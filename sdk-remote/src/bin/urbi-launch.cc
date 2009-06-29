@@ -126,8 +126,6 @@ main(int argc, char* argv[])
   ConnectMode connect_mode = MODE_REMOTE;
   /// Core dll to use.
   std::string dll;
-  /// Server host name.
-  std::string host = "localhost";
   /// Server port.
   int port = urbi::UClient::URBI_PORT;
 
@@ -183,11 +181,11 @@ main(int argc, char* argv[])
     dll = arg_custom.value();
   if (arg_debug.filled())
     verbosity = arg_debug.get<unsigned>(1);
-  if (libport::opts::host.filled())
-  {
-    host = libport::opts::host.value();
-    args << "--host" << host;
-  }
+
+  /// Server host name.
+  std::string host = libport::opts::host.value(UClient::DEFAULT_HOST);
+  args << "--host" << host;
+
   if (arg_plugin.get())
     connect_mode = MODE_PLUGIN_LOAD;
   if (arg_remote.get())

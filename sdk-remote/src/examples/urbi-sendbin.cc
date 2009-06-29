@@ -40,7 +40,8 @@ namespace
       "Options:\n"
       "  -h, --help        display this message and exit\n"
       "  -v, --version     display version information and exit\n"
-      "  -H, --host HOST   the host running the Urbi server [localhost]\n"
+      "  -H, --host ADDR   the host running the Urbi server"
+                << " [" << urbi::UClient::DEFAULT_HOST << "]\n"
       "  -p, --port PORT   the Urbi server port ["
                 << urbi::UClient::URBI_PORT << "]\n"
       ;
@@ -140,7 +141,7 @@ main(int argc, char * argv[])
 {
   libport::program_initialize(argc, argv);
   /// Server host name.
-  std::string host = "localhost";
+  std::string host = urbi::UClient::DEFAULT_HOST;
   /// Server port.
   int port = urbi::UClient::URBI_PORT;
   /// Whether we send "quit" at the end.

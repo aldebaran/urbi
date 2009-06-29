@@ -240,7 +240,8 @@ namespace urbi
       "  -b, --buffer SIZE     input buffer size"
 		 << " [" << UAbstractClient::URBI_BUFLEN << "]\n"
       "  -h, --help            display this message and exit\n"
-      "  -H, --host ADDR       server host name   [localhost]\n"
+      "  -H, --host ADDR       server host name"
+                << " [" << UClient::DEFAULT_HOST << "]\n"
       "      --server          put remote in server mode\n"
       "  -p, --port PORT       tcp port URBI will listen to"
 		 << " [" << UAbstractClient::URBI_PORT << "]\n"
@@ -333,7 +334,7 @@ namespace urbi
   int
   main(const libport::cli_args_type& args, bool block, bool)
   {
-    std::string host = "localhost";
+    std::string host = UClient::DEFAULT_HOST;
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;
     bool server = false;

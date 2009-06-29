@@ -6,7 +6,7 @@ foo = Proc.new{ |msg| puts "callback"; puts msg; }
 all = Proc.new{ |msg| puts "Hey, a result have been received!"; }
 
 puts "Connexion to the server..."
-a = Liburbi::UClient.new("127.0.0.1")
+a = Liburbi::UClient.new()
 
 if (a.error() != 0)
 	puts "UClient couldn't connect."

@@ -8,7 +8,7 @@ f = function ()
 end
 
 print("Connexion to URBI server...")
-a = liburbi.UClient("127.0.0.1")
+a = liburbi.UClient()
 
 if (a.error()) then
 	print "Couldn't connect to the URBI Server"

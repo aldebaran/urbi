@@ -4,7 +4,7 @@ class Test
 	{
 		System.Console.WriteLine("Connexion to the URBI server...");
 		System.Console.WriteLine("Connexion to the URBI server...");
-		UClient a = new UClient("127.0.0.1");
+		UClient a = new UClient;
 
 		if (a.error() != 0)
 		{

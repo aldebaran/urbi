@@ -1,7 +1,7 @@
 use liburbi;
 
 print "Connexion to the URBI server...";
-$a = liburbi::new_UClient("127.0.0.1");
+$a = liburbi::new_UClient();
 
 if ($a.error() != 0)
 {

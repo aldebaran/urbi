@@ -2,7 +2,7 @@
 
 dl("liburbi.so");
 
-$cl = new UClient("127.0.0.1");
+$cl = new UClient();
 
 //$cl->send("12;");
 

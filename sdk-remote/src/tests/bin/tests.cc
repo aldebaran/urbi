@@ -25,11 +25,12 @@ usage()
     "\n"
     "Options:\n"
     "  -h, --help            display this message and exit\n"
-    "  -H, --host ADDR       server host name   [localhost]\n"
+    "  -H, --host ADDR   the host running the Urbi server"
+              << " [" << urbi::UClient::DEFAULT_HOST << "]\n"
     "  -p, --port PORT       tcp port URBI will listen to"
-               << " [" << urbi::UAbstractClient::URBI_PORT << "]\n"
+              << " [" << urbi::UClient::URBI_PORT << "]\n"
     "  -r, --port-file FILE  file containing the port to listen to\n"
-               << libport::exit(EX_OK);
+              << libport::exit(EX_OK);
 }
 
 static char
@@ -93,7 +94,7 @@ main(int argc, char* argv[])
 {
   // Actually argv[0] is verbose and not interesting.
   libport::program_initialize(argc, argv);
-  std::string host = "localhost";
+  std::string host = urbi::UClient::DEFAULT_HOST;
   int port = urbi::UAbstractClient::URBI_PORT;
 
   /// The command line test requested.

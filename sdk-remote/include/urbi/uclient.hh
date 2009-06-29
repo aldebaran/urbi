@@ -42,7 +42,9 @@ namespace urbi
     , private libport::Socket
   {
   public:
-    UClient(const std::string& host, unsigned port = URBI_PORT,
+    using UAbstractClient::DEFAULT_HOST;
+    UClient(const std::string& host = DEFAULT_HOST,
+            unsigned port = URBI_PORT,
 	    size_t buflen = URBI_BUFLEN,
 	    bool server = false);
 

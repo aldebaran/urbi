@@ -194,17 +194,18 @@ int Monitor::createImage()
   visual = windowAttributes.visual;
   depth = windowAttributes.depth;
   isShared = XShmQueryExtension(localDisplay);
-  char * D = getenv("DISPLAY");
-  if (D)
-    {
-      D=strdup(D);
-      char * delim=strstr(D, ":");
-      if (delim)
-	*delim=0;
-      if (D[0]!=0 && strcmp(D, "localhost") && strcmp(D, "127.0.0.1"))
-	isShared = false;
-      free(D);
-    }
+
+  if (char *D = getenv("DISPLAY"))
+  {
+    char *d = strdup(D);
+    char *delim=strstr(d, ":");
+    if (delim)
+      *delim=0;
+    if (d[0]!=0 && strcmp(d, "localhost") && strcmp(d, "127.0.0.1"))
+      isShared = false;
+    free(d);
+  }
+
   if (getenv("DISABLE_SHM") != 0)
     isShared = false;
   try {

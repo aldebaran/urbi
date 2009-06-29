@@ -3,7 +3,7 @@
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007, 2008, 2009 Jean-Christophe Baillie.
+ * Copyright (C) 2004, 2006-2009 Jean-Christophe Baillie.
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -124,6 +124,8 @@ namespace urbi
     enum { URBI_BUFLEN = 128000 };
     /// Standard port of URBI server.
     enum { URBI_PORT = 54000 } ;
+    /// Default host.
+    static const char* DEFAULT_HOST;
 
     /// Error code.
     /// 0 iff no error.
@@ -298,7 +300,7 @@ namespace urbi
     /// This, as a stream.
     std::ostream& stream_get();
 
-    /// dummy tag for client error callback
+    /// dummy tag for client error callback.
     static const char* CLIENTERROR_TAG;
 
   protected:

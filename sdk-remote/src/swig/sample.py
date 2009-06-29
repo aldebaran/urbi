@@ -9,7 +9,7 @@ print "Test the callback";
 foo("foo");
 
 print "Connexion...";
-a = liburbi.UClient("127.0.0.1");
+a = liburbi.UClient();
 # a = liburbi.UClient("robolab5.ensta.fr");
 # a = liburbi.UClient("robolab2.ensta.fr");
 # a = liburbi.UClient("147.250.35.203");

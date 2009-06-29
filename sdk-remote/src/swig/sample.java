@@ -7,7 +7,7 @@ public class test {
 
   public static void main(String argv[]) {
     System.out.println("Connexion to the URBI server...");
-    UClient a = new UClient("127.0.0.1");
+    UClient a = new UClient;
 
     if (a.error() != 0)
 	{

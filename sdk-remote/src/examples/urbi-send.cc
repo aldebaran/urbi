@@ -167,10 +167,6 @@ main(int argc, char* argv[])
   data_list data;
   /// Display the server's banner.
   bool banner = false;
-  /// Server host name.
-  std::string host;
-  /// Server port.
-  int port;
 
   // Parse the command line.
   libport::OptionValues
@@ -205,8 +201,10 @@ main(int argc, char* argv[])
   if (libport::opts::help.get())
     usage(opt_parser);
   banner = arg_banner.get();
-  host = libport::opts::host_l.value("localhost");
-  port = libport::opts::port_l.get<int>(urbi::UClient::URBI_PORT);
+  /// Server host name.
+  std::string host = libport::opts::host_l.value(urbi::UClient::DEFAULT_HOST);
+  /// Server port.
+  int port = libport::opts::port_l.get<int>(urbi::UClient::URBI_PORT);
   if (arg_pfile.filled())
     port = libport::file_contents_get<int>(arg_pfile.value());
   if (libport::opts::version.get())

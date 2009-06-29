@@ -1,7 +1,7 @@
 /****************************************************************************
  * Sample demonstration of URBI capabilities.
  *
- * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006-2009 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -313,16 +313,12 @@ BallTrackingHead::BallTrackingHead(const char * robotname)
 int
 main(int argc, char * argv[])
 {
-  const char * host;
+  const char* host = urbi::UClient::DEFAULT_HOST;
   if (argc != 2)
-    {
     printf("usage: %s robotname\n", argv[0]);
-    //urbi::exit(1);
-    host = "127.0.0.1";
-  }
   else
     host = argv[1];
-  BallTrackingHead bt (host);
+  BallTrackingHead bt(host);
   // Help GCC understand we really want this variable to be "used".
   (void) bt;
   urbi::execute();
