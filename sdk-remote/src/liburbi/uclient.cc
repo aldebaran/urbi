@@ -1,38 +1,18 @@
 /// \file liburbi/uclient.cc
 
-#include <cstdlib>
-#include <cerrno>
-
-#include <locale.h>
-
-#include <libport/windows.hh>
-#include <libport/unistd.h>
-
-#include <libport/sys/time.h>
 #if !defined WIN32
 # include <time.h>
 # include <signal.h>
 #endif
 
-#include <libport/cstdio>
 #include <libport/boost-error.hh>
-#include <libport/debug.hh>
-#include <libport/sys/select.h>
-#include <libport/arpa/inet.h>
-#include <libport/netdb.h>
-#include <libport/errors.hh>
-#include <libport/lockable.hh>
-#include <libport/thread.hh>
-#include <libport/utime.hh>
 
 #include <urbi/uclient.hh>
-#include <urbi/utag.hh>
+//#include <urbi/utag.hh>
 
 namespace urbi
 {
   /*! Establish the connection with the server.
-   Spawn a new thread that will listen to the socket, parse the incoming URBI
-   messages, and notify the appropriate callbacks.
    */
   UClient::UClient(const std::string& host, unsigned port,
                    size_t buflen, bool server)
@@ -47,17 +27,18 @@ namespace urbi
       if ((erc = connect(host, port)))
         libport::boost_error("UClient::UClient connect", erc);
     }
-    else
-      if (listen(boost::bind(&urbi::UClient::mySocketFactory, this), host, port))
-      {
-        libport::perror("UClient::UClient cannot listen");
-        return;
-      }
+    else if ((erc = listen(boost::bind(&urbi::UClient::mySocketFactory, this),
+                           host, port)))
+    {
+      libport::boost_error("UClient::UClient cannot listen", erc);
+      return;
+    }
   }
 
   UClient::~UClient()
   {
   }
+
   int
   UClient::effectiveSend(const void* buffer, size_t size)
   {
@@ -103,7 +84,7 @@ namespace urbi
   UClient::onRead(const void* data, size_t length)
   {
     size_t capacity = buflen - recvBufferPosition - 1;
-    int eat = (capacity < length) ? capacity : length;
+    size_t eat = std::min(capacity, length);
 
     memcpy(&recvBuffer[recvBufferPosition], data, eat);
     recvBufferPosition += eat;

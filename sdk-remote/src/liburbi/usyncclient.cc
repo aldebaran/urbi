@@ -442,9 +442,9 @@ namespace urbi
     if (rc != 0)
       return -1;
     sendBufferLock.lock();
-    int e = effectiveSend(buffer, length);
+    int res = effectiveSend(buffer, length);
     sendBufferLock.unlock();
-    return e;
+    return res;
   }
 
   void
