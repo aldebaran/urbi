@@ -125,6 +125,11 @@ namespace urbi
     /// Standard port of URBI server.
     enum { URBI_PORT = 54000 } ;
 
+    /// Error code.
+    /// 0 iff no error.
+    /// Other values are unspecified.
+    typedef int error_type;
+
     /// Create a new instance and connect to the Urbi server.
     UAbstractClient(const std::string& host, unsigned port = URBI_PORT,
 		    size_t buflen = URBI_BUFLEN,
@@ -134,7 +139,7 @@ namespace urbi
 
     bool init() const;
     /// Return current error status, or zero if no error occurred.
-    int error() const;
+    error_type error() const;
 
     /*----------.
     | Sending.  |
@@ -143,46 +148,46 @@ namespace urbi
     /// Send an Urbi command. The syntax is similar to the printf()
     /// function.
     /// Passing `0' is supported as means `""', but with no warning.
-    int send(const char* format, ...)
+    error_type send(const char* format, ...)
       __attribute__((__format__(printf, 2, 3)));
 
     /// Send the value without any prefix or terminator
-    int send(const urbi::UValue& v);
+    error_type send(const urbi::UValue& v);
 
     /// Send the remainder of the stream.
-    int send(std::istream& is);
+    error_type send(std::istream& is);
 
     /// Send an urbi Binary value.
-    int sendBinary(const void* data, size_t len, const std::string& header);
+    error_type sendBinary(const void* data, size_t len, const std::string& header);
 
     /// Send binary data.
-    int sendBin(const void*, size_t len);
+    error_type sendBin(const void*, size_t len);
 
     /// Send an Urbi header followed by binary data.
-    int sendBin(const void*, size_t len, const char* header, ...)
+    error_type sendBin(const void*, size_t len, const char* header, ...)
       __attribute__((__format__(printf, 4, 5)));
 
     /// Lock the send buffer (for backward compatibility, will be
     /// removed in future versions).
-    int startPack();
+    error_type startPack();
 
     /// Unlock the send buffer (for backward compatibility, will be
     /// removed in future versions).
-    int endPack();
+    error_type endPack();
 
     /// Append Urbi commands to the send buffer (for backward
     /// compatibility, will be removed in future versions).
     /// Passing `0' is supported as means `""', but with no warning.
-    int pack(const char* format, ...)
+    error_type pack(const char* format, ...)
       __attribute__((__format__(printf, 2, 3)));
 
     /// va_list version of pack.
     /// Passing `0' is supported as means `""', but with no warning.
-    int vpack(const char* format, va_list args);
+    error_type vpack(const char* format, va_list args);
 
     /// Send urbi commands contained in a file.
     /// The file "/dev/stdin" is recognized as referring to std::cin.
-    int sendFile(const std::string& f);
+    error_type sendFile(const std::string& f);
 
     /// Send a command, prefixing it with a tag, and associate the
     /// given callback with this tag.
@@ -195,14 +200,14 @@ namespace urbi
       __attribute__((__format__(printf, 4, 5)));
 
     /// Send sound data to the robot for immediate playback.
-    int sendSound(const char* device,
+    error_type sendSound(const char* device,
 		  const urbi::USound& sound, const char* tag = 0);
 
     /// Put a file on the robot's mass storage device.
-    int putFile(const char* localName, const char* remoteName = 0);
+    error_type putFile(const char* localName, const char* remoteName = 0);
 
     /// Save a buffer to a file on the robot.
-    int putFile(const void* buffer, size_t length, const char* remoteName);
+    error_type putFile(const void* buffer, size_t length, const char* remoteName);
 
 
     // Receiving
@@ -301,13 +306,13 @@ namespace urbi
     void onConnection();
 
     /// Queue data for sending, returns zero on success, nonzero on failure.
-    virtual int effectiveSend(const void* buffer, size_t size) = 0;
+    virtual error_type effectiveSend(const void* buffer, size_t size) = 0;
 
     /// Bounce to effectiveSend() using strlen.
-    int effective_send(const char* buffer);
+    error_type effective_send(const char* buffer);
 
     /// Bounce to effectiveSend() using c_str().
-    int effective_send(const std::string& buffer);
+    error_type effective_send(const std::string& buffer);
 
     libport::Lockable sendBufferLock;
     libport::Lockable listLock;
@@ -332,8 +337,11 @@ namespace urbi
 
     /// Urbi Buffer length.
     size_t buflen;
+
     /// System calls return value storage.
-    int rc;
+    /// 0 iff no error.
+    /// Other values are unspecified.
+    error_type rc;
 
     /// Reception buffer.
     char* recvBuffer;

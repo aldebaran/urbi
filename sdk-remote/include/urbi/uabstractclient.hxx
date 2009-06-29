@@ -40,7 +40,7 @@ namespace urbi
   bool
   UCallbackInfo::operator==(int id) const
   {
-    return id==this->id;
+    return this->id == id;
   }
 
   /*------------------.
@@ -55,7 +55,7 @@ namespace urbi
   }
 
   inline
-  int
+  UAbstractClient::error_type
   UAbstractClient::error() const
   {
     return rc;

@@ -221,17 +221,17 @@ namespace urbi
    * only the calling thread can call the send functions. Otherwise do
    * nothing.
    */
-  int
+  UAbstractClient::error_type
   UAbstractClient::startPack()
   {
     sendBufferLock.lock();
     return 0;
   }
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::endPack()
   {
-    int res = effective_send(sendBuffer);
+    error_type res = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     return res;
@@ -240,7 +240,7 @@ namespace urbi
 
   /*! Multiple commands can be sent in one call.
    */
-  int
+  UAbstractClient::error_type
   UAbstractClient::send(const char* command, ...)
   {
     if (rc)
@@ -258,7 +258,7 @@ namespace urbi
     return rc = endPack();
   }
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::send(const UValue& v)
   {
     switch (v.type)
@@ -311,7 +311,7 @@ namespace urbi
     return 0;
   }
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::send(std::istream& is)
   {
     if (rc)
@@ -333,7 +333,7 @@ namespace urbi
    and the corresponding endPack(). Data is queued in the send
    buffer, and sent when endPack() is called.
    */
-  int
+  UAbstractClient::error_type
   UAbstractClient::pack(const char* command, ...)
   {
     if (rc)
@@ -346,7 +346,7 @@ namespace urbi
   }
 
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::vpack(const char* command, va_list arg)
   {
     if (rc)
@@ -374,7 +374,7 @@ namespace urbi
   }
 
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::sendFile(const std::string& f)
   {
     if (f == "/dev/stdin")
@@ -390,14 +390,14 @@ namespace urbi
   }
 
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::sendBin(const void* buffer, size_t len)
   {
     return sendBin(buffer, len, 0);
   }
 
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::sendBin(const void* buffer, size_t len,
 			   const char* header, ...)
   {
@@ -413,13 +413,13 @@ namespace urbi
       effective_send(sendBuffer);
     }
 
-    int res = effectiveSend(buffer, len);
+    error_type res = effectiveSend(buffer, len);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     return res;
   }
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::sendBinary(const void* data, size_t len,
                               const std::string& header)
   {
@@ -542,7 +542,7 @@ namespace urbi
    case of asynchronous send, and may be safely deleted as soon as this
    function returns.
    */
-  int
+  UAbstractClient::error_type
   UAbstractClient::sendSound(const char* device, const USound& sound,
 			     const char* tag)
   {
@@ -692,7 +692,7 @@ namespace urbi
     return res;
   }
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::putFile(const char* localName, const char* remoteName)
   {
     size_t len;
@@ -704,13 +704,13 @@ namespace urbi
     if (!remoteName)
       remoteName = localName;
     send("save(\"%s\", \"", remoteName);
-    int res = sendFile(localName);
+    error_type res = sendFile(localName);
     send("\");");
     sendBufferLock.unlock();
     return res;
   }
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::putFile(const void* buffer, size_t length,
 			   const char* remoteName)
   {
@@ -836,12 +836,14 @@ namespace urbi
 	      currentTag[0] = 0;
 	    else // failure
 	    {
-              GD_FERROR("UAbstractClient::read, error parsing header: '%s'", (recvBuffer));
+              GD_FERROR("UAbstractClient::read, error parsing header: '%s'",
+                        (recvBuffer));
 	      currentTimestamp = 0;
 	      strcpy(currentTag, "UNKNWN");
 	      //listLock.lock();
 	      UMessage msg(*this, 0, tag_error,
-			   "!!! UAbstractClient::read, fatal error parsing header",
+			   "!!! UAbstractClient::read,"
+                           " fatal error parsing header",
 			   binaries_type());
 	      notifyCallbacks(msg);
 	      //unlistLock.lock();
@@ -1053,13 +1055,13 @@ namespace urbi
 # undef VERSION_TAG
   }
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::effective_send(const std::string& s)
   {
     return effectiveSend(s.c_str(), s.size());
   }
 
-  int
+  UAbstractClient::error_type
   UAbstractClient::effective_send(const char* cp)
   {
     return effectiveSend(cp, strlen(cp));
