@@ -37,9 +37,9 @@ namespace urbi
   /*! This implementation creates a thread for each instance of UClient, which
     listens on the associated socket.
   */
-  class URBI_SDK_API UClient:
-    public UAbstractClient,
-    private libport::Socket
+  class URBI_SDK_API UClient
+    : public UAbstractClient
+    , private libport::Socket
   {
   public:
     UClient(const std::string& host, unsigned port = URBI_PORT,

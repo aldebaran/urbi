@@ -5,13 +5,16 @@
 # include <signal.h>
 #endif
 
+#include <boost/lambda/bind.hpp>
+
 #include <libport/boost-error.hh>
+#include <libport/format.hh>
 
 #include <urbi/uclient.hh>
-//#include <urbi/utag.hh>
 
 namespace urbi
 {
+
   /*! Establish the connection with the server.
    */
   UClient::UClient(const std::string& host, unsigned port,
@@ -20,18 +23,19 @@ namespace urbi
     , ping_interval_(0)
     , pong_timeout_(0)
   {
+    using namespace boost::system;
     if (server_)
     {
-      if (boost::system::error_code erc =
-          listen(boost::bind(&urbi::UClient::mySocketFactory, this),
-                 host, port))
-      {
-        libport::boost_error("UClient::UClient cannot listen", erc);
-        return;
-      }
+      if (error_code erc = listen(boost::bind(&UClient::mySocketFactory, this),
+                                  host, port))
+        libport::boost_error(libport::format("UClient::UClient listen(%s, %s)",
+                                             host, port),
+                             erc);
     }
-    else if (boost::system::error_code erc = connect(host, port))
-      libport::boost_error("UClient::UClient connect", erc);
+    else if (error_code erc = connect(host, port))
+      libport::boost_error(libport::format("UClient::UClient connect",
+                                           host, port),
+                           erc);
   }
 
   UClient::~UClient()
@@ -75,7 +79,8 @@ namespace urbi
   {
     rc = -1;
     clientError(erc.message());
-    notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, erc.message().c_str()));
+    notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
+                             erc.message().c_str()));
     return;
   }
 
