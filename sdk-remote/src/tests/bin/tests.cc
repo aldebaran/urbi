@@ -120,15 +120,15 @@ main(int argc, char* argv[])
       tests.push_back(arg);
   }
 
-  VERBOSE("client(" << host << ", " << port << ")");
   urbi::UClient client(host, port);
+  VERBOSE("client(" << host << ", " << port << ") @ " << &client);
   client.setClientErrorCallback(callback(&doExit));
   if (client.error())
     std::cerr << "Failed to set up properly the client" << std::endl
               << libport::exit(EX_SOFTWARE);
 
-  VERBOSE("syncClient(" << host << ", " << port << ")");
   urbi::USyncClient syncClient(host, port);
+  VERBOSE("syncClient(" << host << ", " << port << ") @ " << &syncClient);
   if (syncClient.error())
     std::cerr << "Failed to set up properly the syncClient" << std::endl
               << libport::exit(EX_SOFTWARE);

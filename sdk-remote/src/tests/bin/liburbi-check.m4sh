@@ -70,6 +70,9 @@ export srcdir
 # Move to a private dir.
 mkcd $me.dir
 
+# Be verbose.
+export GD_LEVEL=DUMP
+
 # Help debugging
 set | rst_pre "$me variables"
 
