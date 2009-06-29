@@ -186,12 +186,6 @@ namespace urbi
     listLock.unlock();
   }
 
-  /*! Initializes sendBuffer and recvBuffer, and copy host and port.
-   \param host    IP address or name of the robot to connect to.
-   \param port    TCP port to connect to.
-   \param buflen  size of send and receive buffers.
-   Implementations should establish the connection in their constructor.
-   */
   UAbstractClient::UAbstractClient(const std::string& host,
 				   unsigned port,
 				   size_t buflen,
@@ -349,9 +343,9 @@ namespace urbi
 
 
   /*! This function must only be called between a startPack()
-   and the corresponding endPack(). Data is queued in the send
-   buffer, and sent when endPack() is called.
-   */
+    and the corresponding endPack(). Data is queued in the send
+    buffer, and sent when endPack() is called.
+  */
   UAbstractClient::error_type
   UAbstractClient::pack(const char* command, ...)
   {
@@ -486,26 +480,26 @@ namespace urbi
 
     sendSoundData* s = (sendSoundData*)cb;
     /*
-     if (msg.type != MESSAGE_SYSTEM)
-     return URBI_CONTINUE;
-     if (strstr(msg.systemValue, "start") && s->startNotify==false)
-     {
-     s->startNotify = true;
-     s->uc->notifyCallbacks(UMessage(*s->uc, 0, s->tag, "*** start"));
-     }
-     if (!strstr(msg.systemValue, "stop"))
-     return URBI_CONTINUE;
-     */
+      if (msg.type != MESSAGE_SYSTEM)
+      return URBI_CONTINUE;
+      if (strstr(msg.systemValue, "start") && s->startNotify==false)
+      {
+      s->startNotify = true;
+      s->uc->notifyCallbacks(UMessage(*s->uc, 0, s->tag, "*** start"));
+      }
+      if (!strstr(msg.systemValue, "stop"))
+      return URBI_CONTINUE;
+    */
     /*wavheader wh =
-     {
-     {'R', 'I', 'F', 'F'},
-     44-8,
-     {'W', 'A', 'V', 'E'},
-     {'f', 'm', 't', ' '},
-     16, 1, 1, 16000, 32000, 2, 16,
-     {'d', 'a', 't', 'a'},
-     0}; // no comment...
-     */
+      {
+      {'R', 'I', 'F', 'F'},
+      44-8,
+      {'W', 'A', 'V', 'E'},
+      {'f', 'm', 't', ' '},
+      16, 1, 1, 16000, 32000, 2, 16,
+      {'d', 'a', 't', 'a'},
+      0}; // no comment...
+    */
     //handle next chunk
     if (s->format == SOUND_WAV && s->pos==0)
       s->pos = sizeof (wavheader);
@@ -556,11 +550,11 @@ namespace urbi
   }
 
   /*!
-   If tag is set, an URBI system "stop" message with this tag will be
-   generated when the sound has been played.  The sound data is copied in
-   case of asynchronous send, and may be safely deleted as soon as this
-   function returns.
-   */
+    If tag is set, an URBI system "stop" message with this tag will be
+    generated when the sound has been played.  The sound data is copied in
+    case of asynchronous send, and may be safely deleted as soon as this
+    function returns.
+  */
   UAbstractClient::error_type
   UAbstractClient::sendSound(const char* device, const USound& sound,
 			     const char* tag)
@@ -1030,8 +1024,8 @@ namespace urbi
   void
   UAbstractClient::clientError(std::string message, int erc)
   {
-    /// Just like in UMessage's contructor, skip the possible "!!! "
-    /// prefix.
+    // Just like in UMessage's contructor, skip the possible "!!! "
+    // prefix.
     const char prefix[] = "!!! ";
     if (message.substr(0, sizeof prefix - 1) == prefix)
       message.erase(0, sizeof prefix - 1);
@@ -1141,7 +1135,7 @@ namespace urbi
   void
   UAbstractClient::waitForKernelVersion() const
   {
-    /// FIXME: use a condition.
+    // FIXME: use a condition.
     while (kernelMajor_ < 0 && !error())
       usleep(100000);
   }

@@ -133,7 +133,14 @@ namespace urbi
     typedef int error_type;
 
     /// Create a new instance and connect to the Urbi server.
-    UAbstractClient(const std::string& host, unsigned port = URBI_PORT,
+    /*! Initializes sendBuffer and recvBuffer, and copy host and port.
+      \param host    IP address or name of the robot to connect to.
+      \param port    TCP port to connect to.
+      \param buflen  size of send and receive buffers.
+      Implementations should establish the connection in their constructor.
+    */
+    UAbstractClient(const std::string& host = DEFAULT_HOST,
+                    unsigned port = URBI_PORT,
 		    size_t buflen = URBI_BUFLEN,
 		    bool server = false);
 

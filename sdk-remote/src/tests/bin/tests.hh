@@ -19,8 +19,8 @@ Test file layout
    testname must be filename-without-extension
 - code of the test:
 - setup callbacks, the callback function dump is provided: it displays the
-  message and increments dumpSem semaphore. Setting a Wildcard or at list
-  an error callback is recomended.
+  message and increments dumpSem semaphore. Setting a Wildcard or at least
+  an error callback is recommended.
   - c++ code using UClient & client, USyncClient &syncClient made available
   - expected output in comments:
    //= <expected output>
@@ -74,7 +74,7 @@ void dispatch(const std::string& method, urbi::UClient& client,
   do {									\
     if (method == #Name)						\
     {									\
-      void Name(urbi::UClient& , urbi::USyncClient&);			\
+      void Name(urbi::UClient&, urbi::USyncClient&);			\
       Name(client, syncClient);						\
       return;								\
     }									\
