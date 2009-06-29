@@ -3,6 +3,7 @@ AUTOMAKE_OPTIONS += subdir-objects
 TESTS =
 include $(top_srcdir)/build-aux/check.mk
 include $(top_srcdir)/build-aux/m4sh.mk
+include $(top_srcdir)/build-aux/libport.mk
 
 include examples/local.mk
 include liburbi/local.mk

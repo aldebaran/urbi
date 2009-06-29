@@ -10,7 +10,7 @@ esac
 : ${EXEEXT='@EXEEXT@'}
 : ${abs_top_srcdir='@abs_top_srcdir@'}
 : ${abs_top_builddir='@abs_top_builddir@'}
-: ${program=$abs_top_builddir/src/urbi-launch$EXEEXT}
+: ${program=$abs_top_builddir/src/bin/urbi-launch$EXEEXT}
 
 verbose ()
 {

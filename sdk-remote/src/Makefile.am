@@ -39,6 +39,7 @@ include libuco/local.mk
 include libuobject/local.mk
 
 if SDK_REMOTE
+include bin/local.mk
 include liburbi/local.mk
 include uobjects/local.mk
 endif SDK_REMOTE
@@ -55,22 +56,4 @@ endif EXAMPLES
 
 .PHONY: core libs
 libs: $(LTLIBRARIES)
-core: libs urbi-launch$(EXEEXT)
-
-## ------------- ##
-## Urbi-launch.  ##
-## ------------- ##
-
-if SDK_REMOTE
-bin_PROGRAMS += urbi-launch
-# Find our own ltdl.h.  Push "system" headers last so that our headers
-# have priority.
-urbi_launch_CPPFLAGS = $(LTDL_CPPFLAGS) $(AM_CPPFLAGS)
-urbi_launch_SOURCES = urbi-launch.cc
-urbi_launch_LDFLAGS =				\
-  $(AM_LDFLAGS)
-urbi_launch_LDADD =				\
-  $(AM_LDADD)					\
-  $(LTDL_LIBS)					\
-  liburbi/liburbi.la
-endif
+core: libs bin/urbi-launch$(EXEEXT)
