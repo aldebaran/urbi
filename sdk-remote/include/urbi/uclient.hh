@@ -78,6 +78,11 @@ namespace urbi
 
     /// Bounce to listen or connect, depending whether server mode.
     error_type start();
+  protected:
+    virtual error_type onClose();
+
+  public:
+    int closeUClient ();
 
     virtual void printf(const char * format, ...);
     virtual unsigned int getCurrentTime() const;

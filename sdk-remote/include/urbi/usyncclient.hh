@@ -57,6 +57,9 @@ namespace urbi
   class URBI_SDK_API USyncClient: public UClient
   {
   public:
+    typedef UClient super_type;
+    typedef super_type::error_type error_type;
+
     /** Create a new connection to an Urbi Server.
      *
      *  \param host    The host to connect to.
@@ -90,6 +93,9 @@ namespace urbi
       const char* mmod_;
       static const options default_options;
     };
+
+  protected:
+    virtual error_type onClose ();
 
   protected:
     /** Synchronously ask the server for the value of an expression.

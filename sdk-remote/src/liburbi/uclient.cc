@@ -97,9 +97,27 @@ namespace urbi
 
   UClient::~UClient()
   {
+    closeUClient();
   }
 
-  int
+  UClient::error_type
+  UClient::onClose()
+  {
+    if (closed_)
+      return 1;
+    UAbstractClient::onClose();
+    return 0;
+  }
+
+  UClient::error_type
+  UClient::closeUClient()
+  {
+    close();
+    onClose();
+    return 0;
+  }
+
+  UClient::error_type
   UClient::effectiveSend(const void* buffer, size_t size)
   {
     if (rc)

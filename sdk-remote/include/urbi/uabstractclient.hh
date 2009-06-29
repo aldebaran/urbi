@@ -324,6 +324,10 @@ namespace urbi
     /// Must be called by subclasses when the connection is established.
     void onConnection();
 
+    /// Executed when closing connection.
+    virtual error_type onClose();
+    bool closed_;
+
     /// Queue data for sending, returns zero on success, nonzero on failure.
     virtual error_type effectiveSend(const void* buffer, size_t size) = 0;
 

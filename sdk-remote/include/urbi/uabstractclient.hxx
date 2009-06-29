@@ -87,6 +87,7 @@ namespace urbi
   int
   UAbstractClient::kernelMajor() const
   {
+    waitForKernelVersion();
     return kernelMajor_;
   }
 
@@ -94,6 +95,7 @@ namespace urbi
   int
   UAbstractClient::kernelMinor() const
   {
+    waitForKernelVersion();
     return kernelMinor_;
   }
 
@@ -101,8 +103,17 @@ namespace urbi
   const std::string&
   UAbstractClient::kernelVersion() const
   {
+    waitForKernelVersion();
     return kernelVersion_;
   }
+
+  inline
+  UAbstractClient::error_type
+  UAbstractClient::onClose()
+  {
+    closed_ = true;
+    return 0;
+  };
 
 } // namespace urbi
 

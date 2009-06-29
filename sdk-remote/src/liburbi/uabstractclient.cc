@@ -191,6 +191,7 @@ namespace urbi
 				   size_t buflen,
 				   bool server)
     : std::ostream(new UClientStreambuf(this))
+    , closed_ (false)
     , sendBufferLock()
     , listLock()
     , host_(host)

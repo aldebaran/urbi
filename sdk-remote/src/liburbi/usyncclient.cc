@@ -230,6 +230,20 @@ namespace urbi
     }
   }
 
+  USyncClient::error_type
+  USyncClient::onClose()
+  {
+    if (closed_)
+      return 1;
+
+    UClient::onClose();
+
+    stopCallbackThread_ = true;
+    callbackSem_++;
+    sem_++;
+    return 0;
+  }
+
   UMessage*
   USyncClient::syncGet_(const char* format, va_list& arg,
 			const USyncClient::options& options)
@@ -382,7 +396,12 @@ namespace urbi
   USyncClient::syncGetNormalizedDevice(const char* device, double& val,
 				       libport::utime_t useconds)
   {
-    return getValue(syncGet(useconds, "%s.valn", device), val);
+    UMessage* m = syncGet(useconds, "%s.valn;", device);
+
+    if (!m)
+      return 0;
+
+    return getValue(m, val);
   }
 
   int
@@ -396,21 +415,32 @@ namespace urbi
   USyncClient::syncGetValue(const char* tag, const char* valName, UValue& val,
 			    libport::utime_t useconds)
   {
-    return getValue(syncGetTag(useconds, "%s", tag, 0, valName), val);
+    UMessage* m = syncGetTag(useconds, "%s;", tag, 0, valName);
+
+    if (!m)
+      return 0;
+
+    return getValue(m, val);
   }
 
   int
   USyncClient::syncGetDevice(const char* device, double& val,
 			     libport::utime_t useconds)
   {
-    return getValue(syncGet(useconds, "%s.val", device), val);
+    UMessage* m = syncGet(useconds, "%s.val;", device);
+    if (!m)
+      return 0;
+    return getValue(m, val);
   }
 
   int
   USyncClient::syncGetResult(const char* command, double& val,
 			     libport::utime_t useconds)
   {
-    return getValue(syncGet(useconds, "%s", command), val);
+    UMessage* m = syncGet(useconds, "%s", command);
+    if (!m)
+      return 0;
+    return getValue(m, val);
   }
 
 
@@ -418,7 +448,12 @@ namespace urbi
   USyncClient::syncGetDevice(const char* device, const char* access,
 			     double& val, libport::utime_t useconds)
   {
-    return getValue(syncGet(useconds, "%s.%s", device, access), val);
+    UMessage* m = syncGet(useconds, "%s.%s;", device, access);
+
+    if (!m)
+      return 0;
+
+    return getValue(m, val);
   }
 
 
@@ -435,8 +470,10 @@ namespace urbi
 	 "   noop;\n"
 	 " };\n", device, duration);
     UMessage* m = syncGet(useconds, "%s", "syncgetsound;");
+
     if (!m)
       return 0;
+
     if (m->type != MESSAGE_DATA
 	|| m->value->type != DATA_BINARY
 	|| m->value->binary->type != BINARY_SOUND)
