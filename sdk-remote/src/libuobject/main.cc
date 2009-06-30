@@ -87,8 +87,9 @@ namespace urbi
 	      << program_name()
 	      << ": Remote Component Running on "
 	      << host << " " << port << std::endl;
-
-    new USyncClient(host, port, buflen, server);
+              USyncClient::options o;
+              o.server(server);
+              new USyncClient(host, port, buflen, o);
     defaultContext = new impl::RemoteUContextImpl(
               dynamic_cast<USyncClient*>(getDefaultClient()));
     if (exitOnDisconnect)

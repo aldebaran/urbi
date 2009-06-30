@@ -24,6 +24,7 @@
 #ifndef URBI_USYNCCLIENT_HH
 # define URBI_USYNCCLIENT_HH
 
+# include <libport/finally.hh>
 # include <libport/fwd.hh>
 # include <libport/lockable.hh>
 # include <libport/semaphore.hh>
@@ -57,8 +58,16 @@ namespace urbi
   class URBI_SDK_API USyncClient: public UClient
   {
   public:
+    typedef boost::function1<void, USyncClient*> connect_callback_type;
     typedef UClient super_type;
     typedef super_type::error_type error_type;
+    struct options: public super_type::options
+    {
+      options();
+      UCLIENT_OPTION(bool, startCallbackThread);
+      /// Ignore host and port if set, do not connect or listen.
+      UCLIENT_OPTION(connect_callback_type, connectCallback);
+    };
 
     /** Create a new connection to an Urbi Server.
      *
@@ -74,24 +83,23 @@ namespace urbi
     USyncClient(const std::string& host,
 		unsigned port = URBI_PORT,
 		size_t buflen = URBI_BUFLEN,
-		bool server = false,
-		bool startCallbackThread = true);
+                const options& opt = options());
 
     ~USyncClient();
 
     /// Options for send(), rather than multiplying the overloads.
-    struct options
+    struct send_options
     {
-      options();
+      send_options();
 
-      options& timeout(libport::utime_t);
-      options& tag(const char*, const char* = 0);
+      send_options& timeout(libport::utime_t);
+      send_options& tag(const char*, const char* = 0);
 
       /// Timeout in microseconds
       libport::utime_t timeout_;
       const char* mtag_;
       const char* mmod_;
-      static const options default_options;
+      static const send_options default_options;
     };
 
   protected:
@@ -107,7 +115,7 @@ namespace urbi
      */
     UMessage*
     syncGet_(const char* expression, va_list& arg,
-	     const options& = options::default_options);
+	     const send_options& = send_options::default_options);
 
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
@@ -206,13 +214,30 @@ namespace urbi
      */
     void waitForKernelVersion(bool hasProcessingThread);
 
-    void setDefaultOptions(const options& opt);
-    const options& getOptions(const options& opt =
-                                   options::default_options) const;
+    void setDefaultOptions(const send_options& opt);
+    const send_options& getOptions(const send_options& opt =
+                                   send_options::default_options) const;
+
+    /**
+     * Listen on the specified host:port pair. Bind an USyncClient on each
+     * connection, and call \b connectCallback. Socket ownership is transfered
+     * to the callback.
+     * @return a handle on the listening socket. Destroy it to stop listening.
+     */
+    static boost::shared_ptr<libport::Finally>
+    listen(const std::string& host, const std::string& port,
+           boost::system::error_code& erc,
+           connect_callback_type connectCallback,
+           size_t buflen = URBI_BUFLEN,
+           bool startCallbackThread = true);
+
+    virtual void onConnect();
 
   protected:
     int joinCallbackThread_();
 
+    static libport::Socket* onAccept(connect_callback_type l, size_t buflen,
+                                     bool startThread);
     // Incremented at each queue push, decremented on pop.
     libport::Semaphore sem_;
     // Semaphore to delay execution of callback thread until ctor finishes.
@@ -227,12 +252,13 @@ namespace urbi
     libport::Semaphore syncLock_;
     std::string syncTag;
 
-    options default_options_;
+    send_options default_options_;
 
     bool stopCallbackThread_;
     pthread_t cbThread;
     // Used to block until the callback thread is realy stopped.
     libport::Semaphore stopCallbackSem_;
+    connect_callback_type connectCallback_;
   };
 
 } // namespace urbi

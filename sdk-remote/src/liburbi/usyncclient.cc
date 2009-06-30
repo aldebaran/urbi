@@ -14,35 +14,45 @@
 namespace urbi
 {
 
-  const USyncClient::options USyncClient::options::default_options =
-    USyncClient::options();
-
   USyncClient::options::options()
+  : super_type::options()
+  , startCallbackThread_(true)
+  , connectCallback_(0)
+  {
+  }
+
+  const USyncClient::send_options USyncClient::send_options::default_options =
+    USyncClient::send_options();
+
+  USyncClient::send_options::send_options()
     : timeout_(0)
     , mtag_(0)
     , mmod_(0)
   {}
 
-  USyncClient::options&
-  USyncClient::options::timeout(libport::utime_t usec)
+  USyncClient::send_options&
+  USyncClient::send_options::timeout(libport::utime_t usec)
   {
     timeout_ = usec;
     return *this;
   }
 
-  USyncClient::options&
-  USyncClient::options::tag(const char* tag, const char* mod)
+  USyncClient::send_options&
+  USyncClient::send_options::tag(const char* tag, const char* mod)
   {
     mtag_ = tag;
     mmod_ = mod;
     return *this;
   }
 
+  UCLIENT_OPTION_IMPL(USyncClient, bool, startCallbackThread);
+  UCLIENT_OPTION_IMPL(USyncClient, USyncClient::connect_callback_type,
+                      connectCallback);
+
   USyncClient::USyncClient(const std::string& host,
 			   unsigned port,
 			   size_t buflen,
-			   bool server,
-                           bool startCallbackThread)
+                           const options& opts)
     // Be cautious not to start the UClient part of this USyncClient
     // before the completion of "this".  If you do (e.g., you forget
     // to pass "start(false)" to UClient), then the UClient, as a
@@ -54,21 +64,25 @@ namespace urbi
     // Therefore, start handling connection only in the body of the
     // ctor.
     : UClient(host, port, buflen,
-              UClient::options().server(server).start(false))
+              UClient::options().server(opts.server()).start(false))
     , sem_()
     , queueLock_()
     , message_(0)
     , syncLock_()
     , syncTag()
     , default_options_()
-    , stopCallbackThread_(!startCallbackThread)
+    , stopCallbackThread_(!opts.startCallbackThread())
     , cbThread(0)
+    , connectCallback_(opts.connectCallback())
   {
-    start();
+    // Do not start if connectCallback_ is set, we were constructed by a
+    // listening socket.
+    if (!connectCallback_)
+      start();
     if (error())
       return;
 
-    if (startCallbackThread)
+    if (opts.startCallbackThread())
       cbThread = libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient = this;
@@ -195,7 +209,7 @@ namespace urbi
 
   namespace
   {
-    /// Check that \a cp looks like "foo <" or "foo :".
+    /// Check that \a cp looks like "foo < " or "foo :".
     /// I venture this is an attempt to see if there is a "tag" or a
     /// channel.
     static
@@ -215,7 +229,7 @@ namespace urbi
     /// if they are empty.
     static
     std::string
-    make_tag(UAbstractClient& cl, const USyncClient::options& opt)
+    make_tag(UAbstractClient& cl, const USyncClient::send_options& opt)
     {
       std::string res;
       if (opt.mtag_)
@@ -246,9 +260,9 @@ namespace urbi
 
   UMessage*
   USyncClient::syncGet_(const char* format, va_list& arg,
-			const USyncClient::options& options)
+			const USyncClient::send_options& options)
   {
-    const USyncClient::options& opt_used = getOptions(options);
+    const USyncClient::send_options& opt_used = getOptions(options);
     if (has_tag(format))
       return 0;
     sendBufferLock.lock();
@@ -294,7 +308,7 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, format);
-    UMessage* res = syncGet_(format, arg, options().timeout(useconds));
+    UMessage* res = syncGet_(format, arg, send_options().timeout(useconds));
     va_end(arg);
     return res;
   }
@@ -305,7 +319,7 @@ namespace urbi
   {
     va_list arg;
     va_start(arg, mmod);
-    UMessage* res = syncGet_(format, arg, options().tag(mtag, mmod));
+    UMessage* res = syncGet_(format, arg, send_options().tag(mtag, mmod));
     va_end(arg);
     return res;
   }
@@ -319,7 +333,7 @@ namespace urbi
     va_list arg;
     va_start(arg, mmod);
     UMessage* res = syncGet_(format, arg,
-			     options().tag(mtag, mmod).timeout(useconds));
+			     send_options().tag(mtag, mmod).timeout(useconds));
     va_end(arg);
     return res;
   }
@@ -490,16 +504,57 @@ namespace urbi
   }
 
   void
-  USyncClient::setDefaultOptions(const USyncClient::options& opt)
+  USyncClient::onConnect()
+  {
+    UClient::onConnect();
+    if (connectCallback_)
+      connectCallback_(this);
+    connectCallback_ = 0;
+  }
+
+  void
+  USyncClient::setDefaultOptions(const USyncClient::send_options& opt)
   {
     default_options_ = opt;
   }
 
-  const USyncClient::options&
-  USyncClient::getOptions(const USyncClient::options& opt) const
+  const USyncClient::send_options&
+  USyncClient::getOptions(const USyncClient::send_options& opt) const
   {
-    return (&opt == &USyncClient::options::default_options) ?
+    return (&opt == &USyncClient::send_options::default_options) ?
       default_options_ : opt;
   }
 
+  static void destroySocket(libport::Socket* s)
+  {
+    s->destroy();
+  }
+
+  libport::Socket*
+  USyncClient::onAccept(connect_callback_type connectCallback,
+          size_t buflen,
+          bool startCallbackThread)
+  {
+    return new USyncClient("", 0, buflen, USyncClient::options()
+                           .startCallbackThread(startCallbackThread)
+                           .connectCallback(connectCallback));
+  }
+
+  boost::shared_ptr<libport::Finally>
+  USyncClient::listen(const std::string& host, const std::string& port,
+                      boost::system::error_code& erc,
+                      connect_callback_type connectCallback,
+                      size_t buflen,
+                      bool startCallbackThread)
+  {
+    libport::Socket* s = new libport::Socket;
+    erc = s->listen(boost::bind(&onAccept, connectCallback, buflen,
+                                startCallbackThread),
+                    host, port);
+    if (erc)
+      return boost::shared_ptr<libport::Finally>((libport::Finally*)0);
+    boost::shared_ptr<libport::Finally> res(new libport::Finally);
+    (*res) << boost::bind(&destroySocket, s);
+    return res;
+  }
 } // namespace urbi

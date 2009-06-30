@@ -131,6 +131,8 @@ namespace urbi
     send("if (isdef(Channel))\n"
          "  var lobby.%s = Channel.new(\"%s\") | {};",
          internalPongTag, internalPongTag);
+    host_ = getRemoteHost();
+    port_ = getRemotePort();
   }
 
   void
