@@ -70,6 +70,9 @@ do (Global.UObject)
     for( var t: timerTask)
       t.stop |
     updateTask.stop |
+    var name = __uobjectName |
+    var remote = hasLocalSlot("isRemote") |
+    var lob = lobby; // will find this.lobby if we are a remote uobject
     uobjects.removeSlot(__uobjectName);
     // Deregister all callbacks
     handle = nil;
@@ -84,9 +87,21 @@ do (Global.UObject)
     for (var f: localSlotNames.remove("__uobjectName").remove("finalize"))
       removeSlot(f) ;
     // Destroy C++ UObject instance
-    finalize;
-    // Reparent to loose all UObject methods including finalize
-    setProtos([Finalizable]);
+    if (!remote)
+    {
+      finalize;
+      // Reparent to loose all UObject methods including finalize
+      setProtos([Finalizable]);
+    }
+    else
+    {
+      if (lob.connected)
+      {
+         var chan = Channel.new('external'.MODULE_TAG)|
+         var chan.lobby = lob|
+         chan << ['external'.UEM_DELETE, name];
+      }
+    }
   };
 
   /// Set a timer to call update at specified interval in seconds.
@@ -309,6 +324,7 @@ class Global.'external'
   */
   function 'object'(objname)
   {
+    nonInterruptible |
     if (uobjects.hasLocalSlot(objname))
       return|
     // The remote sent the code 'class <objname> {};' just before
@@ -317,6 +333,8 @@ class Global.'external'
     if (uobjects not in Global.protos)
       Global.addProto(uobjects)|
     uobjects.setSlot(objname, UObject.new) |
+    uobjects.getSlot(objname).setSlot("__uobjectName", objname) |
+    uobjects.getSlot(objname).setSlot("isRemote", true) |
     uobjects.getSlot(objname).uobject_init |
     for| (var s: lobby.getSlot(objname).localSlotNames)
       uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s)) |
