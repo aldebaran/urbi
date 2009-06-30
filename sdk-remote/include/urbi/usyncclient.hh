@@ -64,7 +64,7 @@ namespace urbi
      *  \param buflen  Size of reception buffer, defaults to URBI_BUFLEN.
      *  \param server  If true, listen for an incoming connection from an
      *                  urbi server instead of connecting.
-     *  \param startCallbackThread Create a thread didacated to the processing
+     *  \param startCallbackThread Create a thread dedicated to the processing
      *    of incoming messages. If false, it is the responsibility of the user
      *    to regularly call processEvents().
      */
@@ -76,19 +76,20 @@ namespace urbi
 
     ~USyncClient();
 
-  struct options
-  {
-    options();
+    /// Options for send(), rather than multiplying the overloads.
+    struct options
+    {
+      options();
 
-    options& timeout(libport::utime_t);
-    options& tag(const char*, const char* = 0);
+      options& timeout(libport::utime_t);
+      options& tag(const char*, const char* = 0);
 
-    /// Timeout in microseconds
-    libport::utime_t timeout_;
-    const char* mtag_;
-    const char* mmod_;
-    static const options default_options;
-  };
+      /// Timeout in microseconds
+      libport::utime_t timeout_;
+      const char* mtag_;
+      const char* mmod_;
+      static const options default_options;
+    };
 
   protected:
     /** Synchronously ask the server for the value of an expression.
