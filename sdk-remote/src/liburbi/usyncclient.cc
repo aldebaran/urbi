@@ -396,12 +396,7 @@ namespace urbi
   USyncClient::syncGetNormalizedDevice(const char* device, double& val,
 				       libport::utime_t useconds)
   {
-    UMessage* m = syncGet(useconds, "%s.valn;", device);
-
-    if (!m)
-      return 0;
-
-    return getValue(m, val);
+    return getValue(syncGet(useconds, "%s.valn;", device), val);
   }
 
   int
@@ -415,32 +410,21 @@ namespace urbi
   USyncClient::syncGetValue(const char* tag, const char* valName, UValue& val,
 			    libport::utime_t useconds)
   {
-    UMessage* m = syncGetTag(useconds, "%s;", tag, 0, valName);
-
-    if (!m)
-      return 0;
-
-    return getValue(m, val);
+    return getValue(syncGetTag(useconds, "%s;", tag, 0, valName), val);
   }
 
   int
   USyncClient::syncGetDevice(const char* device, double& val,
 			     libport::utime_t useconds)
   {
-    UMessage* m = syncGet(useconds, "%s.val;", device);
-    if (!m)
-      return 0;
-    return getValue(m, val);
+    return getValue(syncGet(useconds, "%s.val;", device), val);
   }
 
   int
   USyncClient::syncGetResult(const char* command, double& val,
 			     libport::utime_t useconds)
   {
-    UMessage* m = syncGet(useconds, "%s", command);
-    if (!m)
-      return 0;
-    return getValue(m, val);
+    return getValue(syncGet(useconds, "%s", command), val);
   }
 
 
@@ -448,12 +432,7 @@ namespace urbi
   USyncClient::syncGetDevice(const char* device, const char* access,
 			     double& val, libport::utime_t useconds)
   {
-    UMessage* m = syncGet(useconds, "%s.%s;", device, access);
-
-    if (!m)
-      return 0;
-
-    return getValue(m, val);
+    return getValue(syncGet(useconds, "%s.%s;", device, access), val);
   }
 
 
