@@ -54,19 +54,32 @@ namespace urbi
       ///
       /// start defaults to true, for backward compatibility too.
       options(bool server = false);
-# define UCLIENT_OPTION(Type, Name, Default)    \
+# define UCLIENT_OPTION(Type, Name)    \
     public:                                     \
-      options& Name(Type b = Default);          \
+      options& Name(Type b);          \
       Type Name() const;                        \
     private:                                    \
       Type Name ## _;
 
       /// Whether in server mode.
-      UCLIENT_OPTION(bool, server, true);
+      UCLIENT_OPTION(bool, server);
       /// Whether the socket autostarts.
-      UCLIENT_OPTION(bool, start, true);
-# undef UCLIENT_OPTION
+      UCLIENT_OPTION(bool, start);
     };
+
+# define UCLIENT_OPTION_IMPL(Class, Type, Name) \
+  Class::options&                             \
+  Class::options::Name(Type v)                \
+  {                                             \
+    Name ## _ = v;                              \
+    return *this;                               \
+  }                                             \
+                                                \
+  Type                                          \
+  Class::options::Name() const                \
+  {                                             \
+    return Name ## _;                           \
+  }
 
     /// \param opt  options: whether server, whether autostart.
     UClient(const std::string& host = DEFAULT_HOST,

@@ -26,24 +26,8 @@ namespace urbi
   {
   }
 
-# define UCLIENT_OPTION(Type, Name)             \
-  UClient::options&                             \
-  UClient::options::Name(Type v)                \
-  {                                             \
-    Name ## _ = v;                              \
-    return *this;                               \
-  }                                             \
-                                                \
-  Type                                          \
-  UClient::options::Name() const                \
-  {                                             \
-    return Name ## _;                           \
-  }
-
-  UCLIENT_OPTION(bool, server)
-  UCLIENT_OPTION(bool, start)
-# undef UCLIENT_OPTION
-
+  UCLIENT_OPTION_IMPL(UClient, bool, server)
+  UCLIENT_OPTION_IMPL(UClient, bool, start)
 
   /*----------.
   | UClient.  |
