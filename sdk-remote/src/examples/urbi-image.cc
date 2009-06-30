@@ -190,7 +190,7 @@ main (int argc, char *argv[])
       client.send("every (%dms) uimg << %s.val,", period, device);
     else
       if (client.kernelMajor() > 1)
-        client.send("%s.getSlot(\"val\").notifyChange(closure() { connectionTag: this.send(%s.val.asString, \"uimg\")});", device, device);
+        client.send("var handle = WeakPointer.new; %s.getSlot(\"val\").notifyChange(handle, closure() { connectionTag: this.send(%s.val.asString, \"uimg\")});", device, device);
       else
         client.send("loop { uimg << %s.val; noop },", device);
     urbi::execute();
