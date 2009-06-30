@@ -724,7 +724,8 @@ namespace urbi
   URBI_SDK_API std::string getClientConnectionID(const UAbstractClient* cli);
 # ifndef DISABLE_IOSTREAM
   /// Send a possibly armored string to the default client
-  URBI_SDK_API std::ostream& unarmorAndSend(const char* str);
+  URBI_SDK_API std::ostream& unarmorAndSend(const char* str,
+                         UAbstractClient* c = (UAbstractClient*)getDefaultClient());
 # endif
   URBI_SDK_API extern UClient* defaultClient;
 

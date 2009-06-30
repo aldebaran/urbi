@@ -4,16 +4,16 @@
 # define URBI_UOBJECT_HUB_HH
 
 # include <urbi/fwd.hh>
-
+# include <urbi/ucontext.hh>
 namespace urbi
 {
 
   //! Main UObjectHub class definition
-  class URBI_SDK_API UObjectHub
+  class URBI_SDK_API UObjectHub: public UContext
   {
   public:
 
-    UObjectHub(const std::string&);
+    UObjectHub(const std::string&, impl::UContextImpl* ctx=0);
     virtual ~UObjectHub();
 
     void addMember(UObject* obj);
@@ -26,7 +26,7 @@ namespace urbi
     UObjectList  members;
     UObjectList* getSubClass(const std::string&);
     //   UObjectList* getAllSubClass(const std::string&); //TODO
-
+    const std::string& get_name() { return name;}
   protected:
     /// This function calls update and the subclass update.
     int updateGlobal();

@@ -21,34 +21,40 @@
 # include <libport/fwd.hh>
 # include <libport/ufloat.hh>
 
+# include <urbi/ucontext.hh>
 # include <urbi/uvalue.hh>
 # include <urbi/uprop.hh>
 # include <urbi/uproperty.hh>
 
 namespace urbi
 {
-
   /** UVar class definition
 
      Each UVar instance corresponds to one URBI variable. The class
      provides access to the variable properties, and reading/writting
      the value to/from all known types.  */
-  class URBI_SDK_API UVar
+  class URBI_SDK_API UVar: public UContext
   {
   public:
+    /// Creates an unbound UVar. Call init() to bind it.
     UVar();
-    UVar(const std::string&);
-    UVar(const std::string&, const std::string&);
-    UVar(UObject&, const std::string&);
+    UVar(const std::string&, impl::UContextImpl* = 0);
+    UVar(const std::string&, const std::string&, impl::UContextImpl* = 0);
+    UVar(UObject&, const std::string&, impl::UContextImpl* = 0);
     ~UVar();
 
     // Bind to \a object.slot.
-    void init(const std::string& object, const std::string& slot);
+    void init(const std::string& object, const std::string& slot,
+              impl::UContextImpl* = 0);
     void setOwned();
 
     UDataType type() const;
 
+    /// Request the current value, wait until it is available.
     void syncValue();
+
+    /// Keep this UVar synchronized with kernel value.
+    void keepSynchronized();
 
     void reset (ufloat);
 
@@ -116,13 +122,6 @@ namespace urbi
       setProp(prop, v.c_str());
     }
 
-    // internal
-    void __update(UValue&);
-
-    void setZombie ();
-
-    UVariable* variable();
-
     /// Enable bypass-mode for this UVar. Plugin-mode only.
     /// In bypass mode, if the UVar contains binary data, the data is never
     /// copied. The consequence is that the data is only accessible from
@@ -130,19 +129,14 @@ namespace urbi
     /// as all callbacks have returned.
     bool setBypass(bool enable=true);
 
+    impl::UVarImpl* impl_;
+    const UValue& val() const;
   private:
-    bool bypassMode_;
     /// Declared but not implemented: do not ever try to use it.
     UVar(const UVar&);
 
     /// Declared but not implemented: do not ever try to use it.
     UVar& operator=(const UVar&);
-
-    /// Xxx only works in softdevice mode.
-    UValue& val()
-    {
-      return value;
-    }
 
     /// Pointer to internal data specifics.
     UVardata* vardata;
@@ -169,13 +163,12 @@ namespace urbi
 
     /// Full name of the variable as seen in URBI.
     PRIVATE(std::string, name)
-    /// The variable value on the softdevice's side.
-    PRIVATE(UValue, value)
 
 # undef PRIVATE
 
     // Check that the invariants of this class are verified.
     bool invariant() const;
+    friend class impl::UVarImpl;
   };
 
   /*-------------------------.

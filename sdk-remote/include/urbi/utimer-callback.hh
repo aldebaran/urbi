@@ -40,7 +40,7 @@ namespace urbi
     /// \param period in milliseconds.
     UTimerCallback(const std::string& objname,
                    ufloat period,
-                   UTimerTable& tt);
+                   impl::UContextImpl* ctx);
     virtual ~UTimerCallback();
 
     virtual void call() = 0;
@@ -48,6 +48,7 @@ namespace urbi
     ufloat period;
     ufloat lastTimeCalled;
     std::string objname;
+    impl::UContextImpl* ctx_;
   };
 
   // UTimerCallback subclasses
@@ -59,8 +60,8 @@ namespace urbi
 # define MKUTimerCallBackObj(Const, IsConst)                    \
     UTimerCallbackobj(const std::string& objname,               \
 		      ufloat period, T* obj,                    \
-		      int (T::*fun) () Const, UTimerTable &tt)  \
-      : UTimerCallback(objname, period, tt)                     \
+		      int (T::*fun) () Const, impl::UContextImpl* ctx)  \
+      : UTimerCallback(objname, period, ctx)                     \
       , obj(obj)                                                \
       , fun##Const(fun)                                         \
       , is_const_(IsConst)                                      \

@@ -10,9 +10,11 @@ namespace urbi
   `-------------*/
 
   //! UObjectHub constructor.
-  UObjectHub::UObjectHub(const std::string& s)
-    : name(s)
+  UObjectHub::UObjectHub(const std::string& s,  impl::UContextImpl* ctx)
+    : UContext(ctx)
+    , name(s)
   {
+    ctx_->registerHub(this);
   }
 
   int
@@ -47,4 +49,13 @@ namespace urbi
     return res;
   }
 
+  void
+  UObjectHub::USetUpdate(ufloat period)
+  {
+    ctx_->setHubUpdate(this, period);
+  }
+  UObjectHub::~UObjectHub()
+  {
+    ctx_->removeHub(this);
+  }
 } // namespace urbi

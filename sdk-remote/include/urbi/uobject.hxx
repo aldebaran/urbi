@@ -24,23 +24,30 @@ namespace urbi
     return 0;
   }
 
+  inline
+  void
+  UObject::clean()
+  {
+    impl_->clean();
+  }
+
+  inline
+  void
+  UObject::USetUpdate(ufloat period)
+  {
+    impl_->setUpdate(period);
+  }
+
+  inline
+  void
+  UObject::USync(UVar &v)
+  {
+    v.keepSynchronized();
+  }
+
   /*-------------.
   | Standalone.  |
   `-------------*/
-
-  inline
-  bool
-  isPluginMode()
-  {
-    return getRunningMode() == MODE_PLUGIN;
-  }
-
-  inline
-  bool
-  isRemoteMode()
-  {
-    return getRunningMode() == MODE_REMOTE;
-  }
 
 }
 

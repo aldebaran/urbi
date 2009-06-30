@@ -19,6 +19,7 @@
 # include <urbi/utimer-callback.hh>
 # include <urbi/uvar.hh>
 # include <urbi/uobject-hub.hh>
+# include <urbi/ucontext.hh>
 
 // Tell our users that it is fine to use void returning functions.
 #define USE_VOID 1
@@ -31,7 +32,7 @@
  UObject.  It binds the UVar x within the object to a variable
  with the same name in the corresponding Urbi object.  */
 # define UBindVar(Obj,X) \
-  (X).init(__name, #X)
+  (X).init(__name, #X, ctx_)
 
 /** This macro inverts a UVar in/out accesses.
 
@@ -55,7 +56,7 @@
 # define UBindFunction(Obj, X)                          \
   ::urbi::createUCallback(__name, "function", this,     \
                           (&Obj::X), __name + "." #X,   \
-                          ::urbi::functionmap(), false)
+                          false)
 
 /** Registers a function X in current object that will be called each
  time the event of same name is triggered. The function will be
@@ -64,7 +65,7 @@
 # define UBindEvent(Obj, X)                             \
   ::urbi::createUCallback(__name, "event", this,        \
 			  (&Obj::X), __name + "." #X,   \
-                          ::urbi::eventmap(), false)
+                          false)
 
 /** Registers a function \a X in current object that will be called each
  * time the event of same name is triggered, and a function fun called
@@ -75,7 +76,7 @@
 # define UBindEventEnd(Obj, X, Fun)					\
   ::urbi::createUCallback(__name, "eventend", this,			\
 			  (&Obj::X),(&Obj::Fun), __name + "." #X,	\
-                          ::urbi::eventendmap())
+                          )
 
 /// Register current object to the UObjectHub named \a Hub.
 # define URegister(Hub)						\
@@ -93,7 +94,7 @@
 /// Send unquoted Urbi commands to the server.
 /// Add an extra layer of parenthesis for safety.
 #   define URBI(A) \
-  ::urbi::uobject_unarmorAndSend(# A)
+  uobject_unarmorAndSend(# A)
 # endif
 
 /// Send \a Args (which is given to a stream and therefore can use <<)
@@ -104,89 +105,51 @@
     os << Args;					\
     URBI(()) << os.str();			\
   } while (0)
-
+# define URBI_SEND_C(c, Args)			\
+  do {						\
+    std::ostringstream os;			\
+    os << Args;					\
+    c << os.str();			\
+  } while (0)
 /// Send "\a Args ; \n".
 # define URBI_SEND_COMMAND(Args)		\
   URBI_SEND(Args << ';' << std::endl)
-
+# define URBI_SEND_COMMAND_C(c, Args)		\
+  URBI_SEND_C(c, Args << ';' << std::endl)
 /** Send "\a Args | \n".
   * \b Warning: nothing is executed until a ';' or ',' is sent.
   */
 # define URBI_SEND_PIPED_COMMAND(Args)          \
   URBI_SEND(Args << '|' << std::endl)
 
+  # define URBI_SEND_PIPED_COMMAND_C(c, Args)          \
+  URBI_SEND_C(c, Args << '|' << std::endl)
 namespace urbi
 {
 
-  typedef int UReturn;
-
-  /// an empty dummy UObject used by UVar to set a NotifyChange
-  /// This avoid coupling a UVar to a particular object
-  extern URBI_SDK_API UObject* dummyUObject;
-
-  // Global function of the urbi:: namespace to access kernel features
-
-  /// Write a message to the server debug output. Printf syntax.
-  URBI_SDK_API void echo(const char* format, ... )
-    __attribute__((__format__(printf, 1, 2)));
-
-  /// Retrieve a UObjectHub based on its name or return 0 if not found.
   URBI_SDK_API UObjectHub* getUObjectHub(const std::string& n);
-  /// Retrieve a UObject based on its name or return 0 if not found.
   URBI_SDK_API UObject* getUObject(const std::string& n);
-
-  /// Send Urbi code (ghost connection in plugin mode, default
-  /// connection in remote mode).
   URBI_SDK_API void uobject_unarmorAndSend(const char* str);
-
-  /// Send the string to the connection hosting the UObject.
   URBI_SDK_API void send(const char* str);
-
-  /// Send buf to the connection hosting the UObject.
-  URBI_SDK_API void send(void* buf, size_t size);
-
-  /// Possible UObject running modes.
-  enum UObjectMode
-  {
-    MODE_PLUGIN=1,
-    MODE_REMOTE
-  };
-
-  /// Return the mode in which the code is running.
+  URBI_SDK_API void send(const std::string&s);
+  URBI_SDK_API  void send(const void* buf, size_t size);
   URBI_SDK_API UObjectMode getRunningMode();
+  URBI_SDK_API bool isPluginMode();
+  URBI_SDK_API bool isRemoteMode();
 
-  /// Return true if the code is running in plugin mode.
-  bool isPluginMode();
-  /// Return true if the code is running in remote mode.
-  bool isRemoteMode();
-
-  /// Yield execution until next cycle. Process pending messages in remote mode.
-  URBI_SDK_API void yield();
-  /// Yield execution until \b deadline is met (see libport::utime()).
-  URBI_SDK_API void yield_until(libport::utime_t deadline);
-  /** Yield execution until something else is scheduled, or until a message is
-    * received in remote mode.
-    */
-  URBI_SDK_API void yield_until_things_changed();
-  /** If \b s is true, mark the current task as having no side effect.
-    * This call has no effect in remote mode.
-    */
-  URBI_SDK_API void side_effect_free_set(bool s);
-  /// Get the current side_effect_free state.
-  URBI_SDK_API bool side_effect_free_get();
-
+  typedef int UReturn;
   /** Main UObject class definition
       Each UObject instance corresponds to an URBI object.
       It provides mechanisms to bind variables and functions between
       C++ and Urbi.
   */
-  class URBI_SDK_API UObject
+  class URBI_SDK_API UObject: public UContext
   {
   public:
 
-    UObject(const std::string&);
-    /// dummy UObject constructor
-    UObject(int);
+    UObject(const std::string&, impl::UContextImpl* impl = 0);
+    /// Reserved for internal use
+    UObject(int, impl::UContextImpl* impl = 0);
     virtual ~UObject();
 
 
@@ -242,7 +205,7 @@ namespace urbi
 
     /// \internal
 # define MakeNotify(Type, Notified, Arg, Const,				\
-		    TypeString, Name, Map, Owned,			\
+		    TypeString, Name, Owned,			\
 		    WithArg, StoreArg)					\
     template <class T>							\
     void UNotify##Type(Notified, int (T::*fun) (Arg) Const)		\
@@ -250,39 +213,39 @@ namespace urbi
       UGenericCallback* cb =						\
 	createUCallback (__name, TypeString,				\
 			 dynamic_cast<T*>(this),			\
-			 fun, Name, Map, Owned);			\
+			 fun, Name, Owned);			\
 									\
       if (WithArg && cb)						\
 	cb->storage = StoreArg;						\
     }
 
     /// \internal
-# define MakeMetaNotifyArg(Type, Notified, TypeString, Map, Owned,	\
+# define MakeMetaNotifyArg(Type, Notified, TypeString, Owned,	\
 			   Name, StoreArg)				\
     MakeNotify(Type, Notified, /**/, /**/,   TypeString, Name,		\
-               Map, Owned, false, StoreArg);				\
+               Owned, false, StoreArg);				\
     MakeNotify(Type, Notified, /**/, const,  TypeString, Name,		\
-               Map, Owned, false, StoreArg);				\
+               Owned, false, StoreArg);				\
     MakeNotify(Type, Notified, UVar&, /**/,  TypeString, Name,		\
-               Map, Owned, true, StoreArg);				\
+               Owned, true, StoreArg);				\
     MakeNotify(Type, Notified, UVar&, const, TypeString, Name,		\
-               Map, Owned, true, StoreArg);
+               Owned, true, StoreArg);
 
     /// \internal
-# define MakeMetaNotify(Type, TypeString, Map)				\
+# define MakeMetaNotify(Type, TypeString)				\
     MakeMetaNotifyArg(Type, UVar& v, TypeString,			\
-                      Map, v.owned, v.get_name (), &v);                 \
+                      v.owned, v.get_name (), &v);                 \
     MakeMetaNotifyArg(Type, const std::string& name, TypeString,	\
-                      Map, false, name, new UVar(name));
+                      false, name, new UVar(name));
 
     /// \internal
-    MakeMetaNotify(Access, "varaccess", accessmap());
+    MakeMetaNotify(Access, "varaccess");
 
     /// \internal
-    MakeMetaNotify(Change, "var", monitormap());
+    MakeMetaNotify(Change, "var");
 
     /// \internal
-    MakeMetaNotify(OnRequest, "var_onrequest", monitormap());
+    MakeMetaNotify(OnRequest, "var_onrequest");
 
 # undef MakeNotify
 # undef MakeMetaNotifyArg
@@ -294,7 +257,7 @@ namespace urbi
     void USetTimer(ufloat t, int (T::*fun) () Const)			\
     {									\
       new UTimerCallbackobj<T> (__name, t,				\
-				dynamic_cast<T*>(this), fun, timermap()); \
+				dynamic_cast<T*>(this), fun, ctx_);     \
     }
 
     MKUSetTimer (/**/, /**/);
@@ -318,9 +281,6 @@ namespace urbi
 
     /// The hub, if it exists.
     UObjectHub* objecthub;
-
-    /// Send a command to Urbi.
-    int send(const std::string& s);
 
     /// Set a timer that will call the update function every 'period'
     /// milliseconds.
@@ -364,17 +324,18 @@ namespace urbi
     /// Remove all bindings, this method is called by the destructor.
     void clean();
 
+
     /// The load attribute is standard and can be used to control the
     /// activity of the object.
     UVar load;
 
+    baseURBIStarter* cloner;
   private:
     /// Pointer to a globalData structure specific to the
     /// remote/plugin architectures who defines it.
     UObjectData* objectData;
 
-    /// In ms.
-    ufloat period;
+    impl::UObjectImpl* impl_;
   };
 
 } // end namespace urbi

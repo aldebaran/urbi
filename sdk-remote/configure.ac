@@ -47,6 +47,7 @@ BOOST_REQUIRE([1.35])
 URBI_SOCKETS
 URBI_LIBPORT([libport])
 
+BOOST_THREADS
 # X11.
 # AC_PATH_XTRA finds X11 headers even if cross-compiling to windows.
 case $ac_cv_host in

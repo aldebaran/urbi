@@ -23,30 +23,45 @@
 # include <string>
 
 # include <urbi/export.hh>
+# include <urbi/fwd.hh>
 # include <urbi/utable.hh>
 # include <urbi/uvalue.hh>
+# include <urbi/ucontext.hh>
 
 namespace urbi
 {
 
+  namespace impl
+  {
+    class URBI_SDK_API UGenericCallbackImpl
+    {
+      public:
+        virtual void initialize(UGenericCallback* owner, bool owned) = 0;
+        virtual void initialize(UGenericCallback* owner) = 0;
+        virtual void registerCallback() = 0;
+        virtual void clear() = 0;
+    };
+  };
   //! Function and Event storage mechanism
   /*! This heavily overloaded class is the only way in C++ to make life easy from the
     the interface user point's of view.
   */
 
-  class URBI_SDK_API UGenericCallback
+  class URBI_SDK_API UGenericCallback: public UContext
   {
   public:
     UGenericCallback(const std::string& objname,
 		     const std::string& type,
 		     const std::string& name,
-		     int size, UTable&, bool owned);
+		     int size, bool owned,
+                     impl::UContextImpl* ctx);
     UGenericCallback(const std::string& objname,
 		     const std::string& type,
-		     const std::string& name, UTable&);
+		     const std::string& name,
+                     impl::UContextImpl* ctx);
     virtual ~UGenericCallback();
 
-    void registerCallback(UTable& t);
+    void registerCallback();
 
     const std::string& getName() const
     {
@@ -65,9 +80,10 @@ namespace urbi
 
     /// Name of the UObject that created the callback.
     std::string objname;
+    std::string type;
 
-  private:
     std::string name;
+    impl::UGenericCallbackImpl* impl_;
   };
 
 
@@ -88,12 +104,12 @@ namespace urbi
       UCallback%N%(const std::string& objname, const std::string& type,	\
 		   OBJ* obj,						\
 		   R (OBJ::*fun) (%%%,% P% %%) Const,			\
-		   const std::string& funname, UTable &t, bool owned)	\
-      : UGenericCallback(objname, type, funname, %N%, t, owned),	\
+		   const std::string& funname, bool owned)	\
+      : UGenericCallback(objname, type, funname, %N%, owned, obj->ctx_),\
 	obj(obj), fun##Const(fun), is_const_ (IsConst)			\
     {									\
       nbparam = %N%;                                                    \
-      registerCallback(t);						\
+      registerCallback();						\
     }
 
     MKUCallBackNotifyCtr%N% (/**/, false);
@@ -129,11 +145,11 @@ namespace urbi
     UCallbackvoid%N%(const std::string& objname, const std::string& type,
 		     OBJ* obj,
 		     void (OBJ::*fun) (%%%,% P% %%),
-		   const std::string& funname, UTable &t, bool owned)
-      : UGenericCallback(objname, type, funname,%N%, t, owned),
+		   const std::string& funname, bool owned)
+      : UGenericCallback(objname, type, funname,%N%, owned, obj->ctx_),
 	obj(obj), fun(fun)
     {
-      registerCallback(t);
+      registerCallback();
     }
 
     virtual UValue __evalcall(UList &param)
@@ -162,13 +178,12 @@ namespace urbi
 			    OBJ* obj,					\
 			    void (OBJ::*fun) (%%%,% P% %%) FConst,	\
 			    void (OBJ::*end)() EConst,			\
-			    const std::string& funname,			\
-			    UTable &t)					\
-      : UGenericCallback(objname, type, funname,%N%, t, false),		\
+			    const std::string& funname)	                \
+      : UGenericCallback(objname, type, funname,%N%, false, obj->ctx_), \
 	obj(obj), fun(end), is_const_(IsConst)				\
     {									\
       nbparam = %N%;                                                    \
-      registerCallback(t);						\
+      registerCallback();						\
     }
 
     MKUCallBackNotifyEndCtr%N% (/**/, /**/, false);
@@ -203,7 +218,7 @@ namespace urbi
 		    const std::string& funname, UTable &t, bool owned)
       : UGenericCallback(objname, type, funname,%N%, t, owned),  fun(fun)
     {
-      registerCallback(t);
+      registerCallback();
     }
 
     virtual UValue __evalcall(UList &param)
@@ -227,11 +242,12 @@ namespace urbi
     public:
     UFCallback%N%(const std::string& objname, const std::string& type,
 		  R (*fun) (%%%,% P% %%),
-		const std::string& funname, UTable &t, bool owned)
-      : UGenericCallback(objname, type, funname,%N%, t, owned),  fun(fun)
+		const std::string& funname, bool owned,
+                impl::UContextImpl* ctx)
+      : UGenericCallback(objname, type, funname,%N%, owned, ctx),  fun(fun)
     {
       nbparam = %N%;
-      registerCallback(t);
+      registerCallback();
     }
 
     virtual UValue __evalcall(UList& param)
@@ -253,9 +269,11 @@ namespace urbi
   UGenericCallback*
   createUCallback(const std::string& objname, const std::string& type,
 		  R (*fun) (%%%,% P% %%),
-		  const std::string& funname, UTable& t, bool owned)
+		  const std::string& funname, bool owned,
+                  impl::UContextImpl* ctx)
   {
-    return new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname,t, owned);
+    return new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname, owned,
+    ctx);
   }
 
 #if 0
@@ -282,10 +300,10 @@ namespace urbi
   createUCallback(const std::string& objname, const std::string& type,	\
 		  OBJ* obj,						\
 		  R (OBJ::*fun) (%%%,% P% %%) Const,			\
-		  const std::string& funname, UTable &t, bool owned)	\
+		  const std::string& funname,  bool owned)	        \
   {									\
     return new UCallback%N%<OBJ,R%%, P% %%> (objname, type, obj, fun,	\
-					     funname,t,			\
+					     funname,			\
 					     owned);			\
   }
 
@@ -317,11 +335,11 @@ namespace urbi
 		  OBJ* obj,						\
 		  void (OBJ::*fun) (%%%,% P% %%) FConst,		\
 		  void (OBJ::*end)() EConst,				\
-		  const std::string& funname, UTable &t)		\
+		  const std::string& funname)	                	\
   {									\
     return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname,		\
 						    type, obj, fun,	\
-						    end,funname,t);	\
+						    end,funname);	\
   }
 
   MKCreateUCallBackEnd%N% (/**/, /**/);

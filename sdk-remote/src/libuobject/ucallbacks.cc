@@ -12,6 +12,8 @@
 #include <urbi/uexternal.hh>
 #include <urbi/uobject.hh>
 
+#include <libuobject/remoteucontextimpl.hh>
+
 namespace urbi
 {
 
@@ -29,48 +31,53 @@ namespace urbi
     }
   }
 
-  //! UGenericCallback constructor.
-  UGenericCallback::UGenericCallback(const std::string& objname,
-				     const std::string& type,
-				     const std::string& name,
-				     int size, UTable &, bool)
-    : nbparam(size)
-    , objname(objname)
-    , name(callback_name(name, type, size))
+  namespace impl
   {
+  void
+  RemoteUGenericCallbackImpl::initialize(UGenericCallback* owner,
+                                         bool)
+  {
+    owner_ = owner;
+    std::string type = owner_->type;
+    //owner_->name = callback_name(owner_->name, owner_->type, owner_->nbparam);
     GD_FINFO("Registering %s %s %s into %s from %s",
-             (type)(name)(size)(this->name)(objname));
-
+             (type)(owner_->name)(owner_->nbparam)(owner_->name)(owner_->objname));
+    UClient& cl = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
     if (type == "var")
-      URBI_SEND_PIPED_COMMAND("external " << type << " "
-                              << name << " from " << objname);
+      URBI_SEND_PIPED_COMMAND_C(cl, "external " << type << " "
+                              << owner_->name << " from " << owner_->objname);
     else if (type == "event" || type == "function")
-      URBI_SEND_PIPED_COMMAND("external " << type << "(" << size << ") "
-                              << name << " from " << objname);
+      URBI_SEND_PIPED_COMMAND_C(cl, "external " << type << "("
+                                << owner_->nbparam << ") "
+                                << owner_->name << " from " << owner_->objname);
     else if (type == "varaccess")
       echo("Warning: NotifyAccess facility is not available for modules in "
 	   "remote mode.\n");
   }
 
   //! UGenericCallback constructor.
-  UGenericCallback::UGenericCallback(const std::string& objname,
-				     const std::string& type,
-				     const std::string& name, UTable&)
-    : objname(objname), name(name)
+  void
+  RemoteUGenericCallbackImpl::initialize(UGenericCallback* owner)
   {
-    URBI_SEND_PIPED_COMMAND("external " << type << " " << name);
-  }
-
-  UGenericCallback::~UGenericCallback()
-  {
+    owner_ = owner;
+    UClient& cl = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
+    URBI_SEND_PIPED_COMMAND_C(cl, "external " << owner_->type << " "
+                              << owner_->name);
   }
 
   void
-  UGenericCallback::registerCallback(UTable& t)
+  RemoteUGenericCallbackImpl::clear()
   {
-    GD_FINFO("Pushing %s in %s", (name)(&t));
-    t[name].push_back(this);
+  }
+  void
+  RemoteUGenericCallbackImpl::registerCallback()
+  {
+    GD_FINFO("Pushing %s in %s", (owner_->name) (owner_->type));
+    UTable& t =
+    dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->tableByName(owner_->type);
+    t[callback_name(owner_->name, owner_->type, owner_->nbparam)].push_back(owner_);
   }
 
+  }
 
 } // namespace urbi

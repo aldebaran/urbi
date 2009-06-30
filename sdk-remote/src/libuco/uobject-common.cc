@@ -1,10 +1,233 @@
-#include <urbi/uobject.hh>
+#include <cstdarg>
 
+#include <boost/thread.hpp>
+
+#include <libport/containers.hxx>
+#include <libport/foreach.hh>
+#include <libport/utime.hh>
+
+#include <urbi/uobject.hh>
+#include <urbi/ustarter.hh>
 namespace urbi
 {
+  namespace impl
+  {
+    std::vector<std::string> listModules()
+    {
+      std::vector<std::string> res;
+      foreach(baseURBIStarter* s, baseURBIStarter::list())
+      {
+        res.push_back(s->name);
+      }
+      return res;
+    }
+  }
+  static void noop(impl::UContextImpl*)
+  {
+  }
+  static boost::thread_specific_ptr<impl::UContextImpl> current_context(&noop);
+  impl::UContextImpl* getCurrentContext()
+  {
+    return current_context.get();
+  }
+  void setCurrentContext(impl::UContextImpl* impl)
+  {
+    current_context.reset(impl);
+  }
+
+  //! UGenericCallback constructor.
+  UGenericCallback::UGenericCallback(const std::string& objname,
+				     const std::string& type,
+				     const std::string& name,
+				     int size, bool owned,
+                                     impl::UContextImpl* ctx)
+  :UContext(ctx)
+  , nbparam(size)
+  , objname(objname)
+  , type(type)
+  , name(name)
+  {
+    impl_ = ctx_->getGenericCallbackImpl();
+    impl_->initialize(this, owned);
+  }
+   //! UGenericCallback constructor.
+  UGenericCallback::UGenericCallback(const std::string& objname,
+				     const std::string& type,
+				     const std::string& name,
+                                     impl::UContextImpl* ctx)
+  : UContext(ctx)
+  , objname(objname)
+  , type(type)
+  , name(name)
+  {
+    impl_ = ctx_->getGenericCallbackImpl();
+    impl_->initialize(this);
+  }
+  UGenericCallback::~UGenericCallback()
+  {
+    impl_->clear();
+  }
+  void
+  UGenericCallback::registerCallback()
+  {
+    impl_->registerCallback();
+  }
+
+  UObject::UObject(int, impl::UContextImpl* impl)
+  : UContext(impl)
+  , __name("_dummy")
+  , classname("_dummy")
+  , derived(false)
+  , autogroup(false)
+  , remote(true)
+  , impl_(ctx_->getObjectImpl())
+  {
+    impl_->initialize(this);
+    objecthub = 0;
+  }
+
+   //! UObject constructor.
+   UObject::UObject(const std::string& s, impl::UContextImpl* impl)
+    : UContext(impl)
+    , __name(s)
+    , classname(s)
+    , derived(false)
+    , autogroup(false)
+    , remote(true)
+    , impl_(ctx_->getObjectImpl())
+  {
+   impl_->initialize(this);
+   objecthub = 0;
+   autogroup = false;
+   // Do not replace this call to init by a `, load(s, "load")' as
+   // both result in "var <__name>.load = 1", which is not valid
+   // until the two above lines actually create <__name>.
+   load.init(__name, "load");
+   // default
+   load = 1;
+  }
   void
   UObject::addAutoGroup()
   {
     UJoinGroup(classname + "s");
+  }
+
+  void
+  UObject::UAutoGroup()
+  {
+    autogroup = true;
+  }
+
+  //! UObject destructor.
+  UObject::~UObject()
+  {
+    clean();
+    if (impl_)
+      delete impl_;
+  }
+
+  void
+  UObject::UJoinGroup(const std::string& gpname)
+  {
+    std::string groupregister = "addgroup " + gpname +" { "+__name+"};";
+    send(groupregister);
+  }
+
+  namespace impl
+  {
+   void
+   UContextImpl::init()
+   {
+     setCurrentContext(this);
+     foreach(baseURBIStarter* s, baseURBIStarter::list())
+     {
+       if (!libport::mhas(initialized, s))
+       {
+         newUObjectClass(s);
+         initialized.insert(s);
+       }
+     }
+     foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
+     {
+       if (!libport::mhas(initialized, s))
+       {
+         newUObjectHubClass(s);
+         initialized.insert(s);
+       }
+     }
+   }
+   bool
+   UContextImpl::bind(const std::string& n)
+   {
+     foreach(baseURBIStarter* s, baseURBIStarter::list())
+     {
+       if (s->name == n)
+       {
+         s->instanciate(this);
+         return true;
+       }
+     }
+     return false;
+   }
+   void
+   UContextImpl::registerObject(UObject*o)
+   {
+     objects[o->__name] = o;
+   }
+   void
+   UContextImpl::registerHub(UObjectHub*u)
+   {
+     hubs[u->get_name()] = u;
+   }
+
+  UObjectHub*
+  UContextImpl::getUObjectHub(const std::string& n)
+  {
+    hubs_type::iterator i = hubs.find(n);
+    if (i == hubs.end())
+      return 0;
+    return i->second;
+  }
+
+  UObject*
+  UContextImpl::getUObject(const std::string& n)
+  {
+    objects_type::iterator i = objects.find(n);
+    if (i == objects.end())
+      return 0;
+    return i->second;
+  }
+  }
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
+  //! echo method
+  void
+  echo(const char* format, ...)
+  {
+    if (format)
+    {
+      va_list arg;
+      va_start(arg, format);
+      vfprintf(stderr, format, arg);
+      va_end(arg);
+    }
+  }
+
+  UTimerCallback::UTimerCallback(const std::string& objname,
+				 ufloat period,
+                                 impl::UContextImpl* ctx)
+    : period(period)
+    , objname(objname)
+    , ctx_(ctx)
+  {
+    lastTimeCalled = -9999999;
+
+    ctx_->setTimer(this);
+  }
+
+  UTimerCallback::~UTimerCallback()
+  {
   }
 }

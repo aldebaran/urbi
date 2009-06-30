@@ -35,7 +35,17 @@ namespace urbi
   URBI_SDK_API UClient* getDefaultClient();
 
   class UVariable;
+  class UContext;
+  namespace impl
+  {
+    class UContextImpl;
+    class UObjectImpl;
+    class UVarImpl;
+    class UGenericCallbackImpl;
+  }
 
+  class baseURBIStarter;
+  class baseURBIStarterHub;
 };
 
 #endif //! URBI_FWD_HH

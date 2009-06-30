@@ -6,22 +6,29 @@
 
 namespace urbi
 {
-  UVar::UVar(const std::string& varname)
-    : VAR_PROP_INIT
+  UVar::UVar(const std::string& varname, impl::UContextImpl* impl)
+    : UContext(impl)
+    , VAR_PROP_INIT
+    , impl_(0)
     , name(varname)
   {
     __init();
   }
 
-  UVar::UVar(UObject& obj, const std::string& varname)
-    : VAR_PROP_INIT
+  UVar::UVar(UObject& obj, const std::string& varname, impl::UContextImpl* impl)
+    : UContext(impl)
+    , VAR_PROP_INIT
+    , impl_(0)
     , name(obj.__name + '.' + varname)
   {
     __init();
   }
 
-  UVar::UVar(const std::string& objname, const std::string& varname)
-    : VAR_PROP_INIT
+  UVar::UVar(const std::string& objname, const std::string& varname,
+             impl::UContextImpl* impl)
+    : UContext(impl)
+    , VAR_PROP_INIT
+    , impl_(0)
     , name(objname + '.' + varname)
   {
     __init();
@@ -29,8 +36,13 @@ namespace urbi
 
 
   void
-  UVar::init(const std::string& objname, const std::string& varname)
+  UVar::init(const std::string& objname, const std::string& varname,
+             impl::UContextImpl* ctx)
   {
+    ctx_ = ctx;
+    if (!ctx_)
+      ctx_ = getCurrentContext();
+    impl_ = 0;
     name = objname + '.' + varname;
     __init();
   }
@@ -57,39 +69,35 @@ namespace urbi
   | UVar.  |
   `-------*/
 
-  UVar&
-  UVar::operator= (const UValue& v)
-  {
-    switch (v.type)
-    {
-      case DATA_STRING:
-	*this = *v.stringValue;
-	break;
-      case DATA_BINARY:
-	*this = *v.binary;
-	break;
-      case DATA_LIST:
-	*this = *v.list;
-	break;
-      case DATA_DOUBLE:
-	*this = v.val;
-	break;
-      case DATA_VOID:
-	//TODO: do something!
-	pabort (v);
-	break;
-      case DATA_OBJECT:
-	// Not valid currently.
-	pabort (v);
-	break;
-    }
-    return *this;
-  }
+ void
+ UVar::__init()
+ {
+   owned = false;
+   vardata = 0;
+   if (!impl_)
+   {
+     impl_ = ctx_->getVarImpl();
+   }
+   impl_->initialize(this);
+ }
 
+ UVar::~UVar()
+ {
+   if (impl_)
+     impl_->clean();
+   delete impl_;
+ }
+
+ //! UVar reset  (deep assignement)
+  void
+  UVar::reset(ufloat n)
+  {
+    *this = n;
+  }
 } // namespace urbi
 
 std::ostream&
 operator<< (std::ostream& o, const urbi::UVar& u)
 {
-  return o << "UVar (\"" << u.get_name() << "\" = " << u.get_value() << ')';
+  return o << "UVar (\"" << u.get_name() << "\" = " << u.val() << ')';
 }

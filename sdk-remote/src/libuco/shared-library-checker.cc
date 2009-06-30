@@ -25,7 +25,8 @@ namespace urbi
       std::string
       mode()
       {
-        return isPluginMode() ? "plugin" : "remote";
+        return getRunningMode() == MODE_PLUGIN ?
+          "plugin" : "remote";
       }
 
       shared_library_checker()

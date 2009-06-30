@@ -21,194 +21,12 @@
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
-
+#include <libuobject/remoteucontextimpl.hh>
 using libport::program_name;
 
 namespace urbi
 {
-
-  namespace
-  {
-
-    /// Find in baseURBIStarter::list an object named \a named.
-    /// Report errors to \a client.
-    /// \return a pointer to the object found, 0 otherwise.
-    static
-    baseURBIStarter*
-    find_object(UAbstractClient& client,
-                const std::string& name)
-    {
-      baseURBIStarter* res = 0;
-      foreach (baseURBIStarter* s, baseURBIStarter::list())
-        if (s->name == name)
-        {
-          if (res)
-            client.printf("Double object definition %s\n", name.c_str());
-          else
-            res = s;
-        }
-
-      if (!res)
-        client.printf("Unknown object definition %s\n", name.c_str());
-      return res;
-    }
-
-    /// Look for the function args[1] in \a t, and make a call to the
-    /// associated callback with arguments (args[2], args[3], etc.).
-    static
-    void
-    eval_call(UTable& t, UList& args)
-    {
-      if (UTable::callbacks_type* cs = t.find0(args[1]))
-      {
-        args.setOffset(2);
-        foreach (UGenericCallback* c, *cs)
-          c->__evalcall(args);
-        args.setOffset(0);
-      }
-    }
-
-  }
-
-  UCallbackAction
-  dispatcher(const UMessage& msg)
-  {
-    typedef UTable::callbacks_type callbacks_type;
-    //check message type
-    if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST)
-    {
-      msg.client.printf("Component Error: "
-			"unknown message content, type %d\n",
-			msg.type);
-      return URBI_CONTINUE;
-    }
-
-    UList& array = *msg.value->list;
-
-    if (array.size() < 2)
-    {
-      msg.client.printf("Component Error: Invalid number "
-			"of arguments in the server message: %lu\n",
-			static_cast<unsigned long>(array.size()));
-      return URBI_CONTINUE;
-    }
-
-    if (array[0].type != DATA_DOUBLE)
-    {
-      msg.client.printf("Component Error: "
-			"invalid server message type %d\n",
-			array[0].type);
-      return URBI_CONTINUE;
-    }
-
-    switch ((USystemExternalMessage)(int)array[0])
-    {
-      case UEM_ASSIGNVALUE:
-      {
-        if (array.size() != 3)
-        {
-          msg.client.printf("Component Error: Invalid number "
-                            "of arguments in the server message: %lu"
-                            " (expected 3)\n",
-                            static_cast<unsigned long>(array.size()));
-          return URBI_CONTINUE;
-        }
-        if (std::list<UVar*> *us = varmap().find0(array[1]))
-        {
-          foreach (UVar* u, *us)
-            u->__update(array[2]);
-        }
-        if (callbacks_type* cs = monitormap().find0(array[1]))
-        {
-          foreach (UGenericCallback *c, *cs)
-          {
-            // test of return value here
-            UList u;
-            u.array.push_back(new UValue());
-            u[0].storage = c->storage;
-            c->__evalcall(u);
-          }
-        }
-      }
-      break;
-
-      case UEM_EVALFUNCTION:
-      {
-	callbacks_type tmpfun = functionmap()[array[1]];
-        const std::string var = array[2];
-	callbacks_type::iterator tmpfunit = tmpfun.begin();
-	array.setOffset(3);
-	UValue retval = (*tmpfunit)->__evalcall(array);
-	array.setOffset(0);
-	switch (retval.type)
-        {
-        case DATA_BINARY:
-	  // Send it
-	  if (UClient* client = urbi::getDefaultClient())
-          {
-            // URBI_SEND_COMMAND does not now how to send binary since it
-            // depends on the kernel version.
-            client->startPack();
-            *client << " var  " << var << "=";
-            client->send(retval);
-            *client << ";";
-            client->endPack();
-          }
-	  else
-            // Send void if no client. Would block anyway.
-	    goto case_void;
-          break;
-
-        case DATA_VOID:
-        case_void:
-          URBI_SEND_COMMAND("var " << var);
-          break;
-
-        default:
-          URBI_SEND_COMMAND("var " << var << "=" << retval);
-          break;
-        }
-      }
-      break;
-
-      case UEM_EMITEVENT:
-        eval_call(eventmap(), array);
-      break;
-
-      case UEM_ENDEVENT:
-        eval_call(eventendmap(), array);
-      break;
-
-      case UEM_NEW:
-        if (baseURBIStarter* o = find_object(msg.client,
-                                             (std::string)array[2]))
-          o->copy((std::string) array[1]);
-      break;
-
-      case UEM_DELETE:
-        if (baseURBIStarter* o = find_object(msg.client,
-                                             (std::string)array[1]))
-        {
-          // remove the object from objectlist or terminate
-          // the component if there is nothing left
-          if (baseURBIStarter::list().size() == 1)
-            exit(0);
-          else
-            // delete the object
-            delete o;
-        }
-        break;
-
-      default:
-        msg.client.printf("Component Error: "
-                          "unknown server message type number %d\n",
-                          (int)array[0]);
-        return URBI_CONTINUE;
-    }
-    // Send a terminating ';' since code send by the UObject API uses '|'.
-    URBI_SEND_COMMAND("");
-    return URBI_CONTINUE;
-  }
+    static impl::RemoteUContextImpl* defaultContext;
 
 
   UCallbackAction
@@ -271,7 +89,8 @@ namespace urbi
 	      << host << " " << port << std::endl;
 
     new USyncClient(host, port, buflen, server);
-
+    defaultContext = new impl::RemoteUContextImpl(
+              dynamic_cast<USyncClient*>(getDefaultClient()));
     if (exitOnDisconnect)
     {
       if (!getDefaultClient() || getDefaultClient()->error())
@@ -288,9 +107,6 @@ namespace urbi
     getDefaultClient()->setErrorCallback(callback(&debug));
 #endif
 
-    getDefaultClient()->setCallback(&dispatcher,
-				    externalModuleTag.c_str());
-
     // Wait for client to be connected if in server mode.
     while (getDefaultClient()
            && !getDefaultClient()->error()
@@ -301,9 +117,8 @@ namespace urbi
     while (getDefaultClient()
            && getDefaultClient()->connectionID() == "")
       usleep(5000);
-
-    dummyUObject = new UObject(0);
-    baseURBIStarter::init();
+    defaultContext->init();
+   //baseURBIStarter::init();
     // Send a ';' since UObject likely sent a serie of piped commands.
     URBI_SEND_COMMAND("");
     return 0;

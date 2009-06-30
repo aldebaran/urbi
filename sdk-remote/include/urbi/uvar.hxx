@@ -29,10 +29,113 @@ namespace urbi
   UVar::UVar()
     : owned(false)
     , VAR_PROP_INIT
+    , impl_(0)
     , vardata(0)
     , name("noname")
-  {}
+  {
+  }
 
+  inline
+  void
+  UVar::setOwned()
+  {
+    impl_->setOwned();
+  }
+
+  inline
+  UDataType
+  UVar::type() const
+  {
+    return impl_->type();
+  }
+
+  inline
+  void
+  UVar::syncValue()
+  {
+    impl_->sync();
+  }
+
+  inline const UValue&
+  UVar::val() const
+  {
+      return impl_->get();
+  }
+  inline
+  void
+  UVar::keepSynchronized()
+  {
+    impl_->keepSynchronized();
+  }
+  inline
+  UVar&
+  UVar::operator=(const UValue& v)
+  {
+    impl_->set(v);
+    return *this;
+  }
+  #define SET(type)               \
+  inline UVar& UVar::operator=(type tv)    \
+  {                              \
+    UValue v(tv, false);       \
+    impl_->set(v);               \
+    return *this;                \
+  }
+
+  SET(ufloat)
+  SET(const std::string&)
+  SET(const UBinary&)
+  SET(const UImage&)
+  SET(const USound&)
+  SET(const UList&)
+  #undef SET
+
+ #define GET(type)                    \
+  inline UVar::operator type() const  \
+  {                                   \
+    return impl_->get();              \
+  }
+
+  GET(int)
+  GET(const UBinary&)
+  GET(UImage)
+  GET(USound)
+  GET(ufloat)
+  GET(std::string)
+  GET(UList)
+  #undef GET
+  inline UVar::operator UBinary*() const
+  {
+    return new UBinary((const UBinary&)*this);
+  }
+
+  inline void UVar::setProp(UProperty prop, const UValue &v)
+  {
+    impl_->setProp(prop, v);
+  }
+
+  inline void UVar::setProp(UProperty prop, const char* v)
+  {
+    UValue tv(v);
+    impl_->setProp(prop, tv);
+  }
+
+  inline void UVar::setProp(UProperty prop, ufloat v)
+  {
+    UValue tv(v);
+    impl_->setProp(prop, tv);
+  }
+
+  inline bool
+  UVar::setBypass(bool enable)
+  {
+    return impl_->setBypass(enable);
+  }
+  inline UValue
+  UVar::getProp(UProperty prop)
+  {
+    return impl_->getProp(prop);
+  }
 } // end namespace urbi
 
 #endif // ! URBI_UVAR_HXX

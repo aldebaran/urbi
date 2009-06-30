@@ -50,24 +50,6 @@ namespace urbi
   | UTable.  |
   `---------*/
 
-#define SINGLETON_FUNCTION(Type, Name)          \
-  Type& Name()                                  \
-  {                                             \
-    static Type instance;                       \
-    return instance;                            \
-  }
-
-  SINGLETON_FUNCTION(UTable, accessmap);
-  SINGLETON_FUNCTION(UTable, eventendmap);
-  SINGLETON_FUNCTION(UTable, eventmap);
-  SINGLETON_FUNCTION(UTable, functionmap);
-  SINGLETON_FUNCTION(UTable, monitormap);
-  SINGLETON_FUNCTION(UVarTable, varmap);
-  SINGLETON_FUNCTION(UTimerTable, timermap);
-
-#undef SINGLETON_FUNCTION
-
-
   UTable::UTable()
   {
   }

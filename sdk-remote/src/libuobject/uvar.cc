@@ -12,83 +12,67 @@
 
 #include <liburbi/compatibility.hh>
 
+#include <libuobject/remoteucontextimpl.hh>
 namespace urbi
 {
-  /// This class is useless in SDK-Remote, and it is not used by Urbi
-  /// 2 either.  But Urbi 1 uses this field to store private data, and
-  /// since SDK-Remote is to be compatible with both Urbi, keep it,
-  /// although useless.
-  class UVardata
-  {};
+  namespace impl
+  {
 
   //! UVar initialization
   void
-  UVar::__init()
+  RemoteUVarImpl::initialize(UVar* owner)
   {
-    bypassMode_ = false;
-    varmap()[name].push_back(this);
-    URBI_SEND_PIPED_COMMAND("if (!isdef(" << name << ")) var " << name);
-    vardata = 0; // unused. For internal softdevices only
-    this->owned = false;
-    assert (dummyUObject);
-
+    owner_ = owner;
+    RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
+    client_ = ctx->client_;
+    std::string name = owner_->get_name();
+    ctx->varmap()[name].push_back(owner_);
+    URBI_SEND_PIPED_COMMAND_C((*client_), "if (!isdef(" << name << ")) var "
+                            << name);
+    UObject* dummyUObject = ctx->getDummyUObject();
     createUCallback(dummyUObject->__name,
 		    "var",
-		    dummyUObject, &UObject::voidfun, name, monitormap(), false);
+		    dummyUObject, &UObject::voidfun, name, false);
   }
 
-  bool UVar::setBypass(bool enable)
+  bool RemoteUVarImpl::setBypass(bool enable)
   {
     return !enable;
   }
 
   //! UVar out value (read mode)
   ufloat&
-  UVar::out()
+  RemoteUVarImpl::out()
   {
-    return value.val;
+    return const_cast<ufloat&>(get().val);
   }
 
   //! UVar in value (write mode)
   ufloat&
-  UVar::in()
+  RemoteUVarImpl::in()
   {
-    return value.val;
+    return const_cast<ufloat&>(get().val);
   }
 
 
   void
-  UVar::setProp(UProperty p, const UValue& v)
+  RemoteUVarImpl::setProp(UProperty p, const UValue& v)
   {
-    URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << " = " << v);
+    URBI_SEND_PIPED_COMMAND_C((*client_), owner_->get_name() << "->"
+                              << urbi::name(p) << " = " << v);
   }
 
   void
-  UVar::setProp(UProperty p, const char* v)
+  RemoteUVarImpl::keepSynchronized()
   {
-    URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << " = " << v);
-  }
-
-  void
-  UVar::setProp(UProperty p, double v)
-  {
-    // FIXME: This is not the right way to do it.  Generalize
-    // conversions between enums and strings.
-    int i = static_cast<int>(v);
-    if (p == PROP_BLEND && is_blendtype(i))
-      URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << " = "
-                              << '"'
-                              << urbi::name(static_cast<UBlendType>(i))
-                              << '"');
-    else
-      URBI_SEND_PIPED_COMMAND(name << "->" << urbi::name(p) << " = " << v);
+    //FIXME: do something?
   }
 
   UValue
-  UVar::getProp(UProperty p)
+  RemoteUVarImpl::getProp(UProperty p)
   {
-    USyncClient& uc = dynamic_cast<USyncClient&>(get_default_client());
-    UMessage* m = uc.syncGet("%s->%s", name.c_str(), urbi::name(p));
+    UMessage* m = client_->syncGet("%s->%s", owner_->get_name().c_str(),
+                                  urbi::name(p));
     assert(m->value);
     UValue res = *m->value;
     delete m;
@@ -105,201 +89,70 @@ namespace urbi
   */
 
   //! UVar destructor.
-  UVar::~UVar()
-  {
-    varmap().clean(*this);
-  }
-
-  // This is a stub for something that might be existing in k1.  k2 no
-  // longer uses it, but SDK-Remote tries to stay compatible with it.
-  class UVariable
-  {};
-
-  //! Set the UVar in "zombie" mode  (the attached UVariable is dead)
   void
-  UVar::setZombie()
+  RemoteUVarImpl::clean()
   {
-    // no effect in remote mode.
+    RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
+    ctx->varmap().clean(*owner_);
   }
 
-  //! Return the internal variable.
-  UVariable*
-  UVar::variable()
-  {
-    return 0;
-  }
 
-  //! UVar reset  (deep assignement)
   void
-  UVar::reset(ufloat n)
+  RemoteUVarImpl::set(const UValue& v)
   {
-    *this = n;
+    if (v.type == DATA_BINARY)
+    {
+      UBinary& b = *(v.binary);
+      client_->startPack();
+      // K1 only supports a binary at top level within ';' and no other separator.
+      if (client_->kernelMajor() < 2)
+        URBI_SEND_COMMAND_C((*client_),"");
+      (*client_) << owner_->get_name() << "=";
+      client_->sendBinary(b.common.data, b.common.size,
+                            b.getMessage());
+      (*client_) << ";";
+      client_->endPack();
+    }
+    else if (v.type == DATA_STRING)
+      URBI_SEND_PIPED_COMMAND_C((*client_), owner_->get_name() << "=\""
+                              << libport::escape(*v.stringValue, '"') << '"');
+    else
+      URBI_SEND_PIPED_COMMAND_C((*client_), owner_->get_name() << "=" << v);
   }
 
-  //! UVar float assignment
-  UVar&
-  UVar::operator= (ufloat n)
+  const UValue& RemoteUVarImpl::get()
   {
-    URBI_SEND_PIPED_COMMAND(name << "=" << n);
-    return *this;
-  }
-
-  //! UVar string assignment
-  UVar&
-  UVar::operator= (const std::string& s)
-  {
-    URBI_SEND_PIPED_COMMAND(name << "=\"" << libport::escape(s, '"') << '"');
-    return *this;
-  }
-
-  //! UVar binary assignment
-  UVar&
-  UVar::operator= (const UBinary& b)
-  {
-    getDefaultClient()->startPack();
-    // K1 only supports a binary at top level within ';' and no other separator.
-    if (getDefaultClient()->kernelMajor() < 2)
-      URBI_SEND_COMMAND("");
-    (*getDefaultClient()) << name << "=";
-    getDefaultClient()->sendBinary(b.common.data, b.common.size,
-                                   b.getMessage());
-    (*getDefaultClient()) << ";";
-    getDefaultClient()->endPack();
-    return *this;
-  }
-
-  UVar&
-  UVar::operator= (const UImage& i)
-  {
-    //we don't use UBinary Image ctor because it copies data
-    UBinary b;
-    b.type = BINARY_IMAGE;
-    b.image = i;
-    *this = b;
-    b.common.data = 0; //required, dtor frees data
-    return *this;
-  }
-
-  UVar&
-  UVar::operator= (const USound& i)
-  {
-    //we don't use UBinary Image ctor because it copies data
-    UBinary b;
-    b.type = BINARY_SOUND;
-    b.sound = i;
-    *this = b;
-    b.common.data = 0; //required, dtor frees data
-    return *this;
-  }
-
-  UVar&
-  UVar::operator= (const UList& l)
-  {
-    UValue v;
-    v.type = DATA_LIST;
-    v.list = &const_cast<UList&>(l);
-    URBI_SEND_PIPED_COMMAND(name << "=" << v);
-    v.type = DATA_VOID;
-    v.list = 0;
-    return *this;
-  }
-
-
-  UVar::operator int() const
-  {
-    return (int) value;
+    return value_;
   };
-
-  UVar::operator ufloat() const
-  {
-    return (ufloat) value;
-  };
-
-
-  UVar::operator std::string() const
-  {
-    return (std::string) value;
-  };
-
-
-  UVar::operator const UBinary&() const
-  {
-    return value;
-  };
-
-  UVar::operator UBinary*() const
-  {
-    return new UBinary(value.operator const UBinary&());
-  };
-
-  UVar::operator UImage() const
-  {
-    return (UImage) value;
-  };
-
-  UVar::operator USound() const
-  {
-    return (USound) value;
-  };
-
-  UVar::operator UList() const
-  {
-    return (UList) value;
-  };
-
-  //! UVar update
-  void
-  UVar::__update(UValue& v)
-  {
-# ifdef LIBURBIDEBUG
-    std::cout << "  Variable " << name << " updated to : ";
-
-    switch (v.type)
-      {
-      case DATA_DOUBLE:
-	std::cout << (double)v << std::endl;
-	break;
-      case DATA_STRING:
-	std::cout << (std::string)v << std::endl;
-	break;
-      case DATA_BINARY:
-      case DATA_LIST:
-      case DATA_OBJECT:
-      case DATA_VOID:
-	break;
-      }
-# endif
-    value = v;
-  }
 
   //! set own mode
   void
-  UVar::setOwned()
+  RemoteUVarImpl::setOwned()
   {
-    owned = true;
+    owner_->owned = true;
   }
 
   //! Get Uvalue type
   UDataType
-  UVar::type() const
+  RemoteUVarImpl::type()
   {
-    return value.type;
+    return get().type;
   }
 
   void
-  UVar::requestValue()
+  RemoteUVarImpl::request()
   {
+    std::string name = owner_->get_name();
     //build a getvalue message  that will be parsed and returned by the server
-    URBI_SEND_PIPED_COMMAND(externalModuleTag << "<<"
+    URBI_SEND_PIPED_COMMAND_C((*client_), externalModuleTag << "<<"
                             <<'[' << UEM_ASSIGNVALUE << ","
                             << '"' << name << '"' << ',' << name << ']');
   }
 
   void
-  UVar::syncValue()
+  RemoteUVarImpl::sync()
   {
-    USyncClient& client = dynamic_cast<USyncClient&>(URBI(()));
-    std::string tag(client.fresh());
+    std::string tag(client_->fresh());
     static boost::format
       fmt("{\n"
           "  if (isdef (%s) && !(%s))\n"
@@ -311,13 +164,20 @@ namespace urbi
           "     1/0\n"
           "  }\n"
           "};\n");
+    std::string name = owner_->get_name();
     std::string cmd = str(fmt
                           % name
                           % compatibility::isvoid(name.c_str())
                           % name);
-    UMessage* m = client.syncGetTag("%s", tag.c_str(), 0, cmd.c_str());
+    UMessage* m = client_->syncGetTag("%s", tag.c_str(), 0, cmd.c_str());
     if (m->type == MESSAGE_DATA)
-      __update(*m->value);
+      value_ = *m->value;
   }
 
+  void
+  RemoteUVarImpl::update(const UValue& v)
+  {
+    value_ = v;
+  }
+  }
 } //namespace urbi

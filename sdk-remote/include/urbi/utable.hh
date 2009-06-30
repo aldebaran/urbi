@@ -67,14 +67,6 @@ namespace urbi
     void clean(const key_type& name);
   };
 
-  // Lists and hashtables used.
-  URBI_SDK_API UTable& accessmap();
-  URBI_SDK_API UTable& eventendmap();
-  URBI_SDK_API UTable& eventmap();
-  URBI_SDK_API UTable& functionmap();
-  URBI_SDK_API UTable& monitormap();
-
-
   /*------------.
   | UVarTable.  |
   `------------*/
@@ -102,15 +94,12 @@ namespace urbi
 
     void clean(const UVar& uvar);
   };
-  URBI_SDK_API UVarTable& varmap();
-
 
   /*--------------.
   | Timer table.  |
   `--------------*/
 
   typedef std::list<UTimerCallback*> UTimerTable;
-  URBI_SDK_API UTimerTable& timermap();
 
 } // end namespace urbi
 

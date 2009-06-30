@@ -53,52 +53,24 @@ namespace urbi
   inline
   URBIStarter<T>::~URBIStarter()
   {
-    clean();
+    list().remove(this);
   }
 
-  template <class T>
-  inline
-  void
-  URBIStarter<T>::clean()
-  {
-    delete getUObject();
-    for (list_type::iterator i = list().begin(); i != list().end();
-	 ++i)
-      if (*i == this)
-      {
-	list().erase(i);
-	break;
-      }
-  }
-
-  template <class T>
-  inline
-  baseURBIStarter*
-  URBIStarter<T>::copy(const std::string& objname)
-  {
-    URBIStarter<T>* ustarter = new URBIStarter<T>(objname, local);
-    ustarter->init(objname);
-    copy_(ustarter->object);
-    return ustarter;
-  }
-
-  /// Access to the object from the outside.
   template <class T>
   inline
   UObject*
-  URBIStarter<T>::getUObject()
-  {
-    return object;
-  }
-
-  template <class T>
-  inline
-  void
-  URBIStarter<T>::init(const std::string& objname)
-  {
-    std::string fullname = getFullName(objname);
-    object = new T(fullname);
-  }
+  URBIStarter<T>::instanciate(impl::UContextImpl* ctx,
+                                 const std::string& n)
+    {
+      std::string rn = n;
+      if (rn.empty())
+        rn = name;
+      // FIXME: not exception-safe
+      setCurrentContext(ctx);
+      UObject* res =  new T(rn);
+      res->cloner = this;
+      return res;
+    }
 
     /*---------------------.
     | baseURBIStarterHub.  |
@@ -129,24 +101,16 @@ namespace urbi
   inline
   URBIStarterHub<T>::~URBIStarterHub()
   {
-    /* noone can kill a hub*/
+    list().remove(this);
   }
-
-  template <class T>
-  inline
-  void
-  URBIStarterHub<T>::init(const std::string& objname)
-  {
-    object = new T(objname);
-  }
-
-  /// Access to the object from the outside.
   template <class T>
   inline
   UObjectHub*
-  URBIStarterHub<T>::getUObjectHub()
+  URBIStarterHub<T>::instanciate(impl::UContextImpl* ctx,
+                          const std::string& n)
   {
-    return object;
+    setCurrentContext(ctx);
+    return new T(n.empty()? name:n);
   }
 
 } // end namespace urbi

@@ -429,12 +429,12 @@ public:
 
   int sendString(const std::string& s)
   {
-    urbi::send(s.c_str());
+    send(s.c_str());
     return 0;
   }
   int sendBuf(const std::string& b, int l)
   {
-    urbi::send(const_cast<void*>(static_cast<const void*>(b.c_str())), l);
+    send(const_cast<void*>(static_cast<const void*>(b.c_str())), l);
     return 0;
   }
   int sendPar()
@@ -445,32 +445,32 @@ public:
 
   void yield()
   {
-    urbi::yield();
+    UObject::yield();
   }
   void loop_yield(long duration)
   {
     libport::utime_t end = libport::utime() + duration;
     while (libport::utime() < end)
     {
-      urbi::yield();
+      UObject::yield();
       usleep(1000);
     }
   }
   void yield_for(long duration)
   {
-    urbi::yield_until(libport::utime() + duration);
+    UObject::yield_until(libport::utime() + duration);
   }
   void yield_until_things_changed()
   {
-    urbi::yield_until_things_changed();
+    UObject::yield_until_things_changed();
   }
   void side_effect_free_set(bool sef)
   {
-    urbi::side_effect_free_set(sef);
+    UObject::side_effect_free_set(sef);
   }
   bool side_effect_free_get()
   {
-    return urbi::side_effect_free_get();
+    return UObject::side_effect_free_get();
   }
   int getDestructionCount()
   {
@@ -493,8 +493,8 @@ public:
 };
 
 int all::destructionCount = 0;
-
 ::urbi::URBIStarter<all>
  starter1(urbi::isPluginMode()?"all":"remall");
 ::urbi::URBIStarter<all>
  starter2(urbi::isPluginMode()?"all2":"remall2");
+

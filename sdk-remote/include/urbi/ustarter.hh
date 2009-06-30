@@ -20,6 +20,8 @@
 # include <urbi/export.hh>
 # include <urbi/fwd.hh>
 
+#include <urbi/ucontext.hh>
+#include <urbi/uobject.hh>
 /// This macro must be called once for every UObject class.
 # define UStartRename(Type, Name)               \
   ::urbi::URBIStarter<Type>                     \
@@ -46,28 +48,16 @@ namespace urbi
   | UStarter.  |
   `-----------*/
 
-  /// URBIStarter base class used to store heterogeneous template
-  /// class objects in starterlist.
+  /*** UObject factory class.
+  */
   class URBI_SDK_API baseURBIStarter
   {
   public:
     baseURBIStarter(const std::string& name, bool local = false);
     virtual ~baseURBIStarter();
-
-    virtual UObject* getUObject() = 0;
-
-    /// Delete the UObject and remove ourselve from the list.
-    virtual void clean() = 0;
-    /// Create the instance.
-    virtual void init(const std::string& name) = 0;
-
-    /// Create all the instances.
-    static void init();
-
-    /** Create a new UObject cloning the one in this baseURBIstarter.
-     *  Also create a baseURBIStarter for this new UObject and return it.
-     */
-    virtual baseURBIStarter* copy(const std::string& name) = 0;
+    /// Create an instance of the UObject.
+    virtual UObject* instanciate(impl::UContextImpl* ctx,
+                             const std::string& n=std::string()) = 0;
 
     std::string name;
     /// Set to true to have the UObjects use a random unique name.
@@ -79,16 +69,6 @@ namespace urbi
     typedef std::list<baseURBIStarter*> list_type;
     static list_type& list();
 
-    /// Retrieve an UObject, otherwise 0.
-    static UObject* find(const std::string& name);
-
-  protected:
-    /// Common parts used by copy<T>(const std::string& name).
-    // The main point here is to stop using deprecated interfaces
-    // ourselved in the headers (*.hxx) which results in spurious
-    // warnings.  Since we disable the warnings when building
-    // our library, we don't have the problem with code put in *.cc.
-    void copy_(UObject* uso);
   };
 
 
@@ -106,18 +86,9 @@ namespace urbi
 
     virtual ~URBIStarter();
 
-    virtual void clean();
+    virtual UObject* instanciate(impl::UContextImpl* ctx,
+                                 const std::string& n=std::string());
 
-    virtual baseURBIStarter* copy(const std::string& objname);
-
-    /// Access to the object from the outside.
-    virtual UObject* getUObject();
-
-  protected:
-    /// Called when the object is ready to be initialized.
-    virtual void init(const std::string& objname);
-
-    T* object;
   };
 
 
@@ -135,15 +106,14 @@ namespace urbi
     virtual ~baseURBIStarterHub();
 
     /// Used to provide a wrapper to initialize objects in starterlist.
-    virtual void init(const std::string&) = 0;
-    virtual UObjectHub* getUObjectHub() = 0;
+    virtual UObjectHub* instanciate(impl::UContextImpl* ctx,
+                                 const std::string& n=std::string()) = 0;
     std::string name;
 
     /// UObjectHub list.
     typedef std::list<baseURBIStarterHub*> list_type;
     static list_type& list();
-    /// Retrieve an UObjectHub, otherwise 0.
-    static UObjectHub* find(const std::string& name);
+
   };
 
 
@@ -159,16 +129,10 @@ namespace urbi
   {
   public:
     URBIStarterHub(const std::string& name);
+    virtual UObjectHub* instanciate(impl::UContextImpl* ctx,
+                                 const std::string& n=std::string());
     virtual ~URBIStarterHub();
 
-  protected:
-    /// Called when the object is ready to be initialized.
-    virtual void init(const std::string& objname);
-
-    /// Access to the object from the outside.
-    virtual UObjectHub* getUObjectHub();
-
-    T* object;
   };
 
 } // end namespace urbi

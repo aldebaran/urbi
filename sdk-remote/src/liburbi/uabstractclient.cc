@@ -1176,9 +1176,9 @@ namespace urbi
 
 
   std::ostream&
-  unarmorAndSend(const char* a)
+  unarmorAndSend(const char* a, UAbstractClient* where)
   {
-    std::ostream& s = default_stream();
+    std::ostream& s = *where;
     if (strlen(a)>2)
     {
       if (a[0]=='(' && a[strlen(a)-1]==')')
