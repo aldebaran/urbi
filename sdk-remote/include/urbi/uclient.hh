@@ -43,15 +43,41 @@ namespace urbi
   {
   public:
     using UAbstractClient::DEFAULT_HOST;
+
+    /// Construction options.
+    struct options
+    {
+      /// Backward compatibility with the previous UClient::UClient
+      /// interface.  Don't make it "explicit" so that we can call
+      /// "UClient(host, port)" and have the expected "server ==
+      /// false".
+      ///
+      /// start defaults to true, for backward compatibility too.
+      options(bool server = false);
+# define UCLIENT_OPTION(Type, Name, Default)    \
+    public:                                     \
+      options& Name(Type b = Default);          \
+      Type Name() const;                        \
+    private:                                    \
+      Type Name ## _;
+
+      /// Whether in server mode.
+      UCLIENT_OPTION(bool, server, true);
+      /// Whether the socket autostarts.
+      UCLIENT_OPTION(bool, start, true);
+# undef UCLIENT_OPTION
+    };
+
+    /// \param opt  options: whether server, whether autostart.
     UClient(const std::string& host = DEFAULT_HOST,
             unsigned port = URBI_PORT,
 	    size_t buflen = URBI_BUFLEN,
-	    bool server = false);
+	    const options& opt = options());
 
     virtual ~UClient();
 
-    //! For compatibility with older versions of the library
-    void start() {}
+    /// Bounce to listen or connect, depending whether server mode.
+    error_type start();
 
     virtual void printf(const char * format, ...);
     virtual unsigned int getCurrentTime() const;

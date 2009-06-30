@@ -15,15 +15,55 @@
 namespace urbi
 {
 
-  /*! Establish the connection with the server.
-   */
+  /*-------------------.
+  | UClient::options.  |
+  `-------------------*/
+
+  UClient::options::options(bool server)
+    : server_(server)
+      // Unless stated otherwise, auto start.
+    , start_(true)
+  {
+  }
+
+# define UCLIENT_OPTION(Type, Name)             \
+  UClient::options&                             \
+  UClient::options::Name(Type v)                \
+  {                                             \
+    Name ## _ = v;                              \
+    return *this;                               \
+  }                                             \
+                                                \
+  Type                                          \
+  UClient::options::Name() const                \
+  {                                             \
+    return Name ## _;                           \
+  }
+
+  UCLIENT_OPTION(bool, server)
+  UCLIENT_OPTION(bool, start)
+# undef UCLIENT_OPTION
+
+
+  /*----------.
+  | UClient.  |
+  `----------*/
+
   UClient::UClient(const std::string& host, unsigned port,
-                   size_t buflen, bool server)
-    : UAbstractClient(host, port, buflen, server)
+                   size_t buflen,
+                   const options& opt)
+    : UAbstractClient(host, port, buflen, opt.server())
     , ping_interval_(0)
     , pong_timeout_(0)
   {
-    rc = server_ ? listen_() : connect_();
+    if (opt.start())
+      start();
+  }
+
+  UClient::error_type
+  UClient::start()
+  {
+    return rc = server_ ? listen_() : connect_();
   }
 
   UClient::error_type

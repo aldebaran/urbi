@@ -43,7 +43,18 @@ namespace urbi
 			   size_t buflen,
 			   bool server,
                            bool startCallbackThread)
-    : UClient(host, port, buflen, server)
+    // Be cautious not to start the UClient part of this USyncClient
+    // before the completion of "this".  If you do (e.g., you forget
+    // to pass "start(false)" to UClient), then the UClient, as a
+    // libport::Socket, is likely to receive messages that will be
+    // bounced to USyncClient::onRead, as expected for virtual
+    // functions.  Except that "this" is not a valid USyncClient, as
+    // its members we not initialized.
+    //
+    // Therefore, start handling connection only in the body of the
+    // ctor.
+    : UClient(host, port, buflen,
+              UClient::options().server(server).start(false))
     , sem_()
     , queueLock_()
     , message_(0)
@@ -53,6 +64,7 @@ namespace urbi
     , stopCallbackThread_(!startCallbackThread)
     , cbThread(0)
   {
+    start();
     if (error())
       return;
 
