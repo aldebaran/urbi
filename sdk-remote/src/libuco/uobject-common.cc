@@ -8,6 +8,7 @@
 
 #include <urbi/uobject.hh>
 #include <urbi/ustarter.hh>
+#include <urbi/ucontext-factory.hh>
 namespace urbi
 {
   namespace impl

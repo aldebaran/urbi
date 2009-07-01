@@ -16,7 +16,7 @@
 #include <urbi/ustarter.hh>
 #include <urbi/usyncclient.hh>
 #include <urbi/uvar.hh>
-
+#include <urbi/ucontext-factory.hh>
 #include <libuobject/remoteucontextimpl.hh>
 
 namespace urbi
@@ -48,23 +48,23 @@ namespace urbi
     }
   }
 
-  typedef libport::hash_map<std::string, UContextImpl*> contexts_type;
+  typedef libport::hash_map<std::string, impl::UContextImpl*> contexts_type;
   static contexts_type contexts;
-  UContextImpl* makeRemoteContext(const std::string& host,
+  impl::UContextImpl* makeRemoteContext(const std::string& host,
                                   const std::string& port)
   {
-    UContextImpl* c = new RemoteUContextImpl(
+    impl::UContextImpl* c = new impl::RemoteUContextImpl(
             new USyncClient(host, strtol(port.c_str(), 0, 0)));
     return c;
   }
-  UContextImpl* getRemoteContext(const std::string& host,
+  impl::UContextImpl* getRemoteContext(const std::string& host,
                                  const std::string& port)
   {
     std::string key = host + ':' + port;
     contexts_type::iterator i = contexts.find(key);
     if (i != contexts.end())
       return i->second;
-    UContextImpl* c = new RemoteUContextImpl(
+    impl::UContextImpl* c = new impl::RemoteUContextImpl(
           new USyncClient(host, strtol(port.c_str(), 0, 0)));
     contexts[key] = c;
     return c;
