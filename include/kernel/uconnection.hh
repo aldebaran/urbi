@@ -25,7 +25,11 @@
 #  include <runner/shell.hh>
 # endif
 
-# include <ast/nary-fwd.hh>
+namespace ast
+{
+  class Nary;
+  typedef libport::intrusive_ptr<Nary> rNary;
+}
 
 namespace object
 {
