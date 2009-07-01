@@ -40,6 +40,7 @@ class URBI_SDK_API RemoteUContextImpl: public impl::UContextImpl
   public:
    /// Dispatch a message on our connection
     UCallbackAction dispatcher(const UMessage& msg);
+    USyncClient* getClient();
     USyncClient* client_;
     #define TABLE(t, n) \
   private: t n##_; public: t& n() {return n##_;}

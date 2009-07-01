@@ -70,6 +70,11 @@ namespace urbi
     return c;
   }
 
+  USyncClient*
+  RemoteUContextImpl::getClient()
+  {
+    return client_;
+  }
   UObject*
   RemoteUContextImpl::getDummyUObject()
   {
