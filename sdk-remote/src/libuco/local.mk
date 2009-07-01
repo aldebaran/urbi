@@ -24,7 +24,6 @@ dist_libuco_libuco_la_SOURCES =			\
   libuco/exit.cc				\
   libuco/gd-init.cc				\
   libuco/package-info.cc			\
-  libuco/shared-library-checker.cc		\
   libuco/uimage.cc				\
   libuco/uobject-common.cc			\
   libuco/uobject-hub-common.cc			\
