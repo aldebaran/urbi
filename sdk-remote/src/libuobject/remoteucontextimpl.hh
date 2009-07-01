@@ -4,7 +4,7 @@
 #include <urbi/usyncclient.hh>
 namespace urbi {
   namespace impl {
-class RemoteUContextImpl: public impl::UContextImpl
+class URBI_SDK_API RemoteUContextImpl: public impl::UContextImpl
   {
   public:
     /// Setup to work on given client
