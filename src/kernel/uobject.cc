@@ -807,10 +807,6 @@ namespace urbi
        uvar_set(owner_->get_name(), ov);
      ov->invalidate();
    }
-   static UValue& pompompom(UValue* v)
-   {
-     return *v;
-   }
    const UValue& KernelUVarImpl::get()
    {
      ECHO("uvar cast operator for "<<owner_->get_name());
@@ -821,8 +817,10 @@ namespace urbi
          return bv->value_get();
        else
        {
-         UValue v = ::uvalue_cast(o);
-         return pompompom(&v);
+         //We expect our caller to cast by value, so copy will be made right
+         //away. Since we are not thread-safe, this code is correct.
+         static UValue v = ::uvalue_cast(o);
+         return v;
        }
      }
      catch (object::UrbiException&)
