@@ -26,10 +26,6 @@
 # include <urbi/export.hh>
 # include <kernel/utypes.hh>
 
-// Do not include runner/fwd.hh etc. which are not public.
-namespace runner { class Runner; }
-namespace sched  { class Scheduler; }
-
 namespace kernel
 {
   /// Global variable for the server

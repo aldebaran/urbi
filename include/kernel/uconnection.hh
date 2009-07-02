@@ -16,7 +16,6 @@
 #  define WIN32_LEAN_AND_MEAN
 # endif
 
-# include <libport/intrusive-ptr.hh>
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
 # include <kernel/utypes.hh>
@@ -25,24 +24,6 @@
 #  include <runner/shell.hh>
 # endif
 
-namespace ast
-{
-  class Nary;
-  typedef libport::intrusive_ptr<Nary> rNary;
-}
-
-namespace object
-{
-  class Lobby;
-  template<class T> class Atom;
-  typedef libport::intrusive_ptr<Lobby> rLobby;
-}
-
-namespace runner
-{
-  class Shell;
-  typedef libport::intrusive_ptr<Shell> rShell;
-}
 
 namespace kernel
 {
