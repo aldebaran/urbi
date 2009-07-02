@@ -52,7 +52,7 @@ var myObject = Object.new;
 [00000001] Object_0x76543210
 \end{urbiscript}
 
-\paragraph{How do I destroy an Object}
+\paragraph{How do I destroy an Object?}
 There is no \lstinline{delete} in Urbi, for a number of reasons (see
 \autoref{sec:k122:delete}).  Objects are deleted when they are no
 longer used/referenced to.
@@ -61,8 +61,8 @@ In practice, users who want to ``delete an object'' actually want to
 remove a slot --- see \autoref{sec:tut:objects}.  Users who want to
 clear an object can empty it --- see \autoref{sec:k122:delete}.
 
-Note that \lstinline{myObject = nil} does not explicitly destroys the
-object that was bound to the name \lstinline{myObject}, yet it may did
+Note that \lstinline{myObject = nil} does not explicitly destroy the
+object bound to the name \lstinline{myObject}, yet it may do
 so provided that \lstinline{myObject} was the last and only reference
 to this object.
 
