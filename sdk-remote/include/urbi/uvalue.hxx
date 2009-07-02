@@ -292,23 +292,31 @@ namespace urbi
 
 # undef UVALUE_CASTER_DECLARE
 
-
 # ifndef UOBJECT_NO_LIST_CAST
-  template<typename I>
-  struct uvalue_caster <std::list<I> >
-  {
-    std::list<I> operator()(UValue& v)
-      {
-        std::list<I> res;
-        if (v.type != DATA_LIST)
-          // Cast just the element.
-          res.push_back(uvalue_cast<I>(v));
-        else
-          for (int i = 0; i < v.list->size(); ++i)
-            res.push_back(uvalue_cast<I>(*v.list->array[i]));
-        return res;
-      }
-  };
+
+#  define UVALUE_CONTAINER_CASTER_DECLARE(Type)                 \
+  template <typename T>                                         \
+  struct uvalue_caster< Type<T> >                               \
+  {                                                             \
+    Type<T>                                                     \
+    operator()(UValue& v)                                       \
+    {                                                           \
+      Type<T> res;                                              \
+      if (v.type != DATA_LIST)                                  \
+        // Cast just the element.                               \
+        res.push_back(uvalue_cast<T>(v));                       \
+      else                                                      \
+        for (size_t i = 0; i < v.list->size(); ++i)             \
+          res.push_back(uvalue_cast<T>(*v.list->array[i]));     \
+      return res;                                               \
+    }                                                           \
+  }
+
+  UVALUE_CONTAINER_CASTER_DECLARE(std::list);
+  UVALUE_CONTAINER_CASTER_DECLARE(std::vector);
+
+#  undef UVALUE_CONTAINER_CASTER_DECLARE
+
 # endif
 
 
