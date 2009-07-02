@@ -437,6 +437,7 @@ namespace urbi
           if (data.interactive)
             select_time = std::min(100000LL, select_time);
         }
+        s.io_.reset();
         s.io_.poll();
       }
 
