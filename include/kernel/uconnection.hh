@@ -28,31 +28,36 @@
 namespace kernel
 {
   /// Pure virtual class for a client connection.
-  /*! UConnection is holding the message queue in and out. No assumption is made
-      here on the kind of underlying connection (TCP, IPC, ...).
 
-      The sending mechanism is asynchronous. Each time the send() function is
-      called, it will pile the data in the internal buffer and try to send what is
-      available in the internal buffer by calling continue_send(), except if the
-      connection is blocked (see block()).
+  /*! UConnection is holding the message queue in and out. No
+     assumption is made here on the kind of underlying connection
+     (TCP, IPC, ...).
 
-      The programmer has to call continue_send() each time the system is ready to
-      send something, to make sure the internal buffer is progressively emptied.
+     The sending mechanism is asynchronous. Each time the send()
+     function is called, it will pile the data in the internal buffer
+     and try to send what is available in the internal buffer by
+     calling continue_send(), except if the connection is blocked (see
+     block()).
 
-      If the connection is not ready for sending, the programmer must call the
-      block() function in order to prevent future send() to call continue_send().
-      Using this feature, it is always possible to use send(), but the data will
-      simply be piled on the internal buffer and sent later, when the connection
-      is unblocked.
+     The programmer has to call continue_send() each time the system
+     is ready to send something, to make sure the internal buffer is
+     progressively emptied.
 
-      A call to continue_send() automatically unblocks the connection.
+     If the connection is not ready for sending, the programmer must
+     call the block() function in order to prevent future send() to
+     call continue_send().  Using this feature, it is always possible
+     to use send(), but the data will simply be piled on the internal
+     buffer and sent later, when the connection is unblocked.
 
-      The received() function must be called each time data has been received on
-      the connection.
+     A call to continue_send() automatically unblocks the
+     connection.
 
-      The effective_send() function should be overloaded to define the way the
-      system is actually sending data through the real connection.
-   */
+     The received() function must be called each time data has been
+     received on the connection.
+
+     The effective_send() function should be overloaded to define
+     the way the system is actually sending data through the real
+     connection.  */
 
   class URBI_SDK_API UConnection
   {
@@ -97,11 +102,14 @@ namespace kernel
     send(const char* buf, const char* tag = 0, bool flush = true);
 
     //! Send at most packetSize bytes in the connection, calling effective_send()
+
     /*! Must be called when the system tells that the connection is ready to
       accept new data for sending, in order to carry on the processing of the
       sending queue stored in the internal buffer.
-      Each call to continue_send sends packetSize bytes (at most) through the real
-      connection until the internal buffer is empty.
+
+      Each call to continue_send sends packetSize bytes (at most) through
+      the real connection until the internal buffer is empty.
+
       \return
       - USUCCESS: successful
       - UFAIL   : effective_send() failed or not enough memory
