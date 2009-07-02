@@ -32,8 +32,14 @@ namespace kernel
   void
   Connection::close()
   {
+    // Closing the Socket will call our onError().
     libport::Socket::close();
-    server_.connection_remove(this);
+  }
+
+  void
+  Connection::onError(boost::system::error_code)
+  {
+    closing_ = true;
   }
 
   void
