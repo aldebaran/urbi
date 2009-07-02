@@ -303,7 +303,7 @@ namespace urbi
     {                                                           \
       Type<T> res;                                              \
       if (v.type != DATA_LIST)                                  \
-        // Cast just the element.                               \
+        /* Cast just the element.  */                           \
         res.push_back(uvalue_cast<T>(v));                       \
       else                                                      \
         for (size_t i = 0; i < v.list->size(); ++i)             \
