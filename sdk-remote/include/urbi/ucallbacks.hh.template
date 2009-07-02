@@ -22,6 +22,7 @@
 
 # include <string>
 
+# include <libport/meta.hh>
 # include <urbi/export.hh>
 # include <urbi/fwd.hh>
 # include <urbi/utable.hh>
@@ -84,6 +85,19 @@ namespace urbi
 
     std::string name;
     impl::UGenericCallbackImpl* impl_;
+
+  protected:
+    template<typename T>
+    static inline impl::UContextImpl* fetchContext(T* ptr, libport::meta::True)
+    {
+    return ptr->ctx_;
+    }
+
+    template<typename T>
+    static inline impl::UContextImpl* fetchContext(T*, libport::meta::False)
+    {
+    return getCurrentContext();
+    }
   };
 
 
@@ -104,8 +118,11 @@ namespace urbi
       UCallback%N%(const std::string& objname, const std::string& type,	\
 		   OBJ* obj,						\
 		   R (OBJ::*fun) (%%%,% P% %%) Const,			\
-		   const std::string& funname, bool owned)	\
-      : UGenericCallback(objname, type, funname, %N%, owned, obj->ctx_),\
+		   const std::string& funname, bool owned)	        \
+      : UGenericCallback(objname, type, funname, %N%, owned,            \
+      fetchContext(obj,                                                 \
+      typename libport::meta::If<libport::meta::Inherits<OBJ,           \
+        UContext>::res>::res())),                                         \
 	obj(obj), fun##Const(fun), is_const_ (IsConst)			\
     {									\
       nbparam = %N%;                                                    \
@@ -146,7 +163,7 @@ namespace urbi
 		     OBJ* obj,
 		     void (OBJ::*fun) (%%%,% P% %%),
 		   const std::string& funname, bool owned)
-      : UGenericCallback(objname, type, funname,%N%, owned, obj->ctx_),
+      : UGenericCallback(objname, type, funname,%N%, owned),
 	obj(obj), fun(fun)
     {
       registerCallback();
@@ -179,7 +196,10 @@ namespace urbi
 			    void (OBJ::*fun) (%%%,% P% %%) FConst,	\
 			    void (OBJ::*end)() EConst,			\
 			    const std::string& funname)	                \
-      : UGenericCallback(objname, type, funname,%N%, false, obj->ctx_), \
+      : UGenericCallback(objname, type, funname,%N%, false,             \
+      fetchContext(obj,                                                 \
+        typename libport::meta::If<libport::meta::Inherits<OBJ,         \
+          UContext>::res>::res())),                                       \
 	obj(obj), fun(end), is_const_(IsConst)				\
     {									\
       nbparam = %N%;                                                    \
