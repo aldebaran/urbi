@@ -124,6 +124,7 @@ namespace urbi {
     private:
       UVar* owner_;
       bool bypassMode_;
+      UValue cache_;
     };
     class KernelUGenericCallbackImpl: public UGenericCallbackImpl
     {
@@ -817,10 +818,8 @@ namespace urbi
          return bv->value_get();
        else
        {
-         //We expect our caller to cast by value, so copy will be made right
-         //away. Since we are not thread-safe, this code is correct.
-         static UValue v = ::uvalue_cast(o);
-         return v;
+         cache_ = ::uvalue_cast(o);
+         return cache_;
        }
      }
      catch (object::UrbiException&)
