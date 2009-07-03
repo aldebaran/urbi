@@ -366,7 +366,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   | Internal rules for generated code. |
   `-----------------------------------*/
 
-^"//#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}      {
+"//#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}      {
 
   /* synclines are mainly made to get correct locations when loading a
      file: save the current location before loading the file, then
@@ -420,7 +420,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   loc.step();
 }
 
-^"//#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
+"//#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
   PRE_SKIP();
   if (up->synclines_.empty())
   {
