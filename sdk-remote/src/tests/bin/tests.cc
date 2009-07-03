@@ -1,6 +1,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <libport/cli.hh>
+#include <libport/debug.hh>
 #include <libport/foreach.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
@@ -12,6 +13,9 @@
 #include <bin/tests.hh>
 
 using libport::program_name;
+
+GD_INIT();
+GD_ADD_CATEGORY(Test);
 
 // Use this semaphore in tests that require one.  dump() takes it.
 libport::Semaphore dumpSem;
@@ -89,9 +93,23 @@ doExit(const urbi::UMessage& /* msg */)
 }
 
 
+std::string
+sget_error(urbi::USyncClient& c, const std::string& msg)
+{
+  VERBOSE("get_erroneous: Asking " << msg);
+  urbi::UMessage* m = c.syncGet(msg);
+  assert(m && m->type == urbi::MESSAGE_ERROR);
+  std::string res(m->message);
+  delete m;
+  return res;
+}
+
+
 int
 main(int argc, char* argv[])
 {
+  GD_CATEGORY(Test);
+
   // Actually argv[0] is verbose and not interesting.
   libport::program_initialize(argc, argv);
   std::string host = urbi::UClient::DEFAULT_HOST;

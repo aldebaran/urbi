@@ -1,5 +1,6 @@
 #include <bin/tests.hh>
-BEGIN_TEST(removecallbacks, client, )
+
+BEGIN_TEST(removecallbacks, client, syncClient)
 client.setCallback(&dump, "error"); // ping
 urbi::UCallbackID i1 = client.setCallback(&dump, "output");
 urbi::UCallbackID i2 = client.setCallback(&dump, "output");

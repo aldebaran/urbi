@@ -37,12 +37,44 @@ Test file layout
 #define VERBOSE(S)				\
   std::cerr << libport::program_name() << ": " << S << std::endl
 
-/// Send S to the client.
-#define SEND(S)						\
+/// Send S to the Client.
+#define SEND_(Client, S)                                \
   do {							\
     VERBOSE("Sending: " << S);				\
-    client.send((std::string(S) + "\n").c_str());	\
+    Client.send((std::string(S) + "\n").c_str());	\
   } while (0)
+
+/// Send S to client/syncclient.
+#define SEND(S)	  SEND_(client, S)
+#define SSEND(S)  SEND_(syncClient, S)
+
+
+/*----------.
+| SyncGet.  |
+`----------*/
+
+template <typename T>
+inline
+T
+sget(urbi::USyncClient& c, const std::string& msg)
+{
+  VERBOSE("syncGet: Asking " << msg);
+  T res;
+  assert(urbi::getValue(c.syncGet(msg), res));
+  return res;
+}
+
+/// syncGet E from the syncClient.
+#define SGET(Type, E)                           \
+  sget<Type>(syncClient, E)
+
+
+std::string sget_error(urbi::USyncClient& c, const std::string& msg);
+
+/// Send a computation, expect an error.
+#define SGET_ERROR(E)                           \
+  sget_error(syncClient, E)
+
 
 
 extern libport::Semaphore dumpSem;
@@ -62,6 +94,7 @@ urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
 
 #define END_TEST                                \
     sleep(3);                                   \
+    SSEND("quit;");                             \
     SEND("shutdown;");                          \
   }
 
