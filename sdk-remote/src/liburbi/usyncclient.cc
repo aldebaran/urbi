@@ -285,19 +285,19 @@ namespace urbi
     if (has_tag(format))
       return 0;
     sendBufferLock.lock();
+    std::string tag = make_tag(*this, opt_used);
+    pack("%s", compatibility::evaluate_in_channel_open(tag).c_str());
     rc = vpack(format, arg);
     if (rc < 0)
     {
       sendBufferLock.unlock();
       return 0;
     }
-    std::string tag = make_tag(*this, opt_used);
-    effective_send(compatibility::evaluate_in_channel_open(tag));
+    pack("%s", compatibility::evaluate_in_channel_close(tag).c_str());
     queueLock_.lock();
     rc = effective_send(sendBuffer);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    effective_send(compatibility::evaluate_in_channel_close(tag));
     return waitForTag(opt_used.mtag_ ? opt_used.mtag_ : tag,
                       opt_used.timeout_);
   }
