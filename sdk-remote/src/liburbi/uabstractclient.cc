@@ -1,31 +1,28 @@
 /// \file liburbi/uabstractclient.cc
 
-#include <boost/format.hpp>
+#include <algorithm>
+#include <cassert>
+#include <cerrno>
+#include <cmath>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
 
-#include <libport/windows.hh>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <libport/cstdio>
 #include <libport/cstring>
 #include <libport/debug.hh>
 #include <libport/escape.hh>
-#include <libport/unistd.h>
-
-#include <cstdlib>
-#include <cerrno>
-#include <cmath>
-#include <cassert>
-
-#include <libport/sys/stat.h>
-
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-
-#include <boost/lexical_cast.hpp>
-
 #include <libport/lockable.hh>
+#include <libport/sys/stat.h>
+#include <libport/unistd.h>
+#include <libport/windows.hh>
 
 #include <urbi/uabstractclient.hh>
+
+#include <liburbi/compatibility.hh>
 
 
 namespace urbi
@@ -1049,14 +1046,16 @@ namespace urbi
 # define VERSION_TAG TAG_PRIVATE_PREFIX "__version"
     setCallback(*this, &UAbstractClient::setVersion, VERSION_TAG);
     // We don't know our kernel version yet.
-    send("{\n"
+    send(SYNCLINE_PUSH()
+         "{\n"
          "  var __ver__ = 2;\n"
          "  {var __ver__ = 1};\n"
          "  var " VERSION_TAG ";\n"
          "  if (__ver__ == 2)\n"
          "    " VERSION_TAG " = Channel.new(\"" VERSION_TAG "\");\n"
          "  " VERSION_TAG " << system.version;\n"
-         "};\n");
+         "};\n"
+         SYNCLINE_POP());
 # undef VERSION_TAG
   }
 
@@ -1117,9 +1116,11 @@ namespace urbi
     // Have the connectionId sent on __ident.
 # define IDENT_TAG TAG_PRIVATE_PREFIX "__ident"
     setCallback(*this, &UAbstractClient::setConnectionID, IDENT_TAG);
+    send(SYNCLINE_PUSH());
     send(kernelMajor_ < 2
          ? IDENT_TAG " << local.connectionID;\n"
          : "Channel.new(\"" IDENT_TAG "\") << connectionTag.name;\n");
+    send(SYNCLINE_POP());
     return URBI_REMOVE;
 # undef IDENT_TAG
   }

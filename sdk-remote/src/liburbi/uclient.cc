@@ -12,6 +12,8 @@
 
 #include <urbi/uclient.hh>
 
+#include <liburbi/compatibility.hh>
+
 namespace urbi
 {
 
@@ -122,14 +124,16 @@ namespace urbi
     init_ = true;
     onConnection();
 
-   waitingPong = false;
+    waitingPong = false;
 
     // Declare ping channel for kernel that requires it.  Do not try
     // to depend on kernelMajor, because it has not been computed yet.
     // And computing kernelMajor requires this code to be run.  So we
     // need to write something that both k1 and k2 will like.
-    send("if (isdef(Channel))\n"
-         "  var lobby.%s = Channel.new(\"%s\") | {};",
+    send(SYNCLINE_PUSH()
+         "if (isdef(Channel))\n"
+         "  var lobby.%s = Channel.new(\"%s\") | {};\n"
+         SYNCLINE_POP(),
          internalPongTag, internalPongTag);
     host_ = getRemoteHost();
     port_ = getRemotePort();

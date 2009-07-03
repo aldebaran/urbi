@@ -1,3 +1,5 @@
+#include <boost/preprocessor/stringize.hpp>
+
 #include <urbi/uobject.hh>
 
 namespace urbi

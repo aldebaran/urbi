@@ -1,6 +1,15 @@
 #ifndef LIBUOBJECT_COMPATIBILITY_HH
 # define LIBUOBJECT_COMPATIBILITY_HH
 
+// Macros to hide internal code sent by liburbi, not by the user, so
+// that her locations are "correct": referring to her messages, not to
+// hers plus those of the machinery.
+#define SYNCLINE_PUSH()                                         \
+  "//#push " BOOST_PP_STRINGIZE(__LINE__) " \"" __FILE__ "\"\n"
+
+#define SYNCLINE_POP()                          \
+  "//#pop\n"
+
 namespace urbi
 {
   namespace compatibility
