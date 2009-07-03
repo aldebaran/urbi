@@ -242,6 +242,8 @@ namespace urbi
     libport::Semaphore sem_;
     // Semaphore to delay execution of callback thread until ctor finishes.
     libport::Semaphore callbackSem_;
+
+    // The list of incoming messages waiting to be processed.
     std::list<UMessage*> queue;
     libport::Lockable queueLock_;
 
