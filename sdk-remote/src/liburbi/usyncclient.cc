@@ -516,9 +516,11 @@ namespace urbi
     // to be defined.
     while (kernelMajor_ < 0 && !error())
     {
-      if (!hasProcessingThread)
+      // Process events if we are the processing thread or if there is none.
+      if (!hasProcessingThread || cbThread == pthread_self())
         processEvents();
-      usleep(100000);
+      // Process the sockets if we are the asio worker thread.
+      libport::Socket::sleep(100000);
     }
   }
 
