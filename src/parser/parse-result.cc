@@ -58,7 +58,7 @@ namespace parser
       << "Status:"
       << libport::incendl << status << libport ::decendl
       << "Ast:"
-      << libport::incendl << libport::deref << *ast_ << libport ::decendl
+      << libport::incendl << libport::deref << ast_ << libport ::decendl
       << "Error: "
       << libport::incendl << errors_ << libport ::decendl
       ;
