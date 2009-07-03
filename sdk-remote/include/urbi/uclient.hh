@@ -129,8 +129,16 @@ namespace urbi
     /// Delay (in microseconds) of timeout to wait 'PONG'.
     libport::utime_t pong_timeout_;
 
-    /// True if waiting 'PONG'.
-    bool waitingPong;
+    /// Send timeout error.
+    void pongTimeout();
+
+    void sendPing();
+
+    libport::utime_t ping_sent_;
+
+    libport::AsyncCallHandler pong_timeout_handler_;
+
+    libport::Semaphore ping_sem_;
 
   private:
     /// Wrapper around Socket::connect.

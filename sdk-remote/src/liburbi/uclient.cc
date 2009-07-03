@@ -41,6 +41,8 @@ namespace urbi
     : UAbstractClient(host, port, buflen, opt.server())
     , ping_interval_(0)
     , pong_timeout_(0)
+    , ping_sent_(libport::utime())
+    , ping_sem_(0)
   {
     if (opt.start())
       start();
@@ -124,8 +126,6 @@ namespace urbi
     init_ = true;
     onConnection();
 
-    waitingPong = false;
-
     // Declare ping channel for kernel that requires it.  Do not try
     // to depend on kernelMajor, because it has not been computed yet.
     // And computing kernelMajor requires this code to be run.  So we
@@ -137,7 +137,9 @@ namespace urbi
          internalPongTag, internalPongTag);
     host_ = getRemoteHost();
     port_ = getRemotePort();
-  }
+    if (ping_interval_)
+      sendPing();
+}
 
   void
   UClient::onError(boost::system::error_code erc)
@@ -155,11 +157,38 @@ namespace urbi
     size_t capacity = buflen - recvBufferPosition - 1;
     size_t eat = std::min(capacity, length);
 
+    if (ping_interval_ && ping_sem_.uget(1))
+    {
+      pong_timeout_handler_->cancel();
+      libport::asyncCall(boost::bind(&UClient::sendPing, this),
+                         ping_interval_ - (libport::utime() - ping_sent_));
+    }
     memcpy(&recvBuffer[recvBufferPosition], data, eat);
     recvBufferPosition += eat;
     recvBuffer[recvBufferPosition] = 0;
     processRecvBuffer();
     return eat;
+  }
+
+  void
+  UClient::pongTimeout()
+  {
+    const char* err = "!!! Lost connection with server: ping timeout";
+    // FIXME: Choose between two differents way to alert user program
+    clientError(err);
+    notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
+    close();
+  }
+
+  void
+  UClient::sendPing()
+  {
+    pong_timeout_handler_ =
+      libport::asyncCall(boost::bind(&UClient::pongTimeout, this),
+                         pong_timeout_);
+    send("%s << 1,", internalPongTag);
+    ping_sent_ = libport::utime();
+    ping_sem_++;
   }
 
   void
@@ -184,12 +213,16 @@ namespace urbi
   }
 
   void
-  UClient::setKeepAliveCheck(unsigned pingInterval,
-                             unsigned pongTimeout)
+  UClient::setKeepAliveCheck(unsigned ping_interval,
+                             unsigned pong_timeout)
   {
     // From milliseconds to microseconds.
-    ping_interval_ = pingInterval * 1000;
-    pong_timeout_  = pongTimeout * 1000;
+    if ((!ping_interval) && ping_interval_)
+      pong_timeout_handler_->cancel();
+    ping_interval_ = ping_interval * 1000;
+    pong_timeout_  = pong_timeout * 1000;
+    if (ping_interval_)
+      sendPing();
   }
 
 
