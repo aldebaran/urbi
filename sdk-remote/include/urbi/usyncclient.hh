@@ -259,6 +259,8 @@ namespace urbi
     // Used to block until the callback thread is realy stopped.
     libport::Semaphore stopCallbackSem_;
     connect_callback_type connectCallback_;
+    // True if waitForTag is waiting from the polling thread.
+    bool waitingFromPollThread_;
   };
 
 } // namespace urbi

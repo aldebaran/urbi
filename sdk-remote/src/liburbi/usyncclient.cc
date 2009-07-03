@@ -182,7 +182,10 @@ namespace urbi
     {
       message_ = new UMessage(msg);
       syncTag.clear();
-      syncLock_++;
+      if (waitingFromPollThread_)
+        libport::get_io_service().stop();
+      else
+        syncLock_++;
     }
     else
     {
@@ -195,15 +198,31 @@ namespace urbi
   UMessage*
   USyncClient::waitForTag(const std::string& tag, libport::utime_t useconds)
   {
+    if (message_ || !syncTag.empty())
+      throw std::runtime_error("Another waitForTag is allready in progress");
     syncTag = tag;
+    message_ = 0;
+    waitingFromPollThread_ = libport::isPollThread();
+    // Reset before releasing the lock, as other thread may call io.stop()
+    if (waitingFromPollThread_)
+      libport::get_io_service().reset();
     queueLock_.unlock();
     // syncTag is reset by the other thread.
-    UMessage *res = syncLock_.uget(useconds) ? message_ : 0;
+    UMessage *res;
+    if (waitingFromPollThread_)
+      if (!useconds)
+        libport::get_io_service().run();
+      else
+        libport::pollFor(useconds);
+    else
+      syncLock_.uget(useconds);
+    res = message_;
     if (!res)
       GD_ERROR("Timed out");
     else if (res->type == MESSAGE_ERROR)
       GD_FERROR("Received error message: %s", (*res));
     message_ = 0;
+    syncTag.clear();
     return res;
   }
 
