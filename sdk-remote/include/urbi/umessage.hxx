@@ -12,7 +12,7 @@ namespace urbi
   {
     int res = 0;
     if ((res = (m && m->type == MESSAGE_DATA)))
-      val = *m->value;
+      val = (T) *m->value;
     delete m;
     return res;
   }
