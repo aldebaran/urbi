@@ -17,7 +17,7 @@ cleanup ()
 
   local children_sta=$(children_status remote)
   # Don't clean before calling children_status...
-  test x$VERBOSE != x || children_clean
+  # test x$VERBOSE != x || children_clean
 
   case $exit_status:$children_sta in
     (0:0) ;;
