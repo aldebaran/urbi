@@ -349,7 +349,13 @@ namespace urbi
       if (desired_port != -1)
       {
         std::string host = IF_OPTION_PARSER(libport::opts::host_l.value(""),"");
-        s.listen(&connectionFactory, host, desired_port);
+        if (boost::system::error_code err =
+            s.listen(&connectionFactory, host, desired_port))
+          throw urbi::Exit
+            (EX_UNAVAILABLE,
+             libport::format("%s: cannot listen to port %s:%s: %s",
+                             program_name(), host, desired_port,
+                             err.message()));
         port = s.getLocalPort();
         if (!port)
           throw urbi::Exit
@@ -436,8 +442,13 @@ namespace urbi
           if (data.interactive)
             select_time = std::min(100000LL, select_time);
         }
-        s.io_.reset();
-        s.io_.poll();
+        if (select_time)
+          libport::pollFor(select_time, true);
+        else
+        {
+          s.io_.reset();
+          s.io_.poll();
+        }
       }
 
       next_time = s.work();
