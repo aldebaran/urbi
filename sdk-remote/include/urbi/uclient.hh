@@ -39,7 +39,7 @@ namespace urbi
   */
   class URBI_SDK_API UClient
     : public UAbstractClient
-    , protected libport::Socket
+    , public libport::Socket
   {
   public:
     using UAbstractClient::DEFAULT_HOST;
