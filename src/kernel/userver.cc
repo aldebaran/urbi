@@ -412,7 +412,7 @@ namespace kernel
   static void bounce_disconnection(UConnection* uc)
   {
     // This is executed from a job: we have a runner.
-    uc->lobby_get()->call(SYMBOL(handleDisconnect));
+    uc->lobby_get()->disconnect();
     delete uc;
   }
 

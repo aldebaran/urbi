@@ -67,12 +67,21 @@ namespace object
   }
 
   void
+  Lobby::disconnect()
+  {
+    connection_ = 0;
+    call(SYMBOL(handleDisconnect));
+  }
+
+  void
   Lobby::send(const objects_type& args)
   {
     if (proto == this)
       RAISE("must be called on Lobby derivative");
 
     check_arg_count(args.size(), 1, 2);
+    if (!connection_)
+      return;
     // Second argument is the tag name.
     std::string tag;
     if (args.size() == 2)
@@ -94,6 +103,8 @@ namespace object
   {
     if (proto == this)
       RAISE("must be called on Lobby derivative");
+    if (!connection_)
+      return;
     connection_->send_queue(data.c_str(), data.size());
     connection_->flush();
   }

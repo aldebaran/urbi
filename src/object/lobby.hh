@@ -32,7 +32,8 @@ namespace object
     void write(const std::string& data);
     connection_type& connection_get();
     const connection_type& connection_get() const;
-
+    /// Mark this lobby as disconnected.
+    void disconnect();
   private:
     /// The Lobby prototype uses an empty connection_.
     /// The actual lobbies must have a non-empty one.
