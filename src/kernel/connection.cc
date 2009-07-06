@@ -26,7 +26,13 @@ namespace kernel
   Connection::onConnect()
   {
     initialize();
-    lobby_->slot_set(SYMBOL(remoteIP), object::to_urbi(getRemoteHost()));
+    try {
+      lobby_->slot_set(SYMBOL(remoteIP), object::to_urbi(getRemoteHost()));
+    }
+    catch(std::exception& e)
+    {
+      // We got disconnected, do nothing, onError will be called.
+    }
   }
 
   void
@@ -53,7 +59,9 @@ namespace kernel
   size_t
   Connection::effective_send(const char* buffer, size_t length)
   {
-    libport::Socket::send((const void *)buffer, length);
+    if (!closing_)
+      libport::Socket::send((const void *)buffer, length);
+    /// FIXME: we claim to write OK to avoid buffering useless stuff.
     return length;
   }
 
