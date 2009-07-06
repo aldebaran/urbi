@@ -31,6 +31,19 @@ do (Float)
   // FIXME: =~= cannot be correctly implemented without properties.
   function '=~='(x) { (this - x).abs <= delta + x.delta };
 
+  // Repeat \a action \a this times.
+  function each (action)
+  {
+    for| (var i = 0; i < this; i++)
+      action(i)
+  };
+
+  // Repeat \a action \a this times in concurrently.
+  function 'each&' (action)
+  {
+    seq.'each&'(action)
+  };
+
   function sgn() { if (this < 0) -1 else if (this > 0) 1 else 0 };
 
   /// Normalized value (i.e., 0 <= res <= 1).
@@ -109,13 +122,6 @@ do (Float)
       action()
   };
 
-  // Repeat \a action \a this times.
-  function each (action)
-  {
-    for| (var i = 0; i < this; i++)
-      action(i)
-  };
-
   function asList()
   {
     var res = [];
@@ -133,6 +139,7 @@ do (Float)
   {
     asString(16)
   };
+
 };
 
 

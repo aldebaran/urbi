@@ -112,12 +112,32 @@ assert(pi.cos == -1);
 
 \item \lstinline|each(\var{fun})|\\
   Call the functional argument \var{fun} on every integer from 0 to
-  target - 1.
+  target - 1, sequentially.
 \begin{urbiscript}[firstnumber=last]
-3.each(function (i) { echo(i * 2) });
+3.each(function (i) { echo(100 + i) });
+[00000000] *** 100
+[00000000] *** 101
+[00000000] *** 102
+for (var x : 3) { echo(x); sleep(20ms); echo (100 + x); };
 [00000000] *** 0
+[00000000] *** 100
+[00000000] *** 1
+[00000000] *** 101
 [00000000] *** 2
-[00000000] *** 4
+[00000000] *** 102
+\end{urbiscript}
+
+\item \lstinline|each&(\var{fun})|\\
+  Call the functional argument \var{fun} on every integer from 0 to
+  target - 1, concurrently.
+\begin{urbiscript}[firstnumber=last]
+for& (var x : 3) { echo(x); sleep(20ms); echo (100 + x); };
+[00000000] *** 0
+[00000000] *** 1
+[00000000] *** 2
+[00000000] *** 100
+[00000000] *** 101
+[00000000] *** 102
 \end{urbiscript}
 
 \item \lstinline|exp|\\
