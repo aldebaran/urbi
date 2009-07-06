@@ -417,7 +417,7 @@ details into advanced \us code.
 \chapter{Basic objects, \us values model} % FIXME: values model
 \label{sec:tut:value}
 
-In this section, we focus on \urbi values as objects, and study \us
+In this section, we focus on \us values as objects, and study \us
 by-reference values model. We won't study classes and actual objective
 programming yet, these points will be presented in
 \autoref{sec:tut:object}.
@@ -653,12 +653,11 @@ an integer, with a function that computes the value. This enables to
 replace an attribute with a method without changing the object
 interface, since the parentheses are optional.
 
-This implies that getSlot can be a better tool for object inspection
-to avoid invoking slots, as shown below.
+This implies that \lstinline|getSlot| can be a better tool for object
+inspection to avoid invoking slots, as shown below.
 
 \begin{urbiscript}[firstnumber=last]
-// The 'empty' method of strings return
-// whether they're the empty string.
+// The 'empty' method of strings returns whether the string is empty.
 "foo".empty;
 [00000000] false
 "".empty;
@@ -724,18 +723,18 @@ be able to differentiate them.
 
 \begin{urbiscript}
 var o = Object.clone;
-[00000000] Object_0x1
+[00000000] Object_0x100000
 o.uid;
-[00000000] "0x1"
+[00000000] "0x100000"
 42.uid;
-[00000000] "0x2"
+[00000000] "0x200000"
 42.uid;
-[00000000] "0x3"
+[00000000] "0x300000"
 \end{urbiscript}
 
 % FIXME: maybe should I introduce == and other basic operator before.
 Our objects have different uids, reflecting the fact that they are
-different objects. Note that inputting the same integer twice
+different objects. Note that entering the same integer twice
 (\lstinline{42} here) yields different objects. Let's introduce new
 operators before diving in this concept. First the equality operator:
 \lstinline{==}. This operator is the exact same as \C or \Cxx's one,
@@ -756,10 +755,11 @@ a === b;
 [00000000] false
 \end{urbiscript}
 
-Here, the \lstinline{==} operator shows us that a and b are equal ---
-indeed, they both evaluate to 42. Yet, the \lstinline{===} operator show
-us that they are not the same object, that they are two different
-instances of integers, even if they both equal 42.
+Here, the \lstinline{==} operator reports that \lstinline{a} and
+\lstinline{b} are equal ---
+indeed, they both evaluate to 42. Yet, the \lstinline{===} operator shows
+that they are not the same object: they are two different
+instances of integer objects, both equal 42.
 
 Thanks to this operator, we can point out the fact that slots and
 local variables in \us have a reference semantic. That is, when you
@@ -999,14 +999,15 @@ echo(o.uid);
 [00000000] *** 0x0
 \end{urbiscript}
 
-The same result can be obtained with a short \lstinline|do| scope, that redirect
-method calls to their target, as in the listing below. This is
-similar to the \pascal ``\lstinline{with}'' construct.  The value of
-the \lstinline{do}-block is the target itself.
+The same result can be obtained with a short \lstinline|do| scope,
+that redirect method calls to their target, as in the listing
+below. This is similar to the \pascal
+``\lstinline[language=Pascal]{with}'' construct.  The value of the
+\lstinline{do}-block is the target itself.
 
 \begin{urbiscript}
 var o = Object.clone;
-[00000000] Object_0x0
+[00000000] Object_0x100000
 // All the message in this scope are destined to o.
 do (o)
 {
@@ -1014,8 +1015,8 @@ do (o)
  var two = 2; // message, so it applies on obj too.
  echo(uid);
 };
-[00000000] *** 0x0
-[00000000] Object_0x0
+[00000000] *** 0x100000
+[00000000] Object_0x100000
 \end{urbiscript}
 
 
@@ -1030,29 +1031,30 @@ tool.
 
 \section{Scopes as expressions}
 
-Scope are expressions, just as \lstinline|1 + 1| or \lstinline|"foo"|.
-They evaluate to the last expression they contain, or void if they're
+Contrary to other languages from the \C family, scopes are
+expressions: they can be used where values are expected, just as
+\lstinline|1 + 1| or \lstinline|"foo"|.
+They evaluate to the value of their last expression, or void if they're
 empty. The following listing illustrates the use of scopes as
 expressions. Note that the last semicolon inside a scope is optional.
 
 \begin{urbiscript}
-// scope evaluate to the
-// last expression they contain
+// Scopes evaluate to the last expression they contain.
 { 1; 2; 3};
 [00000000] 3
-// They are expression
+// They are expressions.
 echo({1; 2; 3});
 [00000000] *** 3
 \end{urbiscript}
 
 \section{Advanced scoping}
 
-Scopes can be nested. Variables can be redefined in sub-scope. In this
-case, the new variables hide the old one in this scope (that is, the
-innermost variable takes precedence), as illustrated below.
+Scopes can be nested. Variables can be redefined in sub-scopes. In
+this case, the inner variables hide the outer ones, as illustrated
+below.
 
 \begin{urbiscript}
-var x = 0; // Define the outer x.
+var x = 0;   // Define the outer x.
 [00000000] 0
 {
   var x = 1; // Define an inner x.
@@ -1151,37 +1153,44 @@ described in \autoref{sec:tut:functional}.
 \chapter{Objective programming, \us object model}
 \label{sec:tut:object}
 
-% FIXME: this section content will soon become mostly crap
-
-We are now at the point you waited for: object programing. We will
-here study the prototype-based object model of \us, and how to
-define and use classes.
+This section presents object programing in \us: the prototype-based
+object model of \us, and how to define and use classes.
 
 \section{Prototype-based programing in \us}
 
 You're probably already familiar with class-based object programing,
-since this is the \Cxx model. Prototype-based object programing is
-slightly different: it has no actual types. Instead, you have an
+since this is the \Cxx model.  Classes and objects are very differents
+entities.  Types are static entities that do not exist at runtime,
+while objects are dynamic entities that do not exist at compile time.
+
+Prototype-based object programing is different: the difference between
+classes and objects, between types and values, is blurred. Instead,
+you have an
 object, that is already an instance, and that you might clone to
 obtain a new one that you can modify afterward. Prototype-based
 programming was introduced by the Self language, and is used in
 several popular script languages such as \io or \js.
 
-Consider pairs for instance (see \refObject{Pair}). Pairs are objects
-that hold two values,
-first and second, like an \lstinline{std::pair} in \Cxx. Since \us is
-prototype-based, there is no pair class. Instead, \lstinline|Pair| is
-really a pair.
+Class-based programming can be considered with an industrial
+metaphore: classes are moulds, from which objects are generated.
+Prototype-based programming is more biological: an prototype object is
+cloned into another object which which can be modified during its
+lifetime.
+
+Consider pairs for instance (see \refObject{Pair}). Pairs hold two
+values, \lstinline|first| and \lstinline|second|, like an
+\lstinline{std::pair} in \Cxx. Since \us is prototype-based, there is
+no pair class. Instead, \lstinline|Pair| is really a pair (object).
 
 \begin{urbiscript}
 Pair;
 [00000000] (nil, nil)
 \end{urbiscript}
 
-We can see here that Pair is a pair whose two values are equal to nil
---- which is a reasonable neutral value. To get a pair of our own, we
-simply clone \lstinline|Pair|. We can then use it as a
-regular pair.
+We can see here that \lstinline|Pair| is a pair whose two values are
+equal to \lstinline|nil| --- which is a reasonable default value. To
+get a pair of our own, we simply clone \lstinline|Pair|.  We can then
+use it as a regular pair.
 
 \begin{urbiscript}
 var p = Pair.clone;
@@ -1198,7 +1207,7 @@ Pair;
 
 Since \lstinline|Pair| is a regular pair object, you can modify and
 use it at will. Yet this is not a good idea, since you will alter your
-base prototype, which alters any derivative, future or past.
+base prototype, which alters any derivative, future and even past.
 
 \begin{urbiscript}
 var before = Pair.clone;
@@ -1229,39 +1238,39 @@ p.protos;
 \end{urbiscript}
 
 As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|,
-which is Pair. We can check this as presented below.
+which is how \lstinline|Pair| displays itself. We can check this as
+presented below.
 
 \begin{urbiscript}[firstnumber=last]
-// Lists 'head' method returns the first element
+// List.head returns the first element.
 p.protos.head;
 [00000000] (nil, nil)
-// We can make sure the prototype is really Pair
+// Check that the prototype is really Pair.
 p.protos.head === Pair;
 [00000000] true
 \end{urbiscript}
 
 Prototypes are the base of the slot lookup mechanism. Slot lookup is
-the action of finding an object slot when \lstinline{getSlot} or the dot
-notation is used. So far, when we typed \lstinline|obj.slot|, ``slot''
-was always a slot of \lstinline|obj|.
-Yet, this call can be valid even if obj has
-no ``slot'' slot, because slots are also looked up in prototypes. For
+the action of finding an object slot when \lstinline{getSlot} or the
+dot notation is used. So far, when we typed
+\lstinline|\var{obj}.\var{slot}|, \var{slot} was always a slot of
+\var{obj}.  Yet, this call can be valid even if \var{obj} has no
+\var{slot} slot, because slots are also looked up in prototypes. For
 instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
-``first'' or ``second'' slots. Yet, \lstinline|p.first| and
-\lstinline|p.second| succeed because these slots are present in
-\lstinline|Pair|, which is \lstinline|p|'s prototype. This is
-illustrated below.
+\lstinline|first| or \lstinline|second| slots. Yet,
+\lstinline|p.first| and \lstinline|p.second| work, because these slots
+are present in \lstinline|Pair|, which is \lstinline|p|'s
+prototype. This is illustrated below.
 
 \begin{urbiscript}
 var p = Pair.clone;
 [00000000] (nil, nil)
-// p has absolutely no slots.
+// p has no slots of its own.
 p.localSlotNames;
 [00000000] []
-// Yet this works
+// Yet this works.
 p.first;
-// This is because p has Pair for prototype,
-// and Pair has a 'first' slot.
+// This is because p has Pair for prototype, and Pair has a 'first' slot.
 p.protos.head === Pair;
 [00000000] true
 "first" in Pair.localSlotNames && "second" in Pair.localSlotNames;
@@ -1277,10 +1286,10 @@ remove prototypes from an object thanks to \lstinline{addProto} and
 \lstinline{removeProto}.
 
 \begin{urbiscript}
-// We create a fresh object
+// We create a fresh object.
 var c = Object.clone;
 [00000000] Object_0x1
-// As expected, it has no 'slot' slot
+// As expected, it has no 'slot' slot.
 c.slot;
 [00000000:error] !!! lookup failed: slot
 var p = Object.clone;
@@ -1289,23 +1298,22 @@ var p.slot = 0;
 [00000000] 0
 c.addProto(p);
 [00000000] Object_0x1
-// Now, slot is found in c,
-// because it is inherited from p.
+// Now, 'slot' is found in c, because it is inherited from p.
 c.slot;
 [00000000] 0
 c.removeProto(p);
 [00000000] Object_0x1
-// Back to our good old lookup error
+// Back to our good old lookup error.
 c.slot;
 [00000000:error] !!! lookup failed: slot
 \end{urbiscript}
 
 The slot lookup algorithm in \us in a depth-first traversal of the
-object prototypes tree. Formally, when the "s" slot is requested from
-x:
+object prototypes tree. Formally, when the \var{s} slot is requested
+from \var{x}:
 
 \begin{itemize}
-\item If x itself has the slot, the requested value is found.
+\item If \var{x} itself has the slot, the requested value is found.
 \item Otherwise, the same lookup algorithm is applied on all
   prototypes, most recent first.
 \end{itemize}
@@ -1315,27 +1323,27 @@ prototype's slots.
 
 \begin{urbiscript}
 var proto1 = Object.clone;
-[00000000] Object_0x00000000
+[00000000] Object_0x10000000
 var proto2 = Object.clone;
-[00000000] Object_0x00000000
+[00000000] Object_0x20000000
 var o = Object.clone;
-[00000000] Object_0x00000000
+[00000000] Object_0x30000000
 o.addProto(proto1);
-[00000000] Object_0x00000000
+[00000000] Object_0x30000000
 o.addProto(proto2);
-[00000000] Object_0x00000000
-// We give o an x slot through proto1
+[00000000] Object_0x30000000
+// We give o an x slot through proto1.
 var proto1.x = 0;
 [00000000] 0
 o.x;
 [00000000] 0
 // proto2 is visited first during lookup.
-// Thus its "x" slot take precedence over proto1's
+// Thus its "x" slot takes precedence over proto1's.
 var proto2.x = 1;
 [00000000] 1
 o.x;
 [00000000] 1
-// o's own slots still have the higher precedence
+// Of course, o's own slots have the highest precedence.
 var o.x = 2;
 [00000000] 2
 o.x;
@@ -1357,22 +1365,23 @@ p.locateSlot("locateSlot");
 [00000000] Object
 \end{urbiscript}
 
-You can see here that the prototype model is rather simple. Obtaining
-a fresh object simply consist in cloning a model object, a prototype,
-that was provided to you. Moreover, you can add behavior to an object
-at any time with a simple \lstinline{addProto}: you can make any object a
-fully functional Pair with a simple \lstinline|myObj.addProto(Pair)|.
+The prototype model is rather simple: creating a fresh object simply
+consists in cloning a model object, a prototype, that was provided to
+you.  Moreover, you can add behavior to an object at any time with a
+simple \lstinline{addProto}: you can make any object a fully
+functional \lstinline|Pair| with a simple
+\lstinline|myObj.addProto(Pair)|.
 
 \section{Copy on write}
 
 One point might be bothering you though: what if you want to update a
 slot value in a clone of your prototype?
 
-Say we implement a simple prototype, with an "x" slot equal to
-\lstinline|0|, and clone it twice. We have three object with an "x"
-slot, yet only one actual \lstinline|0| integer. Will modifying x in
-one of the clone change the prototype's "x", thus altering the
-prototype and the other clone as well?
+Say we implement a simple prototype, with an \var{x} slot equal to
+\lstinline|0|, and clone it twice. We have three object with an
+\var{x} slot, yet only one actual \lstinline|0| integer. Will
+modifying \var{x} in one of the clone change the prototype's \var{x},
+thus altering the prototype and the other clone as well?
 
 The answer is, of course, no, as illustrated below.
 
@@ -1421,7 +1430,7 @@ slot of our fresh Pair, we didn't alter Pair one all its other clones.
 % prototypes ...
 \section{Defining classes}
 
-Now that we know the internals of \urbi's object model, we can start
+Now that we know the internals of \us's object model, we can start
 defining our own classes. For instance, we can define our own
 \lstinline{Pair} class. We just have to create a pair, with its first and
 second slots. For this we use the \lstinline{do} scope described in
