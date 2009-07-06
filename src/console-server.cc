@@ -247,7 +247,6 @@ namespace urbi
       arg_no_net("ignored for backward compatibility", "no-network", 'n');
 
     libport::OptionValue
-      arg_dbg      ("", "debug"),
       arg_period   ("ignored for backward compatibility", "period", 'P'),
       arg_port_file("write port number to the specified file.",
                     "port-file", 'w', "FILE"),
@@ -260,10 +259,10 @@ namespace urbi
       libport::OptionParser parser;
       parser
         << "Options:"
-        << arg_dbg
         << arg_fast
         << libport::opts::help
         << libport::opts::version
+        << libport::opts::debug
         << arg_period
         << "Tuning:"
         << arg_stack
@@ -320,7 +319,7 @@ namespace urbi
 
     // Libtool traces.
     lt_dladd_log_function((lt_dllog_function*) &ltdebug,
-                          (void*) IF_OPTION_PARSER(arg_dbg.get<int>(0),0));
+                          (void*) IF_OPTION_PARSER(GD_CURRENT_LEVEL(),0));
 
     // If not defined in command line, use the envvar.
     if (IF_OPTION_PARSER(!arg_stack.filled() && , )  getenv("URBI_STACK_SIZE"))
@@ -379,7 +378,7 @@ namespace urbi
     )
 
     kernel::UConnection& c = s.ghost_connection_get();
-    GD_INFO("got ghost connection");
+    GD_INFO_TRACE("got ghost connection");
 
     foreach (const Input& i, input)
     {
@@ -396,7 +395,7 @@ namespace urbi
     }
 
     c.received("");
-    GD_INFO("going to work...");
+    GD_INFO_TRACE("going to work...");
 
     if (sem)
       (*sem)++;
