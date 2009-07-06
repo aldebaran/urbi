@@ -136,7 +136,6 @@ main(int argc, char* argv[])
 
   libport::OptionValue
     arg_custom("start using the shared library FILE", "custom", 'c', "FILE"),
-    arg_debug("increase verbosity for debug", "debug", 0, "N"),
     arg_pfile("file containing the port to listen to", "port-file", 0, "FILE");
   libport::OptionFlag
     arg_plugin("start as a plugin uobject on a running server", "plugin", 'p'),
@@ -149,7 +148,7 @@ main(int argc, char* argv[])
 	     << libport::opts::help
 	     << libport::opts::version
 	     << arg_custom
-	     << arg_debug
+	     << libport::opts::debug
 	     << "Mode selection:"
 	     << arg_plugin
 	     << arg_remote
@@ -179,8 +178,7 @@ main(int argc, char* argv[])
     usage(opt_parser);
   if (arg_custom.filled())
     dll = arg_custom.value();
-  if (arg_debug.filled())
-    verbosity = arg_debug.get<unsigned>(1);
+  verbosity = GD_CURRENT_LEVEL();
 
   /// Server host name.
   std::string host = libport::opts::host.value(UClient::DEFAULT_HOST);
