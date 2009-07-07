@@ -23,28 +23,18 @@ verbose ()
 verbose "$*"
 case " $* " in
   (*' --start '* | *' -s '*)
-     # Spawning a new server, which requires a server.  Two cases:
-     # this package is part of a kernel package, in which case we
-     # should find libuobject.la in it.  Otherwise we hope a kernel
-     # was installed, and the real urbi-launch will look for it at the
-     # right place.
-     if test -f $abs_top_builddir/../src/Makefile; then
-       libuobjectdir=$abs_top_builddir/../src
-       # Be sure to find the shipped Urbi files.
-       URBI_PATH="$abs_top_srcdir/../share:$abs_top_builddir/../share:$URBI_PATH"
-       export URBI_PATH
-     fi
-     # Unfortunately, ltdl does not seem to look into the *.la
-     # file to find the dependencies, so load them first.
-     for var in LD_LIBRARY_PATH DYLD_LIBRARY_PATH
-     do
-       eval "val=\$$var"
-       val=$abs_top_builddir/../src/lib/sched/.libs:$val
-       eval "$var=\$val"
-       verbose "$var=$val"
-       export $var
-     done
-     ;;
+    # Spawning a new server, which requires a server.  Two cases:
+    # this package is part of a kernel package, in which case we
+    # should find libuobject.la in it.  Otherwise we hope a kernel
+    # was installed, and the real urbi-launch will look for it at the
+    # right place.
+    if test -f $abs_top_builddir/../src/Makefile; then
+      libuobjectdir=$abs_top_builddir/../src
+      # Be sure to find the shipped Urbi files.
+      URBI_PATH="$abs_top_srcdir/../share:$abs_top_builddir/../share:$URBI_PATH"
+      export URBI_PATH
+    fi
+    ;;
   (*)
      libuobjectdir=$abs_top_builddir/src/libuobject;;
 esac
@@ -53,6 +43,16 @@ if test -n "$libuobjectdir"; then
   set x -c "$libuobjectdir/libuobject" "$@"
   shift
 fi
+
+# Find the noninstalled libport libraries.
+libport_dir=$abs_top_builddir/libport
+for d in $libport_dir/lib/*/.libs
+do
+  export LD_LIBRARY_PATH=$d:$LD_LIBRARY_PATH
+  export DYLD_LIBRARY_PATH=$d:$DYLD_LIBRARY_PATH
+done
+verbose "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+verbose "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
 
 verbose "running $program $*"
 exec "$program" "$@"
