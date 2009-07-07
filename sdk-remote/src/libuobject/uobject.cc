@@ -129,6 +129,13 @@ namespace urbi
     throw std::runtime_error("Unexpected table name. " + n);
   }
 
+  std::pair<int, int>
+  RemoteUContextImpl::kernelVersion()
+  {
+    client_->waitForKernelVersion(true);
+    return std::make_pair(client_->kernelMajor(),
+                          client_->kernelMinor());
+  }
   // **************************************************************************
   //! UObject constructor.
   void RemoteUObjectImpl::initialize(UObject* owner)

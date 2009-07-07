@@ -28,6 +28,7 @@ namespace urbi
                         UAutoValue v7 = UAutoValue(),
                         UAutoValue v8 = UAutoValue());
       virtual UObjectMode getRunningMode();
+    virtual std::pair<int, int> kernelVersion();
       virtual void yield();
       virtual void yield_until(libport::utime_t deadline);
       virtual void yield_until_things_changed();

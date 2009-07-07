@@ -47,6 +47,8 @@ namespace urbi {
 
     /// Return the mode in which the code is running.
     virtual UObjectMode getRunningMode() = 0;
+    /// Get the kernel major,minor version
+    virtual std::pair<int, int> kernelVersion() = 0;
     /// Yield execution until next cycle. Process pending messages in remote mode.
     virtual void yield() = 0;
     /// Yield execution until \b deadline is met (see libport::utime()).
