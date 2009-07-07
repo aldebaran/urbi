@@ -78,9 +78,10 @@ namespace urbi
               << libport::exit (EX_OK);
   }
 
+  typedef std::vector<std::string> files_type;
   int
   initialize(const std::string& host, int port, size_t buflen,
-	     bool exitOnDisconnect, bool server)
+	     bool exitOnDisconnect, bool server, const files_type& files)
   {
     std::cerr << program_name()
 	      << ": " << urbi::package_info() << std::endl
@@ -122,6 +123,9 @@ namespace urbi
    //baseURBIStarter::init();
     // Send a ';' since UObject likely sent a serie of piped commands.
     URBI_SEND_COMMAND("");
+    // Load initialization files.
+    foreach (const std::string& file, files)
+      getDefaultClient()->sendFile(file);
     return 0;
   }
 
@@ -155,6 +159,8 @@ namespace urbi
     int port = UAbstractClient::URBI_PORT;
     bool server = false;
     size_t buflen = UAbstractClient::URBI_BUFLEN;
+    // Files to load
+    files_type files;
 
     // The number of the next (non-option) argument.
     unsigned argp = 1;
@@ -165,6 +171,8 @@ namespace urbi
 	buflen = libport::convert_argument<size_t>(args, i++);
       else if (arg == "--disconnect" || arg == "-d")
 	exitOnDisconnect = true;
+      else if (arg == "--file" || arg == "-f")
+        files.push_back(libport::convert_argument<const char*>(args, i++));
       else if (arg == "--stay-alive" || arg == "-s")
 	exitOnDisconnect = false;
       else if (arg == "--help" || arg == "-h")
@@ -201,11 +209,11 @@ namespace urbi
 	}
     }
 
-   initialize(host, port, buflen, exitOnDisconnect, server);
+    initialize(host, port, buflen, exitOnDisconnect, server, files);
 
-   if (block)
-     while (true)
-       usleep(30000000);
+    if (block)
+      while (true)
+        usleep(30000000);
     return 0;
   }
 
