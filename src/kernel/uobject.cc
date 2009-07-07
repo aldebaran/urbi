@@ -77,6 +77,7 @@ namespace urbi {
                          UAutoValue v7 = UAutoValue(),
                          UAutoValue v8 = UAutoValue());
       virtual UObjectMode getRunningMode();
+      virtual std::pair<int, int> kernelVersion();
       virtual void yield();
       virtual void yield_until(libport::utime_t deadline);
       virtual void yield_until_things_changed();
@@ -704,6 +705,13 @@ namespace urbi
       (new object::Float(period / 1000.0))
       (MAKE_VOIDCALL(hub, urbi::UObjectHub, update));
     getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
+  }
+
+  std::pair<int, int>
+  KernelUContextImpl::kernelVersion()
+  {
+    //FIXME: fetch from some other place
+    return std::make_pair(2, 0);
   }
 
   void
