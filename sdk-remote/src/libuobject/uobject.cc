@@ -7,6 +7,7 @@
 #include <libport/lexical-cast.hh>
 #include <libport/unistd.h>
 
+#include <libport/debug.hh>
 #include <libport/format.hh>
 
 #include <liburbi/compatibility.hh>
@@ -308,7 +309,15 @@ namespace urbi
         if (std::list<UVar*> *us = varmap().find0(array[1]))
         {
           foreach (UVar* u, *us)
-            dynamic_cast<RemoteUVarImpl*>(u->impl_)->update(array[2]);
+          {
+            if (RemoteUVarImpl* impl = dynamic_cast<RemoteUVarImpl*>(u->impl_))
+              impl->update(array[2]);
+            else
+            {
+              GD_FERROR("Unable to cast %x to a RemoteUVarImpl.", (u->impl_));
+              std::abort();
+            }
+          }
         }
         if (callbacks_type* cs = monitormap().find0(array[1]))
         {
