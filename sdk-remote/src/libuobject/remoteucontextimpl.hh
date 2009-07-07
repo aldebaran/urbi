@@ -63,7 +63,7 @@ namespace urbi
       UObject* dummyUObject;
     };
 
-    class RemoteUObjectImpl: public UObjectImpl
+    class URBI_SDK_API RemoteUObjectImpl: public UObjectImpl
     {
     public:
       virtual void initialize(UObject* owner);
@@ -75,7 +75,7 @@ namespace urbi
       int period;
     };
 
-    class RemoteUVarImpl: public UVarImpl
+    class URBI_SDK_API RemoteUVarImpl: public UVarImpl
     {
     public:
       virtual void initialize(UVar* owner);
@@ -100,7 +100,7 @@ namespace urbi
       UVar* owner_;
     };
 
-    class RemoteUGenericCallbackImpl: public UGenericCallbackImpl
+    class URBI_SDK_API RemoteUGenericCallbackImpl: public UGenericCallbackImpl
     {
     public:
       virtual void initialize(UGenericCallback* owner, bool owned);
