@@ -137,6 +137,7 @@ namespace urbi
     libport::utime_t ping_sent_;
 
     libport::AsyncCallHandler pong_timeout_handler_;
+    libport::AsyncCallHandler send_ping_handler_;
 
     libport::Semaphore ping_sem_;
 
@@ -147,6 +148,8 @@ namespace urbi
     /// Wrapper around Socket::listen.
     /// Server mode.
     error_type listen_();
+    /// Reset all asynchronous calls.
+    void resetAsyncCalls_();
   };
 
 } // namespace urbi

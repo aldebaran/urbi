@@ -145,6 +145,7 @@ namespace urbi
   UClient::onError(boost::system::error_code erc)
   {
     rc = -1;
+    resetAsyncCalls_();
     clientError(erc.message());
     notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
                              erc.message().c_str()));
@@ -160,7 +161,8 @@ namespace urbi
     if (ping_interval_ && ping_sem_.uget(1))
     {
       pong_timeout_handler_->cancel();
-      libport::asyncCall(boost::bind(&UClient::sendPing, this),
+      send_ping_handler_ = libport::asyncCall(boost::bind(&UClient::sendPing,
+                                                          this),
                          ping_interval_ - (libport::utime() - ping_sent_));
     }
     memcpy(&recvBuffer[recvBufferPosition], data, eat);
@@ -216,16 +218,29 @@ namespace urbi
   UClient::setKeepAliveCheck(unsigned ping_interval,
                              unsigned pong_timeout)
   {
+    // Always interrupt previous ping handler.
+    resetAsyncCalls_();
     // From milliseconds to microseconds.
-    if ((!ping_interval) && ping_interval_)
-      pong_timeout_handler_->cancel();
     ping_interval_ = ping_interval * 1000;
     pong_timeout_  = pong_timeout * 1000;
     if (ping_interval_)
       sendPing();
   }
 
-
+  void
+  UClient::resetAsyncCalls_()
+  {
+    if (pong_timeout_handler_)
+    {
+      pong_timeout_handler_->cancel();
+      pong_timeout_handler_.reset();
+    }
+    if (send_ping_handler_)
+    {
+      send_ping_handler_->cancel();
+      send_ping_handler_.reset();
+    }
+  }
 /*-----------------------.
 | Standalone functions.  |
 `-----------------------*/
