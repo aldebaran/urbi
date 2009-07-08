@@ -10,6 +10,7 @@
 #include <libport/cstdlib>
 #include <libport/format.hh>
 #include <libport/program-name.hh>
+#include <libport/xltdl.hh>
 
 #include <cerrno>
 #include <memory>
@@ -383,18 +384,17 @@ namespace object
     return Lobby::instances_get();
   }
 
-
   static void
-  system_loadModule(const rObject&, const std::string& name)
+  load(const std::string& name, bool global)
   {
-    static bool initialized = false;
+     static bool initialized = false;
 
     if (!initialized)
     {
       initialized = true;
       lt_dlinit();
     }
-    lt_dlhandle handle = lt_dlopenext(name.c_str());
+    lt_dlhandle handle = libport::xlt_dlopenext(name, global, 0, false);
     if (!handle)
       RAISE("Failed to open `" + name + "': " + lt_dlerror());
 
@@ -405,6 +405,18 @@ namespace object
     CxxObject::create();
     CxxObject::initialize(global_class);
     CxxObject::cleanup();
+  }
+
+  static void
+  system_loadLibrary(const rObject&, const std::string& name)
+  {
+    load(name, true);
+  }
+
+  static void
+  system_loadModule(const rObject&, const std::string& name)
+  {
+   load(name, false);
   }
 
   static libport::cli_args_type urbi_arguments_;
@@ -477,6 +489,7 @@ namespace object
     DECLARE(jobs);
     DECLARE(loadFile);
     DECLARE(loadModule);
+    DECLARE(loadLibrary);
     DECLARE(lobbies);
     DECLARE(lobby);
     DECLARE(nonInterruptible);
