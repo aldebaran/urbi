@@ -93,26 +93,12 @@ version()
 }
 
 
-static
-int
-ltdebug(unsigned verbosity, unsigned level, const char* format, va_list args)
-{
-  int errors = 0;
-  if (level <= verbosity)
-  {
-    errors += fprintf(stderr, "%s: ", program_name().c_str()) < 0;
-    errors += vfprintf(stderr, format, args) < 0;
-  }
-  return errors;
-}
-
 typedef int (*umain_type)(const libport::cli_args_type& args,
                           bool block, bool errors);
 int
 main(int argc, char* argv[])
 {
   libport::program_initialize(argc, argv);
-  unsigned verbosity = 0;
 
   enum ConnectMode
   {
@@ -178,7 +164,6 @@ main(int argc, char* argv[])
     usage(opt_parser);
   if (arg_custom.filled())
     dll = arg_custom.value();
-  verbosity = GD_CURRENT_LEVEL();
 
   /// Server host name.
   std::string host = libport::opts::host.value(UClient::DEFAULT_HOST);
@@ -219,24 +204,20 @@ main(int argc, char* argv[])
    * -Dlopen the uobjects to load.
    * -Call urbi::main found by dlsym() in libuobject.
    */
-  lt_dladd_log_function((lt_dllog_function*) &ltdebug, (void*) verbosity);
-  lt_dlinit();
-  lt_dlhandle core = libport::xlt_dlopenext(dll, true, EX_OSFILE, verbosity);
+  libport::xlt_handle core = libport::xlt_openext(dll, true, EX_OSFILE);
 
   // If URBI_UOBJECT_PATH is not defined, first look in ., then in the
   // stdlib.
   std::string uobject_path = libport::xgetenv("URBI_UOBJECT_PATH", ".:");
 
   // Load the modules using our uobject library path.
-  libport::xlt_dladvise dl;
+  libport::xlt_advise dl;
   dl.ext()
-    .exit_failure(EX_NOINPUT)
-    .verbose(verbosity)
     .path().push_back(list_of(uobject_path)(coredir / "uobjects"), ":");
 
   foreach (const std::string& s, modules)
-    dl.xdlopen(s);
+    dl.open(s);
 
-  umain_type umain = libport::xlt_dlsym<umain_type>(core, "urbi_main_args");
+  umain_type umain = core.sym<umain_type>("urbi_main_args");
   umain(args, true, true);
 }
