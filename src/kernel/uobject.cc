@@ -90,6 +90,7 @@ namespace urbi {
       virtual void registerHub(UObjectHub*);
       virtual void removeHub(UObjectHub*) ;
       virtual void setHubUpdate(UObjectHub*, ufloat);
+      virtual void instanciated(UObject* uob);
       static inline KernelUContextImpl* instance() {return instance_;}
     private:
       static KernelUContextImpl* instance_;
@@ -712,6 +713,11 @@ namespace urbi
   {
     //FIXME: fetch from some other place
     return std::make_pair(2, 0);
+  }
+
+  void
+  KernelUContextImpl::instanciated(UObject*)
+  {
   }
 
   void
