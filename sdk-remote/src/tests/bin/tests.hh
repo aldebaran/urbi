@@ -1,9 +1,11 @@
 #ifndef SDK_REMOTE_TESTS_TESTS_HH
 # define SDK_REMOTE_TESTS_TESTS_HH
 
+# include <libport/debug.hh>
 # include <libport/semaphore.hh>
 # include <libport/program-name.hh>
 # include <libport/unistd.h>
+
 # include <urbi/uclient.hh>
 # include <urbi/usyncclient.hh>
 
@@ -34,8 +36,13 @@ Test file layout
 
 
 /// Display a debug message.
-#define VERBOSE(S)				\
-  std::cerr << libport::program_name() << ": " << S << std::endl
+#define VERBOSE(S)                              \
+  do {                                          \
+    GD_CATEGORY(TEST);                          \
+    std::ostringstream o;                       \
+    o << S;                                     \
+    GD_INFO(o.str());                           \
+  } while (0)
 
 /// Send S to the Client.
 #define SEND_(Client, S)                                \

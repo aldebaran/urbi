@@ -15,7 +15,7 @@
 using libport::program_name;
 
 GD_INIT();
-GD_ADD_CATEGORY(Test);
+GD_ADD_CATEGORY(TEST);
 
 // Use this semaphore in tests that require one.  dump() takes it.
 libport::Semaphore dumpSem;
