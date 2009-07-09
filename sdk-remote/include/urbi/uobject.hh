@@ -53,9 +53,9 @@
  a basic integral or floating types, char *, std::string, UValue,
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
-# define UBindFunction(Obj, X)                          \
-  ::urbi::createUCallback(__name, "function", this,     \
-                          (&Obj::X), __name + "." #X,   \
+# define UBindFunction(Obj, X)                                          \
+  ::urbi::createUCallback(__name, "function", static_cast<Obj*>(this),  \
+                          (&Obj::X), __name + "." #X,                   \
                           false)
 
 /** Registers a function X in current object that will be called each
