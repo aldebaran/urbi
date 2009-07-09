@@ -241,6 +241,15 @@ namespace urbi
       send_ping_handler_.reset();
     }
   }
+
+  void
+  UClient::waitForKernelVersion() const
+  {
+    // FIXME: use a condition.
+    while (kernelMajor_ < 0 && !error())
+      sleep(100000);
+  }
+
 /*-----------------------.
 | Standalone functions.  |
 `-----------------------*/

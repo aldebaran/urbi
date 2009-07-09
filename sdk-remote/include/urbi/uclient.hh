@@ -89,6 +89,8 @@ namespace urbi
 
     virtual ~UClient();
 
+    virtual void waitForKernelVersion() const;
+
     /// Bounce to listen or connect, depending whether server mode.
     error_type start();
   protected:

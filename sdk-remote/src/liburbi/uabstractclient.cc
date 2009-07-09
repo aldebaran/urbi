@@ -1125,14 +1125,6 @@ namespace urbi
 # undef IDENT_TAG
   }
 
-  void
-  UAbstractClient::waitForKernelVersion() const
-  {
-    // FIXME: use a condition.
-    while (kernelMajor_ < 0 && !error())
-      usleep(100000);
-  }
-
   int
   UAbstractClient::getCurrentTimestamp() const
   {

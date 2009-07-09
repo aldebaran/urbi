@@ -212,6 +212,7 @@ namespace urbi
      * @param hasProcessingThread true if a processing thread is running, false
      * if processEvents must be called while waiting.
      */
+    using super_type::waitForKernelVersion;
     void waitForKernelVersion(bool hasProcessingThread);
 
     void setDefaultOptions(const send_options& opt);

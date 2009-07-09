@@ -388,7 +388,7 @@ namespace urbi
     /** Block until kernel version is available or an error occurrs.
      * Message processing must not depend on this thread.
      */
-    void waitForKernelVersion() const;
+    virtual void waitForKernelVersion() const = 0;
 
   protected:
     /// The full kernel version as answered by the server.
