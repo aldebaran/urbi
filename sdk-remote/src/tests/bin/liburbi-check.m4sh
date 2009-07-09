@@ -97,8 +97,11 @@ children_register remote
 # Let some time to run the tests.
 children_wait 10
 
-# Ignore the "client errors".
-sed -e '/^E client_error/d' remote.out.raw >remote.out.eff
+# Ignore the "client errors" and ping maintenance.
+sed -e '/^E client_error/d'                                             \
+    -e '/^E __gostai_private__connection_timeout Operation canceled/d'     \
+  remote.out.raw >remote.out.eff
+
 # Compare expected output with actual output.
 rst_expect output remote.out
 rst_pre "Error output" remote.err
