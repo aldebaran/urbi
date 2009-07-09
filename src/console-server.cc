@@ -173,19 +173,6 @@ namespace urbi
     return c;
   }
 
-  static
-  int
-  ltdebug(unsigned verbosity, unsigned level, const char* format, va_list args)
-  {
-    int errors = 0;
-    if (level <= verbosity)
-    {
-      errors += fprintf(stderr, "%s: ", program_name().c_str()) < 0;
-      errors += vfprintf(stderr, format, args) < 0;
-    }
-    return errors;
-  }
-
   static std::string convert_input_file(const std::string& arg)
   {
     return (arg == "-") ? "/dev/stdin" : arg;
@@ -316,10 +303,6 @@ namespace urbi
       }
     }
 #endif
-
-    // Libtool traces.
-    lt_dladd_log_function((lt_dllog_function*) &ltdebug,
-                          (void*) IF_OPTION_PARSER(GD_CURRENT_LEVEL(),0));
 
     // If not defined in command line, use the envvar.
     if (IF_OPTION_PARSER(!arg_stack.filled() && , )  getenv("URBI_STACK_SIZE"))

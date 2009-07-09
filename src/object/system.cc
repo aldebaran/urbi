@@ -387,16 +387,10 @@ namespace object
   static void
   load(const std::string& name, bool global)
   {
-     static bool initialized = false;
-
-    if (!initialized)
-    {
-      initialized = true;
-      lt_dlinit();
-    }
-    lt_dlhandle handle = libport::xlt_dlopenext(name, global, 0, false);
-    if (!handle)
+    libport::xlt_handle handle = libport::xlt_openext(name, global, 0);
+    if (!handle.handle)
       RAISE("Failed to open `" + name + "': " + lt_dlerror());
+    handle.detach();
 
     // Reload uobjects
     uobjects_reload();
