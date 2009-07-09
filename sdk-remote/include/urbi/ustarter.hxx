@@ -68,6 +68,7 @@ namespace urbi
       // FIXME: not exception-safe
       setCurrentContext(ctx);
       UObject* res =  new T(rn);
+      ctx->instanciated(res);
       res->cloner = this;
       return res;
     }

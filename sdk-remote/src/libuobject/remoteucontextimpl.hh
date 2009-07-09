@@ -41,6 +41,7 @@ namespace urbi
       virtual void registerHub(UObjectHub*);
       virtual void removeHub(UObjectHub*) ;
       virtual void setHubUpdate(UObjectHub*, ufloat);
+      virtual void instanciated(UObject* obj);
 
     public:
       /// Dispatch a message on our connection

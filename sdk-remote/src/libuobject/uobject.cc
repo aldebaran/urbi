@@ -136,10 +136,19 @@ namespace urbi
     return std::make_pair(client_->kernelMajor(),
                           client_->kernelMinor());
   }
+
+  void
+  RemoteUContextImpl::instanciated(UObject*)
+  {
+    // Protect our initialization code against rescoping by ','.
+    send(";");
+  }
+
   // **************************************************************************
   //! UObject constructor.
   void RemoteUObjectImpl::initialize(UObject* owner)
   {
+    //We were called by UObject base constructor.
     period = -1;
     this->owner_ = owner;
     if (owner->__name == "_dummy")
@@ -150,6 +159,9 @@ namespace urbi
                               "class " << owner_->__name << "{}");
     URBI_SEND_PIPED_COMMAND_C((*client),
                               "external object " << owner_->__name);
+    // At this point the child class constructor is called, and will
+    // also send piped commands.
+    // Then the starter will call instanciated() which will send a semicolon.
   }
 
 

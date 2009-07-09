@@ -72,6 +72,8 @@ namespace urbi {
     virtual void registerHub(UObjectHub*);
     virtual void removeHub(UObjectHub*) = 0;
     virtual void setHubUpdate(UObjectHub*, ufloat) = 0;
+    /// Called by the urbiStarter after each UObject instanciation.
+    virtual void instanciated(UObject*) = 0;
     typedef libport::hash_map<std::string, UObject*>  objects_type;
     objects_type objects;
     typedef libport::hash_map<std::string, UObjectHub*> hubs_type;
