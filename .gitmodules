@@ -1,12 +1,12 @@
 [submodule "tests"]
 	path = tests
-	url = git@core.gostai.com:urbivalid.git
+	url = git@git.gostai.com:urbivalid.git
 [submodule "sdk-remote"]
 	path = sdk-remote
 	url = git@git.gostai.com:sdk-remote.git
 [submodule "bison"]
 	path = bison
-	url = git@core.gostai.com:bison.git
+	url = git@git.gostai.com:bison.git
 [submodule "document-aux"]
 	path = doc/document-aux
-	url = git@core.gostai.com:document-aux.git
+	url = git@git.gostai.com:document-aux.git
