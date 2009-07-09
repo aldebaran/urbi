@@ -3,4 +3,4 @@
 	url = git@git.gostai.com:libport.git
 [submodule "jpeg"]
 	path = jpeg
-	url = git@core.gostai.com:libjpeg-6b.git
+	url = git@git.gostai.com:libjpeg-6b.git
