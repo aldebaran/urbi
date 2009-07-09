@@ -182,15 +182,15 @@ namespace urbi
 
     // Stop any previous update
     if (2 <= kernelMajor())
-      URBI_SEND_COMMAND
+      URBI_SEND_COMMAND_C(*ctx.getClient(),
         (libport::format("if (!%s.hasLocalSlot(\"%s\"))\n"
                          "  var %s.%s = Tag.new(\"%s\")|\n"
                          " %s.%s.stop",
                          owner_->__name, tagName,
                          owner_->__name, tagName, tagName,
-                         owner_->__name, tagName));
+                         owner_->__name, tagName)));
     else
-      URBI_SEND_COMMAND("stop " << tagName);
+      URBI_SEND_COMMAND_C(*ctx.getClient(), "stop " << tagName);
 
     // Find previous update timer on this object and delete.
     {
@@ -223,7 +223,7 @@ namespace urbi
 
     // Set update at given period
     std::string base = 2 <= kernelMajor() ? owner_->__name + "." : "";
-    URBI_SEND_COMMAND(
+    URBI_SEND_COMMAND_C(*ctx.getClient(),
       base << tagName << ": every(" << period << "ms)"
       "                     { " << compatibility::emit(cbName) << ";},");
 
@@ -342,6 +342,7 @@ namespace urbi
 
       case UEM_EVALFUNCTION:
       {
+        GD_FINFO_DUMP("dispatching call of %s...", ((std::string)(array[1])));
 	callbacks_type tmpfun = functionmap()[array[1]];
         const std::string var = array[2];
 	callbacks_type::iterator tmpfunit = tmpfun.begin();
@@ -350,32 +351,26 @@ namespace urbi
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
+        GD_FINFO_DUMP("...dispatch of %s done", ((std::string)(array[1])));
 	switch (retval.type)
         {
         case DATA_BINARY:
 	  // Send it
-	  if (UClient* client = urbi::getDefaultClient())
-          {
-            // URBI_SEND_COMMAND does not now how to send binary since it
-            // depends on the kernel version.
-            client->startPack();
-            *client << " var  " << var << "=";
-            client->send(retval);
-            *client << ";";
-            client->endPack();
-          }
-	  else
-            // Send void if no client. Would block anyway.
-	    goto case_void;
+          // URBI_SEND_COMMAND does not now how to send binary since it
+          // depends on the kernel version.
+          client_->startPack();
+          *client_ << " var  " << var << "=";
+          client_->send(retval);
+          *client_ << ";";
+          client_->endPack();
           break;
 
         case DATA_VOID:
-        case_void:
-          URBI_SEND_COMMAND("var " << var);
+          URBI_SEND_COMMAND_C((*client_), "var " << var);
           break;
 
         default:
-          URBI_SEND_COMMAND("var " << var << "=" << retval);
+          URBI_SEND_COMMAND_C((*client_), "var " << var << "=" << retval);
           break;
         }
       }
@@ -425,7 +420,7 @@ namespace urbi
         return URBI_CONTINUE;
     }
     // Send a terminating ';' since code send by the UObject API uses '|'.
-    URBI_SEND_COMMAND("");
+    URBI_SEND_COMMAND_C((*client_), "");
     return URBI_CONTINUE;
   }
   void
