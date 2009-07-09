@@ -1,6 +1,6 @@
 [submodule "libport"]
 	path = libport
-	url = git@core.gostai.com:libport.git
+	url = git@git.gostai.com:libport.git
 [submodule "jpeg"]
 	path = jpeg
 	url = git@core.gostai.com:libjpeg-6b.git
