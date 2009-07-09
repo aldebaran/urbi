@@ -3,7 +3,7 @@
 	url = git@core.gostai.com:urbivalid.git
 [submodule "sdk-remote"]
 	path = sdk-remote
-	url = git@core.gostai.com:sdk-remote.git
+	url = git@git.gostai.com:sdk-remote.git
 [submodule "bison"]
 	path = bison
 	url = git@core.gostai.com:bison.git
