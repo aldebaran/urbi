@@ -14,9 +14,11 @@ namespace urbi
 
     inline
     std::string
-    evaluate_in_channel_open(const std::string& name)
+    evaluate_in_channel_open(const std::string& name, unsigned major)
     {
-      if (kernelMajor() < 2)
+      std::cerr << "evaluate_in_channel_open(" << name << ", " << major << ")" << std::endl;
+
+      if (major < 2)
         return name + " << ";
       else
         return (SYNCLINE_PUSH()
@@ -26,9 +28,9 @@ namespace urbi
 
     inline
     std::string
-    evaluate_in_channel_close(const std::string& name)
+    evaluate_in_channel_close(const std::string& name, unsigned major)
     {
-      if (kernelMajor() < 2)
+      if (major < 2)
         return ",";
       else
         return ("\n"

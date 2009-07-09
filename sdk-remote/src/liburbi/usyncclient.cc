@@ -286,14 +286,16 @@ namespace urbi
       return 0;
     sendBufferLock.lock();
     std::string tag = make_tag(*this, opt_used);
-    pack("%s", compatibility::evaluate_in_channel_open(tag).c_str());
+    pack("%s", compatibility::evaluate_in_channel_open
+         (tag, kernelMajor()).c_str());
     rc = vpack(format, arg);
     if (rc < 0)
     {
       sendBufferLock.unlock();
       return 0;
     }
-    pack("%s", compatibility::evaluate_in_channel_close(tag).c_str());
+    pack("%s", compatibility::evaluate_in_channel_close
+         (tag, kernelMajor()).c_str());
     queueLock_.lock();
     rc = effective_send(sendBuffer);
     sendBuffer[0] = 0;
