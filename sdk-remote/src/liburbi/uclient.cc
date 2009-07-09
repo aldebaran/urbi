@@ -135,8 +135,15 @@ namespace urbi
          "  var lobby.%s = Channel.new(\"%s\") | {};\n"
          SYNCLINE_POP(),
          internalPongTag, internalPongTag);
-    host_ = getRemoteHost();
-    port_ = getRemotePort();
+    // The folowwing calls may fail if we got disconnected.
+    try
+    {
+      host_ = getRemoteHost();
+      port_ = getRemotePort();
+    }
+    catch(std::exception&)
+    { // Ignore the error, next read attempt will trigger onError.
+    }
     if (ping_interval_)
       sendPing();
 }
