@@ -16,8 +16,6 @@ namespace urbi
     std::string
     evaluate_in_channel_open(const std::string& name, unsigned major)
     {
-      std::cerr << "evaluate_in_channel_open(" << name << ", " << major << ")" << std::endl;
-
       if (major < 2)
         return name + " << ";
       else
