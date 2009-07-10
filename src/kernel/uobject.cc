@@ -757,6 +757,11 @@ namespace urbi
   void
   KernelUVarImpl::initialize(UVar* owner)
   {
+    // Protect against multiple parallel creation of the same UVar.
+    getCurrentRunner().non_interruptible_set(true);
+    libport::Finally f;
+    f << boost::bind(&Runner::non_interruptible_set,
+                     boost::ref(getCurrentRunner()), false);
     owner_ = owner;
     ECHO("__init " << owner_->get_name());
     owner_->owned = false;
