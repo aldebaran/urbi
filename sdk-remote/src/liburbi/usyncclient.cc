@@ -15,11 +15,10 @@ namespace urbi
 {
 
   USyncClient::options::options()
-  : super_type::options()
-  , startCallbackThread_(true)
-  , connectCallback_(0)
-  {
-  }
+    : super_type::options()
+    , startCallbackThread_(true)
+    , connectCallback_(0)
+  {}
 
   const USyncClient::send_options USyncClient::send_options::default_options =
     USyncClient::send_options();
