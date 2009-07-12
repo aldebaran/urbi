@@ -109,6 +109,7 @@ namespace urbi {
     class KernelUVarImpl: public UVarImpl
     {
     public:
+      KernelUVarImpl();
       virtual void initialize(UVar* owner);
       virtual void clean();
       virtual void setOwned();
@@ -752,6 +753,11 @@ namespace urbi
     args.push_back(me);
     args.push_back(new object::Float(period / 1000.0));
     getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
+  }
+
+  KernelUVarImpl::KernelUVarImpl()
+    : bypassMode_(false)
+  {
   }
 
   void
