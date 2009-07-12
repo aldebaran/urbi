@@ -15,6 +15,8 @@
 urbi::UDataType uvalue_type(const object::rObject& o)
 {
   CAPTURE_GLOBAL(Binary);
+  if (object::rUValue bv = o->as<object::UValue>())
+    return bv->value_get().type;
   if (o->as<object::Float>())
     return urbi::DATA_DOUBLE;
   if (o->as<object::String>())
