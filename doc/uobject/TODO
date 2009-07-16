@@ -1,0 +1,59 @@
+On a un problème qu'il va falloir régler asap et que j'ai déjà soulevé
+plusieurs fois. Les gens qui s'interessent à Urbi en tant que
+middleware (robotique ou jeu) n'ont pas à leur disposition de
+quickstart digne de ce nom. Une step by step introduction qui permet à
+n'importe qui de mettre le pied à l'étrier, et le bon pied.
+
+Le bon pied, car actuellement les tutoriaux et autres quickstart dispo
+sur le web mettent l'accent sur le langage Urbiscript. UObject arrive
+en dernière position à la fin du document, comme une cerise sur le
+gâteau. Or, pour les gens intéressés par un middleware, ce n'est pas
+une cerise, c'est précisément le gâteau. De plus, il y a l'éternelle
+confusion script vs C++ qui est renforcée par le fait qu'on ne voit
+pas de C++ avant la fin du document.
+
+Je voudrais qu'on démarre, sous la responsabilité d'Akim, la rédaction
+d'un quickstart de maximum 10 pages qui parte avant tout de UObject,
+puis introduise ensuite Urbiscript et ses subtilités comme un outil
+d'orchestration. Ca donnerait un plan du genre:
+
+* Description approche Urbi, philosophie (orchestration etc)
+=> un exemple de code Urbiscript qui orchestre 3 UObject de manière
+simple mais non triviale, avec at, &, events, tags et qui servira de
+fil conducteur au quickstart (le but du quickstart est de refaire cet
+exemple initial).
+
+* Description basique de l'API UObject et de l'approche UObject
+(binding explicite)
+
+* Asynchronisme dans UObject: notifychange, timers
+
+* Compilation et branchement de UObject (urbi-launch): expliquer les
+deux modes: distant / plugé
+
+* Cycle complet de lancement d'une appli Urbi: lancement d'urbi,
+execution d'urbi.ini, chargement dynamique des UObjects
+
+* Introduction à Urbiscript (rappeler que c'est avant tout un langage
+comme les autres, avec if/for/while, etc), puis passer rapidement aux
+elements clefs de la prog evenementielle dans Urbi: at/whenever
+
+* Parallelisme explicite: &
+
+* Tags et controle d'execution
+
+* Channels et liburbi (les principes, renvoyer à la doc liburbi pour
+l'API)
+
+* All together, on reprend l'exemple du début et on détaille le code
+des UObjects utilisés, puis le code urbiscript.
+
+* Conclusion note: expliquer qu'on peut embedder l'engine Urbi dans
+une appli native C++ (tout le monde le demande), qu'on peut faire des
+bridges génériques avec d'autres archis à composants (citer CORBA),
+donner le lien pour télécharger, le lien vers la doc du langage
+urbiscript, vers la doc de UObject, etc.
+
+Ce quickstart devra d'abord etre dispo en pdf puis ensuite une version
+web sera faite, pour remplacer l'actuel "quickstart" sur la front
+page.
