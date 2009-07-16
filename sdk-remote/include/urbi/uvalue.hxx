@@ -147,7 +147,7 @@ namespace urbi
 # undef CONTAINER_TO_UVALUE_DECLARE
 
 
-#define CTOR_AND_ASSIGN_AND_COMMA(Type)		\
+# define CTOR_AND_ASSIGN_AND_COMMA(Type)        \
   inline                                        \
   UValue& UValue::operator, (Type rhs)          \
   {						\
@@ -173,11 +173,11 @@ namespace urbi
   CTOR_AND_ASSIGN_AND_COMMA(const USound&);
   CTOR_AND_ASSIGN_AND_COMMA(const UImage&);
 
-#undef CTOR_AND_ASSIGN_AND_COMMA
+# undef CTOR_AND_ASSIGN_AND_COMMA
 
 
 
-#define UVALUE_INTEGRAL_CAST(Type)                              \
+# define UVALUE_INTEGRAL_CAST(Type)                             \
   inline                                                        \
   UValue::operator Type() const                                 \
   {                                                             \
@@ -188,7 +188,7 @@ namespace urbi
   UVALUE_INTEGRAL_CAST(unsigned int)
   UVALUE_INTEGRAL_CAST(long)
   UVALUE_INTEGRAL_CAST(unsigned long)
-#undef UVALUE_INTEGRAL_CAST
+# undef UVALUE_INTEGRAL_CAST
 
 
   inline
@@ -253,41 +253,28 @@ namespace urbi
 
 #undef UVALUE_CASTER_DEFINE
 
-  template <>
-  struct uvalue_caster<const UValue&>
-  {
-    const UValue& operator()(UValue& v)
-      {
-        return v;
-      }
-  };
 
-  template <>
-  struct uvalue_caster<UValue&>
-  {
-    UValue& operator()(UValue& v)
-      {
-        return v;
-      }
-  };
+  /*-----------------------------------.
+  | Casting an UValue into an UValue.  |
+  `-----------------------------------*/
 
-  template <>
-  struct uvalue_caster<UValue>
-  {
-    UValue operator()(UValue& v)
-      {
-        return v;
-      }
-  };
+# define UVALUE_CASTER_DEFINE(Type)              \
+  template <>                                   \
+  struct uvalue_caster<Type>                    \
+  {                                             \
+    Type operator()(UValue& v)                  \
+    {                                           \
+      return v;                                 \
+    }                                           \
+  }
 
-  template <>
-  struct uvalue_caster<const UValue>
-  {
-    const UValue operator()(UValue& v)
-      {
-        return v;
-      }
-  };
+  UVALUE_CASTER_DEFINE(const UValue&);
+  UVALUE_CASTER_DEFINE(UValue&);
+  UVALUE_CASTER_DEFINE(const UValue);
+  UVALUE_CASTER_DEFINE(UValue);
+# undef UVALUE_CASTER_DEFINE
+
+
 
   // The following ones are defined in uvalue-common.cc.
   template <>
@@ -310,6 +297,7 @@ namespace urbi
   UVALUE_CASTER_DECLARE(const char*);
 
 # undef UVALUE_CASTER_DECLARE
+
 
 # ifndef UOBJECT_NO_LIST_CAST
 
