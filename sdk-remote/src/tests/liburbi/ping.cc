@@ -6,13 +6,13 @@ client.setCallback(callback(&dump), "output");
 client.setCallback(callback(&dump), "__gostai_private__internal_pong");
 
 // Test from without ping to with ping.
-client.setKeepAliveCheck(100, 50);
+client.setKeepAliveCheck(500, 250);
 //= D __gostai_private__internal_pong 1
 dumpSem--;
 SEND("output << \"before sleep\";");
 //= D output "before sleep"
 dumpSem--;
-SEND("sleep(0.1);");
+SEND("sleep(0.5);");
 //= D __gostai_private__internal_pong 1
 dumpSem--;
 SEND("output << \"after sleep\";");
@@ -20,13 +20,13 @@ SEND("output << \"after sleep\";");
 dumpSem--;
 
 // Test from with ping to with different ping.
-client.setKeepAliveCheck(50, 25);
+client.setKeepAliveCheck(250, 125);
 //= D __gostai_private__internal_pong 1
 dumpSem--;
 SEND("output << \"before sleep\";");
 //= D output "before sleep"
 dumpSem--;
-SEND("sleep(0.05);");
+SEND("sleep(0.25);");
 //= D __gostai_private__internal_pong 1
 dumpSem--;
 SEND("output << \"after sleep\";");
@@ -45,17 +45,19 @@ dumpSem--;
 
 // Test from without ping to with ping
 // with pong timeout > ping interval.
-client.setKeepAliveCheck(25, 150);
+client.setKeepAliveCheck(100, 500);
 //= D __gostai_private__internal_pong 1
 dumpSem--;
 SEND("output << \"before sleep\";");
 //= D output "before sleep"
 dumpSem--;
-SEND("sleep(0.2);");
+SEND("sleep(0.1);");
 //= D __gostai_private__internal_pong 1
 dumpSem--;
 SEND("output << \"after sleep\";");
 //= D output "after sleep"
-dumpSem--;
+SEND("__gostai_private__internal_pong.enabled = false;");
+SEND("sleep(0.1);");
+//= E client_error Lost connection with server: ping timeout
 
 END_TEST
