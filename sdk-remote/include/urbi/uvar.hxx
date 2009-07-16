@@ -15,6 +15,7 @@
 #ifndef URBI_UVAR_HXX
 # define URBI_UVAR_HXX
 
+# include <cassert>
 # include <urbi/uvar.hh>
 
 namespace urbi
@@ -39,6 +40,7 @@ namespace urbi
   void
   UVar::setOwned()
   {
+    assert(impl_);
     impl_->setOwned();
   }
 
@@ -46,6 +48,7 @@ namespace urbi
   UDataType
   UVar::type() const
   {
+    assert(impl_);
     return impl_->type();
   }
 
@@ -53,33 +56,40 @@ namespace urbi
   void
   UVar::syncValue()
   {
+    assert(impl_);
     impl_->sync();
   }
 
   inline const UValue&
   UVar::val() const
   {
-      return impl_->get();
+    assert(impl_);
+    return impl_->get();
   }
+
   inline
   void
   UVar::keepSynchronized()
   {
     impl_->keepSynchronized();
   }
+
   inline
   UVar&
   UVar::operator=(const UValue& v)
   {
+    assert(impl_);
     impl_->set(v);
     return *this;
   }
-  #define SET(type)               \
+
+# define SET(type)                         \
   inline UVar& UVar::operator=(type tv)    \
-  {                              \
-    UValue v(tv, false);       \
-    impl_->set(v);               \
-    return *this;                \
+  {                                        \
+    UValue v(tv, false);                   \
+    assert(impl_);                         \
+    impl_->set(v);                         \
+    return *this;                          \
   }
 
   SET(ufloat)
@@ -88,11 +98,12 @@ namespace urbi
   SET(const UImage&)
   SET(const USound&)
   SET(const UList&)
-  #undef SET
+# undef SET
 
- #define GET(type)                    \
+# define GET(type)                    \
   inline UVar::operator type() const  \
   {                                   \
+    assert(impl_);                    \
     return impl_->get();              \
   }
 
@@ -103,37 +114,44 @@ namespace urbi
   GET(ufloat)
   GET(std::string)
   GET(UList)
-  #undef GET
+# undef GET
+
   inline UVar::operator UBinary*() const
   {
-    return new UBinary((const UBinary&)*this);
+    return new UBinary(static_cast<const UBinary&>(*this));
   }
 
   inline void UVar::setProp(UProperty prop, const UValue &v)
   {
+    assert(impl_);
     impl_->setProp(prop, v);
   }
 
   inline void UVar::setProp(UProperty prop, const char* v)
   {
     UValue tv(v);
+    assert(impl_);
     impl_->setProp(prop, tv);
   }
 
   inline void UVar::setProp(UProperty prop, ufloat v)
   {
     UValue tv(v);
+    assert(impl_);
     impl_->setProp(prop, tv);
   }
 
   inline bool
   UVar::setBypass(bool enable)
   {
+    assert(impl_);
     return impl_->setBypass(enable);
   }
+
   inline UValue
   UVar::getProp(UProperty prop)
   {
+    assert(impl_);
     return impl_->getProp(prop);
   }
 } // end namespace urbi

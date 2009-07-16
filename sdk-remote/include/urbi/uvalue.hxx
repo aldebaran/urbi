@@ -224,11 +224,12 @@ namespace urbi
 
   // Run the uvalue_caster<Type> on v.
   template <typename Type>
-  typename uvar_ref_traits<typename libport::unref_traits<Type>::type>::type
+  typename uvar_ref_traits<typename libport::traits::remove_reference<Type>::type>::type
   uvalue_cast(UValue& v)
   {
-    return uvalue_caster<typename libport::unref_traits<Type>::type>()(v);
+    return uvalue_caster<typename libport::traits::remove_reference<Type>::type>()(v);
   }
+
 
 # define UVALUE_CASTER_DEFINE(Type)		\
   template <>					\

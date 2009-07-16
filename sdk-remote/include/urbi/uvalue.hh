@@ -17,7 +17,7 @@
 
 # include <vector>
 
-# include <libport/select-ref.hh>
+# include <libport/traits.hh>
 # include <libport/ufloat.h>
 
 # include <urbi/fwd.hh>
@@ -237,7 +237,7 @@ namespace urbi
   | Casters.  |
   `----------*/
 
-  // For each Type, define an operator() that cast its UValue&
+  // For each Type, define an operator() that casts its UValue&
   // argument into Type.  We need partial specialization.
   template <typename Type>
   struct uvalue_caster
@@ -260,7 +260,7 @@ namespace urbi
 
   // Run the uvalue_caster<Type> on v.
   template <typename Type>
-  typename uvar_ref_traits<typename libport::unref_traits<Type>::type>::type
+  typename uvar_ref_traits<typename libport::traits::remove_reference<Type>::type>::type
   uvalue_cast (UValue& v);
 
 } // namespace urbi
