@@ -1,0 +1,656 @@
+\chapter{Use cases}
+\label{sec:uob:uses}
+\section{Writing a servomotor device}
+
+Let's write a \lstinline{UObject} for a servomotor device whose
+underlying API is:
+
+\begin{itemize}
+\item \lstinline{bool initialize (int id)}\\
+  Initialize the servomotor with given ID.
+\item \lstinline{double getPosition (int id)}\\
+  Read servomotor of given id position.
+\item \lstinline{void setPosition (int id, double pos)}\\
+  Send a command to servomotor.
+\item \lstinline{void setPID (int id, int p, int i, int d)}\\
+  Set P, I, and D arguments.
+\end{itemize}
+
+First our header. Our servo device provides an attribute named
+\lstinline{val}, the standard \urbi name, and two ways to set PID
+gain: a method, and three variables.
+
+\begin{cxx}
+class servo : public urbi::UObject //must inherits UObject
+{
+public:
+  // the class must have a single constructor taking a string
+  servo(const std::string&);
+
+  // Urbi  constructor
+  int init(int id);
+
+  // main attribute
+  urbi::UVar val;
+
+  // position variables:
+  //  P gain
+  urbi::UVar P;
+  //  I gain
+  urbi::UVar I;
+  //  D gain
+  urbi::UVar D;
+
+  // callback for val change
+  int valueChanged(UVar& v);
+  //callback for val access
+  int valueAccessed(UVar& v);
+  // callback for PID change
+  int pidChanged(UVar& v);
+
+  // method to change all values
+  void setPID(int p, int i, int d);
+
+  // motor ID
+  int id_;
+};
+\end{cxx}
+
+The constructor only registers init, so that our default instance
+\lstinline{servo} does nothing, and can only be used to create new
+instances.
+
+\begin{cxx}
+servo::servo (const std::string& s)
+  : urbi::UObject (s)
+{
+   // register init
+   UBindFunction (servo, init);
+}
+\end{cxx}
+
+The \lstinline{init} function, called in a new instance each time a
+new \urbi instance is created, registers the four variables
+(\lstinline{val}, \lstinline{P}, \lstinline{I} and \lstinline{D}), and
+sets up callback functions.
+
+\begin{cxx}
+// Urbi constructor.
+int
+servo::init (int id)
+{
+  id_ = id;
+
+  if (!initialize (id))
+    return 1;
+
+  UBindVar (servo, val);
+
+  // val is both a sensor and an actuator.
+  Uowned (val);
+
+  // Set blend mode to mix.
+  val.blend = urbi::UMIX;
+
+  // Register variables.
+  UBindVar (servo, P);
+  UBindVar (servo, I);
+  UBindVar (servo, D);
+
+  // Register functions.
+  UBindFunction (servo, setPID);
+
+  // Register callbacks on functions.
+  UNotifyChange (val, &servo::valueChanged);
+  UNotifyAccess (val, &servo::valueAccessed);
+  UNotifyChange (P, &servo::pidChanged);
+  UNotifyChange (I, &servo::pidChanged);
+  UNotifyChange (D, &servo::pidChanged);
+
+  return 0;
+}
+\end{cxx}
+
+Then we define our callback methods. \lstinline{servo::valueChanged}
+will be called each time the \lstinline{val} variable is modified,
+just after the value is changed: we use this method to send our servo
+commands. \lstinline{servo::valueAccessed} is called just before the
+value is going to be read. In this function we request the current
+value from the servo, and set \lstinline{val} accordingly.
+
+\begin{cxx}
+// Called each time val is written to.
+int
+servo::valueChanged (urbi::UVar& v)
+{
+  // v is a reference to our class member val: you can use both
+  // indifferently.
+  setPosition (id, (double)val);
+
+  // The return value is ignored for now, just return 0.
+  return 0;
+}
+
+// Called each time val is read.
+int
+servo::valueAccessed (urbi::UVar& v)
+{
+  // v is a reference to val.
+  val = getPosition (id);
+
+  return 0;
+}
+\end{cxx}
+
+\lstinline{servo::pidChanged} is called each time one of the PID
+variables is written to. The function \lstinline{servo::setPID} can be
+called directly from \urbi.
+
+\begin{cxx}
+int
+servo::pidChanged (urbi::UVar& v)
+{
+  setPID(id, (int)P, (int)I, (int)D);
+
+  return 0;
+}
+
+void
+servo::setPID (int p, int i, int d)
+{
+  setPID (id, p, i, d);
+  P = p;
+  I = i;
+  D = d;
+}
+
+// Register servo class to the Urbi kernel.
+UStart (servo);
+\end{cxx}
+
+That's it, compile this module, and you can use it within \us:
+
+\begin{urbifixme}
+// Create a new instance.  Calls init (1).
+headPan = new servo (1);
+
+// Calls setPID ().
+headPan.setPID (8,2,1);
+
+// Calls valueChanged ().
+headPan.val = 13;
+
+// Calls valueAccessed ().
+headPan.val * 12;
+
+// Periodically calls valueChanged ().
+headPan.val = 0 sin:1s ampli:20,
+
+// Periodically calls valueAccessed ().
+at (headPan.val < 0)
+  echo ("left");
+\end{urbifixme}
+
+The sample code above has one problem: \lstinline{valueAccessed} and
+\lstinline{valueChanged} are called each time the value is read or
+written from \urbi, which can happen quite often. This is a problem if
+sending the actual command (\lstinline{setPosition} in our example)
+takes time to execute. There are two solutions to this issue.
+
+\subsection{Caching}
+
+One solution is to remember the last time the value was read/written,
+and not apply the new command before a fixed time. Note that the
+kernel is doing this automatically for \lstinline{UOwned}'d variables
+that are in a blend mode different than \lstinline{normal}. So the
+easiest solution to the above problem is likely to set the variable to
+the \lstinline{mix} blending mode. The unavoidable drawback is that
+commands are not applied immediately, but only after a small delay.
+
+\subsection{Using timers}
+
+Instead of updating/fetching the value on demand, you can chose to do
+it periodically based on a timer. A small difference between the two
+API methods comes in handy for this case: the \lstinline{update()}
+virtual method called periodically after being set up by
+\lstinline{USetUpdate(interval)} is called just after one pass of
+\urbi code execution, whereas the timers set up by
+\lstinline{USetTimer} are called just before one pass of \urbi code
+execution. So the ideal solution is to read your sensors in the second
+callback, and write to your actuators in the first. Our previous
+example (omitting PID handling for clarity) can be rewritten. The
+header becomes:
+
+\begin{cxx}
+// Inherit from UObject.
+class servo : public urbi::UObject
+{
+public:
+  // The class must have a single constructor taking a string.
+  servo (const std::string&)
+
+  // Urbi constructor.
+  int init (int id);
+
+  // Called periodically.
+  virtual int update ();
+  // Called periodically.
+  int getVal ();
+
+  // Our position variable.
+  urbi::UVar val;
+
+  // Motor ID.
+  int id_;
+};
+\end{cxx}
+
+Constructor is unchanged, \lstinline{init} becomes:
+
+\begin{cxx}
+// Urbi constructor.
+int
+servo::init (int id)
+{
+  id_ = id;
+
+  if (!initialize (id))
+    return 0;
+
+  UBindVar (servo,val);
+  // Val is both a sensor and an actuator.
+  UOwned(val);
+
+  // Will call update () periodically.
+  USetUpdate(1);
+  // Idem for getVal ().
+  USetTimer (1, &servo::getVal);
+
+  return 0;
+}
+\end{cxx}
+
+\lstinline{valueChanged} becomes \lstinline{update} and
+\lstinline{valueAccessed} becomes \lstinline{getVal}. Instead of being
+called on demand, they are now called periodically. The period of the
+call cannot be lower than the value returned by
+\lstinline{Object.getPeriod;}
+so you can set it to 0 to mean ``as fast as is useful''.
+
+\section{Using hubs to group objects}
+
+Now, suppose that, for our previous example, we can speed things up by
+sending all the servomotor commands at the same time, using the
+following method that takes two arrays of ids and positions.
+
+\begin{cxx}
+void setPositions(int count, int* ids, double* positions);
+\end{cxx}
+
+A hub is the perfect way to handle this task. The UObject header stays
+the same. We add a hub declaration:
+
+\begin{cxx}
+class servohub : public urbi::UObjectHub
+{
+public:
+  // The class must have a single constructor taking a string.
+  servohub (const std::string&);
+
+  // Called periodically.
+  virtual int update ();
+
+  // Called by servo.
+  void addValue (int id, double val);
+
+  int* ids;
+  double* vals;
+  int size;
+  int count;
+};
+\end{cxx}
+
+\lstinline{servo::update} becomes a call to the \lstinline{addValue}
+method of the hub:
+
+\begin{cxx}
+int
+servo::update()
+{
+  ((servohub*)getUObjectHub ("servohub"))->addValue (id, (double)val);
+};
+\end{cxx}
+
+The following line can be added to the servo \lstinline{init} method,
+although it has no use in our specific example:
+
+\begin{cxx}
+URegister(servohub);
+\end{cxx}
+
+Finally, the implementation of our hub methods is:
+
+\begin{cxx}
+servohub::servohub (const std::string& s)
+  : UObjectHub (s)
+  , ids   (0)
+  , vals  (0)
+  , size  (0)
+  , count (0)
+{
+  // setup our timer
+  USetUpdate (1);
+}
+
+int
+servohub::update ()
+{
+  // Called periodically.
+  setPositions (count, ids, vals);
+
+  // Reset position counter.
+  count = 0;
+
+  return 0;
+}
+
+void
+servohub::addValue (int id, double val)
+{
+  if (count + 1 < size)
+  {
+    // Allocate more memory.
+    ids = (int*) realloc (ids, (count + 1) * sizeof (int));
+    vals = (double*) realloc (vals, (count + 1) * sizeof (double));
+    size = count + 1;
+  }
+  ids[count] = id;
+  vals[count++] = val;
+}
+
+UStartHub (servohub);
+\end{cxx}
+
+Periodically, the \lstinline{update} method is called on each servo
+instance, which adds commands to the hub arrays, then the
+\lstinline{update} method of the hub is called, actually sending the
+command and resetting the array.
+
+\subsection{Alternate implementation}
+
+Alternatively, to demonstrate the use of the members hub variable, we
+can entirely remove the \lstinline{update} method in the servo class
+(and the \lstinline{USetUpdate()} call in \lstinline{init}), and
+rewrite the hub \lstinline{update} method the following way:
+
+\begin{cxx}
+int servohub::update()
+{
+  //called periodically
+  for (UObjectList::iterator i = members.begin ();
+       i != members.end ();
+       ++i)
+    addValue (((servo*)*i)->id, (double)((servo*)*i)->val);
+  setPositions(count, ids, vals);
+  // reset position counter
+  count = 0;
+
+  return 0;
+}
+\end{cxx}
+
+\section{Writing a camera device}
+
+A camera device is an UObject whose \lstinline{val} field is a binary
+object. The \urbi kernel itself doesn't make any difference between
+all the possible binary formats and data type, but the API provides
+image-specific structures for convenience. You must be careful about
+memory management. The \lstinline{UBinary} structure handles its own
+memory: copies are deep, and the destructor frees the associated
+buffer. The \lstinline{UImage} and \lstinline{USound} structures do
+not.
+
+Let's suppose we have an underlying camera API with the following functions:
+\begin{itemize}
+\item \lstinline{bool initialize (int id)}\\
+  Initialize the camera with given ID.
+\item \lstinline{int getWidth (int id)}\\
+  Return image width.
+\item \lstinline{int getHeight (int id)}\\
+  Return image height.
+\item \lstinline{char* getImage (int id)}\\
+  Get image buffer of format RGB24.  The buffer returned is always the
+  same and doesn't have to be freed.
+\end{itemize}
+
+Our device code can be written as follows:
+\begin{cxx}
+// Inherit from UObject.
+class Camera : public urbi::UObject
+{
+public:
+  // The class must have a single constructor taking a string.
+  Camera(const std::string&);
+
+  // Urbi constructor.
+  int init (int id);
+
+  // Our image variable and dimensions.
+  urbi::UVar val;
+  urbi::UVar width;
+  urbi::UVar height;
+
+  // Called on access.
+  int getVal (UVar&);
+
+  // Called periodically.
+  virtual int update ();
+
+  // Frame counter for caching.
+  int frame;
+  // Frame number of last access.
+  int accessFrame;
+  // Camera id.
+  int id_;
+  // Storage for last captured image.
+  UBinary bin;
+};
+\end{cxx}
+
+The constructor only registers \lstinline{init}:
+
+\begin{cxx}
+Camera::Camera (const std::string& s)
+  : urbi::UObject (s)
+  , frame (0)
+{
+  UBindFunction (Camera, init);
+}
+\end{cxx}
+
+The \lstinline{init} function binds the variable, a function called on
+access, and sets a timer up on update. It also initializes the
+\lstinline{UBinary} structure.
+
+\begin{cxx}
+int
+Camera::init (int id)
+{
+  //urbi constructor
+  id_ = id;
+  frame = 0;
+  accessFrame = 0;
+
+  if (!initialize (id))
+    return 0;
+
+  UBindVar (Camera, val);
+  UBindVar (Camera, width);
+  UBindVar (Camera, height);
+  width = getWidth (id);
+  height = getHeight (id);
+
+  UNotifyAccess (val, &Camera::getVal);
+
+  bin.type = BINARY_IMAGE;
+  bin.image.width = width;
+  bin.image.height = height;
+  bin.image.imageFormat = IMAGE_RGB;
+  bin.image.size = width * height * 3;
+
+  // Call update () periodically.
+  USetUpdate (1);
+
+  return 0;
+}
+\end{cxx}
+
+The \lstinline{update} function simply updates the frame counter:
+
+\begin{cxx}
+int
+Camera::update ()
+{
+  ++frame;
+  return 0;
+}
+\end{cxx}
+
+The \lstinline{getVal} updates the camera value, only if it hasn't
+already been called this frame, which provides a simple caching
+mechanism to avoid performing the potentially long operation of
+acquiring an image too often.
+
+\begin{cxx}
+int
+Camera::getVal(urbi::UVar&)
+{
+  if (frame == accessFrame)
+    return 1;
+
+  bin.image.data = getImage (id);
+  // Assign image to bin.
+  val = bin;
+}
+
+UStart(Camera);
+\end{cxx}
+
+The image data is copied inside the kernel when proceeding this way.
+
+Be careful, suppose that we had created the \lstinline{UBinary}
+structure inside the \lstinline{getVal} method, our buffer would have
+been freed at the end of the function. To avoid this, set it to 0
+after assigning the \lstinline{UBinary} to the \lstinline{UVar}.
+
+\subsection{Optimization in plugin mode}
+
+In plugin mode, it is possible to access the buffer used by the kernel
+by casting the \lstinline{UVar} to a \lstinline{UImage}. You can
+modify the content of the kernel buffer but no other argument.
+
+\section{Writing a speaker or microphone device}
+
+Sound handling works similarly to image manipulation, the
+\lstinline{USound} structure is provided for this purpose. The
+recommended way to implement a microphone is to fill the
+\lstinline{UObject} val variable with the sound data corresponding to
+one kernel period. If you do so, the \urbi code
+\lstinline{loop tag:micro.val,} will produce the expected result.
+
+\section{Writing a softdevice: ball detection}
+
+Algorithms that require intense computation can be written in \Cxx but
+still be usable within \urbi: they acquire their data using
+\lstinline{UVar} referencing other modules' variables, and output
+their results to other \lstinline{UVar}. Let's consider the case of a
+ball detector device that takes an image as input, and outputs the
+coordinates of a ball if one is found.
+
+The header is defined like:
+
+\begin{cxx}
+class BallTracker : public urbi::UObject
+{
+public:
+  BallTracker (const std::string&);
+  int init (const std::string& varname);
+
+  // Is the ball visible?
+  urbi::UVar visible;
+
+  // Ball coordinates.
+  urbi::UVar x;
+  urbi::UVar y;
+ };
+\end{cxx}
+
+The constructor only registers \lstinline{init}:
+
+\begin{cxx}
+// The constructor registers init only.
+BallTracker::BallTracker (const::string& s)
+  : urbi::UObject (s)
+{
+  UBindFunction (BallTracker, init);
+}
+\end{cxx}
+
+The \lstinline{init} function binds the variables and a callback on
+update of the image variable passed as a argument.
+
+\begin{cxx}
+int
+BallTracker::init (const std::string& cameraval)
+{
+  UBindVar (BallTracker, visible);
+  UBindVar (BallTracker, x);
+  UBindVar (BallTracker, y);
+  UNotifyChange (cameraval, &BallTracker::newImage);
+
+  visible = 0;
+
+  return 0;
+}
+\end{cxx}
+
+The \lstinline{newImage} function runs the detection algorithm on the
+image in its argument, and updates the variables.
+
+\begin{cxx}
+int
+BallTracker::newImage (urbi::UVar& v)
+{
+  //cast to UImage
+  urbi::UImage i = v;
+  int px,py;
+  bool found = detectBall (i.data, i.width, i.height, &px, &py);
+
+  if (found)
+  {
+    visible = 1;
+    x = px / i.width;
+    y = py / i.height;
+  }
+  else
+    visible = 0;
+
+  return 0;
+}
+\end{cxx}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
+
+% LocalWords:  UObject API UVar UBinary USound UImage liburbi UValue namespace
+% LocalWords:  urbi const UBindVar UBindFunction rhs UStart init UNotifyChange
+% LocalWords:  UNotifyAccess notifyChange notifyAccess USetUpdate USetTimer pos
+% LocalWords:  UOwned UNotifyOnRequest requestValue UProp enum struct plugin px
+% LocalWords:  UObjects UObjectHub UStartHub URegister getUObjectHub classname
+% LocalWords:  someevent sometag bool getPosition setPosition setPID PID Uowned
+% LocalWords:  valueChanged valueAccessed pidChanged headPan ampli getVal vals
+% LocalWords:  setPositions servohub addValue realloc sizeof destructor RGB py
+% LocalWords:  getWidth getHeight getImage accessFrame softdevice BallTracker
+% LocalWords:  varname cameraval newImage detectBall

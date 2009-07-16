@@ -1,0 +1,218 @@
+\chapter{The UObject API}
+\label{sec:uob:api}
+
+\section{Creating a class, binding variables and functions}
+
+Let's illustrate those concepts by defining a simple object:
+\lstinline{adder}. This object has one variable \lstinline{v}, and a
+method \lstinline{add} that returns the sum of this variable and its
+argument.
+
+\begin{itemize}
+\item First the required include and namespace:
+
+\begin{cxx}
+#include <urbi/uobject.hh>
+\end{cxx}
+
+\item Then we declare our \lstinline{adder} class:
+\begin{cxx}
+class adder : public urbi::UObject // Must inherit from UObject.
+{
+  public:
+   // The class must have a single constructor taking a string.
+   adder (const std::string&);
+
+   // Our variable.
+   urbi::UVar v;
+
+   // Our method.
+   double add (double);
+};
+\end{cxx}
+\item The implementation of the constructor and our \lstinline{add}
+  method:
+\begin{cxx}
+// the constructor defines what is available from Urbi
+adder::adder (const std::string& s)
+  : UObject (s) // required
+{
+  // Bind the variable.
+  UBindVar (adder, v);
+
+  // Bind the function.
+  UBindFunction (adder, add);
+}
+
+double
+adder::add (double rhs)
+{
+  return v + rhs;
+}
+\end{cxx}
+\item And register this class:
+\begin{cxx}
+// Register the class to the Urbi kernel.
+UStart (adder);
+\end{cxx}
+\end{itemize}
+
+To summarize:
+
+\begin{itemize}
+\item Declare your object class as inheriting from
+  \lstinline{urbi::UObject}.
+\item Declare a single constructor taking a string, and pass this
+  string to the constructor of \lstinline{urbi::UObject}.
+\item Declare the variables you want to share with \urbi with the type
+  \lstinline{urbi::UVar}.
+\item In the constructor, use the macros
+  \lstinline|UBindVar(\var{class-name}, \var{variable-name})|
+  for each \lstinline{UVar} you want as an instance variable, and
+  \lstinline|UBindFunction(\var{class-name}, \var{function-name})| for
+  each function you want to bind.
+\item Call the macro \lstinline{UStart} for each object.
+\end{itemize}
+
+\section{Creating new instances}
+
+When you start an \urbi server, an object of each class registered
+with \lstinline{UStart} is created with the same name as the
+class. New instances can be created from \urbi using the
+\lstinline|new| method. For each instance created in \urbi, a
+corresponding instance of the \Cxx object is created. You can get the
+arguments passed to the constructor by defining and binding a method
+named \lstinline|init| with the appropriate number of arguments.
+
+\section{Notification of a variable change or access}
+
+You can register a function that will be called each time a variable
+is modified or accessed (for embedded components only) by calling
+\lstinline{UNotifyChange} and \lstinline{UNotifyAccess}, passing
+either an \lstinline{UVar} or a variable name as first argument, and a
+member function of your \lstinline{UObject} as second argument. This
+function can take zero or one argument: a \lstinline{UVar} reference
+pointing to the \lstinline{UVar} being accessed or modified. The
+\lstinline{notifyChange} callback function is called after the
+variable value is changed, whereas the \lstinline{notifyAccess}
+callback is called before the variable is accessed, giving you the
+possibility to update its value.
+
+\section{Timers}
+\label{sec:uob:timers}
+
+The API gives you two methods to have a function called periodically:
+\begin{itemize}
+\item \lstinline|urbi::UObject::USetUpdate(ufloat \var{period})|\\
+  Set up a timer that calls the virtual method
+  \lstinline{UObject::update()} with the specified period (in
+  milliseconds).  Disable updates if \var{period} is -1.
+
+\item \lstinline|urbi::UObject::USetTimer<T>(ufloat \var{period}), int (T::*\var{fun})()|\\
+  Invoke an UObject member function \var{fun} every \var{period}
+  milliseconds.  \var{fun} is a regular member-function pointer, for
+  instance \lstinline|MyUObject::my_function|.
+\end{itemize}
+
+\section{The special case of sensor/effector variables}
+
+In \urbi, a variable can have a different meaning depending on whether
+you are reading or writing it: you can use the same variable to
+represent the target value of an effector and the current value
+measured by an associated sensor. This special mode is activated by
+the \lstinline{UObject} defining the variable by calling
+\lstinline{UOwned} after calling \lstinline{UBindVar}. This call has
+the following effects:
+\begin{itemize}
+\item When \urbi code or code in other modules read the variable, they
+  read the current value.
+\item When \urbi code or code in other modules write the variable,
+  they set the target value.
+\item When the module that called \lstinline|UOwned| reads the
+  variable, it reads the target value. When it writes the variable, it
+  writes the current value.
+\end{itemize}
+
+\section{Using \urbi variables}
+
+You can read or write any \urbi variable by creating an
+\lstinline{UVar} passing the variable name to the constructor. Change
+the value by writing any compatible type to the \lstinline{UVar}, and
+access the value by casting the \lstinline{UVar} to any compatible
+type. However, some care must be taken in remote mode: changes on the
+variable coming from \urbi code or an other module are only visible if
+you have called \lstinline{UNotifyChange} on this variable. Otherwise
+the \lstinline{UVar} is not synchronized. Alternatively, in remote
+mode, you can get the value on demand by calling
+\lstinline|UNotifyOnRequest (\var{variable}, \var{function})|. Then to get an
+updated value, call the \lstinline{requestValue} method on the
+\lstinline{UVar}, and your callback function will be called as soon as
+the value is available. You can read and write all the \urbi
+properties of an \lstinline{UVar} by reading and writing the
+appropriate \lstinline{UProp} object in the \lstinline{UVar}.
+
+\section{Using binary types}
+
+\urbi can store binary objects of any type in a generic container, and
+provides specific structures for sound and images. The generic
+containers is called \lstinline{UBinary} and is defined in the
+\lstinline{urbi/uobject.hh} header. It contains an enum field type
+giving the type of the binary (\lstinline{UNKNOWN}, \lstinline{SOUND}
+or \lstinline{IMAGE}), and an union of a \lstinline{USound} and
+\lstinline{UImage} struct containing a pointer to the data, the size
+of the data and type-specific meta-information. Reading a
+\lstinline{UBinary} from a \lstinline{UVar}, and writing a
+\lstinline{UBinary} to a \lstinline{UVar} performs a deep-copy of the
+data. In plugin mode, you can access directly the buffer used by the
+kernel by casting the \lstinline{UVar} to an \lstinline{UImage} or a
+\lstinline{USound}. You can then write to the buffer, but you can not
+change any other information.
+
+\section{Using hubs to group objects}
+
+Sometimes, you need to perform actions for a group of
+\lstinline{UObjects}, for instance devices that need to be updated
+together. The API provides the \lstinline{UObjectHub} class for this
+purpose. To create a hub, simply declare a subclass of
+\lstinline{UObjectHub}, and register it by calling once the macro
+\lstinline|UStartHub (\var{class-name})|. A single instance of this class
+will then be created upon server start-up. \lstinline{UObject}
+instances can then register to this hub by calling
+\lstinline|URegister (\var{hub-class-name})|. Timers can be attached to
+\lstinline{UObjectHub} the same way as to \lstinline{UObject} (see
+\autoref{sec:uob:timers}). The kernel will call the \lstinline{update()}
+method of all \lstinline{UObject} before calling the
+\lstinline{update()} method of the hub. A hub instance can be
+retrieved by calling \lstinline{getUObjectHub (string classname)}. The
+hub also holds the list of registered UObject in its members
+attribute.
+
+\section{Sending \urbi code}
+
+If you need to send \urbi code to the server, the \lstinline{URBI()}
+macro is available, as well as the \lstinline{send()} function. You
+can either pass it a string, or directly \urbi code inside a pair of
+parentheses:
+
+\begin{urbifixme}
+send ("tag:1+1;");
+
+URBI (( at (someevent (x)) { sometag:echo x; }; ));
+\end{urbifixme}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
+
+% LocalWords:  UObject API UVar UBinary USound UImage liburbi UValue namespace
+% LocalWords:  urbi const UBindVar UBindFunction rhs UStart init UNotifyChange
+% LocalWords:  UNotifyAccess notifyChange notifyAccess USetUpdate USetTimer pos
+% LocalWords:  UOwned UNotifyOnRequest requestValue UProp enum struct plugin px
+% LocalWords:  UObjects UObjectHub UStartHub URegister getUObjectHub classname
+% LocalWords:  someevent sometag bool getPosition setPosition setPID PID Uowned
+% LocalWords:  valueChanged valueAccessed pidChanged headPan ampli getVal vals
+% LocalWords:  setPositions servohub addValue realloc sizeof destructor RGB py
+% LocalWords:  getWidth getHeight getImage accessFrame softdevice BallTracker
+% LocalWords:  varname cameraval newImage detectBall
