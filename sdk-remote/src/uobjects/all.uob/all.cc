@@ -493,8 +493,7 @@ public:
 };
 
 int all::destructionCount = 0;
-::urbi::URBIStarter<all>
- starter1(urbi::isPluginMode()?"all":"remall");
-::urbi::URBIStarter<all>
- starter2(urbi::isPluginMode()?"all2":"remall2");
 
+::urbi::URBIStarter<all>
+    starter1(urbi::isPluginMode() ? "all"  : "remall"),
+    starter2(urbi::isPluginMode() ? "all2" : "remall2");
