@@ -1,0 +1,120 @@
+\newenvironment{todo}{%
+  \begin{quote}\itshape%
+  }{%
+  \end{quote}%
+}
+
+\chapter{Quick Start}
+\label{sec:uob:quick}
+
+This chapter presents \urbi SDK with a specific focus on its
+middleware features.  It is self-contained in order to help readers
+quickly grasp the potential of \urbi used as a middleware.  References
+to other sections of this document are liberally provided to point the
+reader to the more complete documentation; they should be ignored
+during the first reading.
+
+\section{\urbi as Middleware}
+
+\urbi SDK is meant to make easier the orchestration of independent,
+concurent, components.  It was first designed for robotics: it
+provides all the needed features to coordonate the execution of
+various components (actuators, sensors, software devices that provide
+features such as text-to-speach, face recognition and so forth).
+Traditional languages such as \Cxx are definitely very adequate to
+program the local, low-level, handling of these hardward or software
+devices; indeed one needs efficiency, small memory footprint, and
+access to low-level hardware details.  Yet, when it comes to
+orchestration and to coordination between components, in a word, when
+it comes to \emph{address concurrency}, such languages are no longer
+an adequate model.
+
+Rather, one has to select a middleware infrastructure in order to be
+able to use remote components as if they were local, to allow
+concurrent execution, to make synchronous or asynchronous requests and
+so forth.  The \dfn{UObject} architecture provide exactly this: a
+common API which allows conformant components to be used seemlessly in
+highly concurrent settings.  Components need not be designed with
+UObjects in mind, rather, UObjects are typically ``shells'' around
+``regular'' components.
+
+As a quite magical feature that comes for free, components with an
+UObject interface are naturally supported by the \us programming
+language.  This can be a tremendous help: one can interact with these
+components (making queries, changing them, observing their state,
+monitoring various kinds of events and so forth), which provides a
+huge speed-up during development.
+
+Finally, note that, although made with robots in mind, the UObject
+architecture is well suited to tame any heavily concurrent
+environment, such as video games.
+
+\subsection{The \urbi Architecture}
+
+\begin{todo}
+  * Description approche Urbi, philosophie (orchestration etc) => un
+  exemple de code Urbiscript qui orchestre 3 UObject de manière simple
+  mais non triviale, avec at, \&, events, tags et qui servira de fil
+  conducteur au quickstart (le but du quickstart est de refaire cet
+  exemple initial).
+\end{todo}
+
+\section{UObject Basics}
+
+\subsection{Wrapping into an UObject}
+\begin{todo}
+  * Description basique de l'API UObject et de l'approche UObject
+  (binding explicite)
+\end{todo}
+
+\subsection{Asynchronicity}
+\begin{todo}
+  * Asynchronisme dans UObject: notifychange, timers
+\end{todo}
+
+\subsection{Running Components}
+\begin{todo}
+  * Compilation et branchement de UObject (urbi-launch): expliquer les
+  deux modes: distant / plugé
+
+  * Cycle complet de lancement d'une appli Urbi: lancement d'urbi,
+  execution d'urbi.ini, chargement dynamique des UObjects
+\end{todo}
+
+\section{Using \us}
+
+\subsection{The \us Scripting Language}
+\begin{todo}
+  * Introduction à Urbiscript (rappeler que c'est avant tout un
+  langage comme les autres, avec if/for/while, etc), puis passer
+  rapidement aux elements clefs de la prog evenementielle dans Urbi:
+  at/whenever
+\end{todo}
+
+\subsection{Concurrency}
+\begin{todo}
+  * Parallelisme explicite: \&
+
+  * Tags et controle d'execution
+
+  * Channels et liburbi (les principes, renvoyer à la doc liburbi pour
+  l'API)
+
+  * All together, on reprend l'exemple du début et on détaille le code
+  des UObjects utilisés, puis le code urbiscript.
+\end{todo}
+
+\section{Conclusion}
+\begin{todo}
+  * Conclusion note: expliquer qu'on peut embedder l'engine Urbi dans
+  une appli native C++ (tout le monde le demande), qu'on peut faire
+  des bridges génériques avec d'autres archis à composants (citer
+  CORBA), donner le lien pour télécharger, le lien vers la doc du
+  langage urbiscript, vers la doc de UObject, etc.
+\end{todo}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
