@@ -105,6 +105,7 @@ namespace urbi
     return array.size();
   }
 
+
   /*---------.
   | UValue.  |
   `---------*/
@@ -120,6 +121,31 @@ namespace urbi
   {
     return *this = b;
   }
+
+#  define CONTAINER_TO_UVALUE_DECLARE(Type)                     \
+  template <typename T>                                         \
+  inline                                                        \
+  UValue&                                                       \
+  operator, (UValue &b, const Type<T> &v)                       \
+  {                                                             \
+    b.type = DATA_LIST;                                         \
+    b.list = new UList();                                       \
+    for (typename Type<T>::const_iterator i = v.begin(),        \
+           i_end = v.end();                                     \
+         i != i_end; ++i)                                       \
+    {                                                           \
+      UValue r;                                                 \
+      r, *i;                                                    \
+      b.list->array.push_back(new UValue(r));                   \
+    }                                                           \
+    return b;                                                   \
+  }
+
+  CONTAINER_TO_UVALUE_DECLARE(std::list)
+  CONTAINER_TO_UVALUE_DECLARE(std::vector)
+
+# undef CONTAINER_TO_UVALUE_DECLARE
+
 
 #define CTOR_AND_ASSIGN_AND_COMMA(Type)		\
   inline                                        \
