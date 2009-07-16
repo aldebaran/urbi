@@ -1,0 +1,113 @@
+Notes from Guillaume Deslandes.
+
+Notes:
+- urbiScript not UrbiScript
+- timeout (4) loop| ;
+  -> timeout not honored
+  -> ',' not honored either
+
+- class a { ... sleep ()  .... };
+  -> isdef (a): 1, but a == Void
+  -> missing some "isinit" ?
+
+- Call on getSlot result ?
+  class a { function f () { echo (42); };};
+  a.getSlot ("f")();
+  [04974102:error] !!! 170.16: syntax error, unexpected (, expecting end of command
+  class a { var x = 42; function f () { echo (x); }; function g () {return getSlot ("f");};};
+  [05258319] Lobby_0x805d180
+  [05258321] a
+  a.g()();
+  [05262522:error] !!! 204.6: syntax error, unexpected (, expecting end of command
+
+- 4.2: if the "condition" evaluation is false
+- listing 4.8: in the middle of the page ?
+- 5.1: "Scopes" are expressions
+- Sugar for getslot ?
+- I miss delete (really useful for "live testing" as redefining slot is an error)
+  -> "unref" ?
+- No ref to listing 6.7 ?
+- 6.3: Copy on write: "three objectS"
+- String to sth ?
+  getSlot ("Object.asString");
+  [68638491:error] !!! 290.1-27: lookup failed: Object.asString
+- Chap 8
+  - page 55, "adapt features ans paradigmS" ?
+  - page 55, "\&" -> "&" (multiple times)
+- detach must take "blocks" of code ?
+  detach ( echo (42) );
+  [00045465] *** 42
+  detach ( loop echo (42) );
+  [00054073:error] !!! 3.10-13: syntax error, unexpected loop, expecting )
+  detach ( { loop echo (42) } );
+  [00061877] *** 42
+  [00061878] *** ...
+- Stop some detached code ? if not tagged ?
+- stopall works only on "my" code. Way to stop everything ?
+- page 56, 8.3, and a colon ($:$) -> ":"
+- listing 8.8: some "/* HIDE */"
+- page 66: "However, if you emit an event for a given duration,
+            and whenever will keep" -> extra "and" ?
+- Add come "clean" method on tags: stop, unfreeze, unblock
+- Catch lasting events ?
+  at (e? ~ 1s) echo ("e");
+  [09438263:error] !!! 1026.8: syntax error, unexpected ~, expecting )
+- page 75-76: error in script positioning
+- Table 14.1: "bitand Synonym for & operator" ???
+- page 104, left margin "autorefsec:fixme"
+- CallMessage.args ?
+- page 111: right margin "fixme"
+- page 115 some snippets not in "purple" ?
+- Section 15.5 "comparables" -> "see section 15.5 ..."
+- page 135: "one or two timeS"
+- Lists: foldl: "is is too damn to explain, yet so simple."
+  empty script
+- List.range: (does not check if 0 arg)
+  var l = [1,2,3,4,5,6,7,8];
+  [00003868] [1, 2, 3, 4, 5, 6, 7, 8]
+  l.range();
+  [00006372:error] !!! /home/deslandes/install/urbi-sdk-2.0-rc-1-linux-x86-gcc4/share/gostai/urbi/call-message.u:19.5-11: []: invalid index: 0
+  [00006372:error] !!!    called from: /home/deslandes/install/urbi-sdk-2.0-rc-1-linux-x86-gcc4/share/gostai/urbi/list.u:110.12-24: argAt
+  [00006372:error] !!!    called from: 2.1-9: range
+- List.range: Why no error here ?
+  l.range(0,-3);
+  [00223264] []
+
+  if error there ?
+  l.range(0,10);
+  [00225394:error] !!! /home/deslandes/install/urbi-sdk-2.0-rc-1-linux-x86-gcc4/share/gostai/urbi/list.u:113.14-20: []: invalid index: 8
+  [00225394:error] !!!    called from: 31.1-13: range
+
+  -> invalid index 8: why not stop *before* ?
+  -> why not return a smaller list ? like std:string ?
+
+  message ??
+  l < 3;
+  [00418064:error] !!! /home/deslandes/install/urbi-sdk-2.0-rc-1-linux-x86-gcc4/share/gostai/urbi/list.u:48.25-31: lookup failed: empty
+
+
+
+
+Questions:
+- diff .asString and .asPrintable ?
+- listing 3.19: way to write into a via b ?
+- Mutex via tags ?
+- Switch current task ?
+- Fix style ?
+  unfreeze -> unFreeze
+  ...
+- No doc for pattern matching in switch
+
+- new -> clone ; try (init ()) catch (...) raise (...)
+- allow to raise Urbi exceptions from binded C++
+- CTRL-C in a telnet connection: stops UObjects' updates (created in this connection)
+  but does not delete UObjects
+
+Check:
+- redefine '=' for an object ?
+- autoevaluation of 0 arg function is not that great...
+  I more often need "getSlot" than f() when
+- Need Float.srand ? Done automagically ?
+- Float.ceil ?
+  Float.trunc + 1 ?
+
