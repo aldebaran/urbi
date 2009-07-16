@@ -48,7 +48,7 @@ Test file layout
 #define SEND_(Client, S)                                \
   do {							\
     VERBOSE("Sending: " << S);				\
-    Client.send("%s", (std::string(S) + "\n").c_str());	\
+    Client.send("%s\n", (std::string(S)).c_str());	\
   } while (0)
 
 /// Send S to client/syncclient.
