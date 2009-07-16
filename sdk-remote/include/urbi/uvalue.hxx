@@ -175,35 +175,28 @@ namespace urbi
 
 #undef CTOR_AND_ASSIGN_AND_COMMA
 
-  inline
-  UValue::operator int() const
-  {
-    return static_cast<int>(static_cast<ufloat>((*this)));
+
+
+#define UVALUE_INTEGRAL_CAST(Type)                              \
+  inline                                                        \
+  UValue::operator Type() const                                 \
+  {                                                             \
+    return static_cast<Type>(static_cast<ufloat>((*this)));     \
   }
 
-  inline
-  UValue::operator unsigned int() const
-  {
-    return static_cast<unsigned int>(static_cast<ufloat>((*this)));
-  }
+  UVALUE_INTEGRAL_CAST(int)
+  UVALUE_INTEGRAL_CAST(unsigned int)
+  UVALUE_INTEGRAL_CAST(long)
+  UVALUE_INTEGRAL_CAST(unsigned long)
+#undef UVALUE_INTEGRAL_CAST
 
-  inline
-  UValue::operator long() const
-  {
-    return static_cast<long>(static_cast<ufloat>((*this)));
-  }
-
-  inline
-  UValue::operator unsigned long() const
-  {
-    return static_cast<unsigned long>(static_cast<ufloat>((*this)));
-  }
 
   inline
   UValue::operator bool() const
   {
     return static_cast<int>(static_cast<ufloat>((*this))) != 0;
   }
+
 
   inline
   UValue&
