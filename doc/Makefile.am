@@ -43,6 +43,8 @@ dist_doc_DATA =					\
   RELEASE-NOTES.txt				\
   REPORTING-BUGS.txt
 
+
+
 ## -------------- ##
 ## urbi-sdk.pdf.  ##
 ## -------------- ##

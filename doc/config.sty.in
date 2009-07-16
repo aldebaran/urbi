@@ -1,0 +1,6 @@
+\newcommand{\absTopSrcdir}{@abs_top_srcdir@}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "urbi-sdk"
+%%% End:

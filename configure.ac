@@ -28,6 +28,7 @@ URBI_PACKAGE_KIND([kernel])
 URBI_DIRS([engine])
 
 URBI_DOC
+AC_CONFIG_FILES([doc/config.sty])
 
 ## ------------- ##
 ## Compilation.  ##

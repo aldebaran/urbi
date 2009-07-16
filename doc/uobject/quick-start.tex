@@ -61,11 +61,24 @@ environment, such as video games.
 
 \section{UObject Basics}
 
+As a simple running example, consider a (very) basic factory.  Raw
+material delivered to the factory is push into some assembly machine,
+which takes some time.
+
+As a firth component of this factory, consider the following
+implementation of the core engine of the factory.
+\newcommand{\factoryDir}{\uobjectsDir/factory/factory.uob}
+\lstinputlisting[language=C++]{\factoryDir/factory.hh}
+\lstinputlisting[language=C++]{\factoryDir/factory.cc}
+
 \subsection{Wrapping into an UObject}
 \begin{todo}
   * Description basique de l'API UObject et de l'approche UObject
   (binding explicite)
 \end{todo}
+
+\lstinputlisting[language=C++]{\factoryDir/ufactory.hh}
+\lstinputlisting[language=C++]{\factoryDir/ufactory.cc}
 
 \subsection{Asynchronicity}
 \begin{todo}
