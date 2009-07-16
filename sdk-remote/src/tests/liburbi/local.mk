@@ -53,9 +53,10 @@ m4sh_scripts += bin/liburbi-check
 
 # The test suite.
 LIBURBI_TESTS =					\
-  liburbi/values.cc				\
+  liburbi/ping.cc				\
   liburbi/removecallbacks.cc			\
-  liburbi/syncvalues.cc
+  liburbi/syncvalues.cc				\
+  liburbi/values.cc
 
 
 TESTS += $(LIBURBI_TESTS)
