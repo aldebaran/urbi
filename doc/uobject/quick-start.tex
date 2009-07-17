@@ -11,12 +11,12 @@ during the first reading.
 \section{\urbi as Middleware}
 
 \urbi SDK is meant to make easier the orchestration of independent,
-concurent, components.  It was first designed for robotics: it
-provides all the needed features to coordonate the execution of
+concurrent, components.  It was first designed for robotics: it
+provides all the needed features to coordinate the execution of
 various components (actuators, sensors, software devices that provide
-features such as text-to-speach, face recognition and so forth).
+features such as text-to-speech, face recognition and so forth).
 Traditional languages such as \Cxx are definitely very adequate to
-program the local, low-level, handling of these hardward or software
+program the local, low-level, handling of these hardware or software
 devices; indeed one needs efficiency, small memory footprint, and
 access to low-level hardware details.  Yet, when it comes to
 orchestration and to coordination between components, in a word, when
@@ -27,7 +27,7 @@ Rather, one has to select a middleware infrastructure in order to be
 able to use remote components as if they were local, to allow
 concurrent execution, to make synchronous or asynchronous requests and
 so forth.  The \dfn{UObject} architecture provide exactly this: a
-common API which allows conformant components to be used seemlessly in
+common API which allows conforming components to be used seamlessly in
 highly concurrent settings.  Components need not be designed with
 UObjects in mind, rather, UObjects are typically ``shells'' around
 ``regular'' components.
