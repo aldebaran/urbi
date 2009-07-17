@@ -126,6 +126,82 @@ urbi-launch [\var{urbi-launch-option}...] \var{module}... [-- \var{module-option
 \command{urbi}, see \autoref{sec:tools:urbi}.
 
 
+\section{\command{umake}}
+\label{sec:tools:umake}
+
+The \command{umake} programs builds loadable modules, UObjects, to be
+later run using \command{urbi-launch}
+(autoref{sec:tools:urbi-launch}).  Using it is not mandatory: users
+familiar with their compilation tools will probably prefer using them
+directly.  Yet \command{umake} makes things more uniform and simpler,
+at the cost of less control.
+
+\subsection{Invoking \command{umake}}
+\label{sec:tools:umake:invoke}
+
+Usage:
+\begin{shell}
+umake \var{option}... \var{file}...
+\end{shell}
+
+Compile the \var{file}.  The \var{files} can be of different kinds:
+\begin{itemize}
+\item objects files (\file{*.o}, \file{*.obj} and so forth) and linked
+  into the result.
+\item libraries (\file{*.a}) and linked into the result.
+\item source files (\file{*.cc}, \file{*.cpp}, \file{*.c}, \file{*.C})
+  are compiled.
+\item header files (\file{*.h}, \file{*.hh}, \file{*.hxx},
+  \file{*.hpp}) are \emph{not} compiled, but used as dependencies: if
+  a header file is changed, the next \command{umake} run will actually
+  recompile.
+\item directories are recursively traversed, and files of the above
+  types are gathered as if they were given on the command line.
+\end{itemize}
+
+\paragraph{General options}
+\begin{options}
+\item[-D, --debug] turn on shell debugging (set -x)
+\item[-h, --help] display this help message and exit successfully
+\item[-q, --quiet] no output unless errors (implies \option{--batch})
+\item[-v, --version] display version information and exit successfully
+\item[-V, --verbose] report on what is done
+\end{options}
+
+\paragraph{Compilation options}
+\begin{options}
+\item[--deep-clean] remove all building directories
+\item[-c, --clean] clean building directory before compilation
+\item[-j, --jobs=\var{jobs}] specify the numbers of commands to run
+  simultaneously
+\item[-l, --library] produce a library, don't link to a particular
+  core
+\item[-s, --shared-library] produce a shared library loadable by any
+  core
+\item[-o, --output=output] output file name
+\item[-C, --core=\var{core}] build type
+\item[-H, --host=\var{host}] destination host
+\item[-m, --disable-automain] do not add the \lstinline|main| function
+\end{options}
+
+\paragraph{Developper options}
+\begin{options}
+\item[-p, --prefix=\var{dir}] library file location
+\item[-P, --param-mk=\var{file}] param.mk location
+\item[-k, --kernel=\var{dir}] kernel location
+\end{options}
+
+
+\subsection{\command{umake} Wrappers}
+\label{sec:tools:umake:wrappers}
+
+As a convenience for common \command{umake} usages, some wrappers are
+provided:
+\begin{description}
+\item[\command{umake-shared}] Build a shared object to be later run
+  using \command{urbi-launch} (autoref{sec:tools:urbi-launch}).  Same
+  as \samp{umake --shared}.
+\end{description}
 
 %%% Local Variables:
 %%% mode: latex

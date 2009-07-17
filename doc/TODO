@@ -1,3 +1,7 @@
+* umake
+Complete the umake documentation using examples from
+http://www.gostai.com/doc/en/umake.pdf.
+
 Notes from Guillaume Deslandes.
 
 Notes:
@@ -111,3 +115,6 @@ Check:
 - Float.ceil ?
   Float.trunc + 1 ?
 
+Local Variables:
+mode: outline
+End:
