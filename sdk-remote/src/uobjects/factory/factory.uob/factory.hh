@@ -6,9 +6,20 @@
 class Factory
 {
 public:
-  Factory(unsigned duration);
-  std::string operator()(const std::list<std::string>& components) const;
-  unsigned duration;
+  /// Construction.
+  /// \param duration  how long the assembly process takes.
+  ///                  In seconds.
+  Factory(float duration);
+
+  /// Lists of strings.
+  typedef std::list<std::string> strings;
+
+  /// Assemble the raw components into a product.
+  std::string operator()(const strings& components) const;
+
+  /// The duration of the assembly process, in seconds.
+  /// Must be positive.
+  float duration;
 };
 
 #endif // ! FACTORY_FACTORY_HH
