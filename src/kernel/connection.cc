@@ -10,6 +10,7 @@ namespace kernel
 
   Connection::Connection()
     : UConnection(*kernel::urbiserver, Connection::PACKET_SIZE)
+    , Socket(kernel::urbiserver->get_io_service())
   {
     if (uerror_ != USUCCESS)
       close();

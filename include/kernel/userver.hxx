@@ -25,6 +25,12 @@ namespace kernel
   {
     return *scheduler_;
   }
+
+  inline boost::asio::io_service&
+  UServer::get_io_service ()
+  {
+    return io_;
+  }
 }
 
 #endif // !KERNEL_USERVER_HXX

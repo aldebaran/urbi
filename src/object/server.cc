@@ -5,12 +5,14 @@
 namespace object
 {
   Server::Server()
+  : libport::Socket(Socket::get_io_service())
   {
     proto_add(Object::proto);
 //    initialize();
   }
 
   Server::Server(rServer model)
+  : libport::Socket(Socket::get_io_service())
   {
     proto_add(model);
     initialize();

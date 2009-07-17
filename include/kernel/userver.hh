@@ -192,6 +192,7 @@ namespace kernel
 
     runner::Runner& getCurrentRunner() const;
 
+    boost::asio::io_service& get_io_service();
   protected:
     //! Overload this function to specify how your robot is displaying messages.
     virtual void effectiveDisplay(const char*) = 0;
@@ -236,6 +237,9 @@ namespace kernel
 
     /// Store the server thread Id.
     pthread_t thread_id_;
+
+    /// io_service used by all our connections
+    boost::asio::io_service& io_;
   };
 
 }

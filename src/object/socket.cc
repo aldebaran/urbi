@@ -1,3 +1,7 @@
+#include <kernel/userver.hh>
+
+#include <libport/boost-version.hh>
+
 #include <object/global.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
@@ -5,10 +9,9 @@
 
 namespace object
 {
-
   Socket::Socket()
     : CxxObject()
-    , libport::Socket()
+    , libport::Socket(Socket::get_io_service())
     , server_()
     , disconnect_()
   {
@@ -18,7 +21,7 @@ namespace object
 
   Socket::Socket(rServer server)
     : CxxObject()
-    , libport::Socket()
+    , libport::Socket(Socket::get_io_service())
     , server_(server)
     , disconnect_()
   {
@@ -28,7 +31,7 @@ namespace object
 
   Socket::Socket(rSocket)
     : CxxObject()
-    , libport::Socket()
+    , libport::Socket(Socket::get_io_service())
     , server_()
     , disconnect_()
   {
@@ -140,12 +143,12 @@ namespace object
     libport::Socket::send(data);
   }
 
-  static boost::asio::io_service* ios = 0;
   void
   Socket::poll()
   {
-    ios->reset();
-    ios->poll();
+    boost::asio::io_service& ios = get_io_service();
+    ios.reset();
+    ios.poll();
   }
 
   URBI_CXX_OBJECT_REGISTER(Socket);
@@ -162,11 +165,18 @@ namespace object
     bind(SYMBOL(port),          &Socket::port);
     bind(SYMBOL(write),         &Socket::write);
   }
+  static boost::asio::io_service& io_unused = libport::get_io_service();
+  boost::asio::io_service&
+  Socket::get_io_service()
+  {
+    static boost::asio::io_service* ios = 0;
+    if (!ios) ios = new boost::asio::io_service;
+    return *ios;
+  }
 
   rObject
   Socket::proto_make()
   {
-    ios = &libport::get_io_service(false);
     return new Socket();
   }
 }

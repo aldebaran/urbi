@@ -25,12 +25,11 @@ namespace object
     static void poll();
     std::string host() const;
     unsigned short port() const;
-
+    static boost::asio::io_service& get_io_service();
   private:
     void slots_create();
     rServer server_;
     rObject disconnect_;
-
     URBI_CXX_OBJECT(Socket);
   };
 }

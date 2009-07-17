@@ -57,6 +57,7 @@ GD_ADD_CATEGORY(URBI);
 
 using libport::program_name;
 
+
 class ConsoleServer
   : public kernel::UServer
   , public libport::Socket
@@ -64,9 +65,9 @@ class ConsoleServer
 public:
   ConsoleServer(bool fast)
     : kernel::UServer("console")
+    , libport::Socket(kernel::UServer::get_io_service())
     , fast(fast)
     , ctime(0)
-    , io_(libport::get_io_service(false))
   {}
 
   virtual ~ConsoleServer()
@@ -100,9 +101,14 @@ public:
     std::cout << t;
   }
 
+  boost::asio::io_service&
+  get_io_service()
+  {
+    return kernel::UServer::get_io_service();
+  }
+
   bool fast;
   libport::utime_t ctime;
-  boost::asio::io_service& io_;
 };
 
 namespace
@@ -426,11 +432,11 @@ namespace urbi
             select_time = std::min(100000LL, select_time);
         }
         if (select_time)
-          libport::pollFor(select_time, true);
+          libport::pollFor(select_time, true, s.get_io_service());
         else
         {
-          s.io_.reset();
-          s.io_.poll();
+          s.get_io_service().reset();
+          s.get_io_service().poll();
         }
       }
 

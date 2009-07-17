@@ -18,6 +18,7 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <libport/asio.hh>
 #include <libport/backtrace.hh>
 #include <libport/compiler.hh>
 #include <libport/config.h>
@@ -92,6 +93,7 @@ namespace kernel
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
     , thread_id_(pthread_self())
+    , io_(*new boost::asio::io_service())
   {
 #if ! defined NDEBUG
     server_timer.start();
