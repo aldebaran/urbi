@@ -1,11 +1,13 @@
 \chapter{Programs}
 \label{sec:tools}
 
-\section{\command{urbi}}
+\section{\command{urbi} --- Running an Urbi Server}
 \label{sec:tools:urbi}
 
 The \command{urbi} program launches an \urbi server, for either batch,
-interactive, or network-based executions.
+interactive, or network-based executions.  It is subsumed by, but
+simpler to use than, \command{urbi-launch}
+(\autoref{sec:tools:urbi-launch}).
 
 \subsection{Options}
 
@@ -69,6 +71,61 @@ $ echo "var two = 2;" >two.u
 one + two;
 [00000000] 3
 \end{shell}%$
+
+\section{\command{urbi-launch} --- Running a UObject}
+\label{sec:tools:urbi-launch}
+
+The \command{urbi-launch} program launches an \urbi system.  It is
+more general than \command{urbi} (\autoref{sec:tools:urbi}):
+everything \command{urbi} can do, \command{urbi-launch} can do it too.
+
+\command{urbi-launch} launches UObjects, either in plugged-in mode, or
+in remote mode.  Since UObjects can also accept options, the command
+line features two parts, separated by \samp{--}:
+
+\begin{shell}
+urbi-launch [\var{urbi-launch-option}...] \var{module}... [-- \var{module-option}...]
+\end{shell}
+
+\paragraph{Urbi-launch options}
+\begin{options}
+\item[-h, --help] display the help message and exit successfully.
+\item[--version] display version information and exit successfully.
+\item[-c, --customize=\var{file}] start the \urbi server in
+  \var{file}.  This option is mostly for developpers.
+\item[-d, --debug=\var{level}] Set the verbosity level of traces.
+  This option is mostly for developpers, but it is very useful when
+  tracking problems such as a UObject that fails to load properly.
+  Valid values for \var{level} are, in increasing verbosity order:
+  \begin{enumerate}
+  \item \code{NONE}, no log messages at all.
+  \item \code{LOG}, the default value.
+  \item \code{TRACE}
+  \item \code{DEBUG}
+  \item \code{DUMP}, maximum verbosity.
+  \end{enumerate}
+\end{options}
+
+\paragraph{Mode selection}
+\begin{options}
+\item[-p, --plugin] attach the \var{module} onto a currently running
+  \urbi server (identified by \var{host} and \var{port}).  This is
+  equivalent to running \lstinline|loadModule("\var{module}")| on the
+  corresponding server.
+
+\item[-r, --remote] run the \var{modules} as separated processes,
+  connected to a running Urbi server (identified by \var{host} and
+  \var{port}) via network connection.
+
+\item[-s, --start] Start an Urbi server with plugged-in \var{modules}.
+\end{options}
+
+\paragraph{Networking}
+\command{urbi-launch} supports the same networking options
+(\option{--host}, \option{--port}, \option{--port-file}) as
+\command{urbi}, see \autoref{sec:tools:urbi}.
+
+
 
 %%% Local Variables:
 %%% mode: latex
