@@ -189,6 +189,7 @@ namespace urbi
     The function is called rigth after the variable v is updated.
     */
     void UNotifyOnRequest(UVar& v, int (UObject::*fun)(UVar&));
+
     /*!
     \brief Call a function each time a variable is accessed.
     \param v the variable to monitor.
@@ -204,37 +205,37 @@ namespace urbi
 # else
 
     /// \internal
-# define MakeNotify(Type, Notified, Arg, Const,				\
+# define MakeNotify(Type, Notified, Arg, Const,                 \
 		    TypeString, Name, Owned,			\
-		    WithArg, StoreArg)					\
-    template <class T>							\
-    void UNotify##Type(Notified, int (T::*fun) (Arg) Const)		\
-    {									\
-      UGenericCallback* cb =						\
-	createUCallback (__name, TypeString,				\
-			 dynamic_cast<T*>(this),			\
-			 fun, Name, Owned);			\
-									\
-      if (WithArg && cb)						\
-	cb->storage = StoreArg;						\
+		    WithArg, StoreArg)                          \
+    template <class T>                                          \
+    void UNotify##Type(Notified, int (T::*fun) (Arg) Const)     \
+    {                                                           \
+      UGenericCallback* cb =                                    \
+	createUCallback(__name, TypeString,                     \
+                        dynamic_cast<T*>(this),                 \
+                        fun, Name, Owned);			\
+                                                                \
+      if (WithArg && cb)                                        \
+	cb->storage = StoreArg;                                 \
     }
 
     /// \internal
 # define MakeMetaNotifyArg(Type, Notified, TypeString, Owned,	\
-			   Name, StoreArg)				\
-    MakeNotify(Type, Notified, /**/, /**/,   TypeString, Name,		\
+			   Name, StoreArg)                      \
+    MakeNotify(Type, Notified, /**/, /**/,   TypeString, Name,  \
                Owned, false, StoreArg);				\
-    MakeNotify(Type, Notified, /**/, const,  TypeString, Name,		\
+    MakeNotify(Type, Notified, /**/, const,  TypeString, Name,  \
                Owned, false, StoreArg);				\
-    MakeNotify(Type, Notified, UVar&, /**/,  TypeString, Name,		\
+    MakeNotify(Type, Notified, UVar&, /**/,  TypeString, Name,  \
                Owned, true, StoreArg);				\
-    MakeNotify(Type, Notified, UVar&, const, TypeString, Name,		\
+    MakeNotify(Type, Notified, UVar&, const, TypeString, Name,  \
                Owned, true, StoreArg);
 
     /// \internal
 # define MakeMetaNotify(Type, TypeString)				\
     MakeMetaNotifyArg(Type, UVar& v, TypeString,			\
-                      v.owned, v.get_name (), &v);                 \
+                      v.owned, v.get_name (), &v);                      \
     MakeMetaNotifyArg(Type, const std::string& name, TypeString,	\
                       false, name, new UVar(name));
 
