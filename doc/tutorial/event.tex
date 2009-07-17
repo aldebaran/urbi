@@ -1,0 +1,167 @@
+\chapter{Event-based programming}
+\label{sec:tut:event-prog}
+
+When dealing with highly interactive agent programming, sequential
+programming is inconvenient. We want to react to external, random
+events, not execute code linearly with a predefined flow. \us has a
+strong support for event-based programming.
+
+\section{Event related constructs}
+
+The first construct we will study is the \lstinline|at| keyword. Given
+a condition, and an expression, \lstinline|at| will evaluate the
+expression every time the condition becomes true. That is,
+when a rising edge occurs on the condition.
+
+\begin{urbiscript}
+var x = 0;
+[00000000] 0
+at (x > 5)
+  echo("ping");
+[00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
+x = 5;
+[00000000] 5
+// This triggers the event
+x = 6;
+[00000000] 6
+[00000000] *** ping
+// Does not trigger, since the condition is already true.
+x = 7;
+[00000000] 7
+// The condition becomes false here.
+x = 3;
+[00000000] 3
+
+x = 10;
+[00000000] 10
+[00000000] *** ping
+\end{urbiscript}
+
+An \lstinline|onleave| block can be appended to execute an expression
+when the expression \emph{becomes} false --- that is, on falling edges.
+
+\begin{urbiscript}
+var x = false;
+[00000000] false
+at (x)
+  echo("x")
+onleave
+  echo("!x");
+[00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
+x = true;
+[00000000] true
+[00000000] *** x
+x = false;
+[00000000] false
+[00000000] *** !x
+\end{urbiscript}
+
+The \lstinline|whenever| construct is similar to \lstinline|at|,
+except the expression evaluation is systematically restarted when it
+finishes as long as the condition stands true.
+
+\begin{urbiscript}
+var x = false;
+[00000000] false
+whenever (x)
+{
+  echo("ping");
+  sleep(1s);
+};
+x = true;
+[00000000] true
+sleep(3s);
+// Whenever keeps triggering
+[00000000] *** ping
+[00001000] *** ping
+[00002000] *** ping
+x = false;
+[00002000] false
+// Whenever stops triggering
+\end{urbiscript}
+
+Just like \lstinline|at| has \lstinline|onleave|, \lstinline|whenever|
+has \lstinline|else|: the given expression is evaluated as long as the
+condition is false.
+
+\begin{urbiscript}
+var x = false;
+[00002000] false
+whenever (x)
+{
+  echo("ping");
+  sleep(1s);
+}
+else
+{
+  echo("pong");
+  sleep(1s);
+};
+sleep (3s);
+[00000000] *** pong
+[00001000] *** pong
+[00002000] *** pong
+x = true;
+[00003000] true
+sleep (3s);
+[00003000] *** ping
+[00004000] *** ping
+[00005000] *** ping
+x = false;
+[00006000] false
+sleep (2s);
+[00006000] *** pong
+[00007000] *** pong
+\end{urbiscript}
+
+\section{Events}
+\label{sec:tut:events}
+\us enables you to define events, that can be caught with the
+\lstinline|at| and \lstinline|whenever| constructs we saw earlier. You
+can create events by cloning the \lstinline|Event| prototype. They can
+then be emitted with the \lstinline|!| keyword.
+
+\begin{urbiscript}
+var myEvent = Event.new;
+[00000000] Event_0x0
+at (myEvent?)
+  echo("ping");
+myEvent!;
+[00000000] *** ping
+// events work well with parallelism
+myEvent! & myEvent!;
+[00000000] *** ping
+[00000000] *** ping
+\end{urbiscript}
+
+Both \lstinline|at| and \lstinline|whenever| have the same behavior on
+punctual events. However, if you emit an event for a given duration,
+and \lstinline|whenever| will keep triggering for this duration,
+contrary to \lstinline|at|.
+
+\begin{urbiscript}
+var myEvent = Event.new;
+[00000000] Event_0x0
+whenever (myEvent?)
+{
+  echo("ping (whenever)")|
+  sleep(200ms)
+};
+at (myEvent?)
+{
+  echo("ping (at)")|
+  sleep(200ms)
+};
+// Emit myEvent for .3 second.
+myEvent! ~ 300ms;
+[00000000] *** ping (at)
+[00000000] *** ping (whenever)
+[00000100] *** ping (whenever)
+\end{urbiscript}
+
+%\section{Valued events}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

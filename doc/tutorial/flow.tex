@@ -1,0 +1,153 @@
+\chapter{Flow control constructs}
+\label{sec:tut:flow}
+
+In this section, we'll introduce some flow control structures that
+will prove handy later. Most of them are inspired by \C/\Cxx.
+
+\section{if}
+
+The \lstinline{if} construct is the same has \C/\Cxx's one. The
+\lstinline{if} keyword is followed by a condition between parentheses and
+an expression, and optionally the \lstinline{else} keyword and another
+expression. If the condition evaluates to true, the first expression
+is evaluated. Otherwise, the second expression is evaluated if
+present.
+
+\begin{urbiscript}
+if (true)
+  echo("ok");
+[00000000] *** ok
+if (false)
+  echo("ko")
+else
+  echo("ok");
+[00000000] *** ok
+\end{urbiscript}
+
+The \lstinline|if| construct is an expression: it has a value.
+
+\begin{urbiscript}
+echo({ if (false) "a" else "b" });
+[00000000] *** b
+\end{urbiscript}
+
+\section{while}
+
+The \lstinline{while} construct is, again, the same as in \C/\Cxx. The
+\lstinline{while} keyword is followed by a condition between parentheses
+and an expression. If the expression evaluation is false, the
+execution jumps after the while block; otherwise, the expression is
+evaluated and control jumps before the while block.
+
+% FIXME: += wasn't introduced
+\begin{urbiscript}
+var x = 2;
+[00000000] 2
+while (x < 40)
+{
+  x += 10;
+  echo(x);
+};
+[00000000] *** 12
+[00000000] *** 22
+[00000000] *** 32
+[00000000] *** 42
+\end{urbiscript}
+
+\section{for}
+
+The \lstinline{for} keyword supports different constructs, as in
+languages such as Java, \Cs, or even the forthcoming \Cxx revision.
+
+The first construct is hardly more than syntactic suggar for a
+\lstinline{while} loop.
+
+\begin{urbiscript}
+for (var x = 2; x < 40; x += 10)
+  echo(x);
+[00000000] *** 2
+[00000000] *** 12
+[00000000] *** 22
+[00000000] *** 32
+\end{urbiscript}
+
+The second construct allows to iterate over members of a collection,
+such as a list. The \lstinline{for} keyword, followed by
+\lstinline|var|, an identifier, a semicolon (or \lstinline|in|), an
+expression and a scope, executes the scope for every element in the
+collection resulting of the evaluation of the expression, with the
+variable named with the identifier referring to the list
+elements.
+
+\begin{urbiscript}
+for (var e : [1, 2, 3]) { echo(e) };
+[00000000] *** 1
+[00000000] *** 2
+[00000000] *** 3
+\end{urbiscript}
+
+\section{switch}
+
+The syntax of the \lstinline|switch| construct is similar to \C/\Cxx's
+one, except it works on any kind of object, not only integral
+ones. Comparison is done by semantic equality (operator
+\lstinline{==}). Execution will jump out of the
+\lstinline|switch|-block after a case has been executed (no need to
+\lstinline{break}).  Also, contrary to \Cxx, the whole construct has a
+value: that of the matching \lstinline{case}.
+
+\begin{urbiscript}
+switch ("bar")
+{
+  case "foo":  0;
+  case "bar":  1;
+  case "baz":  2;
+  case "qux":  3;
+};
+[00000000] 1
+\end{urbiscript}
+
+\section{do}
+\label{section:constructs/do}
+
+A do scope is a shorthand to perform several actions on an
+object.
+
+\begin{urbiscript}
+var o = Object.clone;
+[00000000] Object_0x0
+var o.one = 1;
+[00000000] 1
+var o.two = 2;
+[00000000] 2
+echo(o.uid);
+[00000000] *** 0x0
+\end{urbiscript}
+
+The same result can be obtained with a short \lstinline|do| scope,
+that redirect method calls to their target, as in the listing
+below. This is similar to the \pascal
+``\lstinline[language=Pascal]{with}'' construct.  The value of the
+\lstinline{do}-block is the target itself.
+
+\begin{urbiscript}
+var o = Object.clone;
+[00000000] Object_0x100000
+// All the message in this scope are destined to o.
+do (o)
+{
+ var one = 1; // var is a shortcut for the setSlot
+ var two = 2; // message, so it applies on obj too.
+ echo(uid);
+};
+[00000000] *** 0x100000
+[00000000] Object_0x100000
+\end{urbiscript}
+
+
+%\section{Conclusion} FIXME?
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

@@ -1,0 +1,133 @@
+\chapter{Advanced functions and scoping}
+\label{sec:tut:function}
+
+This section presents advanced uses of functions and scoping, as well
+as their combo: lexical closures, which prove to be a very powerful
+tool.
+
+\section{Scopes as expressions}
+
+Contrary to other languages from the \C family, scopes are
+expressions: they can be used where values are expected, just as
+\lstinline|1 + 1| or \lstinline|"foo"|.
+They evaluate to the value of their last expression, or void if they're
+empty. The following listing illustrates the use of scopes as
+expressions. Note that the last semicolon inside a scope is optional.
+
+\begin{urbiscript}
+// Scopes evaluate to the last expression they contain.
+{ 1; 2; 3};
+[00000000] 3
+// They are expressions.
+echo({1; 2; 3});
+[00000000] *** 3
+\end{urbiscript}
+
+\section{Advanced scoping}
+
+Scopes can be nested. Variables can be redefined in sub-scopes. In
+this case, the inner variables hide the outer ones, as illustrated
+below.
+
+\begin{urbiscript}
+var x = 0;   // Define the outer x.
+[00000000] 0
+{
+  var x = 1; // Define an inner x.
+  x = 2;     // These refer to
+  echo(x);   // the inner x
+};
+[00000000] *** 2
+x;           // This is the outer x again.
+[00000000] 0
+{
+  x = 3;     // This is still the outer x.
+  echo(x);
+};
+[00000000] *** 3
+x;
+[00000000] 3
+\end{urbiscript}
+
+\section{Local functions}
+
+Functions can be defined anywhere local variables can --- that is,
+about anywhere. These functions' visibility are limited to the scope
+they're defined in, like variables. This enables for instance to write
+local helper functions like ``max2'' in the example belox.
+
+\begin{urbiscript}
+function max3(a, b, c) // Max of three values
+{
+  function max2(a, b)
+  {
+    if (a > b)
+      return a
+    else
+      return b
+  };
+  max2(a, max2(b, c));
+} | {};
+\end{urbiscript}
+
+\section{Lexical closures}
+
+A \dfn{closure} is the capture by a function of a variable external to this
+function. \us supports lexical closure: functions can refer to outer
+local variables, as long as they are visible (in scope) from where
+the function is defined.
+
+\begin{urbiscript}
+function printSalaries(rate)
+{
+  var charges = 100;
+  function computeSalary(hours)
+  {
+    // Here rate and charges are captured
+    // from the environment by closure
+    rate * hours - charges
+  };
+
+  echo("Alice's salary is " + computeSalary(35));
+  echo("Bob's salary is " + computeSalary(30));
+} | {};
+printSalaries(15);
+[00000000] *** Alice's salary is 425
+[00000000] *** Bob's salary is 350
+\end{urbiscript}
+
+Closures can also write to captured variables, as shown below.
+
+% Fixme: these are not actually closures because of the toplevel ...
+\begin{urbiscript}
+var x = 0;
+[00000000] 0
+var y = 0;
+[00000000] 0
+function add(n)
+{
+  // x and y are updated by closure
+  x += n;
+  y += n;
+  void
+} | {};
+add(25);
+add(25);
+add(1);
+x;
+[00000000] 51
+y;
+[00000000] 51
+\end{urbiscript}
+
+Closure can be really powerful tools in some situation, and they are
+even more useful when combined with functional programing, as
+described in \autoref{sec:tut:functional}.
+
+%\section{Conclusion}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

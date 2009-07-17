@@ -1,0 +1,319 @@
+\chapter{Parallelism, concurrent flows control}
+\label{sec:tut:concurrent}
+
+Parallelism is one of the major features of \us. So far, all we've
+seen already existed in other language - although we tried to pick,
+mix and adapt features and paradigm to create a nice scripting
+language. Parallelism is one of the corner stone of its paradigm, and
+what makes it so adapted to high level scripting of interactive
+agents, such as robotics or \ai.
+
+\section{Parallelism operators}
+
+For now, we've separated our different commands with a semicolon
+(\lstinline{;}). There are actually other separators in \us:
+
+\begin{itemize}
+\item ``\lstinline{;}'': Serialization operator. Wait for the left
+  operand to finish before continuing.
+\item ``\lstinline{&}'': Parallelism n-ary operator. All operands are
+  started simultaneously, and executed in parallel. The \lstinline{&}
+  block itself finishes when both operands finish. \lstinline{&} has
+  higher precedence than other separators.
+\item ``\lstinline{,}'': Background operator. Left operand is started,
+  and evaluation continues immediately. End of execution of the left
+  operand is waited at the exit of the scope.
+\end{itemize}
+
+The listing below show usage of \lstinline{&} to
+launch two functions in parallel.
+
+\begin{urbiscript}
+function test(name)
+{
+  echo(name + ": 1");
+  echo(name + ": 2");
+  echo(name + ": 3");
+} | {};
+// Serialized executions
+test("left") ; test ("middle"); test ("right");
+[00000000] *** left: 1
+[00000000] *** left: 2
+[00000000] *** left: 3
+[00000000] *** middle: 1
+[00000000] *** middle: 2
+[00000000] *** middle: 3
+[00000000] *** right: 1
+[00000000] *** right: 2
+[00000000] *** right: 3
+// Parallel execution
+test("left") & test("middle") & test ("right");
+[00000000] *** left: 1
+[00000000] *** middle: 1
+[00000000] *** right: 1
+[00000000] *** left: 2
+[00000000] *** middle: 2
+[00000000] *** right: 2
+[00000000] *** left: 3
+[00000000] *** middle: 3
+[00000000] *** right: 3
+\end{urbiscript}
+
+In this test, we see that the \lstinline{&} runs its operands
+simultaneously.
+
+The difference between ``\lstinline{&}'' and ``\lstinline{,}'' is
+rather subtle:
+
+\begin{itemize}
+\item In the top level, will wait for you to terminate your
+  ``\lstinline{&}'' block to start executing anything, while it will
+  run the code terminated by ``\lstinline{,}'' immediately.
+\item Execution is blocked after a ``\lstinline{&}'' group until all
+  its children have finished.
+\end{itemize}
+
+\begin{urbiscript}
+function test(name)
+{
+  echo(name + ": 1");
+  echo(name + ": 2");
+  echo(name + ": 3");
+} | {};
+// Run test and echo("right") in parallel,
+// and wait until both are done before continuing
+test("left") & echo("right"); echo("done");
+[00000000] *** left: 1
+[00000000] *** right
+[00000000] *** left: 2
+[00000000] *** left: 3
+[00000000] *** done
+// Run test in background, then both echos without waiting.
+test("left") , echo("right"); echo("done");
+[00000000] *** left: 1
+[00000000] *** right
+[00000000] *** left: 2
+[00000000] *** done
+[00000000] *** left: 3
+\end{urbiscript}
+
+That's about all there is to say about these operators. Although
+they're rather simple, they are really powerful and enables you to
+include parallelism anywhere at no syntactical cost.
+
+\section{Detach}
+
+The \lstinline{detach} function backgrounds the execution of its
+argument. Its behavior is the same as the comma (\lstinline{,}) operator,
+except the execution is completely detached, and not waited for at the
+end of the scope.
+
+\begin{urbiscript}
+function test()
+{
+  // wait 1 second, and echo "foo"
+  detach({sleep(1s); echo("foo")});
+} | {};
+test();
+echo("Not blocked");
+[00000000] *** Not blocked
+sleep(1s);
+[00005000] *** foo
+/*(*/sleep(200ms);/*)*/
+\end{urbiscript}
+
+\section{Tags for parallel control flows}
+\label{sec:tut:tags}
+
+Tags are a multipurpose code execution control and instrumentation
+feature. Any chunk of code can be tagged, by preceding it with a tag
+and a colon (\lstinline{:}). Tag can be created with
+\lstinline|Tag.new("name")|. Giving tags a name is optional, yet it's
+probably a better idea since it will be used for many
+features. The listing below illustrates how to tag chunks of code.
+
+\begin{urbiscript}
+// Create a new tag
+var mytag = Tag.new("name");
+[00000000] Tag<name>
+// Tag the evaluation of 42
+mytag: 42;
+[00000000] 42
+// Tag the evaluation of a block.
+mytag: { "foo"; 51 };
+[00000000] 51
+// Tag a function call.
+mytag: echo("tagged");
+[00000000] *** tagged
+\end{urbiscript}
+
+You can use tag that wasn't declared previously, they will be created
+implicitly like in the listing below. However, this is fragile code since
+tags will be created in a global scope, the \lstinline{Tag} object. This
+feature can be used when inputting test code in the top level to avoid
+bothering to declare each tag, yet it should be considered very bad
+practice in regular code.
+
+\begin{urbiscript}
+// Since mytag is not declared, this will first do:
+// var Tag.mytag = Tag.new("mytag");
+mytag : 42;
+[00000000] 42
+\end{urbiscript}
+
+So you can tag code, yet what's the use? One of the primary purpose of
+tags is to be able to control the execution of code running in
+parallel. Tags have a few control methods:
+
+\begin{description}
+\item[freeze] Suspend execution of all tagged code.
+\item[unfreeze] Resume execution of previously frozen code.
+\item[stop] Stop the execution of the tagged code. The flows of
+  execution that where stopped jump immediately at the end of the
+  tagged block.
+\item[block] Block the execution of the tagged code, that is:
+  \begin{itemize}
+  \item Stop it.
+  \item When an execution flow encounters the tagged block, it simply
+    skips it.
+  \end{itemize}
+  You can think of \lstinline{block} like a permanent \lstinline{stop}.
+\item[unblock] Stop blocking the tagged code.
+\end{description}
+
+The three listings below illustrate usage of these tag features.
+
+\begin{urbiscript}
+// Launch in background (using the comma) code that prints "ping"
+// every second.  Tag it to keep control over it.
+mytag:
+{
+  loop
+  {
+    echo("ping");
+    sleep(0.5s)
+  }
+},
+sleep(1.6s);
+[00000000] *** ping
+[00001000] *** ping
+[00002000] *** ping
+// Suspend execution
+mytag.freeze;
+// No printing anymore
+sleep(1.6s);
+// Resume execution
+mytag.unfreeze;
+sleep(0.1s);
+[00007000] *** ping
+\end{urbiscript}
+
+\begin{urbiscript}
+// Now, we print out a message when we get out of the tag.
+{
+  mytag:
+  {
+    loop
+    {
+      echo("ping"); sleep(1s)
+    }
+  };
+  // Execution flow jumps here if mytag is stopped.
+  echo("Background job stopped")|
+},
+sleep(3s);
+[00000000] *** ping
+[00001000] *** ping
+[00002000] *** ping
+// Stop the tag
+mytag.stop;
+[00002500] *** Background job stopped
+// Our background job finished.
+// Unfreezing the tag has no effect.
+mytag.unfreeze;
+\end{urbiscript}
+
+\begin{urbiscript}
+// Now, print out a message when we get out of the tag.
+{
+  loop
+  {
+    echo("ping"); sleep(1s);
+    mytag: { echo("pong"); sleep(1s); };
+  };
+
+  // Execution flow will jump here if mytag is stopped
+  echo("Background job stopped")|
+},
+sleep(4s);
+/*(*/sleep(100ms);/*)*/
+[00000000] *** ping
+[00001000] *** pong
+[00002000] *** ping
+[00003000] *** pong
+// Block printing of pong.
+mytag.block;
+sleep(3s);
+/*(*/sleep(100ms);/*)*/
+// The second half of the while isn't executed anymore.
+[00004000] *** ping
+[00005000] *** ping
+[00006000] *** ping
+// Reactivate pong
+mytag.unblock;
+sleep(4s);
+/*(*/sleep(100ms);/*)*/
+[00007000] *** ping
+[00008000] *** pong
+[00009000] *** ping
+[00010000] *** pong
+[00011000] *** ping
+\end{urbiscript}
+
+\section{Advanced example with parallelism and tags}
+
+In this section, we implement a more advanced example with
+parallelism.
+
+The listing below presents how to implement a \lstinline{timeOut}
+function, that takes code to execute and a timeout as arguments. It
+executes the code, and returns its value. However, if the code
+execution takes longer than the given timeout, it aborts it, print
+\lstinline|"Timeout!"| and returns void. In this example, we use:
+
+\begin{itemize}
+\item Lazy arguments, since we want to delay the execution of the
+  given code, to keep control on it.
+\item Parallelism operators, to launch a timeout job in background.
+\end{itemize}
+
+% FIXME: doesn't work (inner return)
+\begin{urbiscript}
+// timeout (Code, Duration).
+function timeOut
+{
+  // In background, launch a timeout job that waits
+  // for the given duration before aborting the function.
+  // call.evalArgAt(1) is the second argument, the delay.
+  {
+    sleep (call.evalArgAt(1));
+    echo("Timeout!");
+    return;
+  },
+  return call.evalArgAt(0);
+} | {};
+timeOut({sleep(1s); echo("On time"); 42}, 2s);
+[00000000] *** On time
+[00000000] 42
+timeOut({sleep(2s); echo("On time"); 42}, 1s);
+[00000000] *** Timeout!
+\end{urbiscript}
+
+% FIXME: add example with tags
+
+% Add chronograms
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

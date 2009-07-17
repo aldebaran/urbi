@@ -1,0 +1,147 @@
+\chapter{Getting started}
+\label{sec:tut:started}
+\us comes with a set of tools, two of which being of particular
+importance:
+\begin{description}
+\item[\dfn{urbi}] launches an \urbi server.  There are several means
+  to interact with it, which we will see later.
+\item[\dfn{urbi-launch}] runs \urbi components, the UObjects, and connects
+  them to an \urbi server.
+\end{description}
+
+Please, first make sure that these tools are properly installed.  If
+you encounter problems, please see \autoref{sec:installation}, which
+is more detailed, and possibly \autoref{sec:faq} for frequently asked
+questions.
+
+\begin{shell}
+# Make sure urbi is properly installed.
+$ urbi --version
+Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+Copyright (C) 2005-2009 Gostai SAS.
+
+URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+Copyright (C) 2004-2009 Gostai SAS.
+
+Libport version preview/1.0/beta1-1048 rev. f1c5170
+Copyright (C) 2005-2009 Gostai SAS.
+\end{shell}%$
+
+
+There are several means to interact with a server spawned by
+\command{urbi}, see \autoref{sec:tools:urbi} for details.  First of
+all, you may use the options
+\option{-e}/\option{--expression \var{code}} and
+\option{-f}/\option{--file \var{file}} to send some \var{code} or the
+contents of some \var{file} to the newly run server.  You may combine
+any number of these options, but beware that being event-driven, the
+server does not ``know'' when a program ends.  Therefore, batch
+programs should end by calling \lstinline{shutdown}:
+
+\begin{shell}[alsolanguage={[interactive]Urbi}]
+# A classical program.
+$ urbi -e 'echo("Hello, World!");' -e 'shutdown;'
+[00000004] *** Hello, World!
+\end{shell}%$
+
+To run an interactive session, use option
+\option{-i}/\option{--interactive}.  Like most interactive
+interpreters, \urbi will evaluate the given commands and print out the
+results.
+
+\begin{shell}[alsolanguage={[interactive]Urbi}]
+$ urbi -i
+[00000000:start] *** **********************************************************
+[00000000:start] *** Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+[00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+[00000000:start] *** Copyright (C) 2004-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** Libport version preview/1.0/beta1-1048 rev. f1c5170
+[00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** URBI comes with ABSOLUTELY NO WARRANTY.
+[00000000:start] *** This software can be used under certain conditions;
+[00000000:start] *** see LICENSE file for details.
+[00000000:start] ***
+[00000000:start] *** See http://www.urbiforge.com for news and updates.
+[00000000:start] *** **********************************************************
+[00000000:start] ***
+[00000000:ident] *** ID: U3154688
+[00000000:start] *** Urbi is up and running.
+1+2;
+[00000000] 3
+shutdown;
+\end{shell}%$
+
+The output from the server is prefixed by a number surrounded by
+square brackets: this is the date (in milliseconds since the server
+was launched) at which that line was sent by the server. This is
+useful at occasions, since \urbi is meant to run many parallel
+commands.  But since these timestamps are irrelevant in most examples,
+they will often be filled with zeroes through this documentation.
+
+The program \command{rlwrap} provides additional services (history of
+commands, advanced command line edition etc.); run \samp{rlwrap
+  urbi -i}.
+
+In either case the server can also be made available for network-based
+interactions using option \option{--port \var{port}}.  Note that while
+\lstinline{shutdown} asks the server to quit, \lstinline{quit} only
+quits one interactive session.  In the following example the server is
+still available for other, possibly concurrent, sessions.
+
+\begin{shell}[alsolanguage={[interactive]Urbi}]
+$ urbi --port 54000 &
+[1] 77024
+$ telnet localhost 54000
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+[00000758:start] *** **********************************************************
+[00000758:start] *** Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
+[00000758:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
+[00000758:start] *** Copyright (C) 2004-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** Libport version preview/1.0/beta1-1048 rev. f1c5170
+[00000758:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000758:start] ***
+[00000758:start] *** URBI comes with ABSOLUTELY NO WARRANTY.
+[00000758:start] *** This software can be used under certain conditions;
+[00000758:start] *** see LICENSE file for details.
+[00000758:start] ***
+[00000758:start] *** See http://www.urbiforge.com for news and updates.
+[00000758:start] *** **********************************************************
+[00000758:start] ***
+[00000758:ident] *** ID: U348160
+12345679*8;
+[00018032] 98765432
+quit;
+\end{shell}%$
+
+The program \command{urbi-send} provides a nice interface to
+interact with a running server.
+
+\begin{shell}[alsolanguage={[interactive]Urbi}]
+$ urbi-send -p 54000 -e '1+2*3;' -e 'quit;'
+[00018032:] 7
+# Have the server shutdown;
+$ urbi-send -p 54000 -e 'shutdown;'
+\end{shell}
+
+\medskip
+
+You can now send commands to your \urbi server. If at any point you
+get lost, or want a fresh start, you can simply close and reopen your
+connection to the server to get a clean environment.  In some cases,
+particularly if you made global changes in the environment, it is
+simpler start anew: shut your current server down, and spawn a new
+one.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

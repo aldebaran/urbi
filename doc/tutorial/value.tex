@@ -1,0 +1,463 @@
+\chapter{Basic objects, \us values model} % FIXME: values model
+\label{sec:tut:value}
+
+In this section, we focus on \us values as objects, and study \us
+by-reference values model. We won't study classes and actual objective
+programming yet, these points will be presented in
+\autoref{sec:tut:object}.
+
+\section{Objects in \us}
+\label{sec:tut:objects}
+An object in \us is a rather simple concept: a list of slots. A
+\dfn{slot} is a value associated to a name. So an \dfn{object} is a
+list of slot names, each of which indexes a value --- just like a
+dictionary. You can get an object's slot value by using the dot
+(\lstinline{.}) operator on this object, followed by the name of the
+slot. You can list the names of the slots of an object with the
+\lstinline{localSlotNames} method.
+
+\begin{urbiscript}
+// Create a fresh object with two slots.
+class Foo { var a = 42; var b = "foo"; };
+[00000000] Foo
+// Inspect it.
+Foo.localSlotNames;
+[00000000] ["a", "asFoo", "b", "type"]
+// We now know the name of its slots.
+// Let's see their value.
+Foo.a;
+[00000000] 42
+Foo.b;
+[00000000] "foo"
+\end{urbiscript}
+
+It's as simple as this. Let's now try to build such an object. First,
+we want a fresh object to work on. In \us, \lstinline{Object} is the
+parent type of every object (in fact, since \us is prototype-based,
+\lstinline{Object} is the uppermost prototype of every object, but
+we'll talk about prototypes later). An instance of object, is an
+empty, neutral object, so let's start by instantiating one with the
+\lstinline{clone} method of \lstinline{Object}.
+
+\begin{urbiscript}
+// Create the o variable as a fresh object.
+var o = Object.clone;
+[00000000] Object_0x00000000
+// Check its content
+o.localSlotNames;
+[00000000] []
+\end{urbiscript}
+
+As you can see, we obtain an empty fresh object. Note that it still
+inherits from \lstinline{Object} features that all objects share, such as
+the \lstinline{localSlotNames} method.
+
+Also note how \lstinline{o} is printed out: \lstinline{Object_},
+followed by an hexadecimal number. Since this object is empty, its
+printing is quite generic: its type (\lstinline{Object}), and its
+unique identifier (every \us object has one). Since these identifiers
+are often irrelevant and might differ between two executions, they are
+often filled with zeroes in this document.
+
+We're now getting back to our empty object. We want to give it two
+slots, \lstinline{a} and \lstinline{b}, with values \lstinline|42| and
+\lstinline|"foo"| respectively. We can do this with the
+\lstinline{setSlot} method, which takes the slot name and
+its value.
+
+\begin{urbiscript}[firstnumber=last]
+o.setSlot("a", 42);
+[00000000] 42
+o.localSlotNames;
+[00000000] ["a"]
+o.a;
+[00000000] 42
+\end{urbiscript}
+
+Here we successfully created our first slot, a. A good shorthand for
+setting slot is using the \lstinline{var} keyword.
+
+\begin{urbiscript}[firstnumber=last]
+// This is equivalent to o.setSlot("b", "foo").
+var o.b = "foo";
+[00000000] "foo"
+o.localSlotNames;
+[00000000] ["a", "b"]
+o.b;
+[00000000] "foo"
+\end{urbiscript}
+
+The latter form with \lstinline{var} is preferred, but you need to know
+the name of the slot at the time of writing the code. With the former
+one, you can compute the slot name at execution time. Likewise, you
+can read a slot with a run-time determined name with the
+\lstinline{getSlot} method, which takes the slot name as
+argument.  The following listing illustrates the use of
+\lstinline{getSlot} and \lstinline{setSlot} to read and write slots whose
+names are unknown at code-writing time.
+
+% mefyl: FIXME: I never introduced that '+' concatenates strings.
+
+\begin{urbiscript}[firstnumber=last]
+function set(object, name, value)
+{
+  // We have to use setSlot here, since we don't
+  // know the actual name of the slot.
+  return object.setSlot("x_" + name, value);
+} | {};
+function get(object, name)
+{
+  // We have to use getSlot here, since we don't
+  // know the actual name of the slot.
+  return object.getSlot("x_" + name);
+} | {};
+var x = Object.clone;
+[00000000] Object_0x00000000
+set(x, "foo", 0);
+[00000000] 0
+set(x, "bar", 1);
+[00000000] 1
+x.localSlotNames;
+[00000000] ["x_bar", "x_foo"]
+get(x, "foo");
+[00000000] 0
+get(x, "bar");
+[00000000] 1
+\end{urbiscript}
+
+Right, now we can create fresh objects, create slots in them and read
+them afterward, even if their name is dynamically computed, with
+\lstinline{getSlot} and \lstinline{setSlot}. Now, you might wonder if
+there's a method to update the value of the slot. Guess what, there's
+one, and it's named\ldots \lstinline{updateSlot} (originality
+award). Getting back to our \lstinline{o} object, let's try to update one
+of its slots.
+
+\begin{urbiscript}[firstnumber=last]
+o.a;
+[00000000] 42
+o.updateSlot("a", 51);
+[00000000] 51
+o.a;
+[00000000] 51
+\end{urbiscript}
+
+Again, there's a shorthand for \lstinline{updateSlot}: operator
+\lstinline{=}.
+
+\begin{urbiscript}[firstnumber=last]
+o.b;
+[00000000] "foo"
+// Equivalent to o.updateSlot("b", "bar")
+o.b = "bar";
+[00000000] "bar"
+o.b;
+[00000000] "bar"
+\end{urbiscript}
+
+Likewise, prefer the '\lstinline{=}' notation whenever
+possible, but you'll need \lstinline{updateSlot} to update a slot whose
+name you don't know at code-writing time.
+
+Note that defining the same slot twice, be it with \lstinline{setSlot} or
+\lstinline{var}, is an error. The slot must be defined once with setSlot,
+and subsequent writes must be done with \lstinline{updateSlot}.
+
+\begin{urbiscript}[firstnumber=last]
+var o.c = 0;
+[00000000] 0
+// Can't redefine a slot like this
+var o.c = 1;
+[00000000:error] !!! slot redefinition: c
+// Okay.
+o.c = 1;
+[00000000] 1
+\end{urbiscript}
+
+Finally, use \lstinline{removeSlot} to delete a slot from an object.
+
+\begin{urbiscript}[firstnumber=last]
+o.localSlotNames;
+[00000000] ["a", "b", "c"]
+o.removeSlot("c");
+[00000000] Object_0x00000000
+o.localSlotNames;
+[00000000] ["a", "b"]
+\end{urbiscript}
+
+Here we are, now you can inspect and modify objects at will. Don't
+hesitate to explore \us objects you'll encounter through this
+documentation like this. Last point: reading, updating or removing a
+slot which does not exist is, of course, an error.
+
+\begin{urbiscript}[firstnumber=last]
+o.d;
+[00000000:error] !!! lookup failed: d
+o.d = 0;
+[00000000:error] !!! lookup failed: d
+\end{urbiscript}
+
+\section{Methods}
+
+Methods in \us are simply object slots containing functions. We made a
+little simplification earlier by saying that \lstinline|obj.slot| is
+equivalent to \lstinline|obj.getSlot("slot")|: if the fetched value is
+executable code such as a function, the dot form evaluates it, as
+illustrated below. Inside a method, \lstinline|this| gives access to
+the target --- as in \Cxx.  It can be omitted if there is no ambiguity
+with local variables.
+
+\begin{urbiscript}
+var o = Object.clone;
+[00000000] Object_0x0
+// This syntax stores the function in the 'f' slot of 'o'.
+function o.f ()
+{
+  echo("This is f with target " + this);
+  return 42;
+} | {};
+// The slot value is the function.
+o.getSlot("f");
+[00000001] function () {
+[:]  echo("This is f with target " . '+'(this));
+[:]  return 42;
+[:]}
+// Huho, the function is invoked!
+o.f;
+[00000000] *** This is f with target Object_0x0
+[00000000] 42
+// The parentheses are in fact optional.
+o.f();
+[00000000] *** This is f with target Object_0x0
+[00000000] 42
+\end{urbiscript}
+
+This was designed this way so as one can replace an attribute, such as
+an integer, with a function that computes the value. This enables to
+replace an attribute with a method without changing the object
+interface, since the parentheses are optional.
+
+This implies that \lstinline|getSlot| can be a better tool for object
+inspection to avoid invoking slots, as shown below.
+
+\begin{urbiscript}[firstnumber=last]
+// The 'empty' method of strings returns whether the string is empty.
+"foo".empty;
+[00000000] false
+"".empty;
+[00000000] true
+// Using getSlot, we can fetch the function without calling it.
+"".getSlot("asList");
+[00000000] function () {
+[:]  split("")
+[:]}
+\end{urbiscript}
+
+The \lstinline|asList| function simply bounces the task to
+\lstinline|split|.  Let's try \lstinline{getSlot}'ing another method:
+
+\begin{urbiscript}[firstnumber=last]
+"foo".size;
+[00000000] 3
+"foo".getSlot("size");
+[00000000] Primitive_0x0
+\end{urbiscript}
+
+The \lstinline{size} method of \refObject{String} is another type of
+object: a \refObject{Primitive}. These objects are executable, like
+functions, but they are actually opaque primitives implemented in
+\Cxx.
+
+\section{Everything is an object}
+
+If you're wondering what is an object and what is not, the answer is
+simple: every single bit of value you manipulate in \us is an
+object, including primitive types, types themselves, functions, \ldots
+
+\begin{urbiscript}[firstnumber=last]
+var x = 0;
+[00000000] 0
+x.localSlotNames;
+[00000000] []
+var x.slot = 1;
+[00000000] 1
+x.localSlotNames;
+[00000000] ["slot"]
+x.slot;
+[00000000] 1
+x;
+[00000000] 0
+\end{urbiscript}
+
+% FIXME: I'm saying integer through this whole documentation, even
+% though 42 is a float for now. But it will eventually be an integer
+% (right? right?).
+As you can see, integers are objects just like any other value.
+
+\section{The \us values model}
+
+We are now going to focus on the \us value model, that is how values
+are stored and passed around. The whole point is to understand when
+variables point to the same object.  For this, we introduce
+\lstinline{uid}, a method that returns the target's unique identifier
+--- the same one that was printed when we evaluated
+\lstinline|Object.clone|.  Since uids might vary from an execution to
+another, their values in this documentation are dummy, yet not null to
+be able to differentiate them.
+
+\begin{urbiscript}
+var o = Object.clone;
+[00000000] Object_0x100000
+o.uid;
+[00000000] "0x100000"
+42.uid;
+[00000000] "0x200000"
+42.uid;
+[00000000] "0x300000"
+\end{urbiscript}
+
+% FIXME: maybe should I introduce == and other basic operator before.
+Our objects have different uids, reflecting the fact that they are
+different objects. Note that entering the same integer twice
+(\lstinline{42} here) yields different objects. Let's introduce new
+operators before diving in this concept. First the equality operator:
+\lstinline{==}. This operator is the exact same as \C or \Cxx's one,
+it simply returns whether its two operands are \emph{semantically}
+equal. The second operator is \lstinline{===}, which is the
+\emph{physical} equality operator. It returns whether its two operands
+are the same object, which is equivalent to having the same uid. This
+can seem a bit confusing; let's have an example.
+
+\begin{urbiscript}[firstnumber=last]
+var a = 42;
+[00000000] 42
+var b = 42;
+[00000000] 42
+a == b;
+[00000000] true
+a === b;
+[00000000] false
+\end{urbiscript}
+
+Here, the \lstinline{==} operator reports that \lstinline{a} and
+\lstinline{b} are equal ---
+indeed, they both evaluate to 42. Yet, the \lstinline{===} operator shows
+that they are not the same object: they are two different
+instances of integer objects, both equal 42.
+
+Thanks to this operator, we can point out the fact that slots and
+local variables in \us have a reference semantic. That is, when you
+defining a local variable or a slot, you're not copying any value (as
+you would be in \C or \Cxx), you're only making it refer to an already
+existing value (as you would in \ruby or \java).
+
+\begin{urbiscript}
+var a = 42;
+[00000000] 42
+var b = 42;
+[00000000] 42
+var c = a; // c refers to the same object as a.
+[00000000] 42
+// a, b and c are equal: they have the same value.
+a == b && a == c;
+[00000000] true
+// Yet only a and c are actually the same object.
+a === b;
+[00000000] false
+a === c;
+[00000000] true
+\end{urbiscript}
+
+So here we see that \lstinline|a| and \lstinline|c| point to the same
+integer, while \lstinline|b| points to a second one. This a
+non-trivial fact: any modification on \lstinline|a| will affect
+\lstinline|c| as well, as shown below.
+
+\begin{urbiscript}[firstnumber=last]
+a.localSlotNames;
+[00000000] []
+b.localSlotNames;
+[00000000] []
+c.localSlotNames;
+[00000000] []
+var a.flag; // Create a slot in a.
+a.localSlotNames;
+[00000000] ["flag"]
+b.localSlotNames;
+[00000000] []
+c.localSlotNames;
+[00000000] ["flag"]
+\end{urbiscript}
+
+Updating slots or local variables does not update the referenced
+value. It simply redirects the variable to the new given value.
+
+\begin{urbiscript}
+var a = 42;
+[00000000] 42
+var b = a;
+[00000000] 42
+// b and a point to the same integer.
+a === b;
+[00000000] true
+// Updating b won't change the referred value, 42,
+// it makes it reference a fresh integer with value 51.
+b = 51;
+[00000000] 51
+// Thus, a is left unchanged:
+a;
+[00000000] 42
+\end{urbiscript}
+
+Understanding the two latter examples is really important, to be aware
+of what your variable are referring to.
+
+Finally, function and method arguments are also passed by reference:
+they can be modified by the function.
+
+\begin{urbiscript}
+function test(arg)
+{
+  var arg.flag;  // add a slot in arg
+  echo(arg.uid); // print its uid
+} | {};
+var x = Object.clone;
+[00000000] Object_0x1
+x.uid;
+[00000000] "0x1"
+test(x);
+[00000000] *** 0x1
+x.localSlotNames;
+[00000000] ["flag"]
+\end{urbiscript}
+
+Beware however that arguments are passed by reference, and the
+behavior might not be what you may expected.
+
+\begin{urbiscript}
+function test(arg)
+{
+  // Updates the local variable arg to refer 1.
+  // Does not affect the referred value, nor the actual external argument.
+  arg = 1;
+} | {};
+var x = 0;
+[00000000] 0
+test(x);
+[00000000] 1
+// x wasn't modified
+x;
+[00000000] 0
+\end{urbiscript}
+
+\section{Conclusion}
+
+You should now understand the reference semantic of local variables,
+slots and arguments. It's very important to keep them in mind,
+otherwise you will end up modifying variables you didn't want, or
+change a copy of reference, failing to update the desired one.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

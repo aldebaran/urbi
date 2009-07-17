@@ -1,0 +1,145 @@
+\chapter{Functional programming}
+\label{sec:tut:functional}
+
+\us support functional programming through first class functions and
+lambda expressions.
+
+\section{First class functions}
+
+\us has first class functions. That is, function are regular values,
+just like an integer or a string, enabling you to store them or pass
+them as arguments. For instance, you don't need to write
+\lstinline|function object.f(){/* ... */}| to insert a function in an
+object, you can simply use \lstinline{setSlot}.
+
+% FIXME: doesn't work, toplevel, puke, etc
+\begin{urbiscript}
+var o = Object.clone | {};
+// Here we can use f as any regular value
+o.setSlot("m1", function () { echo("Hello") }) | {};
+// This is strictly equivalent
+var o.m2 = function () { echo("Hello") } | {};
+o.m1;
+[00000000] *** Hello
+o.m2;
+[00000000] *** Hello
+\end{urbiscript}
+
+This enables to write powerful pieces of code, like functions that
+take function as argument. For instance, consider the \lstinline{all}
+function: given a list and a function, it applies the function to each
+element of the list, and returns whether all calls returned true. This
+enables to check very simply if all elements in a list verify a
+predicate.
+
+\begin{urbiscript}
+function all(list, predicate)
+{
+  for (var elt : list)
+    if (!predicate(elt))
+      return false;
+  return true;
+} | {};
+// Check if all elements in a list are positive.
+function positive(x) { x >= 0 } | {};
+all([1, 2, 3], getSlot("positive"));
+[00000000] true
+all([1, 2, -3], getSlot("positive"));
+[00000000] false
+\end{urbiscript}
+
+It turns out that \lstinline|all| already exists: instead of
+\lstinline|all(\var{list}, \var{predicate})|, use
+\lstinline|\var{list}.all(\var{predicate})|, see \refObject{List}.
+
+\section{Lambda functions}
+
+Another nice feature is the ability to write lambda functions, which
+are anonymous functions. You can create a functional value as an
+expression, without naming it, with the syntax shown below.
+
+\begin{urbiscript}
+// Create an anonymous function
+function (x) {x + 1} | {};
+// This enable to easily pass function
+// to our "all" function:
+[1, 2, 3].all(function (x) { x > 0});
+[00000000] true
+\end{urbiscript}
+
+In fact, the \lstinline{function} construct we saw earlier is only a
+shorthand for a variable assignment.
+
+\begin{lstlisting}
+// This ...
+function obj.f (/*...*/) {/*...*/};
+// ... is actually a shorthand for this
+var obj.f = function (/*...*/) {/* ... */};
+\end{lstlisting}
+
+% This should maybe be outside the functional section. It is also
+% incomplete.
+\section{Lazy arguments}
+
+Most popular programming languages use strict arguments evaluation:
+arguments are evaluated before functions are called. Other languages
+use lazy evaluation: argument are evaluated by the function only when
+needed. In \us, evaluation is strict by default, but you can ask a
+function not to evaluate its arguments, and do it by hand. This works
+by not specifying formal arguments. The function is provided with a
+\lstinline{call} object that enables you to evaluate arguments.
+
+\begin{urbiscript}
+// Note the lack of formal arguments specification
+function first
+{
+  // Evaluate only the first argument.
+  call.evalArgAt(0);
+} | {};
+first(echo("first"), echo("second"));
+[00000000] *** first
+function reverse
+{
+  call.evalArgAt(1);
+  call.evalArgAt(0);
+} | {};
+reverse(echo("first"), echo("second"));
+[00000000] *** second
+[00000000] *** first
+\end{urbiscript}
+
+A good example are logic operators. Although \Cxx is a strict
+language, it uses a few logic operators. For instance, the logical and
+(\lstinline{&&}) does not evaluate its right operand if the left
+operand is false (the result will be false anyway).
+
+\us logic operator mimic this behavior. The listing below shows how
+one can implement such a behavior.
+
+\begin{urbiscript}
+function myand
+{
+  var lhs = call.evalArgAt(0);
+  if (lhs)
+    return call.evalArgAt(1)
+  else
+    return false;
+} | {};
+function f()
+{
+  echo("f executed");
+  return true;
+} | {};
+myand(false, f());
+[00000000] false
+myand(true, f());
+[00000000] *** f executed
+[00000000] true
+\end{urbiscript}
+
+%\section{Pattern matching}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

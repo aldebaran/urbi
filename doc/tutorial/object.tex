@@ -1,0 +1,373 @@
+\chapter{Objective programming, \us object model}
+\label{sec:tut:object}
+
+This section presents object programing in \us: the prototype-based
+object model of \us, and how to define and use classes.
+
+\section{Prototype-based programing in \us}
+
+You're probably already familiar with class-based object programing,
+since this is the \Cxx model.  Classes and objects are very differents
+entities.  Types are static entities that do not exist at runtime,
+while objects are dynamic entities that do not exist at compile time.
+
+Prototype-based object programing is different: the difference between
+classes and objects, between types and values, is blurred. Instead,
+you have an
+object, that is already an instance, and that you might clone to
+obtain a new one that you can modify afterward. Prototype-based
+programming was introduced by the Self language, and is used in
+several popular script languages such as \io or \js.
+
+Class-based programming can be considered with an industrial
+metaphore: classes are moulds, from which objects are generated.
+Prototype-based programming is more biological: an prototype object is
+cloned into another object which which can be modified during its
+lifetime.
+
+Consider pairs for instance (see \refObject{Pair}). Pairs hold two
+values, \lstinline|first| and \lstinline|second|, like an
+\lstinline{std::pair} in \Cxx. Since \us is prototype-based, there is
+no pair class. Instead, \lstinline|Pair| is really a pair (object).
+
+\begin{urbiscript}
+Pair;
+[00000000] (nil, nil)
+\end{urbiscript}
+
+We can see here that \lstinline|Pair| is a pair whose two values are
+equal to \lstinline|nil| --- which is a reasonable default value. To
+get a pair of our own, we simply clone \lstinline|Pair|.  We can then
+use it as a regular pair.
+
+\begin{urbiscript}
+var p = Pair.clone;
+[00000000] (nil, nil)
+p.first = "101010";
+[00000000] "101010"
+p.second = true;
+[00000000] true
+p;
+[00000000] ("101010", true)
+Pair;
+[00000000] (nil, nil)
+\end{urbiscript}
+
+Since \lstinline|Pair| is a regular pair object, you can modify and
+use it at will. Yet this is not a good idea, since you will alter your
+base prototype, which alters any derivative, future and even past.
+
+\begin{urbiscript}
+var before = Pair.clone;
+[00000000] (nil, nil)
+Pair.first = false;
+[00000000] false
+var after = Pair.clone;
+[00000000] (false, nil)
+before;
+[00000000] (false, nil)
+// before and after share the same first: that of Pair.
+assert(Pair.first === before.first);
+assert(Pair.first === after.first);
+\end{urbiscript}
+
+\section{Prototypes and slot lookup}
+
+In prototype-based language, 'is-a' relations (being an instance of
+some type) and inheritance relations (extending another type) are
+simplified in a single relation: prototyping. You can inspect an
+object prototypes with the \lstinline{protos} method.
+
+\begin{urbiscript}
+var p = Pair.clone;
+[00000000] (nil, nil)
+p.protos;
+[00000000] [(nil, nil)]
+\end{urbiscript}
+
+As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|,
+which is how \lstinline|Pair| displays itself. We can check this as
+presented below.
+
+\begin{urbiscript}[firstnumber=last]
+// List.head returns the first element.
+p.protos.head;
+[00000000] (nil, nil)
+// Check that the prototype is really Pair.
+p.protos.head === Pair;
+[00000000] true
+\end{urbiscript}
+
+Prototypes are the base of the slot lookup mechanism. Slot lookup is
+the action of finding an object slot when \lstinline{getSlot} or the
+dot notation is used. So far, when we typed
+\lstinline|\var{obj}.\var{slot}|, \var{slot} was always a slot of
+\var{obj}.  Yet, this call can be valid even if \var{obj} has no
+\var{slot} slot, because slots are also looked up in prototypes. For
+instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
+\lstinline|first| or \lstinline|second| slots. Yet,
+\lstinline|p.first| and \lstinline|p.second| work, because these slots
+are present in \lstinline|Pair|, which is \lstinline|p|'s
+prototype. This is illustrated below.
+
+\begin{urbiscript}
+var p = Pair.clone;
+[00000000] (nil, nil)
+// p has no slots of its own.
+p.localSlotNames;
+[00000000] []
+// Yet this works.
+p.first;
+// This is because p has Pair for prototype, and Pair has a 'first' slot.
+p.protos.head === Pair;
+[00000000] true
+"first" in Pair.localSlotNames && "second" in Pair.localSlotNames;
+[00000000] true
+\end{urbiscript}
+
+As shown here, the \lstinline{clone} method simply creates an empty
+object, with its target as prototype. The new object has the exact
+same behavior as the cloned on thanks to slot lookup.
+
+Let's experience slot lookup by ourselves. In \us, you can add and
+remove prototypes from an object thanks to \lstinline{addProto} and
+\lstinline{removeProto}.
+
+\begin{urbiscript}
+// We create a fresh object.
+var c = Object.clone;
+[00000000] Object_0x1
+// As expected, it has no 'slot' slot.
+c.slot;
+[00000000:error] !!! lookup failed: slot
+var p = Object.clone;
+[00000000] Object_0x2
+var p.slot = 0;
+[00000000] 0
+c.addProto(p);
+[00000000] Object_0x1
+// Now, 'slot' is found in c, because it is inherited from p.
+c.slot;
+[00000000] 0
+c.removeProto(p);
+[00000000] Object_0x1
+// Back to our good old lookup error.
+c.slot;
+[00000000:error] !!! lookup failed: slot
+\end{urbiscript}
+
+The slot lookup algorithm in \us in a depth-first traversal of the
+object prototypes tree. Formally, when the \var{s} slot is requested
+from \var{x}:
+
+\begin{itemize}
+\item If \var{x} itself has the slot, the requested value is found.
+\item Otherwise, the same lookup algorithm is applied on all
+  prototypes, most recent first.
+\end{itemize}
+
+Thus, slots from the last prototype added take precedence over other
+prototype's slots.
+
+\begin{urbiscript}
+var proto1 = Object.clone;
+[00000000] Object_0x10000000
+var proto2 = Object.clone;
+[00000000] Object_0x20000000
+var o = Object.clone;
+[00000000] Object_0x30000000
+o.addProto(proto1);
+[00000000] Object_0x30000000
+o.addProto(proto2);
+[00000000] Object_0x30000000
+// We give o an x slot through proto1.
+var proto1.x = 0;
+[00000000] 0
+o.x;
+[00000000] 0
+// proto2 is visited first during lookup.
+// Thus its "x" slot takes precedence over proto1's.
+var proto2.x = 1;
+[00000000] 1
+o.x;
+[00000000] 1
+// Of course, o's own slots have the highest precedence.
+var o.x = 2;
+[00000000] 2
+o.x;
+[00000000] 2
+\end{urbiscript}
+
+You can check where in the prototype hierarchy a slot is found with
+the \lstinline{locateSlot} method. This is a very
+handful tool when inspecting an object.
+
+\begin{urbiscript}
+var p = Pair.clone;
+[00000000] (nil, nil)
+// Check that the 'first' slot is found in Pair
+p.locateSlot("first") === Pair;
+[00000000] true
+// Where does locateSlot itself come from? Object itself!
+p.locateSlot("locateSlot");
+[00000000] Object
+\end{urbiscript}
+
+The prototype model is rather simple: creating a fresh object simply
+consists in cloning a model object, a prototype, that was provided to
+you.  Moreover, you can add behavior to an object at any time with a
+simple \lstinline{addProto}: you can make any object a fully
+functional \lstinline|Pair| with a simple
+\lstinline|myObj.addProto(Pair)|.
+
+\section{Copy on write}
+
+One point might be bothering you though: what if you want to update a
+slot value in a clone of your prototype?
+
+Say we implement a simple prototype, with an \var{x} slot equal to
+\lstinline|0|, and clone it twice. We have three object with an
+\var{x} slot, yet only one actual \lstinline|0| integer. Will
+modifying \var{x} in one of the clone change the prototype's \var{x},
+thus altering the prototype and the other clone as well?
+
+The answer is, of course, no, as illustrated below.
+
+\begin{urbiscript}
+var proto = Object.clone;
+[00000000] Object_0x1
+var proto.x = 0;
+[00000000] 0
+var o1 = proto.clone;
+[00000000] Object_0x2
+var o2 = proto.clone;
+[00000000] Object_0x3
+// Are we modifying proto's x slot here?
+o1.x = 1;
+[00000000] 1
+// Obviously not
+o2.x;
+[00000000] 0
+proto.x;
+[00000000] 0
+o1.x;
+[00000000] 1
+\end{urbiscript}
+
+This work thanks to copy-on-write: slots are first duplicated to the
+local object when they're updated, as we can check below.
+
+\begin{urbiscript}[firstnumber=last]
+// This is the continuation of previous example.
+
+// As expected, o2 finds "x" in proto
+o2.locateSlot("x") === proto;
+[00000000] true
+// Yet o1 doesn't anymore
+o1.locateSlot("x") === proto;
+[00000000] false
+// Because the slot was duplicated locally
+o1.locateSlot("x") === o1;
+[00000000] true
+\end{urbiscript}
+
+This is why, when we cloned Pair earlier, and modified the ``first''
+slot of our fresh Pair, we didn't alter Pair one all its other clones.
+
+% BIG FIXME: classes, classes ... c'mon, these are not classes but
+% prototypes ...
+\section{Defining classes}
+
+Now that we know the internals of \us's object model, we can start
+defining our own classes. For instance, we can define our own
+\lstinline{Pair} class. We just have to create a pair, with its first and
+second slots. For this we use the \lstinline{do} scope described in
+\autoref{section:constructs/do}. The listing below defines a new
+\lstinline{Pair} class. The \lstinline{asString} function is simply used to
+customize pairs printing - don't give it too much attention for now.
+
+\begin{urbiscript}
+var MyPair = Object.clone;
+[00000000] Object_0x1
+do (MyPair)
+{
+  var first = nil;
+  var second = nil;
+  function asString ()
+  {
+    "MyPair: " + first + ", " + second
+  };
+} | {};
+// We just defined a pair
+MyPair;
+[00000000] MyPair: nil, nil
+// Let's try it out
+var p = MyPair.clone;
+[00000000] MyPair: nil, nil
+p.first = 0;
+[00000000] 0
+p;
+[00000000] MyPair: 0, nil
+MyPair;
+[00000000] MyPair: nil, nil
+\end{urbiscript}
+
+That's it, we defined a pair that can be cloned at will! \us
+provides a shorthand to define classes as we did above: the
+\lstinline{class} keyword.
+
+\begin{urbiscript}
+class MyPair
+{
+  var first = nil;
+  var second = nil;
+  function asString() { "(" + first + ", " + second + ")"; };
+};
+[00000000] (nil, nil)
+\end{urbiscript}
+
+The \lstinline{class} keyword simply creates MyPair with Object.clone,
+and provides you with a \lstinline|do (MyPair)| scope. It actually also
+predefines a few slots, but this is not the point here.
+
+\section{Constructors}
+\label{sec:tut:ctor}
+As we've seen, we can use the clone method on any object to obtain an
+identical object. Yet, some class provide more elaborated
+constructors, accessible by calling \lstinline{new} instead of
+\lstinline{clone}, potentially passing it arguments.
+
+\begin{urbiscript}
+var p = Pair.new("foo", false);
+[00000000] ("foo", false)
+\end{urbiscript}
+
+While \lstinline{clone} guarantees you obtain a empty fresh object
+inheriting from the prototype, \lstinline{new} behavior is left to the
+discretion of the cloned prototype --- although its behavior is the
+same as \lstinline{clone} by default.
+
+To define such constructors, prototypes only need to provide an
+\lstinline{init} method, that will be called with the arguments given to
+new. For instance, we can improve our previous \lstinline{Pair} class
+with a constructor.
+
+\begin{urbiscript}
+class MyPair
+{
+  var first = nil;
+  var second = nil;
+  function init(f, s) { first = f;   second = s;  };
+  function asString() { "(" + first + ", " + second + ")"; };
+};
+[00000000] (nil, nil)
+MyPair.new(0, 1);
+[00000000] (0, 1)
+\end{urbiscript}
+
+%\section{Conclusion}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
