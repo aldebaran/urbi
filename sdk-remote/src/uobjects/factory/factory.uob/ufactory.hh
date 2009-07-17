@@ -26,8 +26,7 @@ public:
   std::string assemble(std::list<std::string> components);
 
   /// Function notified when the duration is changed.
-  /// \param v   the UVar being modified
-  ///            (i.e., UFactory::duration).
+  /// \param v   the UVar being modified (i.e., UFactory::duration).
   /// \return 0  on success.
   int duration_set(urbi::UVar& v);
 

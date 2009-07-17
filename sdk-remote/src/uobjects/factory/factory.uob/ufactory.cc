@@ -30,9 +30,9 @@ UFactory::init(ufloat d)
   // Build the factory.
   factory = new Factory(d);
 
-  // Require that duration_set be invoked each time duration is
-  // changed.  Declared after the above "duration = d" since we
-  // don't want it to be triggered for this first assignment.
+  // Request that duration_set be invoked each time duration is
+  // changed.  Declared after the above "duration = d" since we don't
+  // want it to be triggered for this first assignment.
   UNotifyChange(duration, &UFactory::duration_set);
 
   // Success.
