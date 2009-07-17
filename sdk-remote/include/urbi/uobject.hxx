@@ -28,6 +28,7 @@ namespace urbi
   void
   UObject::clean()
   {
+    assert(impl_);
     impl_->clean();
   }
 
@@ -35,6 +36,7 @@ namespace urbi
   void
   UObject::USetUpdate(ufloat period)
   {
+    assert(impl_);
     impl_->setUpdate(period);
   }
 
@@ -44,10 +46,6 @@ namespace urbi
   {
     v.keepSynchronized();
   }
-
-  /*-------------.
-  | Standalone.  |
-  `-------------*/
 
 }
 
