@@ -1,9 +1,3 @@
-\newenvironment{todo}{%
-  \begin{quote}\itshape%
-  }{%
-  \end{quote}%
-}
-
 \chapter{Quick Start}
 \label{sec:uob:quick}
 
@@ -51,22 +45,23 @@ environment, such as video games.
 
 \subsection{The \urbi Architecture}
 
-\begin{todo}
-  * Description approche Urbi, philosophie (orchestration etc) => un
-  exemple de code Urbiscript qui orchestre 3 UObject de manière simple
-  mais non triviale, avec at, \&, events, tags et qui servira de fil
-  conducteur au quickstart (le but du quickstart est de refaire cet
-  exemple initial).
-\end{todo}
+%  * Description approche Urbi, philosophie (orchestration etc) => un
+%  exemple de code Urbiscript qui orchestre 3 UObject de manière simple
+%  mais non triviale, avec at, \&, events, tags et qui servira de fil
+%  conducteur au quickstart (le but du quickstart est de refaire cet
+%  exemple initial).
+
 
 \section{UObject Basics}
 
 As a simple running example, consider a (very) basic factory.  Raw
-material delivered to the factory is push into some assembly machine,
+material delivered to the factory is pushed into some assembly machine,
 which takes some time.
 
-As a firth component of this factory, consider the following
-implementation of the core engine of the factory.
+As a firth component of this factory, the core engine of the factory
+is implemented as follows.  This class is pure regular \Cxx, it uses
+no \urbi feature at all.
+
 \newcommand{\factoryDir}{\uobjectsDir/factory/factory.uob}
 \lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/factory.hh}
 \lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/factory.cc}
@@ -74,15 +69,17 @@ implementation of the core engine of the factory.
 \subsection{Wrapping into an UObject}
 
 By \dfn{binding} a UObject, we mean using the UObject API to declare
-objects to the Urbi world.  These objects have member variables (also
+objects to the \urbi world.  These objects have member variables (also
 known as \dfn{attributes}) and/or member functions (also known as
 \dfn{methods}) all of them or some of them being declared into the
-Urbi world.
+\urbi world.
 
 One could modify the \lstinline|Factory| class to make it a UObject,
 yet we rather recommend wrapping pure \Cxx classes into a UObject.  It
 is strongly suggested to aggregate the native \Cxx objects in the
-UObject --- rather than trying to derive from it.
+UObject --- rather than trying to derive from it.  By convention, we
+prepend a ``U'' to the name of the base class, hence the
+\lstinline|UFactory| class.
 
 \lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/ufactory.hh}
 
@@ -128,54 +125,71 @@ The following listing is abundantly commented, and is easy to grasp.
 
 \lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/ufactory.cc}
 
-\subsection{Asynchronicity}
-\begin{todo}
-  * Asynchronisme dans UObject: notifychange, timers
-\end{todo}
-
 \subsection{Running Components}
-\begin{todo}
-  * Compilation et branchement de UObject (urbi-launch): expliquer les
-  deux modes: distant / pluge'
+%  * Compilation et branchement de UObject (urbi-launch): expliquer les
+%  deux modes: distant / pluge'
+%
+%  * Cycle complet de lancement d'une appli Urbi: lancement d'urbi,
+%  execution d'urbi.ini, chargement dynamique des UObjects
 
-  * Cycle complet de lancement d'une appli Urbi: lancement d'urbi,
-  execution d'urbi.ini, chargement dynamique des UObjects
-\end{todo}
+
+As a first benefit from using the \urbi environment, this source code
+is already runnable!  No \lstinline|main| function is needed, the
+\urbi system provides one for you.
+
+Of course, beforehand, we need to compile this UObject into some
+loadable module.  The \urbi modules are \dfn{shared objects}, i.e.,
+libraries that can be loaded on demand (and unloaded) during the
+execution of the program.  Their typical file names depend on the
+architecture: \file{ufactory.so} on most Unix, \file{ufactory.dylib}
+on Mac OS X, and \file{ufactory.dll} on Windows.
+
+To abstract away from these differences, we will simply use the base
+name, \file{ufactory} with the \urbi tool chain.
+
+There are several options to compile our sample factory as a UObject,
+for instance you can use directly your regular compiler tool chain.
+You may also use the \file{umake-*} family of programs ().
+
+
+\subsection{Asynchronicity}
+%  * Asynchronisme dans UObject: notifychange, timers
+
 
 \section{Using \us}
 
 \subsection{The \us Scripting Language}
-\begin{todo}
-  * Introduction a` Urbiscript (rappeler que c'est avant tout un
-  langage comme les autres, avec if/for/while, etc), puis passer
-  rapidement aux elements clefs de la prog evenementielle dans Urbi:
-  at/whenever
-\end{todo}
+%  * Introduction a` Urbiscript (rappeler que c'est avant tout un
+%  langage comme les autres, avec if/for/while, etc), puis passer
+%  rapidement aux elements clefs de la prog evenementielle dans Urbi:
+%  at/whenever
+
 
 \subsection{Concurrency}
-\begin{todo}
-  * Parallelisme explicite: \&
+%  * Parallelisme explicite: \&
+%
+%  * Tags et controle d'execution
+%
+%  * Channels et liburbi (les principes, renvoyer a` la doc liburbi pour
+%  l'API)
+%
+%  * All together, on reprend l'exemple du de'but et on de'taille le code
+%  des UObjects utilise's, puis le code urbiscript.
 
-  * Tags et controle d'execution
-
-  * Channels et liburbi (les principes, renvoyer a` la doc liburbi pour
-  l'API)
-
-  * All together, on reprend l'exemple du de'but et on de'taille le code
-  des UObjects utilise's, puis le code urbiscript.
-\end{todo}
 
 \section{Conclusion}
-\begin{todo}
-  * Conclusion note: expliquer qu'on peut embedder l'engine Urbi dans
-  une appli native C++ (tout le monde le demande), qu'on peut faire
-  des bridges ge'ne'riques avec d'autres archis a` composants (citer
-  CORBA), donner le lien pour te'le'charger, le lien vers la doc du
-  langage urbiscript, vers la doc de UObject, etc.
-\end{todo}
+%  * Conclusion note: expliquer qu'on peut embedder l'engine Urbi dans
+%  une appli native C++ (tout le monde le demande), qu'on peut faire
+%  des bridges ge'ne'riques avec d'autres archis a` composants (citer
+%  CORBA), donner le lien pour te'le'charger, le lien vers la doc du
+%  langage urbiscript, vers la doc de UObject, etc.
+
 
 
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
 %%% End:
+
+% LocalWords:  SDK middleware UObject API UObjects basicstyle prepend UFactory
+% LocalWords:  UStart uobjects UBindFunction UBindVar Asynchronicity
