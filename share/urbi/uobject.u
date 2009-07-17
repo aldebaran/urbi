@@ -336,6 +336,10 @@ class Global.'external'
     uobjects.getSlot(objname).setSlot("__uobjectName", objname) |
     uobjects.getSlot(objname).setSlot("isRemote", true) |
     uobjects.getSlot(objname).uobject_init |
+    if (!lobby.hasLocalSlot(objname))
+    {
+      wall("ERROR: lobby has no slot " + objname)
+    }|
     for| (var s: lobby.getSlot(objname).localSlotNames)
       uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s)) |
     lobby.removeSlot(objname)|
@@ -477,8 +481,8 @@ class Global.'external'
       if (uobjects.getSlot(o).hasSlot("lobby")
 	&& uobjects.getSlot(o).lobby === l)
       {
-        uobjects.getSlot(o).destroy |
-	uobjects.removeSlot(o)
+        // Destroy will remove the object from uobjects
+        uobjects.getSlot(o).destroy
       }
     }
   };
