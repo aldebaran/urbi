@@ -178,7 +178,7 @@ get_options ()
 
       (*.h |*.hh|*.hxx|*.hpp) headers+=" '$1'";  havearg=true ;;
       (*.cc|*.cpp|*.c|*.C)    sources+=" '$1'";  havearg=true ;;
-      (*.a|*.o)               libs+=" '$1'";     havearg=true ;;
+      (*.a|*.o|*.obj)         libs+=" '$1'";     havearg=true ;;
       (*/)
 	# It is a directory.
 	files=$(find "$1"				\
@@ -190,6 +190,7 @@ get_options ()
 	    -or -iname '*.cc'				\
 	    -or -iname '*.cpp'				\
 	    -or -iname '*.o'				\
+	    -or -iname '*.obj'				\
 	    -or -iname '*.a' | grep -Fv "$builddir_pref" ) || true
 	havearg=true;
 	shift
