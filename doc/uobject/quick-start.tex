@@ -68,17 +68,65 @@ which takes some time.
 As a firth component of this factory, consider the following
 implementation of the core engine of the factory.
 \newcommand{\factoryDir}{\uobjectsDir/factory/factory.uob}
-\lstinputlisting[language=C++]{\factoryDir/factory.hh}
-\lstinputlisting[language=C++]{\factoryDir/factory.cc}
+\lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/factory.hh}
+\lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/factory.cc}
 
 \subsection{Wrapping into an UObject}
-\begin{todo}
-  * Description basique de l'API UObject et de l'approche UObject
-  (binding explicite)
-\end{todo}
 
-\lstinputlisting[language=C++]{\factoryDir/ufactory.hh}
-\lstinputlisting[language=C++]{\factoryDir/ufactory.cc}
+By \dfn{binding} a UObject, we mean using the UObject API to declare
+objects to the Urbi world.  These objects have member variables (also
+known as \dfn{attributes}) and/or member functions (also known as
+\dfn{methods}) all of them or some of them being declared into the
+Urbi world.
+
+One could modify the \lstinline|Factory| class to make it a UObject,
+yet we rather recommend wrapping pure \Cxx classes into a UObject.  It
+is strongly suggested to aggregate the native \Cxx objects in the
+UObject --- rather than trying to derive from it.
+
+\lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/ufactory.hh}
+
+The implementation of \lstinline|UFactory| is quite straightforward.
+It uses some of the primitives used in the binding process
+(\autoref{sec:uob:api:bind}):
+\begin{itemize}
+\item \lstinline|UStart(\var{class})| declares classes that are
+  UObjects; eventually, such classes will appear in \us as
+  \lstinline|uobjects.\var{class}|.  Use it once.
+
+\item \lstinline|UBindFunction(\var{class}, \var{function})| declares
+  a \var{function}.  Eventually bound in the \us world as
+  \lstinline|uobjects.\var{class}.\var{function}|.
+
+\item Similarly, \lstinline|UBindVar(\var{class}, \var{variable})|
+  declares a \var{variable}.
+\end{itemize}
+
+\urbi relies on the prototype model for object-oriented programming,
+which is somewhat different from the traditional \Cxx class-based
+model (\autoref{sec:tut:value}).  This is reflected by the presence of 
+\emph{two} different constructors:
+\begin{itemize}
+\item \lstinline|UFactory::UFactory|, the \Cxx constructor which is
+  invoked for every single instance of the UObject.  It is always
+  invoked by the \urbi system when instantiating a UObject,
+  \emph{including} the prototype itself.  It sole argument is its name
+  (an internal detail you need not be aware of), and its main purpose
+  is to register attributes and functions, especially the
+  \lstinline|UFactory::init| function.
+
+\item \lstinline|UFactory::init|, the \urbi constructor invoked each
+  time a new clone of \lstinline|UFactory| is made, i.e., for every
+  instance except the first one.
+  
+  Functions and variables that do not make sense for the initial
+  prototype (which might not be fully functional) should be bound
+  here, rather that in the \Cxx constructor.
+\end{itemize}
+
+The following listing is abundantly commented, and is easy to grasp.
+
+\lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/ufactory.cc}
 
 \subsection{Asynchronicity}
 \begin{todo}
@@ -88,7 +136,7 @@ implementation of the core engine of the factory.
 \subsection{Running Components}
 \begin{todo}
   * Compilation et branchement de UObject (urbi-launch): expliquer les
-  deux modes: distant / plugé
+  deux modes: distant / pluge'
 
   * Cycle complet de lancement d'une appli Urbi: lancement d'urbi,
   execution d'urbi.ini, chargement dynamique des UObjects
@@ -98,7 +146,7 @@ implementation of the core engine of the factory.
 
 \subsection{The \us Scripting Language}
 \begin{todo}
-  * Introduction à Urbiscript (rappeler que c'est avant tout un
+  * Introduction a` Urbiscript (rappeler que c'est avant tout un
   langage comme les autres, avec if/for/while, etc), puis passer
   rapidement aux elements clefs de la prog evenementielle dans Urbi:
   at/whenever
@@ -110,19 +158,19 @@ implementation of the core engine of the factory.
 
   * Tags et controle d'execution
 
-  * Channels et liburbi (les principes, renvoyer à la doc liburbi pour
+  * Channels et liburbi (les principes, renvoyer a` la doc liburbi pour
   l'API)
 
-  * All together, on reprend l'exemple du début et on détaille le code
-  des UObjects utilisés, puis le code urbiscript.
+  * All together, on reprend l'exemple du de'but et on de'taille le code
+  des UObjects utilise's, puis le code urbiscript.
 \end{todo}
 
 \section{Conclusion}
 \begin{todo}
   * Conclusion note: expliquer qu'on peut embedder l'engine Urbi dans
   une appli native C++ (tout le monde le demande), qu'on peut faire
-  des bridges génériques avec d'autres archis à composants (citer
-  CORBA), donner le lien pour télécharger, le lien vers la doc du
+  des bridges ge'ne'riques avec d'autres archis a` composants (citer
+  CORBA), donner le lien pour te'le'charger, le lien vers la doc du
   langage urbiscript, vers la doc de UObject, etc.
 \end{todo}
 
