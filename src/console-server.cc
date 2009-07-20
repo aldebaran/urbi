@@ -214,6 +214,11 @@ namespace urbi
         std::cerr << program_name() << ": " << e.what() << std::endl;
         return e.error_get();
       }
+      catch (const std::exception& e)
+      {
+        std::cerr << program_name() << ": " << e.what() << std::endl;
+        return 1;
+      }
     }
 
     GD_CATEGORY(URBI);
