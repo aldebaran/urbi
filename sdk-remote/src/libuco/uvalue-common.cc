@@ -33,6 +33,9 @@
 #include <urbi/ubinary.hh>
 #include <urbi/uvalue.hh>
 
+GD_ADD_CATEGORY(UValue);
+GD_ADD_CATEGORY(UBinary);
+
 namespace urbi
 {
 
@@ -130,6 +133,7 @@ namespace urbi
 		const std::list<BinaryData>& bins,
 		std::list<BinaryData>::const_iterator& binpos)
   {
+    GD_CATEGORY(UValue);
     SKIP_SPACES();
     if (message[pos] == '"')
     {
@@ -321,6 +325,7 @@ namespace urbi
 		 std::list<BinaryData>::const_iterator& binpos)
 
   {
+    GD_CATEGORY(UBinary);
     // LIBPORT_ECHO("Parsing: {" << is.str() << "}");
     if (binpos == bins.end())
     {

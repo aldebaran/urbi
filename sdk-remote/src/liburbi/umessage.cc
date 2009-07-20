@@ -9,6 +9,8 @@
 #include <urbi/umessage.hh>
 #include <urbi/uvalue.hh>
 
+GD_ADD_CATEGORY(UMessage);
+
 namespace urbi
 {
 
@@ -27,6 +29,7 @@ namespace urbi
     , value(0)
     , rawMessage(msg)
   {
+    GD_CATEGORY(UMessage);
     while (msg[0] == ' ')
       ++msg;
 
@@ -50,7 +53,7 @@ namespace urbi
     /* no assertion can be made on message[p] because there is no terminator
      * for binaries */
     if (p < 0 || /*message[p] ||*/ iter != bins.end())
-      GD_FERROR("PARSE ERROR in `%s' at %s", (msg)(abs(p)));
+      GD_FERROR("parse error in `%s' at %s", (msg)(abs(p)));
   }
 
   UMessage::UMessage(const UMessage& b)

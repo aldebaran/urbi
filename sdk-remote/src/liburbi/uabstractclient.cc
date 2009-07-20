@@ -24,6 +24,7 @@
 
 #include <liburbi/compatibility.hh>
 
+GD_ADD_CATEGORY(UAbstractClient);
 
 namespace urbi
 {
@@ -814,6 +815,7 @@ namespace urbi
   bool
   UAbstractClient::process_recv_buffer_text_()
   {
+    GD_CATEGORY(UAbstractClient);
     // Not in binary mode.
     char* endline =
       static_cast<char*> (memchr(recvBuffer+parsePosition, '\n',
@@ -839,8 +841,7 @@ namespace urbi
         else
         {
           // failure
-          GD_FERROR("UAbstractClient::read, error parsing header: '%s'",
-                    (recvBuffer));
+          GD_FERROR("read, error parsing header: '%s'", (recvBuffer));
           currentTimestamp = 0;
           strcpy(currentTag, "UNKNWN");
           //listLock.lock();
@@ -937,7 +938,7 @@ namespace urbi
             strtol(recvBuffer+parsePosition+1, &endLength, 0);
           if (endLength == recvBuffer+parsePosition+1)
           {
-            GD_ERROR("UClient::read, error parsing bin data length.");
+            GD_ERROR("read, error parsing bin data length.");
             recvBufferPosition = 0;
             return false;
           }
@@ -1089,6 +1090,7 @@ namespace urbi
   UCallbackAction
   UAbstractClient::setVersion(const UMessage& msg)
   {
+    GD_CATEGORY(UAbstractClient);
     if (msg.type != MESSAGE_DATA)
       return URBI_CONTINUE;
     passert(msg.value->type, msg.value->type == DATA_STRING);

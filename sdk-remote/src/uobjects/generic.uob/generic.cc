@@ -4,6 +4,8 @@
 #include <iostream>
 #include "generic.hh"
 
+GD_ADD_CATEGORY(generic);
+
 UStart (generic);
 
 generic::generic (const std::string& s)
@@ -55,6 +57,7 @@ generic::inc ()
 UReturn
 generic::newval (UVar& v)
 {
-  GD_FERROR("generic:newval: %s", ((int) v));
+  GD_CATEGORY(generic);
+  GD_FERROR("newval: %s", ((int) v));
   return 0;
 }

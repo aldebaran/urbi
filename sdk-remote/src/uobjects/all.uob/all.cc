@@ -7,6 +7,8 @@
 
 #include <urbi/uobject.hh>
 
+GD_CATEGORY(all);
+
 class all: public urbi::UObject
 {
 public:
@@ -246,6 +248,7 @@ public:
   urbi::UList
   readProps(const std::string& name)
   {
+    GD_CATEGORY(all);
     urbi::UVar v(name);
     urbi::UList res;
 
@@ -286,6 +289,7 @@ public:
 
   int writeD(const std::string &name, double val)
   {
+    GD_CATEGORY(all);
     GD_FERROR("writeD %s", (name));
     urbi::UVar v(name);
     v = val;
@@ -294,6 +298,7 @@ public:
 
   int writeS(const std::string &name, const std::string &val)
   {
+    GD_CATEGORY(all);
     GD_FERROR("writeS %s", (name));
     urbi::UVar v(name);
     v = val;
@@ -302,6 +307,7 @@ public:
 
   int writeL(const std::string &name, const std::string &val)
   {
+    GD_CATEGORY(all);
     GD_FERROR("writeL %s", (name));
     urbi::UVar v(name);
     urbi::UList l;

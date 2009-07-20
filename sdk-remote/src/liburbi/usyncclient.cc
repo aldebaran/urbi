@@ -11,6 +11,8 @@
 #include <urbi/uconversion.hh>
 #include <urbi/usyncclient.hh>
 
+GD_ADD_CATEGORY(USyncClient);
+
 namespace urbi
 {
 
@@ -197,6 +199,7 @@ namespace urbi
   UMessage*
   USyncClient::waitForTag(const std::string& tag, libport::utime_t useconds)
   {
+    GD_CATEGORY(USyncClient);
     if (message_ || !syncTag.empty())
       throw std::runtime_error("Another waitForTag is allready in progress");
     syncTag = tag;

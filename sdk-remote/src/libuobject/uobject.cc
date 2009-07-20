@@ -20,6 +20,8 @@
 #include <urbi/ucontext-factory.hh>
 #include <libuobject/remoteucontextimpl.hh>
 
+GD_ADD_CATEGORY(Libuobject);
+
 namespace urbi
 {
   UObjectMode running_mode()
@@ -284,6 +286,7 @@ namespace urbi
   UCallbackAction
   RemoteUContextImpl::dispatcher(const UMessage& msg)
   {
+    GD_CATEGORY(Libuobject);
     setCurrentContext(this);
     typedef UTable::callbacks_type callbacks_type;
     //check message type
