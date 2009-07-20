@@ -183,7 +183,7 @@ namespace urbi
   UClient::pongTimeout()
   {
     const char* err = "!!! Lost connection with server: ping timeout";
-    // FIXME: Choose between two differents way to alert user program
+    // FIXME: Choose between two differents way to alert user program.
     clientError(err);
     notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag, err));
     close();

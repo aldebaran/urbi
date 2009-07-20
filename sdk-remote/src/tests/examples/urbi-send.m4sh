@@ -52,6 +52,11 @@ find_urbi_server
 # Start it.
 spawn_urbi_server
 
+
+## -------- ##
+## Test 1.  ##
+## -------- ##
+# Check that -f works.
 cat >quit.u <<EOF
 "PASS";
 quit;
@@ -71,6 +76,10 @@ xrun "check" grep "160000" client1.out
 xrun "check" grep "PASS" client1.out
 
 
+
+## -------- ##
+## Test 2.  ##
+## -------- ##
 
 cat >shutdown.u <<EOF
 "LAST";
