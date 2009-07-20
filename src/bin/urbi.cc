@@ -4,11 +4,15 @@
 
 #include <libport/cstdlib>
 
-#include <libport/debug.hh>
 #include <libport/containers.hh>
+#include <libport/debug.hh>
 #include <libport/detect-win32.h>
 #include <libport/program-name.hh>
+#include <libport/separate.hh>
 #include <libport/unistd.h>
+
+GD_INIT();
+GD_ADD_CATEGORY(Urbi);
 
 int
 main(int argc, char* argv[])
@@ -29,5 +33,7 @@ main(int argc, char* argv[])
     args << "--debug" << libport::opts::debug.value().c_str();
   args << "--";
   args.insert(args.end(), argv + 1, argv + argc);
+  GD_CATEGORY(Urbi);
+  GD_FINFO_DEBUG("exec: %s", (libport::separate(args, " ")));
   libport::exec(args);
 }
