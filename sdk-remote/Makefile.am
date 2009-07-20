@@ -59,6 +59,32 @@ check-buildfarm recheck recheck-html:
 	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
 
 
+
+
+## -------- ##
+## Stamps.  ##
+## -------- ##
+
+# All the libraries.
+STAMPS += libraries.stamp
+libraries.stamp: src/libuobject/libuobject.la src/liburbi/liburbi.la
+	@echo "$$(date): $?" >>$@
+
+# All the executables.
+STAMPS += executables.stamp
+executables_stamp_DEPS = 			\
+  src/bin/urbi-launch$(EXEEXT)			\
+  src/examples/urbi-send$(EXEEXT)		\
+  src/examples/urbi-sendbin$(EXEEXT)
+executables.stamp: $(executables_stamp_DEPS)
+	@echo "$$(date): $?" >>$@
+
+# Everything.
+STAMPS += all.stamp
+all.stamp: libraries.stamp executables.stamp
+	@echo "$$(date): $?" >>$@
+
+
 ## ----- ##
 ## Doc.  ##
 ## ----- ##

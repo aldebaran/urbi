@@ -1,6 +1,10 @@
 include $(top_srcdir)/build-aux/init.mk
 AUTOMAKE_OPTIONS += subdir-objects
 TESTS =
+# Rerun only what failed, since sometimes it's only because of CPU
+# overloads that touchy tests failed.
+LAZY_TEST_SUITE = 1
+STRICT_TEST_LOGS = $(shell $(LIST_FAILED_TEST_LOGS))
 include $(top_srcdir)/build-aux/check.mk
 include $(top_srcdir)/build-aux/m4sh.mk
 include $(top_srcdir)/build-aux/libport.mk
