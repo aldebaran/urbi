@@ -1,0 +1,51 @@
+\section{FormatInfo}
+
+A \dfn{format info} is a prototype that corresponds to a formatting
+pattern like those used in printf. It store the formatting pattern
+itself and all the format informations it can extract from the
+pattern.
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+Format info are created for the formatting pattern as a string.
+
+\begin{urbiscript}
+var f = FormatInfo.new("%+2.3d");
+[00000001] %+2.3d
+\end{urbiscript}
+
+\subsection{Syntax}
+
+A formatting pattern must one of the following (characters that are
+between brackets are optional):
+
+\begin{itemize}
+\item \verb&%&\emph{options} \emph{spec}
+\item \verb&%|&\emph{options}[\emph{spec}]\verb&|&
+\end{itemize}
+
+\emph{options} is flags and may be zero of more of the following:
+\begin{itemize}
+\item \verb&"-"&: Left alignment.
+\item \verb&"="&: Centered alignment.
+\item \verb&"+"&: Show sign even for positive number.
+\item \verb&" "&: If the string does not begin with "+" or "-", insert a space before the converted string.
+\item \verb&"0"&: Pad with 0's (inserted after sign or base indicator).
+\item \verb&"#"&: Show numerical base, and decimal point.
+\item \verb&"'"&: Splits Thousands ($1000 \rightarrow 1 000$).
+\end{itemize}
+
+\emph{spec} is the convertion character and may be one of the following:
+\begin{itemize}
+\item \verb&"s"&: Default character, prints normally.
+\item \verb&"d", "D"&: Case modifier, \verb&"d"& for lowercase and \verb&"D"& for uppercase.
+\item \verb&"x", "X"&: Prints in hexadecimal, \verb&"x"& for lowercase and \verb&"X"& for uppercase.
+\item \verb&"o"&: Prints in octal.
+\item \verb&"b"&: Prints in binary.
+\end{itemize}

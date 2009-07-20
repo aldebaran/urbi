@@ -1,0 +1,46 @@
+\section{Formater}
+
+A \dfn{formater} is an object whose job is to store format
+informations of a format string like used in printf in libc or
+boost::format.
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+Formaters are created with the format string. It cut the string to
+separate normal parts of string and formatting pattern and store them
+in list keeping the same order.
+
+\begin{urbiscript}
+var f = Formater.new("Name:%s, Surname:%s;");
+[00000001] Formater ["Name:", %s, ", Surname:", %s, ";"]
+\end{urbiscript}
+
+Actually, formatting pattern are translated into
+\refObject{FormatInfo}.
+
+\subsection{Methods}
+
+\begin{itemize}
+\item \lstinline|asList|\\
+  Return the content of the \dfn{formater} as a list of strings and
+  \refObject{FormatInfo}.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(f.asList.asString, "[\"Name:\", %s, \", Surname:\", %s, \";\"]");
+\end{urbiscript}
+
+\item \lstinline|'%'(\var{args})|\\
+  Use \lstinline|this| as format string and \var{args} as the list of
+  argument. For this purpose, this operator concatenate normal string
+  and the string that are result of asString called on elements of
+  \var{args} with the suiting \refObject{FormatInfo}.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(f % ["Foo", "Bar"], "Name:Foo, Surname:Bar;");
+\end{urbiscript}
+
+\end{itemize}
