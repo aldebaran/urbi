@@ -125,8 +125,24 @@ urbi-launch [\var{urbi-launch-option}...] \var{module}... [-- \var{module-option
 (\option{--host}, \option{--port}, \option{--port-file}) as
 \command{urbi}, see \autoref{sec:tools:urbi}.
 
+\section{\command{urbi-send} --- Sending \us Commands to a Server}
+\label{sec:tools:urbi-send}
 
-\section{\command{umake}}
+\begin{options}
+\item[-b, --banner] do not hide the server-sent banner
+\item[-e, --expression=\var{script}] send \var{script} to the server
+\item[-f, --file=\var{file}] send the contents of \var{file} to the
+  server
+\item[-h, --help] display this message and exit successfully
+\item[-H, --host=\var{host}] address to listen to
+\item[-P, --port=\var{port}] port to listen to, 0 for automatic
+  selection
+\item[--port-file=\var{file}] file containing the port to listen to
+\item[--version] display version information
+\end{options}
+
+
+\section{\command{umake} --- Compiling UObject Components}
 \label{sec:tools:umake}
 
 The \command{umake} programs builds loadable modules, UObjects, to be
@@ -198,9 +214,13 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
 As a convenience for common \command{umake} usages, some wrappers are
 provided:
 \begin{description}
-\item[\command{umake-shared}] Build a shared object to be later run
-  using \command{urbi-launch} (autoref{sec:tools:urbi-launch}).  Same
-  as \samp{umake --shared}.
+\item[\command{umake-deepclean}] --- Cleaning\\
+  Clean the temporary files made by running \command{umake} with the
+  same arguments.  Same as \samp{umake --deep-clean}.
+\item[\command{umake-shared}] --- Compiling Shared UObjects\\
+  Build a shared object to be later run using \command{urbi-launch}
+  (autoref{sec:tools:urbi-launch}).  Same as \samp{umake
+    --shared-library}.
 \end{description}
 
 %%% Local Variables:

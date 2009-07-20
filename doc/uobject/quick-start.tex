@@ -137,12 +137,13 @@ As a first benefit from using the \urbi environment, this source code
 is already runnable!  No \lstinline|main| function is needed, the
 \urbi system provides one for you.
 
+\subsubsection{Compiling}
 Of course, beforehand, we need to compile this UObject into some
 loadable module.  The \urbi modules are \dfn{shared objects}, i.e.,
 libraries that can be loaded on demand (and unloaded) during the
 execution of the program.  Their typical file names depend on the
-architecture: \file{ufactory.so} on most Unix, \file{ufactory.dylib}
-on Mac OS X, and \file{ufactory.dll} on Windows.
+architecture: \file{ufactory.so} on most Unix (including Mac OS X),
+and \file{ufactory.dll} on Windows.
 
 To abstract away from these differences, we will simply use the base
 name, \file{ufactory} with the \urbi tool chain.
@@ -150,7 +151,55 @@ name, \file{ufactory} with the \urbi tool chain.
 There are several options to compile our factory as a UObject.  You
 can use directly your regular compiler tool chain.  You may also use
 \command{umake-shared} from the \file{umake-*} family of programs
-(\autoref{sec:tools:umake:wrappers}).
+(\autoref{sec:tools:umake:wrappers}):
+
+\begin{shell}
+$ ls factory.uob
+factory.cc  factory.hh  ufactory.cc  ufactory.hh
+$ umake-shared factory.uob -o factory
+# ... Lots of compilation log messages ...
+$ ls
+_ubuild-factory.so  factory.la  factory.so  factory.uob
+\end{shell}%$
+
+The various files are:
+\begin{description}
+\item[\file{factory.uob}] Merely by convention, the sources of our
+  UObject are in a \file{*.uob} directory.
+\item[\file{factory.so}] A shared dlopen-module.  This is the ``true''
+  product of the \command{umake-shared} invocation.  Its default name
+  can be quite complex (\file{uobject-i386-apple-darwin9.7.0.so} on my
+  machine), as it will encode information about the architecture of
+  your machine; if you don't need such accuracy, use the option
+  \option{--output}/\option{-o} to specify the output file name.
+
+  \command{umake-shared} traversed \file{factory.uob} to gather and
+  process relevant files (source files, headers, libraries and object
+  files) in order to produce this output file.
+
+\item[\file{\_ubuild-factory.so}] this is a temporary directory in
+  which the compilation takes place.  It can be safely removed by
+  hand, or using \command{umake-deepclean}
+  (\autoref{sec:tools:umake:wrappers}).
+
+\item[\file{factory.la}] a
+  \href{http://www.gnu.org/software/libtool/}{GNU Libtool} file that
+  contains information such as dependencies on other libraries.  While
+  this file should be useless most of the time, we recommend against
+  removing it: it may help understand some problems.
+\end{description}
+
+\subsubsection{Running UObjects}
+
+There are several means to toy with this simple UObject.  You can use
+\command{urbi-launch} (\autoref{sec:tools:urbi-launch}) to plug the
+UFactory in an \urbi server and use \command{urbi-send}
+(\autoref{sec:tools:urbi-send}) to interact with it.
+
+\begin{shell}
+# Launch an Urbi server with UFactory plugged in.
+$ urbi-launch --port 54000 --start ufactory &
+\end{shell}%$
 
 
 \subsection{Asynchronicity}
