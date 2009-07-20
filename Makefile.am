@@ -96,33 +96,20 @@ recheck recheck-html:
 ## Stamps.  ##
 ## -------- ##
 
-# Running continuously the test suite is costly, especially for the
-# buildfarm.  Some changes have no impact whatsoever on the kernel,
-# uconsole etc, for instance changes in the documentation.  In that
-# case we would like not to rerun the test suite.  But spelling out
-# the exact dependencies (on the libraries, the binaries, the
-# wrappers, but also the urbi/*.u files) is hard.  So we create stamp
-# files that make it easier to depend on changes of some components.
-
 # urbi.stamp is defined and built in share/urbi/local.mk.
-STAMPS = urbi.stamp
+STAMPS += urbi.stamp
 
 # All the libraries.
 STAMPS += libraries.stamp
-libraries.stamp: src/libuobject.la sdk-remote/src/libuobject/libuobject.la sdk-remote/src/liburbi/liburbi.la
+libraries.stamp: src/libuobject.la sdk-remote/libraries.stamp
 	@echo "$$(date): $?" >>$@
 
 # All the executables.
 STAMPS += executables.stamp
-executables.stamp: src/bin/urbi$(EXEEXT) sdk-remote/src/bin/urbi-launch$(EXEEXT)
+executables.stamp: src/bin/urbi$(EXEEXT) sdk-remote/executables.stamp
 	@echo "$$(date): $?" >>$@
 
 # Everything.
 STAMPS += all.stamp
 all.stamp: urbi.stamp libraries.stamp executables.stamp
 	@echo "$$(date): $?" >>$@
-
-.PHONY: stamps
-stamps: $(STAMPS)
-noinst_DATA = $(STAMPS)
-CLEANFILES += $(STAMPS)
