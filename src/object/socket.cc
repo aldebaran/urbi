@@ -1,7 +1,5 @@
 #include <kernel/userver.hh>
 
-#include <libport/boost-version.hh>
-
 #include <object/global.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
@@ -63,18 +61,18 @@ namespace object
   {
     CAPTURE_GLOBAL(Event);
 
-#define EVENT(Name)                                                     \
-    {                                                                   \
-      rObject val = Event->call(SYMBOL(new));                           \
-      slot_set(Name, val);                                              \
-    }                                                                   \
+#define EVENT(Name)                             \
+    {                                           \
+      rObject val = Event->call(SYMBOL(new));   \
+      slot_set(Name, val);                      \
+    }                                           \
 /**/
 
     EVENT(SYMBOL(connected));
     EVENT(SYMBOL(disconnected));
     EVENT(SYMBOL(error));
     EVENT(SYMBOL(received));
-#undef event
+#undef EVENT
 
   }
 
@@ -100,9 +98,9 @@ namespace object
   }
 
 #define EMIT(Name)                              \
-  slot_get(SYMBOL(Name))->call(SYMBOL(emit));
+  slot_get(SYMBOL(Name))->call(SYMBOL(emit))
 #define EMIT1(Name, Arg)                                        \
-  slot_get(SYMBOL(Name))->call(SYMBOL(emit), to_urbi(Arg));
+  slot_get(SYMBOL(Name))->call(SYMBOL(emit), to_urbi(Arg))
 
   void
   Socket::onConnect()
@@ -117,7 +115,6 @@ namespace object
   {
     EMIT1(error, err.message());
     EMIT(disconnected);
-//     if (!isConnected())
     assert(disconnect_);
     disconnect_->call(SYMBOL(stop));
   }
@@ -155,22 +152,27 @@ namespace object
 
   void Socket::initialize(CxxObject::Binder<Socket>& bind)
   {
-    bind(SYMBOL(connect),       &Socket::connect);
-    bind(SYMBOL(connectSerial), &Socket::connectSerial);
-    bind(SYMBOL(disconnect),    &Socket::disconnect);
-    bind(SYMBOL(host),          &Socket::host);
-    bind(SYMBOL(init),          &Socket::init);
-    bind(SYMBOL(isConnected),   &Socket::isConnected);
-    bind(SYMBOL(poll),          &Socket::poll);
-    bind(SYMBOL(port),          &Socket::port);
-    bind(SYMBOL(write),         &Socket::write);
+#define DECLARE(Name)                           \
+    bind(SYMBOL(Name), &Socket::Name)
+
+    DECLARE(connect);
+    DECLARE(connectSerial);
+    DECLARE(disconnect);
+    DECLARE(host);
+    DECLARE(init);
+    DECLARE(isConnected);
+    DECLARE(poll);
+    DECLARE(port);
+    DECLARE(write);
+#undef DECLARE
   }
+
   static boost::asio::io_service& io_unused = libport::get_io_service();
+
   boost::asio::io_service&
   Socket::get_io_service()
   {
-    static boost::asio::io_service* ios = 0;
-    if (!ios) ios = new boost::asio::io_service;
+    static boost::asio::io_service* ios = new boost::asio::io_service;
     return *ios;
   }
 
