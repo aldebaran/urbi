@@ -394,7 +394,7 @@ namespace urbi
     else
     {
       std::ifstream is(f.c_str(), std::ios::binary);
-      if (is.bad())
+      if (is.fail())
         return -1;
       else
         return send(is);

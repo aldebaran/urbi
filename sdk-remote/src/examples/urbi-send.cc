@@ -23,17 +23,16 @@
 
 #include <list>
 #include <string>
-
 #include <libport/cstdio>
-#include <libport/sysexits.hh>
-#include <libport/foreach.hh>
-
-#include <libport/cli.hh>
-#include <libport/package-info.hh>
-#include <libport/program-name.hh>
-#include <libport/option-parser.hh>
 
 #include <boost/bind.hpp>
+
+#include <libport/cli.hh>
+#include <libport/foreach.hh>
+#include <libport/option-parser.hh>
+#include <libport/package-info.hh>
+#include <libport/program-name.hh>
+#include <libport/sysexits.hh>
 
 #include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
@@ -95,6 +94,7 @@ error(void* banner, const urbi::UMessage& msg)
   exit(0);
 }
 
+
 /*-----------------.
 | Things to send.  |
 `-----------------*/
@@ -102,8 +102,38 @@ error(void* banner, const urbi::UMessage& msg)
 struct Data
 {
   virtual ~Data() {};
-  virtual void send(urbi::UClient& u) const = 0;
+  typedef urbi::UAbstractClient::error_type error_type;
+
+  /// Send and return the error code, but don't issue error
+  /// messages.
+  virtual error_type send(urbi::UClient& u) const = 0;
+
+  /// Try to send, and die verbosely on errors.
+  void xsend(urbi::UClient& u) const;
+
+  /// Print.
+  virtual std::ostream& dump(std::ostream& o) const = 0;
 };
+
+inline
+std::ostream&
+operator<< (std::ostream& o, const Data& d)
+{
+  return d.dump(o);
+}
+
+void Data::xsend(urbi::UClient& u) const
+{
+  error_type res = send(u);
+  LIBPORT_ECHO("Res: " << *this << ": " << res);
+  if (res)
+  {
+    std::cerr << libport::program_name() << ": failed to send " << *this;
+    if (errno)
+      std::cerr << ": " << strerror(errno);
+    std::cerr << std::endl << libport::exit(1);
+  }
+}
 
 struct TextData: Data
 {
@@ -112,10 +142,17 @@ struct TextData: Data
   {}
 
   virtual
-  void
+  error_type
   send(urbi::UClient& u) const
   {
-    u.send("%s", command_.c_str());
+    return u.send("%s", command_.c_str());
+  }
+
+  virtual
+  std::ostream&
+  dump(std::ostream& o) const
+  {
+    return o << "expression {{{" << command_ << "}}}";
   }
 
   std::string command_;
@@ -129,10 +166,17 @@ struct FileData: Data
   {}
 
   virtual
-  void
+  error_type
   send(urbi::UClient& u) const
   {
-    u.sendFile(filename_ == "-" ? "/dev/stdin" : filename_);
+    return u.sendFile(filename_ == "-" ? "/dev/stdin" : filename_);
+  }
+
+  virtual
+  std::ostream&
+  dump(std::ostream& o) const
+  {
+    return o << "file `" << filename_ << "'";
   }
 
   std::string filename_;
@@ -229,13 +273,10 @@ main(int argc, char* argv[])
   /*----------------.
   | Send contents.  |
   `----------------*/
-  for (data_list::const_iterator i = data.begin(),
-         i_end = data.end();
-       i != i_end;
-       ++i)
+  foreach (Data* d, data)
   {
-    (*i)->send(client);
-    delete *i;
+    d->xsend(client);
+    delete d;
   }
 
   std::cout << libport::program_name()
