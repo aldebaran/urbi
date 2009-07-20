@@ -104,7 +104,7 @@ fwd_hh_prologue: |2
 
   # include <libport/fwd.hh>
   # include <libport/hash.hh>
-  # include <libport/separator.hh>
+  # include <libport/separate.hh>
 
 # The end of the fwd.hh file, in the namespace.
 fwd_hh_epilogue: |2
@@ -442,7 +442,7 @@ Nary:
 
     impl prologue: |2
       #include <libport/indent.hh>
-      #include <libport/separator.hh>
+      #include <libport/separate.hh>
 
       #include <ast/message.hh>
       #include <ast/stmt.hh>

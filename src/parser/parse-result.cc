@@ -7,7 +7,7 @@
 #include <libport/deref.hh>
 #include <libport/indent.hh>
 #include <libport/foreach.hh>
-#include <libport/separator.hh>
+#include <libport/separate.hh>
 
 #include <ast/nary.hh>
 #include <ast/print.hh>

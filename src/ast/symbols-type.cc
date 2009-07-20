@@ -1,4 +1,4 @@
-#include <libport/separator.hh>
+#include <libport/separate.hh>
 #include <libport/symbol.hh>
 
 #include <ast/symbols-type.hh>

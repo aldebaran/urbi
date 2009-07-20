@@ -62,7 +62,7 @@
 #include <libport/assert.hh>
 #include <libport/finally.hh>
 #include <libport/format.hh>
-#include <libport/separator.hh>
+#include <libport/separate.hh>
 
 #include <ast/all.hh>
 #include <ast/new-clone.hh>

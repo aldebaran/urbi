@@ -1,5 +1,5 @@
 #include <libport/indent.hh>
-#include <libport/separator.hh>
+#include <libport/separate.hh>
 
 #include <ast/exp.hh>
 #include <ast/exps-type.hh>
