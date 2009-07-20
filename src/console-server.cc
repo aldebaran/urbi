@@ -334,7 +334,7 @@ namespace urbi
     int port = -1;
     {
       int desired_port = IF_OPTION_PARSER(libport::opts::port_l.get<int>(-1),
-                                          54000);
+                                          UAbstractClient::URBI_PORT);
       if (desired_port != -1)
       {
         std::string host = IF_OPTION_PARSER(libport::opts::host_l.value(""),"");
@@ -346,10 +346,13 @@ namespace urbi
                              program_name(), host, desired_port,
                              err.message()));
         port = s.getLocalPort();
-        if (!port)
+        // Port not allocated at all, or port differs from (non null)
+        // request.
+        if (!port
+            || (desired_port && port != desired_port))
           throw urbi::Exit
             (EX_UNAVAILABLE,
-             libport::format("%s: cannot bind to port %s:%s",
+             libport::format("%s: cannot listen to port %s:%s",
                              program_name(), host, desired_port));
       }
     }
