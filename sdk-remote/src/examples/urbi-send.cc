@@ -124,9 +124,7 @@ operator<< (std::ostream& o, const Data& d)
 
 void Data::xsend(urbi::UClient& u) const
 {
-  error_type res = send(u);
-  LIBPORT_ECHO("Res: " << *this << ": " << res);
-  if (res)
+  if (send(u))
   {
     std::cerr << libport::program_name() << ": failed to send " << *this;
     if (errno)
