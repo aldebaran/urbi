@@ -20,10 +20,10 @@ UFactory::init(ufloat d)
   if (d < 0)
     return 1;
 
-  // Bind the UVars before using them.
-  UBindVar(UFactory, duration);
   // Bind the functions, i.e., declare them to the Urbi world.
   UBindFunction(UFactory, assemble);
+  // Bind the UVars before using them.
+  UBindVar(UFactory, duration);
 
   // Set the duration.
   duration = d;
