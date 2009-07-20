@@ -279,7 +279,7 @@ namespace urbi
     switch (type)
     {
       case DATA_DOUBLE:
-	s << (float) val;
+	s << static_cast<ufloat>(val);
 	break;
       case DATA_STRING:
 	s << '"' << libport::escape(*stringValue, '"') << '"';
@@ -293,9 +293,8 @@ namespace urbi
       case DATA_OBJECT:
 	s << *object;
         break;
-      break;
-      default:
-	s << "<<void>>";
+      case DATA_VOID:
+        break;
     }
     return s;
   }
