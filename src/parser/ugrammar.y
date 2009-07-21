@@ -1408,6 +1408,7 @@ exp:
 exps:
   /* empty */ { $$ = new ast::exps_type; }
 | exps.1      { std::swap($$, $1); }
+| exps.1 ","  { std::swap($$, $1); }
 ;
 
 exps.1:
@@ -1467,8 +1468,9 @@ formal_arguments.1:
 
 // Zero or several comma-separated identifiers.
 formal_arguments:
-  /* empty */          { $$ = new ::parser::formals_type; }
-| formal_arguments.1   { std::swap($$, $1); }
+  /* empty */             { $$ = new ::parser::formals_type; }
+| formal_arguments.1      { std::swap($$, $1); }
+| formal_arguments.1 ","  { std::swap($$, $1); }
 ;
 
 // Function formal arguments.

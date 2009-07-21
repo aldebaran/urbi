@@ -54,6 +54,15 @@ urbiScript functions
 New constructs:
 - every|
 - break and continue are supported in "every|" loops.
+- non-empty lists of expressions in list literals, in function calls,
+  and non-empty lists of function formal arguments may end with a
+  trailing optional comma.  For instance:
+
+    function binList(a, b,) { [a, b,] } | binList(1, 2,)
+
+  in equivalent to
+
+    function binList(a, b) { [a, b] } | binList(1, 2)
 
 New objects:
 - Finalizable

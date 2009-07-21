@@ -1,7 +1,7 @@
 \section{List}
 
-\lstinline|List|s implement potentially empty ordered collections of
-elements.
+\lstinline|List|s implement potentially-empty ordered (heterogeneous)
+collections of elements.
 
 \subsection{Prototypes}
 
@@ -11,16 +11,17 @@ elements.
 
 \subsection{Construction}
 
-List can be created with their literal syntax, as shown in
-\autoref{sec:us-syn-lit-list}.
+List can be created with their literal syntax: a possibly empty
+sequence of expressions in square brackets, separated by commas.
+Non-empty list may actually \emph{terminate} with a comma, rather than
+\emph{separate}; in other words, an optional trailing comma is accepted.
 
-%% They can also be created with the \lstinline|new| method of
-%% \lstinline|List|, given the initial members (\autoref{lst:new-list}).
-%%
-%% \begin{urbiscript}[caption=List.new, label=lst:new-list]
-%% List.new(nil, "foo", 42);
-%% [00000000] [nil, "foo", 42]
-%% \end{urbiscript}
+\begin{urbiscript}
+[]; // The empty list
+[00000000] []
+[1, "2", [3,],];
+[00000000] [1, "2", [3]]
+\end{urbiscript}
 
 \subsection{Methods}
 

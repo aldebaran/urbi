@@ -757,11 +757,29 @@ value, like floats and strings, and can be handled as such.  This is
 different from most \C-like languages.  One can create a functional
 value thanks to the \lstinline|function| keyword, followed by the list
 of formal arguments and a compound statement representing the body of
-the function. Formal arguments are a comma separated list of
-identifiers. The listing below illustrates this.
+the function. Formal arguments are a possibly-empty comma-separated
+list of identifiers.  Non-empty lists of formal arguments may
+optionaly end with a trailing comma. The listing below illustrates
+this.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
+function () { echo(0) };
+[00000000] function () {
+[:]  echo(0)
+[:]}
+
 function (arg1, arg2) { echo(0) };
+[00000000] function (arg1, arg2) {
+[:]  echo(0)
+[:]}
+
+function (
+           arg1, // Ignored argument.
+           arg2, // Also ignored.
+          )
+{
+  echo(0)
+};
 [00000000] function (arg1, arg2) {
 [:]  echo(0)
 [:]}
@@ -821,6 +839,16 @@ f(0);
 f(0, 1, 2);
 [00000000:error] !!! f: Expected 2 arguments, given 3
 \end{urbiscript}
+
+Non-empty lists of effective arguments may end with an optional comma.
+\begin{urbiscript}[firstnumber=last]
+f(
+  "bar",
+  "foo",
+ );
+[00000000] *** foobar
+\end{urbiscript}
+
 
 \subsection{Return value}
 
