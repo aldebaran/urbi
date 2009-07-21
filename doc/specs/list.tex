@@ -60,21 +60,21 @@ assert([1].asBool == true);
 Return the target.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 2].asList, [0, 1, 2]);
+assert([0, 1, 2].asList == [0, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|asString|\\
 Return the target as a string describing the list.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 2].asString, "[0, 1, 2]");
+assert([0, 1, 2].asString == "[0, 1, 2]");
 \end{urbiscript}
 
 \item \lstinline|back|\\
 Return the last element of the target. An error if the target is empty.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 2].back, 2);
+assert([0, 1, 2].back == 2);
 [].back;
 [00000000:error] !!! back: cannot be applied onto empty list
 \end{urbiscript}
@@ -128,7 +128,7 @@ predicate.
 
 \begin{urbiscript}[firstnumber=last]
 // Keep only odd numbers
-assert([0 == 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1}), [1, 3, 5]);
+assert([0, 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1}) == [1, 3, 5]);
 \end{urbiscript}
 
 \item \lstinline|foldl(\var{action}, \var{value})|\\
@@ -144,7 +144,7 @@ Return the first element of the target. An error if the target is
 empty.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 2].front, 0);
+assert([0, 1, 2].front == 0);
 [].front;
 [00000000:error] !!! front: cannot be applied onto empty list
 \end{urbiscript}
@@ -207,8 +207,8 @@ Apply the given functional value on every member, and return the list
 of results.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 2, 3].map(function (v) { v % 2 == 0}),
-  [true, false, true, false]);
+assert([0, 1, 2, 3].map(function (v) { v % 2 == 0})
+        == [true, false, true, false]);
 \end{urbiscript}
 
 \item \lstinline|range(\var{begin}, \var{end})|\\
@@ -216,7 +216,7 @@ Return a sub-range of the string, from the first index included to the
 second index excluded. An error if out of bounds.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 2, 3].range(1, 3), [1, 2]);
+assert([0, 1, 2, 3].range(1, 3) == [1, 2]);
 [].range(1, 3);
 [00428697:error] !!! urbi/list.u: []: invalid index: 1
 \end{urbiscript}
@@ -273,14 +273,14 @@ assert(g == [1, 2]);
 Return the target with the order of elements inverted.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 2].reverse, [2, 1, 0]);
+assert([0, 1, 2].reverse == [2, 1, 0]);
 \end{urbiscript}
 
 \item \lstinline|size|\\
 Return the number of elements in the target.
 
 \begin{urbiscript}[firstnumber=last]
-assert([1 == 2, 3].size, 3);
+assert([0, 1, 2].size == 3);
 assert([].size == 0);
 \end{urbiscript}
 
@@ -288,7 +288,7 @@ assert([].size == 0);
 Return the target, sorted with respect to the \lstinline|<| criteria.
 
 \begin{urbiscript}[firstnumber=last]
-assert([1 == 0, 3, 2].sort, [0, 1, 2, 3]);
+assert([1, 0, 3, 2].sort == [0, 1, 2, 3]);
 \end{urbiscript}
 
 \item \lstinline|tail|\\
@@ -296,7 +296,7 @@ Return the target, minus the first element. An error if the target is
 empty.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 2].tail, [1, 2]);
+assert([0, 1, 2].tail == [1, 2]);
 [].tail;
 [00000000:error] !!! tail: cannot be applied onto empty list
 \end{urbiscript}
@@ -339,14 +339,14 @@ assert(f == [0, 42, 2]);
 Return the target, concatenated n times to itself, n being \var{times}.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1] * 3, [0, 1, 0, 1, 0, 1]);
+assert([0, 1] * 3 == [0, 1, 0, 1, 0, 1]);
 \end{urbiscript}
 
 \item \lstinline|'+'(\var{other})|\\
 Return the concatenation of the target and the \var{other} list.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1] + [2, 3], [0, 1, 2, 3]);
+assert([0, 1] + [2, 3] == [0, 1, 2, 3]);
 \end{urbiscript}
 
 \item \lstinline|'-'(\var{other})|\\
@@ -354,7 +354,7 @@ Return the target without all element that equals any element in the
 \var(other) list.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0 == 1, 0, 2, 3] - [1, 2], [0, 0, 3]);
+assert([0, 1, 0, 2, 3] - [1, 2] == [0, 0, 3]);
 \end{urbiscript}
 
 \item \lstinline|'<<'(\var{that})|\\
