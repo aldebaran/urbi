@@ -1,0 +1,11 @@
+/*------------.
+| Orderable.  |
+`------------*/
+
+class Global.Orderable
+{
+  function '<'  (rhs) { rhs > this };
+  function '<=' (rhs) { this < rhs || this == rhs };
+  function '>'  (rhs) { rhs < this };
+  function '>=' (rhs) { this > rhs || this == rhs };
+};

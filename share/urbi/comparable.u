@@ -1,0 +1,9 @@
+/*-------------.
+| Comparable.  |
+`-------------*/
+
+class Global.Comparable
+{
+  function '!=' (rhs) { ! (this == rhs) };
+  function '==' (rhs) { ! (this != rhs) };
+};

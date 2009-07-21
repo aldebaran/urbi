@@ -147,35 +147,14 @@ do (Global)
 load("urbi/control.u");
 load("urbi/channel.u");
 
-
 // Disable top-level display
 topLevel.enabled = false;
 
-
-/*-------------.
-| Comparable.  |
-`-------------*/
-
-class Global.Comparable
-{
-  function '!=' (rhs) { ! (this == rhs) };
-  function '==' (rhs) { ! (this != rhs) };
-};
+load("urbi/comparable.u");
 // Provide !=.
 Object.addProto(Comparable);
 
-/*------------.
-| Orderable.  |
-`------------*/
-
-class Global.Orderable
-{
-  function '<'  (rhs) { rhs > this };
-  function '<=' (rhs) { this < rhs || this == rhs };
-  function '>'  (rhs) { rhs < this };
-  function '>=' (rhs) { this > rhs || this == rhs };
-};
-
+load("urbi/orderable.u");
 load("urbi/updatehook-stack.u");
 load("urbi/float.u");
 load("urbi/trajectory-generator.u");
