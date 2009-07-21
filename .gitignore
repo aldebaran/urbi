@@ -9,6 +9,7 @@
 /dev/*.pyc
 /doc/Makefile.in
 /doc/tests/faq/
+/doc/tests/guide/
 /doc/tests/installation/
 /doc/tests/introduction/
 /doc/tests/k1-to-k2/
