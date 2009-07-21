@@ -76,13 +76,13 @@ namespace urbi {
                          UAutoValue v6 = UAutoValue(),
                          UAutoValue v7 = UAutoValue(),
                          UAutoValue v8 = UAutoValue());
-      virtual UObjectMode getRunningMode();
-      virtual std::pair<int, int> kernelVersion();
+      virtual UObjectMode getRunningMode() const;
+      virtual std::pair<int, int> kernelVersion() const;
       virtual void yield();
       virtual void yield_until(libport::utime_t deadline);
       virtual void yield_until_things_changed();
       virtual void side_effect_free_set(bool s);
-      virtual bool side_effect_free_get();
+      virtual bool side_effect_free_get() const;
       virtual UVarImpl* getVarImpl();
       virtual UObjectImpl* getObjectImpl();
       virtual UGenericCallbackImpl* getGenericCallbackImpl();
@@ -117,18 +117,19 @@ namespace urbi {
       virtual void request();
       virtual void keepSynchronized();
       virtual void set(const UValue& v);
-      virtual const UValue& get();
+      virtual const UValue& get() const;
       virtual ufloat& in();
       virtual ufloat& out();
-      virtual UDataType type();
+      virtual UDataType type() const;
       virtual UValue getProp(UProperty prop);
       virtual void setProp(UProperty prop, const UValue& v);
       virtual bool setBypass(bool enable);
     private:
       UVar* owner_;
       bool bypassMode_;
-      UValue cache_;
+      mutable UValue cache_;
     };
+
     class KernelUGenericCallbackImpl: public UGenericCallbackImpl
     {
     public:
@@ -596,7 +597,7 @@ namespace urbi
   {
     getCurrentRunner().side_effect_free_set(s);
   }
-  bool KernelUContextImpl::side_effect_free_get()
+  bool KernelUContextImpl::side_effect_free_get() const
   {
     return getCurrentRunner().side_effect_free_get();
   }
@@ -638,10 +639,10 @@ namespace urbi
     rObject b = get_base(object);
     object::objects_type args;
     args.push_back(b);
-    #define CHECK(i) if (v##i.type != DATA_VOID)  \
-       args.push_back(object_cast(v##i))
+#define CHECK(i) if (v##i.type != DATA_VOID)    \
+      args.push_back(object_cast(v##i))
     CHECK(1);CHECK(2);CHECK(3);CHECK(4);CHECK(5);CHECK(6);CHECK(7);CHECK(8);
-    #undef CHECK
+#undef CHECK
     b->call(libport::Symbol(method), args);
   }
 
@@ -658,7 +659,7 @@ namespace urbi
   }
 
   UObjectMode
-  KernelUContextImpl::getRunningMode()
+  KernelUContextImpl::getRunningMode() const
   {
     return MODE_PLUGIN;
   }
@@ -710,7 +711,7 @@ namespace urbi
   }
 
   std::pair<int, int>
-  KernelUContextImpl::kernelVersion()
+  KernelUContextImpl::kernelVersion() const
   {
     //FIXME: fetch from some other place
     return std::make_pair(2, 0);
@@ -825,6 +826,7 @@ namespace urbi
    {
      //noop
    }
+
    void KernelUVarImpl::set(const UValue& v)
    {
      ECHO("uvar = operator for "<<owner_->get_name());
@@ -836,7 +838,8 @@ namespace urbi
        uvar_set(owner_->get_name(), ov);
      ov->invalidate();
    }
-   const UValue& KernelUVarImpl::get()
+
+   const UValue& KernelUVarImpl::get() const
    {
      ECHO("uvar cast operator for "<<owner_->get_name());
      try {
@@ -856,28 +859,34 @@ namespace urbi
        ("Invalid read of void UVar '" + owner_->get_name() + "'");
      }
    }
+
    ufloat& KernelUVarImpl::in()
    {
      throw std::runtime_error("in() is not implemented");
    }
+
    ufloat& KernelUVarImpl::out()
    {
       throw std::runtime_error("out() is not implemented");
    }
+
    UDataType
-   KernelUVarImpl::type()
+   KernelUVarImpl::type() const
    {
-     return ::uvalue_type(owner_->owned ? uvar_uowned_get(owner_->get_name()) : uvar_get(owner_->get_name()));
+     return ::uvalue_type(owner_->owned
+                          ? uvar_uowned_get(owner_->get_name())
+                          : uvar_get(owner_->get_name()));
    }
+
    UValue KernelUVarImpl::getProp(UProperty prop)
    {
      StringPair p = split_name(owner_->get_name());
      rObject o = get_base(p.first);
-     return ::uvalue_cast(
-                          o->call(SYMBOL(getProperty),
+     return ::uvalue_cast(o->call(SYMBOL(getProperty),
                                   new object::String(p.second),
                                   new object::String(UPropertyNames[prop])));
    }
+
    void KernelUVarImpl::setProp(UProperty prop, const UValue& v)
    {
      StringPair p = split_name(owner_->get_name());
@@ -899,13 +908,13 @@ namespace urbi
      owned_ = owned;
      registered_ = false;
    }
+
    void
    KernelUGenericCallbackImpl::initialize(UGenericCallback* owner)
    {
-     owner_ = owner;
-     owned_ = false;
-     registered_ = false;
+     initialize(owner, false);
    }
+
    void
    KernelUGenericCallbackImpl::registerCallback()
    {
@@ -971,7 +980,7 @@ namespace urbi
 }
 
   std::string
-  baseURBIStarter::getFullName(const std::string& name)
+  baseURBIStarter::getFullName(const std::string& name) const
   {
     return name;
   }
