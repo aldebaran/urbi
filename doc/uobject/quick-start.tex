@@ -101,7 +101,7 @@ It uses some of the primitives used in the binding process
 
 \urbi relies on the prototype model for object-oriented programming,
 which is somewhat different from the traditional \Cxx class-based
-model (\autoref{sec:tut:value}).  This is reflected by the presence of 
+model (\autoref{sec:tut:value}).  This is reflected by the presence of
 \emph{two} different constructors:
 \begin{itemize}
 \item \lstinline|UFactory::UFactory|, the \Cxx constructor which is
@@ -115,7 +115,7 @@ model (\autoref{sec:tut:value}).  This is reflected by the presence of
 \item \lstinline|UFactory::init|, the \urbi constructor invoked each
   time a new clone of \lstinline|UFactory| is made, i.e., for every
   instance except the first one.
-  
+
   Functions and variables that do not make sense for the initial
   prototype (which might not be fully functional) should be bound
   here, rather that in the \Cxx constructor.
@@ -193,12 +193,61 @@ The various files are:
 
 There are several means to toy with this simple UObject.  You can use
 \command{urbi-launch} (\autoref{sec:tools:urbi-launch}) to plug the
-UFactory in an \urbi server and use \command{urbi-send}
-(\autoref{sec:tools:urbi-send}) to interact with it.
+UFactory in an \urbi server and enter an interactive session.
 
-\begin{shell}
+\begin{shell}[alsolanguage={[interactive]Urbi}]
 # Launch an Urbi server with UFactory plugged in.
-$ urbi-launch --port 54000 --start ufactory &
+$ urbi-launch --start ufactory -- --interactive
+[00000000:start] *** **********************************************************
+[00000000:start] *** Urbi SDK version preview/2.0/rc-1 rev. 132e9ea
+[00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** Urbi SDK Remote version preview/1.6/rc-1 rev. 6a062f1
+[00000000:start] *** Copyright (C) 2004-2009 Gostai S.A.S..
+[00000000:start] ***
+[00000000:start] *** Libport version preview/1.0/rc-1 rev. 1e41751
+[00000000:start] *** Copyright (C) 2005-2009 Gostai SAS.
+[00000000:start] ***
+[00000000:start] *** URBI comes with ABSOLUTELY NO WARRANTY.
+[00000000:start] *** This software can be used under certain conditions;
+[00000000:start] *** see LICENSE file for details.
+[00000000:start] ***
+[00000000:start] *** See http://www.urbiforge.com for news and updates.
+[00000000:start] *** **********************************************************
+[00000000:start] ***
+[00000000:ident] *** ID: U6335792
+[00000127:start] *** Urbi is up and running.
+var f = uobjects.UFactory.new(1s);
+[00020853] UFactory_0x1899c90
+f.assemble(["Hello, ", "World!"]);
+[00038705] "Hello, World!"
+shutdown;
+\end{shell}%$
+
+You may also launch the factory UObject in the background, as a
+network component:
+
+\begin{shell}[alsolanguage={[interactive]Urbi}]
+$ urbi-launch --start ufactory --host 0.0.0.0 --port 54000 &
+\end{shell}%$
+
+\noindent
+and interact with it using your favorite client (\command{telnet},
+\command{netcat}, \command{socat}, \ldots), or using the
+\command{urbi-send} tool (\autoref{sec:tools:urbi-send}).
+
+\begin{shell}[alsolanguage={[interactive]Urbi}]
+$ urbi-send --port 54000                            \
+            -e 'var f = uobjects.UFactory.new(1s)|' \
+            -e 'f.assemble(["12", "34"]);'          \
+            --quit
+[00146148] "1234"
+[00000000:client_error] End of file
+$ urbi-send --port 54000                                            \
+            -e uobjects.UFactory.new(1s).assemble(["34", "12"]);'   \
+            --quit
+[00146148] "3412"
+[00000000:client_error] End of file
 \end{shell}%$
 
 

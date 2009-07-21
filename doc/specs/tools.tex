@@ -62,7 +62,7 @@ The options \option{-e}, \option{-f} accumulate, and are run in the
 same \refObject{Lobby} as \option{-i} if used.  In other words, the
 following session is valid:
 
-\begin{shell}
+\begin{shell}[alsolanguage={[interactive]Urbi}]
 # Create a file "two.u".
 $ echo "var two = 2;" >two.u
 # urbi -e 'var one = 1;' -f two.u -i
@@ -78,6 +78,8 @@ one + two;
 The \command{urbi-launch} program launches an \urbi system.  It is
 more general than \command{urbi} (\autoref{sec:tools:urbi}):
 everything \command{urbi} can do, \command{urbi-launch} can do it too.
+
+\subsection{Invoking \command{urbi-launch}}
 
 \command{urbi-launch} launches UObjects, either in plugged-in mode, or
 in remote mode.  Since UObjects can also accept options, the command
@@ -117,7 +119,9 @@ urbi-launch [\var{urbi-launch-option}...] \var{module}... [-- \var{module-option
   connected to a running Urbi server (identified by \var{host} and
   \var{port}) via network connection.
 
-\item[-s, --start] Start an Urbi server with plugged-in \var{modules}.
+\item[-s, --start] Start an Urbi server with plugged-in
+  \var{modules}.  In this case, the \var{module-option} are exactly
+  the options supported by \command{urbi}.
 \end{options}
 
 \paragraph{Networking}
@@ -125,19 +129,53 @@ urbi-launch [\var{urbi-launch-option}...] \var{module}... [-- \var{module-option
 (\option{--host}, \option{--port}, \option{--port-file}) as
 \command{urbi}, see \autoref{sec:tools:urbi}.
 
+\subsection{Examples}
+
+To launch a fresh server in an interactive session with the
+\lstinline|UFactory| UObject compiled as the file \file{factory.so}
+(or \file{factory.dll} plugged in, run:
+
+\begin{shell}
+urbi-launch --start ufactory -- --interactive
+\end{shell}
+
+To start an \urbi server accepting connections on the local port 54000
+from any remote host, with \lstinline|UFactory| plugged in, run:
+
+\begin{shell}
+urbi-launch --start --host 0.0.0.0 --port 54000 ufactory
+\end{shell}
+
+
 \section{\command{urbi-send} --- Sending \us Commands to a Server}
 \label{sec:tools:urbi-send}
 
+\begin{shell}
+urbi-send \var{option}...
+\end{shell}
+
+Connect to an \urbi server, and send commands or file contents to it.
+Stay connected, until server disconnection, or user interuption (such
+as \key{C-c} under a Unix terminal).
+
 \begin{options}
-\item[-b, --banner] do not hide the server-sent banner
-\item[-e, --expression=\var{script}] send \var{script} to the server
+\item[-b, --banner] do not hide the server-sent banner.
+\item[-e, --expression=\var{script}] send \var{script} to the server.
 \item[-f, --file=\var{file}] send the contents of \var{file} to the
-  server
-\item[-h, --help] display this message and exit successfully
-\item[-H, --host=\var{host}] address to listen to
+  server.
+\item[-h, --help] display this message and exit successfully.
+\item[-H, --host=\var{host}] address to listen to.
 \item[-P, --port=\var{port}] port to listen to, 0 for automatic
-  selection
-\item[--port-file=\var{file}] file containing the port to listen to
+  selection.
+\item[--port-file=\var{file}] file containing the port to listen to.
+\item[-q, --quit] disconnect from the server immediately after having
+  sent all the commands.  This is equivalent to \samp{-e 'quit;'}.
+  This is inappropriate if code running in background is expected to
+  deliver its result asynchronously: the connection will be closed
+  before the result was sent.
+
+  Without this option, \command{urbi-send} prompts the user to hit
+  \key{C-c} to end the connection.
 \item[--version] display version information
 \end{options}
 
@@ -177,27 +215,28 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
 
 \paragraph{General options}
 \begin{options}
-\item[-D, --debug] turn on shell debugging (set -x)
-\item[-h, --help] display this help message and exit successfully
-\item[-q, --quiet] no output unless errors (implies \option{--batch})
-\item[-v, --version] display version information and exit successfully
-\item[-V, --verbose] report on what is done
+\item[-D, --debug] turn on shell debugging (\lstinline|set -x|) to
+  track \command{umake} problems.
+\item[-h, --help] display this help message and exit successfully.
+\item[-q, --quiet] no output unless errors.
+\item[-v, --version] display version information and exit successfully.
+\item[-V, --verbose] report on what is done.
 \end{options}
 
 \paragraph{Compilation options}
 \begin{options}
-\item[--deep-clean] remove all building directories
-\item[-c, --clean] clean building directory before compilation
-\item[-j, --jobs=\var{jobs}] specify the numbers of commands to run
-  simultaneously
+\item[--deep-clean] remove all building directories and exit.
+\item[-c, --clean] clean building directory before compilation.
+\item[-j, --jobs=\var{jobs}] specify the numbers of compilation
+  commands to run simultaneously.
 \item[-l, --library] produce a library, don't link to a particular
-  core
+  core.
 \item[-s, --shared-library] produce a shared library loadable by any
-  core
-\item[-o, --output=output] output file name
-\item[-C, --core=\var{core}] build type
-\item[-H, --host=\var{host}] destination host
-\item[-m, --disable-automain] do not add the \lstinline|main| function
+  core.
+\item[-o, --output=\var{output}] output file name.
+\item[-C, --core=\var{core}] build type.
+\item[-H, --host=\var{host}] destination host.
+\item[-m, --disable-automain] do not add the \lstinline|main| function.
 \end{options}
 
 \paragraph{Developper options}

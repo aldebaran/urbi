@@ -24,6 +24,8 @@ improved.  Changes include, but are not limited to:
 - specs:
   - completion of the definition of the control flow constructs
     (every, every|, if, for, loop)
+  - tools (umake, umake-shared, umake-deepclean, urbi, urbi-launch,
+    urbi-send).
   - Boolean
   - Channel
   - Dictionary
@@ -104,7 +106,7 @@ Various
 =======
 
 - Text files are converted to DOS end-of-lines for Windows packages.
-
+- urbi-send supports --quit.
 
 ***************************
 * New in kernel 2.0 RC 1. *
