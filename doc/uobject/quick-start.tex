@@ -88,7 +88,7 @@ It uses some of the primitives used in the binding process
 (\autoref{sec:uob:api:bind}):
 \begin{itemize}
 \item \lstinline|UStart(\var{class})| declares classes that are
-  UObjects; eventually, such classes will appear in \us as
+  UObjects; eventually such classes will appear in \us as
   \lstinline|uobjects.\var{class}|.  Use it once.
 
 \item \lstinline|UBindFunction(\var{class}, \var{function})| declares
@@ -135,7 +135,7 @@ The following listing is abundantly commented, and is easy to grasp.
 
 As a first benefit from using the \urbi environment, this source code
 is already runnable!  No \lstinline|main| function is needed, the
-\urbi system provides one for you.
+\urbi system provides one.
 
 \subsubsection{Compiling}
 Of course, beforehand, we need to compile this UObject into some
@@ -144,7 +144,6 @@ libraries that can be loaded on demand (and unloaded) during the
 execution of the program.  Their typical file names depend on the
 architecture: \file{ufactory.so} on most Unix (including Mac OS X),
 and \file{ufactory.dll} on Windows.
-
 To abstract away from these differences, we will simply use the base
 name, \file{ufactory} with the \urbi tool chain.
 
@@ -252,36 +251,35 @@ $ urbi-send --port 54000                                            \
 
 
 \subsection{Asynchronicity}
-%  * Asynchronisme dans UObject: notifychange, timers
+% * Asynchronisme dans UObject: notifychange, timers
 
 
 \section{Using \us}
 
 \subsection{The \us Scripting Language}
-%  * Introduction a` Urbiscript (rappeler que c'est avant tout un
-%  langage comme les autres, avec if/for/while, etc), puis passer
-%  rapidement aux elements clefs de la prog evenementielle dans Urbi:
-%  at/whenever
+% Introduction a` Urbiscript (rappeler que c'est avant tout un langage
+% comme les autres, avec if/for/while, etc), puis passer rapidement
+% aux elements clefs de la prog evenementielle dans Urbi: at/whenever
 
 
 \subsection{Concurrency}
-%  * Parallelisme explicite: \&
+% * Parallelisme explicite: \&
 %
-%  * Tags et controle d'execution
+% * Tags et controle d'execution
 %
-%  * Channels et liburbi (les principes, renvoyer a` la doc liburbi pour
-%  l'API)
+% * Channels et liburbi (les principes, renvoyer a` la doc liburbi pour
+% l'API)
 %
-%  * All together, on reprend l'exemple du de'but et on de'taille le code
-%  des UObjects utilise's, puis le code urbiscript.
+% * All together, on reprend l'exemple du de'but et on de'taille le code
+% des UObjects utilise's, puis le code urbiscript.
 
 
 \section{Conclusion}
-%  * Conclusion note: expliquer qu'on peut embedder l'engine Urbi dans
-%  une appli native C++ (tout le monde le demande), qu'on peut faire
-%  des bridges ge'ne'riques avec d'autres archis a` composants (citer
-%  CORBA), donner le lien pour te'le'charger, le lien vers la doc du
-%  langage urbiscript, vers la doc de UObject, etc.
+% * Conclusion note: expliquer qu'on peut embedder l'engine Urbi dans
+% une appli native C++ (tout le monde le demande), qu'on peut faire
+% des bridges ge'ne'riques avec d'autres archis a` composants (citer
+% CORBA), donner le lien pour te'le'charger, le lien vers la doc du
+% langage urbiscript, vers la doc de UObject, etc.
 
 
 
