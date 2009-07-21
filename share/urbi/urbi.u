@@ -5,12 +5,12 @@
 do (Object)
 {
   // Cannot use "from" which is a k1 reserved word.
-  function copySlot (frm, to)
+  function copySlot(frm, to)
   {
     setSlot(to, getSlot(frm))
   };
 
-  function cloneSlot (frm, to)
+  function cloneSlot(frm, to)
   {
     setSlot(to, getSlot(frm).clone)
   };
@@ -57,7 +57,7 @@ do (Global)
   addProto(System);
 
   // Look for file and load file.
-  function load (file)
+  function load(file)
   {
     loadFile(searchFile(file));
   };
@@ -72,8 +72,6 @@ load("urbi/lazy.u");
 load("urbi/list.u");
 load("urbi/singleton.u");
 
-// FIXME: If we "load" here, we are stuck.
-
 /*-------.
 | void.  |
 `-------*/
@@ -84,17 +82,14 @@ load("urbi/singleton.u");
 do (Object)
 {
   var isVoid = false;
-  function acceptVoid ()
-  {
-    this
-  };
-  function unacceptVoid()
-  {
-    this
-  }
+  function acceptVoid()   { this };
+  function unacceptVoid() { this };
 };
-var void.acceptVoid.acceptVoid = function() { new };
-var void.acceptVoid.unacceptVoid = function() { protos.front };
+do (void.acceptVoid)
+{
+  function acceptVoid()   { new };
+  function unacceptVoid() { protos.front };
+};
 
 /*-----------.
 | Booleans.  |
@@ -283,25 +278,15 @@ do (Object)
 
 
 load("urbi/math.u");
-
 load("urbi/group.u");
-
 load("urbi/binary.u");
-
 load("urbi/profiling.u");
-
 load("urbi/position.u");
-
 load("urbi/loadable.u");
-
 load("urbi/tuple.u");
-
 load("urbi/dictionary.u");
-
 load("urbi/weak-pointer.u");
-
 load("urbi/pattern.u");
-
 load("urbi/task.u");
 
 // Properties require patterns
@@ -311,40 +296,11 @@ do (Object)
   protos->updateHook = function(slot, value) { setProtos(value); };
 };
 
-/*--------------------.
-| Publish-subscribe.  |
-`--------------------*/
-
 load("urbi/pubsub.u");
-
-/*---------.
-| Events.  |
-`---------*/
-
 load("urbi/event.u");
-
-/*-------.
-| Tags.  |
-`-------*/
-
 load("urbi/tag.u");
-
-/*--------.
-| Lobby.  |
-`--------*/
-
 load("urbi/lobby.u");
-
-/*--------.
-| Mutex.  |
-`--------*/
-
 load("urbi/mutex.u");
-
-/*--------.
-| Timeout.  |
-`--------*/
-
 load("urbi/timeout.u");
 
 /*----------.
@@ -364,10 +320,10 @@ function help()
   detach(tutorial.start);
 };
 
-// This variable is used by initialization code to detect the end of urbi.u.
+// This variable is used by initialization code to detect the end of
+// urbi.u.
 topLevel.enabled = true |
-var Object.loaded = 1 |
-{};
+var Object.loaded = 1 |;
 
 // Load URBI.INI outside initialization phase.
 try
@@ -377,13 +333,13 @@ try
 catch (var e if e.isA(FileNotFound))
 {
   var this.urbi_ini_path = nil;
-} | {};
+}|;
 if (!urbi_ini_path.isNil)
 {
   echo("Loading %s" % [urbi_ini_path], "start");
   loadFile(urbi_ini_path);
 };
-removeSlot("urbi_ini_path") | {};
+removeSlot("urbi_ini_path")|;
 
 /*-----------------------------------------------------------.
 | Ready to go.  This string is special and expected by       |
