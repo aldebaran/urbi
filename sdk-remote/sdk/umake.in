@@ -8,7 +8,7 @@ Usage: $me [OPTION]... [FILE]...
 General options:
   -D, --debug       turn on shell debugging (set -x)
   -h, --help        display this help and exit successfully
-  -q, --quiet       no output unless errors (implies --batch)
+  -q, --quiet       no output unless errors
   -v, --version     display version information and exit successfully
   -V, --verbose     report on what is done
 
