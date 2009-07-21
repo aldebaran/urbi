@@ -38,7 +38,7 @@ reserved words\footnote{
 between simple quotes (\lstinline|'|), in which case they may contain
 any character.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var x;
 var foobar51;
 var this.a_name_with_underscores;
@@ -212,7 +212,7 @@ the decimal part. Briefly, float literals match the
 expression. The listing below is an example of literal
 floats.  See \refObject{Float} for more details.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 1;
 [00000000] 1
 1.1;
@@ -227,7 +227,7 @@ empty list of arbitrary expressions enclosed in square brackets
 (\lstinline|[]|), as shown in the listing below.  See
 \refObject{List} for more details.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 []; // The empty list
 [00000000] []
 [1, 2, 3];
@@ -258,7 +258,7 @@ will be printed out as \lstinline|\n| when a string result is
 dumped. An actual line feed will of course be output if a string
 content is printed with echo for instance.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 "";
 [00000000] ""
 "foo";
@@ -378,7 +378,7 @@ semantics on numeric values. See the table and the listing below.
   \caption{Arithmetic operators}
 \end{table}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 1 + 1;
 [00000000] 2
 1 - 2;
@@ -421,18 +421,18 @@ with another operator. See the table and the listing below.
 %  x %= 3;
 
 
-\begin{urbiscript}
-var x = 0;
+\begin{urbiscript}[firstnumber=last]
+var y = 0;
 [00000000] 0
-x = 10;
+y = 10;
 [00000000] 10
-x += 10;
+y += 10;
 [00000000] 20
-x /= 5;
+y /= 5;
 [00000000] 4
-x++;
+y++;
 [00000000] 4
-x;
+y;
 [00000000] 5
 \end{urbiscript}
 
@@ -456,7 +456,7 @@ purpose than bit-related operations. See the table and the listing below.
   \caption{Bitwise operators}
 \end{table}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 4 << 2;
 [00000000] 16
 4 >> 2;
@@ -485,7 +485,7 @@ short-circuiting: their right-hand side is evaluated only if needed.
   \caption{Boolean operators}
 \end{table}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 true && true;
 [00000000] true
 true || false;
@@ -523,7 +523,7 @@ false && (1 / 0);
   \caption{Comparison operators}
 \end{table}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 0 < 0;
 [00000000] false
 0 <= 0;
@@ -532,11 +532,11 @@ false && (1 / 0);
 [00000000] true
 0 === 0;
 [00000000] false
-var x = 0;
+var z = 0;
 [00000000] 0
-x === x;
+z === z;
 [00000000] true
-x !== x;
+z !== z;
 [00000000] false
 \end{urbiscript}
 
@@ -564,7 +564,7 @@ targeted object.
   \end{tabular}
 \end{table}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // On lists.
 var l = [1, 2, 3, 4, 5];
 [00000000] [1, 2, 3, 4, 5]
@@ -670,7 +670,7 @@ separators (see \fixme{autoref{sec:fixme}}). The last separator is
 optional and ignored if present. Scopes are themselves expressions,
 and can thus be used in composite expressions, nested, and so forth.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // Scopes evaluate to their last expression
 {
   1;
@@ -695,21 +695,21 @@ name. Their value can be changed with the assignment operator; such an
 assignment expression returns the new value. The use of local
 variables is illustrated below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // This declare variable x with value 42, and evaluates to 42.
-var x = 42;
+var t = 42;
 [00000000] 42
 // x equals 42
-x;
+t;
 [00000000] 42
 // We can assign it a new value
-x = 51;
+t = 51;
 [00000000] 51
-x;
+t;
 [00000000] 51
 // Initialization defaults to void
-var y;
-y.isVoid;
+var u;
+u.isVoid;
 [00000000] true
 \end{urbiscript}
 
@@ -721,7 +721,7 @@ variables with the same name cannot be defined in the same scope. A
 variable with the same name can be defined in an inner scope, in which
 case references refer to the innermost variable, as shown below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 {
   var x = "x";
   var y = "outer y";
@@ -771,7 +771,7 @@ Usually functions are bound to an identifier to be invoked later.
 The listing below shows a short-hand to define a named
 function.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // Functions are often stored in variables to call them later
 var f1 = function () {
   echo("hello")
@@ -805,18 +805,15 @@ effective arguments is not checked, and arguments themselves are not
 evaluated. Arguments can then be manipulated with the call message,
 explained below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var f = function(a, b) {
-  echo(b);
-  echo(a);
+  echo(b + a);
 };
 [00000000:hide] function (a, b) {
-[:]  echo(b);
-[:]  echo(a);
+[:]  echo(b . '+'(a))
 [:]}
 
 f(1, 0);
-[00000000] *** 0
 [00000000] *** 1
 // Calling a function with the wrong number of argument is an error
 f(0);
@@ -835,8 +832,8 @@ which case the evaluation of the function is stopped. If
 \lstinline|return| is used with no value, the function returns
 \lstinline|void|.
 
-\begin{urbiscript}
-function f(a, b)
+\begin{urbiscript}[firstnumber=last]
+function g1(a, b)
 {
   echo(a);
   echo(b);
@@ -848,11 +845,11 @@ function f(a, b)
 [:]  a
 [:]}
 
-f(1, 2);
+g1(1, 2);
 [00000000] *** 1
 [00000000] *** 2
 [00000000] 1
-function g(a, b)
+function g2(a, b)
 {
   echo(a);
   return a; // Stop execution at this point and return a
@@ -864,10 +861,10 @@ function g(a, b)
 [:]  echo(b);
 [:]}
 
-g(1, 2);
+g2(1, 2);
 [00000000] *** 1
 [00000000] 1
-function h()
+function g3()
 {
   return; // Stop execution at this point and return void
   echo(0); // This is not executed
@@ -877,7 +874,7 @@ function h()
 [:]  echo(0);
 [:]}
 
-h(); // Returns void, so nothing is printed.
+g3(); // Returns void, so nothing is printed.
 \end{urbiscript}
 
 \subsection{Call messages}
@@ -902,8 +899,8 @@ Functions defined with a (possibly empty) list of formal arguments in
 parentheses are strict: the effective arguments are first evaluated,
 and then their value is given to the called function.
 
-\begin{urbiscript}
-function first(a, b) {
+\begin{urbiscript}[firstnumber=last]
+function first1(a, b) {
   echo(a); echo(b)
 };
 [00000000:hide] function (a, b) {
@@ -911,8 +908,8 @@ function first(a, b) {
 [:]  echo(b)
 [:]}
 
-first({echo("Arg1"); 1},
-      {echo("Arg2"); 2});
+first1({echo("Arg1"); 1},
+       {echo("Arg2"); 2});
 [00000000] *** Arg1
 [00000000] *** Arg2
 [00000000] *** 1
@@ -924,8 +921,8 @@ call message to manipulate its \emph{unevaluated} arguments.
 The listing below gives an example.  More information about
 this can be found in the \refObject{CallMessage} class documentation.
 
-\begin{urbiscript}
-function first
+\begin{urbiscript}[firstnumber=last]
+function first2
 {
   echo(call.evalArgAt(0));
   echo(call.evalArgAt(1));
@@ -935,8 +932,8 @@ function first
 [:]  echo(call . evalArgAt(1));
 [:]}
 
-first({echo("Arg1"); 1},
-      {echo("Arg2"); 2});
+first2({echo("Arg1"); 1},
+       {echo("Arg2"); 2});
 [00000000] *** Arg1
 [00000000] *** 1
 [00000000] *** Arg2
@@ -947,8 +944,8 @@ A lazy function may implement a strict interface by evaluating its
 arguments and storing them as local variables, see below.  This is
 less efficient than defining a strict function.
 
-\begin{urbiscript}
-function first
+\begin{urbiscript}[firstnumber=last]
+function first3
 {
   var a = call.evalArgAt(0);
   var b = call.evalArgAt(1);
@@ -961,8 +958,8 @@ function first
 [:]  echo(b);
 [:]}
 
-first({echo("Arg1"); 1},
-      {echo("Arg2"); 2});
+first3({echo("Arg1"); 1},
+       {echo("Arg2"); 2});
 [00000000] *** Arg1
 [00000000] *** Arg2
 [00000000] *** 1
@@ -978,26 +975,26 @@ in the current context. \us supports read/write lexical closures,
 meaning that the variable is shared between the function and the outer
 environment, as shown below.
 
-\begin{urbiscript}
-var x = 0;
+\begin{urbiscript}[firstnumber=last]
+var n = 0;
 [00000000:hide] 0
 
 function cl()
 {
   // x refers to a variable outside the function
-  x++;
-  echo(x);
+  n++;
+  echo(n);
 };
 [00000000] function () {
-[:]  x++;
-[:]  echo(x);
+[:]  n++;
+[:]  echo(n);
 [:]}
 
 cl();
 [00000000] *** 1
-x;
+n;
 [00000000] 1
-x++;
+n++;
 [00000000] 1
 cl();
 [00000000] *** 3
@@ -1006,7 +1003,7 @@ cl();
 The following listing illustrate that local variables can even
 escape their declaration scope by lexical closure.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 function wrapper()
 {
   // Normally, x is local to 'wrapper', and is limited to this scope.
@@ -1018,13 +1015,13 @@ function wrapper()
 } |
 [00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
 
-var f = wrapper();
+var w = wrapper();
 [00000000:hide] function () {
 [:]  x++
 [:]}
-f();
+w();
 [00000000] 0
-f();
+w();
 [00000000] 1
 [00000000] *** ping
 \end{urbiscript}
@@ -1046,7 +1043,7 @@ Any value in \us is an object. Objects contain:
 \subsubsection{Manipulation}
 
 \dfn{Objects} can contain any number of \dfn{slots}, every slot has a
-name and a value. They are often called ``fields'', ``attributes'' or
+name and a value. Slots are often called ``fields'', ``attributes'' or
 ``members'' in other object-oriented languages.
 
 The \lstinline|createSlot| function adds a slot to an object with the
@@ -1058,7 +1055,7 @@ the object slot's name. The listing below shows how to manipulate
 slots. More documentation about these methods can be found in
 \autorefObject{Object}.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var o = Object.new;
 [00000000:hide] Object_0xADDR
 o.localSlotNames;
@@ -1101,19 +1098,19 @@ given by the \lstinline|protos| method; they can be added or removed
 with \lstinline|addProto| and \lstinline|removeProto|.  See
 \autorefObject{Object} for more documentation.
 
-\begin{urbiscript}
-var o = Object.new;
+\begin{urbiscript}[firstnumber=last]
+var ob = Object.new;
 [00000000:hide] Object_0xADDR
 
-o.protos;
+ob.protos;
 [00000000] [Object]
-o.addProto(Pair);
+ob.addProto(Pair);
 [00000000:hide] (nil, nil)
-o.protos;
+ob.protos;
 [00000000] [(nil, nil), Object]
-o.removeProto(Object);
+ob.removeProto(Object);
 [00000000:hide] (nil, nil)
-o.protos;
+ob.protos;
 [00000000] [(nil, nil)]
 \end{urbiscript}
 
@@ -1138,7 +1135,7 @@ is, when looking for a slot in an object:
 
 This listing shows how slots are inherited.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var a = Object.new;
 [00000000:hide] Object_0xADDR
 
@@ -1183,28 +1180,28 @@ with the new value. This process is called \dfn{copy on write}; thanks
 to it, prototypes are not altered when the slot is overridden in a
 child object.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var p = Object.new;
 [00000000:hide] Object_0xADDR
 
 var p.slot = 0;
 [00000000:hide] 0
 
-var c = Object.new;
+var d = Object.new;
 [00000000:hide] Object_0xADDR
 
-c.addProto(p);
+d.addProto(p);
 [00000000:hide] Object_0xADDR
 
-c.slot;
+d.slot;
 [00000000] 0
-c.slot = 1;
+d.slot = 1;
 [00000000] 1
 // p's slot was not altered
 p.slot;
 [00000000] 0
-// It was copied in c
-c.slot;
+// It was copied in d
+d.slot;
 [00000000] 1
 \end{urbiscript}
 
@@ -1245,29 +1242,29 @@ When a message ``msg'' is sent to object \lstinline|obj|:
 
 Such message sending is illustrated below.
 
-\begin{urbiscript}
-var o = Object.new;
+\begin{urbiscript}[firstnumber=last]
+var obj = Object.new;
 [00000000:hide] Object_0xADDR
 
-var o.a = 42;
+var obj.a = 42;
 [00000000:hide] 42
 
-var o.b = function (x) { x + 1 };
+var obj.b = function (x) { x + 1 };
 [00000000:hide] function (x) {
 [:]  x . '+'(1)
 [:]}
 
-o.a;
+obj.a;
 [00000000] 42
-o.a();
+obj.a();
 [00000000] 42
-o.a(50);
+obj.a(50);
 [00000000:error] !!! a: Expected 0 argument, given 1
-o.b;
+obj.b;
 [00000000:error] !!! b: Expected 1 argument, given 0
-o.b();
+obj.b();
 [00000000:error] !!! b: Expected 1 argument, given 0
-o.b(50);
+obj.b(50);
 [00000000] 51
 \end{urbiscript}
 
@@ -1278,7 +1275,7 @@ o.b(50);
 When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|break| makes the execution jump after the loop.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var i = 5;
 [00000000:hide] 5
 
@@ -1300,7 +1297,7 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|continue| short-circuits the rest of the loop-body, and
 runs the next iteration (if there remains one).
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 for (var i = 0; i < 8; i++)
 {
   if (i % 2 != 0)
@@ -1330,7 +1327,7 @@ It evaluates \var{body}, with \lstinline|this| being \var{target}, as
 shown below.  The whole construct evaluates to the value
 of \var{body}.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 do (1024)
 {
   assert(this == 1024);
@@ -1392,15 +1389,15 @@ declares are visible in both the \var{then-clause} and the
 
 \begin{urbiscript}[firstnumber=last]
 assert({if (false) 10 else 20} == 20);
-assert({if (true) 10 else 20} == 10);
+assert({if (true)  10 else 20} == 10);
 
-assert({if (true) 10} == 10);
+assert({if (true) 10         } == 10);
 
 assert({if (var x = 10) x + 2 else x - 2} == 12);
 assert({if (var x = 0)  x + 2 else x - 2} == -2);
 
-if (var x = 123) x | x;
-[00000005:error] !!! lookup failed: x
+if (var xx = 123) xx | xx;
+[00000005:error] !!! lookup failed: xx
 \end{urbiscript}
 
 \subsection{for}
@@ -1446,7 +1443,7 @@ evaluates to \lstinline|void|.  Inside \var{body}, the current element
 is accessible via the \var{name} local variable. The listing below
 illustrates this.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 for (var x in [0, 1, 2, 3, 4])
   echo(x.sqr);
 [00000000] *** 0
@@ -1462,7 +1459,7 @@ current element and performs \lstinline|action| over it. Thus, you can
 make any object acceptable in a \lstinline|for| by defining an
 adequate \lstinline|each| method.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var Hobbits = Object.new;
 [00000000:hide] Object_0xADDR
 function Hobbits.each (action)
@@ -1502,11 +1499,11 @@ loop index is not available within the body,
 \lstinline|for (n)| is equivalent to \lstinline|for (var i: n)|.
 The loop evaluates to \lstinline|void|.
 
-\begin{urbiscript}
-var v = 1|
+\begin{urbiscript}[firstnumber=last]
+var res = 1|
 for (10)
-  v *= 2;
-v;
+  res *= 2;
+res;
 [00000000] 1024
 \end{urbiscript}
 
@@ -1536,7 +1533,7 @@ Endless loops can be created with \lstinline|loop|, which is
 equivalent to \lstinline|while (true)|.  The loop evaluates to
 \lstinline|void|.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var v = 1 |
 loop
 {
@@ -1582,7 +1579,7 @@ clauses: execution will never span over several cases.  Since the
 comparisons are performed with the generic \lstinline|==| operator,
 \lstinline|switch| can be performed on any comparable data type.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 function sw(v)
 {
   switch (v)
@@ -1617,14 +1614,14 @@ If \var{condition} evaluation, is true, \var{body} is evaluated and
 execution jumps before the \lstinline|while|, otherwise execution
 jumps after the \lstinline|while|.
 
-\begin{urbiscript}
-var i = 3;
+\begin{urbiscript}[firstnumber=last]
+var j = 3;
 [00000000:hide] 3
 
-while (0 < i)
+while (0 < j)
 {
-  echo(i);
-  i--;
+  echo(j);
+  j--;
 };
 [00000000] *** 3
 [00000000] *** 2
@@ -1643,7 +1640,7 @@ the toplevel --- as in \Cxx.  Contrary to \Cxx, exceptions reaching
 the toplevel are printed, and won't abort the kernel --- other and new
 connections will continue to execute normally.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 throw 42;
 [00000000:error] !!! 42
 function inner() { throw "exn" } | {};
@@ -1675,7 +1672,7 @@ control jumps after the whole try/catch block. If no catch clause
 matches, the exceptions isn't stopped and continues
 upward.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 function test(e)
 {
   try
@@ -1711,7 +1708,7 @@ test(51);
 The \lstindex{every} statement enables to execute a block of code
 repeatedly, with the given period.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // Print out a message every second.
 every (1s)
   echo("Are you still there?");
@@ -1725,6 +1722,7 @@ It exists in two flavors. The default flavor launches the execution of
 the block in the background every given period. Iterations may
 overlap.
 
+% Cut the previous every, no [firstnumber=last]
 \begin{urbiscript}
 // If an iteration is longer than the given period, it will overlap
 // with the next one.
@@ -1748,6 +1746,7 @@ iterations are delayed. That is, the next iterations will start
 immediately after the end of the current one, and next iterations will
 occur normally from this point.
 
+% Cut the previous every, no [firstnumber=last]
 \begin{urbiscript}
 var too_long = true|;
 
@@ -1780,6 +1779,7 @@ every| (1s)
 The flow-control constructs \lstinline|break| and \lstinline|continue|
 are supported.
 
+% Cut the previous every, no [firstnumber=last]
 \begin{urbiscript}
 {
   var count = 0;
