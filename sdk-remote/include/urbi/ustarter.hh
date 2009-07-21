@@ -57,18 +57,17 @@ namespace urbi
     virtual ~baseURBIStarter();
     /// Create an instance of the UObject.
     virtual UObject* instanciate(impl::UContextImpl* ctx,
-                             const std::string& n=std::string()) = 0;
+                                 const std::string& n = std::string()) = 0;
 
     std::string name;
     /// Set to true to have the UObjects use a random unique name.
     bool local;
     /// Return the full name to pass to the UObject constructor.
-    std::string getFullName(const std::string& name);
+    std::string getFullName(const std::string& name) const;
 
     /// List of starters.
     typedef std::list<baseURBIStarter*> list_type;
     static list_type& list();
-
   };
 
 

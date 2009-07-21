@@ -120,7 +120,7 @@ namespace urbi
       URBI_SEND_PIPED_COMMAND_C((*client_), owner_->get_name() << "=" << v);
   }
 
-  const UValue& RemoteUVarImpl::get()
+  const UValue& RemoteUVarImpl::get() const
   {
     return value_;
   };
@@ -134,7 +134,7 @@ namespace urbi
 
   //! Get Uvalue type
   UDataType
-  RemoteUVarImpl::type()
+  RemoteUVarImpl::type() const
   {
     return get().type;
   }

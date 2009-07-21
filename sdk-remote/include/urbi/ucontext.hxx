@@ -1,32 +1,39 @@
 #include <libport/hash.hh>
 #include <urbi/fwd.hh>
 #include <urbi/ucontext-impl.hh>
-namespace urbi {
+namespace urbi
+{
   inline
   UContext::UContext(impl::UContextImpl* impl)
-  :ctx_(impl)
+    : ctx_(impl)
   {
     if (!ctx_)
       ctx_ = getCurrentContext();
   }
-  inline UObjectHub* getUObjectHub(const std::string& n)
+
+  inline UObjectHub*
+  getUObjectHub(const std::string& n)
   {
     return getCurrentContext()->getUObjectHub(n);
   }
+
   inline UObjectHub*
   UContext::getUObjectHub(const std::string& n)
   {
     return ctx_->getUObjectHub(n);
   }
+
   inline UObject* getUObject(const std::string& n)
   {
     return getCurrentContext()->getUObject(n);
   }
+
   inline UObject* UContext::
   getUObject(const std::string& n)
   {
     return ctx_->getUObject(n);
   }
+
   /// Send Urbi code (ghost connection in plugin mode, default
   /// connection in remote mode).
   inline void
@@ -34,90 +41,105 @@ namespace urbi {
   {
     return getCurrentContext()->uobject_unarmorAndSend(str);
   }
+
   inline void
   UContext::uobject_unarmorAndSend(const char* str)
   {
     return ctx_->uobject_unarmorAndSend(str);
   }
+
   inline void
   send(const char* str)
   {
     getCurrentContext()->send(str);
   }
+
   /// Send the string to the connection hosting the UObject.
   inline void
   UContext::send(const char* str)
   {
     ctx_->send(str);
   }
+
   inline void
   send(const std::string& str)
   {
     getCurrentContext()->send(str.c_str(), str.length());
   }
+
   inline void
   UContext::send(const std::string& s)
   {
     ctx_->send(s.c_str(), s.length());
   }
+
   /// Send buf to the connection hosting the UObject.
   inline void
   send(const void* buf, size_t size)
   {
     getCurrentContext()->send(buf, size);
   }
+
   inline void
   UContext::send(const void* buf, size_t size)
   {
     ctx_->send(buf, size);
   }
+
   inline void
   UContext::call(const std::string& object,
-                         const std::string& method,
-                         UAutoValue v1,
-                         UAutoValue v2,
-                         UAutoValue v3,
-                         UAutoValue v4,
-                         UAutoValue v5,
-                         UAutoValue v6,
-                         UAutoValue v7,
-                         UAutoValue v8)
-    {
-      ctx_->call(object, method, v1, v2, v3, v4, v5, v6, v7, v8);
-    }
-    URBI_SDK_API UObjectMode running_mode();
+                 const std::string& method,
+                 UAutoValue v1,
+                 UAutoValue v2,
+                 UAutoValue v3,
+                 UAutoValue v4,
+                 UAutoValue v5,
+                 UAutoValue v6,
+                 UAutoValue v7,
+                 UAutoValue v8)
+  {
+    ctx_->call(object, method, v1, v2, v3, v4, v5, v6, v7, v8);
+  }
+
+  URBI_SDK_API UObjectMode running_mode();
   inline UObjectMode
   getRunningMode()
   {
-    impl::UContextImpl* ctx = getCurrentContext();
-    if (ctx)
+    if (impl::UContextImpl* ctx = getCurrentContext())
       return ctx->getRunningMode();
-    else // Hack to get a valid mode if one of the uobjects is loaded
+    else
+      // Hack to get a valid mode if one of the uobjects is loaded
       return running_mode();
   }
+
   /// Return the mode in which the code is running.
   inline UObjectMode
-  UContext::getRunningMode()
+  UContext::getRunningMode() const
   {
     return ctx_->getRunningMode();
   }
-  inline bool isPluginMode()
+
+  inline bool
+  isPluginMode()
   {
     return getRunningMode() == MODE_PLUGIN;
   }
+
   /// Return true if the code is running in plugin mode.
-  inline  bool
-  UContext::isPluginMode()
+  inline bool
+  UContext::isPluginMode() const
   {
     return getRunningMode() == MODE_PLUGIN;
   }
-  inline bool isRemoteMode()
+
+  inline bool
+  isRemoteMode()
   {
     return getRunningMode() == MODE_REMOTE;
   }
   /// Return true if the code is running in remote mode.
   inline bool
-  UContext::isRemoteMode()
+  UContext::isRemoteMode() const
   {
     return getRunningMode() == MODE_REMOTE;
   }
@@ -128,12 +150,14 @@ namespace urbi {
   {
     return ctx_->yield();
   }
+
   /// Yield execution until \b deadline is met (see libport::utime()).
   inline void
   UContext::yield_until(libport::utime_t deadline)
   {
     return ctx_->yield_until(deadline);
   }
+
   /** Yield execution until something else is scheduled, or until a message is
   * received in remote mode.
   */
@@ -142,6 +166,7 @@ namespace urbi {
   {
     return ctx_->yield_until_things_changed();
   }
+
   /** If \b s is true, mark the current task as having no side effect.
   * This call has no effect in remote mode.
   */
@@ -150,9 +175,10 @@ namespace urbi {
   {
     return ctx_->side_effect_free_set(s);
   }
+
   /// Get the current side_effect_free state.
   inline bool
-  UContext::side_effect_free_get()
+  UContext::side_effect_free_get() const
   {
     return ctx_->side_effect_free_get();
   }

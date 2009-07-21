@@ -7,7 +7,8 @@ namespace urbi
 {
   namespace impl
   {
-    class URBI_SDK_API RemoteUContextImpl: public impl::UContextImpl
+    class URBI_SDK_API RemoteUContextImpl
+      : public impl::UContextImpl
     {
     public:
       /// Setup to work on given client
@@ -27,13 +28,13 @@ namespace urbi
                         UAutoValue v6 = UAutoValue(),
                         UAutoValue v7 = UAutoValue(),
                         UAutoValue v8 = UAutoValue());
-      virtual UObjectMode getRunningMode();
-    virtual std::pair<int, int> kernelVersion();
+      virtual UObjectMode getRunningMode() const;
+      virtual std::pair<int, int> kernelVersion() const;
       virtual void yield();
       virtual void yield_until(libport::utime_t deadline);
       virtual void yield_until_things_changed();
       virtual void side_effect_free_set(bool s);
-      virtual bool side_effect_free_get();
+      virtual bool side_effect_free_get() const;
       virtual UVarImpl* getVarImpl();
       virtual UObjectImpl* getObjectImpl();
       virtual UGenericCallbackImpl* getGenericCallbackImpl();
@@ -87,10 +88,10 @@ namespace urbi
       virtual void request();
       virtual void keepSynchronized();
       virtual void set(const UValue& v);
-      virtual const UValue& get();
+      virtual const UValue& get() const;
       virtual ufloat& in();
       virtual ufloat& out();
-      virtual UDataType type();
+      virtual UDataType type() const;
       virtual UValue getProp(UProperty prop);
       virtual void setProp(UProperty prop, const UValue& v);
       virtual bool setBypass(bool enable);
