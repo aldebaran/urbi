@@ -195,6 +195,6 @@ main(int argc, char * argv[])
        ++i)
     send_data(client, *i);
   if (quit)
-    client.send("shutdown;");
+    client.send("quit;");
   urbi::execute();
 }

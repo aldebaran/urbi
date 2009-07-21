@@ -217,7 +217,8 @@ main(int argc, char* argv[])
   libport::OptionValue
     arg_pfile("file containing the port to listen to", "port-file", 0, "FILE");
   libport::OptionFlag
-    arg_banner("do not hide the server-sent banner", "banner", 'b');
+    arg_banner("do not hide the server-sent banner", "banner", 'b'),
+    arg_quit("send `quit' at the end to disconnect", "quit", 'q');
 
   typedef boost::function1<void, const std::string&> cb_type;
 
@@ -235,7 +236,8 @@ main(int argc, char* argv[])
 	     << libport::opts::host_l
 	     << libport::opts::port_l
 	     << arg_pfile
-	     << libport::opts::version;
+	     << libport::opts::version
+             << arg_quit;
 
   libport::cli_args_type
     remainings_args = opt_parser(libport::program_arguments());
@@ -277,8 +279,11 @@ main(int argc, char* argv[])
     delete d;
   }
 
-  std::cout << libport::program_name()
-	    << ": file sent, hit Ctrl-C to terminate."
-            << std::endl;
+  if (arg_quit.get())
+    client.send("quit;");
+  else
+    std::cout << libport::program_name()
+              << ": file sent, hit Ctrl-C to terminate."
+              << std::endl;
   urbi::execute();
 }
