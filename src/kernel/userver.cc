@@ -305,7 +305,7 @@ namespace kernel
     | Setup.  |
     `--------*/
 
-    // The order is important: ghost connection, plugins, urbi.ini
+    // The order is important: ghost connection, plugins, urbi.u.
 
     // Ghost connection
     DEBUG(("Setting up ghost connection..."));
@@ -483,18 +483,6 @@ namespace kernel
   UServer::custom_banner_get() const
   {
     return "";
-  }
-
-  namespace
-  {
-    bool
-    file_readable(const std::string& s)
-    {
-      std::ifstream is(s.c_str(), std::ios::binary);
-      bool res = is;
-      is.close();
-      return res;
-    }
   }
 
   std::string
