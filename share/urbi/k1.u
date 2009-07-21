@@ -7,6 +7,11 @@ class Global.Kernel1Functions
     o.copy
   };
 
+  function noop()
+  {
+    warn("`noop' is deprecated, use `{}'") |
+  };
+
   function ping()
   {
     echo ("pong time=" + (time / 1s).asString + "s");
@@ -26,6 +31,7 @@ class Global.Kernel1Functions
 
   function strlen(s)
   {
+    warn("`strlen(string)' is deprecated, use `string.length'") |
     s.length
   };
 
@@ -34,18 +40,8 @@ class Global.Kernel1Functions
     call.evalArgAt(0).acceptVoid.isVoid
   };
 
-  var system = System;
-  var system.ghostID = "";
-};
-
-// K1 compatibility: import the k1 functions.
-Global.addProto(Global.Kernel1Functions);
-
-
-// Deprecated commands from k1.
-// FIXME: Some commands should be rewritten once it becomes possible.
-class Global.DeprecatedCommands
-{
+  // Deprecated commands from k1.
+  // FIXME: Maybe some commands should be rewritten.
   for| (var name: [
                   "commands",
                   "connections",
@@ -62,7 +58,11 @@ class Global.DeprecatedCommands
                   "vars"
                     ])
     setSlot(name,
-      function () { echo("`" + name + "' is deprecated." ) })
+      function () { echo("`" + name + "' is deprecated." ) });
+
+  var system = System;
+  var system.ghostID = "";
 };
 
-Global.addProto(Global.DeprecatedCommands);
+// K1 compatibility: import the k1 functions.
+Global.addProto(Global.Kernel1Functions);
