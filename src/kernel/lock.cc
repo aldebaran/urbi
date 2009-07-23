@@ -64,7 +64,7 @@ namespace kernel
     // Check that it matches with our own key.
     if (key != URBI_SDK_KEY)
       server_error("invalid Urbi SDK key: " + path);
-# endif URBI_SDK_KEY
+# endif // !URBI_SDK_KEY
   }
 
 }
