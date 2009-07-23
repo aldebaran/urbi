@@ -28,4 +28,15 @@ do (String)
       res += this + e |
     res[size, res.size]
   };
+
+  function isLower()
+  {
+    this.toLower == this;
+  };
+
+  function isUpper()
+  {
+    this.toUpper == this;
+  };
+
 };
