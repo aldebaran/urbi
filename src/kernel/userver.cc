@@ -58,6 +58,7 @@
 #include <sched/scheduler.hh>
 
 #include <kernel/connection-set.hh>
+#include <kernel/lock.hh>
 #include <kernel/server-timer.hh>
 #include <kernel/ubanner.hh>
 #include <kernel/ughostconnection.hh>
@@ -68,8 +69,27 @@ using libport::program_name;
 
 namespace kernel
 {
+  /*----------------.
+  | Free standing.  |
+  `----------------*/
+
   // Global server reference
   UServer *urbiserver = 0;
+
+  static
+  void
+  init_error()
+  {
+    static bool ignore = getenv("IGNORE_URBI_U");
+    if (!ignore)
+      urbi::Exit(EX_OSFILE, "set IGNORE_URBI_U to ignore.");
+  }
+
+
+
+  /*----------.
+  | UServer.  |
+  `----------*/
 
   UServer::UServer(const char* mainName)
     : search_path(boost::assign::list_of
@@ -85,6 +105,7 @@ namespace kernel
     , thread_id_(pthread_self())
     , io_(*new boost::asio::io_service())
   {
+    lock_check(*this);
 #if ! defined NDEBUG
     server_timer.start();
     server_timer.dump_on_destruction(std::cerr);
@@ -110,18 +131,6 @@ namespace kernel
     else
       DEBUG (("not found\n"));
     return res;
-  }
-
-  static
-  void
-  init_error()
-  {
-    static bool ignore = getenv("IGNORE_URBI_U");
-    if (!ignore)
-    {
-      boost::format fmt("%s: set IGNORE_URBI_U to ignore.");
-      throw urbi::Exit(EX_OSFILE, str(fmt % program_name()));
-    }
   }
 
   void

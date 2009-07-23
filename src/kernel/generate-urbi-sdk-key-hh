@@ -1,0 +1,11 @@
+#! /usr/bin/perl -w
+binmode(STDIN);
+undef $/;
+(my $key .= <STDIN>) =~ s/(.)/ sprintf("\\x%2x", ord($1) ^ 23)/ges;
+
+if ($key)
+{
+    print <<EOF;
+#define URBI_SDK_KEY "$key"
+EOF
+}

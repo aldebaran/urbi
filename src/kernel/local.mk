@@ -5,6 +5,8 @@ dist_libuobject_la_SOURCES +=			\
   kernel/connection-set.hh			\
   kernel/debug.cc				\
   kernel/debug.hh				\
+  kernel/lock.cc				\
+  kernel/lock.hh				\
   kernel/server-timer.hh			\
   kernel/server-timer.cc			\
   kernel/ubanner.hh				\
@@ -21,3 +23,15 @@ dist_libuobject_la_SOURCES +=			\
   kernel/usystem.cc				\
   kernel/uvalue-cast.cc				\
   kernel/uvalue-cast.hh
+
+
+## ------------------------ ##
+## kernel/urbi-sdk-key.hh.  ##
+## ------------------------ ##
+
+nodist_libuobject_la_SOURCES +=			\
+  kernel/urbi-sdk-key.hh
+kernel/urbi-sdk-key.hh: $(top_srcdir)/urbi-sdk.key
+	rm -f $@ $@.tmp
+	$(srcdir)/kernel/generate-urbi-sdk-key-hh <$< >$@.tmp
+	mv $@.tmp $@
