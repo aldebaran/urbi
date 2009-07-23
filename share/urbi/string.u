@@ -29,4 +29,9 @@ do (String)
     res[size, res.size]
   };
 
+  function '%'(list)
+  {
+    Formatter.new(this) % list
+  };
+
 };

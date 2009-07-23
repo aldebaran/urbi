@@ -272,54 +272,6 @@ namespace object
     return res;
   }
 
-  template <typename It>
-  static std::string
-  str_format(const std::string& fmt, It begin, It end)
-  {
-    std::string res;
-    const char* next;
-    const char* str = fmt.c_str();
-
-    while ((next = strchr(str, '%')))
-    {
-      res += std::string(str, next - str);
-      str = next + 2;
-      const char format = next[1];
-      if (format == 0)
-	RAISE("Trailing `%'");
-      switch (format)
-      {
-        case '%':
-          res += '%';
-          break;
-        case 's':
-        {
-          if (begin == end)
-	    RAISE("Too few arguments for format");
-          res += from_urbi<std::string>((*begin)->call(SYMBOL(asString)));
-          begin++;
-          break;
-        }
-        default:
-	  RAISE(std::string("Unrecognized format: `%") + format + "'");
-          break;
-      }
-    }
-    if (begin != end)
-      RAISE("Too many arguments for format");
-    res += str;
-    return res;
-  }
-
-  std::string String::format(rObject value) const
-  {
-    rList l = value->as<List>();
-    if (l)
-      return str_format(content_, l->value_get().begin(), l->value_get().end());
-    else
-      return str_format(content_, &value, &value + 1);
-  }
-
   void String::check_bounds(size_type from, size_type to) const
   {
     if (from >= content_.length())
@@ -426,7 +378,6 @@ namespace object
     bind(SYMBOL(Name), &String::Function)
 
     DECLARE(LT          , lt);
-    DECLARE(PERCENT     , format);
     DECLARE(PLUS        , plus);
     DECLARE(STAR        , star);
     DECLARE(asBool      , as_bool);

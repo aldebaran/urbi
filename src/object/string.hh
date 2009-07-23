@@ -38,7 +38,6 @@ namespace object
 
     size_type distance(const std::string& other) const;
     bool empty() const;
-    std::string format(rObject values) const;
     std::string plus(rObject rhs) const;
     bool lt(const std::string& rhs) const;
     std::string fresh() const;
