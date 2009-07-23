@@ -82,6 +82,22 @@ assert(String.fresh == "_5");
 assert("foo".fresh == "foo_6");
 \end{urbiscript}
 
+\item \lstinline|isLower|\\
+  Return true if all character of \lstinline|this| is lower case.
+\begin{urbiscript}[firstnumber=last]
+assert("".isLower);
+assert("lower".isLower);
+assert(! "Not Lower".isLower);
+\end{urbiscript}
+
+\item \lstinline|isUpper|\\
+  Return true if all character of \lstinline|this| is upper case.
+\begin{urbiscript}[firstnumber=last]
+assert("".isUpper);
+assert("UPPER".isUpper);
+assert(! "Not Upper".isUpper);
+\end{urbiscript}
+
 \item \lstinline|replace(\var{from}, \var{to})|\\
   Replace every occurrence of the string \var{from} in
   \lstinline|this| by \var{to}, and return the result.
