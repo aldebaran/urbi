@@ -476,7 +476,7 @@ namespace kernel
   }
 
   std::string
-  UServer::find_file(const libport::path& path)
+  UServer::find_file(const libport::path& path) const
   {
     return search_path.find_file(path) / path.basename();
   }

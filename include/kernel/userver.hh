@@ -95,7 +95,7 @@ namespace kernel
 
     /// Return the full file name, handle paths.
     /// Return \a f on failure.
-    virtual std::string find_file(const libport::path& path);
+    virtual std::string find_file(const libport::path& path) const;
 
     /// Type of UCommandQueue
     enum QueueType {
