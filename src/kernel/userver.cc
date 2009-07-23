@@ -71,16 +71,6 @@ namespace kernel
   // Global server reference
   UServer *urbiserver = 0;
 
-  // Buffers used to output data.
-  /// Used by echo() & error().
-  // FIXME: Because of this stupid hard limit, we can't produce
-  // large outputs!  We should move to using C++.  Or some scheme
-  // that is robust to the size of the message.
-  // NOTE: Do not *ever* create an object of this type on the stack.
-  // All instances must be marked as static. And the functions using
-  // them will not be reentrant. You have been warned.
-  typedef char buffer_type[8192];
-
   UServer::UServer(const char* mainName)
     : search_path(boost::assign::list_of
                   (std::string(libport::xgetenv("URBI_PATH")))
