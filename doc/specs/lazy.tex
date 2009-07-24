@@ -70,7 +70,7 @@ future \us might support dictionaries whose indices are not only
 strings, but in the meanwhile, you have to convert the arguments into
 strings, as the following sample object demonstrates.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 class UnaryLazy
 {
   function init(f)
@@ -118,7 +118,7 @@ automatically when a lazy function call is made (see
 standard \lstinline|new| method of \lstinline|Lazy|, giving it an
 argument-less function which evaluates to the lazified value.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 Lazy.new(closure () { /* Value to lazify */ });
 [00000000:hide] Lazy_0xADDR
 \end{urbiscript}
@@ -127,19 +127,18 @@ Lazy.new(closure () { /* Value to lazify */ });
 
 \begin{itemize}
 \item \lstinline|eval|\\
-The \lstinline|eval| method forces evaluation of the held lazy
-value. Two calls to \lstinline|eval| will systematically evaluate the
-expression twice, which can be useful to duplicates its side effects.
+  Force the evaluation of the held lazy value. Two calls to
+  \lstinline|eval| will systematically evaluate the expression twice,
+  which can be useful to duplicate its side effects.
 
 \item \lstinline|value|\\
-The \lstinline|value| method returns the held value, potentially
-evaluating it before. \lstinline|value| performs memoization, that is,
-only the first call will actually evaluate the expression, subsequent
-calls will return the cached value. Unless you want to explicitly
-trigger side effects from the expression by evaluating it several
-time, this should be preferred over \lstinline|eval| to avoid
-evaluating the expression several times uselessly.
-
+  Return the held value, potentially evaluating it
+  before. \lstinline|value| performs memoization, that is, only the
+  first call will actually evaluate the expression, subsequent calls
+  will return the cached value. Unless you want to explicitly trigger
+  side effects from the expression by evaluating it several time, this
+  should be preferred over \lstinline|eval| to avoid evaluating the
+  expression several times uselessly.
 \end{itemize}
 
 
