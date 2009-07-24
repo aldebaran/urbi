@@ -307,6 +307,22 @@ namespace parser
   }
 
 
+  // Build a for(num) loop.
+  ast::rExp
+  ast_for(const yy::location&, ast::flavor_type,
+          ast::rExp num, ast::rExp body)
+  {
+    //FIXME: Flavor support.
+    PARAMETRIC_AST(semi,
+        "for (var '$for' = %exp:1;"
+        "     0 < '$for';" // Use 0 < n, not n > 0, since < is faster.
+        "     '$for' -= 1)"
+        "  %exp:2"
+      );
+    return exp(semi % num % body);
+  }
+
+
   // Build a C-like for loop.
   ast::rExp
   ast_for(const yy::location&, ast::flavor_type flavor,

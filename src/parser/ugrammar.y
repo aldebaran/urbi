@@ -1009,13 +1009,7 @@ stmt_loop:
     {
       //FIXME: Flavor support.
       FLAVOR_CHECK1(@1, "for", $1, semicolon);
-      PARAMETRIC_AST(desugar,
-        "for (var '$for' = %exp:1;"
-        "     0 < '$for';" // Use 0 < n, not n > 0, since < is faster.
-        "     '$for' -= 1)"
-        "  %exp:2"
-        );
-      $$ = exp(desugar % $3 % $5);
+      $$ = ast_for(@$, $1, $3, $5);
     }
 | "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK
     {

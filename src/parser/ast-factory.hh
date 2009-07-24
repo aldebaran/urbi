@@ -85,9 +85,14 @@ namespace parser
   ast_every(const yy::location& loc, ast::flavor_type flavor,
             ast::rExp test, ast::rExp body);
 
+  // Build a for(num) loop.
+  ast::rExp
+  ast_for(const yy::location&, ast::flavor_type flavor,
+          ast::rExp num, ast::rExp body);
+
   /// Build a C-for loop.
   ast::rExp
-  ast_for(const yy::location& l, ast::flavor_type op,
+  ast_for(const yy::location& l, ast::flavor_type flavor,
           ast::rExp init, ast::rExp test, ast::rExp inc,
           ast::rExp body);
 
