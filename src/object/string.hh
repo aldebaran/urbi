@@ -73,6 +73,20 @@ namespace object
     /// Return a new string with all lower case made upper case.
     std::string to_upper() const;
 
+    /// Functions is_XXX:
+    /// Return whether C isXXX is true for all characters.
+    bool is_upper() const;
+    bool is_lower() const;
+    bool is_alpha() const;
+    bool is_cntrl() const;
+    bool is_space() const;
+    bool is_digit() const;
+    bool is_xdigit() const;
+    bool is_alnum() const;
+    bool is_punct() const;
+    bool is_graph() const;
+    bool is_print() const;
+
     static std::string fromAscii(rObject, int code);
 
     int toAscii() const;

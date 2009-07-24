@@ -82,17 +82,49 @@ assert(String.fresh == "_5");
 assert("foo".fresh == "foo_6");
 \end{urbiscript}
 
-\item \lstinline|isLower|\\
-  Return whether there are no upper case character in \lstinline|this|.
+\item Character handling functions\\
+  Here is a map of how the original 127-character ASCII set is
+  considered by each function (a \textbullet{} indicates that the function
+  returns true if all characters of \lstinline|this| are on the
+  row).
+
+\begin{tabular}{|l||l||c|c|c|c|c|c|c|c|c|c|c|}
+  \hline
+  &&&&&&&&&&&&\\
+  ASCII values & Characters & \begin{sideways}iscntrl\end{sideways}
+    & \begin{sideways}isspace\end{sideways}
+    & \begin{sideways}isupper\end{sideways}
+    & \begin{sideways}islower\end{sideways}
+    & \begin{sideways}isalpha\end{sideways}
+    & \begin{sideways}isdigit\end{sideways}
+    & \begin{sideways}isxdigit\end{sideways}
+    & \begin{sideways}isalnum\end{sideways}
+    & \begin{sideways}ispunct\end{sideways}
+    & \begin{sideways}isgraph\end{sideways}
+    & \begin{sideways}print \end{sideways}\\ \hline \hline
+  0x00 .. 0x08 & & \textbullet & & & & & & & & & &\\ \hline
+  0x09 .. 0x0D & \textbackslash{}t, \textbackslash{}f,
+  \textbackslash{}v, \textbackslash{}n, \textbackslash{}r &
+  \textbullet & \textbullet & & & & & & & & &\\ \hline
+  0x0E .. 0x1F & & \textbullet & & & & & & & & & &\\ \hline
+  0x20 & space (' ') & & \textbullet & & & & & & & & & \textbullet\\ \hline
+  0x21 .. 0x2F & \verb|!"#$%&'()*+,-./| & & & & & & & & & \textbullet & \textbullet & \textbullet\\ \hline
+  0x30 .. 0x39 & \verb|0-9| & & & & & & \textbullet & \textbullet & \textbullet & & \textbullet & \textbullet\\ \hline
+  0x3a .. 0x40 & \verb|:;<=>?@| & & & & & & & & & \textbullet & \textbullet & \textbullet\\ \hline
+  0x41 .. 0x46 & \verb|A-F| & & & \textbullet & & \textbullet & & \textbullet & \textbullet & & \textbullet & \textbullet\\ \hline
+  0x47 .. 0x5A & \verb|G-Z| & & & \textbullet & & \textbullet & & & \textbullet & & \textbullet & \textbullet\\ \hline
+  0x5B .. 0x60 & \verb|[\]^{}_`| & & & & & & & & & \textbullet & \textbullet & \textbullet\\ \hline
+  0x61 .. 0x66 & \verb|a-f| & & & & \textbullet & \textbullet & & \textbullet & \textbullet & & \textbullet & \textbullet\\ \hline
+  0x67 .. 0x7A & \verb|g-z| & & & & \textbullet & \textbullet & & & \textbullet & & \textbullet & \textbullet\\ \hline
+  0x7B .. 0x7E & \verb-{|}~- & & & & & & & & & \textbullet & \textbullet & \textbullet\\ \hline
+  0x7F & (DEL) &  \textbullet & & & & & & & & & &\\
+  \hline
+\end{tabular}
+
 \begin{urbiscript}[firstnumber=last]
 assert("".isLower);
 assert("lower".isLower);
 assert(! "Not Lower".isLower);
-\end{urbiscript}
-
-\item \lstinline|isUpper|\\
-  Return whether there are no lower case character in \lstinline|this|.
-\begin{urbiscript}[firstnumber=last]
 assert("".isUpper);
 assert("UPPER".isUpper);
 assert(! "Not Upper".isUpper);

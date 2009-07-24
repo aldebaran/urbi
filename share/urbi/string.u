@@ -29,14 +29,4 @@ do (String)
     res[size, res.size]
   };
 
-  function isLower()
-  {
-    this.toLower == this;
-  };
-
-  function isUpper()
-  {
-    this.toUpper == this;
-  };
-
 };

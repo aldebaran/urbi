@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object string.
  */
 
+#include <cctype>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
 #include <boost/format.hpp>
@@ -357,6 +359,28 @@ namespace object
     return res;
   }
 
+#define IS(Spec)                                        \
+  bool String::is_ ## Spec() const                      \
+  {                                                     \
+    bool res = true;                                    \
+    size_t pos = content_.size();                       \
+    while (res && --pos && is ## Spec(content_[pos]))   \
+      ;                                                 \
+    return res;                                         \
+  }
+  IS(upper)
+  IS(lower)
+  IS(alpha)
+  IS(cntrl)
+  IS(space)
+  IS(digit)
+  IS(xdigit)
+  IS(alnum)
+  IS(punct)
+  IS(graph)
+  IS(print)
+#undef IS
+
   int String::toAscii() const
   {
     check_bounds(0, 1);
@@ -402,6 +426,18 @@ namespace object
     DECLARE(toAscii     , toAscii);
     DECLARE(toLower     , to_lower);
     DECLARE(toUpper     , to_upper);
+    DECLARE(isLower     , is_lower);
+    DECLARE(isUpper     , is_upper);
+    DECLARE(isAlpha     , is_alpha);
+    DECLARE(isCntrl     , is_cntrl);
+    DECLARE(isSpace     , is_space);
+    DECLARE(isDigit     , is_digit);
+    DECLARE(isXdigit    , is_xdigit);
+    DECLARE(isAlnum     , is_alnum);
+    DECLARE(isPunct     , is_punct);
+    DECLARE(isGraph     , is_graph);
+    DECLARE(isPrint     , is_print);
+
 
 #undef DECLARE
 
