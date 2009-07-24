@@ -83,7 +83,7 @@ assert("foo".fresh == "foo_6");
 \end{urbiscript}
 
 \item \lstinline|isLower|\\
-  Return true if all character of \lstinline|this| is lower case.
+  Return whether there are no upper case character in \lstinline|this|.
 \begin{urbiscript}[firstnumber=last]
 assert("".isLower);
 assert("lower".isLower);
@@ -91,7 +91,7 @@ assert(! "Not Lower".isLower);
 \end{urbiscript}
 
 \item \lstinline|isUpper|\\
-  Return true if all character of \lstinline|this| is upper case.
+  Return whether there are no lower case character in \lstinline|this|.
 \begin{urbiscript}[firstnumber=last]
 assert("".isUpper);
 assert("UPPER".isUpper);
