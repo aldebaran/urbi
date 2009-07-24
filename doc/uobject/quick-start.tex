@@ -126,6 +126,7 @@ The following listing is abundantly commented, and is easy to grasp.
 \lstinputlisting[language=C++,basicstyle=\ttfamily\footnotesize]{\factoryDir/ufactory.cc}
 
 \subsection{Running Components}
+\label{sec:uob:quick:run}
 %  * Compilation et branchement de UObject (urbi-launch): expliquer les
 %  deux modes: distant / pluge'
 %
@@ -256,11 +257,96 @@ $ urbi-send --port 54000                                            \
 
 \section{Using \us}
 
-\subsection{The \us Scripting Language}
 % Introduction a` Urbiscript (rappeler que c'est avant tout un langage
 % comme les autres, avec if/for/while, etc), puis passer rapidement
 % aux elements clefs de la prog evenementielle dans Urbi: at/whenever
 
+\us is a programming language primarily designed for robotics.  Its
+syntax is inpired by that of \Cxx: if you know \C, \Cxx, \java or \Cs,
+writing \us programs is easy.  It's a dynamic object-oriented
+(\autoref{sec:tut:object}) scripting language, which makes it well
+suited for high-level application.  It supports and emphasizes
+parallel (\autoref{sec:tut:concurrent}) and event-based programming
+(\autoref{sec:tut:event-prog}), which are very popular paradigms in
+robotics, by providing core primitives and language constructs.
+
+Thanks to its client/server approach, one can easily interact with a
+robot, to monitor it, or to experiment live changes in the \us
+programs.
+
+Courtesy of the UObject architecture, \us is fully integrated with
+\Cxx. As already seen in the above examples
+(\autoref{sec:uob:quick:run}), you can bind \Cxx classes in \us
+seamlessly. \us is also integrated with many other languages such as
+\java, \matlab or \python.  UObject also naturally provide \us with
+support for distributed architectures: objects can run in different
+processes, possibly on remote computers.
+
+%% Everything that follows is bullshit: UObject invocations are
+%% *not* in different threads, so we are definitely doomed here.
+%%
+\subsection{The \us Scripting Language}
+
+The following example shows how one can easily interface UObjects into
+the \us language.  The following simple class (actually, a genuine
+object, in \us ``classes are objects'', see \autoref{sec:tut:object})
+aggregates two assembly machines, a fast one, and a slow one.  This
+class demonstrates usual object-oriented, sequential, features.
+
+\begin{urbiscript}
+//#plug factory/factory
+class TwoMachineFactory
+{
+  // A shorthand common to all the Two Machine factories.
+  var UFactory = uobjects.UFactory;
+
+  // Default machines.
+  var this.fastMachine = UFactory.new(10ms);
+  var this.slowMachine = UFactory.new(100ms);
+
+  // The urbiScript constructor.
+  // Build two machines, a fast one, and a slow one.
+  function init(fast = 10ms, slow = 100ms)
+  {
+    // Make sure fast <= slow.
+    if (slow < fast)
+      [fast, slow] = [slow, fast];
+    // Two machines for each instance of factory.
+    fastMachine = UFactory.new(fast);
+    slowMachine = UFactory.new(slow);
+  };
+
+  // Wrappers to make invocation of the machine simpler.
+  function fast(input) { fastMachine.assemble(input) };
+  function slow(input) { slowMachine.assemble(input) };
+
+  // Use the slow machine for large jobs.
+  function assemble(input)
+  {
+    var res;
+    if (5 < input.size)
+      { res = slow(input); echo("Used the slow machine") }
+    else
+      { res = fast(input); echo("Used the fast machine") } |
+    res
+  };
+};
+[00000001] TwoMachineFactory
+\end{urbiscript}
+
+Using this class is straightforward.
+
+\begin{urbiscript}[firstnumber=last]
+var f = TwoMachineFactory.new|;
+f.assemble([1, 2, 3, 4, 5, 6]);
+[00000002] *** Used the slow machine
+[00000003] "123456"
+f.assemble([1]);
+[00000004] *** Used the fast machine
+[00000005] "1"
+\end{urbiscript}
+
+The genuine power of \us is when concurrency comes into play.
 
 \subsection{Concurrency}
 % * Parallelisme explicite: \&
@@ -273,6 +359,37 @@ $ urbi-send --port 54000                                            \
 % * All together, on reprend l'exemple du de'but et on de'taille le code
 % des UObjects utilise's, puis le code urbiscript.
 
+First of all, why should we wait for the slow job to finish if we have
+a fast machine available?
+
+\begin{urbiscript}[firstnumber=last]
+f.assemble([1, 2, 3, 4, 5, 6]),
+f.assemble([1]),
+[00000004] *** Used the fast machine
+sleep(100ms);
+[00000002] *** Used the slow machine
+\end{urbiscript}
+
+Contrary to the previous run, the fast machine answered first.  There
+is one bit (one dot?) of difference between both runs: the first one
+used the sequential terminator, \samp{;}, while the second run used
+\samp{,} to send the execution ``in background''.
+
+You maybe also notice that the result is no longer reported.  Indeed,
+the \us interactive shell only displays the result of synchronous
+expressions (i.e., those ending with a \samp{;}): asynchronous answers
+are confusing (see the inversion here).
+
+Channels (\refObject{Channels}) are useful to ``send'' asynchronous
+answers.
+
+\begin{urbiscript}[firstnumber=last]
+//for, (var list = [1, 2, 3, 4, 5, 6, 7];
+//      !list.empty;
+//      list.removeBack)
+//  cout << list.asString + " => " + f.assemble(list);
+//sleep(1s);
+\end{urbiscript}
 
 \section{Conclusion}
 % * Conclusion note: expliquer qu'on peut embedder l'engine Urbi dans
