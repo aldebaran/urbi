@@ -109,16 +109,14 @@
     }
 
 
-
 # undef ERROR
-# define ERROR(Loc, Msg, Type)                  \
-    do {                                        \
-      std::stringstream s;                      \
-      s << Msg;                                 \
-      up.error(Loc, s.str());                   \
-      yylhs.value.destroy<Type>();              \
-      YYERROR;                                  \
-    } while (false)                             \
+// FIXME: Bison should really get rid of yylhs when YYERROR is invoked.
+# define ERROR(Loc, FormatArgs, Type)                   \
+    do {                                                \
+      up.error(Loc, (libport::format FormatArgs));      \
+      yylhs.value.destroy<Type>();                      \
+      YYERROR;                                          \
+    } while (false)
 
     static
     void
@@ -225,16 +223,29 @@
 /// The check is performed by the parser, not the scanner, because
 /// some keywords may, or may not, have some flavors dependencies
 /// on the syntactic construct.  See the various "for"s for instance.
-#define FLAVOR_CHECK(Loc, Keyword, Flav, Condition)			\
-  do									\
-    if (!(Condition))							\
-    {									\
-      error(Loc,							\
-	    ("invalid flavor `" + boost::lexical_cast<std::string>(Flav) \
-	     + "' for `" Keyword  "'"));				\
-      YYERROR;								\
-    }									\
+#define FLAVOR_CHECK(Loc, Keyword, Flav, Condition)     \
+  do                                                    \
+    if (!(Condition))                                   \
+      ERROR(Loc,                                        \
+            ("invalid flavor: %s%s", Keyword, Flav),    \
+            ast::rExp);                                 \
   while (0)
+
+#define FLAVOR_CHECK1(Loc, Keyword, Flav, Flav1)        \
+  FLAVOR_CHECK(Loc, Keyword, Flav,                      \
+               Flav == ast::flavor_ ## Flav1)
+
+#define FLAVOR_CHECK2(Loc, Keyword, Flav, Flav1, Flav2) \
+  FLAVOR_CHECK(Loc, Keyword, Flav,                      \
+               Flav == ast::flavor_ ## Flav1            \
+               || Flav == ast::flavor_ ## Flav2)
+
+#define FLAVOR_CHECK3(Loc, Keyword, Flav, Flav1, Flav2, Flav3)  \
+  FLAVOR_CHECK(Loc, Keyword, Flav,                              \
+               Flav == ast::flavor_ ## Flav1                    \
+               || Flav == ast::flavor_ ## Flav2                 \
+               || Flav == ast::flavor_ ## Flav3)
+
 };
 
 // We use variants.
@@ -783,19 +794,18 @@ stmt:
     }
 | "at" "(" exp tilda.opt ")" nstmt onleave.opt
     {
-      FLAVOR_CHECK(@$, "at", $1,
-		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
+      FLAVOR_CHECK1(@1, "at", $1, semicolon);
       expensive(up, @$, "at (<expression>), prefer at (<event>)");
       $$ = ast_at(@$, $3, $6, $7, $4);
     }
 | "at" "(" event_match ")" nstmt onleave.opt
     {
+      FLAVOR_CHECK1(@1, "at", $1, semicolon);
       $$ = ast_at_event(@$, $3, $5, $6);
     }
 | "every" "(" exp ")" nstmt
     {
-      FLAVOR_CHECK(@$, "every", $1,
-		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
+      FLAVOR_CHECK2(@1, "every", $1, semicolon, pipe);
       $$ = ast_every(@$, $1, $3, $5);
     }
 | "if" "(" stmts ")" nstmt else.opt
@@ -988,11 +998,17 @@ stmt_loop:
  */
   "loop" stmt %prec CMDBLOCK
     {
+      // FIXME: Flavors.
+      // I tend to think that "loop&" does not make sense,
+      // but "loop," does.  Contrary to while.
+      FLAVOR_CHECK2(@1, "loop", $1, semicolon, pipe);
       $$ = new ast::While(@$, $1, new ast::Float(@$, 1),
 			  ast_scope(@$,$2));
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
+      //FIXME: Flavor support.
+      FLAVOR_CHECK1(@1, "for", $1, semicolon);
       PARAMETRIC_AST(desugar,
         "for (var '$for' = %exp:1;"
         "     0 < '$for';" // Use 0 < n, not n > 0, since < is faster.
@@ -1003,21 +1019,21 @@ stmt_loop:
     }
 | "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_CHECK(@$, "for", $1,
-		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
+      FLAVOR_CHECK2(@1, "for", $1, semicolon, pipe);
       $$ = ast_for(@$, $1, $3, $5, $7, $9);
     }
 | "for" "(" "var" "identifier" in_or_colon exp ")" stmt    %prec CMDBLOCK
     {
-      $$ = new ast::Foreach(@$, $1,
-                            new ast::LocalDeclaration(@4, $4, new ast::Implicit(@4)),
-                            $6, ast_scope(@$,$8));
+      FLAVOR_CHECK3(@1, "for", $1, semicolon, pipe, and);
+      $$ =
+        new ast::Foreach(@$, $1,
+                         new ast::LocalDeclaration(@4, $4,
+                                                   new ast::Implicit(@4)),
+                         $6, ast_scope(@$,$8));
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_CHECK(@$, "while", $1,
-		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
-
+      FLAVOR_CHECK2(@1, "while", $1, semicolon, pipe);
       $$ = new ast::While(@$, $1, $3, ast_scope(@$,$5));
     }
 ;
@@ -1056,7 +1072,7 @@ exp:
     if (!$2.unsafe_cast<ast::LValue>()
         || ($2.unsafe_cast<ast::Call>()
             && $2.unsafe_cast<ast::Call>()->arguments_get()))
-      ERROR(@2, "syntax error, " << *$2 << " is not a valid lvalue",
+      ERROR(@2, ("syntax error, %s is not a valid lvalue", *$2),
             ast::rExp);
     ast::rBinding res = new ast::Binding(@$, $2.unchecked_cast<ast::LValue>());
     $$ = res;
@@ -1066,7 +1082,7 @@ exp:
     if (!$3.unsafe_cast<ast::LValue>()
         || ($3.unsafe_cast<ast::Call>()
             && $3.unsafe_cast<ast::Call>()->arguments_get()))
-      ERROR(@3, "syntax error, " << *$3 << " is not a valid lvalue",
+      ERROR(@3, ("syntax error, %s is not a valid lvalue", *$3),
             ast::rExp);
     ast::rBinding res = new ast::Binding(@$, $3.unchecked_cast<ast::LValue>());
     res->constant_set(true);

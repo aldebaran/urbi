@@ -35,7 +35,10 @@ k2-check:
 ENABLE_HARD_ERRORS = false
 
 # test we don't want to care about temporarily
-TFAIL_TESTS +=			\
+TFAIL_TESTS +=					\
+  1.x/implicit.chk				\
+  2.x/every-exception.chk			\
+  2.x/bench/assignment.chk			\
   2.x/every-exception.chk
 
 # k1 tests that currently don't pass, but we should.

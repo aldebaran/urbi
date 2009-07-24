@@ -132,9 +132,7 @@ namespace flower
       each % SYMBOL(each_AMPERSAND);
       break;
     case ast::flavor_comma:
-      each.clear();
-      errors_.error(code->location_get(), "invalid flavor: `for,'");
-      return;
+      pabort("invalid comma flavor");
     }
     each % c;
 
