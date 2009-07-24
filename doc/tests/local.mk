@@ -26,6 +26,12 @@ $(srcdir)/tests/%/test.mk: %.tex $(srcdir)/tex2chk
 
 include $(top_srcdir)/build-aux/check.mk
 
+# A target that just runs "make check", we don't want to "make all" as
+# is the default with "make check-am".
+just-check: $(nodist_check_SCRIPTS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
+
+
 TEST_LOGS = $(TESTS:.chk=.log)
 LAZY_TEST_SUITE = 1
 STRICT_TEST_LOGS = $(shell $(LIST_FAILED_TEST_LOGS))
