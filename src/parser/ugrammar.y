@@ -1007,8 +1007,7 @@ stmt_loop:
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
-      //FIXME: Flavor support.
-      FLAVOR_CHECK1(@1, "for", $1, semicolon);
+      FLAVOR_CHECK3(@1, "for", $1, and, pipe, semicolon);
       $$ = ast_for(@$, $1, $3, $5);
     }
 | "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK

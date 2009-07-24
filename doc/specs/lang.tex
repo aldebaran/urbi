@@ -1523,17 +1523,31 @@ Hobbits.each(function (name) { echo("%s is a hobbit." % [name]) });
 
 \us provides some support for simple replication of computations: it
 allow to repeat a loop body $n$-times.  With the exception that the
-loop index is not available within the body,
-\lstinline|for (n)| is equivalent to \lstinline|for (var i: n)|.
-The loop evaluates to \lstinline|void|.
+loop index is not available within the body, \lstinline|for (n)| is
+equivalent to \lstinline|for (var i: n)|.  It supports the same
+flavors: \lstinline|for;|, \lstinline{for|}, and \lstinline|for&|. The
+loop evaluates to \lstinline|void|.
 
 \begin{urbiscript}[firstnumber=last]
-var res = 1|
-for (10)
-  res *= 2;
-res;
-[00000000] 1024
+assert({ var res = []; for (3) { res << 1; res << 2 } ; res }
+        == [1, 2, 1, 2, 1, 2]);
+
+assert({ var res = []; for|(3) { res << 1; res << 2 } ; res }
+        == [1, 2, 1, 2, 1, 2]);
+
+assert({ var res = []; for&(3) { res << 1; res << 2 } ; res }
+        == [1, 1, 1, 2, 2, 2]);
 \end{urbiscript}
+
+Note that since these \lstinline|for| loops are merely anynomous
+foreach-style loops, the argument needs not being an integer, any
+iterable value can be used.
+
+\begin{urbiscript}[firstnumber=last]
+assert(3 == { var r = 0; for ([1, 2, 3]) r += 1; r});
+assert(3 == { var r = 0; for ("123")     r += 1; r});
+\end{urbiscript}
+
 
 \subsection{if}
 

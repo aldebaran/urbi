@@ -48,12 +48,19 @@ time.  FIXME: More about this here, and some figures please.
 Including about SDK-Remote.
 
 
-urbiScript functions
-====================
+urbiScript
+==========
 
 New constructs:
 - every|
+
 - break and continue are supported in "every|" loops.
+
+- for(num) and for(var i: set) support the for&, for| and for;
+  flavors.
+
+- for(init; cond; inc) supports the for| and for; flavors.
+
 - non-empty lists of expressions in list literals, in function calls,
   and non-empty lists of function formal arguments may end with a
   trailing optional comma.  For instance:
