@@ -307,24 +307,38 @@ namespace parser
   }
 
 
-  /// Build a for loop.
-  // The increment is included directly in the condition to make sure
-  // it is executed on `continue'.
+  // Build a C-like for loop.
   ast::rExp
-  ast_for(const yy::location&, ast::flavor_type,
+  ast_for(const yy::location&, ast::flavor_type flavor,
           ast::rExp init, ast::rExp test, ast::rExp inc,
           ast::rExp body)
   {
-    // FIXME: for| is handled as a simple for
-    PARAMETRIC_AST(desugar,
+    // The increment is included directly in the condition to make
+    // sure it is executed on `continue'.
+
+    PARAMETRIC_AST(pipe,
       "{"
       "  %exp:1 |"
-      "  var '$tmp-for-first' = true |"
-      "  while ({ if ('$tmp-for-first') '$tmp-for-first' = false else %exp:2 | %exp:3})"
-      "    %exp:4 |"
+      "  var '$first' = true |"
+      "  while| ({ if ('$first') '$first' = false else %exp:2|"
+      "            %exp:3})"
+      "    %exp:4"
       "}"
       );
-    return exp(desugar % init % inc % test % body);
+
+    // Don't use ";" for costs that should not be visible to the user:
+    // $first.
+    PARAMETRIC_AST(semi,
+      "{"
+      "  %exp:1;"
+      "  var '$first' = true |"
+      "  while ({ if ('$first') '$first' = false else %exp:2|"
+      "           %exp:3})"
+      "    %exp:4"
+      "}"
+      );
+    return exp((flavor == ast::flavor_semicolon ? semi : pipe)
+               % init % inc % test % body);
   }
 
 
