@@ -1,3 +1,6 @@
+// A wrapper around Boost.Foreach.
+#include <libport/foreach.hh>
+
 #include "ufactory.hh"
 
 // Register the UFactory UObject in the Urbi world.
@@ -6,7 +9,7 @@ UStart(UFactory);
 // Bouncing the name to the UObject constructor is mandatory.
 UFactory::UFactory(const std::string& name)
   : urbi::UObject(name)
-  , factory(0)
+//  , factory(0)
 {
   // Register the Urbi constructor.  This is the only mandatory
   // part of the C++ constructor.
@@ -28,7 +31,7 @@ UFactory::init(ufloat d)
   // Set the duration.
   duration = d;
   // Build the factory.
-  factory = new Factory(d);
+  //factory = new Factory(d);
 
   // Request that duration_set be invoked each time duration is
   // changed.  Declared after the above "duration = d" since we don't
@@ -42,12 +45,12 @@ UFactory::init(ufloat d)
 int
 UFactory::duration_set(urbi::UVar& v)
 {
-  assert(factory);
+  //assert(factory);
   ufloat d = static_cast<ufloat>(v);
   if (0 <= d)
   {
     // Valid value.
-    factory->duration = d;
+    // factory->duration = d;
     return 0;
   }
   else
@@ -59,7 +62,22 @@ UFactory::duration_set(urbi::UVar& v)
 std::string
 UFactory::assemble(std::list<std::string> components)
 {
-  assert(factory);
+  //assert(factory);
+
+  // duration is in seconds.
+  useconds_t one_second = 1000 * 1000;
+  long duration_us = static_cast<int>(duration) * one_second;
+
+  // Iterate over the list of strings (using Boost.Foreach), and
+  // concatenate them in res.
+  std::string res;
+  foreach (const std::string& s, components)
+  {
+    yield_until(libport::utime() + duration_us);
+    res += s;
+  }
+  return res;
+
   // Bounce to Factory::operator().
-  return (*factory)(components);
+//  return (*factory)(components);
 }

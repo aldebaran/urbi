@@ -35,6 +35,6 @@ private:
   urbi::UVar duration;
 
   /// The actual factory, wrapped in this UObject.
-  Factory* factory;
+//  Factory* factory;
 };
 #endif // ! FACTORY_UFACTORY_HH
