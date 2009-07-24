@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <libport/cerrno>
+#include <libport/cstdio>
 #include <libport/cstring>
 #include <libport/sysexits.hh>
 
@@ -46,9 +48,16 @@ print(rAst ast)
   ++fd;
   std::stringstream output;
   ast::dot_print(ast, output);
-  size_t s = write(fd, output.str().c_str(), output.str().length());
-  assert(s == output.str().length());
-  (void)s;
+  ssize_t s = write(fd, output.str().c_str(), output.str().length());
+  if (0 <= s)
+  {
+    assert_eq(static_cast<size_t>(s), output.str().length());
+    std::cerr << "filled fd " << fd << std::endl;
+  }
+  else if (errno != EBADF)
+    perror("write");
+  else
+    std::cerr << "skipped fd " << fd << std::endl;
 }
 
 int
