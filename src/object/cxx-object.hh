@@ -118,6 +118,8 @@ namespace object
       /// Bind \a method with \a name
       template <typename M>
       void operator()(const libport::Symbol& name, M method);
+      template <typename A>
+      void var(const libport::Symbol& name, A (T::*attr));
 
     private:
       Binder(rObject tgt);

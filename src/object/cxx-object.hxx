@@ -111,6 +111,24 @@ namespace object
     tgt_->slot_set(name, make_primitive(method), true);
   }
 
+  template <typename C, typename T>
+  static rObject
+  getter(libport::intrusive_ptr<C> self, T (C::* value))
+  {
+    return to_urbi(self.get()->*value);
+  }
+
+  template <typename T>
+  template <typename A>
+  void
+  CxxObject::Binder<T>::var(const libport::Symbol& name,
+                            A (T::*attr))
+  {
+    boost::function1<rObject, libport::intrusive_ptr<T> > f
+      (boost::bind(&getter<T, A>, _1, attr));
+    tgt_->slot_set(name, make_primitive(f), true);
+  }
+
   template<typename T>
   inline void
   type_check(const rObject& o,
