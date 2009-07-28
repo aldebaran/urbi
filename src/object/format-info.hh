@@ -1,0 +1,68 @@
+/**
+ ** \file object/format-info.hh
+ ** \brief Definition of the Urbi object format-info.
+ */
+
+#ifndef OBJECT_FORMAT_INFO_HH
+# define OBJECT_FORMAT_INFO_HH
+
+# include <string>
+
+# include <libport/attributes.hh>
+
+# include <object/fwd.hh>
+# include <object/cxx-object.hh>
+# include <object/cxx-conversions.hh>
+
+namespace object
+{
+  class FormatInfo: public CxxObject
+  {
+  public:
+    FormatInfo();
+    FormatInfo(rFormatInfo model);
+
+    void init(const std::string& pattern);
+
+    std::string as_string() const;
+
+  public:
+    struct Align
+    {
+      enum position
+      {
+        LEFT = -1,
+        CENTER,
+        RIGHT
+      };
+    };
+
+    struct Case
+    {
+      enum mode
+      {
+        LOWER = -1,
+        UNDEFINED,
+        UPPER
+      };
+    };
+
+    ATTRIBUTE_R(size_t, width);
+    ATTRIBUTE_R(unsigned int, precision);
+    ATTRIBUTE_R(bool, alt);
+    ATTRIBUTE_R(char, prefix);
+    ATTRIBUTE_R(Align::position, alignment);
+    ATTRIBUTE_R(Case::mode, case);
+    ATTRIBUTE_R(char, group);
+    ATTRIBUTE_R(char, pad);
+    ATTRIBUTE_R(char, spec);
+    ATTRIBUTE_R(std::string, pattern);
+
+    URBI_CXX_OBJECT(FormatInfo);
+  };
+
+} // namaspace object
+
+# include <object/format-info.hxx>
+
+#endif // !OBJECT_FORMAT_INFO_HH

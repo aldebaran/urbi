@@ -105,6 +105,11 @@ dist_libuobject_la_SOURCES +=			\
   object/finalizable.cc                         \
   object/float.cc				\
   object/float.hh				\
+  object/format-info.cc				\
+  object/format-info.hh				\
+  object/format-info.hxx			\
+  object/formatter.cc				\
+  object/formatter.hh				\
   object/fwd.hh					\
   object/global.cc				\
   object/global.hh				\

@@ -29,6 +29,8 @@ namespace object
     Macro(File);                                \
     Macro(Finalizable);                         \
     Macro(Float);                               \
+    Macro(FormatInfo);                          \
+    Macro(Formatter);                           \
     Macro(List);                                \
     Macro(Lobby);                               \
     Macro(OutputStream);                        \

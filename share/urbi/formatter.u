@@ -1,0 +1,40 @@
+do (Formatter)
+{
+
+  function asString()
+  {
+    if (this === Formatter)
+      return "Formatter"|
+    return "Formatter " + data.asString;
+  };
+
+  function '%'(args)
+  {
+    var res = "";
+
+    for (var c: data)
+    {
+      switch (c.protos.front)
+      {
+        case String:
+          res = res + c|
+        case FormatInfo:
+        {
+          if (args)
+            res = res + args.removeFront.asString(c)
+          else
+            throw Exception.new("%: Too few argument for format")|
+        };
+      }|
+    }|
+    if (args)
+      throw Exception.new("%: Too many arguments for format")|
+    return res|
+  };
+
+  function asList()
+  {
+    data;
+  }
+
+};

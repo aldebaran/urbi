@@ -160,6 +160,10 @@ load("urbi/string.u");
 load("urbi/system.u");
 load("urbi/object.u");
 
+/*---------.
+| Format.  |
+`---------*/
+load("urbi/formatter.u");
 
 /*-----------.
 | Printing.  |
