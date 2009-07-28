@@ -4,6 +4,7 @@
 # include <boost/optional.hpp>
 
 # include <libport/assert.hh>
+# include <libport/format.hh>
 # include <libport/path.hh>
 # include <libport/symbol.hh>
 
@@ -229,6 +230,32 @@ namespace object
     from(const target_type& v)
     {
       return new String(v);
+    }
+  };
+
+  /*-------.
+  | char.  |
+  `-------*/
+  template <>
+  struct CxxConvert<char>
+  {
+    typedef char target_type;
+    static target_type
+    to(const rObject& o, unsigned idx)
+    {
+      type_check<String>(o, idx);
+      std::string str = o->as<String>()->value_get();
+      if (str.size() != 1)
+        runner::raise_primitive_error
+          (libport::format("expected one character string for argument %s",
+                           idx));
+      return str[0];
+    }
+
+    static rObject
+    from(target_type v)
+    {
+      return new String(std::string(1, v));
     }
   };
 
