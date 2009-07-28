@@ -130,7 +130,7 @@ namespace object
   }
 
   template<typename T>
-  inline void
+  inline libport::intrusive_ptr<T>
   type_check(const rObject& o,
 	     boost::optional<unsigned> idx)
   {
@@ -140,6 +140,7 @@ namespace object
     // when there is actually a mismatch.
     if (!is_a<T>(o))
       type_check(o, T::proto, idx);
+    return o->as<T>();
   }
 
   template<typename T>

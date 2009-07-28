@@ -111,8 +111,7 @@ namespace object
     static target_type
     to(const rObject& o, unsigned idx)
     {
-      type_check<Float>(o, idx);
-      return o->as<Float>()->to_int();
+      return type_check<Float>(o, idx)->to_int();
     }
 
     static rObject

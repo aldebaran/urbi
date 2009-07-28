@@ -141,8 +141,9 @@ namespace object
   /// atoms more efficiently.
   template<typename T>
   URBI_SDK_API
-  void type_check(const rObject& o,
-		  boost::optional<unsigned> idx = boost::optional<unsigned>());
+  libport::intrusive_ptr<T> type_check(const rObject& o,
+                                       boost::optional<unsigned> idx =
+                                       boost::optional<unsigned>());
 
   /// Throw an exception if formal != effective.
   /// \note: \c self is included in the count.
