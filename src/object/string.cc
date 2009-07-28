@@ -14,6 +14,7 @@
 #include <libport/lexical-cast.hh>
 
 #include <object/float.hh>
+#include <object/format-info.hh>
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/string.hh>
@@ -108,9 +109,23 @@ namespace object
   }
 
   std::string
-  String::as_string () const
+  String::as_string (const objects_type& args) const
   {
-    return content_;
+    if (args.size() > 1)
+      runner::raise_arity_error(args.size(), 0, 1);
+    if (args.size() == 0)
+      return content_;
+
+    rFormatInfo finfo = type_check<FormatInfo>(args[0], 0u);
+    if (!finfo->case_get())
+      return content_;
+    else
+    {
+      std::string modified("");
+      foreach(char c, content_)
+        modified += (finfo->case_get() > 0) ? toupper(c) : tolower(c);
+      return modified;
+    }
   }
 
   bool
