@@ -5,7 +5,7 @@
 # From a test file to a log file.
 # Do not use a regular `.test.log:' rule here, since in that case the
 # following rule (without incoming extension) will mask this one.
-%.log: %.cc $(check_programs) $(top_builddir)/libraries.stamp
+%.log: %.cc $(check_programs)
 	@$(am__check_pre) bin/liburbi-check $(srcdir)/$* $(am__check_post)
 
 # Find libport's sources and config.h.
