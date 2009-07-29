@@ -198,9 +198,9 @@ do (Object)
   };
 
   // Destined to be overridden by subclasses.
-  function asString ()
+  function asString (f = FormatInfo)
   {
-    id
+    format(id, f)
   };
 
   function asPrintable ()
