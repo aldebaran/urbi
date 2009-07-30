@@ -739,6 +739,12 @@ namespace urbi
     ECHO( "Uobject ctor for " << owner->__name );
     uobject_to_robject[owner_->__name] = owner;
     owner_->ctx_->registerObject(owner);
+    rObject o = get_base(owner->__name);
+    if (!o)
+    { // Instanciation occured through ucontext::bind.
+      o = uobject_make_proto(owner->__name);
+      where->slot_set(Symbol(owner->__name), o);
+    }
   }
   void
   KernelUObjectImpl::clean()
