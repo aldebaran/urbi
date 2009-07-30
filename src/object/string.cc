@@ -364,8 +364,10 @@ namespace object
   {                                                     \
     bool res = true;                                    \
     size_t pos = content_.size();                       \
-    while (res && --pos && is ## Spec(content_[pos]))   \
-      ;                                                 \
+    if (pos)                                            \
+      while (res && --pos                               \
+             && (res = is ## Spec(content_[pos])))      \
+        ;                                               \
     return res;                                         \
   }
   IS(upper)
