@@ -464,12 +464,22 @@ in Global.
 static rObject
 get_base(const std::string& objname)
 {
-  rObject res = uobject_map[objname];
+  rObject res = libport::find0(uobject_map, objname);
+  object::Object::location_type s;
   // The user may be using the Urbi variable name.
   if (!res)
-    res = object::global_class->slot_get(libport::Symbol(objname));
+  {
+    s = object::global_class->slot_locate(libport::Symbol(objname));
+    // Not simplifyable! If the rSlot contains 0, casting to rObject will segv.
+    if (s.second)
+      res = *s.second;
+  }
   if (!res)
-    res = where->slot_get(libport::Symbol(objname));
+  {
+    s = where->slot_locate(libport::Symbol(objname));
+    if (s.second)
+      res = *s.second;
+  }
   return res;
 }
 
