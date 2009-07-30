@@ -3,10 +3,9 @@
  ** \brief Creation of the URBI object float.
  */
 
-#include <boost/format.hpp>
-
 #include <libport/cmath>
 #include <libport/compiler.hh>
+#include <libport/format.hh>
 
 #include <kernel/config.h>
 #ifndef HAVE_ROUND
@@ -15,6 +14,7 @@
 #include <libport/ufloat.hh>
 
 #include <object/float.hh>
+#include <object/format-info.hh>
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/string.hh>
@@ -88,43 +88,21 @@ namespace object
   }
 
   std::string
-  Float::as_string(int base)
+  Float::as_string(rFormatInfo finfo)
   {
-    if (base != 10 && base != 16)
-      RAISE("valid base is 10 or 16");
-
-    // Do not rely on boost::format to print inf and nan since
-    // behavior differs under Win32.
-    if (std::isinf(value_))
-      return value_ > 0 ? SYMBOL(inf) : SYMBOL(MINUS_inf);
-    if (std::isnan(value_))
-      return SYMBOL(nan);
-    // Print integers with a precision ("%.20") in the format string
-    // to avoid the scientific notation with loss of precision.
-    if (::round(value_) == value_)
+    try
     {
-      // This format string is enough for a 64 bits integer.
-      static boost::format dec("%.20g");
-      static boost::format hex("%.20x");
-      // Use an integer, otherwise boost::format ignores the
-      // hexadecimal flag. Protect the conversion as it may just not fit
-      // in a long long. In this case, we will resort to the default
-      // display.
-      try
-      {
-	return str((base == 10 ? dec : hex)
-                   % libport::numeric_cast<long long>(value_));
-      }
-      catch (const libport::bad_numeric_cast&)
-      {
-	// Do nothing.
-      }
+      return libport::format(finfo->pattern_get(),
+                             libport::numeric_cast<long long>(value_));
+    }
+    catch (const libport::bad_numeric_cast&)
+    {
+      // Do nothing.
     }
 
-    if (base == 16)
+    if (finfo->spec_get() == 'x')
       runner::raise_bad_integer_error(value_);
-    static boost::format f("%g");
-    return str(f % value_);
+    return libport::format(finfo->pattern_get(), value_);
   }
 
   Float::value_type
@@ -295,7 +273,7 @@ namespace object
   | Binding system |
   `---------------*/
 
-  OVERLOAD_DEFAULT(as_string_bouncer, 0, &Float::as_string, 10);
+  OVERLOAD_DEFAULT(as_string_bouncer, 0, &Float::as_string, FormatInfo::proto);
 
   URBI_CXX_OBJECT_REGISTER(Float);
 

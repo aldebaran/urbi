@@ -9,6 +9,7 @@
 # include <libport/ufloat.hh>
 
 # include <object/cxx-object.hh>
+# include <object/fwd.hh>
 
 namespace object
 {
@@ -68,7 +69,7 @@ namespace object
 
     value_type acos();
     value_type asin();
-    std::string as_string(int base = 10);
+    std::string as_string(rFormatInfo finfo);
     value_type atan();
     value_type atan2(value_type);
     value_type cos();
