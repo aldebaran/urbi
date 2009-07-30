@@ -91,6 +91,8 @@ namespace urbi
     {
       client_->setCallback(callback(*this, &RemoteUContextImpl::dispatcher),
                            externalModuleTag.c_str());
+      client_->setClientErrorCallback(callback(*this,
+                 &RemoteUContextImpl::clientError));
     }
 
     void RemoteUContextImpl::uobject_unarmorAndSend(const char* a)
@@ -514,6 +516,18 @@ namespace urbi
     void
     RemoteUContextImpl::registerHub(UObjectHub*)
     {
+    }
+
+    UCallbackAction
+    RemoteUContextImpl::clientError(const UMessage& m)
+    {
+      // Destroy everything
+      foreach(objects_type::value_type& v, objects)
+        delete v.second;
+      objects.clear();
+      foreach(hubs_type::value_type& v, hubs)
+        delete v.second;
+      hubs.clear();
     }
   } // namespace urbi::impl
 

@@ -61,6 +61,7 @@ namespace urbi
       TABLE(UTimerTable, timermap);
 #undef TABLE
       UTable& tableByName(const std::string& n);
+      UCallbackAction clientError(const UMessage&);
       // Create it on demand.
       UObject* getDummyUObject();
       UObject* dummyUObject;
