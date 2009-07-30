@@ -106,7 +106,7 @@ def primitive_list(r, met):
     params = []
     if r:
         params += ['typename R']
-        r = 'return '
+        r = 'return CxxConvert<typename Flatten<R>::type>::from'
         r_void = ''
     else:
         r = ''
@@ -133,7 +133,7 @@ def primitive_list(r, met):
         %(boost)s f)
       {
         %(target_get)s
-        %(return)sf(%(target)s%(args)s);
+        %(return)s(f(%(target)s%(args)s));
         %(return_void)s
       }
     };
