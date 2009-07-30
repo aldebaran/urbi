@@ -115,7 +115,7 @@ namespace object
         || (!piped && cursor < pattern.size()))
     {
       spec_ = tolower(current = pattern[cursor]);
-      substr_ = "sdbxoDX";
+      substr_ = "sdbxoefgEGDX";
       if (substr_.find(spec_) != substr_.npos)
       {
         if (spec_ != 's')
