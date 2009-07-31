@@ -519,7 +519,7 @@ namespace urbi
     }
 
     UCallbackAction
-    RemoteUContextImpl::clientError(const UMessage& m)
+    RemoteUContextImpl::clientError(const UMessage&)
     {
       // Destroy everything
       foreach(objects_type::value_type& v, objects)
@@ -528,6 +528,7 @@ namespace urbi
       foreach(hubs_type::value_type& v, hubs)
         delete v.second;
       hubs.clear();
+      return URBI_CONTINUE;
     }
   } // namespace urbi::impl
 
