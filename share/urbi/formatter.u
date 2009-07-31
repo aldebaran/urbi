@@ -10,6 +10,9 @@ do (Formatter)
 
   function '%'(args)
   {
+    if (!args.isA(List))
+      args = [args];
+
     var res = "";
 
     for (var c: data)
