@@ -167,8 +167,6 @@ namespace object
 #undef DECLARE
   }
 
-  static boost::asio::io_service& io_unused = libport::get_io_service();
-
   boost::asio::io_service&
   Socket::get_io_service()
   {
