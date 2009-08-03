@@ -162,9 +162,7 @@ assert("Hello == World!".toUpper, "HELLO, WORLD!");
 \end{urbiscript}
 
 \item \lstinline|'%'(\var{args})|\\
-  Use \lstinline|this| as format string, and convert occurrences of
-  \lstinline|%s| in \lstinline|this| by the \var{args} converted as
-  strings via \lstinline|asString|.
+  It is an equivalent of \lstinline|Formater.new(this) % \var{args}|
 %  This construct is actually more
 %  powerful than this, since it relies on
 %  \href{http://www.boost.org/doc/libs/1_39_0/libs/format/doc/format.html,
