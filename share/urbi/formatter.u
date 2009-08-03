@@ -5,17 +5,17 @@ do (Formatter)
   {
     if (this === Formatter)
       return "Formatter"|
-    return "Formatter " + data.asString;
+    return "Formatter " + data.asString
   };
 
   function '%'(args)
   {
     if (!args.isA(List))
-      args = [args];
+      args = [args]|
 
-    var res = "";
+    var res = ""|
 
-    for (var c: data)
+    for| (var c: data)
     {
       switch (c.protos.front)
       {
@@ -27,7 +27,7 @@ do (Formatter)
             res = res + args.removeFront.asString(c)
           else
             throw Exception.new("%: Too few argument for format")|
-        };
+        }|
       }|
     }|
     if (args)
@@ -37,7 +37,7 @@ do (Formatter)
 
   function asList()
   {
-    data;
-  }
+    data
+  };
 
 };
