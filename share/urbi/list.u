@@ -159,7 +159,7 @@ do (List)
     return res
   };
 
-  function asString ()
+  function asString (f = FormatInfo)
   {
     var res = "" |
     if (size)
@@ -168,7 +168,7 @@ do (List)
       for| (var elt: tail)
         res += ", " + elt.acceptVoid.asPrintable |
     } |
-    "[" + res + "]"
+    format("[" + res + "]", f)
   };
 
   // Pattern matching
