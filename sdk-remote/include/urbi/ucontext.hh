@@ -90,6 +90,8 @@ namespace urbi
     /// Get the current side_effect_free state.
     bool side_effect_free_get() const;
 
+    /// Get the version of the kernel that will receive send() messages.
+    std::pair<int, int> kernelVersion();
     impl::UContextImpl* ctx_;
   };
 

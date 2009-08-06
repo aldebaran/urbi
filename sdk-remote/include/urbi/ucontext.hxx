@@ -182,4 +182,10 @@ namespace urbi
   {
     return ctx_->side_effect_free_get();
   }
+
+  inline std::pair<int, int>
+  UContext::kernelVersion()
+  {
+    return ctx_->kernelVersion();
+  }
 }
