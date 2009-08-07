@@ -159,6 +159,7 @@ load("urbi/trajectory-generator.u");
 load("urbi/string.u");
 load("urbi/system.u");
 load("urbi/object.u");
+load("urbi/file.u");
 
 /*---------.
 | Format.  |
