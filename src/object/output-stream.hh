@@ -23,8 +23,9 @@ namespace object
 
   public:
     void init(rFile f);
-    rOutputStream put(unsigned char);
+    rOutputStream putByte(unsigned char);
     void flush();
+    rOutputStream put(rObject o);
 
   /*--------.
   | Details |

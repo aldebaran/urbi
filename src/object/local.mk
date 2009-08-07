@@ -161,7 +161,5 @@ if !COMPILATION_MODE_SPACE
     object/socket.cc				\
     object/socket.hh				\
     object/server.cc				\
-    object/server.hh				\
-    object/text-output-stream.cc		\
-    object/text-output-stream.hh
+    object/server.hh
 endif

@@ -49,7 +49,7 @@ namespace object
     own_ = true;
   }
 
-  rOutputStream OutputStream::put(unsigned char c)
+  rOutputStream OutputStream::putByte(unsigned char c)
   {
     stream_->put(c);
     return this;
@@ -58,6 +58,18 @@ namespace object
   void OutputStream::flush()
   {
     stream_->flush();
+  }
+
+  rOutputStream
+  OutputStream::put(rObject o)
+  {
+    checkFD_();
+    std::string str = o->call(SYMBOL(asString))->as<String>()->value_get();
+    size_t str_size = str.size();
+    size_t size = write(fd_, str.c_str(), str_size);
+    assert_eq(size, str_size);
+    (void)size;
+    return this;
   }
 
   /*--------------.
@@ -70,11 +82,13 @@ namespace object
     return new OutputStream(std::cout);
   }
 
-  void OutputStream::initialize(object::CxxObject::Binder<object::OutputStream>& bind)
+  void
+  OutputStream::initialize(object::CxxObject::Binder<object::OutputStream>& bind)
   {
-    bind(SYMBOL(LT_LT), &OutputStream::put);
-    bind(SYMBOL(init), &OutputStream::init);
-    bind(SYMBOL(flush), &OutputStream::flush);
+    bind(SYMBOL(LT_LT), &OutputStream::put    );
+    bind(SYMBOL(flush), &OutputStream::flush  );
+    bind(SYMBOL(init),  &OutputStream::init   );
+    bind(SYMBOL(put),   &OutputStream::putByte);
   }
 
   URBI_CXX_OBJECT_REGISTER(OutputStream);

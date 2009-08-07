@@ -24,7 +24,6 @@
 #include <object/system.hh>
 #include <object/tag.hh>
 #include <object/task.hh>
-#include <object/text-output-stream.hh>
 #include <object/uvar.hh>
 
 namespace object
@@ -174,7 +173,6 @@ namespace object
     CxxObject::push_initializer_to_back<Primitive>();
     CxxObject::push_initializer_to_back<UVar>();
     CxxObject::push_initializer_to_back<OutputStream>();
-    CxxObject::push_initializer_to_back<TextOutputStream>();
 
     CxxObject::create();
 
