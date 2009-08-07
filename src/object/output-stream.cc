@@ -1,3 +1,8 @@
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include <fstream>
 
 #include <boost/format.hpp>
@@ -10,15 +15,15 @@
 
 namespace object
 {
-  OutputStream::OutputStream(std::ostream& stream, bool own)
-    : stream_(&stream)
+  OutputStream::OutputStream(int fd, bool own)
+    : fd_(fd)
     , own_(own)
   {
     proto_add(proto ? proto : Object::proto);
   }
 
-  OutputStream::OutputStream(rOutputStream)
-    : stream_(0)
+  OutputStream::OutputStream(rOutputStream model)
+    : fd_(model->fd_)
     , own_(false)
   {
     proto_add(proto);
@@ -26,8 +31,16 @@ namespace object
 
   OutputStream::~OutputStream()
   {
-    if (own_)
-      delete stream_;
+    if (own_ && fd_ != -1)
+      if (::close(fd_))
+        RAISE(libport::strerror(errno));
+  }
+
+  void
+  OutputStream::checkFD_() const
+  {
+    if (fd_ == -1)
+      RAISE("Stream is closed");
   }
 
   /*-------------.
@@ -37,13 +50,12 @@ namespace object
   void OutputStream::init(rFile f)
   {
     libport::path path = f->value_get()->value_get();
-    stream_ =
-      new std::ofstream(path.to_string().c_str());
-    if (!stream_->good())
+    fd_ = open(path.to_string().c_str(), O_WRONLY | O_APPEND | O_CREAT, S_IRWXU);
+
+    if (fd_ < 0)
     {
       boost::format fmt("Unable to open file for writing: %s");
-      delete stream_;
-      stream_ = 0;
+      fd_ = 0;
       RAISE(str(fmt % path));
     }
     own_ = true;
@@ -51,13 +63,18 @@ namespace object
 
   rOutputStream OutputStream::putByte(unsigned char c)
   {
-    stream_->put(c);
+    checkFD_();
+    // FIXME: bufferize
+    size_t size = write(fd_, &c, 1);
+    assert_eq(size, 1);
+    (void)size;
     return this;
   }
 
   void OutputStream::flush()
   {
-    stream_->flush();
+    checkFD_();
+    // FIXME: nothing since not bufferized for now
   }
 
   rOutputStream
@@ -76,10 +93,10 @@ namespace object
   | Urbi bindings |
   `--------------*/
 
-  rObject OutputStream::proto_make()
+  rObject
+  OutputStream::proto_make()
   {
-    // FIXME
-    return new OutputStream(std::cout);
+    return new OutputStream(STDOUT_FILENO, false);
   }
 
   void

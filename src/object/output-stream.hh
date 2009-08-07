@@ -13,9 +13,16 @@ namespace object
   `---------------------------*/
 
   public:
-    OutputStream(std::ostream& stream, bool own = false);
+    OutputStream(int fd, bool own);
     OutputStream(rOutputStream stream);
     ~OutputStream();
+
+  /*------------.
+  | Data access |
+  `------------*/
+
+  private:
+    void checkFD_() const;
 
   /*-------------.
   | Urbi methods |
@@ -31,10 +38,8 @@ namespace object
   | Details |
   `--------*/
 
-  protected:
-    std::ostream* stream_;
-
   private:
+    int fd_;
     bool own_;
     URBI_CXX_OBJECT(OutputStream);
   };
