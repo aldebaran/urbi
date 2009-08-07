@@ -37,6 +37,7 @@ namespace object
     Macro(OutputStream);                        \
     Macro(Path);                                \
     Macro(Primitive);                           \
+    Macro(Process);                             \
     Macro(Semaphore);                           \
     Macro(Server);                              \
     Macro(Socket);                              \
