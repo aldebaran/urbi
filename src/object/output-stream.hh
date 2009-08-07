@@ -33,6 +33,7 @@ namespace object
     rOutputStream putByte(unsigned char);
     void flush();
     rOutputStream put(rObject o);
+    void close();
 
   /*--------.
   | Details |

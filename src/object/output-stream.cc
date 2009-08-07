@@ -89,6 +89,15 @@ namespace object
     return this;
   }
 
+  void
+  OutputStream::close()
+  {
+    checkFD_();
+    if (::close(fd_))
+      RAISE(libport::strerror(errno));
+    fd_ = -1;
+  }
+
   /*--------------.
   | Urbi bindings |
   `--------------*/
@@ -103,6 +112,7 @@ namespace object
   OutputStream::initialize(object::CxxObject::Binder<object::OutputStream>& bind)
   {
     bind(SYMBOL(LT_LT), &OutputStream::put    );
+    bind(SYMBOL(close), &OutputStream::close  );
     bind(SYMBOL(flush), &OutputStream::flush  );
     bind(SYMBOL(init),  &OutputStream::init   );
     bind(SYMBOL(put),   &OutputStream::putByte);
