@@ -31,6 +31,7 @@ namespace object
     Macro(Float);                               \
     Macro(FormatInfo);                          \
     Macro(Formatter);                           \
+    Macro(InputStream);                         \
     Macro(List);                                \
     Macro(Lobby);                               \
     Macro(OutputStream);                        \

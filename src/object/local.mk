@@ -156,6 +156,8 @@ dist_libuobject_la_SOURCES +=			\
 
 if !COMPILATION_MODE_SPACE
   dist_libuobject_la_SOURCES +=			\
+    object/input-stream.cc			\
+    object/input-stream.hh			\
     object/output-stream.cc			\
     object/output-stream.hh			\
     object/socket.cc				\
