@@ -22,34 +22,42 @@ var f = FormatInfo.new("%+2.3d");
 
 \subsection{Syntax}
 
-A formatting pattern must one of the following (characters that are
-between brackets are optional):
+A formatting pattern must one of the following (brackets denote
+optional arguments):
 \begin{itemize}
 \item \verb&%&\var{options} \var{spec}
 \item \verb&%|&\var{options}[\var{spec}]\verb&|&
 \end{itemize}
 
 \noindent
-\var{options} is flags and may be zero of more of the following:
-\begin{itemize}
-\item \verb&"-"&: Left alignment.
-\item \verb&"="&: Centered alignment.
-\item \verb&"+"&: Show sign even for positive number.
-\item \verb&" "&: If the string does not begin with "+" or "-", insert
-  a space before the converted string.
-\item \verb&"0"&: Pad with 0's (inserted after sign or base indicator).
-\item \verb&"#"&: Show numerical base, and decimal point.
-\item \verb&"'"&: Splits thousands (1000 $\rightarrow$ 1 000).
-\end{itemize}
+\var{options} is a sequence of 0 or several of the following
+characters:
+
+\begin{tabular}{|c|l|}
+  \hline
+  \samp{-} & Left alignment.\\
+  \samp{=} & Centered alignment.\\
+  \samp{+} & Show sign even for positive number.\\
+  \samp{ } & If the string does not begin with \samp{+} or \samp{-}, insert
+  a space before the converted string.\\
+  \samp{0} & Pad with 0's (inserted after sign or base indicator).\\
+  \samp{\#} & Show numerical base, and decimal point.\\
+  \samp{'} & Split thousands (\samp{1 000}).\\
+  \hline
+\end{tabular}
 
 \noindent
-\var{spec} is the convertion character and may be one of the following:
-\begin{itemize}
-\item \verb&"s"&: Default character, prints normally.
-\item \verb&"d", "D"&: Case modifier, \verb&"d"& for lowercase and
-  \verb&"D"& for uppercase.
-\item \verb&"x", "X"&: Prints in hexadecimal, \verb&"x"& for lowercase
-  and \verb&"X"& for uppercase.
-\item \verb&"o"&: Prints in octal.
-\item \verb&"b"&: Prints in binary.
-\end{itemize}
+\var{spec} is the convertion character and must be one of the
+following:
+
+\begin{tabular}{|c|l|}
+  \hline
+  \samp{s} & Default character, prints normally\\
+  \samp{d} & Case modifier: lowercase \\
+  \samp{D} & Case modifier: uppercase \\
+  \samp{x} & Prints in hexadecimal lowercase \\
+  \samp{X} & Prints in hexadecimal uppercase \\
+  \samp{o} & Prints in octal\\
+  \samp{b} & Prints in binary\\
+  \hline
+\end{tabular}
