@@ -8,31 +8,31 @@
 namespace object
 {
   FormatInfo::FormatInfo()
-    : width_(0)
-    , precision_(6)
+    : alignment_(Align::RIGHT)
     , alt_(false)
-    , prefix_(0)
-    , alignment_(Align::RIGHT)
     , case_(Case::UNDEFINED)
     , group_(0)
     , pad_(' ')
-    , spec_('s')
     , pattern_("%s")
+    , precision_(6)
+    , prefix_(0)
+    , spec_('s')
+    , width_(0)
   {
     proto_add(proto ? proto : Object::proto);
   }
 
   FormatInfo::FormatInfo(rFormatInfo model)
-    : width_(model->width_)
-    , precision_(model->precision_)
+    : alignment_(model->alignment_)
     , alt_(model->alt_)
-    , prefix_(model->prefix_)
-    , alignment_(model->alignment_)
     , case_(model->case_)
     , group_(model->group_)
     , pad_(model->pad_)
-    , spec_(model->spec_)
     , pattern_(model->pattern_)
+    , precision_(model->precision_)
+    , prefix_(model->prefix_)
+    , spec_(model->spec_)
+    , width_(model->width_)
   {
     proto_add(model);
   }
