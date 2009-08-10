@@ -26,7 +26,7 @@ else
 
 The \lstinline|if| construct is an expression: it has a value.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 echo({ if (false) "a" else "b" });
 [00000000] *** b
 \end{urbiscript}
@@ -40,7 +40,7 @@ execution jumps after the while block; otherwise, the expression is
 evaluated and control jumps before the while block.
 
 % FIXME: += wasn't introduced
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var x = 2;
 [00000000] 2
 while (x < 40)
@@ -62,7 +62,7 @@ languages such as Java, \Cs, or even the forthcoming \Cxx revision.
 The first construct is hardly more than syntactic suggar for a
 \lstinline{while} loop.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 for (var x = 2; x < 40; x += 10)
   echo(x);
 [00000000] *** 2
@@ -79,7 +79,7 @@ collection resulting of the evaluation of the expression, with the
 variable named with the identifier referring to the list
 elements.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 for (var e : [1, 2, 3]) { echo(e) };
 [00000000] *** 1
 [00000000] *** 2
@@ -96,7 +96,7 @@ ones. Comparison is done by semantic equality (operator
 \lstinline{break}).  Also, contrary to \Cxx, the whole construct has a
 value: that of the matching \lstinline{case}.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 switch ("bar")
 {
   case "foo":  0;
@@ -113,7 +113,7 @@ switch ("bar")
 A do scope is a shorthand to perform several actions on an
 object.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var o = Object.clone;
 [00000000] Object_0x0
 var o.one = 1;
@@ -130,7 +130,7 @@ below. This is similar to the \pascal
 ``\lstinline[language=Pascal]{with}'' construct.  The value of the
 \lstinline{do}-block is the target itself.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var o = Object.clone;
 [00000000] Object_0x100000
 // All the message in this scope are destined to o.
