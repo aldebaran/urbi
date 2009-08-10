@@ -26,12 +26,12 @@ do (Formatter)
           if (args)
             res = res + args.removeFront.asString(c)
           else
-            throw Exception.new("%: Too few argument for format")|
+            throw Exception.new("%: too few argument for format")|
         }|
       }|
     }|
     if (args)
-      throw Exception.new("%: Too many arguments for format")|
+      throw Exception.new("%: too many arguments for format")|
     return res|
   };
 

@@ -82,31 +82,30 @@ namespace object
     }
 
     // Parsing width.
-    std::string substr_ =
+    std::string substr =
       pattern.substr(cursor,
-                     pattern.find_first_not_of("0123456789",
-                                               cursor) - cursor);
-    if (substr_.size())
+                     pattern.find_first_not_of("0123456789", cursor) - cursor);
+    if (!substr.empty())
     {
-      width_ = lexical_cast<size_t>(substr_);
-      cursor += substr_.size();
+      width_ = lexical_cast<size_t>(substr);
+      cursor += substr.size();
     }
 
     // Parsing precision.
-    if (pattern.size() > cursor && pattern[cursor] == '.' && cursor++)
+    if (cursor < pattern.size() && pattern[cursor] == '.' && cursor++)
     {
-      substr_ =
-        pattern.substr(cursor, pattern.find_first_not_of("0123456789",
-                                                         cursor) - cursor);
-      if (substr_.size())
-      {
-        precision_ = lexical_cast<unsigned int>(substr_);
-        cursor += substr_.size();
-      }
+      substr =
+        pattern.substr(cursor,
+                       pattern.find_first_not_of("0123456789", cursor) - cursor);
+      if (substr.empty())
+        RAISE(std::string("format: unexpected \"")
+              + pattern[cursor]
+              + "\", expected width ([1-9][0-9]*).");
       else
-        runner::raise_primitive_error(std::string("format: Unexpected \"")
-                                      + pattern[cursor]
-                                      + "\", expected width ([1-9][0-9]*).");
+      {
+        precision_ = lexical_cast<unsigned int>(substr);
+        cursor += substr.size();
+      }
     }
 
     // Parsing spec.
@@ -114,16 +113,11 @@ namespace object
         || (!piped && cursor < pattern.size()))
     {
       spec_ = tolower(current = pattern[cursor]);
-      substr_ = "sdbxoefgEGDX";
-      if (substr_.find(spec_) != substr_.npos)
-      {
-        if (spec_ != 's')
-          case_ = (islower(pattern[cursor])) ? Case::LOWER : Case::UPPER;
-      }
-      else
-        runner::raise_primitive_error
-          (std::string("format: \"") + spec_
-           + "\" is not a valid conversion type character");
+      if (!strchr("sdbxoefgEGDX", spec_))
+        RAISE(std::string("format: \"") + spec_
+              + "\" is not a valid conversion type character");
+      else if (spec_ != 's')
+        case_ = (islower(pattern[cursor])) ? Case::LOWER : Case::UPPER;
     }
 
     int overflow;

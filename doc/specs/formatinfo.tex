@@ -20,8 +20,6 @@ var f = FormatInfo.new("%+2.3d");
 [00000001] %+2.3d
 \end{urbiscript}
 
-\subsection{Syntax}
-
 A formatting pattern must one of the following (brackets denote
 optional arguments):
 \begin{itemize}
@@ -61,3 +59,92 @@ following:
   \samp{b} & Prints in binary\\
   \hline
 \end{tabular}
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|alignment|\\
+  Requested alignment: \lstinline|-1| for left, \lstinline|0| for
+  centered, \lstinline|1| for right (default).
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").alignment == 1);
+assert(FormatInfo.new("%=s").alignment == 0);
+assert(FormatInfo.new("%-s").alignment == -1);
+\end{urbiscript}
+
+\item \lstinline|alt|\\
+  Whether the ``alternative'' display is requested (\samp{\#}).
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").alt == false);
+assert(FormatInfo.new("%#s").alt == true);
+\end{urbiscript}
+
+\item \lstinline|group|\\
+  Separator to use for thousands.  Corresponds to the \samp{'}
+  \var{option}.
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").group == "\x00");
+assert(FormatInfo.new("%'s").group == " ");
+\end{urbiscript}
+
+\item \lstinline|pad|\\
+  The padding character to use for alignment requests.  Defaults to space.
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").pad == " ");
+assert(FormatInfo.new("%0s").pad == "0");
+\end{urbiscript}
+
+\item \lstinline|pattern|\\
+  The pattern given to the constructor.
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%#'12.8s").pattern == "%#'12.8s");
+\end{urbiscript}
+
+\item \lstinline|precision|\\
+  The number of digits to display after the period.
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").precision == 6);
+assert(FormatInfo.new("%23.3s").precision == 3);
+\end{urbiscript}
+
+\item \lstinline|prefix|\\
+  The string to display before positive numbers.  Defaults to empty.
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").prefix == "\x00");
+assert(FormatInfo.new("% s").prefix == " ");
+assert(FormatInfo.new("%+s").prefix == "+");
+\end{urbiscript}
+
+\item \lstinline|spec|\\
+  The specification character, regardless of the case conversion
+  requests.
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").spec == "s");
+assert(FormatInfo.new("%23.3s").spec == "s");
+assert(FormatInfo.new("%'X").spec == "x");
+\end{urbiscript}
+
+\item \lstinline|uppercase|\\
+  Case conversion: \lstinline|-1| for lower case, \lstinline|0| for no
+  conversion (default), \lstinline|1| for conversion to uppercase.
+  The value depends on the case of specification character, except for
+  \samp{\%s} which corresponds to \lstinline|0|.
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").uppercase == 0);
+assert(FormatInfo.new("%d").uppercase == -1);
+assert(FormatInfo.new("%D").uppercase == 1);
+assert(FormatInfo.new("%x").uppercase == -1);
+assert(FormatInfo.new("%X").uppercase == 1);
+\end{urbiscript}
+
+\item \lstinline|width|\\
+  Width requested for alignment.
+\begin{urbiscript}[firstnumber=last]
+assert(FormatInfo.new("%s").width == 0);
+assert(FormatInfo.new("%10s").width == 10);
+\end{urbiscript}
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
