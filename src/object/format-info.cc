@@ -71,10 +71,10 @@ namespace object
 //      WARNING;
       switch (current)
       {
-        case '-': alignment_ = Align::LEFT; excludes += "-="; break;
+        case '-': alignment_ = Align::LEFT;   excludes += "-="; break;
         case '=': alignment_ = Align::CENTER; excludes += "-="; break;
-        case '+': prefix_ = '+'; excludes + " +"; break;
-        case ' ': prefix_ = ' '; excludes + " +"; break;
+        case '+': prefix_ = '+';              excludes += " +"; break;
+        case ' ': prefix_ = ' ';              excludes += " +"; break;
         case '0': pad_ = '0'; break;
         case '#': alt_ = true; break;
         case '\'': group_ = ' '; break;
