@@ -66,7 +66,7 @@ namespace object
     checkFD_();
     // FIXME: bufferize
     size_t size = write(fd_, &c, 1);
-    assert_eq(size, 1);
+    assert_eq(size, 1u);
     (void)size;
     return this;
   }
