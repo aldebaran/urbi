@@ -135,8 +135,8 @@ assert(! "Not Upper".isUpper);
   \lstinline|this| by \var{to}, and return the result.
   \lstinline|this| is not modified.
 \begin{urbiscript}[firstnumber=last]
-assert("Hello == World!".replace("Hello", "Bonjour")
-                      .replace("World!", "Monde !"),
+assert("Hello, World!".replace("Hello", "Bonjour")
+                      .replace("World!", "Monde !") ==
        "Bonjour, Monde !");
 \end{urbiscript}
 
@@ -186,7 +186,7 @@ assert("foo" * 3 == "foofoofoo");
 assert("foo" + "bar" == "foobar");
 assert("foo" + "" == "foo");
 assert("foo" + 3 == "foo3");
-assert("foo" + [1 == 2, 3], "foo[1, 2, 3]");
+assert("foo" + [1, 2, 3] == "foo[1, 2, 3]");
 \end{urbiscript}
 
 \item \lstinline|'<'(\var{other})|\\
@@ -204,7 +204,7 @@ assert(!("a" < "a"));
   Return the substring starting at \var{from}, up to and not including
   \var{to} (which defaults to \var{to} + 1).
 \begin{urbiscript}[firstnumber=last]
-assert("foobar"[0 == 3], "foo");
+assert("foobar"[0, 3] == "foo");
 assert("foobar"[0] == "f");
 \end{urbiscript}
 
@@ -218,10 +218,10 @@ assert("foobar"[0] == "f");
   \lstinline|this|.
 \begin{urbiscript}[firstnumber=last]
 var s1 = "foobar" | var s2 = s1 |
-assert(s1[0 == 3] = "quux", "quux");
+assert((s1[0, 3] = "quux") == "quux");
 assert(s1 == "quuxbar");
 assert(s2 == "quuxbar");
-assert(s1[4 == 7] = "", "");
+assert((s1[4, 7] = "") == "");
 assert(s2 == "quux");
 \end{urbiscript}
 \end{itemize}
