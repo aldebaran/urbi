@@ -44,18 +44,17 @@ namespace object
     bool piped;
 
     if (pattern.empty())
-      runner::raise_primitive_error("pattern is empty");
+      RAISE("format: pattern is empty");
     if (pattern[0] != '%')
-      runner::raise_primitive_error("format: Pattern \"" + pattern
-                                    + "\" doesn't begin with %");
+      RAISE("format: pattern \"" + pattern + "\" doesn't begin with %");
     if (pattern.size() == 1)
-      runner::raise_primitive_error("format: Trailing `%'");
+      RAISE("format: trailing `%'");
     if ((piped = pattern[1] == '|'))
     {
       size_t pos = pattern.find_first_of('|', 2);
       if (pos == pattern.npos)
-        runner::raise_primitive_error("format begins with '|' but "
-                                     "doesn't end with '|'");
+        RAISE("format: format begins with '|' but "
+              "does not end with '|'");
       pattern_ = pattern.substr(0, pos + 1);
       cursor++;
     }
@@ -128,15 +127,12 @@ namespace object
     }
 
     int overflow;
-    if (piped)
-    {
-      if ((overflow = pattern_.size() - 1 - ++cursor) > 0)
-        runner::raise_primitive_error("format is between pipes and \""
-                                      + pattern_.substr(cursor, overflow)
-                                      + "\" are too many characters");
-    }
-    else
+    if (!piped)
       pattern_ = pattern.substr(0, ++cursor);
+    else if (0 < (overflow = pattern_.size() - 1 - ++cursor))
+      RAISE("format: format is between pipes and \""
+            + pattern_.substr(cursor, overflow)
+            + "\" are too many characters");
   }
 
   std::string
