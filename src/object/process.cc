@@ -1,5 +1,6 @@
 #include <errno.h>
-
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include <object/input-stream.hh>
 #include <object/output-stream.hh>
@@ -11,6 +12,7 @@ namespace object
   Process::Process(const std::string& binary,
                    const arguments_type& argv)
     : pid_(0)
+    , joined_(false)
     , binary_(binary)
     , argv_(argv)
     , stream_(0)
@@ -20,6 +22,7 @@ namespace object
 
   Process::Process(rProcess model)
     : pid_(0)
+    , joined_(false)
     , binary_(model->binary_)
     , argv_(model->argv_)
     , stream_(0)
@@ -110,6 +113,17 @@ namespace object
     }
   }
 
+  void
+  Process::join()
+  {
+    if (joined_)
+      // FIXME: This should definitely be autorized
+      RAISE("Process has already been joined");
+    joined_ = true;
+    int status;
+    waitpid(pid_, &status, 0);
+  }
+
   rObject
   Process::proto_make()
   {
@@ -123,6 +137,7 @@ namespace object
   Process::initialize(CxxObject::Binder<Process>& bind)
   {
     bind(SYMBOL(init), &Process::init);
+    bind(SYMBOL(join), &Process::join);
     bind(SYMBOL(run),  &Process::run );
   }
 

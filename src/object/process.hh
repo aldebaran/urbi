@@ -29,6 +29,7 @@ namespace object
     void init(const std::string& binary,
               const arguments_type& argv);
     void run();
+    void join();
 
   /*--------.
   | Details |
@@ -36,6 +37,7 @@ namespace object
 
   private:
     pid_t pid_;
+    bool joined_;
     std::string binary_;
     arguments_type argv_;
     libport::FdStream* stream_;
