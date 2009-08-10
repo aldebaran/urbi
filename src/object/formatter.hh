@@ -20,7 +20,7 @@ namespace object
     Formatter();
     Formatter(rFormatter model);
 
-    void init(std::string format);
+    void init(const std::string& format);
 
   private:
     ATTRIBUTE_R(rList, data);

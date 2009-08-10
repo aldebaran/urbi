@@ -17,14 +17,15 @@ namespace object
   }
 
   void
-  Formatter::init(std::string format)
+  Formatter::init(const std::string& format)
   {
     size_t cursor = 0;
     size_t end = format.size();
     std::string str("");
     while (cursor < end)
     {
-      std::string buf = format.substr(cursor, format.find_first_of('%', cursor) - cursor);
+      std::string buf =
+        format.substr(cursor, format.find_first_of('%', cursor) - cursor);
       str += buf;
       cursor += buf.size();
       if (cursor == end)
