@@ -354,7 +354,7 @@ namespace parser
     // $first.
     PARAMETRIC_AST(semi,
       "{"
-      "  %exp:1;"
+      "  %exp:1|" // When not entering the loop, we want 0 cycles consumed.
       "  var '$first' = true |"
       "  while ({ if ('$first') '$first' = false else %exp:2|"
       "           %exp:3})"
