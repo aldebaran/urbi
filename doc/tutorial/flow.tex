@@ -110,18 +110,18 @@ switch ("bar")
 \section{do}
 \label{section:constructs/do}
 
-A do scope is a shorthand to perform several actions on an
+A \lstinline|do| scope is a shorthand to perform several actions on an
 object.
 
 \begin{urbiscript}[firstnumber=last]
-var o = Object.clone;
-[00000000] Object_0x0
-var o.one = 1;
+var o1 = Object.clone;
+[00000000] Object_0x100000
+var o1.one = 1;
 [00000000] 1
-var o.two = 2;
+var o1.two = 2;
 [00000000] 2
-echo(o.uid);
-[00000000] *** 0x0
+echo(o1.uid);
+[00000000] *** 0x100000
 \end{urbiscript}
 
 The same result can be obtained with a short \lstinline|do| scope,
@@ -131,14 +131,14 @@ below. This is similar to the \pascal
 \lstinline{do}-block is the target itself.
 
 \begin{urbiscript}[firstnumber=last]
-var o = Object.clone;
+var o2 = Object.clone;
 [00000000] Object_0x100000
 // All the message in this scope are destined to o.
-do (o)
+do (o2)
 {
- var one = 1; // var is a shortcut for the setSlot
- var two = 2; // message, so it applies on obj too.
- echo(uid);
+  var one = 1; // var is a shortcut for the setSlot
+  var two = 2; // message, so it applies on obj too.
+  echo(uid);
 };
 [00000000] *** 0x100000
 [00000000] Object_0x100000

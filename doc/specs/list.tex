@@ -124,8 +124,8 @@ assert(! [1].empty);
 \end{urbiscript}
 
 \item \lstinline|filter(\var{fun})|\\
-Return the list of all member of the target that verify the given
-predicate.
+  Return the list of all member of the target that verify the given
+  predicate.
 
 \begin{urbiscript}[firstnumber=last]
 // Keep only odd numbers
@@ -133,16 +133,27 @@ assert([0, 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1}) == [1, 3, 5]);
 \end{urbiscript}
 
 \item \lstinline|foldl(\var{action}, \var{value})|\\
-
-\fixme{This is too damn hard to explain, yet so simple.}
+  \href{http://en.wikipedia.org/wiki/Fold_(higher-order_function)}{Fold},
+  also known as \dfn{reduce} or \dfn{accumulate}, computes a result
+  from a list.  Starting from \var{value} as the initial result, apply
+  repeatedly the binary \var{action} to the current result and the
+  next member of the list, from left to right.  For instance, if
+  \var{action} were the binary addition and \var{value} were 0, then
+  folding a list would compute the sum of the list, including for
+  empty lists.
 
 \begin{urbiscript}[firstnumber=last]
-
+[].foldl(function (a, b) { a + b }, 0);
+[00000000] 0
+[1, 2, 3].foldl(function (a, b) { a + b }, 0);
+[00000000] 6
+[1, 2, 3].foldl(function (a, b) { a - b }, 0);
+[00000000] -6
 \end{urbiscript}
 
 \item \lstinline|front|\\
-Return the first element of the target. An error if the target is
-empty.
+  Return the first element of the target. An error if the target is
+  empty.
 
 \begin{urbiscript}[firstnumber=last]
 assert([0, 1, 2].front == 0);
@@ -151,7 +162,7 @@ assert([0, 1, 2].front == 0);
 \end{urbiscript}
 
 \item \lstinline|has(\var{that})|\\
-Return whether one of the member of the target equals the argument.
+  Whether one of the members of the target equals the argument.
 
 \begin{urbiscript}[firstnumber=last]
 assert([0, 1, 2].has(1));
@@ -159,9 +170,8 @@ assert(! [0, 1, 2].has(5));
 \end{urbiscript}
 
 \item \lstinline|hasSame(\var{that})|\\
-
-Return whether one of the member of the target is physically equal to
-the argument.
+  Return whether one of the member of the target is physically equal
+  to the argument.
 
 \begin{urbiscript}[firstnumber=last]
 var y = 1;
@@ -186,7 +196,7 @@ assert(z == [0, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|insertFront(\var{that})|\\
-Insert the given element at the beginning of the target.
+  Insert the given element at the beginning of the target.
 
 \begin{urbiscript}[firstnumber=last]
 var a = [1, 2];
@@ -196,11 +206,11 @@ assert(a == [0, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|join(\var{sep})|\\
-Concatenate all members of the target to form a string, separating
-them with the given separator.
+  Concatenate all members of the target to form a string, separating
+  them with the given separator.
 
 \begin{urbiscript}[firstnumber=last]
-assert(["b" == "ob", "b"].join("a"), "baobab");
+assert(["b", "ob", "b"].join("a") == "baobab");
 \end{urbiscript}
 
 \item \lstinline|map(\var{fun})|\\
@@ -213,8 +223,8 @@ assert([0, 1, 2, 3].map(function (v) { v % 2 == 0})
 \end{urbiscript}
 
 \item \lstinline|range(\var{begin}, \var{end})|\\
-Return a sub-range of the string, from the first index included to the
-second index excluded. An error if out of bounds.
+  Return a sub-range of the string, from the first index included to
+  the second index excluded. An error if out of bounds.
 
 \begin{urbiscript}[firstnumber=last]
 assert([0, 1, 2, 3].range(1, 3) == [1, 2]);
@@ -223,7 +233,7 @@ assert([0, 1, 2, 3].range(1, 3) == [1, 2]);
 \end{urbiscript}
 
 \item \lstinline|remove(\var{val})|\\
-Remove all elements from the target that equals \var{val}.
+  Remove all elements from the target that equals \var{val}.
 
 \begin{urbiscript}[firstnumber=last]
 var c = [0, 1, 0, 2, 0, 3];
@@ -233,8 +243,8 @@ assert(c == [1, 2, 3]);
 \end{urbiscript}
 
 \item \lstinline|removeBack|\\
-Remove and return the last element of the target. An error if the
-target is empty.
+  Remove and return the last element of the target. An error if the
+  target is empty.
 
 \begin{urbiscript}[firstnumber=last]
 var t = [0, 1, 2];
@@ -246,7 +256,8 @@ assert(t == [0, 1]);
 \end{urbiscript}
 
 \item \lstinline|removeById(\var{that})|\\
-Remove all elements from the target that physically equals \var{that}.
+  Remove all elements from the target that physically equals
+  \var{that}.
 
 \begin{urbiscript}[firstnumber=last]
 var d = 1;
