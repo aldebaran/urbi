@@ -53,6 +53,7 @@ libuobject_la_CPPFLAGS =				\
 libuobject_la_LDFLAGS =				\
   -avoid-version -no-undefined
 libuobject_la_LIBADD =					\
+  $(BOOST_REGEX_LIBS)					\
   $(BOOST_SYSTEM_LIBS)					\
   $(LIBPORT_LIBS)					\
   $(LTDL_LIBS)						\

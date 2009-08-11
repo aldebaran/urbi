@@ -38,6 +38,7 @@ namespace object
     Macro(Path);                                \
     Macro(Primitive);                           \
     Macro(Process);                             \
+    Macro(Regexp);                              \
     Macro(Semaphore);                           \
     Macro(Server);                              \
     Macro(Socket);                              \

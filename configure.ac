@@ -112,8 +112,9 @@ URBI_ARG_ENABLE([enable-programs],
                 [Build extra programs], [yes|no], [no])
 AM_CONDITIONAL([BUILD_PROGRAMS],
                [test x$enable_programs = xyes])
-BOOST_TOKENIZER
+BOOST_REGEX
 BOOST_SYSTEM
+BOOST_TOKENIZER
 
 
 ## -------------- ##

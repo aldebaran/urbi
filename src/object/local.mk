@@ -82,9 +82,9 @@ dist_libuobject_la_SOURCES +=			\
   object/any-to-boost-function.hh		\
   object/barrier.cc				\
   object/barrier.hh				\
+  object/centralized-slots.cc			\
   object/centralized-slots.hh			\
   object/centralized-slots.hxx			\
-  object/centralized-slots.cc			\
   object/code.cc				\
   object/code.hh				\
   object/cxx-conversions.hh			\
@@ -101,8 +101,8 @@ dist_libuobject_la_SOURCES +=			\
   object/executable.cc				\
   object/file.cc				\
   object/file.hh				\
-  object/finalizable.hh                         \
   object/finalizable.cc                         \
+  object/finalizable.hh                         \
   object/float.cc				\
   object/float.hh				\
   object/format-info.cc				\
@@ -130,6 +130,8 @@ dist_libuobject_la_SOURCES +=			\
   object/primitive.hh				\
   object/process.cc				\
   object/process.hh				\
+  object/regexp.cc				\
+  object/regexp.hh				\
   object/root-classes.cc			\
   object/root-classes.hh			\
   object/semaphore.cc				\
@@ -151,8 +153,8 @@ dist_libuobject_la_SOURCES +=			\
   object/task.hh				\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\
-  object/uvar.hh                                \
   object/uvar.cc                                \
+  object/uvar.hh                                \
   object/vector-slots.hh			\
   object/vector-slots.hxx
 
