@@ -34,14 +34,14 @@ do (Float)
   // Repeat \a action \a this times.
   function each (action)
   {
-    for (var i = 0; i < this; i++)
+    for (var i = 0; i < this; i += 1)
       action(i)
   };
 
   // Repeat \a action \a this times separated with '|'.
   function 'each|' (action)
   {
-    for| (var i = 0; i < this; i++)
+    for| (var i = 0; i < this; i += 1)
       action(i)
   };
 

@@ -696,12 +696,8 @@ namespace runner
     {
       if (must_yield && tail++)
 	YIELD();
-      JAECHO ("while test", e->test_get());
       if (!operator()(e->test_get().get())->as_bool())
 	break;
-
-      JAECHO ("while body", e->body_get());
-
       e->body_get()->eval(*this);
     }
     return object::void_class;
