@@ -230,7 +230,7 @@ namespace object
       args.push_back(o);
       sched::rJob job =
         new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
-                                f, SYMBOL(each), args);
+                                f, SYMBOL(each_AMPERSAND), args);
       r.register_child(job, children);
       jobs.push_back(job);
       job->start_job();
@@ -245,6 +245,7 @@ namespace object
       ce.rethrow_child_exception();
     }
   }
+
   rList
   List::insertFront(const rObject& o)
   {
