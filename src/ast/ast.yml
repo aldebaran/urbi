@@ -637,10 +637,11 @@ Foreach:
         type: rScope
         desc: Executed for each value in the list
   printer:
-    - '"for "'
+    - '"for (var "'
     - '{ n->index_get()->what_get().print_escaped(ostr_); }'
-    - '" in "'
+    - '" : "'
     - ~list
+    - '")"'
     - libport::iendl
     - ~body
 
