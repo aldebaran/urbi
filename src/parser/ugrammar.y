@@ -1018,11 +1018,7 @@ stmt_loop:
 | "for" "(" "var" "identifier" in_or_colon exp ")" stmt    %prec CMDBLOCK
     {
       FLAVOR_CHECK3(@1, "for", $1, semicolon, pipe, and);
-      $$ =
-        new ast::Foreach(@$, $1,
-                         new ast::LocalDeclaration(@4, $4,
-                                                   new ast::Implicit(@4)),
-                         $6, ast_scope(@$,$8));
+      $$ = ast_for(@$, $1, @4, $4, $6, $8);
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {

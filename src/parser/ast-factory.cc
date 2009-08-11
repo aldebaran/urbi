@@ -307,10 +307,10 @@ namespace parser
   }
 
 
-  // Build a for(num) loop.
+  // Build a for(iterable) loop.
   ast::rExp
   ast_for(const yy::location&, ast::flavor_type flavor,
-          ast::rExp num, ast::rExp body)
+          ast::rExp iterable, ast::rExp body)
   {
     PARAMETRIC_AST(ampersand,
         "for&(var '$for': %exp:1)"
@@ -327,7 +327,21 @@ namespace parser
     return exp((flavor == ast::flavor_and ? ampersand
                 : flavor == ast::flavor_pipe ? pipe
                 : semi )
-               % num % body);
+               % iterable % body);
+  }
+
+
+  // Build a for(var id : iterable) loop.
+  ast::rExp
+  ast_for(const yy::location& l, ast::flavor_type flavor,
+          const yy::location& id_loc, libport::Symbol id,
+          ast::rExp iterable, ast::rExp body)
+  {
+    return
+      new ast::Foreach(l, flavor,
+                       new ast::LocalDeclaration(id_loc, id,
+                                                 new ast::Implicit(id_loc)),
+                       iterable, ast_scope(l, body));
   }
 
 
