@@ -221,6 +221,8 @@ namespace object
     static target_type
     to(const rObject& o, unsigned idx)
     {
+      if (rPath p = o->as<Path>())
+        return p->value_get();
       type_check<String>(o, idx);
       return o->as<String>()->value_get();
     }
