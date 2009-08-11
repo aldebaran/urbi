@@ -15,6 +15,7 @@
 
 #include <object/float.hh>
 #include <object/format-info.hh>
+#include <object/global.hh>
 #include <object/list.hh>
 #include <object/object.hh>
 #include <object/string.hh>
@@ -118,13 +119,13 @@ namespace object
 
     rFormatInfo finfo = type_check<FormatInfo>(args[0], 0u);
     if (!finfo->case_get())
-      return content_;
+      return global_format(finfo, content_, finfo);
     else
     {
       std::string modified("");
       foreach(char c, content_)
         modified += (finfo->case_get() > 0) ? toupper(c) : tolower(c);
-      return modified;
+      return global_format(finfo, modified, finfo);
     }
   }
 
