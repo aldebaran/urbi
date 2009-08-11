@@ -2,6 +2,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include <libport/unistd.h>
+
 #include <object/input-stream.hh>
 #include <object/output-stream.hh>
 #include <object/process.hh>
@@ -102,12 +104,16 @@ namespace object
         libport::perror("dup2");
         std::abort();
       }
-      size_t size = argv_.size();
-      const char** argv = new const char*[size + 1];
-      for (unsigned i = 0; i < size; ++i)
-        argv[i] = argv_[i].c_str();
-      argv[size] = 0;
-      execvp(binary_.c_str(), const_cast<char*const*>(argv));
+      try
+      {
+        arguments_type argv;
+        argv.push_back(binary_);
+        foreach (const std::string& arg, argv_)
+          argv.push_back(arg);
+        libport::exec(argv, true);
+      }
+      catch (...)
+      { /* nothing */ }
       libport::perror("exec");
       std::abort();
     }
