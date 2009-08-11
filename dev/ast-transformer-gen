@@ -10,6 +10,8 @@ srcdir = sys.argv[1]
 
 loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
+arr = nodes.values ()
+arr.sort (lambda x, y: cmp (x.name, y.name))
 
 header = file("transformer.hh.tmp", "w")
 implem = file("transformer.cc.tmp", "w")
@@ -125,7 +127,7 @@ namespace ast
 #endif
 """ % {
   'boost_seq_nodes':
-    '\n      '.join(map(lambda k: '(%s)' % nodes[k].name, nodes)),
+    '\n      '.join(map(lambda n: '(%s)' % n.name, arr)),
   }
 
 def attr_transform(attr):
