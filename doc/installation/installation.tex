@@ -90,33 +90,12 @@ The environment variable \code{URBI\_ROOT} is used to locate the \us
 standard files.  You may extend the search path so that your own Urbi
 files can be found easily.  This is the role of the environment
 variable \index{urbi path@\code{URBI\_PATH}}\emphdfn{\code{URBI\_PATH}},
-which contains a list of directory
-names separated by colons.
+which contains a list of directory names separated by colons.
 
 Note \code{URBI\_PATH} is also designed to be able to \emph{override}
 the default standard files.  Use a lone colon to specify where the
 standard, \code{URBI\_ROOT}-based, search path must be inserted.  See
-the following examples
-
-\begin{shell}
-# Completely override the system path.  First look for files in
-# /home/jessie/urbi, then in /usr/local/urbi.
-export URBI_PATH=/home/jessie/urbi:/usr/local/urbi
-
-# Prepend the previous path to the default path.  This is dangerous as
-# it may result in some standard files being hidden.
-export URBI_PATH=/home/jessie/urbi:/usr/local/urbi:
-
-# First look in Jessie's directory, then the default location, and
-# finally in /usr/local/urbi.
-export URBI_PATH=/home/jessie/urbi::/usr/local/urbi
-
-# Extend the default path, i.e., files that are not found in the
-# default path will be looked for in Jessie's place, and then in
-# /usr/local/urbi
-export URBI_PATH=:/home/jessie/urbi:/usr/local/urbi
-\end{shell}
-
+\autoref{sec:tools:envvars} for more details on the syntax.
 
 %%% Local Variables:
 %%% mode: latex

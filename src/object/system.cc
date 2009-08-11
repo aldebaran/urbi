@@ -217,10 +217,9 @@ namespace object
     if (!libport::path(filename).exists())
       runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
 #endif
-    return
-      execute_parsed(parser::parse_file(filename),
-                     SYMBOL(loadFile),
-		     "error loading file: " + filename);
+    return execute_parsed(parser::parse_file(filename),
+                          SYMBOL(loadFile),
+                          "error loading file: " + filename);
   }
 
   static rObject
@@ -385,11 +384,12 @@ namespace object
   }
 
   static void
-  load(const std::string& name, bool global)
+  load(const rObject& name, bool global)
   {
-    libport::xlt_handle handle = libport::xlt_openext(name, global, 0);
+    const std::string& filename = filename_get(name);
+    libport::xlt_handle handle = libport::xlt_openext(filename, global, 0);
     if (!handle.handle)
-      RAISE("Failed to open `" + name + "': " + lt_dlerror());
+      RAISE("Failed to open `" + filename + "': " + lt_dlerror());
     handle.detach();
 
     // Reload uobjects
@@ -402,13 +402,13 @@ namespace object
   }
 
   static void
-  system_loadLibrary(const rObject&, const std::string& name)
+  system_loadLibrary(const rObject&, const rObject& name)
   {
     load(name, true);
   }
 
   static void
-  system_loadModule(const rObject&, const std::string& name)
+  system_loadModule(const rObject&, const rObject& name)
   {
    load(name, false);
   }

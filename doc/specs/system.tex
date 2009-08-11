@@ -11,6 +11,19 @@ Details on the architecture the \urbi server runs on.
 \item \lstinline'Platform'\\
   See \refObject{System.Platform}
 
+\item \lstinline'loadLibrary(\var{library})'\\
+  Load the library \var{library}, to be found in the
+  \env{URBI\_UOBJECT\_PATH} search-path (see
+  \autoref{sec:tools:envvars}).  The \var{library} may be a
+  \refObject{String} or a \refObject{Path}.  The \Cxx symbols are made
+  available to the other \Cxx components.  See also
+  \lstinline|loadModule|.
+
+\item \lstinline'loadModule(\var{module})'\\
+  Load the UObject \var{module}.  Same as \lstinline|loadLibrary|,
+  except that the low-level \Cxx symbols are not made ``global'' (in
+  the sense of the shared library loader).
+
 \item \lstinline'reboot'\\
   Restart the \urbi server.  Architecture dependent.
 

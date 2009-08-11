@@ -14,7 +14,7 @@ Documentation
 The documentation was largely extended and fixed.  Its layout was also
 improved.  Changes include, but are not limited to:
 
-- documentation of UOBJECT_PATH
+- documentation of URBI_UOBJECT_PATH
 - documentation of various executables
 - k1-to-k2
   Conversion idioms to urbiScript 1 to urbiScript 2
@@ -109,8 +109,8 @@ Changes:
 UObjects
 ========
 
-- the environment variable UOBJECT_PATH is used by urbi-launch and
-  urbiScript's loadModule to find uobjects.
+- the environment variable URBI_UOBJECT_PATH is used by urbi-launch
+  and urbiScript's loadModule to find uobjects.
 
 - fixed multiple notifications of event trigger in remote UObjects
 

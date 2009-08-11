@@ -1,6 +1,53 @@
 \chapter{Programs}
 \label{sec:tools}
 
+\section{Environment Variables}
+\label{sec:tools:envvars}
+
+There is a number of environment variables that alter the behavior of
+the \urbi tools.
+
+\subsection{Search Path Variables}
+
+Some variables define \dfn[search-path]{search-paths}, i.e.,
+colon-separated lists of directories in which library files (\us
+programs, UObjects and so forth) are looked for.
+
+The tools have predefined values for these variables which are
+tailored for your installation --- so that \urbi tools can be run
+without any special adjustment.  In order to provide the user with a
+means to override or extend these built-in values, the path variables
+support a special syntax: a lone colon specifies where the standard
+search path must be inserted.  See the following examples about
+\env{URBI\_PATH}.
+
+\begin{shell}
+# Completely override the system path.  First look for files in
+# /home/jessie/urbi, then in /usr/local/urbi.
+export URBI_PATH=/home/jessie/urbi:/usr/local/urbi
+
+# Prepend the previous path to the default path.  This is dangerous as
+# it may result in some standard files being hidden.
+export URBI_PATH=/home/jessie/urbi:/usr/local/urbi:
+
+# First look in Jessie's directory, then the default location, and
+# finally in /usr/local/urbi.
+export URBI_PATH=/home/jessie/urbi::/usr/local/urbi
+
+# Extend the default path, i.e., files that are not found in the
+# default path will be looked for in Jessie's place, and then in
+# /usr/local/urbi
+export URBI_PATH=:/home/jessie/urbi:/usr/local/urbi
+\end{shell}
+
+\subsection{Environment Variables}
+\begin{description}
+\item[\env{URBI\_PATH}] The search-path for \us source files.
+\item[\env{URBI\_UOBJECT\_PATH}] The search-path for UObjects files.
+  This is used by \command{urbi-launch}, by
+  \lstinline|System.loadModule| and \lstinline|System.loadLibrary|.
+\end{description}
+
 \section{\command{urbi} --- Running an Urbi Server}
 \label{sec:tools:urbi}
 
@@ -21,8 +68,8 @@ simpler to use than, \command{urbi-launch}
   \option{--stack-size=512} or more.
 
   Alternatively you can define the environment variable
-  \code{URBI\_STACK\_SIZE}.  The option \option{--stack-size} has
-  precedence over the \code{URBI\_STACK\_SIZE}.
+  \env{URBI\_STACK\_SIZE}.  The option \option{--stack-size} has
+  precedence over the \env{URBI\_STACK\_SIZE}.
 \end{options}
 
 \paragraph{Networking}
@@ -88,6 +135,8 @@ line features two parts, separated by \samp{--}:
 \begin{shell}
 urbi-launch [\var{urbi-launch-option}...] \var{module}... [-- \var{module-option}...]
 \end{shell}
+
+The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.
 
 \paragraph{Urbi-launch options}
 \begin{options}
