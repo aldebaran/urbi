@@ -11,12 +11,12 @@ namespace object
     : alignment_(Align::RIGHT)
     , alt_(false)
     , case_(Case::UNDEFINED)
-    , group_(0)
-    , pad_(' ')
+    , group_("")
+    , pad_(" ")
     , pattern_("%s")
     , precision_(6)
-    , prefix_(0)
-    , spec_('s')
+    , prefix_("")
+    , spec_("s")
     , width_(0)
   {
     proto_add(proto ? proto : Object::proto);
@@ -73,11 +73,11 @@ namespace object
       {
         case '-': alignment_ = Align::LEFT;   excludes += "-="; break;
         case '=': alignment_ = Align::CENTER; excludes += "-="; break;
-        case '+': prefix_ = '+';              excludes += " +"; break;
-        case ' ': prefix_ = ' ';              excludes += " +"; break;
-        case '0': pad_ = '0'; break;
+        case '+': prefix_ = "+";              excludes += " +"; break;
+        case ' ': prefix_ = " ";              excludes += " +"; break;
+        case '0': pad_ = "0"; break;
         case '#': alt_ = true; break;
-        case '\'': group_ = ' '; break;
+        case '\'': group_ = " "; break;
       };
     }
 
@@ -113,10 +113,10 @@ namespace object
         || (!piped && cursor < pattern.size()))
     {
       spec_ = tolower(current = pattern[cursor]);
-      if (!strchr("sdbxoefgEGDX", spec_))
+      if (!strchr("sdbxoefgEGDX", spec_[0]))
         RAISE(std::string("format: \"") + spec_
               + "\" is not a valid conversion type character");
-      else if (spec_ != 's')
+      else if (spec_ != "s")
         case_ = (islower(pattern[cursor])) ? Case::LOWER : Case::UPPER;
     }
 

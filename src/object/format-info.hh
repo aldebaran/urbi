@@ -50,12 +50,12 @@ namespace object
     ATTRIBUTE_R(Align::position, alignment);
     ATTRIBUTE_R(bool, alt);
     ATTRIBUTE_R(Case::mode, case);
-    ATTRIBUTE_R(char, group);
-    ATTRIBUTE_R(char, pad);
+    ATTRIBUTE_R(std::string, group);
+    ATTRIBUTE_R(std::string, pad);
     ATTRIBUTE_R(std::string, pattern);
     ATTRIBUTE_R(unsigned int, precision);
-    ATTRIBUTE_R(char, prefix);
-    ATTRIBUTE_R(char, spec);
+    ATTRIBUTE_R(std::string, prefix);
+    ATTRIBUTE_R(std::string, spec);
     ATTRIBUTE_R(size_t, width);
 
     URBI_CXX_OBJECT(FormatInfo);

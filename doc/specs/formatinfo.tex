@@ -82,7 +82,7 @@ assert(FormatInfo.new("%#s").alt == true);
   Separator to use for thousands.  Corresponds to the \samp{'}
   \var{option}.
 \begin{urbiscript}[firstnumber=last]
-assert(FormatInfo.new("%s").group == "\x00");
+assert(FormatInfo.new("%s").group == "");
 assert(FormatInfo.new("%'s").group == " ");
 \end{urbiscript}
 
@@ -109,7 +109,7 @@ assert(FormatInfo.new("%23.3s").precision == 3);
 \item \lstinline|prefix|\\
   The string to display before positive numbers.  Defaults to empty.
 \begin{urbiscript}[firstnumber=last]
-assert(FormatInfo.new("%s").prefix == "\x00");
+assert(FormatInfo.new("%s").prefix == "");
 assert(FormatInfo.new("% s").prefix == " ");
 assert(FormatInfo.new("%+s").prefix == "+");
 \end{urbiscript}

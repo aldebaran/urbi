@@ -100,7 +100,7 @@ namespace object
       // Do nothing.
     }
 
-    if (finfo->spec_get() == 'x')
+    if (finfo->spec_get() == "x")
       runner::raise_bad_integer_error(value_);
     return libport::format(finfo->pattern_get(), value_);
   }
