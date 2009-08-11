@@ -113,7 +113,7 @@ namespace object
         || (!piped && cursor < pattern.size()))
     {
       spec_ = tolower(current = pattern[cursor]);
-      if (!strchr("sdbxoefgEGDX", spec_[0]))
+      if (!strchr("sdbxoefEDX", spec_[0]))
         RAISE(std::string("format: \"") + spec_
               + "\" is not a valid conversion type character");
       else if (spec_ != "s")

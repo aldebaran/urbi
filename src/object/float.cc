@@ -3,6 +3,8 @@
  ** \brief Creation of the URBI object float.
  */
 
+#include <algorithm>
+
 #include <libport/cmath>
 #include <libport/compiler.hh>
 #include <libport/format.hh>
@@ -90,9 +92,14 @@ namespace object
   std::string
   Float::as_string(rFormatInfo finfo)
   {
+    std::string pattern(finfo->pattern_get());
+
+    replace(pattern.begin(), pattern.end(), 's', 'g');
+    replace(pattern.begin(), pattern.end(), 'd', 'g');
+    replace(pattern.begin(), pattern.end(), 'D', 'G');
     try
     {
-      return libport::format(finfo->pattern_get(),
+      return libport::format(pattern,
                              libport::numeric_cast<long long>(value_));
     }
     catch (const libport::bad_numeric_cast&)
@@ -102,7 +109,7 @@ namespace object
 
     if (finfo->spec_get() == "x")
       runner::raise_bad_integer_error(value_);
-    return libport::format(finfo->pattern_get(), value_);
+    return libport::format(pattern, value_);
   }
 
   Float::value_type
