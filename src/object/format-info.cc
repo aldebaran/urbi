@@ -66,9 +66,9 @@ namespace object
     while ((pattern.size() > ++cursor)
            && flags.npos != flags.find(current = pattern[cursor]))
     {
-// FIXME:
-//    if (excludes.npos != excludes.find(current))
-//      WARNING;
+      if (excludes.npos != excludes.find(current))
+        RAISE(std::string("format: '") + current
+              + "' conflics whese one of these flags: \"" + excludes + "\".");
       switch (current)
       {
         case '-': alignment_ = Align::LEFT;   excludes += "-="; break;
