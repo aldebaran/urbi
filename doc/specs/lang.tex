@@ -790,25 +790,18 @@ The listing below shows a short-hand to define a named
 function.
 
 \begin{urbiscript}[firstnumber=last]
-// Functions are often stored in variables to call them later
+// Functions are often stored in variables to call them later.
 var f1 = function () {
   echo("hello")
-};
-[00000000:hide] function () {
-[:]  echo("hello")
-[:]}
-
+}|
 f1();
 [00000000] *** hello
-// This form is strictly equivalent, yet simpler
+
+// This form is strictly equivalent, yet simpler.
 function f2()
 {
   echo("hello")
-};
-[00000000:hide] function () {
-[:]  echo("hello")
-[:]}
-
+}|
 f2();
 [00000000] *** hello
 \end{urbiscript}
@@ -826,14 +819,10 @@ explained below.
 \begin{urbiscript}[firstnumber=last]
 var f = function(a, b) {
   echo(b + a);
-};
-[00000000:hide] function (a, b) {
-[:]  echo(b . '+'(a))
-[:]}
-
+}|
 f(1, 0);
 [00000000] *** 1
-// Calling a function with the wrong number of argument is an error
+// Calling a function with the wrong number of argument is an error.
 f(0);
 [00000000:error] !!! f: Expected 2 arguments, given 1
 f(0, 1, 2);
@@ -866,42 +855,27 @@ function g1(a, b)
   echo(a);
   echo(b);
   a // Return value is a
-};
-[00000000:hide] function (a, b) {
-[:]  echo(a);
-[:]  echo(b);
-[:]  a
-[:]}
-
+}|
 g1(1, 2);
 [00000000] *** 1
 [00000000] *** 2
 [00000000] 1
+
 function g2(a, b)
 {
   echo(a);
   return a; // Stop execution at this point and return a
   echo(b); // This is not executed
-};
-[00000000:hide] function (a, b) {
-[:]  echo(a);
-[:]  return a;
-[:]  echo(b);
-[:]}
-
+}|
 g2(1, 2);
 [00000000] *** 1
 [00000000] 1
+
 function g3()
 {
   return; // Stop execution at this point and return void
   echo(0); // This is not executed
-};
-[00000000:hide] function () {
-[:]  return;
-[:]  echo(0);
-[:]}
-
+}|
 g3(); // Returns void, so nothing is printed.
 \end{urbiscript}
 
@@ -930,12 +904,7 @@ and then their value is given to the called function.
 \begin{urbiscript}[firstnumber=last]
 function first1(a, b) {
   echo(a); echo(b)
-};
-[00000000:hide] function (a, b) {
-[:]  echo(a);
-[:]  echo(b)
-[:]}
-
+}|
 first1({echo("Arg1"); 1},
        {echo("Arg2"); 2});
 [00000000] *** Arg1
@@ -954,12 +923,7 @@ function first2
 {
   echo(call.evalArgAt(0));
   echo(call.evalArgAt(1));
-};
-[00000000:hide] function {
-[:]  echo(call . evalArgAt(0));
-[:]  echo(call . evalArgAt(1));
-[:]}
-
+}|
 first2({echo("Arg1"); 1},
        {echo("Arg2"); 2});
 [00000000] *** Arg1
@@ -978,14 +942,7 @@ function first3
   var a = call.evalArgAt(0);
   var b = call.evalArgAt(1);
   echo(a); echo(b);
-};
-[00000000:hide] function {
-[:]  var a = call . evalArgAt(0);
-[:]  var b = call . evalArgAt(1);
-[:]  echo(a);
-[:]  echo(b);
-[:]}
-
+}|
 first3({echo("Arg1"); 1},
        {echo("Arg2"); 2});
 [00000000] *** Arg1
@@ -1004,20 +961,13 @@ meaning that the variable is shared between the function and the outer
 environment, as shown below.
 
 \begin{urbiscript}[firstnumber=last]
-var n = 0;
-[00000000:hide] 0
-
+var n = 0|
 function cl()
 {
   // x refers to a variable outside the function
   n++;
   echo(n);
-};
-[00000000] function () {
-[:]  n++;
-[:]  echo(n);
-[:]}
-
+}|
 cl();
 [00000000] *** 1
 n;
@@ -1043,10 +993,7 @@ function wrapper()
 } |
 [00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
 
-var w = wrapper();
-[00000000:hide] function () {
-[:]  x++
-[:]}
+var w = wrapper()|
 w();
 [00000000] 0
 w();
@@ -1084,8 +1031,7 @@ slots. More documentation about these methods can be found in
 \autorefObject{Object}.
 
 \begin{urbiscript}[firstnumber=last]
-var o = Object.new;
-[00000000:hide] Object_0xADDR
+var o = Object.new|
 o.localSlotNames;
 [00000000] []
 o.createSlot("test");
@@ -1127,17 +1073,15 @@ with \lstinline|addProto| and \lstinline|removeProto|.  See
 \autorefObject{Object} for more documentation.
 
 \begin{urbiscript}[firstnumber=last]
-var ob = Object.new;
-[00000000:hide] Object_0xADDR
-
+var ob = Object.new|
 ob.protos;
 [00000000] [Object]
 ob.addProto(Pair);
-[00000000:hide] (nil, nil)
+[00000000] (nil, nil)
 ob.protos;
 [00000000] [(nil, nil), Object]
 ob.removeProto(Object);
-[00000000:hide] (nil, nil)
+[00000000] (nil, nil)
 ob.protos;
 [00000000] [(nil, nil)]
 \end{urbiscript}
@@ -1164,35 +1108,24 @@ is, when looking for a slot in an object:
 This listing shows how slots are inherited.
 
 \begin{urbiscript}[firstnumber=last]
-var a = Object.new;
-[00000000:hide] Object_0xADDR
-
-var b = Object.new;
-[00000000:hide] Object_0xADDR
-
-var c = Object.new;
-[00000000:hide] Object_0xADDR
-
-a.setSlot("x", "slot in a");
-[00000000:hide] "slot in a"
-b.setSlot("x", "slot in b");
-[00000000:hide] "slot in b"
+var a = Object.new|
+var b = Object.new|
+var c = Object.new|
+a.setSlot("x", "slot in a")|
+b.setSlot("x", "slot in b")|
 // c has no "x" slot
 c.getSlot("x");
 [00000000:error] !!! lookup failed: x
-// c can inherit the "x" slot from a
-c.addProto(a);
-[00000000:hide] Object_0xADDR
+// c can inherit the "x" slot from a.
+c.addProto(a)|
 c.getSlot("x");
 [00000000] "slot in a"
 // b is prepended to the prototype list, and has thus priority
-c.addProto(b);
-[00000000:hide] Object_0xADDR
+c.addProto(b)|
 c.getSlot("x");
 [00000000] "slot in b"
 // a local slot in c has priority over prototypes
-c.setSlot("x", "slot in c");
-[00000000:hide] "slot in c"
+c.setSlot("x", "slot in c")|
 c.getSlot("x");
 [00000000] "slot in c"
 \end{urbiscript}
@@ -1209,18 +1142,10 @@ to it, prototypes are not altered when the slot is overridden in a
 child object.
 
 \begin{urbiscript}[firstnumber=last]
-var p = Object.new;
-[00000000:hide] Object_0xADDR
-
-var p.slot = 0;
-[00000000:hide] 0
-
-var d = Object.new;
-[00000000:hide] Object_0xADDR
-
-d.addProto(p);
-[00000000:hide] Object_0xADDR
-
+var p = Object.new|
+var p.slot = 0|
+var d = Object.new|
+d.addProto(p)|
 d.slot;
 [00000000] 0
 d.slot = 1;
@@ -1271,17 +1196,9 @@ When a message ``msg'' is sent to object \lstinline|obj|:
 Such message sending is illustrated below.
 
 \begin{urbiscript}[firstnumber=last]
-var obj = Object.new;
-[00000000:hide] Object_0xADDR
-
-var obj.a = 42;
-[00000000:hide] 42
-
-var obj.b = function (x) { x + 1 };
-[00000000:hide] function (x) {
-[:]  x . '+'(1)
-[:]}
-
+var obj = Object.new|
+var obj.a = 42|
+var obj.b = function (x) { x + 1 }|
 obj.a;
 [00000000] 42
 obj.a();
@@ -1304,9 +1221,7 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|break| makes the execution jump after the loop.
 
 \begin{urbiscript}[firstnumber=last]
-var i = 5;
-[00000000:hide] 5
-
+var i = 5|
 for (; true; echo(i))
 {
   if (i > 8)
@@ -1488,22 +1403,14 @@ make any object acceptable in a \lstinline|for| by defining an
 adequate \lstinline|each| method.
 
 \begin{urbiscript}[firstnumber=last]
-var Hobbits = Object.new;
-[00000000:hide] Object_0xADDR
+var Hobbits = Object.new|
 function Hobbits.each (action)
 {
   action("Frodo");
   action("Merry");
   action("Pippin");
   action("Sam");
-};
-[00000000:hide] function (action) {
-[:]  action("Frodo");
-[:]  action("Merry");
-[:]  action("Pippin");
-[:]  action("Sam");
-[:]}
-
+}|
 for (var name in Hobbits)
   echo("%s is a hobbit." % [name]);
 [00000000] *** Frodo is a hobbit.
@@ -1657,9 +1564,7 @@ execution jumps before the \lstinline|while|, otherwise execution
 jumps after the \lstinline|while|.
 
 \begin{urbiscript}[firstnumber=last]
-var j = 3;
-[00000000:hide] 3
-
+var j = 3|
 while (0 < j)
 {
   echo(j);
@@ -1685,11 +1590,8 @@ connections will continue to execute normally.
 \begin{urbiscript}[firstnumber=last]
 throw 42;
 [00000000:error] !!! 42
-function inner() { throw "exn" } | {};
-function outer() { inner() };
-[00000000:hide] function () {
-[:]  inner()
-[:]}
+function inner() { throw "exn" } |
+function outer() { inner() }|
 // Exceptions propagate to parent call up to the toplevel
 outer();
 [00000000:error] !!! exn
