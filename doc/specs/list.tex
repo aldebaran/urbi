@@ -323,16 +323,20 @@ assert(!([0, 1, 2] == [0, 0, 2]));
 \end{urbiscript}
 
 \item \lstinline|'[]'(\var{n})|\\
-  Return the nth member of the target (indexing is zero-based). An
-  error if out of bounds.
+  Return the \var{n}th member of the target (indexing is
+  zero-based). If \var{n} is negative, start from the end.  An error
+  if out of bounds.
 
 \begin{urbiscript}[firstnumber=last]
-var l = [0, 1, 2];
-[00000000:hide] [0, 1, 2]
-l[1];
-[00000000] 1
-l[3];
+assert(["0", "1", "2"][0] == "0");
+assert(["0", "1", "2"][2] == "2");
+["0", "1", "2"][3];
 [00007061:error] !!! []: invalid index: 3
+
+assert(["0", "1", "2"][-1] == "2");
+assert(["0", "1", "2"][-3] == "0");
+["0", "1", "2"][-4];
+[00007061:error] !!! []: invalid index: -4
 \end{urbiscript}
 
 \item \lstinline|'[]='(\var{index}, \var{value})|\\
