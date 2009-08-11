@@ -387,7 +387,12 @@ namespace object
   load(const rObject& name, bool global)
   {
     const std::string& filename = filename_get(name);
-    libport::xlt_handle handle = libport::xlt_openext(filename, global, 0);
+
+    libport::xlt_advise dl;
+    dl.ext().global(global).path()
+      .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"), ":");
+
+    libport::xlt_handle handle = dl.open(filename);
     if (!handle.handle)
       RAISE("Failed to open `" + filename + "': " + lt_dlerror());
     handle.detach();
