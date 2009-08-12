@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <sys/prctl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -92,6 +93,8 @@ namespace object
     else
     {
       // Child
+      // Ask to be killed when the parent dies
+      prctl(PR_SET_PDEATHSIG, SIGKILL);
       close(input_fd_[1]);
       close(output_fd_[0]);
       if (dup2(output_fd_[1], STDOUT_FILENO) == -1)
