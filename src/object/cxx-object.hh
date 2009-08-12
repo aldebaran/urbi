@@ -120,6 +120,7 @@ namespace object
       void operator()(const libport::Symbol& name, M method);
       template <typename A>
       void var(const libport::Symbol& name, A (T::*attr));
+      rObject proto() { return tgt_; }
 
     private:
       Binder(rObject tgt);
