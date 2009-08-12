@@ -41,8 +41,9 @@ namespace object
     std::string binary_;
     arguments_type argv_;
     libport::FdStream* stream_;
-    int output_fd_[2];
-    int input_fd_[2];
+    int stdout_fd_[2];
+    int stderr_fd_[2];
+    int stdin_fd_[2];
     URBI_CXX_OBJECT(Process);
   };
 }

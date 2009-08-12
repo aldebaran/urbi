@@ -47,10 +47,9 @@ namespace object
       delete stream_;
     if (pid_)
     {
-      close(input_fd_[0]);
-      close(input_fd_[1]);
-      close(output_fd_[0]);
-      close(output_fd_[1]);
+      close(stdin_fd_[1]);
+      close(stdout_fd_[0]);
+      close(stderr_fd_[0]);
       // FIXME: collect the zombie!
       // if (!joined_)
     }
@@ -61,12 +60,20 @@ namespace object
     if (pid_)
       RAISE("Process was already run");
 
-    if (pipe(output_fd_))
+    if (pipe(stdout_fd_))
       RAISE(libport::strerror(errno));
-    if (pipe(input_fd_))
+    if (pipe(stdin_fd_))
     {
-      close(output_fd_[0]);
-      close(output_fd_[1]);
+      close(stdout_fd_[0]);
+      close(stdout_fd_[1]);
+      RAISE(libport::strerror(errno));
+    }
+    if (pipe(stderr_fd_))
+    {
+      close(stdout_fd_[0]);
+      close(stdout_fd_[1]);
+      close(stdin_fd_[0]);
+      close(stdin_fd_[1]);
       RAISE(libport::strerror(errno));
     }
 
@@ -74,10 +81,12 @@ namespace object
 
     if (pid_ < 0)
     {
-      close(input_fd_[0]);
-      close(input_fd_[1]);
-      close(output_fd_[0]);
-      close(output_fd_[1]);
+      close(stdin_fd_[0]);
+      close(stdin_fd_[1]);
+      close(stdout_fd_[0]);
+      close(stdout_fd_[1]);
+      close(stderr_fd_[0]);
+      close(stderr_fd_[1]);
       pid_ = 0;
       RAISE(libport::strerror(errno));
     }
@@ -85,24 +94,32 @@ namespace object
     if (pid_)
     {
       // Parent
-      close(input_fd_[0]);
-      close(output_fd_[1]);
-      slot_set(SYMBOL(input), new OutputStream(input_fd_[1], false));
-      slot_set(SYMBOL(output), new InputStream(output_fd_[0], false));
+      close(stdin_fd_[0]);
+      close(stdout_fd_[1]);
+      close(stderr_fd_[1]);
+      slot_set(SYMBOL(stdin), new OutputStream(stdin_fd_[1], false));
+      slot_set(SYMBOL(stdout), new InputStream(stdout_fd_[0], false));
+      slot_set(SYMBOL(stderr), new InputStream(stderr_fd_[0], false));
     }
     else
     {
       // Child
       // Ask to be killed when the parent dies
       prctl(PR_SET_PDEATHSIG, SIGKILL);
-      close(input_fd_[1]);
-      close(output_fd_[0]);
-      if (dup2(output_fd_[1], STDOUT_FILENO) == -1)
+      close(stdin_fd_[1]);
+      close(stdout_fd_[0]);
+      close(stderr_fd_[0]);
+      if (dup2(stdout_fd_[1], STDOUT_FILENO) == -1)
       {
         libport::perror("dup2");
         std::abort();
       }
-      if (dup2(input_fd_[0], STDIN_FILENO) == -1)
+      if (dup2(stderr_fd_[1], STDERR_FILENO) == -1)
+      {
+        libport::perror("dup2");
+        std::abort();
+      }
+      if (dup2(stdin_fd_[0], STDIN_FILENO) == -1)
       {
         libport::perror("dup2");
         std::abort();
