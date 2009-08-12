@@ -107,9 +107,7 @@ namespace object
       try
       {
         arguments_type argv;
-        argv.push_back(binary_);
-        foreach (const std::string& arg, argv_)
-          argv.push_back(arg);
+        argv << binary_ << argv_;
         libport::exec(argv, true);
       }
       catch (...)
