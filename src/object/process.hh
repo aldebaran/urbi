@@ -29,18 +29,20 @@ namespace object
     void init(const std::string& binary,
               const arguments_type& argv);
     void run();
-    void join();
+    void join() const;
+    bool done() const;
+    rObject status() const;
 
   /*--------.
   | Details |
   `--------*/
 
   private:
+    static void monitor_children();
     pid_t pid_;
-    bool joined_;
     std::string binary_;
     arguments_type argv_;
-    libport::FdStream* stream_;
+    int status_;
     int stdout_fd_[2];
     int stderr_fd_[2];
     int stdin_fd_[2];
