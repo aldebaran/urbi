@@ -111,10 +111,9 @@
 
 # undef ERROR
 // FIXME: Bison should really get rid of yylhs when YYERROR is invoked.
-# define ERROR(Loc, FormatArgs, Type)                   \
+# define ERROR(Loc, FormatArgs)                         \
     do {                                                \
       up.error(Loc, (libport::format FormatArgs));      \
-      yylhs.value.destroy<Type>();                      \
       YYERROR;                                          \
     } while (false)
 
@@ -227,8 +226,7 @@
   do                                                    \
     if (!(Condition))                                   \
       ERROR(Loc,                                        \
-            ("invalid flavor: %s%s", Keyword, Flav),    \
-            ast::rExp);                                 \
+            ("invalid flavor: %s%s", Keyword, Flav));   \
   while (0)
 
 #define FLAVOR_CHECK1(Loc, Keyword, Flav, Flav1)        \
@@ -1061,8 +1059,7 @@ exp:
     if (!$2.unsafe_cast<ast::LValue>()
         || ($2.unsafe_cast<ast::Call>()
             && $2.unsafe_cast<ast::Call>()->arguments_get()))
-      ERROR(@2, ("syntax error, %s is not a valid lvalue", *$2),
-            ast::rExp);
+      ERROR(@2, ("syntax error, %s is not a valid lvalue", *$2));
     ast::rBinding res = new ast::Binding(@$, $2.unchecked_cast<ast::LValue>());
     $$ = res;
   }
@@ -1071,8 +1068,7 @@ exp:
     if (!$3.unsafe_cast<ast::LValue>()
         || ($3.unsafe_cast<ast::Call>()
             && $3.unsafe_cast<ast::Call>()->arguments_get()))
-      ERROR(@3, ("syntax error, %s is not a valid lvalue", *$3),
-            ast::rExp);
+      ERROR(@3, ("syntax error, %s is not a valid lvalue", *$3));
     ast::rBinding res = new ast::Binding(@$, $3.unchecked_cast<ast::LValue>());
     res->constant_set(true);
     $$ = res;
