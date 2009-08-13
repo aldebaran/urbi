@@ -78,9 +78,9 @@ namespace urbi {
                          UAutoValue v8 = UAutoValue());
       virtual UObjectMode getRunningMode() const;
       virtual std::pair<int, int> kernelVersion() const;
-      virtual void yield();
-      virtual void yield_until(libport::utime_t deadline);
-      virtual void yield_until_things_changed();
+      virtual void yield() const;
+      virtual void yield_until(libport::utime_t deadline) const;
+      virtual void yield_until_things_changed() const;
       virtual void side_effect_free_set(bool s);
       virtual bool side_effect_free_get() const;
       virtual UVarImpl* getVarImpl();
@@ -591,15 +591,15 @@ namespace urbi
     kernel::urbiserver->ghost_connection_get()
       .received(static_cast<const char*>(buf), size);
   }
-  void KernelUContextImpl::yield()
+  void KernelUContextImpl::yield() const
   {
     getCurrentRunner().yield();
   }
-  void KernelUContextImpl::yield_until(libport::utime_t deadline)
+  void KernelUContextImpl::yield_until(libport::utime_t deadline) const
   {
     getCurrentRunner().yield_until(deadline);
   }
-  void KernelUContextImpl::yield_until_things_changed()
+  void KernelUContextImpl::yield_until_things_changed() const
   {
     getCurrentRunner().yield_until_things_changed();
   }
