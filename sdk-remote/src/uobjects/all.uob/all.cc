@@ -12,6 +12,8 @@ GD_CATEGORY(all);
 class all: public urbi::UObject
 {
 public:
+  typedef urbi::UObject super_type;
+
   all(const std::string& name)
     : urbi::UObject(name)
   {
@@ -72,12 +74,12 @@ public:
     UBindFunction(all, transmitI);
     UBindFunction(all, transmitSnd);
 
-    UBindFunction(all, yield);
     UBindFunction(all, loop_yield);
     UBindFunction(all, yield_for);
-    UBindFunction(all, yield_until_things_changed);
-    UBindFunction(all, side_effect_free_set);
-    UBindFunction(all, side_effect_free_get);
+    UBindFunction(urbi::UContext, side_effect_free_get);
+    UBindFunction(urbi::UContext, side_effect_free_set);
+    UBindFunction(urbi::UContext, yield);
+    UBindFunction(urbi::UContext, yield_until_things_changed);
 
     UBindFunction(all, getDestructionCount);
 
@@ -449,35 +451,21 @@ public:
     return 0;
   }
 
-  void yield()
-  {
-    UObject::yield();
-  }
   void loop_yield(long duration)
   {
     libport::utime_t end = libport::utime() + duration;
     while (libport::utime() < end)
     {
-      UObject::yield();
+      yield();
       usleep(1000);
     }
   }
+
   void yield_for(long duration)
   {
-    UObject::yield_until(libport::utime() + duration);
+    yield_until(libport::utime() + duration);
   }
-  void yield_until_things_changed()
-  {
-    UObject::yield_until_things_changed();
-  }
-  void side_effect_free_set(bool sef)
-  {
-    UObject::side_effect_free_set(sef);
-  }
-  bool side_effect_free_get()
-  {
-    return UObject::side_effect_free_get();
-  }
+
   int getDestructionCount()
   {
     return destructionCount;
