@@ -241,12 +241,12 @@ namespace urbi
       return;
     }
 
-    void RemoteUContextImpl::yield()
+    void RemoteUContextImpl::yield() const
     {
       yield_until(libport::utime());
     }
 
-    void RemoteUContextImpl::yield_until(libport::utime_t deadline)
+    void RemoteUContextImpl::yield_until(libport::utime_t deadline) const
     {
       // Ensure processEvents is called at least once.
       while (true)
@@ -260,7 +260,7 @@ namespace urbi
       }
     }
 
-    void RemoteUContextImpl::yield_until_things_changed()
+    void RemoteUContextImpl::yield_until_things_changed() const
     {
       while (true)
       {

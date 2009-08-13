@@ -146,14 +146,14 @@ namespace urbi
 
   /// Yield execution until next cycle. Process pending messages in remote mode.
   inline void
-  UContext::yield()
+  UContext::yield() const
   {
     return ctx_->yield();
   }
 
   /// Yield execution until \b deadline is met (see libport::utime()).
   inline void
-  UContext::yield_until(libport::utime_t deadline)
+  UContext::yield_until(libport::utime_t deadline) const
   {
     return ctx_->yield_until(deadline);
   }
@@ -162,7 +162,7 @@ namespace urbi
   * received in remote mode.
   */
   inline void
-  UContext::yield_until_things_changed()
+  UContext::yield_until_things_changed() const
   {
     return ctx_->yield_until_things_changed();
   }

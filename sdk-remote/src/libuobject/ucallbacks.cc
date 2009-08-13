@@ -36,8 +36,7 @@ namespace urbi
   namespace impl
   {
     void
-    RemoteUGenericCallbackImpl::initialize(UGenericCallback* owner,
-                                           bool)
+    RemoteUGenericCallbackImpl::initialize(UGenericCallback* owner, bool)
     {
       GD_CATEGORY(Libuobject);
       owner_ = owner;
@@ -48,14 +47,16 @@ namespace urbi
                (owner_->name)(owner_->objname));
       UClient& cl = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
       if (type == "var")
-        URBI_SEND_PIPED_COMMAND_C(cl, "external " << type << " "
-                                  << owner_->name
-                                  << " from " << owner_->objname);
+        URBI_SEND_PIPED_COMMAND_C
+          (cl,
+           libport::format("external %s %s from %s",
+                           type, owner_->name, owner_->objname));
       else if (type == "event" || type == "function")
-        URBI_SEND_PIPED_COMMAND_C(cl, "external " << type << "("
-                                  << owner_->nbparam << ") "
-                                  << owner_->name
-                                  << " from " << owner_->objname);
+        URBI_SEND_PIPED_COMMAND_C
+          (cl,
+           libport::format("external %s (%s) %s from %s",
+                           type, owner_->nbparam, owner_->name,
+                           owner_->objname));
       else if (type == "varaccess")
         echo("Warning: NotifyAccess facility is not available for modules in "
              "remote mode.\n");
@@ -67,8 +68,10 @@ namespace urbi
     {
       owner_ = owner;
       UClient& cl = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
-      URBI_SEND_PIPED_COMMAND_C(cl, "external " << owner_->type << " "
-                                << owner_->name);
+      URBI_SEND_PIPED_COMMAND_C
+        (cl,
+           libport::format("external %s %s",
+                           owner->type, owner_->name));
     }
 
     void

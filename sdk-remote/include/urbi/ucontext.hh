@@ -72,15 +72,15 @@ namespace urbi
 
     /// Yield execution until next cycle.
     /// Process pending messages in remote mode.
-    void yield();
+    void yield() const;
 
     /// Yield execution until \b deadline is met (see libport::utime()).
-    void yield_until(libport::utime_t deadline);
+    void yield_until(libport::utime_t deadline) const;
 
     /** Yield execution until something else is scheduled, or until a message is
      * received in remote mode.
      */
-    void yield_until_things_changed();
+    void yield_until_things_changed() const;
 
     /** If \b s is true, mark the current task as having no side effect.
      * This call has no effect in remote mode.
