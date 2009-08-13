@@ -52,11 +52,18 @@ namespace object
     ATTRIBUTE_R(Case::mode, case);
     ATTRIBUTE_R(std::string, group);
     ATTRIBUTE_R(std::string, pad);
-    ATTRIBUTE_R(std::string, pattern);
+    std::string pattern_;
+    const std::string& pattern_get();
     ATTRIBUTE_R(unsigned int, precision);
     ATTRIBUTE_R(std::string, prefix);
     ATTRIBUTE_R(std::string, spec);
     ATTRIBUTE_R(size_t, width);
+
+  private:
+
+    void compute_pattern();
+    bool consistent_;
+    rObject update_hook(const std::string& slot, rObject val);
 
     URBI_CXX_OBJECT(FormatInfo);
   };

@@ -19,6 +19,7 @@ namespace object
     , prefix_("")
     , spec_("s")
     , width_(0)
+    , consistent_(true)
   {
     proto_add(proto ? proto : Object::proto);
   }
@@ -34,6 +35,7 @@ namespace object
     , prefix_(model->prefix_)
     , spec_(model->spec_)
     , width_(model->width_)
+    , consistent_(model->consistent_)
   {
     proto_add(model);
   }
@@ -142,6 +144,98 @@ namespace object
     return global_format(finfo, pattern_get(), finfo);
   }
 
+  const std::string&
+  FormatInfo::pattern_get()
+  {
+    if (!consistent_)
+      compute_pattern();
+    return pattern_;
+  }
+
+  void
+  FormatInfo::compute_pattern()
+  {
+    pattern_ = std::string("%|")
+      + (alignment_ == Align::RIGHT ? ""
+         : (alignment_ == Align::LEFT) ? "-" : "=")
+      + (alt_ ? "#" : "")
+      + (group_ == "" ? "" : "'")
+      + (pad_ == " " ? "" : "0")
+      + prefix_
+      + (width_ == 0 ? "" : string_cast(width_))
+      + (precision_ == 6 ? "" : "." + string_cast(precision_))
+      + (case_ == Case::UPPER ? char(toupper(spec_[0])): spec_[0])
+      + '|';
+    consistent_ = true;
+  }
+
+  rObject
+  FormatInfo::update_hook(const std::string& slot, rObject val)
+  {
+    if (slot == "width")
+      width_ = type_check<Float>(val, 0u)->to_unsigned_int();
+    else if (slot == "precision")
+      precision_ = type_check<Float>(val, 0u)->to_unsigned_int();
+    else if (slot == "alt")
+      alt_ = val->as_bool();
+    else if (slot == "prefix")
+    {
+      std::string val_(type_check<String>(val, 0u)->value_get());
+      if (val_ != " " && val_ != "+" && val_ != "")
+        RAISE("expected \"\", \" \" or \"+\", got \"" + val_ + "\"");
+      prefix_ = val_;
+    }
+    else if (slot == "alignment")
+    {
+      int val_(type_check<Float>(val, 0u)->to_int());
+      if (val > 1 || val < -1)
+        RAISE("expected integer -1, 0 or 1, got " + string_cast(val_));
+      alignment_ = val_ ? Align::CENTER
+        : (val_ == 1 ? Align::RIGHT : Align::LEFT);
+    }
+    else if (slot == "uppercase")
+    {
+      int val_(type_check<Float>(val, 0u)->to_int());
+      if (val > 1 || val < -1)
+        RAISE("expected integer -1, 0 or 1, got " + string_cast(val_));
+      case_ = val_ ? Case::UNDEFINED
+        : (val_ == 1 ? Case::UPPER : Case::LOWER);
+      if (case_ == Case::UNDEFINED)
+        spec_ = "s";
+      else if (spec_ == "s")
+        spec_ = (case_ == Case::UPPER ? "D" : "d");
+    }
+    else if (slot == "group")
+    {
+      std::string val_(type_check<String>(val, 0u)->value_get());
+      if (val_ != " " && val_ != "")
+        RAISE("expected \" \" or \"\", got \"" + val_ + "\"");
+      group_ = val_;
+    }
+    else if (slot == "pad")
+    {
+      std::string val_(type_check<String>(val, 0u)->value_get());
+      if (val_ != " " && val_ != "0")
+        RAISE("expected \" \" or \"0\", got \"" + val_ + "\"");
+      pad_ = val_;
+    }
+    else if (slot == "spec")
+    {
+      std::string val_(type_check<String>(val, 0u)->value_get());
+      if (val_.size() != 1)
+        RAISE("expected one character long string, got " + val_);
+      if (!strchr("sdbxoefEDX", val_[0]))
+        RAISE("expected one character in \"sdbxoefEDX\", got \"" + val_ + "\"");
+      spec_ = type_check<String>(val, 0u)->to_lower();
+      case_ = (spec_ == "s") ? Case::UNDEFINED
+        : (islower(val_[0]) ? Case::LOWER : Case::UPPER);
+    }
+    else
+      return 0;
+    consistent_ = false;
+    return 0;
+  }
+
   void
   FormatInfo::initialize(CxxObject::Binder<FormatInfo>& bind)
   {
@@ -157,6 +251,15 @@ namespace object
     bind(SYMBOL(pad), &FormatInfo::pad_get);
     bind(SYMBOL(spec), &FormatInfo::spec_get);
     bind(SYMBOL(pattern), &FormatInfo::pattern_get);
+    bind.proto()->property_set(SYMBOL(width), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
+    bind.proto()->property_set(SYMBOL(precision), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
+    bind.proto()->property_set(SYMBOL(alt), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
+    bind.proto()->property_set(SYMBOL(prefix), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
+    bind.proto()->property_set(SYMBOL(alignment), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
+    bind.proto()->property_set(SYMBOL(uppercase), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
+    bind.proto()->property_set(SYMBOL(group), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
+    bind.proto()->property_set(SYMBOL(pad), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
+    bind.proto()->property_set(SYMBOL(spec), SYMBOL(updateHook), make_primitive(&FormatInfo::update_hook));
   }
 
   rObject
