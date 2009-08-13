@@ -9,7 +9,7 @@
 
 namespace object
 {
-  class Path: public CxxObject
+  class URBI_SDK_API Path: public CxxObject
   {
 
   /*------------.
