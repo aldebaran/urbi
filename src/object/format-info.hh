@@ -24,7 +24,7 @@ namespace object
 
     void init(const std::string& pattern);
 
-    std::string as_string();
+    std::string as_string() const;
 
   public:
     struct Align
@@ -47,22 +47,24 @@ namespace object
       };
     };
 
+
     ATTRIBUTE_R(Align::position, alignment);
     ATTRIBUTE_R(bool, alt);
-    ATTRIBUTE_R(Case::mode, case);
+  private:
+    mutable bool consistent_;
     ATTRIBUTE_R(std::string, group);
     ATTRIBUTE_R(std::string, pad);
-    std::string pattern_;
-    const std::string& pattern_get();
+    mutable std::string pattern_;
+    const std::string& pattern_get() const;
     ATTRIBUTE_R(unsigned int, precision);
     ATTRIBUTE_R(std::string, prefix);
     ATTRIBUTE_R(std::string, spec);
+    ATTRIBUTE_R(Case::mode, uppercase);
     ATTRIBUTE_R(size_t, width);
 
   private:
 
-    void compute_pattern();
-    bool consistent_;
+    void compute_pattern() const;
     rObject update_hook(const std::string& slot, rObject val);
 
     URBI_CXX_OBJECT(FormatInfo);

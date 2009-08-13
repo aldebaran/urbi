@@ -112,8 +112,8 @@ namespace object
   std::string
   String::format (rFormatInfo finfo) const
   {
-    std::string str(!finfo->case_get() ? content_
-                    : (finfo->case_get() > 0 ? to_upper() : to_lower()));
+    std::string str(!finfo->uppercase_get() ? content_
+                    : (finfo->uppercase_get() > 0 ? to_upper() : to_lower()));
     int padsize;
     if ((padsize = finfo->width_get() - str.size()) <= 0)
       return str;
