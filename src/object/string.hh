@@ -33,8 +33,9 @@ namespace object
     float as_float() const;
     /// False iff empty.
     virtual bool as_bool() const;
-    std::string as_string(const objects_type& args) const;
+    std::string as_string() const;
     std::string as_printable() const;
+    std::string format(rFormatInfo finfo) const;
 
     size_type distance(const std::string& other) const;
     bool empty() const;

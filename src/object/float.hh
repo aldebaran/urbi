@@ -69,7 +69,8 @@ namespace object
 
     value_type acos();
     value_type asin();
-    std::string as_string(rFormatInfo finfo);
+    std::string format(rFormatInfo finfo);
+    std::string as_string();
     value_type atan();
     value_type atan2(value_type);
     value_type cos();

@@ -110,23 +110,27 @@ namespace object
   }
 
   std::string
-  String::as_string (const objects_type& args) const
+  String::format (rFormatInfo finfo) const
   {
-    if (args.size() > 1)
-      runner::raise_arity_error(args.size(), 0, 1);
-    if (args.size() == 0)
-      return content_;
+    std::string str(!finfo->case_get() ? content_
+                    : (finfo->case_get() > 0 ? to_upper() : to_lower()));
+    int padsize;
+    if ((padsize = finfo->width_get() - str.size()) <= 0)
+      return str;
 
-    rFormatInfo finfo = type_check<FormatInfo>(args[0], 0u);
-    if (!finfo->case_get())
-      return global_format(finfo, content_, finfo);
+    std::string res(padsize, finfo->pad_get()[0]);
+    if (finfo->alignment_get() == FormatInfo::Align::LEFT)
+      return std::string(str).append(res);
+    else if (finfo->alignment_get() == FormatInfo::Align::RIGHT)
+      return res.append(str);
     else
-    {
-      std::string modified("");
-      foreach(char c, content_)
-        modified += (finfo->case_get() > 0) ? toupper(c) : tolower(c);
-      return global_format(finfo, modified, finfo);
-    }
+      return res.insert((res.size() + 1) / 2, str);
+  }
+
+  std::string
+  String::as_string () const
+  {
+    return content_;
   }
 
   bool
@@ -387,6 +391,7 @@ namespace object
     DECLARE(asString    , as_string);
     DECLARE(distance    , distance);
     DECLARE(empty       , empty);
+    DECLARE(format      , format);
     DECLARE(fresh       , fresh);
     DECLARE(fromAscii   , fromAscii);
     DECLARE(replace     , replace);

@@ -24,7 +24,7 @@ do (Formatter)
         case FormatInfo:
         {
           if (args)
-            res = res + args.removeFront.asString(c)
+            res = res + args.removeFront.format(c)
           else
             throw Exception.new("%: too few argument for format")|
         }|

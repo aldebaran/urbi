@@ -133,15 +133,9 @@ namespace object
   }
 
   std::string
-  FormatInfo::as_string(const objects_type& args)
+  FormatInfo::as_string()
   {
-    if (args.size() > 1)
-      runner::raise_arity_error(args.size(), 0, 1);
-    if (args.size() == 0)
-      return pattern_get();
-
-    rFormatInfo finfo = type_check<FormatInfo>(args[0], 0u);
-    return global_format(finfo, pattern_get(), finfo);
+    return pattern_get();
   }
 
   const std::string&

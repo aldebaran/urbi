@@ -90,7 +90,7 @@ namespace object
   }
 
   std::string
-  Float::as_string(rFormatInfo finfo)
+  Float::format(rFormatInfo finfo)
   {
     std::string pattern(finfo->pattern_get());
 
@@ -110,6 +110,20 @@ namespace object
     if (finfo->spec_get() == "x")
       runner::raise_bad_integer_error(value_);
     return libport::format(pattern, value_);
+  }
+
+  std::string
+  Float::as_string()
+  {
+    try
+    {
+      return libport::format("%1%",
+                             libport::numeric_cast<long long>(value_));
+    }
+    catch (const libport::bad_numeric_cast&)
+    {
+      return libport::format("%1%", value_);
+    }
   }
 
   Float::value_type
@@ -280,8 +294,6 @@ namespace object
   | Binding system |
   `---------------*/
 
-  OVERLOAD_DEFAULT(as_string_bouncer, 0, &Float::as_string, FormatInfo::proto);
-
   URBI_CXX_OBJECT_REGISTER(Float);
 
   void
@@ -299,7 +311,8 @@ namespace object
     bind(SYMBOL(STAR_STAR), &Float::pow);
     bind(SYMBOL(abs), &Float::fabs);
     bind(SYMBOL(acos), &Float::acos);
-    bind(SYMBOL(asString), &as_string_bouncer);
+    bind(SYMBOL(asString), &Float::as_string);
+    bind(SYMBOL(format), &Float::format);
     bind(SYMBOL(asin), &Float::asin);
     bind(SYMBOL(atan), &Float::atan);
     bind(SYMBOL(atan2), &Float::atan2);
