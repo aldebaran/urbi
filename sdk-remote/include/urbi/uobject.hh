@@ -132,7 +132,7 @@ namespace urbi
   URBI_SDK_API void uobject_unarmorAndSend(const char* str);
   URBI_SDK_API void send(const char* str);
   URBI_SDK_API void send(const std::string&s);
-  URBI_SDK_API  void send(const void* buf, size_t size);
+  URBI_SDK_API void send(const void* buf, size_t size);
   URBI_SDK_API UObjectMode getRunningMode();
   URBI_SDK_API bool isPluginMode();
   URBI_SDK_API bool isRemoteMode();
