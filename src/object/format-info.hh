@@ -24,7 +24,7 @@ namespace object
 
     void init(const std::string& pattern);
 
-    std::string as_string() const;
+    std::string as_string(const objects_type& args);
 
   public:
     struct Align

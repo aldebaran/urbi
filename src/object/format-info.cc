@@ -3,6 +3,7 @@
 #include <libport/lexical-cast.hh>
 
 #include <object/format-info.hh>
+#include <object/global.hh>
 #include <object/symbols.hh>
 
 namespace object
@@ -130,9 +131,15 @@ namespace object
   }
 
   std::string
-  FormatInfo::as_string() const
+  FormatInfo::as_string(const objects_type& args)
   {
-    return pattern_;
+    if (args.size() > 1)
+      runner::raise_arity_error(args.size(), 0, 1);
+    if (args.size() == 0)
+      return pattern_get();
+
+    rFormatInfo finfo = type_check<FormatInfo>(args[0], 0u);
+    return global_format(finfo, pattern_get(), finfo);
   }
 
   void
