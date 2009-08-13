@@ -17,7 +17,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.10 foreign tar-ustar nostdinc subdir-objects
+AM_INIT_AUTOMAKE([1.10.1 foreign tar-ustar nostdinc subdir-objects
                   -Wall -Wno-portability])
 
 ## ------------ ##
@@ -86,7 +86,8 @@ URBI_ARG_ENABLE([enable-serialization],
 AM_CONDITIONAL([ENABLE_SERIALIZATION],
                [test x$enable_serialization = xyes])
 if test x$enable_serialization = xyes; then
-  AC_DEFINE([ENABLE_SERIALIZATION], [1], [Define to 1 if serialization is enabled.])
+  AC_DEFINE([ENABLE_SERIALIZATION], [1],
+            [Define to 1 if serialization is enabled.])
 fi
 
 # Where we look for the installed files.
@@ -98,9 +99,6 @@ AC_SUBST([urbidir], [${pkgdatadir}/urbi])
 ## -------- ##
 ## Target.  ##
 ## -------- ##
-# URBI_LIBPORT requires 1.34, but it may be too soon to update its
-# request, since the rest of the dev team might not have Boost 1.35.
-# So require it here.
 BOOST_REQUIRE([1.37])
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff
 # below.
