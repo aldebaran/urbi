@@ -1,0 +1,62 @@
+\section{Regexp}
+
+A Regexp is an object which allow you to match strings with a regular
+expression.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+\label{stdlib:tag:ctor}
+
+A \lstinline{Regexp} is created with the regular expression once and for all, and
+it can be used many times to match with other strings.
+
+\begin{urbiscript}
+var r1 = Regexp.new(".");
+[00000001] Regexp(".")
+\end{urbiscript}
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|match(\var{str})|\\
+  Whether \lstinline|this| matches \var{str}.
+\begin{urbiscript}
+// Ordinary characters
+var r = Regexp.new("oo")|
+assert(r.match("oo"));
+assert(r.match("foobar"));
+assert(!r.match("bazquux"));
+
+// ^
+r = Regexp.new("^oo")|
+assert(r.match("oops"));
+assert(!r.match("woot"));
+
+// $
+r = Regexp.new("oo$")|
+assert(r.match("foo"));
+assert(!r.match("mooh"));
+
+// *
+r = Regexp.new("fo*bar")|
+assert(r.match("fbar"));
+assert(r.match("fooooobar"));
+assert(!r.match("far"));
+
+// ()
+r = Regexp.new("f(oo)*bar")|
+assert(r.match("foooobar"));
+assert(!r.match("fooobar"));
+\end{urbiscript}
+
+
+
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
