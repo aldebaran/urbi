@@ -1,5 +1,5 @@
-#include <errno.h>
-#include <sys/prctl.h>
+#include <cerrno>
+#include <libport/sys/prctl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <vector>
@@ -192,19 +192,22 @@ namespace object
     else
     {
       done = true;
-      if (WIFEXITED(status_))
+      // On OS X, casts are made to int, which results in failures on
+      // status_ which is const here.
+      int status = status_;
+      if (WIFEXITED(status))
       {
         exited = true;
-        int rv = WEXITSTATUS(status_);
+        int rv = WEXITSTATUS(status);
         res->slot_set(SYMBOL(exitStatus), to_urbi(rv));
         res->slot_set(SYMBOL(asString),
                       to_urbi(libport::format("exited with status %s", rv)));
       }
       else
       {
-        assert(WIFSIGNALED(status_));
+        assert(WIFSIGNALED(status));
         signaled = true;
-        int sig = WTERMSIG(status_);
+        int sig = WTERMSIG(status);
         res->slot_set(SYMBOL(exitSignal), to_urbi(sig));
         res->slot_set(SYMBOL(asString),
                       to_urbi(libport::format("killed by signal %s", sig)));
@@ -242,4 +245,3 @@ namespace object
 
   URBI_CXX_OBJECT_REGISTER(Process);
 }
-
