@@ -87,6 +87,7 @@ namespace urbi
 
     RemoteUContextImpl::RemoteUContextImpl(USyncClient* client)
       : client_(client)
+      , closed_(false)
       , dummyUObject(0)
     {
       client_->setCallback(callback(*this, &RemoteUContextImpl::dispatcher),
@@ -281,6 +282,8 @@ namespace urbi
     UCallbackAction
     RemoteUContextImpl::dispatcher(const UMessage& msg)
     {
+      if (closed_)
+        return URBI_CONTINUE;
       GD_CATEGORY(Libuobject);
       setCurrentContext(this);
       typedef UTable::callbacks_type callbacks_type;
@@ -521,6 +524,7 @@ namespace urbi
     UCallbackAction
     RemoteUContextImpl::clientError(const UMessage&)
     {
+      closed_ = true;
       // Destroy everything
       foreach(objects_type::value_type& v, objects)
         delete v.second;

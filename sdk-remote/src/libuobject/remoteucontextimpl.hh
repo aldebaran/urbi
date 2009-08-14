@@ -49,7 +49,8 @@ namespace urbi
       UCallbackAction dispatcher(const UMessage& msg);
       USyncClient* getClient();
       USyncClient* client_;
-
+      /// True if we received a clientError message.
+      bool closed_;
 #define TABLE(t, n)                                     \
     private: t n##_; public: t& n() {return n##_;}
       TABLE(UTable, accessmap);
