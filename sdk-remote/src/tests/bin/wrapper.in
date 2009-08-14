@@ -27,10 +27,10 @@ abs_top_builddir='@abs_top_builddir@'
 abs_top_srcdir='@abs_top_srcdir@'
 
 # Find urbi headers.
-CPPFLAGS+=" -I$abs_top_srcdir/include -I$abs_top_builddir/include"
+EXTRA_CPPFLAGS+=" -I$abs_top_srcdir/include -I$abs_top_builddir/include"
 
 # Find libport headers.
-CPPFLAGS+=" -I$abs_top_srcdir/libport/include -I$abs_top_builddir/libport/include"
+EXTRA_CPPFLAGS+=" -I$abs_top_srcdir/libport/include -I$abs_top_builddir/libport/include"
 
 test -d "$abs_top_builddir" ||
   fatal "cannot find top build directory: $abs_top_builddir"
@@ -39,9 +39,9 @@ param_mk=$abs_top_builddir/sdk/param.mk
 test -f "$param_mk" ||
   fatal "cannot find $param_mk"
 
-libtool=$abs_top_builddir/libtool
-test -f "$libtool" ||
-  fatal "cannot find $libtool"
+: ${LIBTOOL=$abs_top_builddir/libtool}
+test -f "$LIBTOOL" ||
+  fatal "cannot find $LIBTOOL"
 
 # umake-link does not support -P.
 case $me in
@@ -74,12 +74,12 @@ wrappee=$abs_top_builddir/sdk/$me
 # these are scripts.
 set x                                           \
     $PREURBI "$wrappee"                         \
-    LIBTOOL="$abs_top_builddir/libtool"         \
+    LIBTOOL="$LIBTOOL"                          \
     envdir="$envdir"                            \
     "$@"                                        \
-    "--kernel=$kernel_dir"                      \
-    "--prefix=$prefix"                          \
-    EXTRA_CPPFLAGS="$CPPFLAGS"                  \
+    --kernel="$kernel_dir"                      \
+    --prefix="$prefix"                          \
+    EXTRA_CPPFLAGS="$EXTRA_CPPFLAGS"            \
     VPATH="$abs_top_srcdir/src/liburbi"
 shift
 
