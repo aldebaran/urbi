@@ -41,9 +41,9 @@ namespace urbi
     : UAbstractClient(host, port, buflen, opt.server())
     , ping_interval_(0)
     , pong_timeout_(0)
+    , link_(new UClient*(this))
     , ping_sent_(libport::utime())
     , ping_sem_(0)
-    , link_(new UClient*(this))
   {
     if (opt.start())
       start();
