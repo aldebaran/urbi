@@ -1,5 +1,6 @@
 \section{Event}
-Entities that can be ``emited'' and ``caught'', or ``sent'' and
+
+An \dfn{event} can be ``emited'' and ``caught'', or ``sent'' and
 ``received''.  See also \autoref{sec:tut:events}.
 
 \subsection{Prototypes}
@@ -9,7 +10,8 @@ Entities that can be ``emited'' and ``caught'', or ``sent'' and
 
 \subsection{Construction}
 
-An \lstinline{Event} is created like any other object, without arguments.
+An \lstinline{Event} is created like any other object, without
+arguments.
 
 \begin{urbiscript}
 var e = Event.new;
@@ -22,21 +24,21 @@ var e = Event.new;
   Return \lstinline|this|.
 
 \item \lstinline|'emit'|\\
-  Throw an \lstinline|Event|. The operator bang can also be used. This
-  function can take zero or more argument of same or different type.
-  These argument are passed when the throwed event are caugth. An
-  event can also be throwed for a certain time using \lstinline|~|.
+  Throw an \lstinline|Event|. This function is called by the bang
+  operator.  It takes any number of arguments, passed to the receiver
+  when the event is caught. An event can also be emitted for a certain
+  duration using \lstinline|~|.
 
 \item \lstinline|syncEmit|\\
-  Throw a synchronized event. This call waits that all functions that
-  have to react to this event have returned. This function can have
-  the same argument as \lstinline|emit|.
+  Throw a synchronized event. This call awaits that all functions that
+  have to react to this event have returned.  This function can have
+  the same arguments as \lstinline|emit|.
 
 \item \lstinline|trigger|\\
-  This function is used to launch an event during a not already known
+  This function is used to launch an event during an unknown amount of
   time. Calling this function launchs and keeps the event trigerred
-  and returns an object that can be stopped with a method named stop
-  to stop launching the event.
+  and returns an object whose \lstinline|stop| method stops launching
+  the event.
 \end{itemize}
 
 %%% Local Variables:
