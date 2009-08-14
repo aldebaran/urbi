@@ -721,7 +721,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
      \\[0-7]{3}         {
        long c = strtol (yytext + 1, 0, 8);
-       if (c > 255)
+       if (255 < c)
          SCAN_ERROR("invalid escape: `" + yytext + '\'');
        else
          GROW_VAL(c);
