@@ -43,6 +43,7 @@ namespace urbi
     , pong_timeout_(0)
     , ping_sent_(libport::utime())
     , ping_sem_(0)
+    , link_(new UClient*(this))
   {
     if (opt.start())
       start();
@@ -85,6 +86,7 @@ namespace urbi
 
   UClient::~UClient()
   {
+    *link_ = 0;
     closeUClient();
   }
 
@@ -145,7 +147,7 @@ namespace urbi
     { // Ignore the error, next read attempt will trigger onError.
     }
     if (ping_interval_)
-      sendPing();
+      sendPing(link_);
 }
 
   void
@@ -169,7 +171,7 @@ namespace urbi
     {
       pong_timeout_handler_->cancel();
       send_ping_handler_ = libport::asyncCall(boost::bind(&UClient::sendPing,
-                                                          this),
+                                                          this, link_),
                          ping_interval_ - (libport::utime() - ping_sent_));
     }
     memcpy(&recvBuffer[recvBufferPosition], data, eat);
@@ -180,8 +182,10 @@ namespace urbi
   }
 
   void
-  UClient::pongTimeout()
+  UClient::pongTimeout(link_type l)
   {
+    if (!*l)
+      return;
     const char* err = "!!! Lost connection with server: ping timeout";
     // FIXME: Choose between two differents way to alert user program.
     clientError(err);
@@ -190,10 +194,12 @@ namespace urbi
   }
 
   void
-  UClient::sendPing()
+  UClient::sendPing(link_type l)
   {
+    if (!*l)
+      return;
     pong_timeout_handler_ =
-      libport::asyncCall(boost::bind(&UClient::pongTimeout, this),
+      libport::asyncCall(boost::bind(&UClient::pongTimeout, this, link_),
                          pong_timeout_);
     send("%s << 1,", internalPongTag);
     ping_sent_ = libport::utime();
@@ -231,7 +237,7 @@ namespace urbi
     ping_interval_ = ping_interval * 1000;
     pong_timeout_  = pong_timeout * 1000;
     if (ping_interval_)
-      sendPing();
+      sendPing(link_);
   }
 
   void

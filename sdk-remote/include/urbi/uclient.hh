@@ -131,10 +131,13 @@ namespace urbi
     /// Delay (in microseconds) of timeout to wait 'PONG'.
     libport::utime_t pong_timeout_;
 
-    /// Send timeout error.
-    void pongTimeout();
+    typedef boost::shared_ptr<UClient*> link_type;
+    link_type link_;
 
-    void sendPing();
+    /// Send timeout error.
+    void pongTimeout(link_type l);
+
+    void sendPing(link_type l);
 
     libport::utime_t ping_sent_;
 
