@@ -1,3 +1,8 @@
+# Be sure to run up-to-date checking binaries.
+check-TESTS: tests-check-programs
+tests-check-programs:
+	$(MAKE) $(AM_MAKEFLAGS) -C $(top_builddir)/tests am-check-programs
+
 ## ------- ##
 ## Check.  ##
 ## ------- ##
