@@ -2,6 +2,43 @@
 Entities that can be ``emited'' and ``caught'', or ``sent'' and
 ``received''.  See also \autoref{sec:tut:events}.
 
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+An \lstinline{Event} is created like any other object, without arguments.
+
+\begin{urbiscript}
+var e = Event.new;
+[00000001] Event_0x9ad8118
+\end{urbiscript}
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|asEvent|\\
+  Return \lstinline|this|.
+
+\item \lstinline|'emit'|\\
+  Throw an \lstinline|Event|. The operator bang can also be used. This
+  function can take zero or more argument of same or different type.
+  These argument are passed when the throwed event are caugth. An
+  event can also be throwed for a certain time using \lstinline|~|.
+
+\item \lstinline|syncEmit|\\
+  Throw a synchronized event. This call waits that all functions that
+  have to react to this event have returned. This function can have
+  the same argument as \lstinline|emit|.
+
+\item \lstinline|trigger|\\
+  This function is used to launch an event during a not already known
+  time. Calling this function launchs and keeps the event trigerred
+  and returns an object that can be stopped with a method named stop
+  to stop launching the event.
+\end{itemize}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
