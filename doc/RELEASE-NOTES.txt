@@ -52,6 +52,7 @@ urbiScript
 ==========
 
 New constructs:
+
 - every|
 
 - break and continue are supported in "every|" loops.
@@ -70,6 +71,9 @@ New constructs:
   in equivalent to
 
     function binList(a, b) { [a, b] } | binList(1, 2)
+
+- consecutive string literals are joined into a unique string literal,
+  as in C++.
 
 New objects:
 - Finalizable

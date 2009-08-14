@@ -10,16 +10,18 @@ A \dfn{string} is a sequence of characters.
 
 \subsection{Construction}
 The simplest way to create fresh String is by using the literal
-syntax. A null String can also be obtained with \lstinline|String|'s
+syntax.  Several escaping sequences (the traditional ones and \us
+specific ones) allow to insert special characters.  Consecutive
+string literals are merged together.  See
+\autoref{sec:us-syn-lit-string} for details and examples.
+
+A null String can also be obtained with \lstinline|String|'s
 \lstinline|new| method.
 
 \begin{urbiscript}
-String.new;
-[00000000] ""
-String;
-[00000000] ""
-"123";
-[00000000] "123"
+assert(String.new == "");
+assert(String == "");
+assert("123".new == "123");
 \end{urbiscript}
 
 \subsection{Methods}

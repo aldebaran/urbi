@@ -266,13 +266,6 @@
 
 
  /*---------.
- | String.  |
- `---------*/
-
-%token  <std::string>  STRING  "string";
-
-
- /*---------.
  | Symbol.  |
  `---------*/
 
@@ -1155,10 +1148,16 @@ duration:
 exp:
   exp_float      { std::swap($$, $1);  }
 | duration       { $$ = new ast::Float(@$, $1);  }
-| "string"       { $$ = new ast::String(@$, $1); }
+| string         { $$ = new ast::String(@$, $1); }
 | "[" exps "]"   { $$ = new ast::List(@$, $2); }
 ;
 
+%token <std::string> STRING "string";
+%type <std::string> string;
+string:
+  "string"        { std::swap($$, $1);  }
+| string "string" { std::swap($$, $1); $$ += $2; }
+;
 
 /*------------------.
 | Location support. |

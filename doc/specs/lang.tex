@@ -235,27 +235,52 @@ empty list of arbitrary expressions enclosed in square brackets
 \end{urbiscript}
 
 \subsubsection{Strings}
+\label{sec:us-syn-lit-string}
 
 \dfn{String} literals are enclosed in double quotes (\lstinline|"|)
 and can contain arbitrary characters, which stand for themselves, with
 the exception of the escape character, backslash (\lstinline|\|), see
-the listing below. Backslash introduces the following
-escapes:
+below.  Backslash introduces the following escapes:
 
-\begin{itemize}
-  \item \lstinline |\\|: backslash
-  \item \lstinline|\a|: bell ring
-  \item \lstinline|\b|: backspace
-  \item \lstinline|\f|: form feed
-  \item \lstinline|\n|: line feed
-  \item \lstinline|\r|: carriage return
-  \item \lstinline|\t|: tabulation
-  \item \lstinline|\v|: vertical tabulation
-\end{itemize}
+\begin{tabular}{|c|p{.8\linewidth}|}
+  \hline
+  \lstinline|\\| & backslash             \\
+  \lstinline|\a| & bell ring             \\
+  \lstinline|\b| & backspace             \\
+  \lstinline|\f| & form feed             \\
+  \lstinline|\n| & line feed             \\
+  \lstinline|\r| & carriage return       \\
+  \lstinline|\t| & tabulation            \\
+  \lstinline|\v| & vertical tabulation   \\
 
-The interpreter prints escaped strings; for instance, line feed
-will be printed out as \lstinline|\n| when a string result is
-dumped. An actual line feed will of course be output if a string
+  \lstinline|\[0-7]{3}|
+  & eight-bit character corresponding to a three-digit octal number.
+  For instance, \lstinline|\000| and \lstinline|177|. \\
+
+  \lstinline|\x[0-9a-fA-F]{2}|
+  & eight-bit character corresponding to a two-digit hexadecimal
+  number.  For instance, \lstinline|0xfF|. \\
+
+  \lstinline|\B(\var{length})(\var{content})|
+  & binary blob.  A \var{length}-long sequence of verbatim
+  \var{content}.  \var{length} is expressed in decimal.  \var{content}
+  is not interpreted in any way.  The parentheses below to the syntax,
+  and are required.  For instance \lstinline|\B(2)(\B)|\\
+  \hline
+\end{tabular}
+
+Consecutive string literals are glued together into a unique string.
+This is useful to split large strings into chunks that fit usual
+programming widths.
+
+\begin{urbiscript}[firstnumber=last]
+assert("foo" "bar" "baz" == "foobarbaz");
+assert("\B(3)("\")" == "\"\\\"");
+\end{urbiscript}
+
+The interpreter prints the strings escaped; for instance, line feed
+will be printed out as \lstinline|\n| when a string result is dumped
+and so forth. An actual line feed will of course be output if a string
 content is printed with echo for instance.
 
 \begin{urbiscript}[firstnumber=last]
