@@ -1,5 +1,52 @@
 \section{Singleton}
 
+A \lstinline{Singleton} is a prototype that cannot be cloned. All
+prototype derived of \lstinline{Singleton} are also singleton.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+To be a singleton, the object must have \lstinline{Singleton} in his
+list of prototypes. The common way to do this is \lstinline{var s = Singleton.new},
+but this doesn't work : \lstinline|s| isn't a new singleton, it is the
+\lstinline|Singleton| itself since it cannot be cloned. There are two
+other ways :
+
+
+\begin{urbiscript}
+// Defining a new class and specifying Singleton as a parent.
+class NewSingleton1: Singleton
+{
+  var asString = "NewSingleton1";
+}|
+var s1 = NewSingleton1.new;
+[00000001] NewSingleton1
+assert(s1 === NewSingleton1);
+assert(NewSingleton1 !== Singleton);
+
+// Create a new Object and set his prototype by hand.
+var NewSingleton2 = Object.New|
+var NewSingleton2.asString = "NewSingleton2"|
+NewSingleton2.protos = [Singleton]|
+var s2 = NewSingleton2.new;
+[00000001] NewSingleton2
+assert(s2 === NewSingleton1);
+assert(NewSingleton2 !== Singleton);
+\end{urbiscript}
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|clone|\\
+  Return \lstinline|this|.
+
+\item \lstinline|new'|\\
+  Return \lstinline|this|.
+\end{itemize}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
