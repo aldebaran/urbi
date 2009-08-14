@@ -30,8 +30,7 @@ assert("123".new == "123");
   If the whole content of \lstinline|this| is an integer, return its
   value, otherwise return an error.
 \begin{urbiscript}[firstnumber=last]
-"23.03".asFloat;
-[00000000] 23.03
+assert("23.03".asFloat == 23.03);
 
 "123abc".asFloat;
 [00000001:error] !!! asFloat: unable to convert to float: "123abc"

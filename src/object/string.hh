@@ -6,6 +6,7 @@
 #ifndef OBJECT_STRING_CLASS_HH
 # define OBJECT_STRING_CLASS_HH
 
+# include <libport/ufloat.hh>
 # include <object/cxx-object.hh>
 
 namespace object
@@ -30,7 +31,7 @@ namespace object
     value_type& value_get();
 
     /// Urbi methods
-    float as_float() const;
+    libport::ufloat as_float() const;
     /// False iff empty.
     virtual bool as_bool() const;
     std::string as_string() const;

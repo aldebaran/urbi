@@ -89,12 +89,12 @@ namespace object
     return !empty();
   }
 
-  float
+  libport::ufloat
   String::as_float() const
   {
     try
     {
-      return boost::lexical_cast<float>(content_);
+      return boost::lexical_cast<libport::ufloat>(content_);
     }
     catch (const boost::bad_lexical_cast&)
     {
