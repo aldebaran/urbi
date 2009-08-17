@@ -31,6 +31,7 @@ dist_libuobject_la_SOURCES +=			\
 
 nodist_libuobject_la_SOURCES +=			\
   kernel/urbi-sdk-key.hh
+dist_noinst_SCRIPTS += kernel/generate-urbi-sdk-key-hh
 kernel/urbi-sdk-key.hh: $(top_srcdir)/urbi-sdk.key
 	rm -f $@ $@.tmp
 	$(srcdir)/kernel/generate-urbi-sdk-key-hh <$< >$@.tmp
