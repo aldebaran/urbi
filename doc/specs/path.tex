@@ -3,6 +3,110 @@
 A \dfn{Path} points to a file system entity (directory, file and so
 forth).
 
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+A \dfn{Path} is contructed with the string that points to the
+file system entity. This path can be either relative or absolute.
+
+\begin{urbiscript}
+var p = Path.new("/path/file.u");
+[00000001] Path("/path/file.u")
+\end{urbiscript}
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|absolute|\\
+  Whether \lstinline|this| is absolute or not.
+\begin{urbiscript}[firstnumber=last]
+assert(Path.new("/absolute/path").absolute);
+assert(!Path.new("relative/path").absolute);
+\end{urbiscript}
+
+\item \lstinline|asList|\\
+  List of names used in path, ie folders and files, sorted by
+  level. There is no difference between relative path and absolute
+  path.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(Path.new("/path/to/file.u").asList, ["path", "to", "file.u"]);
+assert_eq(Path.new("/path").asList, Path.new("path").asList);
+\end{urbiscript}
+
+\item \lstinline|basename|\\
+  Base name of the path.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(Path.new("/absolute/path/file.u").basename, "file.u");
+assert_eq(Path.new("relative/path/file.u").basename, "file.u");
+\end{urbiscript}
+
+\item \lstinline|cd|\\
+  Change current working directory to \lstinline|this|. Returns the new
+  current working directory.
+
+\item \lstinline|cwd|\\
+  The current working directory.
+\begin{urbiscript}[firstnumber=last]
+var pwd = Path.cwd|
+assert_eq(Path.new("/").cd.asString, "/");
+assert_eq(Path.cwd.asString, "/");
+assert_eq(pwd.cd.asString, pwd.asString);
+\end{urbiscript}
+
+\item \lstinline|dirname|\\
+  Directory name of the path.
+\begin{urbiscript}[firstnumber=last]
+assert_eq(Path.new("/absolute/path/file.u").dirname.asString,
+          "/absolute/path");
+assert_eq(Path.new("relative/path/file.u").dirname.asString,
+          "relative/path");
+\end{urbiscript}
+
+\item \lstinline|exists|\\
+  Whether the path exists.
+\begin{urbiscript}[firstnumber=last]
+assert(Path.cwd.exists);
+assert(Path.new("/").exists);
+assert(!Path.new("/this/path/does/not/exists").exists);
+\end{urbiscript}
+
+\item \lstinline|isDir|\\
+  Whether \lstinline|this| is a directory.
+\begin{urbiscript}[firstnumber=last]
+assert(Path.cwd.isDir);
+\end{urbiscript}
+
+\item \lstinline|isReg|\\
+  Whether \lstinline|this| is a regular file.
+
+\item \lstinline|open|\\
+  Open \lstinline|this|. Return either a \dfn{Directory} or a
+  \dfn{File} according the type of \lstinline|this|. See
+  \refObject{File} and \refObject{Directory}.
+
+\item \lstinline|readable|\\
+  Whether \lstinline|this| is readable.
+
+\item \lstinline|writable|\\
+  Whether \lstinline|this| is writable.
+
+\item \lstinline|'/'(\var{rhs})|\\
+  Create a new \dfn{Path} that is the concatenation of
+  \lstinline|this| and \lstinline|\var{rhs}|. \lstinline|\var{rhs}|
+  can be a \dfn{Path} or a \dfn{String} and cannot be absolute.
+\begin{urbiscript}[firstnumber=last]
+Path.new("/con/ca") / Path.new("te/na/tion");
+[00000002] Path("/con/ca/te/na/tion")
+Path.cwd / Path.new("/tmp/foo");
+[00000003:error] !!! /: Rhs of concatenation is absolute: /tmp/foo
+\end{urbiscript}
+
+\end{itemize}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
