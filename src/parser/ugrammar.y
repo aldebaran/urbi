@@ -1001,20 +1001,20 @@ stmt_loop:
       FLAVOR_CHECK3(@1, "for", $1, and, pipe, semicolon);
       $$ = ast_for(@$, $1, $3, $5);
     }
-| "for" "(" stmt ";" exp ";" stmt ")" stmt %prec CMDBLOCK
+| "for" "(" stmt[init] ";" exp[cond] ";" stmt[inc] ")" stmt[body] %prec CMDBLOCK
     {
       FLAVOR_CHECK2(@1, "for", $1, semicolon, pipe);
-      $$ = ast_for(@$, $1, $3, $5, $7, $9);
+      $$ = ast_for(@$, $1, $init, $cond, $inc, $body);
     }
-| "for" "(" "var" "identifier" in_or_colon exp ")" stmt    %prec CMDBLOCK
+| "for" "(" "var" "identifier"[id] in_or_colon exp ")" stmt %prec CMDBLOCK
     {
       FLAVOR_CHECK3(@1, "for", $1, semicolon, pipe, and);
-      $$ = ast_for(@$, $1, @4, $4, $6, $8);
+      $$ = ast_for(@$, $1, @id, $id, $exp, $stmt);
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
       FLAVOR_CHECK2(@1, "while", $1, semicolon, pipe);
-      $$ = new ast::While(@$, $1, $3, ast_scope(@$,$5));
+      $$ = new ast::While(@$, $1, $exp, ast_scope(@stmt, $stmt));
     }
 ;
 
