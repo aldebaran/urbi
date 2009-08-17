@@ -11,48 +11,50 @@ expression.
 \subsection{Construction}
 \label{stdlib:tag:ctor}
 
-A \lstinline{Regexp} is created with the regular expression once and for all, and
-it can be used many times to match with other strings.
+A \lstinline{Regexp} is created with the regular expression once and
+for all, and it can be used many times to match with other strings.
 
 \begin{urbiscript}
-var r1 = Regexp.new(".");
+Regexp.new(".");
 [00000001] Regexp(".")
 \end{urbiscript}
+
+\us supports Perl regular expressions, see
+\href{http://perldoc.perl.org/perlre.html}{the perlre man page}.
+Expressions cannot be empty.
 
 \subsection{Methods}
 \begin{itemize}
 \item \lstinline|match(\var{str})|\\
   Whether \lstinline|this| matches \var{str}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // Ordinary characters
 var r = Regexp.new("oo")|
 assert(r.match("oo"));
 assert(r.match("foobar"));
 assert(!r.match("bazquux"));
 
-// ^
+// ^, anchoring at the beginning of line.
 r = Regexp.new("^oo")|
 assert(r.match("oops"));
 assert(!r.match("woot"));
 
-// $
+// $, anchoring at the end of line.
 r = Regexp.new("oo$")|
 assert(r.match("foo"));
 assert(!r.match("mooh"));
 
-// *
+// *, greedy repetition, 0 or more.
 r = Regexp.new("fo*bar")|
 assert(r.match("fbar"));
 assert(r.match("fooooobar"));
 assert(!r.match("far"));
 
-// ()
+// (), grouping.
 r = Regexp.new("f(oo)*bar")|
 assert(r.match("foooobar"));
 assert(!r.match("fooobar"));
 \end{urbiscript}
-
-
 
 \end{itemize}
 

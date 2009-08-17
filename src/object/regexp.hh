@@ -22,7 +22,7 @@ namespace object
     bool match(const std::string& str) const;
 
   private:
-    boost::regex rg_;
+    boost::regex re_;
     URBI_CXX_OBJECT(Regexp);
   };
 }

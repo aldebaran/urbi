@@ -7,13 +7,13 @@
 namespace object
 {
   Regexp::Regexp(const std::string& rg)
-    : rg_(rg)
+    : re_(rg)
   {
     proto_add(proto ? proto : Object::proto);
   }
 
   Regexp::Regexp(rRegexp model)
-    : rg_(model->rg_)
+    : re_(model->re_)
   {
     proto_add(model);
   }
@@ -21,15 +21,20 @@ namespace object
   std::string
   Regexp::as_string() const
   {
-    return libport::format("Regexp(\"%s\")", libport::escape(rg_));
+    return libport::format("Regexp(\"%s\")", libport::escape(re_));
   }
 
   void
   Regexp::init(const std::string& rg)
   {
+    // Depending on the version of Boost.Regex, "" might not be valid.
+    // Make it always invalid.
+    if (rg.empty())
+      RAISE(libport::format("Invalid regular expression \"%s\": %s",
+                            libport::escape(rg), "Empty expression"));
     try
     {
-      rg_ = boost::regex(rg);
+      re_ = boost::regex(rg);
     }
     catch (const boost::regex_error& e)
     {
@@ -41,7 +46,7 @@ namespace object
   bool
   Regexp::match(const std::string& str) const
   {
-    return regex_search(str, rg_);
+    return regex_search(str, re_);
   }
 
   void
