@@ -8,7 +8,7 @@ TESTS_DIRS = 0.x 1.x 2.x demo uob
 # Run server in fast mode
 FAST_MODE = true
 # Whether we use Valgrind etc. Activated in 'check-buildfarm'.
-INSTRUMENT = false
+INSTRUMENTATION = false
 
 # The wrappers around our embedded SDK-Remote tools.
 sdk_remote_builddir = $(abs_top_builddir)/sdk-remote
@@ -16,7 +16,7 @@ sdk_remote_builddir = $(abs_top_builddir)/sdk-remote
 # Environment used both in check and installcheck.
 CHECK_ENVIRONMENT +=				\
   FAST_MODE=$(FAST_MODE)			\
-  INSTRUMENT=$(INSTRUMENT)
+  INSTRUMENTATION=$(INSTRUMENTATION)
 
 # Currently with Wine, we found no (simple) means to execute a Unix
 # process from a Windows process.  As a result, the "urbi" native

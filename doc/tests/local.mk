@@ -63,7 +63,7 @@ check-clean-local:
 ## ----------- ##
 
 .PHONY: check-buildfarm
-CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENT=1
+CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
 check-buildfarm:
 	$(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
 
