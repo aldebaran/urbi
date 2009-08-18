@@ -77,8 +77,8 @@ if ENABLE_SERIALIZATION
     ast/serialize.hh
 endif
 
-nodist_libuobject_la_SOURCES += 		\
+nodist_libuobject_la_sources +=			\
   $(BUILT_SOURCES_ast_libuobject)
 
 # To ensure that the file is kept up to date.
-dist_noinst_DATA = ast/ast.dot
+dist_noinst_DATA += ast/ast.dot
