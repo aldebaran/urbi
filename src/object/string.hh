@@ -30,6 +30,11 @@ namespace object
     const value_type& value_get() const;
     value_type& value_get();
 
+    // Comparison.
+    bool operator==(const rObject& rhs) const;
+    bool operator==(const value_type& rhs) const;
+    bool operator<=(const value_type& rhs) const;
+
     /// Urbi methods
     libport::ufloat as_float() const;
     /// False iff empty.
@@ -41,7 +46,6 @@ namespace object
     size_type distance(const std::string& other) const;
     bool empty() const;
     std::string plus(rObject rhs) const;
-    bool lt(const std::string& rhs) const;
     std::string fresh() const;
     /// Convert every occurrence of \a from to \a to.
     std::string replace(const std::string& from, const std::string& to) const;

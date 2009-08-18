@@ -58,6 +58,27 @@ namespace object
     return content_;
   }
 
+  bool
+  String::operator==(const rObject& rhs) const
+  {
+    return (rhs->is_a<String>()
+            && *this == rhs->as<String>()->value_get());
+  }
+
+  bool
+  String::operator==(const value_type& rhs) const
+  {
+    return value_get() == rhs;
+  }
+
+  bool
+  String::operator<=(const value_type& rhs) const
+  {
+    return value_get() <= rhs;
+  }
+
+
+
   String::size_type
   String::distance(const std::string& other) const
   {
@@ -128,15 +149,9 @@ namespace object
   }
 
   std::string
-  String::as_string () const
+  String::as_string() const
   {
     return content_;
-  }
-
-  bool
-  String::lt(const std::string& rhs) const
-  {
-    return value_get() < rhs;
   }
 
   std::string
@@ -379,10 +394,13 @@ namespace object
 
   void String::initialize(CxxObject::Binder<String>& bind)
   {
+    bind(SYMBOL(EQ_EQ),
+         static_cast<bool (String::*)(const rObject&) const>
+                    (&String::operator==));
 #define DECLARE(Name, Function)                 \
     bind(SYMBOL(Name), &String::Function)
 
-    DECLARE(LT          , lt);
+    DECLARE(LT_EQ       , operator<=);
     DECLARE(PLUS        , plus);
     DECLARE(STAR        , star);
     DECLARE(asBool      , as_bool);
@@ -394,24 +412,23 @@ namespace object
     DECLARE(format      , format);
     DECLARE(fresh       , fresh);
     DECLARE(fromAscii   , fromAscii);
+    DECLARE(isAlnum     , is_alnum);
+    DECLARE(isAlpha     , is_alpha);
+    DECLARE(isCntrl     , is_cntrl);
+    DECLARE(isDigit     , is_digit);
+    DECLARE(isGraph     , is_graph);
+    DECLARE(isLower     , is_lower);
+    DECLARE(isPrint     , is_print);
+    DECLARE(isPunct     , is_punct);
+    DECLARE(isSpace     , is_space);
+    DECLARE(isUpper     , is_upper);
+    DECLARE(isXdigit    , is_xdigit);
     DECLARE(replace     , replace);
     DECLARE(set         , set);
     DECLARE(size        , size);
     DECLARE(toAscii     , toAscii);
     DECLARE(toLower     , to_lower);
     DECLARE(toUpper     , to_upper);
-    DECLARE(isLower     , is_lower);
-    DECLARE(isUpper     , is_upper);
-    DECLARE(isAlpha     , is_alpha);
-    DECLARE(isCntrl     , is_cntrl);
-    DECLARE(isSpace     , is_space);
-    DECLARE(isDigit     , is_digit);
-    DECLARE(isXdigit    , is_xdigit);
-    DECLARE(isAlnum     , is_alnum);
-    DECLARE(isPunct     , is_punct);
-    DECLARE(isGraph     , is_graph);
-    DECLARE(isPrint     , is_print);
-
 
 #undef DECLARE
 

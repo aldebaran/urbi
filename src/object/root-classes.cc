@@ -212,7 +212,6 @@ namespace object
     Name::proto->slot_set(SYMBOL(EQ_EQ), new Primitive(&compare<Name>));
 
     COMPARABLE(float,     Float);
-    COMPARABLE(string,    String);
 
     // Object.addProto(Global)
     Object::proto->proto_add(global_class);
