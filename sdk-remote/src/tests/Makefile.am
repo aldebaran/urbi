@@ -37,7 +37,7 @@ bin/urbi-launch$(EXEEXT): bin/urbi-launch.in
 	chmod +x $@
 
 # By default, instrument the code.
-#INSTRUMENT = true
+#INSTRUMENTATION = true
 URBI_SERVER = urbi-launch$(EXEEXT) --start --
 
 ## ------------------- ##
@@ -82,7 +82,7 @@ debug:
 ## ----------- ##
 
 # The target run by the buildfarm.
-CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENT=1
+CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENTATION=0.2
 check-buildfarm:
 	$(MAKE) $(AM_MAKEFLAGS) $(CHECK_BUILDFARM_FLAGS) check-html
 
