@@ -24,8 +24,8 @@ clean-uobjects:
 # This is a bug in deep-clean: we don't clean the .libs files.  But it
 # is not so simple, as several builds may share a common .libs, so one
 # build cannot remove this directory.
-	find . -name ".libs" -a -type d | xargs rm -rf
-	rm -f $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
+	-find . -name ".libs" -a -type d | xargs rm -rf
+	-rm -f $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
 
 # Help to restart broken builds.
 $(UMAKE_SHARED):
