@@ -3,6 +3,8 @@ include build-aux/build-aux.mk
 include build-aux/package-version.mk
 include build-aux/fix-libtool-la.mk
 include build-aux/build-farm.mk
+BOOTSTRAP_CFG = .bootstrap.cfg
+include build-aux/bootstrap.mk
 
 AUTOMAKE_OPTIONS += subdir-objects
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
