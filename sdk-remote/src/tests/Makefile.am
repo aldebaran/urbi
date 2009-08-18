@@ -46,7 +46,7 @@ URBI_SERVER = urbi-launch$(EXEEXT) --start --
 
 CHECK_ENVIRONMENT +=				\
   srcdir='$(srcdir)'				\
-  INSTRUMENT=$(INSTRUMENT)			\
+  INSTRUMENTATION=$(INSTRUMENTATION)		\
   PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
   URBI_SERVER='$(URBI_SERVER)'
 
