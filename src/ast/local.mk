@@ -77,7 +77,11 @@ if ENABLE_SERIALIZATION
     ast/serialize.hh
 endif
 
-nodist_libuobject_la_sources +=			\
+# These files are generated at bootstrap time, we need to ship them.
+# We would like to generate them at make time, but unfortunately we
+# also generate the Makefile snippets, which is something we cannot do
+# easily after Automake was run.
+dist_libuobject_la_SOURCES +=			\
   $(BUILT_SOURCES_ast_libuobject)
 
 # To ensure that the file is kept up to date.
