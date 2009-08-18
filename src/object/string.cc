@@ -59,19 +59,6 @@ namespace object
   }
 
   bool
-  String::operator==(const rObject& rhs) const
-  {
-    return (rhs->is_a<String>()
-            && *this == rhs->as<String>()->value_get());
-  }
-
-  bool
-  String::operator==(const value_type& rhs) const
-  {
-    return value_get() == rhs;
-  }
-
-  bool
   String::operator<=(const value_type& rhs) const
   {
     return value_get() <= rhs;
@@ -395,8 +382,8 @@ namespace object
   void String::initialize(CxxObject::Binder<String>& bind)
   {
     bind(SYMBOL(EQ_EQ),
-         static_cast<bool (String::*)(const rObject&) const>
-                    (&String::operator==));
+         static_cast<bool (self_type::*)(const rObject&) const>
+                    (&self_type::operator==));
 #define DECLARE(Name, Function)                 \
     bind(SYMBOL(Name), &String::Function)
 

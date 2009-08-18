@@ -7,6 +7,7 @@
 
 #include <libport/unistd.h>
 #include <libport/file-system.hh>
+#include <libport/lexical-cast.hh>
 
 // For bad_alloc
 #include <exception>
@@ -23,9 +24,9 @@ namespace object
 {
   using boost::format;
 
-  /*------------.
-  | C++ methods |
-  `------------*/
+  /*--------------.
+  | C++ methods.  |
+  `--------------*/
 
   const Path::value_type& Path::value_get() const
   {
@@ -33,9 +34,9 @@ namespace object
   }
 
 
-  /*-------------.
-  | Urbi methods |
-  `-------------*/
+  /*---------------.
+  | Urbi methods.  |
+  `---------------*/
 
   // Construction
 
@@ -62,7 +63,16 @@ namespace object
     path_ = path;
   }
 
-  // Global informations
+  bool
+  Path::operator<=(const rPath& rhs) const
+  {
+    return path_.to_string() <= rhs->path_.to_string();
+  }
+
+
+  /*---------------------.
+  | Global information.  |
+  `---------------------*/
 
   rPath Path::cwd()
   {
@@ -208,22 +218,30 @@ namespace object
 
   void Path::initialize(CxxObject::Binder<Path>& bind)
   {
-    bind(SYMBOL(absolute), &Path::absolute);
-    bind(SYMBOL(asList), &Path::as_list);
-    bind(SYMBOL(asPrintable), &Path::as_printable);
-    bind(SYMBOL(asString), &Path::as_string);
-    bind(SYMBOL(basename), &Path::basename);
-    bind(SYMBOL(cd), &Path::cd);
-    bind(SYMBOL(cwd), &Path::cwd);
-    bind(SYMBOL(dirname), &Path::dirname);
-    bind(SYMBOL(exists), &Path::exists);
-    bind(SYMBOL(init), &Path::init);
-    bind(SYMBOL(isDir), &Path::is_dir);
-    bind(SYMBOL(isReg), &Path::is_reg);
-    bind(SYMBOL(open), &Path::open);
-    bind(SYMBOL(readable), &Path::readable);
+    bind(SYMBOL(EQ_EQ),
+         static_cast<bool (self_type::*)(const rObject&) const>
+                    (&self_type::operator==));
     bind(SYMBOL(SLASH), concat_bouncer);
-    bind(SYMBOL(writable), &Path::writable);
+
+#define DECLARE(Urbi, Cxx)                      \
+    bind(SYMBOL(Urbi), &Path::Cxx)
+
+    DECLARE(LT_EQ, operator<=);
+    DECLARE(absolute, absolute);
+    DECLARE(asList, as_list);
+    DECLARE(asPrintable, as_printable);
+    DECLARE(asString, as_string);
+    DECLARE(basename, basename);
+    DECLARE(cd, cd);
+    DECLARE(cwd, cwd);
+    DECLARE(dirname, dirname);
+    DECLARE(exists, exists);
+    DECLARE(init, init);
+    DECLARE(isDir, is_dir);
+    DECLARE(isReg, is_reg);
+    DECLARE(open, open);
+    DECLARE(readable, readable);
+    DECLARE(writable, writable);
   }
 
   rObject

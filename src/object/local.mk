@@ -99,6 +99,8 @@ dist_libuobject_la_SOURCES +=			\
   object/directory.cc				\
   object/directory.hh				\
   object/executable.cc				\
+  object/equality-comparable.hh			\
+  object/equality-comparable.hxx		\
   object/file.cc				\
   object/file.hh				\
   object/finalizable.cc                         \

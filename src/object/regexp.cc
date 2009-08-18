@@ -52,9 +52,13 @@ namespace object
   void
   Regexp::initialize(CxxObject::Binder<Regexp>& bind)
   {
-    bind(SYMBOL(asString), &Regexp::as_string);
-    bind(SYMBOL(init), &Regexp::init);
-    bind(SYMBOL(match), &Regexp::match);
+#define DECLARE(Urbi, Cxx)                      \
+    bind(SYMBOL(Urbi), &Regexp::Cxx)
+
+    DECLARE(asString, as_string);
+    DECLARE(init, init);
+    DECLARE(match, match);
+#undef DECLARE
   }
 
   rObject

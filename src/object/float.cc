@@ -50,20 +50,6 @@ namespace object
     return value_;
   }
 
-
-  bool
-  Float::operator==(const rObject& rhs) const
-  {
-    return (rhs->is_a<Float>()
-            && *this == rhs->as<Float>()->value_get());
-  }
-
-  bool
-  Float::operator==(const value_type& rhs) const
-  {
-    return value_get() == rhs;
-  }
-
   bool
   Float::operator<=(const value_type& rhs) const
   {
@@ -318,8 +304,8 @@ namespace object
   Float::initialize(CxxObject::Binder<Float>& bind)
   {
     bind(SYMBOL(EQ_EQ),
-         static_cast<bool (Float::*)(const rObject&) const>
-                    (&Float::operator==));
+         static_cast<bool (self_type::*)(const rObject&) const>
+                    (&self_type::operator==));
 #define DECLARE(Urbi, Cxx)                      \
     bind(SYMBOL(Urbi), &Float::Cxx)
 

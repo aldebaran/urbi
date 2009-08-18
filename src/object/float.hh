@@ -10,11 +10,14 @@
 
 # include <object/cxx-object.hh>
 # include <object/fwd.hh>
+# include <object/equality-comparable.hh>
 
 namespace object
 {
 
-  class URBI_SDK_API Float: public CxxObject
+  class URBI_SDK_API Float
+    : public CxxObject
+    , public EqualityComparable<Float, libport::ufloat>
   {
 
   /*--------------.
@@ -23,6 +26,7 @@ namespace object
 
   public:
 
+    typedef Float self_type;
     typedef libport::ufloat value_type;
 
     /// The preferred target for unsigned casts.
@@ -35,8 +39,6 @@ namespace object
     virtual bool as_bool() const;
 
     // Comparison.
-    bool operator==(const rObject& rhs) const;
-    bool operator==(const value_type& rhs) const;
     bool operator<=(const value_type& rhs) const;
 
     /// \name Conversions.

@@ -8,12 +8,16 @@
 
 # include <libport/ufloat.hh>
 # include <object/cxx-object.hh>
+# include <object/equality-comparable.hh>
 
 namespace object
 {
-  class URBI_SDK_API String: public CxxObject
+  class URBI_SDK_API String
+    : public CxxObject
+    , public EqualityComparable<String, std::string>
   {
   public:
+    typedef String self_type;
     typedef std::string value_type;
 
     // size_t would make more sense, but the only conversion coded is
@@ -31,8 +35,6 @@ namespace object
     value_type& value_get();
 
     // Comparison.
-    bool operator==(const rObject& rhs) const;
-    bool operator==(const value_type& rhs) const;
     bool operator<=(const value_type& rhs) const;
 
     /// Urbi methods

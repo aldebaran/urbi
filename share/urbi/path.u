@@ -1,0 +1,5 @@
+do (Path)
+{
+  // WARNING: We must derive from Orderable first.
+  setProtos([Orderable, Comparable]);
+};

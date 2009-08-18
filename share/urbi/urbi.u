@@ -156,19 +156,12 @@ load("urbi/orderable.u");
 load("urbi/updatehook-stack.u");
 load("urbi/float.u");
 load("urbi/trajectory-generator.u");
+load("urbi/path.u");
 load("urbi/string.u");
 load("urbi/system.u");
 load("urbi/object.u");
 load("urbi/file.u");
-
-/*---------.
-| Format.  |
-`---------*/
 load("urbi/formatter.u");
-
-/*-----------.
-| Printing.  |
-`-----------*/
 
 do (Object)
 {
@@ -289,11 +282,6 @@ load("urbi/tag.u");
 load("urbi/lobby.u");
 load("urbi/mutex.u");
 load("urbi/timeout.u");
-
-/*---------.
-| Socket.  |
-`---------*/
-
 load("urbi/socket.u");
 
 /*----------.

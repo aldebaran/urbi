@@ -6,24 +6,27 @@
 
 # include <object/cxx-object.hh>
 # include <object/directory.hh>
+# include <object/equality-comparable.hh>
 
 namespace object
 {
-  class URBI_SDK_API Path: public CxxObject
+  class URBI_SDK_API Path
+    : public CxxObject
+    , public EqualityComparable<Path, libport::path>
   {
 
-  /*------------.
-  | C++ methods |
-  `------------*/
+  /*--------------.
+  | C++ methods.  |
+  `--------------*/
 
   public:
-
+    typedef Path self_type;
     typedef libport::path value_type;
     const value_type& value_get() const;
 
-  /*-------------.
-  | Urbi methods |
-  `-------------*/
+  /*---------------.
+  | Urbi methods.  |
+  `---------------*/
 
   public:
 
@@ -32,6 +35,9 @@ namespace object
     Path(rPath model);
     Path(const std::string& value);
     void init(const std::string& path);
+
+    // Comparison.
+    bool operator<=(const rPath& rhs) const;
 
     // Global informations
     static rPath cwd();
@@ -57,9 +63,9 @@ namespace object
     std::string as_string();
     std::string as_printable();
 
-  /*--------.
-  | Details |
-  `--------*/
+  /*----------.
+  | Details.  |
+  `----------*/
 
   private:
     value_type path_;

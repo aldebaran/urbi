@@ -7,9 +7,11 @@
 
 namespace object
 {
-  class Regexp: public CxxObject
+  class Regexp
+    : public CxxObject
   {
   public:
+    typedef Regexp self_type;
     Regexp(const std::string& rg);
     Regexp(rRegexp model);
 

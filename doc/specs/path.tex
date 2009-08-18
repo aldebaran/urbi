@@ -5,68 +5,76 @@ forth).
 
 \subsection{Prototypes}
 \begin{itemize}
-\item \refObject{Object}
+\item \refObject{Comparable}
+\item \refObject{Orderable}
 \end{itemize}
 
 \subsection{Construction}
 
-A \dfn{Path} is contructed with the string that points to the
-file system entity. This path can be either relative or absolute.
+A \lstinline|Path| is contructed with the string that points to the
+file system entity. This path can be relative or absolute.
 
 \begin{urbiscript}
-var p = Path.new("/path/file.u");
+Path.new("/path/file.u");
 [00000001] Path("/path/file.u")
+\end{urbiscript}
+
+Some minor simplifications are made, such as stripping useless
+\file{./} occurrences.
+
+\begin{urbiscript}[firstnumber=last]
+Path.new("././///.//foo/");
+[00000002] Path("foo")
 \end{urbiscript}
 
 \subsection{Methods}
 \begin{itemize}
 \item \lstinline|absolute|\\
-  Whether \lstinline|this| is absolute or not.
+  Whether \lstinline|this| is absolute.
 \begin{urbiscript}[firstnumber=last]
-assert(Path.new("/absolute/path").absolute);
-assert(!Path.new("relative/path").absolute);
+assert(Path.new("/abs/path").absolute);
+assert(!Path.new("rel/path").absolute);
 \end{urbiscript}
 
 \item \lstinline|asList|\\
-  List of names used in path, ie folders and files, sorted by
-  level. There is no difference between relative path and absolute
+  List of names used in path (directories and possibly file), from
+  bottom up. There is no difference between relative path and absolute
   path.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(Path.new("/path/to/file.u").asList, ["path", "to", "file.u"]);
-assert_eq(Path.new("/path").asList, Path.new("path").asList);
+assert(Path.new("/path/to/file.u").asList == ["path", "to", "file.u"]);
+assert(Path.new("/path").asList           == Path.new("path").asList);
 \end{urbiscript}
 
 \item \lstinline|basename|\\
   Base name of the path.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(Path.new("/absolute/path/file.u").basename, "file.u");
-assert_eq(Path.new("relative/path/file.u").basename, "file.u");
+assert(Path.new("/absolute/path/file.u").basename == "file.u");
+assert(Path.new("relative/path/file.u").basename  == "file.u");
 \end{urbiscript}
 
 \item \lstinline|cd|\\
-  Change current working directory to \lstinline|this|. Returns the new
-  current working directory.
+  Change current working directory to \lstinline|this|. Return the new
+  current working directory as a \lstinline|Path|.
 
 \item \lstinline|cwd|\\
   The current working directory.
 \begin{urbiscript}[firstnumber=last]
 var pwd = Path.cwd|
-assert_eq(Path.new("/").cd.asString, "/");
-assert_eq(Path.cwd.asString, "/");
-assert_eq(pwd.cd.asString, pwd.asString);
+assert(Path.new("/").cd == Path.new("/"));
+assert(Path.cwd         == Path.new("/"));
+assert(pwd.cd           == pwd);
 \end{urbiscript}
 
 \item \lstinline|dirname|\\
   Directory name of the path.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(Path.new("/absolute/path/file.u").dirname.asString,
-          "/absolute/path");
-assert_eq(Path.new("relative/path/file.u").dirname.asString,
-          "relative/path");
+assert(Path.new("/abs/path/file.u").dirname == Path.new("/abs/path"));
+assert(Path.new("rel/path/file.u").dirname  == Path.new("rel/path"));
 \end{urbiscript}
 
 \item \lstinline|exists|\\
-  Whether the path exists.
+  Whether something (a file, a directory, \ldots) exists where
+  \lstinline|this| points to.
 \begin{urbiscript}[firstnumber=last]
 assert(Path.cwd.exists);
 assert(Path.new("/").exists);
@@ -81,6 +89,9 @@ assert(Path.cwd.isDir);
 
 \item \lstinline|isReg|\\
   Whether \lstinline|this| is a regular file.
+\begin{urbiscript}[firstnumber=last]
+assert(!Path.cwd.isReg);
+\end{urbiscript}
 
 \item \lstinline|open|\\
   Open \lstinline|this|. Return either a \dfn{Directory} or a
@@ -89,19 +100,42 @@ assert(Path.cwd.isDir);
 
 \item \lstinline|readable|\\
   Whether \lstinline|this| is readable.
+\begin{urbiscript}[firstnumber=last]
+assert(Path.new("/tmp").readable);
+\end{urbiscript}
 
 \item \lstinline|writable|\\
   Whether \lstinline|this| is writable.
+\begin{urbiscript}[firstnumber=last]
+assert(Path.new("/tmp").writable);
+\end{urbiscript}
 
 \item \lstinline|'/'(\var{rhs})|\\
   Create a new \dfn{Path} that is the concatenation of
   \lstinline|this| and \lstinline|\var{rhs}|. \lstinline|\var{rhs}|
   can be a \dfn{Path} or a \dfn{String} and cannot be absolute.
 \begin{urbiscript}[firstnumber=last]
-Path.new("/con/ca") / Path.new("te/na/tion");
-[00000002] Path("/con/ca/te/na/tion")
+assert(Path.new("/con/ca") / Path.new("te/na/tion")
+       == Path.new("/con/ca/te/na/tion"));
 Path.cwd / Path.new("/tmp/foo");
 [00000003:error] !!! /: Rhs of concatenation is absolute: /tmp/foo
+\end{urbiscript}
+
+\item \lstinline|'=='(\var{that})|\\
+  Same as comparing the string versions of \lstinline|this| and
+  \var{that}.  Beware that two paths may be different and point to the
+  very same location.
+\begin{urbiscript}[firstnumber=last]
+assert(  Path.new("/a")  == Path.new("/a"));
+assert(!(Path.new("/a")  == Path.new("a")  ));
+\end{urbiscript}
+
+\item \lstinline|'<'(\var{that})|\\
+  Same as comparing the string versions of \lstinline|this| and
+  \var{that}.
+\begin{urbiscript}[firstnumber=last]
+assert(  Path.new("/a")   < Path.new("/a/b"));
+assert(!(Path.new("/a/b") < Path.new("/a")  ));
 \end{urbiscript}
 
 \end{itemize}
