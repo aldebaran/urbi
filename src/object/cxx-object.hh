@@ -159,12 +159,12 @@ namespace object
 
 }
 
-# if ! defined(OBJECT_EXECUTABLE_HH)                                    \
-  && ! defined(OBJECT_FLOAT_CLASS_HH)                                   \
-  && ! defined(OBJECT_LIST_CLASS_HH)                                    \
-  && ! defined(OBJECT_STRING_CLASS_HH)                                  \
-  && ! defined(OBJECT_TAG_CLASS_HH)
+# if ! defined OBJECT_EXECUTABLE_HH             \
+      && ! defined OBJECT_FLOAT_CLASS_HH        \
+      && ! defined OBJECT_LIST_CLASS_HH         \
+      && ! defined OBJECT_STRING_CLASS_HH       \
+      && ! defined OBJECT_TAG_CLASS_HH
 #  include <object/cxx-object.hxx>
 # endif
 
-#endif
+#endif // ! OBJECT_CXX_OBJECT_HH
