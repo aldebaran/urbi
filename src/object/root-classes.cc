@@ -90,23 +90,6 @@ namespace object
     return args.front();
   }
 
-  template <typename T>
-  static rObject
-  compare(objects_type args)
-  {
-    check_arg_count(args.size() - 1, 1);
-    type_check<T>(args[0]);
-    libport::intrusive_ptr<T> arg0 = args[0].unsafe_cast<T>();
-
-    // Comparing two atoms with different types isn't an error, it
-    // just return false
-    if (!is_a<T>(args[1]))
-      return to_boolean(false);
-
-    libport::intrusive_ptr<T> arg1 = args[1]->as<T>();
-    return to_boolean(arg0->value_get() == arg1->value_get());
-  }
-
   /// Initialize the root classes.  There are some dependency issues.
   /// For instance, String is a clone of Object, but Object.type is a
   /// String.  So we need to control the initialization sequence.
@@ -205,13 +188,6 @@ namespace object
     ANONYMOUS_CLASS_SETUP(accepted_void_class, acceptedVoid);
 
 #undef SYMBOL_
-
-// This can't be APPLYED_ON_ALL_PRIMITIVES_BUT_OBJECT because some are
-// false atoms
-#define COMPARABLE(What, Name)		\
-    Name::proto->slot_set(SYMBOL(EQ_EQ), new Primitive(&compare<Name>));
-
-    COMPARABLE(float,     Float);
 
     // Object.addProto(Global)
     Object::proto->proto_add(global_class);

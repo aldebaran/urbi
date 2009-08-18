@@ -50,6 +50,31 @@ namespace object
     return value_;
   }
 
+
+  bool
+  Float::operator==(const rObject& rhs) const
+  {
+    return (rhs->is_a<Float>()
+            && *this == rhs->as<Float>()->value_get());
+  }
+
+  bool
+  Float::operator==(const value_type& rhs) const
+  {
+    return value_get() == rhs;
+  }
+
+  bool
+  Float::operator<=(const value_type& rhs) const
+  {
+    return value_get() <= rhs;
+  }
+
+
+  /*--------------.
+  | Conversions.  |
+  `--------------*/
+
 #define CONVERSION(Name, Type)				\
   Type							\
   Float::to_##Name(const std::string fmt) const         \
@@ -90,7 +115,7 @@ namespace object
   }
 
   std::string
-  Float::format(rFormatInfo finfo)
+  Float::format(rFormatInfo finfo) const
   {
     std::string pattern(finfo->pattern_get());
 
@@ -113,7 +138,7 @@ namespace object
   }
 
   std::string
-  Float::as_string()
+  Float::as_string() const
   {
     try
     {
@@ -127,14 +152,14 @@ namespace object
   }
 
   Float::value_type
-  Float::atan2(value_type y)
+  Float::atan2(value_type y) const
   {
     return ::atan2(value_, y);
   }
 
 #define BOUNCE_OP(Op, ResType, Check)					\
   ResType								\
-  Float::operator Op(value_type rhs)					\
+  Float::operator Op(value_type rhs) const				\
   {                                                                     \
     static libport::Symbol op(#Op);                                     \
     WHEN(Check,                                                         \
@@ -145,12 +170,11 @@ namespace object
 
   BOUNCE_OP(*, Float::value_type, false)
   BOUNCE_OP(/, Float::value_type, true)
-  BOUNCE_OP(<, bool, false)
 
 #undef BOUNCE_OP
 
   Float::value_type
-  Float::operator %(value_type rhs)
+  Float::operator %(value_type rhs) const
   {
     if (!rhs)
       RAISE("modulo by 0");
@@ -158,7 +182,7 @@ namespace object
   }
 
   Float::value_type
-  Float::pow(value_type rhs)
+  Float::pow(value_type rhs) const
   {
     return powf(value_get(), rhs);
   }
@@ -169,7 +193,7 @@ namespace object
   `------------------*/
 #define BOUNCE_UNSIGNED_OP(Op)                  \
   Float::unsigned_type                          \
-  Float::operator Op()				\
+  Float::operator Op() const                    \
   {						\
     return Op to_unsigned_type();               \
   }
@@ -181,9 +205,9 @@ namespace object
   /*-------------------.
   | Binary operators.  |
   `-------------------*/
-#define BOUNCE_UNSIGNED_OP(Op)			\
+#define BOUNCE_UNSIGNED_OP(Op)                  \
   Float::unsigned_type                          \
-  Float::operator Op(unsigned_type rhs)         \
+  Float::operator Op(unsigned_type rhs) const   \
   {						\
     return to_unsigned_type() Op rhs;           \
   }
@@ -209,7 +233,7 @@ namespace object
 
 #define BOUNCE(F, Pos, Range)                           \
   Float::value_type					\
-  Float::F()                                            \
+  Float::F() const                                      \
   {                                                     \
     WHEN(Pos, CHECK_POSITIVE(SYMBOL(F)));               \
     WHEN(Range, CHECK_TRIGO_RANGE(SYMBOL(F)));          \
@@ -234,7 +258,7 @@ namespace object
 #undef BOUNCE
 
   int
-  Float::random()
+  Float::random() const
   {
     static const std::string fmt = "expected positive integer, got %s";
     unsigned int upper_bound = to_unsigned_int(fmt);
@@ -243,34 +267,28 @@ namespace object
     return rand() % upper_bound;
   }
 
-  rFloat
-  Float::plus(const objects_type& args)
-  {
-    check_arg_count(args.size(), 0, 1);
-    if (args.empty())
-      return this;
-    else
-    {
-      type_check<Float>(args[0], 1);
-      return new Float(value_get() + args[0]->as<Float>()->value_get());
-    }
+
+#define DEFINE(Urbi, Op)                                        \
+  Float::value_type                                             \
+  Float::Urbi(const objects_type& args) const                   \
+  {                                                             \
+    check_arg_count(args.size(), 0, 1);                         \
+    if (args.empty())                                           \
+      return Op value_get();                                    \
+    else                                                        \
+    {                                                           \
+      type_check<Float>(args[0], 1);                            \
+      return value_get() Op args[0]->as<Float>()->value_get();  \
+    }                                                           \
   }
 
-  rFloat
-  Float::minus(const objects_type& args)
-  {
-    check_arg_count(args.size(), 0, 1);
-    if (args.empty())
-      return new Float(-value_get());
-    else
-    {
-      type_check<Float>(args[0], 1);
-      return new Float(value_get() - args[0]->as<Float>()->value_get());
-    }
-  }
+  DEFINE(plus, +);
+  DEFINE(minus, -);
+#undef DEFINE
+
 
   rList
-  Float::seq()
+  Float::seq() const
   {
     unsigned int n = to_unsigned_int();
     List::value_type res;
@@ -279,9 +297,9 @@ namespace object
     return new List(res);
   }
 
-  /*--------.
-  | Details |
-  `--------*/
+  /*----------.
+  | Details.  |
+  `----------*/
 
   std::ostream& Float::special_slots_dump(std::ostream& o) const
   {
@@ -290,47 +308,55 @@ namespace object
   }
 
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
+  /*-----------------.
+  | Binding system.  |
+  `-----------------*/
 
   URBI_CXX_OBJECT_REGISTER(Float);
 
   void
   Float::initialize(CxxObject::Binder<Float>& bind)
   {
-    bind(SYMBOL(CARET), &Float::operator^);
-    bind(SYMBOL(GT_GT), &Float::operator>>);
-    bind(SYMBOL(LT), static_cast<bool (Float::*)(value_type)>(&Float::operator<));
-    bind(SYMBOL(LT_LT), &Float::operator<<);
-    bind(SYMBOL(MINUS), &Float::minus);
-    bind(SYMBOL(PERCENT), &Float::operator%);
-    bind(SYMBOL(PLUS), &Float::plus);
-    bind(SYMBOL(SLASH), &Float::operator/);
-    bind(SYMBOL(STAR), &Float::operator*);
-    bind(SYMBOL(STAR_STAR), &Float::pow);
-    bind(SYMBOL(abs), &Float::fabs);
-    bind(SYMBOL(acos), &Float::acos);
-    bind(SYMBOL(asString), &Float::as_string);
-    bind(SYMBOL(format), &Float::format);
-    bind(SYMBOL(asin), &Float::asin);
-    bind(SYMBOL(atan), &Float::atan);
-    bind(SYMBOL(atan2), &Float::atan2);
-    bind(SYMBOL(bitand), &Float::operator&);
-    bind(SYMBOL(bitor), &Float::operator|);
-    bind(SYMBOL(compl), &Float::operator~);
-    bind(SYMBOL(cos), &Float::cos);
-    bind(SYMBOL(exp), &Float::exp);
-    bind(SYMBOL(inf), &Float::inf);
-    bind(SYMBOL(log), &Float::log);
-    bind(SYMBOL(nan), &Float::nan);
-    bind(SYMBOL(random), &Float::random);
-    bind(SYMBOL(round), &Float::round);
-    bind(SYMBOL(seq), &Float::seq);
-    bind(SYMBOL(sin), &Float::sin);
-    bind(SYMBOL(sqrt), &Float::sqrt);
-    bind(SYMBOL(tan), &Float::tan);
-    bind(SYMBOL(trunc), &Float::trunc);
+    bind(SYMBOL(EQ_EQ),
+         static_cast<bool (Float::*)(const rObject&) const>
+                    (&Float::operator==));
+#define DECLARE(Urbi, Cxx)                      \
+    bind(SYMBOL(Urbi), &Float::Cxx)
+
+    DECLARE(CARET, operator^);
+    DECLARE(GT_GT, operator>>);
+    DECLARE(LT_EQ, operator<=);
+    DECLARE(LT_LT, operator<<);
+    DECLARE(MINUS, minus);
+    DECLARE(PERCENT, operator%);
+    DECLARE(PLUS, plus);
+    DECLARE(SLASH, operator/);
+    DECLARE(STAR, operator*);
+    DECLARE(STAR_STAR, pow);
+    DECLARE(abs, fabs);
+    DECLARE(acos, acos);
+    DECLARE(asString, as_string);
+    DECLARE(asin, asin);
+    DECLARE(atan, atan);
+    DECLARE(atan2, atan2);
+    DECLARE(bitand, operator&);
+    DECLARE(bitor, operator|);
+    DECLARE(compl, operator~);
+    DECLARE(cos, cos);
+    DECLARE(exp, exp);
+    DECLARE(format, format);
+    DECLARE(inf, inf);
+    DECLARE(log, log);
+    DECLARE(nan, nan);
+    DECLARE(random, random);
+    DECLARE(round, round);
+    DECLARE(seq, seq);
+    DECLARE(sin, sin);
+    DECLARE(sqrt, sqrt);
+    DECLARE(tan, tan);
+    DECLARE(trunc, trunc);
+
+#undef DECLARE
   }
 
   rObject

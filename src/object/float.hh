@@ -17,9 +17,9 @@ namespace object
   class URBI_SDK_API Float: public CxxObject
   {
 
-  /*------------.
-  | C++ methods |
-  `------------*/
+  /*--------------.
+  | C++ methods.  |
+  `--------------*/
 
   public:
 
@@ -33,6 +33,11 @@ namespace object
 
     /// False iff equals zero.
     virtual bool as_bool() const;
+
+    // Comparison.
+    bool operator==(const rObject& rhs) const;
+    bool operator==(const value_type& rhs) const;
+    bool operator<=(const value_type& rhs) const;
 
     /// \name Conversions.
     /// \{
@@ -67,46 +72,45 @@ namespace object
     Float(value_type value_);
     Float(const rFloat& model);
 
-    value_type acos();
-    value_type asin();
-    std::string format(rFormatInfo finfo);
-    std::string as_string();
-    value_type atan();
-    value_type atan2(value_type);
-    value_type cos();
-    value_type exp();
-    value_type fabs();
-    value_type log();
-    rFloat minus(const objects_type& args);
-    rFloat plus(const objects_type& args);
+    value_type acos() const;
+    value_type asin() const;
+    std::string format(rFormatInfo finfo) const;
+    std::string as_string() const;
+    value_type atan() const;
+    value_type atan2(value_type) const;
+    value_type cos() const;
+    value_type exp() const;
+    value_type fabs() const;
+    value_type log() const;
+    value_type minus(const objects_type& args) const;
+    value_type plus(const objects_type& args) const;
     using Object::operator<;
-    bool operator <(value_type rhs);
 
     // Operations on unsigned.
-    unsigned_type operator ~();
-    unsigned_type operator |(unsigned_type rhs);
-    unsigned_type operator &(unsigned_type rhs);
-    unsigned_type operator ^(unsigned_type rhs);
-    unsigned_type operator <<(unsigned_type rhs);
-    unsigned_type operator >>(unsigned_type rhs);
+    unsigned_type operator ~() const;
+    unsigned_type operator |(unsigned_type rhs) const;
+    unsigned_type operator &(unsigned_type rhs) const;
+    unsigned_type operator ^(unsigned_type rhs) const;
+    unsigned_type operator <<(unsigned_type rhs) const;
+    unsigned_type operator >>(unsigned_type rhs) const;
 
-    value_type pow(value_type rhs);
-    value_type operator *(value_type rhs);
-    value_type operator /(value_type rhs);
-    value_type operator %(value_type rhs);
+    value_type pow(value_type rhs) const;
+    value_type operator *(value_type rhs) const;
+    value_type operator /(value_type rhs) const;
+    value_type operator %(value_type rhs) const;
 
-    int random();
-    value_type round();
-    rList seq();
-    value_type sin();
-    value_type sqrt();
-    value_type tan();
-    value_type trunc();
+    int random() const;
+    value_type round() const;
+    rList seq() const;
+    value_type sin() const;
+    value_type sqrt() const;
+    value_type tan() const;
+    value_type trunc() const;
 
 
-  /*---------------.
-  | Urbi functions |
-  `---------------*/
+  /*-----------------.
+  | Urbi functions.  |
+  `-----------------*/
 
   public:
 
@@ -114,9 +118,9 @@ namespace object
     static value_type nan();
 
 
-  /*--------.
-  | Details |
-  `--------*/
+  /*----------.
+  | Details.  |
+  `----------*/
 
   private:
 
