@@ -30,8 +30,8 @@ my $previous_label = undef;
 sub lineno (\%)
 {
   my ($lst) = @_;
-  my $line = ${%$lst}{_line};
-  my $file = ${%$lst}{_file};
+  my $line = $$lst{_line};
+  my $file = $$lst{_file};
   "clog << \"$file:$line\";\n"
   . "//#line $line \"$file\"\n"
 }
@@ -44,15 +44,15 @@ sub register ($$\%)
   my ($file, $line, $lst) = @_;
   # If this listing has a name which is already used, append to
   # this existing listing.
-  my $name = ${%$lst}{name};
+  my $name = $$lst{name};
   if ($name)
     {
       if ($by_name{$name})
         {
-          ${%{$by_name{$name}}}{_contents} .=
+          ${$by_name{$name}}{_contents} .=
             "\n\n"
             . lineno(%$lst)
-            . ${%$lst}{_contents};
+            . $$lst{_contents};
           return;
         }
       else
@@ -61,23 +61,23 @@ sub register ($$\%)
         }
     }
 
-  my $label = ${%$lst}{label};
+  my $label = $$lst{label};
   if ($chk{$label})
     {
       # Collision.
       print STDERR
         "warning: label `$label' defined twice\n",
-        "  ${%{$chk{$label}}}{_location}: first definition\n",
+        "  ${$chk{$label}}{_location}: first definition\n",
         "  $file:$line: second definition\n";
     }
-  elsif (exists ${%$lst}{firstnumber}
-         && ${%$lst}{firstnumber} eq "last")
+  elsif (exists $$lst{firstnumber}
+         && $$lst{firstnumber} eq "last")
     {
       # Extension of the previous listing.
-      ${%{$chk{$previous_label}}}{_contents} .=
+      ${$chk{$previous_label}}{_contents} .=
         "\n\n"
         . lineno(%$lst)
-        . ${%$lst}{_contents};
+        . $$lst{_contents};
     }
   else
     {
