@@ -1,14 +1,18 @@
 #! /usr/bin/perl -w
 
 # Read a LaTeX file, and extract chk files for each urbiscript
-# environment listing.  The label is used to name the create chk file.
-# If there is no label, FILE:LINE is used to name the file.
+# environment listing.  The label is used to name the created chk
+# file.  If there is no label, FILE:LINE is used to name the file.
 #
 # lstlisting has a notion of split listing, using the attribute "name"
 # to decide how pieces must be glued together (this is used when
 # numbering).  Listings with the same "name" are glued togeter.  This
 # is especially needed when a listing uses objects defined in earlier
 # listings.
+#
+# Another means to glue together urbiscript snippets is to use the
+# attribute firstnumber=last in the snippet that should be fused with
+# the previous one.
 
 use strict;
 use English;
