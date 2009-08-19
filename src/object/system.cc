@@ -316,9 +316,7 @@ namespace object
     // bit, because our channeling/message-sending system sucks a lot.
     runner::Runner::backtrace_type bt = runner().backtrace_get();
     bt.pop_back();
-    foreach (const runner::Runner::frame_type& elt,
-	     boost::make_iterator_range(boost::rbegin(bt),
-					boost::rend(bt)))
+    rforeach (const runner::Runner::frame_type& elt, bt)
       runner().send_message("backtrace", elt.first + " (" + elt.second + ")");
   }
 
