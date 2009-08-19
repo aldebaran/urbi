@@ -71,9 +71,15 @@ namespace runner
     /// Send the current backtrace through the connection.
     /// \param chan The channel to print through.
     virtual void show_backtrace(const std::string& chan) = 0;
+
     /// Retreive the current backtrace as a list of (function name,
     /// location) pairs
-    typedef std::pair<std::string, std::string> frame_type;
+    struct frame_type
+    {
+      frame_type(const std::string& name, const std::string& location);
+      std::string name;
+      std::string location;
+    };
     typedef std::vector<frame_type> backtrace_type;
     virtual backtrace_type backtrace_get() const = 0;
 

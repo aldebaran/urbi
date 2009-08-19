@@ -99,6 +99,17 @@ namespace runner
     return tag_stack_.size();
   }
 
+  /*---------------------.
+  | Runner::frame_type.  |
+  `---------------------*/
+
+  LIBPORT_SPEED_INLINE
+  Runner::frame_type::frame_type(const std::string& n, const std::string& l)
+    : name(n)
+    , location(l)
+  {
+  }
+
 } // namespace runner
 
 #endif // RUNNER_RUNNER_HXX

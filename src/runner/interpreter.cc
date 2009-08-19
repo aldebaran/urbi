@@ -289,7 +289,7 @@ namespace runner
       std::ostringstream o;
       if (c.second)
         o << c.second.get();
-      res.push_back(std::make_pair(c.first.name_get(), o.str()));
+      res.push_back(frame_type(c.first.name_get(), o.str()));
     }
     return res;
   }

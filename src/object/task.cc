@@ -101,18 +101,15 @@ namespace object
   Task::backtrace()
   {
     List::value_type res;
-
-    const runner::Runner* runner = dynamic_cast<runner::Runner*>(value_.get());
-
-    if (!runner)
-      return new List(res);
-
-    foreach(runner::Runner::frame_type line, runner->backtrace_get())
+    if (const runner::Runner* runner = dynamic_cast<runner::Runner*>(value_.get()))
     {
-      List::value_type frame;
-      frame.push_back(new String(line.first));
-      frame.push_back(new String(line.second));
-      libport::push_front(res, new List(frame));
+      foreach(runner::Runner::frame_type line, runner->backtrace_get())
+      {
+        List::value_type frame;
+        frame << new String(line.name)
+              << new String(line.location);
+        libport::push_front(res, new List(frame));
+      }
     }
     return new List(res);
   }

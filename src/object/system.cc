@@ -317,7 +317,7 @@ namespace object
     runner::Runner::backtrace_type bt = runner().backtrace_get();
     bt.pop_back();
     rforeach (const runner::Runner::frame_type& elt, bt)
-      runner().send_message("backtrace", elt.first + " (" + elt.second + ")");
+      runner().send_message("backtrace", elt.name + " (" + elt.location + ")");
   }
 
   static List::value_type
