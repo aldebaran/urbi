@@ -31,6 +31,7 @@
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
+#include <libport/tokenizer.hh>
 
 #include <kernel/config.h>
 
@@ -210,6 +211,25 @@ namespace kernel
       return r;
     }
 
+    static
+    inline
+    runner::Runner&
+    operator<<(runner::Runner& r, const char* s)
+    {
+      return r << std::string(s);
+    }
+
+    template<typename Cont>
+    static
+    inline
+    runner::Runner&
+    operator<<(runner::Runner& r, const Cont& c)
+    {
+      foreach (const std::string& s, c)
+        r << s;
+      return r;
+    }
+
     static void ice(int i)
     {
       install_ice_catcher(hard_ice);
@@ -237,12 +257,11 @@ namespace kernel
         << "Please include it in the report."
         << ""
         << "---------- VERSION ----------"
-        << UServer::package_info().signature()
+        << libport::make_tokenizer(UServer::package_info().signature(), "\n")
         << ""
-        << "---------- CURRENT C++ BACKTRACE ----------";
-      foreach (const std::string& s, libport::Backtrace())
-        r << s;
-      r << ""
+        << "---------- CURRENT C++ BACKTRACE ----------"
+        << libport::Backtrace()
+        << ""
         << "---------- CURRENT URBI BACKTRACE ----------";
       static const std::string notag = "";
       r.show_backtrace(notag);
