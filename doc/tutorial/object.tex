@@ -40,7 +40,7 @@ equal to \lstinline|nil| --- which is a reasonable default value. To
 get a pair of our own, we simply clone \lstinline|Pair|.  We can then
 use it as a regular pair.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var p = Pair.clone;
 [00000000] (nil, nil)
 p.first = "101010";
@@ -57,7 +57,7 @@ Since \lstinline|Pair| is a regular pair object, you can modify and
 use it at will. Yet this is not a good idea, since you will alter your
 base prototype, which alters any derivative, future and even past.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var before = Pair.clone;
 [00000000] (nil, nil)
 Pair.first = false;
@@ -73,8 +73,8 @@ assert(Pair.first === after.first);
 
 \section{Prototypes and slot lookup}
 
-In prototype-based language, 'is-a' relations (being an instance of
-some type) and inheritance relations (extending another type) are
+In prototype-based language, \emph{is-a} relations (being an instance
+of some type) and inheritance relations (extending another type) are
 simplified in a single relation: prototyping. You can inspect an
 object prototypes with the \lstinline{protos} method.
 
@@ -274,17 +274,28 @@ o1.locateSlot("x") === o1;
 This is why, when we cloned Pair earlier, and modified the ``first''
 slot of our fresh Pair, we didn't alter Pair one all its other clones.
 
-% BIG FIXME: classes, classes ... c'mon, these are not classes but
-% prototypes ...
-\section{Defining classes}
+\section{Defining pseudo-classes}
 
 Now that we know the internals of \us's object model, we can start
-defining our own classes. For instance, we can define our own
-\lstinline{Pair} class. We just have to create a pair, with its first and
-second slots. For this we use the \lstinline{do} scope described in
-\autoref{section:constructs/do}. The listing below defines a new
-\lstinline{Pair} class. The \lstinline{asString} function is simply used to
-customize pairs printing - don't give it too much attention for now.
+defining our own classes.
+
+But wait, we just said there are no classes in prototype-based
+object-oriented languages!  That is true: there are no classes in the
+sense of \Cxx: compile-time entities that are not objects.  Instead,
+prototype-based languages rely on the existence of a canonical object
+(the \dfn{prototype}) from which (pseudo) \emph{instances} are
+derived.  Yet, since the syntactic inspiration for \us comes from
+languages such as \java, \Cxx and so forth, it is nevertheless the
+\lstinline|class| keyword that is used to define the pseudo-classes,
+i.e., prototypes.
+
+As an example, we define our own \lstinline{Pair} class. We just have
+to create a pair, with its \lstinline|first| and \lstinline|second|
+slots. For this we use the \lstinline{do} scope described in
+\autoref{section:constructs:do}. The listing below defines a new
+\lstinline{Pair} class. The \lstinline{asString} function is simply
+used to customize pairs printing --- don't give it too much attention
+for now.
 
 \begin{urbiscript}
 var MyPair = Object.clone;
@@ -332,17 +343,17 @@ predefines a few slots, but this is not the point here.
 
 \section{Constructors}
 \label{sec:tut:ctor}
-As we've seen, we can use the clone method on any object to obtain an
-identical object. Yet, some class provide more elaborated
-constructors, accessible by calling \lstinline{new} instead of
-\lstinline{clone}, potentially passing it arguments.
+As we've seen, we can use the \lstinline|clone| method on any object
+to obtain an identical object. Yet, some classes provide more
+elaborate constructors, accessible by calling \lstinline{new} instead
+of \lstinline{clone}, potentially passing arguments.
 
 \begin{urbiscript}
 var p = Pair.new("foo", false);
 [00000000] ("foo", false)
 \end{urbiscript}
 
-While \lstinline{clone} guarantees you obtain a empty fresh object
+While \lstinline{clone} guarantees you obtain an empty fresh object
 inheriting from the prototype, \lstinline{new} behavior is left to the
 discretion of the cloned prototype --- although its behavior is the
 same as \lstinline{clone} by default.
@@ -364,6 +375,36 @@ class MyPair
 MyPair.new(0, 1);
 [00000000] (0, 1)
 \end{urbiscript}
+
+\section{Operators}
+\label{sec:tut:operators}
+
+In \us, operators such as \lstinline|+|, \lstinline|&&| and others,
+are regular function that benefit from a bit of syntactic suggar.  To
+be more precise, \lstinline|\var{a}+\var{b}| is exactly the same as
+\lstinline|\var{a}.'+'(\var{b})|.  The rules to resolve slot names
+apply too, i.e., the \lstinline|'+'| slot is looked for in \var{a},
+then in its prototypes.
+
+The following example provides arithmetics between pairs.
+
+\begin{urbiscript}[firstnumber=last]
+class ArithPair
+{
+  var first = nil;
+  var second = nil;
+  function init(f, s) { first = f;   second = s;  };
+  function asString() { "(" + first + ", " + second + ")"; };
+  function '+'(rhs) { new(first + rhs.first, second + rhs.second); };
+  function '-'(rhs) { new(first - rhs.first, second - rhs.second); };
+  function '*'(rhs) { new(first * rhs.first, second * rhs.second); };
+  function '/'(rhs) { new(first / rhs.first, second / rhs.second); };
+};
+[00000000] (nil, nil)
+ArithPair.new(1, 10) + ArithPair.new(2, 20) * ArithPair.new(3, 30);
+[00000000] (7, 610)
+\end{urbiscript}
+
 
 %\section{Conclusion}
 
