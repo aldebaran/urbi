@@ -333,28 +333,26 @@ namespace object
     return res;
   }
 
-#define IS(Spec)                                        \
-  bool String::is_ ## Spec() const                      \
-  {                                                     \
-    bool res = true;                                    \
-    size_t pos = content_.size();                       \
-    if (pos)                                            \
-      while (res && --pos                               \
-             && (res = is ## Spec(content_[pos])))      \
-        ;                                               \
-    return res;                                         \
+#define IS(Spec)                                \
+  bool String::is_ ## Spec() const              \
+  {                                             \
+    foreach (char c, content_)                  \
+      if (!is ## Spec(c))                       \
+        return false;                           \
+    return true;                                \
   }
-  IS(upper)
-  IS(lower)
+
+  IS(alnum)
   IS(alpha)
   IS(cntrl)
-  IS(space)
   IS(digit)
-  IS(xdigit)
-  IS(alnum)
-  IS(punct)
   IS(graph)
+  IS(lower)
   IS(print)
+  IS(punct)
+  IS(space)
+  IS(upper)
+  IS(xdigit)
 #undef IS
 
   int String::toAscii() const

@@ -123,9 +123,14 @@ assert("foo".fresh == "foo_6");
 \end{tabular}
 
 \begin{urbiscript}[firstnumber=last]
+assert("".isDigit);
+assert("0123456789".isDigit);
+assert(!"a".isDigit);
+
 assert("".isLower);
 assert("lower".isLower);
 assert(! "Not Lower".isLower);
+
 assert("".isUpper);
 assert("UPPER".isUpper);
 assert(! "Not Upper".isUpper);
