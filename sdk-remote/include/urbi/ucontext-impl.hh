@@ -18,7 +18,7 @@ namespace urbi
       /// Inject all loaded uobjects in the system by calling newUObjectClass.
       void init();
       /// Inject a specific uobject
-      bool bind(const std::string& name);
+      bool bind(const std::string& name, std::string rename = std::string());
       /// Called to instanciate the first Object of class.
       virtual void newUObjectClass(baseURBIStarter* s) = 0;
       virtual void newUObjectHubClass(baseURBIStarterHub* s) = 0;

@@ -158,13 +158,13 @@ namespace urbi
      }
    }
    bool
-   UContextImpl::bind(const std::string& n)
+   UContextImpl::bind(const std::string& n, std::string rename)
    {
      foreach(baseURBIStarter* s, baseURBIStarter::list())
      {
        if (s->name == n)
        {
-         s->instanciate(this);
+         s->instanciate(this, rename);
          return true;
        }
      }
