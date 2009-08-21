@@ -1,2 +1,27 @@
-every (128ms)
-  Socket.poll;
+do (Global.Socket)
+{
+  var pollInterval = 128ms|
+  var pollTag = Tag.new|
+
+  at (pollInterval->changed?)
+  {
+    pollTag.stop;
+    if (pollInterval)
+      pollLoop;
+  };
+
+  function pollLoop
+  {
+    detach({
+      pollTag:loop
+      {
+        sleep(Socket.pollInterval)|
+        echo("coucou");
+        Socket.poll;
+      }
+    });
+  };
+
+};
+
+Socket.pollLoop;

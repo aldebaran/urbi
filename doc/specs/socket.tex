@@ -15,8 +15,6 @@ new \lstinline|Socket| has four own slots: \lstinline|connected|,
 
 \begin{urbiscript}
 var s = Socket.new|
-s.localSlotNames;
-[00000001] ["received", "error", "disconnected", "connected"]
 \end{urbiscript}
 
 \subsection{Methods}
@@ -50,7 +48,13 @@ s.localSlotNames;
   Whether \lstinline|this| is connected.
 
 \item \lstinline|poll|\\
-  Runs the event processing loop to execute ready handlers.
+  Runs the event processing loop to execute ready handlers. By
+  default, the loop is executed every \lstinline|pollInterval|.
+
+\item \lstinline|pollInterval|\\
+  Each \lstinline|pollInterval| amout of time, \lstinline|Socket.poll|
+  is called. If \lstinline|pollInterval| equals zero,
+  \lstinline|Socket.poll| isn't called.
 
 \item \lstinline|port|\\
   The port of the connection.
