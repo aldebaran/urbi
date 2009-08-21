@@ -1,0 +1,49 @@
+\section{Server}
+
+A \dfn{Server} can listen incoming connections.
+
+\subsection{Prorotypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+A \lstinline|Server| is constructed with no argument. At creation, a
+new \lstinline|Server| has its own slot \lstinline|connection|. This
+slot is an event that is launched when a connection establishes.
+
+\begin{urbiscript}
+var s = Server.new|
+s.localSlotNames;
+[00000001] ["connection"]
+\end{urbiscript}
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|connection|\\
+  The event launched at each incoming connection. This event is
+  launched with one argument: the socket of the established connexion.
+\begin{urbiscript}[firstnumber=last]
+at (s.connection?(var socket))
+{
+  // This code execute at each connection. 'socket' is the incoming
+  // connection.
+};
+\end{urbiscript}
+
+\item \lstinline|host|\\
+  The host on which \lstinline|this| is listening. Raise an error if
+  \lstinline|this| isn't listening.
+
+\item \lstinline|listen(\var{host}, \var{port})|\\
+  Listen incoming connections with \var{host} and \var{port}.
+
+\item \lstinline|port|\\
+  The port on which \lstinline|this| is listening. Raise an error if
+  \lstinline|this| isn't listening.
+
+\item \lstinline|sockets|\\
+  The list of the sockets created at each incoming connection.
+
+\end{itemize}

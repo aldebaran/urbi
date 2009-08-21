@@ -1,0 +1,65 @@
+\section{Socket}
+
+A \dfn{Socket} can manage asynchronous input output connections.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+A \lstinline|Socket| is constructed with no argument. At creation, a
+new \lstinline|Socket| has four own slots: \lstinline|connected|,
+\lstinline|disconnected|, \lstinline|error| and \lstinline|received|.
+
+\begin{urbiscript}
+var s = Socket.new|
+s.localSlotNames;
+[00000001] ["received", "error", "disconnected", "connected"]
+\end{urbiscript}
+
+\subsection{Methods}
+\begin{itemize}
+
+\item \lstinline|connect(\var{host}, \var{port})|\\
+  Connects \lstinline|this| on \var{host} and \var{port}.
+
+\item \lstinline|connected|\\
+  Event launched when the connection is established.
+
+\item \lstinline|connectSerial(\var{device}, \var{baudrate})|\\
+  Connect \lstinline|this| on the serial port \var{device}, with given
+  \var{baudrate}.
+
+\item \lstinline|disconnect|\\
+  Closes the connection.
+
+\item \lstinline|disconnected|\\
+  Event launched when a disconnection happens.
+
+\item \lstinline|error|\\
+  Event launched when an error happens. This event is launched with
+  the error message in argument. The event \lstinline|disconnected| is
+  also always launched.
+
+\item \lstinline|host|\\
+  The host of the connection.
+
+\item \lstinline|isConnected|\\
+  Whether \lstinline|this| is connected.
+
+\item \lstinline|poll|\\
+  Runs the event processing loop to execute ready handlers.
+
+\item \lstinline|port|\\
+  The port of the connection.
+
+\item \lstinline|received|\\
+  Event launched when \lstinline|this| has received data. The data is
+  given by argument to the event.
+
+\item \lstinline|write(\var{data})|\\
+  Sends \var{data} trough the connection.
+
+\end{itemize}
