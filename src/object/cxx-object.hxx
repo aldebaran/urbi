@@ -7,6 +7,7 @@
 # include <object/object-class.hh>
 # include <object/primitive.hh>
 # include <object/string.hh>
+# include <object/symbols.hh>
 # include <runner/raise.hh>
 
 namespace object
@@ -118,15 +119,30 @@ namespace object
     return to_urbi(self.get()->*value);
   }
 
+  template <typename C, typename T>
+  static rObject
+  setter(T (C::* attr), libport::intrusive_ptr<C> self,
+         const std::string&, const T& value)
+  {
+    self.get()->*attr = value;
+    return 0;
+  }
+
   template <typename T>
   template <typename A>
   void
   CxxObject::Binder<T>::var(const libport::Symbol& name,
                             A (T::*attr))
   {
-    boost::function1<rObject, libport::intrusive_ptr<T> > f
+    boost::function1<rObject, libport::intrusive_ptr<T> > get
       (boost::bind(&getter<T, A>, _1, attr));
-    tgt_->slot_set(name, make_primitive(f), true);
+    tgt_->slot_set(name, make_primitive(get), true);
+
+    boost::function3<rObject, libport::intrusive_ptr<T>, const std::string&, const A&> set
+      (boost::bind(&setter<T, A>, attr, _1, _2, _3));
+#define S(Name) Symbol(#Name)
+    tgt_->property_set(name, libport::S(updateHook), make_primitive(set));
+#undef S
   }
 
   template<typename T>
