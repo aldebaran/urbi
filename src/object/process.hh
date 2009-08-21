@@ -32,6 +32,8 @@ namespace object
     void join() const;
     bool done() const;
     rObject status() const;
+    std::string name() const;
+    std::string as_string() const;
 
   /*--------.
   | Details |
@@ -39,6 +41,7 @@ namespace object
 
   private:
     static void monitor_children();
+    std::string name_;
     pid_t pid_;
     std::string binary_;
     arguments_type argv_;

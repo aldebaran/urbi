@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <libport/lockable.hh>
+#include <libport/path.hh>
 #include <libport/thread.hh>
 #include <libport/unistd.h>
 
@@ -43,7 +44,8 @@ namespace object
 
   Process::Process(const std::string& binary,
                    const arguments_type& argv)
-    : pid_(0)
+    : name_(libport::path(binary).basename())
+    , pid_(0)
     , binary_(binary)
     , argv_(argv)
     , status_(-1)
@@ -52,7 +54,8 @@ namespace object
   }
 
   Process::Process(rProcess model)
-    : pid_(0)
+    : name_(model->name_)
+    , pid_(0)
     , binary_(model->binary_)
     , argv_(model->argv_)
     , status_(-1)
@@ -64,6 +67,7 @@ namespace object
   Process::init(const std::string& binary,
                 const arguments_type& argv)
   {
+    name_ = libport::path(binary).basename();
     binary_ = binary;
     argv_ = argv;
   }
@@ -76,6 +80,18 @@ namespace object
       close(stdout_fd_[0]);
       close(stderr_fd_[0]);
     }
+  }
+
+  std::string
+  Process::name() const
+  {
+    return name_;
+  }
+
+  std::string
+  Process::as_string() const
+  {
+    return libport::format("Process %s", name_);
   }
 
   void Process::run()
@@ -234,9 +250,11 @@ namespace object
   void
   Process::initialize(CxxObject::Binder<Process>& bind)
   {
+    bind(SYMBOL(asString), &Process::as_string);
     bind(SYMBOL(done), &Process::done);
     bind(SYMBOL(init), &Process::init);
     bind(SYMBOL(join), &Process::join);
+    bind(SYMBOL(name), &Process::name);
     bind(SYMBOL(run),  &Process::run );
     bind(SYMBOL(status),  &Process::status );
 
