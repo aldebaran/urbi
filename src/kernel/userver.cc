@@ -257,7 +257,7 @@ namespace kernel
         << "Please include it in the report."
         << ""
         << "---------- VERSION ----------"
-        << libport::make_tokenizer(UServer::package_info().signature(), "\n")
+        << libport::lines(UServer::package_info().signature())
         << ""
         << "---------- CURRENT C++ BACKTRACE ----------"
         << libport::Backtrace()

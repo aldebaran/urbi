@@ -85,20 +85,17 @@ namespace object
 
     std::ostringstream os;
     args[0]->dump(os, depth_max);
-    //for now our best choice is to dump line by line in "system" messages.
-    const std::string stream = os.str();
-    boost::tokenizer< boost::char_separator<char> > tok =
-      libport::make_tokenizer(stream, "\n");
+    // For now our best choice is to dump line by line in "system" messages.
     const std::string system_header("*** ");
-    foreach(const std::string& line, tok)
-      r.send_message(tag, system_header+line);
+    foreach (const std::string& line, libport::lines(os.str()))
+      r.send_message(tag, system_header + line);
     return void_class;
   }
 
   /// Return the address of an object as a number, mostly
   /// for debugging purpose.
   static rObject
-  object_class_uid (const objects_type& args)
+  object_class_uid(const objects_type& args)
   {
     static boost::format uid("0x%x");
     check_arg_count(args.size() - 1, 0);
