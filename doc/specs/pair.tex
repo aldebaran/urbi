@@ -3,7 +3,24 @@
 A \dfn{pair} is a container storing two objects, similar in spirit to
 \lstinline|std::pair| in \Cxx.
 
+\subsection{Prototype}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
 
+\subsection{Construction}
+
+A \dfn{Pair} is contructed with one or two arguments. In case on one
+argument used, the constructor uses it twice.
+
+\begin{urbiscript}
+var p1 = Pair.new(1, 2);
+[00000001] (1, 2)
+var p2 = Pair.new(3);
+[00000002] (3, 3)
+\end{urbiscript}
+
+\subsection{Methods}
 \begin{itemize}
 \item \lstinline|asString|\\
   Generate the string \samp{(\var{first}, \var{second})} using
@@ -11,16 +28,22 @@ A \dfn{pair} is a container storing two objects, similar in spirit to
 
 \item \lstinline|first|\\
   Return the first member of the pair.
-
-\item \lstinline|init(\var{first}, \var{second})|~\\
-  Instantiate a new \lstinline|Pair| containing \var{first} and
-  \var{second}.
+\begin{urbiscript}
+assert(p1.first == 1);
+\end{urbiscript}
 
 \item \lstinline|second|\\
   Return the second member of the pair.
+\begin{urbiscript}
+assert(p1.second == 2);
+\end{urbiscript}
 
 \item \lstinline|'[]'(\var{index})|\\
   Return the \var{index}-th element.  \var{index} must be 0 or 1.
+\begin{urbiscript}
+assert(Pair[0] === Pair.first);
+assert(Pair[1] === Pair.second);
+\end{urbiscript}
 
 \item \lstinline|'[]='(\var{index}, \var{value})|\\
   Set (and return) the \var{index}-th element to \var{value}.
@@ -28,27 +51,21 @@ A \dfn{pair} is a container storing two objects, similar in spirit to
 
 \item \lstinline|'<'(\var{other})|\\
   Lexicographic comparison between two pairs.
+\begin{urbiscript}
+assert(Pair.new(0, 0) < Pair.new(0, 1));
+assert(Pair.new(0, 0) < Pair.new(1, 0));
+assert(Pair.new(0, 1) < Pair.new(1, 0));
+\end{urbiscript}
 
 \item \lstinline|'=='(\var{other})|\\
   Whether \lstinline|this| and \lstinline|other| have the same
   contents (equality-wise).
-\end{itemize}
-
-See below for an example.
-
 \begin{urbiscript}
-var p = Pair.new(1, 2);
-[00000001] (1, 2)
-p.first - p.second;
-[00000002] -1
-p[0] = 10 | p;
-[00000002] (10, 2)
-assert(Pair.new(0, 0) < Pair.new(0, 1));
-assert(Pair.new(0, 0) < Pair.new(1, 0));
-assert(Pair.new(0, 1) < Pair.new(1, 0));
 assert(Pair.new(1, 2) == Pair.new(1, 2));
 assert(!(Pair.new(1, 1) == Pair.new(2, 2)));
 \end{urbiscript}
+\end{itemize}
+
 
 
 %%% Local Variables:
