@@ -32,7 +32,7 @@ element of the list, and returns whether all calls returned true. This
 enables to check very simply if all elements in a list verify a
 predicate.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 function all(list, predicate)
 {
   for (var elt : list)
@@ -58,7 +58,7 @@ Another nice feature is the ability to write lambda functions, which
 are anonymous functions. You can create a functional value as an
 expression, without naming it, with the syntax shown below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // Create an anonymous function
 function (x) {x + 1} | {};
 // This enable to easily pass function
@@ -70,7 +70,7 @@ function (x) {x + 1} | {};
 In fact, the \lstinline{function} construct we saw earlier is only a
 shorthand for a variable assignment.
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=last]
 // This ...
 function obj.f (/*...*/) {/*...*/};
 // ... is actually a shorthand for this
@@ -89,7 +89,7 @@ function not to evaluate its arguments, and do it by hand. This works
 by not specifying formal arguments. The function is provided with a
 \lstinline{call} object that enables you to evaluate arguments.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // Note the lack of formal arguments specification
 function first
 {
@@ -116,23 +116,25 @@ operand is false (the result will be false anyway).
 \us logic operator mimic this behavior. The listing below shows how
 one can implement such a behavior.
 
-\begin{urbiscript}
-function myand
+\begin{urbiscript}[firstnumber=last]
+function myAnd
 {
-  var lhs = call.evalArgAt(0);
-  if (lhs)
-    return call.evalArgAt(1)
+  if (call.evalArgAt(0))
+    call.evalArgAt(1)
   else
-    return false;
-} | {};
+    false;
+}|;
+
 function f()
 {
   echo("f executed");
   return true;
-} | {};
-myand(false, f());
+}|;
+
+myAnd(false, f());
 [00000000] false
-myand(true, f());
+
+myAnd(true, f());
 [00000000] *** f executed
 [00000000] true
 \end{urbiscript}
