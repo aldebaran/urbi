@@ -5,21 +5,41 @@
 #ifndef KERNEL_SERVER_TIMER_HH
 # define KERNEL_SERVER_TIMER_HH
 
-# if defined NDEBUG
+# include <kernel/config.h>
 
-# define TIMER_PUSH(Name)
-# define TIMER_POP(Name)
+# if defined COMPILATION_MODE_SPEED
 
-# else
+#  define TIMER_INIT()
+#  define TIMER_PUSH(Name)
+#  define TIMER_POP(Name)
+
+# else // ! COMPILATION_MODE_SPEED
 
 #  include <libport/timer.hh>
 
-extern libport::timer server_timer;
-#   define TIMER_PUSH(Name)			\
-  server_timer.push(Name)
-#   define TIMER_POP(Name)			\
-  server_timer.pop(Name)
+namespace kernel
+{
+  extern libport::timer server_timer;
+}
 
-# endif // ! NDEBUG
+#  define TIMER_INIT()                          \
+  do {                                          \
+    kernel::server_timer.start();               \
+    kernel::timer_log_on_destruction();         \
+  } while (false)
+
+#  define TIMER_PUSH(Name)			\
+  kernel::server_timer.push(Name)
+
+#  define TIMER_POP(Name)			\
+  kernel::server_timer.pop(Name)
+
+# endif // ! COMPILATION_MODE_SPEED
+
+namespace kernel
+{
+  /// Request that server_timer be GD_DUMPed on destruction.
+  void timer_log_on_destruction();
+}
 
 #endif // !KERNEL_SERVER_TIMER_HH

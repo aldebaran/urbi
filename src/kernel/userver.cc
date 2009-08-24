@@ -107,11 +107,8 @@ namespace kernel
     , io_(*new boost::asio::io_service())
   {
     lock_check(*this);
-#if ! defined NDEBUG
-    server_timer.start();
-    server_timer.dump_on_destruction(std::cerr);
+    TIMER_INIT();
     TIMER_PUSH("server");
-#endif
     urbiserver = this;
 #ifndef WIN32
     // Use line buffering even when stdout is not a TTY.
