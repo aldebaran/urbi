@@ -11,32 +11,6 @@ do (Global)
     lobby.send("*** " + call.evalArgAt(0).asString, tag)
   };
 
-  // Look for file and load it.
-  // Throw on errors.
-  function load(file)
-  {
-    loadFile(searchFile(file));
-  };
-
-  // Look for file, and load verbosely on channel it if found.
-  function maybeLoad(file, channelName = "")
-  {
-    var path = nil;
-    try
-    {
-      path = searchFile(file);
-    }
-    catch (var e if e.isA(FileNotFound))
-    {
-    }|;
-    if (!path.isNil)
-    {
-      if (channelName)
-        echo("Loading %s" % [path], channelName);
-      loadFile(path);
-    };
-  };
-
   /*---------------------------.
   | Method function wrappers.  |
   `---------------------------*/

@@ -11,6 +11,16 @@ Details on the architecture the \urbi server runs on.
 \item \lstinline'Platform'\\
   See \refObject{System.Platform}
 
+\item \lstinline|load(\var{file})|\\
+  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}),
+  and load it.  Throw a \lstinline|FileNotFound| error if the file
+  cannot be found.  Return the last value of the file.
+\begin{urbiscript}
+// Create the file ``123.u'' that contains exactly ``123;''.
+assert(System.system("echo '123;' >123.u") == 0);
+assert(load("123.u") == 123);
+\end{urbiscript}
+
 \item \lstinline'loadLibrary(\var{library})'\\
   Load the library \var{library}, to be found in the
   \env{URBI\_UOBJECT\_PATH} search-path (see
@@ -23,6 +33,19 @@ Details on the architecture the \urbi server runs on.
   Load the UObject \var{module}.  Same as \lstinline|loadLibrary|,
   except that the low-level \Cxx symbols are not made ``global'' (in
   the sense of the shared library loader).
+
+\item \lstinline|maybeLoad(\var{file}, \var{channelName} = "")|\\
+  Look for \var{file} in the \urbi path
+  (\autoref{sec:tools:envvars}).  If the file is found and
+  \var{channelName} is non-empty, announce on it that \var{file} is
+  about to be loaded, and load it.
+
+\begin{urbiscript}[firstnumber=last]
+// Create the file ``123.u'' that contains exactly ``123;''.
+assert(System.system("echo '123;' >123.u") == 0);
+assert(maybeLoad("123.u") == 123);
+assert(maybeLoad("u.123").isVoid);
+\end{urbiscript}
 
 \item \lstinline'reboot'\\
   Restart the \urbi server.  Architecture dependent.

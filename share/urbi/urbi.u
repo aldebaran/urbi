@@ -48,8 +48,8 @@ do (Object)
 };
 
 // Global.load is not defined, yet.
-System.loadFile(System.searchFile("urbi/global.u"));
-
+System.loadFile(System.searchFile("urbi/system.u"));
+System.load("urbi/global.u");
 load("urbi/exception.u");
 load("urbi/call-message.u");
 load("urbi/lazy.u");
@@ -119,7 +119,6 @@ load("urbi/float.u");
 load("urbi/trajectory-generator.u");
 load("urbi/path.u");
 load("urbi/string.u");
-load("urbi/system.u");
 load("urbi/object.u");
 load("urbi/file.u");
 load("urbi/formatter.u");
