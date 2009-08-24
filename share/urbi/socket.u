@@ -16,7 +16,6 @@ do (Global.Socket)
       pollTag:loop
       {
         sleep(Socket.pollInterval)|
-        echo("coucou");
         Socket.poll;
       }
     });
