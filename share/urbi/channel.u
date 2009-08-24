@@ -7,14 +7,6 @@ function Object.print()
   topLevel << this
 };
 
-function Global.echo
-{
-  var tag = ""|
-  if (1 < call.argsCount)
-    tag = call.evalArgAt(1)|
-  lobby.send("*** " + call.evalArgAt(0).asString, tag)
-};
-
 function Global.wall
 {
   call.message = "echo";
