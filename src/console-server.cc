@@ -55,8 +55,8 @@
 GD_INIT();
 GD_ADD_CATEGORY(URBI);
 
-using libport::program_name;
-
+#define URBI_EXIT(Status, Args)                 \
+  throw urbi::Exit(Status, libport::format Args)
 
 class ConsoleServer
   : public kernel::UServer
@@ -142,10 +142,8 @@ namespace
   forbid_option(const std::string& arg)
   {
     if (arg.size() > 1 && arg[0] == '-')
-    {
-      boost::format fmt("%s: unrecognized command line option: %s");
-      throw urbi::Exit(EX_USAGE, str(fmt % libport::program_name() % arg));
-    }
+      URBI_EXIT(EX_USAGE,
+                ("unrecognized command line option: %s", arg));
   }
 }
 
@@ -211,12 +209,12 @@ namespace urbi
       }
       catch (const urbi::Exit& e)
       {
-        std::cerr << program_name() << ": " << e.what() << std::endl;
+        std::cerr << libport::program_name() << ": " << e.what() << std::endl;
         return e.error_get();
       }
       catch (const std::exception& e)
       {
-        std::cerr << program_name() << ": " << e.what() << std::endl;
+        std::cerr << libport::program_name() << ": " << e.what() << std::endl;
         return 1;
       }
     }
@@ -280,8 +278,7 @@ namespace urbi
       }
       catch (libport::Error& e)
       {
-        boost::format fmt("%s: command line error: %s");
-        throw Exit(EX_USAGE, str(fmt % libport::program_name() % e.what()));
+        URBI_EXIT(EX_USAGE, ("command line error: %s", e.what()));
       }
 
       if (libport::opts::help.get())
@@ -345,20 +342,16 @@ namespace urbi
         std::string host = IF_OPTION_PARSER(libport::opts::host_l.value(""),"");
         if (boost::system::error_code err =
             s.listen(&connectionFactory, host, desired_port))
-          throw urbi::Exit
-            (EX_UNAVAILABLE,
-             libport::format("%s: cannot listen to port %s:%s: %s",
-                             program_name(), host, desired_port,
-                             err.message()));
+          URBI_EXIT(EX_UNAVAILABLE,
+                    ("cannot listen to port %s:%s: %s",
+                     host, desired_port, err.message()));
         port = s.getLocalPort();
         // Port not allocated at all, or port differs from (non null)
         // request.
         if (!port
             || (desired_port && port != desired_port))
-          throw urbi::Exit
-            (EX_UNAVAILABLE,
-             libport::format("%s: cannot listen to port %s:%s",
-                             program_name(), host, desired_port));
+          URBI_EXIT(EX_UNAVAILABLE,
+                    ("cannot listen to port %s:%s", host, desired_port));
       }
     }
     data.network = 0 < port;
@@ -385,16 +378,14 @@ namespace urbi
 
     foreach (const Input& i, input)
     {
-      int res = USUCCESS;
+      // FIXME: We target s for files and c for strings.
       if (i.file_p)
-        res = s.load_file(i.value, c.recv_queue_get());
+      {
+        if (s.load_file(i.value, c.recv_queue_get()) != USUCCESS)
+          URBI_EXIT(EX_NOINPUT, ("failed to process file %s", i.value));
+      }
       else
         c.recv_queue_get().push(i.value.c_str());
-      if (res != USUCCESS)
-      {
-        boost::format fmt("%s: failed to process %s");
-        throw urbi::Exit(EX_NOINPUT, str(fmt % program_name() % i.value));
-      }
     }
 
     c.received("");
@@ -404,7 +395,6 @@ namespace urbi
       (*sem)++;
 
     return main_loop(data);
-
   }
 
   int
@@ -421,9 +411,10 @@ namespace urbi
         {
           input = libport::read_stdin();
         }
-        catch (libport::exception::Exception e)
+        catch (const libport::exception::Exception& e)
         {
-          std::cerr << program_name() << ": "  << e.what() << std::endl;
+          std::cerr << libport::program_name() << ": "
+                    << e.what() << std::endl;
           data.interactive = false;
         }
         if (!input.empty())
