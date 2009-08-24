@@ -14,9 +14,9 @@ A \dfn{Pair} is contructed with one or two arguments. In case on one
 argument used, the constructor uses it twice.
 
 \begin{urbiscript}
-var p1 = Pair.new(1, 2);
+Pair.new(1, 2);
 [00000001] (1, 2)
-var p2 = Pair.new(3);
+Pair.new(3);
 [00000002] (3, 3)
 \end{urbiscript}
 
@@ -28,19 +28,19 @@ var p2 = Pair.new(3);
 
 \item \lstinline|first|\\
   Return the first member of the pair.
-\begin{urbiscript}
-assert(p1.first == 1);
+\begin{urbiscript}[firstnumber=last]
+assert(Pair.new(1, 2).first == 1);
 \end{urbiscript}
 
 \item \lstinline|second|\\
   Return the second member of the pair.
-\begin{urbiscript}
-assert(p1.second == 2);
+\begin{urbiscript}[firstnumber=last]
+assert(Pair.new(1, 2).second == 2);
 \end{urbiscript}
 
 \item \lstinline|'[]'(\var{index})|\\
   Return the \var{index}-th element.  \var{index} must be 0 or 1.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert(Pair[0] === Pair.first);
 assert(Pair[1] === Pair.second);
 \end{urbiscript}
@@ -51,7 +51,7 @@ assert(Pair[1] === Pair.second);
 
 \item \lstinline|'<'(\var{other})|\\
   Lexicographic comparison between two pairs.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert(Pair.new(0, 0) < Pair.new(0, 1));
 assert(Pair.new(0, 0) < Pair.new(1, 0));
 assert(Pair.new(0, 1) < Pair.new(1, 0));
@@ -60,7 +60,7 @@ assert(Pair.new(0, 1) < Pair.new(1, 0));
 \item \lstinline|'=='(\var{other})|\\
   Whether \lstinline|this| and \lstinline|other| have the same
   contents (equality-wise).
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert(Pair.new(1, 2) == Pair.new(1, 2));
 assert(!(Pair.new(1, 1) == Pair.new(2, 2)));
 \end{urbiscript}
