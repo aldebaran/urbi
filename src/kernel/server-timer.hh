@@ -20,6 +20,9 @@
 namespace kernel
 {
   extern libport::timer server_timer;
+
+  /// Request that server_timer be GD_DUMPed on destruction.
+  void timer_log_on_destruction();
 }
 
 #  define TIMER_INIT()                          \
@@ -35,11 +38,5 @@ namespace kernel
   kernel::server_timer.pop(Name)
 
 # endif // ! COMPILATION_MODE_SPEED
-
-namespace kernel
-{
-  /// Request that server_timer be GD_DUMPed on destruction.
-  void timer_log_on_destruction();
-}
 
 #endif // !KERNEL_SERVER_TIMER_HH

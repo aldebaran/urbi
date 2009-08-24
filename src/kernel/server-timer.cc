@@ -1,14 +1,15 @@
+#include <kernel/server-timer.hh>
+
 #ifndef COMPILATION_MODE_SPEED
 
 # include <libport/debug.hh>
 # include <libport/tokenizer.hh>
-# include <kernel/server-timer.hh>
 
 namespace kernel
 {
   libport::timer server_timer;
 
-  void timer_log()
+  static void timer_log()
   {
     std::stringstream o;
     server_timer.dump(o);
