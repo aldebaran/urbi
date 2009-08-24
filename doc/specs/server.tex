@@ -1,8 +1,8 @@
 \section{Server}
 
-A \dfn{Server} can listen incoming connections.
+A \dfn{Server} can listen to incoming connections.
 
-\subsection{Prorotypes}
+\subsection{Prototypes}
 \begin{itemize}
 \item \refObject{Object}
 \end{itemize}
@@ -23,27 +23,26 @@ s.localSlotNames;
 \begin{itemize}
 \item \lstinline|connection|\\
   The event launched at each incoming connection. This event is
-  launched with one argument: the socket of the established connexion.
+  launched with one argument: the socket of the established connection.
 \begin{urbiscript}[firstnumber=last]
 at (s.connection?(var socket))
 {
-  // This code execute at each connection. 'socket' is the incoming
+  // This code is run at each connection. 'socket' is the incoming
   // connection.
 };
 \end{urbiscript}
 
 \item \lstinline|host|\\
   The host on which \lstinline|this| is listening. Raise an error if
-  \lstinline|this| isn't listening.
+  \lstinline|this| is not listening.
 
 \item \lstinline|listen(\var{host}, \var{port})|\\
   Listen incoming connections with \var{host} and \var{port}.
 
 \item \lstinline|port|\\
   The port on which \lstinline|this| is listening. Raise an error if
-  \lstinline|this| isn't listening.
+  \lstinline|this| is not listening.
 
 \item \lstinline|sockets|\\
   The list of the sockets created at each incoming connection.
-
 \end{itemize}

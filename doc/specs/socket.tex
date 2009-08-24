@@ -1,6 +1,7 @@
 \section{Socket}
 
-A \dfn{Socket} can manage asynchronous input output connections.
+A \dfn{Socket} can manage asynchronous input/output network
+connections.
 
 \subsection{Prototypes}
 \begin{itemize}
@@ -21,17 +22,17 @@ var s = Socket.new|
 \begin{itemize}
 
 \item \lstinline|connect(\var{host}, \var{port})|\\
-  Connects \lstinline|this| on \var{host} and \var{port}.
+  Connect \lstinline|this| to \var{host} and \var{port}.
 
 \item \lstinline|connected|\\
   Event launched when the connection is established.
 
 \item \lstinline|connectSerial(\var{device}, \var{baudrate})|\\
-  Connect \lstinline|this| on the serial port \var{device}, with given
+  Connect \lstinline|this| to the serial port \var{device}, with given
   \var{baudrate}.
 
 \item \lstinline|disconnect|\\
-  Closes the connection.
+  Close the connection.
 
 \item \lstinline|disconnected|\\
   Event launched when a disconnection happens.
@@ -54,7 +55,7 @@ var s = Socket.new|
 \item \lstinline|pollInterval|\\
   Each \lstinline|pollInterval| amout of time, \lstinline|Socket.poll|
   is called. If \lstinline|pollInterval| equals zero,
-  \lstinline|Socket.poll| isn't called.
+  \lstinline|Socket.poll| is not called.
 
 \item \lstinline|port|\\
   The port of the connection.
