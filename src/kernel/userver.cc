@@ -265,9 +265,12 @@ namespace kernel
         << "---------- CURRENT URBI BACKTRACE ----------";
       static const std::string notag = "";
       r.show_backtrace(notag);
-      r << ""
-        << "---------- PS ----------";
-      object::system_class->call(SYMBOL(ps));
+      if (object::system_class->slot_has(SYMBOL(ps)))
+      {
+        r << ""
+          << "---------- PS ----------";
+        object::system_class->call(SYMBOL(ps));
+      }
       exit(EX_SOFTWARE);
     }
   }

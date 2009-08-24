@@ -7,6 +7,10 @@
 #include <runner/sneaker.hh>
 #include <sched/scheduler.hh>
 
+static const char *
+not_loaded_yet = ("\n(this is typical of lookup errors occuring before"
+                  " the completion of the initialization)");
+
 namespace runner
 {
   using namespace object;
@@ -34,7 +38,9 @@ namespace runner
 	     rObject arg4,
              bool skip)
   {
-    assert(global_class->slot_has(exn_name));
+    __passert(global_class->slot_has(exn_name),
+              "cannot throw Urbi exception " + exn_name.name_get ()
+              + not_loaded_yet);
     const rObject& exn = global_class->slot_get(exn_name);
     Runner& r = dbg::runner_or_sneaker_get();
     objects_type args;
@@ -70,7 +76,9 @@ namespace runner
   void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
-    assert(global_class->slot_has(SYMBOL(LookupError)));
+    __passert(global_class->slot_has(SYMBOL(LookupError)),
+              "cannot raise LookupError about " + msg.name_get()
+              + not_loaded_yet);
     raise_urbi_skip(SYMBOL(LookupError),
                     to_urbi(msg),
                     obj);
@@ -79,7 +87,9 @@ namespace runner
   void
   raise_const_error()
   {
-    assert(global_class->slot_has(SYMBOL(ConstError)));
+    __passert(global_class->slot_has(SYMBOL(ConstError)),
+              std::string("cannot raise ConstError")
+              + not_loaded_yet);
     raise_urbi_skip(SYMBOL(ConstError));
   }
 
