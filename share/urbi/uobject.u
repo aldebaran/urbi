@@ -3,27 +3,6 @@
 /// FIXME: implement in C++ to get the period passed on command line.
 var Object.getPeriod = 20ms;
 
-/// Returns true if argument is defined. Argument can be of the form a.b.c.
-function Global.isdef
-{
-  var base = call.sender |
-  var first = true |
-  for| (var c: call.argString(0).split([".", " "], nil, false, false))
-  {
-    if (base.hasSlot(c))
-    {
-      if (!first && !base.hasLocalSlot(c))
-        return false |
-      var s = base.getSlot(c).acceptVoid |
-      base = s.apply([s]).acceptVoid |
-      first = false
-    }
-      else
-      return false |
-  } |
-  return true
-};
-
 var Global.UObject = Finalizable.new;
 do (Global.UObject)
 {

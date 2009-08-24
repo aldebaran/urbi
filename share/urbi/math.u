@@ -15,8 +15,7 @@ class Global.Math
     return call.evalArgs.min
   };
 
-  // FIXME: Global.max but Math.min???
-  function Global.max
+  function max
   {
     return call.evalArgs.max
   };

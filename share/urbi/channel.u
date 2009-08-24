@@ -7,13 +7,6 @@ function Object.print()
   topLevel << this
 };
 
-function Global.wall
-{
-  call.message = "echo";
-  for (var lobby in lobbies - [Lobby])
-    lobby.callMessage(call);
-};
-
 // Does not have anything special.  Yet.
 class Global.Channel
 {
