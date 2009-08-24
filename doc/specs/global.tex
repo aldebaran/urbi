@@ -1,5 +1,34 @@
 \section{Global}
 
+\fixme{Lots of work to do here.}
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|load(\var{file})|\\
+  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}),
+  and load it.  Throw a \lstinline|FileNotFound| error if the file
+  cannot be found.  Return the last value of the file.
+\begin{urbiscript}
+// Create the file ``123.u'' that contains exactly ``123;''.
+assert(System.system("echo '123;' >123.u") == 0);
+assert(load("123.u") == 123);
+\end{urbiscript}
+
+
+\item \lstinline|maybeLoad(\var{file}, \var{channelName} = "")|\\
+  Look for \var{file} in the \urbi path
+  (\autoref{sec:tools:envvars}).  If the file is found and
+  \var{channelName} is non-empty, announce on it that \var{file} is
+  about to be loaded, and load it.
+
+\begin{urbiscript}[firstnumber=last]
+// Create the file ``123.u'' that contains exactly ``123;''.
+assert(System.system("echo '123;' >123.u") == 0);
+assert(maybeLoad("123.u") == 123);
+assert(maybeLoad("u.123").isVoid);
+\end{urbiscript}
+\end{itemize}
+
 
 %%% Local Variables:
 %%% mode: latex
