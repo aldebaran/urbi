@@ -28,6 +28,30 @@ my %by_name;
 # The name of the previous test.
 my $previous_label = undef;
 
+# A regexp that matches nested parents.
+my $nparens;
+$nparens =
+  qr{
+       \(
+       (?:
+          (?> [^()]+ )         # Non-parens without backtracking
+        |
+          (??{ $nparens })     # Group with matching parens
+       )*
+       \)
+    }x;
+
+# strip $STRING
+# -------------
+# Kill leading/trailing spaces.
+sub strip ($)
+{
+  local ($_) = @_;
+  s/^\s+//;
+  s/\s+$//g;
+  $_;
+}
+
 # lineno
 # ------
 # Issue an urbiScript //#line for test $lst.
@@ -117,7 +141,9 @@ sub process_listing ($$$)
   # assert_eq is clearer when there are failures, but it is not nice
   # looking in the documentation.  Beware of === and !== that contain
   # ==.
-  $res{'_contents'} =~ s/^(\s*assert)\(([^,(]*?)\s+==\s/$1_eq($2, /gms;
+  $res{'_contents'} =~
+    s{^(\s*assert)\s*\(((?:(?>[^()])|$nparens)+?)\s*(?<![!=])==(?![=])\s*}
+     { "$1_eq(" . strip ($2) . ", "}gmse;
 
   # Decode and normalize the options.
   if ($options)
