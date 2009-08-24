@@ -1,7 +1,49 @@
 \section{System}
 Details on the architecture the \urbi server runs on.
 
+\subsection{Prototypes}
 \begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Methods}
+\begin{itemize}
+%% \item \lstinline|_exit|
+%% \item \lstinline|aliveJobs|
+%% \item \lstinline|arguments|
+%% \item \lstinline|backtrace|
+%% \item \lstinline|breakpoint|
+%% \item \lstinline|currentRunner|
+%% \item \lstinline|cycle|
+%% \item \lstinline|eval|
+%% \item \lstinline|fresh|
+%% \item \lstinline|getenv|
+%% \item \lstinline|jobs|
+%% \item \lstinline|loadFile|
+%% \item \lstinline|loadModule|
+%% \item \lstinline|loadLibrary|
+%% \item \lstinline|lobbies|
+%% \item \lstinline|lobby|
+%% \item \lstinline|nonInterruptible|
+%% \item \lstinline|programName|
+%% \item \lstinline|quit|
+%% \item \lstinline|reboot|
+%% \item \lstinline|registerAtJob|
+%% \item \lstinline|resetStats|
+%% \item \lstinline|scopeTag|
+%% \item \lstinline|searchFile|
+%% \item \lstinline|searchPath|
+%% \item \lstinline|setenv|
+%% \item \lstinline|shiftedTime|
+%% \item \lstinline|shutdown|
+%% \item \lstinline|sleep|
+%% \item \lstinline|spawn|
+%% \item \lstinline|stats|
+%% \item \lstinline|stopall|
+%% \item \lstinline|system|
+%% \item \lstinline|time|
+%% \item \lstinline|unsetenv|
+
 \item \lstinline'_exit(\var{status})'\\
   Shut the server down brutally: the connections are not closed, and
   the resources are not explicitly released (the operating system
