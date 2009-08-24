@@ -7,19 +7,6 @@ function Object.print()
   topLevel << this
 };
 
-/* Implemented in C++ for better performances.
-function lobby.send
-{
-  var what = call.evalArgAt(0);
-  var tag = "";
-  if (call.argsCount > 1)
-    tag = call.evalArgAt(1);
-  write("[" + time.trunc
-        + { if (tag == "") "" else ":" + tag}
-        + "] " + what + "\n")
-};
-*/
-
 function Global.echo
 {
   var tag = ""|
