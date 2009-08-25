@@ -27,10 +27,10 @@ do (System)
   {
     if (!ndebug)
     {
-      var lhs = call.evalArgAt(1);
-      var rhs = call.evalArgAt(2);
-      var lhsStr = call.argString(1);
-      var rhsStr = call.argString(2);
+      var lhs = call.evalArgAt(1) |
+      var rhs = call.evalArgAt(2) |
+      var lhsStr = call.argString(1) |
+      var rhsStr = call.argString(2) |
 
       // Support lazy invocations (all arguments are lazy),
       // or a partially lazy one, to ease bouncing from assert_eq.
@@ -40,19 +40,19 @@ do (System)
             call.args[0]
           else
             call.argAt(0);
-        };
+        } |
       assert_(lhs.getSlot(opStr).apply([lhs, rhs]),
               "%s %s %s (%s %s %s)"
                  % [lhsStr, opStr, rhsStr,
-                    lhs,    opStr, rhs]);
+                    lhs,    opStr, rhs])
     }
   };
 
   /// assert_eq(Lhs, Rhs).
   function assert_eq
   {
-    call.args.insertFront("==");
-    call.message = "assert_op";
+    call.args.insertFront("==") |
+    call.message = "assert_op" |
     callMessage(call)
   };
 
