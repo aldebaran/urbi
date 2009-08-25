@@ -64,11 +64,7 @@ namespace object
     return value_get() <= rhs;
   }
 
-  std::string
-  String::append(const std::string& other)
-  {
-    return content_.append(other);
-  }
+
 
   String::size_type
   String::distance(const std::string& other) const
@@ -396,7 +392,6 @@ namespace object
     DECLARE(asFloat     , as_float);
     DECLARE(asPrintable , as_printable);
     DECLARE(asString    , as_string);
-    DECLARE(append      , append);
     DECLARE(distance    , distance);
     DECLARE(empty       , empty);
     DECLARE(format      , format);

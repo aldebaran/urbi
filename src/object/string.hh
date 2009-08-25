@@ -45,7 +45,6 @@ namespace object
     std::string as_printable() const;
     std::string format(rFormatInfo finfo) const;
 
-    std::string append(const std::string& other);
     size_type distance(const std::string& other) const;
     bool empty() const;
     std::string plus(rObject rhs) const;
