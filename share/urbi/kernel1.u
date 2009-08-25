@@ -1,5 +1,5 @@
 // k1 compatibility.
-class Global.Kernel1Functions
+class Global.Kernel1
 {
   function copy(o)
   {
@@ -14,7 +14,7 @@ class Global.Kernel1Functions
 
   function ping()
   {
-    echo ("pong time=" + (time / 1s).asString + "s");
+    echo("pong time=" + (time / 1s).asString + "s");
   };
 
   function seq(n)
@@ -43,26 +43,26 @@ class Global.Kernel1Functions
   // Deprecated commands from k1.
   // FIXME: Maybe some commands should be rewritten.
   for| (var name: [
-                  "commands",
-                  "connections",
-                  "devices",
-                  "events",
-                  "functions",
-                  "reset",
-                  "runningcommands",
-                  "strict",
-                  "taglist",
-                  "undefall",
-                  "unstrict",
-                  "uservars",
-                  "vars"
-                    ])
+                    "commands",
+                    "connections",
+                    "devices",
+                    "events",
+                    "functions",
+                    "reset",
+                    "runningcommands",
+                    "strict",
+                    "taglist",
+                    "undefall",
+                    "unstrict",
+                    "uservars",
+                    "vars",
+                  ])
     setSlot(name,
-      function () { echo("`" + name + "' is deprecated." ) });
+      function () { warn("`" + name + "' is deprecated." ) });
 
   var system = System;
   var system.ghostID = "";
 };
 
 // K1 compatibility: import the k1 functions.
-Global.addProto(Global.Kernel1Functions);
+Global.addProto(Global.Kernel1);
