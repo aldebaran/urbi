@@ -525,13 +525,26 @@ namespace urbi
     RemoteUContextImpl::clientError(const UMessage&)
     {
       closed_ = true;
-      // Destroy everything
-      foreach(objects_type::value_type& v, objects)
-        delete v.second;
-      objects.clear();
-      foreach(hubs_type::value_type& v, hubs)
-        delete v.second;
-      hubs.clear();
+      /* Destroy everything
+       *  We must remove each object from the hash right after deleting it
+       * to prevent getUObject requests on deleted items from dtor of other
+       * uobjects.
+       * Clearing first then deleting might make some UObject fail, since
+       * getUObject would return 0 for perfectly valid and accessible UObjects.
+       */
+      while (!objects.empty())
+      {
+        objects_type::iterator i = objects.begin();
+        delete i->second;
+        objects.erase(i);
+      }
+
+      while (!hubs.empty())
+      {
+        hubs_type::iterator i = hubs.begin();
+        delete i->second;
+        hubs.erase(i);
+      }
       return URBI_CONTINUE;
     }
   } // namespace urbi::impl
