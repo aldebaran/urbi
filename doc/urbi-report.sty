@@ -232,7 +232,31 @@
   {\autoref{sec:std-#1}}
 
 %% FIXME: I don't know how to return to \newline here :(
+%% \begin{labeled}{MacroName}
+\newenvironment{labeled}[1]%
+  {\begin{list}{}{%
+        \def\@labeled@temp@a{\let\@labeled@MakeLabel}%
+        \expandafter\@labeled@temp@a \csname #1 \endcsname %
+        \renewcommand{\makelabel}[1]{\@labeled@MakeLabel{##1}\hfill\break}}}%
+  {\end{list}}
+
+%% A list of \env, \file, \option.
+%% I don't know how to factor.
+\newenvironment{envs}%
+  {\begin{list}{}{%
+    \renewcommand{\makelabel}[1]%
+       {\index{##1@\env{##1}}\env{##1}\hfill\break}}}%
+  {\end{list}}
+
+\newenvironment{files}%
+  {\begin{list}{}{%
+    \renewcommand{\makelabel}[1]%
+       {\index{##1@\file{##1}}\file{##1}\hfill\break}}}%
+  {\end{list}}
+
 \newenvironment{options}%
   {\begin{list}{}{%
-        \renewcommand{\makelabel}[1]{\option{##1}\hfill\break}}}%
+    \renewcommand{\makelabel}[1]%
+       {\index{##1@\option{##1}}\option{##1}\hfill\break}}}%
   {\end{list}}
+

@@ -117,6 +117,7 @@ var Object.loaded = 1 |;
 
 // Load URBI.INI outside initialization phase.
 maybeLoad("URBI.INI", "start");
+maybeLoad("global.u", "start");
 
 /*-----------------------------------------------------------.
 | Ready to go.  This string is special and expected by       |

@@ -41,12 +41,35 @@ export URBI_PATH=:/home/jessie/urbi:/usr/local/urbi
 \end{shell}
 
 \subsection{Environment Variables}
-\begin{description}
-\item[\env{URBI\_PATH}] The search-path for \us source files.
-\item[\env{URBI\_UOBJECT\_PATH}] The search-path for UObjects files.
+\begin{envs}
+\item[URBI\_PATH] The search-path for \us source files.
+\item[URBI\_UOBJECT\_PATH] The search-path for UObjects files.
   This is used by \command{urbi-launch}, by
   \lstinline|System.loadModule| and \lstinline|System.loadLibrary|.
-\end{description}
+\end{envs}
+
+\section{Special Files}
+\label{sec:tools:files}
+
+\begin{files}
+\item[global.u] If found in the \env{URBI\_PATH} (see
+  \autoref{sec:tools:envvars}), this file is loaded by \urbi server upon
+  start-up.  It is the appropriate place to install features you
+  mean to provide to all the users of the server.  It is will be
+  loaded via a special system connection, with its own private lobby.
+  Therefore, purely local definitions will not be reachable from
+  users; global modifications should be made in globally visible
+  objects, say \refObject{Global}.
+
+\item[URBI.INI] This is the obsolete name for \file{global.u}.
+
+\item[local.u] If found in the \env{URBI\_PATH} (see
+  \autoref{sec:tools:envvars}), this file is loaded by every
+  connection established with an \urbi server.  This is the
+  appropriate place for enhancements local to a lobby.
+
+\item[CLIENT.INI] This is the obsolete name for \file{global.u}.
+\end{files}
 
 \section{\command{urbi} --- Running an Urbi Server}
 \label{sec:tools:urbi}

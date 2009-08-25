@@ -102,6 +102,7 @@ namespace kernel
 
     /// Load CLIENT.INI.
     server_.load_file("CLIENT.INI", *recv_queue_);
+    server_.load_file("local.u", *recv_queue_);
     received("");
   }
 

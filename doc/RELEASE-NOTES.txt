@@ -14,8 +14,10 @@ Documentation
 The documentation was largely extended and fixed.  Its layout was also
 improved.  Changes include, but are not limited to:
 
-- documentation of URBI_UOBJECT_PATH
-- documentation of various executables
+- URBI_UOBJECT_PATH
+- various executables
+- environment variables
+- special files
 - k1-to-k2
   Conversion idioms to urbiScript 1 to urbiScript 2
 - faq
@@ -126,7 +128,10 @@ Various
 =======
 
 - Text files are converted to DOS end-of-lines for Windows packages.
+
 - urbi-send supports --quit.
+
+- The files global.u/local.u replace URBI.INI/CLIENT.INI.
 
 ***************************
 * New in kernel 2.0 RC 1. *

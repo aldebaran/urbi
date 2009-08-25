@@ -43,10 +43,9 @@ STRICT_TEST_LOGS = $(shell $(LIST_FAILED_TEST_LOGS))
 $(TEST_LOGS): $(top_builddir)/all.stamp
 
 
-# Set URBI_PATH to find URBI.INI.
-TESTS_ENVIRONMENT +=				\
-  URBI_PATH=$(abs_srcdir)/specs:$$URBI_PATH	\
-  srcdir=$(srcdir)				\
+TESTS_ENVIRONMENT +=						\
+  URBI_PATH=$$URBI_PATH						\
+  srcdir=$(srcdir)						\
   PATH=$(abs_top_builddir)/sdk-remote/src/tests/bin:$$PATH
 
 UCONSOLE_CHECK = $(top_builddir)/tests/bin/uconsole-check
