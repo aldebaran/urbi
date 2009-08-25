@@ -8,6 +8,33 @@ do (Formatter)
     return "Formatter " + data.asString
   };
 
+  function '%'(args)
+  {
+    if (!args.isA(List))
+      args = [args]|
+
+    var res = ""|
+
+    for| (var c: data)
+    {
+      switch (c.protos.front)
+      {
+        case String:
+          res = res + c|
+        case FormatInfo:
+        {
+          if (args)
+            res = res + args.removeFront.format(c)
+          else
+            throw Exception.new("%: too few argument for format")|
+        }|
+      }|
+    }|
+    if (args)
+      throw Exception.new("%: too many arguments for format")|
+    return res|
+  };
+
   function asList()
   {
     data
