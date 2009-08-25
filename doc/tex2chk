@@ -41,6 +41,20 @@ $nparens =
        \)
     }x;
 
+# The (Boolean) operators in urbiScript.  Beware of operators "nested"
+# in other operators: we must not cut "===" into "==" as operator, and
+# "=" as lhs or rhs.
+my $operators =
+  qr{
+      (?<![!=])
+      (?:
+         [!=]={1, 2} # ==, ===, !=, !==.
+       | [<>]=?      # <, <=, >, >=.
+       | =?~=        # =~=, ~=.
+      )
+      (?![=])
+    }x;
+
 # strip $STRING
 # -------------
 # Kill leading/trailing spaces.
@@ -77,7 +91,7 @@ sub register ($$\%)
     {
       if ($by_name{$name})
         {
-          ${$by_name{$name}}{_contents} .=
+          $by_name{$name}{_contents} .=
             "\n\n"
             . lineno(%$lst)
             . $$lst{_contents};
@@ -95,14 +109,16 @@ sub register ($$\%)
       # Collision.
       print STDERR
         "warning: label `$label' defined twice\n",
-        "  ${$chk{$label}}{_location}: first definition\n",
+        "  $chk{$label}{_location}: first definition\n",
         "  $file:$line: second definition\n";
     }
   elsif (exists $$lst{firstnumber}
          && $$lst{firstnumber} eq "last")
     {
       # Extension of the previous listing.
-      ${$chk{$previous_label}}{_contents} .=
+      die "$file:$line: [firstnumber=last] used without preceding listing\n"
+        unless defined $previous_label;
+      $chk{$previous_label}{_contents} .=
         "\n\n"
         . lineno(%$lst)
         . $$lst{_contents};
@@ -230,7 +246,7 @@ sub dump_chk ($)
         or die "cannot create $file.tmp: $!";
     print $out lineno(%c);
     print $out "$c{_contents}\n";
-    system ("$ENV{move_if_change} -I '^//' $file.tmp $file") == 0
+    system ("$ENV{move_if_change} -s -I '^//' $file.tmp $file") == 0
       or die "$ENV{move_if_change} failed: $?";
   }
   my $local_mk = "$dir/test.mk";
