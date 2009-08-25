@@ -36,10 +36,10 @@ $(ast_srcdir)/%.stamp: $(gen_dir)/ast-%-gen $(ast_gen_deps)
 
 ## If a generated file is missing, rerun the generation by removing
 ## the stamp file.
-AST_REGENERATE_IF_NEEDED =			\
-  if test ! -f $@; then				\
-    rm -f $<;					\
-    $(MAKE) $(AM_MAKEFLAGS) $<;			\
+AST_REGENERATE_IF_NEEDED =				\
+  if test ! -f $@ && test ! -f $(srcdir)/$@; then	\
+    rm -f $<;						\
+    $(MAKE) $(AM_MAKEFLAGS) $<;				\
   fi
 
 
