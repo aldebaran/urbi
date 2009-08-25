@@ -455,6 +455,7 @@ The UObject class expects to know the variable name,i.e. a = new b;
 should pass a to b's corresponding UObject ctor. Since we don't have this
 information, we create a unique string, pass it to the ctor, and store it
 in a.
+
 But the user can create UVars based on the variable name it knows about,
 i.e. a.val. So get_base must look in its uid map, and if it finds nothing,
 look for an Urbi variable with given name. We expect all UObjects to be created

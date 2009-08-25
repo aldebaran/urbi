@@ -3,9 +3,13 @@
 /// FIXME: implement in C++ to get the period passed on command line.
 var Object.getPeriod = 20ms;
 
+// We cannot use the "class Global.UObject: Finalizable" syntax here,
+// because of specific constraints of Finalizable.
 var Global.UObject = Finalizable.new;
 do (Global.UObject)
 {
+  var type = "UObject";
+
   var minimumInterval = Object.getPeriod;
   var updateTask = 0;
   var timerTask = 0;
@@ -26,8 +30,8 @@ do (Global.UObject)
     call.message = "init" |
     var ret = res.callMessage(call)|
     if (ret != 0)
-      throw Exception.new
-      ("%s construction failed: init returned %s." % [__uobjectName, ret])|
+      throw Exception.new("%s construction failed: init returned %s."
+                          % [__uobjectName, ret])|
     res
   };
 
@@ -255,7 +259,7 @@ at (getSlot("UVar").onHasNotifyAccess?)
   getSlot("UVar").nAccessTag: loop { sleep(getPeriod)};
 
 
-var Global.uobjects = Object.clone;
+class Global.uobjects {};
 var Global.uobjects_handle = WeakPointer.new;
 
 // UObjects can use evaluate at initialization-time.
