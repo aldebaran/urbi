@@ -554,6 +554,7 @@ namespace urbi
   {
     return MODE_PLUGIN;
   }
+
   namespace impl
   {
     UContextImpl* getPluginContext()
@@ -565,435 +566,439 @@ namespace urbi
     {
       instance_ = this;
     }
-  void
-  KernelUContextImpl::newUObjectClass(baseURBIStarter* s)
-  {
-    object::rObject proto = uobject_make_proto(s->name);
-    where->slot_set(libport::Symbol(s->name + "_class"), proto);
-    // Make our first instance.
-    where->slot_set(libport::Symbol(s->name), uobject_new(proto, true));
-  }
-  void
-  KernelUContextImpl::newUObjectHubClass(baseURBIStarterHub* s)
-  {
-    s->instanciate(this);
-  }
-  void
-  KernelUContextImpl::send(const char* str)
-  {
-    kernel::urbiserver->ghost_connection_get().received(str);
-  }
+    void
+    KernelUContextImpl::newUObjectClass(baseURBIStarter* s)
+    {
+      object::rObject proto = uobject_make_proto(s->name);
+      where->slot_set(libport::Symbol(s->name + "_class"), proto);
+      // Make our first instance.
+      where->slot_set(libport::Symbol(s->name), uobject_new(proto, true));
+    }
+    void
+    KernelUContextImpl::newUObjectHubClass(baseURBIStarterHub* s)
+    {
+      s->instanciate(this);
+    }
+    void
+    KernelUContextImpl::send(const char* str)
+    {
+      kernel::urbiserver->ghost_connection_get().received(str);
+    }
 
-  void
-  KernelUContextImpl::send(const void* buf, size_t size)
-  {
-    // Feed this to the ghostconnection.
-    kernel::urbiserver->ghost_connection_get()
-      .received(static_cast<const char*>(buf), size);
-  }
-  void KernelUContextImpl::yield() const
-  {
-    getCurrentRunner().yield();
-  }
-  void KernelUContextImpl::yield_until(libport::utime_t deadline) const
-  {
-    getCurrentRunner().yield_until(deadline);
-  }
-  void KernelUContextImpl::yield_until_things_changed() const
-  {
-    getCurrentRunner().yield_until_things_changed();
-  }
-  void KernelUContextImpl::side_effect_free_set(bool s)
-  {
-    getCurrentRunner().side_effect_free_set(s);
-  }
-  bool KernelUContextImpl::side_effect_free_get() const
-  {
-    return getCurrentRunner().side_effect_free_get();
-  }
-  UObjectHub*
-  KernelUContextImpl::getUObjectHub(const std::string& n)
-  {
-    return UContextImpl::getUObjectHub(n);
-  }
+    void
+    KernelUContextImpl::send(const void* buf, size_t size)
+    {
+      // Feed this to the ghostconnection.
+      kernel::urbiserver->ghost_connection_get()
+        .received(static_cast<const char*>(buf), size);
+    }
+    void KernelUContextImpl::yield() const
+    {
+      getCurrentRunner().yield();
+    }
+    void KernelUContextImpl::yield_until(libport::utime_t deadline) const
+    {
+      getCurrentRunner().yield_until(deadline);
+    }
+    void KernelUContextImpl::yield_until_things_changed() const
+    {
+      getCurrentRunner().yield_until_things_changed();
+    }
+    void KernelUContextImpl::side_effect_free_set(bool s)
+    {
+      getCurrentRunner().side_effect_free_set(s);
+    }
+    bool KernelUContextImpl::side_effect_free_get() const
+    {
+      return getCurrentRunner().side_effect_free_get();
+    }
+    UObjectHub*
+    KernelUContextImpl::getUObjectHub(const std::string& n)
+    {
+      return UContextImpl::getUObjectHub(n);
+    }
 
-  UObject*
-  KernelUContextImpl::getUObject(const std::string& n)
-  {
-    UObject* res = UContextImpl::getUObject(n);
-    if (res)
-      return res;
-    uobject_to_robject_type::iterator it = uobject_to_robject.find(n);
-    if (it != uobject_to_robject.end())
-      return it->second;
-    rObject r = get_base(n);
-    if (!r)
-      return 0;
-    std::string name =
-      object::from_urbi<std::string>(r->slot_get(SYMBOL(__uobjectName)));
-    return getUObject(name);
-  }
+    UObject*
+    KernelUContextImpl::getUObject(const std::string& n)
+    {
+      UObject* res = UContextImpl::getUObject(n);
+      if (res)
+        return res;
+      uobject_to_robject_type::iterator it = uobject_to_robject.find(n);
+      if (it != uobject_to_robject.end())
+        return it->second;
+      rObject r = get_base(n);
+      if (!r)
+        return 0;
+      std::string name =
+        object::from_urbi<std::string>(r->slot_get(SYMBOL(__uobjectName)));
+      return getUObject(name);
+    }
 
-  void
-  KernelUContextImpl::call(const std::string& object,
-                           const std::string& method,
-                           UAutoValue v1,
-                           UAutoValue v2,
-                           UAutoValue v3,
-                           UAutoValue v4,
-                           UAutoValue v5,
-                           UAutoValue v6,
-                           UAutoValue v7,
-                           UAutoValue v8)
-  {
-    rObject b = get_base(object);
-    object::objects_type args;
-    args.push_back(b);
+    void
+    KernelUContextImpl::call(const std::string& object,
+                             const std::string& method,
+                             UAutoValue v1,
+                             UAutoValue v2,
+                             UAutoValue v3,
+                             UAutoValue v4,
+                             UAutoValue v5,
+                             UAutoValue v6,
+                             UAutoValue v7,
+                             UAutoValue v8)
+    {
+      rObject b = get_base(object);
+      object::objects_type args;
+      args.push_back(b);
 #define CHECK(i) if (v##i.type != DATA_VOID)    \
-      args.push_back(object_cast(v##i))
-    CHECK(1);CHECK(2);CHECK(3);CHECK(4);CHECK(5);CHECK(6);CHECK(7);CHECK(8);
+        args.push_back(object_cast(v##i))
+      CHECK(1);CHECK(2);CHECK(3);CHECK(4);CHECK(5);CHECK(6);CHECK(7);CHECK(8);
 #undef CHECK
-    b->call(libport::Symbol(method), args);
-  }
-
-  void
-  KernelUContextImpl::uobject_unarmorAndSend(const char* str)
-  {
-    // Feed this to the ghostconnection.
-    kernel::UConnection& ghost = kernel::urbiserver->ghost_connection_get();
-    size_t len = strlen(str);
-    if (2 <= len && str[0] == '(')
-      ghost.received(str + 1, len - 2);
-    else
-      ghost.received(str);
-  }
-
-  UObjectMode
-  KernelUContextImpl::getRunningMode() const
-  {
-    return MODE_PLUGIN;
-  }
-  UVarImpl*
-  KernelUContextImpl::getVarImpl()
-  {
-    return new KernelUVarImpl();
-  }
-  UObjectImpl*
-  KernelUContextImpl::getObjectImpl()
-  {
-    return new KernelUObjectImpl();
-  }
-  UGenericCallbackImpl*
-  KernelUContextImpl::getGenericCallbackImpl()
-  {
-    return new KernelUGenericCallbackImpl();
-  }
-  void
-  KernelUContextImpl::setTimer(UTimerCallback* cb)
-  {
-    rObject me = get_base(cb->objname);
-    rObject f = me->slot_get(SYMBOL(setTimer));
-    rObject p = new object::Float(cb->period / 1000.0);
-    rObject call = MAKE_VOIDCALL(cb, urbi::UTimerCallback, call);
-    object::objects_type args = list_of (me)(p) (call);
-    getCurrentRunner().apply(f, SYMBOL(setTimer), args);
-  }
-  void KernelUContextImpl::registerHub(UObjectHub*)
-  {
-  }
-  void KernelUContextImpl::removeHub(UObjectHub*)
-  {
-  }
-  void KernelUContextImpl::setHubUpdate(UObjectHub* hub, ufloat period)
-  {
-    /* Call Urbi-side setHubUpdate, passing an rPrimitive wrapping the 'update'
-     * call.
-     */
-    CHECK_MAINTHREAD();
-    rObject uob = object::Object::proto->slot_get(SYMBOL(UObject));
-    rObject f = uob->slot_get(SYMBOL(setHubUpdate));
-    object::objects_type args = list_of
-      (uob)
-      (rObject(new object::String(hub->get_name())))
-      (new object::Float(period / 1000.0))
-      (MAKE_VOIDCALL(hub, urbi::UObjectHub, update));
-    getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
-  }
-
-  std::pair<int, int>
-  KernelUContextImpl::kernelVersion() const
-  {
-    //FIXME: fetch from some other place
-    return std::make_pair(2, 0);
-  }
-
-  void
-  KernelUContextImpl::instanciated(UObject*)
-  {
-  }
-
-  void
-  KernelUObjectImpl::initialize(UObject* owner)
-  {
-    owner_ = owner;
-    ECHO( "Uobject ctor for " << owner->__name );
-    uobject_to_robject[owner_->__name] = owner;
-    owner_->ctx_->registerObject(owner);
-    rObject o = get_base(owner->__name);
-    if (!o)
-    { // Instanciation occured through ucontext::bind.
-      o = uobject_make_proto(owner->__name);
-      where->slot_set(Symbol(owner->__name), o);
+      b->call(libport::Symbol(method), args);
     }
-  }
-  void
-  KernelUObjectImpl::clean()
-  {
-    uobject_to_robject.erase(owner_->__name);
-  }
-  void
-  KernelUObjectImpl::setUpdate(ufloat period)
-  {
-    CHECK_MAINTHREAD();
-    rObject me = get_base(owner_->__name);
-    rObject f = me->slot_get(SYMBOL(setUpdate));
-    object::objects_type args;
-    args.push_back(me);
-    std::string meId = getCurrentRunner().apply(
-      me->slot_get(SYMBOL(id)), SYMBOL(id), args)
-      ->as<object::String>()->value_get();
 
-    me->slot_update(SYMBOL(update),
-                    object::make_primitive(boost::function1<void, rObject>(
-                boost::bind(&bounce_update,owner_, me.get(), meId + " update"))));
-    args.clear();
-    args.push_back(me);
-    args.push_back(new object::Float(period / 1000.0));
-    getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
-  }
-
-  KernelUVarImpl::KernelUVarImpl()
-    : bypassMode_(false)
-  {
-  }
-
-  void
-  KernelUVarImpl::initialize(UVar* owner)
-  {
-    // Protect against multiple parallel creation of the same UVar.
-    runner::Runner& runner = getCurrentRunner();
-    bool prevState = runner.non_interruptible_get();
-    FINALLY(
-            ((bool, prevState))
-            ((runner::Runner&, runner)),
-            runner.non_interruptible_set(prevState););
-    runner.non_interruptible_set(true);
-    owner_ = owner;
-    ECHO("__init " << owner_->get_name());
-    owner_->owned = false;
-    bypassMode_ = false;
-    StringPair p = split_name(owner_->get_name());
-    rObject o = get_base(p.first);
-    assertion(o);
-    Symbol varName(p.second);
-    // Force kernel-side variable creation, init to void.
-    rObject initVal;
-    if (o->slot_locate(varName).first == o)
+    void
+    KernelUContextImpl::uobject_unarmorAndSend(const char* str)
     {
-      initVal = o->local_slot_get(varName)->value();
-      // Check if the variable exists and is an uvar.
-      if (initVal->slot_has(SYMBOL(owned)))
-	return;
+      // Feed this to the ghostconnection.
+      kernel::UConnection& ghost = kernel::urbiserver->ghost_connection_get();
+      size_t len = strlen(str);
+      if (2 <= len && str[0] == '(')
+        ghost.received(str + 1, len - 2);
       else
-	o->slot_remove(varName);
+        ghost.received(str);
     }
-    //clone uvar
-    ECHO("creating uvar "<<name);
-    rObject protouvar = object::Object::proto->slot_get(SYMBOL(UVar));
-    rObject uvar = protouvar->call(SYMBOL(new),
-                                   o, new object::String(varName));
-    // If the variable existed but was not an uvar, copy its old value.
-    if (initVal)
-      o->slot_get(varName)->slot_update(SYMBOL(val), initVal);
-  }
-   void KernelUVarImpl::clean()
-   {
-     //noop
-   }
-   void KernelUVarImpl::setOwned()
-   {
-     owner_->owned = true;
-     // Write 1 to the Urbi-side uvar owned slot.
-     StringPair p = split_name(owner_->get_name());
-     rObject o = get_base(p.first);
-     o->slot_get(Symbol(p.second))
-       ->slot_update(SYMBOL(owned), object::true_class);
-     ECHO("call to setowned on "<<owner_->get_name());
-   }
-   void KernelUVarImpl::sync()
-   {
-     //noop
-   }
-   void KernelUVarImpl::request()
-   {
-     //noop
-   }
-   void KernelUVarImpl::keepSynchronized()
-   {
-     //noop
-   }
 
-   void KernelUVarImpl::set(const UValue& v)
-   {
-     ECHO("uvar = operator for "<<owner_->get_name());
-     object::rUValue ov(new object::UValue());
-     ov->put(v, bypassMode_);
-     if (owner_->owned)
-       uvar_uowned_set(owner_->get_name(), ov);
-     else
-       uvar_set(owner_->get_name(), ov);
-     ov->invalidate();
-   }
-
-   const UValue& KernelUVarImpl::get() const
-   {
-     ECHO("uvar cast operator for "<<owner_->get_name());
-     try {
-       rObject o = owner_->owned?
-         ::uvar_uowned_get(owner_->get_name()) : ::uvar_get(owner_->get_name());
-       if (object::rUValue bv = o->as<object::UValue>())
-         return bv->value_get();
-       else
-       {
-         cache_ = ::uvalue_cast(o);
-         return cache_;
-       }
-     }
-     catch (object::UrbiException&)
-     {
-       runner::raise_primitive_error
-       ("Invalid read of void UVar '" + owner_->get_name() + "'");
-     }
-   }
-
-   ufloat& KernelUVarImpl::in()
-   {
-     throw std::runtime_error("in() is not implemented");
-   }
-
-   ufloat& KernelUVarImpl::out()
-   {
-      throw std::runtime_error("out() is not implemented");
-   }
-
-   UDataType
-   KernelUVarImpl::type() const
-   {
-     return ::uvalue_type(owner_->owned
-                          ? uvar_uowned_get(owner_->get_name())
-                          : uvar_get(owner_->get_name()));
-   }
-
-   UValue KernelUVarImpl::getProp(UProperty prop)
-   {
-     StringPair p = split_name(owner_->get_name());
-     rObject o = get_base(p.first);
-     return ::uvalue_cast(o->call(SYMBOL(getProperty),
-                                  new object::String(p.second),
-                                  new object::String(UPropertyNames[prop])));
-   }
-
-   void KernelUVarImpl::setProp(UProperty prop, const UValue& v)
-   {
-     StringPair p = split_name(owner_->get_name());
-     rObject o = get_base(p.first);
-     o->call(SYMBOL(setProperty),
-             new object::String(p.second),
-             new object::String(UPropertyNames[prop]),
-             object_cast(v));
-   }
-   bool KernelUVarImpl::setBypass(bool enable)
-   {
-     bypassMode_ = enable;
-     return true;
-   }
-   void
-   KernelUGenericCallbackImpl::initialize(UGenericCallback* owner, bool owned)
-   {
-     owner_ = owner;
-     owned_ = owned;
-     registered_ = false;
-   }
-
-   void
-   KernelUGenericCallbackImpl::initialize(UGenericCallback* owner)
-   {
-     initialize(owner, false);
-   }
-
-   void
-   KernelUGenericCallbackImpl::registerCallback()
-   {
-     runner::Runner& runner = getCurrentRunner();
-     if (registered_)
-     {
-       std::cerr << "###UGenericcallback on " << owner_->name
-       << " allready registered" << std::endl;
-       return;
-     }
-     registered_ = true;
-     StringPair p = split_name(owner_->name);
-     std::string method = p.second;
-     ECHO("ugenericcallback " << owner_->type << " " << p.first << " "
-          << method << "  " << owned_);
-     // UObject owning the variable/event to monitor
-     rObject me = get_base(p.first); //objname?
-     assertion(me);
-     object::objects_type args = list_of(me);
-     std::string meId = runner.apply(me->slot_get(SYMBOL(id)), SYMBOL(id),
-                                     args)
-     ->as<object::String>()->value_get();
-     std::string traceName = meId + "::" + owner_->type + "::"
-     + string_cast((void*)this);
-     if (owner_->type == "function")
-     {
-       ECHO( "binding " << p.first << "." << owner_->method );
-       me->slot_set(libport::Symbol(method), object::make_primitive(
-           boost::function1<rObject, const objects_type&>
-         (boost::bind(&wrap_ucallback, _1, owner_, traceName))));
-    }
-    if (owner_->type == "var" || owner_->type == "varaccess")
+    UObjectMode
+    KernelUContextImpl::getRunningMode() const
     {
-      rObject var = me->slot_get(Symbol(method));
-      assertion(var);
-      Symbol sym(SYMBOL(notifyAccess));
-      if (owner_->type != "varaccess")
-      {
-	if (owned_)
-          sym = SYMBOL(notifyChangeOwned);
-	else
-	  sym = SYMBOL(notifyChange);
-      }
-      rObject source = get_base(owner_->objname);
-      assertion(source);
-      rObject handle = source->slot_get(SYMBOL(handle));
-      rObject f = var->slot_get(sym);
-      assertion(f);
-      object::objects_type args = list_of
-        (var)
-        (handle)
-	(object::make_primitive(
-	boost::function1<rObject, const objects_type&>
-	(boost::bind(&wrap_ucallback_notify, _1, owner_,
-                     traceName + " " + owner_->type))));
-        runner.apply(f, sym, args);
+      return MODE_PLUGIN;
     }
-   }
-   void
-   KernelUGenericCallbackImpl::clear()
-   {
-   }
-}
+    UVarImpl*
+    KernelUContextImpl::getVarImpl()
+    {
+      return new KernelUVarImpl();
+    }
+    UObjectImpl*
+    KernelUContextImpl::getObjectImpl()
+    {
+      return new KernelUObjectImpl();
+    }
+    UGenericCallbackImpl*
+    KernelUContextImpl::getGenericCallbackImpl()
+    {
+      return new KernelUGenericCallbackImpl();
+    }
+    void
+    KernelUContextImpl::setTimer(UTimerCallback* cb)
+    {
+      rObject me = get_base(cb->objname);
+      rObject f = me->slot_get(SYMBOL(setTimer));
+      rObject p = new object::Float(cb->period / 1000.0);
+      rObject call = MAKE_VOIDCALL(cb, urbi::UTimerCallback, call);
+      object::objects_type args = list_of (me)(p) (call);
+      getCurrentRunner().apply(f, SYMBOL(setTimer), args);
+    }
+    void KernelUContextImpl::registerHub(UObjectHub*)
+    {
+    }
+    void KernelUContextImpl::removeHub(UObjectHub*)
+    {
+    }
+
+    void KernelUContextImpl::setHubUpdate(UObjectHub* hub, ufloat period)
+    {
+      // Call Urbi-side setHubUpdate, passing an rPrimitive wrapping
+      // the 'update' call.
+      CHECK_MAINTHREAD();
+      rObject uob = object::Object::proto->slot_get(SYMBOL(UObject));
+      rObject f = uob->slot_get(SYMBOL(setHubUpdate));
+      object::objects_type args = list_of
+        (uob)
+        (rObject(new object::String(hub->get_name())))
+        (new object::Float(period / 1000.0))
+        (MAKE_VOIDCALL(hub, urbi::UObjectHub, update));
+      getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
+    }
+
+    std::pair<int, int>
+    KernelUContextImpl::kernelVersion() const
+    {
+      //FIXME: fetch from some other place
+      return std::make_pair(2, 0);
+    }
+
+    void
+    KernelUContextImpl::instanciated(UObject*)
+    {
+    }
+
+    void
+    KernelUObjectImpl::initialize(UObject* owner)
+    {
+      owner_ = owner;
+      ECHO( "Uobject ctor for " << owner->__name );
+      uobject_to_robject[owner_->__name] = owner;
+      owner_->ctx_->registerObject(owner);
+      rObject o = get_base(owner->__name);
+      if (!o)
+      {
+        // Instanciation occured through ucontext::bind.
+        o = uobject_make_proto(owner->__name);
+        where->slot_set(Symbol(owner->__name), o);
+      }
+    }
+    void
+    KernelUObjectImpl::clean()
+    {
+      uobject_to_robject.erase(owner_->__name);
+    }
+    void
+    KernelUObjectImpl::setUpdate(ufloat period)
+    {
+      CHECK_MAINTHREAD();
+      rObject me = get_base(owner_->__name);
+      rObject f = me->slot_get(SYMBOL(setUpdate));
+      object::objects_type args;
+      args.push_back(me);
+      std::string meId = getCurrentRunner().apply(
+        me->slot_get(SYMBOL(id)), SYMBOL(id), args)
+        ->as<object::String>()->value_get();
+
+      me->slot_update
+        (SYMBOL(update),
+         object::make_primitive
+         (boost::function1<void, rObject>(
+           boost::bind(&bounce_update, owner_, me.get(), meId + " update"))));
+      args.clear();
+      args.push_back(me);
+      args.push_back(new object::Float(period / 1000.0));
+      getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
+    }
+
+    KernelUVarImpl::KernelUVarImpl()
+      : bypassMode_(false)
+    {
+    }
+
+    void
+    KernelUVarImpl::initialize(UVar* owner)
+    {
+      // Protect against multiple parallel creation of the same UVar.
+      runner::Runner& runner = getCurrentRunner();
+      bool prevState = runner.non_interruptible_get();
+      FINALLY(
+        ((bool, prevState))
+        ((runner::Runner&, runner)),
+        runner.non_interruptible_set(prevState););
+      runner.non_interruptible_set(true);
+      owner_ = owner;
+      ECHO("__init " << owner_->get_name());
+      owner_->owned = false;
+      bypassMode_ = false;
+      StringPair p = split_name(owner_->get_name());
+      rObject o = get_base(p.first);
+      assertion(o);
+      Symbol varName(p.second);
+      // Force kernel-side variable creation, init to void.
+      rObject initVal;
+      if (o->slot_locate(varName).first == o)
+      {
+        initVal = o->local_slot_get(varName)->value();
+        // Check if the variable exists and is an uvar.
+        if (initVal->slot_has(SYMBOL(owned)))
+          return;
+        else
+          o->slot_remove(varName);
+      }
+      //clone uvar
+      ECHO("creating uvar "<<name);
+      rObject protouvar = object::Object::proto->slot_get(SYMBOL(UVar));
+      rObject uvar = protouvar->call(SYMBOL(new),
+                                     o, new object::String(varName));
+      // If the variable existed but was not an uvar, copy its old value.
+      if (initVal)
+        o->slot_get(varName)->slot_update(SYMBOL(val), initVal);
+    }
+    void KernelUVarImpl::clean()
+    {
+      //noop
+    }
+    void KernelUVarImpl::setOwned()
+    {
+      owner_->owned = true;
+      // Write 1 to the Urbi-side uvar owned slot.
+      StringPair p = split_name(owner_->get_name());
+      rObject o = get_base(p.first);
+      o->slot_get(Symbol(p.second))
+        ->slot_update(SYMBOL(owned), object::true_class);
+      ECHO("call to setowned on "<<owner_->get_name());
+    }
+    void KernelUVarImpl::sync()
+    {
+      //noop
+    }
+    void KernelUVarImpl::request()
+    {
+      //noop
+    }
+    void KernelUVarImpl::keepSynchronized()
+    {
+      //noop
+    }
+
+    void KernelUVarImpl::set(const UValue& v)
+    {
+      ECHO("uvar = operator for "<<owner_->get_name());
+      object::rUValue ov(new object::UValue());
+      ov->put(v, bypassMode_);
+      if (owner_->owned)
+        uvar_uowned_set(owner_->get_name(), ov);
+      else
+        uvar_set(owner_->get_name(), ov);
+      ov->invalidate();
+    }
+
+    const UValue& KernelUVarImpl::get() const
+    {
+      ECHO("uvar cast operator for "<<owner_->get_name());
+      try {
+        rObject o = (owner_->owned
+                     ? ::uvar_uowned_get(owner_->get_name())
+                     : ::uvar_get(owner_->get_name()));
+        if (object::rUValue bv = o->as<object::UValue>())
+          return bv->value_get();
+        else
+        {
+          cache_ = ::uvalue_cast(o);
+          return cache_;
+        }
+      }
+      catch (object::UrbiException&)
+      {
+        runner::raise_primitive_error
+          ("Invalid read of void UVar '" + owner_->get_name() + "'");
+      }
+    }
+
+    ufloat& KernelUVarImpl::in()
+    {
+      throw std::runtime_error("in() is not implemented");
+    }
+
+    ufloat& KernelUVarImpl::out()
+    {
+      throw std::runtime_error("out() is not implemented");
+    }
+
+    UDataType
+    KernelUVarImpl::type() const
+    {
+      return ::uvalue_type(owner_->owned
+                           ? uvar_uowned_get(owner_->get_name())
+                           : uvar_get(owner_->get_name()));
+    }
+
+    UValue KernelUVarImpl::getProp(UProperty prop)
+    {
+      StringPair p = split_name(owner_->get_name());
+      rObject o = get_base(p.first);
+      return ::uvalue_cast(o->call(SYMBOL(getProperty),
+                                   new object::String(p.second),
+                                   new object::String(UPropertyNames[prop])));
+    }
+
+    void KernelUVarImpl::setProp(UProperty prop, const UValue& v)
+    {
+      StringPair p = split_name(owner_->get_name());
+      rObject o = get_base(p.first);
+      o->call(SYMBOL(setProperty),
+              new object::String(p.second),
+              new object::String(UPropertyNames[prop]),
+              object_cast(v));
+    }
+    bool KernelUVarImpl::setBypass(bool enable)
+    {
+      bypassMode_ = enable;
+      return true;
+    }
+    void
+    KernelUGenericCallbackImpl::initialize(UGenericCallback* owner, bool owned)
+    {
+      owner_ = owner;
+      owned_ = owned;
+      registered_ = false;
+    }
+
+    void
+    KernelUGenericCallbackImpl::initialize(UGenericCallback* owner)
+    {
+      initialize(owner, false);
+    }
+
+    void
+    KernelUGenericCallbackImpl::registerCallback()
+    {
+      runner::Runner& runner = getCurrentRunner();
+      if (registered_)
+      {
+        std::cerr << "###UGenericcallback on " << owner_->name
+                  << " allready registered" << std::endl;
+        return;
+      }
+      registered_ = true;
+      StringPair p = split_name(owner_->name);
+      std::string method = p.second;
+      ECHO("ugenericcallback " << owner_->type << " " << p.first << " "
+           << method << "  " << owned_);
+      // UObject owning the variable/event to monitor
+      rObject me = get_base(p.first); //objname?
+      assertion(me);
+      object::objects_type args = list_of(me);
+      std::string meId = runner.apply(me->slot_get(SYMBOL(id)), SYMBOL(id),
+                                      args)
+        ->as<object::String>()->value_get();
+      std::string traceName = meId + "::" + owner_->type + "::"
+        + string_cast((void*)this);
+      if (owner_->type == "function")
+      {
+        ECHO( "binding " << p.first << "." << owner_->method );
+        me->slot_set(libport::Symbol(method), object::make_primitive(
+                       boost::function1<rObject, const objects_type&>
+                       (boost::bind(&wrap_ucallback, _1, owner_, traceName))));
+      }
+      if (owner_->type == "var" || owner_->type == "varaccess")
+      {
+        rObject var = me->slot_get(Symbol(method));
+        assertion(var);
+        Symbol sym(SYMBOL(notifyAccess));
+        if (owner_->type != "varaccess")
+        {
+          if (owned_)
+            sym = SYMBOL(notifyChangeOwned);
+          else
+            sym = SYMBOL(notifyChange);
+        }
+        rObject source = get_base(owner_->objname);
+        assertion(source);
+        rObject handle = source->slot_get(SYMBOL(handle));
+        rObject f = var->slot_get(sym);
+        assertion(f);
+        object::objects_type args = list_of
+          (var)
+          (handle)
+          (object::make_primitive(
+            boost::function1<rObject, const objects_type&>
+            (boost::bind(&wrap_ucallback_notify, _1, owner_,
+                         traceName + " " + owner_->type))));
+        runner.apply(f, sym, args);
+      }
+    }
+    void
+    KernelUGenericCallbackImpl::clear()
+    {
+    }
+  }
 
   std::string
   baseURBIStarter::getFullName(const std::string& name) const
