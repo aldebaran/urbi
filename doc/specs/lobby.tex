@@ -1,14 +1,16 @@
 \section{Lobby}
-Local environment for each (remote or local) connection to an \urbi
-server.
+
+A \dfn{lobby} is the local environment for each (remote or local)
+connection to an \urbi server.
 
 \subsection{Prototypes}
-
-Lobby is a prototype of an instance of \refObject{Channel}.
+\begin{itemize}
+\item one instance of \refObject{Channel}
+\end{itemize}
 
 \subsection{Construction}
 
-A lobby is implicitly created at each connection. At top level,
+A lobby is implicitly created at each connection. At the top level,
 \lstinline|this| is a \dfn{Lobby}.
 
 \begin{urbiscript}
@@ -21,6 +23,15 @@ this.protos;
 \item \lstinline|connected|\\
   Whether \lstinline|this| is connected.
 
+\item \lstinline|connectionTag|\\
+  The tag of all code executed in the context of \lstinline|this|.
+
+\item \lstinline|help|\\
+  Launch the tutorial.
+
+\item \lstinline|lobby|\\
+  Return \lstinline|this|.
+
 \item \lstinline|onDisconnect|\\
   Event launched when \lstinline|this| has disconnected.
 
@@ -28,16 +39,6 @@ this.protos;
   Send value to \lstinline|this|.
 
 \item \lstinline|write|\\
-
-\item \lstinline|lobby|\\
-  Return \lstinline|this|.
-
-\item \lstinline|connectionTag|\\
-  The tag of all code executed in the context of \lstinline|this|.
-
-\item \lstinline|help|\\
-  Launch the tutorial.
-
 \end{itemize}
 
 %%% Local Variables:
