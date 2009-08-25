@@ -93,7 +93,7 @@ DATA_FROM_UGRAMMAR_Y = 				\
   parser/ugrammar.output			\
   parser/ugrammar.stamp				\
   parser/ugrammar.xml
-dist_noinst_DATA += $(DATA_FROM_UGRAMMAR_Y)
+nodist_noinst_DATA += $(DATA_FROM_UGRAMMAR_Y)
 
 FROM_UGRAMMAR_Y = $(SOURCES_FROM_UGRAMMAR_Y) $(DATA_FROM_UGRAMMAR_Y)
 MAINTAINERCLEANFILES += $(FROM_UGRAMMAR_Y)
