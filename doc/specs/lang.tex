@@ -1670,9 +1670,9 @@ test(51);
 
 \section{Parallel and event-based flow control}
 
-\subsection{at}
+\subsection{\lstinline'at'}
 
-\subsection{every}
+\subsection{\lstinline'every'}
 
 The \lstindex{every} statement enables to execute a block of code
 repeatedly, with the given period.
@@ -1687,9 +1687,107 @@ every (1s)
 [00002000] *** Are you still there?
 \end{urbiscript}
 
-It exists in two flavors. The default flavor launches the execution of
-the block in the background every given period. Iterations may
-overlap.
+It exists in several flavors.
+
+\subsubsection{\lstinline'every|'}
+The whole \lstinline'every|' statement itself remains in foreground:
+statements attached after it with \lstinline';' or \lstinline'|' will
+not be reached unless you \lstinline'break' out of it.  You may use
+\lstinline|continue| to finish one iteration.  In that case, the
+following iteration is not immediately started, it will be launched as
+expected, at the given period.
+
+\begin{urbiscript}
+{
+  var count = 4;
+  var start = time;
+  echo("before");
+  every| (100ms)
+  {
+    count -= 1;
+    echo("begin: %s @ %1.2fs" % [count, time - start]);
+    if (count == 2)
+      continue;
+    if (count == 0)
+      break;
+    echo("end:   " + count);
+  };
+  echo("after");
+};
+[00000597] *** before
+[00000598] *** begin: 3 @ 0.00s
+[00000599] *** end:   3
+[00000698] *** begin: 2 @ 0.10s
+[00000798] *** begin: 1 @ 0.20s
+[00000799] *** end:   1
+[00000898] *** begin: 0 @ 0.30s
+[00000899] *** after
+\end{urbiscript}
+
+The \lstindex{every|} flavor does not let iterations overlap. If an
+iteration takes too long, the following iterations are delayed. That
+is, the next iterations will start immediately after the end of the
+current one, and next iterations will occur normally from this point.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var too_long = true|;
+
+  var count = 5;
+  // Every other iteration exceeds the period, and will delay the
+  // following one.
+  every| (1s)
+  {
+    if (! count -=1)
+      break;
+
+    if (too_long)
+    {
+      too_long = false;
+      echo("Long in");
+      sleep(1.5s);
+      echo("Long out");
+    }
+    else
+    {
+      too_long = true;
+      echo("Short");
+    };
+  };
+};
+[00000000] *** Long in
+[00001500] *** Long out
+[00001500] *** Short
+[00002500] *** Long in
+[00004000] *** Long out
+[00004000] *** Short
+\end{urbiscript}
+
+The flow-control constructs \lstinline|break| and \lstinline|continue|
+are supported.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var count = 0;
+  every| (250ms)
+  {
+    count += 1;
+    if (count == 2)
+      continue;
+    if (count == 4)
+      break;
+    echo(count);
+  }
+};
+/*(*/sleep(2s);/*)*/
+[00000000] *** 1
+[00001500] *** 3
+\end{urbiscript}
+
+
+\subsubsection{\lstinline'every;'}
+The default flavor, \lstinline|every;| launches the execution of the
+block in the background every given period. Iterations may overlap.
 
 % Cut the previous every, no [firstnumber=last]
 \begin{urbiscript}
@@ -1707,64 +1805,6 @@ every (1s)
 [00001500] *** Out
 [00002000] *** In
 [00002500] *** Out
-\end{urbiscript}
-
-On the other hand, the \lstindex{every|} flavor will not let
-iterations overlap. If an iteration takes too long, the following
-iterations are delayed. That is, the next iterations will start
-immediately after the end of the current one, and next iterations will
-occur normally from this point.
-
-% Cut the previous every, no [firstnumber=last]
-\begin{urbiscript}
-var too_long = true|;
-
-// Every other iteration exceeds the period, and will delay the
-// following one.
-every| (1s)
-{
-  if (too_long)
-  {
-    too_long = false;
-    echo("Long in");
-    sleep(1.5s);
-    echo("Long out");
-  }
-  else
-  {
-    too_long = true;
-    echo("Short");
-  }
-};
-/*(*/sleep(4.1s);/*)*/
-[00000000] *** Long in
-[00001500] *** Long out
-[00001500] *** Short
-[00002500] *** Long in
-[00004000] *** Long out
-[00004000] *** Short
-\end{urbiscript}
-
-The flow-control constructs \lstinline|break| and \lstinline|continue|
-are supported.
-
-% Cut the previous every, no [firstnumber=last]
-\begin{urbiscript}
-{
-  var count = 0;
-  every| (250ms)
-  {
-    count += 1;
-    if (count == 2)
-      continue;
-    if (count == 4)
-      break;
-    echo(count);
-  }
-};
-/*(*/sleep(2s);/*)*/
-[00000000] *** 1
-[00001500] *** 3
 \end{urbiscript}
 
 \subsection{for\& (:)}

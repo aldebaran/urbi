@@ -296,11 +296,9 @@ namespace parser
 
     // every| (exp:1) exp:2.
     PARAMETRIC_AST(pipe,
-    "detach ({\n"
-    "  for (var deadline = shiftedTime; true;\n"
-    "       deadline = Control.'every|sleep'(deadline, %exp:1))\n"
-    "    %exp:2\n"
-    "})\n");
+    "for (var deadline = shiftedTime; true;\n"
+    "     deadline = Control.'every|sleep'(deadline, %exp:1))\n"
+    "  %exp:2\n");
 
     return exp((flavor == ast::flavor_semicolon ? semi : pipe)
                % test % body);
