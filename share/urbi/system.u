@@ -9,29 +9,51 @@ do (System)
   // Assertion control.
   var ndebug = false;
 
-  function assert_(value, message)
+  function assert_(assertion, message)
   {
-    if (!value)
+    if (!assertion)
       throw "failed assertion: " + message;
   };
 
+  /// assert(assertion).
   function assert
   {
-    if (!System.ndebug)
-      System.assert_ (call.evalArgAt (0), call.argString (0));
+    if (!ndebug)
+      assert_(call.evalArgAt(0), call.argString(0));
   };
 
+  /// assert_op(Operator: String | Lazy, Lhs, Rhs).
+  function assert_op
+  {
+    if (!ndebug)
+    {
+      var lhs = call.evalArgAt(1);
+      var rhs = call.evalArgAt(2);
+      var lhsStr = call.argString(1);
+      var rhsStr = call.argString(2);
+
+      // Support lazy invocations (all arguments are lazy),
+      // or a partially lazy one, to ease bouncing from assert_eq.
+      var opStr =
+        {
+          if (call.args[0].type == "String")
+            call.args[0]
+          else
+            call.argAt(0);
+        };
+      assert_(lhs.getSlot(opStr).apply([lhs, rhs]),
+              "%s %s %s (%s %s %s)"
+                 % [lhsStr, opStr, rhsStr,
+                    lhs,    opStr, rhs]);
+    }
+  };
+
+  /// assert_eq(Lhs, Rhs).
   function assert_eq
   {
-    if (!System.ndebug)
-      {
-        var v0 = call.evalArgAt(0);
-        var v1 = call.evalArgAt(1);
-        var s0 = call.argString(0);
-        var s1 = call.argString(1);
-        System.assert_(v0 == v1,
-                       s0 + " == " + s1 + " ("  + v0 + " == " + v1 + ")");
-      }
+    call.args.insertFront("==");
+    call.message = "assert_op";
+    callMessage(call)
   };
 
   // Look for file and load it.
