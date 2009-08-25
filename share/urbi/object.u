@@ -1,5 +1,92 @@
 do (Object)
 {
+  /*--------------.
+  | Conversions.  |
+  `--------------*/
+  function as(type)
+  {
+    getSlot("as" + type.type).apply([this])
+  };
+
+  // Destined to be overridden by subclasses.
+  function asString ()
+  {
+    id
+  };
+
+  function format (f = FormatInfo)
+  {
+    asPrintable.format(f)
+  };
+
+  function asPrintable ()
+  {
+    asString
+  };
+
+  function asToplevelPrintable ()
+  {
+    asPrintable
+  };
+
+
+  /*--------.
+  | Slots.  |
+  `--------*/
+  function ownsSlot(s)
+  {
+    warn("`o.ownsSlot(s)' is deprecated, use `o.hasLocalSlot(s)'") |
+    hasLocalSlot(s)
+  };
+
+  function slotNames()
+  {
+    warn("the semantics of `slotNames' is about to change from"
+         " `localSlotNames' to `allSlotNames', consistently with"
+         " `hasLocalSlot'/`hasSlot'.  In the meanwhile please use"
+         "  either `localSlotNames' or `allSlotNames'") |
+    localSlotNames
+  };
+
+  function isProto()
+  {
+    hasLocalSlot("type")
+  };
+
+  // Gives type, + uid if relevant
+  function id ()
+  {
+    var res = type.clone |
+    if (!isProto)
+      res += "_" + uid |
+    res
+  };
+
+  function bounce_named (fn)
+  {
+    function (x)
+    {
+      x.getSlot (fn) .apply ([x])
+    }
+  };
+
+  function bounce
+  {
+    bounce_named (call.argString (1))
+  };
+
+  // Tasks.
+  var tasks = [];
+
+  function eachBg(f, list)
+  {
+    if (list.size)
+    {
+      Object.tasks += [detach (f (list.head))];
+      eachBg (f, list.tail)
+    };
+  };
+
   function inspect (var deep = false)
   {
     function '<' (l, r) { l.toLower < r.toLower };
