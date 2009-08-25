@@ -7,9 +7,11 @@
 #include <runner/sneaker.hh>
 #include <sched/scheduler.hh>
 
+#ifndef NDEBUG
 static const char *
 not_loaded_yet = ("\n(this is typical of lookup errors occuring before"
                   " the completion of the initialization)");
+#endif
 
 namespace runner
 {
