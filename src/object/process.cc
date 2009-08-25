@@ -254,7 +254,7 @@ namespace object
     bind(SYMBOL(done), &Process::done);
     bind(SYMBOL(init), &Process::init);
     bind(SYMBOL(join), &Process::join);
-    bind(SYMBOL(name), &Process::name);
+    bind.var(SYMBOL(name), &Process::name_);
     bind(SYMBOL(run),  &Process::run );
     bind(SYMBOL(status),  &Process::status );
 
