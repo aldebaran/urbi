@@ -10,6 +10,7 @@
 
 # include <object/fwd.hh>
 # include <object/cxx-object.hh>
+# include <object/cxx-primitive.hh>
 
 namespace object
 {
@@ -21,6 +22,9 @@ namespace object
     Formatter(rFormatter model);
 
     void init(const std::string& format);
+
+    std::string format_list(const objects_type& args) const;
+    std::string format_non_list(const rObject& args) const;
 
   private:
     ATTRIBUTE_R(rList, data);

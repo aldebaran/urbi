@@ -50,11 +50,49 @@ namespace object
       data_->insertBack(to_urbi(str));
   }
 
+  std::string
+  Formatter::format_list(const objects_type& args) const
+  {
+    std::string res("");
+    const objects_type& l = args[0]->as<List>()->value_get();
+    size_t index = 0;
+    size_t max = l.size();
+
+    foreach(const rObject& c, data_->value_get())
+    {
+      if (c->is_a<FormatInfo>())
+      {
+        if (index >= max)
+          RAISE("too few argument for format");
+        else
+          res += l[index++]->call("format", c)->as<String>()->value_get();
+      }
+      else
+        res += c->as<String>()->value_get();
+    }
+    if (index < max)
+      RAISE("too many arguments for format");
+    return res;
+  }
+
+  std::string
+  Formatter::format_non_list(const rObject& arg) const
+  {
+    libport::ReservedVector<rObject, 8> args(1, arg);
+
+    return format_list(args);
+  }
+
+  OVERLOAD_TYPE(overload_format, 1, 0,
+                any-type, &Formatter::format_non_list,
+                List, &Formatter::format_list);
+
   void
   Formatter::initialize(CxxObject::Binder<Formatter>& bind)
   {
     bind(SYMBOL(init), &Formatter::init);
     bind(SYMBOL(data), &Formatter::data_get);
+    bind(SYMBOL(PERCENT), overload_format);
   }
 
   rObject
