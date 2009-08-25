@@ -1,54 +1,6 @@
-/*---------.
-| Object.  |
-`---------*/
-
-do (Object)
-{
-  // Cannot use "from" which is a k1 reserved word.
-  function copySlot(frm, to)
-  {
-    setSlot(to, getSlot(frm))
-  };
-
-  function cloneSlot(frm, to)
-  {
-    setSlot(to, getSlot(frm).clone)
-  };
-
-  // Some sort of k1 compatibility.
-  copySlot ("addProto", "inherit");
-  copySlot ("removeProto", "disinherit");
-
-  // Change the whole set of parents.
-  function setProtos(ps)
-  {
-    // Beware that we may be losing the ancestry on Object, which has
-    // access to "addProto".
-    var add = Object.getSlot("addProto") |
-    protos.clear() |
-    for| (var p: ps.reverse)
-      add.apply([this, p]) |
-  };
-
-  function '!==' (rhs)
-  {
-    !(this === rhs)
-  };
-
-  // Invoke "clone", then "init".
-  function 'new'
-  {
-    // The fresh child.
-    var res = call.getSlot("target").clone |
-    // Call the "init" from the parent, retargetted to the child.
-    call.message = "init" |
-    res.callMessage(call) |
-    res
-  };
-};
-
 // Global.load is not defined, yet.
 System.loadFile(System.searchFile("urbi/system.u"));
+System.load("urbi/object.u");
 System.load("urbi/global.u");
 load("urbi/exception.u");
 load("urbi/call-message.u");
@@ -74,10 +26,6 @@ do (void.acceptVoid)
   function acceptVoid()   { new };
   function unacceptVoid() { protos.front };
 };
-
-/*-----------.
-| Booleans.  |
-`-----------*/
 
 load("urbi/boolean.u");
 
@@ -119,7 +67,6 @@ load("urbi/float.u");
 load("urbi/trajectory-generator.u");
 load("urbi/path.u");
 load("urbi/string.u");
-load("urbi/object.u");
 load("urbi/file.u");
 load("urbi/formatter.u");
 
@@ -137,13 +84,6 @@ load("urbi/dictionary.u");
 load("urbi/weak-pointer.u");
 load("urbi/pattern.u");
 load("urbi/task.u");
-
-// Properties require patterns
-do (Object)
-{
-  // Syntactic sugar for setProtos.
-  protos->updateHook = function(slot, value) { setProtos(value); };
-};
 
 load("urbi/pubsub.u");
 load("urbi/event.u");

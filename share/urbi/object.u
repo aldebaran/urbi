@@ -1,8 +1,54 @@
 do (Object)
 {
+  // Syntactic sugar for setProtos.
+  protos->updateHook = function(slot, value) { setProtos(value); };
+
+  // Cannot use "from" which is a k1 reserved word.
+  function copySlot(frm, to)
+  {
+    setSlot(to, getSlot(frm))
+  };
+
+  function cloneSlot(frm, to)
+  {
+    setSlot(to, getSlot(frm).clone)
+  };
+
+  // Some sort of k1 compatibility.
+  copySlot ("addProto", "inherit");
+  copySlot ("removeProto", "disinherit");
+
+  // Change the whole set of parents.
+  function setProtos(ps)
+  {
+    // Beware that we may be losing the ancestry on Object, which has
+    // access to "addProto".
+    var add = Object.getSlot("addProto") |
+    protos.clear() |
+    for| (var p: ps.reverse)
+      add.apply([this, p]) |
+  };
+
+  function '!==' (rhs)
+  {
+    !(this === rhs)
+  };
+
+  // Invoke "clone", then "init".
+  function 'new'
+  {
+    // The fresh child.
+    var res = call.getSlot("target").clone |
+    // Call the "init" from the parent, retargetted to the child.
+    call.message = "init" |
+    res.callMessage(call) |
+    res
+  };
+
   /*--------------.
   | Conversions.  |
   `--------------*/
+
   function as(type)
   {
     getSlot("as" + type.type).apply([this])
