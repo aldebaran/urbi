@@ -1,0 +1,31 @@
+\section{Directory}
+
+A \dfn{Directory} represents a directory of the filesystem.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+A \dfn{Directory} can be constructed with one argument: the path of
+the directory using a String or a Path. It can also be constructed by
+the method open of \refObject{Path}.
+
+\begin{urbiscript}
+var d = Directory.new("/");
+[00000001] Directory("/")
+var slash = Directory.new(Path);
+[00000002] Directory("/")
+\end{urbiscript}
+
+\subsection{Methods}
+\begin{itemize}
+\item \lstinline|list|\\
+  A list of String of the content of the directory.
+
+\item \lstinline|content|\\
+  A list of Path of the content of the directory.
+
+\end{itemize}
