@@ -167,8 +167,8 @@ namespace urbi
     stopCallbackThread();
     if (cbThread)
     {
-      if (pthread_join(cbThread, 0))
-        errabort("pthread_join");
+      if (int err = pthread_join(cbThread, 0))
+        errabort(err, "pthread_join");
       cbThread = 0;
     }
     return 0;
