@@ -1,8 +1,7 @@
 #include <stdlib.h>
-
-#include <boost/format.hpp>
-
 #include <fstream>
+
+#include <libport/file-system.hh>
 
 #include <object/file.hh>
 #include <object/global.hh>
@@ -142,16 +141,10 @@ namespace object
 
   rObject File::content() const
   {
-    std::ifstream s(path_->as_string().c_str());
-    if (!s.good())
-      RAISE("File not readable: " + as_string());
-
-    std::string res;
-    while (!s.eof())
-      get_buf(s, res);
-
     CAPTURE_GLOBAL(Binary);
-    return Binary->call(SYMBOL(new), to_urbi(std::string()), to_urbi(res));
+    return Binary->call(SYMBOL(new),
+                        to_urbi(std::string()),
+                        to_urbi(libport::file_content(path_->as_string())));
   }
 
   /*--------.
