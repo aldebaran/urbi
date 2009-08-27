@@ -93,6 +93,9 @@ namespace urbi
 
   USyncClient::~USyncClient()
   {
+    close();
+    wasDestroyed();
+    waitForDestructionPermission();
     if (cbThread)
       joinCallbackThread_();
   }
