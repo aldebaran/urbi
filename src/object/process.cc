@@ -15,6 +15,15 @@
 #include <object/symbols.hh>
 #include <urbi/sdk.hh>
 
+#  define XRUN(Function, Args)                  \
+      do {                                      \
+        if ((Function Args) == -1)              \
+          errnoabort(#Function);                \
+      } while (false)
+
+#  define XCLOSE(Fd)                            \
+  XRUN(close, (Fd))
+
 namespace object
 {
   typedef std::vector<rProcess> processes_type;
@@ -76,9 +85,9 @@ namespace object
   {
     if (pid_)
     {
-      close(stdin_fd_[1]);
-      close(stdout_fd_[0]);
-      close(stderr_fd_[0]);
+      XCLOSE(stdin_fd_[1]);
+      XCLOSE(stdout_fd_[0]);
+      XCLOSE(stderr_fd_[0]);
     }
   }
 
@@ -103,39 +112,42 @@ namespace object
       RAISE(libport::strerror(errno));
     if (pipe(stdin_fd_))
     {
-      close(stdout_fd_[0]);
-      close(stdout_fd_[1]);
-      RAISE(libport::strerror(errno));
+      int err = errno;
+      XCLOSE(stdout_fd_[0]);
+      XCLOSE(stdout_fd_[1]);
+      RAISE(libport::strerror(err));
     }
     if (pipe(stderr_fd_))
     {
-      close(stdout_fd_[0]);
-      close(stdout_fd_[1]);
-      close(stdin_fd_[0]);
-      close(stdin_fd_[1]);
-      RAISE(libport::strerror(errno));
+      int err = errno;
+      XCLOSE(stdout_fd_[0]);
+      XCLOSE(stdout_fd_[1]);
+      XCLOSE(stdin_fd_[0]);
+      XCLOSE(stdin_fd_[1]);
+      RAISE(libport::strerror(err));
     }
 
     pid_ = fork();
 
     if (pid_ < 0)
     {
-      close(stdin_fd_[0]);
-      close(stdin_fd_[1]);
-      close(stdout_fd_[0]);
-      close(stdout_fd_[1]);
-      close(stderr_fd_[0]);
-      close(stderr_fd_[1]);
+      int err = errno;
+      XCLOSE(stdin_fd_[0]);
+      XCLOSE(stdin_fd_[1]);
+      XCLOSE(stdout_fd_[0]);
+      XCLOSE(stdout_fd_[1]);
+      XCLOSE(stderr_fd_[0]);
+      XCLOSE(stderr_fd_[1]);
       pid_ = 0;
-      RAISE(libport::strerror(errno));
+      RAISE(libport::strerror(err));
     }
 
     if (pid_)
     {
       // Parent
-      close(stdin_fd_[0]);
-      close(stdout_fd_[1]);
-      close(stderr_fd_[1]);
+      XCLOSE(stdin_fd_[0]);
+      XCLOSE(stdout_fd_[1]);
+      XCLOSE(stderr_fd_[1]);
       slot_set(SYMBOL(stdin), new OutputStream(stdin_fd_[1], false));
       slot_set(SYMBOL(stdout), new InputStream(stdout_fd_[0], false));
       slot_set(SYMBOL(stderr), new InputStream(stderr_fd_[0], false));
@@ -149,24 +161,14 @@ namespace object
       // Child
       // Ask to be killed when the parent dies
       prctl(PR_SET_PDEATHSIG, SIGKILL);
-      close(stdin_fd_[1]);
-      close(stdout_fd_[0]);
-      close(stderr_fd_[0]);
-      if (dup2(stdout_fd_[1], STDOUT_FILENO) == -1)
-      {
-        libport::perror("dup2");
-        std::abort();
-      }
-      if (dup2(stderr_fd_[1], STDERR_FILENO) == -1)
-      {
-        libport::perror("dup2");
-        std::abort();
-      }
-      if (dup2(stdin_fd_[0], STDIN_FILENO) == -1)
-      {
-        libport::perror("dup2");
-        std::abort();
-      }
+      XCLOSE(stdin_fd_[1]);
+      XCLOSE(stdout_fd_[0]);
+      XCLOSE(stderr_fd_[0]);
+
+      XRUN(dup2, (stdout_fd_[1], STDOUT_FILENO));
+      XRUN(dup2, (stderr_fd_[1], STDERR_FILENO));
+      XRUN(dup2, (stdin_fd_[0],  STDIN_FILENO));
+
       try
       {
         arguments_type argv;
@@ -175,8 +177,7 @@ namespace object
       }
       catch (...)
       { /* nothing */ }
-      libport::perror("exec");
-      std::abort();
+      errnoabort("exec");
     }
   }
 
@@ -229,7 +230,6 @@ namespace object
                       to_urbi(libport::format("killed by signal %s", sig)));
       }
     }
-
 
     res->slot_set(SYMBOL(done), to_urbi(done));
     res->slot_set(SYMBOL(exited), to_urbi(exited));

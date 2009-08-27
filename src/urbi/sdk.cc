@@ -42,10 +42,7 @@ namespace urbi
          ret = select(fd + 1, &rfds, NULL, NULL, &tv))
     {
       if (ret == -1)
-      {
-        libport::perror("select");
-        std::abort();
-      }
+        errnoabort("select");
       yield_for(128000);
       FD_SET(fd, &rfds);
     }
