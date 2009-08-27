@@ -98,7 +98,7 @@ namespace object
     output += std::string(buf, input.gcount());
   }
 
-  rList File::as_list()
+  rList File::as_list() const
   {
     std::ifstream s(path_->as_string().c_str());
     if (!s.good())
@@ -124,23 +124,23 @@ namespace object
 
     // Bad bad bad user! The file does not finish with a \n! Handle it
     // anyway ...
-    if (line != "")
+    if (!line.empty())
       res << new String(line);
 
     return new List(res);
   }
 
-  std::string File::as_string()
+  std::string File::as_string() const
   {
     return path_->as_string();
   }
 
-  std::string File::as_printable()
+  std::string File::as_printable() const
   {
     return (boost::format("File(\"%s\")") % path_->as_string()).str();
   }
 
-  rObject File::content()
+  rObject File::content() const
   {
     std::ifstream s(path_->as_string().c_str());
     if (!s.good())

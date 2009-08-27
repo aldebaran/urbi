@@ -35,10 +35,13 @@ namespace object
     void init(const std::string& path);
 
     // Conversions
-    rList as_list();
-    std::string as_string();
-    std::string as_printable();
-    rObject content();
+    rList as_list() const;
+    std::string as_string() const;
+    std::string as_printable() const;
+
+    /// The contents of the file.  Might not be a text file, hence it
+    /// returns an instance of Binary, not a std::string.
+    rObject content() const;
 
 
   /*--------.
