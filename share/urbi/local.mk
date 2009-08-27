@@ -1,10 +1,10 @@
 # Yes, this is not by the book, but it is so cooler.
 dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
+dist_urbi_DATA += share/urbi/tutorial-content.u
 
 nodist_urbi_DATA =				\
   $(package_info_u)				\
-  share/urbi/platform.u				\
-  share/urbi/tutorial-content.u
+  share/urbi/platform.u
 
 # package-info.u
 package_info_u = share/urbi/package-info.u
