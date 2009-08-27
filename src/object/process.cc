@@ -114,17 +114,19 @@ namespace object
   {
     run_();
   }
+
   void Process::runTo(const std::string& outFile)
   {
     run_(outFile);
   }
+
   void Process::run_(boost::optional<std::string> outFile)
   {
     if (pid_)
       RAISE("Process was already run");
 
     if (pipe(stdin_fd_))
-      RAISE(libport::strerror(errno));
+      FRAISE("pipe failed: %s", libport::strerror(errno));
     if (!outFile)
     {
       if (pipe(stdout_fd_))
@@ -132,7 +134,7 @@ namespace object
         int err = errno;
         XCLOSE(stdin_fd_[0]);
         XCLOSE(stdin_fd_[1]);
-        RAISE(libport::strerror(err));
+        FRAISE("pipe failed: %s:", libport::strerror(err));
       }
       if (pipe(stderr_fd_))
       {
@@ -141,7 +143,7 @@ namespace object
         XCLOSE(stdout_fd_[1]);
         XCLOSE(stdin_fd_[0]);
         XCLOSE(stdin_fd_[1]);
-        RAISE(libport::strerror(err));
+        FRAISE("pipe failed: %s:", libport::strerror(err));
       }
     }
     else
@@ -161,12 +163,13 @@ namespace object
         XCLOSE(stderr_fd_[1]);
       }
       pid_ = 0;
-      RAISE(libport::strerror(err));
+      FRAISE("fork failed: %s", libport::strerror(err));
     }
 
     if (pid_)
     {
-      // Parent
+      // Parent.
+      std::cerr << "Got child: " << pid_ << std::endl;
       XCLOSE(stdin_fd_[0]);
       if (!outFile)
       {
@@ -185,7 +188,7 @@ namespace object
     else
     {
       // Child
-      // Ask to be killed when the parent dies
+      // Ask to be killed when the parent dies.
       prctl(PR_SET_PDEATHSIG, SIGKILL);
       XCLOSE(stdin_fd_[1]);
       if (!outFile)
@@ -217,15 +220,24 @@ namespace object
     }
   }
 
+#define XKILL(Signal)                                   \
+  do {                                                  \
+    if (::kill(pid_, Signal))                           \
+      FRAISE("cannot kill %s (%s): %s",                 \
+             pid_, #Signal, libport::strerror(errno));  \
+  } while (false)
+
   void
   Process::kill()
   {
-    ::kill(pid_, SIGTERM);
-    for(int i=0; i<10&!done(); i++)
+    XKILL(SIGTERM);
+    for (int i = 0; i < 10 && !done(); ++i)
       usleep(200000);
     if (!done())
-      ::kill(pid_, SIGKILL);
+      XKILL(SIGKILL);
   }
+
+#undef XKILL
 
   void
   Process::join() const
@@ -250,8 +262,8 @@ namespace object
     bool done = false;
     if (status_ == -1)
     {
-      res->slot_set(SYMBOL(asString), to_urbi(std::string(
-               pid_?"not started":"running")));
+      res->slot_set(SYMBOL(asString),
+                    to_urbi(pid_ ? "running" : "not started"));
     }
     else
     {
@@ -277,7 +289,6 @@ namespace object
                       to_urbi(libport::format("killed by signal %s", sig)));
       }
     }
-
 
     res->slot_set(SYMBOL(done), to_urbi(done));
     res->slot_set(SYMBOL(exited), to_urbi(exited));
