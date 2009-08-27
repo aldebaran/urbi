@@ -1,6 +1,8 @@
 #ifndef CXX_PRIMITIVE_HH
 # define CXX_PRIMITIVE_HH
 
+# include <libport/format.hh>
+
 # include <object/fwd.hh>
 # include <object/object.hh>
 
@@ -89,6 +91,12 @@ namespace object
  */
 #define RAISE(Message)                                 \
   runner::raise_primitive_error(Message)
+
+/// If we happen to meet a preprocessor that does not support varargs,
+/// change the uses to include two pairs of parens, and remove those
+/// below.
+#define FRAISE(Args...)                         \
+  RAISE(libport::format(Args))
 
 #include <object/cxx-primitive.hxx>
 

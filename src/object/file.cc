@@ -59,7 +59,7 @@ namespace object
   void File::init(rPath path)
   {
     if (!path->is_reg())
-      RAISE(str(format("Not a regular file: '%s'") % path->as_string()));
+      FRAISE("Not a regular file: %s", path->as_string());
     path_ = path;
   }
 
@@ -102,7 +102,7 @@ namespace object
   {
     std::ifstream s(path_->as_string().c_str());
     if (!s.good())
-      RAISE("File not readable: " + as_string());
+      FRAISE("File not readable: %s", as_string());
 
     List::value_type res;
     std::string line;
@@ -137,7 +137,7 @@ namespace object
 
   std::string File::as_printable() const
   {
-    return (boost::format("File(\"%s\")") % path_->as_string()).str();
+    return libport::format("File(\"%s\")", path_->as_string());
   }
 
   rObject File::content() const
