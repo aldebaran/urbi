@@ -1,7 +1,10 @@
 #include <cerrno>
 #include <libport/sys/prctl.h>
+#include <libport/sys/stat.h>
+
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include <vector>
 
 #include <libport/lockable.hh>
@@ -86,8 +89,11 @@ namespace object
     if (pid_)
     {
       XCLOSE(stdin_fd_[1]);
-      XCLOSE(stdout_fd_[0]);
-      XCLOSE(stderr_fd_[0]);
+      if (stdout_fd_[0] != -1)
+      {
+        XCLOSE(stdout_fd_[0]);
+        XCLOSE(stderr_fd_[0]);
+      }
     }
   }
 
@@ -105,28 +111,40 @@ namespace object
 
   void Process::run()
   {
+    run_();
+  }
+  void Process::runTo(const std::string& outFile)
+  {
+    run_(outFile);
+  }
+  void Process::run_(boost::optional<std::string> outFile)
+  {
     if (pid_)
       RAISE("Process was already run");
 
-    if (pipe(stdout_fd_))
-      RAISE(libport::strerror(errno));
     if (pipe(stdin_fd_))
+      RAISE(libport::strerror(errno));
+    if (!outFile)
     {
-      int err = errno;
-      XCLOSE(stdout_fd_[0]);
-      XCLOSE(stdout_fd_[1]);
-      RAISE(libport::strerror(err));
+      if (pipe(stdout_fd_))
+      {
+        int err = errno;
+        XCLOSE(stdin_fd_[0]);
+        XCLOSE(stdin_fd_[1]);
+        RAISE(libport::strerror(err));
+      }
+      if (pipe(stderr_fd_))
+      {
+        int err = errno;
+        XCLOSE(stdout_fd_[0]);
+        XCLOSE(stdout_fd_[1]);
+        XCLOSE(stdin_fd_[0]);
+        XCLOSE(stdin_fd_[1]);
+        RAISE(libport::strerror(err));
+      }
     }
-    if (pipe(stderr_fd_))
-    {
-      int err = errno;
-      XCLOSE(stdout_fd_[0]);
-      XCLOSE(stdout_fd_[1]);
-      XCLOSE(stdin_fd_[0]);
-      XCLOSE(stdin_fd_[1]);
-      RAISE(libport::strerror(err));
-    }
-
+    else
+      stdout_fd_[0] = -1;
     pid_ = fork();
 
     if (pid_ < 0)
@@ -134,10 +152,13 @@ namespace object
       int err = errno;
       XCLOSE(stdin_fd_[0]);
       XCLOSE(stdin_fd_[1]);
-      XCLOSE(stdout_fd_[0]);
-      XCLOSE(stdout_fd_[1]);
-      XCLOSE(stderr_fd_[0]);
-      XCLOSE(stderr_fd_[1]);
+      if (!outFile)
+      {
+        XCLOSE(stdout_fd_[0]);
+        XCLOSE(stdout_fd_[1]);
+        XCLOSE(stderr_fd_[0]);
+        XCLOSE(stderr_fd_[1]);
+      }
       pid_ = 0;
       RAISE(libport::strerror(err));
     }
@@ -146,11 +167,15 @@ namespace object
     {
       // Parent
       XCLOSE(stdin_fd_[0]);
-      XCLOSE(stdout_fd_[1]);
-      XCLOSE(stderr_fd_[1]);
+      if (!outFile)
+      {
+        XCLOSE(stdout_fd_[1]);
+        XCLOSE(stderr_fd_[1]);
+        slot_set(SYMBOL(stdout), new InputStream(stdout_fd_[0], false));
+        slot_set(SYMBOL(stderr), new InputStream(stderr_fd_[0], false));
+      }
       slot_set(SYMBOL(stdin), new OutputStream(stdin_fd_[1], false));
-      slot_set(SYMBOL(stdout), new InputStream(stdout_fd_[0], false));
-      slot_set(SYMBOL(stderr), new InputStream(stderr_fd_[0], false));
+
       {
         libport::BlockLock lock(mutex);
         processes.push_back(this);
@@ -162,9 +187,19 @@ namespace object
       // Ask to be killed when the parent dies
       prctl(PR_SET_PDEATHSIG, SIGKILL);
       XCLOSE(stdin_fd_[1]);
-      XCLOSE(stdout_fd_[0]);
-      XCLOSE(stderr_fd_[0]);
-
+      if (!outFile)
+      {
+        XCLOSE(stdout_fd_[0]);
+        XCLOSE(stderr_fd_[0]);
+      }
+      else
+      {
+        int fd = open(outFile.get().c_str(), O_WRONLY | O_APPEND | O_CREAT,
+                      00600);
+        if (fd == -1)
+          errnoabort("open " + outFile.get());
+        stdout_fd_[1] = stderr_fd_[1] = fd;
+      }
       XRUN(dup2, (stdout_fd_[1], STDOUT_FILENO));
       XRUN(dup2, (stderr_fd_[1], STDERR_FILENO));
       XRUN(dup2, (stdin_fd_[0],  STDIN_FILENO));
@@ -179,6 +214,16 @@ namespace object
       { /* nothing */ }
       errnoabort("exec");
     }
+  }
+
+  void
+  Process::kill()
+  {
+    ::kill(pid_, SIGTERM);
+    for(int i=0; i<10&!done(); i++)
+      usleep(200000);
+    if (!done())
+      ::kill(pid_, SIGKILL);
   }
 
   void
@@ -204,7 +249,8 @@ namespace object
     bool done = false;
     if (status_ == -1)
     {
-      res->slot_set(SYMBOL(asString), to_urbi(std::string("running")));
+      res->slot_set(SYMBOL(asString), to_urbi(std::string(
+               pid_?"not started":"running")));
     }
     else
     {
@@ -231,6 +277,7 @@ namespace object
       }
     }
 
+
     res->slot_set(SYMBOL(done), to_urbi(done));
     res->slot_set(SYMBOL(exited), to_urbi(exited));
     res->slot_set(SYMBOL(signaled), to_urbi(signaled));
@@ -256,6 +303,8 @@ namespace object
     bind(SYMBOL(join), &Process::join);
     bind.var(SYMBOL(name), &Process::name_);
     bind(SYMBOL(run),  &Process::run );
+    bind(SYMBOL(runTo),  &Process::runTo );
+    bind(SYMBOL(kill),  &Process::kill );
     bind(SYMBOL(status),  &Process::status );
 
     libport::startThread(boost::function0<void>(&Process::monitor_children));
