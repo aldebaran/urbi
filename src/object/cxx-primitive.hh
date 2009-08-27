@@ -14,8 +14,8 @@ namespace object
 /**
  *  @param Name Name of the function to generate
  *  @param N    Number of arguments expected by the function
- *  @param Arg  Argument which type to test
- *  @param T1   First possible type for the argument
+ *  @param Arg  Argument whose type to test
+ *  @param T1   First possible type for the argument (ignored in fact)
  *  @param V1   Primitive to bounce on when the argument is of type T1
  *  @param T2   Second possible type for the argument
  *  @param V2   Primitive to bounce on when the argument is of type T2

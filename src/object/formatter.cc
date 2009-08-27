@@ -50,12 +50,60 @@ namespace object
       data_->insertBack(to_urbi(str));
   }
 
+  std::string
+  Formatter::operator%(const objects_type& args) const
+  {
+    size_t index = 0;
+    size_t max = args.size();
+
+    std::string res;
+    foreach(const rObject& c, data_->value_get())
+    {
+      rObject str;
+      if (c->is_a<FormatInfo>())
+      {
+        if (index < max)
+          str = args[index++]->call("format", c);
+        else
+          RAISE("too few arguments for format");
+      }
+      else
+        str = c;
+
+      assert(str);
+      if (!str->is_a<String>())
+      {
+        std::stringstream o;
+        o << *str;
+        RAISE(libport::format("invalid argument for format: %s", o.str()));
+      }
+      res += str->as<String>()->value_get();
+    }
+    if (index < max)
+      RAISE("too many arguments for format");
+    return res;
+  }
+
+  std::string
+  Formatter::operator%(const rObject& arg) const
+  {
+    if (rList l = arg->as<List>())
+      return operator%(l->value_get());
+    else
+      return operator%(objects_type(1, arg));
+  }
+
+#define OPERATOR_PCT(Type)                                      \
+  static_cast<std::string (Formatter::*)(const Type&) const>    \
+             (&Formatter::operator%)
   void
   Formatter::initialize(CxxObject::Binder<Formatter>& bind)
   {
-    bind(SYMBOL(init), &Formatter::init);
-    bind(SYMBOL(data), &Formatter::data_get);
+    bind(SYMBOL(init),    &Formatter::init);
+    bind(SYMBOL(data),    &Formatter::data_get);
+    bind(SYMBOL(PERCENT), OPERATOR_PCT(rObject));
   }
+#undef OPERATOR_PCT
 
   rObject
   Formatter::proto_make()

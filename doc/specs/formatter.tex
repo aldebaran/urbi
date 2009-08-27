@@ -16,7 +16,7 @@ separate regular parts of string and formatting patterns, and stores
 them.
 
 \begin{urbiscript}
-var f = Formatter.new("Name:%s, Surname:%s;");
+Formatter.new("Name:%s, Surname:%s;");
 [00000001] Formatter ["Name:", %s, ", Surname:", %s, ";"]
 \end{urbiscript}
 
@@ -30,17 +30,54 @@ Actually, formatting patterns are translated into
   Return the content of the \dfn{formatter} as a list of strings and
   \refObject{FormatInfo}.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(f.asList.asString, "[\"Name:\", %s, \", Surname:\", %s, \";\"]");
+assert(Formatter.new("Name:%s, Surname:%s;").asList.asString
+       == "[\"Name:\", %s, \", Surname:\", %s, \";\"]");
 \end{urbiscript}
 
 \item \lstinline|'%'(\var{args})|\\
   Use \lstinline|this| as format string and \var{args} as the list of
-  arguments.  For this purpose, this operator concatenates normal
-  string and the string that are result of \lstinline|asString| called
-  on members of \var{args} with the appropriate
-  \refObject{FormatInfo}.
+  arguments, and return the result (a \refObject{String}).  The arity
+  of the Formatter (i.e., the number of expected arguments) and the
+  size of \var{args} must match exactly.
+
+  This operator concatenates regular strings and the strings that are
+  result of \lstinline|asString| called on members of \var{args} with
+  the appropriate \refObject{FormatInfo}.
 \begin{urbiscript}[firstnumber=last]
-assert_eq(f % ["Foo", "Bar"], "Name:Foo, Surname:Bar;");
+assert(Formatter.new("Name:%s, Surname:%s;") % ["Foo", "Bar"]
+       == "Name:Foo, Surname:Bar;");
 \end{urbiscript}
+
+  If \var{args} is not a \refObject{List}, then the call is equivalent
+  to calling |'%'([\var{args}])|.
+\begin{urbiscript}[firstnumber=last]
+assert(Formatter.new("%06.3f") % Math.pi
+       == "03.142");
+\end{urbiscript}
+
+  Note that \lstinline|String.'%'| provides a nicer interface to this
+  operator:
+\begin{urbiscript}[firstnumber=last]
+assert("%06.3f" % Math.pi == "03.142");
+\end{urbiscript}
+
+  It is nevertheless interesting to use the Formatter for performance
+  reasons if the format is reused many times.
+\begin{urbiscript}[firstnumber=last]
+{
+  // Some large database of people.
+  var people =
+    [["Foo", "Bar" ],
+     ["One", "Two" ],
+     ["Un",  "Deux"],];
+  var f = Formatter.new("Name:%7s, Surname:%7s;");
+  for (var p: people)
+    echo (f % p);
+};
+[00031939] *** Name:    Foo, Surname:    Bar;
+[00031940] *** Name:    One, Surname:    Two;
+[00031941] *** Name:     Un, Surname:   Deux;
+\end{urbiscript}
+
 
 \end{itemize}
