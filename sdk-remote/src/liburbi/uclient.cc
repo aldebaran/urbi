@@ -286,7 +286,8 @@ namespace urbi
 
   void disconnect(UClient &client)
   {
-    delete &client;
+    // Asynchronous deletion to let our async handlers terminate.
+    client.destroy();
   }
 
 } // namespace urbi
