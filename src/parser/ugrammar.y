@@ -72,6 +72,7 @@
   using parser::ast_at;
   using parser::ast_at_event;
   using parser::ast_bin;
+  using parser::ast_binding;
   using parser::ast_call;
   using parser::ast_class;
   using parser::ast_every;
@@ -110,11 +111,23 @@
 
 
 # undef ERROR
-// FIXME: Bison should really get rid of yylhs when YYERROR is invoked.
 # define ERROR(Loc, FormatArgs)                         \
     do {                                                \
       up.error(Loc, (libport::format FormatArgs));      \
       YYERROR;                                          \
+    } while (false)
+
+/// FIXME: Handle this in Bison itself, around user actions.
+# define TRY(Exp)                                       \
+    do {                                                \
+      try                                               \
+      {                                                 \
+        Exp;                                            \
+      }                                                 \
+      catch (const ::parser::syntax_error& err)         \
+      {                                                 \
+        ERROR(err.location, ("%s", err.what()));        \
+      }                                                 \
     } while (false)
 
     static
@@ -1047,24 +1060,13 @@ id:
 ;
 
 exp:
-  "var" exp
+  "var" exp[lvalue]
   {
-    if (!$2.unsafe_cast<ast::LValue>()
-        || ($2.unsafe_cast<ast::Call>()
-            && $2.unsafe_cast<ast::Call>()->arguments_get()))
-      ERROR(@2, ("syntax error, %s is not a valid lvalue", *$2));
-    ast::rBinding res = new ast::Binding(@$, $2.unchecked_cast<ast::LValue>());
-    $$ = res;
+    TRY($$ = ast_binding(@$, false, @lvalue, $lvalue));
   }
-| "const" "var" exp
+| "const" "var" exp[lvalue]
   {
-    if (!$3.unsafe_cast<ast::LValue>()
-        || ($3.unsafe_cast<ast::Call>()
-            && $3.unsafe_cast<ast::Call>()->arguments_get()))
-      ERROR(@3, ("syntax error, %s is not a valid lvalue", *$3));
-    ast::rBinding res = new ast::Binding(@$, $3.unchecked_cast<ast::LValue>());
-    res->constant_set(true);
-    $$ = res;
+    TRY($$ = ast_binding(@$, true, @lvalue, $lvalue));
   }
 | lvalue
   {

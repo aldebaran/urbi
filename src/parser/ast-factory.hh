@@ -2,6 +2,7 @@
 # define PARSER_AST_FACTORY_HH
 
 # include <list>
+# include <stdexcept>
 
 # include <ast/exps-type.hh>
 # include <ast/flavor.hh>
@@ -15,6 +16,15 @@ namespace parser
   typedef modifier_type formal_type;
   typedef std::vector<formal_type> formals_type;
 
+  /// FIXME: this is something that should be handled by Bison.
+  struct syntax_error : std::runtime_error
+  {
+    syntax_error(const yy::location& l, const std::string& m)
+      : std::runtime_error(m)
+      , location(l)
+    {}
+    yy::location location;
+  };
 
   /// at (%cond ~ %duration) {%body} onleave {%onleave}
   ast::rExp
@@ -34,6 +44,15 @@ namespace parser
   ast::rExp
   ast_bin(const yy::location& l,
           ast::flavor_type op, ast::rExp lhs, ast::rExp rhs);
+
+  /// Create a binding, possibly const.
+  /// Corresponds to "var <exp>" and "const var <exp>".
+  /// Check that <exp> can indeed be declared: it must be an LValue.
+  /// It must not be a descendant such as Property.
+  ast::rBinding
+  ast_binding(const yy::location& l,
+              bool constant,
+              const yy::location& exp_loc, ast::rExp exp);
 
   /// "<method>"
   ast::rCall

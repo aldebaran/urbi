@@ -1,3 +1,5 @@
+#include <libport/format.hh>
+
 #include <ast/all.hh>
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
@@ -215,6 +217,29 @@ namespace parser
     return res;
   }
 
+
+  ast::rBinding
+  ast_binding(const yy::location& l,
+              bool constant,
+              const yy::location& exp_loc, ast::rExp exp)
+  {
+    if (false
+        // Must be an LValue,
+        || !exp.unsafe_cast<ast::LValue>()
+        // But must not be one of the subclasses about properties.
+        || exp.unsafe_cast<ast::PropertyAction>()
+        // Or can be a call without argument, i.e., "Foo.bar".
+        || (exp.unsafe_cast<ast::Call>()
+            && exp.unsafe_cast<ast::Call>()->arguments_get()))
+      throw syntax_error(exp_loc,
+                         libport::format("syntax error, "
+                                         "%s is not a valid lvalue",
+                                         *exp));
+
+    ast::rBinding res = new ast::Binding(l, exp.unchecked_cast<ast::LValue>());
+    res->constant_set(constant);
+    return res;
+  }
 
   /// "<method> (args)".
   ast::rCall
