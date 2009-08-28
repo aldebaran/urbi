@@ -140,19 +140,19 @@ namespace urbi
    UContextImpl::init()
    {
      setCurrentContext(this);
-     foreach(baseURBIStarter* s, baseURBIStarter::list())
-     {
-       if (!libport::mhas(initialized, s))
-       {
-         newUObjectClass(s);
-         initialized.insert(s);
-       }
-     }
      foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
      {
        if (!libport::mhas(initialized, s))
        {
          newUObjectHubClass(s);
+         initialized.insert(s);
+       }
+     }
+     foreach(baseURBIStarter* s, baseURBIStarter::list())
+     {
+       if (!libport::mhas(initialized, s))
+       {
+         newUObjectClass(s);
          initialized.insert(s);
        }
      }
