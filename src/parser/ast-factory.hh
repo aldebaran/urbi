@@ -154,7 +154,6 @@ namespace parser
   ast::rExp ast_nil();
 
   /// Create a closure or a function.
-  /// \param up       the parser to report errors to.
   /// \param closure  whether building a closure.
   /// \param loc      location for the whole declaration.
   /// \param floc     location of the formals.
@@ -162,8 +161,7 @@ namespace parser
   /// \param bloc     location of the body.
   /// \param b        body.
   ast::rRoutine
-  ast_routine(ParserImpl& up,
-              const ast::loc& loc, bool closure,
+  ast_routine(const ast::loc& loc, bool closure,
               const ast::loc& floc, formals_type* f,
               const ast::loc& bloc, const ast::rExp b);
 

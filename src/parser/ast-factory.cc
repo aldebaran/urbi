@@ -163,8 +163,6 @@ namespace parser
   }
 
 
-  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-  /// \param op must be & or |.
   ast::rExp
   ast_bin(const yy::location& l,
           ast::flavor_type op, ast::rExp lhs, ast::rExp rhs)
@@ -451,14 +449,12 @@ namespace parser
   }
 
   ast::rRoutine
-  ast_routine(ParserImpl& up,
-              const ast::loc& loc, bool closure,
+  ast_routine(const ast::loc& loc, bool closure,
               const ast::loc& floc, formals_type* f,
               const ast::loc& bloc, ast::rExp b)
   {
     if (closure && !f)
-      up.error(loc, "closure cannot be lazy");
-    // Yet we might build one...
+      throw syntax_error(loc, "closure cannot be lazy");
     return new ast::Routine(loc, closure,
                             symbols_to_decs(floc, f),
                             ast_scope(bloc, b));

@@ -619,8 +619,10 @@ stmt:
   routine k1_id formals block
     {
       // Compiled as "var name = function args stmt".
-      $$ = new ast::Declaration(@$, $2,
-                                ast_routine(up, @$, $1, @3, $3, @4, $4));
+      TRY(
+        $$ = new ast::Declaration(@$, $2,
+                                  ast_routine(@$, $1, @3, $3, @4, $4))
+        );
     }
 ;
 
@@ -1114,7 +1116,7 @@ id:
 exp:
   routine formals block
     {
-      $$ = ast_routine(up, @$, $1, @2, $2, @3, $3);
+      TRY($$ = ast_routine(@$, $1, @2, $2, @3, $3));
     }
 ;
 
