@@ -169,7 +169,6 @@ namespace object
     if (pid_)
     {
       // Parent.
-      std::cerr << "Got child: " << pid_ << std::endl;
       XCLOSE(stdin_fd_[0]);
       if (!outFile)
       {
