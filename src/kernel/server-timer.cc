@@ -3,6 +3,7 @@
 #ifndef COMPILATION_MODE_SPEED
 
 # include <libport/debug.hh>
+# include <libport/lexical-cast.hh>
 # include <libport/tokenizer.hh>
 
 namespace kernel
@@ -11,10 +12,11 @@ namespace kernel
 
   static void timer_log()
   {
-    std::stringstream o;
-    server_timer.dump(o);
+    // We _need_ an intermediate string variable here.
+    // See libport/tokenizer.hh.
+    std::string s = string_cast(server_timer);
     GD_CATEGORY(URBI);
-    foreach (const std::string& line, libport::lines(o.str()))
+    foreach (const std::string& line, libport::lines(s))
       GD_INFO_TRACE(line);
   }
 
