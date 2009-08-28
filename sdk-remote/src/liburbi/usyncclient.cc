@@ -93,11 +93,15 @@ namespace urbi
 
   USyncClient::~USyncClient()
   {
-    close();
+    // Notify of destruction
     wasDestroyed();
-    waitForDestructionPermission();
+    // Close the socket
+    close();
+    // Wait for our message handler thread to terminate
     if (cbThread)
       joinCallbackThread_();
+    // Wait for all asio async handlers to terminate
+    waitForDestructionPermission();
   }
 
   void USyncClient::callbackThread()
@@ -137,6 +141,8 @@ namespace urbi
       return;
     stopCallbackThread_ = true;
     sem_++;
+    // Unlock any pending syncGet.
+    syncLock_++;
     // Wait until the callback thread is actually stopped to avoid both
     // processEvents and the callbackThread running at the same time.
     stopCallbackSem_--;
