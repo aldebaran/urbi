@@ -113,11 +113,12 @@ ugrammar_deps =					\
 # from the Automake documentation.
 AM_BISONFLAGS = -d -ra -Dparse.error=$(PARSE_ERROR)
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
-	rm -f $@ $@.tmp
+	rm -f $@ $@.tmp parser/ugrammar-pruned.y
 	echo '$@ rebuilt because of: $?' >$@.tmp
 	$(MAKE) $(BISONXX)
 	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
 	$(PRUNE_FOR_SPACE) - <$< >parser/ugrammar-pruned.y
+	chmod a-w parser/ugrammar-pruned.y
 	$(BISONXX) parser/ugrammar-pruned.y parser/ugrammar.cc \
 	  $(AM_BISONFLAGS) $(BISONFLAGS)
 	mv -f $@.tmp $@
