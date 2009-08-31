@@ -114,6 +114,7 @@ main(int argc, char* argv[])
   std::string dll;
   /// Server port.
   int port = urbi::UClient::URBI_PORT;
+  std::string host = UClient::DEFAULT_HOST;
 
   // The options passed to urbi::main.
   libport::cli_args_type args;
@@ -165,9 +166,12 @@ main(int argc, char* argv[])
   if (arg_custom.filled())
     dll = arg_custom.value();
 
-  /// Server host name.
-  std::string host = libport::opts::host.value(UClient::DEFAULT_HOST);
-  args << "--host" << host;
+  /// Server host name
+  if (libport::opts::host.filled())
+  {
+    host = libport::opts::host.value();
+    args << "--host" << host;
+  }
 
   if (arg_plugin.get())
     connect_mode = MODE_PLUGIN_LOAD;
