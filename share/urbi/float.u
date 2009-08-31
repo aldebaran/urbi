@@ -31,9 +31,16 @@ do (Float)
   // FIXME: =~= cannot be correctly implemented without properties.
   function '=~='(x) { (this - x).abs <= delta + x.delta };
 
-  // Repeat \a action \a this times.
+  function asList()
+  {
+    seq
+  };
+
+  /// Repeat \a action \a this times.
   function each (action)
   {
+    // Not bouncing to seq to optimize: no need to build explicitly
+    // the list.
     for (var i = 0; i < this; i += 1)
       action(i)
   };
@@ -41,6 +48,8 @@ do (Float)
   // Repeat \a action \a this times separated with '|'.
   function 'each|' (action)
   {
+    // Not bouncing to seq to optimize: no need to build explicitly
+    // the list.
     for| (var i = 0; i < this; i += 1)
       action(i)
   };
@@ -127,14 +136,6 @@ do (Float)
   {
     for| (var i = 0; i < this; i++)
       action()
-  };
-
-  function asList()
-  {
-    var res = [];
-    for (var i in this)
-      res << i;
-    return res
   };
 
   function map(f)

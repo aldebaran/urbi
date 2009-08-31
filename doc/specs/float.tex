@@ -38,12 +38,6 @@ assert(0.acos == pi/2);
 assert(1.acos == 0);
 \end{urbiscript}
 
-\item \lstinline|asFloat|\\
-  Return the target.
-\begin{urbiscript}[firstnumber=last]
-assert(51.asFloat == 51);
-\end{urbiscript}
-
 \item \lstinline|asBool|\\
   Whether non null.
 \begin{urbiscript}[firstnumber=last]
@@ -53,6 +47,36 @@ assert((-0.1).asBool == true);
 assert(inf.asBool == true);
 assert(nan.asBool == true);
 \end{urbiscript}
+
+\item \lstinline|asFloat|\\
+  Return the target.
+\begin{urbiscript}[firstnumber=last]
+assert(51.asFloat == 51);
+\end{urbiscript}
+
+\item \lstinline|asList|\\
+  Bounces to \lstinline|seq|.  It is therefore possible to use the
+  various flavors of \lstinline|for|-rang loops on integers:
+\begin{urbiscript}[firstnumber=last]
+{
+  var res;
+
+  res = [];
+  for (var i : 3)
+    res << i;
+  assert(res == [0, 1, 2]);
+
+  res = [];
+  for|(var i : 3)
+    res << i;
+  assert(res == [0, 1, 2]);
+
+  res = [];
+  for&(var i : 3)
+    res << i;
+  assert(res.sort == [0, 1, 2]);
+};
+\end{urbiscript}%>>
 
 \item \lstinline|asin|\\
   Arcsine of the target.
