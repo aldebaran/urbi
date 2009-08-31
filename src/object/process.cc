@@ -221,7 +221,7 @@ namespace object
 
 #define XKILL(Signal)                                   \
   do {                                                  \
-    if (::kill(pid_, Signal))                           \
+    if (::kill(pid_, Signal) && errno != ESRCH)         \
       FRAISE("cannot kill %s (%s): %s",                 \
              pid_, #Signal, libport::strerror(errno));  \
   } while (false)
