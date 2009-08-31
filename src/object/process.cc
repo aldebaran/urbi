@@ -229,9 +229,6 @@ namespace object
   void
   Process::kill()
   {
-    XKILL(SIGTERM);
-    for (int i = 0; i < 10 && !done(); ++i)
-      usleep(200000);
     if (!done())
       XKILL(SIGKILL);
   }
