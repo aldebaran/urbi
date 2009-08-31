@@ -18,6 +18,7 @@
 #include <libport/format.hh>
 #ifndef NO_OPTION_PARSER
 # include <libport/option-parser.hh>
+# include <libport/tokenizer.hh>
 # define IF_OPTION_PARSER(a, b) a
 #else
  #define IF_OPTION_PARSER(a, b) b
@@ -121,7 +122,7 @@ namespace
     std::stringstream output;
     output
       << "usage: " << libport::program_name()
-      << " [OPTIONS] [PROGRAM_FILE] [ARGS...]" << std::endl
+      << " [OPTIONS] [PROGRAM_FILE | -- ] [ARGS...]" << std::endl
       << std::endl
       << "  PROGRAM_FILE   Urbi script to load."
       << "  `-' stands for standard input" << std::endl
@@ -225,7 +226,20 @@ namespace urbi
 
     object::system_set_program_name(args[0]);
     args.erase(args.begin());
-
+#ifndef NO_OPTION_PARSER
+    // Detect shebang mode
+    if (!args.empty() && !args[0].empty() && args[0][1] == '-'
+        && args[0].find_first_of(' ') != args[0].npos)
+    { // All our arguments are in args[0]
+      std::string arg0(args[0]);
+      libport::cli_args_type nargs;
+      foreach(const std::string& arg, libport::make_tokenizer(arg0, " "))
+        nargs.push_back(arg);
+      for (size_t i = 1; i< args.size(); ++i)
+        nargs.push_back(args[i]);
+      args = nargs;
+    }
+#endif
     // Input files.
     typedef std::vector<Input> input_type;
     input_type input;
@@ -250,7 +264,7 @@ namespace urbi
 
     libport::OptionValues
       arg_exps("run expression", "expression", 'e', "EXP");
-
+    libport::OptionsEnd arg_remaining(true);
     {
       libport::OptionParser parser;
       parser
@@ -271,6 +285,7 @@ namespace urbi
         << arg_exps
         << libport::opts::files
         << arg_interactive
+        << arg_remaining
         ;
       try
       {
@@ -296,16 +311,26 @@ namespace urbi
         input.push_back(Input(true, convert_input_file(file)));
       arg_stack_size = arg_stack.get<size_t>(static_cast<size_t>(0));
 
+     // Since arg_remaining ate everything, args should be empty unless the user
+     // made a mistake
+     if (!args.empty())
+       forbid_option(args[0]);
+
       // Unrecognized options. These are a script file, followed by user args.
-      if (!args.empty())
+      // or '--' followed by user args.
+      libport::OptionsEnd::values_type remaining_args = arg_remaining.get();
+      if (!remaining_args.empty())
       {
-        forbid_option(args[0]);
-        input.push_back(Input(true, convert_input_file(args[0])));
+        unsigned startPos = 0;
+        if (!arg_remaining.found_separator())
+        { // first argument is an input file.
+          input.push_back(Input(true, convert_input_file(remaining_args[0])));
+          ++startPos;
+        }
         // Anything left is user argument
-        for (unsigned i = 1; i < args.size(); ++i)
+        for (unsigned i = startPos; i < remaining_args.size(); ++i)
         {
-          std::string arg = args[i];
-          forbid_option(arg);
+          std::string arg = remaining_args[i];
           object::system_push_argument(arg);
         }
       }
