@@ -364,7 +364,8 @@ namespace urbi
                                           UAbstractClient::URBI_PORT);
       if (desired_port != -1)
       {
-        std::string host = IF_OPTION_PARSER(libport::opts::host_l.value(""),"");
+        std::string host =
+          IF_OPTION_PARSER(libport::opts::host_l.value("127.0.0.1"),"");
         if (boost::system::error_code err =
             s.listen(&connectionFactory, host, desired_port))
           URBI_EXIT(EX_UNAVAILABLE,
