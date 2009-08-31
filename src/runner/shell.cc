@@ -56,6 +56,9 @@ namespace runner
 	side_effect_free_set(true);
 	while (commands_.empty())
 	{
+          libport::Finally finally(boost::bind(&Job::side_effect_free_set,
+                                               this,
+                                               side_effect_free_get()));
 	  handle_oob_();
 	  yield_until_things_changed();
 	}
