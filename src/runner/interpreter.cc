@@ -14,6 +14,8 @@
 #include <libport/config.h>
 #include <libport/finally.hh>
 #include <libport/foreach.hh>
+#include <libport/format.hh>
+#include <libport/lexical-cast.hh>
 #include <libport/symbol.hh>
 
 #include <ast/call.hh>
@@ -64,10 +66,10 @@ namespace runner
   | Interpreter.  |
   `--------------*/
 
-  Interpreter::Interpreter (rLobby lobby,
-			    sched::Scheduler& sched,
-			    ast::rConstAst ast,
-			    const libport::Symbol& name)
+  Interpreter::Interpreter(rLobby lobby,
+                           sched::Scheduler& sched,
+                           ast::rConstAst ast,
+                           const libport::Symbol& name)
     : Runner(lobby, sched, name)
     , ast_(ast)
     , code_(0)
@@ -79,7 +81,8 @@ namespace runner
   }
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
-			   const libport::Symbol& name, const objects_type& args)
+			   const libport::Symbol& name,
+                           const objects_type& args)
     : Runner(model, name)
     , ast_(0)
     , code_(code)
@@ -105,7 +108,7 @@ namespace runner
     init();
   }
 
-  Interpreter::~Interpreter ()
+  Interpreter::~Interpreter()
   {
   }
 
@@ -120,10 +123,12 @@ namespace runner
   void
   Interpreter::show_exception_ (object::UrbiException& ue)
   {
-    rObject str = ue.value_get()->call(SYMBOL(asString));
-    std::ostringstream o;
-    o << "!!! " << str->as<object::String>()->value_get();
-    send_message("error", o.str ());
+    send_message("error",
+                 libport::format("!!! %s",
+                                 (ue.value_get()
+                                  ->call(SYMBOL(asString))
+                                  ->as<object::String>()
+                                  ->value_get())));
     show_backtrace(ue.backtrace_get(), "error");
   }
 
@@ -309,12 +314,13 @@ namespace runner
     CAPTURE_GLOBAL(Exception);
     if (is_a(exn, Exception))
     {
-      std::stringstream o;
       assert(innermost_node_);
-      o << innermost_node_->location_get();
-      exn->slot_update(SYMBOL(location), new object::String(o.str()));
-      exn->slot_update(SYMBOL(backtrace),
-                       as_task()->as<object::Task>()->backtrace());
+      exn->slot_update
+        (SYMBOL(location),
+         new object::String(string_cast(innermost_node_->location_get())));
+      exn->slot_update
+        (SYMBOL(backtrace),
+         as_task()->as<object::Task>()->backtrace());
     }
     call_stack_type bt = call_stack_get();
     if (skip_last && !bt.empty())
