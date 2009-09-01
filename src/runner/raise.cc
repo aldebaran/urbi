@@ -7,6 +7,13 @@
 #include <runner/sneaker.hh>
 #include <sched/scheduler.hh>
 
+#define assert_user_mode(Exn, Msg)                              \
+  __passert((::kernel::urbiserver->mode_get()                   \
+             == kernel::UServer::mode_user),                    \
+            Exn << " exception thrown in kernel mode: "         \
+            << Msg                                              \
+            << dbg::runner_or_sneaker_get().backtrace_get())
+
 namespace runner
 {
   using namespace object;
@@ -24,14 +31,10 @@ namespace runner
 	     rObject arg4,
              bool skip)
   {
+    // Too dangerous to try to print arg1 etc. here, as it certainly
+    // involves running urbiScript code.
+    assert_user_mode(exn_name, "");
     Runner& r = dbg::runner_or_sneaker_get();
-
-    __passert(::kernel::urbiserver->mode_get() == kernel::UServer::mode_user,
-              "exception thrown in kernel mode: "
-              << exn_name.name_get() << std::endl
-              // Too dangerous to try to print arg1 etc. here, as it
-              // certainly involves running urbiScript code.
-              << r.backtrace_get());
 
     const rObject& exn = global_class->slot_get(exn_name);
     if (arg1 == raise_current_method)
@@ -54,6 +57,7 @@ namespace runner
   void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
+    assert_user_mode("Lookup", msg);
     raise_urbi_skip(SYMBOL(LookupError),
                     to_urbi(msg),
                     obj);
