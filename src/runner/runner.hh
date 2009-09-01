@@ -207,6 +207,9 @@ namespace runner
     sched::prio_type prio_;
   };
 
+  /// Dump \a b on \a o, for debugging.
+  std::ostream& operator<<(std::ostream& o, const Runner::backtrace_type& b);
+
 } // namespace runner
 
 # ifdef LIBPORT_COMPILATION_MODE_SPEED
