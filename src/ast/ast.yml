@@ -263,9 +263,16 @@ Exp:
   inline:
     header inside: |2
         public:
+          /// Whether it is an empty Nary.
+          virtual bool empty() const;
           /// Whether is an instance of ast::Implicit.
           virtual bool implicit() const;
     impl inside: |2
+          bool Exp::empty() const
+          {
+            return false;
+          }
+
           bool Exp::implicit() const
           {
             return false;
@@ -311,9 +318,10 @@ Scope:
         access: rwW
   printer:
     - '"{"'
-    - 'libport::incendl'
-    - ~body
-    - 'libport::decendl'
+    - "{
+         if (!n->body_get()->empty())
+           ostr_ << libport::incendl << *n->body_get() << libport::decendl;
+       }"
     - '"}"'
 
 Do:
@@ -340,6 +348,12 @@ Flavored:
         type: flavor_type
         desc: Execution model
         access: rW
+  printer:
+    - '{
+         if (n->flavor_get() != flavor_none
+             && n->flavor_get() != flavor_semicolon)
+           ostr_ << n->flavor_get();
+       }'
 
 
 Message:
@@ -405,7 +419,7 @@ Nary:
           void clear();
 
           /// Are there any children?
-          bool empty() const;
+          virtual bool empty() const;
 
           /// Push a new expression, creating a Statement node.
           void push_back(rExp e, flavor_type f = flavor_none);
@@ -613,11 +627,8 @@ While:
         desc: Executed if test is true
   printer:
     - '"while"'
-    - '{
-         if (n->flavor_get() != flavor_semicolon)
-           ostr_ << n->flavor_get();
-       }'
-    - '"("'
+    - '{ visit(static_cast<const Flavored*>(n)); }'
+    - '" ("'
     - ~test
     - '")"'
     - libport::iendl
@@ -637,7 +648,9 @@ Foreach:
         type: rScope
         desc: Executed for each value in the list
   printer:
-    - '"for (var "'
+    - '"for"'
+    - '{ visit(static_cast<const Flavored*>(n)); }'
+    - '" (var "'
     - '{ n->index_get()->what_get().print_escaped(ostr_); }'
     - '" : "'
     - ~list
