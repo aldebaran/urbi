@@ -201,6 +201,8 @@ namespace object
 
     virtual std::string type_name_get() const;
 
+    /// Invoke \a name on \a this, passing additional arguments.
+    /// Pushes arg0 (this) before the other arguments.
     rObject call(libport::Symbol name,
                  rObject arg1 = 0,
                  rObject arg2 = 0,
@@ -208,6 +210,8 @@ namespace object
                  rObject arg4 = 0,
                  rObject arg5 = 0);
 
+    /// Invoke \a name on \a this, passing additional arguments.
+    /// Pushes arg0 (this) before the other arguments.
     rObject call(const std::string& name,
                  rObject arg1 = 0,
                  rObject arg2 = 0,
@@ -215,6 +219,9 @@ namespace object
                  rObject arg4 = 0,
                  rObject arg5 = 0);
 
+    /// Invoke \a name on \a this, passing additional arguments.
+    /// \a this is used to look for name, but it is not passed
+    /// as arg0.  UrbiScript's "this" must be args[0].
     rObject call(libport::Symbol name,
                  const objects_type& args);
 

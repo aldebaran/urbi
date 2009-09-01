@@ -56,7 +56,7 @@ do (System)
     callMessage(call)
   };
 
-  // Look for file and load it.
+  /// Look for file and load it.
   // Throw on errors.
   function load(file)
   {
