@@ -43,35 +43,12 @@ namespace runner
     __passert(global_class->slot_has(exn_name),
               "cannot throw Urbi exception " + exn_name.name_get ()
               + not_loaded_yet);
-    const rObject& exn = global_class->slot_get(exn_name);
     Runner& r = dbg::runner_or_sneaker_get();
-    objects_type args;
-    args.push_back(exn);
-    do
-    {
-      if (arg1)
-      {
-	if (arg1 == raise_current_method)
-	  args.push_back(to_urbi(r.innermost_call_get()));
-	else
-	  args.push_back(arg1);
-      }
-      else
-	break;
-      if (arg2)
-	args.push_back(arg2);
-      else
-	break;
-      if (arg3)
-	args.push_back(arg3);
-      else
-	break;
-      if (arg4)
-	args.push_back(arg4);
-      else
-	break;
-    } while (false);
-    r.raise(args[0]->call(SYMBOL(new), args), skip);
+    const rObject& exn = global_class->slot_get(exn_name);
+    if (arg1 == raise_current_method)
+      arg1 = to_urbi(r.innermost_call_get());
+    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4),
+            skip);
     pabort("Unreachable");
   }
 
