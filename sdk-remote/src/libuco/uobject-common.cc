@@ -2,13 +2,14 @@
 
 #include <boost/thread.hpp>
 
-#include <libport/containers.hxx>
+#include <libport/containers.hh>
 #include <libport/foreach.hh>
 #include <libport/utime.hh>
 
 #include <urbi/uobject.hh>
 #include <urbi/ustarter.hh>
 #include <urbi/ucontext-factory.hh>
+
 namespace urbi
 {
   namespace impl
@@ -23,14 +24,18 @@ namespace urbi
       return res;
     }
   }
+
   static void noop(impl::UContextImpl*)
   {
   }
+
   static boost::thread_specific_ptr<impl::UContextImpl> current_context(&noop);
+
   impl::UContextImpl* getCurrentContext()
   {
     return current_context.get();
   }
+
   void setCurrentContext(impl::UContextImpl* impl)
   {
     current_context.reset(impl);
@@ -42,32 +47,35 @@ namespace urbi
 				     const std::string& name,
 				     int size, bool owned,
                                      impl::UContextImpl* ctx)
-  :UContext(ctx)
-  , nbparam(size)
-  , objname(objname)
-  , type(type)
-  , name(name)
+    : UContext(ctx)
+    , nbparam(size)
+    , objname(objname)
+    , type(type)
+    , name(name)
   {
     impl_ = ctx_->getGenericCallbackImpl();
     impl_->initialize(this, owned);
   }
-   //! UGenericCallback constructor.
+
+  //! UGenericCallback constructor.
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name,
                                      impl::UContextImpl* ctx)
-  : UContext(ctx)
-  , objname(objname)
-  , type(type)
-  , name(name)
+    : UContext(ctx)
+    , objname(objname)
+    , type(type)
+    , name(name)
   {
     impl_ = ctx_->getGenericCallbackImpl();
     impl_->initialize(this);
   }
+
   UGenericCallback::~UGenericCallback()
   {
     impl_->clear();
   }
+
   void
   UGenericCallback::registerCallback()
   {
@@ -75,20 +83,20 @@ namespace urbi
   }
 
   UObject::UObject(int, impl::UContextImpl* impl)
-  : UContext(impl)
-  , __name("_dummy")
-  , classname("_dummy")
-  , derived(false)
-  , autogroup(false)
-  , remote(true)
-  , impl_(ctx_->getObjectImpl())
+    : UContext(impl)
+    , __name("_dummy")
+    , classname("_dummy")
+    , derived(false)
+    , autogroup(false)
+    , remote(true)
+    , impl_(ctx_->getObjectImpl())
   {
     impl_->initialize(this);
     objecthub = 0;
   }
 
-   //! UObject constructor.
-   UObject::UObject(const std::string& s, impl::UContextImpl* impl)
+  //! UObject constructor.
+  UObject::UObject(const std::string& s, impl::UContextImpl* impl)
     : UContext(impl)
     , __name(s)
     , classname(s)
@@ -97,16 +105,17 @@ namespace urbi
     , remote(true)
     , impl_(ctx_->getObjectImpl())
   {
-   impl_->initialize(this);
-   objecthub = 0;
-   autogroup = false;
-   // Do not replace this call to init by a `, load(s, "load")' as
-   // both result in "var <__name>.load = 1", which is not valid
-   // until the two above lines actually create <__name>.
-   load.init(__name, "load");
-   // default
-   load = 1;
+    impl_->initialize(this);
+    objecthub = 0;
+    autogroup = false;
+    // Do not replace this call to init by a `, load(s, "load")' as
+    // both result in "var <__name>.load = 1", which is not valid
+    // until the two above lines actually create <__name>.
+    load.init(__name, "load");
+    // default
+    load = 1;
   }
+
   void
   UObject::addAutoGroup()
   {
