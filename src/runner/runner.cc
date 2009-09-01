@@ -25,24 +25,13 @@ namespace runner
     // If there is a Channel object with name 'tag', use it.
     rSlot chan_slot = lobby_->slot_locate(libport::Symbol(tag), true).second;
     rObject chan = chan_slot ? chan_slot->value() : rObject();
-    object::objects_type args;
     if (chan && is_a(chan, lobby_->slot_get(SYMBOL(Channel))))
-    {
-      args.push_back(chan);
-      args.push_back(new object::String(msg));
-      apply(chan->slot_get(SYMBOL(LT_LT_)),
-	    SYMBOL(LT_LT_),
-	    args);
-    }
+      chan->call(SYMBOL(LT_LT_),
+                 new object::String(msg));
     else
-    {
-      args.push_back(lobby_);
-      args.push_back(new object::String(msg));
-      args.push_back(new object::String(tag));
-      apply(lobby_->slot_get(SYMBOL(send)),
-	    SYMBOL(send),
-            args);
-    }
+      lobby_->call(SYMBOL(send),
+                   new object::String(msg),
+                   new object::String(tag));
   }
 
   void
