@@ -1395,14 +1395,14 @@ It has the exact same behavior as \C's \lstinline|for|:
 \item The loop evaluates to \lstinline|void|.
 \end{enumerate}
 
-\subsubsection{for in}
+\subsubsection{Range-for}
 \label{sec:lang:for:each}
 
 \us supports iteration over a collection with another form of the
 \lstinline|for| loop.
 
 \begin{urbifixme}[frame=, backgroundcolor=, ]
-for (var \var{name} in \var{collection})
+for (var \var{name} : \var{collection})
    \var{body};
 \end{urbifixme}
 
@@ -1412,7 +1412,7 @@ is accessible via the \var{name} local variable. The listing below
 illustrates this.
 
 \begin{urbiscript}[firstnumber=last]
-for (var x in [0, 1, 2, 3, 4])
+for (var x : [0, 1, 2, 3, 4])
   echo(x.sqr);
 [00000000] *** 0
 [00000000] *** 1

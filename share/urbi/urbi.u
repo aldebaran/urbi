@@ -5,8 +5,10 @@ System.load("urbi/global.u");
 load("urbi/exception.u");
 load("urbi/call-message.u");
 load("urbi/lazy.u");
+load("urbi/range-iterable.u");
 load("urbi/list.u");
 load("urbi/singleton.u");
+
 
 /*-------.
 | void.  |

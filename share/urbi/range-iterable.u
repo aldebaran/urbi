@@ -1,0 +1,22 @@
+/// Provide range-for loops, provided which have some "asList".
+class Global.RangeIterable
+{
+  // Repeat \a action \a this times in concurrently.
+  function 'each&' (action)
+  {
+    asList.'each&'(action)
+  };
+
+  // Repeat \a action \a this times in concurrently.
+  function 'each' (action)
+  {
+    asList.'each'(action)
+  };
+
+  // Repeat \a action \a this times in concurrently.
+  function 'each|' (action)
+  {
+    asList.'each|'(action)
+  };
+
+};

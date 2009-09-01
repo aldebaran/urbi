@@ -9,7 +9,7 @@ do (Float)
   // Warning: We derive from Orderable first so that we use its
   // Object.==, otherwise String would use both Comparable.== and
   // Comparable.!= that bounce endlessly one on the other.
-  setProtos([Orderable, Comparable]);
+  setProtos([Orderable, Comparable, RangeIterable]);
 
   function sqr() { this * this };
 
@@ -37,27 +37,21 @@ do (Float)
   };
 
   /// Repeat \a action \a this times.
-  function each (action)
+  // Not using RangeIterable to optimize: no need to build explicitly
+  // the list.
+  function each(action)
   {
-    // Not bouncing to seq to optimize: no need to build explicitly
-    // the list.
     for (var i = 0; i < this; i += 1)
       action(i)
   };
 
-  // Repeat \a action \a this times separated with '|'.
-  function 'each|' (action)
+  /// Repeat \a action \a this times separated with '|'.
+  // Not using RangeIterable to optimize: no need to build explicitly
+  // the list.
+  function 'each|'(action)
   {
-    // Not bouncing to seq to optimize: no need to build explicitly
-    // the list.
     for| (var i = 0; i < this; i += 1)
       action(i)
-  };
-
-  // Repeat \a action \a this times in concurrently.
-  function 'each&' (action)
-  {
-    seq.'each&'(action)
   };
 
   function sgn() { if (this < 0) -1 else if (this > 0) 1 else 0 };

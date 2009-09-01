@@ -1,4 +1,4 @@
-class Global.Group
+class Global.Group : RangeIterable
 {
   function init
   {
@@ -27,22 +27,17 @@ class Global.Group
     this
   };
 
-  function asString ()
+  function asList()
+  {
+    members
+  };
+
+  function asString()
   {
     if (this === Group)
       "Group"
     else
-      type + " " + members.asString
-  };
-
-  function each (action)
-  {
-    members.each(action)
-  };
-
-  function 'each&' (action)
-  {
-    members.'each&' (action)
+      type + " " + members
   };
 
   // FIXME: This implementation always evaluates the

@@ -1,0 +1,60 @@
+\section{RangeIterable}
+
+This object is meant to be used as a prototype for objects that
+support an \lstinline|asList| method, to use range-based
+\lstinline|for| loops (\autoref{sec:lang:for:each}).
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Methods}
+
+\begin{itemize}
+\item \lstinline|each(\var{fun})|\\
+  Apply the given functional value \var{fun} on all ``members'',
+  sequentially.  Corresponds to range-\lstinline|for| loops.
+\begin{urbiscript}
+class range : RangeIterable
+{
+  var asList = [10, 20, 30];
+}|;
+for (var i : range)
+  echo (i);
+[00000000] *** 10
+[00000000] *** 20
+[00000000] *** 30
+\end{urbiscript}
+
+\item \lstinline|each&(\var{fun})|\\
+  Apply the given functional value \var{fun} on all ``members'', in
+  parallel, starting all the computations simultaneously.  Corresponds
+  to range-\lstinline|for&| loops.
+\begin{urbiscript}[firstnumber=last]
+{
+  var res = [];
+  for& (var i : range)
+    res << i;
+  assert(res.sort == [10, 20, 30]);
+};
+\end{urbiscript}
+
+\item \lstinline|each|(\var{fun})|\\
+  Apply the given functional value \var{fun} on all ``members'', with
+  tight sequentially.  Corresponds to range-\lstinline'for|' loops.
+\begin{urbiscript}[firstnumber=last]
+{
+  var res = [];
+  for| (var i : range)
+    res << i;
+  assert(res == [10, 20, 30]);
+};
+\end{urbiscript}
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

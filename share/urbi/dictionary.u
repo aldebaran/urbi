@@ -1,5 +1,7 @@
 do (Global.Dictionary)
 {
+  protos << Global.RangeIterable;
+
   /// Dictionary.init(KEY1, VAL1, ...).
   function init
   {

@@ -4,6 +4,8 @@
 
 do (List)
 {
+  protos.insertBack(Global.RangeIterable);
+
   // Whether e is in the list.
   function has(e)
   {
@@ -165,6 +167,7 @@ do (List)
     if (size)
     {
       res = front.acceptVoid.asPrintable |
+      // FIXME: join might be more efficient.
       for| (var elt: tail)
         res += ", " + elt.acceptVoid.asPrintable |
     } |
@@ -203,14 +206,3 @@ do (List)
     min(function (a, b) {!comp(a, b)})
   };
 };
-
-
-function Object.each(f)
-{
-  asList.each(f)
-};
-
-function Object.'each|'(f)
-{
-  asList.'each|'(f)
-}

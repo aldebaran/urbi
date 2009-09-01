@@ -1,11 +1,11 @@
+\chapter{\us Standard Library}
+\label{sec:stdlib}
+
 %% Redefine \section is this chapter so that we don't have to
 %% call \labelObject each time.  See the bottom of this file for the
 %% restoring of \section.
 \let\sectionOrig\section
 \renewcommand{\section}[1]{\sectionOrig{\labelObject{#1}\lstindex{#1}}}
-
-\chapter{\us Standard Library}
-\label{sec:stdlib}
 
 \input{specs/boolean}
 \input{specs/callmessage}
@@ -29,6 +29,7 @@
 \input{specs/pair}
 \input{specs/path}
 \input{specs/primitive}
+\input{specs/range-iterable}
 \input{specs/regexp}
 \input{specs/server}
 \input{specs/singleton}

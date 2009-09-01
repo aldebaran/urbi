@@ -30,7 +30,7 @@ assert(Dummy.protos == [Orderable, Object]);
   \lstinline|this|, the parents of the parents of
   \lstinline|this|,\ldots
 \begin{urbiscript}[firstnumber=last]
-assert(123.allProtos.size == 11);
+assert(123.allProtos.size == 12);
 \end{urbiscript}
 
 \item \lstinline|allSlotNames|\\
@@ -141,10 +141,6 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 [00020505] ***       }
 [00020505] ***   }
 \end{urbiscript}
-
-\item \lstinline|each(\var{fun})|\\
-  Call \lstinline|each| with the given functional value on
-  \lstinline|this.asList|.
 
 \item \lstinline|eachBg|\\
 

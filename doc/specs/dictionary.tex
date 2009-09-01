@@ -35,6 +35,7 @@ d.getWithDefault("four", 4);
 
 \begin{itemize}
 \item \refObject{Object}
+\item \refObject{RangeIterable}
 \end{itemize}
 
 \subsection{Construction}
@@ -59,12 +60,20 @@ assert(Dictionary.new.set("key", "value").asBool == true);
 
 \item \lstinline|asList|\\
   Return the contents of the dictionary as a \refObject{Pair} list
-  (\var{key}, \var{value}).  This makes it easier to iterate over a
-  Dictionary using \lstinline|for|.  No particular order is ensured.
+  (\var{key}, \var{value}).  Since Dictionary derives from
+  \refObject{RangeIterable}, it is easy to iterate over a Dictionary
+  using a range-\lstinline|for| (\autoref{sec:lang:for:each}).  No
+  particular order is ensured.
 
 \begin{urbiscript}[firstnumber=last]
-Dictionary.new("one", 1, "two", 2).asList;
-[00000000] [("one", 1), ("two", 2)]
+assert(Dictionary.new("one", 1, "two", 2).asList
+       == [Pair.new("one", 1), Pair.new("two", 2)]);
+{
+  var res = [];
+  for| (var entry: Dictionary.new("one", 1, "two", 2))
+    res << entry.second;
+  assert(res == [1, 2]);
+};
 \end{urbiscript}
 
 \item \lstinline|clear|\\
