@@ -93,7 +93,8 @@ namespace kernel
   `----------*/
 
   UServer::UServer(const char* mainName)
-    : search_path(boost::assign::list_of
+    : mode_(mode_kernel)
+    , search_path(boost::assign::list_of
                   (std::string(libport::xgetenv("URBI_PATH")))
                   (std::string(libport::xgetenv("URBI_ROOT", URBI_ROOT))
                    + "/share/gostai"),
@@ -341,6 +342,7 @@ namespace kernel
     // Force processing of urbi.u.
     while (!object::Object::proto->slot_has(SYMBOL(loaded)))
       work();
+    mode_ = mode_user;
     object::Object::proto->slot_remove(SYMBOL(loaded));
   }
 

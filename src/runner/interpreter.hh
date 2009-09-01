@@ -178,8 +178,8 @@ namespace runner
      * \param exn Value to throw
      * \param skip_last Skip last call when reporting the backtrace
      */
-    virtual void raise(rObject exn, bool skip_last = false)
-      __attribute__ ((noreturn));
+    ATTRIBUTE_NORETURN
+    virtual void raise(rObject exn, bool skip_last = false);
 
     virtual libport::Symbol innermost_call_get() const;
 

@@ -8,6 +8,7 @@
 # include <sstream>
 
 # include <libport/config.h>
+# include <libport/attributes.hh>
 
 # if LIBPORT_HAVE_WINDOWS_H
 // Without this, windows.h may include winsock.h, which will conflict with
@@ -59,13 +60,26 @@ namespace kernel
      */
     void initialize(bool interactive = false);
 
+    /// Support a kernel and a user mode.
+    ///
+    /// Exceptions may not be launched in user mode, they are hard
+    /// error.  This is used to catch error when the system is
+    /// incomplete, say when an error occurs when loading urbi/urbi.u.
+    /// Therefore, "of course", defaults to mode_kernel.
+    enum mode_type
+    {
+      mode_kernel,
+      mode_user,
+    };
+    ATTRIBUTE_R(mode_type, mode);
+
+  public:
     /// Process the jobs.
     /// \return the time when should be called again.
     libport::utime_t work();
 
     /// Set the system.args list in URBI.
     void main(int argc, const char* argv[]);
-
 
     /// Package information about this server.
     static const libport::PackageInfo& package_info();

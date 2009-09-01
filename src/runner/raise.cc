@@ -7,12 +7,6 @@
 #include <runner/sneaker.hh>
 #include <sched/scheduler.hh>
 
-#ifndef NDEBUG
-static const char *
-not_loaded_yet = ("\n(this is typical of lookup errors occuring before"
-                  " the completion of the initialization)");
-#endif
-
 namespace runner
 {
   using namespace object;
@@ -21,6 +15,31 @@ namespace runner
   // as a function call parameter.
 
   const rObject& raise_current_method = void_class;
+
+  void
+  raise_urbi(libport::Symbol exn_name,
+	     rObject arg1,
+	     rObject arg2,
+	     rObject arg3,
+	     rObject arg4,
+             bool skip)
+  {
+    Runner& r = dbg::runner_or_sneaker_get();
+
+    __passert(::kernel::urbiserver->mode_get() == kernel::UServer::mode_user,
+              "exception thrown in kernel mode: "
+              << exn_name.name_get() << std::endl
+              // Too dangerous to try to print arg1 etc. here, as it
+              // certainly involves running urbiScript code.
+              << r.backtrace_get());
+
+    const rObject& exn = global_class->slot_get(exn_name);
+    if (arg1 == raise_current_method)
+      arg1 = to_urbi(r.innermost_call_get());
+    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4),
+            skip);
+    pabort("Unreachable");
+  }
 
   void
   raise_urbi_skip(libport::Symbol exn_name,
@@ -33,31 +52,8 @@ namespace runner
   }
 
   void
-  raise_urbi(libport::Symbol exn_name,
-	     rObject arg1,
-	     rObject arg2,
-	     rObject arg3,
-	     rObject arg4,
-             bool skip)
-  {
-    __passert(global_class->slot_has(exn_name),
-              "cannot throw Urbi exception " + exn_name.name_get ()
-              + not_loaded_yet);
-    Runner& r = dbg::runner_or_sneaker_get();
-    const rObject& exn = global_class->slot_get(exn_name);
-    if (arg1 == raise_current_method)
-      arg1 = to_urbi(r.innermost_call_get());
-    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4),
-            skip);
-    pabort("Unreachable");
-  }
-
-  void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
-    __passert(global_class->slot_has(SYMBOL(LookupError)),
-              "cannot raise LookupError about " + msg.name_get()
-              + not_loaded_yet);
     raise_urbi_skip(SYMBOL(LookupError),
                     to_urbi(msg),
                     obj);
@@ -66,9 +62,6 @@ namespace runner
   void
   raise_const_error()
   {
-    __passert(global_class->slot_has(SYMBOL(ConstError)),
-              std::string("cannot raise ConstError")
-              + not_loaded_yet);
     raise_urbi_skip(SYMBOL(ConstError));
   }
 
