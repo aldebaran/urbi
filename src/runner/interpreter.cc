@@ -121,7 +121,7 @@ namespace runner
   }
 
   void
-  Interpreter::show_exception_ (object::UrbiException& ue)
+  Interpreter::show_exception_(object::UrbiException& ue)
   {
     send_message("error",
                  libport::format("!!! %s",

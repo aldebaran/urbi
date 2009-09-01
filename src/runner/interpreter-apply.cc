@@ -64,10 +64,10 @@ namespace runner
   `-------------------------------------*/
 
   Interpreter::rObject
-  Interpreter::apply_ast (const rObject& target,
-                          const libport::Symbol& message,
-                          const ast::exps_type* arguments,
-                          boost::optional<ast::loc> location)
+  Interpreter::apply_ast(const rObject& target,
+                         const libport::Symbol& message,
+                         const ast::exps_type* arguments,
+                         boost::optional<ast::loc> location)
   {
     // Accept to call methods on void only if void itself is holding
     // the method.
@@ -83,11 +83,11 @@ namespace runner
   }
 
   Interpreter::rObject
-  Interpreter::apply_ast (const rObject& target,
-                          const rObject& routine,
-                          const libport::Symbol& message,
-                          const ast::exps_type* input_ast_args,
-                          boost::optional<ast::loc> loc)
+  Interpreter::apply_ast(const rObject& target,
+                         const rObject& routine,
+                         const libport::Symbol& message,
+                         const ast::exps_type* input_ast_args,
+                         boost::optional<ast::loc> loc)
   {
     assertion(routine);
     assertion(target);
@@ -153,7 +153,7 @@ namespace runner
 	raise_unexpected_void_error();
 
     if (const rCode& code = function->as<object::Code>())
-      return apply_urbi (code, msg, args, call_message);
+      return apply_urbi(code, msg, args, call_message);
     else if (const object::rPrimitive& p = function->as<object::Primitive>())
       return p->value_get()(args);
     else
@@ -306,14 +306,13 @@ namespace runner
     // space, for example in an infinite recursion.
     check_stack_space ();
 
-
     stacks_.execution_starts(msg);
     return operator()(ast->body_get().get());
   }
 
-  /*--------.
-  | Helpers |
-  `--------*/
+  /*----------.
+  | Helpers.  |
+  `----------*/
 
   void
   Interpreter::push_evaluated_arguments(object::objects_type& args,
@@ -334,29 +333,29 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::build_call_message (const rObject& code,
-                                   const libport::Symbol& msg,
-				   const object::objects_type& args)
+  Interpreter::build_call_message(const rObject& code,
+                                  const libport::Symbol& msg,
+                                  const object::objects_type& args)
   {
     CAPTURE_GLOBAL(CallMessage);
     rObject res = CallMessage->clone();
 
     // Set the sender to be the current self. self must always exist.
-    res->slot_set (SYMBOL(sender), stacks_.self().get());
+    res->slot_set(SYMBOL(sender), stacks_.self().get());
 
     // Set the target to be the object on which the function is applied.
-    res->slot_set (SYMBOL(target), args.front());
+    res->slot_set(SYMBOL(target), args.front());
 
     // Set the code slot.
-    res->slot_set (SYMBOL(code), code);
+    res->slot_set(SYMBOL(code), code);
 
     // Set the name of the message call.
-    res->slot_set (SYMBOL(message), new object::String(msg));
+    res->slot_set(SYMBOL(message), new object::String(msg));
 
-    res->slot_set (SYMBOL(args), new object::List(
-                     objects_type(
-                       boost::begin(libport::skip_first(args)),
-                       boost::end(libport::skip_first(args)))));
+    res->slot_set(SYMBOL(args), new object::List(
+                    objects_type(
+                      boost::begin(libport::skip_first(args)),
+                      boost::end(libport::skip_first(args)))));
 
     return res;
   }
@@ -416,7 +415,8 @@ namespace runner
       // Capture the variable
       assignment->depth_set(assignment->depth_get() + 1);
       ast::rLocalDeclaration nd =
-        new ast::LocalDeclaration(d->location_get(), d->what_get(), d->value_get());
+        new ast::LocalDeclaration(d->location_get(),
+                                  d->what_get(), d->value_get());
       nd->local_index_set(routine_->captured_variables_get()->size());
       routine_->captured_variables_get()->push_back(nd);
       assignment->declaration_set(0);
@@ -443,7 +443,8 @@ namespace runner
       // Capture the variable
       local->depth_set(local->depth_get() + 1);
       ast::rLocalDeclaration nd =
-        new ast::LocalDeclaration(d->location_get(), d->what_get(), d->value_get());
+        new ast::LocalDeclaration(d->location_get(),
+                                  d->what_get(), d->value_get());
       nd->local_index_set(routine_->captured_variables_get()->size());
       routine_->captured_variables_get()->push_back(nd);
       local->declaration_set(0);

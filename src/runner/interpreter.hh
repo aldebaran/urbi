@@ -189,10 +189,10 @@ namespace runner
   private:
     void init();
     /// Reset result_, set the location and call stack of ue.
-    rObject apply_urbi (const rCode& function,
-			const libport::Symbol& msg,
-			const object::objects_type& args,
-			const rObject& call_message);
+    rObject apply_urbi(const rCode& function,
+                       const libport::Symbol& msg,
+                       const object::objects_type& args,
+                       const rObject& call_message);
 
   private:
     /// The root of the AST being executed.
