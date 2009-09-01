@@ -78,9 +78,11 @@ namespace parser
     if (duration)
     {
       PARAMETRIC_AST(desugar,
-                     "var '$at' = persist(%exp:1, %exp:2) |"
-                     "at ('$at') %exp:3 onleave %exp:4");
-
+                     "{"
+                     "  var '$at' = persist(%exp:1, %exp:2) |"
+                     "  at ('$at'()) %exp:3 onleave %exp:4"
+                     "}"
+        );
       return exp(desugar % cond % duration % body % onleave);
     }
     else
