@@ -144,6 +144,54 @@ namespace urbi
 
   namespace impl
   {
+    void
+    UContextImpl::init()
+    {
+      setCurrentContext(this);
+      foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
+      {
+        if (!libport::mhas(initialized, s))
+        {
+          newUObjectHubClass(s);
+          initialized.insert(s);
+        }
+      }
+      foreach(baseURBIStarter* s, baseURBIStarter::list())
+      {
+        if (!libport::mhas(initialized, s))
+        {
+          newUObjectClass(s);
+          initialized.insert(s);
+        }
+      }
+    }
+
+    bool
+    UContextImpl::bind(const std::string& n, std::string rename)
+    {
+      foreach(baseURBIStarter* s, baseURBIStarter::list())
+      {
+        if (s->name == n)
+        {
+          s->instanciate(this, rename);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    void
+    UContextImpl::registerObject(UObject*o)
+    {
+      objects[o->__name] = o;
+    }
+
+    void
+    UContextImpl::registerHub(UObjectHub*u)
+    {
+      hubs[u->get_name()] = u;
+    }
+
     UObjectHub*
     UContextImpl::getUObjectHub(const std::string& n)
     {
@@ -155,52 +203,8 @@ namespace urbi
     {
       return libport::find0(objects, n);
     }
-   void
-   UContextImpl::init()
-   {
-     setCurrentContext(this);
-     foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
-     {
-       if (!libport::mhas(initialized, s))
-       {
-         newUObjectHubClass(s);
-         initialized.insert(s);
-       }
-     }
-     foreach(baseURBIStarter* s, baseURBIStarter::list())
-     {
-       if (!libport::mhas(initialized, s))
-       {
-         newUObjectClass(s);
-         initialized.insert(s);
-       }
-     }
-   }
-   bool
-   UContextImpl::bind(const std::string& n, std::string rename)
-   {
-     foreach(baseURBIStarter* s, baseURBIStarter::list())
-     {
-       if (s->name == n)
-       {
-         s->instanciate(this, rename);
-         return true;
-       }
-     }
-     return false;
-   }
-   void
-   UContextImpl::registerObject(UObject*o)
-   {
-     objects[o->__name] = o;
-   }
-   void
-   UContextImpl::registerHub(UObjectHub*u)
-   {
-     hubs[u->get_name()] = u;
-   }
-
   }
+
   /*--------------------------.
   | Free standing functions.  |
   `--------------------------*/
