@@ -139,7 +139,7 @@ namespace runner
     precondition(!args.empty());
     precondition(args.front());
 
-    bool reg = msg != libport::Symbol::make_empty();
+    bool reg = !msg.empty();
     if (reg)
       call_stack_.push_back(std::make_pair(msg, loc));
     FINALLY(((call_stack_type&, call_stack_))((bool, reg)),
