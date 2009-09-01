@@ -274,10 +274,7 @@ namespace runner
     rforeach (const call_type& c, bt)
     {
       std::ostringstream o;
-      o << "!!!    called from: ";
-      if (c.second)
-        o << *c.second << ": ";
-      o << c.first;
+      o << "!!!    called from: " << c;
       send_message(chan, o.str());
     }
   }

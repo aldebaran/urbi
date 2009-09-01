@@ -9,9 +9,9 @@
 namespace object
 {
 
-  /*--------------.
-  | UrbiException |
-  `--------------*/
+  /*----------------.
+  | UrbiException.  |
+  `----------------*/
 
   inline
   UrbiException::UrbiException(rObject value, const call_stack_type& bt)
@@ -19,6 +19,7 @@ namespace object
     , backtrace_(bt)
   {
   }
+
 } // namespace object
 
 #endif //! OBJECT_URBI_EXCEPTION_HXX

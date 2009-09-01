@@ -155,6 +155,7 @@ dist_libuobject_la_SOURCES +=			\
   object/task.hh				\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\
+  object/urbi-exception.cc			\
   object/uvar.cc                                \
   object/uvar.hh                                \
   object/vector-slots.hh			\
