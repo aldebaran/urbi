@@ -518,9 +518,8 @@ namespace object
                const objects_type& args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
-    rObject self = slot_get(name);
-    return r.apply(self, name, args);
+    rObject fun = slot_get(name);
+    return r.apply(fun, name, args);
   }
 
   rObject
