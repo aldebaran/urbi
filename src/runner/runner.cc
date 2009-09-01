@@ -4,9 +4,8 @@
  */
 
 #include <libport/containers.hh>
+#include <libport/foreach.hh>
 #include <libport/windows.hh>
-
-#include <kernel/uconnection.hh>
 
 #include <object/lobby.hh>
 #include <object/slot.hh>

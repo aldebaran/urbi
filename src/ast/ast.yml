@@ -766,19 +766,20 @@ List:
 LValue:
   super: Exp
   inline:
-    header prologue: |2
-      # include <ast/print.hh>
     header inside: |2
         public:
           /// This lvalue as a call
           rCall call();
+    impl prologue: |2
+      # include <ast/call.hh>
+      # include <ast/print.hh>
     impl inside: |2
-          rCall LValue::call()
-          {
-            rCall res = dynamic_cast<Call*>(this);
-            passert("Invalid call: " << *this, res);
-            return res;
-          }
+        rCall LValue::call()
+        {
+          rCall res = dynamic_cast<Call*>(this);
+          passert("Invalid call: " << *this, res);
+          return res;
+        }
 
 LValueArgs:
   super: LValue

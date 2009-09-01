@@ -8,6 +8,7 @@
 
 #include <libport/finally.hh>
 
+#include <ast/ast.hh>
 #include <object/tag.hh>
 
 namespace runner

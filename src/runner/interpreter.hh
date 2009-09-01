@@ -12,6 +12,7 @@
 # include <libport/hash.hh>
 
 # include <ast/fwd.hh>
+# include <ast/exps-type.hh>
 
 # include <object/urbi-exception.hh>
 
