@@ -1,6 +1,8 @@
 #ifndef OBJECT_INPUT_STREAM_HH
 # define OBJECT_INPUT_STREAM_HH
 
+# include <libport/cstdio>
+
 # include <object/cxx-object.hh>
 
 namespace object
