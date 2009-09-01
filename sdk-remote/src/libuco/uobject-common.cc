@@ -132,8 +132,7 @@ namespace urbi
   UObject::~UObject()
   {
     clean();
-    if (impl_)
-      delete impl_;
+    delete impl_;
   }
 
   void
@@ -145,6 +144,17 @@ namespace urbi
 
   namespace impl
   {
+    UObjectHub*
+    UContextImpl::getUObjectHub(const std::string& n)
+    {
+      return libport::find0(hubs, n);
+    }
+
+    UObject*
+    UContextImpl::getUObject(const std::string& n)
+    {
+      return libport::find0(objects, n);
+    }
    void
    UContextImpl::init()
    {
@@ -190,23 +200,6 @@ namespace urbi
      hubs[u->get_name()] = u;
    }
 
-  UObjectHub*
-  UContextImpl::getUObjectHub(const std::string& n)
-  {
-    hubs_type::iterator i = hubs.find(n);
-    if (i == hubs.end())
-      return 0;
-    return i->second;
-  }
-
-  UObject*
-  UContextImpl::getUObject(const std::string& n)
-  {
-    objects_type::iterator i = objects.find(n);
-    if (i == objects.end())
-      return 0;
-    return i->second;
-  }
   }
   /*--------------------------.
   | Free standing functions.  |
