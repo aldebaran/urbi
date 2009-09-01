@@ -7,7 +7,7 @@ do (List)
   // Whether e is in the list.
   function has(e)
   {
-    return any (function (i) { i == e })
+    any (function (i) { i == e })
   };
 
   // FIXME: We need to use a single convention for physical-equality
@@ -16,7 +16,7 @@ do (List)
   // memHas, or choose another convention.
   function hasSame(e)
   {
-    return any (function (i) { i === e })
+    any (function (i) { i === e })
   };
 
   function '=='(other)
@@ -48,7 +48,7 @@ do (List)
       l = l.tail|
       r = r.tail|
     }|
-    return l.empty && !r.empty
+    l.empty && !r.empty
   };
 
   // Same contents except occurrences of e.
@@ -69,7 +69,7 @@ do (List)
     for| (var i: this)
       if (i not in rhs)
 	res.insertBack(i) |
-    return res
+    res
   };
 
   // Add head, symmetric of tail
@@ -141,7 +141,7 @@ do (List)
   };
 
   // Whether all the elements verify the \a f predicate.
-  function all (f)
+  function all(f)
   {
     for| (var i: this)
       if (!f (i))
@@ -150,16 +150,16 @@ do (List)
   };
 
   // The list of elements verifying the \a f predicate.
-  function filter (f)
+  function filter(f)
   {
     var res = [] |
     for| (var elt: this)
       if (f(elt))
         res << elt |
-    return res
+    res
   };
 
-  function asString ()
+  function asString()
   {
     var res = "" |
     if (size)

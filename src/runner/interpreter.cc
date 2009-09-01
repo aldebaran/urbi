@@ -271,7 +271,7 @@ namespace runner
   Interpreter::show_backtrace(const call_stack_type& bt,
                               const std::string& chan)
   {
-    rforeach (call_type c, bt)
+    rforeach (const call_type& c, bt)
     {
       std::ostringstream o;
       o << "!!!    called from: ";
