@@ -37,8 +37,6 @@
 namespace binder
 {
   using libport::Finally;
-  using parser::ast_lvalue_once;
-  using parser::ast_lvalue_wrap;
 
   /*---------.
   | Binder.  |
@@ -373,7 +371,8 @@ namespace binder
   {
     ast::rAst save;
     std::swap(save, result_);
-    ast::rExp res = recurse(parser::ast_closure(arg));
+    parser::AstFactory factory;
+    ast::rExp res = recurse(factory.make_closure(arg));
     std::swap(save, result_);
     return res;
   }

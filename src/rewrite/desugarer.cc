@@ -23,11 +23,6 @@
 
 namespace rewrite
 {
-  using parser::ast_call;
-  using parser::ast_string;
-  using parser::ast_lvalue_once;
-  using parser::ast_lvalue_wrap;
-
   Desugarer::Desugarer()
     : pattern_(false)
     , allow_decl_(false)
@@ -75,7 +70,7 @@ namespace rewrite
       what = binding->what_get();
 
     const ast::loc& loc = assign->location_get();
-    ast::rLValue tgt = ast_lvalue_once(what);
+    ast::rLValue tgt = parser::AstFactory::make_lvalue_once(what);
 
     // Complete the dictionary with the base, getter and setter.
     // FIXME: There is a copy here that we would like to get rid of.
@@ -87,7 +82,7 @@ namespace rewrite
     source[SYMBOL(setter)] =
       exp(setter
           % new ast::Assignment(loc, new_clone(tgt),
-                                parser::ast_call(loc, SYMBOL(v))));
+                                parser::AstFactory::make_call(loc, SYMBOL(v))));
 
     PARAMETRIC_AST(dict, "Dictionary.new");
     ast::rExp modifiers = exp(dict);
@@ -103,7 +98,7 @@ namespace rewrite
 
     PARAMETRIC_AST(trajectory, "TrajectoryGenerator.new(%exp:1).run");
     ast::rExp res =
-      ast::rExp(ast_lvalue_wrap(what, exp(trajectory % modifiers)).get());
+      ast::rExp(parser::AstFactory::make_lvalue_wrap(what, exp(trajectory % modifiers)).get());
 
     if (binding)
     {
@@ -151,8 +146,8 @@ namespace rewrite
     {
       ast::exps_type* args = maybe_recurse_collection(sub->arguments_get());
       args->push_back(recurse(assign->value_get()));
-      result_ = ast_call(loc, recurse(sub->target_get()),
-                         SYMBOL(SBL_SBR_EQ), args);
+      result_ = parser::AstFactory::make_call(loc, recurse(sub->target_get()),
+                                              SYMBOL(SBL_SBR_EQ), args);
       return;
     }
 
@@ -183,7 +178,7 @@ namespace rewrite
 
     ast::rExp pattern = assign->what_get();
     rewrite::PatternBinder bind
-      (ast_call(loc, SYMBOL(DOLLAR_pattern)), loc, true);
+      (parser::AstFactory::make_call(loc, SYMBOL(DOLLAR_pattern)), loc, true);
     bind(pattern.get());
 
     rewrite.location_set(assign->location_get());
@@ -247,8 +242,8 @@ namespace rewrite
 
     desugar % what
       % protos_set
-      % ast_string(l, name)
-      % ast_string(l, libport::Symbol("as" + name.name_get()))
+      % parser::AstFactory::make_string(l, name)
+      % parser::AstFactory::make_string(l, libport::Symbol("as" + name.name_get()))
       % c->content_get();
 
     result_ = recurse_with_subdecl(exp(desugar));
@@ -322,14 +317,14 @@ namespace rewrite
     PARAMETRIC_AST(desugar, "%lvalue:1 = %exp:2 . %id:3 (%exp:4)");
 
     ast::rLValue what = recurse(a->what_get());
-    ast::rLValue tgt = ast_lvalue_once(what);
+    ast::rLValue tgt = parser::AstFactory::make_lvalue_once(what);
 
     desugar % tgt
       % new_clone(tgt)
       % a->op_get()
       % a->value_get();
 
-    result_ = ast_lvalue_wrap(what, exp(desugar));
+    result_ = parser::AstFactory::make_lvalue_wrap(what, exp(desugar));
     result_ = recurse(result_);
     result_->original_set(a);
   }
@@ -373,7 +368,7 @@ namespace rewrite
 
       if (match)
       {
-        rewrite::PatternBinder bind(ast_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+        rewrite::PatternBinder bind(parser::AstFactory::make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
         bind(c->match_get()->pattern_get().get());
         PARAMETRIC_AST(pattern, "var '$pattern' = Pattern.new(%exp:1)");
         ast::rExp p =

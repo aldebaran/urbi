@@ -90,7 +90,7 @@ namespace ast
   ParametricAst::visit(const ast::MetaId* e)
   {
     libport::Symbol name = id_map_type::take_(e->id_get () - 1);
-    result_ = parser::ast_call(e->location_get(), name);
+    result_ = parser::AstFactory::make_call(e->location_get(), name);
   }
 
   void

@@ -21,9 +21,6 @@
 
 namespace parser
 {
-  typedef std::pair<libport::Symbol, ast::rExp> modifier_type;
-  typedef modifier_type formal_type;
-  typedef std::vector<formal_type> formals_type;
 
   /// FIXME: this is something that should be handled by Bison.
   struct syntax_error : std::runtime_error
@@ -35,210 +32,260 @@ namespace parser
     yy::location location;
   };
 
-  /// at (%cond ~ %duration) {%body} onleave {%onleave}
-  ast::rExp
-  ast_at(const yy::location& loc,
-         ast::rExp cond,
-         ast::rExp body, ast::rExp onleave = 0,
-         ast::rExp duration = 0);
+  class AstFactory
+  {
+  public:
+    typedef std::pair<libport::Symbol, ast::rExp> modifier_type;
+    typedef modifier_type formal_type;
+    typedef std::vector<formal_type> formals_type;
 
-  /// at (?(%event)(%payload) {%body} onleave {%onleave}
-  ast::rExp
-  ast_at_event(const ast::loc& loc,
-               EventMatch& event,
-               ast::rExp body, ast::rExp onleave = 0);
+    typedef yy::location location;
 
-  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-  /// \param op can be any of the four cases.
-  ast::rExp
-  ast_bin(const yy::location& l,
-          ast::flavor_type op, ast::rExp lhs, ast::rExp rhs);
+    /// at (%cond ~ %duration) {%body} onleave {%onleave}
+    static
+    ast::rExp
+    make_at(const yy::location& loc,
+            ast::rExp cond,
+            ast::rExp body, ast::rExp onleave = 0,
+            ast::rExp duration = 0) /* const */;
 
-  /// Create a binding, possibly const.
-  /// Corresponds to "var <exp>" and "const var <exp>".
-  /// Check that <exp> can indeed be declared: it must be an LValue.
-  /// It must not be a descendant such as Property.
-  ast::rBinding
-  ast_binding(const yy::location& l,
-              bool constant,
-              const yy::location& exp_loc, ast::rExp exp);
+    /// at (?(%event)(%payload) {%body} onleave {%onleave}
+    static
+    ast::rExp
+    make_at_event(const location& loc,
+                  EventMatch& event,
+                  ast::rExp body, ast::rExp onleave = 0) /* const */;
 
-  /// "<method>"
-  ast::rCall
-  ast_call(const yy::location& l,
-           libport::Symbol method);
+    /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+    /// \param op can be any of the four cases.
+    static
+    ast::rExp
+    make_bin(const yy::location& l,
+             ast::flavor_type op, ast::rExp lhs, ast::rExp rhs) /* const */;
 
+    /// Create a binding, possibly const.
+    /// Corresponds to "var <exp>" and "const var <exp>".
+    /// Check that <exp> can indeed be declared: it must be an LValue.
+    /// It must not be a descendant such as Property.
+    static
+    ast::rBinding
+    make_binding(const yy::location& l,
+                 bool constant,
+                 const yy::location& exp_loc, ast::rExp exp) /* const */;
 
-  /// "<target> . <method> (args)".
-  ast::rCall
-  ast_call(const yy::location& l,
-           ast::rExp target, libport::Symbol method, ast::exps_type* args);
-
-  /// "<target> . <method> ()".
-  ast::rCall
-  ast_call(const yy::location& l,
-           ast::rExp target, libport::Symbol method);
-
-  /// "<target> . <method> (<arg1>)".
-  ast::rCall
-  ast_call(const yy::location& l,
-           ast::rExp target, libport::Symbol method, ast::rExp arg1);
+    /// "<method>"
+    static
+    ast::rCall
+    make_call(const yy::location& l,
+              libport::Symbol method) /* const */;
 
 
-  /// "<target> . <method> (<arg1>, <arg2>)".
-  /// "<target> . <method> (<arg1>, <arg2>, <arg3>)".
-  ast::rCall
-  ast_call(const yy::location& l,
-           ast::rExp target, libport::Symbol method,
-           ast::rExp arg1, ast::rExp arg2, ast::rExp arg3 = 0);
+    /// "<target> . <method> (args)".
+    static
+    ast::rCall
+    make_call(const yy::location& l,
+              ast::rExp target,
+              libport::Symbol method, ast::exps_type* args) /* const */;
+
+    /// "<target> . <method> ()".
+    static
+    ast::rCall
+    make_call(const yy::location& l,
+              ast::rExp target, libport::Symbol method) /* const */;
+
+    /// "<target> . <method> (<arg1>)".
+    static
+    ast::rCall
+    make_call(const yy::location& l,
+              ast::rExp target, libport::Symbol method, ast::rExp arg1) /* const */;
 
 
-  /// "class" lvalue protos block
-  ast::rExp
-  ast_class(const yy::location& l,
-            ast::rCall lvalue, ast::exps_type* protos, ast::rExp block);
+    /// "<target> . <method> (<arg1>, <arg2>)".
+    /// "<target> . <method> (<arg1>, <arg2>, <arg3>)".
+    static
+    ast::rCall
+    make_call(const yy::location& l,
+              ast::rExp target, libport::Symbol method,
+              ast::rExp arg1, ast::rExp arg2, ast::rExp arg3 = 0) /* const */;
 
 
-  /// closure () { <value> }
-  ast::rExp
-  ast_closure(ast::rExp value);
-
-  ast::rExp
-  ast_event_catcher(const ast::loc& loc,
-                    EventMatch& event,
-                    ast::rExp body, ast::rExp onleave);
-
-  /// Build an "every" loop.
-  ast::rExp
-  ast_every(const yy::location& loc, ast::flavor_type flavor,
-            ast::rExp test, ast::rExp body);
-
-  // Build a for(iterable) loop.
-  ast::rExp
-  ast_for(const yy::location&, ast::flavor_type flavor,
-          ast::rExp iterable, ast::rExp body);
-
-  // Build a for(var id : iterable) loop.
-  ast::rExp
-  ast_for(const yy::location& l, ast::flavor_type flavor,
-          const yy::location& id_loc, libport::Symbol id,
-          ast::rExp iterable, ast::rExp body);
-
-  /// Build a C-for loop.
-  ast::rExp
-  ast_for(const yy::location& l, ast::flavor_type flavor,
-          ast::rExp init, ast::rExp test, ast::rExp inc,
-          ast::rExp body);
-
-  /// \param iffalse can be 0.
-  ast::rExp
-  ast_if(const yy::location& l,
-         ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse);
-
-  /** Use these functions to avoid CPP-like problem when referring
-   *  several times to an lvalue.  For instance, do not desugar
-   *
-   *  f(x).val += 1
-   *
-   *  as
-   *
-   *  f(x).val = f(x).val + 1
-   *
-   *  but as
-   *
-   *  var tmp = f(x) | tmp.val = tmp.val + 1
-   *
-   * 1/ Use ast_lvalue_once to get the actual slot owner to use.
-   * 2/ Transform your code
-   * 3/ Use ast_lvalue_wrap to potentially define the cached owner.
-   *
-   */
-  // We need two separate functions. This could be improved if
-  // ParametricAst where able to pick the same variable several times,
-  // which should pose no problem now that ast are refcounted.
-  ast::rLValue ast_lvalue_once(const ast::rLValue& lvalue);
-  ast::rExp ast_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e);
-
-  /// Return the ast for "nil".
-  ast::rExp ast_nil();
-
-  /// Create a closure or a function.
-  /// \param closure  whether building a closure.
-  /// \param loc      location for the whole declaration.
-  /// \param floc     location of the formals.
-  /// \param f        formals.  Mandatory for closures.
-  /// \param bloc     location of the body.
-  /// \param b        body.
-  ast::rRoutine
-  ast_routine(const ast::loc& loc, bool closure,
-              const ast::loc& floc, formals_type* f,
-              const ast::loc& bloc, const ast::rExp b);
-
-  /// Return \a e in a ast::Scope unless it is already one.
-  ast::rScope
-  ast_scope(const yy::location& l, ast::rExp target, ast::rExp e);
-
-  ast::rScope
-  ast_scope(const yy::location& l, ast::rExp e);
-
-  ast::rExp
-  ast_string(const yy::location& l, libport::Symbol s);
+    /// "class" lvalue protos block
+    static
+    ast::rExp
+    make_class(const yy::location& l,
+               ast::rCall lvalue,
+               ast::exps_type* protos, ast::rExp block) /* const */;
 
 
-  /* Simplify \a e in every possible means.  Typically, remove useless
-     Naries with a single statement.  */
-  ast::rExp ast_strip(ast::rNary e);
-  ast::rExp ast_strip(ast::rExp e);
+    /// closure () { <value> }
+    static
+    ast::rExp
+    make_closure(ast::rExp value) /* const */;
+
+    static
+    ast::rExp
+    make_event_catcher(const location& loc,
+                       EventMatch& event,
+                       ast::rExp body, ast::rExp onleave) /* const */;
+
+    /// Build an "every" loop.
+    static
+    ast::rExp
+    make_every(const yy::location& loc, ast::flavor_type flavor,
+               ast::rExp test, ast::rExp body) /* const */;
+
+    // Build a for(iterable) loop.
+    static
+    ast::rExp
+    make_for(const yy::location&, ast::flavor_type flavor,
+             ast::rExp iterable, ast::rExp body) /* const */;
+
+    // Build a for(var id : iterable) loop.
+    static
+    ast::rExp
+    make_for(const yy::location& l, ast::flavor_type flavor,
+             const yy::location& id_loc, libport::Symbol id,
+             ast::rExp iterable, ast::rExp body) /* const */;
+
+    /// Build a C-for loop.
+    static
+    ast::rExp
+    make_for(const yy::location& l, ast::flavor_type flavor,
+             ast::rExp init, ast::rExp test, ast::rExp inc,
+             ast::rExp body) /* const */;
+
+    /// \param iffalse can be 0.
+    static
+    ast::rExp
+    make_if(const yy::location& l,
+            ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse) /* const */;
+
+    /** Use these functions to avoid CPP-like problem when referring
+     *  several times to an lvalue.  For instance, do not desugar
+     *
+     *  f(x).val += 1
+     *
+     *  as
+     *
+     *  f(x).val = f(x).val + 1
+     *
+     *  but as
+     *
+     *  var tmp = f(x) | tmp.val = tmp.val + 1
+     static
+     *
+     * 1/ Use make_lvalue_once to get the actual slot owner to use.
+     * 2/ Transform your code
+     * 3/ Use make_lvalue_wrap to potentially define the cached owner.
+     *
+     */
+    // We need two separate functions. This could be improved if
+    // ParametricAst where able to pick the same variable several times,
+    // which should pose no problem now that ast are refcounted.
+    static
+    ast::rLValue
+    make_lvalue_once(const ast::rLValue& lvalue) /* const */;
+    static
+    ast::rExp
+    make_lvalue_wrap(const ast::rLValue& lvalue, const ast::rExp& e) /* const */;
+
+    static
+    /// Return the ast for "nil".
+    ast::rExp make_nil() /* const */;
+
+    /// Create a closure or a function.
+    /// \param closure  whether building a closure.
+    /// \param loc      location for the whole declaration.
+    /// \param floc     location of the formals.
+    /// \param f        formals.  Mandatory for closures.
+    /// \param bloc     location of the body.
+    /// \param b        body.
+    static
+    ast::rRoutine
+    make_routine(const location& loc, bool closure,
+                 const location& floc, formals_type* f,
+                 const location& bloc, const ast::rExp b) /* const */;
+
+    /// Return \a e in a ast::Scope unless it is already one.
+    static
+    ast::rScope
+    make_scope(const yy::location& l, ast::rExp target, ast::rExp e) /* const */;
+
+    static
+    ast::rScope
+    make_scope(const yy::location& l, ast::rExp e) /* const */;
+
+    static
+    ast::rExp
+    make_string(const yy::location& l, libport::Symbol s) /* const */;
 
 
-  /*--------.
-  | Switch  |
-  `--------*/
-
-  typedef std::pair<ast::rMatch, ast::rNary> case_type;
-  typedef std::list<case_type> cases_type;
-
-  ast::rExp
-  ast_switch(const yy::location& l, ast::rExp cond,
-             const cases_type& cases, ast::rExp def);
+    /* Simplify \a e in every possible means.  Typically, remove useless
+       static
+       Naries with a single statement.  */
+    static
+    ast::rExp make_strip(ast::rNary e) /* const */;
+    static
+    ast::rExp make_strip(ast::rExp e) /* const */;
 
 
-  /// timeout(duration) body
-  ast::rExp ast_timeout(const ast::rExp& duration, const ast::rExp& body);
+    /*--------.
+    | Switch  |
+    `--------*/
 
-  /// waituntil (cond ~ duration);
-  /// \param duration can be 0.
-  ast::rExp ast_waituntil(const yy::location& loc,
-                          const ast::rExp& cond, ast::rExp duration);
+    typedef std::pair<ast::rMatch, ast::rNary> case_type;
+    typedef std::list<case_type> cases_type;
 
-  /// waituntil (?(%event)(%payload))
-  ast::rExp
-  ast_waituntil_event(const ast::loc& loc,
-                      ast::rExp event,
-                      ast::exps_type* payload);
+    static
+    ast::rExp
+    make_switch(const yy::location& l, ast::rExp cond,
+                const cases_type& cases, ast::rExp def) /* const */;
 
-  /// whenever (%cond ~ %duration) {%body} onleave {%else_stmt}
-  ast::rExp
-  ast_whenever(const yy::location& loc,
-               ast::rExp cond,
-               ast::rExp body, ast::rExp else_stmt = 0,
-               ast::rExp duration = 0);
 
-  /// whenever (?(%event)(%payload) {%body} onleave {%onleave}
-  ast::rExp
-  ast_whenever_event(const ast::loc& loc,
-                     EventMatch& event,
-                     ast::rExp body, ast::rExp onleave = 0);
+    /// timeout(duration) body
+    static
+    ast::rExp
+    make_timeout(const ast::rExp& duration, const ast::rExp& body) /* const */;
+
+    /// waituntil (cond ~ duration);
+    /// \param duration can be 0.
+    static
+    ast::rExp
+    make_waituntil(const yy::location& loc,
+                   const ast::rExp& cond, ast::rExp duration) /* const */;
+
+    /// waituntil (?(%event)(%payload))
+    static
+    ast::rExp
+    make_waituntil_event(const location& loc,
+                         ast::rExp event,
+                         ast::exps_type* payload) /* const */;
+
+    /// whenever (%cond ~ %duration) {%body} onleave {%else_stmt}
+    static
+    ast::rExp
+    make_whenever(const yy::location& loc,
+                  ast::rExp cond,
+                  ast::rExp body, ast::rExp else_stmt = 0,
+                  ast::rExp duration = 0) /* const */;
+
+    /// whenever (?(%event)(%payload) {%body} onleave {%onleave}
+    static
+    ast::rExp
+    make_whenever_event(const location& loc,
+                        EventMatch& event,
+                        ast::rExp body, ast::rExp onleave = 0) /* const */;
+  };
 }
 
-// The structures (list) live in std, that's where Koening look-up
-// will look for them.
+// The structures (list and pair) live in std, that's where Koening
+// look-up will look for them.
 namespace std
 {
-  ostream& operator<<(ostream& o, const parser::case_type& c);
-  ostream& operator<<(ostream& o, const parser::cases_type& c);
-  ostream& operator<<(ostream& o, const parser::modifier_type& m);
-  ostream& operator<<(ostream& o, const parser::formals_type& f);
+  ostream& operator<<(ostream& o, const parser::AstFactory::case_type& c);
+  ostream& operator<<(ostream& o, const parser::AstFactory::cases_type& c);
+  ostream& operator<<(ostream& o, const parser::AstFactory::modifier_type& m);
+  ostream& operator<<(ostream& o, const parser::AstFactory::formals_type& f);
 }
 
 # include <parser/ast-factory.hxx>

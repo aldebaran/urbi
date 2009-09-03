@@ -77,23 +77,26 @@
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
-  using parser::ast_at;
-  using parser::ast_at_event;
-  using parser::ast_bin;
-  using parser::ast_binding;
-  using parser::ast_call;
-  using parser::ast_class;
-  using parser::ast_every;
-  using parser::ast_for;
-  using parser::ast_if;
-  using parser::ast_nil;
-  using parser::ast_routine;
-  using parser::ast_scope;
-  using parser::ast_string;
-  using parser::ast_strip;
-  using parser::ast_switch;
-  using parser::ast_whenever;
-  using parser::ast_whenever_event;
+#define ast_at               up.factory().make_at
+#define ast_at_event         up.factory().make_at_event
+#define ast_bin              up.factory().make_bin
+#define ast_binding          up.factory().make_binding
+#define ast_call             up.factory().make_call
+#define ast_class            up.factory().make_class
+#define ast_every            up.factory().make_every
+#define ast_for              up.factory().make_for
+#define ast_if               up.factory().make_if
+#define ast_nil              up.factory().make_nil
+#define ast_routine          up.factory().make_routine
+#define ast_scope            up.factory().make_scope
+#define ast_string           up.factory().make_string
+#define ast_strip            up.factory().make_strip
+#define ast_switch           up.factory().make_switch
+#define ast_timeout          up.factory().make_timeout
+#define ast_waituntil        up.factory().make_waituntil
+#define ast_waituntil_event  up.factory().make_waituntil_event
+#define ast_whenever         up.factory().make_whenever
+#define ast_whenever_event   up.factory().make_whenever_event
 
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
@@ -109,7 +112,7 @@
     static void
     modifiers_add(parser::ParserImpl& up, const ast::loc& loc,
                   ast::modifiers_type& mods,
-                  const ::parser::modifier_type& mod)
+                  const ::parser::AstFactory::modifier_type& mod)
     {
       if (libport::mhas(mods, mod.first))
         up.warn(loc,
@@ -675,7 +678,7 @@ k1_id:
 `------------*/
 
 
-%type <::parser::modifier_type> modifier;
+%type <::parser::AstFactory::modifier_type> modifier;
 %type <ast::rDictionary> dictionary;
 
 modifier:
@@ -867,7 +870,7 @@ stmt:
     }
 | "timeout" "(" exp ")" stmt
     {
-      $$ = ::parser::ast_timeout($3, $5);
+      $$ = ast_timeout($3, $5);
     }
 | "return" exp.opt
     {
@@ -885,11 +888,11 @@ stmt:
     {
       expensive(up, @$,
                 "waituntil (<expression>), prefer waituntil (<event>)");
-      $$ = ::parser::ast_waituntil(@$, $3, $4);
+      $$ = ast_waituntil(@$, $3, $4);
     }
 | "waituntil" "(" event_match ")"
     {
-      $$ = ::parser::ast_waituntil_event(@$, $3.event, $3.pattern);
+      $$ = ast_waituntil_event(@$, $3.event, $3.pattern);
     }
 ;
 
@@ -936,17 +939,17 @@ stmt:
 | Cases.  |
 `--------*/
 
-%type <::parser::cases_type> cases;
+%type <::parser::AstFactory::cases_type> cases;
 
 cases:
-  /* empty */  { $$ = ::parser::cases_type();   }
+  /* empty */  { $$ = ::parser::AstFactory::cases_type();   }
 | cases case   { std::swap($$, $1); $$.push_back($2); }
 ;
 
-%type <::parser::case_type> case;
+%type <::parser::AstFactory::case_type> case;
 
 case:
-  "case" match ":" stmts  {  $$ = ::parser::case_type($2, $4); }
+  "case" match ":" stmts  {  $$ = ::parser::AstFactory::case_type($2, $4); }
 ;
 
 /*-------------.
@@ -1457,18 +1460,18 @@ var.opt:
 | "var"
 ;
 
-%type <::parser::formal_type> formal_argument;
+%type <::parser::AstFactory::formal_type> formal_argument;
 formal_argument:
-  var.opt "identifier"          { $$ = ::parser::formal_type($2, 0);  }
-| var.opt "identifier" "=" exp  { $$ = ::parser::formal_type($2, $4); }
+  var.opt "identifier"          { $$ = ::parser::AstFactory::formal_type($2, 0);  }
+| var.opt "identifier" "=" exp  { $$ = ::parser::AstFactory::formal_type($2, $4); }
 ;
 
 // One or several comma-separated identifiers.
-%type <::parser::formals_type*> formal_arguments formal_arguments.1 formals;
+%type <::parser::AstFactory::formals_type*> formal_arguments formal_arguments.1 formals;
 formal_arguments.1:
   formal_argument
   {
-    $$ = new ::parser::formals_type;
+    $$ = new ::parser::AstFactory::formals_type;
     $$->push_back($1);
   }
 | formal_arguments.1 "," formal_argument
@@ -1480,7 +1483,7 @@ formal_arguments.1:
 
 // Zero or several comma-separated identifiers.
 formal_arguments:
-  /* empty */             { $$ = new ::parser::formals_type; }
+  /* empty */             { $$ = new ::parser::AstFactory::formals_type; }
 | formal_arguments.1      { std::swap($$, $1); }
 | formal_arguments.1 ","  { std::swap($$, $1); }
 ;

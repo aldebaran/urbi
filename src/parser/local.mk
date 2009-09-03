@@ -18,6 +18,7 @@ dist_libuobject_la_SOURCES +=			\
   parser/parse-result.hxx			\
   parser/parse-result.cc			\
   parser/parser-impl.hh				\
+  parser/parser-impl.hxx			\
   parser/parser-impl.cc				\
   parser/parser-utils.hh			\
   parser/parser-utils.cc			\

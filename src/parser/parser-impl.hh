@@ -54,6 +54,9 @@ namespace parser
     /// Warn at \a l about \a msg.
     void warn(const location_type& l, const std::string& msg);
 
+    /// The factory.
+    const AstFactory& factory() const;
+
   private:
     // Give access to loc_.
     friend int parser_type::parse();
@@ -93,8 +96,13 @@ namespace parser
 
     /// Whether meta-variables are enabled.
     bool meta_;
+
+    /// Factory.
+    std::auto_ptr<AstFactory> factory_;
   };
 
 }
+
+# include <parser/parser-impl.hxx>
 
 #endif // !PARSER_PARSER_IMPL_HH

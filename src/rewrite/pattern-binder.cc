@@ -16,13 +16,11 @@
 
 namespace rewrite
 {
-  using parser::ast_string;
-
   ast::rExp
   PatternBinder::to_binding(ast::rConstExp original)
   {
     PARAMETRIC_AST(rewrite, "Pattern.Binding.new(%exp:1)");
-    rewrite % ast_string(original->location_get(), next_name());
+    rewrite % parser::AstFactory::make_string(original->location_get(), next_name());
     ast::rExp res = exp(rewrite);
     res->original_set(original);
     return res;
@@ -43,7 +41,9 @@ namespace rewrite
   PatternBinder::value_get()
   {
     PARAMETRIC_AST(get, "%lvalue:1 . bindings[%exp:2]");
-    return exp(get % pattern_ % ast_string(ast::loc(), next_name()));
+    return exp(get
+               % pattern_
+               % parser::AstFactory::make_string(ast::loc(), next_name()));
   }
 
   PatternBinder::PatternBinder(ast::rLValue pattern,

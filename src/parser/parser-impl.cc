@@ -47,6 +47,7 @@ namespace parser
     , result_(0)
     , debug_(yydebug)
     , meta_(false)
+    , factory_()
   {
   }
 
