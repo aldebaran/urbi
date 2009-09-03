@@ -87,18 +87,20 @@ namespace parser
 
     if (duration)
     {
-      PARAMETRIC_AST(desugar,
-                     "{"
-                     "  var '$at' = persist(%exp:1, %exp:2) |"
-                     "  at ('$at'()) %exp:3 onleave %exp:4"
-                     "}"
+      PARAMETRIC_AST
+        (desugar,
+         "{"
+         "  var '$at' = persist(%exp:1, %exp:2) |"
+         "  at ('$at'()) %exp:3 onleave %exp:4"
+         "}"
         );
       return exp(desugar % cond % duration % body % onleave);
     }
     else
     {
-      PARAMETRIC_AST(desugar,
-                     "Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
+      PARAMETRIC_AST
+        (desugar,
+         "Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
 
       return exp(desugar % cond % body % onleave);
     }
@@ -130,18 +132,18 @@ namespace parser
       bind(pattern.get());
       PARAMETRIC_AST
         (desugar,
-         "detach("
-         "{"
-         "  %exp:1.onEvent("
-         "  closure ('$evt')"
-         "  {"
-         "    var '$pattern' = Pattern.new(%exp:2) |"
-         "    if ('$pattern'.match('$evt'.payload))"
-         "    {"
-         "      %exp: 3 |"
-         "      %exp: 4 |"
-         "    }"
-         "  })"
+         "detach(\n"
+         "{\n"
+         "  %exp:1.onEvent(\n"
+         "  closure ('$evt')\n"
+         "  {\n"
+         "    var '$pattern' = Pattern.new(%exp:2) |\n"
+         "    if ('$pattern'.match('$evt'.payload))\n"
+         "    {\n"
+         "      %exp: 3 |\n"
+         "      %exp: 4 |\n"
+         "    }\n"
+         "  })\n"
          "})");
       return exp(desugar
                  % event.event
@@ -151,14 +153,15 @@ namespace parser
     }
     else
     {
-      PARAMETRIC_AST(desugar_no_pattern,
-                     "detach("
-                     "{"
-                     "  %exp:1.onEvent(closure ('$evt')"
-                     "  {"
-                     "    %exp: 2 |"
-                     "  })"
-                     "})");
+      PARAMETRIC_AST
+        (desugar_no_pattern,
+         "detach(\n"
+         "{\n"
+         "  %exp:1.onEvent(closure ('$evt')\n"
+         "  {\n"
+         "    %exp: 2 |\n"
+         "  })\n"
+         "})\n");
       return exp(desugar_no_pattern % event.event % body);
     }
   }
@@ -169,9 +172,10 @@ namespace parser
                             EventMatch& event,
                             ast::rExp body, ast::rExp onleave) // const
   {
-    PARAMETRIC_AST(desugar_body,
-                   "%exp:1 |"
-                   "waituntil(!'$evt'.active)");
+    PARAMETRIC_AST
+      (desugar_body,
+       "%exp:1 |"
+       "waituntil(!'$evt'.active)");
     body = exp(desugar_body % body);
     return make_event_catcher(loc, event, body, onleave);
   }
@@ -179,7 +183,8 @@ namespace parser
 
   ast::rExp
   AstFactory::make_bin(const location& l,
-                       ast::flavor_type op, ast::rExp lhs, ast::rExp rhs) // const
+                       ast::flavor_type op,
+                       ast::rExp lhs, ast::rExp rhs) // const
   {
     assert(lhs);
     assert(rhs);
@@ -346,18 +351,21 @@ namespace parser
   AstFactory::make_for(const location&, ast::flavor_type flavor,
                        ast::rExp iterable, ast::rExp body) // const
   {
-    PARAMETRIC_AST(ampersand,
-                   "for&(var '$for': %exp:1)"
-                   "  %exp:2"
-      );
-    PARAMETRIC_AST(pipe,
-                   "for|(var '$for': %exp:1)"
-                   "  %exp:2"
-      );
-    PARAMETRIC_AST(semi,
-                   "for (var '$for': %exp:1)"
-                   "  %exp:2"
-      );
+    PARAMETRIC_AST
+      (ampersand,
+       "for&(var '$for': %exp:1)\n"
+       "  %exp:2\n"
+        );
+    PARAMETRIC_AST
+      (pipe,
+       "for|(var '$for': %exp:1)\n"
+       "  %exp:2\n"
+        );
+    PARAMETRIC_AST
+      (semi,
+       "for (var '$for': %exp:1)\n"
+       "  %exp:2"
+        );
     return exp((flavor == ast::flavor_and ? ampersand
                 : flavor == ast::flavor_pipe ? pipe
                 : semi )
@@ -390,24 +398,24 @@ namespace parser
 
     PARAMETRIC_AST
       (pipe,
-       "{"
-       "  %exp:1 |"
-       "  var '$first' = true |"
-       "  while| ({ if ('$first') '$first' = false else %exp:2|"
-       "            %exp:3})"
-       "    %exp:4"
+       "{\n"
+       "  %exp:1 |\n"
+       "  var '$first' = true |\n"
+       "  while| ({ if ('$first') '$first' = false else %exp:2|\n"
+       "            %exp:3})\n"
+       "    %exp:4\n"
        "}");
 
     // Don't use ";" for costs that should not be visible to the user:
     // $first.
     PARAMETRIC_AST
       (semi,
-       "{"
-       "  %exp:1|" // When not entering the loop, we want 0 cycles consumed.
-       "  var '$first' = true |"
-       "  while ({ if ('$first') '$first' = false else %exp:2|"
-       "           %exp:3})"
-       "    %exp:4"
+       "{\n"
+       "  %exp:1|\n" // When not entering the loop, we want 0 cycles consumed.
+       "  var '$first' = true |\n"
+       "  while ({ if ('$first') '$first' = false else %exp:2|\n"
+       "           %exp:3})\n"
+       "    %exp:4\n"
        "}");
     return exp((flavor == ast::flavor_semicolon ? semi : pipe)
                % init % inc % test % body);
@@ -441,11 +449,10 @@ namespace parser
   {
     PARAMETRIC_AST
       (wrap,
-       "{"
-       "var '$tmp' = %exp:1;"
-       "%exp:2;"
-       "}"
-        );
+       "{\n"
+       "  var '$tmp' = %exp:1;\n"
+       "  %exp:2;\n"
+       "}\n");
 
     if (lvalue->call()->target_implicit())
       return e;
@@ -536,21 +543,22 @@ namespace parser
     ast::rExp inner = def ? def : make_nil();
     rforeach (const case_type& c, cases)
     {
-      PARAMETRIC_AST(desugar,
-                     "var '$pattern' = Pattern.new(%exp:1) |"
-                     "if (if ('$pattern'.match('$switch'))"
-                     "    {"
-                     "      %exp:2 |"
-                     "      %exp:3"
-                     "    }"
-                     "    else"
-                     "      false)"
-                     "{"
-                     "  %exp:4 |"
-                     "  %exp:5"
-                     "}"
-                     "else"
-                     "  %exp:6"
+      PARAMETRIC_AST
+        (desugar,
+         "var '$pattern' = Pattern.new(%exp:1) |\n"
+         "if (if ('$pattern'.match('$switch'))\n"
+         "    {\n"
+         "      %exp:2 |\n"
+         "      %exp:3\n"
+         "    }\n"
+         "    else\n"
+         "      false)\n"
+         "{\n"
+         "  %exp:4 |\n"
+         "  %exp:5\n"
+         "}\n"
+         "else\n"
+         "  %exp:6\n"
         );
 
       PARAMETRIC_AST(cond,
@@ -581,17 +589,18 @@ namespace parser
   AstFactory::make_timeout(const ast::rExp& duration,
                            const ast::rExp& body) // const
   {
-    PARAMETRIC_AST(desugar,
-                   "{"
-                   " var '$tag' = Tag.new |"
-                   " '$tag':"
-                   "   {"
-                   "      {"
-                   "        sleep(%exp:1) | '$tag'.stop"
-                   "      },"
-                   "     %exp:2 | '$tag'.stop"
-                   "   }"
-                   "}");
+    PARAMETRIC_AST
+      (desugar,
+       "{\n"
+       " var '$tag' = Tag.new |\n"
+       " '$tag':\n"
+       "   {\n"
+       "      {\n"
+       "        sleep(%exp:1) | '$tag'.stop\n"
+       "      },\n"
+       "     %exp:2 | '$tag'.stop\n"
+       "   }\n"
+       "}");
     return exp(desugar % duration % body);
   }
 
@@ -603,18 +612,19 @@ namespace parser
     if (duration)
     {
       PARAMETRIC_AST(desugar,
-                     "{"
-                     "  var '$waituntil' = persist(%exp:1, %exp:2) |"
-                     "  waituntil('$waituntil'())"
-                     "}"
+                     "{\n"
+                     "  var '$waituntil' = persist(%exp:1, %exp:2) |\n"
+                     "  waituntil('$waituntil'())\n"
+                     "}\n"
         );
       return exp(desugar % cond % duration);
     }
     else
     {
-      PARAMETRIC_AST(desugar,
-                     "{var '$tag' = Tag.new |"
-                     "'$tag': {at (%exp:1) '$tag'.stop | sleep(inf)}}");
+      PARAMETRIC_AST
+        (desugar,
+         "{var '$tag' = Tag.new |\n"
+         "'$tag': {at (%exp:1) '$tag'.stop | sleep(inf)}}");
       return exp(desugar % cond);
     }
   }
@@ -633,13 +643,13 @@ namespace parser
 
     PARAMETRIC_AST
       (desugar,
-       "{"
-       "  var '$pattern' = Pattern.new(%exp:1) |"
-       "  %exp:2.'waituntil'('$pattern') |"
-       "  {"
-       "    %unscope: 2 |"
-       "    %exp:3 |"
-       "  }"
+       "{\n"
+       "  var '$pattern' = Pattern.new(%exp:1) |\n"
+       "  %exp:2.'waituntil'('$pattern') |\n"
+       "  {\n"
+       "    %unscope: 2 |\n"
+       "    %exp:3 |\n"
+       "  }\n"
        "}");
 
     ast::rList d_payload = new ast::List(loc, payload);
@@ -659,11 +669,11 @@ namespace parser
                                   ast::rExp body, ast::rExp onleave) // const
   {
     PARAMETRIC_AST(desugar_body,
-                   "while (true)"
-                   "{"
-                   "  %exp:1 |"
-                   "  if(!'$evt'.active)"
-                   "    break"
+                   "while (true)\n"
+                   "{\n"
+                   "  %exp:1 |\n"
+                   "  if(!'$evt'.active)\n"
+                   "    break\n"
                    "}");
     body = exp(desugar_body % body);
     return make_event_catcher(loc, event, body, onleave);
@@ -681,8 +691,8 @@ namespace parser
     if (duration)
     {
       PARAMETRIC_AST(desugar,
-                     "var '$whenever' = persist(%exp:1, %exp:2) |"
-                     "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'"
+                     "var '$whenever' = persist(%exp:1, %exp:2) |\n"
+                     "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'\n"
         );
       return exp(desugar % cond % duration % body % else_stmt);
     }
