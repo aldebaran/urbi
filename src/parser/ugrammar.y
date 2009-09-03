@@ -13,10 +13,8 @@
 
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
-%parse-param {::parser::ParserImpl& up}
-%parse-param {yyFlexLexer& scanner}
-%lex-param   {::parser::ParserImpl& up}
-%lex-param   {yyFlexLexer& scanner}
+%param {::parser::ParserImpl& up}
+%param {yyFlexLexer& scanner}
 
 %code requires // Output in ugrammar.hh.
 {
