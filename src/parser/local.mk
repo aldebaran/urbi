@@ -108,10 +108,19 @@ ugrammar_deps =					\
   $(wildcard $(top_srcdir)/bison/data/*.cc)	\
   $(wildcard $(top_srcdir)/bison/data/*.m4)
 
+
+# Bison options.  Use space-expensive features only when not in space
+# compilation mode.
+AM_BISONFLAGS = --defines --report=all
+if !COMPILATION_MODE_SPACE
+  AM_BISONFLAGS += -Dparse.error=verbose -Dlr.default-reductions=consistent
+endif
+if COMPILATION_MODE_DEBUG
+  AM_BISONFLAGS += -Dparse.assert -Dparse.trace
+endif
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
-AM_BISONFLAGS = -d -ra -Dparse.error=$(PARSE_ERROR)
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
 	rm -f $@ $@.tmp parser/ugrammar-pruned.y
 	echo '$@ rebuilt because of: $?' >$@.tmp
