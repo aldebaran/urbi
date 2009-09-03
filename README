@@ -1,7 +1,8 @@
         					-*- outline -*-
 
 * requirements
-To bootstrap and compile this package, the following tools are needed.
+To bootstrap this package from its repository, and then to compile it,
+the following tools are needed.
 
 ** Autoconf 2.63 or later
 ** Automake 1.10.2 or later
@@ -22,11 +23,16 @@ install it.
 ** Ccache
 Not a requirement, but it's better to have it.
 
+** Cvs
+This surprising requirement comes from the system Bison uses to fetch
+the current version of the message translations.
+
 ** Flex 2.5.35 or later
 Beware that 2.5.33 has bugs than prevents this package from building
 correctly.
 
 ** G++ 4.0 or later
+GCC 4.2 or better is a better option.
 
 ** Git 1.6 or later
 Beware that older version behave poorly with submodules.  The newer,
@@ -45,12 +51,18 @@ and the following times
   make -j4
   sudo make install
 
-** Gettext
+** Gettext 1.17
 Required to bootstrap Bison.  In particular it provides autopoint.
+
+** GNU sha1sum
+We need the GNU version of sha1sum.  On Mac Ports it is part of the
+coreutils package.
 
 ** Help2man
 
 ** Libtool 2.2 or later
+Actually it should no longer be needed, as we embed all the file we
+need in libport.
 
 ** PDFLaTeX
 TeX Live is the most common distro nowadays.
@@ -70,6 +82,9 @@ Pay attention that you will probably need to adjust your PYTHONPATH.
 
 ** socat
 Needed by the test suite.
+
+** Valgrind
+Not needed, but if present, used by the test suite.
 
 ** xsltproc
 This is not a requirement, but it's better to have it.
