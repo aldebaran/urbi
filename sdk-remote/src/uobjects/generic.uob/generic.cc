@@ -7,26 +7,24 @@
  *
  * See the LICENSE file for more information.
  */
-// #define ENABLE_DEBUG_TRACES
-#include <libport/compiler.hh>
+
 #include <libport/debug.hh>
 #include <iostream>
 #include "generic.hh"
 
 GD_ADD_CATEGORY(generic);
-
 UStart (generic);
 
-generic::generic (const std::string& s)
-  : UObject (s)
+generic::generic(const std::string& s)
+  : UObject(s)
 {
-  UBindVar (generic, val);
-  UBindFunction (generic, init);
-  UBindFunction (generic, foo);
-  UBindFunction (generic, inc);
+  UBindVar(generic, val);
+  UBindFunction(generic, init);
+  UBindFunction(generic, foo);
+  UBindFunction(generic, inc);
 
-  UNotifyChange (val, &generic::newval);
-  PING();
+  UNotifyChange(val, &generic::newval);
+  LIBPORT_PING();
 #if FIXME
   // This feature is deprecated (it is not implemented in k2, and it
   // was considered not relevant).  So unless there are reason to
@@ -39,24 +37,25 @@ generic::generic (const std::string& s)
 }
 
 int
-generic::init ()
+generic::init()
 {
-  PING();
   return 0;
 }
 
 int
-generic::foo (int x)
+generic::foo(int x)
 {
-  PING();
+  GD_CATEGORY(generic);
+  GD_FINFO_DEBUG("foo(%s)", (x));
   val = x;
   return x+1;
 }
 
 IF_VOID(void, int)
-generic::inc ()
+generic::inc()
 {
-  PING();
+  GD_CATEGORY(generic);
+  GD_INFO_DEBUG("inc");
   // Yeah, not nicely written...  Study the UVar interface to rewrite
   // this cleanly.
   val = (int) val + 1;
@@ -64,9 +63,9 @@ generic::inc ()
 }
 
 UReturn
-generic::newval (UVar& v)
+generic::newval(UVar& v)
 {
   GD_CATEGORY(generic);
-  GD_FERROR("newval: %s", ((int) v));
+  GD_FINFO_DEBUG("newval: %s", ((int) v));
   return 0;
 }

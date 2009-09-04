@@ -30,7 +30,7 @@ int
 uaccess::init ()
 {
   val = 0;
-  //  ECHO("val = " << val);
+  LIBPORT_DEBUG("val = " << val);
   return 0;
 }
 
@@ -40,7 +40,7 @@ uaccess::newval (UVar& v)
   static int value = 0;
   value++;
   v = value;
-  //  ECHO("v = " << v << ", val = " << val);
+  LIBPORT_DEBUG("v = " << v << ", val = " << val);
   return 0;
 }
 
