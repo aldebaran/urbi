@@ -320,10 +320,19 @@ namespace parser
     // every (exp:1) exp:2.
     PARAMETRIC_AST
       (semi,
-       "controlTag:\n"
-       "for (var deadline = shiftedTime; true;\n"
-       "     deadline = Control.'every;sleep'(deadline, %exp:1))\n"
-       "  detach ({ try { %exp:2 } catch (var e) { controlTag.stop(e)} })\n");
+       "detach ({\n"
+       "  var deadline = shiftedTime |\n"
+       "  var controlTag = Tag.newFlowControl |\n"
+       "  throw\n"
+       "  {\n"
+       "    controlTag: loop\n"
+       "    {\n"
+       "      detach ({ try { %exp:2 } catch (var e) { controlTag.stop(e)} }) |\n"
+       "      deadline += %exp:1 |\n"
+       "      sleep (deadline - shiftedTime)\n"
+       "    };\n"
+       "  }\n"
+       "})\n");
 
     // every| (exp:1) exp:2.
     PARAMETRIC_AST
