@@ -33,7 +33,7 @@ namespace parser
     // The number of read bytes.
     size_t length = scanner.pre_length;
 
-    ECHO("res: " << t << ", length: " << length);
+    LIBPORT_DEBUG("res: " << t << ", length: " << length);
     if (t == yy::parser::token::TOK_PRE_COMPLETE)
       return length;
     else

@@ -262,7 +262,7 @@ static rObject urbi_get(rObject r, const std::string& slot)
   object::objects_type args;
   args.push_back(r);
   Symbol symSlot(slot);
-  ECHO("applying get for " << slot << "...");
+  LIBPORT_DEBUG("applying get for " << slot << "...");
   rObject var = r->slot_get(symSlot);
   // Bypass the apply if we can.
   if (object::rUVar uvar = var->as<object::UVar>())
@@ -276,10 +276,10 @@ static rObject urbi_set(rObject r, const std::string& slot, rObject v)
 {
   rObject name = new object::String(slot);
   object::objects_type args = list_of (r)(name)(v);
-  ECHO("applying set...");
+  LIBPORT_DEBUG("applying set...");
   rObject ret = getCurrentRunner().apply(r->slot_get(SYMBOL(updateSlot)),
 					 SYMBOL(updateSlot), args);
-  ECHO("done");
+  LIBPORT_DEBUG("done");
   return ret;
 }
 
@@ -338,7 +338,7 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
                                      urbi::UGenericCallback* ugc,
                                      std::string traceName)
 {
-  ECHO("uvwrapnotify");
+  LIBPORT_DEBUG("uvwrapnotify");
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
   urbi::UList l;
   l.array.push_back(new urbi::UValue());
@@ -453,7 +453,7 @@ uobject_new(rObject proto, bool forceName)
   {
     if (i->name == cname)
     {
-      ECHO( "Instanciating a new " << cname << " named "<< name);
+      LIBPORT_DEBUG("Instanciating a new " << cname << " named "<< name);
       i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
       return r;
     }
@@ -518,7 +518,7 @@ uvar_set(const std::string& name, rObject val)
 static rObject
 uvar_uowned_get(const std::string& name)
 {
-  ECHO("uowned get for "<<name);
+  LIBPORT_DEBUG("uowned get for "<<name);
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
   return o->slot_get(Symbol(p.second))
@@ -528,7 +528,7 @@ uvar_uowned_get(const std::string& name)
 static rObject
 uvar_uowned_set(const std::string& name, rObject val)
 {
-  ECHO("uowned set for "<<name);
+  LIBPORT_DEBUG("uowned set for "<<name);
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
   rObject v = o->slot_get(Symbol(p.second));
@@ -750,7 +750,7 @@ namespace urbi
     KernelUObjectImpl::initialize(UObject* owner)
     {
       owner_ = owner;
-      ECHO( "Uobject ctor for " << owner->__name );
+      LIBPORT_DEBUG("Uobject ctor for " << owner->__name);
       uobject_to_robject[owner_->__name] = owner;
       owner_->ctx_->registerObject(owner);
       rObject o = get_base(owner->__name);
@@ -806,7 +806,7 @@ namespace urbi
         runner.non_interruptible_set(prevState););
       runner.non_interruptible_set(true);
       owner_ = owner;
-      ECHO("__init " << owner_->get_name());
+      LIBPORT_DEBUG("__init " << owner_->get_name());
       owner_->owned = false;
       bypassMode_ = false;
       StringPair p = split_name(owner_->get_name());
@@ -825,7 +825,7 @@ namespace urbi
           o->slot_remove(varName);
       }
       //clone uvar
-      ECHO("creating uvar "<<name);
+      LIBPORT_DEBUG("creating uvar "<<name);
       rObject protouvar = object::Object::proto->slot_get(SYMBOL(UVar));
       rObject uvar = protouvar->call(SYMBOL(new),
                                      o, new object::String(varName));
@@ -845,7 +845,7 @@ namespace urbi
       rObject o = get_base(p.first);
       o->slot_get(Symbol(p.second))
         ->slot_update(SYMBOL(owned), object::true_class);
-      ECHO("call to setowned on "<<owner_->get_name());
+      LIBPORT_DEBUG("call to setowned on "<<owner_->get_name());
     }
     void KernelUVarImpl::sync()
     {
@@ -862,7 +862,7 @@ namespace urbi
 
     void KernelUVarImpl::set(const UValue& v)
     {
-      ECHO("uvar = operator for "<<owner_->get_name());
+      LIBPORT_DEBUG("uvar = operator for "<<owner_->get_name());
       object::rUValue ov(new object::UValue());
       ov->put(v, bypassMode_);
       if (owner_->owned)
@@ -874,7 +874,7 @@ namespace urbi
 
     const UValue& KernelUVarImpl::get() const
     {
-      ECHO("uvar cast operator for "<<owner_->get_name());
+      LIBPORT_DEBUG("uvar cast operator for "<<owner_->get_name());
       try {
         rObject o = (owner_->owned
                      ? ::uvar_uowned_get(owner_->get_name())
@@ -962,7 +962,7 @@ namespace urbi
       registered_ = true;
       StringPair p = split_name(owner_->name);
       std::string method = p.second;
-      ECHO("ugenericcallback " << owner_->type << " " << p.first << " "
+      LIBPORT_DEBUG("ugenericcallback " << owner_->type << " " << p.first << " "
            << method << "  " << owned_);
       // UObject owning the variable/event to monitor
       rObject me = get_base(p.first); //objname?
@@ -975,7 +975,7 @@ namespace urbi
         + string_cast((void*)this);
       if (owner_->type == "function")
       {
-        ECHO( "binding " << p.first << "." << owner_->method );
+        LIBPORT_DEBUG("binding " << p.first << "." << owner_->method);
         me->slot_set(libport::Symbol(method), object::make_primitive(
                        boost::function1<rObject, const objects_type&>
                        (boost::bind(&wrap_ucallback, _1, owner_, traceName))));

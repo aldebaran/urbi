@@ -159,7 +159,7 @@ namespace kernel
 
     // nb of bytes to send.
     size_t toSend = std::min(packet_size_, send_queue_->size());
-    ECHO(toSend);
+    LIBPORT_DEBUG(toSend);
 
     if (!toSend)
     {
@@ -169,7 +169,7 @@ namespace kernel
 
     if (const char* popData = send_queue_->peek(toSend))
     {
-      ECHO(popData);
+      LIBPORT_DEBUG(popData);
       int wasSent = effective_send(popData, toSend);
 
       // FIXME: This can never happen, as effective_send
@@ -192,7 +192,7 @@ namespace kernel
   void
   UConnection::received(const char* buffer, size_t length)
   {
-    PING();
+    LIBPORT_PING();
 
     recv_queue_->push(buffer, length);
     parser::UParser& p = parser_get();
@@ -212,16 +212,16 @@ namespace kernel
 
       if (ast::rNary ast = result->ast_get())
       {
-        ECHO("parsed: {{{" << *ast << "}}}");
+        LIBPORT_DEBUG("parsed: {{{" << *ast << "}}}");
         ast = parser::transform(ast);
         assert(ast);
-        ECHO("bound and flowed: {{{" << *ast << "}}}");
+        LIBPORT_DEBUG("bound and flowed: {{{" << *ast << "}}}");
         // Append to the current list.
         active_command->splice_back(ast);
-        ECHO("appended: " << *active_command << "}}}");
+        LIBPORT_DEBUG("appended: " << *active_command << "}}}");
       }
       else
-        ECHO("the parser returned NULL:" << std::endl
+        LIBPORT_DEBUG("the parser returned NULL:" << std::endl
              << "{{{" << command << "}}}");
     }
 
@@ -236,11 +236,11 @@ namespace kernel
   void
   UConnection::execute(ast::rNary active_command)
   {
-    PING();
+    LIBPORT_PING();
     if (active_command->empty())
       return;
 
-    ECHO("Command is: {{{" << *active_command << "}}}");
+    LIBPORT_DEBUG("Command is: {{{" << *active_command << "}}}");
 
     // Our active_command_ is a ast::Nary, we must now "tell" it that
     // it's a top-level Nary so that it can send its results back to the
@@ -250,7 +250,7 @@ namespace kernel
 
     shell_->append_command(const_cast<const ast::Nary*>(active_command.get()));
 
-    PING();
+    LIBPORT_PING();
   }
 
   std::string

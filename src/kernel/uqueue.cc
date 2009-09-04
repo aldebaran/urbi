@@ -32,12 +32,12 @@ namespace kernel
   {
     // The buffer is null-terminated when used in full, so we can use it
     // without computing its length.
-    ECHO("Size: " << size());
+    LIBPORT_DEBUG("Size: " << size());
     if (size() < preparse_hint)
       return std::string();
-    ECHO("buf: {{{" << std::string(peek()) << "}}}");
+    LIBPORT_DEBUG("buf: {{{" << std::string(peek()) << "}}}");
     long len = parser::prescan(peek(), size());
-    ECHO("Len: " << len);
+    LIBPORT_DEBUG("Len: " << len);
     if (len <= 0)
     {
       preparse_hint = len * -1;
@@ -47,7 +47,7 @@ namespace kernel
     }
     preparse_hint = 0;
     const std::string res(pop(len), len);
-    ECHO("Res: " << res);
+    LIBPORT_DEBUG("Res: " << res);
     return res;
   }
 }

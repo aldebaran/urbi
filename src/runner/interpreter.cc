@@ -231,7 +231,7 @@ namespace runner
     }
     catch (object::UrbiException&)
     {
-      ECHO("Implicit tag: " << *e);
+      LIBPORT_DEBUG("Implicit tag: " << *e);
       // We got a lookup error. It means that we have to automatically
       // create the tag. In this case, we only accept k1 style tags,
       // i.e. chains of identifiers, excluding function calls.
@@ -253,11 +253,11 @@ namespace runner
 	// exists.
 	if (rObject owner = where->slot_locate(elt).first)
         {
-          ECHO("Component " << elt << " exists.");
+          LIBPORT_DEBUG("Component " << elt << " exists.");
 	  where = owner->local_slot_get(elt)->value();
 	  if (object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get()))
 	  {
-            ECHO("It is a tag, so use it as the new parent.");
+            LIBPORT_DEBUG("It is a tag, so use it as the new parent.");
 	    parent = parent_;
 	  }
         }

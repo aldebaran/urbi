@@ -40,21 +40,20 @@
 # include <sched/exception.hh>
 
 /// Job echo.
-#define JECHO(Title, Content)                           \
-  ECHO ("job " << ME << ", " Title ": " << Content)
+#define JECHO(Title, Content)                                   \
+  LIBPORT_DEBUG("job " << ME << ", " Title ": " << Content)
 
 /// Job & astecho.
 #define JAECHO(Title, Ast)                      \
-  JECHO (Title, AST(Ast))
+  JECHO(Title, AST(Ast))
 
 /* Yield and trace. */
-#define YIELD()                                 \
-  do                                            \
-  {                                             \
-    ECHO ("job " << ME << " yielding on AST: "  \
-	  << &e << ' ' << AST(e));              \
-    yield ();                                   \
-  } while (0)
+#define YIELD()                                         \
+  do {                                                  \
+    LIBPORT_DEBUG("job " << ME << " yielding on AST: "  \
+                  << &e << ' ' << AST(e));              \
+    yield ();                                           \
+  } while (false)
 
 
 namespace runner
@@ -229,7 +228,7 @@ namespace runner
       res.push_back(v);
     }
     return new object::List(res);
-    //ECHO ("result: " << *result_);
+    //LIBPORT_DEBUG("result: " << *result_);
   }
 
   LIBPORT_SPEED_INLINE object::rObject
@@ -348,7 +347,7 @@ namespace runner
               {
                 static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
 
-                ECHO("toplevel: returning a result to the connection.");
+                LIBPORT_DEBUG("toplevel: returning a result to the connection");
 
                 // Display the value using the topLevel channel.  If
                 // it is not (yet) defined, do nothing, unless the
