@@ -55,8 +55,10 @@ class BallTrackingHead
   /// Client for command reception.
   /// urbi::UClient robotG;
 
-  std::vector<PositionData> current_x, current_y; //joint value for the last few frames
-  int baseframeX, baseframeY; //base of current_x, current_y (currentx[i] = frame_base - i)
+  //joint value for the last few frames
+  std::vector<PositionData> current_x, current_y;
+  // base of current_x, current_y (currentx[i] = frame_base - i)
+  int baseframeX, baseframeY;
   unsigned char  image[500000];  //uncompressed image
   double target_x, target_y;  //command to center the ball
   double expect_x, expect_y;  //values in last command, that should be reached
@@ -84,7 +86,9 @@ void BallTrackingHead::doSendCommand(double current_x, double current_y)
   static int sframe=0;
   static unsigned int stime=0;
   double command_x=-1, command_y=-1;
-  robotC.send("headPan.val = headPan.val + %lf & headTilt.val = headTilt.val + %lf,",target_x,target_y);
+  robotC.send("headPan.val = headPan.val + %lf"
+              " & headTilt.val = headTilt.val + %lf,",
+              target_x, target_y);
   if (! (sframe % 1000))
     {
       if (stime)
@@ -176,7 +180,8 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
   urbi::UImage& img = msg.value->binary->image;
   double cx=0, cy=0;
   /*
-    std::vector<PositionData>::iterator it = find(current_x.begin(), current_x.end(), msg.timestamp/32);
+    std::vector<PositionData>::iterator it =
+      find(current_x.begin(), current_x.end(), msg.timestamp/32);
     if (it==current_x.end())
     {
     return URBI_CONTINUE;
