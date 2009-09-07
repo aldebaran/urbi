@@ -12,8 +12,6 @@
  ** \brief Creation of the URBI object system.
  */
 
-#include <ltdl.h>
-
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 #include <libport/cstdlib>
