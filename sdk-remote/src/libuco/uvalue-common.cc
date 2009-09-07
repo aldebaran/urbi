@@ -7,37 +7,20 @@
  *
  * See the LICENSE file for more information.
  */
-/*! \file libuco/uvalue-common.cc
- *******************************************************************************
 
- File: uvalue-common.cc\n
- Implementation of the UValue class and other linked classes
-
- This file is part of LIBURBI\n
- (c) Jean-Christophe Baillie, 2004-2006.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.com
-
- **************************************************************************** */
-
-#include <libport/compiler.hh>
-#include <sstream>
-#include <iostream>
-#include <cstdlib>
+/// \file libuco/uvalue-common.cc
 
 #include <libport/cassert>
+#include <libport/compiler.hh>
+#include <libport/cstdio>
+#include <libport/cstdlib>
 #include <libport/cstring>
 #include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <libport/foreach.hh>
+#include <libport/iostream>
 #include <libport/lexical-cast.hh>
+#include <sstream>
 
 #include <urbi/ubinary.hh>
 #include <urbi/uvalue.hh>

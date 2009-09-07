@@ -9,10 +9,7 @@
  */
 
 /// \file urbi/utable.hh
- *******************************************************************************
-
- Definition of the callback tables.
-**************************************************************************** */
+/// \brief Definition of the callback tables.
 
 #ifndef URBI_UTABLE_HH
 # define URBI_UTABLE_HH
