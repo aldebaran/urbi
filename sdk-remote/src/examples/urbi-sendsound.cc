@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <sys/types.h>
 #include <libport/sys/stat.h>
 
@@ -20,7 +21,7 @@ urbi::USound snd;
 static urbi::UCallbackAction
 endProgram(const urbi::UMessage&)
 {
-  printf("done\n");
+  std::cout << "done" << std::endl;
   urbi::exit(0);
   return urbi::URBI_REMOVE;
 }
@@ -39,10 +40,10 @@ int
 main(int argc, char * argv [])
 {
   if (argc<3)
-    {
-      printf("usage: urbisendsound robot file\n\t file must be in the WAV format\n");
-      exit(1);
-    }
+  {
+    printf("usage: urbisendsound robot file\n\t file must be in the WAV format\n");
+    exit(1);
+  }
 
   urbi::UClient uc(argv[1]);
   if (uc.error())
@@ -54,10 +55,10 @@ main(int argc, char * argv [])
   else
     f = fopen(argv[2],"r");
   if (!f)
-    {
-      printf("error opening file\n");
-      exit(3);
-    }
+  {
+    printf("error opening file\n");
+    exit(3);
+  }
 
   //sem_init(&sem, false, 0);
   //uc->sendCommand(&soundFormat, "speaker.formatlist;");
@@ -68,37 +69,36 @@ main(int argc, char * argv [])
 
   urbi::USound s;
 
-  if (f!=stdin)
-    {
-      struct stat st;
-      stat(argv[2],&st);
-      s.data = static_cast<char *> (malloc (st.st_size));
-      s.soundFormat = urbi::SOUND_WAV;
-      s.size = st.st_size;
-      ignore = fread(s.data, 1,st.st_size, f);
-      snd.data = 0;
-      convert(s, snd);
+  if (f != stdin)
+  {
+    struct stat st;
+    stat(argv[2], &st);
+    s.data = static_cast<char *> (malloc (st.st_size));
+    s.soundFormat = urbi::SOUND_WAV;
+    s.size = st.st_size;
+    ignore = fread(s.data, 1,st.st_size, f);
+    snd.data = 0;
+    convert(s, snd);
 
-      uc.setCallback(endProgram,"end");
-      printf("sending %d bytes\n", static_cast<int>(st.st_size));
-      uc.sendSound("speaker", snd,"end");
-      printf("done, waiting for end of play notification\n");
-    }
+    uc.setCallback(endProgram,"end");
+    printf("sending %d bytes\n", static_cast<int>(st.st_size));
+    uc.sendSound("speaker", snd,"end");
+    printf("done, waiting for end of play notification\n");
+  }
   else
+  {
+    s.data = static_cast<char *> (malloc (130000));
+    s.soundFormat = urbi::SOUND_WAV;
+    ignore = fread(s.data, 44, 1, f);
+    int sz=1;
+    while (sz)
     {
-      s.data = static_cast<char *> (malloc (130000));
-      s.soundFormat = urbi::SOUND_WAV;
-      ignore = fread(s.data, 44, 1, f);
-      int sz=1;
-
-      while (sz)
-      {
-	sz = fread(s.data+44,1,128000,f);
-	s.size = sz+44;
-	convert(s, snd);
-	uc.sendSound("speaker", snd,sz<128000?"end":"void");
-	printf("sending %d bytes\n",sz);
-      }
+      sz = fread(s.data+44,1,128000,f);
+      s.size = sz+44;
+      convert(s, snd);
+      uc.sendSound("speaker", snd,sz<128000?"end":"void");
+      printf("sending %d bytes\n",sz);
     }
+  }
   urbi::execute();
 }
