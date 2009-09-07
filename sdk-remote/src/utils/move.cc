@@ -7,7 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
-#include <libport/assert.hh>
+#include <libport/cassert>
 #include <libport/sys/stat.h>
 #include <cstdlib>
 #include <libport/cstdio>

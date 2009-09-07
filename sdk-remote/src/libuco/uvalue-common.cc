@@ -32,7 +32,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#include <libport/assert.hh>
+#include <libport/cassert>
 #include <libport/cstring>
 #include <libport/debug.hh>
 #include <libport/escape.hh>

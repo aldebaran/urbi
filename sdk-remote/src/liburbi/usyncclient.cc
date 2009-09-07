@@ -11,7 +11,7 @@
 #include <libport/unistd.h>
 #include <fcntl.h>
 
-#include <libport/assert.hh>
+#include <libport/cassert>
 #include <libport/compiler.hh>
 #include <libport/debug.hh>
 #include <libport/thread.hh>

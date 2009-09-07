@@ -23,7 +23,7 @@
 # define URBI_UBLEND_TYPE_HH
 
 # include <libport/cstring>
-# include <libport/assert.hh>
+# include <libport/cassert>
 
 namespace urbi
 {

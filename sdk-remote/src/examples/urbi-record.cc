@@ -7,7 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
-#include <libport/assert.hh>
+#include <libport/cassert>
 #include <csignal>
 #include <urbi/uclient.hh>
 

@@ -14,7 +14,7 @@
 # define URBI_UPROPERTY_HH
 
 # include <libport/cstring>
-# include <libport/assert.hh>
+# include <libport/cassert>
 
 namespace urbi
 {

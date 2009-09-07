@@ -15,7 +15,7 @@
 
 # include <cassert>
 # include <urbi/uvalue.hh>
-# include <libport/assert.hh>
+# include <libport/cassert>
 
 namespace urbi
 {
