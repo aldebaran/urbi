@@ -1,16 +1,14 @@
-/// \file urbi/uvalue.hxx
+/*
+ * Copyright (C) 2009, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
 
-// This file is part of UObject Component Architecture
-// Copyright (c) 2009 Gostai S.A.S.
-//
-// Permission to use, copy, modify, and redistribute this software for
-// non-commercial use is hereby granted.
-//
-// This software is provided "as is" without warranty of any kind,
-// either expressed or implied, including but not limited to the
-// implied warranties of fitness for a particular purpose.
-//
-// For more information, comments, bug reports: http://www.urbiforge.com
+/// \file urbi/uvalue.hxx
 
 #ifndef URBI_UVALUE_HXX
 # define URBI_UVALUE_HXX
