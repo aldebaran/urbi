@@ -113,7 +113,8 @@ namespace urbi
     {
       UBinary& b = *(v.binary);
       client_->startPack();
-      // K1 only supports a binary at top level within ';' and no other separator.
+      // K1 only supports a binary at top level within ';' and no
+      // other separator.
       if (client_->kernelMajor() < 2)
         URBI_SEND_COMMAND_C((*client_),"");
       (*client_) << owner_->get_name() << "=";

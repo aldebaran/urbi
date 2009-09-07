@@ -50,7 +50,8 @@ namespace urbi
       GD_CATEGORY(Libuobject);
       owner_ = owner;
       std::string type = owner_->type;
-      //owner_->name = callback_name(owner_->name, owner_->type, owner_->nbparam);
+      //owner_->name =
+      // callback_name(owner_->name, owner_->type, owner_->nbparam);
       GD_FINFO("Registering %s %s %s into %s from %s",
                (type)(owner_->name)(owner_->nbparam)
                (owner_->name)(owner_->objname));

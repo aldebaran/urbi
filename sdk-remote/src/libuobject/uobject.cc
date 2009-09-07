@@ -171,7 +171,8 @@ namespace urbi
       if (owner->__name == "_dummy")
         return;
       owner_->ctx_->registerObject(owner);
-      UClient* client = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
+      UClient* client =
+        dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
       URBI_SEND_PIPED_COMMAND_C((*client),
                                 "class " << owner_->__name << "{}");
       URBI_SEND_PIPED_COMMAND_C((*client),
