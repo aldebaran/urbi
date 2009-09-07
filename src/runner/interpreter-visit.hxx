@@ -257,6 +257,93 @@ namespace runner
 
 
   LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::top_level_visit(const ast::Exp* exp)
+  {
+    // Visual Studio on Windows does not rewind the stack before the
+    // end of a "try/catch" block, "catch" included. It means that we
+    // cannot display the exception in the "catch" block in case this
+    // is a scheduling error due to stack exhaustion, as we may need
+    // the stack. The following objects will be set if we have an
+    // exception to show, and it will be printed after the "catch"
+    // block, or if we have an exception to rethrow.
+    sched::exception_ptr exception_to_throw;
+    boost::scoped_ptr<object::UrbiException> exception_to_show;
+
+    object::rObject res;
+    try
+    {
+      res = operator()(exp);
+      // We need to keep checking for void here because it
+      // cannot be passed to the << function.
+      if (res != object::void_class)
+      {
+        static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
+
+        LIBPORT_DEBUG("toplevel: returning a result to the connection");
+
+        // Display the value using the topLevel channel.  If
+        // it is not (yet) defined, do nothing, unless the
+        // environment variable TOPLEVEL_DEBUG is set.
+        if (rSlot topLevel =
+            object::global_class->slot_locate(SYMBOL(topLevel), false).second)
+          topLevel->value()->call(SYMBOL(LT_LT), res);
+        else if (toplevel_debug)
+        {
+          try
+          {
+            rObject result = res->call(SYMBOL(asToplevelPrintable));
+            std::ostringstream os;
+            result->print(os);
+            std::string r = os.str();
+            lobby_->connection_get().send(r.c_str(), r.size());
+            lobby_->connection_get().endline();
+          }
+          catch (object::UrbiException&)
+          {
+            // nothing
+          }
+        }
+      }
+    }
+    // Catch and print unhandled exceptions
+    catch (object::UrbiException& exn)
+    {
+      exception_to_show.reset
+        (new object::UrbiException(exn.value_get(),
+                                   exn.backtrace_get()));
+    }
+    // Forward scheduler exception
+    catch (const sched::exception& e)
+    {
+      exception_to_throw = e.clone();
+    }
+    // Stop invalid exceptions thrown by primitives
+    catch (const std::exception& e)
+    {
+      static boost::format format("Invalid exception `%s' caught");
+      send_message("error", str(format % e.what()));
+    }
+    catch (...)
+    {
+      send_message("error", "Invalid unknown exception caught");
+    }
+
+    if (exception_to_throw.get())
+      exception_to_throw->rethrow();
+    else if (exception_to_show.get())
+    {
+      show_exception_(*exception_to_show);
+
+      // In the case of a Nary with multiple elements at the toplevel,
+      // we want to reset the result to void to make sure that we
+      // do not return a reference onto the previously evaluated
+      // expression.
+      res = object::void_class;
+    }
+    return res;
+  }
+
+  LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Nary* e)
   {
     const ast::exps_type& exps = e->children_get();
@@ -325,93 +412,8 @@ namespace runner
         }
         else
         {
-	  // Visual Studio on Windows does not rewind the stack before the
-	  // end of a "try/catch" block, "catch" included. It means that
-	  // we cannot display the exception in the "catch" block in case
-	  // this is a scheduling error due to stack exhaustion, as we
-	  // may need the stack. The following objects will be set if we
-	  // have an exception to show, and it will be printed after
-	  // the "catch" block, or if we have an exception to rethrow.
-	  sched::exception_ptr exception_to_throw;
-	  boost::scoped_ptr<object::UrbiException> exception_to_show;
-
           // If at toplevel, print errors and continue, else rethrow them
-          if (e->toplevel_get())
-          {
-            try
-            {
-              res = operator()(exp);
-              // We need to keep checking for void here because it
-              // cannot be passed to the << function.
-              if (res != object::void_class)
-              {
-                static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
-
-                LIBPORT_DEBUG("toplevel: returning a result to the connection");
-
-                // Display the value using the topLevel channel.  If
-                // it is not (yet) defined, do nothing, unless the
-                // environment variable TOPLEVEL_DEBUG is set.
-                if (rSlot topLevel =
-                    object::global_class->slot_locate
-                    (SYMBOL(topLevel), false).second)
-                  topLevel->value()->call(SYMBOL(LT_LT), res);
-                else if (toplevel_debug)
-                {
-                  try
-                  {
-                    rObject result = res->call(SYMBOL(asToplevelPrintable));
-                    std::ostringstream os;
-                    result->print(os);
-                    std::string r = os.str();
-                    lobby_->connection_get().send(r.c_str(), r.size());
-                    lobby_->connection_get().endline();
-                  }
-                  catch (object::UrbiException&)
-                  {
-                    // nothing
-                  }
-                }
-              }
-            }
-            // Catch and print unhandled exceptions
-            catch (object::UrbiException& exn)
-            {
-	      exception_to_show.reset
-	        (new object::UrbiException(exn.value_get(),
-					   exn.backtrace_get()));
-            }
-            // Forward scheduler exception
-            catch (const sched::exception& e)
-            {
-              exception_to_throw = e.clone();
-            }
-            // Stop invalid exceptions thrown by primitives
-            catch (const std::exception& e)
-            {
-              static boost::format format("Invalid exception `%s' caught");
-              send_message("error", str(format % e.what()));
-            }
-            catch (...)
-            {
-              send_message("error", "Invalid unknown exception caught");
-            }
-
-            if (exception_to_throw.get())
-              exception_to_throw->rethrow();
-            else if (exception_to_show.get())
-	    {
-              show_exception_(*exception_to_show);
-
-	      // In the case of a Nary with multiple elements at the toplevel,
-	      // we want to reset the result to void to make sure that we
-	      // do not return a reference onto the previously evaluated
-	      // expression.
-	      res = object::void_class;
-	    }
-          }
-          else
-            res = operator()(exp);
+          res = e->toplevel_get() ? top_level_visit(exp) : operator()(exp);
         }
       }
       // If we get a scope tag, stop the runners tagged with it.

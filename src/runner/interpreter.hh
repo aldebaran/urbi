@@ -164,14 +164,17 @@ namespace runner
     LIBPORT_SPEED_ALWAYS_INLINE object::rObject visit(const ast::Node* n);
 
     AST_FOR_EACH_NODE(VISIT);
-
 #undef VISIT
 
+    // When evaluating for the toplevel, print the result.  Also,
+    // handle errors, print them and continue.
+    LIBPORT_SPEED_ALWAYS_INLINE
+    object::rObject top_level_visit(const ast::Exp* exp);
     /// \}
 
 
     /// Do the actual work.  Implementation of \c Job::run.
-    virtual void work ();
+    virtual void work();
 
     /// Signal a scheduling error exception.
     ///
@@ -193,7 +196,7 @@ namespace runner
     virtual libport::Symbol innermost_call_get() const;
 
   protected:
-    void show_exception_ (object::UrbiException& ue);
+    void show_exception_(object::UrbiException& ue);
 
   private:
     void init();
