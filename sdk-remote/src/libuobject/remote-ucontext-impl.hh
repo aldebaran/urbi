@@ -94,7 +94,7 @@ namespace urbi
 
     private:
       UObject* owner_;
-      int period;
+      ufloat period;
     };
 
     class URBI_SDK_API RemoteUVarImpl: public UVarImpl

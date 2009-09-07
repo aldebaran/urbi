@@ -213,9 +213,9 @@ namespace urbi
     void
     RemoteUObjectImpl::setUpdate(ufloat t)
     {
-      RemoteUContextImpl& ctx = dynamic_cast<RemoteUContextImpl&>
-        (*(owner_->ctx_));
-      // Forge names for callback and tag
+      RemoteUContextImpl& ctx =
+        dynamic_cast<RemoteUContextImpl&>(*(owner_->ctx_));
+      // Forge names for callback and tag.
       std::string tagName = "maintimer_" + owner_->__name;
       std::string cbName = owner_->__name + ".maintimer";
 
@@ -245,7 +245,7 @@ namespace urbi
           }
       }
 
-      // Set period value
+      // Set period value.
       period = t;
       // Do nothing more if negative value given
       if (period < 0)
