@@ -7,8 +7,11 @@
  *
  * See the LICENSE file for more information.
  */
+
+#include <libport/cstdlib>
+#include <libport/cstdio>
+
 #include <urbi/uconversion.hh>
-#include <cstdlib>
 
 #ifndef NO_IMAGE_CONVERSION
 # include <setjmp.h>
@@ -41,7 +44,7 @@ namespace urbi
   } // namespace
 
   int
-  convertRGBtoYCrCb(const byte * sourceImage,
+  convertRGBtoYCrCb(const byte* sourceImage,
 		    size_t bufferSize,
 		    byte* destinationImage)
   {
@@ -265,7 +268,7 @@ namespace urbi
       dest->pub.next_output_byte = dst;
       cinfo.image_width = w;
       cinfo.image_height = h;
-      cinfo.input_components = 3;		/* # of color components per pixel */
+      cinfo.input_components = 3;  // # of color components per pixel.
       /* colorspace of input image */
       cinfo.in_color_space = ycrcb ? JCS_YCbCr : JCS_RGB;
 
@@ -302,11 +305,12 @@ namespace urbi
       jerr.pub.error_exit = urbi_jpeg_error_exit;
       if (setjmp(jerr.setjmp_buffer))
       {
-	/* If we get here, the JPEG code has signaled an error.
-	 * We need to clean up the JPEG object, close the input file, and return.
-	 */
+        /* If we get here, the JPEG code has signaled an error.  We
+         * need to clean up the JPEG object, close the input file, and
+         * return.
+         */
 	jpeg_destroy_decompress(&cinfo);
-	printf( "JPEG error!\n");
+        std::cerr << "JPEG error!" << std::endl;
 	return 0;
       }
       jpeg_create_decompress(&cinfo);
@@ -338,9 +342,10 @@ namespace urbi
 	 * more than one scanline at a time if that's more convenient.
 	 */
 	JSAMPROW row_pointer[1];
-	row_pointer[0] = (JOCTET *) & ((char *) buffer)[cinfo.output_scanline   *
-							cinfo.output_components *
-							cinfo.output_width];
+	row_pointer[0] =
+          (JOCTET *) & ((char *) buffer)[cinfo.output_scanline
+                                         * cinfo.output_components
+                                         * cinfo.output_width];
 	jpeg_read_scanlines(&cinfo, row_pointer, 1);
       }
       jpeg_finish_decompress(&cinfo);
@@ -674,10 +679,10 @@ namespace urbi
     }
 
     //do the conversion and write to dest.data
-    char * sbuffer = source.data;
+    char* sbuffer = source.data;
     if (source.soundFormat == SOUND_WAV)
       sbuffer += sizeof (wavheader);
-    char * dbuffer = dest.data;
+    char* dbuffer = dest.data;
     if (dest.soundFormat == SOUND_WAV)
       dbuffer += sizeof (wavheader);
     int elementCount = dest.size - (dest.soundFormat == SOUND_WAV ?
