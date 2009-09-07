@@ -1,24 +1,14 @@
-/*! \file urbi/uclient.hh
-****************************************************************************
- * Definition of the URBI interface class
+/*
+ * Copyright (C) 2004, 2006-2009, Gostai S.A.S.
  *
- * Copyright (C) 2004, 2006, 2007, 2008, 2009 Jean-Christophe Baillie.
- * All rights reserved.
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-**********************************************************************/
+ * See the LICENSE file for more information.
+ */
+
+/// \file urbi/uclient.hh
 
 #ifndef URBI_UCLIENT_HH
 # define URBI_UCLIENT_HH
@@ -45,7 +35,7 @@ namespace urbi
     using UAbstractClient::DEFAULT_HOST;
 
     /// Construction options.
-    struct options
+    struct URBI_SDK_API options
     {
       /// Backward compatibility with the previous UClient::UClient
       /// interface.  Don't make it "explicit" so that we can call
@@ -54,9 +44,9 @@ namespace urbi
       ///
       /// start defaults to true, for backward compatibility too.
       options(bool server = false);
-# define UCLIENT_OPTION(Type, Name)    \
+# define UCLIENT_OPTION(Type, Name)             \
     public:                                     \
-      options& Name(Type b);          \
+      options& Name(Type b);                    \
       Type Name() const;                        \
     private:                                    \
       Type Name ## _;
@@ -68,15 +58,15 @@ namespace urbi
     };
 
 # define UCLIENT_OPTION_IMPL(Class, Type, Name) \
-  Class::options&                             \
-  Class::options::Name(Type v)                \
+  Class::options&                               \
+  Class::options::Name(Type v)                  \
   {                                             \
     Name ## _ = v;                              \
     return *this;                               \
   }                                             \
                                                 \
   Type                                          \
-  Class::options::Name() const                \
+  Class::options::Name() const                  \
   {                                             \
     return Name ## _;                           \
   }
