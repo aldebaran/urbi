@@ -408,7 +408,7 @@ namespace runner
 	    register_child(subrunner, children);
 	    runners.push_back(subrunner);
 	  }
-          subrunner->start_job ();
+          subrunner->start_job();
         }
         else
         {
@@ -499,7 +499,9 @@ namespace runner
   {
     Interpreter* i = this;
     bool non_interruptible = non_interruptible_;
-    FINALLY(((Interpreter*, i))((bool&, non_interruptible_))((bool, non_interruptible)),
+    FINALLY(((Interpreter*, i))
+            ((bool&, non_interruptible_))
+            ((bool, non_interruptible)),
             i->cleanup_scope_tag();
             non_interruptible_ = non_interruptible;
       );
