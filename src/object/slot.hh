@@ -10,7 +10,7 @@
 #ifndef OBJECT_SLOT_HH
 # define OBJECT_SLOT_HH
 
-# include <libport/assert.hh>
+# include <libport/cassert>
 # include <libport/hash.hh>
 # include <libport/intrusive-ptr.hh>
 # include <libport/ref-counted.hh>

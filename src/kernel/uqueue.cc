@@ -13,7 +13,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
-#include <libport/assert.hh>
+#include <libport/cassert>
 #include <libport/cstring>
 
 #include <kernel/uqueue.hh>

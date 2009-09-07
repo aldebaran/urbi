@@ -67,7 +67,7 @@
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <libport/assert.hh>
+#include <libport/cassert>
 #include <libport/finally.hh>
 #include <libport/format.hh>
 #include <libport/separate.hh>

@@ -22,7 +22,7 @@ print >> header, """\
 
 # include <set>
 
-# include <libport/assert.hh>
+# include <libport/cassert>
 # include <libport/contract.hh>
 # include <libport/type-info.hh>
 

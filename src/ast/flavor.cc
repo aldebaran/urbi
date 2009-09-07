@@ -14,7 +14,7 @@
 
 #include <cstdlib>
 
-#include <libport/assert.hh>
+#include <libport/cassert>
 
 #include <ast/flavor.hh>
 

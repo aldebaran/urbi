@@ -12,7 +12,7 @@
 
 # include <boost/optional.hpp>
 
-# include <libport/assert.hh>
+# include <libport/cassert>
 # include <libport/format.hh>
 # include <libport/path.hh>
 # include <libport/symbol.hh>

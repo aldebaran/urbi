@@ -12,7 +12,7 @@
  ** \brief Creation of the URBI object lobby.
  */
 
-#include <libport/assert.hh>
+#include <libport/cassert>
 
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>

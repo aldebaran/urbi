@@ -23,7 +23,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/version.hpp>
 
-#include <libport/assert.hh>
+#include <libport/cassert>
 #include <libport/foreach.hh>
 #include <libport/ref-pt.hh>
 

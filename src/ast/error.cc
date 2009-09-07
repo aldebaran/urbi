@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <sstream>
-#include <libport/assert.hh>
+#include <libport/cassert>
 #include <libport/indent.hh>
 
 #include <ast/error.hh>
