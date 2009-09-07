@@ -51,7 +51,10 @@ namespace urbi
     current_context.reset(impl);
   }
 
-  //! UGenericCallback constructor.
+  /*-------------------.
+  | UGenericCallback.  |
+  `-------------------*/
+
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name,
@@ -67,7 +70,6 @@ namespace urbi
     impl_->initialize(this, owned);
   }
 
-  //! UGenericCallback constructor.
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name,
@@ -91,6 +93,11 @@ namespace urbi
   {
     impl_->registerCallback();
   }
+
+
+  /*----------.
+  | UObject.  |
+  `----------*/
 
   UObject::UObject(int, impl::UContextImpl* impl)
     : UContext(impl)
@@ -152,8 +159,17 @@ namespace urbi
     send(groupregister);
   }
 
+
+  /*---------------.
+  | UContextImpl.  |
+  `---------------*/
   namespace impl
   {
+    // Declared pure virtual, but needs an implementation.  Known
+    // idiom.
+    UContextImpl::~UContextImpl()
+    {}
+
     void
     UContextImpl::init()
     {

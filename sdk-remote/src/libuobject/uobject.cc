@@ -27,7 +27,7 @@
 #include <urbi/usyncclient.hh>
 #include <urbi/uvar.hh>
 #include <urbi/ucontext-factory.hh>
-#include <libuobject/remoteucontextimpl.hh>
+#include <libuobject/remote-ucontext-impl.hh>
 
 GD_ADD_CATEGORY(Libuobject);
 
@@ -60,6 +60,7 @@ namespace urbi
 
     typedef libport::hash_map<std::string, impl::UContextImpl*> contexts_type;
     static contexts_type contexts;
+
     impl::UContextImpl* makeRemoteContext(const std::string& host,
                                           const std::string& port)
     {
@@ -67,6 +68,7 @@ namespace urbi
         new USyncClient(host, strtol(port.c_str(), 0, 0)));
       return c;
     }
+
     impl::UContextImpl* getRemoteContext(const std::string& host,
                                          const std::string& port)
     {
@@ -104,6 +106,9 @@ namespace urbi
       client_->setClientErrorCallback(callback(*this,
                  &RemoteUContextImpl::clientError));
     }
+
+    RemoteUContextImpl::~RemoteUContextImpl()
+    {}
 
     void RemoteUContextImpl::uobject_unarmorAndSend(const char* a)
     {

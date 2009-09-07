@@ -21,7 +21,7 @@
 #include <urbi/uexternal.hh>
 #include <urbi/uobject.hh>
 
-#include <libuobject/remoteucontextimpl.hh>
+#include <libuobject/remote-ucontext-impl.hh>
 
 GD_ADD_CATEGORY(Libuobject);
 

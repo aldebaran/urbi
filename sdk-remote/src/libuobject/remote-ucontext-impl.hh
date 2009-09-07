@@ -7,8 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
-#ifndef REMOTEUCONTEXTIMPL_HH
-# define REMOTEUCONTEXTIMPL_HH
+#ifndef LIBUOBJECT_REMOTE_UCONTEXT_IMPL_HH
+# define LIBUOBJECT_REMOTE_UCONTEXT_IMPL_HH
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 
@@ -22,6 +22,7 @@ namespace urbi
     public:
       /// Setup to work on given client
       RemoteUContextImpl(USyncClient* client);
+      virtual ~RemoteUContextImpl();
       virtual void newUObjectClass(baseURBIStarter* s);
       virtual void newUObjectHubClass(baseURBIStarterHub* s);
       virtual void uobject_unarmorAndSend(const char* str);
@@ -127,4 +128,4 @@ namespace urbi
     };
   }
 }
-#endif
+#endif // !LIBUOBJECT_REMOTE_UCONTEXT_IMPL_HH

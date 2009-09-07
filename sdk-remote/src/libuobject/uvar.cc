@@ -21,7 +21,7 @@
 
 #include <liburbi/compatibility.hh>
 
-#include <libuobject/remoteucontextimpl.hh>
+#include <libuobject/remote-ucontext-impl.hh>
 namespace urbi
 {
   namespace impl

@@ -37,11 +37,6 @@ namespace urbi
     {}
   };
 
-  namespace impl
-  {
-    class URBI_SDK_API UContextImpl;
-  }
-
   /** Methods available in both UObject and UVar
    *  Wrapper around UContextImpl to enable access through inheritance.
    */

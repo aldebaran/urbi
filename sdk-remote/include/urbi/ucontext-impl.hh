@@ -24,6 +24,7 @@ namespace urbi
     class URBI_SDK_API UContextImpl
     {
     public:
+      virtual ~UContextImpl() = 0;
       /// Inject all loaded uobjects in the system by calling newUObjectClass.
       void init();
       /// Inject a specific uobject

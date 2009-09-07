@@ -30,13 +30,12 @@
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
-#include <libuobject/remoteucontextimpl.hh>
+#include <libuobject/remote-ucontext-impl.hh>
 using libport::program_name;
 
 namespace urbi
 {
-    static impl::RemoteUContextImpl* defaultContext;
-
+  static impl::RemoteUContextImpl* defaultContext;
 
   UCallbackAction
   debug(const UMessage& msg)
