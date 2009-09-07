@@ -1,21 +1,18 @@
-/* \file urbi/utable.hh
+/*
+ * Copyright (C) 2006-2009, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+/// \file urbi/utable.hh
  *******************************************************************************
 
  Definition of the callback tables.
-
- This file is part of UObject Component Architecture\n
- Copyright (c) 2006-2009 Gostai S.A.S.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.com
-
- **************************************************************************** */
+**************************************************************************** */
 
 #ifndef URBI_UTABLE_HH
 # define URBI_UTABLE_HH
