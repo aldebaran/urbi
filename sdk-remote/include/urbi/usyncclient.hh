@@ -61,7 +61,9 @@ namespace urbi
     typedef boost::function1<void, USyncClient*> connect_callback_type;
     typedef UClient super_type;
     typedef super_type::error_type error_type;
-    struct options: public super_type::options
+
+    struct URBI_SDK_API options
+      : public super_type::options
     {
       options();
       UCLIENT_OPTION(bool, startCallbackThread);
