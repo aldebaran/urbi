@@ -23,7 +23,7 @@ Factory::operator()(const strings& components) const
 {
   // Waiting for duration seconds.
   useconds_t one_second = 1000 * 1000;
-  usleep(duration * one_second);
+  usleep(useconds_t(duration * one_second));
 
   // Iterate over the list of strings (using Boost.Foreach), and
   // concatenate them in res.
