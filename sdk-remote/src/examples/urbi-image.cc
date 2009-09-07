@@ -10,8 +10,8 @@
 
 /// \brief Sample image acqusition urbi client.
 
-/*
- * This simple demonstration program display or save images from an Urbi server.
+/* This simple demonstration program display or save images from an
+ * Urbi server.
  */
 
 #include <libport/cstdio>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, Gostai S.A.S.
+ * Copyright (C) 2004, 2006, 2007, 2009, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -7,11 +7,6 @@
  *
  * See the LICENSE file for more information.
  */
-
-/// \brief $Id: urbisound.cpp,v 1.9 2005/09/21 06:45:36 nottale Exp $
- *
- * Sample demonstration of URBI sound capabilities.
-**********************************************************************/
 
 /* This simple demonstration program save to a file or send to the
  * speakers sounds coming from an Urbi server.  The data written is
