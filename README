@@ -72,13 +72,9 @@ This is not a requirement, but it's better to have it.  Used by the
 test suite.  Unfortunately the name of the package varies between
 distros.  It provides "rst2html".
 
-** py-syck
-Unfortunately it is common for distros not to ship it.  In which case
-see run
-
-  common/install/install-pysyck --sudo-command=sudo
-
-Pay attention that you will probably need to adjust your PYTHONPATH.
+** yaml for Python
+MacPorts: py26-yaml
+Ubuntu:   python-yaml
 
 ** socat
 Needed by the test suite.

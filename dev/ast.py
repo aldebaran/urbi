@@ -2,7 +2,7 @@
 ## Abstract syntax tree YAML tools.
 ## ---------------------------------------------------------------------------
 
-import string, re, sys, syck, tools
+import string, re, sys, yaml, tools
 
 from tools import warning, error
 
@@ -180,12 +180,7 @@ class Node:
     self.includes = {}
 
     for key in dict:
-      # PySyck changed its behavior WRT duplicate keys
-      # See: http://pyyaml.org/ticket/16
-      # We should NOT rely on this behavior especially because this isn't
-      # valid YAML code according to the spec:
-      # "YAML mappings require key uniqueness"
-      # http://yaml.org/spec/current.html#id2507367
+      # Catch duplicate keys.
       if isinstance (key, tuple):
 	(realkey, value) = key
 	error ('duplicate key: ' + name + "::" + realkey)
@@ -204,8 +199,8 @@ class Node:
 	warning ('unknown Node attribute: ' + name + "::" + key)
       self.__dict__[key] = dict[key]
 
-    # If we have only one super-class, Syck parsed this as a single value but
-    # we want a list here.
+    # If we have only one super-class, it has been parsed as a single
+    # value, but we want a list.
     if (not isinstance (self.super, list)):
       self.super = [self.super]
 
@@ -380,9 +375,7 @@ class Loader:
 
   def load (self, file):
     "Load both the paramaters and the AST description."
-    # See http://pyyaml.org/browser/pysyck/trunk/README.txt for more
-    # information on `syck.load_documents'.
-    docs = syck.load_documents (file.read ())
+    docs = yaml.load_all (file.read ())
     i = iter (docs)
     global ast_params
     ast_params = i.next ()
