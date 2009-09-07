@@ -51,6 +51,17 @@ namespace urbi
     current_context.reset(impl);
   }
 
+
+  /*-----------------------.
+  | UGenericCallbackImpl.  |
+  `-----------------------*/
+
+  namespace impl
+  {
+    UGenericCallbackImpl::~UGenericCallbackImpl()
+    {}
+  }
+
   /*-------------------.
   | UGenericCallback.  |
   `-------------------*/
@@ -94,6 +105,17 @@ namespace urbi
     impl_->registerCallback();
   }
 
+
+  /*--------------.
+  | UObjectImpl.  |
+  `--------------*/
+
+  namespace impl
+  {
+    UObjectImpl::~UObjectImpl()
+    {
+    }
+  }
 
   /*----------.
   | UObject.  |

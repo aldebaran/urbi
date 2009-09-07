@@ -98,6 +98,7 @@ namespace urbi
     class URBI_SDK_API UObjectImpl
     {
     public:
+      virtual ~UObjectImpl() = 0;
       // Called by uobject constructor
       virtual void initialize(UObject* owner) = 0;
       virtual void clean() = 0;
@@ -107,6 +108,7 @@ namespace urbi
     class URBI_SDK_API UVarImpl
     {
     public:
+      virtual ~UVarImpl() = 0;
       virtual void initialize(UVar* owner) = 0;
       virtual void clean() = 0;
       virtual void setOwned() = 0;

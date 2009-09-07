@@ -61,8 +61,14 @@ namespace urbi
       USyncClient* client_;
       /// True if we received a clientError message.
       bool closed_;
-#define TABLE(t, n)                                     \
-    private: t n##_; public: t& n() {return n##_;}
+#define TABLE(Type, Name)                       \
+    private:                                    \
+      Type Name ## _;                           \
+    public:                                     \
+      Type& Name()                              \
+      {                                         \
+        return Name ## _;                       \
+      }
       TABLE(UTable, accessmap);
       TABLE(UTable, eventmap);
       TABLE(UTable, eventendmap);
@@ -81,6 +87,7 @@ namespace urbi
     class URBI_SDK_API RemoteUObjectImpl: public UObjectImpl
     {
     public:
+      virtual ~RemoteUObjectImpl();
       virtual void initialize(UObject* owner);
       virtual void clean();
       virtual void setUpdate(ufloat period);

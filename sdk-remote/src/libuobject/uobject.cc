@@ -61,16 +61,16 @@ namespace urbi
     typedef libport::hash_map<std::string, impl::UContextImpl*> contexts_type;
     static contexts_type contexts;
 
-    impl::UContextImpl* makeRemoteContext(const std::string& host,
-                                          const std::string& port)
+    impl::UContextImpl*
+    makeRemoteContext(const std::string& host, const std::string& port)
     {
       impl::UContextImpl* c = new impl::RemoteUContextImpl(
         new USyncClient(host, strtol(port.c_str(), 0, 0)));
       return c;
     }
 
-    impl::UContextImpl* getRemoteContext(const std::string& host,
-                                         const std::string& port)
+    impl::UContextImpl*
+    getRemoteContext(const std::string& host, const std::string& port)
     {
       std::string key = host + ':' + port;
       contexts_type::iterator i = contexts.find(key);
@@ -82,19 +82,9 @@ namespace urbi
       return c;
     }
 
-    USyncClient*
-    RemoteUContextImpl::getClient()
-    {
-      return client_;
-    }
-
-    UObject*
-    RemoteUContextImpl::getDummyUObject()
-    {
-      if (!dummyUObject)
-        dummyUObject = new UObject(0, this);
-      return dummyUObject;
-    }
+    /*---------------------.
+    | RemoteUContextImpl.  |
+    `---------------------*/
 
     RemoteUContextImpl::RemoteUContextImpl(USyncClient* client)
       : client_(client)
@@ -109,6 +99,20 @@ namespace urbi
 
     RemoteUContextImpl::~RemoteUContextImpl()
     {}
+
+    USyncClient*
+    RemoteUContextImpl::getClient()
+    {
+      return client_;
+    }
+
+    UObject*
+    RemoteUContextImpl::getDummyUObject()
+    {
+      if (!dummyUObject)
+        dummyUObject = new UObject(0, this);
+      return dummyUObject;
+    }
 
     void RemoteUContextImpl::uobject_unarmorAndSend(const char* a)
     {
@@ -161,6 +165,14 @@ namespace urbi
       // Protect our initialization code against rescoping by ','.
       send(";");
     }
+
+
+    /*--------------------.
+    | RemoteUObjectImpl.  |
+    `--------------------*/
+
+    RemoteUObjectImpl::~RemoteUObjectImpl()
+    {}
 
     //! UObject constructor.
     void RemoteUObjectImpl::initialize(UObject* owner)
@@ -507,11 +519,13 @@ namespace urbi
     {
       return new RemoteUVarImpl();
     }
+
     UObjectImpl*
     RemoteUContextImpl::getObjectImpl()
     {
       return new RemoteUObjectImpl();
     }
+
     UGenericCallbackImpl*
     RemoteUContextImpl::getGenericCallbackImpl()
     {

@@ -36,17 +36,18 @@ namespace urbi
   {
     class URBI_SDK_API UGenericCallbackImpl
     {
-      public:
-        virtual void initialize(UGenericCallback* owner, bool owned) = 0;
-        virtual void initialize(UGenericCallback* owner) = 0;
-        virtual void registerCallback() = 0;
-        virtual void clear() = 0;
+    public:
+      virtual ~UGenericCallbackImpl() = 0;
+      virtual void initialize(UGenericCallback* owner, bool owned) = 0;
+      virtual void initialize(UGenericCallback* owner) = 0;
+      virtual void registerCallback() = 0;
+      virtual void clear() = 0;
     };
   };
+
   //! Function and Event storage mechanism
-  /*! This heavily overloaded class is the only way in C++ to make life easy from the
-    the interface user point's of view.
-  */
+  /// This heavily overloaded class is the only way in C++ to make
+  /// life easy from the the interface user point's of view.  */
 
   class URBI_SDK_API UGenericCallback: public UContext
   {
@@ -355,7 +356,7 @@ namespace urbi
 		  OBJ* obj,						\
 		  void (OBJ::*fun) (%%%,% P% %%) FConst,		\
 		  void (OBJ::*end)() EConst,				\
-		  const std::string& funname)	                	\
+		  const std::string& funname)		\
   {									\
     return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname,		\
 						    type, obj, fun,	\

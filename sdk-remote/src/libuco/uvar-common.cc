@@ -15,6 +15,21 @@
 
 namespace urbi
 {
+
+    /*-----------.
+    | UVarImpl.  |
+    `-----------*/
+  namespace impl
+  {
+    UVarImpl::~UVarImpl()
+    {
+    }
+  }
+
+
+  /*-------.
+  | UVar.  |
+  `-------*/
   UVar::UVar(const std::string& varname, impl::UContextImpl* impl)
     : UContext(impl)
     , VAR_PROP_INIT
@@ -74,39 +89,36 @@ namespace urbi
     }
   }
 
-  /*-------.
-  | UVar.  |
-  `-------*/
+  void
+  UVar::__init()
+  {
+    owned = false;
+    vardata = 0;
+    if (!impl_)
+    {
+      impl_ = ctx_->getVarImpl();
+    }
+    impl_->initialize(this);
+  }
 
- void
- UVar::__init()
- {
-   owned = false;
-   vardata = 0;
-   if (!impl_)
-   {
-     impl_ = ctx_->getVarImpl();
-   }
-   impl_->initialize(this);
- }
+  UVar::~UVar()
+  {
+    if (impl_)
+      impl_->clean();
+    delete impl_;
+  }
 
- UVar::~UVar()
- {
-   if (impl_)
-     impl_->clean();
-   delete impl_;
- }
-
- //! UVar reset  (deep assignement)
   void
   UVar::reset(ufloat n)
   {
     *this = n;
   }
+
+  std::ostream&
+  operator<< (std::ostream& o, const UVar& u)
+  {
+    return o << "UVar(\"" << u.get_name() << "\" = " << u.val() << ')';
+  }
+
 } // namespace urbi
 
-std::ostream&
-operator<< (std::ostream& o, const urbi::UVar& u)
-{
-  return o << "UVar (\"" << u.get_name() << "\" = " << u.val() << ')';
-}
