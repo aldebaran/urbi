@@ -85,10 +85,12 @@
 #define ast_class            up.factory().make_class
 #define ast_every            up.factory().make_every
 #define ast_for              up.factory().make_for
+#define ast_freezeif         up.factory().make_freezeif
 #define ast_if               up.factory().make_if
 #define ast_nil              up.factory().make_nil
 #define ast_routine          up.factory().make_routine
 #define ast_scope            up.factory().make_scope
+#define ast_stopif           up.factory().make_stopif
 #define ast_string           up.factory().make_string
 #define ast_strip            up.factory().make_strip
 #define ast_switch           up.factory().make_switch
@@ -817,12 +819,10 @@ stmt:
     }
 | "at" "(" event_match ")" nstmt onleave.opt
     {
-      FLAVOR_CHECK1(@1, "at", $1, semicolon);
-      $$ = ast_at_event(@$, $3, $5, $6);
+      $$ = ast_at_event(@$, $1, $3, $5, $6);
     }
 | "every" "(" exp ")" nstmt
     {
-      FLAVOR_CHECK2(@1, "every", $1, semicolon, pipe);
       $$ = ast_every(@$, $1, $3, $5);
     }
 | "if" "(" stmts ")" nstmt else.opt
@@ -831,38 +831,11 @@ stmt:
     }
 | "freezeif" "(" softtest ")" stmt
     {
-      PARAMETRIC_AST(desugar,
-        "var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
-        "var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
-        "'$freezeif_ex' :"
-        "{"
-        "  at(%exp:1)"
-        "    '$freezeif_in'.freeze"
-        "  onleave"
-        "    '$freezeif_in'.unfreeze |"
-        "  '$freezeif_in' :"
-        "  {"
-        "    %exp:2 |"
-        "    '$freezeif_ex'.stop |"
-        "    "
-        "  }"
-        "}"
-        );
-      $$ = exp(desugar % $3 % $5);
+      $$ = ast_freezeif(@$, $3, $5);
     }
 | "stopif" "(" softtest ")" stmt
     {
-      PARAMETRIC_AST(desugar,
-        "{"
-        "  var '$stopif' = Tag.new(\"$stopif\") |"
-        "  '$stopif':"
-        "  {"
-        "    { %exp:1 | '$stopif'.stop } &"
-        "    { waituntil(%exp:2) | '$stopif'.stop }"
-        "  } |"
-        "}"
-        );
-      $$ = exp(desugar % $5 % $3);
+      $$ = ast_stopif(@$, $3, $5);
     }
 | "switch" "(" exp ")" "{" cases default.opt "}"
     {

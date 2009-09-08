@@ -74,6 +74,35 @@ namespace
   }
 }
 
+#define SYNTAX_ERROR(Loc, Message...)                   \
+  throw syntax_error(Loc, libport::format(Message))
+
+/// Generate a parse error for invalid keyword/flavor combination.
+/// The check is performed by the parser, not the scanner, because
+/// some keywords may, or may not, have some flavors dependencies
+/// on the syntactic construct.  See the various "for"s for instance.
+#define FLAVOR_CHECK(Loc, Keyword, Flav, Condition)                     \
+  do                                                                    \
+    if (!(Condition))                                                   \
+      SYNTAX_ERROR(Loc, "invalid flavor: %s%s", Keyword, Flav);         \
+  while (0)
+
+#define FLAVOR_CHECK1(Loc, Keyword, Flav, Flav1)        \
+  FLAVOR_CHECK(Loc, Keyword, Flav,                      \
+               Flav == ast::flavor_ ## Flav1)
+
+#define FLAVOR_CHECK2(Loc, Keyword, Flav, Flav1, Flav2) \
+  FLAVOR_CHECK(Loc, Keyword, Flav,                      \
+               Flav == ast::flavor_ ## Flav1            \
+               || Flav == ast::flavor_ ## Flav2)
+
+#define FLAVOR_CHECK3(Loc, Keyword, Flav, Flav1, Flav2, Flav3)  \
+  FLAVOR_CHECK(Loc, Keyword, Flav,                              \
+               Flav == ast::flavor_ ## Flav1                    \
+               || Flav == ast::flavor_ ## Flav2                 \
+               || Flav == ast::flavor_ ## Flav3)
+
+
 namespace parser
 {
   ast::rExp
@@ -169,9 +198,11 @@ namespace parser
 
   ast::rExp
   AstFactory::make_at_event(const location& loc,
+                            ast::flavor_type flavor,
                             EventMatch& event,
                             ast::rExp body, ast::rExp onleave) // const
   {
+    FLAVOR_CHECK1(loc, "at", flavor, semicolon);
     PARAMETRIC_AST
       (desugar_body,
        "%exp:1 |"
@@ -248,10 +279,8 @@ namespace parser
         // Or can be a call without argument, i.e., "Foo.bar".
         || (exp.unsafe_cast<ast::Call>()
             && exp.unsafe_cast<ast::Call>()->arguments_get()))
-      throw syntax_error(exp_loc,
-                         libport::format("syntax error, "
-                                         "%s is not a valid lvalue",
-                                         *exp));
+      SYNTAX_ERROR(exp_loc,
+                   "syntax error, %s is not a valid lvalue", *exp);
 
     ast::rBinding res = new ast::Binding(l, exp.unchecked_cast<ast::LValue>());
     res->constant_set(constant);
@@ -314,9 +343,11 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_every(const location&, ast::flavor_type flavor,
+  AstFactory::make_every(const location& loc, ast::flavor_type flavor,
                          ast::rExp test, ast::rExp body) // const
   {
+    FLAVOR_CHECK2(loc, "every", flavor, semicolon, pipe);
+
     // every (exp:1) exp:2.
     PARAMETRIC_AST
       (semi,
@@ -421,6 +452,32 @@ namespace parser
                % init % inc % test % body);
   }
 
+  //| "freezeif" "(" softtest ")" stmt
+  ast::rExp
+  AstFactory::make_freezeif(const location&,
+                            ast::rExp cond,
+                            ast::rExp body) // const
+  {
+    PARAMETRIC_AST
+      (desugar,
+       "var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
+       "var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
+        "'$freezeif_ex' :"
+       "{"
+       "  at(%exp:1)"
+       "    '$freezeif_in'.freeze"
+       "  onleave"
+        "    '$freezeif_in'.unfreeze |"
+       "  '$freezeif_in' :"
+       "  {"
+       "    %exp:2 |"
+       "    '$freezeif_ex'.stop |"
+       "    "
+       "  }"
+       "}"
+        );
+    return exp(desugar % cond % body);
+  }
 
   ast::rExp
   AstFactory::make_if(const location& l,
@@ -476,7 +533,7 @@ namespace parser
                            const location& bloc, ast::rExp b) // const
   {
     if (closure && !f)
-      throw syntax_error(loc, "closure cannot be lazy");
+      SYNTAX_ERROR(loc, "closure cannot be lazy");
     return new ast::Routine(loc, closure,
                             symbols_to_decs(floc, f),
                             make_scope(bloc, b));
@@ -500,6 +557,24 @@ namespace parser
   AstFactory::make_scope(const location& l, ast::rExp e) // const
   {
     return make_scope(l, 0, e);
+  }
+
+  ast::rExp
+  AstFactory::make_stopif(const location&,
+                          ast::rExp cond, ast::rExp body) // const
+  {
+    PARAMETRIC_AST
+      (desugar,
+       "{"
+       "  var '$stopif' = Tag.new(\"$stopif\") |"
+       "  '$stopif':"
+       "  {"
+       "    { %exp:1 | '$stopif'.stop } &"
+       "    { waituntil(%exp:2) | '$stopif'.stop }"
+        "  } |"
+       "}"
+        );
+    return exp(desugar % cond % body);
   }
 
   ast::rExp

@@ -49,10 +49,11 @@ namespace parser
             ast::rExp body, ast::rExp onleave = 0,
             ast::rExp duration = 0) /* const */;
 
-    /// at (?(%event)(%payload) {%body} onleave {%onleave}
+    /// at(%flavor) (?(%event)(%payload) {%body} onleave {%onleave}
     static
     ast::rExp
     make_at_event(const location& loc,
+                  ast::flavor_type flavor,
                   EventMatch& event,
                   ast::rExp body, ast::rExp onleave = 0) /* const */;
 
@@ -154,6 +155,13 @@ namespace parser
              ast::rExp init, ast::rExp test, ast::rExp inc,
              ast::rExp body) /* const */;
 
+
+    /// freezeif ( %cond ) %body.
+    static
+    ast::rExp
+    make_freezeif(const location& loc,
+                  ast::rExp cond, ast::rExp body) /* const */;
+
     /// \param iffalse can be 0.
     static
     ast::rExp
@@ -214,6 +222,11 @@ namespace parser
     static
     ast::rScope
     make_scope(const yy::location& l, ast::rExp e) /* const */;
+
+    static
+    ast::rExp
+    make_stopif(const location& loc,
+                ast::rExp cond, ast::rExp body) /* const */;
 
     static
     ast::rExp
