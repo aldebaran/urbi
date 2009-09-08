@@ -585,8 +585,8 @@ namespace parser
        "  var '$stopif' = Tag.new(\"$stopif\") |"
        "  '$stopif':"
        "  {"
-       "    { %exp:1 | '$stopif'.stop } &"
-       "    { waituntil(%exp:2) | '$stopif'.stop }"
+       "    { %exp:2 | '$stopif'.stop } &"
+       "    { waituntil(%exp:1) | '$stopif'.stop }"
         "  } |"
        "}"
         );
