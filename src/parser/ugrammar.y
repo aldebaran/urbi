@@ -124,14 +124,6 @@
       mods[mod.first] = mod.second;
     }
 
-
-# undef ERROR
-# define ERROR(Loc, FormatArgs)                         \
-    do {                                                \
-      up.error(Loc, (libport::format FormatArgs));      \
-      YYERROR;                                          \
-    } while (false)
-
     static
     void
     expensive(parser::ParserImpl& up, ast::loc loc,
