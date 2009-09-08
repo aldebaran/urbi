@@ -798,7 +798,7 @@ namespace parser
   ast::rExp
   AstFactory::make_while(const location& loc, ast::flavor_type flavor,
                          ast::rExp cond,
-                         const locaation& body_loc, ast::rExp body) // const
+                         const location& body_loc, ast::rExp body) // const
   {
     FLAVOR_CHECK2(loc, "while", flavor, semicolon, pipe);
     return new ast::While(loc, flavor, cond, make_scope(body_loc, body));

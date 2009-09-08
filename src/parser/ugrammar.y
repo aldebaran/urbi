@@ -244,35 +244,6 @@
 {
 #include <ast/flavor.hh>
 };
-%code
-{
-/// Generate a parse error for invalid keyword/flavor combination.
-/// The check is performed by the parser, not the scanner, because
-/// some keywords may, or may not, have some flavors dependencies
-/// on the syntactic construct.  See the various "for"s for instance.
-#define FLAVOR_CHECK(Loc, Keyword, Flav, Condition)     \
-  do                                                    \
-    if (!(Condition))                                   \
-      ERROR(Loc,                                        \
-            ("invalid flavor: %s%s", Keyword, Flav));   \
-  while (0)
-
-#define FLAVOR_CHECK1(Loc, Keyword, Flav, Flav1)        \
-  FLAVOR_CHECK(Loc, Keyword, Flav,                      \
-               Flav == ast::flavor_ ## Flav1)
-
-#define FLAVOR_CHECK2(Loc, Keyword, Flav, Flav1, Flav2) \
-  FLAVOR_CHECK(Loc, Keyword, Flav,                      \
-               Flav == ast::flavor_ ## Flav1            \
-               || Flav == ast::flavor_ ## Flav2)
-
-#define FLAVOR_CHECK3(Loc, Keyword, Flav, Flav1, Flav2, Flav3)  \
-  FLAVOR_CHECK(Loc, Keyword, Flav,                              \
-               Flav == ast::flavor_ ## Flav1                    \
-               || Flav == ast::flavor_ ## Flav2                 \
-               || Flav == ast::flavor_ ## Flav3)
-
-};
 
 // We use variants.
 %define variant
