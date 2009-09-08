@@ -31,15 +31,15 @@ $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_h
 	@touch $@.tmp
 # Don't use `mv' here so that even if we are interrupted, the file
 # is still available for diff in the next run.
-	if test -f $(precompiled_symbols_hh); then	\
+	@if test -f $(precompiled_symbols_hh); then	\
 	  cat $(precompiled_symbols_hh);		\
 	fi >$(precompiled_symbols_hh)~
-	(cd $(srcdir) &&				\
+	@(cd $(srcdir) &&				\
 	 ./object/symbols-generate.pl			\
 		$(precompiled_symbols_hh_sources))	\
 		>$(precompiled_symbols_hh).tmp
-	diff -u $(precompiled_symbols_hh)~ $(precompiled_symbols_hh).tmp || true
-	$(move_if_change)						\
+	@diff -u $(precompiled_symbols_hh)~ $(precompiled_symbols_hh).tmp || true
+	@$(move_if_change)						\
 	  $(precompiled_symbols_hh).tmp $(precompiled_symbols_hh)
 	@mv -f $@.tmp $@
 
