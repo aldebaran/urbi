@@ -495,6 +495,16 @@ namespace parser
   }
 
 
+  // loop %body.
+  ast::rExp
+  AstFactory::make_loop(const location& loc, ast::flavor_type flavor,
+                        const location& body_loc, ast::rExp body) // const
+  {
+    FLAVOR_CHECK2(loc, "loop", flavor, semicolon, pipe);
+    return make_while(loc, flavor, new ast::Float(loc, 1), body_loc, body);
+  }
+
+
   ast::rLValue
   AstFactory::make_lvalue_once(const ast::rLValue& lvalue) // const
   {
@@ -783,6 +793,15 @@ namespace parser
                      "Control.whenever_(%exp:1, %exp:2, %exp:3)");
       return exp(desugar % cond % body % else_stmt);
     }
+  }
+
+  ast::rExp
+  AstFactory::make_while(const location& loc, ast::flavor_type flavor,
+                         ast::rExp cond,
+                         const locaation& body_loc, ast::rExp body) // const
+  {
+    FLAVOR_CHECK2(loc, "while", flavor, semicolon, pipe);
+    return new ast::While(loc, flavor, cond, make_scope(body_loc, body));
   }
 
 }

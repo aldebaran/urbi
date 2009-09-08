@@ -168,6 +168,12 @@ namespace parser
     make_if(const yy::location& l,
             ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse) /* const */;
 
+    /// loop %body.
+    static
+    ast::rExp
+    make_loop(const location& loc, ast::flavor_type flavor,
+              const location& body_loc, ast::rExp body) /* const */;
+
     /** Use these functions to avoid CPP-like problem when referring
      *  several times to an lvalue.  For instance, do not desugar
      *
@@ -288,7 +294,15 @@ namespace parser
     make_whenever_event(const location& loc,
                         EventMatch& event,
                         ast::rExp body, ast::rExp onleave = 0) /* const */;
+
+    /// while (%cond) %body.
+    static
+    ast::rExp
+    make_while(const location& loc, ast::flavor_type flavor,
+               ast::rExp cond,
+               const location& body_loc, ast::rExp body) /* const */;
   };
+
 }
 
 // The structures (list and pair) live in std, that's where Koening

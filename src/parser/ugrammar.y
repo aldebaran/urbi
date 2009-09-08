@@ -87,6 +87,7 @@
 #define ast_for              up.factory().make_for
 #define ast_freezeif         up.factory().make_freezeif
 #define ast_if               up.factory().make_if
+#define ast_loop             up.factory().make_loop
 #define ast_nil              up.factory().make_nil
 #define ast_routine          up.factory().make_routine
 #define ast_scope            up.factory().make_scope
@@ -99,6 +100,7 @@
 #define ast_waituntil_event  up.factory().make_waituntil_event
 #define ast_whenever         up.factory().make_whenever
 #define ast_whenever_event   up.factory().make_whenever_event
+#define ast_while            up.factory().make_while
 
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
@@ -987,12 +989,7 @@ stmt_loop:
  */
   "loop" stmt %prec CMDBLOCK
     {
-      // FIXME: Flavors.
-      // I tend to think that "loop&" does not make sense,
-      // but "loop," does.  Contrary to while.
-      FLAVOR_CHECK2(@1, "loop", $1, semicolon, pipe);
-      $$ = new ast::While(@$, $1, new ast::Float(@$, 1),
-			  ast_scope(@$,$2));
+      $$ = ast_loop(@$, $1, @2, $2);
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
@@ -1008,8 +1005,7 @@ stmt_loop:
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_CHECK2(@1, "while", $1, semicolon, pipe);
-      $$ = new ast::While(@$, $1, $exp, ast_scope(@stmt, $stmt));
+      $$ = ast_while(@$, $1, $exp, @stmt, $stmt);
     }
 ;
 
