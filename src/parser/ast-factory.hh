@@ -22,16 +22,6 @@
 namespace parser
 {
 
-  /// FIXME: this is something that should be handled by Bison.
-  struct syntax_error : std::runtime_error
-  {
-    syntax_error(const yy::location& l, const std::string& m)
-      : std::runtime_error(m)
-      , location(l)
-    {}
-    yy::location location;
-  };
-
   class AstFactory
   {
   public:

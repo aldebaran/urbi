@@ -75,7 +75,7 @@ namespace
 }
 
 #define SYNTAX_ERROR(Loc, Message...)                   \
-  throw syntax_error(Loc, libport::format(Message))
+  throw yy::parser::syntax_error(Loc, libport::format(Message))
 
 /// Generate a parse error for invalid keyword/flavor combination.
 /// The check is performed by the parser, not the scanner, because

@@ -132,19 +132,6 @@
       YYERROR;                                          \
     } while (false)
 
-/// FIXME: Handle this in Bison itself, around user actions.
-# define TRY(Exp)                                       \
-    do {                                                \
-      try                                               \
-      {                                                 \
-        Exp;                                            \
-      }                                                 \
-      catch (const ::parser::syntax_error& err)         \
-      {                                                 \
-        ERROR(err.location, ("%s", err.what()));        \
-      }                                                 \
-    } while (false)
-
     static
     void
     expensive(parser::ParserImpl& up, ast::loc loc,
@@ -605,10 +592,8 @@ stmt:
   routine k1_id formals block
     {
       // Compiled as "var name = function args stmt".
-      TRY(
-        $$ = new ast::Declaration(@$, $2,
-                                  ast_routine(@$, $1, @3, $3, @4, $4))
-        );
+      $$ = new ast::Declaration(@$, $2,
+                                ast_routine(@$, $1, @3, $3, @4, $4));
     }
 ;
 
@@ -1011,11 +996,11 @@ id:
 exp:
   "var" exp[lvalue]
   {
-    TRY($$ = ast_binding(@$, false, @lvalue, $lvalue));
+    $$ = ast_binding(@$, false, @lvalue, $lvalue);
   }
 | "const" "var" exp[lvalue]
   {
-    TRY($$ = ast_binding(@$, true, @lvalue, $lvalue));
+    $$ = ast_binding(@$, true, @lvalue, $lvalue);
   }
 | lvalue
   {
@@ -1063,7 +1048,7 @@ id:
 exp:
   routine formals block
     {
-      TRY($$ = ast_routine(@$, $1, @2, $2, @3, $3));
+      $$ = ast_routine(@$, $1, @2, $2, @3, $3);
     }
 ;
 
