@@ -67,10 +67,18 @@ need in libport.
 ** PDFLaTeX
 TeX Live is the most common distro nowadays.
 
+** Python
+You need xml/sax, which seems to be part only of Python 2.6.  Using
+python_select can be useful to state that you want to use Python 2.6
+by default (sudo python_select python26).
+
+MacPorts: python26 python_select
+
 ** py-docutils
 This is not a requirement, but it's better to have it.  Used by the
 test suite.  Unfortunately the name of the package varies between
 distros.  It provides "rst2html".
+MacPorts: py26-docutils
 
 ** yaml for Python
 MacPorts: py26-yaml
