@@ -107,10 +107,12 @@ namespace parser
 {
   ast::rExp
   AstFactory::make_at(const location& loc,
+                      ast::flavor_type flavor,
                       ast::rExp cond,
                       ast::rExp body, ast::rExp onleave,
                       ast::rExp duration) // const
   {
+    FLAVOR_CHECK1(loc, "at", flavor, semicolon);
     if (!onleave)
       onleave = new ast::Noop(loc, 0);
 
@@ -379,9 +381,11 @@ namespace parser
 
   // Build a for(iterable) loop.
   ast::rExp
-  AstFactory::make_for(const location&, ast::flavor_type flavor,
+  AstFactory::make_for(const location& loc, ast::flavor_type flavor,
                        ast::rExp iterable, ast::rExp body) // const
   {
+    FLAVOR_CHECK3(loc, "for", flavor, and, pipe, semicolon);
+
     PARAMETRIC_AST
       (ampersand,
        "for&(var '$for': %exp:1)\n"
@@ -406,27 +410,29 @@ namespace parser
 
   // Build a for(var id : iterable) loop.
   ast::rExp
-  AstFactory::make_for(const location& l, ast::flavor_type flavor,
+  AstFactory::make_for(const location& loc, ast::flavor_type flavor,
                        const location& id_loc, libport::Symbol id,
                        ast::rExp iterable, ast::rExp body) // const
   {
+    FLAVOR_CHECK3(loc, "for", flavor, semicolon, pipe, and);
     return
-      new ast::Foreach(l, flavor,
+      new ast::Foreach(loc, flavor,
                        new ast::LocalDeclaration(id_loc, id,
                                                  new ast::Implicit(id_loc)),
-                       iterable, make_scope(l, body));
+                       iterable, make_scope(loc, body));
   }
 
 
   // Build a C-like for loop.
   ast::rExp
-  AstFactory::make_for(const location&, ast::flavor_type flavor,
+  AstFactory::make_for(const location& loc, ast::flavor_type flavor,
                        ast::rExp init, ast::rExp test, ast::rExp inc,
                        ast::rExp body) // const
   {
+    FLAVOR_CHECK2(loc, "for", flavor, semicolon, pipe);
+
     // The increment is included directly in the condition to make
     // sure it is executed on `continue'.
-
     PARAMETRIC_AST
       (pipe,
        "{\n"
@@ -452,7 +458,7 @@ namespace parser
                % init % inc % test % body);
   }
 
-  //| "freezeif" "(" softtest ")" stmt
+
   ast::rExp
   AstFactory::make_freezeif(const location&,
                             ast::rExp cond,

@@ -813,9 +813,8 @@ stmt:
     }
 | "at" "(" exp tilda.opt ")" nstmt onleave.opt
     {
-      FLAVOR_CHECK1(@1, "at", $1, semicolon);
       expensive(up, @$, "at (<expression>), prefer at (<event>)");
-      $$ = ast_at(@$, $3, $6, $7, $4);
+      $$ = ast_at(@$, $1, $3, $6, $7, $4);
     }
 | "at" "(" event_match ")" nstmt onleave.opt
     {
@@ -997,17 +996,14 @@ stmt_loop:
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_CHECK3(@1, "for", $1, and, pipe, semicolon);
       $$ = ast_for(@$, $1, $3, $5);
     }
 | "for" "(" stmt[init] ";" exp[cond] ";" stmt[inc] ")" stmt[body] %prec CMDBLOCK
     {
-      FLAVOR_CHECK2(@1, "for", $1, semicolon, pipe);
       $$ = ast_for(@$, $1, $init, $cond, $inc, $body);
     }
 | "for" "(" "var" "identifier"[id] in_or_colon exp ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_CHECK3(@1, "for", $1, semicolon, pipe, and);
       $$ = ast_for(@$, $1, @id, $id, $exp, $stmt);
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK

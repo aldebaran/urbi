@@ -41,10 +41,10 @@ namespace parser
 
     typedef yy::location location;
 
-    /// at (%cond ~ %duration) {%body} onleave {%onleave}
+    /// at%flavor (%cond ~ %duration) {%body} onleave {%onleave}
     static
     ast::rExp
-    make_at(const yy::location& loc,
+    make_at(const yy::location& loc, ast::flavor_type flavor,
             ast::rExp cond,
             ast::rExp body, ast::rExp onleave = 0,
             ast::rExp duration = 0) /* const */;
