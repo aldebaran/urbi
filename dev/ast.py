@@ -21,15 +21,15 @@ ast_nodes = None;
 class Attribute:
   """An attribute of a AST class node."""
   def __init__(self, name, dict, ast_params):
-    self.name = name
-    self.type = ""
-    self.mandatory = True
-    self.init = None
-    self.owned = True
-    self.serialize = True
     self.access = "rw"
     self.desc = ""
     self.hide = False
+    self.init = None
+    self.mandatory = True
+    self.name = name
+    self.owned = True
+    self.serialize = True
+    self.type = ""
     for key in dict:
       if not key in [
 	'access',
@@ -164,20 +164,21 @@ class Attribute:
 
 class Node:
   def __init__(self, name, dict, ast_params):
+    self.ast_params = ast_params
+    self.attributes = []
+    self.clone_by_ref = False
+    self.cloner_prologue = ""
+    # Is the class concrete? (Default is false.)
+    self.concrete = False
+    self.declAttribute = ""
+    self.derived = []
+    self.desc = ""
+    self.hide = False
+    self.includes = {}
+    self.inline = {}
     self.name = name
     self.super = ""
     self.super_non_nodes = []
-    self.cloner_prologue = ""
-    self.clone_by_ref = False
-    self.derived = []
-    self.desc = ""
-    self.inline = {}
-    self.hide = False
-    self.attributes = []
-    # Is the class concrete? (Default is false.)
-    self.concrete = False
-    self.ast_params = ast_params
-    self.includes = {}
 
     for key in dict:
       # Catch duplicate keys.
@@ -187,6 +188,7 @@ class Node:
       if key not in [
 	'attributes',
 	'concrete',
+	'declAttribute',
 	'default',
 	'desc',
 	'hide',

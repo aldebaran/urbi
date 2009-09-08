@@ -140,7 +140,10 @@ def print_class_open (node, header, inline, impl):
 
   # Declare class
   sys.stdout = header
-  decl = "class " + node.name
+  decl = "class "
+  if node.declAttribute:
+    decl += node.declAttribute + " "
+  decl += node.name
 
   # Declare parents.
   sups = [sup.name for sup in node.super]

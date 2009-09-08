@@ -152,6 +152,10 @@ printer_cc_prologue: |2
 #  * cloner_prologue
 #    Code to execute before cloning this node
 #
+#  * declAttribute
+#    Attribute attached to the identifier of the class, to pass
+#    compiler attributes (such as DLL export requests and so forth).
+#
 #  * attributes:
 #    + name
 #      a C++ attribute name
@@ -212,24 +216,21 @@ printer_cc_prologue: |2
 ## -------------- ##
 
 Ast:
+  declAttribute: 'URBI_SDK_API'
   super:
     - 'libport::RefCounted'
     - 'libport::meta::Hierarchy<Ast, Nodes>'
   inline:
     header prologue: |2
-      # include <ast/fwd.hh>
-      namespace runner { class Interpreter; }
-
       /* At least OS X's GCC does not actually export functions that
          are flagged as exported, but use types that are not exported.
          So we need to export these, for sake of binder::bind.
          The impact on the size is neglectible.  */
       # include <urbi/export.hh>
-      namespace ast
-      {
-        class URBI_SDK_API Ast;
-        class URBI_SDK_API Nary;
-      }
+
+      # include <ast/fwd.hh>
+      namespace runner { class Interpreter; }
+
     header inside: |2
         public:
           /// Store a reference onto the original node.
@@ -388,6 +389,7 @@ Stmt:
        }'
 
 Nary:
+  declAttribute: 'URBI_SDK_API'
   super: Exp
   desc: /// A list of \c Exp, mainly Stmt and Message.
   attributes:
