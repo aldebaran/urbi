@@ -299,7 +299,8 @@ namespace parser
 
   ast::rCall
   AstFactory::make_call(const location& l,
-                        ast::rExp target, libport::Symbol method, ast::exps_type* args) // const
+                        ast::rExp target,
+                        libport::Symbol method, ast::exps_type* args) // const
   {
     return new ast::Call(l, args, target, method);
   }
@@ -360,7 +361,11 @@ namespace parser
        "  {\n"
        "    controlTag: loop\n"
        "    {\n"
-       "      detach ({ try { %exp:2 } catch (var e) { controlTag.stop(e)} }) |\n"
+       "      detach ({\n"
+       "                try\n"
+       "                  { %exp:2 }\n"
+       "                catch (var e)\n"
+       "                  { controlTag.stop(e)} }) |\n"
        "      deadline += %exp:1 |\n"
        "      sleep (deadline - shiftedTime)\n"
        "    };\n"
@@ -487,7 +492,8 @@ namespace parser
 
   ast::rExp
   AstFactory::make_if(const location& l,
-                      ast::rExp cond, ast::rExp iftrue, ast::rExp iffalse) // const
+                      ast::rExp cond,
+                      ast::rExp iftrue, ast::rExp iffalse) // const
   {
     return new ast::If(l, make_strip(cond),
                        make_scope(l, iftrue),
