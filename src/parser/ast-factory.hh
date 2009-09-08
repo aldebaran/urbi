@@ -34,7 +34,8 @@ namespace parser
     /// at%flavor (%cond ~ %duration) {%body} onleave {%onleave}
     static
     ast::rExp
-    make_at(const yy::location& loc, ast::flavor_type flavor,
+    make_at(const yy::location& loc,
+            const location& flavor_loc, ast::flavor_type flavor,
             ast::rExp cond,
             ast::rExp body, ast::rExp onleave = 0,
             ast::rExp duration = 0) /* const */;
@@ -43,7 +44,7 @@ namespace parser
     static
     ast::rExp
     make_at_event(const location& loc,
-                  ast::flavor_type flavor,
+                  const location& flavor_loc, ast::flavor_type flavor,
                   EventMatch& event,
                   ast::rExp body, ast::rExp onleave = 0) /* const */;
 
@@ -52,7 +53,8 @@ namespace parser
     static
     ast::rExp
     make_bin(const yy::location& l,
-             ast::flavor_type op, ast::rExp lhs, ast::rExp rhs) /* const */;
+             ast::flavor_type op,
+             ast::rExp lhs, ast::rExp rhs) /* const */;
 
     /// Create a binding, possibly const.
     /// Corresponds to "var <exp>" and "const var <exp>".
@@ -122,26 +124,30 @@ namespace parser
     /// Build an "every" loop.
     static
     ast::rExp
-    make_every(const yy::location& loc, ast::flavor_type flavor,
+    make_every(const yy::location& loc,
+               const location& flavor_loc, ast::flavor_type flavor,
                ast::rExp test, ast::rExp body) /* const */;
 
     // Build a for(iterable) loop.
     static
     ast::rExp
-    make_for(const yy::location&, ast::flavor_type flavor,
+    make_for(const yy::location&,
+             const location& flavor_loc, ast::flavor_type flavor,
              ast::rExp iterable, ast::rExp body) /* const */;
 
     // Build a for(var id : iterable) loop.
     static
     ast::rExp
-    make_for(const yy::location& l, ast::flavor_type flavor,
+    make_for(const yy::location& l,
+             const location& flavor_loc, ast::flavor_type flavor,
              const yy::location& id_loc, libport::Symbol id,
              ast::rExp iterable, ast::rExp body) /* const */;
 
     /// Build a C-for loop.
     static
     ast::rExp
-    make_for(const yy::location& l, ast::flavor_type flavor,
+    make_for(const yy::location& l,
+             const location& flavor_loc, ast::flavor_type flavor,
              ast::rExp init, ast::rExp test, ast::rExp inc,
              ast::rExp body) /* const */;
 
@@ -161,7 +167,8 @@ namespace parser
     /// loop %body.
     static
     ast::rExp
-    make_loop(const location& loc, ast::flavor_type flavor,
+    make_loop(const location& loc,
+              const location& flavor_loc, ast::flavor_type flavor,
               const location& body_loc, ast::rExp body) /* const */;
 
     /** Use these functions to avoid CPP-like problem when referring
@@ -288,7 +295,8 @@ namespace parser
     /// while (%cond) %body.
     static
     ast::rExp
-    make_while(const location& loc, ast::flavor_type flavor,
+    make_while(const location& loc,
+               const location& flavor_loc, ast::flavor_type flavor,
                ast::rExp cond,
                const location& body_loc, ast::rExp body) /* const */;
   };

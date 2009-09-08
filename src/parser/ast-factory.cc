@@ -81,38 +81,38 @@ namespace
 /// The check is performed by the parser, not the scanner, because
 /// some keywords may, or may not, have some flavors dependencies
 /// on the syntactic construct.  See the various "for"s for instance.
-#define FLAVOR_CHECK(Loc, Keyword, Flav, Condition)                     \
+#define FLAVOR_CHECK(Keyword, Condition)                                \
   do                                                                    \
     if (!(Condition))                                                   \
-      SYNTAX_ERROR(Loc, "invalid flavor: %s%s", Keyword, Flav);         \
+      SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", Keyword, flavor); \
   while (0)
 
-#define FLAVOR_CHECK1(Loc, Keyword, Flav, Flav1)        \
-  FLAVOR_CHECK(Loc, Keyword, Flav,                      \
-               Flav == ast::flavor_ ## Flav1)
+#define FLAVOR_CHECK1(Keyword, Flav1)           \
+  FLAVOR_CHECK(Keyword,                         \
+               flavor == ast::flavor_ ## Flav1)
 
-#define FLAVOR_CHECK2(Loc, Keyword, Flav, Flav1, Flav2) \
-  FLAVOR_CHECK(Loc, Keyword, Flav,                      \
-               Flav == ast::flavor_ ## Flav1            \
-               || Flav == ast::flavor_ ## Flav2)
+#define FLAVOR_CHECK2(Keyword, Flav1, Flav2)            \
+  FLAVOR_CHECK(Keyword,                                 \
+               flavor == ast::flavor_ ## Flav1          \
+               || flavor == ast::flavor_ ## Flav2)
 
-#define FLAVOR_CHECK3(Loc, Keyword, Flav, Flav1, Flav2, Flav3)  \
-  FLAVOR_CHECK(Loc, Keyword, Flav,                              \
-               Flav == ast::flavor_ ## Flav1                    \
-               || Flav == ast::flavor_ ## Flav2                 \
-               || Flav == ast::flavor_ ## Flav3)
+#define FLAVOR_CHECK3(Keyword, Flav1, Flav2, Flav3)     \
+  FLAVOR_CHECK(Keyword,                                 \
+               flavor == ast::flavor_ ## Flav1          \
+               || flavor == ast::flavor_ ## Flav2       \
+               || flavor == ast::flavor_ ## Flav3)
 
 
 namespace parser
 {
   ast::rExp
   AstFactory::make_at(const location& loc,
-                      ast::flavor_type flavor,
+                      const location& flavor_loc, ast::flavor_type flavor,
                       ast::rExp cond,
                       ast::rExp body, ast::rExp onleave,
                       ast::rExp duration) // const
   {
-    FLAVOR_CHECK1(loc, "at", flavor, semicolon);
+    FLAVOR_CHECK1("at", semicolon);
     if (!onleave)
       onleave = new ast::Noop(loc, 0);
 
@@ -200,11 +200,11 @@ namespace parser
 
   ast::rExp
   AstFactory::make_at_event(const location& loc,
-                            ast::flavor_type flavor,
+                            const location& flavor_loc, ast::flavor_type flavor,
                             EventMatch& event,
                             ast::rExp body, ast::rExp onleave) // const
   {
-    FLAVOR_CHECK1(loc, "at", flavor, semicolon);
+    FLAVOR_CHECK1("at", semicolon);
     PARAMETRIC_AST
       (desugar_body,
        "%exp:1 |"
@@ -346,10 +346,11 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_every(const location& loc, ast::flavor_type flavor,
+  AstFactory::make_every(const location&,
+                         const location& flavor_loc, ast::flavor_type flavor,
                          ast::rExp test, ast::rExp body) // const
   {
-    FLAVOR_CHECK2(loc, "every", flavor, semicolon, pipe);
+    FLAVOR_CHECK2("every", semicolon, pipe);
 
     // every (exp:1) exp:2.
     PARAMETRIC_AST
@@ -386,10 +387,11 @@ namespace parser
 
   // Build a for(iterable) loop.
   ast::rExp
-  AstFactory::make_for(const location& loc, ast::flavor_type flavor,
+  AstFactory::make_for(const location&,
+                       const location& flavor_loc, ast::flavor_type flavor,
                        ast::rExp iterable, ast::rExp body) // const
   {
-    FLAVOR_CHECK3(loc, "for", flavor, and, pipe, semicolon);
+    FLAVOR_CHECK3("for", and, pipe, semicolon);
 
     PARAMETRIC_AST
       (ampersand,
@@ -415,11 +417,12 @@ namespace parser
 
   // Build a for(var id : iterable) loop.
   ast::rExp
-  AstFactory::make_for(const location& loc, ast::flavor_type flavor,
+  AstFactory::make_for(const location& loc,
+                       const location& flavor_loc, ast::flavor_type flavor,
                        const location& id_loc, libport::Symbol id,
                        ast::rExp iterable, ast::rExp body) // const
   {
-    FLAVOR_CHECK3(loc, "for", flavor, semicolon, pipe, and);
+    FLAVOR_CHECK3("for", semicolon, pipe, and);
     return
       new ast::Foreach(loc, flavor,
                        new ast::LocalDeclaration(id_loc, id,
@@ -430,11 +433,12 @@ namespace parser
 
   // Build a C-like for loop.
   ast::rExp
-  AstFactory::make_for(const location& loc, ast::flavor_type flavor,
+  AstFactory::make_for(const location&,
+                       const location& flavor_loc, ast::flavor_type flavor,
                        ast::rExp init, ast::rExp test, ast::rExp inc,
                        ast::rExp body) // const
   {
-    FLAVOR_CHECK2(loc, "for", flavor, semicolon, pipe);
+    FLAVOR_CHECK2("for", semicolon, pipe);
 
     // The increment is included directly in the condition to make
     // sure it is executed on `continue'.
@@ -503,11 +507,15 @@ namespace parser
 
   // loop %body.
   ast::rExp
-  AstFactory::make_loop(const location& loc, ast::flavor_type flavor,
+  AstFactory::make_loop(const location& loc,
+                        const location& flavor_loc, ast::flavor_type flavor,
                         const location& body_loc, ast::rExp body) // const
   {
-    FLAVOR_CHECK2(loc, "loop", flavor, semicolon, pipe);
-    return make_while(loc, flavor, new ast::Float(loc, 1), body_loc, body);
+    FLAVOR_CHECK2("loop", semicolon, pipe);
+    return make_while(loc,
+                      flavor_loc, flavor,
+                      new ast::Float(loc, 1),
+                      body_loc, body);
   }
 
 
@@ -802,11 +810,12 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_while(const location& loc, ast::flavor_type flavor,
+  AstFactory::make_while(const location& loc,
+                         const location& flavor_loc, ast::flavor_type flavor,
                          ast::rExp cond,
                          const location& body_loc, ast::rExp body) // const
   {
-    FLAVOR_CHECK2(loc, "while", flavor, semicolon, pipe);
+    FLAVOR_CHECK2("while", semicolon, pipe);
     return new ast::While(loc, flavor, cond, make_scope(body_loc, body));
   }
 

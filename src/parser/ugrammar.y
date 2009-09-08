@@ -772,15 +772,15 @@ stmt:
 | "at" "(" exp tilda.opt ")" nstmt onleave.opt
     {
       expensive(up, @$, "at (<expression>), prefer at (<event>)");
-      $$ = ast_at(@$, $1, $3, $6, $7, $4);
+      $$ = ast_at(@$, @1, $1, $3, $6, $7, $4);
     }
 | "at" "(" event_match ")" nstmt onleave.opt
     {
-      $$ = ast_at_event(@$, $1, $3, $5, $6);
+      $$ = ast_at_event(@$, @1, $1, $3, $5, $6);
     }
 | "every" "(" exp ")" nstmt
     {
-      $$ = ast_every(@$, $1, $3, $5);
+      $$ = ast_every(@$, @1, $1, $3, $5);
     }
 | "if" "(" stmts ")" nstmt else.opt
     {
@@ -945,23 +945,23 @@ stmt_loop:
  */
   "loop" stmt %prec CMDBLOCK
     {
-      $$ = ast_loop(@$, $1, @2, $2);
+      $$ = ast_loop(@$, @1, $1, @2, $2);
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
-      $$ = ast_for(@$, $1, $3, $5);
+      $$ = ast_for(@$, @1, $1, $3, $5);
     }
 | "for" "(" stmt[init] ";" exp[cond] ";" stmt[inc] ")" stmt[body] %prec CMDBLOCK
     {
-      $$ = ast_for(@$, $1, $init, $cond, $inc, $body);
+      $$ = ast_for(@$, @1, $1, $init, $cond, $inc, $body);
     }
 | "for" "(" "var" "identifier"[id] in_or_colon exp ")" stmt %prec CMDBLOCK
     {
-      $$ = ast_for(@$, $1, @id, $id, $exp, $stmt);
+      $$ = ast_for(@$, @1, $1, @id, $id, $exp, $stmt);
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
-      $$ = ast_while(@$, $1, $exp, @stmt, $stmt);
+      $$ = ast_while(@$, @1, $1, $exp, @stmt, $stmt);
     }
 ;
 
