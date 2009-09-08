@@ -79,7 +79,6 @@ endif
 ## Bison parser.  ##
 ## -------------- ##
 
-
 # We do not use Automake features here.
 SOURCES_FROM_UGRAMMAR_Y =			\
   parser/stack.hh				\

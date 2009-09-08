@@ -50,6 +50,16 @@ env_LTLIBRARIES = libuobject.la
 # considered as kernel sources.
 libuobject_la_CPPFLAGS =				\
   $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DLIBPORT_NO_SSL
+# Unfortunately, we _have_ to disable -fstrict-aliasing.  Because of
+# Bison's variants.  I don't know how to avoid this.
+#
+#   In file included from parser/ugrammar.cc:41:
+#   parser/ugrammar.hh: In member function 'T& yy::variant<S>::as() [with T = libport::intrusive_ptr<ast::Nary>, unsigned int S = 28u]':
+#   parser/ugrammar-pruned.y:404:   instantiated from here
+#   parser/ugrammar.hh:135: error: dereferencing type-punned pointer will break strict-aliasing rules
+#
+libuobject_la_CXXFLAGS = $(AM_CXXFLAGS) -fno-strict-aliasing
+
 libuobject_la_LDFLAGS =				\
   -avoid-version -no-undefined
 libuobject_la_LIBADD =					\
