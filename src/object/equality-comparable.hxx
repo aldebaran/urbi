@@ -7,8 +7,15 @@
  *
  * See the LICENSE file for more information.
  */
+
 namespace object
 {
+  template <typename Exact, typename Value>
+  inline
+  EqualityComparable<Exact, Value>::~EqualityComparable()
+  {
+  }
+
   template <typename Exact, typename Value>
   inline
   bool

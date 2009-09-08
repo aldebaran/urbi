@@ -20,6 +20,7 @@ namespace object
     typedef Exact exact_type;
     typedef Value value_type;
 
+    virtual ~EqualityComparable() = 0;
     virtual const value_type& value_get() const = 0;
 
     bool operator==(const rObject& rhs) const;
