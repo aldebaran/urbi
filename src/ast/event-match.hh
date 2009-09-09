@@ -7,20 +7,16 @@
  *
  * See the LICENSE file for more information.
  */
-/**
- ** \file parser/fwd.hh
- ** \brief Forward declarations of all parser classes
- ** (needed by the visitors).
- */
 
-#ifndef PARSER_EVENT_MATCH_HH
-# define PARSER_EVENT_MATCH_HH
+
+#ifndef AST_EVENT_MATCH_HH
+# define AST_EVENT_MATCH_HH
 
 # include <ast/fwd.hh>
 # include <ast/exp.hh>
 # include <ast/exps-type.hh>
 
-namespace parser
+namespace ast
 {
   struct EventMatch
   {
@@ -49,4 +45,4 @@ namespace parser
   operator<<(std::ostream& o, const EventMatch& e);
 }
 
-#endif // ! PARSER_EVENT_MATCH_HH
+#endif // ! AST_EVENT_MATCH_HH

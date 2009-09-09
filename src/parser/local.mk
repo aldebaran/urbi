@@ -1,9 +1,4 @@
 dist_libuobject_la_SOURCES +=			\
-  parser/ast-factory.hh				\
-  parser/ast-factory.hxx			\
-  parser/ast-factory.cc				\
-  parser/event-match.hh				\
-  parser/event-match.cc				\
   parser/fwd.hh					\
   parser/is-keyword.hh				\
   parser/is-keyword.cc				\

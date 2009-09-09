@@ -29,21 +29,21 @@
 {
 #include <kernel/config.h> // YYDEBUG.
 
+#include <ast/call.hh>
+#include <ast/catches-type.hh>
+#include <ast/event-match.hh>
+#include <ast/exps-type.hh>
+#include <ast/factory.hh>
+#include <ast/fwd.hh>
+#include <ast/nary.hh>
+#include <ast/symbols-type.hh>
+#include <kernel/fwd.hh>
 #include <libport/hash.hh>
 #include <libport/pod-cast.hh>
 #include <libport/ufloat.hh>
 #include <list>
-#include <kernel/fwd.hh>
-#include <ast/catches-type.hh>
-#include <ast/fwd.hh>
-#include <ast/exps-type.hh>
-#include <ast/symbols-type.hh>
 #include <object/symbols.hh>
-#include <parser/ast-factory.hh>
 #include <parser/fwd.hh>
-#include <ast/call.hh>
-#include <ast/nary.hh>
-#include <parser/event-match.hh>
 }
 
 // Locations.
@@ -116,7 +116,7 @@
     static void
     modifiers_add(parser::ParserImpl& up, const ast::loc& loc,
                   ast::modifiers_type& mods,
-                  const ::parser::AstFactory::modifier_type& mod)
+                  const ::ast::Factory::modifier_type& mod)
     {
       if (libport::mhas(mods, mod.first))
         up.warn(loc,
@@ -630,7 +630,7 @@ k1_id:
 `------------*/
 
 
-%type <::parser::AstFactory::modifier_type> modifier;
+%type <::ast::Factory::modifier_type> modifier;
 %type <ast::rDictionary> dictionary;
 
 modifier:
@@ -861,17 +861,17 @@ stmt:
 | Cases.  |
 `--------*/
 
-%type <::parser::AstFactory::cases_type> cases;
+%type <::ast::Factory::cases_type> cases;
 
 cases:
-  /* empty */  { $$ = ::parser::AstFactory::cases_type();   }
+  /* empty */  { $$ = ::ast::Factory::cases_type();   }
 | cases case   { std::swap($$, $1); $$.push_back($2); }
 ;
 
-%type <::parser::AstFactory::case_type> case;
+%type <::ast::Factory::case_type> case;
 
 case:
-  "case" match ":" stmts  {  $$ = ::parser::AstFactory::case_type($2, $4); }
+  "case" match ":" stmts  {  $$ = ::ast::Factory::case_type($2, $4); }
 ;
 
 /*-------------.
@@ -1109,11 +1109,11 @@ exp:
 `---------*/
 
 %token QUEST_MARK "?";
-%type <::parser::EventMatch> event_match;
+%type <ast::EventMatch> event_match;
 event_match:
   exp "?" args.opt guard.opt
   {
-    $$ = ::parser::EventMatch($1, $3, $4);
+    $$ = ast::EventMatch($1, $3, $4);
   }
 //<no-space< ? event.
 | "?" exp guard.opt
@@ -1127,10 +1127,10 @@ event_match:
       ast::exps_type* args = new ast::exps_type(*call->arguments_get());
       call->arguments_set(0);
       assert(args);
-      $$ = ::parser::EventMatch(call, args, $3);
+      $$ = ast::EventMatch(call, args, $3);
     }
     else
-      $$ = ::parser::EventMatch($2, 0, $3);
+      $$ = ast::EventMatch($2, 0, $3);
   }
 //>no-space>
 ;
@@ -1373,18 +1373,18 @@ var.opt:
 | "var"
 ;
 
-%type <::parser::AstFactory::formal_type> formal_argument;
+%type <::ast::Factory::formal_type> formal_argument;
 formal_argument:
-  var.opt "identifier"          { $$ = ::parser::AstFactory::formal_type($2, 0);  }
-| var.opt "identifier" "=" exp  { $$ = ::parser::AstFactory::formal_type($2, $4); }
+  var.opt "identifier"          { $$ = ::ast::Factory::formal_type($2, 0);  }
+| var.opt "identifier" "=" exp  { $$ = ::ast::Factory::formal_type($2, $4); }
 ;
 
 // One or several comma-separated identifiers.
-%type <::parser::AstFactory::formals_type*> formal_arguments formal_arguments.1 formals;
+%type <::ast::Factory::formals_type*> formal_arguments formal_arguments.1 formals;
 formal_arguments.1:
   formal_argument
   {
-    $$ = new ::parser::AstFactory::formals_type;
+    $$ = new ::ast::Factory::formals_type;
     $$->push_back($1);
   }
 | formal_arguments.1 "," formal_argument
@@ -1396,7 +1396,7 @@ formal_arguments.1:
 
 // Zero or several comma-separated identifiers.
 formal_arguments:
-  /* empty */             { $$ = new ::parser::AstFactory::formals_type; }
+  /* empty */             { $$ = new ::ast::Factory::formals_type; }
 | formal_arguments.1      { std::swap($$, $1); }
 | formal_arguments.1 ","  { std::swap($$, $1); }
 ;

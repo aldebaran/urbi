@@ -13,9 +13,9 @@
  */
 
 #include <ast/print.hh>
-#include <parser/event-match.hh>
+#include <ast/event-match.hh>
 
-namespace parser
+namespace ast
 {
   std::ostream&
   EventMatch::dump(std::ostream& o) const
@@ -34,4 +34,3 @@ namespace parser
   }
 
 }
-

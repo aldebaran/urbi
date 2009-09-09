@@ -11,7 +11,7 @@
 namespace parser
 {
   inline
-  const AstFactory&
+  const ast::Factory&
   ParserImpl::factory() const
   {
     return *factory_;

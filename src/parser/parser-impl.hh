@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file parser/parser-impl.hh
 
 #ifndef PARSER_PARSER_IMPL_HH
@@ -16,6 +17,7 @@
 # include <memory>
 # include <string>
 
+# include <ast/fwd.hh>
 # include <parser/fwd.hh>
 # include <parser/parse-result.hh>
 # include <parser/utoken.hh>
@@ -55,7 +57,7 @@ namespace parser
     void warn(const location_type& l, const std::string& msg);
 
     /// The factory.
-    const AstFactory& factory() const;
+    const ast::Factory& factory() const;
 
   private:
     // Give access to loc_.
@@ -98,7 +100,7 @@ namespace parser
     bool meta_;
 
     /// Factory.
-    std::auto_ptr<AstFactory> factory_;
+    std::auto_ptr<ast::Factory> factory_;
   };
 
 }

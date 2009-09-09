@@ -15,7 +15,7 @@
 # include <boost/type_traits/remove_const.hpp>
 
 # include <ast/analyzer.hh>
-# include <parser/ast-factory.hh>
+# include <ast/factory.hh>
 
 namespace rewrite
 {
@@ -73,7 +73,7 @@ namespace rewrite
     /// Whether Declarations are allowed in children.
     bool allow_subdecl_;
     /// Factory.
-    std::auto_ptr<parser::AstFactory> factory_;
+    std::auto_ptr<ast::Factory> factory_;
   };
 }
 

@@ -15,7 +15,7 @@
 
 #include <object/symbols.hh>
 
-#include <parser/ast-factory.hh>
+#include <ast/factory.hh>
 #include <parser/parse.hh>
 
 #include <rewrite/desugarer.hh>

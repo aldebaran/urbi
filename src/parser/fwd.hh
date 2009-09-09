@@ -23,12 +23,6 @@ class yyFlexLexer;
 
 namespace parser
 {
-  // ast-factory.hh.
-  class AstFactory;
-
-  // event-match.hh.
-  struct EventMatch;
-
   // parser-impl.hh.
   class ParserImpl;
 

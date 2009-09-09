@@ -7,22 +7,21 @@
  *
  * See the LICENSE file for more information.
  */
-#ifndef PARSER_AST_FACTORY_HH
-# define PARSER_AST_FACTORY_HH
+
+#ifndef AST_FACTORY_HH
+# define AST_FACTORY_HH
 
 # include <list>
-# include <stdexcept>
+# include <libport/fwd.hh>
 
 # include <ast/exps-type.hh>
 # include <ast/flavor.hh>
 # include <ast/fwd.hh>
-# include <libport/fwd.hh>
-# include <parser/fwd.hh>
 
-namespace parser
+namespace ast
 {
 
-  class AstFactory
+  class Factory
   {
   public:
     typedef std::pair<libport::Symbol, ast::rExp> modifier_type;
@@ -307,12 +306,10 @@ namespace parser
 // look-up will look for them.
 namespace std
 {
-  ostream& operator<<(ostream& o, const parser::AstFactory::case_type& c);
-  ostream& operator<<(ostream& o, const parser::AstFactory::cases_type& c);
-  ostream& operator<<(ostream& o, const parser::AstFactory::modifier_type& m);
-  ostream& operator<<(ostream& o, const parser::AstFactory::formals_type& f);
+  ostream& operator<<(ostream& o, const ast::Factory::case_type& c);
+  ostream& operator<<(ostream& o, const ast::Factory::cases_type& c);
+  ostream& operator<<(ostream& o, const ast::Factory::modifier_type& m);
+  ostream& operator<<(ostream& o, const ast::Factory::formals_type& f);
 }
 
-# include <parser/ast-factory.hxx>
-
-#endif // !PARSER_AST_FACTORY_HH
+#endif // !AST_FACTORY_HH

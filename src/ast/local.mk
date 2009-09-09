@@ -47,13 +47,17 @@ dist_libuobject_la_SOURCES +=			\
   ast/catches-type.hh				\
   ast/catches-type.cc				\
   ast/cloner.hxx				\
-  ast/dot-print.cc                              \
-  ast/dot-print.hh                              \
+  ast/dot-print.cc				\
+  ast/dot-print.hh				\
+  ast/event-match.hh				\
+  ast/event-match.cc				\
   ast/error.hh					\
   ast/error.hxx					\
   ast/error.cc					\
   ast/exps-type.hh				\
   ast/exps-type.cc				\
+  ast/factory.hh				\
+  ast/factory.cc				\
   ast/flavor.cc					\
   ast/flavor.hh					\
   ast/flavor.hxx				\

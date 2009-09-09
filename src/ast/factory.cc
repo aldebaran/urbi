@@ -13,8 +13,8 @@
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
 #include <object/symbols.hh>
-#include <parser/ast-factory.hh>
-#include <parser/event-match.hh>
+#include <ast/factory.hh>
+#include <ast/event-match.hh>
 #include <parser/parser-impl.hh>
 #include <parser/parse-result.hh>
 #include <parser/parse.hh>
@@ -24,7 +24,7 @@
 namespace std
 {
   ostream&
-  operator<< (ostream& o, const parser::AstFactory::case_type& c)
+  operator<< (ostream& o, const ast::Factory::case_type& c)
   {
     return o << "/* " << (const void*) &c << " */ "
              << "case "
@@ -34,25 +34,25 @@ namespace std
   }
 
   ostream&
-  operator<< (ostream& o, const parser::AstFactory::cases_type& cs)
+  operator<< (ostream& o, const ast::Factory::cases_type& cs)
   {
     o << "/* " << (const void*) &cs << " */ "
       << "{" << endl;
-    foreach (const parser::AstFactory::case_type& c, cs)
+    foreach (const ast::Factory::case_type& c, cs)
       o << "  " << c << endl;
     return o << "}";
   }
 
   ostream&
-  operator<<(ostream& o, const parser::AstFactory::modifier_type& m)
+  operator<<(ostream& o, const ast::Factory::modifier_type& m)
   {
     return o << m.first << ": " << m.second;
   }
 
   ostream&
-  operator<<(ostream& o, const parser::AstFactory::formals_type& f)
+  operator<<(ostream& o, const ast::Factory::formals_type& f)
   {
-    foreach (const parser::AstFactory::formal_type& var, f)
+    foreach (const ast::Factory::formal_type& var, f)
       o << var.first << " " << var.second;
     return o;
   }
@@ -62,12 +62,12 @@ namespace
 {
   static ast::local_declarations_type*
   symbols_to_decs(const ast::loc& loc,
-                  parser::AstFactory::formals_type* formals)
+                  ast::Factory::formals_type* formals)
   {
     if (!formals)
       return 0;
     ast::local_declarations_type* res = new ast::local_declarations_type();
-    foreach (const parser::AstFactory::formal_type& var, *formals)
+    foreach (const ast::Factory::formal_type& var, *formals)
       res->push_back(new ast::LocalDeclaration(loc, var.first, var.second));
     delete formals;
     return res;
@@ -103,10 +103,10 @@ namespace
                || flavor == ast::flavor_ ## Flav3)
 
 
-namespace parser
+namespace ast
 {
   ast::rExp
-  AstFactory::make_at(const location& loc,
+  Factory::make_at(const location& loc,
                       const location& flavor_loc, ast::flavor_type flavor,
                       ast::rExp cond,
                       ast::rExp body, ast::rExp onleave,
@@ -138,7 +138,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_event_catcher(const location& loc,
+  Factory::make_event_catcher(const location& loc,
                                  EventMatch& event,
                                  ast::rExp body, ast::rExp onleave) // const
   {
@@ -199,7 +199,7 @@ namespace parser
 
 
   ast::rExp
-  AstFactory::make_at_event(const location& loc,
+  Factory::make_at_event(const location& loc,
                             const location& flavor_loc, ast::flavor_type flavor,
                             EventMatch& event,
                             ast::rExp body, ast::rExp onleave) // const
@@ -215,7 +215,7 @@ namespace parser
 
 
   ast::rExp
-  AstFactory::make_bin(const location& l,
+  Factory::make_bin(const location& l,
                        ast::flavor_type op,
                        ast::rExp lhs, ast::rExp rhs) // const
   {
@@ -269,7 +269,7 @@ namespace parser
 
 
   ast::rBinding
-  AstFactory::make_binding(const location& l, const
+  Factory::make_binding(const location& l, const
                            bool constant,
                            const location& exp_loc, ast::rExp exp)
   {
@@ -290,7 +290,7 @@ namespace parser
   }
 
   ast::rCall
-  AstFactory::make_call(const location& l,
+  Factory::make_call(const location& l,
                         libport::Symbol method) // const
   {
     return make_call(l, new ast::Implicit(l), method);
@@ -298,7 +298,7 @@ namespace parser
 
 
   ast::rCall
-  AstFactory::make_call(const location& l,
+  Factory::make_call(const location& l,
                         ast::rExp target,
                         libport::Symbol method, ast::exps_type* args) // const
   {
@@ -307,14 +307,14 @@ namespace parser
 
   /// "<target> . <method> ()".
   ast::rCall
-  AstFactory::make_call(const location& l,
+  Factory::make_call(const location& l,
                         ast::rExp target, libport::Symbol method) // const
   {
     return make_call(l, target, method, 0);
   }
 
   ast::rCall
-  AstFactory::make_call(const location& l,
+  Factory::make_call(const location& l,
                         ast::rExp target,
                         libport::Symbol method, ast::rExp arg1) // const
   {
@@ -325,7 +325,7 @@ namespace parser
 
 
   ast::rCall
-  AstFactory::make_call(const location& l,
+  Factory::make_call(const location& l,
                         ast::rExp target, libport::Symbol method,
                         ast::rExp arg1, ast::rExp arg2, ast::rExp arg3) // const
   {
@@ -339,14 +339,14 @@ namespace parser
 
 
   ast::rExp
-  AstFactory::make_closure(ast::rExp value) // const
+  Factory::make_closure(ast::rExp value) // const
   {
     PARAMETRIC_AST(a, "closure () { %exp:1 }");
     return exp(a % value);
   }
 
   ast::rExp
-  AstFactory::make_every(const location&,
+  Factory::make_every(const location&,
                          const location& flavor_loc, ast::flavor_type flavor,
                          ast::rExp test, ast::rExp body) // const
   {
@@ -387,7 +387,7 @@ namespace parser
 
   // Build a for(iterable) loop.
   ast::rExp
-  AstFactory::make_for(const location&,
+  Factory::make_for(const location&,
                        const location& flavor_loc, ast::flavor_type flavor,
                        ast::rExp iterable, ast::rExp body) // const
   {
@@ -417,7 +417,7 @@ namespace parser
 
   // Build a for(var id : iterable) loop.
   ast::rExp
-  AstFactory::make_for(const location& loc,
+  Factory::make_for(const location& loc,
                        const location& flavor_loc, ast::flavor_type flavor,
                        const location& id_loc, libport::Symbol id,
                        ast::rExp iterable, ast::rExp body) // const
@@ -433,7 +433,7 @@ namespace parser
 
   // Build a C-like for loop.
   ast::rExp
-  AstFactory::make_for(const location&,
+  Factory::make_for(const location&,
                        const location& flavor_loc, ast::flavor_type flavor,
                        ast::rExp init, ast::rExp test, ast::rExp inc,
                        ast::rExp body) // const
@@ -469,7 +469,7 @@ namespace parser
 
 
   ast::rExp
-  AstFactory::make_freezeif(const location&,
+  Factory::make_freezeif(const location&,
                             ast::rExp cond,
                             ast::rExp body) // const
   {
@@ -495,7 +495,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_if(const location& l,
+  Factory::make_if(const location& l,
                       ast::rExp cond,
                       ast::rExp iftrue, ast::rExp iffalse) // const
   {
@@ -507,7 +507,7 @@ namespace parser
 
   // loop %body.
   ast::rExp
-  AstFactory::make_loop(const location& loc,
+  Factory::make_loop(const location& loc,
                         const location& flavor_loc, ast::flavor_type flavor,
                         const location& body_loc, ast::rExp body) // const
   {
@@ -520,7 +520,7 @@ namespace parser
 
 
   ast::rLValue
-  AstFactory::make_lvalue_once(const ast::rLValue& lvalue) // const
+  Factory::make_lvalue_once(const ast::rLValue& lvalue) // const
   {
     ast::rCall tmp = make_call(lvalue->location_get(), SYMBOL(DOLLAR_tmp));
 
@@ -531,7 +531,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_lvalue_wrap(const ast::rLValue& lvalue,
+  Factory::make_lvalue_wrap(const ast::rLValue& lvalue,
                                const ast::rExp& e) // const
   {
     PARAMETRIC_AST
@@ -551,14 +551,14 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_nil() // const
+  Factory::make_nil() // const
   {
     PARAMETRIC_AST(nil, "nil");
     return exp(nil);
   }
 
   ast::rRoutine
-  AstFactory::make_routine(const location& loc, bool closure,
+  Factory::make_routine(const location& loc, bool closure,
                            const location& floc, formals_type* f,
                            const location& bloc, ast::rExp b) // const
   {
@@ -572,7 +572,7 @@ namespace parser
 
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rScope
-  AstFactory::make_scope(const location& l,
+  Factory::make_scope(const location& l,
                          ast::rExp target, ast::rExp e) // const
   {
     if (ast::rScope res = e.unsafe_cast<ast::Scope>())
@@ -584,13 +584,13 @@ namespace parser
   }
 
   ast::rScope
-  AstFactory::make_scope(const location& l, ast::rExp e) // const
+  Factory::make_scope(const location& l, ast::rExp e) // const
   {
     return make_scope(l, 0, e);
   }
 
   ast::rExp
-  AstFactory::make_stopif(const location&,
+  Factory::make_stopif(const location&,
                           ast::rExp cond, ast::rExp body) // const
   {
     PARAMETRIC_AST
@@ -608,7 +608,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_string(const location& l, libport::Symbol s) // const
+  Factory::make_string(const location& l, libport::Symbol s) // const
   {
     return new ast::String(l, s);
   }
@@ -619,7 +619,7 @@ namespace parser
   `-------------*/
 
   ast::rExp
-  AstFactory::make_strip(ast::rNary nary) // const
+  Factory::make_strip(ast::rNary nary) // const
   {
     ast::rExp res = nary;
     // Remove useless nary and statement if there's only one child.
@@ -631,7 +631,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_strip(ast::rExp e) // const
+  Factory::make_strip(ast::rExp e) // const
   {
     if (ast::rNary nary = e.unsafe_cast<ast::Nary>())
       return make_strip(nary);
@@ -641,7 +641,7 @@ namespace parser
 
 
   ast::rExp
-  AstFactory::make_switch(const location&, ast::rExp cond,
+  Factory::make_switch(const location&, ast::rExp cond,
                           const cases_type& cases, ast::rExp def) // const
   {
     const location& loc = cond->location_get();
@@ -691,7 +691,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_timeout(const ast::rExp& duration,
+  Factory::make_timeout(const ast::rExp& duration,
                            const ast::rExp& body) // const
   {
     PARAMETRIC_AST
@@ -711,7 +711,7 @@ namespace parser
 
 
   ast::rExp
-  AstFactory::make_waituntil(const location&,
+  Factory::make_waituntil(const location&,
                              const ast::rExp& cond, ast::rExp duration) // const
   {
     if (duration)
@@ -736,7 +736,7 @@ namespace parser
 
 
   ast::rExp
-  AstFactory::make_waituntil_event(const location& loc,
+  Factory::make_waituntil_event(const location& loc,
                                    ast::rExp event,
                                    ast::exps_type* payload) // const
   {
@@ -769,7 +769,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_whenever_event(const location& loc,
+  Factory::make_whenever_event(const location& loc,
                                   EventMatch& event,
                                   ast::rExp body, ast::rExp onleave) // const
   {
@@ -785,7 +785,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_whenever(const location&,
+  Factory::make_whenever(const location&,
                             ast::rExp cond,
                             ast::rExp body, ast::rExp else_stmt,
                             ast::rExp duration) // const
@@ -810,7 +810,7 @@ namespace parser
   }
 
   ast::rExp
-  AstFactory::make_while(const location& loc,
+  Factory::make_while(const location& loc,
                          const location& flavor_loc, ast::flavor_type flavor,
                          ast::rExp cond,
                          const location& body_loc, ast::rExp body) // const

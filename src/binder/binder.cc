@@ -31,7 +31,7 @@
 #include <object/symbols.hh>
 #include <object/object.hh>
 
-#include <parser/ast-factory.hh>
+#include <ast/factory.hh>
 #include <parser/parse.hh>
 
 namespace binder
@@ -371,7 +371,7 @@ namespace binder
   {
     ast::rAst save;
     std::swap(save, result_);
-    parser::AstFactory factory;
+    ast::Factory factory;
     ast::rExp res = recurse(factory.make_closure(arg));
     std::swap(save, result_);
     return res;

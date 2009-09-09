@@ -109,6 +109,12 @@ fwd_hh_prologue: |2
 # The end of the fwd.hh file, in the namespace.
 fwd_hh_epilogue: |2
 
+  // factory.hh.
+  class Factory;
+
+  // event-match.hh.
+  struct EventMatch;
+
   typedef libport::hash_map<libport::Symbol, ast::rExp> modifiers_type;
 
 printer_cc_prologue: |2

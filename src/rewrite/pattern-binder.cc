@@ -11,7 +11,7 @@
 
 #include <ast/exps-type.hh>
 #include <ast/parametric-ast.hh>
-#include <parser/ast-factory.hh>
+#include <ast/factory.hh>
 #include <rewrite/pattern-binder.hh>
 
 namespace rewrite
@@ -20,7 +20,7 @@ namespace rewrite
   PatternBinder::to_binding(ast::rConstExp original)
   {
     PARAMETRIC_AST(rewrite, "Pattern.Binding.new(%exp:1)");
-    rewrite % parser::AstFactory::make_string(original->location_get(), next_name());
+    rewrite % ast::Factory::make_string(original->location_get(), next_name());
     ast::rExp res = exp(rewrite);
     res->original_set(original);
     return res;
@@ -43,7 +43,7 @@ namespace rewrite
     PARAMETRIC_AST(get, "%lvalue:1 . bindings[%exp:2]");
     return exp(get
                % pattern_
-               % parser::AstFactory::make_string(ast::loc(), next_name()));
+               % ast::Factory::make_string(ast::loc(), next_name()));
   }
 
   PatternBinder::PatternBinder(ast::rLValue pattern,

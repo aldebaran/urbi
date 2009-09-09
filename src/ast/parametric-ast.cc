@@ -15,8 +15,8 @@
 #include <ast/cloner.hxx>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
+#include <ast/factory.hh>
 
-#include <parser/ast-factory.hh>
 #include <parser/parse.hh>
 #include <parser/parse-result.hh>
 
@@ -90,7 +90,7 @@ namespace ast
   ParametricAst::visit(const ast::MetaId* e)
   {
     libport::Symbol name = id_map_type::take_(e->id_get () - 1);
-    result_ = parser::AstFactory::make_call(e->location_get(), name);
+    result_ = ast::Factory::make_call(e->location_get(), name);
   }
 
   void

@@ -14,7 +14,7 @@
 
 #include <ast/flavor.hh>
 #include <ast/parametric-ast.hh>
-#include <parser/ast-factory.hh>
+#include <ast/factory.hh>
 #include <rewrite/rescoper.hh>
 #include <ast/cloner.hxx>
 
@@ -84,7 +84,7 @@ namespace rewrite
     {
       child = unscope(child, nary);
       // Wrap every child in a closure
-      res->children_get().push_back(recurse(parser::AstFactory::make_closure(child)));
+      res->children_get().push_back(recurse(ast::Factory::make_closure(child)));
     }
 
     nary->push_back(res);
@@ -102,7 +102,7 @@ namespace rewrite
       {
         ast::rExp child = stm->expression_get();
         child = unscope(child, res);
-        res->push_back(recurse(parser::AstFactory::make_closure(child)),
+        res->push_back(recurse(ast::Factory::make_closure(child)),
                        ast::flavor_comma);
       }
       else
