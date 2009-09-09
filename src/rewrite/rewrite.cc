@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <rewrite/desugarer.hh>
 #include <rewrite/pattern-binder.hh>
 #include <rewrite/rewrite.hh>

@@ -7,12 +7,15 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef REWRITE_DESUGAR_HH
 # define REWRITE_DESUGAR_HH
 
+# include <memory>
 # include <boost/type_traits/remove_const.hpp>
 
 # include <ast/analyzer.hh>
+# include <parser/ast-factory.hh>
 
 namespace rewrite
 {
@@ -69,6 +72,8 @@ namespace rewrite
     bool allow_decl_;
     /// Whether Declarations are allowed in children.
     bool allow_subdecl_;
+    /// Factory.
+    std::auto_ptr<parser::AstFactory> factory_;
   };
 }
 
