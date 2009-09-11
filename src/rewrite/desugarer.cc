@@ -157,7 +157,7 @@ namespace rewrite
         assign->what_get().unsafe_cast<ast::Property>())
     {
       result_ = new ast::PropertyWrite(prop->location_get(),
-                                       prop->owner_get(),
+                                       recurse(prop->owner_get()),
                                        prop->name_get(),
                                        assign->value_get());
       return;
