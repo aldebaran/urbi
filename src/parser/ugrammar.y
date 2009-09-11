@@ -77,30 +77,30 @@
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
-#define ast_at               up.factory().make_at
-#define ast_at_event         up.factory().make_at_event
-#define ast_bin              up.factory().make_bin
-#define ast_binding          up.factory().make_binding
-#define ast_call             up.factory().make_call
-#define ast_class            up.factory().make_class
-#define ast_every            up.factory().make_every
-#define ast_for              up.factory().make_for
-#define ast_freezeif         up.factory().make_freezeif
-#define ast_if               up.factory().make_if
-#define ast_loop             up.factory().make_loop
-#define ast_nil              up.factory().make_nil
-#define ast_routine          up.factory().make_routine
-#define ast_scope            up.factory().make_scope
-#define ast_stopif           up.factory().make_stopif
-#define ast_string           up.factory().make_string
-#define ast_strip            up.factory().make_strip
-#define ast_switch           up.factory().make_switch
-#define ast_timeout          up.factory().make_timeout
-#define ast_waituntil        up.factory().make_waituntil
-#define ast_waituntil_event  up.factory().make_waituntil_event
-#define ast_whenever         up.factory().make_whenever
-#define ast_whenever_event   up.factory().make_whenever_event
-#define ast_while            up.factory().make_while
+#define make_at               up.factory().make_at
+#define make_at_event         up.factory().make_at_event
+#define make_bin              up.factory().make_bin
+#define make_binding          up.factory().make_binding
+#define make_call             up.factory().make_call
+#define make_class            up.factory().make_class
+#define make_every            up.factory().make_every
+#define make_for              up.factory().make_for
+#define make_freezeif         up.factory().make_freezeif
+#define make_if               up.factory().make_if
+#define make_loop             up.factory().make_loop
+#define make_nil              up.factory().make_nil
+#define make_routine          up.factory().make_routine
+#define make_scope            up.factory().make_scope
+#define make_stopif           up.factory().make_stopif
+#define make_string           up.factory().make_string
+#define make_strip            up.factory().make_strip
+#define make_switch           up.factory().make_switch
+#define make_timeout          up.factory().make_timeout
+#define make_waituntil        up.factory().make_waituntil
+#define make_waituntil_event  up.factory().make_waituntil_event
+#define make_whenever         up.factory().make_whenever
+#define make_whenever_event   up.factory().make_whenever_event
+#define make_while            up.factory().make_while
 
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
@@ -355,7 +355,7 @@
 start:
   root
   {
-    up.result_->ast_set($1);
+    up.result_->make_set($1);
     up.loc_ = @$;
   }
 ;
@@ -404,8 +404,8 @@ stmts:
 // Composite statement: with "|" and "&".
 cstmt:
   stmt            { assert($1); std::swap($$, $1); }
-| cstmt "|" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
-| cstmt "&" cstmt { $$ = ast_bin(@$, $2, $1, $3); }
+| cstmt "|" cstmt { $$ = make_bin(@$, $2, $1, $3); }
+| cstmt "&" cstmt { $$ = make_bin(@$, $2, $1, $3); }
 ;
 
 
@@ -421,7 +421,7 @@ tag:
 stmt:
   tag ":" stmt
   {
-    $$ = new ast::TaggedStmt (@$, $1, ast_scope(@$, $3));
+    $$ = new ast::TaggedStmt (@$, $1, make_scope(@$, $3));
   }
 ;
 
@@ -435,7 +435,7 @@ stmt:
 ;
 
 block:
-  "{" stmts "}"       { $$ = ast_strip($2); }
+  "{" stmts "}"       { $$ = make_strip($2); }
 ;
 
 /*----------.
@@ -491,7 +491,7 @@ stmt:
 identifier_as_string:
   "identifier"
     {
-      $$ = ast_string(@1, $1);
+      $$ = make_string(@1, $1);
     }
 ;
 
@@ -585,7 +585,7 @@ stmt:
     {
       // Compiled as "var name = function args stmt".
       $$ = new ast::Declaration(@$, $2,
-                                ast_routine(@$, $1, @3, $3, @4, $4));
+                                make_routine(@$, $1, @3, $3, @4, $4));
     }
 ;
 
@@ -620,8 +620,8 @@ stmt:
 // for anonymous functions.  But that's not a good option IMHO (AD).
 %type <ast::rCall> k1_id;
 k1_id:
-  "identifier"               { $$ = ast_call(@$, $1); }
-| k1_id "." "identifier"     { $$ = ast_call(@$, ast::rExp($1), $3); }
+  "identifier"               { $$ = make_call(@$, $1); }
+| k1_id "." "identifier"     { $$ = make_call(@$, ast::rExp($1), $3); }
 ;
 
 
@@ -764,35 +764,35 @@ stmt:
 | "at" "(" exp tilda.opt ")" nstmt onleave.opt
     {
       expensive(up, @$, "at (<expression>), prefer at (<event>)");
-      $$ = ast_at(@$, @1, $1, $3, $6, $7, $4);
+      $$ = make_at(@$, @1, $1, $3, $6, $7, $4);
     }
 | "at" "(" event_match ")" nstmt onleave.opt
     {
-      $$ = ast_at_event(@$, @1, $1, $3, $5, $6);
+      $$ = make_at_event(@$, @1, $1, $3, $5, $6);
     }
 | "every" "(" exp ")" nstmt
     {
-      $$ = ast_every(@$, @1, $1, $3, $5);
+      $$ = make_every(@$, @1, $1, $3, $5);
     }
 | "if" "(" stmts ")" nstmt else.opt
     {
-      $$ = ast_if(@$, $3, $5, $6);
+      $$ = make_if(@$, $3, $5, $6);
     }
 | "freezeif" "(" softtest ")" stmt
     {
-      $$ = ast_freezeif(@$, $3, $5);
+      $$ = make_freezeif(@$, $3, $5);
     }
 | "stopif" "(" softtest ")" stmt
     {
-      $$ = ast_stopif(@$, $3, $5);
+      $$ = make_stopif(@$, $3, $5);
     }
 | "switch" "(" exp ")" "{" cases default.opt "}"
     {
-      $$ = ast_switch(@3, $3, $6, $7);
+      $$ = make_switch(@3, $3, $6, $7);
     }
 | "timeout" "(" exp ")" stmt
     {
-      $$ = ast_timeout($3, $5);
+      $$ = make_timeout($3, $5);
     }
 | "return" exp.opt
     {
@@ -810,11 +810,11 @@ stmt:
     {
       expensive(up, @$,
                 "waituntil (<expression>), prefer waituntil (<event>)");
-      $$ = ast_waituntil(@$, $3, $4);
+      $$ = make_waituntil(@$, $3, $4);
     }
 | "waituntil" "(" event_match ")"
     {
-      $$ = ast_waituntil_event(@$, $3.event, $3.pattern);
+      $$ = make_waituntil_event(@$, $3.event, $3.pattern);
     }
 ;
 
@@ -849,11 +849,11 @@ onleave.opt:
 stmt:
   "whenever" "(" exp tilda.opt ")" nstmt else.opt
     {
-      $$ = ast_whenever(@$, $3, $6, $7, $4);
+      $$ = make_whenever(@$, $3, $6, $7, $4);
     }
 | "whenever" "(" event_match ")" nstmt else.opt
     {
-      $$ = ast_whenever_event(@$, $3, $5, $6);
+      $$ = make_whenever_event(@$, $3, $5, $6);
     }
 ;
 
@@ -904,7 +904,7 @@ catch:
 stmt:
   "try" block catches
   {
-    $$ = new ast::Try(@$, ast_scope(@$,$2), $3);
+    $$ = new ast::Try(@$, make_scope(@$,$2), $3);
   }
 | "throw" exp.opt
   {
@@ -937,23 +937,23 @@ stmt_loop:
  */
   "loop" stmt %prec CMDBLOCK
     {
-      $$ = ast_loop(@$, @1, $1, @2, $2);
+      $$ = make_loop(@$, @1, $1, @2, $2);
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
-      $$ = ast_for(@$, @1, $1, $3, $5);
+      $$ = make_for(@$, @1, $1, $3, $5);
     }
 | "for" "(" stmt[init] ";" exp[cond] ";" stmt[inc] ")" stmt[body] %prec CMDBLOCK
     {
-      $$ = ast_for(@$, @1, $1, $init, $cond, $inc, $body);
+      $$ = make_for(@$, @1, $1, $init, $cond, $inc, $body);
     }
 | "for" "(" "var" "identifier"[id] in_or_colon exp ")" stmt %prec CMDBLOCK
     {
-      $$ = ast_for(@$, @1, $1, @id, $id, $exp, $stmt);
+      $$ = make_for(@$, @1, $1, @id, $id, $exp, $stmt);
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
-      $$ = ast_while(@$, @1, $1, $exp, @stmt, $stmt);
+      $$ = make_while(@$, @1, $1, $exp, @stmt, $stmt);
     }
 ;
 
@@ -967,8 +967,8 @@ in_or_colon: "in" | ":";
 %token DO "do";
 
 exp:
-	           block  { $$ = ast_scope(@$, 0, $1);  }
-| "do" "(" exp ")" block  { $$ = ast_scope(@$, $3, $5); }
+	           block  { $$ = make_scope(@$, 0, $1);  }
+| "do" "(" exp ")" block  { $$ = make_scope(@$, $3, $5); }
 ;
 
 /*---------------------------.
@@ -977,8 +977,8 @@ exp:
 
 %type <ast::rLValue> lvalue;
 lvalue:
-	  id	{ $$ = ast_call(@$, $1); }
-| exp "." id	{ $$ = ast_call(@$, $1, $3); }
+	  id	{ $$ = make_call(@$, $1); }
+| exp "." id	{ $$ = make_call(@$, $1, $3); }
 ;
 
 id:
@@ -988,11 +988,11 @@ id:
 exp:
   "var" exp[lvalue]
   {
-    $$ = ast_binding(@$, false, @lvalue, $lvalue);
+    $$ = make_binding(@$, false, @lvalue, $lvalue);
   }
 | "const" "var" exp[lvalue]
   {
-    $$ = ast_binding(@$, true, @lvalue, $lvalue);
+    $$ = make_binding(@$, true, @lvalue, $lvalue);
   }
 | lvalue
   {
@@ -1014,7 +1014,7 @@ new:
   "new" "identifier" args.opt
   {
     // Compiled as "id . new (args)".
-    $$ = ast_call(@$, ast_call(@$, $2), SYMBOL(new), $3);
+    $$ = make_call(@$, make_call(@$, $2), SYMBOL(new), $3);
     up.warn(@$,
 	    "deprecated construct. Instead of using 'a = new b(x)', "
 	    "use 'a = b.new(x)'.");
@@ -1040,7 +1040,7 @@ id:
 exp:
   routine formals block
     {
-      $$ = ast_routine(@$, $1, @2, $2, @3, $3);
+      $$ = make_routine(@$, $1, @2, $2, @3, $3);
     }
 ;
 
@@ -1098,7 +1098,7 @@ exp:
     PARAMETRIC_AST(no_file, "nil");
     const libport::Symbol* fn = @$.begin.filename;
     $$ = exp(pos
-             % (fn ? new ast::String(@$, fn->name_get()) : ast_nil())
+             % (fn ? new ast::String(@$, fn->name_get()) : make_nil())
              % new ast::Float(@$, @$.begin.line)
              % new ast::Float(@$, @$.begin.column));
   }
@@ -1195,21 +1195,21 @@ exp:
 ;
 
 exp:
-  exp "+" exp	          { $$ = ast_call(@$, $1, $2, $3); }
-| exp "-" exp	          { $$ = ast_call(@$, $1, $2, $3); }
-| exp "*" exp	          { $$ = ast_call(@$, $1, $2, $3); }
-| exp "**" exp            { $$ = ast_call(@$, $1, $2, $3); }
-| exp "/" exp	          { $$ = ast_call(@$, $1, $2, $3); }
-| exp "%" exp	          { $$ = ast_call(@$, $1, $2, $3); }
-| exp "^" exp	          { $$ = ast_call(@$, $1, $2, $3); }
-| exp "<<" exp            { $$ = ast_call(@$, $1, $2, $3); }
-| exp "bitand" exp        { $$ = ast_call(@$, $1, $2, $3); }
-| exp "bitor" exp         { $$ = ast_call(@$, $1, $2, $3); }
-| exp ">>" exp            { $$ = ast_call(@$, $1, $2, $3); }
-| "+" exp    %prec UNARY  { $$ = ast_call(@$, $2, $1); }
-| "-" exp    %prec UNARY  { $$ = ast_call(@$, $2, $1); }
-| "!" exp                 { $$ = ast_call(@$, $2, $1); }
-| "compl" exp             { $$ = ast_call(@$, $2, $1); }
+  exp "+" exp	          { $$ = make_call(@$, $1, $2, $3); }
+| exp "-" exp	          { $$ = make_call(@$, $1, $2, $3); }
+| exp "*" exp	          { $$ = make_call(@$, $1, $2, $3); }
+| exp "**" exp            { $$ = make_call(@$, $1, $2, $3); }
+| exp "/" exp	          { $$ = make_call(@$, $1, $2, $3); }
+| exp "%" exp	          { $$ = make_call(@$, $1, $2, $3); }
+| exp "^" exp	          { $$ = make_call(@$, $1, $2, $3); }
+| exp "<<" exp            { $$ = make_call(@$, $1, $2, $3); }
+| exp "bitand" exp        { $$ = make_call(@$, $1, $2, $3); }
+| exp "bitor" exp         { $$ = make_call(@$, $1, $2, $3); }
+| exp ">>" exp            { $$ = make_call(@$, $1, $2, $3); }
+| "+" exp    %prec UNARY  { $$ = make_call(@$, $2, $1); }
+| "-" exp    %prec UNARY  { $$ = make_call(@$, $2, $1); }
+| "!" exp                 { $$ = make_call(@$, $2, $1); }
+| "compl" exp             { $$ = make_call(@$, $2, $1); }
 | "(" exp ")"             { std::swap($$, $2); }
 ;
 
@@ -1233,31 +1233,31 @@ exp:
 ;
 
 exp:
-  exp "!="  exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp "!==" exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp "<"   exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp "<="  exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp "=="  exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp "===" exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp "=~=" exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp ">"   exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp ">="  exp { $$ = ast_call(@$, $1, $2, $3); }
-| exp "~="  exp { $$ = ast_call(@$, $1, $2, $3); }
+  exp "!="  exp { $$ = make_call(@$, $1, $2, $3); }
+| exp "!==" exp { $$ = make_call(@$, $1, $2, $3); }
+| exp "<"   exp { $$ = make_call(@$, $1, $2, $3); }
+| exp "<="  exp { $$ = make_call(@$, $1, $2, $3); }
+| exp "=="  exp { $$ = make_call(@$, $1, $2, $3); }
+| exp "===" exp { $$ = make_call(@$, $1, $2, $3); }
+| exp "=~=" exp { $$ = make_call(@$, $1, $2, $3); }
+| exp ">"   exp { $$ = make_call(@$, $1, $2, $3); }
+| exp ">="  exp { $$ = make_call(@$, $1, $2, $3); }
+| exp "~="  exp { $$ = make_call(@$, $1, $2, $3); }
 
-| exp "&&" exp  { $$ = ast_call(@$, $1, $2, $3); }
-| exp "||" exp  { $$ = ast_call(@$, $1, $2, $3); }
+| exp "&&" exp  { $$ = make_call(@$, $1, $2, $3); }
+| exp "||" exp  { $$ = make_call(@$, $1, $2, $3); }
 ;
 
 // e in c => c.has(e).
 exp:
   exp "in" exp
   {
-    $$ = ast_call(@$, $3, SYMBOL(has), $1);
+    $$ = make_call(@$, $3, SYMBOL(has), $1);
   }
 // "!" is a synonym for "not", typing "not in" is "! in" here.
 | exp "!" "in" exp
   {
-    $$ = ast_call(@$, ast_call(@$, $4, SYMBOL(has), $1), SYMBOL(BANG));
+    $$ = make_call(@$, make_call(@$, $4, SYMBOL(has), $1), SYMBOL(BANG));
   }
 ;
 
