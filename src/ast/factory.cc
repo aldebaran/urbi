@@ -107,10 +107,10 @@ namespace ast
 {
   ast::rExp
   Factory::make_at(const location& loc,
-                      const location& flavor_loc, ast::flavor_type flavor,
-                      ast::rExp cond,
-                      ast::rExp body, ast::rExp onleave,
-                      ast::rExp duration) // const
+                   const location& flavor_loc, ast::flavor_type flavor,
+                   ast::rExp cond,
+                   ast::rExp body, ast::rExp onleave,
+                   ast::rExp duration) // const
   {
     FLAVOR_CHECK1("at", semicolon);
     if (!onleave)
@@ -124,7 +124,7 @@ namespace ast
          "  var '$at' = persist(%exp:1, %exp:2) |"
          "  at ('$at'()) %exp:3 onleave %exp:4"
          "}"
-        );
+          );
       return exp(desugar % cond % duration % body % onleave);
     }
     else
@@ -139,8 +139,8 @@ namespace ast
 
   ast::rExp
   Factory::make_event_catcher(const location& loc,
-                                 EventMatch& event,
-                                 ast::rExp body, ast::rExp onleave) // const
+                              EventMatch& event,
+                              ast::rExp body, ast::rExp onleave) // const
   {
     if (onleave)
     {
@@ -200,9 +200,9 @@ namespace ast
 
   ast::rExp
   Factory::make_at_event(const location& loc,
-                            const location& flavor_loc, ast::flavor_type flavor,
-                            EventMatch& event,
-                            ast::rExp body, ast::rExp onleave) // const
+                         const location& flavor_loc, ast::flavor_type flavor,
+                         EventMatch& event,
+                         ast::rExp body, ast::rExp onleave) // const
   {
     FLAVOR_CHECK1("at", semicolon);
     PARAMETRIC_AST
@@ -216,8 +216,8 @@ namespace ast
 
   ast::rExp
   Factory::make_bin(const location& l,
-                       ast::flavor_type op,
-                       ast::rExp lhs, ast::rExp rhs) // const
+                    ast::flavor_type op,
+                    ast::rExp lhs, ast::rExp rhs) // const
   {
     assert(lhs);
     assert(rhs);
@@ -270,8 +270,8 @@ namespace ast
 
   ast::rBinding
   Factory::make_binding(const location& l, const
-                           bool constant,
-                           const location& exp_loc, ast::rExp exp)
+                        bool constant,
+                        const location& exp_loc, ast::rExp exp)
   {
     if (false
         // Must be an LValue,
@@ -291,7 +291,7 @@ namespace ast
 
   ast::rCall
   Factory::make_call(const location& l,
-                        libport::Symbol method) // const
+                     libport::Symbol method) // const
   {
     return make_call(l, new ast::Implicit(l), method);
   }
@@ -299,8 +299,8 @@ namespace ast
 
   ast::rCall
   Factory::make_call(const location& l,
-                        ast::rExp target,
-                        libport::Symbol method, ast::exps_type* args) // const
+                     ast::rExp target,
+                     libport::Symbol method, ast::exps_type* args) // const
   {
     return new ast::Call(l, args, target, method);
   }
@@ -308,15 +308,15 @@ namespace ast
   /// "<target> . <method> ()".
   ast::rCall
   Factory::make_call(const location& l,
-                        ast::rExp target, libport::Symbol method) // const
+                     ast::rExp target, libport::Symbol method) // const
   {
     return make_call(l, target, method, 0);
   }
 
   ast::rCall
   Factory::make_call(const location& l,
-                        ast::rExp target,
-                        libport::Symbol method, ast::rExp arg1) // const
+                     ast::rExp target,
+                     libport::Symbol method, ast::rExp arg1) // const
   {
     ast::rCall res = make_call(l, target, method, new ast::exps_type);
     res->arguments_get()->push_back(arg1);
@@ -326,8 +326,8 @@ namespace ast
 
   ast::rCall
   Factory::make_call(const location& l,
-                        ast::rExp target, libport::Symbol method,
-                        ast::rExp arg1, ast::rExp arg2, ast::rExp arg3) // const
+                     ast::rExp target, libport::Symbol method,
+                     ast::rExp arg1, ast::rExp arg2, ast::rExp arg3) // const
   {
     ast::rCall res = make_call(l, target, method, new ast::exps_type);
     res->arguments_get()->push_back(arg1);
@@ -347,8 +347,8 @@ namespace ast
 
   ast::rExp
   Factory::make_every(const location&,
-                         const location& flavor_loc, ast::flavor_type flavor,
-                         ast::rExp test, ast::rExp body) // const
+                      const location& flavor_loc, ast::flavor_type flavor,
+                      ast::rExp test, ast::rExp body) // const
   {
     FLAVOR_CHECK2("every", semicolon, pipe);
 
@@ -388,8 +388,8 @@ namespace ast
   // Build a for(iterable) loop.
   ast::rExp
   Factory::make_for(const location&,
-                       const location& flavor_loc, ast::flavor_type flavor,
-                       ast::rExp iterable, ast::rExp body) // const
+                    const location& flavor_loc, ast::flavor_type flavor,
+                    ast::rExp iterable, ast::rExp body) // const
   {
     FLAVOR_CHECK3("for", and, pipe, semicolon);
 
@@ -418,9 +418,9 @@ namespace ast
   // Build a for(var id : iterable) loop.
   ast::rExp
   Factory::make_for(const location& loc,
-                       const location& flavor_loc, ast::flavor_type flavor,
-                       const location& id_loc, libport::Symbol id,
-                       ast::rExp iterable, ast::rExp body) // const
+                    const location& flavor_loc, ast::flavor_type flavor,
+                    const location& id_loc, libport::Symbol id,
+                    ast::rExp iterable, ast::rExp body) // const
   {
     FLAVOR_CHECK3("for", semicolon, pipe, and);
     return
@@ -434,9 +434,9 @@ namespace ast
   // Build a C-like for loop.
   ast::rExp
   Factory::make_for(const location&,
-                       const location& flavor_loc, ast::flavor_type flavor,
-                       ast::rExp init, ast::rExp test, ast::rExp inc,
-                       ast::rExp body) // const
+                    const location& flavor_loc, ast::flavor_type flavor,
+                    ast::rExp init, ast::rExp test, ast::rExp inc,
+                    ast::rExp body) // const
   {
     FLAVOR_CHECK2("for", semicolon, pipe);
 
@@ -470,19 +470,19 @@ namespace ast
 
   ast::rExp
   Factory::make_freezeif(const location&,
-                            ast::rExp cond,
-                            ast::rExp body) // const
+                         ast::rExp cond,
+                         ast::rExp body) // const
   {
     PARAMETRIC_AST
       (desugar,
        "var '$freezeif_ex' = Tag.new(\"$freezeif_ex\") |"
        "var '$freezeif_in' = Tag.new(\"$freezeif_in\") |"
-        "'$freezeif_ex' :"
+       "'$freezeif_ex' :"
        "{"
        "  at(%exp:1)"
        "    '$freezeif_in'.freeze"
        "  onleave"
-        "    '$freezeif_in'.unfreeze |"
+       "    '$freezeif_in'.unfreeze |"
        "  '$freezeif_in' :"
        "  {"
        "    %exp:2 |"
@@ -496,8 +496,8 @@ namespace ast
 
   ast::rExp
   Factory::make_if(const location& l,
-                      ast::rExp cond,
-                      ast::rExp iftrue, ast::rExp iffalse) // const
+                   ast::rExp cond,
+                   ast::rExp iftrue, ast::rExp iffalse) // const
   {
     return new ast::If(l, make_strip(cond),
                        make_scope(l, iftrue),
@@ -508,8 +508,8 @@ namespace ast
   // loop %body.
   ast::rExp
   Factory::make_loop(const location& loc,
-                        const location& flavor_loc, ast::flavor_type flavor,
-                        const location& body_loc, ast::rExp body) // const
+                     const location& flavor_loc, ast::flavor_type flavor,
+                     const location& body_loc, ast::rExp body) // const
   {
     FLAVOR_CHECK2("loop", semicolon, pipe);
     return make_while(loc,
@@ -532,7 +532,7 @@ namespace ast
 
   ast::rExp
   Factory::make_lvalue_wrap(const ast::rLValue& lvalue,
-                               const ast::rExp& e) // const
+                            const ast::rExp& e) // const
   {
     PARAMETRIC_AST
       (wrap,
@@ -559,8 +559,8 @@ namespace ast
 
   ast::rRoutine
   Factory::make_routine(const location& loc, bool closure,
-                           const location& floc, formals_type* f,
-                           const location& bloc, ast::rExp b) // const
+                        const location& floc, formals_type* f,
+                        const location& bloc, ast::rExp b) // const
   {
     if (closure && !f)
       SYNTAX_ERROR(loc, "closure cannot be lazy");
@@ -573,7 +573,7 @@ namespace ast
   /// Return \a e in a ast::Scope unless it is already one.
   ast::rScope
   Factory::make_scope(const location& l,
-                         ast::rExp target, ast::rExp e) // const
+                      ast::rExp target, ast::rExp e) // const
   {
     if (ast::rScope res = e.unsafe_cast<ast::Scope>())
       return res;
@@ -591,7 +591,7 @@ namespace ast
 
   ast::rExp
   Factory::make_stopif(const location&,
-                          ast::rExp cond, ast::rExp body) // const
+                       ast::rExp cond, ast::rExp body) // const
   {
     PARAMETRIC_AST
       (desugar,
@@ -601,7 +601,7 @@ namespace ast
        "  {"
        "    { %exp:2 | '$stopif'.stop } &"
        "    { waituntil(%exp:1) | '$stopif'.stop }"
-        "  } |"
+       "  } |"
        "}"
         );
     return exp(desugar % cond % body);
@@ -642,7 +642,7 @@ namespace ast
 
   ast::rExp
   Factory::make_switch(const location&, ast::rExp cond,
-                          const cases_type& cases, ast::rExp def) // const
+                       const cases_type& cases, ast::rExp def) // const
   {
     const location& loc = cond->location_get();
     ast::rExp inner = def ? def : make_nil();
@@ -664,7 +664,7 @@ namespace ast
          "}\n"
          "else\n"
          "  %exp:6\n"
-        );
+          );
 
       PARAMETRIC_AST(cond,
                      "true");
@@ -692,7 +692,7 @@ namespace ast
 
   ast::rExp
   Factory::make_timeout(const ast::rExp& duration,
-                           const ast::rExp& body) // const
+                        const ast::rExp& body) // const
   {
     PARAMETRIC_AST
       (desugar,
@@ -712,15 +712,16 @@ namespace ast
 
   ast::rExp
   Factory::make_waituntil(const location&,
-                             const ast::rExp& cond, ast::rExp duration) // const
+                          const ast::rExp& cond, ast::rExp duration) // const
   {
     if (duration)
     {
-      PARAMETRIC_AST(desugar,
-                     "{\n"
-                     "  var '$waituntil' = persist(%exp:1, %exp:2) |\n"
-                     "  waituntil('$waituntil'())\n"
-                     "}\n"
+      PARAMETRIC_AST
+        (desugar,
+         "{\n"
+         "  var '$waituntil' = persist(%exp:1, %exp:2) |\n"
+         "  waituntil('$waituntil'())\n"
+         "}\n"
         );
       return exp(desugar % cond % duration);
     }
@@ -737,8 +738,8 @@ namespace ast
 
   ast::rExp
   Factory::make_waituntil_event(const location& loc,
-                                   ast::rExp event,
-                                   ast::exps_type* payload) // const
+                                ast::rExp event,
+                                ast::exps_type* payload) // const
   {
     if (!payload)
     {
@@ -770,35 +771,37 @@ namespace ast
 
   ast::rExp
   Factory::make_whenever_event(const location& loc,
-                                  EventMatch& event,
-                                  ast::rExp body, ast::rExp onleave) // const
+                               EventMatch& event,
+                               ast::rExp body, ast::rExp onleave) // const
   {
-    PARAMETRIC_AST(desugar_body,
-                   "while (true)\n"
-                   "{\n"
-                   "  %exp:1 |\n"
-                   "  if(!'$evt'.active)\n"
-                   "    break\n"
-                   "}");
-    body = exp(desugar_body % body);
+    PARAMETRIC_AST
+      (desugar,
+       "while (true)\n"
+       "{\n"
+       "  %exp:1 |\n"
+       "  if(!'$evt'.active)\n"
+       "    break\n"
+       "}");
+    body = exp(desugar % body);
     return make_event_catcher(loc, event, body, onleave);
   }
 
   ast::rExp
   Factory::make_whenever(const location&,
-                            ast::rExp cond,
-                            ast::rExp body, ast::rExp else_stmt,
-                            ast::rExp duration) // const
+                         ast::rExp cond,
+                         ast::rExp body, ast::rExp else_stmt,
+                         ast::rExp duration) // const
   {
     // FIXME: Be smarter on empty else_stmt.
     if (!else_stmt)
       else_stmt = make_nil();
     if (duration)
     {
-      PARAMETRIC_AST(desugar,
-                     "var '$whenever' = persist(%exp:1, %exp:2) |\n"
-                     "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'\n"
-        );
+      PARAMETRIC_AST
+        (desugar,
+         "var '$whenever' = persist(%exp:1, %exp:2) |\n"
+         "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'\n"
+          );
       return exp(desugar % cond % duration % body % else_stmt);
     }
     else
@@ -811,9 +814,9 @@ namespace ast
 
   ast::rExp
   Factory::make_while(const location& loc,
-                         const location& flavor_loc, ast::flavor_type flavor,
-                         ast::rExp cond,
-                         const location& body_loc, ast::rExp body) // const
+                      const location& flavor_loc, ast::flavor_type flavor,
+                      ast::rExp cond,
+                      const location& body_loc, ast::rExp body) // const
   {
     FLAVOR_CHECK2("while", semicolon, pipe);
     return new ast::While(loc, flavor, cond, make_scope(body_loc, body));

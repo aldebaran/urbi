@@ -152,7 +152,7 @@
       return noop;
     }
 
-  /// Use the scanner in the right parser::ParserImpl.
+    /// Use the scanner in the right parser::ParserImpl.
     static
     inline
     yy::parser::symbol_type
