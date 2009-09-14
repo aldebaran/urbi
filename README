@@ -81,6 +81,10 @@ distros.  It provides "rst2html".
 MacPorts: py26-docutils
 
 ** yaml for Python
+The AST is generated from a description written in YAML.  Our (Python)
+tools need to read these files to generate the AST classes.  See
+http://pyyaml.org/wiki/PyYAML.
+
 MacPorts: py26-yaml
 Ubuntu:   python-yaml
 
