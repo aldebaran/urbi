@@ -26,39 +26,37 @@ Not a requirement, but it's better to have it.
 ** Cvs
 This surprising requirement comes from the system Bison uses to fetch
 the current version of the message translations.
+MacPorts: cvs
+Ubuntu: cvs
 
 ** Flex 2.5.35 or later
 Beware that 2.5.33 has bugs than prevents this package from building
 correctly.
+MacPorts: flex
+Ubuntu: flex
 
 ** G++ 4.0 or later
 GCC 4.2 or better is a better option.
 
 ** Git 1.6 or later
-Beware that older version behave poorly with submodules.  The newer,
-the better.  Actually, it is quite nice to checkout git's own
-repository and to use this version.
-
-  git clone git://git.kernel.org/pub/scm/git/git.git
-  cd git
-  ./configure
-  make -j4
-  sudo make install
-
-and the following times
-
-  git pull
-  make -j4
-  sudo make install
+Beware that older version behave poorly with submodules.
+MacPorts: git-core
+Ubuntu: git-core
 
 ** Gettext 1.17
 Required to bootstrap Bison.  In particular it provides autopoint.
+MacPorts: gettext
+Ubuntu: gettext
 
 ** GNU sha1sum
 We need the GNU version of sha1sum.  On Mac Ports it is part of the
 coreutils package.
+MacPorts: coreutils
+Ubuntu: coreutils
 
 ** Help2man
+MacPorts: help2man
+Ubuntu: help2man
 
 ** Libtool 2.2 or later
 Actually it should no longer be needed, as we embed all the file we
@@ -66,6 +64,8 @@ need in libport.
 
 ** PDFLaTeX
 TeX Live is the most common distro nowadays.
+Ubuntu: texlive-base texlive-latex-extra
+MacPorts: texlive texlive_texmf-full
 
 ** Python
 You need xml/sax, which seems to be part only of Python 2.6.  Using
@@ -73,6 +73,7 @@ python_select can be useful to state that you want to use Python 2.6
 by default (sudo python_select python26).
 
 MacPorts: python26 python_select
+Ubuntu: python26 python-xml
 
 ** py-docutils
 This is not a requirement, but it's better to have it.  Used by the

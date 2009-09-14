@@ -5,43 +5,44 @@ stderr ()
   echo >&2 "$0: $@"
 }
 
-fatal ()
+error ()
 {
   stderr "$0: $@"
   exit 1
 }
+
+fatal ()
+{
+  error 1 "$0: $@"
+}
+
 
 # Failures do matter.
 set -e
 
 # The ast/ is generated, including its Makefile.
 if test -f dev/ast-nodes-mk-gen && test -f src/ast/ast.yml; then
-  python_check_mod_syck='
+  python_check_mod_yaml='
 import sys, imp
 try:
-  imp.find_module("syck")
+  imp.find_module("yaml")
 except ImportError:
   sys.exit(1)
 '
   if ! python -c ''; then
     fatal "python is required"
-  elif ! python -c "$python_check_mod_syck"; then
-    fatal "Python module \`syck' is required"
+  elif ! python -c "$python_check_mod_yaml"; then
+    fatal "Python module \`yaml' is required.  See README."
   fi
 
   python dev/ast-nodes-mk-gen src/ast <src/ast/ast.yml \
-    || {
-      rv=$?
-      cat >&2 <<EOF
+    || error $? "
 
 -----------------------------------------------------------------------
-If the last error is "./bootstrap: Python module \`yaml' is required"
+If the last error is \"./bootstrap: Python module \`yaml' is required\"
 then you need to install Python Bindings for Yaml.
 
-See README.
-EOF
-      (exit $rv); exit $rv
-    }
+See README."
 fi
 
 # Finally, install the GNU Build System and our submodules.
