@@ -28,7 +28,6 @@ dist_libuco_libuco_la_SOURCES =			\
   libuco/uobject-common.cc			\
   libuco/uobject-hub-common.cc			\
   libuco/uprop.cc				\
-  libuco/urbi-main.cc				\
   libuco/usound.cc				\
   libuco/ustarter.cc				\
   libuco/utable.cc				\
