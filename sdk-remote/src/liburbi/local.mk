@@ -6,10 +6,6 @@ lib_LTLIBRARIES += liburbi/liburbi.la
 # FIXME: Something is fishy here: why do we duplicate libuco code in
 # both liburbi and libuobject?  Libuobject includes liburbi.
 liburbi_liburbi_la_SOURCES =			\
-  libuco/uimage.cc				\
-  libuco/usound.cc				\
-  libuco/uvalue-common.cc			\
-  libuco/package-info.cc			\
   liburbi/compatibility.hh			\
   liburbi/compatibility.hxx			\
   liburbi/kernel-version.cc			\
@@ -26,7 +22,7 @@ liburbi_liburbi_la_CPPFLAGS =			\
 # Find version.hh.
 liburbi_liburbi_la_CPPFLAGS += -I.
 
-liburbi_liburbi_la_LIBADD = $(LIBADD) $(JPEG_LIBS)
+liburbi_liburbi_la_LIBADD = $(LIBADD) libuco/libuco.la $(JPEG_LIBS)
 liburbi_liburbi_la_LDFLAGS = -avoid-version -no-undefined
 
 
