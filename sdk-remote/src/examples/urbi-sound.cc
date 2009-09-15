@@ -16,10 +16,10 @@
 
 #include <libport/cstdio>
 #include <ctime>
-#include <sys/types.h>
+#include <libport/sys/types.h>
 #include <libport/sys/stat.h>
 
-#include <fcntl.h>
+#include <libport/fcntl.h>
 #include "urbi/uclient.hh"
 
 #ifndef WIN32

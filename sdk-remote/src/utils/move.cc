@@ -9,9 +9,9 @@
  */
 #include <libport/cassert>
 #include <libport/sys/stat.h>
-#include <cstdlib>
+#include <libport/cstdlib>
 #include <libport/cstdio>
-#include <cmath>
+#include <libport/cmath>
 #include <iostream>
 #include <vector>
 #include <libport/unistd.h>

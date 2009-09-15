@@ -9,7 +9,7 @@
  */
 /// \file libuobject/uvar.cc
 
-#include <boost/format.hpp>
+#include <libport/format.hh>
 
 #include <libport/escape.hh>
 

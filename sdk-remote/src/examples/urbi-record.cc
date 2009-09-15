@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 #include <libport/cassert>
-#include <csignal>
+#include <libport/csignal>
 #include <urbi/uclient.hh>
 
 /*

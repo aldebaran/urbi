@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 #include <cstdarg>
-#include <cstdio>
+#include <libport/cstdio>
 
 #include <boost/thread.hpp>
 

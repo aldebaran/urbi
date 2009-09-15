@@ -15,7 +15,7 @@
  */
 
 #include <libport/cstdio>
-#include <csignal>
+#include <libport/csignal>
 
 #include <libport/cli.hh>
 #include <libport/program-name.hh>

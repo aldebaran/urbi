@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 #include <string>
-#include <cassert>
+#include <libport/cassert>
 #include <cstdarg>
 #include <libport/cstdlib>
 #include <iostream>

@@ -9,8 +9,8 @@
  */
 #include <libport/cstdio>
 #include <libport/unistd.h>
-#include <cstdlib>
-#include <pthread.h>
+#include <libport/cstdlib>
+#include <libport/pthread.h>
 #include <libport/windows.hh>
 
 #include "monitor.h"

@@ -9,7 +9,7 @@
  */
 
 #include <libport/unistd.h>
-#include <fcntl.h>
+#include <libport/fcntl.h>
 
 #include <libport/cassert>
 #include <libport/compiler.hh>

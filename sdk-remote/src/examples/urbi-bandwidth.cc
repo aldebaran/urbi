@@ -8,9 +8,9 @@
  * See the LICENSE file for more information.
  */
 #include <libport/cassert>
-#include <sys/types.h>
+#include <libport/sys/types.h>
 #include <libport/sys/stat.h>
-#include <signal.h>
+#include <libport/csignal>
 #include <libport/windows.hh>
 
 #include <urbi/uclient.hh>

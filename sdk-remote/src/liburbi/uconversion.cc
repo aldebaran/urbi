@@ -14,7 +14,7 @@
 #include <urbi/uconversion.hh>
 
 #ifndef NO_IMAGE_CONVERSION
-# include <setjmp.h>
+# include <csetjmp>
 
 // It would be nice to use jpeg/jpeglib.h, but this file includes
 // jconfig.h, unqualified, which we might pick-up on the host.  So

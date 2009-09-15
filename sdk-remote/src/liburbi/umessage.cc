@@ -9,7 +9,7 @@
  */
 /// \file liburbi/umessage.cc
 
-#include <cstdlib>
+#include <libport/cstdlib>
 #include <iomanip>
 #include <iostream>
 

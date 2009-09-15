@@ -13,7 +13,7 @@
  * This is a port to URBI of the Sony OPEN-R balltrackinghead example.
  * The algorithms used are as close as possible to the original version.
  */
-#include <cmath>
+#include <libport/cmath>
 
 #include <vector>
 

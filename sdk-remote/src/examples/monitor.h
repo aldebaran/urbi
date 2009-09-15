@@ -15,8 +15,8 @@
 #  include "monitor-win.h"
 # else
 # include "libport/cstring"
-# include <cerrno>
-# include <cassert>
+# include <libport/cerrno>
+# include <libport/cassert>
 # include <iostream>
 # include <X11/X.h>
 # include <X11/Xlib.h>

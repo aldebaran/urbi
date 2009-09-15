@@ -10,8 +10,8 @@
 /// \file liburbi/uclient.cc
 
 #if !defined WIN32
-# include <time.h>
-# include <signal.h>
+# include <ctime>
+# include <libport/csignal>
 #endif
 
 #include <boost/lambda/bind.hpp>

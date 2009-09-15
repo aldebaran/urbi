@@ -7,9 +7,9 @@
  *
  * See the LICENSE file for more information.
  */
-#include <sys/types.h>
+#include <libport/sys/types.h>
 #include <libport/sys/stat.h>
-#include <csignal>
+#include <libport/csignal>
 #include <libport/unistd.h>
 #include <libport/windows.hh>
 

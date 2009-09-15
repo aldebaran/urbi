@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 #include <sstream>
-#include <cstring>
+#include <libport/cstring>
 
 #include <urbi/usound.hh>
 
