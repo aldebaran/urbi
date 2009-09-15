@@ -7,7 +7,10 @@
  *
  * See the LICENSE file for more information.
  */
+
+#include <libport/deref.hh>
 #include <libport/format.hh>
+#include <libport/separate.hh>
 
 #include <ast/all.hh>
 #include <ast/new-clone.hh>
@@ -28,9 +31,9 @@ namespace std
   {
     return o << "/* " << (const void*) &c << " */ "
              << "case "
-             << libport::deref << c.first
+             << ::libport::deref << c.first
              << " => "
-             << libport::deref << c.second;
+             << ::libport::deref << c.second;
   }
 
   ostream&

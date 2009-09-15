@@ -17,6 +17,6 @@ namespace std
   std::ostream&
   operator<<(std::ostream& o, const ast::symbols_type& ss)
   {
-    return o << libport::separate(ss, ", ");
+    return o << ::libport::separate(ss, ", ");
   }
 }
