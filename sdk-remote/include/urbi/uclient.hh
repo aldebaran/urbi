@@ -20,7 +20,6 @@
 
 # include <urbi/uabstractclient.hh>
 
-
 namespace urbi
 {
   ///Linux implementation of UAbstractClient.
@@ -111,7 +110,7 @@ namespace urbi
 
     virtual void onError(boost::system::error_code erc);
 
-    virtual int onRead(const void*, size_t length);
+    virtual size_t onRead(const void*, size_t length);
 
   protected:
     /// Delay (in microseconds) without activity to check if the

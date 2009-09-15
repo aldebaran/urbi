@@ -170,7 +170,7 @@ namespace urbi
     return;
   }
 
-  int
+  size_t
   UClient::onRead(const void* data, size_t length)
   {
     size_t capacity = buflen - recvBufferPosition - 1;
@@ -179,9 +179,10 @@ namespace urbi
     if (ping_interval_ && ping_sem_.uget(1))
     {
       pong_timeout_handler_->cancel();
-      send_ping_handler_ = libport::asyncCall(boost::bind(&UClient::sendPing,
-                                                          this, link_),
-                         ping_interval_ - (libport::utime() - ping_sent_));
+      send_ping_handler_ =
+        libport::asyncCall(boost::bind(&UClient::sendPing,
+                                       this, link_),
+                           ping_interval_ - (libport::utime() - ping_sent_));
     }
     memcpy(&recvBuffer[recvBufferPosition], data, eat);
     recvBufferPosition += eat;
