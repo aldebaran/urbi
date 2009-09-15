@@ -106,33 +106,38 @@
   uobject_unarmorAndSend(# A)
 # endif
 
+
+/// Send \a Args (which is given to a stream and therefore can use <<)
+/// to \a C.
+# define URBI_SEND_C(C, Args)			\
+  do {						\
+    std::ostringstream os;			\
+    os << Args;					\
+    C << os.str();                              \
+  } while (false)
+
 /// Send \a Args (which is given to a stream and therefore can use <<)
 /// to the server.
 # define URBI_SEND(Args)			\
-  do {						\
-    std::ostringstream os;			\
-    os << Args;					\
-    URBI(()) << os.str();			\
-  } while (0)
-# define URBI_SEND_C(c, Args)			\
-  do {						\
-    std::ostringstream os;			\
-    os << Args;					\
-    c << os.str();			\
-  } while (0)
-/// Send "\a Args ; \n".
+  URBI_SEND_C(URBI(()), Args)
+
+/// Send "\a Args ; \n" to \a C.
+# define URBI_SEND_COMMAND_C(C, Args)		\
+  URBI_SEND_C(C, Args << ';' << std::endl)
+
 # define URBI_SEND_COMMAND(Args)		\
-  URBI_SEND(Args << ';' << std::endl)
-# define URBI_SEND_COMMAND_C(c, Args)		\
-  URBI_SEND_C(c, Args << ';' << std::endl)
-/** Send "\a Args | \n".
+  URBI_SEND_COMMAND_C(URBI(()), Args)
+
+/** Send "\a Args | \n" to \a C.
   * \b Warning: nothing is executed until a ';' or ',' is sent.
   */
-# define URBI_SEND_PIPED_COMMAND(Args)          \
-  URBI_SEND(Args << '|' << std::endl)
+# define URBI_SEND_PIPED_COMMAND_C(C, Args)     \
+  URBI_SEND_C(C, Args << '|' << std::endl)
 
-  # define URBI_SEND_PIPED_COMMAND_C(c, Args)          \
-  URBI_SEND_C(c, Args << '|' << std::endl)
+# define URBI_SEND_PIPED_COMMAND(Args)          \
+  URBI_SEND_PIPED_COMMAND_C(URBI(()), Args)
+
+
 namespace urbi
 {
 
