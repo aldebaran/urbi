@@ -134,7 +134,7 @@ namespace object
     return libport::Socket::isConnected();
   }
 
-  int
+  size_t
   Socket::onRead(const void* data, size_t length)
   {
     std::string str(reinterpret_cast<const char*>(data), length);

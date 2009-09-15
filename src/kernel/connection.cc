@@ -7,8 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
-#include <kernel/connection.hh>
 
+#include <kernel/connection.hh>
 #include <kernel/userver.hh>
 
 #include <object/lobby.hh>
@@ -25,7 +25,7 @@ namespace kernel
       close();
   }
 
-  int
+  size_t
   Connection::onRead(const void* data, size_t length)
   {
     this->received((const char*)data, length);
@@ -36,10 +36,11 @@ namespace kernel
   Connection::onConnect()
   {
     initialize();
-    try {
+    try
+    {
       lobby_->slot_set(SYMBOL(remoteIP), object::to_urbi(getRemoteHost()));
     }
-    catch(std::exception& e)
+    catch(std::exception&)
     {
       // We got disconnected, do nothing, onError will be called.
     }
@@ -70,7 +71,7 @@ namespace kernel
   Connection::effective_send(const char* buffer, size_t length)
   {
     if (!closing_)
-      libport::Socket::send((const void *)buffer, length);
+      libport::Socket::send((const void*)buffer, length);
     /// FIXME: we claim to write OK to avoid buffering useless stuff.
     return length;
   }

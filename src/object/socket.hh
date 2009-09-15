@@ -28,7 +28,7 @@ namespace object
     void init();
     virtual void onConnect();
     virtual void onError(boost::system::error_code);
-    virtual int  onRead(const void* data, size_t length);
+    virtual size_t onRead(const void* data, size_t length);
     void write(const std::string& data);
     bool isConnected() const;
     static void poll();

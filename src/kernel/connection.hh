@@ -26,7 +26,7 @@ namespace kernel
     enum { PACKET_SIZE = 1000000000 };
 
     // libport::Socket virtual methods.
-    virtual int onRead(const void* data, size_t length);
+    virtual size_t onRead(const void* data, size_t length);
 
     virtual void onConnect();
 
