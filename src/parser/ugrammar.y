@@ -346,7 +346,7 @@
 start:
   root
   {
-    up.result_->make_set($1);
+    up.result_->ast_set($1);
     up.loc_ = @$;
   }
 ;
