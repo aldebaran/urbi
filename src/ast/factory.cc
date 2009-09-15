@@ -61,22 +61,6 @@ namespace std
   }
 }
 
-namespace
-{
-  static ast::local_declarations_type*
-  symbols_to_decs(const ast::loc& loc,
-                  ast::Factory::formals_type* formals)
-  {
-    if (!formals)
-      return 0;
-    ast::local_declarations_type* res = new ast::local_declarations_type();
-    foreach (const ast::Factory::formal_type& var, *formals)
-      res->push_back(new ast::LocalDeclaration(loc, var.first, var.second));
-    delete formals;
-    return res;
-  }
-}
-
 #define SYNTAX_ERROR(Loc, Message...)                   \
   throw yy::parser::syntax_error(Loc, libport::format(Message))
 
@@ -587,6 +571,22 @@ namespace ast
   {
     PARAMETRIC_AST(nil, "nil");
     return exp(nil);
+  }
+
+  namespace
+  {
+    static local_declarations_type*
+    symbols_to_decs(const loc& loc,
+                    Factory::formals_type* formals)
+    {
+      if (!formals)
+        return 0;
+      local_declarations_type* res = new local_declarations_type();
+      foreach (const Factory::formal_type& var, *formals)
+        res->push_back(new LocalDeclaration(loc, var.first, var.second));
+      delete formals;
+      return res;
+    }
   }
 
   rRoutine
