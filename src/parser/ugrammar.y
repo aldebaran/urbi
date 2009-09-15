@@ -143,15 +143,6 @@
                 libport::format("expensive feature: %s", msg));
     }
 
-
-    /// Whether the \a e was the empty command.
-    static bool
-    implicit(const ast::rExp e)
-    {
-      ast::rConstNoop noop = e.unsafe_cast<const ast::Noop>();
-      return noop;
-    }
-
     /// Use the scanner in the right parser::ParserImpl.
     static
     inline
@@ -379,7 +370,7 @@ stmts:
   cstmt
   {
     $$ = new ast::Nary(@$);
-    if (!implicit($1))
+    if (!ast::implicit($1))
       $$->push_back($1);
   }
 | stmts ";" cstmt
@@ -387,7 +378,7 @@ stmts:
     std::swap($$, $1);
     if ($$->back_flavor_get() == ast::flavor_none)
       $$->back_flavor_set($2, @2);
-    if (!implicit($3))
+    if (!ast::implicit($3))
       $$->push_back($3);
   }
 | stmts "," cstmt
@@ -395,7 +386,7 @@ stmts:
     std::swap($$, $1);
     if ($$->back_flavor_get() == ast::flavor_none)
       $$->back_flavor_set($2, @2);
-    if (!implicit($3))
+    if (!ast::implicit($3))
       $$->push_back($3);
   }
 ;
@@ -750,7 +741,7 @@ nstmt:
   stmt
     {
       std::swap($$, $1);
-      if (implicit($$))
+      if (ast::implicit($$))
 	up.warn(@1,
 		"implicit empty instruction.  Use '{}' to make it explicit.");
     }

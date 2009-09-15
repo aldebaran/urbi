@@ -313,6 +313,9 @@ namespace ast
                const location& body_loc, rExp body) /* const */;
   };
 
+  /// Whether the \a e was the empty command.
+  bool implicit(const ast::rExp e);
+
 }
 
 // The structures (list and pair) live in std, that's where Koening

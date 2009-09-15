@@ -108,6 +108,13 @@ namespace
 
 namespace ast
 {
+  bool
+  implicit(const ast::rExp e)
+  {
+    ast::rConstNoop noop = e.unsafe_cast<const ast::Noop>();
+    return noop;
+  }
+
   ast::rExp
   Factory::make_at(const location& loc,
                    const location& flavor_loc, ast::flavor_type flavor,
