@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file libuco/urbi-main.cc
 
 #include <libport/cli.hh>

@@ -65,7 +65,7 @@ namespace urbi
     makeRemoteContext(const std::string& host, const std::string& port)
     {
       impl::UContextImpl* c = new impl::RemoteUContextImpl(
-        new USyncClient(host, strtol(port.c_str(), 0, 0)));
+        new USyncClient(host, lexical_cast<unsigned>(port)));
       return c;
     }
 
@@ -77,7 +77,7 @@ namespace urbi
       if (i != contexts.end())
         return i->second;
       impl::UContextImpl* c = new impl::RemoteUContextImpl(
-        new USyncClient(host, strtol(port.c_str(), 0, 0)));
+        new USyncClient(host, lexical_cast<unsigned>(port)));
       contexts[key] = c;
       return c;
     }
