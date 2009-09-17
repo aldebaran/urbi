@@ -1,9 +1,10 @@
 -*- outline -*-
 
 * depencies
+libuvalue.a:
 libuco.a:
-liburbi.so: libuco.a
-libuobject-sdk.so: liburbi.so
+liburbi.so: libuvalue.a
+libuobject-sdk.so: libuco.a liburbi.so
 libuobject-ker.so: libuco.a
 
 * libuco

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file libuco/uvar-common.cc
 
 #include <urbi/uobject.hh>
@@ -121,4 +122,3 @@ namespace urbi
   }
 
 } // namespace urbi
-

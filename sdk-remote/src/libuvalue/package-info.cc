@@ -7,13 +7,14 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/package-info.hh>
 #include <libport/version.hh>
 
 #include <sdk/config.h>
 #include <urbi/package-info.hh>
 
-#include <libuco/version.hh>
+#include <libuvalue/version.hh>
 
 namespace urbi
 {

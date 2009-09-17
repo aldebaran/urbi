@@ -7,10 +7,11 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef LIBUOBJECT_REMOTE_UCONTEXT_IMPL_HH
 # define LIBUOBJECT_REMOTE_UCONTEXT_IMPL_HH
-#include <urbi/uobject.hh>
-#include <urbi/usyncclient.hh>
+# include <urbi/uobject.hh>
+# include <urbi/usyncclient.hh>
 
 namespace urbi
 {

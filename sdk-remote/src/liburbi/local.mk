@@ -22,7 +22,7 @@ liburbi_liburbi_la_CPPFLAGS =			\
 # Find version.hh.
 liburbi_liburbi_la_CPPFLAGS += -I.
 
-liburbi_liburbi_la_LIBADD = $(LIBADD) libuco/libuco.la $(JPEG_LIBS)
+liburbi_liburbi_la_LIBADD = $(LIBADD) libuvalue/libuvalue.la $(JPEG_LIBS)
 liburbi_liburbi_la_LDFLAGS = -avoid-version -no-undefined
 
 
