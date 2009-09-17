@@ -28,6 +28,7 @@
 #include <urbi/package-info.hh>
 #include <urbi/uexternal.hh>
 #include <urbi/umain.hh>
+#include <urbi/umessage.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 #include <libuobject/remote-ucontext-impl.hh>

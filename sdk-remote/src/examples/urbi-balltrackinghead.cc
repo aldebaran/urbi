@@ -18,6 +18,7 @@
 #include <vector>
 
 #include <urbi/uclient.hh>
+#include <urbi/uconversion.hh>
 
 #ifndef LIBURBI_OPENR
 # include "monitor.h"

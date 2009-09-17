@@ -22,6 +22,7 @@
 #include <liburbi/compatibility.hh>
 
 #include <urbi/uexternal.hh>
+#include <urbi/umessage.hh>
 #include <urbi/uobject.hh>
 #include <urbi/ustarter.hh>
 #include <urbi/usyncclient.hh>

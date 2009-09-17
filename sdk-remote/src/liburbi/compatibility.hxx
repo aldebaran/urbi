@@ -7,9 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
-#include <boost/preprocessor/stringize.hpp>
 
-#include <urbi/uobject.hh>
+#include <urbi/kernel-version.hh>
 
 namespace urbi
 {

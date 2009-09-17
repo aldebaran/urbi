@@ -31,7 +31,6 @@
 # include <cstdarg>
 
 # include <list>
-# include <vector>
 # include <iostream>
 # include <string>
 
@@ -42,8 +41,7 @@
 
 # include <urbi/fwd.hh>
 # include <urbi/export.hh>
-# include <urbi/uconversion.hh>
-# include <urbi/utag.hh>
+# include <urbi/ubinary.hh>
 # include <urbi/umessage.hh>
 
 /**
@@ -56,7 +54,7 @@ Classes of interest:
 */
 namespace urbi
 {
-  /// Return values for the callack functions.
+  /// Return values for the callcack functions.
   /*! Each callback function, when called, must return with either URBI_CONTINUE
     or URBI_REMOVE:
     - URBI_CONTINUE means that the client should continue to call this callbak

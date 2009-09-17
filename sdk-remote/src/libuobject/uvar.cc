@@ -16,6 +16,7 @@
 #include <urbi/uabstractclient.hh>
 #include <urbi/ublend-type.hh>
 #include <urbi/uexternal.hh>
+#include <urbi/umessage.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
 

@@ -13,6 +13,7 @@
 #include <libport/unistd.h>
 
 #include <urbi/uclient.hh>
+#include <urbi/uconversion.hh>
 
 class SoundPipe
 {

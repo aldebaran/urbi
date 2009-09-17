@@ -12,6 +12,7 @@
 #include <libport/sys/stat.h>
 
 #include <urbi/uclient.hh>
+#include <urbi/uconversion.hh>
 
 // FIXME: those return values should not be ignored
 static size_t ignore;

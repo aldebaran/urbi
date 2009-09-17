@@ -10,6 +10,8 @@
 #ifndef LIBUOBJECT_COMPATIBILITY_HH
 # define LIBUOBJECT_COMPATIBILITY_HH
 
+#include <boost/preprocessor/stringize.hpp>
+
 // Macros to hide internal code sent by liburbi, not by the user, so
 // that her locations are "correct": referring to her messages, not to
 // hers plus those of the machinery.

@@ -10,12 +10,8 @@
 
 /// \file urbi/uvalue.hxx
 
-#ifndef URBI_UVALUE_HXX
-# define URBI_UVALUE_HXX
-
-# include <cassert>
-# include <urbi/uvalue.hh>
-# include <libport/cassert>
+#include <cassert>
+#include <libport/cassert>
 
 namespace urbi
 {
@@ -327,5 +323,3 @@ namespace urbi
 
 
 } // namespace urbi
-
-#endif // ! URBI_UVALUE_HXX

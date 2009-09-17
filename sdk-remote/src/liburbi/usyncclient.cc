@@ -19,6 +19,7 @@
 
 #include <liburbi/compatibility.hh>
 #include <urbi/uconversion.hh>
+#include <urbi/umessage.hh>
 #include <urbi/usyncclient.hh>
 
 GD_ADD_CATEGORY(USyncClient);

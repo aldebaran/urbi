@@ -30,6 +30,9 @@
 #include <libport/windows.hh>
 
 #include <urbi/uabstractclient.hh>
+#include <urbi/uconversion.hh>
+#include <urbi/umessage.hh>
+#include <urbi/utag.hh>
 
 #include <liburbi/compatibility.hh>
 

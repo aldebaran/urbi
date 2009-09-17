@@ -22,6 +22,7 @@
 #include <libport/option-parser.hh>
 #include <libport/sysexits.hh>
 
+#include <urbi/uconversion.hh>
 #include <urbi/usyncclient.hh>
 
 #include "monitor.h"

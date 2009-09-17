@@ -19,3 +19,7 @@ impossible to share the Makefile snippets while trying to get rid of
 recursive Makefiles in SDK-Remote.
 
 The name is a contraction of "library uobject-common".
+
+
+* Dependencies
+UGenericCallback: UContext

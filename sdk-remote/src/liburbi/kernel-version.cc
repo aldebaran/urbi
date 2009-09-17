@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/cassert>
 #include <urbi/kernel-version.hh>
 #include <urbi/uabstractclient.hh>

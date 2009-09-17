@@ -20,6 +20,7 @@
 #include <libport/format.hh>
 
 #include <urbi/uclient.hh>
+#include <urbi/utag.hh>
 
 #include <liburbi/compatibility.hh>
 
