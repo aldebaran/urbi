@@ -52,16 +52,6 @@ namespace urbi
   }
 
 
-  /*-----------------------.
-  | UGenericCallbackImpl.  |
-  `-----------------------*/
-
-  namespace impl
-  {
-    UGenericCallbackImpl::~UGenericCallbackImpl()
-    {}
-  }
-
   /*-------------------.
   | UGenericCallback.  |
   `-------------------*/
@@ -105,17 +95,6 @@ namespace urbi
     impl_->registerCallback();
   }
 
-
-  /*--------------.
-  | UObjectImpl.  |
-  `--------------*/
-
-  namespace impl
-  {
-    UObjectImpl::~UObjectImpl()
-    {
-    }
-  }
 
   /*----------.
   | UObject.  |
@@ -187,11 +166,6 @@ namespace urbi
   `---------------*/
   namespace impl
   {
-    // Declared pure virtual, but needs an implementation.  Known
-    // idiom.
-    UContextImpl::~UContextImpl()
-    {}
-
     void
     UContextImpl::init()
     {

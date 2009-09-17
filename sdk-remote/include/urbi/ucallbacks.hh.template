@@ -43,6 +43,10 @@ namespace urbi
       virtual void registerCallback() = 0;
       virtual void clear() = 0;
     };
+
+    inline
+    UGenericCallbackImpl::~UGenericCallbackImpl()
+    {}
   };
 
   //! Function and Event storage mechanism

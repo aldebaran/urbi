@@ -19,6 +19,7 @@ urbiinclude_HEADERS =				\
   include/urbi/uclient.hh			\
   include/urbi/ucontext-factory.hh		\
   include/urbi/ucontext-impl.hh			\
+  include/urbi/ucontext-impl.hxx		\
   include/urbi/ucontext.hh			\
   include/urbi/ucontext.hxx			\
   include/urbi/uconversion.hh			\

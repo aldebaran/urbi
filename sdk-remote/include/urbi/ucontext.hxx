@@ -7,17 +7,17 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/hash.hh>
 #include <urbi/fwd.hh>
 #include <urbi/ucontext-impl.hh>
+
 namespace urbi
 {
   inline
   UContext::UContext(impl::UContextImpl* impl)
-    : ctx_(impl)
+    : ctx_(impl ? impl : getCurrentContext())
   {
-    if (!ctx_)
-      ctx_ = getCurrentContext();
   }
 
   inline UObjectHub*

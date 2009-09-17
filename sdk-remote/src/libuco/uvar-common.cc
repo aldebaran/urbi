@@ -17,16 +17,6 @@
 namespace urbi
 {
 
-    /*-----------.
-    | UVarImpl.  |
-    `-----------*/
-  namespace impl
-  {
-    UVarImpl::~UVarImpl()
-    {
-    }
-  }
-
 
   /*-------.
   | UVar.  |

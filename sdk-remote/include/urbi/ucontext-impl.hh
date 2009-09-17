@@ -125,4 +125,6 @@ namespace urbi
   }
 }
 
+# include <urbi/ucontext-impl.hxx>
+
 #endif
