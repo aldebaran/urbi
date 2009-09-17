@@ -13,7 +13,7 @@
 #include <libport/sys/stat.h>
 
 #include <libport/sys/types.h>
-#include <sys/wait.h>
+#include <libport/sys/wait.h>
 #include <libport/fcntl.h>
 #include <vector>
 
