@@ -13,7 +13,7 @@
 #ifndef KERNEL_UCONNECTION_HH
 # define KERNEL_UCONNECTION_HH
 
-# include <cstring>
+# include <libport/cstring>
 # include <iomanip>
 # include <memory>
 
