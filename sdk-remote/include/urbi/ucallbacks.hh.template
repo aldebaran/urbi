@@ -127,7 +127,7 @@ namespace urbi
       : UGenericCallback(objname, type, funname, %N%, owned,            \
       fetchContext(obj,                                                 \
       typename libport::meta::If<libport::meta::Inherits<OBJ,           \
-        UContext>::res>::res())),                                         \
+        UContext>::res>::res())),                                       \
 	obj(obj), fun##Const(fun), is_const_ (IsConst)			\
     {									\
       nbparam = %N%;                                                    \
@@ -174,7 +174,7 @@ namespace urbi
       registerCallback();
     }
 
-    virtual UValue __evalcall(UList &param)
+    virtual UValue __evalcall(UList& param)
     {
       // Avoid warnings when we don't use param.
       (void) param;
@@ -204,7 +204,7 @@ namespace urbi
       : UGenericCallback(objname, type, funname,%N%, false,             \
       fetchContext(obj,                                                 \
         typename libport::meta::If<libport::meta::Inherits<OBJ,         \
-          UContext>::res>::res())),                                       \
+          UContext>::res>::res())),                                     \
 	obj(obj), fun(end), is_const_(IsConst)				\
     {									\
       nbparam = %N%;                                                    \
@@ -218,7 +218,7 @@ namespace urbi
 
 # undef MKUCallBackNotifyEndCtr%N%
 
-    virtual UValue __evalcall(UList &)
+    virtual UValue __evalcall(UList&)
     {
       UValue res;
       res(), (is_const_) ? ((*obj).*func)() : ((*obj).*fun)();
@@ -240,13 +240,13 @@ namespace urbi
   public:
     UFCallbackvoid%N%(const std::string& objname, const std::string& type,
 		      void (*fun) (%%%,% P% %%),
-		    const std::string& funname, UTable &t, bool owned)
+		    const std::string& funname, UTable& t, bool owned)
       : UGenericCallback(objname, type, funname,%N%, t, owned),  fun(fun)
     {
       registerCallback();
     }
 
-    virtual UValue __evalcall(UList &param)
+    virtual UValue __evalcall(UList& param)
     {
       // Avoid warnings when we don't use param.
       (void) param;
@@ -308,7 +308,7 @@ namespace urbi
     UGenericCallback*
     createUCallback(const std::string& objname, const std::string& type,
 		    void (*fun) (%%%,% P% %%),
-		    const std::string& funname, UTable &t, bool owned)
+		    const std::string& funname, UTable& t, bool owned)
   {
     return new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t,
 						  owned);
@@ -319,7 +319,7 @@ namespace urbi
 
   // Second argument is useless, it exist only for visual c++ compiler
   // which warn at compilation for a call of MKUCreateCallBack()
-# define MKUCreateCallBack%N%(Const, Useless)					\
+# define MKUCreateCallBack%N%(Const, Useless)                           \
   template <class OBJ, class R%%, class P% %%>				\
   UGenericCallback*							\
   createUCallback(const std::string& objname, const std::string& type,	\
@@ -345,7 +345,7 @@ namespace urbi
   createUCallback(const std::string& objname, const std::string& type,
 		  OBJ* obj,
 		  void (OBJ::*fun) (%%%,% P% %%),
-		  const std::string& funname, UTable &t, bool owned)
+		  const std::string& funname, UTable& t, bool owned)
   {
     return new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t,
 					       owned);
@@ -360,7 +360,7 @@ namespace urbi
 		  OBJ* obj,						\
 		  void (OBJ::*fun) (%%%,% P% %%) FConst,		\
 		  void (OBJ::*end)() EConst,				\
-		  const std::string& funname)		\
+		  const std::string& funname)                           \
   {									\
     return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname,		\
 						    type, obj, fun,	\
