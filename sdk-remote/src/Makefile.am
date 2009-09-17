@@ -37,7 +37,6 @@ AM_LDADD =					\
 
 include libuco/local.mk
 include libuobject/local.mk
-include libuvalue/local.mk
 
 if SDK_REMOTE
 include bin/local.mk
