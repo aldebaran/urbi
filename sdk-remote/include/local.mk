@@ -25,7 +25,6 @@ urbiinclude_HEADERS =				\
   include/urbi/uexternal.hh			\
   include/urbi/uimage.hh			\
   include/urbi/umain.hh				\
-  include/urbi/umain.hxx			\
   include/urbi/umessage.hh			\
   include/urbi/umessage.hxx			\
   include/urbi/uobject-hub.hh			\

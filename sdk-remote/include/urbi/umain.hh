@@ -7,7 +7,6 @@
  *
  * See the LICENSE file for more information.
  */
-
 /// \file urbi/umain.hh
 
 #ifndef URBI_UMAIN_HH
@@ -32,13 +31,12 @@
 
 extern "C"
 {
-  /// Bouncer to urbi::main() for easier access through dlsym().
-  int urbi_main(int argc, const char* argv[],
-                bool block, bool errors);
-
-  /// Bouncer to urbi::main() for easier access through dlsym().
-  int urbi_main_args(const libport::cli_args_type& args,
-                     bool block, bool errors);
+  /** Bouncer to urbi::main() for easier access through dlsym(). */
+  URBI_SDK_API int urbi_main(int argc, const char* argv[],
+                             bool block, bool errors);
+  /** Bouncer to urbi::main() for easier access through dlsym(). */
+  URBI_SDK_API int urbi_main_args(const libport::cli_args_type& args,
+                                  bool block, bool errors);
 }
 
 namespace urbi
@@ -50,13 +48,13 @@ namespace urbi
    * urbi::main(argc, argv) after your work is done.
    * This function returns if block is set to false.
    */
-  int main(const libport::cli_args_type& args,
-           bool block = true, bool errors = false);
+  URBI_SDK_API int main(const libport::cli_args_type& args,
+                        bool block = true, bool errors = false);
 
   /** Initialisation method using C style arguments.
    */
-  int main(int argc, const char *argv[],
-           bool block = true, bool errors = false);
+  URBI_SDK_API int main(int argc, const char *argv[],
+                        bool block = true, bool errors = false);
 
 
   /** Initialisation method, for remote mode only, that returns.
@@ -68,11 +66,8 @@ namespace urbi
    * \param exitOnDisconnect call exit() if we get disconnected from server.
    * \return 0 if no error occured.
    */
-  URBI_SDK_API
-  int initialize(const std::string& host, int port, size_t buflen,
-                 bool exitOnDisconnect, bool server = false);
+  int URBI_SDK_API initialize(const std::string& host, int port, size_t buflen,
+                              bool exitOnDisconnect, bool server = false);
 }
-
-# include <urbi/umain.hxx>
 
 #endif /* !URBI_UMAIN_HH */
