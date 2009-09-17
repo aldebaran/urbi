@@ -246,7 +246,7 @@ main(int argc, char* argv[])
     usage(opt_parser);
   banner = arg_banner.get();
   /// Server host name.
-  std::string host = libport::opts::host_l.value(urbi::UClient::DEFAULT_HOST);
+  std::string host = libport::opts::host_l.value(urbi::UClient::default_host());
   /// Server port.
   int port = libport::opts::port_l.get<int>(urbi::UClient::URBI_PORT);
   if (arg_pfile.filled())

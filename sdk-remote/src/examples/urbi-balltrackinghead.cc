@@ -309,7 +309,7 @@ BallTrackingHead::BallTrackingHead(const char * robotname)
 int
 main(int argc, char * argv[])
 {
-  const char* host = urbi::UClient::DEFAULT_HOST;
+  const char* host = urbi::UClient::default_host();
   if (argc != 2)
     printf("usage: %s robotname\n", argv[0]);
   else

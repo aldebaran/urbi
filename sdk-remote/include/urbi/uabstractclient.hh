@@ -125,7 +125,7 @@ namespace urbi
     /// Standard port of URBI server.
     enum { URBI_PORT = 54000 } ;
     /// Default host.
-    static const char* DEFAULT_HOST;
+    static const char* default_host();
 
     /// Error code.
     /// 0 iff no error.
@@ -139,7 +139,7 @@ namespace urbi
       \param buflen  size of send and receive buffers.
       Implementations should establish the connection in their constructor.
     */
-    UAbstractClient(const std::string& host = DEFAULT_HOST,
+    UAbstractClient(const std::string& host = default_host(),
                     unsigned port = URBI_PORT,
 		    size_t buflen = URBI_BUFLEN,
 		    bool server = false);

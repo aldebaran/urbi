@@ -156,7 +156,7 @@ main (int argc, char *argv[])
     fileName = arg_out.value().c_str();
 
   urbi::USyncClient
-    client(libport::opts::host.value(urbi::UClient::DEFAULT_HOST),
+    client(libport::opts::host.value(urbi::UClient::default_host()),
            libport::opts::port.get<int>(urbi::UClient::URBI_PORT));
   if (client.error())
     std::cerr << libport::program_name() << ": client failed to set up"

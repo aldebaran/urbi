@@ -31,8 +31,6 @@ namespace urbi
     , public libport::Socket
   {
   public:
-    using UAbstractClient::DEFAULT_HOST;
-
     /// Construction options.
     struct URBI_SDK_API options
     {
@@ -71,7 +69,7 @@ namespace urbi
   }
 
     /// \param opt  options: whether server, whether autostart.
-    UClient(const std::string& host = DEFAULT_HOST,
+    UClient(const std::string& host = default_host(),
             unsigned port = URBI_PORT,
 	    size_t buflen = URBI_BUFLEN,
 	    const options& opt = options());

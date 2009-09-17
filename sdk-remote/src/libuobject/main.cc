@@ -67,7 +67,7 @@ namespace urbi
 		 << " [" << UAbstractClient::URBI_BUFLEN << "]\n"
       "  -h, --help            display this message and exit\n"
       "  -H, --host ADDR       server host name"
-                << " [" << UClient::DEFAULT_HOST << "]\n"
+                 << " [" << UClient::default_host() << "]\n"
       "      --server          put remote in server mode\n"
       "  -p, --port PORT       tcp port URBI will listen to"
 		 << " [" << UAbstractClient::URBI_PORT << "]\n"
@@ -162,7 +162,7 @@ namespace urbi
   int
   main(const libport::cli_args_type& args, bool block, bool)
   {
-    std::string host = UClient::DEFAULT_HOST;
+    std::string host = UClient::default_host();
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;
     bool server = false;

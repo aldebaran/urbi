@@ -123,7 +123,7 @@ main(int argc, char* argv[])
   std::string dll;
   /// Server port.
   int port = urbi::UClient::URBI_PORT;
-  std::string host = UClient::DEFAULT_HOST;
+  std::string host = UClient::default_host();
 
   // The options passed to urbi::main.
   libport::cli_args_type args;

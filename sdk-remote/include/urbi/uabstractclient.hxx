@@ -47,6 +47,26 @@ namespace urbi
   | UAbstractClient.  |
   `------------------*/
 
+  // This constant is declared as an inlined function instead of a
+  // simple value because of Windows.  Indeed, libuco uses the
+  // default_host value at various places, but it does not include
+  // UAbstractClient.o.  So in the end, our libraries depend on values
+  // that will be provided by those who link against these libraries.
+  // This is not portable.
+  //
+  // So use an inline function.  This probably means there are several
+  // instances of this value, one per library.  But who would compare
+  // the pointers instead of the values?
+  inline
+  const char*
+  UAbstractClient::default_host()
+  {
+    // When using Boost.Asio, "localhost" on OS X is IPv6, and nothing
+    // works as expected.  Make sure we run in IPv4.
+    // FIXME: Find out why we run in IPv6 by default.
+    return "127.0.0.1";
+  }
+
   inline
   bool
   UAbstractClient::init() const

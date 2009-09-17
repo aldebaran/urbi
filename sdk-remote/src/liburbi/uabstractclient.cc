@@ -156,11 +156,6 @@ namespace urbi
   `------------------*/
 
 
-  // When using Boost.Asio, "localhost" on OS X is IPv6, and nothing
-  // works as expected.  Make sure we run in IPv4.
-  // FIXME: Find out why we run in IPv6 by default.
-  const char* UAbstractClient::DEFAULT_HOST = "127.0.0.1";
-
   const char* UAbstractClient::CLIENTERROR_TAG = "client_error";
 
   void
