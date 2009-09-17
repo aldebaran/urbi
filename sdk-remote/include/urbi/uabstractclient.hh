@@ -701,36 +701,55 @@ namespace urbi
   static const char comma = ',';
 
   /// Must be called at the last line of your main() function.
-  URBI_SDK_API void execute(void);
+  URBI_SDK_API
+  void execute(void);
+
   /// Terminate your URBI program.
-  URBI_SDK_API void exit(int code);
+  URBI_SDK_API
+  void exit(int code);
+
   /// Create a new UClient object
-  URBI_SDK_API UClient& connect(const std::string& host);
+  URBI_SDK_API
+  UClient& connect(const std::string& host);
+
   /// Destroy an UClient object
   /// Be careful: don't use client after called this function
-  URBI_SDK_API void disconnect(UClient &client);
+  URBI_SDK_API
+  void disconnect(UClient &client);
 
   /*-----------------.
   | Default client.  |
   `-----------------*/
 
   /// Return the first UClient created by the program.
-  URBI_SDK_API UClient* getDefaultClient();
-  /// Same as getDefaultClient(), but as a reference.
-  URBI_SDK_API UClient& get_default_client();
-  /// Redefine the default client.
-  URBI_SDK_API void setDefaultClient(UClient* cl);
+  URBI_SDK_API
+  UClient* getDefaultClient();
 
-  URBI_SDK_API std::string getClientConnectionID(const UAbstractClient* cli);
+  /// Same as getDefaultClient(), but as a reference.
+  URBI_SDK_API
+  UClient& get_default_client();
+
+  /// Redefine the default client.
+  URBI_SDK_API
+  void setDefaultClient(UClient* cl);
+
+  URBI_SDK_API
+  std::string getClientConnectionID(const UAbstractClient* cli);
+
 # ifndef DISABLE_IOSTREAM
   /// Send a possibly armored string to the default client
-  URBI_SDK_API std::ostream& unarmorAndSend(const char* str,
-                         UAbstractClient* c = (UAbstractClient*)getDefaultClient());
+  URBI_SDK_API
+  std::ostream&
+  unarmorAndSend(const char* str,
+                 UAbstractClient* c = (UAbstractClient*)getDefaultClient());
 # endif
-  URBI_SDK_API extern UClient* defaultClient;
+
+  URBI_SDK_API
+  extern UClient* defaultClient;
 
   /// Return a stream for error, preferrably the one the defaultClient.
-  URBI_SDK_API std::ostream& default_stream();
+  URBI_SDK_API
+  std::ostream& default_stream();
 
 } // namespace urbi
 
