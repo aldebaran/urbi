@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef CXX_PRIMITIVE_HH
 # define CXX_PRIMITIVE_HH
 
@@ -31,7 +32,7 @@ namespace object
  *  @param T2   Second possible type for the argument
  *  @param V2   Primitive to bounce on when the argument is of type T2
  */
-#define OVERLOAD_TYPE(Name, N, Arg, T1, V1, T2, V2)                     \
+# define OVERLOAD_TYPE(Name, N, Arg, T1, V1, T2, V2)                    \
                                                                         \
   static rObject Name(const object::objects_type& args)                 \
   {                                                                     \
@@ -52,7 +53,7 @@ namespace object
  *  @param V1   Primitive to bounce on for N1     arguments
  *  @param V2   Primitive to bounce on for N1 + 1 arguments
  */
-#define OVERLOAD_2(Name, N, V1, V2)                                     \
+# define OVERLOAD_2(Name, N, V1, V2)                                    \
                                                                         \
   static rObject Name(const object::objects_type& args)                 \
   {                                                                     \
@@ -80,7 +81,7 @@ namespace object
  *  @param P    Primitive to bounce on
  *  @param V    Default value for argument N + 1
  */
-#define OVERLOAD_DEFAULT(Name, N, P, V)                                 \
+# define OVERLOAD_DEFAULT(Name, N, P, V)                                \
                                                                         \
   static rObject Name(const object::objects_type& args_)                \
   {                                                                     \
@@ -98,15 +99,15 @@ namespace object
 /**
  *  @param Message
  */
-#define RAISE(Message)                                 \
+# define RAISE(Message)                         \
   runner::raise_primitive_error(Message)
 
 /// If we happen to meet a preprocessor that does not support varargs,
 /// change the uses to include two pairs of parens, and remove those
 /// below.
-#define FRAISE(Args...)                         \
-  RAISE(libport::format(Args))
+# define FRAISE(...)                            \
+  RAISE(libport::format(__VA_ARGS__))
 
-#include <object/cxx-primitive.hxx>
+# include <object/cxx-primitive.hxx>
 
 #endif
