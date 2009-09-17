@@ -18,7 +18,7 @@
 #include <iostream>
 
 #include <libport/format.hh>
-#include <boost/lexical_cast.hpp>
+#include <libport/lexical-cast.hh>
 
 #include <libport/cstdio>
 #include <libport/cstring>

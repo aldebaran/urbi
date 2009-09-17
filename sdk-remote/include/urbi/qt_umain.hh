@@ -28,7 +28,7 @@
 # include <urbi/uobject.hh>
 # include <libport/windows.hh>
 # ifndef WIN32
-#  include <unistd.h>
+#  include <libport/unistd.h>
 # endif
 
 # ifdef URBI_ENV_REMOTE

@@ -25,7 +25,7 @@
 #include <string>
 #include <libport/cstdio>
 
-#include <boost/bind.hpp>
+#include <libport/bind.hh>
 
 #include <libport/cli.hh>
 #include <libport/foreach.hh>

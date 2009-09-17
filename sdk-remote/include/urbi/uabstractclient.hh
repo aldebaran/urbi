@@ -24,10 +24,10 @@
 #ifndef URBI_UABSTRACTCLIENT_HH
 # define URBI_UABSTRACTCLIENT_HH
 
-# include <cstdio>
-# include <sys/types.h>
+# include <libport/cstdio>
+# include <libport/sys/types.h>
 # include <libport/cstring>
-# include <cstdlib>
+# include <libport/cstdlib>
 # include <cstdarg>
 
 # include <list>

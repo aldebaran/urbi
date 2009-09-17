@@ -7,7 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
-#include <boost/lexical_cast.hpp>
+#include <libport/lexical-cast.hh>
 
 #include <libport/cli.hh>
 #include <libport/debug.hh>

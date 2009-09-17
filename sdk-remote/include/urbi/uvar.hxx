@@ -12,7 +12,7 @@
 #ifndef URBI_UVAR_HXX
 # define URBI_UVAR_HXX
 
-# include <cassert>
+# include <libport/cassert>
 # include <urbi/uvar.hh>
 
 namespace urbi

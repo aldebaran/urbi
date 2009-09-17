@@ -10,7 +10,7 @@
 
 /// \file urbi/uvalue.hxx
 
-#include <cassert>
+#include <libport/cassert>
 #include <libport/cassert>
 
 namespace urbi

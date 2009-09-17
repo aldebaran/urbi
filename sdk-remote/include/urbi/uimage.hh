@@ -12,7 +12,7 @@
 #ifndef URBI_UIMAGE_HH
 # define URBI_UIMAGE_HH
 
-# include <cstdlib>
+# include <libport/cstdlib>
 # include <urbi/export.hh>
 
 namespace urbi

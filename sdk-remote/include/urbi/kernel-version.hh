@@ -12,7 +12,7 @@
 #ifndef URBI_KERNEL_VERSION_HH
 # define URBI_KERNEL_VERSION_HH
 
-# include <cstring>
+# include <libport/cstring>
 # include <urbi/export.hh>
 
 namespace urbi
