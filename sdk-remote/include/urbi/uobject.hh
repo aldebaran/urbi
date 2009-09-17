@@ -12,9 +12,9 @@
 #ifndef URBI_UOBJECT_HH
 # define URBI_UOBJECT_HH
 
-# include <string>
-
 # include <libport/warning-push.hh>
+
+# include <string>
 
 # include <libport/compiler.hh>
 # include <libport/fwd.hh>

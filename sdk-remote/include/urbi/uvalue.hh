@@ -12,6 +12,8 @@
 #ifndef URBI_UVALUE_HH
 # define URBI_UVALUE_HH
 
+# include <libport/warning-push.hh>
+
 # include <vector>
 
 # include <libport/traits.hh>
@@ -263,5 +265,7 @@ namespace urbi
 } // namespace urbi
 
 # include <urbi/uvalue.hxx>
+
+# include <libport/warning-pop.hh>
 
 #endif // ! URBI_UVALUE_HH
