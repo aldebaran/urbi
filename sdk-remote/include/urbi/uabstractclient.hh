@@ -86,11 +86,11 @@ namespace urbi
   {
   public:
     UCallbackInfo(UCallbackWrapper &w);
-    bool operator==(int id) const;
+    bool operator==(UCallbackID id) const;
 
     char tag[URBI_MAX_TAG_LENGTH];
     UCallbackWrapper& callback;
-    int id;
+    UCallbackID id;
   };
 
   //used internaly

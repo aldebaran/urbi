@@ -38,7 +38,7 @@ namespace urbi
 
   inline
   bool
-  UCallbackInfo::operator==(int id) const
+  UCallbackInfo::operator==(UCallbackID id) const
   {
     return this->id == id;
   }
