@@ -7,7 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
-#include <stdlib.h>
+#include <libport/cstdlib>
 #include <fstream>
 
 #include <libport/file-system.hh>

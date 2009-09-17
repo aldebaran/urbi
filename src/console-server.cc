@@ -17,7 +17,7 @@
 #include <libport/cstring>
 
 #include <boost/function.hpp>
-#include <boost/bind.hpp>
+#include <libport/bind.hh>
 
 #include <libport/asio.hh>
 #include <libport/cli.hh>

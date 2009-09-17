@@ -7,14 +7,14 @@
  *
  * See the LICENSE file for more information.
  */
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include <libport/cerrno>
+#include <libport/sys/types.h>
+#include <libport/sys/stat.h>
+#include <libport/fcntl.h>
 
 #include <fstream>
 
-#include <boost/format.hpp>
+#include <libport/format.hh>
 
 #include <object/file.hh>
 #include <object/output-stream.hh>

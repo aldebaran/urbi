@@ -14,8 +14,8 @@
 
 //#define ENABLE_DEBUG_TRACES
 
-#include <boost/bind.hpp>
-#include <boost/format.hpp>
+#include <libport/bind.hh>
+#include <libport/format.hh>
 
 #include <libport/compiler.hh>
 #include <libport/containers.hh>

@@ -8,9 +8,9 @@
  * See the LICENSE file for more information.
  */
 #include <libport/dirent.h>
-#include <sys/types.h>
+#include <libport/sys/types.h>
 
-#include <boost/format.hpp>
+#include <libport/format.hh>
 
 #include <libport/detect-win32.h>
 

@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <climits>
 
-#include <boost/format.hpp>
+#include <libport/format.hh>
 #include <boost/lambda/lambda.hpp>
 
 #include <libport/containers.hh>

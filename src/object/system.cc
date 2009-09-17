@@ -19,7 +19,7 @@
 #include <libport/program-name.hh>
 #include <libport/xltdl.hh>
 
-#include <cerrno>
+#include <libport/cerrno>
 #include <memory>
 #include <sstream>
 

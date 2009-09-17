@@ -15,12 +15,12 @@
 #include <libport/config.h>
 #include <libport/cstring>
 #include <libport/cstdio>
-#include <cassert>
+#include <libport/cassert>
 #include <sstream>
 #include <iomanip>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
+#include <libport/lexical-cast.hh>
 #include <boost/version.hpp>
 
 #include <libport/cassert>

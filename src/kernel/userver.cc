@@ -10,7 +10,7 @@
 /// \file kernel/userver.cc
 
 //#define ENABLE_DEBUG_TRACES
-#include <cassert>
+#include <libport/cassert>
 #include <libport/compiler.hh>
 #include <libport/csignal>
 #include <libport/cstdlib>
@@ -22,9 +22,9 @@
 #include <kernel/userver.hh>
 
 #include <boost/assign/list_of.hpp>
-#include <boost/bind.hpp>
+#include <libport/bind.hh>
 #include <boost/checked_delete.hpp>
-#include <boost/format.hpp>
+#include <libport/format.hh>
 #include <boost/algorithm/string.hpp>
 
 #include <libport/asio.hh>

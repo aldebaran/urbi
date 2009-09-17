@@ -7,7 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
-#include <boost/bind.hpp>
+#include <libport/bind.hh>
 
 // Uncomment this to get exhaustive execution debug output
 // #define ENABLE_STACK_DEBUG_TRACES

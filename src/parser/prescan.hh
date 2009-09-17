@@ -10,7 +10,7 @@
 #ifndef PARSER_PRESCAN_HH
 # define PARSER_PRESCAN_HH
 
-# include <cstdlib>
+# include <libport/cstdlib>
 
 /* The scanner is used for two different purposes: "regular": as a
    regular scanner that feeds its parser, and "prescanner" as a

@@ -12,7 +12,7 @@
  ** \brief Implementation of ast::flavor_type.
  */
 
-#include <cstdlib>
+#include <libport/cstdlib>
 
 #include <libport/cassert>
 

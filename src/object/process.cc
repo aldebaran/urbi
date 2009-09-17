@@ -12,9 +12,9 @@
 #include <libport/sys/prctl.h>
 #include <libport/sys/stat.h>
 
-#include <sys/types.h>
+#include <libport/sys/types.h>
 #include <sys/wait.h>
-#include <fcntl.h>
+#include <libport/fcntl.h>
 #include <vector>
 
 #include <libport/lockable.hh>

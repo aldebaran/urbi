@@ -10,7 +10,7 @@
 #include <iostream>
 #include <list>
 
-#include <boost/bind.hpp>
+#include <libport/bind.hh>
 #include <boost/ptr_container/ptr_list.hpp>
 
 #include <libport/finally.hh>

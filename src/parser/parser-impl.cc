@@ -14,8 +14,8 @@
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
-#include <cassert>
-#include <cstdlib>
+#include <libport/cassert>
+#include <libport/cstdlib>
 #include <fstream>
 #include <sstream>
 #include <string>

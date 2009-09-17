@@ -10,8 +10,8 @@
 #include <cstdarg>
 
 #include <boost/assign.hpp>
-#include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
+#include <libport/bind.hh>
+#include <libport/lexical-cast.hh>
 
 #ifdef ENABLE_DEBUG_TRACES_UOBJECT
 # define ENABLE_DEBUG_TRACES

@@ -7,13 +7,13 @@
  *
  * See the LICENSE file for more information.
  */
-#include <errno.h>
-#include <fcntl.h>
+#include <libport/cerrno>
+#include <libport/fcntl.h>
 #include <fstream>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <libport/sys/stat.h>
+#include <libport/sys/types.h>
 
-#include <boost/format.hpp>
+#include <libport/format.hh>
 
 #include <object/file.hh>
 #include <object/input-stream.hh>

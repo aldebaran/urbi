@@ -12,7 +12,7 @@
  ** \brief Creation of the URBI object list.
  */
 
-#include <boost/bind.hpp>
+#include <libport/bind.hh>
 
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>

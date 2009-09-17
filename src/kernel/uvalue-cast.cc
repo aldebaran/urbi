@@ -7,8 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
+#include <libport/format.hh>
+#include <libport/lexical-cast.hh>
 
 #include <kernel/uvalue-cast.hh>
 #include <object/cxx-conversions.hh>

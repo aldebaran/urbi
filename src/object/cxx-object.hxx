@@ -10,7 +10,7 @@
 #ifndef CXX_OBJECT_HXX
 # define CXX_OBJECT_HXX
 
-# include <boost/bind.hpp>
+# include <libport/bind.hh>
 
 # include <object/cxx-primitive.hh>
 # include <object/object-class.hh>

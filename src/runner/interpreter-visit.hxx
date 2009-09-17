@@ -10,8 +10,8 @@
 #ifndef RUNNER_INTERPRETER_VISIT_HXX
 # define RUNNER_INTERPRETER_VISIT_HXX
 
-# include <boost/bind.hpp>
-# include <boost/format.hpp>
+# include <libport/bind.hh>
+# include <libport/format.hh>
 # include <boost/scoped_ptr.hpp>
 
 # include <libport/compilation.hh>

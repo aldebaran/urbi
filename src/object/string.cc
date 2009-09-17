@@ -16,7 +16,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
-#include <boost/format.hpp>
+#include <libport/format.hh>
 
 #include <libport/damerau-levenshtein-distance.hh>
 #include <libport/escape.hh>
