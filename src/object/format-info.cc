@@ -176,61 +176,66 @@ namespace object
   FormatInfo::update_hook(const std::string& slot, rObject val)
   {
     if (slot == "alignment")
-    {
-      int val_(type_check<Float>(val, 0u)->to_int());
-      if (val > 1 || val < -1)
-        RAISE("expected integer -1, 0 or 1, got " + string_cast(val_));
-      alignment_ = val_ ? Align::CENTER
-        : (val_ == 1 ? Align::RIGHT : Align::LEFT);
-    }
+      switch (int v = type_check<Float>(val, 0u)->to_int())
+      {
+#define CASE(In, Out)                           \
+        case In: alignment_ = Align::Out; break
+        CASE(-1, LEFT);
+        CASE( 0, CENTER);
+        CASE( 1, RIGHT);
+#undef CASE
+      default:
+        FRAISE("expected integer -1, 0 or 1, got %s", v);
+      }
     else if (slot == "alt")
       alt_ = val->as_bool();
     else if (slot == "group")
     {
-      std::string val_(type_check<String>(val, 0u)->value_get());
-      if (val_ != " " && val_ != "")
-        RAISE("expected \" \" or \"\", got \"" + val_ + "\"");
-      group_ = val_;
+      std::string v = type_check<String>(val, 0u)->value_get();
+      if (!v.empty() && v != " ")
+        FRAISE("expected \" \" or \"\", got \"%s\"", v);
+      group_ = v;
     }
     else if (slot == "pad")
     {
-      std::string val_(type_check<String>(val, 0u)->value_get());
-      if (val_ != " " && val_ != "0")
-        RAISE("expected \" \" or \"0\", got \"" + val_ + "\"");
-      pad_ = val_;
+      std::string v = type_check<String>(val, 0u)->value_get();
+      if (v != " " && v != "0")
+        FRAISE("expected \" \" or \"0\", got \"%s\"", v);
+      pad_ = v;
     }
     else if (slot == "precision")
       precision_ = type_check<Float>(val, 0u)->to_unsigned_int();
     else if (slot == "prefix")
     {
-      std::string val_(type_check<String>(val, 0u)->value_get());
-      if (val_ != " " && val_ != "+" && val_ != "")
-        RAISE("expected \"\", \" \" or \"+\", got \"" + val_ + "\"");
-      prefix_ = val_;
+      std::string v = type_check<String>(val, 0u)->value_get();
+      if (v != " " && v != "+" && v != "")
+        FRAISE("expected \"\", \" \" or \"+\", got \"%s\"", v);
+      prefix_ = v;
     }
     else if (slot == "spec")
     {
       std::string val_(type_check<String>(val, 0u)->value_get());
       if (val_.size() != 1)
-        RAISE("expected one character long string, got " + val_);
+        RAISE("expected one-character long string, got " + val_);
       if (!strchr("sdbxoefEDX", val_[0]))
         RAISE("expected one character in \"sdbxoefEDX\", got \"" + val_ + "\"");
       spec_ = type_check<String>(val, 0u)->to_lower();
-      uppercase_ = (spec_ == "s") ? Case::UNDEFINED
-        : (islower(val_[0]) ? Case::LOWER : Case::UPPER);
+      uppercase_ = (spec_ == "s"       ? Case::UNDEFINED
+                    : islower(val_[0]) ? Case::LOWER
+                    :                    Case::UPPER);
     }
     else if (slot == "uppercase")
-    {
-      int val_(type_check<Float>(val, 0u)->to_int());
-      if (val > 1 || val < -1)
-        RAISE("expected integer -1, 0 or 1, got " + string_cast(val_));
-      uppercase_ = val_ ? Case::UNDEFINED
-        : (val_ == 1 ? Case::UPPER : Case::LOWER);
-      if (uppercase_ == Case::UNDEFINED)
-        spec_ = "s";
-      else if (spec_ == "s")
-        spec_ = (uppercase_ == Case::UPPER ? "D" : "d");
-    }
+      switch (int v = type_check<Float>(val, 0u)->to_int())
+      {
+#define CASE(In, Out, Spec)                                     \
+        case In: uppercase_ = Case::Out; spec_ = Spec; break
+        CASE(-1, LOWER,     "d");
+        CASE( 0, UNDEFINED, "s");
+        CASE( 1, UPPER,     "D");
+#undef CASE
+      default:
+        FRAISE("expected integer -1, 0 or 1, got %s", v);
+      }
     else if (slot == "width")
       width_ = type_check<Float>(val, 0u)->to_unsigned_int();
     else
@@ -242,9 +247,9 @@ namespace object
   void
   FormatInfo::initialize(CxxObject::Binder<FormatInfo>& bind)
   {
-    bind(SYMBOL(init), &FormatInfo::init);
+    bind(SYMBOL(init),     &FormatInfo::init);
     bind(SYMBOL(asString), &FormatInfo::as_string);
-    bind(SYMBOL(pattern), &FormatInfo::pattern_get);
+    bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
 
 #define DECLARE(Name)                                                   \
     bind(SYMBOL(Name), &FormatInfo::Name ##_get);                       \
