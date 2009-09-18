@@ -42,15 +42,22 @@ namespace runner
   | Regular visit.  |
   `----------------*/
 
+# define FINALLY_AST_ARGS                       \
+  (Ast,                                         \
+   ((const ast::Ast*&, innermost_node_))        \
+   ((const ast::Ast*, previous)),               \
+   innermost_node_ = previous)
+
+  FINALLY_DECLARE FINALLY_AST_ARGS;
   inline object::rObject
   Interpreter::operator() (const ast::Ast* e)
   {
     const ast::Ast* previous = innermost_node_;
-    FINALLY(((const ast::Ast*&, innermost_node_))((const ast::Ast*, previous)),
-      innermost_node_ = previous);
+    FINALLY_USE FINALLY_AST_ARGS;
     innermost_node_ = e;
     return e->eval(*this);
   }
+# undef FINALLY_AST_ARGS
 
 } // namespace runner
 
