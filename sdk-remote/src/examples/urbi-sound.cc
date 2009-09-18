@@ -20,7 +20,8 @@
 #include <libport/sys/stat.h>
 
 #include <libport/fcntl.h>
-#include "urbi/uclient.hh"
+#include <urbi/uclient.hh>
+#include <urbi/uconversion.hh>
 
 #ifndef WIN32
 # include <sys/ioctl.h>
