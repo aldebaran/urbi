@@ -45,7 +45,7 @@ namespace runner
   FINALLY_DECLARE(Ast,
                   ((const ast::Ast*&, innermost_node_))
                   ((const ast::Ast*, previous)),
-                  innermost_node_ = previous)
+                  innermost_node_ = previous);
   inline object::rObject
   Interpreter::operator() (const ast::Ast* e)
   {
@@ -53,7 +53,7 @@ namespace runner
     FINALLY_USE(Ast,
                 ((const ast::Ast*&, innermost_node_))
                 ((const ast::Ast*, previous)),
-                innermost_node_ = previous)
+                innermost_node_ = previous);
     innermost_node_ = e;
     return e->eval(*this);
   }
