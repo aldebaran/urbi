@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-/// \file liburbi/uimage.cc
+/// \file libuvalue/uimage.cc
 
 #include <urbi/uimage.hh>
 

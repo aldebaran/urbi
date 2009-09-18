@@ -1,14 +1,4 @@
 ## ------------ ##
-## version.hh.  ##
-## ------------ ##
-
-REVISION_FILE = liburbi/version.hh
-include $(top_srcdir)/build-aux/revision.mk
-
-nodist_env_DATA = $(REVISION_FILE)
-
-
-## ------------ ##
 ## liburbi.la.  ##
 ## ------------ ##
 
@@ -19,16 +9,12 @@ liburbi_liburbi_la_SOURCES =			\
   liburbi/compatibility.hh			\
   liburbi/compatibility.hxx			\
   liburbi/kernel-version.cc			\
-  liburbi/package-info.cc			\
   liburbi/uabstractclient.cc			\
   liburbi/uclient.cc				\
   liburbi/uconversion.cc			\
-  liburbi/uimage.cc				\
   liburbi/umessage.cc				\
-  liburbi/usound.cc				\
   liburbi/usyncclient.cc			\
-  liburbi/utag.cc				\
-  liburbi/uvalue-common.cc
+  liburbi/utag.cc
 
 liburbi_liburbi_la_CPPFLAGS =			\
   $(AM_CPPFLAGS)				\
@@ -36,7 +22,7 @@ liburbi_liburbi_la_CPPFLAGS =			\
 # Find version.hh.
 liburbi_liburbi_la_CPPFLAGS += -I.
 
-liburbi_liburbi_la_LIBADD = $(LIBADD) $(JPEG_LIBS)
+liburbi_liburbi_la_LIBADD = $(LIBADD) libuvalue/libuvalue.la $(JPEG_LIBS)
 liburbi_liburbi_la_LDFLAGS = -avoid-version -no-undefined
 
 

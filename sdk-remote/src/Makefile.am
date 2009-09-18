@@ -35,6 +35,8 @@ AM_LDADD =					\
   $(PTHREAD_LIBS)				\
   $(LIBPORT_LIBS)
 
+# The order matters: build dependencies first.
+include libuvalue/local.mk
 include libuco/local.mk
 include libuobject/local.mk
 

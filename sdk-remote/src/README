@@ -1,10 +1,11 @@
 -*- outline -*-
 
-* dependencies
-libuco.a:
-liburbi.so:
+* depencies
+libuvalue.a:
+libuco.a: libuvalue.a
+liburbi.so: libuvalue.a
 libuobject-sdk.so: libuco.a liburbi.so
-libuobject-ker.so: libuco.a
+libuobject-ker.so: libuco.a libuvalue.a
 
 * libuco
 This convenience library contains code that is used both by
@@ -18,3 +19,7 @@ impossible to share the Makefile snippets while trying to get rid of
 recursive Makefiles in SDK-Remote.
 
 The name is a contraction of "library uobject-common".
+
+
+* Dependencies
+UGenericCallback: UContext
