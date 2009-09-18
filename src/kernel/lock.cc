@@ -18,7 +18,8 @@
 
 namespace kernel
 {
-  static inline void server_error(const std::string& msg) ATTRIBUTE_NORETURN;
+  ATTRIBUTE_NORETURN
+  static inline void server_error(const std::string& msg);
 
   static inline
   void

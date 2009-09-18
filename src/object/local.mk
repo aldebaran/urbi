@@ -130,10 +130,6 @@ dist_libuobject_la_SOURCES +=			\
   object/path.hh				\
   object/primitive.cc				\
   object/primitive.hh				\
-  object/process.cc				\
-  object/process.hh				\
-  object/regexp.cc				\
-  object/regexp.hh				\
   object/root-classes.cc			\
   object/root-classes.hh			\
   object/semaphore.cc				\
@@ -167,8 +163,17 @@ if !COMPILATION_MODE_SPACE
     object/input-stream.hh			\
     object/output-stream.cc			\
     object/output-stream.hh			\
+    object/regexp.cc				\
+    object/regexp.hh				\
     object/socket.cc				\
     object/socket.hh				\
     object/server.cc				\
     object/server.hh
+
+# Too hard currently...
+if !WIN32
+  dist_libuobject_la_SOURCES +=			\
+    object/process.cc				\
+    object/process.hh
+endif
 endif
