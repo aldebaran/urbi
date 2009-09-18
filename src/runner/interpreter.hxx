@@ -42,18 +42,18 @@ namespace runner
   | Regular visit.  |
   `----------------*/
 
-# define FINALLY_AST_ARGS                       \
-  (Ast,                                         \
-   ((const ast::Ast*&, innermost_node_))        \
-   ((const ast::Ast*, previous)),               \
-   innermost_node_ = previous)
-
-  FINALLY_DECLARE FINALLY_AST_ARGS;
+  FINALLY_DECLARE(Ast,
+                  ((const ast::Ast*&, innermost_node_))
+                  ((const ast::Ast*, previous)),
+                  innermost_node_ = previous)
   inline object::rObject
   Interpreter::operator() (const ast::Ast* e)
   {
     const ast::Ast* previous = innermost_node_;
-    FINALLY_USE FINALLY_AST_ARGS;
+    FINALLY_USE(Ast,
+                ((const ast::Ast*&, innermost_node_))
+                ((const ast::Ast*, previous)),
+                innermost_node_ = previous)
     innermost_node_ = e;
     return e->eval(*this);
   }
