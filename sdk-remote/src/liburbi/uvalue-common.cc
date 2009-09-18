@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-/// \file libuvalue/uvalue-common.cc
+/// \file liburbi/uvalue-common.cc
 
 #include <libport/cassert>
 #include <libport/compiler.hh>

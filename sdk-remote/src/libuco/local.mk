@@ -8,7 +8,7 @@ libuco_libuco_la_CPPFLAGS =			\
   -DBUILDING_URBI_SDK
 # Find version.hh.
 libuco_libuco_la_CPPFLAGS += -I.
-libuco_libuco_la_LDFLAGS = libuvalue/libuvalue.la $(BOOST_THREAD_LDFLAGS)
+libuco_libuco_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS)
 libuco_libuco_la_LIBADD = $(BOOST_THREAD_LIBS)
 
 dist_libuco_libuco_la_SOURCES =			\

@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-/// \file libuvalue/uprop.cc
+/// \file libuco/uprop.cc
 #include <urbi/uprop.hh>
 #include <urbi/uvar.hh>
 
