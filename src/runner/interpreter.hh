@@ -75,11 +75,6 @@ namespace runner
     /// The entry point: visit \a e.
     ATTRIBUTE_ALWAYS_INLINE object::rObject operator() (const ast::Ast* e);
 
-    /// \ name Accessors.
-    /// \{
-  public:
-    /// \}
-
     /// Execute the code of function \a func with arguments \a args in
     /// the local runner.
     ///
