@@ -141,10 +141,22 @@ Dictionary.clone.init("one", 1, "two", 2);
 [00000000] Dictionary {"one" => 1, "two" => 2}
 \end{urbiscript}
 
-\item \lstinline|keys|\\
-  The list of all the keys.  No particular order is ensured.
+\item \lstinline|keys()|\\
+  The list of all the keys.  No particular order is ensured.  Since
+  \refObject{List} features the same function, uniform iteration over
+  a List or a Dictionary is possible.
 \begin{urbiscript}[firstnumber=last]
-assert(Dictionary.new("one", 1, "two", 2).keys == ["one", "two"]);
+{
+  var d = Dictionary.new("one", 1, "two", 2);
+  assert(d.keys == ["one", "two"]);
+  assert({
+           var res = [];
+           for (var k: d.keys)
+             res << d[k];
+           res
+         }
+         == l);
+};
 \end{urbiscript}
 
 \item \lstinline|set(\var{key}, \var{value})|\\

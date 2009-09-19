@@ -21,6 +21,11 @@ do (List)
     any (function (i) { i === e })
   };
 
+  function keys()
+  {
+    size.asList;
+  }
+
   function '=='(other)
   {
     if (size != other.size)

@@ -214,6 +214,24 @@ assert(a == [0, 1, 2]);
 assert(["b", "ob", "b"].join("a") == "baobab");
 \end{urbiscript}
 
+\item \lstinline|keys()|\\
+  The list of valid indexes.  This allows uniform iteration over a
+  \refObject{Dictionary} or a \refObject{List}.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var l = ["a", "b", "c"];
+  assert(l.keys == [0, 1, 2]);
+  assert({
+           var res = [];
+           for (var k: l.keys)
+             res << l[k];
+           res
+         }
+         == l);
+};
+\end{urbiscript}
+
 \item \lstinline|map(\var{fun})|\\
 Apply the given functional value on every member, and return the list
 of results.
