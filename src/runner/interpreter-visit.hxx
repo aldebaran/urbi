@@ -494,41 +494,24 @@ namespace runner
   }
 
 
-  FINALLY_DECLARE(Scope,
-                  ((Interpreter*, i))
-                  ((bool&, non_interruptible_))
-                  ((bool, non_interruptible)),
-                  i->cleanup_scope_tag();
-                  non_interruptible_ = non_interruptible;);
-
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Scope* e)
   {
     Interpreter* i = this;
     bool non_interruptible = non_interruptible_;
-    FINALLY_USE(Scope,
-                ((Interpreter*, i))
-                ((bool&, non_interruptible_))
-                ((bool, non_interruptible)),
-                i->cleanup_scope_tag();
-                non_interruptible_ = non_interruptible;);
+    FINALLY_Scope(USE);
     create_scope_tag();
     return operator()(e->body_get().get());
   }
 
 
-  FINALLY_DECLARE(Do,
-                  ((Stacks&, stacks_))((rObject&, old_tgt)),
-                  stacks_.switch_self(old_tgt));
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Do* e)
   {
     rObject tgt = operator()(e->target_get().get());
     rObject old_tgt = stacks_.self();
     stacks_.switch_self(tgt);
-    FINALLY_USE(Do,
-                ((Stacks&, stacks_))((rObject&, old_tgt)),
-                stacks_.switch_self(old_tgt));
+    FINALLY_Do(USE);
     visit(static_cast<const ast::Scope*>(e));
     // This is arguable. Do, just like Scope, should maybe return
     // their last inner value.
@@ -661,9 +644,6 @@ namespace runner
   }
 
 
-  FINALLY_DECLARE(Try,
-                  ((rObject&, current_exception_))((rObject&, old_exception)),
-                  current_exception_ = old_exception);
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Try* e)
   {
@@ -700,9 +680,7 @@ namespace runner
         }
       }
       rObject old_exception = current_exception_;
-      FINALLY_USE(Try,
-                  ((rObject&, current_exception_))((rObject&, old_exception)),
-                  current_exception_ = old_exception);
+      FINALLY_Try(USE);
       current_exception_ = value;
       return operator()(handler->body_get().get());
     }

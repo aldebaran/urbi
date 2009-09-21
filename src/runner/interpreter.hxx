@@ -42,18 +42,18 @@ namespace runner
   | Regular visit.  |
   `----------------*/
 
-  FINALLY_DECLARE(Ast,
-                  ((const ast::Ast*&, innermost_node_))
-                  ((const ast::Ast*, previous)),
-                  innermost_node_ = previous);
+#define FINALLY_Ast(DefineOrUse)                                        \
+  FINALLY_ ## DefineOrUse(Ast,                                          \
+                          ((const ast::Ast*&, innermost_node_))         \
+                          ((const ast::Ast*, previous)),                \
+                          innermost_node_ = previous);
+
+  FINALLY_Ast(DEFINE);
   inline object::rObject
   Interpreter::operator() (const ast::Ast* e)
   {
     const ast::Ast* previous = innermost_node_;
-    FINALLY_USE(Ast,
-                ((const ast::Ast*&, innermost_node_))
-                ((const ast::Ast*, previous)),
-                innermost_node_ = previous);
+    FINALLY_Ast(USE);
     innermost_node_ = e;
     return e->eval(*this);
   }

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file runner/interpreter.hh
  ** \brief Definition of runner::Interpreter.
@@ -18,6 +19,7 @@
 # include <boost/tuple/tuple.hpp>
 
 # include <libport/compilation.hh>
+# include <libport/finally.hh>
 # include <libport/hash.hh>
 
 # include <ast/fwd.hh>
@@ -227,6 +229,31 @@ namespace runner
 
     /// The current exception when executing a "catch" block.
     rObject current_exception_;
+
+    // Work around limitations of VC++ 8.
+#define FINALLY_Scope(DefineOrUse)                                      \
+    FINALLY_ ## DefineOrUse(Scope,                                      \
+                            ((Interpreter*, i))                         \
+                            ((bool&, non_interruptible_))               \
+                            ((bool, non_interruptible)),                \
+                            i->cleanup_scope_tag();                     \
+                            non_interruptible_ = non_interruptible;)
+
+#define FINALLY_Do(DefineOrUse)                                 \
+    FINALLY_ ## DefineOrUse(Do,                                 \
+                            ((Stacks&, stacks_))                \
+                            ((rObject&, old_tgt)),              \
+                            stacks_.switch_self(old_tgt))
+
+#define FINALLY_Try(DefineOrUse)                                \
+    FINALLY_ ## DefineOrUse(Try,                                \
+                            ((rObject&, current_exception_))    \
+                            ((rObject&, old_exception)),        \
+                            current_exception_ = old_exception)
+
+    FINALLY_Scope(DEFINE);
+    FINALLY_Do(DEFINE);
+    FINALLY_Try(DEFINE);
   };
 
 } // namespace runner
