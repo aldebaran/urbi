@@ -24,7 +24,7 @@ do (List)
   function keys()
   {
     size.asList;
-  }
+  };
 
   function '=='(other)
   {
@@ -169,7 +169,7 @@ do (List)
   function asString()
   {
     var res = "" |
-    if (size)
+    if (!empty)
     {
       res = front.acceptVoid.asPrintable |
       // FIXME: join might be more efficient.
