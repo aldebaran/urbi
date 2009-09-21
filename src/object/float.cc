@@ -112,38 +112,62 @@ namespace object
   std::string
   Float::format(rFormatInfo finfo) const
   {
-    std::string pattern(finfo->pattern_get());
-
-    replace(pattern.begin(), pattern.end(), 's', 'g');
-    replace(pattern.begin(), pattern.end(), 'd', 'g');
-    replace(pattern.begin(), pattern.end(), 'D', 'G');
-    try
+    // MSVC displays "1.#INF/1.#QNAN" instead of "inf/nan".
+    // FIXME: We should also support %20s and so forth.  The easiest
+    // is then probably to reuse the FormatInfo, but with a string
+    // "nan" etc.
+#if defined _MSC_VER
+    if (std::isnan(value_))
+      // The "+" prefix is not obeyed, but " " is.
+      return finfo->prefix_get() == " " ? " nan" : "nan";
+    else if (std::isinf(value_))
+      // " inf", "+inf" etc.
+      return finfo->prefix_get() + (0 < value_ ? "inf" : "-inf");
+    else
+#endif
     {
-      return libport::format(pattern,
-                             libport::numeric_cast<long long>(value_));
-    }
-    catch (const libport::bad_numeric_cast&)
-    {
-      // Do nothing.
-    }
+      std::string pattern(finfo->pattern_get());
 
-    if (finfo->spec_get() == "x" || finfo->spec_get() == "o")
-      runner::raise_bad_integer_error(value_);
-    return libport::format(pattern, value_);
+      replace(pattern.begin(), pattern.end(), 's', 'g');
+      replace(pattern.begin(), pattern.end(), 'd', 'g');
+      replace(pattern.begin(), pattern.end(), 'D', 'G');
+      try
+      {
+        return libport::format(pattern,
+                               libport::numeric_cast<long long>(value_));
+      }
+      catch (const libport::bad_numeric_cast&)
+      {
+        // Do nothing.
+      }
+
+      if (finfo->spec_get() == "x" || finfo->spec_get() == "o")
+        runner::raise_bad_integer_error(value_);
+      return libport::format(pattern, value_);
+    }
   }
 
   std::string
   Float::as_string() const
   {
-    try
-    {
-      return libport::format("%1%",
-                             libport::numeric_cast<long long>(value_));
-    }
-    catch (const libport::bad_numeric_cast&)
-    {
-      return libport::format("%1%", value_);
-    }
+    // MSVC displays "1.#INF/1.#QNAN" instead of "inf/nan".
+#if defined _MSC_VER
+    if (std::isnan(value_))
+      return "nan";
+    else if (std::isinf(value_))
+      // " inf", "+inf" etc.
+      return 0 < value_ ? "inf" : "-inf";
+    else
+#endif
+      try
+      {
+        return libport::format("%1%",
+                               libport::numeric_cast<long long>(value_));
+      }
+      catch (const libport::bad_numeric_cast&)
+      {
+        return libport::format("%1%", value_);
+      }
   }
 
   Float::value_type
