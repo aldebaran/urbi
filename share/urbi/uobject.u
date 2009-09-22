@@ -146,6 +146,9 @@ do (getSlot("UVar"))
 
   function init(parent, name)
   {
+    if (parent.hasSlot("__uobjectName"))
+        var this.ownerName = parent.__uobjectName|
+    var this.initialName = name|
     parent.setSlot(name, this)|
     parent.setProperty(name, "updateHook", getSlot("update_bounce"))|
     var this.newPropertyHook = getSlot("newPropertyHook_")|
