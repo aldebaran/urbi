@@ -50,7 +50,8 @@ public:
     UBindFunction(all, sendBuf);
     UBindFunction(all, sendPar);
     UBindFunction(all, typeOf);
-
+    UBindFunction(all, uobjectName);
+    UBindFunction(all, allUObjectName);
     UBindVar(all,a);
     UBindVar(all,b);
     UBindVar(all,c);
@@ -479,6 +480,20 @@ public:
   {
     return destructionCount;
   }
+
+  std::string uobjectName(UObject* n)
+  {
+    if (!n)
+      return std::string();
+    else
+      return n->__name;
+  }
+
+  std::string allUObjectName(all* n)
+  {
+    return uobjectName(n);
+  }
+
   urbi::UVar a,b,c;
   urbi::UVar* vars[3];
 

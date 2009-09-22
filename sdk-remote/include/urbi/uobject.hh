@@ -353,6 +353,11 @@ namespace urbi
     impl::UObjectImpl* impl_;
   };
 
+  // Provide cast support to UObject*
+  template<> struct uvalue_caster<UObject*>
+  {
+    UObject* operator()(urbi::UValue& v);
+  };
 } // end namespace urbi
 
 // This file needs the definition of UObject, so included last.

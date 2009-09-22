@@ -56,6 +56,22 @@ namespace urbi
     v.keepSynchronized();
   }
 
+  inline UObject*
+  uvalue_caster<UObject*>::operator()(UValue& v)
+  {
+    if (v.type != DATA_STRING)
+      return 0;
+    return getUObject(*v.stringValue);
+  }
+
+  template<typename T> struct
+  uvalue_caster<T*> {
+    T* operator()(UValue& v)
+    {
+      UObject* res = uvalue_caster<UObject*>()(v);
+      return dynamic_cast<T*>(res);
+    }
+  };
 }
 
 #endif // !URBI_UOBJECT_HXX
