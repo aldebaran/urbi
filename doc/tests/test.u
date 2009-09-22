@@ -87,12 +87,34 @@ do (Path)
 }|
 
 // Deterministic String.fresh.
-do (String)
-{
-  var counter_ = 5;
-  fresh->constant = false;
-  fresh = function ()
+if (System.Platform.isWindows)
+  do (System)
   {
-    this + "_" + counter_++;
-  }
-}|
+    // This is not implemented on Windows.
+    system->constant = false;
+    system = function (dummy)
+    {
+      0;
+    };
+
+    // Therefore, we need to cheat to have the load sample work.
+    var loadOrig = getSlot("load");
+    load->constant = false;
+    load = function (file)
+    {
+      if (file == "123.u")
+        123
+      else
+        loadOrig(file);
+    };
+
+    var maybeLoadOrig = getSlot("maybeLoad");
+    maybeLoad->constant = false;
+    maybeLoad = function (file)
+    {
+      if (file == "123.u")
+        123
+      else
+        maybeLoadOrig(file);
+    };
+  }|
