@@ -364,7 +364,7 @@ namespace urbi
     // hs optional, in which case t remains empty.
     std::string t;
     hs >> t;
-    if (t == "jpeg" || t == "YCbCr" || t == "rgb")
+    if (t == "jpeg" || t == "YCbCr" || t == "rgb" || t.find("image_")==0)
     {
       type = BINARY_IMAGE;
       image.size = common.size;
