@@ -59,9 +59,13 @@ assert(Path.new("relative/path/file.u").basename  == "file.u");
 \item \lstinline|cwd|\\
   The current working directory.
 \begin{urbiscript}[firstnumber=last]
+// Save current directory.
 var pwd = Path.cwd|
+// Go into ``/''.
 assert(Path.new("/").cd == Path.new("/"));
+// Current working directory is ``/''.
 assert(Path.cwd         == Path.new("/"));
+// Go back to the directory we were in.
 assert(pwd.cd           == pwd);
 \end{urbiscript}
 
