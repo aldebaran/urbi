@@ -86,18 +86,23 @@ do (Global.UObject)
       }
     }
   };
-
+  var bounceSetUpdate = Event.new;
+  at(bounceSetUpdate?(var obj))
+  {
+    if (0 < obj.updateInterval)
+      obj.updateTask: detach(obj.periodicCall(obj.updateInterval,
+                                          obj.getSlot("update"),
+                                      "update", [obj]));
+  };
   /// Set a timer to call update at specified interval in seconds.
   function setUpdate(interval)
   {
     if (0 < interval && interval < minimumInterval)
       interval = minimumInterval;
     // Stop current update task.
-    updateTask.stop;
-    updateInterval = interval;
-    if (0 < interval)
-      updateTask: detach(periodicCall(updateInterval, getSlot("update"),
-                                      "update", [this]));
+    updateTask.stop|
+    updateInterval = interval|
+    bounceSetUpdate!(this)
   };
 
   /// Set a timer to call \b func every \b interval milliseconds.
