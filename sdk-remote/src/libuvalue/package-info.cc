@@ -14,7 +14,7 @@
 #include <sdk/config.h>
 #include <urbi/package-info.hh>
 
-#include <liburbi/version.hh>
+#include <libuvalue/version.hh>
 
 namespace urbi
 {
