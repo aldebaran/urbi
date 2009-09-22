@@ -42,6 +42,8 @@ urbi::UDataType uvalue_type(const object::rObject& o)
 urbi::UValue uvalue_cast(const object::rObject& o)
 {
   CAPTURE_GLOBAL(Binary);
+  CAPTURE_GLOBAL(UObject);
+  CAPTURE_GLOBAL(UVar);
   urbi::UValue res;
   if (object::rUValue bv = o->as<object::UValue>())
     return bv->value_get();
@@ -73,6 +75,18 @@ urbi::UValue uvalue_cast(const object::rObject& o)
     res.binary->parse(
       (boost::lexical_cast<std::string>(data.size()) +
        " " + keywords + '\n').c_str(), 0, l, i);
+  }
+  else if (is_a(o, UObject))
+  {
+    res = o->slot_get(SYMBOL(__uobjectName))->as<object::String>()
+      ->value_get();
+  }
+  else if (is_a(o, UVar))
+  {
+    res =
+      o->slot_get(SYMBOL(ownerName))->as<object::String>()->value_get()
+      + "."
+      + o->slot_get(SYMBOL(initialName))->as<object::String>()->value_get();
   }
   else // We could not find how to cast this value
   {
