@@ -272,9 +272,12 @@ var Global.uobjects_handle = WeakPointer.new;
 
 // UObjects can use evaluate at initialization-time.
 UVar.new(Global,"evaluate");
-Global.getSlot("evaluate").notifyChange(uobjects_handle, function()
+Global.getSlot("evaluate").owned = true;
+Global.getSlot("evaluate").notifyChangeOwned(uobjects_handle, function()
 {
-  eval(evaluate)
+  var res = eval(Global.getSlot("evaluate").val.asString).acceptVoid |
+  if (!res.isVoid)
+    Global.getSlot("evaluate").writeOwned(res)
 })|;
 
 Global.uobjects.uobject_init();
