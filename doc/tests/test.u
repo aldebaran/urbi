@@ -87,6 +87,17 @@ do (Path)
 }|
 
 // Deterministic String.fresh.
+do (String)
+{
+  var counter_ = 5;
+  fresh->constant = false;
+  fresh = function ()
+  {
+    this + "_" + counter_++;
+  }
+}|
+
+// System.system is not implemented on Windows.
 if (System.Platform.isWindows)
   do (System)
   {
