@@ -8,11 +8,11 @@
  * See the LICENSE file for more information.
  */
 
-#ifndef WIN32
+#include <kernel/config.h>
+#if HAVE_SYS_INOTIFY_H
 # include <sys/inotify.h>
 #endif
 
-#include <libport/detect-win32.h>
 #include <libport/dirent.h>
 #include <libport/format.hh>
 #include <libport/lockable.hh>
@@ -48,7 +48,7 @@ namespace object
   | Urbi methods |
   `-------------*/
 
-#ifndef WIN32
+#if HAVE_SYS_INOTIFY_H
   // Event polling thread
   static libport::hash_map<unsigned, std::pair<rObject, rObject> > _watch_map;
   static libport::Lockable _watch_map_lock;
@@ -137,7 +137,7 @@ namespace object
       RAISE(str(format("Not a directory: '%s'") % path->as_string()));
     path_ = path;
 
-#ifndef WIN32
+#if HAVE_SYS_INOTIFY_H
     int watch = inotify_add_watch(_watch_fd, path->as_string().c_str(),
                                   IN_CREATE | IN_DELETE);
     if (watch == -1)
@@ -236,7 +236,7 @@ namespace object
     rPrimitive p = new Primitive(&init_bouncer);
     proto->slot_set(SYMBOL(init), p);
 
-#ifndef WIN32
+#if HAVE_SYS_INOTIFY_H
     libport::startThread(boost::function0<void>(poll));
 #endif
   }

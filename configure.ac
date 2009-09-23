@@ -76,11 +76,18 @@ AM_PROG_AS
 AC_ENABLE_STATIC([no])
 URBI_LIBTOOL
 
+
+## ---------------- ##
+## Build variants.  ##
+## ---------------- ##
+
+# --enable-headers-install.
 URBI_ARG_ENABLE([enable-headers-install],
                 [Install kernel headers], [yes|no], [no])
 AM_CONDITIONAL([INSTALL_KERNEL_HEADERS],
                [test x$enable_headers_install = xyes])
 
+# --enable-serialization.
 URBI_ARG_ENABLE([enable-serialization],
                 [Build with support for serialization], [yes|no], [yes])
 AM_CONDITIONAL([ENABLE_SERIALIZATION],
@@ -90,30 +97,36 @@ if test x$enable_serialization = xyes; then
             [Define to 1 if serialization is enabled.])
 fi
 
+# --enable-programs.
+URBI_ARG_ENABLE([enable-programs],
+                [Build extra programs], [yes|no], [no])
+AM_CONDITIONAL([BUILD_PROGRAMS],
+               [test x$enable_programs = xyes])
+
+
 # Where we look for the installed files.
 # Do not use $package here, kernel is a too generic name.
 pkgdatadir=${datadir}/gostai
 AC_SUBST([urbidir], [${pkgdatadir}/urbi])
 
 
-## -------- ##
-## Target.  ##
-## -------- ##
+## ------------ ##
+## Components.  ##
+## ------------ ##
+
 BOOST_REQUIRE([1.37])
+BOOST_REGEX
+BOOST_SYSTEM
+BOOST_TOKENIZER
+
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff
 # below.
 URBI_LIBPORT([sdk-remote/libport])
 URBI_PTHREAD
 URBI_SOCKETS
 
-URBI_ARG_ENABLE([enable-programs],
-                [Build extra programs], [yes|no], [no])
-AM_CONDITIONAL([BUILD_PROGRAMS],
-               [test x$enable_programs = xyes])
-BOOST_REGEX
-BOOST_SYSTEM
-BOOST_TOKENIZER
-
+# object/directory.
+AC_CHECK_HEADERS([sys/inotify.h])
 
 ## -------------- ##
 ## Sub packages.  ##
