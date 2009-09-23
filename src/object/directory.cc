@@ -54,16 +54,17 @@ namespace object
   static libport::Lockable _watch_map_lock;
   static int _watch_fd;
 
-  static void poll()
+  ATTRIBUTE_NORETURN
+  static
+  void poll()
   {
     _watch_fd = inotify_init();
     if (_watch_fd == -1)
       FRAISE("unable to start inotify: %s", libport::strerror(errno));
 
-    static const size_t name_size_max = 1024;
-
     while (true)
     {
+      static const size_t name_size_max = 1024;
       static const size_t evt_size = sizeof(inotify_event);
       static const size_t buf_size = evt_size + name_size_max;
 
@@ -71,7 +72,7 @@ namespace object
       const int len = read(_watch_fd, &buffer, buf_size);
 
       if (len < 0)
-        errnoabort();
+        errnoabort("read failed");
 
       int i = 0;
       while (i < len)
