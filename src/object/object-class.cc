@@ -92,11 +92,16 @@ namespace object
       tag = arg2->value_get();
     }
 
-    std::ostringstream os;
-    args[0]->dump(os, depth_max);
+    // Do not use libport::lines on os.str().
+    std::string dump;
+    {
+      std::ostringstream os;
+      args[0]->dump(os, depth_max);
+      dump = os.str();
+    }
     // For now our best choice is to dump line by line in "system" messages.
     const std::string system_header("*** ");
-    foreach (const std::string& line, libport::lines(os.str()))
+    foreach (const std::string& line, libport::lines(dump))
       r.send_message(tag, system_header + line);
     return void_class;
   }
