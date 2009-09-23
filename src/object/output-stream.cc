@@ -59,7 +59,8 @@ namespace object
   void OutputStream::init(rFile f)
   {
     libport::path path = f->value_get()->value_get();
-    fd_ = open(path.to_string().c_str(), O_WRONLY | O_APPEND | O_CREAT, S_IRWXU);
+    fd_ = open(path.to_string().c_str(),
+               O_WRONLY | O_APPEND | O_CREAT, S_IRWXU);
 
     if (fd_ < 0)
     {
@@ -118,7 +119,7 @@ namespace object
   }
 
   void
-  OutputStream::initialize(object::CxxObject::Binder<object::OutputStream>& bind)
+  OutputStream::initialize(CxxObject::Binder<object::OutputStream>& bind)
   {
     bind(SYMBOL(LT_LT), &OutputStream::put    );
     bind(SYMBOL(close), &OutputStream::close  );

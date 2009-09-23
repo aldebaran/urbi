@@ -106,9 +106,8 @@ namespace object
     // Parsing precision.
     if (cursor < pattern.size() && pattern[cursor] == '.' && cursor++)
     {
-      substr =
-        pattern.substr(cursor,
-                       pattern.find_first_not_of("0123456789", cursor) - cursor);
+      substr = pattern.substr
+        (cursor, pattern.find_first_not_of("0123456789", cursor) - cursor);
       if (substr.empty())
         RAISE(std::string("format: unexpected \"")
               + pattern[cursor]

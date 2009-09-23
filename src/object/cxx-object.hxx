@@ -81,21 +81,18 @@ namespace object
   rObject
   CxxObject::TypeInitializer<T>::make_class()
   {
+    using boost::bind;
+
     static libport::Symbol type("type");
     static libport::Symbol clone("clone");
     res_->slot_set(type, new String(T::type_name()), true);
-    res_->slot_set(clone,
-                   rPrimitive(new Primitive(boost::bind(cxx_object_clone<T>, _1))),
-                   true);
+    res_->slot_set(clone, new Primitive(bind(cxx_object_clone<T>, _1)), true);
     Binder<T> b(res_);
     T::initialize(b);
 
-    libport::Symbol conversion =
-      libport::Symbol(std::string("as") + T::type_name());
-    if (!res_->slot_locate(conversion, false).first)
-      res_->slot_set(conversion,
-                     rPrimitive(new Primitive(boost::bind(cxx_object_id<T>, _1))),
-                     true);
+    libport::Symbol name = libport::Symbol(std::string("as") + T::type_name());
+    if (!res_->slot_locate(name, false).first)
+      res_->slot_set(name, new Primitive(bind(cxx_object_id<T>, _1)), true);
     return res_;
   }
 
@@ -143,12 +140,18 @@ namespace object
   CxxObject::Binder<T>::var(const libport::Symbol& name,
                             A (T::*attr))
   {
-    boost::function1<rObject, libport::intrusive_ptr<T> > get
-      (boost::bind(&getter<T, A>, _1, attr));
+    using libport::intrusive_ptr;
+    using boost::function1;
+    using boost::function3;
+
+    typedef function1<rObject, intrusive_ptr<T> > urbi_getter_type;
+    typedef function3<rObject, intrusive_ptr<T>, const std::string&, const A&>
+      urbi_setter_type;
+
+    urbi_getter_type get(boost::bind(&getter<T, A>, _1, attr));
     tgt_->slot_set(name, make_primitive(get), true);
 
-    boost::function3<rObject, libport::intrusive_ptr<T>, const std::string&, const A&> set
-      (boost::bind(&setter<T, A>, attr, _1, _2, _3));
+    urbi_setter_type set(boost::bind(&setter<T, A>, attr, _1, _2, _3));
 #define S(Name) Symbol(#Name)
     tgt_->property_set(name, libport::S(updateHook), make_primitive(set));
 #undef S

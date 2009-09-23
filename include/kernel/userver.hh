@@ -102,14 +102,14 @@ namespace kernel
     virtual libport::utime_t getTime() = 0;
 
     //! Overload this function to return a specific header for your URBI server
-    /*! Used to give some information specific to your server in the standardized
-     header which is displayed on the server output at start and in the
-     connection when a new connection is created.\n
-     Typical custom header should be like:
+    /*!  Used to give some information specific to your server in
+       the standardized header which is displayed on the server output
+       at start and in the connection when a new connection is
+       created.\n Typical custom header should be like:
 
-     URBI version xx.xx for \<robotname\> robot\\n\n
-     (c) Copyright \<year\> \<name\>\\n
-     */
+       URBI version xx.xx for \<robotname\> robot\\n\n
+       (c) Copyright \<year\> \<name\>\\n
+    */
     virtual std::string custom_banner_get() const;
 
     /// Return the complete banner, including the frame above and

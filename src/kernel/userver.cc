@@ -174,8 +174,8 @@ namespace kernel
     if (urbi_rev != cxx_rev)
     {
       std::cerr
-        << program_name() << ": revison mismatch between C++ and Urbi." << std::endl
-        << program_name() << ":   kernel revision: " << cxx_rev << std::endl
+        << program_name() << ": revison mismatch between C++ and Urbi.\n"
+        << program_name() << ":   kernel revision: " << cxx_rev << "\n"
         << program_name() << ":   urbi.u revision: " << urbi_rev << std::endl;
       init_error();
     }
@@ -200,7 +200,7 @@ namespace kernel
     {
       std::cerr
         << program_name()
-        << ": killed with signal " << i << " (" << strsignal (i)
+        << ": killed with signal " << i << " (" << strsignal(i)
         << ") while trying to debug" << std::endl;
       libport::signal(i, SIG_DFL);
       if (kill(getpid(), i))

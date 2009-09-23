@@ -29,7 +29,8 @@
 # define WHEN_NOT2(Cond1, Cond2, X) NPRINT_##Cond1##Cond2(X)
 
 # define IF(Cond, Then, Else) WHEN(Cond, Then) WHEN_NOT(Cond, Else)
-# define IF2(Cond1, Cond2, Then, Else) WHEN2(Cond1, Cond2, Then) WHEN_NOT2(Cond1, Cond2, Else)
+# define IF2(Cond1, Cond2, Then, Else)                  \
+  WHEN2(Cond1, Cond2, Then) WHEN_NOT2(Cond1, Cond2, Else)
 
 # define COMMA_ ,
 # define COMMA(Cond) PRINT_##Cond(COMMA_)

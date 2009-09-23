@@ -29,6 +29,8 @@
 
 namespace object
 {
+  using runner::Runner;
+
   Task::Task()
     : value_(0)
   {
@@ -69,7 +71,7 @@ namespace object
   std::string
   Task::status()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+    Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
     std::stringstream status;
     switch(value_->state_get())
@@ -110,9 +112,9 @@ namespace object
   Task::backtrace()
   {
     List::value_type res;
-    if (const runner::Runner* runner = dynamic_cast<runner::Runner*>(value_.get()))
+    if (const Runner* runner = dynamic_cast<Runner*>(value_.get()))
     {
-      foreach(runner::Runner::frame_type line, runner->backtrace_get())
+      foreach(Runner::frame_type line, runner->backtrace_get())
       {
         List::value_type frame;
         frame << new String(line.name)
@@ -126,14 +128,14 @@ namespace object
   void
   Task::waitForTermination()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+    Runner& r = ::kernel::urbiserver->getCurrentRunner();
     r.yield_until_terminated(*value_);
   }
 
   void
   Task::waitForChanges()
   {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+    Runner& r = ::kernel::urbiserver->getCurrentRunner();
     r.yield_until_things_changed();
   }
 

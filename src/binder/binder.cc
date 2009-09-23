@@ -529,8 +529,8 @@ namespace binder
     else
       routine()->local_variables_get()->push_back(decl);
 
-    env_[decl->what_get()].push_back(
-      std::make_pair(decl, std::make_pair(routine_depth_, scope_depth_ - unscope_)));
+    env_[decl->what_get()].push_back(std::make_pair
+      (decl, std::make_pair(routine_depth_, scope_depth_ - unscope_)));
     unbind_type::iterator it = unbind_.end();
     for (unsigned i = 0; i <= unscope_; ++i)
       it--;
