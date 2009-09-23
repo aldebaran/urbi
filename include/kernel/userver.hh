@@ -29,6 +29,7 @@
 # include <libport/fwd.hh>
 # include <libport/compiler.hh>
 # include <libport/file-library.hh>
+# include <libport/lockable.hh>
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
 # include <libport/pthread.h>
@@ -36,6 +37,7 @@
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
 # include <kernel/utypes.hh>
+# include <object/object.hh>
 
 namespace kernel
 {
@@ -217,6 +219,28 @@ namespace kernel
     runner::Runner& getCurrentRunner() const;
 
     boost::asio::io_service& get_io_service();
+
+    /*------------------------.
+    | Asynchronous scheduling |
+    `------------------------*/
+
+  public:
+    void schedule(object::rObject target, libport::Symbol method,
+                  const object::objects_type& args);
+
+  private:
+    struct AsyncJob
+    {
+      AsyncJob(object::rObject t, libport::Symbol m,
+               const object::objects_type& a);
+
+      object::rObject target;
+      libport::Symbol method;
+      object::objects_type args;
+    };
+    std::vector<AsyncJob> _async_jobs;
+    libport::Lockable _async_jobs_lock;
+
   protected:
     //! Overload this function to specify how your robot is displaying messages.
     virtual void effectiveDisplay(const char*) = 0;

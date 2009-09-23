@@ -76,6 +76,8 @@
 #include <kernel/uqueue.hh>
 
 using libport::program_name;
+using object::objects_type;
+using object::rObject;
 
 namespace kernel
 {
@@ -372,6 +374,13 @@ namespace kernel
   {
   }
 
+  static object::rObject
+  method_wrap(object::rObject tgt, libport::Symbol m, objects_type args,
+              const objects_type&)
+  {
+    return tgt->call(m, args);
+  }
+
   libport::utime_t
   UServer::work()
   {
@@ -435,10 +444,37 @@ namespace kernel
       next_time = scheduler_->work ();
       updateTime();
     }
+    {
+      libport::BlockLock lock(_async_jobs_lock);
+      foreach (AsyncJob& job, _async_jobs)
+      {
+        object::rPrimitive p = new object::Primitive
+          (boost::bind(method_wrap, job.target, job.method, job.args, _1));
+        sched::rJob interpreter =  new runner::Interpreter
+          (*ghost_connection_get().shell_get(), p, job.method, job.args);
+        scheduler_->add_job(interpreter);
+      }
+      _async_jobs.clear();
+    }
     work_handle_stopall_();
     afterWork();
     return next_time;
   }
+
+  void
+  UServer::schedule(object::rObject o, libport::Symbol method,
+                    const object::objects_type& args)
+  {
+    libport::BlockLock lock(_async_jobs_lock);
+    _async_jobs.push_back(AsyncJob(o, method, args));
+  }
+
+  UServer::AsyncJob::AsyncJob(object::rObject t, libport::Symbol m,
+                              const object::objects_type& a)
+    : target(t)
+    , method(m)
+    , args(a)
+  {}
 
   static void bounce_disconnection(UConnection* uc)
   {
