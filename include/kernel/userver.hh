@@ -220,9 +220,9 @@ namespace kernel
 
     boost::asio::io_service& get_io_service();
 
-    /*------------------------.
-    | Asynchronous scheduling |
-    `------------------------*/
+    /*--------------------------.
+    | Asynchronous scheduling.  |
+    `--------------------------*/
 
   public:
     void schedule(object::rObject target, libport::Symbol method,
@@ -238,8 +238,8 @@ namespace kernel
       libport::Symbol method;
       object::objects_type args;
     };
-    std::vector<AsyncJob> _async_jobs;
-    libport::Lockable _async_jobs_lock;
+    std::vector<AsyncJob> async_jobs_;
+    libport::Lockable async_jobs_lock_;
 
   protected:
     //! Overload this function to specify how your robot is displaying messages.

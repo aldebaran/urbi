@@ -445,8 +445,8 @@ namespace kernel
       updateTime();
     }
     {
-      libport::BlockLock lock(_async_jobs_lock);
-      foreach (AsyncJob& job, _async_jobs)
+      libport::BlockLock lock(async_jobs_lock_);
+      foreach (AsyncJob& job, async_jobs_)
       {
         object::rPrimitive p = new object::Primitive
           (boost::bind(method_wrap, job.target, job.method, job.args, _1));
@@ -454,7 +454,7 @@ namespace kernel
           (*ghost_connection_get().shell_get(), p, job.method, job.args);
         scheduler_->add_job(interpreter);
       }
-      _async_jobs.clear();
+      async_jobs_.clear();
     }
     work_handle_stopall_();
     afterWork();
@@ -465,8 +465,8 @@ namespace kernel
   UServer::schedule(object::rObject o, libport::Symbol method,
                     const object::objects_type& args)
   {
-    libport::BlockLock lock(_async_jobs_lock);
-    _async_jobs.push_back(AsyncJob(o, method, args));
+    libport::BlockLock lock(async_jobs_lock_);
+    async_jobs_.push_back(AsyncJob(o, method, args));
   }
 
   UServer::AsyncJob::AsyncJob(object::rObject t, libport::Symbol m,

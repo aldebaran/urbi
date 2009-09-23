@@ -141,12 +141,9 @@ namespace object
                             A (T::*attr))
   {
     using libport::intrusive_ptr;
-    using boost::function1;
-    using boost::function3;
 
-    typedef function1<rObject, intrusive_ptr<T> > urbi_getter_type;
-    typedef function3<rObject, intrusive_ptr<T>, const std::string&, const A&>
-      urbi_setter_type;
+    typedef boost::function1<rObject, intrusive_ptr<T> > urbi_getter_type;
+    typedef boost::function3<rObject, intrusive_ptr<T>, const std::string&, const A&> urbi_setter_type;
 
     urbi_getter_type get(boost::bind(&getter<T, A>, _1, attr));
     tgt_->slot_set(name, make_primitive(get), true);
