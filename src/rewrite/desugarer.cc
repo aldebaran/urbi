@@ -136,6 +136,8 @@ namespace rewrite
     // Simple assignment: x = value.
     if (ast::rCall call = assign->what_get().unsafe_cast<ast::Call>())
     {
+      if (call->arguments_get())
+        errors_.error(assign->location_get(), "cannot assign a routine call");
       result_ = new ast::Assignment(loc, call, assign->value_get());
       result_ = recurse(result_);
       return;
