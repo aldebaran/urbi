@@ -667,7 +667,7 @@ namespace urbi
         args.push_back(object_cast(v##i))
       CHECK(1);CHECK(2);CHECK(3);CHECK(4);CHECK(5);CHECK(6);CHECK(7);CHECK(8);
 #undef CHECK
-      b->call(libport::Symbol(method), args);
+      b->call_with_this(libport::Symbol(method), args);
     }
 
     void

@@ -517,7 +517,7 @@ namespace object
     CHECK_ARG(5);
     done:
 
-    return call(name, args);
+    return call_with_this(name, args);
   }
 
 #undef CHECK_ARG
@@ -525,6 +525,17 @@ namespace object
   rObject
   Object::call(libport::Symbol name,
                const objects_type& args)
+  {
+    objects_type actual_args;
+    actual_args << this;
+    foreach (const object::rObject& arg, args)
+      actual_args << arg;
+    return call_with_this(name, actual_args);
+  }
+
+  rObject
+  Object::call_with_this(libport::Symbol name,
+                      const objects_type& args)
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     rObject fun = slot_get(name);

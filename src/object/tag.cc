@@ -98,7 +98,7 @@ namespace object
   Tag::new_flow_control(const objects_type& args)
   {
     // FIXME: new is now called on self instead of on proto.
-    rTag res = args[0]->call(SYMBOL(new), args)->as<Tag>();
+    rTag res = args[0]->call_with_this(SYMBOL(new), args)->as<Tag>();
     res->value_get()->flow_control_set();
     return res;
   }

@@ -228,11 +228,14 @@ namespace object
                  rObject arg4 = 0,
                  rObject arg5 = 0);
 
+    // /// Invoke \a name on \a this, passing additional arguments.
+    rObject call(libport::Symbol name,
+                 const objects_type& args);
+
     /// Invoke \a name on \a this, passing additional arguments.
     /// \a this is used to look for name, but it is not passed
     /// as arg0.  UrbiScript's "this" must be args[0].
-    rObject call(libport::Symbol name,
-                 const objects_type& args);
+    rObject call_with_this(libport::Symbol name, const objects_type& args);
 
 
     /*-------------.
