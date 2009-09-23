@@ -13,6 +13,8 @@
 # include <sys/inotify.h>
 #endif
 
+#include <libport/cassert>
+#include <libport/compiler.hh>
 #include <libport/dirent.h>
 #include <libport/format.hh>
 #include <libport/lockable.hh>
