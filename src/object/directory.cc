@@ -7,20 +7,28 @@
  *
  * See the LICENSE file for more information.
  */
-#include <libport/dirent.h>
-#include <libport/sys/types.h>
 
-#include <libport/format.hh>
+#ifndef WIN32
+# include <sys/inotify.h>
+#endif
 
 #include <libport/detect-win32.h>
+#include <libport/dirent.h>
+#include <libport/format.hh>
+#include <libport/lockable.hh>
+#include <libport/sys/types.h>
+#include <libport/thread.hh>
 
 #include <kernel/userver.hh>
 
 #include <object/directory.hh>
+#include <object/global.hh>
 #include <object/path.hh>
 #include <object/symbols.hh>
 
 #include <runner/raise.hh>
+
+using libport::BlockLock;
 
 namespace object
 {
@@ -40,8 +48,60 @@ namespace object
   | Urbi methods |
   `-------------*/
 
-  // Construction
+#ifndef WIN32
+  // Event polling thread
+  static libport::hash_map<unsigned, std::pair<rObject, rObject> > _watch_map;
+  static libport::Lockable _watch_map_lock;
+  static int _watch_fd;
 
+  static void poll()
+  {
+    _watch_fd = inotify_init();
+    if (_watch_fd == -1)
+      FRAISE("unable to start inotify: %s", libport::strerror(errno));
+
+    static const size_t name_size_max = 1024;
+
+    while (true)
+    {
+      static const size_t evt_size = sizeof(inotify_event);
+      static const size_t buf_size = evt_size + name_size_max;
+
+      char buffer[buf_size];
+      const int len = read(_watch_fd, &buffer, buf_size);
+
+      if (len < 0)
+        errnoabort();
+
+      int i = 0;
+      while (i < len)
+      {
+        inotify_event& evt = reinterpret_cast<inotify_event&>(buffer[i]);
+        i += evt_size + evt.len;
+
+        rObject event;
+        {
+          BlockLock lock(_watch_map_lock);
+          assert(libport::mhas(_watch_map, evt.wd));
+          if (evt.mask & IN_CREATE)
+            event = _watch_map[evt.wd].first;
+          else if (evt.mask & IN_DELETE)
+            event = _watch_map[evt.wd].second;
+          else
+            pabort("unrecognized inotify event");
+        }
+
+        {
+          object::objects_type args;
+          args << new object::String(evt.name);
+          ::kernel::urbiserver->schedule(event, SYMBOL(emit), args);
+        }
+      }
+    }
+  }
+#endif
+
+  // Construction
   Directory::Directory()
     : path_(new Path("/"))
   {
@@ -52,6 +112,7 @@ namespace object
     : path_(model.get()->path_)
   {
     proto_add(model);
+    create_events();
   }
 
   Directory::Directory(const std::string& value)
@@ -60,11 +121,33 @@ namespace object
     proto_add(proto ? proto : Object::proto);
   }
 
+  void
+  Directory::create_events()
+  {
+    CAPTURE_GLOBAL(Event);
+    on_file_created_ = Event->call("new");
+    slot_set(SYMBOL(fileCreated), on_file_created_);
+    on_file_deleted_ = Event->call("new");
+    slot_set(SYMBOL(fileDeleted), on_file_deleted_);
+  }
+
   void Directory::init(rPath path)
   {
     if (!path->is_dir())
       RAISE(str(format("Not a directory: '%s'") % path->as_string()));
     path_ = path;
+
+#ifndef WIN32
+    int watch = inotify_add_watch(_watch_fd, path->as_string().c_str(),
+                                  IN_CREATE | IN_DELETE);
+    if (watch == -1)
+      FRAISE("unable to watch directory: %s", libport::strerror(errno));
+    {
+      libport::BlockLock lock(_watch_map_lock);
+      _watch_map[watch].first = on_file_created_;
+      _watch_map[watch].second = on_file_deleted_;
+    }
+#endif
   }
 
   void Directory::init(const std::string& path)
@@ -152,6 +235,10 @@ namespace object
 
     rPrimitive p = new Primitive(&init_bouncer);
     proto->slot_set(SYMBOL(init), p);
+
+#ifndef WIN32
+    libport::startThread(boost::function0<void>(poll));
+#endif
   }
 
   rObject

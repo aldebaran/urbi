@@ -49,7 +49,16 @@ namespace object
 //     std::string basename();
 //     std::string dirname();
 
-    // Conversions
+  private:
+    void create_events();
+    rObject on_file_created_;
+    rObject on_file_deleted_;
+
+  /*------------.
+  | Conversions |
+  `------------*/
+
+  public:
     std::string as_string();
     std::string as_printable();
 
