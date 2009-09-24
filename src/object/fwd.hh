@@ -32,6 +32,7 @@ namespace object
 # define APPLY_ON_ALL_PRIMITIVES(Macro)         \
     Macro(Barrier);                             \
     Macro(Code);                                \
+    Macro(Date);                                \
     Macro(Dictionary);                          \
     Macro(Directory);                           \
     Macro(Executable);                          \

@@ -15,6 +15,7 @@
 #include <object/barrier.hh>
 #include <object/code.hh>
 #include <object/cxx-object.hh>
+#include <object/date.hh>
 #include <object/dictionary.hh>
 #include <object/directory.hh>
 #include <object/file.hh>
@@ -211,6 +212,7 @@ namespace object
   {
     Barrier     *b;
     (void)b;
+    Date        date;
     Directory   d;
     File        f;
     Path        p;

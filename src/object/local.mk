@@ -94,13 +94,15 @@ dist_libuobject_la_SOURCES +=			\
   object/cxx-object.hh				\
   object/cxx-object.hxx				\
   object/cxx-primitive.hh			\
+  object/date.hh				\
+  object/date.cc				\
   object/dictionary.cc				\
   object/dictionary.hh				\
   object/directory.cc				\
   object/directory.hh				\
-  object/executable.cc				\
   object/equality-comparable.hh			\
   object/equality-comparable.hxx		\
+  object/executable.cc				\
   object/file.cc				\
   object/file.hh				\
   object/finalizable.cc                         \
@@ -149,9 +151,9 @@ dist_libuobject_la_SOURCES +=			\
   object/tag.hh					\
   object/task.cc				\
   object/task.hh				\
+  object/urbi-exception.cc			\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\
-  object/urbi-exception.cc			\
   object/uvar.cc                                \
   object/uvar.hh                                \
   object/vector-slots.hh			\
