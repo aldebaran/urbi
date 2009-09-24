@@ -55,13 +55,13 @@ namespace object
   `--------*/
 
   private:
-    unsigned _stamp;
-    unsigned _year;
-    unsigned _month;
-    unsigned _day;
-    unsigned _hour;
-    unsigned _min;
-    unsigned _sec;
+    unsigned stamp_;
+    unsigned year_;
+    unsigned month_;
+    unsigned day_;
+    unsigned hour_;
+    unsigned min_;
+    unsigned sec_;
 
     URBI_CXX_OBJECT(Date);
   };

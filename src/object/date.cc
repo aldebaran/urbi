@@ -3,9 +3,9 @@
 
 namespace object
 {
-  /*-------------.
-  | Construction |
-  `-------------*/
+  /*---------------.
+  | Construction.  |
+  `---------------*/
 
   Date::Date()
   {
@@ -22,13 +22,13 @@ namespace object
   }
 
   Date::Date(rDate time)
-    : _stamp(time)
-    , _year(time->_year)
-    , _month(time->_month)
-    , _day(time->_day)
-    , _hour(time->_hour)
-    , _min(time->_min)
-    , _sec(time->_sec)
+    : stamp_(time)
+    , year_(time->year_)
+    , month_(time->month_)
+    , day_(time->day_)
+    , hour_(time->hour_)
+    , min_(time->min_)
+    , sec_(time->sec_)
   {
     CAPTURE_GLOBAL(Orderable);
     proto_add(Orderable);
@@ -55,45 +55,45 @@ namespace object
   {
     struct tm date;
     localtime_r(&time, &date);
-    _stamp = time;
-    _year = date.tm_year + 1900;
-    _month = date.tm_mon;
-    _day = date.tm_mday;
-    _hour = date.tm_hour;
-    _min = date.tm_min;
-    _sec = date.tm_sec;
+    stamp_ = time;
+    year_ = date.tm_year + 1900;
+    month_ = date.tm_mon;
+    day_ = date.tm_mday;
+    hour_ = date.tm_hour;
+    min_ = date.tm_min;
+    sec_ = date.tm_sec;
   }
 
-  /*-----------.
-  | Comparison |
-  `-----------*/
+  /*-------------.
+  | Comparison.  |
+  `-------------*/
 
   bool
   Date::operator ==(rDate rhs) const
   {
-    return _stamp == rhs->_stamp;
+    return stamp_ == rhs->stamp_;
   }
 
   bool
   Date::operator <(rDate rhs) const
   {
-    return _stamp < rhs->_stamp;
+    return stamp_ < rhs->stamp_;
   }
 
-  /*------------.
-  | Conversions |
-  `------------*/
+  /*--------------.
+  | Conversions.  |
+  `--------------*/
 
   std::string
   Date::as_string()
   {
     return libport::format("%s-%s-%s %s:%s:%s",
-                           _year, _month, _day, _hour, _min, _sec);
+                           year_, month_, day_, hour_, min_, sec_);
   }
 
-  /*---------------.
-  | Binding system |
-  `---------------*/
+  /*-----------------.
+  | Binding system.  |
+  `-----------------*/
 
   void
   Date::initialize(CxxObject::Binder<Date>& bind)
