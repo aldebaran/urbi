@@ -15,7 +15,7 @@
  */
 
 #include <libport/cstdio>
-#include <ctime>
+#include <libport/ctime>
 #include <libport/sys/types.h>
 #include <libport/sys/stat.h>
 

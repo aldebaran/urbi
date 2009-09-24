@@ -10,7 +10,7 @@
 /// \file liburbi/uclient.cc
 
 #if !defined WIN32
-# include <ctime>
+# include <libport/ctime>
 # include <libport/csignal>
 #endif
 
