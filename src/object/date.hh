@@ -11,7 +11,7 @@
 #ifndef OBJECT_DATE_HH
 # define OBJECT_DATE_HH
 
-# include <time.h>
+# include <libport/ctime>
 
 # include <object/cxx-object.hh>
 
