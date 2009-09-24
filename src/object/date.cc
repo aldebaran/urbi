@@ -10,9 +10,7 @@ namespace object
   Date::Date()
   {
     proto_add(proto ? proto : Object::proto);
-    time_t time;
-    ::time(&time);
-    split(time);
+    split(time(0));
   }
 
   Date::Date(time_t time)
@@ -43,11 +41,7 @@ namespace object
     if (!args.empty())
       split(from_urbi<unsigned>(args[0]));
     else
-    {
-      time_t time;
-      ::time(&time);
-      split(time);
-    }
+      split(time(0));
   }
 
   void
