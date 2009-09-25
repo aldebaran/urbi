@@ -24,9 +24,9 @@ namespace object
     Regexp(const std::string& rg);
     Regexp(rRegexp model);
 
-  /*-------------.
-  | Urbi methods |
-  `-------------*/
+  /*---------------.
+  | Urbi methods.  |
+  `---------------*/
   public:
     std::string as_string() const;
     void init(const std::string& rg);
