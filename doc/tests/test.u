@@ -43,49 +43,6 @@ do (Object)
     };
 }|
 
-// Be robust to Windows:
-// failed assertion: Path . new("/") . cd == Path . new("/")
-//                   (Path("/") == Path("/"))
-// failed assertion: Path . cwd == Path . new("/")
-//                   (Path("/") == Path("/"))
-// The following is taken from tests/test.u.  We need to factor.
-{
-  function neutralize(string)
-  {
-    if (2 < string.size && string[1] == ":")
-      string[0, 2] = "";
-    for (var i = 0; i < string.size; i++)
-      if (string[i] == "\\")
-        string[i] = "/";
-    return string;
-  };
-
-  function wrap(o, msg, wrapper)
-  {
-    var old = o.getSlot(msg); o.removeSlot(msg);
-    o.setSlot
-    (msg,
-    function()
-    {
-      return wrapper(old.apply([this]))
-    }
-    );
-  };
-  wrap(Path, "asString", neutralize);
-  wrap(Path, "asPrintable", neutralize);
-  wrap(Exception, "asString", neutralize);
-}|
-
-do (Path)
-{
-  '=='->constant = false;
-  '==' = function (that)
-  {
-    clog << asString + " vs. " + that.asString;
-    asString == that.asString;
-  }
-}|
-
 // Deterministic String.fresh.
 do (String)
 {

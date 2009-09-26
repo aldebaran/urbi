@@ -58,15 +58,22 @@ assert(Path.new("relative/path/file.u").basename  == "file.u");
 
 \item \lstinline|cwd|\\
   The current working directory.
+% We used to write
+% assert(Path.new("/").cd == Path.new("/"));
+% assert(Path.cwd         == Path.new("/"));
+% which is wrong on Windows, because cwd (like cd) returns Z:/ instead
+% of /.
 \begin{urbiscript}[firstnumber=last]
-// Save current directory.
-var pwd = Path.cwd|
-// Go into ``/''.
-assert(Path.new("/").cd == Path.new("/"));
-// Current working directory is ``/''.
-assert(Path.cwd         == Path.new("/"));
-// Go back to the directory we were in.
-assert(pwd.cd           == pwd);
+{
+  // Save current directory.
+  var pwd = Path.cwd|
+  // Go into ``/''.
+  var root = Path.new("/").cd;
+  // Current working directory is ``/''.
+  assert(Path.cwd == root);
+  // Go back to the directory we were in.
+  assert(pwd.cd == pwd);
+};
 \end{urbiscript}
 
 \item \lstinline|dirname|\\
