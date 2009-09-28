@@ -27,7 +27,7 @@ namespace rewrite
     : pattern_(false)
     , allow_decl_(false)
     , allow_subdecl_(false)
-    , factory_()
+    , factory_(new ast::Factory)
   {}
 
 
