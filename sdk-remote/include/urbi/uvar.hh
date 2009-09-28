@@ -45,6 +45,7 @@ namespace urbi
               impl::UContextImpl* = 0);
     void setOwned();
 
+    /// The type of the current content.
     UDataType type() const;
 
     /// Request the current value, wait until it is available.

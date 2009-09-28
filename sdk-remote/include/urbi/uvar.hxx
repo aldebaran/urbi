@@ -80,8 +80,8 @@ namespace urbi
     return *this;
   }
 
-# define SET(type)                         \
-  inline UVar& UVar::operator=(type tv)    \
+# define SET(Type)                         \
+  inline UVar& UVar::operator=(Type tv)    \
   {                                        \
     UValue v(tv, false);                   \
     assert(impl_);                         \
@@ -89,28 +89,28 @@ namespace urbi
     return *this;                          \
   }
 
-  SET(ufloat)
-  SET(const std::string&)
   SET(const UBinary&)
   SET(const UImage&)
-  SET(const USound&)
   SET(const UList&)
+  SET(const USound&)
+  SET(const std::string&)
+  SET(ufloat)
 # undef SET
 
-# define GET(type)                    \
-  inline UVar::operator type() const  \
+# define GET(Type)                    \
+  inline UVar::operator Type() const  \
   {                                   \
     assert(impl_);                    \
     return impl_->get();              \
   }
 
-  GET(int)
-  GET(const UBinary&)
   GET(UImage)
-  GET(USound)
-  GET(ufloat)
-  GET(std::string)
   GET(UList)
+  GET(USound)
+  GET(const UBinary&)
+  GET(int)
+  GET(std::string)
+  GET(ufloat)
 # undef GET
 
   inline UVar::operator UBinary*() const
