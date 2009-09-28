@@ -178,6 +178,24 @@ Use \lstinline{Foo.stop} instead.
 
 Use \lstinline{//# line} instead.
 
+\subsection{tag+end}
+
+When you used to write code like this to detect the end of a given Urbi
+command:
+\begin{urbiscript}
+mytag+end: { echo ("foo") },
+\end{urbiscript}
+
+You can now use the \lstinline{leave?} method of the \lstinline{Tag} object
+like this:
+
+\begin{urbiscript}
+var mytag = Tag.new("mytag");
+at (mytag.leave?)
+  Channel.new("mytag") << "code has finished";
+mytag: { echo ("foo") },
+\end{urbiscript}
+
 \section{Cookbook}
 
 
