@@ -47,7 +47,7 @@ namespace parser
     , result_(0)
     , debug_(yydebug)
     , meta_(false)
-    , factory_()
+    , factory_(new ast::Factory)
   {
   }
 
