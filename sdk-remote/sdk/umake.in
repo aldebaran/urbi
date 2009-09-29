@@ -128,7 +128,7 @@ get_options ()
       (-s | --shared-library) core= ; shared=true ;;
       (     --deep-clean)    deep_clean ;;
       (-c | --clean)         clean=true ;;
-      (-j | --jobs)  shift; makeargs+=" -j $1";;
+      (-j | --jobs)  shift; append "-j $1" " ";;
       (-C | --core  ) shift; core=$1;;
       (-H | --host  ) shift; host=$1;;
       (-o | --output) shift; target=$1;;
@@ -174,11 +174,11 @@ get_options ()
     # If this is a directory, append a slash.
     case $1$(test -d "$1" && echo '/') in
       (VPATH=*) vpath=$vpath:$(echo "$1" | sed -e 's/^[^=]*=//');;
-      (*=*)     makeargs+=" '$1'" ;;
+      (*=*)     append makeargs "'$1'";;
 
-      (*.h |*.hh|*.hxx|*.hpp) headers+=" '$1'";  havearg=true ;;
-      (*.cc|*.cpp|*.c|*.C)    sources+=" '$1'";  havearg=true ;;
-      (*.a|*.o|*.obj)         libs+=" '$1'";     havearg=true ;;
+      (*.h |*.hh|*.hxx|*.hpp) append headers "'$1'";  havearg=true ;;
+      (*.cc|*.cpp|*.c|*.C)    append sources "'$1'";  havearg=true ;;
+      (*.a|*.o|*.obj)         append libs "'$1'";     havearg=true ;;
       (*/)
 	# It is a directory.
 	files=$(find "$1"				\
@@ -257,13 +257,13 @@ fi
 # Use default main.
 if $automain; then
   : ${umaindir='@umaindir@'}
-  sources+=" $umaindir/umain.cc"
+  append sources "$umaindir/umain.cc"
 fi
 
 for s in $(eval echo "$sources")
 do
-  objects+=" '"$(basename "$s" | sed 's/\.[^.]*$/.o/g')"'"
-  vpath+=:$(dirname "$s")
+  append objects "'"$(basename "$s" | sed 's/\.[^.]*$/.o/g')"'"
+  append vpath $(dirname "$s") :
 done
 
 # The library extension.
@@ -289,17 +289,17 @@ case $core in
     for i in $libs
     do
       test "$i" = "$target" ||
-        res+=" $i"
+        append res "$i"
     done
     libs=$res
     if $shared; then
-      makeargs+=" OUTSHLIB=$target"
+      append makeargs "OUTSHLIB=$target"
     else
-      makeargs+=" OUTLIB=$target"
+      append makeargs "OUTLIB=$target"
     fi
     ;;
   (*)
-    makeargs+=" OUTBIN=$target"
+    append makeargs "OUTBIN=$target"
     ;;
 esac
 
@@ -314,7 +314,7 @@ esac
 if $shared; then
   case $host in
       (*pw32*|*mingw32*)
-      LIBADD+=' -no-undefined ${envdir}/libuobject.la'
+      append LIBADD '-no-undefined ${envdir}/libuobject.la'
       ;;
   esac
 fi
@@ -354,7 +354,7 @@ else
 fi
 
 # Then pass env.
-makeargs+=" prefix=$prefix"
+append makeargs "prefix=$prefix"
 verbose                                         \
         "LIBADD='$LIBADD'"                      \
         "headers='$headers'"                    \

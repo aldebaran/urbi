@@ -199,3 +199,16 @@ initialize ()
 
   verbose "$0 running."
 }
+
+# append VARIABLE CONTENT [SEPARATOR=' ']
+# ---------------------------------------
+append ()
+{
+  local var=$1
+  local content=$2
+  local sep=${3-' '}
+  if eval "test \${$var+set} = set"; then
+    eval "$var=\$$var\$sep"
+  fi
+  eval "$var=\$$var\$content"
+}
