@@ -81,11 +81,23 @@ html_files = 					\
   urbi-sdk4.html				\
   urbi-sdk5.html
 install-doc: $(pdf_DATA) urbi-sdk.html
+doc_host = downloads@www.gostai.com
+doc_dir = gostai.com-downloads/urbi-sdk-2.0
+doc_files = $(pdf_DATA) $(html_files) 
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
 # compilation seems to prefer *.png to *.pdf, which is wrong here.
 	cp $(srcdir)/img/urbi-sdk1x.png urbi-sdk1x.png
-	scp $(pdf_DATA) $(html_files) downloads@www.gostai.com:urbi-sdk-2.0/doc
+	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new && \
+			 mkdir -p $(doc_dir)/doc.new'
+	scp $(doc_files) $(doc_host):$(doc_dir)/doc.new
+	ssh $(doc_host)				\
+	  'bak=$$(date +"%F-%T") &&		\
+	   cd $(doc_dir) &&			\
+	   { 					\
+	     mv doc doc.$$bak &&		\
+	     mv doc.new doc;			\
+	   } || mv doc.$$bak doc'
 
 ## -------------- ##
 ## document-aux.  ##
