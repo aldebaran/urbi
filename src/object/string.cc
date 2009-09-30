@@ -115,8 +115,7 @@ namespace object
     }
     catch (const boost::bad_lexical_cast&)
     {
-      boost::format fmt("unable to convert to float: %s");
-      RAISE(str(fmt % as_printable()));
+      FRAISE("unable to convert to float: %s", as_printable());
     }
   }
 
@@ -127,21 +126,26 @@ namespace object
   }
 
   std::string
-  String::format (rFormatInfo finfo) const
+  String::format(rFormatInfo finfo) const
   {
-    std::string str(!finfo->uppercase_get() ? content_
-                    : (finfo->uppercase_get() > 0 ? to_upper() : to_lower()));
-    int padsize;
-    if ((padsize = finfo->width_get() - str.size()) <= 0)
-      return str;
+    std::string res(!finfo->uppercase_get() ? content_
+                    : finfo->uppercase_get() > 0 ? to_upper()
+		    : to_lower());
 
-    std::string res(padsize, finfo->pad_get()[0]);
-    if (finfo->alignment_get() == FormatInfo::Align::LEFT)
-      return std::string(str).append(res);
-    else if (finfo->alignment_get() == FormatInfo::Align::RIGHT)
-      return res.append(str);
-    else
-      return res.insert((res.size() + 1) / 2, str);
+    // Number of padding chars to add.
+    size_t size = res.size();
+    int padsize = finfo->width_get() - size;
+    if (0 < padsize)
+      {
+        // Where to insert the padding.
+        size_t pos =
+          (finfo->alignment_get() == FormatInfo::Align::LEFT ? size
+           : finfo->alignment_get() == FormatInfo::Align::RIGHT ? 0
+           : (size + 1) / 2);
+        res.insert(pos,
+                   std::string(padsize, finfo->pad_get()[0]));
+      }
+    return res;
   }
 
   std::string
@@ -291,12 +295,12 @@ namespace object
   void String::check_bounds(size_type from, size_type to) const
   {
     if (from >= content_.length())
-      RAISE("invalid index: " + string_cast(from));
+      FRAISE("invalid index: %s", from);
     if (to >  content_.length())
-      RAISE("invalid index: " + string_cast(to));
+      FRAISE("invalid index: %s", to);
     if (from > to)
-      RAISE("range starting after its end does not make sense: "
-            + string_cast(from) + ", " + string_cast(to));
+      FRAISE("range starting after its end does not make sense: %s, %s",
+	     from, to);
   }
 
   std::string String::sub(size_type idx) const
