@@ -27,9 +27,9 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 
 \begin{itemize}
 \item \lstinline|all(\var{fun})|\\
-% FIXME: link to predicate glossary entry
-Return whether all the members of the target verify the given
-predicate.
+  % FIXME: link to predicate glossary entry
+  Return whether all the members of the target verify the predicate
+  \var{fun}.
 
 \begin{urbiscript}[firstnumber=last]
 // Are all elements positive?
@@ -39,9 +39,9 @@ assert([-2, 0, 2, 4].all(function (e) { e % 2 == 0 }));
 \end{urbiscript}
 
 \item \lstinline|any(\var{fun})|\\
-% FIXME: link to predicate glossary entry
-  Whether at least one of the members of the target verify the given
-  predicate.
+  % FIXME: link to predicate glossary entry
+  Whether at least one of the members of the target verifies the
+  predicate \var{fun}.
 
 \begin{urbiscript}[firstnumber=last]
 // Is there any even element?
@@ -104,7 +104,7 @@ assert(x.clear == []);
 [00000000] *** 4
 \end{urbiscript}
 
-\item \lstinline|each&(\var{fun})|\\
+\item \lstinline|'each&'(\var{fun})|\\
 Apply the given functional value on all members simultaneously.
 
 \begin{urbiscript}[firstnumber=last]
@@ -126,11 +126,11 @@ assert(! [1].empty);
 \end{urbiscript}
 
 \item \lstinline|filter(\var{fun})|\\
-  Return the list of all member of the target that verify the given
-  predicate.
+  The list of all the members of the target that verify the predicate
+  \var{fun}.
 
 \begin{urbiscript}[firstnumber=last]
-// Keep only odd numbers
+// Keep only odd numbers.
 assert([0, 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1}) == [1, 3, 5]);
 \end{urbiscript}
 
