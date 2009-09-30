@@ -40,8 +40,8 @@ assert([-2, 0, 2, 4].all(function (e) { e % 2 == 0 }));
 
 \item \lstinline|any(\var{fun})|\\
 % FIXME: link to predicate glossary entry
-Return whether at least one of the members of the target verify the
-given predicate.
+  Whether at least one of the members of the target verify the given
+  predicate.
 
 \begin{urbiscript}[firstnumber=last]
 // Is there any even element?
@@ -65,10 +65,11 @@ assert([0, 1, 2].asList == [0, 1, 2]);
 \end{urbiscript}
 
 \item \lstinline|asString|\\
-Return the target as a string describing the list.
+  A string describing the list.  Uses \lstinline|asPrintable| on its
+  members, so that, for instance, strings are displayed with quotes.
 
 \begin{urbiscript}[firstnumber=last]
-assert([0, 1, 2].asString == "[0, 1, 2]");
+assert([0, [1], "2"].asString == "[0, [1], \"2\"]");
 \end{urbiscript}
 
 \item \lstinline|back|\\
@@ -206,12 +207,13 @@ assert(a.insertFront(0) == [0, 1, 2]);
 assert(a == [0, 1, 2]);
 \end{urbiscript}
 
-\item \lstinline|join(\var{sep})|\\
-  Concatenate all members of the target to form a string, separating
-  them with the given separator.
+\item \lstinline|join(\var{sep} = "", \var{prefix} = "", \var{suffix} = "")|\\
+  Bounces to \lstinline|String.join|, see \refObject{String}.
 
 \begin{urbiscript}[firstnumber=last]
-assert(["b", "ob", "b"].join("a") == "baobab");
+assert(["", "ob", ""].join                == "ob");
+assert(["", "ob", ""].join("a")           == "aoba");
+assert(["", "ob", ""].join("a", "B", "b") == "Baobab");
 \end{urbiscript}
 
 \item \lstinline|keys()|\\

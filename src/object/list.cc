@@ -289,6 +289,25 @@ namespace object
     return this;
   }
 
+
+  // FIXME: Really looks like String::join, we should find a means to
+  // factor both.
+  std::string
+  List::asString() const
+  {
+    std::string res = "[";
+    bool tail = false;
+    foreach (const rObject& o, content_)
+      {
+        if (tail++)
+          res += ", ";
+        res += o->call(SYMBOL(asPrintable))->as<String>()->value_get();
+      }
+    res += "]";
+    return res;
+  }
+
+
   rObject
   List::removeBack()
   {
@@ -325,6 +344,7 @@ namespace object
     bind(SYMBOL(Name), &List::Function)
 
     DECLARE(asBool,         as_bool         );
+    DECLARE(asString,       asString        );
     DECLARE(back,           back            );
     DECLARE(clear,          clear           );
     DECLARE(each,           each            );

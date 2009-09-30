@@ -84,12 +84,9 @@ do (List)
   copySlot ("insertBack", "<<");
 
   // Concatenate the string representation of the members, separated by \a sep
-  function join(sep)
+  function join(sep = "", prefix = "", suffix = "")
   {
-    if (empty)
-      ""
-    else
-      foldl_head(function (a, b) { a.asString + sep + b.asString })
+    sep.join(this, prefix, suffix);
   };
 
   // We might want separate Range objects, with a literal syntax
@@ -166,20 +163,7 @@ do (List)
     res
   };
 
-  function asString()
-  {
-    var res = "" |
-    if (!empty)
-    {
-      res = front.acceptVoid.asPrintable |
-      // FIXME: join might be more efficient.
-      for| (var elt: tail)
-        res += ", " + elt.acceptVoid.asPrintable |
-    } |
-    "[" + res + "]"
-  };
-
-  // Pattern matching
+  // Pattern matching.
   function matchAgainst(handler, pattern)
   {
     if (!pattern.isA(List) || pattern.size != size)

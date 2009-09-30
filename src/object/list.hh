@@ -50,6 +50,9 @@ namespace object
     rList   insert      (const rFloat& idx, const rObject& elt);
     rList   insertBack  (const rObject& elt);
     rList   insertFront (const rObject& elt);
+
+    std::string asString() const;
+
     rList   remove_by_id(const rObject& elt);
     rList   reverse     ();
     rObject set         (const rFloat& nth, const rObject& value);
