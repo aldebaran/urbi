@@ -19,7 +19,7 @@ precompiled_symbols_hh_sources =		\
                $(FROM_UGRAMMAR_Y)		\
                $(FROM_UTOKEN_L),		\
         $(dist_libuobject_la_SOURCES))
-EXTRA_DIST += object/symbols-generate.pl $(precompiled_symbols_stamp)
+EXTRA_DIST += object/symbols-generate.pl
 
 $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_hh_sources)
 	@rm -f $@.tmp
