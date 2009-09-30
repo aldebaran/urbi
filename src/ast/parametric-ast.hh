@@ -137,7 +137,7 @@ namespace ast
 /// Define a parametric ast, using the current file and line as location.
 # define PARAMETRIC_AST_HELPER(Name, Content, Desugar)                  \
   static ::ast::ParametricAst                                           \
-  Name(Content, __HERE__, Desugar)
+  Name(Content, LOCATION_HERE, Desugar)
 
 # define PARAMETRIC_AST(Name, Content)                                  \
   PARAMETRIC_AST_HELPER(Name, Content, false)

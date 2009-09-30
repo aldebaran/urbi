@@ -485,9 +485,9 @@ namespace runner
         ast::new_clone(e);
 
       ast::rRoutine routine =
-        new ast::Routine(__HERE__,
+        new ast::Routine(LOCATION_HERE,
                          true, new ast::local_declarations_type,
-                         new ast::Scope(__HERE__, body));
+                         new ast::Scope(LOCATION_HERE, body));
 
       rCode closure = new object::Code(routine.get());
       closure->self_set(stacks_.self());

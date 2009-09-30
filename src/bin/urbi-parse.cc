@@ -29,6 +29,6 @@ main(int argc, char** argv)
     source += buf;
   }
 
-  ast::rAst res = parser::parse(source, __HERE__)->ast_get();
+  ast::rAst res = parser::parse(source, LOCATION_HERE)->ast_get();
   ast::serialize(res, *output);
 }

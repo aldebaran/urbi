@@ -19,7 +19,8 @@
 
 # include <parser/location.hh>
 
-# define __HERE__ (::ast::loc(new libport::Symbol(__FILE__), __LINE__))
+# define LOCATION_HERE					\
+  ::ast::loc(new libport::Symbol(__FILE__), __LINE__)
 
 namespace ast
 {

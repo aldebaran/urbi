@@ -101,7 +101,7 @@ namespace dbg
   {
     assert(sneaker);
     return
-      object::execute_parsed(parser::parse(command, __HERE__),
+      object::execute_parsed(parser::parse(command, LOCATION_HERE),
                              SYMBOL(eval),
 			     std::string("error evaluating command `") +
 			     command + "'");
