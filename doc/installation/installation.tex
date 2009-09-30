@@ -35,12 +35,14 @@ where
 
 \section{Install}
 
+\subsection{Linux and MacOS}
+
 Uncompress the package where you want to install it.  The package is
 built to be installed as \file{/usr/local/gostai}, but this can be
 changed --- see below.  It might be interesting to keep several
 versions of our packages, in which case using symbolic links (aka
-\emph{aliases}) proves to be handy.  Under Unix, the installation
-sequence should look like:
+\emph{aliases}) proves to be handy.  The installation sequence should
+look like:
 
 \begin{shell}
 $ tar zxf urbi-sdk-2.0-beta3-linux-x86.tar.gz
@@ -70,10 +72,23 @@ $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$URBI_ROOT/lib
 $ export PATH=$PATH:$URBI_ROOT/bin
 \end{shell}%$
 
+If you want to be able to launch the urbi tools without specifying
+their full path, don't forget to extend your PATH variable:
+
+\begin{shell}[escapeinside=`']
+$ export PATH="`\var{urbi\_root}'/bin:$PATH"
+\end{shell}%$
+
+\subsection{Windows}
+
+Uncompress the zip file wherever you want.
+
 \section{Checks}
 
 Running the various programs is the quickest way to test your urbi
 installation.
+
+\subsection{Linux and MacOS}
 
 \begin{shell}
 # Check that urbi is properly set up.
@@ -83,6 +98,13 @@ $ urbi-launch --version
 # Check that urbi-launch can find its dependencies.
 $ urbi-launch -- --version
 \end{shell}%$
+
+\subsection{Windows}
+
+Execute the urbi.bat script located at the root of the uncompressed
+package. It should open a terminal with an interactive Urbi session.
+
+% FIXME: add a listing with the urbi banner under windows?
 
 \section{\code{URBI\_PATH}}
 
