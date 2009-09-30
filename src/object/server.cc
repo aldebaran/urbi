@@ -59,8 +59,11 @@ namespace object
   void
   Server::listen(const std::string& host, const std::string& port)
   {
-    libport::Socket::listen(boost::bind(&Server::make_socket, this),
-                            host, port);
+    boost::system::error_code err =
+      libport::Socket::listen(boost::bind(&Server::make_socket, this),
+			      host, port);
+    if (err)
+      RAISE(err.message());
   }
 
   void
