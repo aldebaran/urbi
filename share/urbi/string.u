@@ -18,17 +18,6 @@ do (String)
   // Allow to use a string in a "for" loop.
   function asList() { split("") };
 
-  // Join list elements with a separator.
-  function join(l)
-  {
-    if (l.empty)
-      return "" |
-    var res = "" |
-    for| (var e: l)
-      res += this + e |
-    res[size, res.size]
-  };
-
   function '%'(list)
   {
     Formatter.new(this) % list

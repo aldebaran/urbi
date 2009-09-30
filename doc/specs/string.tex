@@ -137,6 +137,15 @@ assert("UPPER".isUpper);
 assert(! "Not Upper".isUpper);
 \end{urbiscript}
 
+\item \lstinline|join(\var{list}, \var{prefix}, \var{suffix})|\\
+  Glue the result of \lstinline|asString| applied to the members of
+  \var{list}, separated by \lstinline|this|, and embedded in a pair
+  \var{prefix}/var{suffix}.
+\begin{urbiscript}[firstnumber=last]
+assert("|".join([1, 2, 3], "(", ")")      == "(1|2|3)");
+assert(", ".join([1, [2], "3"], "[", "]") == "[1, [2], 3]");
+\end{urbiscript}
+
 \item \lstinline|replace(\var{from}, \var{to})|\\
   Replace every occurrence of the string \var{from} in
   \lstinline|this| by \var{to}, and return the result.
@@ -180,7 +189,7 @@ assert("%s + %s = %s" % [1, 2, 3] == "1 + 2 = 3");
 \end{urbiscript}
 
 \item \lstinline|'*'(\var{n})|\\
-  Return the concatentation of \lstinline|this| \var{n} times.
+  Concatenate \lstinline|this| \var{n} times.
 \begin{urbiscript}[firstnumber=last]
 assert("foo" * 0 == "");
 assert("foo" * 1 == "foo");
@@ -188,8 +197,7 @@ assert("foo" * 3 == "foofoofoo");
 \end{urbiscript}
 
 \item \lstinline|'+'(\var{other})|\\
-  Return the concatenation of \lstinline|this| and
-  \lstinline|\var{other}.asString|.
+  Concatenate \lstinline|this| and \lstinline|\var{other}.asString|.
 \begin{urbiscript}[firstnumber=last]
 assert("foo" + "bar" == "foobar");
 assert("foo" + "" == "foo");

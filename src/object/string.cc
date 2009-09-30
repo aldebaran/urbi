@@ -174,7 +174,27 @@ namespace object
   }
 
 
-  static size_t
+  std::string
+  String::join(const objects_type& os,
+               const std::string& prefix, const std::string& suffix) const
+  {
+    std::string res = prefix;
+    bool tail = false;
+    foreach (const rObject& o, os)
+      {
+        if (tail++)
+          res += content_;
+        // FIXME: Calling asString is a common need we should factor.
+        res += o->call(SYMBOL(asString))->as<String>()->value_get();
+      }
+    res += suffix;
+    return res;
+  }
+
+
+
+  static
+  size_t
   find_first(const std::vector<std::string>& seps,
              const std::string& str,
              size_t start,
@@ -200,20 +220,19 @@ namespace object
                 bool keep_delim, bool keep_empty) const
   {
     std::vector<std::string> res;
-    size_t start = 0;
-    size_t end;
-    std::string delim;
 
     // Special case: splitting on an empty string returns the individual
     // characters.
     if (libport::has(sep, ""))
     {
-      for (std::string::size_type pos = 0; pos != content_.size(); pos++)
+      for (std::string::size_type pos = 0; pos != content_.size(); ++pos)
 	res.push_back(content_.substr(pos, 1));
       return res;
     }
 
-    for (end = find_first(sep, content_, start, delim);
+    size_t start = 0;
+    std::string delim;
+    for (size_t end = find_first(sep, content_, start, delim);
          end != std::string::npos && limit;
          end = find_first(sep, content_, start, delim), --limit)
     {
@@ -421,6 +440,7 @@ namespace object
     DECLARE(isSpace     , is_space);
     DECLARE(isUpper     , is_upper);
     DECLARE(isXdigit    , is_xdigit);
+    DECLARE(join        , join);
     DECLARE(replace     , replace);
     DECLARE(set         , set);
     DECLARE(size        , size);

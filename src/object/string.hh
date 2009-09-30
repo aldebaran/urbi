@@ -63,6 +63,11 @@ namespace object
     const std::string& set(const std::string& rhs);
     size_type size() const;
 
+    std::string
+      join(const objects_type& os,
+           const std::string& prefix = "",
+           const std::string& suffix = "") const;
+
     std::vector<std::string>
       split(const std::string& sep,
             int limit = -1,
