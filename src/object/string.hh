@@ -50,7 +50,7 @@ namespace object
     libport::ufloat as_float() const;
     /// False iff empty.
     virtual bool as_bool() const;
-    std::string as_string() const;
+    const std::string& as_string() const;
     std::string as_printable() const;
     std::string format(rFormatInfo finfo) const;
 
@@ -60,16 +60,18 @@ namespace object
     std::string fresh() const;
     /// Convert every occurrence of \a from to \a to.
     std::string replace(const std::string& from, const std::string& to) const;
-    std::string set(const std::string& rhs);
+    const std::string& set(const std::string& rhs);
     size_type size() const;
-    std::vector<std::string> split(const std::string& sep,
-                                   int limit = -1,
-                                   bool keep_delim = false,
-                                   bool keep_empty = true) const;
-    std::vector<std::string> split(const std::vector<std::string>& sep,
-                                   int limit = -1,
-                                   bool keep_delim = false,
-                                   bool keep_empty = true) const;
+
+    std::vector<std::string>
+      split(const std::string& sep,
+            int limit = -1,
+            bool keep_delim = false, bool keep_empty = true) const;
+    std::vector<std::string>
+      split(const std::vector<std::string>& sep,
+            int limit = -1,
+            bool keep_delim = false, bool keep_empty = true) const;
+
     std::string star(size_type times) const;
 
     /// [from, to].

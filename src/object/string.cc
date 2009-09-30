@@ -81,7 +81,8 @@ namespace object
     return libport::damerau_levenshtein_distance(value_get(), other);
   }
 
-  std::string String::plus(rObject rhs) const
+  std::string
+  String::plus(rObject rhs) const
   {
     rObject str = rhs->call(SYMBOL(asString));
     type_check<String>(str);
@@ -148,23 +149,22 @@ namespace object
     return res;
   }
 
-  std::string
+  const std::string&
   String::as_string() const
   {
     return content_;
   }
 
-  std::string
+  const std::string&
   String::set(const std::string& rhs)
   {
-    content_ = libport::Symbol(rhs);
-    return rhs;
+    return content_ = rhs;
   }
 
   std::string
   String::fresh() const
   {
-    return libport::Symbol::fresh(libport::Symbol(value_get())).name_get();
+    return libport::Symbol(value_get());
   }
 
   std::string
