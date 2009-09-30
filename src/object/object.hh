@@ -286,7 +286,7 @@ namespace object
   typedef boost::shared_ptr<rObject> rrObject;
 
   /// Pretty print an object (using the asString urbi method).
-  std::ostream& operator << (std::ostream& s, Object& o);
+  std::ostream& operator<<(std::ostream& s, Object& o);
 
 } // namespace object
 

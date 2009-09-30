@@ -36,7 +36,7 @@ namespace object
 
   inline
   Object&
-  Object::proto_remove (const rObject& p)
+  Object::proto_remove(const rObject& p)
   {
     assert(p);
     protos_type::iterator i = protos_->begin();
@@ -50,7 +50,7 @@ namespace object
 
   inline
   const Object::protos_type&
-  Object::protos_get () const
+  Object::protos_get() const
   {
     return *protos_;
   }
@@ -77,7 +77,7 @@ namespace object
 
   inline
   const Object::slots_implem&
-  Object::slots_get () const
+  Object::slots_get() const
   {
     return slots_;
   }
@@ -144,19 +144,22 @@ namespace object
   `-------------------*/
 
   template <typename T>
-  bool Object::is_a() const
+  bool
+  Object::is_a() const
   {
     return dynamic_cast<const T*>(this);
   }
 
   template <typename T>
-  libport::intrusive_ptr<T> Object::as() const
+  libport::intrusive_ptr<T>
+  Object::as() const
   {
     return dynamic_cast<const T*>(this);
   }
 
   template <typename T>
-  libport::intrusive_ptr<T> Object::as()
+  libport::intrusive_ptr<T>
+  Object::as()
   {
     return dynamic_cast<T*>(this);
   }
