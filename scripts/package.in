@@ -97,6 +97,13 @@ do
   esac
 done
 
+# Fix libtool usage of +=.
+targetline='eval "$1=\\"\\\$\$1 $2\\""'
+$FIND $packagedir -name libtool -exec sh -c  " sed -r -e 's/^.*eval.*\+=.*$/$targetline/' {} > {}.new && mv {}.new {}" ';'
+
+# Remove cccache from the param.mk. No perl, no sed -i.
+$FIND $packagedir -name param.mk -exec sh -c  " sed -e 's/ccache //' {} > {}.new && mv {}.new {}" ';'
+
 # When building a release for non-Windows platforms, strip the binaries
 # and the libraries.
 if $release_mode && [ "$OS" != windows ]; then
