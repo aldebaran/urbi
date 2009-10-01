@@ -318,20 +318,22 @@ namespace object
 #define DECLARE(Name, Code)                                     \
     Object::proto->slot_set(SYMBOL(Name), make_primitive(&Object::Code))
 
-    DECLARE(asBool         , as_bool);
-    DECLARE(createSlot     , urbi_createSlot);
-    DECLARE(getProperty    , property_get);
-    DECLARE(getSlot        , urbi_getSlot);
-    DECLARE(hasProperty    , property_has);
-    DECLARE(hasSlot        , slot_has);
-    DECLARE(locateSlot     , urbi_locateSlot);
-    DECLARE(properties     , urbi_properties);
-    DECLARE(removeProperty , property_remove);
-    DECLARE(removeSlot     , urbi_removeSlot);
-    DECLARE(setConstSlot   , urbi_setConstSlot);
-    DECLARE(setProperty    , property_set);
-    DECLARE(setSlot        , urbi_setSlot);
-    DECLARE(updateSlot     , urbi_updateSlot);
+    DECLARE(asBool             , as_bool);
+    DECLARE(asPrintable        , asPrintable);
+    DECLARE(asToplevelPrintable, asToplevelPrintable);
+    DECLARE(createSlot         , urbi_createSlot);
+    DECLARE(getProperty        , property_get);
+    DECLARE(getSlot            , urbi_getSlot);
+    DECLARE(hasProperty        , property_has);
+    DECLARE(hasSlot            , slot_has);
+    DECLARE(locateSlot         , urbi_locateSlot);
+    DECLARE(properties         , urbi_properties);
+    DECLARE(removeProperty     , property_remove);
+    DECLARE(removeSlot         , urbi_removeSlot);
+    DECLARE(setConstSlot       , urbi_setConstSlot);
+    DECLARE(setProperty        , property_set);
+    DECLARE(setSlot            , urbi_setSlot);
+    DECLARE(updateSlot         , urbi_updateSlot);
 #undef DECLARE
   }
 

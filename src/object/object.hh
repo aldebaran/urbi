@@ -250,7 +250,8 @@ namespace object
     rObject urbi_setSlot(key_type k, const rObject& o);
     rObject urbi_setConstSlot(key_type k, const rObject& o);
     rObject urbi_updateSlot(key_type k, const rObject& o);
-
+    rObject asPrintable() const;
+    rObject asToplevelPrintable() const;
 
   private:
     location_type

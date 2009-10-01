@@ -494,6 +494,17 @@ namespace object
     return slot_update(name, value);
   }
 
+  rObject
+  Object::asPrintable() const
+  {
+    return const_cast<Object*>(this)->call(SYMBOL(asString));
+  }
+
+  rObject
+  Object::asToplevelPrintable() const
+  {
+    return const_cast<Object*>(this)->call(SYMBOL(asPrintable));
+  }
 
 #define CHECK_ARG(N)				\
   if (!arg ## N)				\

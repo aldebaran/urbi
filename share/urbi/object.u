@@ -65,16 +65,6 @@ do (Object)
     asPrintable.format(f)
   };
 
-  function asPrintable ()
-  {
-    asString
-  };
-
-  function asToplevelPrintable ()
-  {
-    asPrintable
-  };
-
 
   /*--------.
   | Slots.  |
