@@ -106,7 +106,7 @@ $FIND $packagedir -name libtool -exec sh -c  " sed -r -e 's/^.*eval.*\+=.*$/$tar
 $FIND $packagedir -name libtool -exec sh -c  " sed -e 's/^predep_objects=.*/predep_objects=/' -e 's/postdep_objects=.*/postdep_objects=/' -e 's/-nostdlib//g'  {} > {}.new && mv {}.new {}" ';'
 
 # Remove cccache from the param.mk. No perl, no sed -i.
-$FIND $packagedir -name param.mk -or -name libtool -exec sh -c  " sed -e 's/ccache //' {} > {}.new && mv {}.new {}" ';'
+$FIND $packagedir '(' -name param.mk -or -name libtool ')' -exec sh -c  " sed -e 's/ccache //' {} > {}.new && mv {}.new {}" ';'
 
 
 #restore +x on libtool
