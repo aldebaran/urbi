@@ -74,8 +74,12 @@ namespace object
       const int len = read(_watch_fd, &buffer, buf_size);
 
       if (len < 0)
-        errnoabort("read failed");
-
+      {
+        if (errno == EINTR)
+          continue;
+        else
+          errnoabort("read failed");
+      }
       int i = 0;
       while (i < len)
       {
