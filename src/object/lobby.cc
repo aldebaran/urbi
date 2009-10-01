@@ -12,9 +12,12 @@
  ** \brief Creation of the URBI object lobby.
  */
 
+#include <boost/algorithm/string.hpp>
+
 #include <libport/cassert>
 
 #include <kernel/uconnection.hh>
+#include <kernel/ughostconnection.hh>
 #include <kernel/userver.hh>
 
 #include <object/lobby.hh>
@@ -118,11 +121,42 @@ namespace object
     connection_->flush();
   }
 
+  rLobby
+  Lobby::create()
+  {
+    kernel::UGhostConnection* g =
+      new kernel::UGhostConnection(*kernel::urbiserver, true);
+    return g->lobby_get();
+  }
+
+  void
+  Lobby::receive(const std::string& s)
+  {
+    connection_->received(s);
+  }
+
+  void
+  Lobby::resendBanner()
+  {
+    const std::string& banner = connection_->server_get().banner_get();
+    std::vector<std::string> lines;
+    boost::split(lines, banner, boost::is_any_of("\n"));
+    foreach (const std::string& l, lines)
+      call(SYMBOL(send), new String("*** " + l + "\n"),  new String("start"));
+
+    /// Send connection id.
+    //call(SYMBOL(send), new String("*** ID: " + connection_tag_ + "\n"),
+    //     new String("ident"));
+  }
+
   void
   Lobby::initialize(CxxObject::Binder<Lobby>& bind)
   {
     bind(SYMBOL(send), &Lobby::send);
     bind(SYMBOL(write), &Lobby::write);
+    bind(SYMBOL(create), &Lobby::create);
+    bind(SYMBOL(receive), &Lobby::receive);
+    bind(SYMBOL(resendBanner), &Lobby::resendBanner);
   }
 
   rObject

@@ -43,6 +43,12 @@ namespace object
     const connection_type& connection_get() const;
     /// Mark this lobby as disconnected.
     void disconnect();
+    /// Create new lobby attached to a ghost connection.
+    rLobby create();
+    /// Fake reception of a string on the connection.
+    void receive(const std::string& data);
+    /// Resend the banner using an urbiScript call to send
+    void resendBanner();
   private:
     /// The Lobby prototype uses an empty connection_.
     /// The actual lobbies must have a non-empty one.
