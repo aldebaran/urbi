@@ -60,6 +60,7 @@ namespace object
     void put(const urbi::UValue& v, bool bypass=false);
     void put(rObject v);
     rObject extract();
+    std::string extractAsToplevelPrintable();
     void invalidate();
     const urbi::UValue& value_get();
   private:

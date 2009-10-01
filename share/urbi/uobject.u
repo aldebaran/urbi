@@ -253,7 +253,7 @@ do (UValue)
   function asToplevelPrintable()
   {
      if (transparent)
-      extract.asToplevelPrintable
+      extractAsToplevelPrintable
     else
       id.asToplevelPrintable
   };

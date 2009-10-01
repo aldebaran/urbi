@@ -230,6 +230,17 @@ namespace object
       cache_ = object_cast(value_);
     return cache_;
   }
+  std::string
+  UValue::extractAsToplevelPrintable()
+  {
+    if (value_.type == urbi::DATA_VOID && cache_)
+    { // Someone used put, cache_ is more recent
+      return cache_->call("asToplevelPrintable")->as<String>()->value_get();
+    }
+    std::stringstream s;
+    value_.print(s);
+    return s.str();
+  }
   const urbi::UValue&
   UValue::value_get()
   {
@@ -270,6 +281,8 @@ namespace object
   UValue::initialize(CxxObject::Binder<UValue>& bind)
   {
     bind(SYMBOL(extract), &UValue::extract);
+    bind(SYMBOL(extractAsToplevelPrintable),
+         &UValue::extractAsToplevelPrintable);
     bind(SYMBOL(invalidate), &UValue::invalidate);
     bind(SYMBOL(put), (void (UValue::*)(rObject))&UValue::put);
   }
