@@ -101,8 +101,19 @@ done
 targetline='eval "$1=\\"\\\$\$1 $2\\""'
 $FIND $packagedir -name libtool -exec sh -c  " sed -r -e 's/^.*eval.*\+=.*$/$targetline/' {} > {}.new && mv {}.new {}" ';'
 
+# Remove -nostdlib and explicit stdlib from libtool
+# The resulting libtool may not work, but it is not working without patch anyway...
+$FIND $packagedir -name libtool -exec sh -c  " sed -e 's/^predep_objects=.*/predep_objects=/' -e 's/postdep_objects=.*/postdep_objects=/' -e 's/-nostdlib//g'  {} > {}.new && mv {}.new {}" ';'
+
 # Remove cccache from the param.mk. No perl, no sed -i.
-$FIND $packagedir -name param.mk -exec sh -c  " sed -e 's/ccache //' {} > {}.new && mv {}.new {}" ';'
+$FIND $packagedir -name param.mk -or -name libtool -exec sh -c  " sed -e 's/ccache //' {} > {}.new && mv {}.new {}" ';'
+
+
+#restore +x on libtool
+$FIND $packagedir -name libtool -exec chmod u+x '{}' ';'
+
+#set more permissive access rights
+chmod a+rX -R $packagedir
 
 # When building a release for non-Windows platforms, strip the binaries
 # and the libraries.
