@@ -124,8 +124,10 @@ chmod -R a+rX $packagedir
 
 case $OS in
   (windows)
-    # On Windows, copy the .bat file
-    unix2dos "$builddir/scripts/urbi.bat" "$packagedir";;
+    # On Windows, copy the .bat file.
+    $CP "$builddir/scripts/urbi.bat" "$packagedir"
+    unix2dos "$packagedir/urbi.bat"
+    ;;
   (*)
     # When building a release for non-Windows platforms, strip the
     # binaries and the libraries.
