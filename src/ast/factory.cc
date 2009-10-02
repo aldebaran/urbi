@@ -64,14 +64,17 @@ namespace std
 #define SYNTAX_ERROR(Loc, ...)                   \
   throw yy::parser::syntax_error(Loc, libport::format(__VA_ARGS__))
 
+#define FLAVOR_ERROR(Keyword)                                           \
+  SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", Keyword, flavor)
+
 /// Generate a parse error for invalid keyword/flavor combination.
 /// The check is performed by the parser, not the scanner, because
 /// some keywords may, or may not, have some flavors dependencies
 /// on the syntactic construct.  See the various "for"s for instance.
-#define FLAVOR_CHECK(Keyword, Condition)                                \
-  do                                                                    \
-    if (!(Condition))                                                   \
-      SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", Keyword, flavor); \
+#define FLAVOR_CHECK(Keyword, Condition)        \
+  do                                            \
+    if (!(Condition))                           \
+      FLAVOR_ERROR(Keyword);                    \
   while (0)
 
 #define FLAVOR_CHECK1(Keyword, Flav1)           \
@@ -344,8 +347,6 @@ namespace ast
                       const location& flavor_loc, flavor_type flavor,
                       rExp test, rExp body) // const
   {
-    FLAVOR_CHECK2("every", semicolon, pipe);
-
     // every (exp:1) exp:2.
     PARAMETRIC_AST
       (semi,
@@ -374,7 +375,9 @@ namespace ast
        "     deadline = Control.'every|sleep'(deadline, %exp:1))\n"
        "  %exp:2\n");
 
-    return exp((flavor == flavor_semicolon ? semi : pipe)
+    return exp((flavor == flavor_semicolon ? semi
+                : flavor == flavor_pipe ? pipe
+                : FLAVOR_ERROR("every"))
                % test % body);
   }
 
@@ -385,8 +388,6 @@ namespace ast
                     const location& flavor_loc, flavor_type flavor,
                     rExp iterable, rExp body) // const
   {
-    FLAVOR_CHECK3("for", and, pipe, semicolon);
-
     PARAMETRIC_AST
       (ampersand,
        "for&(var '$for': %exp:1)\n"
@@ -404,7 +405,8 @@ namespace ast
         );
     return exp((flavor == flavor_and ? ampersand
                 : flavor == flavor_pipe ? pipe
-                : semi )
+                : flavor == flavor_semicolon ? semi
+                : FLAVOR_ERROR("for"))
                % iterable % body);
   }
 
@@ -432,8 +434,6 @@ namespace ast
                     rExp init, rExp test, rExp inc,
                     rExp body) // const
   {
-    FLAVOR_CHECK2("for", semicolon, pipe);
-
     // The increment is included directly in the condition to make
     // sure it is executed on `continue'.
     PARAMETRIC_AST
@@ -457,7 +457,9 @@ namespace ast
        "           %exp:3})\n"
        "    %exp:4\n"
        "}");
-    return exp((flavor == flavor_semicolon ? semi : pipe)
+    return exp((flavor == flavor_semicolon ? semi
+                : flavor == flavor_pipe ? pipe
+                : FLAVOR_ERROR("for"))
                % init % inc % test % body);
   }
 
