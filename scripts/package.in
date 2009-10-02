@@ -97,35 +97,43 @@ do
   esac
 done
 
-# Fix libtool usage of +=.
-targetline='eval "$1=\\"\\\$\$1 $2\\""'
-$FIND $packagedir -name libtool -exec sh -c  " sed -r -e 's/^.*eval.*\+=.*$/$targetline/' {} > {}.new && mv {}.new {}" ';'
+# 1. Fix libtool usage of +=.
+# 2. Remove -nostdlib and explicit stdlib from libtool The resulting
+# libtool may not work, but it is not working without patch anyway...
+targetline=''
+$FIND $packagedir -name libtool |
+  xargs perl -pi                                                        \
+       -e 's/^\s*eval "\$1\+=\\\$2"$/eval "\$1=\\\$\$1\\" \$2\\""/;'    \
+       -e 's/^predep_objects=.*/#- $&/;'                                \
+       -e 's/postdep_objects=.*/#- $&/;'                                \
+       -e 's/-nostdlib//g;'
 
-# Remove -nostdlib and explicit stdlib from libtool
-# The resulting libtool may not work, but it is not working without patch anyway...
-$FIND $packagedir -name libtool -exec sh -c  " sed -e 's/^predep_objects=.*/predep_objects=/' -e 's/postdep_objects=.*/postdep_objects=/' -e 's/-nostdlib//g'  {} > {}.new && mv {}.new {}" ';'
+# Remove ccache from the param.mk and libtool.
+$FIND $packagedir '(' -name param.mk -or -name libtool ')' |
+  xargs perl -pi -e 's/ccache //;'
 
-# Remove cccache from the param.mk. No perl, no sed -i.
-$FIND $packagedir '(' -name param.mk -or -name libtool ')' -exec sh -c  " sed -e 's/ccache //' {} > {}.new && mv {}.new {}" ';'
-
-
-#restore +x on libtool
+# Restore +x on libtool.
 $FIND $packagedir -name libtool -exec chmod u+x '{}' ';'
 
-#set more permissive access rights
-chmod a+rX -R $packagedir
+# Set more permissive access rights.
+chmod -R a+rX $packagedir
 
-# When building a release for non-Windows platforms, strip the binaries
-# and the libraries.
-if $release_mode && [ "$OS" != windows ]; then
-  (cd "$packagedir"
-   # Do not show errors -- we know that we have shell scripts there.
-   $FIND bin -type f -print | xargs strip 2> /dev/null || true
-   $FIND . -type f -name '*.so.*' -print | xargs strip || true
-   $FIND . -type f -name '*.a' -print | xargs strip || true)
-fi
-
-# On Windows, copy the .bat file
 case $OS in
-  (windows) unix2dos "$builddir/scripts/urbi.bat" "$packagedir";;
+  (windows)
+    # On Windows, copy the .bat file
+    unix2dos "$builddir/scripts/urbi.bat" "$packagedir";;
+  (*)
+    # When building a release for non-Windows platforms, strip the
+    # binaries and the libraries.
+    if $release_mode; then
+      here=$pwd
+      cd "$packagedir"
+      # Do not show errors -- we know that we have shell scripts there.
+      $FIND bin -type f |
+        xargs strip 2>/dev/null || true
+      $FIND . -type f '(' -name '*.so.*' -o -name '*.a' ')' |
+        xargs strip || true
+      cd $here
+    fi
+    ;;
 esac
