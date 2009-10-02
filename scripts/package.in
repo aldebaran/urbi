@@ -88,15 +88,15 @@ $MV "$MANIFEST" "$packagedir/MANIFEST"
 # Copy the instructions at the top-level.
 here=$(pwd)
 cd $packagedir
-for i in {LICENSE,README,RELEASE-NOTES,REPORTING-BUGS}.txt
+for i in share/doc/urbi-sdk/*.txt
 do
   case $OS in
     (windows)
-      unix2dos "share/doc/$i"
-      $CP "share/doc/$i" .
+      unix2dos "$i"
+      $CP "$i" .
       ;;
     (*)
-      ln -s "share/doc/urbi-sdk/$i"
+      ln -s "$i"
       ;;
   esac
 done
