@@ -165,18 +165,19 @@ namespace rewrite
       return;
     }
 
-    PARAMETRIC_AST(rewrite,
-                   "{"
-                   "  var '$value' = %exp:2 |"
-                   "  var '$pattern' = Pattern.new(%exp:1) |"
-                   "  if (!'$pattern'.match('$value'))"
-                   "    throw MatchFailure.new() |"
-                   "  {"
-                   "    %unscope:2 |"
-                   "    %exp:3"
-                   "  } |"
-                   "  '$value'"
-                   "}"
+    PARAMETRIC_AST
+      (rewrite,
+       "{\n"
+       "  var '$value' = %exp:2 |\n"
+       "  var '$pattern' = Pattern.new(%exp:1) |\n"
+       "  if (!'$pattern'.match('$value'))\n"
+       "    throw MatchFailure.new() |\n"
+       "  {\n"
+       "    %unscope:2 |\n"
+       "    %exp:3\n"
+       "  } |\n"
+       "  '$value'\n"
+       "}\n"
       );
 
     ast::rExp pattern = assign->what_get();
@@ -219,18 +220,18 @@ namespace rewrite
     libport::Symbol name = what->call()->name_get();
 
     PARAMETRIC_AST(desugar,
-      "const var %lvalue:1 ="
-      "{"
-      "  var '$tmp' = Object.clone |"
-      "  %exp:2 |"
-      "  '$tmp'.setSlot(\"type\", %exp:3) |"
-      "  '$tmp'.setSlot(%exp:4, function () { this }) |"
-      "  do ('$tmp')"
-      "  {"
-      "    %exp:5 |"
-      "  } |"
-      "  '$tmp'"
-      "}"
+      "const var %lvalue:1 =\n"
+      "{\n"
+      "  var '$tmp' = Object.clone |\n"
+      "  %exp:2 |\n"
+      "  '$tmp'.setSlot(\"type\", %exp:3) |\n"
+      "  '$tmp'.setSlot(%exp:4, function () { this }) |\n"
+      "  do ('$tmp')\n"
+      "  {\n"
+      "    %exp:5 |\n"
+      "  } |\n"
+      "  '$tmp'\n"
+      "}\n"
       );
 
     ast::exps_type* protos = maybe_recurse_collection(c->protos_get());
@@ -278,17 +279,18 @@ namespace rewrite
 
     if (ast::rExp duration = e->duration_get())
     {
-      PARAMETRIC_AST(emit,
-                     "{"
-		     "  var '$emit' = %exp:1.trigger(%exps:2) |"
-		     "  var '$duration' = %exp:3 |"
-                     "  if ('$duration' != inf)"
-                     "    Control.finally(closure () { sleep('$duration') },"
-                     "                    closure () { '$emit'.stop })"
-		     "}");
+      PARAMETRIC_AST
+        (emit,
+         "{\n"
+         "  var '$emit' = %exp:1.trigger(%exps:2) |\n"
+         "  var '$duration' = %exp:3 |\n"
+         "  if ('$duration' != inf)\n"
+         "    Control.finally(closure () { sleep('$duration') },\n"
+         "                    closure () { '$emit'.stop })\n"
+         "}");
 
       // FIXME: children desugared twice
-      result_ =  recurse(exp(emit %  event % args % duration));
+      result_ = recurse(exp(emit %  event % args % duration));
     }
     else
     {

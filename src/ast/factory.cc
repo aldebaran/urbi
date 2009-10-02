@@ -845,8 +845,9 @@ namespace ast
     }
     else
     {
-      PARAMETRIC_AST(desugar,
-                     "Control.whenever_(%exp:1, %exp:2, %exp:3)");
+      PARAMETRIC_AST
+        (desugar,
+         "Control.whenever_(%exp:1, %exp:2, %exp:3)");
       return exp(desugar % cond % body % else_stmt);
     }
   }
