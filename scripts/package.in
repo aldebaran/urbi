@@ -85,22 +85,26 @@ MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
 (cd "$packagedir" && $FIND . -type f -print | $SED -e "s,^./,,") > "$MANIFEST"
 $MV "$MANIFEST" "$packagedir/MANIFEST"
 
-# Copy the instructions at the top-level
+# Copy the instructions at the top-level.
+here=$(pwd)
+cd $packagedir
 for i in {LICENSE,README,RELEASE-NOTES,REPORTING-BUGS}.txt
 do
   case $OS in
     (windows)
-      $CP "$srcdir/doc/$i" "$packagedir/doc/$i"
-      unix2dos "$packagedir/doc/$i";;
+      unix2dos "share/doc/$i"
+      $CP "share/doc/$i" .
+      ;;
     (*)
-      (cd "$packagedir" && ln -s "share/doc/urbi-sdk/$i");;
+      ln -s "share/doc/urbi-sdk/$i"
+      ;;
   esac
 done
+cd $here
 
 # 1. Fix libtool usage of +=.
 # 2. Remove -nostdlib and explicit stdlib from libtool The resulting
 # libtool may not work, but it is not working without patch anyway...
-targetline=''
 $FIND $packagedir -name libtool |
   xargs perl -pi                                                        \
        -e 's/^\s*eval "\$1\+=\\\$2"$/eval "\$1=\\\$\$1\\" \$2\\""/;'    \
@@ -126,7 +130,7 @@ case $OS in
     # When building a release for non-Windows platforms, strip the
     # binaries and the libraries.
     if $release_mode; then
-      here=$pwd
+      here=$(pwd)
       cd "$packagedir"
       # Do not show errors -- we know that we have shell scripts there.
       $FIND bin -type f |
