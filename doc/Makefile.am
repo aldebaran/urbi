@@ -17,7 +17,7 @@ EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
 # Our system leaves trailing unused *chk files.
-CHECK_CLEANFILES +=						\
+MAINTAINERCLEANFILES +=						\
   $(shell find $(srcdir) -name '*.chk' -or -name 'test.chk')
 
 # Find urbi-report.sty, and workaround some strange behavior of
@@ -83,7 +83,7 @@ html_files = 					\
 install-doc: $(pdf_DATA) urbi-sdk.html
 doc_host = downloads@www.gostai.com
 doc_dir = gostai.com-downloads/urbi-sdk-2.0
-doc_files = $(pdf_DATA) $(html_files) 
+doc_files = $(pdf_DATA) $(html_files)
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
 # compilation seems to prefer *.png to *.pdf, which is wrong here.
