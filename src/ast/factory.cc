@@ -67,6 +67,18 @@ namespace std
 #define FLAVOR_ERROR(Keyword)                                           \
   SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", Keyword, flavor)
 
+#define FLAVOR_IS(Flav1)                        \
+  (flavor == flavor_ ## Flav1)
+
+#define FLAVOR_IS2(Flav1, Flav2)                \
+  (FLAVOR_IS(Flav1) || FLAVOR_IS(Flav2))
+
+#define FLAVOR_IS3(Flav1, Flav2, Flav3)                \
+  (FLAVOR_IS2(Flav1, Flav2) || FLAVOR_IS(Flav3))
+
+#define FLAVOR_IS4(Flav1, Flav2, Flav3, Flav4)          \
+  (FLAVOR_IS2(Flav1, Flav2, Flav3) || FLAVOR_IS(Flav4))
+
 /// Generate a parse error for invalid keyword/flavor combination.
 /// The check is performed by the parser, not the scanner, because
 /// some keywords may, or may not, have some flavors dependencies
@@ -78,20 +90,13 @@ namespace std
   while (0)
 
 #define FLAVOR_CHECK1(Keyword, Flav1)           \
-  FLAVOR_CHECK(Keyword,                         \
-               flavor == flavor_ ## Flav1)
+  FLAVOR_CHECK(Keyword, FLAVOR_IS(Flav1))
 
 #define FLAVOR_CHECK2(Keyword, Flav1, Flav2)            \
-  FLAVOR_CHECK(Keyword,                                 \
-               flavor == flavor_ ## Flav1          \
-               || flavor == flavor_ ## Flav2)
+  FLAVOR_CHECK(Keyword, FLAVOR_IS2(Flav1, Flav2))
 
-#define FLAVOR_CHECK3(Keyword, Flav1, Flav2, Flav3)     \
-  FLAVOR_CHECK(Keyword,                                 \
-               flavor == flavor_ ## Flav1          \
-               || flavor == flavor_ ## Flav2       \
-               || flavor == flavor_ ## Flav3)
-
+#define FLAVOR_CHECK3(Keyword, Flav1, Flav2, Flav3)             \
+  FLAVOR_CHECK(Keyword, FLAVOR_IS3(Flav1, Flav2, Flav3))
 
 namespace ast
 {
@@ -375,8 +380,8 @@ namespace ast
        "     deadline = Control.'every|sleep'(deadline, %exp:1))\n"
        "  %exp:2\n");
 
-    return exp((flavor == flavor_semicolon ? semi
-                : flavor == flavor_pipe ? pipe
+    return exp((FLAVOR_IS(semicolon) ? semi
+                : FLAVOR_IS(pipe) ? pipe
                 : FLAVOR_ERROR("every"))
                % test % body);
   }
@@ -403,9 +408,9 @@ namespace ast
        "for (var '$for': %exp:1)\n"
        "  %exp:2"
         );
-    return exp((flavor == flavor_and ? ampersand
-                : flavor == flavor_pipe ? pipe
-                : flavor == flavor_semicolon ? semi
+    return exp((FLAVOR_IS(and) ? ampersand
+                : FLAVOR_IS(pipe) ? pipe
+                : FLAVOR_IS(semicolon) ? semi
                 : FLAVOR_ERROR("for"))
                % iterable % body);
   }
@@ -457,8 +462,8 @@ namespace ast
        "           %exp:3})\n"
        "    %exp:4\n"
        "}");
-    return exp((flavor == flavor_semicolon ? semi
-                : flavor == flavor_pipe ? pipe
+    return exp((FLAVOR_IS(semicolon) ? semi
+                : FLAVOR_IS(pipe) ? pipe
                 : FLAVOR_ERROR("for"))
                % init % inc % test % body);
   }
