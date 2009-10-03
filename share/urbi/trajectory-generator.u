@@ -101,7 +101,7 @@ class Global.TrajectoryGenerator
     var tag = Tag.new|
     tag:
     {
-      every(getPeriod)
+      every|(getPeriod)
       {
 	if (isOver)
           tag.stop|
