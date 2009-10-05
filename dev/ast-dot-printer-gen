@@ -203,9 +203,8 @@ namespace %(ns)s
   void
   DotPrinter::recurse(const T* c)
   {
-    if (!c)
-      return;
-    recurse(*c);
+    if (c)
+      recurse(*c);
   }
 
   %(visit)s
