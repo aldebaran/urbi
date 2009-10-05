@@ -620,8 +620,12 @@ If:
     - ~thenclause
     - libport::iendl
     - '"else"'
-    - libport::iendl
-    - ~elseclause
+    - '{
+         if (n->elseclause_get()->body_get().is_a<If>())
+           ostr_ << " " << *n->elseclause_get()->body_get();
+         else
+           ostr_ << libport::iendl << *n->elseclause_get();
+       }'
 
 While:
   super:
