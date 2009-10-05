@@ -1890,12 +1890,61 @@ every (1s)
 [00002500] *** Out
 \end{urbiscript}
 
-\subsection{for\& (:)}
+\subsection{for}
+
+\subsubsection{C-for,}
+\begin{note}
+  This feature is experimental.  It might be changed, or even removed.
+  Feedback on its use would be appreciated.
+\end{note}
+
+\lstinline|for,| is syntactic sugar for \lstinline|while,|, see
+\autoref{sec:lang:while:comma}.
+
+\begin{urbiscript}
+for, (var i = 3; 0 < i; i -= 1)
+{
+  var j = i |
+  echo ("in: i = %s, j = %s" % [i, j]);
+  sleep(j/10);
+  echo ("out: i = %s, j = %s" % [i, j]);
+};
+echo ("done");
+[00000144] *** in: i = 3, j = 3
+[00000145] *** in: i = 2, j = 2
+[00000145] *** in: i = 1, j = 1
+[00000246] *** out: i = 0, j = 1
+[00000346] *** out: i = 0, j = 2
+[00000445] *** out: i = 0, j = 3
+[00000446] *** done
+\end{urbiscript}
+
+\begin{urbiscript}[firstnumber=last]
+for, (var i = 9; 0 < i; i -= 1)
+{
+  var j = i;
+  if (j % 2)
+    continue
+  else if (j == 4)
+    break
+  else
+    echo("%s: done" % j)
+};
+echo("done");
+[00000146] *** 8: done
+[00000148] *** 6: done
+[00000150] *** done
+\end{urbiscript}
+
+
+\subsection{range-for\& (:)}
 \subsection{for\& (n)}
 \subsection{waituntil}
 \subsection{whenever}
 
+\subsection{While}
 \subsubsection{while,}
+\label{sec:lang:while:comma}
 
 \begin{note}
   This feature is experimental.  It might be changed, or even removed.

@@ -439,30 +439,42 @@ namespace ast
                     rExp init, rExp test, rExp inc,
                     rExp body) // const
   {
-    // The increment is included directly in the condition to make
-    // sure it is executed on `continue'.
+    // Include the increment in the condition to be execute it on
+    // `continue'.
+    //
+    // Don't use ";" for costs that should not be visible to the user:
+    // $first.
+    PARAMETRIC_AST
+      (comma,
+       "{\n"
+       "  %exp:1 |\n"
+       "  var '$first' = true |\n"
+       "  while, ({ if ('$first') '$first' = false else %exp:2|\n"
+       "            %exp:3 })\n"
+       "    %exp:4\n"
+       "}");
+
     PARAMETRIC_AST
       (pipe,
        "{\n"
        "  %exp:1 |\n"
        "  var '$first' = true |\n"
        "  while| ({ if ('$first') '$first' = false else %exp:2|\n"
-       "            %exp:3})\n"
+       "            %exp:3 })\n"
        "    %exp:4\n"
        "}");
 
-    // Don't use ";" for costs that should not be visible to the user:
-    // $first.
     PARAMETRIC_AST
       (semi,
        "{\n"
        "  %exp:1|\n" // When not entering the loop, we want 0 cycles consumed.
        "  var '$first' = true |\n"
        "  while ({ if ('$first') '$first' = false else %exp:2|\n"
-       "           %exp:3})\n"
+       "           %exp:3 })\n"
        "    %exp:4\n"
        "}");
-    return exp((FLAVOR_IS(semicolon) ? semi
+    return exp((FLAVOR_IS(comma) ? comma
+                : FLAVOR_IS(semicolon) ? semi
                 : FLAVOR_IS(pipe) ? pipe
                 : FLAVOR_ERROR("for"))
                % init % inc % test % body);
