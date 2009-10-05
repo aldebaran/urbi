@@ -16,10 +16,10 @@
 namespace rewrite
 {
   /**
-   *  The roles of the rescoper are:
+   *  The rescoper:
    *
-   *  - Insert closures around '&' and ',' operands.
-   *  - Extract variables declaration to unscope them.
+   *  - inserts closures around '&' and ',' operands,
+   *  - extracts variable declarations to unscope them.
    *
    *  That is, rewrite:
    *

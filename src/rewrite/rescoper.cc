@@ -95,7 +95,7 @@ namespace rewrite
   Rescoper::visit(const ast::Nary* nary)
   {
     ast::rNary res = new ast::Nary(nary->location_get());
-    foreach (ast::rExp child, (nary->children_get()))
+    foreach (ast::rExp child, nary->children_get())
     {
       ast::rStmt stm = child.unsafe_cast<ast::Stmt>();
       if (stm && stm->flavor_get() == ast::flavor_comma)
