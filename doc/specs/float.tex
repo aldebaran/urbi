@@ -167,7 +167,7 @@ for (var x : 3) { echo(x); sleep(20ms); echo (100 + x); };
   for|(var x : 3) { res << x; sleep(20ms); res << (100 + x); };
   assert(res == [0, 100, 1, 101, 2, 102]);
 };
-\end{urbiscript}%>>
+\end{urbiscript}%>>>>>>
 
 \item \lstinline|each&(\var{fun})|\\
   Call the functional argument \var{fun} on every integer from 0 to
@@ -175,10 +175,10 @@ for (var x : 3) { echo(x); sleep(20ms); echo (100 + x); };
 \begin{urbiscript}[firstnumber=last]
 {
   var res = [];
-  for& (var x : 3) { res << x; sleep(20ms); res << (100 + x) };
+  for& (var x : 3) { res << x; sleep(30ms); res << (100 + x) };
   assert(res == [0, 1, 2, 100, 101, 102]);
 };
-\end{urbiscript}
+\end{urbiscript}%>>>>
 
 \item \lstinline|exp|\\
   Exponential of the target.
