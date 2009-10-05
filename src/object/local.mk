@@ -17,7 +17,8 @@ precompiled_symbols_hh_sources =		\
   parser/ugrammar.y				\
   $(filter-out $(precompiled_symbols_hh)	\
                $(FROM_UGRAMMAR_Y)		\
-               $(FROM_UTOKEN_L),		\
+               $(FROM_UTOKEN_L)			\
+	       ast/ignores,			\
         $(dist_libuobject_la_SOURCES))
 EXTRA_DIST += object/symbols-generate.pl
 
