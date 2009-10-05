@@ -1600,6 +1600,89 @@ while (0 < j)
 [00000000] *** 1
 \end{urbiscript}
 
+The default flavor for \lstinline|while| is \lstinline|while;|.
+
+\subsubsection{while;}
+
+The semantics of
+
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+while; (\var{condition})
+  \var{body};
+\end{urbifixme}
+
+\noindent
+is the same as
+
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+\var{condition} | \var{body} ; \var{condition} | \var{body} ; ...
+\end{urbifixme}
+
+\noindent
+as long as \var{cond} evaluates to true, or until \lstinline|break| is
+invoked.  If \lstinline|continue| is evaluated, the rest of the body
+is skipped, and the next iteration is started.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var i = 4|
+  while (true)
+  {
+    i -= 1;
+    echo ("in: " + i);
+    if (i == 1)
+      break
+    else if (i == 2)
+      continue;
+    echo ("out: " + i);
+  };
+};
+[00000000] *** in: 3
+[00000000] *** out: 3
+[00000000] *** in: 2
+[00000000] *** in: 1
+\end{urbiscript}
+
+
+\subsubsection{while|}
+
+The semantics of
+
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+while| (\var{condition})
+  \var{body};
+\end{urbifixme}
+
+\noindent
+is the same as
+
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+\var{condition} | \var{body} | \var{condition} | \var{body} | ...
+\end{urbifixme}
+
+The execution is can be controled by \lstinline|break| and
+\lstinline|continue|.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var i = 4|
+  while| (true)
+  {
+    i -= 1;
+    echo ("in: " + i);
+    if (i == 1)
+      break
+    else if (i == 2)
+      continue;
+    echo ("out: " + i);
+  };
+};
+[00000000] *** in: 3
+[00000000] *** out: 3
+[00000000] *** in: 2
+[00000000] *** in: 1
+\end{urbiscript}
+
 
 \section{Exceptions}
 
