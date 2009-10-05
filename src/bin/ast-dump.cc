@@ -27,6 +27,8 @@ using namespace parser;
 static void
 usage()
 {
+  // Not argv[0] because we need the libtool wrapper.
+  const char* program = "_build/src/bin/ast-dump";
   std::cout <<
     "usage: ast-dump FILE.u\n"
     "\n"
@@ -42,11 +44,24 @@ usage()
     "For instance, you might use it like this to see ast after\n"
     "desugaring:\n"
     "\n"
-    "  _build/src/bin/ast-dump foo.u 4> ast.dot && dotty ast.dot\n"
+    "  " << program << " foo.u 4> ast.dot && dotty ast.dot\n"
     "\n"
     "or, with zsh\n"
     "\n"
-    "  dotty =(_build/src/bin/ast-dump foo.u 4>&1)\n";
+    "  dotty =(_build/src/bin/ast-dump foo.u 4>&1)\n"
+    "\n"
+    "or,\n"
+    "\n"
+    "  function ast-dump ()\n"
+    "  {\n"
+    "    base=$1\n"
+    "    " << program << " $base.u \\\n"
+    "       3>$base.1.parse.dot \\\n"
+    "       4>$base.2.flow.dot \\\n"
+    "       5>$base.3.desugar.dot \\\n"
+    "       6>$base.4.rescope.dot \\\n"
+    "       7>$base.5.binding.dot;\n"
+    "  }\n";
   exit (EX_OK);
 }
 
