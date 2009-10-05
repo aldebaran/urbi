@@ -27,12 +27,18 @@ namespace ast
   public:
     typedef ast::DefaultConstVisitor super_type;
 
+    Analyzer();
+    virtual ~Analyzer();
+
     /// The errors seen so far.
     ast::Error& errors_get();
 
   protected:
     /// The errors found so far.
     ast::Error errors_;
+
+    /// Factory.
+    std::auto_ptr<ast::Factory> factory_;
   };
 
   /// Apply a visitor on a.

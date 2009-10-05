@@ -42,8 +42,7 @@ namespace rewrite
       PARAMETRIC_AST(ast, "{}");
       return exp(ast);
     }
-    return
-      new ast::Assignment(l, recurse(what), recurse(value));
+    return new ast::Assignment(l, recurse(what), recurse(value));
   }
 
   /**
@@ -84,7 +83,7 @@ namespace rewrite
     {
       child = unscope(child, nary);
       // Wrap every child in a closure
-      res->children_get().push_back(recurse(ast::Factory::make_closure(child)));
+      res->children_get().push_back(recurse(factory_->make_closure(child)));
     }
 
     nary->push_back(res);
@@ -102,7 +101,7 @@ namespace rewrite
       {
         ast::rExp child = stm->expression_get();
         child = unscope(child, res);
-        res->push_back(recurse(ast::Factory::make_closure(child)),
+        res->push_back(recurse(factory_->make_closure(child)),
                        ast::flavor_comma);
       }
       else
@@ -116,11 +115,11 @@ namespace rewrite
     if (a->flavor_get() == ast::flavor_comma)
       {
         ast::loc l = a->location_get();
-        ast::rExp body = recurse(ast::Factory::make_closure(a->body_get()));
-        result_ = ast::Factory::make_while(l,
-                                           l, a->flavor_get(),
-                                           recurse(a->test_get()),
-                                           l, body);
+        ast::rExp body = recurse(factory_->make_closure(a->body_get()));
+        result_ = factory_->make_while(l,
+                                       l, a->flavor_get(),
+                                       recurse(a->test_get()),
+                                       l, body);
       }
     else
       super_type::visit(a);

@@ -72,8 +72,6 @@ namespace rewrite
     bool allow_decl_;
     /// Whether Declarations are allowed in children.
     bool allow_subdecl_;
-    /// Factory.
-    std::auto_ptr<ast::Factory> factory_;
   };
 }
 

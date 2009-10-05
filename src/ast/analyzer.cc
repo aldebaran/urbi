@@ -7,13 +7,23 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <ast/analyzer.hh>
 #include <ast/nary.hh>
+#include <ast/factory.hh>
 
 namespace ast
 {
 
-  inline
+  Analyzer::Analyzer()
+    : ast::Cloner()
+    , errors_()
+    , factory_(new ast::Factory)
+  {}
+
+  Analyzer::~Analyzer()
+  {}
+
   ast::Error&
   Analyzer::errors_get()
   {

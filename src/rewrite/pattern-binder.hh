@@ -10,6 +10,7 @@
 #ifndef REWRITE_PATTERN_BINDER_HH
 # define REWRITE_PATTERN_BINDER_HH
 
+# include <memory>
 # include <ast/fwd.hh>
 # include <ast/cloner.hh>
 
@@ -43,6 +44,7 @@ namespace rewrite
     ast::rLValue pattern_;
     int i_;
     bool assign_;
+    std::auto_ptr<ast::Factory> factory_;
   };
 }
 

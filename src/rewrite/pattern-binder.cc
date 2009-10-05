@@ -16,11 +16,21 @@
 
 namespace rewrite
 {
+  PatternBinder::PatternBinder(ast::rLValue pattern,
+                               const ast::loc& loc,
+                               bool assign)
+    : bindings_(new ast::Pipe(loc, ast::exps_type()))
+    , pattern_(pattern)
+    , i_(0)
+    , assign_(assign)
+    , factory_(new ast::Factory())
+  {}
+
   ast::rExp
   PatternBinder::to_binding(ast::rConstExp original)
   {
     PARAMETRIC_AST(rewrite, "Pattern.Binding.new(%exp:1)");
-    rewrite % ast::Factory::make_string(original->location_get(), next_name());
+    rewrite % factory_->make_string(original->location_get(), next_name());
     ast::rExp res = exp(rewrite);
     res->original_set(original);
     return res;
@@ -43,17 +53,8 @@ namespace rewrite
     PARAMETRIC_AST(get, "%lvalue:1 . bindings[%exp:2]");
     return exp(get
                % pattern_
-               % ast::Factory::make_string(ast::loc(), next_name()));
+               % factory_->make_string(ast::loc(), next_name()));
   }
-
-  PatternBinder::PatternBinder(ast::rLValue pattern,
-                               const ast::loc& loc,
-                               bool assign)
-    : bindings_(new ast::Pipe(loc, ast::exps_type()))
-    , pattern_(pattern)
-    , i_(0)
-    , assign_(assign)
-  {}
 
   libport::Symbol
   PatternBinder::next_name()
