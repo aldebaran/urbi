@@ -699,27 +699,34 @@ namespace runner
     sched::jobs_type runners;
     Job::ChildrenCollecter children(this, 0);
 
-    while (true)
+    try
     {
-      if (must_yield && tail++)
-	YIELD();
-      if (!operator()(e->test_get().get())->as_bool())
-	break;
-      if (e->flavor_get() == ast::flavor_comma)
-        {
-          // The new runners are attached to the same tags as we are.
-	  sched::rJob subrunner =
-	    new Interpreter(*this,
-                            operator()(e->body_get().get()),
-			    libport::Symbol::fresh(name_get()));
-          // If the subrunner throws an exception, propagate it here
-          // ASAP.
-          register_child(subrunner, children);
-          runners.push_back(subrunner);
-          subrunner->start_job();
-        }
-      else
-        e->body_get()->eval(*this);
+      while (true)
+      {
+        if (must_yield && tail++)
+          YIELD();
+        if (!operator()(e->test_get().get())->as_bool())
+          break;
+        if (e->flavor_get() == ast::flavor_comma)
+          {
+            // The new runners are attached to the same tags as we are.
+            sched::rJob subrunner =
+              new Interpreter(*this,
+                              operator()(e->body_get().get()),
+                            libport::Symbol::fresh(name_get()));
+            // If the subrunner throws an exception, propagate it here
+            // ASAP.
+            register_child(subrunner, children);
+            runners.push_back(subrunner);
+            subrunner->start_job();
+          }
+        else
+          e->body_get()->eval(*this);
+      }
+    }
+    catch (const sched::ChildException& ce)
+    {
+      ce.rethrow_child_exception();
     }
 
     // If we get a scope tag, stop the runners tagged with it.
