@@ -693,17 +693,40 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::While* e)
   {
-    const bool must_yield = e->flavor_get() == ast::flavor_semicolon;
+    const bool must_yield = e->flavor_get() != ast::flavor_pipe;
     bool tail = false;
-    // Evaluate the test.
+
+    sched::jobs_type runners;
+    Job::ChildrenCollecter children(this, 0);
+
     while (true)
     {
       if (must_yield && tail++)
 	YIELD();
       if (!operator()(e->test_get().get())->as_bool())
 	break;
-      e->body_get()->eval(*this);
+      if (e->flavor_get() == ast::flavor_comma)
+        {
+          // The new runners are attached to the same tags as we are.
+	  sched::rJob subrunner =
+	    new Interpreter(*this,
+                            operator()(e->body_get().get()),
+			    libport::Symbol::fresh(name_get()));
+          // If the subrunner throws an exception, propagate it here
+          // ASAP.
+          register_child(subrunner, children);
+          runners.push_back(subrunner);
+          subrunner->start_job();
+        }
+      else
+        e->body_get()->eval(*this);
     }
+
+    // If we get a scope tag, stop the runners tagged with it.
+    if (const sched::rTag& tag = scope_tag_get())
+      tag->stop(scheduler_get(), object::void_class);
+    yield_until_terminated(runners);
+
     return object::void_class;
   }
 

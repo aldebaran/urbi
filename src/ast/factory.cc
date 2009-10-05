@@ -858,7 +858,7 @@ namespace ast
                       rExp cond,
                       const location& body_loc, rExp body) // const
   {
-    FLAVOR_CHECK2("while", semicolon, pipe);
+    FLAVOR_CHECK3("while", comma, pipe, semicolon);
     return new While(loc, flavor, cond, make_scope(body_loc, body));
   }
 

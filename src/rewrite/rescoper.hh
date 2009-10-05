@@ -57,6 +57,7 @@ namespace rewrite
     CONST_VISITOR_VISIT_NODES(
       (And)
       (Nary)
+      (While)
       );
 
   private:

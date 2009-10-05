@@ -111,4 +111,19 @@ namespace rewrite
     result_ = res;
   }
 
+  void Rescoper::visit(const ast::While* a)
+  {
+    if (a->flavor_get() == ast::flavor_comma)
+      {
+        ast::loc l = a->location_get();
+        ast::rExp body = recurse(ast::Factory::make_closure(a->body_get()));
+        result_ = ast::Factory::make_while(l,
+                                           l, a->flavor_get(),
+                                           recurse(a->test_get()),
+                                           l, body);
+      }
+    else
+      super_type::visit(a);
+  }
+
 }

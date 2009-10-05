@@ -1895,6 +1895,87 @@ every (1s)
 \subsection{waituntil}
 \subsection{whenever}
 
+\subsubsection{while,}
+
+\begin{note}
+  This feature is experimental.  It might be changed, or even removed.
+  Feedback on its use would be appreciated.
+\end{note}
+
+This construct provides a means to run concurrently multiple instances
+of statements.  The semantics of
+
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+while, (\var{condition})
+  \var{body};
+\end{urbifixme}
+
+\noindent
+is the same as
+
+\begin{urbifixme}[frame=, backgroundcolor=, ]
+\var{condition} | \var{body} , \var{condition} | \var{body} , ...
+\end{urbifixme}
+
+Attention must be paid to the fact that the (concurrent) iterations
+share a common access to the environment, therefore if, for instance,
+you want to keep the value of some index variable, use a local
+variable inside the loop body:
+
+% Cut the previous every, no [firstnumber=last]
+\begin{urbiscript}
+{
+  var i = 4|
+  while, (i)
+  {
+    var j = i -= 1;
+    echo ("in: i = %s, j = %s" % [i, j]);
+    sleep(j/10);
+    echo ("out: i = %s, j = %s" % [i, j]);
+  }|
+  echo ("done");
+}|
+[00000144] *** in: i = 2, j = 3
+[00000145] *** in: i = 1, j = 2
+[00000145] *** in: i = 0, j = 1
+[00000146] *** in: i = 0, j = 0
+[00000146] *** out: i = 0, j = 0
+[00000246] *** out: i = 0, j = 1
+[00000346] *** out: i = 0, j = 2
+[00000445] *** out: i = 0, j = 3
+[00000446] *** done
+\end{urbiscript}
+
+As for the other flavors, \lstinline|continue| skips the current
+iteration, and \lstinline|break| ends the loop.  Note that
+\lstinline|break| stops all the running iterations.  This semantics is
+likely to be changed to ``\lstinline|break| ends the current iteration
+and stops the generation of others, but lets the other concurrent
+iterations finish'', so do not rely on this feature.
+
+Control flow is passed to the following statement when all the
+iterations are done.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var i = 10|
+  while, (i)
+  {
+    var j = i -= 1;
+    if (j % 2)
+      continue
+    else if (j == 4)
+      break
+    else
+      echo("%s: done" % j)
+  }|
+  echo("done");
+};
+[00000146] *** 8: done
+[00000148] *** 6: done
+[00000150] *** done
+\end{urbiscript}
+
 
 \section{Pattern matching}
 
