@@ -78,8 +78,8 @@ namespace runner
              boost::make_iterator_range(e->children_get(), 1, 0))
     {
       Interpreter* job =
-	new Interpreter(*this, operator()(child.get()),
-			libport::Symbol::fresh(name_get()));
+        new Interpreter(*this, operator()(child.get()),
+                        libport::Symbol::fresh(name_get()));
       register_child(job, children);
       jobs.push_back(job);
       job->start_job();
@@ -224,7 +224,7 @@ namespace runner
       rObject v = operator()(c.get());
       // Refuse void in literal lists.
       if (v == object::void_class)
-	raise_unexpected_void_error();
+        raise_unexpected_void_error();
       res.push_back(v);
     }
     return new object::List(res);
@@ -361,9 +361,9 @@ namespace runner
     if (!e->toplevel_get() && exps.size() == 1)
     {
       const ast::Stmt* stmt =
-	dynamic_cast<const ast::Stmt*>(exps.front().get());
+        dynamic_cast<const ast::Stmt*>(exps.front().get());
       if (stmt && stmt->flavor_get() != ast::flavor_comma)
-	return visit(stmt);
+        return visit(stmt);
     }
 
     // List of runners for Stmt flavored by a comma.
@@ -396,18 +396,18 @@ namespace runner
         if (stmt && stmt->flavor_get() == ast::flavor_comma)
         {
           // The new runners are attached to the same tags as we are.
-	  sched::rJob subrunner =
-	    new Interpreter(*this, operator()(exp),
-			    libport::Symbol::fresh(name_get()));
+          sched::rJob subrunner =
+            new Interpreter(*this, operator()(exp),
+                            libport::Symbol::fresh(name_get()));
           // If the subrunner throws an exception, propagate it here
           // ASAP, unless we are at the top level. It we are at the
           // toplevel, we do not even have to register it as a
           // subrunner.
           if (!e->toplevel_get())
-	  {
-	    register_child(subrunner, children);
-	    runners.push_back(subrunner);
-	  }
+          {
+            register_child(subrunner, children);
+            runners.push_back(subrunner);
+          }
           subrunner->start_job();
         }
         else
@@ -418,7 +418,7 @@ namespace runner
       }
       // If we get a scope tag, stop the runners tagged with it.
       if (const sched::rTag& tag = scope_tag_get())
-	tag->stop(scheduler_get(), object::void_class);
+        tag->stop(scheduler_get(), object::void_class);
       yield_until_terminated(runners);
     }
     catch (const sched::ChildException& ce)
@@ -544,7 +544,7 @@ namespace runner
       rObject v = operator()(exp.second.get());
       // Refuse void in literals.
       if (v == object::void_class)
-	raise_unexpected_void_error();
+        raise_unexpected_void_error();
       passert(v, v);
       res->set(exp.first, v);
     }
@@ -578,27 +578,27 @@ namespace runner
       // Apply tag as well as its ancestors to the current runner.
       do
       {
-	// If tag is blocked, do not start and ignore the
-	// statement completely but use the provided payload.
-	// Since the list of parents starts from the specific tag
-	// and goes up to the root tag, the most specific payload
-	// will be retrieved.
-	if (urbi_tag->value_get()->blocked())
-	  return boost::any_cast<rObject>(urbi_tag->value_get()->payload_get());
-	// If tag is frozen, remember it.
-	some_frozen = some_frozen || urbi_tag->value_get()->frozen();
-	applied.push_back(urbi_tag);
-	urbi_tag = urbi_tag->parent_get();
+        // If tag is blocked, do not start and ignore the
+        // statement completely but use the provided payload.
+        // Since the list of parents starts from the specific tag
+        // and goes up to the root tag, the most specific payload
+        // will be retrieved.
+        if (urbi_tag->value_get()->blocked())
+          return boost::any_cast<rObject>(urbi_tag->value_get()->payload_get());
+        // If tag is frozen, remember it.
+        some_frozen = some_frozen || urbi_tag->value_get()->frozen();
+        applied.push_back(urbi_tag);
+        urbi_tag = urbi_tag->parent_get();
       } while (urbi_tag);
       // Apply the tags, starting with the uppermost one in the ancestry
       // chain so that a "stop" on a parent removes the corresponding
       // children.
       foreach (const rTag& tag, applied)
-	apply_tag(tag, &finally);
+        apply_tag(tag, &finally);
       // If one of the tags caused us to be frozen, let the scheduler
       // handle this properly to avoid duplicating the logic.
       if (some_frozen)
-	yield();
+        yield();
       // Start with the uppermost tag in the derivation chain.
       rforeach (const object::rTag& tag, applied)
         tag->triggerEnter();
@@ -611,11 +611,11 @@ namespace runner
       trigger_leave(applied);
       // Rewind up to the appropriate depth.
       if (e.depth_get() < result_depth)
-	throw;
+        throw;
 
       // If we are frozen, reenter the scheduler for a while.
       if (frozen())
-	yield();
+        yield();
       // Extract the value from the exception.
       return boost::any_cast<rObject>(e.payload_get());
     }
@@ -638,8 +638,8 @@ namespace runner
   Interpreter::visit(const ast::Throw* e)
   {
     raise(e->value_get() ?
-	  operator()(e->value_get().get()) :
-	  current_exception_);
+          operator()(e->value_get().get()) :
+          current_exception_);
     pabort("Unreachable");
   }
 
