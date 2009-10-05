@@ -395,9 +395,11 @@ var Object.foo = "foo"|;
 \end{urbiscript}
 
 \begin{urbiscript}[firstnumber=last]
-while (!Object.hasSlot("bar")) sleep(20ms) | echo (Object.bar),
+while (!Object.hasSlot("bar"))
+  sleep(20ms) |
+echo (Object.bar),
 var Object.bar = "bar"|;
-sleep(25ms);
+sleep(30ms);
 [00000003] *** bar
 \end{urbiscript}
 

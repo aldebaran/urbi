@@ -2,7 +2,7 @@
 \label{sec:tut:concurrent}
 
 Parallelism is one of the major features of \us. So far, all we've
-seen already existed in other language - although we tried to pick,
+seen already existed in other language --- although we tried to pick,
 mix and adapt features and paradigm to create a nice scripting
 language. Parallelism is one of the corner stone of its paradigm, and
 what makes it so adapted to high level scripting of interactive
@@ -25,8 +25,8 @@ For now, we've separated our different commands with a semicolon
   operand is waited at the exit of the scope.
 \end{itemize}
 
-The listing below show usage of \lstinline{&} to
-launch two functions in parallel.
+The example below demonstrates the use of \lstinline{&} to launch two
+functions in parallel.
 
 \begin{urbiscript}
 function test(name)
@@ -34,7 +34,7 @@ function test(name)
   echo(name + ": 1");
   echo(name + ": 2");
   echo(name + ": 3");
-} | {};
+} |;
 // Serialized executions
 test("left") ; test ("middle"); test ("right");
 [00000000] *** left: 1
@@ -278,13 +278,13 @@ parallelism.
 The listing below presents how to implement a \lstinline{timeOut}
 function, that takes code to execute and a timeout as arguments. It
 executes the code, and returns its value. However, if the code
-execution takes longer than the given timeout, it aborts it, print
-\lstinline|"Timeout!"| and returns void. In this example, we use:
+execution takes longer than the given timeout, it aborts it, prints
+\lstinline|"Timeout!"| and returns \lstinline|void|. In this example, we use:
 
 \begin{itemize}
-\item Lazy arguments, since we want to delay the execution of the
+\item Lazy evaluation, since we want to delay the execution of the
   given code, to keep control on it.
-\item Parallelism operators, to launch a timeout job in background.
+\item Concurrency operators, to launch a timeout job in background.
 \end{itemize}
 
 % FIXME: doesn't work (inner return)
@@ -294,14 +294,15 @@ function timeOut
 {
   // In background, launch a timeout job that waits
   // for the given duration before aborting the function.
-  // call.evalArgAt(1) is the second argument, the delay.
+  // call.evalArgAt(1) is the second argument, the duration.
   {
-    sleep (call.evalArgAt(1));
+    sleep(call.evalArgAt(1));
     echo("Timeout!");
     return;
   },
+  // Run the Code and return its value.
   return call.evalArgAt(0);
-} | {};
+} |;
 timeOut({sleep(1s); echo("On time"); 42}, 2s);
 [00000000] *** On time
 [00000000] 42
