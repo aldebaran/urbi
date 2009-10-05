@@ -98,6 +98,12 @@ namespace std
 #define FLAVOR_CHECK3(Keyword, Flav1, Flav2, Flav3)             \
   FLAVOR_CHECK(Keyword, FLAVOR_IS3(Flav1, Flav2, Flav3))
 
+#define FLAVOR_DEFAULT(Flavor)                  \
+  do {                                          \
+    if (FLAVOR_IS(none))                        \
+      flavor = flavor_ ## Flavor;               \
+  } while (false)
+
 namespace ast
 {
   bool
@@ -114,6 +120,7 @@ namespace ast
                    rExp body, rExp onleave,
                    rExp duration) // const
   {
+    FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
     if (!onleave)
       onleave = new Noop(loc, 0);
@@ -206,6 +213,7 @@ namespace ast
                          EventMatch& event,
                          rExp body, rExp onleave) // const
   {
+    FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
     PARAMETRIC_AST
       (desugar_body,
@@ -352,9 +360,10 @@ namespace ast
                       const location& flavor_loc, flavor_type flavor,
                       rExp test, rExp body) // const
   {
-    // every (exp:1) exp:2.
+    FLAVOR_DEFAULT(comma);
+    // every, (exp:1) exp:2.
     PARAMETRIC_AST
-      (semi,
+      (comma,
        "detach ({\n"
        "  var deadline = shiftedTime |\n"
        "  var controlTag = Tag.newFlowControl |\n"
@@ -380,7 +389,7 @@ namespace ast
        "     deadline = Control.'every|sleep'(deadline, %exp:1))\n"
        "  %exp:2\n");
 
-    return exp((FLAVOR_IS(semicolon) ? semi
+    return exp((FLAVOR_IS(comma) ? comma
                 : FLAVOR_IS(pipe) ? pipe
                 : FLAVOR_ERROR("every"))
                % test % body);
@@ -393,6 +402,7 @@ namespace ast
                     const location& flavor_loc, flavor_type flavor,
                     rExp iterable, rExp body) // const
   {
+    FLAVOR_DEFAULT(semicolon);
     PARAMETRIC_AST
       (ampersand,
        "for&(var '$for': %exp:1)\n"
@@ -423,6 +433,7 @@ namespace ast
                     const location& id_loc, libport::Symbol id,
                     rExp iterable, rExp body) // const
   {
+    FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK3("for", semicolon, pipe, and);
     return
       new Foreach(loc, flavor,
@@ -444,6 +455,7 @@ namespace ast
     //
     // Don't use ";" for costs that should not be visible to the user:
     // $first.
+    FLAVOR_DEFAULT(semicolon);
     PARAMETRIC_AST
       (comma,
        "{\n"
@@ -524,6 +536,7 @@ namespace ast
                      const location& flavor_loc, flavor_type flavor,
                      const location& body_loc, rExp body) // const
   {
+    FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK2("loop", semicolon, pipe);
     return make_while(loc,
                       flavor_loc, flavor,
@@ -870,6 +883,7 @@ namespace ast
                       rExp cond,
                       const location& body_loc, rExp body) // const
   {
+    FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK3("while", comma, pipe, semicolon);
     return new While(loc, flavor, cond, make_scope(body_loc, body));
   }

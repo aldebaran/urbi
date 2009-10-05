@@ -246,7 +246,8 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
       case '|': RETURN_FLAVOR(Token, pipe);             \
       case ',': RETURN_FLAVOR(Token, comma);            \
       case '&': RETURN_FLAVOR(Token, and);              \
-      default:  RETURN_FLAVOR(Token, semicolon);        \
+      case ';': RETURN_FLAVOR(Token, semicolon);        \
+      default:  RETURN_FLAVOR(Token, none);             \
     }                                                   \
   }
 
