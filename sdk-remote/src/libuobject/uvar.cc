@@ -164,22 +164,27 @@ namespace urbi
   RemoteUVarImpl::sync()
   {
     std::string tag(client_->fresh());
+    std::string repeatChannel;
+    if (client_->kernelMajor() < 2)
+      repeatChannel = tag + " << ";
     static boost::format
       fmt("{\n"
           "  if (isdef (%s) && !(%s))\n"
           "  {\n"
-          "    %s\n"
+          "    %s %s\n"
           "  }\n"
           "  else\n"
           "  {\n"
-          "     1/0\n"
+          "     %s 1/0\n"
           "  }\n"
           "};\n");
     std::string name = owner_->get_name();
     std::string cmd = str(fmt
                           % name
                           % compatibility::isvoid(name.c_str())
-                          % name);
+                          % repeatChannel
+                          % name
+                          % repeatChannel);
     UMessage* m = client_->syncGetTag("%s", tag.c_str(), 0, cmd.c_str());
     if (m->type == MESSAGE_DATA)
       value_ = *m->value;
