@@ -28,7 +28,6 @@ Details on the architecture the \urbi server runs on.
 %% \item \lstinline|quit|
 %% \item \lstinline|registerAtJob|
 %% \item \lstinline|resetStats|
-%% \item \lstinline|scopeTag|
 %% \item \lstinline|searchFile|
 %% \item \lstinline|searchPath|
 %% \item \lstinline|setenv|
@@ -116,6 +115,12 @@ assert(maybeLoad("u.123").isVoid);
 
 \item \lstinline|reboot|\\
   Restart the \urbi server.  Architecture dependent.
+
+\item \lstinline|scopeTag|\\
+  Return a fresh Tag whose \lstinline|stop| will be invoked a the end
+  of the current scope.  This function is likely to be removed, or
+  maybe just moved into \refObject{Tag}.  See
+  \autoref{sec:specs:tag:scope}.
 
 \item \lstinline|sleep(\var{duration})|\\
   Suspend the execution for \var{duration} seconds.  No CPU cycle is
