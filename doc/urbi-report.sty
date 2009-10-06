@@ -212,6 +212,16 @@
 \RequirePackage{myhyperref}
 \hypersetup{colorlinks, citecolor=blue, linkcolor=blue, urlcolor=blue}
 
+%% Wikipedia.
+\newcommand{\wref}[2][\empty]{%
+  \ifx#1\empty%
+    \href{http://en.wikipedia.org/wiki/#2}{#2}%
+  \else%
+    \href{http://en.wikipedia.org/wiki/#1}{#2}%
+  \fi%
+}
+
+
 %% \labelObject{ ObjectName }
 %% --------------------------
 %% Define a label for an USL (Urbi Standard Library) class name.

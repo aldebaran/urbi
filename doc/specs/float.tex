@@ -203,17 +203,29 @@ assert(1.exp.log == 1);
 \end{urbiscript}
 
 \item \lstinline|nan|\\
-  The ``not a number'' special float value.
+  The ``not a number'' special float value.  More precisely, this
+  returns the ``quiet NaN'', i.e., it is propagated in the various
+  computations, it does not raise exceptions.
 \begin{urbiscript}[firstnumber=last]
 Float.nan;
 [00000000] nan
+(Float.nan + Float.nan) / (Float.nan - Float.nan);
+[00000000] nan
+\end{urbiscript}
+
+A {NaN} has one distinctive property over the other Floats: it is
+equal to no other float, not even itself.  This behavior is mandated
+by the \wref[IEEE_754-2008]{IEEE 754-2008} standard.
+\begin{urbiscript}[firstnumber=last]
+assert({ var n = Float.nan; n === n});
+assert({ var n = Float.nan; n  != n});
 \end{urbiscript}
 
 \item \lstinline|random|\\
   A random integer between 0 and the target.
 \begin{urbiscript}[firstnumber=last]
 for (3)
-  echo (5.random);
+  echo(5.random);
 [00000000] *** 3
 [00000000] *** 1
 [00000000] *** 2
