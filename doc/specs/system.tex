@@ -8,7 +8,6 @@ Details on the architecture the \urbi server runs on.
 
 \subsection{Methods}
 \begin{itemize}
-%% \item \lstinline|_exit|
 %% \item \lstinline|aliveJobs|
 %% \item \lstinline|arguments|
 %% \item \lstinline|backtrace|
@@ -34,14 +33,13 @@ Details on the architecture the \urbi server runs on.
 %% \item \lstinline|searchPath|
 %% \item \lstinline|setenv|
 %% \item \lstinline|shutdown|
-%% \item \lstinline|sleep|
 %% \item \lstinline|spawn|
 %% \item \lstinline|stats|
 %% \item \lstinline|stopall|
 %% \item \lstinline|system|
 %% \item \lstinline|unsetenv|
 
-\item \lstinline'_exit(\var{status})'\\
+\item \lstinline|_exit(\var{status})|\\
   Shut the server down brutally: the connections are not closed, and
   the resources are not explicitly released (the operating system
   reclaims most of them: memory, file descriptors and so forth).
@@ -77,9 +75,6 @@ assert_op(">",  1, 1 + 1);
 [00000003:error] !!! failed assertion: 1 > 1 . '+'(1) (1 <= 2)
 \end{urbiscript}
 
-\item \lstinline'Platform'\\
-  See \refObject{System.Platform}
-
 \item \lstinline|load(\var{file})|\\
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}),
   and load it.  Throw a \lstinline|FileNotFound| error if the file
@@ -90,7 +85,7 @@ assert(System.system("echo '123;' >123.u") == 0);
 assert(load("123.u") == 123);
 \end{urbiscript}
 
-\item \lstinline'loadLibrary(\var{library})'\\
+\item \lstinline|loadLibrary(\var{library})|\\
   Load the library \var{library}, to be found in the
   \env{URBI\_UOBJECT\_PATH} search-path (see
   \autoref{sec:tools:envvars}).  The \var{library} may be a
@@ -98,7 +93,7 @@ assert(load("123.u") == 123);
   available to the other \Cxx components.  See also
   \lstinline|loadModule|.
 
-\item \lstinline'loadModule(\var{module})'\\
+\item \lstinline|loadModule(\var{module})|\\
   Load the UObject \var{module}.  Same as \lstinline|loadLibrary|,
   except that the low-level \Cxx symbols are not made ``global'' (in
   the sense of the shared library loader).
@@ -116,8 +111,20 @@ assert(maybeLoad("123.u") == 123);
 assert(maybeLoad("u.123").isVoid);
 \end{urbiscript}
 
+\item \lstinline|Platform|\\
+  See \refObject{System.Platform}
+
 \item \lstinline|reboot|\\
   Restart the \urbi server.  Architecture dependent.
+
+\item \lstinline|sleep(\var{duration})|\\
+  Suspend the execution for \var{duration} seconds.  No CPU cycle is
+  wasted during this wait.
+
+\begin{urbiscript}[firstnumber=last]
+assert((time - {sleep(1s); time}).round == -1);
+\end{urbiscript}
+
 
 \item \lstinline|shiftedTime|\\
   Return the number of seconds elapsed since the \urbi server was
