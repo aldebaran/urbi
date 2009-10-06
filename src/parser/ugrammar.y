@@ -301,7 +301,7 @@
 %left "new";
 %left "identifier";
 
-// ":" > "indentifier, so as we get the iteration:
+// ":" > "identifier", to get the iteration:
 //   for (var i : [1, 2, 3]) ;
 //
 // not the tagged statement:
@@ -411,7 +411,7 @@ tag:
 stmt:
   tag ":" stmt
   {
-    $$ = new ast::TaggedStmt (@$, $1, make_scope(@$, $3));
+    $$ = new ast::TaggedStmt(@$, $1, make_scope(@$, $3));
   }
 ;
 
@@ -420,7 +420,7 @@ stmt:
 `-------*/
 
 stmt:
-  /* empty */ { $$ = new ast::Noop (@$, 0); }
+  /* empty */ { $$ = new ast::Noop(@$, 0); }
 | exp         { std::swap($$, $1); }
 ;
 
