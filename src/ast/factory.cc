@@ -416,7 +416,7 @@ namespace ast
     PARAMETRIC_AST
       (semi,
        "for (var '$for': %exp:1)\n"
-       "  %exp:2"
+       "  %exp:2\n"
         );
     return exp((FLAVOR_IS(and) ? ampersand
                 : FLAVOR_IS(pipe) ? pipe
@@ -477,7 +477,7 @@ namespace ast
        "}");
 
     PARAMETRIC_AST
-      (semi,
+      (semicolon,
        "{\n"
        "  %exp:1|\n" // When not entering the loop, we want 0 cycles consumed.
        "  var '$first' = true |\n"
@@ -486,7 +486,7 @@ namespace ast
        "    %exp:4\n"
        "}");
     return exp((FLAVOR_IS(comma) ? comma
-                : FLAVOR_IS(semicolon) ? semi
+                : FLAVOR_IS(semicolon) ? semicolon
                 : FLAVOR_IS(pipe) ? pipe
                 : FLAVOR_ERROR("for"))
                % init % inc % test % body);
@@ -532,16 +532,25 @@ namespace ast
 
   // loop %body.
   rExp
-  Factory::make_loop(const location& loc,
+  Factory::make_loop(const location&,
                      const location& flavor_loc, flavor_type flavor,
-                     const location& body_loc, rExp body) // const
+                     const location&, rExp body) // const
   {
     FLAVOR_DEFAULT(semicolon);
-    FLAVOR_CHECK2("loop", semicolon, pipe);
-    return make_while(loc,
-                      flavor_loc, flavor,
-                      new Float(loc, 1),
-                      body_loc, body);
+    PARAMETRIC_AST
+      (pipe,
+       "while| (true)\n"
+       "  %exp:1\n"
+        );
+    PARAMETRIC_AST
+      (semicolon,
+       "while; (true)\n"
+       "  %exp:1\n"
+        );
+    return exp((FLAVOR_IS(pipe) ? pipe
+                : FLAVOR_IS(semicolon) ? semicolon
+                : FLAVOR_ERROR("loop"))
+               % body);
   }
 
 
