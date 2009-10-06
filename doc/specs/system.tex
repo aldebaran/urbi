@@ -27,21 +27,18 @@ Details on the architecture the \urbi server runs on.
 %% \item \lstinline|nonInterruptible|
 %% \item \lstinline|programName|
 %% \item \lstinline|quit|
-%% \item \lstinline|reboot|
 %% \item \lstinline|registerAtJob|
 %% \item \lstinline|resetStats|
 %% \item \lstinline|scopeTag|
 %% \item \lstinline|searchFile|
 %% \item \lstinline|searchPath|
 %% \item \lstinline|setenv|
-%% \item \lstinline|shiftedTime|
 %% \item \lstinline|shutdown|
 %% \item \lstinline|sleep|
 %% \item \lstinline|spawn|
 %% \item \lstinline|stats|
 %% \item \lstinline|stopall|
 %% \item \lstinline|system|
-%% \item \lstinline|time|
 %% \item \lstinline|unsetenv|
 
 \item \lstinline'_exit(\var{status})'\\
@@ -119,12 +116,56 @@ assert(maybeLoad("123.u") == 123);
 assert(maybeLoad("u.123").isVoid);
 \end{urbiscript}
 
-\item \lstinline'reboot'\\
+\item \lstinline|reboot|\\
   Restart the \urbi server.  Architecture dependent.
 
-\item \lstinline'shutdown'\\
+\item \lstinline|shiftedTime|\\
+  Return the number of seconds elapsed since the \urbi server was
+  launched.  Contrary to \lstinline|System.time|, time spent in frozen
+  code is not counted.
+\begin{urbiscript}[firstnumber=last]
+assert({ var t0 = shiftedTime | sleep(1s) | shiftedTime - t0 }.round ~= 1);
+assert (
+  1 ==
+  {
+    var t = Tag.new|;
+    var t0 = time|;
+    var res;
+    t: { sleep(1s) | res = shiftedTime - t0 },
+    t.freeze;
+    sleep(1s);
+    t.unfreeze;
+    sleep(1s);
+    res.round;
+  });
+\end{urbiscript}
+
+\item \lstinline|shutdown|\\
   Have the \urbi server shut down.  All the connections are closed,
   the resources are released.  Architecture dependent.
+
+\item \lstinline|time|\\
+  Return the number of seconds elapsed since the \urbi server was
+  launched.  In presence of a frozen \refObject{Tag}, see also
+  \lstinline|System.shiftedTime|.
+\begin{urbiscript}[firstnumber=last]
+assert({ var t0 = time | sleep(1s) | time - t0 }.round ~= 1);
+assert (
+  2 ==
+  {
+    var t = Tag.new|;
+    var t0 = time|;
+    var res;
+    t: { sleep(1s) | res = time - t0 },
+    t.freeze;
+    sleep(1s);
+    t.unfreeze;
+    sleep(1s);
+    res.round;
+  });
+\end{urbiscript}
+
+
 \end{itemize}
 
 %%% Local Variables:
