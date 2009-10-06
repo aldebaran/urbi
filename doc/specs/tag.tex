@@ -70,25 +70,69 @@ sleep(2.1s);
 [00006000] *** ping again
 \end{urbiscript}
 
+\subsubsection{Freeze/unfreeze}
+\label{sec:specs:tag:freeze}
+
+To \dfn{freeze} a tag means holding the execution of code it labels.
+This applies to code already being run, and ``arriving'' pieces of code.
+
+\begin{urbiscript}
+var t = Tag.new|;
+var t0 = time|;
+t: every(1s) echo("time   : %.0f" % (time - t0)),
+sleep(2.2s);
+[00000158] *** time   : 0
+[00001159] *** time   : 1
+[00002159] *** time   : 2
+
+t.freeze;
+assert(t.frozen);
+t: every(1s) echo("shifted: %.0f" % (shiftedTime - t0)),
+sleep(2.2s);
+// The tag is frozen, nothing is run.
+
+// Unfreeze the tag: suspended code is resumed.
+// Note the difference between "time" and "shiftedTime".
+t.unfreeze;
+assert(!t.frozen);
+sleep(2.2s);
+[00004559] *** shifted: 2
+[00005361] *** time   : 5
+[00005560] *** shifted: 3
+[00006362] *** time   : 6
+[00006562] *** shifted: 4
+\end{urbiscript}
+
 
 \subsection{Methods}
 
 \begin{itemize}
 \item \lstinline|block|~\\
-  Block any code tagged by \lstinline|this|.  Blocked code can be
-  later unblocked using \lstinline|Tag.unblock|.  See
+  Block any code tagged by \lstinline|this|.  Blocked tags can be
+  unblocked using \lstinline|Tag.unblock|.  See
   \autoref{sec:specs:tag:block}.
 
 \item \lstinline|blocked|~\\
   Whether code tagged by \lstinline|this| is blocked.  See
   \autoref{sec:specs:tag:block}.
 
+\item \lstinline|freeze|~\\
+  Suspend code tagged by \lstinline|this|, already running or
+  forthcoming.  Frozen code can be later unfrozen using
+  \lstinline|Tag.unfreeze|.  See \autoref{sec:specs:tag:freeze}.
+
+\item \lstinline|frozen|~\\
+  Whether the tag is frozen. See  \autoref{sec:specs:tag:freeze}.
+
 \item \lstinline|stop|~\\
   Stop any code tagged by \lstinline|this|.
 
 \item \lstinline|unblock|~\\
-  Unblock any code tagged by \lstinline|this|.  See
-  \autoref{sec:specs:tag:block}.
+  Unblock \lstinline|this|.  See \autoref{sec:specs:tag:block}.
+
+\item \lstinline|unfreeze|~\\
+  Unfreeze code tagged by \lstinline|this|.  See
+  \autoref{sec:specs:tag:freeze}.
 \end{itemize}
 
 %%% Local Variables:
