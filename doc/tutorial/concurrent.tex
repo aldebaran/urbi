@@ -103,7 +103,7 @@ include parallelism anywhere at no syntactical cost.
 
 \section{Detach}
 
-The \lstinline{detach} function backgrounds the execution of its
+The \lstindex{Control.detach} function backgrounds the execution of its
 argument. Its behavior is the same as the comma (\lstinline{,}) operator,
 except the execution is completely detached, and not waited for at the
 end of the scope.
@@ -111,9 +111,9 @@ end of the scope.
 \begin{urbiscript}
 function test()
 {
-  // wait 1 second, and echo "foo"
+  // Wait for one second, and echo "foo".
   detach({sleep(1s); echo("foo")});
-} | {};
+}|;
 test();
 echo("Not blocked");
 [00000000] *** Not blocked
@@ -128,7 +128,7 @@ sleep(1s);
 A \refObject{Tag} is a multipurpose code execution control and instrumentation
 feature. Any chunk of code can be tagged, by preceding it with a tag
 and a colon (\lstinline{:}). Tag can be created with
-\lstinline|Tag.new(\var{name})|. Giving tags a name is optional, yet it's
+\lstinline|Tag.new(\var{name})|.  Naming tags is optional, yet it's
 a good idea since it will be used for many features. The example below
 illustrates how to tag chunks of code.
 
@@ -147,11 +147,11 @@ mytag: echo("tagged");
 [00000000] *** tagged
 \end{urbiscript}
 
-You can use tag that wasn't declared previously, they will be created
+You can use tags that were not declared previously, they will be created
 implicitly (see below). However, this is not recommended since
 tags will be created in a global scope, the \lstinline{Tag} object. This
 feature can be used when inputting test code in the top level to avoid
-bothering to declare each tag, yet it should be considered very bad
+bothering to declare each tag, yet it is considered poor
 practice in regular code.
 
 \begin{urbiscript}
@@ -163,7 +163,7 @@ mytag : 42;
 
 So you can tag code, yet what's the use? One of the primary purpose of
 tags is to be able to control the execution of code running in
-parallel. Tags have a few control methods:
+parallel. Tags have a few control methods (see \refObject{Tag}):
 
 \begin{description}
 \item[freeze] Suspend execution of all tagged code.

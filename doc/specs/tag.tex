@@ -24,19 +24,87 @@ var t2 = Tag.new("cool name");
 
 \subsection{Examples}
 
+\subsubsection{Stop}
+\label{sec:specs:tag:stop}
+
+To \dfn{stop} a tag means to kill all the code currently running that
+it labels.  It does not affect ``newcomers''.
+
+\begin{urbiscript}
+var t = Tag.new|;
+var t0 = time|;
+t: every(1s) echo("foo"),
+sleep(2.2s);
+[00000158] *** foo
+[00001159] *** foo
+[00002159] *** foo
+
+t.stop;
+// Nothing runs.
+sleep(2.2s);
+
+t: every(1s) echo("bar"),
+sleep(2.2s);
+[00000158] *** bar
+[00001159] *** bar
+[00002159] *** bar
+
+t.stop;
+\end{urbiscript}
+
+\lstinline|System.stop| can be used to inject a return value to a
+tagged expression.
+
+\begin{urbiscript}
+var t = Tag.new|;
+var res;
+detach(res = { t: every(1s) echo("computing") });
+sleep(2.2s);
+[00000001] *** computing
+[00000002] *** computing
+[00000003] *** computing
+
+t.stop("result");
+assert(res == "result");
+\end{urbiscript}
+
+Be extremely cautious, as of today the precedence rules are
+misleading: \lstinline|\var{var} = \var{tag}: \var{exp}| is read as
+\lstinline|(\var{var} = \var{tag}): \var{exp}| (i.e., defining
+\var{var} as an alias to \var{tag} and using it to tag \var{exp}), not as
+\lstinline|\var{var} = { \var{tag}: \var{exp} }|.  Contrast the
+following example, which is most probably an error from the user, with
+the previous, correct, one.
+
+\begin{urbiscript}
+var t = Tag.new("t")|;
+var res;
+res = t: every(1s) echo("computing"),
+sleep(2.2s);
+[00000001] *** computing
+[00000002] *** computing
+[00000003] *** computing
+
+t.stop("result");
+assert(res == "result");
+[00000004:error] !!! failed assertion: res == "result" (Tag<t> != "result")
+\end{urbiscript}
+
+
 \subsubsection{Block/unblock}
 \label{sec:specs:tag:block}
 
 To \dfn{block} a tag means:
 \begin{itemize}
-\item Stop running pieces of code it labels.
-\item Ignore new pieces of code it labels.
+\item Stop running pieces of code it labels (as with
+  \lstinline|Tag.stop|).
+\item Ignore new pieces of code it labels (this differs from
+  \lstinline|Tag.stop|).
 \end{itemize}
 
 One can \dfn{unblock} the tag.  Contrary to
-\lstinline|freeze|/\lstinline|unfreeze|, tagged code does the resume
+\lstinline|freeze|/\lstinline|unfreeze|, tagged code does not resume
 the execution.
-
 
 \begin{urbiscript}
 var ping = Tag.new("ping")|;
@@ -46,6 +114,7 @@ ping:
 assert(!ping.blocked);
 sleep(2.1s);
 [00000000] *** ping
+[00002000] *** ping
 [00002000] *** ping
 
 ping.block;
@@ -68,6 +137,23 @@ sleep(2.1s);
 [00004000] *** ping again
 [00005000] *** ping again
 [00006000] *** ping again
+\end{urbiscript}
+
+As with \lstinline|stop|, one can force the value of stopped
+expressions.
+
+\begin{urbiscript}
+assert(
+  ["foo", "foo", "foo"]
+  ==
+  {
+    var t = Tag.new;
+    var res = [];
+    for (3)
+      detach(res << {t: sleep(inf)});
+    t.block("foo");
+    res;
+  });
 \end{urbiscript}
 
 \subsubsection{Freeze/unfreeze}
@@ -107,9 +193,10 @@ sleep(2.2s);
 \subsection{Methods}
 
 \begin{itemize}
-\item \lstinline|block|~\\
+\item \lstinline|block(\var{result} = void)|~\\
   Block any code tagged by \lstinline|this|.  Blocked tags can be
-  unblocked using \lstinline|Tag.unblock|.  See
+  unblocked using \lstinline|Tag.unblock|.  If some \var{result} was
+  specified, let stopped code return \var{result} as value.  See
   \autoref{sec:specs:tag:block}.
 
 \item \lstinline|blocked|~\\
@@ -124,8 +211,10 @@ sleep(2.2s);
 \item \lstinline|frozen|~\\
   Whether the tag is frozen. See  \autoref{sec:specs:tag:freeze}.
 
-\item \lstinline|stop|~\\
-  Stop any code tagged by \lstinline|this|.
+\item \lstinline|stop(\var{result} = void)|~\\
+  Stop any code tagged by \lstinline|this|.  If some \var{result} was
+  specified, let stopped code return \var{result} as value.
+  See \autoref{sec:specs:tag:stop}.
 
 \item \lstinline|unblock|~\\
   Unblock \lstinline|this|.  See \autoref{sec:specs:tag:block}.
