@@ -103,7 +103,12 @@ assert(FormatInfo.new("%#'12.8s").pattern == "%#'12.8s");
 \end{urbiscript}
 
 \item \lstinline|precision|\\
-  The number of digits to display after the period.
+  When formatting a \refObject{Float}, the maximum number of digits
+  after decimal point when in fixed or scientific mode, and in total
+  when in default mode.  When formatting other objects with spec-char
+  \samp{s}, the conversion string is truncated to the precision first
+  chars. The eventual padding to \lstinline|width| is done after
+  truncation.
 \begin{urbiscript}[firstnumber=last]
 assert(FormatInfo.new("%s").precision == 6);
 assert(FormatInfo.new("%23.3s").precision == 3);
