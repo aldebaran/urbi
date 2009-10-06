@@ -67,7 +67,7 @@ assert_(1 == 1 + 1, "one is not two");
 assert(true);
 assert(42);
 assert(1 == 1 + 1);
-[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 == 2)
+[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
 \end{urbiscript}
 
 \item \lstinline|assert_op(\var{operator}, \var{lhs}, \var{rhs})|\\
@@ -77,7 +77,7 @@ assert(1 == 1 + 1);
 assert_op("<",  1, 1 + 1);
 assert_op("<=", 1, 1 + 1);
 assert_op(">",  1, 1 + 1);
-[00000003:error] !!! failed assertion: 1 > 1 . '+'(1) (1 > 2)
+[00000003:error] !!! failed assertion: 1 > 1 . '+'(1) (1 <= 2)
 \end{urbiscript}
 
 \item \lstinline'Platform'\\

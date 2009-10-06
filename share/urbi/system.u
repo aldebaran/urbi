@@ -1,7 +1,3 @@
-/*-----------------.
-| System version.  |
-`-----------------*/
-
 do (System)
 {
   const var version = "2.0";
@@ -20,6 +16,21 @@ do (System)
   {
     if (!ndebug)
       assert_(call.evalArgAt(0), call.argString(0));
+  };
+
+  // Return a string that represents the negation of "op".
+  function assert_neg_op (op)
+  {
+    var ops =
+      (
+        '==':  "!="
+        '===': "!=="
+        '<':   ">="
+        '<=':  ">"
+      );
+    for (var p: ops)
+      ops[p.second] = p.first;
+    ops.getWithDefault(op, "(! %s)" % op);
   };
 
   /// assert_op(Operator: String | Lazy, Lhs, Rhs).
@@ -44,7 +55,7 @@ do (System)
       assert_(lhs.getSlot(opStr).apply([lhs, rhs]),
               "%s %s %s (%s %s %s)"
                  % [lhsStr, opStr, rhsStr,
-                    lhs,    opStr, rhs])
+                    lhs.asPrintable, assert_neg_op(opStr), rhs.asPrintable])
     }
   };
 
