@@ -125,12 +125,12 @@ sleep(1s);
 \section{Tags for parallel control flows}
 \label{sec:tut:tags}
 
-Tags are a multipurpose code execution control and instrumentation
+A \refObject{Tag} is a multipurpose code execution control and instrumentation
 feature. Any chunk of code can be tagged, by preceding it with a tag
 and a colon (\lstinline{:}). Tag can be created with
-\lstinline|Tag.new("name")|. Giving tags a name is optional, yet it's
-probably a better idea since it will be used for many
-features. The listing below illustrates how to tag chunks of code.
+\lstinline|Tag.new(\var{name})|. Giving tags a name is optional, yet it's
+a good idea since it will be used for many features. The example below
+illustrates how to tag chunks of code.
 
 \begin{urbiscript}
 // Create a new tag
@@ -148,7 +148,7 @@ mytag: echo("tagged");
 \end{urbiscript}
 
 You can use tag that wasn't declared previously, they will be created
-implicitly like in the listing below. However, this is fragile code since
+implicitly (see below). However, this is not recommended since
 tags will be created in a global scope, the \lstinline{Tag} object. This
 feature can be used when inputting test code in the top level to avoid
 bothering to declare each tag, yet it should be considered very bad
@@ -181,7 +181,7 @@ parallel. Tags have a few control methods:
 \item[unblock] Stop blocking the tagged code.
 \end{description}
 
-The three listings below illustrate usage of these tag features.
+The three following examples illustrate these features.
 
 \begin{urbiscript}
 // Launch in background (using the comma) code that prints "ping"
@@ -235,15 +235,10 @@ mytag.unfreeze;
 
 \begin{urbiscript}
 // Now, print out a message when we get out of the tag.
+loop
 {
-  loop
-  {
-    echo("ping"); sleep(1s);
-    mytag: { echo("pong"); sleep(1s); };
-  };
-
-  // Execution flow will jump here if mytag is stopped
-  echo("Background job stopped")|
+  echo("ping"); sleep(1s);
+  mytag: { echo("pong"); sleep(1s); };
 },
 sleep(4s);
 /*(*/sleep(100ms);/*)*/
