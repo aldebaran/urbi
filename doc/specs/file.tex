@@ -1,0 +1,75 @@
+\section{File}
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+Files may be created from a \refObject{String}, or from a
+\refObject{Path}.  The file must exist on the file system, and must be
+a file.  You may use \lstinline|File.create| to create a file that
+does not exist (or to override an existing one).
+
+\begin{urbiscript}
+System.system("(echo 1; echo 2) >file.txt")|;
+File.new("file.txt");
+[00000001] File("file.txt")
+
+File.new(Path.new("file.txt"));
+[00000001] File("file.txt")
+\end{urbiscript}
+
+You may use \refObject{InputStream} and \refObject{OutputStream} to
+read or write to Files.
+
+\subsection{Methods}
+
+\begin{itemize}
+\item \lstinline|asList|\\
+  Read the file, and return its content as a list of its lines.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+assert(File.new("file.txt").asList == ["1", "2"]);
+\end{urbiscript}
+
+\item \lstinline|asPrintable|\\
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+assert(File.new("file.txt").asPrintable == "File(\"file.txt\")");
+\end{urbiscript}
+
+
+\item \lstinline|asString|\\
+  The name of the opened file.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+assert(File.new("file.txt").asString == "file.txt");
+\end{urbiscript}
+
+\item \lstinline|content|\\
+  The content of the file as a \ref{Binary} object.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+assert(File.new("file.txt").content.data == "1\n2\n");
+\end{urbiscript}
+
+\item \lstinline|create(\var{name})|\\
+  If the file \var{name} exists, return a File to it, otherwise create
+  an empty one, and return a File to it.  See \refObject{OutputStream}
+  for methods to add content to the file.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+assert(File.create("file.txt").asPrintable == "File(\"file.txt\")");
+assert(File.new("file.txt").content.data == "1\n2\n");
+
+assert(File.create("new.txt").content.empty);
+\end{urbiscript}
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

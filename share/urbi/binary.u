@@ -17,6 +17,11 @@ class Global.Binary
     res
   };
 
+  function empty()
+  {
+    data.empty;
+  };
+
   // The semantics is mandated by K1 compatibility.
   function '+'(lhs)
   {
