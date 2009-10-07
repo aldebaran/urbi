@@ -1,0 +1,65 @@
+\section{OutputStream}
+
+OutputStreams are used to write (possibly binary) files by hand.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+An OutputStream is a reading-interface to a file, so its constructor
+requires a \refObject{File}.  If the file already exists, content is
+\emph{appended} to it.  Remove the file beforehand if you want to
+override its content.
+
+\begin{urbiscript}
+System.system("(echo 1; echo 2) >file.txt")|;
+OutputStream.new(File.new("file.txt"));
+[00000001] OutputStream_0x827000
+
+OutputStream.new(File.create("new.txt"));
+[00000001] OutputStream_0x827000
+\end{urbiscript}
+
+\subsection{Methods}
+
+\begin{itemize}
+\item \lstinline|<<(\var{that})|\\
+  Output \lstinline|\var{this}.asString|.  Return \lstinline|this| to
+  enable chains of calls.
+\begin{urbiscript}[firstnumber=last]
+assert(
+  {
+    {
+      var o = OutputStream.new(File.create("fresh.txt"));
+      o << 1 << "2" << [3, [4]];
+    };
+    File.new("fresh.txt").content.data;
+  }
+  ==
+  "12[3, [4]]");
+\end{urbiscript}
+
+\item \lstinline|close|\\
+  Flush the buffers, and close the file.
+\begin{urbiscript}[firstnumber=last]
+assert(OutputStream.new(File.create("file.txt")).close.isVoid);
+\end{urbiscript}
+
+\item \lstinline|putByte(\var{byte})|\\
+  In order to private efficient input/output operations,
+  \dfn[buffer]{buffers} are used.  As a consequence, what is put into
+  a stream might not be immediately saved on the actual file.  To
+  \dfn{flush} a buffer means to dump its content to the file.
+\begin{urbiscript}[firstnumber=last]
+assert(OutputStream.new(File.create("file.txt")).flush.isVoid);
+\end{urbiscript}
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
