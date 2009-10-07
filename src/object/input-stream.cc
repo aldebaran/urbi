@@ -24,9 +24,9 @@
 
 namespace object
 {
-  /*---------------------------.
-  | Construction / Destruction |
-  `---------------------------*/
+  /*-----------------------------.
+  | Construction / Destruction.  |
+  `-----------------------------*/
 
   InputStream::InputStream(int fd, bool own)
     : fd_(fd)
@@ -54,21 +54,21 @@ namespace object
         RAISE(libport::strerror(errno));
   }
 
-  /*------------.
-  | Data access |
-  `------------*/
+  /*--------------.
+  | Data access.  |
+  `--------------*/
 
   int
-  InputStream::_get()
+  InputStream::get_()
   {
     if (pos_ == size_)
-      if (!_getBuffer())
+      if (!getBuffer_())
         return -1;
     return buffer_[pos_++];
   }
 
   bool
-  InputStream::_getBuffer()
+  InputStream::getBuffer_()
   {
     urbi::yield_for_fd(fd_);
     size_ = read(fd_, &buffer_, 1);
@@ -77,7 +77,7 @@ namespace object
   }
 
   std::string
-  InputStream::_getSeparator(char sep, bool incl, bool& ok)
+  InputStream::getSeparator_(char sep, bool incl, bool& ok)
   {
     ok = false;
     std::string res;
@@ -97,33 +97,29 @@ namespace object
         else
           res += buffer_[pos_];
       }
-      if (!_getBuffer())
+      if (!getBuffer_())
         return res;
     }
   }
 
-  /*-------------.
-  | Urbi methods |
-  `-------------*/
+  /*--------------.
+  | Urbi methods. |
+  `--------------*/
 
   void
   InputStream::init(rFile f)
   {
     libport::path path = f->value_get()->value_get();
     fd_ = open(path.to_string().c_str(), O_RDONLY);
-    own_ = true;
     if (fd_ < 0)
-    {
-      boost::format fmt("Unable to open file for reading: %s");
-      fd_ = 0;
-      RAISE(str(fmt % path));
-    }
+      FRAISE("cannot open file for reading: %s", path);
+    own_ = true;
   }
 
   rObject
   InputStream::get()
   {
-    int res = _get();
+    int res = get_();
     if (res == -1)
       return 0;
     return to_urbi(res);
@@ -132,7 +128,7 @@ namespace object
   rObject
   InputStream::getChar()
   {
-    int res = _get();
+    int res = get_();
     if (res == -1)
       return 0;
     return to_urbi(std::string(1, res));
@@ -142,15 +138,15 @@ namespace object
   InputStream::getLine()
   {
     bool ok;
-    std::string res = _getSeparator('\n', false, ok);
+    std::string res = getSeparator_('\n', false, ok);
     if (ok)
       return to_urbi(res);
     return 0;
   }
 
-  /*--------------.
-  | Urbi bindings |
-  `--------------*/
+  /*----------------.
+  | Urbi bindings.  |
+  `----------------*/
 
   rObject
   InputStream::proto_make()
@@ -159,7 +155,7 @@ namespace object
   }
 
   void
-  InputStream::initialize(object::CxxObject::Binder<object::InputStream>& bind)
+  InputStream::initialize(CxxObject::Binder<InputStream>& bind)
   {
     bind(SYMBOL(get), &InputStream::get);
     bind(SYMBOL(getChar), &InputStream::getChar);

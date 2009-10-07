@@ -17,25 +17,25 @@ namespace object
   class OutputStream: public CxxObject
   {
 
-  /*---------------------------.
-  | Construction / Destruction |
-  `---------------------------*/
+  /*-----------------------------.
+  | Construction / Destruction.  |
+  `-----------------------------*/
 
   public:
     OutputStream(int fd, bool own);
     OutputStream(rOutputStream stream);
     ~OutputStream();
 
-  /*------------.
-  | Data access |
-  `------------*/
+  /*--------------.
+  | Data access.  |
+  `--------------*/
 
   private:
     void checkFD_() const;
 
-  /*-------------.
-  | Urbi methods |
-  `-------------*/
+  /*---------------.
+  | Urbi methods.  |
+  `---------------*/
 
   public:
     void init(rFile f);
@@ -44,9 +44,9 @@ namespace object
     rOutputStream put(rObject o);
     void close();
 
-  /*--------.
-  | Details |
-  `--------*/
+  /*----------.
+  | Details.  |
+  `----------*/
 
   private:
     int fd_;

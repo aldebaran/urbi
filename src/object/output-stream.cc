@@ -49,12 +49,12 @@ namespace object
   OutputStream::checkFD_() const
   {
     if (fd_ == -1)
-      RAISE("Stream is closed");
+      RAISE("stream is closed");
   }
 
-  /*-------------.
-  | Urbi methods |
-  `-------------*/
+  /*---------------.
+  | Urbi methods.  |
+  `---------------*/
 
   void OutputStream::init(rFile f)
   {
@@ -63,11 +63,7 @@ namespace object
                O_WRONLY | O_APPEND | O_CREAT, S_IRWXU);
 
     if (fd_ < 0)
-    {
-      boost::format fmt("Unable to open file for writing: %s");
-      fd_ = 0;
-      RAISE(str(fmt % path));
-    }
+      FRAISE("cannot open file for writing: %s", path);
     own_ = true;
   }
 
@@ -108,9 +104,9 @@ namespace object
     fd_ = -1;
   }
 
-  /*--------------.
-  | Urbi bindings |
-  `--------------*/
+  /*----------------.
+  | Urbi bindings.  |
+  `----------------*/
 
   rObject
   OutputStream::proto_make()
@@ -119,7 +115,7 @@ namespace object
   }
 
   void
-  OutputStream::initialize(CxxObject::Binder<object::OutputStream>& bind)
+  OutputStream::initialize(CxxObject::Binder<OutputStream>& bind)
   {
     bind(SYMBOL(LT_LT), &OutputStream::put    );
     bind(SYMBOL(close), &OutputStream::close  );
