@@ -125,6 +125,7 @@ URBI_LIBPORT([sdk-remote/libport])
 URBI_PTHREAD
 URBI_SOCKETS
 
+WITH_XENOMAI
 # object/directory.
 AC_CHECK_HEADERS([sys/inotify.h])
 
