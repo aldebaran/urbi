@@ -1,44 +1,63 @@
 // k1 compatibility.
 class Global.Kernel1
 {
-  function copy(o)
+  setProtos([Singleton]);
+
+  function deprecated(what, suggestion = "")
   {
-    warn("`copy(o)' is deprecated, use `o.copy'") |
-    o.copy
+    if (suggestion.empty)
+      warn("`%s' is deprecated" % what)
+    else
+    warn("`%s' is deprecated, use `%s'" % [what, suggestion])
+  };
+
+  function copy(b)
+  {
+    deprecated("copy(binary)", "binary.copy") |
+    b.copy
+  };
+
+  function isvoid
+  {
+    deprecated("isvoid(o)", "o.isVoid") |
+    call.evalArgAt(0).acceptVoid.isVoid
   };
 
   function noop()
   {
-    warn("`noop' is deprecated, use `{}'") |
+    deprecated("noop", "{}")
   };
 
   function ping()
   {
-    echo("pong time=" + (time / 1s).asString + "s");
+    echo("pong time=%ss" % time);
   };
 
   function seq(n)
   {
-    warn("`seq(number)' is deprecated, use `number.seq'") |
+    deprecated("seq(number)", "number.seq") |
     n.seq
   };
 
   function size(l)
   {
-    warn("`size(list)' is deprecated, use `list.size'") |
+    deprecated("size(list)", "list.size") |
     l.size
   };
 
   function strlen(s)
   {
-    warn("`strlen(string)' is deprecated, use `string.length'") |
+    deprecated("strlen(string)", "string.length") |
     s.length
   };
 
-  function isvoid
+  function system
   {
-    call.evalArgAt(0).acceptVoid.isVoid
+    deprecated("system", "System") |
+    System
   };
+
+  var System.ghostID = function () { deprecated("ghostID") };
 
   // Deprecated commands from k1.
   // FIXME: Maybe some commands should be rewritten.
@@ -58,10 +77,8 @@ class Global.Kernel1
                     "vars",
                   ])
     setSlot(name,
-      function () { warn("`" + name + "' is deprecated." ) });
+      function () { deprecated(name) });
 
-  var system = System;
-  var system.ghostID = "";
 };
 
 // K1 compatibility: import the k1 functions.

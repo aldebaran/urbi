@@ -1,0 +1,94 @@
+\section{Kernel1}
+
+This object is actually meant to play the role of a name-space in
+which obsolete functions from \us 1.0 are provided for backward
+compatibility.  Do not use these functions, scheduled for removal.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Singleton}
+\end{itemize}
+
+\subsection{Construction}
+
+Since it is a \refObject{Singleton}, you are not expected to build
+other instances.
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|commands|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|connections|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|copy(\var{binary})|\\
+  Obsolete syntax for \lstinline|\var{binary}.copy|, see
+  \refObject{Binary}.
+
+\item \lstinline|devices|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|events|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|functions|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|isvoid(\var{obj})|\\
+  Obsolete syntax for \lstinline|\var{obj}.isVoid|, see
+  \refObject{Object}.
+
+\item \lstinline|noop|\\
+  Do nothing.  Use \lstinline|{}| instead.
+
+\item \lstinline|ping|\\
+  Return \lstinline|time| verbosely, see \refObject{System}.
+\begin{urbiscript}
+Kernel1.ping;
+[00000421] *** pong time=0.12s
+\end{urbiscript}
+
+\item \lstinline|reset|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|runningcommands|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|seq(\var{number})|\\
+  Obsolete syntax for \lstinline|\var{number}.seq|, see
+  \refObject{Float}.
+
+\item \lstinline|size(\var{list})|\\
+  Obsolete syntax for \lstinline|\var{list}.size|, see
+  \refObject{List}.
+
+\item \lstinline|strict|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|strlen(\var{string})|\\
+  Obsolete syntax for \lstinline|\var{string}.length|, see
+  \refObject{String}.
+
+\item \lstinline|taglist|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|undefall|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|unstrict|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|uservars|\\
+  Ignored for backward compatibility.
+
+\item \lstinline|vars|\\
+  Ignored for backward compatibility.
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
