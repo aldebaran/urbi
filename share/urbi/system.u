@@ -59,10 +59,62 @@ do (System)
     }
   };
 
-  /// assert_eq(Lhs, Rhs).
+  /// assert_eq(Lhs, Rhs) and so forth.
+  // Cannot do this, as we don't have Dictionary.each yet.
+  //for (var p :
+  //      (
+  //        assert_eq: "=="
+  //        assert_ge: ">="
+  //        assert_gt: ">"
+  //        assert_le: "<="
+  //        assert_lt: "<"
+  //        assert_ne: "!="
+  //      ))
+  //  setSlot(p.first,
+  //          function () {
+  //            call.args.insertFront(p.second) |
+  //            call.message = "assert_op" |
+  //            callMessage(call)
+  //          });
+
   function assert_eq
   {
     call.args.insertFront("==") |
+    call.message = "assert_op" |
+    callMessage(call)
+  };
+
+  function assert_ge
+  {
+    call.args.insertFront(">=") |
+    call.message = "assert_op" |
+    callMessage(call)
+  };
+
+  function assert_gt
+  {
+    call.args.insertFront(">") |
+    call.message = "assert_op" |
+    callMessage(call)
+  };
+
+  function assert_le
+  {
+    call.args.insertFront("<=") |
+    call.message = "assert_op" |
+    callMessage(call)
+  };
+
+  function assert_lt
+  {
+    call.args.insertFront("<") |
+    call.message = "assert_op" |
+    callMessage(call)
+  };
+
+  function assert_ne
+  {
+    call.args.insertFront("!=") |
     call.message = "assert_op" |
     callMessage(call)
   };
