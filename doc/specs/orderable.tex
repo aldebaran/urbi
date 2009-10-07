@@ -23,9 +23,9 @@ var one = Foo.new(1);
 var two = Foo.new(2);
 [00000002] <2>
 
-assert(  one <= one  &&   one <= two  && !(two <= one));
-assert(!(one >  one) && !(one >  two) &&   two >  one);
-assert(  one >= one  && !(one >= two) &&   two >= one);
+assert( (one <= one) &&  (one <= two) && !(two <= one));
+assert(!(one >  one) && !(one >  two) &&  (two >  one));
+assert( (one >= one) && !(one >= two) &&  (two >= one));
 \end{urbiscript}
 
 

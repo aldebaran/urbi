@@ -112,6 +112,20 @@ do (System)
     callMessage(call)
   };
 
+  function assert_meq
+  {
+    call.args.insertFront("===") |
+    call.message = "assert_op" |
+    callMessage(call)
+  };
+
+  function assert_mne
+  {
+    call.args.insertFront("!==") |
+    call.message = "assert_op" |
+    callMessage(call)
+  };
+
   function assert_ne
   {
     call.args.insertFront("!=") |

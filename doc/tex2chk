@@ -154,12 +154,14 @@ sub assert_name($)
   my ($op) = @_;
   my %op =
     (
-     '==' => 'eq',
-     '!=' => 'ne',
-     '<'  => 'lt',
-     '<=' => 'le',
-     '>'  => 'gt',
-     '>=' => 'ge',
+     '!='  => 'ne',
+     '!==' => 'mne',
+     '<'   => 'lt',
+     '<='  => 'le',
+     '=='  => 'eq',
+     '===' => 'meq',
+     '>'   => 'gt',
+     '>='  => 'ge',
     );
   "assert_" . $op{$op};
 }
@@ -197,13 +199,13 @@ sub process_listing ($$$)
   # Be also woried about precedence.  1 < 2 == true should not be
   # cut on `<'.  I don't feel like parsing urbi in Perl...
   $res{'_contents'} =~
-    s{^(\s*)      # $1 indentation
+    s{^(\s*)                 # $1 indentation
        assert
        \s*\(
-       ($braced)   # $2 lhs
+       ($braced)             # $2 lhs
        \s*
        (?<![!=])
-       (==)    #    (<|<=|>|>=|!=|==)            # $3 operator
+       (<|<=|>|>=|!=|==|===|!==)     # $3 operator
        (?![=])\s*}
      { $1 . assert_name($3) . '(' . strip ($2) . ", "}gmsex;
 
