@@ -30,10 +30,17 @@ improved.  Changes include, but are not limited to:
     urbi-send).
   - Boolean
   - Channel
+  - Date
   - Dictionary
+  - File
+  - Kernel1
+  - InputStream
   - Lazy
+  - Math
   - Mutex
+  - Regexp
   - Object
+  - OutputStream
   - Pair
   - String
   - Tag
@@ -78,8 +85,12 @@ New constructs:
   as in C++.
 
 New objects:
+- File
 - Finalizable
+- InputStream
 - Mutex
+- OutputStream
+- Regexp
 - Server
 - Socket
 - Timeout
@@ -110,6 +121,17 @@ Changes:
 - Dictionaries.asString does not sort the keys.
 - Dictionaries.[]= returns the assigned value, not the dictionary.
 - Constants is merged into Math.
+- every no longer goes in background.  When you used to write
+
+     every (1s) echo("foo");
+
+  now write (note the change in the separator)
+
+     every (1s) echo("foo"),
+
+  or
+
+     detach({ every (1s) echo("foo"); });
 
 
 UObjects
