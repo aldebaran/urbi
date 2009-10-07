@@ -1,10 +1,11 @@
 class Global.Math
 {
+  setProtos([Singleton]);
+
   for (var fn: ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
                "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"])
-  {
-    setSlot (fn, bounce_named (fn))
-  };
+    setSlot(fn, bounce_named(fn));
+
   function atan2(x, y)
   {
     x.atan2(y)
@@ -20,8 +21,7 @@ class Global.Math
     return call.evalArgs.max
   };
 
-  var pi  = 3.14159265358979323846264338327950288;
-  var inf = Float.inf;
-  var nan = Float.nan;
+  for (var v: ["inf", "pi", "nan"])
+    setSlot(v, Float.getSlot(v));
 };
 Global.addProto(Global.Math);

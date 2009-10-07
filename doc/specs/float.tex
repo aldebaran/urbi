@@ -35,7 +35,7 @@ assert(  5 .abs == 5);
 \item \lstinline|acos|\\
   Arccosine of the target.
 \begin{urbiscript}[firstnumber=last]
-assert(0.acos == pi/2);
+assert(0.acos == Float.pi/2);
 assert(1.acos == 0);
 \end{urbiscript}
 
@@ -95,7 +95,7 @@ assert(42.asString == "42");
   Return the arctangent of the target.
 \begin{urbiscript}[firstnumber=last]
 assert(0.atan == 0);
-assert(1.atan == pi/4);
+assert(1.atan == Float.pi/4);
 \end{urbiscript}
 
 \item \lstinline|'bitand'(\var{that})|\\
@@ -132,7 +132,7 @@ assert(compl 4294967295 == 0);
   Cosine of the target.
 \begin{urbiscript}[firstnumber=last]
 assert(0.cos == 1);
-assert(pi.cos == -1);
+assert(Float.pi.cos == -1);
 \end{urbiscript}
 
 \item \lstinline|each(\var{fun})|\\
@@ -235,6 +235,12 @@ assert({ var n = Float.nan; n === n});
 assert({ var n = Float.nan; n  != n});
 \end{urbiscript}
 
+\item \lstinline|pi|\\
+  $\pi$.
+\begin{urbiscript}[firstnumber=last]
+assert(Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1);
+\end{urbiscript}
+
 \item \lstinline|random|\\
   A random integer between 0 and the target.
 \begin{urbiscript}[firstnumber=last]
@@ -289,7 +295,7 @@ assert(1024.sqrt == 32);
   Tangent of the target.
 \begin{urbiscript}[firstnumber=last]
 assert(0.tan == 0);
-(pi/4).tan;
+(Float.pi/4).tan;
 [00000000] 1
 \end{urbiscript}
 

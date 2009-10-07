@@ -54,6 +54,8 @@ do (Float)
       action(i)
   };
 
+  var pi = 3.14159265358979323846264338327950288;
+
   function sgn() { if (this < 0) -1 else if (this > 0) 1 else 0 };
 
   /// Normalized value (i.e., 0 <= res <= 1).
