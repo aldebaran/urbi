@@ -65,16 +65,15 @@ Object.addProto(Comparable);
 
 load("urbi/orderable.u");
 load("urbi/updatehook-stack.u");
+
+load("urbi/date.u");
 load("urbi/float.u");
 load("urbi/trajectory-generator.u");
 load("urbi/path.u");
 load("urbi/string.u");
 load("urbi/file.u");
 load("urbi/formatter.u");
-
 load("urbi/kernel1.u");
-
-
 load("urbi/math.u");
 load("urbi/group.u");
 load("urbi/binary.u");
@@ -86,7 +85,6 @@ load("urbi/dictionary.u");
 load("urbi/weak-pointer.u");
 load("urbi/pattern.u");
 load("urbi/task.u");
-
 load("urbi/pubsub.u");
 load("urbi/event.u");
 load("urbi/tag.u");

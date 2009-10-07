@@ -1,0 +1,4 @@
+do (Date)
+{
+  setProtos([Orderable, Comparable]);
+};

@@ -20,48 +20,39 @@ namespace object
   class Date: public CxxObject
   {
 
-  /*-------------.
-  | Construction |
-  `-------------*/
+  /*---------------.
+  | Construction.  |
+  `---------------*/
 
   public:
+    typedef time_t value_type;
     Date();
     Date(rDate model);
     Date(time_t time);
     void init(const objects_type& args);
 
-  private:
-    void split(time_t time);
-
-  /*------------.
-  | Comparisons |
-  `------------*/
+  /*--------------.
+  | Comparisons.  |
+  `--------------*/
 
   public:
     using Object::operator <;
     bool operator ==(rDate rhs) const;
     bool operator <(rDate rhs) const;
 
-  /*------------.
-  | Conversions |
-  `------------*/
+  /*--------------.
+  | Conversions.  |
+  `--------------*/
 
   public:
-    std::string as_string();
-    std::string as_printable();
+    std::string as_string() const;
 
-  /*--------.
-  | Details |
-  `--------*/
+  /*----------.
+  | Details.  |
+  `----------*/
 
   private:
-    unsigned stamp_;
-    unsigned year_;
-    unsigned month_;
-    unsigned day_;
-    unsigned hour_;
-    unsigned min_;
-    unsigned sec_;
+    time_t time_;
 
     URBI_CXX_OBJECT(Date);
   };

@@ -8,25 +8,19 @@ namespace object
   `---------------*/
 
   Date::Date()
+    : time_(0)
   {
     proto_add(proto ? proto : Object::proto);
-    split(time(0));
   }
 
-  Date::Date(time_t time)
+  Date::Date(time_t t)
+    : time_(t)
   {
     proto_add(proto ? proto : Object::proto);
-    split(time);
   }
 
   Date::Date(rDate time)
-    : stamp_(time)
-    , year_(time->year_)
-    , month_(time->month_)
-    , day_(time->day_)
-    , hour_(time->hour_)
-    , min_(time->min_)
-    , sec_(time->sec_)
+    : time_(time->time_)
   {
     CAPTURE_GLOBAL(Orderable);
     proto_add(Orderable);
@@ -37,25 +31,7 @@ namespace object
   Date::init(const objects_type& args)
   {
     check_arg_count(args.size(), 0, 1);
-
-    if (!args.empty())
-      split(from_urbi<unsigned>(args[0]));
-    else
-      split(time(0));
-  }
-
-  void
-  Date::split(time_t time)
-  {
-    struct tm date;
-    localtime_r(&time, &date);
-    stamp_ = time;
-    year_ = date.tm_year + 1900;
-    month_ = date.tm_mon;
-    day_ = date.tm_mday;
-    hour_ = date.tm_hour;
-    min_ = date.tm_min;
-    sec_ = date.tm_sec;
+    time_ = args.empty() ? 0 : from_urbi<unsigned>(args[0]);
   }
 
   /*-------------.
@@ -65,13 +41,13 @@ namespace object
   bool
   Date::operator ==(rDate rhs) const
   {
-    return stamp_ == rhs->stamp_;
+    return time_ == rhs->time_;
   }
 
   bool
   Date::operator <(rDate rhs) const
   {
-    return stamp_ < rhs->stamp_;
+    return time_ < rhs->time_;
   }
 
   /*--------------.
@@ -79,10 +55,17 @@ namespace object
   `--------------*/
 
   std::string
-  Date::as_string()
+  Date::as_string() const
   {
-    return libport::format("%s-%s-%s %s:%s:%s",
-                           year_, month_, day_, hour_, min_, sec_);
+    struct tm date;
+    localtime_r(&time_, &date);
+    return libport::format("%04s-%02s-%02s %02s:%02s:%02s",
+                           1900 + date.tm_year,
+                           date.tm_mon + 1,
+                           date.tm_mday,
+                           date.tm_hour,
+                           date.tm_min,
+                           date.tm_sec);
   }
 
   /*-----------------.
