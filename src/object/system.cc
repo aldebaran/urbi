@@ -397,9 +397,16 @@ namespace object
     dl.ext().global(global).path()
       .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"), ":");
 
-    libport::xlt_handle handle = dl.open(filename);
-    if (!handle.handle)
-      RAISE("Failed to open `" + filename + "': " + lt_dlerror());
+    libport::xlt_handle handle;
+    try
+    {
+      handle = dl.open(filename);
+    }
+    catch(const libport::xlt_advise::exception& e)
+    {
+      RAISE(e.what());
+    }
+
     handle.detach();
 
     // Reload uobjects
