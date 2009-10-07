@@ -1,0 +1,63 @@
+\section{Date}
+
+This class is meant to record dates in time.  It is experimental, and
+very likely to be changed in the future.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Orderable}
+\item \refObject{Comparable}
+\end{itemize}
+
+\subsection{Construction}
+
+Without argument, newly constructed dates refer to the current date.
+
+\begin{urbiscript}
+Date.new;
+[00000001] 1970-01-01 01:00:00
+\end{urbiscript}
+
+With a numeric argument \var{s}, refers to the date that is \var{s}
+seconds after January 1st 1970, at midnight.
+
+\begin{urbiscript}[firstnumber=last]
+Date.new(1234567890);
+[00023593] 2009-02-14 00:31:30
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|==(\var{that})|\\
+  Equality test.
+\begin{urbiscript}[firstnumber=last]
+assert(Date.new(11223344) == Date.new(11223344));
+assert(Date.new(11111111) != Date.new(22222222));
+\end{urbiscript}
+
+\item \lstinline|<(\var{that})|\\
+  Order comparison.
+\begin{urbiscript}[firstnumber=last]
+assert(Date.new(11111111) < Date.new(22222222));
+\end{urbiscript}
+
+\item \lstinline|asString|\\
+  Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
+    \var{hh}:\var{mn}:\var{ss}} where \var{yyyy} is the four-digit
+  year, \var{mm} the two-digit month (from 1 to 12), \var{dd} the
+  two-digit day in the month (from 1 to 31), \var{hh} the two-digit
+  hour (from 0 to 23), \var{mn} the two-digit number of minutes in the
+  hour (from 0 to 59), and \var{ss} the two-digit number of seconds in
+  the minute (from 0 to 59).
+\begin{urbiscript}[firstnumber=last]
+assert(Date.new(1234567890).asString == "2009-02-14 00:31:30");
+\end{urbiscript}
+
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
