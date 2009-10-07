@@ -231,11 +231,11 @@
 \newcommand{\labelObject}[1]
   {\label{sec:std-#1}}
 
-%% \refObject{ ObjectName }
-%% ------------------------
+%% \refObject[Plural]{ ObjectName }
+%% --------------------------------
 %% Point to the definition of an USL class.
-\newcommand{\refObject}[1]
-  {\hyperref[sec:std-#1]{\lstinline|#1| (\autoref*{sec:std-#1})}}
+\newcommand{\refObject}[2][]
+  {\hyperref[sec:std-#2]{\lstinline|#2|#1 (\autoref*{sec:std-#2})}}
 
 %% \autorefObject{ ObjectName }
 %% ----------------------------

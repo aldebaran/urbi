@@ -1,0 +1,97 @@
+\section{Binary}
+
+A Binary object, sometimes called a \dfn{blob}, is raw memory,
+decorated with a user defined header.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+Binaries are usually not made by users, but they are heavily used by
+the internal machinery when exchanging Binary UValues.  A binary
+features some \lstinline|content| and some \lstinline|keywords|, both
+simple \refObject[s]{String}.
+
+\begin{urbiscript}
+Binary.new("my header", "my content");
+[00000001] BIN 10 my header
+[:]my content
+\end{urbiscript}
+
+Beware that the third line above (\samp{my content}), was output by
+the system, although not preceded by a timestamp.
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|'+'(\var{that})|\\
+  Return a new Binary whose keywords are those of \lstinline|this| if
+  not empty, otherwise those of \var{that}, and whose data is the
+  concatenation of both.
+\begin{urbiscript}[firstnumber=last]
+assert(Binary.new("0", "0") + Binary.new("1", "1")
+       == Binary.new("0", "01"));
+assert(Binary.new("", "0") + Binary.new("1", "1")
+       == Binary.new("1", "01"));
+\end{urbiscript}
+
+\item \lstinline|'=='(\var{other})|\\
+  Whether \lstinline|keywords| and \lstinline|data| are equal.
+\begin{urbiscript}[firstnumber=last]
+assert(Binary.new("0", "0") == Binary.new("0", "0"));
+assert(Binary.new("0", "0") != Binary.new("0", "1"));
+assert(Binary.new("0", "0") != Binary.new("1", "0"));
+\end{urbiscript}
+
+\item \lstinline|asString|\\
+  Display using the syntactic rules of the UObject/UValue protocol.
+  Incoming binaries must use a semicolon to separate the header part
+  from the content, while outgoing binaries use a cariage-return.
+\begin{urbiscript}[firstnumber=last]
+assert(Binary.new("head", "content").asString
+       == "BIN 7 head\ncontent");
+var b = BIN 7 header;content;
+[00000002] BIN 7 header
+[:]content
+assert(b == Binary.new("header", "content"));
+\end{urbiscript}
+
+This syntax (\lstinline|BIN \var{size} \var{header}; \var{content}|)
+is \emph{partially} supported in \us, but it is strongly discouraged.
+Rather, use the \lstinline|\B(\var{size})(\var{data})| special escape
+(see \autoref{sec:us-syn-lit-string}):
+
+\begin{urbiscript}[firstnumber=last]
+assert(Binary.new("head", "\B(7)(content)").asString
+       == "BIN 7 head\ncontent");
+\end{urbiscript}
+
+
+\item \lstinline|data|\\
+  The data carried by the Binary.
+\begin{urbiscript}[firstnumber=last]
+assert(Binary.new("head", "content").data == "content");
+\end{urbiscript}
+
+\item \lstinline|empty|\\
+  Whether the data is empty.
+\begin{urbiscript}[firstnumber=last]
+assert(Binary.new("head", "").empty);
+assert(!Binary.new("head", "content").empty);
+\end{urbiscript}
+
+\item \lstinline|keywords|\\
+  The headers carried by the Binary.
+\begin{urbiscript}[firstnumber=last]
+assert(Binary.new("head", "content").keywords == "head");
+\end{urbiscript}
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

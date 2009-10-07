@@ -1,20 +1,39 @@
 class Global.Binary
 {
-  function init(k, v)
+  addProto(Comparable);
+
+  // The semantics is mandated by K1 compatibility.
+  function '+'(rhs)
   {
-    var this.keywords = k |
-    var this.data = v
+    var res = Global.Binary.new(keywords, data + rhs.data)|
+    if (keywords.empty)
+      res.keywords = rhs.keywords |
+    return res
+  };
+
+  function '=='(rhs)
+  {
+    keywords == rhs.keywords && data == rhs.data
   };
 
   function asString()
   {
     if (this === Binary)
       return "Binary" |
-    var res = "BIN " + data.size.asString |
+    var res = "BIN " + data.size |
     if (!keywords.empty)
       res += " " + keywords |
+    // The way the data is separated from the header differs depending
+    // on whether the information is sent to the kernel, or send by it
+    // it.  This is tightly related to the liburbi protocol, don't
+    // play foolish games here.
     res += "\n" + data |
     res
+  };
+
+  function copy()
+  {
+    Global.Binary.new(keywords, data)
   };
 
   function empty()
@@ -22,17 +41,10 @@ class Global.Binary
     data.empty;
   };
 
-  // The semantics is mandated by K1 compatibility.
-  function '+'(lhs)
+  function init(k, v)
   {
-    var res = Global.Binary.new(keywords, data + lhs.data)|
-    if (keywords.empty)
-      res.keywords = lhs.keywords |
-    return res
+    var this.keywords = k |
+    var this.data = v
   };
 
-  function copy()
-  {
-    Global.Binary.new(keywords, data)
-  };
 };
