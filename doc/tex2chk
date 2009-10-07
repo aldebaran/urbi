@@ -28,17 +28,36 @@ my %by_name;
 # The name of the previous test.
 my $previous_label = undef;
 
-# A regexp that matches nested parents.
-my $nparens;
-$nparens =
+# A regexp that matches 0 or more repetitions of either a
+# non-backtracking word with no parens/braces, or a braced group, or a
+# parenthezied group.
+#
+# Note that since it is greedy and non-backtracking, it might eat too
+# much.  Use $braced instead.
+my $balanced;
+$balanced =
   qr{
-       \(
        (?:
-          (?> [^()]+ )         # Non-parens without backtracking
+          (?> [^(){}\[\]]+ )         # Non-parens/braces without backtracking
         |
-          (??{ $nparens })     # Group with matching parens
+          \( (??{ $balanced }) \)     # Group with matching parens
+        |
+          \{ (??{ $balanced }) \}     # Group with matching braces
+        |
+          \[ (??{ $balanced }) \]     # Group with matching brackets
        )*
-       \)
+    }x;
+
+# Same as above, but allow backtracking on non-braced parts, so that
+# we don't eat places where we want to catch operators.
+my $braced =
+  qr{
+      (?:
+          \{ $balanced \}
+        | \( $balanced \)
+        | \[ $balanced \]
+        | [^(){}\[\]]+        # Non-parens/braces with backtracking
+      )*
     }x;
 
 # The (Boolean) operators in urbiScript.  Beware of operators "nested"
@@ -169,6 +188,8 @@ sub process_listing ($$$)
   $res{'_contents'} = $2;
   my $options = $1;
 
+#  print STDERR "$2\n";
+
   # assert_eq is clearer when there are failures, but it is not nice
   # looking in the documentation.  Beware of === and !== that contain
   # ==.
@@ -176,14 +197,15 @@ sub process_listing ($$$)
   # Be also woried about precedence.  1 < 2 == true should not be
   # cut on `<'.  I don't feel like parsing urbi in Perl...
   $res{'_contents'} =~
-    s{^\s*assert
+    s{^(\s*)      # $1 indentation
+       assert
        \s*\(
-       ((?:(?>[^()])|$nparens)+?)   # $1 lhs
+       ($braced)   # $2 lhs
        \s*
        (?<![!=])
-       (==)    #    (<|<=|>|>=|!=|==)            # $2 operator
+       (==)    #    (<|<=|>|>=|!=|==)            # $3 operator
        (?![=])\s*}
-     { assert_name($2) . '(' . strip ($1) . ", "}gmsex;
+     { $1 . assert_name($3) . '(' . strip ($2) . ", "}gmsex;
 
   # Decode and normalize the options.
   if ($options)
