@@ -690,6 +690,7 @@ namespace runner
   }
 
 
+  /// FIXME: There is a lot in common with Nary, factor.
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::While* e)
   {
@@ -728,10 +729,6 @@ namespace runner
     {
       ce.rethrow_child_exception();
     }
-
-    // If we get a scope tag, stop the runners tagged with it.
-    if (const sched::rTag& tag = scope_tag_get())
-      tag->stop(scheduler_get(), object::void_class);
     yield_until_terminated(runners);
 
     return object::void_class;

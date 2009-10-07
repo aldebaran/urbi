@@ -364,23 +364,9 @@ namespace ast
     // every, (exp:1) exp:2.
     PARAMETRIC_AST
       (comma,
-       "detach ({\n"
-       "  var deadline = shiftedTime |\n"
-       "  var controlTag = Tag.newFlowControl |\n"
-       "  throw\n"
-       "  {\n"
-       "    controlTag: loop\n"
-       "    {\n"
-       "      detach ({\n"
-       "                try\n"
-       "                  { %exp:2 }\n"
-       "                catch (var e)\n"
-       "                  { controlTag.stop(e)} }) |\n"
-       "      deadline += %exp:1 |\n"
-       "      sleep (deadline - shiftedTime)\n"
-       "    };\n"
-       "  }\n"
-       "})\n");
+       "for, (var deadline = shiftedTime; true;\n"
+       "      deadline = Control.'every,sleep'(deadline, %exp:1))\n"
+       "  %exp:2\n");
 
     // every| (exp:1) exp:2.
     PARAMETRIC_AST

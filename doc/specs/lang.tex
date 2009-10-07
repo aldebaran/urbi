@@ -1762,9 +1762,9 @@ repeatedly, with the given period.
 
 \begin{urbiscript}[firstnumber=last]
 // Print out a message every second.
-every (1s)
-  echo("Are you still there?");
-/*(*/sleep(2.1s);/*)*/
+timeout (2.1s)
+  every (1s)
+    echo("Are you still there?");
 [00000000] *** Are you still there?
 [00001000] *** Are you still there?
 [00002000] *** Are you still there?
@@ -1780,7 +1780,7 @@ not be reached unless you \lstinline'break' out of it.  You may use
 following iteration is not immediately started, it will be launched as
 expected, at the given period.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 {
   var count = 4;
   var start = time;
@@ -1876,13 +1876,13 @@ block in the background every given period. Iterations may overlap.
 \begin{urbiscript}
 // If an iteration is longer than the given period, it will overlap
 // with the next one.
-every (1s)
-{
-  echo("In");
-  sleep(1.5s);
-  echo("Out");
-};
-/*(*/sleep(2.8s);/*)*/
+timeout (2.8s)
+  every (1s)
+  {
+    echo("In");
+    sleep(1.5s);
+    echo("Out");
+  };
 [00000000] *** In
 [00001000] *** In
 [00001500] *** Out
@@ -1901,7 +1901,7 @@ every (1s)
 \lstinline|for,| is syntactic sugar for \lstinline|while,|, see
 \autoref{sec:lang:while:comma}.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 for, (var i = 3; 0 < i; i -= 1)
 {
   var j = i |
