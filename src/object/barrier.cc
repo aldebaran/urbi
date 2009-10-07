@@ -35,6 +35,7 @@ namespace object
   struct BarrierException : public sched::SchedulerException
   {
     BarrierException(rObject payload) : payload_(payload) {};
+    ~BarrierException() throw() {}
     ADD_FIELD(rObject, payload)
     COMPLETE_EXCEPTION(BarrierException)
   };

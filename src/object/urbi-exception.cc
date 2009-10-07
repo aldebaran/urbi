@@ -61,6 +61,15 @@ namespace object
         << "}";
   }
 
+  const char*
+  UrbiException::what() const throw()
+  {
+    std::stringstream s;
+    dump(s);
+    // Leaking, but calling this method means the program will terminate.
+    return strdup(s.str().c_str());
+  }
+
   std::ostream&
   operator<<(std::ostream& o, const UrbiException& e)
   {
