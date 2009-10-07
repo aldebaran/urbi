@@ -49,7 +49,7 @@ assert(File.new("file.txt").asString == "file.txt");
 \end{urbiscript}
 
 \item \lstinline|content|\\
-  The content of the file as a \ref{Binary} object.
+  The content of the file as a \refObject{Binary} object.
 \begin{urbiscript}[firstnumber=last]
 System.system("(echo 1; echo 2) >file.txt")|;
 assert(File.new("file.txt").content.data == "1\n2\n");
