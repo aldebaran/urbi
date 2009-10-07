@@ -46,7 +46,8 @@ fi
 
 # Find the noninstalled libport libraries.
 libport_dir=$abs_top_builddir/libport
-for d in $libport_dir/lib/*/.libs
+# Careful, do not add directory containing libuobject.
+for d in $libport_dir/lib/*/.libs $abs_top_builddir/*/.libs $abs_top_builddir/src/liburbi/.libs
 do
   export LD_LIBRARY_PATH=$d:$LD_LIBRARY_PATH
   export DYLD_LIBRARY_PATH=$d:$DYLD_LIBRARY_PATH

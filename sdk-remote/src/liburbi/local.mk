@@ -10,6 +10,7 @@ liburbi_liburbi_la_SOURCES =			\
   liburbi/compatibility.hxx			\
   liburbi/kernel-version.cc			\
   liburbi/uabstractclient.cc			\
+  liburbi/urbi-launch.cc                        \
   liburbi/uclient.cc				\
   liburbi/uconversion.cc			\
   liburbi/umessage.cc				\
