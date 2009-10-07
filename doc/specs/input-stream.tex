@@ -1,0 +1,86 @@
+\section{InputStream}
+
+InputStreams are used to read (possibly binary) files by hand.
+\refObject{File} provides means to swallow a whole file either as a
+single large string, or a list of lines.  \lstinline|InputStream|
+provides a more fine-grained interface to read files.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+An InputStream is a reading-interface to a file, so its constructor
+requires a \refObject{File}.
+
+\begin{urbiscript}
+System.system("(echo 1; echo 2) >file.txt")|;
+InputStream.new(File.new("file.txt"));
+[00000001] InputStream_0x827000
+\end{urbiscript}
+
+\subsection{Methods}
+
+\begin{itemize}
+\item \lstinline|get|\\
+  Get the next available byte as a \refObject{Float}, or
+  \lstinline|void| if the end of file was reached.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+assert(
+  {
+    var res = [];
+    var i = InputStream.new(File.new("file.txt"));
+    var x;
+    while (!(x = i.get.acceptVoid).isVoid)
+      res << x;
+    res;
+  }
+  ==
+  [49, 10, 50, 10]);
+\end{urbiscript}
+
+\item \lstinline|getChar|\\
+  Get the next available byte as a \refObject{String}, or
+  \lstinline|void| if the end of file was reached.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+assert(
+  {
+    var res = [];
+    var i = InputStream.new(File.new("file.txt"));
+    var x;
+    while (!(x = i.getChar.acceptVoid).isVoid)
+      res << x;
+    res;
+  }
+  ==
+  ["1", "\n", "2", "\n"]);
+\end{urbiscript}
+
+\item \lstinline|getLine|\\
+  Get the next available line as a \refObject{String}, or
+  \lstinline|void| if the end of file was reached.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+assert(
+  {
+    var res = [];
+    var i = InputStream.new(File.new("file.txt"));
+    var x;
+    while (!(x = i.getLine.acceptVoid).isVoid)
+      res << x;
+    res;
+  }
+  ==
+  ["1", "2"]);
+\end{urbiscript}
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
