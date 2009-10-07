@@ -130,6 +130,21 @@ sub register ($$\%)
     }
 }
 
+sub assert_name($)
+{
+  my ($op) = @_;
+  my %op =
+    (
+     '==' => 'eq',
+     '!=' => 'ne',
+     '<'  => 'lt',
+     '<=' => 'le',
+     '>'  => 'gt',
+     '>=' => 'ge',
+    );
+  "assert_" . $op{$op};
+}
+
 sub process_listing ($$$)
 {
   my ($file, $line, $lst) = @_;
@@ -157,9 +172,18 @@ sub process_listing ($$$)
   # assert_eq is clearer when there are failures, but it is not nice
   # looking in the documentation.  Beware of === and !== that contain
   # ==.
+  #
+  # Be also woried about precedence.  1 < 2 == true should not be
+  # cut on `<'.  I don't feel like parsing urbi in Perl...
   $res{'_contents'} =~
-    s{^(\s*assert)\s*\(((?:(?>[^()])|$nparens)+?)\s*(?<![!=])==(?![=])\s*}
-     { "$1_eq(" . strip ($2) . ", "}gmse;
+    s{^\s*assert
+       \s*\(
+       ((?:(?>[^()])|$nparens)+?)   # $1 lhs
+       \s*
+       (?<![!=])
+       (==)    #    (<|<=|>|>=|!=|==)            # $2 operator
+       (?![=])\s*}
+     { assert_name($2) . '(' . strip ($1) . ", "}gmsex;
 
   # Decode and normalize the options.
   if ($options)
