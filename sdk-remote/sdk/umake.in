@@ -225,10 +225,15 @@ builddir=
 builddir_pref="_ubuild"
 
 : ${prefix="@prefix@"}
+if test ! -d "$prefix" ; then
+ prefix=$(dirname $0)/..
+fi
 : ${PACKAGE_BRAND="@PACKAGE_BRAND@"}
 : ${branddir="@branddir@"}
 #prefix="$dir/"
 #prefix="${prefix%/bin*}"
+
+
 
 # Target name.
 target=
