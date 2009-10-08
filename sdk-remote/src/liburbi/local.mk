@@ -25,7 +25,9 @@ liburbi_liburbi_la_CPPFLAGS += -I.
 
 liburbi_liburbi_la_LIBADD = $(LIBADD) libuvalue/libuvalue.la $(JPEG_LIBS)
 liburbi_liburbi_la_LDFLAGS = -avoid-version -no-undefined
-
+# We are using Libport.OptionParser which uses Boost.Optional, which is
+# incompatible with strict alias analysis.
+liburbi_liburbi_la_CXXFLAGS = -fno-strict-aliasing $(AM_CXXFLAGS)
 
 ## ---------- ##
 ## umain.cc.  ##
