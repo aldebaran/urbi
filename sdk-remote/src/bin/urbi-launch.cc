@@ -19,6 +19,8 @@
 // Quick hackish portability layer. We cannot use the one from libport as
 // it is not header-only.
 #ifdef WIN32
+  static const int RTLD_LAZY = 0;
+  static const int RTLD_GLOBAL = 0;
   static const char* lib_rel_path = "bin";
   static const char* lib_ext = ".dll";
   static const char* LD_LIBRARY_PATH_NAME = "PATH";
@@ -44,6 +46,7 @@
   }
 
 #else
+  typedef void* HMODULE;
   #include <dlfcn.h>
   static const char* lib_rel_path = "lib";
 # ifdef __APPLE__
@@ -106,7 +109,7 @@ int main(int argc, char* argv[])
   std::string liburbi_path = std::string() +  libdir + "/liburbi" + lib_ext;
 
   // First try using LIBRARY_PATH in the environment.
-  void* handle = dlopen((std::string("liburbi") + lib_ext).c_str(),
+  HMODULE handle = dlopen((std::string("liburbi") + lib_ext).c_str(),
     RTLD_LAZY | RTLD_GLOBAL);
 
   // If it fails, force path based on URBI_ROOT.
