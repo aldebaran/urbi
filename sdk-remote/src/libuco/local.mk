@@ -12,7 +12,6 @@ libuco_libuco_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS)
 libuco_libuco_la_LIBADD = libuvalue/libuvalue.la $(BOOST_THREAD_LIBS)
 
 dist_libuco_libuco_la_SOURCES =			\
-  libuco/exit.cc				\
   libuco/gd-init.cc				\
   libuco/uobject-common.cc			\
   libuco/uobject-hub-common.cc			\
