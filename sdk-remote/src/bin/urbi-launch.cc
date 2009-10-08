@@ -14,7 +14,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <list>
 #include <libport/windows.hh>
+#include <libport/foreach.hh>
 
 // Quick hackish portability layer. We cannot use the one from libport as
 // it is not header-only.
@@ -23,7 +25,7 @@
   static const int RTLD_GLOBAL = 0;
   static const char* lib_rel_path = "bin";
   static const char* lib_ext = ".dll";
-  static const char* LD_LIBRARY_PATH_NAME = "PATH";
+  static const char* LD_LIBRARY_PATH_NAME = "LD_LIBRARY_PATH";
   HMODULE dlopen(const char* name, int)
   {
     return LoadLibrary(name);
@@ -44,6 +46,31 @@
 
     return buf;
   }
+  typedef std::list<std::string> strings_type;
+
+  strings_type
+  split(std::string lib)
+  {
+    strings_type res;
+    size_t pos;
+    while ((pos = lib.find_first_of(':')) != lib.npos)
+    {
+      std::string s = lib.substr(0, pos);
+      lib = lib.substr(pos + 1, lib.npos);
+      // In case we split "c:\foo" into "c" and "\foo", glue them
+      // together again.
+      if (s[0] == '\\'
+          && !res.empty()
+          && res.back().length() == 1)
+        res.back() += ':' + s;
+      else
+        res.push_back(s);
+    }
+    if (!lib.empty())
+      res.push_back(lib);
+    return res;
+  }
+
 
 #else
   typedef void* HMODULE;
@@ -89,14 +116,15 @@ int main(int argc, char* argv[])
   std::string urbi_root = get_urbi_root(argv[0]);
   std::string libdir = urbi_root + "/" + lib_rel_path;
 
+  const char* c_ld_lib_path = getenv(LD_LIBRARY_PATH_NAME);
+  std::string ld_lib_path = c_ld_lib_path ? c_ld_lib_path:"";
+
 #ifndef WIN32
   // Only set URBI_ROOT if not allready present.
   setenv("URBI_ROOT", urbi_root.c_str(), 0);
 
   // Look if what we need is in (DY)LD_LIBRARY_PATH. Proceed if it is.
   // Otherwise, add it and exec ourselve to retry.
-  const char* c_ld_lib_path = getenv(LD_LIBRARY_PATH_NAME);
-  std::string ld_lib_path = c_ld_lib_path ? c_ld_lib_path:"";
   if (ld_lib_path.find(libdir) == ld_lib_path.npos)
   {
     setenv(LD_LIBRARY_PATH_NAME, (ld_lib_path +":" + libdir).c_str(), 1);
@@ -104,6 +132,13 @@ int main(int argc, char* argv[])
   }
 #else
   _putenv(("URBI_ROOT=" +urbi_root).c_str());
+  char* c_path = getenv("PATH");
+  std::string path = c_path?c_path:"";
+  strings_type ldpath_list = split(ld_lib_path);
+  foreach(const std::string& s, ldpath_list)
+    path += ";" + s;
+  std::cerr <<  ("ENV PATH=" + path) << std::endl;
+  _putenv( ("PATH=" + path).c_str());
 #endif
 
   std::string liburbi_path = std::string() +  libdir + "/liburbi" + lib_ext;
