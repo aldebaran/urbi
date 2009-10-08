@@ -24,11 +24,11 @@
   static const char* lib_rel_path = "bin";
   static const char* lib_ext = ".dll";
   static const char* LD_LIBRARY_PATH_NAME = "PATH";
-  void* dlopen(const char* name, int)
+  HMODULE dlopen(const char* name, int)
   {
     return LoadLibrary(name);
   }
-  void* dlsym(void* module, const char* name)
+  void* dlsym(HMODULE module, const char* name)
   {
     return GetProcAddress(module, name);
   }
