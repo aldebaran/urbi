@@ -64,8 +64,12 @@ namespace std
 #define SYNTAX_ERROR(Loc, ...)                   \
   throw yy::parser::syntax_error(Loc, libport::format(__VA_ARGS__))
 
-#define FLAVOR_ERROR(Keyword)                                           \
-  SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", Keyword, flavor)
+static ast::ParametricAst& flavor_error(const char* keyword, ast::flavor_type flavor, const ast::Factory::location& flavor_loc)
+{
+  SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", keyword, flavor);
+}
+
+#define FLAVOR_ERROR(Keyword) flavor_error(Keyword, flavor, flavor_loc)
 
 #define FLAVOR_IS(Flav1)                        \
   (flavor == flavor_ ## Flav1)
