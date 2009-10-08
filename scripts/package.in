@@ -112,9 +112,9 @@ $FIND $packagedir -name libtool |
        -e 's/postdep_objects=.*/#- $&/;'                                \
        -e 's/-nostdlib//g;'
 
-# Remove ccache from the param.mk and libtool.
+# Remove ccache  and -Werror from the param.mk and libtool.
 $FIND $packagedir '(' -name param.mk -or -name libtool ')' |
-  xargs perl -pi -e 's/ccache //;'
+  xargs perl -pi -e 's/ccache //;' -e 's/-Werror//;'
 
 # Restore +x on libtool.
 $FIND $packagedir -name libtool -exec chmod u+x '{}' ';'
