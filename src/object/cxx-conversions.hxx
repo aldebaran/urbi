@@ -154,7 +154,7 @@ namespace object
 
   CONVERT(unsigned char);
   CONVERT(unsigned short);
-  CONVERT(unsigned int);
+  CONVERT(unsigned long);
 #undef CONVERT
 
   /*--------.

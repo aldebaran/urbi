@@ -39,7 +39,7 @@ namespace object
     typedef libport::ufloat value_type;
 
     /// The preferred target for unsigned casts.
-    typedef unsigned long unsigned_type;
+    typedef unsigned int unsigned_type;
 
     value_type& value_get();
     const value_type& value_get() const;
