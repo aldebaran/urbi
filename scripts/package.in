@@ -129,8 +129,14 @@ $FIND $packagedir -name libtool |
        -e 's/-nostdlib//g;'
 
 # Remove ccache  and -Werror from the param.mk and libtool.
+# Remove also hidden visibility as it prevents linking uobjects using
+# boost symbols inside libport.
 $FIND $packagedir '(' -name param.mk -or -name libtool ')' |
-  xargs perl -pi -e 's/ccache //;' -e 's/-Werror//;'
+  xargs perl -pi \
+	-e 's/ccache //;' 			\
+	-e 's/-Werror//;'			\
+	-e 's/-fvisibility=hidden//;'		\
+	-e 's/-fvisibility-inlines-hidden//;'
 
 # Restore +x on libtool.
 $FIND $packagedir -name libtool -exec chmod u+x '{}' ';'
