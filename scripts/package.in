@@ -79,6 +79,22 @@ $RM -r "$packagedir"
 $MKDIR_P "$packagedir"
 (cd "$DESTDIR$prefix" && $TAR cf - .) | (cd "$packagedir" && $TAR xpBf -)
 
+# Install the boost headers.
+# First we must figure out where they are. If they were found in a standard
+# include directory, no variable will tell us that.
+# So go the configure way and ask the compiler.
+make -C  $builddir/sdk-remote/src bin/urbi-launch.ii
+incline=$(grep -m 1 foreach.hpp $builddir/sdk-remote/src/bin/urbi-launch.ii | cut '-d ' -f 3)
+incline=$(echo $incline | sed -e 's/"//g' -e 's/\\\\/\//g' -e 's/foreach.hpp//')
+#ensure we got it right
+if test ! -f  $incline/version.hpp; then
+  echo "Failed to find boost include directory, got '$incline'"
+  exit 1
+fi
+
+cp -a $incline $packagedir/include
+
+
 # Build a MANIFEST with the list of files to install into the final
 # destination.
 MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
