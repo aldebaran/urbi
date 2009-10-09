@@ -489,7 +489,7 @@ namespace urbi
       URBI_SEND_COMMAND_C((*client_),
                           "timer_" << cb->objname << ": every("
                           << cb->period << "ms)"
-                          "{ " << compatibility::emit(event) << ";}");
+                          "{ " << compatibility::emit(event) << ";},");
     }
 
     void
