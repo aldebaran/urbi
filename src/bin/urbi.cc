@@ -18,6 +18,7 @@
 #include <libport/detect-win32.h>
 #include <libport/program-name.hh>
 #include <libport/separate.hh>
+#include <libport/sysexits.hh>
 #include <libport/unistd.h>
 
 GD_INIT();
@@ -44,5 +45,13 @@ main(int argc, char* argv[])
   args.insert(args.end(), argv + 1, argv + argc);
   GD_CATEGORY(urbi);
   GD_FINFO_DEBUG("exec: %s", (libport::separate(args, " ")));
-  libport::exec(args);
+  try
+  {
+    libport::exec(args);
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << e.what() << std::endl
+              << libport::exit(EX_OSFILE);
+  }
 }
