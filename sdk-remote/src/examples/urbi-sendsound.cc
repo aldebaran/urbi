@@ -9,6 +9,7 @@
  */
 
 #include <libport/sys/types.h>
+#include <libport/sysexits.hh>
 #include <libport/sys/stat.h>
 
 #include <urbi/uclient.hh>
@@ -56,10 +57,9 @@ main(int argc, char * argv [])
   else
     f = fopen(argv[2],"r");
   if (!f)
-  {
-    printf("error opening file\n");
-    exit(3);
-  }
+    std::cerr << libport::format("error opening file `%s': %s\n",
+                                 argv[2], strerror(errno))
+              << libport::exit(EX_FAIL);
 
   //sem_init(&sem, false, 0);
   //uc->sendCommand(&soundFormat, "speaker.formatlist;");

@@ -10,6 +10,7 @@
 #include <libport/csignal>
 #include <libport/windows.hh>
 #include <libport/unistd.h>
+#include <libport/sysexits.hh>
 
 #include <urbi/uclient.hh>
 
@@ -154,9 +155,12 @@ play(urbi::UClient * robot, FILE *f)
 int main(int argc, char * argv[])
 {
   if (argc<3)
-    {
-    printf("usage: %s robot file [loop] \n\tPass '-' as 'robotname' to dump to stdout in human-readable format,\n\t or '+' to dump to stdout in urbi format.\n",argv[0]);
-
+  {
+    printf(
+    "usage: %s robot file [loop] \n"
+    "\tPass '-' as 'robotname' to dump to stdout in human-readable format,\n"
+    "\t or '+' to dump to stdout in urbi format.\n",
+    argv[0]);
     exit(1);
   }
 
@@ -178,7 +182,8 @@ int main(int argc, char * argv[])
     {
       robot=new urbi::UClient(argv[1]);
       robot->start();
-      if (robot->error()) exit(4);
+      if (robot->error())
+        exit(4);
     }
 
   if (robot)
@@ -187,15 +192,13 @@ int main(int argc, char * argv[])
   do {
     FILE* f = libport::streq(argv[2],"-") ? stdin : fopen(argv[2],"r");
     if (!f)
-      {
-	fprintf(stderr, "error opening file\n");
-	exit(2);
-      }
+      std::cerr << libport::format("error opening file `%s': %s\n",
+                                   argv[2], strerror(errno))
+                << libport::exit(EX_FAIL);
     if (!parseHeader(f))
-      {
-	fprintf(stderr, "error parsing header\n");
-	exit(3);
-      }
+      std::cerr << libport::format("error parsing header from `%s'\n",
+                                   argv[2])
+                << libport::exit(EX_FAIL);
 
     play(robot,f);
     fclose(f);

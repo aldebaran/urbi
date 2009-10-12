@@ -9,6 +9,7 @@
  */
 #include <libport/cassert>
 #include <libport/csignal>
+#include <libport/sysexits.hh>
 #include <urbi/uclient.hh>
 
 /*
@@ -135,12 +136,16 @@ int main(int argc, char * argv[])
   signal(SIGINT,endRecord);
   urbi::UClient c(argv[1]);
   c.start();
-  if (c.error()) exit(2);
-  if (libport::streq(argv[2],"-")) f=stdout;
+  if (c.error())
+    exit(2);
+  if (libport::streq(argv[2],"-"))
+    f = stdout;
   else
-    f=fopen(argv[2],"w");
+    f = fopen(argv[2],"w");
   if (!f)
-    exit(3);
+      std::cerr << libport::format("error opening file `%s': %s\n",
+                                   argv[2], strerror(errno))
+                << libport::exit(EX_FAIL);
   buildHeader();
   //c.send("motoroff");
   //build command

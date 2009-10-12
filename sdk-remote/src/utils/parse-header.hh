@@ -127,7 +127,7 @@ namespace urbi
     if (int a = parseHeader(inf,ouf))
       std::cerr << libport::program_name()
                 << ": error parsing header: " << a << std::endl
-                << libport::exit(3);
+                << libport::exit(EX_FAIL);
 
     *in = inf;
     *out = ouf;
