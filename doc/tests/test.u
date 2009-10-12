@@ -54,35 +54,21 @@ do (String)
   }
 }|
 
-// System.system is not implemented on Windows.
 if (System.Platform.isWindows)
   do (System)
   {
-    // This is not implemented on Windows.
+    // On Windows, use /bin/sh to please our tests.
+    var 'system.orig' = getSlot("system");
     system->constant = false;
-    system = function (dummy)
+    system = function (command)
     {
-      0;
-    };
-
-    // Therefore, we need to cheat to have the load sample work.
-    var loadOrig = getSlot("load");
-    load->constant = false;
-    load = function (file)
-    {
-      if (file == "123.u")
-        123
-      else
-        loadOrig(file);
-    };
-
-    var maybeLoadOrig = getSlot("maybeLoad");
-    maybeLoad->constant = false;
-    maybeLoad = function (file)
-    {
-      if (file == "123.u")
-        123
-      else
-        maybeLoadOrig(file);
+      // Escape all the quotes and backslashes, and call /bin/sh.
+      var cmd = "/bin/sh -c \"" |
+      for| (var c: command)
+        cmd += {if (c in ["\\", "\""]) "\\" else ""} + c |
+      cmd += "\"";
+      var res = 'system.orig'(cmd) |
+      clog << ("system wrapper: " + command + ": " + cmd + ": " + res) |
+      res
     };
   }|
