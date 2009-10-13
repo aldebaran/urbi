@@ -45,17 +45,16 @@ namespace urbi
     tv.tv_sec = 0;
     tv.tv_usec = 0;
 
-    int ret = 0;
-
     // FIXME: Kinda busy loop
+    int ret = 0;
     for (ret = select(fd + 1, &rfds, NULL, NULL, &tv);
          !ret;
          ret = select(fd + 1, &rfds, NULL, NULL, &tv))
     {
-      if (ret == -1)
-        errnoabort("select");
       yield_for(128000);
       FD_SET(fd, &rfds);
     }
+    if (ret == -1)
+      errnoabort("select");
   }
 }
