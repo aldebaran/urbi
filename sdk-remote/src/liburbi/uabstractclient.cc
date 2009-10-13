@@ -448,12 +448,12 @@ namespace urbi
     else
     {
       sendBufferLock.lock();
-      (*this) << "Global.Binary.new(\""
-              << libport::escape(header)
-              << "\", \"\\B(" << len << ")(";
+      *this << "Global.Binary.new(\""
+            << libport::escape(header)
+            << "\", \"\\B(" << len << ")(";
       send(0);
       effectiveSend(data, len);
-      (*this) << ")\")";
+      *this << ")\")";
       send(0);
       sendBufferLock.unlock();
       return rc;

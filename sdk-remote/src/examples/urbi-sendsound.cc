@@ -43,7 +43,8 @@ main(int argc, char * argv [])
 {
   if (argc<3)
   {
-    printf("usage: urbisendsound robot file\n\t file must be in the WAV format\n");
+    printf("usage: urbisendsound robot file\n"
+           "\t file must be in the WAV format\n");
     exit(1);
   }
 

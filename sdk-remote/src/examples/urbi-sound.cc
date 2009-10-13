@@ -152,10 +152,7 @@ int main(int argc, char *argv[])
       exit(2);
     }
 
-    if (argc==5)
-      withheader = false;
-    else
-      withheader = true;
+    withheader = argc !=5;
   }
   else
   {
