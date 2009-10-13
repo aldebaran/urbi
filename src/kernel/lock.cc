@@ -28,6 +28,9 @@ namespace kernel
     throw urbi::Exit(EX_OSFILE, msg);
   }
 
+#define FAIL(Format, ...)                               \
+  server_error(libport::format(Format), ## __VA_ARGS__)
+
   /// Check that this server is allowed to run.  Die if not.
   void
   lock_check(const UServer& s)
@@ -43,27 +46,20 @@ namespace kernel
     }
     catch (const libport::file_library::Not_found&)
     {
-      server_error(std::string()
-                   + "cannot find Urbi SDK key file " URBI_SDK_KEY_FILE ": "
-                   + strerror(errno));
+      FAIL("cannot find Urbi SDK key file `%s': %s",
+           URBI_SDK_KEY_FILE, strerror(errno));
     }
 
     // Load it.
     std::string key;
+    try
     {
-      std::ifstream is(path.c_str(), std::ios::binary);
-      if (!is)
-        server_error("cannot open Urbi SDK key file " + path
-                     + ": " + strerror(errno));
-      while (is.good())
-      {
-        static char buf[BUFSIZ];
-        is.read(buf, sizeof buf);
-        key.append(buf, is.gcount());
-      }
-      if (is.bad())
-        server_error("cannot load Urbi SDK key file " + path
-                     + ": " + strerror(errno));
+      key = libport::read_file(path);
+    }
+    catch (const std::exception& e)
+    {
+      FAIL("cannot read Urbi SDK key file `%s': %s",
+           path, e.what());
     }
 
     // Play a bit with the key itself, so that it is not too easy,
@@ -73,7 +69,7 @@ namespace kernel
 
     // Check that it matches with our own key.
     if (key != URBI_SDK_KEY)
-      server_error("invalid Urbi SDK key: " + path);
+      FAIL("invalid Urbi SDK key: %s", path);
 # endif // !URBI_SDK_KEY
   }
 
