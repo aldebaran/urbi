@@ -193,9 +193,11 @@ for (var x : 3) { echo(x); sleep(20ms); echo (100 + x); };
   number of digits after decimal point when in fixed or scientific
   mode, and in total when in default mode.  Beware that 0 plays a
   special role, as it is not a ``significant'' digit.
+
+  Note also that under Windows the behavior differs slightly.
 \begin{urbiscript}[firstnumber=last]
 assert("%1.0d" % 0.1 == "0.1");
-assert("%1.0d" % 1.1 == "1");
+assert("%1.0d" % 1.1 == {if (System.Platform.isWindows) "1.1" else "1"});
 
 assert("%1.0f" % 0.1 == "0");
 assert("%1.0f" % 1.1 == "1");

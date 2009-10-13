@@ -1,7 +1,7 @@
 \section{Timeout}
 
-\dfn{Timeout} allow to tag some pieces of code which should be
-executed in limited time.
+Timeout objects can be used as \refObject[s]{Tag} to execute some
+code in limited time.
 
 \subsection{Prototypes}
 \begin{itemize}
@@ -23,7 +23,7 @@ Use it as a tag :
 \begin{urbiscript}[firstnumber=last]
 t:{
   echo("This code will execute.");
-  sleep(350ms);
+  sleep(500ms);
   echo("But not this one.");
 };
 [00000000] *** This code will execute.
@@ -33,11 +33,21 @@ Even if exception has been disabled in constructor, you can know if
 your piece of code has timed out or not using the member ``timedOut''.
 
 \begin{urbiscript}[firstnumber=last]
-t:sleep(350ms);
+t:sleep(500ms);
 if (t.timedOut)
   echo("Your code has just timed out !");
 [00000000] *** Your code has just timed out !
 \end{urbiscript}
+
+\subsection{Slots}
+\begin{itemize}
+\item \lstinline|count|\\
+  Fire \lstinline|this|.
+
+\item \lstinline|launch|\\
+  Fire \lstinline|this|.
+
+\end{itemize}
 
 %%% Local Variables:
 %%% mode: latex
