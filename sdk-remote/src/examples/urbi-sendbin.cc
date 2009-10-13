@@ -119,28 +119,19 @@ send_data(urbi::UClient& client, const data_type& data)
   }
   else
   {
-    FILE *f = fopen(data.file, "r");
-    if (!f)
-      std::cerr << program_name() << ": cannot open " << data.file
-                << ": " << strerror(errno)
-                << libport::exit(EX_NOINPUT);
-
-    struct stat st;
-    stat(data.file, &st);
-    char* buffer = new char[st.st_size];
-    size_t len = 0;
-    while (true)
+    try
     {
-      size_t r = fread(buffer + len, 1, st.st_size - len, f);
-      if (!r)
-        break;
-      len +=r;
+      std::string content = libport::read_file(data.file);
+      client.send("%s = ", data.variable);
+      client.sendBinary(content.c_str(), content.size(), data.headers);
+      // No need to have the server echo the binary back to us.
+      client.send("|;");
     }
-    client.send("%s", data.variable);
-    client.send(" = ");
-    client.sendBinary(buffer, len, data.headers);
-    // No need to have the server echo the binary back to us.
-    client.send("|;");
+    catch (const std::exception& e)
+    {
+      std::cerr << program_name() << ": " << e.what() << std::endl
+                << libport::exit(EX_NOINPUT);
+    }
   }
 }
 
