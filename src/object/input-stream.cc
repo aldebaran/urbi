@@ -49,9 +49,8 @@ namespace object
 
   InputStream::~InputStream()
   {
-    if (own_)
-      if (close(fd_))
-        RAISE(libport::strerror(errno));
+    if (own_ && close(fd_))
+      RAISE(libport::strerror(errno));
   }
 
   /*--------------.
