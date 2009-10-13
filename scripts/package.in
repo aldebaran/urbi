@@ -92,7 +92,7 @@ if test ! -f  $incline/version.hpp; then
   exit 1
 fi
 
-cp -a $incline $packagedir/include
+$CP -pRP $incline $packagedir/include
 
 
 # Build a MANIFEST with the list of files to install into the final
