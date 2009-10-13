@@ -94,7 +94,7 @@ error(const urbi::UMessage& msg)
 }
 
 
-/// The tripples given by the user.
+/// The triples given by the user.
 struct data_type
 {
   data_type(const char* v, const char* f, const char* h)
@@ -109,29 +109,19 @@ static
 void
 send_data(urbi::UClient& client, const data_type& data)
 {
-  // Read the whole file in memory
-  if (!strcmp(data.file, "/dev/stdin"))
+  try
   {
-    std::string input = libport::read_stdin();
-    client.sendBin(input.c_str(), input.size(),
+    std::string content = libport::read_file(data.file);
+    client.sendBin(content.c_str(), content.size(),
                    "%s = BIN %lu %s;",
-                   data.variable, (unsigned long)input.size(), data.headers);
+                   data.variable,
+                   static_cast<unsigned long>(content.size()),
+                   data.headers);
   }
-  else
+  catch (const std::exception& e)
   {
-    try
-    {
-      std::string content = libport::read_file(data.file);
-      client.send("%s = ", data.variable);
-      client.sendBinary(content.c_str(), content.size(), data.headers);
-      // No need to have the server echo the binary back to us.
-      client.send("|;");
-    }
-    catch (const std::exception& e)
-    {
-      std::cerr << program_name() << ": " << e.what() << std::endl
-                << libport::exit(EX_NOINPUT);
-    }
+    std::cerr << program_name() << ": " << e.what() << std::endl
+              << libport::exit(EX_NOINPUT);
   }
 }
 
