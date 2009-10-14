@@ -140,7 +140,7 @@ namespace object
   static inline rObject
   tag_event(Tag* owner, const libport::Symbol& field)
   {
-    if (owner->slot_has(field))
+    if (owner->local_slot_get(field))
       return owner->slot_get(field);
 
     CAPTURE_GLOBAL(Event);
@@ -164,14 +164,14 @@ namespace object
   void
   Tag::triggerEnter()
   {
-    if (slot_has(SYMBOL(enterEvent)))
+    if (local_slot_get(SYMBOL(enterEvent)))
       slot_get(SYMBOL(enterEvent))->call(SYMBOL(syncEmit));
   }
 
   void
   Tag::triggerLeave()
   {
-    if (slot_has(SYMBOL(leaveEvent)))
+    if (local_slot_get(SYMBOL(leaveEvent)))
       slot_get(SYMBOL(leaveEvent))->call(SYMBOL(syncEmit));
   }
 
