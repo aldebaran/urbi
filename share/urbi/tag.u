@@ -10,29 +10,21 @@ do (Global.Tag)
       "Tag<" + name + ">"
   };
 
-  var begin = SystemTag.new("begin");
-  var end = SystemTag.new("end");
-
+  function end()
   {
-    function report(msg)
-    {
-      var res = ""|
-      for| (var tag: currentRunner.tags)
-        if (!tag.isA(SystemTag))
-          res += tag.name + ": "|
-      echo(res + msg)
-    };
+    var res = clone;
+    at (res.leave?)
+      echo("%s: end" % res.name);
+    return res;
+  };
 
-    at (begin.enter?)
-    {
-      report("begin");
-    };
-
-    at (end.leave?)
-    {
-      report("end");
-    };
-  }
+  function begin()
+  {
+    var res = clone;
+    at (res.enter?)
+      echo("%s: begin" % res.name);
+    return res;
+  };
 };
 
 class Global.Tags
