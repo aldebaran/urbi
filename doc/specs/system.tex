@@ -17,9 +17,6 @@ Details on the architecture the \urbi server runs on.
 %% \item \lstinline|eval|
 %% \item \lstinline|fresh|
 %% \item \lstinline|jobs|
-%% \item \lstinline|loadFile|
-%% \item \lstinline|loadModule|
-%% \item \lstinline|loadLibrary|
 %% \item \lstinline|lobbies|
 %% \item \lstinline|lobby|
 %% \item \lstinline|nonInterruptible|
@@ -27,9 +24,7 @@ Details on the architecture the \urbi server runs on.
 %% \item \lstinline|quit|
 %% \item \lstinline|registerAtJob|
 %% \item \lstinline|resetStats|
-%% \item \lstinline|searchFile|
 %% \item \lstinline|searchPath|
-%% \item \lstinline|shutdown|
 %% \item \lstinline|spawn|
 %% \item \lstinline|stats|
 %% \item \lstinline|stopall|
@@ -79,6 +74,16 @@ assert(getenv("UndefinedEnvironmentVariable").isNil);
 assert(!getenv("PATH").isNil);
 \end{urbiscript}
 
+\item \lstinline|loadFile(\var{file})|\\
+  Load the \us file \var{file}.  Throw a \lstinline|FileNotFound|
+  error if the file cannot be found.  Return the last value of the
+  file.
+\begin{urbiscript}[firstnumber=last]
+// Create the file ``123.u'' that contains exactly ``123;''.
+assert(System.system("echo '123;' >123.u") == 0);
+assert(loadFile("123.u") == 123);
+\end{urbiscript}
+
 \item \lstinline|load(\var{file})|\\
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}),
   and load it.  Throw a \lstinline|FileNotFound| error if the file
@@ -120,6 +125,15 @@ assert(maybeLoad("u.123").isVoid);
 
 \item \lstinline|reboot|\\
   Restart the \urbi server.  Architecture dependent.
+
+\item \lstinline|searchFile(\var{file})|\\
+  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars})
+  and return its \refObject{Path}.  Throw a \lstinline|FileNotFound|
+  error if the file cannot be found.
+\begin{urbiscript}[firstnumber=last]
+assert(System.system("echo '123;' >123.u") == 0);
+assert(searchFile("123.u") == Path.cwd / Path.new("123.u"));
+\end{urbiscript}
 
 \item \lstinline|setenv(\var{name}, \var{value})|\\
   Set the environment variable \var{name} to
@@ -191,10 +205,6 @@ assert (
 
 \begin{urbiscript}[firstnumber=last]
 assert(System.system("exit 0") == 0);
-assert(System.system("echo '[00000002] hello world'") == 0);
-sleep(1s);
-[00000002] hello world
-
 assert(System.system("exit 23") >> 8
        == { if (System.Platform.isWindows) 0 else 23 });
 \end{urbiscript}
