@@ -39,16 +39,16 @@ namespace object
     // Depending on the version of Boost.Regex, "" might not be valid.
     // Make it always invalid.
     if (rg.empty())
-      RAISE(libport::format("Invalid regular expression \"%s\": %s",
-                            libport::escape(rg), "Empty expression"));
+      FRAISE("Invalid regular expression \"%s\": %s",
+             libport::escape(rg), "Empty expression");
     try
     {
       re_ = boost::regex(rg);
     }
     catch (const boost::regex_error& e)
     {
-      RAISE(libport::format("Invalid regular expression \"%s\": %s",
-                            libport::escape(rg), e.what()));
+      FRAISE("Invalid regular expression \"%s\": %s",
+             libport::escape(rg), e.what());
     }
   }
 

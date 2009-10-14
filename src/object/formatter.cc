@@ -84,7 +84,7 @@ namespace object
       {
         std::stringstream o;
         o << *str;
-        RAISE(libport::format("invalid argument for format: %s", o.str()));
+        FRAISE("invalid argument for format: %s", o.str());
       }
       res += str->as<String>()->value_get();
     }

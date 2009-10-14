@@ -188,7 +188,7 @@ namespace object
       return new Directory(path_);
     if (is_reg())
       return new File(path_);
-    RAISE(str(format("Unsupported file type: %s.") % path_));
+    FRAISE("unsupported file type: %s", path_);
   }
 
   // Conversions
@@ -218,7 +218,7 @@ namespace object
 
   void Path::handle_any_error()
   {
-    RAISE(str(format("%1%: %2%") % strerror(errno) % path_));
+    FRAISE("%1%: %2%", strerror(errno), path_);
   }
 
   /*---------------.

@@ -141,7 +141,7 @@ namespace object
   void Directory::init(rPath path)
   {
     if (!path->is_dir())
-      RAISE(str(format("Not a directory: '%s'") % path->as_string()));
+      FRAISE("Not a directory: '%s'", path->as_string());
     path_ = path;
 
 #if HAVE_SYS_INOTIFY_H

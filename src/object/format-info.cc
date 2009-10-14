@@ -79,8 +79,8 @@ namespace object
            && flags.npos != flags.find(current = pattern[cursor]))
     {
       if (excludes.npos != excludes.find(current))
-        RAISE(std::string("format: '") + current
-              + "' conflics whese one of these flags: \"" + excludes + "\".");
+        FRAISE("format: '%s' conflics whese one of these flags: \"%s\".",
+               current, excludes);
       switch (current)
       {
         case '-': alignment_ = Align::LEFT;   excludes += "-="; break;
@@ -109,9 +109,8 @@ namespace object
       substr = pattern.substr
         (cursor, pattern.find_first_not_of("0123456789", cursor) - cursor);
       if (substr.empty())
-        RAISE(std::string("format: unexpected \"")
-              + pattern[cursor]
-              + "\", expected width ([1-9][0-9]*).");
+        FRAISE("format: unexpected \"%s\", expected width ([1-9][0-9]*).",
+               pattern[cursor]);
       else
       {
         precision_ = lexical_cast<unsigned int>(substr);
@@ -125,19 +124,22 @@ namespace object
     {
       spec_ = tolower(current = pattern[cursor]);
       if (!strchr("sdbxoefEDX", spec_[0]))
-        RAISE(std::string("format: \"") + spec_
-              + "\" is not a valid conversion type character");
+        FRAISE("format: \"%s\" is not a valid conversion type character",
+               spec_);
       else if (spec_ != "s")
         uppercase_ = (islower(pattern[cursor])) ? Case::LOWER : Case::UPPER;
     }
 
-    int overflow;
-    if (!piped)
+
+    if (piped)
+    {
+      int overflow = pattern_.size() - 1 - ++cursor;
+      if (0 < overflow)
+        FRAISE("format: too many characters between pipes and \"%s\"",
+               pattern_.substr(cursor, overflow));
+    }
+    else
       pattern_ = pattern.substr(0, ++cursor);
-    else if (0 < (overflow = pattern_.size() - 1 - ++cursor))
-      RAISE("format: format is between pipes and \""
-            + pattern_.substr(cursor, overflow)
-            + "\" are too many characters");
   }
 
   std::string

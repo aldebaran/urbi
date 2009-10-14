@@ -466,18 +466,16 @@ namespace object
   static int
   system_system(const rObject&, const std::string& s)
   {
-    int res = system(s.c_str());
-    switch (res)
+    switch (int res = system(s.c_str()))
     {
     case -1:
       // FIXME: This is potentially widly used, see also path.cc.
-      RAISE(libport::format("%1%: %2%", strerror(errno), s));
-      break;
+      FRAISE("%1%: %2%", strerror(errno), s);
     case 127:
-      RAISE(libport::format("shell failed: %1%", s));
-      break;
+      FRAISE("shell failed: %1%", s);
+    default:
+      return res;
     }
-    return res;
   }
 
   void
