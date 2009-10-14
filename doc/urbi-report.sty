@@ -45,20 +45,18 @@
 
 \newtheorem{note}{Note}
 
+\newenvironment{windows}
+{%
+  \paragraph{Windows Issues}%
+  \begin{quote}%
+    \itshape%
+  }{%
+  \end{quote}%
+}
+
 %% -------- %%
 %% Floats.  %%
 %% -------- %%
-
-%% This version tries to either put floats HERE, or regroup them on pages
-
-% \newcommand   {\floatpos}          {htbp}
-% \newcommand   {\floatposh}         {htbp}
-% \newcommand   {\flushfloat}        {\afterpage{\clearpage}}
-% \renewcommand {\floatpagefraction} {0.8}
-
-
-% This version tries to insert float as near as possible from the
-% declaration point, but after it.
 
 % Don't insert a float at the top of a page before it's referred to!
 \RequirePackage{flafter}

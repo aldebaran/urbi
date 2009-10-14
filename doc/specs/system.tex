@@ -139,6 +139,10 @@ assert(searchFile("123.u") == Path.cwd / Path.new("123.u"));
   Set the environment variable \var{name} to
   \lstinline|\var{value}.asString|, and return this value.  See also
   \lstinline|System.getenv| and \lstinline|System.unsetenv|.
+  \begin{windows}
+    Under Windows, setting to an empty value is equivalent to
+    undefining.
+  \end{windows}
 
 \begin{urbiscript}[firstnumber=last]
 assert(setenv("MyVar", 12) == "12");
@@ -151,9 +155,9 @@ assert(setenv("MyVar", 23) == "23");
 assert(System.system("exit $MyVar") >> 8 ==
        {if (Platform.isWindows) 0 else 23});
 
-// Defining to empty is not undefining.
+// Defining to empty is not undefining, unless you are on Windows.
 assert(setenv("MyVar", "") == "");
-assert(!getenv("MyVar").isNil);
+assert(getenv("MyVar").isNil == Platform.isWindows);
 \end{urbiscript}
 
 \item \lstinline|scopeTag|\\
@@ -201,7 +205,11 @@ assert (
   \var{command} depends on your system.  On Unix systems, this is
   typically \file{/bin/sh}, while Windows uses \file{command.exe}.
 
-  Return the exit status.  Under Windows, this is always 0.
+  Return the exit status.
+
+  \begin{windows}
+    Under Windows, the exit status is always 0.
+  \end{windows}
 
 \begin{urbiscript}[firstnumber=last]
 assert(System.system("exit 0") == 0);

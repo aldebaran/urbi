@@ -10,6 +10,12 @@ provides a more fine-grained interface to read files.
 \item \refObject{Object}
 \end{itemize}
 
+\begin{windows}
+  Beware that because of limitations in the current implementation,
+  one cannot safely read from two different files at the same time
+  under Windows.
+\end{windows}
+
 \subsection{Construction}
 
 An InputStream is a reading-interface to a file, so its constructor
