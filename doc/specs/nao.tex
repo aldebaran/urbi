@@ -1,0 +1,295 @@
+\newcommand{\naoqi}{NaoQi\xspace}
+
+\chapter{Nao}
+
+\section{Introduction}
+
+The Nao is a 60 centimeters tall humanoid robot built by Aldebaran Robotics.
+It has an onboard Geode processor running Linux, 25 degrees of freedom,
+two onboard cameras, speakers, microphones, accelerometers, ultrasound and IR
+sensors...
+
+\section{Starting up}
+
+Nao comes with an installed version of \urbi.
+
+On some versions of Nao, \urbi is not automatically started upon startup.
+If this is the case, you must take the following steps to activate \urbi:
+
+\begin{itemize}
+\item Log in to your Nao using ssh: \lstinline|ssh root@myNao|
+\item Add a line containing \lstinline|urbistarter| to
+"/opt/naoqi/modules/lib/autoload.ini".
+\item Add a line containg
+\lstinline|LaunchThread( "ALUrbiStarter", "runServer", [ ] );| to "/opt/naoqi/modules/python/autolaunch.py".
+\item Restart your Nao.
+\end{itemize}
+
+Those lines might allready be present but commented out.
+
+You should be able to connect to your Nao on the port 54000 and send it \us:
+
+\begin{urbifixme}
+tts.say("Hello, I am Nao."),
+// Activate right arm.
+armR.load = 1;
+// Wave the arm: put it in position
+rShoulderRoll.val = -0.3 time: 0.5s |
+rShoulderPitch.val = -1 speed: 0.9 |
+// Wave it
+timeout(6s) rShoulderRoll.val = -0.4 sin:2s ampli:0.4;
+// And put it back down.
+rShoulderPitch.val = 2 speed:0.9;
+// Activate all motors.
+motors.on;
+// Stand
+motion.walkStraight(0.01, 50);
+// bow
+motion.setBalanceMode(motion.BALANCE_MODE_AUTO);
+motion.gotoTorsoOrientation(0, pi/6, 2, 1);
+motion.gotoTorsoOrientation(0, 0, 2, 1);
+\end{urbifixme}
+
+\section{Accessing joints}
+All the Nao joints are accessible through their standard Nao and \urbi names,
+and respect the \urbi standard specifications for servo motors: Basicaly each
+motor has a \var{load} field that is linked to the motor stiffness, and a
+\var{val} field that can be used to read or write the motor position.
+
+Some motor groups are also provided: they can be used exactly as joints,
+but any action performed on a group is sent to all the joints that are a
+member of this group.
+
+\begin{urbifixme}
+// Activate all motors
+motors.load = 1;
+// Or only all the head motors
+head.load = 1;
+// Move headYaw to 0.8 in one seconds. Since this commands takes
+// one second to execute, terminate with a comma to be able
+// to send other commands while it executes.
+headYaw.val = 0.8 time: 1s,
+// Move headPitch to -0.5 as fast as possible.
+headPitch.val = -0.5;
+// Move headYaw continuously in a sinusoidal trajectory...
+tag: headYaw.val = 0 sin:2s ampli:0.5,
+// ...and stop the movement
+tag.stop;
+\end{urbifixme}
+
+The two hands are purposefuly not included in the 'motors' group.
+Although you can control them using the \var{val} slot, it is recommanded that
+you use the \var{open()} and \var{close()} methods, since they stop the motors
+once the movement is finished.
+
+\subsection{Advanced parameters}
+
+\subsubsection{Trajectory generator period}
+
+The trajectory generators will issue write command at a period given by the
+\var{Object.getPeriod} variable. The default is 20ms which is the native period
+of Naoqi.
+
+\subsubsection{Motor backend method}
+
+\urbi can use two different methods to send the joint commands:
+\lstinline|DCM::send()|, or \lstinline|ALMotor::setAngle()|.
+The mode can be changed by calling \lstinline|motor.setDCMWrite(bool)|.
+
+In \lstinline|setAngle()| mode, each write operation to a joint will
+synchronously call the \command{setAngle()} Naoqi method.
+
+In DCM mode, \urbi will set a hook on the DCM update,
+and send all commands in this hook using the \command{send()} method.
+\urbi will send commands S milliseconds in the future. S
+defaults to 50ms, and can be changed by calling
+\lstinline|ALMotor.setDCMShift(shiftValue)|
+
+\subsubsection{Motor command debuging}
+
+The motors implements a debugging mode that can be activated by calling
+ALMotor::setTrace(1). While activated, it will write all sent commands to the
+file /tmp/traj.log. Each line  will contain the motor number, the command
+timestamp, and the command position.
+Be careful not to let this feature active while not using it, as it would
+quickly fill-up the memory.
+
+\section{Leds}
+
+All Nao's leds and led groups, as defined by \naoqi, are available as objects in
+\us. You can set the led values by writting to the slots \var{val} (intensity
+between 0 and 1), \var{r}, \var{g}, \var{b} (color intensity between 0 and 1)
+ or \var{rgb} (RGB value, one byte each, i.e. 0xFF0000 is red).
+
+\section{Camera}
+
+The Nao camera object is instanciated by default, under the standard name
+\var{camera}. It is deactivated by default, set its \var{load} field to 1 to
+activate.
+
+\subsection{Slots}
+\begin{itemize}
+\item \lstinline|format| \\
+  Set the image format: 1 for a jpeg-compressed image, 0 for raw yuv.
+\item \lstinline|formatDetail| \\
+  Set the image format, providing more options:
+  \begin{itemize}
+  \item \lstinline|0| raw RGB.
+  \item \lstinline|1| raw YUV.
+  \item \lstinline|2| JPEG.
+  \item \lstinline|3| I420: 1 byte/pixel, 4bit Y, 2bit U, 2bit V.
+  \item \lstinline|4| YUV844i:  2 bytes/pixel interlaced.
+  \item \lstinline|5| Grey8: grey image, 1 byte/pixel.
+  \item \lstinline|6| Grey4: grey image 4 bits/pixel.
+  \end{itemize}
+  JPEG mode gives the smallest images and uses less bandwidth to access the
+  images remotely, but uses more CPU power.
+\item \lstinline|quality| \\
+  Set JPEG compression quality, from 0 to 100.
+\item \lstinline|rate| \\
+  Set image frame rate in Hz. The effective framerate will be a bit lower than
+  this value.
+\item \lstinline|resolution| \\
+  Set image resolution.  0 gives the max resolution (640x380), 1 divides each
+  dimension by two(320x240), 2 divides by four(160x120), 3 by eight(80x60).
+\item \lstinline|width| \\
+  Image width. Read-only.
+\item \lstinline|height| \\
+  Image height. Read-only.
+\item \lstinline|threaded| \\
+  Set to 1 to activate threaded mode, and to 0 to deactivate. This must be set
+  before switching load to 1 for the first time. Defaults to 1.
+\end{itemize}
+
+The camera object uses an optimization minimising the number of copies of the
+image buffer. As a consequence, the image can only be accessed from \us and
+UObject notifyChange callbacks.
+
+\section{Other sensors}
+
+The following sensors are available through a \us variable.
+Reading the variable will give the latest available sensor value.
+
+\begin{itemize}
+\item \lstinline|sonar.val| \\
+    last value from the Sonar module. List of three elements: left value, right
+    value, name of what is detected.
+\item \lstinline|inertial.val| \\
+    name of the position detected by inertial sensors.
+\item \lstinline|bumperL.val|, \lstinline|bumperR.val| \\
+    Foot bumper, can be 0 or 1.
+\item \lstinline|headSensorR.val, headSensorM.val, headSensorF.val| \\
+    Head touch sensor segments.
+\item \lstinline|accelX.val, accelY.val, accelZ.val| \\
+    Accelerometer values.
+\item \lstinline|gyroX.val, gyroY.val, gyroZ.val| \\
+    Gyroscope values.
+\item \lstinline|battery.voltage, battery.current| \\
+    Current battery voltage and current usage.
+\end{itemize}
+
+\section{Interfacing with \naoqi}
+
+\subsection{Accessing the \naoqi shared memory region.}
+
+Many \naoqi modules communicate through a shared hash table handled by the
+\lstinline|ALMemory| module. This module is available under the \lstinline|stm|
+name in \urbi, and has the following slots:
+
+\begin{itemize}
+\item \lstinline|get(\var{name})| \\
+  Return the value of memory location \var{name}.
+\item \lstinline|set(\var{name}, \var{value})| \\
+  Set memory location \var{name} to \var{value}.
+\item \lstinline|bindRenameVariable(\var{memoryName}, \var{variableName}| \\
+  Create a \us slot named \var{variableName}, and synchronise it with memory
+  location \var{memoryName}. Only read support is available.
+  \var{variableName} can be of the form "a.b", in wich case it will create
+  variable "b" in object "a", or of the form "b", in which case variable "b"
+  will be created in object "stm".
+\end{itemize}
+
+\subsection{Accessing standard \naoqi modules.}
+
+All standard \naoqi modules (ALMemory, ALLogger, ALMotion, ALFrameManager,
+ALTextToSpeech, ALAudioPlayer...) are available in \urbi. You can call all
+their methods directly.
+
+\subsection{Binding new \naoqi modules in Urbi.}
+
+You can create a proxy on every \naoqi module, local or remote.
+The method is similar to what is done in C++, with the addition that all the
+module's methods can be directly called without using the meta-call 'call'
+method:
+
+\begin{urbifixme}
+// Instanciate a proxy for the ALMotion module.
+var motion = ALProxy.new( "ALMotion" );
+// Bind its methods, declaring "walkStraight" as a 'long' method.
+motion.generateALBindings(["walkStraight", "walkArk", "walk"]);
+motion.addWalkStraight( 0.1, 60 );
+motion.walk();
+\end{urbifixme}
+
+The argument to generateALBindings() is a list of all the function
+names that you want to be asynchronous. You must pass in this list
+all the functions that takes a long(more than a few milliseconds)
+time to execute.
+
+Synchronous calls have less overhead, but will freeze the urbiScript
+interpreter for the duration of the call.
+
+Most of the standard modules are loaded by the initialization script URBI.INI.
+
+\subsection{Writting \naoqi modules in Urbi.}
+
+You can create independant modules capable of answering requests and services
+from other \naoqi modules, written in C++, urbiScript or ruby. Let's see an
+example:
+
+\begin{urbifixme}
+
+// ----------------------------------
+// Simple module creation samples
+// ----------------------------------
+// the name of your variable and of the module must be the SAME!
+var urbiHelloWorld = ALModule.new( "urbiHelloWorld" );
+
+// create a new method doing some interesting things
+function urbiHelloWorld.sayHello()
+{
+  // Use ALTextToSpeech, instanciated by URBI.INI
+  tts.say( "Hello" );
+};
+
+// inform the world that there's a new method, and what it's doing
+urbiHelloWorld.bindUrbiMethod( "sayHello", "Nao will say 'Hello'", [], [] );
+
+// to test it outside of Urbi, you can for example type in a browser:
+// http://<Nao's IP>:9559/?eval=urbiHelloWorld.version(); or
+// http://<Nao's IP>:9559/?eval=urbiHelloWorld.ping(); and more naturally
+// http://<Nao's IP>:9559/?eval=urbiHelloWorld.sayHello();
+
+// ----------------------------------
+// another module example
+// ----------------------------------
+var mathematic = ALModule.new( "mathematic" );
+
+function mathematic.add( a, b )
+{
+  var res = a + b;
+  echo( "mathematic.add => " + res );
+  return res;
+};
+
+mathematic.setModuleDescription(
+  "A powerfull module to make remote computing in urbiscript :)" );
+mathematic.bindUrbiMethod( "add", "Compute the sum of two numbers",
+[["a","first number of the addition"],
+["b","second number of the addition"]],
+["sum", "the sum of the addition"] );
+
+// to test it outside of urbi, you can for example enter in a browser:
+// http://<Nao's IP>:9559/?eval=mathematic.add(2,3)
+\end{urbifixme}
+
