@@ -54,6 +54,7 @@ do (String)
   }
 }|
 
+// Keep sync with urbivalid/test.u.
 if (System.Platform.isWindows)
   do (System)
   {
