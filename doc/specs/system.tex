@@ -16,7 +16,6 @@ Details on the architecture the \urbi server runs on.
 %% \item \lstinline|cycle|
 %% \item \lstinline|eval|
 %% \item \lstinline|fresh|
-%% \item \lstinline|getenv|
 %% \item \lstinline|jobs|
 %% \item \lstinline|loadFile|
 %% \item \lstinline|loadModule|
@@ -30,13 +29,10 @@ Details on the architecture the \urbi server runs on.
 %% \item \lstinline|resetStats|
 %% \item \lstinline|searchFile|
 %% \item \lstinline|searchPath|
-%% \item \lstinline|setenv|
 %% \item \lstinline|shutdown|
 %% \item \lstinline|spawn|
 %% \item \lstinline|stats|
 %% \item \lstinline|stopall|
-%% \item \lstinline|system|
-%% \item \lstinline|unsetenv|
 
 \item \lstinline|_exit(\var{status})|\\
   Shut the server down brutally: the connections are not closed, and
@@ -72,6 +68,15 @@ assert_op("<",  1, 1 + 1);
 assert_op("<=", 1, 1 + 1);
 assert_op(">",  1, 1 + 1);
 [00000003:error] !!! failed assertion: 1 > 1 . '+'(1) (1 <= 2)
+\end{urbiscript}
+
+\item \lstinline|getenv(\var{name})|\\
+  Return the value of the environment variable \var{name} as a
+  \refObject{String} if set, \lstinline|nil| otherwise.  See also
+  \lstinline|System.setenv| and \lstinline|System.unsetenv|.
+\begin{urbiscript}[firstnumber=last]
+assert(getenv("UndefinedEnvironmentVariable").isNil);
+assert(!getenv("PATH").isNil);
 \end{urbiscript}
 
 \item \lstinline|load(\var{file})|\\
@@ -116,6 +121,27 @@ assert(maybeLoad("u.123").isVoid);
 \item \lstinline|reboot|\\
   Restart the \urbi server.  Architecture dependent.
 
+\item \lstinline|setenv(\var{name}, \var{value})|\\
+  Set the environment variable \var{name} to
+  \lstinline|\var{value}.asString|, and return this value.  See also
+  \lstinline|System.getenv| and \lstinline|System.unsetenv|.
+
+\begin{urbiscript}[firstnumber=last]
+assert(setenv("MyVar", 12) == "12");
+assert(getenv("MyVar") == "12");
+
+// A child process that uses the environment variable.
+assert(System.system("exit $MyVar") >> 8 ==
+       {if (Platform.isWindows) 0 else 12});
+assert(setenv("MyVar", 23) == "23");
+assert(System.system("exit $MyVar") >> 8 ==
+       {if (Platform.isWindows) 0 else 23});
+
+// Defining to empty is not undefining.
+assert(setenv("MyVar", "") == "");
+assert(!getenv("MyVar").isNil);
+\end{urbiscript}
+
 \item \lstinline|scopeTag|\\
   Return a fresh Tag whose \lstinline|stop| will be invoked a the end
   of the current scope.  This function is likely to be removed, or
@@ -129,7 +155,6 @@ assert(maybeLoad("u.123").isVoid);
 \begin{urbiscript}[firstnumber=last]
 assert((time - {sleep(1s); time}).round == -1);
 \end{urbiscript}
-
 
 \item \lstinline|shiftedTime|\\
   Return the number of seconds elapsed since the \urbi server was
@@ -156,6 +181,24 @@ assert (
   Have the \urbi server shut down.  All the connections are closed,
   the resources are released.  Architecture dependent.
 
+\item \lstinline|system(\var{command})|\\
+  Ask the operating system to run the \var{command}.  This is
+  typically used to start new processes.  The exact syntax of
+  \var{command} depends on your system.  On Unix systems, this is
+  typically \file{/bin/sh}, while Windows uses \file{command.exe}.
+
+  Return the exit status.  Under Windows, this is always 0.
+
+\begin{urbiscript}[firstnumber=last]
+assert(System.system("exit 0") == 0);
+assert(System.system("echo '[00000002] hello world'") == 0);
+[00000002] hello world
+
+assert(System.system("exit 23") >> 8
+       == { if (System.Platform.isWindows) 0 else 23 });
+\end{urbiscript}
+
+
 \item \lstinline|time|\\
   Return the number of seconds elapsed since the \urbi server was
   launched.  In presence of a frozen \refObject{Tag}, see also
@@ -175,6 +218,18 @@ assert (
     sleep(1s);
     res.round;
   });
+\end{urbiscript}
+
+\item \lstinline|unsetenv(\var{name})|\\
+  Undefine the environment variable \var{name}, return its previous
+  value.  See also \lstinline|System.getenv| and
+  \lstinline|System.setenv|.
+
+\begin{urbiscript}[firstnumber=last]
+assert(setenv("MyVar", 12) == "12");
+assert(!getenv("MyVar").isNil);
+assert(unsetenv("MyVar") == "12");
+assert(getenv("MyVar").isNil);
 \end{urbiscript}
 
 
