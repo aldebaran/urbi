@@ -7,7 +7,10 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/cerrno>
+#include <libport/read-stdin.hh>
+#include <libport/exception.hh>
 
 #include <urbi/sdk.hh>
 #include <kernel/userver.hh>
@@ -56,5 +59,27 @@ namespace urbi
     }
     if (ret == -1)
       errnoabort("select");
+  }
+
+  std::string
+  yield_for_read(int fd)
+  {
+    // FIXME: Kinda busy loop.
+    std::string res;
+    try
+    {
+      while (true)
+      {
+        std::string res = libport::read_fd(fd);
+        if (!res.empty())
+          return res;
+        yield_for(128000);
+      }
+    }
+    catch (const libport::Exception& e)
+    {
+      LIBPORT_ECHO(e.what());
+    }
+    return "";
   }
 }

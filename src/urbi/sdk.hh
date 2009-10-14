@@ -33,6 +33,10 @@ namespace urbi
   void yield_for(libport::utime_t t);
   void yield_for_fd(int fd);
 
+  /// Wait for data on \a fd, yielding until data is available.
+  /// \return the available data, "" iff EOF.
+  std::string yield_for_read(int fd);
+
   // FIXME: function isn't ideal
   inline
   rObject global();

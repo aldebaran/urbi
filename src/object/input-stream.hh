@@ -45,7 +45,7 @@ namespace object
     int fd_;
     /// Whether we own fd_, and therefore need to close it.
     bool own_;
-    unsigned char buffer_[BUFSIZ];
+    std::string buffer_;
     unsigned pos_;
     size_t size_;
 
