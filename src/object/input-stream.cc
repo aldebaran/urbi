@@ -60,17 +60,17 @@ namespace object
   int
   InputStream::get_()
   {
-    if (pos_ == size_)
-      if (!getBuffer_())
-        return -1;
+    if (pos_ == size_ && !getBuffer_())
+      return -1;
     return buffer_[pos_++];
   }
 
   bool
   InputStream::getBuffer_()
   {
+    assert_eq(pos_, size_);
     urbi::yield_for_fd(fd_);
-    size_ = read(fd_, &buffer_, 1);
+    size_ = read(fd_, &buffer_, sizeof buffer_);
     pos_ = 0;
     return size_;
   }

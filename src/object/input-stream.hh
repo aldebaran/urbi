@@ -34,10 +34,16 @@ namespace object
   `--------------*/
 
   private:
+    /// Get a byte.
+    /// \return the next available byte, or -1 if none available.
     int get_();
+
+    /// Fill the buffer.
+    /// \return true if something was read.
     bool getBuffer_();
     std::string getSeparator_(char sep, bool incl, bool& ok);
     int fd_;
+    /// Whether we own fd_, and therefore need to close it.
     bool own_;
     unsigned char buffer_[BUFSIZ];
     unsigned pos_;
