@@ -275,6 +275,7 @@ This is why, when we cloned Pair earlier, and modified the ``first''
 slot of our fresh Pair, we didn't alter Pair one all its other clones.
 
 \section{Defining pseudo-classes}
+\label{sec:tut:class}
 
 Now that we know the internals of \us's object model, we can start
 defining our own classes.
@@ -337,9 +338,10 @@ class MyPair
 [00000000] (nil, nil)
 \end{urbiscript}
 
-The \lstinline{class} keyword simply creates MyPair with Object.clone,
-and provides you with a \lstinline|do (MyPair)| scope. It actually also
-predefines a few slots, but this is not the point here.
+The \lstinline{class} keyword simply creates \lstinline|MyPair| with
+\lstinline|MyPair|Object.clone|, and provides you with a
+\lstinline|do (MyPair)| scope. It actually also predefines a few
+slots, but this is not the point here.
 
 \section{Constructors}
 \label{sec:tut:ctor}

@@ -11,18 +11,55 @@ with many primitives that are mandatory for all object in \us.
 \item \refObject{Global}
 \end{itemize}
 
+\subsection{Construction}
+
+Fresh object can be instantiated by cloning Object itself.
+
+\begin{urbiscript}
+Object.new;
+[00000421] Object_0x00000000
+\end{urbiscript}
+
+The keyword \lstindex{class} also allows to define objects which are
+intented to serve as prototype of a familly of objects, similarly to
+classes in traditional object-oriented programming languages (see
+\autoref{sec:tut:class}).
+
+\begin{urbiscript}[firstnumber=last]
+{
+  class Foo
+  {
+    var attr = 23;
+  };
+  assert(Foo.localSlotNames == ["asFoo", "attr", "type"]);
+  assert(Foo.asFoo === Foo);
+  assert(Foo.attr == 23);
+  assert(Foo.type == "Foo");
+};
+\end{urbiscript}
+
+
 \subsection{Slots}
 
 \begin{itemize}
 \item \lstinline|acceptVoid|\\
+  Return \lstinline|this|.  See \refObject{void} to know why.
+\begin{urbiscript}[firstnumber=last]
+{
+  var o = Object.new;
+  assert(o.acceptVoid === o);
+};
+\end{urbiscript}
+
 
 \item \lstinline|addProto(\var{proto})|\\
-  Add the prototype \var{proto} as a parent into the list of
-  \lstinline|this|.
-
-\begin{urbiscript}
-var Dummy = Object.new | Dummy.addProto(Orderable) | {};
-assert(Dummy.protos == [Orderable, Object]);
+  Add \var{proto} into the list of prototypes of \lstinline|this|.
+\begin{urbiscript}[firstnumber=last]
+{
+  var o = Object.new;
+  o.addProto(Orderable);
+  assert(o.protos == [Orderable, Object]);
+};
 \end{urbiscript}
 
 \item \lstinline|allProto|\\
@@ -185,7 +222,7 @@ assert(!Base.hasSlot("derive"));
 \item \lstinline|id|\\
 
 \item \lstinline|inspect(\var{deep} = false)|\\
-  Describe \lstinline|this|: its prototypes and slots, and there
+  Describe \lstinline|this|: its prototypes and slots, and their
   properties.  If \var{deep}, all the slots are described, not only
   the local slots. See also \lstinline|Object.dump|.
 \begin{urbiscript}[firstnumber=last]
@@ -225,8 +262,8 @@ assert(!(42.isProto));
 \end{urbiscript}
 
 \item \lstinline|isVoid|\\
-  Return true if \lstinline|this| is \lstinline|void|.
-
+  Return true if \lstinline|this| is \lstinline|void|.  See
+  \refObject{void}.
 \begin{urbiscript}[firstnumber=last]
 assert(void.isVoid);
 assert(!(42.isVoid));
@@ -308,6 +345,13 @@ assert(theObject === Object);
   Returns ths unique id of \lstinline|this|.
 
 \item \lstinline|unacceptvoid|\\
+  Return \lstinline|this|.  See \refObject{void} to know why.
+\begin{urbiscript}[firstnumber=last]
+{
+  var o = Object.new|
+  assert(o.unacceptVoid === o);
+};
+\end{urbiscript}
 
 \item \lstinline|uobject_init|\\
 

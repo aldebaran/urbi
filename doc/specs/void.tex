@@ -1,7 +1,62 @@
 \section{void}
 
-\dfn{void} is a very special object used to denote ``no value''.  It
-has no prototype and cannot be used as a value.
+The special entity \lstinline|void| is an object used to denote ``no
+value''.  It has no prototype and cannot be used as a value.  In
+contrast with \refObject{nil}, which is a valid object,
+\lstinline|void| denotes a value one is not allowed to read.
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{void}
+\end{itemize}
+
+\subsection{Construction}
+
+\lstinline|void| is the value returned by constructs that return no
+value.
+
+\begin{urbiscript}
+assert(void.isVoid);
+assert({}.isVoid);
+assert({if (false) 123}.isVoid);
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|acceptVoid|\\
+  Trick \lstinline|this| so that, even if it is \lstinline|void| it
+  can be used as a value.  See also \lstinline|unacceptVoid|.
+\begin{urbiscript}[firstnumber=last]
+void.foo;
+[00096374:error] !!! unexpected void
+void.acceptVoid.foo;
+[00102358:error] !!! lookup failed: foo
+\end{urbiscript}
+
+\item \lstinline|isVoid|\\
+  Whether \lstinline|this| is \lstinline|void|.  Therefore, return
+  \lstinline|true|.
+\begin{urbiscript}[firstnumber=last]
+assert(void.isVoid);
+assert(void.acceptVoid.isVoid);
+assert(! 123.isVoid);
+\end{urbiscript}
+
+\item \lstinline|unacceptVoid|\\
+  Remove the magic from \lstinline|this| that allowed to manipulate it
+  as a value, even if it \lstinline|void|.  See also
+  \lstinline|acceptVoid|.
+\begin{urbiscript}[firstnumber=last]
+void.acceptVoid.unacceptVoid.foo;
+[00096374:error] !!! unexpected void
+\end{urbiscript}
+
+\end{itemize}
+
+
+
 
 %%% Local Variables:
 %%% mode: latex
