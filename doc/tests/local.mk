@@ -51,7 +51,8 @@ TESTS_ENVIRONMENT +=						\
 UCONSOLE_CHECK = $(top_builddir)/tests/bin/uconsole-check
 UCONSOLE_CHECKFLAGS = -k2 --no-locations
 
-%.log: %.chk
+tests_deps := $(call ls_files, *.u)
+%.log: %.chk $(tests_deps)
 	@$(am__check_pre) $(UCONSOLE_CHECK) $(UCONSOLE_CHECKFLAGS) $${dir}$< $(am__check_post)
 check-clean-local:
 	-chmod -R 700 $(TEST_LOGS:.log=.dir) 2>/dev/null
