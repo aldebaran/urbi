@@ -204,19 +204,15 @@ for ``one second and 1 millisecond'', is strictly equivalent to
 \subsubsection{Floats}
 \label{sec:us-syn-lit-float}
 
-Literal \dfn{floats} consist in a succession of digit, representing
-the integral part of the number in decimal base, possibly followed by
-a dot (\lstinline|.|) and another succession of digits representing
-the decimal part. Briefly, float literals match the
-\lstinline|[0-9]+(\.[0-9]+)?| regular
-expression. The listing below is an example of literal
-floats.  See \refObject{Float} for more details.
+\us supports the so called \dfn{scientific notation} for
+floating-point literals.  See \refObject{Float} for more details.
+Examples include:
 
 \begin{urbiscript}[firstnumber=last]
 1;
 [00000000] 1
-1.1;
-[00000000] 1.1
+1.234e6;
+[00000000] 1234000
 \end{urbiscript}
 
 \subsubsection{Lists}

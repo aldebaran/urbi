@@ -1,6 +1,7 @@
 \section{Float}
 
-Float is an \us primitive to represent floating point number.
+Float is an \us primitive to represent floating point number.  They
+are also used, in the current version of \us, to represent integers.
 
 \subsection{Prototypes}
 
@@ -11,14 +12,46 @@ Float is an \us primitive to represent floating point number.
 \end{itemize}
 
 \subsection{Construction}
+\label{sec:float:ctor}
 
-The most common way to create fresh floats is by using the literal
-syntax presented in \autoref{sec:us-syn-lit-float}. A null float can
-also be obtained with \lstinline|Float|'s \lstinline|new| method.
+The most common way to create fresh floats is using the literal
+syntax.  Numbers are composed of three parts:
+\begin{description}
+\item[integral] (mandatory) a non empty sequence of (decimal) digits;
+\item[fractional] (optional) a period, and a non empty sequence of
+  (decimal) digits;
+\item[exponent] (optional) either \samp{e} or \samp{E}, an optional
+  sign (\samp{+} or \samp{-}), then a non-empty sequence of digits.
+\end{description}
+
+In other words, float literals match the
+\lstinline|[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?|
+regular expression.  For instance:
 
 \begin{urbiscript}
-Float.new;
-[00000000] 0
+assert(0 == 0000.0000);
+// This is actually a call to the unary '+'.
+assert(+1 == 1);
+assert(0.123456 == 123456 / 1000000);
+assert(1e3 == 1000);
+assert(1e-3 == 0.001);
+assert(1.234e3 == 1234);
+\end{urbiscript}
+
+There are also some special numbers, \lstinline|nan|, \lstinline|inf|
+(see below).
+
+\begin{urbiscript}[firstnumber=last]
+assert(Math.log(0) == -inf);
+assert(Math.exp(-inf) == 0);
+assert((inf/inf).asString == "nan");
+\end{urbiscript}
+
+A null float can also be obtained with \lstinline|Float|'s
+\lstinline|new| method.
+
+\begin{urbiscript}[firstnumber=last]
+assert(Float.new == 0);
 \end{urbiscript}
 
 \subsection{Slots}
