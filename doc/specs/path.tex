@@ -45,6 +45,17 @@ assert(Path.new("/path/to/file.u").asList == ["path", "to", "file.u"]);
 assert(Path.new("/path").asList           == Path.new("path").asList);
 \end{urbiscript}
 
+\item \lstinline|asPrintable|\\
+\begin{urbiscript}[firstnumber=last]
+assert(Path.new("file.txt").asPrintable == "Path(\"file.txt\")");
+\end{urbiscript}
+
+\item \lstinline|asString|\\
+  The name of the file.
+\begin{urbiscript}[firstnumber=last]
+assert(Path.new("file.txt").asString == "file.txt");
+\end{urbiscript}
+
 \item \lstinline|basename|\\
   Base name of the path.
 \begin{urbiscript}[firstnumber=last]

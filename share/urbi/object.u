@@ -54,15 +54,15 @@ do (Object)
     getSlot("as" + type.type).apply([this])
   };
 
-  // Destined to be overridden by subclasses.
-  function asString ()
+  // To be overridden by subclasses.
+  function asString()
   {
     id
   };
 
-  function format (f = FormatInfo)
+  function format(f = FormatInfo)
   {
-    asPrintable.format(f)
+    asString.format(f)
   };
 
 
