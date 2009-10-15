@@ -222,6 +222,139 @@ handy to implement cleanups, how ever the scope was exited from.
 sleep(2s);
 \end{urbiscript}
 
+\subsubsection{Enter/leave events}
+\label{sec:specs:tag:enter-leave}
+
+Tags provide two events, \lstinline|enter| and \lstinline|leave|, that
+trigger whenever flow control enters or leaves statements they tag.
+
+\begin{urbiscript}
+var t = Tag.new("t");
+[00000000] Tag<t>
+
+at (t.enter?)
+  echo("enter");
+at (t.leave?)
+  echo("leave");
+
+t: {echo("inside"); 42};
+[00000000] *** enter
+[00000000] *** inside
+[00000000] *** leave
+[00000000] 42
+\end{urbiscript}
+
+This feature is fundamental, since it is a concise and safe way to
+ensure code will be executed upon exiting a chunk of code (like
+\acronym{raii} in \Cxx or \lstinline|finally| in Java). The exit code
+will be run no matter what the reason for leaving the block was:
+natural exit, exceptions, flow control instructions like
+\lstinline|return| or \lstinline|break|, \ldots
+
+For instance, suppose we want to make sure we turn the gas off when
+we're done cooking. Here is the \emph{bad} way to do it:
+
+\begin{urbiscript}
+function cook()
+{
+  turn_gas_on();
+
+  // Cooking code ...
+
+  turn_gas_off();
+}|
+
+enter_the_kitchen();
+cook();
+leave_the_kitchen();
+\end{urbiscript}
+
+This is bad because there are several situation where we could leave
+the kitchen with gas still turned on. Consider the following cooking
+code:
+
+\begin{urbiscript}
+function cook()
+{
+  turn_gas_on();
+
+  if (meal_ready)
+  {
+    echo("The meal is already there, nothing to do!");
+    // Oops ...
+    return
+  };
+
+  for (var ingredient in recipe)
+    if (ingredient not in kitchen)
+      // Oops ...
+      throw Exception("missing ingredient: %s" % ingredient)
+    else
+      put_ingredient();
+
+  // ...
+
+  turn_gas_off();
+}|
+
+enter_the_kitchen();
+cook();
+leave_the_kitchen();
+\end{urbiscript}
+
+Here you can see that if the meal was already prepared, or that if an
+ingredient is missing, we will leave the \lstinline|cook| function
+without executing the \lstinline|turn_gas_off| statement, through the
+\lstinline|return| statement or the exception. The right way to ensure
+gas is necessarily turned off is:
+
+\begin{urbiscript}
+function cook()
+{
+  var with_gas = Tag.new("with_gas");
+
+  at (with_gas.enter?)
+    turn_gas_on();
+  at (with_gas.leave?)
+    turn_gas_off();
+
+  with_gas: {
+    // Cooking code. Even if exception are thrown here or return is called,
+    // the gas will be turned off.
+  }
+}|
+
+enter_the_kitchen();
+cook();
+leave_the_kitchen();
+\end{urbiscript}
+
+\subsubsection{Begin/end}
+\label{sec:specs:tag:begin-end}
+
+The \lstinline|begin| and \lstinline|end| methods enable you to
+monitor when your code is executed. This is a good example of a good
+use of enter and leave events (\autoref{sec:specs:tag:enter-leave}),
+which are use in backend to implement this feature.
+
+\begin{urbiscript}
+var mytag = Tag.new("mytag");
+[00000000] Tag<mytag>
+
+mytag.begin: echo(1);
+[00000000] *** mytag: begin
+[00000000] *** 1
+
+mytag.end: echo(2);
+[00000000] *** 2
+[00000000] *** mytag: end
+
+mytag.begin.end: echo(3);
+[00000000] *** mytag: begin
+[00000000] *** 3
+[00000000] *** mytag: end
+\end{urbiscript}
+
 \subsection{Slots}
 
 \begin{itemize}
@@ -231,9 +364,21 @@ sleep(2s);
   specified, let stopped code return \var{result} as value.  See
   \autoref{sec:specs:tag:block}.
 
+\item \lstinline|begin|~\\
+  A subtag that prints out "tag\_name: begin" everytime flow control
+  enters the tagged code. See \autoref{sec:specs:tag:begin-end}.
+
 \item \lstinline|blocked|~\\
   Whether code tagged by \lstinline|this| is blocked.  See
   \autoref{sec:specs:tag:block}.
+
+\item \lstinline|end|~\\
+  A subtag that prints out "tag\_name: end" everytime flow control
+  leaves the tagged code. See \autoref{sec:specs:tag:begin-end}.
+
+\item \lstinline|enter|~\\
+  An event that trigger everytime flow control enter the tagged code.
+  See \autoref{sec:specs:tag:enter-leave}.
 
 \item \lstinline|freeze|~\\
   Suspend code tagged by \lstinline|this|, already running or
@@ -242,6 +387,10 @@ sleep(2s);
 
 \item \lstinline|frozen|~\\
   Whether the tag is frozen. See  \autoref{sec:specs:tag:freeze}.
+
+\item \lstinline|leave|~\\
+  An event that trigger everytime flow control leaves the tagged code.
+  See \autoref{sec:specs:tag:enter-leave}.
 
 \item \lstinline|stop(\var{result} = void)|~\\
   Stop any code tagged by \lstinline|this|.  If some \var{result} was

@@ -1,0 +1,8 @@
+function enter_the_kitchen() {}|
+function leave_the_kitchen() {}|
+function turn_gas_on() {}|
+function turn_gas_off() {}|
+
+var meal_ready = false|
+var recipe = []|
+var ingredient = 0|
