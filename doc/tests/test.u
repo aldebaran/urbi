@@ -85,7 +85,7 @@ if (System.Platform.isWindows)
       // Run the command, wait for the stamp.
       'system.orig'(cmd) |
       while| (!stamp.exists)
-        sleep(20ms)
+        sleep(20ms)|
       var res = File.new(stamp).asList[0].asFloat |
       clog << ("system wrapper: " + command + ": " + cmd + ": " + res) |
       res
