@@ -19,7 +19,7 @@ improved.  Changes include, but are not limited to:
 - environment variables
 - special files
 - k1-to-k2
-  Conversion idioms to urbiScript 1 to urbiScript 2
+  Conversion idioms from urbiScript 1 to urbiScript 2
 - faq
   - stack exhaustion
   - at and waituntil: performance considerations
