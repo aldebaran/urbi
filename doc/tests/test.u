@@ -58,18 +58,38 @@ do (String)
 if (System.Platform.isWindows)
   do (System)
   {
+    var this.count = 1;
+
     // On Windows, use /bin/sh to please our tests.
     var 'system.orig' = getSlot("system");
     system->constant = false;
     system = function (command)
     {
+      // For some reason I don't understand, the command is
+      // backgrounded on Windows (or by Wine).  So use some stamp file
+      // to mark the end of the command.  This also provides a means
+      // to get the real exit status with Wine.
+      var stamp = Path.new("%s.stamp" % count) |
+      count += 1 |
+      // As a subshell, not a subcommand ({ %s; }) so that if the
+      // command includes an "exit", then the stamp file is really
+      // created anyway with the right value.
+      command = "( %s ); echo $? >%s" % [command, stamp]|
+
       // Escape all the quotes and backslashes, and call /bin/sh.
       var cmd = "/bin/sh -c \"" |
       for| (var c: command)
         cmd += {if (c in ["\\", "\""]) "\\" else ""} + c |
-      cmd += "\"";
-      var res = 'system.orig'(cmd) |
+      cmd += "\"" |
+
+      // Run the command, wait for the stamp.
+      'system.orig'(cmd) |
+      while| (!stamp.exists)
+        sleep(20ms)
+      var res = File.new(stamp).asList[0].asFloat |
       clog << ("system wrapper: " + command + ": " + cmd + ": " + res) |
       res
     };
   }|
+
+;
