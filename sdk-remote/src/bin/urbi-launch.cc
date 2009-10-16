@@ -97,11 +97,7 @@ std::string get_urbi_root(const char* arg0)
        ;
   if (p<0)
     return ".";
-  std::string bindir = std::string(arg0, arg0 + p);
-  if (bindir.rfind("bin") == bindir.size() - 3)
-    return bindir.substr(0,  bindir.size() - 3);
-  else
-    return bindir + "/..";
+  return std::string(arg0, arg0 + p) + "/..";
 }
 
 /// Main. Load liburbi and call urbi_launch
