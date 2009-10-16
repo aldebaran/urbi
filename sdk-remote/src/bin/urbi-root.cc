@@ -8,15 +8,18 @@
  * See the LICENSE file for more information.
  */
 
-#include "urbi-root.hh"
-
 #include <cstring>
 #include <cstdlib>
 
+#include <libport/config.h>
+#include <libport/detect-win32.h>
+
+#include "urbi-root.hh"
+
 #ifdef WIN32
 
-static const char* lib_rel_path = "bin";
-static const char* lib_ext = ".dll";
+const char* lib_rel_path = "bin";
+const char* lib_ext = ".dll";
 
 #else
 const char* lib_rel_path = "lib";
