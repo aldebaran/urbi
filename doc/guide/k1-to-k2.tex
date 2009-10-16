@@ -147,14 +147,14 @@ The same feature and syntax is now provided by \lstinline|for|.  See
 
 \subsection{new Foo}
 
-See \autoref{sec:tut:ctor} for details on \code{new}.  The construct
-\lstinline{new Foo} is no longer supported because it is ambiguous:
+See \autoref{sec:tut:ctor} for details on \lstinline{new}.  The construct
+\lstinline{new Foo} is no longer supported because it is (too) ambiguous:
 what does \lstinline{new a(1,2).b(3,4)} mean?  Is
 \lstinline{a(1,2).b} the object to clone and \lstinline{(3,4)} are the
 arguments of the constructor?  Or is it the result of
 \lstinline{a(1,2).b(3,4)} that must be cloned?
 
-In temporary versions, \us 2 used to support this \code{new} construct,
+In temporary versions, \us 2 used to support this \lstinline{new} construct,
 but too many users got it wrong, and we decided to keep only the
 simpler, safer, and more consistent method-call-style construct:
 \lstinline{Foo.new}.  Every single possible interpretation of
@@ -172,28 +172,32 @@ For consistency with the \Cxx syntax, \us now uses \lstinline{this}.
 
 \subsection{stop Foo}
 
-Use \lstinline{Foo.stop} instead.
+Use \lstinline{Foo.stop} instead, see \refObject{Tag}.
 
-\subsection{# line}
+\subsection{\# line}
 
-Use \lstinline{//# line} instead.
+Use \lstinline{//#line} instead, see \autoref{sec:specs:synclines}.
 
 \subsection{tag+end}
 
-When you used to write code like this to detect the end of a given Urbi
-command:
-\begin{urbiscript}
+To detect the end of a statement, instead of
+
+\begin{urbifixme}
 mytag+end: { echo ("foo") },
-\end{urbiscript}
+\end{urbifixme}
 
-You can now use the \lstinline{leave?} method of the \lstinline{Tag} object
-like this:
+\noindent
+use the \lstinline{leave?} method of the \refObject{Tag} object:
 
-\begin{urbiscript}
-var mytag = Tag.new("mytag");
-at (mytag.leave?)
-  Channel.new("mytag") << "code has finished";
-mytag: { echo ("foo") },
+\begin{urbiscript}[firstnumber=last]
+{
+  var mytag = Tag.new("mytag");
+  at (mytag.leave?)
+    Channel.new("mytag") << "code has finished";
+  mytag: { echo ("foo") },
+};
+[00000002] *** foo
+[00000003:mytag] "code has finished"
 \end{urbiscript}
 
 \section{Cookbook}

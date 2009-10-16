@@ -2,6 +2,7 @@
 \label{sec:lang}
 
 \section{Syntax}
+
 \subsection{Comments}
 
 \dfn{Comments} are used to document the code, they are ignored by the
@@ -21,6 +22,38 @@
 /* C style comment */
 /* These comments /* do */ nest */
 \end{urbiscript}
+
+\subsection{Synclines}
+\label{sec:specs:synclines}
+
+While the interaction with an \us kernel is usually performed via a
+network connection, programmers are used to work with files which have
+names, line numbers and so forth.  This is most important in error
+messages.  Since even loading a file actually means sending its
+content as if it were typed in the network session, in order to
+provide the user with meaningful locations in error messages, \us
+features \dfn[syncline]{synclines}, a means to change the ``current
+location'', similarly to \lstinline[language=C]|#line| in \C-like
+languages.  This is achieved using special \lstindex|//#| comments.
+
+The following special comments are recognized only as a whole line.
+If some component does not match exactly the expected syntax, or if
+there are trailing items, the whole line is treated as a comment.
+\begin{itemize}
+\item \lstinline|//#line \var{line} "\var{file}"|\\
+  Specify that the \emph{next} line is from the file named \var{file},
+  and which line number is \var{line}.  The current location (i.e.,
+  current file and line) is lost.
+
+\item \lstinline|//#push \var{line} "\var{file}"|\\
+  Save the current location, and then behave as if \lstinline|//#line|
+  was used.
+
+\item \lstinline|//#pop|\\
+  Restore the current location.  \lstinline|//#push| and
+  \lstinline|//#pop| must match.
+\end{itemize}
+
 
 \subsection{Identifiers}
 \label{sec:us-syn-id}
@@ -780,7 +813,7 @@ value thanks to the \lstinline|function| keyword, followed by the list
 of formal arguments and a compound statement representing the body of
 the function. Formal arguments are a possibly-empty comma-separated
 list of identifiers.  Non-empty lists of formal arguments may
-optionaly end with a trailing comma. The listing below illustrates
+optionally end with a trailing comma. The listing below illustrates
 this.
 
 \begin{urbiscript}[firstnumber=last]
@@ -1467,7 +1500,7 @@ assert({ var res = []; for&(3) { res << 1; res << 2 } ; res }
         == [1, 1, 1, 2, 2, 2]);
 \end{urbiscript}
 
-Note that since these \lstinline|for| loops are merely anynomous
+Note that since these \lstinline|for| loops are merely anonymous
 foreach-style loops, the argument needs not being an integer, any
 iterable value can be used.
 
@@ -1517,7 +1550,7 @@ v;
 
 \subsection{switch}
 
-The \lstinline|switch| statement in \us is similiar to \C's one.
+The \lstinline|switch| statement in \us is similar to \C's one.
 
 \begin{urbifixme}[frame=, backgroundcolor=, ]
 switch (\var{value})
@@ -1656,7 +1689,7 @@ is the same as
 \var{condition} | \var{body} | \var{condition} | \var{body} | ...
 \end{urbifixme}
 
-The execution is can be controled by \lstinline|break| and
+The execution is can be controlled by \lstinline|break| and
 \lstinline|continue|.
 
 \begin{urbiscript}[firstnumber=last]
@@ -1687,8 +1720,8 @@ The execution is can be controled by \lstinline|break| and
 Use the \lstinline|throw| keyword to \dfn[exception!throwing]{throw
   exceptions}, as shown below. Thrown exceptions will
 break the execution upward until they are caught, or until they reach
-the toplevel --- as in \Cxx.  Contrary to \Cxx, exceptions reaching
-the toplevel are printed, and won't abort the kernel --- other and new
+the top-level --- as in \Cxx.  Contrary to \Cxx, exceptions reaching
+the top-level are printed, and won't abort the kernel --- other and new
 connections will continue to execute normally.
 
 \begin{urbiscript}[firstnumber=last]
@@ -1696,7 +1729,7 @@ throw 42;
 [00000000:error] !!! 42
 function inner() { throw "exn" } |
 function outer() { inner() }|
-// Exceptions propagate to parent call up to the toplevel
+// Exceptions propagate to parent call up to the top-level
 outer();
 [00000000:error] !!! exn
 [00000000:error] !!!    called from: 3.20-26: inner
@@ -2030,3 +2063,12 @@ iterations are done.
 %%% mode: latex
 %%% TeX-master: "urbi-specs"
 %%% End:
+
+% LocalWords:  Synclines zA eq asm loopn namespace bitand bitor bool onleave mn
+% LocalWords:  compl const sizeof stopif struct enum extern typedef typeid goto
+% LocalWords:  typename foreach freezeif waituntil wchar inline fA xfF baz nb
+% LocalWords:  foobarbaz urbiScript desugared stdlib redefinable args Bitwise
+% LocalWords:  updateSlot bitwise variadic abcdef bc afoodef isVoid subscopes
+% LocalWords:  arg CallMessage evalArgAt createSlot getSlot setSlot asString sw
+% LocalWords:  localSlotNames protos addProto removeProto lookup prepended p's
+% LocalWords:  msg sqrt sqr Frodo iterable cond exn
