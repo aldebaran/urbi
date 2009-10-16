@@ -18,87 +18,44 @@
 #include <libport/windows.hh>
 #include <libport/foreach.hh>
 
+#include "urbi-root.hh"
+
 // Quick hackish portability layer. We cannot use the one from libport as
 // it is not header-only.
 #ifdef WIN32
-  static const int RTLD_LAZY = 0;
-  static const int RTLD_GLOBAL = 0;
-  static const char* lib_rel_path = "bin";
-  static const char* lib_ext = ".dll";
-  static const char* LD_LIBRARY_PATH_NAME = "LD_LIBRARY_PATH";
-  HMODULE dlopen(const char* name, int)
-  {
-    return LoadLibrary(name);
-  }
-  void* dlsym(HMODULE module, const char* name)
-  {
-    return GetProcAddress(module, name);
-  }
-  static const char*
-  dlerror(DWORD err = GetLastError())
-  {
-    static char buf[1024];
-
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                  0, err, 0,
-                  (LPTSTR)buf, sizeof buf,
-                  0);
-
-    return buf;
-  }
-  typedef std::list<std::string> strings_type;
-
-  strings_type
-  split(std::string lib)
-  {
-    strings_type res;
-    size_t pos;
-    while ((pos = lib.find_first_of(':')) != lib.npos)
-    {
-      std::string s = lib.substr(0, pos);
-      lib = lib.substr(pos + 1, lib.npos);
-      // In case we split "c:\foo" into "c" and "\foo", glue them
-      // together again.
-      if (s[0] == '\\'
-          && !res.empty()
-          && res.back().length() == 1)
-        res.back() += ':' + s;
-      else
-        res.push_back(s);
-    }
-    if (!lib.empty())
-      res.push_back(lib);
-    return res;
-  }
+static const int RTLD_LAZY = 0;
+static const int RTLD_GLOBAL = 0;
+static const char* LD_LIBRARY_PATH_NAME = "LD_LIBRARY_PATH";
 
 
-#else
-  typedef void* HMODULE;
-  #include <dlfcn.h>
-  static const char* lib_rel_path = "lib";
-# ifdef __APPLE__
-  static const char* LD_LIBRARY_PATH_NAME = "DYLD_LIBRARY_PATH";
-  static const char* lib_ext = ".dylib";
-# else
-  static const char* LD_LIBRARY_PATH_NAME = "LD_LIBRARY_PATH";
-  static const char* lib_ext = ".so";
-# endif
-#endif
-
-/// Return the content of URBI_ROOT, or extract it from argv[0].
-std::string get_urbi_root(const char* arg0)
+static HMODULE
+dlopen(const char* name, int)
 {
-  const char* uroot = getenv("URBI_ROOT");
-  if (uroot)
-    return uroot;
-  int p = 0;
-  for (p = strlen(arg0)-1; p>=0 && arg0[p] != '/' && arg0[p] != '\\'
-                  ; --p)
-       ;
-  if (p<0)
-    return ".";
-  return std::string(arg0, arg0 + p) + "/..";
+  return LoadLibrary(name);
 }
+
+static void*
+dlsym(HMODULE module, const char* name)
+{
+  return GetProcAddress(module, name);
+}
+
+static const char*
+dlerror(DWORD err = GetLastError())
+{
+  static char buf[1024];
+
+  FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                0, err, 0,
+                (LPTSTR)buf, sizeof buf,
+                0);
+
+  return buf;
+}
+#else
+typedef void* HMODULE;
+# include <dlfcn.h>
+#endif
 
 /// Main. Load liburbi and call urbi_launch
 int main(int argc, char* argv[])
