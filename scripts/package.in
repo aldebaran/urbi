@@ -15,7 +15,7 @@ stderr ()
 
 error ()
 {
-  local status=$1
+  local status="$1"
   shift
   stderr "$@"
   exit $status
