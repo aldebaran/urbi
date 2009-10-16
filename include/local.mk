@@ -13,6 +13,9 @@ dist_kernelincludekernel_HEADERS =		\
   include/kernel/utypes.hh
 endif
 
+kernelincludeurbidir = $(kernelincludedir)/urbi
+dist_kernelincludeurbi_HEADERS =		\
+  include/urbi/sdk.hh
 
 ## ------- ##
 ## Check.  ##
