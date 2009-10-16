@@ -14,7 +14,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
-#include <list>
 #include <libport/windows.hh>
 #include <libport/foreach.hh>
 
@@ -51,6 +50,29 @@ dlerror(DWORD err = GetLastError())
                 0);
 
   return buf;
+}
+
+static strings_type
+split(std::string lib)
+{
+  strings_type res;
+  size_t pos;
+  while ((pos = lib.find_first_of(':')) != lib.npos)
+  {
+    std::string s = lib.substr(0, pos);
+    lib = lib.substr(pos + 1, lib.npos);
+    // In case we split "c:\foo" into "c" and "\foo", glue them
+    // together again.
+    if (s[0] == '\\'
+        && !res.empty()
+        && res.back().length() == 1)
+      res.back() += ':' + s;
+    else
+      res.push_back(s);
+  }
+  if (!lib.empty())
+    res.push_back(lib);
+  return res;
 }
 #else
 typedef void* HMODULE;
