@@ -28,6 +28,38 @@ assert(true.new === true);
 assert(6 < 2 === false);
 \end{urbiscript}
 
+\subsection{Truth Values}
+\label{sec:truth}
+
+As in many programming languages, conditions may be more than only
+\lstinline|true| and \lstinline|false|.  Whether some value is
+considered as true depends on the type of \lstinline|this|.  Actually,
+by default objects as considered ``true'', objects evaluating to
+``false'' are the exception:
+\begin{itemize}
+\item \lstinline|false|, \lstinline|nil|\\
+  \lstinline|false|.
+\item \lstinline|void|\\
+  raise an error.
+\item lstinline|Float|\\
+  \lstinline|false| iff null (\refObject{Float}).
+\item \lstinline|Dictionary|, \lstinline|List|,  \lstinline|String|\\
+  \lstinline|false| iff empty (\refObject{Dictionary},
+  \refObject{List}, \refObject{String}).
+\item otherwise\\
+  \lstinline|true|.
+\end{itemize}
+
+The method \lstinline|Object.asBool| is in charge of converting some
+arbitrary value into a Boolean.
+\begin{urbiscript}[firstnumber=last]
+assert(Global.asBool == true);
+assert(nil.asBool ==    false);
+void.asBool;
+[00000421:error] !!! unexpected void
+\end{urbiscript}
+
+
 \subsection{Slots}
 
 \begin{itemize}

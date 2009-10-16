@@ -5,7 +5,6 @@ http://www.gostai.com/doc/en/umake.pdf.
 Notes from Guillaume Deslandes.
 
 Notes:
-- urbiScript not UrbiScript
 - timeout (4) loop| ;
   -> timeout not honored
   -> ',' not honored either

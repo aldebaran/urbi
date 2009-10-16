@@ -1231,14 +1231,14 @@ obj.msg();
 obj.msg;
 \end{urbifixme}
 
-When a message ``msg'' is sent to object \lstinline|obj|:
+When a message \var{msg} is sent to object \lstinline|obj|:
 
 \begin{itemize}
-\item The ``msg'' slot of \lstinline|obj| is retrieved (i.e.,
-  \lstinline|obj.getSlot("msg")|). If the slot is not found, the
+\item The \var{msg} slot of \lstinline|obj| is retrieved (i.e.,
+  \lstinline|obj.getSlot("\var{msg}")|). If the slot is not found, the
   classic lookup error is raised.
 \item If the object is not a \lstinline|Routine|
-  (\fixme{autoref{sec:fixme}}), it's
+  (\fixme{autoref{sec:fixme}}), it is
   the result of the message sending. In this case, there must be no
   argument, otherwise an error is raised.
 \item If the object is a \lstinline|Routine|, it is invoked with the
@@ -1345,10 +1345,9 @@ if (\var{condition}) \var{then-clause}
 if (\var{condition}) \var{then-clause} else \var{else-clause}
 \end{urbifixme}
 
-First \var{condition} is evaluated; if if evaluates to a value which
-is true (\fixme{point to a definition of truth values}), evaluate
-\var{then-clause}, otherwise, if applicable, evaluate
-\var{else-clause}.
+First \var{condition} is evaluated; if it evaluates to a value which
+is true (\autoref{sec:truth}), evaluate \var{then-clause}, otherwise,
+if applicable, evaluate \var{else-clause}.
 
 \begin{urbiscript}[firstnumber=last]
 if (true) assert(true) else assert(false);
@@ -2056,8 +2055,10 @@ iterations are done.
 
 
 \section{Pattern matching}
+\fixme{fill}
 
 \section{Trajectories}
+\fixme{fill}
 
 % Local Variables:
 %%% mode: latex

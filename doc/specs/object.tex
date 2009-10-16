@@ -79,21 +79,8 @@ assert(123.allProtos.size == 13);
 \item \lstinline|as|\\
 
 \item \lstinline|asBool|\\
-  Whether \lstinline|this| is ``true''.  Depends on the type of
-  \lstinline|this|:
-  \begin{itemize}
-  \item \lstinline|false|, \lstinline|nil|\\
-    return \lstinline|false|.
-  \item  \lstinline|void|\\
-    raise an error.
-  \item lstinline|Float|\\
-    Return true iff non null (\refObject{Float}).
-  \item \lstinline|Dictionary|, \lstinline|List|,  \lstinline|String|\\
-    Return \lstinline|true| iff non-empty (\refObject{Dictionary},
-    \refObject{List}, \refObject{String}).
-  \item otherwise\\
-    Return true.
-  \end{itemize}
+  Whether \lstinline|this| is ``true'', see \autoref{sec:truth}.
+
 \begin{urbiscript}[firstnumber=last]
 assert(Global.asBool == true);
 assert(nil.asBool ==    false);
