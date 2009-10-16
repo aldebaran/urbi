@@ -42,7 +42,7 @@ verb=false      # true for verbose mode
 (
   foo=bar
   test_local () {
-    local foo=foo
+    local foo="foo"
   }
   test_local
   test $foo = bar
@@ -101,7 +101,7 @@ run ()
 # Report an error and exit with EXIT_STATUS.
 error ()
 {
-  local s=$1
+  local s="$1"
   shift
   stderr "$@"
   exit $s
@@ -114,11 +114,11 @@ error ()
 # This function tests only directories
 dirlist_error ()
 {
-  local err=$1
-  local type=$2
-  local base=$3
-  local val=$4
-  local dirlist=$base/*
+  local err="$1"
+  local type="$2"
+  local base="$3"
+  local val="$4"
+  local dirlist="$base/*"
 
   if test ! -d $base/$val; then
     stderr "no such $type $val, possible choices are :"
@@ -139,11 +139,11 @@ dirlist_error ()
 # This function tests only directories
 exist_error ()
 {
-  local err=$1
-  local type=$2
-  local base=$3
-  local option=$4
-  local longtype=$2
+  local err="$1"
+  local type="$2"
+  local base="$3"
+  local option="$4"
+  local longtype="$2"
 
   case $type in
     d) longtype=directory;;
@@ -204,9 +204,9 @@ initialize ()
 # ---------------------------------------
 append ()
 {
-  local var=$1
-  local content=$2
-  local sep=${3-' '}
+  local var="$1"
+  local content="$2"
+  local sep="${3-' '}"
   if eval "test \${$var+set} = set"; then
     eval "$var=\$$var\$sep"
   fi

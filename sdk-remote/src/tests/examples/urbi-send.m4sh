@@ -4,7 +4,7 @@ URBI_INIT
 # Avoid zombies and preserve debugging information.
 cleanup ()
 {
-  local exit_status=$?
+  local exit_status="$?"
 
   # Let a second C-c really kill us: restore default traps.
   trap - 0 1 2 13 15
@@ -58,7 +58,7 @@ spawn_urbi_server
 # Run "urbi-send OPTION" in the background as child NAME.
 urbi_send ()
 {
-  local name=$1
+  local name="$1"
   shift
   instrument -o $name.val --                     \
      urbi-send$EXEEXT --port-file server.port   \
