@@ -20,8 +20,7 @@ bin_ast_dump_LDADD = libuobject.la
 
 # urbi.
 bin_PROGRAMS += bin/urbi
-bin_urbi_SOURCES = bin/urbi.cc
-bin_urbi_LDADD = $(LIBPORT_LIBS)
+bin_urbi_SOURCES = bin/urbi.cc ../sdk-remote/src/bin/urbi-root.cc
 
 # urbi-parse.
 dist_bin_urbi_parse_SOURCES = bin/urbi-parse.cc

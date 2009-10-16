@@ -9,49 +9,59 @@
  */
 #include <config.h>
 
+#include <iostream>
+#include <string>
 #include <vector>
+
+#include <boost/lexical_cast.hpp>
 
 #include <libport/cstdlib>
 
 #include <libport/containers.hh>
-#include <libport/debug.hh>
-#include <libport/detect-win32.h>
-#include <libport/program-name.hh>
-#include <libport/separate.hh>
 #include <libport/sysexits.hh>
 #include <libport/unistd.h>
 
-GD_INIT();
-GD_ADD_CATEGORY(urbi);
+#include "../sdk-remote/src/bin/urbi-root.hh"
 
 int
 main(int argc, char* argv[])
 {
-  libport::program_initialize(argc, argv);
-  // Installation prefix.
-  std::string urbi_root = libport::xgetenv("URBI_ROOT", URBI_ROOT);
-  std::string urbi_launch =
-    libport::xgetenv("URBI_LAUNCH", urbi_root + "/bin/urbi-launch" EXEEXT);
-  std::vector<const char*> args;
-  args.reserve(3 + argc + 1);
-  libport::OptionParser opt_parser;
-  opt_parser << libport::opts::debug;
-  opt_parser(libport::program_arguments());
-  args << urbi_launch.c_str()
-       << "--start";
-  if (libport::opts::debug.filled())
-    args << "--debug" << libport::opts::debug.value().c_str();
-  args << "--";
-  args.insert(args.end(), argv + 1, argv + argc);
-  GD_CATEGORY(urbi);
-  GD_FINFO_DEBUG("exec: %s", (libport::separate(args, " ")));
-  try
+  const std::string urbi_root = get_urbi_root(argv[0]);
+  const std::string urbi_launch = urbi_root + "/bin/urbi-launch";
+
+  std::vector<std::string> args_urbi_launch;
+  std::vector<std::string> args_libuobject;
+  args_urbi_launch << "--start";
+
+  for (int i = 1; i < argc; ++i)
   {
-    libport::exec(args);
+    if (!strcmp(argv[i], "--debug") || !strcmp(argv[i], "-d"))
+    {
+      args_urbi_launch << "--debug";
+      args_urbi_launch << argv[++i];
+    }
+    else if (!strncmp(argv[i], "--debug=", 8))
+    {
+      args_urbi_launch << "--debug";
+      args_urbi_launch << argv[i] + 8;
+    }
+    else
+      args_libuobject << argv[i];
   }
-  catch (const std::exception& e)
-  {
-    std::cerr << e.what() << std::endl
-              << libport::exit(EX_OSFILE);
-  }
+
+  const size_t args_n = args_urbi_launch.size() + args_libuobject.size() + 3;
+  const char** args_exec = new const char*[args_n];
+  memset(args_exec, sizeof(char*), args_n);
+
+  unsigned i = 0;
+  args_exec[i++] = urbi_launch.c_str();
+  for (unsigned j = 0; j < args_urbi_launch.size(); ++j)
+    args_exec[i++] = args_urbi_launch[j].c_str();
+  args_exec[i++] = "--";
+  for (unsigned j = 0; j < args_libuobject.size(); ++j)
+    args_exec[i++] = args_libuobject[j].c_str();
+
+  execv(urbi_launch.c_str(), const_cast<char *const*>(args_exec));
+  std::cerr << "unable to exec urbi-launch" << std::endl;
+  exit(EX_OSFILE);
 }
