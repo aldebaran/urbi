@@ -31,6 +31,12 @@ do (Float)
   // FIXME: =~= cannot be correctly implemented without properties.
   function '=~='(x) { (this - x).abs <= delta + x.delta };
 
+  /// Normalized value (i.e., 0 <= res <= 1).
+  function '\'n'()
+  {
+    (this - rangemin) / (rangemax - rangemin)
+  };
+
   function asList()
   {
     seq
@@ -54,14 +60,14 @@ do (Float)
       action(i)
   };
 
-  var pi = 3.14159265358979323846264338327950288;
-
-  function sgn() { if (this < 0) -1 else if (this > 0) 1 else 0 };
-
-  /// Normalized value (i.e., 0 <= res <= 1).
-  function '\'n'()
+  function hex()
   {
-    (this - rangemin) / (rangemax - rangemin)
+    format(FormatInfo.new("%x"))
+  };
+
+  function map(f)
+  {
+    asList.map(f)
   };
 
   /// owner: The object that owns the slot onto which a property will be
@@ -127,21 +133,15 @@ do (Float)
     }|
   };
 
+  var pi = 3.14159265358979323846264338327950288;
+
+  function sgn() { if (this < 0) -1 else if (this > 0) 1 else 0 };
+
   // Repeat \a action \a this times.
   function times (action)
   {
     for| (var i = 0; i < this; i++)
       action()
-  };
-
-  function map(f)
-  {
-    asList.map(f)
-  };
-
-  function hex()
-  {
-    format(FormatInfo.new("%x"))
   };
 
 };
