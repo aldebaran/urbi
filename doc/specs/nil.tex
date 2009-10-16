@@ -1,0 +1,40 @@
+\section{nil}
+
+The special entity \lstinline|nil| is an object used to denote an
+empty value.  Contrary to \refObject{void}, it is a regular value
+which can be read.
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Singleton}
+\end{itemize}
+
+\subsection{Construction}
+
+Being a singleton, \lstinline|nil| is not to be constructed, just used.
+
+\begin{urbiscript}
+assert(nil == nil);
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|isNil|\\
+  Whether \lstinline|this| is \lstinline|nil|.  I.e., true.  See also
+  \lstinline|Object.isNil|.
+\begin{urbiscript}[firstnumber=last]
+assert(nil.isNil);
+assert(!Object.isNil);
+\end{urbiscript}
+
+\end{itemize}
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

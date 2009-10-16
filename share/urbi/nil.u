@@ -1,0 +1,17 @@
+do (nil)
+{
+  // Singleton derives from Object.
+  setProtos([Singleton]);
+  function '==' (x) { x.isNil };
+  var asString = "nil";
+  // nil prints nothing in the toplevel
+  var asToplevelPrintable = nil;
+};
+
+do (Object)
+{
+  function isNil()
+  {
+    nil === this
+  }
+};
