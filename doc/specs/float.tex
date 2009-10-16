@@ -253,6 +253,22 @@ assert(1.log == 0);
 assert(1.exp.log == 1);
 \end{urbiscript}
 
+\item \lstinline|max(\var{arg1}, ...)|\\
+  Bounces to \lstinline|List.max| on \lstinline|[this, \var{arg1}, ...]|.
+\begin{urbiscript}[firstnumber=last]
+assert(1.max == 1);
+assert(1.max(2, 3) == 3);
+assert(3.max(1, 2) == 3);
+\end{urbiscript}
+
+\item \lstinline|min(\var{arg1}, ...)|\\
+  Bounces to \lstinline|List.min| on \lstinline|[this, \var{arg1}, ...]|.
+\begin{urbiscript}[firstnumber=last]
+assert(1.min == 1);
+assert(1.min(2, 3) == 1);
+assert(3.min(1, 2) == 1);
+\end{urbiscript}
+
 \item \lstinline|nan|\\
   The ``not a number'' special float value.  More precisely, this
   returns the ``quiet NaN'', i.e., it is propagated in the various

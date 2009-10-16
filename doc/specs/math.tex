@@ -46,6 +46,20 @@ other instances.
 \item \lstinline|log(\var{float})|\\
   Bounce to \lstinline|\var{float}.log|.
 
+\item \lstinline|max(\var{arg1}, ...)|\\
+  Bounce to \lstinline|[\var{arg1}, ...].max|, see \refObject{List}.
+\begin{urbiscript}
+assert(max( 100,   20,   3 ) == 100);
+assert(max("100", "20", "3") == "3");
+\end{urbiscript}
+
+\item \lstinline|min(\var{arg1}, ...)|\\
+  Bounce to \lstinline|[\var{arg1}, ...].min|, see \refObject{List}.
+\begin{urbiscript}[firstnumber=last]
+assert(min( 100,   20,   3 ) ==     3);
+assert(min("100", "20", "3") == "100");
+\end{urbiscript}
+
 \item \lstinline|nan|\\
   Bounce to \lstinline|Float.nan|.
 

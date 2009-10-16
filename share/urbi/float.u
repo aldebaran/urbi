@@ -70,6 +70,16 @@ do (Float)
     asList.map(f)
   };
 
+  function max
+  {
+    (call.evalArgs << this).max;
+  };
+
+  function min
+  {
+    (call.evalArgs << this).min;
+  };
+
   /// owner: The object that owns the slot onto which a property will be
   ///        given.
   /// name:  Slot name.
