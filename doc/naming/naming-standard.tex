@@ -1,3 +1,11 @@
+\newcommand{\slot}[2]{%
+  #1 & #2 \\\hline%
+}%
+
+\newcommand{\optSlot}[2]{%
+  \textcolor{gray}{[#1]} & #2 \\\hline%
+}%
+
 \newenvironment{slots}[1][Slots]
 {%
   \subparagraph{#1}%
@@ -13,7 +21,6 @@
   \end{flushleft}%
 }
 
-\newcommand{\optSlot}[1]{\textcolor{gray}{[#1]}}
 
 \chapter{\urbi Ready™-Certification Standard}
 
@@ -259,18 +266,29 @@ robot.
 Contains information about the robot identity.
 
 \begin{slots}
-type &
-This describes the robot category
-among: humanoid, fourlegged, wheeled, industrial arm. It gives a
-general idea of the robot family, but does not replace a more
-systematic probe of available services by investigating the list of
-attributes of the object.\\\hline
-name &
-Name of the robot.\\\hline
-model &
-Model of the robot.\\\hline
-serial &
-Serial number (if available).\\\hline
+  \slot{type}
+  {
+    This describes the robot category among: humanoid, fourlegged,
+    wheeled, industrial arm. It gives a general idea of the robot
+    family, but does not replace a more systematic probe of available
+    services by investigating the list of attributes of the object.
+  }
+
+  \slot{name}%
+  {%
+    Name of the robot.%
+  }
+
+  \slot{model}%
+  {%
+    Model of the robot.%
+  }
+
+  \slot{serial}%
+  {%
+    Serial number (if available).%
+  }
+
 \end{slots}
 
 
@@ -279,16 +297,26 @@ Serial number (if available).\\\hline
 Contains information about the network identification of the robot.
 
 \begin{slots}
-IP &
-IP address of the robot.\\\hline
-gateway &
-Gateway IP address.\\\hline
-latency &
-Measured average network
-latency.\\\hline
-bandwidth &
-Measured average network
-bandwidth.\\\hline
+  \slot{IP}%
+  {%
+    IP address of the robot.%
+  }
+
+  \slot{gateway}%
+  {%
+    Gateway IP address.%
+  }
+
+  \slot{latency}%
+  {%
+    Measured average network latency.%
+  }
+
+  \slot{bandwidth}%
+  {%
+    Measured average network bandwidth.%
+  }
+
 \end{slots}
 
 \paragraph{motor}
@@ -296,22 +324,30 @@ bandwidth.\\\hline
 This facet is used to describe a generic motor controller.
 
 \begin{slots}
-val &
-This slot is a generic pointer to a
-more specific slot describing the motor position, like
-\texttt{position} or \texttt{angle}, depending on the type of motor. It
-is mandatory in the Urbi Ready standard as a universal proxy to control
-an actuator. The more specific slot is described in a subclass of
-\texttt{motor}.\\\hline
-\optSlot{PGain} &
-Controls the P gain of the PID
-controller.\\\hline
-\optSlot{IGain} &
-Controls the I gain of the PID
-controller.\\\hline
-\optSlot{DGain} &
-Controls the D gain of the PID
-controller.\\\hline
+  \slot{val}%
+  {%
+    This slot is a generic pointer to a more specific slot describing
+    the motor position, like \texttt{position} or \texttt{angle},
+    depending on the type of motor. It is mandatory in the Urbi Ready
+    standard as a universal proxy to control an actuator. The more
+    specific slot is described in a subclass of \texttt{motor}.%
+  }
+
+  \slot{PGain}%
+  {%
+    Controls the P gain of the PID controller.%
+  }
+
+  \slot{IGain}%
+  {%
+    Controls the I gain of the PID controller.%
+  }
+
+  \slot{DGain}%
+  {%
+    Controls the D gain of the PID controller.%
+  }
+
 \end{slots}
 
 \paragraph{ linearMotor  \textmd{subclass of motor}}
@@ -320,30 +356,44 @@ controller.\\\hline
 This facet is used to describe a linear motor controller.
 
 \begin{slots}
-position &
-Position of the motor in centimeters.
-Pointed to by the \texttt{val} slot.\\\hline
-force &
-Intensity of the measured or estimated
-force applied on a linear motor.\\\hline
+  \slot{position}%
+  {%
+    Position of the motor in centimeters.  Pointed to by the
+    \texttt{val} slot.%
+  }
+
+  \slot{force}%
+  {%
+    Intensity of the measured or estimated force applied on a linear
+    motor.%
+  }
+
 \end{slots}
-{
-     \textbf{\textit{rotationalMotor}}
-\textit{subclass of motor}}
+
+\paragraph{rotationalMotor \textmd{subclass of motor}}
 
 
 This facet is used to describe a rotational motor controller.
 
 \begin{slots}
-angle &
-Angle of the motor in degree, modulo
-360. Pointed to by the \texttt{val} slot.\\\hline
-turn &
-Absolute angular position of the
-motor, expressed in number of turns.\\\hline
-torque &
-Intensity of the measured or estimated
-torque applied on the motor.\\\hline
+  \slot{angle}%
+  {%
+    Angle of the motor in degree, modulo 360. Pointed to by the
+    \texttt{val} slot.%
+  }
+
+  \slot{turn}%
+  {%
+    Absolute angular position of the motor, expressed in number of
+    turns.%
+  }
+
+  \slot{torque}%
+  {%
+    Intensity of the measured or estimated torque applied on the
+    motor.%
+  }
+
 \end{slots}
 
 
@@ -352,13 +402,15 @@ torque applied on the motor.\\\hline
 This facet is used to describe a generic sensor.
 
 \begin{slots}
-val &
-This slot is a generic pointer to a
-more specific slot describing the sensor value, like \texttt{distance}
-or \texttt{temperature}, depending on the type of sensor. It is
-mandatory in the Urbi Ready standard as a universal proxy to read a
-sensor. The more specific slot is described in a subclass of
-\texttt{sensor}.\\\hline
+  \slot{val}%
+  {%
+    This slot is a generic pointer to a more specific slot describing
+    the sensor value, like \texttt{distance} or \texttt{temperature},
+    depending on the type of sensor. It is mandatory in the Urbi Ready
+    standard as a universal proxy to read a sensor. The more specific
+    slot is described in a subclass of \texttt{sensor}.%
+  }
+
 \end{slots}
 
 
@@ -368,9 +420,12 @@ This facet is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
 
 \begin{slots}
-distance &
-Measured distance expressed in meters.
-Pointed to by the \texttt{val} slot.\\\hline
+  \slot{distance}%
+  {%
+    Measured distance expressed in meters.  Pointed to by the
+    \texttt{val} slot.%
+  }
+
 \end{slots}
 
 
@@ -380,10 +435,13 @@ This facet is used to describe a touch pressure sensor (contact,
 induction,...).
 
 \begin{slots}
-pressure &
-Intensity of the pressure put on the
-touch sensor. Can be 0/1 for simple buttons or expressed in Pascal
-units. Pointed to by the \texttt{val} slot.\\\hline
+  \slot{pressure}%
+  {%
+    Intensity of the pressure put on the touch sensor. Can be 0/1 for
+    simple buttons or expressed in Pascal units. Pointed to by the
+    \texttt{val} slot.%
+  }
+
 \end{slots}
 
 
@@ -392,9 +450,12 @@ units. Pointed to by the \texttt{val} slot.\\\hline
 This facet is used to describe an accelerometer.
 
 \begin{slots}
-acceleration &
-Acceleration expressed in m/s2.
-Pointed to by the \texttt{val} slot.\\\hline
+  \slot{acceleration}%
+  {%
+    Acceleration expressed in m/s2.  Pointed to by the \texttt{val}
+    slot.%
+  }
+
 \end{slots}
 
 \paragraph{gyroSensor  \textmd{subclass of sensor}}
@@ -402,9 +463,12 @@ Pointed to by the \texttt{val} slot.\\\hline
 This facet is used to describe an gyrometer.
 
 \begin{slots}
-acceleration &
-Acceleration expressed in rad/s2.
-Pointed to by the \texttt{val} slot.\\\hline
+  \slot{acceleration}%
+  {%
+    Acceleration expressed in rad/s2.  Pointed to by the \texttt{val}
+    slot.%
+  }
+
 \end{slots}
 
 \paragraph{ temperatureSensor  \textmd{subclass of sensor}}
@@ -413,9 +477,12 @@ Pointed to by the \texttt{val} slot.\\\hline
 This facet is used to describe a temperature sensor.
 
 \begin{slots}
-temperature &
-Measured temperature in Celsius degrees.
-Pointed to by the \texttt{val} slot.\\\hline
+  \slot{temperature}%
+  {%
+    Measured temperature in Celsius degrees.  Pointed to by the
+    \texttt{val} slot.%
+  }
+
 \end{slots}
 
 \paragraph{mobile}
@@ -424,12 +491,18 @@ Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
 
 \begin{slots}
-go(x) &
-Move approximatively x meters forward
-if x is positive, backward otherwise.\\\hline
-turn(x) &
-Turn right approximatively x degrees.
-x can be a positive or negative value.\\\hline
+  \slot{go(x)}%
+  {%
+    Move approximatively x meters forward if x is positive, backward
+    otherwise.%
+  }
+
+  \slot{turn(x)}%
+  {%
+    Turn right approximatively x degrees.  x can be a positive or
+    negative value.%
+  }
+
 \end{slots}
 
 \paragraph{tracker}
@@ -441,12 +514,18 @@ motion can be achieved, whether it is done with a pan/tilt camera or
 with whole body motion or a combination of both.
 
 \begin{slots}
-yaw &
-Rotational articulation around the Z
-axis in the robot, expressed in degrees.\\\hline
-pitch &
-Rotational articulation around the Y
-axis in the robot, expressed in degrees.\\\hline
+  \slot{yaw}%
+  {%
+    Rotational articulation around the Z axis in the robot, expressed
+    in degrees.%
+  }
+
+  \slot{pitch}%
+  {%
+    Rotational articulation around the Y axis in the robot, expressed
+    in degrees.%
+  }
+
 \end{slots}
 
 \paragraph{videoin}
@@ -455,67 +534,95 @@ The videoin facet groups every information relative to cameras or any
 image sensor.
 
 \begin{slots}
-val &
-Binary value corresponding to the
-image, expressed in the current unit (RGB, jpeg, YCrCb...). The unit
-can be changed like any other regular unit in Urbi. \\\hline
-xfov &
-The x Field Of View of the camera
-expressed in degrees.\\\hline
-yfov &
-The y Field Of View of the camera
-expressed in degrees.\\\hline
-height &
-Height of the image in the current
-resolution, expressed in pixels\\\hline
-width &
-Width of the image in the current
-resolution, expressed in pixels\\\hline
-\optSlot{shutter} &
-The shutter speed (expressed
-in ms). 0 if non applicable.\\\hline
-\optSlot{wb} &
-White balance (expressed with
-an integer value depending on the camera documentation). 0 if non
-applicable.\\\hline
-\optSlot{gain} &
-Camera gain amplification
-(expressed as a coefficient between 0 and infinity). 1 if non
-applicable.\\\hline
-\optSlot{resolution} &
- Can be used to specify a given
+  \slot{val}%
+  {%
+    Binary value corresponding to the image, expressed in the current
+    unit (RGB, jpeg, YCrCb...). The unit can be changed like any other
+    regular unit in Urbi. %
+  }
+
+  \slot{xfov}%
+  {%
+    The x Field Of View of the camera expressed in degrees.%
+  }
+
+  \slot{yfov}%
+  {%
+    The y Field Of View of the camera expressed in degrees.%
+  }
+
+  \slot{height}%
+  {%
+    Height of the image in the current resolution, expressed in
+    pixels%
+  }
+
+  \slot{width}%
+  {%
+    Width of the image in the current resolution, expressed in pixels%
+  }
+
+  \slot{shutter}%
+  {%
+    The shutter speed (expressed in ms). 0 if non applicable.%
+  }
+
+  \slot{wb}%
+  {%
+    White balance (expressed with an integer value depending on the
+    camera documentation). 0 if non applicable.%
+  }
+
+  \slot{gain}%
+  {%
+    Camera gain amplification (expressed as a coefficient between 0
+    and infinity). 1 if non applicable.%
+  }
+
+  \slot{resolution}%
+  {%
+    Can be used to specify a given
 resolution, expressed as a percentage of the maximal resolution of the
 camera (number between 0 and 1). 1 if non applicable.
 
-Once modified, the effective
-resolution in X/Y can be checked with the width and height
-slots.\\\hline
+Once modified, the effective resolution in X/Y can be checked with the
+width and height slots.%
+}
+
 \end{slots}
 
 \paragraph{audioout}
 The audioout facet groups every information relative to speakers.
 
 \begin{slots}
-val &
- The speaker value, expressed as a
+  \slot{val}%
+  {%
+    The speaker value, expressed as a
 binary, in the format given by the binary header during the
 assignment.
 
-Speakers are write-only devices, so
-there is not much sense in reading the content of this attribute. At
-best, it returns the remaining sound to be played if it is not over
-yet, but this is not a requirement.\\\hline
-remain &
-The amount of time remaining to play in
-the speaker sound buffer (expressed in \textit{ms} as
-a default unit).\\\hline
-playing &
-This is a boolean value which is true
-when there is a sound currently playing (the buffer is not
-empty)\\\hline
-\optSlot{volume} &
-Volume of the play back, in
-decibels.\\\hline
+Speakers are write-only devices, so there is not much sense in reading
+the content of this attribute. At best, it returns the remaining sound
+to be played if it is not over yet, but this is not a requirement.%
+}
+
+\slot{remain}%
+{%
+  The amount of time remaining to play in the speaker sound buffer
+  (expressed in \textit{ms} as a default unit).%
+}
+
+\slot{playing}%
+{%
+  This is a boolean value which is true when there is a sound
+  currently playing (the buffer is not empty)%
+}
+
+\slot{volume}%
+{%
+  Volume of the play back, in decibels.%
+}
+
 \end{slots}
 
 
@@ -525,19 +632,26 @@ decibels.\\\hline
 The audioin facet groups every information relative to microphones.
 
 \begin{slots}
-val &
- Binary value corresponding to the
+  \slot{val}%
+  {%
+    Binary value corresponding to the
 sound heard, expressed in the current unit (wav, mp3...). The unit can
 be changed like any other regular unit in Urbi.
 
-The content is the sound heard by the
-microphone since the last update event.\\\hline
-duration &
-Amount of sound in the val
-attribute, expressed in \textit{ms}.\\\hline
-\optSlot{gain} &
-Microphone gain amplification
-(expressed between 0 and 1)\\\hline
+The content is the sound heard by the microphone since the last update
+event.%
+}
+
+\slot{duration}%
+{%
+  Amount of sound in the val attribute, expressed in \textit{ms}.%
+}
+
+\slot{gain}%
+{%
+  Microphone gain amplification (expressed between 0 and 1)%
+}
+
 \end{slots}
 
 
@@ -549,27 +663,45 @@ that fits some criteria and define a “blob” accordingly. Here are the
 typical slots expected:
 
 \begin{slots}
-x &
-The x position of the center of the
-blob in the image\\\hline
-y &
-The y position of the center of the
-blob in the image\\\hline
-ratio &
-The size of the blob expressed as a
-normalized image size: 1 = full image, 0 = nothing.\\\hline
-visible &
-A Boolean expressing whether there is a
-blob in the image or not (see threshold)\\\hline
-threshold &
-The minimum value of ratio to
-decide that the blob is visible.\\\hline
-\optSlot{orientation} &
-Angle of the main ellipsoid axis of
-the blog (0 = horizontal), expressed in degrees.\\\hline
-\optSlot{elongation} &
-Ratio between the main and the second
-diameter of the blob enveloping ellipse.\\\hline
+  \slot{x}%
+  {%
+    The x position of the center of the blob in the image%
+  }
+
+  \slot{y}%
+  {%
+    The y position of the center of the blob in the image%
+  }
+
+  \slot{ratio}%
+  {%
+    The size of the blob expressed as a normalized image size: 1 =
+    full image, 0 = nothing.%
+  }
+
+  \slot{visible}%
+  {%
+    A Boolean expressing whether there is a blob in the image or not
+    (see threshold)%
+  }
+
+  \slot{threshold}%
+  {%
+    The minimum value of ratio to decide that the blob is visible.%
+  }
+
+  \slot{orientation}%
+  {%
+    Angle of the main ellipsoid axis of the blog (0 = horizontal),
+    expressed in degrees.%
+  }
+
+  \slot{elongation}%
+  {%
+    Ratio between the main and the second diameter of the blob
+    enveloping ellipse.%
+  }
+
 \end{slots}
 
 \paragraph{textToSpeech}
@@ -578,35 +710,55 @@ implementations should use the \texttt{speaker} component (or alias) as
 their default sound output.
 
 \begin{slots}
-\optSlot{lang} &
-The language used, in international
-notation (fr, en, it…): ISO 639\\\hline
-\optSlot{speed} &
-How fast the voice should go, between
-0 and 1.\\\hline
-\optSlot{pitch} &
-Voice pitch, between 0 and 1.\\\hline
-\optSlot{gender} &
-Gender of the speaker
-(0:male/1:female)\\\hline
-\optSlot{age} &
-Age of the speaker, if
-applicable\\\hline
-\optSlot{name} &
-Most TTS engine will propose several
-voices, this attributes allows picking one. It’s a string identifier
-specific to the TTS developer.\\\hline
-say(s) &
-Speak the sentence given in parameter
-\var{s}.\\\hline
-\optSlot{voicexml(s)} &
-Speak the text
-\var{s} expressed as a VoiceXML
-string.\\\hline
-\optSlot{script(s)} &
-Speak the text
-\var{s} augmented by script markups (see
-specific Gostai documentation) to generate \urbi events.\\\hline
+  \slot{lang}%
+  {%
+    The language used, in international notation (fr, en, it…): ISO
+    639%
+  }
+
+  \slot{speed}%
+  {%
+    How fast the voice should go, between 0 and 1.%
+  }
+
+  \slot{pitch}%
+  {%
+    Voice pitch, between 0 and 1.%
+  }
+
+  \slot{gender}%
+  {%
+    Gender of the speaker (0:male/1:female)%
+  }
+
+  \slot{age}%
+  {%
+    Age of the speaker, if applicable%
+  }
+
+  \slot{name}%
+  {%
+    Most TTS engine will propose several voices, this attributes
+    allows picking one. It’s a string identifier specific to the TTS
+    developer.%
+  }
+
+  \slot{say(s)}%
+  {%
+    Speak the sentence given in parameter \var{s}.%
+  }
+
+  \slot{voicexml(s)}%
+  {%
+    Speak the text \var{s} expressed as a VoiceXML string.%
+  }
+
+  \slot{script(s)}%
+  {%
+    Speak the text \var{s} augmented by script markups (see specific
+    Gostai documentation) to generate \urbi events.%
+  }
+
 \end{slots}
 
 
@@ -618,16 +770,21 @@ should use the \texttt{micro} component (or alias) as their default
 sound input.
 
 \begin{slots}
-\optSlot{lang} &
-The language used, in international
-notation (fr, en, it…): ISO 639\\\hline
+  \slot{lang}%
+  {%
+    The language used, in international notation (fr, en, it…): ISO
+    639%
+  }
+
 \end{slots}
 
 \begin{slots}[Events]
-hear(s) &
-This event has one parameter which is
-the string describing what the speech engine has recognized (can be a
-word or a sentence).\\\hline
+  \slot{hear(s)}%
+  {%
+    This event has one parameter which is the string describing what
+    the speech engine has recognized (can be a word or a sentence).%
+  }
+
 \end{slots}
 
 \section{Standard Components}
