@@ -4,8 +4,8 @@
     \tablehead{}%
     \begin{supertabular}{|m{2.8669999cm}|m{12.472cm}|}%
       \hline%
-      \bfseries Slot &%
-      \bfseries Description\\\hline%
+      \textbf{Slot} &%
+      \textbf{Description}\\\hline%
     }
     {%
     \end{supertabular}%
@@ -795,17 +795,17 @@ the yaw/pitch/roll meaning.
 
 \begin{center}
 \tablehead{\hline
-\bfseries Component &
-\bfseries Description &
-\bfseries Sub. of &
-\bfseries Contains &
-\bfseries Facets\\\hline}
+\textbf{Component} &
+\textbf{Description} &
+\textbf{Sub. of} &
+\textbf{Contains} &
+\textbf{Facets} \\\hline}
 \begin{supertabular}{|m{2.312cm}|m{6.776cm}|m{2.629cm}|m{2.471cm}|m{2.1269999cm}|}
 robot &
 This is the main component that
 represents an abstraction of the robot. &
-\ttfamily {}- &
-\ttfamily body &
+\code{{}-} &
+\code{body} &
 \ttfamily identity network mobile
 tracker\\\hline
 body &
@@ -816,10 +816,10 @@ non-localized sensor arrays, typically body skin or heat detectors.
 Localized sensors, like fingertips touch sensors, will typically be
 found attached to the finger component they belong and not directly to
 the body.  &
-\ttfamily robot &
+\code{robot} &
 \ttfamily arm leg neck head wheel tail skin
 torso … &
-\ttfamily {}-\\\hline
+\code{{}-} \\\hline
 leg &
 Legs are found in humanoid or
 animaloid robots and correspond to part of the kinematics chain that
@@ -828,124 +828,124 @@ the ground in normal operation mode (unlike arms). A typical
 configuration for humanoids contains a hip, a knee and an ankle. If the
 leg is more segmented, the leg can be described with a simple array of
 joints. &
-\ttfamily body &
+\code{body} &
 hip knee ankle foot joint &
-\ttfamily {}-\\\hline
+\code{{}-} \\\hline
 arm &
 Unlike legs, an arm’s extremity does
 not always touch the ground in normal operating mode. This applies to
 humanoid robots or single-arm industrial robots. Arms supersede legs in
 the nomenclature: if a body part behaves alternatively like an arm and
 like a leg, it will be considered as an arm. &
-\ttfamily body &
+\code{body} &
 shoulder elbow wrist hand grip  joint &
-\ttfamily {}-\\\hline
+\code{{}-} \\\hline
 shoulder &
 The shoulder is the upper part of the
 arm. It can have one, two or three degrees of freedom and is the
 closest part of the arm relative to the body. &
-\ttfamily arm &
-\ttfamily yaw pitch roll &
-\ttfamily {}-\\\hline
+\code{arm} &
+\code{yaw pitch roll} &
+\code{{}-} \\\hline
 elbow &
 Separates the upper arm and the lower
 arm, this is usually a single rotational axis. &
-\ttfamily arm &
-\ttfamily pitch  &
-\ttfamily {}-\\\hline
+\code{arm} &
+\code{pitch} &
+\code{{}-} \\\hline
 wrist &
 Connects the hand and the lower part
 of the arm. Usually three degrees of freedom axis. &
-\ttfamily arm &
-\ttfamily yaw pitch roll &
-\ttfamily {}-\\\hline
+\code{arm} &
+\code{yaw pitch roll} &
+\code{{}-} \\\hline
 hand &
 The hand is an extension of the arm
 that usually holds fingers. It’s not the wrist, which is articulated
 and between the arm and the hand.  &
-\ttfamily arm &
-\ttfamily finger &
-\ttfamily {}-\\\hline
+\code{arm} &
+\code{finger} &
+\code{{}-} \\\hline
 finger &
 Fingers are a series of articulated
 motors at the extremity of the arm, and connected to the hand. They are
 usually localized with arrays and/or lateral localization respective to
 the hand. &
-\ttfamily hand &
-\ttfamily touch &
-\ttfamily motor\\\hline
+\code{hand} &
+\code{touch} &
+\code{motor} \\\hline
 grip &
 Simple two-fingers system. &
-\ttfamily arm hand &
-\ttfamily touch &
-\ttfamily motor\\\hline
+\code{arm hand} &
+\code{touch} &
+\code{motor} \\\hline
 hip &
 The hip is the upper part of the leg
 and connects it to the main body. It can have one, two or three degrees
 of freedom. &
-\ttfamily leg &
-\ttfamily yaw pitch roll &
-\ttfamily {}-\\\hline
+\code{leg} &
+\code{yaw pitch roll} &
+\code{{}-} \\\hline
 knee &
 Separates the upper leg and the lower
 leg, this is usually a single rotational axis. &
-\ttfamily leg &
-\ttfamily pitch &
-\ttfamily {}-\\\hline
+\code{leg} &
+\code{pitch} &
+\code{{}-} \\\hline
 ankle &
 Connects the foot and the lower part
 of the leg. Usually three degrees of freedom axis. &
-\ttfamily leg &
-\ttfamily yaw pitch roll &
-\ttfamily {}-\\\hline
+\code{leg} &
+\code{yaw pitch roll} &
+\code{{}-} \\\hline
 foot &
 The foot is an extension of the leg
 that usually holds toes. It’s not the ankle, which is articulated and
 between the leg and the foot. The foot can also contain touch sensors
 in simple configurations. &
-\ttfamily leg &
-\ttfamily touch &
-\ttfamily {}-\\\hline
+\code{leg} &
+\code{touch} &
+\code{{}-} \\\hline
 toe &
 Like fingers, but attached to the
 foot. &
-\ttfamily foot &
-\ttfamily touch &
-\ttfamily motor\\\hline
+\code{foot} &
+\code{touch} &
+\code{motor} \\\hline
 neck  &
 The neck corresponds to a degree of
 freedom not part of the head, but relative to the rigid connection
 between the head and the main body.  &
-\ttfamily body &
-\ttfamily yaw pitch roll &
-\ttfamily {}-\\\hline
+\code{body} &
+\code{yaw pitch roll} &
+\code{{}-} \\\hline
 tail &
 A tail is a series of articulated
 motors at the back of the robot. &
-\ttfamily body &
-\ttfamily joint &
-\ttfamily {}-\\\hline
+\code{body} &
+\code{joint} &
+\code{{}-} \\\hline
 head &
 The head main pivotal axis. &
-\ttfamily body neck &
-\ttfamily camera mouth ear lip eye eyebrow &
-\ttfamily {}-\\\hline
+\code{body neck} &
+\code{camera mouth ear lip eye eyebrow} &
+\code{{}-} \\\hline
 mouth &
 The robot mouth (open/close) &
-\ttfamily head &
-\ttfamily lip &
-\ttfamily motor\\\hline
+\code{head} &
+\code{lip} &
+\code{motor} \\\hline
 ear &
 Ears may have degrees of freedom in
 certain robots. &
-\ttfamily head &
-\ttfamily {}- &
-\ttfamily motor\\\hline
+\code{head} &
+\code{{}-} &
+\code{motor} \\\hline
 joint &
 Generic articulation in the robot. &
-\ttfamily tail arm leg lip &
-\ttfamily {}- &
-\ttfamily motor\\\hline
+\code{tail arm leg lip} &
+\code{{}-} &
+\code{motor} \\\hline
 yaw &
 Rotational articulation around the Z
 axis in the robot. \textit{See the introduction paragraph on
@@ -953,8 +953,8 @@ yaw/pitch/roll orientation for more details on how to identify which
 direction corresponds to yaw.} &
 \ttfamily neck knee ankle shoulder elbow wrist
 torso &
-\ttfamily {}- &
-\ttfamily rotational-Motor\\\hline
+\code{{}-} &
+\code{rotational-Motor} \\\hline
 pitch &
 Rotational articulation around the Y
 axis in the robot. \textit{See the introduction paragraph on
@@ -962,8 +962,8 @@ yaw/pitch/roll orientation for more details on how to identify which
 direction corresponds to pitch.} &
 \ttfamily neck knee ankle shoulder elbow wrist
 torso &
-\ttfamily {}- &
-\ttfamily rotational-Motor\\\hline
+\code{{}-} &
+\code{rotational-Motor} \\\hline
 roll &
 Rotational articulation around the X
 axis in the robot. \textit{See the introduction paragraph on
@@ -971,95 +971,95 @@ yaw/pitch/roll orientation for more details on how to identify which
 direction corresponds to roll.} &
 \ttfamily neck knee ankle shoulder elbow wrist
 torso &
-\ttfamily {}- &
-\ttfamily rotational-Motor\\\hline
+\code{{}-} &
+\code{rotational-Motor} \\\hline
 lip &
 Corresponds to animated lips. &
-\ttfamily mouth &
-\ttfamily joint &
-\ttfamily motor\\\hline
+\code{mouth} &
+\code{joint} &
+\code{motor} \\\hline
 eye &
 Corresponds to the eyeball pivotal
 axis. &
-\ttfamily head &
-\ttfamily camera &
-\ttfamily {}-\\\hline
+\code{head} &
+\code{camera} &
+\code{{}-} \\\hline
 eyebrow &
 Some robots will have eyebrow with
 generally one or several degree of freedom. &
-\ttfamily head &
-\ttfamily joint &
-\ttfamily motor\\\hline
+\code{head} &
+\code{joint} &
+\code{motor} \\\hline
 torso &
 This corresponds to a pivotal or
 rotational axis in the middle of the main body. &
-\ttfamily body &
-\ttfamily yaw pitch roll &
-\ttfamily {}-\\\hline
+\code{body} &
+\code{yaw pitch roll} &
+\code{{}-} \\\hline
 spine &
 This is a more elaborated version of
 “torso”, with a series of articulations to give several degrees of
 freedom in the back of the robot. &
-\ttfamily torso &
-\ttfamily joint &
-\ttfamily {}-\\\hline
+\code{torso} &
+\code{joint} &
+\code{{}-} \\\hline
 clavicle &
 This is not to be mixed up with the
 “top of the arm” body part. It is an independent degree of freedom that
 can be used to bring the two arms closer in a sort of “shoulder
 raising” movement. &
-\ttfamily body &
-\ttfamily {}- &
-\ttfamily motor\\\hline
+\code{body} &
+\code{{}-} &
+\code{motor} \\\hline
 touch &
 Touch sensor. &
-\ttfamily finger grip foot toe &
-\ttfamily {}- &
-\ttfamily touchSensor\\\hline
+\code{finger grip foot toe} &
+\code{{}-} &
+\code{touchSensor} \\\hline
 gyro &
 Gyrometer sensor. &
-\ttfamily body &
-\ttfamily {}- &
-\ttfamily gyroSensor\\\hline
+\code{body} &
+\code{{}-} &
+\code{gyroSensor} \\\hline
 accel  &
 Accelerometer sensor. &
-\ttfamily body &
-\ttfamily {}- &
-\ttfamily accelerationSensor\\\hline
+\code{body} &
+\code{{}-} &
+\code{accelerationSensor} \\\hline
 camera &
 Camera sensor. If several cameras are
 available, localization shall apply, however there must always be an
 alias from \texttt{camera} to one of the effective camera (like
 \texttt{cameraR} or \texttt{cameraL}). &
-\ttfamily head body &
-\ttfamily {}- &
-\ttfamily videoin\\\hline
+\code{head body} &
+\code{{}-} &
+\code{videoin} \\\hline
 speaker &
 Speaker device. If several speakers
 are available, localization shall apply, however there must always be
 an alias from \texttt{speaker} to one of the effective speakers (like
 \texttt{speakerR} or \texttt{speakerL}). &
-\ttfamily head body &
-\ttfamily {}- &
-\ttfamily audioin\\\hline
+\code{head body} &
+\code{{}-} &
+\code{audioin} \\\hline
 micro  &
 Microphone devices. If several
 microphones are available, localization shall apply, however there must
 always be an alias from \texttt{micro} to one of the effective
 microphones (like \texttt{microR} or \texttt{microL}). &
-\ttfamily head body &
-\ttfamily {}- &
-\ttfamily audioout\\\hline
+\code{head body} &
+\code{{}-} &
+\code{audioout} \\\hline
 speech &
 Speech recognition component. &
-\ttfamily robot &
-\ttfamily {}- &
-\ttfamily speechRecognizer\\\hline
+\code{robot} &
+\code{{}-} &
+\code{speechRecognizer} \\\hline
 voice &
 Voice synthesis component. &
-\ttfamily robot &
-\ttfamily {}- &
-\ttfamily textToSpeech\\\hline
+\code{robot} &
+\code{{}-} &
+\code{textToSpeech} \\\hline
 \end{supertabular}
 \end{center}
 
@@ -1081,16 +1081,16 @@ Some examples:
 \hline
 Full name &
 Compact name\\\hline
-\ttfamily robot.body.armR.elbow &
-\ttfamily elbowR\\\hline
-\ttfamily robot.body.head.yaw &
-\ttfamily headYaw\\\hline
-\ttfamily robot.body.legL.knee.pitch &
-\ttfamily kneeL\\\hline
-\ttfamily robot.body.armR.hand.finger[3][2] &
-\ttfamily fingerR[3][2]\\\hline
-\ttfamily robot.body.armL.hand.fingerR &
-\ttfamily fingerLR\\\hline
+\code{robot.body.armR.elbow} &
+\code{elbowR} \\\hline
+\code{robot.body.head.yaw} &
+\code{headYaw} \\\hline
+\code{robot.body.legL.knee.pitch} &
+\code{kneeL} \\\hline
+\code{robot.body.armR.hand.finger[3][2]} &
+\code{fingerR[3][2]} \\\hline
+\code{robot.body.armL.hand.fingerR} &
+\code{fingerLR} \\\hline
 \end{supertabular}
 \end{flushleft}
 
