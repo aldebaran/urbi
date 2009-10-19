@@ -1799,10 +1799,10 @@ expected, at the given period.
   var count = 4;
   var start = time;
   echo("before");
-  every| (100ms)
+  every| (1s)
   {
     count -= 1;
-    echo("begin: %s @ %1.1fs" % [count, time - start]);
+    echo("begin: %s @ %1.0fs" % [count, time - start]);
     if (count == 2)
       continue;
     if (count == 0)
@@ -1812,12 +1812,12 @@ expected, at the given period.
   echo("after");
 };
 [00000597] *** before
-[00000598] *** begin: 3 @ 0.0s
+[00000598] *** begin: 3 @ 0s
 [00000599] *** end:   3
-[00000698] *** begin: 2 @ 0.1s
-[00000798] *** begin: 1 @ 0.2s
+[00000698] *** begin: 2 @ 1s
+[00000798] *** begin: 1 @ 2s
 [00000799] *** end:   1
-[00000898] *** begin: 0 @ 0.3s
+[00000898] *** begin: 0 @ 3s
 [00000899] *** after
 \end{urbiscript}
 
