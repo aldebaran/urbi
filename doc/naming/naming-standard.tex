@@ -1,0 +1,1472 @@
+% This file was converted to LaTeX by Writer2LaTeX ver. 1.0
+% see http://writer2latex.sourceforge.net for more info
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T3,T1]{fontenc}
+\usepackage[french,english]{babel}
+\usepackage[noenc]{tipa}
+\usepackage{tipx}
+\usepackage[geometry,weather,misc,clock]{ifsym}
+\usepackage{pifont}
+\usepackage{eurosym}
+\usepackage{amsmath}
+\usepackage{wasysym}
+\usepackage{amssymb,amsfonts,textcomp}
+\usepackage{color}
+\usepackage{array}
+\usepackage{supertabular}
+\usepackage{hhline}
+\usepackage{hyperref}
+\hypersetup{pdftex, colorlinks=true, linkcolor=blue, citecolor=blue, filecolor=blue, urlcolor=blue, pdftitle= , pdfauthor=Jean-Christophe Baillie, pdfsubject=, pdfkeywords=}
+\usepackage[pdftex]{graphicx}
+% Outline numbering
+\setcounter{secnumdepth}{1}
+\renewcommand\thesection{\Roman{section}}
+\makeatletter
+\newcommand\arraybslash{\let\\\@arraycr}
+\makeatother
+% List styles
+\newcommand\liststyleWWviiiNumxi{%
+\renewcommand\labelitemi{[F0B7?]}
+\renewcommand\labelitemii{o}
+\renewcommand\labelitemiii{[F0A7?]}
+\renewcommand\labelitemiv{[F0B7?]}
+}
+\newcommand\liststyleLi{%
+\renewcommand\theenumi{\arabic{enumi}}
+\renewcommand\theenumii{\arabic{enumii}}
+\renewcommand\theenumiii{\arabic{enumiii}}
+\renewcommand\theenumiv{\arabic{enumiv}}
+\renewcommand\labelenumi{\theenumi.}
+\renewcommand\labelenumii{\theenumii.}
+\renewcommand\labelenumiii{\theenumiii.}
+\renewcommand\labelenumiv{\theenumiv.}
+}
+\newcommand\liststyleLii{%
+\renewcommand\theenumi{\arabic{enumi}}
+\renewcommand\theenumii{\arabic{enumii}}
+\renewcommand\theenumiii{\arabic{enumiii}}
+\renewcommand\theenumiv{\arabic{enumiv}}
+\renewcommand\labelenumi{\theenumi.}
+\renewcommand\labelenumii{\theenumii.}
+\renewcommand\labelenumiii{\theenumiii.}
+\renewcommand\labelenumiv{\theenumiv.}
+}
+\newcommand\liststyleLiii{%
+\renewcommand\theenumi{\arabic{enumi}}
+\renewcommand\theenumii{\arabic{enumii}}
+\renewcommand\theenumiii{\arabic{enumiii}}
+\renewcommand\theenumiv{\arabic{enumiv}}
+\renewcommand\labelenumi{\theenumi.}
+\renewcommand\labelenumii{\theenumii.}
+\renewcommand\labelenumiii{\theenumiii.}
+\renewcommand\labelenumiv{\theenumiv.}
+}
+% Page layout (geometry)
+\setlength\voffset{-1in}
+\setlength\hoffset{-1in}
+\setlength\topmargin{2.499cm}
+\setlength\oddsidemargin{1.764cm}
+\setlength\textheight{24.700998cm}
+\setlength\textwidth{17.473001cm}
+\setlength\footskip{0.0cm}
+\setlength\headheight{0cm}
+\setlength\headsep{0cm}
+% Footnote rule
+\setlength{\skip\footins}{0.119cm}
+\renewcommand\footnoterule{\vspace*{-0.018cm}\setlength\leftskip{0pt}\setlength\rightskip{0pt plus 1fil}\noindent\textcolor{black}{\rule{0.25\columnwidth}{0.018cm}}\vspace*{0.101cm}}
+% Pages styles
+\makeatletter
+\newcommand\ps@Standard{
+  \renewcommand\@oddhead{}
+  \renewcommand\@evenhead{}
+  \renewcommand\@oddfoot{}
+  \renewcommand\@evenfoot{}
+  \renewcommand\thepage{\arabic{page}}
+}
+\makeatother
+\pagestyle{Standard}
+\setlength\tabcolsep{1mm}
+\renewcommand\arraystretch{1.3}
+\title{ }
+\author{Jean-Christophe Baillie}
+\date{2008-03-28}
+\begin{document}
+{\centering 
+\includegraphics[width=13.012cm,height=2.981cm]{namingstandard-img/namingstandard-img1.png}
+\par}
+
+{\centering\selectlanguage{french}
+\foreignlanguage{english}{\textsf{\textbf{\textsc{URBI
+}}}}\foreignlanguage{english}{\textsf{\textbf{\textsc{READY™
+Certification Standard}}}}
+\par}
+
+{\centering 
+\includegraphics[width=6.615cm,height=4.233cm]{namingstandard-img/namingstandard-img2.png}
+\par}
+
+{\centering\selectlanguage{french}
+\foreignlanguage{english}{\textsf{\textit{Version 1.0}}} 
+\foreignlanguage{english}{\textsf{\textit{March 2008}}}
+\par}
+
+{\centering\selectlanguage{english}\sffamily
+Copyright © Gostai S.A.S
+\par}
+
+{\centering\selectlanguage{english}\sffamily
+2006-2008
+\par}
+
+\setcounter{tocdepth}{3}
+\renewcommand\contentsname{}
+\tableofcontents
+\section[]{\selectlanguage{english} }
+\section{Introduction}
+{\selectlanguage{french}
+\foreignlanguage{english}{\textsf{This document aims at clarifying the
+naming convention}}\foreignlanguage{english}{\textsf{s in URBI Engines
+for standard hardware/software devices and components implemented as
+}}\foreignlanguage{english}{UObject}\foreignlanguage{english}{\textsf{
+and the corresponding methods/attributes/events to access them. The
+list of available hardware types and software component is increasing
+and this document will be updated accordingly. Please contact us
+directly, should you be working on a component not described or closely
+related to one described here:}}}
+
+{\centering\selectlanguage{english}\sffamily\itshape
+standard@gostai.com
+\par}
+
+{\selectlanguage{english}\sffamily
+Any implementation of an URBI server must comply with the latest version
+of this standard to get the {\textquotedbl}URBI ready{\textquotedbl}
+certification from Gostai S.A.S.}
+
+{\selectlanguage{english}\sffamily
+Gostai S.A.S. is currently the only authority which has the ability to
+deliver an {\textquotedbl}URBI Ready{\textquotedbl} certification.}
+
+{\selectlanguage{english}
+“URBI Ready” and the associated logo are trademarks of Gostai S.A.S. and
+should not be used or displayed in any way without an explicit written
+agreement from Gostai.}
+
+\section[The Structure Tree]{\selectlanguage{english} The Structure
+Tree}
+{\selectlanguage{french}
+\foreignlanguage{english}{\textsf{The robot will be described as a set
+of
+}}\foreignlanguage{english}{\textsf{\textit{components}}}\foreignlanguage{english}{\textsf{
+organized in a hierarchical structure called the
+}}\foreignlanguage{english}{\textsf{\textit{structure
+tree}}}\foreignlanguage{english}{\textsf{. The relationship between a
+component and a sub-component in the tree is a ‘part-of’ inclusion
+relationship. From the point of view of URBI, each component in the
+tree is an object, and it contains attributes pointing to its
+sub-components. Here is a example illustrating a part of a hierarchy
+that could be found with a humanoid robot:}}}
+
+
+
+\begin{figure}
+\centering
+\includegraphics[width=10.146cm,height=5.683cm]{namingstandard-img/namingstandard-img3.pdf}
+\end{figure}
+{\selectlanguage{french}
+\foreignlanguage{english}{\textsf{The leaves of the tree are called
+}}\foreignlanguage{english}{\textsf{\textit{devices}}}\foreignlanguage{english}{\textsf{,
+and they usually match physical devices in the robot: motors, sensors,
+lights, camera, etc. Inside URBI, the various objects corresponding to
+the tree components are accessed by following the path of objects
+inclusions, like in the example below (shortcuts will be described
+later):}}}
+
+{\selectlanguage{english}
+body.legR.hip.tilt}
+
+{\selectlanguage{english}
+body.legL.knee.led}
+
+{\selectlanguage{english}
+body.legL.hip}
+
+{\selectlanguage{english}
+…}
+
+{\selectlanguage{english}\sffamily
+The structure tree should not be mistaken for a representation of the
+kinematics chain of the robot. The kinematics chain is built from a
+subset of the devices corresponding to motor devices, and it represents
+spatial connections between them. Except for these motor devices, the
+structure tree components do not have a direct counterpart in the
+kinematics chain, or, if they do, it is as a subset of the kinematics
+chain (for example, \texttt{legR} is a subset of the whole kinematics
+chain).}
+
+{\selectlanguage{english}\sffamily
+The goal of this standard is to provide guidelines on how to define the
+components and the structure tree, knowing the kinematics chain of the
+robot.}
+
+\section[Frame of Reference]{\selectlanguage{english} Frame of
+Reference}
+{\selectlanguage{english}\sffamily
+In many cases, it will be necessary to refer to an absolute frame of
+reference attached to the robot body. To avoid ambiguities, the
+standard frame of reference will have the following definition:}
+
+
+
+\begin{figure}
+\centering
+ [Warning: Image ignored] % Unhandled or unsupported graphics:
+%\includegraphics[width=7.458cm,height=7.1cm]{}
+
+\end{figure}
+\liststyleWWviiiNumxi
+\begin{itemize}
+\item {\selectlanguage{french}
+\foreignlanguage{english}{\textsf{\textbf{Origin}}}\foreignlanguage{english}{\textsf{:
+the center of mass of the robot}}}
+\end{itemize}
+\liststyleWWviiiNumxi
+\begin{itemize}
+\item {\selectlanguage{french}
+\foreignlanguage{english}{\textsf{\textbf{X
+axis}}}\foreignlanguage{english}{\textsf{: oriented towards the front
+of the robot. If there is a camera, the front is defined by the default
+direction of the camera, otherwise the front will be seen as the
+natural frontal orientation for a mobile robot (the direction of
+“forward” movement). If the robot is not naturally oriented, the X axis
+will be chosen to match the main axis of symmetry of the robot body and
+it will be oriented towards the smallest side, typically the top of a
+cone for example. }}\foreignlanguage{english}{\textsf{In case of a
+perfectly symmetrical body, the X axis can be chosen arbitrarily but a
+clear mark should be made visible on the robot body to indicate it.}}}
+\end{itemize}
+\liststyleWWviiiNumxi
+\begin{itemize}
+\item {\selectlanguage{french}
+\foreignlanguage{english}{\textsf{\textbf{Z
+axis}}}\foreignlanguage{english}{\textsf{: oriented in the opposite
+direction from the gravity. If there is no gravity or natural up/down
+orientation in the environment or normal operation mode of the robot,
+the Z axis should be chosen in the direction of the main axis of
+symmetry in the orthogonal plane defined by the X axis, oriented
+towards the smallest side. In case of a perfectly symmetrical plane,
+the Z axis can be chosen arbitrarily but a clear mark should be made
+visible on the robot body to indicate it.}}}
+\end{itemize}
+\liststyleWWviiiNumxi
+\begin{itemize}
+\item {\selectlanguage{french}
+\foreignlanguage{english}{\textsf{\textbf{Y
+axis}}}\foreignlanguage{english}{\textsf{: oriented to make a
+right-handed coordinate system. }}}
+\end{itemize}
+{\selectlanguage{english}\sffamily
+The axes are oriented in a counter-clockwise direction, as depicted in
+the illustration above.}
+
+\section[Component naming]{\selectlanguage{english} Component naming}
+{\selectlanguage{french}
+\foreignlanguage{english}{\textsf{The name of a component A, which is a
+sub-component of component B, is divided into two parts: the generic
+designation of a subpart of the kinematics chain (like ‘leg’, ‘head’,
+‘finger’) that A is referring to, and optionally some topological
+disambiguator relative to its position within the component B it
+belongs to. For example, when there are two legs, we need to
+differentiate between the right and left leg, relative to the body
+component they belong to. The first part is called the
+}}\foreignlanguage{english}{\textsf{\textit{designation}}}\foreignlanguage{english}{\textsf{,
+and the second optional part is called the
+}}\foreignlanguage{english}{\textsf{\textit{localization}}}\foreignlanguage{english}{\textsf{.}}}
+
+{\selectlanguage{english}\sffamily\bfseries\itshape
+Designation}
+
+{\selectlanguage{english}\sffamily
+The designation of a component is a usually robot-specific and depends
+on the class of the robot (wheeled, humanoid, animaloid, etc). We will
+give in the following chapters some guidelines for the most current
+designations, and we will give more advanced rules for rare customized
+cases. }
+
+{\selectlanguage{english}\sffamily
+The designation is the critical part of the naming standard. We cannot
+possibly cover all future configurations and conceivable robot complex
+bodies, but the current document will grow whenever we find a new case.
+We hope to be already covering most of the main cases you can find in
+the industry.}
+
+{\selectlanguage{english}\sffamily\bfseries\itshape
+Localization }
+
+{\selectlanguage{french}
+\foreignlanguage{english}{\textsf{Localization is necessary when there
+are two identical sub-components A1 and A2 belonging to the same
+component B, like for example two legs or two arms attached to the main
+body. Usually this can be sorted out with simple geometric qualifiers
+like
+}}\foreignlanguage{english}{\textsf{\textit{Right/Center/Left}}}\foreignlanguage{english}{\textsf{,
+}}\foreignlanguage{english}{\textsf{\textit{Front/Middle/Back}}}\foreignlanguage{english}{\textsf{
+or
+}}\foreignlanguage{english}{\textsf{\textit{Up}}}\foreignlanguage{english}{\textsf{\textit{/In-between/Down}}}\foreignlanguage{english}{\textsf{.
+The naming convention is to use the first letter of the geometric
+characteristic, like
+}}\foreignlanguage{english}{R}\foreignlanguage{english}{\textsf{ for
+Right, }}\foreignlanguage{english}{I}\foreignlanguage{english}{\textsf{
+for In-between. Note that “right” or “front” are understood here from
+the point of view of a man standing and looking in the direction of the
+X-axis of the robot, and
+}}\foreignlanguage{english}{\textsf{\textit{Up}}}\foreignlanguage{english}{\textsf{/}}\foreignlanguage{english}{\textsf{\textit{Down}}}\foreignlanguage{english}{\textsf{
+matches the Z-axis, as depicted in the figure below:}}}
+
+{\centering [Warning: Draw object ignored][Warning: Draw object
+ignored]\par}
+
+{\selectlanguage{french}
+\foreignlanguage{english}{\textsf{Several geometric qualifiers can be
+used at the same time to further refine the position. As a convention,
+side information comes first
+(}}\foreignlanguage{english}{R}\foreignlanguage{english}{\textsf{/}}\foreignlanguage{english}{C}\foreignlanguage{english}{\textsf{/}}\foreignlanguage{english}{L}\foreignlanguage{english}{\textsf{),
+followed by the depth information
+(}}\foreignlanguage{english}{F}\foreignlanguage{english}{\textsf{/}}\foreignlanguage{english}{M}\foreignlanguage{english}{\textsf{/}}\foreignlanguage{english}{H}\foreignlanguage{english}{\textsf{)
+and then the height information
+(}}\foreignlanguage{english}{U}\foreignlanguage{english}{\textsf{/}}\foreignlanguage{english}{I}\foreignlanguage{english}{\textsf{/}}\foreignlanguage{english}{D}\foreignlanguage{english}{\textsf{).
+}}}
+
+{\selectlanguage{english}\sffamily
+You can further qualify a side+depth localization with an additional R/L
+side information. This can be used in the typical layout below:}
+
+{\centering 
+\includegraphics[width=8.819cm,height=8.819cm]{namingstandard-img/namingstandard-img4.jpg}
+\par}
+
+{\selectlanguage{english}\sffamily
+This dual positioning using side+depth can also be used to combine
+side+height or height+depth information.}
+
+{\selectlanguage{english}\sffamily
+Some layouts will typically imply a bilateral organization like for
+example an insectoid robot with a series of 3 legs on both side of its
+body. In that case, an array will be used and follow the geometrical
+localization (R/L). The smaller the number, the closer to the front:
+R[1], R[2], R[3] and L[1], L[2], L[3]. This can be used when there is
+at least 3 components on each side, otherwise the
+\textit{Front}/\textit{Back} approach prevails.}
+
+{\selectlanguage{english}\sffamily
+Some components like spines or tails are highly articulated with a set
+of identical sub-components. When talking about these sub-components,
+the above localization should be replaced by an array with a numbering
+starting at 0. The smaller the number, the closer the sub-component is
+to the robot main body. For surface-like sub-components, like skin
+touch sensors, the array can be two dimensional.}
+
+{\selectlanguage{english}\sffamily
+Other possible localization for sensors are the X, Y and Z axis
+themselves, like for example for an accelerometer or a gyro sensor,
+available in each of the three directions.}
+
+{\selectlanguage{english}\sffamily
+Examples of component names including localization:}
+
+{\selectlanguage{english}
+legR, legL, armR, armL}
+
+{\selectlanguage{english}
+fingerR, fingerC, fingerL // three fingers hand}
+
+{\selectlanguage{english}
+joint[0], joint[1] … joint[5] // from tail}
+
+{\selectlanguage{english}
+touch[478][124] // from skin}
+
+{\selectlanguage{english}
+accelX, accelY, accelZ // typical accelerometer}
+
+{\selectlanguage{english}
+gyroX, gyroY, gyroZ // tpycial gyro sensor}
+
+\section[]{\selectlanguage{english} }
+\section[Facets]{\selectlanguage{english} Facets}
+{\selectlanguage{english}\sffamily
+URBI allows multiple inheritances between objects. This feature can be
+used to introduce the notion of “facet”. A facet is an object in URBI
+that describes some aspect of a type of component. }
+
+{\selectlanguage{english}\sffamily
+For example, for a joint, we can have a “swivel” facet, used to define
+patella joints. For the robot body itself, we have a “mobile” facet
+describing mobile robots, which includes some standard way of
+requesting a move forward, a turn, etc. A robot with a Pan/Tilt camera
+or otherwise moving camera will have the “panoramic” facet which is
+abstracting the way the robot can turn its gaze in any direction.}
+
+{\selectlanguage{english}\sffamily
+In short, facets are standard Urbi objects that components can inherit
+from to acquire some functionalities, expressed as a standard
+interface. We will describe in the following pages a few of the most
+standard facets. Each facet should be reimplemented for any particular
+robot that uses them, for example the “mobile” facet will have a
+completely different implementation with a humanoid robot and a wheeled
+robot.}
+
+{\selectlanguage{english}\sffamily\bfseries\itshape
+identity}
+
+{\selectlanguage{english}\sffamily
+Contains information about the robot identity. }
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.8669999cm}|m{12.472cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} type &
+\selectlanguage{english}\sffamily This describes the robot category
+among: humanoid, fourlegged, wheeled, industrial arm. It gives a
+general idea of the robot family, but does not replace a more
+systematic probe of available services by investigating the list of
+attributes of the object.\\\hline
+\selectlanguage{english} name &
+\selectlanguage{english}\sffamily Name of the robot.\\\hline
+\selectlanguage{english} model &
+\selectlanguage{english}\sffamily Model of the robot.\\\hline
+\selectlanguage{english} serial &
+\selectlanguage{english}\sffamily Serial number (if available).\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+network}
+
+{\selectlanguage{english}\sffamily
+Contains information about the network identification of the robot.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} IP &
+\selectlanguage{english}\sffamily IP address of the robot.\\\hline
+\selectlanguage{english} gateway &
+\selectlanguage{english}\sffamily Gateway IP address.\\\hline
+\selectlanguage{english} latency &
+\selectlanguage{english}\sffamily Measured average network
+latency.\\\hline
+\selectlanguage{english} bandwidth &
+\selectlanguage{english}\sffamily Measured average network
+bandwidth.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+motor}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe a generic motor controller.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} val &
+\selectlanguage{english}\sffamily This slot is a generic pointer to a
+more specific slot describing the motor position, like
+\texttt{position} or \texttt{angle}, depending on the type of motor. It
+is mandatory in the Urbi Ready standard as a universal proxy to control
+an actuator. The more specific slot is described in a subclass of
+\texttt{motor}.\\\hline
+\selectlanguage{english} PGain &
+\selectlanguage{english}\sffamily Controls the P gain of the PID
+controller.\\\hline
+\selectlanguage{english} IGain &
+\selectlanguage{english}\sffamily Controls the I gain of the PID
+controller.\\\hline
+\selectlanguage{english} DGain &
+\selectlanguage{english}\sffamily Controls the D gain of the PID
+controller.\\\hline
+\end{supertabular}
+\end{flushleft}
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
+\hhline{-~}
+ &
+\selectlanguage{french}\sffamily Optional slot.\\\hhline{-~}
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+ linearMotor  \textmd{subclass of motor}}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe a linear motor controller.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} position &
+\selectlanguage{english}\sffamily Position of the motor in centimeters.
+Pointed to by the \texttt{val} slot.\\\hline
+\selectlanguage{english} force &
+\selectlanguage{english}\sffamily Intensity of the measured or estimated
+force applied on a linear motor.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{french}
+    
+\foreignlanguage{english}{\textsf{\textbf{\textit{rotationalMotor}}}} 
+\foreignlanguage{english}{\textsf{\textit{subclass of motor}}}}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe a rotational motor controller.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} angle &
+\selectlanguage{english}\sffamily Angle of the motor in degree, modulo
+360. Pointed to by the \texttt{val} slot.\\\hline
+\selectlanguage{english} turn &
+\selectlanguage{english}\sffamily Absolute angular position of the
+motor, expressed in number of turns.\\\hline
+\selectlanguage{english} torque &
+\selectlanguage{english}\sffamily Intensity of the measured or estimated
+torque applied on the motor.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+sensor}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe a generic sensor.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} val &
+\selectlanguage{english}\sffamily This slot is a generic pointer to a
+more specific slot describing the sensor value, like \texttt{distance}
+or \texttt{temperature}, depending on the type of sensor. It is
+mandatory in the Urbi Ready standard as a universal proxy to read a
+sensor. The more specific slot is described in a subclass of
+\texttt{sensor}.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+ distanceSensor  \textmd{subclass of sensor}}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe a distance sensor (infrared, laser,
+ultrasonic...).}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} distance &
+\selectlanguage{english}\sffamily Measured distance expressed in meters.
+Pointed to by the \texttt{val} slot.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+ touchSensor  \textmd{subclass of sensor}}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe a touch pressure sensor (contact,
+induction,...).}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} pressure &
+\selectlanguage{english}\sffamily Intensity of the pressure put on the
+touch sensor. Can be 0/1 for simple buttons or expressed in Pascal
+units. Pointed to by the \texttt{val} slot.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+ acceleration\foreignlanguage{english}{Sensor 
+}\foreignlanguage{english}{\textmd{subclass of sensor}}}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe an accelerometer.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.651cm}|m{11.639cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} acceleration &
+\selectlanguage{english}\sffamily Acceleration expressed in m/s2.
+Pointed to by the \texttt{val} slot.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+\foreignlanguage{english}{gyroSensor 
+}\foreignlanguage{english}{\textmd{subclass of sensor}}}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe an gyrometer.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.651cm}|m{11.639cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} acceleration &
+\selectlanguage{english}\sffamily Acceleration expressed in rad/s2.
+Pointed to by the \texttt{val} slot.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+ temperatureSensor  \textmd{subclass of sensor}}
+
+{\selectlanguage{english}\sffamily
+This facet is used to describe a temperature sensor.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{2.98cm}|m{12.31cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} temperature &
+\selectlanguage{english}\sffamily Measured temperature in C° degrees.
+Pointed to by the \texttt{val} slot.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+mobile}
+
+{\selectlanguage{english}\sffamily
+Mobile robots all share this generic interface to provide high order
+level motion control capabilities.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} go(x) &
+\selectlanguage{english}\sffamily Move approximatively x meters forward
+if x is positive, backward otherwise.\\\hline
+\selectlanguage{english} turn(x) &
+\selectlanguage{english}\sffamily Turn right approximatively x degrees.
+x can be a positive or negative value.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+tracker}
+
+{\selectlanguage{english}\sffamily
+Camera-equipped robots can sometimes move the orientation of the field
+of view horizontally and vertically, which is a very important feature
+for many applications. In that case, this facet abstracts how such
+motion can be achieved, whether it is done with a pan/tilt camera or
+with whole body motion or a combination of both.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} yaw &
+\selectlanguage{english}\sffamily Rotational articulation around the Z
+axis in the robot, expressed in degrees.\\\hline
+\selectlanguage{english} pitch &
+\selectlanguage{english}\sffamily Rotational articulation around the Y
+axis in the robot, expressed in degrees.\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+videoin}
+
+{\selectlanguage{english}\sffamily
+The videoin facet groups every information relative to cameras or any
+image sensor. }
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} val &
+\selectlanguage{english}\sffamily Binary value corresponding to the
+image, expressed in the current unit (RGB, jpeg, YCrCb...). The unit
+can be changed like any other regular unit in Urbi. \\\hline
+\selectlanguage{english} xfov &
+\selectlanguage{english}\sffamily The x Field Of View of the camera
+expressed in degrees.\\\hline
+\selectlanguage{english} yfov &
+\selectlanguage{english}\sffamily The y Field Of View of the camera
+expressed in degrees.\\\hline
+\selectlanguage{english} height &
+\selectlanguage{english}\sffamily Height of the image in the current
+resolution, expressed in pixels\\\hline
+\selectlanguage{english} width &
+\selectlanguage{english}\sffamily Width of the image in the current
+resolution, expressed in pixels\\\hline
+\selectlanguage{english} shutter &
+\selectlanguage{french} \foreignlanguage{english}{\textsf{The shutter
+speed }}\foreignlanguage{english}{\textsf{(expressed in ms). 0 if non
+applicable.}}\\\hline
+\selectlanguage{english} wb &
+\selectlanguage{french} \foreignlanguage{english}{\textsf{White balance
+}}\foreignlanguage{english}{\textsf{(expressed with an integer value
+depending on the camera documentation). 0 if non applicable.}}\\\hline
+\selectlanguage{english} gain &
+\selectlanguage{french} \foreignlanguage{english}{\textsf{Camera gain
+amplification }}\foreignlanguage{english}{\textsf{(expressed as a
+coefficient between 0 and infinity). 1 if non
+applicable}}\foreignlanguage{english}{\textsf{\textit{.}}}\\\hline
+\selectlanguage{english} resolution &
+{\selectlanguage{english}\sffamily Can be used to specify a given
+resolution, expressed as a percentage of the maximal resolution of the
+camera (number between 0 and 1). 1 if non applicable. }
+
+\selectlanguage{english}\sffamily Once modified, the effective
+resolution in X/Y can be checked with the width and height
+slots.\\\hline
+\end{supertabular}
+\end{flushleft}
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
+\hhline{-~}
+ &
+\selectlanguage{french} Optional slot.\\\hhline{-~}
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+audioout}
+
+{\selectlanguage{english}\sffamily
+The audioout facet groups every information relative to speakers. }
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} val &
+{\selectlanguage{english}\sffamily The speaker value, expressed as a
+binary, in the format given by the binary header during the
+assignment.}
+
+\selectlanguage{english}\sffamily Speakers are write-only devices, so
+there is not much sense in reading the content of this attribute. At
+best, it returns the remaining sound to be played if it is not over
+yet, but this is not a requirement.\\\hline
+\selectlanguage{english} remain &
+\selectlanguage{french} \foreignlanguage{english}{\textsf{The amount of
+time remaining to play in the speaker sound buffer (expressed in
+}}\foreignlanguage{english}{\textsf{\textit{ms}}}\foreignlanguage{english}{\textsf{
+as a default unit).}}\\\hline
+\selectlanguage{english} playing &
+\selectlanguage{english}\sffamily This is a boolean value which is true
+when there is a sound currently playing (the buffer is not
+empty)\\\hline
+\selectlanguage{english} volume &
+\selectlanguage{english}\sffamily Volume of the play back, in
+decibels.\\\hline
+\end{supertabular}
+\end{flushleft}
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
+\hhline{-~}
+ &
+\selectlanguage{french} Optional slot.\\\hhline{-~}
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+audioin}
+
+{\selectlanguage{english}\sffamily
+The audioin facet groups every information relative to microphones. }
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} val &
+{\selectlanguage{english}\sffamily Binary value corresponding to the
+sound heard, expressed in the current unit (wav, mp3...). The unit can
+be changed like any other regular unit in Urbi. }
+
+\selectlanguage{french} \foreignlanguage{english}{\textsf{The content is
+the sound heard by the microphone since the last
+}}\foreignlanguage{english}{update}\foreignlanguage{english}{\textsf{
+event.}}\\\hline
+\selectlanguage{english} duration &
+\selectlanguage{french} \foreignlanguage{english}{\textsf{Amount of
+sound in the
+}}\foreignlanguage{english}{val}\foreignlanguage{english}{\textsf{
+attribute, expressed in
+}}\foreignlanguage{english}{\textsf{\textit{ms}}}\foreignlanguage{english}{\textsf{.}}\\\hline
+\selectlanguage{english} gain &
+\selectlanguage{french} \foreignlanguage{english}{\textsf{Microphone
+gain amplification
+}}\foreignlanguage{english}{\textsf{\textit{(expressed between 0 and
+1)}}}\\\hline
+\end{supertabular}
+\end{flushleft}
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
+\hhline{-~}
+ &
+\selectlanguage{french}\sffamily Optional slot.\\\hhline{-~}
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+blobDetector}
+
+{\selectlanguage{english}\sffamily
+Ball detectors, marker detectors and various feature-based detectors
+should all share a similar interface. They extract a part of the image
+that fits some criteria and define a “blob” accordingly. Here are the
+typical slots expected:}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} x &
+\selectlanguage{english}\sffamily The x position of the center of the
+blob in the image\\\hline
+\selectlanguage{english} y &
+\selectlanguage{english}\sffamily The y position of the center of the
+blob in the image\\\hline
+\selectlanguage{english} ratio &
+\selectlanguage{english}\sffamily The size of the blob expressed as a
+normalized image size: 1 = full image, 0 = nothing.\\\hline
+\selectlanguage{english} visible &
+\selectlanguage{french} \foreignlanguage{english}{\textsf{A boolean
+expressing whether there is a blob in the image or not (see
+}}\foreignlanguage{english}{threshold}\foreignlanguage{english}{\textsf{)}}\\\hline
+\selectlanguage{english} threshold &
+\selectlanguage{french} \foreignlanguage{english}{\textsf{The minimum
+value of
+}}\foreignlanguage{english}{ratio}\foreignlanguage{english}{\textsf{ to
+decide that the blob is
+}}\foreignlanguage{english}{visible}\foreignlanguage{english}{\textsf{.}}\\\hline
+\selectlanguage{english} orientation &
+\selectlanguage{english}\sffamily Angle of the main ellipsoid axis of
+the blog (0 = horizontal), expressed in degrees.\\\hline
+\selectlanguage{english} elongation &
+\selectlanguage{english}\sffamily Ratio between the main and the second
+diameter of the blob enveloping ellipse.\\\hline
+\end{supertabular}
+\end{flushleft}
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
+\hhline{-~}
+ &
+\selectlanguage{french}\sffamily Optional slot.\\\hhline{-~}
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+textToSpeech}
+
+{\selectlanguage{english}\sffamily
+Text to speech allows to read text using a speech synthetizor. Default
+implementations should use the \texttt{speaker} component (or alias) as
+their default sound output.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} lang &
+\selectlanguage{english}\sffamily The language used, in international
+notation (fr, en, it…): ISO 639\\\hline
+\selectlanguage{english} speed &
+\selectlanguage{english}\sffamily How fast the voice should go, between
+0 and 1.\\\hline
+\selectlanguage{english} pitch &
+\selectlanguage{english}\sffamily Voice pitch, between 0 and 1.\\\hline
+\selectlanguage{english} gender &
+\selectlanguage{english}\sffamily Gender of the speaker
+(0:male/1:female)\\\hline
+\selectlanguage{english} age &
+\selectlanguage{english}\sffamily Age of the speaker, if
+applicable\\\hline
+\selectlanguage{english} name &
+\selectlanguage{english}\sffamily Most TTS engine will propose several
+voices, this attributes allows picking one. It’s a string identifier
+specific to the TTS developer.\\\hline
+\selectlanguage{english} say(s) &
+\selectlanguage{english}\sffamily Speak the sentence given in parameter
+{\textquotesingle}s{\textquotesingle}.\\\hline
+\selectlanguage{english} voicexml(s) &
+\selectlanguage{english}\sffamily Speak the text
+{\textquotesingle}s{\textquotesingle} expressed as a VoiceXML
+string.\\\hline
+\selectlanguage{english} script(s) &
+\selectlanguage{english}\sffamily Speak the text
+{\textquotesingle}s{\textquotesingle} augmented by script markups (see
+specific Gostai documentation) to generate URBI events.\\\hline
+\end{supertabular}
+\end{flushleft}
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
+\hhline{-~}
+ &
+\selectlanguage{french}\sffamily Optional slot.\\\hhline{-~}
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries\itshape
+speechRecognizer}
+
+{\selectlanguage{english}\sffamily
+Speech recognition allows to transform a stream of sound into a text
+using various speech recognition algorithms. Default implementations
+should use the \texttt{micro} component (or alias) as their default
+sound input.}
+
+{\selectlanguage{english}\sffamily\bfseries
+Slots}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} lang &
+\selectlanguage{english}\sffamily The language used, in international
+notation (fr, en, it…): ISO 639\\\hline
+\end{supertabular}
+\end{flushleft}
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
+\hhline{-~}
+ &
+\selectlanguage{french}\sffamily Optional slot.\\\hhline{-~}
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily\bfseries
+Events}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
+\hline
+\selectlanguage{english}\sffamily\bfseries Slot &
+\selectlanguage{english}\sffamily\bfseries Description\\\hline
+\selectlanguage{english} hear(s) &
+\selectlanguage{english}\sffamily This event has one parameter which is
+the string describing what the speech engine has recognized (can be a
+word or a sentence).\\\hline
+\end{supertabular}
+\end{flushleft}
+\section[Standard Components]{\selectlanguage{english} Standard
+Components}
+{\selectlanguage{english}\sffamily
+Standard components correspond to components typically found in wheeled
+robots, humanoid or animaloid robots, or in industrial arms. }
+
+{\selectlanguage{english}\sffamily
+The table on the next pages summarize the currently referenced standard
+components, with a description of potential components that they could
+be subcomponent of, a description of potential components they may
+contain, and a list of relevant facets. This table should be seen as a
+quick reference guide to identify available components in a given
+robot.}
+
+{\selectlanguage{french}\sffamily\bfseries\itshape
+Yaw/Pitch/Roll orientation: guideline}
+
+{\selectlanguage{english}\sffamily
+It is not always clear which rotational direction corresponds to the
+yaw, pitch or roll components (listed in the table below). This is a
+quick guideline to help determine the proper association. }
+
+{\selectlanguage{english}\sffamily
+Let us consider the robot in its resting, most prototypical position,
+like “standing” on two or four legs for a humanoid or animaloid, and
+let all members “naturally” fall under gravity. When gravity has no
+effect on a certain joint (because it is in the orthogonal plan to Z,
+for example), the medium position between rangemin and rangemax should
+be used. The body position achieved will be considered as a reference.
+Then for each component that is described in terms of yaw/pitch/roll
+sub-decomposition, the association will be as follow:}
+
+{\selectlanguage{french}
+\foreignlanguage{english}{\textsf{\textbf{
+yaw}}}\foreignlanguage{english}{\textsf{ : rotational articulation
+around the Z axis in the robot.}}}
+
+{\selectlanguage{english}\sffamily
+\textbf{ pitch} : rotational articulation around the Y axis in the
+robot.}
+
+{\selectlanguage{english}\sffamily
+\textbf{ roll} : rotational articulation around the X axis in the
+robot.}
+
+{\selectlanguage{english}\sffamily
+When there is no exact match with the X/Y/Z axis, the closest match, or
+the default remaining available axis, should be selected to determine
+the yaw/pitch/roll meaning. }
+
+\begin{center}
+\tablehead{\hline
+\selectlanguage{english}\sffamily\bfseries Component &
+\selectlanguage{english}\sffamily\bfseries Description &
+\selectlanguage{english}\sffamily\bfseries Sub. of &
+\selectlanguage{english}\sffamily\bfseries Contains &
+\selectlanguage{english}\sffamily\bfseries Facets\\\hline}
+\begin{supertabular}{|m{2.312cm}|m{6.776cm}|m{2.629cm}|m{2.471cm}|m{2.1269999cm}|}
+\selectlanguage{english} robot &
+\selectlanguage{english}\sffamily This is the main component that
+represents an abstraction of the robot. &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english}\ttfamily identity network mobile
+tracker\\\hline
+\selectlanguage{english} body &
+\selectlanguage{english}\sffamily This is the main component that
+contains every piece of hardware in the robot. This includes all
+primary kinematics sub-chains (arms, legs, neck, head, etc) and
+non-localized sensor arrays, typically body skin or heat detectors.
+Localized sensors, like fingertips touch sensors, will typically be
+found attached to the finger component they belong and not directly to
+the body.  &
+\selectlanguage{english}\ttfamily robot &
+\selectlanguage{english}\ttfamily arm leg neck head wheel tail skin
+torso … &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} leg &
+\selectlanguage{english}\sffamily Legs are found in humanoid or
+animaloid robots and correspond to part of the kinematics chain that
+are attached to the main body by one extremity only and which do touch
+the ground in normal operation mode (unlike arms). A typical
+configuration for humanoids contains a hip, a knee and an ankle. If the
+leg is more segmented, the leg can be described with a simple array of
+joints. &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english} hip knee ankle foot joint &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} arm &
+\selectlanguage{english}\sffamily Unlike legs, an arm’s extremity does
+not always touch the ground in normal operating mode. This applies to
+humanoid robots or single-arm industrial robots. Arms supersede legs in
+the nomenclature: if a body part behaves alternatively like an arm and
+like a leg, it will be considered as an arm. &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english} shoulder elbow wrist hand grip  joint &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} shoulder &
+\selectlanguage{english}\sffamily The shoulder is the upper part of the
+arm. It can have one, two or three degrees of freedom and is the
+closest part of the arm relative to the body. &
+\selectlanguage{english}\ttfamily arm &
+\selectlanguage{english}\ttfamily yaw pitch roll &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} elbow &
+\selectlanguage{english}\sffamily Separates the upper arm and the lower
+arm, this is usually a single rotational axis. &
+\selectlanguage{english}\ttfamily arm &
+\selectlanguage{english}\ttfamily pitch  &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} wrist &
+\selectlanguage{english}\sffamily Connects the hand and the lower part
+of the arm. Usually three degrees of freedom axis. &
+\selectlanguage{english}\ttfamily arm &
+\selectlanguage{english}\ttfamily yaw pitch roll &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} hand &
+\selectlanguage{english}\sffamily The hand is an extension of the arm
+that usually holds fingers. It’s not the wrist, which is articulated
+and between the arm and the hand.  &
+\selectlanguage{english}\ttfamily arm &
+\selectlanguage{english}\ttfamily finger &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} finger &
+\selectlanguage{english}\sffamily Fingers are a series of articulated
+motors at the extremity of the arm, and connected to the hand. They are
+usually localized with arrays and/or lateral localization respective to
+the hand. &
+\selectlanguage{english}\ttfamily hand &
+\selectlanguage{english}\ttfamily touch &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} grip &
+\selectlanguage{english}\sffamily Simple two-fingers system. &
+\selectlanguage{english}\ttfamily arm hand &
+\selectlanguage{english}\ttfamily touch &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} hip &
+\selectlanguage{english}\sffamily The hip is the upper part of the leg
+and connects it to the main body. It can have one, two or three degrees
+of freedom. &
+\selectlanguage{english}\ttfamily leg &
+\selectlanguage{english}\ttfamily yaw pitch roll &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} knee &
+\selectlanguage{english}\sffamily Separates the upper leg and the lower
+leg, this is usually a single rotational axis. &
+\selectlanguage{english}\ttfamily leg &
+\selectlanguage{english}\ttfamily pitch &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} ankle &
+\selectlanguage{english}\sffamily Connects the foot and the lower part
+of the leg. Usually three degrees of freedom axis. &
+\selectlanguage{english}\ttfamily leg &
+\selectlanguage{english}\ttfamily yaw pitch roll &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} foot &
+\selectlanguage{english}\sffamily The foot is an extension of the leg
+that usually holds toes. It’s not the ankle, which is articulated and
+between the leg and the foot. The foot can also contain touch sensors
+in simple configurations. &
+\selectlanguage{english}\ttfamily leg &
+\selectlanguage{english}\ttfamily touch &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} toe &
+\selectlanguage{english}\sffamily Like fingers, but attached to the
+foot. &
+\selectlanguage{english}\ttfamily foot &
+\selectlanguage{english}\ttfamily touch &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} neck  &
+\selectlanguage{english}\sffamily The neck corresponds to a degree of
+freedom not part of the head, but relative to the rigid connection
+between the head and the main body.  &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english}\ttfamily yaw pitch roll &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} tail &
+\selectlanguage{english}\sffamily A tail is a series of articulated
+motors at the back of the robot. &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english}\ttfamily joint &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} head &
+\selectlanguage{english}\sffamily The head main pivotal axis. &
+\selectlanguage{english}\ttfamily body neck &
+\selectlanguage{english}\ttfamily camera mouth ear lip eye eyebrow &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} mouth &
+\selectlanguage{english}\sffamily The robot mouth (open/close) &
+\selectlanguage{english}\ttfamily head &
+\selectlanguage{english}\ttfamily lip &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} ear &
+\selectlanguage{english}\sffamily Ears may have degrees of freedom in
+certain robots. &
+\selectlanguage{english}\ttfamily head &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} joint &
+\selectlanguage{english}\sffamily Generic articulation in the robot. &
+\selectlanguage{english}\ttfamily tail arm leg lip &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} yaw &
+\selectlanguage{english}\sffamily Rotational articulation around the Z
+axis in the robot. \textit{See the introduction paragraph on
+yaw/pitch/roll orientation for more details on how to identify which
+direction corresponds to yaw.} &
+\selectlanguage{english}\ttfamily neck knee ankle shoulder elbow wrist
+torso &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily rotational-Motor\\\hline
+\selectlanguage{english} pitch &
+\selectlanguage{english}\sffamily Rotational articulation around the Y
+axis in the robot. \textit{See the introduction paragraph on
+yaw/pitch/roll orientation for more details on how to identify which
+direction corresponds to pitch.} &
+\selectlanguage{english}\ttfamily neck knee ankle shoulder elbow wrist
+torso &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily rotational-Motor\\\hline
+\selectlanguage{english} roll &
+\selectlanguage{english}\sffamily Rotational articulation around the X
+axis in the robot. \textit{See the introduction paragraph on
+yaw/pitch/roll orientation for more details on how to identify which
+direction corresponds to roll.} &
+\selectlanguage{english}\ttfamily neck knee ankle shoulder elbow wrist
+torso &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily rotational-Motor\\\hline
+\selectlanguage{english} lip &
+\selectlanguage{english}\sffamily Corresponds to animated lips. &
+\selectlanguage{english}\ttfamily mouth &
+\selectlanguage{english}\ttfamily joint &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} eye &
+\selectlanguage{english}\sffamily Corresponds to the eyeball pivotal
+axis. &
+\selectlanguage{english}\ttfamily head &
+\selectlanguage{english}\ttfamily camera &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} eyebrow &
+\selectlanguage{english}\sffamily Some robots will have eyebrow with
+generally one or several degree of freedom. &
+\selectlanguage{english}\ttfamily head &
+\selectlanguage{english}\ttfamily joint &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} torso &
+\selectlanguage{english}\sffamily This corresponds to a pivotal or
+rotational axis in the middle of the main body. &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english}\ttfamily yaw pitch roll &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} spine &
+\selectlanguage{english}\sffamily This is a more elaborated version of
+“torso”, with a series of articulations to give several degrees of
+freedom in the back of the robot. &
+\selectlanguage{english}\ttfamily torso &
+\selectlanguage{english}\ttfamily joint &
+\selectlanguage{english}\ttfamily {}-\\\hline
+\selectlanguage{english} clavicle &
+\selectlanguage{english}\sffamily This is not to be mixed up with the
+“top of the arm” body part. It is an independent degree of freedom that
+can be used to bring the two arms closer in a sort of “shoulder
+raising” movement. &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily motor\\\hline
+\selectlanguage{english} touch &
+\selectlanguage{english}\sffamily Touch sensor. &
+\selectlanguage{english}\ttfamily finger grip foot toe &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily touchSensor\\\hline
+\selectlanguage{english} gyro &
+\selectlanguage{english}\sffamily Gyrometer sensor. &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily gyroSensor\\\hline
+\selectlanguage{english} accel  &
+\selectlanguage{english}\sffamily Accelerometer sensor. &
+\selectlanguage{english}\ttfamily body &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily accelerationSensor\\\hline
+\selectlanguage{english} camera &
+\selectlanguage{english}\sffamily Camera sensor. If several cameras are
+available, localization shall apply, however there must always be an
+alias from \texttt{camera} to one of the effective camera (like
+\texttt{cameraR} or \texttt{cameraL}). &
+\selectlanguage{english}\ttfamily head body &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily videoin\\\hline
+\selectlanguage{english} speaker &
+\selectlanguage{english}\sffamily \foreignlanguage{english}{Speaker
+device. If several speakers are available, localization shall apply,
+however there must always be an alias from
+}\foreignlanguage{english}{\texttt{speaker}}\foreignlanguage{english}{
+to one of the effective speakers (like
+}\foreignlanguage{english}{\texttt{speakerR}}\foreignlanguage{english}{
+or
+}\foreignlanguage{english}{\texttt{speakerL}}\foreignlanguage{english}{).}
+&
+\selectlanguage{english}\ttfamily head body &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily audioin\\\hline
+\selectlanguage{english} micro  &
+\selectlanguage{english}\sffamily Microphone devices.
+I\foreignlanguage{english}{f several microphones are available,
+localization shall apply, however there must always be an alias from
+}\foreignlanguage{english}{\texttt{micro}}\foreignlanguage{english}{ to
+one of the effective microphones (like
+}\foreignlanguage{english}{\texttt{microR}}\foreignlanguage{english}{
+or
+}\foreignlanguage{english}{\texttt{microL}}\foreignlanguage{english}{).}
+&
+\selectlanguage{english}\ttfamily head body &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily audioout\\\hline
+\selectlanguage{english} speech &
+\selectlanguage{english}\sffamily Speech recognition component. &
+\selectlanguage{english}\ttfamily robot &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily speechRecognizer\\\hline
+\selectlanguage{english} voice &
+\selectlanguage{english}\sffamily Voice synthesis component. &
+\selectlanguage{english}\ttfamily robot &
+\selectlanguage{english}\ttfamily {}- &
+\selectlanguage{english}\ttfamily textToSpeech\\\hline
+\end{supertabular}
+\end{center}
+\section[Compact notation]{\selectlanguage{english} Compact notation}
+{\selectlanguage{english}\sffamily
+Components are usually identified with their full-length name, which is
+the path to access them inside the structure tree. For convenience and
+backward compatibility with pre-2.0 versions of URBI, there is also a
+compact notation available. We will describe here how to construct the
+compact notation starting from the full name and the structure tree.}
+
+{\selectlanguage{english}\sffamily\itshape
+Some examples:}
+
+\begin{flushleft}
+\tablehead{}
+\begin{supertabular}{|m{9.008cm}|m{5.533cm}|}
+\hline
+\selectlanguage{english}\sffamily Full name &
+\selectlanguage{english}\sffamily Compact name\\\hline
+\selectlanguage{english}\ttfamily robot.body.armR.elbow &
+\selectlanguage{english}\ttfamily elbowR\\\hline
+\selectlanguage{english}\ttfamily robot.body.head.yaw &
+\selectlanguage{english}\ttfamily headYaw\\\hline
+\selectlanguage{english}\ttfamily robot.body.legL.knee.pitch &
+\selectlanguage{english}\ttfamily kneeL\\\hline
+\selectlanguage{english}\ttfamily robot.body.armR.hand.finger[3][2] &
+\selectlanguage{english}\ttfamily fingerR[3][2]\\\hline
+\selectlanguage{english}\ttfamily robot.body.armL.hand.fingerR &
+\selectlanguage{english}\ttfamily fingerLR\\\hline
+\end{supertabular}
+\end{flushleft}
+{\selectlanguage{english}\sffamily
+The rule is to move every localization qualifier at the end of the
+compact notation, in the order where they appear in the full-length
+name. The remaining component names should then be considered one by
+one to see if they are needed to remove ambiguities. If they are not,
+like typically the robot or body components which are shared with
+almost every other full-length name, they can be ignored. If finally
+several component names have to be kept, they should be separated by
+using upper case letters for the first character instead of a dot, like
+in Java-style notation.}
+
+{\selectlanguage{english}\sffamily
+Example 1: \texttt{robot.body.armL.hand.fingerR}}
+
+\liststyleLi
+\begin{enumerate}
+\item {\selectlanguage{english}\sffamily
+Move all localization at the end: \texttt{robot.body.arm.hand.fingerLR}}
+\item {\selectlanguage{english}\sffamily
+The fullname remaining is: \texttt{robot.body.arm.hand.finger}}
+\item {\selectlanguage{english}\sffamily
+\texttt{finger} should be kept, \texttt{hand}, \texttt{arm},
+\texttt{body} and \texttt{robot} are not necessary since every finger
+component will always be attached only to a hand, itself attached to an
+arm and a body and a robot.}
+\item {\selectlanguage{english}\sffamily
+The result is \texttt{fingerLR}}
+\end{enumerate}
+{\selectlanguage{english}\sffamily
+Example 2: \texttt{robot.body.head.yaw}}
+
+\liststyleLii
+\begin{enumerate}
+\item {\selectlanguage{english}\sffamily
+No localization to move}
+\item {\selectlanguage{english}\sffamily
+\texttt{yaw} must be kept because \texttt{head} also have a
+\texttt{pitch} subcomponent and }
+\item {\selectlanguage{english}\sffamily
+\texttt{head} must also be kept to avoid ambiguity with other components
+having a \texttt{yaw} subcomponent.}
+\item {\selectlanguage{english}\sffamily
+The result is \texttt{headYaw}}
+\end{enumerate}
+{\selectlanguage{english}\sffamily
+Example 3: \texttt{robot.body.legL.knee.pitch}}
+
+\liststyleLiii
+\begin{enumerate}
+\item {\selectlanguage{english}\sffamily
+Move all localization at the end: \texttt{robot.body.leg.knee.pitchL}}
+\item {\selectlanguage{english}\sffamily
+\texttt{pitch} is not necessary because \texttt{knee} has only a
+\texttt{pitch}, so \texttt{knee} will be kept only}
+\item {\selectlanguage{english}\sffamily
+The result is \texttt{kneeL}}
+\end{enumerate}
+\end{document}
