@@ -60,15 +60,15 @@ Copyright © Gostai S.A.S
 \renewcommand\contentsname{}
 \tableofcontents
 \section{Introduction}
-{
-\textsf{This document aims at clarifying the naming convention}\textsf{s
+
+This document aims at clarifying the naming conventions
 in URBI Engines for standard hardware/software devices and components
-implemented as }UObject\textsf{ and the corresponding
+implemented as UObject and the corresponding
 methods/attributes/events to access them. The list of available
 hardware types and software component is increasing and this document
 will be updated accordingly. Please contact us directly, should you be
 working on a component not described or closely related to one
-described here:}}
+described here:
 
 {\centering\sffamily\itshape
 standard@gostai.com
@@ -89,15 +89,15 @@ should not be used or displayed in any way without an explicit written
 agreement from Gostai.}
 
 \section{The Structure Tree}
-{
-\textsf{The robot will be described as a set of
-}\textsf{\textit{components}}\textsf{ organized in a hierarchical
-structure called the }\textsf{\textit{structure tree}}\textsf{. The
+
+The robot will be described as a set of
+\textit{components} organized in a hierarchical
+structure called the \textit{structure tree}. The
 relationship between a component and a sub-component in the tree is a
 ‘part-of’ inclusion relationship. From the point of view of URBI, each
 component in the tree is an object, and it contains attributes pointing
 to its sub-components. Here is a example illustrating a part of a
-hierarchy that could be found with a humanoid robot:}}
+hierarchy that could be found with a humanoid robot:
 
 
 
@@ -105,13 +105,13 @@ hierarchy that could be found with a humanoid robot:}}
 \centering
 %\includegraphics[width=10.146cm,height=5.683cm]{namingstandard-img/namingstandard-img3.pdf}
 \end{figure}
-{
-\textsf{The leaves of the tree are called
-}\textsf{\textit{devices}}\textsf{, and they usually match physical
+
+The leaves of the tree are called
+\textit{devices}, and they usually match physical
 devices in the robot: motors, sensors, lights, camera, etc. Inside
 URBI, the various objects corresponding to the tree components are
 accessed by following the path of objects inclusions, like in the
-example below (shortcuts will be described later):}}
+example below (shortcuts will be described later):
 
 {
 body.legR.hip.tilt}
@@ -146,8 +146,6 @@ In many cases, it will be necessary to refer to an absolute frame of
 reference attached to the robot body. To avoid ambiguities, the
 standard frame of reference will have the following definition:
 
-
-
 \begin{figure}
 \centering
  [Warning: Image ignored] % Unhandled or unsupported graphics:
@@ -155,54 +153,45 @@ standard frame of reference will have the following definition:
 
 \end{figure}
 
-\begin{itemize}
-\item {
-\textsf{\textbf{Origin}}\textsf{: the center of mass of the robot}}
-\end{itemize}
-\begin{itemize}
-\item {
-\textsf{\textbf{X axis}}\textsf{: oriented towards the front of the
+\begin{description}
+\item[Origin] the center of mass of the robot
+\item[X axis] oriented towards the front of the
 robot. If there is a camera, the front is defined by the default
 direction of the camera, otherwise the front will be seen as the
 natural frontal orientation for a mobile robot (the direction of
 “forward” movement). If the robot is not naturally oriented, the X axis
 will be chosen to match the main axis of symmetry of the robot body and
 it will be oriented towards the smallest side, typically the top of a
-cone for example. }\textsf{In case of a perfectly symmetrical body, the
+cone for example. In case of a perfectly symmetrical body, the
 X axis can be chosen arbitrarily but a clear mark should be made
-visible on the robot body to indicate it.}}
-\end{itemize}
-\begin{itemize}
-\item {
-\textsf{\textbf{Z axis}}\textsf{: oriented in the opposite direction
+visible on the robot body to indicate it.
+\item[Z axis] oriented in the opposite direction
 from the gravity. If there is no gravity or natural up/down orientation
 in the environment or normal operation mode of the robot, the Z axis
 should be chosen in the direction of the main axis of symmetry in the
 orthogonal plane defined by the X axis, oriented towards the smallest
 side. In case of a perfectly symmetrical plane, the Z axis can be
 chosen arbitrarily but a clear mark should be made visible on the robot
-body to indicate it.}}
-\end{itemize}
-\begin{itemize}
-\item {
-\textsf{\textbf{Y axis}}\textsf{: oriented to make a right-handed
-coordinate system. }}
-\end{itemize}
+body to indicate it.
+\item[Y axis] oriented to make a right-handed
+coordinate system.
+\end{description}
+
 
 The axes are oriented in a counter-clockwise direction, as depicted in
 the illustration above.
 
 \section{Component naming}
-{
-\textsf{The name of a component A, which is a sub-component of component
+
+The name of a component A, which is a sub-component of component
 B, is divided into two parts: the generic designation of a subpart of
 the kinematics chain (like ‘leg’, ‘head’, ‘finger’) that A is referring
 to, and optionally some topological disambiguator relative to its
 position within the component B it belongs to. For example, when there
 are two legs, we need to differentiate between the right and left leg,
 relative to the body component they belong to. The first part is called
-the }\textsf{\textit{designation}}\textsf{, and the second optional
-part is called the }\textsf{\textit{localization}}\textsf{.}}
+the \textit{designation}, and the second optional
+part is called the \textit{localization}.
 
 \paragraph{Designation}
 
@@ -222,31 +211,29 @@ the industry.
 
 \paragraph{Localization }
 
-{
-\textsf{Localization is necessary when there are two identical
+Localization is necessary when there are two identical
 sub-components A1 and A2 belonging to the same component B, like for
 example two legs or two arms attached to the main body. Usually this
 can be sorted out with simple geometric qualifiers like
-}\textsf{\textit{Right/Center/Left}}\textsf{,
-}\textsf{\textit{Front/Middle/Back}}\textsf{ or
-}\textsf{\textit{Up}}\textsf{\textit{/In-between/Down}}\textsf{. The
+\textit{Right/Center/Left},
+\textit{Front/Middle/Back} or
+\textit{Up}\textit{/In-between/Down}. The
 naming convention is to use the first letter of the geometric
-characteristic, like }R\textsf{ for Right, }I\textsf{ for In-between.
+characteristic, like R for Right, I for In-between.
 Note that “right” or “front” are understood here from the point of view
 of a man standing and looking in the direction of the X-axis of the
 robot, and
-}\textsf{\textit{Up}}\textsf{/}\textsf{\textit{Down}}\textsf{ matches
-the Z-axis, as depicted in the figure below:}}
+\textit{Up}/\textit{Down} matches
+the Z-axis, as depicted in the figure below:
 
 {\centering [Warning: Draw object ignored][Warning: Draw object
 ignored]\par}
 
-{
-\textsf{Several geometric qualifiers can be used at the same time to
+Several geometric qualifiers can be used at the same time to
 further refine the position. As a convention, side information comes
-first (}R\textsf{/}C\textsf{/}L\textsf{), followed by the depth
-information (}F\textsf{/}M\textsf{/}H\textsf{) and then the height
-information (}U\textsf{/}I\textsf{/}D\textsf{). }}
+first (R/C/L), followed by the depth
+information (F/M/H) and then the height
+information (U/I/D).
 
 
 You can further qualify a side+depth localization with an additional R/L
@@ -439,8 +426,8 @@ force applied on a linear motor.\\\hline
 \end{supertabular}
 \end{flushleft}
 {
-     \textsf{\textbf{\textit{rotationalMotor}}}
-\textsf{\textit{subclass of motor}}}
+     \textbf{\textit{rotationalMotor}}
+\textit{subclass of motor}}
 
 
 This facet is used to describe a rotational motor controller.
@@ -657,16 +644,16 @@ width &
 \sffamily Width of the image in the current
 resolution, expressed in pixels\\\hline
 shutter &
-\textsf{The shutter speed }\textsf{(expressed
-in ms). 0 if non applicable.}\\\hline
+The shutter speed (expressed
+in ms). 0 if non applicable.\\\hline
 wb &
-\textsf{White balance }\textsf{(expressed with
+White balance (expressed with
 an integer value depending on the camera documentation). 0 if non
-applicable.}\\\hline
+applicable.\\\hline
 gain &
-\textsf{Camera gain amplification
-}\textsf{(expressed as a coefficient between 0 and infinity). 1 if non
-applicable}\textsf{\textit{.}}\\\hline
+Camera gain amplification
+(expressed as a coefficient between 0 and infinity). 1 if non
+applicable.\\\hline
 resolution &
  Can be used to specify a given
 resolution, expressed as a percentage of the maximal resolution of the
@@ -708,9 +695,9 @@ there is not much sense in reading the content of this attribute. At
 best, it returns the remaining sound to be played if it is not over
 yet, but this is not a requirement.\\\hline
 remain &
-\textsf{The amount of time remaining to play in
-the speaker sound buffer (expressed in }\textsf{\textit{ms}}\textsf{ as
-a default unit).}\\\hline
+The amount of time remaining to play in
+the speaker sound buffer (expressed in \textit{ms} as
+a default unit).\\\hline
 playing &
 \sffamily This is a boolean value which is true
 when there is a sound currently playing (the buffer is not
@@ -746,14 +733,14 @@ val &
 sound heard, expressed in the current unit (wav, mp3...). The unit can
 be changed like any other regular unit in Urbi.
 
-\textsf{The content is the sound heard by the
-microphone since the last }update\textsf{ event.}\\\hline
+The content is the sound heard by the
+microphone since the last update event.\\\hline
 duration &
-\textsf{Amount of sound in the }val\textsf{
-attribute, expressed in }\textsf{\textit{ms}}\textsf{.}\\\hline
+Amount of sound in the val
+attribute, expressed in \textit{ms}.\\\hline
 gain &
-\textsf{Microphone gain amplification
-}\textsf{\textit{(expressed between 0 and 1)}}\\\hline
+Microphone gain amplification
+(expressed between 0 and 1)\\\hline
 \end{supertabular}
 \end{flushleft}
 \begin{flushleft}
@@ -790,11 +777,11 @@ ratio &
 \sffamily The size of the blob expressed as a
 normalized image size: 1 = full image, 0 = nothing.\\\hline
 visible &
-\textsf{A boolean expressing whether there is a
-blob in the image or not (see }threshold\textsf{)}\\\hline
+A Boolean expressing whether there is a
+blob in the image or not (see threshold)\\\hline
 threshold &
-\textsf{The minimum value of }ratio\textsf{ to
-decide that the blob is }visible\textsf{.}\\\hline
+The minimum value of ratio to
+decide that the blob is visible.\\\hline
 orientation &
 \sffamily Angle of the main ellipsoid axis of
 the blog (0 = horizontal), expressed in degrees.\\\hline
@@ -939,8 +926,8 @@ Then for each component that is described in terms of yaw/pitch/roll
 sub-decomposition, the association will be as follow:
 
 {
-\textsf{\textbf{ yaw}}\textsf{ : rotational articulation around the Z
-axis in the robot.}}
+\textbf{ yaw} : rotational articulation around the Z
+axis in the robot.}
 
 
 \textbf{ pitch} : rotational articulation around the Y axis in the
