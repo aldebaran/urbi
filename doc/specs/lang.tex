@@ -1794,6 +1794,8 @@ not be reached unless you \lstinline'break' out of it.  You may use
 following iteration is not immediately started, it will be launched as
 expected, at the given period.
 
+% We used to use 100ms instead of 1s, but severely loaded machines
+% (the Mac Mini) fail way too often.
 \begin{urbiscript}[firstnumber=last]
 {
   var count = 4;
