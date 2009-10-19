@@ -12,6 +12,8 @@
   \end{flushleft}%
 }
 
+\newcommand{\optSlot}[1]{\textcolor{gray}{[#1]}}
+
 \chapter{\urbi Ready™-Certification Standard}
 
 \begin{center}
@@ -306,26 +308,17 @@ more specific slot describing the motor position, like
 is mandatory in the Urbi Ready standard as a universal proxy to control
 an actuator. The more specific slot is described in a subclass of
 \texttt{motor}.\\\hline
-PGain &
+\optSlot{PGain} &
 Controls the P gain of the PID
 controller.\\\hline
-IGain &
+\optSlot{IGain} &
 Controls the I gain of the PID
 controller.\\\hline
-DGain &
+\optSlot{DGain} &
 Controls the D gain of the PID
 controller.\\\hline
 \end{slots}
 
-
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
-\hhline{-~}
- &
-Optional slot.\\\hhline{-~}
-\end{supertabular}
-\end{flushleft}
 \paragraph{ linearMotor  \textmd{subclass of motor}}
 
 
@@ -505,18 +498,18 @@ resolution, expressed in pixels\\\hline
 width &
 Width of the image in the current
 resolution, expressed in pixels\\\hline
-shutter &
+\optSlot{shutter} &
 The shutter speed (expressed
 in ms). 0 if non applicable.\\\hline
-wb &
+\optSlot{wb} &
 White balance (expressed with
 an integer value depending on the camera documentation). 0 if non
 applicable.\\\hline
-gain &
+\optSlot{gain} &
 Camera gain amplification
 (expressed as a coefficient between 0 and infinity). 1 if non
 applicable.\\\hline
-resolution &
+\optSlot{resolution} &
  Can be used to specify a given
 resolution, expressed as a percentage of the maximal resolution of the
 camera (number between 0 and 1). 1 if non applicable.
@@ -526,21 +519,9 @@ resolution in X/Y can be checked with the width and height
 slots.\\\hline
 \end{slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
-\hhline{-~}
- &
-Optional slot.\\\hhline{-~}
-\end{supertabular}
-\end{flushleft}
 \paragraph{audioout}
-
-
 The audioout facet groups every information relative to speakers.
-
 \subparagraph{Slots}
-
 \begin{slots}
 val &
  The speaker value, expressed as a
@@ -559,19 +540,11 @@ playing &
 This is a boolean value which is true
 when there is a sound currently playing (the buffer is not
 empty)\\\hline
-volume &
+\optSlot{volume} &
 Volume of the play back, in
 decibels.\\\hline
 \end{slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
-\hhline{-~}
- &
-Optional slot.\\\hhline{-~}
-\end{supertabular}
-\end{flushleft}
 
 
 \paragraph{audioin}
@@ -591,19 +564,10 @@ microphone since the last update event.\\\hline
 duration &
 Amount of sound in the val
 attribute, expressed in \textit{ms}.\\\hline
-gain &
+\optSlot{gain} &
 Microphone gain amplification
 (expressed between 0 and 1)\\\hline
 \end{slots}
-
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
-\hhline{-~}
- &
-Optional slot.\\\hhline{-~}
-\end{supertabular}
-\end{flushleft}
 
 
 \paragraph{blobDetector}
@@ -631,25 +595,15 @@ blob in the image or not (see threshold)\\\hline
 threshold &
 The minimum value of ratio to
 decide that the blob is visible.\\\hline
-orientation &
+\optSlot{orientation} &
 Angle of the main ellipsoid axis of
 the blog (0 = horizontal), expressed in degrees.\\\hline
-elongation &
+\optSlot{elongation} &
 Ratio between the main and the second
 diameter of the blob enveloping ellipse.\\\hline
 \end{slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
-\hhline{-~}
- &
-Optional slot.\\\hhline{-~}
-\end{supertabular}
-\end{flushleft}
 \paragraph{textToSpeech}
-
-
 Text to speech allows to read text using a speech synthetizor. Default
 implementations should use the \texttt{speaker} component (or alias) as
 their default sound output.
@@ -657,45 +611,36 @@ their default sound output.
 \subparagraph{Slots}
 
 \begin{slots}
-lang &
+\optSlot{lang} &
 The language used, in international
 notation (fr, en, it…): ISO 639\\\hline
-speed &
+\optSlot{speed} &
 How fast the voice should go, between
 0 and 1.\\\hline
-pitch &
+\optSlot{pitch} &
 Voice pitch, between 0 and 1.\\\hline
-gender &
+\optSlot{gender} &
 Gender of the speaker
 (0:male/1:female)\\\hline
-age &
+\optSlot{age} &
 Age of the speaker, if
 applicable\\\hline
-name &
+\optSlot{name} &
 Most TTS engine will propose several
 voices, this attributes allows picking one. It’s a string identifier
 specific to the TTS developer.\\\hline
 say(s) &
 Speak the sentence given in parameter
 \var{s}.\\\hline
-voicexml(s) &
+\optSlot{voicexml(s)} &
 Speak the text
 \var{s} expressed as a VoiceXML
 string.\\\hline
-script(s) &
+\optSlot{script(s)} &
 Speak the text
 \var{s} augmented by script markups (see
 specific Gostai documentation) to generate \urbi events.\\\hline
 \end{slots}
-
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
-\hhline{-~}
- &
-Optional slot.\\\hhline{-~}
-\end{supertabular}
-\end{flushleft}
 
 
 \paragraph{speechRecognizer}
@@ -708,19 +653,11 @@ sound input.
 \subparagraph{Slots}
 
 \begin{slots}
-lang &
+\optSlot{lang} &
 The language used, in international
 notation (fr, en, it…): ISO 639\\\hline
 \end{slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{1.717cm}|m{10.464cm}}
-\hhline{-~}
- &
-Optional slot.\\\hhline{-~}
-\end{supertabular}
-\end{flushleft}
 \subparagraph{Events}
 
 \begin{slots}
