@@ -24,43 +24,6 @@
 \makeatletter
 \newcommand\arraybslash{\let\\\@arraycr}
 \makeatother
-% List styles
-\newcommand\liststyleWWviiiNumxi{%
-\renewcommand\labelitemi{[F0B7?]}
-\renewcommand\labelitemii{o}
-\renewcommand\labelitemiii{[F0A7?]}
-\renewcommand\labelitemiv{[F0B7?]}
-}
-\newcommand\liststyleLi{%
-\renewcommand\theenumi{\arabic{enumi}}
-\renewcommand\theenumii{\arabic{enumii}}
-\renewcommand\theenumiii{\arabic{enumiii}}
-\renewcommand\theenumiv{\arabic{enumiv}}
-\renewcommand\labelenumi{\theenumi.}
-\renewcommand\labelenumii{\theenumii.}
-\renewcommand\labelenumiii{\theenumiii.}
-\renewcommand\labelenumiv{\theenumiv.}
-}
-\newcommand\liststyleLii{%
-\renewcommand\theenumi{\arabic{enumi}}
-\renewcommand\theenumii{\arabic{enumii}}
-\renewcommand\theenumiii{\arabic{enumiii}}
-\renewcommand\theenumiv{\arabic{enumiv}}
-\renewcommand\labelenumi{\theenumi.}
-\renewcommand\labelenumii{\theenumii.}
-\renewcommand\labelenumiii{\theenumiii.}
-\renewcommand\labelenumiv{\theenumiv.}
-}
-\newcommand\liststyleLiii{%
-\renewcommand\theenumi{\arabic{enumi}}
-\renewcommand\theenumii{\arabic{enumii}}
-\renewcommand\theenumiii{\arabic{enumiii}}
-\renewcommand\theenumiv{\arabic{enumiv}}
-\renewcommand\labelenumi{\theenumi.}
-\renewcommand\labelenumii{\theenumii.}
-\renewcommand\labelenumiii{\theenumiii.}
-\renewcommand\labelenumiv{\theenumiv.}
-}
 % Page layout (geometry)
 \setlength\voffset{-1in}
 \setlength\hoffset{-1in}
@@ -217,12 +180,11 @@ standard frame of reference will have the following definition:}
 %%\includegraphics[width=7.458cm,height=7.1cm]{}
 
 \end{figure}
-\liststyleWWviiiNumxi
+
 \begin{itemize}
 \item {
 \textsf{\textbf{Origin}}\textsf{: the center of mass of the robot}}
 \end{itemize}
-\liststyleWWviiiNumxi
 \begin{itemize}
 \item {
 \textsf{\textbf{X axis}}\textsf{: oriented towards the front of the
@@ -236,7 +198,6 @@ cone for example. }\textsf{In case of a perfectly symmetrical body, the
 X axis can be chosen arbitrarily but a clear mark should be made
 visible on the robot body to indicate it.}}
 \end{itemize}
-\liststyleWWviiiNumxi
 \begin{itemize}
 \item {
 \textsf{\textbf{Z axis}}\textsf{: oriented in the opposite direction
@@ -248,7 +209,6 @@ side. In case of a perfectly symmetrical plane, the Z axis can be
 chosen arbitrarily but a clear mark should be made visible on the robot
 body to indicate it.}}
 \end{itemize}
-\liststyleWWviiiNumxi
 \begin{itemize}
 \item {
 \textsf{\textbf{Y axis}}\textsf{: oriented to make a right-handed
@@ -1376,7 +1336,7 @@ in Java-style notation.}
 {\sffamily
 Example 1: \texttt{robot.body.armL.hand.fingerR}}
 
-\liststyleLi
+
 \begin{enumerate}
 \item {\sffamily
 Move all localization at the end: \texttt{robot.body.arm.hand.fingerLR}}
@@ -1393,7 +1353,7 @@ The result is \texttt{fingerLR}}
 {\sffamily
 Example 2: \texttt{robot.body.head.yaw}}
 
-\liststyleLii
+
 \begin{enumerate}
 \item {\sffamily
 No localization to move}
@@ -1409,7 +1369,7 @@ The result is \texttt{headYaw}}
 {\sffamily
 Example 3: \texttt{robot.body.legL.knee.pitch}}
 
-\liststyleLiii
+
 \begin{enumerate}
 \item {\sffamily
 Move all localization at the end: \texttt{robot.body.leg.knee.pitchL}}
