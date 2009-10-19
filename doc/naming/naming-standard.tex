@@ -1,5 +1,6 @@
-\newenvironment{slots}
+\newenvironment{slots}[1][Slots]
 {%
+  \subparagraph{#1}%
   \begin{flushleft}%
     \tablehead{}%
     \begin{supertabular}{|m{2.8669999cm}|m{12.472cm}|}%
@@ -257,8 +258,6 @@ robot.
 
 Contains information about the robot identity.
 
-\subparagraph{Slots}
-
 \begin{slots}
 type &
 This describes the robot category
@@ -279,8 +278,6 @@ Serial number (if available).\\\hline
 
 Contains information about the network identification of the robot.
 
-\subparagraph{Slots}
-
 \begin{slots}
 IP &
 IP address of the robot.\\\hline
@@ -297,8 +294,6 @@ bandwidth.\\\hline
 \paragraph{motor}
 
 This facet is used to describe a generic motor controller.
-
-\subparagraph{Slots}
 
 \begin{slots}
 val &
@@ -324,8 +319,6 @@ controller.\\\hline
 
 This facet is used to describe a linear motor controller.
 
-\subparagraph{Slots}
-
 \begin{slots}
 position &
 Position of the motor in centimeters.
@@ -340,8 +333,6 @@ force applied on a linear motor.\\\hline
 
 
 This facet is used to describe a rotational motor controller.
-
-\subparagraph{Slots}
 
 \begin{slots}
 angle &
@@ -360,8 +351,6 @@ torque applied on the motor.\\\hline
 
 This facet is used to describe a generic sensor.
 
-\subparagraph{Slots}
-
 \begin{slots}
 val &
 This slot is a generic pointer to a
@@ -378,8 +367,6 @@ sensor. The more specific slot is described in a subclass of
 This facet is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
 
-\subparagraph{Slots}
-
 \begin{slots}
 distance &
 Measured distance expressed in meters.
@@ -391,8 +378,6 @@ Pointed to by the \texttt{val} slot.\\\hline
 
 This facet is used to describe a touch pressure sensor (contact,
 induction,...).
-
-\subparagraph{Slots}
 
 \begin{slots}
 pressure &
@@ -406,8 +391,6 @@ units. Pointed to by the \texttt{val} slot.\\\hline
 
 This facet is used to describe an accelerometer.
 
-\subparagraph{Slots}
-
 \begin{slots}
 acceleration &
 Acceleration expressed in m/s2.
@@ -417,8 +400,6 @@ Pointed to by the \texttt{val} slot.\\\hline
 \paragraph{gyroSensor  \textmd{subclass of sensor}}
 
 This facet is used to describe an gyrometer.
-
-\subparagraph{Slots}
 
 \begin{slots}
 acceleration &
@@ -431,8 +412,6 @@ Pointed to by the \texttt{val} slot.\\\hline
 
 This facet is used to describe a temperature sensor.
 
-\subparagraph{Slots}
-
 \begin{slots}
 temperature &
 Measured temperature in Celsius degrees.
@@ -443,8 +422,6 @@ Pointed to by the \texttt{val} slot.\\\hline
 
 Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
-
-\subparagraph{Slots}
 
 \begin{slots}
 go(x) &
@@ -463,8 +440,6 @@ for many applications. In that case, this facet abstracts how such
 motion can be achieved, whether it is done with a pan/tilt camera or
 with whole body motion or a combination of both.
 
-\subparagraph{Slots}
-
 \begin{slots}
 yaw &
 Rotational articulation around the Z
@@ -478,8 +453,6 @@ axis in the robot, expressed in degrees.\\\hline
 
 The videoin facet groups every information relative to cameras or any
 image sensor.
-
-\subparagraph{Slots}
 
 \begin{slots}
 val &
@@ -521,7 +494,7 @@ slots.\\\hline
 
 \paragraph{audioout}
 The audioout facet groups every information relative to speakers.
-\subparagraph{Slots}
+
 \begin{slots}
 val &
  The speaker value, expressed as a
@@ -551,8 +524,6 @@ decibels.\\\hline
 
 The audioin facet groups every information relative to microphones.
 
-\subparagraph{Slots}
-
 \begin{slots}
 val &
  Binary value corresponding to the
@@ -576,8 +547,6 @@ Ball detectors, marker detectors and various feature-based detectors
 should all share a similar interface. They extract a part of the image
 that fits some criteria and define a “blob” accordingly. Here are the
 typical slots expected:
-
-\subparagraph{Slots}
 
 \begin{slots}
 x &
@@ -607,8 +576,6 @@ diameter of the blob enveloping ellipse.\\\hline
 Text to speech allows to read text using a speech synthetizor. Default
 implementations should use the \texttt{speaker} component (or alias) as
 their default sound output.
-
-\subparagraph{Slots}
 
 \begin{slots}
 \optSlot{lang} &
@@ -650,22 +617,19 @@ using various speech recognition algorithms. Default implementations
 should use the \texttt{micro} component (or alias) as their default
 sound input.
 
-\subparagraph{Slots}
-
 \begin{slots}
 \optSlot{lang} &
 The language used, in international
 notation (fr, en, it…): ISO 639\\\hline
 \end{slots}
 
-\subparagraph{Events}
-
-\begin{slots}
+\begin{slots}[Events]
 hear(s) &
 This event has one parameter which is
 the string describing what the speech engine has recognized (can be a
 word or a sentence).\\\hline
 \end{slots}
+
 \section{Standard Components}
 
 Standard components correspond to components typically found in wheeled
