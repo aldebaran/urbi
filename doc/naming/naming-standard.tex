@@ -92,12 +92,12 @@ standard@gostai.com
 
 
 Any implementation of an URBI server must comply with the latest version
-of this standard to get the {\textquotedbl}URBI ready{\textquotedbl}
+of this standard to get the ``URBI ready''
 certification from Gostai S.A.S.
 
 
 Gostai S.A.S. is currently the only authority which has the ability to
-deliver an {\textquotedbl}URBI Ready{\textquotedbl} certification.
+deliver an ``URBI Ready'' certification.
 
 {
 “URBI Ready” and the associated logo are trademarks of Gostai S.A.S. and
@@ -521,7 +521,7 @@ This facet is used to describe a temperature sensor.
 
 \begin{slots}
 temperature &
-Measured temperature in C° degrees.
+Measured temperature in Celsius degrees.
 Pointed to by the \texttt{val} slot.\\\hline
 \end{slots}
 
@@ -756,14 +756,14 @@ voices, this attributes allows picking one. It’s a string identifier
 specific to the TTS developer.\\\hline
 say(s) &
 Speak the sentence given in parameter
-{\textquotesingle}s{\textquotesingle}.\\\hline
+\var{s}.\\\hline
 voicexml(s) &
 Speak the text
-{\textquotesingle}s{\textquotesingle} expressed as a VoiceXML
+\var{s} expressed as a VoiceXML
 string.\\\hline
 script(s) &
 Speak the text
-{\textquotesingle}s{\textquotesingle} augmented by script markups (see
+\var{s} augmented by script markups (see
 specific Gostai documentation) to generate URBI events.\\\hline
 \end{slots}
 
