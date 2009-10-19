@@ -581,13 +581,13 @@ image sensor.
 
   \slot{resolution}%
   {%
-    Can be used to specify a given
-resolution, expressed as a percentage of the maximal resolution of the
-camera (number between 0 and 1). 1 if non applicable.
+    Can be used to specify a given resolution, expressed as a
+    percentage of the maximal resolution of the camera (number between
+    0 and 1). 1 if non applicable.
 
-Once modified, the effective resolution in X/Y can be checked with the
-width and height slots.%
-}
+    Once modified, the effective resolution in X/Y can be checked with
+    the width and height slots.%
+  }
 
 \end{slots}
 
@@ -597,32 +597,31 @@ The audioout facet groups every information relative to speakers.
 \begin{slots}
   \slot{val}%
   {%
-    The speaker value, expressed as a
-binary, in the format given by the binary header during the
-assignment.
+    The speaker value, expressed as a binary, in the format given by
+    the binary header during the assignment.
 
-Speakers are write-only devices, so there is not much sense in reading
-the content of this attribute. At best, it returns the remaining sound
-to be played if it is not over yet, but this is not a requirement.%
-}
+    Speakers are write-only devices, so there is not much sense in
+    reading the content of this attribute. At best, it returns the
+    remaining sound to be played if it is not over yet, but this is
+    not a requirement.%
+  }
 
-\slot{remain}%
-{%
-  The amount of time remaining to play in the speaker sound buffer
-  (expressed in \textit{ms} as a default unit).%
-}
+  \slot{remain}%
+  {%
+    The amount of time remaining to play in the speaker sound buffer
+    (expressed in \textit{ms} as a default unit).%
+  }
 
-\slot{playing}%
-{%
-  This is a boolean value which is true when there is a sound
-  currently playing (the buffer is not empty)%
-}
+  \slot{playing}%
+  {%
+    This is a boolean value which is true when there is a sound
+    currently playing (the buffer is not empty)%
+  }
 
-\slot{volume}%
-{%
-  Volume of the play back, in decibels.%
-}
-
+  \slot{volume}%
+  {%
+    Volume of the play back, in decibels.%
+  }
 \end{slots}
 
 
@@ -634,24 +633,23 @@ The audioin facet groups every information relative to microphones.
 \begin{slots}
   \slot{val}%
   {%
-    Binary value corresponding to the
-sound heard, expressed in the current unit (wav, mp3...). The unit can
-be changed like any other regular unit in Urbi.
+    Binary value corresponding to the sound heard, expressed in the
+    current unit (wav, mp3...). The unit can be changed like any other
+    regular unit in Urbi.
 
-The content is the sound heard by the microphone since the last update
-event.%
-}
+    The content is the sound heard by the microphone since the last
+    update event.%
+  }
 
-\slot{duration}%
-{%
-  Amount of sound in the val attribute, expressed in \textit{ms}.%
-}
+  \slot{duration}%
+  {%
+    Amount of sound in the val attribute, expressed in \textit{ms}.%
+  }
 
-\slot{gain}%
-{%
-  Microphone gain amplification (expressed between 0 and 1)%
-}
-
+  \slot{gain}%
+  {%
+    Microphone gain amplification (expressed between 0 and 1)%
+  }
 \end{slots}
 
 
@@ -775,7 +773,6 @@ sound input.
     The language used, in international notation (fr, en, it…): ISO
     639%
   }
-
 \end{slots}
 
 \begin{slots}[Events]
@@ -784,7 +781,6 @@ sound input.
     This event has one parameter which is the string describing what
     the speech engine has recognized (can be a word or a sentence).%
   }
-
 \end{slots}
 
 \section{Standard Components}
@@ -1140,8 +1136,6 @@ in Java-style notation.}
 
 
 Example 1: \texttt{robot.body.armL.hand.fingerR}
-
-
 \begin{enumerate}
 \item
 Move all localization at the end: \texttt{robot.body.arm.hand.fingerLR}
@@ -1157,8 +1151,6 @@ The result is \texttt{fingerLR}
 \end{enumerate}
 
 Example 2: \texttt{robot.body.head.yaw}
-
-
 \begin{enumerate}
 \item
 No localization to move
@@ -1173,8 +1165,6 @@ The result is \texttt{headYaw}
 \end{enumerate}
 
 Example 3: \texttt{robot.body.legL.knee.pitch}
-
-
 \begin{enumerate}
 \item
 Move all localization at the end: \texttt{robot.body.leg.knee.pitchL}
