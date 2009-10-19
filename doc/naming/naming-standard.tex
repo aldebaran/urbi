@@ -67,17 +67,12 @@ devices in the robot: motors, sensors, lights, camera, etc. Inside
 accessed by following the path of objects inclusions, like in the
 example below (shortcuts will be described later):
 
-{
-body.legR.hip.tilt}
-
-{
-body.legL.knee.led}
-
-{
-body.legL.hip}
-
-{
-…}
+\begin{urbifixme}
+body.legR.hip.tilt;
+body.legL.knee.led;
+body.legL.hip;
+// ...
+\end{urbifixme}
 
 
 The structure tree should not be mistaken for a representation of the
@@ -224,23 +219,14 @@ available in each of the three directions.
 
 Examples of component names including localization:
 
-{
-legR, legL, armR, armL}
-
-{
-fingerR, fingerC, fingerL // three fingers hand}
-
-{
-joint[0], joint[1] … joint[5] // from tail}
-
-{
-touch[478][124] // from skin}
-
-{
-accelX, accelY, accelZ // typical accelerometer}
-
-{
-gyroX, gyroY, gyroZ // tpycial gyro sensor}
+\begin{urbifixme}
+legR, legL, armR, armL;
+fingerR, fingerC, fingerL;      // three fingers hand
+joint[0], joint[1] ... joint[5] // from tail
+touch[478][124]                 // from skin
+accelX, accelY, accelZ;         // typical accelerometer
+gyroX, gyroY, gyroZ;            // typical gyro sensor
+\end{urbifixme}
 
 \section{Facets}
 
@@ -266,7 +252,6 @@ completely different implementation with a humanoid robot and a wheeled
 robot.
 
 \paragraph{identity}
-
 
 Contains information about the robot identity.
 
