@@ -21,6 +21,18 @@
   \end{flushleft}%
 }
 
+\newcommand{\refFacet}[2][]%
+  {\hyperref[sec:facet:#2]{\lstinline|#2|#1 (\autoref*{sec:facet:#2})}}
+
+\newcommand{\facet}[2][]{%
+  \ifthenelse{\equal{#1}{}}{%
+    \subsection{#2}%
+  }{%
+    \subsection{#2 (subclass of #1)}%
+  }%
+  \label{sec:facet:#2}
+}
+
 
 \chapter{\urbi Ready™-Certification Standard}
 
@@ -261,7 +273,7 @@ robot that uses them, for example the “mobile” facet will have a
 completely different implementation with a humanoid robot and a wheeled
 robot.
 
-\paragraph{identity}
+\facet{identity}
 
 Contains information about the robot identity.
 
@@ -292,7 +304,7 @@ Contains information about the robot identity.
 \end{slots}
 
 
-\paragraph{network}
+\facet{network}
 
 Contains information about the network identification of the robot.
 
@@ -319,7 +331,7 @@ Contains information about the network identification of the robot.
 
 \end{slots}
 
-\paragraph{motor}
+\facet{motor}
 
 This facet is used to describe a generic motor controller.
 
@@ -350,7 +362,7 @@ This facet is used to describe a generic motor controller.
 
 \end{slots}
 
-\paragraph{ linearMotor  \textmd{subclass of motor}}
+\facet[motor]{linearMotor}
 
 
 This facet is used to describe a linear motor controller.
@@ -370,7 +382,7 @@ This facet is used to describe a linear motor controller.
 
 \end{slots}
 
-\paragraph{rotationalMotor \textmd{subclass of motor}}
+\facet[motor]{rotationalMotor}
 
 
 This facet is used to describe a rotational motor controller.
@@ -397,7 +409,7 @@ This facet is used to describe a rotational motor controller.
 \end{slots}
 
 
-\paragraph{sensor}
+\facet{sensor}
 
 This facet is used to describe a generic sensor.
 
@@ -414,7 +426,7 @@ This facet is used to describe a generic sensor.
 \end{slots}
 
 
-\paragraph{ distanceSensor  \textmd{subclass of sensor}}
+\facet[sensor]{distanceSensor}
 
 This facet is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
@@ -429,7 +441,7 @@ ultrasonic...).
 \end{slots}
 
 
-\paragraph{ touchSensor  \textmd{subclass of sensor}}
+\facet[sensor]{touchSensor}
 
 This facet is used to describe a touch pressure sensor (contact,
 induction,...).
@@ -445,7 +457,7 @@ induction,...).
 \end{slots}
 
 
-\paragraph{ accelerationSensor  \textmd{subclass of sensor}}
+\facet[sensor]{accelerationSensor}
 
 This facet is used to describe an accelerometer.
 
@@ -458,8 +470,7 @@ This facet is used to describe an accelerometer.
 
 \end{slots}
 
-\paragraph{gyroSensor  \textmd{subclass of sensor}}
-
+\facet[sensor]{gyroSensor}
 This facet is used to describe an gyrometer.
 
 \begin{slots}
@@ -471,9 +482,7 @@ This facet is used to describe an gyrometer.
 
 \end{slots}
 
-\paragraph{ temperatureSensor  \textmd{subclass of sensor}}
-
-
+\facet[sensor]{temperatureSensor}
 This facet is used to describe a temperature sensor.
 
 \begin{slots}
@@ -485,7 +494,7 @@ This facet is used to describe a temperature sensor.
 
 \end{slots}
 
-\paragraph{mobile}
+\facet{mobile}
 
 Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
@@ -505,7 +514,7 @@ level motion control capabilities.
 
 \end{slots}
 
-\paragraph{tracker}
+\facet{tracker}
 
 Camera-equipped robots can sometimes move the orientation of the field
 of view horizontally and vertically, which is a very important feature
@@ -528,7 +537,7 @@ with whole body motion or a combination of both.
 
 \end{slots}
 
-\paragraph{videoin}
+\facet{videoin}
 
 The videoin facet groups every information relative to cameras or any
 image sensor.
@@ -591,7 +600,7 @@ image sensor.
 
 \end{slots}
 
-\paragraph{audioout}
+\facet{audioout}
 The audioout facet groups every information relative to speakers.
 
 \begin{slots}
@@ -626,7 +635,7 @@ The audioout facet groups every information relative to speakers.
 
 
 
-\paragraph{audioin}
+\facet{audioin}
 
 The audioin facet groups every information relative to microphones.
 
@@ -653,7 +662,7 @@ The audioin facet groups every information relative to microphones.
 \end{slots}
 
 
-\paragraph{blobDetector}
+\facet{blobDetector}
 
 Ball detectors, marker detectors and various feature-based detectors
 should all share a similar interface. They extract a part of the image
@@ -702,7 +711,7 @@ typical slots expected:
 
 \end{slots}
 
-\paragraph{textToSpeech}
+\facet{textToSpeech}
 Text to speech allows to read text using a speech synthetizor. Default
 implementations should use the \texttt{speaker} component (or alias) as
 their default sound output.
@@ -760,7 +769,7 @@ their default sound output.
 \end{slots}
 
 
-\paragraph{speechRecognizer}
+\facet{speechRecognizer}
 
 Speech recognition allows to transform a stream of sound into a text
 using various speech recognition algorithms. Default implementations
