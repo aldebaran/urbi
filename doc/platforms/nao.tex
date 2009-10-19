@@ -34,12 +34,12 @@ tts.say("Hello, I am Nao."),
 // Activate right arm.
 armR.load = 1;
 // Wave the arm: put it in position
-rShoulderRoll.val = -0.3 time: 0.5s |
-rShoulderPitch.val = -1 speed: 0.9 |
+shoulderRRoll.val = -0.3 time: 0.5s |
+shoulderRPitch.val = -1 speed: 0.9 |
 // Wave it
-timeout(6s) rShoulderRoll.val = -0.4 sin:2s ampli:0.4;
-// And put it back down.
-rShoulderPitch.val = 2 speed:0.9;
+timeout(6s) shoulderRRoll.val = -0.4 sin:2s ampli:0.4;
+// And put it back down, using the uncompressed name this time
+robot.body.armR.shoulder.pitch.val = 2 speed:0.9;
 // Activate all motors.
 motors.on;
 // Stand
