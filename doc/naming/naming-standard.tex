@@ -25,6 +25,22 @@
 \newcommand\arraybslash{\let\\\@arraycr}
 \makeatother
 
+
+\newenvironment{slots}
+{%
+  \begin{flushleft}%
+    \tablehead{}%
+    \begin{supertabular}{|m{2.8669999cm}|m{12.472cm}|}%
+      \hline%
+      \sffamily\bfseries Slot &%
+      \sffamily\bfseries Description\\\hline%
+    }
+    {%
+    \end{supertabular}%
+  \end{flushleft}%
+}
+
+
 \setlength\tabcolsep{1mm}
 \renewcommand\arraystretch{1.3}
 \title{ }
@@ -320,12 +336,7 @@ Contains information about the robot identity.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.8669999cm}|m{12.472cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 type &
 \sffamily This describes the robot category
 among: humanoid, fourlegged, wheeled, industrial arm. It gives a
@@ -338,21 +349,16 @@ model &
 \sffamily Model of the robot.\\\hline
 serial &
 \sffamily Serial number (if available).\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{network}
+\end{slots}
 
+
+\paragraph{network}
 
 Contains information about the network identification of the robot.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 IP &
 \sffamily IP address of the robot.\\\hline
 gateway &
@@ -363,21 +369,15 @@ latency.\\\hline
 bandwidth &
 \sffamily Measured average network
 bandwidth.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{motor}
+\end{slots}
 
+\paragraph{motor}
 
 This facet is used to describe a generic motor controller.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 val &
 \sffamily This slot is a generic pointer to a
 more specific slot describing the motor position, like
@@ -394,8 +394,9 @@ controller.\\\hline
 DGain &
 \sffamily Controls the D gain of the PID
 controller.\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
+
+
 \begin{flushleft}
 \tablehead{}
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
@@ -411,20 +412,14 @@ This facet is used to describe a linear motor controller.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 position &
 \sffamily Position of the motor in centimeters.
 Pointed to by the \texttt{val} slot.\\\hline
 force &
 \sffamily Intensity of the measured or estimated
 force applied on a linear motor.\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
 {
      \textbf{\textit{rotationalMotor}}
 \textit{subclass of motor}}
@@ -434,12 +429,7 @@ This facet is used to describe a rotational motor controller.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 angle &
 \sffamily Angle of the motor in degree, modulo
 360. Pointed to by the \texttt{val} slot.\\\hline
@@ -449,21 +439,16 @@ motor, expressed in number of turns.\\\hline
 torque &
 \sffamily Intensity of the measured or estimated
 torque applied on the motor.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{sensor}
+\end{slots}
 
+
+\paragraph{sensor}
 
 This facet is used to describe a generic sensor.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 val &
 \sffamily This slot is a generic pointer to a
 more specific slot describing the sensor value, like \texttt{distance}
@@ -471,83 +456,62 @@ or \texttt{temperature}, depending on the type of sensor. It is
 mandatory in the Urbi Ready standard as a universal proxy to read a
 sensor. The more specific slot is described in a subclass of
 \texttt{sensor}.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{ distanceSensor  \textmd{subclass of sensor}}
+\end{slots}
 
+
+\paragraph{ distanceSensor  \textmd{subclass of sensor}}
 
 This facet is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 distance &
 \sffamily Measured distance expressed in meters.
 Pointed to by the \texttt{val} slot.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{ touchSensor  \textmd{subclass of sensor}}
+\end{slots}
 
+
+\paragraph{ touchSensor  \textmd{subclass of sensor}}
 
 This facet is used to describe a touch pressure sensor (contact,
 induction,...).
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.8669999cm}|m{12.422cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 pressure &
 \sffamily Intensity of the pressure put on the
 touch sensor. Can be 0/1 for simple buttons or expressed in Pascal
 units. Pointed to by the \texttt{val} slot.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{ accelerationSensor  \textmd{subclass of sensor}}
+\end{slots}
 
+
+\paragraph{ accelerationSensor  \textmd{subclass of sensor}}
 
 This facet is used to describe an accelerometer.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.651cm}|m{11.639cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 acceleration &
 \sffamily Acceleration expressed in m/s2.
 Pointed to by the \texttt{val} slot.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{gyroSensor  \textmd{subclass of sensor}}
+\end{slots}
 
+\paragraph{gyroSensor  \textmd{subclass of sensor}}
 
 This facet is used to describe an gyrometer.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.651cm}|m{11.639cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 acceleration &
 \sffamily Acceleration expressed in rad/s2.
 Pointed to by the \texttt{val} slot.\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
+
 \paragraph{ temperatureSensor  \textmd{subclass of sensor}}
 
 
@@ -555,41 +519,29 @@ This facet is used to describe a temperature sensor.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{2.98cm}|m{12.31cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 temperature &
 \sffamily Measured temperature in C° degrees.
 Pointed to by the \texttt{val} slot.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{mobile}
+\end{slots}
 
+\paragraph{mobile}
 
 Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 go(x) &
 \sffamily Move approximatively x meters forward
 if x is positive, backward otherwise.\\\hline
 turn(x) &
 \sffamily Turn right approximatively x degrees.
 x can be a positive or negative value.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{tracker}
+\end{slots}
 
+\paragraph{tracker}
 
 Camera-equipped robots can sometimes move the orientation of the field
 of view horizontally and vertically, which is a very important feature
@@ -599,34 +551,23 @@ with whole body motion or a combination of both.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 yaw &
 \sffamily Rotational articulation around the Z
 axis in the robot, expressed in degrees.\\\hline
 pitch &
 \sffamily Rotational articulation around the Y
 axis in the robot, expressed in degrees.\\\hline
-\end{supertabular}
-\end{flushleft}
-\paragraph{videoin}
+\end{slots}
 
+\paragraph{videoin}
 
 The videoin facet groups every information relative to cameras or any
 image sensor.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 val &
 \sffamily Binary value corresponding to the
 image, expressed in the current unit (RGB, jpeg, YCrCb...). The unit
@@ -662,8 +603,8 @@ camera (number between 0 and 1). 1 if non applicable.
 \sffamily Once modified, the effective
 resolution in X/Y can be checked with the width and height
 slots.\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
+
 \begin{flushleft}
 \tablehead{}
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
@@ -679,12 +620,7 @@ The audioout facet groups every information relative to speakers.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 val &
  The speaker value, expressed as a
 binary, in the format given by the binary header during the
@@ -705,8 +641,8 @@ empty)\\\hline
 volume &
 \sffamily Volume of the play back, in
 decibels.\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
+
 \begin{flushleft}
 \tablehead{}
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
@@ -715,19 +651,15 @@ decibels.\\\hline
 Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-\paragraph{audioin}
 
+
+\paragraph{audioin}
 
 The audioin facet groups every information relative to microphones.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 val &
  Binary value corresponding to the
 sound heard, expressed in the current unit (wav, mp3...). The unit can
@@ -741,8 +673,8 @@ attribute, expressed in \textit{ms}.\\\hline
 gain &
 Microphone gain amplification
 (expressed between 0 and 1)\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
+
 \begin{flushleft}
 \tablehead{}
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
@@ -751,8 +683,9 @@ Microphone gain amplification
 \sffamily Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-\paragraph{blobDetector}
 
+
+\paragraph{blobDetector}
 
 Ball detectors, marker detectors and various feature-based detectors
 should all share a similar interface. They extract a part of the image
@@ -761,12 +694,7 @@ typical slots expected:
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 x &
 \sffamily The x position of the center of the
 blob in the image\\\hline
@@ -788,8 +716,8 @@ the blog (0 = horizontal), expressed in degrees.\\\hline
 elongation &
 \sffamily Ratio between the main and the second
 diameter of the blob enveloping ellipse.\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
+
 \begin{flushleft}
 \tablehead{}
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
@@ -807,12 +735,7 @@ their default sound output.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 lang &
 \sffamily The language used, in international
 notation (fr, en, it…): ISO 639\\\hline
@@ -842,8 +765,8 @@ script(s) &
 \sffamily Speak the text
 {\textquotesingle}s{\textquotesingle} augmented by script markups (see
 specific Gostai documentation) to generate URBI events.\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
+
 \begin{flushleft}
 \tablehead{}
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
@@ -852,8 +775,9 @@ specific Gostai documentation) to generate URBI events.\\\hline
 \sffamily Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-\paragraph{speechRecognizer}
 
+
+\paragraph{speechRecognizer}
 
 Speech recognition allows to transform a stream of sound into a text
 using various speech recognition algorithms. Default implementations
@@ -862,17 +786,12 @@ sound input.
 
 \subparagraph{Slots}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 lang &
 \sffamily The language used, in international
 notation (fr, en, it…): ISO 639\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
+
 \begin{flushleft}
 \tablehead{}
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
@@ -883,18 +802,12 @@ notation (fr, en, it…): ISO 639\\\hline
 \end{flushleft}
 \subparagraph{Events}
 
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{3.293cm}|m{11.997cm}|}
-\hline
-\sffamily\bfseries Slot &
-\sffamily\bfseries Description\\\hline
+\begin{slots}
 hear(s) &
 \sffamily This event has one parameter which is
 the string describing what the speech engine has recognized (can be a
 word or a sentence).\\\hline
-\end{supertabular}
-\end{flushleft}
+\end{slots}
 \section{Standard Components}
 
 Standard components correspond to components typically found in wheeled
@@ -1211,6 +1124,8 @@ voice &
 \ttfamily textToSpeech\\\hline
 \end{supertabular}
 \end{center}
+
+
 \section{Compact notation}
 
 Components are usually identified with their full-length name, which is
