@@ -32,8 +32,8 @@
     \tablehead{}%
     \begin{supertabular}{|m{2.8669999cm}|m{12.472cm}|}%
       \hline%
-      \sffamily\bfseries Slot &%
-      \sffamily\bfseries Description\\\hline%
+      \bfseries Slot &%
+      \bfseries Description\\\hline%
     }
     {%
     \end{supertabular}%
@@ -64,11 +64,11 @@ Certification Standard}}}
 \textsf{\textit{Version 1.0}}  \textsf{\textit{March 2008}}
 \par}
 
-{\centering\sffamily
+{\centering
 Copyright © Gostai S.A.S
 \par}
 
-{\centering\sffamily
+{\centering
 2006-2008
 \par}
 
@@ -86,7 +86,7 @@ will be updated accordingly. Please contact us directly, should you be
 working on a component not described or closely related to one
 described here:
 
-{\centering\sffamily\itshape
+{\centering\itshape
 standard@gostai.com
 \par}
 
@@ -338,17 +338,17 @@ Contains information about the robot identity.
 
 \begin{slots}
 type &
-\sffamily This describes the robot category
+This describes the robot category
 among: humanoid, fourlegged, wheeled, industrial arm. It gives a
 general idea of the robot family, but does not replace a more
 systematic probe of available services by investigating the list of
 attributes of the object.\\\hline
 name &
-\sffamily Name of the robot.\\\hline
+Name of the robot.\\\hline
 model &
-\sffamily Model of the robot.\\\hline
+Model of the robot.\\\hline
 serial &
-\sffamily Serial number (if available).\\\hline
+Serial number (if available).\\\hline
 \end{slots}
 
 
@@ -360,14 +360,14 @@ Contains information about the network identification of the robot.
 
 \begin{slots}
 IP &
-\sffamily IP address of the robot.\\\hline
+IP address of the robot.\\\hline
 gateway &
-\sffamily Gateway IP address.\\\hline
+Gateway IP address.\\\hline
 latency &
-\sffamily Measured average network
+Measured average network
 latency.\\\hline
 bandwidth &
-\sffamily Measured average network
+Measured average network
 bandwidth.\\\hline
 \end{slots}
 
@@ -379,20 +379,20 @@ This facet is used to describe a generic motor controller.
 
 \begin{slots}
 val &
-\sffamily This slot is a generic pointer to a
+This slot is a generic pointer to a
 more specific slot describing the motor position, like
 \texttt{position} or \texttt{angle}, depending on the type of motor. It
 is mandatory in the Urbi Ready standard as a universal proxy to control
 an actuator. The more specific slot is described in a subclass of
 \texttt{motor}.\\\hline
 PGain &
-\sffamily Controls the P gain of the PID
+Controls the P gain of the PID
 controller.\\\hline
 IGain &
-\sffamily Controls the I gain of the PID
+Controls the I gain of the PID
 controller.\\\hline
 DGain &
-\sffamily Controls the D gain of the PID
+Controls the D gain of the PID
 controller.\\\hline
 \end{slots}
 
@@ -402,7 +402,7 @@ controller.\\\hline
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
 \hhline{-~}
  &
-\sffamily Optional slot.\\\hhline{-~}
+Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
 \paragraph{ linearMotor  \textmd{subclass of motor}}
@@ -414,10 +414,10 @@ This facet is used to describe a linear motor controller.
 
 \begin{slots}
 position &
-\sffamily Position of the motor in centimeters.
+Position of the motor in centimeters.
 Pointed to by the \texttt{val} slot.\\\hline
 force &
-\sffamily Intensity of the measured or estimated
+Intensity of the measured or estimated
 force applied on a linear motor.\\\hline
 \end{slots}
 {
@@ -431,13 +431,13 @@ This facet is used to describe a rotational motor controller.
 
 \begin{slots}
 angle &
-\sffamily Angle of the motor in degree, modulo
+Angle of the motor in degree, modulo
 360. Pointed to by the \texttt{val} slot.\\\hline
 turn &
-\sffamily Absolute angular position of the
+Absolute angular position of the
 motor, expressed in number of turns.\\\hline
 torque &
-\sffamily Intensity of the measured or estimated
+Intensity of the measured or estimated
 torque applied on the motor.\\\hline
 \end{slots}
 
@@ -450,7 +450,7 @@ This facet is used to describe a generic sensor.
 
 \begin{slots}
 val &
-\sffamily This slot is a generic pointer to a
+This slot is a generic pointer to a
 more specific slot describing the sensor value, like \texttt{distance}
 or \texttt{temperature}, depending on the type of sensor. It is
 mandatory in the Urbi Ready standard as a universal proxy to read a
@@ -468,7 +468,7 @@ ultrasonic...).
 
 \begin{slots}
 distance &
-\sffamily Measured distance expressed in meters.
+Measured distance expressed in meters.
 Pointed to by the \texttt{val} slot.\\\hline
 \end{slots}
 
@@ -482,7 +482,7 @@ induction,...).
 
 \begin{slots}
 pressure &
-\sffamily Intensity of the pressure put on the
+Intensity of the pressure put on the
 touch sensor. Can be 0/1 for simple buttons or expressed in Pascal
 units. Pointed to by the \texttt{val} slot.\\\hline
 \end{slots}
@@ -496,7 +496,7 @@ This facet is used to describe an accelerometer.
 
 \begin{slots}
 acceleration &
-\sffamily Acceleration expressed in m/s2.
+Acceleration expressed in m/s2.
 Pointed to by the \texttt{val} slot.\\\hline
 \end{slots}
 
@@ -508,7 +508,7 @@ This facet is used to describe an gyrometer.
 
 \begin{slots}
 acceleration &
-\sffamily Acceleration expressed in rad/s2.
+Acceleration expressed in rad/s2.
 Pointed to by the \texttt{val} slot.\\\hline
 \end{slots}
 
@@ -521,7 +521,7 @@ This facet is used to describe a temperature sensor.
 
 \begin{slots}
 temperature &
-\sffamily Measured temperature in C° degrees.
+Measured temperature in C° degrees.
 Pointed to by the \texttt{val} slot.\\\hline
 \end{slots}
 
@@ -534,10 +534,10 @@ level motion control capabilities.
 
 \begin{slots}
 go(x) &
-\sffamily Move approximatively x meters forward
+Move approximatively x meters forward
 if x is positive, backward otherwise.\\\hline
 turn(x) &
-\sffamily Turn right approximatively x degrees.
+Turn right approximatively x degrees.
 x can be a positive or negative value.\\\hline
 \end{slots}
 
@@ -553,10 +553,10 @@ with whole body motion or a combination of both.
 
 \begin{slots}
 yaw &
-\sffamily Rotational articulation around the Z
+Rotational articulation around the Z
 axis in the robot, expressed in degrees.\\\hline
 pitch &
-\sffamily Rotational articulation around the Y
+Rotational articulation around the Y
 axis in the robot, expressed in degrees.\\\hline
 \end{slots}
 
@@ -569,20 +569,20 @@ image sensor.
 
 \begin{slots}
 val &
-\sffamily Binary value corresponding to the
+Binary value corresponding to the
 image, expressed in the current unit (RGB, jpeg, YCrCb...). The unit
 can be changed like any other regular unit in Urbi. \\\hline
 xfov &
-\sffamily The x Field Of View of the camera
+The x Field Of View of the camera
 expressed in degrees.\\\hline
 yfov &
-\sffamily The y Field Of View of the camera
+The y Field Of View of the camera
 expressed in degrees.\\\hline
 height &
-\sffamily Height of the image in the current
+Height of the image in the current
 resolution, expressed in pixels\\\hline
 width &
-\sffamily Width of the image in the current
+Width of the image in the current
 resolution, expressed in pixels\\\hline
 shutter &
 The shutter speed (expressed
@@ -600,7 +600,7 @@ resolution &
 resolution, expressed as a percentage of the maximal resolution of the
 camera (number between 0 and 1). 1 if non applicable.
 
-\sffamily Once modified, the effective
+Once modified, the effective
 resolution in X/Y can be checked with the width and height
 slots.\\\hline
 \end{slots}
@@ -626,7 +626,7 @@ val &
 binary, in the format given by the binary header during the
 assignment.
 
-\sffamily Speakers are write-only devices, so
+Speakers are write-only devices, so
 there is not much sense in reading the content of this attribute. At
 best, it returns the remaining sound to be played if it is not over
 yet, but this is not a requirement.\\\hline
@@ -635,11 +635,11 @@ The amount of time remaining to play in
 the speaker sound buffer (expressed in \textit{ms} as
 a default unit).\\\hline
 playing &
-\sffamily This is a boolean value which is true
+This is a boolean value which is true
 when there is a sound currently playing (the buffer is not
 empty)\\\hline
 volume &
-\sffamily Volume of the play back, in
+Volume of the play back, in
 decibels.\\\hline
 \end{slots}
 
@@ -680,7 +680,7 @@ Microphone gain amplification
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
 \hhline{-~}
  &
-\sffamily Optional slot.\\\hhline{-~}
+Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
 
@@ -696,13 +696,13 @@ typical slots expected:
 
 \begin{slots}
 x &
-\sffamily The x position of the center of the
+The x position of the center of the
 blob in the image\\\hline
 y &
-\sffamily The y position of the center of the
+The y position of the center of the
 blob in the image\\\hline
 ratio &
-\sffamily The size of the blob expressed as a
+The size of the blob expressed as a
 normalized image size: 1 = full image, 0 = nothing.\\\hline
 visible &
 A Boolean expressing whether there is a
@@ -711,10 +711,10 @@ threshold &
 The minimum value of ratio to
 decide that the blob is visible.\\\hline
 orientation &
-\sffamily Angle of the main ellipsoid axis of
+Angle of the main ellipsoid axis of
 the blog (0 = horizontal), expressed in degrees.\\\hline
 elongation &
-\sffamily Ratio between the main and the second
+Ratio between the main and the second
 diameter of the blob enveloping ellipse.\\\hline
 \end{slots}
 
@@ -723,7 +723,7 @@ diameter of the blob enveloping ellipse.\\\hline
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
 \hhline{-~}
  &
-\sffamily Optional slot.\\\hhline{-~}
+Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
 \paragraph{textToSpeech}
@@ -737,32 +737,32 @@ their default sound output.
 
 \begin{slots}
 lang &
-\sffamily The language used, in international
+The language used, in international
 notation (fr, en, it…): ISO 639\\\hline
 speed &
-\sffamily How fast the voice should go, between
+How fast the voice should go, between
 0 and 1.\\\hline
 pitch &
-\sffamily Voice pitch, between 0 and 1.\\\hline
+Voice pitch, between 0 and 1.\\\hline
 gender &
-\sffamily Gender of the speaker
+Gender of the speaker
 (0:male/1:female)\\\hline
 age &
-\sffamily Age of the speaker, if
+Age of the speaker, if
 applicable\\\hline
 name &
-\sffamily Most TTS engine will propose several
+Most TTS engine will propose several
 voices, this attributes allows picking one. It’s a string identifier
 specific to the TTS developer.\\\hline
 say(s) &
-\sffamily Speak the sentence given in parameter
+Speak the sentence given in parameter
 {\textquotesingle}s{\textquotesingle}.\\\hline
 voicexml(s) &
-\sffamily Speak the text
+Speak the text
 {\textquotesingle}s{\textquotesingle} expressed as a VoiceXML
 string.\\\hline
 script(s) &
-\sffamily Speak the text
+Speak the text
 {\textquotesingle}s{\textquotesingle} augmented by script markups (see
 specific Gostai documentation) to generate URBI events.\\\hline
 \end{slots}
@@ -772,7 +772,7 @@ specific Gostai documentation) to generate URBI events.\\\hline
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
 \hhline{-~}
  &
-\sffamily Optional slot.\\\hhline{-~}
+Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
 
@@ -788,7 +788,7 @@ sound input.
 
 \begin{slots}
 lang &
-\sffamily The language used, in international
+The language used, in international
 notation (fr, en, it…): ISO 639\\\hline
 \end{slots}
 
@@ -797,14 +797,14 @@ notation (fr, en, it…): ISO 639\\\hline
 \begin{supertabular}{|m{1.717cm}|m{10.464cm}}
 \hhline{-~}
  &
-\sffamily Optional slot.\\\hhline{-~}
+Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
 \subparagraph{Events}
 
 \begin{slots}
 hear(s) &
-\sffamily This event has one parameter which is
+This event has one parameter which is
 the string describing what the speech engine has recognized (can be a
 word or a sentence).\\\hline
 \end{slots}
@@ -857,21 +857,21 @@ the yaw/pitch/roll meaning.
 
 \begin{center}
 \tablehead{\hline
-\sffamily\bfseries Component &
-\sffamily\bfseries Description &
-\sffamily\bfseries Sub. of &
-\sffamily\bfseries Contains &
-\sffamily\bfseries Facets\\\hline}
+\bfseries Component &
+\bfseries Description &
+\bfseries Sub. of &
+\bfseries Contains &
+\bfseries Facets\\\hline}
 \begin{supertabular}{|m{2.312cm}|m{6.776cm}|m{2.629cm}|m{2.471cm}|m{2.1269999cm}|}
 robot &
-\sffamily This is the main component that
+This is the main component that
 represents an abstraction of the robot. &
 \ttfamily {}- &
 \ttfamily body &
 \ttfamily identity network mobile
 tracker\\\hline
 body &
-\sffamily This is the main component that
+This is the main component that
 contains every piece of hardware in the robot. This includes all
 primary kinematics sub-chains (arms, legs, neck, head, etc) and
 non-localized sensor arrays, typically body skin or heat detectors.
@@ -883,7 +883,7 @@ the body.  &
 torso … &
 \ttfamily {}-\\\hline
 leg &
-\sffamily Legs are found in humanoid or
+Legs are found in humanoid or
 animaloid robots and correspond to part of the kinematics chain that
 are attached to the main body by one extremity only and which do touch
 the ground in normal operation mode (unlike arms). A typical
@@ -894,7 +894,7 @@ joints. &
 hip knee ankle foot joint &
 \ttfamily {}-\\\hline
 arm &
-\sffamily Unlike legs, an arm’s extremity does
+Unlike legs, an arm’s extremity does
 not always touch the ground in normal operating mode. This applies to
 humanoid robots or single-arm industrial robots. Arms supersede legs in
 the nomenclature: if a body part behaves alternatively like an arm and
@@ -903,33 +903,33 @@ like a leg, it will be considered as an arm. &
 shoulder elbow wrist hand grip  joint &
 \ttfamily {}-\\\hline
 shoulder &
-\sffamily The shoulder is the upper part of the
+The shoulder is the upper part of the
 arm. It can have one, two or three degrees of freedom and is the
 closest part of the arm relative to the body. &
 \ttfamily arm &
 \ttfamily yaw pitch roll &
 \ttfamily {}-\\\hline
 elbow &
-\sffamily Separates the upper arm and the lower
+Separates the upper arm and the lower
 arm, this is usually a single rotational axis. &
 \ttfamily arm &
 \ttfamily pitch  &
 \ttfamily {}-\\\hline
 wrist &
-\sffamily Connects the hand and the lower part
+Connects the hand and the lower part
 of the arm. Usually three degrees of freedom axis. &
 \ttfamily arm &
 \ttfamily yaw pitch roll &
 \ttfamily {}-\\\hline
 hand &
-\sffamily The hand is an extension of the arm
+The hand is an extension of the arm
 that usually holds fingers. It’s not the wrist, which is articulated
 and between the arm and the hand.  &
 \ttfamily arm &
 \ttfamily finger &
 \ttfamily {}-\\\hline
 finger &
-\sffamily Fingers are a series of articulated
+Fingers are a series of articulated
 motors at the extremity of the arm, and connected to the hand. They are
 usually localized with arrays and/or lateral localization respective to
 the hand. &
@@ -937,31 +937,31 @@ the hand. &
 \ttfamily touch &
 \ttfamily motor\\\hline
 grip &
-\sffamily Simple two-fingers system. &
+Simple two-fingers system. &
 \ttfamily arm hand &
 \ttfamily touch &
 \ttfamily motor\\\hline
 hip &
-\sffamily The hip is the upper part of the leg
+The hip is the upper part of the leg
 and connects it to the main body. It can have one, two or three degrees
 of freedom. &
 \ttfamily leg &
 \ttfamily yaw pitch roll &
 \ttfamily {}-\\\hline
 knee &
-\sffamily Separates the upper leg and the lower
+Separates the upper leg and the lower
 leg, this is usually a single rotational axis. &
 \ttfamily leg &
 \ttfamily pitch &
 \ttfamily {}-\\\hline
 ankle &
-\sffamily Connects the foot and the lower part
+Connects the foot and the lower part
 of the leg. Usually three degrees of freedom axis. &
 \ttfamily leg &
 \ttfamily yaw pitch roll &
 \ttfamily {}-\\\hline
 foot &
-\sffamily The foot is an extension of the leg
+The foot is an extension of the leg
 that usually holds toes. It’s not the ankle, which is articulated and
 between the leg and the foot. The foot can also contain touch sensors
 in simple configurations. &
@@ -969,47 +969,47 @@ in simple configurations. &
 \ttfamily touch &
 \ttfamily {}-\\\hline
 toe &
-\sffamily Like fingers, but attached to the
+Like fingers, but attached to the
 foot. &
 \ttfamily foot &
 \ttfamily touch &
 \ttfamily motor\\\hline
 neck  &
-\sffamily The neck corresponds to a degree of
+The neck corresponds to a degree of
 freedom not part of the head, but relative to the rigid connection
 between the head and the main body.  &
 \ttfamily body &
 \ttfamily yaw pitch roll &
 \ttfamily {}-\\\hline
 tail &
-\sffamily A tail is a series of articulated
+A tail is a series of articulated
 motors at the back of the robot. &
 \ttfamily body &
 \ttfamily joint &
 \ttfamily {}-\\\hline
 head &
-\sffamily The head main pivotal axis. &
+The head main pivotal axis. &
 \ttfamily body neck &
 \ttfamily camera mouth ear lip eye eyebrow &
 \ttfamily {}-\\\hline
 mouth &
-\sffamily The robot mouth (open/close) &
+The robot mouth (open/close) &
 \ttfamily head &
 \ttfamily lip &
 \ttfamily motor\\\hline
 ear &
-\sffamily Ears may have degrees of freedom in
+Ears may have degrees of freedom in
 certain robots. &
 \ttfamily head &
 \ttfamily {}- &
 \ttfamily motor\\\hline
 joint &
-\sffamily Generic articulation in the robot. &
+Generic articulation in the robot. &
 \ttfamily tail arm leg lip &
 \ttfamily {}- &
 \ttfamily motor\\\hline
 yaw &
-\sffamily Rotational articulation around the Z
+Rotational articulation around the Z
 axis in the robot. \textit{See the introduction paragraph on
 yaw/pitch/roll orientation for more details on how to identify which
 direction corresponds to yaw.} &
@@ -1018,7 +1018,7 @@ torso &
 \ttfamily {}- &
 \ttfamily rotational-Motor\\\hline
 pitch &
-\sffamily Rotational articulation around the Y
+Rotational articulation around the Y
 axis in the robot. \textit{See the introduction paragraph on
 yaw/pitch/roll orientation for more details on how to identify which
 direction corresponds to pitch.} &
@@ -1027,7 +1027,7 @@ torso &
 \ttfamily {}- &
 \ttfamily rotational-Motor\\\hline
 roll &
-\sffamily Rotational articulation around the X
+Rotational articulation around the X
 axis in the robot. \textit{See the introduction paragraph on
 yaw/pitch/roll orientation for more details on how to identify which
 direction corresponds to roll.} &
@@ -1036,37 +1036,37 @@ torso &
 \ttfamily {}- &
 \ttfamily rotational-Motor\\\hline
 lip &
-\sffamily Corresponds to animated lips. &
+Corresponds to animated lips. &
 \ttfamily mouth &
 \ttfamily joint &
 \ttfamily motor\\\hline
 eye &
-\sffamily Corresponds to the eyeball pivotal
+Corresponds to the eyeball pivotal
 axis. &
 \ttfamily head &
 \ttfamily camera &
 \ttfamily {}-\\\hline
 eyebrow &
-\sffamily Some robots will have eyebrow with
+Some robots will have eyebrow with
 generally one or several degree of freedom. &
 \ttfamily head &
 \ttfamily joint &
 \ttfamily motor\\\hline
 torso &
-\sffamily This corresponds to a pivotal or
+This corresponds to a pivotal or
 rotational axis in the middle of the main body. &
 \ttfamily body &
 \ttfamily yaw pitch roll &
 \ttfamily {}-\\\hline
 spine &
-\sffamily This is a more elaborated version of
+This is a more elaborated version of
 “torso”, with a series of articulations to give several degrees of
 freedom in the back of the robot. &
 \ttfamily torso &
 \ttfamily joint &
 \ttfamily {}-\\\hline
 clavicle &
-\sffamily This is not to be mixed up with the
+This is not to be mixed up with the
 “top of the arm” body part. It is an independent degree of freedom that
 can be used to bring the two arms closer in a sort of “shoulder
 raising” movement. &
@@ -1074,22 +1074,22 @@ raising” movement. &
 \ttfamily {}- &
 \ttfamily motor\\\hline
 touch &
-\sffamily Touch sensor. &
+Touch sensor. &
 \ttfamily finger grip foot toe &
 \ttfamily {}- &
 \ttfamily touchSensor\\\hline
 gyro &
-\sffamily Gyrometer sensor. &
+Gyrometer sensor. &
 \ttfamily body &
 \ttfamily {}- &
 \ttfamily gyroSensor\\\hline
 accel  &
-\sffamily Accelerometer sensor. &
+Accelerometer sensor. &
 \ttfamily body &
 \ttfamily {}- &
 \ttfamily accelerationSensor\\\hline
 camera &
-\sffamily Camera sensor. If several cameras are
+Camera sensor. If several cameras are
 available, localization shall apply, however there must always be an
 alias from \texttt{camera} to one of the effective camera (like
 \texttt{cameraR} or \texttt{cameraL}). &
@@ -1097,7 +1097,7 @@ alias from \texttt{camera} to one of the effective camera (like
 \ttfamily {}- &
 \ttfamily videoin\\\hline
 speaker &
-\sffamily Speaker device. If several speakers
+Speaker device. If several speakers
 are available, localization shall apply, however there must always be
 an alias from \texttt{speaker} to one of the effective speakers (like
 \texttt{speakerR} or \texttt{speakerL}). &
@@ -1105,7 +1105,7 @@ an alias from \texttt{speaker} to one of the effective speakers (like
 \ttfamily {}- &
 \ttfamily audioin\\\hline
 micro  &
-\sffamily Microphone devices. If several
+Microphone devices. If several
 microphones are available, localization shall apply, however there must
 always be an alias from \texttt{micro} to one of the effective
 microphones (like \texttt{microR} or \texttt{microL}). &
@@ -1113,12 +1113,12 @@ microphones (like \texttt{microR} or \texttt{microL}). &
 \ttfamily {}- &
 \ttfamily audioout\\\hline
 speech &
-\sffamily Speech recognition component. &
+Speech recognition component. &
 \ttfamily robot &
 \ttfamily {}- &
 \ttfamily speechRecognizer\\\hline
 voice &
-\sffamily Voice synthesis component. &
+Voice synthesis component. &
 \ttfamily robot &
 \ttfamily {}- &
 \ttfamily textToSpeech\\\hline
@@ -1141,8 +1141,8 @@ Some examples:
 \tablehead{}
 \begin{supertabular}{|m{9.008cm}|m{5.533cm}|}
 \hline
-\sffamily Full name &
-\sffamily Compact name\\\hline
+Full name &
+Compact name\\\hline
 \ttfamily robot.body.armR.elbow &
 \ttfamily elbowR\\\hline
 \ttfamily robot.body.head.yaw &
