@@ -59,8 +59,7 @@ Copyright © Gostai S.A.S
 \setcounter{tocdepth}{3}
 \renewcommand\contentsname{}
 \tableofcontents
-\section[]{}
-\section[Introduction]{Introduction}
+\section{Introduction}
 {
 \textsf{This document aims at clarifying the naming convention}\textsf{s
 in URBI Engines for standard hardware/software devices and components
@@ -89,8 +88,7 @@ deliver an {\textquotedbl}URBI Ready{\textquotedbl} certification.
 should not be used or displayed in any way without an explicit written
 agreement from Gostai.}
 
-\section[The Structure Tree]{The Structure
-Tree}
+\section{The Structure Tree}
 {
 \textsf{The robot will be described as a set of
 }\textsf{\textit{components}}\textsf{ organized in a hierarchical
@@ -142,8 +140,7 @@ The goal of this standard is to provide guidelines on how to define the
 components and the structure tree, knowing the kinematics chain of the
 robot.
 
-\section[Frame of Reference]{Frame of
-Reference}
+\section{Frame of Reference}
 
 In many cases, it will be necessary to refer to an absolute frame of
 reference attached to the robot body. To avoid ambiguities, the
@@ -195,7 +192,7 @@ coordinate system. }}
 The axes are oriented in a counter-clockwise direction, as depicted in
 the illustration above.
 
-\section[Component naming]{Component naming}
+\section{Component naming}
 {
 \textsf{The name of a component A, which is a sub-component of component
 B, is divided into two parts: the generic designation of a subpart of
@@ -306,8 +303,7 @@ accelX, accelY, accelZ // typical accelerometer}
 {
 gyroX, gyroY, gyroZ // tpycial gyro sensor}
 
-\section[]{}
-\section[Facets]{Facets}
+\section{Facets}
 
 URBI allows multiple inheritances between objects. This feature can be
 used to introduce the notion of “facet”. A facet is an object in URBI
@@ -912,8 +908,7 @@ the string describing what the speech engine has recognized (can be a
 word or a sentence).\\\hline
 \end{supertabular}
 \end{flushleft}
-\section[Standard Components]{Standard
-Components}
+\section{Standard Components}
 
 Standard components correspond to components typically found in wheeled
 robots, humanoid or animaloid robots, or in industrial arms.
@@ -1229,7 +1224,7 @@ voice &
 \ttfamily textToSpeech\\\hline
 \end{supertabular}
 \end{center}
-\section[Compact notation]{Compact notation}
+\section{Compact notation}
 
 Components are usually identified with their full-length name, which is
 the path to access them inside the structure tree. For convenience and
