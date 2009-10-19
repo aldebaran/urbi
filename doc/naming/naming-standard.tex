@@ -12,11 +12,12 @@
   \end{flushleft}%
 }
 
+\chapter{\urbi Ready™-Certification Standard}
 
 \section{Introduction}
 
 This document aims at clarifying the naming conventions
-in URBI Engines for standard hardware/software devices and components
+in \urbi Engines for standard hardware/software devices and components
 implemented as UObject and the corresponding
 methods/attributes/events to access them. The list of available
 hardware types and software component is increasing and this document
@@ -24,21 +25,20 @@ will be updated accordingly. Please contact us directly, should you be
 working on a component not described or closely related to one
 described here:
 
-{\centering\itshape
-standard@gostai.com
-\par}
+\begin{center}
+  \email{standard@gostai.com}
+\end{center}
 
-
-Any implementation of an URBI server must comply with the latest version
-of this standard to get the ``URBI ready''
+Any implementation of an \urbi server must comply with the latest version
+of this standard to get the ``\urbi ready''
 certification from Gostai S.A.S.
 
 
 Gostai S.A.S. is currently the only authority which has the ability to
-deliver an ``URBI Ready'' certification.
+deliver an ``\urbi Ready'' certification.
 
 {
-“URBI Ready” and the associated logo are trademarks of Gostai S.A.S. and
+“\urbi Ready” and the associated logo are trademarks of Gostai S.A.S. and
 should not be used or displayed in any way without an explicit written
 agreement from Gostai.}
 
@@ -48,7 +48,7 @@ The robot will be described as a set of
 \textit{components} organized in a hierarchical
 structure called the \textit{structure tree}. The
 relationship between a component and a sub-component in the tree is a
-‘part-of’ inclusion relationship. From the point of view of URBI, each
+‘part-of’ inclusion relationship. From the point of view of \urbi, each
 component in the tree is an object, and it contains attributes pointing
 to its sub-components. Here is a example illustrating a part of a
 hierarchy that could be found with a humanoid robot:
@@ -63,7 +63,7 @@ hierarchy that could be found with a humanoid robot:
 The leaves of the tree are called
 \textit{devices}, and they usually match physical
 devices in the robot: motors, sensors, lights, camera, etc. Inside
-URBI, the various objects corresponding to the tree components are
+\urbi, the various objects corresponding to the tree components are
 accessed by following the path of objects inclusions, like in the
 example below (shortcuts will be described later):
 
@@ -246,8 +246,8 @@ gyroX, gyroY, gyroZ // tpycial gyro sensor}
 
 \section{Facets}
 
-URBI allows multiple inheritances between objects. This feature can be
-used to introduce the notion of “facet”. A facet is an object in URBI
+\urbi allows multiple inheritances between objects. This feature can be
+used to introduce the notion of “facet”. A facet is an object in \urbi
 that describes some aspect of a type of component.
 
 
@@ -702,7 +702,7 @@ string.\\\hline
 script(s) &
 Speak the text
 \var{s} augmented by script markups (see
-specific Gostai documentation) to generate URBI events.\\\hline
+specific Gostai documentation) to generate \urbi events.\\\hline
 \end{slots}
 
 \begin{flushleft}
@@ -1068,7 +1068,7 @@ Voice synthesis component. &
 
 Components are usually identified with their full-length name, which is
 the path to access them inside the structure tree. For convenience and
-backward compatibility with pre-2.0 versions of URBI, there is also a
+backward compatibility with pre-2.0 versions of \urbi, there is also a
 compact notation available. We will describe here how to construct the
 compact notation starting from the full name and the structure tree.
 
