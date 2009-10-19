@@ -108,7 +108,7 @@ error ()
 }
 
 # dirlist_error EXIT_STATUS WHAT WHERE WHICH
-# --------------------------------
+# ------------------------------------------
 # Report an error and exit with failure if WHICH, of type WHAT
 # does not exist in WHERE.
 # This function tests only directories
@@ -118,11 +118,10 @@ dirlist_error ()
   local type="$2"
   local base="$3"
   local val="$4"
-  local dirlist="$base/*"
 
   if test ! -d $base/$val; then
     stderr "no such $type $val, possible choices are :"
-    for d in $dirlist; do
+    for d in $base/*; do
       if test -d $d; then
 	stderr "  - $(basename $d)"
       fi
@@ -132,7 +131,7 @@ dirlist_error ()
 }
 
 # exist_error EXIT_STATUS WHAT WHERE OPTION
-# --------------------------------
+# -----------------------------------------
 # Report an error and exit with failure if WHERE is not found
 # or is not of type WHAT.
 # OPTION indicates which umake option to set for this value.
@@ -206,8 +205,9 @@ append ()
 {
   local var="$1"
   local content="$2"
-  local sep="${3-' '}"
-  if eval "test \${$var+set} = set"; then
+  local sep
+  sep=${3-' '}
+  if eval "test \"\${$var:+set}\" = set"; then
     eval "$var=\$$var\$sep"
   fi
   eval "$var=\$$var\$content"
