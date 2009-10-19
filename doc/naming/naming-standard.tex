@@ -230,8 +230,7 @@ relative to the body component they belong to. The first part is called
 the }\textsf{\textit{designation}}\textsf{, and the second optional
 part is called the }\textsf{\textit{localization}}\textsf{.}}
 
-{\sffamily\bfseries\itshape
-Designation}
+\paragraph{Designation}
 
 {\sffamily
 The designation of a component is a usually robot-specific and depends
@@ -247,8 +246,7 @@ bodies, but the current document will grow whenever we find a new case.
 We hope to be already covering most of the main cases you can find in
 the industry.}
 
-{\sffamily\bfseries\itshape
-Localization }
+\paragraph{Localization }
 
 {
 \textsf{Localization is necessary when there are two identical
@@ -355,8 +353,7 @@ robot that uses them, for example the “mobile” facet will have a
 completely different implementation with a humanoid robot and a wheeled
 robot.}
 
-{\sffamily\bfseries\itshape
-identity}
+\paragraph{identity}
 
 {\sffamily
 Contains information about the robot identity. }
@@ -384,8 +381,7 @@ serial &
 \sffamily Serial number (if available).\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-network}
+\paragraph{network}
 
 {\sffamily
 Contains information about the network identification of the robot.}
@@ -411,8 +407,7 @@ bandwidth &
 bandwidth.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-motor}
+\paragraph{motor}
 
 {\sffamily
 This facet is used to describe a generic motor controller.}
@@ -452,8 +447,7 @@ controller.\\\hline
 \sffamily Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
- linearMotor  \textmd{subclass of motor}}
+\paragraph{ linearMotor  \textmd{subclass of motor}}
 
 {\sffamily
 This facet is used to describe a linear motor controller.}
@@ -502,8 +496,7 @@ torque &
 torque applied on the motor.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-sensor}
+\paragraph{sensor}
 
 {\sffamily
 This facet is used to describe a generic sensor.}
@@ -526,8 +519,7 @@ sensor. The more specific slot is described in a subclass of
 \texttt{sensor}.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
- distanceSensor  \textmd{subclass of sensor}}
+\paragraph{ distanceSensor  \textmd{subclass of sensor}}
 
 {\sffamily
 This facet is used to describe a distance sensor (infrared, laser,
@@ -547,8 +539,7 @@ distance &
 Pointed to by the \texttt{val} slot.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
- touchSensor  \textmd{subclass of sensor}}
+\paragraph{ touchSensor  \textmd{subclass of sensor}}
 
 {\sffamily
 This facet is used to describe a touch pressure sensor (contact,
@@ -569,8 +560,7 @@ touch sensor. Can be 0/1 for simple buttons or expressed in Pascal
 units. Pointed to by the \texttt{val} slot.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
- accelerationSensor  \textmd{subclass of sensor}}
+\paragraph{ accelerationSensor  \textmd{subclass of sensor}}
 
 {\sffamily
 This facet is used to describe an accelerometer.}
@@ -589,8 +579,7 @@ acceleration &
 Pointed to by the \texttt{val} slot.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-gyroSensor  \textmd{subclass of sensor}}
+\paragraph{gyroSensor  \textmd{subclass of sensor}}
 
 {\sffamily
 This facet is used to describe an gyrometer.}
@@ -609,8 +598,7 @@ acceleration &
 Pointed to by the \texttt{val} slot.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
- temperatureSensor  \textmd{subclass of sensor}}
+\paragraph{ temperatureSensor  \textmd{subclass of sensor}}
 
 {\sffamily
 This facet is used to describe a temperature sensor.}
@@ -629,8 +617,7 @@ temperature &
 Pointed to by the \texttt{val} slot.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-mobile}
+\paragraph{mobile}
 
 {\sffamily
 Mobile robots all share this generic interface to provide high order
@@ -653,8 +640,7 @@ turn(x) &
 x can be a positive or negative value.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-tracker}
+\paragraph{tracker}
 
 {\sffamily
 Camera-equipped robots can sometimes move the orientation of the field
@@ -680,8 +666,7 @@ pitch &
 axis in the robot, expressed in degrees.\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-videoin}
+\paragraph{videoin}
 
 {\sffamily
 The videoin facet groups every information relative to cameras or any
@@ -741,8 +726,7 @@ slots.\\\hline
 Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-audioout}
+\paragraph{audioout}
 
 {\sffamily
 The audioout facet groups every information relative to speakers. }
@@ -786,8 +770,7 @@ decibels.\\\hline
 Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-audioin}
+\paragraph{audioin}
 
 {\sffamily
 The audioin facet groups every information relative to microphones. }
@@ -824,8 +807,7 @@ gain &
 \sffamily Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-blobDetector}
+\paragraph{blobDetector}
 
 {\sffamily
 Ball detectors, marker detectors and various feature-based detectors
@@ -873,8 +855,7 @@ diameter of the blob enveloping ellipse.\\\hline
 \sffamily Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-textToSpeech}
+\paragraph{textToSpeech}
 
 {\sffamily
 Text to speech allows to read text using a speech synthetizor. Default
@@ -929,8 +910,7 @@ specific Gostai documentation) to generate URBI events.\\\hline
 \sffamily Optional slot.\\\hhline{-~}
 \end{supertabular}
 \end{flushleft}
-{\sffamily\bfseries\itshape
-speechRecognizer}
+\paragraph{speechRecognizer}
 
 {\sffamily
 Speech recognition allows to transform a stream of sound into a text
@@ -989,8 +969,7 @@ contain, and a list of relevant facets. This table should be seen as a
 quick reference guide to identify available components in a given
 robot.}
 
-{\sffamily\bfseries\itshape
-Yaw/Pitch/Roll orientation: guideline}
+\paragraph{Yaw/Pitch/Roll orientation: guideline}
 
 {\sffamily
 It is not always clear which rotational direction corresponds to the
