@@ -98,14 +98,14 @@ described here:}}
 standard@gostai.com
 \par}
 
-{\sffamily
+
 Any implementation of an URBI server must comply with the latest version
 of this standard to get the {\textquotedbl}URBI ready{\textquotedbl}
-certification from Gostai S.A.S.}
+certification from Gostai S.A.S.
 
-{\sffamily
+
 Gostai S.A.S. is currently the only authority which has the ability to
-deliver an {\textquotedbl}URBI Ready{\textquotedbl} certification.}
+deliver an {\textquotedbl}URBI Ready{\textquotedbl} certification.
 
 {
 “URBI Ready” and the associated logo are trademarks of Gostai S.A.S. and
@@ -150,7 +150,7 @@ body.legL.hip}
 {
 …}
 
-{\sffamily
+
 The structure tree should not be mistaken for a representation of the
 kinematics chain of the robot. The kinematics chain is built from a
 subset of the devices corresponding to motor devices, and it represents
@@ -158,19 +158,19 @@ spatial connections between them. Except for these motor devices, the
 structure tree components do not have a direct counterpart in the
 kinematics chain, or, if they do, it is as a subset of the kinematics
 chain (for example, \texttt{legR} is a subset of the whole kinematics
-chain).}
+chain).
 
-{\sffamily
+
 The goal of this standard is to provide guidelines on how to define the
 components and the structure tree, knowing the kinematics chain of the
-robot.}
+robot.
 
 \section[Frame of Reference]{Frame of
 Reference}
-{\sffamily
+
 In many cases, it will be necessary to refer to an absolute frame of
 reference attached to the robot body. To avoid ambiguities, the
-standard frame of reference will have the following definition:}
+standard frame of reference will have the following definition:
 
 
 
@@ -214,9 +214,9 @@ body to indicate it.}}
 \textsf{\textbf{Y axis}}\textsf{: oriented to make a right-handed
 coordinate system. }}
 \end{itemize}
-{\sffamily
+
 The axes are oriented in a counter-clockwise direction, as depicted in
-the illustration above.}
+the illustration above.
 
 \section[Component naming]{Component naming}
 {
@@ -232,19 +232,19 @@ part is called the }\textsf{\textit{localization}}\textsf{.}}
 
 \paragraph{Designation}
 
-{\sffamily
+
 The designation of a component is a usually robot-specific and depends
 on the class of the robot (wheeled, humanoid, animaloid, etc). We will
 give in the following chapters some guidelines for the most current
 designations, and we will give more advanced rules for rare customized
-cases. }
+cases.
 
-{\sffamily
+
 The designation is the critical part of the naming standard. We cannot
 possibly cover all future configurations and conceivable robot complex
 bodies, but the current document will grow whenever we find a new case.
 We hope to be already covering most of the main cases you can find in
-the industry.}
+the industry.
 
 \paragraph{Localization }
 
@@ -274,42 +274,42 @@ first (}R\textsf{/}C\textsf{/}L\textsf{), followed by the depth
 information (}F\textsf{/}M\textsf{/}H\textsf{) and then the height
 information (}U\textsf{/}I\textsf{/}D\textsf{). }}
 
-{\sffamily
+
 You can further qualify a side+depth localization with an additional R/L
-side information. This can be used in the typical layout below:}
+side information. This can be used in the typical layout below:
 
 {\centering
 %\includegraphics[width=8.819cm,height=8.819cm]{namingstandard-img/namingstandard-img4.jpg}
 \par}
 
-{\sffamily
-This dual positioning using side+depth can also be used to combine
-side+height or height+depth information.}
 
-{\sffamily
+This dual positioning using side+depth can also be used to combine
+side+height or height+depth information.
+
+
 Some layouts will typically imply a bilateral organization like for
 example an insectoid robot with a series of 3 legs on both side of its
 body. In that case, an array will be used and follow the geometrical
 localization (R/L). The smaller the number, the closer to the front:
 R[1], R[2], R[3] and L[1], L[2], L[3]. This can be used when there is
 at least 3 components on each side, otherwise the
-\textit{Front}/\textit{Back} approach prevails.}
+\textit{Front}/\textit{Back} approach prevails.
 
-{\sffamily
+
 Some components like spines or tails are highly articulated with a set
 of identical sub-components. When talking about these sub-components,
 the above localization should be replaced by an array with a numbering
 starting at 0. The smaller the number, the closer the sub-component is
 to the robot main body. For surface-like sub-components, like skin
-touch sensors, the array can be two dimensional.}
+touch sensors, the array can be two dimensional.
 
-{\sffamily
+
 Other possible localization for sensors are the X, Y and Z axis
 themselves, like for example for an accelerometer or a gyro sensor,
-available in each of the three directions.}
+available in each of the three directions.
 
-{\sffamily
-Examples of component names including localization:}
+
+Examples of component names including localization:
 
 {
 legR, legL, armR, armL}
@@ -331,32 +331,32 @@ gyroX, gyroY, gyroZ // tpycial gyro sensor}
 
 \section[]{}
 \section[Facets]{Facets}
-{\sffamily
+
 URBI allows multiple inheritances between objects. This feature can be
 used to introduce the notion of “facet”. A facet is an object in URBI
-that describes some aspect of a type of component. }
+that describes some aspect of a type of component.
 
-{\sffamily
+
 For example, for a joint, we can have a “swivel” facet, used to define
 patella joints. For the robot body itself, we have a “mobile” facet
 describing mobile robots, which includes some standard way of
 requesting a move forward, a turn, etc. A robot with a Pan/Tilt camera
 or otherwise moving camera will have the “panoramic” facet which is
-abstracting the way the robot can turn its gaze in any direction.}
+abstracting the way the robot can turn its gaze in any direction.
 
-{\sffamily
+
 In short, facets are standard Urbi objects that components can inherit
 from to acquire some functionalities, expressed as a standard
 interface. We will describe in the following pages a few of the most
 standard facets. Each facet should be reimplemented for any particular
 robot that uses them, for example the “mobile” facet will have a
 completely different implementation with a humanoid robot and a wheeled
-robot.}
+robot.
 
 \paragraph{identity}
 
-{\sffamily
-Contains information about the robot identity. }
+
+Contains information about the robot identity.
 
 \subparagraph{Slots}
 
@@ -382,8 +382,8 @@ serial &
 \end{flushleft}
 \paragraph{network}
 
-{\sffamily
-Contains information about the network identification of the robot.}
+
+Contains information about the network identification of the robot.
 
 \subparagraph{Slots}
 
@@ -407,8 +407,8 @@ bandwidth.\\\hline
 \end{flushleft}
 \paragraph{motor}
 
-{\sffamily
-This facet is used to describe a generic motor controller.}
+
+This facet is used to describe a generic motor controller.
 
 \subparagraph{Slots}
 
@@ -446,8 +446,8 @@ controller.\\\hline
 \end{flushleft}
 \paragraph{ linearMotor  \textmd{subclass of motor}}
 
-{\sffamily
-This facet is used to describe a linear motor controller.}
+
+This facet is used to describe a linear motor controller.
 
 \subparagraph{Slots}
 
@@ -469,8 +469,8 @@ force applied on a linear motor.\\\hline
      \textsf{\textbf{\textit{rotationalMotor}}}
 \textsf{\textit{subclass of motor}}}
 
-{\sffamily
-This facet is used to describe a rotational motor controller.}
+
+This facet is used to describe a rotational motor controller.
 
 \subparagraph{Slots}
 
@@ -493,8 +493,8 @@ torque applied on the motor.\\\hline
 \end{flushleft}
 \paragraph{sensor}
 
-{\sffamily
-This facet is used to describe a generic sensor.}
+
+This facet is used to describe a generic sensor.
 
 \subparagraph{Slots}
 
@@ -515,9 +515,9 @@ sensor. The more specific slot is described in a subclass of
 \end{flushleft}
 \paragraph{ distanceSensor  \textmd{subclass of sensor}}
 
-{\sffamily
+
 This facet is used to describe a distance sensor (infrared, laser,
-ultrasonic...).}
+ultrasonic...).
 
 \subparagraph{Slots}
 
@@ -534,9 +534,9 @@ Pointed to by the \texttt{val} slot.\\\hline
 \end{flushleft}
 \paragraph{ touchSensor  \textmd{subclass of sensor}}
 
-{\sffamily
+
 This facet is used to describe a touch pressure sensor (contact,
-induction,...).}
+induction,...).
 
 \subparagraph{Slots}
 
@@ -554,8 +554,8 @@ units. Pointed to by the \texttt{val} slot.\\\hline
 \end{flushleft}
 \paragraph{ accelerationSensor  \textmd{subclass of sensor}}
 
-{\sffamily
-This facet is used to describe an accelerometer.}
+
+This facet is used to describe an accelerometer.
 
 \subparagraph{Slots}
 
@@ -572,8 +572,8 @@ Pointed to by the \texttt{val} slot.\\\hline
 \end{flushleft}
 \paragraph{gyroSensor  \textmd{subclass of sensor}}
 
-{\sffamily
-This facet is used to describe an gyrometer.}
+
+This facet is used to describe an gyrometer.
 
 \subparagraph{Slots}
 
@@ -590,8 +590,8 @@ Pointed to by the \texttt{val} slot.\\\hline
 \end{flushleft}
 \paragraph{ temperatureSensor  \textmd{subclass of sensor}}
 
-{\sffamily
-This facet is used to describe a temperature sensor.}
+
+This facet is used to describe a temperature sensor.
 
 \subparagraph{Slots}
 
@@ -608,9 +608,9 @@ Pointed to by the \texttt{val} slot.\\\hline
 \end{flushleft}
 \paragraph{mobile}
 
-{\sffamily
+
 Mobile robots all share this generic interface to provide high order
-level motion control capabilities.}
+level motion control capabilities.
 
 \subparagraph{Slots}
 
@@ -630,12 +630,12 @@ x can be a positive or negative value.\\\hline
 \end{flushleft}
 \paragraph{tracker}
 
-{\sffamily
+
 Camera-equipped robots can sometimes move the orientation of the field
 of view horizontally and vertically, which is a very important feature
 for many applications. In that case, this facet abstracts how such
 motion can be achieved, whether it is done with a pan/tilt camera or
-with whole body motion or a combination of both.}
+with whole body motion or a combination of both.
 
 \subparagraph{Slots}
 
@@ -655,9 +655,9 @@ axis in the robot, expressed in degrees.\\\hline
 \end{flushleft}
 \paragraph{videoin}
 
-{\sffamily
+
 The videoin facet groups every information relative to cameras or any
-image sensor. }
+image sensor.
 
 \subparagraph{Slots}
 
@@ -695,9 +695,9 @@ gain &
 }\textsf{(expressed as a coefficient between 0 and infinity). 1 if non
 applicable}\textsf{\textit{.}}\\\hline
 resolution &
-{\sffamily Can be used to specify a given
+ Can be used to specify a given
 resolution, expressed as a percentage of the maximal resolution of the
-camera (number between 0 and 1). 1 if non applicable. }
+camera (number between 0 and 1). 1 if non applicable.
 
 \sffamily Once modified, the effective
 resolution in X/Y can be checked with the width and height
@@ -714,8 +714,8 @@ Optional slot.\\\hhline{-~}
 \end{flushleft}
 \paragraph{audioout}
 
-{\sffamily
-The audioout facet groups every information relative to speakers. }
+
+The audioout facet groups every information relative to speakers.
 
 \subparagraph{Slots}
 
@@ -726,9 +726,9 @@ The audioout facet groups every information relative to speakers. }
 \sffamily\bfseries Slot &
 \sffamily\bfseries Description\\\hline
 val &
-{\sffamily The speaker value, expressed as a
+ The speaker value, expressed as a
 binary, in the format given by the binary header during the
-assignment.}
+assignment.
 
 \sffamily Speakers are write-only devices, so
 there is not much sense in reading the content of this attribute. At
@@ -757,8 +757,8 @@ Optional slot.\\\hhline{-~}
 \end{flushleft}
 \paragraph{audioin}
 
-{\sffamily
-The audioin facet groups every information relative to microphones. }
+
+The audioin facet groups every information relative to microphones.
 
 \subparagraph{Slots}
 
@@ -769,9 +769,9 @@ The audioin facet groups every information relative to microphones. }
 \sffamily\bfseries Slot &
 \sffamily\bfseries Description\\\hline
 val &
-{\sffamily Binary value corresponding to the
+ Binary value corresponding to the
 sound heard, expressed in the current unit (wav, mp3...). The unit can
-be changed like any other regular unit in Urbi. }
+be changed like any other regular unit in Urbi.
 
 \textsf{The content is the sound heard by the
 microphone since the last }update\textsf{ event.}\\\hline
@@ -793,11 +793,11 @@ gain &
 \end{flushleft}
 \paragraph{blobDetector}
 
-{\sffamily
+
 Ball detectors, marker detectors and various feature-based detectors
 should all share a similar interface. They extract a part of the image
 that fits some criteria and define a “blob” accordingly. Here are the
-typical slots expected:}
+typical slots expected:
 
 \subparagraph{Slots}
 
@@ -840,10 +840,10 @@ diameter of the blob enveloping ellipse.\\\hline
 \end{flushleft}
 \paragraph{textToSpeech}
 
-{\sffamily
+
 Text to speech allows to read text using a speech synthetizor. Default
 implementations should use the \texttt{speaker} component (or alias) as
-their default sound output.}
+their default sound output.
 
 \subparagraph{Slots}
 
@@ -894,11 +894,11 @@ specific Gostai documentation) to generate URBI events.\\\hline
 \end{flushleft}
 \paragraph{speechRecognizer}
 
-{\sffamily
+
 Speech recognition allows to transform a stream of sound into a text
 using various speech recognition algorithms. Default implementations
 should use the \texttt{micro} component (or alias) as their default
-sound input.}
+sound input.
 
 \subparagraph{Slots}
 
@@ -937,26 +937,26 @@ word or a sentence).\\\hline
 \end{flushleft}
 \section[Standard Components]{Standard
 Components}
-{\sffamily
-Standard components correspond to components typically found in wheeled
-robots, humanoid or animaloid robots, or in industrial arms. }
 
-{\sffamily
+Standard components correspond to components typically found in wheeled
+robots, humanoid or animaloid robots, or in industrial arms.
+
+
 The table on the next pages summarize the currently referenced standard
 components, with a description of potential components that they could
 be subcomponent of, a description of potential components they may
 contain, and a list of relevant facets. This table should be seen as a
 quick reference guide to identify available components in a given
-robot.}
+robot.
 
 \paragraph{Yaw/Pitch/Roll orientation: guideline}
 
-{\sffamily
+
 It is not always clear which rotational direction corresponds to the
 yaw, pitch or roll components (listed in the table below). This is a
-quick guideline to help determine the proper association. }
+quick guideline to help determine the proper association.
 
-{\sffamily
+
 Let us consider the robot in its resting, most prototypical position,
 like “standing” on two or four legs for a humanoid or animaloid, and
 let all members “naturally” fall under gravity. When gravity has no
@@ -964,24 +964,24 @@ effect on a certain joint (because it is in the orthogonal plan to Z,
 for example), the medium position between rangemin and rangemax should
 be used. The body position achieved will be considered as a reference.
 Then for each component that is described in terms of yaw/pitch/roll
-sub-decomposition, the association will be as follow:}
+sub-decomposition, the association will be as follow:
 
 {
 \textsf{\textbf{ yaw}}\textsf{ : rotational articulation around the Z
 axis in the robot.}}
 
-{\sffamily
+
 \textbf{ pitch} : rotational articulation around the Y axis in the
-robot.}
+robot.
 
-{\sffamily
+
 \textbf{ roll} : rotational articulation around the X axis in the
-robot.}
+robot.
 
-{\sffamily
+
 When there is no exact match with the X/Y/Z axis, the closest match, or
 the default remaining available axis, should be selected to determine
-the yaw/pitch/roll meaning. }
+the yaw/pitch/roll meaning.
 
 \begin{center}
 \tablehead{\hline
@@ -1253,15 +1253,15 @@ voice &
 \end{supertabular}
 \end{center}
 \section[Compact notation]{Compact notation}
-{\sffamily
+
 Components are usually identified with their full-length name, which is
 the path to access them inside the structure tree. For convenience and
 backward compatibility with pre-2.0 versions of URBI, there is also a
 compact notation available. We will describe here how to construct the
-compact notation starting from the full name and the structure tree.}
+compact notation starting from the full name and the structure tree.
 
-{\sffamily\itshape
-Some examples:}
+{\itshape
+Some examples:
 
 \begin{flushleft}
 \tablehead{}
@@ -1281,7 +1281,7 @@ Some examples:}
 \ttfamily fingerLR\\\hline
 \end{supertabular}
 \end{flushleft}
-{\sffamily
+
 The rule is to move every localization qualifier at the end of the
 compact notation, in the order where they appear in the full-length
 name. The remaining component names should then be considered one by
@@ -1292,50 +1292,50 @@ several component names have to be kept, they should be separated by
 using upper case letters for the first character instead of a dot, like
 in Java-style notation.}
 
-{\sffamily
-Example 1: \texttt{robot.body.armL.hand.fingerR}}
+
+Example 1: \texttt{robot.body.armL.hand.fingerR}
 
 
 \begin{enumerate}
-\item {\sffamily
-Move all localization at the end: \texttt{robot.body.arm.hand.fingerLR}}
-\item {\sffamily
-The fullname remaining is: \texttt{robot.body.arm.hand.finger}}
-\item {\sffamily
+\item
+Move all localization at the end: \texttt{robot.body.arm.hand.fingerLR}
+\item
+The fullname remaining is: \texttt{robot.body.arm.hand.finger}
+\item
 \texttt{finger} should be kept, \texttt{hand}, \texttt{arm},
 \texttt{body} and \texttt{robot} are not necessary since every finger
 component will always be attached only to a hand, itself attached to an
-arm and a body and a robot.}
-\item {\sffamily
-The result is \texttt{fingerLR}}
+arm and a body and a robot.
+\item
+The result is \texttt{fingerLR}
 \end{enumerate}
-{\sffamily
-Example 2: \texttt{robot.body.head.yaw}}
+
+Example 2: \texttt{robot.body.head.yaw}
 
 
 \begin{enumerate}
-\item {\sffamily
-No localization to move}
-\item {\sffamily
+\item
+No localization to move
+\item
 \texttt{yaw} must be kept because \texttt{head} also have a
-\texttt{pitch} subcomponent and }
-\item {\sffamily
+\texttt{pitch} subcomponent and
+\item
 \texttt{head} must also be kept to avoid ambiguity with other components
-having a \texttt{yaw} subcomponent.}
-\item {\sffamily
-The result is \texttt{headYaw}}
+having a \texttt{yaw} subcomponent.
+\item
+The result is \texttt{headYaw}
 \end{enumerate}
-{\sffamily
-Example 3: \texttt{robot.body.legL.knee.pitch}}
+
+Example 3: \texttt{robot.body.legL.knee.pitch}
 
 
 \begin{enumerate}
-\item {\sffamily
-Move all localization at the end: \texttt{robot.body.leg.knee.pitchL}}
-\item {\sffamily
+\item
+Move all localization at the end: \texttt{robot.body.leg.knee.pitchL}
+\item
 \texttt{pitch} is not necessary because \texttt{knee} has only a
-\texttt{pitch}, so \texttt{knee} will be kept only}
-\item {\sffamily
-The result is \texttt{kneeL}}
+\texttt{pitch}, so \texttt{knee} will be kept only
+\item
+The result is \texttt{kneeL}
 \end{enumerate}
 \end{document}
