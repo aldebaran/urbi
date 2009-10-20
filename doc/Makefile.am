@@ -71,19 +71,24 @@ view: $(pdf_DATA)
 ## document-aux.  ##
 ## -------------- ##
 .PHONY: install-doc
-html_files = 					\
+html_files =					\
   urbi-sdk.css					\
   urbi-sdk.html					\
-  urbi-sdk0x.png				\
-  urbi-sdk1x.png				\
   urbi-sdk2.html				\
   urbi-sdk3.html				\
   urbi-sdk4.html				\
-  urbi-sdk5.html
-install-doc: $(pdf_DATA) urbi-sdk.html
+  urbi-sdk5.html				\
+  urbi-sdk0x.png				\
+  urbi-sdk1x.png				\
+  urbi-sdk2x.png				\
+  urbi-sdk3x.png				\
+  urbi-sdk4x.png				\
+  urbi-sdk5x.png				\
+  urbi-sdk6x.png
 doc_host = downloads@www.gostai.com
 doc_dir = gostai.com-downloads/urbi-sdk-2.0
 doc_files = $(pdf_DATA) $(html_files)
+install-doc: $(pdf_DATA) urbi-sdk.html
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
 # compilation seems to prefer *.png to *.pdf, which is wrong here.
