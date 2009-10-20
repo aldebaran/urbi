@@ -222,8 +222,9 @@ do (getSlot("UVar"))
 
   function notifyChange(handle, f)
   {
+    var wasEmpty = change.empty |
     change[handle] = f |
-    if (change.asList.size == 1)
+    if (wasEmpty)
       detach(loopCheck) |
     void
   };
@@ -236,8 +237,9 @@ do (getSlot("UVar"))
   {
     //beware of the CoW
     getSlot("UVar").nAccess++ |
+    var wasEmpty = access.empty |
     access[handle] = f |
-    if (access.asList.size == 1)
+    if (wasEmpty)
       detach(loopCheck) |
     if (getSlot("UVar").nAccess == 1)
       onHasNotifyAccess! |
