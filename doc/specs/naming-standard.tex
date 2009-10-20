@@ -174,7 +174,7 @@ bodies, but the current document will grow whenever we find a new
 case.  We hope to be already covering most of the main cases you can
 find in the industry.
 
-\paragraph{Localization }
+\paragraph{Localization}
 
 Localization is necessary when there are two identical sub-components
 A1 and A2 belonging to the same component B, like for example two legs
@@ -814,321 +814,314 @@ When there is no exact match with the X/Y/Z axis, the closest match, or
 the default remaining available axis, should be selected to determine
 the yaw/pitch/roll meaning.
 
+\bigskip
+
 \newcommand{\component}[5]
 {
-  #1 &
+  \lstindex{#1} &
   #5 &
-  #2 &
-  #3 &
-  #4\\\hline
+  \code{#2} &
+  \code{#3} &
+  \code{#4}\\\hline
 }
-\begin{center}
+
 \tablehead{\hline
-\textbf{Component} &
+\textbf{Name} &
 \textbf{Description} &
 \textbf{Sub. of} &
 \textbf{Contains} &
 \textbf{Facets} \\\hline}
-\begin{supertabular}{|m{2.312cm}|m{6.776cm}|m{2.629cm}|m{2.471cm}|m{2.1269999cm}|}
-  \component{robot}{\code{{}-} }{\code{body} }{\ttfamily identity
-    network mobile tracker}{
+\begin{supertabular}{|m{.115\linewidth}|m{.45\linewidth}|*{4}{m{.12\linewidth}|}}
+  \component{robot}{-}{body}{identity network mobile tracker}{
     %%
     This is the main component that represents an abstraction of the
     robot.
     %%
   }
 
-  \component{body}{\code{robot} }{\ttfamily arm leg neck head wheel tail skin
-torso … }{\code{{}-} }{
+  \component{body}{robot}{arm leg neck head wheel tail skin torso
+    \ldots}{-}{
     %%
-      This is the main component that
-contains every piece of hardware in the robot. This includes all
-primary kinematics sub-chains (arms, legs, neck, head, etc) and
-non-localized sensor arrays, typically body skin or heat detectors.
-Localized sensors, like fingertips touch sensors, will typically be
-found attached to the finger component they belong and not directly to
-the body.
+    This is the main component that contains every piece of hardware
+    in the robot. This includes all primary kinematics sub-chains
+    (arms, legs, neck, head, etc) and non-localized sensor arrays,
+    typically body skin or heat detectors.  Localized sensors, like
+    fingertips touch sensors, will typically be found attached to the
+    finger component they belong and not directly to the body.
+    %%
+  }
+
+  \component{leg}{body}{hip knee ankle foot joint}{-}{
+    %%
+    Legs are found in humanoid or animaloid robots and correspond to
+    part of the kinematics chain that are attached to the main body by
+    one extremity only and which do touch the ground in normal
+    operation mode (unlike arms). A typical configuration for
+    humanoids contains a hip, a knee and an ankle. If the leg is more
+    segmented, the leg can be described with a simple array of joints.
+    %%
+  }
+
+  \component{arm}{body}{shoulder elbow wrist hand grip  joint}{-}{
+    %%
+    Unlike legs, an arm’s extremity does not always touch the ground
+    in normal operating mode. This applies to humanoid robots or
+    single-arm industrial robots. Arms supersede legs in the
+    nomenclature: if a body part behaves alternatively like an arm and
+    like a leg, it will be considered as an arm.
+    %%
+  }
+
+  \component{shoulder}{arm}{yaw pitch roll}{-}{
+    %%
+    The shoulder is the upper part of the arm. It can have one, two or
+    three degrees of freedom and is the closest part of the arm
+    relative to the body.
+    %%
+  }
+
+  \component{elbow}{arm}{pitch}{-}{
+    %%
+    Separates the upper arm and the lower arm, this is usually a
+    single rotational axis.
+    %%
+  }
+
+  \component{wrist}{arm}{yaw pitch roll}{-}{
+    %%
+    Connects the hand and the lower part of the arm. Usually three
+    degrees of freedom axis.
+    %%
+  }
+
+  \component{hand}{arm}{finger}{-}{
+    %%
+    The hand is an extension of the arm that usually holds
+    fingers. It’s not the wrist, which is articulated and between the
+    arm and the hand.
+    %%
+  }
+
+  \component{finger}{hand}{touch}{motor}{
+    %%
+    Fingers are a series of articulated motors at the extremity of the
+    arm, and connected to the hand. They are usually localized with
+    arrays and/or lateral localization respective to the hand.
+    %%
+  }
+
+  \component{grip}{arm hand}{touch}{motor}{
+    %%
+    Simple two-fingers system.
+    %%
+  }
+
+  \component{hip}{leg}{yaw pitch roll}{-}{
+    %%
+    The hip is the upper part of the leg and connects it to the main
+    body. It can have one, two or three degrees of freedom.
+    %%
+  }
+
+  \component{knee}{leg}{pitch}{-}{
+    %%
+    Separates the upper leg and the lower leg, this is usually a
+    single rotational axis.
     %%
     }
 
-  \component{leg}{\code{body} }{hip knee ankle foot joint }{\code{{}-} }{
+  \component{ankle}{leg}{yaw pitch roll}{-}{
     %%
-      Legs are found in humanoid or
-animaloid robots and correspond to part of the kinematics chain that
-are attached to the main body by one extremity only and which do touch
-the ground in normal operation mode (unlike arms). A typical
-configuration for humanoids contains a hip, a knee and an ankle. If the
-leg is more segmented, the leg can be described with a simple array of
-joints.
+    Connects the foot and the lower part of the leg. Usually three
+    degrees of freedom axis.
     %%
     }
 
-  \component{arm}{\code{body} }{shoulder elbow wrist hand grip  joint }{\code{{}-} }{
+  \component{foot}{leg}{touch}{-}{
     %%
-      Unlike legs, an arm’s extremity does
-not always touch the ground in normal operating mode. This applies to
-humanoid robots or single-arm industrial robots. Arms supersede legs in
-the nomenclature: if a body part behaves alternatively like an arm and
-like a leg, it will be considered as an arm.
+    The foot is an extension of the leg that usually holds toes. It’s
+    not the ankle, which is articulated and between the leg and the
+    foot. The foot can also contain touch sensors in simple
+    configurations.
+    %%
+  }
+
+  \component{toe}{foot}{touch}{motor}{
+    %%
+    Like fingers, but attached to the foot.
+    %%
+  }
+
+  \component{neck}{body}{yaw pitch roll}{-}{
+    %%
+    The neck corresponds to a degree of freedom not part of the head,
+    but relative to the rigid connection between the head and the main
+    body.
+    %%
+  }
+
+  \component{tail}{body}{joint}{-}{
+    %%
+    A tail is a series of articulated motors at the back of the robot.
+    %%
+  }
+
+  \component{head}{body neck}{camera mouth ear lip eye eyebrow}{-}{
+    %%
+    The head main pivotal axis.
+    %%
+  }
+
+  \component{mouth}{head}{lip}{motor}{
+    %%
+    The robot mouth (open/close)
+    %%
+  }
+
+  \component{ear}{head}{-}{motor}{
+    %%
+    Ears may have degrees of freedom in
+    certain robots.
+    %%
+  }
+
+  \component{joint}{tail arm leg lip}{-}{motor}{
+    %%
+    Generic articulation in the robot.
+    %%
+  }
+
+  \component{yaw}{neck knee ankle shoulder elbow wrist
+    torso}{-}{rotational\-Motor}{
+    %%
+    Rotational articulation around the Z axis in the
+    robot. \textit{See the introduction paragraph on yaw/pitch/roll
+      orientation for more details on how to identify which direction
+      corresponds to yaw.}
+    %%
+  }
+
+  \component{pitch}{neck knee ankle shoulder elbow wrist
+    torso}{-}{rotational\-Motor}{
+    %%
+    Rotational articulation around the Y axis in the
+    robot. \textit{See the introduction paragraph on yaw/pitch/roll
+      orientation for more details on how to identify which direction
+      corresponds to pitch.}
+    %%
+  }
+
+  \component{roll}{neck knee ankle shoulder elbow wrist
+    torso}{-}{rotational\-Motor}{
+    %%
+    Rotational articulation around the X axis in the
+    robot. \textit{See the introduction paragraph on yaw/pitch/roll
+      orientation for more details on how to identify which direction
+      corresponds to roll.}
+    %%
+  }
+
+  \component{lip}{mouth}{joint}{motor}{
+    %%
+    Corresponds to animated lips.
+    %%
+  }
+
+  \component{eye}{head}{camera}{-}{
+    %%
+    Corresponds to the eyeball pivotal axis.
     %%
     }
 
-  \component{shoulder}{\code{arm} }{\code{yaw pitch roll} }{\code{{}-} }{
+  \component{eyebrow}{head}{joint}{motor}{
     %%
-      The shoulder is the upper part of the
-arm. It can have one, two or three degrees of freedom and is the
-closest part of the arm relative to the body.
-    %%
-    }
-
-  \component{elbow}{\code{arm} }{\code{pitch} }{\code{{}-} }{
-    %%
-      Separates the upper arm and the lower
-arm, this is usually a single rotational axis.
+    Some robots will have eyebrow with generally one or several degree
+    of freedom.
     %%
     }
 
-  \component{wrist}{\code{arm} }{\code{yaw pitch roll} }{\code{{}-} }{
+  \component{torso}{body}{yaw pitch roll}{-}{
     %%
-      Connects the hand and the lower part
-of the arm. Usually three degrees of freedom axis.
-    %%
-    }
-
-  \component{hand}{\code{arm} }{\code{finger} }{\code{{}-} }{
-    %%
-      The hand is an extension of the arm
-that usually holds fingers. It’s not the wrist, which is articulated
-and between the arm and the hand.
+    This corresponds to a pivotal or rotational axis in the middle of
+    the main body.
     %%
     }
 
-  \component{finger}{\code{hand} }{\code{touch} }{\code{motor} }{
+  \component{spine}{torso}{joint}{-}{
     %%
-      Fingers are a series of articulated
-motors at the extremity of the arm, and connected to the hand. They are
-usually localized with arrays and/or lateral localization respective to
-the hand.
-    %%
-    }
-
-  \component{grip}{\code{arm hand} }{\code{touch} }{\code{motor} }{
-    %%
-      Simple two-fingers system.
+    This is a more elaborated version of “torso”, with a series of
+    articulations to give several degrees of freedom in the back of
+    the robot.
     %%
     }
 
-  \component{hip}{\code{leg} }{\code{yaw pitch roll} }{\code{{}-} }{
+  \component{clavicle}{body}{-}{motor}{
     %%
-      The hip is the upper part of the leg
-and connects it to the main body. It can have one, two or three degrees
-of freedom.
-    %%
-    }
-
-  \component{knee}{\code{leg} }{\code{pitch} }{\code{{}-} }{
-    %%
-      Separates the upper leg and the lower
-leg, this is usually a single rotational axis.
+    This is not to be mixed up with the “top of the arm” body part. It
+    is an independent degree of freedom that can be used to bring the
+    two arms closer in a sort of “shoulder raising” movement.
     %%
     }
 
-  \component{ankle}{\code{leg} }{\code{yaw pitch roll} }{\code{{}-} }{
-    %%
-      Connects the foot and the lower part
-of the leg. Usually three degrees of freedom axis.
-    %%
-    }
-
-  \component{foot}{\code{leg} }{\code{touch} }{\code{{}-} }{
-    %%
-      The foot is an extension of the leg
-that usually holds toes. It’s not the ankle, which is articulated and
-between the leg and the foot. The foot can also contain touch sensors
-in simple configurations.
-    %%
-    }
-
-  \component{toe}{\code{foot} }{\code{touch} }{\code{motor} }{
-    %%
-      Like fingers, but attached to the
-foot.
-    %%
-    }
-
-  \component{neck}{\code{body} }{\code{yaw pitch roll} }{\code{{}-} }{
-    %%
-      The neck corresponds to a degree of
-freedom not part of the head, but relative to the rigid connection
-between the head and the main body.
-    %%
-    }
-
-  \component{tail}{\code{body} }{\code{joint} }{\code{{}-} }{
-    %%
-      A tail is a series of articulated
-motors at the back of the robot.
-    %%
-    }
-
-  \component{head}{\code{body neck} }{\code{camera mouth ear lip eye eyebrow} }{\code{{}-} }{
-    %%
-      The head main pivotal axis.
-    %%
-    }
-
-  \component{mouth}{\code{head} }{\code{lip} }{\code{motor} }{
-    %%
-      The robot mouth (open/close)
-    %%
-    }
-
-  \component{ear}{\code{head} }{\code{{}-} }{\code{motor} }{
-    %%
-      Ears may have degrees of freedom in
-certain robots.
-    %%
-    }
-
-  \component{joint}{\code{tail arm leg lip} }{\code{{}-} }{\code{motor} }{
-    %%
-      Generic articulation in the robot.
-    %%
-    }
-
-  \component{yaw}{\ttfamily neck knee ankle shoulder elbow wrist
-torso }{\code{{}-} }{\code{rotational-Motor} }{
-    %%
-      Rotational articulation around the Z
-axis in the robot. \textit{See the introduction paragraph on
-yaw/pitch/roll orientation for more details on how to identify which
-direction corresponds to yaw.}
-    %%
-    }
-
-  \component{pitch}{\ttfamily neck knee ankle shoulder elbow wrist
-torso }{\code{{}-} }{\code{rotational-Motor} }{
-    %%
-      Rotational articulation around the Y
-axis in the robot. \textit{See the introduction paragraph on
-yaw/pitch/roll orientation for more details on how to identify which
-direction corresponds to pitch.}
-    %%
-    }
-
-  \component{roll}{\ttfamily neck knee ankle shoulder elbow wrist
-torso }{\code{{}-} }{\code{rotational-Motor} }{
-    %%
-      Rotational articulation around the X
-axis in the robot. \textit{See the introduction paragraph on
-yaw/pitch/roll orientation for more details on how to identify which
-direction corresponds to roll.}
-    %%
-    }
-
-  \component{lip}{\code{mouth} }{\code{joint} }{\code{motor} }{
-    %%
-      Corresponds to animated lips.
-    %%
-    }
-
-  \component{eye}{\code{head} }{\code{camera} }{\code{{}-} }{
-    %%
-      Corresponds to the eyeball pivotal
-axis.
-    %%
-    }
-
-  \component{eyebrow}{\code{head} }{\code{joint} }{\code{motor} }{
-    %%
-      Some robots will have eyebrow with
-generally one or several degree of freedom.
-    %%
-    }
-
-  \component{torso}{\code{body} }{\code{yaw pitch roll} }{\code{{}-} }{
-    %%
-      This corresponds to a pivotal or
-rotational axis in the middle of the main body.
-    %%
-    }
-
-  \component{spine}{\code{torso} }{\code{joint} }{\code{{}-} }{
-    %%
-      This is a more elaborated version of
-“torso”, with a series of articulations to give several degrees of
-freedom in the back of the robot.
-    %%
-    }
-
-  \component{clavicle}{\code{body} }{\code{{}-} }{\code{motor} }{
-    %%
-      This is not to be mixed up with the
-“top of the arm” body part. It is an independent degree of freedom that
-can be used to bring the two arms closer in a sort of “shoulder
-raising” movement.
-    %%
-    }
-
-  \component{touch}{\code{finger grip foot toe} }{\code{{}-} }{\code{touchSensor} }{
+  \component{touch}{finger grip foot toe}{-}{touchSensor}{
     %%
       Touch sensor.
     %%
     }
 
-  \component{gyro}{\code{body} }{\code{{}-} }{\code{gyroSensor} }{
+  \component{gyro}{body}{-}{gyroSensor}{
     %%
       Gyrometer sensor.
     %%
     }
 
-  \component{accel}{\code{body} }{\code{{}-} }{\code{accelerationSensor} }{
+  \component{accel}{body}{-}{accel\-eration\-Sensor}{
     %%
       Accelerometer sensor.
     %%
     }
 
-  \component{camera}{\code{head body} }{\code{{}-} }{\code{videoin} }{
+  \component{camera}{head body}{-}{videoin}{
     %%
-      Camera sensor. If several cameras are
-available, localization shall apply, however there must always be an
-alias from \texttt{camera} to one of the effective camera (like
-\texttt{cameraR} or \texttt{cameraL}).
-    %%
-    }
-
-  \component{speaker}{\code{head body} }{\code{{}-} }{\code{audioin} }{
-    %%
-      Speaker device. If several speakers
-are available, localization shall apply, however there must always be
-an alias from \texttt{speaker} to one of the effective speakers (like
-\texttt{speakerR} or \texttt{speakerL}).
+    Camera sensor. If several cameras are available, localization
+    shall apply, however there must always be an alias from
+    \texttt{camera} to one of the effective camera (like
+    \texttt{cameraR} or \texttt{cameraL}).
     %%
     }
 
-  \component{micro}{\code{head body} }{\code{{}-} }{\code{audioout} }{
+  \component{speaker}{head body}{-}{audioin}{
     %%
-      Microphone devices. If several
-microphones are available, localization shall apply, however there must
-always be an alias from \texttt{micro} to one of the effective
-microphones (like \texttt{microR} or \texttt{microL}).
+    Speaker device. If several speakers are available, localization
+    shall apply, however there must always be an alias from
+    \texttt{speaker} to one of the effective speakers (like
+    \texttt{speakerR} or \texttt{speakerL}).
     %%
     }
 
-  \component{speech}{\code{robot} }{\code{{}-} }{\code{speechRecognizer} }{
+  \component{micro}{head body}{-}{audioout}{
+    %%
+    Microphone devices. If several microphones are available,
+    localization shall apply, however there must always be an alias
+    from \texttt{micro} to one of the effective microphones (like
+    \texttt{microR} or \texttt{microL}).
+    %%
+  }
+
+  \component{speech}{robot}{-}{speech\-Recognizer}{
     %%
       Speech recognition component.
     %%
     }
 
-  \component{voice}{\code{robot} }{\code{{}-} }{\code{textToSpeech} }{
+  \component{voice}{robot}{-}{textTo\-Speech}{
     %%
       Voice synthesis component.
     %%
     }
 
 \end{supertabular}
-\end{center}
+
 
 
 \section{Compact notation}
