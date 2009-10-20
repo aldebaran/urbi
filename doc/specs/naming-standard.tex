@@ -1132,15 +1132,10 @@ backward compatibility with pre-2.0 versions of \urbi, there is also a
 compact notation available. We will describe here how to construct the
 compact notation starting from the full name and the structure tree.
 
-{\itshape
-Some examples:
-
-\begin{flushleft}
-\tablehead{}
-\begin{supertabular}{|m{9.008cm}|m{5.533cm}|}
-\hline
+\tablehead{\hline
 Full name &
-Compact name\\\hline
+Compact name\\\hline}
+\begin{supertabular}{|m{9.008cm}|m{5.533cm}|}
 \code{robot.body.armR.elbow} &
 \code{elbowR} \\\hline
 \code{robot.body.head.yaw} &
@@ -1152,7 +1147,6 @@ Compact name\\\hline
 \code{robot.body.armL.hand.fingerR} &
 \code{fingerLR} \\\hline
 \end{supertabular}
-\end{flushleft}
 
 The rule is to move every localization qualifier at the end of the
 compact notation, in the order where they appear in the full-length
@@ -1162,39 +1156,42 @@ like typically the robot or body components which are shared with
 almost every other full-length name, they can be ignored. If finally
 several component names have to be kept, they should be separated by
 using upper case letters for the first character instead of a dot, like
-in Java-style notation.}
+in Java-style notation.
+
+\begin{example}[\texttt{robot.body.armL.hand.fingerR}]~\\
+  \begin{enumerate}
+  \item Move all localization at the end:
+    \texttt{robot.body.arm.hand.fingerLR}
+  \item The fullname remaining is: \texttt{robot.body.arm.hand.finger}
+  \item \texttt{finger} should be kept, \texttt{hand}, \texttt{arm},
+    \texttt{body} and \texttt{robot} are not necessary since every
+    finger component will always be attached only to a hand, itself
+    attached to an arm and a body and a robot.
+  \item The result is \texttt{fingerLR}
+  \end{enumerate}
+\end{example}
 
 
-Example 1: \texttt{robot.body.armL.hand.fingerR}
-\begin{enumerate}
-\item Move all localization at the end:
-  \texttt{robot.body.arm.hand.fingerLR}
-\item The fullname remaining is: \texttt{robot.body.arm.hand.finger}
-\item \texttt{finger} should be kept, \texttt{hand}, \texttt{arm},
-  \texttt{body} and \texttt{robot} are not necessary since every
-  finger component will always be attached only to a hand, itself
-  attached to an arm and a body and a robot.
-\item The result is \texttt{fingerLR}
-\end{enumerate}
+\begin{example}[\texttt{robot.body.head.yaw}]~\\
+  \begin{enumerate}
+  \item No localization to move
+  \item \texttt{yaw} must be kept because \texttt{head} also have a
+    \texttt{pitch} subcomponent and
+  \item \texttt{head} must also be kept to avoid ambiguity with other
+    components having a \texttt{yaw} subcomponent.
+  \item The result is \texttt{headYaw}
+  \end{enumerate}
+\end{example}
 
-Example 2: \texttt{robot.body.head.yaw}
-\begin{enumerate}
-\item No localization to move
-\item \texttt{yaw} must be kept because \texttt{head} also have a
-  \texttt{pitch} subcomponent and
-\item \texttt{head} must also be kept to avoid ambiguity with other
-  components having a \texttt{yaw} subcomponent.
-\item The result is \texttt{headYaw}
-\end{enumerate}
-
-Example 3: \texttt{robot.body.legL.knee.pitch}
-\begin{enumerate}
-\item Move all localization at the end:
-  \texttt{robot.body.leg.knee.pitchL}
-\item \texttt{pitch} is not necessary because \texttt{knee} has only a
-  \texttt{pitch}, so \texttt{knee} will be kept only
-\item The result is \texttt{kneeL}
-\end{enumerate}
+\begin{example}[\texttt{robot.body.legL.knee.pitch}]~\\
+  \begin{enumerate}
+  \item Move all localization at the end:
+    \texttt{robot.body.leg.knee.pitchL}
+  \item \texttt{pitch} is not necessary because \texttt{knee} has only a
+    \texttt{pitch}, so \texttt{knee} will be kept only
+  \item The result is \texttt{kneeL}
+  \end{enumerate}
+\end{example}
 
 
 %%% Local Variables:
