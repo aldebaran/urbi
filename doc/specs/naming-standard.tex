@@ -26,23 +26,24 @@
 
 \newcommand{\facet}[2][]{%
   \ifthenelse{\equal{#1}{}}{%
-    \subsection{#2}%
+    \subsection{#2\index{#2@\lstinline{#2}}}%
   }{%
-    \subsection{#2 (subclass of #1)}%
+    \subsection{#2 (subclass of #1)\index{#2@\lstinline{#2}}}%
   }%
   \label{sec:facet:#2}
 }
 
 
 \chapter{\urbi Ready™-Certification Standard}
+\label{sec:naming}
 
 \begin{center}
   \includegraphics[scale=.5]{img/urbi-ready}
 \end{center}
 
-\section{Introduction}
+% \section{Introduction}
 
-This document aims at clarifying the naming conventions in \urbi
+This section aims at clarifying the naming conventions in \urbi
 Engines for standard hardware/software devices and components
 implemented as UObject and the corresponding methods/attributes/events
 to access them. The list of available hardware types and software
@@ -463,7 +464,6 @@ This facet is used to describe an gyrometer.
     Acceleration expressed in rad/s2.  Pointed to by the \texttt{val}
     slot.%
   }
-
 \end{slots}
 
 \facet[sensor]{temperatureSensor}
