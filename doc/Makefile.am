@@ -18,7 +18,7 @@ CLEANFILES += $(EPS_IMAGES)
 
 # Our system leaves trailing unused *chk files.
 MAINTAINERCLEANFILES +=						\
-  $(shell find $(srcdir) -name '*.chk' -or -name 'test.chk')
+  $(shell find $(srcdir) -name '*.chk')
 
 # Find urbi-report.sty, and workaround some strange behavior of
 # texi2dvi that wants to play tricks with ~ (which becomes a tilda,
