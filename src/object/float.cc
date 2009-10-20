@@ -59,12 +59,25 @@ namespace object
     return value_;
   }
 
-  bool
-  Float::operator<=(const value_type& rhs) const
-  {
-    return value_get() <= rhs;
+#define BOUNCE_COMP_OP(op)                         \
+  bool                                             \
+  Float::operator op(const value_type& rhs) const  \
+  {                                                \
+    return value_get() op rhs;                     \
   }
 
+  BOUNCE_COMP_OP(<=)
+  BOUNCE_COMP_OP(>=)
+  BOUNCE_COMP_OP(>)
+  BOUNCE_COMP_OP(!=)
+
+#undef BOUNCE_COMP_OP
+
+  bool
+  Float::less_than(const value_type& rhs) const
+  {
+    return value_get() < rhs;
+  }
 
   /*--------------.
   | Conversions.  |
@@ -342,10 +355,14 @@ namespace object
 #define DECLARE(Urbi, Cxx)                      \
     bind(SYMBOL(Urbi), &Float::Cxx)
 
-    DECLARE(CARET, operator^);
-    DECLARE(GT_GT, operator>>);
-    DECLARE(LT_EQ, operator<=);
-    DECLARE(LT_LT, operator<<);
+    DECLARE(CARET,     operator^);
+    DECLARE(GT_GT,     operator>>);
+    DECLARE(LT_EQ,     operator<=);
+    DECLARE(LT,        less_than);
+    DECLARE(GT,        operator>);
+    DECLARE(GT_EQ,     operator>=);
+    DECLARE(BANG_EQ,   operator!=);
+    DECLARE(LT_LT,     operator<<);
     DECLARE(MINUS, minus);
     DECLARE(PERCENT, operator%);
     DECLARE(PLUS, plus);

@@ -47,8 +47,13 @@ namespace object
     /// False iff equals zero.
     virtual bool as_bool() const;
 
-    // Comparison.
+    // Comparison. All of them for performance reasons.
     bool operator<=(const value_type& rhs) const;
+    // < is a virtual method of object, we cannot overload it
+    bool less_than(const value_type& rhs) const;
+    bool operator>=(const value_type& rhs) const;
+    bool operator> (const value_type& rhs) const;
+    bool operator!=(const value_type& rhs) const;
 
     /// \name Conversions.
     /// \{
@@ -95,7 +100,6 @@ namespace object
     value_type log() const;
     value_type minus(const objects_type& args) const;
     value_type plus(const objects_type& args) const;
-    using Object::operator<;
 
     // Operations on unsigned.
     unsigned_type operator ~() const;
