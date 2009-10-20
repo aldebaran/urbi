@@ -38,9 +38,11 @@ do (Global.WeakDictionary)
         throw "WeakDictionary key is not a WeakPointer"|
       key.__dec |
       key.dicts = key.dicts + [this]|
-      __dec
-    }|
-    dict.set(key.id, Pair.new(key, val))|
+      __dec |
+      dict.set(key.id, Pair.new(key, [val]))
+    }
+    else
+      dict[key.id].second << val |
     cache_values
   };
   function '[]'(key)
@@ -80,7 +82,11 @@ do (Global.WeakDictionary)
   };
   function cache_values()
   {
-    values = dict.asList.map(function(x) {x.second.second})
+    values = [] |
+    for|(var e: dict)
+    {
+      values += e.second.second
+    }
   };
   function keys()
   {
