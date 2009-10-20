@@ -106,14 +106,14 @@ int main(int argc, char* argv[])
     execv(argv[0], argv);
   }
 #else
-  _putenv(("URBI_ROOT=" +urbi_root).c_str());
+  _putenv(strdup(("URBI_ROOT=" +urbi_root).c_str()));
   char* c_path = getenv("PATH");
   std::string path = c_path?c_path:"";
   strings_type ldpath_list = split(ld_lib_path);
   foreach(const std::string& s, ldpath_list)
     path += ";" + s;
   std::cerr <<  ("ENV PATH=" + path) << std::endl;
-  _putenv( ("PATH=" + path).c_str());
+  _putenv(strdup(("PATH=" + path).c_str()));
 #endif
 
   std::string liburbi_path = std::string() +  libdir + "/liburbi" + lib_ext;
