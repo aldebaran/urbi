@@ -42,22 +42,21 @@
 
 \section{Introduction}
 
-This document aims at clarifying the naming conventions
-in \urbi Engines for standard hardware/software devices and components
-implemented as UObject and the corresponding
-methods/attributes/events to access them. The list of available
-hardware types and software component is increasing and this document
-will be updated accordingly. Please contact us directly, should you be
-working on a component not described or closely related to one
-described here:
+This document aims at clarifying the naming conventions in \urbi
+Engines for standard hardware/software devices and components
+implemented as UObject and the corresponding methods/attributes/events
+to access them. The list of available hardware types and software
+component is increasing and this document will be updated
+accordingly. Please contact us directly, should you be working on a
+component not described or closely related to one described here:
 
 \begin{center}
   \email{standard@gostai.com}
 \end{center}
 
-Any implementation of an \urbi server must comply with the latest version
-of this standard to get the ``\urbi ready''
-certification from Gostai S.A.S.
+Any implementation of an \urbi server must comply with the latest
+version of this standard to get the ``\urbi ready'' certification from
+Gostai S.A.S.
 
 
 Gostai S.A.S. is currently the only authority which has the ability to
@@ -69,25 +68,23 @@ explicit written agreement from Gostai.
 
 \section{The Structure Tree}
 
-The robot will be described as a set of
-\textit{components} organized in a hierarchical
-structure called the \textit{structure tree}. The
+The robot will be described as a set of \textit{components} organized
+in a hierarchical structure called the \textit{structure tree}. The
 relationship between a component and a sub-component in the tree is a
-‘part-of’ inclusion relationship. From the point of view of \urbi, each
-component in the tree is an object, and it contains attributes pointing
-to its sub-components. Here is a example illustrating a part of a
-hierarchy that could be found with a humanoid robot:
+‘part-of’ inclusion relationship. From the point of view of \urbi,
+each component in the tree is an object, and it contains attributes
+pointing to its sub-components. Here is a example illustrating a part
+of a hierarchy that could be found with a humanoid robot:
 
 \begin{center}
   \includegraphics[width=.8\linewidth]{img/structure-tree}
 \end{center}
 
-The leaves of the tree are called
-\textit{devices}, and they usually match physical
-devices in the robot: motors, sensors, lights, camera, etc. Inside
-\urbi, the various objects corresponding to the tree components are
-accessed by following the path of objects inclusions, like in the
-example below (shortcuts will be described later):
+The leaves of the tree are called \textit{devices}, and they usually
+match physical devices in the robot: motors, sensors, lights, camera,
+etc. Inside \urbi, the various objects corresponding to the tree
+components are accessed by following the path of objects inclusions,
+like in the example below (shortcuts will be described later):
 
 \begin{urbifixme}
 body.legR.hip.tilt;
@@ -99,17 +96,17 @@ body.legL.hip;
 
 The structure tree should not be mistaken for a representation of the
 kinematics chain of the robot. The kinematics chain is built from a
-subset of the devices corresponding to motor devices, and it represents
-spatial connections between them. Except for these motor devices, the
-structure tree components do not have a direct counterpart in the
-kinematics chain, or, if they do, it is as a subset of the kinematics
-chain (for example, \texttt{legR} is a subset of the whole kinematics
-chain).
+subset of the devices corresponding to motor devices, and it
+represents spatial connections between them. Except for these motor
+devices, the structure tree components do not have a direct
+counterpart in the kinematics chain, or, if they do, it is as a subset
+of the kinematics chain (for example, \texttt{legR} is a subset of the
+whole kinematics chain).
 
 
-The goal of this standard is to provide guidelines on how to define the
-components and the structure tree, knowing the kinematics chain of the
-robot.
+The goal of this standard is to provide guidelines on how to define
+the components and the structure tree, knowing the kinematics chain of
+the robot.
 
 \section{Frame of Reference}
 
@@ -123,26 +120,25 @@ standard frame of reference will have the following definition:
 
 \begin{description}
 \item[Origin] the center of mass of the robot
-\item[X axis] oriented towards the front of the
-robot. If there is a camera, the front is defined by the default
-direction of the camera, otherwise the front will be seen as the
-natural frontal orientation for a mobile robot (the direction of
-“forward” movement). If the robot is not naturally oriented, the X axis
-will be chosen to match the main axis of symmetry of the robot body and
-it will be oriented towards the smallest side, typically the top of a
-cone for example. In case of a perfectly symmetrical body, the
-X axis can be chosen arbitrarily but a clear mark should be made
-visible on the robot body to indicate it.
-\item[Z axis] oriented in the opposite direction
-from the gravity. If there is no gravity or natural up/down orientation
-in the environment or normal operation mode of the robot, the Z axis
-should be chosen in the direction of the main axis of symmetry in the
-orthogonal plane defined by the X axis, oriented towards the smallest
-side. In case of a perfectly symmetrical plane, the Z axis can be
-chosen arbitrarily but a clear mark should be made visible on the robot
-body to indicate it.
-\item[Y axis] oriented to make a right-handed
-coordinate system.
+\item[X axis] oriented towards the front of the robot. If there is a
+  camera, the front is defined by the default direction of the camera,
+  otherwise the front will be seen as the natural frontal orientation
+  for a mobile robot (the direction of “forward” movement). If the
+  robot is not naturally oriented, the X axis will be chosen to match
+  the main axis of symmetry of the robot body and it will be oriented
+  towards the smallest side, typically the top of a cone for
+  example. In case of a perfectly symmetrical body, the X axis can be
+  chosen arbitrarily but a clear mark should be made visible on the
+  robot body to indicate it.
+\item[Z axis] oriented in the opposite direction from the gravity. If
+  there is no gravity or natural up/down orientation in the
+  environment or normal operation mode of the robot, the Z axis should
+  be chosen in the direction of the main axis of symmetry in the
+  orthogonal plane defined by the X axis, oriented towards the
+  smallest side. In case of a perfectly symmetrical plane, the Z axis
+  can be chosen arbitrarily but a clear mark should be made visible on
+  the robot body to indicate it.
+\item[Y axis] oriented to make a right-handed coordinate system.
 \end{description}
 
 
@@ -151,15 +147,15 @@ the illustration above.
 
 \section{Component naming}
 
-The name of a component A, which is a sub-component of component
-B, is divided into two parts: the generic designation of a subpart of
-the kinematics chain (like ‘leg’, ‘head’, ‘finger’) that A is referring
+The name of a component A, which is a sub-component of component B, is
+divided into two parts: the generic designation of a subpart of the
+kinematics chain (like ‘leg’, ‘head’, ‘finger’) that A is referring
 to, and optionally some topological disambiguator relative to its
 position within the component B it belongs to. For example, when there
 are two legs, we need to differentiate between the right and left leg,
-relative to the body component they belong to. The first part is called
-the \textit{designation}, and the second optional
-part is called the \textit{localization}.
+relative to the body component they belong to. The first part is
+called the \textit{designation}, and the second optional part is
+called the \textit{localization}.
 
 \paragraph{Designation}
 
@@ -173,49 +169,41 @@ cases.
 
 The designation is the critical part of the naming standard. We cannot
 possibly cover all future configurations and conceivable robot complex
-bodies, but the current document will grow whenever we find a new case.
-We hope to be already covering most of the main cases you can find in
-the industry.
+bodies, but the current document will grow whenever we find a new
+case.  We hope to be already covering most of the main cases you can
+find in the industry.
 
 \paragraph{Localization }
 
-Localization is necessary when there are two identical
-sub-components A1 and A2 belonging to the same component B, like for
-example two legs or two arms attached to the main body. Usually this
-can be sorted out with simple geometric qualifiers like
-\textit{Right/Center/Left},
-\textit{Front/Middle/Back} or
-\textit{Up}\textit{/In-between/Down}. The
-naming convention is to use the first letter of the geometric
-characteristic, like R for Right, I for In-between.
-Note that “right” or “front” are understood here from the point of view
-of a man standing and looking in the direction of the X-axis of the
-robot, and
-\textit{Up}/\textit{Down} matches
-the Z-axis, as depicted in the figure below:
+Localization is necessary when there are two identical sub-components
+A1 and A2 belonging to the same component B, like for example two legs
+or two arms attached to the main body. Usually this can be sorted out
+with simple geometric qualifiers like \textit{Right/Center/Left},
+\textit{Front/Middle/Back} or \textit{Up/In-between/Down}. The naming
+convention is to use the first letter of the geometric characteristic,
+like R for Right, I for In-between.  Note that “right” or “front” are
+understood here from the point of view of a man standing and looking
+in the direction of the X-axis of the robot, and \textit{Up/Down}
+matches the Z-axis, as depicted in the figure below:
 
 \begin{center}
   \includegraphics[width=.5\linewidth]{img/cube}
 \end{center}
 
-Several geometric qualifiers can be used at the same time to
-further refine the position. As a convention, side information comes
-first (R/C/L), followed by the depth
-information (F/M/H) and then the height
+Several geometric qualifiers can be used at the same time to further
+refine the position. As a convention, side information comes first
+(R/C/L), followed by the depth information (F/M/H) and then the height
 information (U/I/D).
 
-
-You can further qualify a side+depth localization with an additional R/L
-side information. This can be used in the typical layout below:
+You can further qualify a side+depth localization with an additional
+R/L side information. This can be used in the typical layout below:
 
 \begin{center}
   \includegraphics{img/lrfh}
 \end{center}
 
-
 This dual positioning using side+depth can also be used to combine
 side+height or height+depth information.
-
 
 Some layouts will typically imply a bilateral organization like for
 example an insectoid robot with a series of 3 legs on both side of its
@@ -225,14 +213,12 @@ R[1], R[2], R[3] and L[1], L[2], L[3]. This can be used when there is
 at least 3 components on each side, otherwise the
 \textit{Front}/\textit{Back} approach prevails.
 
-
 Some components like spines or tails are highly articulated with a set
 of identical sub-components. When talking about these sub-components,
 the above localization should be replaced by an array with a numbering
 starting at 0. The smaller the number, the closer the sub-component is
 to the robot main body. For surface-like sub-components, like skin
 touch sensors, the array can be two dimensional.
-
 
 Other possible localization for sensors are the X, Y and Z axis
 themselves, like for example for an accelerometer or a gyro sensor,
@@ -256,14 +242,12 @@ gyroX, gyroY, gyroZ;            // typical gyro sensor
 used to introduce the notion of “facet”. A facet is an object in \urbi
 that describes some aspect of a type of component.
 
-
 For example, for a joint, we can have a “swivel” facet, used to define
 patella joints. For the robot body itself, we have a “mobile” facet
 describing mobile robots, which includes some standard way of
 requesting a move forward, a turn, etc. A robot with a Pan/Tilt camera
 or otherwise moving camera will have the “panoramic” facet which is
 abstracting the way the robot can turn its gaze in any direction.
-
 
 In short, facets are standard Urbi objects that components can inherit
 from to acquire some functionalities, expressed as a standard
@@ -807,11 +791,9 @@ robot.
 
 \paragraph{Yaw/Pitch/Roll orientation: guideline}
 
-
 It is not always clear which rotational direction corresponds to the
 yaw, pitch or roll components (listed in the table below). This is a
 quick guideline to help determine the proper association.
-
 
 Let us consider the robot in its resting, most prototypical position,
 like “standing” on two or four legs for a humanoid or animaloid, and
@@ -1146,41 +1128,37 @@ in Java-style notation.}
 
 Example 1: \texttt{robot.body.armL.hand.fingerR}
 \begin{enumerate}
-\item
-Move all localization at the end: \texttt{robot.body.arm.hand.fingerLR}
-\item
-The fullname remaining is: \texttt{robot.body.arm.hand.finger}
-\item
-\texttt{finger} should be kept, \texttt{hand}, \texttt{arm},
-\texttt{body} and \texttt{robot} are not necessary since every finger
-component will always be attached only to a hand, itself attached to an
-arm and a body and a robot.
-\item
-The result is \texttt{fingerLR}
+\item Move all localization at the end:
+  \texttt{robot.body.arm.hand.fingerLR}
+\item The fullname remaining is: \texttt{robot.body.arm.hand.finger}
+\item \texttt{finger} should be kept, \texttt{hand}, \texttt{arm},
+  \texttt{body} and \texttt{robot} are not necessary since every
+  finger component will always be attached only to a hand, itself
+  attached to an arm and a body and a robot.
+\item The result is \texttt{fingerLR}
 \end{enumerate}
 
 Example 2: \texttt{robot.body.head.yaw}
 \begin{enumerate}
-\item
-No localization to move
-\item
-\texttt{yaw} must be kept because \texttt{head} also have a
-\texttt{pitch} subcomponent and
-\item
-\texttt{head} must also be kept to avoid ambiguity with other components
-having a \texttt{yaw} subcomponent.
-\item
-The result is \texttt{headYaw}
+\item No localization to move
+\item \texttt{yaw} must be kept because \texttt{head} also have a
+  \texttt{pitch} subcomponent and
+\item \texttt{head} must also be kept to avoid ambiguity with other
+  components having a \texttt{yaw} subcomponent.
+\item The result is \texttt{headYaw}
 \end{enumerate}
 
 Example 3: \texttt{robot.body.legL.knee.pitch}
 \begin{enumerate}
-\item
-Move all localization at the end: \texttt{robot.body.leg.knee.pitchL}
-\item
-\texttt{pitch} is not necessary because \texttt{knee} has only a
-\texttt{pitch}, so \texttt{knee} will be kept only
-\item
-The result is \texttt{kneeL}
+\item Move all localization at the end:
+  \texttt{robot.body.leg.knee.pitchL}
+\item \texttt{pitch} is not necessary because \texttt{knee} has only a
+  \texttt{pitch}, so \texttt{knee} will be kept only
+\item The result is \texttt{kneeL}
 \end{enumerate}
-\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
