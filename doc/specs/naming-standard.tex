@@ -330,17 +330,17 @@ This facet is used to describe a generic motor controller.
     specific slot is described in a subclass of \texttt{motor}.%
   }
 
-  \slot{PGain}%
+  \optSlot{PGain}%
   {%
     Controls the P gain of the PID controller.%
   }
 
-  \slot{IGain}%
+  \optSlot{IGain}%
   {%
     Controls the I gain of the PID controller.%
   }
 
-  \slot{DGain}%
+  \optSlot{DGain}%
   {%
     Controls the D gain of the PID controller.%
   }
@@ -555,24 +555,24 @@ image sensor.
     Width of the image in the current resolution, expressed in pixels%
   }
 
-  \slot{shutter}%
+  \optSlot{shutter}%
   {%
     The shutter speed (expressed in ms). 0 if non applicable.%
   }
 
-  \slot{wb}%
+  \optSlot{wb}%
   {%
     White balance (expressed with an integer value depending on the
     camera documentation). 0 if non applicable.%
   }
 
-  \slot{gain}%
+  \optSlot{gain}%
   {%
     Camera gain amplification (expressed as a coefficient between 0
     and infinity). 1 if non applicable.%
   }
 
-  \slot{resolution}%
+  \optSlot{resolution}%
   {%
     Can be used to specify a given resolution, expressed as a
     percentage of the maximal resolution of the camera (number between
@@ -611,7 +611,7 @@ The audioout facet groups every information relative to speakers.
     currently playing (the buffer is not empty)%
   }
 
-  \slot{volume}%
+  \optSlot{volume}%
   {%
     Volume of the play back, in decibels.%
   }
@@ -639,7 +639,7 @@ The audioin facet groups every information relative to microphones.
     Amount of sound in the val attribute, expressed in \textit{ms}.%
   }
 
-  \slot{gain}%
+  \optSlot{gain}%
   {%
     Microphone gain amplification (expressed between 0 and 1)%
   }
@@ -681,13 +681,13 @@ typical slots expected:
     The minimum value of ratio to decide that the blob is visible.%
   }
 
-  \slot{orientation}%
+  \optSlot{orientation}%
   {%
     Angle of the main ellipsoid axis of the blog (0 = horizontal),
     expressed in degrees.%
   }
 
-  \slot{elongation}%
+  \optSlot{elongation}%
   {%
     Ratio between the main and the second diameter of the blob
     enveloping ellipse.%
@@ -701,33 +701,33 @@ implementations should use the \texttt{speaker} component (or alias) as
 their default sound output.
 
 \begin{slots}
-  \slot{lang}%
+  \optSlot{lang}%
   {%
     The language used, in international notation (fr, en, it…): ISO
     639%
   }
 
-  \slot{speed}%
+  \optSlot{speed}%
   {%
     How fast the voice should go, between 0 and 1.%
   }
 
-  \slot{pitch}%
+  \optSlot{pitch}%
   {%
     Voice pitch, between 0 and 1.%
   }
 
-  \slot{gender}%
+  \optSlot{gender}%
   {%
     Gender of the speaker (0:male/1:female)%
   }
 
-  \slot{age}%
+  \optSlot{age}%
   {%
     Age of the speaker, if applicable%
   }
 
-  \slot{name}%
+  \optSlot{name}%
   {%
     Most TTS engine will propose several voices, this attributes
     allows picking one. It’s a string identifier specific to the TTS
@@ -739,12 +739,12 @@ their default sound output.
     Speak the sentence given in parameter \var{s}.%
   }
 
-  \slot{voicexml(s)}%
+  \optSlot{voicexml(s)}%
   {%
     Speak the text \var{s} expressed as a VoiceXML string.%
   }
 
-  \slot{script(s)}%
+  \optSlot{script(s)}%
   {%
     Speak the text \var{s} augmented by script markups (see specific
     Gostai documentation) to generate \urbi events.%
@@ -761,7 +761,7 @@ should use the \texttt{micro} component (or alias) as their default
 sound input.
 
 \begin{slots}
-  \slot{lang}%
+  \optSlot{lang}%
   {%
     The language used, in international notation (fr, en, it…): ISO
     639%
