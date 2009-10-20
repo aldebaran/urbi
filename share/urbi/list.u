@@ -23,7 +23,7 @@ do (List)
 
   function keys()
   {
-    size.asList;
+    size.asList
   };
 
   function '=='(other)
@@ -86,26 +86,26 @@ do (List)
   // Concatenate the string representation of the members, separated by \a sep
   function join(sep = "", prefix = "", suffix = "")
   {
-    sep.join(this, prefix, suffix);
+    sep.join(this, prefix, suffix)
   };
 
   // We might want separate Range objects, with a literal syntax
   // (a..b, a:b, ...).
   function range
   {
-    var fr = 0;
-    var to = size;
+    var fr = 0 |
+    var to = size |
     if (call.argsCount >= 2) // FIXME: throw when > 2
     {
-      fr = call.argAt(0);
-      to = call.argAt(1);
+      fr = call.argAt(0)|
+      to = call.argAt(1)
     }
     else
-      to = call.argAt(0);
-    var res = [];
+      to = call.argAt(0)|
+    var res = []|
     for (var i = fr; i < to; i++)
-      res << this[i];
-    res;
+      res << this[i] |
+    res
   };
 
 
