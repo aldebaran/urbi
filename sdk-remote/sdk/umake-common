@@ -207,8 +207,5 @@ append ()
   local content="$2"
   local sep
   sep=${3-' '}
-  if eval "test \"\${$var:+set}\" = set"; then
-    eval "$var=\$$var\$sep"
-  fi
-  eval "$var=\$$var\$content"
+  eval "$var=\$$var\${$var:+$sep}\$content"
 }
