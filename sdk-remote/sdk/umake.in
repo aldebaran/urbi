@@ -212,14 +212,14 @@ get_options ()
 : ${SHLIBEXT=@SHLIBEXT@}
 clean=false
 : ${URBI_ENV='@URBI_ENV@'}
-core=$URBI_ENV
+core=
 havearg=false   # we have at least one path or file arg
 : ${URBI_HOST='@URBI_HOST@'}
 host=$URBI_HOST
 # Libraries (and flags) to use when linking a module.
 LIBADD=
 # Whether building a shared lib/module.
-shared=false
+shared=true
 
 builddir=
 builddir_pref="_ubuild"
