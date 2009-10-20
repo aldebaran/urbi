@@ -105,9 +105,13 @@ namespace object
   UVar::loopCheck()
   {
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
+    // Loop if we have both notifychange and notifyaccess callbacs.
+    // Listeners on the changed event counts as notifychange
     if (!looping_
-        && !slot_get(SYMBOL(change))->call(SYMBOL(empty))->as_bool()
+        &&
+        (   !slot_get(SYMBOL(change))->call(SYMBOL(empty))->as_bool()
+          || slot_get(SYMBOL(changed))->call(SYMBOL(hasSubscribers))->as_bool()
+        )
         && !slot_get(SYMBOL(access))->call(SYMBOL(empty))->as_bool())
     {
       looping_ = true;
@@ -141,6 +145,7 @@ namespace object
 	callNotify(r, rObject(this), SYMBOL(change));
 	inChange_.erase(i);
       }
+      slot_get(SYMBOL(changed))->call("emit");
     }
     return val;
   }
@@ -179,6 +184,7 @@ namespace object
     runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
     slot_update(SYMBOL(valsensor), newval);
     callNotify(r, rObject(this), SYMBOL(change));
+    slot_get(SYMBOL(changed))->call("emit");
     return newval;
   }
 

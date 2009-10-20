@@ -54,6 +54,8 @@ class Global.Event
 
   function onEvent(code)
   {
+    if (hasLocalSlot("onSubscribe"))
+      onSubscribe! |
     listeners << code |
     var sub = on_pubsub.subscribe |
     // We cannot replace these for loops of detached code with a for&,
@@ -68,6 +70,8 @@ class Global.Event
 
   function 'waituntil'(pattern)
   {
+    if (hasLocalSlot("onSubscribe"))
+      onSubscribe! |
     var sub = wu_pubsub.subscribe |
     for| (var e: alive)
       if (pattern.isNil || pattern.match(e.payload))
@@ -82,5 +86,10 @@ class Global.Event
           wu_pubsub.unsubscribe(sub) |
           return
         }
+  };
+
+  function hasSubscribers()
+  {
+    !wu_pubsub.subscribers.empty || !on_pubsub.subscribers.empty
   };
 };

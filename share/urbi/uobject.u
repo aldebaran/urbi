@@ -175,7 +175,12 @@ do (getSlot("UVar"))
       parent.getProperty = function(varname, propname)
       {
         if (getSlot(varname).isA(UVar))
-          getSlot(varname).getProperty("val", propname).acceptVoid
+        {
+          if (propname == "changed")
+            getSlot(varname).changed
+          else
+            getSlot(varname).getProperty("val", propname).acceptVoid
+        }
         else
           parent_getprop.apply([this, varname, propname])
       }|
@@ -206,6 +211,10 @@ do (getSlot("UVar"))
       var access = WeakDictionary.new |
       var owned = false |
       var val |
+      var changed = Event.new |
+      var changed.onSubscribe = Event.new |
+      at (changed.onSubscribe?)
+        loopCheck |
       var valsensor = 0 |
       var isUVar = 1
     }
