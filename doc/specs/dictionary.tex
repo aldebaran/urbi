@@ -169,6 +169,22 @@ Dictionary.new.set("one", 2).set("one", 1);
 [00000000] Dictionary {"one" => 1}
 \end{urbiscript}
 
+\item \lstinline|size|\\
+  Number of element in the dictionary.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var d = Dictionary.new;
+  assert(d.size == 0);
+  d["a"] = 0;
+  assert(d.size == 1);
+  d["b"] = 1;
+  assert(d.size == 2);
+  d["a"] = 2;
+  assert(d.size == 2);
+};
+\end{urbiscript}
+
 \item \lstinline|[]=(\var{key}, \var{value})|\\
   Syntactic sugar for \lstinline|set(\var{key}, \var{value})|, but
   returns \var{value}.

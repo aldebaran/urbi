@@ -35,6 +35,7 @@ namespace object
     /// Urbi methods
     rDictionary clear();
     bool empty() const;
+    size_t size() const;
     /// False iff empty.
     virtual bool as_bool() const;
     rDictionary erase(libport::Symbol key);

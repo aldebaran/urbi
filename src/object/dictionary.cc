@@ -76,6 +76,12 @@ namespace object
     return content_.empty();
   }
 
+  size_t
+  Dictionary::size() const
+  {
+    return content_.size();
+  }
+
   bool
   Dictionary::as_bool() const
   {
@@ -121,6 +127,7 @@ namespace object
     DECLARE(has);
     DECLARE(keys);
     DECLARE(set);
+    DECLARE(size);
 #undef DECLARE
   }
 
