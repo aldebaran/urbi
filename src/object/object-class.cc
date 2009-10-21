@@ -140,10 +140,10 @@ namespace object
     check_arg_count(args.size() - 1, 1);
     type_check<List>(args[1]);
     const rList& arg1 = args[1]->as<List>();
-    if (arg1->value_get ().size () != 1
-        || arg1->value_get().front() != args[0])
-      RAISE("first argument must be `[this]'");
-    return arg1->value_get().front();
+    unsigned nargs = arg1->value_get ().size ();
+    if (nargs != 1)
+      runner::raise_arity_error(nargs, 1);
+    return args[0];
   }
 
   static rObject
