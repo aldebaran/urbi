@@ -84,9 +84,19 @@ $MKDIR_P "$packagedir"
 # include directory, no variable will tell us that.
 # So go the configure way and ask the compiler.
 make -C  $builddir/sdk-remote/src bin/urbi-launch.ii
-incline=$(grep -m 1 foreach.hpp $builddir/sdk-remote/src/bin/urbi-launch.ii | cut '-d ' -f 3)
-incline=$(echo $incline | sed -e 's/"//g' -e 's/\\\\/\//g' -e 's/foreach.hpp//')
-#ensure we got it right
+incline=$(perl -n \
+            -e 'if (/^#.*"(.*).foreach.hpp"/)
+                {
+                  print "$1\n";
+                  exit 0;
+                }' bin/urbi-launch.ii
+)
+if winepath --help >/dev/null; then
+  incline=$(winepath "$incline")
+elif cygpath --help >/dev/null; then
+  incline=$(cygpath "$incline")
+fi
+# Ensure we got it right.
 if test ! -f  $incline/version.hpp; then
   echo "Failed to find boost include directory, got '$incline'"
   exit 1
@@ -128,7 +138,7 @@ $FIND $packagedir -name libtool |
        -e 's/postdep_objects=.*/#- $&/;'                                \
        -e 's/-nostdlib//g;'
 
-# Remove ccache  and -Werror from the param.mk and libtool.
+# Remove ccache and -Werror from the param.mk and libtool.
 # Remove also hidden visibility as it prevents linking uobjects using
 # boost symbols inside libport.
 $FIND $packagedir '(' -name param.mk -or -name libtool ')' |
