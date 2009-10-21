@@ -22,10 +22,27 @@
 # include <object/uvar.hh>
 
 # include <runner/runner.hh>
+# include <runner/interpreter.hh>
 
 
 namespace object
 {
+  static inline void
+  show_exception_message(runner::Runner& r, rObject self, const char* m1,
+                         const char* m2)
+  {
+    r.lobby_get()->call(SYMBOL(send),
+      new object::String(
+        m1
+          + libport::format(
+            "%s.%s",
+             self->slot_get(SYMBOL(ownerName))->as<String>()->value_get(),
+             self->slot_get(SYMBOL(initialName))->as<String>()->value_get()
+             )
+          + m2),
+      new object::String("error"));
+  }
+
   static inline void callNotify(runner::Runner& r, rObject self,
                                 libport::Symbol notifyList)
   {
@@ -37,25 +54,19 @@ namespace object
     for (List::value_type::iterator i = callbacks.begin();
          i != callbacks.end(); )
     {
+      bool failed = true;
       try
       {
          r.apply(*i, SYMBOL(NOTIFY), args);
-         ++i;
+         failed = false;
       }
       catch(UrbiException& e)
       {
-        std::cerr << "Urbi Exception caught while processing notify: "
-          << *e.value_get() << std::endl;
-        std::cerr << "backtrace: " << std::endl;
-        rforeach (call_type c, e.backtrace_get())
-        {
-          std::ostringstream o;
-          std::cerr << "    called from: ";
-          if (c.second)
-            std::cerr << *c.second << ": ";
-          std::cerr << c.first << std::endl;
-        }
-        i = callbacks.erase(i);
+        show_exception_message(r, self,
+          "!!! Exception caught while processing notify on ", " :");
+        runner::Interpreter& in = dynamic_cast<runner::Interpreter&>(r);
+        in.show_exception(e);
+
       }
       catch(sched::exception& e)
       {
@@ -63,10 +74,17 @@ namespace object
       }
       catch(...)
       {
-        std::cerr << "Unknown exception caught while processing notify."
-          << std::endl;
+        show_exception_message(r, self,
+         "!!! Unknown exception called while processing notify on ", "");
+      }
+      if (failed && self->slot_get(SYMBOL(eraseThrowingCallbacks))->as_bool())
+      {
+        // 'value' is just a cache, not the actual storage location.
+        self->slot_get(notifyList)->call(SYMBOL(remove), *i);
         i = callbacks.erase(i);
       }
+      else
+        ++i;
     }
   }
 

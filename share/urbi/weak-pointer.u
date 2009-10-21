@@ -72,6 +72,18 @@ do (Global.WeakDictionary)
       __inc
     }
   };
+  function remove(val)
+  {
+    for|(var e: dict)
+    {
+      if (e.second.second.has(val))
+      {
+        dict.set(e.first,
+                 Pair.new(e.second.first, e.second.second.remove(val))) |
+        return
+      }
+    }
+  };
   function empty()
   {
     dict.empty
