@@ -89,12 +89,12 @@ incline=$(perl -n \
                 {
                   print "$1\n";
                   exit 0;
-                }' bin/urbi-launch.ii
+                }' $builddir/sdk-remote/src/bin/urbi-launch.ii
 )
 if winepath --help >/dev/null; then
-  incline=$(winepath "$incline")
+  incline=$(winepath -u "$incline")
 elif cygpath --help >/dev/null; then
-  incline=$(cygpath "$incline")
+  incline=$(cygpath -u "$incline")
 fi
 # Ensure we got it right.
 if test ! -f  $incline/version.hpp; then
