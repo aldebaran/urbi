@@ -45,7 +45,10 @@ class Global.Group : RangeIterable
   function fallback
   {
     var results = [] |
+    // We must use callMessage instead of apply, as the later looses the message
     var outer_call = call |
+    // Evaluate args once.
+    call.evalArgs = call.evalArgs |
     function action (m)
     {
       results.insertBack(m.callMessage(outer_call).acceptVoid)
