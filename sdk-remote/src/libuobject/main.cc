@@ -97,11 +97,9 @@ namespace urbi
 	      << program_name()
 	      << ": Remote Component Running on "
 	      << host << " " << port << std::endl;
-              USyncClient::options o;
-              o.server(server);
-              new USyncClient(host, port, buflen, o);
-    defaultContext = new impl::RemoteUContextImpl(
-              dynamic_cast<USyncClient*>(getDefaultClient()));
+    USyncClient::options o;
+    o.server(server);
+    new USyncClient(host, port, buflen, o);
     if (exitOnDisconnect)
     {
       if (!getDefaultClient() || getDefaultClient()->error())
@@ -109,8 +107,10 @@ namespace urbi
 		  << libport::exit(1);
       getDefaultClient()->setClientErrorCallback(callback(&endProgram));
     }
-   if (!getDefaultClient() || getDefaultClient()->error())
+    if (!getDefaultClient() || getDefaultClient()->error())
       return 1;
+    defaultContext = new impl::RemoteUContextImpl(
+      dynamic_cast<USyncClient*>(getDefaultClient()));
 
 #ifdef LIBURBIDEBUG
     getDefaultClient()->setWildcardCallback(callback(&debug));
