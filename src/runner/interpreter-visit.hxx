@@ -332,7 +332,7 @@ namespace runner
       exception_to_throw->rethrow();
     else if (exception_to_show.get())
     {
-      show_exception_(*exception_to_show);
+      show_exception(*exception_to_show);
 
       // In the case of a Nary with multiple elements at the toplevel,
       // we want to reset the result to void to make sure that we

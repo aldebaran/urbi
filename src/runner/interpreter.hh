@@ -192,8 +192,8 @@ namespace runner
 
     virtual libport::Symbol innermost_call_get() const;
 
+    void show_exception(object::UrbiException& ue);
   protected:
-    void show_exception_(object::UrbiException& ue);
 
   private:
     void init();

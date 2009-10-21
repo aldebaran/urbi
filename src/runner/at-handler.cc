@@ -132,7 +132,7 @@ namespace runner
 	}
 	catch (object::UrbiException& ue)
 	{
-	  show_exception_(ue);
+	  show_exception(ue);
 	  job = jobs_.erase(job);
 	  continue;
 	}

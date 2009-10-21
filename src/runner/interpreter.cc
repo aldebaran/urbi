@@ -130,7 +130,7 @@ namespace runner
   }
 
   void
-  Interpreter::show_exception_(object::UrbiException& ue)
+  Interpreter::show_exception(object::UrbiException& ue)
   {
     send_message("error",
                  libport::format("!!! %s",
@@ -169,7 +169,7 @@ namespace runner
         Finally finally(boost::bind(&Runner::non_interruptible_set,
                                     this, non_interruptible_get()));
         non_interruptible_set(true);
-        show_exception_(exn);
+        show_exception(exn);
       }
     }
   }
