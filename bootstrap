@@ -39,7 +39,7 @@ packages ()
 
 if test -x /opt/local/bin/port; then
   packages "MacPorts" "MacPorts"
-elif apt-get --version 2>&1 >/dev/null; then
+elif test -x /usr/bin/apt-get; then
   packages "Debian or Ubuntu" "deb"
 fi
 
