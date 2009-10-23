@@ -13,68 +13,71 @@
 #include <object/regexp.hh>
 #include <object/symbols.hh>
 
-namespace object
+namespace urbi
 {
-  Regexp::Regexp(const std::string& rg)
-    : re_(rg)
+  namespace object
   {
-    proto_add(proto ? proto : Object::proto);
-  }
-
-  Regexp::Regexp(rRegexp model)
-    : re_(model->re_)
-  {
-    proto_add(model);
-  }
-
-  std::string
-  Regexp::as_string() const
-  {
-    return libport::format("Regexp(\"%s\")", libport::escape(re_));
-  }
-
-  void
-  Regexp::init(const std::string& rg)
-  {
-    // Depending on the version of Boost.Regex, "" might not be valid.
-    // Make it always invalid.
-    if (rg.empty())
-      FRAISE("Invalid regular expression \"%s\": %s",
-             libport::escape(rg), "Empty expression");
-    try
+    Regexp::Regexp(const std::string& rg)
+      : re_(rg)
     {
-      re_ = boost::regex(rg);
+      proto_add(proto ? proto : Object::proto);
     }
-    catch (const boost::regex_error& e)
+
+    Regexp::Regexp(rRegexp model)
+      : re_(model->re_)
     {
-      FRAISE("Invalid regular expression \"%s\": %s",
-             libport::escape(rg), e.what());
+      proto_add(model);
     }
-  }
 
-  bool
-  Regexp::match(const std::string& str) const
-  {
-    return regex_search(str, re_);
-  }
+    std::string
+    Regexp::as_string() const
+    {
+      return libport::format("Regexp(\"%s\")", libport::escape(re_));
+    }
 
-  void
-  Regexp::initialize(CxxObject::Binder<Regexp>& bind)
-  {
+    void
+    Regexp::init(const std::string& rg)
+    {
+      // Depending on the version of Boost.Regex, "" might not be valid.
+      // Make it always invalid.
+      if (rg.empty())
+        FRAISE("Invalid regular expression \"%s\": %s",
+               libport::escape(rg), "Empty expression");
+      try
+      {
+        re_ = boost::regex(rg);
+      }
+      catch (const boost::regex_error& e)
+      {
+        FRAISE("Invalid regular expression \"%s\": %s",
+               libport::escape(rg), e.what());
+      }
+    }
+
+    bool
+    Regexp::match(const std::string& str) const
+    {
+      return regex_search(str, re_);
+    }
+
+    void
+    Regexp::initialize(CxxObject::Binder<Regexp>& bind)
+    {
 #define DECLARE(Urbi, Cxx)                      \
-    bind(SYMBOL(Urbi), &Regexp::Cxx)
+      bind(SYMBOL(Urbi), &Regexp::Cxx)
 
-    DECLARE(asString, as_string);
-    DECLARE(init, init);
-    DECLARE(match, match);
+      DECLARE(asString, as_string);
+      DECLARE(init, init);
+      DECLARE(match, match);
 #undef DECLARE
-  }
+    }
 
-  rObject
-  Regexp::proto_make()
-  {
-    return new Regexp(".");
-  }
+    rObject
+    Regexp::proto_make()
+    {
+      return new Regexp(".");
+    }
 
-  URBI_CXX_OBJECT_REGISTER(Regexp);
+    URBI_CXX_OBJECT_REGISTER(Regexp);
+  }
 }

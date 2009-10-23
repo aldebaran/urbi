@@ -29,7 +29,7 @@
 # include <urbi/export.hh>
 # include <kernel/utypes.hh>
 # ifdef _MSC_VER
-#  include <object/lobby.hh>
+#  include <urbi/object/lobby.hh>
 #  include <runner/shell.hh>
 # endif
 
@@ -162,7 +162,7 @@ namespace kernel
     UErrorValue error_get() const;
     parser::UParser& parser_get();
     UServer& server_get() const;
-    object::rLobby& lobby_get();
+    urbi::object::rLobby& lobby_get();
     runner::rShell& shell_get();
 
     bool send_queue_empty() const;
@@ -249,7 +249,7 @@ namespace kernel
     UErrorValue error_;
 
     /// The Lobby into which the code is evaluated.
-    object::rLobby lobby_;
+    urbi::object::rLobby lobby_;
 
   private:
     /// A pointer to stop dependencies.

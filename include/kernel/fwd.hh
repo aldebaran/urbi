@@ -47,11 +47,13 @@ namespace urbi
   class baseURBIStarter;
 }
 
-namespace object
+namespace urbi
 {
-  class Lobby;
-  template<class T> class Atom;
-  typedef libport::intrusive_ptr<Lobby> rLobby;
+  namespace object
+  {
+    class Lobby;
+    typedef libport::intrusive_ptr<Lobby> rLobby;
+  }
 }
 
 namespace parser

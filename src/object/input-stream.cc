@@ -15,152 +15,155 @@
 
 #include <libport/format.hh>
 
-#include <object/file.hh>
+#include <urbi/object/file.hh>
 #include <object/input-stream.hh>
 #include <object/symbols.hh>
 
 #include <urbi/sdk.hh>
 #include <runner/raise.hh>
 
-namespace object
+namespace urbi
 {
-  /*-----------------------------.
-  | Construction / Destruction.  |
-  `-----------------------------*/
-
-  InputStream::InputStream(int fd, bool own)
-    : fd_(fd)
-    , own_(own)
-    , pos_(0)
-    , size_(0)
+  namespace object
   {
-    proto_add(proto ? proto : Object::proto);
-  }
+    /*-----------------------------.
+    | Construction / Destruction.  |
+    `-----------------------------*/
 
-  InputStream::InputStream(rInputStream model)
-    : fd_(model->fd_)
-    , own_(false)
-    , pos_(0)
-    , size_(0)
-  {
-    assert(model);
-    proto_add(model);
-  }
-
-  InputStream::~InputStream()
-  {
-    if (own_ && close(fd_))
-      RAISE(libport::strerror(errno));
-  }
-
-  /*--------------.
-  | Data access.  |
-  `--------------*/
-
-  int
-  InputStream::get_()
-  {
-    if (pos_ == size_ && !getBuffer_())
-      return -1;
-    return buffer_[pos_++];
-  }
-
-  bool
-  InputStream::getBuffer_()
-  {
-    assert_eq(pos_, size_);
-    buffer_ = urbi::yield_for_read(fd_);
-    size_ = buffer_.size();
-    pos_ = 0;
-    return size_;
-  }
-
-  std::string
-  InputStream::getSeparator_(char sep, bool incl, bool& ok)
-  {
-    ok = false;
-    std::string res;
-
-    while (true)
+    InputStream::InputStream(int fd, bool own)
+      : fd_(fd)
+      , own_(own)
+      , pos_(0)
+      , size_(0)
     {
-      for (; pos_ < size_; ++pos_)
-      {
-        ok = true;
-        if (buffer_[pos_] == sep)
-        {
-          if (incl)
-            res += sep;
-          pos_++;
-          return res;
-        }
-        else
-          res += buffer_[pos_];
-      }
-      if (!getBuffer_())
-        return res;
+      proto_add(proto ? proto : Object::proto);
     }
-  }
 
-  /*--------------.
-  | Urbi methods. |
-  `--------------*/
+    InputStream::InputStream(rInputStream model)
+      : fd_(model->fd_)
+      , own_(false)
+      , pos_(0)
+      , size_(0)
+    {
+      assert(model);
+      proto_add(model);
+    }
 
-  void
-  InputStream::init(rFile f)
-  {
-    libport::path path = f->value_get()->value_get();
-    fd_ = open(path.to_string().c_str(), O_RDONLY);
-    if (fd_ < 0)
-      FRAISE("cannot open file for reading: %s", path);
-    own_ = true;
-  }
+    InputStream::~InputStream()
+    {
+      if (own_ && close(fd_))
+        RAISE(libport::strerror(errno));
+    }
 
-  rObject
-  InputStream::get()
-  {
-    int res = get_();
-    if (res == -1)
-      return 0;
-    return to_urbi(res);
-  }
+    /*--------------.
+    | Data access.  |
+    `--------------*/
 
-  rObject
-  InputStream::getChar()
-  {
-    int res = get_();
-    if (res == -1)
-      return 0;
-    return to_urbi(std::string(1, res));
-  }
+    int
+    InputStream::get_()
+    {
+      if (pos_ == size_ && !getBuffer_())
+        return -1;
+      return buffer_[pos_++];
+    }
 
-  rObject
-  InputStream::getLine()
-  {
-    bool ok;
-    std::string res = getSeparator_('\n', false, ok);
-    if (ok)
+    bool
+    InputStream::getBuffer_()
+    {
+      assert_eq(pos_, size_);
+      buffer_ = urbi::yield_for_read(fd_);
+      size_ = buffer_.size();
+      pos_ = 0;
+      return size_;
+    }
+
+    std::string
+    InputStream::getSeparator_(char sep, bool incl, bool& ok)
+    {
+      ok = false;
+      std::string res;
+
+      while (true)
+      {
+        for (; pos_ < size_; ++pos_)
+        {
+          ok = true;
+          if (buffer_[pos_] == sep)
+          {
+            if (incl)
+              res += sep;
+            pos_++;
+            return res;
+          }
+          else
+            res += buffer_[pos_];
+        }
+        if (!getBuffer_())
+          return res;
+      }
+    }
+
+    /*--------------.
+    | Urbi methods. |
+    `--------------*/
+
+    void
+    InputStream::init(rFile f)
+    {
+      libport::path path = f->value_get()->value_get();
+      fd_ = open(path.to_string().c_str(), O_RDONLY);
+      if (fd_ < 0)
+        FRAISE("cannot open file for reading: %s", path);
+      own_ = true;
+    }
+
+    rObject
+    InputStream::get()
+    {
+      int res = get_();
+      if (res == -1)
+        return 0;
       return to_urbi(res);
-    return 0;
+    }
+
+    rObject
+    InputStream::getChar()
+    {
+      int res = get_();
+      if (res == -1)
+        return 0;
+      return to_urbi(std::string(1, res));
+    }
+
+    rObject
+    InputStream::getLine()
+    {
+      bool ok;
+      std::string res = getSeparator_('\n', false, ok);
+      if (ok)
+        return to_urbi(res);
+      return 0;
+    }
+
+    /*----------------.
+    | Urbi bindings.  |
+    `----------------*/
+
+    rObject
+    InputStream::proto_make()
+    {
+      return new InputStream(STDIN_FILENO, false);
+    }
+
+    void
+    InputStream::initialize(CxxObject::Binder<InputStream>& bind)
+    {
+      bind(SYMBOL(get), &InputStream::get);
+      bind(SYMBOL(getChar), &InputStream::getChar);
+      bind(SYMBOL(getLine), &InputStream::getLine);
+      bind(SYMBOL(init), &InputStream::init);
+    }
+
+    URBI_CXX_OBJECT_REGISTER(InputStream);
   }
-
-  /*----------------.
-  | Urbi bindings.  |
-  `----------------*/
-
-  rObject
-  InputStream::proto_make()
-  {
-    return new InputStream(STDIN_FILENO, false);
-  }
-
-  void
-  InputStream::initialize(CxxObject::Binder<InputStream>& bind)
-  {
-    bind(SYMBOL(get), &InputStream::get);
-    bind(SYMBOL(getChar), &InputStream::getChar);
-    bind(SYMBOL(getLine), &InputStream::getLine);
-    bind(SYMBOL(init), &InputStream::init);
-  }
-
-  URBI_CXX_OBJECT_REGISTER(InputStream);
 }

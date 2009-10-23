@@ -55,8 +55,8 @@
 #include <kernel/connection.hh>
 #include <kernel/ubanner.hh>
 #include <object/symbols.hh>
-#include <object/object.hh>
-#include <object/float.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/float.hh>
 #include <object/system.hh>
 #include <urbi/export.hh>
 #include <urbi/umain.hh>

@@ -15,33 +15,36 @@
 #ifndef OBJECT_SEMAPHORE_CLASS_HH
 # define OBJECT_SEMAPHORE_CLASS_HH
 
-# include <object/fwd.hh>
+# include <urbi/object/fwd.hh>
 # include <sched/fwd.hh>
 
-namespace object
+namespace urbi
 {
-  class Semaphore: public CxxObject
+  namespace object
   {
-  public:
-    typedef std::pair< int, std::list<sched::rJob> > value_type;
+    class Semaphore: public CxxObject
+    {
+    public:
+      typedef std::pair< int, std::list<sched::rJob> > value_type;
 
-    Semaphore();
-    Semaphore(rSemaphore model);
-    Semaphore(const value_type& value);
+      Semaphore();
+      Semaphore(rSemaphore model);
+      Semaphore(const value_type& value);
 
-    value_type& value_get();
+      value_type& value_get();
 
-    static rSemaphore _new(rObject sem, rFloat count);
-    void p();
-    void v();
-    rObject criticalSection(rCode);
+      static rSemaphore _new(rObject sem, rFloat count);
+      void p();
+      void v();
+      rObject criticalSection(rCode);
 
-  private:
-    value_type value_;
+    private:
+      value_type value_;
 
-  URBI_CXX_OBJECT(Semaphore);
-  };
+      URBI_CXX_OBJECT(Semaphore);
+    };
 
-}; // namespace object
+  }; // namespace object
+}
 
 #endif // OBJECT_SEMAPHORE_CLASS_HH

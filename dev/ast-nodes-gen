@@ -73,7 +73,7 @@ def print_includes (node, header, inline, impl):
   for i in includes:
     print >>header, "# include " + i
   print_inline_code (node, "header", "prologue")
-  print >>header, "# include <object/fwd.hh>"
+  print >>header, "# include <urbi/object/fwd.hh>"
   print >>header, "# include <kernel/config.h>"
 
   # *.hxx
@@ -322,7 +322,7 @@ def declare_visitor(node, header, abstract):
     /// Accept a non-const visitor \\a v.
     virtual void accept (Visitor& v)%(impl)s;
     /// Evaluate the node in interpreter \\a r
-    virtual object::rObject eval(runner::Interpreter& r) const %(impl)s;
+    virtual urbi::object::rObject eval(runner::Interpreter& r) const %(impl)s;
     /// Return the node type
     virtual std::string node_type() const%(impl)s;
     /// \\}""" % {'impl': impl}
@@ -343,7 +343,7 @@ def print_visitor(node, header, inline, impl):
     v.visit(this);
   }
 
-  object::rObject %(name)s::eval(runner::Interpreter& r) const
+  urbi::object::rObject %(name)s::eval(runner::Interpreter& r) const
   {
     return assert_exp(r.visit(this));
   }

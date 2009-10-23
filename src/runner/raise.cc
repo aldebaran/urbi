@@ -8,13 +8,17 @@
  * See the LICENSE file for more information.
  */
 #include <kernel/userver.hh>
-#include <object/cxx-conversions.hh>
-#include <object/global.hh>
+
 #include <object/symbols.hh>
+
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 #include <runner/sneaker.hh>
+
 #include <sched/scheduler.hh>
+
+#include <urbi/object/cxx-conversions.hh>
+#include <urbi/object/global.hh>
 
 #define assert_user_mode(Exn, Msg)                              \
   __passert((::kernel::urbiserver->mode_get()                   \

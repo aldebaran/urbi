@@ -9,7 +9,7 @@
  */
 #include <libport/containers.hh>
 
-#include <object/object.hh>
+#include <urbi/object/object.hh>
 
 namespace object
 {

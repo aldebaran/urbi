@@ -13,106 +13,109 @@
 
 #include <kernel/userver.hh>
 
-#include <object/barrier.hh>
-#include <object/float.hh>
+#include <urbi/object/barrier.hh>
+#include <urbi/object/float.hh>
 #include <object/symbols.hh>
 
-namespace object
+namespace urbi
 {
-
-  Barrier::Barrier(rBarrier model)
-    : value_(model->value_)
+  namespace object
   {
-    proto_add(model);
-  }
 
-  Barrier::Barrier(const value_type& value)
-    : value_(value)
-  {
-    proto_add(proto ? proto : Object::proto);
-  }
-
-  struct BarrierException : public sched::SchedulerException
-  {
-    BarrierException(rObject payload) : payload_(payload) {};
-    ~BarrierException() throw() {}
-    ADD_FIELD(rObject, payload)
-    COMPLETE_EXCEPTION(BarrierException)
-  };
-
-  rBarrier
-  Barrier::_new(rObject)
-  {
-    return new Barrier(value_type());
-  }
-
-  static bool
-  job_compare(sched::rJob lhs, sched::rJob rhs)
-  {
-    return lhs == rhs;
-  }
-
-  rObject
-  Barrier::wait()
-  {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    value_.push_back(&r);
-    try
+    Barrier::Barrier(rBarrier model)
+      : value_(model->value_)
     {
-      r.yield_until_terminated(r);
-      // We cannot return from here.
-      pabort("yield_until_terminated returned");
+      proto_add(model);
     }
-    catch (const BarrierException& be)
+
+    Barrier::Barrier(const value_type& value)
+      : value_(value)
     {
-      // Regular wake up from a barrier wait.
-      return be.payload_get();
+      proto_add(proto ? proto : Object::proto);
     }
-    catch (...)
+
+    struct BarrierException : public sched::SchedulerException
     {
-      // Signal that we should no longer stay queued.
-      libport::erase_if(value_, boost::bind(job_compare, &r, _1));
-      throw;
+      BarrierException(rObject payload) : payload_(payload) {};
+      ~BarrierException() throw() {}
+      ADD_FIELD(rObject, payload)
+      COMPLETE_EXCEPTION(BarrierException)
+    };
+
+    rBarrier
+    Barrier::_new(rObject)
+    {
+      return new Barrier(value_type());
     }
-  }
 
-  unsigned int
-  Barrier::signal(rObject payload)
-  {
-    if (value_.empty())
-      return 0;
+    static bool
+    job_compare(sched::rJob lhs, sched::rJob rhs)
+    {
+      return lhs == rhs;
+    }
 
-    value_.front()->async_throw(BarrierException(payload));
-    value_.pop_front();
-    return 1;
-  }
+    rObject
+    Barrier::wait()
+    {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      value_.push_back(&r);
+      try
+      {
+        r.yield_until_terminated(r);
+        // We cannot return from here.
+        pabort("yield_until_terminated returned");
+      }
+      catch (const BarrierException& be)
+      {
+        // Regular wake up from a barrier wait.
+        return be.payload_get();
+      }
+      catch (...)
+      {
+        // Signal that we should no longer stay queued.
+        libport::erase_if(value_, boost::bind(job_compare, &r, _1));
+        throw;
+      }
+    }
 
-  unsigned int
-  Barrier::signalAll(rObject payload)
-  {
-    const unsigned int res = value_.size();
+    unsigned int
+    Barrier::signal(rObject payload)
+    {
+      if (value_.empty())
+        return 0;
 
-    foreach (sched::rJob job, value_)
-      job->async_throw(BarrierException(payload));
-    value_.clear();
+      value_.front()->async_throw(BarrierException(payload));
+      value_.pop_front();
+      return 1;
+    }
 
-    return res;
-  }
+    unsigned int
+    Barrier::signalAll(rObject payload)
+    {
+      const unsigned int res = value_.size();
 
-  void Barrier::initialize(CxxObject::Binder<Barrier>& bind)
-  {
-    bind(SYMBOL(new),       &Barrier::_new);
-    bind(SYMBOL(signal),    &Barrier::signal);
-    bind(SYMBOL(signalAll), &Barrier::signalAll);
-    bind(SYMBOL(wait),      &Barrier::wait);
-  }
+      foreach (sched::rJob job, value_)
+        job->async_throw(BarrierException(payload));
+      value_.clear();
 
-  rObject
-  Barrier::proto_make()
-  {
-    return new Barrier(Barrier::value_type());
-  }
+      return res;
+    }
 
-  URBI_CXX_OBJECT_REGISTER(Barrier);
+    void Barrier::initialize(CxxObject::Binder<Barrier>& bind)
+    {
+      bind(SYMBOL(new),       &Barrier::_new);
+      bind(SYMBOL(signal),    &Barrier::signal);
+      bind(SYMBOL(signalAll), &Barrier::signalAll);
+      bind(SYMBOL(wait),      &Barrier::wait);
+    }
 
-} // namespace object
+    rObject
+    Barrier::proto_make()
+    {
+      return new Barrier(Barrier::value_type());
+    }
+
+    URBI_CXX_OBJECT_REGISTER(Barrier);
+
+  } // namespace object
+}

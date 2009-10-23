@@ -24,13 +24,14 @@
 #include <ast/routine.hh>
 #include <ast/transformer.hh>
 
-#include <object/code.hh>
-#include <object/global.hh>
-#include <object/list.hh>
-#include <object/object.hh>
-#include <object/primitive.hh>
-#include <object/slot.hh>
 #include <object/symbols.hh>
+
+#include <urbi/object/code.hh>
+#include <urbi/object/global.hh>
+#include <urbi/object/list.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/primitive.hh>
+#include <urbi/object/slot.hh>
 
 #include <runner/interpreter.hh>
 #include <runner/raise.hh>

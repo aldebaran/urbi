@@ -7,7 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
-#include <object/object.hh>
+#include <urbi/object/object.hh>
 #include <object/sorted-vector-slots.hh>
 
 namespace object

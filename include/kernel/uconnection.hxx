@@ -71,7 +71,7 @@ namespace kernel
   }
 
   inline
-  object::rLobby&
+  urbi::object::rLobby&
   UConnection::lobby_get()
   {
     return lobby_;

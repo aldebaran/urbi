@@ -13,7 +13,7 @@
 # include <libport/compiler.hh>
 # include <libport/ufloat.hh>
 
-# include <object/fwd.hh>
+# include <urbi/object/fwd.hh>
 
 namespace runner
 {

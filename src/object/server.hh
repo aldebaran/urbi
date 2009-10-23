@@ -12,27 +12,30 @@
 
 # include <object/socket.hh>
 
-namespace object
+namespace urbi
 {
-  class URBI_SDK_API Server: public CxxObject, public libport::Socket
+  namespace object
   {
-  public:
-    Server();
-    Server(rServer model);
-    void listen(const std::string& host, const std::string& port);
-    void socket_ready(rSocket socket);
-    unsigned short port() const;
-    std::string host() const;
-    typedef std::vector<rSocket> sockets_type;
-    const sockets_type& sockets() const;
+    class URBI_SDK_API Server: public CxxObject, public libport::Socket
+    {
+      public:
+      Server();
+      Server(rServer model);
+      void listen(const std::string& host, const std::string& port);
+      void socket_ready(rSocket socket);
+      unsigned short port() const;
+      std::string host() const;
+      typedef std::vector<rSocket> sockets_type;
+      const sockets_type& sockets() const;
 
-  private:
-    Socket* make_socket();
-    rObject connection_;
-    void initialize();
-    sockets_type sockets_;
-    URBI_CXX_OBJECT(Server);
-  };
+      private:
+      Socket* make_socket();
+      rObject connection_;
+      void initialize();
+      sockets_type sockets_;
+      URBI_CXX_OBJECT(Server);
+    };
+  }
 }
 
 #endif

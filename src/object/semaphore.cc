@@ -8,97 +8,100 @@
  * See the LICENSE file for more information.
  */
 #include <kernel/userver.hh>
-#include <object/code.hh>
-#include <object/float.hh>
+#include <urbi/object/code.hh>
+#include <urbi/object/float.hh>
 #include <object/semaphore.hh>
 #include <object/symbols.hh>
 #include <runner/runner.hh>
 #include <sched/fwd.hh>
 
-namespace object
+namespace urbi
 {
-  Semaphore::Semaphore()
+  namespace object
   {
-    proto_add(proto ? proto : Object::proto);
-  }
-
-  Semaphore::Semaphore(rSemaphore model)
-    : value_(model->value_)
-  {
-    proto_add(proto);
-  }
-
-  Semaphore::Semaphore(const value_type& value)
-    : value_(value)
-  {
-    proto_add(proto);
-  }
-
-  struct SemaphoreException : public sched::SchedulerException
-  {
-    COMPLETE_EXCEPTION(SemaphoreException);
-  };
-
-  rSemaphore
-  Semaphore::_new(rObject, rFloat c)
-  {
-    int count = c->to_unsigned_int();
-    return new Semaphore(make_pair(count, std::list<sched::rJob>()));
-  }
-
-  void
-  Semaphore::p()
-  {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
-    if (--value_.first < 0)
+    Semaphore::Semaphore()
     {
-      value_.second.push_back(&r);
-      try
+      proto_add(proto ? proto : Object::proto);
+    }
+
+    Semaphore::Semaphore(rSemaphore model)
+      : value_(model->value_)
+    {
+      proto_add(proto);
+    }
+
+    Semaphore::Semaphore(const value_type& value)
+      : value_(value)
+    {
+      proto_add(proto);
+    }
+
+    struct SemaphoreException : public sched::SchedulerException
+    {
+      COMPLETE_EXCEPTION(SemaphoreException);
+    };
+
+    rSemaphore
+    Semaphore::_new(rObject, rFloat c)
+    {
+      int count = c->to_unsigned_int();
+      return new Semaphore(make_pair(count, std::list<sched::rJob>()));
+    }
+
+    void
+    Semaphore::p()
+    {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+
+      if (--value_.first < 0)
       {
-	r.yield_until_terminated(r);
-      }
-      catch (const SemaphoreException&)
-      {
-	// Regular wake up from a semaphore wait.
+        value_.second.push_back(&r);
+        try
+        {
+          r.yield_until_terminated(r);
+        }
+        catch (const SemaphoreException&)
+        {
+          // Regular wake up from a semaphore wait.
+        }
       }
     }
-  }
 
-  void
-  Semaphore::v()
-  {
-    if (++value_.first <= 0)
+    void
+    Semaphore::v()
     {
-      value_.second.front()->async_throw(SemaphoreException());
-      value_.second.pop_front();
+      if (++value_.first <= 0)
+      {
+        value_.second.front()->async_throw(SemaphoreException());
+        value_.second.pop_front();
+      }
     }
-  }
 
-  rObject
-  Semaphore::criticalSection(rCode f)
-  {
-    objects_type args;
-    args.push_back(this);
+    rObject
+    Semaphore::criticalSection(rCode f)
+    {
+      objects_type args;
+      args.push_back(this);
 
-    p();
-    libport::Finally finally(boost::bind(&Semaphore::v, this));
-    return (*f)(args);
-  }
+      p();
+      libport::Finally finally(boost::bind(&Semaphore::v, this));
+      return (*f)(args);
+    }
 
-  void Semaphore::initialize(CxxObject::Binder<Semaphore>& bind)
-  {
-    bind(SYMBOL(new),             &Semaphore::_new);
-    bind(SYMBOL(criticalSection), &Semaphore::criticalSection);
-    bind(SYMBOL(p),               &Semaphore::p);
-    bind(SYMBOL(v),               &Semaphore::v);
-  }
+    void Semaphore::initialize(CxxObject::Binder<Semaphore>& bind)
+    {
+      bind(SYMBOL(new),             &Semaphore::_new);
+      bind(SYMBOL(criticalSection), &Semaphore::criticalSection);
+      bind(SYMBOL(p),               &Semaphore::p);
+      bind(SYMBOL(v),               &Semaphore::v);
+    }
 
-  rObject
-  Semaphore::proto_make()
-  {
-    return new Semaphore();
-  }
+    rObject
+    Semaphore::proto_make()
+    {
+      return new Semaphore();
+    }
 
-  URBI_CXX_OBJECT_REGISTER(Semaphore);
-} // namespace object
+    URBI_CXX_OBJECT_REGISTER(Semaphore);
+  } // namespace object
+}

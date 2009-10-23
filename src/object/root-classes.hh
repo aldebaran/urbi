@@ -15,14 +15,17 @@
 #ifndef OBJECT_ROOT_CLASSES_HH
 # define OBJECT_ROOT_CLASSES_HH
 
-namespace object
+namespace urbi
 {
-  void root_classes_initialize();
-  // For export purpose.
-  void dummy_references();
-  // Remove references onto existing objects referenced in C++.
-  void cleanup_existing_objects();
-}; // namespace object
+  namespace object
+  {
+    void root_classes_initialize();
+    // For export purpose.
+    void dummy_references();
+    // Remove references onto existing objects referenced in C++.
+    void cleanup_existing_objects();
+  }; // namespace object
+}
 
 
 #endif // !OBJECT_ROOT_CLASSES_HH

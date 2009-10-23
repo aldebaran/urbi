@@ -12,10 +12,10 @@
 
 # include <libport/utime.hh>
 
-# include <object/cxx-conversions.hh>
-# include <object/cxx-object.hh>
-# include <object/object.hh>
-# include <object/slot.hh>
+# include <urbi/object/cxx-object.hh>
+# include <urbi/object/slot.hh>
+# include <urbi/object/cxx-conversions.hh>
+# include <urbi/object/object.hh>
 
 namespace urbi
 {

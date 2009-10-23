@@ -13,69 +13,72 @@
  */
 
 #include <kernel/userver.hh>
-#include <object/list.hh>
-#include <object/object.hh>
-#include <object/primitive.hh>
+#include <urbi/object/list.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/primitive.hh>
 #include <object/symbols.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 
-namespace object
+namespace urbi
 {
-  Primitive::Primitive()
+  namespace object
   {
-    RAISE("`Primitive' objects cannot be cloned");
-  }
+    Primitive::Primitive()
+    {
+      RAISE("`Primitive' objects cannot be cloned");
+    }
 
-  Primitive::Primitive(rPrimitive model)
-    : content_(model->value_get())
-  {
-    proto_add(proto);
-  }
+    Primitive::Primitive(rPrimitive model)
+      : content_(model->value_get())
+    {
+      proto_add(proto);
+    }
 
-  Primitive::Primitive(value_type value)
-    : content_(value)
-  {
-    proto_add(proto ? proto : Executable::proto);
-  }
+    Primitive::Primitive(value_type value)
+      : content_(value)
+    {
+      proto_add(proto ? proto : Executable::proto);
+    }
 
-  Primitive::value_type Primitive::value_get() const
-  {
-    return content_;
-  }
+    Primitive::value_type Primitive::value_get() const
+    {
+      return content_;
+    }
 
-  void Primitive::initialize(CxxObject::Binder<Primitive>& bind)
-  {
-    bind(SYMBOL(apply), &Primitive::apply);
-  }
+    void Primitive::initialize(CxxObject::Binder<Primitive>& bind)
+    {
+      bind(SYMBOL(apply), &Primitive::apply);
+    }
 
-  URBI_CXX_OBJECT_REGISTER(Primitive);
+    URBI_CXX_OBJECT_REGISTER(Primitive);
 
-  // FIXME: Code duplication with Code::apply.  Maybe there are more
-  // opportunity to factor.
-  rObject
-  Primitive::apply(rList args)
-  {
-    if (args->value_get().empty())
-      RAISE("list of arguments must begin with `this'");
-    objects_type a = args->value_get();
-    return ::kernel::urbiserver->getCurrentRunner().apply(this, SYMBOL(apply),
-                                                          a);
-  }
+    // FIXME: Code duplication with Code::apply.  Maybe there are more
+    // opportunity to factor.
+    rObject
+    Primitive::apply(rList args)
+    {
+      if (args->value_get().empty())
+        RAISE("list of arguments must begin with `this'");
+      objects_type a = args->value_get();
+      return ::kernel::urbiserver->getCurrentRunner().apply(this, SYMBOL(apply),
+                                                            a);
+    }
 
-  rObject Primitive::operator() (object::objects_type args)
-  {
-    return content_(args);
-  }
+    rObject Primitive::operator() (object::objects_type args)
+    {
+      return content_(args);
+    }
 
-  static void nil()
-  {}
+    static void nil()
+    {}
 
-  rObject
-  Primitive::proto_make()
-  {
-    rObject res = make_primitive(nil);
-    return res;
-  }
+    rObject
+    Primitive::proto_make()
+    {
+      rObject res = make_primitive(nil);
+      return res;
+    }
 
-}; // namespace object
+  }; // namespace object
+}

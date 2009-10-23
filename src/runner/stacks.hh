@@ -19,7 +19,7 @@
 #include <boost/utility.hpp>
 
 # include <ast/fwd.hh>
-# include <object/object.hh>
+# include <urbi/object/object.hh>
 
 namespace runner
 {

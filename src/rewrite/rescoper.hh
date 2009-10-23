@@ -11,7 +11,7 @@
 # define REWRITE_RESCOPER_HH
 
 # include <ast/analyzer.hh>
-# include <object/object.hh>
+# include <urbi/object/object.hh>
 
 namespace rewrite
 {
@@ -38,7 +38,7 @@ namespace rewrite
     /// Super class type.
     typedef ast::Cloner super_type;
     /// Import rObject
-    typedef object::rObject rObject;
+    typedef urbi::object::rObject rObject;
     /// \}
 
     /// \name Ctor & dtor.

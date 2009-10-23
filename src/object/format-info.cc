@@ -12,270 +12,273 @@
 #include <libport/lexical-cast.hh>
 
 #include <object/format-info.hh>
-#include <object/global.hh>
+#include <urbi/object/global.hh>
 #include <object/symbols.hh>
 
-namespace object
+namespace urbi
 {
-  FormatInfo::FormatInfo()
-    : alignment_(Align::RIGHT)
-    , alt_(false)
-    , consistent_(true)
-    , group_("")
-    , pad_(" ")
-    , pattern_("%s")
-    , precision_(6)
-    , prefix_("")
-    , spec_("s")
-    , uppercase_(Case::UNDEFINED)
-    , width_(0)
+  namespace object
   {
-    proto_add(proto ? proto : Object::proto);
-  }
-
-  FormatInfo::FormatInfo(rFormatInfo model)
-    : alignment_(model->alignment_)
-    , alt_(model->alt_)
-    , consistent_(model->consistent_)
-    , group_(model->group_)
-    , pad_(model->pad_)
-    , pattern_(model->pattern_)
-    , precision_(model->precision_)
-    , prefix_(model->prefix_)
-    , spec_(model->spec_)
-    , uppercase_(model->uppercase_)
-    , width_(model->width_)
-  {
-    proto_add(model);
-  }
-
-  void
-  FormatInfo::init(const std::string& pattern)
-  {
-    size_t cursor = 0;
-    bool piped;
-
-    if (pattern.empty())
-      RAISE("format: pattern is empty");
-    if (pattern[0] != '%')
-      RAISE("format: pattern \"" + pattern + "\" doesn't begin with %");
-    if (pattern.size() == 1)
-      RAISE("format: trailing `%'");
-    if ((piped = pattern[1] == '|'))
+    FormatInfo::FormatInfo()
+      : alignment_(Align::RIGHT)
+      , alt_(false)
+      , consistent_(true)
+      , group_("")
+      , pad_(" ")
+      , pattern_("%s")
+      , precision_(6)
+      , prefix_("")
+      , spec_("s")
+      , uppercase_(Case::UNDEFINED)
+      , width_(0)
     {
-      size_t pos = pattern.find_first_of('|', 2);
-      if (pos == pattern.npos)
-        RAISE("format: format begins with '|' but "
-              "does not end with '|'");
-      pattern_ = pattern.substr(0, pos + 1);
-      cursor++;
+      proto_add(proto ? proto : Object::proto);
     }
 
-    // Parsing flags.
-    std::string flags("-=+#0 '");
-    std::string excludes("");
-    char current;
-    while ((pattern.size() > ++cursor)
-           && flags.npos != flags.find(current = pattern[cursor]))
+    FormatInfo::FormatInfo(rFormatInfo model)
+      : alignment_(model->alignment_)
+      , alt_(model->alt_)
+      , consistent_(model->consistent_)
+      , group_(model->group_)
+      , pad_(model->pad_)
+      , pattern_(model->pattern_)
+      , precision_(model->precision_)
+      , prefix_(model->prefix_)
+      , spec_(model->spec_)
+      , uppercase_(model->uppercase_)
+      , width_(model->width_)
     {
-      if (excludes.npos != excludes.find(current))
-        FRAISE("format: '%s' conflics whese one of these flags: \"%s\".",
-               current, excludes);
-      switch (current)
+      proto_add(model);
+    }
+
+    void
+    FormatInfo::init(const std::string& pattern)
+    {
+      size_t cursor = 0;
+      bool piped;
+
+      if (pattern.empty())
+        RAISE("format: pattern is empty");
+      if (pattern[0] != '%')
+        RAISE("format: pattern \"" + pattern + "\" doesn't begin with %");
+      if (pattern.size() == 1)
+        RAISE("format: trailing `%'");
+      if ((piped = pattern[1] == '|'))
       {
-        case '-': alignment_ = Align::LEFT;   excludes += "-="; break;
-        case '=': alignment_ = Align::CENTER; excludes += "-="; break;
-        case '+': prefix_ = "+";              excludes += " +"; break;
-        case ' ': prefix_ = " ";              excludes += " +"; break;
-        case '0': pad_ = "0"; break;
-        case '#': alt_ = true; break;
-        case '\'': group_ = " "; break;
-      };
-    }
+        size_t pos = pattern.find_first_of('|', 2);
+        if (pos == pattern.npos)
+          RAISE("format: format begins with '|' but "
+                "does not end with '|'");
+        pattern_ = pattern.substr(0, pos + 1);
+        cursor++;
+      }
 
-    // Parsing width.
-    std::string substr =
-      pattern.substr(cursor,
-                     pattern.find_first_not_of("0123456789", cursor) - cursor);
-    if (!substr.empty())
-    {
-      width_ = lexical_cast<size_t>(substr);
-      cursor += substr.size();
-    }
-
-    // Parsing precision.
-    if (cursor < pattern.size() && pattern[cursor] == '.' && cursor++)
-    {
-      substr = pattern.substr
-        (cursor, pattern.find_first_not_of("0123456789", cursor) - cursor);
-      if (substr.empty())
-        FRAISE("format: unexpected \"%s\", expected width ([1-9][0-9]*).",
-               pattern[cursor]);
-      else
+      // Parsing flags.
+      std::string flags("-=+#0 '");
+      std::string excludes("");
+      char current;
+      while ((pattern.size() > ++cursor)
+             && flags.npos != flags.find(current = pattern[cursor]))
       {
-        precision_ = lexical_cast<unsigned int>(substr);
+        if (excludes.npos != excludes.find(current))
+          FRAISE("format: '%s' conflics whese one of these flags: \"%s\".",
+                 current, excludes);
+        switch (current)
+        {
+          case '-': alignment_ = Align::LEFT;   excludes += "-="; break;
+          case '=': alignment_ = Align::CENTER; excludes += "-="; break;
+          case '+': prefix_ = "+";              excludes += " +"; break;
+          case ' ': prefix_ = " ";              excludes += " +"; break;
+          case '0': pad_ = "0"; break;
+          case '#': alt_ = true; break;
+          case '\'': group_ = " "; break;
+        };
+      }
+
+      // Parsing width.
+      std::string substr =
+        pattern.substr(cursor,
+                       pattern.find_first_not_of("0123456789", cursor) - cursor);
+      if (!substr.empty())
+      {
+        width_ = lexical_cast<size_t>(substr);
         cursor += substr.size();
       }
-    }
 
-    // Parsing spec.
-    if ((piped && cursor < pattern_.size() - 1)
-        || (!piped && cursor < pattern.size()))
-    {
-      spec_ = tolower(current = pattern[cursor]);
-      if (!strchr("sdbxoefEDX", spec_[0]))
-        FRAISE("format: \"%s\" is not a valid conversion type character",
-               spec_);
-      else if (spec_ != "s")
-        uppercase_ = (islower(pattern[cursor])) ? Case::LOWER : Case::UPPER;
-    }
-
-
-    if (piped)
-    {
-      int overflow = pattern_.size() - 1 - ++cursor;
-      if (0 < overflow)
-        FRAISE("format: too many characters between pipes and \"%s\"",
-               pattern_.substr(cursor, overflow));
-    }
-    else
-      pattern_ = pattern.substr(0, ++cursor);
-  }
-
-  std::string
-  FormatInfo::as_string() const
-  {
-    return pattern_get();
-  }
-
-  const std::string&
-  FormatInfo::pattern_get() const
-  {
-    if (!consistent_)
-      compute_pattern();
-    return pattern_;
-  }
-
-  void
-  FormatInfo::compute_pattern() const
-  {
-    pattern_ = std::string("%|")
-      + (alignment_ == Align::RIGHT ? ""
-         : (alignment_ == Align::LEFT) ? "-" : "=")
-      + (alt_ ? "#" : "")
-      + (group_ == "" ? "" : "'")
-      + (pad_ == " " ? "" : "0")
-      + prefix_
-      + (width_ == 0 ? "" : string_cast(width_))
-      + (precision_ == 6 ? "" : "." + string_cast(precision_))
-      + (uppercase_ == Case::UPPER ? char(toupper(spec_[0])): spec_[0])
-      + '|';
-    consistent_ = true;
-  }
-
-  rObject
-  FormatInfo::update_hook(const std::string& slot, rObject val)
-  {
-    if (slot == "alignment")
-      switch (int v = type_check<Float>(val, 0u)->to_int())
+      // Parsing precision.
+      if (cursor < pattern.size() && pattern[cursor] == '.' && cursor++)
       {
-#define CASE(In, Out)                           \
-        case In: alignment_ = Align::Out; break
-        CASE(-1, LEFT);
-        CASE( 0, CENTER);
-        CASE( 1, RIGHT);
-#undef CASE
-      default:
-        FRAISE("expected integer -1, 0 or 1, got %s", v);
+        substr = pattern.substr
+          (cursor, pattern.find_first_not_of("0123456789", cursor) - cursor);
+        if (substr.empty())
+          FRAISE("format: unexpected \"%s\", expected width ([1-9][0-9]*).",
+                 pattern[cursor]);
+        else
+        {
+          precision_ = lexical_cast<unsigned int>(substr);
+          cursor += substr.size();
+        }
       }
-    else if (slot == "alt")
-      alt_ = val->as_bool();
-    else if (slot == "group")
-    {
-      std::string v = type_check<String>(val, 0u)->value_get();
-      if (!v.empty() && v != " ")
-        FRAISE("expected \" \" or \"\", got \"%s\"", v);
-      group_ = v;
-    }
-    else if (slot == "pad")
-    {
-      std::string v = type_check<String>(val, 0u)->value_get();
-      if (v != " " && v != "0")
-        FRAISE("expected \" \" or \"0\", got \"%s\"", v);
-      pad_ = v;
-    }
-    else if (slot == "precision")
-      precision_ = type_check<Float>(val, 0u)->to_unsigned_int();
-    else if (slot == "prefix")
-    {
-      std::string v = type_check<String>(val, 0u)->value_get();
-      if (v != " " && v != "+" && v != "")
-        FRAISE("expected \"\", \" \" or \"+\", got \"%s\"", v);
-      prefix_ = v;
-    }
-    else if (slot == "spec")
-    {
-      std::string val_(type_check<String>(val, 0u)->value_get());
-      if (val_.size() != 1)
-        RAISE("expected one-character long string, got " + val_);
-      if (!strchr("sdbxoefEDX", val_[0]))
-        RAISE("expected one character in \"sdbxoefEDX\", got \"" + val_ + "\"");
-      spec_ = type_check<String>(val, 0u)->to_lower();
-      uppercase_ = (spec_ == "s"       ? Case::UNDEFINED
-                    : islower(val_[0]) ? Case::LOWER
-                    :                    Case::UPPER);
-    }
-    else if (slot == "uppercase")
-      switch (int v = type_check<Float>(val, 0u)->to_int())
+
+      // Parsing spec.
+      if ((piped && cursor < pattern_.size() - 1)
+          || (!piped && cursor < pattern.size()))
       {
+        spec_ = tolower(current = pattern[cursor]);
+        if (!strchr("sdbxoefEDX", spec_[0]))
+          FRAISE("format: \"%s\" is not a valid conversion type character",
+                 spec_);
+        else if (spec_ != "s")
+          uppercase_ = (islower(pattern[cursor])) ? Case::LOWER : Case::UPPER;
+      }
+
+
+      if (piped)
+      {
+        int overflow = pattern_.size() - 1 - ++cursor;
+        if (0 < overflow)
+          FRAISE("format: too many characters between pipes and \"%s\"",
+                 pattern_.substr(cursor, overflow));
+      }
+      else
+        pattern_ = pattern.substr(0, ++cursor);
+    }
+
+    std::string
+    FormatInfo::as_string() const
+    {
+      return pattern_get();
+    }
+
+    const std::string&
+    FormatInfo::pattern_get() const
+    {
+      if (!consistent_)
+        compute_pattern();
+      return pattern_;
+    }
+
+    void
+    FormatInfo::compute_pattern() const
+    {
+      pattern_ = std::string("%|")
+        + (alignment_ == Align::RIGHT ? ""
+           : (alignment_ == Align::LEFT) ? "-" : "=")
+        + (alt_ ? "#" : "")
+        + (group_ == "" ? "" : "'")
+        + (pad_ == " " ? "" : "0")
+        + prefix_
+        + (width_ == 0 ? "" : string_cast(width_))
+        + (precision_ == 6 ? "" : "." + string_cast(precision_))
+        + (uppercase_ == Case::UPPER ? char(toupper(spec_[0])): spec_[0])
+        + '|';
+      consistent_ = true;
+    }
+
+    rObject
+    FormatInfo::update_hook(const std::string& slot, rObject val)
+    {
+      if (slot == "alignment")
+        switch (int v = type_check<Float>(val, 0u)->to_int())
+        {
+#define CASE(In, Out)                                   \
+          case In: alignment_ = Align::Out; break
+          CASE(-1, LEFT);
+          CASE( 0, CENTER);
+          CASE( 1, RIGHT);
+#undef CASE
+          default:
+            FRAISE("expected integer -1, 0 or 1, got %s", v);
+        }
+      else if (slot == "alt")
+        alt_ = val->as_bool();
+      else if (slot == "group")
+      {
+        std::string v = type_check<String>(val, 0u)->value_get();
+        if (!v.empty() && v != " ")
+          FRAISE("expected \" \" or \"\", got \"%s\"", v);
+        group_ = v;
+      }
+      else if (slot == "pad")
+      {
+        std::string v = type_check<String>(val, 0u)->value_get();
+        if (v != " " && v != "0")
+          FRAISE("expected \" \" or \"0\", got \"%s\"", v);
+        pad_ = v;
+      }
+      else if (slot == "precision")
+        precision_ = type_check<Float>(val, 0u)->to_unsigned_int();
+      else if (slot == "prefix")
+      {
+        std::string v = type_check<String>(val, 0u)->value_get();
+        if (v != " " && v != "+" && v != "")
+          FRAISE("expected \"\", \" \" or \"+\", got \"%s\"", v);
+        prefix_ = v;
+      }
+      else if (slot == "spec")
+      {
+        std::string val_(type_check<String>(val, 0u)->value_get());
+        if (val_.size() != 1)
+          RAISE("expected one-character long string, got " + val_);
+        if (!strchr("sdbxoefEDX", val_[0]))
+          RAISE("expected one character in \"sdbxoefEDX\", got \"" + val_ + "\"");
+        spec_ = type_check<String>(val, 0u)->to_lower();
+        uppercase_ = (spec_ == "s"       ? Case::UNDEFINED
+                      : islower(val_[0]) ? Case::LOWER
+                      :                    Case::UPPER);
+      }
+      else if (slot == "uppercase")
+        switch (int v = type_check<Float>(val, 0u)->to_int())
+        {
 #define CASE(In, Out, Spec)                                     \
-        case In: uppercase_ = Case::Out; spec_ = Spec; break
-        CASE(-1, LOWER,     "d");
-        CASE( 0, UNDEFINED, "s");
-        CASE( 1, UPPER,     "D");
+          case In: uppercase_ = Case::Out; spec_ = Spec; break
+          CASE(-1, LOWER,     "d");
+          CASE( 0, UNDEFINED, "s");
+          CASE( 1, UPPER,     "D");
 #undef CASE
-      default:
-        FRAISE("expected integer -1, 0 or 1, got %s", v);
-      }
-    else if (slot == "width")
-      width_ = type_check<Float>(val, 0u)->to_unsigned_int();
-    else
+          default:
+            FRAISE("expected integer -1, 0 or 1, got %s", v);
+        }
+      else if (slot == "width")
+        width_ = type_check<Float>(val, 0u)->to_unsigned_int();
+      else
+        return 0;
+      consistent_ = false;
       return 0;
-    consistent_ = false;
-    return 0;
-  }
+    }
 
-  void
-  FormatInfo::initialize(CxxObject::Binder<FormatInfo>& bind)
-  {
-    bind(SYMBOL(init),     &FormatInfo::init);
-    bind(SYMBOL(asString), &FormatInfo::as_string);
-    bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
+    void
+    FormatInfo::initialize(CxxObject::Binder<FormatInfo>& bind)
+    {
+      bind(SYMBOL(init),     &FormatInfo::init);
+      bind(SYMBOL(asString), &FormatInfo::as_string);
+      bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
 
 #define DECLARE(Name)                                                   \
-    bind(SYMBOL(Name), &FormatInfo::Name ##_get);                       \
-    bind.proto()->property_set(SYMBOL(Name),                            \
-                               SYMBOL(updateHook),                      \
-                               make_primitive(&FormatInfo::update_hook))
+      bind(SYMBOL(Name), &FormatInfo::Name ##_get);                     \
+      bind.proto()->property_set(SYMBOL(Name),                          \
+                                 SYMBOL(updateHook),                    \
+                                 make_primitive(&FormatInfo::update_hook))
 
-    DECLARE(width);
-    DECLARE(precision);
-    DECLARE(alt);
-    DECLARE(prefix);
-    DECLARE(alignment);
-    DECLARE(uppercase);
-    DECLARE(group);
-    DECLARE(pad);
-    DECLARE(spec);
+      DECLARE(width);
+      DECLARE(precision);
+      DECLARE(alt);
+      DECLARE(prefix);
+      DECLARE(alignment);
+      DECLARE(uppercase);
+      DECLARE(group);
+      DECLARE(pad);
+      DECLARE(spec);
 
 #undef DECLARE
-  }
+    }
 
-  rObject
-  FormatInfo::proto_make()
-  {
-    return new FormatInfo();
-  }
+    rObject
+    FormatInfo::proto_make()
+    {
+      return new FormatInfo();
+    }
 
-  URBI_CXX_OBJECT_REGISTER(FormatInfo);
-} // namespace object
+    URBI_CXX_OBJECT_REGISTER(FormatInfo);
+  } // namespace object
+}

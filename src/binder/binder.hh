@@ -23,7 +23,7 @@
 # include <ast/analyzer.hh>
 # include <ast/error.hxx>
 # include <binder/bind.hh>
-# include <object/fwd.hh>
+# include <urbi/object/fwd.hh>
 
 namespace binder
 {
@@ -37,7 +37,7 @@ namespace binder
     /// Super class type.
     typedef ast::Analyzer super_type;
     /// Import rObject
-    typedef object::rObject rObject;
+    typedef urbi::object::rObject rObject;
     /// \}
 
     /// \name Ctor & dtor.

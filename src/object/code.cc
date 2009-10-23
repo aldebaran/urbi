@@ -19,129 +19,132 @@
 
 #include <kernel/userver.hh>
 
-#include <object/code.hh>
-#include <object/list.hh>
-#include <object/string.hh>
-#include <object/object.hh>
+#include <urbi/object/code.hh>
+#include <urbi/object/list.hh>
+#include <urbi/object/string.hh>
+#include <urbi/object/object.hh>
 #include <object/symbols.hh>
 
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 
-namespace object
+namespace urbi
 {
-  Code::Code(ast_type a)
-    : ast_(a)
-    , captures_()
-    , self_()
-    , call_()
+  namespace object
   {
-    proto_add(proto ? proto : Executable::proto);
-  }
+    Code::Code(ast_type a)
+      : ast_(a)
+      , captures_()
+      , self_()
+      , call_()
+    {
+      proto_add(proto ? proto : Executable::proto);
+    }
 
-  Code::Code(rCode model)
-    : ast_(model->ast_)
-    , captures_(model->captures_)
-    , self_(model->self_)
-    , call_(model->call_)
-  {
-    proto_add(model);
-  }
+    Code::Code(rCode model)
+      : ast_(model->ast_)
+      , captures_(model->captures_)
+      , self_(model->self_)
+      , call_(model->call_)
+    {
+      proto_add(model);
+    }
 
-  Code::ast_type Code::ast_get() const
-  {
-    return ast_;
-  }
+    Code::ast_type Code::ast_get() const
+    {
+      return ast_;
+    }
 
-  rObject Code::call_get() const
-  {
-    return call_;
-  }
+    rObject Code::call_get() const
+    {
+      return call_;
+    }
 
-  const Code::captures_type& Code::captures_get() const
-  {
-    return captures_;
-  }
+    const Code::captures_type& Code::captures_get() const
+    {
+      return captures_;
+    }
 
-  rObject Code::self_get() const
-  {
-    return self_;
-  }
+    rObject Code::self_get() const
+    {
+      return self_;
+    }
 
-  Code::ast_type& Code::ast_get()
-  {
-    return ast_;
-  }
+    Code::ast_type& Code::ast_get()
+    {
+      return ast_;
+    }
 
-  rObject& Code::call_get()
-  {
-    return call_;
-  }
+    rObject& Code::call_get()
+    {
+      return call_;
+    }
 
-  Code::captures_type& Code::captures_get()
-  {
-    return captures_;
-  }
+    Code::captures_type& Code::captures_get()
+    {
+      return captures_;
+    }
 
-  void Code::self_set(rObject v)
-  {
-    self_ = v;
-  }
+    void Code::self_set(rObject v)
+    {
+      self_ = v;
+    }
 
-  rObject Code::apply(rList args)
-  {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+    rObject Code::apply(rList args)
+    {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
-    if (args->value_get().empty())
-      RAISE("list of arguments must begin with `this'");
-    List::value_type a = args->value_get();
+      if (args->value_get().empty())
+        RAISE("list of arguments must begin with `this'");
+      List::value_type a = args->value_get();
 
-    return r.apply(this, SYMBOL(apply), a);
-  }
+      return r.apply(this, SYMBOL(apply), a);
+    }
 
-  std::string Code::as_string(rObject what)
-  {
-    type_check<Code>(what);
-    return string_cast(*what->as<Code>()->ast_get());
+    std::string Code::as_string(rObject what)
+    {
+      type_check<Code>(what);
+      return string_cast(*what->as<Code>()->ast_get());
 
-  }
+    }
 
-  std::string Code::body_string()
-  {
-    if (proto == this)
-      return SYMBOL(LT_Code_GT);
-    return
-      string_cast(*ast_->body_get()->body_get());
-  }
+    std::string Code::body_string()
+    {
+      if (proto == this)
+        return SYMBOL(LT_Code_GT);
+      return
+        string_cast(*ast_->body_get()->body_get());
+    }
 
-  std::ostream&
-  Code::special_slots_dump(std::ostream& o) const
-  {
-    return o << "value = " << *ast_get() << libport::iendl;
-  }
+    std::ostream&
+    Code::special_slots_dump(std::ostream& o) const
+    {
+      return o << "value = " << *ast_get() << libport::iendl;
+    }
 
-  void Code::initialize(CxxObject::Binder<Code>& bind)
-  {
-    bind(SYMBOL(apply), &Code::apply);
-    bind(SYMBOL(asString), &Code::as_string);
-    bind(SYMBOL(bodyString), &Code::body_string);
-  }
+    void Code::initialize(CxxObject::Binder<Code>& bind)
+    {
+      bind(SYMBOL(apply), &Code::apply);
+      bind(SYMBOL(asString), &Code::as_string);
+      bind(SYMBOL(bodyString), &Code::body_string);
+    }
 
-  rObject
-  Code::proto_make()
-  {
-    PARAMETRIC_AST(ast, "function () {}");
-    return new Code(ast.result<const ast::Routine>());
-  }
+    rObject
+    Code::proto_make()
+    {
+      PARAMETRIC_AST(ast, "function () {}");
+      return new Code(ast.result<const ast::Routine>());
+    }
 
-  rObject
-  Code::operator() (object::objects_type args)
-  {
-    runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-    assert(!args.empty());
-    return r.apply(this, libport::Symbol::make_empty(), args);
-  }
+    rObject
+    Code::operator() (object::objects_type args)
+    {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      assert(!args.empty());
+      return r.apply(this, libport::Symbol::make_empty(), args);
+    }
 
 
-  URBI_CXX_OBJECT_REGISTER(Code);
-}; // namespace object
+    URBI_CXX_OBJECT_REGISTER(Code);
+  } // namespace object
+}

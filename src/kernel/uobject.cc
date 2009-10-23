@@ -30,14 +30,14 @@
 #include <kernel/uvalue-cast.hh>
 #include <kernel/uobject.hh>
 
-#include <object/cxx-primitive.hh>
-#include <object/dictionary.hh>
+#include <urbi/object/cxx-primitive.hh>
+#include <urbi/object/dictionary.hh>
 #include <object/finalizable.hh>
-#include <object/float.hh>
-#include <object/global.hh>
-#include <object/object.hh>
-#include <object/object.hh>
-#include <object/string.hh>
+#include <urbi/object/float.hh>
+#include <urbi/object/global.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/string.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/urbi-exception.hh>

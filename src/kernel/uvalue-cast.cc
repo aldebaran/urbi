@@ -11,11 +11,11 @@
 #include <libport/lexical-cast.hh>
 
 #include <kernel/uvalue-cast.hh>
-#include <object/cxx-conversions.hh>
-#include <object/float.hh>
-#include <object/global.hh>
-#include <object/list.hh>
-#include <object/string.hh>
+#include <urbi/object/cxx-conversions.hh>
+#include <urbi/object/float.hh>
+#include <urbi/object/global.hh>
+#include <urbi/object/list.hh>
+#include <urbi/object/string.hh>
 #include <object/symbols.hh>
 #include <object/uvar.hh>
 #include <runner/raise.hh>

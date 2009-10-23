@@ -32,19 +32,20 @@
 
 #include <kernel/uconnection.hh>
 
-#include <object/cxx-conversions.hh>
-#include <object/global.hh>
-#include <object/lobby.hh>
 #include <object/symbols.hh>
-#include <object/task.hh>
 #include <object/urbi-exception.hh>
+
+#include <parser/uparser.hh>
 
 #include <runner/interpreter.hh>
 #include <runner/raise.hh>
 
-#include <parser/uparser.hh>
-
 #include <sched/exception.hh>
+
+#include <urbi/object/cxx-conversions.hh>
+#include <urbi/object/global.hh>
+#include <urbi/object/lobby.hh>
+#include <urbi/object/task.hh>
 
 namespace runner
 {

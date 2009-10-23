@@ -10,49 +10,52 @@
 #ifndef OBJECT_OUTPUT_STREAM_HH
 # define OBJECT_OUTPUT_STREAM_HH
 
-# include <object/cxx-object.hh>
+# include <urbi/object/cxx-object.hh>
 
-namespace object
+namespace urbi
 {
-  class OutputStream: public CxxObject
+  namespace object
   {
+    class OutputStream: public CxxObject
+    {
 
-  /*-----------------------------.
-  | Construction / Destruction.  |
-  `-----------------------------*/
+      /*-----------------------------.
+      | Construction / Destruction.  |
+      `-----------------------------*/
 
-  public:
-    OutputStream(int fd, bool own);
-    OutputStream(rOutputStream stream);
-    ~OutputStream();
+    public:
+      OutputStream(int fd, bool own);
+      OutputStream(rOutputStream stream);
+      ~OutputStream();
 
-  /*--------------.
-  | Data access.  |
-  `--------------*/
+      /*--------------.
+      | Data access.  |
+      `--------------*/
 
-  private:
-    void checkFD_() const;
+    private:
+      void checkFD_() const;
 
-  /*---------------.
-  | Urbi methods.  |
-  `---------------*/
+      /*---------------.
+      | Urbi methods.  |
+      `---------------*/
 
-  public:
-    void init(rFile f);
-    rOutputStream putByte(unsigned char);
-    void flush();
-    rOutputStream put(rObject o);
-    void close();
+    public:
+      void init(rFile f);
+      rOutputStream putByte(unsigned char);
+      void flush();
+      rOutputStream put(rObject o);
+      void close();
 
-  /*----------.
-  | Details.  |
-  `----------*/
+      /*----------.
+      | Details.  |
+      `----------*/
 
-  private:
-    int fd_;
-    bool own_;
-    URBI_CXX_OBJECT(OutputStream);
-  };
+    private:
+      int fd_;
+      bool own_;
+      URBI_CXX_OBJECT(OutputStream);
+    };
+  }
 }
 
 #endif

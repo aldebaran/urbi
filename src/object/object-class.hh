@@ -8,19 +8,22 @@
  * See the LICENSE file for more information.
  */
 /**
- ** \file object/object-class.hh
+ ** \file urbi/object/object.class.hh
  ** \brief Definition of the URBI object object.
  */
 
 #ifndef OBJECT_OBJECT_CLASS_HH
 # define OBJECT_OBJECT_CLASS_HH
 
-# include <object/fwd.hh>
+# include <urbi/object/fwd.hh>
 
-namespace object
+namespace urbi
 {
-  /// Initialize the Object class.
-  void object_class_initialize ();
-}; // namespace object
+  namespace object
+  {
+    /// Initialize the Object class.
+    void object_class_initialize ();
+  }; // namespace object
+}
 
 #endif // !OBJECT_OBJECT_CLASS_HH

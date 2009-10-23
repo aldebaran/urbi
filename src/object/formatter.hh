@@ -17,35 +17,38 @@
 
 # include <libport/attributes.hh>
 
-# include <object/fwd.hh>
-# include <object/cxx-object.hh>
-# include <object/cxx-primitive.hh>
+# include <urbi/object/fwd.hh>
+# include <urbi/object/cxx-object.hh>
+# include <urbi/object/cxx-primitive.hh>
 
-namespace object
+namespace urbi
 {
-
-  class Formatter: public CxxObject
+  namespace object
   {
-  public:
-    Formatter();
-    Formatter(rFormatter model);
 
-    void init(const std::string& format);
+    class Formatter: public CxxObject
+    {
+    public:
+      Formatter();
+      Formatter(rFormatter model);
 
-    /// Regular C++ signature, all the arguments are provided.
-    std::string operator%(const objects_type& args) const;
+      void init(const std::string& format);
 
-    /// Urbi signature that accepts Lists (and bounces to the function
-    /// above), otherwise wraps \a arg in a List and then bounces.
-    std::string operator%(const rObject& arg) const;
+      /// Regular C++ signature, all the arguments are provided.
+      std::string operator%(const objects_type& args) const;
 
-  private:
-    /// The FormatInfos and Strings.
-    ATTRIBUTE_R(rList, data);
+      /// Urbi signature that accepts Lists (and bounces to the function
+      /// above), otherwise wraps \a arg in a List and then bounces.
+      std::string operator%(const rObject& arg) const;
 
-    URBI_CXX_OBJECT(Formatter);
-  };
+    private:
+      /// The FormatInfos and Strings.
+      ATTRIBUTE_R(rList, data);
 
-} // namespace object
+      URBI_CXX_OBJECT(Formatter);
+    };
+
+  } // namespace object
+}
 
 #endif // !OBJECT_FORMATTER_HH

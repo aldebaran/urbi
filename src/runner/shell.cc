@@ -11,9 +11,9 @@
 
 #include <ast/nary.hh>
 
-#include <object/lobby.hh>
-#include <object/object.hh>
-#include <object/tag.hh>
+#include <urbi/object/lobby.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/tag.hh>
 
 #include <runner/shell.hh>
 

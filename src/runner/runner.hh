@@ -22,10 +22,11 @@
 # include <libport/compiler.hh>
 # include <libport/config.h>
 
-# include <object/fwd.hh>
-# include <object/list.hh>
 # include <sched/scheduler.hh>
 # include <sched/job.hh>
+
+# include <urbi/object/fwd.hh>
+# include <urbi/object/list.hh>
 
 namespace runner
 {

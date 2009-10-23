@@ -22,121 +22,123 @@
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
 
-#include <object/float.hh>
+#include <urbi/object/float.hh>
 #include <object/format-info.hh>
-#include <object/global.hh>
-#include <object/list.hh>
-#include <object/object.hh>
-#include <object/string.hh>
+#include <urbi/object/global.hh>
+#include <urbi/object/list.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/string.hh>
 #include <object/symbols.hh>
 #include <runner/raise.hh>
 #include <runner/runner.hh>
 
-namespace object
+namespace urbi
 {
-  /*--------------------.
-  | String primitives.  |
-  `--------------------*/
-
-  String::String()
-    : content_()
+  namespace object
   {
-    proto_add(proto ? proto : Object::proto);
-  }
+    /*--------------------.
+    | String primitives.  |
+    `--------------------*/
 
-  String::String(rString model)
-    : content_(model->content_)
-  {
-    proto_add(proto);
-  }
-
-  String::String(const value_type& v)
-    : content_(v)
-  {
-    assert(proto);
-    proto_add(proto);
-  }
-
-  const String::value_type& String::value_get() const
-  {
-    return content_;
-  }
-
-  String::value_type& String::value_get()
-  {
-    return content_;
-  }
-
-  bool
-  String::operator<=(const value_type& rhs) const
-  {
-    return value_get() <= rhs;
-  }
-
-
-
-  String::size_type
-  String::distance(const std::string& other) const
-  {
-    return libport::damerau_levenshtein_distance(value_get(), other);
-  }
-
-  std::string
-  String::plus(rObject rhs) const
-  {
-    rObject str = rhs->call(SYMBOL(asString));
-    type_check<String>(str);
-    return content_ + str->as<String>()->value_get();
-  }
-
-  String::size_type
-  String::size() const
-  {
-    return content_.size();
-  }
-
-  bool
-  String::empty() const
-  {
-    return content_.empty();
-  }
-
-  bool
-  String::as_bool() const
-  {
-    return !empty();
-  }
-
-  libport::ufloat
-  String::as_float() const
-  {
-    try
+    String::String()
+      : content_()
     {
-      return boost::lexical_cast<libport::ufloat>(content_);
+      proto_add(proto ? proto : Object::proto);
     }
-    catch (const boost::bad_lexical_cast&)
+
+    String::String(rString model)
+      : content_(model->content_)
     {
-      FRAISE("unable to convert to float: %s", as_printable());
+      proto_add(proto);
     }
-  }
 
-  std::string
-  String::as_printable() const
-  {
-    return '"' + string_cast(libport::escape(content_, '"')) + '"';
-  }
+    String::String(const value_type& v)
+      : content_(v)
+    {
+      assert(proto);
+      proto_add(proto);
+    }
 
-  std::string
-  String::format(rFormatInfo finfo) const
-  {
-    std::string res(!finfo->uppercase_get() ? content_
-                    : finfo->uppercase_get() > 0 ? to_upper()
-		    : to_lower());
+    const String::value_type& String::value_get() const
+    {
+      return content_;
+    }
 
-    // Number of padding chars to add.
-    size_t size = res.size();
-    int padsize = finfo->width_get() - size;
-    if (0 < padsize)
+    String::value_type& String::value_get()
+    {
+      return content_;
+    }
+
+    bool
+    String::operator<=(const value_type& rhs) const
+    {
+      return value_get() <= rhs;
+    }
+
+
+
+    String::size_type
+    String::distance(const std::string& other) const
+    {
+      return libport::damerau_levenshtein_distance(value_get(), other);
+    }
+
+    std::string
+    String::plus(rObject rhs) const
+    {
+      rObject str = rhs->call(SYMBOL(asString));
+      type_check<String>(str);
+      return content_ + str->as<String>()->value_get();
+    }
+
+    String::size_type
+    String::size() const
+    {
+      return content_.size();
+    }
+
+    bool
+    String::empty() const
+    {
+      return content_.empty();
+    }
+
+    bool
+    String::as_bool() const
+    {
+      return !empty();
+    }
+
+    libport::ufloat
+    String::as_float() const
+    {
+      try
+      {
+        return boost::lexical_cast<libport::ufloat>(content_);
+      }
+      catch (const boost::bad_lexical_cast&)
+      {
+        FRAISE("unable to convert to float: %s", as_printable());
+      }
+    }
+
+    std::string
+    String::as_printable() const
+    {
+      return '"' + string_cast(libport::escape(content_, '"')) + '"';
+    }
+
+    std::string
+    String::format(rFormatInfo finfo) const
+    {
+      std::string res(!finfo->uppercase_get() ? content_
+                      : finfo->uppercase_get() > 0 ? to_upper()
+                      : to_lower());
+
+      // Number of padding chars to add.
+      size_t size = res.size();
+      int padsize = finfo->width_get() - size;
+      if (0 < padsize)
       {
         // Where to insert the padding.
         size_t pos =
@@ -146,320 +148,321 @@ namespace object
         res.insert(pos,
                    std::string(padsize, finfo->pad_get()[0]));
       }
-    return res;
-  }
+      return res;
+    }
 
-  const std::string&
-  String::as_string() const
-  {
-    return content_;
-  }
+    const std::string&
+    String::as_string() const
+    {
+      return content_;
+    }
 
-  const std::string&
-  String::set(const std::string& rhs)
-  {
-    return content_ = rhs;
-  }
+    const std::string&
+    String::set(const std::string& rhs)
+    {
+      return content_ = rhs;
+    }
 
-  std::string
-  String::fresh() const
-  {
-    return libport::Symbol(value_get());
-  }
+    std::string
+    String::fresh() const
+    {
+      return libport::Symbol(value_get());
+    }
 
-  std::string
-  String::replace(const std::string& from, const std::string& to) const
-  {
-    return boost::replace_all_copy(value_get(), from, to);
-  }
+    std::string
+    String::replace(const std::string& from, const std::string& to) const
+    {
+      return boost::replace_all_copy(value_get(), from, to);
+    }
 
 
-  std::string
-  String::join(const objects_type& os,
-               const std::string& prefix, const std::string& suffix) const
-  {
-    std::string res = prefix;
-    bool tail = false;
-    foreach (const rObject& o, os)
+    std::string
+    String::join(const objects_type& os,
+                 const std::string& prefix, const std::string& suffix) const
+    {
+      std::string res = prefix;
+      bool tail = false;
+      foreach (const rObject& o, os)
       {
         if (tail++)
           res += content_;
         // FIXME: Calling asString is a common need we should factor.
         res += o->call(SYMBOL(asString))->as<String>()->value_get();
       }
-    res += suffix;
-    return res;
-  }
-
-
-
-  static
-  size_t
-  find_first(const std::vector<std::string>& seps,
-             const std::string& str,
-             size_t start,
-             std::string& delim)
-  {
-    size_t res = std::string::npos;
-    delim = "";
-
-    foreach (const std::string& sep, seps)
-    {
-      size_t pos = str.find(sep, start);
-      if (pos != std::string::npos && (pos < res || res == std::string::npos))
-      {
-        res = pos;
-        delim = sep;
-      }
-    }
-    return res;
-  }
-
-  std::vector<std::string>
-  String::split(const std::vector<std::string>& sep, int limit,
-                bool keep_delim, bool keep_empty) const
-  {
-    std::vector<std::string> res;
-
-    // Special case: splitting on an empty string returns the individual
-    // characters.
-    if (libport::has(sep, ""))
-    {
-      for (std::string::size_type pos = 0; pos != content_.size(); ++pos)
-	res.push_back(content_.substr(pos, 1));
+      res += suffix;
       return res;
     }
 
-    size_t start = 0;
-    std::string delim;
-    for (size_t end = find_first(sep, content_, start, delim);
-         end != std::string::npos && limit;
-         end = find_first(sep, content_, start, delim), --limit)
+
+
+    static
+    size_t
+    find_first(const std::vector<std::string>& seps,
+               const std::string& str,
+               size_t start,
+               std::string& delim)
     {
-      std::string sub = content_.substr(start, end - start);
-      if (keep_empty || !sub.empty())
-        res << sub;
-      if (keep_delim)
-        res << delim;
-      start = end + delim.length();
-    }
+      size_t res = std::string::npos;
+      delim = "";
 
-    if (start < content_.size() || keep_empty)
-      res << content_.substr(start);
-
-    return res;
-  }
-
-  std::vector<std::string>
-  String::split(const std::string& sep, int limit,
-                bool keep_delim, bool keep_empty) const
-  {
-    std::vector<std::string> seps;
-    seps << sep;
-    return split(seps, limit, keep_delim, keep_empty);
-  }
-
-  OVERLOAD_TYPE(
-    split_overload, 4, 1,
-    String,
-    (std::vector<std::string>
-     (String::*)(const std::string&, int, bool, bool) const)
-    &String::split,
-    List,
-    (std::vector<std::string>
-     (String::*)(const std::vector<std::string>&, int, bool, bool) const)
-    &String::split)
-
-  static rObject split_bouncer(const objects_type& _args)
-  {
-    objects_type args = _args;
-    static rPrimitive actual = make_primitive(split_overload);
-    check_arg_count(args.size() - 1, 0, 4);
-    switch (args.size())
-    {
-      case 1:
+      foreach (const std::string& sep, seps)
       {
-	static std::vector<std::string> seps =
-	  boost::assign::list_of(" ")("\t")("\r")("\n");
-        args.push_back(to_urbi(seps));
-        args.push_back(new Float(-1));
-        args.push_back(object::false_class);
-        args.push_back(object::false_class);
-        break;
+        size_t pos = str.find(sep, start);
+        if (pos != std::string::npos && (pos < res || res == std::string::npos))
+        {
+          res = pos;
+          delim = sep;
+        }
       }
-      case 2:
-        args.push_back(new Float(-1));
-      case 3:
-        args.push_back(object::false_class);
-      case 4:
-        args.push_back(object::true_class);
-      default:
-        break;
+      return res;
     }
-    if (args[2] == object::nil_class)
-      args[2] = new Float(-1);
-    return (*actual)(args);
-  }
 
-  std::string
-  String::star(size_type times) const
-  {
-    std::string res;
-    res.reserve(times * size());
-    for (size_type i = 0; i < times; i++)
-      res += value_get();
-    return res;
-  }
+    std::vector<std::string>
+    String::split(const std::vector<std::string>& sep, int limit,
+                  bool keep_delim, bool keep_empty) const
+    {
+      std::vector<std::string> res;
 
-  void String::check_bounds(size_type from, size_type to) const
-  {
-    if (from >= content_.length())
-      FRAISE("invalid index: %s", from);
-    if (to >  content_.length())
-      FRAISE("invalid index: %s", to);
-    if (from > to)
-      FRAISE("range starting after its end does not make sense: %s, %s",
-	     from, to);
-  }
+      // Special case: splitting on an empty string returns the individual
+      // characters.
+      if (libport::has(sep, ""))
+      {
+        for (std::string::size_type pos = 0; pos != content_.size(); ++pos)
+          res.push_back(content_.substr(pos, 1));
+        return res;
+      }
 
-  std::string String::sub(size_type idx) const
-  {
-    return sub(idx, idx + 1);
-  }
+      size_t start = 0;
+      std::string delim;
+      for (size_t end = find_first(sep, content_, start, delim);
+           end != std::string::npos && limit;
+           end = find_first(sep, content_, start, delim), --limit)
+      {
+        std::string sub = content_.substr(start, end - start);
+        if (keep_empty || !sub.empty())
+          res << sub;
+        if (keep_delim)
+          res << delim;
+        start = end + delim.length();
+      }
 
-  std::string String::sub_eq(size_type idx, const std::string& v)
-  {
-    return sub_eq(idx, idx + 1, v);
-  }
+      if (start < content_.size() || keep_empty)
+        res << content_.substr(start);
 
-  std::string String::sub(size_type from, size_type to) const
-  {
-    check_bounds(from, to);
-    return content_.substr(from, to - from);
-  }
+      return res;
+    }
 
-  std::string
-  String::sub_eq(size_type from, size_type to, const std::string& v)
-  {
-    check_bounds(from, to);
-    content_ = (content_.substr(0, from)
-                + v
-                + content_.substr(to, std::string::npos));
-    return v;
-  }
+    std::vector<std::string>
+    String::split(const std::string& sep, int limit,
+                  bool keep_delim, bool keep_empty) const
+    {
+      std::vector<std::string> seps;
+      seps << sep;
+      return split(seps, limit, keep_delim, keep_empty);
+    }
 
-  std::string String::to_lower() const
-  {
-    return boost::to_lower_copy(value_get());
-  }
+    OVERLOAD_TYPE(
+      split_overload, 4, 1,
+      String,
+      (std::vector<std::string>
+       (String::*)(const std::string&, int, bool, bool) const)
+      &String::split,
+      List,
+      (std::vector<std::string>
+       (String::*)(const std::vector<std::string>&, int, bool, bool) const)
+      &String::split)
 
-  std::string String::to_upper() const
-  {
-    return boost::to_upper_copy(value_get());
-  }
+    static rObject split_bouncer(const objects_type& _args)
+    {
+      objects_type args = _args;
+      static rPrimitive actual = make_primitive(split_overload);
+      check_arg_count(args.size() - 1, 0, 4);
+      switch (args.size())
+      {
+        case 1:
+        {
+          static std::vector<std::string> seps =
+            boost::assign::list_of(" ")("\t")("\r")("\n");
+          args.push_back(to_urbi(seps));
+          args.push_back(new Float(-1));
+          args.push_back(object::false_class);
+          args.push_back(object::false_class);
+          break;
+        }
+        case 2:
+          args.push_back(new Float(-1));
+        case 3:
+          args.push_back(object::false_class);
+        case 4:
+          args.push_back(object::true_class);
+        default:
+          break;
+      }
+      if (args[2] == object::nil_class)
+        args[2] = new Float(-1);
+      return (*actual)(args);
+    }
 
-  std::string String::fromAscii(rObject, int code)
-  {
-    std::string res;
-    res += code;
-    return res;
-  }
+    std::string
+    String::star(size_type times) const
+    {
+      std::string res;
+      res.reserve(times * size());
+      for (size_type i = 0; i < times; i++)
+        res += value_get();
+      return res;
+    }
+
+    void String::check_bounds(size_type from, size_type to) const
+    {
+      if (from >= content_.length())
+        FRAISE("invalid index: %s", from);
+      if (to >  content_.length())
+        FRAISE("invalid index: %s", to);
+      if (from > to)
+        FRAISE("range starting after its end does not make sense: %s, %s",
+               from, to);
+    }
+
+    std::string String::sub(size_type idx) const
+    {
+      return sub(idx, idx + 1);
+    }
+
+    std::string String::sub_eq(size_type idx, const std::string& v)
+    {
+      return sub_eq(idx, idx + 1, v);
+    }
+
+    std::string String::sub(size_type from, size_type to) const
+    {
+      check_bounds(from, to);
+      return content_.substr(from, to - from);
+    }
+
+    std::string
+    String::sub_eq(size_type from, size_type to, const std::string& v)
+    {
+      check_bounds(from, to);
+      content_ = (content_.substr(0, from)
+                  + v
+                  + content_.substr(to, std::string::npos));
+      return v;
+    }
+
+    std::string String::to_lower() const
+    {
+      return boost::to_lower_copy(value_get());
+    }
+
+    std::string String::to_upper() const
+    {
+      return boost::to_upper_copy(value_get());
+    }
+
+    std::string String::fromAscii(rObject, int code)
+    {
+      std::string res;
+      res += code;
+      return res;
+    }
 
 #define IS(Spec)                                \
-  bool String::is_ ## Spec() const              \
-  {                                             \
-    foreach (char c, content_)                  \
-      if (!is ## Spec(c))                       \
-        return false;                           \
-    return true;                                \
-  }
+    bool String::is_ ## Spec() const            \
+    {                                           \
+      foreach (char c, content_)                \
+        if (!is ## Spec(c))                     \
+          return false;                         \
+      return true;                              \
+    }
 
-  IS(alnum)
-  IS(alpha)
-  IS(cntrl)
-  IS(digit)
-  IS(graph)
-  IS(lower)
-  IS(print)
-  IS(punct)
-  IS(space)
-  IS(upper)
-  IS(xdigit)
+    IS(alnum)
+    IS(alpha)
+    IS(cntrl)
+    IS(digit)
+    IS(graph)
+    IS(lower)
+    IS(print)
+    IS(punct)
+    IS(space)
+    IS(upper)
+    IS(xdigit)
 #undef IS
 
-  int String::toAscii() const
-  {
-    check_bounds(0, 1);
-    return value_get()[0];
-  }
+    int String::toAscii() const
+    {
+      check_bounds(0, 1);
+      return value_get()[0];
+    }
 
-  OVERLOAD_2
-  (sub_bouncer, 2,
-   (std::string (String::*) (unsigned) const) (&String::sub),
-   (std::string (String::*) (unsigned, unsigned) const) (&String::sub)
-    );
+    OVERLOAD_2
+    (sub_bouncer, 2,
+     (std::string (String::*) (unsigned) const) (&String::sub),
+     (std::string (String::*) (unsigned, unsigned) const) (&String::sub)
+      );
 
-  OVERLOAD_2
-  (sub_eq_bouncer, 3,
-   (std::string (String::*) (unsigned, const std::string&))
-   (&String::sub_eq),
-   (std::string (String::*) (unsigned, unsigned, const std::string&))
-   (&String::sub_eq)
-    );
+    OVERLOAD_2
+    (sub_eq_bouncer, 3,
+     (std::string (String::*) (unsigned, const std::string&))
+     (&String::sub_eq),
+     (std::string (String::*) (unsigned, unsigned, const std::string&))
+     (&String::sub_eq)
+      );
 
-  URBI_CXX_OBJECT_REGISTER(String);
+    URBI_CXX_OBJECT_REGISTER(String);
 
-  void String::initialize(CxxObject::Binder<String>& bind)
-  {
-    bind(SYMBOL(EQ_EQ),
-         static_cast<bool (self_type::*)(const rObject&) const>
-                    (&self_type::operator==));
+    void String::initialize(CxxObject::Binder<String>& bind)
+    {
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+           (&self_type::operator==));
 #define DECLARE(Name, Function)                 \
-    bind(SYMBOL(Name), &String::Function)
+      bind(SYMBOL(Name), &String::Function)
 
-    DECLARE(LT_EQ       , operator<=);
-    DECLARE(PLUS        , plus);
-    DECLARE(STAR        , star);
-    DECLARE(asBool      , as_bool);
-    DECLARE(asFloat     , as_float);
-    DECLARE(asPrintable , as_printable);
-    DECLARE(asString    , as_string);
-    DECLARE(distance    , distance);
-    DECLARE(empty       , empty);
-    DECLARE(format      , format);
-    DECLARE(fresh       , fresh);
-    DECLARE(fromAscii   , fromAscii);
-    DECLARE(isAlnum     , is_alnum);
-    DECLARE(isAlpha     , is_alpha);
-    DECLARE(isCntrl     , is_cntrl);
-    DECLARE(isDigit     , is_digit);
-    DECLARE(isGraph     , is_graph);
-    DECLARE(isLower     , is_lower);
-    DECLARE(isPrint     , is_print);
-    DECLARE(isPunct     , is_punct);
-    DECLARE(isSpace     , is_space);
-    DECLARE(isUpper     , is_upper);
-    DECLARE(isXdigit    , is_xdigit);
-    DECLARE(join        , join);
-    DECLARE(replace     , replace);
-    DECLARE(set         , set);
-    DECLARE(size        , size);
-    DECLARE(toAscii     , toAscii);
-    DECLARE(toLower     , to_lower);
-    DECLARE(toUpper     , to_upper);
+      DECLARE(LT_EQ       , operator<=);
+      DECLARE(PLUS        , plus);
+      DECLARE(STAR        , star);
+      DECLARE(asBool      , as_bool);
+      DECLARE(asFloat     , as_float);
+      DECLARE(asPrintable , as_printable);
+      DECLARE(asString    , as_string);
+      DECLARE(distance    , distance);
+      DECLARE(empty       , empty);
+      DECLARE(format      , format);
+      DECLARE(fresh       , fresh);
+      DECLARE(fromAscii   , fromAscii);
+      DECLARE(isAlnum     , is_alnum);
+      DECLARE(isAlpha     , is_alpha);
+      DECLARE(isCntrl     , is_cntrl);
+      DECLARE(isDigit     , is_digit);
+      DECLARE(isGraph     , is_graph);
+      DECLARE(isLower     , is_lower);
+      DECLARE(isPrint     , is_print);
+      DECLARE(isPunct     , is_punct);
+      DECLARE(isSpace     , is_space);
+      DECLARE(isUpper     , is_upper);
+      DECLARE(isXdigit    , is_xdigit);
+      DECLARE(join        , join);
+      DECLARE(replace     , replace);
+      DECLARE(set         , set);
+      DECLARE(size        , size);
+      DECLARE(toAscii     , toAscii);
+      DECLARE(toLower     , to_lower);
+      DECLARE(toUpper     , to_upper);
 
 #undef DECLARE
 
-    bind(SYMBOL(split), split_bouncer);
+      bind(SYMBOL(split), split_bouncer);
 
-    proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
-    proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
-  }
+      proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
+      proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
+    }
 
-  rObject
-  String::proto_make()
-  {
-    return new String();
-  }
+    rObject
+    String::proto_make()
+    {
+      return new String();
+    }
 
-}; // namespace object
+  } // namespace object
+}

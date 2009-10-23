@@ -17,9 +17,9 @@
 
 # include <libport/compilation.hh>
 
-# include <object/lobby.hh>
-# include <object/tag.hh>
-# include <object/task.hh>
+# include <urbi/object/lobby.hh>
+# include <urbi/object/tag.hh>
+# include <urbi/object/task.hh>
 
 namespace runner
 {

@@ -35,7 +35,7 @@
    Therefore, declare here all the symbols we use somewhere in the C++
    code.  */
 
-#  define SYMBOL(Sym) object::symbol_ ## Sym
+#  define SYMBOL(Sym) ::object::symbol_ ## Sym
 #  include <object/precompiled-symbols.hh>
 
 namespace object

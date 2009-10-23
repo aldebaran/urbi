@@ -11,7 +11,7 @@
 #include <kernel/connection.hh>
 #include <kernel/userver.hh>
 
-#include <object/lobby.hh>
+#include <urbi/object/lobby.hh>
 #include <object/symbols.hh>
 
 namespace kernel

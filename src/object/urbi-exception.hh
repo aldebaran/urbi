@@ -21,43 +21,46 @@
 # include <libport/symbol.hh>
 
 # include <ast/loc.hh>
-# include <object/fwd.hh>
+# include <urbi/object/fwd.hh>
 # include <sched/exception.hh>
 
-namespace object
+namespace urbi
 {
-  /// One call.
-  typedef std::pair<libport::Symbol,
-                    boost::optional<ast::loc> > call_type;
-
-  /// Call stack.
-  typedef std::vector<call_type> call_stack_type;
-
-  /// Urbi-visible exceptions.
-  class UrbiException: public sched::exception
+  namespace object
   {
-  public:
-    UrbiException(rObject value, const call_stack_type& bt);
-    ~UrbiException() throw() {}
-    /// Dump this on \a o, for debugging.
-    virtual std::ostream& dump(std::ostream& o) const;
-    virtual const char* what() const throw();
-    ADD_FIELD(rObject, value)
-    ADD_FIELD(call_stack_type, backtrace)
-    PARTIAL_COMPLETE_EXCEPTION(UrbiException)
-  };
+    /// One call.
+    typedef std::pair<libport::Symbol,
+                      boost::optional<ast::loc> > call_type;
 
-  std::ostream& operator<<(std::ostream& o, const UrbiException& e);
+    /// Call stack.
+    typedef std::vector<call_type> call_stack_type;
 
-} // namespace object
+    /// Urbi-visible exceptions.
+    class UrbiException: public sched::exception
+    {
+    public:
+      UrbiException(rObject value, const call_stack_type& bt);
+      ~UrbiException() throw() {}
+      /// Dump this on \a o, for debugging.
+      virtual std::ostream& dump(std::ostream& o) const;
+      virtual const char* what() const throw();
+      ADD_FIELD(rObject, value)
+      ADD_FIELD(call_stack_type, backtrace)
+      PARTIAL_COMPLETE_EXCEPTION(UrbiException)
+    };
+
+    std::ostream& operator<<(std::ostream& o, const UrbiException& e);
+
+  } // namespace object
+}
 
 // These guys are actually instances of std::, so their operator<<
 // need to be there too.
 
 namespace std
 {
-  ostream& operator<<(ostream& o, const object::call_type& c);
-  ostream& operator<<(ostream& o, const object::call_stack_type& c);
+  ostream& operator<<(ostream& o, const urbi::object::call_type& c);
+  ostream& operator<<(ostream& o, const urbi::object::call_stack_type& c);
 }
 
 # include <object/urbi-exception.hxx>

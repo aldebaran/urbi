@@ -9,32 +9,35 @@
  */
 #include <libport/cassert>
 
-#include <object/executable.hh>
+#include <urbi/object/executable.hh>
 
-namespace object
+namespace urbi
 {
-  rObject Executable::operator()(object::objects_type)
+  namespace object
   {
-    pabort("Should never be here");
+    rObject Executable::operator()(object::objects_type)
+    {
+      pabort("Should never be here");
+    }
+
+    Executable::Executable()
+    {
+      proto_add(Object::proto);
+    }
+
+    Executable::Executable(rExecutable model)
+    {
+      proto_add(model);
+    }
+
+    rObject Executable::proto_make()
+    {
+      return new Executable();
+    }
+
+    void Executable::initialize(CxxObject::Binder<Executable>&)
+    {}
+
+    URBI_CXX_OBJECT_REGISTER(Executable);
   }
-
-  Executable::Executable()
-  {
-    proto_add(Object::proto);
-  }
-
-  Executable::Executable(rExecutable model)
-  {
-    proto_add(model);
-  }
-
-  rObject Executable::proto_make()
-  {
-    return new Executable();
-  }
-
-  void Executable::initialize(CxxObject::Binder<Executable>&)
-  {}
-
-  URBI_CXX_OBJECT_REGISTER(Executable);
 }

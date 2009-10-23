@@ -14,20 +14,23 @@
 
 #include <object/format-info.hh>
 
-#include <object/global.hh>
-#include <object/object.hh>
+#include <urbi/object/global.hh>
+#include <urbi/object/object.hh>
 
-namespace object
+namespace urbi
 {
-  rObject global_class;
-
-  /*--------------------.
-  | Global primitives.  |
-  `--------------------*/
-
-  void
-  global_class_initialize()
+  namespace object
   {
-  }
+    rObject global_class;
 
-}; // namespace object
+    /*--------------------.
+    | Global primitives.  |
+    `--------------------*/
+
+    void
+    global_class_initialize()
+    {
+    }
+
+  }; // namespace object
+}

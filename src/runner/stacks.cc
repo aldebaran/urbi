@@ -15,8 +15,8 @@
 #include <ast/local-assignment.hh>
 #include <ast/local-declaration.hh>
 #include <ast/local.hh>
-#include <object/slot.hh>
-#include <object/slot.hxx>
+#include <urbi/object/slot.hh>
+#include <urbi/object/slot.hxx>
 #include <runner/stacks.hh>
 #include <runner/stack-debug.hh>
 

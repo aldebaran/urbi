@@ -33,10 +33,10 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
-#include <object/lobby.hh>
-#include <object/object.hh>
+#include <urbi/object/lobby.hh>
+#include <urbi/object/object.hh>
 #include <object/symbols.hh>
-#include <object/tag.hh>
+#include <urbi/object/tag.hh>
 #include <object/urbi-exception.hh>
 
 #include <parser/uparser.hh>

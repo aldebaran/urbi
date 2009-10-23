@@ -13,59 +13,62 @@
 
 # include <libport/cstdio>
 
-# include <object/cxx-object.hh>
+# include <urbi/object/cxx-object.hh>
 
-namespace object
+namespace urbi
 {
-  class InputStream: public CxxObject
+  namespace object
   {
+    class InputStream: public CxxObject
+    {
 
-  /*-----------------------------.
-  | Construction / Destruction.  |
-  `-----------------------------*/
+      /*-----------------------------.
+      | Construction / Destruction.  |
+      `-----------------------------*/
 
-  public:
-    InputStream(int fd, bool own);
-    InputStream(rInputStream stream);
-    ~InputStream();
+    public:
+      InputStream(int fd, bool own);
+      InputStream(rInputStream stream);
+      ~InputStream();
 
-  /*--------------.
-  | Data access.  |
-  `--------------*/
+      /*--------------.
+      | Data access.  |
+      `--------------*/
 
-  private:
-    /// Get a byte.
-    /// \return the next available byte, or -1 if none available.
-    int get_();
+    private:
+      /// Get a byte.
+      /// \return the next available byte, or -1 if none available.
+      int get_();
 
-    /// Fill the buffer.
-    /// \return true if something was read.
-    bool getBuffer_();
-    std::string getSeparator_(char sep, bool incl, bool& ok);
-    int fd_;
-    /// Whether we own fd_, and therefore need to close it.
-    bool own_;
-    std::string buffer_;
-    unsigned pos_;
-    size_t size_;
+      /// Fill the buffer.
+      /// \return true if something was read.
+      bool getBuffer_();
+      std::string getSeparator_(char sep, bool incl, bool& ok);
+      int fd_;
+      /// Whether we own fd_, and therefore need to close it.
+      bool own_;
+      std::string buffer_;
+      unsigned pos_;
+      size_t size_;
 
-  /*---------------.
-  | Urbi methods.  |
-  `---------------*/
+      /*---------------.
+      | Urbi methods.  |
+      `---------------*/
 
-  public:
-    void init(rFile f);
-    rObject get();
-    rObject getChar();
-    rObject getLine();
+    public:
+      void init(rFile f);
+      rObject get();
+      rObject getChar();
+      rObject getLine();
 
-  /*----------.
-  | Details.  |
-  `----------*/
+      /*----------.
+      | Details.  |
+      `----------*/
 
-  private:
-    URBI_CXX_OBJECT(InputStream);
-  };
+    private:
+      URBI_CXX_OBJECT(InputStream);
+    };
+  }
 }
 
 #endif

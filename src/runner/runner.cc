@@ -16,11 +16,12 @@
 #include <libport/foreach.hh>
 #include <libport/windows.hh>
 
-#include <object/lobby.hh>
-#include <object/slot.hh>
 #include <object/symbols.hh>
-#include <object/tag.hh>
-#include <object/task.hh>
+
+#include <urbi/object/lobby.hh>
+#include <urbi/object/slot.hh>
+#include <urbi/object/tag.hh>
+#include <urbi/object/task.hh>
 
 #include <runner/runner.hh>
 

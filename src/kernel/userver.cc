@@ -54,9 +54,9 @@
 #include <ast/ast.hh>
 #include <ast/nary.hh>
 
-#include <object/lobby.hh>
-#include <object/object.hh>
-#include <object/primitive.hh>
+#include <urbi/object/lobby.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/primitive.hh>
 #include <object/root-classes.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>

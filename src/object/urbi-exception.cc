@@ -7,8 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
-#include <object/object.hh>
-#include <object/string.hh>
+#include <urbi/object/object.hh>
+#include <urbi/object/string.hh>
 #include <object/symbols.hh>
 #include <object/urbi-exception.hh>
 
@@ -20,7 +20,7 @@ namespace std
   `------------*/
 
   ostream&
-  operator<<(ostream& o, const object::call_type& c)
+  operator<<(ostream& o, const urbi::object::call_type& c)
   {
     if (c.second)
       o << *c.second << ": ";
@@ -32,48 +32,51 @@ namespace std
   `------------------*/
 
   ostream&
-  operator<<(ostream& o, const object::call_stack_type& cs)
+  operator<<(ostream& o, const urbi::object::call_stack_type& cs)
   {
-    rforeach (const object::call_type& c, cs)
+    rforeach (const urbi::object::call_type& c, cs)
       o << "    called from: " << c << endl;
     return o;
   }
 
 }
 
-namespace object
+namespace urbi
 {
-
-  /*------------------.
-  | Urbi::Exception.  |
-  `------------------*/
-
-  std::ostream&
-  UrbiException::dump(std::ostream& o) const
+  namespace object
   {
-    return
-      o << "UrbiException"
-        << "{"
-        << libport::incendl
-        <<   value_get() << "," << libport::iendl
-        <<   backtrace_get()
-        << libport::decendl
-        << "}";
-  }
 
-  const char*
-  UrbiException::what() const throw()
-  {
-    std::stringstream s;
-    dump(s);
-    // Leaking, but calling this method means the program will terminate.
-    return strdup(s.str().c_str());
-  }
+    /*------------------.
+    | Urbi::Exception.  |
+    `------------------*/
 
-  std::ostream&
-  operator<<(std::ostream& o, const UrbiException& e)
-  {
-    return e.dump(o);
-  }
+    std::ostream&
+    UrbiException::dump(std::ostream& o) const
+    {
+      return
+        o << "UrbiException"
+          << "{"
+          << libport::incendl
+          <<   value_get() << "," << libport::iendl
+          <<   backtrace_get()
+          << libport::decendl
+          << "}";
+    }
 
+    const char*
+    UrbiException::what() const throw()
+    {
+      std::stringstream s;
+      dump(s);
+      // Leaking, but calling this method means the program will terminate.
+      return strdup(s.str().c_str());
+    }
+
+    std::ostream&
+    operator<<(std::ostream& o, const UrbiException& e)
+    {
+      return e.dump(o);
+    }
+
+  }
 }

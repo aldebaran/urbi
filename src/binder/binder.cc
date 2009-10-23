@@ -29,7 +29,7 @@
 #include <binder/bind-debug.hh>
 
 #include <object/symbols.hh>
-#include <object/object.hh>
+#include <urbi/object/object.hh>
 
 #include <ast/factory.hh>
 #include <parser/parse.hh>

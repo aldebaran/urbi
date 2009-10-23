@@ -55,22 +55,24 @@ BUILT_SOURCES += $(precompiled_symbols_hh)
 ## Generated source files.  ##
 ## ------------------------ ##
 
-FROM_PY =					\
-  object/any-to-boost-function.hxx		\
-  object/cxx-primitive.hxx			\
-  object/executable.hh
+FROM_PY =							\
+  $(top_builddir)/include/urbi/object/any-to-boost-function.hxx	\
+  $(top_builddir)/include/urbi/object/cxx-primitive.hxx		\
+  $(top_builddir)/include/urbi/object/executable.hh
 
 nodist_libuobject_la_SOURCES += $(FROM_PY)
 EXTRA_DIST += $(FROM_PY:=.py)
 
 %.hxx: %.hxx.py
 	rm -f $@ $@.tmp
+	mkdir -p $(dir $@)
 	$< > $@.tmp
 	chmod a-w $@.tmp
 	mv $@.tmp $@
 
 %.hh: %.hh.py
 	rm -f $@ $@.tmp
+	mkdir -p $(dir $@)
 	$< > $@.tmp
 	chmod a-w $@.tmp
 	mv $@.tmp $@
@@ -80,78 +82,48 @@ EXTRA_DIST += $(FROM_PY:=.py)
 ## ----------------- ##
 
 dist_libuobject_la_SOURCES +=			\
-  object/any-to-boost-function.hh		\
   object/barrier.cc				\
-  object/barrier.hh				\
   object/centralized-slots.cc			\
-  object/centralized-slots.hh			\
-  object/centralized-slots.hxx			\
   object/code.cc				\
-  object/code.hh				\
-  object/cxx-conversions.hh			\
-  object/cxx-conversions.hxx			\
   object/cxx-helper.hh				\
   object/cxx-object.cc				\
-  object/cxx-object.hh				\
-  object/cxx-object.hxx				\
-  object/cxx-primitive.hh			\
-  object/date.hh				\
   object/date.cc				\
   object/dictionary.cc				\
-  object/dictionary.hh				\
   object/directory.cc				\
-  object/directory.hh				\
-  object/equality-comparable.hh			\
-  object/equality-comparable.hxx		\
   object/executable.cc				\
   object/file.cc				\
-  object/file.hh				\
   object/finalizable.cc                         \
-  object/finalizable.hh                         \
+  object/finalizable.hh				\
   object/float.cc				\
-  object/float.hh				\
   object/format-info.cc				\
   object/format-info.hh				\
   object/format-info.hxx			\
   object/formatter.cc				\
   object/formatter.hh				\
-  object/fwd.hh					\
   object/global.cc				\
-  object/global.hh				\
   object/hash-slots.hh				\
   object/hash-slots.hxx				\
   object/list.cc				\
-  object/list.hh				\
   object/lobby.cc				\
-  object/lobby.hh				\
   object/object-class.cc			\
   object/object-class.hh			\
   object/object.cc				\
-  object/object.hh				\
-  object/object.hxx				\
   object/path.cc				\
-  object/path.hh				\
   object/primitive.cc				\
-  object/primitive.hh				\
   object/root-classes.cc			\
   object/root-classes.hh			\
   object/semaphore.cc				\
   object/semaphore.hh				\
   object/slot.cc				\
-  object/slot.hh				\
-  object/slot.hxx				\
   object/sorted-vector-slots.hh			\
   object/sorted-vector-slots.hxx		\
   object/string.cc				\
-  object/string.hh				\
   object/symbols.cc				\
   object/symbols.hh				\
   object/system.cc				\
   object/system.hh				\
   object/tag.cc					\
-  object/tag.hh					\
   object/task.cc				\
-  object/task.hh				\
   object/urbi-exception.cc			\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\

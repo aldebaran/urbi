@@ -15,20 +15,22 @@
 #ifndef OBJECT_URBI_EXCEPTION_HXX
 # define OBJECT_URBI_EXCEPTION_HXX
 
-namespace object
+namespace urbi
 {
-
-  /*----------------.
-  | UrbiException.  |
-  `----------------*/
-
-  inline
-  UrbiException::UrbiException(rObject value, const call_stack_type& bt)
-    : value_(value)
-    , backtrace_(bt)
+  namespace object
   {
-  }
+    /*----------------.
+    | UrbiException.  |
+    `----------------*/
 
-} // namespace object
+    inline
+    UrbiException::UrbiException(rObject value, const call_stack_type& bt)
+      : value_(value)
+      , backtrace_(bt)
+    {
+    }
+
+  } // namespace object
+}
 
 #endif //! OBJECT_URBI_EXCEPTION_HXX

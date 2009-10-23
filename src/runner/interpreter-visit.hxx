@@ -10,34 +10,35 @@
 #ifndef RUNNER_INTERPRETER_VISIT_HXX
 # define RUNNER_INTERPRETER_VISIT_HXX
 
-# include <libport/bind.hh>
-# include <libport/format.hh>
 # include <boost/scoped_ptr.hpp>
 
+# include <libport/bind.hh>
 # include <libport/compilation.hh>
 # include <libport/compiler.hh>
 # include <libport/contract.hh>
 # include <libport/finally.hh>
 # include <libport/foreach.hh>
+# include <libport/format.hh>
 
 # include <ast/all.hh>
 # include <ast/print.hh>
 
 # include <kernel/uconnection.hh>
 
-# include <object/code.hh>
-# include <object/global.hh>
-# include <object/list.hh>
-# include <object/dictionary.hh>
-# include <object/tag.hh>
-# include <object/slot.hh>
-# include <object/string.hh>
 # include <object/symbols.hh>
 
 # include <runner/interpreter.hh>
 # include <runner/raise.hh>
 
 # include <sched/exception.hh>
+
+# include <urbi/object/code.hh>
+# include <urbi/object/global.hh>
+# include <urbi/object/list.hh>
+# include <urbi/object/dictionary.hh>
+# include <urbi/object/tag.hh>
+# include <urbi/object/slot.hh>
+# include <urbi/object/string.hh>
 
 /// Job echo.
 #define JECHO(Title, Content)                                   \

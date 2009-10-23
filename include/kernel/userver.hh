@@ -35,9 +35,9 @@
 # include <libport/pthread.h>
 
 # include <kernel/fwd.hh>
-# include <urbi/export.hh>
 # include <kernel/utypes.hh>
-# include <object/object.hh>
+# include <urbi/export.hh>
+# include <urbi/object/object.hh>
 
 namespace kernel
 {
@@ -225,18 +225,18 @@ namespace kernel
     `--------------------------*/
 
   public:
-    void schedule(object::rObject target, libport::Symbol method,
-                  const object::objects_type& args);
+    void schedule(urbi::object::rObject target, libport::Symbol method,
+                  const urbi::object::objects_type& args);
 
   private:
     struct AsyncJob
     {
-      AsyncJob(object::rObject t, libport::Symbol m,
-               const object::objects_type& a);
+      AsyncJob(urbi::object::rObject t, libport::Symbol m,
+               const urbi::object::objects_type& a);
 
-      object::rObject target;
+      urbi::object::rObject target;
       libport::Symbol method;
-      object::objects_type args;
+      urbi::object::objects_type args;
     };
     std::vector<AsyncJob> async_jobs_;
     libport::Lockable async_jobs_lock_;
