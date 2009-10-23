@@ -161,13 +161,9 @@ namespace urbi
       bind(SYMBOL(resendBanner), &Lobby::resendBanner);
     }
 
-    rObject
-    Lobby::proto_make()
-    {
-      return new Lobby(0);
-    }
-
-    URBI_CXX_OBJECT_REGISTER(Lobby);
+    URBI_CXX_OBJECT_REGISTER(Lobby)
+      : connection_(0)
+    {}
 
   }; // namespace object
 }

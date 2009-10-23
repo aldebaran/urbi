@@ -96,12 +96,8 @@ namespace urbi
       bind(SYMBOL(v),               &Semaphore::v);
     }
 
-    rObject
-    Semaphore::proto_make()
-    {
-      return new Semaphore();
-    }
+    URBI_CXX_OBJECT_REGISTER(Semaphore)
+    {}
 
-    URBI_CXX_OBJECT_REGISTER(Semaphore);
   } // namespace object
 }

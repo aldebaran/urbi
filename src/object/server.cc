@@ -89,9 +89,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Server)
-    {
-      return new Server();
-    }
+    {}
 
   }
 }

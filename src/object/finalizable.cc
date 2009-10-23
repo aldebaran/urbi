@@ -74,8 +74,6 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Finalizable)
-    {
-      return new Finalizable();
-    }
+    {}
   }
 }

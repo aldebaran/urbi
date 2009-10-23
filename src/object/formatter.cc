@@ -116,12 +116,8 @@ namespace urbi
     }
 #undef OPERATOR_PCT
 
-    rObject
-    Formatter::proto_make()
-    {
-      return new Formatter();
-    }
+    URBI_CXX_OBJECT_REGISTER(Formatter)
+    {}
 
-    URBI_CXX_OBJECT_REGISTER(Formatter);
   } // namespace object
 }

@@ -72,12 +72,9 @@ namespace urbi
 #undef DECLARE
     }
 
-    rObject
-    Regexp::proto_make()
-    {
-      return new Regexp(".");
-    }
+    URBI_CXX_OBJECT_REGISTER(Regexp)
+      : re_(".")
+    {}
 
-    URBI_CXX_OBJECT_REGISTER(Regexp);
   }
 }

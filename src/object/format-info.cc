@@ -273,12 +273,19 @@ namespace urbi
 #undef DECLARE
     }
 
-    rObject
-    FormatInfo::proto_make()
-    {
-      return new FormatInfo();
-    }
+    URBI_CXX_OBJECT_REGISTER(FormatInfo)
+      : alignment_(Align::RIGHT)
+      , alt_(false)
+      , consistent_(true)
+      , group_("")
+      , pad_(" ")
+      , pattern_("%s")
+      , precision_(6)
+      , prefix_("")
+      , spec_("s")
+      , uppercase_(Case::UNDEFINED)
+      , width_(0)
+    {}
 
-    URBI_CXX_OBJECT_REGISTER(FormatInfo);
   } // namespace object
 }

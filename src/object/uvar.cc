@@ -21,6 +21,7 @@
 
 # include <urbi/object/global.hh>
 # include <urbi/object/list.hh>
+# include <urbi/object/lobby.hh>
 
 # include <runner/runner.hh>
 # include <runner/interpreter.hh>
@@ -219,33 +220,34 @@ namespace urbi
       proto->slot_set(SYMBOL(update_bounce), new Primitive(&update_bounce));
     }
 
-    rObject
-    UVar::proto_make()
-    {
-      return new UVar();
-    }
-
-    URBI_CXX_OBJECT_REGISTER(UVar);
+    URBI_CXX_OBJECT_REGISTER(UVar)
+      : Primitive( boost::bind(&UVar::accessor, this))
+      , looping_(false)
+      , inAccess_(false)
+    {}
 
     UValue::UValue()
     {
       protos_set(new List);
       proto_add(proto ? proto : CxxObject::proto);
     }
+
     UValue::UValue(libport::intrusive_ptr<UValue>)
     {
       protos_set(new List);
       proto_add(proto ? proto : CxxObject::proto);
     }
+
     UValue::UValue(const urbi::UValue& v, bool bypass)
     {
       protos_set(new List);
       proto_add(proto ? proto : CxxObject::proto);
       put(v, bypass);
     }
+
     UValue::~UValue()
-    {
-    }
+    {}
+
     rObject
     UValue::extract()
     {
@@ -257,6 +259,7 @@ namespace urbi
         cache_ = object_cast(value_);
       return cache_;
     }
+
     std::string
     UValue::extractAsToplevelPrintable()
     {
@@ -268,6 +271,7 @@ namespace urbi
       value_.print(s);
       return s.str();
     }
+
     const urbi::UValue&
     UValue::value_get()
     {
@@ -280,12 +284,14 @@ namespace urbi
       alocated_ = true;
       return value_;
     }
+
     void
     UValue::invalidate()
     {
       if (!alocated_)
         value_ = urbi::UValue();
     }
+
     void
     UValue::put(const urbi::UValue& v,  bool bypass)
     {
@@ -293,17 +299,14 @@ namespace urbi
       value_.set(v, !bypass);
       cache_ = 0;
     }
+
     void
     UValue::put(rObject r)
     {
       value_ = urbi::UValue();
       cache_ = r;
     }
-    rObject
-    UValue::proto_make()
-    {
-      return new UValue();
-    }
+
     void
     UValue::initialize(CxxObject::Binder<UValue>& bind)
     {
@@ -313,6 +316,8 @@ namespace urbi
       bind(SYMBOL(invalidate), &UValue::invalidate);
       bind(SYMBOL(put), (void (UValue::*)(rObject))&UValue::put);
     }
-    URBI_CXX_OBJECT_REGISTER(UValue);
+
+    URBI_CXX_OBJECT_REGISTER(UValue)
+    {}
   }
 }

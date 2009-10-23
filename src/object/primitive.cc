@@ -68,13 +68,15 @@ namespace urbi
       return content_(args);
     }
 
-    static void nil()
-    {}
+    static rObject nil(const objects_type&)
+    {
+      return void_class;
+    }
 
     URBI_CXX_OBJECT_REGISTER(Primitive)
+      : content_(nil)
     {
-      rObject res = make_primitive(nil);
-      return res;
+      proto_add(Executable::proto);
     }
 
   }; // namespace object

@@ -149,12 +149,6 @@ namespace urbi
     | Urbi bindings.  |
     `----------------*/
 
-    rObject
-    InputStream::proto_make()
-    {
-      return new InputStream(STDIN_FILENO, false);
-    }
-
     void
     InputStream::initialize(CxxObject::Binder<InputStream>& bind)
     {
@@ -164,6 +158,12 @@ namespace urbi
       bind(SYMBOL(init), &InputStream::init);
     }
 
-    URBI_CXX_OBJECT_REGISTER(InputStream);
+    URBI_CXX_OBJECT_REGISTER(InputStream)
+      : fd_(STDIN_FILENO)
+      , own_(false)
+      , pos_(0)
+      , size_(0)
+    {}
+
   }
 }

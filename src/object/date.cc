@@ -84,12 +84,8 @@ namespace urbi
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
     }
 
-    rObject
-    Date::proto_make()
-    {
-      return new Date(0);
-    }
-
-    URBI_CXX_OBJECT_REGISTER(Date);
+    URBI_CXX_OBJECT_REGISTER(Date)
+      : time_(0)
+    {}
   }
 }

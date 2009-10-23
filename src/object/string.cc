@@ -457,9 +457,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(String)
-    {
-      return new String();
-    }
+    {}
 
   } // namespace object
 }

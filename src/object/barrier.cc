@@ -109,13 +109,8 @@ namespace urbi
       bind(SYMBOL(wait),      &Barrier::wait);
     }
 
-    rObject
-    Barrier::proto_make()
-    {
-      return new Barrier(Barrier::value_type());
-    }
-
-    URBI_CXX_OBJECT_REGISTER(Barrier);
+    URBI_CXX_OBJECT_REGISTER(Barrier)
+    {}
 
   } // namespace object
 }

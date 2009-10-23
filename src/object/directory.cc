@@ -250,16 +250,8 @@ namespace urbi
 #endif
     }
 
-    rObject
-    Directory::proto_make()
-    {
-#ifdef WIN32
-      return new Directory("C:\\");
-#else
-      return new Directory("/");
-#endif
-    }
-
-    URBI_CXX_OBJECT_REGISTER(Directory);
+    URBI_CXX_OBJECT_REGISTER(Directory)
+      : path_(new Path())
+    {}
   }
 }

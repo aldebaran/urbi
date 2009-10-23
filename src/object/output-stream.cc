@@ -110,12 +110,6 @@ namespace urbi
     | Urbi bindings.  |
     `----------------*/
 
-    rObject
-    OutputStream::proto_make()
-    {
-      return new OutputStream(STDOUT_FILENO, false);
-    }
-
     void
     OutputStream::initialize(CxxObject::Binder<OutputStream>& bind)
     {
@@ -126,6 +120,10 @@ namespace urbi
       bind(SYMBOL(put),   &OutputStream::putByte);
     }
 
-    URBI_CXX_OBJECT_REGISTER(OutputStream);
+    URBI_CXX_OBJECT_REGISTER(OutputStream)
+      : fd_(STDOUT_FILENO)
+      , own_(false)
+    {}
+
   }
 }

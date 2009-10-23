@@ -185,12 +185,8 @@ namespace urbi
       proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
     }
 
-    rObject
-    File::proto_make()
-    {
-      return new File("/");
-    }
-
-    URBI_CXX_OBJECT_REGISTER(File);
+    URBI_CXX_OBJECT_REGISTER(File)
+      : path_(new Path("/"))
+    {}
   }
 }

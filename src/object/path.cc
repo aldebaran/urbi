@@ -255,16 +255,15 @@ namespace urbi
       DECLARE(writable, writable);
     }
 
-    rObject
-    Path::proto_make()
-    {
+    URBI_CXX_OBJECT_REGISTER(Path)
+      : path_(
 #ifdef WIN32
-      return new Path("C:\\");
+        "C:\\"
 #else
-      return new Path("/");
+        "/"
 #endif
-    }
+        )
+    {}
 
-    URBI_CXX_OBJECT_REGISTER(Path);
   }
 }

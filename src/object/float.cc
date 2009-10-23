@@ -396,9 +396,8 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Float)
-    {
-      return new Float(0);
-    }
+      : value_(0)
+    {}
 
   }; // namespace object
 }

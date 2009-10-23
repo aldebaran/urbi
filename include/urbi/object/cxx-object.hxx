@@ -77,7 +77,7 @@ namespace urbi
     void
     CxxObject::TypeInitializer<T>::create()
     {
-      res_ = T::proto_make();
+      res_ = new T(FirstPrototypeFlag());
       // If the user didn't specify a prototype, use Object.
       if (res_->protos_get().empty())
         res_->proto_add(Object::proto);

@@ -220,9 +220,8 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Tag)
-    {
-      return new Tag();
-    }
+      : value_(new sched::Tag(libport::Symbol::make_empty()))
+    {}
 
   } // namespace object
 }

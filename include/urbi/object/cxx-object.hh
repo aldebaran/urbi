@@ -26,7 +26,7 @@ public:                                                                 \
   virtual bool valid_proto(const ::urbi::object::Object& o) const;      \
 private:                                                                \
   friend class ::urbi::object::CxxObject::TypeInitializer<Name>;        \
-  static ::urbi::object::rObject proto_make();                          \
+  Name(const ::urbi::object::FirstPrototypeFlag&);                      \
 
 #define URBI_CXX_OBJECT_REGISTER(Name)                                  \
   const std::string& Name::type_name()                                  \
@@ -47,19 +47,22 @@ private:                                                                \
   {                                                                     \
     return dynamic_cast<const Name*>(&o);                               \
   }                                                                     \
+                                                                        \
   struct Name ## _register__                                            \
   {                                                                     \
     Name ## _register__() {::urbi::object::CxxObject::add<Name>();}     \
   };                                                                    \
   static Name ## _register__ Name ## _registered__;                     \
-  ::urbi::object::rObject                                               \
-  Name::proto_make()                                                    \
+                                                                        \
+  Name::Name(const ::urbi::object::FirstPrototypeFlag&)                 \
 
 
 namespace urbi
 {
   namespace object
   {
+    struct FirstPrototypeFlag {};
+
     /// Base class for Urbi bound C++ classes.
     class URBI_SDK_API CxxObject: public Object
     {

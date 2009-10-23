@@ -173,12 +173,8 @@ namespace urbi
       bind(SYMBOL(waitForTermination), &Task::waitForTermination);
     }
 
-    rObject
-    Task::proto_make()
-    {
-      return new Task();
-    }
+    URBI_CXX_OBJECT_REGISTER(Task)
+    {}
 
-    URBI_CXX_OBJECT_REGISTER(Task);
   }; // namespace object
 }

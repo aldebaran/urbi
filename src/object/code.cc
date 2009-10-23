@@ -130,13 +130,6 @@ namespace urbi
     }
 
     rObject
-    Code::proto_make()
-    {
-      PARAMETRIC_AST(ast, "function () {}");
-      return new Code(ast.result<const ast::Routine>());
-    }
-
-    rObject
     Code::operator() (object::objects_type args)
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
@@ -145,6 +138,12 @@ namespace urbi
     }
 
 
-    URBI_CXX_OBJECT_REGISTER(Code);
+    URBI_CXX_OBJECT_REGISTER(Code)
+    {
+      PARAMETRIC_AST(ast, "function () {}");
+      ast_ = ast.result<const ast::Routine>();
+      proto_add(Executable::proto);
+    }
+
   } // namespace object
 }

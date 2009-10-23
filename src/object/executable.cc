@@ -30,14 +30,12 @@ namespace urbi
       proto_add(model);
     }
 
-    rObject Executable::proto_make()
-    {
-      return new Executable();
-    }
-
     void Executable::initialize(CxxObject::Binder<Executable>&)
     {}
 
-    URBI_CXX_OBJECT_REGISTER(Executable);
+    URBI_CXX_OBJECT_REGISTER(Executable)
+    {
+
+    }
   }
 }

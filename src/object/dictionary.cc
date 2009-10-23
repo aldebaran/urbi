@@ -133,8 +133,6 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Dictionary)
-    {
-      return new Dictionary();
-    }
+    {}
   }
 }

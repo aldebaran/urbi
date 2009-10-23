@@ -335,7 +335,7 @@ namespace urbi
       DECLARE(removeSlot         , urbi_removeSlot);
       DECLARE(setConstSlot       , urbi_setConstSlot);
       DECLARE(setProperty        , property_set);
-      DECLARE(setSlot            , urbi_setSlot);
+      DECLARE(setSlot            , setSlot);
       DECLARE(updateSlot         , urbi_updateSlot);
 #undef DECLARE
     }
