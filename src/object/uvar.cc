@@ -17,6 +17,7 @@
 
 # include <object/global.hh>
 # include <object/list.hh>
+# include <object/lobby.hh>
 # include <object/symbols.hh>
 # include <object/urbi-exception.hh>
 # include <object/uvar.hh>
