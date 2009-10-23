@@ -125,7 +125,7 @@ Setup.exe" and follow the instructions given by the installer:
 \paragraph{RPM based distributions}
 \label{webots.setup.linux.rpm}%
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 rpm -hiv <package Urbi For Webots>.rpm
 \end{lstlisting}
 
@@ -135,7 +135,7 @@ rpm -hiv <package Urbi For Webots>.rpm
 Execute the following command:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 $ sudo dpkg --install <package Urbi For Webots>.deb
 \end{lstlisting}
 
@@ -146,13 +146,13 @@ Your software is installed, you'll now have to setup the license.
 \label{webots.setup.linux.tarball}%
      as root
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 $ cd /
 $ tar -xvzf  <package Urbi For Webots>.tgz
 \end{lstlisting}
      or
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 $ cd /
 $ tar -xvjf  <package Urbi For Webots>.tar.bz2
 \end{lstlisting}
@@ -179,7 +179,7 @@ path as explained in Webots documentation.  From a shell terminal this
 gives you:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 $ cd $HOME/Desktop
 $ ls
 usr webots webots-urbiengine-sdk-webots-1.03-k1462-e247-l482-powerpc-apple-darwin8-gcc-4.0.1.zip
@@ -271,7 +271,7 @@ add "-{}l" and the absolute path of your license file to the field
 line. Exemple (with a license file urbi.key located in
 \nolinkurl{C:/mylicensefolder/})
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 controllerArgs "-f -l C:/mylicensefolder/urbi.key  -p 54000 32 "
 \end{lstlisting}
 Contact us at Gostai if you still have some problems with the license,
@@ -411,7 +411,7 @@ command to it and makes your robot move and interact with it's
 environment. For example try typing the following commands in
 \textbf{telnet}:
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 headPan = 50 time: 5s;
 headPan = -50 time: 5s;
 headPan = 0 time: 5s;
@@ -438,7 +438,7 @@ specify it's path in the controllerArgs webots node.  For example
 create a new text file, rename it test.u and write in it:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 robot.sit (),
 \end{lstlisting}
 
@@ -446,7 +446,7 @@ Then edit the webots world aibo\_ers7\_urbi\_soccer.wbt, and add the
 path of your file test.u on the line of the controllerArgs node.
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 controllerArgs "-f -p 54000 32 [HERE ADD YOUR SCRIPT FILES]"
 \end{lstlisting}
 
@@ -509,7 +509,7 @@ For exemple let say that you created your file in
          Add this path to the controllerArgs line and it gives:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 # Under Windows, absolute path version:
 controllerArgs "-f -p 54000 50 \"C:/Program Files/webots/projects/packages/urbi/data/aibo/test.u\""
 (note the use of \" \" about the path, which are mandatory if the path
@@ -565,7 +565,7 @@ section and move it to the folder containing the \nolinkurl{URBI.ini}
 file. Then open \nolinkurl{URBI.ini} and add at the end of the file:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
       load ("test.u");
 \end{lstlisting}
 Now launch Webots and open the world using the URBI controller loading
@@ -628,14 +628,14 @@ those files.
 the following rule:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 data/<ROBOT NAME>
 \end{lstlisting}
 
 If several version of the robots are available, the following
 rule is applied:
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 data/<ROBOT NAME>/<VERSION>
 \end{lstlisting}
 
@@ -674,7 +674,7 @@ world have no specificities.
 
 Connect to the URBI server and use the following command:
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 unfreeze balltracking;
 \end{lstlisting}
 
@@ -712,7 +712,7 @@ Webots world. If this is not the case, some controllers will not work.
 the following lines:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 // Create a moving label.
 l = new Label("URBI for Webots");
 l.size = 0.04;
@@ -814,13 +814,13 @@ read the corresponding documentation to obtain more information.
 \item     Edit the \nolinkurl{URBI.INI} file and change the line:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
     load("kiki.ini");
 \end{lstlisting}
 
 by:
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
     load("foo.ini"); // The name should match with the file you've just renamed.
 \end{lstlisting}
 
@@ -855,7 +855,7 @@ directory. With the previous example, it would have been the
 following piece of code:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 system.name = "/gostai/webots/kiki";
 system.type = "webots";
 
@@ -913,7 +913,7 @@ You specify the controller options in the controllerArgs field of the Webots
 world (.wbt) files.
  The controllerArgs must be as follow:
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 controllerArgs [options] period [path1 path2 ...]
 \end{lstlisting}
 \begin{itemize}
@@ -1003,7 +1003,7 @@ controllerArgs [options] period [path1 path2 ...]
   functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   void accelerometer_enable (DeviceTag sensor, unsigned short ms);
   void accelerometer_disable (DeviceTag sensor);
 \end{lstlisting}
@@ -1026,7 +1026,7 @@ file).
   Retrieved with the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   const float *accelerometer_get_values (DeviceTag sensor); float
   accelerometer_value_x (float *array); float accelerometer_value_y
   (float *array); float accelerometer_value_z (float *array);
@@ -1074,7 +1074,7 @@ file).
   disable the device we use the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   void camera_enable (DeviceTag camera, unsigned short ms); void
   camera_disable (DeviceTag camera);
 \end{lstlisting}
@@ -1095,7 +1095,7 @@ file).
   following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   unsigned char *camera_get_image (DeviceTag camera);
 \end{lstlisting}
 \item[{format}] Permissions: readable, writable.
@@ -1163,7 +1163,7 @@ file).
   function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   unsigned short camera_get_width (DeviceTag camera);
 \end{lstlisting}
 \item[{height}] Permissions: readable.
@@ -1176,7 +1176,7 @@ file).
   function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   unsigned short camera_get_height (DeviceTag camera);
 \end{lstlisting}
 \item[{xfov}] Permissions: readable, writeable.
@@ -1189,7 +1189,7 @@ file).
   the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   float camera_get_fov (DeviceTag camera); void camera_set_fov
   (DeviceTag camera, float fov);
 \end{lstlisting}
@@ -1213,7 +1213,7 @@ file).
   plane.  Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   float camera_get_near (DeviceTag camera);
 \end{lstlisting}
 \item[{far}] Permissions: readable.
@@ -1226,7 +1226,7 @@ file).
   plane.  Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   float camera_get_far (DeviceTag camera);
 \end{lstlisting}
 \end{description}
@@ -1248,7 +1248,7 @@ file).
 
   Example:
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   wheelL = new DifferentialWheels("e-puck", true); wheelR = new
   DifferentialWheels("e-puck", false);
 \end{lstlisting}
@@ -1280,7 +1280,7 @@ file).
   functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   int differential_wheels_get_left_encoder (void); int
   differential_wheels_get_right_encoder (void); void
   differential_wheels_set_encoders (int left, int right);
@@ -1300,7 +1300,7 @@ file).
   20 radian per seconds.  Set with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   void differential_wheels_set_speed(short left, short right);
 \end{lstlisting}
 \item[{speedFactor}] Permissions: readable, writeable.
@@ -1361,7 +1361,7 @@ file).
   functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void distance_sensor_enable (DeviceTag sensor, unsigned short ms);
 void distance_sensor_disable (DeviceTag sensor);
 \end{lstlisting}
@@ -1386,7 +1386,7 @@ file).
  Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 unsigned short distance_sensor_get_value  (DeviceTag sensor);
 \end{lstlisting}
 \item[{factor}] Permissions: readable, writeable.
@@ -1433,7 +1433,7 @@ unsigned short distance_sensor_get_value  (DeviceTag sensor);
           Example:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 var1 = "hello world";
 emitter.send (var1);
 // will send 13 bytes:
@@ -1454,7 +1454,7 @@ true, you can only send BIN variables with the send () function, and
 only the data in the BIN variable is send.
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 var2=BIN 11;hello world
 emitter.rawMode = true;
 emitter.send (var2);
@@ -1471,7 +1471,7 @@ won't be able to recreate the corresponding URBI variable.
 This function use the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 int emitter_send_packet  (DeviceTag emitter, const void *data, int size);
 \end{lstlisting}
 \end{description}
@@ -1497,7 +1497,7 @@ int emitter_send_packet  (DeviceTag emitter, const void *data, int size);
   Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 int emitter_get_buffer_size  (DeviceTag emitter);
 \end{lstlisting}
 \item[{         channel
@@ -1518,7 +1518,7 @@ int emitter_get_buffer_size  (DeviceTag emitter);
   Retrieved and set with the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void emitter_set_channel  (DeviceTag emitter, int channel);
 int emitter_get_channel (DeviceTag emitter);
 \end{lstlisting}
@@ -1538,7 +1538,7 @@ int emitter_get_channel (DeviceTag emitter);
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void emitter_set_range  (DeviceTag emitter, float range);
 float emitter_get_range (DeviceTag emitter);
 \end{lstlisting}
@@ -1600,7 +1600,7 @@ float emitter_get_range (DeviceTag emitter);
   functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void gps_enable  (DeviceTag sensor, unsigned short ms);
 void gps_disable (DeviceTag sensor);
 \end{lstlisting}
@@ -1623,7 +1623,7 @@ file).
  Retrieved with the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 const float *gps_get_matrix  (DeviceTag sensor);
 float gps_position_x (float *matrix);
 float gps_position_y (float *matrix);
@@ -1647,7 +1647,7 @@ float gps_position_z (float *matrix);
           Retrieved with the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void gps_euler (const float *matrix, float *euler);
 const float *gps_get_matrix  (DeviceTag sensor);
 \end{lstlisting}
@@ -1684,7 +1684,7 @@ const float *gps_get_matrix  (DeviceTag sensor);
  Retrieved and set with the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 float gripper_get_position  (DeviceTag gripper);
 void gripper_set_position  (DeviceTag gripper, float position);
 \end{lstlisting}
@@ -1701,7 +1701,7 @@ void gripper_set_position  (DeviceTag gripper, float position);
  Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 float gripper_get_resistivity  (DeviceTag gripper);
 \end{lstlisting}
 \end{description}
@@ -1741,7 +1741,7 @@ float gripper_get_resistivity  (DeviceTag gripper);
           To enable and disable the device we use the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void robot_keyboard_enable(unsigned short ms);
 void robot_keyboard_disable();
 \end{lstlisting}
@@ -1763,7 +1763,7 @@ void robot_keyboard_disable();
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 int robot_keyboard_get_key();
 \end{lstlisting}
 \end{description}
@@ -1801,7 +1801,7 @@ int robot_keyboard_get_key();
           Set with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void led_set  (DeviceTag device, unsigned char value);
 \end{lstlisting}
 \end{description}
@@ -1841,7 +1841,7 @@ void led_set  (DeviceTag device, unsigned char value);
           To enable and disable the device we use the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void light_sensor_enable (DeviceTag sensor, unsigned short ms);
 void light_sensor_disable (DeviceTag sensor);
 \end{lstlisting}
@@ -1864,7 +1864,7 @@ void light_sensor_disable (DeviceTag sensor);
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 unsigned short light_sensor_get_value  (DeviceTag sensor);
 \end{lstlisting}
 \end{description}
@@ -1911,7 +1911,7 @@ unsigned short light_sensor_get_value  (DeviceTag sensor);
           Retrieved and set with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 float servo_get_position  (DeviceTag servo);
 void servo_set_position  (DeviceTag servo, float position);
 \end{lstlisting}
@@ -1951,7 +1951,7 @@ void servo_set_position  (DeviceTag servo, float position);
           This function use the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 const void *receiver_get_data  (DeviceTag receiver);
 \end{lstlisting}
 \item[{next ()}]           Deletes the head packet. The next packet in the queue, if any, becomes the
@@ -1961,7 +1961,7 @@ const void *receiver_get_data  (DeviceTag receiver);
           This function use the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void receiver_next_packet  (DeviceTag receiver);
 \end{lstlisting}
 \end{description}
@@ -1988,7 +1988,7 @@ void receiver_next_packet  (DeviceTag receiver);
           To enable and disable the device we use the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void receiver_enable  (DeviceTag receiver, unsigned short ms);
 void receiver_disable (DeviceTag receiver);
 \end{lstlisting}
@@ -2011,7 +2011,7 @@ void receiver_disable (DeviceTag receiver);
           Retrieved and set with the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void receiver_set_channel  (DeviceTag receiver, int channel);
 int receiver_get_channel (DeviceTag receiver);
 \end{lstlisting}
@@ -2032,7 +2032,7 @@ int receiver_get_channel (DeviceTag receiver);
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 int receiver_get_data_size  (DeviceTag receiver);
 \end{lstlisting}
 \item[{         emitterDirection
@@ -2051,7 +2051,7 @@ int receiver_get_data_size  (DeviceTag receiver);
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 const float *receiver_get_emitter_direction  (DeviceTag receiver);
 \end{lstlisting}
 \item[{         queueLength
@@ -2068,7 +2068,7 @@ const float *receiver_get_emitter_direction  (DeviceTag receiver);
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 int receiver_get_queue_length  (DeviceTag receiver);
 \end{lstlisting}
 \item[{         rawMode
@@ -2100,7 +2100,7 @@ int receiver_get_queue_length  (DeviceTag receiver);
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 float receiver_get_signal_strength  (DeviceTag receiver);
 \end{lstlisting}
 \end{description}
@@ -2136,7 +2136,7 @@ float receiver_get_signal_strength  (DeviceTag receiver);
  Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 const char *robot_get_name();
 \end{lstlisting}
 \end{description}
@@ -2176,7 +2176,7 @@ const char *robot_get_name();
           Retrieved and set with the following Webots functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 float servo_get_position  (DeviceTag servo);
 void servo_set_position  (DeviceTag servo, float position);
 \end{lstlisting}
@@ -2199,7 +2199,7 @@ void servo_set_position  (DeviceTag servo, float position);
           Set with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void servo_set_control_p  (DeviceTag servo, float p);
 \end{lstlisting}
 \item[{         force
@@ -2219,7 +2219,7 @@ void servo_set_control_p  (DeviceTag servo, float p);
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 float servo_get_motor_force_feedback  (DeviceTag servo);
 \end{lstlisting}
 \end{description}
@@ -2260,7 +2260,7 @@ float servo_get_motor_force_feedback  (DeviceTag servo);
   functions:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 void touch_sensor_enable (DeviceTag sensor, unsigned short ms);
 void touch_sensor_disable (DeviceTag sensor);
 \end{lstlisting}
@@ -2281,7 +2281,7 @@ void touch_sensor_disable (DeviceTag sensor);
           Retrieved with the following Webots function:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 unsigned short touch_sensor_get_value  (DeviceTag sensor);
 \end{lstlisting}
 \end{description}
@@ -2338,7 +2338,7 @@ simulation.
 
 Example:
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 floor = new ManipulateNode("FLOOR");
 \end{lstlisting}
 \end{description}
@@ -2471,7 +2471,7 @@ characters are concateneted and put in a string.
 ex:
 
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 p = new UBinaryReader();
 a = BIN 10;abcdefghij   /// Create an UBinary which contains abcdefghij
 p.set (a);              /// Set the UBinary in the reader.
@@ -2648,7 +2648,7 @@ default install of Webots and URBI for Webots, you just have to be in
 the directory containing your source UObject files and type the
 command:
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 $ umake-engine -C webots -o urbi
 \end{lstlisting}
 
@@ -2681,7 +2681,7 @@ allocate a new object of type your UObject and use it.
 \section{Copyright}
 \label{webots.copyright}%
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 
 THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE
 TERMS OF THIS CREATIVE COMMONS PUBLIC LICENSE ("CCPL" OR
@@ -2888,13 +2888,13 @@ EVEN IF LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 \section{JPEG License}
 \label{webots.jpeglicense}%
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
 This software is based in part on the work of the Independent JPEG Group
 \end{lstlisting}
 \section{OpenSSL License}
 \label{webots.openssllicense}%
 
-\begin{lstlisting}[firstnumber=1,]
+\begin{lstlisting}
   LICENSE ISSUES
   ==============
 
