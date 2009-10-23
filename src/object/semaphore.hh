@@ -41,7 +41,7 @@ namespace urbi
     private:
       value_type value_;
 
-      URBI_CXX_OBJECT(Semaphore);
+      URBI_CXX_OBJECT_(Semaphore);
     };
 
   }; // namespace object

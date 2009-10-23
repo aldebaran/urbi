@@ -66,7 +66,7 @@ namespace urbi
       int stdout_fd_[2];
       int stderr_fd_[2];
       int stdin_fd_[2];
-      URBI_CXX_OBJECT(Process);
+      URBI_CXX_OBJECT_(Process);
     };
   }
 }

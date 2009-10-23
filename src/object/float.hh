@@ -141,7 +141,7 @@ namespace object
 
     value_type value_;
 
-    URBI_CXX_OBJECT(Float);
+    URBI_CXX_OBJECT_(Float);
   };
 
 } // namespace object

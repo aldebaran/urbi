@@ -45,7 +45,7 @@ namespace urbi
       virtual rObject operator() (object::objects_type args);
       %s
 
-      URBI_CXX_OBJECT(Executable);
+      URBI_CXX_OBJECT_(Executable);
     };
   }
 }

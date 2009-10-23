@@ -47,7 +47,7 @@ namespace urbi
     private:
       value_type value_;
 
-    URBI_CXX_OBJECT(Task);
+    URBI_CXX_OBJECT_(Task);
     };
 
   }; // namespace object

@@ -60,7 +60,7 @@ namespace urbi
       /// Captured 'this' and 'call'. Only set for closures.
       rObject self_, call_;
 
-    URBI_CXX_OBJECT(Code);
+    URBI_CXX_OBJECT_(Code);
     };
   }; // namespace object
 }

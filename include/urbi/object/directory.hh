@@ -75,7 +75,7 @@ namespace urbi
     private:
       value_type path_;
 
-    URBI_CXX_OBJECT(Directory);
+    URBI_CXX_OBJECT_(Directory);
     };
   }
 }

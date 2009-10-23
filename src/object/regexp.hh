@@ -36,7 +36,7 @@ namespace urbi
 
     private:
       boost::regex re_;
-      URBI_CXX_OBJECT(Regexp);
+      URBI_CXX_OBJECT_(Regexp);
     };
   }
 }

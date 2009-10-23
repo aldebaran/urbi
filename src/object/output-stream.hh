@@ -53,7 +53,7 @@ namespace urbi
     private:
       int fd_;
       bool own_;
-      URBI_CXX_OBJECT(OutputStream);
+      URBI_CXX_OBJECT_(OutputStream);
     };
   }
 }

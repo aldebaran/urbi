@@ -27,7 +27,7 @@ namespace urbi
       void __dec();
       int __get();
       private:
-      URBI_CXX_OBJECT(Finalizable);
+      URBI_CXX_OBJECT_(Finalizable);
     };
   }
 }

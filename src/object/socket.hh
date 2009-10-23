@@ -41,7 +41,7 @@ namespace urbi
       void slots_create();
       rServer server_;
       rObject disconnect_;
-      URBI_CXX_OBJECT(Socket);
+      URBI_CXX_OBJECT_(Socket);
     };
   }
 }

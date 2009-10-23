@@ -17,9 +17,9 @@
 # include <urbi/object/object.hh>
 
 
-#define URBI_CXX_OBJECT(Name)                                           \
+
+#define URBI_CXX_OBJECT_(Name)                                          \
 public:                                                                 \
-  static void initialize(::urbi::object::CxxObject::Binder<Name>&);     \
   static const ::std::string& type_name();                              \
   virtual ::std::string type_name_get() const;                          \
   static ::urbi::object::rObject proto;                                 \
@@ -27,6 +27,12 @@ public:                                                                 \
 private:                                                                \
   friend class ::urbi::object::CxxObject::TypeInitializer<Name>;        \
   Name(const ::urbi::object::FirstPrototypeFlag&);                      \
+public:                                                                 \
+  static void initialize(::urbi::object::CxxObject::Binder<Name>&)      \
+
+#define URBI_CXX_OBJECT(Name)                   \
+  URBI_CXX_OBJECT_(Name)                        \
+  {}                                            \
 
 #define URBI_CXX_OBJECT_REGISTER(Name)                                  \
   const std::string& Name::type_name()                                  \

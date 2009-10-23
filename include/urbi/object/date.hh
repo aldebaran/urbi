@@ -56,7 +56,7 @@ namespace urbi
     private:
       time_t time_;
 
-      URBI_CXX_OBJECT(Date);
+      URBI_CXX_OBJECT_(Date);
     };
   }
 }

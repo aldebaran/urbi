@@ -62,7 +62,7 @@ namespace urbi
     private:
       value_type path_;
 
-    URBI_CXX_OBJECT(File);
+    URBI_CXX_OBJECT_(File);
     };
   }
 }

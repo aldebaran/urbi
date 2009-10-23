@@ -33,7 +33,7 @@ namespace urbi
       rObject connection_;
       void initialize();
       sockets_type sockets_;
-      URBI_CXX_OBJECT(Server);
+      URBI_CXX_OBJECT_(Server);
     };
   }
 }

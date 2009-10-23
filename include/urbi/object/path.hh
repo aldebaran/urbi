@@ -89,7 +89,7 @@ namespace urbi
       // Stat the file and handle all errors
       struct stat stat();
 
-      URBI_CXX_OBJECT(Path);
+      URBI_CXX_OBJECT_(Path);
     };
   }
 }

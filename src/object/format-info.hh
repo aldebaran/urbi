@@ -78,7 +78,7 @@ namespace urbi
       void compute_pattern() const;
       rObject update_hook(const std::string& slot, rObject val);
 
-      URBI_CXX_OBJECT(FormatInfo);
+      URBI_CXX_OBJECT_(FormatInfo);
     };
 
   } // namaspace object
