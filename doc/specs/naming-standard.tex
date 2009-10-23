@@ -375,8 +375,8 @@ This facet is used to describe a rotational motor controller.
 \begin{slots}
   \slot{angle}%
   {%
-    Angle of the motor in degree, modulo 360. Pointed to by the
-    \texttt{val} slot.%
+    Angle of the motor in radian, modulo $2\pi$. Pointed to by the
+    \code{val} slot.%
   }
 
   \slot{turn}%
@@ -473,7 +473,7 @@ This facet is used to describe a temperature sensor.
   \slot{temperature}%
   {%
     Measured temperature in Celsius degrees.  Pointed to by the
-    \texttt{val} slot.%
+    \code{val} slot.%
   }
 
 \end{slots}
@@ -492,8 +492,8 @@ level motion control capabilities.
 
   \slot{turn(x)}%
   {%
-    Turn right approximatively x degrees.  x can be a positive or
-    negative value.%
+    Turn right approximatively \var{x} radians.  \var{x} can be a
+    positive or negative value.%
   }
 
 \end{slots}
@@ -510,13 +510,13 @@ with whole body motion or a combination of both.
   \slot{yaw}%
   {%
     Rotational articulation around the Z axis in the robot, expressed
-    in degrees.%
+    in radians.%
   }
 
   \slot{pitch}%
   {%
     Rotational articulation around the Y axis in the robot, expressed
-    in degrees.%
+    in radians.%
   }
 
 \end{slots}
@@ -536,12 +536,12 @@ image sensor.
 
   \slot{xfov}%
   {%
-    The x Field Of View of the camera expressed in degrees.%
+    The x Field Of View of the camera expressed in radians.%
   }
 
   \slot{yfov}%
   {%
-    The y Field Of View of the camera expressed in degrees.%
+    The y Field Of View of the camera expressed in radians.%
   }
 
   \slot{height}%
@@ -650,8 +650,8 @@ The audioin facet groups every information relative to microphones.
 
 Ball detectors, marker detectors and various feature-based detectors
 should all share a similar interface. They extract a part of the image
-that fits some criteria and define a ``blob'' accordingly. Here are the
-typical slots expected:
+that fits some criteria and define a \dfn{blob} accordingly. Here are
+the typical slots expected:
 
 \begin{slots}
   \slot{x}%
@@ -683,8 +683,8 @@ typical slots expected:
 
   \optSlot{orientation}%
   {%
-    Angle of the main ellipsoid axis of the blog (0 = horizontal),
-    expressed in degrees.%
+    Angle of the main ellipsoid axis of the blob (0 = horizontal),
+    expressed in radians.%
   }
 
   \optSlot{elongation}%
@@ -981,8 +981,7 @@ the yaw/pitch/roll meaning.
 
   \component{ear}{head}{-}{motor}{
     %%
-    Ears may have degrees of freedom in
-    certain robots.
+    Ears may have degrees of freedom in certain robots.
     %%
   }
 
@@ -1030,8 +1029,8 @@ the yaw/pitch/roll meaning.
 
   \component{eyebrow}{head}{joint}{motor}{
     %%
-    Some robots will have eyebrow with generally one or several degree
-    of freedom.
+    Some robots will have eyebrows with generally one or several
+    degrees of freedom.
     %%
     }
 
