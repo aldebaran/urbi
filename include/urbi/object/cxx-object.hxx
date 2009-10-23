@@ -58,7 +58,11 @@ namespace urbi
         check_arg_count(args.size() - 1, 0);
         rObject tgt = args[0];
         assert(tgt->as<T>());
-        return new T(tgt->as<T>());
+        libport::intrusive_ptr<T> res = new T(tgt->as<T>());
+        // If the user didn't specify a prototype, use the model.
+        if (res->protos_get().empty())
+          res->proto_add(tgt);
+        return res;
       }
 
       template <typename T>
@@ -74,6 +78,9 @@ namespace urbi
     CxxObject::TypeInitializer<T>::create()
     {
       res_ = T::proto_make();
+      // If the user didn't specify a prototype, use Object.
+      if (res_->protos_get().empty())
+        res_->proto_add(Object::proto);
       assert(res_);
     }
 
