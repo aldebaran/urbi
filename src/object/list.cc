@@ -376,10 +376,7 @@ namespace urbi
       bind(SYMBOL(sort),      &sort_bouncer          );
     }
 
-    URBI_CXX_OBJECT_REGISTER(List);
-
-    rObject
-    List::proto_make()
+    URBI_CXX_OBJECT_REGISTER(List)
     {
       return new List();
     }

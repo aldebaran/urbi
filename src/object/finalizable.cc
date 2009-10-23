@@ -53,7 +53,6 @@ namespace urbi
                + " reference(s) to this");
       }
     }
-    URBI_CXX_OBJECT_REGISTER(Finalizable);
 
     void Finalizable::__dec()
     {
@@ -74,8 +73,7 @@ namespace urbi
       bind(SYMBOL(__get),         &Finalizable::__get);
     }
 
-    rObject
-    Finalizable::proto_make()
+    URBI_CXX_OBJECT_REGISTER(Finalizable)
     {
       return new Finalizable();
     }

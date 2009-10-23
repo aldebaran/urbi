@@ -346,8 +346,6 @@ namespace urbi
     | Binding system.  |
     `-----------------*/
 
-    URBI_CXX_OBJECT_REGISTER(Float);
-
     void
     Float::initialize(CxxObject::Binder<Float>& bind)
     {
@@ -397,8 +395,7 @@ namespace urbi
 #undef DECLARE
     }
 
-    rObject
-    Float::proto_make()
+    URBI_CXX_OBJECT_REGISTER(Float)
     {
       return new Float(0);
     }

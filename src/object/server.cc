@@ -80,8 +80,6 @@ namespace urbi
       return sockets_;
     }
 
-    URBI_CXX_OBJECT_REGISTER(Server);
-
     void Server::initialize(CxxObject::Binder<Server>& bind)
     {
       bind(SYMBOL(host),    &Server::host);
@@ -90,8 +88,7 @@ namespace urbi
       bind(SYMBOL(sockets), &Server::sockets);
     }
 
-    rObject
-    Server::proto_make()
+    URBI_CXX_OBJECT_REGISTER(Server)
     {
       return new Server();
     }

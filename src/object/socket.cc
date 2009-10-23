@@ -159,8 +159,6 @@ namespace urbi
       ios.poll();
     }
 
-    URBI_CXX_OBJECT_REGISTER(Socket);
-
     void Socket::initialize(CxxObject::Binder<Socket>& bind)
     {
 #define DECLARE(Name)                           \
@@ -185,8 +183,7 @@ namespace urbi
       return *ios;
     }
 
-    rObject
-    Socket::proto_make()
+    URBI_CXX_OBJECT_REGISTER(Socket)
     {
       return new Socket();
     }

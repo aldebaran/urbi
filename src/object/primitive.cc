@@ -51,8 +51,6 @@ namespace urbi
       bind(SYMBOL(apply), &Primitive::apply);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Primitive);
-
     // FIXME: Code duplication with Code::apply.  Maybe there are more
     // opportunity to factor.
     rObject
@@ -73,8 +71,7 @@ namespace urbi
     static void nil()
     {}
 
-    rObject
-    Primitive::proto_make()
+    URBI_CXX_OBJECT_REGISTER(Primitive)
     {
       rObject res = make_primitive(nil);
       return res;

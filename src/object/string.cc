@@ -409,8 +409,6 @@ namespace urbi
      (&String::sub_eq)
       );
 
-    URBI_CXX_OBJECT_REGISTER(String);
-
     void String::initialize(CxxObject::Binder<String>& bind)
     {
       bind(SYMBOL(EQ_EQ),
@@ -458,8 +456,7 @@ namespace urbi
       proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
     }
 
-    rObject
-    String::proto_make()
+    URBI_CXX_OBJECT_REGISTER(String)
     {
       return new String();
     }

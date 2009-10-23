@@ -219,10 +219,7 @@ namespace urbi
 #undef DECLARE
     }
 
-    URBI_CXX_OBJECT_REGISTER(Tag);
-
-    rObject
-    Tag::proto_make()
+    URBI_CXX_OBJECT_REGISTER(Tag)
     {
       return new Tag();
     }

@@ -113,7 +113,6 @@ namespace urbi
       return libport::mhas(content_, key);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Dictionary);
 
     void
     Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
@@ -133,8 +132,7 @@ namespace urbi
 #undef DECLARE
     }
 
-    rObject
-    Dictionary::proto_make()
+    URBI_CXX_OBJECT_REGISTER(Dictionary)
     {
       return new Dictionary();
     }

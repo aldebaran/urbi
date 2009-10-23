@@ -52,6 +52,8 @@ private:                                                                \
     Name ## _register__() {::urbi::object::CxxObject::add<Name>();}     \
   };                                                                    \
   static Name ## _register__ Name ## _registered__;                     \
+  ::urbi::object::rObject                                               \
+  Name::proto_make()                                                    \
 
 
 namespace urbi
