@@ -16,6 +16,32 @@ fatal ()
   error 1 "$0: $@"
 }
 
+# packages PACKAGE-SYSTEM-NAME REGEXP
+packages ()
+{
+  {
+    echo "************************************************"
+    echo "* You seem to be using $1."
+    perl -ne '
+      if (/^(?:'"$2"'|package): (.*)/)
+      {
+        push @out, split /\s+/, $1;
+      }
+      END
+      {
+        use Text::Wrap;
+        print "* We need the following packages:\n";
+        print wrap("* ", "* ", sort @out), "\n";
+      }' <README
+    echo "************************************************"
+  } | sed -e "s,^,$0: ,"
+}
+
+if test -x /opt/local/bin/port; then
+  packages "MacPorts" "MacPorts"
+elif apt-get --version 2>&1 >/dev/null; then
+  packages "Debian or Ubuntu" "deb"
+fi
 
 # Failures do matter.
 set -e
