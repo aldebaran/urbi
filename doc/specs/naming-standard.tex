@@ -6,19 +6,33 @@
   \cellcolor{verylightgray}[\lstindex{#1}] & #2 \\\hline%
 }%
 
-\newenvironment{slots}[1][Slots]
+\newenvironment{slotsOrEvents}[1]
 {%
-  \subparagraph{#1}%
+%  \subparagraph{#1}%
   \begin{flushleft}%
     \tablehead{%
       \hline%
-      \textbf{Slot} &%
+      \textbf{#1} &%
       \textbf{Description}\\\hline%
     }%
-    \begin{supertabular}{|m{2.8669999cm}|m{12.472cm}|}%
+    \begin{supertabular}{|m{.2\linewidth}|m{.8\linewidth}|}%
     }{%
     \end{supertabular}%
   \end{flushleft}%
+}
+
+\newenvironment{slots}
+{%
+  \begin{slotsOrEvents}{Slot}%
+  }{%
+  \end{slotsOrEvents}%
+}
+
+\newenvironment{events}
+{%
+  \begin{slotsOrEvents}{Event}%
+  }{%
+  \end{slotsOrEvents}%
 }
 
 \newcommand{\refFacet}[2][]%
@@ -772,13 +786,13 @@ sound input.
   }
 \end{slots}
 
-\begin{slots}[Events]
+\begin{events}
   \slot{hear(s)}%
   {%
     This event has one parameter which is the string describing what
     the speech engine has recognized (can be a word or a sentence).%
   }
-\end{slots}
+\end{events}
 
 \section{Standard Components}
 
