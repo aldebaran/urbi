@@ -165,6 +165,17 @@ namespace urbi
       return dynamic_cast<T*>(this);
     }
 
+    /*---------------.
+    | Binding system |
+    `---------------*/
+
+    template <typename T>
+    inline void
+    Object::bind(const std::string& name, T p)
+    {
+      slot_set(libport::Symbol(name), make_primitive(p));
+    }
+
   } // namespace object
 }
 

@@ -254,6 +254,9 @@ namespace urbi
       rObject asPrintable() const;
       rObject asToplevelPrintable() const;
 
+      template <typename T>
+      void bind(const std::string& name, T);
+
       private:
       location_type
         slot_locate_(const key_type& k, bool fallback) const;
