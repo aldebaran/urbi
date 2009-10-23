@@ -208,12 +208,41 @@ for instance.  They are listed in \autoref{tab:keywords}.
 \renewcommand{\baselinestretch}{1}
 
 \subsection{Literals}
+
+\subsubsection{Angles}
+
+\dfn[angle]{Angles} are floats (see \autoref{sec:us-syn-lit-float})
+followed by an angle unit. They are simply equivalent to the same
+float, expressed in radians. For instance, \lstinline|180deg| (180
+degrees) is equal to \lstinline|pi|. Available units and their
+equivalent are shown in \autoref{tab:durations}.
+
+\begin{table}[\floatpos]
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    unit        & abbreviation & equivalence for $n$  \\
+    \hline
+    radian      & rad          & $n$         \\
+    degree      & deg          & $n / 180 * \pi$        \\
+    grad        & grad         & $n / 200 * \pi$        \\
+    \hline
+  \end{tabular}
+  \caption{Duration units}
+  \label{tab:durations}
+\end{table}
+
+\begin{urbiscript}[firstnumber=last]
+assert(pi == 180deg);
+assert(pi == 200rad);
+\end{urbiscript}
+
 \subsubsection{Durations}
 
 \dfn{Durations} are floats (see \autoref{sec:us-syn-lit-float})
 followed by a time unit. They are simply equivalent to the same float,
 expressed in seconds. For instance, \lstinline|1s 1ms|, which stands
-for ``one second and 1 millisecond'', is strictly equivalent to
+for ``one second and one millisecond'', is strictly equivalent to
 \lstinline|1.0001|. Available units and their equivalent are shown in
 \autoref{tab:durations}.
 
@@ -233,6 +262,19 @@ for ``one second and 1 millisecond'', is strictly equivalent to
   \caption{Duration units}
   \label{tab:durations}
 \end{table}
+
+\begin{urbiscript}[firstnumber=last]
+assert(1d == 24h);
+assert(1h == 60mn);
+assert(1mn == 60s);
+assert(1s == 1000ms);
+
+assert(1s == 1);
+assert(1s2s3s == 6);
+assert(1s 2s 3s == 6);
+assert(1s 1ms == 1.001);
+assert(1ms 1s == 1.001);
+\end{urbiscript}
 
 \subsubsection{Floats}
 \label{sec:us-syn-lit-float}

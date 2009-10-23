@@ -1040,8 +1040,9 @@ exp:
 `----------*/
 
 %token <libport::ufloat>
-        FLOAT      "float"
-        DURATION   "duration";
+        ANGLE     "angle"
+        DURATION  "duration"
+        FLOAT     "float";
 %type <ast::rExp> exp_float;
 exp_float:
   "float"  { $$ = new ast::Float(@$, $1); }
@@ -1065,6 +1066,7 @@ duration:
 
 exp:
   exp_float      { std::swap($$, $1);  }
+| "angle"        { $$ = new ast::Float(@$, $1);  }
 | duration       { $$ = new ast::Float(@$, $1);  }
 | string         { $$ = new ast::String(@$, $1); }
 | "[" exps "]"   { $$ = new ast::List(@$, $2); }
