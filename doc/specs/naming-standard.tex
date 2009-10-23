@@ -69,8 +69,8 @@ explicit written agreement from Gostai.
 
 \section{The Structure Tree}
 
-The robot will be described as a set of \textit{components} organized
-in a hierarchical structure called the \textit{structure tree}. The
+The robot will be described as a set of \dfn[component]{components} organized
+in a hierarchical structure called the \dfn{structure tree}. The
 relationship between a component and a sub-component in the tree is a
 `part-of' inclusion relationship. From the point of view of \urbi,
 each component in the tree is an object, and it contains attributes
@@ -238,10 +238,11 @@ gyroX, gyroY, gyroZ;            // typical gyro sensor
 \end{urbifixme}
 
 \section{Facets}
+\label{sec:facet}
 
 \urbi allows multiple inheritances between objects. This feature can be
 used to introduce the notion of ``facet''. A facet is an object in \urbi
-that describes some aspect of a type of component.
+that describes some aspects of a type of component.
 
 For example, for a joint, we can have a ``swivel'' facet, used to define
 patella joints. For the robot body itself, we have a ``mobile'' facet
@@ -252,11 +253,14 @@ abstracting the way the robot can turn its gaze in any direction.
 
 In short, facets are standard Urbi objects that components can inherit
 from to acquire some functionalities, expressed as a standard
-interface. We will describe in the following pages a few of the most
-standard facets. Each facet should be reimplemented for any particular
-robot that uses them, for example the ``mobile'' facet will have a
-completely different implementation with a humanoid robot and a wheeled
-robot.
+interface.  These objects feature slots, and events; some of them
+possibly are optional, which is denoted by grayed-cells, and a name
+put in square backets.
+
+The following pages describe a few of the most standard facets. Each
+facet should be reimplemented for any particular robot that uses them,
+for example the ``mobile'' facet will have a completely different
+implementation with a humanoid robot and a wheeled robot.
 
 \facet{identity}
 
@@ -781,13 +785,6 @@ sound input.
 Standard components correspond to components typically found in wheeled
 robots, humanoid or animaloid robots, or in industrial arms.
 
-The table on the next pages summarize the currently referenced standard
-components, with a description of potential components that they could
-be subcomponent of, a description of potential components they may
-contain, and a list of relevant facets. This table should be seen as a
-quick reference guide to identify available components in a given
-robot.
-
 \subsection{Yaw/Pitch/Roll orientation}
 \label{sec:naming:ypr}
 
@@ -816,6 +813,13 @@ the yaw/pitch/roll meaning.
 
 \subsection{Standard Component List}
 \label{sec:naming:components}
+
+The following table summarizes the currently referenced standard
+components, with a description of potential components that they could
+be subcomponent of, a description of potential components they may
+contain, and a list of relevant facets. This table should be seen as a
+quick reference guide to identify available components in a given
+robot.
 
 \newcommand{\component}[5]
 {
