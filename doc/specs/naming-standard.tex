@@ -124,7 +124,7 @@ standard frame of reference will have the following definition:
 \item[X axis] oriented towards the front of the robot. If there is a
   camera, the front is defined by the default direction of the camera,
   otherwise the front will be seen as the natural frontal orientation
-  for a mobile robot (the direction of “forward” movement). If the
+  for a mobile robot (the direction of ``forward'' movement). If the
   robot is not naturally oriented, the X axis will be chosen to match
   the main axis of symmetry of the robot body and it will be oriented
   towards the smallest side, typically the top of a cone for
@@ -182,7 +182,7 @@ or two arms attached to the main body. Usually this can be sorted out
 with simple geometric qualifiers like \textit{Right/Center/Left},
 \textit{Front/Middle/Back} or \textit{Up/In-between/Down}. The naming
 convention is to use the first letter of the geometric characteristic,
-like R for Right, I for In-between.  Note that “right” or “front” are
+like R for Right, I for In-between.  Note that ``right'' or ``front'' are
 understood here from the point of view of a man standing and looking
 in the direction of the X-axis of the robot, and \textit{Up/Down}
 matches the Z-axis, as depicted in the figure below:
@@ -240,21 +240,21 @@ gyroX, gyroY, gyroZ;            // typical gyro sensor
 \section{Facets}
 
 \urbi allows multiple inheritances between objects. This feature can be
-used to introduce the notion of “facet”. A facet is an object in \urbi
+used to introduce the notion of ``facet''. A facet is an object in \urbi
 that describes some aspect of a type of component.
 
-For example, for a joint, we can have a “swivel” facet, used to define
-patella joints. For the robot body itself, we have a “mobile” facet
+For example, for a joint, we can have a ``swivel'' facet, used to define
+patella joints. For the robot body itself, we have a ``mobile'' facet
 describing mobile robots, which includes some standard way of
 requesting a move forward, a turn, etc. A robot with a Pan/Tilt camera
-or otherwise moving camera will have the “panoramic” facet which is
+or otherwise moving camera will have the ``panoramic'' facet which is
 abstracting the way the robot can turn its gaze in any direction.
 
 In short, facets are standard Urbi objects that components can inherit
 from to acquire some functionalities, expressed as a standard
 interface. We will describe in the following pages a few of the most
 standard facets. Each facet should be reimplemented for any particular
-robot that uses them, for example the “mobile” facet will have a
+robot that uses them, for example the ``mobile'' facet will have a
 completely different implementation with a humanoid robot and a wheeled
 robot.
 
@@ -650,7 +650,7 @@ The audioin facet groups every information relative to microphones.
 
 Ball detectors, marker detectors and various feature-based detectors
 should all share a similar interface. They extract a part of the image
-that fits some criteria and define a “blob” accordingly. Here are the
+that fits some criteria and define a ``blob'' accordingly. Here are the
 typical slots expected:
 
 \begin{slots}
@@ -796,8 +796,8 @@ yaw, pitch or roll components (listed in the table below). This is a
 quick guideline to help determine the proper association.
 
 Let us consider the robot in its resting, most prototypical position,
-like “standing” on two or four legs for a humanoid or animaloid, and
-let all members “naturally” fall under gravity. When gravity has no
+like ``standing'' on two or four legs for a humanoid or animaloid, and
+let all members ``naturally'' fall under gravity. When gravity has no
 effect on a certain joint (because it is in the orthogonal plan to Z,
 for example), the medium position between rangemin and rangemax should
 be used. The body position achieved will be considered as a reference.
@@ -1044,7 +1044,7 @@ the yaw/pitch/roll meaning.
 
   \component{spine}{torso}{joint}{-}{
     %%
-    This is a more elaborated version of “torso”, with a series of
+    This is a more elaborated version of ``torso'', with a series of
     articulations to give several degrees of freedom in the back of
     the robot.
     %%
@@ -1052,9 +1052,9 @@ the yaw/pitch/roll meaning.
 
   \component{clavicle}{body}{-}{motor}{
     %%
-    This is not to be mixed up with the “top of the arm” body part. It
+    This is not to be mixed up with the ``top of the arm'' body part. It
     is an independent degree of freedom that can be used to bring the
-    two arms closer in a sort of “shoulder raising” movement.
+    two arms closer in a sort of ``shoulder raising'' movement.
     %%
     }
 
