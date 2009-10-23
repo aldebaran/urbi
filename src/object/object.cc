@@ -477,9 +477,9 @@ namespace urbi
     }
 
     rObject
-    Object::urbi_setSlot(key_type name, const rObject& value)
+    Object::setSlot(const std::string& slot, const rObject& value)
     {
-      slot_set(name, value);
+      slot_set(libport::Symbol(slot), value);
       return value;
     }
 
