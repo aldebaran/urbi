@@ -72,7 +72,7 @@ explicit written agreement from Gostai.
 The robot will be described as a set of \textit{components} organized
 in a hierarchical structure called the \textit{structure tree}. The
 relationship between a component and a sub-component in the tree is a
-‘part-of’ inclusion relationship. From the point of view of \urbi,
+`part-of' inclusion relationship. From the point of view of \urbi,
 each component in the tree is an object, and it contains attributes
 pointing to its sub-components. Here is a example illustrating a part
 of a hierarchy that could be found with a humanoid robot:
@@ -150,7 +150,7 @@ the illustration above.
 
 The name of a component A, which is a sub-component of component B, is
 divided into two parts: the generic designation of a subpart of the
-kinematics chain (like ‘leg’, ‘head’, ‘finger’) that A is referring
+kinematics chain (like ``leg'', ``head'', ``finger'') that A is referring
 to, and optionally some topological disambiguator relative to its
 position within the component B it belongs to. For example, when there
 are two legs, we need to differentiate between the right and left leg,
@@ -730,7 +730,7 @@ their default sound output.
   \optSlot{name}%
   {%
     Most TTS engine will propose several voices, this attributes
-    allows picking one. It’s a string identifier specific to the TTS
+    allows picking one. It's a string identifier specific to the TTS
     developer.%
   }
 
@@ -865,7 +865,7 @@ the yaw/pitch/roll meaning.
 
   \component{arm}{body}{shoulder elbow wrist hand grip  joint}{}{
     %%
-    Unlike legs, an arm’s extremity does not always touch the ground
+    Unlike legs, an arm's extremity does not always touch the ground
     in normal operating mode. This applies to humanoid robots or
     single-arm industrial robots. Arms supersede legs in the
     nomenclature: if a body part behaves alternatively like an arm and
@@ -898,7 +898,7 @@ the yaw/pitch/roll meaning.
   \component{hand}{arm}{finger}{}{
     %%
     The hand is an extension of the arm that usually holds
-    fingers. It’s not the wrist, which is articulated and between the
+    fingers. It's not the wrist, which is articulated and between the
     arm and the hand.
     %%
   }
@@ -940,7 +940,7 @@ the yaw/pitch/roll meaning.
 
   \component{foot}{leg}{touch}{}{
     %%
-    The foot is an extension of the leg that usually holds toes. It’s
+    The foot is an extension of the leg that usually holds toes. It's
     not the ankle, which is articulated and between the leg and the
     foot. The foot can also contain touch sensors in simple
     configurations.
