@@ -29,7 +29,6 @@ pdfauthor={Rémi Humbert}%
 \newenvironment{DBKlegalnotice}{}{}
 
 \begin{document}
-
 %% Legalnotices
 \begin{DBKlegalnotice}
 
@@ -51,10 +50,11 @@ pdfauthor={Rémi Humbert}%
 % Chapter
 % -------
 
-\chapter{Introduction}
+\chapter{Webots}
+\section{Introduction}
 \label{webots.intro}%
 
-\section{}\label{webots.intro.intro}%
+\subsection{}\label{webots.intro.intro}%
 
 This documentation describes the URBI engine for Webots.  Please go to
 http://www.gostai.com/doc/en/webots/ to get the last updated version
@@ -65,16 +65,16 @@ of this documentation.
 % Chapter
 % -------
 
-\chapter{Quick Start}
+\section{Quick Start}
 \label{webots.quickstart}%
 
-\section{}\label{webots.quickstart.intro}%
+\subsection{}\label{webots.quickstart.intro}%
 
 This section describes how to setup the software on your computer and
 give you the basis to use URBI for Webots.
 
 
-\section{Setup}
+\subsection{Setup}
 \label{webots.setup}%
 
 The setup process depends on your OS, please follow the corresponding
@@ -113,10 +113,10 @@ tarball (zip, tar.gz or tar.bz2)\\
 \label{webots.setup.distributions}%
 \end{table}
 
-\subsection{Windows}
+\subsubsection{Windows}
 \label{webots.setup.windows}%
 
-\subsubsection{Installation}
+\paragraph{Installation}
 \label{webots.setup.windows.installation}%
 
 To install URBI for Webots under windows, Webots must be installed on
@@ -175,17 +175,17 @@ Setup.exe" and follow the instructions given by the installer:
   close the installer.
 \end{enumerate}
 
-\subsection{Linux}
+\subsubsection{Linux}
 \label{webots.setup.linux}%
 
-\subsubsection{RPM based distributions}
+\paragraph{RPM based distributions}
 \label{webots.setup.linux.rpm}%
 
 \begin{lstlisting}[firstnumber=1,]
 rpm -hiv <package Urbi For Webots>.rpm
 \end{lstlisting}
 
-\subsubsection{Debian base distributions}
+\paragraph{Debian base distributions}
 \label{webots.setup.linux.deb}%
 
 Execute the following command:
@@ -198,7 +198,7 @@ $ sudo dpkg --install <package Urbi For Webots>.deb
 Your software is installed, you'll now have to setup the license.
 
 
-\subsubsection{Manual setup (from a tarball)}
+\paragraph{Manual setup (from a tarball)}
 \label{webots.setup.linux.tarball}%
      as root
 
@@ -213,10 +213,10 @@ $ cd /
 $ tar -xvjf  <package Urbi For Webots>.tar.bz2
 \end{lstlisting}
 
-\subsection{MacOs}
+\subsubsection{MacOs}
 \label{webots.setup.macos}%
 
-\subsubsection{Manual install}
+\paragraph{Manual install}
 \label{webots.setup.macos.manual}%
 
 You have to be administrator on your machine in order to install
@@ -243,7 +243,7 @@ $ cp -r usr /
 $ cp -r webots/* $WEBOTS_HOME/
 \end{lstlisting}
 
-\section{Evaluation mode}
+\subsection{Evaluation mode}
 \label{webots.evaluation}%
 
 If you don't provide a valid license file to the urbi controller, it
@@ -261,7 +261,7 @@ tells you that the license is invalid or missing:
 %\end{minipage}
 
 
-\section{License setup}
+\subsection{License setup}
 \label{webots.license}%
 
 In order to run Urbi for Webots unlimitedly you must have a licence
@@ -273,7 +273,7 @@ licensing system.  In Webots you have two licensing system available:
 \end{itemize}
 
 
-\subsection{Urbi licensing with "webots.key" license}
+\subsubsection{Urbi licensing with "webots.key" license}
 \label{webots.license.webotskey}%
 
 To obtain an Urbi license if you use this type of licensing, please
@@ -299,7 +299,7 @@ in the same folder as the urbi controller. By default in
 \end{itemize}
 
 
-\subsection{Urbi licensing with USB dongle}
+\subsubsection{Urbi licensing with USB dongle}
 \label{webots.license.dongleusb}%
 
 To obtain an Urbi license if you use this type of licensing, please
@@ -316,7 +316,7 @@ controller.  By default in
 \end{itemize}
 
 
-\section{License problem}
+\subsection{License problem}
 \label{webots.problem}%
 
 If you have a valid license but still get the licensing error message,
@@ -334,13 +334,13 @@ Contact us at Gostai if you still have some problems with the license,
 and we will resolve the problem with you.
 
 
-\section{Your first run}
+\subsection{Your first run}
 \label{webots.firstrun}%
 
 This section describes basic use of the URBI engine for Webots.
 
 
-\subsection{URBI worlds}
+\subsubsection{URBI worlds}
 \label{webots.firstrun.openworld}%
 
 We provide a set of example worlds with several robots you will be
@@ -371,7 +371,7 @@ controller.
 Let's see how this controller let you control the robot.
 
 
-\subsection{URBI controller}
+\subsubsection{URBI controller}
 \label{webots.firstrun.urbicontroller}%
 
 You have two ways to control your robot through the URBI
@@ -382,7 +382,7 @@ The second way is by writing URBI scripts that will be loaded at
 controller start up.
 
 
-\subsection{Send commands with a client software}
+\subsubsection{Send commands with a client software}
 \label{webots.firstrun.clientsoftware}%
 
 In order to connect to the URBI controller and then send commands, you
@@ -398,10 +398,10 @@ specify the address of your computer ('localhost') and the right port
 (54000).
 
 
-\subsubsection{Telnet}
+\paragraph{Telnet}
 \label{webots.firstrun.clientsoftware.telnet}%
 
-\paragraph{Windows}
+\subparagraph{Windows}
 \label{webots.firstrun.clientsoftware.telnet.windows}%
 
 To launch \textbf{telnet} under windows click on the start menu, and
@@ -445,7 +445,7 @@ really convenient.
 %\end{minipage}
 
 
-\paragraph{Linux and MacOs}
+\subparagraph{Linux and MacOs}
 \label{webots.firstrun.clientsoftware.telnet.linuxandmacos}%
 
 Open a new shell and type \textbf{telnet localhost 54000}.  This
@@ -459,7 +459,7 @@ controller send you the Urbi header.
 %\end{minipage}
 
 
-\paragraph{Use telnet to send commands}
+\subparagraph{Use telnet to send commands}
 \label{webots.firstrun.clientsoftware.telnet.usetelnet}%
 
 Now that you are connected to the URBI controller, you can send
@@ -482,10 +482,10 @@ the center.
 %\end{minipage}
 
 
-\subsection{Load URBI programs at controller start}
+\subsubsection{Load URBI programs at controller start}
 \label{webots.firstrun.loadprograms}%
 
-\subsubsection{By adding the file as argument of the URBI controller}
+\paragraph{By adding the file as argument of the URBI controller}
 \label{webots.firstrun.loadprograms.cmd_line}%
 
 It is possible to write some URBI script and load it at controller
@@ -607,7 +607,7 @@ executed the URBI code you specified: the aibo has sat.
 %\end{minipage}
 
 
-\subsubsection{By loading the file in URBI.ini}
+\paragraph{By loading the file in URBI.ini}
 \label{webots.firstrun.loadprograms.inURBIinifile}%
 
 By default, we don't specify files on the Webots controllerArg
@@ -632,16 +632,16 @@ been loaded too.
 % Chapter
 % -------
 
-\chapter{Built-{}in robots and worlds}
+\section{Built-{}in robots and worlds}
 \label{webots.builtin}%
 
-\section{}\label{webots.builtin.intro}%
+\subsection{}\label{webots.builtin.intro}%
 
  This section deals with the robots and worlds provided with the
 the engine.
 
 
-\section{Understanding the URBI for Webots hierarchy}
+\subsection{Understanding the URBI for Webots hierarchy}
 \label{webots.builtin.hierarchy}%
 
  Urbi for Webots is bundled with a lot of files. Here is a description of
@@ -715,7 +715,7 @@ data/<ROBOT NAME>/<VERSION>
 \label{webots.builtin.files}%
 \end{table}
 
-\section{Worlds special features}
+\subsection{Worlds special features}
 \label{webots.builtin.worlds}%
 
  This section describes the special features of some worlds.
@@ -723,7 +723,7 @@ The worlds referenced in the previous section as the "main"
 world have no specificities.
 
 
-\subsection{The soccer world (balltracking)}
+\subsubsection{The soccer world (balltracking)}
 \label{webots.builtin.worlds.soccer}%
 
  Launch Webots and load the soccer world
@@ -741,7 +741,7 @@ Now, you can use \textbf{shift} and the mouse to move
 the ball, the ERS-{}7 will move its head to follow the ball.
 
 
-\subsection{The supervisor world}
+\subsubsection{The supervisor world}
 \label{webots.builtin.worlds.supervisor}%
 
  Launch Webots and load the supervisor world
@@ -789,7 +789,7 @@ with the sin modifier. The second part moves the floor.
 For a complete documentation of those nodes, please read the
 next sections.
 
-\section{Robots specific functions}
+\subsection{Robots specific functions}
 \label{webots.builtin.robots}%
 
  A lot of functions are directly available in URBI to generate
@@ -797,7 +797,7 @@ high-{}level behaviour. Those features will be described in the
 next section.
 
 
-\subsection{Aibo specific functions}
+\subsubsection{Aibo specific functions}
 \label{webots.builtin.robots.aibo}%
 
  The following table sums up the aibo's functions.
@@ -842,10 +842,10 @@ read the corresponding documentation to obtain more information.
 % Chapter
 % -------
 
-\chapter{Making your own URBI for Webots controllers}
+\section{Making your own URBI for Webots controllers}
 \label{webots.own}%
 
-\section{Create from an existing world}
+\subsection{Create from an existing world}
 \label{webots.own.create}%
 
      As soon as you will want to go further, you will have to create your own
@@ -902,7 +902,7 @@ Your robot is now ready to be controlled by URBI. During the next
 part, you'll learn how to customize the robot you have created.
 
 
-\section{Customize}
+\subsection{Customize}
 \label{webots.own.customize}%
 
 To handle each robots' specificities, Webots use a set of devices
@@ -963,7 +963,7 @@ hardware group should contain all the devices your robot uses. You may
 also create subgroup to ease robot's programming.
 
 
-\section{Urbi controller options}
+\subsection{Urbi controller options}
 \label{webots.own.controlleroptions}%
 
  The Urbi controller can take several options which modify it's behaviour.
@@ -1008,16 +1008,16 @@ controllerArgs [options] period [path1 path2 ...]
 % Chapter
 % -------
 
-\chapter{Available UObjects}
+\section{Available UObjects}
 \label{webots.uobjects}%
 
-\section{Robot devices UObjects}
+\subsection{Robot devices UObjects}
 \label{webots.uobjects.robotdevices}%
 
-\subsection{Accelerometer}
+\subsubsection{Accelerometer}
 \label{webots.uobjects.robotdevices.accelerometer}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.accelerometer.constructor}%
 
 \noindent
@@ -1033,7 +1033,7 @@ controllerArgs [options] period [path1 path2 ...]
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.accelerometer.attributes}%
 
 \noindent
@@ -1091,7 +1091,7 @@ file).
 \end{lstlisting}
 \end{description}
 
-\subsection{Camera}
+\subsubsection{Camera}
 \label{webots.uobjects.robotdevices.camera}%
 
    The camera UObject lets you control a Webots camera device. When your robot
@@ -1102,7 +1102,7 @@ file).
   the camera image will be displayed in the place defined by the .wbt world.
 
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.camera.constructor}%
 
 \noindent
@@ -1112,7 +1112,7 @@ file).
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.camera.attributes}%
 
 \noindent
@@ -1289,10 +1289,10 @@ file).
 \end{lstlisting}
 \end{description}
 
-\subsection{Differential Wheels}
+\subsubsection{Differential Wheels}
 \label{webots.uobjects.robotdevices.differentialwheels}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.differentialwheels.constructor}%
 
 \noindent
@@ -1312,7 +1312,7 @@ file).
 \end{lstlisting}
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.differentialwheels.attributes}%
 
 \noindent
@@ -1381,10 +1381,10 @@ file).
 
 \end{description}
 
-\subsection{Distance Sensor}
+\subsubsection{Distance Sensor}
 \label{webots.uobjects.robotdevices.distancesensor}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.distancesensor.constructor}%
 
 \noindent
@@ -1395,7 +1395,7 @@ file).
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.distancesensor.attributes}%
 
 \noindent
@@ -1457,10 +1457,10 @@ unsigned short distance_sensor_get_value  (DeviceTag sensor);
 
 \end{description}
 
-\subsection{Emitter}
+\subsubsection{Emitter}
 \label{webots.uobjects.robotdevices.emitter}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.emitter.constructor}%
 
 \noindent
@@ -1470,7 +1470,7 @@ unsigned short distance_sensor_get_value  (DeviceTag sensor);
 
 \end{description}
 
-\subsubsection{Functions}
+\paragraph{Functions}
 \label{webots.uobjects.robotdevices.emitter.functions}%
 
 \noindent
@@ -1534,7 +1534,7 @@ int emitter_send_packet  (DeviceTag emitter, const void *data, int size);
 \end{lstlisting}
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.emitter.attributes}%
 
 \noindent
@@ -1613,10 +1613,10 @@ float emitter_get_range (DeviceTag emitter);
 
 \end{description}
 
-\subsection{Gps}
+\subsubsection{Gps}
 \label{webots.uobjects.robotdevices.gps}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.gps.constructor}%
 
 \noindent
@@ -1631,7 +1631,7 @@ float emitter_get_range (DeviceTag emitter);
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.gps.attributes}%
 
 \noindent
@@ -1711,10 +1711,10 @@ const float *gps_get_matrix  (DeviceTag sensor);
 \end{lstlisting}
 \end{description}
 
-\subsection{Gripper}
+\subsubsection{Gripper}
 \label{webots.uobjects.robotdevices.gripper}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.gripper.constructor}%
 
 \noindent
@@ -1724,7 +1724,7 @@ const float *gps_get_matrix  (DeviceTag sensor);
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.gripper.attributes}%
 
 \noindent
@@ -1764,10 +1764,10 @@ float gripper_get_resistivity  (DeviceTag gripper);
 \end{lstlisting}
 \end{description}
 
-\subsection{Keyboard}
+\subsubsection{Keyboard}
 \label{webots.uobjects.robotdevices.keyboard}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.keyboard.constructor}%
 
 \noindent
@@ -1777,7 +1777,7 @@ float gripper_get_resistivity  (DeviceTag gripper);
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.keyboard.attributes}%
 
 \noindent
@@ -1826,10 +1826,10 @@ int robot_keyboard_get_key();
 \end{lstlisting}
 \end{description}
 
-\subsection{Led}
+\subsubsection{Led}
 \label{webots.uobjects.robotdevices.led}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.led.constructor}%
 
 \noindent
@@ -1839,7 +1839,7 @@ int robot_keyboard_get_key();
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.led.attributes}%
 
 \noindent
@@ -1864,10 +1864,10 @@ void led_set  (DeviceTag device, unsigned char value);
 \end{lstlisting}
 \end{description}
 
-\subsection{Light Sensor}
+\subsubsection{Light Sensor}
 \label{webots.uobjects.robotdevices.lightsensor}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.lightsensor.constructor}%
 
 \noindent
@@ -1877,7 +1877,7 @@ void led_set  (DeviceTag device, unsigned char value);
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.lightsensor.attributes}%
 
 \noindent
@@ -1927,10 +1927,10 @@ unsigned short light_sensor_get_value  (DeviceTag sensor);
 \end{lstlisting}
 \end{description}
 
-\subsection{Plunger}
+\subsubsection{Plunger}
 \label{webots.uobjects.robotdevices.plunger}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.plunger.constructor}%
 
 \noindent
@@ -1948,7 +1948,7 @@ unsigned short light_sensor_get_value  (DeviceTag sensor);
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.plunger.attributes}%
 
 \noindent
@@ -1975,10 +1975,10 @@ void servo_set_position  (DeviceTag servo, float position);
 \end{lstlisting}
 \end{description}
 
-\subsection{Receiver}
+\subsubsection{Receiver}
 \label{webots.uobjects.robotdevices.receiver}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.receiver.constructor}%
 
 \noindent
@@ -1988,7 +1988,7 @@ void servo_set_position  (DeviceTag servo, float position);
 
 \end{description}
 
-\subsubsection{Functions}
+\paragraph{Functions}
 \label{webots.uobjects.robotdevices.receiver.functions}%
 
 \noindent
@@ -2024,7 +2024,7 @@ void receiver_next_packet  (DeviceTag receiver);
 \end{lstlisting}
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.receiver.attributes}%
 
 \noindent
@@ -2163,10 +2163,10 @@ float receiver_get_signal_strength  (DeviceTag receiver);
 \end{lstlisting}
 \end{description}
 
-\subsection{RobotName}
+\subsubsection{RobotName}
 \label{webots.uobjects.robotdevices.robotname}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.robotname.constructor}%
 
 \noindent
@@ -2176,7 +2176,7 @@ float receiver_get_signal_strength  (DeviceTag receiver);
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.robotname.attributes}%
 
 \noindent
@@ -2199,10 +2199,10 @@ const char *robot_get_name();
 \end{lstlisting}
 \end{description}
 
-\subsection{Servo}
+\subsubsection{Servo}
 \label{webots.uobjects.robotdevices.servo}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.servo.constructor}%
 
 \noindent
@@ -2215,7 +2215,7 @@ const char *robot_get_name();
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.servo.attributes}%
 
 \noindent
@@ -2282,10 +2282,10 @@ float servo_get_motor_force_feedback  (DeviceTag servo);
 \end{lstlisting}
 \end{description}
 
-\subsection{Touch Sensor}
+\subsubsection{Touch Sensor}
 \label{webots.uobjects.robotdevices.touchsensor}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.robotdevices.touchsensor.constructor}%
 
 \noindent
@@ -2295,7 +2295,7 @@ float servo_get_motor_force_feedback  (DeviceTag servo);
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.robotdevices.touchsensor.attributes}%
 
 \noindent
@@ -2344,7 +2344,7 @@ unsigned short touch_sensor_get_value  (DeviceTag sensor);
 \end{lstlisting}
 \end{description}
 
-\section{Supervisor devices UObjects}
+\subsection{Supervisor devices UObjects}
 \label{webots.uobjects.supervisor}%
 
  The supervisor UObjects are only available from a supervisor
@@ -2355,10 +2355,10 @@ robot (i.e. from the controller of a supervisor node in Webots).
 simulation.
 
 
-\subsection{Label}
+\subsubsection{Label}
 \label{webots.uobjects.supervisor.label}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.supervisor.label.constructor}%
 
 \noindent
@@ -2367,7 +2367,7 @@ simulation.
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.supervisor.label.attributes}%
 
 \noindent
@@ -2382,10 +2382,10 @@ simulation.
 \item[{size}] Text's size.
 \end{description}
 
-\subsection{Manipulate Node}
+\subsubsection{Manipulate Node}
 \label{webots.uobjects.supervisor.manipulatenode}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.supervisor.manipulatenode.constructor}%
 
 \noindent
@@ -2401,7 +2401,7 @@ floor = new ManipulateNode("FLOOR");
 \end{lstlisting}
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.supervisor.manipulatenode.attributes}%
 
 \noindent
@@ -2414,10 +2414,10 @@ floor = new ManipulateNode("FLOOR");
 \item[{az}] Z angle value.
 \end{description}
 
-\subsection{Simulation Controller}
+\subsubsection{Simulation Controller}
 \label{webots.uobjects.supervisor.simulationcontroller}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.supervisor.simulationcontroller.constructor}%
 
 \noindent
@@ -2426,7 +2426,7 @@ floor = new ManipulateNode("FLOOR");
 
 \end{description}
 
-\subsubsection{Functions}
+\paragraph{Functions}
 \label{webots.uobjects.supervisor.simulationcontroller.functions}%
 
 \noindent
@@ -2456,13 +2456,13 @@ floor = new ManipulateNode("FLOOR");
 
 \end{description}
 
-\section{Other UObjects}
+\subsection{Other UObjects}
 \label{webots.uobjects.other}%
 
-\subsection{UBinaryReader}
+\subsubsection{UBinaryReader}
 \label{webots.uobjects.other.ubinaryreader}%
 
-\subsubsection{Constructor}
+\paragraph{Constructor}
 \label{webots.uobjects.other.ubinaryreader.constructor}%
 
 \noindent
@@ -2471,7 +2471,7 @@ floor = new ManipulateNode("FLOOR");
 
 \end{description}
 
-\subsubsection{Functions}
+\paragraph{Functions}
 \label{webots.uobjects.other.ubinaryreader.functions}%
 
 \noindent
@@ -2552,7 +2552,7 @@ p.read ("c:5"),
 
 \end{description}
 
-\subsubsection{Attributes}
+\paragraph{Attributes}
 \label{webots.uobjects.other.ubinaryreader.attributes}%
 
 \noindent
@@ -2585,26 +2585,26 @@ p.read ("c:5"),
 % Chapter
 % -------
 
-\chapter{Develop your own UObjects}
+\section{Develop your own UObjects}
 \label{webots.ownuobjects}%
 
-\section{}\label{webots.ownuobjects.intro}%
+\subsection{}\label{webots.ownuobjects.intro}%
 
  This section describes how to create new UObjects and integrate them
 in your URBI controller to use them from .
 
 
-\section{Code your UObjects}
+\subsection{Code your UObjects}
 \label{webots.ownuobjects.code}%
 
    To create your own UObjects, please refer to the online documentation
   on Gostai website: \url{http://www.gostai.com/doc/en/uobject/}.
 
 
-\section{Compile}
+\subsection{Compile}
 \label{webots.ownuobjects.compile}%
 
-\subsection{Windows}
+\subsubsection{Windows}
 \label{webots.ownuobjects.compile.windows}%
 
      For now we only support compilation with Mingw under windows. We
@@ -2699,7 +2699,7 @@ download them for Mingw here: \url{http://www.gostai.com/boost/}.
 Again we strongly advise you to use the sample DevCpp that we provide.
 
 
-\subsection{Linux and MacOs}
+\subsubsection{Linux and MacOs}
 \label{webots.ownuobjects.compile.linux}%
 
 To compile under Linux use umake. Please refer to the documentation on
@@ -2725,7 +2725,7 @@ using the install system MacPorts: \url{http://www.macports.org} or by
 compiling boost 1.34.1 from the sources.
 
 
-\section{Use the generated executable}
+\subsection{Use the generated executable}
 \label{webots.ownuobjects.use}%
 
 To use the executable you have generated (either urbi.exe on Windows
@@ -2738,10 +2738,10 @@ allocate a new object of type your UObject and use it.
 % Appendixes start here
 % ---------------------
 \appendix
-\chapter{Copyright}
+\section{Copyright}
 \label{webots.copyright}%
 
-\section{}\label{webots.copyright.intro}%
+\subsection{}\label{webots.copyright.intro}%
 
 \begin{lstlisting}[firstnumber=1,]
 
@@ -2946,18 +2946,18 @@ EVEN IF LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
    agreement of the Licensor and You.
 
 \end{lstlisting}
-\chapter{JPEG License}
+\section{JPEG License}
 \label{webots.jpeglicense}%
 
-\section{}\label{webots.jpeglicense.intro}%
+\subsection{}\label{webots.jpeglicense.intro}%
 
 \begin{lstlisting}[firstnumber=1,]
 This software is based in part on the work of the Independent JPEG Group
 \end{lstlisting}
-\chapter{OpenSSL License}
+\section{OpenSSL License}
 \label{webots.openssllicense}%
 
-\section{}\label{webots.openssllicense.intro}%
+\subsection{}\label{webots.openssllicense.intro}%
 
 \begin{lstlisting}[firstnumber=1,]
   LICENSE ISSUES
