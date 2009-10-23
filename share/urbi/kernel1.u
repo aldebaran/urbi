@@ -8,7 +8,7 @@ class Global.Kernel1
     if (suggestion.empty)
       warn("`%s' is deprecated" % what)
     else
-    warn("`%s' is deprecated, use `%s'" % [what, suggestion])
+      warn("`%s' is deprecated, use `%s'" % [what, suggestion])
   };
 
   function copy(b)
