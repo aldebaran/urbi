@@ -101,7 +101,7 @@ subset of the devices corresponding to motor devices, and it
 represents spatial connections between them. Except for these motor
 devices, the structure tree components do not have a direct
 counterpart in the kinematics chain, or, if they do, it is as a subset
-of the kinematics chain (for example, \texttt{legR} is a subset of the
+of the kinematics chain (for example, \code{legR} is a subset of the
 whole kinematics chain).
 
 
@@ -324,10 +324,10 @@ This facet is used to describe a generic motor controller.
   \slot{val}%
   {%
     This slot is a generic pointer to a more specific slot describing
-    the motor position, like \texttt{position} or \texttt{angle},
+    the motor position, like \code{position} or \code{angle},
     depending on the type of motor. It is mandatory in the Urbi Ready
     standard as a universal proxy to control an actuator. The more
-    specific slot is described in a subclass of \texttt{motor}.%
+    specific slot is described in a subclass of \code{motor}.%
   }
 
   \optSlot{PGain}%
@@ -356,7 +356,7 @@ This facet is used to describe a linear motor controller.
   \slot{position}%
   {%
     Position of the motor in centimeters.  Pointed to by the
-    \texttt{val} slot.%
+    \code{val} slot.%
   }
 
   \slot{force}%
@@ -402,10 +402,10 @@ This facet is used to describe a generic sensor.
   \slot{val}%
   {%
     This slot is a generic pointer to a more specific slot describing
-    the sensor value, like \texttt{distance} or \texttt{temperature},
+    the sensor value, like \code{distance} or \code{temperature},
     depending on the type of sensor. It is mandatory in the Urbi Ready
     standard as a universal proxy to read a sensor. The more specific
-    slot is described in a subclass of \texttt{sensor}.%
+    slot is described in a subclass of \code{sensor}.%
   }
 
 \end{slots}
@@ -420,7 +420,7 @@ ultrasonic...).
   \slot{distance}%
   {%
     Measured distance expressed in meters.  Pointed to by the
-    \texttt{val} slot.%
+    \code{val} slot.%
   }
 
 \end{slots}
@@ -697,7 +697,7 @@ the typical slots expected:
 
 \facet{textToSpeech}
 Text to speech allows to read text using a speech synthetizor. Default
-implementations should use the \texttt{speaker} component (or alias) as
+implementations should use the \code{speaker} component (or alias) as
 their default sound output.
 
 \begin{slots}
@@ -757,7 +757,7 @@ their default sound output.
 
 Speech recognition allows to transform a stream of sound into a text
 using various speech recognition algorithms. Default implementations
-should use the \texttt{micro} component (or alias) as their default
+should use the \code{micro} component (or alias) as their default
 sound input.
 
 \begin{slots}
