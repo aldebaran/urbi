@@ -230,7 +230,7 @@ Examples of component names including localization:
 
 \begin{urbifixme}
 legR, legL, armR, armL;
-fingerR, fingerC, fingerL;      // three fingers hand
+fingerR, fingerC, fingerL;      // three-finger hand
 joint[0], joint[1] ... joint[5] // from tail
 touch[478][124]                 // from skin
 accelX, accelY, accelZ;         // typical accelerometer
@@ -436,7 +436,7 @@ induction,...).
   {%
     Intensity of the pressure put on the touch sensor. Can be 0/1 for
     simple buttons or expressed in Pascal units. Pointed to by the
-    \texttt{val} slot.%
+    \code{val} slot.%
   }
 
 \end{slots}
@@ -449,7 +449,7 @@ This facet is used to describe an accelerometer.
 \begin{slots}
   \slot{acceleration}%
   {%
-    Acceleration expressed in m/s2.  Pointed to by the \texttt{val}
+    Acceleration expressed in $m/s^2$.  Pointed to by the \code{val}
     slot.%
   }
 
@@ -459,10 +459,10 @@ This facet is used to describe an accelerometer.
 This facet is used to describe an gyrometer.
 
 \begin{slots}
-  \slot{acceleration}%
+  \slot{speed}%
   {%
-    Acceleration expressed in rad/s2.  Pointed to by the \texttt{val}
-    slot.%
+    Rotational speed in $\mathrm{rad}/s$.  Pointed to by the
+    \code{val} slot.%
   }
 \end{slots}
 
@@ -555,9 +555,9 @@ image sensor.
     Width of the image in the current resolution, expressed in pixels%
   }
 
-  \optSlot{shutter}%
+  \optSlot{exposure}%
   {%
-    The shutter speed (expressed in ms). 0 if non applicable.%
+    The exposure duration, expressed in seconds. 0 if non applicable.%
   }
 
   \optSlot{wb}%
@@ -963,7 +963,8 @@ the yaw/pitch/roll meaning.
 
   \component{tail}{body}{joint}{-}{
     %%
-    A tail is a series of articulated motors at the back of the robot.
+    A \dfn{tail} is a series of articulated motors at the back of the
+    robot.
     %%
   }
 
@@ -1010,8 +1011,8 @@ the yaw/pitch/roll meaning.
   \component{roll}{neck knee ankle shoulder elbow wrist
     torso}{-}{rotational\-Motor}{
     %%
-    Rotational articulation around the X axis in the
-    robot. See \autoref{sec:naming:ypr}.
+    Rotational articulation around the X axis in the robot. See
+    \autoref{sec:naming:ypr}.
     %%
   }
 
@@ -1078,16 +1079,16 @@ the yaw/pitch/roll meaning.
   \component{camera}{head body}{-}{videoin}{
     %%
     Camera sensor. If several cameras are available, localization
-    shall apply, however there must always be an alias from
-    \code{camera} to one of the effective camera (like
-    \code{cameraR} or \code{cameraL}).
+    shall apply; however there must always be an alias from
+    \code{camera} to one of the effective cameras (like \code{cameraR}
+    or \code{cameraL}).
     %%
     }
 
   \component{speaker}{head body}{-}{audioin}{
     %%
     Speaker device. If several speakers are available, localization
-    shall apply, however there must always be an alias from
+    shall apply; however there must always be an alias from
     \code{speaker} to one of the effective speakers (like
     \code{speakerR} or \code{speakerL}).
     %%
@@ -1096,7 +1097,7 @@ the yaw/pitch/roll meaning.
   \component{micro}{head body}{-}{audioout}{
     %%
     Microphone devices. If several microphones are available,
-    localization shall apply, however there must always be an alias
+    localization shall apply; however there must always be an alias
     from \code{micro} to one of the effective microphones (like
     \code{microR} or \code{microL}).
     %%
