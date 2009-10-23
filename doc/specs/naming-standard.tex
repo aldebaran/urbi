@@ -833,7 +833,7 @@ the yaw/pitch/roll meaning.
 \textbf{Contains} &
 \textbf{Facets} \\\hline}
 \begin{supertabular}{|m{.115\linewidth}|m{.45\linewidth}|*{4}{m{.12\linewidth}|}}
-  \component{robot}{-}{body}{identity network mobile tracker}{
+  \component{robot}{}{body}{identity network mobile tracker}{
     %%
     This is the main component that represents an abstraction of the
     robot.
@@ -841,7 +841,7 @@ the yaw/pitch/roll meaning.
   }
 
   \component{body}{robot}{arm leg neck head wheel tail skin torso
-    \ldots}{-}{
+    \ldots}{}{
     %%
     This is the main component that contains every piece of hardware
     in the robot. This includes all primary kinematics sub-chains
@@ -852,7 +852,7 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{leg}{body}{hip knee ankle foot joint}{-}{
+  \component{leg}{body}{hip knee ankle foot joint}{}{
     %%
     Legs are found in humanoid or animaloid robots and correspond to
     part of the kinematics chain that are attached to the main body by
@@ -863,7 +863,7 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{arm}{body}{shoulder elbow wrist hand grip  joint}{-}{
+  \component{arm}{body}{shoulder elbow wrist hand grip  joint}{}{
     %%
     Unlike legs, an arm’s extremity does not always touch the ground
     in normal operating mode. This applies to humanoid robots or
@@ -873,7 +873,7 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{shoulder}{arm}{yaw pitch roll}{-}{
+  \component{shoulder}{arm}{yaw pitch roll}{}{
     %%
     The shoulder is the upper part of the arm. It can have one, two or
     three degrees of freedom and is the closest part of the arm
@@ -881,21 +881,21 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{elbow}{arm}{pitch}{-}{
+  \component{elbow}{arm}{pitch}{}{
     %%
     Separates the upper arm and the lower arm, this is usually a
     single rotational axis.
     %%
   }
 
-  \component{wrist}{arm}{yaw pitch roll}{-}{
+  \component{wrist}{arm}{yaw pitch roll}{}{
     %%
     Connects the hand and the lower part of the arm. Usually three
     degrees of freedom axis.
     %%
   }
 
-  \component{hand}{arm}{finger}{-}{
+  \component{hand}{arm}{finger}{}{
     %%
     The hand is an extension of the arm that usually holds
     fingers. It’s not the wrist, which is articulated and between the
@@ -917,28 +917,28 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{hip}{leg}{yaw pitch roll}{-}{
+  \component{hip}{leg}{yaw pitch roll}{}{
     %%
     The hip is the upper part of the leg and connects it to the main
     body. It can have one, two or three degrees of freedom.
     %%
   }
 
-  \component{knee}{leg}{pitch}{-}{
+  \component{knee}{leg}{pitch}{}{
     %%
     Separates the upper leg and the lower leg, this is usually a
     single rotational axis.
     %%
     }
 
-  \component{ankle}{leg}{yaw pitch roll}{-}{
+  \component{ankle}{leg}{yaw pitch roll}{}{
     %%
     Connects the foot and the lower part of the leg. Usually three
     degrees of freedom axis.
     %%
     }
 
-  \component{foot}{leg}{touch}{-}{
+  \component{foot}{leg}{touch}{}{
     %%
     The foot is an extension of the leg that usually holds toes. It’s
     not the ankle, which is articulated and between the leg and the
@@ -953,7 +953,7 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{neck}{body}{yaw pitch roll}{-}{
+  \component{neck}{body}{yaw pitch roll}{}{
     %%
     The neck corresponds to a degree of freedom not part of the head,
     but relative to the rigid connection between the head and the main
@@ -961,14 +961,13 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{tail}{body}{joint}{-}{
+  \component{tail}{body}{joint}{}{
     %%
-    A \dfn{tail} is a series of articulated motors at the back of the
-    robot.
+    A tail is a series of articulated motors at the back of the robot.
     %%
   }
 
-  \component{head}{body neck}{camera mouth ear lip eye eyebrow}{-}{
+  \component{head}{body neck}{camera mouth ear lip eye eyebrow}{}{
     %%
     The head main pivotal axis.
     %%
@@ -980,20 +979,20 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{ear}{head}{-}{motor}{
+  \component{ear}{head}{}{motor}{
     %%
     Ears may have degrees of freedom in certain robots.
     %%
   }
 
-  \component{joint}{tail arm leg lip}{-}{motor}{
+  \component{joint}{tail arm leg lip}{}{motor}{
     %%
     Generic articulation in the robot.
     %%
   }
 
   \component{yaw}{neck knee ankle shoulder elbow wrist
-    torso}{-}{rotational\-Motor}{
+    torso}{}{rotational\-Motor}{
     %%
     Rotational articulation around the Z axis in the
     robot. See \autoref{sec:naming:ypr}.
@@ -1001,7 +1000,7 @@ the yaw/pitch/roll meaning.
   }
 
   \component{pitch}{neck knee ankle shoulder elbow wrist
-    torso}{-}{rotational\-Motor}{
+    torso}{}{rotational\-Motor}{
     %%
     Rotational articulation around the Y axis in the
     robot.  See \autoref{sec:naming:ypr}.
@@ -1009,7 +1008,7 @@ the yaw/pitch/roll meaning.
   }
 
   \component{roll}{neck knee ankle shoulder elbow wrist
-    torso}{-}{rotational\-Motor}{
+    torso}{}{rotational\-Motor}{
     %%
     Rotational articulation around the X axis in the robot. See
     \autoref{sec:naming:ypr}.
@@ -1022,7 +1021,7 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{eye}{head}{camera}{-}{
+  \component{eye}{head}{camera}{}{
     %%
     Corresponds to the eyeball pivotal axis.
     %%
@@ -1035,14 +1034,14 @@ the yaw/pitch/roll meaning.
     %%
     }
 
-  \component{torso}{body}{yaw pitch roll}{-}{
+  \component{torso}{body}{yaw pitch roll}{}{
     %%
     This corresponds to a pivotal or rotational axis in the middle of
     the main body.
     %%
     }
 
-  \component{spine}{torso}{joint}{-}{
+  \component{spine}{torso}{joint}{}{
     %%
     This is a more elaborated version of ``torso'', with a series of
     articulations to give several degrees of freedom in the back of
@@ -1050,7 +1049,7 @@ the yaw/pitch/roll meaning.
     %%
     }
 
-  \component{clavicle}{body}{-}{motor}{
+  \component{clavicle}{body}{}{motor}{
     %%
     This is not to be mixed up with the ``top of the arm'' body part. It
     is an independent degree of freedom that can be used to bring the
@@ -1058,25 +1057,25 @@ the yaw/pitch/roll meaning.
     %%
     }
 
-  \component{touch}{finger grip foot toe}{-}{touchSensor}{
+  \component{touch}{finger grip foot toe}{}{touchSensor}{
     %%
       Touch sensor.
     %%
     }
 
-  \component{gyro}{body}{-}{gyroSensor}{
+  \component{gyro}{body}{}{gyroSensor}{
     %%
       Gyrometer sensor.
     %%
     }
 
-  \component{accel}{body}{-}{accel\-eration\-Sensor}{
+  \component{accel}{body}{}{accel\-eration\-Sensor}{
     %%
       Accelerometer sensor.
     %%
     }
 
-  \component{camera}{head body}{-}{videoin}{
+  \component{camera}{head body}{}{videoin}{
     %%
     Camera sensor. If several cameras are available, localization
     shall apply; however there must always be an alias from
@@ -1085,7 +1084,7 @@ the yaw/pitch/roll meaning.
     %%
     }
 
-  \component{speaker}{head body}{-}{audioin}{
+  \component{speaker}{head body}{}{audioin}{
     %%
     Speaker device. If several speakers are available, localization
     shall apply; however there must always be an alias from
@@ -1094,7 +1093,7 @@ the yaw/pitch/roll meaning.
     %%
     }
 
-  \component{micro}{head body}{-}{audioout}{
+  \component{micro}{head body}{}{audioout}{
     %%
     Microphone devices. If several microphones are available,
     localization shall apply; however there must always be an alias
@@ -1103,13 +1102,13 @@ the yaw/pitch/roll meaning.
     %%
   }
 
-  \component{speech}{robot}{-}{speech\-Recognizer}{
+  \component{speech}{robot}{}{speech\-Recognizer}{
     %%
       Speech recognition component.
     %%
     }
 
-  \component{voice}{robot}{-}{textTo\-Speech}{
+  \component{voice}{robot}{}{textTo\-Speech}{
     %%
       Voice synthesis component.
     %%
