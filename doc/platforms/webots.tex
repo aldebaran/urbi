@@ -849,18 +849,16 @@ controllerArgs [options] period [path1 path2 ...]
   {float}
   {\{0,1\}}
 
-    This attribute let you enable or disable the
-    Accelerometer device.  By default it is set to 1, which means that
-    the Accelerometer is enabled. If you set it to 0 it will disable
-    it. NB: If you enable or disable one of the Accelerometer UObject
-    component, then all the associated Accelerometer UObject components
-    will also be enabled or disabled (ex: if you disable the y
-    Accelerometer component, then the x and z Accelerometer components
-    will also be disabled).
+  This attribute let you enable or disable the Accelerometer device.
+  By default it is set to 1, which means that the Accelerometer is
+  enabled. If you set it to 0 it will disable it. NB: If you enable or
+  disable one of the Accelerometer UObject component, then all the
+  associated Accelerometer UObject components will also be enabled or
+  disabled (ex: if you disable the y Accelerometer component, then the
+  x and z Accelerometer components will also be disabled).
 
-
-    To enable and disable the device we use the following Webots
-    functions:
+  To enable and disable the device we use the following Webots
+  functions:
 
 \begin{cxx}
 void accelerometer_enable (DeviceTag sensor, unsigned short ms);
@@ -896,21 +894,21 @@ float accelerometer_value_z (float *array);
 
 \subsubsection{Camera}
 
-   The camera UObject lets you control a Webots camera device. When your robot
-  possess a camera, and it use
-  \urbi as a controller, you won't see the camera image displayed on your computer
-  screen unless you create this camera UObject. You can create only one
-  camera Urbi Object by Webots camera device. Once you have created the camera,
-  the camera image will be displayed in the place defined by the .wbt world.
+The camera UObject lets you control a Webots camera device. When your
+robot possess a camera, and it use \urbi as a controller, you won't
+see the camera image displayed on your computer screen unless you
+create this camera UObject. You can create only one camera Urbi Object
+by Webots camera device. Once you have created the camera, the camera
+image will be displayed in the place defined by the .wbt world.
 
 
 \paragraph{Constructor}
 
 \noindent
 \begin{description}
-\item[{Camera (string NodeName)}] Construct a new camera object. The ``NodeName'' attribute is the value
-          of the name field, in the camera node in Webots.
-
+\item[{Camera (string \var{NodeName})}] Construct a new camera
+  object. The ``NodeName'' attribute is the value of the name field,
+  in the camera node in Webots.
 \end{description}
 
 \paragraph{Attributes}
@@ -925,7 +923,6 @@ float accelerometer_value_z (float *array);
   device.  By default it is set to 1, which means that the camera is
   enabled. If you set it to 0 it will disable it.  To enable and
   disable the device we use the following Webots functions:
-
 
 \begin{cxx}
 void camera_enable (DeviceTag camera, unsigned short ms);
@@ -970,24 +967,21 @@ unsigned char *camera_get_image (DeviceTag camera);
   {readable}
   {binary}
   {}
-  The current image acquired by the camera with format
-  RGB.
+  The current image acquired by the camera with format RGB.
 \end{attribute}
 
 \begin{attribute}{jpeg}
   {readable}
   {binary}
   {}
-  The current image acquired by the camera with format
-  JPEG.
+  The current image acquired by the camera with format JPEG.
 \end{attribute}
 
 \begin{attribute}{ycbcr}
   {readable}
   {binary}
   {}
-  The current image acquired by the camera with format
-  YCbCr.
+  The current image acquired by the camera with format YCbCr.
 \end{attribute}
 
 \begin{attribute}{jpegfactor}
@@ -1001,8 +995,7 @@ unsigned char *camera_get_image (DeviceTag camera);
   {readable}
   {float}
   {}
-  Image width. Retrieved with the following Webots
-  function:
+  Image width. Retrieved with the following Webots function:
 \begin{cxx}
 unsigned short camera_get_width (DeviceTag camera);
 \end{cxx}
@@ -1012,8 +1005,7 @@ unsigned short camera_get_width (DeviceTag camera);
   {readable}
   {float}
   {}
-  Image height. Retrieved with the following Webots
-  function:
+  Image height. Retrieved with the following Webots function:
 \begin{cxx}
 unsigned short camera_get_height (DeviceTag camera);
 \end{cxx}
@@ -1069,7 +1061,7 @@ float camera_get_far (DeviceTag camera);
 
 \noindent
 \begin{description}
-\item[{DifferentialWheels (string NodeName, boolean isLeft)}]
+\item[{DifferentialWheels (string \var{NodeName}, boolean \var{isLeft})}]
   Construct a new differential wheels object. You have to set true or
   false in the isLeft field to set whether the wheel you are
   constructing is the left or right wheel.  NB: DifferentialWheels
@@ -2173,15 +2165,15 @@ provide. This to generate an executable that you will name urbi.exe.
 Here is the list of option that you have to provide to your compiler:
 \begin{itemize}
 \item Include path: \file{URBI\_DIRECTORY/SDK/include}. By default it
-  is \verb+c:\Program Files\GOSTAI\Urbi Webots 1.0\SDK\include+.
+  is \nolinkurl{c:\Program Files\GOSTAI\Urbi Webots 1.0\SDK\include}.
 
 \item Library path:
   \begin{files*}
   \item[URBI\_DIRECTORY/SDK/lib] By default it is
-    \verb+c:\Program Files\GOSTAI\\urbi Webots 1.0\SDK\lib+.
+    \nolinkurl{c:\Program Files\GOSTAI\Urbi Webots 1.0\SDK\lib}.
 
   \item[WEBOTS\_DIRECTORY/lib] By default it is
-    \verb+c:\Program Files\Webots\lib+.
+    \nolinkurl{c:\Program Files\Webots\lib}.
   \end{files*}
 
 \item Library to link with:
