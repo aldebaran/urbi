@@ -892,7 +892,7 @@ controllerArgs [options] period [path1 path2 ...]
 }
 
 \noindent
-\begin{description}
+\begin{itemize}
 \begin{attribute}{load}
   {readable, writeable}
   {float}
@@ -922,13 +922,11 @@ void accelerometer\_disable (DeviceTag sensor);
     file).
 \end{attribute}
 
-\item[{ val }] Permissions: readable.
-
-
-  Type: float.
-
-
-  Description: The value of the component this UObject represent. So
+\begin{attribute}{val}
+  {readable}
+  {float}
+  {}
+  The value of the component this UObject represent. So
   it is one of the 3 component of the Webots Accelerometer
   device. Either x, y or z.
 
@@ -941,7 +939,9 @@ void accelerometer\_disable (DeviceTag sensor);
   accelerometer_value_x (float *array); float accelerometer_value_y
   (float *array); float accelerometer_value_z (float *array);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{Camera}
 \label{webots.uobjects.robotdevices.camera}%
@@ -968,17 +968,12 @@ void accelerometer\_disable (DeviceTag sensor);
 \label{webots.uobjects.robotdevices.camera.attributes}%
 
 \noindent
-\begin{description}
-\item[{load}] Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Range: \{0,1\}
-
-
-  Description: This attribute let you enable or disable the camera
+\begin{itemize}
+\begin{attribute}{load}
+  {readable, writeable}
+  {float}
+  {\{0,1\}}
+  This attribute let you enable or disable the camera
   device.  By default it is set to 1, which means that the camera is
   enabled. If you set it to 0 it will disable it.  To enable and
   disable the device we use the following Webots functions:
@@ -992,14 +987,13 @@ void accelerometer\_disable (DeviceTag sensor);
 The frequency given to the enable function is the frequency of the
 \urbi controller (given in the ``controllerArgs'' field in the .wbt
 file).
+\end{attribute}
 
-\item[{val}] Permissions: readable.
-
-
-  Type: binary.
-
-
-  Description:The current image acquired by the camera. The format of
+\begin{attribute}{val}
+  {readable}
+  {binary}
+  {}
+  The current image acquired by the camera. The format of
   the image can be RGB, JPEG or YCbCr, and is determined by the
   ``format'' attribute.  To retrieve the camera image we use the
   following Webots function:
@@ -1008,16 +1002,13 @@ file).
 \begin{lstlisting}
   unsigned char *camera_get_image (DeviceTag camera);
 \end{lstlisting}
-\item[{format}] Permissions: readable, writable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Range: \{0,1,2\}
-
-
-  Description: The format of the camera image for the ``val''
+\begin{attribute}{format}
+  {readable, writable}
+  {float}
+  {\{0,1,2\}}
+  The format of the camera image for the ``val''
   attribute. Set format to:
 
   \begin{description}
@@ -1025,121 +1016,108 @@ file).
   \item[1] for YCbCr;
   \item[2] for RGB;
   \end{description}
+\end{attribute}
 
-\item[{rgb}] Permissions: readable.
-
-
-  Type: binary.
-
-
-  Description: The current image acquired by the camera with format
+\begin{attribute}{rgb}
+  {readable}
+  {binary}
+  {}
+  The current image acquired by the camera with format
   RGB.
+\end{attribute}
 
-\item[{jpeg}] Permissions: readable.
-
-
-  Type: binary.
-
-
-  Description: The current image acquired by the camera with format
+\begin{attribute}{jpeg}
+  {readable}
+  {binary}
+  {}
+  The current image acquired by the camera with format
   JPEG.
+\end{attribute}
 
-\item[{ycbcr}] Permissions: readable.
-
-
-  Type: binary.
-
-
-  Description: The current image acquired by the camera with format
+\begin{attribute}{ycbcr}
+  {readable}
+  {binary}
+  {}
+  The current image acquired by the camera with format
   YCbCr.
+\end{attribute}
 
-\item[{jpegfactor}] Permissions: readable, writeable.
+\begin{attribute}{jpegfactor}
+  {readable, writeable}
+  {float}
+  {[0;100]}
+  Compression factor in JPEG mode.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Range: [0;100]
-
-
-  Description: Compression factor in JPEG mode.
-\item[{width}] Permissions: readable.
-
-
-  Type: float.
-
-
-  Description: Image width. Retrieved with the following Webots
+\begin{attribute}{width}
+  {readable}
+  {float}
+  {}
+  Image width. Retrieved with the following Webots
   function:
 
 
 \begin{lstlisting}
   unsigned short camera_get_width (DeviceTag camera);
 \end{lstlisting}
-\item[{height}] Permissions: readable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Description: Image height. Retrieved with the following Webots
+\begin{attribute}{height}
+  {readable}
+  {float}
+  {}
+  Image height. Retrieved with the following Webots
   function:
-
-
 \begin{lstlisting}
   unsigned short camera_get_height (DeviceTag camera);
 \end{lstlisting}
-\item[{xfov}] Permissions: readable, writeable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Description: Image horizontal focal view.  Retrieved and set with
+\begin{attribute}{xfov}
+  {readable, writeable}
+  {float}
+  {}
+  Image horizontal focal view.  Retrieved and set with
   the following Webots function:
-
-
 \begin{lstlisting}
   float camera_get_fov (DeviceTag camera); void camera_set_fov
   (DeviceTag camera, float fov);
 \end{lstlisting}
-\item[{yfov}] Permissions: readable, writeable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Description: Image vertical focal view. Calculated from the value of
+\begin{attribute}{yfov}
+  {readable, writeable}
+  {float}
+  {}
+  Image vertical focal view. Calculated from the value of
   the horizontal focal view with the formula: yfov = xfov * height /
   width.
+\end{attribute}
 
-\item[{near}] Permissions: readable.
-
-
-  Type: float.
-
-
-  Description: Distance of the camera to the near OpenGL clipping
+\begin{attribute}{near}
+  {readable}
+  {float}
+  {}
+  Distance of the camera to the near OpenGL clipping
   plane.  Retrieved with the following Webots function:
 
 
 \begin{lstlisting}
   float camera_get_near (DeviceTag camera);
 \end{lstlisting}
-\item[{far}] Permissions: readable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Description: Distance of the camera to the far OpenGL clipping
+\begin{attribute}{far}
+  {readable}
+  {float}
+  {}
+  Distance of the camera to the far OpenGL clipping
   plane.  Retrieved with the following Webots function:
-
-
 \begin{lstlisting}
   float camera_get_far (DeviceTag camera);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+\end{itemize}
 
 \subsubsection{Differential Wheels}
 \label{webots.uobjects.robotdevices.differentialwheels}%
@@ -1168,14 +1146,12 @@ file).
 \label{webots.uobjects.robotdevices.differentialwheels.attributes}%
 
 \noindent
-\begin{description}
-\item[{encoder}] Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Definition: Encoders are counters incremented each time a wheel
+\begin{itemize}
+\begin{attribute}{encoder}
+  {readable, writeable}
+  {float}
+  {}
+  Encoders are counters incremented each time a wheel
   turns. The amount added to the encoder is computed from the angle
   the wheel have been rotated and from the ``encoderResolution''
   parameter of the DifferentialWheels node. For convenience we also
@@ -1195,13 +1171,13 @@ file).
   differential_wheels_get_right_encoder (void); void
   differential_wheels_set_encoders (int left, int right);
 \end{lstlisting}
-\item[{speed}] Permissions: readable, writeable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Definition: Current speed of the wheels. The speed unit is defined
+\begin{attribute}{speed}
+  {Permissions: readable, writeable}
+  {float}
+  {}
+  Current speed of the wheels. The speed unit is defined
   by the ``speedUnit'' field of the Webots DifferentialWheels node. The
   default value is 0.1 radian per seconds. For convenience we also
   provide an ``speedFactor'' which allows you to change easily the unit
@@ -1213,25 +1189,25 @@ file).
 \begin{lstlisting}
   void differential_wheels_set_speed(short left, short right);
 \end{lstlisting}
-\item[{speedFactor}] Permissions: readable, writeable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Definition: Convenient variable to set the speed unit. See ``speed''
+\begin{attribute}{speedFactor}
+  {readable, writeable}
+  {float}
+  {}
+  Convenient variable to set the speed unit. See ``speed''
   attribute.
+\end{attribute}
 
-\item[{encoderFactor}] Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Definition: Convenient variable to set the encoder unit. See
+\begin{attribute}{encoderFactor}
+  {readable, writeable}
+  {float}
+  {}
+  Convenient variable to set the encoder unit. See
   ``encoder'' attribute
+\end{attribute}
 
-\end{description}
+\end{itemize}
 
 \subsubsection{Distance Sensor}
 \label{webots.uobjects.robotdevices.distancesensor}%
@@ -1250,18 +1226,12 @@ file).
 \paragraph{Attributes}
 \label{webots.uobjects.robotdevices.distancesensor.attributes}%
 
-\noindent
-\begin{description}
-\item[{load}]     Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Range: \{0,1\}
-
-
-  Description: This attribute let you enable or disable the
+\begin{itemize}
+\begin{attribute}{load}
+  {readable, writeable}
+  {float}
+  {\{0,1\}}
+  This attribute let you enable or disable the
   DistanceSensor device.  By default it is set to 1, which means that
   the DistanceSensor is enabled. If you set it to 0 it will disable
   it.
@@ -1279,35 +1249,31 @@ void distance_sensor_disable (DeviceTag sensor);
 The frequency given to the enable function is the frequency of the
 \urbi controller (given in the ``controllerArgs'' field in the .wbt
 file).
+\end{attribute}
 
-\item[{         val
- }]            Permissions: readable, writeable.
-
-
- Type: float.
-
-
- Description: Distance returned by the sensor. If you want to change
+\begin{attribute}{val}
+  {readable, writeable}
+  {float}
+  {}
+  Distance returned by the sensor. If you want to change
  the unit of the distance sensor you can use the ``factor'' attribute,
  because the ``val'' attribute is multiplied by the ``factor'' attribute
  before being returned: ``val'' = ``val'' * ``factor''.
 
-
  Retrieved with the following Webots function:
-
 
 \begin{lstlisting}
 unsigned short distance_sensor_get_value  (DeviceTag sensor);
 \end{lstlisting}
-\item[{factor}] Permissions: readable, writeable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Description: Factor used to compute the distance sensor's value.
-
-\end{description}
+\begin{attribute}{factor}
+  {readable, writeable}
+  {float}
+  {}
+  Factor used to compute the distance sensor's value.
+\end{attribute}
+\end{itemize}
 
 \subsubsection{Emitter}
 \label{webots.uobjects.robotdevices.emitter}%
@@ -1390,15 +1356,12 @@ int emitter_send_packet  (DeviceTag emitter, const void *data, int size);
 \label{webots.uobjects.robotdevices.emitter.attributes}%
 
 \noindent
-\begin{description}
-\item[{         bufferSize
-  }]            Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Description: Size (in bytes) of the emission buffer. This
+\begin{itemize}
+\begin{attribute}{bufferSize}
+  {readable, writeable}
+  {float}
+  {}
+  Size (in bytes) of the emission buffer. This
   corresponds to the value specified by the bufferSize field of the
   Emitter node. The buffer size indicates the maximal amount of data
   bytes that the emitter's queue can hold in total.
@@ -1410,14 +1373,13 @@ int emitter_send_packet  (DeviceTag emitter, const void *data, int size);
 \begin{lstlisting}
 int emitter_get_buffer_size  (DeviceTag emitter);
 \end{lstlisting}
-\item[{         channel
-  }]            Permissions: readable, writeable.
+\end{attribute}
 
-
-  Type: float.
-
-
-  Description: Emission channel. Change it to modifies the channel
+\begin{attribute}{channel}
+  {readable, writeable}
+  {float}
+  {}
+  Emission channel. Change it to modifies the channel
   field of the corresponding Emitter node. Normally, an emitter can
   send data only to receivers that use the same channel. However, the
   value -{}1 can be used for broadcasting to all channels. By
@@ -1432,14 +1394,13 @@ int emitter_get_buffer_size  (DeviceTag emitter);
 void emitter_set_channel  (DeviceTag emitter, int channel);
 int emitter_get_channel (DeviceTag emitter);
 \end{lstlisting}
-\item[{         range
- }]            Permissions: readable, writeable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: Emission range. Change it to modifies the range field of
+\begin{attribute}{range}
+  {readable, writeable}
+  {float}
+  {}
+  Emission range. Change it to modifies the range field of
  the corresponding Emitter node. If the range is larger than the
  maxRange field of the Emitter node then the current range will be set
  to maxRange.
@@ -1452,18 +1413,18 @@ int emitter_get_channel (DeviceTag emitter);
 void emitter_set_range  (DeviceTag emitter, float range);
 float emitter_get_range (DeviceTag emitter);
 \end{lstlisting}
-\item[{         rawMode
- }]            Permissions: readable, writeable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: Set this attribute to true to enable sending BIN
+\begin{attribute}{rawMode}
+  {readable, writeable}
+  {float}
+  {}
+  Set this attribute to true to enable sending BIN
  variables in raw mode (ie only the data in BIN variables is
  send). Please see ``receive ()'' function for more information.
+\end{attribute}
 
-\end{description}
+\end{itemize}
 
 \subsubsection{Gps}
 \label{webots.uobjects.robotdevices.gps}%
@@ -1488,16 +1449,11 @@ float emitter_get_range (DeviceTag emitter);
 
 \noindent
 \begin{description}
-\item[{load}]     Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Range: \{0,1\}
-
-
-  Description: This attribute let you enable or disable the Gps
+\begin{attribute}{load}
+  {readable, writeable}
+  {float}
+  {\{0,1\}}
+  This attribute let you enable or disable the Gps
   device.  By default it is set to 1, which means that the Gps is
   enabled. If you set it to 0 it will disable it. NB: If you enable or
   disable one of the Gps UObject component, then all the associated
@@ -1518,15 +1474,13 @@ void gps_disable (DeviceTag sensor);
 The frequency given to the enable function is the frequency of the
 \urbi controller (given in the ``controllerArgs'' field in the .wbt
 file).
+\end{attribute}
 
-\item[{         val
- }]            Permissions: readable.
-
-
- Type: float.
-
-
- Description: The value of the component this UObject represent. So it
+\begin{attribute}{val}
+  {readable}
+  {float}
+  {}
+  The value of the component this UObject represent. So it
  is one of the 3 component of the Webots Gps device. Either x, y or z.
 
 
@@ -1539,14 +1493,13 @@ float gps_position_x (float *matrix);
 float gps_position_y (float *matrix);
 float gps_position_z (float *matrix);
 \end{lstlisting}
-\item[{         angle
- }]            Permissions: readable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: Euler angles associated to the UObject component. If the
+\begin{attribute}{angle}
+  {readable}
+  {float}
+  {}
+  Euler angles associated to the UObject component. If the
  component of this UObject is x or z, then the Euler angle can be
  interpreted as inclinometer angle value along either the local X or
  the local Z axis. If the component is y, then Euler angle can be
@@ -1561,6 +1514,8 @@ float gps_position_z (float *matrix);
 void gps_euler (const float *matrix, float *euler);
 const float *gps_get_matrix  (DeviceTag sensor);
 \end{lstlisting}
+\end{attribute}
+
 \end{description}
 
 \subsubsection{Gripper}
@@ -1580,15 +1535,12 @@ const float *gps_get_matrix  (DeviceTag sensor);
 \label{webots.uobjects.robotdevices.gripper.attributes}%
 
 \noindent
-\begin{description}
-\item[{         val
- }]            Permissions: readable, writeable.
-
-
- Type: float.
-
-
- Description: Position of the Gripper device.
+\begin{itemize}
+\begin{attribute}{val}
+  {readable, writeable}
+  {float}
+  {}
+  Position of the Gripper device.
 
 
  Retrieved and set with the following Webots functions:
@@ -1598,14 +1550,13 @@ const float *gps_get_matrix  (DeviceTag sensor);
 float gripper_get_position  (DeviceTag gripper);
 void gripper_set_position  (DeviceTag gripper, float position);
 \end{lstlisting}
-\item[{         resistivity
- }]            Permissions: readable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: the resistivity of the Gripper device.
+\begin{attribute}{resistivity}
+  {readable}
+  {float}
+  {}
+  the resistivity of the Gripper device.
 
 
  Retrieved with the following Webots function:
@@ -1614,7 +1565,9 @@ void gripper_set_position  (DeviceTag gripper, float position);
 \begin{lstlisting}
 float gripper_get_resistivity  (DeviceTag gripper);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{Keyboard}
 \label{webots.uobjects.robotdevices.keyboard}%
@@ -1633,17 +1586,12 @@ float gripper_get_resistivity  (DeviceTag gripper);
 \label{webots.uobjects.robotdevices.keyboard.attributes}%
 
 \noindent
-\begin{description}
-\item[{load}]     Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Range: \{0,1\}
-
-
-  Description: This attribute let you enable or disable the Keyboard
+\begin{itemize}
+\begin{attribute}{load}
+  {readable, writeable}
+  {float}
+  {\{0,1\}}
+  This attribute let you enable or disable the Keyboard
   device.  By default it is set to 1, which means that the Keyboard is
   enabled. If you set it to 0 it will disable it.
 
@@ -1658,15 +1606,13 @@ void robot_keyboard_disable();
 
           The frequency given to the enable function is the frequency of the
           \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
+\end{attribute}
 
-\item[{         val
- }]            Permissions: readable.
-
-
- Type: float.
-
-
- Description: Key code corresponding to the key currently pressed on
+\begin{attribute}{val}
+  {readable}
+  {float}
+  {}
+  Key code corresponding to the key currently pressed on
  the keyboard. If no key is currently pressed, ``val'' equal 0.
 
 
@@ -1676,7 +1622,9 @@ void robot_keyboard_disable();
 \begin{lstlisting}
 int robot_keyboard_get_key();
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{Led}
 \label{webots.uobjects.robotdevices.led}%
@@ -1695,15 +1643,12 @@ int robot_keyboard_get_key();
 \label{webots.uobjects.robotdevices.led.attributes}%
 
 \noindent
-\begin{description}
-\item[{         val
- }]            Permissions: readable, writeable.
-
-
- Type: float.
-
-
- Description: Value of the led. Usually leds have two possible values,
+\begin{itemize}
+\begin{attribute}{val}
+  {readable, writeable}
+  {float}
+  {}
+  Value of the led. Usually leds have two possible values,
  0 for Off and 1 for On, but it is also possible to use other values
  depending on the Webots model.
 
@@ -1714,7 +1659,9 @@ int robot_keyboard_get_key();
 \begin{lstlisting}
 void led_set  (DeviceTag device, unsigned char value);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{Light Sensor}
 \label{webots.uobjects.robotdevices.lightsensor}%
@@ -1733,17 +1680,12 @@ void led_set  (DeviceTag device, unsigned char value);
 \label{webots.uobjects.robotdevices.lightsensor.attributes}%
 
 \noindent
-\begin{description}
-\item[{load}]     Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Range: \{0,1\}
-
-
-  Description: This attribute let you enable or disable the
+\begin{itemize}
+\begin{attribute}{load}
+  {readable, writeable}
+  {float}
+  {\{0,1\}}
+  This attribute let you enable or disable the
   LightSensor device.  By default it is set to 1, which means that the
   LightSensor is enabled. If you set it to 0 it will disable it.
 
@@ -1758,15 +1700,13 @@ void light_sensor_disable (DeviceTag sensor);
 
           The frequency given to the enable function is the frequency of the
           \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
+\end{attribute}
 
-\item[{         val
- }]            Permissions: readable.
-
-
- Type: float.
-
-
- Description: Light value measured by the sensor. The values measured
+\begin{attribute}{val}
+  {readable}
+  {float}
+  {}
+  Light value measured by the sensor. The values measured
  are computed from the lookup table defined in the corresponding
  Webots node.
 
@@ -1777,7 +1717,9 @@ void light_sensor_disable (DeviceTag sensor);
 \begin{lstlisting}
 unsigned short light_sensor_get_value  (DeviceTag sensor);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{Plunger}
 \label{webots.uobjects.robotdevices.plunger}%
@@ -1804,15 +1746,12 @@ unsigned short light_sensor_get_value  (DeviceTag sensor);
 \label{webots.uobjects.robotdevices.plunger.attributes}%
 
 \noindent
-\begin{description}
-\item[{         val
- }]            Permissions: readable, writeable.
-
-
- Type: float.
-
-
- Description: The value of the plunger. When you set this value, the
+\begin{itemize}
+\begin{attribute}{val}
+  {readable, writeable}
+  {float}
+  {}
+  The value of the plunger. When you set this value, the
  value that will be given to Webots is computed as follow: val *
  ((onValue -{} offValue) + offValue).  NB: all values must be given in
  degree (while in Webots they are in radian) !
@@ -1825,7 +1764,9 @@ unsigned short light_sensor_get_value  (DeviceTag sensor);
 float servo_get_position  (DeviceTag servo);
 void servo_set_position  (DeviceTag servo, float position);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{Receiver}
 \label{webots.uobjects.robotdevices.receiver}%
@@ -1880,17 +1821,12 @@ void receiver_next_packet  (DeviceTag receiver);
 \label{webots.uobjects.robotdevices.receiver.attributes}%
 
 \noindent
-\begin{description}
-\item[{load}]     Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Range: \{0,1\}
-
-
-  Description: This attribute let you enable or disable the Receiver
+\begin{itemize}
+\begin{attribute}{load}
+  {readable, writeable}
+  {float}
+  {\{0,1\}}
+  This attribute let you enable or disable the Receiver
   device.  By default it is set to 1, which means that the Receiver is
   enabled. If you set it to 0 it will disable it.
 
@@ -1905,15 +1841,13 @@ void receiver_disable (DeviceTag receiver);
 
           The frequency given to the enable function is the frequency of the
           \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
+\end{attribute}
 
-\item[{         channel
- }]            Permissions: readable, writeable.
-
-
- Type: float.
-
-
- Description: Reception channel. Normally, receiver can only receive
+\begin{attribute}{channel}
+  {readable, writeable}
+  {float}
+  {}
+  Reception channel. Normally, receiver can only receive
  data packets from emitters that use the same channel, however, the
  value -{}1 can be used to listen simultaneously to all channels.
 
@@ -1925,14 +1859,13 @@ void receiver_disable (DeviceTag receiver);
 void receiver_set_channel  (DeviceTag receiver, int channel);
 int receiver_get_channel (DeviceTag receiver);
 \end{lstlisting}
-\item[{         dataSize
- }]            Permissions: readable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: Number of data bytes present in the head packet of the
+\begin{attribute}{dataSize}
+  {readable}
+  {float}
+  {}
+  Number of data bytes present in the head packet of the
  reception queue. Since it is \urbi variables that are sent, the
  receiver need informations on the type of the variable to be able to
  retrieve it correctly. So dataSize is usually greater than the actual
@@ -1945,14 +1878,13 @@ int receiver_get_channel (DeviceTag receiver);
 \begin{lstlisting}
 int receiver_get_data_size  (DeviceTag receiver);
 \end{lstlisting}
-\item[{         emitterDirection
- }]            Permissions: readable.
+\end{attribute}
 
-
- Type: list of 3 float values.
-
-
- Description: Normalized vector that indicates the direction of the
+\begin{attribute}{emitterDirection}
+  {readable}
+  {list of 3 float values}
+  {}
+  Normalized vector that indicates the direction of the
  emitter with respect to the receiver's coordinate system. The three
  vector components indicate respectively the x, y, and z-{}direction
  of the emitter.
@@ -1964,14 +1896,13 @@ int receiver_get_data_size  (DeviceTag receiver);
 \begin{lstlisting}
 const float *receiver_get_emitter_direction  (DeviceTag receiver);
 \end{lstlisting}
-\item[{         queueLength
- }]            Permissions: readable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: Number of data packets currently present in the
+\begin{attribute}{queueLength}
+  {readable}
+  {float}
+  {}
+  Number of data packets currently present in the
  receiver's queue.
 
 
@@ -1981,26 +1912,23 @@ const float *receiver_get_emitter_direction  (DeviceTag receiver);
 \begin{lstlisting}
 int receiver_get_queue_length  (DeviceTag receiver);
 \end{lstlisting}
-\item[{         rawMode
- }]            Permissions: readable, writeable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: Set this attribute to true to enable receiving data in
+\begin{attribute}{rawMode}
+  {readable, writeable}
+  {float}
+  {}
+  Set this attribute to true to enable receiving data in
  raw mode.  In raw mode the ``receive ()'' function will return BIN
  variables containing the data received. Use this mode when you the
  emitter emit non Urbi data.
+\end{attribute}
 
-\item[{         signalStrength
- }]            Permissions: readable.
-
-
- Type: float.
-
-
- Description: Simulated signal strength at the time the last packet
+\begin{attribute}{signalStrength}
+  {readable}
+  {float}
+  {}
+  Simulated signal strength at the time the last packet
  was transmitted.  This signal strength is equal to the inverse of the
  squared distance between the emitter and the receiver. In other
  words: s = 1 / r\^{}2, where s is the signal strength and r is the
@@ -2013,7 +1941,9 @@ int receiver_get_queue_length  (DeviceTag receiver);
 \begin{lstlisting}
 float receiver_get_signal_strength  (DeviceTag receiver);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{RobotName}
 \label{webots.uobjects.robotdevices.robotname}%
@@ -2032,15 +1962,12 @@ float receiver_get_signal_strength  (DeviceTag receiver);
 \label{webots.uobjects.robotdevices.robotname.attributes}%
 
 \noindent
-\begin{description}
-\item[{         val
- }]            Permissions: readable.
-
-
- Type: string.
-
-
- Description: Name of the robot associated to the \urbi controller.
+\begin{itemize}
+\begin{attribute}{val}
+  {readable}
+  {string}
+  {}
+  Name of the robot associated to the \urbi controller.
 
 
  Retrieved with the following Webots function:
@@ -2049,7 +1976,9 @@ float receiver_get_signal_strength  (DeviceTag receiver);
 \begin{lstlisting}
 const char *robot_get_name();
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{Servo}
 \label{webots.uobjects.robotdevices.servo}%
@@ -2071,15 +2000,12 @@ const char *robot_get_name();
 \label{webots.uobjects.robotdevices.servo.attributes}%
 
 \noindent
-\begin{description}
-\item[{         val
- }]            Permissions: readable, writeable.
-
-
- Type: float.
-
-
- Description: Value of the servo. NB: all values must be given in
+\begin{itemize}
+\begin{attribute}{val}
+  {readable, writeable}
+  {float}
+  {}
+  Value of the servo. NB: all values must be given in
  degree (while in Webots they are in radian) !
 
 
@@ -2090,14 +2016,13 @@ const char *robot_get_name();
 float servo_get_position  (DeviceTag servo);
 void servo_set_position  (DeviceTag servo, float position);
 \end{lstlisting}
-\item[{         PGain
- }]            Permissions: writable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: changes the value of the P parameter of the
+\begin{attribute}{PGain}
+  {writable}
+  {float}
+  {}
+  changes the value of the P parameter of the
  P-{}controller. P is a parameter used to compute the current servo
  velocity Vc from the current position Pc and target position Pt, such
  that Vc = P * (Pt -{} Pc).  With a small P a long time is needed to
@@ -2112,14 +2037,13 @@ void servo_set_position  (DeviceTag servo, float position);
 \begin{lstlisting}
 void servo_set_control_p  (DeviceTag servo, float p);
 \end{lstlisting}
-\item[{         force
- }]            Permissions: readable.
+\end{attribute}
 
-
- Type: float.
-
-
- Description: Motor force measurement. ``force'' is equal to the amount
+\begin{attribute}{force}
+  {readable}
+  {float}
+  {}
+  Motor force measurement. ``force'' is equal to the amount
  of motor force that is currently being deployed by the servo in order
  to achieve the desired motion or hold the current position.  The
  measurement of this force is only available if you set the
@@ -2132,7 +2056,9 @@ void servo_set_control_p  (DeviceTag servo, float p);
 \begin{lstlisting}
 float servo_get_motor_force_feedback  (DeviceTag servo);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsubsection{Touch Sensor}
 \label{webots.uobjects.robotdevices.touchsensor}%
@@ -2151,17 +2077,12 @@ float servo_get_motor_force_feedback  (DeviceTag servo);
 \label{webots.uobjects.robotdevices.touchsensor.attributes}%
 
 \noindent
-\begin{description}
-\item[{load}]     Permissions: readable, writeable.
-
-
-  Type: float.
-
-
-  Range: \{0,1\}
-
-
-  Description: This attribute let you enable or disable the
+\begin{itemize}
+\begin{attribute}{load}
+  {readable, writeable}
+  {float}
+  {\{0,1\}}
+  This attribute let you enable or disable the
   TouchSensor device.  By default it is set to 1, which means that the
   TouchSensor is enabled. If you set it to 0 it will disable it.
 
@@ -2177,14 +2098,13 @@ void touch_sensor_disable (DeviceTag sensor);
 
           The frequency given to the enable function is the frequency of the
           \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
+\end{attribute}
 
-\item[{val}]             Permissions: readable, writable.
-
-
-  Type: float.
-
-
-  Description: Value returned by the sensor, computed according to the
+\begin{attribute}{val}
+  {readable, writable}
+  {float}
+  {}
+  Value returned by the sensor, computed according to the
   lookup table in the TouchSensor node.
 
 
@@ -2194,7 +2114,9 @@ void touch_sensor_disable (DeviceTag sensor);
 \begin{lstlisting}
 unsigned short touch_sensor_get_value  (DeviceTag sensor);
 \end{lstlisting}
-\end{description}
+\end{attribute}
+
+\end{itemize}
 
 \subsection{Supervisor devices UObjects}
 \label{webots.uobjects.supervisor}%
