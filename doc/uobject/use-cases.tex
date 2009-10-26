@@ -1,6 +1,6 @@
-\chapter{Use cases}
+\chapter{Use Cases}
 \label{sec:uob:uses}
-\section{Writing a servomotor device}
+\section{Writing a Servomotor Device}
 
 Let's write a \lstinline{UObject} for a servomotor device whose
 underlying API is:
@@ -207,7 +207,7 @@ easiest solution to the above problem is likely to set the variable to
 the \lstinline{mix} blending mode. The unavoidable drawback is that
 commands are not applied immediately, but only after a small delay.
 
-\subsection{Using timers}
+\subsection{Using Timers}
 
 Instead of updating/fetching the value on demand, you can chose to do
 it periodically based on a timer. A small difference between the two
@@ -277,7 +277,7 @@ call cannot be lower than the value returned by
 \lstinline{Object.getPeriod;}
 so you can set it to 0 to mean ``as fast as is useful''.
 
-\section{Using hubs to group objects}
+\section{Using Hubs to Group Objects}
 
 Now, suppose that, for our previous example, we can speed things up by
 sending all the servomotor commands at the same time, using the
@@ -376,7 +376,7 @@ instance, which adds commands to the hub arrays, then the
 \lstinline{update} method of the hub is called, actually sending the
 command and resetting the array.
 
-\subsection{Alternate implementation}
+\subsection{Alternate Implementation}
 
 Alternatively, to demonstrate the use of the members hub variable, we
 can entirely remove the \lstinline{update} method in the servo class
@@ -399,7 +399,7 @@ int servohub::update()
 }
 \end{cxx}
 
-\section{Writing a camera device}
+\section{Writing a Camera Device}
 
 A camera device is an UObject whose \lstinline{val} field is a binary
 object. The \urbi kernel itself doesn't make any difference between
@@ -543,13 +543,13 @@ structure inside the \lstinline{getVal} method, our buffer would have
 been freed at the end of the function. To avoid this, set it to 0
 after assigning the \lstinline{UBinary} to the \lstinline{UVar}.
 
-\subsection{Optimization in plugin mode}
+\subsection{Optimization in Plugin Mode}
 
 In plugin mode, it is possible to access the buffer used by the kernel
 by casting the \lstinline{UVar} to a \lstinline{UImage}. You can
 modify the content of the kernel buffer but no other argument.
 
-\section{Writing a speaker or microphone device}
+\section{Writing a Speaker or Microphone Device}
 
 Sound handling works similarly to image manipulation, the
 \lstinline{USound} structure is provided for this purpose. The
@@ -558,7 +558,7 @@ recommended way to implement a microphone is to fill the
 one kernel period. If you do so, the \urbi code
 \lstinline{loop tag:micro.val,} will produce the expected result.
 
-\section{Writing a softdevice: ball detection}
+\section{Writing a Softdevice: Ball Detection}
 
 Algorithms that require intense computation can be written in \Cxx but
 still be usable within \urbi: they acquire their data using

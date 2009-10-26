@@ -42,83 +42,86 @@ pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
 
 \section*{Outline}
 
-\newenvironment{partDescription}[2]
+\newenvironment{partDescription}[1]
 {%
-  \subsection*{\autoref{#1} --- #2}%
+  \subsection*{\autoref{#1} --- \nameref{#1}}%
   \begin{description}%
-    \newcommand{\xitem}[2]{\item[\autoref{##1} --- ##2]~\\}%
-  }
-  {%
+    \let\itemOrig\item%
+    \renewcommand{\item}[1][]{\itemOrig[\autoref{##1} --- \nameref{##1}]~\\}%
+  }{%
   \end{description}%
 }
 
-\begin{partDescription}{part:tut}{Urbi SDK Tutorial}
-\xitem{sec:tut:started}{Getting Started}
+\begin{partDescription}{part:tut}
+\item[sec:tut:started]
   Quick-install guide.
-\xitem{sec:tut:first}{First Steps}
+\item[sec:tut:first]
   First contact with \us.
-\xitem{sec:tut:value}{Basic objects, \us values model}
+\item[sec:tut:value]
   A quick introduction to objects and values.
-\xitem{sec:tut:flow}{Flow control constructs}
+\item[sec:tut:flow]
   Basic control flow: \lstinline{if}, \lstinline{for} and the like.
-\xitem{sec:tut:function}{Advanced functions and scoping}
+\item[sec:tut:function]
   Details about functions, scoped, and lexical closures.
-\xitem{sec:tut:object}{Objective programming, \us object model}
+\item[sec:tut:object]
   A more in-depth introduction to object-oriented programming in \us.
-\xitem{sec:tut:functional}{Function programming}
+\item[sec:tut:functional]
   Functions are first-class citizens.
-\xitem{sec:tut:concurrent}{Parallelism, concurrent flows control}
+\item[sec:tut:concurrent]
   The \us operators for concurrency, tags.
-\xitem{sec:tut:event-prog}{Event-based programming}
+\item[sec:tut:event-prog]
   Support for event-driven concurrency in \us.
 \end{partDescription}
 
-\begin{partDescription}{part:uobject}{The Middleware Architecture: UObjects}
-\xitem{sec:uob:api}{The UObject API}
+\begin{partDescription}{part:uobject}
+\item[sec:uob:api]
   Buildding simple UObjects.
-\xitem{sec:uob:uses}{Use cases}
+\item[sec:uob:uses]
   Interfacing a servomotor device as an example on how to use the
   UObject architecture as a middleware.
 \end{partDescription}
 
-\begin{partDescription}{part:install}{Installation}
-\xitem{sec:installation}{Installation}
+\begin{partDescription}{part:install}
+\item[sec:installation]
   Complete instructions on how to install \urbi SDK.
 \end{partDescription}
 
-\begin{partDescription}{part:guide}{Guidelines and Cook Books}
-\xitem{sec:faq}{Frequently Asked Questions}
+\begin{partDescription}{part:guide}
+\item[sec:faq]
   Some answers to common questions.
 \end{partDescription}
 
-\begin{partDescription}{part:specs}{Urbi SDK Specifications}
-\xitem{sec:tools}{Tools specifications}%
+\begin{partDescription}{part:specs}
+\item[sec:tools]
   Presentation and usage of the different tools available with the
   \urbi framework related to \us, such as the \urbi server, the
   command line client, \umake, \ldots
 
-\xitem{sec:lang}{\us language specifications}%
+\item[sec:lang]
   Core constructs of the language and their behavior.
 
-\xitem{sec:stdlib}{\us standard library specifications}%
+\item[sec:stdlib]
   Listing of all classes and methods provided in the standard library.
 
-\xitem{sec:naming}{\urbi Ready Certification Standard}%
+\item[sec:naming]
   Also known as ``The \urbi Naming Standard'': naming conventions in
   for standard hardware/software devices and components implemented as
   UObject and the corresponding slots/events to access them.
 
-%\xitem{sec:sdk}{\urbi \sdk specifications}%
+%\item[sec:sdk]
 %  The \urbi software development kit that enable to
 %  interact with \urbi from \Cxx.
 \end{partDescription}
 
-\begin{partDescription}{part:platforms}{Urbi Platforms}
-\xitem{sec:nao}{Nao}%
+\begin{partDescription}{part:platforms}
+\item[sec:nao]
   Programming Aldebaran's Nao using \urbi.
+
+\item[sec:webots] Using Cyberbotics' Webots simulation environment
+  with \urbi.
 \end{partDescription}
 
-%\begin{partDescrption}{part:ref}{References and Index}
+%\begin{partDescrption}{part:ref}
 %\end{partDescrption}
 
 
