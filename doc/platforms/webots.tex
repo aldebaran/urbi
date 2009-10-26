@@ -176,7 +176,7 @@ on it.  You obtain two folders: \file{usr} and \file{webots}.  Copy
 the contents of the \file{webots} directory in the directory
 containing Webots installation (if you did the default installation it
 is in \file{/Applications/Webots}), and copy the contents of the
-\dir{usr} folder in the \file{/usr} system folder.
+\file{usr} folder in the \file{/usr} system folder.
 
 Let say you extracted the zip file in your \file{Desktop} folder, and
 that you set the variable \env{WEBOTS\_HOME} to the Webots
@@ -203,11 +203,9 @@ version during this amount of time. When you launch Webots and \urbi
 without a valid license file you can see a message in Webots log that
 tells you that the license is invalid or missing:
 
-
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/no-license-webots-log-msg.jpg}{{\centering \imgevalsize{images/no-license-webots-log-msg.jpg}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/no-license-webots-log-msg.jpg}}}}{}\end{center}
-%\end{minipage}
+\begin{center}
+  \includegraphics{img/webots/no-license-webots-log-msg}
+\end{center}
 
 
 \subsection{License setup}
@@ -276,28 +274,23 @@ This section describes basic use of the \urbi engine for Webots.
 
 We provide a set of example worlds with several robots you will be
 able to control through \urbi. They are located in the directory:
-\nolinkurl{WEBOTS_DIRECTORY/projects/packages/urbi/worlds/ }.  Open
-the world named \nolinkurl{aibo_ers7_urbi_soccer.wbt}. The image
-bellow is a screenshot of this world. You can see an aibo in a soccer
-field, with a pink ball in front of it.
+\file{WEBOTS\_DIRECTORY/projects/packages/urbi/worlds/}.  Open the
+world named \file{aibo\_ers7\_urbi\_soccer.wbt}. The image bellow is a
+screenshot of this world. You can see an aibo in a soccer field, with
+a pink ball in front of it.
 
 
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/webots-aibo-soccer.jpg}{{\centering \imgevalsize{images/webots-aibo-soccer.jpg}{\includegraphics[width=600pt,keepaspectratio=true]{images/webots-aibo-soccer.jpg}}}}{}\end{center}
-%\end{minipage}
-
+\begin{center}
+  \includegraphics[width=\linewidth]{img/webots/aibo-soccer}
+\end{center}
 
 If you look in Webots scene tree, you will see that the aibo (real
 name is ERS7) is a CustomRobot node, and that it uses urbi as
 controller.
 
-
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/webots-scene-tree.jpg}{{\centering \imgevalsize{images/webots-scene-tree.jpg}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/webots-scene-tree.jpg}}}}{}\end{center}
-%\end{minipage}
-
+\begin{center}
+  \includegraphics[width=.8\linewidth]{img/webots/scene-tree}
+\end{center}
 
 Let's see how this controller let you control the robot.
 
@@ -319,7 +312,7 @@ controller start up.
 In order to connect to the \urbi controller and then send commands, you
 need to use a client software that allows you to connect on some
 address on the network and let you send data through this connection.
-The simplest program which do this is the \textbf{telnet} program,
+The simplest program which do this is the \command{telnet} program,
 available on all platform (Windows, Linux and MacOs). You can also use
 one of the program available at Urbiforge (http://www.urbiforge.com)
 in the Tool section.  The \urbi controller launched with the
@@ -335,83 +328,65 @@ specify the address of your computer ('localhost') and the right port
 \subparagraph{Windows}
 \label{webots.firstrun.clientsoftware.telnet.windows}%
 
-To launch \textbf{telnet} under windows click on the start menu, and
+To launch \command{telnet} under windows click on the start menu, and
 then on run.
 
+\begin{center}
+  \includegraphics[scale=.6]{img/webots/click-run-windows}
+\end{center}
 
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/click-run-windows.gif}{{\centering \imgevalsize{images/click-run-windows.gif}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/click-run-windows.gif}}}}{}\end{center}
-%\end{minipage}
+Type \command{cmd} and click OK. This will launch a dos command prompt.
 
+\begin{center}
+  \includegraphics{img/webots/run-cmd-windows}
+\end{center}
 
-Type \textbf{cmd} and click OK. This will launch a dos command prompt.
+In the dos command prompt type \samp{telnet localhost 54000}.
 
+\begin{center}
+  \includegraphics[width=.8\linewidth]{img/webots/telnet-windows}
+\end{center}
 
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/run-cmd-windows.png}{{\centering \imgevalsize{images/run-cmd-windows.png}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/run-cmd-windows.png}}}}{}\end{center}
-%\end{minipage}
+This launchs \command{telnet}. It connects to the \urbi controller,
+and the \urbi controller sends you the \urbi banner. On windows the
+text is badly displayed because of some character conversion
+problem. It is still usable even if it is not really convenient.
 
-
-In the dos command prompt type \textbf{telnet localhost 54000}.
-
-
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/telnet-windows.PNG}{{\centering \imgevalsize{images/telnet-windows.PNG}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/telnet-windows.PNG}}}}{}\end{center}
-%\end{minipage}
-
-
-This launch telnet. It connect to the \urbi controller, and the \urbi
-controller send you the \urbi header (the lines that display on the
-screen). On windows the text is badly displayed because of some
-character conversion problem. It is still usable even if it is not
-really convenient.
-
-
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/telnet-urbi-windows.PNG}{{\centering \imgevalsize{images/telnet-urbi-windows.PNG}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/telnet-urbi-windows.PNG}}}}{}\end{center}
-%\end{minipage}
-
+\begin{center}
+  \includegraphics[width=.8\linewidth]{img/webots/telnet-urbi-windows}
+\end{center}
 
 \subparagraph{Linux and MacOs}
 \label{webots.firstrun.clientsoftware.telnet.linuxandmacos}%
 
-Open a new shell and type \textbf{telnet localhost 54000}.  This
-launch telnet. It connect to the \urbi controller, and the \urbi
-controller send you the Urbi header.
+Open a new shell and type \command{telnet localhost 54000}.  This
+launch \command{telnet}. It connects to the \urbi controller, and the
+\urbi controller send you the \urbi banner.
 
-
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/telnet-urbi-linux.jpg}{{\centering \imgevalsize{images/telnet-urbi-linux.jpg}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/telnet-urbi-linux.jpg}}}}{}\end{center}
-%\end{minipage}
-
+\begin{center}
+  \includegraphics[width=.8\linewidth]{img/webots/telnet-urbi-linux}
+\end{center}
 
 \subparagraph{Use telnet to send commands}
 \label{webots.firstrun.clientsoftware.telnet.usetelnet}%
 
 Now that you are connected to the \urbi controller, you can send
-command to it and makes your robot move and interact with it's
+commands to it and make your robot move and interact with its
 environment. For example try typing the following commands in
-\textbf{telnet}:
+\command{telnet}:
 
 \begin{urbifixme}
 headPan = 50 time: 5s;
 headPan = -50 time: 5s;
 headPan = 0 time: 5s;
 \end{urbifixme}
+
 And you will see the head of the aibo move left, right, and then to
 the center.
 
-
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/telnet-some-urbi-cmd.jpg}{{\centering \imgevalsize{images/telnet-some-urbi-cmd.jpg}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/telnet-some-urbi-cmd.jpg}}}}{}\end{center}
-%\end{minipage}
-
+\begin{center}
+  \includegraphics[width=.8\linewidth]{img/webots/telnet-some-urbi-cmd}
+\end{center}
 
 \subsubsection{Load \urbi programs at controller start}
 \label{webots.firstrun.loadprograms}%
@@ -419,18 +394,18 @@ the center.
 \paragraph{By adding the file as argument of the \urbi controller}
 \label{webots.firstrun.loadprograms.cmd_line}%
 
-It is possible to write some \urbi script and load it at controller
-startup.  To do this just write \urbi code in some file, and then
-specify it's path in the controllerArgs webots node.  For example
-create a new text file, rename it test.u and write in it:
-
+It is possible to write some \us program and load it at controller
+startup.  To do this just write \us code in some file, and then
+specify its path in the \code{controllerArgs} webots node.  For
+example create a new text file \file{test.u} and write in it:
 
 \begin{urbifixme}
 robot.sit (),
 \end{urbifixme}
 
-Then edit the webots world aibo\_ers7\_urbi\_soccer.wbt, and add the
-path of your file test.u on the line of the controllerArgs node.
+Then edit the webots world \file{aibo\_ers7\_urbi\_soccer.wbt}, and
+add the path of your file \file{test.u} on the line of the
+\code{controllerArgs} node.
 
 
 \begin{shell}
@@ -439,62 +414,41 @@ controllerArgs "-f -p 54000 32 [HERE ADD YOUR SCRIPT FILES]"
 
 For exemple let say that you created your file in
 \begin{itemize}
-
-\item C:/Program Files/webots/projects/packages/urbi/data/aibo/ (under
-  Windows)
-
-
-
-\item /Applications/webots/projects/packages/urbi/data/aibo/ (under
-  Macos)
-
-
-
-\item /usr/local/webots/projects/packages/urbi/data/aibo/ (under
-  Linux)
-
-
+\item \file{C:/Program Files/webots/projects/packages/urbi/data/aibo/}
+  (under Windows)
+\item \file{/Applications/webots/projects/packages/urbi/data/aibo/}
+  (under Macos)
+\item \file{/usr/local/webots/projects/packages/urbi/data/aibo/}
+  (under Linux)
 \end{itemize}
-        Then you can specify the path to your file in a absolute form:
- \begin{itemize}
 
-\item   C:/Program Files/webots/projects/packages/urbi/data/aibo/test.u (under Windows)
-
-
-
-\item   /Applications/webots/projects/packages/urbi/data/aibo/test.u (under Macos)
-
-
-
-\item   /usr/local/webots/projects/packages/urbi/data/aibo/test.u (under Linux)
-
-
+Then you can specify the path to your file in a absolute form:
+\begin{itemize}
+\item \file{C:/Program Files/webots/projects/packages/urbi/data/aibo/test.u}
+  (under Windows)
+\item \file{/Applications/webots/projects/packages/urbi/data/aibo/test.u}
+  (under Macos)
+\item \file{/usr/local/webots/projects/packages/urbi/data/aibo/test.u}
+  (under Linux)
 \end{itemize}
-       Or you can specify it's path relativelly to the Urbi controller location.
-      Let say that you are using the Urbi controller located here:
- \begin{itemize}
 
-\item   C:/Program Files/webots/projects/default/controllers/urbi/urbi (under Windows)
-
-
-
-\item   /Applications/webots/projects/default/controllers/urbi/urbi (under Macos)
-
-
-
-\item   /usr/local/webots/projects/default/controllers/urbi/urbi (under Linux).
-
-
+Or you can specify its path relativelly to the \urbi controller
+location.  Let say that you are using the \urbi controller located
+here:
+\begin{itemize}
+\item \file{C:/Program Files/webots/projects/default/controllers/urbi/urbi}
+  (under Windows)
+\item
+  \file{/Applications/webots/projects/default/controllers/urbi/urbi}
+  (under Macos)
+\item \file{/usr/local/webots/projects/default/controllers/urbi/urbi}
+  (under Linux).
 \end{itemize}
-       Then the path to your file relatively to the Urbi controller is:
- \begin{itemize}
 
-\item   ../../../packages/urbi/data/aibo/test.u (under Windows|Linux|Macos)
-
-
-\end{itemize}
-         Add this path to the controllerArgs line and it gives:
-
+Then the path to your file relatively to the Urbi controller is:
+\file{../../../packages/urbi/data/aibo/test.u} (under
+Windows|Linux|Macos).  Add this path to the controllerArgs line and it
+gives:
 
 \begin{shell}
 # Under Windows, absolute path version:
@@ -516,41 +470,35 @@ NB: If you have some spaces in your file path, you have to add
 backslashed double quotes in order to have webots and Urbi understand
 the path correctly.
 
-
 Now when you launch Webots and you open the world
-aibo\_ers7\_urbi\_soccer.wbt you can verify that the controllerArgs
-was correctly updated.
+\file{aibo\_ers7\_urbi\_soccer.wbt} you can check that the
+\code{controllerArgs} was correctly updated.
 
-
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/webots-scene-tree-add-loaded-file.jpg}{{\centering \imgevalsize{images/webots-scene-tree-add-loaded-file.jpg}{\includegraphics[width=\imgwidth,height=\imgheight,keepaspectratio=true]{images/webots-scene-tree-add-loaded-file.jpg}}}}{}\end{center}
-%\end{minipage}
-
+\begin{center}
+  \includegraphics[width=.8\linewidth]{img/webots/scene-tree-add-loaded-file}
+\end{center}
 
 And if you look at the world view, you can see that the controller has
 executed the \urbi code you specified: the aibo has sat.
 
+\begin{center}
+  \includegraphics[width=.8\linewidth]{img/webots/aibo-sat}
+\end{center}
 
-%\begin{minipage}[c]{\linewidth}
-%\begin{center}
-%\imgexists{images/webots-aibo-sat.jpg}{{\centering \imgevalsize{images/webots-aibo-sat.jpg}{\includegraphics[width=400pt,keepaspectratio=true]{images/webots-aibo-sat.jpg}}}}{}\end{center}
-%\end{minipage}
 
 
 \paragraph{By loading the file in \urbi.ini}
 \label{webots.firstrun.loadprograms.inurbiinifile}
 
-By default, we don't specify files on the Webots controllerArg
-line. We specify directories.  At startup, the \urbi controller will go
-through these directories and try to find a file named
-\nolinkurl{\urbi.ini}. This is a special file containing \urbi code
+By default, we don't specify files on the Webots \code{controllerArg}
+line. We specify directories.  At startup, the \urbi controller will
+go through these directories and try to find a file named
+\file{urbi.ini}. This is a special file containing \us code
 which is always loaded at start up by the \urbi controller. So another
 way to load your custom \urbi code at start up is to use the command
-'load'.  Take the \nolinkurl{test.u} file we created in the previous
-section and move it to the folder containing the \nolinkurl{\urbi.ini}
-file. Then open \nolinkurl{\urbi.ini} and add at the end of the file:
-
+\lstinline|load|.  Take the \file{test.u} file we created in the previous
+section and move it to the folder containing the \file{urbi.ini}
+file. Then open \file{urbi.ini} and add at the end of the file:
 
 \begin{urbifixme}
 load ("test.u");
@@ -559,9 +507,6 @@ Now launch Webots and open the world using the \urbi controller loading
 the \urbi.ini you just updated, and you will see that your code has
 been loaded too.
 
-% -------
-% Chapter
-% -------
 
 \section{Built-{}in robots and worlds}
 \label{webots.builtin}%
