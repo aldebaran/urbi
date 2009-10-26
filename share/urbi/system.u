@@ -133,6 +133,39 @@ do (System)
     callMessage(call)
   };
 
+  systemFiles->updateHook = function(slot, value)
+  {
+    setSystemFiles(value) |
+    void
+  };
+  var loadFile_ = getSlot("loadFile");
+  var defaultIsSystem = true;
+  loadFile = function(file, isSystem = defaultIsSystem)
+  {
+    loadFile_(file) |
+    if (isSystem)
+    {
+      addSystemFile(file.asString)
+    }
+  };
+  addSystemFile("urbi/urbi.u");
+  addSystemFile(searchFile("urbi/urbi.u").asString);
+  addSystemFile(searchFile("urbi/system.u").asString);
+
+  [
+    "ast/factory.cc",
+    "ast/parametric-ast.cc",
+    "ast/parametric-ast.hh",
+    "ast/parametric-ast.hxx",
+    "binder/binder.cc",
+    "flower/flower.cc",
+    "object/code.cc",
+    "parser/ugrammar.y",
+    "rewrite/desugarer.cc",
+    "rewrite/pattern-binder.cc",
+    "rewrite/rescoper.cc"
+  ].each(getSlot("addSystemFile"));
+
   /// Look for file and load it.
   // Throw on errors.
   function load(file)

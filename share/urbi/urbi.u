@@ -91,6 +91,7 @@ function help()
 // This variable is used by initialization code to detect the end of
 // urbi.u.
 topLevel.enabled = true |
+System.defaultIsSystem = false |
 var Object.loaded = 1 |;
 
 // Load URBI.INI outside initialization phase.

@@ -6,7 +6,7 @@ do (Global.Dictionary)
   function init
   {
     if (call.argsCount % 2)
-      throw PrimitiveError.new("init",
+    throw PrimitiveError.new("new",
                                "Dictionary constructor must be given " +
 			       "an even number of arguments") |
     for| (var i = 0; i < call.argsCount; i += 2)

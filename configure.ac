@@ -139,6 +139,9 @@ AC_CONFIG_SUBDIRS([sdk-remote])
 ## Output.  ##
 ## -------- ##
 
+AC_DEFINE_UNQUOTED([SRCDIR], ["$srcdir"],
+  [Define to the path from build to source tree.])
+
 URBI_TESTS
 AC_SUBST([UOBJECT_PATH], ['$(abs_top_builddir)/sdk-remote/src/uobjects'])
 

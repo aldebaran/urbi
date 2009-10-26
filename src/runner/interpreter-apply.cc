@@ -25,6 +25,7 @@
 #include <ast/transformer.hh>
 
 #include <object/symbols.hh>
+#include <object/system.hh>
 
 #include <urbi/object/code.hh>
 #include <urbi/object/global.hh>
@@ -149,7 +150,8 @@ namespace runner
     precondition(!args.empty());
     precondition(args.front());
 
-    bool reg = !msg.empty();
+    bool reg = !msg.empty() && loc && !object::is_system_location(*loc);
+
     if (reg)
       call_stack_.push_back(std::make_pair(msg, loc));
     FINALLY(((call_stack_type&, call_stack_))((bool, reg)),

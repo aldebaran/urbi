@@ -43,6 +43,13 @@ namespace urbi
 
     /// Initialize the System class.
     void system_class_initialize();
+
+  /// Return true if location is from a system file.
+  bool is_system_location(const ast::loc& l);
+
+  typedef std::set<libport::Symbol> system_files_type;
+  /// Return the list of loaded system files.
+  system_files_type& system_files_get();
   }; // namespace object
 }
 

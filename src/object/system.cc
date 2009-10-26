@@ -480,6 +480,40 @@ namespace urbi
       }
     }
 
+  static system_files_type system_files_;
+
+  static void
+  system_addSystemFile(const rObject&, libport::Symbol name)
+  {
+    system_files_.insert(name);
+  }
+
+  static void
+  system_setSystemFiles(const rObject&, std::vector<libport::Symbol> names)
+  {
+    system_files_.clear();
+    system_files_.insert(names.begin(), names.end());
+  }
+
+  static std::vector<libport::Symbol>
+  system_systemFiles(const rObject&)
+  {
+    return std::vector<libport::Symbol>(system_files_.begin(),
+                                      system_files_.end());
+  }
+
+  system_files_type&
+  system_files_get()
+  {
+    return system_files_;
+  }
+
+  bool
+  is_system_location(const ast::loc& l)
+  {
+    return l.begin.filename && libport::mhas(system_files_, *l.begin.filename);
+  }
+
     void
     system_class_initialize()
     {
@@ -523,6 +557,9 @@ namespace urbi
       DECLARE(time);
       DECLARE(unsetenv);
 
+    DECLARE(addSystemFile);
+    DECLARE(setSystemFiles);
+    DECLARE(systemFiles);
 #undef DECLARE
     }
 

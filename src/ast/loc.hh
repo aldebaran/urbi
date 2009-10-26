@@ -19,8 +19,11 @@
 
 # include <parser/location.hh>
 
+# include <kernel/config.h>
+
 # define LOCATION_HERE					\
-  ::ast::loc(new libport::Symbol(__FILE__), __LINE__)
+  ::ast::loc(new libport::Symbol(__FILE__ + sizeof("../" SRCDIR "/src/") - 1), \
+             __LINE__)
 
 namespace ast
 {

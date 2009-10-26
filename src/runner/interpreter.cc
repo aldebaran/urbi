@@ -34,6 +34,7 @@
 
 #include <object/symbols.hh>
 #include <object/urbi-exception.hh>
+#include <object/system.hh>
 
 #include <parser/uparser.hh>
 
@@ -322,9 +323,22 @@ namespace runner
     if (is_a(exn, Exception))
     {
       assert(innermost_node_);
+      const ast::loc* l = 0;
+      if (object::is_system_location(innermost_node_->location_get()))
+      {
+        rforeach(const call_type& c, call_stack_get())
+          if (c.second)
+          {
+            l = &*c.second;
+            break;
+          }
+      }
+      else
+        l = &innermost_node_->location_get();
+      if (l)
       exn->slot_update
         (SYMBOL(location),
-         new object::String(string_cast(innermost_node_->location_get())));
+         new object::String(string_cast(*l)));
       exn->slot_update
         (SYMBOL(backtrace),
          as_task()->as<object::Task>()->backtrace());
