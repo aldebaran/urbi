@@ -166,19 +166,16 @@ namespace urbi
     std::istringstream hs(message);
 
     // Parse the optional type.  Don't check hs.fail, since the type
-    // hs optional, in which case t remains empty.
+    // is optional, in which case t remains empty.
     std::string t;
     hs >> t;
-    if (t == "jpeg" || t == "YCbCr" || t == "rgb" || t.find("image_")==0)
+    UImageFormat image_format = parse_image_format(t);
+    if (image_format != IMAGE_UNKNOWN || t.find("image_")==0)
     {
       type = BINARY_IMAGE;
       image.size = common.size;
       hs >> image.width >> image.height;
-      image.imageFormat =
-        t == "jpeg" ? IMAGE_JPEG
-        : t == "YCbCr" ? IMAGE_YCbCr
-        : t == "rgb" ? IMAGE_RGB
-        : IMAGE_UNKNOWN;
+      image.imageFormat = image_format;
     }
     else if (t == "raw" || t == "wav")
     {

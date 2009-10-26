@@ -24,28 +24,33 @@ namespace urbi
     return res;
   }
 
+  static const char* formats[] = {
+      "rgb",
+      "YCbCr",
+      "jpeg",
+      "ppm",
+      "YUV422",
+      "grey8",
+      "grey4",
+      "image_unknown",
+      ""
+    };
+
   const char*
   UImage::format_string() const
   {
-    switch (imageFormat)
-    {
-    case IMAGE_RGB:
-      return "rgb";
-    case IMAGE_JPEG:
-      return "jpeg";
-    case IMAGE_YCbCr:
-      return "YCbCr";
-    case IMAGE_PPM:
-      return "ppm";
-    case IMAGE_UNKNOWN:
+    int f = static_cast<int>(imageFormat);
+    if (f<=0 || f> IMAGE_UNKNOWN)
       return "image_unknown";
-    }
-    // To pacify "warning: control reaches end of non-void function".
-    // pabort(imageFormat);
-    // FIXME: This should not abort. UImage should be initialized with IMAGE_UKNOWN.
-    //        This is not done because data is stored in an union in UBinary and
-    //        union members cannot have constructors.
-    return "image_unknown";
+    return formats[f-1];
   }
 
+  UImageFormat
+  parse_image_format(const std::string& s)
+  {
+    for (unsigned i = 0; formats[i][0]; ++i)
+      if (s == formats[i])
+        return static_cast<UImageFormat>(i+1);
+    return IMAGE_UNKNOWN;
+  }
 } // namespace urbi

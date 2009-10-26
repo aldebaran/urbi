@@ -402,7 +402,8 @@ namespace urbi
     if (dest.height == 0)
       dest.height = src.height;
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
-    void* uncompressedData = malloc(src.width * src.height * 3);
+    bool allocated = false; // true if uncompressedData must be freed
+    unsigned char* uncompressedData = 0;
     size_t usz = src.width * src.height * 3;
     int format = 42; //0 rgb 1 ycbcr
     int targetformat = 42; //0 rgb 1 ycbcr 2 compressed
@@ -419,32 +420,36 @@ namespace urbi
       case IMAGE_JPEG:
 	targetformat = -1;
 	break;
-      case IMAGE_UNKNOWN:
-	break;
+      default:
+         printf("Image conversion to format %s is not implemented\n",
+               dest.format_string());
+        return 0;
     }
-    int p = 0;
+    unsigned p = 0;
     int c = 0;
     switch (src.imageFormat)
     {
       case IMAGE_YCbCr:
 	format = 1;
-	memcpy(uncompressedData, src.data, src.width * src.height * 3);
+        uncompressedData = src.data;
 	break;
       case IMAGE_RGB:
 	format = 0;
-	memcpy(uncompressedData, src.data, src.width * src.height * 3);
+        uncompressedData = src.data;
 	break;
       case IMAGE_PPM:
 	format = 0;
 	//locate header end
 	p = 0;
 	c = 0;
-	while (c < 3)
+	while (c < 3 && p < src.size)
 	  if (src.data[p++] == '\n')
 	    ++c;
-	memcpy(src.data + p, uncompressedData, src.width * src.height * 3);
+	uncompressedData = src.data + p;
 	break;
       case IMAGE_JPEG:
+        uncompressedData = (unsigned char*)malloc(src.width * src.height * 3);
+        allocated = true;
 	if (targetformat == 1)
 	{
 	  convertJPEGtoRGB((byte*) src.data, src.size,
@@ -458,6 +463,38 @@ namespace urbi
 	  format = 1;
 	}
 	break;
+      case IMAGE_YUV422:
+        format = 1;
+        uncompressedData = (unsigned char*)malloc(src.width * src.height * 3);
+        allocated = true;
+        for (unsigned i=0; i< src.width*src.height; i+=2)
+        {
+          uncompressedData[i*3] = src.data[i*2];
+          uncompressedData[i*3 + 1] = src.data[i*2+1];
+          uncompressedData[i*3 + 2] = src.data[i*2+3];
+          uncompressedData[(i+1)*3] = src.data[i*2+2];
+          uncompressedData[(i+1)*3 + 1] = src.data[i*2+1];
+          uncompressedData[(i+1)*3 + 2] = src.data[i*2+3];
+        }
+        break;
+      case IMAGE_GREY8:
+        format = 1;
+        uncompressedData = (unsigned char*)malloc(src.width * src.height * 3);
+        allocated = true;
+        memset(uncompressedData, 127, src.width * src.height * 3);
+        for (unsigned i=0; i< src.width*src.height; ++i)
+          uncompressedData[i*3] = src.data[i];
+        break;
+      case IMAGE_GREY4:
+        format = 1;
+        uncompressedData = (unsigned char*)malloc(src.width * src.height * 3);
+        allocated = true;
+        memset(uncompressedData, 127, src.width * src.height * 3);
+        for (unsigned i=0; i< src.width*src.height; i+=2)
+        {
+          uncompressedData[i*3] = src.data[i/2] & 0xF0;
+          uncompressedData[(i+1)*3] = (src.data[i/2] & 0x0F) << 4;
+        }
       case IMAGE_UNKNOWN:
 	break;
     }
@@ -466,13 +503,15 @@ namespace urbi
     if (src.width != dest.width || src.height != dest.height)
     {
       void* scaled = malloc(dest.width * dest.height * 3);
-      scaleColorImage((unsigned char*) uncompressedData, src.width,
+      scaleColorImage(uncompressedData, src.width,
 		      src.height, src.width/2, src.height/2,
 		      (unsigned char*) scaled, dest.width, dest.height,
 		      (float) dest.width / (float) src.width,
 		      (float) dest.height / (float) src.height);
-      free(uncompressedData);
-      uncompressedData = scaled;
+      if (allocated)
+        free(uncompressedData);
+      uncompressedData = (unsigned char*)scaled;
+      allocated = true;
     }
 
     //then convert to destination format
@@ -516,16 +555,13 @@ namespace urbi
 			   dest.width , dest.height,
 			   (byte*) dest.data, dsz, 90);
 
-	//fprintf(stderr,
-	//	"unsupported conversion requested: can't compress to jpeg\n");
-	free(uncompressedData);
-	return 1;
 	break;
-      case IMAGE_UNKNOWN:
-	break;
+      default:
+        printf("Image conversion to format %s is not implemented\n",
+               dest.format_string());
     }
-
-    free(uncompressedData);
+    if (allocated)
+      free(uncompressedData);
     return 1;
   }
 
