@@ -101,7 +101,7 @@ namespace urbi
 
       protected:
 
-      class Initializer
+      class URBI_SDK_API Initializer
       {
       public:
         Initializer(rObject& tgt);
