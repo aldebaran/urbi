@@ -137,8 +137,7 @@ activate.
   \item \lstinline|0| raw RGB.
   \item \lstinline|1| raw YUV.
   \item \lstinline|2| JPEG.
-  \item \lstinline|3| I420: 1 byte/pixel, 4bit Y, 2bit U, 2bit V.
-  \item \lstinline|4| YUV844i:  2 bytes/pixel interlaced.
+  \item \lstinline|4| YUV422:  YUYV, 2 bytes/pixel.
   \item \lstinline|5| Grey8: grey image, 1 byte/pixel.
   \item \lstinline|6| Grey4: grey image 4 bits/pixel.
   \end{itemize}
@@ -163,7 +162,10 @@ activate.
 
 The camera object uses an optimization minimising the number of copies of the
 image buffer. As a consequence, the image can only be accessed from \us and
-UObject notifyChange callbacks.
+UObject notifyChange callbacks. If you need to access the camera image by
+typing \lstinline|camera.val|, you can disable this optimization by typing
+\lstinline|showCam();|
+
 
 \section{Other sensors}
 
