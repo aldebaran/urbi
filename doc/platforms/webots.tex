@@ -1,3 +1,17 @@
+\newenvironment{attribute}[4]
+{
+  \item \lstinline|#1|
+    \begin{description}
+    \item[Permissions] #2.
+    \item[Type] #3.
+      \ifx#4\empty\else
+    \item[Range] #4.
+      \fi
+    \item[Description]
+}{
+    \end{description}
+}
+
 \chapter{Webots}
 \label{sec:webots}
 
@@ -823,24 +837,9 @@ controllerArgs [options] period [path1 path2 ...]
   device. Each Accelerometer UObject represent one of the component of
   the Webots Accelerometer device.  ``ComponentName'' can take 3
   values: ``x'', ``y'' or ``z''.
-
 \end{description}
 
 \paragraph{Attributes}
-
-\newenvironment{attribute}[4]
-{
-  \item \lstinline|#1|\\
-    \begin{description}
-    \item[Permissions] #2.
-    \item[Type] #3.
-      \ifx#4\empty\else
-    \item[Range] #4.
-      \fi
-    \item[Description]
-}{
-    \end{description}
-}
 
 \noindent
 \begin{itemize}
