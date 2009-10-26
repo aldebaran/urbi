@@ -227,19 +227,20 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   RETURN_OP(Token);
 
 // UnitLength is the number of letters used for the unit.
-#define RETURN_UNIT(Token, UnitLength, Scale)                           \
+#define RETURN_UNIT(Token, UnitLength, From, To)                        \
   {                                                                     \
     PRE_SKIP();                                                         \
     yytext[yyleng - UnitLength] = 0;                                    \
-    RETURN_VALUE(Token, boost::lexical_cast<ufloat>(yytext) * (Scale)); \
+    RETURN_VALUE(Token,                                                 \
+                 boost::lexical_cast<ufloat>(yytext) / (From) * (To));  \
   }
 
 
-#define RETURN_ANGLE(UnitLength, Scale)         \
-  RETURN_UNIT(ANGLE, UnitLength, Scale)
+#define RETURN_ANGLE(UnitLength, From, To)      \
+  RETURN_UNIT(ANGLE, UnitLength, From, To)
 
 #define RETURN_DURATION(UnitLength, Scale)      \
-  RETURN_UNIT(DURATION, UnitLength, Scale)
+  RETURN_UNIT(DURATION, UnitLength, 1, Scale)
 
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
@@ -475,9 +476,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NUMBER}"ms"  RETURN_DURATION(2, 0.001);
 
   /* Angles. */
-{NUMBER}"rad"   RETURN_ANGLE(3, 1);
-{NUMBER}"deg"   RETURN_ANGLE(3, M_PI / 180);
-{NUMBER}"grad"  RETURN_ANGLE(4, M_PI / 200);
+{NUMBER}"rad"   RETURN_ANGLE(3,   1,    1);
+{NUMBER}"deg"   RETURN_ANGLE(3, 180, M_PI);
+{NUMBER}"grad"  RETURN_ANGLE(4, 200, M_PI);
 
 {HEXA}        RETURN_VALUE(FLOAT, strtoll(yytext + 2, 0, 16));
 {NATURAL}     |
