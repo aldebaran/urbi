@@ -58,11 +58,11 @@ default root is \file{/usr/local/gostai}.  The directory
 
 If your \var{urbi-root} is not \file{/usr/local/gostai}, you will need
 some adjustments.  Define the environment variable \index{urbi
-  root@\code{URBI\_ROOT}}\emphdfn{\code{URBI\_ROOT}} to point to
+  root@\env{URBI\_ROOT}}\emphdfn{\env{URBI\_ROOT}} to point to
 \var{urbi-root}, and adjust the library\footnote{%
 %%
-  Mac OS X users need to extend \code{DYLD\_LIBRARY\_PATH}, not
-  \code{LD\_LIBRARY\_PATH}.
+  Mac OS X users need to extend \env{DYLD\_LIBRARY\_PATH}, not
+  \env{LD\_LIBRARY\_PATH}.
 %%
 } and executable paths.
 
@@ -106,17 +106,17 @@ package. It should open a terminal with an interactive Urbi session.
 
 % FIXME: add a listing with the urbi banner under windows?
 
-\section{\code{URBI\_PATH}}
+\section{\env{URBI\_PATH}}
 
-The environment variable \code{URBI\_ROOT} is used to locate the \us
+The environment variable \env{URBI\_ROOT} is used to locate the \us
 standard files.  You may extend the search path so that your own Urbi
 files can be found easily.  This is the role of the environment
-variable \index{urbi path@\code{URBI\_PATH}}\emphdfn{\code{URBI\_PATH}},
+variable \index{urbi path@\env{URBI\_PATH}}\emphdfn{\env{URBI\_PATH}},
 which contains a list of directory names separated by colons.
 
-Note \code{URBI\_PATH} is also designed to be able to \emph{override}
+Note \env{URBI\_PATH} is also designed to be able to \emph{override}
 the default standard files.  Use a lone colon to specify where the
-standard, \code{URBI\_ROOT}-based, search path must be inserted.  See
+standard, \env{URBI\_ROOT}-based, search path must be inserted.  See
 \autoref{sec:tools:envvars} for more details on the syntax.
 
 %%% Local Variables:
