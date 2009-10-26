@@ -722,29 +722,21 @@ the corresponding documentation to obtain more information.
 \subsection{Create from an existing world}
 \label{webots.own.create}%
 
-     As soon as you will want to go further, you will have to create your own
-    \urbi for Webots based controllers. Here is how to proceed:
+As soon as you will want to go further, you will have to create your
+own \urbi for Webots based controllers. Here is how to proceed:
 
 \begin{enumerate}
 
-\item      Create a new directory in your \nolinkurl{data} directory
-     (say \nolinkurl{foo}). This directory should be named as your
-     new robot.
+\item Create a new directory in your \file{data} directory (say
+  \file{foo}). This directory should be named as your new robot.
 
+\item Copy into your \file{foo} directory the content of the
+  \file{kiki} directory.
 
+\item Edit the \nolinkurl{kiki.ini} file and rename it into your
+  robot's name (i.e. \file{foo.ini} in this example).
 
-\item      Copy into your \nolinkurl{foo} directory the content
-     of the kiki directory.
-
-
-
-\item     Edit the \nolinkurl{kiki.ini} file and rename it into your
-    robot's name (i.e. \nolinkurl{foo.ini} in this example).
-
-
-
-\item     Edit the \nolinkurl{\urbi.INI} file and change the line:
-
+\item Edit the \file{URBI.INI} file and change the line:
 
 \begin{urbifixme}
 load("kiki.ini");
@@ -753,23 +745,18 @@ load("kiki.ini");
 by:
 
 \begin{urbifixme}
-load("foo.ini"); // The name should match with the file you've just renamed.
+// The name should match with the file you've just renamed.
+load("foo.ini");
 \end{urbifixme}
 
+\item Copy the kiki world file (\file{worlds/kiki\_urbi.wbt} should be
+  copied into \file{worlds/foo\_urbi.wbt} for example).
 
-
-
-\item Copy the kiki world file (\nolinkurl{worlds/kiki_urbi.wbt}
-  should be copied into \nolinkurl{worlds/foo_urbi.wbt} for example).
-
-
-  Edit your new world file and check that the field ControllerArgs
-  contains the directory you've just created. It should be, for
-  example: \texttt{-{}\-p 5\-4\-0\-0\-0 5\-0
-    .\-.\-/\-.\-.\-/\-.\-.\-/\-p\-a\-c\-k\-a\-g\-e\-s\-/\-u\-r\-b\-i\-/\-d\-a\-t\-a\-/\-f\-o\-o}.
-  The Controller field should keep its value to \texttt{u\-r\-b\-i}.
-
-
+  Edit your new world file and check that the field
+  \code{ControllerArgs} contains the directory you've just created. It
+  should be, for example: \samp{-p 54000 50
+    ../../../packages/urbi/data/foo}.  The Controller field should
+  keep its value to \command{urbi}.
 \end{enumerate}
 
 Your robot is now ready to be controlled by \urbi. During the next
@@ -779,13 +766,12 @@ part, you'll learn how to customize the robot you have created.
 \subsection{Customize}
 \label{webots.own.customize}%
 
-To handle each robots' specificities, Webots use a set of devices
-which is fully supported by \urbi for Webots. Those devices are created
-in a special file which is called like your robot in its data
-directory. With the previous example, it would have been the
-\nolinkurl{data/foo/foo.ini} file. This file should be like the
-following piece of code:
-
+To handle each robots' specificities, Webots uses a set of devices
+which is fully supported by \urbi for Webots. Those devices are
+created in a special file which is called like your robot in its data
+directory.  With the previous example, it would have been the
+\file{data/foo/foo.ini} file. This file should be like the following
+piece of code:
 
 \begin{urbifixme}
 system.name = "/gostai/webots/kiki";
@@ -813,24 +799,18 @@ group objects {software, hardware};
 The first line is your robot's name, you may edit this to any value.
 The second line must keep its value.
 
-
-After this, you need to create your robot's devices. It's very easy:
-you just have to follow the rule: \texttt{
-  d\-e\-v\-i\-c\-e\-n\-a\-m\-e = n\-e\-w
-  d\-e\-v\-i\-c\-e\-t\-y\-p\-e\-(\-"\-n\-a\-m\-e o\-f t\-h\-e
-  d\-e\-v\-i\-c\-e\-'\-s n\-o\-d\-e i\-n t\-h\-e w\-o\-r\-l\-d
-  f\-i\-l\-e\-"\-)\-;\- }
+After this, you need to create your robot's devices. It's simple,
+follow the rule: \texttt{\var{devicename} = new
+  \var{devicetype}("\var{name of the device's node in the world
+    file}"); }
 
 The node name can be retrieved easily from the Webots world tree
 editor.
 
-One exception is the
-\texttt{D\-i\-f\-f\-e\-r\-e\-n\-t\-i\-a\-l\-W\-h\-e\-e\-l} device.
-There is always two lines. The first has its second argument set to
-\texttt{t\-r\-u\-e} and will create the left wheel. The second with
-its second argument set to \texttt{f\-a\-l\-s\-e} create the right
-wheel.
-
+One exception is the \code{DifferentialWheel} device.  There are
+always two lines. The first has its second argument set to \code{true}
+and will create the left wheel. The second with its second argument
+set to \code{false} create the right wheel.
 
 The last step is editing the groups to add your new devices. The
 hardware group should contain all the devices your robot uses. You may
@@ -840,47 +820,35 @@ also create subgroup to ease robot's programming.
 \subsection{Urbi controller options}
 \label{webots.own.controlleroptions}%
 
- The Urbi controller can take several options which modify it's behaviour.
-You specify the controller options in the controllerArgs field of the Webots
-world (.wbt) files.
- The controllerArgs must be as follow:
+The Urbi controller can take several options which modify its
+behaviour.  You specify the controller options in the
+\code{controllerArgs} field of the Webots world (\file{.wbt}) files.
+The \code{controllerArgs} must be as follow:
 
 \begin{shell}
 controllerArgs [options] period [path1 path2 ...]
 \end{shell}
-\begin{itemize}
 
-\item period: base \urbi interval in milliseconds. You have to set the
+\begin{description}
+\item[period] base \urbi interval in milliseconds. You have to set the
   same period for the Urbi controller and for the Webots worlds. The
-  period in the webots world is defined in the field ``basicTimeStep''.
+  period in the webots world is defined in the field
+  \code{basicTimeStep}.
 
+\item[path] items are absolute or relative path elements searched in
+  order to find Urbi files when 'load' is called.
 
-\item [path ..] items are absolute or relative path elements searched
-  in order to find Urbi files when 'load' is called.
+\item[options]
+  \begin{options}
+  \item[-f] enable fast mode: the server will run as fast as possible
+    and emulate the period specified.  Don't set \option{-f} option
+    when there is ``runRealTime TRUE'' in the Webots world.  Always
+    set \option{-f} otherwise.
+  \item[-l \var{license\_key}] specify the license key to use
+  \item[-p \var{port}] specify the TCP port \urbi will listen to.
+  \end{options}
+\end{description}
 
-
-\item options:
-  \begin{itemize}
-
-  \item -{}f : enable fast mode: the server will run as fast as
-    possible and emulate the period specified.  Don't set -{}f option
-    when there is ``runRealTime TRUE'' in the Webots world.  Always set
-    -{}f otherwise.
-
-
-  \item -{}l license\_key : specify the license key to use
-
-
-  \item -{}p port : specify the tcp port \urbi will listen to.
-
-  \end{itemize}
-
-\end{itemize}
-
-
-% -------
-% Chapter
-% -------
 
 \section{Available UObjects}
 \label{webots.uobjects}%
