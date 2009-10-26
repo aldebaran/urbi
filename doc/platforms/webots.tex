@@ -131,36 +131,37 @@ Setup.exe'' and follow the instructions given by the installer:
 
 \subsubsection{Linux}
 
+In the following, \var{package} denotes the name of the \urbi for
+Webots package.
+
 \paragraph{RPM based distributions}
 
 Execute the following command:
 \begin{shell}
-$ rpm -hiv <package Urbi For Webots>.rpm
+$ rpm -hiv \var{package}.rpm
 \end{shell}
 
-\paragraph{Debian base distributions}
+\paragraph{Debian based distributions}
 
 Execute the following command:
 \begin{shell}
-$ sudo dpkg --install <package Urbi For Webots>.deb
+$ sudo dpkg --install \var{package}.deb
 \end{shell}%$
 
 Your software is installed, you'll now have to setup the license.
 
 
 \paragraph{Manual setup (from a tarball)}
-As root, with \var{package} being the name of the \urbi for Webots
-package:
+As root:
 
 \begin{shell}
 $ cd /
-$ tar -xvzf  \var{package}.tgz
+$ tar -xvzf \var{package}.tgz
 \end{shell}
 or
-
 \begin{shell}
 $ cd /
-$ tar -xvjf  \var{package}.bz2
+$ tar -xvjf \var{package}.bz2
 \end{shell}
 
 \subsubsection{MacOs}
@@ -175,10 +176,10 @@ containing Webots installation (if you did the default installation it
 is in \file{/Applications/Webots}), and copy the contents of the
 \file{usr} folder in the \file{/usr} system folder.
 
-Let say you extracted the zip file in your \file{Desktop} folder, and
-that you set the variable \env{WEBOTS\_HOME} to the Webots
-installation path as explained in Webots documentation.  From a shell
-terminal this gives you:
+If, for instance, you extracted the zip file in your \file{Desktop}
+folder, and that you have set the variable \env{WEBOTS\_HOME} to the
+Webots installation path as explained in Webots documentation.  From a
+shell terminal this gives you:
 
 \begin{shell}
 $ cd $HOME/Desktop
@@ -214,7 +215,7 @@ licensing system.  In Webots there are two licensing system available:
 \item an USB dongle.
 \end{itemize}
 
-\subsubsection{Urbi licensing with \file{webots.key} license}
+\subsubsection{Urbi licensing with webots.key license}
 
 To get an \urbi license using this type of licensing, please send us a
 copy of your \file{webots.key} license, we will generate the \urbi
