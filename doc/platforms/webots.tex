@@ -150,17 +150,18 @@ Your software is installed, you'll now have to setup the license.
 
 \paragraph{Manual setup (from a tarball)}
 \label{webots.setup.linux.tarball}%
-as root
+As root, with \var{package} being the name of the \urbi for Webots
+package:
 
 \begin{shell}
 $ cd /
-$ tar -xvzf  <package Urbi For Webots>.tgz
+$ tar -xvzf  \var{package}.tgz
 \end{shell}
 or
 
 \begin{shell}
 $ cd /
-$ tar -xvjf  <package Urbi For Webots>.tar.bz2
+$ tar -xvjf  \var{package}.bz2
 \end{shell}
 
 \subsubsection{MacOs}
@@ -169,26 +170,24 @@ $ tar -xvjf  <package Urbi For Webots>.tar.bz2
 \paragraph{Manual install}
 \label{webots.setup.macos.manual}%
 
-You have to be administrator on your machine in order to install
-UrbiForWebots.  Extract the zip file containing \urbi by double
-clicking on it.  You obtain two folders: \nolinkurl{usr} and
-\nolinkurl{webots}.  You have to copy the contains of the
-\nolinkurl{webots} directory in the directory containing Webots
-installation (if you did the default installation it is in
-\nolinkurl{/Applications/Webots}), and you have to copy the contains
-of the \nolinkurl{usr} folder in the \nolinkurl{/usr} system folder.
+You have to be administrator on your machine in order to install \urbi
+for Webots.  Extract the zip file containing \urbi by double clicking
+on it.  You obtain two folders: \file{usr} and \file{webots}.  Copy
+the contents of the \file{webots} directory in the directory
+containing Webots installation (if you did the default installation it
+is in \file{/Applications/Webots}), and copy the contents of the
+\dir{usr} folder in the \file{/usr} system folder.
 
-
-Let say you extracted the zip file in your \nolinkurl{Desktop} folder,
-and that you set the variable WEBOTS\_HOME to the Webots installations
-path as explained in Webots documentation.  From a shell terminal this
-gives you:
-
+Let say you extracted the zip file in your \file{Desktop} folder, and
+that you set the variable \env{WEBOTS\_HOME} to the Webots
+installation path as explained in Webots documentation.  From a shell
+terminal this gives you:
 
 \begin{shell}
 $ cd $HOME/Desktop
 $ ls
-usr webots webots-urbiengine-sdk-webots-1.03-k1462-e247-l482-powerpc-apple-darwin8-gcc-4.0.1.zip
+usr webots
+webots-urbiengine-sdk-webots-1.03-k1462-e247-l482-powerpc-apple-darwin8-gcc-4.0.1.zip
 $ cp -r usr /
 $ cp -r webots/* $WEBOTS_HOME/
 \end{shell}
@@ -196,11 +195,11 @@ $ cp -r webots/* $WEBOTS_HOME/
 \subsection{Evaluation mode}
 \label{webots.evaluation}%
 
-If you don't provide a valid license file to the urbi controller, it
-will be launched in evaluation mode. The only difference with the
-normal version is that the controller will exit after 5 minutes, thus
-letting you test all the feature we provide in the registered version
-during this small period of time. When you launch Webots and \urbi
+If you don't provide a valid license file to the \urbi controller, it
+will be launched in \dfn{evaluation mode}. The only difference with
+the normal version is that the controller will exit after five
+minutes, thus letting you test all the features of the registered
+version during this amount of time. When you launch Webots and \urbi
 without a valid license file you can see a message in Webots log that
 tells you that the license is invalid or missing:
 
@@ -215,38 +214,27 @@ tells you that the license is invalid or missing:
 \label{webots.license}%
 
 In order to run Urbi for Webots unlimitedly you must have a licence
-file .  The Urbi for Webots licensing system is based on the Webots
-licensing system.  In Webots you have two licensing system available:
+file.  The Urbi for Webots licensing system is based on the Webots
+licensing system.  In Webots there are two licensing system available:
 \begin{itemize}
-\item a license file ``webots.key'';
-\item an USB dongle;
+\item a license file \file{webots.key};
+\item an USB dongle.
 \end{itemize}
 
-
-\subsubsection{Urbi licensing with ``webots.key'' license}
+\subsubsection{Urbi licensing with \file{webots.key} license}
 \label{webots.license.webotskey}%
 
-To obtain an Urbi license if you use this type of licensing, please
-send us a copy of your webots.key license, we will generate the Urbi
+To get an \urbi license using this type of licensing, please send us a
+copy of your \file{webots.key} license, we will generate the \urbi
 license using this file.
 
-
-Once you have your ``urbi.key'' file, put the ``webots.key'' file in the
-folder:
-\begin{itemize}
-
-\item \nolinkurl{webots/ressources/}
-
-\end{itemize}
-(warning: it is mandatory to have a copy of the webots.key in this
-folder, if you don't have it, Urbi won't find the webots.key file and
-you will get a licensing error message) and place the ``urbi.key'' file
-in the same folder as the urbi controller. By default in
-\begin{itemize}
-
-\item \nolinkurl{webots/projects/default/controllers/urbi/}
-
-\end{itemize}
+Once you have your \file{urbi.key} file, put the \file{webots.key}
+file in the folder \file{webots/ressources/} (warning: it is mandatory
+to have a copy of the webots.key in this folder, if you don't have it,
+\urbi won't find the \file{webots.key} file and you will get a
+licensing error message) and place the \file{urbi.key} file in the
+same folder as the urbi controller. By default in
+\file{webots/projects/default/controllers/urbi/}.
 
 
 \subsubsection{Urbi licensing with USB dongle}
@@ -256,39 +244,32 @@ To obtain an Urbi license if you use this type of licensing, please
 send us your Webots USB dongle number (available in the help/about
 webots menu). We will then generate an Urbi license using this number.
 
-
-Install your ``urbi.key'' file in the same folder as the Urbi
+Install your \file{urbi.key} file in the same folder as the Urbi
 controller.  By default in
-\begin{itemize}
-
-\item  \nolinkurl{webots/projects/default/controllers/urbi/}
-
-\end{itemize}
-
+\file{webots/projects/default/controllers/urbi/}.
 
 \subsection{License problem}
 \label{webots.problem}%
 
 If you have a valid license but still get the licensing error message,
-verify that you have followed correctly the setup instructions. Note
-that you can specify the location of the urbi.key license to the Urbi
-controller, in the .wbt files, within the ``controllerArgs'' field. Just
-add ``-{}l'' and the absolute path of your license file to the field
-line. Exemple (with a license file urbi.key located in
-\nolinkurl{C:/mylicensefolder/})
+check that you have followed correctly the setup instructions. Note
+that you can specify the location of the \file{urbi.key} license to
+the Urbi controller, in the \file{.wbt} files, within the
+\code{controllerArgs} field. Just add \option{-l} and the absolute
+path of your license file to the field line. For instance (with a
+license file urbi.key located in \file{C:/mylicensefolder/})
 
 \begin{shell}
-controllerArgs "-f -l C:/mylicensefolder/urbi.key  -p 54000 32 "
+controllerArgs "-f -l C:/mylicensefolder/urbi.key  -p 54000 32"
 \end{shell}
-Contact us at Gostai if you still have some problems with the license,
-and we will resolve the problem with you.
 
+Contact Gostai if you still have some problems with the license, and
+we will resolve the problem with you.
 
 \subsection{Your first run}
 \label{webots.firstrun}%
 
 This section describes basic use of the \urbi engine for Webots.
-
 
 \subsubsection{\urbi worlds}
 \label{webots.firstrun.openworld}%
