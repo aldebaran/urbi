@@ -215,22 +215,17 @@ for instance.  They are listed in \autoref{tab:keywords}.
 followed by an angle unit. They are simply equivalent to the same
 float, expressed in radians. For instance, \lstinline|180deg| (180
 degrees) is equal to \lstinline|pi|. Available units and their
-equivalent are shown in \autoref{tab:durations}.
+equivalent are shown below.
 
-\begin{table}[\floatpos]
-  \centering
-  \begin{tabular}{|c|c|c|}
-    \hline
-    unit        & abbreviation & equivalence for $n$  \\
-    \hline
-    radian      & rad          & $n$         \\
-    degree      & deg          & $n / 180 * \pi$        \\
-    grad        & grad         & $n / 200 * \pi$        \\
-    \hline
-  \end{tabular}
-  \caption{Duration units}
-  \label{tab:durations}
-\end{table}
+\begin{tabular}{|c|c|c|}
+  \hline
+  unit        & abbreviation & equivalence for $n$  \\
+  \hline
+  radian      & rad          & $n$         \\
+  degree      & deg          & $n / 180 * \pi$        \\
+  grad        & grad         & $n / 200 * \pi$        \\
+  \hline
+\end{tabular}
 
 \begin{urbiscript}[firstnumber=last]
 assert(pi == 180deg);
@@ -243,25 +238,20 @@ assert(pi == 200grad);
 followed by a time unit. They are simply equivalent to the same float,
 expressed in seconds. For instance, \lstinline|1s 1ms|, which stands
 for ``one second and one millisecond'', is strictly equivalent to
-\lstinline|1.0001|. Available units and their equivalent are shown in
-\autoref{tab:durations}.
+\lstinline|1.0001|. Available units and their equivalent are listed
+below.
 
-\begin{table}[\floatpos]
-  \centering
-  \begin{tabular}{|c|c|c|}
-    \hline
-    unit        & abbreviation & equivalence for $n$  \\
-    \hline
-    millisecond & ms           & $n / 1000$         \\
-    second      & s            & $n$                \\
-    minute      & mn           & $n \times 60$           \\
-    hour        & h            & $n \times 60 \times 60$      \\
-    day         & d            & $n \times 60 \times 60 \times 24$ \\
-    \hline
-  \end{tabular}
-  \caption{Duration units}
-  \label{tab:durations}
-\end{table}
+\begin{tabular}{|c|c|c|}
+  \hline
+  unit        & abbreviation & equivalence for $n$  \\
+  \hline
+  millisecond & ms           & $n / 1000$         \\
+  second      & s            & $n$                \\
+  minute      & mn           & $n \times 60$           \\
+  hour        & h            & $n \times 60 \times 60$      \\
+  day         & d            & $n \times 60 \times 60 \times 24$ \\
+  \hline
+\end{tabular}
 
 \begin{urbiscript}[firstnumber=last]
 assert(1d == 24h);
@@ -313,7 +303,8 @@ and can contain arbitrary characters, which stand for themselves, with
 the exception of the escape character, backslash (\lstinline|\|), see
 below.  Backslash introduces the following escapes:
 
-\begin{tabular}{|c|p{.8\linewidth}|}
+\noindent
+\begin{tabular}{|c|p{.7\linewidth}|}
   \hline
   \lstinline|\\| & backslash             \\
   \lstinline|\a| & bell ring             \\
