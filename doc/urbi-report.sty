@@ -266,6 +266,12 @@
        {\index{##1@\file{##1}}\file{##1}\hfill\break}}}%
   {\end{list}}
 
+\newenvironment{files*}%
+  {\begin{list}{}{%
+    \renewcommand{\makelabel}[1]%
+       {\file{##1}\hfill\break}}}%
+  {\end{list}}
+
 \newenvironment{options}%
   {\begin{list}{}{%
     \renewcommand{\makelabel}[1]%

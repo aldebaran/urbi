@@ -862,11 +862,10 @@ controllerArgs [options] period [path1 path2 ...]
     To enable and disable the device we use the following Webots
     functions:
 
-
-\begin{lstlisting}
-void accelerometer\_enable (DeviceTag sensor, unsigned short ms);
-void accelerometer\_disable (DeviceTag sensor);
-\end{lstlisting}
+\begin{cxx}
+void accelerometer_enable (DeviceTag sensor, unsigned short ms);
+void accelerometer_disable (DeviceTag sensor);
+\end{cxx}
 
     The frequency given to the enable function is the frequency of the
     \urbi controller (given in the ``controllerArgs'' field in the .wbt
@@ -885,11 +884,12 @@ void accelerometer\_disable (DeviceTag sensor);
   Retrieved with the following Webots functions:
 
 
-\begin{lstlisting}
-  const float *accelerometer_get_values (DeviceTag sensor); float
-  accelerometer_value_x (float *array); float accelerometer_value_y
-  (float *array); float accelerometer_value_z (float *array);
-\end{lstlisting}
+\begin{cxx}
+const float *accelerometer_get_values (DeviceTag sensor);
+float accelerometer_value_x (float *array);
+float accelerometer_value_y (float *array);
+float accelerometer_value_z (float *array);
+\end{cxx}
 \end{attribute}
 
 \end{itemize}
@@ -927,10 +927,10 @@ void accelerometer\_disable (DeviceTag sensor);
   disable the device we use the following Webots functions:
 
 
-\begin{lstlisting}
-  void camera_enable (DeviceTag camera, unsigned short ms); void
-  camera_disable (DeviceTag camera);
-\end{lstlisting}
+\begin{cxx}
+void camera_enable (DeviceTag camera, unsigned short ms);
+void camera_disable (DeviceTag camera);
+\end{cxx}
 
 The frequency given to the enable function is the frequency of the
 \urbi controller (given in the ``controllerArgs'' field in the .wbt
@@ -947,9 +947,9 @@ file).
   following Webots function:
 
 
-\begin{lstlisting}
-  unsigned char *camera_get_image (DeviceTag camera);
-\end{lstlisting}
+\begin{cxx}
+unsigned char *camera_get_image (DeviceTag camera);
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{format}
@@ -1003,11 +1003,9 @@ file).
   {}
   Image width. Retrieved with the following Webots
   function:
-
-
-\begin{lstlisting}
-  unsigned short camera_get_width (DeviceTag camera);
-\end{lstlisting}
+\begin{cxx}
+unsigned short camera_get_width (DeviceTag camera);
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{height}
@@ -1016,9 +1014,9 @@ file).
   {}
   Image height. Retrieved with the following Webots
   function:
-\begin{lstlisting}
-  unsigned short camera_get_height (DeviceTag camera);
-\end{lstlisting}
+\begin{cxx}
+unsigned short camera_get_height (DeviceTag camera);
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{xfov}
@@ -1027,10 +1025,10 @@ file).
   {}
   Image horizontal focal view.  Retrieved and set with
   the following Webots function:
-\begin{lstlisting}
-  float camera_get_fov (DeviceTag camera); void camera_set_fov
-  (DeviceTag camera, float fov);
-\end{lstlisting}
+\begin{cxx}
+float camera_get_fov (DeviceTag camera);
+void camera_set_fov (DeviceTag camera, float fov);
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{yfov}
@@ -1048,11 +1046,9 @@ file).
   {}
   Distance of the camera to the near OpenGL clipping
   plane.  Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
-  float camera_get_near (DeviceTag camera);
-\end{lstlisting}
+\begin{cxx}
+float camera_get_near (DeviceTag camera);
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{far}
@@ -1061,9 +1057,9 @@ file).
   {}
   Distance of the camera to the far OpenGL clipping
   plane.  Retrieved with the following Webots function:
-\begin{lstlisting}
-  float camera_get_far (DeviceTag camera);
-\end{lstlisting}
+\begin{cxx}
+float camera_get_far (DeviceTag camera);
+\end{cxx}
 \end{attribute}
 \end{itemize}
 
@@ -1082,10 +1078,10 @@ file).
 
   Example:
 
-\begin{lstlisting}
-  wheelL = new DifferentialWheels("e-puck", true); wheelR = new
-  DifferentialWheels("e-puck", false);
-\end{lstlisting}
+\begin{urbifixme}
+wheelL = new DifferentialWheels("e-puck", true);
+wheelR = new DifferentialWheels("e-puck", false);
+\end{urbifixme}
 \end{description}
 
 \paragraph{Attributes}
@@ -1109,13 +1105,11 @@ file).
   specified value, instead, it will simply reset the encoders with the
   specified value.  Retrieved and set with the following Webots
   functions:
-
-
-\begin{lstlisting}
-  int differential_wheels_get_left_encoder (void); int
-  differential_wheels_get_right_encoder (void); void
-  differential_wheels_set_encoders (int left, int right);
-\end{lstlisting}
+\begin{cxx}
+int differential_wheels_get_left_encoder (void);
+int differential_wheels_get_right_encoder (void);
+void differential_wheels_set_encoders (int left, int right);
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{speed}
@@ -1129,11 +1123,9 @@ file).
   of the speed on the Urbi side.  With a ``speedFactor'' of 10, a speed
   value of 20 will make the wheel rotate at a speed of 10 * 20 * 0.1 =
   20 radian per seconds.  Set with the following Webots function:
-
-
-\begin{lstlisting}
-  void differential_wheels_set_speed(short left, short right);
-\end{lstlisting}
+\begin{cxx}
+void differential_wheels_set_speed(short left, short right);
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{speedFactor}
@@ -1160,10 +1152,10 @@ file).
 
 \noindent
 \begin{description}
-\item[{DistanceSensor (string NodeName)}]         Construct a new Distance Sensor object, corresponding to the DistanceSensor node in
-          Webots. The ``NodeName'' attribute is the value
-          of the name field, in the DistanceSensor node in Webots
-
+\item[{DistanceSensor (string NodeName)}] Construct a new Distance
+  Sensor object, corresponding to the DistanceSensor node in
+  Webots. The ``NodeName'' attribute is the value of the name field,
+  in the DistanceSensor node in Webots
 \end{description}
 
 \paragraph{Attributes}
@@ -1178,15 +1170,12 @@ file).
   the DistanceSensor is enabled. If you set it to 0 it will disable
   it.
 
-
   To enable and disable the device we use the following Webots
   functions:
-
-
-\begin{lstlisting}
+\begin{cxx}
 void distance_sensor_enable (DeviceTag sensor, unsigned short ms);
 void distance_sensor_disable (DeviceTag sensor);
-\end{lstlisting}
+\end{cxx}
 
 The frequency given to the enable function is the frequency of the
 \urbi controller (given in the ``controllerArgs'' field in the .wbt
@@ -1204,9 +1193,9 @@ file).
 
  Retrieved with the following Webots function:
 
-\begin{lstlisting}
+\begin{cxx}
 unsigned short distance_sensor_get_value  (DeviceTag sensor);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{factor}
@@ -1223,8 +1212,9 @@ unsigned short distance_sensor_get_value  (DeviceTag sensor);
 
 \noindent
 \begin{description}
-\item[{Emitter (string NodeName)}] Construct a new Emitter component. The ``NodeName'' attribute is the value
-          of the name field, in the Emitter node in Webots.
+\item[{Emitter (string NodeName)}] Construct a new Emitter
+  component. The ``NodeName'' attribute is the value of the name
+  field, in the Emitter node in Webots.
 
 \end{description}
 
@@ -1245,10 +1235,10 @@ unsigned short distance_sensor_get_value  (DeviceTag sensor);
   with the send function EXCEPT UObjects variables.
 
 
-          Example:
+  Example:
 
 
-\begin{lstlisting}
+\begin{urbifixme}
 var1 = "hello world";
 emitter.send (var1);
 // will send 13 bytes:
@@ -1261,34 +1251,32 @@ emitter.send (var2),
 // size, 1 byte for the ';', and 11 bytes for the actual data (hello
 // world) (the BIN header size can augment if you set some information
 // in the BIN header variable, like in images variables for example).
-\end{lstlisting}
+\end{urbifixme}
 
-Note that if you set the ``rawMode'' attribute to true, then the
-comportment of the send () function will change. When ``rawMode'' is
-true, you can only send BIN variables with the send () function, and
-only the data in the BIN variable is send.
+  Note that if you set the ``rawMode'' attribute to true, then the
+  comportment of the send () function will change. When ``rawMode'' is
+  true, you can only send BIN variables with the send () function, and
+  only the data in the BIN variable is send.
 
 
-\begin{lstlisting}
+\begin{urbifixme}
 var2=BIN 11;hello world
 emitter.rawMode = true;
 emitter.send (var2);
 /// Will send 11 bytes:
 // 'h','e','l','l','o',' ','w','o','r','l','d'
 // ie only the bytes that are in the data of the BIN variable.
-\end{lstlisting}
+\end{urbifixme}
 
 Please note that since no type information is included in the send
 data, an \urbi receiver won't be able to parse the data received and
 won't be able to recreate the corresponding \urbi variable.
 
-
 This function use the following Webots functions:
 
-
-\begin{lstlisting}
+\begin{cxx}
 int emitter_send_packet  (DeviceTag emitter, const void *data, int size);
-\end{lstlisting}
+\end{cxx}
 \end{description}
 
 \paragraph{Attributes}
@@ -1304,13 +1292,11 @@ int emitter_send_packet  (DeviceTag emitter, const void *data, int size);
   Emitter node. The buffer size indicates the maximal amount of data
   bytes that the emitter's queue can hold in total.
 
-
   Retrieved with the following Webots function:
 
-
-\begin{lstlisting}
+\begin{cxx}
 int emitter_get_buffer_size  (DeviceTag emitter);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{channel}
@@ -1324,14 +1310,11 @@ int emitter_get_buffer_size  (DeviceTag emitter);
   switching the channel number an emitter can selectively send data to
   different receivers.
 
-
   Retrieved and set with the following Webots functions:
-
-
-\begin{lstlisting}
+\begin{cxx}
 void emitter_set_channel  (DeviceTag emitter, int channel);
 int emitter_get_channel (DeviceTag emitter);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{range}
@@ -1343,14 +1326,12 @@ int emitter_get_channel (DeviceTag emitter);
  maxRange field of the Emitter node then the current range will be set
  to maxRange.
 
+ Retrieved with the following Webots function:
 
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+\begin{cxx}
 void emitter_set_range  (DeviceTag emitter, float range);
 float emitter_get_range (DeviceTag emitter);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{rawMode}
@@ -1361,7 +1342,6 @@ float emitter_get_range (DeviceTag emitter);
  variables in raw mode (ie only the data in BIN variables is
  send). Please see ``receive ()'' function for more information.
 \end{attribute}
-
 \end{itemize}
 
 \subsubsection{Gps}
@@ -1370,14 +1350,13 @@ float emitter_get_range (DeviceTag emitter);
 
 \noindent
 \begin{description}
-\item[{Gps (string NodeName, string ComponentName)}] Construct a new
-  Gps object.  The ``NodeName'' attribute is the value of the name
-  field, in the Gps node in Webots.  The ``ComponentName'' is the name
-  of the Gps component this object represent.  Because you need 3 Gps
-  UObject to represent the Webots Gps device. Each Gps UObject
-  represent one of the component of the Webots Gps device.
+\item[{Gps (string \var{NodeName}, string \var{ComponentName})}]
+  Construct a new Gps object.  The ``NodeName'' attribute is the value
+  of the name field, in the Gps node in Webots.  The ``ComponentName''
+  is the name of the Gps component this object represent.  Because you
+  need 3 Gps UObject to represent the Webots Gps device. Each Gps
+  UObject represent one of the component of the Webots Gps device.
   ``ComponentName'' can take 3 values: ``x'', ``y'' or ``z''.
-
 \end{description}
 
 \paragraph{Attributes}
@@ -1396,15 +1375,13 @@ float emitter_get_range (DeviceTag emitter);
   disable the y Gps component, then the x and z Gps components will
   also be disabled).
 
-
   To enable and disable the device we use the following Webots
   functions:
 
-
-\begin{lstlisting}
+\begin{cxx}
 void gps_enable  (DeviceTag sensor, unsigned short ms);
 void gps_disable (DeviceTag sensor);
-\end{lstlisting}
+\end{cxx}
 
 The frequency given to the enable function is the frequency of the
 \urbi controller (given in the ``controllerArgs'' field in the .wbt
@@ -1422,12 +1399,12 @@ file).
  Retrieved with the following Webots functions:
 
 
-\begin{lstlisting}
+\begin{cxx}
 const float *gps_get_matrix  (DeviceTag sensor);
 float gps_position_x (float *matrix);
 float gps_position_y (float *matrix);
 float gps_position_z (float *matrix);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{angle}
@@ -1445,10 +1422,10 @@ float gps_position_z (float *matrix);
           Retrieved with the following Webots functions:
 
 
-\begin{lstlisting}
+\begin{cxx}
 void gps_euler (const float *matrix, float *euler);
 const float *gps_get_matrix  (DeviceTag sensor);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \end{description}
@@ -1459,8 +1436,9 @@ const float *gps_get_matrix  (DeviceTag sensor);
 
 \noindent
 \begin{description}
-\item[{Gripper (string NodeName)}] Construct a new Gripper component. The ``NodeName'' attribute is the value
-          of the name field, in the Gripper node in Webots.
+\item[{Gripper (string \var{NodeName})}] Construct a new Gripper
+  component. The ``NodeName'' attribute is the value of the name
+  field, in the Gripper node in Webots.
 
 \end{description}
 
@@ -1474,14 +1452,12 @@ const float *gps_get_matrix  (DeviceTag sensor);
   {}
   Position of the Gripper device.
 
+  Retrieved and set with the following Webots functions:
 
- Retrieved and set with the following Webots functions:
-
-
-\begin{lstlisting}
+\begin{cxx}
 float gripper_get_position  (DeviceTag gripper);
 void gripper_set_position  (DeviceTag gripper, float position);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{resistivity}
@@ -1490,13 +1466,11 @@ void gripper_set_position  (DeviceTag gripper, float position);
   {}
   the resistivity of the Gripper device.
 
+  Retrieved with the following Webots function:
 
- Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+\begin{cxx}
 float gripper_get_resistivity  (DeviceTag gripper);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \end{itemize}
@@ -1507,9 +1481,9 @@ float gripper_get_resistivity  (DeviceTag gripper);
 
 \noindent
 \begin{description}
-\item[{Keyboard ()}]      Construct a new Keyboard object. This object is used to retrieve the
-          key codes corresponding to keys pressed on the keyboard.
-
+\item[{Keyboard ()}] Construct a new Keyboard object. This object is
+  used to retrieve the key codes corresponding to keys pressed on the
+  keyboard.
 \end{description}
 
 \paragraph{Attributes}
@@ -1525,16 +1499,15 @@ float gripper_get_resistivity  (DeviceTag gripper);
   enabled. If you set it to 0 it will disable it.
 
 
-          To enable and disable the device we use the following Webots functions:
-
-
-\begin{lstlisting}
+  To enable and disable the device we use the following Webots functions:
+\begin{cxx}
 void robot_keyboard_enable(unsigned short ms);
 void robot_keyboard_disable();
-\end{lstlisting}
+\end{cxx}
 
-          The frequency given to the enable function is the frequency of the
-          \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
+The frequency given to the enable function is the frequency of the
+\urbi controller (given in the ``controllerArgs'' field in the .wbt
+file).
 \end{attribute}
 
 \begin{attribute}{val}
@@ -1542,28 +1515,23 @@ void robot_keyboard_disable();
   {float}
   {}
   Key code corresponding to the key currently pressed on
- the keyboard. If no key is currently pressed, ``val'' equal 0.
+  the keyboard. If no key is currently pressed, ``val'' equal 0.
 
-
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved with the following Webots function:
+\begin{cxx}
 int robot_keyboard_get_key();
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
-
 \end{itemize}
 
 \subsubsection{Led}
 
 \paragraph{Constructor}
 
-\noindent
 \begin{description}
-\item[{Led (string NodeName)}] Construct a new Led object. The ``NodeName'' attribute is the value
-          of the name field, in the Led node in Webots
-
+\item[{Led (string \var{NodeName})}] Construct a new Led object. The
+  ``NodeName'' attribute is the value of the name field, in the Led
+  node in Webots
 \end{description}
 
 \paragraph{Attributes}
@@ -1575,16 +1543,13 @@ int robot_keyboard_get_key();
   {float}
   {}
   Value of the led. Usually leds have two possible values,
- 0 for Off and 1 for On, but it is also possible to use other values
- depending on the Webots model.
+  0 for Off and 1 for On, but it is also possible to use other values
+  depending on the Webots model.
 
-
-          Set with the following Webots function:
-
-
-\begin{lstlisting}
-void led_set  (DeviceTag device, unsigned char value);
-\end{lstlisting}
+  Set with the following Webots function:
+\begin{cxx}
+void led_set (DeviceTag device, unsigned char value);
+\end{cxx}
 \end{attribute}
 
 \end{itemize}
@@ -1595,8 +1560,9 @@ void led_set  (DeviceTag device, unsigned char value);
 
 \noindent
 \begin{description}
-\item[{LightSensor (string NodeName)}]            Construct a new Light Sensor object. The ``NodeName'' attribute is the value
-          of the name field, in the LightSensor node in Webots.
+\item[{LightSensor (string \var{NodeName})}] Construct a new Light
+  Sensor object. The ``NodeName'' attribute is the value of the name
+  field, in the LightSensor node in Webots.
 
 \end{description}
 
@@ -1612,17 +1578,16 @@ void led_set  (DeviceTag device, unsigned char value);
   LightSensor device.  By default it is set to 1, which means that the
   LightSensor is enabled. If you set it to 0 it will disable it.
 
+  To enable and disable the device we use the following Webots functions:
 
-          To enable and disable the device we use the following Webots functions:
-
-
-\begin{lstlisting}
+\begin{cxx}
 void light_sensor_enable (DeviceTag sensor, unsigned short ms);
 void light_sensor_disable (DeviceTag sensor);
-\end{lstlisting}
+\end{cxx}
 
-          The frequency given to the enable function is the frequency of the
-          \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
+The frequency given to the enable function is the frequency of the
+\urbi controller (given in the ``controllerArgs'' field in the .wbt
+file).
 \end{attribute}
 
 \begin{attribute}{val}
@@ -1630,16 +1595,13 @@ void light_sensor_disable (DeviceTag sensor);
   {float}
   {}
   Light value measured by the sensor. The values measured
- are computed from the lookup table defined in the corresponding
- Webots node.
+  are computed from the lookup table defined in the corresponding
+  Webots node.
 
-
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved with the following Webots function:
+\begin{cxx}
 unsigned short light_sensor_get_value  (DeviceTag sensor);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \end{itemize}
@@ -1650,93 +1612,82 @@ unsigned short light_sensor_get_value  (DeviceTag sensor);
 
 \noindent
 \begin{description}
-\item[{Plunger (string NodeName, float offValue, float onValue)}]
-  Construct a new Plunger object. The ``NodeName'' attribute is the
-  value of the name field, in the Servo node in Webots. In Webots
-  plunger objects do not exist. They are emulated by Servo with on and
-  off modes represented by the min and max values of the Servo (we
-  remind the reader that a plunger is a device with two states: On /
-  Off). In Urbi Plungers usually varies from 0 to 1. So the offValue
-  and onValue you have to pass to the constructor are the values
-  corresponding to On and Off in Webots. NB: all values must be given
-  in degree (while in Webots they are in radian) !
-
+\item[{Plunger (string \var{NodeName}, float \var{offValue}, float
+    \var{onValue})}] Construct a new Plunger object. The ``NodeName''
+  attribute is the value of the name field, in the Servo node in
+  Webots. In Webots plunger objects do not exist. They are emulated by
+  Servo with on and off modes represented by the min and max values of
+  the Servo (we remind the reader that a plunger is a device with two
+  states: On / Off). In Urbi Plungers usually varies from 0 to 1. So
+  the offValue and onValue you have to pass to the constructor are the
+  values corresponding to On and Off in Webots. NB: all values must be
+  given in degree (while in Webots they are in radian) !
 \end{description}
 
 \paragraph{Attributes}
 
-\noindent
 \begin{itemize}
 \begin{attribute}{val}
   {readable, writeable}
   {float}
   {}
   The value of the plunger. When you set this value, the
- value that will be given to Webots is computed as follow: val *
- ((onValue -{} offValue) + offValue).  NB: all values must be given in
- degree (while in Webots they are in radian) !
+  value that will be given to Webots is computed as follow: val *
+  ((onValue -{} offValue) + offValue).  NB: all values must be given in
+  degree (while in Webots they are in radian) !
 
-
-          Retrieved and set with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved and set with the following Webots function:
+\begin{cxx}
 float servo_get_position  (DeviceTag servo);
 void servo_set_position  (DeviceTag servo, float position);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
-
 \end{itemize}
 
 \subsubsection{Receiver}
 
 \paragraph{Constructor}
 
-\noindent
 \begin{description}
-\item[{Receiver (string NodeName)}] Construct a new Receiver component. The ``NodeName'' attribute is the value
-          of the name field, in the Receiver node in Webots.
-
+\item[{Receiver (string \var{NodeName})}] Construct a new Receiver
+  component. The ``NodeName'' attribute is the value of the name
+  field, in the Receiver node in Webots.
 \end{description}
 
 \paragraph{Functions}
 
 \noindent
 \begin{description}
-\item[{receive ()}] Returns an \urbi variable corresponding to the data
-  of the packet at the head of the reception queue. An \urbi receiver
-  can only receive data from an \urbi emitter, because the \urbi emitter
-  send the data corresponding to \urbi variables given to its emit ()
-  function, plus some informations on the type of the variable. The
-  receiver then parse the received data to recreate the \urbi variable.
-  If the \urbi emitter is in rawMode, the Receiver won't be able to
-  parse the received values.  So you have to set the receiver rawMode
-  also. In raw mode, the receiver returns BIN variables containing the
-  data received.  Please refers to Webots documentation for more
-  information on the Receiver device.
+\item[{receive ()}] Returns an \urbi variable corresponding to the
+  data of the packet at the head of the reception queue. An \urbi
+  receiver can only receive data from an \urbi emitter, because the
+  \urbi emitter send the data corresponding to \urbi variables given
+  to its emit () function, plus some informations on the type of the
+  variable. The receiver then parse the received data to recreate the
+  \urbi variable.  If the \urbi emitter is in rawMode, the Receiver
+  won't be able to parse the received values.  So you have to set the
+  receiver rawMode also. In raw mode, the receiver returns BIN
+  variables containing the data received.  Please refers to Webots
+  documentation for more information on the Receiver device.
 
+  This function use the following Webots functions:
 
-          This function use the following Webots functions:
-
-
-\begin{lstlisting}
+\begin{cxx}
 const void *receiver_get_data  (DeviceTag receiver);
-\end{lstlisting}
-\item[{next ()}]           Deletes the head packet. The next packet in the queue, if any, becomes the
-           new head packet.
+\end{cxx}
 
+\item[{next ()}] Deletes the head packet. The next packet in the
+  queue, if any, becomes the new head packet.
 
-          This function use the following Webots functions:
+  This function use the following Webots functions:
 
-
-\begin{lstlisting}
+\begin{cxx}
 void receiver_next_packet  (DeviceTag receiver);
-\end{lstlisting}
+\end{cxx}
 \end{description}
 
 \paragraph{Attributes}
 
-\noindent
 \begin{itemize}
 \begin{attribute}{load}
   {readable, writeable}
@@ -1746,17 +1697,16 @@ void receiver_next_packet  (DeviceTag receiver);
   device.  By default it is set to 1, which means that the Receiver is
   enabled. If you set it to 0 it will disable it.
 
+  To enable and disable the device we use the following Webots functions:
 
-          To enable and disable the device we use the following Webots functions:
-
-
-\begin{lstlisting}
+\begin{cxx}
 void receiver_enable  (DeviceTag receiver, unsigned short ms);
 void receiver_disable (DeviceTag receiver);
-\end{lstlisting}
+\end{cxx}
 
-          The frequency given to the enable function is the frequency of the
-          \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
+The frequency given to the enable function is the frequency of the
+\urbi controller (given in the ``controllerArgs'' field in the .wbt
+file).
 \end{attribute}
 
 \begin{attribute}{channel}
@@ -1764,17 +1714,14 @@ void receiver_disable (DeviceTag receiver);
   {float}
   {}
   Reception channel. Normally, receiver can only receive
- data packets from emitters that use the same channel, however, the
- value -{}1 can be used to listen simultaneously to all channels.
+  data packets from emitters that use the same channel, however, the
+  value -{}1 can be used to listen simultaneously to all channels.
 
-
-          Retrieved and set with the following Webots functions:
-
-
-\begin{lstlisting}
+  Retrieved and set with the following Webots functions:
+\begin{cxx}
 void receiver_set_channel  (DeviceTag receiver, int channel);
 int receiver_get_channel (DeviceTag receiver);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{dataSize}
@@ -1782,18 +1729,16 @@ int receiver_get_channel (DeviceTag receiver);
   {float}
   {}
   Number of data bytes present in the head packet of the
- reception queue. Since it is \urbi variables that are sent, the
- receiver need informations on the type of the variable to be able to
- retrieve it correctly. So dataSize is usually greater than the actual
- data size.
+  reception queue. Since it is \urbi variables that are sent, the
+  receiver need informations on the type of the variable to be able to
+  retrieve it correctly. So dataSize is usually greater than the actual
+  data size.
 
+  Retrieved with the following Webots function:
 
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+\begin{cxx}
 int receiver_get_data_size  (DeviceTag receiver);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{emitterDirection}
@@ -1801,17 +1746,14 @@ int receiver_get_data_size  (DeviceTag receiver);
   {list of 3 float values}
   {}
   Normalized vector that indicates the direction of the
- emitter with respect to the receiver's coordinate system. The three
- vector components indicate respectively the x, y, and z-{}direction
- of the emitter.
+  emitter with respect to the receiver's coordinate system. The three
+  vector components indicate respectively the x, y, and z-{}direction
+  of the emitter.
 
-
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved with the following Webots function:
+\begin{cxx}
 const float *receiver_get_emitter_direction  (DeviceTag receiver);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{queueLength}
@@ -1819,15 +1761,12 @@ const float *receiver_get_emitter_direction  (DeviceTag receiver);
   {float}
   {}
   Number of data packets currently present in the
- receiver's queue.
+  receiver's queue.
 
-
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved with the following Webots function:
+\begin{cxx}
 int receiver_get_queue_length  (DeviceTag receiver);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{rawMode}
@@ -1835,9 +1774,9 @@ int receiver_get_queue_length  (DeviceTag receiver);
   {float}
   {}
   Set this attribute to true to enable receiving data in
- raw mode.  In raw mode the ``receive ()'' function will return BIN
- variables containing the data received. Use this mode when you the
- emitter emit non Urbi data.
+  raw mode.  In raw mode the ``receive ()'' function will return BIN
+  variables containing the data received. Use this mode when you the
+  emitter emit non Urbi data.
 \end{attribute}
 
 \begin{attribute}{signalStrength}
@@ -1845,20 +1784,16 @@ int receiver_get_queue_length  (DeviceTag receiver);
   {float}
   {}
   Simulated signal strength at the time the last packet
- was transmitted.  This signal strength is equal to the inverse of the
- squared distance between the emitter and the receiver. In other
- words: s = 1 / r\^{}2, where s is the signal strength and r is the
- distance between emitter and receiver.
+  was transmitted.  This signal strength is equal to the inverse of the
+  squared distance between the emitter and the receiver. In other
+  words: s = 1 / r\^{}2, where s is the signal strength and r is the
+  distance between emitter and receiver.
 
-
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved with the following Webots function:
+\begin{cxx}
 float receiver_get_signal_strength  (DeviceTag receiver);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
-
 \end{itemize}
 
 \subsubsection{RobotName}
@@ -1867,9 +1802,9 @@ float receiver_get_signal_strength  (DeviceTag receiver);
 
 \noindent
 \begin{description}
-\item[{RobotName ()}]     Construct a new RobotName object. This object is used to retrieve the name of the
-          robot associated to the \urbi controller.
-
+\item[{RobotName ()}] Construct a new RobotName object. This object is
+  used to retrieve the name of the robot associated to the \urbi
+  controller.
 \end{description}
 
 \paragraph{Attributes}
@@ -1882,13 +1817,10 @@ float receiver_get_signal_strength  (DeviceTag receiver);
   {}
   Name of the robot associated to the \urbi controller.
 
-
- Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved with the following Webots function:
+\begin{cxx}
 const char *robot_get_name();
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \end{itemize}
@@ -1899,16 +1831,16 @@ const char *robot_get_name();
 
 \noindent
 \begin{description}
-\item[{Servo (string NodeName, boolean ForceFeedback)}] Construct a new Servo object. The ``NodeName'' attribute is the value
-          of the name field, in the Servo node in Webots. The ``ForceFeedback'' attribute
-          is a boolean that enable, when set to true, the measurement of the force applied
-          to the joint. The value measured is available in the ``force'' attribute.
-          NB: all values must be given in degree (while in Webots they are in radian) !
-
+\item[{Servo (string \var{NodeName}, boolean \var{ForceFeedback})}]
+  Construct a new Servo object. The ``NodeName'' attribute is the
+  value of the name field, in the Servo node in Webots. The
+  ``ForceFeedback'' attribute is a boolean that enable, when set to
+  true, the measurement of the force applied to the joint. The value
+  measured is available in the ``force'' attribute.  NB: all values
+  must be given in degree (while in Webots they are in radian) !
 \end{description}
 
 \paragraph{Attributes}
-
 \noindent
 \begin{itemize}
 \begin{attribute}{val}
@@ -1916,16 +1848,13 @@ const char *robot_get_name();
   {float}
   {}
   Value of the servo. NB: all values must be given in
- degree (while in Webots they are in radian) !
+  degree (while in Webots they are in radian) !
 
-
-          Retrieved and set with the following Webots functions:
-
-
-\begin{lstlisting}
+  Retrieved and set with the following Webots functions:
+\begin{cxx}
 float servo_get_position  (DeviceTag servo);
 void servo_set_position  (DeviceTag servo, float position);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{PGain}
@@ -1941,12 +1870,11 @@ void servo_set_position  (DeviceTag servo, float position);
  the corresponding Webots Servo node.
 
 
-          Set with the following Webots function:
+ Set with the following Webots function:
 
-
-\begin{lstlisting}
+\begin{cxx}
 void servo_set_control_p  (DeviceTag servo, float p);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \begin{attribute}{force}
@@ -1954,20 +1882,16 @@ void servo_set_control_p  (DeviceTag servo, float p);
   {float}
   {}
   Motor force measurement. ``force'' is equal to the amount
- of motor force that is currently being deployed by the servo in order
- to achieve the desired motion or hold the current position.  The
- measurement of this force is only available if you set the
- forceFeedback parameter to true in the constructor of Servo.
+  of motor force that is currently being deployed by the servo in order
+  to achieve the desired motion or hold the current position.  The
+  measurement of this force is only available if you set the
+  forceFeedback parameter to true in the constructor of Servo.
 
-
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved with the following Webots function:
+\begin{cxx}
 float servo_get_motor_force_feedback  (DeviceTag servo);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
-
 \end{itemize}
 
 \subsubsection{Touch Sensor}
@@ -1976,9 +1900,9 @@ float servo_get_motor_force_feedback  (DeviceTag servo);
 
 \noindent
 \begin{description}
-\item[{TouchSensor (string NodeName)}]            Construct a new TouchSensor object. The ``NodeName'' attribute is the value
-          of the name field, in the Touchsensor node in Webots
-
+\item[{TouchSensor (string \var{NodeName})}] Construct a new
+  TouchSensor object. The ``NodeName'' attribute is the value of the
+  name field, in the Touchsensor node in Webots
 \end{description}
 
 \paragraph{Attributes}
@@ -1993,18 +1917,16 @@ float servo_get_motor_force_feedback  (DeviceTag servo);
   TouchSensor device.  By default it is set to 1, which means that the
   TouchSensor is enabled. If you set it to 0 it will disable it.
 
-
   To enable and disable the device we use the following Webots
   functions:
-
-
-\begin{lstlisting}
+\begin{cxx}
 void touch_sensor_enable (DeviceTag sensor, unsigned short ms);
 void touch_sensor_disable (DeviceTag sensor);
-\end{lstlisting}
+\end{cxx}
 
-          The frequency given to the enable function is the frequency of the
-          \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
+The frequency given to the enable function is the frequency of the
+\urbi controller (given in the ``controllerArgs'' field in the .wbt
+file).
 \end{attribute}
 
 \begin{attribute}{val}
@@ -2014,49 +1936,43 @@ void touch_sensor_disable (DeviceTag sensor);
   Value returned by the sensor, computed according to the
   lookup table in the TouchSensor node.
 
-
-          Retrieved with the following Webots function:
-
-
-\begin{lstlisting}
+  Retrieved with the following Webots function:
+\begin{cxx}
 unsigned short touch_sensor_get_value  (DeviceTag sensor);
-\end{lstlisting}
+\end{cxx}
 \end{attribute}
 
 \end{itemize}
 
 \subsection{Supervisor devices UObjects}
 
- The supervisor UObjects are only available from a supervisor
-robot (i.e. from the controller of a supervisor node in Webots).
+The supervisor UObjects are only available from a supervisor robot
+(i.e. from the controller of a supervisor node in Webots).
 
-
- This extended API allows \urbi to control the world and the whole
+This extended API allows \urbi to control the world and the whole
 simulation.
 
 
 \subsubsection{Label}
-
 \paragraph{Constructor}
-
 \noindent
 \begin{description}
-\item[{Label (string text)}] Construct a new Label object and set its displayed text to ``text''.
-
+\item[{Label (string \var{text})}] Construct a new Label object and
+  set its displayed text to ``text''.
 \end{description}
 
 \paragraph{Attributes}
 
 \noindent
 \begin{description}
-\item[{txt}] Displayed text.
-\item[{x}] X value.
-\item[{y}] Y value.
-\item[{r}] R component of the text's color.
-\item[{g}] G component of the text's color.
-\item[{b}] B component of the text's color.
-\item[{a}] alpha component of the text's color.
-\item[{size}] Text's size.
+\item[txt] Displayed text.
+\item[x] X value.
+\item[y] Y value.
+\item[r] R component of the text's color.
+\item[g] G component of the text's color.
+\item[b] B component of the text's color.
+\item[a] alpha component of the text's color.
+\item[size] Text's size.
 \end{description}
 
 \subsubsection{Manipulate Node}
@@ -2065,27 +1981,28 @@ simulation.
 
 \noindent
 \begin{description}
-\item[{ManipulateNode (string nameOfWebotsManipulatedNode)}] Construct a new ManipulateNode object. ManipulateNode can only
-          manipulate solid objects. Give the name of the manipulated object to
-          the constructor of ManipulateNode.
+\item[{ManipulateNode (string \var{nameOfWebotsManipulatedNode})}]
+  Construct a new ManipulateNode object. ManipulateNode can only
+  manipulate solid objects. Give the name of the manipulated object to
+  the constructor of ManipulateNode.
 
 Example:
 
-\begin{lstlisting}
+\begin{urbifixme}
 floor = new ManipulateNode("FLOOR");
-\end{lstlisting}
+\end{urbifixme}
 \end{description}
 
 \paragraph{Attributes}
 
 \noindent
 \begin{description}
-\item[{tx}] Translation X value.
-\item[{ty}] Translation Y value.
-\item[{tz}] Translation Z value.
-\item[{ax}] X angle value.
-\item[{ay}] Y angle value.
-\item[{az}] Z angle value.
+\item[tx] Translation X value.
+\item[ty] Translation Y value.
+\item[tz] Translation Z value.
+\item[ax] X angle value.
+\item[ay] Y angle value.
+\item[az] Z angle value.
 \end{description}
 
 \subsubsection{Simulation Controller}
@@ -2094,15 +2011,15 @@ floor = new ManipulateNode("FLOOR");
 
 \noindent
 \begin{description}
-\item[{SimulationController ()}] Construct a new Simulation Controller object.
-
+\item[{SimulationController ()}] Construct a new Simulation Controller
+  object.
 \end{description}
 
 \paragraph{Functions}
 
 \noindent
 \begin{description}
-\item[{physicsReset ()}] Sends a request to the simulator process,
+\item[physicsReset ()] Send a request to the simulator process,
   asking to stop the movement of all physics enabled solids in the
   world. It means that for any Solid node containing a Physics node,
   the linear and angular velocities of the corresponding body is reset
@@ -2113,18 +2030,17 @@ floor = new ManipulateNode("FLOOR");
   simulations can be be reproduced identically after calling this
   function.
 
-\item[{revert ()}] Sends a request to the simulator process, asking to
+\item[revert ()] Send a request to the simulator process, asking to
   reload the current world immediately. As a result of reloading the
   current world, the supervisor process and all the robot processes
   are terminated and restarted. You might want to save some data in a
   file from you supervisor program to be able to reload it when the
   supervisor controller restarts.
 
-\item[{quit ()}] Sends a request to the simulator process, asking to
+\item[quit ()] Send a request to the simulator process, asking to
   terminate and quit immediately. As a result of terminating the
   simulator process, all the controller processes, including the
   calling supervisor controller process will terminate.
-
 \end{description}
 
 \subsection{Other UObjects}
@@ -2135,57 +2051,50 @@ floor = new ManipulateNode("FLOOR");
 
 \noindent
 \begin{description}
-\item[{UBinaryReader ()}]         Construct a new UBinaryReader.
-
+\item[{UBinaryReader ()}] Construct a new UBinaryReader.
 \end{description}
 
 \paragraph{Functions}
 
 \noindent
 \begin{description}
-\item[{int set (UBinary b)}] Set the UBinary you want to parse. You
-  have to call the 'set' function before calling the 'read' function.
-  Return 0 in case of success, and 1 in case of error.
+\item[{int set (UBinary \var{b})}] Set the UBinary you want to
+  parse. You have to call the 'set' function before calling the 'read'
+  function.  Return 0 in case of success, and 1 in case of error.
 
-\item[{UList read (String format)}] Read formated binary data from the
-  UBinary, and return a list corresponding to the data which was read.
+\item[{UList read (String \var{format})}] Read formated binary data
+  from the UBinary, and return a list corresponding to the data which
+  was read.
 
+  \var{format} is a list of type identifiants separated by \samp{,}.
 
-  'format' is a list of type identifiants separated by ','.
-
-
-  The type identifiants describe a type, and are of the form Type[:n]
-  where Type can be:
+  The type identifiants describe a type, and are of the form
+  \samp{\var{Type}[:n]} where \var{Type} can be:
   \begin{description}
-  \item[i8] 8 bits integer
-  \item[i16] 16 bits int
-  \item[i32] 32 bits integer
-  \item[i64] 64 bits integer
-  \item[u8] 8 bits unsigned integer
-  \item[u16] 16 bits unsigned integer
-  \item[u32] 32 bits unsigned integer
-  \item[u64] 64 bits unsigned integer
-  \item[f32] 32 bits float
-  \item[f64] 64 bits float
-  \item[c] 8 bits character
+  \item[i8]   8 bit integer
+  \item[i16] 16 bit integer
+  \item[i32] 32 bit integer
+  \item[i64] 64 bit integer
+  \item[u8]   8 bit unsigned integer
+  \item[u16] 16 bit unsigned integer
+  \item[u32] 32 bit unsigned integer
+  \item[u64] 64 bit unsigned integer
+  \item[f32] 32 bit float
+  \item[f64] 64 bit float
+  \item[c]    8 bit character
   \end{description}
-  and where 'n' specify the number of time the UBinaryReader should
-  read a value of this type.
+  and where \samp{n} specify the number of times the UBinaryReader
+  should read a value of this type.
 
+  \samp{n} is optional (that is the meaning of the enclosing \samp{[}
+  \samp{]} which are not part of the syntax).
 
-  'n' is optional (that is the meaning of the enclosing '[' ']' which
-  are not part of the syntax).
-
-
-  The function return a list of values corresponding to the data read.
-  In case of character data, if you specify the 'n' parameter, then
-  the characters are concateneted and put in a string.
-
+  The function returns a list of values corresponding to the data
+  read.  In case of character data, if you specify the \samp{n}
+  parameter, then the characters are concateneted and put in a string.
 
   ex:
-
-
-\begin{lstlisting}
+\begin{urbifixme}
 p = new UBinaryReader();
 a = BIN 10;abcdefghij   /// Create an UBinary which contains abcdefghij
 p.set (a);              /// Set the UBinary in the reader.
@@ -2198,13 +2107,12 @@ p.read ("c,c:3,i8:2,i16"),
 p.index = 4;            /// Set the reading cursor to read the 5th character
 p.read ("c:5"),
 [00169480] ["efghi"]
-\end{lstlisting}
+\end{urbifixme}
 
-In case of error, the function stop reading, and return a list
-containing the values that were successfully read until the error
-occur. The function then set the reading cursor 'index' to -{}1, and
-set an error message in the 'error' attribute.
-
+  In case of error, the function stop reading, and return a list
+  containing the values that were successfully read until the error
+  occur. The function then set the reading cursor 'index' to -{}1, and
+  set an error message in the 'error' attribute.
 \end{description}
 
 \paragraph{Attributes}
@@ -2216,16 +2124,13 @@ set an error message in the 'error' attribute.
   updated so that the next read will occur where the previous read
   stopped.
 
-
   You can change the position of the reading cursor by assigning a new
   value to 'index'. Note that the begining of the UBinary is
   associated to a value of 0 for 'index'.
 
-
   'index' cannot be greater than the UBinary size.
 
-
-  When a reading error occur, 'index' is set to -{}1, and you have to
+  When a reading error occur, 'index' is set to -1, and you have to
   change it's value manually to continue reading.
 
 \item[size] The size of the UBinary currently read.
@@ -2251,64 +2156,51 @@ on Gostai website: \url{http://www.gostai.com/doc/en/uobject/}.
 
 \subsubsection{Windows}
 
-For now we only support compilation with Mingw under windows. We
-recommend that you use DevCpp (which use Mingw compiler) to compile
+Currently we only support compilation with Mingw under windows. We
+recommend that you use DevCpp (which uses Mingw compiler) to compile
 your projects.  We provide a sample DevCpp project in
-\nolinkurl{\urbi_DIRECTORY/doc/sample}.  The directory contain two
-files:
-\begin{itemize}
-\item sample.dev: the DevCpp project file
-\item helloworld.cpp: a sample UObject which prints ``Hello World !'' at
-  initialisation. You may replace this file with your own UObject
-  files.
-\end{itemize}
+\file{URBI\_DIRECTORY/doc/sample}.  The directory contains two files:
+\begin{files*}
+\item[sample.dev] the DevCpp project file
+\item[helloworld.cpp] a sample UObject which prints \samp{Hello
+    World!} at initialisation. You may replace this file with your own
+  UObject files.
+\end{files*}
 
 If you do not want to use this sample project, you have to do the
 following: compile your UObject files and link with the libraries we
 provide. This to generate an executable that you will name urbi.exe.
 Here is the list of option that you have to provide to your compiler:
 \begin{itemize}
-
-\item Include path: \nolinkurl{URBI_DIRECTORY/SDK/include}. By default it is
- \verb+c:\Program Files\GOSTAI\Urbi Webots 1.0\SDK\include+.
-
+\item Include path: \file{URBI\_DIRECTORY/SDK/include}. By default it
+  is \verb+c:\Program Files\GOSTAI\Urbi Webots 1.0\SDK\include+.
 
 \item Library path:
- \begin{itemize}
+  \begin{files*}
+  \item[URBI\_DIRECTORY/SDK/lib] By default it is
+    \verb+c:\Program Files\GOSTAI\\urbi Webots 1.0\SDK\lib+.
 
- \item \nolinkurl{URBI_DIRECTORY/SDK/lib}. By default it is
-   \verb+c:\Program Files\GOSTAI\\urbi Webots 1.0\SDK\lib+.
+  \item[WEBOTS\_DIRECTORY/lib] By default it is
+    \verb+c:\Program Files\Webots\lib+.
+  \end{files*}
 
+\item Library to link with:
+  \begin{files*}
+  \item[liburbicore.a] you have to specify that you want all the
+    symbol of the library to be included, so you have to add the
+    option \option{-whole-archive} to the link line. You may write it
+    as follow: \samp{-Wl,-whole-archive -lurbicore
+      -Wl,-no-whole-archive}.
 
-
- \item{}  \nolinkurl{WEBOTS_DIRECTORY/lib}. By default it is
-   \verb+c:\Program Files\Webots\lib+.
-
-
- \end{itemize}
-
-
-
-\item{}         Library to link with:
-  \begin{itemize}
-
-  \item{} liburbicore.a: you have to specify that you want all the
-    symbol of the library to be included, so you have to add the option
-    -{}whole-{}archive to the link line. You may write it as follow:
-    ``-{}Wl,-{}whole-{}archive -{}lurbicore
-    -{}Wl,-{}no-{}whole-{}archive''
-
-  \item{} libjpeg.a: you MUST link with the static libjpeg that we
-    provide in \nolinkurl{\urbi_DIRECTORY/SDK/lib}
-  \item{} libeay32.dll
-  \item{} libController.dll
-  \item{} ws2\_32.dll
-  \item{} libgdi32.dll
-  \item{} Iphlpapi.dll
-  \item{} libboost\_thread-{}mt.a
-  \end{itemize}
-
-
+  \item[libjpeg.a] you MUST link with the static libjpeg that we
+    provide in \file{URBI\_DIRECTORY/SDK/lib}
+  \item[libeay32.dll]
+  \item[libController.dll]
+  \item[ws2\_32.dll]
+  \item[libgdi32.dll]
+  \item[Iphlpapi.dll]
+  \item[libboost\_thread-mt.a]
+  \end{files*}
 \end{itemize}
 We distribute separately some version of boost 1.34.1 library. You can
 download them for Mingw here: \url{http://www.gostai.com/boost/}.
@@ -2323,28 +2215,28 @@ default install of Webots and \urbi for Webots, you just have to be in
 the directory containing your source UObject files and type the
 command:
 
-\begin{lstlisting}
+\begin{shell}
 $ umake-engine -C webots -o urbi
-\end{lstlisting}
-
+\end{shell}
 
 Important: since release 1.5 you also need to link with boost 1.34.1
-library.  In particular you need to link with libboost\_thread. Under
-Linux we provide binaries for boost library 1.34.1 on this page:
-\url{http://www.gostai.com/boost/}. The binary available under Linux
-are compiled with gcc4.1 and gcc3.3. If you use a different compiler
-you have to compile yourself the libraries. Please go to:
-\url{http://www.boost.org/} to download a source tarball and install
-it.  We don't provide any tarballs for Mac. You can get the binaries
-using the install system MacPorts: \url{http://www.macports.org} or by
-compiling boost 1.34.1 from the sources.
+library.  In particular you need to link with
+\file{libboost\_thread}. Under Linux we provide binaries for boost
+library 1.34.1 on this page: \url{http://www.gostai.com/boost/}. The
+binary available under Linux are compiled with GCC 4.1 and GCC 3.3. If
+you use a different compiler you have to compile yourself the
+libraries. Please go to: \url{http://www.boost.org/} to download a
+source tarball and install it.  We don't provide any tarballs for
+Mac. You can get the binaries using the install system MacPorts:
+\url{http://www.macports.org} or by compiling Boost 1.34.1 from the
+sources.
 
 
 \subsection{Use the generated executable}
 
-To use the executable you have generated (either urbi.exe on Windows
-or Urbi on Linux) simply replace the Urbi controller in
-\nolinkurl{webots/projects/default/controllers/urbi/} by your
+To use the executable you have generated (either \command{urbi.exe} on
+Windows or \command{urbi} on Linux) simply replace the \urbi
+controller in \file{webots/projects/default/controllers/urbi/} by your
 executable. That's it! Launch Webots, connect to the \urbi server,
 allocate a new object of type your UObject and use it.
 
