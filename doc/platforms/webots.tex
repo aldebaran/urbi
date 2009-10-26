@@ -864,53 +864,63 @@ controllerArgs [options] period [path1 path2 ...]
 
 \noindent
 \begin{description}
-\item[{Accelerometer (string NodeName, string ComponentName)}]
-  Construct a new Accelerometer object.  The ``NodeName'' attribute is
-  the value of the name field, in the Accelerometer node in Webots.
-  The ``ComponentName'' is the name of the Accelerometer component this
-  object represent.  Because you need 3 Accelerometer UObject to
-  represent the Webots Accelerometer device. Each Accelerometer
-  UObject represent one of the component of the Webots Accelerometer
-  device.  ``ComponentName'' can take 3 values: ``x'', ``y'' or ``z''.
+\item[{Accelerometer (string \var{NodeName}, string
+    \var{ComponentName})}] Construct a new Accelerometer object.  The
+  ``NodeName'' attribute is the value of the name field, in the
+  Accelerometer node in Webots.  The ``ComponentName'' is the name of
+  the Accelerometer component this object represent.  Because you need
+  3 Accelerometer UObject to represent the Webots Accelerometer
+  device. Each Accelerometer UObject represent one of the component of
+  the Webots Accelerometer device.  ``ComponentName'' can take 3
+  values: ``x'', ``y'' or ``z''.
 
 \end{description}
 
 \paragraph{Attributes}
 \label{webots.uobjects.robotdevices.accelerometer.attributes}%
 
+\newenvironment{attribute}[4]
+{
+  \item \lstinline|#1|\\
+    \begin{description}
+    \item[Permissions] #2.
+    \item[Type] #3.
+    \item[Range] #4.
+    \item[Description]
+}{
+    \end{description}
+}
+
 \noindent
 \begin{description}
-\item[{load}] Permissions: readable, writeable.
+\begin{attribute}{load}
+  {readable, writeable}
+  {float}
+  {\{0,1\}}
+
+    This attribute let you enable or disable the
+    Accelerometer device.  By default it is set to 1, which means that
+    the Accelerometer is enabled. If you set it to 0 it will disable
+    it. NB: If you enable or disable one of the Accelerometer UObject
+    component, then all the associated Accelerometer UObject components
+    will also be enabled or disabled (ex: if you disable the y
+    Accelerometer component, then the x and z Accelerometer components
+    will also be disabled).
 
 
-  Type: float.
-
-
-  Range: \{0,1\}
-
-
-  Description: This attribute let you enable or disable the
-  Accelerometer device.  By default it is set to 1, which means that
-  the Accelerometer is enabled. If you set it to 0 it will disable
-  it. NB: If you enable or disable one of the Accelerometer UObject
-  component, then all the associated Accelerometer UObject components
-  will also be enabled or disabled (ex: if you disable the y
-  Accelerometer component, then the x and z Accelerometer components
-  will also be disabled).
-
-
-  To enable and disable the device we use the following Webots
-  functions:
+    To enable and disable the device we use the following Webots
+    functions:
 
 
 \begin{lstlisting}
-  void accelerometer_enable (DeviceTag sensor, unsigned short ms);
-  void accelerometer_disable (DeviceTag sensor);
+void accelerometer\_enable (DeviceTag sensor, unsigned short ms);
+void accelerometer\_disable (DeviceTag sensor);
 \end{lstlisting}
 
-The frequency given to the enable function is the frequency of the
-\urbi controller (given in the ``controllerArgs'' field in the .wbt
-file).
+    The frequency given to the enable function is the frequency of the
+    \urbi controller (given in the ``controllerArgs'' field in the .wbt
+    file).
+\end{attribute}
 
 \item[{ val }] Permissions: readable.
 
