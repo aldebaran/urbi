@@ -522,65 +522,73 @@ engine.
 those files.
 
 \begin{table}[htbp]
-\begin{center}
-\begin{tabular}{ll}\hline
-  Directory &   Description \\
-  webots/projects/default/controllers & Contains the \urbi controller. \\
-  webots/projects/default/controllers/urbi &      \\
-  webots/projects/default/controllers/urbi/urbi &       Controller's binary \\
-  webots/projects/default/controllers/urbi/urbi.key &   \urbi for Webots license key \\
-  webots/resources/webots.key & Webots license key \\
-  webots/projects/packages/urbi/data &  Data directory (\urbi scripts and misc. multimedia files) \\
-  webots/projects/packages/urbi/data/aibo &     Main Aibo robots directory \\
-  webots/projects/packages/urbi/data/aibo/ers7 &        Aibo ERS-7 directory \\
-  webots/projects/packages/urbi/data/aibo/ers210 &      Aibo ERS-210 directory \\
-  webots/projects/packages/urbi/data/aibo/ers210 &      Aibo ERS-220 directory \\
-  webots/projects/packages/urbi/data/e-puck &   E-puck robots directory \\
-  webots/projects/packages/urbi/data/kiki &     Kiki robots directory \\
-  webots/projects/packages/urbi/data/pioneer2 & Pioneer2 robots directory \\
-  webots/projects/packages/urbi/data/ustd &     Ustd directory (please see Ustd dedicated documentation for more information) \\
-  webots/projects/packages/urbi/worlds &        \urbi for Webots worlds directory \\
-  webots/projects/packages/urbi/worlds/aibo\_ers210\_urbi.wbt & Main world for the Aibo ERS-210. \\
-  webots/projects/packages/urbi/worlds/aibo\_ers7\_urbi.wbt &   Main world for the Aibo ERS-7. \\
-  webots/projects/packages/urbi/worlds/aibo\_ers7\_urbi\_soccer.wbt &   Soccer world for the Aibo ERS-7. \\
-  webots/projects/packages/urbi/worlds/aibo\_ers7\_urbi\_supervisor.wbt &       Supervisor world for the Aibo ERS-7 (see the supervisor section). \\
-  webots/projects/packages/urbi/worlds/e-puck\_urbi.wbt &       Main world for the e-puck. \\
-  webots/projects/packages/urbi/worlds/kiki\_urbi.wbt & Main world for the kiki example robot. \\
-  webots/projects/packages/urbi/worlds/pioneer2\_urbi.wbt &     Main world for the Pioneer 2. \\
-  webots/projects/packages/urbi/worlds/textures &       World's textures directory. \\
-\hline
-\end{tabular}
-\end{center}
-
-\caption{Directory hierarchy}
-\label{webots.builtin.directory}%
+  \begin{center}
+    \begin{tabular}{|>{\ttfamily`}l<{'}|p{.5\linewidth}|}\hline
+      \multicolumn{1}{|c|}{\textbf{Directory}}
+      &
+      \multicolumn{1}{c|}{\textbf{Description}}
+      \\
+      \hline
+      webots/resources/webots.key & Webots license key \\
+      \hline
+      \multicolumn{2}{|c|}{Inside \file{webots/projects/default/}}\\
+      \hline
+      controllers & Contains the \urbi controller. \\
+      controllers/urbi &      \\
+      controllers/urbi/urbi &       Controller's binary \\
+      controllers/urbi/urbi.key &   \urbi for Webots license key \\
+      \hline
+      \multicolumn{2}{|c|}{Inside \file{webots/projects/packages/urbi}}\\
+      \hline
+      data &  Data directory (\urbi scripts and misc. multimedia files) \\
+      data/aibo &     Main Aibo robots directory \\
+      data/aibo/ers7 &        Aibo ERS-7 directory \\
+      data/aibo/ers210 &      Aibo ERS-210 directory \\
+      data/aibo/ers210 &      Aibo ERS-220 directory \\
+      data/e-puck &   E-puck robots directory \\
+      data/kiki &     Kiki robots directory \\
+      data/pioneer2 & Pioneer2 robots directory \\
+      data/ustd &     Ustd directory (please see Ustd dedicated documentation for more information) \\
+      worlds &        \urbi for Webots worlds directory \\
+      worlds/aibo\_ers210\_urbi.wbt & Main world for the Aibo ERS-210. \\
+      worlds/aibo\_ers7\_urbi.wbt &   Main world for the Aibo ERS-7. \\
+      worlds/aibo\_ers7\_urbi\_soccer.wbt &   Soccer world for the Aibo ERS-7. \\
+      worlds/aibo\_ers7\_urbi\_supervisor.wbt &       Supervisor world for the Aibo ERS-7 (see the supervisor section). \\
+      worlds/e-puck\_urbi.wbt &       Main world for the e-puck. \\
+      worlds/kiki\_urbi.wbt & Main world for the kiki example robot. \\
+      worlds/pioneer2\_urbi.wbt &     Main world for the Pioneer 2. \\
+      worlds/textures &       World's textures directory. \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Directory hierarchy}
+  \label{webots.builtin.directory}%
 \end{table}
 
- It is important to notice the data's directory hierarchy, each path follows
-the following rule:
-
+It is important to notice the data's directory hierarchy, each path
+follows the following rule:
 
 \begin{lstlisting}
-data/<ROBOT NAME>
+data/\var{robotName}
 \end{lstlisting}
 
-If several version of the robots are available, the following
+If several versions of the robots are available, the following
 rule is applied:
 
 \begin{lstlisting}
-data/<ROBOT NAME>/<VERSION>
+data/\var{robotName}/\var{version}
 \end{lstlisting}
 
- In those directories, standard files are:
+In these directories, standard files are:
 
 \begin{table}[htbp]
 \begin{center}
 \begin{tabular}{ll}\hline
   File &        Description \\
-  CLIENT.INI &  Client initialization script (required). \\
-  config.u &    Configuration file (used to customize the robot). \\
-  <ROBOT>.ini & Robot hardware layout. \\
-  \urbi.INI &    Server initialization script (required). \\
+  \file{CLIENT.INI} &  Client initialization script (required). \\
+  \file{config.u} &    Configuration file (used to customize the robot). \\
+  \file{\var{robot}.ini} & Robot hardware layout. \\
+  \file{urbi.INI} &    Server initialization script (required). \\
 \hline
 \end{tabular}
 \end{center}
@@ -592,16 +600,16 @@ data/<ROBOT NAME>/<VERSION>
 \subsection{Worlds special features}
 \label{webots.builtin.worlds}%
 
- This section describes the special features of some worlds.
-The worlds referenced in the previous section as the ``main''
-world have no specificities.
+This section describes the special features of some worlds.  The
+worlds referenced in the previous section as the ``main'' world have
+no specificities.
 
 
 \subsubsection{The soccer world (balltracking)}
 \label{webots.builtin.worlds.soccer}%
 
- Launch Webots and load the soccer world
-(\nolinkurl{aibo_ers7_urbi_soccer.wbt}).
+Launch Webots and load the soccer world
+(\file{aibo\_ers7\_urbi\_soccer.wbt}).
 
 
 Connect to the \urbi server and use the following command:
@@ -610,37 +618,33 @@ Connect to the \urbi server and use the following command:
 unfreeze balltracking;
 \end{urbifixme}
 
- This will activate the balltracking of the ERS-{}7 robot.
-Now, you can use \textbf{shift} and the mouse to move
-the ball, the ERS-{}7 will move its head to follow the ball.
+This will activate the balltracking of the ERS-7 robot.  Now, you can
+use \kbd{shift} and the mouse to move the ball, the ERS-7 will move
+its head to follow the ball.
 
 
 \subsubsection{The supervisor world}
 \label{webots.builtin.worlds.supervisor}%
 
- Launch Webots and load the supervisor world
-(\nolinkurl{aibo_ers7_urbi_supervisor.wbt}).
+Launch Webots and load the supervisor world
+(\file{aibo\_ers7\_urbi\_supervisor.wbt}).
 
+It is crucial to understand that this world launches two \urbi
+servers.  The robot's server on the port 54001 and the supervisor
+server on the port 54002.
 
- It is crucial to understand that this world launches two \urbi servers.
-The robot's server on the port 54001 and the supervisor server on the
-port 54002.
+A supervisor is a kind of robot in Webots which can be used to control
+the world. It is used, for example, in the Webots soccer example to
+give the ball's position.
 
+If you create a supervisor node which is linked to an \urbi
+controller, this will allow you to control the world through \urbi.
 
- A supervisor is a kind of robot in Webots which can be used ton control
-the world. It is used, for example, in the Webots soccer example to give
-the ball's position.
+Warning: don't forget to give different ports for each robot you add
+in a Webots world. If this is not the case, some controllers will not
+work.
 
-
- If you create a supervisor node which is linked to an \urbi controller,
-this will allow you to control the world through \urbi.
-
-
- Warning: don't forget to give different ports for each robot you add in a
-Webots world. If this is not the case, some controllers will not work.
-
-
- After having started the simulation of the supervisor world, execute
+After having started the simulation of the supervisor world, execute
 the following lines:
 
 
@@ -656,39 +660,38 @@ fl = new ManipulateNode("FLOOR");
 fl.ty = -1 sin:10s ampli:0.5,
 \end{urbifixme}
 
- The first part of the script creates a label and defines a movement
-with the sin modifier. The second part moves the floor.
+The first part of the script creates a label and defines a movement
+with the \lstinline|sin| modifier. The second part moves the floor.
 
-
-For a complete documentation of those nodes, please read the
-next sections.
+For a complete documentation of these nodes, please read the following
+sections.
 
 \subsection{Robots specific functions}
 \label{webots.builtin.robots}%
 
- A lot of functions are directly available in \urbi to generate
-high-{}level behaviour. Those features will be described in the
-next section.
+Many functions are directly available in \us to generate high-level
+behaviour. Those features will be described in the next section.
 
 
 \subsubsection{Aibo specific functions}
 \label{webots.builtin.robots.aibo}%
 
- The following table sums up the aibo's functions.
+The following table sums up the Aibo's functions.
 
 \begin{itemize}
-\item \lstinline|robot.walk(duration)|\\
+\item \lstinline|robot.walk(\var{duration})|\\
   Walk for duration milliseconds (walk backward if duration is negative).
 \item \lstinline|robot.stopwalk()|\\
   Interrupt the walk.
-\item \lstinline|robot.turn(duration)|\\
-  Turn counter-clockwise for duration milliseconds (turn backward if duration is negative).
+\item \lstinline|robot.turn(\var{duration})|\\
+  Turn counter-clockwise for \var{duration} seconds (turn backward if
+  duration is negative).
 \item \lstinline|robot.stopturn()|\\
   Interrupt the turn.
 \item \lstinline|robot.initial()|\\
   Initial position sitting down (stretch and lay).
 \item \lstinline|robot.stretch()|\\
-  Stretching like in the morning...
+  Stretching like in the morning.
 \item \lstinline|robot.lay()|\\
   Laying (sitting down).
 \item \lstinline|robot.sit()|\\
@@ -699,22 +702,19 @@ next section.
   Stand up.
 \end{itemize}
 
+The following slots are variables.
 \begin{itemize}
 \item \lstinline|robot.walkspeed|\\
-  speed of walk, the smaller the faster: period of a step. Defaults to
+  Speed of walk, the smaller the faster: period of a step. Defaults to
   1s.
 \item \lstinline|robot.turnspeed|\\
   Speed of turn, the smaller the faster: period of a step. Defaults to
   1s.
 \end{itemize}
 
-More high-level behaviours are available in \nolinkurl{ustd}, please
-read the corresponding documentation to obtain more information.
+More high-level behaviours are available in \file{ustd}, please read
+the corresponding documentation to obtain more information.
 
-
-% -------
-% Chapter
-% -------
 
 \section{Making your own \urbi for Webots controllers}
 \label{webots.own}%
