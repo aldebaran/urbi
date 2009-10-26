@@ -2,9 +2,9 @@
 \label{sec:webots}
 
 
-This documentation describes the URBI engine for Webots.  Please go to
-http://www.gostai.com/doc/en/webots/ to get the last updated version
-of this documentation.
+This documentation describes the \urbi engine for Webots.  Please go to
+\url{http://www.gostai.com/doc/en/webots} to get the latest updated
+version of this documentation.
 
 
 % -------
@@ -15,7 +15,7 @@ of this documentation.
 \label{webots.quickstart}%
 
 This section describes how to setup the software on your computer and
-give you the basis to use URBI for Webots.
+give you the basis to use \urbi for Webots.
 
 
 \subsection{Setup}
@@ -31,30 +31,39 @@ Warning: root privileges are required to install this software under
 Linux.
 
 \begin{table}[htbp]
-\begin{center}
-\begin{tabular}{ll}\hline
-Linux distribution &    Package extension\\
-RPM based distributions
-CentOS
-Fedora Core
-Mandriva Linux &
-rpm\\
-Debian based distributions
-Debian GNU/Linux
-Ubuntu &
-deb \\
-Others
-Arch Linux
-Gentoo
-SUSE &
-tarball (zip, tar.gz or tar.bz2)\\
-\hline
-\end{tabular}
-
-\end{center}
-
-\caption{Which package should I use?}
-\label{webots.setup.distributions}%
+  \begin{center}
+    \begin{tabular}{p{.4\linewidth}l}
+      \hline
+      Linux distribution &    Package extension\\
+      \hline
+      RPM based distributions:
+      \begin{itemize}
+      \item CentOS
+      \item Fedora Core
+      \item Mandriva Linux
+      \end{itemize}
+      &
+      rpm\\
+      Debian based distributions
+      \begin{itemize}
+      \item Debian GNU/Linux
+      \item Ubuntu
+      \end{itemize}
+      &
+      deb \\
+      Others
+      \begin{itemize}
+      \item Arch Linux
+      \item Gentoo
+      \item SUSE
+      \end{itemize}
+      &
+      tarball (zip, tar.gz or tar.bz2)\\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Which package should I use?}
+  \label{webots.setup.distributions}%
 \end{table}
 
 \subsubsection{Windows}
@@ -63,59 +72,57 @@ tarball (zip, tar.gz or tar.bz2)\\
 \paragraph{Installation}
 \label{webots.setup.windows.installation}%
 
-To install URBI for Webots under windows, Webots must be installed on
-you computer. If Webots is not installed, please first proceed to
-Webots installation. Then double click on the "URBI Webots 1.0
-Setup.exe" and follow the instructions given by the installer:
+To install \urbi for Webots under windows, Webots must be installed on
+your computer. If Webots is not installed, please first proceed to
+Webots installation. Then double click on the ``\urbi Webots 1.0
+Setup.exe'' and follow the instructions given by the installer:
 
 \begin{enumerate}
+\item The installer recommends to close all other running applications
+  while installing \urbi for Webots. Click ``Next $>$'' to proceed.
 
-\item The installer recommend you to close all other running
-  applications while installing URBI for Webots. Click "Next >{}" to
-  proceed to next step.
-
-\item Before installing URBI for Webots, you have to read and accept
-  the Licence Agreement. Once you have read it, check "I accept the
-  agreement" and click "Next >{}" to proceed to next step.
+\item Before installing \urbi for Webots, read and accept the Licence
+  Agreement. Once you have read it, check ``I accept the agreement'' and
+  click on ``Next $>$'' to proceed.
 
 \item The installer will automatically detect your Webots installation
-  path and install the URBI controller, the worlds and data in the
-  same location. For all the other files (URBI for Webots SDK and URBI
-  for Webots Documentation) you have to provide a new location. This
-  is what the installer is asking at this step. Choose a custom
-  location if you don't want the default one, \nolinkurl{C:\Program
-    Files\Gostai\URBI Webots 1.0}, and click "Next >{}" to proceed to
-  next step.
+  path and install the \urbi controller, the worlds and data in the
+  same location. For all the other files (\urbi for Webots SDK and
+  \urbi for Webots Documentation) you have to provide a new
+  location. This is what the installer is asking at this step. Choose
+  a custom location if you don't want the default one,
+  \nolinkurl{C:\Program Files\Gostai\\urbi Webots 1.0}, and click
+  ``Next $>$'' to proceed.
 
 \item In this step you can choose which features will be installed on
-  your computer. Required features ("URBI Webots") cannot be
-  unchecked. These are the URBI controller and the Urbi for Webots
+  your computer. Required features (``\urbi Webots'') cannot be
+  unchecked. These are the \urbi controller and the Urbi for Webots
   worlds and data. They will be installed in your Webots installation
-  directory. Optional features are the "URBI Software Development
-  Kit", useful if you want to develop your own UObjects and plug them
-  in URBI, and the "URBI Documentation". Optional features will be
+  directory. Optional features are the ``\urbi Software Development
+  Kit'', useful if you want to develop your own UObjects and plug them
+  in \urbi, and the ``\urbi Documentation''. Optional features will be
   installed in the location you provided at Step 3).  Check the
-  checkbox near the features you want to install, and click "Next >{}"
+  checkbox near the features you want to install, and click ``Next $>$''
   to proceed to next step.
 
-\item You can customize the location where shortcuts to URBI files
+\item You can customize the location where shortcuts to \urbi files
   will be installed in you Start Menu. You can choose not to put any
-  shortcuts just by checking "Don't create a start menu folder". Click
-  "Next >{}" to proceed to next step.
+  shortcuts just by checking ``Don't create a start menu folder''. Click
+  ``Next $>$'' to proceed to next step.
 
-\item URBI source code files have a ".u" extension. By default the
-  installer associate all ".u" files with URBI. If you don't want
+\item \urbi source code files have a ``.u'' extension. By default the
+  installer associate all ``.u'' files with \urbi. If you don't want
   these files to be associated unckeck the corresponding
-  checkbox. Then click "Next >{}" to proceed to next step.
+  checkbox. Then click ``Next $>$'' to proceed to next step.
 
 \item The installer prints a summary of the installation options for
-  you to verify that it is correct. Then click "Install" to install
-  URBI for webots on your computer.
+  you to verify that it is correct. Then click ``Install'' to install
+  \urbi for webots on your computer.
 
-\item The installer display the README file. Click "Next >{}" to
+\item The installer display the README file. Click ``Next $>$'' to
   proceed to next step.
 
-\item You have finished to install URBI for Webots. Click "Finish" to
+\item You have finished to install \urbi for Webots. Click ``Finish'' to
   close the installer.
 \end{enumerate}
 
@@ -126,17 +133,17 @@ Setup.exe" and follow the instructions given by the installer:
 \label{webots.setup.linux.rpm}%
 
 Execute the following command:
-\begin{lstlisting}
-rpm -hiv <package Urbi For Webots>.rpm
-\end{lstlisting}
+\begin{shell}
+$ rpm -hiv <package Urbi For Webots>.rpm
+\end{shell}
 
 \paragraph{Debian base distributions}
 \label{webots.setup.linux.deb}%
 
 Execute the following command:
-\begin{lstlisting}
+\begin{shell}
 $ sudo dpkg --install <package Urbi For Webots>.deb
-\end{lstlisting}
+\end{shell}%$
 
 Your software is installed, you'll now have to setup the license.
 
@@ -145,16 +152,16 @@ Your software is installed, you'll now have to setup the license.
 \label{webots.setup.linux.tarball}%
 as root
 
-\begin{lstlisting}
+\begin{shell}
 $ cd /
 $ tar -xvzf  <package Urbi For Webots>.tgz
-\end{lstlisting}
+\end{shell}
 or
 
-\begin{lstlisting}
+\begin{shell}
 $ cd /
 $ tar -xvjf  <package Urbi For Webots>.tar.bz2
-\end{lstlisting}
+\end{shell}
 
 \subsubsection{MacOs}
 \label{webots.setup.macos}%
@@ -163,7 +170,7 @@ $ tar -xvjf  <package Urbi For Webots>.tar.bz2
 \label{webots.setup.macos.manual}%
 
 You have to be administrator on your machine in order to install
-UrbiForWebots.  Extract the zip file containing URBI by double
+UrbiForWebots.  Extract the zip file containing \urbi by double
 clicking on it.  You obtain two folders: \nolinkurl{usr} and
 \nolinkurl{webots}.  You have to copy the contains of the
 \nolinkurl{webots} directory in the directory containing Webots
@@ -178,13 +185,13 @@ path as explained in Webots documentation.  From a shell terminal this
 gives you:
 
 
-\begin{lstlisting}
+\begin{shell}
 $ cd $HOME/Desktop
 $ ls
 usr webots webots-urbiengine-sdk-webots-1.03-k1462-e247-l482-powerpc-apple-darwin8-gcc-4.0.1.zip
 $ cp -r usr /
 $ cp -r webots/* $WEBOTS_HOME/
-\end{lstlisting}
+\end{shell}
 
 \subsection{Evaluation mode}
 \label{webots.evaluation}%
@@ -193,7 +200,7 @@ If you don't provide a valid license file to the urbi controller, it
 will be launched in evaluation mode. The only difference with the
 normal version is that the controller will exit after 5 minutes, thus
 letting you test all the feature we provide in the registered version
-during this small period of time. When you launch Webots and URBI
+during this small period of time. When you launch Webots and \urbi
 without a valid license file you can see a message in Webots log that
 tells you that the license is invalid or missing:
 
@@ -211,12 +218,12 @@ In order to run Urbi for Webots unlimitedly you must have a licence
 file .  The Urbi for Webots licensing system is based on the Webots
 licensing system.  In Webots you have two licensing system available:
 \begin{itemize}
-\item a license file "webots.key";
+\item a license file ``webots.key'';
 \item an USB dongle;
 \end{itemize}
 
 
-\subsubsection{Urbi licensing with "webots.key" license}
+\subsubsection{Urbi licensing with ``webots.key'' license}
 \label{webots.license.webotskey}%
 
 To obtain an Urbi license if you use this type of licensing, please
@@ -224,7 +231,7 @@ send us a copy of your webots.key license, we will generate the Urbi
 license using this file.
 
 
-Once you have your "urbi.key" file, put the "webots.key" file in the
+Once you have your ``urbi.key'' file, put the ``webots.key'' file in the
 folder:
 \begin{itemize}
 
@@ -233,7 +240,7 @@ folder:
 \end{itemize}
 (warning: it is mandatory to have a copy of the webots.key in this
 folder, if you don't have it, Urbi won't find the webots.key file and
-you will get a licensing error message) and place the "urbi.key" file
+you will get a licensing error message) and place the ``urbi.key'' file
 in the same folder as the urbi controller. By default in
 \begin{itemize}
 
@@ -250,7 +257,7 @@ send us your Webots USB dongle number (available in the help/about
 webots menu). We will then generate an Urbi license using this number.
 
 
-Install your "urbi.key" file in the same folder as the Urbi
+Install your ``urbi.key'' file in the same folder as the Urbi
 controller.  By default in
 \begin{itemize}
 
@@ -265,14 +272,14 @@ controller.  By default in
 If you have a valid license but still get the licensing error message,
 verify that you have followed correctly the setup instructions. Note
 that you can specify the location of the urbi.key license to the Urbi
-controller, in the .wbt files, within the "controllerArgs" field. Just
-add "-{}l" and the absolute path of your license file to the field
+controller, in the .wbt files, within the ``controllerArgs'' field. Just
+add ``-{}l'' and the absolute path of your license file to the field
 line. Exemple (with a license file urbi.key located in
 \nolinkurl{C:/mylicensefolder/})
 
-\begin{lstlisting}
+\begin{shell}
 controllerArgs "-f -l C:/mylicensefolder/urbi.key  -p 54000 32 "
-\end{lstlisting}
+\end{shell}
 Contact us at Gostai if you still have some problems with the license,
 and we will resolve the problem with you.
 
@@ -280,14 +287,14 @@ and we will resolve the problem with you.
 \subsection{Your first run}
 \label{webots.firstrun}%
 
-This section describes basic use of the URBI engine for Webots.
+This section describes basic use of the \urbi engine for Webots.
 
 
-\subsubsection{URBI worlds}
+\subsubsection{\urbi worlds}
 \label{webots.firstrun.openworld}%
 
 We provide a set of example worlds with several robots you will be
-able to control through URBI. They are located in the directory:
+able to control through \urbi. They are located in the directory:
 \nolinkurl{WEBOTS_DIRECTORY/projects/packages/urbi/worlds/ }.  Open
 the world named \nolinkurl{aibo_ers7_urbi_soccer.wbt}. The image
 bellow is a screenshot of this world. You can see an aibo in a soccer
@@ -314,27 +321,27 @@ controller.
 Let's see how this controller let you control the robot.
 
 
-\subsubsection{URBI controller}
+\subsubsection{\urbi controller}
 \label{webots.firstrun.urbicontroller}%
 
-You have two ways to control your robot through the URBI
-controller. The first way is by remotely sending commands to the URBI
-controller. The URBI controller act as a server, and let you connect
-to it through the network, and then send URBI commands to this server.
-The second way is by writing URBI scripts that will be loaded at
+You have two ways to control your robot through the \urbi
+controller. The first way is by remotely sending commands to the \urbi
+controller. The \urbi controller act as a server, and let you connect
+to it through the network, and then send \urbi commands to this server.
+The second way is by writing \urbi scripts that will be loaded at
 controller start up.
 
 
 \subsubsection{Send commands with a client software}
 \label{webots.firstrun.clientsoftware}%
 
-In order to connect to the URBI controller and then send commands, you
+In order to connect to the \urbi controller and then send commands, you
 need to use a client software that allows you to connect on some
 address on the network and let you send data through this connection.
 The simplest program which do this is the \textbf{telnet} program,
 available on all platform (Windows, Linux and MacOs). You can also use
 one of the program available at Urbiforge (http://www.urbiforge.com)
-in the Tool section.  The URBI controller launched with the
+in the Tool section.  The \urbi controller launched with the
 aibo\_er7\_urbi\_soccer world is waiting for connections coming on
 your computer, on port 54000. So to connect on it you will have to
 specify the address of your computer ('localhost') and the right port
@@ -375,8 +382,8 @@ In the dos command prompt type \textbf{telnet localhost 54000}.
 %\end{minipage}
 
 
-This launch telnet. It connect to the URBI controller, and the URBI
-controller send you the URBI header (the lines that display on the
+This launch telnet. It connect to the \urbi controller, and the \urbi
+controller send you the \urbi header (the lines that display on the
 screen). On windows the text is badly displayed because of some
 character conversion problem. It is still usable even if it is not
 really convenient.
@@ -392,7 +399,7 @@ really convenient.
 \label{webots.firstrun.clientsoftware.telnet.linuxandmacos}%
 
 Open a new shell and type \textbf{telnet localhost 54000}.  This
-launch telnet. It connect to the URBI controller, and the URBI
+launch telnet. It connect to the \urbi controller, and the \urbi
 controller send you the Urbi header.
 
 
@@ -405,16 +412,16 @@ controller send you the Urbi header.
 \subparagraph{Use telnet to send commands}
 \label{webots.firstrun.clientsoftware.telnet.usetelnet}%
 
-Now that you are connected to the URBI controller, you can send
+Now that you are connected to the \urbi controller, you can send
 command to it and makes your robot move and interact with it's
 environment. For example try typing the following commands in
 \textbf{telnet}:
 
-\begin{lstlisting}
+\begin{urbifixme}
 headPan = 50 time: 5s;
 headPan = -50 time: 5s;
 headPan = 0 time: 5s;
-\end{lstlisting}
+\end{urbifixme}
 And you will see the head of the aibo move left, right, and then to
 the center.
 
@@ -425,29 +432,29 @@ the center.
 %\end{minipage}
 
 
-\subsubsection{Load URBI programs at controller start}
+\subsubsection{Load \urbi programs at controller start}
 \label{webots.firstrun.loadprograms}%
 
-\paragraph{By adding the file as argument of the URBI controller}
+\paragraph{By adding the file as argument of the \urbi controller}
 \label{webots.firstrun.loadprograms.cmd_line}%
 
-It is possible to write some URBI script and load it at controller
-startup.  To do this just write URBI code in some file, and then
+It is possible to write some \urbi script and load it at controller
+startup.  To do this just write \urbi code in some file, and then
 specify it's path in the controllerArgs webots node.  For example
 create a new text file, rename it test.u and write in it:
 
 
-\begin{lstlisting}
+\begin{urbifixme}
 robot.sit (),
-\end{lstlisting}
+\end{urbifixme}
 
 Then edit the webots world aibo\_ers7\_urbi\_soccer.wbt, and add the
 path of your file test.u on the line of the controllerArgs node.
 
 
-\begin{lstlisting}
+\begin{shell}
 controllerArgs "-f -p 54000 32 [HERE ADD YOUR SCRIPT FILES]"
-\end{lstlisting}
+\end{shell}
 
 For exemple let say that you created your file in
 \begin{itemize}
@@ -508,7 +515,7 @@ For exemple let say that you created your file in
          Add this path to the controllerArgs line and it gives:
 
 
-\begin{lstlisting}
+\begin{shell}
 # Under Windows, absolute path version:
 controllerArgs "-f -p 54000 50 \"C:/Program Files/webots/projects/packages/urbi/data/aibo/test.u\""
 (note the use of \" \" about the path, which are mandatory if the path
@@ -522,7 +529,7 @@ controllerArgs "-f -p 54000 50 /usr/local/webots/projects/packages/urbi/data/aib
 
 # Relative path version (os independant)
 controllerArgs "-f -p 54000 50 ../../../packages/urbi/data/aibo/test.u"
-\end{lstlisting}
+\end{shell}
 
 NB: If you have some spaces in your file path, you have to add
 backslashed double quotes in order to have webots and Urbi understand
@@ -541,7 +548,7 @@ was correctly updated.
 
 
 And if you look at the world view, you can see that the controller has
-executed the URBI code you specified: the aibo has sat.
+executed the \urbi code you specified: the aibo has sat.
 
 
 %\begin{minipage}[c]{\linewidth}
@@ -550,25 +557,25 @@ executed the URBI code you specified: the aibo has sat.
 %\end{minipage}
 
 
-\paragraph{By loading the file in URBI.ini}
-\label{webots.firstrun.loadprograms.inURBIinifile}%
+\paragraph{By loading the file in \urbi.ini}
+\label{webots.firstrun.loadprograms.inurbiinifile}
 
 By default, we don't specify files on the Webots controllerArg
-line. We specify directories.  At startup, the URBI controller will go
+line. We specify directories.  At startup, the \urbi controller will go
 through these directories and try to find a file named
-\nolinkurl{URBI.ini}. This is a special file containing URBI code
-which is always loaded at start up by the URBI controller. So another
-way to load your custom URBI code at start up is to use the command
+\nolinkurl{\urbi.ini}. This is a special file containing \urbi code
+which is always loaded at start up by the \urbi controller. So another
+way to load your custom \urbi code at start up is to use the command
 'load'.  Take the \nolinkurl{test.u} file we created in the previous
-section and move it to the folder containing the \nolinkurl{URBI.ini}
-file. Then open \nolinkurl{URBI.ini} and add at the end of the file:
+section and move it to the folder containing the \nolinkurl{\urbi.ini}
+file. Then open \nolinkurl{\urbi.ini} and add at the end of the file:
 
 
-\begin{lstlisting}
+\begin{urbifixme}
 load ("test.u");
-\end{lstlisting}
-Now launch Webots and open the world using the URBI controller loading
-the URBI.ini you just updated, and you will see that your code has
+\end{urbifixme}
+Now launch Webots and open the world using the \urbi controller loading
+the \urbi.ini you just updated, and you will see that your code has
 been loaded too.
 
 % -------
@@ -582,7 +589,7 @@ This section deals with the robots and worlds provided with the the
 engine.
 
 
-\subsection{Understanding the URBI for Webots hierarchy}
+\subsection{Understanding the \urbi for Webots hierarchy}
 \label{webots.builtin.hierarchy}%
 
  Urbi for Webots is bundled with a lot of files. Here is a description of
@@ -592,12 +599,12 @@ those files.
 \begin{center}
 \begin{tabular}{ll}\hline
   Directory &   Description \\
-  webots/projects/default/controllers & Contains the URBI controller. \\
+  webots/projects/default/controllers & Contains the \urbi controller. \\
   webots/projects/default/controllers/urbi &      \\
   webots/projects/default/controllers/urbi/urbi &       Controller's binary \\
-  webots/projects/default/controllers/urbi/urbi.key &   URBI for Webots license key \\
+  webots/projects/default/controllers/urbi/urbi.key &   \urbi for Webots license key \\
   webots/resources/webots.key & Webots license key \\
-  webots/projects/packages/urbi/data &  Data directory (URBI scripts and misc. multimedia files) \\
+  webots/projects/packages/urbi/data &  Data directory (\urbi scripts and misc. multimedia files) \\
   webots/projects/packages/urbi/data/aibo &     Main Aibo robots directory \\
   webots/projects/packages/urbi/data/aibo/ers7 &        Aibo ERS-7 directory \\
   webots/projects/packages/urbi/data/aibo/ers210 &      Aibo ERS-210 directory \\
@@ -606,7 +613,7 @@ those files.
   webots/projects/packages/urbi/data/kiki &     Kiki robots directory \\
   webots/projects/packages/urbi/data/pioneer2 & Pioneer2 robots directory \\
   webots/projects/packages/urbi/data/ustd &     Ustd directory (please see Ustd dedicated documentation for more information) \\
-  webots/projects/packages/urbi/worlds &        URBI for Webots worlds directory \\
+  webots/projects/packages/urbi/worlds &        \urbi for Webots worlds directory \\
   webots/projects/packages/urbi/worlds/aibo\_ers210\_urbi.wbt & Main world for the Aibo ERS-210. \\
   webots/projects/packages/urbi/worlds/aibo\_ers7\_urbi.wbt &   Main world for the Aibo ERS-7. \\
   webots/projects/packages/urbi/worlds/aibo\_ers7\_urbi\_soccer.wbt &   Soccer world for the Aibo ERS-7. \\
@@ -647,7 +654,7 @@ data/<ROBOT NAME>/<VERSION>
   CLIENT.INI &  Client initialization script (required). \\
   config.u &    Configuration file (used to customize the robot). \\
   <ROBOT>.ini & Robot hardware layout. \\
-  URBI.INI &    Server initialization script (required). \\
+  \urbi.INI &    Server initialization script (required). \\
 \hline
 \end{tabular}
 \end{center}
@@ -660,7 +667,7 @@ data/<ROBOT NAME>/<VERSION>
 \label{webots.builtin.worlds}%
 
  This section describes the special features of some worlds.
-The worlds referenced in the previous section as the "main"
+The worlds referenced in the previous section as the ``main''
 world have no specificities.
 
 
@@ -671,11 +678,11 @@ world have no specificities.
 (\nolinkurl{aibo_ers7_urbi_soccer.wbt}).
 
 
-Connect to the URBI server and use the following command:
+Connect to the \urbi server and use the following command:
 
-\begin{lstlisting}
+\begin{urbifixme}
 unfreeze balltracking;
-\end{lstlisting}
+\end{urbifixme}
 
  This will activate the balltracking of the ERS-{}7 robot.
 Now, you can use \textbf{shift} and the mouse to move
@@ -689,7 +696,7 @@ the ball, the ERS-{}7 will move its head to follow the ball.
 (\nolinkurl{aibo_ers7_urbi_supervisor.wbt}).
 
 
- It is crucial to understand that this world launches two URBI servers.
+ It is crucial to understand that this world launches two \urbi servers.
 The robot's server on the port 54001 and the supervisor server on the
 port 54002.
 
@@ -699,8 +706,8 @@ the world. It is used, for example, in the Webots soccer example to give
 the ball's position.
 
 
- If you create a supervisor node which is linked to an URBI controller,
-this will allow you to control the world through URBI.
+ If you create a supervisor node which is linked to an \urbi controller,
+this will allow you to control the world through \urbi.
 
 
  Warning: don't forget to give different ports for each robot you add in a
@@ -711,9 +718,9 @@ Webots world. If this is not the case, some controllers will not work.
 the following lines:
 
 
-\begin{lstlisting}
+\begin{urbifixme}
 // Create a moving label.
-l = new Label("URBI for Webots");
+l = new Label("\urbi for Webots");
 l.size = 0.04;
 l.r = 125 sin:10s ampli:125,
 l.x = 0.2 sin:10s ampli:0.1,
@@ -721,7 +728,7 @@ l.x = 0.2 sin:10s ampli:0.1,
 // Manipulate the floor.
 fl = new ManipulateNode("FLOOR");
 fl.ty = -1 sin:10s ampli:0.5,
-\end{lstlisting}
+\end{urbifixme}
 
  The first part of the script creates a label and defines a movement
 with the sin modifier. The second part moves the floor.
@@ -733,7 +740,7 @@ next sections.
 \subsection{Robots specific functions}
 \label{webots.builtin.robots}%
 
- A lot of functions are directly available in URBI to generate
+ A lot of functions are directly available in \urbi to generate
 high-{}level behaviour. Those features will be described in the
 next section.
 
@@ -783,14 +790,14 @@ read the corresponding documentation to obtain more information.
 % Chapter
 % -------
 
-\section{Making your own URBI for Webots controllers}
+\section{Making your own \urbi for Webots controllers}
 \label{webots.own}%
 
 \subsection{Create from an existing world}
 \label{webots.own.create}%
 
      As soon as you will want to go further, you will have to create your own
-    URBI for Webots based controllers. Here is how to proceed:
+    \urbi for Webots based controllers. Here is how to proceed:
 
 \begin{enumerate}
 
@@ -810,18 +817,18 @@ read the corresponding documentation to obtain more information.
 
 
 
-\item     Edit the \nolinkurl{URBI.INI} file and change the line:
+\item     Edit the \nolinkurl{\urbi.INI} file and change the line:
 
 
-\begin{lstlisting}
+\begin{urbifixme}
 load("kiki.ini");
-\end{lstlisting}
+\end{urbifixme}
 
 by:
 
-\begin{lstlisting}
+\begin{urbifixme}
 load("foo.ini"); // The name should match with the file you've just renamed.
-\end{lstlisting}
+\end{urbifixme}
 
 
 
@@ -839,7 +846,7 @@ load("foo.ini"); // The name should match with the file you've just renamed.
 
 \end{enumerate}
 
-Your robot is now ready to be controlled by URBI. During the next
+Your robot is now ready to be controlled by \urbi. During the next
 part, you'll learn how to customize the robot you have created.
 
 
@@ -847,7 +854,7 @@ part, you'll learn how to customize the robot you have created.
 \label{webots.own.customize}%
 
 To handle each robots' specificities, Webots use a set of devices
-which is fully supported by URBI for Webots. Those devices are created
+which is fully supported by \urbi for Webots. Those devices are created
 in a special file which is called like your robot in its data
 directory. With the previous example, it would have been the
 \nolinkurl{data/foo/foo.ini} file. This file should be like the
@@ -912,14 +919,14 @@ You specify the controller options in the controllerArgs field of the Webots
 world (.wbt) files.
  The controllerArgs must be as follow:
 
-\begin{lstlisting}
+\begin{shell}
 controllerArgs [options] period [path1 path2 ...]
-\end{lstlisting}
+\end{shell}
 \begin{itemize}
 
-\item period: base URBI interval in milliseconds. You have to set the
+\item period: base \urbi interval in milliseconds. You have to set the
   same period for the Urbi controller and for the Webots worlds. The
-  period in the webots world is defined in the field "basicTimeStep".
+  period in the webots world is defined in the field ``basicTimeStep''.
 
 
 \item [path ..] items are absolute or relative path elements searched
@@ -931,14 +938,14 @@ controllerArgs [options] period [path1 path2 ...]
 
   \item -{}f : enable fast mode: the server will run as fast as
     possible and emulate the period specified.  Don't set -{}f option
-    when there is "runRealTime TRUE" in the Webots world.  Always set
+    when there is ``runRealTime TRUE'' in the Webots world.  Always set
     -{}f otherwise.
 
 
   \item -{}l license\_key : specify the license key to use
 
 
-  \item -{}p port : specify the tcp port URBI will listen to.
+  \item -{}p port : specify the tcp port \urbi will listen to.
 
   \end{itemize}
 
@@ -964,13 +971,13 @@ controllerArgs [options] period [path1 path2 ...]
 \noindent
 \begin{description}
 \item[{Accelerometer (string NodeName, string ComponentName)}]
-  Construct a new Accelerometer object.  The "NodeName" attribute is
+  Construct a new Accelerometer object.  The ``NodeName'' attribute is
   the value of the name field, in the Accelerometer node in Webots.
-  The "ComponentName" is the name of the Accelerometer component this
+  The ``ComponentName'' is the name of the Accelerometer component this
   object represent.  Because you need 3 Accelerometer UObject to
   represent the Webots Accelerometer device. Each Accelerometer
   UObject represent one of the component of the Webots Accelerometer
-  device.  "ComponentName" can take 3 values: "x", "y" or "z".
+  device.  ``ComponentName'' can take 3 values: ``x'', ``y'' or ``z''.
 
 \end{description}
 
@@ -1008,7 +1015,7 @@ controllerArgs [options] period [path1 path2 ...]
 \end{lstlisting}
 
 The frequency given to the enable function is the frequency of the
-URBI controller (given in the "controllerArgs" field in the .wbt
+\urbi controller (given in the ``controllerArgs'' field in the .wbt
 file).
 
 \item[{ val }] Permissions: readable.
@@ -1037,7 +1044,7 @@ file).
 
    The camera UObject lets you control a Webots camera device. When your robot
   possess a camera, and it use
-  URBI as a controller, you won't see the camera image displayed on your computer
+  \urbi as a controller, you won't see the camera image displayed on your computer
   screen unless you create this camera UObject. You can create only one
   camera Urbi Object by Webots camera device. Once you have created the camera,
   the camera image will be displayed in the place defined by the .wbt world.
@@ -1048,7 +1055,7 @@ file).
 
 \noindent
 \begin{description}
-\item[{Camera (string NodeName)}] Construct a new camera object. The "NodeName" attribute is the value
+\item[{Camera (string NodeName)}] Construct a new camera object. The ``NodeName'' attribute is the value
           of the name field, in the camera node in Webots.
 
 \end{description}
@@ -1079,7 +1086,7 @@ file).
 \end{lstlisting}
 
 The frequency given to the enable function is the frequency of the
-URBI controller (given in the "controllerArgs" field in the .wbt
+\urbi controller (given in the ``controllerArgs'' field in the .wbt
 file).
 
 \item[{val}] Permissions: readable.
@@ -1090,7 +1097,7 @@ file).
 
   Description:The current image acquired by the camera. The format of
   the image can be RGB, JPEG or YCbCr, and is determined by the
-  "format" attribute.  To retrieve the camera image we use the
+  ``format'' attribute.  To retrieve the camera image we use the
   following Webots function:
 
 
@@ -1106,7 +1113,7 @@ file).
   Range: \{0,1,2\}
 
 
-  Description: The format of the camera image for the "val"
+  Description: The format of the camera image for the ``val''
   attribute. Set format to:
 
   \begin{description}
@@ -1266,11 +1273,11 @@ file).
 
   Definition: Encoders are counters incremented each time a wheel
   turns. The amount added to the encoder is computed from the angle
-  the wheel have been rotated and from the "encoderResolution"
+  the wheel have been rotated and from the ``encoderResolution''
   parameter of the DifferentialWheels node. For convenience we also
-  provide an "encoderFactor" which allows you to change easily the
+  provide an ``encoderFactor'' which allows you to change easily the
   unit of the encoder on the Urbi side.  Hence, if the
-  "encoderResolution" is 100, the "encoderFactor" is -{}1 and the
+  ``encoderResolution'' is 100, the ``encoderFactor'' is -{}1 and the
   wheel made a whole revolution, the corresponding encoder will have
   its value incremented by about 100 * -{}1 * 6.28 = -{}628.  Setting
   encoders value will not make the wheels rotate to reach the
@@ -1291,10 +1298,10 @@ file).
 
 
   Definition: Current speed of the wheels. The speed unit is defined
-  by the "speedUnit" field of the Webots DifferentialWheels node. The
+  by the ``speedUnit'' field of the Webots DifferentialWheels node. The
   default value is 0.1 radian per seconds. For convenience we also
-  provide an "speedFactor" which allows you to change easily the unit
-  of the speed on the Urbi side.  With a "speedFactor" of 10, a speed
+  provide an ``speedFactor'' which allows you to change easily the unit
+  of the speed on the Urbi side.  With a ``speedFactor'' of 10, a speed
   value of 20 will make the wheel rotate at a speed of 10 * 20 * 0.1 =
   20 radian per seconds.  Set with the following Webots function:
 
@@ -1308,7 +1315,7 @@ file).
   Type: float.
 
 
-  Definition: Convenient variable to set the speed unit. See "speed"
+  Definition: Convenient variable to set the speed unit. See ``speed''
   attribute.
 
 \item[{encoderFactor}] Permissions: readable, writeable.
@@ -1318,7 +1325,7 @@ file).
 
 
   Definition: Convenient variable to set the encoder unit. See
-  "encoder" attribute
+  ``encoder'' attribute
 
 \end{description}
 
@@ -1331,7 +1338,7 @@ file).
 \noindent
 \begin{description}
 \item[{DistanceSensor (string NodeName)}]         Construct a new Distance Sensor object, corresponding to the DistanceSensor node in
-          Webots. The "NodeName" attribute is the value
+          Webots. The ``NodeName'' attribute is the value
           of the name field, in the DistanceSensor node in Webots
 
 \end{description}
@@ -1366,7 +1373,7 @@ void distance_sensor_disable (DeviceTag sensor);
 \end{lstlisting}
 
 The frequency given to the enable function is the frequency of the
-URBI controller (given in the "controllerArgs" field in the .wbt
+\urbi controller (given in the ``controllerArgs'' field in the .wbt
 file).
 
 \item[{         val
@@ -1377,9 +1384,9 @@ file).
 
 
  Description: Distance returned by the sensor. If you want to change
- the unit of the distance sensor you can use the "factor" attribute,
- because the "val" attribute is multiplied by the "factor" attribute
- before being returned: "val" = "val" * "factor".
+ the unit of the distance sensor you can use the ``factor'' attribute,
+ because the ``val'' attribute is multiplied by the ``factor'' attribute
+ before being returned: ``val'' = ``val'' * ``factor''.
 
 
  Retrieved with the following Webots function:
@@ -1406,7 +1413,7 @@ unsigned short distance_sensor_get_value  (DeviceTag sensor);
 
 \noindent
 \begin{description}
-\item[{Emitter (string NodeName)}] Construct a new Emitter component. The "NodeName" attribute is the value
+\item[{Emitter (string NodeName)}] Construct a new Emitter component. The ``NodeName'' attribute is the value
           of the name field, in the Emitter node in Webots.
 
 \end{description}
@@ -1425,7 +1432,7 @@ unsigned short distance_sensor_get_value  (DeviceTag sensor);
   currently full, 1 is returned and the packet will not be
   enqueued. The queue is considered to be full when the sum of bytes
   of all the enqueued packets exceeds the buffer size specified by the
-  bufferSize field.  NB: You can send every type of URBI variables
+  bufferSize field.  NB: You can send every type of \urbi variables
   with the send function EXCEPT UObjects variables.
 
 
@@ -1447,8 +1454,8 @@ emitter.send (var2),
 // in the BIN header variable, like in images variables for example).
 \end{lstlisting}
 
-Note that if you set the "rawMode" attribute to true, then the
-comportment of the send () function will change. When "rawMode" is
+Note that if you set the ``rawMode'' attribute to true, then the
+comportment of the send () function will change. When ``rawMode'' is
 true, you can only send BIN variables with the send () function, and
 only the data in the BIN variable is send.
 
@@ -1463,8 +1470,8 @@ emitter.send (var2);
 \end{lstlisting}
 
 Please note that since no type information is included in the send
-data, an URBI receiver won't be able to parse the data received and
-won't be able to recreate the corresponding URBI variable.
+data, an \urbi receiver won't be able to parse the data received and
+won't be able to recreate the corresponding \urbi variable.
 
 
 This function use the following Webots functions:
@@ -1550,7 +1557,7 @@ float emitter_get_range (DeviceTag emitter);
 
  Description: Set this attribute to true to enable sending BIN
  variables in raw mode (ie only the data in BIN variables is
- send). Please see "receive ()" function for more information.
+ send). Please see ``receive ()'' function for more information.
 
 \end{description}
 
@@ -1563,12 +1570,12 @@ float emitter_get_range (DeviceTag emitter);
 \noindent
 \begin{description}
 \item[{Gps (string NodeName, string ComponentName)}] Construct a new
-  Gps object.  The "NodeName" attribute is the value of the name
-  field, in the Gps node in Webots.  The "ComponentName" is the name
+  Gps object.  The ``NodeName'' attribute is the value of the name
+  field, in the Gps node in Webots.  The ``ComponentName'' is the name
   of the Gps component this object represent.  Because you need 3 Gps
   UObject to represent the Webots Gps device. Each Gps UObject
   represent one of the component of the Webots Gps device.
-  "ComponentName" can take 3 values: "x", "y" or "z".
+  ``ComponentName'' can take 3 values: ``x'', ``y'' or ``z''.
 
 \end{description}
 
@@ -1605,7 +1612,7 @@ void gps_disable (DeviceTag sensor);
 \end{lstlisting}
 
 The frequency given to the enable function is the frequency of the
-URBI controller (given in the "controllerArgs" field in the .wbt
+\urbi controller (given in the ``controllerArgs'' field in the .wbt
 file).
 
 \item[{         val
@@ -1660,7 +1667,7 @@ const float *gps_get_matrix  (DeviceTag sensor);
 
 \noindent
 \begin{description}
-\item[{Gripper (string NodeName)}] Construct a new Gripper component. The "NodeName" attribute is the value
+\item[{Gripper (string NodeName)}] Construct a new Gripper component. The ``NodeName'' attribute is the value
           of the name field, in the Gripper node in Webots.
 
 \end{description}
@@ -1746,7 +1753,7 @@ void robot_keyboard_disable();
 \end{lstlisting}
 
           The frequency given to the enable function is the frequency of the
-          URBI controller (given in the "controllerArgs" field in the .wbt file).
+          \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
 
 \item[{         val
  }]            Permissions: readable.
@@ -1756,7 +1763,7 @@ void robot_keyboard_disable();
 
 
  Description: Key code corresponding to the key currently pressed on
- the keyboard. If no key is currently pressed, "val" equal 0.
+ the keyboard. If no key is currently pressed, ``val'' equal 0.
 
 
           Retrieved with the following Webots function:
@@ -1775,7 +1782,7 @@ int robot_keyboard_get_key();
 
 \noindent
 \begin{description}
-\item[{Led (string NodeName)}] Construct a new Led object. The "NodeName" attribute is the value
+\item[{Led (string NodeName)}] Construct a new Led object. The ``NodeName'' attribute is the value
           of the name field, in the Led node in Webots
 
 \end{description}
@@ -1813,7 +1820,7 @@ void led_set  (DeviceTag device, unsigned char value);
 
 \noindent
 \begin{description}
-\item[{LightSensor (string NodeName)}]            Construct a new Light Sensor object. The "NodeName" attribute is the value
+\item[{LightSensor (string NodeName)}]            Construct a new Light Sensor object. The ``NodeName'' attribute is the value
           of the name field, in the LightSensor node in Webots.
 
 \end{description}
@@ -1846,7 +1853,7 @@ void light_sensor_disable (DeviceTag sensor);
 \end{lstlisting}
 
           The frequency given to the enable function is the frequency of the
-          URBI controller (given in the "controllerArgs" field in the .wbt file).
+          \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
 
 \item[{         val
  }]            Permissions: readable.
@@ -1877,7 +1884,7 @@ unsigned short light_sensor_get_value  (DeviceTag sensor);
 \noindent
 \begin{description}
 \item[{Plunger (string NodeName, float offValue, float onValue)}]
-  Construct a new Plunger object. The "NodeName" attribute is the
+  Construct a new Plunger object. The ``NodeName'' attribute is the
   value of the name field, in the Servo node in Webots. In Webots
   plunger objects do not exist. They are emulated by Servo with on and
   off modes represented by the min and max values of the Servo (we
@@ -1924,7 +1931,7 @@ void servo_set_position  (DeviceTag servo, float position);
 
 \noindent
 \begin{description}
-\item[{Receiver (string NodeName)}] Construct a new Receiver component. The "NodeName" attribute is the value
+\item[{Receiver (string NodeName)}] Construct a new Receiver component. The ``NodeName'' attribute is the value
           of the name field, in the Receiver node in Webots.
 
 \end{description}
@@ -1934,13 +1941,13 @@ void servo_set_position  (DeviceTag servo, float position);
 
 \noindent
 \begin{description}
-\item[{receive ()}] Returns an URBI variable corresponding to the data
-  of the packet at the head of the reception queue. An URBI receiver
-  can only receive data from an URBI emitter, because the URBI emitter
-  send the data corresponding to URBI variables given to its emit ()
+\item[{receive ()}] Returns an \urbi variable corresponding to the data
+  of the packet at the head of the reception queue. An \urbi receiver
+  can only receive data from an \urbi emitter, because the \urbi emitter
+  send the data corresponding to \urbi variables given to its emit ()
   function, plus some informations on the type of the variable. The
-  receiver then parse the received data to recreate the URBI variable.
-  If the URBI emitter is in rawMode, the Receiver won't be able to
+  receiver then parse the received data to recreate the \urbi variable.
+  If the \urbi emitter is in rawMode, the Receiver won't be able to
   parse the received values.  So you have to set the receiver rawMode
   also. In raw mode, the receiver returns BIN variables containing the
   data received.  Please refers to Webots documentation for more
@@ -1993,7 +2000,7 @@ void receiver_disable (DeviceTag receiver);
 \end{lstlisting}
 
           The frequency given to the enable function is the frequency of the
-          URBI controller (given in the "controllerArgs" field in the .wbt file).
+          \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
 
 \item[{         channel
  }]            Permissions: readable, writeable.
@@ -2022,7 +2029,7 @@ int receiver_get_channel (DeviceTag receiver);
 
 
  Description: Number of data bytes present in the head packet of the
- reception queue. Since it is URBI variables that are sent, the
+ reception queue. Since it is \urbi variables that are sent, the
  receiver need informations on the type of the variable to be able to
  retrieve it correctly. So dataSize is usually greater than the actual
  data size.
@@ -2078,7 +2085,7 @@ int receiver_get_queue_length  (DeviceTag receiver);
 
 
  Description: Set this attribute to true to enable receiving data in
- raw mode.  In raw mode the "receive ()" function will return BIN
+ raw mode.  In raw mode the ``receive ()'' function will return BIN
  variables containing the data received. Use this mode when you the
  emitter emit non Urbi data.
 
@@ -2113,7 +2120,7 @@ float receiver_get_signal_strength  (DeviceTag receiver);
 \noindent
 \begin{description}
 \item[{RobotName ()}]     Construct a new RobotName object. This object is used to retrieve the name of the
-          robot associated to the URBI controller.
+          robot associated to the \urbi controller.
 
 \end{description}
 
@@ -2129,7 +2136,7 @@ float receiver_get_signal_strength  (DeviceTag receiver);
  Type: string.
 
 
- Description: Name of the robot associated to the URBI controller.
+ Description: Name of the robot associated to the \urbi controller.
 
 
  Retrieved with the following Webots function:
@@ -2148,10 +2155,10 @@ const char *robot_get_name();
 
 \noindent
 \begin{description}
-\item[{Servo (string NodeName, boolean ForceFeedback)}] Construct a new Servo object. The "NodeName" attribute is the value
-          of the name field, in the Servo node in Webots. The "ForceFeedback" attribute
+\item[{Servo (string NodeName, boolean ForceFeedback)}] Construct a new Servo object. The ``NodeName'' attribute is the value
+          of the name field, in the Servo node in Webots. The ``ForceFeedback'' attribute
           is a boolean that enable, when set to true, the measurement of the force applied
-          to the joint. The value measured is available in the "force" attribute.
+          to the joint. The value measured is available in the ``force'' attribute.
           NB: all values must be given in degree (while in Webots they are in radian) !
 
 \end{description}
@@ -2208,7 +2215,7 @@ void servo_set_control_p  (DeviceTag servo, float p);
  Type: float.
 
 
- Description: Motor force measurement. "force" is equal to the amount
+ Description: Motor force measurement. ``force'' is equal to the amount
  of motor force that is currently being deployed by the servo in order
  to achieve the desired motion or hold the current position.  The
  measurement of this force is only available if you set the
@@ -2231,7 +2238,7 @@ float servo_get_motor_force_feedback  (DeviceTag servo);
 
 \noindent
 \begin{description}
-\item[{TouchSensor (string NodeName)}]            Construct a new TouchSensor object. The "NodeName" attribute is the value
+\item[{TouchSensor (string NodeName)}]            Construct a new TouchSensor object. The ``NodeName'' attribute is the value
           of the name field, in the Touchsensor node in Webots
 
 \end{description}
@@ -2265,7 +2272,7 @@ void touch_sensor_disable (DeviceTag sensor);
 \end{lstlisting}
 
           The frequency given to the enable function is the frequency of the
-          URBI controller (given in the "controllerArgs" field in the .wbt file).
+          \urbi controller (given in the ``controllerArgs'' field in the .wbt file).
 
 \item[{val}]             Permissions: readable, writable.
 
@@ -2292,7 +2299,7 @@ unsigned short touch_sensor_get_value  (DeviceTag sensor);
 robot (i.e. from the controller of a supervisor node in Webots).
 
 
- This extended API allows URBI to control the world and the whole
+ This extended API allows \urbi to control the world and the whole
 simulation.
 
 
@@ -2304,7 +2311,7 @@ simulation.
 
 \noindent
 \begin{description}
-\item[{Label (string text)}] Construct a new Label object and set its displayed text to "text".
+\item[{Label (string text)}] Construct a new Label object and set its displayed text to ``text''.
 
 \end{description}
 
@@ -2372,28 +2379,28 @@ floor = new ManipulateNode("FLOOR");
 
 \noindent
 \begin{description}
-\item[{physicsReset ()}]          Sends a request to the simulator process, asking to stop the
-          movement of all physics enabled solids in the world. It means
-          that for any Solid node containing a Physics node, the linear
-          and angular velocities of the corresponding body is reset to 0,
-          hence the inertia is stopped. This function is especially useful
-          when resetting a robot at an initial position from which no
-          initial inertia is required.
-          This function resets the seed of the random number generator
-          used in Webots, so that noise based simulations can be be
-          reproduced identically after calling this function.
+\item[{physicsReset ()}] Sends a request to the simulator process,
+  asking to stop the movement of all physics enabled solids in the
+  world. It means that for any Solid node containing a Physics node,
+  the linear and angular velocities of the corresponding body is reset
+  to 0, hence the inertia is stopped. This function is especially
+  useful when resetting a robot at an initial position from which no
+  initial inertia is required.  This function resets the seed of the
+  random number generator used in Webots, so that noise based
+  simulations can be be reproduced identically after calling this
+  function.
 
-\item[{revert ()}]        Sends a request to the simulator process, asking to reload the
-          current world immediately. As a result of reloading the current
-          world, the supervisor process and all the robot processes are
-          terminated and restarted. You might want to save some data in a
-          file from you supervisor program to be able to reload it when
-          the supervisor controller restarts.
+\item[{revert ()}] Sends a request to the simulator process, asking to
+  reload the current world immediately. As a result of reloading the
+  current world, the supervisor process and all the robot processes
+  are terminated and restarted. You might want to save some data in a
+  file from you supervisor program to be able to reload it when the
+  supervisor controller restarts.
 
-\item[{quit ()}]          Sends a request to the simulator process, asking
-          to terminate and quit immediately. As a result of terminating
-          the simulator process, all the controller processes, including
-          the calling supervisor controller process will terminate.
+\item[{quit ()}] Sends a request to the simulator process, asking to
+  terminate and quit immediately. As a result of terminating the
+  simulator process, all the controller processes, including the
+  calling supervisor controller process will terminate.
 
 \end{description}
 
@@ -2517,7 +2524,7 @@ set an error message in the 'error' attribute.
 \label{webots.ownuobjects}%
 
 This section describes how to create new UObjects and integrate them
-in your URBI controller to use them from .
+in your \urbi controller to use them from .
 
 
 \subsection{Code your UObjects}
@@ -2536,11 +2543,11 @@ on Gostai website: \url{http://www.gostai.com/doc/en/uobject/}.
 For now we only support compilation with Mingw under windows. We
 recommend that you use DevCpp (which use Mingw compiler) to compile
 your projects.  We provide a sample DevCpp project in
-\nolinkurl{URBI_DIRECTORY/doc/sample}.  The directory contain two
+\nolinkurl{\urbi_DIRECTORY/doc/sample}.  The directory contain two
 files:
 \begin{itemize}
 \item sample.dev: the DevCpp project file
-\item helloworld.cpp: a sample UObject which prints "Hello World !" at
+\item helloworld.cpp: a sample UObject which prints ``Hello World !'' at
   initialisation. You may replace this file with your own UObject
   files.
 \end{itemize}
@@ -2551,15 +2558,15 @@ provide. This to generate an executable that you will name urbi.exe.
 Here is the list of option that you have to provide to your compiler:
 \begin{itemize}
 
-\item Include path: \nolinkurl{URBI_DIRECTORY/SDK/include}. By default it is
- \nolinkurl{c:\Program Files\GOSTAI\URBI Webots 1.0\SDK\include}
+\item Include path: \nolinkurl{\urbi_DIRECTORY/SDK/include}. By default it is
+ \nolinkurl{c:\Program Files\GOSTAI\\urbi Webots 1.0\SDK\include}
 
 
 \item Library path:
  \begin{itemize}
 
- \item \nolinkurl{URBI_DIRECTORY/SDK/lib}. By default it is
-   \nolinkurl{c:\Program Files\GOSTAI\URBI Webots 1.0\SDK\lib}.
+ \item \nolinkurl{\urbi_DIRECTORY/SDK/lib}. By default it is
+   \nolinkurl{c:\Program Files\GOSTAI\\urbi Webots 1.0\SDK\lib}.
 
 
 
@@ -2577,11 +2584,11 @@ Here is the list of option that you have to provide to your compiler:
   \item{} liburbicore.a: you have to specify that you want all the
     symbol of the library to be included, so you have to add the option
     -{}whole-{}archive to the link line. You may write it as follow:
-    "-{}Wl,-{}whole-{}archive -{}lurbicore
-    -{}Wl,-{}no-{}whole-{}archive"
+    ``-{}Wl,-{}whole-{}archive -{}lurbicore
+    -{}Wl,-{}no-{}whole-{}archive''
 
   \item{} libjpeg.a: you MUST link with the static libjpeg that we
-    provide in \nolinkurl{URBI_DIRECTORY/SDK/lib}
+    provide in \nolinkurl{\urbi_DIRECTORY/SDK/lib}
   \item{} libeay32.dll
   \item{} libController.dll
   \item{} ws2\_32.dll
@@ -2602,7 +2609,7 @@ Again we strongly advise you to use the sample DevCpp that we provide.
 
 To compile under Linux use umake. Please refer to the documentation on
 Gostai website: \url{http://www.gostai.com/doc/en/umake/}.  With a
-default install of Webots and URBI for Webots, you just have to be in
+default install of Webots and \urbi for Webots, you just have to be in
 the directory containing your source UObject files and type the
 command:
 
@@ -2629,7 +2636,7 @@ compiling boost 1.34.1 from the sources.
 To use the executable you have generated (either urbi.exe on Windows
 or Urbi on Linux) simply replace the Urbi controller in
 \nolinkurl{webots/projects/default/controllers/urbi/} by your
-executable. That's it ! Launch Webots, connect to the URBI server,
+executable. That's it! Launch Webots, connect to the \urbi server,
 allocate a new object of type your UObject and use it.
 
 % ---------------------
