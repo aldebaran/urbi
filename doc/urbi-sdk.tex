@@ -1,27 +1,9 @@
-\documentclass[openright,twoside,11pt]{book}
-  % Index.  Must be before loading hyperref.
-  \usepackage{myindex}
-  \usepackage{index}
-  \makeindex
-  \usepackage{urbi-report}
-  \usepackage{indexing}
-  \newcommand{\lstindex}[1]{\index{#1@\lstinline{#1}}\lstinline{#1}}
-  \usepackage{revision}
+\documentclass{gostai-report}
 
-  \usepackage{config}
-  \usepackage{rotating}
-  \newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
-
-\newcommand{\docurl}{http://www.gostai.com/downloads/urbi-sdk-2.0/doc}
-
-\usepackage{hhline}
-\usepackage{colortbl}
-\usepackage{array}
-
-% CONFIGURATION
 \title{The Urbi Software Development Kit}
+\titleImage{img/urbi-logo}
 \subtitle{Version \VcsDescription}
-\author{Kernel Team}
+\author{Gostai}
 
 % DOCUMENT
 \begin{document}

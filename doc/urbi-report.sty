@@ -11,15 +11,23 @@
 % interactive sessions.
 \RequirePackage[a4paper,hmargin=2.5cm]{geometry}
 
-\RequirePackage{afterpage}
-\RequirePackage{graphicx}
+\RequirePackage[draft,margin]{fixme}
 \RequirePackage[utf8]{inputenc}
+\RequirePackage{afterpage}
+\RequirePackage{array}
+\RequirePackage{colortbl}
+\RequirePackage{config}
+\RequirePackage{graphicx}
+\RequirePackage{hhline}
 \RequirePackage{mycxx}
 \RequirePackage{placeins}
+\RequirePackage{rotating}
 \RequirePackage{supertabular}
 \RequirePackage{texi}
 \RequirePackage{xspace}
-\RequirePackage[draft,margin]{fixme}
+
+\newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
+\newcommand{\docurl}{http://www.gostai.com/downloads/urbi-sdk-2.0/doc}
 
 %% ------------ %%
 %% Shorthands.  %%
@@ -186,10 +194,11 @@
 
     \vfill
 
-    \begin{figure}[htp]
-      \centering
-      \includegraphics[width=12cm]{img/urbi-logo}
-    \end{figure}
+    \ifx\empty\@titleImage\else%
+      \begin{center}%
+        \includegraphics[width=.9\linewidth]{\@titleImage}%
+      \end{center}%
+    \fi%
 
     \begin{center}
       {\Huge\bf\@title\\}
@@ -205,10 +214,9 @@
 
     \vfill
 
-    \begin{figure}[htp]
-      \centering
+    \begin{center}
       \includegraphics[width=12cm]{img/gostai}
-    \end{figure}
+    \end{center}
 %
 %    \vfill
 %    \global\let\title\relax
@@ -216,6 +224,8 @@
 }
 \newcommand{\subtitle}[1]{\def\@subtitle{#1}}
 \subtitle{}
+\newcommand{\titleImage}[1]{\def\@titleImage{#1}}
+\titleImage{}
 
 %% ---------- %%
 %% Hyperref.  %%
