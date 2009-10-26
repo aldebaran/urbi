@@ -5,23 +5,23 @@
 Let's write a \lstinline{UObject} for a servomotor device whose
 underlying API is:
 
-\begin{itemize}
-\item \lstinline{bool initialize (int id)}\\
+\begin{cxxapi}
+\item[bool initialize (int id)]
   Initialize the servomotor with given ID.
-\item \lstinline{double getPosition (int id)}\\
+\item[double getPosition (int id)]
   Read servomotor of given id position.
-\item \lstinline{void setPosition (int id, double pos)}\\
+\item[void setPosition (int id, double pos)]
   Send a command to servomotor.
-\item \lstinline{void setPID (int id, int p, int i, int d)}\\
+\item[void setPID (int id, int p, int i, int d)]
   Set P, I, and D arguments.
-\end{itemize}
+\end{cxxapi}
 
 First our header. Our servo device provides an attribute named
 \lstinline{val}, the standard \urbi name, and two ways to set PID
 gain: a method, and three variables.
 
 \begin{cxx}
-class servo : public urbi::UObject //must inherits UObject
+class servo : public urbi::UObject // must inherit UObject
 {
 public:
   // the class must have a single constructor taking a string
@@ -411,17 +411,17 @@ buffer. The \lstinline{UImage} and \lstinline{USound} structures do
 not.
 
 Let's suppose we have an underlying camera API with the following functions:
-\begin{itemize}
-\item \lstinline{bool initialize (int id)}\\
+\begin{cxxapi}
+\item[bool initialize (int id)]\\
   Initialize the camera with given ID.
-\item \lstinline{int getWidth (int id)}\\
+\item[int getWidth (int id)]\\
   Return image width.
-\item \lstinline{int getHeight (int id)}\\
+\item[int getHeight (int id)]\\
   Return image height.
-\item \lstinline{char* getImage (int id)}\\
+\item[char* getImage (int id)]\\
   Get image buffer of format RGB24.  The buffer returned is always the
   same and doesn't have to be freed.
-\end{itemize}
+\end{cxxapi}
 
 Our device code can be written as follows:
 \begin{cxx}

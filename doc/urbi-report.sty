@@ -168,6 +168,15 @@
       #1}}
   {}
 
+\newenvironment{cxxapi}
+{%
+  \begin{description}%
+    \let\itemOrig\item%
+    \renewcommand{\item}[1][]{\itemOrig[] \lstinline[language=C++]|##1|~\\}%
+  }{%
+  \end{description}%
+}
+
 %% ----------- %%
 %% maketitle.  %%
 %% ----------- %%

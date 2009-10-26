@@ -103,17 +103,17 @@ possibility to update its value.
 \label{sec:uob:timers}
 
 The API gives you two methods to have a function called periodically:
-\begin{itemize}
-\item \lstinline|urbi::UObject::USetUpdate(ufloat \var{period})|\\
+\begin{cxxapi}
+\item[urbi::UObject::USetUpdate(ufloat period)]
   Set up a timer that calls the virtual method
   \lstinline{UObject::update()} with the specified period (in
   milliseconds).  Disable updates if \var{period} is -1.
 
-\item \lstinline|urbi::UObject::USetTimer<T>(ufloat \var{period}), int (T::*\var{fun})()|\\
+\item[urbi::UObject::USetTimer<T>(ufloat period), int (T::*fun)()]
   Invoke an UObject member function \var{fun} every \var{period}
   milliseconds.  \var{fun} is a regular member-function pointer, for
   instance \lstinline|MyUObject::my_function|.
-\end{itemize}
+\end{cxxapi}
 
 \section{The special case of sensor/effector variables}
 
