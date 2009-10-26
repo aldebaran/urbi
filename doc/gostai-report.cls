@@ -13,5 +13,44 @@
 \RequirePackage{indexing}
 \newcommand{\lstindex}[1]{\index{#1@\lstinline{#1}}\lstinline{#1}}
 \RequirePackage{revision}
-\endinput
 
+\newcommand{\savesections}
+{%
+  \let\@partOrig\part%
+  \let\@chapterOrig\chapter%
+  \let\@sectionOrig\section%
+  \let\@subsectionOrig\subsection%
+  \let\@subsubsectionOrig\subsubsection%
+  \let\@paragraphOrig\paragraph%
+  \let\@subparagraphOrig\subparagraph%
+}
+\newcommand{\restoresections}
+{%
+  \let\part\@partOrig%
+  \let\chapter\@chapterOrig%
+  \let\section\@sectionOrig%
+  \let\subsection\@subsectionOrig%
+  \let\subsubsection\@subsubsectionOrig%
+  \let\paragraph\@paragraphOrig%
+  \let\subparagraph\@subparagraphOrig%
+}
+\newcommand{\lowersections}
+{%
+  \let\part\chapter%
+  \let\chapter\section%
+  \let\section\subsection%
+  \let\subsection\subsubsection%
+  \let\subsubsection\paragraph%
+  \let\paragraph\subparagraph%
+}
+\newcommand{\raisesections}
+{%
+  \let\subparagraph\paragraph%
+  \let\paragraph\subsubsection%
+  \let\subsubsection\subsection%
+  \let\subsection\section%
+  \let\section\chapter%
+  \let\chapter\part%
+}
+
+\endinput

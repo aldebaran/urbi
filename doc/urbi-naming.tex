@@ -1,0 +1,18 @@
+\documentclass{gostai-report}
+
+\title{The Urbi Naming Standard}
+\titleImage{img/urbi-logo}
+\subtitle{Version \VcsDescription}
+\author{Gostai}
+
+% DOCUMENT
+\begin{document}
+\maketitle
+\tableofcontents
+\savesections
+\raisesections
+\let\chapter\section
+\input{specs/naming-standard}
+\restoresections
+\chapterIndex
+\end{document}

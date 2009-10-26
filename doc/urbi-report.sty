@@ -296,3 +296,11 @@
     \renewcommand{\makelabel}[1]%
        {\index{##1@\option{##1}}\option{##1}\hfill\break}}}%
   {\end{list}}
+
+
+\newcommand{\chapterIndex}%
+{%
+  \phantomsection % otherwise hyperlinks to previous chapter.
+  \addcontentsline{toc}{chapter}{\indexname}%
+  \printindex%
+}

@@ -49,17 +49,15 @@ dist_doc_DATA =					\
 ## urbi-sdk.pdf.  ##
 ## -------------- ##
 
-pdf_DATA += urbi-sdk.pdf
+pdf_DATA += urbi-sdk.pdf urbi-naming.pdf
 CLEANFILES += $(pdf_DATA)
 urbi_sdk_sources = $(call ls_files,*.tex)
 REVISION_FILE = revision.sty
 REVISIONFLAGS = --latex
-urbi_sdk_deps =					\
-  $(urbi_sdk_sources)				\
-  $(call ls_files,*.sty *.cls)			\
-  $(REVISION_FILE)
 EXTRA_DIST += $(urbi_sdk_sources)
-urbi-sdk.dvi urbi-sdk.html urbi-sdk.pdf: $(urbi_sdk_deps)
+urbi-sdk.dvi urbi-sdk.html urbi-sdk.pdf: $(urbi_sdk_sources)
+$(pdf_DATA): $(call ls_files,*.sty *.cls) $(REVISION_FILE)
+
 urbi-sdk.dvi urbi-sdk.html: $(EPS_IMAGES)
 
 view: $(pdf_DATA)
