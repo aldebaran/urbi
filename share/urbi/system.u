@@ -142,11 +142,12 @@ do (System)
   var defaultIsSystem = true;
   loadFile = function(file, isSystem = defaultIsSystem)
   {
-    loadFile_(file) |
+    var res = loadFile_(file).acceptVoid |
     if (isSystem)
     {
       addSystemFile(file.asString)
-    }
+    } |
+    res.unacceptVoid
   };
   addSystemFile("urbi/urbi.u");
   addSystemFile(searchFile("urbi/urbi.u").asString);

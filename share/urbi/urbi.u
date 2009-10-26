@@ -1,14 +1,4 @@
 // Global.load is not defined, yet.
-System.loadFile(System.searchFile("urbi/system.u"));
-System.load("urbi/object.u");
-System.load("urbi/global.u");
-load("urbi/exception.u");
-load("urbi/call-message.u");
-load("urbi/lazy.u");
-load("urbi/range-iterable.u");
-load("urbi/list.u");
-load("urbi/singleton.u");
-
 
 /*-------.
 | void.  |
@@ -28,6 +18,16 @@ do (void.acceptVoid)
   function acceptVoid()   { new };
   function unacceptVoid() { protos.front };
 };
+
+System.loadFile(System.searchFile("urbi/system.u"));
+System.load("urbi/object.u");
+System.load("urbi/global.u");
+load("urbi/exception.u");
+load("urbi/call-message.u");
+load("urbi/lazy.u");
+load("urbi/range-iterable.u");
+load("urbi/list.u");
+load("urbi/singleton.u");
 
 load("urbi/boolean.u");
 load("urbi/nil.u");
