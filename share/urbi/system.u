@@ -8,7 +8,7 @@ do (System)
   function assert_(assertion, message)
   {
     if (!assertion)
-      throw "failed assertion: " + message;
+      throw Exception.new("failed assertion: " + message);
   };
 
   /// assert(assertion).

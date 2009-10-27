@@ -21,9 +21,9 @@ do (Timeout)
   function launch()
   {
     if (running)
-      throw asString + " is already running";
-    running = true;
-    e!;
+      throw Exception.new(asString + " is already running")|
+    running = true|
+    e!
   };
 
   function count()
@@ -36,9 +36,9 @@ do (Timeout)
 
   function end()
   {
-    running = false;
+    running = false|
     if (thrower && timedOut)
-      throw asString + " has timed out."
+      throw Exception.new(asString + " has timed out.")
   };
 
 };
