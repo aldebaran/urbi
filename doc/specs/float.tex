@@ -90,22 +90,22 @@ nan.asBool == true;
 
 \item \lstinline|asList|\\
   Bounces to \lstinline|seq|.  It is therefore possible to use the
-  various flavors of \lstinline|for|-rang loops on integers:
+  various flavors of \lstinline|for|-range loops on integers:
 \begin{urbiassert}[firstnumber=last]
 {
-  var res;
-
-  res = [];
+  var res = [];
   for (var i : 3)
     res << i;
   res == [0, 1, 2];
-
-  res = [];
+};
+{
+  var res = [];
   for|(var i : 3)
     res << i;
   res == [0, 1, 2];
-
-  res = [];
+};
+{
+  var res = [];
   for&(var i : 3)
     res << i;
   res.sort == [0, 1, 2];
