@@ -8,14 +8,14 @@ do (Timeout)
 
   function init(time_, thrower_ = true)
   {
-    this.timedOut = false;
-    var this.running = false;
-    var this.thrower = thrower_;
-    var this.time = time_;
-    var this.e = Event.new;
-    at (enter?) launch;
-    at (leave?) end;
-    at (e?) count;
+    this.timedOut = false|
+    var this.running = false|
+    var this.thrower = thrower_|
+    var this.time = time_|
+    var this.e = Event.new|
+    at (enter?) launch|
+    at (leave?) end|
+    at (e?) count|
   };
 
   function launch()
@@ -28,10 +28,14 @@ do (Timeout)
 
   function count()
   {
-    timeout (time) {while (running);};
-    timedOut = running;
+    timeout (time)
+    {
+      while (running)
+        |
+    }|
+    timedOut = running|
     if (timedOut)
-      stop;
+      stop
   };
 
   function end()
