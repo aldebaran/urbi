@@ -8,17 +8,15 @@
 
 \newenvironment{slotsOrEvents}[1]
 {%
-%  \subparagraph{#1}%
-  \begin{flushleft}%
-    \tablehead{%
-      \hline%
-      \textbf{#1} &%
-      \textbf{Description}\\\hline%
-    }%
-    \begin{supertabular}{|m{.2\linewidth}|m{.8\linewidth}|}%
-    }{%
-    \end{supertabular}%
-  \end{flushleft}%
+  % \subparagraph{#1}%
+  \tablehead{%
+    \hline%
+    \textbf{#1} &%
+    \textbf{Description}\\\hline%
+  }%
+  \begin{supertabular}{|m{.15\textwidth}|m{.8\textwidth}|}%
+  }{%
+  \end{supertabular}%
 }
 
 \newenvironment{slots}
@@ -493,7 +491,6 @@ This facet is used to describe a temperature sensor.
     Measured temperature in Celsius degrees.  Pointed to by the
     \code{val} slot.%
   }
-
 \end{slots}
 
 \facet{mobile}
@@ -651,12 +648,10 @@ The audioin facet groups every information relative to microphones.
     The content is the sound heard by the microphone since the last
     update event.%
   }
-
   \slot{duration}%
   {%
     Amount of sound in the val attribute, expressed in \textit{ms}.%
   }
-
   \optSlot{gain}%
   {%
     Microphone gain amplification (expressed between 0 and 1)%

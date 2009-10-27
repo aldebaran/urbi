@@ -55,8 +55,11 @@ urbi_sdk_sources = $(call ls_files,*.tex)
 REVISION_FILE = revision.sty
 REVISIONFLAGS = --latex
 EXTRA_DIST += $(urbi_sdk_sources)
-urbi-sdk.dvi urbi-sdk.html urbi-sdk.pdf: $(urbi_sdk_sources)
-$(pdf_DATA): $(call ls_files,*.sty *.cls) $(REVISION_FILE)
+urbi_sdk_deps = 				\
+  $(REVISION_FILE)				\
+  $(call ls_files,*.sty *.cls)			\
+  $(urbi_sdk_sources)
+urbi-sdk.dvi urbi-sdk.html $(pdf_DATA): $(urbi_sdk_deps)
 
 urbi-sdk.dvi urbi-sdk.html: $(EPS_IMAGES)
 
