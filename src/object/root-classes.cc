@@ -168,6 +168,8 @@ namespace urbi
       CxxObject::push_initializer_to_back<Code>();
       CxxObject::push_initializer_to_back<Primitive>();
       CxxObject::push_initializer_to_back<UVar>();
+      CxxObject::push_initializer_to_back<Path>();
+      CxxObject::push_initializer_to_back<Directory>();
       CxxObject::push_initializer_to_back<OutputStream>();
 
       CxxObject::create();
