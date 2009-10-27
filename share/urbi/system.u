@@ -12,7 +12,7 @@ do (System)
   };
 
   /// assert(assertion).
-  function assert
+  function 'assert'
   {
     if (!ndebug)
       assert_(call.evalArgAt(0), call.argString(0));

@@ -502,6 +502,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   "%unscope:"     RETURN_PERCENT(UNSCOPE);
 }
 
+"assert"        RETURN(ASSERT);
 "break"         RETURN(BREAK);
 "call"          RETURN(CALL);
 "case"          RETURN(CASE);

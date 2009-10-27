@@ -1792,15 +1792,54 @@ test(51);
 \end{urbiscript}
 
 \subsection{Inspecting exceptions}
-
+\fixme{fill}
 \subsection{Exceptions and parallelism}
 
+\fixme{fill}
 
+\section{Assertions}
+\label{sec:assertions}
+
+\dfn[assertion]{Assertions} allow to embed consistency checks in the
+code.  They are particularly useful when developping a program since
+they allow early catching of errors.  Yet, they can be costly in
+production mode: the run-time cost of verifying every single assertion
+might be prohitive.  Therefore, as in \C-like languages, assertions
+are disabled when \lstinline|System.ndebug| is true, see \refObject{System}.
+
+\us supports assertions in two different ways: with a function-like
+syntax, which is adequate for single claims, and a block-like syntax,
+to group claims together.
+
+The \lstinline|assert(\var{expression})| bounces to the
+\lstinline|System.'assert'| function, see \refObject{System}.
+
+\begin{urbiscript}[firstnumber=last]
+assert(true);
+assert(42);
+assert(1 == 1 + 1);
+[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
+\end{urbiscript}
+
+Groups of assertions are more readable when used with the
+\lstinline|assert{\var{exp1}; \var{exp2}; ...}| construct.  The
+(possibly empty) list of claims may be ended with a semicolon.
+
+\begin{urbiscript}[firstnumber=last]
+assert
+{
+  true;
+  42;
+  1 == 1 + 1;
+};
+[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
+\end{urbiscript}
 
 
 \section{Parallel and event-based flow control}
 
 \subsection{\lstinline'at'}
+\fixme{fill}
 
 \subsection{\lstinline'every'}
 

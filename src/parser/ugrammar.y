@@ -76,6 +76,7 @@
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
+#define make_assert           up.factory().make_assert
 #define make_at               up.factory().make_at
 #define make_at_event         up.factory().make_at_event
 #define make_bin              up.factory().make_bin
@@ -961,6 +962,17 @@ exp:
 | "do" "(" exp ")" block  { $$ = make_scope(@$, $3, $5); }
 ;
 
+/*-------------.
+| Assertions.  |
+`-------------*/
+
+%token ASSERT "assert";
+exp:
+  "assert" "(" exp ")"    { $$ = make_assert(@$, $3); }
+| "assert" "{" claims "}" { $$ = make_assert(@$, $3); }
+;
+
+
 /*---------------------------.
 | Function calls, messages.  |
 `---------------------------*/
@@ -1022,11 +1034,10 @@ id:
 //>no-space>
 
 
-/*------------.
-| Functions.  |
-`------------*/
+/*---------------------.
+| Anonymous function.  |
+`---------------------*/
 
-// Anonymous function.
 exp:
   routine formals block
     {
@@ -1079,9 +1090,9 @@ string:
 | string "string" { std::swap($$, $1); $$ += $2; }
 ;
 
-/*------------------.
-| Location support. |
-`------------------*/
+/*------------.
+| Locations.  |
+`------------*/
 
 exp:
   "__HERE__"
@@ -1323,8 +1334,22 @@ exp:
 | Expressions.  |
 `--------------*/
 
-%type <ast::exps_type*> exps exps.1 args args.opt;
+%type <ast::exps_type*> claims claims.1 exps exps.1 args args.opt;
 
+// claims: a list of "exp"s separated/terminated with semicolons.
+claims:
+  /* empty */ { $$ = new ast::exps_type; }
+| claims.1      { std::swap($$, $1); }
+| claims.1 ";"  { std::swap($$, $1); }
+;
+
+claims.1:
+  exp               { $$ = new ast::exps_type; $$->push_back($1); }
+| claims.1 ";" exp  { std::swap($$, $1); $$->push_back($3); }
+;
+
+
+// exps: a list of "exp"s separated/terminated with colons.
 exps:
   /* empty */ { $$ = new ast::exps_type; }
 | exps.1      { std::swap($$, $1); }

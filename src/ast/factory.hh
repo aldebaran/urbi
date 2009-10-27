@@ -30,6 +30,20 @@ namespace ast
 
     typedef yy::location location;
 
+    /// assert(%exp).
+    static
+    rExp
+    make_assert(const yy::location& loc,
+                rExp cond) /* const */;
+
+    /// assert(%exps).
+    /// Note that \a cond is "reclaimed" do not use it again.
+    /// (Actually it is reused to build the result).
+    static
+    rExp
+    make_assert(const yy::location& loc,
+                exps_type* cond) /* const */;
+
     /// at%flavor (%cond ~ %duration) {%body} onleave {%onleave}
     static
     rExp

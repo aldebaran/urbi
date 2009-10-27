@@ -118,6 +118,30 @@ namespace ast
   }
 
   rExp
+  Factory::make_assert(const yy::location&,
+                       rExp cond) /* const */
+  {
+    PARAMETRIC_AST
+      (a,
+       "System.'assert'(%exp:1)");
+    return exp(a % cond);
+  }
+
+  /// assert(%exps).
+  rExp
+  Factory::make_assert(const yy::location&,
+                       exps_type* cond) /* const */
+  {
+    assert(cond);
+    foreach (rExp& c, *cond)
+      c = make_assert(c->location_get(), c);
+    rNary res = new Nary;
+    res->children_set(cond);
+    return res;
+  }
+
+
+  rExp
   Factory::make_at(const location& loc,
                    const location& flavor_loc, flavor_type flavor,
                    rExp cond,

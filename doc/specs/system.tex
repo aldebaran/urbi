@@ -45,14 +45,15 @@ assert_(1 == 1 + 1, "one is not two");
 [00000001:error] !!! failed assertion: one is not two
 \end{urbiscript}
 
-\item \lstinline|assert(\var{assertion})|\\
+\item \lstinline|'assert'(\var{assertion})|\\
   Unless \lstinline|System.ndebug| is true, throw an error if
-  \var{assertion} is not verified.
+  \var{assertion} is not verified.  See also the assertion support in
+  \us, \autoref{sec:assertions}.
 \begin{urbiscript}[firstnumber=last]
-assert(true);
-assert(42);
-assert(1 == 1 + 1);
-[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
+'assert'(true);
+'assert'(42);
+'assert'(1 == 1 + 1);
+[00000002:error] !!! failed assertion: 1 . '=='(1 . '+'(1))
 \end{urbiscript}
 
 \item \lstinline|assert_op(\var{operator}, \var{lhs}, \var{rhs})|\\

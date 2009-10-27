@@ -62,6 +62,8 @@ urbiScript
 
 New constructs:
 
+- assert { claim1; claim2;... };
+
 - every|
 
 - break and continue are supported in "every|" loops.
