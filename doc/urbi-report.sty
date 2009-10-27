@@ -87,7 +87,13 @@
 \definecolor{keyword}{rgb}{0.2,0.2,0.8}
 \definecolor{comment}{rgb}{0.8,0.5,0}
 \definecolor{string}{rgb}{0.0,0.5,0.0}
-\definecolor{bg}{rgb}{0.9,0.9,1}
+
+\definecolor{pastelgreen}{rgb}{.9, 1, .9}
+\definecolor{pastelblue}{rgb}{.9, .9, 1}
+\definecolor{pastelred}{rgb}{1, .9, .9}
+
+\definecolor{bg}{rgb}{0.9,0.9,1}    % Same as pastelblue.
+\definecolor{assert}{rgb}{1,0.9,.9} % Same as pastelred.
 
 % For some reason "\color{Foo}" does not work as expected with tex4ht,
 % so use \textcolor.
@@ -123,6 +129,15 @@
 \lstnewenvironment{urbiscript}[1][]
   {\lstset{language=[interactive]urbi,
       basicstyle=\ttfamily\footnotesize,
+      floatplacement=\floatposh,
+      #1}}
+  {}
+
+% urbiScript assertions.
+\lstnewenvironment{urbiassert}[1][]
+  {\lstset{language=[interactive]urbi,
+      basicstyle=\ttfamily\footnotesize,
+      backgroundcolor=\color{assert},
       floatplacement=\floatposh,
       #1}}
   {}

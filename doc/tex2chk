@@ -179,16 +179,20 @@ sub process_listing ($$$)
 
   $lst =~
      /
-       \\begin{urbiscript}
-       (?:\[((?:[^\[\]]|\[[^\]]*\])*)\])?  # $1 optional options.
+       \\begin{(\w+)}            # $1 environment type.
+       (?:\[((?:[^\[\]]|\[[^\]]*\])*)\])?  # $2 optional options.
                     # Optional argument may include `[...]'.
        \n
-       (.*)\n                 # $2 contents
-       \\end{urbiscript}
+       (.*)\n                 # $3 contents
+       \\end{\w+}
      /xs;
 
-  $res{'_contents'} = $2;
-  my $options = $1;
+  my $env = $1;
+  my $options = $2;
+  my $content = $3;
+
+  $res{'_contents'} =
+    ($env eq 'urbiassert') ? "assert {\n$content\n};" : "$content";
 
 #  print STDERR "$2\n";
 
@@ -269,6 +273,26 @@ sub process_file ($)
         $test .= $_;
       }
       else # \end{urbiscript}
+      {
+        $test .= $_;
+        my %res = process_listing $file, $line, $test;
+        register ($file, $line, %res);
+      }
+    }
+    # FIXME: Huge code duplication, but how to factor?
+    elsif (/^\\begin{urbiassert}/ .. /^\\end{urbiassert}/)
+    {
+      if (/^\\begin{urbiassert}/)
+      {
+        # Issue a #line for the first line of Urbi, not the LaTeX line.
+        $line = $in->input_line_number + 1;
+        $test = $_;
+      }
+      elsif (!/^\\end{urbiassert}/)
+      {
+        $test .= $_;
+      }
+      else # \end{urbiassert}
       {
         $test .= $_;
         my %res = process_listing $file, $line, $test;
