@@ -18,6 +18,16 @@ while (<>)
 
 my $mode = $ENV{'KEYWORDS_MODE'};
 
+sub latex ($@)
+{
+  my ($title, @keyword) = @_;
+  map { s/\W/\\$&/g; $_ } @keyword;
+  print "  $title={\n";
+  print wrap (" " x 4, " " x 4, join (", ", @keyword)), "\n";
+  print "  },\n";
+
+}
+
 if ($mode eq "c++")
 {
   print wrap (" " x 4, " " x 4,
@@ -30,8 +40,12 @@ elsif ($mode eq "emacs")
 }
 elsif ($mode eq "listings")
 {
-  print wrap (" " x 4, " " x 4,
-              join (", ", map { s/_/\\_/g; $_ } @keyword)), "\n";
+  latex "morekeywords", grep { /^\w+$/ } @keyword;
+  # We used to make these (at| and the like) "otherkeywords", but
+  # it results in LaTeX seeing "at|" in "\lstinline|Float|", and it
+  # dies later.  It is simpler to declare that [;,|&] are "digits", so
+  # "at|" and the like are just "morekeywords".
+  latex "morekeywords", grep { /\W/ } @keyword;
 }
 else
 {
