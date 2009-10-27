@@ -262,7 +262,7 @@ assert(!(42.isVoid));
   \lstinline|slot| of \lstinline|this|.
 
 \begin{urbiscript}[firstnumber=last]
-assert(locateSlot("init"), Channel);
+assert(locateSlot("init") == Channel);
 assert(locateSlot("doesNotExist").isNil);
 \end{urbiscript}
 
@@ -315,7 +315,7 @@ fortyTwo = 51;
   \var{name} was already defined.
 
 \begin{urbiscript}[firstnumber=last]
-assert(Object.setSlot("theObject", Object), Object);
+assert(Object.setSlot("theObject", Object) === Object);
 assert(Object.theObject === Object);
 assert(theObject === Object);
 \end{urbiscript}
