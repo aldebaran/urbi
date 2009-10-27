@@ -180,8 +180,8 @@ namespace urbi
     CxxObject::push_initializer_to_back()
     {
       CxxObject::initializers_type &l = CxxObject::initializers_get();
-      for (CxxObject::initializers_type::iterator i = l.begin(); i!=l.end(); i++)
-      {
+      for (CxxObject::initializers_type::iterator i = l.begin();
+           i != l.end(); ++i)
         if (CxxObject::TypeInitializer<T>* v =
             dynamic_cast<CxxObject::TypeInitializer<T> *>(*i))
         {
@@ -189,7 +189,6 @@ namespace urbi
           l.push_back(v);
           break;
         }
-      }
     }
   }
 }
