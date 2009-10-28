@@ -146,10 +146,16 @@ do (getSlot("UVar"))
   var ownerName = "<unknown>";
   // If this is true, callbacks that throw will be removed from callback lists.
   var eraseThrowingCallbacks = true;
+  function asString()
+  {
+    "\"" + ownerName + "." + initialName + "\""
+  };
   function init(parent, name)
   {
     if (parent.hasSlot("__uobjectName"))
-        ownerName = parent.__uobjectName|
+        ownerName = parent.__uobjectName
+    else
+      ownerName = parent.asString|
     var this.initialName = name|
     parent.setSlot(name, this)|
     parent.setProperty(name, "updateHook", getSlot("update_bounce"))|
