@@ -20,8 +20,6 @@ fatal ()
 packages ()
 {
   {
-    echo "************************************************"
-    echo "* You seem to be using $1."
     perl -ne '
       if (/^(?:'"$2"'|package): (.*)/)
       {
@@ -30,11 +28,15 @@ packages ()
       END
       {
         use Text::Wrap;
-        print "* We need the following packages:\n";
-        print wrap("* ", "* ", sort @out), "\n";
+        $Text::Wrap::columns = 60;
+        print "*" x 66, "\n";
+        print "You seem to be using '"$1"'.\n";
+        print "At least the following packages are required:\n\n";
+        print wrap("   ", "   ", sort @out), "\n\n";
+        print "See README for more information.\n";
+        print "*" x 66, "\n";
       }' <README
-    echo "************************************************"
-  } | sed -e "s,^,$0: ,"
+  } | sed -e "s,^,$0: * ,"
 }
 
 if test -x /opt/local/bin/port; then
