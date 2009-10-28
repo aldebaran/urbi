@@ -1,0 +1,122 @@
+\chapter{Notations}
+
+This chapter introduces the various notations that are used in the
+document.
+
+\section{Words}
+
+\begin{itemize}
+\item \var{name}\\
+  Depending on the context, a \dfn{variable} name (i.e., an identifier
+  in \Cxx or \us), or a \dfn{meta-variable} name.  A meta-variable
+  denotes a place where some syntactic construct may be entered.  For
+  instance, in \lstinline|while (\var{expression}) \var{statement}|,
+  \var{expression} and \var{statement} do not denote two variable
+  names, but two placeholders which can be filled with an arbitrary
+  expression, and an arbitrary statement.  For instance:
+
+  \lstinline|while (!tasks.empty) { tasks.removeFront.process }|.
+
+\item \env{name}\\
+  An environment variable name, e.g., \env{PATH}.
+\item \lstinline|code|\\
+  A piece of \us or \Cxx code.
+\item \file{name}\\
+  A file name.
+\end{itemize}
+
+\section{Frames}
+
+\subsection{Shell Sessions}
+\label{sec:notations:shell}
+
+Interactive sessions with a (Unix) shell are represented as follows.
+
+\begin{shell}
+$ echo toto
+toto
+\end{shell}
+
+The user entered \samp{echo toto}, and the system answered
+\samp{toto}.  \samp{\$} is the \dfn{prompt}: it starts the lines where
+the system invites the user to enter her commands.
+
+\subsection{\us Sessions}
+
+Interactive sessions with \urbi are represented as follows.
+
+\begin{urbiscript}
+echo("toto");
+[00000001] *** toto
+\end{urbiscript}
+
+Contrary to shell interaction (see \autoref{sec:notations:shell}),
+there is no prompt that marks the user-entered lines (here
+\lstinline|echo("toto");|, but, on the contrary, answers from the \urbi
+server start with a label that includes a timestamp (here
+\samp{00000001}), and possibly a channel name, \samp{output} in the
+following example.
+
+\begin{urbiscript}[firstnumber=last]
+cout << "toto";
+[00000002:output] "toto"
+\end{urbiscript}
+
+
+\subsection{\us Assertions}
+
+\us features assertions blocks, see \autoref{sec:assertions}.  The
+following assertion frame:
+
+\begin{urbiassert}[firstnumber=last]
+1 == 2 / 2;
+1 < 2;
+true;
+"foobar"[0, 3] == "foo";
+[1, 2, 3].map (function (a) { a * a }) == [1, 4, 9];
+Dictionary.new.empty;
+\end{urbiassert}
+
+\noindent
+actually denotes the following assertion-block in an \us-session
+frame:
+
+\begin{urbiscript}[firstnumber=last]
+assert
+{
+  true;
+  1 < 2;
+  1 + 2 * 3 == 7;
+  "foobar"[0, 3] == "foo";
+  [1, 2, 3].map (function (a) { a * a }) == [1, 4, 9];
+  Dictionary.new.empty;
+};
+\end{urbiscript}
+
+\subsection{\Cxx Code}
+
+\Cxx source code is presented in frames as follows.
+
+\begin{cxx}
+class Int
+{
+public:
+  Foo(int v = 0)
+    : val_(v)
+  {}
+
+  void operator(int v)
+  {
+    std::swap(v, val_);
+    return v;
+  }
+
+  int operator() const
+  {
+    return val_;
+  }
+
+private:
+  int val_;
+};
+\end{cxx}
