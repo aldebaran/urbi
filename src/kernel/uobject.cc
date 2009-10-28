@@ -811,7 +811,10 @@ namespace urbi
       bypassMode_ = false;
       StringPair p = split_name(owner_->get_name());
       rObject o = get_base(p.first);
-      assertion(o);
+      if (!o)
+      {
+        FRAISE("UVar creation on non existing object: %s", owner->get_name());
+      }
       Symbol varName(p.second);
       // Force kernel-side variable creation, init to void.
       rObject initVal;
