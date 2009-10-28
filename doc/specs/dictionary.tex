@@ -53,10 +53,10 @@ Dictionary.new("one", 1, "two", 2);
 \begin{itemize}
 \item \lstinline|asBool|\\
   Negation of \lstinline|Dictionary.empty|.
-\begin{urbiscript}[firstnumber=last]
-assert(Dictionary.new.asBool == false);
-assert(Dictionary.new.set("key", "value").asBool == true);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Dictionary.new.asBool == false;
+Dictionary.new.set("key", "value").asBool == true;
+\end{urbiassert}
 
 \item \lstinline|asList|\\
   Return the contents of the dictionary as a \refObject{Pair} list
@@ -79,17 +79,17 @@ assert(Dictionary.new("one", 1, "two", 2).asList
 \item \lstinline|clear|\\
   Empty the dictionary.
 
-\begin{urbiscript}[firstnumber=last]
-assert(Dictionary.new("one", 1).clear.empty());
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Dictionary.new("one", 1).clear.empty();
+\end{urbiassert}
 
 \item \lstinline|empty|\\
   Whether the dictionary is empty.
 
-\begin{urbiscript}[firstnumber=last]
-assert(Dictionary.new.empty);
-assert(!Dictionary.new.set("key", "value").empty);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Dictionary.new.empty;
+!Dictionary.new.set("key", "value").empty;
+\end{urbiassert}
 
 \item \lstinline|erase(\var{key})|\\
   Remove the mapping for \lstinline|\var{key}|.
@@ -102,10 +102,10 @@ Dictionary.new("one", 1, "two", 2).erase("two");
 \item \lstinline|get(\var{key})|\\
   Return the value associated to  \lstinline|\var{key}| if it exists,
   \lstinline|void| otherwise.
-\begin{urbiscript}[firstnumber=last]
-assert(Dictionary.new("one", 1, "two", 2).get("one") == 1);
-assert(Dictionary.new("one", 1, "two", 2).get("three").isVoid);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Dictionary.new("one", 1, "two", 2).get("one") == 1;
+Dictionary.new("one", 1, "two", 2).get("three").isVoid;
+\end{urbiassert}
 
 
 \item \lstinline|getWithDefault(\var{key}, \var{default-value})|\\
@@ -200,9 +200,9 @@ Dictionary.new.set("one", 2).set("one", 1);
 \item \lstinline|[](\var{key})|\\
   Syntactic sugar for \lstinline|get(\var{key})|.
 
-\begin{urbiscript}[firstnumber=last]
-assert(Dictionary.new("one", 1)["one"] == 1);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Dictionary.new("one", 1)["one"] == 1;
+\end{urbiassert}
 
 \end{itemize}
 

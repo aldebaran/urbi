@@ -1,0 +1,108 @@
+#! /usr/bin/perl -w
+
+# Convert urbiscript LaTeX environments that contain only assert()
+# into urbiassert environments.
+
+# A regexp that matches 0 or more repetitions of either a
+# non-backtracking word with no parens/braces, or a braced group, or a
+# parenthezied group.
+#
+# Note that since it is greedy and non-backtracking, it might eat too
+# much.  Use $braced instead.
+my $balanced;
+$balanced =
+  qr{
+       (?:
+          (?> [^(){}\[\]]+ )         # Non-parens/braces without backtracking
+        |
+          \( (??{ $balanced }) \)     # Group with matching parens
+        |
+          \{ (??{ $balanced }) \}     # Group with matching braces
+        |
+          \[ (??{ $balanced }) \]     # Group with matching brackets
+       )*
+    }x;
+
+
+# contents ($FILE_NAME)
+# ---------------------
+sub contents ($)
+{
+  my ($file) = @_;
+  local $/;                     # Turn on slurp-mode.
+  use IO::File;
+  my $f = new IO::File "< $file" or die "cannot open $file: $!";
+  my $contents = $f->getline or die "cannot read $file: $!";
+  $f->close;
+  return $contents;
+}
+
+
+sub transform_env ($$)
+{
+  my ($opt, $body) = @_;
+  $opt ||= "";
+  print STDERR "OPT:{$opt}\n";
+  my $env = 'urbiscript';
+  # If all the lines are assertions, then replace with an assertion
+  # frame.
+  if ($body =~ /^(?:assert\s*\(($balanced)\);\s*)*$/s)
+  {
+    print STDERR "{{{", $body, "}}}\n";
+    $body =~ s{assert\s*\(($balanced)\);}{$1;}g;
+    print STDERR "===> {{{", $body, "}}}\n";
+    $env = 'urbiassert';
+  }
+  else
+  {
+    print STDERR "[[[$body]]]\n";
+  }
+  "\\begin{$env}$opt
+$body
+\\end{$env}";
+}
+
+sub transform_content ($)
+{
+  my ($content) = @_;
+  $content =~
+      s{
+         \\begin{urbiscript}(\[.*?\])?\n
+         (.*?)\n
+         \\end{urbiscript}
+       }
+       { transform_env($1, $2) }gmsex;
+  $content;
+}
+
+
+# transform_file ($FILE)
+# -----------------------
+sub transform_file (\&$)
+{
+  my ($transform, $file) = @_;
+
+  # When using globbing, we sometimes find directories.
+  if (! -f $file)
+  {
+    warn "ignoring non file: $file";
+    return;
+  }
+
+  # When using globbing, we sometimes find directories.
+  if ($file =~ /\.bak$/)
+  {
+    warn "ignoring backup file: $file";
+    return;
+  }
+
+  my ($bak) = "$file.bak";
+  rename ($file, $bak) or die "cannot rename $file as $bak: $!";
+  my $contents = contents ($bak);
+  my $out = new IO::File(">$file") or die;
+  print $out (&$transform($contents));
+  $out->close;
+  system("colordiff -u $bak $file");
+}
+
+map { transform_file(&transform_content, $_) } @ARGV;
