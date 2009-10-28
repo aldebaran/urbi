@@ -10,6 +10,7 @@
 
 /// \file libuco/uvar-common.cc
 
+#include <urbi/ucontext.hh>
 #include <urbi/uobject.hh>
 #include <urbi/uvalue.hh>
 #include <urbi/uvar.hh>
@@ -49,6 +50,14 @@ namespace urbi
     __init();
   }
 
+  UVar::UVar(const UVar& b)
+  : UContext(b.ctx_)
+  , VAR_PROP_INIT
+  , impl_(0)
+  , name (b.name)
+  {
+    __init();
+  }
 
   void
   UVar::init(const std::string& objname, const std::string& varname,
@@ -84,6 +93,7 @@ namespace urbi
   UVar::__init()
   {
     owned = false;
+    temp = false;
     vardata = 0;
     if (!impl_)
     {
@@ -111,4 +121,16 @@ namespace urbi
     return o << "UVar(\"" << u.get_name() << "\" = " << u.val() << ')';
   }
 
+  UVar&
+  uvalue_caster<UVar>::operator() (UValue& v)
+  {
+    if (v.type == DATA_VOID)
+      return *((UVar*)v.storage);
+    if (v.type != DATA_STRING)
+      return *(UVar*)0;
+    UVar* var = new UVar(*v.stringValue);
+    getCurrentContext()->addCleanup(var);
+    var->set_temp(true);
+    return *var;
+  }
 } // namespace urbi

@@ -10,6 +10,8 @@
 #ifndef UCONTEXT_IMPL_HH
 # define UCONTEXT_IMPL_HH
 
+#include <boost/function.hpp>
+
 #include <urbi/fwd.hh>
 #include <urbi/uprop.hh>
 
@@ -93,6 +95,14 @@ namespace urbi
       typedef libport::hash_map<std::string, UObjectHub*> hubs_type;
       hubs_type hubs;
       std::set<void*> initialized;
+
+      /// Add \b ptr to the list of objects to delete whean cleanup() is called.
+      template<typename T>
+      void addCleanup(T* ptr);
+      /// Delete all pointers passed to addCleanup.
+      void cleanup();
+    private:
+      std::vector<boost::function0<void> > cleanup_list_;
     };
 
     class URBI_SDK_API UObjectImpl

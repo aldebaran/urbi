@@ -148,6 +148,7 @@ namespace urbi
 	(is_const_)
 	? ((*obj).*funconst)(%%%,% uvalue_cast<P%>(param[% - 1]) %%)
 	: ((*obj).*fun)     (%%%,% uvalue_cast<P%>(param[% - 1]) %%);
+      ctx_->cleanup();
       return res;
     }
 
@@ -222,6 +223,7 @@ namespace urbi
     {
       UValue res;
       res(), (is_const_) ? ((*obj).*func)() : ((*obj).*fun)();
+      ctx_->cleanup();
       return res;
     }
 
@@ -281,6 +283,7 @@ namespace urbi
       (void) param;
       UValue res;
       res(), (*fun)(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
+      ctx_->cleanup();
       return res;
     }
 

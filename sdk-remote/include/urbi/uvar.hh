@@ -38,6 +38,10 @@ namespace urbi
     UVar(const std::string&, impl::UContextImpl* = 0);
     UVar(const std::string&, const std::string&, impl::UContextImpl* = 0);
     UVar(UObject&, const std::string&, impl::UContextImpl* = 0);
+    UVar(const UVar&);
+  private:
+    UVar& operator=(const UVar&);
+  public:
     ~UVar();
 
     // Bind to \a object.slot.
@@ -130,11 +134,6 @@ namespace urbi
     impl::UVarImpl* impl_;
     const UValue& val() const;
   private:
-    /// Declared but not implemented: do not ever try to use it.
-    UVar(const UVar&);
-
-    /// Declared but not implemented: do not ever try to use it.
-    UVar& operator=(const UVar&);
 
     /// Pointer to internal data specifics.
     UVardata* vardata;
@@ -147,11 +146,11 @@ namespace urbi
     {						\
       return Name;				\
     }						\
-    const Type get_ ##  Name () const		\
+    Type get_ ##  Name () const		        \
     {						\
       return Name;				\
     }						\
-    void set_ ##  Name (Type& v)		\
+    void set_ ##  Name (const Type& v)		\
     {						\
       Name = v;					\
     }						\
@@ -162,6 +161,8 @@ namespace urbi
     /// Full name of the variable as seen in URBI.
     PRIVATE(std::string, name)
 
+    /// True if the variable is a temporary and must not be stored in callbacks
+    PRIVATE(bool, temp);
 # undef PRIVATE
 
     // Check that the invariants of this class are verified.

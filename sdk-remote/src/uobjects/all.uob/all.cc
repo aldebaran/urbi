@@ -39,11 +39,13 @@ public:
 
     UBindFunction(all, setNotifyAccess);
     UBindFunction(all, setNotifyChangeByName);
+    UBindFunction(all, setNotifyChangeByUVar);
 
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
     UBindFunction(all, writeByName);
+    UBindFunction(all, writeByUVar);
     UBindFunction(all, writeOwnByName);
     UBindFunction(all, urbiWriteOwnByName);
     UBindFunction(all, sendString);
@@ -201,6 +203,11 @@ public:
     return 0;
   }
 
+  int setNotifyChangeByUVar(urbi::UVar& v)
+  {
+    UNotifyChange(v, &all::onChange);
+    return 0;
+  }
   int setNotifyAccess(int id)
   {
     UNotifyAccess(*vars[id], &all::onAccess);
@@ -236,6 +243,12 @@ public:
     urbi::UVar v(name);
     v = val;
     return val;
+  }
+
+  int writeByUVar(urbi::UVar v, urbi::UValue val)
+  {
+    v = val;
+    return 0;
   }
 
   int onChange(urbi::UVar& v)

@@ -34,12 +34,6 @@ namespace urbi
   | UValue Casts.  |
   `---------------*/
 
-  UVar&
-  uvalue_caster<UVar>::operator() (UValue& v)
-  {
-    return *((UVar*)v.storage);
-  }
-
   UBinary
   uvalue_caster<UBinary>::operator() (UValue& v)
   {

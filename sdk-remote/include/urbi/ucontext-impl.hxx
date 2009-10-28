@@ -8,6 +8,9 @@
  * See the LICENSE file for more information.
  */
 
+#include <boost/bind.hpp>
+#include <boost/foreach.hpp>
+
 namespace urbi
 {
   namespace impl
@@ -40,6 +43,26 @@ namespace urbi
     {
     }
 
+    template<typename T> void
+    deletor(T* ptr)
+    {
+      delete ptr;
+    }
+
+    template<typename T> void
+    UContextImpl::addCleanup(T* ptr)
+    {
+      cleanup_list_.push_back(boost::bind(&deletor<T>, ptr));
+    }
+
+    inline void
+    UContextImpl::cleanup()
+    {
+      // I would rather not define 'foreach' in a hxx.
+      BOOST_FOREACH(boost::function0<void>& f, cleanup_list_)
+        f();
+      cleanup_list_.clear();
+    }
   }
 
 }
