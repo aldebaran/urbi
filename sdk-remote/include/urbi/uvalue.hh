@@ -53,6 +53,23 @@ namespace urbi
 
     UList& operator=(const UList &b);
 
+    // Assign a container to the UList
+    template<typename T>
+    UList& operator=(const T& container);
+
+    // Transform the UList to a container.
+    template<typename T>
+    T as();
+
+    // Append an element to the end.
+    template<typename T>
+    UList&
+    push_back(const T& v);
+
+    void pop_back();
+
+    UValue& front();
+
     UValue& operator[](size_t i);
     const UValue& operator[](size_t i) const;
 

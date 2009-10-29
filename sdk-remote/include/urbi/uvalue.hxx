@@ -10,6 +10,8 @@
 
 /// \file urbi/uvalue.hxx
 
+#include <boost/foreach.hpp>
+
 #include <libport/cassert>
 #include <libport/cassert>
 
@@ -51,6 +53,27 @@ namespace urbi
     offset = n;
   }
 
+  template<typename T>
+  UList&
+  UList::push_back(const T& v)
+  {
+    array.push_back(new UValue(v));
+    return *this;
+  }
+
+  inline
+  UValue&
+  UList::front()
+  {
+   return *array.front();
+  }
+
+  inline
+  void
+  UList::pop_back()
+  {
+    array.pop_back();
+  }
 
   /*--------------.
   | UNamedValue.  |
@@ -321,5 +344,29 @@ namespace urbi
 
 # endif
 
+  // Uses casters, must be at the end
+  template<typename T>
+  UList&
+  UList::operator=(const T& container)
+  {
+    array.clear();
+    typedef const typename T::value_type constv;
+    BOOST_FOREACH(constv& v, container)
+    {
+      UValue val;
+      val,v;
+      array.push_back(new UValue(val));
+    }
+    return *this;
+  }
+  template<typename T>
+  T
+  UList::as()
+  {
+    T res;
+    BOOST_FOREACH(UValue* v, array)
+      res.push_back(uvalue_caster<typename T::value_type>()(*v));
+    return res;
+  }
 
 } // namespace urbi
