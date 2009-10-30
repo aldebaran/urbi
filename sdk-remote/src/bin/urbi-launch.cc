@@ -25,10 +25,8 @@
 // Quick hackish portability layer. We cannot use the one from libport as
 // it is not header-only.
 #ifdef WIN32
-static const int RTLD_LAZY = 0;
-static const int RTLD_GLOBAL = 0;
-static const char* LD_LIBRARY_PATH_NAME = "LD_LIBRARY_PATH";
-
+#define RTLD_LAZY 0
+#define RTLD_GLOBAL 0
 
 static HMODULE
 dlopen(const char* name, int)
