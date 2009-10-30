@@ -116,11 +116,11 @@ int main(int argc, char* argv[])
   _putenv(strdup(("PATH=" + path).c_str()));
 #endif
 
-  std::string liburbi_path = std::string() +  libdir + "/liburbi" + lib_ext;
+  std::string liburbi_path = std::string() + libdir + "/liburbi" + lib_ext;
 
   // First try using LIBRARY_PATH in the environment.
   HMODULE handle = dlopen((std::string("liburbi") + lib_ext).c_str(),
-    RTLD_LAZY | RTLD_GLOBAL);
+                          RTLD_LAZY | RTLD_GLOBAL);
 
   // If it fails, force path based on URBI_ROOT.
   if (!handle)
