@@ -3,6 +3,20 @@
 This file is meant for people who want to *build* the Kernel.  It is
 not for people who simply want to install a pre-built Urbi SDK.
 
+Outline:
+  * requirements
+    Software you need.
+  * checkouts
+    How to pull Urbi SDK for the repository.
+  * bootstrap
+    How to set up the Autotools and the generated sources.
+  * configuration
+    How to run the GNU Build System (./configure && make).
+  * test suites
+    Various make checks.
+  * FAQ
+    Common errors you are likely to find.
+
 * requirements
 To bootstrap this package from its repository, and then to compile it,
 the following tools are needed.
@@ -29,6 +43,7 @@ package: bc
 Don't try to build it yourself, ask your distro's management to
 install it.
 package: boost-1.39
+windows: http://www.boostpro.com/download
 
 ** Ccache
 Not a requirement, but it's better to have it.
@@ -144,7 +159,71 @@ To use ccache, pass
 
   CC='ccache gcc' CXX='ccache g++'
 
-as options to configure.
+as options to configure:
+
+  ../configure CC='ccache gcc' CXX='ccache g++' ...
+
+** building for Windows.
+
+We support two builds: using Wine on top of Unix, and using Cygwin on
+top of Windows.
+
+Both builds use our wrappers around MSVC's cl.exe and link.exe.  It
+is still unclear whether it was a good or a bad idea, but the wrappers
+use the same names.  Yet libtool will also need to use the genuine
+link.exe.  So to set up Libtool properly, you will need to pass the
+following as argument to configure:
+
+  AR=lib.exe                                                    \
+  CC='ccache cl.exe'                                            \
+  CC_FOR_BUILD=gcc                                              \
+  CXX='ccache cl.exe'                                           \
+  LD=link.exe                                                   \
+  DUMPBIN='/cygdrive/c/vcxx8/VC/bin/link.exe -dump -symbols'    \
+  RANLIB=:                                                      \
+  host_alias=mingw32                                            \
+  --host=mingw32
+
+where:
+  - lib.exe, cl.exe, link.exe are the wrappers
+  - /cygdrive/c/vcxx8/VC/bin/link.exe is the genuine MSVC tool.
+
+Since we are cross-compiling, we also need to specify CC_FOR_BUILD so
+that config.guess can properly guess the type of the build machine.
+
+** building for Windows using cygwin
+
+We use our cl.exe wrappers, which is something that Libtool cannot
+know.  So we need to tell it that we are on Windows with Cygwin, and
+pretend we use GCC, so we pretend we run mingw.
+
+The following options have been used with success to compile Urbi SDK
+with Visual C++ 2005.  Adjust to your own case (in particular the
+location of Boost).
+
+Note that `cl.exe'
+
+ ../configure                                                   \
+  -C                                                            \
+  --prefix=/usr/local/gostai                                    \
+  --enable-compilation-mode=debug                               \
+  --enable-shared                                               \
+  --disable-static                                              \
+  --enable-dependency-tracking                                  \
+  --with-boost=/cygdrive/c/gt-win32-2/d/boost_1_39              \
+  AR=lib.exe                                                    \
+  CC='ccache cl.exe'                                            \
+  CC_FOR_BUILD=gcc                                              \
+  CXX='ccache cl.exe'                                           \
+  LD=link.exe                                                   \
+  DUMPBIN='/cygdrive/c/vcxx8/VC/bin/link.exe -dump -symbols'    \
+  RANLIB=:                                                      \
+  host_alias=mingw32                                            \
+  --host=mingw32
+
+For some reason, the building of libuobject.dll will fail.  You need
+to remove the reference to "libltld.la" from the libtool invocation.
+This will be simplified later.
 
 * compilation
 Should be straightforward.
