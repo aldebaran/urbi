@@ -10,12 +10,13 @@
 
 // This file *must* remain with absolutely no run-time dependency.
 
-#include <string>
-#include <iostream>
 #include <cstdlib>
 #include <cstring>
-#include <libport/windows.hh>
+#include <iostream>
 #include <libport/foreach.hh>
+#include <libport/windows.hh>
+#include <list>
+#include <string>
 
 #include "urbi-root.hh"
 
@@ -61,6 +62,7 @@ dlerror(DWORD err = GetLastError())
   return buf;
 }
 
+typedef std::list<std::string> strings_type;
 static strings_type
 split(std::string lib)
 {
@@ -89,9 +91,9 @@ typedef void* HMODULE;
 #endif
 
 std::string
-xgetenv(const char* var)
+xgetenv(const std::string& var)
 {
-  const char* res = getenv(var);
+  const char* res = getenv(var.c_str());
   return res ? res : "";
 }
 
