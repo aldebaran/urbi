@@ -70,10 +70,10 @@ assert_op(">",  1, 1 + 1);
   Return the value of the environment variable \var{name} as a
   \refObject{String} if set, \lstinline|nil| otherwise.  See also
   \lstinline|System.setenv| and \lstinline|System.unsetenv|.
-\begin{urbiscript}[firstnumber=last]
-assert(getenv("UndefinedEnvironmentVariable").isNil);
-assert(!getenv("PATH").isNil);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+getenv("UndefinedEnvironmentVariable").isNil;
+!getenv("PATH").isNil;
+\end{urbiassert}
 
 \item \lstinline|loadFile(\var{file})|\\
   Load the \us file \var{file}.  Throw a \lstinline|FileNotFound|
@@ -131,10 +131,10 @@ assert(maybeLoad("u.123").isVoid);
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars})
   and return its \refObject{Path}.  Throw a \lstinline|FileNotFound|
   error if the file cannot be found.
-\begin{urbiscript}[firstnumber=last]
-assert(System.system("echo '123;' >123.u") == 0);
-assert(searchFile("123.u") == Path.cwd / Path.new("123.u"));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+System.system("echo '123;' >123.u") == 0;
+searchFile("123.u") == Path.cwd / Path.new("123.u");
+\end{urbiassert}
 
 \item \lstinline|setenv(\var{name}, \var{value})|\\
   Set the environment variable \var{name} to
@@ -171,17 +171,17 @@ assert(getenv("MyVar").isNil == Platform.isWindows);
   Suspend the execution for \var{duration} seconds.  No CPU cycle is
   wasted during this wait.
 
-\begin{urbiscript}[firstnumber=last]
-assert((time - {sleep(1s); time}).round == -1);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+(time - {sleep(1s); time}).round == -1;
+\end{urbiassert}
 
 \item \lstinline|shiftedTime|\\
   Return the number of seconds elapsed since the \urbi server was
   launched.  Contrary to \lstinline|System.time|, time spent in frozen
   code is not counted.
-\begin{urbiscript}[firstnumber=last]
-assert({ var t0 = shiftedTime | sleep(1s) | shiftedTime - t0 }.round ~= 1);
-assert (
+\begin{urbiassert}[firstnumber=last]
+{ var t0 = shiftedTime | sleep(1s) | shiftedTime - t0 }.round ~= 1;
+
   1 ==
   {
     var t = Tag.new|;
@@ -193,8 +193,8 @@ assert (
     t.unfreeze;
     sleep(1s);
     res.round;
-  });
-\end{urbiscript}
+  };
+\end{urbiassert}
 
 \item \lstinline|shutdown|\\
   Have the \urbi server shut down.  All the connections are closed,
@@ -212,20 +212,20 @@ assert (
     Under Windows, the exit status is always 0.
   \end{windows}
 
-\begin{urbiscript}[firstnumber=last]
-assert(System.system("exit 0") == 0);
-assert(System.system("exit 23") >> 8
-       == { if (System.Platform.isWindows) 0 else 23 });
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+System.system("exit 0") == 0;
+System.system("exit 23") >> 8
+       == { if (System.Platform.isWindows) 0 else 23 };
+\end{urbiassert}
 
 
 \item \lstinline|time|\\
   Return the number of seconds elapsed since the \urbi server was
   launched.  In presence of a frozen \refObject{Tag}, see also
   \lstinline|System.shiftedTime|.
-\begin{urbiscript}[firstnumber=last]
-assert({ var t0 = time | sleep(1s) | time - t0 }.round ~= 1);
-assert (
+\begin{urbiassert}[firstnumber=last]
+{ var t0 = time | sleep(1s) | time - t0 }.round ~= 1;
+
   2 ==
   {
     var t = Tag.new|;
@@ -237,20 +237,20 @@ assert (
     t.unfreeze;
     sleep(1s);
     res.round;
-  });
-\end{urbiscript}
+  };
+\end{urbiassert}
 
 \item \lstinline|unsetenv(\var{name})|\\
   Undefine the environment variable \var{name}, return its previous
   value.  See also \lstinline|System.getenv| and
   \lstinline|System.setenv|.
 
-\begin{urbiscript}[firstnumber=last]
-assert(setenv("MyVar", 12) == "12");
-assert(!getenv("MyVar").isNil);
-assert(unsetenv("MyVar") == "12");
-assert(getenv("MyVar").isNil);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+setenv("MyVar", 12) == "12";
+!getenv("MyVar").isNil;
+unsetenv("MyVar") == "12";
+getenv("MyVar").isNil;
+\end{urbiassert}
 
 
 \end{itemize}

@@ -52,25 +52,25 @@ assert([-3, 1, -1].any(function (e) { e > 0 }));
 
 \item \lstinline|asBool|\\
   Whether not empty.
-\begin{urbiscript}[firstnumber=last]
-assert([].asBool == false);
-assert([1].asBool == true);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[].asBool == false;
+[1].asBool == true;
+\end{urbiassert}
 
 \item \lstinline|asList|\\
 Return the target.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1, 2].asList == [0, 1, 2]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1, 2].asList == [0, 1, 2];
+\end{urbiassert}
 
 \item \lstinline|asString|\\
   A string describing the list.  Uses \lstinline|asPrintable| on its
   members, so that, for instance, strings are displayed with quotes.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, [1], "2"].asString == "[0, [1], \"2\"]");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, [1], "2"].asString == "[0, [1], \"2\"]";
+\end{urbiassert}
 
 \item \lstinline|back|\\
 Return the last element of the target. An error if the target is empty.
@@ -120,10 +120,10 @@ Apply the given functional value on all members simultaneously.
 \item \lstinline|empty|\\
   Whether the target is empty.
 
-\begin{urbiscript}[firstnumber=last]
-assert([].empty);
-assert(! [1].empty);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[].empty;
+! [1].empty;
+\end{urbiassert}
 
 \item \lstinline|filter(\var{fun})|\\
   The list of all the members of the target that verify the predicate
@@ -166,10 +166,10 @@ assert([0, 1, 2].front == 0);
 \item \lstinline|has(\var{that})|\\
   Whether one of the members of the target equals the argument.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1, 2].has(1));
-assert(! [0, 1, 2].has(5));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1, 2].has(1);
+! [0, 1, 2].has(5);
+\end{urbiassert}
 
 \item \lstinline|hasSame(\var{that})|\\
   Return whether one of the member of the target is physically equal
@@ -210,11 +210,11 @@ assert(a == [0, 1, 2]);
 \item \lstinline|join(\var{sep} = "", \var{prefix} = "", \var{suffix} = "")|\\
   Bounces to \lstinline|String.join|, see \refObject{String}.
 
-\begin{urbiscript}[firstnumber=last]
-assert(["", "ob", ""].join                == "ob");
-assert(["", "ob", ""].join("a")           == "aoba");
-assert(["", "ob", ""].join("a", "B", "b") == "Baobab");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+["", "ob", ""].join                == "ob";
+["", "ob", ""].join("a")           == "aoba";
+["", "ob", ""].join("a", "B", "b") == "Baobab";
+\end{urbiassert}
 
 \item \lstinline|keys()|\\
   The list of valid indexes.  This allows uniform iteration over a
@@ -238,10 +238,10 @@ assert(["", "ob", ""].join("a", "B", "b") == "Baobab");
 Apply the given functional value on every member, and return the list
 of results.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1, 2, 3].map(function (v) { v % 2 == 0})
-        == [true, false, true, false]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1, 2, 3].map(function (v) { v % 2 == 0})
+        == [true, false, true, false];
+\end{urbiassert}
 
 \item \lstinline|range(\var{begin}, \var{end})|\\
   Return a sub-range of the string, from the first index included to
@@ -305,24 +305,24 @@ assert(g == [1, 2]);
 \item \lstinline|reverse|\\
 Return the target with the order of elements inverted.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1, 2].reverse == [2, 1, 0]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1, 2].reverse == [2, 1, 0];
+\end{urbiassert}
 
 \item \lstinline|size|\\
 Return the number of elements in the target.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1, 2].size == 3);
-assert([].size == 0);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1, 2].size == 3;
+[].size == 0;
+\end{urbiassert}
 
 \item \lstinline|sort|\\
 Return the target, sorted with respect to the \lstinline|<| criteria.
 
-\begin{urbiscript}[firstnumber=last]
-assert([1, 0, 3, 2].sort == [0, 1, 2, 3]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[1, 0, 3, 2].sort == [0, 1, 2, 3];
+\end{urbiassert}
 
 \item \lstinline|tail|\\
 Return the target, minus the first element. An error if the target is
@@ -338,10 +338,10 @@ assert([0, 1, 2].tail == [1, 2]);
 Check whether all elements in the target and \var{that}, are
 equal two by two.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1, 2] == [0, 1, 2]);
-assert(!([0, 1, 2] == [0, 0, 2]));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1, 2] == [0, 1, 2];
+!([0, 1, 2] == [0, 0, 2]);
+\end{urbiassert}
 
 \item \lstinline|'[]'(\var{n})|\\
   Return the \var{n}th member of the target (indexing is
@@ -375,24 +375,24 @@ assert(f == [0, 42, 2]);
 \item \lstinline|'*'(\var{times})|\\
 Return the target, concatenated n times to itself, n being \var{times}.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1] * 3 == [0, 1, 0, 1, 0, 1]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1] * 3 == [0, 1, 0, 1, 0, 1];
+\end{urbiassert}
 
 \item \lstinline|'+'(\var{other})|\\
 Return the concatenation of the target and the \var{other} list.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1] + [2, 3] == [0, 1, 2, 3]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1] + [2, 3] == [0, 1, 2, 3];
+\end{urbiassert}
 
 \item \lstinline|'-'(\var{other})|\\
 Return the target without all element that equals any element in the
 \var(other) list.
 
-\begin{urbiscript}[firstnumber=last]
-assert([0, 1, 0, 2, 3] - [1, 2] == [0, 0, 3]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+[0, 1, 0, 2, 3] - [1, 2] == [0, 0, 3];
+\end{urbiassert}
 
 \item \lstinline|'<<'(\var{that})|\\
   A synonym for \lstinline|insertBack|.
@@ -403,11 +403,11 @@ assert([0, 1, 0, 2, 3] - [1, 2] == [0, 0, 3]);
   from the other, and the first differing element is inferior to the
   other.
 
-\begin{urbiscript}[firstnumber=last]
-assert(!([0, 1, 2] < [0, 1, 2]));
-assert(!([0, 1, 2] < [0, 0, 2]));
-assert([0, 1, 2] < [0, 2, 2]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+!([0, 1, 2] < [0, 1, 2]);
+!([0, 1, 2] < [0, 0, 2]);
+[0, 1, 2] < [0, 2, 2];
+\end{urbiassert}
 
 \end{itemize}
 

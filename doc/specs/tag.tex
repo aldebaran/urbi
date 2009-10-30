@@ -142,8 +142,8 @@ sleep(2.1s);
 As with \lstinline|stop|, one can force the value of stopped
 expressions.
 
-\begin{urbiscript}
-assert(
+\begin{urbiassert}
+
   ["foo", "foo", "foo"]
   ==
   {
@@ -153,8 +153,8 @@ assert(
       detach(res << {t: sleep(inf)});
     t.block("foo");
     res;
-  });
-\end{urbiscript}
+  };
+\end{urbiassert}
 
 \subsubsection{Freeze/unfreeze}
 \label{sec:specs:tag:freeze}

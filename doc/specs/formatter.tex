@@ -29,10 +29,10 @@ Actually, formatting patterns are translated into
 \item \lstinline|asList|\\
   Return the content of the \dfn{formatter} as a list of strings and
   \refObject{FormatInfo}.
-\begin{urbiscript}[firstnumber=last]
-assert(Formatter.new("Name:%s, Surname:%s;").asList.asString
-       == "[\"Name:\", %s, \", Surname:\", %s, \";\"]");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Formatter.new("Name:%s, Surname:%s;").asList.asString
+       == "[\"Name:\", %s, \", Surname:\", %s, \";\"]";
+\end{urbiassert}
 
 \item \lstinline|'%'(\var{args})|\\
   Use \lstinline|this| as format string and \var{args} as the list of
@@ -43,23 +43,23 @@ assert(Formatter.new("Name:%s, Surname:%s;").asList.asString
   This operator concatenates regular strings and the strings that are
   result of \lstinline|asString| called on members of \var{args} with
   the appropriate \refObject{FormatInfo}.
-\begin{urbiscript}[firstnumber=last]
-assert(Formatter.new("Name:%s, Surname:%s;") % ["Foo", "Bar"]
-       == "Name:Foo, Surname:Bar;");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Formatter.new("Name:%s, Surname:%s;") % ["Foo", "Bar"]
+       == "Name:Foo, Surname:Bar;";
+\end{urbiassert}
 
   If \var{args} is not a \refObject{List}, then the call is equivalent
   to calling |'%'([\var{args}])|.
-\begin{urbiscript}[firstnumber=last]
-assert(Formatter.new("%06.3f") % Math.pi
-       == "03.142");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Formatter.new("%06.3f") % Math.pi
+       == "03.142";
+\end{urbiassert}
 
   Note that \lstinline|String.'%'| provides a nicer interface to this
   operator:
-\begin{urbiscript}[firstnumber=last]
-assert("%06.3f" % Math.pi == "03.142");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"%06.3f" % Math.pi == "03.142";
+\end{urbiassert}
 
   It is nevertheless interesting to use the Formatter for performance
   reasons if the format is reused many times.

@@ -31,10 +31,13 @@ classes in traditional object-oriented programming languages (see
   {
     var attr = 23;
   };
-  assert(Foo.localSlotNames == ["asFoo", "attr", "type"]);
-  assert(Foo.asFoo === Foo);
-  assert(Foo.attr == 23);
-  assert(Foo.type == "Foo");
+  assert
+  {
+    Foo.localSlotNames == ["asFoo", "attr", "type"];
+    Foo.asFoo === Foo;
+    Foo.attr == 23;
+    Foo.type == "Foo";
+  };
 };
 \end{urbiscript}
 
@@ -66,9 +69,9 @@ classes in traditional object-oriented programming languages (see
   Return a list with \lstinline|this|, all parents of
   \lstinline|this|, the parents of the parents of
   \lstinline|this|,\ldots
-\begin{urbiscript}[firstnumber=last]
-assert(123.allProtos.size == 13);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+123.allProtos.size == 13;
+\end{urbiassert}
 
 \item \lstinline|allSlotNames|\\
   Return a list with the slot names of \lstinline|this| and of all
@@ -179,9 +182,9 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 \item \lstinline|getSlot(\var{name})|\\
   Return the value associated to \var{name}.
 
-\begin{urbiscript}[firstnumber=last]
-assert(!Object.getSlot("getSlot").isVoid);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+!Object.getSlot("getSlot").isVoid;
+\end{urbiassert}
 
 \item \lstinline|hasProperty|\\
 
@@ -200,11 +203,11 @@ assert(!Derive.hasLocalSlot("base"));
   Whether \lstinline|this| has the slot \var{slot}, locally, or from
   some ancester.  See also \lstinline|Object.hasLocalSlot|.
 
-\begin{urbiscript}[firstnumber=last]
-assert(Derive.hasSlot("derive"));
-assert(Derive.hasSlot("base"));
-assert(!Base.hasSlot("derive"));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Derive.hasSlot("derive");
+Derive.hasSlot("base");
+!Base.hasSlot("derive");
+\end{urbiassert}
 
 \item \lstinline|id|\\
 
@@ -227,52 +230,52 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
   Return true if \lstinline|this| has \var{obj} in his parents, false
   otherwise.
 
-\begin{urbiscript}[firstnumber=last]
-assert(Float.isA(Orderable));
-assert(!(String.isA(Float)));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Float.isA(Orderable);
+!(String.isA(Float));
+\end{urbiassert}
 
 \item \lstinline|isNil|\\
   Return true if \lstinline|this| is \refObject{nil}, false otherwise.
 
-\begin{urbiscript}[firstnumber=last]
-assert(nil.isNil);
-assert(!(0.isNil));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+nil.isNil;
+!(0.isNil);
+\end{urbiassert}
 
 \item \lstinline|isProto|\\
   Return true if \lstinline|this| is a prototype, false otherwise;
 
-\begin{urbiscript}[firstnumber=last]
-assert(Float.isProto);
-assert(!(42.isProto));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Float.isProto;
+!(42.isProto);
+\end{urbiassert}
 
 \item \lstinline|isVoid|\\
   Return true if \lstinline|this| is \lstinline|void|.  See
   \refObject{void}.
-\begin{urbiscript}[firstnumber=last]
-assert(void.isVoid);
-assert(!(42.isVoid));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+void.isVoid;
+!(42.isVoid);
+\end{urbiassert}
 
 \item \lstinline|locateSlot(\var{slot})|\\
   Return \lstinline|nil| if \lstinline|this| don't have the slot
   \lstinline|slot|. Otherwise it returns the first lowest owner of
   \lstinline|slot| of \lstinline|this|.
 
-\begin{urbiscript}[firstnumber=last]
-assert(locateSlot("init") == Channel);
-assert(locateSlot("doesNotExist").isNil);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+locateSlot("init") == Channel;
+locateSlot("doesNotExist").isNil;
+\end{urbiassert}
 
 \item \lstinline|print|\\
 
 \item \lstinline|protos|\\
   Return the list of prototypes of \lstinline|this|.
-\begin{urbiscript}[firstnumber=last]
-assert(12.protos == [0]);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+12.protos == [0];
+\end{urbiassert}
 
 \item \lstinline|properties(\var{slotName})|\\
   Return a dictionary of the properties of slot \var{slotName}.
@@ -314,11 +317,11 @@ fortyTwo = 51;
   Create a slot \var{name} mapping to \var{value}. Raise an error if
   \var{name} was already defined.
 
-\begin{urbiscript}[firstnumber=last]
-assert(Object.setSlot("theObject", Object) === Object);
-assert(Object.theObject === Object);
-assert(theObject === Object);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Object.setSlot("theObject", Object) === Object;
+Object.theObject === Object;
+theObject === Object;
+\end{urbiassert}
 
 \item \lstinline|slotNames|\\
   Returns the list of slot owned by \lstinline|this|.
@@ -345,46 +348,46 @@ assert(theObject === Object);
 \item \lstinline|updateSlot(\var{name}, \var{value})|\\
   Map the existing slot named \var{name} to \var{value}. Raise an
   error if \var{name} was not defined.
-\begin{urbiscript}[firstnumber=last]
-assert(Object.setSlot("one", 1)    == 1);
-assert(Object.updateSlot("one", 2) == 2);
-assert(Object.one                  == 2);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Object.setSlot("one", 1)    == 1;
+Object.updateSlot("one", 2) == 2;
+Object.one                  == 2;
+\end{urbiassert}
 
 \item \lstinline|'&&'(\var{that})|\\
   Short-circuiting logical and. If \lstinline|this| evaluates to true
   evaluate and return \var{that}, otherwise return \lstinline|this|
   without evaluating \var{that}.
-\begin{urbiscript}[firstnumber=last]
-assert(0 && "foo" == 0);
-assert(2 && "foo" == "foo");
+\begin{urbiassert}[firstnumber=last]
+(0 && "foo") == 0;
+(2 && "foo") == "foo";
 
-assert(""    && "foo" == "");
-assert("foo" && "bar" == "bar");
-\end{urbiscript}
+(""    && "foo") == "";
+("foo" && "bar") == "bar";
+\end{urbiassert}
 
 \item \lstinline/'||'(\var{that})/\\
   Short-circuiting logical or. If \lstinline|this| evaluates to false
   evaluate and return \var{that}, otherwise return \lstinline|this|
   without evaluating \var{that}.
-\begin{urbiscript}[firstnumber=last]
-assert(0 || "foo" == "foo");
-assert(2 ||  1/0 ==  2);
+\begin{urbiassert}[firstnumber=last]
+(0 || "foo") == "foo";
+(2 ||  1/0) ==  2;
 
-assert(""    || "foo" == "foo");
-assert("foo" || 1/0 ==   "foo");
-\end{urbiscript}
+(""    || "foo") == "foo";
+("foo" || 1/0) ==   "foo";
+\end{urbiassert}
 
 \item \lstinline|'!'|\\
   Logical negation. If \lstinline|this| evaluates to false return
   \lstinline|true| and vice-versa.
-\begin{urbiscript}[firstnumber=last]
-assert(!1 == false);
-assert(!0 == true);
+\begin{urbiassert}[firstnumber=last]
+!1 == false;
+!0 == true;
 
-assert(!"foo" == false);
-assert(!"" ==    true);
-\end{urbiscript}
+!"foo" == false;
+!"" ==    true;
+\end{urbiassert}
 \end{itemize}
 
 %%% Local Variables:

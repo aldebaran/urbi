@@ -14,9 +14,9 @@ which can be read.
 
 Being a singleton, \lstinline|nil| is not to be constructed, just used.
 
-\begin{urbiscript}
-assert(nil == nil);
-\end{urbiscript}
+\begin{urbiassert}
+nil == nil;
+\end{urbiassert}
 
 \subsection{Slots}
 
@@ -24,10 +24,10 @@ assert(nil == nil);
 \item \lstinline|isNil|\\
   Whether \lstinline|this| is \lstinline|nil|.  I.e., true.  See also
   \lstinline|Object.isNil|.
-\begin{urbiscript}[firstnumber=last]
-assert(nil.isNil);
-assert(!Object.isNil);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+nil.isNil;
+!Object.isNil;
+\end{urbiassert}
 
 \end{itemize}
 

@@ -227,10 +227,10 @@ equivalent are shown below.
   \hline
 \end{tabular}
 
-\begin{urbiscript}[firstnumber=last]
-assert(pi == 180deg);
-assert(pi == 200grad);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+pi == 180deg;
+pi == 200grad;
+\end{urbiassert}
 
 \subsubsection{Durations}
 
@@ -253,18 +253,18 @@ below.
   \hline
 \end{tabular}
 
-\begin{urbiscript}[firstnumber=last]
-assert(1d == 24h);
-assert(1h == 60mn);
-assert(1mn == 60s);
-assert(1s == 1000ms);
+\begin{urbiassert}[firstnumber=last]
+1d == 24h;
+1h == 60mn;
+1mn == 60s;
+1s == 1000ms;
 
-assert(1s == 1);
-assert(1s2s3s == 6);
-assert(1s 2s 3s == 6);
-assert(1s 1ms == 1.001);
-assert(1ms 1s == 1.001);
-\end{urbiscript}
+1s == 1;
+1s2s3s == 6;
+1s 2s 3s == 6;
+1s 1ms == 1.001;
+1ms 1s == 1.001;
+\end{urbiassert}
 
 \subsubsection{Floats}
 \label{sec:us-syn-lit-float}
@@ -335,10 +335,10 @@ Consecutive string literals are glued together into a unique string.
 This is useful to split large strings into chunks that fit usual
 programming widths.
 
-\begin{urbiscript}[firstnumber=last]
-assert("foo" "bar" "baz" == "foobarbaz");
-assert("\B(3)("\")" == "\"\\\"");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"foo" "bar" "baz" == "foobarbaz";
+"\B(3)("\")" == "\"\\\"";
+\end{urbiassert}
 
 The interpreter prints the strings escaped; for instance, line feed
 will be printed out as \lstinline|\n| when a string result is dumped
@@ -1507,25 +1507,25 @@ equivalent to \lstinline|for (var i: n)|.  It supports the same
 flavors: \lstinline|for;|, \lstinline{for|}, and \lstinline|for&|. The
 loop evaluates to \lstinline|void|.
 
-\begin{urbiscript}[firstnumber=last]
-assert({ var res = []; for (3) { res << 1; res << 2 } ; res }
-        == [1, 2, 1, 2, 1, 2]);
+\begin{urbiassert}[firstnumber=last]
+{ var res = []; for (3) { res << 1; res << 2 } ; res }
+        == [1, 2, 1, 2, 1, 2];
 
-assert({ var res = []; for|(3) { res << 1; res << 2 } ; res }
-        == [1, 2, 1, 2, 1, 2]);
+{ var res = []; for|(3) { res << 1; res << 2 } ; res }
+        == [1, 2, 1, 2, 1, 2];
 
-assert({ var res = []; for&(3) { res << 1; res << 2 } ; res }
-        == [1, 1, 1, 2, 2, 2]);
-\end{urbiscript}
+{ var res = []; for&(3) { res << 1; res << 2 } ; res }
+        == [1, 1, 1, 2, 2, 2];
+\end{urbiassert}
 
 Note that since these \lstinline|for| loops are merely anonymous
 foreach-style loops, the argument needs not being an integer, any
 iterable value can be used.
 
-\begin{urbiscript}[firstnumber=last]
-assert(3 == { var r = 0; for ([1, 2, 3]) r += 1; r});
-assert(3 == { var r = 0; for ("123")     r += 1; r});
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+3 == { var r = 0; for ([1, 2, 3]) r += 1; r};
+3 == { var r = 0; for ("123")     r += 1; r};
+\end{urbiassert}
 
 
 \subsection{if}

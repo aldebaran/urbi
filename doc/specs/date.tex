@@ -31,16 +31,16 @@ Date.new(1234567890);
 \begin{itemize}
 \item \lstinline|==(\var{that})|\\
   Equality test.
-\begin{urbiscript}[firstnumber=last]
-assert(Date.new(11223344) == Date.new(11223344));
-assert(Date.new(11111111) != Date.new(22222222));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Date.new(11223344) == Date.new(11223344);
+Date.new(11111111) != Date.new(22222222);
+\end{urbiassert}
 
 \item \lstinline|<(\var{that})|\\
   Order comparison.
-\begin{urbiscript}[firstnumber=last]
-assert(Date.new(11111111) < Date.new(22222222));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Date.new(11111111) < Date.new(22222222);
+\end{urbiassert}
 
 \item \lstinline|asString|\\
   Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
@@ -50,9 +50,9 @@ assert(Date.new(11111111) < Date.new(22222222));
   hour (from 0 to 23), \var{mn} the two-digit number of minutes in the
   hour (from 0 to 59), and \var{ss} the two-digit number of seconds in
   the minute (from 0 to 59).
-\begin{urbiscript}[firstnumber=last]
-assert(Date.new(1234567890).asString == "2009-02-14 00:31:30");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Date.new(1234567890).asString == "2009-02-14 00:31:30";
+\end{urbiassert}
 
 \end{itemize}
 

@@ -19,11 +19,11 @@ examples.
 A null String can also be obtained with \lstinline|String|'s
 \lstinline|new| method.
 
-\begin{urbiscript}
-assert(String.new == "");
-assert(String == "");
-assert("123".new == "123");
-\end{urbiscript}
+\begin{urbiassert}
+String.new == "";
+String == "";
+"123".new == "123";
+\end{urbiassert}
 
 \subsection{Slots}
 \begin{itemize}
@@ -52,16 +52,16 @@ for (var v : "123")
 
 \item \lstinline|asPrintable|\\
   Return \lstinline|this| as a literal (escaped) string.
-\begin{urbiscript}[firstnumber=last]
-assert("foo".asPrintable == "\"foo\"");
-assert("foo".asPrintable.asPrintable == "\"\\\"foo\\\"\"");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"foo".asPrintable == "\"foo\"";
+"foo".asPrintable.asPrintable == "\"\\\"foo\\\"\"";
+\end{urbiassert}
 
 \item \lstinline|asString|\\
   Return \lstinline|this|.
-\begin{urbiscript}[firstnumber=last]
-assert("\"foo\"".asString == "\"foo\"");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"\"foo\"".asString == "\"foo\"";
+\end{urbiassert}
 
 \item \lstinline|distance(\var{other})|\\
   Return the
@@ -69,20 +69,20 @@ assert("\"foo\"".asString == "\"foo\"");
   {Damerau-Levenshtein distance} between \lstinline|this| and
   \var{other}.  The more alike the strings are, the smaller the
   distance is.
-\begin{urbiscript}[firstnumber=last]
-assert("foo".distance("foo") == 0);
-assert("bar".distance("baz") == 1);
-assert("foo".distance("bar") == 3);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"foo".distance("foo") == 0;
+"bar".distance("baz") == 1;
+"foo".distance("bar") == 3;
+\end{urbiassert}
 
 \item \lstinline|fresh|\\
   Return a String that has never been used as an identifier, prefixed
   by \lstinline|this|.  It can safely be used with
   \lstinline|Object.setSlot| and so forth.
-\begin{urbiscript}[firstnumber=last]
-assert(String.fresh == "_5");
-assert("foo".fresh == "foo_6");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+String.fresh == "_5";
+"foo".fresh == "foo_6";
+\end{urbiassert}
 
 \item Character handling functions\\
   Here is a map of how the original 127-character ASCII set is
@@ -123,59 +123,59 @@ assert("foo".fresh == "foo_6");
   \hline
 \end{tabular}
 
-\begin{urbiscript}[firstnumber=last]
-assert("".isDigit);
-assert("0123456789".isDigit);
-assert(!"a".isDigit);
+\begin{urbiassert}[firstnumber=last]
+"".isDigit;
+"0123456789".isDigit;
+!"a".isDigit;
 
-assert("".isLower);
-assert("lower".isLower);
-assert(! "Not Lower".isLower);
+"".isLower;
+"lower".isLower;
+! "Not Lower".isLower;
 
-assert("".isUpper);
-assert("UPPER".isUpper);
-assert(! "Not Upper".isUpper);
-\end{urbiscript}
+"".isUpper;
+"UPPER".isUpper;
+! "Not Upper".isUpper;
+\end{urbiassert}
 
 \item \lstinline|join(\var{list}, \var{prefix}, \var{suffix})|\\
   Glue the result of \lstinline|asString| applied to the members of
   \var{list}, separated by \lstinline|this|, and embedded in a pair
   \var{prefix}/var{suffix}.
-\begin{urbiscript}[firstnumber=last]
-assert("|".join([1, 2, 3], "(", ")")      == "(1|2|3)");
-assert(", ".join([1, [2], "3"], "[", "]") == "[1, [2], 3]");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"|".join([1, 2, 3], "(", ")")      == "(1|2|3)";
+", ".join([1, [2], "3"], "[", "]") == "[1, [2], 3]";
+\end{urbiassert}
 
 \item \lstinline|replace(\var{from}, \var{to})|\\
   Replace every occurrence of the string \var{from} in
   \lstinline|this| by \var{to}, and return the result.
   \lstinline|this| is not modified.
-\begin{urbiscript}[firstnumber=last]
-assert("Hello, World!".replace("Hello", "Bonjour")
+\begin{urbiassert}[firstnumber=last]
+"Hello, World!".replace("Hello", "Bonjour")
                       .replace("World!", "Monde !") ==
-       "Bonjour, Monde !");
-\end{urbiscript}
+       "Bonjour, Monde !";
+\end{urbiassert}
 
 \item \lstinline|size|\\
   Return the size of the string.
-\begin{urbiscript}[firstnumber=last]
-assert("foo".size == 3);
-assert("".size == 0);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"foo".size == 3;
+"".size == 0;
+\end{urbiassert}
 
 \item \lstinline|toLower|\\
   Make lower case every upper case character in \lstinline|this| and
   return the result.  \lstinline|this| is not modified.
-\begin{urbiscript}[firstnumber=last]
-assert("Hello == World!".toLower, "hello, world!");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"Hello, World!".toLower == "hello, world!";
+\end{urbiassert}
 
 \item \lstinline|toUpper|\\
   Make upper case every lower case character in \lstinline|this| and
   return the result.  \lstinline|this| is not modified.
-\begin{urbiscript}[firstnumber=last]
-assert("Hello == World!".toUpper, "HELLO, WORLD!");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"Hello, World!".toUpper == "HELLO, WORLD!";
+\end{urbiassert}
 
 \item \lstinline|'%'(\var{args})|\\
   It is an equivalent of \lstinline|Formatter.new(this) % \var{args}|.
@@ -184,45 +184,45 @@ assert("Hello == World!".toUpper, "HELLO, WORLD!");
 %  powerful than this, since it relies on
 %  \href{http://www.boost.org/doc/libs/1_39_0/libs/format/doc/format.html,
 %    Boost.Format}.  For instance:
-\begin{urbiscript}[firstnumber=last]
-assert("%s + %s = %s" % [1, 2, 3] == "1 + 2 = 3");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"%s + %s = %s" % [1, 2, 3] == "1 + 2 = 3";
+\end{urbiassert}
 
 \item \lstinline|'*'(\var{n})|\\
   Concatenate \lstinline|this| \var{n} times.
-\begin{urbiscript}[firstnumber=last]
-assert("foo" * 0 == "");
-assert("foo" * 1 == "foo");
-assert("foo" * 3 == "foofoofoo");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"foo" * 0 == "";
+"foo" * 1 == "foo";
+"foo" * 3 == "foofoofoo";
+\end{urbiassert}
 
 \item \lstinline|'+'(\var{other})|\\
   Concatenate \lstinline|this| and \lstinline|\var{other}.asString|.
-\begin{urbiscript}[firstnumber=last]
-assert("foo" + "bar" == "foobar");
-assert("foo" + "" == "foo");
-assert("foo" + 3 == "foo3");
-assert("foo" + [1, 2, 3] == "foo[1, 2, 3]");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"foo" + "bar" == "foobar";
+"foo" + "" == "foo";
+"foo" + 3 == "foo3";
+"foo" + [1, 2, 3] == "foo[1, 2, 3]";
+\end{urbiassert}
 
 \item \lstinline|'<'(\var{other})|\\
   Whether \lstinline|this| is lexicographically before \var{other},
   which must be a String.
-\begin{urbiscript}[firstnumber=last]
-assert("" < "a");
-assert(!("a" < ""));
-assert("a" < "b");
-assert(!("a" < "a"));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"" < "a";
+!("a" < "");
+"a" < "b";
+!("a" < "a");
+\end{urbiassert}
 
 \item \lstinline|'[]'(\var{from})|\\
   \lstinline|'[]'(\var{from}, \var{to})|\\
   Return the substring starting at \var{from}, up to and not including
   \var{to} (which defaults to \var{to} + 1).
-\begin{urbiscript}[firstnumber=last]
-assert("foobar"[0, 3] == "foo");
-assert("foobar"[0] == "f");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+"foobar"[0, 3] == "foo";
+"foobar"[0] == "f";
+\end{urbiassert}
 
 \item \lstinline|'[]='(\var{from}, \var{other})|\\
   \lstinline|'[]='(\var{from}, \var{to}, \var{other})|\\

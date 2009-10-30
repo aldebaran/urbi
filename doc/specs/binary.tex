@@ -31,20 +31,20 @@ the system, although not preceded by a timestamp.
   Return a new Binary whose keywords are those of \lstinline|this| if
   not empty, otherwise those of \var{that}, and whose data is the
   concatenation of both.
-\begin{urbiscript}[firstnumber=last]
-assert(Binary.new("0", "0") + Binary.new("1", "1")
-       == Binary.new("0", "01"));
-assert(Binary.new("", "0") + Binary.new("1", "1")
-       == Binary.new("1", "01"));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Binary.new("0", "0") + Binary.new("1", "1")
+       == Binary.new("0", "01");
+Binary.new("", "0") + Binary.new("1", "1")
+       == Binary.new("1", "01");
+\end{urbiassert}
 
 \item \lstinline|'=='(\var{other})|\\
   Whether \lstinline|keywords| and \lstinline|data| are equal.
-\begin{urbiscript}[firstnumber=last]
-assert(Binary.new("0", "0") == Binary.new("0", "0"));
-assert(Binary.new("0", "0") != Binary.new("0", "1"));
-assert(Binary.new("0", "0") != Binary.new("1", "0"));
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Binary.new("0", "0") == Binary.new("0", "0");
+Binary.new("0", "0") != Binary.new("0", "1");
+Binary.new("0", "0") != Binary.new("1", "0");
+\end{urbiassert}
 
 \item \lstinline|asString|\\
   Display using the syntactic rules of the UObject/UValue protocol.
@@ -64,30 +64,30 @@ is \emph{partially} supported in \us, but it is strongly discouraged.
 Rather, use the \lstinline|\B(\var{size})(\var{data})| special escape
 (see \autoref{sec:us-syn-lit-string}):
 
-\begin{urbiscript}[firstnumber=last]
-assert(Binary.new("head", "\B(7)(content)").asString
-       == "BIN 7 head\ncontent");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Binary.new("head", "\B(7)(content)").asString
+       == "BIN 7 head\ncontent";
+\end{urbiassert}
 
 
 \item \lstinline|data|\\
   The data carried by the Binary.
-\begin{urbiscript}[firstnumber=last]
-assert(Binary.new("head", "content").data == "content");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Binary.new("head", "content").data == "content";
+\end{urbiassert}
 
 \item \lstinline|empty|\\
   Whether the data is empty.
-\begin{urbiscript}[firstnumber=last]
-assert(Binary.new("head", "").empty);
-assert(!Binary.new("head", "content").empty);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Binary.new("head", "").empty;
+!Binary.new("head", "content").empty;
+\end{urbiassert}
 
 \item \lstinline|keywords|\\
   The headers carried by the Binary.
-\begin{urbiscript}[firstnumber=last]
-assert(Binary.new("head", "content").keywords == "head");
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+Binary.new("head", "content").keywords == "head";
+\end{urbiassert}
 \end{itemize}
 
 

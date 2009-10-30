@@ -14,11 +14,11 @@ None.
 \lstinline|void| is the value returned by constructs that return no
 value.
 
-\begin{urbiscript}
-assert(void.isVoid);
-assert({}.isVoid);
-assert({if (false) 123}.isVoid);
-\end{urbiscript}
+\begin{urbiassert}
+void.isVoid;
+{}.isVoid;
+{if (false) 123}.isVoid;
+\end{urbiassert}
 
 \subsection{Slots}
 
@@ -36,11 +36,11 @@ void.acceptVoid.foo;
 \item \lstinline|isVoid|\\
   Whether \lstinline|this| is \lstinline|void|.  Therefore, return
   \lstinline|true|.
-\begin{urbiscript}[firstnumber=last]
-assert(void.isVoid);
-assert(void.acceptVoid.isVoid);
-assert(! 123.isVoid);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+void.isVoid;
+void.acceptVoid.isVoid;
+! 123.isVoid;
+\end{urbiassert}
 
 \item \lstinline|unacceptVoid|\\
   Remove the magic from \lstinline|this| that allowed to manipulate it

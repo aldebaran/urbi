@@ -20,13 +20,13 @@ There are no constructors, use \lstinline|true| and \lstinline|false|.
 Since they are singletons, \lstinline|clone| will return themselves,
 not new copies.
 
-\begin{urbiscript}
-assert(true);
-assert(!false);
-assert(2 < 6 === true);
-assert(true.new === true);
-assert(6 < 2 === false);
-\end{urbiscript}
+\begin{urbiassert}
+true;
+!false;
+2 < 6 === true;
+true.new === true;
+6 < 2 === false;
+\end{urbiassert}
 
 \subsection{Truth Values}
 \label{sec:truth}
@@ -68,35 +68,35 @@ void.asBool;
   \lstinline|true| evaluate and return \var{that}.  If
   \lstinline|this| is \lstinline|false|, return itself without
   evaluating \var{that}.
-\begin{urbiscript}[firstnumber=last]
-assert((true && 2) == 2);
-assert((false && 1 / 0) == false);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+(true && 2) == 2;
+(false && 1 / 0) == false;
+\end{urbiassert}
 
 \item \lstinline+'||'(\var{that})+\\
   Short-circuiting logical or. If \lstinline|this| is
   \lstinline|false| evaluate and return \var{that}.  If
   \lstinline|this| is \lstinline|true|, return itself without
   evaluating \var{that}.
-\begin{urbiscript}[firstnumber=last]
-assert((true || 1/0) == true);
-assert((false || 2)  == 2);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+(true || 1/0) == true;
+(false || 2)  == 2;
+\end{urbiassert}
 
 \item \lstinline|'!'|\\
   Logical negation. If \lstinline|this| is \lstinline|false| return
   \lstinline|true| and vice-versa.
-\begin{urbiscript}[firstnumber=last]
-assert(!true == false);
-assert(!false == true);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+!true == false;
+!false == true;
+\end{urbiassert}
 
 \item \lstinline|asBool|\\
   Identity.
-\begin{urbiscript}[firstnumber=last]
-assert(true.asBool ==  true);
-assert(false.asBool == false);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+true.asBool ==  true;
+false.asBool == false;
+\end{urbiassert}
 \end{itemize}
 
 %%% Local Variables:

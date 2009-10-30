@@ -29,8 +29,8 @@ OutputStream.new(File.create("new.txt"));
 \item \lstinline|<<(\var{that})|\\
   Output \lstinline|\var{this}.asString|.  Return \lstinline|this| to
   enable chains of calls.
-\begin{urbiscript}[firstnumber=last]
-assert(
+\begin{urbiassert}[firstnumber=last]
+
   {
     {
       var o = OutputStream.new(File.create("fresh.txt"));
@@ -39,23 +39,23 @@ assert(
     File.new("fresh.txt").content.data;
   }
   ==
-  "12[3, [4]]");
-\end{urbiscript}
+  "12[3, [4]]";
+\end{urbiassert}
 
 \item \lstinline|close|\\
   Flush the buffers, and close the file.
-\begin{urbiscript}[firstnumber=last]
-assert(OutputStream.new(File.create("file.txt")).close.isVoid);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+OutputStream.new(File.create("file.txt")).close.isVoid;
+\end{urbiassert}
 
 \item \lstinline|putByte(\var{byte})|\\
   In order to private efficient input/output operations,
   \dfn[buffer]{buffers} are used.  As a consequence, what is put into
   a stream might not be immediately saved on the actual file.  To
   \dfn{flush} a buffer means to dump its content to the file.
-\begin{urbiscript}[firstnumber=last]
-assert(OutputStream.new(File.create("file.txt")).flush.isVoid);
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+OutputStream.new(File.create("file.txt")).flush.isVoid;
+\end{urbiassert}
 \end{itemize}
 
 
