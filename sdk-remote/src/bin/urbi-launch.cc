@@ -19,6 +19,9 @@
 
 #include "urbi-root.hh"
 
+#define ECHO(S)                                 \
+  std::cerr << S << std::endl
+
 // Quick hackish portability layer. We cannot use the one from libport as
 // it is not header-only.
 #ifdef WIN32
@@ -30,7 +33,15 @@ static const char* LD_LIBRARY_PATH_NAME = "LD_LIBRARY_PATH";
 static HMODULE
 dlopen(const char* name, int)
 {
-  return LoadLibrary(name);
+  HMODULE res = LoadLibrary(name);
+  if (res)
+  {
+    char buf[BUFSIZ];
+    GetModuleFileName(res, buf, sizeof buf - 1);
+    buf[sizeof buf - 1] = 0;
+    ECHO("loaded: " << buf);
+  }
+  return res;
 }
 
 static void*
@@ -128,8 +139,8 @@ int main(int argc, char* argv[])
   strings_type ldpath_list = split(ld_lib_path);
   foreach(const std::string& s, ldpath_list)
     path += ";" + s;
+  ECHO("ENV PATH=" << path);
   xsetenv("PATH", path);
-  std::cerr <<  ("ENV PATH=" + path) << std::endl;
 #endif
 
   std::string liburbi_path = std::string() + libdir + "/liburbi" + lib_ext;
@@ -143,17 +154,15 @@ int main(int argc, char* argv[])
     handle = dlopen(liburbi_path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
   if (!handle)
   {
-    std::cerr << "Failed to open liburbi: " << liburbi_path << ':'
-     << dlerror() << std::endl;
-    std::cerr << getenv(LD_LIBRARY_PATH_NAME) << std::endl;
+    ECHO("cannot open liburbi: " << liburbi_path << ':' << dlerror());
+    ECHO(getenv(LD_LIBRARY_PATH_NAME));
     return 1;
   }
   typedef int(*main_t)(int, char*[]);
   main_t urbi_launch = (main_t)dlsym(handle, "urbi_launch");
   if (!urbi_launch)
   {
-    std::cerr << "Failed to locate urbi_launch symbol: "
-     << dlerror() << std::endl;
+    ECHO("cannot locate urbi_launch symbol: " << dlerror());
     return 2;
   }
   return urbi_launch(argc, argv);
