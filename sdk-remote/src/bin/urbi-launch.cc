@@ -79,6 +79,24 @@ typedef void* HMODULE;
 # include <dlfcn.h>
 #endif
 
+std::string
+xgetenv(const char* var)
+{
+  const char* res = getenv(var);
+  return res ? res : "";
+}
+
+void
+xsetenv(const std::string& var, const std::string& val, int force)
+{
+#ifdef WIN32
+  (void) force;
+  _putenv(strdup((var + "=" + val).c_str()));
+#else
+  setenv(var.c_str(), val.c_str(), force);
+#endif
+}
+
 /// Main. Load liburbi and call urbi_launch
 int main(int argc, char* argv[])
 {
@@ -91,29 +109,27 @@ int main(int argc, char* argv[])
   std::string urbi_root = get_urbi_root(argv[0]);
   std::string libdir = urbi_root + "/" + lib_rel_path;
 
-  const char* c_ld_lib_path = getenv(LD_LIBRARY_PATH_NAME);
-  std::string ld_lib_path = c_ld_lib_path ? c_ld_lib_path:"";
+  std::string ld_lib_path = xgetenv(LD_LIBRARY_PATH_NAME);
 
 #ifndef WIN32
-  // Only set URBI_ROOT if not allready present.
-  setenv("URBI_ROOT", urbi_root.c_str(), 0);
+  // Only set URBI_ROOT if not already present.
+  xsetenv("URBI_ROOT", urbi_root, 0);
 
   // Look if what we need is in (DY)LD_LIBRARY_PATH. Proceed if it is.
   // Otherwise, add it and exec ourselve to retry.
   if (ld_lib_path.find(libdir) == ld_lib_path.npos)
   {
-    setenv(LD_LIBRARY_PATH_NAME, (ld_lib_path +":" + libdir).c_str(), 1);
+    xsetenv(LD_LIBRARY_PATH_NAME, ld_lib_path + ":" + libdir, 1);
     execv(argv[0], argv);
   }
 #else
-  _putenv(strdup(("URBI_ROOT=" +urbi_root).c_str()));
-  char* c_path = getenv("PATH");
-  std::string path = c_path?c_path:"";
+  xsetenv("URBI_ROOT", urbi_root, 1);
+  std::string path = xgetenv("PATH");
   strings_type ldpath_list = split(ld_lib_path);
   foreach(const std::string& s, ldpath_list)
     path += ";" + s;
+  xsetenv("PATH", path);
   std::cerr <<  ("ENV PATH=" + path) << std::endl;
-  _putenv(strdup(("PATH=" + path).c_str()));
 #endif
 
   std::string liburbi_path = std::string() + libdir + "/liburbi" + lib_ext;
