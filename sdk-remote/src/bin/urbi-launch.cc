@@ -99,8 +99,8 @@ void
 xsetenv(const std::string& var, const std::string& val, int force)
 {
 #ifdef WIN32
-  (void) force;
-  _putenv(strdup((var + "=" + val).c_str()));
+  if (force || xgetenv(var).empty())
+    _putenv(strdup((var + "=" + val).c_str()));
 #else
   setenv(var.c_str(), val.c_str(), force);
 #endif
@@ -120,10 +120,10 @@ int main(int argc, char* argv[])
 
   std::string ld_lib_path = xgetenv(LD_LIBRARY_PATH_NAME);
 
-#ifndef WIN32
   // Only set URBI_ROOT if not already present.
   xsetenv("URBI_ROOT", urbi_root, 0);
 
+#ifndef WIN32
   // Look if what we need is in (DY)LD_LIBRARY_PATH. Proceed if it is.
   // Otherwise, add it and exec ourselve to retry.
   if (ld_lib_path.find(libdir) == ld_lib_path.npos)
@@ -132,13 +132,12 @@ int main(int argc, char* argv[])
     execv(argv[0], argv);
   }
 #else
-  xsetenv("URBI_ROOT", urbi_root, 1);
   std::string path = xgetenv("PATH");
   strings_type ldpath_list = split(ld_lib_path);
   foreach(const std::string& s, ldpath_list)
     path += ";" + s;
   ECHO("ENV PATH=" << path);
-  xsetenv("PATH", path);
+  xsetenv("PATH", path, 1);
 #endif
 
   std::string liburbi_path = std::string() + libdir + "/liburbi" + lib_ext;
