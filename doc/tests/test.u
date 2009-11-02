@@ -58,6 +58,19 @@ do (String)
 if (System.Platform.isWindows)
   do (System)
   {
+    var binshs = ["/bin/sh", "/bin/sh.exe",
+                  "\\cygwin\\bin\\sh", "\\cygwin\\bin\\sh.exe"];
+    for (var p : binshs)
+    {
+      if (Path.new(p).exists)
+      {
+        var this.binsh = p;
+        break;
+      };
+    };
+    if (!hasLocalSlot("binsh"))
+      throw Exception.new("cannot find /bin/sh: " + binshs);
+
     var this.count = 1;
 
     // On Windows, use /bin/sh to please our tests.
@@ -77,7 +90,7 @@ if (System.Platform.isWindows)
       command = "( %s ); echo $? >%s" % [command, stamp]|
 
       // Escape all the quotes and backslashes, and call /bin/sh.
-      var cmd = "/bin/sh -c \"" |
+      var cmd = binsh + " -c \"" |
       for| (var c: command)
         cmd += {if (c in ["\\", "\""]) "\\" else ""} + c |
       cmd += "\"" |
