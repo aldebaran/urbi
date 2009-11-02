@@ -99,6 +99,9 @@ namespace urbi
         ->tableByName(owner_->type);
       t[callback_name(owner_->name, owner_->type, owner_->nbparam)]
         .push_back(owner_);
+      if (owner_->target)
+        static_cast<RemoteUVarImpl*>(owner_->target->impl_)
+          ->callbacks_.push_back(this);
     }
 
   }

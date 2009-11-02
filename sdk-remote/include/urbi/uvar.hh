@@ -100,6 +100,9 @@ namespace urbi
     /// once asynchronously.
     void requestValue();
 
+    /// Deactivate all callbacks associated with this UVar and stop synchro.
+    void unnotify();
+
     /// Kernel operators.
     ufloat& in();
     ufloat& out();

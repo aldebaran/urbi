@@ -69,15 +69,13 @@ namespace urbi
     for (UTable::iterator i = begin(); i != end(); ++i)
     {
       mapped_type& cs = i->second;
-      for (mapped_type::iterator j = cs.begin(); j != cs.end(); /* continue */)
+      for (mapped_type::iterator j = cs.begin(); j != cs.end(); ++j)
       {
 	if ((*j)->objname == name)
 	{
 	  delete *j;
-	  j = cs.erase(j);
+	  cs.erase(j);
 	}
-	else
-	  ++j;
       }
 
       if (cs.empty())

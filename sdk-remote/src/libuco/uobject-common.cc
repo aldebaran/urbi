@@ -56,29 +56,35 @@ namespace urbi
   | UGenericCallback.  |
   `-------------------*/
 
-  UGenericCallback::UGenericCallback(const std::string& objname,
+  UGenericCallback::UGenericCallback(UObject& owner,
+                                     UVar* target,
 				     const std::string& type,
 				     const std::string& name,
-				     int size, bool owned,
+				     int size,
                                      impl::UContextImpl* ctx)
     : UContext(ctx)
     , nbparam(size)
-    , objname(objname)
+    , objname(&owner?owner.__name:"dummy")
     , type(type)
     , name(name)
+    , target(target)
+    , owner(owner)
   {
     impl_ = ctx_->getGenericCallbackImpl();
-    impl_->initialize(this, owned);
+    impl_->initialize(this, target?target->owned:false);
   }
 
-  UGenericCallback::UGenericCallback(const std::string& objname,
+  UGenericCallback::UGenericCallback(UObject& owner,
+                                     UVar* target,
 				     const std::string& type,
 				     const std::string& name,
                                      impl::UContextImpl* ctx)
     : UContext(ctx)
-    , objname(objname)
+    , objname(&owner?owner.__name:"dummy")
     , type(type)
     , name(name)
+    , target(target)
+    , owner(owner)
   {
     impl_ = ctx_->getGenericCallbackImpl();
     impl_->initialize(this);
@@ -159,7 +165,6 @@ namespace urbi
     std::string groupregister = "addgroup " + gpname +" { "+__name+"};";
     send(groupregister);
   }
-
 
   /*---------------.
   | UContextImpl.  |

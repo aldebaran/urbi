@@ -40,7 +40,6 @@ public:
     UBindFunction(all, setNotifyAccess);
     UBindFunction(all, setNotifyChangeByName);
     UBindFunction(all, setNotifyChangeByUVar);
-
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
@@ -64,7 +63,8 @@ public:
     UBindVar(all, lastChangeVal);
     lastChangeVal = -1;
     UBindVar(all, lastAccessVal);
-
+    UBindVar(all, removeNotify);
+    removeNotify = "";
     // Properties.
     UBindFunction(all, readProps);
     UBindFunction(all, writeProps);
@@ -256,6 +256,11 @@ public:
     int val = v;
     lastChange = v.get_name();
     lastChangeVal = val;
+    if ((std::string)removeNotify == v.get_name())
+    {
+      v.unnotify();
+      removeNotify = "";
+    }
     return 0;
   }
 
@@ -266,6 +271,11 @@ public:
     val++;
     v = val;
     lastAccessVal = val;
+    if ((std::string)removeNotify == v.get_name())
+    {
+      v.unnotify();
+      removeNotify = "";
+    }
     return 0;
   }
 
@@ -520,6 +530,9 @@ public:
   urbi::UVar lastAccessVal;
   //Set to 0 in ctor, 1 in init
   urbi::UVar initCalled;
+  // If an UVar with the name in removeNotify reaches a callback,
+  // unnotify will be called.
+  urbi::UVar removeNotify;
   static int destructionCount;
 };
 

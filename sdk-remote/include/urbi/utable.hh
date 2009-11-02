@@ -18,6 +18,7 @@
 # include <string>
 
 # include <libport/hash.hh>
+# include <libport/safe-container.hh>
 
 # include <urbi/export.hh>
 # include <urbi/uvalue.hh>
@@ -34,13 +35,13 @@ namespace urbi
   // A few list and hashtable types
   struct URBI_SDK_API UTable
     : libport::hash_map<std::string,
-                        std::list<UGenericCallback*> >
+        libport::SafeContainer< std::list, UGenericCallback*> >
   {
     /// The keys.
     typedef std::string key_type;
 
     /// The list call backs.
-    typedef std::list<UGenericCallback*> callbacks_type;
+    typedef libport::SafeContainer<std::list, UGenericCallback*> callbacks_type;
     typedef callbacks_type mapped_type;
 
     /// Type of the super class.

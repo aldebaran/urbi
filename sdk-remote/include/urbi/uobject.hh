@@ -63,18 +63,16 @@
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
 # define UBindFunction(Obj, X)                                          \
-  ::urbi::createUCallback(__name, "function", static_cast<Obj*>(this),  \
-                          (&Obj::X), __name + "." #X,                   \
-                          false)
+  ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
+                          (&Obj::X), __name + "." #X)
 
 /** Registers a function X in current object that will be called each
  time the event of same name is triggered. The function will be
  called only if the number of arguments match between the function
  prototype and the Urbi event.  */
 # define UBindEvent(Obj, X)                             \
-  ::urbi::createUCallback(__name, "event", this,        \
-			  (&Obj::X), __name + "." #X,   \
-                          false)
+::urbi::createUCallback(*this, 0, "event", this,  \
+			  (&Obj::X), __name + "." #X)
 
 /** Registers a function \a X in current object that will be called each
  * time the event of same name is triggered, and a function fun called
@@ -83,9 +81,8 @@
  * event.
  */
 # define UBindEventEnd(Obj, X, Fun)					\
-  ::urbi::createUCallback(__name, "eventend", this,			\
-			  (&Obj::X),(&Obj::Fun), __name + "." #X,	\
-                          )
+  ::urbi::createUCallback(*this, 0, "eventend", this,			\
+			  (&Obj::X),(&Obj::Fun), __name + "." #X)
 
 /// Register current object to the UObjectHub named \a Hub.
 # define URegister(Hub)						\
@@ -225,16 +222,12 @@ namespace urbi
     template <class T>                                          \
     void UNotify##Type(Notified, int (T::*fun) (Arg) Const)     \
     {                                                           \
-      UGenericCallback* cb =                                    \
-	createUCallback(__name, TypeString,                     \
+	createUCallback(*this, WithArg?(StoreArg):0, TypeString,\
                         dynamic_cast<T*>(this),                 \
-                        fun, Name, Owned);			\
-                                                                \
-      if (WithArg && cb)                                        \
-	cb->storage = StoreArg;                                 \
+                        fun, Name);	\
     }
 
-    /// \internal
+    /// \internal Handle functions taking a UVar& or nothing, const or not.
 # define MakeMetaNotifyArg(Type, Notified, TypeString, Owned,	\
 			   Name, StoreArg)                      \
     MakeNotify(Type, Notified, /**/, /**/,   TypeString, Name,  \
@@ -246,7 +239,7 @@ namespace urbi
     MakeNotify(Type, Notified, UVar&, const, TypeString, Name,  \
                Owned, true, StoreArg);
 
-    /// \internal
+    /// \internal Define notify by name or by passing an UVar.
 # define MakeMetaNotify(Type, TypeString)				\
     MakeMetaNotifyArg(Type, UVar& v, TypeString,			\
                       v.owned, v.get_name (),                           \
@@ -346,6 +339,8 @@ namespace urbi
     UVar load;
 
     baseURBIStarter* cloner;
+
+    impl::UObjectImpl* impl_get();
   private:
     /// Pointer to a globalData structure specific to the
     /// remote/plugin architectures who defines it.

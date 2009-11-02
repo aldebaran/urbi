@@ -56,12 +56,14 @@ namespace urbi
   class URBI_SDK_API UGenericCallback: public UContext
   {
   public:
-    UGenericCallback(const std::string& objname,
+    UGenericCallback(UObject& owner,
+                     UVar* target,
 		     const std::string& type,
 		     const std::string& name,
-		     int size, bool owned,
+		     int size,
                      impl::UContextImpl* ctx);
-    UGenericCallback(const std::string& objname,
+    UGenericCallback(UObject& owner,
+                     UVar* target,
 		     const std::string& type,
 		     const std::string& name,
                      impl::UContextImpl* ctx);
@@ -76,8 +78,6 @@ namespace urbi
 
     virtual UValue __evalcall(UList& param)  = 0;
 
-    /// Used to store the UVar* pointeur for var monitoring.
-    void* storage;
     /// Period of timers.
     ufloat period;
 
@@ -87,10 +87,12 @@ namespace urbi
     /// Name of the UObject that created the callback.
     std::string objname;
     std::string type;
-
+    /// Name of the hooked variable
     std::string name;
+    /// Ptr to the hooked UVar, optional.
+    UVar* target;
     impl::UGenericCallbackImpl* impl_;
-
+    UObject& owner;
   protected:
     template<typename T>
     static inline impl::UContextImpl* fetchContext(T* ptr, libport::meta::True)
@@ -120,11 +122,13 @@ namespace urbi
   public:
 
 # define MKUCallBackNotifyCtr%N%(Const, IsConst)			\
-      UCallback%N%(const std::string& objname, const std::string& type,	\
+      UCallback%N%(UObject& owner,                                      \
+                   UVar* target,                                        \
+                   const std::string& type,	                        \
 		   OBJ* obj,						\
 		   R (OBJ::*fun) (%%%,% P% %%) Const,			\
-		   const std::string& funname, bool owned)	        \
-      : UGenericCallback(objname, type, funname, %N%, owned,            \
+		   const std::string& funname )                	        \
+      : UGenericCallback(owner, target, type, funname, %N%,             \
       fetchContext(obj,                                                 \
       typename libport::meta::If<libport::meta::Inherits<OBJ,           \
         UContext>::res>::res())),                                       \
@@ -159,36 +163,6 @@ namespace urbi
     bool is_const_;
   };
 
-#if 0
-  // void return type
-  template <class OBJ%%, class P% %%>
-  class UCallbackvoid%N% : public UGenericCallback
-  {
-  public:
-    UCallbackvoid%N%(const std::string& objname, const std::string& type,
-		     OBJ* obj,
-		     void (OBJ::*fun) (%%%,% P% %%),
-		   const std::string& funname, bool owned)
-      : UGenericCallback(objname, type, funname,%N%, owned),
-	obj(obj), fun(fun)
-    {
-      registerCallback();
-    }
-
-    virtual UValue __evalcall(UList& param)
-    {
-      // Avoid warnings when we don't use param.
-      (void) param;
-      ((*obj).*fun)(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
-      return UValue();
-    }
-  private:
-    OBJ* obj;
-    void (OBJ::*fun) (%%%,% P% %%);
-  };
-#endif
-
-
   // void return type : special case for notifyend event callbacks
   template <class OBJ%%, class P% %%>
   class UCallbacknotifyend%N% : public UGenericCallback
@@ -196,13 +170,13 @@ namespace urbi
   public:
 
 # define MKUCallBackNotifyEndCtr%N%(FConst, EConst, IsConst)		\
-      UCallbacknotifyend%N%(const std::string& objname,			\
+      UCallbacknotifyend%N%(UObject& owner, UVar* target,       	\
 			    const std::string& type,			\
 			    OBJ* obj,					\
 			    void (OBJ::*fun) (%%%,% P% %%) FConst,	\
 			    void (OBJ::*end)() EConst,			\
 			    const std::string& funname)	                \
-      : UGenericCallback(objname, type, funname,%N%, false,             \
+      : UGenericCallback(owner, target, type, funname,%N%,              \
       fetchContext(obj,                                                 \
         typename libport::meta::If<libport::meta::Inherits<OBJ,         \
           UContext>::res>::res())),                                     \
@@ -234,44 +208,18 @@ namespace urbi
     bool is_const_;
   };
 
-#if 0
-  // void non-member function
-  template <class INU %%, class P% %%>
-  class UFCallbackvoid%N% : public UGenericCallback
-  {
-  public:
-    UFCallbackvoid%N%(const std::string& objname, const std::string& type,
-		      void (*fun) (%%%,% P% %%),
-		    const std::string& funname, UTable& t, bool owned)
-      : UGenericCallback(objname, type, funname,%N%, t, owned),  fun(fun)
-    {
-      registerCallback();
-    }
-
-    virtual UValue __evalcall(UList& param)
-    {
-      // Avoid warnings when we don't use param.
-      (void) param;
-      (*fun)(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
-      return UValue();
-    }
-
-  private:
-    void (*fun) (%%%,% P% %%);
-  };
-
-#endif
-
   // non void non-member function
   template <class R%%, class P% %%>
   class UFCallback%N% : public UGenericCallback
   {
     public:
-    UFCallback%N%(const std::string& objname, const std::string& type,
+    UFCallback%N%(UObject& owner, UVar* target,
+                  const std::string& type,
 		  R (*fun) (%%%,% P% %%),
-		const std::string& funname, bool owned,
-                impl::UContextImpl* ctx)
-      : UGenericCallback(objname, type, funname,%N%, owned, ctx),  fun(fun)
+                  const std::string& funname,
+                  impl::UContextImpl* ctx)
+      : UGenericCallback(owner, target, type, funname,%N%, ctx),
+      fun(fun)
     {
       nbparam = %N%;
       registerCallback();
@@ -295,28 +243,14 @@ namespace urbi
 
   template <class R%%, class P% %%>
   UGenericCallback*
-  createUCallback(const std::string& objname, const std::string& type,
+  createUCallback(UObject& owner, UVar* target,
+                  const std::string& type,
 		  R (*fun) (%%%,% P% %%),
-		  const std::string& funname, bool owned,
+		  const std::string& funname,
                   impl::UContextImpl* ctx)
   {
-    return new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname, owned,
-    ctx);
+    return new UFCallback%N%<R%%, P% %%> (owner, target, type,fun,funname, ctx);
   }
-
-#if 0
-  // callback creation for non-member void return type
-  // inline required since one of them is not a template
-  template <%%%,% class P% %%> inline
-    UGenericCallback*
-    createUCallback(const std::string& objname, const std::string& type,
-		    void (*fun) (%%%,% P% %%),
-		    const std::string& funname, UTable& t, bool owned)
-  {
-    return new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t,
-						  owned);
-  }
-#endif
 
   // callback creation for non void return type
 
@@ -325,14 +259,15 @@ namespace urbi
 # define MKUCreateCallBack%N%(Const, Useless)                           \
   template <class OBJ, class R%%, class P% %%>				\
   UGenericCallback*							\
-  createUCallback(const std::string& objname, const std::string& type,	\
+  createUCallback(UObject& owner, UVar* target,                         \
+                  const std::string& type,	                        \
 		  OBJ* obj,						\
 		  R (OBJ::*fun) (%%%,% P% %%) Const,			\
-		  const std::string& funname,  bool owned)	        \
+		  const std::string& funname)	                        \
   {									\
-    return new UCallback%N%<OBJ,R%%, P% %%> (objname, type, obj, fun,	\
-					     funname,			\
-					     owned);			\
+    return new UCallback%N%<OBJ,R%%, P% %%> (owner, target, type, obj,  \
+                                             fun,	                \
+					     funname);			\
   }
 
   MKUCreateCallBack%N% (/**/, /**/);
@@ -340,32 +275,18 @@ namespace urbi
 
 # undef MKUCreateCallBack%N%
 
-#if 0
-  // callback creation for void return type
-
-  template <class OBJ%%, class P% %%>
-  UGenericCallback*
-  createUCallback(const std::string& objname, const std::string& type,
-		  OBJ* obj,
-		  void (OBJ::*fun) (%%%,% P% %%),
-		  const std::string& funname, UTable& t, bool owned)
-  {
-    return new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t,
-					       owned);
-  }
-#endif
-
   // Special case for eventend notification
 # define MKCreateUCallBackEnd%N%(FConst, EConst)			\
   template <class OBJ%%, class P% %%>					\
   UGenericCallback*							\
-  createUCallback(const std::string& objname, const std::string& type,	\
+  createUCallback(UObject& owner, UVar* target,                         \
+                  const std::string& type,	                        \
 		  OBJ* obj,						\
 		  void (OBJ::*fun) (%%%,% P% %%) FConst,		\
 		  void (OBJ::*end)() EConst,				\
 		  const std::string& funname)                           \
   {									\
-    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname,		\
+    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (owner, target,	\
 						    type, obj, fun,	\
 						    end,funname);	\
   }

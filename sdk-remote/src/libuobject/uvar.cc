@@ -40,9 +40,9 @@ namespace urbi
     URBI_SEND_PIPED_COMMAND_C((*client_), "if (!isdef(" << name << ")) var "
                             << name);
     UObject* dummyUObject = ctx->getDummyUObject();
-    createUCallback(dummyUObject->__name,
+    createUCallback(*dummyUObject, owner,
 		    "var",
-		    dummyUObject, &UObject::voidfun, name, false);
+		    dummyUObject, &UObject::voidfun, name);
   }
 
   bool RemoteUVarImpl::setBypass(bool enable)
@@ -195,5 +195,31 @@ namespace urbi
   {
     value_ = v;
   }
+
+  void RemoteUVarImpl::unnotify()
+  {
+    std::string name = owner_->get_name();
+    size_t p = name.find_first_of(".");
+    if (p == name.npos)
+      throw std::runtime_error("Invalid argument to unnotify: "+name);
+    send(libport::format(
+                         "UObject.unnotify(\"%s\", \"%s\", %s),",
+                         name.substr(0, p), name.substr(p+1, name.npos),
+                         callbacks_.size()));
+    foreach(RemoteUGenericCallbackImpl* c, callbacks_)
+    {
+      UTable& t =
+      dynamic_cast<RemoteUContextImpl*>(c->owner_->ctx_)
+        ->tableByName(c->owner_->type);
+      UTable::callbacks_type& ct = t[c->owner_->name];
+      UTable::callbacks_type::iterator i =
+        std::find(ct.begin(), ct.end(), c->owner_);
+      if (i != ct.end())
+        ct.erase(i);
+      owner_->ctx_->addCleanup(c->owner_);
+      owner_->ctx_->addCleanup(c);
+    }
+    callbacks_.clear();
+  };
   }
 } //namespace urbi

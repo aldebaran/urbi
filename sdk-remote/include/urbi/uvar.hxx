@@ -151,6 +151,14 @@ namespace urbi
     assert(impl_);
     return impl_->getProp(prop);
   }
+
+  inline void
+  UVar::unnotify()
+  {
+    assert(impl_);
+    impl_->unnotify();
+  }
+
 } // end namespace urbi
 
 #endif // ! URBI_UVAR_HXX

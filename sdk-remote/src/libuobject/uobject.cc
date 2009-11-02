@@ -235,8 +235,8 @@ namespace urbi
       // Find previous update timer on this object and delete.
       {
         std::string cbFullName = cbName + "__0";
-        std::list<UGenericCallback*>& cs = ctx.eventmap()[cbFullName];
-        typedef std::list<UGenericCallback*>::iterator iterator;
+        UTable::callbacks_type & cs = ctx.eventmap()[cbFullName];
+        typedef UTable::callbacks_type::iterator iterator;
         for (iterator i = cs.begin(); i != cs.end(); ++i)
           if ((*i)->getName() == cbFullName)
           {
@@ -258,8 +258,8 @@ namespace urbi
         period = 1;
 
       // Create callback
-      createUCallback(owner_->__name, "event",
-                      owner_, &UObject::update, cbName, false);
+      createUCallback(*owner_, 0, "event",
+                      owner_, &UObject::update, cbName);
 
       // Set update at given period
       std::string base = 2 <= kernelMajor() ? owner_->__name + "." : "";
@@ -374,7 +374,7 @@ namespace urbi
             // test of return value here
             UList u;
             u.array.push_back(new UValue());
-            u[0].storage = c->storage;
+            u[0].storage = c->target;
             c->__evalcall(u);
           }
         }
@@ -484,8 +484,9 @@ namespace urbi
       // Register ourself as an event.
       std::string cbname = "timer" + string_cast(cb);
       std::string event = cb->objname + "." + cbname;
-      createUCallback(cb->objname, "event", cb, &UTimerCallback::call,
-                      event, false);
+      createUCallback(*(UObject*)0, 0, "event", cb,
+                      &UTimerCallback::call,
+                      event);
       URBI_SEND_COMMAND_C((*client_),
                           "timer_" << cb->objname << ": every("
                           << cb->period << "ms)"

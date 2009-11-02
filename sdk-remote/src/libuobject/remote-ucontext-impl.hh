@@ -92,12 +92,11 @@ namespace urbi
       virtual void initialize(UObject* owner);
       virtual void clean();
       virtual void setUpdate(ufloat period);
-
     private:
       UObject* owner_;
       ufloat period;
     };
-
+    class RemoteUGenericCallbackImpl;
     class URBI_SDK_API RemoteUVarImpl: public UVarImpl
     {
     public:
@@ -115,12 +114,15 @@ namespace urbi
       virtual UValue getProp(UProperty prop);
       virtual void setProp(UProperty prop, const UValue& v);
       virtual bool setBypass(bool enable);
+      virtual void unnotify();
       void update(const UValue& v);
 
     private:
       USyncClient* client_;
       UValue value_;
       UVar* owner_;
+      friend class RemoteUGenericCallbackImpl;
+      std::vector<RemoteUGenericCallbackImpl*> callbacks_;
     };
 
     class URBI_SDK_API RemoteUGenericCallbackImpl: public UGenericCallbackImpl
@@ -133,6 +135,7 @@ namespace urbi
 
     private:
       UGenericCallback* owner_;
+      friend class RemoteUVarImpl;
     };
   }
 }

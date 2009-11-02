@@ -56,6 +56,13 @@ namespace urbi
     v.keepSynchronized();
   }
 
+  inline
+  impl::UObjectImpl*
+  UObject::impl_get()
+  {
+    return impl_;
+  }
+
   inline UObject*
   uvalue_caster<UObject*>::operator()(UValue& v)
   {
