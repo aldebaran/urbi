@@ -304,16 +304,26 @@ sub process_file ($)
 
 # dump_chk $DIR
 # -------------
-# Generate all the *chk files and there associated test.mk.
+# Generate all the *chk files and their associated test.mk.  Remove
+# the old test files that remain in $DIR.  Remove them *after* having
+# generated the new ones: removing them all beforehand kills the
+# timestamps and will rerun test cases uselessly.
 sub dump_chk ($)
 {
   my ($dir) = @_;
-  my @file;
+
+  # The test files that currently exist.
+  my %old_file = map { $_ => 1 } <$dir/*.chk>;
+
+  # The created test files.
+  my %file;
+
+  # Generate the files.
   for my $k (keys %chk)
   {
     my %c = %{$chk{$k}};
     my $file = "$dir/$c{label}.chk";
-    push @file, $file;
+    $file{$file} = 1;
     my $out = new IO::File ">$file.tmp"
         or die "cannot create $file.tmp: $!";
     print $out lineno(%c);
@@ -321,11 +331,16 @@ sub dump_chk ($)
     system ("$ENV{move_if_change} -s -I '^//' $file.tmp $file") == 0
       or die "$ENV{move_if_change} failed: $?";
   }
+
+  # Remove the old test files.
+  unlink grep { !$file{$_} } keys %old_file;
+
+  # Generate the Makefile.
   my $local_mk = "$dir/test.mk";
   my $mk = new IO::File ">$local_mk"
       or die "cannot create $local_mk: $!";
   # Do not include the ../.. stuff in the Makefile.
-  @file = map { s,^$ENV{srcdir}/,,; $_ } @file;
+  my @file = map { s,^$ENV{srcdir}/,,; $_ } keys %file;
   # Output in order.  It would be nice to have a combinaison between
   # alphabetical and numerical, so that abc-2 < abc-10.
   @file = sort @file;
@@ -338,9 +353,6 @@ my $dir = $ARGV[0];
 $dir =~ s,^$ENV{srcdir},$&/tests,;
 $dir =~ s/\.tex$//;
 
-# FIXME: Find a means to remove the old ones.
-# rmtree $dir
-#  if -d $dir;
 if (! -d $dir)
 {
   mkpath $dir
