@@ -27,6 +27,7 @@
 #include <libport/format.hh>
 #ifndef NO_OPTION_PARSER
 # include <libport/option-parser.hh>
+# include <libport/input-arguments.hh>
 # include <libport/tokenizer.hh>
 # define IF_OPTION_PARSER(a, b) a
 #else
@@ -188,21 +189,33 @@ namespace urbi
     return res;
   }
 
-  static std::string convert_input_file(const std::string& arg)
-  {
-    return (arg == "-") ? "/dev/stdin" : arg;
-  }
-
   /// Data to send to the server.
-  struct Input
+  struct DataSender : libport::opts::DataVisitor
   {
-    Input(bool f, const std::string& v)
-      : file_p(f), value(v)
+    typedef libport::opts::DataVisitor super_type;
+    DataSender(kernel::UServer& server, kernel::UConnection& connection)
+      : server_(server)
+      , connection_(connection)
     {}
-    /// Whether it's a file (or a litteral).
-    bool file_p;
-    /// File name or litteral value.
-    std::string value;
+
+    using super_type::operator();
+
+    void
+    operator()(const libport::opts::TextData& d)
+    {
+      connection_.recv_queue_get().push(d.command_.c_str());
+    }
+
+    void
+    operator()(const libport::opts::FileData& d)
+    {
+      if (server_.load_file(d.filename_, connection_.recv_queue_get())
+          != USUCCESS)
+        URBI_EXIT(EX_NOINPUT, ("failed to process file %s", d.filename_));
+    }
+
+    kernel::UServer& server_;
+    kernel::UConnection& connection_;
   };
 
   static
@@ -251,9 +264,6 @@ namespace urbi
       args = nargs;
     }
 #endif
-    // Input files.
-    typedef std::vector<Input> input_type;
-    input_type input;
     /// The size of the stacks.
     size_t arg_stack_size = 0;
 
@@ -293,8 +303,8 @@ namespace urbi
         << arg_port_file
         << arg_no_net
         << "Execution:"
-        << arg_exps
-        << libport::opts::files
+        << libport::opts::arg_exp
+        << libport::opts::arg_file
         << arg_interactive
         << arg_remaining
         ;
@@ -316,26 +326,23 @@ namespace urbi
       data.fast = IF_OPTION_PARSER(arg_fast.get(), false);
 
 #ifndef NO_OPTION_PARSER
-      foreach (const std::string& exp, arg_exps.get())
-        input.push_back(Input(false, exp));
-      foreach (const std::string& file, libport::opts::files.get())
-        input.push_back(Input(true, convert_input_file(file)));
       arg_stack_size = arg_stack.get<size_t>(static_cast<size_t>(0));
 
      // Since arg_remaining ate everything, args should be empty unless the user
-     // made a mistake
+     // made a mistake.
      if (!args.empty())
        forbid_option(args[0]);
 
-      // Unrecognized options. These are a script file, followed by user args.
-      // or '--' followed by user args.
+      // Unrecognized options: script files, followed by user args, or
+      // '--' followed by user args.
       libport::OptionsEnd::values_type remaining_args = arg_remaining.get();
       if (!remaining_args.empty())
       {
         unsigned startPos = 0;
         if (!arg_remaining.found_separator())
-        { // first argument is an input file.
-          input.push_back(Input(true, convert_input_file(remaining_args[0])));
+        {
+          // First argument is an input file.
+          libport::opts::input_arguments.add_file(remaining_args[0]);
           ++startPos;
         }
         // Anything left is user argument
@@ -413,17 +420,9 @@ namespace urbi
     kernel::UConnection& c = s.ghost_connection_get();
     GD_INFO_TRACE("got ghost connection");
 
-    foreach (const Input& i, input)
-    {
-      // FIXME: We target s for files and c for strings.
-      if (i.file_p)
-      {
-        if (s.load_file(i.value, c.recv_queue_get()) != USUCCESS)
-          URBI_EXIT(EX_NOINPUT, ("failed to process file %s", i.value));
-      }
-      else
-        c.recv_queue_get().push(i.value.c_str());
-    }
+    DataSender send(s, c);
+    send(libport::opts::input_arguments);
+    libport::opts::input_arguments.clear();
 
     c.received("");
     GD_INFO_TRACE("going to work...");
