@@ -35,7 +35,7 @@ do (Global.WeakDictionary)
     if (!dict.has(key.id))
     {
       if (!key.isA(WeakPointer))
-        throw Exception.new("WeakDictionary key is not a WeakPointer")|
+        throw "WeakDictionary key is not a WeakPointer"|
       key.__dec |
       key.dicts = key.dicts + [this]|
       __dec |
@@ -62,7 +62,7 @@ do (Global.WeakDictionary)
   function erase(key)
   {
     if (!key.isA(WeakPointer))
-      throw Exception.new("WeakDictionary key is not a WeakPointer")|
+      throw "WeakDictionary key is not a WeakPointer"|
     nonInterruptible |
     if (dict.has(key.id))
     {
@@ -80,7 +80,7 @@ do (Global.WeakDictionary)
       {
         dict.set(e.first,
                  Pair.new(e.second.first, e.second.second.remove(val))) |
-        return
+        cache_values
       }
     }
   };
