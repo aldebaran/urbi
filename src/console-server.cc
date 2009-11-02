@@ -66,8 +66,8 @@
 GD_INIT();
 GD_ADD_CATEGORY(URBI);
 
-#define URBI_EXIT(Status, Args)                 \
-  throw urbi::Exit(Status, libport::format Args)
+#define URBI_EXIT(Status, ...)                 \
+  throw urbi::Exit(Status, libport::format (__VA_ARGS__))
 
 class ConsoleServer
   : public kernel::UServer
@@ -154,7 +154,7 @@ namespace
   {
     if (arg.size() > 1 && arg[0] == '-')
       URBI_EXIT(EX_USAGE,
-                ("unrecognized command line option: %s", arg));
+                "unrecognized command line option: %s", arg);
   }
 }
 
@@ -211,7 +211,7 @@ namespace urbi
     {
       if (server_.load_file(d.filename_, connection_.recv_queue_get())
           != USUCCESS)
-        URBI_EXIT(EX_NOINPUT, ("failed to process file %s", d.filename_));
+        URBI_EXIT(EX_NOINPUT, "failed to process file %s", d.filename_);
     }
 
     kernel::UServer& server_;
@@ -314,7 +314,7 @@ namespace urbi
       }
       catch (libport::Error& e)
       {
-        URBI_EXIT(EX_USAGE, ("command line error: %s", e.what()));
+        URBI_EXIT(EX_USAGE, "command line error: %s", e.what());
       }
 
       if (libport::opts::help.get())
@@ -387,15 +387,15 @@ namespace urbi
         if (boost::system::error_code err =
             s.listen(&connectionFactory, host, desired_port))
           URBI_EXIT(EX_UNAVAILABLE,
-                    ("cannot listen to port %s:%s: %s",
-                     host, desired_port, err.message()));
+                    "cannot listen to port %s:%s: %s",
+                    host, desired_port, err.message());
         port = s.getLocalPort();
         // Port not allocated at all, or port differs from (non null)
         // request.
         if (!port
             || (desired_port && port != desired_port))
           URBI_EXIT(EX_UNAVAILABLE,
-                    ("cannot listen to port %s:%s", host, desired_port));
+                    "cannot listen to port %s:%s", host, desired_port);
       }
     }
     data.network = 0 < port;
