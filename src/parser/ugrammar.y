@@ -38,7 +38,6 @@
 #include <ast/symbols-type.hh>
 #include <kernel/fwd.hh>
 #include <libport/hash.hh>
-#include <libport/pod-cast.hh>
 #include <libport/ufloat.hh>
 #include <list>
 #include <object/symbols.hh>
