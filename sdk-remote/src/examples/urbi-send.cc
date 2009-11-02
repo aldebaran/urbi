@@ -21,18 +21,17 @@
 
 /* This demonstration program sends commands to an Urbi server. */
 
-#include <list>
-#include <string>
-#include <libport/cstdio>
-
 #include <libport/bind.hh>
-
 #include <libport/cli.hh>
+#include <libport/cstdio>
 #include <libport/foreach.hh>
+#include <libport/input-arguments.hh>
 #include <libport/option-parser.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
+#include <list>
+#include <string>
 
 #include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
@@ -95,107 +94,49 @@ error(void* banner, const urbi::UMessage& msg)
 }
 
 
-/*-----------------.
-| Things to send.  |
-`-----------------*/
-
-struct Data
+struct DataSender : libport::opts::DataVisitor
 {
-  virtual ~Data() {};
+  typedef libport::opts::DataVisitor super_type;
   typedef urbi::UAbstractClient::error_type error_type;
 
-  /// Send and return the error code, but don't issue error
-  /// messages.
-  virtual error_type send(urbi::UClient& u) const = 0;
-
-  /// Try to send, and die verbosely on errors.
-  void xsend(urbi::UClient& u) const;
-
-  /// Print.
-  virtual std::ostream& dump(std::ostream& o) const = 0;
-};
-
-inline
-std::ostream&
-operator<< (std::ostream& o, const Data& d)
-{
-  return d.dump(o);
-}
-
-void Data::xsend(urbi::UClient& u) const
-{
-  if (send(u))
-  {
-    std::cerr << libport::program_name() << ": failed to send " << *this;
-    if (errno)
-      std::cerr << ": " << strerror(errno);
-    std::cerr << std::endl << libport::exit(1);
-  }
-}
-
-struct TextData: Data
-{
-  TextData(const std::string& s)
-    : command_(s)
+  DataSender(urbi::UClient& u)
+    : client_(u)
+    , error_(0)
   {}
 
+  using super_type::operator();
+
   virtual
-  error_type
-  send(urbi::UClient& u) const
+  void
+  operator()(const libport::opts::Data& d)
   {
-    return u.send("%s", command_.c_str());
+    super_type::operator()(d);
+    if (error_)
+    {
+      std::cerr << libport::program_name() << ": failed to send " << d;
+      if (errno)
+        std::cerr << ": " << strerror(errno);
+      std::cerr << std::endl << libport::exit(1);
+    }
   }
 
   virtual
-  std::ostream&
-  dump(std::ostream& o) const
+  void
+  operator()(const libport::opts::TextData& d)
   {
-    return o << "expression {{{" << command_ << "}}}";
+    error_ = client_.send("%s", d.command_.c_str());
   }
 
-  std::string command_;
+  virtual
+  void
+  operator()(const libport::opts::FileData& d)
+  {
+    error_ = client_.sendFile(d.filename_);
+  }
+
+  urbi::UClient& client_;
+  error_type error_;
 };
-
-
-struct FileData: Data
-{
-  FileData(const std::string& s)
-    : filename_(s)
-  {}
-
-  virtual
-  error_type
-  send(urbi::UClient& u) const
-  {
-    return u.sendFile(filename_ == "-" ? "/dev/stdin" : filename_);
-  }
-
-  virtual
-  std::ostream&
-  dump(std::ostream& o) const
-  {
-    return o << "file `" << filename_ << "'";
-  }
-
-  std::string filename_;
-};
-
-
-/*-------------.
-| Callbacks.   |
-`-------------*/
-
-typedef std::list<Data*> data_list;
-
-void add_exp(data_list* data, const std::string& arg)
-{
-  data->push_back(new TextData(arg));
-}
-
-void add_file(data_list* data, const std::string& arg)
-{
-  data->push_back(new FileData(arg));
-}
 
 /*-------.
 | Main.  |
@@ -205,33 +146,21 @@ int
 main(int argc, char* argv[])
 {
   libport::program_initialize(argc, argv);
-  /// Things to send to the server.
-  data_list data;
   /// Display the server's banner.
   bool banner = false;
 
   // Parse the command line.
-  libport::OptionValues
-    arg_exp("send SCRIPT to the server", "expression", 'e', "SCRIPT"),
-    arg_file("send the contents of FILE to the server", "file", 'f', "FILE");
   libport::OptionValue
     arg_pfile("file containing the port to listen to", "port-file", 0, "FILE");
   libport::OptionFlag
     arg_banner("do not hide the server-sent banner", "banner", 'b'),
     arg_quit("send `quit' at the end to disconnect", "quit", 'q');
 
-  typedef boost::function1<void, const std::string&> cb_type;
-
-  cb_type cb_exp(boost::bind(&add_exp, &data, _1));
-  cb_type cb_file(boost::bind(&add_file, &data, _1));
-  arg_exp.set_callback(&cb_exp);
-  arg_file.set_callback(&cb_file);
-
   libport::OptionParser opt_parser;
   opt_parser << "Options:"
 	     << arg_banner
-	     << arg_exp
-	     << arg_file
+	     << libport::opts::arg_exp
+	     << libport::opts::arg_file
 	     << libport::opts::help
 	     << libport::opts::host_l
 	     << libport::opts::port_l
@@ -258,7 +187,7 @@ main(int argc, char* argv[])
     if (arg[0] == '-' && arg[1] != 0)
       libport::invalid_option (arg);
     else
-      data.push_back(new FileData(arg));
+      libport::opts::input_arguments.add_file(arg);
 
   urbi::UClient client(host, port);
   client.setKeepAliveCheck(3000, 1000);
@@ -273,11 +202,9 @@ main(int argc, char* argv[])
   /*----------------.
   | Send contents.  |
   `----------------*/
-  foreach (Data* d, data)
-  {
-    d->xsend(client);
-    delete d;
-  }
+  DataSender send(client);
+  send(libport::opts::input_arguments);
+  libport::opts::input_arguments.clear();
 
   if (arg_quit.get())
     client.send("quit;");
