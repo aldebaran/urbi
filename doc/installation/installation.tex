@@ -73,7 +73,7 @@ $ export PATH=$PATH:$URBI_ROOT/bin
 \end{shell}%$
 
 If you want to be able to launch the urbi tools without specifying
-their full path, don't forget to extend your PATH variable:
+their full path, don't forget to extend your \env{PATH} variable:
 
 \begin{shell}[escapeinside=`']
 $ export PATH="`\var{urbi\_root}'/bin:$PATH"
@@ -101,18 +101,20 @@ $ urbi-launch -- --version
 
 \subsection{Windows}
 
-Execute the urbi.bat script located at the root of the uncompressed
-package. It should open a terminal with an interactive Urbi session.
+Execute the \file{urbi.bat} script located at the root of the
+uncompressed package. It should open a terminal with an interactive
+Urbi session.
 
 % FIXME: add a listing with the urbi banner under windows?
 
 \section{\env{URBI\_PATH}}
+\index{urbi path@\env{URBI\_PATH}}
 
 The environment variable \env{URBI\_ROOT} is used to locate the \us
-standard files.  You may extend the search path so that your own Urbi
+standard files.  You may extend the search path so that your own \us
 files can be found easily.  This is the role of the environment
-variable \index{urbi path@\env{URBI\_PATH}}\emphdfn{\env{URBI\_PATH}},
-which contains a list of directory names separated by colons.
+variable \env{URBI\_PATH}, which contains a list of directory names
+separated by colons (even on Windows).
 
 Note \env{URBI\_PATH} is also designed to be able to \emph{override}
 the default standard files.  Use a lone colon to specify where the
