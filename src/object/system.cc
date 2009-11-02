@@ -499,7 +499,7 @@ namespace urbi
   system_systemFiles(const rObject&)
   {
     return std::vector<libport::Symbol>(system_files_.begin(),
-                                      system_files_.end());
+                                        system_files_.end());
   }
 
   system_files_type&
