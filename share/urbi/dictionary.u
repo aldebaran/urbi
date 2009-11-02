@@ -34,12 +34,16 @@ do (Global.Dictionary)
     res +  "}"
   };
 
-  function getWithDefault(name, otherwise)
+  function getWithDefault(name, otherwise, insert = false)
   {
     if (has(name))
       get(name)
     else
+    {
+      if (insert)
+        set(name, otherwise) |
       otherwise
+    }
   };
 
   // Syntactic sugar.
@@ -51,3 +55,4 @@ do (Global.Dictionary)
   };
 
 };
+
