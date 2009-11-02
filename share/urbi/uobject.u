@@ -131,6 +131,23 @@ do (Global.UObject)
       getSlot(slotName):
         detach({loop{ func(); sleep(interval)}})
   };
+  // Decrease notify refcount for this UVar, stop notify if it reaches 0
+  function unnotify(objname, varname, count)
+  {
+    if (!lobby.hasLocalSlot("__bindingCount"))
+      return |
+    var fullname = objname + "." + varname |
+    var cnt = lobby.__bindingCount.getWithDefault(fullname, -1) |
+    if (cnt <= 0)
+    {
+      wall("Error, unnotify on unknown variable " + fullname) |
+      return
+    } |
+    cnt -= count |
+    lobby.__bindingCount[fullname] = cnt |
+    if (!cnt && hasSlot(objname) && getSlot(objname).hasSlot(varname))
+      getSlot(objname).getSlot(varname).change.remove(lobby.__bindingFunc[fullname])
+  };
 };
 
 /*
@@ -358,6 +375,7 @@ class Global.'external'
       uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s)) |
     lobby.removeSlot(objname)|
     uobjects.getSlot(objname).setSlot("lobby", lobby) |
+    uobjects.getSlot(objname).setSlot("notifies", Dictionary.new) |
     uobjects.getSlot(objname).init() |
     ("external object "+objname).print|
     var chan = Channel.new(MODULE_TAG)|
@@ -397,13 +415,16 @@ class Global.'external'
     {
       var lobby.handle = WeakPointer.new
     }|
-    // Ignore duplicate binds of same var.
-    var lid = lobby.uid|
-    if (!hasLocalSlot(lid))
-      setSlot(lid, [])|
-    if (fullname in getSlot(lid))
-      return|
-    getSlot(lid).insertBack(fullname)|
+    // Refcount number of binds to this var
+    if (!lobby.hasLocalSlot("__bindingCount"))
+    {
+      var lobby.__bindingCount = Dictionary.new |
+      var lobby.__bindingFunc = Dictionary.new
+    } |
+    var currentCount = lobby.__bindingCount.getWithDefault(fullname, 0) |
+    lobby.__bindingCount[fullname] = currentCount + 1 |
+    if (currentCount)
+      return |
     var obj = uobjects.getSlot(objname)|
     // Setup a hook, notify the remote when a change occurrs.
     if (!obj.hasLocalSlot(varname))
@@ -430,6 +451,12 @@ class Global.'external'
         chan << ['external'.UEM_ASSIGNVALUE,
                  fullname,
                  v]
+    }|
+    lobby.__bindingFunc[fullname] = f |
+    if (uobjects.hasLocalSlot(fr))
+    {
+      uobjects.getSlot(fr).notifies
+       .getWithDefault(objname + "." + varname, [], true) << f|
     }|
     uobjects.getSlot(objname).getSlot(varname).notifyChange(lobby.handle, f)|
     void

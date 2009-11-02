@@ -104,7 +104,9 @@ namespace urbi {
     private:
       static KernelUContextImpl* instance_;
     };
+
     KernelUContextImpl* KernelUContextImpl::instance_ = 0;
+    class KernelUGenericCallbackImpl;
     class KernelUObjectImpl: public UObjectImpl
     {
     public:
@@ -113,6 +115,7 @@ namespace urbi {
       virtual void setUpdate(ufloat period);
     private:
       UObject* owner_;
+      friend class KernelUGenericCallbackImpl;
     };
 
     class KernelUVarImpl: public UVarImpl
@@ -133,10 +136,14 @@ namespace urbi {
       virtual UValue getProp(UProperty prop);
       virtual void setProp(UProperty prop, const UValue& v);
       virtual bool setBypass(bool enable);
+      virtual void unnotify();
     private:
       UVar* owner_;
       bool bypassMode_;
       mutable UValue cache_;
+      typedef std::vector<KernelUGenericCallbackImpl*> callbacks_type;
+      callbacks_type callbacks_;
+      friend class KernelUGenericCallbackImpl;
     };
 
     class KernelUGenericCallbackImpl: public UGenericCallbackImpl
@@ -150,6 +157,9 @@ namespace urbi {
       UGenericCallback* owner_;
       bool owned_;
       bool registered_;
+      rObject callback_;
+      friend class KernelUObjectImpl;
+      friend class KernelUVarImpl;
     };
   }
 }
@@ -342,7 +352,7 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
   urbi::UList l;
   l.array.push_back(new urbi::UValue());
-  l[0].storage = ugc->storage;
+  l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
   ugc->__evalcall(l);
   Stats::add(ol.front().get(), traceName, libport::utime() - t);
@@ -789,6 +799,36 @@ namespace urbi
       getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
     }
 
+    void
+    KernelUVarImpl::unnotify()
+    {
+      rObject r;
+      // Try to locate the target urbiscript UVar, which might be gone.
+      // In this case, callbacks are gone too.
+      try {
+        StringPair p = split_name(owner_->get_name());
+        r = get_base(p.first);
+        if (!r)
+          return;
+        r = r->slot_get(Symbol(p.second));
+      }
+      catch(...)
+      {
+        return;
+      }
+      foreach(KernelUGenericCallbackImpl* v, callbacks_)
+      {
+        Symbol s;
+        if (v->owner_->type == "var")
+          s = Symbol(v->owned_?"changeOwned":"change");
+        else if (v->owner_->type == "varaccess")
+          s = SYMBOL(access);
+        else
+          continue;
+        r->slot_get(s)->call(SYMBOL(remove), v->callback_);
+      }
+    }
+
     KernelUVarImpl::KernelUVarImpl()
       : bypassMode_(false)
     {
@@ -1000,14 +1040,18 @@ namespace urbi
         rObject handle = source->slot_get(SYMBOL(handle));
         rObject f = var->slot_get(sym);
         assertion(f);
+        callback_ = object::make_primitive(
+            boost::function1<rObject, const objects_type&>
+            (boost::bind(&wrap_ucallback_notify, _1, owner_,
+                         traceName + " " + owner_->type)));
         object::objects_type args = list_of
           (var)
           (handle)
-          (object::make_primitive(
-            boost::function1<rObject, const objects_type&>
-            (boost::bind(&wrap_ucallback_notify, _1, owner_,
-                         traceName + " " + owner_->type))));
+          (callback_);
         runner.apply(f, sym, args);
+        if (owner_->target)
+          static_cast<KernelUVarImpl*>(owner_->target->impl_)
+            ->callbacks_.push_back(this);
       }
     }
     void
