@@ -179,12 +179,13 @@ namespace urbi
 
   int main_loop(LoopData& l);
 
-  static libport::Socket*
+  static
+  libport::Socket*
   connectionFactory()
   {
-    kernel::Connection* c = new kernel::Connection();
-    kernel::urbiserver->connection_add(c);
-    return c;
+    kernel::Connection* res = new kernel::Connection();
+    kernel::urbiserver->connection_add(res);
+    return res;
   }
 
   static std::string convert_input_file(const std::string& arg)
@@ -204,7 +205,8 @@ namespace urbi
     std::string value;
   };
 
-  static int
+  static
+  int
   init(const libport::cli_args_type& _args, bool errors,
              libport::Semaphore* sem)
   {
@@ -484,16 +486,16 @@ namespace urbi
   }
 
   int
-  main(const libport::cli_args_type& _args, bool block, bool errors)
+  main(const libport::cli_args_type& args, bool block, bool errors)
   {
     if (block)
-      return init(_args, errors, 0);
+      return init(args, errors, 0);
     else
     {
       // The semaphore must survive this block, as init will use it when
       // exiting.
       libport::Semaphore* s = new libport::Semaphore;
-      libport::startThread(boost::bind(&init, boost::ref(_args),
+      libport::startThread(boost::bind(&init, boost::ref(args),
                                        errors, s));
       (*s)--;
       return 0;
