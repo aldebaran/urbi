@@ -64,13 +64,9 @@ libuobject_la_LDFLAGS =				\
   -avoid-version -no-undefined
 libuobject_la_LIBADD =					\
   $(BOOST_REGEX_LIBS)					\
-  $(BOOST_SYSTEM_LIBS)					\
   $(LIBPORT_LIBS)					\
-  $(LTDL_LIBS)						\
-  $(PTHREAD_LIBS)					\
   $(SCHED_LIBS)						\
   $(SERIALIZE_LIBS)					\
-  $(SOCKETS_LIBS)					\
   $(top_builddir)/sdk-remote/src/libuco/libuco.la
 
 ## ------------ ##
