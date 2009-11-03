@@ -23,11 +23,13 @@ for (var p : d)
 [00000002] *** two -> 2
 "three" in d;
 [00000004] false
+d["three"];
+[00000005:error] !!! missing key: three
 d["three"] = d["one"] + d["two"] | {};
 "three" in d;
-[00000005] true
+[00000006] true
 d.getWithDefault("four", 4);
-[00000006] 4
+[00000007] 4
 \end{urbiscript}
 
 
@@ -100,12 +102,23 @@ Dictionary.new("one", 1, "two", 2).erase("two");
 \end{urbiscript}
 
 \item \lstinline|get(\var{key})|\\
-  Return the value associated to  \lstinline|\var{key}| if it exists,
-  \lstinline|void| otherwise.
-\begin{urbiassert}[firstnumber=last]
-Dictionary.new("one", 1, "two", 2).get("one") == 1;
-Dictionary.new("one", 1, "two", 2).get("three").isVoid;
-\end{urbiassert}
+  Return the value associated to \lstinline|\var{key}|.  A
+  Dictionary.KeyError exception is thrown if the key is missing.
+
+% FIXME: the following excpetion test should be rewritte when (if) we
+% introduce the throw assertion.
+\begin{urbiscript}[firstnumber=last]
+assert(Dictionary.new("one", 1, "two", 2).get("one") == 1);
+try
+{
+  Dictionary.new("one", 1, "two", 2).get("three");
+  echo("never reached");
+}
+catch (var e if e.isA(Dictionary.KeyError))
+{
+  assert(e.key == "three")
+};
+\end{urbiscript}
 
 
 \item \lstinline|getWithDefault(\var{key}, \var{default-value})|\\

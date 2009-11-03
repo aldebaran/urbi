@@ -2,11 +2,20 @@ do (Global.Dictionary)
 {
   protos << Global.RangeIterable;
 
+  class KeyError: Exception
+  {
+    function init(name)
+    {
+      var this.key = name;
+      Exception.getSlot("init").apply([this, "missing key: %s" % name]);
+    }
+  };
+
   /// Dictionary.init(KEY1, VAL1, ...).
   function init
   {
     if (call.argsCount % 2)
-    throw PrimitiveError.new("new",
+      throw PrimitiveError.new("new",
                                "Dictionary constructor must be given " +
 			       "an even number of arguments") |
     for| (var i = 0; i < call.argsCount; i += 2)

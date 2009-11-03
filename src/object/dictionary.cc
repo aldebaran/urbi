@@ -14,10 +14,12 @@
 
 #include <libport/containers.hh>
 
+#include <kernel/userver.hh>
+#include <object/symbols.hh>
+#include <runner/runner.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/string.hh>
-#include <object/symbols.hh>
 
 namespace urbi
 {
@@ -62,7 +64,14 @@ namespace urbi
     rObject
     Dictionary::get(libport::Symbol key)
     {
-      return libport::mhas(content_, key) ? content_[key] : rObject();
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      static rObject exn = slot_get(SYMBOL(KeyError));
+
+      if (libport::mhas(content_, key))
+        return content_[key];
+      else
+        r.raise(exn->call("new", new String(key)));
+      unreachable();
     }
 
     rDictionary
