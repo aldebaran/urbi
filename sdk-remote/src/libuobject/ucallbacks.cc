@@ -97,6 +97,13 @@ namespace urbi
       UTable& t =
         dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)
         ->tableByName(owner_->type);
+#ifdef _MSC_VER
+      // Without this, msvc 2005 fails at link time with:
+      // unresolved external symbol "public: __thiscall libport::SafeContainer<class std::list,class urbi::UGenericCallback *>::real_value_type::real_value_type(class urbi::UGenericCallback * const &,class libport::SafeContainer<class std::list,class urbi::UGenericCallback *> &)"
+      if (false)
+        libport::SafeContainer<std::list, UGenericCallback*>::real_value_type
+          rvt(owner_, t["dummy"]);
+#endif
       t[callback_name(owner_->name, owner_->type, owner_->nbparam)]
         .push_back(owner_);
       if (owner_->target)
