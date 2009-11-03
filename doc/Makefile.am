@@ -3,12 +3,10 @@ include $(top_srcdir)/build-aux/doxygen.mk
 include $(top_srcdir)/build-aux/revision.mk
 
 # Document aux.
-share_dir = $(srcdir)/document-aux
+share_dir = $(LIBPORT_SRCDIR)/doc/document-aux
 share_bin_dir = $(share_dir)/bin
 share_make_dir = $(share_dir)/make
-include document-aux/make/tex.mk
-EXTRA_DIST +=								   \
-  $(addprefix document-aux/,$(call ls_files_in_dir,$(srcdir)/document-aux))
+include $(top_srcdir)/sdk-remote/libport/doc/document-aux/make/tex.mk
 
 # img/.
 PDF_IMAGES = $(call ls_files,img/*.pdf)
@@ -20,9 +18,9 @@ CLEANFILES += $(EPS_IMAGES)
 MAINTAINERCLEANFILES +=						\
   $(shell find $(srcdir) -name '*.chk')
 
-# Find urbi-report.sty, and workaround some strange behavior of
-# texi2dvi that wants to play tricks with ~ (which becomes a tilda,
-# instead of a nonbreakable space).
+# Find local *.sty files, workaround some strange behavior of texi2dvi
+# that wants to play tricks with ~ (which becomes a tilda, instead of
+# a nonbreakable space).
 TEXI2DVI_FLAGS += -I $(srcdir) -~
 pdf_DATA =
 

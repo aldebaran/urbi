@@ -7,6 +7,3 @@
 [submodule "bison"]
 	path = bison
 	url = git@git.gostai.com:bison.git
-[submodule "document-aux"]
-	path = doc/document-aux
-	url = git@git.gostai.com:document-aux.git
