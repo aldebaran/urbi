@@ -222,7 +222,7 @@ namespace urbi
     template <class T>                                          \
     void UNotify##Type(Notified, int (T::*fun) (Arg) Const)     \
     {                                                           \
-	createUCallback(*this, WithArg?(StoreArg):0, TypeString,\
+	createUCallback(*this, StoreArg, TypeString,            \
                         dynamic_cast<T*>(this),                 \
                         fun, Name);	\
     }
