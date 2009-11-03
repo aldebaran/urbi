@@ -99,6 +99,60 @@ variable value is changed, whereas the \lstinline{notifyAccess}
 callback is called before the variable is accessed, giving you the
 possibility to update its value.
 
+Notify functions can be unregistered by calling the \lstinline|unnotify|
+function of the \lstinline{UVar} class.
+
+\section{Data-flow based programming: exchanging UVars}
+
+The \lstinline{UNotifyChange} and \lstinline{UNotifyAccess} features can be
+used to link multiple UObjects together, and perform data-flow based
+programming: the \lstinline{UNotifyChange} can be called to monitor UVars
+from other UObjects. Those UVars can be transmitted through bound functions
+calls.
+
+One possible pattern is to have each data-processing UObject take its input
+from monitored UVars, given in it's constructor, and output the result of it's
+processing in other UVars. Consider the following example of an object-tracker:
+
+\begin{cxx}
+class ObjectTracker: public UObject {
+  ObjectTracker(const std::string& n): UObject(n) {
+    // Bind our constructor.
+    UBindFunction(ObjectTracker, init);
+  }
+  // Take our data source in our constructor
+  int init(UVar& image)
+  {
+    UNotifyChange(image, &ObjectTracker::onImage);
+    // Bind our output variable.
+    UBindVar(ObjectTracker, val);
+    return 0;
+  }
+  int onImage(UVar& src)
+  {
+    UBinary b = src;
+    //Processing here
+    val = processing_result;
+    return 0;
+  }
+  UVar val;
+};
+UStart(ObjectTracker);
+\end{cxx}
+
+The following \us code would be used to initialize an ObjectTracker given a
+camera:
+
+\begin{urbiscript}
+var tracker = ObjectTracker.new(camera.getSlot("val"));
+\end{urbiscript}
+
+An other component could then take the tracker output as its input.
+
+Using this model, chains of processing elements can be created. Each time the
+UObject at the start of the chain updates, all the notifyChange will be called
+synchronously in cascade to update the state of the intermediate components.
+
 \section{Timers}
 \label{sec:uob:timers}
 
@@ -140,17 +194,21 @@ You can read or write any \urbi variable by creating an
 \lstinline{UVar} passing the variable name to the constructor. Change
 the value by writing any compatible type to the \lstinline{UVar}, and
 access the value by casting the \lstinline{UVar} to any compatible
-type. However, some care must be taken in remote mode: changes on the
-variable coming from \urbi code or an other module are only visible if
-you have called \lstinline{UNotifyChange} on this variable. Otherwise
-the \lstinline{UVar} is not synchronized. Alternatively, in remote
-mode, you can get the value on demand by calling
+type.
+
+Some care must be taken in remote mode: changes on the
+variable coming from \urbi code or an other module can take time to propagate
+to the \lstinline{UVar}. To have more control on the bandwidth used, you can
+disable the automatic update by calling \lstinline|unnotify()|. Then you can get
+the value on demand by calling
 \lstinline|UNotifyOnRequest (\var{variable}, \var{function})|. Then to get an
 updated value, call the \lstinline{requestValue} method on the
 \lstinline{UVar}, and your callback function will be called as soon as
-the value is available. You can read and write all the \urbi
-properties of an \lstinline{UVar} by reading and writing the
-appropriate \lstinline{UProp} object in the \lstinline{UVar}.
+the value is available.
+
+You can read and write all the \urbi properties of an \lstinline{UVar} by
+reading and writing the appropriate \lstinline{UProp} object in the
+\lstinline{UVar}.
 
 \section{Using binary types}
 
