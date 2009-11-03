@@ -169,7 +169,10 @@ case $OS in
       # Do not show errors -- we know that we have shell scripts there.
       $FIND bin -type f |
         xargs strip 2>/dev/null || true
-      $FIND . -type f '(' -name '*.so.*' -o -name '*.a' ')' |
+      $FIND . -type f '(' -name '*.so.*'        \
+                       -o -name '*.so'          \
+                       -o -name '*.a'           \
+                       ')' |
         xargs strip || true
       cd $here
     fi
