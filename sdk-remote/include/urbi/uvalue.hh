@@ -57,6 +57,8 @@ namespace urbi
     template<typename T>
     UList& operator=(const T& container);
 
+    UList& operator=(UVar& v);
+
     // Transform the UList to a container.
     template<typename T>
     T as();

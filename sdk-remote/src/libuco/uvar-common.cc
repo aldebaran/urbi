@@ -133,4 +133,12 @@ namespace urbi
     var->set_temp(true);
     return *var;
   }
+
+  UList&
+  UList::operator=(UVar& v)
+  {
+    (*this) = (UList)v.val();
+    return *this;
+  }
+
 } // namespace urbi
