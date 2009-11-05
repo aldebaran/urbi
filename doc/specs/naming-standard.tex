@@ -269,7 +269,7 @@ facet should be reimplemented for any particular robot that uses them,
 for example the ``mobile'' facet will have a completely different
 implementation with a humanoid robot and a wheeled robot.
 
-\facet{identity}
+\facet{Identity}
 
 Contains information about the robot identity.
 
@@ -300,7 +300,7 @@ Contains information about the robot identity.
 \end{slots}
 
 
-\facet{network}
+\facet{Network}
 
 Contains information about the network identification of the robot.
 
@@ -327,7 +327,7 @@ Contains information about the network identification of the robot.
 
 \end{slots}
 
-\facet{motor}
+\facet{Motor}
 
 This facet is used to describe a generic motor controller.
 
@@ -338,7 +338,7 @@ This facet is used to describe a generic motor controller.
     the motor position, like \code{position} or \code{angle},
     depending on the type of motor. It is mandatory in the Urbi Ready
     standard as a universal proxy to control an actuator. The more
-    specific slot is described in a subclass of \code{motor}.%
+    specific slot is described in a subclass of \code{Motor}.%
   }
 
   \optSlot{PGain}%
@@ -358,7 +358,7 @@ This facet is used to describe a generic motor controller.
 
 \end{slots}
 
-\facet[motor]{linearMotor}
+\facet[Motor]{LinearMotor}
 
 
 This facet is used to describe a linear motor controller.
@@ -378,7 +378,7 @@ This facet is used to describe a linear motor controller.
 
 \end{slots}
 
-\facet[motor]{rotationalMotor}
+\facet[Motor]{RotationalMotor}
 
 
 This facet is used to describe a rotational motor controller.
@@ -405,7 +405,7 @@ This facet is used to describe a rotational motor controller.
 \end{slots}
 
 
-\facet{sensor}
+\facet{Sensor}
 
 This facet is used to describe a generic sensor.
 
@@ -416,13 +416,13 @@ This facet is used to describe a generic sensor.
     the sensor value, like \code{distance} or \code{temperature},
     depending on the type of sensor. It is mandatory in the Urbi Ready
     standard as a universal proxy to read a sensor. The more specific
-    slot is described in a subclass of \code{sensor}.%
+    slot is described in a subclass of \code{Sensor}.%
   }
 
 \end{slots}
 
 
-\facet[sensor]{distanceSensor}
+\facet[Sensor]{DistanceSensor}
 
 This facet is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
@@ -437,7 +437,7 @@ ultrasonic...).
 \end{slots}
 
 
-\facet[sensor]{touchSensor}
+\facet[Sensor]{TouchSensor}
 
 This facet is used to describe a touch pressure sensor (contact,
 induction,...).
@@ -453,7 +453,7 @@ induction,...).
 \end{slots}
 
 
-\facet[sensor]{accelerationSensor}
+\facet[Sensor]{AccelerationSensor}
 
 This facet is used to describe an accelerometer.
 
@@ -466,7 +466,7 @@ This facet is used to describe an accelerometer.
 
 \end{slots}
 
-\facet[sensor]{gyroSensor}
+\facet[Sensor]{GyroSensor}
 This facet is used to describe an gyrometer.
 
 \begin{slots}
@@ -477,7 +477,7 @@ This facet is used to describe an gyrometer.
   }
 \end{slots}
 
-\facet[sensor]{temperatureSensor}
+\facet[Sensor]{TemperatureSensor}
 This facet is used to describe a temperature sensor.
 
 \begin{slots}
@@ -488,7 +488,7 @@ This facet is used to describe a temperature sensor.
   }
 \end{slots}
 
-\facet{mobile}
+\facet{Mobile}
 
 Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
@@ -508,7 +508,7 @@ level motion control capabilities.
 
 \end{slots}
 
-\facet{tracker}
+\facet{Tracker}
 
 Camera-equipped robots can sometimes move the orientation of the field
 of view horizontally and vertically, which is a very important feature
@@ -531,9 +531,9 @@ with whole body motion or a combination of both.
 
 \end{slots}
 
-\facet{videoin}
+\facet{VideoIn}
 
-The videoin facet groups every information relative to cameras or any
+The VideoIn facet groups every information relative to cameras or any
 image sensor.
 
 \begin{slots}
@@ -594,8 +594,8 @@ image sensor.
 
 \end{slots}
 
-\facet{audioout}
-The audioout facet groups every information relative to speakers.
+\facet{AudioOut}
+The AudioOut facet groups every information relative to speakers.
 
 \begin{slots}
   \slot{val}%
@@ -629,9 +629,9 @@ The audioout facet groups every information relative to speakers.
 
 
 
-\facet{audioin}
+\facet{AudioIn}
 
-The audioin facet groups every information relative to microphones.
+The AudioIn facet groups every information relative to microphones.
 
 \begin{slots}
   \slot{val}%
@@ -654,7 +654,7 @@ The audioin facet groups every information relative to microphones.
 \end{slots}
 
 
-\facet{blobDetector}
+\facet{BlobDetector}
 
 Ball detectors, marker detectors and various feature-based detectors
 should all share a similar interface. They extract a part of the image
@@ -703,7 +703,7 @@ the typical slots expected:
 
 \end{slots}
 
-\facet{textToSpeech}
+\facet{TextToSpeech}
 Text to speech allows to read text using a speech synthetizor. Default
 implementations should use the \code{speaker} component (or alias) as
 their default sound output.
@@ -761,12 +761,11 @@ their default sound output.
 \end{slots}
 
 
-\facet{speechRecognizer}
+\facet{SpeechRecognizer}
 
 Speech recognition allows to transform a stream of sound into a text
-using various speech recognition algorithms. Default implementations
-should use the \code{micro} component (or alias) as their default
-sound input.
+using various speech recognition algorithms. Implementations
+should use the \code{micro} component as their default sound input.
 
 \begin{slots}
   \optSlot{lang}%
@@ -841,7 +840,7 @@ robot.
 \textbf{Contains} &
 \textbf{Facets} \\\hline}
 \begin{supertabular}{|m{.115\linewidth}|m{.45\linewidth}|*{4}{m{.12\linewidth}|}}
-  \component{robot}{}{body}{identity network mobile tracker}{
+  \component{robot}{}{body}{Identity Network Mobile Tracker}{
     %%
     This is the main component that represents an abstraction of the
     robot.
@@ -871,7 +870,7 @@ robot.
     %%
   }
 
-  \component{arm}{body}{shoulder elbow wrist hand grip  joint}{}{
+  \component{arm}{body}{shoulder elbow wrist hand grip joint}{}{
     %%
     Unlike legs, an arm's extremity does not always touch the ground
     in normal operating mode. This applies to humanoid robots or
@@ -911,7 +910,7 @@ robot.
     %%
   }
 
-  \component{finger}{hand}{touch}{motor}{
+  \component{finger}{hand}{touch}{Motor}{
     %%
     Fingers are a series of articulated motors at the extremity of the
     arm, and connected to the hand. They are usually localized with
@@ -919,7 +918,7 @@ robot.
     %%
   }
 
-  \component{grip}{arm hand}{touch}{motor}{
+  \component{grip}{arm hand}{touch}{Motor}{
     %%
     Simple two-fingers system.
     %%
@@ -955,7 +954,7 @@ robot.
     %%
   }
 
-  \component{toe}{foot}{touch}{motor}{
+  \component{toe}{foot}{touch}{Motor}{
     %%
     Like fingers, but attached to the foot.
     %%
@@ -981,26 +980,26 @@ robot.
     %%
   }
 
-  \component{mouth}{head}{lip}{motor}{
+  \component{mouth}{head}{lip}{Motor}{
     %%
     The robot mouth (open/close)
     %%
   }
 
-  \component{ear}{head}{}{motor}{
+  \component{ear}{head}{}{Motor}{
     %%
     Ears may have degrees of freedom in certain robots.
     %%
   }
 
-  \component{joint}{tail arm leg lip}{}{motor}{
+  \component{joint}{tail arm leg lip}{}{Motor}{
     %%
     Generic articulation in the robot.
     %%
   }
 
   \component{yaw}{neck knee ankle shoulder elbow wrist
-    torso}{}{rotational\-Motor}{
+    torso}{}{Rotational\-Motor}{
     %%
     Rotational articulation around the Z axis in the
     robot. See \autoref{sec:naming:ypr}.
@@ -1008,7 +1007,7 @@ robot.
   }
 
   \component{pitch}{neck knee ankle shoulder elbow wrist
-    torso}{}{rotational\-Motor}{
+    torso}{}{Rotational\-Motor}{
     %%
     Rotational articulation around the Y axis in the
     robot.  See \autoref{sec:naming:ypr}.
@@ -1016,14 +1015,14 @@ robot.
   }
 
   \component{roll}{neck knee ankle shoulder elbow wrist
-    torso}{}{rotational\-Motor}{
+    torso}{}{Rotational\-Motor}{
     %%
     Rotational articulation around the X axis in the robot. See
     \autoref{sec:naming:ypr}.
     %%
   }
 
-  \component{lip}{mouth}{joint}{motor}{
+  \component{lip}{mouth}{joint}{Motor}{
     %%
     Corresponds to animated lips.
     %%
@@ -1035,7 +1034,7 @@ robot.
     %%
     }
 
-  \component{eyebrow}{head}{joint}{motor}{
+  \component{eyebrow}{head}{joint}{Motor}{
     %%
     Some robots will have eyebrows with generally one or several
     degrees of freedom.
@@ -1057,7 +1056,7 @@ robot.
     %%
     }
 
-  \component{clavicle}{body}{}{motor}{
+  \component{clavicle}{body}{}{Motor}{
     %%
     This is not to be mixed up with the ``top of the arm'' body part. It
     is an independent degree of freedom that can be used to bring the
@@ -1065,25 +1064,25 @@ robot.
     %%
     }
 
-  \component{touch}{finger grip foot toe}{}{touchSensor}{
+  \component{touch}{finger grip foot toe}{}{TouchSensor}{
     %%
       Touch sensor.
     %%
     }
 
-  \component{gyro}{body}{}{gyroSensor}{
+  \component{gyro}{body}{}{GyroSensor}{
     %%
       Gyrometer sensor.
     %%
     }
 
-  \component{accel}{body}{}{accel\-eration\-Sensor}{
+  \component{accel}{body}{}{Accel\-eration\-Sensor}{
     %%
       Accelerometer sensor.
     %%
     }
 
-  \component{camera}{head body}{}{videoin}{
+  \component{camera}{head body}{}{VideoIn}{
     %%
     Camera sensor. If several cameras are available, localization
     shall apply; however there must always be an alias from
@@ -1092,7 +1091,7 @@ robot.
     %%
     }
 
-  \component{speaker}{head body}{}{audioin}{
+  \component{speaker}{head body}{}{AudioIn}{
     %%
     Speaker device. If several speakers are available, localization
     shall apply; however there must always be an alias from
@@ -1101,7 +1100,7 @@ robot.
     %%
     }
 
-  \component{micro}{head body}{}{audioout}{
+  \component{micro}{head body}{}{AudioOut}{
     %%
     Microphone devices. If several microphones are available,
     localization shall apply; however there must always be an alias
@@ -1110,13 +1109,13 @@ robot.
     %%
   }
 
-  \component{speech}{robot}{}{speech\-Recognizer}{
+  \component{speech}{robot}{}{Speech\-Recognizer}{
     %%
       Speech recognition component.
     %%
     }
 
-  \component{voice}{robot}{}{textTo\-Speech}{
+  \component{voice}{robot}{}{TextTo\-Speech}{
     %%
       Voice synthesis component.
     %%
