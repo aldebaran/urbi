@@ -143,10 +143,11 @@ $FIND $packagedir -name libtool |
 # boost symbols inside libport.
 $FIND $packagedir '(' -name param.mk -or -name libtool ')' |
   xargs perl -pi \
-	-e 's/ccache //;' 			\
-	-e 's/-Werror//;'			\
-	-e 's/-fvisibility=hidden//;'		\
-	-e 's/-fvisibility-inlines-hidden//;'
+        -e 's/ccache //;'                       \
+        -e 's/g(cc|\+\+)(?:-[\d.]+)/g$1/;'      \
+        -e 's/-Werror//;'                       \
+        -e 's/-fvisibility=hidden//;'           \
+        -e 's/-fvisibility-inlines-hidden//;'
 
 # Restore +x on libtool.
 $FIND $packagedir -name libtool -exec chmod u+x '{}' ';'
