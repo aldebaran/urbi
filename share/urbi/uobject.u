@@ -474,6 +474,8 @@ class Global.'external'
     function f
     {
       var args = call.evalArgs;
+      if (args.size != nargs)
+        throw ArityError.new("Remote bound function", args.size, nargs);
       var u = fresh;
       chan << [ 'external'.UEM_EVALFUNCTION,
                 functionName + "__" + args.size.asString,
