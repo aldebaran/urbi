@@ -9,6 +9,12 @@ class Global.Exception
     message = msg
   };
 
+  /// Make the instanciation of subobjects easier.
+  function '$Exception'(msg)
+  {
+    Exception.getSlot("init").apply([this, msg])
+  };
+
   function asString()
   {
     var res = message |
@@ -27,8 +33,7 @@ class Global.ConstError: Exception
 {
   function init()
   {
-    Exception.getSlot("init").apply([this,
-                                     "cannot modify const slot"])
+    '$Exception'("cannot modify const slot")
   }
 };
 
@@ -36,26 +41,23 @@ class Global.ImplicitTagComponentError: Exception
 {
   function init()
   {
-    Exception.getSlot("init").apply([this,
-                                     "invalid component in implicit tag"])
+    '$Exception'("invalid component in implicit tag")
   }
 };
 
 class Global.SchedulingError: Exception
 {
-
   function throwNew(msg)
   {
     throw SchedulingError.new(msg)
   }
-
 };
 
 class Global.UnexpectedVoidError: Exception
 {
   function init()
   {
-    Exception.getSlot("init").apply([this, "unexpected void"])
+    '$Exception'("unexpected void")
   }
 };
 
@@ -63,9 +65,10 @@ class Global.PrimitiveError: Exception
 {
   var routine;
 
-  function init(rout, msg)
+  function init(routine, msg)
   {
-    Exception.getSlot("init").apply([this, "%s: %s" % [rout, msg]])
+    this.routine = routine |
+    '$Exception'("%s: %s" % [routine, msg])
   };
 };
 
@@ -76,25 +79,15 @@ class Global.ArityError: Exception
 
   function init(routine, effective, min, max = void)
   {
-    var plural = "" |
-    var msg;
-    var args;
+    this.routine = routine |
+    this.effective = effective |
 
     if (max.isVoid)
-    {
-      if (min > 1)
-        plural = "s"|
-      msg = "%s: Expected %s argument%s, given %s"|
-      args = [routine, min, plural, effective] |
-    }
+      '$Exception'("%s: Expected %s argument%s, given %s"
+                   % [routine, min, {if (1 < min) "s" else ""}, effective])
     else
-    {
-      if (max > 1)
-        plural = "s"|
-      msg = "%s: Expected between %s and %s argument%s, given %s"|
-      args = [routine, min, max, plural, effective] |
-    };
-    Exception.getSlot("init").apply([this, msg % args])|
+      '$Exception'("%s: Expected between %s and %s argument%s, given %s"
+                   % [routine, min, max, {if (1 < max) "s" else ""}, effective])
   }
 };
 
@@ -103,11 +96,11 @@ class Global.BadIntegerError: Exception
   var routine;
   var effective;
 
-  function init(rout, fmt, eff)
+  function init(routine, fmt, effective)
   {
-    routine = rout |
-    effective = eff |
-    Exception.getSlot("init").apply([this, "%s: %s" % [rout, fmt % [eff]]])
+    this.routine = routine |
+    this.effective = effective |
+    '$Exception'("%s: %s" % [routine, fmt % effective])
   };
 };
 
@@ -116,12 +109,12 @@ class Global.TypeError: Exception
   var expected;
   var effective;
 
-  function init(exp, eff)
+  function init(expected, effective)
   {
-    expected = exp |
-    effective = eff |
-    message = "unexpected %s, expected a %s" %
-    [eff.asPrintable, exp.type]
+    this.expected = expected |
+    this.effective = effective |
+    message = "unexpected %s, expected a %s"
+              % [effective.asPrintable, expected.type]
   }
 };
 
@@ -130,13 +123,13 @@ class Global.ArgumentTypeError: TypeError
   var index;
   var routine;
 
-  function init(rout, idx, exp, eff)
+  function init(routine, index, exp, eff)
   {
     TypeError.getSlot("init").apply([this, exp, eff]) |
-    routine = rout |
-    index = idx |
+    this.routine = routine |
+    this.index = index |
     message = "%s: unexpected %s for argument %s, expected a %s" %
-    [routine, eff.asPrintable, idx, exp.type]
+              [routine, eff.asPrintable, index, exp.type]
   }
 };
 
@@ -151,13 +144,13 @@ class Global.LookupError: Exception
   {
     msg = m |
     obj = o |
-    var explanation = "lookup failed: %s" % [m] |
+    var explanation = "lookup failed: %s" % m |
     var closest = nil |
     if (fixSpellingErrors)
       closest = mispelling(m, o) |
     if (closest)
-      explanation += " (possible mispelling of %s)" % [closest] |
-    Exception.getSlot("init").apply([this, explanation])
+      explanation += " (possible mispelling of %s)" % closest |
+    '$Exception'(explanation)
   };
 
   // Return the most probable slot in "o" (recursively) ressembling "m"
@@ -185,7 +178,8 @@ class Global.LookupError: Exception
     // ought to be enough for everybody. Also, do not try to correct
     // words with less than three letters unless we got a case
     // mismatch (caught above) or only one case-sensitive change.
-    if (min > 2 || (m.size < 3 && closest.size < 3 && m.distance(closest) > 1))
+    if (2 < min
+        || (m.size < 3 && closest.size < 3 && 1 < m.distance(closest)))
       return nil |
     closest
   }
@@ -198,20 +192,18 @@ class Global.RedefinitionError: Exception
   function init(s)
   {
     slot = s |
-    var explanation = "slot redefinition: %s" % [s] |
-    Exception.getSlot("init").apply([this, explanation])
+    '$Exception'("slot redefinition: %s" % s)
   }
 };
 
 class Global.FileNotFound: Exception
 {
-  var path = ".";
+  var path;
 
   function init(p)
   {
-    path = p;
-    var explanation = "file not found: %s" % [p] |
-    Exception.getSlot("init").apply([this, explanation])
+    path = p|
+    '$Exception'("file not found: %s" % p)
   }
 };
 
@@ -219,7 +211,6 @@ class Global.MatchFailure: Exception
 {
   function init()
   {
-    var explanation = "pattern didn't match";
-    Exception.getSlot("init").apply([this, explanation]);
+    '$Exception'("pattern did not match");
   }
 };
