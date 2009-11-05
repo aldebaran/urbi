@@ -3,16 +3,16 @@ Objects that can be compared for equality and inequality.  See also
 \refObject{Comparable}.
 
 This object, made to serve as prototype, provides a definition of
-\lstinline{==} based on \lstinline{!=}, and vice versa.  You
-\strong{must} define one of these, otherwise invoking either method
-will result in endless recursions.
+\lstinline{!=} based on \lstinline{==}.  \lstinline{Object} provides
+a default implementation of \lstinline{==} that bounces on the physical
+equality \lstinline{===}.
 
 \begin{urbiscript}
 class Foo : Comparable
 {
   var value = 0;
   function init (v) { value = v; };
-  function '!=' (lhs) { value != lhs.value; };
+  function '==' (lhs) { value == lhs.value; };
 };
 [00000000] Foo
 Foo.new(1) == Foo.new(1);
