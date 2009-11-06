@@ -28,7 +28,7 @@
 using libport::streq;
 using libport::strneq;
 
-std::string
+static std::string
 xgetenv(const char* var, const std::string& def)
 {
   if (const char* res = getenv(var))
