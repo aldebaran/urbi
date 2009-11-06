@@ -1064,7 +1064,6 @@ function wrapper()
   // Here we make it escape the scope by returning a closure on it.
   return function() { x++ };
 } |
-[00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
 
 var w = wrapper()|
 w();

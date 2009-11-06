@@ -328,7 +328,6 @@ instance, instead of the costly following program:
     x = i
   };
 };
-[00000001:warning] !!! expensive feature: at (<expression>), prefer at (<event>)
 [00000003] *** 0
 [00000003] *** 1
 [00000003] *** one!
@@ -389,7 +388,6 @@ creation of a new slot.
 
 \begin{urbiscript}[firstnumber=last]
 waituntil(Object.hasSlot("foo")) | echo (Object.foo),
-[00000010:warning] !!! expensive feature: waituntil (<expression>), prefer waituntil (<event>)
 var Object.foo = "foo"|;
 [00000003] *** foo
 \end{urbiscript}
