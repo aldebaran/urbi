@@ -1059,9 +1059,13 @@ namespace urbi
          "  var __ver__ = 2;\n"
          "  {var __ver__ = 1};\n"
          "  var " VERSION_TAG ";\n"
-         "  if (__ver__ == 2)\n"
+         "  if (__ver__ == 1)\n"
+         "  " VERSION_TAG " << system.version\n"
+         "  else\n"
+         "  {\n"
          "    " VERSION_TAG " = Channel.new(\"" VERSION_TAG "\");\n"
-         "  " VERSION_TAG " << system.version;\n"
+         "    " VERSION_TAG " << System.version;\n"
+         "  };\n"
          "};\n"
          SYNCLINE_POP());
 # undef VERSION_TAG
