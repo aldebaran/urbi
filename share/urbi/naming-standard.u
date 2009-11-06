@@ -4,32 +4,39 @@ do (Global)
 {
   /// Implementations of a Facet must inherit from the appropriate class.
   class Facet {} |
+
   do (Facet) {
-    class Battery               :Facet   {var _isFacet = true};
-    class Motor                 :Facet   {var _isFacet = true};
-    class LinearMotor           :Motor   {var _isFacet = true};
-    class RotationalMotor       :Motor   {var _isFacet = true};
-    class VideoIn               :Facet   {var _isFacet = true};
-    class AudioIn               :Facet   {var _isFacet = true};
-    class AudioOut              :Facet   {var _isFacet = true};
-    class Identity              :Facet   {var _isFacet = true};
-    class Network               :Facet   {var _isFacet = true};
-    class Sensor                :Facet   {var _isFacet = true};
-    class DistanceSensor        :Sensor  {var _isFacet = true};
-    class TouchSensor           :Sensor  {var _isFacet = true};
-    class AccelerationSensor    :Sensor  {var _isFacet = true};
-    class GyroSensor            :Sensor  {var _isFacet = true};
-    class TemperatureSensor     :Sensor  {var _isFacet = true};
-    class Mobile                :Facet   {var _isFacet = true};
-    class Tracker               :Facet   {var _isFacet = true};
-    class BlobDetector          :Facet   {var _isFacet = true};
-    class TextToSpeech          :Facet   {var _isFacet = true};
-    class SpeechRecognizer      :Facet   {var _isFacet = true};
-    /// Return the list of all facets implemented by this object.
+    class Battery           : Facet  {};
+    class Motor             : Facet  {};
+    class LinearMotor       : Motor  {};
+    class RotationalMotor   : Motor  {};
+    class VideoIn           : Facet  {};
+    class AudioIn           : Facet  {};
+    class AudioOut          : Facet  {};
+    class Identity          : Facet  {};
+    class Network           : Facet  {};
+    class Sensor            : Facet  {};
+    class DistanceSensor    : Sensor {};
+    class TouchSensor       : Sensor {};
+    class AccelerationSensor: Sensor {};
+    class GyroSensor        : Sensor {};
+    class TemperatureSensor : Sensor {};
+    class Mobile            : Facet  {};
+    class Tracker           : Facet  {};
+    class BlobDetector      : Facet  {};
+    class TextToSpeech      : Facet  {};
+    class SpeechRecognizer  : Facet  {};
+
     function facets()
     {
-      var res = allProtos.filter(function(x) { x.hasLocalSlot("_isFacet")}) |
-      res.filter(function(x) { !res.any(function(y) { x!==y && y.isA(x)})})
+      function isFacet(o)
+      {
+        var name = o.type;
+        return Facet.hasSlot(name) && Facet.getSlot(name) === o
+      };
+
+      var res = allProtos.filter(isFacet) |
+      res.filter(function (x) { !res.any(function(y) { x !== y && y.isA(x)})})
     };
   };
 };
