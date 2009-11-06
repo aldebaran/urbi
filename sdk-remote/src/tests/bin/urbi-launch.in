@@ -32,6 +32,12 @@ case " $* " in
       libuobjectdir=$abs_top_builddir/../src
       # Be sure to find the shipped Urbi files.
       URBI_PATH="$abs_top_srcdir/../share:$abs_top_builddir/../share:$URBI_PATH"
+      case $(uname -o 2>/dev/null) in
+        (Cygwin)
+          # We use colon as separators, not semicolon.
+          URBI_PATH=$(cygpath -p -w "$URBI_PATH" | sed -e 's/;/:/g')
+          ;;
+      esac
       export URBI_PATH
     fi
     ;;
