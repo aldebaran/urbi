@@ -41,7 +41,7 @@ esac
 
 if test -n "$libuobjectdir"; then
   libuobject=$libuobjectdir/libuobject
-  case $(uname -o) in
+  case $(uname -o 2>/dev/null) in
     (Cygwin)
       # Using slashes is not a problem.  But not starting with the
       # drive letter is.
