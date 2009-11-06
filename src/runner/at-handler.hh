@@ -27,7 +27,7 @@ namespace runner
   /// \param clause A lambda representing the code to run when the \a condition
   ///        becomes true, or nil. This lambda must start a detached task.
   ///
-  /// \param con_leave A lambda representing the code to run when \a condition
+  /// \param on_leave A lambda representing the code to run when \a condition
   ///        becomes false, or nil. This lambda must start a detach task.
   void register_at_job(const runner::Interpreter& starter,
 		       const rObject& condition,
