@@ -254,7 +254,8 @@ namespace urbi
     // Detect shebang mode
     if (!args.empty() && !args[0].empty() && args[0][1] == '-'
         && args[0].find_first_of(' ') != args[0].npos)
-    { // All our arguments are in args[0]
+    {
+      // All our arguments are in args[0]
       std::string arg0(args[0]);
       libport::cli_args_type nargs;
       foreach(const std::string& arg, libport::make_tokenizer(arg0, " "))
@@ -278,13 +279,11 @@ namespace urbi
       arg_no_net("ignored for backward compatibility", "no-network", 'n');
 
     libport::OptionValue
-      arg_period   ("ignored for backward compatibility", "period", 'P'),
+      arg_period   ("ignored for backward compatibility", "period", 'p'),
       arg_port_file("write port number to the specified file.",
                     "port-file", 'w', "FILE"),
       arg_stack    ("set the job stack size in KB", "stack-size", 's', "SIZE");
 
-    libport::OptionValues
-      arg_exps("run expression", "expression", 'e', "EXP");
     libport::OptionsEnd arg_remaining(true);
     {
       libport::OptionParser parser;
