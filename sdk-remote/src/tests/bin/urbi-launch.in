@@ -40,7 +40,14 @@ case " $* " in
 esac
 
 if test -n "$libuobjectdir"; then
-  set x -c "$libuobjectdir/libuobject" "$@"
+  libuobject=$libuobjectdir/libuobject
+  case $(uname -o) in
+    (Cygwin)
+      # Using slashes is not a problem.  But not starting with the
+      # drive letter is.
+      libuobject=$(cygpath -w "$libuobject");;
+  esac
+  set x -c "$libuobject" "$@"
   shift
 fi
 
