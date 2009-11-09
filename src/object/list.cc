@@ -235,7 +235,7 @@ namespace urbi
       // copy.
       value_type l(content_);
 
-      sched::Job::ChildrenCollecter children(&r, l.size());
+      sched::Job::ChildrenCollector children(&r, l.size());
       sched::jobs_type jobs;
 
       foreach (const rObject& o, l)

@@ -180,7 +180,7 @@ namespace runner
   Interpreter::scheduling_error(const std::string& msg)
   {
     libport::Finally finally;
-    sched::Job::ChildrenCollecter children(this, 1);
+    sched::Job::ChildrenCollector children(this, 1);
     // We may have a situation here. If the stack space is running
     // near exhaustion, we cannot reasonably hope that we will get
     // enough stack space to build an exception, which potentially

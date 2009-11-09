@@ -108,7 +108,7 @@ namespace urbi
       // So that it will resist to the call to yield_until_terminated,
       // and will be reclaimed at the end of the scope.
       sched::rJob job = sub;
-      sched::Job::ChildrenCollecter children(&run, 1);
+      sched::Job::ChildrenCollector children(&run, 1);
       run.register_child(sub, children);
       sub->start_job();
       try
