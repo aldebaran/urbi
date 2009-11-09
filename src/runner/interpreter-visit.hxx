@@ -709,19 +709,19 @@ namespace runner
         if (!operator()(e->test_get().get())->as_bool())
           break;
         if (e->flavor_get() == ast::flavor_comma)
-          {
-            // The new runners are attached to the same tags as we are.
-            sched::rJob subrunner =
-              new Interpreter(*this,
-                              operator()(e->body_get().get()),
+        {
+          // Collect jobs that are already terminated.
+          collector.collect();
+          // The new runners are attached to the same tags as we are.
+          sched::rJob subrunner =
+            new Interpreter(*this,
+                            operator()(e->body_get().get()),
                             libport::Symbol::fresh(name_get()));
-            // If the subrunner throws an exception, propagate it here
-            // ASAP.
-            register_child(subrunner, collector);
-            subrunner->start_job();
-            std::cerr << collector << std::endl;
-            collector.collect();
-          }
+          // If the subrunner throws an exception, propagate it here
+          // ASAP.
+          register_child(subrunner, collector);
+          subrunner->start_job();
+        }
         else
           e->body_get()->eval(*this);
       }
