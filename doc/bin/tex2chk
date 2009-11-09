@@ -258,47 +258,30 @@ sub process_file ($)
   local $_;
   my $test;
   my $line;
+  # The current environment: urbiassert or urbiscript or undef.
+  my $environment;
   while ($_ = $in->getline)
   {
-    if (/^\\begin{urbiscript}/ .. /^\\end{urbiscript}/)
-    {
-      if (/^\\begin{urbiscript}/)
+    if (!defined $environment
+        && /^\\begin{(urbiassert|urbiscript)}/)
       {
+        $environment = $1;
         # Issue a #line for the first line of Urbi, not the LaTeX line.
         $line = $in->input_line_number + 1;
         $test = $_;
       }
-      elsif (!/^\\end{urbiscript}/)
-      {
-        $test .= $_;
-      }
-      else # \end{urbiscript}
+    elsif (defined $environment
+           && /^\\end{$environment}/)
       {
         $test .= $_;
         my %res = process_listing $file, $line, $test;
         register ($file, $line, %res);
+        $environment = undef;
       }
-    }
-    # FIXME: Huge code duplication, but how to factor?
-    elsif (/^\\begin{urbiassert}/ .. /^\\end{urbiassert}/)
-    {
-      if (/^\\begin{urbiassert}/)
-      {
-        # Issue a #line for the first line of Urbi, not the LaTeX line.
-        $line = $in->input_line_number + 1;
-        $test = $_;
-      }
-      elsif (!/^\\end{urbiassert}/)
+    elsif (defined $environment)
       {
         $test .= $_;
       }
-      else # \end{urbiassert}
-      {
-        $test .= $_;
-        my %res = process_listing $file, $line, $test;
-        register ($file, $line, %res);
-      }
-    }
   }
 }
 
