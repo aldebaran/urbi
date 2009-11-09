@@ -284,11 +284,7 @@ namespace urbi
     rList
     List::insert(const rFloat& idx, const rObject& elt)
     {
-      size_type i = index(idx);
-      value_type::iterator b = content_.begin();
-      while(i--)
-        ++b;
-      content_.insert(b, elt);
+      content_.insert(boost::next(content_.begin(), index(idx)), elt);
       return this;
     }
 
