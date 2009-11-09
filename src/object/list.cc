@@ -235,8 +235,7 @@ namespace urbi
       // copy.
       value_type l(content_);
 
-      sched::Job::ChildrenCollector children(&r, l.size());
-      sched::jobs_type jobs;
+      sched::Job::Collector collector(&r, l.size());
 
       foreach (const rObject& o, l)
       {
@@ -246,13 +245,12 @@ namespace urbi
           new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
                                   f, SYMBOL(each_AMPERSAND), args);
         r.register_child(job, children);
-        jobs.push_back(job);
         job->start_job();
       }
 
       try
       {
-        r.yield_until_terminated(jobs);
+        r.yield_until_terminated(collector);
       }
       catch (const sched::ChildException& ce)
       {

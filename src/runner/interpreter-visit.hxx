@@ -69,10 +69,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
   {
-    Job::ChildrenCollector collector(this, e->children_get().size() - 1);
-
-    // Collect all subrunners
-    sched::jobs_type jobs;
+    Job::Collector collector(this, e->children_get().size() - 1);
 
     // Create separate runners for every child but the first
     foreach (const ast::rConstExp& child,
@@ -82,7 +79,6 @@ namespace runner
         new Interpreter(*this, operator()(child.get()),
                         libport::Symbol::fresh(name_get()));
       register_child(job, collector);
-      jobs.push_back(job);
       job->start_job();
     }
 
@@ -99,7 +95,7 @@ namespace runner
       args.push_back(rObject());
       apply_urbi(code, libport::Symbol::make_empty(), args, 0);
       // Wait for all other jobs to terminate.
-      yield_until_terminated(jobs);
+      yield_until_terminated(collector);
     }
     catch (const sched::ChildException& ce)
     {
@@ -367,10 +363,7 @@ namespace runner
         return visit(stmt);
     }
 
-    // List of runners for Stmt flavored by a comma.
-    sched::jobs_type runners;
-
-    Job::ChildrenCollector collector(this, 0);
+    Job::Collector collector(this);
 
     // Initialize the result to void to account for a Nary which would
     // contain only comma-terminated statements.
@@ -405,10 +398,7 @@ namespace runner
           // toplevel, we do not even have to register it as a
           // subrunner.
           if (!e->toplevel_get())
-          {
             register_child(subrunner, collector);
-            runners.push_back(subrunner);
-          }
           subrunner->start_job();
         }
         else
@@ -420,7 +410,7 @@ namespace runner
       // If we get a scope tag, stop the runners tagged with it.
       if (const sched::rTag& tag = scope_tag_get())
         tag->stop(scheduler_get(), object::void_class);
-      yield_until_terminated(runners);
+      yield_until_terminated(collector);
     }
     catch (const sched::ChildException& ce)
     {
@@ -698,7 +688,7 @@ namespace runner
     const bool must_yield = e->flavor_get() != ast::flavor_pipe;
     bool tail = false;
 
-    Job::ChildrenCollector collector(this, 0);
+    Job::Collector collector(this);
 
     try
     {

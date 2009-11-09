@@ -180,7 +180,7 @@ namespace runner
   Interpreter::scheduling_error(const std::string& msg)
   {
     libport::Finally finally;
-    sched::Job::ChildrenCollector children(this, 1);
+    sched::Job::Collector collector(this);
     // We may have a situation here. If the stack space is running
     // near exhaustion, we cannot reasonably hope that we will get
     // enough stack space to build an exception, which potentially
@@ -196,7 +196,7 @@ namespace runner
 		      SchedulingError->slot_get(SYMBOL(throwNew)),
 		      SYMBOL(SchedulingError),
 		      args);
-    register_child(child, children);
+    register_child(child, collector);
     child->start_job();
 
     try
