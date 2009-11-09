@@ -69,7 +69,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
   {
-    Job::ChildrenCollector children(this, e->children_get().size() - 1);
+    Job::ChildrenCollector collector(this, e->children_get().size() - 1);
 
     // Collect all subrunners
     sched::jobs_type jobs;
@@ -81,7 +81,7 @@ namespace runner
       Interpreter* job =
         new Interpreter(*this, operator()(child.get()),
                         libport::Symbol::fresh(name_get()));
-      register_child(job, children);
+      register_child(job, collector);
       jobs.push_back(job);
       job->start_job();
     }
@@ -370,7 +370,7 @@ namespace runner
     // List of runners for Stmt flavored by a comma.
     sched::jobs_type runners;
 
-    Job::ChildrenCollector children(this, 0);
+    Job::ChildrenCollector collector(this, 0);
 
     // Initialize the result to void to account for a Nary which would
     // contain only comma-terminated statements.
@@ -406,7 +406,7 @@ namespace runner
           // subrunner.
           if (!e->toplevel_get())
           {
-            register_child(subrunner, children);
+            register_child(subrunner, collector);
             runners.push_back(subrunner);
           }
           subrunner->start_job();
@@ -698,8 +698,7 @@ namespace runner
     const bool must_yield = e->flavor_get() != ast::flavor_pipe;
     bool tail = false;
 
-    sched::jobs_type runners;
-    Job::ChildrenCollector children(this, 0);
+    Job::ChildrenCollector collector(this, 0);
 
     try
     {
@@ -718,9 +717,10 @@ namespace runner
                             libport::Symbol::fresh(name_get()));
             // If the subrunner throws an exception, propagate it here
             // ASAP.
-            register_child(subrunner, children);
-            runners.push_back(subrunner);
+            register_child(subrunner, collector);
             subrunner->start_job();
+            std::cerr << collector << std::endl;
+            collector.collect();
           }
         else
           e->body_get()->eval(*this);
@@ -730,7 +730,7 @@ namespace runner
     {
       ce.rethrow_child_exception();
     }
-    yield_until_terminated(runners);
+    yield_until_terminated(collector);
 
     return object::void_class;
   }
