@@ -213,7 +213,8 @@ namespace urbi
     system_searchPath()
     {
       List::value_type res;
-      foreach (const libport::path& p, urbiserver->search_path.search_path_get())
+      foreach (const libport::path& p,
+               urbiserver->search_path.search_path_get())
         res.push_back(new Path(p));
       return res;
     }

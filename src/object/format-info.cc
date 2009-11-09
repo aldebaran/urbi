@@ -260,15 +260,15 @@ namespace urbi
                                  SYMBOL(updateHook),                    \
                                  make_primitive(&FormatInfo::update_hook))
 
-      DECLARE(width);
-      DECLARE(precision);
-      DECLARE(alt);
-      DECLARE(prefix);
       DECLARE(alignment);
-      DECLARE(uppercase);
+      DECLARE(alt);
       DECLARE(group);
       DECLARE(pad);
+      DECLARE(precision);
+      DECLARE(prefix);
       DECLARE(spec);
+      DECLARE(uppercase);
+      DECLARE(width);
 
 #undef DECLARE
     }

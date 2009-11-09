@@ -8,8 +8,8 @@
  * See the LICENSE file for more information.
  */
 /**
- ** \file object/global-class.cc
- ** \brief Creation of the URBI object global.
+ ** \file object/global.cc
+ ** \brief Creation of the Urbi object Global.
  */
 
 #include <object/format-info.hh>

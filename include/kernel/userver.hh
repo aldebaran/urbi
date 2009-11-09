@@ -124,7 +124,8 @@ namespace kernel
     virtual std::string find_file(const libport::path& path) const;
 
     /// Type of UCommandQueue
-    enum QueueType {
+    enum QueueType
+    {
       /// The UComandQueue contains URBI code.
       QUEUE_URBI,
       /// THe UCommandQueu contains data, not to be messed with.
@@ -266,7 +267,7 @@ namespace kernel
     /// Stops all commands in all connections.
     bool stopall;
 
-    /// Returns 1 if current thread is different from server thread Id.
+    /// True iff current thread is different from server thread Id.
     bool isAnotherThread() const;
 
   private:
