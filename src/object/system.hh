@@ -29,7 +29,6 @@ namespace urbi
     ///
     /// Used internally and from the debugging routines.
     ///
-    /// \param r   runner that must be an Interpreter.
     /// \param p   the parser result.
     /// \param fun name of the caller.
     /// \param e   exception to raise on error.
