@@ -79,21 +79,21 @@ getenv("UndefinedEnvironmentVariable").isNil;
   Load the \us file \var{file}.  Throw a \lstinline|FileNotFound|
   error if the file cannot be found.  Return the last value of the
   file.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiassert}[firstnumber=last]
 // Create the file ``123.u'' that contains exactly ``123;''.
-assert(System.system("echo '123;' >123.u") == 0);
-assert(loadFile("123.u") == 123);
-\end{urbiscript}
+System.system("echo '123;' >123.u") == 0;
+loadFile("123.u") == 123;
+\end{urbiassert}
 
 \item \lstinline|load(\var{file})|\\
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}),
   and load it.  Throw a \lstinline|FileNotFound| error if the file
   cannot be found.  Return the last value of the file.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiassert}[firstnumber=last]
 // Create the file ``123.u'' that contains exactly ``123;''.
-assert(System.system("echo '123;' >123.u") == 0);
-assert(load("123.u") == 123);
-\end{urbiscript}
+System.system("echo '123;' >123.u") == 0;
+load("123.u") == 123;
+\end{urbiassert}
 
 \item \lstinline|loadLibrary(\var{library})|\\
   Load the library \var{library}, to be found in the
@@ -114,12 +114,12 @@ assert(load("123.u") == 123);
   \var{channelName} is non-empty, announce on it that \var{file} is
   about to be loaded, and load it.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiassert}[firstnumber=last]
 // Create the file ``123.u'' that contains exactly ``123;''.
-assert(System.system("echo '123;' >123.u") == 0);
-assert(maybeLoad("123.u") == 123);
-assert(maybeLoad("u.123").isVoid);
-\end{urbiscript}
+System.system("echo '123;' >123.u") == 0;
+maybeLoad("123.u") == 123;
+maybeLoad("u.123").isVoid;
+\end{urbiassert}
 
 \item \lstinline|Platform|\\
   See \refObject{System.Platform}
@@ -145,21 +145,21 @@ searchFile("123.u") == Path.cwd / Path.new("123.u");
     undefining.
   \end{windows}
 
-\begin{urbiscript}[firstnumber=last]
-assert(setenv("MyVar", 12) == "12");
-assert(getenv("MyVar") == "12");
+\begin{urbiassert}[firstnumber=last]
+setenv("MyVar", 12) == "12";
+getenv("MyVar") == "12";
 
 // A child process that uses the environment variable.
-assert(System.system("exit $MyVar") >> 8 ==
-       {if (Platform.isWindows) 0 else 12});
-assert(setenv("MyVar", 23) == "23");
-assert(System.system("exit $MyVar") >> 8 ==
-       {if (Platform.isWindows) 0 else 23});
+System.system("exit $MyVar") >> 8 ==
+       {if (Platform.isWindows) 0 else 12};
+setenv("MyVar", 23) == "23";
+System.system("exit $MyVar") >> 8 ==
+       {if (Platform.isWindows) 0 else 23};
 
 // Defining to empty is not undefining, unless you are on Windows.
-assert(setenv("MyVar", "") == "");
-assert(getenv("MyVar").isNil == Platform.isWindows);
-\end{urbiscript}
+setenv("MyVar", "") == "";
+getenv("MyVar").isNil == Platform.isWindows;
+\end{urbiassert}
 
 \item \lstinline|scopeTag|\\
   Return a fresh Tag whose \lstinline|stop| will be invoked a the end

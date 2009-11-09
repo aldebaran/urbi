@@ -44,9 +44,12 @@ sub transform_env ($$)
   $opt ||= "";
   print STDERR "OPT:{$opt}\n";
   my $env = 'urbiscript';
-  # If all the lines are assertions, then replace with an assertion
-  # frame.
-  if ($body =~ /^(?:assert\s*\(($balanced)\);\s*)*$/s)
+  # If all the lines are assertions or comments, then replace with an
+  # assertion frame.
+  if ($body =~ /^(?:
+                    assert\s*\($balanced\);\s*
+                  | \s*\/\/[^\n]*\n
+                  )*$/sx)
   {
     print STDERR "{{{", $body, "}}}\n";
     $body =~ s{assert\s*\(($balanced)\);}{$1;}g;
