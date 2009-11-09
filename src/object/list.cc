@@ -244,7 +244,7 @@ namespace urbi
         sched::rJob job =
           new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
                                   f, SYMBOL(each_AMPERSAND), args);
-        r.register_child(job, children);
+        r.register_child(job, collector);
         job->start_job();
       }
 
