@@ -1,7 +1,7 @@
                                                 -*- outline -*-
 
-This package contains the urbiScript Development Kit.  The following
-documents will guide you to install and run Urbi.
+This package contains the Urbi Software Development Kit.  The
+following documents will guide you to install and run Urbi.
 
 * README.txt
 These notes.
@@ -10,7 +10,7 @@ These notes.
 A list of changes since the previous releases.
 
 * share/doc/urbi-sdk.pdf
-The Urbi 2 documentation.  Includes:
+The complete Urbi SDK documentation.  Includes:
 
 ** A tutorial about urbiScript
 
