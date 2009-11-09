@@ -56,7 +56,7 @@ namespace kernel
   class URBI_SDK_API UServer
   {
   public:
-    UServer(const char* mainName);
+    UServer();
     virtual ~UServer();
 
   public:
@@ -258,10 +258,6 @@ namespace kernel
     void work_handle_stopall_();
     void work_test_cpuoverload_();
     /// \}
-
-  private:
-    /// Name of the main device.
-    std::string mainName_;
 
   public:
     /// Stops all commands in all connections.

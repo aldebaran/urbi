@@ -103,7 +103,7 @@ namespace kernel
   | UServer.  |
   `----------*/
 
-  UServer::UServer(const char* mainName)
+  UServer::UServer()
     : mode_(mode_kernel)
     , search_path(boost::assign::list_of
                   (std::string(libport::xgetenv("URBI_PATH")))
@@ -112,7 +112,6 @@ namespace kernel
                   ":")
     , scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
                                                   boost::ref(*this))))
-    , mainName_(mainName)
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
     , thread_id_(pthread_self())

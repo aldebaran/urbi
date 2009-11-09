@@ -75,7 +75,7 @@ class ConsoleServer
 {
 public:
   ConsoleServer(bool fast)
-    : kernel::UServer("console")
+    : kernel::UServer()
     , libport::Socket(kernel::UServer::get_io_service())
     , fast(fast)
     , ctime(0)
