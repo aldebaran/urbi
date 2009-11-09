@@ -576,10 +576,11 @@ namespace urbi
 
   libport::Socket*
   USyncClient::onAccept(connect_callback_type connectCallback,
-          size_t buflen,
-          bool startCallbackThread)
+                        size_t buflen,
+                        bool startCallbackThread)
   {
-    return new USyncClient("", 0, buflen, USyncClient::options()
+    return new USyncClient("", 0, buflen,
+                           USyncClient::options()
                            .startCallbackThread(startCallbackThread)
                            .connectCallback(connectCallback));
   }

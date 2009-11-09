@@ -62,12 +62,21 @@ namespace urbi
     typedef UClient super_type;
     typedef super_type::error_type error_type;
 
+    /// Option structure for USyncClient construction.
+    ///
+    /// In addition to UClient::options, provides:
+    /// - startCallbackThread
+    /// - connectCallback.
     struct URBI_SDK_API options
       : public super_type::options
     {
       options();
+      /// If true, create a thread dedicated to the processing of
+      /// incoming messages. If false, it is the responsibility of the
+      /// user to regularly call processEvents().  Defaults to true.
       UCLIENT_OPTION(bool, startCallbackThread);
       /// Ignore host and port if set, do not connect or listen.
+      /// Called when connection is established.
       UCLIENT_OPTION(connect_callback_type, connectCallback);
     };
 
@@ -76,11 +85,7 @@ namespace urbi
      *  \param host    The host to connect to.
      *  \param port    the port number to connect to, defaults to URBI_PORT.
      *  \param buflen  Size of reception buffer, defaults to URBI_BUFLEN.
-     *  \param server  If true, listen for an incoming connection from an
-     *                  urbi server instead of connecting.
-     *  \param startCallbackThread Create a thread dedicated to the processing
-     *    of incoming messages. If false, it is the responsibility of the user
-     *    to regularly call processEvents().
+     *  \param opt     Parameters of this USyncClient.
      */
     USyncClient(const std::string& host,
 		unsigned port = URBI_PORT,
