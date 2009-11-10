@@ -215,17 +215,22 @@ for instance.  They are listed in \autoref{tab:keywords}.
 followed by an angle unit. They are simply equivalent to the same
 float, expressed in radians. For instance, \lstinline|180deg| (180
 degrees) is equal to \lstinline|pi|. Available units and their
-equivalent are shown below.
+equivalent are presented in \autoref{tab:angle}.
 
-\begin{tabular}{|c|c|c|}
-  \hline
-  unit        & abbreviation & equivalence for $n$  \\
-  \hline
-  radian      & rad          & $n$         \\
-  degree      & deg          & $n / 180 * \pi$        \\
-  grad        & grad         & $n / 200 * \pi$        \\
-  \hline
-\end{tabular}
+\begin{table}[\floatposh]
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    unit        & abbreviation & equivalence for $n$  \\
+    \hline
+    radian      & rad          & $n$         \\
+    degree      & deg          & $n / 180 * \pi$        \\
+    grad        & grad         & $n / 200 * \pi$        \\
+    \hline
+  \end{tabular}
+  \caption{Angle units}
+  \label{tab:angle}
+\end{table}
 
 \begin{urbiassert}[firstnumber=last]
 pi == 180deg;
@@ -238,20 +243,25 @@ pi == 200grad;
 followed by a time unit. They are simply equivalent to the same float,
 expressed in seconds. For instance, \lstinline|1s 1ms|, which stands
 for ``one second and one millisecond'', is strictly equivalent to
-\lstinline|1.0001|. Available units and their equivalent are listed
-below.
+\lstinline|1.0001|. Available units and their equivalent are presented
+in \autoref{tab:duration}.
 
-\begin{tabular}{|c|c|c|}
-  \hline
-  unit        & abbreviation & equivalence for $n$  \\
-  \hline
-  millisecond & ms           & $n / 1000$         \\
-  second      & s            & $n$                \\
-  minute      & mn           & $n \times 60$           \\
-  hour        & h            & $n \times 60 \times 60$      \\
-  day         & d            & $n \times 60 \times 60 \times 24$ \\
-  \hline
-\end{tabular}
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    unit        & abbreviation & equivalence for $n$  \\
+    \hline
+    millisecond & ms           & $n / 1000$         \\
+    second      & s            & $n$                \\
+    minute      & mn           & $n \times 60$           \\
+    hour        & h            & $n \times 60 \times 60$      \\
+    day         & d            & $n \times 60 \times 60 \times 24$ \\
+    \hline
+  \end{tabular}
+  \caption{Duration units}
+  \label{tab:duration}
+\end{table}
 
 \begin{urbiassert}[firstnumber=last]
 1d == 24h;
@@ -301,35 +311,39 @@ empty list of arbitrary expressions enclosed in square brackets
 \dfn{String} literals are enclosed in double quotes (\lstinline|"|)
 and can contain arbitrary characters, which stand for themselves, with
 the exception of the escape character, backslash (\lstinline|\|), see
-below.  Backslash introduces the following escapes:
+below.  The escapes sequences are defined in \autoref{tab:escapes}.
 
-\noindent
-\begin{tabular}{|c|p{.7\linewidth}|}
-  \hline
-  \lstinline|\\| & backslash             \\
-  \lstinline|\a| & bell ring             \\
-  \lstinline|\b| & backspace             \\
-  \lstinline|\f| & form feed             \\
-  \lstinline|\n| & line feed             \\
-  \lstinline|\r| & carriage return       \\
-  \lstinline|\t| & tabulation            \\
-  \lstinline|\v| & vertical tabulation   \\
+\begin{table}[\floatposh]
+  \centering
+  \begin{tabular}{|c|p{.6\linewidth}|}
+    \hline
+    \lstinline|\\| & backslash             \\
+    \lstinline|\a| & bell ring             \\
+    \lstinline|\b| & backspace             \\
+    \lstinline|\f| & form feed             \\
+    \lstinline|\n| & line feed             \\
+    \lstinline|\r| & carriage return       \\
+    \lstinline|\t| & tabulation            \\
+    \lstinline|\v| & vertical tabulation   \\
 
-  \lstinline|\[0-7]{3}|
-  & eight-bit character corresponding to a three-digit octal number.
-  For instance, \lstinline|\000| and \lstinline|177|. \\
+    \lstinline|\[0-7]{3}|
+    & eight-bit character corresponding to a three-digit octal number.
+    For instance, \lstinline|\000| and \lstinline|177|. \\
 
-  \lstinline|\x[0-9a-fA-F]{2}|
-  & eight-bit character corresponding to a two-digit hexadecimal
-  number.  For instance, \lstinline|0xfF|. \\
+    \lstinline|\x[0-9a-fA-F]{2}|
+    & eight-bit character corresponding to a two-digit hexadecimal
+    number.  For instance, \lstinline|0xfF|. \\
 
-  \lstinline|\B(\var{length})(\var{content})|
-  & binary blob.  A \var{length}-long sequence of verbatim
-  \var{content}.  \var{length} is expressed in decimal.  \var{content}
-  is not interpreted in any way.  The parentheses are part of the syntax,
-  they are mandatory.  For instance \lstinline|\B(2)(\B)|\\
-  \hline
-\end{tabular}
+    \lstinline|\B(\var{length})(\var{content})|
+    & binary blob.  A \var{length}-long sequence of verbatim
+    \var{content}.  \var{length} is expressed in decimal.  \var{content}
+    is not interpreted in any way.  The parentheses are part of the syntax,
+    they are mandatory.  For instance \lstinline|\B(2)(\B)|\\
+    \hline
+  \end{tabular}
+  \caption{String escapes}
+  \label{tab:escape}
+\end{table}
 
 Consecutive string literals are glued together into a unique string.
 This is useful to split large strings into chunks that fit usual
@@ -441,7 +455,8 @@ documentation of the classes that provide them.
 \subsubsection{Arithmetic operators}
 
 \us supports classic \dfn{arithmetic operators}, with the classic
-semantics on numeric values. See the table and the listing below.
+semantics on numeric values. See \autoref{tab:arith} and the listing
+below.
 
 \begin{table}[\floatposh]
   \centering
@@ -463,29 +478,25 @@ semantics on numeric values. See the table and the listing below.
     \hline
   \end{tabular}
   \caption{Arithmetic operators}
+  \label{tab:arith}
 \end{table}
 
-\begin{urbiscript}[firstnumber=last]
-1 + 1;
-[00000000] 2
-1 - 2;
-[00000000] -1
-2 * 3;
-[00000000] 6
-10 / 2;
-[00000000] 5
-2 ** 10;
-[00000000] 1024
--(1 + 2);
-[00000000] -3
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+   1 + 1 ==    2;
+   1 - 2 ==   -1;
+   2 * 3 ==    6;
+  10 / 2 ==    5;
+ 2 ** 10 == 1024;
+-(1 + 2) ==   -3;
+\end{urbiassert}
 
 \subsubsection{Assignment operators}
 
 \dfn{Assignment} in \us can be performed with the \lstinline|=|
 operator.  Shorthands such as \lstinline|+=| exist; they are not
 redefinable since they are equivalent to a regular assignment combined
-with another operator. See the table and the listing below.
+with another operator. See \autoref{tab:assignment} and the listing
+below.
 
 
 \begin{table}[\floatposh]
@@ -499,6 +510,7 @@ with another operator. See the table and the listing below.
     \hline
   \end{tabular}
   \caption{Assignment operators}
+  \label{tab:assignment}
 \end{table}
 \footnotetext{For object fields only. Assignment to local variables
   cannot be redefined. }
@@ -526,7 +538,8 @@ y;
 \subsubsection{Bitwise operators}
 
 \us features \dfn{bitwise operators}.  They are also used for other
-purpose than bit-related operations. See the table and the listing below.
+purpose than bit-related operations. See \autoref{tab:bitwise} and the
+listing below.
 
 \begin{table}[\floatposh]
   \centering
@@ -541,14 +554,13 @@ purpose than bit-related operations. See the table and the listing below.
     \hline
   \end{tabular}
   \caption{Bitwise operators}
+  \label{tab:bitwise}
 \end{table}
 
-\begin{urbiscript}[firstnumber=last]
-4 << 2;
-[00000000] 16
-4 >> 2;
-[00000000] 1
-\end{urbiscript}
+\begin{urbiassert}[firstnumber=last]
+4 << 2 == 16;
+4 >> 2 ==  1;
+\end{urbiassert}
 
 \subsubsection{Logical operators}
 
@@ -570,24 +582,21 @@ short-circuiting: their right-hand side is evaluated only if needed.
     \hline
   \end{tabular}
   \caption{Boolean operators}
+  \label{tab:boolean}
 \end{table}
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiassert}[firstnumber=last]
 true && true;
-[00000000] true
 true || false;
-[00000000] true
-!true;
-[00000000] false
+!true == false;
 true || (1 / 0);
-[00000000] true
-false && (1 / 0);
-[00000000] false
-\end{urbiscript}
+(false && (1 / 0)) == false;
+\end{urbiassert}
 
 \subsubsection{Comparison operators}
 
-\us supports classical \dfn{comparison operators}. See the table and the listing below.
+\us supports classical \dfn{comparison operators}. See
+\autoref{tab:comparison} and the listing below.
 
 \begin{table}[\floatposh]
   \centering
@@ -608,17 +617,24 @@ false && (1 / 0);
     \hline
   \end{tabular}
   \caption{Comparison operators}
+  \label{tab:comparison}
 \end{table}
 
 \begin{urbiscript}[firstnumber=last]
-assert(! (0 < 0));
-assert(  0 <= 0);
-assert(0 == 0);
-assert(! (0 === 0));
+assert
+{
+ ! (0 < 0);
+    0 <= 0;
+    0 == 0;
+   0 !== 0;
+};
 var z = 0;
 [00000000] 0
-assert(z === z);
-assert(! (z !== z));
+assert
+{
+  z === z;
+  ! (z !== z);
+};
 \end{urbiscript}
 
 \subsubsection{Miscellaneous operators}
@@ -630,8 +646,6 @@ arguments that will be passed to the \lstinline|'[]'| method of the
 targeted object.
 
 \begin{table}[\floatposh]
-  \caption{Miscellaneous operators}
-  \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
     \operatorhead
@@ -643,27 +657,34 @@ targeted object.
     \operatorsubass
     \hline
   \end{tabular}
+  \caption{Miscellaneous operators}
 \end{table}
 
 \begin{urbiscript}[firstnumber=last]
 // On lists.
 var l = [1, 2, 3, 4, 5];
 [00000000] [1, 2, 3, 4, 5]
-assert(l[0] == 1);
-assert(l[-1] == 5);
-assert((l[0] = 10) == 10);
-assert(l == [10, 2, 3, 4, 5]);
+assert
+{
+  l[0] == 1;
+  l[-1] == 5;
+  (l[0] = 10) == 10;
+  l == [10, 2, 3, 4, 5];
+};
 
 // On strings.
 var s = "abcdef";
 [00000005] "abcdef"
-assert(s[0] == "a");
-assert(s[1,3] == "bc");
-assert((s[1,3] = "foo") == "foo");
-assert(s == "afoodef");
+assert
+{
+  s[0] == "a";
+  s[1,3] == "bc";
+  (s[1,3] = "foo") == "foo";
+  s == "afoodef";
+};
 \end{urbiscript}
 
-\clearpage
+% \clearpage
 \subsubsection{All operators summary}
 
 \autoref{tab:operators-summary} is a summary of all operators, to
@@ -672,9 +693,6 @@ precedence. Groups of rows represent operators with the same
 precedence.
 
 \begin{table}[\floatposh]
-  \caption{Operators summary}
-  \label{tab:operators-summary}
-  \centering
   \begin{tabular}{|c|c|c|c|c|c|}
     \hline
     Operator               & Use                                    & Associativity
@@ -727,7 +745,8 @@ precedence.
     \operatordec
     \hline
   \end{tabular}
-
+  \caption{Operators summary}
+  \label{tab:operators-summary}
 \end{table}
 
 
