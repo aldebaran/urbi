@@ -274,13 +274,12 @@ namespace runner
       // cannot be passed to the << function.
       if (res != object::void_class)
       {
-        static bool toplevel_debug = getenv("TOPLEVEL_DEBUG");
-
         LIBPORT_DEBUG("toplevel: returning a result to the connection");
 
-        // Display the value using the topLevel channel.  If
-        // it is not (yet) defined, do nothing, unless the
-        // environment variable TOPLEVEL_DEBUG is set.
+        // Display the value using the topLevel channel.  If it is not
+        // (yet) defined, do nothing, unless this environment variable
+        // is set.
+        static bool toplevel_debug = getenv("URBI_TOPLEVEL");
         if (rSlot topLevel =
             object::global_class->slot_locate(SYMBOL(topLevel), false).second)
           topLevel->value()->call(SYMBOL(LT_LT), res);

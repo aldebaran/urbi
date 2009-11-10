@@ -12,6 +12,8 @@ Outline:
     How to set up the Autotools and the generated sources.
   * configuration
     How to run the GNU Build System (./configure && make).
+  * run
+    Various special environment variables.
   * test suites
     Various make checks.
   * FAQ
@@ -229,6 +231,41 @@ This will be simplified later.
 Should be straightforward.
 
   make -j3  (or more, distcc is your friend).
+
+* run
+
+There are some special variables in addition to the environment
+variables documented in the manual.
+
+** URBI_CONSOLE_MODE
+Skip lines in input that look like shell output.  A way to
+accept *.chk as input.
+
+** URBI_DESUGAR
+Display the desugared ASTs instead of the original one.
+
+** URBI_IGNORE_URBI_U
+Ignore failures (such as differences bw kernel revision and urbi.u
+revision) during the initialization.
+
+** URBI_LAUNCH
+The path the urbi-launch that urbi.exe will exec.
+
+** URBI_NO_ICE_CATCHER
+Don't try to catch SEGVs.
+
+** URBI_PARSER
+Enable Bison parser traces.
+
+** URBI_REPORT
+Display stats about execution rounds performed by the kernel.
+
+** URBI_SCANNER
+Enable Flex scanner traces.
+
+** URBI_TOPLEVEL
+Force the display the result of the top-level evaluation into the
+lobby.
 
 * test suites
 There are several test suites that will be run if you run "make check"

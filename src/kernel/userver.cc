@@ -92,9 +92,9 @@ namespace kernel
   void
   init_error()
   {
-    static bool ignore = getenv("IGNORE_URBI_U");
+    static bool ignore = getenv("URBI_IGNORE_URBI_U");
     if (!ignore)
-      urbi::Exit(EX_OSFILE, "set IGNORE_URBI_U to ignore.");
+      urbi::Exit(EX_OSFILE, "set URBI_IGNORE_URBI_U to ignore.");
   }
 
 
@@ -186,7 +186,7 @@ namespace kernel
     static void
     install_ice_catcher(void (*catcher)(int))
     {
-      if (getenv("NO_ICE_CATCHER"))
+      if (getenv("URBI_NO_ICE_CATCHER"))
         return;
       signal(SIGABRT, catcher);
       signal(SIGBUS,  catcher);
@@ -383,7 +383,7 @@ namespace kernel
   libport::utime_t
   UServer::work()
   {
-    static bool report = getenv("REPORT");
+    static bool report = getenv("URBI_REPORT");
     static int niter = 0;
     static libport::utime_t sumtime = 0, mintime = 10000000, maxtime = 0;
     static libport::utime_t rsumtime = 0, rmintime = 10000000, rmaxtime = 0;

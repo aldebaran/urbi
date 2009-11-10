@@ -28,15 +28,10 @@ namespace ast
   libport::intrusive_ptr<T>
   ParametricAst::result()
   {
-    static bool desugar = getenv("DESUGAR");
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
-    if (desugar)
-      LIBPORT_ECHO(*this);
     operator()(ast_.get());
     if (!loc_)
       result_->location_set(effective_location_);
-    if (desugar)
-      LIBPORT_ECHO(result_->location_get() << ": " << *result_);
     reset();
     return assert_exp(result_.unsafe_cast<T>());
   }

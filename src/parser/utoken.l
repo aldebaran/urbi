@@ -107,10 +107,10 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   }
 
 # define YY_USER_INIT                                                   \
-  static bool flex_debug = !!getenv("FLEX_DEBUG");                      \
+  static bool flex_debug = getenv("URBI_SCANNER");                      \
   yy_flex_debug = flex_debug;                                           \
                                                                         \
-  static bool uconsole_mode = getenv ("UCONSOLE_MODE");                 \
+  static bool uconsole_mode = getenv ("URBI_CONSOLE_MODE");             \
   sc_default = uconsole_mode ? SC_UCONSOLE : INITIAL;                   \
   if (up && up->meta())                                                 \
     sc_default = SC_META;                                               \

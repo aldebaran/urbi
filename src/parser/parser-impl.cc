@@ -39,7 +39,7 @@ namespace parser
   | ParserImpl.  |
   `-------------*/
 
-  static bool yydebug = getenv("YYDEBUG");
+  static bool yydebug = getenv("URBI_PARSER");
 
   ParserImpl::ParserImpl()
     : loc_()
