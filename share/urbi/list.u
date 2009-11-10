@@ -95,7 +95,7 @@ do (List)
   {
     var fr = 0 |
     var to = size |
-    if (call.argsCount >= 2) // FIXME: throw when > 2
+    if (2 <= call.argsCount) // FIXME: throw when > 2
     {
       fr = call.argAt(0)|
       to = call.argAt(1)

@@ -98,7 +98,7 @@ namespace urbi
       if (i < 0)
         i += content_.size();
       if (i < 0 || content_.size() <= static_cast<size_type>(i))
-        RAISE("invalid index: " + string_cast(idx->value_get()));
+        FRAISE("invalid index: %s", idx->value_get());
       return static_cast<size_type>(i);
     }
 
