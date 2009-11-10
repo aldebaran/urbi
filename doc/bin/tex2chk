@@ -28,6 +28,9 @@ my %by_name;
 # The name of the previous test.
 my $previous_label = undef;
 
+# move-if-changed.
+my $move_if_change = $ENV{move_if_change} || "move-if-change";
+
 # A regexp that matches 0 or more repetitions of either a
 # non-backtracking word with no parens/braces, or a braced group, or a
 # parenthezied group.
@@ -311,8 +314,8 @@ sub dump_chk ($)
         or die "cannot create $file.tmp: $!";
     print $out lineno(%c);
     print $out "$c{_contents}\n";
-    system ("$ENV{move_if_change} -s -I '^//' $file.tmp $file") == 0
-      or die "$ENV{move_if_change} failed: $?";
+    system ("$move_if_change -s -I '^//' $file.tmp $file") == 0
+      or die "$move_if_change failed: $?";
   }
 
   # Remove the old test files.
@@ -322,26 +325,49 @@ sub dump_chk ($)
   my $local_mk = "$dir/test.mk";
   my $mk = new IO::File ">$local_mk"
       or die "cannot create $local_mk: $!";
+
+  my @file = keys %file;
   # Do not include the ../.. stuff in the Makefile.
-  my @file = map { s,^$ENV{srcdir}/,,; $_ } keys %file;
+  map { s,^$ENV{srcdir}/,, } @file
+    if defined $ENV{srcdir};
+
   # Output in order.  It would be nice to have a combinaison between
   # alphabetical and numerical, so that abc-2 < abc-10.
   @file = sort @file;
   print $mk join ("\t\\\n  ", "TESTS += ", @file), "\n";
 }
 
-process_file $ARGV[0];
-# The directory we will output the tests in.
-my $dir = $ARGV[0];
-$dir =~ s,^$ENV{srcdir},$&/tests,;
-$dir =~ s/\.tex$//;
 
-if (! -d $dir)
+=item C<translate($input)>
+
+Read the LaTeX file C<$input>, and generate the corresponding
+directory (*.chk files, and test.mk).
+
+=cut
+
+sub translate ($)
 {
-  mkpath $dir
-    or die "cannot mkpath $dir: $!";
+  my ($input) = @_;
+  process_file $input;
+  # The directory we will output the tests in.
+  my $dir = $input;
+  $dir =~ s,^$ENV{srcdir},$&/tests,
+    if defined $ENV{srcdir};
+  $dir =~ s/\.tex$//;
+
+  if (! -d $dir)
+    {
+      mkpath $dir
+        or die "cannot mkpath $dir: $!";
+    }
+  dump_chk $dir;
 }
-dump_chk $dir;
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+map { translate $_; } @ARGV;
 
 ### Setup "GNU" style for perl-mode and cperl-mode.
 ## Local Variables:
@@ -359,3 +385,4 @@ dump_chk $dir;
 ## cperl-merge-trailing-else: nil
 ## cperl-continued-statement-offset: 2
 ## End:
+
