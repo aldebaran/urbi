@@ -121,7 +121,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   {                                                                     \
     init = true;                                                        \
     if (uconsole_mode)                                                  \
-      std::cerr << "Message from the scanner: UCONSOLE_MODE enabled."   \
+      std::cerr << "Message from the scanner: URBI_CONSOLE_MODE enabled." \
                 << std::endl;                                           \
   }                                                                     \
                                                                         \
