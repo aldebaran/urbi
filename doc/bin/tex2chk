@@ -1,18 +1,44 @@
 #! /usr/bin/perl -w
 
-# Read a LaTeX file, and extract chk files for each urbiscript
-# environment listing.  The label is used to name the created chk
-# file.  If there is no label, FILE:LINE is used to name the file.
-#
-# lstlisting has a notion of split listing, using the attribute "name"
-# to decide how pieces must be glued together (this is used when
-# numbering).  Listings with the same "name" are glued togeter.  This
-# is especially needed when a listing uses objects defined in earlier
-# listings.
-#
-# Another means to glue together urbiscript snippets is to use the
-# attribute firstnumber=last in the snippet that should be fused with
-# the previous one.
+=head1 NAME
+
+=head1 SYNOPSIS
+
+  git-version-gen [OPTIONS...]
+
+=head1 DESCRIPTION
+
+Read a LaTeX file, and extract chk files for each urbiscript
+environment listing.  The label is used to name the created chk
+file.  If there is no label, FILE:LINE is used to name the file.
+
+lstlisting has a notion of split listing, using the attribute "name"
+to decide how pieces must be glued together (this is used when
+numbering).  Listings with the same "name" are glued togeter.  This
+is especially needed when a listing uses objects defined in earlier
+listings.
+
+Another means to glue together urbiscript snippets is to use the
+attribute firstnumber=last in the snippet that should be fused with
+the previous one.
+
+=head1 OPTIONS
+
+General options:
+
+=over 4
+
+=item B<-l>, B<--no-lines>
+
+Don't generate the special //#line lines.
+
+=back
+
+=head1 FUNCTIONS
+
+=over 4
+
+=cut
 
 use strict;
 use English;
@@ -30,6 +56,12 @@ my $previous_label = undef;
 
 # move-if-changed.
 my $move_if_change = $ENV{move_if_change} || "move-if-change";
+
+# Whether we should generate the synclines.
+my $synclines = 1;
+
+# Verbosity level.  Ignored.
+my $verbose = 2;
 
 # A regexp that matches 0 or more repetitions of either a
 # non-backtracking word with no parens/braces, or a braced group, or a
@@ -97,7 +129,7 @@ sub lineno (\%)
   my $line = $$lst{_line};
   my $file = $$lst{_file};
   "clog << \"$file:$line\";\n"
-  . "//#line $line \"$file\"\n"
+  . ($synclines ? "//#line $line \"$file\"\n" : "")
 }
 
 # register ($FILE, $LINE, \%LST)
@@ -363,10 +395,41 @@ sub translate ($)
   dump_chk $dir;
 }
 
+=item C<help>
+
+Generate the B<--help> message.  Generates the full man page when
+C<$verbose>.
+
+=cut
+
+sub help ($)
+{
+  my ($verbose) = @_;
+  use Pod::Usage;
+  # See <URL:http://perldoc.perl.org/pod2man.html#NOTES>.
+  pod2usage( { -message => "Generate Urbi *.chk files from LaTeX files",
+               -exitval => 0,
+               -verbose => $verbose,
+               -output  => \*STDOUT });
+}
+
+sub getopt ()
+{
+  use Getopt::Long;
+  my %option = (
+    "h|help"        => sub { help ($verbose) },
+    "l|no-lines"    => sub { $synclines = 0 },
+    );
+  Getopt::Long::Configure ("bundling", "pass_through");
+  GetOptions (%option)
+    or exit 1;
+}
+
 ## ------ ##
 ## Main.  ##
 ## ------ ##
 
+getopt;
 map { translate $_; } @ARGV;
 
 ### Setup "GNU" style for perl-mode and cperl-mode.
