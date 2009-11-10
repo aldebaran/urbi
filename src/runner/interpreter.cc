@@ -323,25 +323,23 @@ namespace runner
     if (is_a(exn, Exception))
     {
       assert(innermost_node_);
-      const ast::loc* l = 0;
+      boost::optional<ast::loc> l;
       if (object::is_system_location(innermost_node_->location_get()))
       {
         rforeach(const call_type& c, call_stack_get())
           if (c.second)
           {
-            l = &*c.second;
+            l = c.second;
             break;
           }
       }
       else
-        l = &innermost_node_->location_get();
+        l = innermost_node_->location_get();
       if (l)
-      exn->slot_update
-        (SYMBOL(location),
-         new object::String(string_cast(*l)));
-      exn->slot_update
-        (SYMBOL(backtrace),
-         as_task()->as<object::Task>()->backtrace());
+        exn->slot_update(SYMBOL(location),
+                         new object::String(string_cast(*l)));
+      exn->slot_update(SYMBOL(backtrace),
+                       as_task()->as<object::Task>()->backtrace());
     }
     call_stack_type bt = call_stack_get();
     if (skip_last && !bt.empty())
