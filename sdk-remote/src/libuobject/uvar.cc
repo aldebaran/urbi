@@ -181,7 +181,8 @@ namespace urbi
     std::string name = owner_->get_name();
     std::string cmd = str(fmt
                           % name
-                          % compatibility::isvoid(name.c_str())
+                          % compatibility::isvoid(name.c_str(),
+                                                  client_->kernelMajor())
                           % repeatChannel
                           % name
                           % repeatChannel);

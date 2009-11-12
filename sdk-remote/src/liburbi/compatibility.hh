@@ -12,6 +12,8 @@
 
 #include <boost/preprocessor/stringize.hpp>
 
+#include <urbi/kernel-version.hh>
+
 // Macros to hide internal code sent by liburbi, not by the user, so
 // that her locations are "correct": referring to her messages, not to
 // hers plus those of the machinery.
@@ -63,10 +65,12 @@ namespace urbi
                                           unsigned major);
 
     /// Return the string to emit \a event in k1 or k2.
-    std::string emit(const std::string& event);
+    std::string emit(const std::string& event, unsigned major
+                     = kernelMajor());
 
     /// Return the string to test whether \a exp is void in k1 or k2.
-    std::string isvoid(const std::string& exp);
+    std::string isvoid(const std::string& exp, unsigned major
+                       = kernelMajor());
   }
 }
 
