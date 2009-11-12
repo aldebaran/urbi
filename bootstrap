@@ -74,4 +74,4 @@ See README."
 fi
 
 # Finally, install the GNU Build System and our submodules.
-exec sdk-remote/libport/build-aux/bootstrap "$@"
+exec build-aux/bootstrap "$@"
