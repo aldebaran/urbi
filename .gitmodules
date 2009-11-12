@@ -7,3 +7,6 @@
 [submodule "bison"]
 	path = bison
 	url = git@git.gostai.com:bison.git
+[submodule "build-aux"]
+	path = build-aux
+	url = git@git.gostai.com:build-aux
