@@ -1,0 +1,396 @@
+
+
+/** Localization class.
+ */
+class Global.Localization {} | do (Localization)
+{
+  function makeEnum
+  {
+    var type = call.evalArgAt(0) |
+    for| (var i: call.args.size)
+    {
+      if (i)
+        setSlot(call.argString(i), type.new(i, call.argString(i)))
+    }
+  };
+  var name;
+  function init(index, name, compactName=nil)
+  {
+    var this.name = name |
+    var this.index = index |
+    if (compactName)
+      var this.compactName = compactName
+    else
+      var this.compactName = name[0].toUpper
+  };
+  function asString()
+  {
+    name
+  };
+  function addEnum
+  {
+    var args = call.evalArgs|
+    var idx = args[0] |
+    args.removeFront |
+    var l = Localization.new(idx, args.join,
+                             args.map(function(x){x[0].toUpper}).join) |
+    setSlot(l.name, l) |
+    setSlot(args.join("-"), l)|
+    setSlot(args.join("_"), l)|
+    setSlot(args.join(" "), l)
+  };
+  makeEnum(Localization,
+           up,
+           inbetween,
+           down,
+           left,
+           center,
+           right,
+           front,
+           middle,
+           back,
+           x,
+           y,
+           z);
+  {
+    var idx = 12 |
+    for| (var i: [up, down])
+    for| (var j: [front, back])
+    for| (var k: [left, right])
+      addEnum(idx++, i.name , j.name , k.name)|
+    for| (var i: [up, down])
+    for| (var j: [front, back])
+      addEnum(idx++, i.name , j.name)|
+    for| (var i: [up, down])
+    for| (var k: [left, right])
+      addEnum(idx++, i.name , k.name)|
+    for| (var j: [front, back])
+    for| (var k: [left, right])
+      addEnum(idx++, j.name , k.name)|
+  }|
+  var sequence = [[]]*9;
+  sequence[1] = [up];
+  sequence[2] = [up, down];
+  sequence[4] = [up, right, down, left];
+  sequence[8] = [up, upright, right, downright, down, downleft, left, upleft];
+};
+
+/** Component containing a set of Localized sub-components.
+ *
+ * usage:
+ *   var robot = Component.new("robot");
+ *   robot.addComponent(Localier.new("arm"));
+ *   robot.arm[left].addComponent("shoulder");
+ *   robot.arm[left].addDevice("arm", MyMotor.new);
+ */
+var Global.Localizer = Group.new | do (Global.Localizer)
+{
+  var type = "Localizer";
+  function init(name)
+  {
+    var this.componentName = name |
+    var this.parentComponent = nil |
+    var this.cachedNames |
+    var this.dict = Dictionary.new |
+    addProto(Component)
+  };
+  function '[]'
+  {
+    var key = getKey(call.argString(0)) |
+    get(key)
+  };
+  function getKey(keyString)
+  {
+    if (Localization.hasLocalSlot(keyString))
+      Localization.getSlot(keyString)
+    else
+      eval(keyString).asString
+  };
+  function '[]='
+  {
+    var key = getKey(call.argString(0)) |
+    var v = call.evalArgAt(1) |
+    set(key, v)
+  };
+  function get(key)
+  {
+    var okey = key |
+    if (key.isA(Localization))
+      key = key.name |
+    if (!key.isA(String))
+      key = key.asString |
+    if (!dict.has(key))
+      set(okey, Component.new(key)) |
+    dict.get(key)
+  };
+  function set(key, val)
+  {
+    var okey = key |
+    if (key.isA(Localization))
+      key = key.name |
+    if (!key.isA(String))
+      key = key.asString |
+    if (dict.has(key))
+      remove(dict.get(key)) |
+    add(val) |
+    dict.set(key, val) |
+    var val.componentLocalization = okey |
+    if (!okey.isA(Localization))
+      wall("Warning, key " + okey +" is not a Localization")|
+    val.parentComponent = this |
+    val.componentName = key |
+    val
+  };
+  function has(key)
+  {
+    if (key.isA(Localization))
+      key = key.name |
+    dict.has(key)
+  };
+  function asString()
+  {
+    "Localizer <" + dict.keys.join(", ") + ">"
+  };
+};
+
+/** Component of a device hierarchy.
+ *
+ *  Each component can contain other components, or devices.
+ *  Devices must have a 'compactName' slot giving their globally-accessible
+ *  compact name.
+ *
+ *  Each component is also a Group containaing all its sub-components
+ *  and devices.
+ *
+ *  The component and device hierarchy must be constructed using the
+ *  'addComponent' and 'addDevice' functions.
+ *
+ *  Once the hierarchy is complete, you may call the makeCompactNames() function
+ *  on the root node to generate all the compact names, and set slots with those
+ *  names in Global.
+ *
+ *  The dump() and flatDump() can be used to dump all the components in a
+ *  hierarchy, and show the Facets they implement.
+ */
+class Global.Component
+{
+  function clone()
+  {
+    var res = Group.new |
+    res.protos.insertFront(this) |
+    res
+  };
+  function updateSlot(name, val)
+  {
+    if (hasLocalSlot(name))
+      Object.getSlot("updateSlot").apply([this, name, val])
+    else
+      Group.getSlot("updateSlot").apply([this, name, val], "updateSlot")
+  };
+  function init(name)
+  {
+    var this.componentName = name;
+    var this.parentComponent = nil;
+    var this.cachedNames;
+  };
+  /// Add component \b value as a sub-component of this.
+  function addComponent(value)
+  {
+    setSlot(value.componentName, value) |
+    this << value |
+    Object.getSlot("updateSlot").apply([value, "parentComponent", this]) |
+    value
+  };
+  /// Add device \b value, name it \b name.
+  function addDevice(name, value)
+  {
+    setSlot(name, value);
+    // Device inherits from at least a facet which has those slots
+    value.updateSlot("parentComponent", this);
+    value.updateSlot("componentName", name);
+    this << value
+  };
+  function asString()
+  {
+    if (this === Component)
+      return "Component" |
+    if (members.empty)
+      componentName
+    else
+    {
+      var res = componentName + "<";
+      for|(var m: members)
+      res += {
+        if (m.hasLocalSlot("componentName"))
+          m.componentName
+        else
+          m.asString
+      } + ", "|
+      res[0, res.length - 2] + ">"
+    }
+  };
+  /// Get all devices and subdevices of type \b filter
+  function allMembers(var filter=Facet)
+  {
+    var res = []|
+    if (this.isA(filter))
+      res << this |
+    for| (var m: members)
+      if (m.isA(Component))
+        res += m.allMembers(filter)
+      else if (m.isA(filter))
+        res << m |
+    res
+  };
+  /// Give a flattened view of all the implemented Facets in the hierarchy.
+  function flatDump()
+  {
+    dumpByFacet(allMembers)
+  };
+  function dumpByFacet(what, indent=0)
+  {
+    var bf = Dictionary.new|
+    for|(var m: what)
+    {
+      for| (var f: m.facets)
+        bf.getWithDefault(f.asString, [], true) << m
+    }|
+    for|(var k: bf.keys.sort)
+      echo(" "*indent + k +": "
+           + bf[k].map(
+             function(x)
+             {
+               if (x.hasLocalSlot("compactName"))
+                 x.compactName
+               else
+                 x.componentName
+             }).sort.join(" "))
+  };
+  /// Hierarchical dump of all components and devices
+  function dump(var indent = 0)
+  {
+    var myfacets = "";
+    if (isA(Facet))
+      myfacets = "(" + facets.join(" ") + ")"|
+    echo(" "*indent + componentName + myfacets);
+    dumpByFacet(members.filter(function(x) { !x.isA(Component)}),
+                indent+2);
+    members.filter(function(x) { x.isA(Component)})
+      .each(function(x) {x.dump(indent+2)})
+  };
+  /// Give the full name of a device by crawling through the hieararchy
+  function Object.fullname()
+  {
+    if (!hasLocalSlot("parentComponent"))
+      throw "Facet is not attached to a component."|
+    var name =  componentName |
+    var p = parentComponent |
+    var next = this |
+    if (p)
+    loop {
+      if (!p.parentComponent.isA(Localizer))
+      {
+        if (next.hasLocalSlot("componentLocalization"))
+          name = p.componentName  + "[" + next.componentLocalization + "]."
+            + name
+        else
+          name = p.componentName  + "." + name
+      }|
+      if (!p.parentComponent)
+        break |
+      next = p |
+      p = p.parentComponent
+    } |
+    name
+  };
+  function Dictionary.merge(b)
+  {
+    for| (var k:keys)
+      if (b.has(k))
+        set(k, get(k)+b.get(k)) |
+    for| (var k: b.keys)
+       if (!has(k))
+         set(k, b.get(k))
+  };
+  // Store at each level a map nodename->[loc1, loc2...]
+  function Object.cacheNames()
+  {
+    // Avoid problems with group updateslot
+    removeSlot("cachedNames") |
+    var this.cachedNames = Dictionary.new |
+    if (isA(Group))
+      for| (var m: members)
+      {
+        m.cacheNames() |
+        cachedNames.merge(m.cachedNames) |
+        cachedNames.getWithDefault(m.componentName, [], true).insertBack(this)
+      }
+    |
+      cachedNames.set(componentName, [this])
+  };
+  /// Call makeCompactName() on all components and devices.
+  function Object.makeCompactNames(where=Global, cache=true)
+  {
+    if (cache)
+      cacheNames |
+    if (!cache)
+      makeCompactName |
+    if (isA(Group))
+        for|(var m: members)
+          m.makeCompactNames(where, false)
+  };
+  /** Generate the compact name for current Device/Component.
+   *
+   *  The algorithm goes through the hierarchy, and include in the name
+   *  only intermediate components usefull for disambiguation.
+   *
+   *  The object is inserted into \b where, in a slot named after its
+   *  compact name.
+   */
+  var Object.makeCompactName = function (where=Global)
+  {
+    var name="" |
+    var localizers = ""|
+    var p = this|
+    var next = ""|
+    var base = ""|
+    var first = ""| // first component of an uninteresting chain
+    //wall("considering " + fullname);
+    while|(p)
+    {
+      //wall("scanning " + p.fullname + "(" + base + ")");
+      if (p.parentComponent && p.parentComponent.isA(Localizer))
+      {
+        if (p.componentLocalization.hasSlot("compactName"))
+          localizers = p.componentLocalization.compactName.asString + localizers
+        else
+          localizers = p.componentLocalization.asString + localizers
+      }
+      else
+      {
+        if (!first)
+          first = p.componentName |
+        if (!name || p.cachedNames[base].size
+            != p.parentComponent.cachedNames[base].size)
+        {
+          //wall("  including: ") |
+          if (name)
+            name = name[0].toUpper + name[1, name.length] |
+          name = first + name |
+          base = first |
+          first = ""
+        }
+      }|
+      if (base && p.cachedNames[base].size
+          == robot.cachedNames[base].size)
+      break |
+      next = p |
+      p = p.parentComponent
+    }|
+    name = name + localizers |
+    if (!where.hasLocalSlot(name))
+        where.setSlot(name, this) |
+    removeSlot("compactName") | setSlot("compactName", name)
+  }|;
+
+};
