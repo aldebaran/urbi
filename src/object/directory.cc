@@ -38,19 +38,20 @@ namespace urbi
   {
     using boost::format;
 
-    /*------------.
-    | C++ methods |
-    `------------*/
+    /*--------------.
+    | C++ methods.  |
+    `--------------*/
 
-    Directory::value_type Directory::value_get()
+    Directory::value_type
+    Directory::value_get()
     {
       return path_;
     }
 
 
-    /*-------------.
-    | Urbi methods |
-    `-------------*/
+    /*---------------------.
+    | urbiscript methods.  |
+    `---------------------*/
 
 #if HAVE_SYS_INOTIFY_H
     // Event polling thread
@@ -202,9 +203,9 @@ namespace urbi
       return new List(res);
     }
 
-    /*--------.
-    | Details |
-    `--------*/
+    /*----------.
+    | Details.  |
+    `----------*/
 
     namespace details
     {
@@ -230,9 +231,9 @@ namespace urbi
                   String,
                   (void (Directory::*)(const std::string&)) &Directory::init);
 
-    /*---------------.
-    | Binding system |
-    `---------------*/
+    /*----------.
+    | Binding.  |
+    `----------*/
 
     void
     Directory::initialize(CxxObject::Binder<Directory>& bind)

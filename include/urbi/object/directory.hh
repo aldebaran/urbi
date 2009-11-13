@@ -21,18 +21,18 @@ namespace urbi
     class Directory: public CxxObject
     {
 
-    /*------------.
-    | C++ methods |
-    `------------*/
+    /*--------------.
+    | C++ methods.  |
+    `--------------*/
 
     public:
 
       typedef rPath value_type;
       value_type value_get();
 
-    /*-------------.
-    | Urbi methods |
-    `-------------*/
+    /*---------------------.
+    | urbiscript methods.  |
+    `---------------------*/
 
     public:
 
@@ -56,15 +56,15 @@ namespace urbi
       rObject on_file_created_;
       rObject on_file_deleted_;
 
-    /*------------.
-    | Conversions |
-    `------------*/
+    /*--------------.
+    | Conversions.  |
+    `--------------*/
 
     public:
       std::string as_string();
       std::string as_printable();
 
-      // Stat
+      // Stat.
       template <rObject (*F) (Directory& d, const std::string& entry)>
       rList list();
 

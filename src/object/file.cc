@@ -25,9 +25,9 @@ namespace urbi
   {
     using boost::format;
 
-    /*------------.
-    | C++ methods |
-    `------------*/
+    /*--------------.
+    | C++ methods.  |
+    `--------------*/
 
     File::value_type File::value_get()
     {
@@ -35,9 +35,9 @@ namespace urbi
     }
 
 
-    /*-------------.
-    | Urbi methods |
-    `-------------*/
+    /*---------------------.
+    | urbiscript methods.  |
+    `---------------------*/
 
     // Construction
 
@@ -78,7 +78,9 @@ namespace urbi
       init(new Path(path));
     }
 
-    // Conversions
+    /*--------------.
+    | Conversions.  |
+    `--------------*/
 
     static bool
     split_point(const std::string& str, size_t& pos, size_t& size)
@@ -158,9 +160,9 @@ namespace urbi
                           to_urbi(libport::file_content(path_->as_string())));
     }
 
-    /*--------.
-    | Details |
-    `--------*/
+    /*----------.
+    | Details.  |
+    `----------*/
 
     OVERLOAD_TYPE(init_bouncer, 1, 1,
                   Path,
@@ -169,9 +171,9 @@ namespace urbi
                   (void (File::*)(const std::string&)) &File::init);
 
 
-    /*---------------.
-    | Binding system |
-    `---------------*/
+    /*----------.
+    | Binding.  |
+    `----------*/
 
     void
     File::initialize(CxxObject::Binder<File>& bind)
