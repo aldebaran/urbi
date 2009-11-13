@@ -170,7 +170,7 @@ UStart (servo);
 
 That's it, compile this module, and you can use it within \us:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 // Create a new instance.  Calls init (1).
 headPan = new servo (1);
 
@@ -189,7 +189,7 @@ headPan.val = 0 sin:1s ampli:20,
 // Periodically calls valueAccessed ().
 at (headPan.val < 0)
   echo ("left");
-\end{urbifixme}
+\end{urbiunchecked}
 
 The sample code above has one problem: \lstinline{valueAccessed} and
 \lstinline{valueChanged} are called each time the value is read or

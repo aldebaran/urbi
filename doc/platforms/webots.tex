@@ -360,11 +360,11 @@ commands to it and make your robot move and interact with its
 environment. For example try typing the following commands in
 \command{telnet}:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 headPan = 50 time: 5s;
 headPan = -50 time: 5s;
 headPan = 0 time: 5s;
-\end{urbifixme}
+\end{urbiunchecked}
 
 And you will see the head of the aibo move left, right, and then to
 the center.
@@ -382,9 +382,9 @@ startup.  To do this just write \us code in some file, and then
 specify its path in the \code{controllerArgs} webots node.  For
 example create a new text file \file{test.u} and write in it:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 robot.sit (),
-\end{urbifixme}
+\end{urbiunchecked}
 
 Then edit the webots world \file{aibo\_ers7\_urbi\_soccer.wbt}, and
 add the path of your file \file{test.u} on the line of the
@@ -482,9 +482,9 @@ way to load your custom \urbi code at start up is to use the command
 section and move it to the folder containing the \file{urbi.ini}
 file. Then open \file{urbi.ini} and add at the end of the file:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 load ("test.u");
-\end{urbifixme}
+\end{urbiunchecked}
 Now launch Webots and open the world using the \urbi controller loading
 the \urbi.ini you just updated, and you will see that your code has
 been loaded too.
@@ -590,9 +590,9 @@ Launch Webots and load the soccer world
 
 Connect to the \urbi server and use the following command:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 unfreeze balltracking;
-\end{urbifixme}
+\end{urbiunchecked}
 
 This will activate the balltracking of the ERS-7 robot.  Now, you can
 use \kbd{shift} and the mouse to move the ball, the ERS-7 will move
@@ -623,7 +623,7 @@ After having started the simulation of the supervisor world, execute
 the following lines:
 
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 // Create a moving label.
 l = new Label("\urbi for Webots");
 l.size = 0.04;
@@ -633,7 +633,7 @@ l.x = 0.2 sin:10s ampli:0.1,
 // Manipulate the floor.
 fl = new ManipulateNode("FLOOR");
 fl.ty = -1 sin:10s ampli:0.5,
-\end{urbifixme}
+\end{urbiunchecked}
 
 The first part of the script creates a label and defines a movement
 with the \lstinline|sin| modifier. The second part moves the floor.
@@ -709,16 +709,16 @@ own \urbi for Webots based controllers. Here is how to proceed:
 
 \item Edit the \file{URBI.INI} file and change the line:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 load("kiki.ini");
-\end{urbifixme}
+\end{urbiunchecked}
 
 by:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 // The name should match with the file you've just renamed.
 load("foo.ini");
-\end{urbifixme}
+\end{urbiunchecked}
 
 \item Copy the kiki world file (\file{worlds/kiki\_urbi.wbt} should be
   copied into \file{worlds/foo\_urbi.wbt} for example).
@@ -743,7 +743,7 @@ directory.  With the previous example, it would have been the
 \file{data/foo/foo.ini} file. This file should be like the following
 piece of code:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 system.name = "/gostai/webots/kiki";
 system.type = "webots";
 
@@ -764,7 +764,7 @@ group objects {software, hardware};
 
 // Standard aliases
 // etc.
-\end{urbifixme}
+\end{urbiunchecked}
 
 The first line is your robot's name, you may edit this to any value.
 The second line must keep its value.
@@ -1070,10 +1070,10 @@ float camera_get_far (DeviceTag camera);
 
   Example:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 wheelL = new DifferentialWheels("e-puck", true);
 wheelR = new DifferentialWheels("e-puck", false);
-\end{urbifixme}
+\end{urbiunchecked}
 \end{description}
 
 \paragraph{Attributes}
@@ -1230,7 +1230,7 @@ unsigned short distance_sensor_get_value  (DeviceTag sensor);
   Example:
 
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var1 = "hello world";
 emitter.send (var1);
 // will send 13 bytes:
@@ -1243,7 +1243,7 @@ emitter.send (var2),
 // size, 1 byte for the ';', and 11 bytes for the actual data (hello
 // world) (the BIN header size can augment if you set some information
 // in the BIN header variable, like in images variables for example).
-\end{urbifixme}
+\end{urbiunchecked}
 
   Note that if you set the ``rawMode'' attribute to true, then the
   comportment of the send () function will change. When ``rawMode'' is
@@ -1251,14 +1251,14 @@ emitter.send (var2),
   only the data in the BIN variable is send.
 
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var2=BIN 11;hello world
 emitter.rawMode = true;
 emitter.send (var2);
 /// Will send 11 bytes:
 // 'h','e','l','l','o',' ','w','o','r','l','d'
 // ie only the bytes that are in the data of the BIN variable.
-\end{urbifixme}
+\end{urbiunchecked}
 
 Please note that since no type information is included in the send
 data, an \urbi receiver won't be able to parse the data received and
@@ -1980,9 +1980,9 @@ simulation.
 
 Example:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 floor = new ManipulateNode("FLOOR");
-\end{urbifixme}
+\end{urbiunchecked}
 \end{description}
 
 \paragraph{Attributes}
@@ -2086,7 +2086,7 @@ floor = new ManipulateNode("FLOOR");
   parameter, then the characters are concateneted and put in a string.
 
   ex:
-\begin{urbifixme}
+\begin{urbiunchecked}
 p = new UBinaryReader();
 a = BIN 10;abcdefghij   /// Create an UBinary which contains abcdefghij
 p.set (a);              /// Set the UBinary in the reader.
@@ -2099,7 +2099,7 @@ p.read ("c,c:3,i8:2,i16"),
 p.index = 4;            /// Set the reading cursor to read the 5th character
 p.read ("c:5"),
 [00169480] ["efghi"]
-\end{urbifixme}
+\end{urbiunchecked}
 
   In case of error, the function stop reading, and return a list
   containing the values that were successfully read until the error

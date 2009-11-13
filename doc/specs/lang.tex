@@ -1259,14 +1259,14 @@ arguments, the parentheses can be omitted. As you might see,
 sending messages is very similar to calling methods in classical
 languages.
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 // Send the message msg to object obj, with arguments arg1 and arg2.
 obj.msg(arg1, arg2);
 // Send the message msg to object obj, with no arguments.
 obj.msg();
 // This is strictly equivalent.
 obj.msg;
-\end{urbifixme}
+\end{urbiunchecked}
 
 When a message \var{msg} is sent to object \lstinline|obj|:
 
@@ -1350,12 +1350,12 @@ The \lstinline|do| construct changes the target (\lstinline|this|)
 when evaluating an expression.  It is a convenient means to avoid
 repeating the same target several times.
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 do (\var{target})
 {
   \var{body}
 };
-\end{urbifixme}
+\end{urbiunchecked}
 
 It evaluates \var{body}, with \lstinline|this| being \var{target}, as
 shown below.  The whole construct evaluates to the value
@@ -1377,10 +1377,10 @@ do (1024)
 As in most programming languages, conditionals are expressed with
 \lstinline|if|.
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 if (\var{condition}) \var{then-clause}
 if (\var{condition}) \var{then-clause} else \var{else-clause}
-\end{urbifixme}
+\end{urbiunchecked}
 
 First \var{condition} is evaluated; if it evaluates to a value which
 is true (\autoref{sec:truth}), evaluate \var{then-clause}, otherwise,
@@ -1441,10 +1441,10 @@ if (var xx = 123) xx | xx;
 
 \us support the classical \C-like \lstinline|for| construct.
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 for (\var{initialization}; \var{condition}; \var{increment})
   \var{body}
-\end{urbifixme}
+\end{urbiunchecked}
 
 It has the exact same behavior as \C's \lstinline|for|:
 
@@ -1466,10 +1466,10 @@ It has the exact same behavior as \C's \lstinline|for|:
 \us supports iteration over a collection with another form of the
 \lstinline|for| loop.
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 for (var \var{name} : \var{collection})
    \var{body};
-\end{urbifixme}
+\end{urbiunchecked}
 
 It evaluates \var{body} for each element in \var{collection}. The loop
 evaluates to \lstinline|void|.  Inside \var{body}, the current element
@@ -1550,7 +1550,7 @@ iterable value can be used.
 
 \us supports the usual \lstinline|if| constructs.
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 if (\var{condition})
   \var{action};
 
@@ -1558,7 +1558,7 @@ if (\var{condition})
   \var{action}
 else
   \var{otherwise};
-\end{urbifixme}
+\end{urbiunchecked}
 
 If the \var{condition} evaluation is true, \var{action} is
 evaluated. Otherwise, in the latter version, \var{otherwise} is
@@ -1588,7 +1588,7 @@ v;
 
 The \lstinline|switch| statement in \us is similar to \C's one.
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 switch (\var{value})
 {
   case \var{value_one}:
@@ -1600,7 +1600,7 @@ switch (\var{value})
   default:
     \var{default_action};
 };
-\end{urbifixme}
+\end{urbiunchecked}
 
 It might contain an arbitrary number of cases, and optionally a
 default case. The \var{value} is evaluated first, and then the
@@ -1644,10 +1644,10 @@ sw("foobar");
 
 The \lstinline|while| loop is similar to \C's one.
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 while (\var{condition})
   \var{body};
-\end{urbifixme}
+\end{urbiunchecked}
 
 If \var{condition} evaluation, is true, \var{body} is evaluated and
 execution jumps before the \lstinline|while|, otherwise execution
@@ -1671,17 +1671,17 @@ The default flavor for \lstinline|while| is \lstinline|while;|.
 
 The semantics of
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 while; (\var{condition})
   \var{body};
-\end{urbifixme}
+\end{urbiunchecked}
 
 \noindent
 is the same as
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 \var{condition} | \var{body} ; \var{condition} | \var{body} ; ...
-\end{urbifixme}
+\end{urbiunchecked}
 
 \noindent
 as long as \var{cond} evaluates to true, or until \lstinline|break| is
@@ -1713,17 +1713,17 @@ is skipped, and the next iteration is started.
 
 The semantics of
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 while| (\var{condition})
   \var{body};
-\end{urbifixme}
+\end{urbiunchecked}
 
 \noindent
 is the same as
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 \var{condition} | \var{body} | \var{condition} | \var{body} | ...
-\end{urbifixme}
+\end{urbiunchecked}
 
 The execution is can be controlled by \lstinline|break| and
 \lstinline|continue|.
@@ -2070,17 +2070,17 @@ echo("done");
 This construct provides a means to run concurrently multiple instances
 of statements.  The semantics of
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 while, (\var{condition})
   \var{body};
-\end{urbifixme}
+\end{urbiunchecked}
 
 \noindent
 is the same as
 
-\begin{urbifixme}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}[frame=, backgroundcolor=, ]
 \var{condition} | \var{body} , \var{condition} | \var{body} , ...
-\end{urbifixme}
+\end{urbiunchecked}
 
 Attention must be paid to the fact that the (concurrent) iterations
 share a common access to the environment, therefore if, for instance,

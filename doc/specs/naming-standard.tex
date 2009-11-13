@@ -93,12 +93,12 @@ etc. Inside \urbi, the various objects corresponding to the tree
 components are accessed by following the path of objects inclusions,
 like in the example below (shortcuts will be described later):
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 body.legR.hip.tilt;
 body.legL.knee.led;
 body.legL.hip;
 // ...
-\end{urbifixme}
+\end{urbiunchecked}
 
 
 The structure tree should not be mistaken for a representation of the
@@ -234,14 +234,14 @@ available in each of the three directions.
 
 Examples of component names including localization:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 legR, legL, armR, armL;
 fingerR, fingerC, fingerL;      // three-finger hand
 joint[0], joint[1] ... joint[5] // from tail
 touch[478][124]                 // from skin
 accelX, accelY, accelZ;         // typical accelerometer
 gyroX, gyroY, gyroZ;            // typical gyro sensor
-\end{urbifixme}
+\end{urbiunchecked}
 
 \section{Facets}
 \label{sec:facet}

@@ -143,9 +143,9 @@ UStart(ObjectTracker);
 The following \us code would be used to initialize an ObjectTracker given a
 camera:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var tracker = ObjectTracker.new(camera.getSlot("val"));
-\end{urbifixme}
+\end{urbiunchecked}
 
 An other component could then take the tracker output as its input.
 
@@ -253,11 +253,11 @@ macro is available, as well as the \lstinline{send()} function. You
 can either pass it a string, or directly \urbi code inside a pair of
 parentheses:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 send ("tag:1+1;");
 
 URBI (( at (someevent (x)) { sometag:echo x; }; ));
-\end{urbifixme}
+\end{urbiunchecked}
 
 
 %%% Local Variables:

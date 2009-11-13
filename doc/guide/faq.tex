@@ -12,27 +12,27 @@ explain why programs that heavily rely on concurrency might succeed
 where sequential programs can fail.  For instance the following
 program is very likely to quickly exhaust the (single) stack.
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 function consume (num)
 {
   if (num)
     consume(num - 1) | consume(num - 1)
 } |
 consume (512);
-\end{urbifixme}
+\end{urbiunchecked}
 
 But if you use \lstinline{&} instead of \lstinline{|}, then each
 recursive call to \lstinline{consume} will be spawn with a fresh
 stack, and therefore none will run out of stack space:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 function consume (num)
 {
   if (num)
     consume(num - 1) & consume(num - 1)
 } |
 consume (512);
-\end{urbifixme}
+\end{urbiunchecked}
 
 However your machine will run out of resources: this heavily
 concurrent program aims at creating no less than $2^{513}$ threads,
@@ -141,7 +141,7 @@ var myOtherLocalVariable = "bar";
 You can define a method called \lstinline{init} which will be called
 automatically by \lstinline{new}. For example:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 class myObject {
   function init(x, y) {
     var this.x = x;
@@ -149,18 +149,18 @@ class myObject {
   };
 };
 myInstance = myObject.new(10, 20);
-\end{urbifixme}
+\end{urbiunchecked}
 
 
 \paragraph{How can I manipulate the list of prototypes of my objects?}
 The \lstinline{protos} method returns a list (which can be manipulated)
 containing the list of your object prototype.
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var myObject = Object.new;
 myObject.protos;
 [00000001] [Object]
-\end{urbifixme}
+\end{urbiunchecked}
 
 \paragraph{How can I know the slots available for a given object?}
 The \lstinline{localSlotNames} and \lstinline{allSlotNames} methods
@@ -171,41 +171,41 @@ names.
 Functions are first class objects. That means that you can add them as
 any other slot in an object:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var myObject = Object.new;
 var myObject.myFunction = function (x, y)
   { echo ("myFunction called with " + x + " and " + y) };
-\end{urbifixme}
+\end{urbiunchecked}
 
 You can also use the following notation to add a function to your
 object:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var myObject = Object.new;
 function myObject.myFunction (x, y) { /* ... */ };
-\end{urbifixme}
+\end{urbiunchecked}
 
 \noindent
 or even group definitions within a \lstinline{do} scope, which will
 automatically define new slots instead of local variables and
 functions:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var myObject = Object.new;
 do (myObject) {
   function myFunction (x, y) { /* ... */ };
 };
-\end{urbifixme}
+\end{urbiunchecked}
 
 \noindent
 or group those two statements by using a convenient \lstinline{class}
 scope:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 class myObject {
   function myFunction (x, y) { /* ... */ };
 };
-\end{urbifixme}
+\end{urbiunchecked}
 
 
 \subsection{Tags}
@@ -215,19 +215,19 @@ See \autoref{stdlib:tag:ctor}.
 \paragraph{How do I stop a tag?}
 
 Use the \lstinline|stop| method.
-\begin{urbifixme}
+\begin{urbiunchecked}
 myTag.stop;
-\end{urbifixme}
+\end{urbiunchecked}
 
 \paragraph{Can tagged statements return a value?}
 By default, tagged statements will return the latest evaluated expression if
 they have not been stopped:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var myTag = Tag.new;
 var res;
 res = { myTag: { do_something; 42 } };
-\end{urbifixme}
+\end{urbiunchecked}
 
 After the execution, \lstinline{res} will contain 42.
 
@@ -235,7 +235,7 @@ However, when a tag is stopped, all the statements tagged with that
 tag may be forced to return a value, by giving it as a parameter to
 \lstinline{stop}:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var myTag = Tag.new;
 var res;
 { res = { myTag: sleep(inf) } }, // Sleep forever (infinite amount of time),
@@ -244,32 +244,32 @@ var res;
 myTag.stop(42);
 res;
 [00000001] 42
-\end{urbifixme}
+\end{urbiunchecked}
 
 \subsection{Events}
 \paragraph{How do I create an event?}
 Events are objects, and must be created as any object by using
 \lstinline{new} to create derivatives of the \lstinline{Event} object.
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 var ev = Event.new;
-\end{urbifixme}
+\end{urbiunchecked}
 
 \paragraph{How do I emit an event?}
 Use the \lstinline|!| operator.
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 ev!(1, "foo");
-\end{urbifixme}
+\end{urbiunchecked}
 
 \paragraph{How do I catch an event?}
 
 Use the \lstinline|at(\var{event}?\var{args})| construct.
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 at(ev?(1, var msg))
   echo ("Received event with 1 and message " + msg);
-\end{urbifixme}
+\end{urbiunchecked}
 
 The \lstinline{?} marker indicates that we are looking for an event
 instead of a boolean condition. The construct \lstinline{var msg}

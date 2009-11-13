@@ -55,13 +55,13 @@ reasons:
 \item \lstinline{delete} is an unsafe feature that makes only sense in
   pointer-based languages such as \C and \Cxx.  It enables nice bugs
   such as:
-\begin{urbifixme}
+\begin{urbiunchecked}
 var this.a := A.new;
 // ...
 delete this.a;
 // ...
 cout << this.a;
-\end{urbifixme}
+\end{urbiunchecked}
 \end{itemize}
 
 For these reasons, and others, \lstinline{delete Foo} was removed.
@@ -132,14 +132,14 @@ The same feature with a slightly different syntax is now provided by
 \subsection{group}
 Where support for groups was a built-in feature in \us 1, it is now
 provided by the standard library, see \refObject{Group}.  Instead of
-\begin{urbifixme}
+\begin{urbiunchecked}
 group myGroup {a, b, c}
-\end{urbifixme}
+\end{urbiunchecked}
 \noindent
 write
-\begin{urbifixme}
+\begin{urbiunchecked}
 var myGroup = Group.new(a,b,c)
-\end{urbifixme}
+\end{urbiunchecked}
 
 \subsection{loopn}
 The same feature and syntax is now provided by \lstinline|for|.  See
@@ -182,9 +182,9 @@ Use \lstinline{//#line} instead, see \autoref{sec:specs:synclines}.
 
 To detect the end of a statement, instead of
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 mytag+end: { echo ("foo") },
-\end{urbifixme}
+\end{urbiunchecked}
 
 \noindent
 use the \lstinline{leave?} method of the \refObject{Tag} object:

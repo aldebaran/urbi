@@ -29,7 +29,7 @@ Those lines might allready be present but commented out.
 
 You should be able to connect to your Nao on the port 54000 and send it \us:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 tts.say("Hello, I am Nao."),
 // Activate right arm.
 armR.load = 1;
@@ -48,7 +48,7 @@ motion.walkStraight(0.01, 50);
 motion.setBalanceMode(motion.BALANCE_MODE_AUTO);
 motion.gotoTorsoOrientation(0, pi/6, 2, 1);
 motion.gotoTorsoOrientation(0, 0, 2, 1);
-\end{urbifixme}
+\end{urbiunchecked}
 
 \section{Accessing joints}
 All the Nao joints are accessible through their standard Nao and \urbi names,
@@ -60,7 +60,7 @@ Some motor groups are also provided: they can be used exactly as joints,
 but any action performed on a group is sent to all the joints that are a
 member of this group.
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 // Activate all motors
 motors.load = 1;
 // Or only all the head motors
@@ -75,7 +75,7 @@ headPitch.val = -0.5;
 tag: headYaw.val = 0 sin:2s ampli:0.5,
 // ...and stop the movement
 tag.stop;
-\end{urbifixme}
+\end{urbiunchecked}
 
 The two hands are purposefuly not included in the 'motors' group.
 Although you can control them using the \var{val} slot, it is recommanded that
@@ -224,14 +224,14 @@ The method is similar to what is done in C++, with the addition that all the
 module's methods can be directly called without using the meta-call 'call'
 method:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 // Instanciate a proxy for the ALMotion module.
 var motion = ALProxy.new( "ALMotion" );
 // Bind its methods, declaring "walkStraight" as a 'long' method.
 motion.generateALBindings(["walkStraight", "walkArk", "walk"]);
 motion.addWalkStraight( 0.1, 60 );
 motion.walk();
-\end{urbifixme}
+\end{urbiunchecked}
 
 The argument to generateALBindings() is a list of all the function
 names that you want to be asynchronous. You must pass in this list
@@ -249,7 +249,7 @@ You can create independant modules capable of answering requests and services
 from other \naoqi modules, written in C++, urbiScript or ruby. Let's see an
 example:
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 
 // ----------------------------------
 // Simple module creation samples
@@ -293,5 +293,5 @@ mathematic.bindUrbiMethod( "add", "Compute the sum of two numbers",
 
 // to test it outside of urbi, you can for example enter in a browser:
 // http://<Nao's IP>:9559/?eval=mathematic.add(2,3)
-\end{urbifixme}
+\end{urbiunchecked}
 
