@@ -46,7 +46,7 @@ namespace urbi
       captures_type& captures_get();
 
       /// Urbi methods
-      rObject apply(rList args);
+      rObject apply(const object::objects_type& args);
       static std::string as_string(rObject what);
       std::string body_string();
 

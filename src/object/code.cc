@@ -90,15 +90,19 @@ namespace urbi
       self_ = v;
     }
 
-    rObject Code::apply(rList args)
+    rObject Code::apply(const objects_type& apply_args)
     {
+      check_arg_count(apply_args.size(), 1, 2);
+      rList args = apply_args[0]->as<List>();
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
+      libport::Symbol s = SYMBOL(apply);
+      if (apply_args.size() > 1)
+        s = libport::Symbol(apply_args[1]->as<String>()->value_get());
       if (args->value_get().empty())
         RAISE("list of arguments must begin with `this'");
       List::value_type a = args->value_get();
 
-      return r.apply(this, SYMBOL(apply), a);
+      return r.apply(this, s, a);
     }
 
     std::string Code::as_string(rObject what)
