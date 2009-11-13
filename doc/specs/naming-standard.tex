@@ -46,7 +46,7 @@
 }
 
 
-\chapter{\urbi Ready Certification Standard}
+\chapter{Gostai Standard Robotics API}
 \label{sec:naming}
 
 
@@ -65,7 +65,6 @@ component not described or closely related to one described here:
 Any implementation of an \urbi server must comply with the latest
 version of this standard to get the ``\urbi Ready'' certification from
 Gostai S.A.S.
-
 
 Gostai S.A.S. is currently the only authority which has the ability to
 deliver an ``\urbi Ready'' certification.
@@ -165,15 +164,13 @@ relative to the body component they belong to. The first part is
 called the \textit{designation}, and the second optional part is
 called the \textit{localization}.
 
-\paragraph{Designation}
-
+\subsection{Designation}
 
 The designation of a component is a usually robot-specific and depends
-on the class of the robot (wheeled, humanoid, animaloid, etc). We will
-give in the following chapters some guidelines for the most current
-designations, and we will give more advanced rules for rare customized
+on the class of the robot (wheeled, humanoid, animaloid, etc.).
+The following sections provide some guidelines for the most common
+designations, and more advanced rules for rare customized
 cases.
-
 
 The designation is the critical part of the naming standard. We cannot
 possibly cover all future configurations and conceivable robot complex
@@ -181,13 +178,15 @@ bodies, but the current document will grow whenever we find a new
 case.  We hope to be already covering most of the main cases you can
 find in the industry.
 
-\paragraph{Localization}
+\subsection{Localization}
 
 Localization is necessary when there are two identical sub-components
 A1 and A2 belonging to the same component B, like for example two legs
 or two arms attached to the main body. Usually this can be sorted out
-with simple geometric qualifiers like \textit{Right/Center/Left},
-\textit{Front/Middle/Back} or \textit{Up/In-between/Down}. The naming
+with simple geometric qualifiers like
+\textit{Right}/\textit{Center}/\textit{Left},
+\textit{Front}/\textit{Middle}/\textit{Back} or
+\textit{Up}/\textit{In-between}/\textit{Down}. The naming
 convention is to use the first letter of the geometric characteristic,
 like R for Right, I for In-between.  Note that ``right'' or ``front'' are
 understood here from the point of view of a man standing and looking
