@@ -22,173 +22,148 @@ version of this documentation.
 \section{Quick Start}
 
 This section describes how to setup the software on your computer and
-give you the basis to use \urbi for Webots.
+give you the basis to use \uwebots{}.
 
-
-\subsection{Setup}
+\subsection{Installation}
 
 The setup process depends on your OS, please follow the corresponding
 instructions.
 
-Since different packages are available for Linux, you should use the
-package which is designed for your distribution.
+\subsubsection{Linux}
 
-Warning: root privileges are required to install this software under
-Linux.
+To install \uwebots{} in your \webots{} on linux, you must download an
+archive of the form
+\texttt{urbi-for-webots-\var{version}-linux-x86-gcc4-release.tar.bz2}.
+You may choose an other archive format than \texttt{.tar.bz2}, but you
+will need to slightly adjust the following instruction accordingly.
 
-\begin{table}[htbp]
-  \begin{center}
-    \begin{tabular}{p{.4\linewidth}l}
-      \hline
-      Linux distribution &    Package extension\\
-      \hline
-      RPM based distributions:
-      \begin{itemize}
-      \item CentOS
-      \item Fedora Core
-      \item Mandriva Linux
-      \end{itemize}
-      &
-      rpm\\
-      Debian based distributions
-      \begin{itemize}
-      \item Debian GNU/Linux
-      \item Ubuntu
-      \end{itemize}
-      &
-      deb \\
-      Others
-      \begin{itemize}
-      \item Arch Linux
-      \item Gentoo
-      \item SUSE
-      \end{itemize}
-      &
-      tarball (zip, tar.gz or tar.bz2)\\
-      \hline
-    \end{tabular}
-  \end{center}
-  \caption{Which package should I use?}
-  \end{table}
+The archive is structured to blend into the webots hierarchy, as
+follow:
+
+\begin{itemize}
+\item \texttt{urbi-for-webots-\var{version}/projects/default/controllers/urbi2.0/}\\ \urbi{} SDK and
+  \webots{} controller.
+\item \texttt{urbi-for-webots-\var{version}/projects/packages/urbi2.0/share/robot-name/}\\ Shared
+  \us{} robot behaviors.
+\item \texttt{urbi-for-webots-\var{version}/projects/packages/urbi2.0/controllers/robot-name/}\\
+  Demonstration controllers for each robot.
+\item \texttt{urbi-for-webots-\var{version}/projects/packages/urbi2.0/worlds/}\\ Demonstration
+  worlds.
+\end{itemize}
+
+All you need to do is extract it into your webots directory, minus the
+\texttt{urbi-for-webots-\var{version}} containing directory, so as to
+merge the packaged \texttt{project} directory with your \webots{}'
+\texttt{project} directory.
+
+This can be easily done with the following \texttt{tar} command:
+
+\begin{lstlisting}[language=sh]
+tar -xvjf urbi-for-webots.tar.bz2 -C /path/to/webots --strip-components 1
+\end{lstlisting}
+
+Otherwise, you can also merge the directory after extracting the archive:
+
+\begin{lstlisting}[language=sh]
+cp --archive urbi-for-webots/project /path/to/webots
+\end{lstlisting}
+
+You can check your installation works correctly by starting a test world:
+
+\begin{lstlisting}[language=sh]
+cd /path/to/webots
+./webots projects/packages/urbi2.0/worlds/aibo_ers7_urbi_demo.wbt
+\end{lstlisting}
+
+You should see an \aibo{} looking at a moving ball.
+
+\subsubsection{\macosx{}}
+
+\uwebots{} is not available under \macosx{} anymore for now. We hope to
+fix this very shortly.
+
+%% You have to be administrator on your machine in order to install \urbi
+%% for Webots.  Extract the zip file containing \urbi by double clicking
+%% on it.  You obtain two folders: \file{usr} and \file{webots}.  Copy
+%% the contents of the \file{webots} directory in the directory
+%% containing Webots installation (if you did the default installation it
+%% is in \file{/Applications/Webots}), and copy the contents of the
+%% \file{usr} folder in the \file{/usr} system folder.
+
+%% If, for instance, you extracted the zip file in your \file{Desktop}
+%% folder, and that you have set the variable \env{WEBOTS\_HOME} to the
+%% Webots installation path as explained in Webots documentation.  From a
+%% shell terminal this gives you:
+
+%% \begin{shell}
+%% $ cd $HOME/Desktop
+%% $ ls
+%% usr webots
+%% webots-urbiengine-sdk-webots-1.03-k1462-e247-l482-powerpc-apple-darwin8-gcc-4.0.1.zip
+%% $ cp -r usr /
+%% $ cp -r webots/* $WEBOTS_HOME/
+%% \end{shell}
 
 \subsubsection{Windows}
 
-\paragraph{Installation}
+\uwebots{} is not available under windows anymore for now. We hope to
+fix this very shortly.
 
-To install \urbi for Webots under windows, Webots must be installed on
-your computer. If Webots is not installed, please first proceed to
-Webots installation. Then double click on the ``\urbi Webots 1.0
-Setup.exe'' and follow the instructions given by the installer:
+%% \paragraph{Installation}
 
-\begin{enumerate}
-\item The installer recommends to close all other running applications
-  while installing \urbi for Webots. Click ``Next $>$'' to proceed.
+%% To install \urbi for Webots under windows, Webots must be installed on
+%% your computer. If Webots is not installed, please first proceed to
+%% Webots installation. Then double click on the ``\urbi Webots 1.0
+%% Setup.exe'' and follow the instructions given by the installer:
 
-\item Before installing \urbi for Webots, read and accept the Licence
-  Agreement. Once you have read it, check ``I accept the agreement'' and
-  click on ``Next $>$'' to proceed.
+%% \begin{enumerate}
+%% \item The installer recommends to close all other running applications
+%%   while installing \urbi for Webots. Click ``Next $>$'' to proceed.
 
-\item The installer will automatically detect your Webots installation
-  path and install the \urbi controller, the worlds and data in the
-  same location. For all the other files (\urbi for Webots SDK and
-  \urbi for Webots Documentation) you have to provide a new
-  location. This is what the installer is asking at this step. Choose
-  a custom location if you don't want the default one,
-  \verb+C:\Program Files\Gostai\Urbi Webots 1.0+, and click
-  ``Next $>$'' to proceed.
+%% \item Before installing \urbi for Webots, read and accept the Licence
+%%   Agreement. Once you have read it, check ``I accept the agreement'' and
+%%   click on ``Next $>$'' to proceed.
 
-\item In this step you can choose which features will be installed on
-  your computer. Required features (``\urbi Webots'') cannot be
-  unchecked. These are the \urbi controller and the Urbi for Webots
-  worlds and data. They will be installed in your Webots installation
-  directory. Optional features are the ``\urbi Software Development
-  Kit'', useful if you want to develop your own UObjects and plug them
-  in \urbi, and the ``\urbi Documentation''. Optional features will be
-  installed in the location you provided at Step 3).  Check the
-  checkbox near the features you want to install, and click ``Next $>$''
-  to proceed to next step.
+%% \item The installer will automatically detect your Webots installation
+%%   path and install the \urbi controller, the worlds and data in the
+%%   same location. For all the other files (\urbi for Webots SDK and
+%%   \urbi for Webots Documentation) you have to provide a new
+%%   location. This is what the installer is asking at this step. Choose
+%%   a custom location if you don't want the default one,
+%%   \verb+C:\Program Files\Gostai\Urbi Webots 1.0+, and click
+%%   ``Next $>$'' to proceed.
 
-\item You can customize the location where shortcuts to \urbi files
-  will be installed in you Start Menu. You can choose not to put any
-  shortcuts just by checking ``Don't create a start menu folder''. Click
-  ``Next $>$'' to proceed to next step.
+%% \item In this step you can choose which features will be installed on
+%%   your computer. Required features (``\urbi Webots'') cannot be
+%%   unchecked. These are the \urbi controller and the Urbi for Webots
+%%   worlds and data. They will be installed in your Webots installation
+%%   directory. Optional features are the ``\urbi Software Development
+%%   Kit'', useful if you want to develop your own UObjects and plug them
+%%   in \urbi, and the ``\urbi Documentation''. Optional features will be
+%%   installed in the location you provided at Step 3).  Check the
+%%   checkbox near the features you want to install, and click ``Next $>$''
+%%   to proceed to next step.
 
-\item \urbi source code files have a ``.u'' extension. By default the
-  installer associate all ``.u'' files with \urbi. If you don't want
-  these files to be associated unckeck the corresponding
-  checkbox. Then click ``Next $>$'' to proceed to next step.
+%% \item You can customize the location where shortcuts to \urbi files
+%%   will be installed in you Start Menu. You can choose not to put any
+%%   shortcuts just by checking ``Don't create a start menu folder''. Click
+%%   ``Next $>$'' to proceed to next step.
 
-\item The installer prints a summary of the installation options for
-  you to verify that it is correct. Then click ``Install'' to install
-  \urbi for webots on your computer.
+%% \item \urbi source code files have a ``.u'' extension. By default the
+%%   installer associate all ``.u'' files with \urbi. If you don't want
+%%   these files to be associated unckeck the corresponding
+%%   checkbox. Then click ``Next $>$'' to proceed to next step.
 
-\item The installer display the README file. Click ``Next $>$'' to
-  proceed to next step.
+%% \item The installer prints a summary of the installation options for
+%%   you to verify that it is correct. Then click ``Install'' to install
+%%   \urbi for webots on your computer.
 
-\item You have finished to install \urbi for Webots. Click ``Finish'' to
-  close the installer.
-\end{enumerate}
+%% \item The installer display the README file. Click ``Next $>$'' to
+%%   proceed to next step.
 
-\subsubsection{Linux}
-
-In the following, \var{package} denotes the name of the \urbi for
-Webots package.
-
-\paragraph{RPM based distributions}
-
-Execute the following command:
-\begin{shell}
-$ rpm -hiv \var{package}.rpm
-\end{shell}
-
-\paragraph{Debian based distributions}
-
-Execute the following command:
-\begin{shell}
-$ sudo dpkg --install \var{package}.deb
-\end{shell}%$
-
-Your software is installed, you'll now have to setup the license.
-
-
-\paragraph{Manual setup (from a tarball)}
-As root:
-
-\begin{shell}
-$ cd /
-$ tar -xvzf \var{package}.tgz
-\end{shell}
-or
-\begin{shell}
-$ cd /
-$ tar -xvjf \var{package}.bz2
-\end{shell}
-
-\subsubsection{MacOs}
-
-\paragraph{Manual install}
-
-You have to be administrator on your machine in order to install \urbi
-for Webots.  Extract the zip file containing \urbi by double clicking
-on it.  You obtain two folders: \file{usr} and \file{webots}.  Copy
-the contents of the \file{webots} directory in the directory
-containing Webots installation (if you did the default installation it
-is in \file{/Applications/Webots}), and copy the contents of the
-\file{usr} folder in the \file{/usr} system folder.
-
-If, for instance, you extracted the zip file in your \file{Desktop}
-folder, and that you have set the variable \env{WEBOTS\_HOME} to the
-Webots installation path as explained in Webots documentation.  From a
-shell terminal this gives you:
-
-\begin{shell}
-$ cd $HOME/Desktop
-$ ls
-usr webots
-webots-urbiengine-sdk-webots-1.03-k1462-e247-l482-powerpc-apple-darwin8-gcc-4.0.1.zip
-$ cp -r usr /
-$ cp -r webots/* $WEBOTS_HOME/
-\end{shell}
+%% \item You have finished to install \urbi for Webots. Click ``Finish'' to
+%%   close the installer.
+%% \end{enumerate}
 
 \subsection{Evaluation mode}
 
