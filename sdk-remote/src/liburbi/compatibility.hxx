@@ -55,7 +55,7 @@ namespace urbi
 
     inline
     std::string
-    emit(const std::string& event, int major)
+    emit(const std::string& event, unsigned major)
     {
       return 2 <= major ? event + "!" : "emit " + event;
     }
@@ -67,7 +67,7 @@ namespace urbi
 
     inline
     std::string
-    isvoid(const std::string& exp, int major)
+    isvoid(const std::string& exp, unsigned major)
     {
       return 2 <= major ?
         "(" + exp + ").isVoid" : "isvoid(" + exp + ")";
