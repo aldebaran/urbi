@@ -154,41 +154,30 @@ the illustration above.
 
 \section{Component naming}
 
-The name of a component A, which is a sub-component of component B, is
-divided into two parts: the generic designation of a subpart of the
-kinematics chain (like ``leg'', ``head'', ``finger'') that A is referring
-to, and optionally some topological disambiguator relative to its
-position within the component B it belongs to. For example, when there
-are two legs, we need to differentiate between the right and left leg,
-relative to the body component they belong to. The first part is
-called the \textit{designation}, and the second optional part is
-called the \textit{localization}.
+Each component A, which is a sub-component of component B has a name, distinct
+from the name of all the other components at the same level.
+This name is a generic designation of what A represents, such as ``leg''
+,``head'', or ``finger''.
 
-\subsection{Designation}
+Using the correct name for each component is a critical part of this standard.
+No formal rule can be given to find this name for any possible robot
+configuration. However, this document includes a table covering many different
+possible cases. We recommend that robot manufacturers pick from this table
+the name that fits the most the description of their component.
 
-The designation of a component is a usually robot-specific and depends
-on the class of the robot (wheeled, humanoid, animaloid, etc.).
-The following sections provide some guidelines for the most common
-designations, and more advanced rules for rare customized
-cases.
-
-The designation is the critical part of the naming standard. We cannot
-possibly cover all future configurations and conceivable robot complex
-bodies, but the current document will grow whenever we find a new
-case.  We hope to be already covering most of the main cases you can
-find in the industry.
-
-\subsection{Localization}
-
-Localization is necessary when there are two identical sub-components
-A1 and A2 belonging to the same component B, like for example two legs
-or two arms attached to the main body. Usually this can be sorted out
-with simple geometric qualifiers like
+\section{Localization}
+When two identical components A1 and A2, such as the two legs of an humanoid
+robots, are present in the same sub-component B, an extra node is inserted in
+the hierarchy to differenciate them. This node is of the \code{Localizer} type,
+and provides a \code{[]} operator, taking a \code{Localization} argument, used
+to access each of the identical sub-components.
+The urbi SDK provides an implementation for the \code{Localizer} and
+\code{Localization} classes.
+When possible, localization should be simple geometrical qualifier like
 \textit{Right}/\textit{Center}/\textit{Left},
 \textit{Front}/\textit{Middle}/\textit{Back} or
-\textit{Up}/\textit{In-between}/\textit{Down}. The naming
-convention is to use the first letter of the geometric characteristic,
-like R for Right, I for In-between.  Note that ``right'' or ``front'' are
+\textit{Up}/\textit{In-between}/\textit{Down}.
+Note that ``right'' or ``front'' are
 understood here from the point of view of a man standing and looking
 in the direction of the X-axis of the robot, and \textit{Up/Down}
 matches the Z-axis, as depicted in the figure below:
@@ -198,9 +187,15 @@ matches the Z-axis, as depicted in the figure below:
 \end{center}
 
 Several geometric qualifiers can be used at the same time to further
-refine the position. As a convention, side information comes first
-(R/C/L), followed by the depth information (F/M/H) and then the height
-information (U/I/D).
+refine the position. As a convention, height information (U/I/D) comes first,
+folowwed by depth information (F/M/H), and then side information (R/C/L).
+
+\begin{urbifixme}
+// Top-left LED of the left eye.
+robot.body.head.eye[left].led[topleft].val = 1;
+// Touch sensor at the end of the front-left leg of a four-legged robot:
+robot.body.leg[frontleft].foot.touch;
+\end{urbifixme}
 
 You can further qualify a side+depth localization with an additional
 R/L side information. This can be used in the typical layout below:
@@ -212,13 +207,11 @@ R/L side information. This can be used in the typical layout below:
 This dual positioning using side+depth can also be used to combine
 side+height or height+depth information.
 
-Some layouts will typically imply a bilateral organization like for
-example an insectoid robot with a series of 3 legs on both side of its
-body. In that case, an array will be used and follow the geometrical
-localization (R/L). The smaller the number, the closer to the front:
-R[1], R[2], R[3] and L[1], L[2], L[3]. This can be used when there is
-at least 3 components on each side, otherwise the
-\textit{Front}/\textit{Back} approach prevails.
+Layouts with a sequence of three or more identical components can use numbers
+as their Localization, starting from 0.  The smaller the number, the closer to
+the front, up, or left. For instance, an insectoid robot with 3 legs on each
+side will use
+\code{robot.body.leg[left][0]} to address the frontleft leg.
 
 Some components like spines or tails are highly articulated with a set
 of identical sub-components. When talking about these sub-components,
@@ -231,16 +224,20 @@ Other possible localization for sensors are the X, Y and Z axis
 themselves, like for example for an accelerometer or a gyro sensor,
 available in each of the three directions.
 
+\begin{urbifixme}
+robot.body.accel[x]; // accelerometer in the x direction
+\end{urbifixme}
+
 
 Examples of component names including localization:
 
 \begin{urbiunchecked}
-legR, legL, armR, armL;
-fingerR, fingerC, fingerL;      // three-finger hand
+leg[right], leg[left]L;
+finger[right], finger[center], finger[left];      // three-finger hand
 joint[0], joint[1] ... joint[5] // from tail
 touch[478][124]                 // from skin
-accelX, accelY, accelZ;         // typical accelerometer
-gyroX, gyroY, gyroZ;            // typical gyro sensor
+accel[x], accel[y], accel[z];         // typical accelerometer
+gyro[x], gyro[y], gyro[z];            // typical gyro sensor
 \end{urbiunchecked}
 
 \section{Facets}
