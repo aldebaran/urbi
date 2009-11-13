@@ -238,10 +238,10 @@ namespace urbi
     void
     Directory::initialize(CxxObject::Binder<Directory>& bind)
     {
+      bind(SYMBOL(asList), &Directory::list<&details::mk_path>);
       bind(SYMBOL(asPrintable), &Directory::as_printable);
       bind(SYMBOL(asString), &Directory::as_string);
-      bind(SYMBOL(content), &Directory::list<&details::mk_path>);
-      bind(SYMBOL(list), &Directory::list<&details::mk_string>);
+      bind(SYMBOL(content), &Directory::list<&details::mk_string>);
 
       rPrimitive p = new Primitive(&init_bouncer);
       proto->slot_set(SYMBOL(init), p);

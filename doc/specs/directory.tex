@@ -10,22 +10,30 @@ A \dfn{Directory} represents a directory of the filesystem.
 \subsection{Construction}
 
 A \dfn{Directory} can be constructed with one argument: the path of
-the directory using a String or a Path. It can also be constructed by
-the method open of \refObject{Path}.
+the directory using a \refObject{String} or a \refObject{Path}. It can
+also be constructed by the method open of \refObject{Path}.
 
 \begin{urbiscript}
-var d = Directory.new("/");
-[00000001] Directory("/")
-var slash = Directory.new(Path);
-[00000002] Directory("/")
+Directory.new(".");
+[00000001] Directory(".")
+Directory.new(Path.new("."));
+[00000002] Directory(".")
 \end{urbiscript}
 
 \subsection{Slots}
 \begin{itemize}
-\item \lstinline|list|\\
-  A list of String of the content of the directory.
+\item \lstinline|asList|\\
+  The contents of the directory as a \refObject{Path} list.  The
+  various paths include the name of the directory \lstinline|this|.
 
 \item \lstinline|content|\\
-  A list of Path of the content of the directory.
-
+  The contents of the directory as a \refObject{String} list.  The
+  strings include only the last component name; they do not contain
+  the directory name of \lstinline|this|.
 \end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
