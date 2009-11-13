@@ -782,6 +782,29 @@ should use the \code{micro} component as their default sound input.
   }
 \end{events}
 
+\facet{Led}
+
+Simple unicolor Led.
+
+\begin{slots}
+  \slot{val}%
+  {%
+    Led intensity between 0 and 1.%
+  }
+\end{slots}
+
+
+\facet[Led]{RGBLed}
+
+Tri-color led.
+
+\begin{slots}
+  \slot{r,g,b}%
+  {%
+    Intensity of the r, g, and b components, between 0 and 1.%
+  }
+\end{slots}
+
 \section{Standard Components}
 
 Standard components correspond to components typically found in wheeled
