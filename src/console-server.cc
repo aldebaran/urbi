@@ -276,7 +276,9 @@ namespace urbi
                "fast", 'F'),
       arg_interactive("read and parse stdin in a nonblocking way",
                       "interactive", 'i'),
-      arg_no_net("ignored for backward compatibility", "no-network", 'n');
+      arg_no_net("ignored for backward compatibility", "no-network", 'n'),
+      arg_no_banner("do not send the Urbi banner to incoming clients",
+                    "quiet", 'q');
 
     libport::OptionValue
       arg_period   ("ignored for backward compatibility", "period", 'p'),
@@ -296,6 +298,7 @@ namespace urbi
         << arg_period
         << "Tuning:"
         << arg_stack
+        << arg_no_banner
         << "Networking:"
         << libport::opts::host_l
         << libport::opts::port_l
@@ -371,6 +374,13 @@ namespace urbi
 
     data.server = new ConsoleServer(data.fast);
     ConsoleServer& s = *data.server;
+
+    /*----------.
+    | --quiet.  |
+    `----------*/
+
+    if (arg_no_banner.get())
+      s.opt_banner_set(false);
 
     /*----------------.
     | --port/--host.  |

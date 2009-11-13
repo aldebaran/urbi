@@ -188,6 +188,11 @@ namespace kernel
      */
     void updateTime();
 
+    /*----------------.
+    | Configuration.  |
+    `----------------*/
+
+    ATTRIBUTE_RW(bool, opt_banner);
 
     /*--------------.
     | Connections.  |

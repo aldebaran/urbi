@@ -115,6 +115,7 @@ namespace kernel
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
     , thread_id_(pthread_self())
+    , opt_banner_(true)
     , io_(*new boost::asio::io_service())
   {
     lock_check(*this);

@@ -157,6 +157,8 @@ Various
 
 - The files global.u/local.u replace URBI.INI/CLIENT.INI.
 
+- urbi supports --quiet to inhibit the banner.
+
 ***************************
 * New in kernel 2.0 RC 1. *
 ***************************
