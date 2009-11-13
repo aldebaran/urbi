@@ -106,14 +106,14 @@ namespace urbi
       location_type
         slot_locate(const key_type& k, bool fallback = true) const;
 
-      /// Same as slot_locate, but raise LookupError if not found.
-      /// \throw LookupError if the lookup fails.
+      /// Same as slot_locate, but raise Exception.Lookup if not found.
+      /// \throw Exception.Lookup if the lookup fails.
       location_type
         safe_slot_locate(const key_type& k) const;
 
       /// Lookup field in object hierarchy.
       /// \param name The name of the slot to search
-      /// \throw LookupError if the slot isn't found.
+      /// \throw Exception.Lookup if the slot isn't found.
       rObject
         slot_get(const key_type& k) const;
       Slot&

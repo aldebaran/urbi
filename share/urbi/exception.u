@@ -29,7 +29,7 @@ class Global.Exception
   };
 };
 
-class Global.ConstError: Exception
+class Exception.Constness: Exception
 {
   function init()
   {
@@ -37,7 +37,7 @@ class Global.ConstError: Exception
   }
 };
 
-class Global.ImplicitTagComponentError: Exception
+class Exception.ImplicitTagComponent: Exception
 {
   function init()
   {
@@ -45,15 +45,15 @@ class Global.ImplicitTagComponentError: Exception
   }
 };
 
-class Global.SchedulingError: Exception
+class Exception.Scheduling: Exception
 {
   function throwNew(msg)
   {
-    throw SchedulingError.new(msg)
+    throw Exception.Scheduling.new(msg)
   }
 };
 
-class Global.UnexpectedVoidError: Exception
+class Exception.UnexpectedVoid: Exception
 {
   function init()
   {
@@ -61,7 +61,7 @@ class Global.UnexpectedVoidError: Exception
   }
 };
 
-class Global.PrimitiveError: Exception
+class Exception.Primitive: Exception
 {
   var routine;
 
@@ -72,7 +72,7 @@ class Global.PrimitiveError: Exception
   };
 };
 
-class Global.ArityError: Exception
+class Exception.Arity: Exception
 {
   var routine;
   var effective;
@@ -83,15 +83,15 @@ class Global.ArityError: Exception
     this.effective = effective |
 
     if (max.isVoid)
-      '$Exception'("%s: Expected %s argument%s, given %s"
+      '$Exception'("%s: expected %s argument%s, given %s"
                    % [routine, min, {if (1 < min) "s" else ""}, effective])
     else
-      '$Exception'("%s: Expected between %s and %s argument%s, given %s"
+      '$Exception'("%s: expected between %s and %s argument%s, given %s"
                    % [routine, min, max, {if (1 < max) "s" else ""}, effective])
   }
 };
 
-class Global.BadIntegerError: Exception
+class Exception.BadInteger: Exception
 {
   var routine;
   var effective;
@@ -104,7 +104,7 @@ class Global.BadIntegerError: Exception
   };
 };
 
-class Global.TypeError: Exception
+class Exception.Type: Exception
 {
   var expected;
   var effective;
@@ -118,27 +118,27 @@ class Global.TypeError: Exception
   }
 };
 
-class Global.ArgumentTypeError: TypeError
+class Exception.ArgumentType: Exception.Type
 {
   var index;
   var routine;
 
   function init(routine, index, exp, eff)
   {
-    TypeError.getSlot("init").apply([this, exp, eff]) |
+    Exception.Type.getSlot("init").apply([this, exp, eff]) |
     this.routine = routine |
     this.index = index |
-    message = "%s: unexpected %s for argument %s, expected a %s" %
-              [routine, eff.asPrintable, index, exp.type]
+    message = "%s: unexpected %s for argument %s, expected a %s"
+              % [routine, eff.asPrintable, index, exp.type]
   }
 };
 
-class Global.LookupError: Exception
+class Exception.Lookup: Exception
 {
   var msg;
   var obj;
 
-  var fixSpellingErrors = true;
+  var fixSpelling = true;
 
   function init(m, o)
   {
@@ -146,7 +146,7 @@ class Global.LookupError: Exception
     obj = o |
     var explanation = "lookup failed: %s" % m |
     var closest = nil |
-    if (fixSpellingErrors)
+    if (fixSpelling)
       closest = mispelling(m, o) |
     if (closest)
       explanation += " (possible mispelling of %s)" % closest |
@@ -165,9 +165,11 @@ class Global.LookupError: Exception
     var allNames = o.allSlotNames |
     var min = 999 |
     var closest = nil |
-    for| (var n: allNames) {
+    for| (var n: allNames)
+    {
       var d = lcm.distance(n.toLower) |
-      if (d < min) {
+      if (d < min)
+      {
         min = d |
         closest = n |
 	if (min == 0)      // Case mismatch only, that must be it.
@@ -185,7 +187,7 @@ class Global.LookupError: Exception
   }
 };
 
-class Global.RedefinitionError: Exception
+class Exception.Redefinition: Exception
 {
   var slot;
 
@@ -196,7 +198,7 @@ class Global.RedefinitionError: Exception
   }
 };
 
-class Global.FileNotFound: Exception
+class Exception.FileNotFound: Exception
 {
   var path;
 
@@ -207,7 +209,7 @@ class Global.FileNotFound: Exception
   }
 };
 
-class Global.MatchFailure: Exception
+class Exception.MatchFailure: Exception
 {
   function init()
   {

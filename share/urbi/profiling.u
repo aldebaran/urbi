@@ -16,7 +16,7 @@ class Global.Profiling
   function init
   {
     if (call.argsCount != 2)
-      throw ArityError.new("init", call.argsCount, 2);
+      throw Exception.Arity.new("init", call.argsCount, 2);
     var this.expr   = call.argString(0);
     var this.niters = call.evalArgAt (1);
     var start_time = time;

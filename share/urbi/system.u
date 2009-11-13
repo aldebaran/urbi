@@ -15,7 +15,7 @@ do (System)
   function 'assert'
   {
     if (call.args.size != 1)
-      throw ArityError.new(call.message, call.args.size, 1) |
+      throw Exception.Arity.new(call.message, call.args.size, 1) |
     if (!ndebug)
       assert_(call.evalArgAt(0), call.argString(0));
   };
@@ -39,7 +39,7 @@ do (System)
   function assert_op
   {
     if (call.args.size != 3)
-      throw ArityError.new(call.message, call.args.size, 3) |
+      throw Exception.Arity.new(call.message, call.args.size, 3) |
     if (!ndebug)
     {
       var lhs = call.evalArgAt(1) |
@@ -186,7 +186,7 @@ do (System)
     {
       path = searchFile(file);
     }
-    catch (var e if e.isA(FileNotFound))
+    catch (var e if e.isA(Exception.FileNotFound))
     {
     }|;
     if (!path.isNil)

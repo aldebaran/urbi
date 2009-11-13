@@ -170,7 +170,7 @@ namespace rewrite
        "  var '$value' = %exp:2 |\n"
        "  var '$pattern' = Pattern.new(%exp:1) |\n"
        "  if (!'$pattern'.match('$value'))\n"
-       "    throw MatchFailure.new() |\n"
+       "    throw Exception.MatchFailure.new |\n"
        "  {\n"
        "    %unscope:2 |\n"
        "    %exp:3\n"

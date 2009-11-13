@@ -47,9 +47,10 @@ namespace runner
     // Too dangerous to try to print arg1 etc. here, as it certainly
     // involves running urbiScript code.
     assert_user_mode(exn_name, "");
+    assert_ne(exn_name, SYMBOL(Exception));
     Runner& r = dbg::runner_or_sneaker_get();
-
-    const rObject& exn = global_class->slot_get(exn_name);
+    CAPTURE_GLOBAL(Exception);
+    const rObject& exn = Exception->slot_get(exn_name);
     if (arg1 == raise_current_method)
       arg1 = to_urbi(r.innermost_call_get());
     r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4),
@@ -71,7 +72,7 @@ namespace runner
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
     assert_user_mode("Lookup", msg);
-    raise_urbi_skip(SYMBOL(LookupError),
+    raise_urbi_skip(SYMBOL(Lookup),
                     to_urbi(msg),
                     obj);
   }
@@ -79,7 +80,7 @@ namespace runner
   void
   raise_const_error()
   {
-    raise_urbi_skip(SYMBOL(ConstError));
+    raise_urbi_skip(SYMBOL(Constness));
   }
 
 
@@ -87,7 +88,7 @@ namespace runner
   raise_arity_error(unsigned effective,
                     unsigned expected)
   {
-    raise_urbi_skip(SYMBOL(ArityError),
+    raise_urbi_skip(SYMBOL(Arity),
                     raise_current_method,
                     to_urbi(effective),
                     to_urbi(expected));
@@ -98,7 +99,7 @@ namespace runner
                     unsigned minimum,
                     unsigned maximum)
   {
-    raise_urbi_skip(SYMBOL(ArityError),
+    raise_urbi_skip(SYMBOL(Arity),
                     raise_current_method,
                     to_urbi(effective),
                     to_urbi(minimum),
@@ -111,7 +112,7 @@ namespace runner
                             rObject expected,
 			    rObject method_name)
   {
-    raise_urbi_skip(SYMBOL(ArgumentTypeError),
+    raise_urbi_skip(SYMBOL(ArgumentType),
                     method_name,
                     to_urbi(idx),
                     expected,
@@ -122,7 +123,7 @@ namespace runner
   raise_bad_integer_error(libport::ufloat effective,
 			  const std::string& fmt)
   {
-    raise_urbi_skip(SYMBOL(BadIntegerError),
+    raise_urbi_skip(SYMBOL(BadInteger),
                     raise_current_method,
                     to_urbi(fmt),
                     to_urbi(effective));
@@ -131,7 +132,7 @@ namespace runner
   void
   raise_primitive_error(const std::string& message)
   {
-    raise_urbi_skip(SYMBOL(PrimitiveError),
+    raise_urbi_skip(SYMBOL(Primitive),
                     raise_current_method,
                     to_urbi(message));
   }
@@ -139,7 +140,7 @@ namespace runner
   void
   raise_unexpected_void_error()
   {
-    raise_urbi_skip(SYMBOL(UnexpectedVoidError));
+    raise_urbi_skip(SYMBOL(UnexpectedVoid));
   }
 
 }

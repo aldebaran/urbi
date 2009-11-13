@@ -162,7 +162,7 @@ namespace urbi
     Object::slot_set(const key_type& k, Slot* o)
     {
       if (!slots_.set(this, k, o))
-        runner::raise_urbi_skip(SYMBOL(RedefinitionError), to_urbi(k));
+        runner::raise_urbi_skip(SYMBOL(Redefinition), to_urbi(k));
       return *this;
     }
 

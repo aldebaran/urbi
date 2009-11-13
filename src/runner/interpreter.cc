@@ -188,14 +188,15 @@ namespace runner
     // create another job whose task is to build the exception (in a
     // freshly allocated stack) and propagate it to us as we are its
     // parent.
-    CAPTURE_GLOBAL(SchedulingError);
+    CAPTURE_GLOBAL(Exception);
+    object::rObject Scheduling = Exception->slot_get(SYMBOL(Scheduling));
     object::objects_type args;
-    args.push_back(object::to_urbi(msg));
+    args << object::to_urbi(msg);
     sched::rJob child =
       new Interpreter(*this,
-		      SchedulingError->slot_get(SYMBOL(throwNew)),
-		      SYMBOL(SchedulingError),
-		      args);
+                      Scheduling->slot_get(SYMBOL(throwNew)),
+                      SYMBOL(Scheduling),
+                      args);
     register_child(child, collector);
     child->start_job();
 
