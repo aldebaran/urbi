@@ -218,6 +218,8 @@ do (getSlot("UVar"))
   var nAccess = 0;
   var nAccessTag = Tag.new;
   var onHasNotifyAccess = Event.new;
+  // hooking of changed has a cost of one at per UVar.
+  var hookChanged = true;
   function newPropertyHook_(parent, name, prop, value)
   {
    parent.getSlot(name).setProperty("val", prop, value)|
@@ -237,9 +239,12 @@ do (getSlot("UVar"))
       var owned = false |
       var val |
       var changed = Event.new |
-      var changed.onSubscribe = Event.new |
-      at (changed.onSubscribe?)
-        loopCheck |
+      if (hookChanged)
+      {
+        var changed.onSubscribe = Event.new |
+        at (changed.onSubscribe?)
+          loopCheck
+      }|
       var valsensor = 0 |
       var isUVar = 1
     }
