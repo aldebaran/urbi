@@ -110,12 +110,12 @@ namespace kernel
                   (std::string(libport::xgetenv("URBI_ROOT", URBI_ROOT))
                    + "/share/gostai"),
                   ":")
+    , opt_banner_(true)
     , scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
                                                   boost::ref(*this))))
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
     , thread_id_(pthread_self())
-    , opt_banner_(true)
     , io_(*new boost::asio::io_service())
   {
     lock_check(*this);
