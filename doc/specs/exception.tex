@@ -1,0 +1,156 @@
+\section{Exception}
+
+Exceptions are used to handle errors.  More generally, they are a
+means to escape from the normal control-flow to handle exceptional
+situations.
+
+The language support for throwing and catching exceptions (using
+\lstinline|try|/\lstinline|catch| and \lstinline|throw|, see
+\autoref{sec:lang:except}) work perfectly well with any kind of
+object, yet it is a good idea to throw only objects that derive from
+\lstinline|Exception|.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+There are several types of exceptions, each of which corresponding to
+a particular kind of error.  The top-level object,
+\lstinline|Exception|, takes a single argument: an error message.
+
+\begin{urbiscript}
+Exception.new("something bad has happened!");
+[00000001] Exception `something bad has happened!'
+Exception.Arity.new("myRoutine", 1, 10, 23);
+[00000002] Arity `myRoutine: expected between 10 and 23 arguments, given 1'
+\end{urbiscript}
+
+
+\subsection{Slots}
+\begin{itemize}
+\item \lstinline|ArgumentType.new(\var{routine}, \var{index}, \var{expected}, \var{effective})|\\
+  Derives from \lstinline|Exception.Type|.  The \var{routine} was
+  called with a \var{index}-nth argument of type \var{effective}
+  instead of \var{expected}.
+\begin{urbiscript}[firstnumber=last]
+Exception.ArgumentType.new("myRoutine", 1, "myExceptation", "hisResult");
+[00000003] ArgumentType `myRoutine: unexpected "hisResult" for argument 1, expected a String'
+\end{urbiscript}
+
+\item \lstinline|Arity.new(\var{routine}, \var{effective}, \var{min}, \var{max} = void)|\\
+  The \var{routine} was called with an incorrect number of arguments
+  (\var{effective}).  It requires at least \var{min} arguments, and,
+  if specified, at most \var{max}.
+\begin{urbiscript}[firstnumber=last]
+Exception.Arity.new("myRoutine", 1, 10, 23);
+[00000004] Arity `myRoutine: expected between 10 and 23 arguments, given 1'
+\end{urbiscript}
+%% try
+%% {
+%%   Math.cos(1, 2);
+%% }
+%% catch (var e)
+%% {
+%%   assert_eq(e,
+%%   Exception.Arity.new("cos", 2, 1));
+%% };
+
+\item \lstinline|BadInteger.new(\var{routine}, \var{fmt}, \var{effective})|\\
+  The \var{routine} was called with an inappropriate integer
+  (\var{effective}).  Use the format \var{fmt} to create an error
+  message from \var{effective}.
+\begin{urbiscript}[firstnumber=last]
+Exception.BadInteger.new("myRoutine", "bad integer: %s", 12);
+[00000005] BadInteger `myRoutine: bad integer: 12'
+\end{urbiscript}
+
+\item \lstinline|Constness.new(\var{msg})|\\
+  An attempt was made to change a constant value.
+\begin{urbiscript}[firstnumber=last]
+Exception.Constness.new("cannot change this");
+[00000006:error] !!! new: expected 0 argument, given 1
+\end{urbiscript}
+
+\item \lstinline|FileNotFound.new(\var{name})|\\
+  The file named \var{name} cannot be found.
+\begin{urbiscript}[firstnumber=last]
+Exception.FileNotFound.new("foo");
+[00000007] FileNotFound `file not found: foo'
+\end{urbiscript}
+
+\item \lstinline|ImplicitTagComponent.new(\var{msg})|\\
+  An attempt was made to create an implicit tag, a component of which
+  being undefined.
+\begin{urbiscript}[firstnumber=last]
+Exception.Constness.new("no such implicit tag");
+[00000008:error] !!! new: expected 0 argument, given 1
+\end{urbiscript}
+
+\item \lstinline|Lookup.new(\var{object}, \var{name})|\\
+  A failed name lookup was performed om \var{object} to find a slot
+  named \var{name}.  If \lstinline|Exception.Lookup.fixSpelling| is
+  true (which is the default), suggest what the user might have meant
+  to use.
+\begin{urbiscript}[firstnumber=last]
+Exception.Lookup.new(Object, "GetSlot");
+[00000009] Lookup `lookup failed: Object'
+\end{urbiscript}
+
+\item \lstinline|MatchFailure.new|\\
+  A pattern matching failed.
+\begin{urbiscript}[firstnumber=last]
+Exception.MatchFailure.new;
+[00000010] MatchFailure `pattern did not match'
+\end{urbiscript}
+
+\item \lstinline|Primitive.new(\var{routine}, \var{msg})|\\
+  The builtin \var{routine} encountered an error described by
+  \var{msg}.
+\begin{urbiscript}[firstnumber=last]
+Exception.Primitive.new("myRoutine", "cannot do that");
+[00000011] Primitive `myRoutine: cannot do that'
+\end{urbiscript}
+
+\item \lstinline|Redefinition.new(\var{name})|\\
+  An attempt was made to refine a slot named \var{name}.
+\begin{urbiscript}[firstnumber=last]
+Exception.Redefinition.new("foo");
+[00000012] Redefinition `slot redefinition: foo'
+\end{urbiscript}
+
+\item \lstinline|Scheduling.new(\var{msg})|\\
+  Something really bad has happened with the \urbi task scheduler.
+\begin{urbiscript}[firstnumber=last]
+Exception.Scheduling.new("cannot schedule");
+[00000013] Scheduling `cannot schedule'
+\end{urbiscript}
+
+\item \lstinline|Type.new(\var{expected}, \var{effective})|\\
+  A value of type \var{effective} was received, while a value of type
+  \var{expected} was expected.
+\begin{urbiscript}[firstnumber=last]
+Exception.Type.new("myExceptation", "hisResult");
+[00000014] Type `unexpected "hisResult", expected a String'
+\end{urbiscript}
+
+\item \lstinline|UnexpectedVoid.new|\\
+  An attempt was made to read the value of \lstinline|void|.
+\begin{urbiscript}[firstnumber=last]
+Exception.UnexpectedVoid.new;
+[00000015] UnexpectedVoid `unexpected void'
+var a = void;
+a;
+[00000016:error] !!! unexpected void
+[00000017:error] !!! lookup failed: a
+\end{urbiscript}
+
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
