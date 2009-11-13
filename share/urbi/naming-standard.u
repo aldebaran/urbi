@@ -3,8 +3,10 @@
 do (Global)
 {
   /// Implementations of a Facet must inherit from the appropriate class.
-  class Facet {} |
-
+  class Facet {
+    var componentName;
+    var parentComponent = nil;
+  } |
   do (Facet) {
     class Battery           : Facet  {};
     class Motor             : Facet  {};
@@ -26,13 +28,14 @@ do (Global)
     class BlobDetector      : Facet  {};
     class TextToSpeech      : Facet  {};
     class SpeechRecognizer  : Facet  {};
-
+    class Led               : Facet  {};
+    class RGBLed            : Led    {};
     function facets()
     {
       function isFacet(o)
       {
         var name = o.type;
-        return Facet.hasSlot(name) && Facet.getSlot(name) === o
+        Facet.hasLocalSlot(name) && Facet.getSlot(name) === o
       };
 
       var res = allProtos.filter(isFacet) |
