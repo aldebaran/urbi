@@ -190,12 +190,12 @@ Several geometric qualifiers can be used at the same time to further
 refine the position. As a convention, height information (U/I/D) comes first,
 folowwed by depth information (F/M/H), and then side information (R/C/L).
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 // Top-left LED of the left eye.
 robot.body.head.eye[left].led[topleft].val = 1;
 // Touch sensor at the end of the front-left leg of a four-legged robot:
 robot.body.leg[frontleft].foot.touch;
-\end{urbifixme}
+\end{urbiunchecked}
 
 You can further qualify a side+depth localization with an additional
 R/L side information. This can be used in the typical layout below:
@@ -224,9 +224,9 @@ Other possible localization for sensors are the X, Y and Z axis
 themselves, like for example for an accelerometer or a gyro sensor,
 available in each of the three directions.
 
-\begin{urbifixme}
+\begin{urbiunchecked}
 robot.body.accel[x]; // accelerometer in the x direction
-\end{urbifixme}
+\end{urbiunchecked}
 
 
 Examples of component names including localization:
