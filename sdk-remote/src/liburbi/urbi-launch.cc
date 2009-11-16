@@ -102,11 +102,9 @@ version()
 }
 
 
-typedef int (*umain_type)(const libport::cli_args_type& args,
-                          bool block, bool errors);
-extern "C" int
-URBI_SDK_API
-urbi_launch(int argc, char* argv[])
+static
+int
+urbi_launch_(int argc, char* argv[])
 {
   libport::program_initialize(argc, argv);
 
@@ -120,8 +118,7 @@ urbi_launch(int argc, char* argv[])
     MODE_REMOTE
   };
   ConnectMode connect_mode = MODE_REMOTE;
-  /// Core dll to use.
-  std::string dll;
+
   /// Server port.
   int port = urbi::UClient::URBI_PORT;
   std::string host = UClient::default_host();
@@ -173,8 +170,6 @@ urbi_launch(int argc, char* argv[])
     version();
   if (libport::opts::help.get())
     usage(opt_parser);
-  if (arg_custom.filled())
-    dll = arg_custom.value();
 
   /// Server host name
   if (libport::opts::host.filled())
@@ -208,10 +203,13 @@ urbi_launch(int argc, char* argv[])
 
   libport::path urbi_root = libport::xgetenv("URBI_ROOT", URBI_ROOT);
   libport::path coredir = urbi_root / "gostai" / "core" / URBI_HOST;
-  if (dll.empty())
-    dll = (coredir
-           / (connect_mode == MODE_REMOTE ? "remote" : "engine")
-           / "libuobject");
+  /// Core dll to use.
+  std::string dll
+    = (arg_custom.filled()
+       ? arg_custom.value()
+       :  string_cast(coredir
+                      / (connect_mode == MODE_REMOTE ? "remote" : "engine")
+                      / "libuobject"));
 
   /* The two other modes are handled the same way:
    * -Dlopen the correct libuobject.
@@ -228,10 +226,26 @@ urbi_launch(int argc, char* argv[])
   libport::xlt_advise dl;
   dl.ext()
     .path().push_back(list_of(uobject_path)(coredir / "uobjects"), ":");
-
   foreach (const std::string& s, modules)
     dl.open(s);
 
+  typedef int (*umain_type)(const libport::cli_args_type& args,
+                            bool block, bool errors);
   umain_type umain = core.sym<umain_type>("urbi_main_args");
   return umain(args, true, true);
+}
+
+extern "C" int
+URBI_SDK_API
+urbi_launch(int argc, char* argv[])
+{
+  try
+  {
+    return urbi_launch_(argc, argv);
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << argv[0] << ": " << e.what() << std::endl
+              << libport::exit(EX_FAIL);
+  }
 }
