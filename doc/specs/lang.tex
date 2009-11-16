@@ -1806,18 +1806,33 @@ test([22, 20]);
 test(51);
 [00002143:error] !!! 51
 [00002143:error] !!!    called from: 12.1-8: test
-
 \end{urbiscript}
 
 \subsection{Inspecting exceptions}
 
 An \refObject{Exception} is a regular object, on which introspection
-can be performed.  \fixme{fill}
+can be performed.
 
+\begin{urbiscript}[firstnumber=last]
+try
+{
+  Math.cos(3,1415);
+}
+catch (var e)
+{
+  echo ("Exception type: %s" % e.type);
+  if (e.isA(Exception.Arity))
+  {
+    echo("Routine: %s" % e.routine);
+    echo("Number of effective arguments: %s" % e.effective);
+  };
+};
+[00000132] *** Exception type: Arity
+[00000133] *** Routine: cos
+[00000134] *** Number of effective arguments: 2
+\end{urbiscript}
 
-\subsection{Exceptions and parallelism}
-
-\fixme{fill}
+%% FIXME: \subsection{Exceptions and parallelism}
 
 \section{Assertions}
 \label{sec:assertions}
