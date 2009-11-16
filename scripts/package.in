@@ -21,6 +21,11 @@ error ()
   exit $status
 }
 
+fatal ()
+{
+  error 1 "$@"
+}
+
 # If some of those need to be chosen by configure, add an entry
 # there and add the "@" form.
 : ${CP=cp}
@@ -36,7 +41,7 @@ error ()
 
 case $# in
   (10);;
-  (*) error 1 "not enough arguments: $#, expecting 10";;
+  (*) fatal "not enough arguments: $#, expecting 10";;
 esac
 
 # Those would best be set through configure (except "updir"
@@ -79,6 +84,11 @@ $RM -r "$packagedir"
 $MKDIR_P "$packagedir"
 (cd "$DESTDIR$prefix" && $TAR cf - .) | (cd "$packagedir" && $TAR xpBf -)
 
+# Host and build machines.
+build=$(sed -n '/^build = /{s///;p;q;}'$builddir/Makefile)
+host=$(sed -n '/^host = /{s///;p;q;}'$builddir/Makefile)
+stderr "build=$build" "host=$host"
+
 # Install the boost headers.
 # First we must figure out where they are. If they were found in a standard
 # include directory, no variable will tell us that.
@@ -91,15 +101,13 @@ incline=$(perl -n \
                   exit 0;
                 }' $builddir/sdk-remote/src/bin/urbi-launch.ii
 )
-if winepath --help >/dev/null; then
-  incline=$(winepath -u "$incline")
-elif cygpath --help >/dev/null; then
-  incline=$(cygpath -u "$incline")
-fi
+case $build:$host in
+  (*cygwin:*) incline=$(cygpath  -u "$incline");;
+  (*:mingw32) incline=$(winepath -u "$incline");;
+esac
 # Ensure we got it right.
 if test ! -f  $incline/version.hpp; then
-  echo "Failed to find boost include directory, got '$incline'"
-  exit 1
+  fatal "failed to find boost include directory, got '$incline'"
 fi
 
 $CP -pRP $incline $packagedir/include
