@@ -1,13 +1,25 @@
 #! /bin/sh -e
 
-error ()
+stderr ()
 {
   local i
   for i
   do
     echo >&2 "$0: $i"
   done
-  exit 1
+}
+
+error ()
+{
+  local sta=$1
+  shift
+  stderr "$@"
+  exit $sta
+}
+
+fatal ()
+{
+  error 1 "$@"
 }
 
 usage ()
@@ -22,23 +34,31 @@ RELEASE can be specified (e.g., \`2.0-rc-1'), otherwise it is computed
 automatically from the latest time stamp.
 
 Options:
-  --help    display this message and exit successfully
+  -h, --help        display this message and exit successfully
+  -u, --user NAME   use NAME to log on gate [$login]
 EOF
 }
 
 getargs ()
 {
-  for i
+  while test $# -ne 0;
   do
-    case $i in
-      (--help) usage;;
-      (*) latest=$i;;
+    case $1 in
+      (-h|--help) usage;;
+      (-u|--user) shift; login=$1;;
+      (-*) fatal "invalid option: $1";;
+      (*) latest=$1;;
     esac
+    shift
   done
 }
 
-# The directory on built that contains the packages.
-dir=built/kernel-2.0/archives
+# The machine that has the built tarballs.
+gate=bf-2.gostai.com
+# The login to access the tarball.s
+login=build
+# The shared directory that contains the packages.
+dir=share/built/kernel-2.0/archives
 
 oses="windows linux macos"
 
@@ -52,7 +72,7 @@ getargs "$@"
 # urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug_dynamic.tar.gz
 # urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86.tar.gz
 # urbi-sdk-2.0-beta2-498-g4f7f361-macos-x86.tar.gz
-all=$(ssh build@gate "cd $dir && ls -1t *windows*.zip *linux*.gz *macos-*.gz")
+all=$(ssh $login@$gate "cd $dir && ls -1t *windows*.zip *linux*.gz *macos-*.gz")
 
 # Make sure that we have the same version for the three architectures.
 test -n "$latest" ||
@@ -66,13 +86,13 @@ test -n "$latest" ||
                   { print "$1\n"; exit 0; }')
 
 test -n "$latest" ||
-  error "cannot find latest version from:" $all
+  fatal "cannot find latest version from:" $all
 
 for os in $oses
 do
   pack=$(echo "$all" | grep -e "$latest-$os" | grep -v 'debug' || true)
   test -n "$pack"||
-    error "$latest does not exist for $os"
+    fatal "$latest does not exist for $os"
 done
 
 for os in $oses
@@ -82,10 +102,10 @@ do
     echo " --------------- $pack ---------------- "
     # For some reason, "scp A B" does not work, so
     # "scp A localhost && scp localhost B".
-    cmd="scp \"build@gate:$dir/$pack\" /tmp/$pack &&
+    cmd="scp \"$login@$gate:$dir/$pack\" /tmp/$pack &&
      scp /tmp/$pack downloads@www.gostai.com:urbi-sdk-2.0_beta/$os/$pack &&
      ssh downloads@www.gostai.com 'chmod 640 urbi-sdk-2.0_beta/$os/$pack'"
-    echo >&2 "$cmd"
+    stderr "$cmd"
     eval "$cmd"
   done
 done
