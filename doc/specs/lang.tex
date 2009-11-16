@@ -414,17 +414,19 @@ unpredictable, such results would clutter the output randomly.  Use
 asynchronously.
 
 \begin{urbiscript}
-for (3)
 {
-  sleep(1s);
-  echo("ping");
-},
-sleep(.5s);
-for (3)
-{
-  sleep(1s);
-  echo("pong");
-},
+  for (3)
+  {
+    sleep(1s);
+    echo("ping");
+  },
+  sleep(0.5s);
+  for (3)
+  {
+    sleep(1s);
+    echo("pong");
+  },
+};
 [00000316] *** ping
 [00000316] *** pong
 [00000316] *** ping
@@ -438,10 +440,12 @@ too: the execution follow ``waits'' for the end of the jobs
 backgrounded with \samp{,} before proceeding.  Compare the two
 following executions.
 
-\begin{urbiscript}[firstnumber=last]
-sleep(100ms) | echo("1"),
-sleep(100ms) | echo("2"),
-echo("done");
+\begin{urbiscript}
+{
+  sleep(100ms) | echo("1"),
+  sleep(100ms) | echo("2"),
+  echo("done");
+};
 [00000316] *** done
 [00000316] *** 1
 [00000316] *** 2
@@ -468,8 +472,8 @@ efficient, and, in a way, provides some atomicity for concurrent tasks.
 \begin{frame}[containsverbatim]{Tight Sequentiality}
 \begin{urbiscript}
 {
-  echo("11") ; sleep(100ms) ; echo("12"),
-  echo("21") ; sleep(100ms) ; echo("22"),
+  { echo("11") ; sleep(100ms) ; echo("12") },
+  { echo("21") ; sleep(200ms) ; echo("22") },
 };
 [00000316] *** 11
 [00000316] *** 21
@@ -477,10 +481,11 @@ efficient, and, in a way, provides some atomicity for concurrent tasks.
 [00000316] *** 22
 \end{urbiscript}
 
+%% Cannot use sleep here, as it yields, which makes the point moot.
 \begin{urbiscript}
 {
-  echo("11") | sleep(100ms) | echo("12"),
-  echo("21") | sleep(100ms) | echo("22"),
+  { echo("11") | echo("12") },
+  { echo("21") | echo("22") },
 };
 [00000316] *** 11
 [00000316] *** 12
