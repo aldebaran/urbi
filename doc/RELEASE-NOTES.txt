@@ -11,13 +11,15 @@ not reported below.  The following list is by no means exhaustive.
 Documentation
 =============
 
-The documentation was largely extended and fixed.  Its layout was also
-improved.  Changes include, but are not limited to:
+The documentation was fixed, completed, and extended.  Its layout was
+also improved.  Changes include, but are not limited to:
 
-- URBI_UOBJECT_PATH
 - various executables
+  urbi, urbi-launch, urbi-send etc.
 - environment variables
+  URBI_UOBJECT_PATH, URBI_PATH, URBI_ROOT.
 - special files
+  global.u, local.u.
 - k1-to-k2
   Conversion idioms from urbiScript 1 to urbiScript 2
 - faq
@@ -32,6 +34,7 @@ improved.  Changes include, but are not limited to:
   - Channel
   - Date
   - Dictionary
+  - Exception
   - File
   - Kernel1
   - InputStream
@@ -53,9 +56,7 @@ Optimization
 ============
 
 The urbiScript engine was considerably optimized in both space and
-time.  FIXME: More about this here, and some figures please.
-Including about SDK-Remote.
-
+time.
 
 urbiScript
 ==========
@@ -87,6 +88,7 @@ New constructs:
   as in C++.
 
 New objects:
+- Directory
 - File
 - Finalizable
 - InputStream
