@@ -159,6 +159,10 @@ Various
 
 - urbi supports --quiet to inhibit the banner.
 
+- The performance warning about at (condition) has been removed. An
+  optimization for this construct is currently being integrated in the
+  kernel.
+
 ***************************
 * New in kernel 2.0 RC 1. *
 ***************************
