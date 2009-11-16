@@ -85,8 +85,8 @@ $MKDIR_P "$packagedir"
 (cd "$DESTDIR$prefix" && $TAR cf - .) | (cd "$packagedir" && $TAR xpBf -)
 
 # Host and build machines.
-build=$(sed -n '/^build = /{s///;p;q;}'$builddir/Makefile)
-host=$(sed -n '/^host = /{s///;p;q;}'$builddir/Makefile)
+build=$($SED -ne '/^build = /{s///;p;q;}' $builddir/Makefile)
+host=$( $SED -ne '/^host = /{s///;p;q;}' $builddir/Makefile)
 stderr "build=$build" "host=$host"
 
 # Install the boost headers.
