@@ -80,6 +80,3 @@ class Global.Kernel1
       function () { deprecated(name) });
 
 };
-
-// K1 compatibility: import the k1 functions.
-Global.addProto(Global.Kernel1);

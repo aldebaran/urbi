@@ -1,8 +1,8 @@
 \section{Kernel1}
 
-This object is actually meant to play the role of a name-space in
-which obsolete functions from \us 1.0 are provided for backward
-compatibility.  Do not use these functions, scheduled for removal.
+This object plays the role of a name-space in which obsolete functions
+from \us 1.0 are provided for backward compatibility.  Do not use
+these functions, scheduled for removal.
 
 \subsection{Prototypes}
 \begin{itemize}
@@ -26,6 +26,21 @@ other instances.
 \item \lstinline|copy(\var{binary})|\\
   Obsolete syntax for \lstinline|\var{binary}.copy|, see
   \refObject{Binary}.
+\begin{urbiscript}
+// copy.
+var a = BIN 10;0123456789
+[00000001] BIN 10
+[:]0123456789
+
+var b = Kernel1.copy(a);
+[00000003:warning] *** `copy(binary)' is deprecated, use `binary.copy'
+[00000004] BIN 10
+[:]0123456789
+
+echo (b);
+[00000005] *** BIN 10
+[:]0123456789
+\end{urbiscript}
 
 \item \lstinline|devices|\\
   Ignored for backward compatibility.
@@ -45,7 +60,7 @@ other instances.
 
 \item \lstinline|ping|\\
   Return \lstinline|time| verbosely, see \refObject{System}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 Kernel1.ping;
 [00000421] *** pong time=0.12s
 \end{urbiscript}
@@ -63,6 +78,10 @@ Kernel1.ping;
 \item \lstinline|size(\var{list})|\\
   Obsolete syntax for \lstinline|\var{list}.size|, see
   \refObject{List}.
+\begin{urbiassert}[firstnumber=last]
+Kernel1.size([1, 2, 3]) == [1, 2, 3].size;
+[00000002:warning] *** `size(list)' is deprecated, use `list.size'
+\end{urbiassert}
 
 \item \lstinline|strict|\\
   Ignored for backward compatibility.
@@ -70,6 +89,10 @@ Kernel1.ping;
 \item \lstinline|strlen(\var{string})|\\
   Obsolete syntax for \lstinline|\var{string}.length|, see
   \refObject{String}.
+\begin{urbiassert}[firstnumber=last]
+Kernel1.strlen("123") == "123".length;
+[00000002:warning] *** `strlen(string)' is deprecated, use `string.length'
+\end{urbiassert}
 
 \item \lstinline|taglist|\\
   Ignored for backward compatibility.
