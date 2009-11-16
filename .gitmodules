@@ -10,3 +10,6 @@
 [submodule "build-aux"]
 	path = build-aux
 	url = git@git.gostai.com:build-aux
+[submodule "doc/document-aux"]
+	path = doc/document-aux
+	url = git@git.gostai.com:document-aux
