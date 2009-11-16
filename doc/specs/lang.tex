@@ -376,6 +376,131 @@ echo("a\\nb");
 
 See \refObject{String} for more details.
 
+\subsection{Statement Separators}
+\label{sec:lang:separators}
+
+Sequential languages such as \Cxx support a single way to compose two
+statements: the sequential composition, ``denoted'' by \samp{;}.  To
+support concurrency and more fined tuned sequentiality, \us features
+four different statement-separators (or connectors):
+\begin{description}
+\item[\samp{;}] sequentiality
+\item[\samp{|}] tight sequentiality
+\item[\samp{,}] background concurrency
+\item[\samp{\&}] fair-start concurrency
+\end{description}
+
+\subsubsection{\samp{;}}
+
+The \samp{;}-connector waits for the first statement to finish before
+starting the second statement.  When used in the top-level interactive
+session, both results are displayed.
+
+\begin{urbiscript}[firstnumber=last]
+1; 2; 3;
+[00000000] 1
+[00000000] 2
+[00000000] 3
+\end{urbiscript}
+
+\subsubsection{\samp{,}}
+
+The \samp{,}-connector sends the first statement in background for
+concurrent execution, and starts the second statement when possible.
+When used in interactive sessions, the value of backgrounded
+statements are \emph{not} printed --- the time of their arrival being
+unpredictable, such results would clutter the output randomly.  Use
+\refObject[s]{Channel} or \refObject[s]{Event} to return results
+asynchronously.
+
+\begin{urbiscript}
+for (3)
+{
+  sleep(1s);
+  echo("ping");
+},
+sleep(.5s);
+for (3)
+{
+  sleep(1s);
+  echo("pong");
+},
+[00000316] *** ping
+[00000316] *** pong
+[00000316] *** ping
+[00000316] *** pong
+[00000316] *** ping
+[00000316] *** pong
+\end{urbiscript}
+
+Both \samp{;} and \samp{,} have equal precedence.  They are scoped
+too: the execution follow ``waits'' for the end of the jobs
+backgrounded with \samp{,} before proceeding.  Compare the two
+following executions.
+
+\begin{urbiscript}[firstnumber=last]
+sleep(100ms) | echo("1"),
+sleep(100ms) | echo("2"),
+echo("done");
+[00000316] *** done
+[00000316] *** 1
+[00000316] *** 2
+\end{urbiscript}
+
+\begin{urbiscript}[firstnumber=last]
+{
+  sleep(100ms) | echo("1"),
+  sleep(100ms) | echo("2"),
+};
+echo("done");
+[00000316] *** 1
+[00000316] *** 2
+[00000316] *** done
+\end{urbiscript}
+
+
+\subsubsection{\samp{|}}
+When using the \samp{;} connector, the scheduler is allowed to run
+other commands between the first and the second statement.  The
+\samp{|} does not yield between both statements.  It is therefore more
+efficient, and, in a way, provides some atomicity for concurrent tasks.
+
+\begin{frame}[containsverbatim]{Tight Sequentiality}
+\begin{urbiscript}
+{
+  echo("11") ; sleep(100ms) ; echo("12"),
+  echo("21") ; sleep(100ms) ; echo("22"),
+};
+[00000316] *** 11
+[00000316] *** 21
+[00000316] *** 12
+[00000316] *** 22
+\end{urbiscript}
+
+\begin{urbiscript}
+{
+  echo("11") | sleep(100ms) | echo("12"),
+  echo("21") | sleep(100ms) | echo("22"),
+};
+[00000316] *** 11
+[00000316] *** 12
+[00000316] *** 21
+[00000316] *** 22
+\end{urbiscript}
+\end{frame}
+
+In an interactive session, both statements must be ``known'' before
+launching the sequence.  The value of the composed statement is the
+value of the second statement.
+
+\subsubsection{\samp{\&}}
+
+The \samp{\&} is very similar to the \samp{,} connector, but for its
+precedence.  \urbi expects to process the whole statement before
+launching the connected statements.   This is especially handy in
+interactive sessions, as a means to fire a set of tasks concurrently.
+
+
 \subsection{Operators}
 
 \us supports many \dfn{operators}, most of which are inspired from
@@ -759,7 +884,7 @@ precedence.
 % the result, for instance.
 \dfn{Scopes} are sequences of statements, enclosed in curly brackets
 (\lstinline|{}|). Statements are separated with the four statements
-separators (see \fixme{autoref{sec:fixme}}). The last separator is
+separators (see \autoref{sec:lang:separators}). The last separator is
 optional and ignored if present. Scopes are themselves expressions,
 and can thus be used in composite expressions, nested, and so forth.
 
