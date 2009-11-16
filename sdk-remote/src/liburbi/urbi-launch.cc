@@ -108,21 +108,6 @@ urbi_launch_(int argc, char* argv[])
 {
   libport::program_initialize(argc, argv);
 
-  enum ConnectMode
-  {
-    /// Start a new engine and plug the module
-    MODE_PLUGIN_START,
-    /// Load the module in a running engine as a plugin
-    MODE_PLUGIN_LOAD,
-    /// Connect the module to a running engine (remote uobject)
-    MODE_REMOTE
-  };
-  ConnectMode connect_mode = MODE_REMOTE;
-
-  /// Server port.
-  int port = urbi::UClient::URBI_PORT;
-  std::string host = UClient::default_host();
-
   // The options passed to urbi::main.
   libport::cli_args_type args;
 
@@ -171,12 +156,17 @@ urbi_launch_(int argc, char* argv[])
   if (libport::opts::help.get())
     usage(opt_parser);
 
-  /// Server host name
-  if (libport::opts::host.filled())
+  // Connection mode.
+  enum ConnectMode
   {
-    host = libport::opts::host.value();
-    args << "--host" << host;
-  }
+    /// Start a new engine and plug the module
+    MODE_PLUGIN_START,
+    /// Load the module in a running engine as a plugin
+    MODE_PLUGIN_LOAD,
+    /// Connect the module to a running engine (remote uobject)
+    MODE_REMOTE
+  };
+  ConnectMode connect_mode = MODE_REMOTE;
 
   if (arg_plugin.get())
     connect_mode = MODE_PLUGIN_LOAD;
@@ -184,17 +174,23 @@ urbi_launch_(int argc, char* argv[])
     connect_mode = MODE_REMOTE;
   if (arg_start.get())
     connect_mode = MODE_PLUGIN_START;
+
+  /// Server host name.
+  std::string host = libport::opts::host.value(UClient::default_host());
+  if (libport::opts::host.filled())
+    args << "--host" << host;
+
+  /// Server port.
+  int port = libport::opts::port.get<int>(urbi::UClient::URBI_PORT);
   if (libport::opts::port.filled())
-  {
-    port = libport::opts::port.get<int>();
     args << "--port" << libport::opts::port.value();
-  }
+
   if (arg_pfile.filled())
   {
-    std::string my_arg = arg_pfile.value();
+    std::string file = arg_pfile.value();
     if (connect_mode == MODE_PLUGIN_LOAD)
-      port = libport::file_contents_get<int>(my_arg);
-    args << "--port-file" << my_arg;
+      port = libport::file_contents_get<int>(file);
+    args << "--port-file" << file;
   }
   args.insert(args.end(), arg_end.get().begin(), arg_end.get().end());
 
