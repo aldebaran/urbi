@@ -1274,14 +1274,13 @@ When a message \var{msg} is sent to object \lstinline|obj|:
 \item The \var{msg} slot of \lstinline|obj| is retrieved (i.e.,
   \lstinline|obj.getSlot("\var{msg}")|). If the slot is not found, the
   classic lookup error is raised.
-\item If the object is not a \lstinline|Routine|
-  (\fixme{autoref{sec:fixme}}), it is
-  the result of the message sending. In this case, there must be no
-  argument, otherwise an error is raised.
-\item If the object is a \lstinline|Routine|, it is invoked with the
-  message sending arguments, and the returned value is the result. As
+\item If the object is a \dfn{routine} (either a primitive, written in
+  \Cxx for instance, or a function implemented in \us), it is invoked
+  with the message arguments, and the returned value is the result. As
   a consequence, the number of arguments in the message sending must
-  match the one required by the \lstinline|Routine|.
+  match the one required by the routine.
+\item Otherwise (the object is not a routine), this object is the
+  result of the message sending. There must be no argument.
 \end{itemize}
 
 Such message sending is illustrated below.
@@ -1886,7 +1885,101 @@ true;
 \section{Parallel and event-based flow control}
 
 \subsection{\lstinline'at'}
-\fixme{fill}
+
+Using the \lstindex{at} construct, one can arm code that will be
+triggered each time some condition is true.
+
+The \lstinline'at' construct is as follows:
+
+\begin{urbiunchecked}
+at (\var{condition})
+  \var{statement1}
+onleave
+  \var{statement2}
+\end{urbiunchecked}
+
+The \var{condition} can be of two different kinds:
+\lstinline|\var{e}?(\var{args})} to catch when events are sent, or
+\lstinline|\var{exp}| to catch each time a Boolean \var{exp} becomes
+true.
+
+The \lstinline|onleave \var{statement2}| part is optional.  Note that,
+as is the case for the \lstinline|if| statement, there must not be a
+semicolon after \var{statement1} if there is an \lstinline|onleave|
+clause.
+
+\subsubsection{\lstinline'at' on Events}
+
+
+
+\subsubsection{\lstinline'at' on Boolean Expressions}
+
+The \lstinline|at| construct can be used to watch a given Boolean
+expression.
+
+\begin{urbiscript}
+var x = 0 |
+var x_is_two = false |
+at (x == 2)
+  x_is_two = true
+onleave
+  x_is_two = false;
+
+x = 3|;  assert(!x_is_two);
+x = 2|;  assert( x_is_two);
+x = 2|;  assert( x_is_two);
+x = 3|;  assert(!x_is_two);
+\end{urbiscript}
+
+It can also wait for some condition to hold long enough:
+\lstinline|\var{exp} ~ \var{duration}|, as a condition, denotes the
+fact that \var{exp} was true for \var{duration} seconds.
+
+\begin{urbiscript}
+var x = 0 |
+var x_was_two_for_two_seconds = false |
+at (x == 2 ~ 2s)
+  x_was_two_for_two_seconds = true
+onleave
+  x_was_two_for_two_seconds = false;
+
+x = 2       | assert(!x_was_two_for_two_seconds);
+sleep(1.5s) | assert(!x_was_two_for_two_seconds);
+sleep(1.5s) | assert( x_was_two_for_two_seconds);
+
+x = 3|; sleep(0.1s);  assert(!x_was_two_for_two_seconds);
+
+x = 2       | assert(!x_was_two_for_two_seconds);
+sleep(1.5s) | assert(!x_was_two_for_two_seconds);
+x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
+\end{urbiscript}
+
+
+\subsection{Scoping at \lstinline'at'}
+
+\lstinline'at' statements are not scoped.  But, using a
+\refObject{Tag} object, one can control them.  In the following
+example, \lstinline|scopeTag| is used to label the \lstinline|at|
+statement.  When the function ends, the \lstinline|at| is no longer
+active.
+
+\begin{urbiscript}
+var x = 0 |
+var x_is_two = false |;
+
+{
+  scopeTag:
+    at (x == 2)
+      x_is_two = true
+    onleave
+      x_is_two = false;
+  sleep(2s);
+},
+x = 2 |; assert(x_is_two);
+x = 1 |; assert(!x_is_two);
+sleep(3s);
+x = 2 | assert(!x_is_two);
+\end{urbiscript}
 
 \subsection{\lstinline'every'}
 
