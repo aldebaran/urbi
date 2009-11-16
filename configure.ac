@@ -27,8 +27,10 @@ AM_INIT_AUTOMAKE([1.10.1 foreign tar-ustar nostdinc subdir-objects
 URBI_PACKAGE_KIND([kernel])
 URBI_DIRS([engine])
 
+URBI_PROG_PDFLATEX_REQUIRED
 URBI_DOC
 AC_CONFIG_FILES([doc/config.sty])
+
 
 ## ------------- ##
 ## Compilation.  ##
