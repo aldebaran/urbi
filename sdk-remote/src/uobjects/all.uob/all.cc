@@ -144,7 +144,7 @@ public:
     // Dup since we want to test no-copy op: the other end will write.
     b.common.data = strdup(content.c_str());
     b.common.size = content.length();
-    std::cerr <<"writeB cptr " << b.common.data << std::endl;
+    std::cerr << "writeB cptr " << b.common.data << std::endl;
     *vars[idx] = b;
     std::string res((char*)b.common.data, b.common.size);
     free(b.common.data);
@@ -155,7 +155,7 @@ public:
   {
     urbi::UImage i;
     i.data = (unsigned char*)strdup(content.c_str());
-    std::cerr <<"writeI cptr " << (void*)i.data << std::endl;
+    std::cerr << "writeI cptr " << (void*)i.data << std::endl;
     i.size = content.length();
     *vars[idx] = i;
     std::string res((char*)i.data, i.size);
