@@ -40,12 +40,13 @@ The following special comments are recognized only as a whole line.
 If some component does not match exactly the expected syntax, or if
 there are trailing items, the whole line is treated as a comment.
 \begin{itemize}
-\item \lstinline|//#line \var{line} "\var{file}"|\\
+%% I failed to use \var for line and file here.  -- AD.
+\item \lstinline|//#line line "file"|\\
   Specify that the \emph{next} line is from the file named \var{file},
   and which line number is \var{line}.  The current location (i.e.,
   current file and line) is lost.
 
-\item \lstinline|//#push \var{line} "\var{file}"|\\
+\item \lstinline|//#push line "file"|\\
   Save the current location, and then behave as if \lstinline|//#line|
   was used.
 
@@ -1899,7 +1900,7 @@ onleave
 \end{urbiunchecked}
 
 The \var{condition} can be of two different kinds:
-\lstinline|\var{e}?(\var{args})} to catch when events are sent, or
+\lstinline|\var{e}?(\var{args})| to catch when events are sent, or
 \lstinline|\var{exp}| to catch each time a Boolean \var{exp} becomes
 true.
 
