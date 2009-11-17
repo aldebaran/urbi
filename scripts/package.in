@@ -103,7 +103,7 @@ incline=$(perl -n \
 )
 case $build:$host in
   (*cygwin:*) incline=$(cygpath  -u "$incline");;
-  (*:mingw32) incline=$(winepath -u "$incline");;
+  (*:*mingw32) incline=$(winepath -u "$incline");;
 esac
 # Ensure we got it right.
 if test ! -f  $incline/version.hpp; then
