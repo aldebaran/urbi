@@ -413,7 +413,7 @@ unpredictable, such results would clutter the output randomly.  Use
 \refObject[s]{Channel} or \refObject[s]{Event} to return results
 asynchronously.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 {
   for (3)
   {
@@ -440,7 +440,7 @@ too: the execution follow ``waits'' for the end of the jobs
 backgrounded with \samp{,} before proceeding.  Compare the two
 following executions.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 {
   sleep(100ms) | echo("1"),
   sleep(200ms) | echo("2"),
@@ -454,7 +454,7 @@ following executions.
 \begin{urbiscript}[firstnumber=last]
 {
   sleep(100ms) | echo("1"),
-  sleep(100ms) | echo("2"),
+  sleep(200ms) | echo("2"),
 };
 echo("done");
 [00000316] *** 1
