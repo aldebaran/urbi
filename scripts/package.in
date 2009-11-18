@@ -63,8 +63,8 @@ prefix=${10}
 # Set release_mode depending on whether we are building a release version
 # or a development version.
 case $MODE in
-  (release_dynamic) release_mode=true;;
-  (*)               release_mode=false;;
+  (release*)    release_mode=true;;
+  (*)           release_mode=false;;
 esac
 
 # Determine the version from the latest component of the tag. This will
