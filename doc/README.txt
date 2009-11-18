@@ -9,7 +9,7 @@ These notes.
 * RELEASE-NOTES.txt
 A list of changes since the previous releases.
 
-* share/doc/urbi-sdk.pdf
+* share/doc/urbi-sdk/urbi-sdk.pdf
 The complete Urbi SDK documentation.  Includes:
 
 ** A tutorial about urbiScript
