@@ -520,19 +520,17 @@ image sensor.
 \begin{slots}
   \slot{val}%
   {%
-    Binary value corresponding to the image, expressed in the current
-    unit (RGB, jpeg, YCrCb...). The unit can be changed like any other
-    regular unit in Urbi. %
+    Image represented as a \code{Binary} value. %
   }
 
   \slot{xfov}%
   {%
-    The x Field Of View of the camera expressed in radians.%
+    The x field of view of the camera expressed in radians.%
   }
 
   \slot{yfov}%
   {%
-    The y Field Of View of the camera expressed in radians.%
+    The y field of view of the camera expressed in radians.%
   }
 
   \slot{height}%
@@ -546,9 +544,15 @@ image sensor.
     Width of the image in the current resolution, expressed in pixels%
   }
 
+  \optSlot{format}%
+  {%
+    Format of the image, expressed as an integer in the enum urbi::UImageFormat.
+    See below for more informations.%
+  }
+
   \optSlot{exposure}%
   {%
-    The exposure duration, expressed in seconds. 0 if non applicable.%
+    Exposure duration, expressed in seconds. 0 if non applicable.%
   }
 
   \optSlot{wb}%
@@ -565,15 +569,38 @@ image sensor.
 
   \optSlot{resolution}%
   {%
-    Can be used to specify a given resolution, expressed as a
-    percentage of the maximal resolution of the camera (number between
-    0 and 1). 1 if non applicable.
-
+    Image resolution, expressed as an integer. 0 corresponds to the
+    maximal resolution of the camera. Successive values correspond to
+    all the supported image sizes in decreasing order.
     Once modified, the effective resolution in X/Y can be checked with
     the width and height slots.%
   }
+  \optSlot{quality}%
+  {%
+    If the image is in the jpeg format, this slot sets the compression quality,
+    from 0 (best compression, worst quality) to 100 (best quality, bigger
+    image).%
+  }
 
 \end{slots}
+
+The image sensor is expected to use the cheapest way in term of CPU and/or
+energy consumption to produce images of the requested format.
+Implementations linked to a physical image sensor do not have to implement
+all the possible formats. In this case, the format closest to what was
+requested must be used.
+A generic image conversion object will be provided. In order to avoid
+duplicate image conversions when multiple unrelated behaviors need the same
+format, it is recommended that this object be instannciated in a slot of the
+VideoIn object named after the format it converts to:
+\begin{urbiunchecked}
+if (!robot.body.head.camera.hasSlot("jpeg"))
+{
+  var robot.body.head.camera.jpeg =
+    ImageConversion.new(robot.body.head.camera.getSlot("val"));
+  robot.body.head.camera.jpeg.format = 3;
+}
+\end{urbiunchecked}
 
 \facet{AudioOut}
 The AudioOut facet groups every information relative to speakers.
