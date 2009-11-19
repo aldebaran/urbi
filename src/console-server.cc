@@ -189,6 +189,7 @@ namespace urbi
     return res;
   }
 
+#ifndef NO_OPTION_PARSER
   /// Data to send to the server.
   struct DataSender : libport::opts::DataVisitor
   {
@@ -217,6 +218,7 @@ namespace urbi
     kernel::UServer& server_;
     kernel::UConnection& connection_;
   };
+#endif
 
   static
   int
@@ -379,8 +381,10 @@ namespace urbi
     | --quiet.  |
     `----------*/
 
+#ifndef NO_OPTION_PARSER
     if (arg_no_banner.get())
       s.opt_banner_set(false);
+#endif
 
     /*----------------.
     | --port/--host.  |
@@ -388,11 +392,11 @@ namespace urbi
     int port = -1;
     {
       int desired_port = IF_OPTION_PARSER(libport::opts::port_l.get<int>(-1),
-                                          UAbstractClient::URBI_PORT);
+                                          54000);
       if (desired_port != -1)
       {
         std::string host =
-          IF_OPTION_PARSER(libport::opts::host_l.value("127.0.0.1"),"");
+          IF_OPTION_PARSER(libport::opts::host_l.value("127.0.0.1"),"0.0.0.0");
         if (boost::system::error_code err =
             s.listen(&connectionFactory, host, desired_port))
           URBI_EXIT(EX_UNAVAILABLE,
@@ -429,9 +433,11 @@ namespace urbi
     kernel::UConnection& c = s.ghost_connection_get();
     GD_INFO_TRACE("got ghost connection");
 
+#ifndef NO_OPTION_PARSER
     DataSender send(s, c);
     send(libport::opts::input_arguments);
     libport::opts::input_arguments.clear();
+#endif
 
     c.received("");
     GD_INFO_TRACE("going to work...");
