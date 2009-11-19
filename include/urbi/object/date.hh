@@ -49,6 +49,14 @@ namespace urbi
     public:
       std::string as_string() const;
 
+    /*--------.
+    | Dates.  |
+    `--------*/
+
+    public:
+      static rDate now();
+      static rDate epoch();
+
     /*----------.
     | Details.  |
     `----------*/

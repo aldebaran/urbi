@@ -71,6 +71,22 @@ namespace urbi
                              date.tm_sec);
     }
 
+    /*--------.
+    | Dates.  |
+    `--------*/
+
+    rDate
+    Date::now ()
+    {
+      return new Date (time(NULL));
+    }
+
+    rDate
+    Date::epoch ()
+    {
+      return new Date (0);
+    }
+
     /*-----------------.
     | Binding system.  |
     `-----------------*/
@@ -78,10 +94,12 @@ namespace urbi
     void
     Date::initialize(CxxObject::Binder<Date>& bind)
     {
-      bind(SYMBOL(asString), &Date::as_string);
-      bind(SYMBOL(init), &Date::init);
       bind(SYMBOL(EQ_EQ), &Date::operator ==);
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
+      bind(SYMBOL(asString), &Date::as_string);
+      bind(SYMBOL(epoch), &Date::epoch);
+      bind(SYMBOL(init), &Date::init);
+      bind(SYMBOL(now), &Date::now);
     }
 
     URBI_CXX_OBJECT_REGISTER(Date)
