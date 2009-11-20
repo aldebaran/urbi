@@ -1,13 +1,13 @@
 #ifndef OBJECT_DURATION_HH
 # define OBJECT_DURATION_HH
 
-# include <urbi/object/cxx-object.hh>
+# include <urbi/object/float.hh>
 
 namespace urbi
 {
   namespace object
   {
-    class Duration: public CxxObject
+    class Duration: public Float
     {
     /*---------------.
     | Construction.  |
@@ -30,14 +30,13 @@ namespace urbi
     `--------------*/
 
     public:
-      time_t seconds() const;
+      float seconds() const;
 
     /*----------.
     | Details.  |
     `----------*/
 
     private:
-      time_t _seconds;
       URBI_CXX_OBJECT(Duration);
     };
   }

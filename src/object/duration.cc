@@ -12,14 +12,16 @@ namespace urbi
     `---------------*/
 
     Duration::Duration(time_t seconds)
-      : _seconds(seconds)
+      : Float(seconds)
     {
       proto_add(proto);
     }
 
     Duration::Duration(rDuration model)
-      : _seconds(model->_seconds)
-    {}
+      : Float(model->value_get())
+    {
+      proto_add(proto);
+    }
 
     /*-----------.
     | Printing.  |
@@ -28,7 +30,7 @@ namespace urbi
     std::string
     Duration::asString() const
     {
-      return string_cast(_seconds) + "s";
+      return string_cast(value_get()) + "s";
     }
 
     std::string
@@ -41,17 +43,20 @@ namespace urbi
     | Conversions.  |
     `--------------*/
 
-    time_t
+    float
     Duration::seconds() const
     {
-      return _seconds;
+      return value_get();
     }
 
     URBI_CXX_OBJECT_REGISTER(Duration)
-      : _seconds(0)
+      : Float(0)
     {
+      proto_add(Float::proto);
+
       bind(SYMBOL(asPrintable), &Duration::asPrintable);
       bind(SYMBOL(asString), &Duration::asString);
+      bind(SYMBOL(seconds), &Duration::seconds);
     }
   }
 }
