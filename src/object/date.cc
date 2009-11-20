@@ -1,5 +1,6 @@
 #include <object/symbols.hh>
 #include <urbi/object/date.hh>
+#include <urbi/object/duration.hh>
 #include <urbi/object/global.hh>
 
 namespace urbi
@@ -53,6 +54,16 @@ namespace urbi
       return time_ < rhs->time_;
     }
 
+    /*-------------.
+    | Operations.  |
+    `-------------*/
+
+    rDuration
+    Date::operator - (rDate rhs) const
+    {
+      return new Duration(time_ - rhs->time_);
+    }
+
     /*--------------.
     | Conversions.  |
     `--------------*/
@@ -96,6 +107,7 @@ namespace urbi
     {
       bind(SYMBOL(EQ_EQ), &Date::operator ==);
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
+      bind(SYMBOL(MINUS), &Date::operator -);
       bind(SYMBOL(asString), &Date::as_string);
       bind(SYMBOL(epoch), &Date::epoch);
       bind(SYMBOL(init), &Date::init);

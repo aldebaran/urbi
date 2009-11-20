@@ -90,6 +90,7 @@ dist_libuobject_la_SOURCES +=			\
   object/date.cc				\
   object/dictionary.cc				\
   object/directory.cc				\
+  object/duration.cc				\
   object/executable.cc				\
   object/file.cc				\
   object/finalizable.cc                         \

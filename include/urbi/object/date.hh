@@ -42,6 +42,13 @@ namespace urbi
       bool operator ==(rDate rhs) const;
       bool operator <(rDate rhs) const;
 
+    /*-------------.
+    | Operations.  |
+    `-------------*/
+
+    public:
+      rDuration operator - (rDate rhs) const;
+
     /*--------------.
     | Conversions.  |
     `--------------*/

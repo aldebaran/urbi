@@ -37,6 +37,7 @@ namespace urbi
     Macro(Date);                                \
     Macro(Dictionary);                          \
     Macro(Directory);                           \
+    Macro(Duration);                            \
     Macro(Executable);                          \
     Macro(File);                                \
     Macro(Finalizable);                         \
