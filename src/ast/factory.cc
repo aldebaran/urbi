@@ -552,6 +552,11 @@ namespace ast
   {
     FLAVOR_DEFAULT(semicolon);
     PARAMETRIC_AST
+      (comma,
+       "while, (true)\n"
+       "  %exp:1\n"
+        );
+    PARAMETRIC_AST
       (pipe,
        "while| (true)\n"
        "  %exp:1\n"
@@ -561,7 +566,8 @@ namespace ast
        "while; (true)\n"
        "  %exp:1\n"
         );
-    return exp((FLAVOR_IS(pipe) ? pipe
+    return exp((FLAVOR_IS(comma) ? comma
+                : FLAVOR_IS(pipe) ? pipe
                 : FLAVOR_IS(semicolon) ? semicolon
                 : FLAVOR_ERROR("loop"))
                % body);

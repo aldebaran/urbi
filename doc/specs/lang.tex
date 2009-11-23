@@ -1698,19 +1698,43 @@ after the \var{action}; it would end the
 
 Endless loops can be created with \lstinline|loop|, which is
 equivalent to \lstinline|while (true)|.  The loop evaluates to
-\lstinline|void|.
+\lstinline|void|.  Both sequential flavors, \lstinline|loop;| and
+\lstinline'loop;', are supported.  The default flavor is
+\lstinline|loop;|.
 
-\begin{urbiscript}[firstnumber=last]
-var v = 1 |
-loop
+\begin{urbiassert}[firstnumber=last]
 {
-  v *= 2;
-  if (1024 <= v)
-    break;
-};
-v;
-[00000000] 1024
-\end{urbiscript}
+  var n = 10|;
+  var res = []|;
+  loop;
+  {
+    n--;
+    res << n;
+    if (n == 0)
+      break
+  };
+  res
+}
+==
+[9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+\end{urbiassert}
+
+\begin{urbiassert}[firstnumber=last]
+{
+  var n = 10|;
+  var res = []|;
+  loop|
+  {
+    n--;
+    res << n;
+    if (n == 0)
+      break
+  };
+  res
+}
+==
+[9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+\end{urbiassert}
 
 \subsection{switch}
 
@@ -2295,10 +2319,39 @@ echo("done");
 \end{urbiscript}
 
 
-\subsection{range-for\& (:)}
+\subsubsection{range-for\& (:)}
 %%% FIXME:
-\subsection{for\& (n)}
+\subsubsection{for\& (n)}
 %%% FIXME:
+
+\subsection{loop,}
+\begin{note}
+  This feature is experimental.  It might be changed, or even removed.
+  Feedback on its use would be appreciated.
+\end{note}
+
+This is syntactic sugar for \lstinline|while,(true)|.  In the
+following example, care must be taken that concurrent executions don't
+modify \lstinline|n| simultaneously.  This would happen had
+\lstinline|;| been used instead of \lstinline'|'.
+
+\begin{urbiassert}[firstnumber=last]
+{
+  var n = 10|;
+  var res = []|;
+  loop,
+  {
+    n-- |
+    res << n |
+    if (n == 0)
+      break
+  };
+  res.sort
+}
+==
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+\end{urbiassert}
+
 \subsection{\lstinline|waituntil|}
 %%% FIXME:
 \subsection{\lstinline|whenever|}
