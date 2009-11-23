@@ -11,6 +11,7 @@
 /// \file libuvalue/ubinary.cc
 
 #include <iostream>
+#include <sstream>
 #include <libport/debug.hh>
 #include <urbi/ubinary.hh>
 
