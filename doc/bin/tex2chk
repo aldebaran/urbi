@@ -95,7 +95,7 @@ my $braced =
       )*
     }x;
 
-# The (Boolean) operators in urbiScript.  Beware of operators "nested"
+# The (Boolean) operators in urbiscript.  Beware of operators "nested"
 # in other operators: we must not cut "===" into "==" as operator, and
 # "=" as lhs or rhs.
 my $operators =
@@ -122,13 +122,14 @@ sub strip ($)
 
 # lineno
 # ------
-# Issue an urbiScript //#line for test $lst.
+# Issue an urbiscript //#line for test $lst.
 sub lineno (\%)
 {
   my ($lst) = @_;
   my $line = $$lst{_line};
   my $file = $$lst{_file};
-  "clog << \"$file:$line\";\n"
+  "syncline << \"$file:$line\";\n"
+  . "[01234567:syncline] \"$file:$line\"\n"
   . ($synclines ? "//#line $line \"$file\"\n" : "")
 }
 
@@ -285,11 +286,22 @@ sub process_listing ($$$)
   return %res;
 }
 
+# process_file $FILE
+# ------------------
+# $FILE is a complete path, including the $ENV{srcdir} part.
 sub process_file ($)
 {
   my ($file) = @_;
   my $in = new IO::File $file
       or die "cannot open $file";
+
+  # The last part of the file name, i.e., without the $ENV{srcdir}
+  # part.  (../../doc/tests/specs/boolean/boolean-24.chk ->
+  # doc/tests/specs/boolean/boolean-24.chk with srcdir = ../../doc).
+  my $base = $file;
+  $base =~ s,^$ENV{srcdir},doc,
+    if defined $ENV{srcdir};
+
   local $_;
   my $test;
   my $line;
@@ -309,8 +321,8 @@ sub process_file ($)
            && /^\\end{$environment}/)
       {
         $test .= $_;
-        my %res = process_listing $file, $line, $test;
-        register ($file, $line, %res);
+        my %res = process_listing $base, $line, $test;
+        register ($base, $line, %res);
         $environment = undef;
       }
     elsif (defined $environment)

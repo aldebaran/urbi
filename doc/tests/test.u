@@ -3,6 +3,9 @@
 // Too many unpredictable changes in the error messages.
 Exception.Lookup.fixSpelling = false |
 
+// A channel for synclines.
+var Global.syncline = Channel.new("syncline")|
+
 // Determinism: asList and asString.
 do (Dictionary)
 {
