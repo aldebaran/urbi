@@ -512,8 +512,10 @@ namespace urbi
       CHECK(v5); CHECK(v6); CHECK(v7); CHECK(v8);
 #undef CHECK
       std::string r = s.str();
-      r = r.substr(0, r.length() - 1) + ")";
-      URBI_SEND_COMMAND_C((*client_), r);
+      if (v1.type != DATA_VOID)
+        r = r.substr(0, r.length() - 1);
+      r += ')';
+      URBI_SEND_COMMA_COMMAND_C((*client_), r);
     }
 
     UVarImpl*

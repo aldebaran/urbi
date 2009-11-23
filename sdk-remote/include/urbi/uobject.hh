@@ -134,6 +134,11 @@
 # define URBI_SEND_PIPED_COMMAND(Args)          \
   URBI_SEND_PIPED_COMMAND_C(URBI(()), Args)
 
+# define URBI_SEND_COMMA_COMMAND_C(C, Args)     \
+  URBI_SEND_C(C, Args << ',' << std::endl)
+
+# define URBI_SEND_COMMA_COMMAND(Args)          \
+  URBI_SEND_COMMA_COMMAND_C(URBI(()), Args)
 
 namespace urbi
 {

@@ -73,6 +73,7 @@ public:
     UBindFunction(all, writeS);
     UBindFunction(all, writeL);
     UBindFunction(all, writeB);
+    UBindFunction(all, makeCall);
     UBindFunction(all, writeBNone);
     UBindFunction(all, writeI);
     UBindFunction(all, writeSnd);
@@ -517,6 +518,30 @@ public:
     return uobjectName(n);
   }
 
+  void makeCall(const std::string& obj, const std::string& func,
+                urbi::UList args)
+  {
+     switch(args.size())
+     {
+     case 0:
+       call(obj, func);
+       break;
+     case 1:
+       call(obj, func, args[0]);
+       break;
+     case 2:
+       call(obj, func, args[0], args[1]);
+       break;
+     case 3:
+       call(obj, func, args[0], args[1], args[2]);
+       break;
+     case 4:
+       call(obj, func, args[0], args[1], args[2]);
+       break;
+     default:
+       throw std::runtime_error("Not implemented");
+     }
+  }
   urbi::UVar a,b,c;
   urbi::UVar* vars[3];
 
