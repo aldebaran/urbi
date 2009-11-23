@@ -469,8 +469,7 @@ other commands between the first and the second statement.  The
 \samp{|} does not yield between both statements.  It is therefore more
 efficient, and, in a way, provides some atomicity for concurrent tasks.
 
-\begin{frame}[containsverbatim]{Tight Sequentiality}
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 {
   { echo("11") ; sleep(100ms) ; echo("12") },
   { echo("21") ; sleep(200ms) ; echo("22") },
@@ -482,7 +481,7 @@ efficient, and, in a way, provides some atomicity for concurrent tasks.
 \end{urbiscript}
 
 %% Cannot use sleep here, as it yields, which makes the point moot.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 {
   { echo("11") | echo("12") },
   { echo("21") | echo("22") },
@@ -492,7 +491,6 @@ efficient, and, in a way, provides some atomicity for concurrent tasks.
 [00000316] *** 21
 [00000316] *** 22
 \end{urbiscript}
-\end{frame}
 
 In an interactive session, both statements must be ``known'' before
 launching the sequence.  The value of the composed statement is the
