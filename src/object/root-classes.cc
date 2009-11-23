@@ -165,12 +165,25 @@ namespace urbi
       // Object is a special case: it is not built as a clone of itself.
       Object::proto = new Object();
 
-      CxxObject::push_initializer_to_back<Code>();
-      CxxObject::push_initializer_to_back<Primitive>();
-      CxxObject::push_initializer_to_back<UVar>();
-      CxxObject::push_initializer_to_back<Path>();
-      CxxObject::push_initializer_to_back<Directory>();
-      CxxObject::push_initializer_to_back<OutputStream>();
+      // Our current initialization system does not track
+      // dependencies, we have to address them by hand until some
+      // better scheme is found.
+#define INIT(Class)                                     \
+      CxxObject::push_initializer_to_back<Class>()
+
+      INIT(Code);
+      INIT(Primitive);
+
+      INIT(UVar);
+
+      INIT(Path);
+      INIT(Directory);
+      INIT(OutputStream);
+
+      // Duration derives from Float.
+      INIT(Float);
+      INIT(Duration);
+#undef INIT
 
       CxxObject::create();
 
