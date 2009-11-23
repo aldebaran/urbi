@@ -443,7 +443,7 @@ following executions.
 \begin{urbiscript}[firstnumber=last]
 {
   sleep(100ms) | echo("1"),
-  sleep(200ms) | echo("2"),
+  sleep(400ms) | echo("2"),
   echo("done");
 };
 [00000316] *** done
@@ -454,7 +454,7 @@ following executions.
 \begin{urbiscript}[firstnumber=last]
 {
   sleep(100ms) | echo("1"),
-  sleep(200ms) | echo("2"),
+  sleep(400ms) | echo("2"),
 };
 echo("done");
 [00000316] *** 1
@@ -472,7 +472,7 @@ efficient, and, in a way, provides some atomicity for concurrent tasks.
 \begin{urbiscript}[firstnumber=last]
 {
   { echo("11") ; sleep(100ms) ; echo("12") },
-  { echo("21") ; sleep(200ms) ; echo("22") },
+  { echo("21") ; sleep(400ms) ; echo("22") },
 };
 [00000316] *** 11
 [00000316] *** 21
