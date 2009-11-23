@@ -26,6 +26,7 @@
 #include <urbi/object/date.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/directory.hh>
+#include <urbi/object/duration.hh>
 #include <urbi/object/file.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/list.hh>
