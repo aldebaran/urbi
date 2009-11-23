@@ -479,6 +479,12 @@ class Global.'external'
     function f
     {
       var args = call.evalArgs;
+      // Just to be safe, do not rely on asString for UObject and UVar
+      for| (var i: args.size)
+        if (args[i].isA(UObject))
+          args[i] = args[i].__uobjectName
+        else if (args[i].isA(UVar))
+          args[i] = args[i].ownerName + "." + args[i].initialName ;
       if (args.size != nargs)
         throw Exception.Arity.new("Remote bound function", args.size, nargs);
       var u = fresh;
