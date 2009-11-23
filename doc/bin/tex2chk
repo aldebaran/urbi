@@ -109,6 +109,7 @@ my $operators =
       (?![=])
     }x;
 
+
 # strip $STRING
 # -------------
 # Kill leading/trailing spaces.
@@ -320,7 +321,7 @@ sub process_file ($)
     elsif (defined $environment
            && /^\\end{$environment}/)
       {
-        $test .= $_;
+       $test .= $_;
         my %res = process_listing $base, $line, $test;
         register ($base, $line, %res);
         $environment = undef;
@@ -358,7 +359,7 @@ sub dump_chk ($)
         or die "cannot create $file.tmp: $!";
     print $out lineno(%c);
     print $out "$c{_contents}\n";
-    system ("$move_if_change -s -I '^//' $file.tmp $file") == 0
+    system ("$move_if_change --color -I '^//' $file.tmp $file") == 0
       or die "$move_if_change failed: $?";
   }
 
