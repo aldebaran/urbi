@@ -219,7 +219,7 @@ do (getSlot("UVar"))
   var nAccessTag = Tag.new;
   var onHasNotifyAccess = Event.new;
   // hooking of changed has a cost of one at per UVar.
-  var hookChanged = true;
+  var hookChanged = !getenv("URBI_UVAR_HOOK_CHANGED");
   function newPropertyHook_(parent, name, prop, value)
   {
    parent.getSlot(name).setProperty("val", prop, value)|
