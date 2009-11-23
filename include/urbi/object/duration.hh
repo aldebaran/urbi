@@ -30,7 +30,7 @@ namespace urbi
     `--------------*/
 
     public:
-      float seconds() const;
+      value_type seconds() const;
 
     /*----------.
     | Details.  |

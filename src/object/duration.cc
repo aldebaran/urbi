@@ -43,7 +43,7 @@ namespace urbi
     | Conversions.  |
     `--------------*/
 
-    float
+    Duration::value_type
     Duration::seconds() const
     {
       return value_get();
