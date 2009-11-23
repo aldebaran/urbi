@@ -501,7 +501,7 @@ class Global.'external'
        {if (starting) UEM_EMITEVENT else UEM_ENDEVENT},
        evname] + args
   };
-  function 'event'(nargs, objname, ename, fr)
+  function event(nargs, objname, ename, fr)
   {
     // FIXME: No way to catch an event with payload without generating the 'at'
     // code.

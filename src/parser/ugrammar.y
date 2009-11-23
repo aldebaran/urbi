@@ -134,6 +134,13 @@
 
   } // anon namespace
 
+# define REQUIRE_IDENTIFIER(Loc, Effective, Expected)                   \
+  do {                                                                  \
+    if (Effective != libport::Symbol(Expected))                         \
+      up.error(Loc,                                                     \
+               libport::format("unexpected `%s', expecting `%s'",       \
+                               Effective, Expected));                   \
+  } while (false)
 
 } // %code requires.
 
@@ -155,7 +162,6 @@
         DEFAULT       "default"
         ELSE         "else"
         EMIT         "emit"
-        EVENT        "event"
         FREEZEIF     "freezeif"
         FUNCTION     "function"
         IF           "if"
@@ -481,10 +487,24 @@ from:
 object:
   "identifier"
   {
-    if ($1 != SYMBOL(object))
-      up.error(@1, "unexpected `" + $1.name_get() + "', expecting `object'");
+    REQUIRE_IDENTIFIER(@1, $1, "object");
   }
 ;
+
+// "event" or "function".
+%type <libport::Symbol> function_or_event;
+function_or_event:
+  "function"
+  {
+    $$ = SYMBOL(function);
+  }
+| "identifier"
+  {
+    REQUIRE_IDENTIFIER(@1, $1, "event");
+    $$ = SYMBOL(event);
+  }
+;
+
 
 %token EXTERNAL "external";
 stmt:
@@ -499,21 +519,23 @@ stmt:
     PARAMETRIC_AST(a, "'external'.'var'(%exp:1, %exp:2, %exp:3)");
     $$ = exp(a % $obj % $slot % $id);
   }
-| "external" "function" "(" exp_float[arity] ")"
+| "external" function_or_event[kind]
+             "(" exp_float[arity] ")"
              identifier_as_string[obj] "." identifier_as_string[slot]
 	     from identifier_as_string[id]
   {
-    PARAMETRIC_AST
-      (a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
-    $$ = exp(a % $arity % $obj % $slot % $id);
-  }
-| "external" "event" "(" exp_float[arity] ")"
-             identifier_as_string[obj] "." identifier_as_string[slot]
-	     from identifier_as_string[id]
-  {
-    PARAMETRIC_AST
-      (a, "'external'.'event'(%exp:1, %exp:2, %exp:3, %exp:4)");
-    $$ = exp(a % $arity % $obj % $slot % $id);
+    if ($kind == SYMBOL(event))
+    {
+      PARAMETRIC_AST
+        (a, "'external'.event(%exp:1, %exp:2, %exp:3, %exp:4)");
+      $$ = exp(a % $arity % $obj % $slot % $id);
+    }
+    else
+    {
+      PARAMETRIC_AST
+        (a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
+      $$ = exp(a % $arity % $obj % $slot % $id);
+    }
   }
 ;
 

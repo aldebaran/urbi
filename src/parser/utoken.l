@@ -514,7 +514,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "do"            RETURN(DO);
 "else"          RETURN(ELSE);
 "emit"          RETURN(EMIT);
-"event"         RETURN(EVENT);
 "freezeif"      RETURN(FREEZEIF);
 "function"      RETURN(FUNCTION);
 "if"            RETURN(IF);

@@ -26,9 +26,9 @@ class Global.Event
     var res.payload = call.evalArgs |
     var res.active = false |
     // Publish event on the waituntil channel, to unfreeze other
-    // waiting jobs
+    // waiting jobs.
     wu_pubsub.publish(res) |
-    // Then call synchronously 'at' subscribers
+    // Then call synchronously 'at' subscribers.
     for& (var code : listeners)
       code(res) |
     void
@@ -45,7 +45,7 @@ class Global.Event
     res
   };
 
-  function 'stop'()
+  function stop()
   {
     alive.removeById(this) |
     active = false |
