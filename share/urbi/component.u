@@ -193,9 +193,16 @@ class Global.Component
     var this.parentComponent = nil;
     var this.cachedNames;
   };
-  /// Add component \b value as a sub-component of this.
+  /// Add a localizer name \b name as a sub-component of this.
+  function addLocalizer(name)
+  {
+    addComponent(Localizer.new(name))
+  };
+  /// Add component \b value (or named value) as a sub-component of this.
   function addComponent(value)
   {
+    if (value.isA(String))
+      value = Component.new(value) |
     setSlot(value.componentName, value) |
     this << value |
     Object.getSlot("updateSlot").apply([value, "parentComponent", this]) |
@@ -204,11 +211,12 @@ class Global.Component
   /// Add device \b value, name it \b name.
   function addDevice(name, value)
   {
-    setSlot(name, value);
+    setSlot(name, value) |
     // Device inherits from at least a facet which has those slots
-    value.updateSlot("parentComponent", this);
-    value.updateSlot("componentName", name);
-    this << value
+    value.updateSlot("parentComponent", this) |
+    value.updateSlot("componentName", name) |
+    this << value |
+    value
   };
   function asString()
   {
