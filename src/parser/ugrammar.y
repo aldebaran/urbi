@@ -479,21 +479,13 @@ identifier_as_string:
 from:
   "identifier"
   {
-    if ($1 != SYMBOL(from))
-      up.error(@1, "unexpected `" + $1.name_get() + "', expecting `from'");
-  }
-;
-
-object:
-  "identifier"
-  {
-    REQUIRE_IDENTIFIER(@1, $1, "object");
+    REQUIRE_IDENTIFIER(@1, $1, "from");
   }
 ;
 
 // "event" or "function".
-%type <libport::Symbol> function_or_event;
-function_or_event:
+%type <libport::Symbol> event_or_function;
+event_or_function:
   "function"
   {
     $$ = SYMBOL(function);
@@ -508,9 +500,10 @@ function_or_event:
 
 %token EXTERNAL "external";
 stmt:
-  "external" object identifier_as_string[id]
+  "external" "identifier"[object] identifier_as_string[id]
   {
-    PARAMETRIC_AST(a, "'external'.'object'(%exp:1)");
+    REQUIRE_IDENTIFIER(@object, $object, "object");
+    PARAMETRIC_AST(a, "'external'.object(%exp:1)");
     $$ = exp(a % $id);
   }
 | "external" "var" identifier_as_string[obj] "." identifier_as_string[slot]
@@ -519,7 +512,7 @@ stmt:
     PARAMETRIC_AST(a, "'external'.'var'(%exp:1, %exp:2, %exp:3)");
     $$ = exp(a % $obj % $slot % $id);
   }
-| "external" function_or_event[kind]
+| "external" event_or_function[kind]
              "(" exp_float[arity] ")"
              identifier_as_string[obj] "." identifier_as_string[slot]
 	     from identifier_as_string[id]
