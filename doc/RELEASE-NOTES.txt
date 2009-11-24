@@ -88,12 +88,14 @@ New constructs:
   as in C++.
 
 New objects:
+- Date
 - Directory
 - File
 - Finalizable
 - InputStream
 - Mutex
 - OutputStream
+- Process
 - Regexp
 - Server
 - Socket
@@ -101,19 +103,23 @@ New objects:
 - WeakDictionary
 - WeakPointer
 
-New functions:
+New features:
 - asBool
 - Channel.wall
+- Dictionary.size
 - Global.evaluate
 - Group.each, Group.each&
-- Lobby.onDisconnect (actually, an event).
+- Lobby: onDisconnect (actually, an event), remoteIP
 - Object.inspect
 - String:
   fromAscii, replace, toAscii
-- System: _exit, assert_eq, system
+- System: _exit, assert_eq, system, terminate
 
 Fixes:
+- at constructs do not leak local variables anymore.
+- Each tag now has its enter and leave events.
 - File.content reads the whole file.
+- Invalid assignments such as f(x) = n are now refused as expected.
 
 Deprecations:
 - ownsSlot is deprecated in favor of hasSlot/hasLocalSlot.
@@ -124,6 +130,7 @@ Changes:
   in conditions.
 - Dictionaries.asString does not sort the keys.
 - Dictionaries.[]= returns the assigned value, not the dictionary.
+- Dictionaries.[] raises an exception if the key is missing.
 - Constants is merged into Math.
 - every no longer goes in background.  When you used to write
 
@@ -136,7 +143,7 @@ Changes:
   or
 
      detach({ every (1s) echo("foo"); });
-
+- Tag: begin and end now simply print the tag name followed by 'begin' or 'end'.
 
 UObjects
 ========
@@ -147,6 +154,8 @@ UObjects
 - fixed multiple notifications of event trigger in remote UObjects
 
 - possible notifyChange-based deadlocks are neutralized
+
+- an exception is now thrown if the C++ init method failed.
 
 - FIXME: MN: destruction of UObjects.
 
