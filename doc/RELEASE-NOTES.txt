@@ -148,16 +148,47 @@ Changes:
 UObjects
 ========
 
+- Handle UObject destruction. To remove an UObject, call the urbiscript
+  'destroy()' method. The corresponding C++ instance will be deleted.
+
+- Add UVar::unnotify(). When called, it removes all UNotifyChange registered
+  with the UVar.
+
+- Bound functions using UBindFunction can now take arguments of type
+  UVar& and UObject*. The recommended method to pass UVars from
+  urbiscript is now to use 'camera.getSlot("val")' instead of '"camera.val"'.
+
+- Add a 0-copy mode for UVars: If UVar::enableBypass(true) is called on an
+  UVar, notifyChange on this UVar can recover the uncopied data by using
+  UVar.get(), returning an UValue&. However, the data is only accessible
+  from within notifyChange: reading the UVar directly will return nil.
+
+- Add support for the changed! event on UVars. Code like:
+
+     at(headTouch.val->changed? if headTouch.val) tts.say("ouch");
+
+  will now work. This hook costs one at() per UVar, and can be disabled by
+  setting UVar.hookChanged to false.
+
+- Add a statistics-gathering tool. Enable it by calling
+  'uobjects.enableStats(true)'. Reset counters by calling 'uobjects.clearStats'
+  'uobjects.getStats()' will return a dictionary  of all bound C++ function
+  called, including timer callbacks, along with the average, min, max call
+  durations, and the number of calls.
+
+- When code registered by a notifyChange throws, the exception is intercepted
+  to protect other unrelated callbacks. The throwing callback  gets removed
+  from the callback list, unless the removeThrowingCallbacks on the UVar is
+  false.
+
 - the environment variable URBI_UOBJECT_PATH is used by urbi-launch
   and urbiScript's loadModule to find uobjects.
 
 - fixed multiple notifications of event trigger in remote UObjects
 
-- possible notifyChange-based deadlocks are neutralized
+- Many other bugfixes and performance improvments.
 
 - an exception is now thrown if the C++ init method failed.
-
-- FIXME: MN: destruction of UObjects.
 
 Various
 =======
