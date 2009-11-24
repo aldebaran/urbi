@@ -6,51 +6,7 @@ release.
 ***************************
 
 This release candidate includes many fixes and improvements that are
-not reported below.  The following list is by no means exhaustive.
-
-Documentation
-=============
-
-The documentation was fixed, completed, and extended.  Its layout was
-also improved.  Changes include, but are not limited to:
-
-- various executables
-  urbi, urbi-launch, urbi-send etc.
-- environment variables
-  URBI_UOBJECT_PATH, URBI_PATH, URBI_ROOT.
-- special files
-  global.u, local.u.
-- k1-to-k2
-  Conversion idioms from urbiScript 1 to urbiScript 2
-- faq
-  - stack exhaustion
-  - at and waituntil: performance considerations
-- specs:
-  - completion of the definition of the control flow constructs
-    (every, every|, if, for, loop)
-  - tools (umake, umake-shared, umake-deepclean, urbi, urbi-launch,
-    urbi-send).
-  - Boolean
-  - Channel
-  - Date
-  - Dictionary
-  - Exception
-  - File
-  - Kernel1
-  - InputStream
-  - Lazy
-  - Math
-  - Mutex
-  - Regexp
-  - Object
-  - OutputStream
-  - Pair
-  - String
-  - Tag
-  - Timeout
-- tutorial:
-  - uobjects
-
+not reported below. The following list is by no means exhaustive.
 
 Optimization
 ============
@@ -189,6 +145,51 @@ UObjects
 - Many other bugfixes and performance improvments.
 
 - an exception is now thrown if the C++ init method failed.
+
+
+Documentation
+=============
+
+The documentation was fixed, completed, and extended.  Its layout was
+also improved.  Changes include, but are not limited to:
+
+- various executables
+  urbi, urbi-launch, urbi-send etc.
+- environment variables
+  URBI_UOBJECT_PATH, URBI_PATH, URBI_ROOT.
+- special files
+  global.u, local.u.
+- k1-to-k2
+  Conversion idioms from urbiScript 1 to urbiScript 2
+- faq
+  - stack exhaustion
+  - at and waituntil: performance considerations
+- specs:
+  - completion of the definition of the control flow constructs
+    (every, every|, if, for, loop)
+  - tools (umake, umake-shared, umake-deepclean, urbi, urbi-launch,
+    urbi-send).
+  - Boolean
+  - Channel
+  - Date
+  - Dictionary
+  - Exception
+  - File
+  - Kernel1
+  - InputStream
+  - Lazy
+  - Math
+  - Mutex
+  - Regexp
+  - Object
+  - OutputStream
+  - Pair
+  - String
+  - Tag
+  - Timeout
+- tutorial:
+  - uobjects
+
 
 Various
 =======
