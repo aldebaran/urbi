@@ -44,20 +44,21 @@ New constructs:
   as in C++.
 
 New objects:
+- Component, Localizer, Facet: naming standard infrastructure classes.
 - Date
 - Directory
 - File
-- Finalizable
+- Finalizable: objects that call finalize() when they are destroyed.
 - InputStream
 - Mutex
 - OutputStream
-- Process
+- Process: Start and monitor child processes.
 - Regexp
-- Server
-- Socket
+- Server: TCP/UDP server socket.
+- Socket: TCP/UDP client socket.
 - Timeout
-- WeakDictionary
-- WeakPointer
+- WeakDictionary, WeakPointer: Store dictionary of objects without increasing
+  their reference count.
 
 New features:
 - asBool
@@ -66,6 +67,7 @@ New features:
 - Global.evaluate
 - Group.each, Group.each&
 - Lobby: onDisconnect (actually, an event), remoteIP
+  create, received, resendBanner
 - Object.inspect
 - String:
   fromAscii, replace, toAscii
@@ -100,6 +102,9 @@ Changes:
 
      detach({ every (1s) echo("foo"); });
 - Tag: begin and end now simply print the tag name followed by 'begin' or 'end'.
+- System-code is now hidden from the backtraces.
+- Code.apply: the call message can be changed by passing it as an extra
+  argument.
 
 UObjects
 ========
