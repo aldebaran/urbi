@@ -173,13 +173,11 @@ namespace runner
     {
       if (args.size() != 1)
       {
-	rSlot call = function->slot_locate(SYMBOL(LPAREN_RPAREN), false).second;
         // FIXME: args is modified.
-	if (call)
-        {
-//          args.front() = function;
-	  return apply(call->value(), SYMBOL(LPAREN_RPAREN), args, call_message, loc);
-        }
+	if (rSlot call =
+            function->slot_locate(SYMBOL(LPAREN_RPAREN), false).second)
+	  return apply(call->value(),
+                       SYMBOL(LPAREN_RPAREN), args, call_message, loc);
       }
       object::check_arg_count(args.size()-1, 0);
       return function;
