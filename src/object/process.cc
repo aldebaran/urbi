@@ -28,13 +28,13 @@
 #include <object/symbols.hh>
 #include <urbi/sdk.hh>
 
-#  define XRUN(Function, Args)                  \
-      do {                                      \
-        if ((Function Args) == -1)              \
-          errnoabort(#Function);                \
-      } while (false)
+#define XRUN(Function, Args)                    \
+  do {                                          \
+    if ((Function Args) == -1)                  \
+      errnoabort(#Function);                    \
+  } while (false)
 
-#  define XCLOSE(Fd)                            \
+#define XCLOSE(Fd)                              \
   XRUN(close, (Fd))
 
 namespace urbi
