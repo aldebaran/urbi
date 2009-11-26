@@ -168,12 +168,12 @@ sub register ($$\%)
         "  $chk{$label}{_location}: first definition\n",
         "  $file:$line: second definition\n";
     }
+  # Accept that we use "[firstnumber=last]" without a preceding one.
   elsif (exists $$lst{firstnumber}
-         && $$lst{firstnumber} eq "last")
+         && $$lst{firstnumber} eq "last"
+         && defined $previous_label)
     {
       # Extension of the previous listing.
-      die "$file:$line: [firstnumber=last] used without preceding listing\n"
-        unless defined $previous_label;
       $chk{$previous_label}{_contents} .=
         "\n\n"
         . lineno(%$lst)
