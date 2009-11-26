@@ -28,6 +28,25 @@ function () { 1 } != function { 1 };
 function () { 1 } != function (ignored) { 1 };
 \end{urbiassert}
 
+\item \lstinline|apply(\var{args})|\\
+  Invoke the routine, with all the arguments.  The target,
+  \lstinline|this|, will be set to \lstinline|\var{args}[0]| and the
+  remaining arguments with be given as arguments.
+\begin{urbiassert}[firstnumber=last]
+function (x, y) { x+y }.apply([nil, 10, 20]) == 30;
+function () { this }.apply([123]) == 123;
+
+// There is Object.apply.
+1.apply([this]) == 1;
+\end{urbiassert}
+\begin{urbiscript}[firstnumber=last]
+function () {}.apply([]);
+[00000001:error] !!! apply: list of arguments must begin with `this'
+
+function () {}.apply([1, 2]);
+[00000002:error] !!! apply: expected 0 argument, given 1
+\end{urbiscript}
+
 \item \lstinline|asString|\\
   Conversion to \refObject{String}.
 \begin{urbiassert}[firstnumber=last]
