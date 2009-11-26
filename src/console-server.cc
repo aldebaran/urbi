@@ -326,7 +326,8 @@ namespace urbi
       if (libport::opts::version.get())
         version();
 #endif
-      data.interactive = IF_OPTION_PARSER(arg_interactive.get(), true);
+      data.interactive = IF_OPTION_PARSER(arg_interactive.get(),
+                                           getenv("INTERACTIVE"));
       data.fast = IF_OPTION_PARSER(arg_fast.get(), false);
 
 #ifndef NO_OPTION_PARSER
