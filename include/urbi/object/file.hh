@@ -45,6 +45,10 @@ namespace urbi
       void init(rPath path);
       void init(const std::string& path);
 
+      static rFile createTemp(rObject);
+      void rename(const std::string& dst);
+      void remove();
+
       // Conversions
       rList as_list() const;
       std::string as_string() const;

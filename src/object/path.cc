@@ -44,6 +44,11 @@ namespace urbi
       return path_;
     }
 
+    void Path::value_set(const value_type& val)
+    {
+      path_ = val;
+    }
+
 
     /*---------------.
     | Urbi methods.  |

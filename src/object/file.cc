@@ -66,6 +66,18 @@ namespace urbi
       return new File(p);
     }
 
+    void File::rename(const std::string& dst)
+    {
+      libport::path path = path_->value_get();
+      path.rename (dst);
+      path_->value_set(path);
+    }
+
+    void File::remove()
+    {
+      path_->value_get().remove ();
+    }
+
     void File::init(rPath path)
     {
       if (!path->is_reg())
@@ -183,6 +195,8 @@ namespace urbi
       bind(SYMBOL(asString), &File::as_string);
       bind(SYMBOL(content), &File::content);
       bind(SYMBOL(create), &File::create);
+      bind(SYMBOL(rename), &File::rename);
+      bind(SYMBOL(remove), &File::remove);
 
       proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
     }

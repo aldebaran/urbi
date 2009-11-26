@@ -34,6 +34,7 @@ namespace urbi
       typedef Path self_type;
       typedef libport::path value_type;
       const value_type& value_get() const;
+      void value_set(const value_type&);
 
     /*---------------.
     | Urbi methods.  |
