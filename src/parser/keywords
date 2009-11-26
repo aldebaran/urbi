@@ -8,9 +8,13 @@ while (<>)
 {
   if (/^"(\w+)"(\{FLAVOR\})?/)
     {
-      push @keyword, $1;
-      push @keyword, "$1;", "$1|", "$1,", "$1&"
-        if $2;
+      my ($k, $flav) = ($1, $2);
+      # Skip obsolete keywords.
+      next
+        if $k eq 'new';
+      push @keyword, $k;
+      push @keyword, "$k;", "$k|", "$k,", "$k&"
+        if $flav;
     }
 }
 
