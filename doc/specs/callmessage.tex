@@ -5,6 +5,131 @@ Capturing a method invocation: its target and arguments.
 \subsubsection{Evaluating an argument several times}
 \label{sec:std-callmsg-examples-several}
 
+The following example implements a lazy function which takes an
+integer \var{n}, then arguments.  The \var{n}-th argument is evaluated
+twice using \lstinline|CallMessage.evalArgAt|.
+
+\begin{urbiscript}
+function callTwice
+{
+  var n = call.evalArgAt(0);
+  call.evalArgAt(n);
+  call.evalArgAt(n)
+} |;
+
+// Call twice echo("foo").
+callTwice(1, echo("foo"), echo("bar"));
+[00000001] *** foo
+[00000002] *** foo
+
+// Call twice echo("bar").
+callTwice(2, echo("foo"), echo("bar"));
+[00000003] *** bar
+[00000004] *** bar
+\end{urbiscript}
+
+
+\subsubsection{Strict Functions}
+
+Strict functions do support \lstinline|call|.
+
+\begin{urbiscript}[firstnumber=last]
+function strict(x)
+{
+  echo("Entering");
+  echo("Strict: " + x);
+  echo("Lazy:   " + call.evalArgAt(0));
+} |;
+
+strict({echo("1"); 1});
+[00000011] *** 1
+[00000013] *** Entering
+[00000012] *** Strict: 1
+[00000013] *** 1
+[00000014] *** Lazy:   1
+\end{urbiscript}
+
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|args|\\
+  The list of unevaluated arguments.
+\begin{urbiscript}[firstnumber=last]
+function args { call.args }|
+assert
+{
+  args == [];
+  args() == [];
+  args({echo(111); 1}) == [Lazy.new(closure() {echo(111); 1})];
+  args(1, 2) == [Lazy.new(closure () {1}),
+                 Lazy.new(closure () {2})];
+};
+\end{urbiscript}
+
+
+\item \lstinline|argsCount|\\
+  Return the number of arguments.  Do not evaluate them.
+\begin{urbiscript}[firstnumber=last]
+function argsCount { call.argsCount }|;
+assert
+{
+  argsCount == 0;
+  argsCount() == 0;
+  argsCount({echo(1); 1}) == 1;
+  argsCount({echo(1); 1}, {echo(2); 2}) == 2;
+};
+\end{urbiscript}
+
+\item \lstinline|evalArgAt(\var{n})|\\
+  Evaluate the \var{n}-th argument, and return its value.  \var{n}
+  must evaluate to an nonnegative integer.  Repeated invocations
+  repeat the evaluation, see
+  \autoref{sec:std-callmsg-examples-several}.
+\begin{urbiscript}[firstnumber=last]
+function sumTwice
+{
+  var n = call.evalArgAt(0);
+  call.evalArgAt(n) + call.evalArgAt(n)
+}|;
+
+function one () { echo("one"); 1 }|;
+
+sumTwice(1, one, one + one);
+[00000008] *** one
+[00000009] *** one
+[00000010] 2
+sumTwice(2, one, one + one);
+[00000011] *** one
+[00000012] *** one
+[00000011] *** one
+[00000012] *** one
+[00000013] 4
+
+sumTwice(3, one, one);
+[00000014:error] !!! evalArgAt: invalid index: 3
+sumTwice(3.14, one, one);
+[00000015:error] !!! evalArgAt: invalid index: 3.14
+\end{urbiscript}
+
+\item \lstinline|evalArgs|\\
+  Call \lstinline|evalArgAt| for each argument, return the list of
+  values.
+\begin{urbiscript}[firstnumber=last]
+function twice
+{
+  call.evalArgs + call.evalArgs
+}|;
+twice({echo(1); 1}, {echo(2); 2});
+[00000011] *** 1
+[00000012] *** 2
+[00000011] *** 1
+[00000012] *** 2
+[00000013] [1, 2, 1, 2]
+\end{urbiscript}
+\end{itemize}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
