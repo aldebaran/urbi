@@ -669,7 +669,10 @@ namespace ast
                       rExp target, rExp e) // const
   {
     if (rScope res = e.unsafe_cast<Scope>())
+    {
+      passert(target, !target);
       return res;
+    }
     else if (target)
       return new Do(l, e, target);
     else
