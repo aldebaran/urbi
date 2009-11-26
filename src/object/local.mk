@@ -96,11 +96,6 @@ dist_libuobject_la_SOURCES +=			\
   object/finalizable.cc                         \
   object/finalizable.hh				\
   object/float.cc				\
-  object/format-info.cc				\
-  object/format-info.hh				\
-  object/format-info.hxx			\
-  object/formatter.cc				\
-  object/formatter.hh				\
   object/global.cc				\
   object/hash-slots.hh				\
   object/hash-slots.hxx				\
@@ -135,6 +130,11 @@ dist_libuobject_la_SOURCES +=			\
 
 if !COMPILATION_MODE_SPACE
   dist_libuobject_la_SOURCES +=			\
+    object/format-info.cc                       \
+    object/format-info.hh                       \
+    object/format-info.hxx                      \
+    object/formatter.cc                         \
+    object/formatter.hh                         \
     object/input-stream.cc			\
     object/input-stream.hh			\
     object/output-stream.cc			\

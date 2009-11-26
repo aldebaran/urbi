@@ -23,7 +23,9 @@
 #include <libport/lexical-cast.hh>
 
 #include <urbi/object/float.hh>
-#include <object/format-info.hh>
+#if !defined COMPILATION_MODE_SPACE
+# include <object/format-info.hh>
+#endif
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
@@ -128,6 +130,7 @@ namespace urbi
       return '"' + string_cast(libport::escape(content_, '"')) + '"';
     }
 
+#if !defined COMPILATION_MODE_SPACE
     std::string
     String::format(rFormatInfo finfo) const
     {
@@ -150,6 +153,7 @@ namespace urbi
       }
       return res;
     }
+#endif
 
     const std::string&
     String::as_string() const
@@ -426,7 +430,9 @@ namespace urbi
       DECLARE(asString    , as_string);
       DECLARE(distance    , distance);
       DECLARE(empty       , empty);
+#if !defined COMPILATION_MODE_SPACE
       DECLARE(format      , format);
+#endif
       DECLARE(fresh       , fresh);
       DECLARE(fromAscii   , fromAscii);
       DECLARE(isAlnum     , is_alnum);

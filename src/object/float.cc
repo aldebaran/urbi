@@ -25,7 +25,9 @@
 #include <libport/ufloat.hh>
 
 #include <object/cxx-helper.hh>
-#include <object/format-info.hh>
+#if !defined COMPILATION_MODE_SPACE
+# include <object/format-info.hh>
+#endif
 #include <object/symbols.hh>
 
 #include <urbi/object/float.hh>
@@ -126,6 +128,7 @@ namespace urbi
       return std::numeric_limits<libport::ufloat>::quiet_NaN();
     }
 
+#if !defined COMPILATION_MODE_SPACE
     std::string
     Float::format(rFormatInfo finfo) const
     {
@@ -163,6 +166,7 @@ namespace urbi
         return libport::format(pattern, value_);
       }
     }
+#endif
 
     std::string
     Float::as_string() const
@@ -380,7 +384,9 @@ namespace urbi
       DECLARE(compl, operator~);
       DECLARE(cos, cos);
       DECLARE(exp, exp);
+#if !defined COMPILATION_MODE_SPACE
       DECLARE(format, format);
+#endif
       DECLARE(inf, inf);
       DECLARE(log, log);
       DECLARE(nan, nan);

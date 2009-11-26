@@ -19,6 +19,8 @@
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/equality-comparable.hh>
 
+# include <kernel/config.h>
+
 namespace urbi
 {
   namespace object
@@ -54,8 +56,9 @@ namespace urbi
       virtual bool as_bool() const;
       const std::string& as_string() const;
       std::string as_printable() const;
+#if !defined COMPILATION_MODE_SPACE
       std::string format(rFormatInfo finfo) const;
-
+#endif
       size_type distance(const std::string& other) const;
       bool empty() const;
       std::string plus(rObject rhs) const;

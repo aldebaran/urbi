@@ -21,6 +21,8 @@
 # include <object/fwd.hh>
 # include <object/equality-comparable.hh>
 
+# include <kernel/config.h>
+
 namespace object
 {
 
@@ -90,7 +92,9 @@ namespace object
 
     value_type acos() const;
     value_type asin() const;
+#if !defined COMPILATION_MODE_SPACE
     std::string format(rFormatInfo finfo) const;
+#endif
     std::string as_string() const;
     value_type atan() const;
     value_type atan2(value_type) const;
