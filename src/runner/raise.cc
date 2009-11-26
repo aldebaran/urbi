@@ -115,8 +115,8 @@ namespace runner
     raise_urbi_skip(SYMBOL(ArgumentType),
                     method_name,
                     to_urbi(idx),
-                    expected,
-                    effective);
+                    effective,
+                    expected);
   }
 
   void
@@ -135,6 +135,13 @@ namespace runner
     raise_urbi_skip(SYMBOL(Primitive),
                     raise_current_method,
                     to_urbi(message));
+  }
+
+  void
+  raise_type_error(rObject effective,
+                   rObject expected)
+  {
+    raise_urbi_skip(SYMBOL(Type), effective, expected);
   }
 
   void

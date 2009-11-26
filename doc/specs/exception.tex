@@ -31,12 +31,12 @@ Exception.Arity.new("myRoutine", 1, 10, 23);
 
 \subsection{Slots}
 \begin{itemize}
-\item \lstinline|ArgumentType.new(\var{routine}, \var{index}, \var{expected}, \var{effective})|\\
+\item \lstinline|ArgumentType.new(\var{routine}, \var{index}, \var{effective}, \var{expected})|\\
   Derives from \lstinline|Exception.Type|.  The \var{routine} was
   called with a \var{index}-nth argument of type \var{effective}
   instead of \var{expected}.
 \begin{urbiscript}[firstnumber=last]
-Exception.ArgumentType.new("myRoutine", 1, "myExceptation", "hisResult");
+Exception.ArgumentType.new("myRoutine", 1, "hisResult", "myExceptation");
 [00000003] ArgumentType `myRoutine: unexpected "hisResult" for argument 1, expected a String'
 \end{urbiscript}
 
@@ -70,8 +70,8 @@ Exception.BadInteger.new("myRoutine", "bad integer: %s", 12);
 \item \lstinline|Constness.new(\var{msg})|\\
   An attempt was made to change a constant value.
 \begin{urbiscript}[firstnumber=last]
-Exception.Constness.new("cannot change this");
-[00000006:error] !!! new: expected 0 argument, given 1
+Exception.Constness.new;
+[00000006] Constness `cannot modify const slot'
 \end{urbiscript}
 
 \item \lstinline|FileNotFound.new(\var{name})|\\
@@ -85,8 +85,8 @@ Exception.FileNotFound.new("foo");
   An attempt was made to create an implicit tag, a component of which
   being undefined.
 \begin{urbiscript}[firstnumber=last]
-Exception.Constness.new("no such implicit tag");
-[00000008:error] !!! new: expected 0 argument, given 1
+Exception.ImplicitTagComponent.new;
+[00000008] ImplicitTagComponent `invalid component in implicit tag'
 \end{urbiscript}
 
 \item \lstinline|Lookup.new(\var{object}, \var{name})|\\
@@ -128,11 +128,11 @@ Exception.Scheduling.new("cannot schedule");
 [00000013] Scheduling `cannot schedule'
 \end{urbiscript}
 
-\item \lstinline|Type.new(\var{expected}, \var{effective})|\\
+\item \lstinline|Type.new(\var{effective, \var{expected})|\\
   A value of type \var{effective} was received, while a value of type
   \var{expected} was expected.
 \begin{urbiscript}[firstnumber=last]
-Exception.Type.new("myExceptation", "hisResult");
+Exception.Type.new("hisResult", "myExceptation");
 [00000014] Type `unexpected "hisResult", expected a String'
 \end{urbiscript}
 

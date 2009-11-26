@@ -109,7 +109,7 @@ class Exception.Type: Exception
   var expected;
   var effective;
 
-  function init(expected, effective)
+  function init(effective, expected)
   {
     this.expected = expected |
     this.effective = effective |
@@ -123,13 +123,13 @@ class Exception.ArgumentType: Exception.Type
   var index;
   var routine;
 
-  function init(routine, index, exp, eff)
+  function init(routine, index, effective, expected)
   {
-    Exception.Type.getSlot("init").apply([this, exp, eff]) |
+    Exception.Type.getSlot("init").apply([this, effective, expected]) |
     this.routine = routine |
     this.index = index |
     message = "%s: unexpected %s for argument %s, expected a %s"
-              % [routine, eff.asPrintable, index, exp.type]
+              % [routine, effective.asPrintable, index, expected.type]
   }
 };
 

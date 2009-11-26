@@ -65,7 +65,7 @@ namespace runner
     {
       ast::rConstCall c = e.unsafe_cast<const ast::Call>();
       if (!c || c->arguments_get())
-	runner::raise_urbi(SYMBOL(ImplicitTagComponentError));
+	runner::raise_urbi(SYMBOL(ImplicitTagComponent));
       res.push_back (c->name_get());
       e = c->target_get();
     }

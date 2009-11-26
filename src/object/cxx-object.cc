@@ -64,8 +64,6 @@ namespace urbi
     type_check(const rObject& o, const rObject& exp,
                boost::optional<unsigned> idx)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
       assert(o);
       assert(exp);
       if (!is_a(o, exp))
@@ -73,10 +71,7 @@ namespace urbi
         if (idx)
           runner::raise_argument_type_error(idx.get(), o, exp);
         else
-        {
-          CAPTURE_GLOBAL(TypeError);
-          r.raise(TypeError->call(SYMBOL(new), exp, o));
-        }
+          runner::raise_type_error(o, exp);
       }
     }
 

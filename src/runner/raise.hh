@@ -18,7 +18,7 @@
 namespace runner
 {
   /// Raise an URBI exception designed by its name. A lookup will be
-  /// performed in the "Global" object.  If arg1 is
+  /// performed in the "Global.Exception" object.  If arg1 is
   /// "raise_current_method", the innermost method name will be looked
   /// up in the current runner and used instead.
   ATTRIBUTE_NORETURN
@@ -68,6 +68,11 @@ namespace runner
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_primitive_error(const std::string& message);
+
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
+  void raise_type_error(object::rObject effective,
+                        object::rObject expected);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
