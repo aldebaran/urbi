@@ -1,7 +1,3 @@
-/*-------------.
-| Comparable.  |
-`-------------*/
-
 class Global.Comparable
 {
   function '!=' (rhs) { ! (this == rhs) };

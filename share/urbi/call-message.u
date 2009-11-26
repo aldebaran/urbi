@@ -6,7 +6,7 @@ class Global.CallMessage
 {
   function argString(i)
   {
-    args[i].string
+    args[i].asString
   };
 
   function evalArgAt(i)

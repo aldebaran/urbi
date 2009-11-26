@@ -1,4 +1,4 @@
-class Global.Lazy
+class Global.Lazy : Global.Comparable
 {
   var code;
   var val;
@@ -8,6 +8,18 @@ class Global.Lazy
     var this.code = value |
     var this.val |
     this
+  };
+
+  function '=='(other)
+  {
+    // code is very likely to be a closure, so try not to fire it,
+    // otherwise we might compare two values instead of two
+    // expressions.
+    //
+    // FIXME: cannot compare ASTs currently, so compare strings.
+    getSlot("code").acceptVoid.asString
+      == other.getSlot("code").acceptVoid.asString
+    && getSlot("val").acceptVoid == other.getSlot("val").acceptVoid;
   };
 
   function eval()
@@ -23,7 +35,7 @@ class Global.Lazy
     getSlot("val").unacceptVoid
   };
 
-  function string ()
+  function asString ()
   {
     getSlot("code").bodyString
   };

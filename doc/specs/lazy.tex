@@ -30,16 +30,12 @@ function heavy_computation()
 {
   echo("Heavy computation");
   return 1 + 1;
-};
-[00000000:hide] function () {
-[:]  echo("Heavy computation");
-[:]  return 1 . '+'(1);
-[:]}
+}|;
 
 // We want to do the heavy computations only if needed,
 // and make it a lazy value to be able to evaluate it "on demand".
 var v = Lazy.new(closure () { heavy_computation() });
-[00000000] Lazy_0xADDR
+[00000000] heavy_computation()
 /* some code */;
 // So far, the value was not needed, and heavy_computation
 // was not evaluated.
@@ -110,6 +106,12 @@ p.value(1);
 [00074562] 2
 \end{urbiscript}
 
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Comparable}
+\end{itemize}
+
 \subsection{Construction}
 
 Lazies are seldom instantiated manually. They are mainly created
@@ -119,13 +121,40 @@ standard \lstinline|new| method of \lstinline|Lazy|, giving it an
 argument-less function which evaluates to the lazified value.
 
 \begin{urbiscript}[firstnumber=last]
-Lazy.new(closure () { /* Value to lazify */ });
-[00000000:hide] Lazy_0xADDR
+Lazy.new(closure () { /* Value to lazify */ 0 });
+[00000000] 0
 \end{urbiscript}
 
 \subsection{Slots}
 
 \begin{itemize}
+\item \lstinline|==(\var{that})|\\
+  Whether \lstinline|this| and \var{that} are the same source code and
+  value (an unevaluated Lazy is never equal to an evaluated one).  It
+  actually checks that both have the same \lstinline|asString|.
+\begin{urbiassert}[firstnumber=last]
+Lazy.new(closure () { 1 + 1 }) == Lazy.new(closure () { 1 + 1 });
+Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
+\end{urbiassert}
+\begin{urbiscript}[firstnumber=last]
+{
+  var l1 = Lazy.new(closure () { 1 + 1 });
+  var l2 = Lazy.new(closure () { 1 + 1 });
+  assert (l1 == l2);
+  l1.eval;
+  assert (l1 != l2);
+  l2.eval;
+  assert (l1 == l2);
+};
+\end{urbiscript}
+
+\item \lstinline|asString|\\
+  The conversion to \refObject{String} of the body of a non-evaluated
+  argument.
+\begin{urbiassert}[firstnumber=last]
+Lazy.new(closure () { echo(1); 1 }).asString == "echo(1);\n1";
+\end{urbiassert}
+
 \item \lstinline|eval|\\
   Force the evaluation of the held lazy value. Two calls to
   \lstinline|eval| will systematically evaluate the expression twice,

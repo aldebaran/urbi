@@ -24,6 +24,7 @@ System.load("urbi/object.u");
 System.load("urbi/global.u");
 load("urbi/exception.u");
 load("urbi/call-message.u");
+load("urbi/comparable.u");
 load("urbi/lazy.u");
 load("urbi/range-iterable.u");
 load("urbi/list.u");
@@ -37,7 +38,6 @@ load("urbi/channel.u");
 // Disable top-level display
 topLevel.enabled = false;
 
-load("urbi/comparable.u");
 // Provide !=.
 Object.addProto(Comparable);
 
