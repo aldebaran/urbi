@@ -31,37 +31,41 @@ optional arguments):
 \var{options} is a sequence of 0 or several of the following
 characters:
 
-\begin{tabular}{|c|l|}
-  \hline
-  \samp{-} & Left alignment.\\
-  \samp{=} & Centered alignment.\\
-  \samp{+} & Show sign even for positive number.\\
-  \samp{ } & If the string does not begin with \samp{+} or \samp{-}, insert
-  a space before the converted string.\\
-  \samp{0} & Pad with 0's (inserted after sign or base indicator).\\
-  \samp{\#} & Show numerical base, and decimal point.\\
-%  \samp{'} & Split thousands (\samp{1 000}).\\
-  \hline
-\end{tabular}
+\begin{center}
+  \begin{tabular}{|c|l|}
+    \hline
+    \samp{-} & Left alignment.\\
+    \samp{=} & Centered alignment.\\
+    \samp{+} & Show sign even for positive number.\\
+    \samp{ } & If the string does not begin with \samp{+} or \samp{-}, insert
+    a space before the converted string.\\
+    \samp{0} & Pad with 0's (inserted after sign or base indicator).\\
+    \samp{\#} & Show numerical base, and decimal point.\\
+    % \samp{'} & Split thousands (\samp{1 000}).\\
+    \hline
+  \end{tabular}
+\end{center}
 
 \noindent
 \var{spec} is the convertion character and must be one of the
 following:
 
-\begin{tabular}{|c|l|}
-  \hline
-  \samp{s} & Default character, prints normally\\
-  \samp{d} & Case modifier: lowercase \\
-  \samp{D} & Case modifier: uppercase \\
-  \samp{x} & Prints in hexadecimal lowercase \\
-  \samp{X} & Prints in hexadecimal uppercase \\
-  \samp{o} & Prints in octal\\
- % \samp{b} & Prints in binary\\
-  \samp{e} & Prints floats in scientific format\\
-  \samp{E} & Prints floats in scientific format uppercase\\
-  \samp{f} & Prints floats in fixed format\\
-  \hline
-\end{tabular}
+\begin{center}
+  \begin{tabular}{|c|l|}
+    \hline
+    \samp{s} & Default character, prints normally\\
+    \samp{d} & Case modifier: lowercase \\
+    \samp{D} & Case modifier: uppercase \\
+    \samp{x} & Prints in hexadecimal lowercase \\
+    \samp{X} & Prints in hexadecimal uppercase \\
+    \samp{o} & Prints in octal\\
+    % \samp{b} & Prints in binary\\
+    \samp{e} & Prints floats in scientific format\\
+    \samp{E} & Prints floats in scientific format uppercase\\
+    \samp{f} & Prints floats in fixed format\\
+    \hline
+  \end{tabular}
+\end{center}
 
 \subsection{Slots}
 \begin{itemize}
