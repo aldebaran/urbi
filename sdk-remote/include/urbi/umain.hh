@@ -15,27 +15,36 @@
 # include <libport/cli.hh>
 # include <urbi/exit.hh>
 # include <urbi/uobject.hh>
+# include <urbi/urbi-root.hh>
 
-# define UMAIN()				\
-  int						\
-  main_args(const libport::cli_args_type& args) \
-  {						\
-    return urbi::main(args, true, true);        \
-  }                                             \
-                                                \
-  int						\
-  main(int argc, const char* argv[])		\
-  {						\
-    return urbi::main(argc, argv, true, true);  \
-  }
+# define UMAIN()                                                \
+                                                                \
+  int                                                           \
+  main(int argc, const char** argv)                             \
+  {                                                             \
+    UrbiRoot urbi_root(argv[0]);                                \
+    return urbi::main(argc, argv, urbi_root, true, true);       \
+  }                                                             \
+                                                                \
+  int                                                           \
+  main_args(const libport::cli_args_type& args)                 \
+  {                                                             \
+    size_t argc = args.size();                                  \
+    const char** argv = new const char*[argc];                  \
+    for (unsigned i = 0; i < argc; ++i)                         \
+      argv[i] = args[i].c_str();                                \
+    int res = main(argc, argv);                                 \
+    delete [] argv;                                             \
+    return res;                                                 \
+  }                                                             \
 
 extern "C"
 {
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  URBI_SDK_API int urbi_main(int argc, const char* argv[],
+  URBI_SDK_API int urbi_main(int argc, const char* argv[], UrbiRoot& root,
                              bool block, bool errors);
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  URBI_SDK_API int urbi_main_args(const libport::cli_args_type& args,
+  URBI_SDK_API int urbi_main_args(const libport::cli_args_type& args, UrbiRoot& root,
                                   bool block, bool errors);
 }
 
@@ -48,12 +57,12 @@ namespace urbi
    * urbi::main(argc, argv) after your work is done.
    * This function returns if block is set to false.
    */
-  URBI_SDK_API int main(const libport::cli_args_type& args,
+  URBI_SDK_API int main(const libport::cli_args_type& args, UrbiRoot& root,
                         bool block = true, bool errors = false);
 
   /** Initialisation method using C style arguments.
    */
-  URBI_SDK_API int main(int argc, const char *argv[],
+  URBI_SDK_API int main(int argc, const char *argv[], UrbiRoot& root,
                         bool block = true, bool errors = false);
 
 

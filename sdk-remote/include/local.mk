@@ -33,6 +33,7 @@ urbiinclude_HEADERS =				\
   include/urbi/uobject.hxx			\
   include/urbi/uprop.hh				\
   include/urbi/uproperty.hh			\
+  include/urbi/urbi-root.hh			\
   include/urbi/usound.hh			\
   include/urbi/ustarter.hh			\
   include/urbi/ustarter.hxx			\

@@ -30,6 +30,7 @@
 #include <urbi/umain.hh>
 #include <urbi/umessage.hh>
 #include <urbi/uobject.hh>
+#include <urbi/urbi-root.hh>
 #include <urbi/usyncclient.hh>
 #include <libuobject/remote-ucontext-impl.hh>
 using libport::program_name;
@@ -161,7 +162,7 @@ namespace urbi
 
 
   int
-  main(const libport::cli_args_type& args, bool block, bool)
+  main(const libport::cli_args_type& args, UrbiRoot&, bool block, bool)
   {
     std::string host = UClient::default_host();
     bool exitOnDisconnect = true;

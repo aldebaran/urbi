@@ -21,6 +21,7 @@ libuvalue_libuvalue_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS)
 libuvalue_libuvalue_la_LIBADD = $(BOOST_THREAD_LIBS)
 
 dist_libuvalue_libuvalue_la_SOURCES =		\
+  liburbi/urbi-root.cc				\
   libuvalue/exit.cc				\
   libuvalue/package-info.cc			\
   libuvalue/ubinary.cc				\

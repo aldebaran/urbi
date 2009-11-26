@@ -36,6 +36,7 @@ using namespace boost::assign;
 #include <urbi/exit.hh>
 #include <urbi/package-info.hh>
 #include <urbi/uclient.hh>
+#include <urbi/urbi-root.hh>
 
 using namespace urbi;
 using libport::program_name;
@@ -104,7 +105,7 @@ version()
 
 static
 int
-urbi_launch_(int argc, char* argv[])
+urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
 {
   libport::program_initialize(argc, argv);
 
@@ -197,22 +198,13 @@ urbi_launch_(int argc, char* argv[])
   if (connect_mode == MODE_PLUGIN_LOAD)
     return connect_plugin(host, port, modules);
 
-  libport::path urbi_root = libport::xgetenv("URBI_ROOT", URBI_ROOT);
-  libport::path coredir = urbi_root / "gostai" / "core" / URBI_HOST;
-  /// Core dll to use.
-  std::string dll
-    = (arg_custom.filled()
-       ? arg_custom.value()
-       :  string_cast(coredir
-                      / (connect_mode == MODE_REMOTE ? "remote" : "engine")
-                      / "libuobject"));
-
-  /* The two other modes are handled the same way:
-   * -Dlopen the correct libuobject.
-   * -Dlopen the uobjects to load.
-   * -Call urbi::main found by dlsym() in libuobject.
-   */
-  libport::xlt_handle core = libport::xlt_openext(dll, true, EX_OSFILE);
+  // Open the right core library.
+  if (arg_custom.filled())
+    urbi_root.load_custom(arg_custom.value());
+  else if (connect_mode == MODE_REMOTE)
+    urbi_root.load_remote();
+  else
+    urbi_root.load_plugin();
 
   // If URBI_UOBJECT_PATH is not defined, first look in ., then in the
   // stdlib.
@@ -220,24 +212,21 @@ urbi_launch_(int argc, char* argv[])
 
   // Load the modules using our uobject library path.
   libport::xlt_advise dl;
-  dl.ext()
-    .path().push_back(list_of(uobject_path)(coredir / "uobjects"), ":");
+  dl.ext().path().push_back(uobject_path, ":");
+  dl.ext().path().push_back(urbi_root.uobjects_path());
   foreach (const std::string& s, modules)
     dl.open(s);
 
-  typedef int (*umain_type)(const libport::cli_args_type& args,
-                            bool block, bool errors);
-  umain_type umain = core.sym<umain_type>("urbi_main_args");
-  return umain(args, true, true);
+  return urbi_root.urbi_main(args, true, true);
 }
 
 extern "C" int
 URBI_SDK_API
-urbi_launch(int argc, char* argv[])
+urbi_launch(int argc, const char* argv[], UrbiRoot& urbi_root)
 {
   try
   {
-    return urbi_launch_(argc, argv);
+    return urbi_launch_(argc, argv, urbi_root);
   }
   catch (const std::exception& e)
   {

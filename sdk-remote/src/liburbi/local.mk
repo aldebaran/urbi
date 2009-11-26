@@ -10,10 +10,10 @@ liburbi_liburbi_la_SOURCES =			\
   liburbi/compatibility.hxx			\
   liburbi/kernel-version.cc			\
   liburbi/uabstractclient.cc			\
-  liburbi/urbi-launch.cc                        \
   liburbi/uclient.cc				\
   liburbi/uconversion.cc			\
   liburbi/umessage.cc				\
+  liburbi/urbi-launch.cc			\
   liburbi/usyncclient.cc			\
   liburbi/utag.cc
 
@@ -21,7 +21,7 @@ liburbi_liburbi_la_CPPFLAGS =			\
   $(AM_CPPFLAGS)				\
   -DBUILDING_URBI_SDK
 # Find version.hh.
-liburbi_liburbi_la_CPPFLAGS += -I.
+liburbi_liburbi_la_CPPFLAGS += -I. -DURBI_ROOT_NOT_DLL
 
 liburbi_liburbi_la_LIBADD = $(LIBADD) libuvalue/libuvalue.la $(JPEG_LIBS)
 liburbi_liburbi_la_LDFLAGS = -avoid-version -no-undefined
