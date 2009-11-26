@@ -81,6 +81,13 @@ assert
 };
 \end{urbiscript}
 
+\item \lstinline|code|\\
+  The body of the called function as a \refObject{Code}.
+\begin{urbiscript}[firstnumber=last]
+function code { call.getSlot("code") }|
+assert (code == getSlot("code"));
+\end{urbiscript}
+
 \item \lstinline|evalArgAt(\var{n})|\\
   Evaluate the \var{n}-th argument, and return its value.  \var{n}
   must evaluate to an nonnegative integer.  Repeated invocations
@@ -127,6 +134,14 @@ twice({echo(1); 1}, {echo(2); 2});
 [00000012] *** 2
 [00000013] [1, 2, 1, 2]
 \end{urbiscript}
+
+\item \lstinline|message|\\
+  The name under which the function was called.
+\begin{urbiscript}[firstnumber=last]
+function myself { call.message }|
+assert(myself == "myself");
+\end{urbiscript}
+
 \end{itemize}
 
 

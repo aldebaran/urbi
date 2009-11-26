@@ -1,6 +1,48 @@
 \section{Code}
+
 Objects that can be ``invoked'', comparable to \Cxx's Function Objects.
 
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Comparable]
+\item[Executable]
+\item[Object]
+\end{refObjects}
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|==(\var{that})|\\
+  Whether \lstinline|this| and \var{that} are the same source code.
+  It actually checks that both have the same \lstinline|asString|.
+\begin{urbiassert}[firstnumber=last]
+function () { 1 } == function () { 1 };
+function () { 1 } != closure  () { 1 };
+closure  () { 1 } != function () { 1 };
+
+function () { 1 + 1 } == function () { 1 + 1 };
+function () { 1 + 2 } != function () { 2 + 1 };
+
+function () { 1 } != function { 1 };
+function () { 1 } != function (ignored) { 1 };
+\end{urbiassert}
+
+\item \lstinline|asString|\\
+  Conversion to \refObject{String}.
+\begin{urbiassert}[firstnumber=last]
+closure  () { 1 }.asString == "closure () {\n  1\n}";
+function () { 1 }.asString == "function () {\n  1\n}";
+\end{urbiassert}
+
+\item \lstinline|bodyString|\\
+  Conversion to \refObject{String} of the routine body.
+\begin{urbiassert}[firstnumber=last]
+closure  () { 1 }.bodyString == "1";
+function () { 1 }.bodyString == "1";
+\end{urbiassert}
+
+\end{itemize}
 
 %%% Local Variables:
 %%% mode: latex

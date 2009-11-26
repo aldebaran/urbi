@@ -15,10 +15,7 @@ class Global.Lazy : Global.Comparable
     // code is very likely to be a closure, so try not to fire it,
     // otherwise we might compare two values instead of two
     // expressions.
-    //
-    // FIXME: cannot compare ASTs currently, so compare strings.
-    getSlot("code").acceptVoid.asString
-      == other.getSlot("code").acceptVoid.asString
+    getSlot("code") == other.getSlot("code")
     && getSlot("val").acceptVoid == other.getSlot("val").acceptVoid;
   };
 

@@ -130,8 +130,7 @@ Lazy.new(closure () { /* Value to lazify */ 0 });
 \begin{itemize}
 \item \lstinline|==(\var{that})|\\
   Whether \lstinline|this| and \var{that} are the same source code and
-  value (an unevaluated Lazy is never equal to an evaluated one).  It
-  actually checks that both have the same \lstinline|asString|.
+  value (an unevaluated Lazy is never equal to an evaluated one).
 \begin{urbiassert}[firstnumber=last]
 Lazy.new(closure () { 1 + 1 }) == Lazy.new(closure () { 1 + 1 });
 Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
