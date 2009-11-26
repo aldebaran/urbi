@@ -69,20 +69,17 @@ namespace runner
   }
 
   void
-  raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
+  raise_argument_type_error(unsigned idx,
+                            rObject effective,
+                            rObject expected,
+			    rObject method_name)
   {
-    assert_user_mode("Lookup", msg);
-    raise_urbi_skip(SYMBOL(Lookup),
-                    to_urbi(msg),
-                    obj);
+    raise_urbi_skip(SYMBOL(ArgumentType),
+                    method_name,
+                    to_urbi(idx),
+                    effective,
+                    expected);
   }
-
-  void
-  raise_const_error()
-  {
-    raise_urbi_skip(SYMBOL(Constness));
-  }
-
 
   void
   raise_arity_error(unsigned effective,
@@ -107,19 +104,6 @@ namespace runner
   }
 
   void
-  raise_argument_type_error(unsigned idx,
-                            rObject effective,
-                            rObject expected,
-			    rObject method_name)
-  {
-    raise_urbi_skip(SYMBOL(ArgumentType),
-                    method_name,
-                    to_urbi(idx),
-                    effective,
-                    expected);
-  }
-
-  void
   raise_bad_integer_error(libport::ufloat effective,
 			  const std::string& fmt)
   {
@@ -127,6 +111,21 @@ namespace runner
                     raise_current_method,
                     to_urbi(fmt),
                     to_urbi(effective));
+  }
+
+  void
+  raise_const_error()
+  {
+    raise_urbi_skip(SYMBOL(Constness));
+  }
+
+  void
+  raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
+  {
+    assert_user_mode("Lookup", msg);
+    raise_urbi_skip(SYMBOL(Lookup),
+                    to_urbi(msg),
+                    obj);
   }
 
   void

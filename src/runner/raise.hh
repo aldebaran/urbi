@@ -17,10 +17,12 @@
 
 namespace runner
 {
-  /// Raise an URBI exception designed by its name. A lookup will be
-  /// performed in the "Global.Exception" object.  If arg1 is
-  /// "raise_current_method", the innermost method name will be looked
-  /// up in the current runner and used instead.
+  extern const object::rObject& raise_current_method;
+
+  /// Raise an Urbi exception denoted by its name, looked up in
+  /// "Global.Exception".  If arg1 is "raise_current_method", the
+  /// innermost method name will be looked up in the current runner
+  /// and used instead.
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_urbi(libport::Symbol exn_name,
@@ -30,7 +32,7 @@ namespace runner
 		  object::rObject arg4 = 0,
                   bool skip = false);
 
-  /// Like raise_urbi, but skip the last callstack element
+  /// Like raise_urbi, but skip the last callstack element.
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_urbi_skip(libport::Symbol exn_name,
@@ -39,7 +41,13 @@ namespace runner
                        object::rObject arg3 = 0,
                        object::rObject arg4 = 0);
 
-  extern const object::rObject& raise_current_method;
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
+  void raise_argument_type_error
+    (unsigned idx,
+     object::rObject effective,
+     object::rObject expected,
+     object::rObject method_name = raise_current_method);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
@@ -59,11 +67,11 @@ namespace runner
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
-  void raise_lookup_error(libport::Symbol msg, const object::rObject& obj);
+  void raise_const_error();
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
-  void raise_const_error();
+  void raise_lookup_error(libport::Symbol msg, const object::rObject& obj);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
@@ -73,14 +81,6 @@ namespace runner
   URBI_SDK_API
   void raise_type_error(object::rObject effective,
                         object::rObject expected);
-
-  ATTRIBUTE_NORETURN
-  URBI_SDK_API
-  void raise_argument_type_error
-    (unsigned idx,
-     object::rObject effective,
-     object::rObject expected,
-     object::rObject method_name = raise_current_method);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
