@@ -109,7 +109,6 @@ namespace urbi
     {
       type_check<Code>(what);
       return string_cast(*what->as<Code>()->ast_get());
-
     }
 
     std::string Code::body_string()
