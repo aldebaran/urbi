@@ -18,6 +18,7 @@
 
 #include <ast/exps-type.hh>
 #include <ast/local-declarations-type.hh>
+#include <ast/factory.hh>
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
@@ -490,7 +491,7 @@ namespace runner
       ast::rRoutine routine =
         new ast::Routine(LOCATION_HERE,
                          true, new ast::local_declarations_type,
-                         new ast::Scope(LOCATION_HERE, body));
+                         ast::Factory::make_scope(LOCATION_HERE, body));
 
       rCode closure = new object::Code(routine.get());
       closure->self_set(stacks_.self());
