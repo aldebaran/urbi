@@ -472,6 +472,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {NUMBER}"d"   RETURN_DURATION(1, 60*60*24);
 {NUMBER}"h"   RETURN_DURATION(1, 60*60);
 {NUMBER}"mn"  RETURN_DURATION(2, 60);
+{NUMBER}"min" RETURN_DURATION(3, 60);
 {NUMBER}"s"   RETURN_DURATION(1, 1);
 {NUMBER}"ms"  RETURN_DURATION(2, 0.001);
 
@@ -693,7 +694,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   | Deprecated constructs.  |
   `------------------------*/
 
-{NUMBER}"m"   DEPRECATED(std::string(yytext) + "n");
+{NUMBER}"m"   DEPRECATED(std::string(yytext) + "in");
 "foreach"     DEPRECATED("for");
 "internal"    DEPRECATED("");
 "loopn"       DEPRECATED("for");

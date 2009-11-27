@@ -255,7 +255,7 @@ in \autoref{tab:duration}.
     \hline
     millisecond & ms           & $n / 1000$         \\
     second      & s            & $n$                \\
-    minute      & mn           & $n \times 60$           \\
+    minute      & min          & $n \times 60$           \\
     hour        & h            & $n \times 60 \times 60$      \\
     day         & d            & $n \times 60 \times 60 \times 24$ \\
     \hline
@@ -266,8 +266,8 @@ in \autoref{tab:duration}.
 
 \begin{urbiassert}[firstnumber=last]
 1d == 24h;
-1h == 60mn;
-1mn == 60s;
+1h == 60min;
+1min == 60s;
 1s == 1000ms;
 
 1s == 1;
