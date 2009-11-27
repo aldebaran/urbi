@@ -13,7 +13,7 @@ class Global.Localization {} | do (Localization)
         setSlot(call.argString(i), type.new(i, call.argString(i)))
     }
   };
-  var name;
+  var name = "";
   function init(index, name, compactName=nil)
   {
     var this.name = name |
