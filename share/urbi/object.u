@@ -126,10 +126,10 @@ do (Object)
   function inspect (var deep = false)
   {
     function '<' (l, r) { l.toLower < r.toLower };
-    echo("Inspecting " + this);
+    echo("Inspecting " + this.asPrintable);
     echo("** Prototypes:");
     for (var p: protos)
-      echo("  " + p);
+      echo("  " + p.asPrintable);
     var slots =
       {
         if (deep)
@@ -137,7 +137,7 @@ do (Object)
           echo("** All Slots:");
           allSlotNames;
         }
-          else
+        else
         {
           echo("** Local Slots:");
           localSlotNames;
@@ -146,14 +146,23 @@ do (Object)
     for (var s: slots.sort ('<'))
     {
       var o = locateSlot(s);
-      echo("  " + o + "." + s + " : " + o.getSlot(s).type);
-      var ps = o.properties(s);
-      if (!ps.empty)
-        {
-          echo("    Properties:");
-          for (var p: ps.keys.sort('<'))
-            echo("     " + p + " : " + ps[p].type + " = " + ps[p]);
-        }
+      echo({
+             if (!deep)
+               "  "
+             else if (o === this)
+               "  this."
+             else
+               "  %s." % o.asPrintable
+           }
+           + "%s : %s"
+              % [s, o.getSlot(s).type]);
+      if (var ps = o.properties(s))
+      {
+        echo("    Properties:");
+        for (var p: ps.keys.sort('<'))
+          echo("     %s : %s = %s"
+               % [p, ps[p].type, ps[p].asPrintable]);
+      }
     };
   };
 };
