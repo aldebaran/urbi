@@ -14,10 +14,6 @@ do (Object)
     setSlot(to, getSlot(frm).clone)
   };
 
-  // Some sort of k1 compatibility.
-  copySlot ("addProto", "inherit");
-  copySlot ("removeProto", "disinherit");
-
   // Change the whole set of parents.
   function setProtos(ps)
   {
