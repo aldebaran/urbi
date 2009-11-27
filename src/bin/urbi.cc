@@ -23,26 +23,15 @@
 #include <libport/sysexits.hh>
 #include <libport/unistd.h>
 
-#include "../sdk-remote/src/bin/urbi-root.hh"
+#include <urbi/urbi-root.hh>
 
 using libport::streq;
 using libport::strneq;
 
-static std::string
-xgetenv(const char* var, const std::string& def)
-{
-  if (const char* res = getenv(var))
-    return res;
-  else
-    return def;
-}
-
 int
 main(int argc, char* argv[])
 {
-  const std::string urbi_launch =
-    xgetenv("URBI_LAUNCH",
-            get_urbi_root(argv[0]) + "/bin/urbi-launch");
+  UrbiRoot urbi_root(argv[0]);
 
   std::vector<std::string> args_urbi_launch;
   std::vector<std::string> args_libuobject;
@@ -58,25 +47,21 @@ main(int argc, char* argv[])
       args_libuobject << argv[i];
   }
 
-  // Prepare a C version of vector<string> to please exec.
-  const size_t args_n = args_urbi_launch.size() + args_libuobject.size() + 3;
-  const char** args_exec = new const char*[args_n];
+  // Prepare a C version of vector<string> to please urbi_launch.
+  const size_t argc_bounce = args_urbi_launch.size() + args_libuobject.size() + 2;
+  const char** argv_bounce = new const char*[argc_bounce + 1];
 
   {
     unsigned i = 0;
-    args_exec[i++] = urbi_launch.c_str();
+    argv_bounce[i++] = argv[0];//urbi_launch.c_str();
     for (unsigned j = 0; j < args_urbi_launch.size(); ++j)
-      args_exec[i++] = args_urbi_launch[j].c_str();
-    args_exec[i++] = "--";
+      argv_bounce[i++] = args_urbi_launch[j].c_str();
+    argv_bounce[i++] = "--";
     for (unsigned j = 0; j < args_libuobject.size(); ++j)
-      args_exec[i++] = args_libuobject[j].c_str();
-    args_exec[i++] = 0;
-    assert(i <= args_n);
+      argv_bounce[i++] = args_libuobject[j].c_str();
+    argv_bounce[i] = 0;
+    assert(i == argc_bounce);
   }
 
-  execv(urbi_launch.c_str(), const_cast<char *const*>(args_exec));
-  std::cerr
-    << argv[0] << ": cannot exec " << urbi_launch
-    << ": " << strerror(errno) << std::endl;
-  exit(EX_OSFILE);
+  return urbi_root.urbi_launch(argc_bounce, argv_bounce);
 }

@@ -1,3 +1,1 @@
-set URBI_ROOT=%cd%
-set PATH=gostai\core\@URBI_HOST@\engine;bin;%PATH%
 bin\urbi-launch.exe --port 54000 --start -- --interactive

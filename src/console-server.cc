@@ -74,8 +74,8 @@ class ConsoleServer
   , public libport::Socket
 {
 public:
-  ConsoleServer(bool fast)
-    : kernel::UServer()
+  ConsoleServer(bool fast, UrbiRoot& root)
+    : kernel::UServer(root)
     , libport::Socket(kernel::UServer::get_io_service())
     , fast(fast)
     , ctime(0)
@@ -223,7 +223,7 @@ namespace urbi
   static
   int
   init(const libport::cli_args_type& _args, bool errors,
-             libport::Semaphore* sem)
+       libport::Semaphore* sem, UrbiRoot& urbi_root)
   {
     libport::Finally f;
     if (sem)
@@ -232,7 +232,7 @@ namespace urbi
     {
       try
       {
-        return init(_args, false, sem);
+        return init(_args, false, sem, urbi_root);
       }
       catch (const urbi::Exit& e)
       {
@@ -374,7 +374,7 @@ namespace urbi
       sched::configuration.default_stack_size = arg_stack_size;
     }
 
-    data.server = new ConsoleServer(data.fast);
+    data.server = new ConsoleServer(data.fast, urbi_root);
     ConsoleServer& s = *data.server;
 
     /*----------.
@@ -500,17 +500,17 @@ namespace urbi
   }
 
   int
-  main(const libport::cli_args_type& args, bool block, bool errors)
+  main(const libport::cli_args_type& args, UrbiRoot& urbi_root, bool block, bool errors)
   {
     if (block)
-      return init(args, errors, 0);
+      return init(args, errors, 0, urbi_root);
     else
     {
       // The semaphore must survive this block, as init will use it when
       // exiting.
       libport::Semaphore* s = new libport::Semaphore;
       libport::startThread(boost::bind(&init, boost::ref(args),
-                                       errors, s));
+                                       errors, s, boost::ref(urbi_root)));
       (*s)--;
       return 0;
     }

@@ -103,12 +103,11 @@ namespace kernel
   | UServer.  |
   `----------*/
 
-  UServer::UServer()
+  UServer::UServer(UrbiRoot& urbi_root)
     : mode_(mode_kernel)
     , search_path(boost::assign::list_of
                   (std::string(libport::xgetenv("URBI_PATH")))
-                  (std::string(libport::xgetenv("URBI_ROOT", URBI_ROOT))
-                   + "/share/gostai"),
+                  (urbi_root.share_path()),
                   ":")
     , opt_banner_(true)
     , scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
@@ -117,6 +116,7 @@ namespace kernel
     , connections_(new kernel::ConnectionSet)
     , thread_id_(pthread_self())
     , io_(*new boost::asio::io_service())
+    , urbi_root_(urbi_root)
   {
     lock_check(*this);
     TIMER_INIT();

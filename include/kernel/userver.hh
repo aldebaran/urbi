@@ -38,6 +38,7 @@
 # include <kernel/utypes.hh>
 # include <urbi/export.hh>
 # include <urbi/object/object.hh>
+# include <urbi/urbi-root.hh>
 
 namespace kernel
 {
@@ -56,7 +57,7 @@ namespace kernel
   class URBI_SDK_API UServer
   {
   public:
-    UServer();
+    UServer(UrbiRoot& urbi_root);
     virtual ~UServer();
 
   public:
@@ -290,6 +291,9 @@ namespace kernel
 
     /// io_service used by all our connections
     boost::asio::io_service& io_;
+
+    /// Urbi SDK installation
+    UrbiRoot& urbi_root_;
   };
 
 }
