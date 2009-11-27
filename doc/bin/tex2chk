@@ -185,7 +185,7 @@ sub register ($$\%)
       $chk{$previous_label}{_contents} .=
         "\n"
         . lineno(%$lst)
-        unless $$lst{_contents} =~ /^\[\d{8}\]/;
+        unless $$lst{_contents} =~ /^\n*\[\d{8}\]/s;
 
       $chk{$previous_label}{_contents} .=
         $$lst{_contents};
