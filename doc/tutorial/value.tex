@@ -11,41 +11,71 @@ programming yet, these points will be presented in
 An object in \us is a rather simple concept: a list of slots. A
 \dfn{slot} is a value associated to a name. So an \dfn{object} is a
 list of slot names, each of which indexes a value --- just like a
-dictionary. You can get an object's slot value by using the dot
-(\lstinline{.}) operator on this object, followed by the name of the
-slot. You can list the names of the slots of an object with the
-\lstinline{localSlotNames} method.
+dictionary.
 
 \begin{urbiscript}
 // Create a fresh object with two slots.
-class Foo { var a = 42; var b = "foo"; };
+class Foo
+{
+  var a = 42;
+  var b = "foo";
+};
 [00000000] Foo
+\end{urbiscript}
+
+The \lstinline{localSlotNames} method lists the names of the slots of
+an object (\refObject{Object}).
+
+\begin{urbiscript}[firstnumber=last]
 // Inspect it.
 Foo.localSlotNames;
 [00000000] ["a", "asFoo", "b", "type"]
-// We now know the name of its slots.
-// Let's see their value.
+\end{urbiscript}
+
+You can get an object's slot value by using the dot (\lstinline{.})
+operator on this object, followed by the name of the slot.
+
+\begin{urbiscript}[firstnumber=last]
+// We now know the name of its slots. Let's see their value.
 Foo.a;
 [00000000] 42
 Foo.b;
 [00000000] "foo"
 \end{urbiscript}
 
-It's as simple as this. Let's now try to build such an object. First,
-we want a fresh object to work on. In \us, \lstinline{Object} is the
-parent type of every object (in fact, since \us is prototype-based,
-\lstinline{Object} is the uppermost prototype of every object, but
-we'll talk about prototypes later). An instance of object, is an
-empty, neutral object, so let's start by instantiating one with the
-\lstinline{clone} method of \lstinline{Object}.
+It's as simple as this.  The \lstinline|inspect| method provides a
+convenient short-hand to discover an object (\refObject{Object}).
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
+Foo.inspect;
+[00000009] *** Inspecting Foo
+[00000010] *** ** Prototypes:
+[00000011] ***   Object
+[00000012] *** ** Local Slots:
+[00000013] ***   a : Float
+[00000014] ***   asFoo : Code
+[00000015] ***   b : String
+[00000016] ***   type : String
+\end{urbiscript}
+
+Let's now try to build such an object. First, we want a fresh object
+to work on. In \us, \lstinline{Object} is the parent type of every
+object (in fact, since \us is prototype-based, \lstinline{Object} is
+the uppermost prototype of every object, but we'll talk about
+prototypes later). An instance of object, is an empty, neutral object,
+so let's start by instantiating one with the \lstinline{clone} method
+of \lstinline{Object}.
+
+\begin{urbiscript}[firstnumber=last]
 // Create the o variable as a fresh object.
 var o = Object.clone;
 [00000000] Object_0x00000000
 // Check its content
-o.localSlotNames;
-[00000000] []
+o.inspect;
+[00006725] *** Inspecting Object_0x00000000
+[00006725] *** ** Prototypes:
+[00006726] ***   Object
+[00006726] *** ** Local Slots:
 \end{urbiscript}
 
 As you can see, we obtain an empty fresh object. Note that it still
@@ -68,23 +98,28 @@ its value.
 \begin{urbiscript}[firstnumber=last]
 o.setSlot("a", 42);
 [00000000] 42
-o.localSlotNames;
-[00000000] ["a"]
-o.a;
-[00000000] 42
+o.inspect;
+[00009837] *** Inspecting Object_0x00000000
+[00009837] *** ** Prototypes:
+[00009837] ***   Object
+[00009838] *** ** Local Slots:
+[00009838] ***   a : Float
 \end{urbiscript}
 
-Here we successfully created our first slot, a. A good shorthand for
-setting slot is using the \lstinline{var} keyword.
+Here we successfully created our first slot, \lstinline|a|. A good
+shorthand for setting slot is using the \lstinline{var} keyword.
 
 \begin{urbiscript}[firstnumber=last]
 // This is equivalent to o.setSlot("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
-o.localSlotNames;
-[00000000] ["a", "b"]
-o.b;
-[00000000] "foo"
+o.inspect;
+[00072678] *** Inspecting Object_0x00000000
+[00072678] *** ** Prototypes:
+[00072679] ***   Object
+[00072679] *** ** Local Slots:
+[00072679] ***   a : Float
+[00072680] ***   b : String
 \end{urbiscript}
 
 The latter form with \lstinline{var} is preferred, but you need to know
@@ -104,13 +139,13 @@ function set(object, name, value)
   // We have to use setSlot here, since we don't
   // know the actual name of the slot.
   return object.setSlot("x_" + name, value);
-} | {};
+} |;
 function get(object, name)
 {
   // We have to use getSlot here, since we don't
   // know the actual name of the slot.
   return object.getSlot("x_" + name);
-} | {};
+} |;
 var x = Object.clone;
 [00000000] Object_0x00000000
 set(x, "foo", 0);
@@ -215,7 +250,7 @@ function o.f ()
 {
   echo("This is f with target " + this);
   return 42;
-} | {};
+} |;
 // The slot value is the function.
 o.getSlot("f");
 [00000001] function () {
@@ -420,7 +455,7 @@ function test(arg)
 {
   var arg.flag;  // add a slot in arg
   echo(arg.uid); // print its uid
-} | {};
+} |;
 var x = Object.clone;
 [00000000] Object_0x1
 x.uid;
@@ -440,7 +475,7 @@ function test(arg)
   // Updates the local variable arg to refer 1.
   // Does not affect the referred value, nor the actual external argument.
   arg = 1;
-} | {};
+} |;
 var x = 0;
 [00000000] 0
 test(x);
