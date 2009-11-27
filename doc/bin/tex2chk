@@ -175,9 +175,20 @@ sub register ($$\%)
     {
       # Extension of the previous listing.
       $chk{$previous_label}{_contents} .=
-        "\n\n"
+        "\n";
+
+      # Do not issue a syncline if the content to append starts with a
+      # result.  This happens for instance in slides where the input
+      # is on lhs, and the result on rhs.  In which case, our
+      # (verbose) synclines would insert an intermediate output (the
+      # syncline) that would cause some misaligned results.
+      $chk{$previous_label}{_contents} .=
+        "\n"
         . lineno(%$lst)
-        . $$lst{_contents};
+        unless $$lst{_contents} =~ /^\[\d{8}\]/;
+
+      $chk{$previous_label}{_contents} .=
+        $$lst{_contents};
     }
   else
     {
