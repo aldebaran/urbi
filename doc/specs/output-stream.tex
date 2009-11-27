@@ -9,7 +9,7 @@ OutputStreams are used to write (possibly binary) files by hand.
 
 \subsection{Construction}
 
-An OutputStream is a reading-interface to a file, so its constructor
+An OutputStream is a writing-interface to a file; its constructor
 requires a \refObject{File}.  If the file already exists, content is
 \emph{appended} to it.  Remove the file beforehand if you want to
 override its content.
@@ -30,16 +30,15 @@ OutputStream.new(File.create("new.txt"));
   Output \lstinline|\var{this}.asString|.  Return \lstinline|this| to
   enable chains of calls.
 \begin{urbiassert}[firstnumber=last]
-
+{
   {
-    {
-      var o = OutputStream.new(File.create("fresh.txt"));
-      o << 1 << "2" << [3, [4]];
-    };
-    File.new("fresh.txt").content.data;
-  }
-  ==
-  "12[3, [4]]";
+    var o = OutputStream.new(File.create("fresh.txt"));
+    o << 1 << "2" << [3, [4]];
+  };
+  File.new("fresh.txt").content.data;
+}
+==
+"12[3, [4]]";
 \end{urbiassert}
 
 \item \lstinline|close|\\
