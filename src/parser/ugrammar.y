@@ -87,6 +87,7 @@
 #define make_freezeif         up.factory().make_freezeif
 #define make_if               up.factory().make_if
 #define make_loop             up.factory().make_loop
+#define make_nary             up.factory().make_nary
 #define make_nil              up.factory().make_nil
 #define make_routine          up.factory().make_routine
 #define make_scope            up.factory().make_scope
@@ -353,28 +354,9 @@ root:
 
 // Statements: with ";" and ",".
 stmts:
-  cstmt
-  {
-    $$ = new ast::Nary(@$);
-    if (!ast::implicit($1))
-      $$->push_back($1);
-  }
-| stmts ";" cstmt
-  {
-    std::swap($$, $1);
-    if ($$->back_flavor_get() == ast::flavor_none)
-      $$->back_flavor_set($2, @2);
-    if (!ast::implicit($3))
-      $$->push_back($3);
-  }
-| stmts "," cstmt
-  {
-    std::swap($$, $1);
-    if ($$->back_flavor_get() == ast::flavor_none)
-      $$->back_flavor_set($2, @2);
-    if (!ast::implicit($3))
-      $$->push_back($3);
-  }
+  cstmt            { $$ = make_nary(@$, $1); }
+| stmts ";" cstmt  { $$ = make_nary(@$, $1, @2, $2, $3); }
+| stmts "," cstmt  { $$ = make_nary(@$, $1, @2, $2, $3); }
 ;
 
 %type <ast::rExp> cstmt;
