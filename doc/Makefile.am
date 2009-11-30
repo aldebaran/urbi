@@ -89,8 +89,8 @@ html_files =					\
   urbi-sdk6x.png
 doc_host = downloads@www.gostai.com
 doc_dir = gostai.com-downloads/urbi-sdk-2.0
-doc_files = $(pdf_DATA) $(html_files)
-install-doc: $(pdf_DATA) urbi-sdk.html
+doc_files = $(pdf_DATA) # $(html_files)
+install-doc: $(pdf_DATA) # urbi-sdk.html
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
 # compilation seems to prefer *.png to *.pdf, which is wrong here.
