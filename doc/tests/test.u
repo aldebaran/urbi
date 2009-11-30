@@ -6,16 +6,21 @@ Exception.Lookup.fixSpelling = false |
 // A channel for synclines.
 var Global.syncline = Channel.new("syncline")|
 
-// Determinism: asList and asString.
-do (Dictionary)
+function Object.override(slot, value)
 {
-  copySlot("keys", "oldKeys");
-  keys->constant = false;
-  keys = function ()
+  copySlot(slot, "old" + slot);
+  setProperty(slot, "constant", false);
+  updateSlot(slot, value);
+}|;
+
+// Determinism: asList and asString.
+Dictionary.override("keys",
+   function ()
     {
-      oldKeys.sort;
-    };
-}|
+      oldkeys.sort;
+    }
+)|;
+
 
 // We want random to become deterministic.
 do (Float)
@@ -36,15 +41,12 @@ do (Float)
 }|
 
 // Deterministic localSlotNames.
-do (Object)
-{
-  copySlot("localSlotNames", "oldLocalSlotNames");
-  localSlotNames->constant = false;
-  localSlotNames = function ()
+Object.override("localSlotNames",
+  function ()
     {
-      oldLocalSlotNames.sort;
-    };
-}|
+      oldlocalSlotNames.sort;
+    }
+)|
 
 // Deterministic String.fresh.
 do (String)
