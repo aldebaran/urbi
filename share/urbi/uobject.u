@@ -358,7 +358,7 @@ class Global.'external'
   -  return the instance, which is also left in uobjects.<newname> because the
   remote will use it using this name.
   */
-  function 'object'(objname)
+  function object(objname)
   {
     nonInterruptible |
     if (uobjects.hasLocalSlot(objname))
@@ -387,7 +387,7 @@ class Global.'external'
     var chan.lobby = lobby|
     function cloner()
     {
-      var u = fresh;
+      var u = "object".fresh;
       chan << ['external'.UEM_NEW, u, objname];
       // Wait until the remote defines u.init.
       // FIXME: Use waituntil once it is efficient.
@@ -487,7 +487,7 @@ class Global.'external'
           args[i] = args[i].ownerName + "." + args[i].initialName ;
       if (args.size != nargs)
         throw Exception.Arity.new("Remote bound function", args.size, nargs);
-      var u = fresh;
+      var u = "function".fresh;
       chan << [ 'external'.UEM_EVALFUNCTION,
                 functionName + "__" + args.size.asString,
                 "Global.uobjects." + u ] + args;

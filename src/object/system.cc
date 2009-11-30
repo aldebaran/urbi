@@ -244,12 +244,6 @@ namespace urbi
       return scheduler().cycle_get();
     }
 
-    static libport::Symbol
-    system_fresh()
-    {
-      return libport::Symbol::fresh();
-    }
-
     static rObject
     system_lobby()
     {
@@ -530,7 +524,6 @@ namespace urbi
       DECLARE(currentRunner);
       DECLARE(cycle);
       DECLARE(eval);
-      DECLARE(fresh);
       DECLARE(getenv);
       DECLARE(jobs);
       DECLARE(loadFile);

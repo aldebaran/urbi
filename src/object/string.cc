@@ -166,7 +166,7 @@ namespace urbi
     std::string
     String::fresh() const
     {
-      return libport::Symbol(value_get());
+      return libport::Symbol::fresh(value_get());
     }
 
     std::string
