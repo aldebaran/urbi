@@ -144,6 +144,7 @@ struct DataSender : libport::opts::DataVisitor
 
 int
 main(int argc, char* argv[])
+try
 {
   libport::program_initialize(argc, argv);
   /// Display the server's banner.
@@ -185,7 +186,7 @@ main(int argc, char* argv[])
 
   foreach(std::string arg, remainings_args)
     if (arg[0] == '-' && arg[1] != 0)
-      libport::invalid_option (arg);
+      libport::invalid_option(arg);
     else
       libport::opts::input_arguments.add_file(arg);
 
@@ -213,4 +214,9 @@ main(int argc, char* argv[])
               << ": file sent, hit Ctrl-C to terminate."
               << std::endl;
   urbi::execute();
+}
+catch (const std::exception& e)
+{
+  std::cerr << program_name() << ": " << e.what() << std::endl
+            << libport::exit(EX_FAIL);
 }

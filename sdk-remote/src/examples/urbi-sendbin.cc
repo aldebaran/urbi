@@ -128,6 +128,7 @@ send_data(urbi::UClient& client, const data_type& data)
 
 int
 main(int argc, char * argv[])
+try
 {
   libport::program_initialize(argc, argv);
   /// Server host name.
@@ -159,7 +160,7 @@ main(int argc, char * argv[])
     else
     {
       if (argc < i + 3)
-        libport::missing_argument("too few arguments");
+        libport::usage_error("too few arguments");
       data.push_back(data_type(argv[i], argv[i + 1], argv[i + 2]));
       i += 3;
     }
@@ -187,4 +188,9 @@ main(int argc, char * argv[])
   if (quit)
     client.send("quit;");
   urbi::execute();
+}
+catch (const std::exception& e)
+{
+  std::cerr << program_name() << ": " << e.what() << std::endl
+            << libport::exit(EX_FAIL);
 }
