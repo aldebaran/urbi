@@ -60,7 +60,8 @@ namespace ast
 #undef TYPEDEF
 
     /// Build a ParametricAst whose textual part is \a s.
-    ParametricAst(const std::string& s, const loc& l = loc(), bool desugar = false);
+    ParametricAst(const char* s, const loc& l = loc(),
+                  bool desugar = false);
     /// Destroy the ParametricAst.
     /// \precondition empty()
     virtual ~ParametricAst();
