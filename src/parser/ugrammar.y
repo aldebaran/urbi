@@ -89,6 +89,7 @@
 #define make_loop             up.factory().make_loop
 #define make_nary             up.factory().make_nary
 #define make_nil              up.factory().make_nil
+#define make_position         up.factory().make_position
 #define make_routine          up.factory().make_routine
 #define make_scope            up.factory().make_scope
 #define make_stopif           up.factory().make_stopif
@@ -1069,16 +1070,7 @@ string:
 `------------*/
 
 exp:
-  "__HERE__"
-  {
-    PARAMETRIC_AST(pos, "Position.new(%exp:1, %exp:2, %exp:3)");
-    PARAMETRIC_AST(no_file, "nil");
-    const libport::Symbol* fn = @$.begin.filename;
-    $$ = exp(pos
-             % (fn ? new ast::String(@$, fn->name_get()) : make_nil())
-             % new ast::Float(@$, @$.begin.line)
-             % new ast::Float(@$, @$.begin.column));
-  }
+  "__HERE__"  { $$ = make_position(@$); }
 ;
 
 /*---------.

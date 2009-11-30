@@ -650,6 +650,18 @@ namespace ast
     }
   }
 
+  /// Create a Position.
+  rExp
+  Factory::make_position(const location& loc) /* const */
+  {
+    PARAMETRIC_AST(pos, "Position.new(%exp:1, %exp:2, %exp:3)");
+    const libport::Symbol* fn = loc.begin.filename;
+    return exp(pos
+               % (fn ? new ast::String(loc, fn->name_get()) : make_nil())
+               % new ast::Float(loc, loc.begin.line)
+               % new ast::Float(loc, loc.begin.column));
+  }
+
   rRoutine
   Factory::make_routine(const location& loc, bool closure,
                         const location& floc, formals_type* f,

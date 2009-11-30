@@ -230,6 +230,10 @@ namespace ast
     /// Return the ast for "nil".
     rExp make_nil() /* const */;
 
+    static
+    /// Create a Position.
+    rExp make_position(const location& loc) /* const */;
+
     /// Create a closure or a function.
     /// \param closure  whether building a closure.
     /// \param loc      location for the whole declaration.
