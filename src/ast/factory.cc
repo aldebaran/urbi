@@ -593,6 +593,13 @@ namespace ast
   }
 
 
+  rList
+  Factory::make_list(const location& loc,
+                     exps_type* exps) /* const */
+  {
+    return new ast::List(loc, exps ? exps : new exps_type);
+  }
+
   // loop %body.
   rExp
   Factory::make_loop(const location&,

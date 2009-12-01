@@ -1018,7 +1018,7 @@ exp:
 | "angle"        { $$ = new ast::Float(@$, $1);  }
 | duration       { $$ = new ast::Float(@$, $1);  }
 | string         { $$ = new ast::String(@$, $1); }
-| "[" exps "]"   { $$ = new ast::List(@$, $2); }
+| "[" exps "]"   { $$ = MAKE(list, @$, $2); }
 ;
 
 %token <std::string> STRING "string";

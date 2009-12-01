@@ -200,6 +200,15 @@ namespace ast
     make_if(const yy::location& l,
             rExp cond, rExp iftrue, rExp iffalse) /* const */;
 
+
+    /// Make a list.
+    /// \param loc    the location of the whole list, "[", "]" included.
+    /// \param exps   the list of expressions.  Stolen.
+    static
+    rList
+    make_list(const location& loc,
+              exps_type* exps = 0) /* const */;
+
     /// loop %body.
     static
     rExp
