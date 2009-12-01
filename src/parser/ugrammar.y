@@ -83,6 +83,10 @@
 #define make_call             up.factory().make_call
 #define make_class            up.factory().make_class
 #define make_every            up.factory().make_every
+#define make_external_event_or_function\
+                              up.factory().make_external_event_or_function
+#define make_external_object  up.factory().make_external_object
+#define make_external_var     up.factory().make_external_var
 #define make_for              up.factory().make_for
 #define make_freezeif         up.factory().make_freezeif
 #define make_if               up.factory().make_if
@@ -443,7 +447,7 @@ protos:
 stmt:
   "class" lvalue protos block
     {
-      $$ = new ast::Class(@$, $2, $3, $4);
+      $$ = make_class(@$, $2, $3, $4);
     }
 ;
 
@@ -486,32 +490,20 @@ stmt:
   "external" "identifier"[object] identifier_as_string[id]
   {
     REQUIRE_IDENTIFIER(@object, $object, "object");
-    PARAMETRIC_AST(a, "'external'.object(%exp:1)");
-    $$ = exp(a % $id);
+    $$ = make_external_object(@$, $id);
   }
 | "external" "var" identifier_as_string[obj] "." identifier_as_string[slot]
 	     from identifier_as_string[id]
   {
-    PARAMETRIC_AST(a, "'external'.'var'(%exp:1, %exp:2, %exp:3)");
-    $$ = exp(a % $obj % $slot % $id);
+    $$ = make_external_var(@$, $obj, $slot, $id);
   }
 | "external" event_or_function[kind]
              "(" exp_float[arity] ")"
              identifier_as_string[obj] "." identifier_as_string[slot]
 	     from identifier_as_string[id]
   {
-    if ($kind == SYMBOL(event))
-    {
-      PARAMETRIC_AST
-        (a, "'external'.event(%exp:1, %exp:2, %exp:3, %exp:4)");
-      $$ = exp(a % $arity % $obj % $slot % $id);
-    }
-    else
-    {
-      PARAMETRIC_AST
-        (a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
-      $$ = exp(a % $arity % $obj % $slot % $id);
-    }
+    $$ = make_external_event_or_function(@$,
+                                         $kind, $arity, $obj, $slot, $id);
   }
 ;
 

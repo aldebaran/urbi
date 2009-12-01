@@ -119,7 +119,7 @@ namespace ast
     static
     rExp
     make_class(const yy::location& l,
-               rCall lvalue,
+               rLValue lvalue,
                exps_type* protos, rExp block) /* const */;
 
 
@@ -141,7 +141,30 @@ namespace ast
                const location& flavor_loc, flavor_type flavor,
                rExp test, rExp body) /* const */;
 
-    // Build a for(iterable) loop.
+
+    /// external event, or external function.
+    static
+    rExp
+    make_external_event_or_function(const yy::location& loc,
+                                    const libport::Symbol kind,
+                                    rExp arity,
+                                    rExp obj,
+                                    rExp slot,
+                                    rExp id) /* const */;
+
+    static
+    rExp
+    make_external_object(const yy::location&,
+                         rExp id) /* const */;
+
+    static
+    rExp
+    make_external_var(const yy::location&,
+                      rExp obj,
+                      rExp slot,
+                      rExp id) /* const */;
+
+    /// Build a for(iterable) loop.
     static
     rExp
     make_for(const yy::location&,

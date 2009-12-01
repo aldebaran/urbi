@@ -376,6 +376,15 @@ namespace ast
   }
 
 
+  /// "class" lvalue protos block
+  rExp
+  Factory::make_class(const yy::location& l,
+                      rLValue lvalue,
+                      exps_type* protos, rExp block) /* const */
+  {
+    return new ast::Class(l, lvalue, protos, block);
+  }
+
   rExp
   Factory::make_closure(rExp value) // const
   {
@@ -409,6 +418,46 @@ namespace ast
                % test % body);
   }
 
+
+  rExp
+  Factory::make_external_event_or_function(const yy::location&,
+                                           const libport::Symbol kind,
+                                           rExp arity,
+                                           rExp obj,
+                                           rExp slot,
+                                           rExp id) /* const */
+  {
+    if (kind == SYMBOL(event))
+    {
+      PARAMETRIC_AST
+        (a, "'external'.event(%exp:1, %exp:2, %exp:3, %exp:4)");
+      return exp(a % arity % obj % slot % id);
+    }
+    else
+    {
+      PARAMETRIC_AST
+        (a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
+      return exp(a % arity % obj % slot % id);
+    }
+  }
+
+  rExp
+  Factory::make_external_object(const yy::location&,
+                                rExp id) /* const */
+  {
+    PARAMETRIC_AST(a, "'external'.object(%exp:1)");
+    return exp(a % id);
+  }
+
+  rExp
+  Factory::make_external_var(const yy::location&,
+                             rExp obj,
+                             rExp slot,
+                             rExp id) /* const */
+  {
+    PARAMETRIC_AST(a, "'external'.'var'(%exp:1, %exp:2, %exp:3)");
+    return exp(a % obj % slot % id);
+  }
 
   // Build a for(iterable) loop.
   rExp
