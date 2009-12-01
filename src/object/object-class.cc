@@ -49,7 +49,6 @@ namespace urbi
     object_class_clone(const objects_type& args)
     {
       check_arg_count(args.size() - 1, 0);
-
       return args[0]->clone();
     }
 
