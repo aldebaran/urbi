@@ -1,5 +1,12 @@
-class Tuple
+class Global.Tuple
 {
+  var members = [];
+
+  function init(m)
+  {
+    members = m
+  };
+
   function asString ()
   {
     "(" + members.map(methodToFunction("asPrintable")).join(", ") + ")"
@@ -39,9 +46,13 @@ class Tuple
 
       function init
       {
-        // if (call.argsCount >= size) throw;
-        members = call.evalArgs |
-        members += members.range(size - members.size) |
+        if (call.argsCount != size)
+          throw Exception.Arity.new("%s.%s" % [name, "init"],
+                                    call.argsCount,
+                                    size);
+        var m = call.evalArgs |
+        m += m.range(size - m.size) |
+        Tuple.getSlot("init").apply([this, m])
       };
 
       var idx = 0;
