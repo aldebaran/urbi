@@ -75,37 +75,8 @@
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
-#define make_assert           up.factory().make_assert
-#define make_at               up.factory().make_at
-#define make_at_event         up.factory().make_at_event
-#define make_bin              up.factory().make_bin
-#define make_binding          up.factory().make_binding
-#define make_call             up.factory().make_call
-#define make_class            up.factory().make_class
-#define make_every            up.factory().make_every
-#define make_external_event_or_function\
-                              up.factory().make_external_event_or_function
-#define make_external_object  up.factory().make_external_object
-#define make_external_var     up.factory().make_external_var
-#define make_for              up.factory().make_for
-#define make_freezeif         up.factory().make_freezeif
-#define make_if               up.factory().make_if
-#define make_loop             up.factory().make_loop
-#define make_nary             up.factory().make_nary
-#define make_nil              up.factory().make_nil
-#define make_position         up.factory().make_position
-#define make_routine          up.factory().make_routine
-#define make_scope            up.factory().make_scope
-#define make_stopif           up.factory().make_stopif
-#define make_string           up.factory().make_string
-#define make_strip            up.factory().make_strip
-#define make_switch           up.factory().make_switch
-#define make_timeout          up.factory().make_timeout
-#define make_waituntil        up.factory().make_waituntil
-#define make_waituntil_event  up.factory().make_waituntil_event
-#define make_whenever         up.factory().make_whenever
-#define make_whenever_event   up.factory().make_whenever_event
-#define make_while            up.factory().make_while
+#define MAKE(Kind, ...)                         \
+  up.factory().make_ ## Kind(__VA_ARGS__)
 
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
@@ -359,17 +330,17 @@ root:
 
 // Statements: with ";" and ",".
 stmts:
-  cstmt            { $$ = make_nary(@$, $1); }
-| stmts ";" cstmt  { $$ = make_nary(@$, $1, @2, $2, $3); }
-| stmts "," cstmt  { $$ = make_nary(@$, $1, @2, $2, $3); }
+  cstmt            { $$ = MAKE(nary, @$, $1); }
+| stmts ";" cstmt  { $$ = MAKE(nary, @$, $1, @2, $2, $3); }
+| stmts "," cstmt  { $$ = MAKE(nary, @$, $1, @2, $2, $3); }
 ;
 
 %type <ast::rExp> cstmt;
 // Composite statement: with "|" and "&".
 cstmt:
   stmt            { assert($1); std::swap($$, $1); }
-| cstmt "|" cstmt { $$ = make_bin(@$, $2, $1, $3); }
-| cstmt "&" cstmt { $$ = make_bin(@$, $2, $1, $3); }
+| cstmt "|" cstmt { $$ = MAKE(bin, @$, $2, $1, $3); }
+| cstmt "&" cstmt { $$ = MAKE(bin, @$, $2, $1, $3); }
 ;
 
 
@@ -385,7 +356,7 @@ tag:
 stmt:
   tag ":" stmt
   {
-    $$ = new ast::TaggedStmt(@$, $1, make_scope(@$, $3));
+    $$ = new ast::TaggedStmt(@$, $1, MAKE(scope, @$, $3));
   }
 ;
 
@@ -399,7 +370,7 @@ stmt:
 ;
 
 block:
-  "{" stmts "}"       { $$ = make_strip($2); }
+  "{" stmts "}"       { $$ = MAKE(strip, $2); }
 ;
 
 /*----------.
@@ -447,7 +418,7 @@ protos:
 stmt:
   "class" lvalue protos block
     {
-      $$ = make_class(@$, $2, $3, $4);
+      $$ = MAKE(class, @$, $2, $3, $4);
     }
 ;
 
@@ -455,7 +426,7 @@ stmt:
 identifier_as_string:
   "identifier"
     {
-      $$ = make_string(@1, $1);
+      $$ = MAKE(string, @1, $1);
     }
 ;
 
@@ -490,20 +461,20 @@ stmt:
   "external" "identifier"[object] identifier_as_string[id]
   {
     REQUIRE_IDENTIFIER(@object, $object, "object");
-    $$ = make_external_object(@$, $id);
+    $$ = MAKE(external_object, @$, $id);
   }
 | "external" "var" identifier_as_string[obj] "." identifier_as_string[slot]
-	     from identifier_as_string[id]
+             from identifier_as_string[id]
   {
-    $$ = make_external_var(@$, $obj, $slot, $id);
+    $$ = MAKE(external_var, @$, $obj, $slot, $id);
   }
 | "external" event_or_function[kind]
              "(" exp_float[arity] ")"
              identifier_as_string[obj] "." identifier_as_string[slot]
-	     from identifier_as_string[id]
+             from identifier_as_string[id]
   {
-    $$ = make_external_event_or_function(@$,
-                                         $kind, $arity, $obj, $slot, $id);
+    $$ = MAKE(external_event_or_function,
+              @$, $kind, $arity, $obj, $slot, $id);
   }
 ;
 
@@ -546,7 +517,7 @@ stmt:
     {
       // Compiled as "var name = function args stmt".
       $$ = new ast::Declaration(@$, $2,
-                                make_routine(@$, $1, @3, $3, @4, $4));
+                                MAKE(routine, @$, $1, @3, $3, @4, $4));
     }
 ;
 
@@ -581,8 +552,8 @@ stmt:
 // for anonymous functions.  But that's not a good option IMHO (AD).
 %type <ast::rCall> k1_id;
 k1_id:
-  "identifier"               { $$ = make_call(@$, $1); }
-| k1_id "." "identifier"     { $$ = make_call(@$, ast::rExp($1), $3); }
+  "identifier"               { $$ = MAKE(call, @$, $1); }
+| k1_id "." "identifier"     { $$ = MAKE(call, @$, ast::rExp($1), $3); }
 ;
 
 
@@ -712,8 +683,8 @@ nstmt:
     {
       std::swap($$, $1);
       if (ast::implicit($$))
-	up.warn(@1,
-		"implicit empty instruction.  Use '{}' to make it explicit.");
+        up.warn(@1,
+                "implicit empty instruction.  Use '{}' to make it explicit.");
     }
 ;
 
@@ -724,35 +695,35 @@ stmt:
     }
 | "at" "(" exp tilda.opt ")" nstmt onleave.opt
     {
-      $$ = make_at(@$, @1, $1, $3, $6, $7, $4);
+      $$ = MAKE(at, @$, @1, $1, $3, $6, $7, $4);
     }
 | "at" "(" event_match ")" nstmt onleave.opt
     {
-      $$ = make_at_event(@$, @1, $1, $3, $5, $6);
+      $$ = MAKE(at_event, @$, @1, $1, $3, $5, $6);
     }
 | "every" "(" exp ")" nstmt
     {
-      $$ = make_every(@$, @1, $1, $3, $5);
+      $$ = MAKE(every, @$, @1, $1, $3, $5);
     }
 | "if" "(" stmts ")" nstmt else.opt
     {
-      $$ = make_if(@$, $3, $5, $6);
+      $$ = MAKE(if, @$, $3, $5, $6);
     }
 | "freezeif" "(" softtest ")" stmt
     {
-      $$ = make_freezeif(@$, $3, $5);
+      $$ = MAKE(freezeif, @$, $3, $5);
     }
 | "stopif" "(" softtest ")" stmt
     {
-      $$ = make_stopif(@$, $3, $5);
+      $$ = MAKE(stopif, @$, $3, $5);
     }
 | "switch" "(" exp ")" "{" cases default.opt "}"
     {
-      $$ = make_switch(@3, $3, $6, $7);
+      $$ = MAKE(switch, @3, $3, $6, $7);
     }
 | "timeout" "(" exp ")" stmt
     {
-      $$ = make_timeout($3, $5);
+      $$ = MAKE(timeout, $3, $5);
     }
 | "return" exp.opt
     {
@@ -768,11 +739,11 @@ stmt:
     }
 | "waituntil" "(" exp tilda.opt ")"
     {
-      $$ = make_waituntil(@$, $3, $4);
+      $$ = MAKE(waituntil, @$, $3, $4);
     }
 | "waituntil" "(" event_match ")"
     {
-      $$ = make_waituntil_event(@$, $3.event, $3.pattern);
+      $$ = MAKE(waituntil_event, @$, $3.event, $3.pattern);
     }
 ;
 
@@ -807,11 +778,11 @@ onleave.opt:
 stmt:
   "whenever" "(" exp tilda.opt ")" nstmt else.opt
     {
-      $$ = make_whenever(@$, $3, $6, $7, $4);
+      $$ = MAKE(whenever, @$, $3, $6, $7, $4);
     }
 | "whenever" "(" event_match ")" nstmt else.opt
     {
-      $$ = make_whenever_event(@$, $3, $5, $6);
+      $$ = MAKE(whenever_event, @$, $3, $5, $6);
     }
 ;
 
@@ -862,7 +833,7 @@ catch:
 stmt:
   "try" block catches
   {
-    $$ = new ast::Try(@$, make_scope(@$,$2), $3);
+    $$ = new ast::Try(@$, MAKE(scope, @$,$2), $3);
   }
 | "throw" exp.opt
   {
@@ -895,23 +866,23 @@ stmt_loop:
  */
   "loop" stmt %prec CMDBLOCK
     {
-      $$ = make_loop(@$, @1, $1, @2, $2);
+      $$ = MAKE(loop, @$, @1, $1, @2, $2);
     }
 | "for" "(" exp ")" stmt %prec CMDBLOCK
     {
-      $$ = make_for(@$, @1, $1, $3, $5);
+      $$ = MAKE(for, @$, @1, $1, $3, $5);
     }
 | "for" "(" stmt[init] ";" exp[cond] ";" stmt[inc] ")" stmt[body] %prec CMDBLOCK
     {
-      $$ = make_for(@$, @1, $1, $init, $cond, $inc, $body);
+      $$ = MAKE(for, @$, @1, $1, $init, $cond, $inc, $body);
     }
 | "for" "(" "var" "identifier"[id] in_or_colon exp ")" stmt %prec CMDBLOCK
     {
-      $$ = make_for(@$, @1, $1, @id, $id, $exp, $stmt);
+      $$ = MAKE(for, @$, @1, $1, @id, $id, $exp, $stmt);
     }
 | "while" "(" exp ")" stmt %prec CMDBLOCK
     {
-      $$ = make_while(@$, @1, $1, $exp, @stmt, $stmt);
+      $$ = MAKE(while, @$, @1, $1, $exp, @stmt, $stmt);
     }
 ;
 
@@ -925,8 +896,8 @@ in_or_colon: "in" | ":";
 %token DO "do";
 
 exp:
-	           block  { $$ = make_scope(@$, 0, $1);  }
-| "do" "(" exp ")" block  { $$ = make_scope(@$, $3, $5); }
+                   block  { $$ = MAKE(scope, @$, 0, $1);  }
+| "do" "(" exp ")" block  { $$ = MAKE(scope, @$, $3, $5); }
 ;
 
 /*-------------.
@@ -935,8 +906,8 @@ exp:
 
 %token ASSERT "assert";
 exp:
-  "assert" "(" exp ")"    { $$ = make_assert(@$, $3); }
-| "assert" "{" claims "}" { $$ = make_assert(@$, $3); }
+  "assert" "(" exp ")"    { $$ = MAKE(assert, @$, $3); }
+| "assert" "{" claims "}" { $$ = MAKE(assert, @$, $3); }
 ;
 
 
@@ -946,8 +917,8 @@ exp:
 
 %type <ast::rLValue> lvalue;
 lvalue:
-	  id	{ $$ = make_call(@$, $1); }
-| exp "." id	{ $$ = make_call(@$, $1, $3); }
+          id    { $$ = MAKE(call, @$, $1); }
+| exp "." id    { $$ = MAKE(call, @$, $1, $3); }
 ;
 
 id:
@@ -957,11 +928,11 @@ id:
 exp:
   "var" exp[lvalue]
   {
-    $$ = make_binding(@$, false, @lvalue, $lvalue);
+    $$ = MAKE(binding, @$, false, @lvalue, $lvalue);
   }
 | "const" "var" exp[lvalue]
   {
-    $$ = make_binding(@$, true, @lvalue, $lvalue);
+    $$ = MAKE(binding, @$, true, @lvalue, $lvalue);
   }
 | lvalue
   {
@@ -983,10 +954,10 @@ new:
   "new" "identifier" args.opt
   {
     // Compiled as "id . new (args)".
-    $$ = make_call(@$, make_call(@$, $2), SYMBOL(new), $3);
+    $$ = MAKE(call, @$, MAKE(call, @$, $2), SYMBOL(new), $3);
     up.warn(@$,
-	    "deprecated construct. Instead of using 'a = new b(x)', "
-	    "use 'a = b.new(x)'.");
+            "deprecated construct. Instead of using 'a = new b(x)', "
+            "use 'a = b.new(x)'.");
   }
 ;
 
@@ -1008,7 +979,7 @@ id:
 exp:
   routine formals block
     {
-      $$ = make_routine(@$, $1, @2, $2, @3, $3);
+      $$ = MAKE(routine, @$, $1, @2, $2, @3, $3);
     }
 ;
 
@@ -1062,7 +1033,7 @@ string:
 `------------*/
 
 exp:
-  "__HERE__"  { $$ = make_position(@$); }
+  "__HERE__"  { $$ = MAKE(position, @$); }
 ;
 
 /*---------.
@@ -1156,21 +1127,21 @@ exp:
 ;
 
 exp:
-  exp "+" exp	          { $$ = make_call(@$, $1, $2, $3); }
-| exp "-" exp	          { $$ = make_call(@$, $1, $2, $3); }
-| exp "*" exp	          { $$ = make_call(@$, $1, $2, $3); }
-| exp "**" exp            { $$ = make_call(@$, $1, $2, $3); }
-| exp "/" exp	          { $$ = make_call(@$, $1, $2, $3); }
-| exp "%" exp	          { $$ = make_call(@$, $1, $2, $3); }
-| exp "^" exp	          { $$ = make_call(@$, $1, $2, $3); }
-| exp "<<" exp            { $$ = make_call(@$, $1, $2, $3); }
-| exp "bitand" exp        { $$ = make_call(@$, $1, $2, $3); }
-| exp "bitor" exp         { $$ = make_call(@$, $1, $2, $3); }
-| exp ">>" exp            { $$ = make_call(@$, $1, $2, $3); }
-| "+" exp    %prec UNARY  { $$ = make_call(@$, $2, $1); }
-| "-" exp    %prec UNARY  { $$ = make_call(@$, $2, $1); }
-| "!" exp                 { $$ = make_call(@$, $2, $1); }
-| "compl" exp             { $$ = make_call(@$, $2, $1); }
+  exp "+" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "-" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "*" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "**" exp            { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "/" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "%" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "^" exp             { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "<<" exp            { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "bitand" exp        { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "bitor" exp         { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp ">>" exp            { $$ = MAKE(call, @$, $1, $2, $3); }
+| "+" exp    %prec UNARY  { $$ = MAKE(call, @$, $2, $1); }
+| "-" exp    %prec UNARY  { $$ = MAKE(call, @$, $2, $1); }
+| "!" exp                 { $$ = MAKE(call, @$, $2, $1); }
+| "compl" exp             { $$ = MAKE(call, @$, $2, $1); }
 | "(" exp ")"             { std::swap($$, $2); }
 ;
 
@@ -1194,31 +1165,31 @@ exp:
 ;
 
 exp:
-  exp "!="  exp { $$ = make_call(@$, $1, $2, $3); }
-| exp "!==" exp { $$ = make_call(@$, $1, $2, $3); }
-| exp "<"   exp { $$ = make_call(@$, $1, $2, $3); }
-| exp "<="  exp { $$ = make_call(@$, $1, $2, $3); }
-| exp "=="  exp { $$ = make_call(@$, $1, $2, $3); }
-| exp "===" exp { $$ = make_call(@$, $1, $2, $3); }
-| exp "=~=" exp { $$ = make_call(@$, $1, $2, $3); }
-| exp ">"   exp { $$ = make_call(@$, $1, $2, $3); }
-| exp ">="  exp { $$ = make_call(@$, $1, $2, $3); }
-| exp "~="  exp { $$ = make_call(@$, $1, $2, $3); }
+  exp "!="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "!==" exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "<"   exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "<="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "=="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "===" exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "=~=" exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp ">"   exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp ">="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "~="  exp { $$ = MAKE(call, @$, $1, $2, $3); }
 
-| exp "&&" exp  { $$ = make_call(@$, $1, $2, $3); }
-| exp "||" exp  { $$ = make_call(@$, $1, $2, $3); }
+| exp "&&" exp  { $$ = MAKE(call, @$, $1, $2, $3); }
+| exp "||" exp  { $$ = MAKE(call, @$, $1, $2, $3); }
 ;
 
 // e in c => c.has(e).
 exp:
   exp "in" exp
   {
-    $$ = make_call(@$, $3, SYMBOL(has), $1);
+    $$ = MAKE(call, @$, $3, SYMBOL(has), $1);
   }
 // "!" is a synonym for "not", typing "not in" is "! in" here.
 | exp "!" "in" exp
   {
-    $$ = make_call(@$, make_call(@$, $4, SYMBOL(has), $1), SYMBOL(BANG));
+    $$ = MAKE(call, @$, MAKE(call, @$, $4, SYMBOL(has), $1), SYMBOL(BANG));
   }
 ;
 
@@ -1261,7 +1232,7 @@ lvalue:
   "%lvalue:" unsigned
   {
     $$ = new ast::MetaLValue(@$, new ast::exps_type(),
-			     $2);
+                             $2);
   }
 ;
 
