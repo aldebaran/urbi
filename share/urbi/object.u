@@ -3,15 +3,24 @@ do (Object)
   // Syntactic sugar for setProtos.
   protos->updateHook = function(slot, value) { setProtos(value); };
 
-  // Cannot use "from" which is a k1 reserved word.
-  function copySlot(frm, to)
+  function 'class'(var name, var protos = [])
   {
-    setSlot(to, getSlot(frm))
+    var res = Object.clone |
+    if (protos)
+      res.setProtos(protos) |
+    var res.type = name |
+    res.setSlot("as" + name, function () { this })|
+    res
   };
 
-  function cloneSlot(frm, to)
+  function cloneSlot(from, to)
   {
-    setSlot(to, getSlot(frm).clone)
+    setSlot(to, getSlot(from).clone)
+  };
+
+  function copySlot(from, to)
+  {
+    setSlot(to, getSlot(from))
   };
 
   // Change the whole set of parents.

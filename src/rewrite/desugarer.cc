@@ -218,35 +218,23 @@ namespace rewrite
     ast::rLValue what = recurse(c->what_get());
     libport::Symbol name = what->call()->name_get();
 
-    PARAMETRIC_AST(desugar,
-      "const var %lvalue:1 =\n"
-      "{\n"
-      "  var '$tmp' = Object.clone |\n"
-      "  %exp:2 |\n"
-      "  '$tmp'.setSlot(\"type\", %exp:3) |\n"
-      "  '$tmp'.setSlot(%exp:4, function () { this }) |\n"
-      "  do ('$tmp')\n"
-      "  {\n"
-      "    %exp:5 |\n"
-      "  } |\n"
-      "  '$tmp'\n"
-      "}\n"
-      );
-
-    ast::exps_type* protos = maybe_recurse_collection(c->protos_get());
-    ast::rExp protos_set;
-    if (protos)
-    {
-      PARAMETRIC_AST(setProtos, "'$tmp'.setProtos(%exp:1)");
-      protos_set = exp(setProtos % new ast::List(l, protos));
-    }
-    else
-      protos_set = new ast::Noop(l, 0);
+    // Bouncing to a 'class' function provides a simple means to make
+    // sure that the "setProtos($exp:3)" is properly evaluated in the
+    // context of the caller.  Otherwise, if put it inside the "do",
+    // the protos will be looked for in the context of the newly
+    // created object.
+    PARAMETRIC_AST
+      (desugar,
+       "const var %lvalue:1 =\n"
+       "  do (Object.'class'(%exp:2, %exp:3))\n"
+       "  {\n"
+       "    %exp:4\n"
+       "  }\n"
+       );
 
     desugar % what
-      % protos_set
       % factory_->make_string(l, name)
-      % factory_->make_string(l, libport::Symbol("as" + name.name_get()))
+      % factory_->make_list(l, maybe_recurse_collection(c->protos_get()))
       % c->content_get();
 
     result_ = recurse_with_subdecl(exp(desugar));
