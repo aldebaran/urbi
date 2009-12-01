@@ -1,19 +1,41 @@
+class Tuple
+{
+  function asString ()
+  {
+    "(" + members.map(methodToFunction("asPrintable")).join(", ") + ")"
+  };
+
+  function '=='(other)
+  {
+    return members == other.members
+  };
+
+  function '<' (other)
+  {
+    members < other.members
+  };
+
+  function '[]'(n)
+  {
+    members[n]
+  };
+
+  function '[]='(n, v)
+  {
+    members[n] = v
+  };
+};
+
 {
   function makeTupleClass(name, size)
   {
     var names = ["first", "second", "third", "fourth", "fifth", "sixth"];
 
-    class Res
+    class Res : Tuple
     {
       type = name;
       var members = [nil] * size;
       var size = size;
-
-      function asString ()
-      {
-        var strs = members.map(methodToFunction("asPrintable")) |
-        "(" + strs.join(", ") + ")"
-      };
 
       function init
       {
@@ -37,28 +59,7 @@
           });
         idx++;
       };
-
-      function '=='(other)
-      {
-        return members == other.members
-      };
-
-      function '<' (other)
-      {
-        members < other.members
-      };
-
-      function '[]'(n)
-      {
-        members[n]
-      };
-
-      function '[]='(n, v)
-      {
-        members[n] = v
-      };
     };
-
     Global.setSlot(name, Res);
   };
 
