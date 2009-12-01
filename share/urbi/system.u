@@ -205,5 +205,3 @@ do (System)
   };
 
 };
-
-System.load("urbi/platform.u");
