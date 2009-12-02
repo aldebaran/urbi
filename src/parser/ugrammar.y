@@ -422,15 +422,6 @@ stmt:
     }
 ;
 
-%type <ast::rExp> identifier_as_string;
-identifier_as_string:
-  "identifier"
-    {
-      $$ = MAKE(string, @1, $1);
-    }
-;
-
-
 /*-----------.
 | Bindings.  |
 `-----------*/
@@ -458,20 +449,20 @@ event_or_function:
 
 %token EXTERNAL "external";
 stmt:
-  "external" "identifier"[object] identifier_as_string[id]
+  "external" "identifier"[object] "identifier"[id]
   {
     REQUIRE_IDENTIFIER(@object, $object, "object");
     $$ = MAKE(external_object, @$, $id);
   }
-| "external" "var" identifier_as_string[obj] "." identifier_as_string[slot]
-             from identifier_as_string[id]
+| "external" "var" "identifier"[obj] "." "identifier"[slot]
+             from "identifier"[id]
   {
     $$ = MAKE(external_var, @$, $obj, $slot, $id);
   }
 | "external" event_or_function[kind]
-             "(" exp_float[arity] ")"
-             identifier_as_string[obj] "." identifier_as_string[slot]
-             from identifier_as_string[id]
+             "(" "float"[arity] ")"
+             "identifier"[obj] "." "identifier"[slot]
+             from "identifier"[id]
   {
     $$ = MAKE(external_event_or_function,
               @$, $kind, $arity, $obj, $slot, $id);
@@ -994,7 +985,7 @@ exp:
         FLOAT     "float";
 %type <ast::rExp> exp_float;
 exp_float:
-  "float"  { $$ = new ast::Float(@$, $1); }
+  "float"  { $$ = MAKE(float, @$, $1); }
 ;
 
 
@@ -1015,9 +1006,9 @@ duration:
 
 exp:
   exp_float      { std::swap($$, $1);  }
-| "angle"        { $$ = new ast::Float(@$, $1);  }
-| duration       { $$ = new ast::Float(@$, $1);  }
-| string         { $$ = new ast::String(@$, $1); }
+| "angle"        { $$ = MAKE(float, @$, $1);  }
+| duration       { $$ = MAKE(float, @$, $1);  }
+| string         { $$ = MAKE(string, @$, $1); }
 | "[" exps "]"   { $$ = MAKE(list, @$, $2); }
 ;
 

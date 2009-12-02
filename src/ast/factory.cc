@@ -420,43 +420,51 @@ namespace ast
 
 
   rExp
-  Factory::make_external_event_or_function(const yy::location&,
-                                           const libport::Symbol kind,
-                                           rExp arity,
-                                           rExp obj,
-                                           rExp slot,
-                                           rExp id) /* const */
+  Factory::make_external_event_or_function(const yy::location& l,
+                                           libport::Symbol kind,
+                                           float arity,
+                                           libport::Symbol obj,
+                                           libport::Symbol slot,
+                                           libport::Symbol id) /* const */
   {
-    if (kind == SYMBOL(event))
-    {
-      PARAMETRIC_AST
-        (a, "'external'.event(%exp:1, %exp:2, %exp:3, %exp:4)");
-      return exp(a % arity % obj % slot % id);
-    }
-    else
-    {
-      PARAMETRIC_AST
-        (a, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
-      return exp(a % arity % obj % slot % id);
-    }
+    PARAMETRIC_AST
+      (event, "'external'.event(%exp:1, %exp:2, %exp:3, %exp:4)");
+
+    PARAMETRIC_AST
+      (function, "'external'.'function'(%exp:1, %exp:2, %exp:3, %exp:4)");
+
+    return exp((kind == SYMBOL(event) ? event : function)
+               % make_float(l, arity)
+               % make_string(l, obj)
+               % make_string(l, slot)
+               % make_string(l, id));
   }
 
   rExp
-  Factory::make_external_object(const yy::location&,
-                                rExp id) /* const */
+  Factory::make_external_object(const yy::location& l,
+                                libport::Symbol id) /* const */
   {
     PARAMETRIC_AST(a, "'external'.object(%exp:1)");
-    return exp(a % id);
+    return exp(a % make_string(l, id));
   }
 
   rExp
-  Factory::make_external_var(const yy::location&,
-                             rExp obj,
-                             rExp slot,
-                             rExp id) /* const */
+  Factory::make_external_var(const yy::location& l,
+                             libport::Symbol obj,
+                             libport::Symbol slot,
+                             libport::Symbol id) /* const */
   {
     PARAMETRIC_AST(a, "'external'.'var'(%exp:1, %exp:2, %exp:3)");
-    return exp(a % obj % slot % id);
+    return exp(a
+               % make_string(l, obj)
+               % make_string(l, slot)
+               % make_string(l, id));
+  }
+
+  rExp
+  Factory::make_float(const location& l, libport::ufloat s) // const
+  {
+    return new Float(l, s);
   }
 
   // Build a for(iterable) loop.
@@ -777,10 +785,6 @@ namespace ast
     return new String(l, s);
   }
 
-
-  /*-------------.
-  | make_strip.  |
-  `-------------*/
 
   rExp
   Factory::make_strip(rNary nary) // const

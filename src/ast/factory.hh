@@ -13,6 +13,7 @@
 
 # include <list>
 # include <libport/fwd.hh>
+# include <libport/ufloat.hh>
 
 # include <ast/exps-type.hh>
 # include <ast/flavor.hh>
@@ -146,23 +147,28 @@ namespace ast
     static
     rExp
     make_external_event_or_function(const yy::location& loc,
-                                    const libport::Symbol kind,
-                                    rExp arity,
-                                    rExp obj,
-                                    rExp slot,
-                                    rExp id) /* const */;
+                                    libport::Symbol kind,
+                                    float arity,
+                                    libport::Symbol obj,
+                                    libport::Symbol slot,
+                                    libport::Symbol id) /* const */;
 
     static
     rExp
-    make_external_object(const yy::location&,
-                         rExp id) /* const */;
+    make_external_object(const yy::location& l,
+                         libport::Symbol id) /* const */;
 
     static
     rExp
-    make_external_var(const yy::location&,
-                      rExp obj,
-                      rExp slot,
-                      rExp id) /* const */;
+    make_external_var(const yy::location& l,
+                      libport::Symbol obj,
+                      libport::Symbol slot,
+                      libport::Symbol id) /* const */;
+
+    static
+    rExp
+    make_float(const yy::location& l, libport::ufloat s) /* const */;
+
 
     /// Build a for(iterable) loop.
     static
