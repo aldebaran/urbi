@@ -301,7 +301,7 @@ namespace ast
 
     static
     rExp
-    make_string(const yy::location& l, libport::Symbol s) /* const */;
+    make_string(const yy::location& l, const std::string& s) /* const */;
 
 
     /* Simplify \a e in every possible means.  Typically, remove useless

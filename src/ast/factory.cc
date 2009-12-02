@@ -780,7 +780,7 @@ namespace ast
   }
 
   rExp
-  Factory::make_string(const location& l, libport::Symbol s) // const
+  Factory::make_string(const location& l, const std::string& s) // const
   {
     return new String(l, s);
   }
