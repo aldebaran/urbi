@@ -61,10 +61,20 @@ Exception.Arity.new("myRoutine", 1, 10, 23);
 \item \lstinline|BadInteger.new(\var{routine}, \var{fmt}, \var{effective})|\\
   The \var{routine} was called with an inappropriate integer
   (\var{effective}).  Use the format \var{fmt} to create an error
-  message from \var{effective}.
+  message from \var{effective}.  Derives from
+  \lstinline|Exception.BadNumber|.
 \begin{urbiscript}[firstnumber=last]
 Exception.BadInteger.new("myRoutine", "bad integer: %s", 12);
 [00000005] BadInteger `myRoutine: bad integer: 12'
+\end{urbiscript}
+
+\item \lstinline|BadNumber.new(\var{routine}, \var{fmt}, \var{effective})|\\
+  The \var{routine} was called with an inappropriate number
+  (\var{effective}).  Use the format \var{fmt} to create an error
+  message from \var{effective}.
+\begin{urbiscript}[firstnumber=last]
+Exception.BadNumber.new("myRoutine", "bad number: %s", 12.34);
+[00000005] BadNumber `myRoutine: bad number: 12.34'
 \end{urbiscript}
 
 \item \lstinline|Constness.new(\var{msg})|\\
@@ -104,6 +114,22 @@ Exception.Lookup.new(Object, "GetSlot");
 \begin{urbiscript}[firstnumber=last]
 Exception.MatchFailure.new;
 [00000010] MatchFailure `pattern did not match'
+\end{urbiscript}
+
+\item \lstinline|NegativeNumber.new(\var{routine}, \var{effective})|\\
+  The \var{routine} was called with a negative number
+  (\var{effective}).  Derives from \lstinline|Exception.BadNumber|.
+\begin{urbiscript}[firstnumber=last]
+Exception.NegativeNumber.new("myRoutine", -12);
+[00000005] NegativeNumber `myRoutine: expected non-negative number, got -12'
+\end{urbiscript}
+
+\item \lstinline|NonPositiveNumber.new(\var{routine}, \var{effective})|\\
+  The \var{routine} was called with a non-positive number
+  (\var{effective}).  Derives from \lstinline|Exception.BadNumber|.
+\begin{urbiscript}[firstnumber=last]
+Exception.NonPositiveNumber.new("myRoutine", -12);
+[00000005] NonPositiveNumber `myRoutine: expected positive number, got -12'
 \end{urbiscript}
 
 \item \lstinline|Primitive.new(\var{routine}, \var{msg})|\\

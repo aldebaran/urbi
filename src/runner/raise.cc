@@ -129,6 +129,22 @@ namespace runner
   }
 
   void
+  raise_negative_number_error(libport::ufloat effective)
+  {
+    raise_urbi_skip(SYMBOL(NegativeNumber),
+                    raise_current_method,
+                    to_urbi(effective));
+  }
+
+  void
+  raise_non_positive_number_error(libport::ufloat effective)
+  {
+    raise_urbi_skip(SYMBOL(NonPositiveNumber),
+                    raise_current_method,
+                    to_urbi(effective));
+  }
+
+  void
   raise_primitive_error(const std::string& message)
   {
     raise_urbi_skip(SYMBOL(Primitive),

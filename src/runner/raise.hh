@@ -75,6 +75,14 @@ namespace runner
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
+  void raise_negative_integer_error(libport::ufloat effective);
+
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
+  void raise_nonpositive_integer_error(libport::ufloat effective);
+
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_primitive_error(const std::string& message);
 
   ATTRIBUTE_NORETURN

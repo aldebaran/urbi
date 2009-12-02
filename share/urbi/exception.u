@@ -91,7 +91,7 @@ class Exception.Arity: Exception
   }
 };
 
-class Exception.BadInteger: Exception
+class Exception.BadNumber: Exception
 {
   var routine;
   var effective;
@@ -101,6 +101,30 @@ class Exception.BadInteger: Exception
     this.routine = routine |
     this.effective = effective |
     '$Exception'("%s: %s" % [routine, fmt % effective])
+  };
+};
+
+class Exception.BadInteger: Exception.BadNumber
+{
+};
+
+class Exception.NegativeNumber: Exception.BadNumber
+{
+  function init(routine, effective)
+  {
+    Exception.BadNumber
+      .getSlot("init")
+      .apply([this, routine, "expected non-negative number, got %s", effective])
+  };
+};
+
+class Exception.NonPositiveNumber: Exception.BadNumber
+{
+  function init(routine, effective)
+  {
+    Exception.BadNumber
+      .getSlot("init")
+      .apply([this, routine, "expected positive number, got %s", effective])
   };
 };
 
