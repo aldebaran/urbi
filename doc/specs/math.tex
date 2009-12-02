@@ -21,7 +21,12 @@ other instances.
 \begin{itemize}
 \item \lstinline|abs(\var{float})|\\
   Bounce to \lstinline|\var{float}.abs|.
-
+\begin{urbiassert}[firstnumber=last]
+Math.abs(1) == 1;
+Math.abs(-1) == 1;
+Math.abs(0) == 0;
+Math.abs(3.5) == 3.5;
+\end{urbiassert}
 \item \lstinline|acos(\var{float})|\\
   Bounce to \lstinline|\var{float}.acos|.
 
@@ -30,12 +35,23 @@ other instances.
 
 \item \lstinline|atan(\var{float})|\\
   Bounce to \lstinline|\var{float}.atan|.
+\begin{urbiassert}[firstnumber=last]
+Math.atan(1) ~= pi/4;
+\end{urbiassert}
 
 \item \lstinline|atan2(\var{x}, \var{y})|\\
   Bounce to \lstinline|\var{x}.atan2(\var{y})|.
+\begin{urbiassert}[firstnumber=last]
+Math.atan2(2, 2) ~= pi/4;
+Math.atan2(-2, 2) ~= -pi/4;
+\end{urbiassert}
 
 \item \lstinline|cos(\var{float})|\\
   Bounce to \lstinline|\var{float}.cos|.
+\begin{urbiassert}[firstnumber=last]
+Math.cos(0) == 1;
+Math.cos(pi) ~= -1;
+\end{urbiassert}
 
 \item \lstinline|exp(\var{float})|\\
   Bounce to \lstinline|\var{float}.exp|.
@@ -45,10 +61,13 @@ other instances.
 
 \item \lstinline|log(\var{float})|\\
   Bounce to \lstinline|\var{float}.log|.
+\begin{urbiassert}[firstnumber=last]
+Math.log(1) == 0;
+\end{urbiassert}
 
 \item \lstinline|max(\var{arg1}, ...)|\\
   Bounce to \lstinline|[\var{arg1}, ...].max|, see \refObject{List}.
-\begin{urbiassert}
+\begin{urbiassert}[firstnumber=last]
 max( 100,   20,   3 ) == 100;
 max("100", "20", "3") == "3";
 \end{urbiassert}
@@ -71,24 +90,56 @@ min("100", "20", "3") == "100";
 
 \item \lstinline|round(\var{float})|\\
   Bounce to \lstinline|\var{float}.round|.
+\begin{urbiassert}[firstnumber=last]
+Math.round(1) == 1;
+Math.round(1.1) == 1;
+Math.round(1.49) == 1;
+Math.round(1.5) == 2;
+Math.round(1.51) == 2;
+\end{urbiassert}
 
 \item \lstinline|sgn(\var{float})|\\
   Bounce to \lstinline|\var{float}.sgn|.
+\begin{urbiassert}[firstnumber=last]
+Math.sgn(2) == 1;
+Math.sgn(-2) == -1;
+Math.sgn(0) == 0;
+\end{urbiassert}
 
 \item \lstinline|sin(\var{float})|\\
   Bounce to \lstinline|\var{float}.sin|.
+\begin{urbiassert}[firstnumber=last]
+Math.sin(0) == 0;
+Math.sin(pi) ~= 0;
+\end{urbiassert}
 
 \item \lstinline|sqr(\var{float})|\\
   Bounce to \lstinline|\var{float}.sqr|.
+\begin{urbiassert}[firstnumber=last]
+Math.sqr(2.2) ~= 4.84;
+\end{urbiassert}
 
 \item \lstinline|sqrt(\var{float})|\\
   Bounce to \lstinline|\var{float}.sqrt|.
+\begin{urbiassert}[firstnumber=last]
+Math.sqrt(4) == 2;
+\end{urbiassert}
 
 \item \lstinline|tan(\var{float})|\\
   Bounce to \lstinline|\var{float}.tan|.
+\begin{urbiassert}[firstnumber=last]
+Math.tan(pi/4) ~= 1;
+\end{urbiassert}
 
 \item \lstinline|trunc(\var{float})|\\
   Bounce to \lstinline|\var{float}.trunc|.
+\begin{urbiassert}[firstnumber=last]
+Math.trunc(1) == 1;
+Math.trunc(1.1) == 1;
+Math.trunc(1.49) == 1;
+Math.trunc(1.5) == 1;
+Math.trunc(1.51) == 1;
+\end{urbiassert}
 \end{itemize}
 
 
