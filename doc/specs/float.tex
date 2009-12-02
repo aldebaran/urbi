@@ -96,20 +96,25 @@ nan.asBool == true;
   var res = [];
   for (var i : 3)
     res << i;
-  res == [0, 1, 2];
-};
+  res
+}
+== [0, 1, 2];
+
 {
   var res = [];
   for|(var i : 3)
     res << i;
-  res == [0, 1, 2];
-};
+  res
+}
+== [0, 1, 2];
+
 {
   var res = [];
   for&(var i : 3)
     res << i;
-  res.sort == [0, 1, 2];
-};
+  res.sort
+}
+== [0, 1, 2];
 \end{urbiassert}%>>
 
 \item \lstinline|asin|\\
@@ -170,47 +175,60 @@ Float.pi.cos == -1;
 
 \item \lstinline|each(\var{fun})|\\
   Call the functional argument \var{fun} on every integer from 0 to
-  target - 1, sequentially.
-\begin{urbiscript}[firstnumber=last]
-3.each(function (i) { echo(100 + i) });
-[00000000] *** 100
-[00000000] *** 101
-[00000000] *** 102
-for (var x : 3) { echo(x); sleep(20ms); echo (100 + x); };
-[00000000] *** 0
-[00000000] *** 100
-[00000000] *** 1
-[00000000] *** 101
-[00000000] *** 2
-[00000000] *** 102
-\end{urbiscript}
+  target - 1, sequentially.  The number must be non-negative.
+\begin{urbiassert}[firstnumber=last]
+{
+  var res = [];
+  3.each(function (i) { res << 100 + i });
+  res
+}
+== [100, 101, 102];
+
+{
+  var res = [];
+  for(var x : 3) { res << x; sleep(20ms); res << (100 + x); };
+  res
+}
+== [0, 100, 1, 101, 2, 102];
+
+{
+  var res = [];
+  0.each (function (i) { res << 100 + i });
+  res
+}
+== [];
+\end{urbiassert}
 
 \item \lstinline'each|(\var{fun})'\\
   Call the functional argument \var{fun} on every integer from 0 to
-  target - 1, with tight sequentiality.
+  target - 1, with tight sequentiality.  The number must be
+  non-negative.
 \begin{urbiassert}[firstnumber=last]
 {
   var res = [];
   3.'each|'(function (i) { res << 100 + i });
-  res == [100, 101, 102];
-};
+  res
+}
+== [100, 101, 102];
 
 {
   var res = [];
   for|(var x : 3) { res << x; sleep(20ms); res << (100 + x); };
-  res == [0, 100, 1, 101, 2, 102];
-};
+  res
+}
+== [0, 100, 1, 101, 2, 102];
 \end{urbiassert}%>>>>>>
 
 \item \lstinline|each&(\var{fun})|\\
   Call the functional argument \var{fun} on every integer from 0 to
-  target - 1, concurrently.
+  target - 1, concurrently.  The number must ne non-negative.
 \begin{urbiassert}[firstnumber=last]
 {
   var res = [];
   for& (var x : 3) { res << x; sleep(30ms); res << (100 + x) };
-  res == [0, 1, 2, 100, 101, 102];
-};
+  res
+}
+== [0, 1, 2, 100, 101, 102];
 \end{urbiassert}%>>>>
 
 \item \lstinline|exp|\\
@@ -310,8 +328,12 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 
 \item \lstinline|seq|\\
   The sequence of integers from 0 to \lstinline|this| - 1 as a list.
+  The number must be non-negative.
 \begin{urbiassert}[firstnumber=last]
 3.seq == [0, 1, 2];
+0.seq == [];
+(-1).seq;
+[00004586:error] !!! seq: expected non-negative integer, got -1
 \end{urbiassert}
 
 \item \lstinline|sgn|\\
