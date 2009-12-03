@@ -571,6 +571,33 @@ namespace urbi
 
 namespace urbi
 {
+  void dup(unsigned short* dst, unsigned short* src, int count)
+  {
+    unsigned int* idst = (unsigned int*)dst;
+    unsigned short* end = src + count;
+    while (src != end)
+    {
+      *(idst++) = (unsigned int)(*src) << 16 | (unsigned int)(*src);
+      src++;
+    }
+  }
+  void dup(unsigned char* dst, unsigned char* src, int count)
+  {
+    unsigned short* idst = (unsigned short*)dst;
+    unsigned char* end = src + count;
+    while (src != end)
+    {
+      *(idst++) = (unsigned short)(*src) << 8 | (unsigned short)(*src);
+      src++;
+    }
+  }
+
+  template<typename D> void
+  pud(D* dst, D* src, int count)
+  {
+    for (int i=0; i<count/2; i++)
+      dst[i] = src[i*2];
+  }
   template<class S, class D>
   void copy(S* src, D* dst,
 	    int sc, int dc, int sr, int dr, int count, bool sf, bool df)
@@ -652,7 +679,7 @@ namespace urbi
       return 1; //conversion not handled yet
     /* phase one: calculate required buffer size, set destination unspecified
      * fields */
-    int schannels, srate, ssampleSize;
+    size_t schannels, srate, ssampleSize;
     USoundSampleFormat ssampleFormat;
     if (source.soundFormat == SOUND_WAV)
       {
@@ -727,7 +754,12 @@ namespace urbi
     switch (ssampleSize * 1000 + dest.sampleSize)
     {
       case 8008:
-	copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate,
+        if (srate == dest.rate && schannels == 1 && dest.channels == 2)
+          dup((unsigned char*)sbuffer, (unsigned char*)dbuffer, elementCount);
+        else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
+          pud(sbuffer, dbuffer, elementCount);
+        else
+	  copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate,
 	     elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
 	     SAMPLE_SIGNED);
 	break;
@@ -736,8 +768,13 @@ namespace urbi
 	     dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
 	     dest.sampleFormat == SAMPLE_SIGNED);
 	break;
-      case 16016:
-	copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels,
+      case 16016: // Data is short, but convertions needs an unsigned short.
+         if (srate == dest.rate && schannels == 1 && dest.channels == 2)
+          dup((unsigned short*)sbuffer, (unsigned short*)dbuffer, elementCount);
+        else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
+          pud((unsigned short*)sbuffer, (unsigned short*)dbuffer, elementCount);
+        else
+	  copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels,
 	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
 	     dest.sampleFormat == SAMPLE_SIGNED);
 	break;
