@@ -1,0 +1,77 @@
+\chapter{Spykee}
+
+\section{Introduction}
+
+The Spykee is a WiFi-enabled robot built by Meccano (known as Erector in the
+United States). It is equiped with a camera, speaker, microphone, and moves
+using two tracks.
+
+\section{Installing Urbi on the Spykee}
+
+To enable Urbi in the Spykee, you must update it with a new firmware. The Urbi
+firmware can be downloaded from \url{http://www.gostai.com}.
+
+Once obtained, use the Spykee interface, downloadable from
+\url{http://spykeeworld.com} to install it: Start the interface, connect to
+your robot, click the "settings" button, then on the Spykee image on the left.
+Then go to the "Firmware" tab, and click the "Load" button. Select the firmware
+file you downloaded earlier, and press OK. Leave the Spykee on its base until it
+reboots by itself, the update process will take a few minutes. Do not reboot
+the Spykee yourself while update is in progress or you migth render it useless.
+\begin{center}
+\includegraphics[width=0.95\textwidth]{img/spykee-flash-instructions}
+\end{center}
+
+With the Urbi firmware, the Spykee should continue to work as usual: you can
+still control it using the Spykee interface. But you can now also control it
+with Urbi. Please read the Urbi tutorial if you do not know how to communicate
+with an urb server.
+
+\section{Device list}
+
+The following standard devices are available on the Spykee:
+
+\begin{itemize}
+\item \lstinline|trackL, trackR (Motor)| \\
+    The two tracks. The \lstinline|val| slot can be read or set to change each
+    track speed, from -100 to 100.
+\item \lstinline|ledL, ledR, flash (Led)| \\
+    left and rigth led pairs, and camera light. On if the \lstinline|val| slot
+    is set to 1.
+\item \lstinline|camera (VideoIn)| \\
+    Spykee camera. The \lstinline|val| slot contains the last received image
+    in jpeg format.
+\item \lstinline|speaker (AudioOut)| \\
+    Sound speaker.
+\item \lstinline|micro (AudioIn)| \\
+    Microphone.
+\item \lstinline|robot (Mobile)| \\
+    Provides the standard functions go() and turn().
+\end{itemize}
+
+The following non-standard functions are also present:
+
+\begin{itemize}
+\item \lstinline|speaker.playSound(id)| \\
+    Play Spykee sound sample "id", from 0 to 15.
+\item \lstinline|mp3.play(stream)| \\
+    Play mp3 file or http stream "stream".
+\item \lstinline|mp3.stop()| \\
+    Stop playing current stream or file.
+\item \lstinline|Spykee.setConfigValue(key, value)| \\
+    Set persistant config entry "key" to "value". Beware that the configuration
+    sector only have a few kilobytes of space, do not put too many or to big
+    values here.
+\item \lstinline|Spykee.getConfigValue(key)| \\
+    Retrieve persistant value associated with "key". Do not call this function
+    two often as it is very costly.
+\item \lstinline|Spykee.findBase()| \\
+    Ask the Spykee to look for its base and station on it.
+\item \lstinline|Spykee.cancelFindBase()| \\
+    Abort the previous order.
+\item \lstinline|Spykee.chargeStop()| \\
+    Ask the Spykee to stop charging and exit its charging station.
+\item \lstinline|Spykee.power| \\
+    Remaining energy in the battery, from 0 to 100. The value may be inaccurate
+    or outside the range while the Spykee is charging.
+\end{itemize}
