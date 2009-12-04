@@ -213,7 +213,7 @@
 | Expressions.  |
 `--------------*/
 
-%type <ast::rExp> block exp exp.opt softtest stmt stmt_loop;
+%type <ast::rExp> block exp exp.opt stmt stmt_loop;
 
 
 /*----------------------.
@@ -284,7 +284,7 @@
 
 %left "const" "var"
 
-%nonassoc "~" // This is not the same as in C++, this is for "softest".
+%nonassoc "~" // This is not the same as in C++, this is for durations.
 %left  "||"
 %left  "&&"
 %nonassoc "in"
@@ -700,11 +700,11 @@ stmt:
     {
       $$ = MAKE(if, @$, $3, $5, $6);
     }
-| "freezeif" "(" softtest ")" stmt
+| "freezeif" "(" exp ")" stmt
     {
       $$ = MAKE(freezeif, @$, $3, $5);
     }
-| "stopif" "(" softtest ")" stmt
+| "stopif" "(" exp ")" stmt
     {
       $$ = MAKE(stopif, @$, $3, $5);
     }
@@ -1287,14 +1287,6 @@ args:
 args.opt:
   /* empty */  { $$ = 0; }
 | args         { std::swap($$, $1); }
-;
-
-/*------------.
-| Soft test.  |
-`------------*/
-
-softtest:
-  exp    { std::swap($$, $1);  }
 ;
 
 
