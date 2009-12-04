@@ -736,7 +736,16 @@ stmt:
     {
       $$ = MAKE(waituntil_event, @$, $3.event, $3.pattern);
     }
+| "whenever" "(" exp tilda.opt ")" nstmt else.opt
+    {
+      $$ = MAKE(whenever, @$, $3, $6, $7, $4);
+    }
+| "whenever" "(" event_match ")" nstmt else.opt
+    {
+      $$ = MAKE(whenever_event, @$, $3, $5, $6);
+    }
 ;
+
 
 
 /*----------------------------------------.
@@ -765,17 +774,6 @@ onleave.opt:
 | "onleave" nstmt                 { std::swap($$, $2); }
 ;
 
-
-stmt:
-  "whenever" "(" exp tilda.opt ")" nstmt else.opt
-    {
-      $$ = MAKE(whenever, @$, $3, $6, $7, $4);
-    }
-| "whenever" "(" event_match ")" nstmt else.opt
-    {
-      $$ = MAKE(whenever_event, @$, $3, $5, $6);
-    }
-;
 
 /*--------.
 | Cases.  |
