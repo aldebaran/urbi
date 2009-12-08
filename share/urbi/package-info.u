@@ -1,0 +1,51 @@
+class System.PackageInfo
+{
+  var components = Dictionary.new;
+
+  var dependencies = [];
+  function init (var name)
+  {
+    var this.name = name |
+    System.PackageInfo.components[name] = this
+  };
+
+  function depend(var other)
+  {
+    dependencies += [other]|;
+  };
+
+  function signature ()
+  {
+    "%s version %s rev. %s\n"
+    "Copyright (C) %s %s"
+    % [name, version, revision, copyright_holder, copyright_years]
+    +
+    {
+      if (dependencies)
+        "\n\n"
+        + dependencies.map(methodToFunction("signature")).join("\n")
+      else
+        "";
+    }
+  };
+
+};
+
+load("urbi/package-info-urbi-sdk.u");
+load("urbi/package-info-urbi-sdk-remote.u");
+load("urbi/package-info-libport.u");
+
+do (System.PackageInfo)
+{
+  var copyright_holder = "Gostai SAS.";
+  var copyright_years = "2005-2009";
+  do (components["Urbi SDK"])
+  {
+    depend(components["Urbi SDK Remote"]);
+  };
+
+  do (components["Urbi SDK Remote"])
+  {
+    depend(components["Libport"]);
+  }
+};

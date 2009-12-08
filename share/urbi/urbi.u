@@ -64,6 +64,7 @@ load("urbi/tuple.u");
 load("urbi/dictionary.u");
 load("urbi/weak-pointer.u");
 load("urbi/pattern.u");
+load("urbi/package-info.u");
 load("urbi/task.u");
 load("urbi/pubsub.u");
 load("urbi/event.u");

@@ -6,13 +6,35 @@ nodist_urbi_DATA =				\
   $(package_info_u)				\
   share/urbi/platform.u
 
-# package-info.u
-package_info_u = share/urbi/package-info.u
-REVISIONFLAGS = --urbi
-REVISION_FILE = $(package_info_u)
-include $(top_srcdir)/build-aux/revision.mk
 
-# tutorial-content.u.
+## ------------ ##
+## PackageInfos ##
+## ------------ ##
+
+REVISION = $(build_aux_dir)/git-version-gen
+REVISIONFLAGS = --urbi --directory
+REVISION_RUN = $(REVISION) $(REVISIONFLAGS) --cache=$< --output=$@
+
+BUILT_SOURCES +=				\
+  share/urbi/package-info-urbi-sdk.u		\
+  share/urbi/package-info-urbi-sdk-remote.u	\
+  share/urbi/package-info-libport.u
+
+share/urbi/package-info-urbi-sdk.u: $(top_srcdir)/.version $(REVISION)
+	$(REVISION_RUN) --prefix='Urbi SDK'
+	touch $@
+share/urbi/package-info-urbi-sdk-remote.u: $(top_srcdir)/sdk-remote/.version $(REVISION)
+	$(REVISION_RUN) --prefix='Urbi SDK Remote'
+	touch $@
+share/urbi/package-info-libport.u: $(top_srcdir)/sdk-remote/libport/.version $(REVISION)
+	$(REVISION_RUN) --prefix='Libport'
+	touch $@
+
+
+## ---------- ##
+## Tutorial.  ##
+## ---------- ##
+
 tutorial_sources =				\
   share/urbi/tutorial/tutorial.xml		\
   share/urbi/tutorial/tutorial.py
