@@ -145,10 +145,6 @@ namespace kernel
     /// Same but calls init_error on errors.
     void xload_init_file(const char* fn);
 
-    /// Check that C++ and Urbi revisions match.
-    /// Call init_error on errors.
-    void revision_check();
-
     /// Save content to a file
     /// This function must be redefined by the robot-specific server.
     /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.

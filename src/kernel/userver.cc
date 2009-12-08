@@ -155,32 +155,6 @@ namespace kernel
     }
   }
 
-  void
-  UServer::revision_check()
-  {
-    // Check that revision bw C++ and Urbi match.
-    xload_init_file("urbi/package-info.u");
-
-    // Force the processing until PackageInfo is defined.
-    while (!object::system_class->slot_has(SYMBOL(PackageInfo)))
-      work();
-    object::rObject PackageInfo =
-      object::system_class->slot_get(SYMBOL(PackageInfo));
-    std::string urbi_rev =
-      PackageInfo->slot_get(SYMBOL(revision)).get<std::string>();
-
-    // C++ revision.
-    std::string cxx_rev = package_info().get("revision");
-    if (urbi_rev != cxx_rev)
-    {
-      std::cerr
-        << program_name() << ": revison mismatch between C++ and Urbi.\n"
-        << program_name() << ":   kernel revision: " << cxx_rev << "\n"
-        << program_name() << ":   urbi.u revision: " << urbi_rev << std::endl;
-      init_error();
-    }
-  }
-
 #if !defined WIN32 && !defined _MSC_VER
   namespace
   {
@@ -342,7 +316,6 @@ namespace kernel
     ghost_ = new UGhostConnection(*this, interactive);
     DEBUG(("done\n"));
 
-    revision_check();
     xload_init_file("urbi/urbi.u");
 
     // Handle plugged UObjects.
