@@ -283,7 +283,6 @@ namespace urbi
                     "quiet", 'q');
 
     libport::OptionValue
-      arg_period   ("ignored for backward compatibility", "period", 'p'),
       arg_port_file("write port number to the specified file.",
                     "port-file", 'w', "FILE"),
       arg_stack    ("set the job stack size in KB", "stack-size", 's', "SIZE");
@@ -297,7 +296,6 @@ namespace urbi
         << libport::opts::help
         << libport::opts::version
         << libport::opts::debug
-        << arg_period
         << "Tuning:"
         << arg_stack
         << arg_no_banner
