@@ -20,7 +20,7 @@
 #include <libport/foreach.hh>
 
 #include <urbi/urbi-root.hh>
-#include <sdk/config.h>
+#include <libport/config.h>
 
 /*--------.
 | Helpers |
@@ -89,7 +89,7 @@ static const std::string libext = ".so";
 static const std::string separator = "/";
 static const std::string libdir = "lib";
 #endif
-static const std::string libuobjects_dir = std::string("/gostai/core/") + URBI_HOST;
+static const std::string libuobjects_dir = std::string("/gostai/core/") + LIBPORT_URBI_HOST;
 
 /*-------------------------------------.
 | Crapy dynamic portability routines.  |
