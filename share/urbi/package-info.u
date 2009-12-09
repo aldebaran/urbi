@@ -18,7 +18,7 @@ class System.PackageInfo
   {
     "%s version %s rev. %s\n"
     "Copyright (C) %s %s"
-    % [name, version, revision, copyright_holder, copyright_years]
+    % [name, version, revision, copyright_years, copyright_holder]
     +
     {
       if (dependencies)
