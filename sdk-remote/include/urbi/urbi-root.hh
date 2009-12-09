@@ -40,7 +40,8 @@ class URBI_SDK_MAYBE_API UrbiRoot
 public:
   /// Load an Urbi SDK.
   /// \param program The command used to invoke urbi-launch or urbi.
-  UrbiRoot(const std::string& program);
+  /// \param static_build true if this is a static build:do not dlopen anything
+  UrbiRoot(const std::string& program, bool static_build=false);
 
   /*---------------.
   | Entry points.  |

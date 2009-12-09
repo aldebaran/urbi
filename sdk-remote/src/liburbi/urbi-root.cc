@@ -176,7 +176,7 @@ xdlopen(const std::string& path, int flags, const std::string& self)
 | UrbiRoot |
 `---------*/
 
-UrbiRoot::UrbiRoot(const std::string& program)
+UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   : program_(program)
   , root_()
   , handle_libjpeg_(0)
@@ -249,12 +249,14 @@ UrbiRoot::UrbiRoot(const std::string& program)
   // const std::string urbi_path = root_ + separator + "share" + separator + "gostai";
   // xsetenv("URBI_PATH", xgetenv("URBI_PATH") + ":" + urbi_path, true);
   // URBI_ROOT_DEBUG("append to URBI_PATH: " << urbi_path);
-
-  handle_libjpeg_        = library_load("jpeg",        "JPEG");
-  handle_libport_        = library_load("port",        "PORT");
-  handle_libsched_       = library_load("sched",       "SCHED");
-  handle_libser_         = library_load("serialize",   "SER");
-  handle_liburbi_        = library_load("urbi",        "URBI");
+  if (!static_build)
+  {
+    handle_libjpeg_        = library_load("jpeg",        "JPEG");
+    handle_libport_        = library_load("port",        "PORT");
+    handle_libsched_       = library_load("sched",       "SCHED");
+    handle_libser_         = library_load("serialize",   "SER");
+    handle_liburbi_        = library_load("urbi",        "URBI");
+  }
 }
 
 RTLD_HANDLE
