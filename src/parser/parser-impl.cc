@@ -120,6 +120,8 @@ namespace parser
   parse_result_type
   ParserImpl::parse_file(const std::string& fn)
   {
+    if (debug_)
+      LIBPORT_ECHO("Parsing file: " << fn);
     std::ifstream f(fn.c_str());
     if (!f.good())
     {
@@ -133,6 +135,8 @@ namespace parser
       location_type loc(new libport::Symbol(fn));
       parse_(f, &loc);
     }
+    if (debug_)
+      LIBPORT_ECHO("Result: " << *result_);
     return result_;
   }
 
