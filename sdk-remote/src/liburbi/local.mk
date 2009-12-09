@@ -33,4 +33,4 @@ liburbi_liburbi_la_CXXFLAGS = -fno-strict-aliasing $(AM_CXXFLAGS)
 ## umain.cc.  ##
 ## ---------- ##
 
-dist_umain_DATA = liburbi/umain.cc
+dist_umain_DATA = liburbi/umain.cc liburbi/urbi-root.cc
