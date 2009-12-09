@@ -451,7 +451,9 @@ class Global.'external'
     var chan.lobby = lobby|
     function f()
     {
-      var v = uob.getSlot(varname).val.acceptVoid |
+      var uvar = uob.getSlot(varname) |
+      var v = uvar.getSlot({if (uvar.owned) "valsensor" else "val"})
+        .acceptVoid |
       if (!v.isNil && !v.isVoid)
         chan << ['external'.UEM_ASSIGNVALUE,
                  fullname,
