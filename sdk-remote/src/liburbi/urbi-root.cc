@@ -325,7 +325,8 @@ int
 UrbiRoot::urbi_launch(int argc, const char** argv)
 {
   URBI_ROOT_DEBUG(program_, "loading symbol urbi_launch from liburbi-launch");
-  urbi_launch_type f = reinterpret_cast<urbi_launch_type>(dlsym(handle_liburbi_, "urbi_launch"));
+  // Reinterpret-cast fails with gcc3 arm
+  urbi_launch_type f = (urbi_launch_type)(dlsym(handle_liburbi_, "urbi_launch"));
 
   if (!f)
     URBI_ROOT_FATAL(program_, 2, "cannot locate urbi_launch symbol: " << dlerror());
@@ -345,7 +346,8 @@ int
 UrbiRoot::urbi_main(const std::vector<std::string>& args, bool block, bool errors)
 {
   URBI_ROOT_DEBUG(program_, "loading symbol urbi_main_args from libuobject");
-  urbi_main_type f = reinterpret_cast<urbi_main_type>(dlsym(handle_libuobject_, "urbi_main_args"));
+  // Reinterpret-cast fails with gcc3 arm
+  urbi_main_type f = (urbi_main_type)(dlsym(handle_libuobject_, "urbi_main_args"));
 
   if (!f)
     URBI_ROOT_FATAL(program_, 2, "cannot locate urbi_launch symbol: " << dlerror());
