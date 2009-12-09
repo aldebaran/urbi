@@ -34,12 +34,12 @@ tts.say("Hello, I am Nao."),
 // Activate right arm.
 armR.load = 1;
 // Wave the arm: put it in position
-shoulderRRoll.val = -0.3 time: 0.5s |
-shoulderRPitch.val = -1 speed: 0.9 |
+shoulderRollR.val = -0.3 time: 0.5s |
+shoulderPitchR.val = -1 speed: 0.9 |
 // Wave it
-timeout(6s) shoulderRRoll.val = -0.4 sin:2s ampli:0.4;
+timeout(6s) shoulderRollR.val = -0.4 sin:2s ampli:0.4;
 // And put it back down, using the uncompressed name this time
-robot.body.armR.shoulder.pitch.val = 2 speed:0.9;
+robot.body.arm[right].shoulder.pitch.val = 2 speed:0.9;
 // Activate all motors.
 motors.on;
 // Stand
@@ -48,6 +48,12 @@ motion.walkStraight(0.01, 50);
 motion.setBalanceMode(motion.BALANCE_MODE_AUTO);
 motion.gotoTorsoOrientation(0, pi/6, 2, 1);
 motion.gotoTorsoOrientation(0, 0, 2, 1);
+// Start walking...
+tag: robot.walk(1),
+// ... and interrupt the movement
+sleep(2s) | tag.stop;
+// Get the list of all devices and the interfaces they implement:
+robot.dump;
 \end{urbiunchecked}
 
 \section{Accessing joints}
@@ -87,7 +93,7 @@ once the movement is finished.
 \subsubsection{Trajectory generator period}
 
 The trajectory generators will issue write command at a period given by the
-\var{Object.getPeriod} variable. The default is 20ms which is the native period
+\var{Object.getPeriod} variable. The default is 10ms which is the native period
 of Naoqi.
 
 \subsubsection{Motor backend method}
@@ -127,6 +133,12 @@ The Nao camera object is instanciated by default, under the standard name
 \var{camera}. It is deactivated by default, set its \var{load} field to 1 to
 activate.
 
+The camera object uses an optimization minimising the number of copies of the
+image buffer. As a consequence, the image can only be accessed from \us and
+UObject notifyChange callbacks. If you need to access the camera image by
+typing \lstinline|camera.val|, you can disable this optimization by typing
+\lstinline|showCam();|
+
 \subsection{Slots}
 \begin{itemize}
 \item \lstinline|format| \\
@@ -160,11 +172,7 @@ activate.
   before switching load to 1 for the first time. Defaults to 1.
 \end{itemize}
 
-The camera object uses an optimization minimising the number of copies of the
-image buffer. As a consequence, the image can only be accessed from \us and
-UObject notifyChange callbacks. If you need to access the camera image by
-typing \lstinline|camera.val|, you can disable this optimization by typing
-\lstinline|showCam();|
+
 
 
 \section{Other sensors}
@@ -233,12 +241,12 @@ motion.addWalkStraight( 0.1, 60 );
 motion.walk();
 \end{urbiunchecked}
 
-The argument to generateALBindings() is a list of all the function
+The argument to \lstinline|generateALBindings()| is a list of all the function
 names that you want to be asynchronous. You must pass in this list
 all the functions that takes a long(more than a few milliseconds)
 time to execute.
 
-Synchronous calls have less overhead, but will freeze the urbiScript
+Synchronous calls have less overhead, but will freeze the \us
 interpreter for the duration of the call.
 
 Most of the standard modules are loaded by the initialization script URBI.INI.
