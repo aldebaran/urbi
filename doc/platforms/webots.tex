@@ -18,7 +18,7 @@
 This chapter documents the use of \urbi in the \webots simulation
 environment.
 
-\section{Quick Start}
+\section{Setup}
 
 This section describes how to setup the software on your computer and
 give you the basis to use \uwebots{}.
@@ -164,7 +164,9 @@ fix this very shortly.
 %%   close the installer.
 %% \end{enumerate}
 
-\subsection{Evaluation mode}
+\subsection{License}
+
+\subsubsection{Evaluation mode}
 
 If you don't provide a valid license file to the \urbi controller, it
 will be launched in \dfn{evaluation mode}. The only difference with
@@ -178,9 +180,6 @@ tells you that the license is invalid or missing:
   \includegraphics{img/webots/no-license-webots-log-msg}
 \end{center}
 
-
-\subsection{License setup}
-
 In order to run Urbi for \webots unlimitedly you must have a licence
 file.  The Urbi for \webots licensing system is based on the \webots
 licensing system.  In \webots there are two licensing system available:
@@ -189,22 +188,23 @@ licensing system.  In \webots there are two licensing system available:
 \item an USB dongle.
 \end{itemize}
 
-\subsubsection{Urbi licensing with \webots.key license}
+\newcommand{\webotskey}{\file{webots.key}\xspace}
+
+\subsubsection{Urbi licensing with a \webotskey \webots license}
 
 To get an \urbi license using this type of licensing, please send us a
-copy of your \file{webots.key} license, we will generate the \urbi
+copy of your \webotskey license, we will generate the \urbi
 license using this file.
 
-Once you have your \file{urbi.key} file, put the \file{webots.key}
+Once you have your \file{urbi.key} file, put the \webotskey
 file in the folder \file{webots/ressources/} (warning: it is mandatory
-to have a copy of the webots.key in this folder, if you don't have it,
-\urbi won't find the \file{webots.key} file and you will get a
+to have a copy of the \webotskey in this folder, if you don't have it,
+\urbi won't find the \webotskey file and you will get a
 licensing error message) and place the \file{urbi.key} file in the
 same folder as the urbi controller. By default in
 \file{webots/projects/default/controllers/urbi/}.
 
-
-\subsubsection{Urbi licensing with USB dongle}
+\subsubsection{Urbi licensing with USB dongle \webots license}
 
 To obtain an Urbi license if you use this type of licensing, please
 send us your \webots USB dongle number (available in the help/about
@@ -214,7 +214,7 @@ Install your \file{urbi.key} file in the same folder as the Urbi
 controller.  By default in
 \file{webots/projects/default/controllers/urbi/}.
 
-\subsection{License problem}
+\subsubsection{License problem}
 
 If you have a valid license but still get the licensing error message,
 check that you have followed correctly the setup instructions. Note
@@ -231,11 +231,11 @@ controllerArgs "-f -l C:/mylicensefolder/urbi.key  -p 54000 32"
 Contact Gostai if you still have some problems with the license, and
 we will resolve the problem with you.
 
-\subsection{Your first run}
+\section{Quick Start}
 
 This section describes basic use of the \urbi engine for \webots.
 
-\subsubsection{\urbi worlds}
+\subsection{\urbi worlds}
 
 We provide a set of example worlds with several robots you will be
 able to control through \urbi. They are located in the directory:
@@ -260,7 +260,7 @@ controller.
 Let's see how this controller let you control the robot.
 
 
-\subsubsection{\urbi controller}
+\subsection{\urbi controller}
 
 You have two ways to control your robot through the \urbi
 controller. The first way is by remotely sending commands to the \urbi
@@ -270,7 +270,7 @@ The second way is by writing \urbi scripts that will be loaded at
 controller start up.
 
 
-\subsubsection{Send commands with a client software}
+\subsection{Send commands with a client software}
 
 In order to connect to the \urbi controller and then send commands, you
 need to use a client software that allows you to connect on some
@@ -347,7 +347,7 @@ the center.
   \includegraphics[width=.8\linewidth]{img/webots/telnet-some-urbi-cmd}
 \end{center}
 
-\subsubsection{Load \urbi programs at controller start}
+\subsection{Load \urbi programs at controller start}
 
 \paragraph{By adding the file as argument of the \urbi controller}
 
