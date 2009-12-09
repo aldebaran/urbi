@@ -2,6 +2,16 @@ This file summarizes the user-visible changes since the first beta 1
 release.
 
 ***************************
+* New in kernel 2.0 RC 3. *
+***************************
+
+fixes
+=====
+
+- local.u works as expected.
+
+
+***************************
 * New in kernel 2.0 RC 2. *
 ***************************
 
@@ -14,7 +24,7 @@ Optimization
 The urbiScript engine was considerably optimized in both space and
 time.
 
-urbiScript
+urbiscript
 ==========
 
 New constructs:
@@ -143,7 +153,7 @@ UObjects
   false.
 
 - the environment variable URBI_UOBJECT_PATH is used by urbi-launch
-  and urbiScript's loadModule to find uobjects.
+  and urbiscript's loadModule to find uobjects.
 
 - fixed multiple notifications of event trigger in remote UObjects
 
@@ -165,7 +175,7 @@ also improved.  Changes include, but are not limited to:
 - special files
   global.u, local.u.
 - k1-to-k2
-  Conversion idioms from urbiScript 1 to urbiScript 2
+  Conversion idioms from urbiscript 1 to urbiscript 2
 - faq
   - stack exhaustion
   - at and waituntil: performance considerations
@@ -337,11 +347,11 @@ Environment variables
 The environment variable URBI_ROOT denotes the directory which is the
 root of the tree into which Urbi was installed.  It corresponds to the
 "prefix" in GNU Autoconf parlance, and defaults to "/usr/local" under
-Unix.  urbiScript library files are expected to be in
+Unix.  urbiscript library files are expected to be in
 <URBI_ROOT>/share/gostai/urbi.
 
 The environment variable URBI_PATH, which allows to specify a
-colon-separated list of directories into which urbiScript files are
+colon-separated list of directories into which urbiscript files are
 looked-up, may extend or override URBI_ROOT.  Any superfluous colon
 denotes the place where the URBI_ROOT path is taken into account.
 
