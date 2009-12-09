@@ -48,10 +48,11 @@ namespace kernel
     // corresponding Lobby.
     recv_queue_->push
       (
-       "maybeLoad(\"URBI.INI\", \"start\");"
-       "maybeLoad(\"global.u\", \"start\");"
-       "maybeLoad(\"CLIENT.INI\", \"start\");"
-       "maybeLoad(\"local.u\", \"start\");"
+       "maybeLoad(\"URBI.INI\", \"start\");\n"
+       "maybeLoad(\"global.u\", \"start\");\n"
+       "maybeLoad(\"CLIENT.INI\", \"start\");\n"
+       "maybeLoad(\"local.u\", \"start\");\n"
+       "//#line 1\n"
        );
     received("");
   }

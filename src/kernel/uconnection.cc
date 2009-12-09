@@ -100,8 +100,9 @@ namespace kernel
       recv_queue_->push("resendBanner;");
     recv_queue_->push
       (
-       "maybeLoad(\"CLIENT.INI\", \"start\");"
-       "maybeLoad(\"local.u\", \"start\");"
+       "maybeLoad(\"CLIENT.INI\", \"start\");\n"
+       "maybeLoad(\"local.u\", \"start\");\n"
+       "//#line 1\n"
        );
     received("");
   }
