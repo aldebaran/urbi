@@ -13,6 +13,12 @@ stderr ()
   done
 }
 
+complain ()
+{
+  stderr "$@"
+  errors=$((errors + 1))
+}
+
 error ()
 {
   local status="$1"
@@ -54,8 +60,8 @@ srcdir=$2
 builddir=$3
 DESTDIR=$4
 updir=$5
-ARCH=$6       # ex. x86
-OS=$7         # ex. linux
+ARCH=$6       # x86|ppc
+OS=$7         # linux|windows|macos
 COMP=$8       # ex. gcc4
 MODE=$9       # [release|debug]_[static|dynamic]
 prefix=${10}
@@ -181,6 +187,7 @@ case $OS in
         xargs strip 2>/dev/null || true
       $FIND . -type f '(' -name '*.so.*'        \
                        -o -name '*.so'          \
+                       -o -name '*.dll'         \
                        -o -name '*.a'           \
                        ')' |
         xargs strip || true
@@ -188,3 +195,19 @@ case $OS in
     fi
     ;;
 esac
+
+# Check that we don't depend on boost.
+case $OS
+  (macos)
+    for i in $($FIND . -type f '(' -name '*.dll')
+    do
+      if otool -L $i | grep -q -i boost; then
+        complain "$i depends on Boost" $(otool -L $i | grep -q -i boost)
+      fi
+    done
+    ;;
+esac
+
+if test $errors -ne 0; then
+  fatal "there were $errors errors."
+fi
