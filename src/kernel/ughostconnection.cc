@@ -14,9 +14,10 @@
 #include <libport/cstring>
 #include <libport/windows.hh>
 
-#include <kernel/utypes.hh>
-#include <kernel/userver.hh>
 #include <kernel/ughostconnection.hh>
+#include <kernel/uqueue.hh>
+#include <kernel/userver.hh>
+#include <kernel/utypes.hh>
 
 namespace kernel
 {
@@ -36,6 +37,23 @@ namespace kernel
 
   UGhostConnection::~UGhostConnection()
   {
+  }
+
+  void
+  UGhostConnection::initialize()
+  {
+    if (::kernel::urbiserver->opt_banner_get())
+      recv_queue_->push("resendBanner;");
+    // FIXME: Maybe simply call some specific function from the
+    // corresponding Lobby.
+    recv_queue_->push
+      (
+       "maybeLoad(\"URBI.INI\", \"start\");"
+       "maybeLoad(\"global.u\", \"start\");"
+       "maybeLoad(\"CLIENT.INI\", \"start\");"
+       "maybeLoad(\"local.u\", \"start\");"
+       );
+    received("");
   }
 
   void

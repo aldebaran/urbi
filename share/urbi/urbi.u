@@ -96,7 +96,3 @@ function help()
 topLevel.enabled = true |
 System.defaultIsSystem = false |
 var Object.loaded = 1 |;
-
-// Load URBI.INI outside initialization phase.
-maybeLoad("URBI.INI", "start");
-maybeLoad("global.u", "start");

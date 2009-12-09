@@ -23,13 +23,17 @@ namespace kernel
   class UGhostConnection : public UConnection
   {
   public:
+    typedef UConnection super_type;
+
     /// UGhostConnection constructor.
-    /// Does not call UConnection::initialize, must be performed
-    /// once urbiscript is ready.
     UGhostConnection(UServer& s, bool interactive = false);
 
     //! UGhostConnection destructor.
     virtual ~UGhostConnection();
+
+    /// Set up the connection.
+    /// Loads global.u, local.u and so forth.
+    void initialize();
 
     //! Close the connection
     /// Does nothing. The ghost connection cannot be closed.

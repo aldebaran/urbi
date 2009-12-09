@@ -98,8 +98,11 @@ namespace kernel
   {
     if (::kernel::urbiserver->opt_banner_get())
       recv_queue_->push("resendBanner;");
-    server_.load_file("CLIENT.INI", *recv_queue_);
-    server_.load_file("local.u", *recv_queue_);
+    recv_queue_->push
+      (
+       "maybeLoad(\"CLIENT.INI\", \"start\");"
+       "maybeLoad(\"local.u\", \"start\");"
+       );
     received("");
   }
 

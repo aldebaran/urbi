@@ -253,7 +253,7 @@ namespace kernel
     /// The Lobby into which the code is evaluated.
     urbi::object::rLobby lobby_;
 
-  private:
+  protected:
     /// A pointer to stop dependencies.
     std::auto_ptr<UQueue> send_queue_;
 
