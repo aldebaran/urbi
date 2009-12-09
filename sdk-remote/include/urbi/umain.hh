@@ -23,7 +23,8 @@
   main(int argc, const char** argv)                             \
   {                                                             \
     UrbiRoot urbi_root(argv[0]);                                \
-    return urbi::main(argc, argv, urbi_root, true, true);       \
+    std::vector<std::string> args(argv, argv + argc);           \
+    return urbi_root.urbi_main(args, true, true);               \
   }                                                             \
                                                                 \
   int                                                           \
