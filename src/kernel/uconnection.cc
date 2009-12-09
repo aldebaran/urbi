@@ -7,8 +7,10 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file kernel/uconnection.cc
 /// \brief Implementation of UConnection.
+
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 

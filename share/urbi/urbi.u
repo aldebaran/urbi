@@ -101,10 +101,9 @@ var Object.loaded = 1 |;
 maybeLoad("URBI.INI", "start");
 maybeLoad("global.u", "start");
 
-/*-----------------------------------------------------------.
-| Ready to go.  This string is special and expected by       |
-|  uconsole-check as the signal that we have loaded urbi.u.  |
-|  Messages before, and including this one, are ignored.     |
-`-----------------------------------------------------------*/
+/*-----------------------------------------------------------------.
+| Ready to go.  The "Urbi is up..." string is special and expected |
+| by uconsole-check as the signal that we have loaded urbi.u.  It  |
+| ignores messages before this one, this one included.             |
+`-----------------------------------------------------------------*/
 echo("Urbi is up and running.", "start");
-
