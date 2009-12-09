@@ -131,15 +131,9 @@ namespace kernel
   UErrorValue
   UServer::load_init_file(const char* fn)
   {
-    DEBUG(("Loading %s...", fn));
     UErrorValue res = load_file(fn, ghost_->recv_queue_get());
     if (res == USUCCESS)
-    {
-      DEBUG(("done\n"));
       ghost_->received("");
-    }
-    else
-      DEBUG (("not found\n"));
     return res;
   }
 
@@ -532,6 +526,7 @@ namespace kernel
   UErrorValue
   UServer::load_file(const std::string& base, UQueue& q, QueueType type)
   {
+    DEBUG(("Looking for %s...", base));
     std::istream *is;
     libport::Finally finally;
     if (base == "/dev/stdin")
@@ -543,9 +538,11 @@ namespace kernel
         std::string file = find_file(base);
         is = new std::ifstream(file.c_str(), std::ios::binary);
         finally << boost::bind(boost::checked_delete<std::istream>, is);
+        DEBUG(("Loading %s...", file));
       }
       catch (libport::file_library::Not_found&)
       {
+        DEBUG(("not found\n"));
         return UFAIL;
       }
       if (!*is)
@@ -562,6 +559,7 @@ namespace kernel
       is->read(buf, sizeof buf);
       q.push(buf, is->gcount());
     }
+    DEBUG(("done\n"));
     return USUCCESS;
   }
 
