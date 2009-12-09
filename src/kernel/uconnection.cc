@@ -21,11 +21,6 @@
 #include <sstream>
 #include <iomanip>
 
-#include <boost/algorithm/string.hpp>
-#include <libport/lexical-cast.hh>
-#include <boost/version.hpp>
-
-#include <libport/cassert>
 #include <libport/foreach.hh>
 #include <libport/ref-pt.hh>
 
@@ -101,20 +96,8 @@ namespace kernel
   void
   UConnection::initialize()
   {
-    /// Send the banner.
     if (::kernel::urbiserver->opt_banner_get())
-    {
-      const std::string& banner = server_.banner_get();
-      std::vector<std::string> lines;
-      boost::split(lines, banner, boost::is_any_of("\n"));
-      foreach (const std::string& l, lines)
-        send(("*** " + l + "\n").c_str(), "start");
-
-      /// Send connection id.
-      send(("*** ID: " + connection_tag_ + "\n").c_str(), "ident");
-    }
-
-    /// Load CLIENT.INI.
+      recv_queue_->push("resendBanner;");
     server_.load_file("CLIENT.INI", *recv_queue_);
     server_.load_file("local.u", *recv_queue_);
     received("");

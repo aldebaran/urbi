@@ -70,7 +70,6 @@
 #include <kernel/connection-set.hh>
 #include <kernel/lock.hh>
 #include <kernel/server-timer.hh>
-#include <kernel/ubanner.hh>
 #include <kernel/ughostconnection.hh>
 #include <kernel/uobject.hh>
 #include <kernel/uqueue.hh>
@@ -253,32 +252,6 @@ namespace kernel
   }
 #endif
 
-  std::string
-  UServer::banner_get() const
-  {
-    const std::string marker =
-      "**********************************************************";
-    std::string res =
-      marker + "\n"
-      + package_info().signature() + "\n"
-      + "\n";
-
-    const std::string& custom = custom_banner_get();
-    if (!custom.empty())
-      res +=
-        custom + "\n"
-        + "\n";
-
-    res +=
-      "URBI comes with ABSOLUTELY NO WARRANTY.\n"
-      "This software can be used under certain conditions;\n"
-      "see LICENSE file for details.\n"
-      "\n"
-      "See http://www.urbiforge.com for news and updates.\n"
-      + marker + "\n";
-    return res;
-  }
-
   void
   UServer::initialize(bool interactive)
   {
@@ -292,12 +265,6 @@ namespace kernel
     // Set the initial time to a valid value.
     updateTime();
 
-
-    /*---------.
-    | Banner.  |
-    `---------*/
-    DEBUG((banner_get()));
-    DEBUG(("Ready.\n"));
 
     /*--------.
     | Setup.  |
@@ -513,12 +480,6 @@ namespace kernel
   UServer::updateTime()
   {
     lastTime_ = getTime();
-  }
-
-  std::string
-  UServer::custom_banner_get() const
-  {
-    return "";
   }
 
   std::string

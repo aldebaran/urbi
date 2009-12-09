@@ -19,6 +19,16 @@ do (Lobby)
     onDisconnect!(this)
   };
 
+  function resendBanner()
+  {
+    System
+      .PackageInfo
+      .components["Urbi SDK"]
+      .banner
+      .split("\n")
+      .each(closure (s) { send(s, "start") })
+  };
+
   /* Implemented in C++ for better performances.
   function send
   {
