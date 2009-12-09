@@ -3,8 +3,8 @@ dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
 dist_urbi_DATA += share/urbi/tutorial-content.u
 
 nodist_urbi_DATA =				\
-  $(package_info_u)				\
   share/urbi/platform.u
+BUILT_SOURCES += $(nodist_urbi_DATA)
 
 
 ## ------------ ##
@@ -15,7 +15,7 @@ REVISION = $(build_aux_dir)/git-version-gen
 REVISIONFLAGS = --urbi --directory
 REVISION_RUN = $(REVISION) $(REVISIONFLAGS) --cache=$< --output=$@
 
-BUILT_SOURCES +=				\
+nodist_urbi_DATA +=				\
   share/urbi/package-info-urbi-sdk.u		\
   share/urbi/package-info-urbi-sdk-remote.u	\
   share/urbi/package-info-libport.u
