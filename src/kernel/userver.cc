@@ -322,6 +322,10 @@ namespace kernel
       work();
     mode_ = mode_user;
     object::Object::proto->slot_remove(SYMBOL(loaded));
+
+    // urbiscript is up and running.  Send local.u and the banner to
+    // the ghostconnection too.
+    ghost_->initialize();
   }
 
 

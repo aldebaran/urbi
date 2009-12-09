@@ -91,11 +91,13 @@ namespace kernel
     UConnection(UServer& userver, size_t packetSize);
     virtual ~UConnection();
 
-    //! Initializes the connection, by sending the standard header for URBI
-    /*! This function must be called once the connection is operational and
-      able to send data. It is a requirement for URBI compliance to send
-      the header at start, so this function must be called.
-    */
+    /// \brief Set up urbiscript support.
+    ///
+    /// This function must be called once the connection is
+    /// operational, able to send data and to process urbiscript
+    /// programs. It is a requirement for Urbi compliance to send the
+    /// header at start, so this function must be called.  It is
+    /// expected to load "local.u".
     void initialize();
 
     /*-----------------------.

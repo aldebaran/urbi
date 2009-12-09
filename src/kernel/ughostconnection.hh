@@ -17,28 +17,30 @@
 
 namespace kernel
 {
-  /// UGhostConnection is a invisible connection used to read URBI.INI
-  /*! This implentation of UConnection is trivial and does nothing.
-   */
+  /// UGhostConnection is a invisible connection used to boot
+  /// urbiscript (reading urbi/urbi.u, global.u).
 
   class UGhostConnection : public UConnection
   {
   public:
-    //! UGhostConnection constructor.
+    /// UGhostConnection constructor.
+    /// Does not call UConnection::initialize, must be performed
+    /// once urbiscript is ready.
     UGhostConnection(UServer& s, bool interactive = false);
+
     //! UGhostConnection destructor.
     virtual ~UGhostConnection();
 
     //! Close the connection
-    /*! This function does nothing. The ghost connection cannot be closed.
-     */
+    /// Does nothing. The ghost connection cannot be closed.
     virtual void close();
 
   protected:
-    // Bounce to UServer::display.
+    /// Bounce to UServer::display.
     virtual size_t effective_send(const char* buffer, size_t length);
+
   public:
-    //! Send a "\n" through the connection
+    /// Send a "\n" through the connection.
     virtual void endline();
   };
 

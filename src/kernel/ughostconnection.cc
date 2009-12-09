@@ -31,7 +31,6 @@ namespace kernel
     : UConnection(s, PACKETSIZE)
   {
     interactive_p(interactive);
-    initialize();
     server_.connection_add(this);
   }
 
