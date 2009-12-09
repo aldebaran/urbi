@@ -19,13 +19,17 @@ do (Lobby)
     onDisconnect!(this)
   };
 
+  // Ready to go.  The "Urbi is up..." string is special and expected
+  // by uconsole-check as the signal that we have loaded urbi.u.  It
+  // ignores messages before this one, this one included.
   function resendBanner()
   {
-    System
+    (System
       .PackageInfo
       .components["Urbi SDK"]
       .banner
       .split("\n")
+      << "Urbi is up and running.")
       .each(closure (s) { send(s, "start") })
   };
 
