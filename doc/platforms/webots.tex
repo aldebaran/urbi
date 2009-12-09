@@ -172,64 +172,50 @@ If you don't provide a valid license file to the \urbi controller, it
 will be launched in \dfn{evaluation mode}. The only difference with
 the normal version is that the controller will exit after five
 minutes, thus letting you test all the features of the registered
-version during this amount of time. When you launch \webots and \urbi
-without a valid license file you can see a message in \webots log that
-tells you that the license is invalid or missing:
+version during this amount of time. In evaluation mode, the \urbi
+controller will display the following message in the \webots console:
 
-\begin{center}
-  \includegraphics{img/webots/no-license-webots-log-msg}
-\end{center}
+\begin{lstlisting}
+**************************************************
+* URBI: Invalid or missing license.
+* Urbi for Webots will qui after five minutes.
+**************************************************
+\end{lstlisting}
 
-In order to run Urbi for \webots unlimitedly you must have a licence
-file.  The Urbi for \webots licensing system is based on the \webots
-licensing system.  In \webots there are two licensing system available:
-\begin{itemize}
-\item a license file \file{webots.key};
-\item an USB dongle.
-\end{itemize}
+In order to run \uwebots unlimitedly you must provide it with a
+licence file, as described in the following section.
 
+\subsubsection{Setting up a license}
 \newcommand{\webotskey}{\file{webots.key}\xspace}
+\newcommand{\urbikey}{\file{urbi.key}\xspace}
+\newcommand{\webotskeydir}{\file{webots/ressources/}\xspace}
+\newcommand{\contactemail}{\email{contact@gostai.com}\xspace}
 
-\subsubsection{Urbi licensing with a \webotskey \webots license}
+Providing a valid \uwebots license will enable you to run \urbi
+controllers for an unlimited amount of time. The license is a file
+named \urbikey. You simply need copy it in the
+\webotskeydir directory of your \webots installation.
 
-To get an \urbi license using this type of licensing, please send us a
-copy of your \webotskey license, we will generate the \urbi
-license using this file.
+The \uwebots licensing system is based on the \webots licensing
+system: your \uwebots key is attached to your \webots key. The
+procedure will depend on whether your \webots license is based on a
+\webotskey file or an USB dongle.
 
-Once you have your \file{urbi.key} file, put the \webotskey
-file in the folder \file{webots/ressources/} (warning: it is mandatory
-to have a copy of the \webotskey in this folder, if you don't have it,
-\urbi won't find the \webotskey file and you will get a
-licensing error message) and place the \file{urbi.key} file in the
-same folder as the urbi controller. By default in
-\file{webots/projects/default/controllers/urbi/}.
+If you have any problem setting up your \uwebots license, feel free to
+contact us at \contactemail.
 
-\subsubsection{Urbi licensing with USB dongle \webots license}
+\paragraph{Urbi licensing with a \webotskey \webots license:}
 
-To obtain an Urbi license if you use this type of licensing, please
-send us your \webots USB dongle number (available in the help/about
-\webots menu). We will then generate an Urbi license using this number.
+If you use a file-based \webots license, please send us your
+\webotskey on \contactemail so as we can generate your \urbikey. In
+this case, you need to put your \webotskey together with your \urbikey
+in the \webotskeydir directory.
 
-Install your \file{urbi.key} file in the same folder as the Urbi
-controller.  By default in
-\file{webots/projects/default/controllers/urbi/}.
+\paragraph{Urbi licensing with an USB dongle \webots license:}
 
-\subsubsection{License problem}
-
-If you have a valid license but still get the licensing error message,
-check that you have followed correctly the setup instructions. Note
-that you can specify the location of the \file{urbi.key} license to
-the Urbi controller, in the \file{.wbt} files, within the
-\code{controllerArgs} field. Just add \option{-l} and the absolute
-path of your license file to the field line. For instance (with a
-license file urbi.key located in \file{C:/mylicensefolder/})
-
-\begin{shell}
-controllerArgs "-f -l C:/mylicensefolder/urbi.key  -p 54000 32"
-\end{shell}
-
-Contact Gostai if you still have some problems with the license, and
-we will resolve the problem with you.
+If you use an USB dongle based license, please send us your dongle
+number available in the help/about \webots menu to \contactemail so as
+we can generate your \urbikey.
 
 \section{Quick Start}
 
