@@ -60,7 +60,7 @@ srcdir=$2
 builddir=$3
 DESTDIR=$4
 updir=$5
-ARCH=$6       # x86|ppc
+ARCH=$6       # ARM|x86|ppc
 OS=$7         # linux|windows|macos
 COMP=$8       # ex. gcc4
 MODE=$9       # [release|debug]_[static|dynamic]
@@ -196,10 +196,15 @@ case $OS in
     ;;
 esac
 
-# Check that we don't depend on boost.
+# Check that we don't depend on boost.  Or rather, check that we don't
+# have invalid locations.
 case $OS in
+  (linux)
+    $(dirname $0)/check-lib-deps  \
+      $($FIND . -type f '(' -name '*.so.*' -o -name '*.so')
+    ;;
   (macos)
-    for i in $($FIND . -type f '(' -name '*.dylib')
+    for i in $($FIND . -type f '(' -name '*.dylib' ')')
     do
       if otool -L $i | grep -q -i boost; then
         complain "$i depends on Boost" $(otool -L $i | grep -q -i boost)

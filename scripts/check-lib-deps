@@ -1,0 +1,37 @@
+#! /usr/bin/perl -w
+
+use IO::File;
+
+my $status = 0;
+# Accepted resolved libraries.
+my %loc;
+
+sub check($)
+{
+  my ($lib) = @_;
+  my $ldd = new IO::File("ldd $lib|")
+      or die "cannot read ldd $lib: $!";
+  while ($_ = $ldd->getline)
+  {
+    if (/^\t(.*?)\s+=>\s(.*?)\s\(.*\)$/)
+    {
+      my ($dep, $loc) = ($1, $2);
+      if ($loc)
+      {
+        if ($loc =~ m(^(/lib|/usr/lib/gcc)))
+        {
+          $loc{$loc} = 1;
+        }
+        else
+        {
+          print STDERR "$lib: depends on $loc\n";
+          $status = 1;
+        }
+      }
+    }
+  }
+}
+
+map { check($_) } @ARGV;
+print STDERR "Accepted dependencies:\n", map { "  $_\n" } sort keys %loc;
+exit($status);
