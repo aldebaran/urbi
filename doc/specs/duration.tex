@@ -19,12 +19,12 @@ Duration.new(1h);
 [00023593] Duration(3600s)
 \end{urbiscript}
 
-Durations cannot be negative.
+Durations can be negative.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiscript}[firstnumber=last]
 Duration.new(-1);
-[00000006:error] !!! new: expected non-negative integer, got -1
-\end{urbiassert}
+[00000001] Duration(-1s)
+\end{urbiscript}
 
 
 \subsection{Slots}

@@ -11,7 +11,7 @@ namespace urbi
     | Construction.  |
     `---------------*/
 
-    Duration::Duration(time_t seconds)
+    Duration::Duration(value_type seconds)
       : Float(seconds)
     {
       proto_add(proto);
@@ -27,7 +27,7 @@ namespace urbi
     Duration::init(const objects_type& args)
     {
       check_arg_count(args.size(), 0, 1);
-      value_get() = args.empty() ? 0 : from_urbi<unsigned>(args[0]);
+      value_get() = args.empty() ? 0 : from_urbi<value_type>(args[0]);
     }
 
     /*-----------.

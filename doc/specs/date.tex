@@ -35,16 +35,16 @@ Date.new(1234567890);
   \var{that} after \lstinline|this|.
 \begin{urbiassert}[firstnumber=last]
 Date.new(1000) + Duration.new(100) == Date.new(1100);
+Date.new(1000) + Duration.new(-100) == Date.new(900);
 \end{urbiassert}
 
 \item \lstinline|-(\var{that})|\\
   Compute the difference between two dates.  Return a
-  \refObject{Duration}.  Negative durations are invalid.
+  \refObject{Duration}.
 \begin{urbiassert}[firstnumber=last]
 Date.new(100) - Date.new(0) == Duration.new(100);
+Date.new(0) - Date.new(100) == Duration.new(-100);
 \end{urbiassert}
-%Date.new(0) - Date.new(100);
-%[00000006:error] !!! new: expected non-negative integer, got -100
 
 \item \lstinline|==(\var{that})|\\
   Equality test.

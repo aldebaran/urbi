@@ -24,7 +24,7 @@ namespace urbi
     `---------------*/
 
     public:
-      Duration(time_t seconds = 0);
+      Duration(value_type seconds = 0);
       Duration(rDuration model);
       void init(const objects_type& args);
 
