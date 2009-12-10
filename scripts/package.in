@@ -187,7 +187,7 @@ case $OS in
         xargs strip 2>/dev/null || true
       $FIND . -type f '(' -name '*.so.*'        \
                        -o -name '*.so'          \
-                       -o -name '*.dll'         \
+                       -o -name '*.dylib'       \
                        -o -name '*.a'           \
                        ')' |
         xargs strip || true
@@ -199,7 +199,7 @@ esac
 # Check that we don't depend on boost.
 case $OS in
   (macos)
-    for i in $($FIND . -type f '(' -name '*.dll')
+    for i in $($FIND . -type f '(' -name '*.dylib')
     do
       if otool -L $i | grep -q -i boost; then
         complain "$i depends on Boost" $(otool -L $i | grep -q -i boost)
