@@ -12,27 +12,10 @@
 
 namespace kernel
 {
-  inline size_t
-  UQueue::size() const
-  {
-    return next_character_ - first_character_;
-  }
-
-  inline bool UQueue::empty() const
-  {
-    return !size();
-  }
-
   inline void
-  UQueue::push(const char *s)
+  UQueue::push(const std::string& s)
   {
-    push(s, strlen(s));
-  }
-
-  inline void
-  UQueue::clear()
-  {
-    first_character_ = next_character_ = buffer_;
+    push(s.c_str(), s.size());
   }
 }
 

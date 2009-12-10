@@ -7,26 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
-/*! \file kernel/uqueue.hh
- *******************************************************************************
-
- File: uqueue.h\n
- Definition of the UQueue class.
-
- This file is part of
- %URBI Kernel, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004-2005.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.net
-
- **************************************************************************** */
+/// \file kernel/uqueue.hh
 
 #ifndef KERNEL_UQUEUE_HH
 # define KERNEL_UQUEUE_HH
@@ -48,6 +29,9 @@ namespace kernel
     //                   needed.
     UQueue(super_type::size_type chunk_size = 1024);
 
+    using super_type::push;
+    void push(const std::string& s);
+
     //! Pops the next command in the queue.
     /*! Scan the buffer to a terminating ',' or ';' symbol by removing
      any text between:
@@ -66,11 +50,13 @@ namespace kernel
      */
     std::string pop_command();
 
-    private:
+  private:
     /// Do not try to pop a command if less than preparse_hint bytes are
     /// available.
     size_t preparse_hint;
   };
 }
+
+# include <kernel/uqueue.hxx>
 
 #endif // !KERNEL_UQUEUE_HH
