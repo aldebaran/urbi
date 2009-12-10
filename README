@@ -16,7 +16,7 @@ Outline:
     Various special environment variables.
   * test suites
     Various make checks.
-  * FAQ
+  * FAQ/Troubleshooting
     Common errors you are likely to find.
 
 * requirements
@@ -62,7 +62,9 @@ correctly.
 package: flex
 
 ** G++ 4.0 or later
-GCC 4.2 or better is a better option.
+GCC 4.2 or better is a better option.  Beware that we have a problem
+with GCC-4.4 which rejects some Bison generated code.  See the FAQ.
+package: g++-4.2
 
 ** Git 1.6 or later
 Beware that older version behave poorly with submodules.
@@ -103,6 +105,10 @@ This is not a requirement, but it's better to have it.  Used by the
 test suite.  Unfortunately the name of the package varies between
 distros.  It provides "rst2html".
 MacPorts: py26-docutils
+
+** Texinfo
+Needed to compile Bison.
+package: texinfo
 
 ** yaml for Python
 The AST is generated from a description written in YAML.  Our (Python)
@@ -341,7 +347,22 @@ To check remote uobjects tests:
 The snippets of code displayed in the documentation are transformed
 into test files.
 
-* FAQ
+* FAQ/Troubleshouting
+
+** error: `<anonymous>' is used uninitialized in this function
+If you encounter this error:
+
+  cc1plus: warnings being treated as errors
+  parser/ugrammar.hh: In member function `void yy::parser::yypush_(const char*, int, yy::parser::symbol_type&)':
+  parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized in this function
+  parser/ugrammar.cc:1305: note: `<anonymous>' was declared here
+  parser/ugrammar.hh: In member function `void yy::parser::yypush_(const char*, yy::parser::stack_symbol_type&)':
+  parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized in this function
+  parser/ugrammar.cc:1475: note: `<anonymous>' was declared here
+
+then you found a problem that we don't know how to resolved currently.
+Downgrade from GCC-4.4 to GCC-4.3.
+
 ** AM_LANGINFO_CODESET
 
 If at bootstrap you have something like:
