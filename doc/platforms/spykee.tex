@@ -25,7 +25,7 @@ the Spykee yourself while update is in progress or you migth render it useless.
 With the Urbi firmware, the Spykee should continue to work as usual: you can
 still control it using the Spykee interface. But you can now also control it
 with Urbi. Please read the Urbi tutorial if you do not know how to communicate
-with an urb server.
+with an urbi server.
 
 \section{Device list}
 
@@ -75,3 +75,42 @@ The following non-standard functions are also present:
     Remaining energy in the battery, from 0 to 100. The value may be inaccurate
     or outside the range while the Spykee is charging.
 \end{itemize}
+
+\section{Dynamically loaded modules}
+At startuup, the Spykee tries to connect to the spykee.gostai.com website to
+fetch a list of additional features available for download.
+It sets up the system in a way that the first attempt to use one of those
+additional features will download and load the required objects.
+
+The location where the modules are fetched can be changed by setting the
+\lstinline|loader_host| and \lstinline|loader_dir| config values (using
+\lstinline|Spykee.setConfigValue()|).
+Default values are \em{spykee.gostai.com} and \em{/modules/}.
+
+The following modules are currently available:
+
+\subsection{Clapper}
+
+The Clapper module detects and counts short and loud sounds, such as the one
+made by clapping one's hands. It can be instanciated by typing:
+
+\begin{urbiunchecked}
+var Global.clap = Clapper.new("micro.val", 0.2, 200, 800, 4000);
+\end{urbiunchecked}
+
+The second parameter is the volume threshold above which a clap is detected.
+The third and fourth parameters are the minimum and maximum delay between claps,
+in milliseconds. The last argument is the maximum duration of a sound sequence.
+
+Each time a clap sequence ends, the \lstinline|val| slot of the object is
+set to the number of claps heard, then reset to 0.
+Additionnaly, if \lstinline|emitEvent| is true, the event \lstinline|sequence|
+is emited with one argument: the number of claps heard.
+
+\begin{urbiunchecked}
+clap.emitEvent = 1;
+// Play sound sample number 3 when two successive claps are heard.
+tag:at(clap.sequence?(2)) speaker.playSound(3);
+// Stop the previous behavior.
+tag.stop;
+\end{urbiunchecked}
