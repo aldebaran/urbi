@@ -201,10 +201,12 @@ esac
 case $OS in
   (linux)
     $(dirname $0)/check-lib-deps  \
-      $($FIND . -type f '(' -name '*.so.*' -o -name '*.so')
+      $($FIND . -type f                \
+                -a '(' -name '*.so.*' -o -name '*.so' ')')
     ;;
   (macos)
-    for i in $($FIND . -type f '(' -name '*.dylib' ')')
+    for i in $($FIND . -type f          \
+                       -a '(' -name '*.dylib' ')')
     do
       if otool -L $i | grep -q -i boost; then
         complain "$i depends on Boost" $(otool -L $i | grep -q -i boost)
