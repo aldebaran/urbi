@@ -17,7 +17,7 @@ namespace urbi
       proto_add(proto ? proto : Object::proto);
     }
 
-    Date::Date(time_t t)
+    Date::Date(value_type t)
       : time_(t)
     {
       proto_add(proto ? proto : Object::proto);
@@ -104,13 +104,13 @@ namespace urbi
     rDate
     Date::now ()
     {
-      return new Date (time(NULL));
+      return new Date(time(0));
     }
 
     rDate
     Date::epoch ()
     {
-      return new Date (0);
+      return new Date(0);
     }
 
     /*-----------------.

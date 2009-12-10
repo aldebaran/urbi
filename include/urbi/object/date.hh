@@ -30,7 +30,7 @@ namespace urbi
       typedef time_t value_type;
       Date();
       Date(rDate model);
-      Date(time_t time);
+      Date(value_type time);
       void init(const objects_type& args);
 
     /*--------------.
@@ -71,7 +71,7 @@ namespace urbi
     `----------*/
 
     private:
-      time_t time_;
+      value_type time_;
 
       URBI_CXX_OBJECT_(Date);
     };
