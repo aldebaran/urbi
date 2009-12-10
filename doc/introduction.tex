@@ -42,17 +42,28 @@ pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
 
 \section*{Outline}
 
-\newenvironment{partDescription}[1]
+This multi-part document provides a complete guide to Urbi.
+
+\newenvironment{partDescription}[2]
 {%
   \subsection*{\autoref{#1} --- \nameref{#1}}%
+  #2
   \begin{description}%
     \let\itemOrig\item%
-    \renewcommand{\item}[1][]{\itemOrig[\autoref{##1} --- \nameref{##1}]~\\}%
+    \renewcommand{\item}[1][]{\itemOrig[~~\autoref{##1} --- \nameref{##1}]~\\}%
   }{%
   \end{description}%
 }
 
 \begin{partDescription}{part:tut}
+  {%
+    This 50-page tutorial will guide the new comer into the Urbi
+    world.  It goes from the installation steps up to concurrent and
+    event-based programming.
+
+    No specific knowledge is expected from the reader.
+    %
+  }
 \item[sec:tut:started]
   Quick-install guide.
 \item[sec:tut:first]
@@ -74,26 +85,53 @@ pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
 \end{partDescription}
 
 \begin{partDescription}{part:uobject}
+  {
+    %
+    The core of Urbi is its middleware architecture, the UObjects.
+    UObjects are components written in fast, static languages such as
+    \Cxx.  Urbi provides means to coordinate them.  This part explains
+    how to create new UObjects and how to wrap existing code into
+    UObjects.  It also shows how \us exploits these UObjects.
+    %
+  }
 \item[sec:uob:quick] This chapter, self-contained, shows the potential
   of \urbi used as a middleware.
 \item[sec:uob:api]
-  Buildding simple UObjects.
+  Building simple UObjects.
 \item[sec:uob:uses]
   Interfacing a servomotor device as an example on how to use the
   UObject architecture as a middleware.
 \end{partDescription}
 
 \begin{partDescription}{part:install}
+  {
+    %
+    This part contains detailed instructions on the installation
+    procedure.
+    %
+  }
 \item[sec:installation]
   Complete instructions on how to install \urbi SDK.
 \end{partDescription}
 
 \begin{partDescription}{part:guide}
+  {
+    %
+    This part contains guides to some specific aspects of \urbi SDK.
+    %
+  }
 \item[sec:faq]
   Some answers to common questions.
 \end{partDescription}
 
 \begin{partDescription}{part:specs}
+  {
+    %
+    This part is the reference manual about \urbi SDK.  It describes
+    all the components (tools, \us, \us standard library) in a rather
+    terse way.
+    %
+  }
 \item[sec:tools]
   Presentation and usage of the different tools available with the
   \urbi framework related to \us, such as the \urbi server, the
@@ -116,6 +154,13 @@ pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
 \end{partDescription}
 
 \begin{partDescription}{part:platforms}
+  {
+    %
+    Some of the supported platforms with specific features are
+    described in this part.  Environments not described in this part
+    are covered by stand-alone documentations.
+    %
+  }
 \item[sec:nao]
   Programming Aldebaran's Nao using \urbi.
 
@@ -151,3 +196,6 @@ pages, \href{\docurl/urbi-sdk.html}{urbi-sdk.html}.
 %%% mode: latex
 %%% TeX-master: "urbi-sdk"
 %%% End:
+
+% LocalWords:  monomethods Gostai PDF urbi sdk pdf html multi uobject UObjects
+% LocalWords:  middleware UObject faq lang stdlib nao webots Cyberbotics Webots
