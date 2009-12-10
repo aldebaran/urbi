@@ -64,6 +64,21 @@ namespace urbi
       return new Duration(time_ - rhs->time_);
     }
 
+    Date&
+    Date::operator += (rDuration rhs)
+    {
+      time_ += rhs->seconds();
+      return *this;
+    }
+
+    rDate
+    Date::operator + (rDuration rhs) const
+    {
+      rDate res = new Date(time_);
+      *res += rhs;
+      return res;
+    }
+
     /*--------------.
     | Conversions.  |
     `--------------*/
@@ -108,6 +123,7 @@ namespace urbi
       bind(SYMBOL(EQ_EQ), &Date::operator ==);
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
       bind(SYMBOL(MINUS), &Date::operator -);
+      bind(SYMBOL(PLUS), &Date::operator +);
       bind(SYMBOL(asString), &Date::as_string);
       bind(SYMBOL(epoch), &Date::epoch);
       bind(SYMBOL(init), &Date::init);

@@ -47,6 +47,7 @@ load("urbi/updatehook-stack.u");
 
 load("urbi/code.u");
 load("urbi/date.u");
+load("urbi/duration.u");
 load("urbi/float.u");
 load("urbi/trajectory-generator.u");
 load("urbi/path.u");

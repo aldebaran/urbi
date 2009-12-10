@@ -48,6 +48,8 @@ namespace urbi
 
     public:
       rDuration operator - (rDate rhs) const;
+      Date& operator += (rDuration rhs);
+      rDate operator + (rDuration rhs) const;
 
     /*--------------.
     | Conversions.  |

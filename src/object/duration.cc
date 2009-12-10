@@ -23,6 +23,13 @@ namespace urbi
       proto_add(proto);
     }
 
+    void
+    Duration::init(const objects_type& args)
+    {
+      check_arg_count(args.size(), 0, 1);
+      value_get() = args.empty() ? 0 : from_urbi<unsigned>(args[0]);
+    }
+
     /*-----------.
     | Printing.  |
     `-----------*/
@@ -56,6 +63,7 @@ namespace urbi
 
       bind(SYMBOL(asPrintable), &Duration::asPrintable);
       bind(SYMBOL(asString), &Duration::asString);
+      bind(SYMBOL(init), &Duration::init);
       bind(SYMBOL(seconds), &Duration::seconds);
     }
   }

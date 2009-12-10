@@ -1,0 +1,56 @@
+\section{Duration}
+
+This class records differences between \refDate[s]{Date}.  It is
+experimental, and very likely to be changed in the future.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Float}
+\end{itemize}
+
+\subsection{Construction}
+
+Without argument, a nul duration.
+
+\begin{urbiscript}
+Duration.new;
+[00000001] Duration(0s)
+Duration.new(1h);
+[00023593] Duration(3600s)
+\end{urbiscript}
+
+Durations cannot be negative.
+
+\begin{urbiassert}[firstnumber=last]
+Duration.new(-1);
+[00000006:error] !!! new: expected non-negative integer, got -1
+\end{urbiassert}
+
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|asFloat|\\
+  Return the duration as a \refObject{Float}.
+\begin{urbiassert}[firstnumber=last]
+Duration.new(1000).asFloat == 1000;
+\end{urbiassert}
+
+\item \lstinline|asString|\\
+  Return the duration as a \refObject{String}.
+\begin{urbiassert}[firstnumber=last]
+Duration.new(1000).asString == "1000s";
+\end{urbiassert}
+
+\item \lstinline|seconds|\\
+  Return the duration as a \refObject{Float}.
+\begin{urbiassert}[firstnumber=last]
+Duration.new(1000).seconds == 1000;
+\end{urbiassert}
+\end{itemize}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
