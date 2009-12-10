@@ -18,7 +18,9 @@ sub check($)
       my ($dep, $loc) = ($1, $2);
       if ($loc)
       {
-        if ($loc =~ m(^(/lib|/usr/lib/gcc)))
+        if ($loc =~ m(^(/lib
+                       |/usr/lib/gcc
+                       |/usr/lib/libstdc\+\+))x)
         {
           $loc{$loc} = 1;
         }
