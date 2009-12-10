@@ -47,8 +47,12 @@ urbi::UValue uvalue_cast(const object::rObject& o)
   urbi::UValue res;
   if (object::rUValue bv = o->as<object::UValue>())
     return bv->value_get();
-  if (object::rFloat f = o->as<object::Float>())
+  else if (object::rFloat f = o->as<object::Float>())
     res = f->value_get();
+  else if (o == object::true_class)
+    res = 1;
+  else if (o == object::false_class)
+    res = 0;
   else if (object::rString s = o->as<object::String>())
     res = s->value_get();
   else if (object::rList s = o->as<object::List>())
