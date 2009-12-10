@@ -197,7 +197,7 @@ case $OS in
 esac
 
 # Check that we don't depend on boost.
-case $OS
+case $OS in
   (macos)
     for i in $($FIND . -type f '(' -name '*.dll')
     do
