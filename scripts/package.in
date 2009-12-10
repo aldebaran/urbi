@@ -200,7 +200,7 @@ esac
 # have invalid locations.
 case $OS in
   (linux)
-    $(dirname $0)/check-lib-deps  \
+    $srcdir/scripts/check-lib-deps  \
       $($FIND . -type f                \
                 -a '(' -name '*.so.*' -o -name '*.so' ')')
     ;;
