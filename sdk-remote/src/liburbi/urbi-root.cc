@@ -22,6 +22,15 @@
 #include <urbi/urbi-root.hh>
 #include <libport/config.h>
 
+#if defined WIN32
+# define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Windows
+#elif defined __APPLE__
+# define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Apple
+#else
+# define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Linux
+#endif
+
+
 /*--------.
 | Helpers |
 `--------*/
@@ -74,20 +83,14 @@ debug()
 | File constants.  |
 `-----------------*/
 
-#ifdef WIN32
-static const std::string libext = ".dll";
-static const std::string separator = "\\";
-static const std::string libdir = "bin";
-#else
-# ifdef __APPLE__
-static const std::string libext = ".dylib";
-# else
-static const std::string libext = ".so";
-# endif
-static const std::string separator = "/";
-static const std::string libdir = "lib";
-#endif
-static const std::string libuobjects_dir = std::string("/gostai/core/") + LIBPORT_URBI_HOST;
+static const std::string libext =
+                           APPLE_LINUX_WINDOWS(".dylib", ".so", ".dll");
+static const std::string separator =
+                           APPLE_LINUX_WINDOWS("/", "/", "\\");
+static const std::string libdir =
+                           APPLE_LINUX_WINDOWS("lib", "lib", "bin");
+static const std::string libuobjects_dir =
+                           std::string("/gostai/core/") + LIBPORT_URBI_HOST;
 
 /*-------------------------------------.
 | Crapy dynamic portability routines.  |
