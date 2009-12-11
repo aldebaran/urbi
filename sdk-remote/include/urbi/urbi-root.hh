@@ -82,7 +82,7 @@ private:
   RTLD_HANDLE handle_libjpeg_;
   RTLD_HANDLE handle_libport_;
   RTLD_HANDLE handle_libsched_;
-  RTLD_HANDLE handle_libser_;
+  RTLD_HANDLE handle_libserialize_;
   RTLD_HANDLE handle_liburbi_;
   RTLD_HANDLE handle_libuobject_;
 };

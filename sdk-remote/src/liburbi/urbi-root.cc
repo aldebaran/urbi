@@ -264,7 +264,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
     handle_libjpeg_        = library_load("jpeg",        "JPEG");
     handle_libport_        = library_load("port",        "PORT");
     handle_libsched_       = library_load("sched",       "SCHED");
-    handle_libser_         = library_load("serialize",   "SER");
+    handle_libserialize_   = library_load("serialize",   "SERIALIZE");
     handle_liburbi_        = library_load("urbi",        "URBI");
   }
 }
