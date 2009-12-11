@@ -44,9 +44,9 @@ xgetenv(const std::string& var)
 // #endif
 // }
 
-/*----------.
-| Reporting |
-`----------*/
+/*------------.
+| Reporting.  |
+`------------*/
 
 static bool
 debug()
@@ -58,23 +58,21 @@ debug()
 # define URBI_ROOT_ECHO(S)                      \
   std::cerr << S << std::endl                   \
 
-# define URBI_ROOT_DEBUG(Self, S)                        \
-  do                                                    \
-  {                                                     \
+# define URBI_ROOT_DEBUG(Self, S)                       \
+  do {                                                  \
     if (debug())                                        \
       URBI_ROOT_ECHO(Self << ": " << S);                \
   } while (0)                                           \
 
 # define URBI_ROOT_FATAL(Self, N, S)            \
-  do                                            \
-  {                                             \
+  do {                                          \
     URBI_ROOT_ECHO(Self << ": " << S);          \
     exit(N);                                    \
   } while (0)
 
-/*---------------.
-| File constants |
-`---------------*/
+/*-----------------.
+| File constants.  |
+`-----------------*/
 
 #ifdef WIN32
 static const std::string libext = ".dll";
@@ -168,7 +166,8 @@ xdlopen(const std::string& path, int flags, const std::string& self)
   URBI_ROOT_DEBUG(self, "loading library: " << path);
   RTLD_HANDLE res = dlopen(path.c_str(), flags);
   if (!res)
-    URBI_ROOT_FATAL(self, 1, "cannot open library: " << path << ": " << dlerror());
+    URBI_ROOT_FATAL(self, 1,
+                    "cannot open library: " << path << ": " << dlerror());
   return res;
 }
 
@@ -189,7 +188,8 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   std::string uroot = xgetenv("URBI_ROOT");
   if (!uroot.empty())
   {
-    URBI_ROOT_DEBUG(program_, "URBI_ROOT is set, forcing root directory: " << root_);
+    URBI_ROOT_DEBUG(program_,
+                    "URBI_ROOT is set, forcing root directory: " << root_);
     root_ = uroot;
   }
   else
@@ -220,7 +220,8 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 #endif
     if (pos == std::string::npos)
     {
-      URBI_ROOT_DEBUG(program_, "invoked from the path, looking for ourselves in PATH");
+      URBI_ROOT_DEBUG(program_,
+                      "invoked from the path, looking for ourselves in PATH");
       strings_type path = split(xgetenv("PATH"));
       foreach (const std::string& dir, path)
       {
@@ -239,7 +240,9 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
     else
     {
       root_ = argv0.substr(0, pos) + separator + "..";
-      URBI_ROOT_DEBUG(program_, "invoked with a path, setting root to parent directory: " << root_);
+      URBI_ROOT_DEBUG(program_,
+                      "invoked with a path, setting root to parent directory: "
+                      << root_);
     }
   }
 
@@ -301,7 +304,8 @@ void
 UrbiRoot::load_plugin()
 {
   URBI_ROOT_DEBUG(program_, "loading plugin UObject implementation");
-  handle_libuobject_ = xdlopen(root_ + libuobjects_dir + separator + "engine/libuobject" + libext,
+  handle_libuobject_ = xdlopen(root_ + libuobjects_dir + separator
+                               + "engine/libuobject" + libext,
                                RTLD_NOW | RTLD_GLOBAL, program_);
 }
 
@@ -310,7 +314,8 @@ void
 UrbiRoot::load_remote()
 {
   URBI_ROOT_DEBUG(program_, "loading remote UObject implementation");
-  handle_libuobject_ = xdlopen(root_ + libuobjects_dir + separator + "remote/libuobject" + libext,
+  handle_libuobject_ = xdlopen(root_ + libuobjects_dir + separator
+                               + "remote/libuobject" + libext,
                                RTLD_NOW | RTLD_GLOBAL, program_);
 }
 
@@ -342,17 +347,21 @@ UrbiRoot::urbi_launch(int argc, char** argv)
   return urbi_launch(argc, const_cast<const char**>(argv));
 }
 
-typedef int(*urbi_main_type)(const std::vector<std::string>& args, UrbiRoot& root,
+typedef int(*urbi_main_type)(const std::vector<std::string>& args,
+                             UrbiRoot& root,
                              bool block, bool errors);
 int
-UrbiRoot::urbi_main(const std::vector<std::string>& args, bool block, bool errors)
+UrbiRoot::urbi_main(const std::vector<std::string>& args,
+                    bool block, bool errors)
 {
   URBI_ROOT_DEBUG(program_, "loading symbol urbi_main_args from libuobject");
   // Reinterpret-cast fails with gcc3 arm
-  urbi_main_type f = (urbi_main_type)(dlsym(handle_libuobject_, "urbi_main_args"));
+  urbi_main_type f =
+    (urbi_main_type)(dlsym(handle_libuobject_, "urbi_main_args"));
 
   if (!f)
-    URBI_ROOT_FATAL(program_, 2, "cannot locate urbi_launch symbol: " << dlerror());
+    URBI_ROOT_FATAL(program_, 2,
+                    "cannot locate urbi_launch symbol: " << dlerror());
 
   return f(args, *this, block, errors);
 }
