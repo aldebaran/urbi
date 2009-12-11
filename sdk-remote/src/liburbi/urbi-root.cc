@@ -258,6 +258,9 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   // URBI_ROOT_DEBUG("append to URBI_PATH: " << urbi_path);
   if (!static_build)
   {
+#if defined __APPLE__
+    xdlopen("/usr/lib/libSystem.B.dylib", RTLD_NOW | RTLD_GLOBAL, program_);
+#endif
     handle_libjpeg_        = library_load("jpeg",        "JPEG");
     handle_libport_        = library_load("port",        "PORT");
     handle_libsched_       = library_load("sched",       "SCHED");
