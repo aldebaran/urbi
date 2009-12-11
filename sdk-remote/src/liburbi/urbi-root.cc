@@ -174,9 +174,25 @@ xdlopen(const std::string& path, int flags, const std::string& self)
   return res;
 }
 
-/*---------.
-| UrbiRoot |
-`---------*/
+static
+std::string
+resolve_symlinks(const std::string& logname, const std::string& s)
+{
+#if defined WIN32
+  return s;
+#else
+  char path[BUFSIZ];
+  strncpy(path, s.c_str(), BUFSIZ);
+  path[BUFSIZ - 1] = 0;
+  while (readlink(path, path, BUFSIZ) != -1)
+    URBI_ROOT_DEBUG(logname, "unrolling symbolic link: " << path);
+  return path;
+#endif
+}
+
+/*-----------.
+| UrbiRoot.  |
+`-----------*/
 
 UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   : program_(program)
@@ -199,22 +215,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   {
     URBI_ROOT_DEBUG(program_, "guessing Urbi root: invoked as: " << program_);
     // Handle the chained symlinks case.
-#ifndef WIN32
-    char path[BUFSIZ];
-    strncpy(path, program.c_str(), BUFSIZ);
-    path[BUFSIZ - 1] = 0;
-    ssize_t size;
-    while (true)
-    {
-      size = readlink(path, path, BUFSIZ);
-      if (size == -1)
-        break;
-      URBI_ROOT_DEBUG(program_, "unrolling symbolic link: " << path);
-    }
-    std::string argv0 = path;
-#else
-    std::string argv0 = program;
-#endif
+    std::string argv0 = resolve_symlinks(program_, program);
 
 #ifdef WIN32
     size_t pos = argv0.find_last_of("/\\");
