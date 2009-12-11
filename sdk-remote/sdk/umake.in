@@ -83,8 +83,11 @@ kernel ()
 # Clean all build directories.
 deep_clean ()
 {
-  find . -name "${builddir_pref}*" -a -type d | xargs rm -rf
-  error 0 "all build directories cleaned."
+  if find . -name "${builddir_pref}*" -a -type d | xargs rm -rf; then
+    error 0 "all build directories cleaned."
+  else
+    fatal "cannot clean build directories."
+  fi
 }
 
 
@@ -374,12 +377,15 @@ builddir="$(dirname $target)/_ubuild-$(basename $target)"
 libsdir="$(dirname $target)/.libs"
 # Clean target build directory
 if $clean; then
-  rm -rf "$builddir/" 2>/dev/null
-  stderr "build directory cleaned."
+  if rm -rf "$builddir"; then
+    stderr "build directory cleaned."
+  else
+    fatal "cannot remove $builddir"
+  fi
 fi
 
 # Create target build directory
-mkdir -p "$builddir" 2>/dev/null
+mkdir -p "$builddir"
 
 # Generate object fullnames
 obj_fullnames=
