@@ -67,7 +67,7 @@ namespace urbi
     Date&
     Date::operator += (rDuration rhs)
     {
-      time_ += rhs->seconds();
+      time_ += static_cast<value_type>(rhs->seconds());
       return *this;
     }
 
