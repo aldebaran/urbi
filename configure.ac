@@ -41,17 +41,23 @@ AC_CONFIG_FILES([doc/config.sty])
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
 # If we have our own Bison, use it.
 if test -d $srcdir/bison; then
-  here=$(pwd)
-  test -d bison || mkdir bison
-  abs_srcdir=$(cd "$srcdir" && pwd)
-  cd bison
-  # Unset everything that puts us in cross-compilation mode,
-  # as Bison is a build tool.
-  unset AR CC CFLAGS CPPFLAGS CXX CXXFLAGS host host_alias LD
-  AC_MSG_NOTICE([====== configuring bison])
-  "$abs_srcdir"/bison/configure
-  AC_MSG_NOTICE([====== bison configured])
-  cd $here
+  # Run in a subshell, since we change the environment.
+  AC_MSG_NOTICE([==================== configuring bison])
+  if
+    (
+      test -d bison || mkdir bison
+      abs_srcdir=$(cd "$srcdir" && pwd)
+      cd bison
+      # Unset everything that puts us in cross-compilation mode,
+      # as Bison is a build tool.
+      unset AR CC CFLAGS CPPFLAGS CXX CXXFLAGS host host_alias LD
+      "$abs_srcdir"/bison/configure -C
+    )
+  then
+    AC_MSG_NOTICE([==================== bison configured])
+  else
+    AC_MSG_ERROR([failed to configure bison])
+  fi
   AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
 else
   TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
