@@ -60,20 +60,21 @@ fi
 # Find the noninstalled libport libraries.
 libport_dir=$abs_top_builddir/libport
 # Careful, do not add directory containing libuobject.
-for d in $libport_dir/lib/*/.libs $abs_top_builddir/*/.libs $abs_top_builddir/src/liburbi/.libs
+for d in $libport_dir/lib/*/.libs               \
+         $abs_top_builddir/*/.libs              \
+         $abs_top_builddir/src/liburbi/.libs
 do
   export LD_LIBRARY_PATH=$d:$LD_LIBRARY_PATH
   export DYLD_LIBRARY_PATH=$d:$DYLD_LIBRARY_PATH
 done
+verbose "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+verbose "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
 
 export URBI_ROOT_LIBJPEG=$abs_top_builddir/jpeg/.libs/libjpeg
 export URBI_ROOT_LIBPORT=$libport_dir/lib/libport/.libs/libport
 export URBI_ROOT_LIBSCHED=$libport_dir/lib/sched/.libs/libsched
 export URBI_ROOT_LIBSERIALIZE=$libport_dir/lib/serialize/.libs/libserialize
 export URBI_ROOT_LIBURBI=$abs_top_builddir/src/liburbi/.libs/liburbi
-
-verbose "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
-verbose "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
 
 verbose "running $program $*"
 exec "$program" "$@"

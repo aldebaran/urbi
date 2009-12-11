@@ -251,7 +251,9 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   }
 
   if (root_.empty())
-    URBI_ROOT_FATAL(program_, 3, "Unable to find Urbi SDK installation location. Please set URBI_ROOT.");
+    URBI_ROOT_FATAL(program_, 3,
+                    "Unable to find Urbi SDK installation location. "
+                    "Please set URBI_ROOT.");
 
   // const std::string urbi_path = root_ + separator + "share" + separator + "gostai";
   // xsetenv("URBI_PATH", xgetenv("URBI_PATH") + ":" + urbi_path, true);
