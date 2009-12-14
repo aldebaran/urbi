@@ -80,7 +80,7 @@ in a hierarchical structure called the \dfn{structure tree}. The
 relationship between a component and a sub-component in the tree is a
 `part-of' inclusion relationship. From the point of view of \urbi,
 each component in the tree is an object, and it contains attributes
-pointing to its sub-components. Here is a example illustrating a part
+pointing to its sub-components. Here is an example illustrating a part
 of a hierarchy that could be found with a wheeled robot with a gripper:
 
 \begin{center}
@@ -1283,7 +1283,8 @@ hierarchy. It provides the following methods:
   \lstinline|\var{name}|. The device must inherit from at least one Interface.
 
 \item \lstinline|makeCompactNames| \\
-  This function must be called once on the root node (\code{robot}).
+  This function must be called once on the root node (\code{robot}) after the
+  hierarchy is completed.
   It automaticaly computes the short name of all the devices, and insert them as
   slots of the \code{Global} object.
 
@@ -1305,8 +1306,9 @@ can be used to set and get the \code{Component} or device associated with
 that \code{Localization}.
 
 Note that the \code{[]} function is using a mechanims to automaticaly look
-for its argument as a slot of \code{Localization}. As a consequence, you cannot
-pass a variable to this function, but only one of the constant \code{Localizer}.
+for its argument as a slot of \code{Localizer}. As a consequence, you cannot
+pass a variable to this function, but only one of the constant
+\code{Localization}.
 To pass a variable, use the \code{get(loc)} or the \code{set(loc, value)}
 function.
 
