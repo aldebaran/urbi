@@ -60,7 +60,8 @@ sub dependencies ($)
           if (/^\t(.*?)\s+=>\s(.*?)\s\(.*\)$/)
             {
               my ($dep, $loc) = ($1, $2);
-              push @res, $loc;
+              push @res, $loc
+                if $loc;
             }
         }
     }
@@ -127,7 +128,7 @@ sub check($)
         }
       else
         {
-          print STDERR "$lib: depends on $loc\n";
+          print STDERR "error: $lib depends on $loc\n";
           $status = 1;
         }
     }
