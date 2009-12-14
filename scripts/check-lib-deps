@@ -3,6 +3,7 @@
 use English;
 use File::Basename;
 use IO::File;
+use strict;
 
 # The command line arguments.
 my %argv;
@@ -92,6 +93,16 @@ sub xsystem (@)
     }
 }
 
+# Return the name in the install tree.
+# Make it absolute, and cut the $DESTDIR.
+sub installname ($)
+{
+  my ($file) = @_;
+  my $res = File::Spec->rel2abs($file);
+  $res =~ s/$destdir//;
+  $res;
+}
+
 # Relocate $LIBRARY.
 #
 # On OS X, look for all the dependencies that are inside our DESTDIR,
@@ -99,9 +110,8 @@ sub xsystem (@)
 sub relocate ($)
 {
   my ($lib) = @_;
-  my $dir = dirname $lib;
-  $dir =~ s/^$destdir//;
-  verbose 3, "relocate($lib)\n";
+  my $dir = dirname(installname($lib));
+  verbose 3, "relocate($lib) @ $dir\n";
   if ($OSNAME eq 'darwin')
     {
       for my $dep (grep {exists $argv{$_}} dependencies($lib))
@@ -118,11 +128,14 @@ sub check($)
 {
   my ($lib) = @_;
   verbose 3, "check($lib)\n";
+  my @valid =
+    $OSNAME eq 'darwin' ? qw(/usr/lib /opt/local/lib)
+    : qw(/lib /usr/lib/gcc /usr/lib/libstdc++);
+  my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
+  print STDERR "{{{", $re, "}}}\n";
   for my $loc (dependencies($lib))
     {
-      if ($loc =~ m(^(/lib
-                     |/usr/lib/gcc
-                     |/usr/lib/libstdc\+\+))x)
+      if ($loc =~ m($re))
         {
           $loc{$loc} = 1;
         }
@@ -164,11 +177,7 @@ sub getopt ()
   Getopt::Long::Configure ("bundling", "pass_through");
   GetOptions (%option)
     or exit 1;
-  for my $arg (@ARGV)
-    {
-      (my $real = $arg) =~ s/$destdir//;
-      $argv{$real} = 1;
-    };
+  map {$argv{installname($_)} = 1} @ARGV;
 }
 
 ######################################################################
