@@ -238,7 +238,7 @@ class Global.Component
     }
   };
   /// Get all devices and subdevices of type \b filter
-  function allMembers(var filter=Facet)
+  function allMembers(var filter=Interface)
   {
     var res = []|
     if (this.isA(filter))
@@ -253,9 +253,9 @@ class Global.Component
   /// Give a flattened view of all the implemented Facets in the hierarchy.
   function flatDump()
   {
-    dumpByFacet(allMembers)
+    dumpByInteface(allMembers)
   };
-  function dumpByFacet(what, indent=0)
+  function dumpByInteface(what, indent=0)
   {
     var bf = Dictionary.new|
     for|(var m: what)
@@ -278,10 +278,10 @@ class Global.Component
   function dump(var indent = 0)
   {
     var myfacets = "";
-    if (isA(Facet))
+    if (isA(Interface))
       myfacets = "(" + facets.join(" ") + ")"|
     echo(" "*indent + componentName + myfacets);
-    dumpByFacet(members.filter(function(x) { !x.isA(Component)}),
+    dumpByInterface(members.filter(function(x) { !x.isA(Component)}),
                 indent+2);
     members.filter(function(x) { x.isA(Component)})
       .each(function(x) {x.dump(indent+2)})
@@ -290,7 +290,7 @@ class Global.Component
   function Object.fullname()
   {
     if (!hasLocalSlot("parentComponent"))
-      throw "Facet is not attached to a component."|
+      throw "Interface is not attached to a component."|
     var name =  componentName |
     var p = parentComponent |
     var next = this |

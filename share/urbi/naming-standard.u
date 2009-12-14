@@ -3,43 +3,49 @@
 do (Global)
 {
   /// Implementations of a Facet must inherit from the appropriate class.
-  class Facet {
+  class Interface {
     var componentName;
     var parentComponent = nil;
   } |
-  do (Facet) {
-    class Battery           : Facet  {};
-    class Motor             : Facet  {};
+  do (Interface) {
+    class Battery           : Interface  {};
+    class Motor             : Interface  {};
     class LinearMotor       : Motor  {};
     class RotationalMotor   : Motor  {};
-    class VideoIn           : Facet  {};
-    class AudioIn           : Facet  {};
-    class AudioOut          : Facet  {};
-    class Identity          : Facet  {};
-    class Network           : Facet  {};
-    class Sensor            : Facet  {};
+    class VideoIn           : Interface  {};
+    class AudioIn           : Interface  {};
+    class AudioOut          : Interface  {};
+    class Identity          : Interface  {};
+    class Network           : Interface  {};
+    class Sensor            : Interface  {};
     class DistanceSensor    : Sensor {};
     class TouchSensor       : Sensor {};
     class AccelerationSensor: Sensor {};
     class GyroSensor        : Sensor {};
     class TemperatureSensor : Sensor {};
-    class Mobile            : Facet  {};
-    class Tracker           : Facet  {};
-    class BlobDetector      : Facet  {};
-    class TextToSpeech      : Facet  {};
-    class SpeechRecognizer  : Facet  {};
-    class Led               : Facet  {};
+    class Mobile            : Interface  {};
+    class Tracker           : Interface  {};
+    class BlobDetector      : Interface  {};
+    class TextToSpeech      : Interface  {};
+    class SpeechRecognizer  : Interface  {};
+    class Led               : Interface  {};
     class RGBLed            : Led    {};
-    function facets()
+    function interfaces()
     {
-      function isFacet(o)
+      function isInterface(o)
       {
         var name = o.type;
-        Facet.hasLocalSlot(name) && Facet.getSlot(name) === o
+        Interface.hasLocalSlot(name) && Interface.getSlot(name) === o
       };
 
-      var res = allProtos.filter(isFacet) |
+      var res = allProtos.filter(isInterface) |
       res.filter(function (x) { !res.any(function(y) { x !== y && y.isA(x)})})
     };
   };
+  // Keep the 'Facet' name for backward compatibility.
+  var Facet = function() {
+    wall("Warning, Facet is deprecated, use 'Interface'");
+    Facet = Interface
+  };
+  var Interface.facets = Interface.getSlot("interfaces");
 };

@@ -34,18 +34,18 @@
 }
 
 \newcommand{\refFacet}[2][]%
-  {\hyperref[sec:facet:#2]{\lstinline|#2|#1 (\autoref*{sec:facet:#2})}}
+  {\hyperref[sec:interface:#2]{\lstinline|#2|#1 (\autoref*{sec:interface:#2})}}
 
-\newcommand{\facet}[2][]{%
+\newcommand{\interface}[2][]{%
   \ifthenelse{\equal{#1}{}}{%
     \subsection{#2\index{#2@\lstinline{#2}}}%
   }{%
     \subsection{#2 (subclass of #1)\index{#2@\lstinline{#2}}}%
   }%
-  \label{sec:facet:#2}
+  \label{sec:interface:#2}
 }
 
-
+\newcommand{\gsrapi}{Gostai Standard Robotics API\xspace}
 \chapter{Gostai Standard Robotics API}
 \label{sec:naming}
 
@@ -113,7 +113,7 @@ subset of the devices corresponding to motor devices, and it
 represents spatial connections between them. Except for these motor
 devices, the structure tree components do not have a direct
 counterpart in the kinematics chain, or, if they do, it is as a subset
-of the kinematics chain (for example, \code{legR} is a subset of the
+of the kinematics chain (for example, \code{leg[right]} is a subset of the
 whole kinematics chain).
 
 
@@ -252,32 +252,30 @@ accel[x], accel[y], accel[z];         // typical accelerometer
 gyro[x], gyro[y], gyro[z];            // typical gyro sensor
 \end{urbiunchecked}
 
-\section{Facets}
-\label{sec:facet}
+\section{Interface}
+\label{sec:interface}
 
-\urbi allows multiple inheritances between objects. This feature can be
-used to introduce the notion of ``facet''. A facet is an object in \urbi
-that describes some aspects of a type of component.
+An ``interface'' describes some aspects of a type of device, by specifying the
+slots and methods that implementations must provide. Each child node of
+the component hierarchy should implement at least one interface.
 
-For example, for a joint, we can have a ``swivel'' facet, used to define
-patella joints. For the robot body itself, we have a ``mobile'' facet
+For example, for a joint, we can have a ``Swivel'' interface, used to define
+patella joints. For the robot body itself, we have a ``Mobile'' interface
 describing mobile robots, which includes some standard way of
-requesting a move forward, a turn, etc. A robot with a Pan/Tilt camera
-or otherwise moving camera will have the ``panoramic'' facet which is
-abstracting the way the robot can turn its gaze in any direction.
+requesting a move forward, a turn, etc.
 
-In short, facets are standard Urbi objects that components can inherit
-from to acquire some functionalities, expressed as a standard
-interface.  These objects feature slots, and events; some of them
-possibly are optional, which is denoted by grayed-cells, and a name
-put in square backets.
+In short, interfaces are standard Urbi objects that components can inherit
+from to declare that they have some functionalities.
 
-The following pages describe a few of the most standard facets. Each
-facet should be reimplemented for any particular robot that uses them,
-for example the ``mobile'' facet will have a completely different
-implementation with a humanoid robot and a wheeled robot.
+The following pages describe a few of the most standard interfaces. Each
+device in the component hierarchy which falls within the category of an
+interface should implement it.
 
-\facet{Identity}
+Each interface defines slots, which can be functions, events or plain data.
+Some of those slots are optional: they are greyed and put around square
+braquets in the following table.
+
+\interface{Identity}
 
 Contains information about the robot identity.
 
@@ -308,7 +306,7 @@ Contains information about the robot identity.
 \end{slots}
 
 
-\facet{Network}
+\interface{Network}
 
 Contains information about the network identification of the robot.
 
@@ -320,9 +318,9 @@ Contains information about the network identification of the robot.
 
 \end{slots}
 
-\facet{Motor}
+\interface{Motor}
 
-This facet is used to describe a generic motor controller.
+This interface is used to describe a generic motor controller.
 
 \begin{slots}
   \slot{val}%
@@ -351,10 +349,10 @@ This facet is used to describe a generic motor controller.
 
 \end{slots}
 
-\facet[Motor]{LinearMotor}
+\interface[Motor]{LinearMotor}
 
 
-This facet is used to describe a linear motor controller.
+This interface is used to describe a linear motor controller.
 
 \begin{slots}
   \slot{position}%
@@ -371,10 +369,10 @@ This facet is used to describe a linear motor controller.
 
 \end{slots}
 
-\facet[Motor]{RotationalMotor}
+\interface[Motor]{RotationalMotor}
 
 
-This facet is used to describe a rotational motor controller.
+This interface is used to describe a rotational motor controller.
 
 \begin{slots}
   \slot{angle}%
@@ -398,9 +396,9 @@ This facet is used to describe a rotational motor controller.
 \end{slots}
 
 
-\facet{Sensor}
+\interface{Sensor}
 
-This facet is used to describe a generic sensor.
+This interface is used to describe a generic sensor.
 
 \begin{slots}
   \slot{val}%
@@ -415,9 +413,9 @@ This facet is used to describe a generic sensor.
 \end{slots}
 
 
-\facet[Sensor]{DistanceSensor}
+\interface[Sensor]{DistanceSensor}
 
-This facet is used to describe a distance sensor (infrared, laser,
+This interface is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
 
 \begin{slots}
@@ -430,9 +428,9 @@ ultrasonic...).
 \end{slots}
 
 
-\facet[Sensor]{TouchSensor}
+\interface[Sensor]{TouchSensor}
 
-This facet is used to describe a touch pressure sensor (contact,
+This interface is used to describe a touch pressure sensor (contact,
 induction,...).
 
 \begin{slots}
@@ -446,9 +444,9 @@ induction,...).
 \end{slots}
 
 
-\facet[Sensor]{AccelerationSensor}
+\interface[Sensor]{AccelerationSensor}
 
-This facet is used to describe an accelerometer.
+This interface is used to describe an accelerometer.
 
 \begin{slots}
   \slot{acceleration}%
@@ -459,8 +457,8 @@ This facet is used to describe an accelerometer.
 
 \end{slots}
 
-\facet[Sensor]{GyroSensor}
-This facet is used to describe an gyrometer.
+\interface[Sensor]{GyroSensor}
+This interface is used to describe an gyrometer.
 
 \begin{slots}
   \slot{speed}%
@@ -470,8 +468,8 @@ This facet is used to describe an gyrometer.
   }
 \end{slots}
 
-\facet[Sensor]{TemperatureSensor}
-This facet is used to describe a temperature sensor.
+\interface[Sensor]{TemperatureSensor}
+This interface is used to describe a temperature sensor.
 
 \begin{slots}
   \slot{temperature}%
@@ -481,7 +479,7 @@ This facet is used to describe a temperature sensor.
   }
 \end{slots}
 
-\facet{Mobile}
+\interface{Mobile}
 
 Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
@@ -501,11 +499,11 @@ level motion control capabilities.
 
 \end{slots}
 
-\facet{Tracker}
+\interface{Tracker}
 
 Camera-equipped robots can sometimes move the orientation of the field
 of view horizontally and vertically, which is a very important feature
-for many applications. In that case, this facet abstracts how such
+for many applications. In that case, this interface abstracts how such
 motion can be achieved, whether it is done with a pan/tilt camera or
 with whole body motion or a combination of both.
 
@@ -524,9 +522,9 @@ with whole body motion or a combination of both.
 
 \end{slots}
 
-\facet{VideoIn}
+\interface{VideoIn}
 
-The VideoIn facet groups every information relative to cameras or any
+The VideoIn interface groups every information relative to cameras or any
 image sensor.
 
 \begin{slots}
@@ -614,8 +612,8 @@ if (!robot.body.head.camera.hasSlot("jpeg"))
 }
 \end{urbiunchecked}
 
-\facet{AudioOut}
-The AudioOut facet groups every information relative to speakers.
+\interface{AudioOut}
+The AudioOut interface groups every information relative to speakers.
 
 \begin{slots}
   \slot{val}%
@@ -649,9 +647,9 @@ The AudioOut facet groups every information relative to speakers.
 
 
 
-\facet{AudioIn}
+\interface{AudioIn}
 
-The AudioIn facet groups every information relative to microphones.
+The AudioIn interface groups every information relative to microphones.
 
 \begin{slots}
   \slot{val}%
@@ -674,7 +672,7 @@ The AudioIn facet groups every information relative to microphones.
 \end{slots}
 
 
-\facet{BlobDetector}
+\interface{BlobDetector}
 
 Ball detectors, marker detectors and various feature-based detectors
 should all share a similar interface. They extract a part of the image
@@ -723,7 +721,7 @@ the typical slots expected:
 
 \end{slots}
 
-\facet{TextToSpeech}
+\interface{TextToSpeech}
 Text to speech allows to read text using a speech synthetizor. Default
 implementations should use the \code{speaker} component (or alias) as
 their default sound output.
@@ -782,7 +780,7 @@ their default sound output.
 \end{slots}
 
 
-\facet{SpeechRecognizer}
+\interface{SpeechRecognizer}
 
 Speech recognition allows to transform a stream of sound into a text
 using various speech recognition algorithms. Implementations
@@ -804,7 +802,7 @@ should use the \code{micro} component as their default sound input.
   }
 \end{events}
 
-\facet{Led}
+\interface{Led}
 
 Simple unicolor Led.
 
@@ -816,7 +814,7 @@ Simple unicolor Led.
 \end{slots}
 
 
-\facet[Led]{RGBLed}
+\interface[Led]{RGBLed}
 
 Tri-color led.
 
@@ -864,7 +862,7 @@ the yaw/pitch/roll meaning.
 The following table summarizes the currently referenced standard
 components, with a description of potential components that they could
 be subcomponent of, a description of potential components they may
-contain, and a list of relevant facets. This table should be seen as a
+contain, and a list of relevant interfaces. This table should be seen as a
 quick reference guide to identify available components in a given
 robot.
 
