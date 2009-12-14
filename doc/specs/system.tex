@@ -8,7 +8,6 @@ Details on the architecture the \urbi server runs on.
 
 \subsection{Slots}
 \begin{itemize}
-%% \item \lstinline|aliveJobs|
 %% \item \lstinline|arguments|
 %% \item \lstinline|backtrace|
 %% \item \lstinline|breakpoint|
@@ -34,10 +33,28 @@ Details on the architecture the \urbi server runs on.
   reclaims most of them: memory, file descriptors and so forth).
   Architecture dependent.
 
+\item \lstinline|aliveJobs|\\
+  The number of detached routines currently running.
+\begin{urbiscript}[firstnumber=last]
+{
+  var nJobs = aliveJobs;
+  for (var i: [1s, 2s, 3s])
+    detach({sleep(i)});
+  sleep(0.5s);
+  assert(aliveJobs - nJobs == 3);
+  sleep(1s);
+  assert(aliveJobs - nJobs == 2);
+  sleep(1s);
+  assert(aliveJobs - nJobs == 1);
+  sleep(1s);
+  assert(aliveJobs - nJobs == 0);
+};
+\end{urbiscript}
+
 \item \lstinline|assert_(\var{assertion}, \var{message})|\\
   If \var{assertion} does not evaluate to true, throw the failure
   \var{message}.
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 assert_(true,       "true failed");
 assert_(42,         "42 failed");
 assert_(1 == 1 + 1, "one is not two");
