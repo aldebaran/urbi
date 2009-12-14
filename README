@@ -79,9 +79,17 @@ We need the GNU version of sha1sum.  On Mac Ports it is part of the
 coreutils package.
 package: coreutils
 
+** GraphViz
+Used to generate some of the figures in the documentation.
+package: graphviz
+
 ** Help2man
 Needed by Bison.
 package: help2man
+
+** ImageMagick
+Used to convert some of the figures in the documentation.
+package: ImageMagick
 
 ** Libtool 2.2 or later
 Actually it should no longer be needed, as we embed all the file we

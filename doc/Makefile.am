@@ -68,11 +68,11 @@ view: $(pdf_DATA)
 
 %.eps: %.pdf
 	-mkdir -p $(dir $@)
-	convert "$<" "$@"
+	$(CONVERT) "$<" "$@"
 %.pdf: %.dot
 	-mkdir -p $(dir $@)
-	dot -Tpdf $< -o $@.tmp
-	pdfcrop $@.tmp $@
+	$(DOT) -Tpdf $< -o $@.tmp
+	$(PDFCROP) $@.tmp $@
 	rm $@.tmp
 
 
