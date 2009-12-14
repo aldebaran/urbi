@@ -84,6 +84,28 @@ else
 fi
 packagedir="$updir/$name"
 
+# Check that we don't depend on boost.  Or rather, check that we don't
+# have invalid locations.  And possibly make the libraries and
+# executables relocatable.
+case $OS in
+  (linux)
+    $srcdir/scripts/check-lib-deps -d "$DESTDIR"                \
+      $($FIND "$DESTDIR"                                        \
+              -type f                                           \
+              -a '(' -name '*.so.*' -o -name '*.so' ')')
+    ;;
+  (macos)
+    # On OS X, we relocate libs and executables.
+    $srcdir/scripts/check-lib-deps -d "$DESTDIR"        \
+        $($FIND "$DESTDIR"                              \
+                -type f                                 \
+                -a '('                                  \
+                      -perm -+x                         \
+                      -o -name '*.dylib'                \
+                   ')')
+    ;;
+esac
+
 # Create a fresh directory in which we put the subdirectories of the
 # $install directory.
 $RM -r "$packagedir"
@@ -195,28 +217,6 @@ case $OS in
         xargs strip || true
       cd $here
     fi
-    ;;
-esac
-
-# Check that we don't depend on boost.  Or rather, check that we don't
-# have invalid locations.  And possibly make the libraries and
-# executables relocatable.
-case $OS in
-  (linux)
-    $srcdir/scripts/check-lib-deps -d "$DESTDIR"                \
-      $($FIND "$packagedir"                                     \
-              -type f                                           \
-              -a '(' -name '*.so.*' -o -name '*.so' ')')
-    ;;
-  (macos)
-    # On OS X, we relocate libs and executables.
-    $srcdir/scripts/check-lib-deps -d "$DESTDIR"        \
-        $($FIND "$packagedir"                           \
-                -type f                                 \
-                -a '('                                  \
-                      -perm -+x                         \
-                      -o -name '*.dylib'                \
-                   ')')
     ;;
 esac
 
