@@ -7,10 +7,11 @@ share_dir = $(top_srcdir)/doc/document-aux
 share_bin_dir = $(share_dir)/bin
 share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
-include document-aux/make/pdf-figs.mk
+
 # img/.
-PDF_IMAGES = $(call ls_files,img/*.pdf) $($(call ls_files,img/*.dot):.dot=.pdf)
-EXTRA_DIST += $(PDF_IMAGES) $(call ls_files,img/*.png)
+DOT_IMAGES = $(call ls_files,img/*.dot)
+PDF_IMAGES = $(call ls_files,img/*.pdf) $(DOT_IMAGES:.dot=.pdf)
+EXTRA_DIST += $(call ls_files,img/*)
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
@@ -42,7 +43,6 @@ dist_doc_DATA =					\
   REPORTING-BUGS.txt
 
 
-
 ## -------------- ##
 ## urbi-sdk.pdf.  ##
 ## -------------- ##
@@ -57,6 +57,8 @@ urbi_sdk_deps = 				\
   $(REVISION_FILE)				\
   $(call ls_files,*.sty *.cls)			\
   $(urbi_sdk_sources)
+
+$(pdf_DATA): $(PDF_IMAGES)
 urbi-sdk.dvi urbi-sdk.html $(pdf_DATA): $(urbi_sdk_deps)
 
 urbi-sdk.dvi urbi-sdk.html: $(EPS_IMAGES)
@@ -66,7 +68,12 @@ view: $(pdf_DATA)
 
 %.eps: %.pdf
 	-mkdir -p $(dir $@)
-	convert $< $@
+	convert "$<" "$@"
+%.pdf: %.dot
+	-mkdir -p $(dir $@)
+	dot -Tpdf $< -o $@.tmp
+	pdfcrop $@.tmp $@
+	rm $@.tmp
 
 
 ## -------------- ##
