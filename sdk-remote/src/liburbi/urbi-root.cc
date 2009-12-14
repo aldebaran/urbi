@@ -36,10 +36,10 @@
 `--------*/
 
 static std::string
-xgetenv(const std::string& var)
+xgetenv(const std::string& var, const std::string& val = "")
 {
   const char* res = getenv(var.c_str());
-  return res ? res : "";
+  return res ? std::string(res) : val;
 }
 
 // static void
@@ -263,26 +263,23 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 #if defined __APPLE__
     xdlopen("/usr/lib/libSystem.B.dylib", RTLD_NOW | RTLD_GLOBAL, program_);
 #endif
-    handle_libjpeg_        = library_load("jpeg",        "JPEG");
-    handle_libport_        = library_load("port",        "PORT");
-    handle_libsched_       = library_load("sched",       "SCHED");
-    handle_libserialize_   = library_load("serialize",   "SERIALIZE");
-    handle_liburbi_        = library_load("urbi",        "URBI");
+    handle_libjpeg_      = library_load("jpeg",      "JPEG");
+    handle_libport_      = library_load("port",      "PORT");
+    handle_libsched_     = library_load("sched",     "SCHED");
+    handle_libserialize_ = library_load("serialize", "SERIALIZE");
+    handle_liburbi_      = library_load("urbi",      "URBI");
   }
 }
 
 RTLD_HANDLE
 UrbiRoot::library_load(const std::string& base, const std::string& env)
 {
-  std::string path;
-  const std::string varname = "URBI_ROOT_LIB" + env;
-  std::string alt = xgetenv(varname);
-
-  if (alt.empty())
-    path = root_ + separator + libdir + separator + "lib" + base + libext;
-  else
-    path = alt + libext;
-  return xdlopen(path, RTLD_NOW | RTLD_GLOBAL, program_);
+  return
+    xdlopen(xgetenv("URBI_ROOT_LIB" + env,
+                    root_ + separator + libdir + separator + "lib" + base)
+            + libext,
+            RTLD_NOW | RTLD_GLOBAL,
+            program_);
 }
 
 std::string
