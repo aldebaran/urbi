@@ -213,8 +213,10 @@ case $OS in
     $srcdir/scripts/check-lib-deps -d "$DESTDIR"        \
         $($FIND "$packagedir"                           \
                 -type f                                 \
-                -a '(' -name '*.dylib' ')')             \
-        "$packagedir"/usr/local/bin/*
+                -a '('                                  \
+                      -perm -+x                         \
+                      -o -name '*.dylib'                \
+                   ')')
     ;;
 esac
 
