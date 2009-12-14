@@ -8,8 +8,6 @@ Details on the architecture the \urbi server runs on.
 
 \subsection{Slots}
 \begin{itemize}
-%% \item \lstinline|arguments|
-%% \item \lstinline|backtrace|
 %% \item \lstinline|breakpoint|
 %% \item \lstinline|currentRunner|
 %% \item \lstinline|cycle|
@@ -51,6 +49,22 @@ Details on the architecture the \urbi server runs on.
 };
 \end{urbiscript}
 
+\item \lstinline|arguments|\\
+  The list of the command line arguments passed to the user script.
+  This is especially useful in scripts.
+\begin{shell}[alsolanguage={[Interactive]Urbi}]
+$ cat >echo <<EOF
+#! /usr/bin/env urbi
+System.arguments;
+shutdown;
+EOF
+$ chmod +x echo
+$ ./echo 1 2 3
+[00000172] ["1", "2", "3"]
+$ ./echo -x 12 -v "foo"
+[00000172] ["-x", "12", "-v", "foo"]
+\end{shell}
+
 \item \lstinline|assert_(\var{assertion}, \var{message})|\\
   If \var{assertion} does not evaluate to true, throw the failure
   \var{message}.
@@ -80,6 +94,22 @@ assert_op("<",  1, 1 + 1);
 assert_op("<=", 1, 1 + 1);
 assert_op(">",  1, 1 + 1);
 [00000003:error] !!! failed assertion: 1 > 1 . '+'(1) (1 <= 2)
+\end{urbiscript}
+
+\item \lstinline|backtrace|\\
+  Display the call stack on the channel \code{backtrace}.
+\begin{urbiscript}[firstnumber=last]
+//#push 100 "foo.u"
+function innermost () { backtrace }|;
+function inner ()     { innermost }|;
+function outer ()     { inner }|;
+function outermost () { outer }|;
+outermost;
+[00000013:backtrace] innermost (foo.u:101.25-33)
+[00000014:backtrace] inner (foo.u:102.25-29)
+[00000015:backtrace] outer (foo.u:103.25-29)
+[00000016:backtrace] outermost (foo.u:104.1-9)
+//#pop
 \end{urbiscript}
 
 \item \lstinline|getenv(\var{name})|\\
