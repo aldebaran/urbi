@@ -177,15 +177,15 @@ robots, are present in the same sub-component B, an extra node is inserted in
 the hierarchy to differenciate them. This node is of the \code{Localizer} type,
 and provides a \code{[]} operator, taking a \code{Localization} argument, used
 to access each of the identical sub-components.
-The urbi SDK provides an implementation for the \code{Localizer} and
+The \usdk provides an implementation for the \code{Localizer} and
 \code{Localization} classes.
 When possible, localization should be simple geometrical qualifier like
-\textit{Right}/\textit{Center}/\textit{Left},
-\textit{Front}/\textit{Middle}/\textit{Back} or
-\textit{Up}/\textit{In-between}/\textit{Down}.
+\textit{right}/\textit{center}/\textit{left},
+\textit{front}/\textit{middle}/\textit{back} or
+\textit{up}/\textit{in-between}/\textit{down}.
 Note that ``right'' or ``front'' are
 understood here from the point of view of a man standing and looking
-in the direction of the X-axis of the robot, and \textit{Up/Down}
+in the direction of the X-axis of the robot, and \textit{up/pown}
 matches the Z-axis, as depicted in the figure below:
 
 \begin{center}
@@ -244,7 +244,7 @@ robot.body.accel[x]; // accelerometer in the x direction
 Examples of component names including localization:
 
 \begin{urbiunchecked}
-leg[right], leg[left]L;
+leg[right], leg[left];
 finger[right], finger[center], finger[left];      // three-finger hand
 joint[0], joint[1] ... joint[5] // from tail
 touch[478][124]                 // from skin
@@ -828,10 +828,17 @@ Tri-color led.
 \section{Standard Components}
 
 Standard components correspond to components typically found in wheeled
-robots, humanoid or animaloid robots, or in industrial arms.
+robots, humanoid or animaloid robots, or in industrial arms. This section
+provides a list of such components. Whenever possible, robots compatible with
+the \gsrapi should name all the components in the hierarchy using this list.
 
 \subsection{Yaw/Pitch/Roll orientation}
 \label{sec:naming:ypr}
+
+Note that \gsrapi considers the orientation to be a component name, and
+not a localizer. So one would write \lstinline|head.yaw| and not
+\lstinline|head.joint[yaw]| to refer to a rotational articulation of the head
+around the Z axis.
 
 It is not always clear which rotational direction corresponds to the
 yaw, pitch or roll components (listed in the table below). This is a
@@ -1241,6 +1248,100 @@ in Java-style notation.
   \end{enumerate}
 \end{example}
 
+\section{Support classes}
+The \usdk provides a few support classes in \us to help you build the component
+hierarchy. You can access those classes by including the files
+\file{urbi/naming-standard.u} and \file{urbi/component.h}.
+
+\subsection{Interface}
+The \code{Interface} class contains \us objects for all the interfaces defined
+in this document. Implementations must inherit from the correct interface.
+
+\begin{urbiunchecked}
+// Instanciate a camera.
+var cam = myCamera.new();
+// Make it inherit from VideoIn.
+cam.addProto(Interface.VideoIn);
+\end{urbiunchecked}
+
+The \code{Interface.interfaces} method can be called to get a list of all
+the interfaces an object implements.
+
+\subsection{Component}
+The \code{Component} class can be used to create intermediate nodes of the
+hierarchy. It provides the following methods:
+
+\begin{itemize}
+
+\item \lstinline|addComponent(\var{name})|\\
+  Add a new sub-component to the current component. \lstinline|\var{name}| can
+  be the name of the new component to create, or an instance of
+  \code{Component}.
+
+\item \lstinline|addDevice(\var{name}, \var{value})|\\
+  Add device \lstinline|\var{value}| as sub-component, under the name
+  \lstinline|\var{name}|. The device must inherit from at least one Interface.
+
+\item \lstinline|makeCompactNames| \\
+  This function must be called once on the root node (\code{robot}).
+  It automaticaly computes the short name of all the devices, and insert them as
+  slots of the \code{Global} object.
+
+\item \lstinline|dump| \\
+  Display a hierarchical view of the component hierarchy.
+
+\item \lstinline|flatDump| \\
+  Display all the devices in the hierarchy, sorted by the Interface they
+  implement.
+
+\end{itemize}
+
+\subsection{Localizer}
+
+The \code{Localizer} class is a special type of \code{Component} that stores
+other components based on their localization. It provides a \code{[]} operator
+that takes a \code{Localization}, such as \lstinline|top,left,front|, and that
+can be used to set and get the \code{Component} or device associated with
+that \code{Localization}.
+
+Note that the \code{[]} function is using a mechanims to automaticaly look
+for its argument as a slot of \code{Localization}. As a consequence, you cannot
+pass a variable to this function, but only one of the constant \code{Localizer}.
+To pass a variable, use the \code{get(loc)} or the \code{set(loc, value)}
+function.
+
+The following example illustrates a typical instanciation sequence:
+
+\begin{urbiunchecked}
+// Create the top-level node.
+var Global.robot = Component.new("robot");
+robot.addComponent("head");
+var cam = MyCamera.new;
+cam.addProto(Interface.VideoIn);
+robot.head.addDevice("camera", cam);
+// Add two wheels
+robot.addComponent(Localizer.new("wheel"));
+robot.wheel[left] = MyWheel.new(0).addProto(Interface.RotationalMotor);
+robot.wheel[right] = MyWheel.new(1).addProto(Interface.RotationalMotor);
+// Implement the Mobile facet in urbiscript:
+var robot.go = function(d)
+{
+  robot.wheel.val = robot.wheel.val + d / wheelRadius adaptive:1
+};
+var robot.turn = function(r)
+{
+  var v = r * wheelDistance / wheelRadius;
+  robot.wheel[left].val = robot.wheel[left].val + v adaptive:1 &
+  robot.wheel[right].val = robot.wheel[right].val - v adaptive:1
+};
+robot.addProto(Interface.Mobile);
+robot.makeCompactNames;
+// Let us see the result:
+robot.flatDump;
+[00010130] *** Mobile: robot
+[00010130] *** RotationalMotor: wheelL wheelR
+[00010130] *** VideoIn: camera
+\end{urbiunchecked}
 
 %%% Local Variables:
 %%% mode: latex
