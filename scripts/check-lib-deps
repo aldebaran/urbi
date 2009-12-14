@@ -1,39 +1,199 @@
 #! /usr/bin/perl -w
 
+use English;
+use File::Basename;
 use IO::File;
 
-my $status = 0;
+# The command line arguments.
+my %argv;
+
+my $destdir;
+
 # Accepted resolved libraries.
 my %loc;
+
+my $status = 0;
+
+my $verbose = 1;
+
+=item C<verbose($level, @message)>
+
+Report the C<@message> is C<$level> E<lt>= C<$verbose>.
+
+=cut
+
+sub verbose($@)
+{
+  my ($level, @message) = @_;
+  print STDERR "$0: ", @message
+    if $level <= $verbose;
+}
+
+# Return the list of paths we depend upon.
+sub dependencies ($)
+{
+  my ($lib) = @_;
+  verbose 3, "dependencies($lib)\n";
+  my @res;
+  if ($OSNAME eq 'darwin')
+    {
+      my $deps = new IO::File("otool -L $lib|")
+        or die "cannot read otool -L $lib: $!";
+      while ($_ = $deps->getline)
+        {
+          if (/^\t(.*?)\s+\(.*\)$/)
+            {
+              push @res, $1;
+            }
+          else
+            {
+              verbose 2, "ignoring $_";
+            }
+        }
+    }
+  else
+    {
+      my $ldd = new IO::File("ldd $lib|")
+        or die "cannot read ldd $lib: $!";
+      while ($_ = $ldd->getline)
+        {
+          if (/^\t(.*?)\s+=>\s(.*?)\s\(.*\)$/)
+            {
+              my ($dep, $loc) = ($1, $2);
+              push @res, $loc;
+            }
+        }
+    }
+  verbose 2, "$lib depends on @res\n";
+  @res;
+}
+
+
+sub xsystem (@)
+{
+  my (@args) = @_;
+
+  verbose 2, "Running: @args\n";
+  system(@args) == 0
+    or die "system @args failed: $?";
+  if ($? == -1)
+    {
+      die "failed to execute: $!\n";
+    }
+  elsif ($? & 127)
+    {
+      die sprintf ("child died with signal %d, %s coredump\n",
+                   ($? & 127),  ($? & 128) ? 'with' : 'without');
+    }
+  elsif ($? >> 8)
+    {
+      die sprintf "child exited with value %d\n", $? >> 8;
+    }
+}
+
+# Relocate $LIBRARY.
+#
+# On OS X, look for all the dependencies that are inside our DESTDIR,
+# and make then relative.
+sub relocate ($)
+{
+  my ($lib) = @_;
+  my $dir = dirname $lib;
+  $dir =~ s/^$destdir//;
+  verbose 3, "relocate($lib)\n";
+  if ($OSNAME eq 'darwin')
+    {
+      for my $dep (grep {exists $argv{$_}} dependencies($lib))
+        {
+          my $rel = File::Spec->abs2rel($dep, $dir);
+          xsystem("install_name_tool",
+                  "-change", $dep, "\@loader_path/$rel",
+                  $lib);
+        }
+    }
+}
 
 sub check($)
 {
   my ($lib) = @_;
-  my $ldd = new IO::File("ldd $lib|")
-      or die "cannot read ldd $lib: $!";
-  while ($_ = $ldd->getline)
-  {
-    if (/^\t(.*?)\s+=>\s(.*?)\s\(.*\)$/)
+  verbose 3, "check($lib)\n";
+  for my $loc (dependencies($lib))
     {
-      my ($dep, $loc) = ($1, $2);
-      if ($loc)
-      {
-        if ($loc =~ m(^(/lib
-                       |/usr/lib/gcc
-                       |/usr/lib/libstdc\+\+))x)
+      if ($loc =~ m(^(/lib
+                     |/usr/lib/gcc
+                     |/usr/lib/libstdc\+\+))x)
         {
           $loc{$loc} = 1;
         }
-        else
+      else
         {
           print STDERR "$lib: depends on $loc\n";
           $status = 1;
         }
-      }
     }
-  }
 }
 
-map { check($_) } @ARGV;
+=item C<help>
+
+Generate the B<--help> message.  Generates the full man page when
+C<$verbose>.
+
+=cut
+
+sub help ($)
+{
+  my ($verbose) = @_;
+  use Pod::Usage;
+  # See <URL:http://perldoc.perl.org/pod2man.html#NOTES>.
+  pod2usage( { -message => "Generate and cache git describe data",
+               -exitval => 0,
+               -verbose => $verbose,
+               -output  => \*STDOUT });
+}
+
+sub getopt ()
+{
+  use Getopt::Long;
+  my %option = (
+    "d|destdir=s"   => \$destdir,
+    "h|help"        => sub { help ($verbose) },
+    "q|quiet"       => sub { --$verbose },
+    "v|verbose"     => sub { ++$verbose },
+    );
+  Getopt::Long::Configure ("bundling", "pass_through");
+  GetOptions (%option)
+    or exit 1;
+  for my $arg (@ARGV)
+    {
+      (my $real = $arg) =~ s/$destdir//;
+      $argv{$real} = 1;
+    };
+}
+
+######################################################################
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+getopt;
+map { my $lib = $_; relocate($lib); check($lib) } @ARGV;
 print STDERR "Accepted dependencies:\n", map { "  $_\n" } sort keys %loc;
 exit($status);
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:

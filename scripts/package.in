@@ -199,21 +199,22 @@ case $OS in
 esac
 
 # Check that we don't depend on boost.  Or rather, check that we don't
-# have invalid locations.
+# have invalid locations.  And possibly make the libraries and
+# executables relocatable.
 case $OS in
   (linux)
-    $srcdir/scripts/check-lib-deps  \
-      $($FIND . -type f                \
-                -a '(' -name '*.so.*' -o -name '*.so' ')')
+    $srcdir/scripts/check-lib-deps -d "$DESTDIR"                \
+      $($FIND "$packagedir"                                     \
+              -type f                                           \
+              -a '(' -name '*.so.*' -o -name '*.so' ')')
     ;;
   (macos)
-    for i in $($FIND . -type f          \
-                       -a '(' -name '*.dylib' ')')
-    do
-      if otool -L $i | grep -q -i boost; then
-        complain "$i depends on Boost" $(otool -L $i | grep -q -i boost)
-      fi
-    done
+    # On OS X, we relocate libs and executables.
+    $srcdir/scripts/check-lib-deps -d "$DESTDIR"        \
+        $($FIND "$packagedir"                           \
+                -type f                                 \
+                -a '(' -name '*.dylib' ')')             \
+        "$packagedir"/usr/local/bin/*
     ;;
 esac
 
