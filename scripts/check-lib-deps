@@ -44,7 +44,9 @@ sub dependencies ($)
         {
           if (/^\t(.*?)\s+\(.*\)$/)
             {
-              push @res, $1;
+              # On OS X, a library appears to depend on itself.
+              push @res, $1
+                unless $1 eq installname($lib);
             }
           else
             {
@@ -129,8 +131,8 @@ sub check($)
   my ($lib) = @_;
   verbose 3, "check($lib)\n";
   my @valid =
-    $OSNAME eq 'darwin' ? qw(/usr/lib /opt/local/lib)
-    : qw(/lib /usr/lib/gcc /usr/lib/libstdc++);
+    $OSNAME eq 'darwin' ? qw(@loader_path/ /usr/lib/ /opt/local/lib/)
+    : qw(/lib/ /usr/lib/gcc/ /usr/lib/libstdc++);
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
   print STDERR "{{{", $re, "}}}\n";
   for my $loc (dependencies($lib))
@@ -177,7 +179,12 @@ sub getopt ()
   Getopt::Long::Configure ("bundling", "pass_through");
   GetOptions (%option)
     or exit 1;
+
+  # DESTDIR must not end with slashes.
+  $destdir =~ s,/+$,,g;
+
   map {$argv{installname($_)} = 1} @ARGV;
+  verbose 2, "Shipped deps: ", sort keys %argv, "\n";
 }
 
 ######################################################################
