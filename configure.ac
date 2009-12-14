@@ -30,18 +30,11 @@ URBI_DIRS([engine])
 URBI_PROG_PDFLATEX_REQUIRED
 URBI_DOC
 AC_CONFIG_FILES([doc/config.sty])
-AC_CHECK_PROGS([CONVERT], [convert], [no])
-if test $CONVERT = no; then
-  AC_MSG_ERROR([convert, from the ImageMagick package, is needed])
-fi
-AC_CHECK_PROGS([DOT], [dot], [no])
-if test $DOT = no; then
-  AC_MSG_ERROR([dot, from the GraphViz package, is needed])
-fi
-AC_CHECK_PROGS([PDFCROP], [pdfcrop], [no])
-if test $PDFCROP = no; then
-  AC_MSG_ERROR([pdfcrop, from the texlive_base package, is needed])
-fi
+
+URBI_REQUIRE_PROGS([CONVERT], [convert], [ImageMagick])
+URBI_REQUIRE_PROGS([DOT],     [dot],     [GraphViz])
+URBI_REQUIRE_PROGS([PDFCROP], [pdfcrop], [TeXlive])
+
 
 ## ------------- ##
 ## Compilation.  ##
