@@ -7,9 +7,9 @@ share_dir = $(top_srcdir)/doc/document-aux
 share_bin_dir = $(share_dir)/bin
 share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
-
+include document-aux/make/pdf-figs.mk
 # img/.
-PDF_IMAGES = $(call ls_files,img/*.pdf)
+PDF_IMAGES = $(call ls_files,img/*.pdf) $($(call ls_files,img/*.dot):.dot=.pdf)
 EXTRA_DIST += $(PDF_IMAGES) $(call ls_files,img/*.png)
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps)
 CLEANFILES += $(EPS_IMAGES)

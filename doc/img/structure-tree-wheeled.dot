@@ -1,0 +1,20 @@
+digraph structure_tree_wheeled {
+  wheelFL[label="wheel[frontleft]"];
+  body->wheelFL;
+  body->head;
+  body->laser;
+  headYaw[label="yaw"];
+  headPitch[label="pitch"];
+  head->headYaw;
+  head->headPitch;
+  head->camera;
+  body->arm;
+  armYaw[label="yaw"];
+  armPitch[label="pitch"];
+  armRoll[label="roll"];
+  arm->armYaw;
+  arm->armPitch;
+  arm->armRoll;
+  arm->gripper;
+  body->"...";
+};

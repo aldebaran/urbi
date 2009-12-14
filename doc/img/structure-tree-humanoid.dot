@@ -1,0 +1,27 @@
+digraph structure_tree_humanoid {
+        legL [label="leg[left]"];
+	legR [label="leg[right]"];
+	body -> legL;
+	body -> legR;
+	body -> "...";
+	hipL [label="hip"];
+	hipR [label="hip"];
+	hipYawL [label="yaw"];
+	hipYawR [label="yaw"];
+	hipPitchL [label="pitch"];
+	hipPitchR [label="pitch"];
+	kneeL [label="knee"];
+	kneeR [label="knee"];
+	kneePitchL [label="pitch"];
+	kneePitchR [label="pitch"];
+	legL -> hipL;
+	hipL -> hipYawL;
+	hipL -> hipPitchL;
+	legL -> kneeL;
+	kneeL -> kneePitchL;
+	legR -> hipR;
+        hipR -> hipYawR;
+        hipR -> hipPitchR;
+        legR -> kneeR;
+        kneeR -> kneePitchR;
+}

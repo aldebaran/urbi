@@ -81,10 +81,16 @@ relationship between a component and a sub-component in the tree is a
 `part-of' inclusion relationship. From the point of view of \urbi,
 each component in the tree is an object, and it contains attributes
 pointing to its sub-components. Here is a example illustrating a part
-of a hierarchy that could be found with a humanoid robot:
+of a hierarchy that could be found with a wheeled robot with a gripper:
 
 \begin{center}
-  \includegraphics[width=.8\linewidth]{img/structure-tree}
+  \includegraphics[width=.8\linewidth]{img/structure-tree-wheeled}
+\end{center}
+
+And here is another example for an humanoid robot:
+
+\begin{center}
+  \includegraphics[width=.8\linewidth]{img/structure-tree-humanoid}
 \end{center}
 
 The leaves of the tree are called \textit{devices}, and they usually
@@ -94,9 +100,9 @@ components are accessed by following the path of objects inclusions,
 like in the example below (shortcuts will be described later):
 
 \begin{urbiunchecked}
-body.legR.hip.tilt;
-body.legL.knee.led;
-body.legL.hip;
+body.leg[right].hip.tilt;
+body.arm.grip;
+body.laser;
 // ...
 \end{urbiunchecked}
 
@@ -191,6 +197,12 @@ refine the position. As a convention, height information (U/I/D) comes first,
 folowwed by depth information (F/M/H), and then side information (R/C/L).
 
 \begin{urbiunchecked}
+// Front-left wheel of a four-wheeled robot:
+robot.body.wheel[frontleft];
+// Front laser of a robot equiped with multiple sonars:
+robot.body.laser[front];
+// Left camera from a robot with a stereo camera at the end of an arm:
+robot.body.arm.camera[left];
 // Top-left LED of the left eye.
 robot.body.head.eye[left].led[topleft].val = 1;
 // Touch sensor at the end of the front-left leg of a four-legged robot:
@@ -875,11 +887,11 @@ robot.
   \component{robot}{}{body}{Identity Network Mobile Tracker}{
     %%
     This is the main component that represents an abstraction of the
-    robot.
+    robot, and the root node of the whole component hierarchy.
     %%
   }
 
-  \component{body}{robot}{arm leg neck head wheel tail skin torso
+  \component{body}{robot}{wheel arm leg neck head wheel tail skin torso
     \ldots}{}{
     %%
     This is the main component that contains every piece of hardware
@@ -891,6 +903,11 @@ robot.
     %%
   }
 
+  \component{wheel}{body}{}{RotationalMotor}{
+    %%
+    Wheel attached to its parent component.
+    %%
+  }
   \component{leg}{body}{hip knee ankle foot joint}{}{
     %%
     Legs are found in humanoid or animaloid robots and correspond to
