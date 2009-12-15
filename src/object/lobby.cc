@@ -72,7 +72,7 @@ namespace urbi
     Lobby::create()
     {
       return
-        new kernel::UGhostConnection(*kernel::urbiserver, true)
+        (new kernel::UGhostConnection(*kernel::urbiserver, true))
         ->lobby_get();
     }
 
