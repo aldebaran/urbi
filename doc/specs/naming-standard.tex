@@ -174,7 +174,7 @@ the name that fits the most the description of their component.
 \section{Localization}
 When two identical components A1 and A2, such as the two legs of an humanoid
 robots, are present in the same sub-component B, an extra node is inserted in
-the hierarchy to differenciate them. This node is of the \code{Localizer} type,
+the hierarchy to differentiate them. This node is of the \code{Localizer} type,
 and provides a \code{[]} operator, taking a \code{Localization} argument, used
 to access each of the identical sub-components.
 The \usdk provides an implementation for the \code{Localizer} and
@@ -194,12 +194,12 @@ matches the Z-axis, as depicted in the figure below:
 
 Several geometric qualifiers can be used at the same time to further
 refine the position. As a convention, height information (U/I/D) comes first,
-folowwed by depth information (F/M/H), and then side information (R/C/L).
+followed by depth information (F/M/H), and then side information (R/C/L).
 
 \begin{urbiunchecked}
 // Front-left wheel of a four-wheeled robot:
 robot.body.wheel[frontleft];
-// Front laser of a robot equiped with multiple sonars:
+// Front laser of a robot equipped with multiple sonars:
 robot.body.laser[front];
 // Left camera from a robot with a stereo camera at the end of an arm:
 robot.body.arm.camera[left];
@@ -273,7 +273,7 @@ interface should implement it.
 
 Each interface defines slots, which can be functions, events or plain data.
 Some of those slots are optional: they are greyed and put around square
-braquets in the following table.
+brackets in the following table.
 
 \interface{Identity}
 
@@ -282,7 +282,7 @@ Contains information about the robot identity.
 \begin{slots}
   \slot{type}
   {
-    This describes the robot category among: humanoid, fourlegged,
+    This describes the robot category among: humanoid, four-legged,
     wheeled, industrial arm. It gives a general idea of the robot
     family, but does not replace a more systematic probe of available
     services by investigating the list of attributes of the object.
@@ -506,7 +506,7 @@ Interface for a scanning laser rangefinder, or other similar technologies.
 
   \slot{distanceMin}
   {%
-    Minimun measurable distance.%
+    Minimum measurable distance.%
   }
 
   \slot{distanceMin}
@@ -535,13 +535,13 @@ level motion control capabilities.
 \begin{slots}
   \slot{go(x)}%
   {%
-    Move approximatively x meters forward if x is positive, backward
+    Move approximately x meters forward if x is positive, backward
     otherwise.%
   }
 
   \slot{turn(x)}%
   {%
-    Turn right approximatively \var{x} radians.  \var{x} can be a
+    Turn right approximately \var{x} radians.  \var{x} can be a
     positive or negative value.%
   }
 
@@ -605,7 +605,7 @@ image sensor.
   \optSlot{format}%
   {%
     Format of the image, expressed as an integer in the enum urbi::UImageFormat.
-    See below for more informations.%
+    See below for more information.%
   }
 
   \optSlot{exposure}%
@@ -649,7 +649,7 @@ all the possible formats. In this case, the format closest to what was
 requested must be used.
 A generic image conversion object will be provided. In order to avoid
 duplicate image conversions when multiple unrelated behaviors need the same
-format, it is recommended that this object be instannciated in a slot of the
+format, it is recommended that this object be instantiated in a slot of the
 VideoIn object named after the format it converts to:
 \begin{urbiunchecked}
 if (!robot.body.head.camera.hasSlot("jpeg"))
@@ -683,7 +683,7 @@ The AudioOut interface groups every information relative to speakers.
 
   \slot{playing}%
   {%
-    This is a boolean value which is true when there is a sound
+    This is a Boolean value which is true when there is a sound
     currently playing (the buffer is not empty)%
   }
 
@@ -770,7 +770,7 @@ the typical slots expected:
 \end{slots}
 
 \interface{TextToSpeech}
-Text to speech allows to read text using a speech synthetizor. Default
+Text to speech allows to read text using a speech synthesizer. Default
 implementations should use the \code{speaker} component (or alias) as
 their default sound output.
 
@@ -852,7 +852,7 @@ should use the \code{micro} component as their default sound input.
 
 \interface{Led}
 
-Simple unicolor Led.
+Simple uni-color Led.
 
 \begin{slots}
   \slot{val}%
@@ -916,7 +916,7 @@ the yaw/pitch/roll meaning.
 
 The following table summarizes the currently referenced standard
 components, with a description of potential components that they could
-be subcomponent of, a description of potential components they may
+be sub-component of, a description of potential components they may
 contain, and a list of relevant interfaces. This table should be seen as a
 quick reference guide to identify available components in a given
 robot.
@@ -1265,7 +1265,7 @@ in Java-style notation.
   \begin{enumerate}
   \item Move all localization at the end:
     \code{robot.body.arm.hand.fingerLR}
-  \item The fullname remaining is: \code{robot.body.arm.hand.finger}
+  \item The full name remaining is: \code{robot.body.arm.hand.finger}
   \item \code{finger} should be kept, \code{hand}, \code{arm},
     \code{body} and \code{robot} are not necessary since every
     finger component will always be attached only to a hand, itself
@@ -1279,9 +1279,9 @@ in Java-style notation.
   \begin{enumerate}
   \item No localization to move
   \item \code{yaw} must be kept because \code{head} also have a
-    \code{pitch} subcomponent and
+    \code{pitch} sub-component and
   \item \code{head} must also be kept to avoid ambiguity with other
-    components having a \code{yaw} subcomponent.
+    components having a \code{yaw} sub-component.
   \item The result is \code{headYaw}
   \end{enumerate}
 \end{example}
@@ -1306,7 +1306,7 @@ The \code{Interface} class contains \us objects for all the interfaces defined
 in this document. Implementations must inherit from the correct interface.
 
 \begin{urbiunchecked}
-// Instanciate a camera.
+// Instantiate a camera.
 var cam = myCamera.new();
 // Make it inherit from VideoIn.
 cam.addProto(Interface.VideoIn);
@@ -1333,7 +1333,7 @@ hierarchy. It provides the following methods:
 \item \lstinline|makeCompactNames| \\
   This function must be called once on the root node (\code{robot}) after the
   hierarchy is completed.
-  It automaticaly computes the short name of all the devices, and insert them as
+  It automatically computes the short name of all the devices, and insert them as
   slots of the \code{Global} object.
 
 \item \lstinline|dump| \\
@@ -1353,14 +1353,14 @@ that takes a \code{Localization}, such as \lstinline|top,left,front|, and that
 can be used to set and get the \code{Component} or device associated with
 that \code{Localization}.
 
-Note that the \code{[]} function is using a mechanims to automaticaly look
+Note that the \code{[]} function is using a mechanisms to automatically look
 for its argument as a slot of \code{Localizer}. As a consequence, you cannot
 pass a variable to this function, but only one of the constant
 \code{Localization}.
 To pass a variable, use the \code{get(loc)} or the \code{set(loc, value)}
 function.
 
-The following example illustrates a typical instanciation sequence:
+The following example illustrates a typical instantiation sequence:
 
 \begin{urbiunchecked}
 // Create the top-level node.
@@ -1397,3 +1397,15 @@ robot.flatDump;
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
 %%% End:
+
+% LocalWords:  verylightgray Gostai API UObject Localizer pown frontleft accel
+% LocalWords:  insectoid functionalities IP Urbi PGain PID IGain DGain ufloat
+% LocalWords:  LinearMotor RotationalMotor DistanceSensor TouchSensor gyrometer
+% LocalWords:  AccelerationSensor GyroSensor TemperatureSensor angleMin VideoIn
+% LocalWords:  angleMax distanceMin xfov yfov enum wb jpeg ImageConversion wav
+% LocalWords:  AudioOut AudioIn BlobDetector TextToSpeech lang TTS voicexml Tri
+% LocalWords:  VoiceXML SpeechRecognizer RGBLed animaloid localizer rangemin
+% LocalWords:  rangemax eration cameraR cameraL speakerR speakerL microR microL
+% LocalWords:  TextTo pre elbowR headYaw kneeL fingerR fingerLR urbi myCamera
+% LocalWords:  addComponent addDevice makeCompactNames flatDump loc urbiscript
+% LocalWords:  wheelRadius wheelDistance wheelL wheelR
