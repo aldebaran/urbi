@@ -13,7 +13,7 @@ fixes
 Changes:
 
 - Lobby.quit replaces System.quit.
-
+- Lobby.wall replaces Global.wall.
 
 ***************************
 * New in kernel 2.0 RC 2. *

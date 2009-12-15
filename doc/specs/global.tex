@@ -16,8 +16,19 @@ anywhere.
 \end{itemize}
 
 \subsection{Slots}
-%\begin{itemize}
-%\end{itemize}
+\begin{itemize}
+\item \lstinline|echo(\var{value}, \var{channel} = ""|\\
+  Bounce to \lstinline|lobby.echo|, see \refObject{Lobby}.
+\begin{urbiscript}[firstnumber=last]
+echo("111", "foo");
+[00015895:foo] *** 111
+echo(222, "");
+[00051909] *** 222
+echo(333);
+[00055205] *** 333
+\end{urbiscript}
+
+\end{itemize}
 
 %%% Local Variables:
 %%% mode: latex

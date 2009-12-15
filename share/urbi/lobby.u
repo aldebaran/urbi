@@ -12,10 +12,18 @@ do (Lobby)
     return res
   };
 
+  function echo
+  {
+    var tag = ""|
+    if (1 < call.argsCount)
+      tag = call.evalArgAt(1)|
+    send("*** " + call.evalArgAt(0).asString, tag)
+  };
+
   function handleDisconnect()
   {
     connected = false |
-    Lobby.systemLobby.send(("disconnecting " + this).asPrintable) |
+    Lobby.systemLobby.echo("disconnecting " + this) |
     onDisconnect!(this)
   };
 
@@ -33,4 +41,10 @@ do (Lobby)
       .each(closure (s) { echo(s, "start") })
   };
 
+  function wall
+  {
+    call.message = "echo";
+    for (var l in lobbies - [Lobby])
+      l.callMessage(call);
+  };
 };

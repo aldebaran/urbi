@@ -61,6 +61,20 @@ connected;
 Lobby.create;
 \end{urbiassert}
 
+\item \lstinline|echo(\var{value}, \var{channel} = ""|\\
+  Send \lstinline|\var{value}.asString| to \lstinline|this|, prefixed
+  by the \refObject{String} \var{channel} name if specified.  This is
+  the preferred way to send informative messages (prefixed with
+  \samp{***}).
+\begin{urbiscript}[firstnumber=last]
+lobby.echo("111", "foo");
+[00015895:foo] *** 111
+lobby.echo(222, "");
+[00051909] *** 222
+lobby.echo(333);
+[00055205] *** 333
+\end{urbiscript}
+
 \item \lstinline|help|\experimental\\
   Launch the tutorial.
 
@@ -90,8 +104,9 @@ Lobby.create.receive("12;");
 \end{urbiscript}
 
 \item \lstinline|send(\var{value}, \var{channel} = ""|\\
-  Send the \refObject{String} \var{value} to \lstinline|this|,
-  prefixed by the \refObject{String} \var{channel} name if specified.
+  This is low-level routine.  Send the \refObject{String} \var{value}
+  to \lstinline|this|, prefixed by the \refObject{String}
+  \var{channel} name if specified.
 \begin{urbiscript}[firstnumber=last]
 lobby.send("111", "foo");
 [00015895:foo] 111

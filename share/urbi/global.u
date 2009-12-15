@@ -3,14 +3,6 @@ do (Global)
   // Import the primitives.
   addProto(System);
 
-  function echo
-  {
-    var tag = ""|
-    if (1 < call.argsCount)
-      tag = call.evalArgAt(1)|
-    lobby.send("*** " + call.evalArgAt(0).asString, tag)
-  };
-
   /// Returns true if argument is defined. Argument can be of the form a.b.c.
   function isdef
   {
@@ -53,10 +45,8 @@ do (Global)
     }
   };
 
-  function wall
+  function echo
   {
-    call.message = "echo";
-    for (var lobby in lobbies - [Lobby])
-      lobby.callMessage(call);
+    lobby.callMessage(call);
   };
 };
