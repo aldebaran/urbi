@@ -96,6 +96,12 @@ namespace urbi
     }
 
     void
+    Lobby::quit()
+    {
+      connection_get().close();
+    }
+
+    void
     Lobby::send(const objects_type& args)
     {
       if (proto == this)
@@ -140,10 +146,15 @@ namespace urbi
     void
     Lobby::initialize(CxxObject::Binder<Lobby>& bind)
     {
-      bind(SYMBOL(send), &Lobby::send);
-      bind(SYMBOL(write), &Lobby::write);
-      bind(SYMBOL(create), &Lobby::create);
-      bind(SYMBOL(receive), &Lobby::receive);
+#define DECLARE(Name)                           \
+      bind(SYMBOL(Name), &Lobby::Name)
+
+      DECLARE(create);
+      DECLARE(quit);
+      DECLARE(receive);
+      DECLARE(send);
+      DECLARE(write);
+#undef DECLARE
     }
 
     URBI_CXX_OBJECT_REGISTER(Lobby)

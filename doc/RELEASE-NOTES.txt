@@ -10,6 +10,10 @@ fixes
 
 - local.u works as expected.
 
+Changes:
+
+- Lobby.quit replaces System.quit.
+
 
 ***************************
 * New in kernel 2.0 RC 2. *

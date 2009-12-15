@@ -257,12 +257,6 @@ namespace urbi
     }
 
     static void
-    system_quit()
-    {
-      runner().lobby_get()->connection_get().close();
-    }
-
-    static void
     system_spawn(const rObject&,
                  const rCode& code,
                  const rObject& clear_tags)
@@ -535,7 +529,6 @@ namespace urbi
       DECLARE(lobby);
       DECLARE(nonInterruptible);
       DECLARE(programName);
-      DECLARE(quit);
       DECLARE(reboot);
       DECLARE(registerAtJob);
       DECLARE(resetStats);

@@ -43,10 +43,16 @@ namespace urbi
       void write(const std::string& data);
       connection_type& connection_get();
       const connection_type& connection_get() const;
-      /// Mark this lobby as disconnected.
-      void disconnect();
+
       /// Create new lobby attached to a ghost connection.
       rLobby create();
+
+      /// Mark this lobby as disconnected.
+      void disconnect();
+
+      /// Shut the lobby/connection down.
+      void quit();
+
       /// Fake reception of a string on the connection.
       void receive(const std::string& data);
 
