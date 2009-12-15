@@ -121,7 +121,13 @@ package: texinfo
 ** yaml for Python
 The AST is generated from a description written in YAML.  Our (Python)
 tools need to read these files to generate the AST classes.  See
-http://pyyaml.org/wiki/PyYAML.
+http://pyyaml.org/wiki/PyYAML.  The procedure is:
+
+   cd /tmp
+   wget http://pyyaml.org/download/pyyaml/PyYAML-3.09.zip
+   unzip PyYAML-3.09.zip
+   cd pyYAML-3.09.zip
+   python setup.py install
 
 MacPorts: py26-yaml
 deb:   python-yaml

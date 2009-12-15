@@ -2,18 +2,26 @@
 
 stderr ()
 {
-  echo >&2 "$0: $@"
+  local i
+  local me
+  me=$(basename "$0")
+  for i
+  do
+    echo >&2 "$me: $i"
+  done
 }
 
 error ()
 {
-  stderr "$0: $@"
-  exit 1
+  local exit="$1"
+  shift
+  stderr "$@"
+  exit $exit
 }
 
 fatal ()
 {
-  error 1 "$0: $@"
+  error 1 "$@"
 }
 
 # packages PACKAGE-SYSTEM-NAME REGEXP
@@ -70,7 +78,7 @@ except ImportError:
 If the last error is \"./bootstrap: Python module \`yaml' is required\"
 then you need to install Python Bindings for Yaml.
 
-See README."
+See README for instructions."
 fi
 
 # Finally, install the GNU Build System and our submodules.
