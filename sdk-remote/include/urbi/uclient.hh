@@ -23,8 +23,8 @@
 namespace urbi
 {
   ///Linux implementation of UAbstractClient.
-  /*! This implementation creates a thread for each instance of UClient, which
-    listens on the associated socket.
+  /*! This implementation uses a shared thread between all the instances to
+   * handle Socket operations, and call the registered callbacks in that thread.
   */
   class URBI_SDK_API UClient
     : public UAbstractClient
@@ -68,7 +68,10 @@ namespace urbi
     return Name ## _;                           \
   }
 
-    /// \param opt  options: whether server, whether autostart.
+    /*! Create a new client and tries to connect to the server.
+     * Will block until the connection is established or timeouts.
+     * \param opt  options: whether server, whether autostart.
+     */
     UClient(const std::string& host = default_host(),
             unsigned port = URBI_PORT,
 	    size_t buflen = URBI_BUFLEN,

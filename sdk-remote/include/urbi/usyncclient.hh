@@ -50,8 +50,13 @@ namespace urbi
      values. These functions can safely be called frow within a
      callback function.
 
-     All callback will be called in a separate thread created in the
-     constructor.  If you want to call these callbacks in a different
+     All callbacks will be called in a separate thread created in the
+     constructor.
+     When one of those callbacks calls a synchronous function, new incoming
+     messages are kept on hold until the response from the synchronous call
+     is received.
+
+     If you want to call these callbacks in a different
      thread, call @stopCallbackThread, then regularly call
      @processEvents. Each call will call callbacks for all pending
      messages in the current thread.  */
@@ -80,7 +85,8 @@ namespace urbi
       UCLIENT_OPTION(connect_callback_type, connectCallback);
     };
 
-    /** Create a new connection to an Urbi Server.
+    /** Create a new connection to an Urbi Server. Blocks until the connexion
+     * is established.
      *
      *  \param host    The host to connect to.
      *  \param port    the port number to connect to, defaults to URBI_PORT.

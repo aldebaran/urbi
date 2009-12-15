@@ -151,6 +151,15 @@ namespace urbi
     /*----------.
     | Sending.  |
     `----------*/
+    /**
+    * \defgroup Sending urbiscript code.
+    *
+    * All the send functions are expected to be asynchronous by default: they
+    * return immediately, and
+    * send the data in a separate thread.
+    */
+    //@{
+
 
     /// Send an Urbi command. The syntax is similar to the printf()
     /// function.
@@ -218,8 +227,18 @@ namespace urbi
     error_type putFile(const void* buffer, size_t length,
                        const char* remoteName);
 
+    //@}
 
-    // Receiving
+    //@{
+    /**
+    * \defgroup Setting read callbacks.
+    *
+    * All those functions register function callbacks that are called on
+    * some events. The UClient subclass calls those callbacks synchronously
+    * in the main read thread, so no other callback will be called until
+    * the first one returns.
+    * The USyncClient subclass uses a separate thread per instance.
+    */
 
     /// Associate a callback function with a tag. New style.
     /*!
@@ -246,6 +265,7 @@ namespace urbi
     UCallbackID setCallback(UCustomCallback, void* callbackData,
                             const char* tag);
 
+    //@}
     //@{
     /// \deprecated{ Callback to class member functions(old-style).}
 
