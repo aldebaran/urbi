@@ -10,14 +10,11 @@ Details on the architecture the \urbi server runs on.
 \begin{itemize}
 %% \item \lstinline|breakpoint|
 %% \item \lstinline|currentRunner|
-%% \item \lstinline|cycle|
-%% \item \lstinline|eval|
 %% \item \lstinline|jobs|
 %% \item \lstinline|lobbies|
 %% \item \lstinline|lobby|
 %% \item \lstinline|nonInterruptible|
 %% \item \lstinline|programName|
-%% \item \lstinline|quit|
 %% \item \lstinline|registerAtJob|
 %% \item \lstinline|resetStats|
 %% \item \lstinline|searchPath|
@@ -96,7 +93,7 @@ assert_op(">",  1, 1 + 1);
 [00000003:error] !!! failed assertion: 1 > 1 . '+'(1) (1 <= 2)
 \end{urbiscript}
 
-\item \lstinline|backtrace|\\
+\item \lstinline|backtrace|\experimental\\
   Display the call stack on the channel \code{backtrace}.
 \begin{urbiscript}[firstnumber=last]
 //#push 100 "foo.u"
@@ -111,6 +108,34 @@ outermost;
 [00000016:backtrace] outermost (foo.u:104.1-9)
 //#pop
 \end{urbiscript}
+
+\item \lstinline|cycle|\experimental\\
+  The number of execution cycles since the beginning.
+\begin{urbiscript}[firstnumber=last]
+{
+  var first = cycle ; var second = cycle ;
+  assert(first + 1 == second);
+  first = cycle | second = cycle ;
+  assert(first == second);
+};
+\end{urbiscript}
+
+\item \lstinline|eval(\var{source})|\\
+  Evaluate the \us \var{source}, and return its result.  The
+  \var{source} must be complete, yet the terminator (e.g., \samp{;})
+  is not required.  The evaluation is performed in the context of the
+  current object (\lstinline|this|), in particular, to create local
+  variables, create scopes.
+\begin{urbiassert}[firstnumber=last]
+eval("1+2") == 1+2;
+eval("\"x\" * 10") == "x" * 10;
+eval("eval(\"1\")") ==  1;
+eval("{ var x = 1; x + x; }") ==  2;
+
+// This creates a slot in the current object.
+eval("var x = 23;") == 23;
+x == 23;
+\end{urbiassert}
 
 \item \lstinline|getenv(\var{name})|\\
   Return the value of the environment variable \var{name} as a

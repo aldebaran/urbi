@@ -71,9 +71,9 @@ namespace urbi
     rLobby
     Lobby::create()
     {
-      kernel::UGhostConnection* g =
-        new kernel::UGhostConnection(*kernel::urbiserver, true);
-      return g->lobby_get();
+      return
+        new kernel::UGhostConnection(*kernel::urbiserver, true)
+        ->lobby_get();
     }
 
     Lobby::connection_type&

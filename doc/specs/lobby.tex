@@ -5,7 +5,8 @@ connection to an \urbi server.
 
 \subsection{Prototypes}
 \begin{itemize}
-\item one instance of \refObject{Channel}
+\item \lstinline|Global.topLevel|, one instance of \refObject{Channel}
+  with an empty Channel name.
 \end{itemize}
 
 \subsection{Construction}
@@ -13,32 +14,105 @@ connection to an \urbi server.
 A lobby is implicitly created at each connection. At the top level,
 \lstinline|this| is a \dfn{Lobby}.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 this.protos;
 [00000001] [Lobby]
+this.protos[0].protos;
+[00000003] [Channel_0xADDR]
+\end{urbiscript}
+
+Lobbies cannot be cloned, they must be created using
+\lstinline|create|.
+
+\begin{urbiscript}[firstnumber=last]
+Lobby.new;
+[00000177:error] !!! new: `Lobby' objects cannot be cloned
+Lobby.create;
+[00000174] Lobby_0x126450
+\end{urbiscript}
+
+
+\subsection{Examples}
+
+Since every lobby is-a \refObject{Channel}, one can use the methods of
+Channel.
+
+\begin{urbiscript}[firstnumber=last]
+lobby << 123;
+[00478679] 123
+lobby << "foo";
+[00478679] "foo"
 \end{urbiscript}
 
 \subsection{Slots}
 \begin{itemize}
 \item \lstinline|connected|\\
   Whether \lstinline|this| is connected.
+\begin{urbiassert}[firstnumber=last]
+connected;
+\end{urbiassert}
 
 \item \lstinline|connectionTag|\\
   The tag of all code executed in the context of \lstinline|this|.
 
-\item \lstinline|help|\\
+\item \lstinline|create|\\
+  Instantiate a new Lobby.
+\begin{urbiassert}[firstnumber=last]
+Lobby.create;
+\end{urbiassert}
+
+\item \lstinline|help|\experimental\\
   Launch the tutorial.
 
 \item \lstinline|lobby|\\
-  Return \lstinline|this|.
+  Return the current lobby, i.e., \lstinline|this|.
+\begin{urbiassert}[firstnumber=last]
+lobby === this;
+\end{urbiassert}
 
-\item \lstinline|onDisconnect|\\
+\item \lstinline|onDisconnect(\var{lobby})|\\
   Event launched when \lstinline|this| has disconnected.
 
-\item \lstinline|send|\\
-  Send value to \lstinline|this|.
+\item \lstinline|quit|\\
+  Shutdown this lobby, i.e., close the connection.  The server is
+  still running, see \lstinline|System.shutdown| to quit the server.
 
-\item \lstinline|write|\\
+\item \lstinline|receive(\var{value})|\\
+  This is low-level routine.  Pretend the \refObject{String}
+  \var{value} was received from the connection.  There is no guarantee
+  that \var{value} will be the next program block that will be
+  processed: for instance, if you load a file which, in its middle,
+  uses \lstinline|lobby.receive("foo")|, then \lstinline|"foo"| will
+  be appended after the end of the file.
+\begin{urbiscript}[firstnumber=last]
+Lobby.create.receive("12;");
+[00478679] 12
+\end{urbiscript}
+
+\item \lstinline|send(\var{value}, \var{channel} = ""|\\
+  Send the \refObject{String} \var{value} to \lstinline|this|,
+  prefixed by the \refObject{String} \var{channel} name if specified.
+\begin{urbiscript}[firstnumber=last]
+lobby.send("111", "foo");
+[00015895:foo] 111
+lobby.send("222", "");
+[00051909] 222
+lobby.send("333");
+[00055205] 333
+\end{urbiscript}
+
+\item \lstinline|write(\var{value})|\\
+  This is low-level routine.  Send the \refObject{String} \var{value}
+  to the connection.  Note that because of buffering, the output might
+  not be visible before an end-of-line character is output.
+\begin{urbiscript}[firstnumber=last]
+lobby.write("[");
+lobby.write("999999999:");
+lobby.write("myTag] ");
+lobby.write("Hello, World!");
+lobby.write("\n");
+[999999999:myTag] Hello, World!
+\end{urbiscript}
 \end{itemize}
 
 %%% Local Variables:
