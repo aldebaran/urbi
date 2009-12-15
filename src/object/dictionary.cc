@@ -128,7 +128,7 @@ namespace urbi
     {
       bind(SYMBOL(asBool), &Dictionary::as_bool);
 #define DECLARE(Name)                           \
-      bind(SYMBOL(Name), &Dictionary::Name);
+      bind(SYMBOL(Name), &Dictionary::Name)
 
       DECLARE(clear);
       DECLARE(empty);

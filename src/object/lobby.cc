@@ -68,6 +68,14 @@ namespace urbi
       RAISE("`Lobby' objects cannot be cloned");
     }
 
+    rLobby
+    Lobby::create()
+    {
+      kernel::UGhostConnection* g =
+        new kernel::UGhostConnection(*kernel::urbiserver, true);
+      return g->lobby_get();
+    }
+
     Lobby::connection_type&
     Lobby::connection_get()
     {
@@ -121,14 +129,6 @@ namespace urbi
         return;
       connection_->send_queue(data.c_str(), data.size());
       connection_->flush();
-    }
-
-    rLobby
-    Lobby::create()
-    {
-      kernel::UGhostConnection* g =
-        new kernel::UGhostConnection(*kernel::urbiserver, true);
-      return g->lobby_get();
     }
 
     void
