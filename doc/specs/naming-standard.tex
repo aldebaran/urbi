@@ -479,6 +479,54 @@ This interface is used to describe a temperature sensor.
   }
 \end{slots}
 
+\interface[Sensor]{Laser}
+Interface for a scanning laser rangefinder, or other similar technologies.
+
+\begin{slots}
+  \slot{val}%
+  {%
+    Last scan result. Can be either a list of ufloat, or a binary containing
+    a packed array of doubles.
+  }
+
+  \slot{angleMin}
+  {%
+    Start scan angle in radians, relative to the front of the device.%
+  }
+
+  \slot{angleMax}
+  {%
+    End scan angle in radians, relative to the front of the device.%
+  }
+
+  \slot{resolution}
+  {%
+    Angular resolution of the scan, in radians.%
+  }
+
+  \slot{distanceMin}
+  {%
+    Minimun measurable distance.%
+  }
+
+  \slot{distanceMin}
+  {%
+    Maximum measurable distance.%
+  }
+
+  \optSlot{rate}
+  {%
+    Number of scans per second.%
+  }
+\end{slots}
+
+Depending on the implementation, some of the parameters can be read-only, or
+can only accept a few possible values. In that case it is up to the implementer
+to select the closest possible value to what the user entered. It is the
+responsibility of the user to read the parameter after setting it to check
+what value will actually be used by the implementation.
+
+
 \interface{Mobile}
 
 Mobile robots all share this generic interface to provide high order

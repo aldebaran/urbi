@@ -23,6 +23,7 @@ do (Global)
     class AccelerationSensor: Sensor {};
     class GyroSensor        : Sensor {};
     class TemperatureSensor : Sensor {};
+    class Laser             : Sensor {};
     class Mobile            : Interface  {};
     class Tracker           : Interface  {};
     class BlobDetector      : Interface  {};
