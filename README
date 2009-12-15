@@ -80,7 +80,14 @@ coreutils package.
 package: coreutils
 
 ** GraphViz
-Used to generate some of the figures in the documentation.
+Used to generate some of the figures in the documentation.  There is
+no GraphViz package for CygWin, so download the MSI file from
+GraphViz' site, and install it.  Then change your path to go into its
+bin directory.
+
+  wget http://www.graphviz.org/pub/graphviz/stable/windows/graphviz-2.26.msi
+  PATH=/cygdrive/c/Program\ Files/Graphviz2.26/bin:$PATH
+
 package: graphviz
 
 ** Help2man
