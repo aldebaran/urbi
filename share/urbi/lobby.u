@@ -30,7 +30,7 @@ do (Lobby)
       .banner
       .split("\n")
       << "Urbi is up and running.")
-      .each(closure (s) { send(s, "start") })
+      .each(closure (s) { echo(s, "start") })
   };
 
 };
