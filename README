@@ -44,7 +44,8 @@ package: bc
 ** Boost 1.37 or later
 Don't try to build it yourself, ask your distro's management to
 install it.
-package: boost-1.39
+deb: libboost-devel
+MacPorts: boost
 windows: http://www.boostpro.com/download
 
 ** Ccache
@@ -64,7 +65,8 @@ package: flex
 ** G++ 4.0 or later
 GCC 4.2 or better is a better option.  Beware that we have a problem
 with GCC-4.4 which rejects some Bison generated code.  See the FAQ.
-package: g++-4.2
+deb: g++-4.2
+MacPorts: gcc42
 
 ** Git 1.6 or later
 Beware that older version behave poorly with submodules.
