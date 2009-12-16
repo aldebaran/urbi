@@ -218,16 +218,15 @@ If you use an USB dongle based license, please send us your dongle
 number available in the help/about \webots menu to \contactemail so as
 we can generate your \urbikey.
 
-\section{Quick Start}
+\section{Using \urbi as a controller in your \webots worlds}
 
-This section describes basic use of the \urbi engine for \webots.
-
-\subsection{Controlling a robot with \uwebots}
+This section will show you how to control your own simulation with
+\urbi controllers.
 
 A robot controlled by \urbi in \webots uses a controller which is
-actually a standard \urbi server, with custom UOBjects plugged
+actually a standard \urbi server, with custom UObjects plugged
 in. This mean you can connect to the \urbi server and interact with
-the robot juste like you would with the actual \urbi server of the
+the robot just like you would with the actual \urbi server of the
 robot. Note however that since the \urbi server is started by webots,
 we have no way to interact with it on the standard input, and need to
 connect to it via the network. Please refer to
@@ -239,7 +238,7 @@ instance, run in \webots the \file{aibo-ball-tracking.wbt} world
 located in the \webotsworldsdir. You can then connect on the 54000
 port and control the \aibo like a regular one.
 
-\subsection{Using \urbi controllers in your own worlds}
+\subsection{Using the default urbi-2.0 controller}
 
 To use an urbi controller in your \webots world, first define an
 \verb+urbi-2.0+ controller for your webots node:
@@ -257,7 +256,7 @@ server is however useless since it doesn't run any specific behavior
 and you cannot interact with it. You can ask the \urbi server to
 listen for incoming connection, so as you can connect to it and
 control the robot interactively. You can also load \us files in the
-server to run them at startup. You can of course do both.
+server to run them at start-up. You can of course do both.
 
 To do this, simply pass arguments to the controller with the
 \verb+controllerArgs+ \webots attribute. Available arguments are the
@@ -291,6 +290,27 @@ DEF MYNODE Robot
   controllerArgs "--file my_behavior/my_script.u"
 }
 \end{lstlisting}
+
+\subsection{Defining custom \urbi controllers}
+
+A different approach would be to define your own \urbi-based
+controller. If you create a controller in \webots' controllers
+directory and create a \file{global.u} file in it, \webots will
+automatically recognize it as an \urbi controller and start the
+\file{urbi-2.0} controller. The \file{global.u} and potential
+\file{local.u} will be automatically loaded by the \urbi kernel, as
+documented in \autoref{sec:tools:files}.
+
+This approach is equivalent to using the default \file{urbi-2.0}
+controller and passing it file to load, but enables you to define
+custom, reusable controllers for your robots. For instance, you could
+create a \file{my-project/controllers/my-robot/} controller, with a
+\file{global.u} file in it that load all your robots objects (motors,
+sensors, \ldots). To use an \urbi controller for your robot, you would
+then simply have to use \lstinline+controller "my-robot"+ in your
+world file. If you used the default \file{urbi-2.0} controller, you
+would have to add \lstinline+controllerArgs "--file some-dir/my-robot-bindings.u"+
+to get a functional controller for your robot.
 
 \section{Built-{}in robots and worlds}
 
@@ -489,137 +509,6 @@ The following slots are variables.
 
 More high-level behaviours are available in \file{ustd}, please read
 the corresponding documentation to obtain more information.
-
-
-\section{Making your own \urbi for \webots controllers}
-
-\subsection{Create from an existing world}
-
-As soon as you will want to go further, you will have to create your
-own \urbi for \webots based controllers. Here is how to proceed:
-
-\begin{enumerate}
-
-\item Create a new directory in your \file{data} directory (say
-  \file{foo}). This directory should be named as your new robot.
-
-\item Copy into your \file{foo} directory the content of the
-  \file{kiki} directory.
-
-\item Edit the \nolinkurl{kiki.ini} file and rename it into your
-  robot's name (i.e. \file{foo.ini} in this example).
-
-\item Edit the \file{URBI.INI} file and change the line:
-
-\begin{urbiunchecked}
-load("kiki.ini");
-\end{urbiunchecked}
-
-by:
-
-\begin{urbiunchecked}
-// The name should match with the file you've just renamed.
-load("foo.ini");
-\end{urbiunchecked}
-
-\item Copy the kiki world file (\file{worlds/kiki\_urbi.wbt} should be
-  copied into \file{worlds/foo\_urbi.wbt} for example).
-
-  Edit your new world file and check that the field
-  \code{ControllerArgs} contains the directory you've just created. It
-  should be, for example: \samp{-p 54000 50
-    ../../../packages/urbi/data/foo}.  The Controller field should
-  keep its value to \command{urbi}.
-\end{enumerate}
-
-Your robot is now ready to be controlled by \urbi. During the next
-part, you'll learn how to customize the robot you have created.
-
-
-\subsection{Customize}
-
-To handle each robots' specificities, \webots uses a set of devices
-which is fully supported by \urbi for \webots. Those devices are
-created in a special file which is called like your robot in its data
-directory.  With the previous example, it would have been the
-\file{data/foo/foo.ini} file. This file should be like the following
-piece of code:
-
-\begin{urbiunchecked}
-system.name = "/gostai/webots/kiki";
-system.type = "webots";
-
-
-wheelL = new DifferentialWheels("kiki", true);
-alias wheelL.val wheelL.speed;
-wheelR = new DifferentialWheels("kiki", false);
-group wheels {wheelL, wheelR};
-
-alias wheelR.val wheelR.speed;
-eyeL = new DistanceSensor("ir0");
-eyeR = new DistanceSensor("ir1");
-
-// Standard groups
-group software {};
-group hardware {wheelL, wheelR, eyeL, eyeR};
-group objects {software, hardware};
-
-// Standard aliases
-// etc.
-\end{urbiunchecked}
-
-The first line is your robot's name, you may edit this to any value.
-The second line must keep its value.
-
-After this, you need to create your robot's devices. It's simple,
-follow the rule: \texttt{\var{devicename} = new
-  \var{devicetype}("\var{name of the device's node in the world
-    file}"); }
-
-The node name can be retrieved easily from the \webots world tree
-editor.
-
-One exception is the \code{DifferentialWheel} device.  There are
-always two lines. The first has its second argument set to \code{true}
-and will create the left wheel. The second with its second argument
-set to \code{false} create the right wheel.
-
-The last step is editing the groups to add your new devices. The
-hardware group should contain all the devices your robot uses. You may
-also create subgroup to ease robot's programming.
-
-
-\subsection{Urbi controller options}
-
-The Urbi controller can take several options which modify its
-behaviour.  You specify the controller options in the
-\code{controllerArgs} field of the \webots world (\file{.wbt}) files.
-The \code{controllerArgs} must be as follow:
-
-\begin{shell}
-controllerArgs [options] period [path1 path2 ...]
-\end{shell}
-
-\begin{description}
-\item[period] base \urbi interval in milliseconds. You have to set the
-  same period for the Urbi controller and for the \webots worlds. The
-  period in the \webots world is defined in the field
-  \code{basicTimeStep}.
-
-\item[path] items are absolute or relative path elements searched in
-  order to find Urbi files when 'load' is called.
-
-\item[options]
-  \begin{options}
-  \item[-f] enable fast mode: the server will run as fast as possible
-    and emulate the period specified.  Don't set \option{-f} option
-    when there is ``runRealTime TRUE'' in the \webots world.  Always
-    set \option{-f} otherwise.
-  \item[-l \var{license\_key}] specify the license key to use
-  \item[-p \var{port}] specify the TCP port \urbi will listen to.
-  \end{options}
-\end{description}
-
 
 \section{\webots UObjects}
 
