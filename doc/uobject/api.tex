@@ -176,6 +176,8 @@ The API gives you two methods to have a function called periodically:
   Invoke an UObject member function \var{fun} every \var{period}
   milliseconds.  \var{fun} is a regular member-function pointer, for
   instance \lstinline|MyUObject::my_function|.
+  The function returns a \lstinline|TimerHandle| that can be passed to the
+  \lstinline|UObject::removeTimer(h)| function to disable the timer.
 \end{cxxapi}
 
 \section{The special case of sensor/effector variables}
