@@ -30,12 +30,19 @@
 namespace runner
 {
   using namespace object;
-
-  // We can use void as the current method because it cannot be used
-  // as a function call parameter.
-
-  const rObject& raise_current_method = void_class;
-
+  RaiseCurrent raise_current_method;
+  void
+  raise_urbi(libport::Symbol exn_name,
+             RaiseCurrent,
+	     rObject arg1,
+	     rObject arg2,
+	     rObject arg3,
+             bool skip)
+  {
+    Runner& r = dbg::runner_or_sneaker_get();
+    raise_urbi(exn_name, to_urbi(r.innermost_call_get()), arg1, arg2, arg3,
+               skip);
+  }
   void
   raise_urbi(libport::Symbol exn_name,
 	     rObject arg1,
@@ -51,11 +58,20 @@ namespace runner
     Runner& r = dbg::runner_or_sneaker_get();
     CAPTURE_GLOBAL(Exception);
     const rObject& exn = Exception->slot_get(exn_name);
-    if (arg1 == raise_current_method)
-      arg1 = to_urbi(r.innermost_call_get());
-    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4),
-            skip);
+    if (arg1 == void_class)
+      raise_unexpected_void_error();
+    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4), skip);
     pabort("Unreachable");
+  }
+
+  void
+  raise_urbi_skip(libport::Symbol exn_name,
+                  RaiseCurrent,
+                  rObject arg1,
+                  rObject arg2,
+                  rObject arg3)
+  {
+    raise_urbi(exn_name, raise_current_method, arg1, arg2, arg3, true);
   }
 
   void
@@ -74,8 +90,15 @@ namespace runner
                             rObject expected,
 			    rObject method_name)
   {
-    raise_urbi_skip(SYMBOL(ArgumentType),
+    if (method_name)
+      raise_urbi_skip(SYMBOL(ArgumentType),
                     method_name,
+                    to_urbi(idx),
+                    effective,
+                    expected);
+    else
+    raise_urbi_skip(SYMBOL(ArgumentType),
+                    raise_current_method,
                     to_urbi(idx),
                     effective,
                     expected);

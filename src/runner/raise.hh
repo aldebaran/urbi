@@ -17,12 +17,21 @@
 
 namespace runner
 {
-  extern const object::rObject& raise_current_method;
 
+  class RaiseCurrent {};
+  extern RaiseCurrent raise_current_method;
   /// Raise an Urbi exception denoted by its name, looked up in
-  /// "Global.Exception".  If arg1 is "raise_current_method", the
+  /// "Global.Exception".  If "raise_current" is passed, the
   /// innermost method name will be looked up in the current runner
-  /// and used instead.
+  /// and used as first argument (inserted before arg1..arg4).
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
+  void raise_urbi(libport::Symbol exn_name,
+                  RaiseCurrent,
+		  object::rObject arg1 = 0,
+		  object::rObject arg2 = 0,
+		  object::rObject arg3 = 0,
+                  bool skip = false);
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_urbi(libport::Symbol exn_name,
@@ -36,10 +45,19 @@ namespace runner
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_urbi_skip(libport::Symbol exn_name,
+                       RaiseCurrent,
+                       object::rObject arg1 = 0,
+                       object::rObject arg2 = 0,
+                       object::rObject arg3 = 0);
+
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
+  void raise_urbi_skip(libport::Symbol exn_name,
                        object::rObject arg1 = 0,
                        object::rObject arg2 = 0,
                        object::rObject arg3 = 0,
-                       object::rObject arg4 = 0);
+                       object::rObject arg4 = 0
+                       );
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
@@ -47,7 +65,7 @@ namespace runner
     (unsigned idx,
      object::rObject effective,
      object::rObject expected,
-     object::rObject method_name = raise_current_method);
+     object::rObject method_name = 0);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
