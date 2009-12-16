@@ -312,6 +312,27 @@ world file. If you used the default \file{urbi-2.0} controller, you
 would have to add \lstinline+controllerArgs "--file some-dir/my-robot-bindings.u"+
 to get a functional controller for your robot.
 
+\section{Binding your own robots with \uwebots}
+
+Binding your own robot model with \uwebots is extremely similar to
+binding an actual robot with \urbi, except the UObjects (device
+drivers) are already written for \webots generic devices. It thus
+mainly consists in writing an initialization \us file that instantiate
+those \urbi objects for your robots devices (motors, sensors,
+\ldots). For instance, a binding for a minimalist robot that only has
+a servomotor and a distance sensor could be:
+
+\begin{lstlisting}
+var motor = Servo.new("webots_motor_node_name");
+var distance = DistanceSensor.new("webots_sensor_node_name");
+\end{lstlisting}
+
+Note that, whenever possible, your \webots binding should be strictly
+identical to the actual robot binding (if any) so as the same \urbi
+code will work in the simulator and in reality. Additionally, you
+should whenever possible respect the \gsrapi (see
+\autoref{sec:naming}) to be compatible with standard \urbi components.
+
 \section{Built-{}in robots and worlds}
 
 This section deals with the robots and worlds provided with the the
