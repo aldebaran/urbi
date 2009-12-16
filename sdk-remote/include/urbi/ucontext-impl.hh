@@ -84,7 +84,7 @@ namespace urbi
       virtual UGenericCallbackImpl* getGenericCallbackImpl() = 0;
       /// Default implementations appends to 'objects'.
       virtual void registerObject(UObject*o);
-      virtual void setTimer(UTimerCallback* cb) = 0;
+      virtual TimerHandle setTimer(UTimerCallback* cb) = 0;
       virtual void registerHub(UObjectHub*);
       virtual void removeHub(UObjectHub*) = 0;
       virtual void setHubUpdate(UObjectHub*, ufloat) = 0;
@@ -113,6 +113,7 @@ namespace urbi
       virtual void initialize(UObject* owner) = 0;
       virtual void clean() = 0;
       virtual void setUpdate(ufloat period) = 0;
+      virtual bool removeTimer(TimerHandle h) = 0;
     };
 
     class URBI_SDK_API UVarImpl
@@ -125,6 +126,7 @@ namespace urbi
       virtual void sync() = 0;
       virtual void request() = 0;
       virtual void keepSynchronized() = 0;
+      // Set the UVar value from v. Must deep-copy unless bypass mode is enabled
       virtual void set(const UValue& v) = 0;
       virtual const UValue& get() const = 0;
       virtual UDataType type() const = 0;

@@ -83,6 +83,7 @@ namespace urbi
 # define SET(Type)                         \
   inline UVar& UVar::operator=(Type tv)    \
   {                                        \
+    /*no need to copy, impl will do it*/   \
     UValue v(tv, false);                   \
     assert(impl_);                         \
     impl_->set(v);                         \

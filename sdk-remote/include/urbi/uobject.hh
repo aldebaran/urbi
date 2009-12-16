@@ -268,16 +268,20 @@ namespace urbi
     /// \internal
 # define MKUSetTimer(Const, Useless)                                    \
     template <class T>							\
-    void USetTimer(ufloat t, int (T::*fun) () Const)			\
+    TimerHandle USetTimer(ufloat t, int (T::*fun) () Const)	        \
     {									\
-      new UTimerCallbackobj<T> (__name, t,				\
-				dynamic_cast<T*>(this), fun, ctx_);     \
+      return (new UTimerCallbackobj<T> (__name, t,			\
+				dynamic_cast<T*>(this), fun, ctx_))     \
+        ->handle_get();                                                 \
     }
 
     MKUSetTimer (/**/, /**/);
     MKUSetTimer (const, /**/);
 
 # undef MKUSetTimer
+
+    /// Remove a timer registered with USetTimer.
+    bool removeTimer(TimerHandle h);
 
 # endif //DOXYGEN
 

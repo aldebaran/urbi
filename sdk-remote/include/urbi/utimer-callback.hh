@@ -37,11 +37,13 @@ namespace urbi
     virtual ~UTimerCallback();
 
     virtual void call() = 0;
-
+    TimerHandle handle_get() { return handle_;}
     ufloat period;
     ufloat lastTimeCalled;
     std::string objname;
+  private:
     impl::UContextImpl* ctx_;
+    TimerHandle handle_;
   };
 
   // UTimerCallback subclasses

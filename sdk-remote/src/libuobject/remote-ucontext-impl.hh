@@ -49,7 +49,7 @@ namespace urbi
       virtual UVarImpl* getVarImpl();
       virtual UObjectImpl* getObjectImpl();
       virtual UGenericCallbackImpl* getGenericCallbackImpl();
-      virtual void setTimer(UTimerCallback* cb);
+      virtual TimerHandle setTimer(UTimerCallback* cb);
       virtual void registerHub(UObjectHub*);
       virtual void removeHub(UObjectHub*) ;
       virtual void setHubUpdate(UObjectHub*, ufloat);
@@ -92,6 +92,7 @@ namespace urbi
       virtual void initialize(UObject* owner);
       virtual void clean();
       virtual void setUpdate(ufloat period);
+      virtual bool removeTimer(TimerHandle h);
     private:
       UObject* owner_;
       ufloat period;

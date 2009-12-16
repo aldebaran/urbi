@@ -15,7 +15,7 @@
 
 # include <list>
 # include <string>
-
+# include <boost/shared_ptr.hpp>
 # include <urbi/export.hh>
 
 namespace urbi
@@ -52,7 +52,7 @@ namespace urbi
     class UVarImpl;
     class UGenericCallbackImpl;
   }
-
+  typedef boost::shared_ptr<std::string> TimerHandle;
   class baseURBIStarter;
   class baseURBIStarterHub;
 };

@@ -28,6 +28,7 @@ public:
     updated = 0;
     UBindFunction(timer, setupUpdate);
     UBindFunction(timer, setupTimer);
+    UBindFunction(timer, unsetupTimer);
     UBindFunction(timer, setupHubUpdate);
     UBindFunction(timer, init);
   }
@@ -40,10 +41,13 @@ public:
     USetUpdate(d);
     return 0;
   }
-  int setupTimer(int d)
+  std::string setupTimer(int d)
   {
-    USetTimer(d, &timer::onTimer);
-    return 0;
+    return *USetTimer(d, &timer::onTimer);
+  }
+  bool unsetupTimer(const std::string& s)
+  {
+    return removeTimer(urbi::TimerHandle(new std::string(s)));
   }
   int setupHubUpdate(int d)
   {

@@ -479,7 +479,7 @@ namespace urbi
     | UObjects accessors.  |
     `---------------------*/
 
-    void RemoteUContextImpl::setTimer(UTimerCallback* cb)
+    TimerHandle RemoteUContextImpl::setTimer(UTimerCallback* cb)
     {
       // Register ourself as an event.
       std::string cbname = "timer" + string_cast(cb);
@@ -491,6 +491,20 @@ namespace urbi
                           "timer_" << cb->objname << ": every("
                           << cb->period << "ms)"
                           "{ " << compatibility::emit(event) << ";},");
+      return TimerHandle(new std::string("timer_" + cb->objname));
+    }
+
+    bool
+    RemoteUObjectImpl::removeTimer(TimerHandle h)
+    {
+      if (!h)
+        return false;
+      UClient* client =
+        dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
+      URBI_SEND_COMMAND_C(*client,
+        compatibility::stop(*h, client->kernelMajor()) << ",");
+      h.reset();
+      return true;
     }
 
     void

@@ -57,6 +57,13 @@ namespace urbi
   }
 
   inline
+  bool
+  UObject::removeTimer(TimerHandle h)
+  {
+    return impl_->removeTimer(h);
+  }
+
+  inline
   impl::UObjectImpl*
   UObject::impl_get()
   {
