@@ -132,9 +132,11 @@ BOOST_REQUIRE([1.37])
 if $COMPILATION_MODE_DEBUG; then
   boost_rt_opt=gd
 fi
+BOOST_DATE_TIME([$boost_rt_opt])
 BOOST_REGEX([$boost_rt_opt])
 BOOST_SYSTEM([$boost_rt_opt])
 BOOST_TOKENIZER([$boost_rt_opt])
+
 
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff
 # below.

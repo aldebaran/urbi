@@ -1,7 +1,18 @@
+/*
+ * Copyright (C) 2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
 #include <object/symbols.hh>
 #include <urbi/object/date.hh>
 #include <urbi/object/duration.hh>
 #include <urbi/object/global.hh>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace urbi
 {
@@ -35,7 +46,24 @@ namespace urbi
     Date::init(const objects_type& args)
     {
       check_arg_count(args.size(), 0, 1);
-      time_ = args.empty() ? 0 : from_urbi<unsigned>(args[0]);
+
+      if (args.empty())
+      {
+        time_ = 0;
+        return;
+      }
+
+      if (rString str = args[0]->as<object::String>())
+      {
+        boost::posix_time::ptime t
+          (boost::posix_time::time_from_string(str->value_get()));
+        tm timeinfo = boost::posix_time::to_tm(t);
+        time_ = mktime (&timeinfo);
+
+        return;
+      }
+
+      time_ = from_urbi<unsigned>(args[0]);
     }
 
     /*-------------.
@@ -97,6 +125,17 @@ namespace urbi
                              date.tm_sec);
     }
 
+    /*---------.
+    | Getter.  |
+    `---------*/
+
+    unsigned
+    Date::timestamp () const
+    {
+      return time_;
+    }
+
+
     /*--------.
     | Dates.  |
     `--------*/
@@ -113,6 +152,7 @@ namespace urbi
       return new Date(0);
     }
 
+
     /*-----------------.
     | Binding system.  |
     `-----------------*/
@@ -128,6 +168,7 @@ namespace urbi
       bind(SYMBOL(epoch), &Date::epoch);
       bind(SYMBOL(init), &Date::init);
       bind(SYMBOL(now), &Date::now);
+      bind(SYMBOL(timestamp), &Date::timestamp);
     }
 
     URBI_CXX_OBJECT_REGISTER(Date)

@@ -64,6 +64,7 @@ libuobject@LIBSFX@_la_LDFLAGS =				\
   -avoid-version -no-undefined
 libuobject@LIBSFX@_la_LIBADD =				\
   $(BOOST_REGEX_LIBS)					\
+  $(BOOST_DATE_TIME_LIBS)				\
   $(LIBPORT_LIBS)					\
   $(SCHED_LIBS)						\
   $(SERIALIZE_LIBS)					\
