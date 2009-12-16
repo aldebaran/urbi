@@ -95,7 +95,7 @@ namespace urbi {
       virtual UVarImpl* getVarImpl();
       virtual UObjectImpl* getObjectImpl();
       virtual UGenericCallbackImpl* getGenericCallbackImpl();
-      virtual void setTimer(UTimerCallback* cb);
+      virtual TimerHandle setTimer(UTimerCallback* cb);
       virtual void registerHub(UObjectHub*);
       virtual void removeHub(UObjectHub*) ;
       virtual void setHubUpdate(UObjectHub*, ufloat);
@@ -113,6 +113,7 @@ namespace urbi {
       virtual void initialize(UObject* owner);
       virtual void clean();
       virtual void setUpdate(ufloat period);
+      virtual bool removeTimer(TimerHandle h);
     private:
       UObject* owner_;
       friend class KernelUGenericCallbackImpl;
@@ -712,15 +713,28 @@ namespace urbi
     {
       return new KernelUGenericCallbackImpl();
     }
-    void
+    TimerHandle
     KernelUContextImpl::setTimer(UTimerCallback* cb)
     {
       rObject me = get_base(cb->objname);
       rObject f = me->slot_get(SYMBOL(setTimer));
       rObject p = new object::Float(cb->period / 1000.0);
+      std::string stag = object::String::proto->as<object::String>()->fresh();
+      rObject tag = new object::String(stag);
       rObject call = MAKE_VOIDCALL(cb, urbi::UTimerCallback, call);
-      object::objects_type args = list_of (me)(p) (call);
+      object::objects_type args = list_of (me)(p) (call)(tag);
       getCurrentRunner().apply(f, SYMBOL(setTimer), args);
+      return TimerHandle(new std::string(stag));
+    }
+    bool
+    KernelUObjectImpl::removeTimer(TimerHandle h)
+    {
+      if (!h)
+        return false;
+      rObject me = get_base(owner_->__name);
+      me->call(SYMBOL(removeTimer), new object::String(*h));
+      h.reset();
+      return true;
     }
     void KernelUContextImpl::registerHub(UObjectHub*)
     {

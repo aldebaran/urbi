@@ -45,13 +45,13 @@ do (Global.UObject)
     updateTask = Tag.new;
     remoteEventMap = Dictionary.new;
     var this.handle = WeakPointer.new;
-    timerTask = [];
+    timerTask = Dictionary.new;
   };
 
   function destroy()
   {
     for( var t: timerTask)
-      t.stop |
+      t.second.stop |
     updateTask.stop |
     var name = __uobjectName |
     var remote = hasLocalSlot("isRemote") |
@@ -106,17 +106,31 @@ do (Global.UObject)
   };
 
   /// Set a timer to call \b func every \b interval milliseconds.
-  function setTimer(interval, func)
+  function setTimer(interval, func, tagName=nil)
   {
+    if (!tagName)
+      tagName = String.fresh|
     if (interval < minimumInterval)
       interval = minimumInterval;
     if (!hasLocalSlot("timerTask"))
-      timerTask = [];
+      timerTask = Dictionary.new;
     var tag = Tag.new;
     tag: detach({loop{ func(); sleep(interval)}}) |
-    timerTask += [tag]
+    timerTask[tagName] = tag;
   };
-
+  /// Remove timer associated with \b tagName
+  function removeTimer(tagName)
+  {
+    var v = timerTask.getWithDefault(tagName, nil) |
+    if (v)
+    {
+      v.stop |
+      timerTask.erase(tagName) |
+      true
+    }
+    else
+      false
+  };
   /// Call hub update function \b for hub \b hubname
   function setHubUpdate(hubname, interval, func)
   {
