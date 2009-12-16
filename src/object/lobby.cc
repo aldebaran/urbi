@@ -98,6 +98,9 @@ namespace urbi
     void
     Lobby::quit()
     {
+      if (proto == this)
+        RAISE("must be called on Lobby derivative");
+
       connection_get().close();
     }
 
