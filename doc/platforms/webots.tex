@@ -333,203 +333,48 @@ code will work in the simulator and in reality. Additionally, you
 should whenever possible respect the \gsrapi (see
 \autoref{sec:naming}) to be compatible with standard \urbi components.
 
-\section{Built-{}in robots and worlds}
+\section{Built-in robots and worlds}
 
-This section deals with the robots and worlds provided with the the
-engine.
+\uwebots comes with several built-in demonstration robots and
+worlds. Every included robot has a binding file named
+\file{projects/packages/urbi-2.0/share/robot-name/robot-name.u} and a
+custom controller located in
+\file{projects/packages/urbi-2.0/controllers} whose \file{global.u}
+start-up file loads the binding. Thus, using \lstinline+controller "robot-name"+
+in the webots world file automatically starts an \urbi
+kernel with the right binding to control the robot.
 
-
-\subsection{Understanding the \urbi for \webots hierarchy}
-
- Urbi for \webots is bundled with a lot of files. Here is a description of
-those files.
-
-\begin{table}[htbp]
-  \begin{center}
-    \begin{tabular}{|>{\ttfamily`}l<{'}|p{.5\linewidth}|}\hline
-      \multicolumn{1}{|c|}{\textbf{Directory}}
-      &
-      \multicolumn{1}{c|}{\textbf{Description}}
-      \\
-      \hline
-      webots/resources/webots.key & Webots license key \\
-      \hline
-      \multicolumn{2}{|c|}{Inside \file{webots/projects/default/}}\\
-      \hline
-      controllers & Contains the \urbi controller. \\
-      controllers/urbi &      \\
-      controllers/urbi/urbi &       Controller's binary \\
-      controllers/urbi/urbi.key &   \urbi for Webots license key \\
-      \hline
-      \multicolumn{2}{|c|}{Inside \file{webots/projects/packages/urbi}}\\
-      \hline
-      data &  Data directory (\urbi scripts and misc. multimedia files) \\
-      data/aibo &     Main Aibo robots directory \\
-      data/aibo/ers7 &        Aibo ERS-7 directory \\
-      data/aibo/ers210 &      Aibo ERS-210 directory \\
-      data/aibo/ers210 &      Aibo ERS-220 directory \\
-      data/e-puck &   E-puck robots directory \\
-      data/kiki &     Kiki robots directory \\
-      data/pioneer2 & Pioneer2 robots directory \\
-      data/ustd &     Ustd directory (please see Ustd dedicated documentation for more information) \\
-      worlds &        \urbi for Webots worlds directory \\
-      worlds/aibo\_ers210\_urbi.wbt & Main world for the Aibo ERS-210. \\
-      worlds/aibo\_ers7\_urbi.wbt &   Main world for the Aibo ERS-7. \\
-      worlds/aibo\_ers7\_urbi\_soccer.wbt &   Soccer world for the Aibo ERS-7. \\
-      worlds/aibo\_ers7\_urbi\_supervisor.wbt &       Supervisor world for the Aibo ERS-7 (see the supervisor section). \\
-      worlds/e-puck\_urbi.wbt &       Main world for the e-puck. \\
-      worlds/kiki\_urbi.wbt & Main world for the kiki example robot. \\
-      worlds/pioneer2\_urbi.wbt &     Main world for the Pioneer 2. \\
-      worlds/textures &       World's textures directory. \\
-      \hline
-    \end{tabular}
-  \end{center}
-  \caption{Directory hierarchy}
-  \end{table}
-
-It is important to notice the data's directory hierarchy, each path
-follows the following rule:
-
-\begin{lstlisting}
-data/\var{robotName}
-\end{lstlisting}
-
-If several versions of the robots are available, the following
-rule is applied:
-
-\begin{lstlisting}
-data/\var{robotName}/\var{version}
-\end{lstlisting}
-
-In these directories, standard files are:
-
-\begin{table}[htbp]
-\begin{center}
-\begin{tabular}{ll}\hline
-  File &        Description \\
-  \file{CLIENT.INI} &  Client initialization script (required). \\
-  \file{config.u} &    Configuration file (used to customize the robot). \\
-  \file{\var{robot}.ini} & Robot hardware layout. \\
-  \file{urbi.INI} &    Server initialization script (required). \\
-\hline
-\end{tabular}
-\end{center}
-
-\caption{Standard robot's files}
-\end{table}
-
-\subsection{Worlds special features}
-
-This section describes the special features of some worlds.  The
-worlds referenced in the previous section as the ``main'' world have
-no specificities.
-
-
-\subsubsection{The soccer world (balltracking)}
-
-Launch \webots and load the soccer world
-(\file{aibo\_ers7\_urbi\_soccer.wbt}).
-
-
-Connect to the \urbi server and use the following command:
-
-\begin{urbiunchecked}
-unfreeze balltracking;
-\end{urbiunchecked}
-
-This will activate the balltracking of the ERS-7 robot.  Now, you can
-use \kbd{shift} and the mouse to move the ball, the ERS-7 will move
-its head to follow the ball.
-
-
-\subsubsection{The supervisor world}
-
-Launch \webots and load the supervisor world
-(\file{aibo\_ers7\_urbi\_supervisor.wbt}).
-
-It is crucial to understand that this world launches two \urbi
-servers.  The robot's server on the port 54001 and the supervisor
-server on the port 54002.
-
-A supervisor is a kind of robot in \webots which can be used to control
-the world. It is used, for example, in the \webots soccer example to
-give the ball's position.
-
-If you create a supervisor node which is linked to an \urbi
-controller, this will allow you to control the world through \urbi.
-
-Warning: don't forget to give different ports for each robot you add
-in a \webots world. If this is not the case, some controllers will not
-work.
-
-After having started the simulation of the supervisor world, execute
-the following lines:
-
-
-\begin{urbiunchecked}
-// Create a moving label.
-l = new Label("\urbi for Webots");
-l.size = 0.04;
-l.r = 125 sin:10s ampli:125,
-l.x = 0.2 sin:10s ampli:0.1,
-
-// Manipulate the floor.
-fl = new ManipulateNode("FLOOR");
-fl.ty = -1 sin:10s ampli:0.5,
-\end{urbiunchecked}
-
-The first part of the script creates a label and defines a movement
-with the \lstinline|sin| modifier. The second part moves the floor.
-
-For a complete documentation of these nodes, please read the following
-sections.
-
-\subsection{Robots specific functions}
-
-Many functions are directly available in \us to generate high-level
-behaviour. Those features will be described in the next section.
-
-
-\subsubsection{Aibo specific functions}
-
-The following table sums up the Aibo's functions.
+Here is a description of the built-in worlds:
 
 \begin{itemize}
-\item \lstinline|robot.walk(\var{duration})|\\
-  Walk for duration milliseconds (walk backward if duration is negative).
-\item \lstinline|robot.stopwalk()|\\
-  Interrupt the walk.
-\item \lstinline|robot.turn(\var{duration})|\\
-  Turn counter-clockwise for \var{duration} seconds (turn backward if
-  duration is negative).
-\item \lstinline|robot.stopturn()|\\
-  Interrupt the turn.
-\item \lstinline|robot.initial()|\\
-  Initial position sitting down (stretch and lay).
-\item \lstinline|robot.stretch()|\\
-  Stretching like in the morning.
-\item \lstinline|robot.lay()|\\
-  Laying (sitting down).
-\item \lstinline|robot.sit()|\\
-  Sit on the back.
-\item \lstinline|robot.beg()|\\
-  Stand up with knees bent.
-\item \lstinline|robot.stand()|\\
-  Stand up.
+\item \file{aibo-ball-tracking.wbt}\\
+  This world demonstrates the \urbi classical \aibo ball tracking
+  behavior. It uses two \urbi controllers:
+  \begin{itemize}
+  \item The first one controls the \aibo and runs the tracking
+    behavior. It uses the \file{aibo} controller and the
+    \file{aibo/ball-tracking.u} script. You can connect to this
+    controller on port 54000.
+  \item The second controls the ball. It uses the generic
+    \file{urbi-2.0} controller and moves the ball around automatically
+    with the \file{aibo/move-ball.u} script thanks to the supervisor
+    API (see \autoref{sec:webots:supervisor}).
+  \end{itemize}
+\item \file{aibo-soccer.wbt}\\
+  This empty world simply provide and \aibo on a soccer field with a
+  ball. It uses the \file{aibo} controller. You can connect to it on
+  the 54000 port to control the \aibo or program behaviors.
+\item \file{e-puck-wander.wbt}\\
+  This world presents an e-puck robot wandering around randomly. It
+  uses the \file{e-puck} controller and the \file{e-puck/wander.u}
+  script for the wandering behavior. You can connect to it on port
+  54000.
+\item \file{pioneer-wander.wbt}\\
+  This world presents a Pioneer robot wandering around randomly. It
+  uses the \file{pioneer} controller and the \file{pioneer/wander.u}
+  script for the wandering behavior. You can connect to it on port
+  54000.
 \end{itemize}
-
-The following slots are variables.
-\begin{itemize}
-\item \lstinline|robot.walkspeed|\\
-  Speed of walk, the smaller the faster: period of a step. Defaults to
-  1s.
-\item \lstinline|robot.turnspeed|\\
-  Speed of turn, the smaller the faster: period of a step. Defaults to
-  1s.
-\end{itemize}
-
-More high-level behaviours are available in \file{ustd}, please read
-the corresponding documentation to obtain more information.
 
 \section{\webots UObjects}
 
@@ -1290,6 +1135,7 @@ you instanciate both left and right objects.
 \end{itemize}
 
 \subsection{Supervisor \api UObjects}
+\label{sec:webots:supervisor}
 
 The supervisor UObjects are only available from a supervisor robot
 (i.e. from the controller of a supervisor node in \webots). They
