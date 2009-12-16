@@ -71,6 +71,10 @@ namespace urbi
     /// Return the string to test whether \a exp is void in k1 or k2.
     std::string isvoid(const std::string& exp, unsigned major
                        = kernelMajor());
+
+    /// Return the string to stop a tag in k1 or k2.
+    std::string stop(const std::string& tag, unsigned major
+                     = kernelMajor());
   }
 }
 

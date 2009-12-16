@@ -72,5 +72,14 @@ namespace urbi
       return 2 <= major ?
         "(" + exp + ").isVoid" : "isvoid(" + exp + ")";
     }
+
+
+    inline
+    std::string
+    stop(const std::string& tag, unsigned major)
+    {
+      return 2 <= major ?
+        tag + ".stop" : "stop " + tag;
+    }
   }
 }
