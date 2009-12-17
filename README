@@ -192,6 +192,20 @@ as options to configure:
 
   ../configure CC='ccache gcc' CXX='ccache g++' ...
 
+** Windows: CygWin
+The builds for windows use our wrappers.  These wrappers use a
+database to store the dependencies (actually, to speed up their
+computation).  We use Perl, and its DBI module.  So be sort to have
+sqlite, and DBI.
+
+      perl -MCPAN -e 'install Bundle::DBI'
+
+It might fail.  The most important part is
+
+      perl -MCPAN -e 'install DBD:SQLite'
+
+It might suffice, I don't know...
+
 ** building for Windows.
 
 We support two builds: using Wine on top of Unix, and using Cygwin on
