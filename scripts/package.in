@@ -13,6 +13,7 @@ stderr ()
   done
 }
 
+errors=0
 complain ()
 {
   stderr "$@"
@@ -226,6 +227,6 @@ esac
 # work well without them.
 $FIND . -name '*.la' | xargs $RM -f
 
-if test $errors -ne 0; then
+if test "$errors" -ne 0; then
   fatal "there were $errors errors."
 fi
