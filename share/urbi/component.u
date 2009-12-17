@@ -136,7 +136,7 @@ var Global.Localizer = Group.new | do (Global.Localizer)
     dict.set(key, val) |
     var val.componentLocalization = okey |
     if (!okey.isA(Localization))
-      wall("Warning, key " + okey +" is not a Localization")|
+      Lobby.wall("Warning, key " + okey +" is not a Localization")|
     val.parentComponent = this |
     val.componentName = key |
     val

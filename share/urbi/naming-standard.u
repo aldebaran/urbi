@@ -45,7 +45,7 @@ do (Global)
   };
   // Keep the 'Facet' name for backward compatibility.
   var Facet = function() {
-    wall("Warning, Facet is deprecated, use 'Interface'");
+    Lobby.wall("Warning, Facet is deprecated, use 'Interface'");
     Facet = Interface
   };
   var Interface.facets = Interface.getSlot("interfaces");
