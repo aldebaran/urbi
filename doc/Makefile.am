@@ -69,11 +69,20 @@ view: $(pdf_DATA)
 %.eps: %.pdf
 	-mkdir -p $(dir $@)
 	$(CONVERT) "$<" "$@"
+
+FIG2DEV = fig2dev
 %.pdf: %.dot
 	-mkdir -p $(dir $@)
-	$(DOT) -Tpdf $< -o $@.tmp
-	$(PDFCROP) $@.tmp $@
-	rm $@.tmp
+# Some versions of dot don't support PDF output.
+	if $(DOT) -Tpdf </dev/null 2>/dev/null; then	\
+	  $(DOT) -Tpdf $< -o $@.tmp;			\
+	  $(PDFCROP) $@.tmp $@;				\
+	  rm $@.tmp;					\
+	else $(DOT) -Tfig $< -o $*.fig;			\
+	  $(FIG2DEV) -Lpdf -p dummy $*.fig $@;		\
+	  rm $*.fig;					\
+	fi
+
 
 
 ## -------------- ##
