@@ -27,24 +27,30 @@ fatal ()
 # packages PACKAGE-SYSTEM-NAME REGEXP
 packages ()
 {
-  {
-    perl -ne '
-      if (/^(?:'"$2"'|package): (.*)/)
-      {
-        push @out, split /\s+/, $1;
-      }
-      END
-      {
-        use Text::Wrap;
-        $Text::Wrap::columns = 60;
-        print "*" x 66, "\n";
-        print "You seem to be using '"$1"'.\n";
-        print "At least the following packages are required:\n\n";
-        print wrap("   ", "   ", sort @out), "\n\n";
-        print "See README for more information.\n";
-        print "*" x 66, "\n";
-      }' <README
-  } | sed -e "s,^,$0: * ,"
+  perl -n                                     \
+    -e "my \$package = '$1';"                  \
+    -e "my \$regexp = '$2';"                   \
+    -e '
+    if (/^(?:$regexp|package): (.*)/)
+    {
+      push @out, split /\s+/, $1;
+    }
+    END
+    {
+      my $install = $package eq "MacPorts" ? "sudo port install"
+                  : "sudo apt-get install";
+
+      use Text::Wrap;
+      $Text::Wrap::columns = 60;
+      $Text::Wrap::separator="  \\\n";
+      print "*" x 66, "\n";
+      print "You seem to be using $package.\n";
+      print "At least the following packages are required:\n\n";
+      print "$install$Text::Wrap::separator";
+      print wrap("   ", "   ", sort @out), "\n\n";
+      print "See README for more information.\n";
+      print "*" x 66, "\n";
+    }' <README
 }
 
 if test -x /opt/local/bin/port; then
