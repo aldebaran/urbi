@@ -35,11 +35,15 @@ namespace urbi
       void loopCheck();
       rObject writeOwned(rObject newval);
     private:
+      /// Check and unlock getters stuck waiting.
+      void checkBypassCopy();
       bool looping_;
       /// Set of runners currently in a notifyChange.
       std::set<void*> inChange_;
       bool inAccess_;
       URBI_CXX_OBJECT_(UVar);
+      int waiterCount_;
+      friend class UValue;
     };
     typedef libport::intrusive_ptr<UVar> rUVar;
 
@@ -70,6 +74,8 @@ namespace urbi
       /// False if the value was constructed with copy=false.
       bool alocated_;
       rObject cache_;
+      bool bypassMode_;
+      friend class UVar;
       URBI_CXX_OBJECT_(UValue);
     };
     typedef libport::intrusive_ptr<UValue> rUValue;

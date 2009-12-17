@@ -109,18 +109,22 @@ namespace urbi
       : Primitive( boost::bind(&UVar::accessor, this))
       , looping_(false)
       , inAccess_(false)
+      , waiterCount_(0)
     {
       protos_set(new List);
       proto_add(proto ? proto : Primitive::proto);
+      slot_set(SYMBOL(waiterTag), new Tag());
     }
 
     UVar::UVar(libport::intrusive_ptr<UVar>)
       : Primitive( boost::bind(&UVar::accessor, this))
       , looping_(false)
       , inAccess_(false)
+      , waiterCount_(0)
     {
       protos_set(new List);
       proto_add(proto ? proto : Primitive::proto);
+      slot_set(SYMBOL(waiterTag), new Tag());
     }
 
     void
@@ -150,6 +154,23 @@ namespace urbi
       }
     }
 
+    void
+    UVar::checkBypassCopy()
+    {
+      // If there are blocked reads, call extract to force caching of the
+      // temporary value, and unblock them.
+      if (waiterCount_)
+      {
+        rUValue val = slot_get(slot_get(SYMBOL(owned))->as_bool()
+                               ? SYMBOL(valsensor)
+                               : SYMBOL(val))
+                      ->as<UValue>();
+        if (val)
+          val->extract();
+        slot_get(SYMBOL(waiterTag))->call(SYMBOL(stop));
+      }
+    }
+
     rObject
     UVar::update_(rObject val)
     {
@@ -159,6 +180,7 @@ namespace urbi
         callNotify(r, rObject(this), SYMBOL(changeOwned));
       else
       {
+        checkBypassCopy();
         std::set<void*>::iterator i = inChange_.find(&r);
         if (i == inChange_.end())
         {
@@ -195,8 +217,36 @@ namespace urbi
                              ? SYMBOL(valsensor)
                              : SYMBOL(val));
       if (!fromCXX)
+      {
         if (object::rUValue bv = res->as<object::UValue>())
+        {
+          if (bv->bypassMode_ && bv->extract() == nil_class)
+          {
+            // This is a read on a bypass-mode UVar, from outside any
+            // notifychange: the value is not available.
+            // So we mark that we wait by inc-ing waiterCount, and wait
+            // on waiterTag until we timeout, or someone writes to the UVar
+            // and unlock us.
+
+            // free the shared ptrs
+            res.reset();
+            bv.reset();
+            ++waiterCount_;
+            slot_get(SYMBOL(waiterTag))->call(SYMBOL(waitUntilStopped),
+                                              new Float(0.5));
+            --waiterCount_;
+            // The val slot likely changed, fetch it again.
+            res = slot_get(slot_get(SYMBOL(owned))->as_bool()
+                           ? SYMBOL(valsensor)
+                           : SYMBOL(val));
+            if (object::rUValue bv = res->as<object::UValue>())
+              return bv->extract();
+            else
+              return res;
+          }
           return bv->extract();
+        }
+      }
       return res;
     }
 
@@ -205,6 +255,7 @@ namespace urbi
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       slot_update(SYMBOL(valsensor), newval);
+      checkBypassCopy();
       callNotify(r, rObject(this), SYMBOL(change));
       slot_get(SYMBOL(changed))->call("emit");
       return newval;
@@ -227,18 +278,21 @@ namespace urbi
     {}
 
     UValue::UValue()
+      : bypassMode_(false)
     {
       protos_set(new List);
       proto_add(proto ? proto : CxxObject::proto);
     }
 
     UValue::UValue(libport::intrusive_ptr<UValue>)
+      : bypassMode_(false)
     {
       protos_set(new List);
       proto_add(proto ? proto : CxxObject::proto);
     }
 
     UValue::UValue(const urbi::UValue& v, bool bypass)
+      : bypassMode_(false)
     {
       protos_set(new List);
       proto_add(proto ? proto : CxxObject::proto);
@@ -295,6 +349,7 @@ namespace urbi
     void
     UValue::put(const urbi::UValue& v,  bool bypass)
     {
+      bypassMode_ = bypass;
       alocated_ = !bypass;
       value_.set(v, !bypass);
       cache_ = 0;

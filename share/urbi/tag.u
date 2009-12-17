@@ -25,6 +25,11 @@ do (Global.Tag)
       echo("%s: begin" % res.name);
     return res;
   };
+
+  function waitUntilStopped(time_out=inf)
+  {
+    this: sleep(time_out)
+  };
 };
 
 class Global.Tags
