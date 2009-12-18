@@ -203,19 +203,39 @@ case $OS in
     ;;
   (*)
     # When building a release for non-Windows platforms, strip the
-    # binaries and the libraries.
+    # binaries and the libraries.  Pay attention that on OS X strip
+    # when given no option behaves as "strip -S -x -X":
+    #
+    # -S Remove the debugging symbol table entries (those created by
+    # -the -g option to cc(1) and other compilers).
+    #
+    # -X Remove the local symbols whose names begin with `L'.
+    #
+    # -x Remove all local symbols (saving only global symbols).
+    #
+    # As a result, the build (on Leopard) works on Leopard, but not
+    # on Snow Leopard (I don't know why exactly).  On Linux, too
+    # "strip" does more than simply "strip -S", but since it seems to
+    # work and it does save space, use the fully blown strip:
+    #  58M libuobject.so     no strip
+    # 7.8M libuobject.2.so   strip -S
+    # 6.4M libuobject.3.so   strip
     if $release_mode; then
+      case $OS in
+        (macos) : ${STRIP='strip -S'};;
+        (*)     : ${STRIP=strip};;
+      esac
       here=$(pwd)
       cd "$packagedir"
-      # Do not show errors -- we know that we have shell scripts there.
+      # Do not show errors -- there are shell scripts there.
       $FIND bin -type f |
-        xargs strip 2>/dev/null || true
+        xargs $STRIP 2>/dev/null || true
       $FIND . -type f '(' -name '*.so.*'        \
                        -o -name '*.so'          \
                        -o -name '*.dylib'       \
                        -o -name '*.a'           \
                        ')' |
-        xargs strip || true
+        xargs $STRIP || true
       cd $here
     fi
     ;;
