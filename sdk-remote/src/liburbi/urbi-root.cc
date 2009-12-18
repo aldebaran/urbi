@@ -91,6 +91,7 @@ static const std::string libdir =
                            APPLE_LINUX_WINDOWS("lib", "lib", "bin");
 
 /// Join path components.
+static
 std::string
 operator/(const std::string& lhs, const std::string& rhs)
 {
