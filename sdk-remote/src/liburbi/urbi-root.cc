@@ -164,7 +164,8 @@ split(std::string lib)
 }
 
 static RTLD_HANDLE
-xdlopen(const std::string& path, int flags, const std::string& self)
+xdlopen(const std::string& self, const std::string& path,
+        int flags = RTLD_GLOBAL)
 {
   URBI_ROOT_DEBUG(self, "loading library: " << path);
   RTLD_HANDLE res = dlopen(path.c_str(), flags);
@@ -276,11 +277,10 @@ UrbiRoot::library_load(const std::string& base)
     s = toupper(s);
 
   return
-    xdlopen(xgetenv(envvar,
+    xdlopen(program_,
+            xgetenv(envvar,
                     root_ + separator + libdir + separator + "lib" + base)
-            + libext,
-            RTLD_NOW | RTLD_GLOBAL,
-            program_);
+            + libext);
 }
 
 std::string
@@ -311,9 +311,9 @@ void
 UrbiRoot::load_plugin()
 {
   URBI_ROOT_DEBUG(program_, "loading plugin UObject implementation");
-  handle_libuobject_ = xdlopen(root_ + libuobjects_dir + separator
-                               + "engine/libuobject" + libext,
-                               RTLD_NOW | RTLD_GLOBAL, program_);
+  handle_libuobject_ =
+    xdlopen(program_,
+            root_ + libuobjects_dir + separator + "engine/libuobject" + libext);
 }
 
 /// Location of Urbi remote libuobject
@@ -321,9 +321,9 @@ void
 UrbiRoot::load_remote()
 {
   URBI_ROOT_DEBUG(program_, "loading remote UObject implementation");
-  handle_libuobject_ = xdlopen(root_ + libuobjects_dir + separator
-                               + "remote/libuobject" + libext,
-                               RTLD_NOW | RTLD_GLOBAL, program_);
+  handle_libuobject_ =
+    xdlopen(program_,
+            root_ + libuobjects_dir + separator + "remote/libuobject" + libext);
 }
 
 void
@@ -331,7 +331,7 @@ UrbiRoot::load_custom(const std::string& path_)
 {
   std::string path = path_ + separator + "libuobject" + libext;
   URBI_ROOT_DEBUG(program_, "loading custom UObject implementation: " << path);
-  handle_libuobject_ = xdlopen(path, RTLD_NOW | RTLD_GLOBAL, program_);
+  handle_libuobject_ = xdlopen(program_, path);
 }
 
 typedef int(*urbi_launch_type)(int, const char*[], UrbiRoot&);
@@ -343,7 +343,8 @@ UrbiRoot::urbi_launch(int argc, const char** argv)
   urbi_launch_type f = (urbi_launch_type)(dlsym(handle_liburbi_, "urbi_launch"));
 
   if (!f)
-    URBI_ROOT_FATAL(program_, 2, "cannot locate urbi_launch symbol: " << dlerror());
+    URBI_ROOT_FATAL(program_, 2,
+                    "cannot locate urbi_launch symbol: " << dlerror());
 
   return f(argc, argv, *this);
 }
