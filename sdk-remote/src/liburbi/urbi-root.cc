@@ -260,19 +260,23 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   // URBI_ROOT_DEBUG("append to URBI_PATH: " << urbi_path);
   if (!static_build)
   {
-    handle_libjpeg_      = library_load("jpeg",      "JPEG");
-    handle_libport_      = library_load("port",      "PORT");
-    handle_libsched_     = library_load("sched",     "SCHED");
-    handle_libserialize_ = library_load("serialize", "SERIALIZE");
-    handle_liburbi_      = library_load("urbi",      "URBI");
+    handle_libjpeg_      = library_load("jpeg");
+    handle_libport_      = library_load("port");
+    handle_libsched_     = library_load("sched");
+    handle_libserialize_ = library_load("serialize");
+    handle_liburbi_      = library_load("urbi");
   }
 }
 
 RTLD_HANDLE
-UrbiRoot::library_load(const std::string& base, const std::string& env)
+UrbiRoot::library_load(const std::string& base)
 {
+  std::string envvar = "URBI_ROOT_LIB" + base;
+  foreach (char& s, envvar)
+    s = toupper(s);
+
   return
-    xdlopen(xgetenv("URBI_ROOT_LIB" + env,
+    xdlopen(xgetenv(envvar,
                     root_ + separator + libdir + separator + "lib" + base)
             + libext,
             RTLD_NOW | RTLD_GLOBAL,

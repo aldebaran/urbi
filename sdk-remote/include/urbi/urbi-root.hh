@@ -76,7 +76,9 @@ public:
   std::string uobjects_path() const;
 
 private:
-  RTLD_HANDLE library_load(const std::string& path, const std::string& env);
+  /// Load the library "${libdir}/${base}${ext}", unless the envvar
+  /// named "URBI_ROOT_LIB${BASE}" points to another location.
+  RTLD_HANDLE library_load(const std::string& base);
   std::string program_;
   std::string root_;
   RTLD_HANDLE handle_libjpeg_;
