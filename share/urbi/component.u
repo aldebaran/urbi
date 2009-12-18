@@ -253,7 +253,7 @@ class Global.Component
   /// Give a flattened view of all the implemented Facets in the hierarchy.
   function flatDump()
   {
-    dumpByInteface(allMembers)
+    dumpByInterface(allMembers)
   };
   function dumpByInterface(what, indent=0)
   {
