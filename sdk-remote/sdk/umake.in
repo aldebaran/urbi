@@ -212,7 +212,7 @@ get_options ()
 ## ------ ##
 
 : ${EXEEXT=@EXEEXT@}
-: ${SHLIBEXT=@SHLIBEXT@}
+: ${DLMODEXT=@DLMODEXT@}
 clean=false
 : ${URBI_ENV='@URBI_ENV@'}
 core=
@@ -275,7 +275,7 @@ do
 done
 
 # The library extension.
-libext=$SHLIBEXT
+libext=$DLMODEXT
 $shared || libext=.a
 
 # Select target name if unspecified.

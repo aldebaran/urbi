@@ -6,7 +6,7 @@ branddir = @branddir@
 hostdir = @hostdir@
 envdir = @hostdir@/$(URBI_ENV)
 builddir = $(UMAKE_BUILD_DIR)
-SHLIBEXT = @SHLIBEXT@
+DLMODEXT = @DLMODEXT@
 
 # The basename (no extension) of the library we should link against.
 # This default value is for backward compatibility: find the
@@ -101,12 +101,12 @@ $(builddir)/%.$(URBI_HOST).lo: %.cpp $(HEADERS)
 $(OUTLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS) -o $@
 
-lalib = $(OUTSHLIB:$(SHLIBEXT)=.la)
-libbase = $(OUTSHLIB:$(SHLIBEXT)=)
+lalib = $(OUTSHLIB:$(DLMODEXT)=.la)
+libbase = $(OUTSHLIB:$(DLMODEXT)=)
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lalib)	\
 	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)	-rpath $(hostdir) $(LIBADD)
-	cp $$(ls $(dir $(libbase))/.libs/$(notdir $(libbase))*$(SHLIBEXT) \
+	cp $$(ls $(dir $(libbase))/.libs/$(notdir $(libbase))*$(DLMODEXT) \
 	  | head -n 1) $(OUTSHLIB)
 
 
