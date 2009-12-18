@@ -186,6 +186,23 @@ xdlopen(const std::string& program,
                     "cannot open library: " << path << ": " << dlerror());
 }
 
+template <typename Res>
+static
+Res
+xdlsym(const std::string& program,
+       const char* modname, RTLD_HANDLE module,
+       const char* name)
+{
+  URBI_ROOT_DEBUG(program, "loading symbol " << name << " from " << modname);
+  // Reinterpret-cast fails with gcc3 arm.
+  if (Res res = (Res)(dlsym(module, name)))
+    return res;
+  else
+    URBI_ROOT_FATAL(program, 2,
+                    "cannot locate " << name << " symbol: " << dlerror());
+}
+
+
 static
 std::string
 resolve_symlinks(const std::string& logname, const std::string& s)
@@ -347,14 +364,12 @@ typedef int(*urbi_launch_type)(int, const char*[], UrbiRoot&);
 int
 UrbiRoot::urbi_launch(int argc, const char** argv)
 {
-  URBI_ROOT_DEBUG(program_, "loading symbol urbi_launch from liburbi-launch");
+  URBI_ROOT_DEBUG(program_, "loading symbol urbi_launch from ");
   // Reinterpret-cast fails with gcc3 arm
-  urbi_launch_type f = (urbi_launch_type)(dlsym(handle_liburbi_, "urbi_launch"));
-
-  if (!f)
-    URBI_ROOT_FATAL(program_, 2,
-                    "cannot locate urbi_launch symbol: " << dlerror());
-
+  urbi_launch_type f =
+    xdlsym<urbi_launch_type>(program_,
+                             "liburbi-launch", handle_liburbi_,
+                             "urbi_launch");
   return f(argc, argv, *this);
 }
 
@@ -371,14 +386,9 @@ int
 UrbiRoot::urbi_main(const std::vector<std::string>& args,
                     bool block, bool errors)
 {
-  URBI_ROOT_DEBUG(program_, "loading symbol urbi_main_args from libuobject");
-  // Reinterpret-cast fails with gcc3 arm
   urbi_main_type f =
-    (urbi_main_type)(dlsym(handle_libuobject_, "urbi_main_args"));
-
-  if (!f)
-    URBI_ROOT_FATAL(program_, 2,
-                    "cannot locate urbi_launch symbol: " << dlerror());
-
+    xdlsym<urbi_main_type>(program_,
+                           "libuobject", handle_libuobject_,
+                           "urbi_main_args");
   return f(args, *this, block, errors);
 }
