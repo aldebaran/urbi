@@ -163,10 +163,12 @@ split(std::string lib)
   return res;
 }
 
+/// \a path does not include the extension.
 static RTLD_HANDLE
-xdlopen(const std::string& self, const std::string& path,
+xdlopen(const std::string& self, std::string path,
         int flags = RTLD_GLOBAL)
 {
+  path += libext;
   URBI_ROOT_DEBUG(self, "loading library: " << path);
   RTLD_HANDLE res = dlopen(path.c_str(), flags);
   if (!res)
@@ -279,8 +281,7 @@ UrbiRoot::library_load(const std::string& base)
   return
     xdlopen(program_,
             xgetenv(envvar,
-                    root_ + separator + libdir + separator + "lib" + base)
-            + libext);
+                    root_ + separator + libdir + separator + "lib" + base));
 }
 
 std::string
@@ -313,7 +314,7 @@ UrbiRoot::load_plugin()
   URBI_ROOT_DEBUG(program_, "loading plugin UObject implementation");
   handle_libuobject_ =
     xdlopen(program_,
-            root_ + libuobjects_dir + separator + "engine/libuobject" + libext);
+            root_ + libuobjects_dir + separator + "engine/libuobject");
 }
 
 /// Location of Urbi remote libuobject
@@ -323,13 +324,13 @@ UrbiRoot::load_remote()
   URBI_ROOT_DEBUG(program_, "loading remote UObject implementation");
   handle_libuobject_ =
     xdlopen(program_,
-            root_ + libuobjects_dir + separator + "remote/libuobject" + libext);
+            root_ + libuobjects_dir + separator + "remote/libuobject");
 }
 
 void
 UrbiRoot::load_custom(const std::string& path_)
 {
-  std::string path = path_ + separator + "libuobject" + libext;
+  std::string path = path_ + separator + "libuobject";
   URBI_ROOT_DEBUG(program_, "loading custom UObject implementation: " << path);
   handle_libuobject_ = xdlopen(program_, path);
 }
