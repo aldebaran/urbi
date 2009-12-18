@@ -281,40 +281,38 @@ UrbiRoot::library_load(const std::string& base)
   return
     xdlopen(program_,
             xgetenv(envvar,
-                    root_ + separator + libdir + separator + "lib" + base));
+                    root(libdir + separator + "lib" + base)));
 }
 
 std::string
-UrbiRoot::root() const
+UrbiRoot::root(const std::string& path) const
 {
-  return root_;
+  return root_ + (path.empty() ? path : separator) + path;
 }
 
 std::string
-UrbiRoot::core_path() const
+UrbiRoot::core_path(const std::string& path) const
 {
-  return root_ + libuobjects_dir;
+  return root_ + libuobjects_dir + (path.empty() ? path : separator) + path;
 }
 
 std::string
-UrbiRoot::uobjects_path() const
+UrbiRoot::uobjects_path(const std::string& path) const
 {
-  return core_path() + separator + "uobjects";
+  return core_path("uobjects" + (path.empty() ? path : separator) + path);
 }
 
 std::string
-UrbiRoot::share_path() const
+UrbiRoot::share_path(const std::string& path) const
 {
-  return root_ + separator + "share/gostai";
+  return root("share/gostai" + (path.empty() ? path : separator) + path);
 }
 
 void
 UrbiRoot::load_plugin()
 {
   URBI_ROOT_DEBUG(program_, "loading plugin UObject implementation");
-  handle_libuobject_ =
-    xdlopen(program_,
-            root_ + libuobjects_dir + separator + "engine/libuobject");
+  handle_libuobject_ = xdlopen(program_, core_path("engine/libuobject"));
 }
 
 /// Location of Urbi remote libuobject
@@ -322,9 +320,7 @@ void
 UrbiRoot::load_remote()
 {
   URBI_ROOT_DEBUG(program_, "loading remote UObject implementation");
-  handle_libuobject_ =
-    xdlopen(program_,
-            root_ + libuobjects_dir + separator + "remote/libuobject");
+  handle_libuobject_ = xdlopen(program_, core_path("remote/libuobject"));
 }
 
 void

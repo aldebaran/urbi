@@ -67,13 +67,17 @@ public:
 
 public:
   /// Root of the Urbi installation.
-  std::string root() const;
+  /// \param path  if non empty, append "/" \a path to the result.
+  std::string root(const std::string& path = "") const;
   /// Plugin and remote libuobjects parent directory.
-  std::string core_path() const;
+  /// \param path  if non empty, append "/" \a path to the result.
+  std::string core_path(const std::string& path = "") const;
   /// Share location. Contains Urbi scripts in the urbi/ subdirectory.
-  std::string share_path() const;
+  /// \param path  if non empty, append "/" \a path to the result.
+  std::string share_path(const std::string& path = "") const;
   /// Standard uobjects directory.
-  std::string uobjects_path() const;
+  /// \param path  if non empty, append "/" \a path to the result.
+  std::string uobjects_path(const std::string& path = "") const;
 
 private:
   /// Load the library "${libdir}/${base}${ext}", unless the envvar
