@@ -137,7 +137,8 @@ namespace urbi
     impl::UVarImpl* impl_;
     const UValue& val() const;
   private:
-
+    /// Check that impl_ is set or throw a runtime error.
+    void check_() const;
     /// Pointer to internal data specifics.
     UVardata* vardata;
     void __init();

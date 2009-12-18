@@ -96,6 +96,9 @@ public:
 
     UBindFunction(all, getDestructionCount);
 
+    UBindFunction(all, invalidRead);
+    UBindFunction(all, invalidWrite);
+
     vars[0] = &a;
     vars[1] = &b;
     vars[2] = &c;
@@ -232,7 +235,17 @@ public:
     *vars[id] = val;
     return val;
   }
-
+  void invalidWrite()
+  {
+    urbi::UVar v;
+    v = 12;
+  }
+  void invalidRead()
+  {
+    urbi::UVar v;
+    int i = v;
+    (void)i;
+  }
   int readByName(const std::string &name)
   {
     urbi::UVar v(name);
