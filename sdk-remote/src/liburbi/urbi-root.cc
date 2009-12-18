@@ -90,7 +90,16 @@ static const std::string separator =
 static const std::string libdir =
                            APPLE_LINUX_WINDOWS("lib", "lib", "bin");
 static const std::string libuobjects_dir =
-                           std::string("/gostai/core/") + LIBPORT_URBI_HOST;
+                           std::string("gostai/core/") + LIBPORT_URBI_HOST;
+
+/// Join path components.
+std::string
+operator/(const std::string& lhs, const std::string& rhs)
+{
+  return (lhs.empty() ? rhs
+          : rhs.empty() ? lhs
+          : lhs + separator + rhs);
+}
 
 /*-------------------------------------.
 | Crapy dynamic portability routines.  |
@@ -233,11 +242,11 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
       foreach (const std::string& dir, path)
       {
         struct stat stats;
-        std::string file = dir + separator + argv0;
+        std::string file = dir / argv0;
         if (stat(file.c_str(), &stats) == 0)
         {
           URBI_ROOT_DEBUG(program_, "found: " << file);
-          root_ = dir + separator + "..";
+          root_ = dir / "..";
           URBI_ROOT_DEBUG(program_, "root directory is: " << root_);
           break;
         }
@@ -246,7 +255,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
     }
     else
     {
-      root_ = argv0.substr(0, pos) + separator + "..";
+      root_ = argv0.substr(0, pos) / "..";
       URBI_ROOT_DEBUG(program_,
                       "invoked with a path, setting root to parent directory: "
                       << root_);
@@ -258,7 +267,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
                     "Unable to find Urbi SDK installation location. "
                     "Please set URBI_ROOT.");
 
-  // const std::string urbi_path = root_ + separator + "share" + separator + "gostai";
+  // const std::string urbi_path = root_ / "share" / "gostai";
   // xsetenv("URBI_PATH", xgetenv("URBI_PATH") + ":" + urbi_path, true);
   // URBI_ROOT_DEBUG("append to URBI_PATH: " << urbi_path);
   if (!static_build)
@@ -281,31 +290,31 @@ UrbiRoot::library_load(const std::string& base)
   return
     xdlopen(program_,
             xgetenv(envvar,
-                    root(libdir + separator + "lib" + base)));
+                    root(libdir / "lib" + base)));
 }
 
 std::string
 UrbiRoot::root(const std::string& path) const
 {
-  return root_ + (path.empty() ? path : separator) + path;
+  return root_ / path;
 }
 
 std::string
 UrbiRoot::core_path(const std::string& path) const
 {
-  return root_ + libuobjects_dir + (path.empty() ? path : separator) + path;
+  return root(libuobjects_dir / path);
 }
 
 std::string
 UrbiRoot::uobjects_path(const std::string& path) const
 {
-  return core_path("uobjects" + (path.empty() ? path : separator) + path);
+  return core_path("uobjects" / path);
 }
 
 std::string
 UrbiRoot::share_path(const std::string& path) const
 {
-  return root("share/gostai" + (path.empty() ? path : separator) + path);
+  return root("share/gostai" / path);
 }
 
 void
@@ -326,7 +335,7 @@ UrbiRoot::load_remote()
 void
 UrbiRoot::load_custom(const std::string& path_)
 {
-  std::string path = path_ + separator + "libuobject";
+  std::string path = path_ / "libuobject";
   URBI_ROOT_DEBUG(program_, "loading custom UObject implementation: " << path);
   handle_libuobject_ = xdlopen(program_, path);
 }
