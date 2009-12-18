@@ -176,7 +176,7 @@ static RTLD_HANDLE
 xdlopen(const std::string& program,
         const std::string& msg,
         std::string path,
-        int flags = RTLD_GLOBAL)
+        int flags = RTLD_LAZY | RTLD_GLOBAL)
 {
   path += libext;
   URBI_ROOT_DEBUG(program, "loading library: " << path << " (" << msg << ")");
