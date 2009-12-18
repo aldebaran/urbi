@@ -172,16 +172,18 @@ split(std::string lib)
 
 /// \a path does not include the extension.
 static RTLD_HANDLE
-xdlopen(const std::string& self, std::string path,
+xdlopen(const std::string& program,
+        const std::string& msg,
+        std::string path,
         int flags = RTLD_GLOBAL)
 {
   path += libext;
-  URBI_ROOT_DEBUG(self, "loading library: " << path);
-  RTLD_HANDLE res = dlopen(path.c_str(), flags);
-  if (!res)
-    URBI_ROOT_FATAL(self, 1,
+  URBI_ROOT_DEBUG(program, "loading library: " << path << " (" << msg << ")");
+  if (RTLD_HANDLE res = dlopen(path.c_str(), flags))
+    return res;
+  else
+    URBI_ROOT_FATAL(program, 1,
                     "cannot open library: " << path << ": " << dlerror());
-  return res;
 }
 
 static
@@ -287,6 +289,7 @@ UrbiRoot::library_load(const std::string& base)
 
   return
     xdlopen(program_,
+            base,
             xgetenv(envvar,
                     root(libdir / "lib" + base)));
 }
@@ -318,8 +321,8 @@ UrbiRoot::share_path(const std::string& path) const
 void
 UrbiRoot::load_plugin()
 {
-  URBI_ROOT_DEBUG(program_, "loading plugin UObject implementation");
   handle_libuobject_ = xdlopen(program_,
+                               "plugin UObject implementation",
                                core_path() / "engine" / "libuobject");
 }
 
@@ -327,17 +330,17 @@ UrbiRoot::load_plugin()
 void
 UrbiRoot::load_remote()
 {
-  URBI_ROOT_DEBUG(program_, "loading remote UObject implementation");
   handle_libuobject_ = xdlopen(program_,
+                               "remote UObject implementation",
                                core_path() / "remote" / "libuobject");
 }
 
 void
 UrbiRoot::load_custom(const std::string& path_)
 {
-  std::string path = path_ / "libuobject";
-  URBI_ROOT_DEBUG(program_, "loading custom UObject implementation: " << path);
-  handle_libuobject_ = xdlopen(program_, path);
+  handle_libuobject_ = xdlopen(program_,
+                               "custom UObject implementation",
+                               path_ / "libuobject");
 }
 
 typedef int(*urbi_launch_type)(int, const char*[], UrbiRoot&);
