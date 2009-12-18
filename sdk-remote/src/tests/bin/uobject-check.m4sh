@@ -27,7 +27,7 @@ run "urbi-launch --start" $urbi_launch --debug 3 --start /dev/null ||
     (72) error SKIP "urbi-launch cannot find libuobject";;
   esac
 
-for ext in '' .la $SHLIBEXT
+for ext in '' .la $DLMODEXT
 do
   xrun "urbi-launch $me$ext --version" "$urbi_launch" --debug 3 --start $uob$ext -- --version
 done

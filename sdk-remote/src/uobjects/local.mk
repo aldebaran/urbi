@@ -2,12 +2,12 @@ include uobjects/uobjects.mk
 
 EXTRA_DIST += $(addprefix uobjects/,$(UOBJECTS:=.uob))
 
-uobjects_DATA = $(addprefix uobjects/,$(UOBJECTS:=$(SHLIBEXT)))
-CLEANFILES += $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
+uobjects_DATA = $(addprefix uobjects/,$(UOBJECTS:=$(DLMODEXT)))
+CLEANFILES += $(uobjects_DATA) $(uobjects_DATA:$(DLMODEXT)=.la)
 
 UMAKE_SHARED = tests/bin/umake-shared
 
-%$(SHLIBEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject.la
+%$(DLMODEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject.la
 	$(UMAKE_SHARED) --clean --output=$@ $<
 ## umake has dependencies support, so it might not recompile here, in
 ## which case, if this was triggered because of $(UMAKE_SHARED) we
@@ -25,7 +25,7 @@ clean-uobjects:
 # is not so simple, as several builds may share a common .libs, so one
 # build cannot remove this directory.
 	-find . -name ".libs" -a -type d | xargs rm -rf
-	-rm -f $(uobjects_DATA) $(uobjects_DATA:$(SHLIBEXT)=.la)
+	-rm -f $(uobjects_DATA) $(uobjects_DATA:$(DLMODEXT)=.la)
 
 # Help to restart broken builds.
 $(UMAKE_SHARED):
