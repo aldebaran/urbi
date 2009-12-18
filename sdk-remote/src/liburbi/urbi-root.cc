@@ -89,8 +89,6 @@ static const std::string separator =
                            APPLE_LINUX_WINDOWS("/", "/", "\\");
 static const std::string libdir =
                            APPLE_LINUX_WINDOWS("lib", "lib", "bin");
-static const std::string libuobjects_dir =
-                           std::string("gostai/core/") + LIBPORT_URBI_HOST;
 
 /// Join path components.
 std::string
@@ -302,7 +300,7 @@ UrbiRoot::root(const std::string& path) const
 std::string
 UrbiRoot::core_path(const std::string& path) const
 {
-  return root(libuobjects_dir / path);
+  return root_ / "gostai" / "core" / LIBPORT_URBI_HOST / path;
 }
 
 std::string
@@ -314,14 +312,15 @@ UrbiRoot::uobjects_path(const std::string& path) const
 std::string
 UrbiRoot::share_path(const std::string& path) const
 {
-  return root("share/gostai" / path);
+  return root_ / "share" / "gostai" / path;
 }
 
 void
 UrbiRoot::load_plugin()
 {
   URBI_ROOT_DEBUG(program_, "loading plugin UObject implementation");
-  handle_libuobject_ = xdlopen(program_, core_path("engine/libuobject"));
+  handle_libuobject_ = xdlopen(program_,
+                               core_path() / "engine" / "libuobject");
 }
 
 /// Location of Urbi remote libuobject
@@ -329,7 +328,8 @@ void
 UrbiRoot::load_remote()
 {
   URBI_ROOT_DEBUG(program_, "loading remote UObject implementation");
-  handle_libuobject_ = xdlopen(program_, core_path("remote/libuobject"));
+  handle_libuobject_ = xdlopen(program_,
+                               core_path() / "remote" / "libuobject");
 }
 
 void
