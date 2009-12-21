@@ -48,7 +48,8 @@ main(int argc, char* argv[])
   }
 
   // Prepare a C version of vector<string> to please urbi_launch.
-  const size_t argc_bounce = args_urbi_launch.size() + args_libuobject.size() + 2;
+  const size_t argc_bounce =
+    args_urbi_launch.size() + args_libuobject.size() + 2;
   const char** argv_bounce = new const char*[argc_bounce + 1];
 
   {
