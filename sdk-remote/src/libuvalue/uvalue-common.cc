@@ -349,6 +349,9 @@ namespace urbi
       case DATA_STRING:
 	s << '"' << libport::escape(*stringValue, '"') << '"';
 	break;
+      case DATA_SLOTNAME:
+        s << *stringValue;
+        break;
       case DATA_BINARY:
         s << *binary;
 	break;
@@ -460,6 +463,7 @@ namespace
     switch(type)
     {
       case DATA_STRING:
+      case DATA_SLOTNAME:
 	delete stringValue;
 	break;
       case DATA_BINARY:
@@ -499,6 +503,7 @@ namespace
       case DATA_DICTIONARY:
       case DATA_OBJECT:
       case DATA_VOID:
+      case DATA_SLOTNAME:
         break;
     }
     return ufloat(0);
@@ -512,6 +517,7 @@ namespace
       case DATA_DOUBLE:
         return lexical_cast<std::string>(val);
       case DATA_STRING:
+      case DATA_SLOTNAME:
         return *stringValue;
       // We cannot convert to UBinary because it is ambigous so we
       // try until we found the right type.
@@ -584,6 +590,7 @@ namespace
 	val = v.val;
 	break;
       case DATA_STRING:
+      case DATA_SLOTNAME:
 	stringValue = new std::string(*v.stringValue);
 	break;
       case DATA_BINARY:

@@ -288,10 +288,13 @@ namespace urbi
   {
     switch (v.type)
     {
+    // Bounce to UValue operator << for those types.
     case DATA_DOUBLE:
+    case DATA_SLOTNAME:
     case DATA_STRING:
       return send("%s", string_cast(v).c_str());
       break;
+    // Use our own sendBinary for binary, who knows how to talk to k1 and k2.
     case DATA_BINARY:
       if (v.binary->type != BINARY_NONE
           && v.binary->type != BINARY_UNKNOWN)
@@ -299,6 +302,7 @@ namespace urbi
       return sendBinary(v.binary->common.data, v.binary->common.size,
                         v.binary->message);
       break;
+    // Lists can contain binary, so recurse using this function.
     case DATA_LIST:
     {
       send("[");

@@ -38,6 +38,7 @@ namespace urbi
     DATA_LIST,
     DATA_OBJECT,
     DATA_STRING,
+    DATA_SLOTNAME,
     DATA_VOID
   };
 

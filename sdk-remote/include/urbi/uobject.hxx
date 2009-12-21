@@ -110,9 +110,19 @@ namespace urbi
   inline UObject*
   uvalue_caster<UObject*>::operator()(UValue& v)
   {
-    if (v.type != DATA_STRING)
+    if (v.type != DATA_STRING && v.type != DATA_SLOTNAME)
       return 0;
     return getUObject(*v.stringValue);
+  }
+  inline
+  UValue& operator,(UValue&a, const UObject* b)
+  {
+    if (!b)
+      a = "nil";
+    else
+      a = b->__name;
+    a.type = DATA_SLOTNAME;
+    return a;
   }
 
 #ifndef NO_ANY_POINTER_CASTER

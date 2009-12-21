@@ -474,6 +474,7 @@ namespace urbi
   {
     UObject* operator()(urbi::UValue& v);
   };
+  UValue& operator,(UValue&a, const UObject* b);
 #endif
 } // end namespace urbi
 

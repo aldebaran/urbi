@@ -89,6 +89,7 @@ public:
     UBindFunction(all, transmitB);
     UBindFunction(all, transmitI);
     UBindFunction(all, transmitSnd);
+    UBindFunction(all, transmitO);
 
     UBindFunction(all, loop_yield);
     UBindFunction(all, yield_for);
@@ -528,6 +529,11 @@ public:
     for (unsigned int i=0; i<im.size; i++)
       im.data[i] -= 1;
     return im;
+  }
+
+  urbi::UObject* transmitO(UObject* o)
+  {
+    return o;
   }
 
   int sendString(const std::string& s)
