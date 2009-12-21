@@ -22,6 +22,7 @@
 
 # include <string>
 
+# include <libport/compiler.hh>
 # include <libport/meta.hh>
 # include <libport/thread-pool.hh>
 # include <urbi/export.hh>
@@ -29,6 +30,8 @@
 # include <urbi/utable.hh>
 # include <urbi/uvalue.hh>
 # include <urbi/ucontext.hh>
+
+# include <boost/function.hpp>
 
 namespace urbi
 {
@@ -319,6 +322,65 @@ namespace urbi
 
   %%%%
 
+%%%% 0 10
+
+  template <class R%%, class P% %%>
+  class UBoostFunctionCallback%N% : public UGenericCallback
+  {
+    public:
+    UBoostFunctionCallback%N%(UObject& owner, UVar* target,
+                  const std::string& type,
+		  boost::function%N%<R %%, P% %%> fun,
+                  const std::string& funname,
+                  impl::UContextImpl* ctx)
+      : UGenericCallback(owner, target, type, funname,%N%, ctx),
+      fun(fun)
+    {
+      nbparam = %N%;
+      registerCallback();
+    }
+
+    virtual UValue __evalcall(UList& param)
+    {
+      impl::UContextImpl::CleanupStack s_(*ctx_);
+      // Avoid warnings when we don't use param.
+      (void) param;
+      UValue res;
+      res(), fun(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
+      return res;
+    }
+
+    private:
+    boost::function%N%<R %%, P% %%> fun;
+  };
+
+  template <class R%%, class P% %%>
+  UGenericCallback*
+  createUCallback(UObject& owner, UVar* target,
+                  const std::string& type,
+		  boost::function%N%<R %%, P% %%> fun,
+		  const std::string& funname,
+                  impl::UContextImpl* ctx)
+  {
+    return new UBoostFunctionCallback%N%<R%%, P% %%> (owner, target, type,fun,funname, ctx);
+  }
+
+// No stdcall on 64 bit gcc it seems.
+#ifndef __x86_64
+  template <class R%%, class P% %%>
+  UGenericCallback*
+  createUCallbackStd(UObject& owner, UVar* target,
+                  const std::string& type,
+		  // MSVC wants it here.
+		  R (ATTRIBUTE_STDCALL *fun)(%%%,% P% %%),
+		  const std::string& funname,
+                  impl::UContextImpl* ctx)
+  {
+    return new UBoostFunctionCallback%N%<R %%, P% %%> (owner, target,
+    type,boost::function%N%<R %%, P% %%>(fun),funname, ctx);
+  }
+#endif
+%%%%
 } // end namespace urbi
 
 #endif // ! URBI_UCALLBACKS_HH
