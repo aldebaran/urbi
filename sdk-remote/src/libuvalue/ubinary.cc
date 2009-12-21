@@ -135,12 +135,12 @@ namespace urbi
     is >> psize;
     if (is.fail())
     {
-      GD_FERROR("cannot read bin size: %s (%s)", (is.str())(psize));
+      GD_FERROR("cannot read bin size: %s (%s)", is.str(), psize);
       return false;
     }
     if (psize != binpos->size)
     {
-      GD_FERROR("bin size inconsistency: %s != %s", (psize)(binpos->size));
+      GD_FERROR("bin size inconsistency: %s != %s", psize, binpos->size);
       return false;
     }
     common.size = psize;
@@ -192,7 +192,7 @@ namespace urbi
     }
     else
     {
-      // GD_FWARN("unknown binary type: %s", (t));
+      // GD_FWARN("unknown binary type: %s", t);
       type = BINARY_UNKNOWN;
     }
 

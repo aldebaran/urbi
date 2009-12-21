@@ -46,7 +46,7 @@ int
 generic::foo(int x)
 {
   GD_CATEGORY(generic);
-  GD_FINFO_DEBUG("foo(%s)", (x));
+  GD_FINFO_DEBUG("foo(%s)", x);
   val = x;
   return x+1;
 }
@@ -66,6 +66,6 @@ UReturn
 generic::newval(UVar& v)
 {
   GD_CATEGORY(generic);
-  GD_FINFO_DEBUG("newval: %s", ((int) v));
+  GD_FINFO_DEBUG("newval: %s", (int) v);
   return 0;
 }

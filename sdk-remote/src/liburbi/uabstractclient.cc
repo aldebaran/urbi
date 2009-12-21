@@ -848,7 +848,7 @@ namespace urbi
         else
         {
           // failure
-          GD_FERROR("read, error parsing header: '%s'", (recvBuffer));
+          GD_FERROR("read, error parsing header: '%s'", recvBuffer);
           currentTimestamp = 0;
           strcpy(currentTag, "UNKNWN");
           //listLock.lock();
@@ -1123,7 +1123,9 @@ namespace urbi
       kernelMajor_ = 2;
       kernelMinor_ = 0;
       GD_FWARN("failed to parse kernel version string: '%s', assuming %s.%s.",
-               (kernelVersion_)(kernelMajor_)(kernelMinor_));
+               kernelVersion_,
+               kernelMajor_,
+               kernelMinor_);
     }
 
     // Have the connectionId sent on __ident.

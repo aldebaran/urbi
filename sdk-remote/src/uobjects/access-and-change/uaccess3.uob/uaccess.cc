@@ -36,7 +36,7 @@ uaccess::newval (UVar& v)
 {
   static int value = 0;
   value++;
-  GD_FERROR("uaccess::newval: value = %s", (value));
+  GD_FERROR("uaccess::newval: value = %s", value);
   v = value;
   return 0;
 }

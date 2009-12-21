@@ -32,6 +32,6 @@ uchange::init ()
 UReturn
 uchange::newval (UVar& v)
 {
-  GD_FERROR("uchange::newval: %s", ((int) v));
+  GD_FERROR("uchange::newval: %s", (int) v);
   return 0;
 }

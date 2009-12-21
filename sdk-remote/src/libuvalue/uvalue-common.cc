@@ -98,7 +98,7 @@ namespace urbi
     if (message[pos] != Char)                           \
     {                                                   \
       GD_FERROR("unexpected `%s', expected `%s'",       \
-                (message[pos])(Char));                  \
+                message[pos], Char);                    \
       return -pos;                                      \
     }                                                   \
   } while(0)
@@ -254,7 +254,8 @@ namespace urbi
     }
 
     // Anything else is an error, but be resilient and ignore it.
-    GD_FWARN("syntax error: %s (ignored)", (std::string(message + pos)));
+    GD_FWARN("syntax error: %s (ignored)",
+                std::string(message + pos));
     return -pos;
   }
 

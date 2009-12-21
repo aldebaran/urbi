@@ -44,7 +44,7 @@ using libport::program_name;
 static UCallbackAction
 onError(const UMessage& msg)
 {
-  GD_FERROR("%s: load module error: %s", (program_name())(msg.message));
+  GD_FERROR("%s: load module error: %s", program_name(), msg.message);
   return URBI_CONTINUE;
 }
 

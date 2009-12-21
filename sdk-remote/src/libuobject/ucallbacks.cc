@@ -53,8 +53,11 @@ namespace urbi
       //owner_->name =
       // callback_name(owner_->name, owner_->type, owner_->nbparam);
       GD_FINFO("Registering %s %s %s into %s from %s",
-               (type)(owner_->name)(owner_->nbparam)
-               (owner_->name)(owner_->objname));
+               type,
+               owner_->name,
+               owner_->nbparam,
+               owner_->name,
+               owner_->objname);
       UClient& cl = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
       if (type == "var")
         URBI_SEND_PIPED_COMMAND_C
@@ -93,7 +96,7 @@ namespace urbi
     RemoteUGenericCallbackImpl::registerCallback()
     {
       GD_CATEGORY(Libuobject);
-      GD_FINFO("Pushing %s in %s", (owner_->name) (owner_->type));
+      GD_FINFO("Pushing %s in %s", owner_->name, owner_->type);
       UTable& t =
         dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)
         ->tableByName(owner_->type);

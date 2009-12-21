@@ -362,7 +362,7 @@ namespace urbi
               impl->update(array[2]);
             else
             {
-              GD_FERROR("Unable to cast %x to a RemoteUVarImpl.", (u->impl_));
+              GD_FERROR("Unable to cast %x to a RemoteUVarImpl.", u->impl_);
               std::abort();
             }
           }
@@ -383,7 +383,7 @@ namespace urbi
 
       case UEM_EVALFUNCTION:
       {
-        GD_FINFO_DUMP("dispatching call of %s...", ((std::string)(array[1])));
+        GD_FINFO_DUMP("dispatching call of %s...", (std::string)(array[1]));
 	callbacks_type tmpfun = functionmap()[array[1]];
         const std::string var = array[2];
 	callbacks_type::iterator tmpfunit = tmpfun.begin();
@@ -392,7 +392,7 @@ namespace urbi
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
-        GD_FINFO_DUMP("...dispatch of %s done", ((std::string)(array[1])));
+        GD_FINFO_DUMP("...dispatch of %s done", (std::string)(array[1]));
 	switch (retval.type)
         {
         case DATA_BINARY:

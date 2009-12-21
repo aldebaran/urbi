@@ -241,7 +241,7 @@ namespace urbi
     if (!res)
       GD_ERROR("Timed out");
     else if (res->type == MESSAGE_ERROR)
-      GD_FERROR("Received error message: %s", (*res));
+      GD_FERROR("Received error message: %s", *res);
     message_ = 0;
     syncTag.clear();
     return res;

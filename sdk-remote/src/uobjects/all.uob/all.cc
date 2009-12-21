@@ -317,7 +317,7 @@ public:
 #undef APPEND_UFLOAT
 #undef APPEND
 
-    GD_FERROR("all.readProps: %s", (res));
+    GD_FERROR("all.readProps: %s", res);
     return res;
   }
 
@@ -339,7 +339,7 @@ public:
   int writeD(const std::string &name, double val)
   {
     GD_CATEGORY(all);
-    GD_FERROR("writeD %s", (name));
+    GD_FERROR("writeD %s", name);
     urbi::UVar v(name);
     v = val;
     return 0;
@@ -348,7 +348,7 @@ public:
   int writeS(const std::string &name, const std::string &val)
   {
     GD_CATEGORY(all);
-    GD_FERROR("writeS %s", (name));
+    GD_FERROR("writeS %s", name);
     urbi::UVar v(name);
     v = val;
     return 0;
@@ -357,7 +357,7 @@ public:
   int writeL(const std::string &name, const std::string &val)
   {
     GD_CATEGORY(all);
-    GD_FERROR("writeL %s", (name));
+    GD_FERROR("writeL %s", name);
     urbi::UVar v(name);
     urbi::UList l;
     l.array.push_back(new urbi::UValue(val));
