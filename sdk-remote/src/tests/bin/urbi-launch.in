@@ -9,8 +9,8 @@ esac
 
 : ${EXEEXT='@EXEEXT@'}
 : ${abs_top_srcdir='@abs_top_srcdir@'}
-: ${abs_top_builddir='@abs_top_builddir@'}
-: ${program=$abs_top_builddir/src/bin/urbi-launch$EXEEXT}
+: ${sdk_remote_builddir='@abs_top_builddir@'}
+: ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT}
 
 verbose ()
 {
@@ -28,10 +28,10 @@ case " $* " in
     # should find libuobject.la in it.  Otherwise we hope a kernel
     # was installed, and the real urbi-launch will look for it at the
     # right place.
-    if test -f $abs_top_builddir/../src/Makefile; then
-      libuobjectdir=$abs_top_builddir/../src
+    if test -f $sdk_remote_builddir/../src/Makefile; then
+      libuobjectdir=$sdk_remote_builddir/../src
       # Be sure to find the shipped Urbi files.
-      URBI_PATH="$abs_top_srcdir/../share:$abs_top_builddir/../share:$URBI_PATH"
+      URBI_PATH="$abs_top_srcdir/../share:$sdk_remote_builddir/../share:$URBI_PATH"
       case $(uname -o 2>/dev/null) in
         (Cygwin)
           # We use colon as separators, not semicolon.
@@ -42,7 +42,7 @@ case " $* " in
     fi
     ;;
   (*)
-     libuobjectdir=$abs_top_builddir/src/libuobject;;
+     libuobjectdir=$sdk_remote_builddir/src/libuobject;;
 esac
 
 if test -n "$libuobjectdir"; then
@@ -58,23 +58,24 @@ if test -n "$libuobjectdir"; then
 fi
 
 # Find the noninstalled libport libraries.
-libport_dir=$abs_top_builddir/libport
+libport_builddir=$sdk_remote_builddir/libport
 # Careful, do not add directory containing libuobject.
-for d in $libport_dir/lib/*/.libs               \
-         $abs_top_builddir/*/.libs              \
-         $abs_top_builddir/src/liburbi/.libs
+for d in $libport_builddir/lib/*/.libs               \
+         $sdk_remote_builddir/*/.libs              \
+         $sdk_remote_builddir/src/liburbi/.libs
 do
-  export LD_LIBRARY_PATH=$d:$LD_LIBRARY_PATH
-  export DYLD_LIBRARY_PATH=$d:$DYLD_LIBRARY_PATH
+  ds="$ds$d:"
 done
+export LD_LIBRARY_PATH=$ds$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$ds$DYLD_LIBRARY_PATH
 verbose "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 verbose "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
 
-export URBI_ROOT_LIBJPEG=$abs_top_builddir/jpeg/.libs/libjpeg
-export URBI_ROOT_LIBPORT=$libport_dir/lib/libport/.libs/libport
-export URBI_ROOT_LIBSCHED=$libport_dir/lib/sched/.libs/libsched
-export URBI_ROOT_LIBSERIALIZE=$libport_dir/lib/serialize/.libs/libserialize
-export URBI_ROOT_LIBURBI=$abs_top_builddir/src/liburbi/.libs/liburbi
+export URBI_ROOT_LIBJPEG=$sdk_remote_builddir/jpeg/.libs/libjpeg
+export URBI_ROOT_LIBPORT=$libport_builddir/lib/libport/.libs/libport
+export URBI_ROOT_LIBSCHED=$libport_builddir/lib/sched/.libs/libsched
+export URBI_ROOT_LIBSERIALIZE=$libport_builddir/lib/serialize/.libs/libserialize
+export URBI_ROOT_LIBURBI=$sdk_remote_builddir/src/liburbi/.libs/liburbi
 
 verbose "running $program $*"
 exec "$program" "$@"

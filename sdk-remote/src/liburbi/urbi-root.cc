@@ -391,5 +391,9 @@ UrbiRoot::urbi_main(const std::vector<std::string>& args,
     xdlsym<urbi_main_type>(program_,
                            "libuobject", handle_libuobject_,
                            "urbi_main_args");
+  URBI_ROOT_DEBUG(program_, "command line: ");
+  foreach (const std::string& arg, args)
+    URBI_ROOT_DEBUG(program_, "  " << arg);
+
   return f(args, *this, block, errors);
 }
