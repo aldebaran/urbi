@@ -106,6 +106,7 @@ namespace urbi
   }
 
 
+#ifndef NO_UOBJECT_CASTER
   inline UObject*
   uvalue_caster<UObject*>::operator()(UValue& v)
   {
@@ -114,6 +115,7 @@ namespace urbi
     return getUObject(*v.stringValue);
   }
 
+#ifndef NO_ANY_POINTER_CASTER
   template<typename T> struct
   uvalue_caster<T*> {
     T* operator()(UValue& v)
@@ -122,6 +124,8 @@ namespace urbi
       return dynamic_cast<T*>(res);
     }
   };
+#endif
+#endif
 }
 
 #endif // !URBI_UOBJECT_HXX

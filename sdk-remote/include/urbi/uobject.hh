@@ -468,11 +468,13 @@ namespace urbi
     libport::ThreadPool::rTaskLock taskLock_;
   };
 
+#ifndef NO_UOBJECT_CASTER
   // Provide cast support to UObject*
   template<> struct uvalue_caster<UObject*>
   {
     UObject* operator()(urbi::UValue& v);
   };
+#endif
 } // end namespace urbi
 
 // This file needs the definition of UObject, so included last.
