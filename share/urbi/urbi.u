@@ -82,16 +82,6 @@ load("urbi/socket.u");
 "Initializing uobjects NOW";
 load("urbi/uobject.u");
 
-/*-----------.
-| Tutorial.  |
-`-----------*/
-
-function help()
-{
-  load("urbi/tutorial.u");
-  detach(tutorial.start);
-};
-
 // This variable is used by initialization code to detect the end of
 // urbi.u.
 topLevel.enabled = true |
