@@ -32,7 +32,7 @@ not reported below. The following list is by no means exhaustive.
 Optimization
 ============
 
-The urbiScript engine was considerably optimized in both space and
+The urbiscript engine was considerably optimized in both space and
 time.
 
 urbiscript
