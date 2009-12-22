@@ -5,16 +5,29 @@ use File::Basename;
 use IO::File;
 use strict;
 
+use File::Find ();
+# For the convenience of &wanted calls, including -eval statements:
+use vars qw/*name *dir *prune/;
+*name   = *File::Find::name;
+*dir    = *File::Find::dir;
+*prune  = *File::Find::prune;
+
 # The command line arguments.
 my %argv;
 
+# The list of files to check.
+my @checked;
+
+# The place the installation was made.
 my $destdir;
 
 # Accepted resolved libraries.
 my %loc;
 
+# Exit status.
 my $status = 0;
 
+# Verbosity level.
 my $verbose = 1;
 
 =item C<verbose($level, @message)>
@@ -185,9 +198,26 @@ sub getopt ()
 
   # DESTDIR must not end with slashes.
   $destdir =~ s,/+$,,g;
+}
 
-  map {$argv{installname($_)} = 1} @ARGV;
-  verbose 2, "Shipped deps: ", sort keys %argv, "\n";
+sub wanted
+{
+  # We check the shared lib dependencies on binaries and on shared
+  # libraries.
+  my $re =
+    (
+     $^O eq 'darwin'
+     ? qr{\.dylib\z}s
+     : qr{\.so(\..*)\z}s
+    );
+  if (-f $_
+      && (-x $_ || /$re/))
+    {
+      # We are not interested in plain files.
+      my $res = `file $_`;
+      push @checked, $File::Find::name
+        if $res !~ /shell script|ASCII English text/;
+    }
 }
 
 ######################################################################
@@ -197,7 +227,17 @@ sub getopt ()
 ## ------ ##
 
 getopt;
-map { my $lib = $_; relocate($lib); check($lib) } @ARGV;
+File::Find::find({wanted => \&wanted}, @ARGV);
+map {$argv{installname($_)} = 1} @checked;
+verbose 2, "Shipped deps: ", sort keys %argv;
+map
+  {
+    my $lib = $_;
+    relocate($lib);
+    check($lib);
+  }
+  @checked;
+
 print STDERR "Accepted dependencies:\n", map { "  $_\n" } sort keys %loc;
 exit($status);
 
