@@ -161,7 +161,7 @@ sub help ($)
   my ($verbose) = @_;
   use Pod::Usage;
   # See <URL:http://perldoc.perl.org/pod2man.html#NOTES>.
-  pod2usage( { -message => "Generate and cache git describe data",
+  pod2usage( { -message => "Relocate shlib deps when possible, check remaing deps",
                -exitval => 0,
                -verbose => $verbose,
                -output  => \*STDOUT });
