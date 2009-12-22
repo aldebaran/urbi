@@ -5,15 +5,22 @@ release.
 * New in kernel 2.0 RC 3. *
 ***************************
 
-fixes
+Fixes
 =====
 
 - local.u works as expected.
 
-Changes:
+Changes
+=======
 
 - Lobby.quit replaces System.quit.
 - Lobby.wall replaces Global.wall.
+- Socket.connect accepts integers
+
+Documentation
+=============
+
+- Socket provides a complete example.
 
 ***************************
 * New in kernel 2.0 RC 2. *

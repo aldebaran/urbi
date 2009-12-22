@@ -3,6 +3,116 @@
 A \dfn{Socket} can manage asynchronous input/output network
 connections.
 
+\subsection{Example}
+
+The following example demonstrates how both the \refObject{Server} and
+\refObject{Socket} object work.
+
+This simple example will establish a dialogue between
+\lstinline|server| and \lstinline|client|.  The following object,
+\lstinline|Dialogue|, contains the script of this exchange.  It is put
+into \lstinline|Global| so that both the server and client can read
+it.  \lstinline|Dialogue.reply(var \var{s})| returns the reply to a
+message \var{s}.
+
+\begin{urbiscript}[firstnumber=last]
+class Global.Dialogue
+{
+  var lines =
+  [
+    "Hi!",
+    "Hey!",
+    "Hey you doin'?",
+    "Whazaaa!",
+    "See ya.",
+  ]|;
+
+  function reply(var s)
+  {
+    for (var i: lines.size - 1)
+      if (s == lines[i])
+        return lines[i + 1];
+    "off";
+  }
+}|;
+\end{urbiscript}
+
+The server, an instance of \refObject{Server}, expects incoming
+connections, notified by the socket's \lstinline|connection?| event.
+Once the connection establish, it listens to the \lstinline|socket|
+for incoming messages, notified by the \lstinline|received?| event.
+Its reaction to this event is to send the following line of the
+dialogue.  At the end of the dialogue, the socket is disconnected.
+
+\begin{urbiscript}[firstnumber=last]
+var server =
+  do (Server.new)
+  {
+    at (connection?(var socket))
+      at (socket.received?(var data))
+      {
+        var reply = Dialogue.reply(data);
+        socket.write(reply);
+        echo("server: " + reply);
+        if (reply == "off")
+          socket.disconnect;
+      };
+  }|;
+\end{urbiscript}
+
+The client, an instance of \refObject{Socket} expects incoming
+messages, notified by the \lstinline|received?| event.  Its reaction
+is to send the following line of the dialogue.
+
+\begin{urbiscript}[firstnumber=last]
+var client =
+  do (Socket.new)
+  {
+    at (received?(var data))
+    {
+      var reply = Dialogue.reply(data);
+      write(reply);
+      echo("client: " + reply);
+    };
+  }|;
+\end{urbiscript}
+
+As of today, \us's socket machinery requires to be regularly polled.
+
+\begin{urbiscript}[firstnumber=last]
+every (100ms)
+  Socket.poll,
+\end{urbiscript}
+
+The server is then activated, listening to incoming connections on a
+port that will be chosen by the system amongst the free ones.
+
+\begin{urbiscript}[firstnumber=last]
+server.listen("localhost", "0");
+clog << "connecting to %s:%s" % [server.host, server.port];
+\end{urbiscript}
+
+The client connects to the server, and initiates the dialogue.
+
+\begin{urbiscript}[firstnumber=last]
+client.connect(server.host, server.port);
+echo("client: " + Dialogue.lines[0]);
+client.write(Dialogue.lines[0]);
+[00000003] *** client: Hi!
+\end{urbiscript}
+
+Because this dialogue is asynchronous, the easiest way to wait for the
+dialogue to finish is to wait for the \lstinline|disconnected?| event.
+
+\begin{urbiscript}[firstnumber=last]
+waituntil(client.disconnected?);
+[00000004] *** server: Hey!
+[00000005] *** client: Hey you doin'?
+[00000006] *** server: Whazaaa!
+[00000007] *** client: See ya.
+[00000008] *** server: off
+\end{urbiscript}
+
 \subsection{Prototypes}
 \begin{itemize}
 \item \refObject{Object}
@@ -14,7 +124,7 @@ A \lstinline|Socket| is constructed with no argument. At creation, a
 new \lstinline|Socket| has four own slots: \lstinline|connected|,
 \lstinline|disconnected|, \lstinline|error| and \lstinline|received|.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var s = Socket.new|
 \end{urbiscript}
 
@@ -22,7 +132,10 @@ var s = Socket.new|
 \begin{itemize}
 
 \item \lstinline|connect(\var{host}, \var{port})|\\
-  Connect \lstinline|this| to \var{host} and \var{port}.
+  Connect \lstinline|this| to \var{host} and \var{port}.  The
+  \var{port} can be either an integer, or a string that denotes
+  symbolic ports, such as \lstinline|"smtp"|, or \lstinline|"ftp"| and
+  so forth.
 
 \item \lstinline|connected|\\
   Event launched when the connection is established.
@@ -68,3 +181,8 @@ var s = Socket.new|
   Sends \var{data} trough the connection.
 
 \end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

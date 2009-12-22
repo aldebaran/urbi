@@ -1,6 +1,7 @@
 \section{Server}
 
-A \dfn{Server} can listen to incoming connections.
+A \dfn{Server} can listen to incoming connections.  See
+\refObject{Socket} for an example.
 
 \subsection{Prototypes}
 \begin{itemize}
@@ -13,7 +14,7 @@ A \lstinline|Server| is constructed with no argument. At creation, a
 new \lstinline|Server| has its own slot \lstinline|connection|. This
 slot is an event that is launched when a connection establishes.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var s = Server.new|
 s.localSlotNames;
 [00000001] ["connection"]
@@ -35,6 +36,10 @@ at (s.connection?(var socket))
 \item \lstinline|host|\\
   The host on which \lstinline|this| is listening. Raise an error if
   \lstinline|this| is not listening.
+\begin{urbiscript}[firstnumber=last]
+Server.host;
+[00000003:error] !!! host: server not listening
+\end{urbiscript}
 
 \item \lstinline|listen(\var{host}, \var{port})|\\
   Listen incoming connections with \var{host} and \var{port}.
@@ -42,7 +47,16 @@ at (s.connection?(var socket))
 \item \lstinline|port|\\
   The port on which \lstinline|this| is listening. Raise an error if
   \lstinline|this| is not listening.
+\begin{urbiscript}[firstnumber=last]
+Server.port;
+[00000004:error] !!! port: server not listening
+\end{urbiscript}
 
 \item \lstinline|sockets|\\
   The list of the sockets created at each incoming connection.
 \end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:
