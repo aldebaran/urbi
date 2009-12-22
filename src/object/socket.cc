@@ -90,9 +90,25 @@ namespace urbi
     void
     Socket::connect(const std::string& host, const std::string& port)
     {
-      if (boost::system::error_code error = libport::Socket::connect(host, port))
-        RAISE(error.message());
+      if (boost::system::error_code err = libport::Socket::connect(host, port))
+        RAISE(err.message());
     }
+
+    void
+    Socket::connect(const std::string& host, unsigned port)
+    {
+      if (boost::system::error_code err = libport::Socket::connect(host, port))
+        RAISE(err.message());
+    }
+
+    OVERLOAD_TYPE(
+      connect_overload, 2, 2,
+      String,
+      (void (Socket::*)(const std::string&, const std::string&))
+      &Socket::connect,
+      Float,
+      (void (Socket::*)(const std::string&, unsigned))
+      &Socket::connect)
 
     void
     Socket::connectSerial(const std::string& device, unsigned int baudrate)
@@ -164,7 +180,6 @@ namespace urbi
 #define DECLARE(Name)                           \
       bind(SYMBOL(Name), &Socket::Name)
 
-      DECLARE(connect);
       DECLARE(connectSerial);
       DECLARE(disconnect);
       DECLARE(host);
@@ -174,6 +189,8 @@ namespace urbi
       DECLARE(port);
       DECLARE(write);
 #undef DECLARE
+
+      proto->slot_set(SYMBOL(connect), new Primitive(connect_overload));
     }
 
     boost::asio::io_service&

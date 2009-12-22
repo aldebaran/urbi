@@ -25,6 +25,7 @@ namespace urbi
       Socket(rServer server);
       Socket(rSocket model);
       void connect(const std::string& host, const std::string& port);
+      void connect(const std::string& host, unsigned port);
       void connectSerial(const std::string& device, unsigned int baudrate);
       void disconnect();
       void init();
