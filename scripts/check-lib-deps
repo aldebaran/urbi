@@ -26,7 +26,7 @@ Report the C<@message> is C<$level> E<lt>= C<$verbose>.
 sub verbose($@)
 {
   my ($level, @message) = @_;
-  print STDERR "$0: ", @message
+  map { print STDERR "$0: $_\n" } @message
     if $level <= $verbose;
 }
 
@@ -34,7 +34,7 @@ sub verbose($@)
 sub dependencies ($)
 {
   my ($lib) = @_;
-  verbose 3, "dependencies($lib)\n";
+  verbose 3, "dependencies($lib)";
   my @res;
   if ($OSNAME eq 'darwin')
     {
@@ -42,6 +42,7 @@ sub dependencies ($)
         or die "cannot read otool -L $lib: $!";
       while ($_ = $deps->getline)
         {
+          chomp $_;
           if (/^\t(.*?)\s+\(.*\)$/)
             {
               # On OS X, a library appears to depend on itself.
@@ -68,7 +69,7 @@ sub dependencies ($)
             }
         }
     }
-  verbose 2, "$lib depends on @res\n";
+  verbose 2, "$lib depends on @res";
   @res;
 }
 
@@ -77,7 +78,7 @@ sub xsystem (@)
 {
   my (@args) = @_;
 
-  verbose 2, "Running: @args\n";
+  verbose 2, "Running: @args";
   system(@args) == 0
     or die "system @args failed: $?";
   if ($? == -1)
@@ -113,7 +114,7 @@ sub relocate ($)
 {
   my ($lib) = @_;
   my $dir = dirname(installname($lib));
-  verbose 3, "relocate($lib) @ $dir\n";
+  verbose 3, "relocate($lib) @ $dir";
   if ($OSNAME eq 'darwin')
     {
       for my $dep (grep {exists $argv{$_}} dependencies($lib))
@@ -129,12 +130,11 @@ sub relocate ($)
 sub check($)
 {
   my ($lib) = @_;
-  verbose 3, "check($lib)\n";
+  verbose 3, "check($lib)";
   my @valid =
     $OSNAME eq 'darwin' ? qw(@loader_path/ /usr/lib/ /opt/local/lib/)
     : qw(/lib/ /usr/lib/gcc/ /usr/lib/libstdc++);
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
-  print STDERR "{{{", $re, "}}}\n";
   for my $loc (dependencies($lib))
     {
       if ($loc =~ m($re))
