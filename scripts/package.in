@@ -89,22 +89,8 @@ packagedir="$updir/$name"
 # have invalid locations.  And possibly make the libraries and
 # executables relocatable.
 case $OS in
-  (linux)
-    $srcdir/scripts/check-lib-deps -d "$DESTDIR"                \
-      $($FIND "$DESTDIR"                                        \
-              -type f                                           \
-              -a '(' -name '*.so.*' -o -name '*.so' ')')
-    ;;
-  (macos)
-    # On OS X, we relocate libs and executables.
-    $srcdir/scripts/check-lib-deps -d "$DESTDIR"        \
-        $($FIND "$DESTDIR"                              \
-                -type f                                 \
-                -a '('                                  \
-                      -perm -+x                         \
-                      -o -name '*.dylib'                \
-                   ')')
-    ;;
+  (linux|macos)
+    $srcdir/scripts/check-lib-deps -d "$DESTDIR" "$DESTDIR";;
 esac
 
 # Create a fresh directory in which we put the subdirectories of the
