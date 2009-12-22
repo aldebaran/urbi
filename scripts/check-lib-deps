@@ -180,6 +180,9 @@ sub getopt ()
   GetOptions (%option)
     or exit 1;
 
+  die "passing --destdir is mandatory\n"
+    unless defined $destdir;
+
   # DESTDIR must not end with slashes.
   $destdir =~ s,/+$,,g;
 
