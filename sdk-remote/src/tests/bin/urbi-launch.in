@@ -1,25 +1,98 @@
 #! @SHELL@
 # @configure_input@
 
+: ${EXEEXT='@EXEEXT@'}
+: ${sdk_remote_srcdir='@abs_top_srcdir@'}
+: ${sdk_remote_builddir='@abs_top_builddir@'}
+: ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT}
+
+###################### Common between urbi-launch.in and urbi.in: begin.
+
 set -e
 
 case $VERBOSE in
   (x) set -x;;
 esac
 
-: ${EXEEXT='@EXEEXT@'}
-: ${abs_top_srcdir='@abs_top_srcdir@'}
-: ${sdk_remote_builddir='@abs_top_builddir@'}
-: ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT}
+stderr ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$0: $i"
+  done
+}
 
 verbose ()
 {
-  if test -n "$VERBOSE"; then
-    echo >&2 "$0: $@"
-  fi
+  test -z "$VERBOSE" ||
+    stderr "$@"
 }
 
-# The libubbject we load depends on the usage.
+# prependenv VAR VAL
+# ------------------
+# Set env verbosely $VAR=$VAL.
+setenv ()
+{
+  eval "$1=\$2"
+  export $1
+  verbose "$1 = $2"
+}
+
+# prependenv VAR VAL
+# ------------------
+# Set env verbosely $VAR=$VAL${$VAR}.
+prependenv ()
+{
+  local val
+  eval "val=\$2\$$1"
+  setenv "$1" "$val"
+}
+
+# ld_path_add DIR...
+# ------------------
+# Extend the appropriate envvar so that shared libraries in DIR... will
+# be found.
+ld_path_add ()
+{
+  local d
+  local ds=
+  for d
+  do
+    if test -d $d; then
+      ds="$ds$d:"
+    fi
+  done
+  case $(uname -s) in
+    (CYGWIN*) prependenv PATH "$ds" ;;
+    (Darwin)  prependenv DYLD_LIBRARY_PATH "$ds";;
+    (*)       prependenv LD_LIBRARY_PATH "$ds";;
+  esac
+}
+
+# repath PATH
+# -----------
+# Set $repath_res to the native path.
+repath ()
+{
+  case $(uname -s) in
+    (CYGWIN*)  repath_res=$(cygpath --windows "$1");;
+    (*)        repath_res=$1;;
+  esac
+}
+
+# urbi_lib BASENAME PATH
+urbi_lib ()
+{
+  local base=$1
+  local path=$2
+  repath "$path"
+  setenv "URBI_ROOT_LIB$base" $repath_res
+}
+
+###################### Common between urbi-launch.in and urbi.in: end.
+
+# The libuobject we load depends on the usage.
 verbose "$*"
 case " $* " in
   (*' --start '* | *' -s '*)
@@ -31,7 +104,7 @@ case " $* " in
     if test -f $sdk_remote_builddir/../src/Makefile; then
       libuobjectdir=$sdk_remote_builddir/../src
       # Be sure to find the shipped Urbi files.
-      URBI_PATH="$abs_top_srcdir/../share:$sdk_remote_builddir/../share:$URBI_PATH"
+      URBI_PATH="$sdk_remote_srcdir/../share:$sdk_remote_builddir/../share:$URBI_PATH"
       case $(uname -o 2>/dev/null) in
         (Cygwin)
           # We use colon as separators, not semicolon.
@@ -47,12 +120,8 @@ esac
 
 if test -n "$libuobjectdir"; then
   libuobject=$libuobjectdir/.libs
-  case $(uname -o 2>/dev/null) in
-    (Cygwin)
-      # Using slashes is not a problem.  But not starting with the
-      # drive letter is.
-      libuobject=$(cygpath -w "$libuobject");;
-  esac
+  repath "$libuobject"
+  libuobject=$repath_res
   set x -c "$libuobject" "$@"
   shift
 fi
@@ -60,22 +129,15 @@ fi
 # Find the noninstalled libport libraries.
 libport_builddir=$sdk_remote_builddir/libport
 # Careful, do not add directory containing libuobject.
-for d in $libport_builddir/lib/*/.libs               \
-         $sdk_remote_builddir/*/.libs              \
-         $sdk_remote_builddir/src/liburbi/.libs
-do
-  ds="$ds$d:"
-done
-export LD_LIBRARY_PATH=$ds$LD_LIBRARY_PATH
-export DYLD_LIBRARY_PATH=$ds$DYLD_LIBRARY_PATH
-verbose "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
-verbose "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
+ld_path_add $libport_builddir/lib/*/.libs               \
+            $sdk_remote_builddir/*/.libs                \
+            $sdk_remote_builddir/src/liburbi/.libs
 
-export URBI_ROOT_LIBJPEG=$sdk_remote_builddir/jpeg/.libs/libjpeg
-export URBI_ROOT_LIBPORT=$libport_builddir/lib/libport/.libs/libport
-export URBI_ROOT_LIBSCHED=$libport_builddir/lib/sched/.libs/libsched
-export URBI_ROOT_LIBSERIALIZE=$libport_builddir/lib/serialize/.libs/libserialize
-export URBI_ROOT_LIBURBI=$sdk_remote_builddir/src/liburbi/.libs/liburbi
+urbi_lib JPEG      "$sdk_remote_builddir/jpeg/.libs/libjpeg"
+urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport"
+urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched"
+urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize"
+urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi"
 
 verbose "running $program $*"
 exec "$program" "$@"
