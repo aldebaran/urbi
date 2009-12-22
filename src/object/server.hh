@@ -18,7 +18,7 @@ namespace urbi
   {
     class URBI_SDK_API Server: public CxxObject, public libport::Socket
     {
-      public:
+    public:
       Server();
       Server(rServer model);
       void listen(const std::string& host, const std::string& port);
@@ -28,7 +28,7 @@ namespace urbi
       typedef std::vector<rSocket> sockets_type;
       const sockets_type& sockets() const;
 
-      private:
+    private:
       Socket* make_socket();
       rObject connection_;
       void initialize();

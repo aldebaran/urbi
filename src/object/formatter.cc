@@ -49,7 +49,7 @@ namespace urbi
           cursor += 2;
           continue;
         }
-        if (str.size())
+        if (!str.empty())
         {
           data_->insertBack(to_urbi(str));
           str.erase();
@@ -59,7 +59,7 @@ namespace urbi
         data_->insertBack(f);
         cursor += f->pattern_get().size();
       }
-      if (str.size())
+      if (!str.empty())
         data_->insertBack(to_urbi(str));
     }
 
@@ -70,7 +70,7 @@ namespace urbi
       size_t max = args.size();
 
       std::string res;
-      foreach(const rObject& c, data_->value_get())
+      foreach (const rObject& c, data_->value_get())
       {
         rObject str;
         if (c->is_a<FormatInfo>())
