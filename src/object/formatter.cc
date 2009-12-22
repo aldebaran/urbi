@@ -7,6 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
+
+#include <sstream>
 #include <object/format-info.hh>
 #include <object/formatter.hh>
 #include <object/symbols.hh>
@@ -84,6 +86,7 @@ namespace urbi
         assert(str);
         if (!str->is_a<String>())
         {
+          // Need this because operator<< is not const.
           std::stringstream o;
           o << *str;
           FRAISE("invalid argument for format: %s", o.str());

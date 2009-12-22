@@ -7,6 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
+
+#include <sstream>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
