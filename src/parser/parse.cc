@@ -34,7 +34,6 @@ namespace parser
       UParser p;
       p.meta(meta_p);
       parse_result_type res = p.parse(cmd, &l);
-      res->dump_errors();
       passert(*res, !res->status);
       return res;
     }
@@ -61,7 +60,6 @@ namespace parser
   {
     UParser p;
     parse_result_type res = p.parse_file(file);
-    res->dump_errors();
     passert(*res, !res->status);
     return res;
   }
