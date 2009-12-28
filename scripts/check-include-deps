@@ -148,7 +148,7 @@ getopt;
 File::Find::find({wanted => \&wanted}, @ARGV);
 map
 {
-  my $to = dirname "$includedir/$needed{$_}";
+  my $to = "$includedir/$needed{$_}";
   verbose 2, "$_ => $to";
   if (! -d $to)
     {
