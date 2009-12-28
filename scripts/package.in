@@ -33,6 +33,10 @@ fatal ()
   error 1 "$@"
 }
 
+## ----------- ##
+## Variables.  ##
+## ----------- ##
+
 # If some of those need to be chosen by configure, add an entry
 # there and add the "@" form.
 : ${CP=cp}
@@ -74,17 +78,17 @@ case $MODE in
   (*)           release_mode=false;;
 esac
 
-# Determine the version from the latest component of the tag. This will
-# ease ordering.
-version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^preview/,,;s,/,-,g")
-# If we are in release mode, do not tell it, the final users won't care
-if $release_mode; then
-  name="$PROJECT-$version-$OS-$ARCH-$COMP"
-else
-  name="$PROJECT-$version-$OS-$ARCH-$COMP-$MODE"
-fi
-packagedir="$updir/$name"
+# Host and build machines.
+build=$($SED -ne '/^build = /{s///;p;q;}' $builddir/Makefile)
+host=$( $SED -ne '/^host = /{s///;p;q;}' $builddir/Makefile)
+stderr "build=$build" "host=$host"
 
+## -------------- ##
+## Post-install.  ##
+## -------------- ##
+
+# Shared lib dependencies.
+#
 # Check that we don't depend on boost.  Or rather, check that we don't
 # have invalid locations.  And possibly make the libraries and
 # executables relocatable.
@@ -93,21 +97,11 @@ case $OS in
     $srcdir/scripts/check-lib-deps -d "$DESTDIR" "$DESTDIR";;
 esac
 
-# Create a fresh directory in which we put the subdirectories of the
-# $install directory.
-$RM -r "$packagedir"
-$MKDIR_P "$packagedir"
-(cd "$DESTDIR$prefix" && $TAR cf - .) | (cd "$packagedir" && $TAR xpBf -)
-
-# Host and build machines.
-build=$($SED -ne '/^build = /{s///;p;q;}' $builddir/Makefile)
-host=$( $SED -ne '/^host = /{s///;p;q;}' $builddir/Makefile)
-stderr "build=$build" "host=$host"
-
-# Install the boost headers.
-# First we must figure out where they are. If they were found in a standard
-# include directory, no variable will tell us that.
-# So go the configure way and ask the compiler.
+# Boost headers.
+#
+# First we must figure out where they are. If they were found in a
+# standard include directory, no variable will tell us that.  So go
+# the configure way and ask the compiler.
 BOOST_FIND_FILE="utils/find-boost.ii"
 make -C  $builddir/sdk-remote/src "$BOOST_FIND_FILE"
 incline=$(perl -n \
@@ -126,18 +120,13 @@ if test ! -f  $incline/version.hpp; then
   fatal "failed to find boost include directory, got '$incline'"
 fi
 
-$CP -pRP $incline $packagedir/include
+$CP -pRP $incline "$DESTDIR$prefix/include"
 
-
-# Build a MANIFEST with the list of files to install into the final
-# destination.
-MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
-(cd "$packagedir" && $FIND . -type f -print | $SED -e "s,^./,,") > "$MANIFEST"
-$MV "$MANIFEST" "$packagedir/MANIFEST"
-
+# Documentation.
+#
 # Copy the instructions at the top-level.
 here=$(pwd)
-cd $packagedir
+cd "$DESTDIR$prefix"
 for i in share/doc/urbi-sdk/*.txt
 do
   case $OS in
@@ -157,7 +146,7 @@ cd $here
 #
 # The resulting libtool may not work, but it is not working without
 # patch anyway...
-$FIND $packagedir -name libtool |
+$FIND "$DESTDIR$prefix" -name libtool |
   xargs perl -pi                                                        \
        -e 's/^\s*eval "\$1\+=\\\$2"$/eval "\$1=\\\$\$1\\" \$2\\""/;'    \
        -e 's/^predep_objects=.*/#- $&/;'                                \
@@ -167,7 +156,7 @@ $FIND $packagedir -name libtool |
 # Remove ccache and -Werror from the param.mk and libtool.
 # Remove also hidden visibility as it prevents linking uobjects using
 # boost symbols inside libport.
-$FIND $packagedir '(' -name param.mk -or -name libtool ')' |
+$FIND "$DESTDIR$prefix" '(' -name param.mk -or -name libtool ')' |
   xargs perl -pi \
         -e 's/ccache //;'                       \
         -e 's/g(cc|\+\+)(?:-[\d.]+)/g$1/;'      \
@@ -176,16 +165,16 @@ $FIND $packagedir '(' -name param.mk -or -name libtool ')' |
         -e 's/-fvisibility-inlines-hidden//;'
 
 # Restore +x on libtool.
-$FIND $packagedir -name libtool -exec chmod u+x '{}' ';'
+$FIND "$DESTDIR$prefix" -name libtool -exec chmod u+x '{}' ';'
 
 # Set more permissive access rights.
-chmod -R a+rX $packagedir
+chmod -R a+rX "$DESTDIR$prefix"
 
 case $OS in
   (windows)
     # On Windows, copy the .bat file.
-    $CP "$builddir/scripts/urbi.bat" "$packagedir"
-    unix2dos "$packagedir/urbi.bat"
+    $CP "$builddir/scripts/urbi.bat" "$DESTDIR$prefix"
+    unix2dos "$DESTDIR$prefix/urbi.bat"
     ;;
   (*)
     # When building a release for non-Windows platforms, strip the
@@ -211,18 +200,15 @@ case $OS in
         (macos) : ${STRIP='strip -S'};;
         (*)     : ${STRIP=strip};;
       esac
-      here=$(pwd)
-      cd "$packagedir"
       # Do not show errors -- there are shell scripts there.
-      $FIND bin -type f |
+      $FIND "$DESTDIR$prefix/bin" -type f |
         xargs $STRIP 2>/dev/null || true
-      $FIND . -type f '(' -name '*.so.*'        \
+      $FIND "$DESTDIR$prefix" -type f '(' -name '*.so.*'        \
                        -o -name '*.so'          \
                        -o -name '*.dylib'       \
                        -o -name '*.a'           \
                        ')' |
         xargs $STRIP || true
-      cd $here
     fi
     ;;
 esac
@@ -231,7 +217,38 @@ esac
 # we use Boost as static libraries, they appear as runtime
 # dependencies.  We could try to fix the *.la files, but it appears to
 # work well without them.
-$FIND . -name '*.la' | xargs $RM -f
+$FIND "$DESTDIR$prefix" -name '*.la' | xargs $RM -f
+
+# MANIFEST.
+#
+# Build a MANIFEST with the list of files to install into the final
+# destination.
+MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
+$FIND "$DESTDIR$prefix" -type f -print |
+  $SED -e "s,^$DESTDIR$prefix/,," > "$MANIFEST"
+$MV "$MANIFEST" "$DESTDIR$prefix"
+
+
+## ----------- ##
+## Packaging.  ##
+## ----------- ##
+
+# Determine the version from the latest component of the tag. This will
+# ease ordering.
+version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^preview/,,;s,/,-,g")
+# If we are in release mode, do not tell it, the final users won't care
+if $release_mode; then
+  name="$PROJECT-$version-$OS-$ARCH-$COMP"
+else
+  name="$PROJECT-$version-$OS-$ARCH-$COMP-$MODE"
+fi
+
+# Create a fresh directory in which we put the subdirectories of the
+# $install directory.
+packagedir="$updir/$name"
+$RM -r "$packagedir"
+$MKDIR_P "$packagedir"
+(cd "$DESTDIR$prefix" && $TAR cf - .) | (cd "$packagedir" && $TAR xpBf -)
 
 if test "$errors" -ne 0; then
   fatal "there were $errors errors."
