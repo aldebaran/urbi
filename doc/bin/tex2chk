@@ -2,6 +2,8 @@
 
 =head1 NAME
 
+  tex2chk - extract urbiscript test files from the LaTeX documentation.
+
 =head1 SYNOPSIS
 
   git-version-gen [OPTIONS...]
