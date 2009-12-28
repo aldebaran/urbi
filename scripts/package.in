@@ -94,12 +94,19 @@ stderr "build=$build" "host=$host"
 # executables relocatable.
 case $OS in
   (linux|macos)
-    $srcdir/scripts/check-lib-deps -d "$DESTDIR" "$DESTDIR";;
+    $srcdir/scripts/check-lib-deps              \
+      --verbose                                 \
+      --destdir "$DESTDIR"                      \
+      "$DESTDIR"
+    ;;
 esac
 
 # Boost headers.
 #
-$srcdir/scripts/check-include-deps $builddir -i "$DESTDIR$prefix/include"
+$srcdir/scripts/check-include-deps              \
+  --include-dir "$DESTDIR$prefix/include"       \
+  --verbose                                     \
+  $builddir
 
 # Documentation.
 #
