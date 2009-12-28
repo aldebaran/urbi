@@ -99,28 +99,7 @@ esac
 
 # Boost headers.
 #
-# First we must figure out where they are. If they were found in a
-# standard include directory, no variable will tell us that.  So go
-# the configure way and ask the compiler.
-BOOST_FIND_FILE="utils/find-boost.ii"
-make -C  $builddir/sdk-remote/src "$BOOST_FIND_FILE"
-incline=$(perl -n \
-            -e 'if (/^#.*"(.*).foreach.hpp"/)
-                {
-                  print "$1\n";
-                  exit 0;
-                }' "$builddir/sdk-remote/src/$BOOST_FIND_FILE"
-)
-case $build:$host in
-  (*cygwin:*) incline=$(cygpath  -u "$incline");;
-  (*:*mingw32) incline=$(winepath -u "$incline");;
-esac
-# Ensure we got it right.
-if test ! -f  $incline/version.hpp; then
-  fatal "failed to find boost include directory, got '$incline'"
-fi
-
-$CP -pRP $incline "$DESTDIR$prefix/include"
+$srcdir/scripts/check-include-deps $builddir -i "$DESTDIR$prefix/include"
 
 # Documentation.
 #
