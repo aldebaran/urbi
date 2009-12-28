@@ -47,7 +47,7 @@ $10^{80}$).
 Urbi is based on prototypes. To create a new Object derivative (which
 will inherit all the Object methods), you can do:
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var myObject = Object.new;
 [00000001] Object_0x76543210
 \end{urbiscript}
@@ -68,12 +68,293 @@ to this object.
 
 \subsection{Slots and variables}
 
+\subsubsection{Is the lobby a scope?}
+
+One frequently asked question is what visibility do variables have in
+\us, especially when they are declared at the top-level interactive
+loop.  In this section, we will see the mechanisms behind slots, local
+variables and scoping to fully explain this behavior and determine how
+to proceed to give the right visibility to variables.
+
+For instance, this code might seem confusing at first:
+
+\begin{urbiscript}[firstnumber=last]
+var mind = 42;
+[00000001] 42
+function get()
+{
+  echo(mind);
+}|;
+get();
+[00000000] *** 42
+function Object.get()
+{
+  echo(mind)
+}|;
+// Where is my mind?
+Object.get;
+[00000000:error] !!! lookup failed: mind
+\end{urbiscript}
+
+\paragraph{Local variables, slots and targets}
+The first point is to understand the difference between local
+variables and slots. Slots are simply object fields: a name in an
+object referring to another object, like members in \Cxx. They can be
+defined with the \lstinline|setSlot| method, or with the
+\lstinline|var| keyword.
+
+\begin{urbiscript}[firstnumber=last]
+// Add an `x' slot in Object, with value 51.
+Object.setSlot("x", 51);
+[00000000] 51
+// This is an equivalent version, for the `y' slot.
+var Object.y = 51;
+[00000000] 51
+
+// We can access these slots with the dot operator.
+Object.x + Object.y;
+[00000000] 102
+\end{urbiscript}
+
+On the other hand, local variables are not stored in an object, but in
+the execution stack: their lifetime spans from their declaration point
+to the end of the current scope. They are declared with the `var'
+keyword.
+
+\begin{urbiscript}[firstnumber=last]
+function foo()
+{
+  // Declare an `x' local variable, with value 51.
+  var x = 51;
+  // `x' isn't stored in any object. It's simply
+  // available until the end of the scope.
+  echo(x);
+}|;
+\end{urbiscript}
+
+You probably noticed that in the last two code snippets, we used the
+\lstinline|var| keyword to declare both a slot in Object and a local
+variable. The rule is simple: \lstinline|var| declares a slot if an
+owning object is specified with the dot notation, as in %
+\lstinline|var owner.slot|, and a local variable if only an
+unqualified name is given, as in \lstinline|var name|.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  // Store a `kyle' slot in Object.
+  var Object.kyle = 42;
+  // Declare a local variable, limited to this scope.
+  var kenny = 42;
+}; // End of scope.
+[00000000] 42
+
+// Kyle survived.
+echo(Object.kyle);
+[00000000] *** 42
+
+// Oh my God, they killed Kenny.
+echo(kenny);
+[00000000:error] !!! lookup failed: kenny
+\end{urbiscript}
+
+There is however an exception to this rule: \lstinline|do| and
+\lstinline|class| scopes are designed to define a target where to
+store slots. Thus, in \lstinline|do| and \lstinline|class| scopes,
+even unqualified \lstinline|var| uses declare slots in the target.
+
+\begin{urbiscript}[firstnumber=last]
+// Classical scope.
+{
+  var arm = 64; // Local to the scope.
+};
+[00000000] 64
+
+// Do scope, with target Object
+do (Object)
+{
+  var chocolate = 64; // Stored as a slot in Object.
+};
+[00000000] Object
+
+// No arm...
+echo(arm);
+[00000000:error] !!! lookup failed: arm
+// ... but still chocolate!
+echo(chocolate);
+[00000000] *** 64
+\end{urbiscript}
+
+Last tricky rule you must keep in mind: the toplevel of your
+connection --- your interactive session --- is a %
+\lstinline|do (lobby)| scope. That is, when you type \lstinline|var x|
+directly in your connection, it stores an \lstinline|x| slot in the
+\lstinline|lobby| object. So, what is this lobby? It's precisely the
+object designed to store your toplevel variables. Every \urbi server
+has an unique \refObject{Lobby} (note the capital), and every
+connection has its \lstinline|lobby| that inherits the
+\lstinline|Lobby|. Thus, variables stored in \lstinline|Lobby| are
+accessible from any connection, while variables stored in a
+connection's \lstinline|lobby| are local to this connection.
+
+To fully understand how lobbies and the toplevel work, we must
+understand how calls --- message passing --- work in \us.  In \us,
+every call has a target. For instance, in \lstinline|Object.x|,
+\lstinline|Object| is the target of the \lstinline|x| call. If no
+target is specified, as in \lstinline|x| alone, the target defaults to
+\lstinline|this|, yielding \lstinline|this.x|. Knowing this rules,
+plus the fact that at the toplevel \lstinline|this| is
+\lstinline|lobby|, we can understand better what happens when defining
+and accessing variables at the toplevel:
+
+\begin{urbiscript}[firstnumber=last]
+// Since we are at the toplevel, this stores x in the lobby.
+// It is equivalent to `var lobby.x'.
+var x = "hello";
+[00000000] "hello"
+
+// This is an unqualified call, and is thus
+// equivalent to `this.x'.
+// That is, `lobby.x' would be equivalent.
+x;
+[00000000] "hello"
+\end{urbiscript}
+
+\paragraph{Solving the tricky example}
+We now know all the scoping rules required to explain the behavior of
+the first code snippet. First, let's determine why the first access to
+\lstinline|mind| works:
+
+\begin{urbiscript}[firstnumber=last]
+// This is equivalent to `var lobby.myMind = 42'.
+var myMind = 42;
+[00000001] 42
+// This is equivalent to `function lobby.getMine...'
+function getMine()
+{
+  // This is equivalent to `echo(this.myMind)'
+  echo(myMind);
+}|;
+// This is equivalent to `this.getMine()', i.e. `lobby.getMine()'.
+getMine();
+[00000000] *** 42
+\end{urbiscript}
+
+Step by step:
+\begin{itemize}
+\item We create a \lstinline|myMind| slot in \lstinline|lobby|, with
+  value 42.
+\item We create a \lstinline|getMine| function in \lstinline|lobby|.
+\item We call the lobby's \lstinline|getMine| method.
+\item We access \lstinline|this.myMind| from within the method. Since
+  the method was called with \lstinline|lobby| as targetMine,
+  \lstinline|this| is \lstinline|lobby|, and \lstinline|lobby.x|
+  resolves to the previously defined 42.
+\end{itemize}
+
+We can also explain why the second test fails:
+
+\begin{urbiscript}[firstnumber=last]
+// Create the `hisMind' slot in the lobby.
+var hisMind = 42;
+[00000000] 42
+// Define a `getHis' method in `Object'.
+function Object.getHis()
+{
+  // Equivalent to echo(this.hisMind).
+  echo(hisMind)
+}|;
+// Call Object's getHis method.
+Object.getHis;
+[00000000:error] !!! lookup failed: hisMind
+\end{urbiscript}
+
+Step by step:
+\begin{itemize}
+\item We create a \lstinline|hisMind| slot in \lstinline|lobby|, with
+  value 42, like before.
+\item We create a \lstinline|getHis| function in \lstinline|Object|.
+\item We call Object's \lstinline|getHis| method.
+\end{itemize}
+
+In the method, \lstinline|this| is \lstinline|Object|. Thus
+\lstinline|hisMind|, which is \lstinline|this.hisMind|, fails because
+Object has no such slot.
+
+The key to understanding this behavior is that any unqualified call
+--- unless it refers to a local variable --- is destined to
+\lstinline|this|. Thus, variables stored in the lobby are only
+accessible from the toplevel, or from functions that are targeted on
+the lobby.
+
+\paragraph{So, where to store global variables?}
+From these rules, we can deduce a simple statement: since unqualified
+slots are searched in \lstinline|this|, for a slot to be global, it
+must always be accessible through \lstinline|this|. One way to achieve
+this is to store the slot in \lstinline|Object|, the ancestor of any
+object:
+
+\begin{urbiscript}[firstnumber=last]
+var Object.global = 1664;
+[00000000] 1664
+
+function any_object()
+{
+  // This is equivalent to echo(this.global)
+  echo(global);
+}|;
+\end{urbiscript}
+
+In the previous example, typing \lstinline|global| will look for the
+\lstinline|global| slot in \lstinline|this|. Since \lstinline|this|
+necessarily inherits \lstinline|Object|, it will necessarily be found.
+
+This solution would work; however, storing all global variables in
+\lstinline|Object| wouldn't be very clean. \lstinline|Object| is
+rather designed to hold methods shared by all objects. Instead, a
+\lstinline|Global| object exists. This object is a prototype of
+Object, so all his slots are accessible from Object, and thus from
+anywhere. So, creating a genuine global variable is as simple as
+storing it in \lstinline|Global|:
+
+\begin{urbiscript}[firstnumber=last]
+var Global.g = "I'm global!";
+[00000000] "I'm global!"
+\end{urbiscript}
+
+Note that you might want to reproduce the \lstinline|Global| system
+and create your own object to store your related variables in a more
+tidy fashion. This is for instance what is done for mathematical
+constants:
+
+\begin{urbiscript}[firstnumber=last]
+// Store all constants here
+class Constants
+{
+  var Pi = 3.14;
+  var Euler = 2.17;
+  var One = 1;
+  // ...
+}|;
+// Make them global by making them accessible from Global.
+Global.addProto(Constants);
+[00000000] Global
+
+// Test it.
+Global.Pi;
+[00000000] 3.14
+Pi;
+[00000000] 3.14
+function Object.testPi() { echo(Pi) }|;
+42.testPi;
+[00000000] *** 3.14
+\end{urbiscript}
+
 \paragraph{How do I add a new slot in an object?}
 To add a slot to an object \lstinline{O}, you have to use the
 \lstinline{var} keyword, which is syntactic sugar for the
 \lstinline{setSlot} method:
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 var O2 = Object.new |
 // Syntax...
 var O2.mySlot1 = 42;
@@ -91,15 +372,15 @@ object, versus a local variable name:
 \begin{urbiscript}[firstnumber=last]
 {
   // Create a new slot in the current object.
-  var this.foo = 42;
+  var this.bar = 42;
 
   // Create a local variable, which will not be known anymore
   // after we exit the current scope.
-  var bar = 23;
+  var qux = 23;
 }|
+qux;
+[00000001:error] !!! lookup failed: qux
 bar;
-[00000001:error] !!! lookup failed: bar
-foo;
 [00000001] 42
 \end{urbiscript}
 
@@ -142,8 +423,10 @@ You can define a method called \lstinline{init} which will be called
 automatically by \lstinline{new}. For example:
 
 \begin{urbiunchecked}
-class myObject {
-  function init(x, y) {
+class myObject
+{
+  function init(x, y)
+  {
     var this.x = x;
     var this.y = y;
   };
@@ -192,7 +475,8 @@ functions:
 
 \begin{urbiunchecked}
 var myObject = Object.new;
-do (myObject) {
+do (myObject)
+{
   function myFunction (x, y) { /* ... */ };
 };
 \end{urbiunchecked}
@@ -202,7 +486,8 @@ or group those two statements by using a convenient \lstinline{class}
 scope:
 
 \begin{urbiunchecked}
-class myObject {
+class myObject
+{
   function myFunction (x, y) { /* ... */ };
 };
 \end{urbiunchecked}
@@ -431,7 +716,7 @@ of an UObject.
 In remote mode, a single thread is also used to handle all UObject
 callbacks, for all the UObjects in the same executable. It means that
 two bound functions registered from the same executable will never
-execute in parallel. Consider this sample C++ function:
+execute in parallel. Consider this sample \Cxx function:
 
 \begin{cxx}
 int MyObject::test(int delay)
