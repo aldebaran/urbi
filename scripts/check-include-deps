@@ -83,8 +83,13 @@ sub wanted
         or die "cannot open $File::Find::name: $!";
       while (my $line = $in->getline)
         {
-          $needed{$1} = 1
-            if ($line =~ m((.*/boost/.*):$));
+          if ($line =~ m((.*/boost/.*):$))
+            {
+              my $file = $1;
+              # On wine, we escape colons in file names.
+              $file = s/\:/:/g;
+              $needed{$file} = 1
+            }
         }
     }
 }
