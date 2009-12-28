@@ -199,10 +199,6 @@ namespace kernel
 
     \param buffer the buffer to send
     \param length the length of the buffer
-    \return
-    - USUCCESS: successful. The message is in the queue.
-    - UFAIL   : could not send the buffer, not enough memory in the
-    send queue.
     \sa send(const char*)
     */
     virtual void send_queue(const char* buffer, size_t length);
