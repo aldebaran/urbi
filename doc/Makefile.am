@@ -47,7 +47,10 @@ dist_doc_DATA =					\
 ## urbi-sdk.pdf.  ##
 ## -------------- ##
 
-pdf_DATA += urbi-sdk.pdf urbi-naming.pdf
+pdf_DATA +=					\
+  urbi-faq.pdf					\
+  urbi-naming.pdf				\
+  urbi-sdk.pdf
 CLEANFILES += $(pdf_DATA)
 urbi_sdk_sources = $(call ls_files,*.tex)
 REVISION_FILE = revision.sty

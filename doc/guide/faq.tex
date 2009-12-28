@@ -2,7 +2,9 @@
 \label{sec:faq}
 
 \section{Tools}
-\paragraph{The server dies with ``stack exhaustion''}
+\subsection{urbi-launch and urbi}
+\subsubsection{The server dies with ``stack exhaustion''}
+\index{stack!size}
 Your program might be deeply recursive, or use large temporary
 objects.  Use \option{--stack-size} to augment the stack size, see
 \autoref{sec:tools:urbi}.
@@ -43,7 +45,7 @@ $10^{80}$).
 \section{\us}
 \subsection{Objects lifetime}
 
-\paragraph{How do I create a new Object derivative?}
+\subsubsection{How do I create a new Object derivative?}
 Urbi is based on prototypes. To create a new Object derivative (which
 will inherit all the Object methods), you can do:
 
@@ -52,8 +54,8 @@ var myObject = Object.new;
 [00000001] Object_0x76543210
 \end{urbiscript}
 
-\paragraph{How do I destroy an Object?}
-There is no \lstinline{delete} in Urbi, for a number of reasons (see
+\subsubsection{How do I destroy an Object?}
+There is no \lstindex{delete} in Urbi, for a number of reasons (see
 \autoref{sec:k122:delete}).  Objects are deleted when they are no
 longer used/referenced to.
 
@@ -188,9 +190,9 @@ Last tricky rule you must keep in mind: the toplevel of your
 connection --- your interactive session --- is a %
 \lstinline|do (lobby)| scope. That is, when you type \lstinline|var x|
 directly in your connection, it stores an \lstinline|x| slot in the
-\lstinline|lobby| object. So, what is this lobby? It's precisely the
-object designed to store your toplevel variables. Every \urbi server
-has an unique \refObject{Lobby} (note the capital), and every
+\lstinline|lobby| object. So, what is this \dfn{lobby}? It's precisely
+the object designed to store your top-level variables. Every \urbi
+server has an unique \refObject{Lobby} (note the capital), and every
 connection has its \lstinline|lobby| that inherits the
 \lstinline|Lobby|. Thus, variables stored in \lstinline|Lobby| are
 accessible from any connection, while variables stored in a
@@ -349,7 +351,7 @@ function Object.testPi() { echo(Pi) }|;
 [00000000] *** 3.14
 \end{urbiscript}
 
-\paragraph{How do I add a new slot in an object?}
+\subsubsection{How do I add a new slot in an object?}
 To add a slot to an object \lstinline{O}, you have to use the
 \lstinline{var} keyword, which is syntactic sugar for the
 \lstinline{setSlot} method:
@@ -385,8 +387,7 @@ bar;
 \end{urbiscript}
 
 
-\paragraph{How do I modify a slot of my object?}
-
+\subsubsection{How do I modify a slot of my object?}
 Use the \lstinline|=| operator, which is syntactic sugar for the
 \lstinline|updateSlot| method.
 
@@ -404,7 +405,7 @@ O.updateSlot("mySlot", 23);
 [00000001] 23
 \end{urbiscript}
 
-\paragraph{How do I create or modify a local variable?}
+\subsubsection{How do I create or modify a local variable?}
 Use \lstinline|var| and \lstinline|=|.
 
 \begin{urbiscript}[firstnumber=last]
@@ -418,7 +419,8 @@ var myOtherLocalVariable = "bar";
 \end{urbiscript}
 
 
-\paragraph{How do I make a constructor?}
+\subsubsection{How do I make a constructor?}
+\index{constructor}
 You can define a method called \lstinline{init} which will be called
 automatically by \lstinline{new}. For example:
 
@@ -435,8 +437,8 @@ myInstance = myObject.new(10, 20);
 \end{urbiunchecked}
 
 
-\paragraph{How can I manipulate the list of prototypes of my objects?}
-The \lstinline{protos} method returns a list (which can be manipulated)
+\subsubsection{How can I manipulate the list of prototypes of my objects?}
+The \lstindex{protos} method returns a list (which can be manipulated)
 containing the list of your object prototype.
 
 \begin{urbiunchecked}
@@ -445,12 +447,12 @@ myObject.protos;
 [00000001] [Object]
 \end{urbiunchecked}
 
-\paragraph{How can I know the slots available for a given object?}
-The \lstinline{localSlotNames} and \lstinline{allSlotNames} methods
+\subsubsection{How can I know the slots available for a given object?}
+The \lstindex{localSlotNames} and \lstindex{allSlotNames} methods
 return respectively the local slot names and the local+inherited slot
 names.
 
-\paragraph{How do I create a new function?}
+\subsubsection{How do I create a new function?}
 Functions are first class objects. That means that you can add them as
 any other slot in an object:
 
@@ -494,19 +496,20 @@ class myObject
 
 
 \subsection{Tags}
-\paragraph{How do I create a tag?}
+\index{tag}
+\subsubsection{How do I create a tag?}
 See \autoref{stdlib:tag:ctor}.
 
-\paragraph{How do I stop a tag?}
+\subsubsection{How do I stop a tag?}
 
 Use the \lstinline|stop| method.
 \begin{urbiunchecked}
 myTag.stop;
 \end{urbiunchecked}
 
-\paragraph{Can tagged statements return a value?}
-By default, tagged statements will return the latest evaluated expression if
-they have not been stopped:
+\subsubsection{Can tagged statements return a value?}
+By default, tagged statements will return the value of last evaluated
+expression if they have not been stopped:
 
 \begin{urbiunchecked}
 var myTag = Tag.new;
@@ -532,7 +535,8 @@ res;
 \end{urbiunchecked}
 
 \subsection{Events}
-\paragraph{How do I create an event?}
+\index{event}
+\subsubsection{How do I create an event?}
 Events are objects, and must be created as any object by using
 \lstinline{new} to create derivatives of the \lstinline{Event} object.
 
@@ -540,15 +544,14 @@ Events are objects, and must be created as any object by using
 var ev = Event.new;
 \end{urbiunchecked}
 
-\paragraph{How do I emit an event?}
+\subsubsection{How do I emit an event?}
 Use the \lstinline|!| operator.
 
 \begin{urbiunchecked}
 ev!(1, "foo");
 \end{urbiunchecked}
 
-\paragraph{How do I catch an event?}
-
+\subsubsection{How do I catch an event?}
 Use the \lstinline|at(\var{event}?\var{args})| construct.
 
 \begin{urbiunchecked}
@@ -564,7 +567,8 @@ whatever value is present in the event that triggered the
 \lstinline{at}.
 
 \subsection{Lists}
-\paragraph{How can I iterate over a list?}
+\index{list}
+\subsubsection{How can I iterate over a list?}
 
 Use the \lstinline{for} construct (\autoref{sec:lang:for:each}), or
 the \lstinline|each| method (\refObject{List}):
@@ -590,7 +594,7 @@ change.
 
 There are at least two means to avoid this problems.
 
-\paragraph{Events}
+\subsubsection{Events}
 The key \us feature for event-based programming are... events (see
 \refObject{Event} and \autoref{sec:tut:events}).  The use of
 \lstinline|at| and \lstinline|waituntil| with events is well
@@ -643,6 +647,8 @@ use the following implementation:
 You may also use the event guard using %
 \lstinline|at (\var{event}? if \var{cond})|:
 
+% I have no idea why I need this.  Looks like a bug in lstlisting...
+\clearpage
 \begin{urbiscript}[firstnumber=last]
 {
   var x = 0;
@@ -663,7 +669,7 @@ You may also use the event guard using %
 The optimization of \lstinline|waituntil(\var{cond})| can be done
 similarly.
 
-\paragraph{Loops}
+\subsubsection{Loops}
 
 Alternatively, \lstinline|waituntil| can be simulated with a
 \lstinline|while|, but rather that looping intensively on an empty
@@ -688,21 +694,22 @@ sleep(100ms);
 \end{urbiscript}
 
 \section{UObjects}
-
-\subsection{Thread-safety}
-
+\index{UObject}
+\subsection{Is the UObject API Thread-Safe?}
+\index{thread-safety}
 We are receiving a lot of questions on thread-safety issues in UObject
 code. So here comes a quick explanation on how things work in plugin
 and remote mode, with a focus on those questions.
 
 \subsubsection{Plugin mode}
 
-In plugin mode, all the UObject callbacks (timer, bound functions,
-notifyChange and notifyAccess targets) are called synchronously in the
-same thread that executes \us code. All reads and writes to Urbi
-variables, through UVar, are done synchronously. \strong{The UObject
-  plugin API is not thread-safe.} If your code uses other threads,
-they must not attempt to read or to write UVars.
+In \dfn{plugin mode}, all the UObject callbacks (timer, bound
+functions, notifyChange and notifyAccess targets) are called
+synchronously in the same thread that executes \us code. All reads and
+writes to \urbi variables, through \dfn{UVar}, are done
+synchronously. \strong{The UObject plugin API is not thread-safe.} If
+your code uses other threads, they must not attempt to read or to
+write UVars.
 
 If your other threads need to write to UVars, or to send \us code, the
 simplest solution is to queue those requests in a list (locked by a
@@ -713,10 +720,10 @@ of an UObject.
 
 \paragraph{Execution model}
 
-In remote mode, a single thread is also used to handle all UObject
-callbacks, for all the UObjects in the same executable. It means that
-two bound functions registered from the same executable will never
-execute in parallel. Consider this sample \Cxx function:
+In \dfn{remote mode}, a single thread is also used to handle all
+UObject callbacks, for all the UObjects in the same executable. It
+means that two bound functions registered from the same executable
+will never execute in parallel. Consider this sample \Cxx function:
 
 \begin{cxx}
 int MyObject::test(int delay)
@@ -807,7 +814,7 @@ is thread-safe.
 
 
 \subsection{Shared library dependencies}
-\paragraph{urbi-launch fails with 'myuobject: file not found'. What can I do?}
+\subsubsection{urbi-launch fails with 'myuobject: file not found'. What can I do?}
 If you are sure the file is there, the most probable cause is an
 undefined symbol in your shared library. A libltdl quirk prevents us
 from displaying a more accurate error message.  You can use a tool
@@ -817,19 +824,21 @@ standard package on most Linux distributions.  Run it with
 containing \samp{dlerror} in the output. One will contain the exact
 message that occurred while trying to load your shared library.
 
-Under Mac OS X, the \code{DYLD\_PRINT\_APIS} environment variable can
+Under Mac OS X, the \env{DYLD\_PRINT\_APIS} environment variable can
 be set to 1 to make the shared library loader more verbose and display
 all its attempts to load a file to stderr.
 
 Note that this problem is Mac OS X and Linux specific.
 
 \section{Miscellaneous}
-\paragraph{How can I know what has changed since the latest beta release I got?}
+\subsection{Releases}
+\subsubsection{How can I know what has changed since the latest beta release I got?}
 The file \file{RELEASE-NOTES.txt} at the top of the distribution
 contains the list of user-visible changes between consecutive
 releases.
 
-\paragraph{How do I report a bug?}
+\subsection{Bugs}
+\subsubsection{How do I report a bug?}
 See the file \file{REPORTING-BUGS.txt} at the top of the
 distribution. We insist on keeping \email{k2-beta@lists.gostai.com} in
 copy at all times, because it helps us to track conversations with our
