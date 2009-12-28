@@ -404,6 +404,124 @@ sleep(100ms);
 
 \section{UObjects}
 
+\subsection{Thread-safety}
+
+We are receiving a lot of questions on thread-safety issues in UObject
+code. So here comes a quick explanation on how things work in plugin
+and remote mode, with a focus on those questions.
+
+\subsubsection{Plugin mode}
+
+In plugin mode, all the UObject callbacks (timer, bound functions,
+notifyChange and notifyAccess targets) are called synchronously in the
+same thread that executes \us code. All reads and writes to Urbi
+variables, through UVar, are done synchronously. \strong{The UObject
+  plugin API is not thread-safe.} If your code uses other threads,
+they must not attempt to read or to write UVars.
+
+If your other threads need to write to UVars, or to send \us code, the
+simplest solution is to queue those requests in a list (locked by a
+mutex), and dequeue and execute those requests in the update function
+of an UObject.
+
+\subsubsection{Remote mode}
+
+\paragraph{Execution model}
+
+In remote mode, a single thread is also used to handle all UObject
+callbacks, for all the UObjects in the same executable. It means that
+two bound functions registered from the same executable will never
+execute in parallel. Consider this sample C++ function:
+
+\begin{cxx}
+int MyObject::test(int delay)
+{
+  static const int callNumber = 0;
+  int call = ++callNumber;
+  std::cerr << "in "  << call << ": " << time() << std::endl;
+  sleep(delay);
+  std::cerr << "out " << call << ": " << time() << std::endl;
+  return 0;
+}
+\end{cxx}
+
+If this function is bound in a remote uobject, the following code:
+
+\begin{cxx}
+MyObject.test(1), MyObject.test(1)
+\end{cxx}
+
+\noindent
+will produce the following output (assuming the first call to
+\lstinline|time| returns 1000).
+
+\begin{lstlisting}
+in 1: 1000
+out 1: 1001
+in 2: 1001
+out 2: 1002
+\end{lstlisting}
+
+However, the execution of the \urbi kernel is not ``stuck'' while the
+remote function executes, as the following code demonstrates:
+
+\begin{urbiunchecked}
+var t = Tag.new;
+test(1) | t.stop,
+t:every(300ms)
+  cerr << "running";
+\end{urbiunchecked}
+
+The corresponding output is (mixing the kernel and the remote outputs):
+
+\begin{lstlisting}
+[0] running
+in 1: 1000
+[300] running
+[600] running
+[900] running
+out 1: 1001
+\end{lstlisting}
+
+As you can see, \urbi semantics is respected (the execution flow is
+stuck until the return value from the function is returned), but the
+kernel is not stuck: other pieces of code are still running.
+
+\paragraph{Thread-safety}
+
+The liburbi and the UObject API in remote mode are thread safe. All
+operations can be performed in any thread. As always, care must be
+taken for all non-atomic operations. For exemple, the following
+function is not thread safe:
+
+\begin{cxx}
+void
+writeToVar(UClient* cl, std::string varName, std::string value)
+{
+  (*cl) << varName << " = " << value << ";";
+}
+\end{cxx}
+
+Two simultaneous calls to this function from different threads can
+result in the two messages being mixed.  The following implementation
+of the same function is thread-safe however:
+
+\begin{cxx}
+void
+writeToVar(UClient* cl, std::string varName, std::string value)
+{
+  std::stringstream s;
+  s << varName << " = " << value << ";";
+  (*cl) << s.str();
+}
+\end{cxx}
+
+\noindent
+since a single call to UClient's \lstinline[language=C++]|operator <<|
+is thread-safe.
+
+
+\subsection{Shared library dependencies}
 \paragraph{urbi-launch fails with 'myuobject: file not found'. What can I do?}
 If you are sure the file is there, the most probable cause is an
 undefined symbol in your shared library. A libltdl quirk prevents us
