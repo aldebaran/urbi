@@ -2,15 +2,60 @@
 
 use English;
 use File::Basename;
+use File::Find ();
 use IO::File;
 use strict;
 
-use File::Find ();
-# For the convenience of &wanted calls, including -eval statements:
-use vars qw/*name *dir *prune/;
-*name   = *File::Find::name;
-*dir    = *File::Find::dir;
-*prune  = *File::Find::prune;
+=head1 NAME
+
+  check-lib-deps - handle shared-lib dependencies
+
+=head1 SYNOPSIS
+
+  check-lib-deps [OPTIONS...] DIR...
+
+=head1 DESCRIPTION
+
+Traverse all the DIR... and relocate, when possible, shared-library
+dependencies.  It works in two steps: first all the dependencies of
+executables and shared libs are gathered.  Second, dependencies that
+are met inside the DESTDIR itself are made relative instead of
+absolute.  As a last step, absolute dependencies that remain are
+checked for validity.
+
+Exit with failure if invalid dependencies remain.
+
+=head1 OPTIONS
+
+General options:
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Display this message and exit.
+
+=item B<-d>, B<--destdir>=I<destdir>
+
+Specify the installation destination directory.  Anything found under
+this directory is considered to be part of it.  Anything else is a
+foreign dependency.
+
+=item B<-q>, B<--quiet>
+
+Be less verbose.  Accumulates.
+
+=item B<-v>, B<--verbose>
+
+Be more verbose.  Accumulates.
+
+=back
+
+=head1 FUNCTIONS
+
+=over 4
+
+=cut
 
 # The command line arguments.
 my %argv;
@@ -238,7 +283,7 @@ map
   }
   @checked;
 
-print STDERR "Accepted dependencies:\n", map { "  $_\n" } sort keys %loc;
+verbose 1, "Accepted dependencies:\n", map { "  $_\n" } sort keys %loc;
 exit($status);
 
 ### Setup "GNU" style for perl-mode and cperl-mode.
