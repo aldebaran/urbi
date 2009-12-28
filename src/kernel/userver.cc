@@ -515,7 +515,7 @@ namespace kernel
     }
     if (type == QUEUE_URBI)
     {
-      q.push((boost::format("//#push 1 \"%1%\"\n") % base).str().c_str());
+      q.push(libport::format("//#push 1 \"%1%\"\n", base));
       finally
         << boost::bind(static_cast<void(UQueue::*)(const char*)>
                        (&UQueue::push),
