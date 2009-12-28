@@ -87,7 +87,7 @@ sub wanted
             {
               my $file = $1;
               # On wine, we escape colons in file names.
-              $file = s/\:/:/g;
+              $file =~ s/\\:/:/g;
               $needed{$file} = 1
             }
         }
