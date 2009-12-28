@@ -15,6 +15,7 @@
   // it is useless to define ENABLE_DEBUG_TRACES here as the guards
   // avoid the redefinition.  Use LIBPORT_ECHO instead of LIBPORT_DEBUG.
   // #define ENABLE_DEBUG_TRACES
+
 #include <libport/compiler.hh>
 
 #include <libport/cstdlib>
@@ -26,6 +27,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <libport/escape.hh>
+#include <libport/format.hh>
 #include <libport/ufloat.hh>
 
 #include <parser/prescan.hh>
@@ -141,7 +143,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   do {                                          \
     if (up)                                     \
       loc.step();                               \
-  } while (0)
+  } while (false)
 
 // Called via YY_USER_ACION each time we *advance* the cursor, in
 // which case Num is actually the number of bytes read.  In prescanner
@@ -153,7 +155,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
       loc.columns(Num);                                 \
     else                                                \
       pre_length += Num;                                \
- } while (0)
+ } while (false)
 
 // To avoid differences between versions of Bison, set by hand the
 // initial columns when advancing lines.  Does not touch pre_length,
@@ -166,14 +168,14 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
       loc.lines(Num);                           \
       loc.end.column = 1;                       \
     }                                           \
-  } while (0)
+  } while (false)
 
 // Report an error.
-#define SCAN_ERROR(Msg)                         \
-  do {                                          \
-    if (up)                                     \
-      up->error(loc, std::string () + Msg);     \
-  } while (0)
+#define SCAN_ERROR(...)                                 \
+  do {                                                  \
+    if (up)                                             \
+      up->error(loc, libport::format(__VA_ARGS__));     \
+  } while (false)
 
 // Report an EOF error.  In that case, the prescanner must return
 // non-null, since null means there is not enough data.
@@ -181,12 +183,12 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
   do {                                                  \
     if (!up)                                            \
       return yy::parser::make_PRE_EOF(loc);             \
-    SCAN_ERROR("unexpected end of file in " + Where);   \
+    SCAN_ERROR("unexpected end of file in %s", Where);  \
   } while(0)
 
 // Report the use of a reserved word.
 #define RESERVED_ERROR                          \
-  SCAN_ERROR("reserved symbol `" + yytext + "'")
+  SCAN_ERROR("reserved symbol: `%s'", yytext)
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate()                                   \
@@ -270,7 +272,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
     PRE_SKIP();                                 \
     assert(up->meta());                         \
     RETURN(PERCENT_ ## Token ## _COLON);        \
-  } while (0)
+  } while (false)
 
 // Return a std::string of kind Token with yytext as value.
 #define RETURN_STR(Token)                       \
@@ -303,7 +305,7 @@ static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
     for (int i = _rewritten.length() - 1; 0 <= i; --i)  \
       unput(_rewritten[i]);                             \
     COLUMNS(-_rewritten.length());                      \
-  } while (0)
+  } while (false)
 
 // We matched an alternative token, rescan with Str instead.
 #define SYNONYM(Str)                            \
@@ -748,7 +750,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\[0-7]{3}         {
        long c = strtol (yytext + 1, 0, 8);
        if (255 < c)
-         SCAN_ERROR("invalid escape: `" + yytext + '\'');
+         SCAN_ERROR("invalid escape: `%s'", yytext);
        else
          GROW_VAL(c);
      }
@@ -763,7 +765,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\t        GROW_VAL('\t');
      \\v        GROW_VAL('\v');
      \\[\\\"\'] GROW_VAL(yytext[1]);
-     \\.        SCAN_ERROR("invalid escape: `" + yytext + '\'');
+     \\.        SCAN_ERROR("invalid escape: `%s'", yytext);
 
      "\\B("[0-9]+")("    {
        // Binary escape.
@@ -841,8 +843,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          COLUMNS(1);
          break;
        default:
-         SCAN_ERROR("unexpected '" + (char)c
-                    + "' for closing \\B, expected ')'");
+         SCAN_ERROR("unexpected '%s' for closing \\B, expected ')'",
+                    (char)c);
          break;
        }
      }
@@ -892,7 +894,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 <*>{
    .      {
-             SCAN_ERROR("invalid character: " + yytext);
+             SCAN_ERROR("invalid character: `%s'", yytext);
              STEP();
           }
 }
