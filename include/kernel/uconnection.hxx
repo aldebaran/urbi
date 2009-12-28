@@ -114,6 +114,13 @@ namespace kernel
     send(buf, strlen(buf), tag, flush);
   }
 
+  inline
+  void
+  UConnection::send_queue(const std::string& s)
+  {
+    send_queue(s.c_str(), s.length());
+  }
+
 }
 
 #endif // !KERNEL_UCONNECTION_HXX

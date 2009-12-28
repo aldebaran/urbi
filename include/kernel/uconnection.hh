@@ -183,9 +183,6 @@ namespace kernel
     bool has_pending_command() const;
     void drop_pending_commands();
 
-    /// Build a prefix [01234567:tag].
-    std::string make_prefix(const char* tag) const;
-
     //! Send a buffer through the connection without flushing it.
     /*! The function piles the buffer in the sending queue and calls
      continue_send() if the connection is not blocked (blocked means that
@@ -202,6 +199,8 @@ namespace kernel
     \sa send(const char*)
     */
     virtual void send_queue(const char* buffer, size_t length);
+    /// Bounce to (const char* buffer, size_t length).
+    void send_queue(const std::string& s);
 
     /// Whether an interactive session.
     bool interactive_p() const;

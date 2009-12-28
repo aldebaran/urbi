@@ -122,8 +122,12 @@ namespace kernel
 
     if (tag)
     {
-      std::string pref = make_prefix(tag);
-      send_queue(pref.c_str(), pref.length());
+      if (*tag)
+        send_queue(libport::format("[%08d:%s] ",
+                                   server_.lastTime() / 1000L, tag));
+      else
+        send_queue(libport::format("[%08d] ",
+                                   server_.lastTime() / 1000L));
     }
     if (buf)
     {
@@ -217,8 +221,8 @@ namespace kernel
         LIBPORT_DEBUG("appended: " << *active_command << "}}}");
       }
       else
-        LIBPORT_DEBUG("the parser returned NULL:" << std::endl
-             << "{{{" << command << "}}}");
+        LIBPORT_DEBUG("the parser returned 0:" << std::endl
+                      << "{{{" << command << "}}}");
     }
 
     // Execute the new command.
@@ -247,20 +251,6 @@ namespace kernel
     shell_->append_command(const_cast<const ast::Nary*>(active_command.get()));
 
     LIBPORT_PING();
-  }
-
-  std::string
-  UConnection::make_prefix(const char* tag) const
-  {
-    std::ostringstream o;
-    char fill = o.fill('0');
-    o << '[' << std::setw(8) << server_.lastTime() / 1000L;
-    o.fill(fill);
-    if (tag && strlen(tag))
-      o << ':' << tag;
-    o << "] ";
-
-    return o.str();
   }
 
   bool
