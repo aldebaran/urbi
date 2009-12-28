@@ -83,12 +83,18 @@ sub wanted
         or die "cannot open $File::Find::name: $!";
       while (my $line = $in->getline)
         {
-          if ($line =~ m((.*/boost/.*):$))
+          if ($line =~ m((.*/(boost/.*)):$))
             {
               my $file = $1;
+              # The hierarchy may look like
+              # /home/build/.wine/dosdevices/z\:/home/build/local/boost/boost_1_39/boost/algorithm/string.hpp.
+              # So we do expect the first `.*' to be greedy, so that
+              # we only have the last "/boost/" component here
+              # (boost/algorithm).
+              my $install = dirname($2);
               # On wine, we escape colons in file names.
               $file =~ s/\\:/:/g;
-              $needed{$file} = 1
+              $needed{$file} = $install;
             }
         }
     }
@@ -142,8 +148,7 @@ getopt;
 File::Find::find({wanted => \&wanted}, @ARGV);
 map
 {
-  (my $base = $_) =~ s(^.*/include/)();
-  my $to = dirname "$includedir/$base";
+  my $to = dirname "$includedir/$needed{$_}";
   verbose 2, "$_ => $to";
   if (! -d $to)
     {
