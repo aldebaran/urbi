@@ -57,12 +57,8 @@ namespace urbi
 
     public:
       std::string as_string() const;
-
-    /*---------.
-    | Getter.  |
-    `---------*/
-    public:
-      unsigned timestamp () const;
+      libport::ufloat asFloat () const;
+      libport::ufloat timestamp () const;
 
 
     /*--------.

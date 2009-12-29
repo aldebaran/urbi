@@ -27,6 +27,22 @@ Date.new(1234567890);
 [00023593] 2009-02-14 00:31:30
 \end{urbiscript}
 
+With a string argument \var{d}, refers to the date contained in \var{d}.
+The string should be formatted as \samp{\var{yyyy}-\var{mm}-\var{dd}
+    \var{hh}:\var{mn}:\var{ss}} (see \lstinline|Date.asString|). \var{mn}
+and \var{ss} are optional. If the block \samp{\var{hh}:\var{mn}:\var{ss}}
+is absent, the behavior is undefined.
+
+
+\begin{urbiscript}[firstnumber=last]
+Date.new("2003-10-10 20:10:50");
+[00086457] 2003-10-10 20:10:50
+Date.new("2003-10-10 20:10");
+[00091439] 2003-10-10 20:10:00
+Date.new("2003-10-10 20");
+[00094386] 2003-10-10 20:00:00
+\end{urbiscript}
+
 \subsection{Slots}
 
 \begin{itemize}
@@ -59,6 +75,13 @@ Date.new(11111111) != Date.new(22222222);
 Date.new(11111111) < Date.new(22222222);
 \end{urbiassert}
 
+\item \lstinline|asFloat|\\
+  Give the numeric value of the date that refers to the date that is \var{s}
+seconds after the epoch.
+\begin{urbiassert}[firstnumber=last]
+Date.new("2002-01-20 23:59:59").asFloat == 1011567599;
+\end{urbiassert}
+
 \item \lstinline|asString|\\
   Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
     \var{hh}:\var{mn}:\var{ss}} where \var{yyyy} is the four-digit
@@ -76,10 +99,13 @@ Date.new(1234567890).asString == "2009-02-14 00:31:30";
   midnight.
 \begin{urbiassert}[firstnumber=last]
 Date.epoch == Date;
+
 Date.epoch == Date.new(0);
 Date.epoch == Date.new();
 \end{urbiassert}
 
+\item \lstinline|timestamp|\\
+Synonym for \lstinline|Date.asFloat|
 
 \end{itemize}
 

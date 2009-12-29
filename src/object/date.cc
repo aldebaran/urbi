@@ -125,16 +125,17 @@ namespace urbi
                              date.tm_sec);
     }
 
-    /*---------.
-    | Getter.  |
-    `---------*/
-
-    unsigned
-    Date::timestamp () const
+    libport::ufloat
+    Date::asFloat () const
     {
       return time_;
     }
 
+    libport::ufloat
+    Date::timestamp () const
+    {
+      return asFloat ();
+    }
 
     /*--------.
     | Dates.  |
