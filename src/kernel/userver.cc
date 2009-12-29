@@ -508,6 +508,7 @@ namespace kernel
       catch (libport::file_library::Not_found&)
       {
         DEBUG(("not found\n"));
+        errno = ENOENT;
         return UFAIL;
       }
       if (!*is)

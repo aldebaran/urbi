@@ -212,7 +212,9 @@ namespace urbi
     {
       if (server_.load_file(d.filename_, connection_.recv_queue_get())
           != USUCCESS)
-        URBI_EXIT(EX_NOINPUT, "failed to process file %s", d.filename_);
+        URBI_EXIT(EX_NOINPUT,
+                  "failed to process file %s: %s",
+                  d.filename_, strerror(errno));
     }
 
     kernel::UServer& server_;
