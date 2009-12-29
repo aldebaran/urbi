@@ -15,7 +15,7 @@ method \lstinline{add} that returns the sum of this variable and its
 argument.
 
 \begin{itemize}
-\item First the required include and namespace:
+\item First the required include:
 
 \begin{cxx}
 #include <urbi/uobject.hh>
@@ -95,41 +95,44 @@ named \lstinline|init| with the appropriate number of arguments.
 You can register a function that will be called each time a variable
 is modified or accessed (for embedded components only) by calling
 \lstinline{UNotifyChange} and \lstinline{UNotifyAccess}, passing
-either an \UVar or a variable name as first argument, and a
-member function of your \UObject as second argument. This
-function can take zero or one argument: a \UVar reference
-pointing to the \UVar being accessed or modified. The
-\lstinline{notifyChange} callback function is called after the
-variable value is changed, whereas the \lstinline{notifyAccess}
-callback is called before the variable is accessed, giving you the
-possibility to update its value.
+either an \UVar or a variable name as first argument, and a member
+function of your \UObject as second argument. This function can take
+zero or one argument: a \UVar reference pointing to the \UVar being
+accessed or modified. The \lstinline{notifyChange} callback function
+is called after the variable value is changed, whereas the
+\lstinline{notifyAccess} callback is called before the variable is
+accessed, giving you the possibility to update its value.
 
 The callback functions are expected to return a value of type
-\lstinline|UReturn|, currently typedefed as an int. This return value is ignored
-in the current implementation.
+\lstinline|UReturn|, currently typedefed as an int. This return value
+is ignored in the current implementation.
 
-Notify functions can be unregistered by calling the \lstinline|unnotify|
-function of the \UVar class.
+Notify functions can be unregistered by calling the
+\lstinline|unnotify| function of the \UVar class.
 
 \section{Data-flow based programming: exchanging UVars}
 
-The \lstinline{UNotifyChange} and \lstinline{UNotifyAccess} features can be
-used to link multiple UObjects together, and perform data-flow based
-programming: the \lstinline{UNotifyChange} can be called to monitor UVars
-from other UObjects. Those UVars can be transmitted through bound functions
-calls.
+The \lstinline{UNotifyChange} and \lstinline{UNotifyAccess} features
+can be used to link multiple UObjects together, and perform data-flow
+based programming: the \lstinline{UNotifyChange} can be called to
+monitor UVars from other UObjects.  Those UVars can be transmitted
+through bound function calls.
 
-One possible pattern is to have each data-processing UObject take its input
-from monitored UVars, given in it's constructor, and output the result of it's
-processing in other UVars. Consider the following example of an object-tracker:
+One possible pattern is to have each data-processing UObject take its
+input from monitored UVars, given in its constructor, and output the
+result of its processing in other UVars. Consider the following
+example of an object-tracker:
 
 \begin{cxx}
-class ObjectTracker: public UObject {
-  ObjectTracker(const std::string& n): UObject(n) {
+class ObjectTracker: public urbi::UObject
+{
+  ObjectTracker(const std::string& n)
+    : urbi::UObject(n)
+  {
     // Bind our constructor.
     UBindFunction(ObjectTracker, init);
   }
-  // Take our data source in our constructor
+  // Take our data source in our constructor.
   int init(UVar& image)
   {
     UNotifyChange(image, &ObjectTracker::onImage);
@@ -140,7 +143,7 @@ class ObjectTracker: public UObject {
   int onImage(UVar& src)
   {
     UBinary b = src;
-    //Processing here
+    // Processing here.
     val = processing_result;
     return 0;
   }
@@ -165,14 +168,14 @@ synchronously in cascade to update the state of the intermediate components.
 \section{Timers}
 \label{sec:uob:timers}
 
-The API gives you two methods to have a function called periodically:
+The API provides two methods to have a function called periodically:
 \begin{cxxapi}
-\item[urbi::UObject::USetUpdate(ufloat period)]
+\item[void urbi::UObject::USetUpdate(ufloat period)]
   Set up a timer that calls the virtual method
   \lstinline{UObject::update()} with the specified period (in
   milliseconds).  Disable updates if \var{period} is -1.
 
-\item[urbi::UObject::USetTimer<T>(ufloat period), int (T::*fun)()]
+\item[urbi::TimerHandle urbi::UObject::USetTimer<T>(ufloat period, int (T::*fun)())]
   Invoke an UObject member function \var{fun} every \var{period}
   milliseconds.  \var{fun} is a regular member-function pointer, for
   instance \lstinline|MyUObject::my_function|.
@@ -276,13 +279,13 @@ attribute.
 
 If you need to send \urbi code to the server, the \lstinline{URBI()}
 macro is available, as well as the \lstinline{send()} function. You
-can either pass it a string, or directly \urbi code inside a pair of
-parentheses:
+can either pass it a string, or directly \urbi code inside a double
+pair of parentheses:
 
 \begin{urbiunchecked}
-send ("tag:1+1;");
+send ("myTag:1+1;");
 
-URBI (( at (someevent (x)) { sometag:echo x; }; ));
+URBI (( at (myEvent?(var x)) { myTag:echo x; }; ));
 \end{urbiunchecked}
 
 
