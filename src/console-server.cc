@@ -287,7 +287,8 @@ namespace urbi
     libport::OptionValue
       arg_port_file("write port number to the specified file.",
                     "port-file", 'w', "FILE"),
-      arg_stack    ("set the job stack size in KB", "stack-size", 's', "SIZE");
+      arg_stack    ("set the job stack size in KB",
+                    "stack-size", 's', "SIZE");
 
     libport::OptionsEnd arg_remaining(true);
     {
@@ -333,8 +334,8 @@ namespace urbi
 #ifndef NO_OPTION_PARSER
       arg_stack_size = arg_stack.get<size_t>(static_cast<size_t>(0));
 
-     // Since arg_remaining ate everything, args should be empty unless the user
-     // made a mistake.
+     // Since arg_remaining ate everything, args should be empty
+     // unless the user made a mistake.
      if (!args.empty())
        forbid_option(args[0]);
 
@@ -367,8 +368,8 @@ namespace urbi
     if (arg_stack_size)
     {
       // Make sure the result is a multiple of the page size.  This
-      // required at least on OSX (which unfortunately fails with errno
-      // = 0).
+      // required at least on OSX (which unfortunately fails with
+      // errno = 0).
       arg_stack_size *= 1024;
       size_t pagesize = getpagesize();
       arg_stack_size = ((arg_stack_size + pagesize - 1) / pagesize) * pagesize;
@@ -501,7 +502,8 @@ namespace urbi
   }
 
   int
-  main(const libport::cli_args_type& args, UrbiRoot& urbi_root, bool block, bool errors)
+  main(const libport::cli_args_type& args,
+       UrbiRoot& urbi_root, bool block, bool errors)
   {
     if (block)
       return init(args, errors, 0, urbi_root);
