@@ -210,14 +210,15 @@ namespace urbi
     \brief Call a function each time a variable is accessed.
     \param v the variable to monitor.
     \param fun the function to call each time the variable \b v is accessed.
-    The function is called rigth \b before the variable v is accessed, giving
-    \b fun the oportunity to modify it.
+    The function is called right \b before the variable \b v is accessed, giving
+    \b fun the opportunity to modify it.
     */
     void UNotifyAccess(UVar& v, int (UObject::*fun)(UVar&));
 
     /// Call \a fun every \a t milliseconds.
     template <class T>
-    void USetTimer(ufloat t, int (T::*fun)());
+    TimerHandle
+    USetTimer(ufloat t, int (T::*fun)());
 # else
 
     /// \internal
