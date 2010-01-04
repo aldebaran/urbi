@@ -1,6 +1,7 @@
 #! /usr/bin/perl -w
 
-use English;
+use Cwd;            # realpath
+use English;        # $OSNAME
 use File::Basename;
 use File::Find ();
 use IO::File;
@@ -163,19 +164,32 @@ sub xsystem (@)
     }
 }
 
-# Return the name in the install tree.
-# Make it absolute, and cut the $DESTDIR.
+=item C<installname($file)>
+
+Return the name in the install tree.
+
+Make it absolute, and cut the $DESTDIR.  We use realpath instead of
+rel2abs, because the latter does not work when converting a $ORIGIN
+dependencies to an absolute path: it keeps all the "../.."  bits which
+make it uselessly hard for us to check whether a given dependency is
+within our package or not.
+
+=cut
+
 sub installname ($)
 {
   my ($file) = @_;
-  my $res = File::Spec->rel2abs($file);
+  my $res = Cwd::realpath($file);
   $res =~ s/$destdir//;
   $res;
 }
 
-# Relocate $LIBRARY.
-#
-#
+=item C<relocate($lib)>
+
+Turn absolute dependencies within the package into relative rpaths.
+
+=cut
+
 sub relocate ($)
 {
   my ($lib) = @_;
