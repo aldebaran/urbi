@@ -256,7 +256,8 @@ sub check($)
     $OSNAME eq 'darwin' ? qw(@loader_path/ /usr/lib/ /opt/local/lib/)
     # On GNU/Linux, the related rpath dependencies are resolved and
     # made absolute.  Accept them only if they are inside our package.
-    : $OSNAME eq 'linux' ? qw($destdir /lib/ /usr/lib/gcc/ /usr/lib/libstdc++)
+    : $OSNAME eq 'linux' ? ($destdir,
+                            qw(/lib/ /usr/lib/gcc/ /usr/lib/libstdc++))
     : ();
 
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
