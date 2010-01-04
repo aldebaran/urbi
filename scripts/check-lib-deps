@@ -209,15 +209,56 @@ sub relocate ($)
                   $lib);
         }
     }
+
+  # On GNU/Linux, change the rpaths.  I.e., when we depend on an rpath
+  # which inside the package, make it relative.  It works at the level
+  # of directories, not libraries.  We use chrpath for two things: to
+  # get the list of current RPATH, and to change them.
+  elsif ($OSNAME eq 'linux')
+    {
+      my $rpath = qx(chrpath -l $lib);
+      if ($?)
+        {
+          warn "$0: chrpath -l $lib failed: $?";
+        }
+      else
+        {
+          chomp $rpath;
+          $rpath =~ s/.*RPATH=//;
+          my @rpath;
+          for my $dep (split (":", $rpath))
+            {
+              # FIXME: hardcoded!!!
+              my $rel =
+                ($dep =~ m(gostai)
+                 ? File::Spec->catdir('$ORIGIN',
+                                      File::Spec->abs2rel($dep, $dir))
+                 : $dep);
+              verbose 3, "$dep => $rel"
+                if $dep ne $rel;
+              push @rpath, $rel;
+            }
+          my $newrpath = join (":", @rpath);
+          xsystem("chrpath", "-r", $newrpath, $lib)
+            if $newrpath ne $rpath;
+        }
+    }
 }
 
 sub check($)
 {
   my ($lib) = @_;
   verbose 3, "check($lib)";
+
   my @valid =
+    # On OS X, the relative rpath dependencies are reported
+    # with a relative path starting with @loader_path.
     $OSNAME eq 'darwin' ? qw(@loader_path/ /usr/lib/ /opt/local/lib/)
-    : qw(/lib/ /usr/lib/gcc/ /usr/lib/libstdc++);
+    # On GNU/Linux, the related rpath dependencies are resolved and
+    # made absolute.  Accept them only if they are inside our package.
+    : $OSNAME eq 'linux' ? qw($destdir /lib/ /usr/lib/gcc/ /usr/lib/libstdc++)
+    : ();
+
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
   for my $loc (dependencies($lib))
     {
@@ -278,8 +319,8 @@ sub wanted
   my $re =
     (
      $^O eq 'darwin'
-     ? qr{\.dylib\z}s
-     : qr{\.so(\..*)\z}s
+     ? qr{\.(dylib|so)\z}s # Our UObjects are *.so.
+     : qr{\.so(\..*)?\z}s
     );
   if (-f $_
       && (-x $_ || /$re/))
