@@ -79,9 +79,18 @@ case $MODE in
 esac
 
 # Host and build machines.
-build=$($SED -ne '/^build = /{s///;p;q;}' $builddir/Makefile)
-host=$( $SED -ne '/^host = /{s///;p;q;}' $builddir/Makefile)
-stderr "build=$build" "host=$host"
+make_var ()
+{
+  $SED -ne "/^$1 = /{s///;p;q;}" $builddir/Makefile
+}
+build=$(make_var build)
+host=$(make_var  host)
+buildprefix=$(make_var prefix)
+stderr "build=$build" "host=$host" "prefix=$buildprefix"
+
+if test "$prefix" != "$buildprefix"; then
+  stderr '$prefix != $buildprefix' "($prefix != $buildprefix)"
+fi
 
 ## -------------- ##
 ## Post-install.  ##
