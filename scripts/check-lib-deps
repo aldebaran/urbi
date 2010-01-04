@@ -76,8 +76,8 @@ my $destdir;
 # Accepted resolved libraries.
 my %loc;
 
-# Exit status.
-my $status = 0;
+# Number of errors.
+my $nerrors = 0;
 
 # Verbosity level.
 my $verbose = 1;
@@ -211,8 +211,8 @@ sub check($)
         }
       else
         {
-          print STDERR "error: $lib depends on $loc\n";
-          $status = 1;
+          print STDERR "$0: error: $lib depends on $loc\n";
+          ++$nerrors;
         }
     }
 }
@@ -293,8 +293,9 @@ map
   }
   @checked;
 
-verbose 1, "Accepted dependencies:\n", map { "  $_\n" } sort keys %loc;
-exit($status);
+verbose 1, "Accepted dependencies:", map { "  $_" } sort keys %loc;
+verbose 1, "There were $nerrors errors";
+exit !$nerrors;
 
 ### Setup "GNU" style for perl-mode and cperl-mode.
 ## Local Variables:
