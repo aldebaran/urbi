@@ -222,7 +222,7 @@ $FIND "$DESTDIR$prefix" -name '*.la' | xargs $RM -f
 #
 # Build a MANIFEST with the list of files to install into the final
 # destination.
-MANIFEST="$TMPDIR/MANIFEST.tmp.$$"
+MANIFEST="$TMPDIR/MANIFEST.tmp"
 $FIND "$DESTDIR$prefix" -type f -print |
   $SED -e "s,^$DESTDIR$prefix/,," > "$MANIFEST"
 $MV "$MANIFEST" "$DESTDIR$prefix"
