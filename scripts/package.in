@@ -89,7 +89,11 @@ buildprefix=$(make_var prefix)
 stderr "build=$build" "host=$host" "prefix=$buildprefix"
 
 if test "$prefix" != "$buildprefix"; then
-  stderr '$prefix != $buildprefix' "($prefix != $buildprefix)"
+  stderr '**********************************'   \
+         '$prefix != $buildprefix'              \
+         "($prefix != $buildprefix)"            \
+         "proceeding with prefix=$buildprefix"
+  prefix=$buildprefix
 fi
 
 ## -------------- ##
