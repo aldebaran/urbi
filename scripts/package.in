@@ -216,16 +216,15 @@ esac
 # we use Boost as static libraries, they appear as runtime
 # dependencies.  We could try to fix the *.la files, but it appears to
 # work well without them.
-$FIND "$DESTDIR$prefix" -name '*.la' | xargs $RM -f
+$FIND "$DESTDIR$prefix" -name '*.la' -delete
 
 # MANIFEST.
 #
 # Build a MANIFEST with the list of files to install into the final
 # destination.
-MANIFEST="$TMPDIR/MANIFEST.tmp"
 $FIND "$DESTDIR$prefix" -type f -print |
-  $SED -e "s,^$DESTDIR$prefix/,," > "$MANIFEST"
-$MV "$MANIFEST" "$DESTDIR$prefix"
+  $SED -e "s,^$DESTDIR$prefix/,,"      \
+  >"$DESTDIR$prefix/MANIFEST"
 
 
 ## ----------- ##
