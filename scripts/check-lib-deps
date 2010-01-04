@@ -353,7 +353,7 @@ map
 
 verbose 1, "Accepted dependencies:", map { "  $_" } sort keys %loc;
 verbose 1, "There were $nerrors errors";
-exit !$nerrors;
+exit !!$nerrors;
 
 ### Setup "GNU" style for perl-mode and cperl-mode.
 ## Local Variables:
