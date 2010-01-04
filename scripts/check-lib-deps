@@ -25,6 +25,11 @@ checked for validity.
 
 Exit with failure if invalid dependencies remain.
 
+For interesting input on this topic, see:
+
+  RPATH/RUNPATH issue, equivalent to -headerpad on OSX
+    http://sourceware.org/ml/binutils/2008-01/msg00021.html
+
 =head1 OPTIONS
 
 General options:
@@ -57,7 +62,9 @@ Be more verbose.  Accumulates.
 
 =cut
 
-# The command line arguments.
+# The dependencies that are inside our package.  A simple set (i.e.,
+# the value is always 1).  The keys are *without* destdir.  So use
+# &installname before to check existence inside %argv.
 my %argv;
 
 # The list of files to check.
@@ -166,13 +173,16 @@ sub installname ($)
 
 # Relocate $LIBRARY.
 #
-# On OS X, look for all the dependencies that are inside our DESTDIR,
-# and make then relative.
+#
 sub relocate ($)
 {
   my ($lib) = @_;
   my $dir = dirname(installname($lib));
   verbose 3, "relocate($lib) @ $dir";
+
+  # On OS X, look for all the dependencies that are inside our
+  # DESTDIR, and make then relative.  It works at the level of each
+  # library.
   if ($OSNAME eq 'darwin')
     {
       for my $dep (grep {exists $argv{$_}} dependencies($lib))
