@@ -395,7 +395,8 @@ namespace urbi
     bool server_;
 
     /// Urbi Buffer length.
-    size_t buflen;
+    size_t sendBuflen;
+    size_t recvBuflen;
 
     /// System calls return value storage.
     /// 0 iff no error.

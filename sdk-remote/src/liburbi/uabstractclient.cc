@@ -136,15 +136,17 @@ namespace urbi
   {
     client->sendBufferLock.lock();
     size_t clen = strlen(client->sendBuffer);
-    if (client->buflen < clen + 1 + n)
+    if (client->sendBuflen < clen + 1 + n)
     {
-      //error
+      client->effective_send(client->sendBuffer);
+      client->sendBuffer[0] = 0;
+      client->effectiveSend(s, n);
       client->sendBufferLock.unlock();
-      return 0;
+      return n;
     }
     memcpy(client->sendBuffer + clen, s, n);
     client->sendBuffer[clen+n] = 0;
-    if (strpbrk(client->sendBuffer, "&|;,"))
+    if (strpbrk(client->sendBuffer+clen, "&|;,"))
     {
       client->effective_send(client->sendBuffer);
       client->sendBuffer[0] = 0;
@@ -202,7 +204,8 @@ namespace urbi
     , host_(host)
     , port_(port)
     , server_(server)
-    , buflen(buflen)
+    , sendBuflen(buflen)
+    , recvBuflen(buflen)
     , rc(0)
 
     , recvBuffer(new char[buflen])
@@ -340,7 +343,7 @@ namespace urbi
     sendBufferLock.lock();
     while (is.good() && !rc)
     {
-      is.read(sendBuffer, buflen);
+      is.read(sendBuffer, sendBuflen);
       rc = effectiveSend(sendBuffer, is.gcount());
     }
     sendBuffer[0] = 0;
@@ -381,7 +384,7 @@ namespace urbi
       // portable (e.g., segv on OSX).  So rather, try to vsnprintf,
       // and upon failure, revert the buffer in its previous state.
       size_t slen = strlen(sendBuffer);
-      size_t msize = buflen - slen;
+      size_t msize = sendBuflen - slen;
       int r = vsnprintf(sendBuffer + slen, msize, command, arg);
       if (r < 0 || static_cast<int>(msize) <= r)
       {

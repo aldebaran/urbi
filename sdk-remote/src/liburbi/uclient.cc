@@ -174,8 +174,7 @@ namespace urbi
   size_t
   UClient::onRead(const void* data, size_t length)
   {
-    size_t capacity = buflen - recvBufferPosition - 1;
-    size_t eat = std::min(capacity, length);
+    size_t capacity = recvBuflen - recvBufferPosition - 1;
 
     if (ping_interval_ && ping_sem_.uget(1))
     {
@@ -185,11 +184,20 @@ namespace urbi
                                        this, link_),
                            ping_interval_ - (libport::utime() - ping_sent_));
     }
-    memcpy(&recvBuffer[recvBufferPosition], data, eat);
-    recvBufferPosition += eat;
+    if (capacity < length)
+    {
+      size_t nsz = std::max(recvBuflen*2, recvBufferPosition + length+1);
+      char* nbuf = new char[nsz];
+      memcpy(nbuf, recvBuffer, recvBufferPosition);
+      delete[] recvBuffer;
+      recvBuffer = nbuf;
+      recvBuflen = nsz;
+    }
+    memcpy(&recvBuffer[recvBufferPosition], data, length);
+    recvBufferPosition += length;
     recvBuffer[recvBufferPosition] = 0;
     processRecvBuffer();
-    return eat;
+    return length;
   }
 
   void

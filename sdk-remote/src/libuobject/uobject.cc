@@ -399,10 +399,11 @@ namespace urbi
 	  // Send it
           // URBI_SEND_COMMAND does not now how to send binary since it
           // depends on the kernel version.
+          // Careful, 'var x=1,' has no effect as ',' scopes.
           client_->startPack();
-          *client_ << " var  " << var << "=";
+          *client_ << " var  " << var << "|" << var << "=";
           client_->send(retval);
-          *client_ << ";";
+          *client_ << ",";
           client_->endPack();
           break;
 
@@ -411,7 +412,8 @@ namespace urbi
           break;
 
         default:
-          URBI_SEND_COMMAND_C((*client_), "var " << var << "=" << retval);
+          URBI_SEND_COMMA_COMMAND_C((*client_), "var " << var << "|"
+                                     << var << "=" << retval);
           break;
         }
       }

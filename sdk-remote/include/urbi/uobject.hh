@@ -114,13 +114,21 @@
   } while (false)
 
 /// Send \a Args (which is given to a stream and therefore can use <<)
+/// to \a C, then flush.
+# define URBI_SEND_C_FLUSH(C, Args)		\
+  do {						\
+    std::ostringstream os;			\
+    os << Args;					\
+    C << os.str() << std::endl;                 \
+  } while (false)
+/// Send \a Args (which is given to a stream and therefore can use <<)
 /// to the server.
 # define URBI_SEND(Args)			\
   URBI_SEND_C(URBI(()), Args)
 
 /// Send "\a Args ; \n" to \a C.
 # define URBI_SEND_COMMAND_C(C, Args)		\
-  URBI_SEND_C(C, Args << ';' << std::endl)
+  URBI_SEND_C_FLUSH(C, Args << ';')
 
 # define URBI_SEND_COMMAND(Args)		\
   URBI_SEND_COMMAND_C(URBI(()), Args)
@@ -135,7 +143,7 @@
   URBI_SEND_PIPED_COMMAND_C(URBI(()), Args)
 
 # define URBI_SEND_COMMA_COMMAND_C(C, Args)     \
-  URBI_SEND_C(C, Args << ',' << std::endl)
+  URBI_SEND_C_FLUSH(C, Args << ',')
 
 # define URBI_SEND_COMMA_COMMAND(Args)          \
   URBI_SEND_COMMA_COMMAND_C(URBI(()), Args)
