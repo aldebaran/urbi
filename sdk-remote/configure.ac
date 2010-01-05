@@ -26,6 +26,8 @@ AM_INIT_AUTOMAKE([1.10 -Wall tar-ustar dist-zip nostdinc foreign])
 URBI_PACKAGE_KIND([sdk])
 URBI_DIRS([remote])
 
+URBI_COMPILATION_MODE
+
 AC_PROG_CC
 URBI_PROG_CXX
 
@@ -38,8 +40,6 @@ URBI_DOC
 ## ------------- ##
 ## Compilation.  ##
 ## ------------- ##
-
-URBI_COMPILATION_MODE
 
 BOOST_REQUIRE([1.35])
 
