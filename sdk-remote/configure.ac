@@ -148,19 +148,18 @@ case $enable_programs in
        # passed to this configure, it gives it to its subconfigures,
        # so we would just duplicate the request.
        ;;
-  (*)  ac_configure_args="$ac_configure_args --disable-programs";;
+  (*)  URBI_APPEND_CONFIGUREFLAGS([--disable-programs]);;
 esac
 
 # Let libjpeg use the same libdir as us.
-ac_configure_args="$ac_configure_args libdir='${libdir}'"
+URBI_APPEND_CONFIGUREFLAGS([libdir='${libdir}'])
 AC_CONFIG_SUBDIRS([jpeg])
 
 # If we use a specific runtime for MSVC, tell it to libjpeg, which
 # does not use the compilation-mode macros.
 if test -n "$urbi_msvc_runtime"; then
-  ac_configure_args="$ac_configure_args \
---enable-cflags=$urbi_msvc_runtime_compilerflags \
---enable-ldflags=$urbi_msvc_runtime_ldflags"
+  URBI_APPEND_CONFIGUREFLAGS([--enable-cflags=$urbi_msvc_runtime_compilerflags])
+  URBI_APPEND_CONFIGUREFLAGS([--enable-ldflags=$urbi_msvc_runtime_ldflags])
 fi
 
 ## -------- ##
