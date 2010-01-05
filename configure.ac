@@ -129,9 +129,12 @@ AC_SUBST([urbidir], [${pkgdatadir}/urbi])
 ## ------------ ##
 
 BOOST_REQUIRE([1.37])
-BOOST_REGEX
-BOOST_SYSTEM
-BOOST_TOKENIZER
+if $COMPILATION_MODE_DEBUG; then
+  boost_rt_opt=gd
+fi
+BOOST_REGEX([$boost_rt_opt])
+BOOST_SYSTEM([$boost_rt_opt])
+BOOST_TOKENIZER([$boost_rt_opt])
 
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff
 # below.
