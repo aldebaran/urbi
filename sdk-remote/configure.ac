@@ -131,6 +131,7 @@ if test x"$enable_bindings" != xno; then
  fi
 fi
 
+WITH_XENOMAI
 
 ## --------- ##
 ## libjpeg.  ##
@@ -147,15 +148,17 @@ case $enable_programs in
        # passed to this configure, it gives it to its subconfigures,
        # so we would just duplicate the request.
        ;;
-  (*)  ac_configure_args+=" --disable-programs";;
+  (*)  ac_configure_args="$ac_configure_args --disable-programs";;
 esac
 
-WITH_XENOMAI
-
 # Let libjpeg use the same libdir as us.
-ac_configure_args+=" libdir='${libdir}'"
+ac_configure_args="$ac_configure_args libdir='${libdir}'"
 AC_CONFIG_SUBDIRS([jpeg])
 
+# If we use a specific runtime for MSVC, tell it to libjpeg, which
+# does not use the compilation-mode macros.
+ac_configure_args="$ac_configure_args \
+$urbi_msvc_runtime_ldflags $urbi_msvc_runtime_compilerflags"
 
 ## -------- ##
 ## Output.  ##
