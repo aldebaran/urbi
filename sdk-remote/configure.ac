@@ -152,7 +152,7 @@ case $enable_programs in
 esac
 
 # Let libjpeg use the same libdir as us.
-URBI_APPEND_CONFIGUREFLAGS([libdir='${libdir}'])
+URBI_APPEND_CONFIGUREFLAGS(["libdir='${libdir}'"])
 AC_CONFIG_SUBDIRS([jpeg])
 
 # If we use a specific runtime for MSVC, tell it to libjpeg, which
