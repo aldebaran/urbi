@@ -474,7 +474,7 @@ uobject_new(rObject proto, bool forceName)
 
 /** Find an UObject from its name.
 
-The UObject class expects to know the variable name,i.e. a = new b;
+The UObject class expects to know the variable name, i.e. a = new b;
 should pass a to b's corresponding UObject ctor. Since we don't have this
 information, we create a unique string, pass it to the ctor, and store it
 in a.
@@ -1013,7 +1013,7 @@ namespace urbi
       if (registered_)
       {
         std::cerr << "###UGenericcallback on " << owner_->name
-                  << " allready registered" << std::endl;
+                  << " already registered" << std::endl;
         return;
       }
       registered_ = true;
