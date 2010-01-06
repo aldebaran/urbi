@@ -126,10 +126,10 @@ The program \command{urbi-send} provides a nice interface to
 interact with a running server.
 
 \begin{shell}[alsolanguage={[interactive]Urbi}]
-$ urbi-send -p 54000 -e '1+2*3;' -e 'quit;'
+$ urbi-send -P 54000 -e '1+2*3;' -e 'quit;'
 [00018032:] 7
 # Have the server shutdown;
-$ urbi-send -p 54000 -e 'shutdown;'
+$ urbi-send -P 54000 -e 'shutdown;'
 \end{shell}
 
 \medskip
