@@ -656,6 +656,8 @@ namespace urbi
         return 0;
       std::string name =
         object::from_urbi<std::string>(r->slot_get(SYMBOL(__uobjectName)));
+      if (name == n)
+        return 0;
       return getUObject(name);
     }
 
