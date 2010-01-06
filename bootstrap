@@ -65,11 +65,7 @@ set -e
 # The ast/ is generated, including its Makefile.
 if test -f dev/ast-nodes-mk-gen && test -f src/ast/ast.yml; then
   python_check_mod_yaml='
-import sys, imp
-try:
-  imp.find_module("yaml")
-except ImportError:
-  sys.exit(1)
+import yaml
 '
   if ! python -c ''; then
     fatal "python is required"
