@@ -18,6 +18,7 @@
 
 #include <libport/compiler.hh>
 
+#include <libport/cstdio>
 #include <libport/cstdlib>
 #include <libport/cstring>
 #include <sstream>
