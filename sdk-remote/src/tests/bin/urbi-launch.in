@@ -133,6 +133,10 @@ ld_path_add $libport_builddir/lib/*/.libs               \
             $sdk_remote_builddir/*/.libs                \
             $sdk_remote_builddir/src/liburbi/.libs
 
+urbi_lib JPEG      "$sdk_remote_builddir/jpeg/.libs/libjpeg"
+urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport"
+urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched"
+urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize"
 urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi"
 
 verbose "running $program $*"
