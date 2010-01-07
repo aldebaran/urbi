@@ -227,9 +227,6 @@ resolve_symlinks(const std::string& logname, const std::string& s)
 UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   : program_(program)
   , root_()
-  , handle_libjpeg_(0)
-  , handle_libport_(0)
-  , handle_libsched_(0)
   , handle_liburbi_(0)
   , handle_libuobject_(0)
 {
@@ -289,13 +286,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   // xsetenv("URBI_PATH", xgetenv("URBI_PATH") + ":" + urbi_path, true);
   // URBI_ROOT_DEBUG("append to URBI_PATH: " << urbi_path);
   if (!static_build)
-  {
-    handle_libjpeg_      = library_load("jpeg");
-    handle_libport_      = library_load("port");
-    handle_libsched_     = library_load("sched");
-    handle_libserialize_ = library_load("serialize");
     handle_liburbi_      = library_load("urbi");
-  }
 }
 
 RTLD_HANDLE

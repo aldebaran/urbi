@@ -85,10 +85,6 @@ private:
   RTLD_HANDLE library_load(const std::string& base);
   std::string program_;
   std::string root_;
-  RTLD_HANDLE handle_libjpeg_;
-  RTLD_HANDLE handle_libport_;
-  RTLD_HANDLE handle_libsched_;
-  RTLD_HANDLE handle_libserialize_;
   RTLD_HANDLE handle_liburbi_;
   RTLD_HANDLE handle_libuobject_;
 };
