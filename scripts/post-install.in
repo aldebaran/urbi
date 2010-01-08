@@ -35,10 +35,10 @@ fatal ()
 
 
 PROJECT='@PACKAGE_TARNAME@'
-build='@top_builddir@'
+builddir='@top_builddir@'
 host='@host@'
 prefix='@prefix@'
-srcdir='@top_srcdir@'
+srcdir='@abs_top_srcdir@'
 URBI_HOST_OS='@URBI_HOST_OS@'
 URBI_HOST_CPU='@URBI_HOST_CPU@'
 URBI_HOST_COMP='@URBI_HOST_COMP@'
@@ -79,7 +79,7 @@ do
   case $URBI_HOST_OS in
     (windows)
       unix2dos "$i"
-      $CP "$i" .
+      cp "$i" .
       ;;
     (*)
       ln -s "$i"
@@ -150,7 +150,8 @@ case $URBI_HOST_OS in
       # Do not show errors -- there are shell scripts there.
       find "$DESTDIR$prefix/bin" -type f |
         xargs $STRIP 2>/dev/null || true
-      find "$DESTDIR$prefix" -type f '(' -name '*.so.*'        \
+      find "$DESTDIR$prefix"                    \
+              -type f '(' -name '*.so.*'        \
                        -o -name '*.so'          \
                        -o -name '*.dylib'       \
                        -o -name '*.a'           \
@@ -164,12 +165,12 @@ esac
 # we use Boost as static libraries, they appear as runtime
 # dependencies.  We could try to fix the *.la files, but it appears to
 # work well without them.
-$FIND "$DESTDIR$prefix" -name '*.la' -delete
+find "$DESTDIR$prefix" -name '*.la' -delete
 
 # MANIFEST.
 #
 # Build a MANIFEST with the list of files to install into the final
 # destination.
-$FIND "$DESTDIR$prefix" -type f -print |
-  $SED -e "s,^$DESTDIR$prefix/,,"      \
+find "$DESTDIR$prefix" -type f -print |
+  sed -e "s,^$DESTDIR$prefix/,,"      \
   >"$DESTDIR$prefix/MANIFEST"

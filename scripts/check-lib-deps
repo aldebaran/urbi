@@ -180,7 +180,7 @@ sub installname ($)
 {
   my ($file) = @_;
   my $res = Cwd::realpath($file);
-  $res =~ s/$destdir//;
+  $res =~ s/^$destdir//;
   $res;
 }
 
@@ -311,6 +311,10 @@ sub getopt ()
 
   # DESTDIR must not end with slashes.
   $destdir =~ s,/+$,,g;
+
+  # Since we use the realpath everywhere else, use it here too.
+  # For instance on OS X, /tmp is actually a symlink to private/tmp.
+  $destdir = Cwd::realpath($destdir);
 }
 
 sub wanted

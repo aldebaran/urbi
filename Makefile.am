@@ -135,5 +135,5 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 ## Install.  ##
 ## --------- ##
 install-exec-hook: post-install
-post-install:
-	script/post-install
+post-install: scripts/post-install scripts/urbi.bat
+	scripts/post-install
