@@ -62,6 +62,7 @@ PROJECT='@PACKAGE_TARNAME@'
 build='@build@'
 host='@host@'
 buildprefix='@prefix@'
+abs_top_srcdir='@abs_top_srcdir@'
 URBI_HOST_OS='@URBI_HOST_OS@'
 URBI_HOST_CPU='@URBI_HOST_CPU@'
 URBI_HOST_COMP='@URBI_HOST_COMP@'
@@ -83,14 +84,18 @@ check_equal ()
   eval "lhs=\$$1"
   eval "rhs=\$$2"
   if test "$lhs" != "$rhs"; then
-    stderr "*******************" \
-           "$1 != $2"            \
-           "($lhs != $rhs)"
+    stderr "*******************"                \
+           "$1 != $2"                           \
+           "($lhs != $rhs)"                     \
+           "proceeding with $1 = $rhs"
+    eval "$1=\$$2"
   fi
 }
-check_equal OS   URBI_HOST_OS
-check_equal ARCH URBI_HOST_CPU
-check_equal COMP URBI_HOST_COMP
+check_equal OS     URBI_HOST_OS
+check_equal ARCH   URBI_HOST_CPU
+check_equal COMP   URBI_HOST_COMP
+check_equal srcdir abs_top_srcdir
+check_equal prefix buildprefix
 
 # Set release_mode depending on whether we are building a release version
 # or a development version.
