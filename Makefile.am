@@ -135,5 +135,10 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 ## Install.  ##
 ## --------- ##
 install-exec-hook: post-install
-post-install: scripts/post-install scripts/urbi.bat
+post-install: scripts/post-install
 	scripts/post-install
+
+if WIN32
+  topleveldir = $(prefix)
+  toplevel_SCRIPTS = urbi.bat
+endif
