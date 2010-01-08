@@ -179,8 +179,7 @@ AC_CONFIG_FILES([
 # -----------------------------------
 # Create a testing wrapper for the COMPONENT-NAME.
 m4_define([URBI_CONFIG_WRAPPER],
-[AC_CONFIG_FILES([src/tests/bin/$1:src/tests/bin/wrapper.in],
-                 [chmod a+x src/tests/bin/$1])
+[URBI_CONFIG_SCRIPTS([src/tests/bin/$1:src/tests/bin/wrapper.in])
 ])
 
 # Prepare the umake wrappers.
@@ -190,8 +189,6 @@ URBI_CONFIG_WRAPPER([umake-lib])
 URBI_CONFIG_WRAPPER([umake-link])
 URBI_CONFIG_WRAPPER([umake-remote])
 URBI_CONFIG_WRAPPER([umake-shared])
-AC_CONFIG_FILES([src/tests/bin/urbi-launch$EXEEXT:src/tests/bin/urbi-launch.in],
-                [chmod +x src/tests/bin/urbi-launch$EXEEXT],
-                [EXEEXT=$EXEEXT])
+URBI_CONFIG_SCRIPTS([src/tests/bin/urbi-launch$EXEEXT:src/tests/bin/urbi-launch.in])
 
 AC_OUTPUT
