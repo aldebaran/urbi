@@ -13,13 +13,6 @@ stderr ()
   done
 }
 
-errors=0
-complain ()
-{
-  stderr "$@"
-  errors=$((errors + 1))
-}
-
 error ()
 {
   local status="$1"
@@ -36,17 +29,6 @@ fatal ()
 ## ----------- ##
 ## Variables.  ##
 ## ----------- ##
-
-# If some of those need to be chosen by configure, add an entry
-# there and add the "@" form.
-: ${CP=cp}
-: ${FIND=find}
-: ${GIT=git}
-: ${MKDIR_P="mkdir -p"}
-: ${MV=mv}
-: ${RM="rm -f"}
-: ${SED="sed"}
-: ${TAR=tar}
 
 : ${TMPDIR=/tmp}
 
@@ -66,6 +48,12 @@ abs_top_buildir='@abs_top_buildir@'
 abs_top_srcdir='@abs_top_srcdir@'
 buildprefix='@prefix@'
 host='@host@'
+COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'
+if $COMPILATION_MODE_DEBUG; then
+  COMPILATION_MODE_RELEASE=false
+else
+  COMPILATION_MODE_RELEASE=true
+fi
 
 srcdir=$2
 builddir=$3
@@ -76,6 +64,12 @@ OS=$7         # linux|windows|macos
 COMP=$8       # ex. gcc4
 MODE=$9       # [release|debug]_[static|dynamic]
 prefix=${10}
+# Set release_mode depending on whether we are building a release version
+# or a development version.
+case $MODE in
+  (release*)    release_mode=true;;
+  (*)           release_mode=false;;
+esac
 
 check_equal ()
 {
@@ -91,38 +85,20 @@ check_equal ()
     eval "$1=\$$2"
   fi
 }
-check_equal ARCH   URBI_HOST_CPU
-check_equal COMP   URBI_HOST_COMP
-check_equal OS     URBI_HOST_OS
-check_equal build  abs_top_buildir
-check_equal prefix buildprefix
-check_equal srcdir abs_top_srcdir
 
-# Set release_mode depending on whether we are building a release version
-# or a development version.
-case $MODE in
-  (release*)    release_mode=true;;
-  (*)           release_mode=false;;
-esac
-
-stderr "build=$build" "host=$host" "prefix=$buildprefix"
-
-if test "$prefix" != "$buildprefix"; then
-  stderr '**********************************'   \
-         '$prefix != $buildprefix'              \
-         "($prefix != $buildprefix)"            \
-         "proceeding with prefix=$buildprefix"
-  prefix=$buildprefix
-fi
+check_equal ARCH         URBI_HOST_CPU
+check_equal COMP         URBI_HOST_COMP
+check_equal OS           URBI_HOST_OS
+check_equal builddir     abs_top_buildir
+check_equal prefix       buildprefix
+check_equal release_mode COMPILATION_MODE_RELEASE
+check_equal srcdir       abs_top_srcdir
 
 
-## ----------- ##
-## Packaging.  ##
-## ----------- ##
 
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
-version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^preview/,,;s,/,-,g")
+version=$(cd "$srcdir" && git describe | sed -e "s,^preview/,,;s,/,-,g")
 # If we are in release mode, do not tell it, the final users won't care
 if $release_mode; then
   name="$PROJECT-$version-$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP"
@@ -133,10 +109,6 @@ fi
 # Create a fresh directory in which we put the subdirectories of the
 # $install directory.
 packagedir="$updir/$name"
-$RM -r "$packagedir"
-$MKDIR_P "$packagedir"
-(cd "$DESTDIR$prefix" && $TAR cf - .) | (cd "$packagedir" && $TAR xpBf -)
-
-if test "$errors" -ne 0; then
-  fatal "there were $errors errors."
-fi
+rm -rf "$packagedir"
+mkdir -p "$packagedir"
+(cd "$DESTDIR$prefix" && tar cf - .) | (cd "$packagedir" && tar xpBf -)
