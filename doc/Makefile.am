@@ -98,7 +98,7 @@ install-data-hook:
 	for i in share/doc/urbi-sdk/*.txt; do	\
 	  case $(URBI_HOST_OS) in		\
 	    (windows)				\
-	      unix2dos "$$i";			\
+	      unix2dos "$$i" &&			\
 	      cp "$$i" .			\
 	      ;;				\
 	    (*)					\
