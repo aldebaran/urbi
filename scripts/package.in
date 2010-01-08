@@ -59,13 +59,13 @@ esac
 # which sets the destination).
 
 PROJECT='@PACKAGE_TARNAME@'
-build='@build@'
-host='@host@'
-buildprefix='@prefix@'
-abs_top_srcdir='@abs_top_srcdir@'
-URBI_HOST_OS='@URBI_HOST_OS@'
-URBI_HOST_CPU='@URBI_HOST_CPU@'
 URBI_HOST_COMP='@URBI_HOST_COMP@'
+URBI_HOST_CPU='@URBI_HOST_CPU@'
+URBI_HOST_OS='@URBI_HOST_OS@'
+abs_top_buildir='@abs_top_buildir@'
+abs_top_srcdir='@abs_top_srcdir@'
+buildprefix='@prefix@'
+host='@host@'
 
 srcdir=$2
 builddir=$3
@@ -91,11 +91,12 @@ check_equal ()
     eval "$1=\$$2"
   fi
 }
-check_equal OS     URBI_HOST_OS
 check_equal ARCH   URBI_HOST_CPU
 check_equal COMP   URBI_HOST_COMP
-check_equal srcdir abs_top_srcdir
+check_equal OS     URBI_HOST_OS
+check_equal build  abs_top_buildir
 check_equal prefix buildprefix
+check_equal srcdir abs_top_srcdir
 
 # Set release_mode depending on whether we are building a release version
 # or a development version.
@@ -113,136 +114,6 @@ if test "$prefix" != "$buildprefix"; then
          "proceeding with prefix=$buildprefix"
   prefix=$buildprefix
 fi
-
-## -------------- ##
-## Post-install.  ##
-## -------------- ##
-
-# Shared lib dependencies.
-#
-# Check that we don't depend on boost.  Or rather, check that we don't
-# have invalid locations.  And possibly make the libraries and
-# executables relocatable.
-case $URBI_HOST_OS in
-  (linux|macos)
-    $srcdir/scripts/check-lib-deps              \
-      --verbose                                 \
-      --destdir "$DESTDIR"                      \
-      "$DESTDIR"
-    ;;
-esac
-
-# Boost headers.
-#
-$srcdir/scripts/check-include-deps              \
-  --include-dir "$DESTDIR$prefix/include"       \
-  --verbose                                     \
-  $builddir
-
-# Documentation.
-#
-# Copy the instructions at the top-level.
-here=$(pwd)
-cd "$DESTDIR$prefix"
-for i in share/doc/urbi-sdk/*.txt
-do
-  case $URBI_HOST_OS in
-    (windows)
-      unix2dos "$i"
-      $CP "$i" .
-      ;;
-    (*)
-      ln -s "$i"
-      ;;
-  esac
-done
-cd $here
-
-# 1. Fix libtool usage of +=.
-# 2. Remove -nostdlib and explicit stdlib from libtool.
-#
-# The resulting libtool may not work, but it is not working without
-# patch anyway...
-$FIND "$DESTDIR$prefix" -name libtool |
-  xargs perl -pi                                                        \
-       -e 's/^\s*eval "\$1\+=\\\$2"$/eval "\$1=\\\$\$1\\" \$2\\""/;'    \
-       -e 's/^predep_objects=.*/#- $&/;'                                \
-       -e 's/postdep_objects=.*/#- $&/;'                                \
-       -e 's/-nostdlib//g;'
-
-# Remove ccache and -Werror from the param.mk and libtool.
-# Remove also hidden visibility as it prevents linking uobjects using
-# boost symbols inside libport.
-$FIND "$DESTDIR$prefix" '(' -name param.mk -or -name libtool ')' |
-  xargs perl -pi \
-        -e 's/ccache //;'                       \
-        -e 's/g(cc|\+\+)(?:-[\d.]+)/g$1/;'      \
-        -e 's/-Werror//;'                       \
-        -e 's/-fvisibility=hidden//;'           \
-        -e 's/-fvisibility-inlines-hidden//;'
-
-# Restore +x on libtool.
-$FIND "$DESTDIR$prefix" -name libtool -exec chmod u+x '{}' ';'
-
-# Set more permissive access rights.
-chmod -R a+rX "$DESTDIR$prefix"
-
-case $URBI_HOST_OS in
-  (windows)
-    # On Windows, copy the .bat file.
-    $CP "$builddir/scripts/urbi.bat" "$DESTDIR$prefix"
-    unix2dos "$DESTDIR$prefix/urbi.bat"
-    ;;
-  (*)
-    # When building a release for non-Windows platforms, strip the
-    # binaries and the libraries.  Pay attention that on OS X strip
-    # when given no option behaves as "strip -S -x -X":
-    #
-    # -S Remove the debugging symbol table entries (those created by
-    # -the -g option to cc(1) and other compilers).
-    #
-    # -X Remove the local symbols whose names begin with `L'.
-    #
-    # -x Remove all local symbols (saving only global symbols).
-    #
-    # As a result, the build (on Leopard) works on Leopard, but not
-    # on Snow Leopard (I don't know why exactly).  On Linux, too
-    # "strip" does more than simply "strip -S", but since it seems to
-    # work and it does save space, use the fully blown strip:
-    #  58M libuobject.so     no strip
-    # 7.8M libuobject.2.so   strip -S
-    # 6.4M libuobject.3.so   strip
-    if $release_mode; then
-      case $URBI_HOST_OS in
-        (macos) : ${STRIP='strip -S'};;
-        (*)     : ${STRIP=strip};;
-      esac
-      # Do not show errors -- there are shell scripts there.
-      $FIND "$DESTDIR$prefix/bin" -type f |
-        xargs $STRIP 2>/dev/null || true
-      $FIND "$DESTDIR$prefix" -type f '(' -name '*.so.*'        \
-                       -o -name '*.so'          \
-                       -o -name '*.dylib'       \
-                       -o -name '*.a'           \
-                       ')' |
-        xargs $STRIP || true
-    fi
-    ;;
-esac
-
-# We have some problems with the *.la files.  For instance, although
-# we use Boost as static libraries, they appear as runtime
-# dependencies.  We could try to fix the *.la files, but it appears to
-# work well without them.
-$FIND "$DESTDIR$prefix" -name '*.la' -delete
-
-# MANIFEST.
-#
-# Build a MANIFEST with the list of files to install into the final
-# destination.
-$FIND "$DESTDIR$prefix" -type f -print |
-  $SED -e "s,^$DESTDIR$prefix/,,"      \
-  >"$DESTDIR$prefix/MANIFEST"
 
 
 ## ----------- ##

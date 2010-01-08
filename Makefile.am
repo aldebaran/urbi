@@ -91,6 +91,10 @@ check-sdk-uobjects-buildfarm:
 check-doc:
 	$(MAKE) $(AM_MAKEFLAGS) -C doc just-check
 
+# Check the kernel: doc and tests.
+check-kernel:
+	$(MAKE) $(AM_MAKEFLAGS) check-doc
+	$(MAKE) $(AM_MAKEFLAGS) -C tests check
 
 # check-html, check-clean, check-uob etc.
 # Last in order to avoid hiding the previous rules.
@@ -125,3 +129,11 @@ executables.stamp: src/bin/urbi$(EXEEXT) sdk-remote/src/bin/urbi-launch$(EXEEXT)
 STAMPS += all.stamp
 all.stamp: urbi.stamp libraries.stamp executables.stamp
 	@echo "$$(date): $?" >>$@
+
+
+## --------- ##
+## Install.  ##
+## --------- ##
+install-exec-hook: post-install
+post-install:
+	script/post-install

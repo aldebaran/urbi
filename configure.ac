@@ -41,7 +41,7 @@ URBI_REQUIRE_PROGS([PDFCROP], [pdfcrop], [TeXlive])
 
 
 # Bison.
-AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
+URBI_CONFIG_SCRIPTS([build-aux/bison++])
 # If we have our own Bison, use it.
 if test -d $srcdir/bison; then
   # Run in a subshell, since we change the environment.
@@ -68,7 +68,7 @@ fi
 
 # Flex.  2.3.33 has a problem with REJECT and produces a scanner that
 # does not compile.
-AC_CONFIG_FILES([build-aux/flex++],  [chmod +x build-aux/flex++])
+URBI_CONFIG_SCRIPTS([build-aux/flex++])
 TC_PROG([flex],  [>= 2.5.35], [FLEX],  [fast lexical analyzer generator])
 
 URBI_COMPILATION_MODE
@@ -163,8 +163,10 @@ URBI_TESTS
 AC_SUBST([UOBJECT_PATH], ['$(abs_top_builddir)/sdk-remote/src/uobjects'])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
-AC_CONFIG_FILES([scripts/package],  [chmod +x scripts/package])
-AC_CONFIG_FILES([scripts/urbi.bat], [chmod +x scripts/urbi.bat])
+
+URBI_CONFIG_SCRIPTS([scripts/package],
+                    [scripts/post-install],
+                    [scripts/urbi.bat])
 AC_CONFIG_HEADERS([src/kernel/config.h])
 AC_CONFIG_FILES([share/urbi/platform.u])
 AC_OUTPUT
