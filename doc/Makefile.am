@@ -88,10 +88,30 @@ FIG2DEV = fig2dev
 	fi
 
 
+## --------- ##
+## install.  ##
+## --------- ##
 
-## -------------- ##
-## document-aux.  ##
-## -------------- ##
+# Made the *.txt documentation more accessible.
+install-data-hook:
+	cd "$(DESTDIR)$(prefix)" &&		\
+	for i in share/doc/urbi-sdk/*.txt; do	\
+	  case $(URBI_HOST_OS) in		\
+	    (windows)				\
+	      unix2dos "$$i"			\
+	      cp "$$i" .			\
+	      ;;				\
+	    (*)					\
+	      $(LN_S) "$$i"			\
+	      ;;				\
+	  esac					\
+	done
+
+
+
+## ------------- ##
+## install-doc.  ##
+## ------------- ##
 .PHONY: install-doc
 html_files =					\
   urbi-sdk.css					\

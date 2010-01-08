@@ -38,25 +38,6 @@ $srcdir/scripts/check-include-deps              \
   --verbose                                     \
   $builddir
 
-# Documentation.
-#
-# Copy the instructions at the top-level.
-here=$(pwd)
-cd "$DESTDIR$prefix"
-for i in share/doc/urbi-sdk/*.txt
-do
-  case $URBI_HOST_OS in
-    (windows)
-      unix2dos "$i"
-      cp "$i" .
-      ;;
-    (*)
-      ln -s "$i"
-      ;;
-  esac
-done
-cd $here
-
 # 1. Fix libtool usage of +=.
 # 2. Remove -nostdlib and explicit stdlib from libtool.
 #
