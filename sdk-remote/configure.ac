@@ -24,12 +24,12 @@ AM_INIT_AUTOMAKE([1.10 -Wall tar-ustar dist-zip nostdinc foreign])
 
 # Urbi standard locations.
 URBI_PACKAGE_KIND([sdk])
-URBI_DIRS([remote])
 
 URBI_COMPILATION_MODE
 
 AC_PROG_CC
 URBI_PROG_CXX
+URBI_DIRS([remote])
 
 URBI_LIBTOOL
 URBI_SDK
