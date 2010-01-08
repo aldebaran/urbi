@@ -58,9 +58,14 @@ esac
 # Those would best be set through configure (except "updir"
 # which sets the destination).
 
-# Baby does not want to change the $1 passed to this script.  Let him
-# play with the poo poo in his diapers while we work :)
 PROJECT='@PACKAGE_TARNAME@'
+build='@build@'
+host='@host@'
+buildprefix='@prefix@'
+URBI_HOST_OS='@URBI_HOST_OS@'
+URBI_HOST_CPU='@URBI_HOST_CPU@'
+URBI_HOST_COMP='@URBI_HOST_COMP@'
+
 srcdir=$2
 builddir=$3
 DESTDIR=$4
@@ -71,6 +76,22 @@ COMP=$8       # ex. gcc4
 MODE=$9       # [release|debug]_[static|dynamic]
 prefix=${10}
 
+check_equal ()
+{
+  local lhs
+  local rhs
+  eval "lhs=\$$1"
+  eval "rhs=\$$2"
+  if test "$lhs" != "$rhs"; then
+    stderr "*******************" \
+           "$1 != $2"            \
+           "($lhs != $rhs)"
+  fi
+}
+check_equal OS   URBI_HOST_OS
+check_equal ARCH URBI_HOST_CPU
+check_equal COMP URBI_HOST_COMP
+
 # Set release_mode depending on whether we are building a release version
 # or a development version.
 case $MODE in
@@ -78,14 +99,6 @@ case $MODE in
   (*)           release_mode=false;;
 esac
 
-# Host and build machines.
-make_var ()
-{
-  $SED -ne "/^$1 = /{s///;p;q;}" $builddir/Makefile
-}
-build=$(make_var build)
-host=$(make_var  host)
-buildprefix=$(make_var prefix)
 stderr "build=$build" "host=$host" "prefix=$buildprefix"
 
 if test "$prefix" != "$buildprefix"; then
@@ -105,7 +118,7 @@ fi
 # Check that we don't depend on boost.  Or rather, check that we don't
 # have invalid locations.  And possibly make the libraries and
 # executables relocatable.
-case $OS in
+case $URBI_HOST_OS in
   (linux|macos)
     $srcdir/scripts/check-lib-deps              \
       --verbose                                 \
@@ -128,7 +141,7 @@ here=$(pwd)
 cd "$DESTDIR$prefix"
 for i in share/doc/urbi-sdk/*.txt
 do
-  case $OS in
+  case $URBI_HOST_OS in
     (windows)
       unix2dos "$i"
       $CP "$i" .
@@ -169,7 +182,7 @@ $FIND "$DESTDIR$prefix" -name libtool -exec chmod u+x '{}' ';'
 # Set more permissive access rights.
 chmod -R a+rX "$DESTDIR$prefix"
 
-case $OS in
+case $URBI_HOST_OS in
   (windows)
     # On Windows, copy the .bat file.
     $CP "$builddir/scripts/urbi.bat" "$DESTDIR$prefix"
@@ -195,7 +208,7 @@ case $OS in
     # 7.8M libuobject.2.so   strip -S
     # 6.4M libuobject.3.so   strip
     if $release_mode; then
-      case $OS in
+      case $URBI_HOST_OS in
         (macos) : ${STRIP='strip -S'};;
         (*)     : ${STRIP=strip};;
       esac
@@ -236,9 +249,9 @@ $FIND "$DESTDIR$prefix" -type f -print |
 version=$(cd "$srcdir" && $GIT describe | $SED -e "s,^preview/,,;s,/,-,g")
 # If we are in release mode, do not tell it, the final users won't care
 if $release_mode; then
-  name="$PROJECT-$version-$OS-$ARCH-$COMP"
+  name="$PROJECT-$version-$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP"
 else
-  name="$PROJECT-$version-$OS-$ARCH-$COMP-$MODE"
+  name="$PROJECT-$version-$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP-$MODE"
 fi
 
 # Create a fresh directory in which we put the subdirectories of the

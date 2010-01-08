@@ -25,7 +25,6 @@ AM_INIT_AUTOMAKE([1.10.1 foreign tar-ustar nostdinc subdir-objects
 ## ------------ ##
 
 URBI_PACKAGE_KIND([kernel])
-URBI_DIRS([engine])
 
 URBI_PROG_PDFLATEX_REQUIRED
 URBI_DOC
@@ -74,6 +73,7 @@ TC_PROG([flex],  [>= 2.5.35], [FLEX],  [fast lexical analyzer generator])
 
 URBI_COMPILATION_MODE
 URBI_PROG_CXX
+URBI_DIRS([engine])
 TC_CXX_WARNINGS([[-Wcast-align],
 		 [-Wcast-qual],
 		 [-Wmissing-prototypes],
