@@ -15,10 +15,6 @@ EXTRA_DIST += $(call ls_files,img/*)
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
-# Our system leaves trailing unused *chk files.
-MAINTAINERCLEANFILES +=						\
-  $(shell find $(srcdir) -name '*.chk')
-
 # Find local *.sty files, workaround some strange behavior of texi2dvi
 # that wants to play tricks with ~ (which becomes a tilda, instead of
 # a nonbreakable space).
@@ -30,7 +26,6 @@ TEXI2HTML_FLAGS += --tex4ht --verbose --debug
 
 include specs/local.mk
 include tutorial/local.mk
-include tests/local.mk
 
 ## ------------------------------- ##
 ## Additional text documentation.  ##
@@ -161,3 +156,33 @@ share-ci:
 	cd $(share_dir) && git pull --rebase
 	cd $(share_dir) && git push origin master
 	git commit -m "Update $(share_dir)." $(share_dir)
+
+
+## ------------------- ##
+## Tests environment.  ##
+## ------------------- ##
+
+# Our system leaves trailing unused *chk files.
+MAINTAINERCLEANFILES +=						\
+  $(shell find $(srcdir) -name '*.chk')
+
+include tests/local.mk
+
+# Use the wrappers to run the non-installed executables.
+CHECK_ENVIRONMENT =				\
+  srcdir=$(srcdir)
+
+BUILDCHECK_ENVIRONMENT +=					\
+  PATH=$(sdk_remote_builddir)/src/tests/bin:$$PATH
+
+INSTALLCHECK_ENVIRONMENT +=			\
+  PATH=$(DESTDIR)$(bindir):$$PATH
+
+# By default, tests are buildcheck.
+TESTS_ENVIRONMENT +=				\
+  $(BUILDCHECK_ENVIRONMENT)
+
+# Run the tests with the install-environment.
+installcheck-local:
+	$(MAKE) $(AM_MAKEFLAGS)						\
+	  TESTS_ENVIRONMENT='$$(INSTALLCHECK_ENVIRONMENT)' check
