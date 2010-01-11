@@ -103,6 +103,38 @@ namespace urbi
       value_type minus(const objects_type& args) const;
       value_type plus(const objects_type& args) const;
 
+      // limits.
+      /// Number of digits (in radix base) in the mantissa.
+      static unsigned_type limit_digits();
+      /// Number of digits (in decimal base) that can be represented without change.
+      static unsigned_type limit_digits10();
+
+      /// Minimum positive normalized value.
+      static value_type limit_min();
+      /// Maximum finite value.
+      static value_type limit_max();
+
+      /// Machine epsilon (the difference between 1 and the least
+      /// value greater than 1 that is representable).
+      static value_type limit_epsilon();
+
+      /// Minimum negative integer value for the exponent that
+      /// generates a normalized floating-point number.
+      static int_type limit_min_exponent();
+      /// Minimum negative integer value such that 10 raised to that
+      /// power generates a normalized floating-point number.
+      static int_type limit_min_exponent10();
+
+      /// Maximum integer value for the exponent that generates a
+      /// normalized floating-point number.
+      static unsigned_type limit_max_exponent();
+      /// Maximum integer value such that 10 raised to that power
+      /// generates a normalized finite floating-point number.
+      static unsigned_type limit_max_exponent10();
+
+      /// Base of the exponent of the representation.
+      static unsigned_type limit_radix();
+
       // Operations on unsigned.
       unsigned_type operator ~() const;
       unsigned_type operator |(unsigned_type rhs) const;

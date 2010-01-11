@@ -215,15 +215,15 @@ namespace urbi
     Float::value_type
     Float::operator %(value_type rhs) const
     {
-      if (!rhs)
-        RAISE("modulo by 0");
-      return fmod(value_get(), rhs);
+      if (rhs)
+        return fmod(value_get(), rhs);
+      RAISE("modulo by 0");
     }
 
     Float::value_type
     Float::pow(value_type rhs) const
     {
-      return powf(value_get(), rhs);
+      return std::pow(value_get(), rhs);
     }
 
 
@@ -325,6 +325,25 @@ namespace urbi
 #undef DEFINE
 
 
+#define DEFINE(Urbi, Type, Cxx)                         \
+    Float::Type                                         \
+    Float::limit_ ## Urbi ()                            \
+    {                                                   \
+      return std::numeric_limits<value_type>::Cxx;      \
+    }
+
+    DEFINE(digits         , unsigned_type, digits  )
+    DEFINE(digits10       , unsigned_type, digits10)
+    DEFINE(min            , value_type,    min()         )
+    DEFINE(max            , value_type,    max()         )
+    DEFINE(epsilon        , value_type,    epsilon()     )
+    DEFINE(min_exponent   , int_type,      min_exponent  )
+    DEFINE(min_exponent10 , int_type,      min_exponent10)
+    DEFINE(max_exponent   , unsigned_type, max_exponent  )
+    DEFINE(max_exponent10 , unsigned_type, max_exponent10)
+    DEFINE(radix          , unsigned_type, radix         )
+#undef DEFINE
+
     Float::int_type
     Float::sign() const
     {
@@ -396,6 +415,16 @@ namespace urbi
       DECLARE(format, format);
 #endif
       DECLARE(inf, inf);
+      DECLARE(limit_digits,   limit_digits);
+      DECLARE(limit_digits10, limit_digits10);
+      DECLARE(limit_min, limit_min);
+      DECLARE(limit_max, limit_max);
+      DECLARE(limit_epsilon, limit_epsilon);
+      DECLARE(limit_min_exponent, limit_min_exponent);
+      DECLARE(limit_min_exponent10, limit_min_exponent10);
+      DECLARE(limit_max_exponent, limit_max_exponent);
+      DECLARE(limit_max_exponent10, limit_max_exponent10);
+      DECLARE(limit_radix, limit_radix);
       DECLARE(log, log);
       DECLARE(nan, nan);
       DECLARE(random, random);
