@@ -38,6 +38,12 @@ Section
   CreateShortcut  "$SMPROGRAMS\Gostai\doc.lnk" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf"
   CreateShortcut  "$SMPROGRAMS\Gostai\uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
+; Run vcredist to install Visual Studio libraries.
+; Use this simpler line if you use the vcredist shipped with visual studio
+;  ExecWait '"$INSTDIR\\vcredist_x86.exe" /q:a /c:"msiexec /i vcredist.msi /qn"'
+; Use this line if you use the standalone one from www.microsoft.com
+  ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a /c:\\\"VCREDI~1.EXE /q:a /c:\\\"\\\"msiexec /i vcredist.msi /qn\\\"\\\" \\\"'
+
 ; Install our visual studio wizard
 ;
 ; This is done by creating two files in the vcprojects directory.
