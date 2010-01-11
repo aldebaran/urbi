@@ -94,7 +94,7 @@ namespace urbi
     List::size_type
     List::index(const rFloat& idx) const
     {
-      int i = idx->to_int("invalid index: %s");
+      int i = idx->to_int_type("invalid index: %s");
       if (i < 0)
         i += content_.size();
       if (i < 0 || content_.size() <= static_cast<size_type>(i))

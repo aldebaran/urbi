@@ -40,8 +40,10 @@ namespace urbi
       typedef Float self_type;
       typedef libport::ufloat value_type;
 
-      /// The preferred target for unsigned casts.
+      /// The preferred targets for conversions.
+      typedef int int_type;
       typedef unsigned int unsigned_type;
+      typedef long long long_type;
 
       value_type& value_get();
       const value_type& value_get() const;
@@ -62,15 +64,12 @@ namespace urbi
       /// \{
       // FIXME: For some reason I don't understand, MSVC fails to
       // link when we pass const ref strings here...
-      int
-        to_int(const std::string fmt =
-               "expected integer, got %s") const;
-      long long
-        to_long_long(const std::string fmt =
+      int_type
+        to_int_type(const std::string fmt =
+                    "expected integer, got %s") const;
+      long_type
+        to_long_type(const std::string fmt =
                      "expected integer, got %s") const;
-      unsigned int
-        to_unsigned_int(const std::string fmt =
-                        "expected non-negative integer, got %s") const;
       /// The prefered conversion.
       unsigned_type
         to_unsigned_type(const std::string fmt =
@@ -117,9 +116,11 @@ namespace urbi
       value_type operator /(value_type rhs) const;
       value_type operator %(value_type rhs) const;
 
-      int random() const;
+      unsigned_type random() const;
       value_type round() const;
       rList seq() const;
+      /// -1, 0, or 1.
+      int_type sign() const;
       value_type sin() const;
       value_type sqrt() const;
       value_type tan() const;

@@ -22,11 +22,12 @@ namespace urbi
       to(const rObject& o, unsigned idx)
       {
         type_check<Float>(o, idx);
-        int val = o->as<Float>()->to_int();
-        return (val) ? ((val > 0)
-                        ? FormatInfo::Align::RIGHT
-                        : FormatInfo::Align::LEFT)
-          : FormatInfo::Align::CENTER ;
+        switch (o->as<Float>()->sign())
+        {
+        case -1: return FormatInfo::Align::RIGHT;
+        case 0:  return FormatInfo::Align::CENTER;
+        case 1:  return FormatInfo::Align::LEFT;
+        }
       }
 
       static rObject
@@ -44,11 +45,12 @@ namespace urbi
       to(const rObject& o, unsigned idx)
       {
         type_check<Float>(o, idx);
-        int val = o->as<Float>()->to_int();
-        return (val) ? ((val > 0)
-                        ? FormatInfo::Case::UPPER
-                        : FormatInfo::Case::LOWER)
-          : FormatInfo::Case::UNDEFINED ;
+        switch (o->as<Float>()->sign())
+        {
+        case -1: return FormatInfo::Case::UPPER;
+        case 0:  return FormatInfo::Case::UNDEFINED;
+        case 1:  return FormatInfo::Case::LOWER;
+        }
       }
 
       static rObject

@@ -3,7 +3,7 @@ class Global.Math
   setProtos([Singleton]);
 
   for (var fn: ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
-               "round", "sgn", "sin", "sqr", "sqrt", "tan", "trunc"])
+               "round", "sign", "sin", "sqr", "sqrt", "tan", "trunc"])
     setSlot(fn, bounce_named(fn));
 
   function atan2(x, y)

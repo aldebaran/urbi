@@ -336,13 +336,13 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 [00004586:error] !!! seq: expected non-negative integer, got -1
 \end{urbiassert}
 
-\item \lstinline|sgn|\\
+\item \lstinline|sign|\\
   Return 1 if \lstinline|this| is positive, 0 if it is null, -1
   otherwise.
 \begin{urbiassert}[firstnumber=last]
-(-1164).sgn == -1;
-0.sgn       == 0;
-(1164).sgn  == 1;
+(-1164).sign == -1;
+0.sign       == 0;
+(1164).sign  == 1;
 \end{urbiassert}
 
 \item \lstinline|sin|\\

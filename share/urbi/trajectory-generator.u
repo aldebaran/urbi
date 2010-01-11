@@ -319,7 +319,7 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
     if (done(currentVal))
       return targetValue |
     var res = currentVal
-      + speed * sgn(targetValue - currentVal) * getPeriod |
+      + speed * (targetValue - currentVal).sign * getPeriod |
     if ((currentVal < targetValue && targetValue < res)
       || (res < targetValue && targetValue < currentVal))
     {

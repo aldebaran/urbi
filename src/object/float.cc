@@ -89,9 +89,11 @@ namespace urbi
     | Conversions.  |
     `--------------*/
 
-#define CONVERSION(Name, Type)				\
-    Type                                                \
-    Float::to_##Name(const std::string fmt) const       \
+    // FIXME: For some reason I don't understand, MSVC fails to link
+    // when we pass const ref strings here...
+#define CONVERSION(Type)				\
+    Float::Type                                         \
+    Float::to_##Type(const std::string fmt) const       \
     {							\
       try                                               \
       {							\
@@ -103,10 +105,9 @@ namespace urbi
       }							\
     }							\
 
-    CONVERSION(int, int);
-    CONVERSION(unsigned_int, unsigned int);
-    CONVERSION(unsigned_type, Float::unsigned_type);
-    CONVERSION(long_long, long long);
+    CONVERSION(int_type);
+    CONVERSION(unsigned_type);
+    CONVERSION(long_type);
 
 #undef CONVERSION
 
@@ -295,14 +296,13 @@ namespace urbi
 #undef CHECK_TRIGO_RANGE
 #undef BOUNCE
 
-    int
+    Float::unsigned_type
     Float::random() const
     {
       static const std::string fmt = "expected positive integer, got %s";
-      unsigned int upper_bound = to_unsigned_int(fmt);
-      if (!upper_bound)
-        runner::raise_bad_integer_error(value_get(), fmt);
-      return rand() % upper_bound;
+      if (unsigned_type upper_bound = to_unsigned_type(fmt))
+        return rand() % upper_bound;
+      runner::raise_bad_integer_error(value_get(), fmt);
     }
 
 
@@ -325,10 +325,18 @@ namespace urbi
 #undef DEFINE
 
 
+    Float::int_type
+    Float::sign() const
+    {
+      return (0 < value_    ? 1
+              : 0 == value_ ? 0
+              :               -1);
+    }
+
     rList
     Float::seq() const
     {
-      unsigned int n = to_unsigned_int();
+      Float::unsigned_type n = to_unsigned_type();
       List::value_type res;
       for (unsigned int i = 0; i < n; i++)
         res.push_back(new Float(i));
@@ -393,6 +401,7 @@ namespace urbi
       DECLARE(random, random);
       DECLARE(round, round);
       DECLARE(seq, seq);
+      DECLARE(sign, sign);
       DECLARE(sin, sin);
       DECLARE(sqrt, sqrt);
       DECLARE(tan, tan);

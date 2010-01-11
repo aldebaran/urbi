@@ -147,9 +147,16 @@ do (Float)
 
   var pi = 3.14159265358979323846264338327950288;
 
-  function sgn() { if (this < 0) -1 else if (this > 0) 1 else 0 };
+  function sgn()
+  {
+    warn("`Float.sgn' is deprecated, use `Float.sign'") |
+    sign
+  };
 
-  function sqr() { this ** 2 };
+  function sqr()
+  {
+    this ** 2
+  };
 
   // Repeat \a action \a this times.
   function times (action)

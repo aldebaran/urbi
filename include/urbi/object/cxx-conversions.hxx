@@ -130,11 +130,11 @@ namespace urbi
     template<>
     struct CxxConvert<int>
     {
-      typedef int target_type;
+      typedef Float::int_type target_type;
       static target_type
       to(const rObject& o, unsigned idx)
       {
-        return type_check<Float>(o, idx)->to_int();
+        return type_check<Float>(o, idx)->to_int_type();
       }
 
       static rObject

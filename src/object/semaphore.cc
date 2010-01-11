@@ -44,8 +44,8 @@ namespace urbi
     rSemaphore
     Semaphore::_new(rObject, rFloat c)
     {
-      int count = c->to_unsigned_int();
-      return new Semaphore(make_pair(count, std::list<sched::rJob>()));
+      return new Semaphore(make_pair(c->to_unsigned_type(),
+                                     std::list<sched::rJob>()));
     }
 
     void

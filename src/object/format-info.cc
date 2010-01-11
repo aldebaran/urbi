@@ -179,7 +179,7 @@ namespace urbi
     FormatInfo::update_hook(const std::string& slot, rObject val)
     {
       if (slot == "alignment")
-        switch (int v = type_check<Float>(val, 0u)->to_int())
+        switch (Float::int_type v = type_check<Float>(val, 0u)->to_int_type())
         {
 #define CASE(In, Out)                                   \
           case In: alignment_ = Align::Out; break
@@ -207,7 +207,7 @@ namespace urbi
         pad_ = v;
       }
       else if (slot == "precision")
-        precision_ = type_check<Float>(val, 0u)->to_unsigned_int();
+        precision_ = type_check<Float>(val, 0u)->to_unsigned_type();
       else if (slot == "prefix")
       {
         std::string v = type_check<String>(val, 0u)->value_get();
@@ -228,7 +228,7 @@ namespace urbi
                       :                    Case::UPPER);
       }
       else if (slot == "uppercase")
-        switch (int v = type_check<Float>(val, 0u)->to_int())
+        switch (Float::int_type v = type_check<Float>(val, 0u)->to_int_type())
         {
 #define CASE(In, Out, Spec)                                     \
           case In: uppercase_ = Case::Out; spec_ = Spec; break
@@ -240,7 +240,7 @@ namespace urbi
             FRAISE("expected integer -1, 0 or 1, got %s", v);
         }
       else if (slot == "width")
-        width_ = type_check<Float>(val, 0u)->to_unsigned_int();
+        width_ = type_check<Float>(val, 0u)->to_unsigned_type();
       else
         return 0;
       consistent_ = false;
