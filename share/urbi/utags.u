@@ -1,0 +1,197 @@
+#! urbi -i
+/*
+ * Copyright (C) 2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+// ctags for urbi
+// Output similar to ctags --fields=KsSz --excmd=pattern
+topLevel.enabled = false;
+var output = Channel.new("");
+output.quote = false;
+output.'<<' = function(x)
+{
+   if (enabled)
+    {
+      var toPrint = { if (quote) x.asToplevelPrintable else x.asString }|
+      if (!toPrint.isNil)
+	lobby.write(toPrint);
+    };
+    this
+}|;
+function String.trim()
+  {
+    if (empty)
+      return "";
+    var res = this;
+    var p = res.length-1;
+    while (res[p] == " ")
+      p--;
+    res = res[0, p+1];
+    while (res.length && res[0] == " ")
+      res = res[1, res.length];
+    res;
+  };
+do (Dictionary)
+{
+  var _default = nil;
+  var oget = getSlot("[]");
+  '[]' = function(var k)
+  {
+    if (_default)
+      getWithDefault(k, _default.clone, true)
+    else
+      if (!has(k))
+        _default
+      else
+	oget(k)
+  };
+  var fallback = function
+  {
+    this[call.message]
+  };
+  var updateSlot = function(k, v)
+  {
+    this[k] = v
+  };
+  var merge = function(d2)
+  {
+    for| (var v: d2)
+      this[v.first] = v.second |
+    this
+  };
+}|;
+//function wall {};
+
+var sourcefile = System.arguments[0];
+
+// open file
+var fileLines = File.new(sourcefile).asList;
+// Locate urbi executable
+var binDir = System.searchFile("urbi/urbi.u").dirname / "../../../bin/";
+assert(binDir.exists);
+var tempName = "/tmp/utags-" + String.fresh;
+var command =
+  binDir.asString + "/serialize"
+  + " " + sourcefile
+  + " 3>" + tempName
+  + " 2>/dev/null"
+  + " 4>/dev/null"
+  + " 5>/dev/null"
+  + " 6>/dev/null"
+  + " 7>/dev/null"
+  ;
+wall("executing: " + command);
+System.system(command);
+wall("done, loading output");
+var v = load(tempName)|;
+wall("done");
+Dictionary._default = nil|;
+var currentClass = []|;
+var lastAssign = nil;
+var TAB = "\t";
+var SFX = "\tclass:\tsignature:()";
+
+function locToRegex(loc)
+{
+  var lineNo = locToLine(loc).asFloat;
+  var line = fileLines[lineNo-1];
+  line = line.trim;
+  "/" + line.replace("/", "\\/") + "/;\""
+};
+function locToLine(loc)
+{
+  loc.split(":")[1].split(".")[0]
+};
+function findLocation(tree)
+{
+  if (tree.location)
+    tree.location
+  else if (tree.Routine)
+    tree.Routine.location
+  else if (tree.Call)
+    tree.Call.location
+  else if ( tree[tree.keys[0]].has("location"))
+    tree[tree.keys[0]]["location"]
+  else
+    wall("no location for tree " + tree)
+}|;
+function getLValueName(tree)
+{
+  if (tree.Binding && tree.Binding.what)
+    getLValueName(tree.Binding.what)
+  else if (tree.Call)
+    tree.Call.name
+  else "error"
+}|;
+function recurse(tree)
+{
+  if (tree.isA(String) || tree.isNil)
+    return|
+  if (tree.isA(List))
+  {
+    for|(var e: tree)
+      recurse(e)|
+    return
+  };
+  //wall(tree.type);
+  //wall("t: " + tree["type"]);
+  if (tree["type"] == "Declaration")
+  {
+    var target = tree.what.Call.name;
+    var location = locToRegex(findLocation(tree.value));
+    output << currentClass.join("::") << "::" << target
+    << TAB << sourcefile
+    << TAB << location
+    << TAB << "kind:function"
+    << TAB << "signature:()"
+    << TAB << "class:" << currentClass.join("::")
+    << "\n";
+    return
+  }|
+  // Merge do and class, but the content are using different keys.
+  if (tree["type"] == "Class" || tree["type"] == "Do")
+  {
+    var target = {
+      if (tree.what) tree.what.Call.name else tree.target.Call.name
+    };
+    var location = locToRegex(findLocation(tree));
+    currentClass << target;
+    output << currentClass.join("::")
+    << TAB << sourcefile
+    << TAB <<  location
+    << TAB << "kind:class" << SFX << "\n";
+
+    recurse(tree.content);
+    recurse(tree.body);
+    currentClass.removeBack;
+    return
+  }|
+  if (tree["type"] == "Assign")
+  {
+    //wall("Assign");
+    lastAssign = tree;
+    var target = getLValueName(tree.what);
+    var location = locToRegex(findLocation(tree.value));
+    //wall("loc: " + location);
+    output << currentClass.join("::") << "::"  << target
+    << TAB << sourcefile
+    << TAB << location
+    << TAB << "kind:variable"
+    << TAB << "signature:"
+    << TAB << "class:" << currentClass.join("::")
+    << "\n";
+    return
+  }|
+  //wall(tree.type);
+  for| (var e: tree.keys)
+    recurse(tree[e])|
+
+}|;
+recurse(v)|;
+shutdown;

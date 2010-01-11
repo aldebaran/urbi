@@ -10,7 +10,7 @@
 ## ast-dump.  ##
 ## ---------- ##
 
-EXTRA_PROGRAMS = bin/ast-dump bin/urbi-parse bin/urbi-pp bin/urbi-compile
+EXTRA_PROGRAMS = bin/ast-dump bin/serialize bin/urbi-parse bin/urbi-pp bin/urbi-compile
 
 if BUILD_PROGRAMS
 if !WIN32
@@ -24,6 +24,12 @@ endif BUILD_PROGRAMS
 # ast-dump.
 bin_ast_dump_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
 bin_ast_dump_LDADD = libuobject$(LIBSFX).la
+
+# serializer dump
+bin_PROGRAMS += bin/serialize
+bin_serialize_SOURCES = bin/serialize.cc ast/serializer.cc
+bin_serialize_CPPFLAGS = $(libuobject_la_CPPFLAGS)
+bin_serialize_LDADD = libuobject.la
 
 # urbi.
 bin_PROGRAMS += bin/urbi

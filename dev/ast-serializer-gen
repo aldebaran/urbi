@@ -1,0 +1,326 @@
+#! /usr/bin/env python
+
+import sys
+import ast, tools
+
+if len(sys.argv) != 2:
+  tools.error("Usage: .. SRCDIR")
+srcdir = sys.argv[1]
+
+namespace = 'ast'
+
+loader = ast.Loader ()
+nodes, ast_params = loader.load (sys.stdin)
+# Concrete classes.
+concrete = ast.concrete(nodes)
+
+serializer_printer_hh = file("serializer.hh.tmp", "w")
+
+print >> serializer_printer_hh, """\
+%(banner)s
+
+# include <list>
+# include <sstream>
+
+# include <libport/foreach.hh>
+
+# include <ast/ast.hh>
+# include <ast/visitor.hh>
+# include <ast/symbols-type.hh>
+
+namespace %(ns)s
+{
+  /// Serialize an ast in Dot format
+  class SerializerPrinter: public %(super)s
+  {
+  public:
+    typedef %(super)s super_type;
+
+    SerializerPrinter(std::ostream& output);
+    virtual ~SerializerPrinter();
+    virtual void operator()(const ast::Ast* n);
+
+  protected:
+    virtual void startDictionary(const char* name);
+    virtual void stopDictionary();
+    virtual void startList(const char* name);
+    virtual void stopList();
+    virtual void showElement(const char* name, const char* value);
+    void separator(const char* name);
+    template<typename T> void element(const char* name, const T&value)
+    {
+      std::stringstream s;
+      s << value;
+      showElement(name, s.str().c_str());
+    }
+  private:
+    // Import overloaded virtual functions.
+    using super_type::visit;
+    %(visit)s
+    std::ostream& output_;
+    unsigned id_;
+    std::list<std::pair<unsigned, std::string> > ids_;
+    bool root_;
+
+    template<typename T>
+    void recurse(const T& c);
+
+    template<typename T>
+    void recurse(const T* c);
+    enum NType {
+      LISTSTART,
+      LISTCONT,
+      DICTIONARY
+    };
+    std::vector<NType> stack_;
+    void fill(size_t n);
+  };
+}
+
+#endif
+""" % {
+  'banner' : tools.banner(ast_params, "ast/serializer-generator.hh",
+                          "Declaration of %s::Cloner." % namespace),
+  'ns'     : namespace,
+  'super'  : 'ast::ConstVisitor',
+  'visit'  : tools.indent(4, ast.visit(concrete, True))
+  },
+
+serializer_printer_hh.close()
+tools.lazy_install(srcdir, "serializer.hh");
+
+serializer_printer_cc = file("serializer.cc.tmp", "w")
+
+visit = ''
+
+
+
+def dot_attrs(node):
+  recurse = ''
+  label = ''
+  for attr in node.all_attributes():
+    if attr.name in ['location', 'original']:
+      continue
+    if attr.name == 'lazy' and node.name == 'Lazy':
+      continue
+    if attr.name == 'declaration' and node.name in ['LocalAssignment', 'Local']:
+      continue
+    pointer = ''
+    if attr.visitable_p():
+      recurse += """\
+    ids_.back().second = "%(name)s";
+    operator() (n->%(name)s_get().get());
+""" % {'name': attr.name};
+    elif attr.root_type() in ast_params['collections']:
+      recurse += """\
+    ids_.back().second = "%(name)s";
+    recurse(n->%(name)s_get());
+""" % {'name': attr.name}
+    else:
+      if label != '':
+        label += '|'
+      label += '%(name)s: " << escape(n->%(name)s_get()) << "' % {'name' : attr.name}
+  if label != '':
+    label = '|{%s}' % label
+  label = '|{" << escape(n->location_get()) << " }' + label
+  return recurse, label
+
+
+def process(node):
+  str = ''
+  str += '  startDictionary("%s");\n' % node.name
+  str += '  element("type", "%s");\n' % node.name
+  for attr in node.all_attributes():
+    if attr.name in ['locationAA', 'original']:
+      continue
+    n = attr.name
+    if attr.visitable_p():
+      str += '  startDictionary("%s");\n' % n
+      str += '  operator()(n->%(s)s_get().get());' %{'s': n}
+      str += '  stopDictionary();\n'
+    elif attr.root_type() in ast_params['collections']:
+      str += '  startList("%s");\n' % n
+      str += "  recurse(n->%(s)s_get());\n" % {'s': n}
+      str += "  stopList();\n"
+    else:
+      str += """  element("%(s)s", n->%(s)s_get());\n""" % {'s': n}
+  str += '  stopDictionary();\n'
+  return str
+
+for node in concrete:
+
+  str = process(node)
+
+  visit += """\
+  void
+  SerializerPrinter::visit(const %(type)s* n)
+  {
+    (void) n;
+    %(code)s;
+  }
+
+""" % {
+    'code' : str,
+    'type'  : node.name,
+    }
+
+print >> serializer_printer_cc, """\
+%(banner)s
+
+#include <ast/serializer.hh>
+#include <ast/all.hh>
+
+namespace %(ns)s
+{
+  SerializerPrinter::SerializerPrinter(std::ostream& output)
+    : output_(output)
+    , id_(0)
+    , ids_()
+    , root_(true)
+  {
+  }
+
+  SerializerPrinter::~SerializerPrinter()
+  {}
+
+  template <typename T>
+  std::string
+  escape(const T& e)
+  {
+    std::stringstream s;
+    s << e;
+    std::string res = s.str();
+    for (std::string::size_type i = res.find_first_of("\\\\");
+         i != std::string::npos;
+	 i = res.find_first_of("\\\\", i+3))
+      res.replace(i, 1, "\\\\\\\\");
+    for (std::string::size_type i = res.find_first_of("\\"");
+         i != std::string::npos;
+	 i = res.find_first_of("\\"", i+4))
+      res.replace(i, 1, "\\\\\\"");
+    return res;
+  }
+
+  void SerializerPrinter::operator()(const ast::Ast* n)
+  {
+    if (!n)
+      return;
+    if (root_)
+    {
+      root_ = false;
+      startDictionary("");
+      super_type::operator()(n);
+      stopDictionary();
+      output_ << ";" << std::endl;
+    }
+    else
+      super_type::operator()(n);
+  }
+
+  template<typename T>
+  void
+  SerializerPrinter::recurse(const T& c)
+  {
+    foreach (const typename T::value_type& elt, c)
+      if (elt.get())
+        operator()(elt.get());
+  }
+
+  template<>
+  void
+  SerializerPrinter::recurse<symbols_type>(const symbols_type&)
+  {}
+
+  template<>
+  void
+  SerializerPrinter::recurse<ast::modifiers_type>(const ast::modifiers_type&)
+  {}
+
+  template<typename T>
+  void
+  SerializerPrinter::recurse(const T* c)
+  {
+    if (c)
+      recurse(*c);
+  }
+
+  void
+  SerializerPrinter::separator(const char* name)
+  {
+    fill(stack_.size());
+    if (!stack_.empty() && stack_.back() == LISTCONT)
+      output_ << ',';
+    if (!stack_.empty() && stack_.back() == LISTSTART)
+      stack_.back() = LISTCONT;
+    if (!stack_.empty() && stack_.back() == DICTIONARY)
+    {
+      output_ << ", ";
+      if (name == std::string("closure"))
+        output_ << "\\"Closure\\"" << "=>";
+      else
+        output_ << '"' << name << '"' << "=>";
+    }
+  }
+  void
+  SerializerPrinter::startDictionary(const char* name)
+  {
+    //output_ << "startdict" << std::endl;
+    separator(name);
+    stack_.push_back(DICTIONARY);
+    output_  << '[' << "\\\"NodeName\\\" =>" << '"' << name << '"' << std::endl;
+  }
+  void
+  SerializerPrinter::stopDictionary()
+  {
+    //output_ << "stopdict" << std::endl;
+    if (stack_.empty() || stack_.back() != DICTIONARY)
+      exit(12);
+    stack_.pop_back();
+    fill(stack_.size());
+    output_ << "]" << std::endl;
+  }
+  void
+  SerializerPrinter::startList(const char* name)
+  {
+    //output_ << "startlist" << std::endl;
+    separator(name);
+    stack_.push_back(LISTSTART);
+    output_ << '[' << std::endl;
+  }
+  void
+  SerializerPrinter::stopList()
+  {
+    //output_ << "stoplist" << std::endl;
+    if (stack_.empty() || stack_.back() == DICTIONARY)
+      exit(12);
+    stack_.pop_back();
+    fill(stack_.size());
+    output_ << ']' << std::endl;
+  }
+  void
+  SerializerPrinter::showElement(const char* name, const char* value)
+  {
+    //output_ << "elem" << std::endl;
+    fill(stack_.size());
+    separator(name);
+    output_ << '"' << escape(value) << '"';
+    output_ << std::endl;
+  }
+  void SerializerPrinter::fill(size_t n)
+  {
+    char f[1024];
+    memset(f, ' ', 1023);
+    f[n] = 0;
+    output_ << f;
+  }
+  %(visit)s
+}
+""" % {
+  'banner': tools.banner(ast_params, "ast/serializer-generator.cc",
+			 "Implementation of %s::Cloner." % namespace),
+  'ns': namespace,
+  'visit': visit
+  }
+
+serializer_printer_cc.close()
+tools.lazy_install(srcdir, "serializer.cc");

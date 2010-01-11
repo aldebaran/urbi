@@ -113,4 +113,9 @@ EXTRA_DIST += $(ast_basedir)dot-printer.stamp
 $(ast_basedir)dot-printer.hh $(ast_basedir)dot-printer.cc: $(ast_srcdir)/dot-printer.stamp
 	@$(AST_REGENERATE_IF_NEEDED)
 
+# Serialize
+EXTRA_DIST += $(ast_basedir)serializer.stamp
+$(ast_basedir)serializer.hh $(ast_basedir)serializer.cc: $(ast_srcdir)/serializer.stamp
+	@$(AST_REGENERATE_IF_NEEDED)
+
 MAINTAINERCLEANFILES += $(BUILT_SOURCES_ast)
