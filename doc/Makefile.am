@@ -99,10 +99,10 @@ install-data-hook:
 	  case $(URBI_HOST_OS) in		\
 	    (windows)				\
 	      unix2dos "$$i" &&			\
-	      cp "$$i" .			\
+	      cp -f "$$i" .			\
 	      ;;				\
 	    (*)					\
-	      $(LN_S) "$$i"			\
+	      $(LN_S) -f "$$i"			\
 	      ;;				\
 	  esac					\
 	done
