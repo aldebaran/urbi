@@ -58,7 +58,7 @@ BUILDCHECK_ENVIRONMENT +=			\
   PATH=$(BUILDCHECK_PATH):$$PATH
 
 INSTALLCHECK_ENVIRONMENT +=			\
-  PATH=$(bindir):$$PATH
+  PATH=$(DESTDIR)$(bindir):$$PATH
 
 # By default, tests are buildcheck.
 TESTS_ENVIRONMENT += $(BUILDCHECK_ENVIRONMENT)
@@ -83,8 +83,8 @@ debug:
 
 # The target run by the buildfarm.
 CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENTATION=0.2
-check-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) $(CHECK_BUILDFARM_FLAGS) check-html
+%check-buildfarm:
+	$(MAKE) $(AM_MAKEFLAGS) $(CHECK_BUILDFARM_FLAGS) $*check-html
 
 .PHONY check-TESTS: check-clean-semaphores
 check-clean-semaphores:
