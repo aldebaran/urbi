@@ -55,7 +55,7 @@ namespace urbi
 
 #if HAVE_SYS_INOTIFY_H
     // Event polling thread
-    static libport::hash_map<unsigned, std::pair<rObject, rObject> > _watch_map;
+    static boost::unordered_map<unsigned, std::pair<rObject, rObject> > _watch_map;
     static libport::Lockable _watch_map_lock;
     static int _watch_fd;
 

@@ -25,7 +25,7 @@ namespace urbi
     class Slot: public libport::RefCounted
     {
     public:
-      typedef libport::hash_map<libport::Symbol, rObject> properties_type;
+      typedef boost::unordered_map<libport::Symbol, rObject> properties_type;
 
       Slot();
       Slot(const Slot& model);

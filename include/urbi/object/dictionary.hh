@@ -26,7 +26,7 @@ namespace urbi
     class URBI_SDK_API Dictionary: public CxxObject
     {
     public:
-      typedef libport::hash_map<libport::Symbol, rObject> value_type;
+      typedef boost::unordered_map<libport::Symbol, rObject> value_type;
 
       Dictionary();
       Dictionary(rDictionary model);

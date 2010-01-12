@@ -115,7 +115,7 @@ fwd_hh_epilogue: |2
   // event-match.hh.
   struct EventMatch;
 
-  typedef libport::hash_map<libport::Symbol, ast::rExp> modifiers_type;
+  typedef boost::unordered_map<libport::Symbol, ast::rExp> modifiers_type;
 
 printer_cc_prologue: |2
 

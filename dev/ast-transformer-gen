@@ -55,7 +55,7 @@ namespace ast
 
     template <typename K, typename V>
     void
-    transform_collection(libport::hash_map<K, V>* hash)
+    transform_collection(boost::unordered_map<K, V>* hash)
     {
       if (!hash)
         return;
@@ -64,9 +64,9 @@ namespace ast
 
     template <typename K, typename V>
     void
-    transform_collection(libport::hash_map<K, V>& hash)
+    transform_collection(boost::unordered_map<K, V>& hash)
     {
-      typedef typename libport::hash_map<K, V>::value_type value_type;
+      typedef typename boost::unordered_map<K, V>::value_type value_type;
       foreach (const value_type& v, hash)
       {
         V ast = v.second;

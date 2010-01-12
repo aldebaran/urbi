@@ -19,7 +19,7 @@ namespace object
   class HashSlots: public Slots
   {
     public:
-      typedef libport::hash_map<key_type, rObject> content_type;
+      typedef boost::unordered_map<key_type, rObject> content_type;
       typedef content_type::iterator iterator;
       typedef content_type::const_iterator const_iterator;
 

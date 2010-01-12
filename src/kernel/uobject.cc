@@ -167,7 +167,7 @@ namespace urbi {
 
 // Where to store uobjects
 static rObject where;
-typedef libport::hash_map<std::string, urbi::UObject*> uobject_to_robject_type;
+typedef boost::unordered_map<std::string, urbi::UObject*> uobject_to_robject_type;
 static uobject_to_robject_type uobject_to_robject;
 static std::set<void*> initialized;
 
@@ -194,7 +194,7 @@ namespace Stats
     unsigned max;
     unsigned count;
   };
-  typedef libport::hash_map<std::string, Value> Values;
+  typedef boost::unordered_map<std::string, Value> Values;
   static Values hash;
   static bool enabled = false;
   static void add(void*, const std::string& key, libport::utime_t d)
@@ -343,7 +343,7 @@ rObject uobject_initialize(const objects_type& args)
 }
 
 // No rObject here as we do not want to prevent object destruction.
-static libport::hash_map<std::string, object::Object*> uobject_map;
+static boost::unordered_map<std::string, object::Object*> uobject_map;
 
 static rObject wrap_ucallback_notify(const object::objects_type& ol ,
                                      urbi::UGenericCallback* ugc,

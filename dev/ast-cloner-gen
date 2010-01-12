@@ -115,7 +115,7 @@ print """
 
   private:
     bool use_map_;
-    libport::hash_map<long, ast::rAst> map_;
+    boost::unordered_map<long, ast::rAst> map_;
   };
 
 } // namespace ast
