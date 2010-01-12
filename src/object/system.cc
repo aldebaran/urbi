@@ -315,7 +315,15 @@ namespace urbi
       runner::Runner::backtrace_type bt = runner().backtrace_get();
       bt.pop_back();
       rforeach (const runner::Runner::frame_type& elt, bt)
-        runner().send_message("backtrace", elt.name + " (" + elt.location + ")");
+      {
+        std::ostringstream o;
+        o << *elt->slot_get(SYMBOL(name))->call(SYMBOL(asString))
+          << " ("
+          << *elt->slot_get(SYMBOL(location))->call(SYMBOL(asString))
+          << ")";
+        // o << *elt->call(SYMBOL(asString));
+        runner().send_message("backtrace", o.str());
+      }
     }
 
     static List::value_type

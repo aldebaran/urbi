@@ -76,6 +76,7 @@ load("urbi/lobby.u");
 load("urbi/mutex.u");
 load("urbi/timeout.u");
 load("urbi/socket.u");
+load("urbi/stack-frame.u");
 
 /*----------.
 | UObject.  |

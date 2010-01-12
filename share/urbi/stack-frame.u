@@ -1,0 +1,16 @@
+class Global.StackFrame
+{
+  var name = nil;
+  var location = nil;
+
+  function init(n, l)
+  {
+    this.name = n;
+    this.location = l;
+  };
+
+  function asString()
+  {
+    location.asString + ": " + name.asString
+  }
+};

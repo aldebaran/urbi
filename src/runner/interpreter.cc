@@ -300,13 +300,19 @@ namespace runner
   Interpreter::backtrace_type
   Interpreter::backtrace_get() const
   {
+    CAPTURE_GLOBAL(StackFrame);
     backtrace_type res;
     foreach (call_type c, call_stack_)
     {
       std::ostringstream o;
       if (c.second)
         o << c.second.get();
-      res.push_back(frame_type(c.first.name_get(), o.str()));
+      rObject loc =
+        StackFrame
+        ->call("new",
+               new object::String(c.first.name_get()),
+               new object::String(o.str()));
+      res.push_back(frame_type(loc));
     }
     return res;
   }

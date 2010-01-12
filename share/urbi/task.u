@@ -17,7 +17,7 @@ do (Task)
      if (!b.empty) {
        echo("  Backtrace:") |
        for| (var l : backtrace)
-         echo("    " + l.front + " (at " + l.back + ")")
+         echo("    " + l.name + " (at " + l.location + ")")
      }
    }
 

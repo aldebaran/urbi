@@ -84,12 +84,7 @@ namespace runner
 
     /// Retreive the current backtrace as a list of (function name,
     /// location) pairs
-    struct frame_type
-    {
-      frame_type(const std::string& name, const std::string& location);
-      std::string name;
-      std::string location;
-    };
+    typedef rObject frame_type;
     typedef std::vector<frame_type> backtrace_type;
     virtual backtrace_type backtrace_get() const = 0;
 
