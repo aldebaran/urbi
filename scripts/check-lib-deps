@@ -47,6 +47,12 @@ Specify the installation destination directory.  Anything found under
 this directory is considered to be part of it.  Anything else is a
 foreign dependency.
 
+=item B<-p>, B<--prefix>=I<prefix>
+
+Prefix into which the package is installed.  This is used under
+GNU/Linux to change the RPATH.  Any RPATH component that is prefixed
+by C<$prefix> will be made relative.
+
 =item B<-q>, B<--quiet>
 
 Be less verbose.  Accumulates.
@@ -80,6 +86,9 @@ my %loc;
 # Number of errors.
 my $nerrors = 0;
 
+# The --prefix given to configure.
+my $prefix;
+
 # Verbosity level.
 my $verbose = 1;
 
@@ -95,6 +104,20 @@ sub verbose($@)
   map { print STDERR "$0: " . "  " x $level . "$_\n" } @message
     if $level <= $verbose;
 }
+
+=item C<prefix($prefix, $string)>
+
+Whether C<$prefix> is a prefix of C<$string>.
+
+=cut
+
+sub prefix($$)
+{
+  my ($lhs, $rhs) = @_;
+  my $sub = substr ($rhs, 0, length($lhs));
+  $sub eq $lhs ? 1 : 0;
+}
+
 
 # Return the list of paths we depend upon.
 sub dependencies ($)
@@ -228,9 +251,8 @@ sub relocate ($)
           my @rpath;
           for my $dep (split (":", $rpath))
             {
-              # FIXME: hardcoded!!!
               my $rel =
-                ($dep =~ m(gostai)
+                (prefix($prefix, $dep)
                  ? File::Spec->catdir('$ORIGIN',
                                       File::Spec->abs2rel($dep, $dir))
                  : $dep);
@@ -299,6 +321,7 @@ sub getopt ()
   my %option = (
     "d|destdir=s"   => \$destdir,
     "h|help"        => sub { help ($verbose) },
+    "p|prefix=s"    => \$prefix,
     "q|quiet"       => sub { --$verbose },
     "v|verbose"     => sub { ++$verbose },
     );
@@ -308,6 +331,9 @@ sub getopt ()
 
   die "$0: passing --destdir is mandatory\n"
     unless defined $destdir;
+
+  die "$0: passing --prefix is mandatory\n"
+    unless defined $prefix;
 
   # DESTDIR must not end with slashes.
   $destdir =~ s,/+$,,g;

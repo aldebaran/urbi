@@ -27,6 +27,7 @@ case $URBI_HOST_OS in
     $srcdir/scripts/check-lib-deps              \
       --verbose                                 \
       --destdir "$DESTDIR"                      \
+      --prefix "$prefix"                        \
       "$DESTDIR"
     ;;
 esac
