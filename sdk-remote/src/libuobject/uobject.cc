@@ -59,7 +59,7 @@ namespace urbi
       }
     }
 
-    typedef libport::hash_map<std::string, impl::UContextImpl*> contexts_type;
+    typedef boost::unordered_map<std::string, impl::UContextImpl*> contexts_type;
     static contexts_type contexts;
 
     impl::UContextImpl*

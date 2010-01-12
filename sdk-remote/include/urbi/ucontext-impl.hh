@@ -10,6 +10,8 @@
 #ifndef UCONTEXT_IMPL_HH
 # define UCONTEXT_IMPL_HH
 
+#include <set>
+
 #include <boost/function.hpp>
 
 #include <urbi/fwd.hh>
@@ -90,9 +92,9 @@ namespace urbi
       virtual void setHubUpdate(UObjectHub*, ufloat) = 0;
       /// Called by the urbiStarter after each UObject instanciation.
       virtual void instanciated(UObject*) = 0;
-      typedef libport::hash_map<std::string, UObject*>  objects_type;
+      typedef boost::unordered_map<std::string, UObject*>  objects_type;
       objects_type objects;
-      typedef libport::hash_map<std::string, UObjectHub*> hubs_type;
+      typedef boost::unordered_map<std::string, UObjectHub*> hubs_type;
       hubs_type hubs;
       std::set<void*> initialized;
 

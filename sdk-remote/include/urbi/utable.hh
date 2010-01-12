@@ -34,7 +34,7 @@ namespace urbi
 
   // A few list and hashtable types
   struct URBI_SDK_API UTable
-    : libport::hash_map<std::string,
+    : boost::unordered_map<std::string,
         libport::SafeContainer< std::list, UGenericCallback*> >
   {
     /// The keys.
@@ -45,7 +45,7 @@ namespace urbi
     typedef callbacks_type mapped_type;
 
     /// Type of the super class.
-    typedef libport::hash_map<key_type, mapped_type> super_type;
+    typedef boost::unordered_map<key_type, mapped_type> super_type;
 
     /// Iterator types.
     typedef super_type::const_iterator const_iterator;
@@ -67,7 +67,7 @@ namespace urbi
   `------------*/
 
   struct URBI_SDK_API UVarTable
-    : libport::hash_map<std::string, std::list<UVar*> >
+    : boost::unordered_map<std::string, std::list<UVar*> >
   {
     /// The keys.
     typedef std::string key_type;
@@ -77,7 +77,7 @@ namespace urbi
     typedef callbacks_type mapped_type;
 
     /// Type of the super class.
-    typedef libport::hash_map<key_type, mapped_type> super_type;
+    typedef boost::unordered_map<key_type, mapped_type> super_type;
 
     /// Iterator types.
     typedef super_type::const_iterator const_iterator;
