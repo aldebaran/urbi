@@ -359,7 +359,7 @@ sub wanted
       # We are not interested in plain files.
       my $res = `file $_`;
       push @checked, $File::Find::name
-        if $res !~ /shell script|ASCII English text/;
+        if $res !~ /shell script|ASCII English text|libtool library file/;
     }
 }
 
