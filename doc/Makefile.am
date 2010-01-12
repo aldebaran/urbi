@@ -1,6 +1,7 @@
 include $(top_srcdir)/build-aux/init.mk
 include $(top_srcdir)/build-aux/doxygen.mk
 include $(top_srcdir)/build-aux/revision.mk
+include tests/local.mk
 
 # Document aux.
 share_dir = $(top_srcdir)/doc/document-aux
@@ -156,33 +157,3 @@ share-ci:
 	cd $(share_dir) && git pull --rebase
 	cd $(share_dir) && git push origin master
 	git commit -m "Update $(share_dir)." $(share_dir)
-
-
-## ------------------- ##
-## Tests environment.  ##
-## ------------------- ##
-
-# Our system leaves trailing unused *chk files.
-MAINTAINERCLEANFILES +=						\
-  $(shell find $(srcdir) -name '*.chk')
-
-include tests/local.mk
-
-# Use the wrappers to run the non-installed executables.
-CHECK_ENVIRONMENT =				\
-  srcdir=$(srcdir)
-
-BUILDCHECK_ENVIRONMENT +=					\
-  PATH=$(sdk_remote_builddir)/src/tests/bin:$$PATH
-
-INSTALLCHECK_ENVIRONMENT +=			\
-  PATH=$(DESTDIR)$(bindir):$$PATH
-
-# By default, tests are buildcheck.
-TESTS_ENVIRONMENT +=				\
-  $(BUILDCHECK_ENVIRONMENT)
-
-# Run the tests with the install-environment.
-installcheck-local:
-	$(MAKE) $(AM_MAKEFLAGS)						\
-	  TESTS_ENVIRONMENT='$$(INSTALLCHECK_ENVIRONMENT)' check

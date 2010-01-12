@@ -59,14 +59,42 @@ check-clean-local:
 	-chmod -R 700 $(TEST_LOGS:.log=.dir) 2>/dev/null
 	rm -rf $(TEST_LOGS:.log=.dir)
 
+
+## ------------------- ##
+## Tests environment.  ##
+## ------------------- ##
+
+# Our system leaves trailing unused *chk files.
+MAINTAINERCLEANFILES +=						\
+  $(shell find $(srcdir) -name '*.chk')
+
+# Use the wrappers to run the non-installed executables.
+CHECK_ENVIRONMENT +=				\
+  srcdir=$(srcdir)
+
+BUILDCHECK_ENVIRONMENT +=					\
+  PATH=$(sdk_remote_builddir)/src/tests/bin:$$PATH
+
+INSTALLCHECK_ENVIRONMENT +=			\
+  PATH=$(DESTDIR)$(bindir):$$PATH
+
+# By default, tests are buildcheck.
+TESTS_ENVIRONMENT +=				\
+  $(BUILDCHECK_ENVIRONMENT)
+
+# Run the tests with the install-environment.
+installcheck-local:
+	$(MAKE) $(AM_MAKEFLAGS)						\
+	  TESTS_ENVIRONMENT='$$(INSTALLCHECK_ENVIRONMENT)' check
+
 ## ----------- ##
 ## Buildfarm.  ##
 ## ----------- ##
 
-.PHONY: check-buildfarm
+#.PHONY: check-buildfarm
 CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
-check-buildfarm:
-	$(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
+%heck-buildfarm:
+	$(MAKE) $(AM_MAKEFLAGS) $*heck-html $(CHECK_BUILDFARM_FLAGS)
 
 .PHONY check-TESTS: check-clean-semaphores
 check-clean-semaphores:
