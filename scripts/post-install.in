@@ -4,7 +4,7 @@ set -x
 set -e
 
 PROJECT='@PACKAGE_TARNAME@'
-builddir='@top_builddir@'
+builddir='@abs_top_builddir@'
 host='@host@'
 prefix='@prefix@'
 srcdir='@abs_top_srcdir@'
