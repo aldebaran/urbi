@@ -165,7 +165,8 @@ AC_SUBST([UOBJECT_PATH], ['$(abs_top_builddir)/sdk-remote/src/uobjects'])
 AC_CONFIG_FILES([Makefile src/Makefile])
 
 URBI_CONFIG_SCRIPTS([scripts/package],
-                    [scripts/post-install])
+                    [scripts/post-install],
+                    [scripts/install-boost-headers])
 
 case $URBI_HOST_OS in
   (windows) URBI_CONFIG_SCRIPTS([urbi.bat]);;

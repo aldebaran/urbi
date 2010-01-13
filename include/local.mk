@@ -69,3 +69,8 @@ check-headers:
 
 EXTRA_DIST +=					\
   include/check-headers
+
+install-data-hook: install-boost-headers
+
+install-boost-headers:
+	sh -x $(builddir)/scripts/install-boost-headers
