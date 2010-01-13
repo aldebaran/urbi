@@ -40,7 +40,7 @@ ast_gen_deps =					\
 
 include $(top_srcdir)/dev/ast-gen.mk
 
-dist_libuobject_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=			\
   ast/all.hh					\
   ast/analyzer.hh				\
   ast/analyzer.cc				\
@@ -76,7 +76,7 @@ dist_libuobject_la_SOURCES +=			\
   ast/visitor.hxx
 
 if ENABLE_SERIALIZATION
-  dist_libuobject_la_SOURCES +=                 \
+  dist_libuobject@LIBSFX@_la_SOURCES +=                 \
     ast/serialize.cc                            \
     ast/serialize.hh
 endif
@@ -85,7 +85,7 @@ endif
 # We would like to generate them at make time, but unfortunately we
 # also generate the Makefile snippets, which is something we cannot do
 # easily after Automake was run.
-dist_libuobject_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=			\
   $(BUILT_SOURCES_ast_libuobject)
 
 # To ensure that the file is kept up to date.

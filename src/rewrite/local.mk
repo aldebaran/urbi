@@ -1,4 +1,4 @@
-dist_libuobject_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=			\
 rewrite/desugarer.cc				\
 rewrite/desugarer.hh				\
 rewrite/fwd.hh					\

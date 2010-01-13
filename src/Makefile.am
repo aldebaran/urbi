@@ -45,10 +45,10 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 ## libuobject.  ##
 ## ------------ ##
 
-env_LTLIBRARIES = libuobject.la
+env_LTLIBRARIES = libuobject@LIBSFX@.la
 # The -DBUILDING_LIBPORT is required since libport/network/* are
 # considered as kernel sources.
-libuobject_la_CPPFLAGS =				\
+libuobject@LIBSFX@_la_CPPFLAGS =				\
   $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DLIBPORT_NO_SSL
 # Unfortunately, we _have_ to disable -fstrict-aliasing.  Because of
 # Bison's variants.  I don't know how to avoid this.
@@ -58,11 +58,11 @@ libuobject_la_CPPFLAGS =				\
 #   parser/ugrammar-pruned.y:404:   instantiated from here
 #   parser/ugrammar.hh:135: error: dereferencing type-punned pointer will break strict-aliasing rules
 #
-libuobject_la_CXXFLAGS = $(AM_CXXFLAGS) -fno-strict-aliasing
+libuobject@LIBSFX@_la_CXXFLAGS = $(AM_CXXFLAGS) -fno-strict-aliasing
 
-libuobject_la_LDFLAGS =				\
+libuobject@LIBSFX@_la_LDFLAGS =				\
   -avoid-version -no-undefined
-libuobject_la_LIBADD =					\
+libuobject@LIBSFX@_la_LIBADD =					\
   $(BOOST_REGEX_LIBS)					\
   $(LIBPORT_LIBS)					\
   $(SCHED_LIBS)						\
@@ -77,10 +77,10 @@ REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
 dist_noinst_HEADERS = $(REVISION_FILE)
 
-dist_libuobject_la_SOURCES =
-nodist_libuobject_la_SOURCES =
-BUILT_SOURCES += $(nodist_libuobject_la_SOURCES)
-CLEANFILES += $(nodist_libuobject_la_SOURCES)
+dist_libuobject@LIBSFX@_la_SOURCES =
+nodist_libuobject@LIBSFX@_la_SOURCES =
+BUILT_SOURCES += $(nodist_libuobject@LIBSFX@_la_SOURCES)
+CLEANFILES += $(nodist_libuobject@LIBSFX@_la_SOURCES)
 # Needed in object/local.mk, used potentially everywhere else (maybe
 # before, so initialize it here).
 precompiled_symbols_hh_deps =
@@ -103,7 +103,7 @@ include urbi/local.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 
-dist_libuobject_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=			\
   console-server.cc
 
 # We used to install a different version (with s/remote/engine/g), but

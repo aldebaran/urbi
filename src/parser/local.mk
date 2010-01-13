@@ -1,4 +1,4 @@
-dist_libuobject_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=			\
   parser/fwd.hh					\
   parser/is-keyword.hh				\
   parser/is-keyword.cc				\
@@ -81,7 +81,7 @@ SOURCES_FROM_UGRAMMAR_Y =			\
   parser/location.hh				\
   parser/ugrammar.hh				\
   parser/ugrammar.cc
-nodist_libuobject_la_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
+nodist_libuobject@LIBSFX@_la_SOURCES += $(SOURCES_FROM_UGRAMMAR_Y)
 
 DATA_FROM_UGRAMMAR_Y = 				\
   parser/ugrammar.html				\
@@ -180,7 +180,7 @@ listings: parser/utoken.l
 emacs: parser/utoken.l
 	KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
 
-nodist_libuobject_la_SOURCES += parser/keywords.hh
+nodist_libuobject@LIBSFX@_la_SOURCES += parser/keywords.hh
 parser/keywords.hh: parser/utoken.l
 	rm -f $@
 	KEYWORDS_MODE=c++ $(srcdir)/parser/keywords $< >$@.tmp
@@ -194,8 +194,8 @@ FROM_UTOKEN_L =			\
   parser/utoken.cc
 
 CLEANFILES += parser/utoken.stamp
-dist_libuobject_la_SOURCES += parser/flex-lexer.hh
-nodist_libuobject_la_SOURCES += $(FROM_UTOKEN_L)
+dist_libuobject@LIBSFX@_la_SOURCES += parser/flex-lexer.hh
+nodist_libuobject@LIBSFX@_la_SOURCES += $(FROM_UTOKEN_L)
 
 EXTRA_DIST += parser/utoken.l
 utoken_deps = $(FLEXXX_IN) parser/local.mk

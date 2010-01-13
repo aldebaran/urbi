@@ -15,8 +15,8 @@ endif BUILD_PROGRAMS
 
 # ast-dump.
 dist_bin_ast_dump_SOURCES = bin/ast-dump.cc
-bin_ast_dump_CPPFLAGS = $(libuobject_la_CPPFLAGS)
-bin_ast_dump_LDADD = libuobject.la
+bin_ast_dump_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
+bin_ast_dump_LDADD = libuobject$(LIBSFX).la
 
 # urbi.
 bin_PROGRAMS += bin/urbi
@@ -26,15 +26,15 @@ bin_urbi_SOURCES = bin/urbi.cc ../sdk-remote/src/bin/urbi-root.cc
 
 # urbi-parse.
 dist_bin_urbi_parse_SOURCES = bin/urbi-parse.cc
-bin_urbi_parse_CPPFLAGS = $(libuobject_la_CPPFLAGS)
-bin_urbi_parse_LDADD = libuobject.la
+bin_urbi_parse_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
+bin_urbi_parse_LDADD = libuobject$(LIBSFX).la
 
 # urbi-pp.
 dist_bin_urbi_pp_SOURCES = bin/urbi-pp.cc
-bin_urbi_pp_CPPFLAGS = $(libuobject_la_CPPFLAGS)
-bin_urbi_pp_LDADD = libuobject.la
+bin_urbi_pp_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
+bin_urbi_pp_LDADD = libuobject$(LIBSFX).la
 
 # urbi-compile.
 dist_bin_urbi_compile_SOURCES = bin/urbi-compile.cc
-bin_urbi_compile_CPPFLAGS = $(libuobject_la_CPPFLAGS)
-bin_urbi_compile_LDADD = libuobject.la
+bin_urbi_compile_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
+bin_urbi_compile_LDADD = libuobject$(LIBSFX).la

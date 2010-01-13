@@ -2,7 +2,7 @@
 ## List of used symbols.  ##
 ## ---------------------- ##
 
-nodist_libuobject_la_SOURCES += 		\
+nodist_libuobject@LIBSFX@_la_SOURCES += 		\
   $(precompiled_symbols_hh)
 
 # We generated this file in builddir so that we can have a single
@@ -19,7 +19,7 @@ precompiled_symbols_hh_sources =		\
                $(FROM_UGRAMMAR_Y)		\
                $(FROM_UTOKEN_L)			\
 	       ast/ignores,			\
-        $(dist_libuobject_la_SOURCES))
+        $(dist_libuobject@LIBSFX@_la_SOURCES))
 EXTRA_DIST += object/symbols-generate.pl
 
 $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_hh_sources)
@@ -60,7 +60,7 @@ FROM_PY =							\
   $(top_builddir)/include/urbi/object/cxx-primitive.hxx		\
   $(top_builddir)/include/urbi/object/executable.hh
 
-nodist_libuobject_la_SOURCES += $(FROM_PY)
+nodist_libuobject@LIBSFX@_la_SOURCES += $(FROM_PY)
 EXTRA_DIST += $(FROM_PY:=.py)
 
 %.hxx: %.hxx.py
@@ -81,7 +81,7 @@ EXTRA_DIST += $(FROM_PY:=.py)
 ## Regular sources.  ##
 ## ----------------- ##
 
-dist_libuobject_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=			\
   object/barrier.cc				\
   object/centralized-slots.cc			\
   object/code.cc				\
@@ -129,7 +129,7 @@ dist_libuobject_la_SOURCES +=			\
   object/vector-slots.hxx
 
 if !COMPILATION_MODE_SPACE
-  dist_libuobject_la_SOURCES +=			\
+  dist_libuobject@LIBSFX@_la_SOURCES +=			\
     object/format-info.cc                       \
     object/format-info.hh                       \
     object/format-info.hxx                      \
@@ -148,7 +148,7 @@ if !COMPILATION_MODE_SPACE
 
 # Too hard currently...
 if !WIN32
-  dist_libuobject_la_SOURCES +=			\
+  dist_libuobject@LIBSFX@_la_SOURCES +=			\
     object/process.cc				\
     object/process.hh
 endif

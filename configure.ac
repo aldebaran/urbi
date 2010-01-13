@@ -34,7 +34,6 @@ URBI_REQUIRE_PROGS([CONVERT], [convert], [ImageMagick])
 URBI_REQUIRE_PROGS([DOT],     [dot],     [GraphViz])
 URBI_REQUIRE_PROGS([PDFCROP], [pdfcrop], [TeXlive])
 
-
 ## ------------- ##
 ## Compilation.  ##
 ## ------------- ##
@@ -141,6 +140,7 @@ BOOST_TOKENIZER([$boost_rt_opt])
 URBI_LIBPORT([sdk-remote/libport])
 URBI_PTHREAD
 URBI_SOCKETS
+URBI_LIB_SUFFIX
 
 WITH_XENOMAI
 # object/directory.

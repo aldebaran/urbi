@@ -1,4 +1,4 @@
-dist_libuobject_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=			\
   kernel/connection.cc				\
   kernel/connection.hh				\
   kernel/connection-set.cc			\
@@ -29,7 +29,7 @@ dist_libuobject_la_SOURCES +=			\
 ## kernel/urbi-sdk-key.hh.  ##
 ## ------------------------ ##
 
-nodist_libuobject_la_SOURCES +=			\
+nodist_libuobject@LIBSFX@_la_SOURCES +=			\
   kernel/urbi-sdk-key.hh
 dist_noinst_SCRIPTS += kernel/generate-urbi-sdk-key-hh
 kernel/urbi-sdk-key.hh: $(top_srcdir)/urbi-sdk.key
