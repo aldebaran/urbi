@@ -16,11 +16,15 @@ Changes
 - Lobby.quit replaces System.quit.
 - Lobby.wall replaces Global.wall.
 - Socket.connect accepts integers
+- UObject remote notifyChange on USensor variable now works as expected.
+- UObject timers can now be removed with UObject::removeTimer().
 
 Documentation
 =============
 
 - Socket provides a complete example.
+- The Naming Standard documents the support classes provided to ease
+  creation of the component hierarchy.
 
 ***************************
 * New in kernel 2.0 RC 2. *
