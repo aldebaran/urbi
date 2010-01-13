@@ -14,7 +14,6 @@ Changes
 =======
 
 - Lobby.quit replaces System.quit.
-- Lobby.wall replaces Global.wall.
 - Socket.connect accepts integers
 - UObject remote notifyChange on USensor variable now works as expected.
 - UObject timers can now be removed with UObject::removeTimer().

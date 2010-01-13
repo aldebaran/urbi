@@ -45,7 +45,12 @@ do (Global)
     }
   };
 
+  // Bounce 'echo' and 'wall' to the same slots in lobby.
   function echo
+  {
+    lobby.callMessage(call);
+  };
+  function wall
   {
     lobby.callMessage(call);
   };
