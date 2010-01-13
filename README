@@ -130,16 +130,21 @@ package: texinfo
 ** yaml for Python
 The AST is generated from a description written in YAML.  Our (Python)
 tools need to read these files to generate the AST classes.  See
-http://pyyaml.org/wiki/PyYAML.  The procedure is:
+http://pyyaml.org/wiki/PyYAML.  The installation procedure on CygWin
+is:
 
    cd /tmp
    wget http://pyyaml.org/download/pyyaml/PyYAML-3.09.zip
    unzip PyYAML-3.09.zip
-   cd pyYAML-3.09.zip
+   cd pyYAML-3.09
    python setup.py install
 
 MacPorts: py26-yaml
 deb:   python-yaml
+
+At least on OS X you also need to specify the PYTHONPATH:
+
+  export PYTHONPATH=/opt/local/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/site-packages:$PYTHONPATH
 
 ** socat
 Needed by the test suite.
