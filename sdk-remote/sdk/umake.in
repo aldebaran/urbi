@@ -1,5 +1,5 @@
 @UMAKE_COMMON@
-
+LIBSFX=@LIBSFX@
 usage ()
 {
   cat <<EOF
@@ -322,7 +322,7 @@ esac
 if $shared; then
   case $host in
       (*pw32*|*mingw32*)
-      append LIBADD '-no-undefined ${envdir}/libuobject.la'
+      append LIBADD '-no-undefined ${envdir}/libuobject$LIBSFX.la'
       ;;
   esac
 fi
@@ -352,7 +352,7 @@ if test -z "$LIBNAME"; then
        UMAKE_LIBNAME=libuobject;;
     (fullengine)
        UMAKE_LIBNAME=libuobject
-       UMAKE_EXTRALIB="${libdir}/liburbi.la ${libdir}/libjpeg.la"
+       UMAKE_EXTRALIB="${libdir}/liburbi$LIBSFX.la ${libdir}/libjpeg$LIBSFX.la"
        core=engine;;
     (aibo)
        UMAKE_LIBNAME=libaibo;;

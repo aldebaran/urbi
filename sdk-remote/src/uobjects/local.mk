@@ -7,7 +7,7 @@ CLEANFILES += $(uobjects_DATA) $(uobjects_DATA:$(DLMODEXT)=.la)
 
 UMAKE_SHARED = tests/bin/umake-shared
 
-%$(DLMODEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject.la
+%$(DLMODEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject$(LIBSFX).la
 	$(UMAKE_SHARED) --clean --output=$@ $<
 ## umake has dependencies support, so it might not recompile here, in
 ## which case, if this was triggered because of $(UMAKE_SHARED) we

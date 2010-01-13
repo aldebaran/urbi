@@ -309,7 +309,7 @@ UrbiRoot::library_load(const std::string& base)
     xdlopen(program_,
             base,
             xgetenv(envvar,
-                    root(libdir / "lib" + base)));
+                    root(libdir / "lib" + base + LIBPORT_LIBSFX)));
 }
 
 std::string
@@ -341,7 +341,8 @@ UrbiRoot::load_plugin()
 {
   handle_libuobject_ = xdlopen(program_,
                                "plugin UObject implementation",
-                               core_path() / "engine" / "libuobject");
+                               core_path() / "engine"
+                               / "libuobject" LIBPORT_LIBSFX);
 }
 
 /// Location of Urbi remote libuobject
@@ -350,7 +351,8 @@ UrbiRoot::load_remote()
 {
   handle_libuobject_ = xdlopen(program_,
                                "remote UObject implementation",
-                               core_path() / "remote" / "libuobject");
+                               core_path() / "remote"
+                               / "libuobject" LIBPORT_LIBSFX);
 }
 
 void
@@ -358,7 +360,7 @@ UrbiRoot::load_custom(const std::string& path_)
 {
   handle_libuobject_ = xdlopen(program_,
                                "custom UObject implementation",
-                               path_ / "libuobject");
+                               path_ / "libuobject" LIBPORT_LIBSFX);
 }
 
 typedef int(*urbi_launch_type)(int, const char*[], UrbiRoot&);

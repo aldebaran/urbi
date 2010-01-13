@@ -165,7 +165,9 @@ fi
 ## -------- ##
 ## Output.  ##
 ## -------- ##
+URBI_LIB_SUFFIX
 
+URBI_APPEND_CONFIGUREFLAGS([LIBSFX=$LIBSFX])
 AC_CONFIG_SUBDIRS([libport])
 
 AC_CONFIG_FILES([

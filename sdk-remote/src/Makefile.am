@@ -11,7 +11,7 @@ endif
 
 # libjpeg.
 JPEG_CPPFLAGS = -I$(top_srcdir)/jpeg -I$(top_builddir)/jpeg
-JPEG_LIBS = $(top_builddir)/jpeg/libjpeg.la
+JPEG_LIBS = $(top_builddir)/jpeg/libjpeg$(LIBSFX).la
 
 AM_CPPFLAGS +=					\
   $(LIBPORT_CPPFLAGS)				\
@@ -30,7 +30,7 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 # To be linked in all the executables (urbi-launch, examples/ etc.).
 AM_LDADD =					\
-  liburbi/liburbi.la				\
+  liburbi/liburbi$(LIBSFX).la				\
   $(JPEG_LIBS)					\
   $(PTHREAD_LIBS)				\
   $(LIBPORT_LIBS)

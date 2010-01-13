@@ -20,4 +20,4 @@ utils_urbi_walk_SOURCES =			\
   utils/move.hh
 utils_urbi_walk_LDADD =				\
   $(JPEG_LIBS)					\
-  liburbi/liburbi.la
+  liburbi/liburbi$(LIBSFX).la
