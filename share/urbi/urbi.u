@@ -61,7 +61,6 @@ load("urbi/math.u");
 load("urbi/group.u");
 load("urbi/binary.u");
 load("urbi/profiling.u");
-load("urbi/position.u");
 load("urbi/loadable.u");
 load("urbi/location.u");
 load("urbi/tuple.u");

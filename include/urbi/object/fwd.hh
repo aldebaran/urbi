@@ -51,6 +51,7 @@ namespace urbi
     Macro(Path);                                \
     Macro(Primitive);                           \
     Macro(Process);                             \
+    Macro(Position);                            \
     Macro(Regexp);                              \
     Macro(Semaphore);                           \
     Macro(Server);                              \

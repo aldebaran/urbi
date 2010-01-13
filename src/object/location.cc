@@ -24,8 +24,8 @@ namespace urbi
       rObject loc =
         Location
         ->call("new",
-               object::Position(l.begin),
-               object::Position(l.end));
+               new object::Position(l.begin),
+               new object::Position(l.end));
       return loc;
     }
 

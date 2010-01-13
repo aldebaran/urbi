@@ -161,6 +161,42 @@ namespace urbi
 #undef S
     }
 
+    template <typename C, typename T>
+    static rObject
+    refgetter(libport::intrusive_ptr<C> self, T* (C::* ref)())
+    {
+      return to_urbi(*((self.get()->*ref)()));
+    }
+
+    template <typename C, typename T>
+    static rObject
+    refsetter(T* (C::* ref)(), libport::intrusive_ptr<C> self,
+           const std::string&, const T& value)
+    {
+      *((self.get()->*ref)()) = value;
+      return 0;
+    }
+
+    template <typename T>
+    template <typename A>
+    void
+    CxxObject::Binder<T>::var(const libport::Symbol& name,
+                              A* (T::*ref)())
+    {
+      using libport::intrusive_ptr;
+
+      typedef boost::function1<rObject, intrusive_ptr<T> > urbi_getter_type;
+      typedef boost::function3<rObject, intrusive_ptr<T>, const std::string&, const A&> urbi_setter_type;
+
+      urbi_getter_type get(boost::bind(&refgetter<T, A>, _1, ref));
+      tgt_->slot_set(name, make_primitive(get), true);
+
+      urbi_setter_type set(boost::bind(&refsetter<T, A>, ref, _1, _2, _3));
+#define S(Name) Symbol(#Name)
+      tgt_->property_set(name, libport::S(updateHook), make_primitive(set));
+#undef S
+    }
+
     template<typename T>
     inline libport::intrusive_ptr<T>
     type_check(const rObject& o,

@@ -141,6 +141,8 @@ namespace urbi
         void operator()(const libport::Symbol& name, M method);
         template <typename A>
         void var(const libport::Symbol& name, A (T::*attr));
+        template <typename A>
+        void var(const libport::Symbol& name, A* (T::*ref)());
         rObject proto() { return tgt_; }
 
       private:
