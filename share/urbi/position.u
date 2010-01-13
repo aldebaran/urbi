@@ -13,6 +13,9 @@ class Global.Position
 
   function asString()
   {
-    file.asString + ":" + line + "." + column;
+    if (!file.isNil)
+      file.asString + ":" + line + "." + column
+    else
+      "" + line + "." + column
   }
 };

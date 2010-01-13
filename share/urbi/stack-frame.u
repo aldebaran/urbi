@@ -11,6 +11,9 @@ class Global.StackFrame
 
   function asString()
   {
-    location.asString + ": " + name.asString
+    if (!location.isNil)
+      location.asString + ": " + name.asString
+    else
+      name.asString
   }
 };

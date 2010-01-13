@@ -46,6 +46,7 @@
 #include <urbi/object/cxx-conversions.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/lobby.hh>
+#include <urbi/object/location.hh>
 #include <urbi/object/task.hh>
 
 namespace runner
@@ -304,15 +305,13 @@ namespace runner
     backtrace_type res;
     foreach (call_type c, call_stack_)
     {
-      std::ostringstream o;
+      rObject loc = object::nil_class;
       if (c.second)
-        o << c.second.get();
-      rObject loc =
+        loc = object::Location(c.second.get());
+      rObject frame =
         StackFrame
-        ->call("new",
-               new object::String(c.first.name_get()),
-               new object::String(o.str()));
-      res.push_back(frame_type(loc));
+        ->call("new", new object::String(c.first.name_get()), loc);
+      res.push_back(frame_type(frame));
     }
     return res;
   }

@@ -101,10 +101,12 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
   object/hash-slots.hxx				\
   object/list.cc				\
   object/lobby.cc				\
+  object/location.cc				\
   object/object-class.cc			\
   object/object-class.hh			\
   object/object.cc				\
   object/path.cc				\
+  object/position.cc				\
   object/primitive.cc				\
   object/root-classes.cc			\
   object/root-classes.hh			\

@@ -63,6 +63,7 @@ load("urbi/binary.u");
 load("urbi/profiling.u");
 load("urbi/position.u");
 load("urbi/loadable.u");
+load("urbi/location.u");
 load("urbi/tuple.u");
 load("urbi/dictionary.u");
 load("urbi/weak-pointer.u");
