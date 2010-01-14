@@ -142,7 +142,7 @@ namespace urbi
     {
       if (!pos_.filename)
         return nil_class;
-      return to_urbi(*pos_.filename);
+      return to_urbi<libport::path>(pos_.filename->name_get());
     }
 
     void
