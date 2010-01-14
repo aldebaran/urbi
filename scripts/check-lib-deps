@@ -304,7 +304,10 @@ sub check($)
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
   for my $loc (dependencies($lib))
     {
-      $loc = Cwd::realpath($loc);
+      # If this is really a path (e.g., not using @loader_path), get
+      # rid of symlinks.
+      $loc = Cwd::realpath($loc)
+        if -f $loc;
       if ($loc =~ m($re))
         {
           $loc{$loc} = 1;
