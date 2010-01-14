@@ -11,9 +11,14 @@ include document-aux/make/tex.mk
 
 # img/.
 DOT_IMAGES = $(call ls_files,img/*.dot)
-PDF_IMAGES = $(call ls_files,img/*.pdf) $(DOT_IMAGES:.dot=.pdf)
+PNG_IMAGES = $(call ls_files,img/*.png)
+PDF_IMAGES =					\
+  $(call ls_files,img/*.pdf)			\
+  $(share_dir)/figs/gostai.pdf			\
+  $(share_dir)/figs/urbi.pdf			\
+  $(DOT_IMAGES:.dot=.pdf)
 EXTRA_DIST += $(call ls_files,img/*)
-EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps)
+EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps) $(PNG_IMAGES:.png=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
 # Find local *.sty files, workaround some strange behavior of texi2dvi
@@ -66,6 +71,10 @@ view: $(pdf_DATA)
 	xpdf $<
 
 %.eps: %.pdf
+	-mkdir -p $(dir $@)
+	$(CONVERT) "$<" "$@"
+
+%.eps: %.png
 	-mkdir -p $(dir $@)
 	$(CONVERT) "$<" "$@"
 
@@ -122,11 +131,12 @@ html_files =					\
   urbi-sdk3x.png				\
   urbi-sdk4x.png				\
   urbi-sdk5x.png				\
-  urbi-sdk6x.png
+  urbi-sdk6x.png				\
+  urbi-sdk7x.png
 doc_host = downloads@www.gostai.com
 doc_dir = gostai.com-downloads/urbi-sdk-2.0
-doc_files = $(pdf_DATA) # $(html_files)
-install-doc: $(pdf_DATA) # urbi-sdk.html
+doc_files = $(pdf_DATA) $(html_files)
+install-doc: $(pdf_DATA) urbi-sdk.html
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
 # compilation seems to prefer *.png to *.pdf, which is wrong here.
