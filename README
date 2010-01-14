@@ -41,7 +41,7 @@ package: autoconf automake
 Needed by the test suite.
 package: bc
 
-** Boost 1.37 or later
+** Boost 1.39 or later
 Don't try to build it yourself, ask your distro's management to
 install it.
 deb: libboost-devel
