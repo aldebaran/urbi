@@ -1,6 +1,16 @@
+% \begin{attribute}{name}{permissions}{type}{range}
+%   Documentation.
+% \end{attribute}
 \newenvironment{attribute}[4]
 {
-  \item \lstinline|#1|
+  % Because of a bug in TeX4HT, we cannot use this embedded \item (in
+  % the output, it keeps on embedding descriptions within
+  % descriptions).
+  %
+  % When fixed, we can restore this \item, and remove all the ones
+  % that were added before each \begin{attribute}.
+  %
+  % \item \lstinline|#1|
     \begin{description}
     \item[Permissions] #2.
     \item[Type] #3.
@@ -421,6 +431,7 @@ components in \webots, disabling one of the component (by setting the
 \paragraph{Additional slots}
 
 \begin{itemize}
+\item \lstinline{near}
 \begin{attribute}{near}
   {read only}
   {Float}
@@ -429,6 +440,7 @@ components in \webots, disabling one of the component (by setting the
   plane.
 \end{attribute}
 
+\item \lstinline|far|
 \begin{attribute}{far}
   {read only}
   {Float}
@@ -459,6 +471,7 @@ represented as separated motors in \urbi.
 
 \begin{itemize}
 
+\item \lstinline|encoder|
 \begin{attribute}{encoder}
   {read / write}
   {Float}
@@ -487,6 +500,7 @@ you instanciate both left and right objects.
 \paragraph{Additional slots}
 
 \begin{itemize}
+\item \lstinline|factor|
 \begin{attribute}{factor}
   {read / write}
   {Float}
@@ -572,6 +586,7 @@ you instanciate both left and right objects.
 
 % \noindent
 % \begin{itemize}
+% \item \lstinline{bufferSize}
 % \begin{attribute}{bufferSize}
 %   {readable, writeable}
 %   {float}
@@ -588,6 +603,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{channel}
 % \begin{attribute}{channel}
 %   {readable, writeable}
 %   {float}
@@ -606,6 +622,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{range}
 % \begin{attribute}{range}
 %   {readable, writeable}
 %   {float}
@@ -623,6 +640,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{rawMode}
 % \begin{attribute}{rawMode}
 %   {readable, writeable}
 %   {float}
@@ -652,6 +670,7 @@ you instanciate both left and right objects.
 
 % \noindent
 % \begin{description}
+% \item \lstinline{load}
 % \begin{attribute}{load}
 %   {readable, writeable}
 %   {float}
@@ -677,6 +696,7 @@ you instanciate both left and right objects.
 % file).
 % \end{attribute}
 
+% \item \lstinline{val}
 % \begin{attribute}{val}
 %   {readable}
 %   {float}
@@ -696,6 +716,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{angle}
 % \begin{attribute}{angle}
 %   {readable}
 %   {float}
@@ -735,6 +756,7 @@ you instanciate both left and right objects.
 
 % \noindent
 % \begin{itemize}
+% \item \lstinline{val}
 % \begin{attribute}{val}
 %   {readable, writeable}
 %   {float}
@@ -749,6 +771,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{resistivity}
 % \begin{attribute}{resistivity}
 %   {readable}
 %   {float}
@@ -779,6 +802,7 @@ you instanciate both left and right objects.
 
 % \noindent
 % \begin{itemize}
+% \item \lstinline{load}
 % \begin{attribute}{load}
 %   {readable, writeable}
 %   {float}
@@ -799,6 +823,7 @@ you instanciate both left and right objects.
 % file).
 % \end{attribute}
 
+% \item \lstinline{val}
 % \begin{attribute}{val}
 %   {readable}
 %   {float}
@@ -840,6 +865,7 @@ you instanciate both left and right objects.
 
 % \noindent
 % \begin{itemize}
+% \item \lstinline{load}
 % \begin{attribute}{load}
 %   {readable, writeable}
 %   {float}
@@ -860,6 +886,7 @@ you instanciate both left and right objects.
 % file).
 % \end{attribute}
 
+% \item \lstinline{val}
 % \begin{attribute}{val}
 %   {readable}
 %   {float}
@@ -897,6 +924,7 @@ you instanciate both left and right objects.
 % \paragraph{Attributes}
 
 % \begin{itemize}
+% \item \lstinline{val}
 % \begin{attribute}{val}
 %   {readable, writeable}
 %   {float}
@@ -959,6 +987,7 @@ you instanciate both left and right objects.
 % \paragraph{Attributes}
 
 % \begin{itemize}
+% \item \lstinline{load}
 % \begin{attribute}{load}
 %   {readable, writeable}
 %   {float}
@@ -979,6 +1008,7 @@ you instanciate both left and right objects.
 % file).
 % \end{attribute}
 
+% \item \lstinline{channel}
 % \begin{attribute}{channel}
 %   {readable, writeable}
 %   {float}
@@ -994,6 +1024,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{dataSize}
 % \begin{attribute}{dataSize}
 %   {readable}
 %   {float}
@@ -1011,6 +1042,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{emitterDirection}
 % \begin{attribute}{emitterDirection}
 %   {readable}
 %   {list of 3 float values}
@@ -1026,6 +1058,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{queueLength}
 % \begin{attribute}{queueLength}
 %   {readable}
 %   {float}
@@ -1039,6 +1072,7 @@ you instanciate both left and right objects.
 % \end{cxx}
 % \end{attribute}
 
+% \item \lstinline{rawMode}
 % \begin{attribute}{rawMode}
 %   {readable, writeable}
 %   {float}
@@ -1049,6 +1083,7 @@ you instanciate both left and right objects.
 %   emitter emit non Urbi data.
 % \end{attribute}
 
+% \item \lstinline{signalStrength}
 % \begin{attribute}{signalStrength}
 %   {readable}
 %   {float}
@@ -1081,6 +1116,7 @@ you instanciate both left and right objects.
 
 % \noindent
 % \begin{itemize}
+% \item \lstinline{val}
 % \begin{attribute}{val}
 %   {readable}
 %   {string}
@@ -1110,6 +1146,7 @@ you instanciate both left and right objects.
 \paragraph{Additional slots}
 
 \begin{itemize}
+\item \lstinline{force}
 \begin{attribute}{force}
   {read only}
   {Float}
@@ -1152,24 +1189,28 @@ enable to control the simulation in an omnipotent manner.
 \paragraph{Slots}
 
 \begin{itemize}
+\item \lstinline{txt}
 \begin{attribute}{txt}
   {read / write}
   {String}
   {}
   Displayed text.
 \end{attribute}
+\item \lstinline{x, y}
 \begin{attribute}{x, y}
   {read / write}
   {Float}
   {}
   Coordinates of the label on the screen.
 \end{attribute}
+\item \lstinline{r, g, b, a}
 \begin{attribute}{r, g, b, a}
   {read / write}
   {Float}
   {0, 1}
   Red, blue, green and alpha components of the label's text color.
 \end{attribute}
+\item \lstinline{size}
 \begin{attribute}{size}
   {read / write}
   {Float}
@@ -1191,12 +1232,14 @@ enable to control the simulation in an omnipotent manner.
 \paragraph{Slots}
 
 \begin{itemize}
+\item \lstinline{tx, ty, tz}
 \begin{attribute}{tx, ty, tz}
   {read / write}
   {Float}
   {}
   Applied translation on the three axis.
 \end{attribute}
+\item \lstinline{ax, ay, az}
 \begin{attribute}{ax, ay, az}
   {read / write}
   {Float}
@@ -1210,7 +1253,6 @@ enable to control the simulation in an omnipotent manner.
 \paragraph{Constructor:} SimulationController.new()
 
 \paragraph{Slots}
-
 
 \begin{itemize}
 \item physicsReset() \\
