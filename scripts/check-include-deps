@@ -56,6 +56,9 @@ use strict;
 # The base directory where dependencies will be copied into.
 my $includedir;
 
+# The prefix for the log messages.
+my $me = basename($0);
+
 # A hash whose keys are paths of needed files.
 my %needed;
 
@@ -71,7 +74,7 @@ Report the C<@message> is C<$level> E<lt>= C<$verbose>.
 sub verbose($@)
 {
   my ($level, @message) = @_;
-  map { print STDERR "$0: $_\n" } @message
+  map { print STDERR "$me: $_\n" } @message
     if $level <= $verbose;
 }
 
@@ -80,7 +83,7 @@ sub wanted
   if ($File::Find::name =~ m(\.deps\/[^/]*\.Plo\z)s)
     {
       my $in = new IO::File("$_")
-        or die "cannot open $File::Find::name: $!";
+        or die "$me: cannot open $File::Find::name: $!\n";
       while (my $line = $in->getline)
         {
           if ($line =~ m((.*/(boost/.*)):$))
@@ -133,10 +136,10 @@ sub getopt ()
   GetOptions (%option)
     or exit 1;
 
-  die "passing --include-dir is mandatory\n"
+  die "$me: passing --include-dir is mandatory\n"
     unless defined $includedir;
 
-  warn "--include-dir does not end with `/include': $includedir\n"
+  warn "$me: --include-dir does not end with `/include': $includedir\n"
     unless $includedir =~ /\/include$/;
 }
 
@@ -154,11 +157,11 @@ map
     {
       verbose 2, "mkdir -p $to";
       mkpath $to
-        or die "cannot mkpath $to: $!";
+        or die "$me: cannot mkpath $to: $!\n";
     }
 
   copy "$_", "$to"
-    or die "cannot copy `$_' to `$to': $!";
+    or die "$me: cannot copy `$_' to `$to': $!\n";
 }
 sort keys %needed;
 

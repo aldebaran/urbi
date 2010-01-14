@@ -83,6 +83,9 @@ my $destdir;
 # Accepted resolved libraries.
 my %loc;
 
+# The prefix for the log messages.
+my $me = basename($0);
+
 # Number of errors.
 my $nerrors = 0;
 
@@ -101,7 +104,7 @@ Report the C<@message> is C<$level> E<lt>= C<$verbose>.
 sub verbose($@)
 {
   my ($level, @message) = @_;
-  map { print STDERR "$0: " . "  " x $level . "$_\n" } @message
+  map { print STDERR "$me: " . "  " x $level . "$_\n" } @message
     if $level <= $verbose;
 }
 
@@ -128,7 +131,7 @@ sub dependencies ($)
   if ($OSNAME eq 'darwin')
     {
       my $deps = new IO::File("otool -L $lib|")
-        or die "$0: cannot read otool -L $lib: $!";
+        or die "$me: cannot read otool -L $lib: $!\n";
       while (my $line = $deps->getline)
         {
           chomp $line;
@@ -147,7 +150,7 @@ sub dependencies ($)
   else
     {
       my $ldd = new IO::File("ldd $lib|")
-        or die "$0: cannot read ldd $lib: $!";
+        or die "$me: cannot read ldd $lib: $!\n";
       while (my $line = $ldd->getline)
         {
           chomp $line;
@@ -171,19 +174,19 @@ sub xsystem (@)
 
   verbose 2, "Running: @args";
   system(@args) == 0
-    or die "$0: system @args failed: $?";
+    or die "$me: system @args failed: $?\n";
   if ($? == -1)
     {
-      die "$0: failed to execute: $!\n";
+      die "$me: failed to execute: $!\n";
     }
   elsif ($? & 127)
     {
-      die sprintf ("$0: child died with signal %d, %s coredump\n",
+      die sprintf ("$me: child died with signal %d, %s coredump\n",
                    ($? & 127),  ($? & 128) ? 'with' : 'without');
     }
   elsif ($? >> 8)
     {
-      die sprintf "$0: child exited with value %d\n", $? >> 8;
+      die sprintf "$me: child exited with value %d\n", $? >> 8;
     }
 }
 
@@ -242,7 +245,7 @@ sub relocate ($)
       my $rpath = qx(chrpath -l $lib);
       if ($?)
         {
-          warn "$0: chrpath -l $lib failed: $?";
+          warn "$me: chrpath -l $lib failed: $?";
         }
       else
         {
@@ -300,7 +303,7 @@ sub check($)
         }
       else
         {
-          print STDERR "$0: error: $lib depends on $loc\n";
+          print STDERR "$me: error: $lib depends on $loc\n";
           ++$nerrors;
         }
     }
@@ -338,10 +341,10 @@ sub getopt ()
   GetOptions (%option)
     or exit 1;
 
-  die "$0: passing --destdir is mandatory\n"
+  die "$me: passing --destdir is mandatory\n"
     unless defined $destdir;
 
-  die "$0: passing --prefix is mandatory\n"
+  die "$me: passing --prefix is mandatory\n"
     unless defined $prefix;
 
   # DESTDIR must not end with slashes.
