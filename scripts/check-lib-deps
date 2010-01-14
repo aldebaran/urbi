@@ -135,7 +135,11 @@ sub dependencies ($)
       while (my $line = $deps->getline)
         {
           chomp $line;
-          if ($line =~ /^\t(.*?)\s+\(.*\)$/)
+          if ($line eq "$lib:")
+            {
+              # Ignore silently.
+            }
+          elsif ($line =~ /^\t(.*?)\s+\(.*\)$/)
             {
               # On OS X, a library appears to depend on itself.
               push @res, $1
@@ -143,7 +147,7 @@ sub dependencies ($)
             }
           else
             {
-              verbose 2, "ignoring $line";
+              verbose 2, "ignoring the following otool output line:", $line;
             }
         }
     }
@@ -160,6 +164,10 @@ sub dependencies ($)
               my ($dep, $loc) = ($1, $2);
               push @res, $loc
                 if $loc;
+            }
+          else
+            {
+              verbose 2, "ignoring the following ldd output line:", $line;
             }
         }
     }
