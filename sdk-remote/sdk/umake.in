@@ -322,7 +322,7 @@ esac
 if $shared; then
   case $host in
       (*pw32*|*mingw32*)
-      append LIBADD '-no-undefined ${envdir}/libuobject$LIBSFX.la'
+      append LIBADD "-no-undefined \${envdir}/libuobject$LIBSFX.la"
       ;;
   esac
 fi
