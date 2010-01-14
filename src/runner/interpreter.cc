@@ -307,7 +307,7 @@ namespace runner
     {
       rObject loc = object::nil_class;
       if (c.second)
-        loc = object::Location(c.second.get());
+        loc = new object::Location(c.second.get());
       rObject frame =
         StackFrame
         ->call("new", new object::String(c.first.name_get()), loc);

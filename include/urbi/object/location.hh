@@ -13,6 +13,7 @@
 
 # include <ast/loc.hh>
 
+# include <urbi/object/position.hh>
 # include <urbi/object/cxx-object.hh>
 
 namespace urbi
@@ -20,8 +21,79 @@ namespace urbi
   namespace object
   {
 
-    /// Convertion an AST location \a l into urbi class Global.Location.
-    rObject Location(const ::ast::loc& l);
+    class Location: public CxxObject
+    {
+
+    /*---------------.
+    | Construction.  |
+    `---------------*/
+
+    public:
+      typedef ::ast::loc value_type;
+      Location();
+      Location(const value_type& loc);
+      Location(rLocation model);
+      void init(const objects_type& args);
+
+    /*--------------.
+    | Conversions.  |
+    `--------------*/
+
+    public:
+      std::string as_string() const;
+
+      inline value_type& value_get()
+      {
+        return loc_;
+      }
+
+    /*-----------.
+    | Accessor.  |
+    `-----------*/
+
+    private:
+      inline Position::value_type* begin_ref()
+      {
+        return &loc_.begin;
+      };
+
+      inline Position::value_type* end_ref()
+      {
+        return &loc_.end;
+      };
+
+    /*----------.
+    | Details.  |
+    `----------*/
+
+    private:
+      value_type loc_;
+
+      URBI_CXX_OBJECT_(Location);
+    };
+
+
+    /*-------------.
+    | ::ast::loc.  |
+    `-------------*/
+
+    template <>
+    struct CxxConvert<Location::value_type>
+    {
+      typedef Location::value_type target_type;
+      static target_type
+      to(const rObject& o, unsigned idx)
+      {
+        type_check<Location>(o, idx);
+        return o->as<Location>()->value_get();
+      }
+
+      static rObject
+      from(target_type v)
+      {
+        return new Location(v);
+      }
+    };
 
   } // namespace object
 } // namespace urbi

@@ -30,7 +30,7 @@ namespace urbi
     public:
       typedef ::yy::position value_type;
       Position();
-      Position(value_type pos);
+      Position(const value_type& pos);
       Position(libport::Symbol* f, unsigned int l, unsigned int c);
       Position(rPosition model);
       void init(const objects_type& args);
@@ -62,6 +62,11 @@ namespace urbi
     public:
       std::string as_string() const;
 
+      inline value_type& value_get()
+      {
+        return pos_;
+      }
+
     /*-----------.
     | Accessor.  |
     `-----------*/
@@ -89,6 +94,30 @@ namespace urbi
 
       URBI_CXX_OBJECT_(Position);
     };
+
+
+    /*-----------------.
+    | ::yy::position.  |
+    `-----------------*/
+
+    template <>
+    struct CxxConvert<Position::value_type>
+    {
+      typedef Position::value_type target_type;
+      static target_type
+      to(const rObject& o, unsigned idx)
+      {
+        type_check<Position>(o, idx);
+        return o->as<Position>()->value_get();
+      }
+
+      static rObject
+      from(target_type v)
+      {
+        return new Position(v);
+      }
+    };
+
 
   } // namespace object
 } // namespace urbi

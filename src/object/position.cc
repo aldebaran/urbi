@@ -32,12 +32,11 @@ namespace urbi
       proto_add(proto ? proto : Object::proto);
     }
 
-    Position::Position(value_type pos)
+    Position::Position(const value_type& pos)
       : pos_(pos)
     {
       proto_add(proto ? proto : Object::proto);
     }
-
 
     Position::Position(libport::Symbol* f, unsigned int l, unsigned int c)
       : pos_(f, l, c)
@@ -59,9 +58,6 @@ namespace urbi
       check_arg_count(args.size(), 0, 3);
       switch (args.size())
       {
-      case 0:
-        pos_ = value_type();
-        return;
       case 1:
         pos_ = type_check<Position>(args[0])->pos_;
         return;
@@ -147,7 +143,7 @@ namespace urbi
       if (!pos_.filename)
         return nil_class;
       return to_urbi(*pos_.filename);
-    };
+    }
 
     void
     Position::file_set(rObject o)
@@ -158,7 +154,7 @@ namespace urbi
       if (o != nil_class)
         pos_.filename =
           new libport::Symbol(from_urbi<std::string>(o));
-    };
+    }
 
     /*-----------------.
     | Binding system.  |

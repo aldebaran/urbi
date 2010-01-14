@@ -47,6 +47,7 @@ namespace urbi
     Macro(InputStream);                         \
     Macro(List);                                \
     Macro(Lobby);                               \
+    Macro(Location);                            \
     Macro(OutputStream);                        \
     Macro(Path);                                \
     Macro(Primitive);                           \
