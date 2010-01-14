@@ -293,6 +293,7 @@ sub check($)
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
   for my $loc (dependencies($lib))
     {
+      $loc = Cwd::realpath($loc);
       if ($loc =~ m($re))
         {
           $loc{$loc} = 1;
