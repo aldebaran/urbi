@@ -643,10 +643,25 @@ namespace ast
   {
     rCall tmp = make_call(lvalue->location_get(), SYMBOL(DOLLAR_tmp));
 
-    if (lvalue->call()->target_implicit())
-      return lvalue.get();
-    else
-      return make_call(lvalue->location_get(), tmp, lvalue->call()->name_get());
+    if (rCall call = dynamic_cast<Call*>(lvalue.get()))
+    {
+      if (call->target_implicit())
+        return lvalue.get();
+      else
+        return make_call(lvalue->location_get(), tmp, call->name_get());
+    }
+    else if (rSubscript sub = dynamic_cast<Subscript*>(lvalue.get()))
+    {
+      unsigned int i = 0;
+      exps_type* args = new ast::exps_type();
+      foreach(rExp e, *sub->arguments_get())
+        args->push_back(make_call(lvalue->location_get(), libport::Symbol(libport::format("$arg%u", i++))));
+      return new Subscript(lvalue->location_get(), args, tmp);
+    }
+
+    SYNTAX_ERROR(lvalue->location_get(),
+                 "syntax error, %s is not a valid lvalue", lvalue);
+    return 0;
   }
 
   rExp
@@ -660,13 +675,41 @@ namespace ast
        "  %exp:2;\n"
        "}\n");
 
-    if (lvalue->call()->target_implicit())
-      return e;
-    else
+    if (rCall call = dynamic_cast<Call*>(lvalue.get()))
     {
-      wrap % lvalue->call()->target_get() % e;
+      if (call->target_implicit())
+        return e;
+      else
+      {
+        wrap % call->target_get() % e;
+        return exp(wrap);
+      }
+    }
+    else if (rSubscript sub = dynamic_cast<Subscript*>(lvalue.get()))
+    {
+      rExp result = e;
+
+      unsigned int i = 0;
+      exps_type* args = sub->arguments_get();
+      foreach(rExp e, *args)
+      {
+        PARAMETRIC_AST
+          (arg,
+           "var %id:1 = %exp:2;\n"
+           "%exp:3");
+        arg % libport::Symbol(libport::format("$arg%u", i++))
+          % e
+          % result;
+        result = exp(arg);
+      }
+
+      wrap % sub->target_get() % result;
       return exp(wrap);
     }
+
+    SYNTAX_ERROR(lvalue->location_get(),
+                 "syntax error, %s is not a valid lvalue", lvalue);
+    return 0;
   }
 
   rNary

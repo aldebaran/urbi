@@ -308,7 +308,7 @@ namespace rewrite
   {
     PARAMETRIC_AST(desugar, "%lvalue:1 = %exp:2 . %id:3 (%exp:4)");
 
-    ast::rLValue what = recurse(a->what_get());
+    ast::rLValue what = a->what_get();
     ast::rLValue tgt = factory_->make_lvalue_once(what);
 
     desugar % tgt
