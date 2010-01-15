@@ -218,6 +218,48 @@ sub installname ($)
   $res;
 }
 
+
+=item C<rpath_get($lib)>
+
+Return the RPATH of $lib as a list of directories.
+
+=cut
+
+sub rpath_get($)
+{
+  my ($lib) = @_;
+  my $rpath = qx(chrpath -l $lib);
+  my @res;
+  if ($?)
+    {
+      warn "$me: chrpath -l $lib failed: $?";
+    }
+  else
+    {
+      chomp $rpath;
+      $rpath =~ s/.*RPATH=//;
+      @res = split (":", $rpath)
+    }
+  return @res;
+}
+
+=item C<rpath_set($lib, @rpath)>
+
+Set the RPATH of C<$lib> to C<@rpath>, if needed.
+
+=cut
+
+sub rpath_set($@)
+{
+  my ($lib, @rpath) = @_;
+  my @oldrpath = rpath_get($lib);
+
+  my $oldrpath = @oldrpath;
+  my $newrpath = join(':', @rpath);
+  xsystem("chrpath", "-r", $newrpath, $lib)
+    if $newrpath && $newrpath ne $oldrpath;
+}
+
 =item C<relocate($lib)>
 
 Turn absolute dependencies within the package into relative rpaths.
@@ -250,31 +292,19 @@ sub relocate ($)
   # get the list of current RPATH, and to change them.
   elsif ($OSNAME eq 'linux')
     {
-      my $rpath = qx(chrpath -l $lib);
-      if ($?)
+      my @rpath;
+      for my $dep (rpath_get($lib))
         {
-          warn "$me: chrpath -l $lib failed: $?";
+          my $rel =
+            (prefix($prefix, $dep)
+             ? File::Spec->catdir('$ORIGIN',
+                                  File::Spec->abs2rel($dep, $dir))
+             : $dep);
+          verbose 3, "$dep => $rel"
+            if $dep ne $rel;
+          push @rpath, $rel;
         }
-      else
-        {
-          chomp $rpath;
-          $rpath =~ s/.*RPATH=//;
-          my @rpath;
-          for my $dep (split (":", $rpath))
-            {
-              my $rel =
-                (prefix($prefix, $dep)
-                 ? File::Spec->catdir('$ORIGIN',
-                                      File::Spec->abs2rel($dep, $dir))
-                 : $dep);
-              verbose 3, "$dep => $rel"
-                if $dep ne $rel;
-              push @rpath, $rel;
-            }
-          my $newrpath = join (":", @rpath);
-          xsystem("chrpath", "-r", $newrpath, $lib)
-            if $newrpath ne $rpath;
-        }
+      rpath_set($lib, @rpath);
     }
 }
 
