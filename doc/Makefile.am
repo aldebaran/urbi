@@ -30,13 +30,16 @@ pdf_DATA =
 # Use tex4ht.
 TEXI2HTML_FLAGS += --tex4ht --verbose --debug
 %.htmldir: %.tex $(share_tex_dependencies)
-	-mkdir $@
-	$(TEXI2HTML) $(TEXI2HTML_FLAGS) -o $@/$(notdir $*).html $<
+	-rm -rf $@ $@.tmp
+	-$(mkdir_p) $@.tmp
+	$(TEXI2HTML) $(TEXI2HTML_FLAGS) -o $@.tmp/$(notdir $*).html $<
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
 # compilation seems to prefer *.png to *.pdf, which is wrong here.
-	cp $(share_dir)/figs/urbi.png   $@/urbi-sdk0x.png
-	cp $(share_dir)/figs/gostai.png $@/urbi-sdk1x.png
+	cp $(share_dir)/figs/urbi.png   $@.tmp/urbi-sdk0x.png
+	cp $(share_dir)/figs/gostai.png $@.tmp/urbi-sdk1x.png
+	cd $@.tmp && $(LN_S) $(notdir $*).html index.html
+	mv $@.tmp $@
 
 include specs/local.mk
 include tutorial/local.mk
