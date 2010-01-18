@@ -4,13 +4,14 @@
 %% Redefine \section is this chapter so that we don't have to
 %% call \labelObject each time.  See the bottom of this file for the
 %% restoring of \section.
+%%
+%% The \index cannot be put inside the \section, it breaks tex4ht when
+%% splitting at that boundary.
 \let\sectionOrig\section
 \renewcommand{\section}[1]
 {%
-  \sectionOrig{\labelObject{#1}%
-    \index{#1@\lstinline{#1}}%
-    #1%
-  }%
+  \sectionOrig{\labelObject{#1}#1}%
+  \index{#1@\lstinline{#1}}%
 }
 
 \input{specs/binary}
