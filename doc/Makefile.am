@@ -83,9 +83,9 @@ urbi_sdk_deps = 				\
   $(urbi_sdk_sources)
 
 $(pdf_DATA): $(PDF_IMAGES)
-urbi-sdk.dvi $(html_DATA) $(pdf_DATA): $(urbi_sdk_deps)
+urbi-sdk.dvi $(html_DIR) $(pdf_DATA): $(urbi_sdk_deps)
 
-urbi-sdk.dvi $(html_DATA): $(EPS_IMAGES)
+urbi-sdk.dvi $(html_DIR): $(EPS_IMAGES)
 
 view: $(pdf_DATA)
 	xpdf $<
@@ -140,7 +140,7 @@ install-data-hook:
 .PHONY: install-doc
 doc_host = downloads@www.gostai.com
 doc_dir = gostai.com-downloads/urbi-sdk-2.0
-doc_files = $(pdf_DATA) $(html_DATA)
+doc_files = $(pdf_DATA) $(html_DIR)
 install-doc: $(doc_files)
 	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new && \
 			 mkdir -p $(doc_dir)/doc.new'
