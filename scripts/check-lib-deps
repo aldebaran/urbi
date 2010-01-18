@@ -228,6 +228,34 @@ sub installname ($)
 }
 
 
+=item C<rpath_tool()>
+
+Return the name of the tool to use to change the rpath.  Return undef
+if we don't need it (e.g., on OS X).
+
+=cut
+
+sub rpath_tool()
+{
+  if ($OSNAME eq 'darwin')
+  {
+    return undef;
+  }
+  elsif ($OSNAME eq 'linux')
+  {
+    my @tools = qw(patchelf chrpath);
+    for my $tool (@tools)
+    {
+      if (system($tool, '--version') == 0)
+      {
+        return $tool;
+      }
+    }
+    die "$me: cannot find tool to change rpath: @tools\n";
+  }
+}
+
+
 =item C<rpath_get($lib)>
 
 Return the RPATH of $lib as a list of directories.
@@ -246,6 +274,10 @@ sub rpath_get($)
   elsif ($chrpath eq 'patchelf')
   {
     $res = qx($chrpath --print-rpath $lib);
+  }
+  else
+  {
+    die "$me: unknown chrpath: $chrpath\n";
   }
 
   if ($?)
@@ -277,6 +309,10 @@ sub rpath_set($@)
     elsif ($chrpath eq 'patchelf')
     {
       xsystem($chrpath, "--set-rpath", $newrpath, $lib)
+    }
+    else
+    {
+      die "$me: unknown chrpath: $chrpath\n";
     }
   }
 }
@@ -446,18 +482,8 @@ sub wanted
 
 getopt;
 
-my @tools = qw(patchelf chrpath);
-for my $tool (@tools)
-{
-  if (system($tool, '--version') == 0)
-  {
-    $chrpath = $tool;
-    last;
-  }
-}
-die "cannot find tool to change rpath: @tools\n"
-  unless $chrpath;
-verbose 3, "Using $chrpath";
+$chrpath = rpath_tool;
+verbose 3, "using chrpath = " . ($chrpath || "undef");
 
 File::Find::find({wanted => \&wanted}, @ARGV);
 map {$argv{installname($_)} = 1} @checked;
