@@ -8,7 +8,7 @@ do (Object)
     var res = Object.clone |
     if (protos)
       res.setProtos(protos) |
-    var res.type = name |
+    var res.'$type' = name |
     res.setSlot("as" + name, function () { this })|
     res
   };
@@ -56,13 +56,13 @@ do (Object)
 
   function as(type)
   {
-    getSlot("as" + type.type).apply([this])
+    getSlot("as" + type.'$type').apply([this])
   };
 
   // To be overridden by subclasses.
   function asString()
   {
-    id
+    '$id'
   };
 
   function format(f = FormatInfo)
@@ -91,13 +91,13 @@ do (Object)
 
   function isProto()
   {
-    hasLocalSlot("type")
+    hasLocalSlot("$type")
   };
 
   // Gives type, + uid if relevant
-  function id ()
+  function '$id'()
   {
-    var res = type.clone |
+    var res = '$type' | 
     if (!isProto)
       res += "_" + uid |
     res
@@ -160,13 +160,13 @@ do (Object)
                "  %s." % o.asPrintable
            }
            + "%s : %s"
-              % [s, o.getSlot(s).type]);
+              % [s, o.getSlot(s).'$type']);
       if (var ps = o.properties(s))
       {
         echo("    Properties:");
         for (var p: ps.keys.sort('<'))
           echo("     %s : %s = %s"
-               % [p, ps[p].type, ps[p].asPrintable]);
+               % [p, ps[p].'$type', ps[p].asPrintable]);
       }
     };
   };

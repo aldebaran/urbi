@@ -29,8 +29,8 @@ an object (\refObject{Object}).
 \begin{urbiscript}[firstnumber=last]
 // Inspect it.
 Foo.localSlotNames;
-[00000000] ["a", "asFoo", "b", "type"]
-\end{urbiscript}
+[00000000] ["$type", "a", "asFoo", "b"]
+\end{urbiscript} % fix color $
 
 You can get an object's slot value by using the dot (\lstinline{.})
 operator on this object, followed by the name of the slot.
@@ -52,11 +52,11 @@ Foo.inspect;
 [00000010] *** ** Prototypes:
 [00000011] ***   Object
 [00000012] *** ** Local Slots:
-[00000013] ***   a : Float
-[00000014] ***   asFoo : Code
-[00000015] ***   b : String
-[00000016] ***   type : String
-\end{urbiscript}
+[00000013] ***   $type : String
+[00000014] ***   a : Float
+[00000015] ***   asFoo : Code
+[00000016] ***   b : String
+\end{urbiscript} % fix color $
 
 Let's now try to build such an object. First, we want a fresh object
 to work on. In \us, \lstinline{Object} is the parent type of every

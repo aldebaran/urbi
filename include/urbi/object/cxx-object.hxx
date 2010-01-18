@@ -90,7 +90,7 @@ namespace urbi
     {
       using boost::bind;
 
-      static libport::Symbol type("type");
+      static libport::Symbol type("$type");
       static libport::Symbol clone("clone");
       res_->slot_set(type, new String(T::type_name()), true);
       res_->slot_set(clone, new Primitive(bind(cxx_object_clone<T>, _1)), true);

@@ -444,7 +444,7 @@ uobject_new(rObject proto, bool forceName)
   std::string name;
   if (forceName)
   {
-    r->slot_set(SYMBOL(type), rcName);
+    r->slot_set(SYMBOL(DOLLAR_type), rcName);
     name = cname;
   }
   else
@@ -824,7 +824,7 @@ namespace urbi
       object::objects_type args;
       args.push_back(me);
       std::string meId = getCurrentRunner().apply(
-        me->slot_get(SYMBOL(id)), SYMBOL(id), args)
+        me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
         ->as<object::String>()->value_get();
 
       me->slot_update
@@ -1062,7 +1062,7 @@ namespace urbi
       rObject me = get_base(p.first); //objname?
       assertion(me);
       object::objects_type args = list_of(me);
-      std::string meId = runner.apply(me->slot_get(SYMBOL(id)), SYMBOL(id),
+      std::string meId = runner.apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id),
                                       args)
         ->as<object::String>()->value_get();
       std::string traceName = meId + "::" + owner_->type + "::"

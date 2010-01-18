@@ -66,14 +66,14 @@ class Global.TrajectoryGenerator
   function getStartValue()
   {
     var res = getter |
-    switch (res.type)
+    switch (res.'$type')
     {
       case "Float":
         // Fine.
 
       case "Group":
         res = res.members.head |
-        while (res.type == "List")
+        while (res.'$type' == "List")
           res = res.head
 
       default:

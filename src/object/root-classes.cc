@@ -140,7 +140,7 @@ namespace urbi
 #define SYMBOL_ SYMBOL
 
 #define CLASS_INIT(What, Name)                  \
-      What->slot_set(SYMBOL(type),              \
+      What->slot_set(SYMBOL(DOLLAR_type),       \
                      new String(SYMBOL(Name))); \
       What->slot_set(SYMBOL_(as ## Name),       \
                      new Primitive(id));
@@ -289,7 +289,7 @@ namespace urbi
       void_class_initialize()
       {
         void_class->slot_set(SYMBOL(asString), new String(SYMBOL(void)));
-        void_class->slot_set(SYMBOL(id), new String(SYMBOL(void)));
+        void_class->slot_set(SYMBOL(DOLLAR_id), new String(SYMBOL(void)));
         // void prints nothing in the toplevel
         void_class->slot_set(SYMBOL(asToplevelPrintable), new String(""));
         passert("void must be initialized after true", true_class);

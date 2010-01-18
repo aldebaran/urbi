@@ -85,7 +85,7 @@ class Global.Localization {} | do (Localization)
  */
 var Global.Localizer = Group.new | do (Global.Localizer)
 {
-  var type = "Localizer";
+  var '$type' = "Localizer";
   function init(name)
   {
     var this.componentName = name |

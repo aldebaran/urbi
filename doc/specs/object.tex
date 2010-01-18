@@ -33,13 +33,13 @@ classes in traditional object-oriented programming languages (see
   };
   assert
   {
-    Foo.localSlotNames == ["asFoo", "attr", "type"];
+    Foo.localSlotNames == ["$type", "asFoo", "attr"];
     Foo.asFoo === Foo;
     Foo.attr == 23;
-    Foo.type == "Foo";
+    Foo.'$type' == "Foo";
   };
 };
-\end{urbiscript}
+\end{urbiscript} % fix color $
 
 
 \subsection{Slots}
@@ -209,7 +209,7 @@ Derive.hasSlot("base");
 !Base.hasSlot("derive");
 \end{urbiassert}
 
-\item \lstinline|id|\\
+\item \lstinline|'$id'|\\ % fix color $
 
 \item \lstinline|inspect(\var{deep} = false)|\\
   Describe \lstinline|this|: its prototypes and slots, and their
@@ -329,7 +329,7 @@ theObject === Object;
 \item \lstinline|tasks|\\
   Returns the list of the current running tasks;
 
-\item \lstinline|type|\\
+\item \lstinline|'$type'|\\ % fix color $
 
 \item \lstinline|uid|\\
   Returns ths unique id of \lstinline|this|.

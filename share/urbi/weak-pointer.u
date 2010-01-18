@@ -12,7 +12,7 @@ do (Global.WeakPointer)
     nonInterruptible |
     for| (var d: dicts)
     {
-      d.dict.erase(this.id) |
+      d.dict.erase(this.'$id') |
       __inc |
       d.__inc |
       d.cache_values
@@ -32,22 +32,22 @@ do (Global.WeakDictionary)
   function '[]='(key, val)
   {
     nonInterruptible |
-    if (!dict.has(key.id))
+    if (!dict.has(key.'$id'))
     {
       if (!key.isA(WeakPointer))
         throw "WeakDictionary key is not a WeakPointer"|
       key.__dec |
       key.dicts = key.dicts + [this]|
       __dec |
-      dict.set(key.id, Pair.new(key, [val]))
+      dict.set(key.'$id', Pair.new(key, [val]))
     }
     else
-      dict[key.id].second << val |
+      dict[key.'$id'].second << val |
     cache_values
   };
   function '[]'(key)
   {
-    dict[key.id].second
+    dict[key.'$id'].second
   };
   function finalize()
   {
@@ -64,9 +64,9 @@ do (Global.WeakDictionary)
     if (!key.isA(WeakPointer))
       throw "WeakDictionary key is not a WeakPointer"|
     nonInterruptible |
-    if (dict.has(key.id))
+    if (dict.has(key.'$id'))
     {
-      dict.erase(key.id) |
+      dict.erase(key.'$id') |
       key.__inc |
       key.dicts.remove(this) |
       __inc

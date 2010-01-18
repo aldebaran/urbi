@@ -37,7 +37,7 @@ class Global.Group : RangeIterable
     if (this === Group)
       "Group"
     else
-      type + " " + members
+      '$type' + " " + members
   };
 
   // FIXME: This implementation always evaluates the
