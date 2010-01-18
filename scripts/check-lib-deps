@@ -369,10 +369,17 @@ sub relocate ($)
     }
 }
 
-sub check ($)
+=item C<dependencies_foreign($lib)>
+
+The list of dependencies of C<$lib> that are not part of this package,
+and are not accepted.
+
+=cut
+
+sub dependencies_foreign ($)
 {
   my ($lib) = @_;
-  verbose 3, "check($lib)";
+  my @res;
 
   my @valid =
     # On OS X, the relative rpath dependencies are reported
@@ -420,11 +427,27 @@ sub check ($)
         }
       else
         {
-          print STDERR "$me: error: $lib depends on $loc\n";
-          push @{$rejected{$loc}}, $lib;
-          ++$nerrors;
+          push @res, $loc;
         }
     }
+  return @res;
+}
+
+=item C<check($lib)>
+
+Make sure that C<$lib> depends on no foreign library.
+
+=cut
+
+sub check ($)
+{
+  my ($lib) = @_;
+  for my $loc (dependencies_foreign($lib))
+  {
+    print STDERR "$me: error: $lib depends on $loc\n";
+    push @{$rejected{$loc}}, $lib;
+    ++$nerrors;
+  }
 }
 
 =item C<help>
