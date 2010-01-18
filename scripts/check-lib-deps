@@ -374,19 +374,34 @@ sub check($)
   my @valid =
     # On OS X, the relative rpath dependencies are reported
     # with a relative path starting with @loader_path.
-    $OSNAME eq 'darwin' ? qw(@loader_path/ /usr/lib/ /opt/local/lib/)
+    $OSNAME eq 'darwin'
+    ? qw(
+         /opt/local/lib/libICE.
+         /opt/local/lib/libSM.
+         /opt/local/lib/libX11.
+         /opt/local/lib/libXau.
+         /opt/local/lib/libXdmcp.
+         /opt/local/lib/libXext.
+         /usr/lib/
+         @loader_path/
+        )
     # On GNU/Linux, the related rpath dependencies are resolved and
     # made absolute.  Accept them only if they are inside our package.
-    : $OSNAME eq 'linux' ? ($destdir,
-                            qw(/lib/ /usr/lib/gcc/ /usr/lib/libstdc++
-	/usr/lib/libSM.so
-	/usr/lib/libICE.so
-	/usr/lib/libX11.so
-	/usr/lib/libXext.so
-	/usr/lib/libxcb.so
-	/usr/lib/libXau.so
-	/usr/lib/libXdmcp.so
-	))
+    : $OSNAME eq 'linux'
+    ? ($destdir,
+       qw(
+          /lib/
+          /usr/lib/gcc/
+          /usr/lib/libICE.so
+          /usr/lib/libSM.so
+          /usr/lib/libX11.so
+          /usr/lib/libXau.so
+          /usr/lib/libXdmcp.so
+          /usr/lib/libXext.so
+          /usr/lib/libstdc++
+          /usr/lib/libxcb.so
+         )
+      )
     : ();
 
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
