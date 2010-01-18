@@ -228,19 +228,18 @@ Return the RPATH of $lib as a list of directories.
 sub rpath_get($)
 {
   my ($lib) = @_;
-  my $rpath = qx(chrpath -l $lib);
-  my @res;
+  my $res = qx(chrpath -l $lib);
   if ($?)
     {
       warn "$me: chrpath -l $lib failed: $?";
+      $res = '';
     }
   else
     {
-      chomp $rpath;
-      $rpath =~ s/.*RPATH=//;
-      @res = split (":", $rpath)
+      chomp $res;
+      $res =~ s/.*RPATH=//;
     }
-  return @res;
+  return wantarray ? split (":", $res) : $res;
 }
 
 =item C<rpath_set($lib, @rpath)>
@@ -252,9 +251,7 @@ Set the RPATH of C<$lib> to C<@rpath>, if needed.
 sub rpath_set($@)
 {
   my ($lib, @rpath) = @_;
-  my @oldrpath = rpath_get($lib);
-
-  my $oldrpath = @oldrpath;
+  my $oldrpath = rpath_get($lib);
   my $newrpath = join(':', @rpath);
   xsystem("chrpath", "-r", $newrpath, $lib)
     if $newrpath && $newrpath ne $oldrpath;
