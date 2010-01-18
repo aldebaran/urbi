@@ -81,8 +81,8 @@ namespace rewrite
     PARAMETRIC_AST(setter, "closure (v) { %exp:1 }");
     source[SYMBOL(setter)] =
       exp(setter
-          % new ast::Assignment(loc, new_clone(tgt),
-                                factory_->make_call(loc, SYMBOL(v))));
+          % new ast::Assign(loc, new_clone(tgt),
+                            factory_->make_call(loc, SYMBOL(v)), 0));
 
     PARAMETRIC_AST(dict, "Dictionary.new");
     ast::rExp modifiers = exp(dict);
