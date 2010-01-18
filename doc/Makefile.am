@@ -63,7 +63,15 @@ pdf_DATA +=					\
   urbi-faq.pdf					\
   urbi-naming.pdf				\
   urbi-sdk.pdf
-html_DATA = urbi-sdk.htmldir
+# We cannot simply use html_DATA here, since Automake does not
+# support installing directories.
+html_DIR = urbi-sdk.htmldir
+noinst_DATA += $(html_DIR)
+install-data-hook: install-html-dir
+install-html-dir: $(html_DIR)
+	$(mkdir_p) $(DESTDIR)$(htmldir)
+	tar cf - $(html_DIR) | (cd $(DESTDIR)/$(htmldir) && tar xf -)
+
 CLEANFILES += $(pdf_DATA)
 urbi_sdk_sources = $(call ls_files,*.tex)
 REVISION_FILE = revision.sty
