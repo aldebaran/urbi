@@ -22,9 +22,13 @@ case $build:$host in
     (*:*mingw32) incline=$(winepath -u "$incline");;
 esac
 	# Ensure we got it right.
-if test ! -f  $incline/version.hpp; then
+if test ! -f  "$incline"/version.hpp; then
     echo >&2 "failed to find boost include directory, got '$incline'"
     exit 1
 fi
 
-cp -pRP $incline "$DESTDIR$prefix/include"
+if test -L "$incline"; then
+    incline=$(readlink "$incline")
+fi
+
+cp -pRP "$incline" "$DESTDIR$prefix/include"
