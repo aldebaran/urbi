@@ -31,6 +31,11 @@ For interesting input on this topic, see:
   RPATH/RUNPATH issue, equivalent to -headerpad on OSX
     http://sourceware.org/ml/binutils/2008-01/msg00021.html
 
+To change the RPATH, we use either patchelf or chrpath.  The former is
+preferred, as it has no limitations on the size of the new rpath,
+while the latter requires that the new rpath is no longer than the
+original one.
+
 =head1 OPTIONS
 
 General options:
@@ -76,6 +81,10 @@ my %argv;
 
 # The list of files to check.
 my @checked;
+
+# The tool to get and set the rpath.  Patchelf is preferred, it does
+# not have any limitations on the size of the new rpath.
+my $chrpath;
 
 # The place the installation was made.
 my $destdir;
@@ -180,7 +189,7 @@ sub xsystem (@)
 {
   my (@args) = @_;
 
-  verbose 2, "Running: @args";
+  verbose 2, "running: @args";
   system(@args) == 0
     or die "$me: system @args failed: $?\n";
   if ($? == -1)
@@ -228,17 +237,23 @@ Return the RPATH of $lib as a list of directories.
 sub rpath_get($)
 {
   my ($lib) = @_;
-  my $res = qx(chrpath -l $lib);
+  my $res = '';
+  if ($chrpath eq 'chrpath')
+  {
+    $res = qx($chrpath -l $lib);
+    $res =~ s/.*RPATH=//;
+  }
+  elsif ($chrpath eq 'patchelf')
+  {
+    $res = qx($chrpath --print-rpath $lib);
+  }
+
   if ($?)
-    {
-      warn "$me: chrpath -l $lib failed: $?";
-      $res = '';
-    }
-  else
-    {
-      chomp $res;
-      $res =~ s/.*RPATH=//;
-    }
+  {
+    warn "$me: $chrpath failed on $lib: $?";
+    $res = '';
+  }
+  chomp $res;
   return wantarray ? split (":", $res) : $res;
 }
 
@@ -253,9 +268,19 @@ sub rpath_set($@)
   my ($lib, @rpath) = @_;
   my $oldrpath = rpath_get($lib);
   my $newrpath = join(':', @rpath);
-  xsystem("chrpath", "-r", $newrpath, $lib)
-    if $newrpath && $newrpath ne $oldrpath;
+  if ($newrpath && $newrpath ne $oldrpath)
+  {
+    if ($chrpath eq 'chrpath')
+    {
+      xsystem($chrpath, "-r", $newrpath, $lib)
+    }
+    elsif ($chrpath eq 'patchelf')
+    {
+      xsystem($chrpath, "--set-rpath", $newrpath, $lib)
+    }
+  }
 }
+
 
 =item C<relocate($lib)>
 
@@ -420,6 +445,20 @@ sub wanted
 ## ------ ##
 
 getopt;
+
+my @tools = qw(patchelf chrpath);
+for my $tool (@tools)
+{
+  if (system($tool, '--version') == 0)
+  {
+    $chrpath = $tool;
+    last;
+  }
+}
+die "cannot find tool to change rpath: @tools\n"
+  unless $chrpath;
+verbose 3, "Using $chrpath";
+
 File::Find::find({wanted => \&wanted}, @ARGV);
 map {$argv{installname($_)} = 1} @checked;
 verbose 2, "Shipped deps:", map { "  $_" } sort keys %argv;
