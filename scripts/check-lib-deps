@@ -101,6 +101,9 @@ my $nerrors = 0;
 # The --prefix given to configure.
 my $prefix;
 
+# Foreign, reject libraries as keys, list of dependent as values.
+my %rejected;
+
 # Verbosity level.
 my $verbose = 1;
 
@@ -418,6 +421,7 @@ sub check($)
       else
         {
           print STDERR "$me: error: $lib depends on $loc\n";
+          push @{$rejected{$loc}}, $lib;
           ++$nerrors;
         }
     }
@@ -512,6 +516,9 @@ map
   @checked;
 
 verbose 1, "Accepted dependencies:", map { "  $_" } sort keys %loc;
+verbose (1, "Rejected dependencies:",
+         map { ("  $_:", map { "    $_ " } @{$rejected{$_}}) }
+         (sort keys %rejected));
 verbose 1, "There were $nerrors errors";
 exit !!$nerrors;
 
