@@ -71,16 +71,16 @@ view: $(pdf_DATA)
 	xpdf $<
 
 %.eps: %.pdf
-	-mkdir -p $(dir $@)
+	mkdir -p $(dir $@) || true
 	$(CONVERT) "$<" "$@"
 
 %.eps: %.png
-	-mkdir -p $(dir $@)
+	mkdir -p $(dir $@) || true
 	$(CONVERT) "$<" "$@"
 
 FIG2DEV = fig2dev
 %.pdf: %.dot
-	-mkdir -p $(dir $@)
+	mkdir -p $(dir $@) || true
 # Some versions of dot don't support PDF output.
 	if $(DOT) -Tpdf </dev/null 2>/dev/null; then	\
 	  $(DOT) -Tpdf $< -o $@.tmp &&			\
