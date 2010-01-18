@@ -1,6 +1,12 @@
-\chapter*{Introduction}
+\chapter{Introduction}
 % \phantomsection % otherwise hyperlinks to previous chapter.
-\addcontentsline{toc}{chapter}{Introduction}
+\ifx \Htmltrue\else
+  % TeX4ht already takes care of this.
+  \addcontentsline{toc}{chapter}{Introduction}
+\fi
+
+
+\section{\urbi and \us}
 
 \us is a programming language primarily designed for robotics. It's a
 dynamic, prototype-based, object-oriented scripting language. It
@@ -40,13 +46,13 @@ document, \href{\docurl/urbi-sdk.pdf}{urbi-sdk.pdf}, and as HTML
 pages, \href{\docurl/urbi-sdk.htmldir}{urbi-sdk.htmldir}.
 
 
-\section*{Outline}
+\section{Outline}
 
 This multi-part document provides a complete guide to Urbi.
 
 \newenvironment{partDescription}[2]
 {%
-  \subsection*{\autoref{#1} --- \nameref{#1}}%
+  \item[\autoref{#1} --- \nameref{#1}]~\\%
   #2
   \begin{description}%
     \let\itemOrig\item%
@@ -55,6 +61,7 @@ This multi-part document provides a complete guide to Urbi.
   \end{description}%
 }
 
+\begin{description}
 \begin{partDescription}{part:tut}
   {%
     This 50-page tutorial will guide the new comer into the Urbi
@@ -164,6 +171,7 @@ This multi-part document provides a complete guide to Urbi.
 \item[sec:webots] Using Cyberbotics' Webots simulation environment
   with \urbi.
 \end{partDescription}
+\end{description}
 
 
 %% \paragraph{Thanks}
