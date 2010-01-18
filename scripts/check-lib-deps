@@ -369,7 +369,7 @@ sub relocate ($)
     }
 }
 
-sub check($)
+sub check ($)
 {
   my ($lib) = @_;
   verbose 3, "check($lib)";
@@ -504,16 +504,18 @@ getopt;
 $chrpath = rpath_tool;
 verbose 3, "using chrpath = " . ($chrpath || "undef");
 
+# Gather.
 File::Find::find({wanted => \&wanted}, @ARGV);
 map {$argv{installname($_)} = 1} @checked;
 verbose 2, "Shipped deps:", map { "  $_" } sort keys %argv;
-map
-  {
-    my $lib = $_;
-    relocate($lib);
-    check($lib);
-  }
-  @checked;
+
+# For each library, relocate it, and make sure there are no forbidden
+# dependencies.
+for my $lib (@checked)
+{
+  relocate($lib);
+  check($lib);
+}
 
 verbose 1, "Accepted dependencies:", map { "  $_" } sort keys %loc;
 verbose (1, "Rejected dependencies:",
