@@ -27,8 +27,16 @@ CLEANFILES += $(EPS_IMAGES)
 TEXI2DVI_FLAGS += -I $(srcdir) -~
 pdf_DATA =
 
-# Use tex4ht
+# Use tex4ht.
 TEXI2HTML_FLAGS += --tex4ht --verbose --debug
+%.htmldir: %.tex $(share_tex_dependencies)
+	-mkdir $@
+	$(TEXI2HTML) $(TEXI2HTML_FLAGS) -o $@/$(notdir $*).html $<
+# We need to find a better means to provide our own *.png here.  I
+# have not used the name "gostai.png" because stupidly the PDF
+# compilation seems to prefer *.png to *.pdf, which is wrong here.
+	cp $(share_dir)/figs/urbi.png   $@/urbi-sdk0x.png
+	cp $(share_dir)/figs/gostai.png $@/urbi-sdk1x.png
 
 include specs/local.mk
 include tutorial/local.mk
@@ -52,6 +60,7 @@ pdf_DATA +=					\
   urbi-faq.pdf					\
   urbi-naming.pdf				\
   urbi-sdk.pdf
+html_DATA = urbi-sdk.htmldir
 CLEANFILES += $(pdf_DATA)
 urbi_sdk_sources = $(call ls_files,*.tex)
 REVISION_FILE = revision.sty
@@ -63,9 +72,9 @@ urbi_sdk_deps = 				\
   $(urbi_sdk_sources)
 
 $(pdf_DATA): $(PDF_IMAGES)
-urbi-sdk.dvi urbi-sdk.html $(pdf_DATA): $(urbi_sdk_deps)
+urbi-sdk.dvi $(html_DATA) $(pdf_DATA): $(urbi_sdk_deps)
 
-urbi-sdk.dvi urbi-sdk.html: $(EPS_IMAGES)
+urbi-sdk.dvi $(html_DATA): $(EPS_IMAGES)
 
 view: $(pdf_DATA)
 	xpdf $<
@@ -118,32 +127,13 @@ install-data-hook:
 ## install-doc.  ##
 ## ------------- ##
 .PHONY: install-doc
-html_files =					\
-  urbi-sdk.css					\
-  urbi-sdk.html					\
-  urbi-sdk2.html				\
-  urbi-sdk3.html				\
-  urbi-sdk4.html				\
-  urbi-sdk5.html				\
-  urbi-sdk0x.png				\
-  urbi-sdk1x.png				\
-  urbi-sdk2x.png				\
-  urbi-sdk3x.png				\
-  urbi-sdk4x.png				\
-  urbi-sdk5x.png				\
-  urbi-sdk6x.png				\
-  urbi-sdk7x.png
 doc_host = downloads@www.gostai.com
 doc_dir = gostai.com-downloads/urbi-sdk-2.0
-doc_files = $(pdf_DATA) $(html_files)
-install-doc: $(pdf_DATA) urbi-sdk.html
-# We need to find a better means to provide our own *.png here.  I
-# have not used the name "gostai.png" because stupidly the PDF
-# compilation seems to prefer *.png to *.pdf, which is wrong here.
-	cp $(srcdir)/img/urbi-sdk1x.png urbi-sdk1x.png
+doc_files = $(pdf_DATA) $(html_DATA)
+install-doc: $(doc_files)
 	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new && \
 			 mkdir -p $(doc_dir)/doc.new'
-	scp $(doc_files) $(doc_host):$(doc_dir)/doc.new
+	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
 	ssh $(doc_host)				\
 	  'bak=$$(date +"%F-%T") &&		\
 	   cd $(doc_dir) &&			\
