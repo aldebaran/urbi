@@ -346,7 +346,7 @@ sub rpath_set($@)
   my ($lib, @rpath) = @_;
   my $oldrpath = rpath_get($lib);
   my $newrpath = join(':', @rpath);
-  if ($newrpath && $newrpath ne $oldrpath)
+  if ($newrpath ne $oldrpath)
   {
     if ($chrpath eq 'chrpath')
     {
