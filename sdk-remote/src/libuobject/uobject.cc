@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -383,7 +383,7 @@ namespace urbi
 
       case UEM_EVALFUNCTION:
       {
-        GD_FINFO_DUMP("dispatching call of %s...", (std::string)(array[1]));
+        GD_FINFO_DUMP("dispatching call of %s...", array[1]);
 	callbacks_type tmpfun = functionmap()[array[1]];
         const std::string var = array[2];
 	callbacks_type::iterator tmpfunit = tmpfun.begin();
@@ -392,7 +392,7 @@ namespace urbi
 	array.setOffset(3);
 	UValue retval = (*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
-        GD_FINFO_DUMP("...dispatch of %s done", (std::string)(array[1]));
+        GD_FINFO_DUMP("...dispatch of %s done", array[1]);
 	switch (retval.type)
         {
         case DATA_BINARY:
