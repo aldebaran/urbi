@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -474,22 +474,20 @@ namespace urbi
           s.ghost_connection_get().received(input);
       }
 
-      if (data.network)
+
+      libport::utime_t select_time = 0;
+      if (!data.fast)
       {
-        libport::utime_t select_time = 0;
-        if (!data.fast)
-        {
-          select_time = std::max(next_time - libport::utime(), select_time);
-          if (data.interactive)
-            select_time = std::min(100000LL, select_time);
-        }
-        if (select_time)
-          libport::pollFor(select_time, true, s.get_io_service());
-        else
-        {
-          s.get_io_service().reset();
-          s.get_io_service().poll();
-        }
+        select_time = std::max(next_time - libport::utime(), select_time);
+        if (data.interactive)
+          select_time = std::min(100000LL, select_time);
+      }
+      if (select_time)
+        libport::pollFor(select_time, true, s.get_io_service());
+      else
+      {
+        s.get_io_service().reset();
+        s.get_io_service().poll();
       }
 
       next_time = s.work();
