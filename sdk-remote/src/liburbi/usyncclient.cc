@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -220,7 +220,7 @@ namespace urbi
   {
     GD_CATEGORY(USyncClient);
     if (message_ || !syncTag.empty())
-      throw std::runtime_error("Another waitForTag is allready in progress");
+      throw std::runtime_error("Another waitForTag is already in progress");
     syncTag = tag;
     message_ = 0;
     waitingFromPollThread_ = libport::isPollThread();
