@@ -505,7 +505,7 @@ sub dependencies_foreign ($)
   return @res;
 }
 
-=item C<copy($from, $to)>
+=item C<install($from, $to)>
 
 Copy the file C<$from> as the file C<$to>.  Create parent directories
 if needed.
@@ -515,7 +515,7 @@ does not like that shared objects are not executable.
 
 =cut
 
-sub copy($$)
+sub install($$)
 {
   my ($from, $to) = @_;
   verbose 3, "copy $from $to";
@@ -550,7 +550,7 @@ sub complete ($)
   for my $loc (grep { $_ ne 'not found' } dependencies_foreign($lib))
   {
     my $new = File::Spec->catfile($dir, basename $loc);
-    copy $loc, $new;
+    install $loc, $new;
     $installed{$loc} = 1;
     push @checked, $new;
     $argv{installname($new)} = 1;
