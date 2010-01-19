@@ -132,6 +132,11 @@ test suite.  Unfortunately the name of the package varies between
 distros.  It provides "rst2html".
 MacPorts: py26-docutils
 
+** TeX4HT
+Used to generate the HTML documentation.
+deb: tex4ht
+MacPorts: texlive_texmf-full
+
 ** Texinfo
 Needed to compile Bison.
 package: texinfo

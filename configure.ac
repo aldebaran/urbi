@@ -33,6 +33,7 @@ AC_CONFIG_FILES([doc/config.sty])
 URBI_REQUIRE_PROGS([CONVERT], [convert], [ImageMagick])
 URBI_REQUIRE_PROGS([DOT],     [dot],     [GraphViz])
 URBI_REQUIRE_PROGS([PDFCROP], [pdfcrop], [TeXlive])
+URBI_REQUIRE_PROGS([TEX4HT],  [tex4ht],  [TeX4HT])
 
 ## ------------- ##
 ## Compilation.  ##
