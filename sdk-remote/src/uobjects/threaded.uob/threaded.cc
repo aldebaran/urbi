@@ -170,7 +170,7 @@ void Threaded::threadLoopBody(int id)
   #define int0 static_cast<int>(float0)
   Context& ctx = *ops[id];
   // Randomize behavior to increase chance of detecting a race condition.
-  usleep(random() % 100000);
+  usleep(rand() % 100000);
   if (ctx.hasOp)
   {
     Operation op;
