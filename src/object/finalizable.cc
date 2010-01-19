@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -44,7 +44,7 @@ namespace urbi
         ::kernel::urbiserver->getCurrentRunner().apply
             (finalize->value(), SYMBOL(finalize), args);
       }
-      // We are allready in the destructor, we cannot allow a reference to be
+      // We are already in the destructor, we cannot allow a reference to be
       // kept. This check must be outside the above block.
       if (counter_get() != 1)
       {

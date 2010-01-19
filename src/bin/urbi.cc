@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -10,12 +10,12 @@
 
 #include <config.h>
 
-#include <cerrno>
+#include <libport/cerrno>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include <boost/lexical_cast.hpp>
+#include <libport/lexical-cast.hh>
 
 #include <libport/containers.hh>
 #include <libport/cstdlib>
