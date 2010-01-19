@@ -273,7 +273,7 @@ void Threaded::threadLoopBody(int id)
       }
       break;
     case DELAY:
-      usleep(float0);
+      usleep(int0);
       break;
     case DIE:
       return;
