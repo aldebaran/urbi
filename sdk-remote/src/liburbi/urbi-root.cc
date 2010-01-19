@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,12 +8,12 @@
  * See the LICENSE file for more information.
  */
 
-#include <sys/stat.h>
+#include <libport/sys/stat.h>
 
-#include <cassert>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
+#include <libport/cassert>
+#include <libport/cstring>
+#include <libport/cstdlib>
+#include <libport/cstdio>
 #include <iostream>
 
 #include <libport/config.h>
@@ -36,7 +36,7 @@
 `--------*/
 
 static std::string
-xgetenv(const std::string& var, const std::string& val = "")
+mygetenv(const std::string& var, const std::string& val = "")
 {
   const char* res = getenv(var.c_str());
   return res ? std::string(res) : val;
@@ -46,7 +46,7 @@ xgetenv(const std::string& var, const std::string& val = "")
 // xsetenv(const std::string& var, const std::string& val, int force)
 // {
 // #ifdef WIN32
-//   if (force || xgetenv(var).empty())
+//   if (force || mygetenv(var).empty())
 //     _putenv(strdup((var + "=" + val).c_str()));
 // #else
 //   setenv(var.c_str(), val.c_str(), force);
@@ -60,7 +60,7 @@ xgetenv(const std::string& var, const std::string& val = "")
 static bool
 debug()
 {
-  static bool res = xgetenv("GD_LEVEL") == "DUMP";
+  static bool res = mygetenv("GD_LEVEL") == "DUMP";
   return res;
 }
 
@@ -234,7 +234,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   , handle_libuobject_(0)
 {
   // Find our directory.
-  std::string uroot = xgetenv("URBI_ROOT");
+  std::string uroot = mygetenv("URBI_ROOT");
   if (!uroot.empty())
   {
     URBI_ROOT_DEBUG(program_,
@@ -256,7 +256,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
     {
       URBI_ROOT_DEBUG(program_,
                       "invoked from the path, looking for ourselves in PATH");
-      strings_type path = split(xgetenv("PATH"));
+      strings_type path = split(mygetenv("PATH"));
       foreach (const std::string& dir, path)
       {
         struct stat stats;
@@ -286,7 +286,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
                     "Please set URBI_ROOT.");
 
   // const std::string urbi_path = root_ / "share" / "gostai";
-  // xsetenv("URBI_PATH", xgetenv("URBI_PATH") + ":" + urbi_path, true);
+  // xsetenv("URBI_PATH", mygetenv("URBI_PATH") + ":" + urbi_path, true);
   // URBI_ROOT_DEBUG("append to URBI_PATH: " << urbi_path);
   if (!static_build)
   {
@@ -308,7 +308,7 @@ UrbiRoot::library_load(const std::string& base)
   return
     xdlopen(program_,
             base,
-            xgetenv(envvar,
+            mygetenv(envvar,
                     root(libdir / "lib" + base + LIBPORT_LIBSFX)));
 }
 
