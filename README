@@ -1,13 +1,22 @@
         					-*- outline -*-
 
+   .--------------------------------------------------------------------.
+   |          _   _      _     _    ____  ____  _  __   ____            |
+   |         | | | |_ __| |__ (_)  / ___||  _ \| |/ /  |___ \           |
+   |         | | | | '__| '_ \| |  \___ \| | | | ' /     __) |          |
+   |         | |_| | |  | |_) | |   ___) | |_| | . \    / __/           |
+   |          \___/|_|  |_.__/|_|  |____/|____/|_|\_\  |_____|          |
+   |                                                                    |
+   `--------------------------------------------------------------------'
+
 This file is meant for people who want to *build* the Kernel.  It is
 not for people who simply want to install a pre-built Urbi SDK.
 
 Outline:
   * requirements
     Software you need.
-  * checkouts
-    How to pull Urbi SDK for the repository.
+  * checkout
+    How to pull Urbi SDK from the repository.
   * bootstrap
     How to set up the Autotools and the generated sources.
   * configuration
@@ -165,7 +174,7 @@ have scripts in common (named git-my-*, also available as git my-*)
 that make this easier.  Since they call each other, set your PATH to
 go into common/git.
 
-  git clone git@core.gostai.com:kernel.git
+  git my-clone git@git.gostai.com:kernel
   cd kernel
   git checkout -b 2.0 --track origin/2.0
   git my-update
@@ -390,6 +399,10 @@ The snippets of code displayed in the documentation are transformed
 into test files.
 
 * FAQ/Troubleshouting
+
+** Complaints about +=
+At randowm places we use += in /bin/sh scripts, which dash does not
+support.  Please, use bash instead of dash as /bin/sh.
 
 ** error: `<anonymous>' is used uninitialized in this function
 If you encounter this error:
