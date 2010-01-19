@@ -226,7 +226,7 @@ sub dependencies ($)
       $_ = Cwd::realpath($_)
         if -f $_;
     } @res;
-  verbose 2, "$lib depends on", map { "  $_" } @res;
+  verbose 4, "$lib depends on", map { "  $_" } @res;
   @res;
 }
 
@@ -424,6 +424,19 @@ sub relocate ($)
             if $dep ne $rel;
           push @rpath, $rel;
         }
+      # If there are dependencies to installed libraries, and we don't
+      # already have an RPATH that goes into libdir, install it.
+      #
+      # Beware of operator precedence here, don't remove "useless"
+      # parens.
+      if ((grep {exists $installed{$_}} dependencies($lib))
+          && (! grep { $_ eq $libdir } @rpath))
+      {
+        my $rel = File::Spec->catdir('$ORIGIN',
+                                     File::Spec->abs2rel($libdir, $dir));
+        verbose 3, "installing $rel in RPATH";
+        push @rpath, $rel;
+      }
       rpath_set($lib, @rpath);
     }
 }
@@ -506,7 +519,7 @@ sub complete ($)
   my ($lib) = @_;
   verbose 3, "complete($lib) @ $libdir";
   my $dir = "$destdir$libdir";
-  for my $loc (dependencies_foreign($lib))
+  for my $loc (grep { $_ ne 'not found' } dependencies_foreign($lib))
   {
     my $new = File::Spec->catfile($dir, basename $loc);
     verbose 3, "copy $loc $new";
@@ -619,7 +632,7 @@ sub wanted
 getopt;
 
 $chrpath = rpath_tool;
-verbose 3, "using chrpath = " . ($chrpath || "undef");
+verbose 4, "using chrpath = " . ($chrpath || "undef");
 
 # Gather.
 File::Find::find({wanted => \&wanted}, @ARGV);
