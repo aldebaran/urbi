@@ -445,6 +445,7 @@ Make sure that C<$lib> depends on no foreign library.
 sub check ($)
 {
   my ($lib) = @_;
+  verbose 3, "check($lib)";
   for my $loc (dependencies_foreign($lib))
   {
     print STDERR "$me: error: $lib depends on $loc\n";
@@ -497,6 +498,8 @@ sub getopt ()
   # Since we use the realpath everywhere else, use it here too.
   # For instance on OS X, /tmp is actually a symlink to private/tmp.
   $destdir = Cwd::realpath($destdir);
+
+  verbose 4, "destdir = $destdir";
 }
 
 sub wanted
@@ -533,7 +536,6 @@ verbose 3, "using chrpath = " . ($chrpath || "undef");
 # Gather.
 File::Find::find({wanted => \&wanted}, @ARGV);
 map {$argv{installname($_)} = 1} @checked;
-verbose 2, "Shipped deps:", map { "  $_" } sort keys %argv;
 
 # For each library, relocate it, and make sure there are no forbidden
 # dependencies.
@@ -543,6 +545,7 @@ for my $lib (@checked)
   check($lib);
 }
 
+verbose 2, "Shipped deps:", map { "  $_" } sort keys %argv;
 verbose 1, "Accepted dependencies:", map { "  $_" } sort keys %loc;
 verbose (1, "Rejected dependencies:",
          map { ("  $_:", map { "    $_ " } @{$rejected{$_}}) }
