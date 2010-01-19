@@ -176,7 +176,7 @@ go into common/git.
 
   git my-clone git@git.gostai.com:kernel
   cd kernel
-  git checkout -b 2.0 --track origin/2.0
+  git checkout -b master --track origin/master
   git my-update
 
 * bootstrap
