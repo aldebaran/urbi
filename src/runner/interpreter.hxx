@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -19,6 +19,7 @@
 
 #include <ast/ast.hh>
 #include <urbi/object/tag.hh>
+#include <object/symbols.hh>
 
 namespace runner
 {
@@ -34,8 +35,10 @@ namespace runner
   libport::Symbol
   Interpreter::innermost_call_get() const
   {
-    assert(!call_stack_.empty());
-    return call_stack_.back().first;
+    if (call_stack_.empty())
+      return SYMBOL(LT_empty_GT);
+    else
+      return call_stack_.back().first;
   }
 
   /*----------------.
