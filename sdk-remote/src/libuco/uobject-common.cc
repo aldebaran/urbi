@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -40,14 +40,17 @@ namespace urbi
   }
 
   static boost::thread_specific_ptr<impl::UContextImpl> current_context(&noop);
-
+  static impl::UContextImpl* default_context = 0;
   impl::UContextImpl* getCurrentContext()
   {
-    return current_context.get();
+    impl::UContextImpl* res = current_context.get();
+    return res ? res : default_context;
   }
 
   void setCurrentContext(impl::UContextImpl* impl)
   {
+    if (!default_context)
+      default_context = impl;
     current_context.reset(impl);
   }
 
