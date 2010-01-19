@@ -345,6 +345,12 @@ sub relocate ($)
   # library.
   if ($OSNAME eq 'darwin')
     {
+      # This is not necessary, but it produces a cleaner otool -L
+      # output.  It also helps our check-step (the library no longer
+      # has a name outside of the package).
+      xsystem("install_name_tool",
+              "-id", '@loader_path/' . basename ($lib),
+              $lib);
       for my $dep (grep {exists $argv{$_}} dependencies($lib))
         {
           my $rel = File::Spec->abs2rel($dep, $dir);
