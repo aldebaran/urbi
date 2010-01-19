@@ -3,7 +3,9 @@
 use Cwd;            # realpath
 use English;        # $OSNAME
 use File::Basename;
+use File::Copy;     # copy
 use File::Find ();
+use File::Path qw(mkpath);
 use IO::File;
 use strict;
 
@@ -13,16 +15,37 @@ use strict;
 
 =head1 SYNOPSIS
 
-  check-lib-deps [OPTIONS...] DIR...
+  check-lib-deps [OPTIONS...] DIR|FILE...
 
 =head1 DESCRIPTION
 
-Traverse all the DIR... and relocate, when possible, shared-library
-dependencies.  It works in two steps: first all the dependencies of
-executables and shared libs are gathered.  Second, dependencies that
-are met inside the DESTDIR itself are made relative instead of
-absolute.  As a last step, absolute dependencies that remain are
-checked for validity.
+Traverse all the DIR and FILE... to gather the set of binaries and
+dynamic libraries, and handle there dependencies.
+
+Goes into three steps:
+
+=over 4
+
+=item complete
+
+Collect all the dependencies that are not part of the package, and
+install them into the package tree at C<$libdir>.  This is performed
+only if C<--libdir> was provided.
+
+All the libraries installed for completion will also be traversed to
+apply these three steps.
+
+=item relocate
+
+Transform every internal (i.e., provided by the package) absolute (in
+the sense of absolute path) dependency, into a relative dependency.
+
+=item check
+
+Every foreign dependency (i.e., not provided by the package, and not
+accepted as system dependencies) is an error.
+
+=back
 
 Exit with failure if invalid dependencies remain.
 
@@ -51,6 +74,12 @@ Display this message and exit.
 Specify the installation destination directory.  Anything found under
 this directory is considered to be part of it.  Anything else is a
 foreign dependency.
+
+=item B<-l>, B<--libdir>=I<libdir>
+
+Specify that missing dependencies should be installed in
+C<$destdir$libdir>.  If C<$libdir> is not specified, nothing is
+installed.
 
 =item B<-p>, B<--prefix>=I<prefix>
 
@@ -88,6 +117,13 @@ my $chrpath;
 
 # The place the installation was made.
 my $destdir;
+
+# The set of libraries installed in libdir for completion.
+my %installed;
+
+# The directory in $destdir where missing dependencies should be
+# installed.  Typically C<$prefix/lib>.
+my $libdir;
 
 # Accepted resolved libraries.
 my %loc;
@@ -344,21 +380,31 @@ sub relocate ($)
   # DESTDIR, and make then relative.  It works at the level of each
   # library.
   if ($OSNAME eq 'darwin')
+  {
+    # This is not necessary, but it produces a cleaner otool -L
+    # output.  It also helps our check-step (the library no longer has
+    # a name outside of the package).
+    xsystem("install_name_tool",
+            "-id", '@loader_path/' . basename ($lib),
+            $lib);
+    # Handle installed dependencies.
+    for my $dep (grep {exists $installed{$_}} dependencies($lib))
     {
-      # This is not necessary, but it produces a cleaner otool -L
-      # output.  It also helps our check-step (the library no longer
-      # has a name outside of the package).
+      my $new = File::Spec->catfile($libdir, basename $dep);
+      my $rel = File::Spec->abs2rel($new, $dir);
       xsystem("install_name_tool",
-              "-id", '@loader_path/' . basename ($lib),
+              "-change", $dep, "\@loader_path/$rel",
               $lib);
-      for my $dep (grep {exists $argv{$_}} dependencies($lib))
-        {
-          my $rel = File::Spec->abs2rel($dep, $dir);
-          xsystem("install_name_tool",
-                  "-change", $dep, "\@loader_path/$rel",
-                  $lib);
-        }
     }
+    # Handle inner dependencies.
+    for my $dep (grep {exists $argv{$_}} dependencies($lib))
+    {
+      my $rel = File::Spec->abs2rel($dep, $dir);
+      xsystem("install_name_tool",
+              "-change", $dep, "\@loader_path/$rel",
+              $lib);
+    }
+  }
 
   # On GNU/Linux, change the rpaths.  I.e., when we depend on an rpath
   # which inside the package, make it relative.  It works at the level
@@ -430,16 +476,51 @@ sub dependencies_foreign ($)
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
   for my $loc (dependencies($lib))
     {
-      if ($loc =~ m($re))
+      if (exists $argv{$loc})
         {
+          # Inner library.
+        }
+      elsif ($loc =~ m($re))
+        {
+          # System library.
           $loc{$loc} = 1;
         }
       else
         {
+          # Foreign library.
           push @res, $loc;
         }
     }
   return @res;
+}
+
+=item C<complete($lib)>
+
+Install the foreign dependencies of C<$lib> in C<$destdir$libdir>, if
+C<$libdir> is defined.
+
+=cut
+
+sub complete ($)
+{
+  my ($lib) = @_;
+  verbose 3, "complete($lib) @ $libdir";
+  my $dir = "$destdir$libdir";
+  for my $loc (dependencies_foreign($lib))
+  {
+    my $new = File::Spec->catfile($dir, basename $loc);
+    verbose 3, "copy $loc $new";
+    if (! -d $dir)
+    {
+      mkpath $dir
+        or die "cannot mkpath $dir: $!";
+    }
+    copy $loc, $new
+      or die "$me: copy $loc $new failed: $!\n";
+    $installed{$loc} = 1;
+    push @checked, $new;
+    $argv{installname($new)} = 1;
+  }
 }
 
 =item C<check($lib)>
@@ -484,6 +565,7 @@ sub getopt ()
   my %option = (
     "d|destdir=s"   => \$destdir,
     "h|help"        => sub { help ($verbose) },
+    "l|libdir=s"    => \$libdir,
     "p|prefix=s"    => \$prefix,
     "q|quiet"       => sub { --$verbose },
     "v|verbose"     => sub { ++$verbose },
@@ -545,8 +627,11 @@ map {$argv{installname($_)} = 1} @checked;
 
 # For each library, relocate it, and make sure there are no forbidden
 # dependencies.
-for my $lib (@checked)
+while (@checked)
 {
+  my $lib = shift @checked;
+  complete($lib)
+    if defined $libdir;
   relocate($lib);
   check($lib);
 }

@@ -3,15 +3,21 @@
 set -x
 set -e
 
+COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'
 PROJECT='@PACKAGE_TARNAME@'
+URBI_HOST_COMP='@URBI_HOST_COMP@'
+URBI_HOST_CPU='@URBI_HOST_CPU@'
+URBI_HOST_OS='@URBI_HOST_OS@'
 builddir='@abs_top_builddir@'
 host='@host@'
 prefix='@prefix@'
 srcdir='@abs_top_srcdir@'
-URBI_HOST_OS='@URBI_HOST_OS@'
-URBI_HOST_CPU='@URBI_HOST_CPU@'
-URBI_HOST_COMP='@URBI_HOST_COMP@'
-COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'
+
+# Do not sort by alphabetical order here.  exec_prefix typically use
+# $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
+exec_prefix="@exec_prefix@"
+libdir="@libdir@"
+
 
 ## -------------- ##
 ## Post-install.  ##
@@ -34,6 +40,7 @@ case $URBI_HOST_OS in
       --verbose                                 \
       --destdir "$DESTDIR"                      \
       --prefix "$prefix"                        \
+      --libdir "$libdir"                        \
       "$DESTDIR"
     ;;
 esac
