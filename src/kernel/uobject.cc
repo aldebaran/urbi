@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -22,6 +22,7 @@
 #include <libport/foreach.hh>
 #include <libport/hash.hh>
 #include <libport/lexical-cast.hh>
+#include <libport/synchronizer.hh>
 
 #include <kernel/config.h>
 
@@ -581,6 +582,12 @@ namespace urbi
 
   namespace impl
   {
+    // Using RAII, cannot be a function
+#define LOCK_KERNEL \
+  libport::Synchronizer::SynchroPoint \
+  urbi_synchro_point_(kernel::urbiserver->synchronizer_get(), true)
+
+
     UContextImpl* getPluginContext()
     {
       return KernelUContextImpl::instance();
@@ -593,6 +600,7 @@ namespace urbi
     void
     KernelUContextImpl::newUObjectClass(baseURBIStarter* s)
     {
+      LOCK_KERNEL;
       object::rObject proto = uobject_make_proto(s->name);
       where->slot_set(libport::Symbol(s->name + "_class"), proto);
       // Make our first instance.
@@ -601,39 +609,47 @@ namespace urbi
     void
     KernelUContextImpl::newUObjectHubClass(baseURBIStarterHub* s)
     {
+      LOCK_KERNEL;
       s->instanciate(this);
     }
     void
     KernelUContextImpl::send(const char* str)
     {
+      LOCK_KERNEL;
       kernel::urbiserver->ghost_connection_get().received(str);
     }
 
     void
     KernelUContextImpl::send(const void* buf, size_t size)
     {
+      LOCK_KERNEL;
       // Feed this to the ghostconnection.
       kernel::urbiserver->ghost_connection_get()
         .received(static_cast<const char*>(buf), size);
     }
     void KernelUContextImpl::yield() const
     {
+      CHECK_MAINTHREAD();
       getCurrentRunner().yield();
     }
     void KernelUContextImpl::yield_until(libport::utime_t deadline) const
     {
+      CHECK_MAINTHREAD();
       getCurrentRunner().yield_until(deadline);
     }
     void KernelUContextImpl::yield_until_things_changed() const
     {
+      CHECK_MAINTHREAD();
       getCurrentRunner().yield_until_things_changed();
     }
     void KernelUContextImpl::side_effect_free_set(bool s)
     {
+      CHECK_MAINTHREAD();
       getCurrentRunner().side_effect_free_set(s);
     }
     bool KernelUContextImpl::side_effect_free_get() const
     {
+      CHECK_MAINTHREAD();
       return getCurrentRunner().side_effect_free_get();
     }
     UObjectHub*
@@ -645,6 +661,7 @@ namespace urbi
     UObject*
     KernelUContextImpl::getUObject(const std::string& n)
     {
+      LOCK_KERNEL;
       UObject* res = UContextImpl::getUObject(n);
       if (res)
         return res;
@@ -673,6 +690,7 @@ namespace urbi
                              UAutoValue v7,
                              UAutoValue v8)
     {
+      LOCK_KERNEL;
       rObject b = get_base(object);
       object::objects_type args;
       args.push_back(b);
@@ -686,6 +704,7 @@ namespace urbi
     void
     KernelUContextImpl::uobject_unarmorAndSend(const char* str)
     {
+      LOCK_KERNEL;
       // Feed this to the ghostconnection.
       kernel::UConnection& ghost = kernel::urbiserver->ghost_connection_get();
       size_t len = strlen(str);
@@ -718,6 +737,7 @@ namespace urbi
     TimerHandle
     KernelUContextImpl::setTimer(UTimerCallback* cb)
     {
+      LOCK_KERNEL;
       rObject me = get_base(cb->objname);
       rObject f = me->slot_get(SYMBOL(setTimer));
       rObject p = new object::Float(cb->period / 1000.0);
@@ -733,6 +753,7 @@ namespace urbi
     {
       if (!h)
         return false;
+      LOCK_KERNEL;
       rObject me = get_base(owner_->__name);
       me->call(SYMBOL(removeTimer), new object::String(*h));
       h.reset();
@@ -749,7 +770,7 @@ namespace urbi
     {
       // Call Urbi-side setHubUpdate, passing an rPrimitive wrapping
       // the 'update' call.
-      CHECK_MAINTHREAD();
+      LOCK_KERNEL;
       rObject uob = object::Object::proto->slot_get(SYMBOL(UObject));
       rObject f = uob->slot_get(SYMBOL(setHubUpdate));
       object::objects_type args = list_of
@@ -775,6 +796,7 @@ namespace urbi
     void
     KernelUObjectImpl::initialize(UObject* owner)
     {
+      LOCK_KERNEL;
       owner_ = owner;
       LIBPORT_DEBUG("Uobject ctor for " << owner->__name);
       uobject_to_robject[owner_->__name] = owner;
@@ -790,12 +812,13 @@ namespace urbi
     void
     KernelUObjectImpl::clean()
     {
+      LOCK_KERNEL;
       uobject_to_robject.erase(owner_->__name);
     }
     void
     KernelUObjectImpl::setUpdate(ufloat period)
     {
-      CHECK_MAINTHREAD();
+      LOCK_KERNEL;
       rObject me = get_base(owner_->__name);
       rObject f = me->slot_get(SYMBOL(setUpdate));
       object::objects_type args;
@@ -818,6 +841,7 @@ namespace urbi
     void
     KernelUVarImpl::unnotify()
     {
+      LOCK_KERNEL;
       rObject r;
       // Try to locate the target urbiscript UVar, which might be gone.
       // In this case, callbacks are gone too.
@@ -853,6 +877,7 @@ namespace urbi
     void
     KernelUVarImpl::initialize(UVar* owner)
     {
+      LOCK_KERNEL;
       // Protect against multiple parallel creation of the same UVar.
       runner::Runner& runner = getCurrentRunner();
       bool prevState = runner.non_interruptible_get();
@@ -898,6 +923,7 @@ namespace urbi
     }
     void KernelUVarImpl::setOwned()
     {
+      LOCK_KERNEL;
       owner_->owned = true;
       // Write 1 to the Urbi-side uvar owned slot.
       StringPair p = split_name(owner_->get_name());
@@ -921,6 +947,7 @@ namespace urbi
 
     void KernelUVarImpl::set(const UValue& v)
     {
+      LOCK_KERNEL;
       LIBPORT_DEBUG("uvar = operator for "<<owner_->get_name());
       object::rUValue ov(new object::UValue());
       ov->put(v, bypassMode_);
@@ -933,6 +960,7 @@ namespace urbi
 
     const UValue& KernelUVarImpl::get() const
     {
+      LOCK_KERNEL;
       LIBPORT_DEBUG("uvar cast operator for "<<owner_->get_name());
       try {
         rObject o = (owner_->owned
@@ -966,6 +994,7 @@ namespace urbi
     UDataType
     KernelUVarImpl::type() const
     {
+      LOCK_KERNEL;
       return ::uvalue_type(owner_->owned
                            ? uvar_uowned_get(owner_->get_name())
                            : uvar_get(owner_->get_name()));
@@ -973,6 +1002,7 @@ namespace urbi
 
     UValue KernelUVarImpl::getProp(UProperty prop)
     {
+      LOCK_KERNEL;
       StringPair p = split_name(owner_->get_name());
       rObject o = get_base(p.first);
       return ::uvalue_cast(o->call(SYMBOL(getProperty),
@@ -982,6 +1012,7 @@ namespace urbi
 
     void KernelUVarImpl::setProp(UProperty prop, const UValue& v)
     {
+      LOCK_KERNEL;
       StringPair p = split_name(owner_->get_name());
       rObject o = get_base(p.first);
       o->call(SYMBOL(setProperty),
@@ -989,11 +1020,13 @@ namespace urbi
               new object::String(UPropertyNames[prop]),
               object_cast(v));
     }
+
     bool KernelUVarImpl::setBypass(bool enable)
     {
       bypassMode_ = enable;
       return true;
     }
+
     void
     KernelUGenericCallbackImpl::initialize(UGenericCallback* owner, bool owned)
     {
@@ -1005,12 +1038,14 @@ namespace urbi
     void
     KernelUGenericCallbackImpl::initialize(UGenericCallback* owner)
     {
+      LOCK_KERNEL;
       initialize(owner, false);
     }
 
     void
     KernelUGenericCallbackImpl::registerCallback()
     {
+      LOCK_KERNEL;
       runner::Runner& runner = getCurrentRunner();
       if (registered_)
       {

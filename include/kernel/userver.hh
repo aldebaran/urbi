@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -33,6 +33,7 @@
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
 # include <libport/pthread.h>
+# include <libport/synchronizer.hh>
 
 # include <kernel/fwd.hh>
 # include <kernel/utypes.hh>
@@ -208,6 +209,9 @@ namespace kernel
 
     boost::asio::io_service& get_io_service();
 
+    /// Wake up from main loop.
+    void wake_up();
+
     /*--------------------------.
     | Asynchronous scheduling.  |
     `--------------------------*/
@@ -233,6 +237,7 @@ namespace kernel
     //! Overload this function to specify how your robot is displaying messages.
     virtual void effectiveDisplay(const char*) = 0;
 
+    libport::Synchronizer synchronizer_;
   private:
     // Pointer to stop the header dependency.
     sched::Scheduler* scheduler_;
@@ -246,6 +251,8 @@ namespace kernel
     void work_test_cpuoverload_();
     /// \}
 
+    /// Call synchronizer::check() and yield in a loop.
+    object::rObject handle_synchronizer_(const object::objects_type& );
   public:
     /// Stops all commands in all connections.
     bool stopall;
@@ -253,6 +260,7 @@ namespace kernel
     /// True iff current thread is different from server thread Id.
     bool isAnotherThread() const;
 
+    libport::Synchronizer& synchronizer_get();
   private:
     /// Store the time on the last call to updateTime().
     libport::utime_t lastTime_;
@@ -275,6 +283,9 @@ namespace kernel
 
     /// Urbi SDK installation
     UrbiRoot& urbi_root_;
+
+    /// Socket pair used to wake us up
+    std::pair<libport::Socket*, libport::Socket*> wake_up_pipe_;
   };
 
 }

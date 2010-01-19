@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -98,6 +98,13 @@ namespace kernel
 
 
 
+  static size_t waker_socket_on_read(sched::Scheduler* sc, const void*,
+                                     size_t sz)
+  {
+    sc->signal_world_change();
+    return sz;
+  }
+
   /*----------.
   | UServer.  |
   `----------*/
@@ -125,6 +132,13 @@ namespace kernel
     // Use line buffering even when stdout is not a TTY.
     setlinebuf(stdout);
 #endif
+    // Setup wakeup mechanism when wake_up_pipe.second is written on.
+    wake_up_pipe_ = std::make_pair(new libport::ConcreteSocket(io_),
+                                   new libport::Socket(io_));
+    libport::makePipe(wake_up_pipe_, io_);
+    dynamic_cast<libport::ConcreteSocket*>(wake_up_pipe_.first)
+    ->onRead(boost::bind(&waker_socket_on_read, scheduler_, _1, _2));
+    synchronizer_.setOnLock(boost::bind(&UServer::wake_up, this));
   }
 
   UErrorValue
@@ -293,6 +307,15 @@ namespace kernel
     // urbiscript is up and running.  Send local.u and the banner to
     // the ghostconnection too.
     ghost_->initialize();
+    object::rPrimitive p = new object::Primitive(
+      object::Primitive::value_type(boost::bind(&UServer::handle_synchronizer_, this, _1)));
+    sched::rJob interpreter =
+    new runner::Interpreter(
+                            *ghost_->shell_get().get(),
+                            p->as<object::Object>(),
+                            SYMBOL(handle_synchronizer),
+                            object::objects_type());
+    scheduler_->add_job(interpreter);
   }
 
 
@@ -559,11 +582,7 @@ namespace kernel
   runner::Runner&
   UServer::getCurrentRunner() const
   {
-#ifndef SCHED_CORO_OSTHREAD
-    if (thread_id_ != pthread_self())
-      pabort("UObject API isn't thread safe. "
-             "Do the last call within main thread.");
-#endif
+    // FIXME: check that main thread is currently in handle_synchronizer_().
     return dynamic_cast<runner::Runner&> (scheduler_->current_job());
   }
 
@@ -571,5 +590,29 @@ namespace kernel
   UServer::isAnotherThread() const
   {
     return thread_id_ != pthread_self();
+  }
+
+  object::rObject
+  UServer::handle_synchronizer_(const object::objects_type&)
+  {
+    runner::Runner& r = getCurrentRunner();
+    while (true)
+    {
+      r.side_effect_free_set(true);
+      // We cannot yield within check, or an other OS thread will jump stack!
+      r.non_interruptible_set(true);
+      synchronizer_.check();
+      r.non_interruptible_set(false);
+      r.yield_until_things_changed();
+    }
+    return object::void_class;
+  }
+
+  void
+  UServer::wake_up()
+  {
+    // Do a synchronous write, which will wake the main loop up from poll.
+    char data = 1;
+    wake_up_pipe_.second->syncWrite(&data, 1);
   }
 }
