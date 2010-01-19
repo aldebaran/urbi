@@ -37,7 +37,7 @@ find "$DESTDIR$prefix" -name '*.la' -delete
 case $URBI_HOST_OS in
   (linux|macos)
     $srcdir/scripts/check-lib-deps              \
-      --verbose                                 \
+      --verbose --verbose --verbose --verbose   \
       --destdir "$DESTDIR"                      \
       --prefix "$prefix"                        \
       --libdir "$libdir"                        \
