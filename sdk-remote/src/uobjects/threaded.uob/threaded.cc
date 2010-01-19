@@ -8,6 +8,7 @@
  * See the LICENSE file for more information.
  */
 #include <urbi/uobject.hh>
+#include <libport/foreach.hh>
 #include <libport/thread.hh>
 #include <libport/lockable.hh>
 using namespace urbi;
@@ -42,6 +43,8 @@ public:
     if (n == "Threaded")
       init();
   }
+  ~Threaded();
+  void terminate();
   UVar updated;
   UVar timerUpdated;
   UVar lastChange;
@@ -56,8 +59,8 @@ public:
   int queueOp(unsigned tid, int op, UList args);
   /// Start a new thread and return its id
   int startThread();
-  // Thread main loop body.
-  void threadLoopBody(int id);
+  // Thread main loop body, returns false when it wants to end.
+  bool threadLoopBody(int id);
   // Thread main loop: repeatedly call threadLoopBody.
   void threadLoop(int id);
   int dummy();
@@ -90,14 +93,17 @@ public:
   };
   struct Context
   {
-    Context()
-    : hasOp(false) {}
+    Context(int id)
+    : hasOp(false), dead(false), id(id) {}
     std::list<Operation> ops;
     bool hasOp;
     libport::Lockable opLock;
     std::vector<UVar*> vars;
     std::vector<TimerHandle> timers;
     UValue lastRead;
+    pthread_t threadId;
+    bool dead;
+    int id;
   };
   libport::Lockable opsLock;
   std::vector<Context*> ops;
@@ -132,7 +138,27 @@ int Threaded::init()
     v = i;
   }
   return 0;
-};
+}
+
+Threaded::~Threaded()
+{
+  terminate();
+}
+
+void Threaded::terminate()
+{
+  foreach(Context*c, ops)
+  {
+    if (!c->dead)
+    {
+      queueOp(c->id, DIE, UList());
+      void* retval;
+      std::cerr <<"joining " << c->id << std::endl;
+      pthread_join(c->threadId, &retval);
+      std::cerr <<"done" << std::endl;
+    }
+  }
+}
 
 int Threaded::queueOp(unsigned tid, int op, UList args)
 {
@@ -149,8 +175,9 @@ int Threaded::startThread()
   UValue v;
   libport::BlockLock bl (opsLock);
   int id = ops.size();
-  ops.push_back(new Context());
-  libport::startThread(boost::bind(&Threaded::threadLoop, this, id));
+  ops.push_back(new Context(ops.size()));
+  ops.back()->threadId =
+    libport::startThread(boost::bind(&Threaded::threadLoop, this, id));
   return id;
 }
 
@@ -162,7 +189,7 @@ UValue Threaded::getLastRead(unsigned tid)
   return ops[tid]->lastRead;
 }
 
-void Threaded::threadLoopBody(int id)
+bool Threaded::threadLoopBody(int id)
 {
   #define type0 (op.args[0].type)
   #define string0 (*op.args[0].stringValue)
@@ -276,10 +303,12 @@ void Threaded::threadLoopBody(int id)
       usleep(int0);
       break;
     case DIE:
-      return;
+      ctx.dead = true;
+      return false;
       break;
     }
   }
+  return true;
 }
 
 
@@ -289,7 +318,8 @@ void Threaded::threadLoop(int id)
   {
     try
       {
-        threadLoopBody(id);
+        if (!threadLoopBody(id))
+          return;
       }
     catch(std::exception& e)
       {
