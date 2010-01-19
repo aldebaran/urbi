@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -308,7 +308,7 @@ namespace urbi
 							\
   UValue& UValue::operator=(Args)			\
   {							\
-    passert (type, type == DATA_VOID);			\
+    clear();                                            \
     type = DataType;					\
     Field = Value;					\
     return *this;					\
@@ -369,7 +369,8 @@ namespace
 
 #undef UVALUE_OPERATORS
 
-  UValue::~UValue()
+  void
+  UValue::clear()
   {
     switch(type)
     {
@@ -389,6 +390,12 @@ namespace
       case DATA_VOID:
 	break;
     }
+    type = DATA_VOID;
+  }
+
+  UValue::~UValue()
+  {
+    clear();
   }
 
   UValue::operator ufloat() const
@@ -472,7 +479,7 @@ namespace
     // TODO: optimize
     if (this == &v)
       return *this;
-    this->~UValue();
+    clear();
 
     type = v.type;
     switch (type)

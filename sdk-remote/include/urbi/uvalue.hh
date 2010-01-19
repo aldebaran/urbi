@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, Gostai S.A.S.
+ * Copyright (C) 2007, 2008, 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -168,7 +168,8 @@ namespace urbi
     /// This is dangerous, as the user must ensure that the source UValue
     /// lives longer than this one.
     UValue& set(const UValue&, bool copy=true);
-
+    /// Delete content and reset type to void.
+    void clear();
     /// A specific UValue used when we want to return an error.
     /// For instance, out-of-bound access returns this object.
     static UValue& error();
