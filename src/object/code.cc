@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -93,11 +93,11 @@ namespace urbi
     rObject Code::apply(const objects_type& apply_args)
     {
       check_arg_count(apply_args.size(), 1, 2);
-      rList args = apply_args[0]->as<List>();
+      rList args = type_check<List>(apply_args[0], 0u);
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       libport::Symbol s = SYMBOL(apply);
       if (apply_args.size() > 1)
-        s = libport::Symbol(apply_args[1]->as<String>()->value_get());
+        s = libport::Symbol(type_check<String>(apply_args[1], 1u)->value_get());
       if (args->value_get().empty())
         RAISE("list of arguments must begin with `this'");
       List::value_type a = args->value_get();
