@@ -183,6 +183,13 @@ sub dependencies ($)
             }
         }
     }
+  # If this is really a path (e.g., not using @loader_path), get
+  # rid of symlinks.
+  map
+    {
+      $_ = Cwd::realpath($_)
+        if -f $_;
+    } @res;
   verbose 2, "$lib depends on", map { "  $_" } @res;
   @res;
 }
@@ -417,10 +424,6 @@ sub dependencies_foreign ($)
   my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
   for my $loc (dependencies($lib))
     {
-      # If this is really a path (e.g., not using @loader_path), get
-      # rid of symlinks.
-      $loc = Cwd::realpath($loc)
-        if -f $loc;
       if ($loc =~ m($re))
         {
           $loc{$loc} = 1;
