@@ -11,6 +11,7 @@ UOBJECTS =					\
   remote					\
   sensor					\
   sensor2					\
+  threaded					\
   timer						\
   ultest
 
@@ -35,5 +36,6 @@ uobjects/lib-urbi$(DLMODEXT): $(wildcard $(srcdir)/uobjects/liburbi.uob/*)
 uobjects/remote$(DLMODEXT): $(wildcard $(srcdir)/uobjects/remote.uob/*)
 uobjects/sensor$(DLMODEXT): $(wildcard $(srcdir)/uobjects/sensor.uob/*)
 uobjects/sensor2$(DLMODEXT): $(wildcard $(srcdir)/uobjects/sensor2.uob/*)
+uobjects/threaded$(DLMODEXT): $(wildcard $(srcdir)/uobjects/threaded.uob/*)
 uobjects/timer$(DLMODEXT): $(wildcard $(srcdir)/uobjects/timer.uob/*)
 uobjects/ultest$(DLMODEXT): $(wildcard $(srcdir)/uobjects/ultest.uob/*)
