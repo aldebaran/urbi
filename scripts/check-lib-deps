@@ -3,9 +3,7 @@
 use Cwd;            # realpath
 use English;        # $OSNAME
 use File::Basename;
-use File::Copy;     # copy
 use File::Find ();
-use File::Path qw(mkpath);
 use IO::File;
 use strict;
 
@@ -507,6 +505,36 @@ sub dependencies_foreign ($)
   return @res;
 }
 
+=item C<copy($from, $to)>
+
+Copy the file C<$from> as the file C<$to>.  Create parent directories
+if needed.
+
+Preserve permissions.  This avoids spurious warnings from ldd that
+does not like that shared objects are not executable.
+
+=cut
+
+sub copy($$)
+{
+  my ($from, $to) = @_;
+  verbose 3, "copy $from $to";
+  my $dir = dirname($to);
+  if (! -d $dir)
+  {
+    use File::Path qw(mkpath);
+    mkpath $dir
+      or die "$me: cannot mkpath $dir: $!\n";
+  }
+  use File::Copy;
+  File::Copy::copy $from, $to
+    or die "$me: copy $from $to failed: $!\n";
+
+  my $mode = (stat($from))[2] & 0777;
+  chmod $mode, $to
+    or die "$me: cannot chmod $to failed: $!\n";
+}
+
 =item C<complete($lib)>
 
 Install the foreign dependencies of C<$lib> in C<$destdir$libdir>, if
@@ -522,14 +550,7 @@ sub complete ($)
   for my $loc (grep { $_ ne 'not found' } dependencies_foreign($lib))
   {
     my $new = File::Spec->catfile($dir, basename $loc);
-    verbose 3, "copy $loc $new";
-    if (! -d $dir)
-    {
-      mkpath $dir
-        or die "cannot mkpath $dir: $!";
-    }
-    copy $loc, $new
-      or die "$me: copy $loc $new failed: $!\n";
+    copy $loc, $new;
     $installed{$loc} = 1;
     push @checked, $new;
     $argv{installname($new)} = 1;
