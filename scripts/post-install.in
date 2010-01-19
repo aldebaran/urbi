@@ -34,8 +34,12 @@ find "$DESTDIR$prefix" -name '*.la' -delete
 # Check that we don't depend on boost.  Or rather, check that we don't
 # have invalid locations.  And possibly make the libraries and
 # executables relocatable.
-case $URBI_HOST_OS in
-  (linux|macos)
+case $DESTDIR:$URBI_HOST_OS in
+  ('':*)
+    # This is most probably an install performed by the developper in
+    # her own tree.  Don't try to make it relocatable.
+    ;;
+  (*:linux|*:macos)
     $srcdir/scripts/check-lib-deps              \
       --verbose --verbose --verbose --verbose   \
       --destdir "$DESTDIR"                      \

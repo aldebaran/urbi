@@ -611,17 +611,20 @@ sub getopt ()
   die "$me: passing --destdir is mandatory\n"
     unless defined $destdir;
 
-  die "$me: passing --prefix is mandatory\n"
-    unless defined $prefix;
-
   # DESTDIR must not end with slashes.
   $destdir =~ s,/+$,,g;
+
+  die "$me: destdir cannot be empty\n"
+    unless $destdir;
 
   # Since we use the realpath everywhere else, use it here too.
   # For instance on OS X, /tmp is actually a symlink to private/tmp.
   $destdir = Cwd::realpath($destdir);
 
   verbose 4, "destdir = $destdir";
+
+  die "$me: passing --prefix is mandatory\n"
+    unless defined $prefix;
 }
 
 sub wanted
