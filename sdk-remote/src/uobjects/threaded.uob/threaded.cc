@@ -56,7 +56,9 @@ public:
   int queueOp(unsigned tid, int op, UList args);
   /// Start a new thread and return its id
   int startThread();
-  // Thread main loop
+  // Thread main loop body.
+  void threadLoopBody(int id);
+  // Thread main loop: repeatedly call threadLoopBody.
   void threadLoop(int id);
   int dummy();
   enum OpType
@@ -80,7 +82,9 @@ public:
   struct Operation
   {
     Operation() : op(-1) {}
-    Operation(int a, const UList &b):op(a), args(b) {}
+    Operation(int a, const UList &b)
+      : op(a), args(b)
+    {}
     int op;
     UList args;
   };
@@ -158,130 +162,143 @@ UValue Threaded::getLastRead(unsigned tid)
   return ops[tid]->lastRead;
 }
 
-void Threaded::threadLoop(int id)
+void Threaded::threadLoopBody(int id)
 {
   #define type0 (op.args[0].type)
   #define string0 (*op.args[0].stringValue)
   #define float0 (op.args[0].val)
+  #define int0 static_cast<int>(float0)
   Context& ctx = *ops[id];
-  while (true)
+  // Randomize behavior to increase chance of detecting a race condition.
+  usleep(random() % 100000);
+  if (ctx.hasOp)
   {
-    try {
-    // Randomize behavior to increase chance of detecting a race condition.
-    usleep(random() % 100000);
-    if (ctx.hasOp)
+    Operation op;
     {
-      Operation op;
+      libport::BlockLock bl (ctx.opLock);
+      op = ctx.ops.front();
+      ctx.ops.pop_front();
+      if (ctx.ops.empty())
+        ctx.hasOp = false;
+    }
+    switch(op.op)
+    {
+    case WRITE_VAR:
+      if (type0 == DATA_STRING)
       {
-        libport::BlockLock bl (ctx.opLock);
-        op = ctx.ops.front();
-        ctx.ops.pop_front();
-        if (ctx.ops.empty())
-          ctx.hasOp = false;
+        UVar v(string0);
+        v = op.args[1];
       }
-      switch(op.op)
+      else
       {
-      case WRITE_VAR:
+        std::cerr
+          << libport::utime()
+          << " writevar " << id
+          << " " << ctx.vars[int0]->get_name()
+          << " " << op.args[1]
+          << std::endl;
+        *ctx.vars[int0] = op.args[1];
+        std::cerr << libport::utime() << "done write " << id << std::endl;
+      }
+      break;
+    case READ_VAR:
+      {
+        UValue val;
         if (type0 == DATA_STRING)
         {
           UVar v(string0);
-          v = op.args[1];
+          val = v.val();
         }
         else
-        {
-          std::cerr <<libport::utime() << "writevar " << id <<" " << ctx.vars[float0]->get_name() << " " << op.args[1] << std::endl;
-          *ctx.vars[float0] = op.args[1];
-          std::cerr << libport::utime() << "done write " << id << std::endl;
-        }
-        break;
-      case READ_VAR:
-        {
-          UValue val;
-          if (type0 == DATA_STRING)
-          {
-            UVar v(string0);
-            val = v.val();
-          }
-          else
-            val = ctx.vars[float0]->val();
-          libport::BlockLock bl (ctx.opLock);
-          ctx.lastRead = val;
-        }
-        break;
-      case CREATE_VAR:
-        ctx.vars.push_back(new UVar(string0));
-        break;
-      case DELETE_VAR:
-        {
-          size_t idx = float0;
-          delete ctx.vars[idx];
-          if (idx != ctx.vars.size()-1)
-            ctx.vars[idx] = ctx.vars[ctx.vars.size()-1];
-          ctx.vars.pop_back();
-        }
-        break;
-      case NOTIFY_CHANGE:
-        if (type0 == DATA_STRING)
-          UNotifyChange(string0, &Threaded::onChange);
-        else
-          UNotifyChange(*ctx.vars[float0], &Threaded::onChange);
-        break;
-      case NOTIFY_ACCESS:
-         if (type0 == DATA_STRING)
-          UNotifyAccess(string0, &Threaded::onAccess);
-        else
-          UNotifyAccess(*ctx.vars[float0], &Threaded::onAccess);
-        break;
-      case BIND_FUNCTION:
-        ::urbi::createUCallback(*this, 0, "function", this,
-                          (&Threaded::dummy), __name + "." + string0);
-        break;
-      case SET_UPDATE:
-        USetUpdate(float0);
-        break;
-      case SET_TIMER:
-        ctx.timers.push_back(USetTimer(float0, &Threaded::onTimer));
-        break;
-      case UNSET_TIMER:
-        removeTimer(ctx.timers[(int)float0]);
-        if (ctx.timers.size() == 1)
-          ctx.timers.pop_back();
-        else
-        {
-          ctx.timers[(int)float0] = ctx.timers.back();
-          ctx.timers.pop_back();
-        }
-        break;
-      case UNNOTIFY:
-        ctx.vars[float0]->unnotify();
-        break;
-      case GETUOBJECT:
-        {
-          UObject* uob = getUObject(string0);
-          libport::BlockLock bl (ctx.opLock);
-          if (!uob)
-            ctx.lastRead =  "0";
-          else
-            ctx.lastRead = uob->__name;
-        }
-        break;
-      case DELAY:
-        usleep(float0);
-        break;
-      case DIE:
-        return;
-        break;
+          val = ctx.vars[int0]->val();
+        libport::BlockLock bl (ctx.opLock);
+        ctx.lastRead = val;
       }
+      break;
+    case CREATE_VAR:
+      ctx.vars.push_back(new UVar(string0));
+      break;
+    case DELETE_VAR:
+      {
+        size_t idx = int0;
+        delete ctx.vars[idx];
+        if (idx != ctx.vars.size()-1)
+          ctx.vars[idx] = ctx.vars[ctx.vars.size()-1];
+        ctx.vars.pop_back();
+      }
+      break;
+    case NOTIFY_CHANGE:
+      if (type0 == DATA_STRING)
+        UNotifyChange(string0, &Threaded::onChange);
+      else
+        UNotifyChange(*ctx.vars[int0], &Threaded::onChange);
+      break;
+    case NOTIFY_ACCESS:
+       if (type0 == DATA_STRING)
+        UNotifyAccess(string0, &Threaded::onAccess);
+      else
+        UNotifyAccess(*ctx.vars[int0], &Threaded::onAccess);
+      break;
+    case BIND_FUNCTION:
+      ::urbi::createUCallback(*this, 0, "function", this,
+                        (&Threaded::dummy), __name + "." + string0);
+      break;
+    case SET_UPDATE:
+      USetUpdate(float0);
+      break;
+    case SET_TIMER:
+      ctx.timers.push_back(USetTimer(float0, &Threaded::onTimer));
+      break;
+    case UNSET_TIMER:
+      removeTimer(ctx.timers[int0]);
+      if (ctx.timers.size() == 1)
+        ctx.timers.pop_back();
+      else
+      {
+        ctx.timers[int0] = ctx.timers.back();
+        ctx.timers.pop_back();
+      }
+      break;
+    case UNNOTIFY:
+      ctx.vars[int0]->unnotify();
+      break;
+    case GETUOBJECT:
+      {
+        UObject* uob = getUObject(string0);
+        libport::BlockLock bl (ctx.opLock);
+        if (!uob)
+          ctx.lastRead =  "0";
+        else
+          ctx.lastRead = uob->__name;
+      }
+      break;
+    case DELAY:
+      usleep(float0);
+      break;
+    case DIE:
+      return;
+      break;
     }
   }
-  catch(std::exception& e)
+}
+
+
+void Threaded::threadLoop(int id)
+{
+  while (true)
   {
-    std::cerr <<"exception " << e.what() << std::endl;
-  }
-  catch(...)
-  {
-    std::cerr <<"unknown exception" << std::endl;
-  }
+    try
+      {
+        threadLoopBody(id);
+      }
+    catch(std::exception& e)
+      {
+        std::cerr <<"exception " << e.what() << std::endl;
+      }
+    catch(...)
+      {
+        std::cerr <<"unknown exception" << std::endl;
+      }
   }
 }
 
