@@ -126,13 +126,13 @@ namespace urbi
     }
 
     libport::ufloat
-    Date::asFloat () const
+    Date::asFloat() const
     {
       return time_;
     }
 
     libport::ufloat
-    Date::timestamp () const
+    Date::timestamp() const
     {
       return asFloat ();
     }
@@ -165,6 +165,7 @@ namespace urbi
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
       bind(SYMBOL(MINUS), &Date::operator -);
       bind(SYMBOL(PLUS), &Date::operator +);
+      bind(SYMBOL(asFloat), &Date::asFloat);
       bind(SYMBOL(asString), &Date::as_string);
       bind(SYMBOL(epoch), &Date::epoch);
       bind(SYMBOL(init), &Date::init);
