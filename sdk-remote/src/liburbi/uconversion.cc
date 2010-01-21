@@ -76,9 +76,11 @@ namespace urbi
     unsigned char *out = (unsigned char *) destinationImage;
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
+      unsigned char tmp; // If source == destination
       out[i]     = in[i];
+      tmp        = in[i + 1];
       out[i + 1] = in[i + 2];
-      out[i + 2] = in[i + 1];
+      out[i + 2] = tmp;
     }
     return 1;
   }
