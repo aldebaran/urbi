@@ -181,20 +181,20 @@ namespace ast
   rExp
   Factory::make_event_catcher(const location& loc,
                               EventMatch& event,
-                              rExp body, rExp onleave) // const
+                              rExp enter, rExp leave) // const
   {
-    if (onleave)
+    if (!leave)
     {
-      PARAMETRIC_AST(a, "%exp:1 | %exp:2");
-      body = exp(a % body % onleave);
+      PARAMETRIC_AST(noop, "{}");
+      leave = exp(noop);
     }
 
-    if (event.guard)
-    {
-      PARAMETRIC_AST(desugar_guard,
-                     "if (%exp:1) %exp:2;");
-      body = exp(desugar_guard % event.guard % body);
-    }
+    // if (event.guard)
+    // {
+    //   PARAMETRIC_AST(desugar_guard,
+    //                  "if (%exp:1) %exp:2;");
+    //   body = exp(desugar_guard % event.guard % body);
+    // }
 
     if (event.pattern)
     {
@@ -202,39 +202,67 @@ namespace ast
       rewrite::PatternBinder
         bind(make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
       bind(pattern.get());
+
+      rExp positive;
+      if (event.guard)
+      {
+        PARAMETRIC_AST(desugar,
+          "%exp:1|"
+          "if (%exp:2)"
+          "  '$pattern'"
+          "else"
+          "  void");
+        positive = exp(desugar % bind.bindings_get() % event.guard);
+      }
+      else
+      {
+        PARAMETRIC_AST(desugar, "'$pattern'");
+        positive = exp(desugar);
+      }
+
       PARAMETRIC_AST
         (desugar,
-         "detach(\n"
          "{\n"
          "  %exp:1.onEvent(\n"
          "  closure ('$evt')\n"
          "  {\n"
          "    var '$pattern' = Pattern.new(%exp:2) |\n"
          "    if ('$pattern'.match('$evt'.payload))\n"
-         "    {\n"
-         "      %exp: 3 |\n"
-         "      %exp: 4 |\n"
-         "    }\n"
+         "      %exp: 3\n"
+         "    else\n"
+         "      void\n"
+         "  },\n"
+         "  closure ('$evt', '$pattern')\n"
+         "  {\n"
+         "    %exp: 4 |\n"
+         "    %exp: 5 |\n"
+         "  },\n"
+         "  closure ('$evt', '$pattern')\n"
+         "  {\n"
+         "    %exp: 6 |\n"
+         "    %exp: 7 |\n"
          "  })\n"
-         "})");
+         "}\n");
       return exp(desugar
                  % event.event
                  % bind.result_get().unchecked_cast<Exp>()
+                 % positive
                  % bind.bindings_get()
-                 % body);
+                 % enter
+                 % bind.bindings_get()
+                 % leave);
     }
     else
     {
       PARAMETRIC_AST
         (desugar_no_pattern,
-         "detach(\n"
          "{\n"
-         "  %exp:1.onEvent(closure ('$evt')\n"
-         "  {\n"
-         "    %exp: 2 |\n"
-         "  })\n"
-         "})\n");
-      return exp(desugar_no_pattern % event.event % body);
+         "  %exp:1.onEvent(\n"
+         "  closure ('$evt') { true },\n"
+         "  closure ('$evt', '$pattern') { %exp:2 },\n"
+         "  closure ('$evt', '$pattern') { %exp:3 })\n"
+         "}\n");
+      return exp(desugar_no_pattern % event.event % enter % leave);
     }
   }
 
@@ -247,11 +275,6 @@ namespace ast
   {
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
-    PARAMETRIC_AST
-      (desugar_body,
-       "%exp:1 |"
-       "waituntil(!'$evt'.active)");
-    body = exp(desugar_body % body);
     return make_event_catcher(loc, event, body, onleave);
   }
 
@@ -990,18 +1013,77 @@ namespace ast
   rExp
   Factory::make_whenever_event(const location& loc,
                                EventMatch& event,
-                               rExp body, rExp onleave) // const
+                               rExp body, rExp _else) // const
   {
-    PARAMETRIC_AST
-      (desugar,
-       "while (true)\n"
-       "{\n"
-       "  %exp:1 |\n"
-       "  if(!'$evt'.active)\n"
-       "    break\n"
-       "}");
-    body = exp(desugar % body);
-    return make_event_catcher(loc, event, body, onleave);
+    if (_else)
+    {
+      PARAMETRIC_AST
+        (desugar_body_ast,
+         "'$mtx': if ('$else')"
+         "{"
+         "  '$else' = false |"
+         "  '!$mtx': waituntil('$switch'?)"
+         "}|"
+         "'$count'++|"
+         "while (true)"
+         "{"
+         "  %exp:1;"
+         "  if (!'$evt'.active)"
+         "    break;"
+         "}|");
+      rExp desugar_body = exp(desugar_body_ast % body);
+
+      PARAMETRIC_AST
+        (desugar_leave_ast,
+         "'$mtx':"
+         "{"
+         "  '$count'--|"
+         "  if (!'$count')"
+         "  {"
+         "    '$else' = true|"
+         "    '$switch'!|"
+         "  }"
+         "}");
+      rExp desugar_leave = exp(desugar_leave_ast);
+
+      rExp at = make_event_catcher(loc, event, desugar_body, desugar_leave);
+
+      PARAMETRIC_AST
+        (desugar,
+         "{"
+         "  var '$else' = true|"
+         "  var '$switch' = Event.new|"
+         "  var '$mtx' = Mutex.new|"
+         "  var '!$mtx' = !'$mtx'|"
+         "  var '$count' = 0|"
+         "  %exp:1|" // at
+         "  while (true)"
+         "  {"
+         "    '$mtx': if (!'$else')"
+         "    {"
+         "      '$switch'!;"
+         "      '!$mtx': waituntil('$switch'?)|"
+         "    }|"
+         "    %exp:2|"
+         "  }"
+         "}");
+
+      return exp(desugar % at % _else);
+    }
+    else
+    {
+      PARAMETRIC_AST
+        (desugar_body_ast,
+         "while (true)"
+         "{"
+         "  %exp:1;"
+         "  if (!'$evt'.active)"
+         "    break;"
+         "}|");
+      rExp desugar_body = exp(desugar_body_ast % body);
+
+      return make_event_catcher(loc, event, desugar_body, 0);
+    }
   }
 
   rExp

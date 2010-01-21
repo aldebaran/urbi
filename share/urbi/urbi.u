@@ -79,7 +79,7 @@ load("urbi/pattern.u");
 load("urbi/package-info.u");
 load("urbi/task.u");
 load("urbi/pubsub.u");
-load("urbi/event.u");
+// load("urbi/event.u");
 load("urbi/tag.u");
 load("urbi/lobby.u");
 load("urbi/mutex.u");

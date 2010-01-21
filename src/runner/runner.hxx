@@ -31,6 +31,7 @@ namespace runner
     : sched::Job(sched, name)
     , lobby_(lobby)
     , prio_(sched::UPRIO_DEFAULT)
+    , frozen_(false)
   {
   }
 
@@ -39,6 +40,7 @@ namespace runner
     : sched::Job(model, name)
     , lobby_(model.lobby_)
     , prio_(sched::UPRIO_DEFAULT)
+    , frozen_(false)
   {
   }
 

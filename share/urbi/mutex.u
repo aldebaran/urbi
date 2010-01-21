@@ -17,7 +17,7 @@ do (Mutex)
 
   function init()
   {
-    var this.sem = uobjects.Semaphore.new(1);
+    var this.sem = Semaphore.new(1);
     at (enter?) lock;
     at (leave?) unlock;
   };
@@ -32,4 +32,38 @@ do (Mutex)
     this.sem.v;
   };
 
+  function '!'()
+  {
+    return NotMutex.new(this);
+  };
+};
+
+var Global.NotMutex = Mutex.new;
+do (NotMutex)
+{
+  var type = "NotMutex" |
+  var asNotMutex = this |
+  var asString = Object.getSlot("asString");
+
+  function init(mtx)
+  {
+    var this.mtx = mtx
+  };
+
+  function clone()
+  {
+    var res = Mutex.new;
+    res.protos = [NotMutex];
+    return res;
+  };
+
+  function lock()
+  {
+    this.mtx.unlock()
+  };
+
+  function unlock()
+  {
+    this.mtx.lock()
+  };
 };

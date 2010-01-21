@@ -34,6 +34,7 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/directory.hh		\
   include/urbi/object/equality-comparable.hh	\
   include/urbi/object/equality-comparable.hxx	\
+  include/urbi/object/event.hh			\
   include/urbi/object/file.hh			\
   include/urbi/object/float.hh			\
   include/urbi/object/fwd.hh			\
@@ -93,7 +94,7 @@ EXTRA_DIST += $(FROM_PY:=.py)
 ## install.  ##
 ## --------- ##
 
-install-data-hook: install-boost-headers
+# install-data-hook: install-boost-headers
 
-install-boost-headers:
-	sh -x $(builddir)/scripts/install-boost-headers
+# install-boost-headers:
+# 	sh -x $(builddir)/scripts/install-boost-headers

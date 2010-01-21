@@ -93,6 +93,24 @@ namespace runner
     apply_tag(lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>(), 0);
   }
 
+  Interpreter::Interpreter(rLobby lobby,
+                           sched::Scheduler& sched,
+                           rObject code,
+                           const libport::Symbol& name,
+                           rObject self,
+                           const objects_type& args)
+    : Runner(lobby, sched, name)
+    , ast_(0)
+    , code_(code)
+    , self_(self)
+    , args_(args)
+    , result_(0)
+    , stacks_(lobby)
+  {
+    init();
+    apply_tag(lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>(), 0);
+  }
+
   Interpreter::Interpreter(const Interpreter& model, rObject code,
 			   const libport::Symbol& name,
                            const objects_type& args)
@@ -156,7 +174,7 @@ namespace runner
 	result_ = operator()(ast_.get());
       else
       {
-        libport::push_front(args_, lobby_);
+        libport::push_front(args_, self_ ? self_ : rObject(lobby_));
 	result_ = apply(code_, libport::Symbol::make_empty(), args_);
       }
     }

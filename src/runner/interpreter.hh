@@ -65,6 +65,13 @@ namespace runner
                 const libport::Symbol& name,
                 const objects_type& args = objects_type());
 
+    Interpreter(rLobby lobby,
+                sched::Scheduler& sched,
+                rObject code,
+                const libport::Symbol& name,
+                rObject self,
+                const objects_type& args);
+
     /// Create a copy of a runner starting with another ast.
     Interpreter(const Interpreter&,
                 ast::rConstAst ast,
@@ -209,6 +216,8 @@ namespace runner
 
     /// The urbi Code object to execute
     rObject code_;
+    /// Its potential target
+    rObject self_;
     /// Its arguments
     objects_type args_;
 

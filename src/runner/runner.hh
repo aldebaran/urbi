@@ -20,6 +20,7 @@
 
 # include <boost/tuple/tuple.hpp>
 
+# include <libport/attributes.hh>
 # include <libport/compiler.hh>
 # include <libport/config.h>
 
@@ -215,10 +216,16 @@ namespace runner
 
     /// Current priority.
     sched::prio_type prio_;
+
+    /// Whether the tag is frozen, even if no applied tag is frozen.
+    ATTRIBUTE_RW(bool, frozen);
   };
 
   /// Dump \a b on \a o, for debugging.
   std::ostream& operator<<(std::ostream& o, const Runner::backtrace_type& b);
+
+  /// Smart pointer shorthand
+  typedef libport::intrusive_ptr<Runner> rRunner;
 
 } // namespace runner
 

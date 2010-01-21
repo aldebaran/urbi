@@ -55,7 +55,7 @@ namespace runner
   {
     // Too dangerous to try to print arg1 etc. here, as it certainly
     // involves running urbiScript code.
-    assert_user_mode(exn_name, "");
+    // assert_user_mode(exn_name, "");
     assert_ne(exn_name, SYMBOL(Exception));
     Runner& r = dbg::runner_or_sneaker_get();
     CAPTURE_GLOBAL(Exception);
@@ -147,7 +147,7 @@ namespace runner
   void
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
   {
-    assert_user_mode("Lookup", msg);
+    // assert_user_mode("Lookup", msg);
     raise_urbi_skip(SYMBOL(Lookup),
                     to_urbi(msg),
                     obj);

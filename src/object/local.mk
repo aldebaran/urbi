@@ -65,6 +65,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/dictionary.cc				\
   object/directory.cc				\
   object/duration.cc				\
+  object/event.cc				\
   object/executable.cc				\
   object/file.cc				\
   object/finalizable.cc				\
