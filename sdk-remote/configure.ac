@@ -41,15 +41,12 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
-BOOST_REQUIRE([1.35])
+URBI_BOOST_REQUIRE
 
 # URBI_LIBPORT AC_REQUIREs URBI_PTHREAD, so run the latter first.
 URBI_SOCKETS
 URBI_LIBPORT([libport])
-if $COMPILATION_MODE_DEBUG; then
-  boost_rt_opt=gd
-fi
-BOOST_THREADS([$boost_rt_opt])
+URBI_BOOST([THREADS])
 
 # X11.
 # AC_PATH_XTRA finds X11 headers even if cross-compiling to windows.
