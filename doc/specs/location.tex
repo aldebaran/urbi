@@ -1,6 +1,6 @@
 \section{Location}
 
-This class aggregate two Positions and provide a way to print them as done
+This class aggregates two Positions and provides a way to print them as done
 in error messages.
 
 \subsection{Prototypes}
@@ -10,7 +10,7 @@ in error messages.
 
 \subsection{Construction}
 
-Without argument, newly constructed locations has its positions initialized
+Without argument, a newly constructed Location has its Positions initialized
 to the first line and the first column.
 
 \begin{urbiscript}
@@ -18,16 +18,16 @@ Location.new;
 [00000001] 1.1
 \end{urbiscript}
 
-With a position argument \var{p}, the location will clone the position into
-the begin and end positions.
+With a Position argument \var{p}, the Location will clone the Position into
+the begin and end Positions.
 
 \begin{urbiscript}
 Location.new(Position.new("file.u",14,25));
 [00000001] file.u:14.25
 \end{urbiscript}
 
-With two positions arguments \var{begin} and \var{end}, the location will
-clone both positions into its own fields.
+With two Positions arguments \var{begin} and \var{end}, the Location will
+clone both Positions into its own fields.
 
 \begin{urbiscript}
 Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
@@ -39,7 +39,7 @@ Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
 \begin{itemize}
 
 \item \lstinline|asString|\\
-  Present locations with less variability as possible as either:
+  Present Locations with less variability as possible as either:
   \begin{itemize}
   \item \samp{\var{file}:\var{ll}.\var{cc}}
   \item \samp{\var{file}:\var{ll}.\var{cc}-\var{cc}}
@@ -72,8 +72,8 @@ Location.new(
 \end{urbiassert}
 
 \item \lstinline|begin|\\
-  The begin position used by the location.  Modifying a copy of this field
-  does not modify the location.
+  The begin Position used by the Location.  Modifying a copy of this field
+  does not modify the Location.
 \begin{urbiassert}[firstnumber=last]
 Location.new(
   Position.new("file.u",14,25),
@@ -82,8 +82,8 @@ Location.new(
 \end{urbiassert}
 
 \item \lstinline|end|\\
-  The end position used by the location.  Modifying a copy of this field
-  does not modify the location.
+  The end Position used by the Location.  Modifying a copy of this field
+  does not modify the Location.
 \begin{urbiassert}[firstnumber=last]
 Location.new(
   Position.new("file.u",14,25),
