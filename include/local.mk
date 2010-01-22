@@ -59,17 +59,6 @@ dist_kernelincludeurbiobject_HEADERS =		\
 ## Check.  ##
 ## ------- ##
 
-.PHONY: check-headers
-check-local: check-headers
-check-headers:
-# It is forbidden for public headers to depend on non public headers.
-# But for 2.0b1, we don't care...
-	-srcdir=$(srcdir) \
-	  $(srcdir)/include/check-headers $(dist_kernelincludekernel_HEADERS)
-
-EXTRA_DIST +=					\
-  include/check-headers
-
 install-data-hook: install-boost-headers
 
 install-boost-headers:
