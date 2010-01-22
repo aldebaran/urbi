@@ -656,14 +656,11 @@ sub wanted
      ? qr{\.(dylib|so)\z}s # Our UObjects are *.so.
      : qr{\.so(\..*)?\z}s
     );
-  if (-f $_
-      && (-x $_ || /$re/))
-    {
-      # We are not interested in plain files.
-      my $res = `file $_`;
-      push @checked, $File::Find::name
-        if $res !~ /shell script|ASCII English text|libtool library file/;
-    }
+
+  push @checked, $File::Find::name
+    if (-f $_
+        && (-x $_ || /$re/)
+        && `file $_` !~ /shell script|ASCII English text|libtool library file/);
 }
 
 ######################################################################
