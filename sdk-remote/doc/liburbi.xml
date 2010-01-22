@@ -118,9 +118,10 @@ UCallbackAction onImage(const UMessage &amp;msg) {
 
   unsigned char *image = new unsigned char[msg.image.width*msg.image.height*3];
   int sz = msg.image.width*msg.image.height*3;
+  size_t w, h;
 
   if (msg.image.imageFormat == IMAGE_JPEG) 
-    convertJPEGtoRGB((const byte *) msg.image.data, msg.image.size, (byte *) image, sz); //provided by liburbi
+    convertJPEGtoRGB((const byte *) msg.image.data, msg.image.size, (byte **) &image, sz, w, h); //provided by liburbi
   if (msg.image.imageFormat == IMAGE_YCbCr)
     convertYCrCbtoRGB((const byte *) msg.image.data, msg.image.size, (byte *) image);  //provided by liburbi
 
@@ -293,8 +294,8 @@ We also have included a few functions to convert between different image and sou
 <programlisting>
 int convertRGBtoYCrCb(const byte* source, int sourcelen, byte* dest);
 int convertYCrCbtoRGB(const byte* source, int sourcelen, byte* dest);
-int convertJPEGtoYCrCb(const byte* source, int sourcelen, byte* dest, int &amp;size);
-int convertJPEGtoRGB(const byte* source, int sourcelen, byte* dest, int &amp;size);
+int convertJPEGtoYCrCb(const byte* source, int sourcelen, byte** dest, int &amp;size, int &amp;w, int &amp;h);
+int convertJPEGtoRGB(const byte* source, int sourcelen, byte* dest, int &amp;size, int &amp;w, int &amp;h);
 </programlisting>
 <para>
 The <parameter>size</parameter> parameter must be set to the size of the destination buffer. On return it will be set to the size of the output data.

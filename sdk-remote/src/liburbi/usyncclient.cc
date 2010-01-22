@@ -406,15 +406,16 @@ namespace urbi
     size_t osize = buffersize;
     if (f == 1  && format != IMAGE_JPEG)
     {
+      size_t w, h;
       //uncompress jpeg
       if (format == IMAGE_YCbCr)
 	convertJPEGtoYCrCb((const byte*) m->value->binary->image.data,
-			   m->value->binary->image.size, (byte*) buffer,
-			   buffersize);
+			   m->value->binary->image.size, (byte**) &buffer,
+			   buffersize, w, h);
       else
 	convertJPEGtoRGB((const byte*) m->value->binary->image.data,
-			 m->value->binary->image.size, (byte*) buffer,
-			 buffersize);
+			 m->value->binary->image.size, (byte**) &buffer,
+			 buffersize, w, h);
     }
     else if (format == IMAGE_RGB || format == IMAGE_PPM)
     {

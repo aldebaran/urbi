@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006-2009, Gostai S.A.S.
+ * Copyright (C) 2004, 2006-2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -213,8 +213,11 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
   ++framenum;
   size_t imgsize = 500000;
   if (img.imageFormat == urbi::IMAGE_JPEG)
+  {
+    size_t w, h;
     urbi::convertJPEGtoYCrCb((const urbi::byte *) img.data,
-			     img.size, image, imgsize);
+			     img.size, &image, imgsize, w, h);
+  }
   else
     memcpy(image, img.data, img.width * img.height * 3);
 

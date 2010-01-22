@@ -27,7 +27,7 @@ namespace urbi
   namespace
   {
     void *read_jpeg(const char *jpgbuffer, size_t jpgbuffer_size,
-		    bool RGB, size_t& output_size);
+		    bool RGB, size_t& output_size, size_t& w, size_t& h);
 
     int write_jpeg(const unsigned char* src, size_t w, size_t h, bool ycrcb,
 		   unsigned char* dst, size_t& sz, int quality);
@@ -121,18 +121,25 @@ namespace urbi
 
 
   int
-  convertJPEGtoYCrCb(const byte* source, size_t sourcelen, byte* dest,
-		     size_t& size)
+  convertJPEGtoYCrCb(const byte* source, size_t sourcelen,
+                     byte** dest, size_t& size, size_t& w, size_t& h)
   {
     size_t sz;
-    void *destination = read_jpeg((const char *) source, sourcelen, false, sz);
-    if (!destination)
+    void *destination = read_jpeg((const char *) source, sourcelen, false,
+                                  sz, w, h);
+    if (!destination || !dest)
     {
       size = 0;
       return 0;
     }
+    if (!*dest)
+    {
+      *dest = (byte *) destination;
+      size = sz;
+      return 1;
+    }
     size_t cplen = sz > size ? size : sz;
-    memcpy(dest, destination, cplen);
+    memcpy(*dest, destination, cplen);
     free(destination);
     size = sz;
     return 1;
@@ -140,17 +147,24 @@ namespace urbi
 
   int
   convertJPEGtoRGB(const byte* source, size_t sourcelen,
-                   byte* dest, size_t& size)
+                   byte** dest, size_t& size, size_t& w, size_t& h)
   {
     size_t sz;
-    void *destination = read_jpeg((const char *) source, sourcelen, true, sz);
-    if (!destination)
+    void *destination = read_jpeg((const char *) source, sourcelen, true,
+                                  sz, w, h);
+    if (!destination || !dest)
     {
       size = 0;
       return 0;
     }
+    if (!*dest)
+    {
+      *dest = (byte *) destination;
+      size = sz;
+      return 1;
+    }
     size_t cplen = sz > size ? size : sz;
-    memcpy(dest, destination, cplen);
+    memcpy(*dest, destination, cplen);
     free(destination);
     size = sz;
     return 1;
@@ -307,7 +321,7 @@ namespace urbi
     /*! Convert a jpeg image to YCrCb or RGB. Allocate the buffer with malloc.
      */
     void *read_jpeg(const char *jpgbuffer, size_t jpgbuffer_size, bool RGB,
-		    size_t& output_size)
+		    size_t& output_size, size_t& w, size_t& h)
     {
       struct jpeg_decompress_struct cinfo;
       struct urbi_jpeg_error_mgr jerr;
@@ -340,6 +354,8 @@ namespace urbi
       jpeg_read_header(&cinfo, TRUE);
       cinfo.out_color_space = (RGB ? JCS_RGB : JCS_YCbCr);
       jpeg_start_decompress(&cinfo);
+      w = cinfo.output_width;
+      h = cinfo.output_height;
       output_size = cinfo.output_width *
 	cinfo.output_components        *
 	cinfo.output_height;
@@ -407,14 +423,11 @@ namespace urbi
    */
   int convert(const UImage& src, UImage& dest)
   {
-    if (dest.width == 0)
-      dest.width = src.width;
-    if (dest.height == 0)
-      dest.height = src.height;
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
     bool allocated = false; // true if uncompressedData must be freed
     unsigned char* uncompressedData = 0;
-    size_t usz = src.width * src.height * 3;
+    size_t w, h;
+    size_t usz;
     int format = 42; //0 rgb 1 ycbcr
     int targetformat = 42; //0 rgb 1 ycbcr 2 compressed
 
@@ -437,6 +450,16 @@ namespace urbi
     }
     unsigned p = 0;
     int c = 0;
+
+    // Avoid using src fields because JPEG file format embedded these
+    // information in the data buffer.
+    if (src.imageFormat != IMAGE_JPEG)
+    {
+      w = src.width;
+      h = src.height;
+      usz = w * h * 3;
+    }
+
     switch (src.imageFormat)
     {
       case IMAGE_YCbCr:
@@ -458,18 +481,21 @@ namespace urbi
 	uncompressedData = src.data + p;
 	break;
       case IMAGE_JPEG:
-        uncompressedData = (unsigned char*)malloc(src.width * src.height * 3);
+        // this image is allocated by the function convertJPEG* function.
+        // w, h and usz are defined by these functions calls.
         allocated = true;
 	if (targetformat == 1)
 	{
 	  convertJPEGtoRGB((byte*) src.data, src.size,
-			   (byte*) uncompressedData, usz);
+			   (byte**) &uncompressedData, usz,
+                           w, h);
 	  format = 0;
 	}
 	else
 	{
 	  convertJPEGtoYCrCb((byte*) src.data, src.size,
-			     (byte*) uncompressedData, usz);
+			     (byte**) &uncompressedData, usz,
+                             w, h);
 	  format = 1;
 	}
 	break;
@@ -509,15 +535,19 @@ namespace urbi
 	break;
     }
 
+    if (dest.width == 0)
+      dest.width = w;
+    if (dest.height == 0)
+      dest.height = h;
+
     //now resize if target size is different
-    if (src.width != dest.width || src.height != dest.height)
+    if (w != dest.width || h != dest.height)
     {
       void* scaled = malloc(dest.width * dest.height * 3);
-      scaleColorImage(uncompressedData, src.width,
-		      src.height, src.width/2, src.height/2,
+      scaleColorImage(uncompressedData, w, h, w/2, h/2,
 		      (unsigned char*) scaled, dest.width, dest.height,
-		      (float) dest.width / (float) src.width,
-		      (float) dest.height / (float) src.height);
+		      (float) dest.width / (float) w,
+		      (float) dest.height / (float) h);
       if (allocated)
         free(uncompressedData);
       uncompressedData = (unsigned char*)scaled;
@@ -780,9 +810,13 @@ namespace urbi
 	break;
       case 16016: // Data is short, but convertions needs an unsigned short.
          if (srate == dest.rate && schannels == 1 && dest.channels == 2)
-          dup((unsigned short*)sbuffer, (unsigned short*)dbuffer, elementCount);
+          dup((unsigned short*)sbuffer,
+              (unsigned short*)dbuffer,
+              elementCount);
         else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
-          pud((unsigned short*)sbuffer, (unsigned short*)dbuffer, elementCount);
+          pud((unsigned short*)sbuffer,
+              (unsigned short*)dbuffer,
+              elementCount);
         else
 	  copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels,
 	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,

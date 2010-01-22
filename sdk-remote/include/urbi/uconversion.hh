@@ -28,9 +28,11 @@ namespace urbi
   URBI_SDK_API int convertYCrCbtoRGB(const byte* source, size_t sourcelen,
                                      byte* dest);
   URBI_SDK_API int convertJPEGtoYCrCb(const byte* source, size_t sourcelen,
-                                      byte* dest, size_t& size);
+                                      byte** dest, size_t& size,
+                                      size_t& w, size_t& h);
   URBI_SDK_API int convertJPEGtoRGB(const byte* source, size_t sourcelen,
-                                    byte* dest, size_t& size);
+                                    byte** dest, size_t& size,
+                                    size_t& w, size_t& h);
 
   URBI_SDK_API int convertRGBtoJPEG(const byte* source,
                                     size_t w, size_t h, byte* dest,
