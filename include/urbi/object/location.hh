@@ -41,26 +41,15 @@ namespace urbi
 
     public:
       std::string as_string() const;
-
-      inline value_type& value_get()
-      {
-        return loc_;
-      }
+      inline value_type& value_get();
 
     /*-----------.
     | Accessor.  |
     `-----------*/
 
     private:
-      inline Position::value_type* begin_ref()
-      {
-        return &loc_.begin;
-      };
-
-      inline Position::value_type* end_ref()
-      {
-        return &loc_.end;
-      };
+      Position::value_type* begin_ref();
+      Position::value_type* end_ref();
 
     /*----------.
     | Details.  |
@@ -72,30 +61,9 @@ namespace urbi
       URBI_CXX_OBJECT_(Location);
     };
 
-
-    /*-------------.
-    | ::ast::loc.  |
-    `-------------*/
-
-    template <>
-    struct CxxConvert<Location::value_type>
-    {
-      typedef Location::value_type target_type;
-      static target_type
-      to(const rObject& o, unsigned idx)
-      {
-        type_check<Location>(o, idx);
-        return o->as<Location>()->value_get();
-      }
-
-      static rObject
-      from(target_type v)
-      {
-        return new Location(v);
-      }
-    };
-
   } // namespace object
 } // namespace urbi
+
+#include <urbi/object/location.hxx>
 
 #endif

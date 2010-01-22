@@ -43,11 +43,13 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/global.hh			\
   include/urbi/object/list.hh			\
   include/urbi/object/lobby.hh			\
-  include/urbi/object/location.hh			\
+  include/urbi/object/location.hh		\
+  include/urbi/object/location.hxx		\
   include/urbi/object/object.hh			\
   include/urbi/object/object.hxx		\
   include/urbi/object/path.hh			\
-  include/urbi/object/position.hh			\
+  include/urbi/object/position.hh		\
+  include/urbi/object/position.hxx		\
   include/urbi/object/primitive.hh		\
   include/urbi/object/slot.hh			\
   include/urbi/object/slot.hxx			\

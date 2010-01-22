@@ -49,11 +49,11 @@ namespace urbi
     `-------------*/
 
     public:
-      rPosition operator - (const rFloat rhs) const;
-      rPosition operator + (const rFloat rhs) const;
+      rPosition operator - (int rhs) const;
+      rPosition operator + (int rhs) const;
 
-      void lines(const rFloat c);
-      void columns(const rFloat c);
+      rPosition lines(int c);
+      rPosition columns(int c);
 
     /*--------------.
     | Conversions.  |
@@ -61,11 +61,7 @@ namespace urbi
 
     public:
       std::string as_string() const;
-
-      inline value_type& value_get()
-      {
-        return pos_;
-      }
+      value_type& value_get();
 
     /*-----------.
     | Accessor.  |
@@ -75,15 +71,8 @@ namespace urbi
       rObject file_get() const;
       void file_set(rObject o);
 
-      inline unsigned int* line_ref()
-      {
-        return &pos_.line;
-      };
-
-      inline unsigned int* column_ref()
-      {
-        return &pos_.column;
-      };
+      unsigned int* line_ref();
+      unsigned int* column_ref();
 
     /*----------.
     | Details.  |
@@ -96,30 +85,9 @@ namespace urbi
     };
 
 
-    /*-----------------.
-    | ::yy::position.  |
-    `-----------------*/
-
-    template <>
-    struct CxxConvert<Position::value_type>
-    {
-      typedef Position::value_type target_type;
-      static target_type
-      to(const rObject& o, unsigned idx)
-      {
-        type_check<Position>(o, idx);
-        return o->as<Position>()->value_get();
-      }
-
-      static rObject
-      from(target_type v)
-      {
-        return new Position(v);
-      }
-    };
-
-
   } // namespace object
 } // namespace urbi
+
+#include <urbi/object/position.hxx>
 
 #endif
