@@ -361,6 +361,28 @@ sub rpath_set($@)
   }
 }
 
+=item C<unique(@list)>
+
+Return C<@list> removing duplicates.
+
+=cut
+
+sub unique (@)
+{
+  my (@list) = @_;
+  my %seen;
+  my @res;
+  for my $item (@list)
+  {
+    if (! exists $seen{$item})
+    {
+      $seen{$item} = 1;
+      push @res, $item;
+    }
+  }
+  @res;
+}
+
 
 =item C<relocate($lib)>
 
@@ -422,19 +444,16 @@ sub relocate ($)
             if $dep ne $rel;
           push @rpath, $rel;
         }
-      # If there are dependencies to installed libraries, and we don't
-      # already have an RPATH that goes into libdir, install it.
-      #
-      # Beware of operator precedence here, don't remove "useless"
-      # parens.
-      if ((grep {exists $installed{$_}} dependencies($lib))
-          && (! grep { $_ eq $libdir } @rpath))
+      # If there are dependencies to installed libraries, include this
+      # libdir in the RPATH.
+      if (grep {exists $installed{$_}} dependencies($lib))
       {
         my $rel = File::Spec->catdir('$ORIGIN',
                                      File::Spec->abs2rel($libdir, $dir));
         verbose 3, "installing $rel in RPATH";
         push @rpath, $rel;
       }
+      @rpath = unique @rpath;
       rpath_set($lib, @rpath);
     }
 }
