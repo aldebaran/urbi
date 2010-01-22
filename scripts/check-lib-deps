@@ -1,11 +1,12 @@
 #! /usr/bin/perl -w
 
 use Cwd;            # realpath
-use English;        # $OSNAME
 use File::Basename;
 use File::Find ();
 use IO::File;
 use strict;
+
+sub host_os($);
 
 =head1 NAME
 
@@ -79,6 +80,28 @@ Specify that missing dependencies should be installed in
 C<$destdir$libdir>.  If C<$libdir> is not specified, nothing is
 installed.
 
+=item B<-o>, B<--host-os>=I<host-os>
+
+Specify the host operating system type, i.e., the type of the machine
+the program will run on.  Expected values are:
+
+=over 4
+
+=item mac
+
+Mac OS X.  Use C<otool> and C<install_name_tool>.
+
+=item linux
+
+GNU/Linux.  Use C<ldd> and C<patchelf> if possible, otherwise
+C<chrpath>.
+
+=item windows
+
+MS Windows.  Use C<cygcheck.exe>.
+
+=back
+
 =item B<-p>, B<--prefix>=I<prefix>
 
 Prefix into which the package is installed.  This is used under
@@ -115,6 +138,9 @@ my $chrpath;
 
 # The place the installation was made.
 my $destdir;
+
+# The host operating system.
+my $host_os = host_os($^O);
 
 # The set of libraries installed in libdir for completion.
 my %installed;
@@ -154,6 +180,30 @@ sub verbose($@)
     if $level <= $verbose;
 }
 
+=item C<host_os($host_os)>
+
+Check thet C<$host_os> is valid, and return its canonicalized name a
+la Perl: darwin, linux, windows.
+
+=cut
+
+sub host_os($)
+{
+  my ($host_os) = @_;
+  my %host_os =
+    (
+     darwin  => 'darwin',
+     linux   => 'linux',
+     mac     => 'darwin',
+     macos   => 'darwin',
+     windows => 'windows',
+    );
+  $host_os = lc $host_os;
+  die "$me: invalid host OS: $host_os\n"
+    unless exists $host_os{$host_os};
+  $host_os{$host_os};
+}
+
 =item C<prefix($prefix, $string)>
 
 Whether C<$prefix> is a prefix of C<$string>.
@@ -174,7 +224,7 @@ sub dependencies ($)
   my ($lib) = @_;
   verbose 3, "dependencies($lib)";
   my @res;
-  if ($OSNAME eq 'darwin')
+  if ($host_os eq 'darwin')
     {
       my $deps = new IO::File("otool -L $lib|")
         or die "$me: cannot read otool -L $lib: $!\n";
@@ -281,11 +331,11 @@ if we don't need it (e.g., on OS X).
 
 sub rpath_tool()
 {
-  if ($OSNAME eq 'darwin')
+  if ($host_os eq 'darwin')
   {
     return undef;
   }
-  elsif ($OSNAME eq 'linux')
+  elsif ($host_os eq 'linux')
   {
     my @tools = qw(patchelf chrpath);
     for my $tool (@tools)
@@ -399,7 +449,7 @@ sub relocate ($)
   # On OS X, look for all the dependencies that are inside our
   # DESTDIR, and make then relative.  It works at the level of each
   # library.
-  if ($OSNAME eq 'darwin')
+  if ($host_os eq 'darwin')
   {
     # This is not necessary, but it produces a cleaner otool -L
     # output.  It also helps our check-step (the library no longer has
@@ -430,7 +480,7 @@ sub relocate ($)
   # which inside the package, make it relative.  It works at the level
   # of directories, not libraries.  We use chrpath for two things: to
   # get the list of current RPATH, and to change them.
-  elsif ($OSNAME eq 'linux')
+  elsif ($host_os eq 'linux')
     {
       my @rpath;
       for my $dep (rpath_get($lib))
@@ -473,7 +523,7 @@ sub dependencies_foreign ($)
   my @valid =
     # On OS X, the relative rpath dependencies are reported
     # with a relative path starting with @loader_path.
-    $OSNAME eq 'darwin'
+    $host_os eq 'darwin'
     ? qw(
          /opt/local/lib/libICE.
          /opt/local/lib/libSM.
@@ -486,7 +536,7 @@ sub dependencies_foreign ($)
         )
     # On GNU/Linux, the related rpath dependencies are resolved and
     # made absolute.  Accept them only if they are inside our package.
-    : $OSNAME eq 'linux'
+    : $host_os eq 'linux'
     ? ($destdir,
        qw(
           /lib/
@@ -619,6 +669,7 @@ sub getopt ()
     "d|destdir=s"   => \$destdir,
     "h|help"        => sub { help ($verbose) },
     "l|libdir=s"    => \$libdir,
+    "o|host-os=s"   => sub { $host_os = host_os ($_[1]) },
     "p|prefix=s"    => \$prefix,
     "q|quiet"       => sub { --$verbose },
     "v|verbose"     => sub { ++$verbose },
@@ -640,7 +691,8 @@ sub getopt ()
   # For instance on OS X, /tmp is actually a symlink to private/tmp.
   $destdir = Cwd::realpath($destdir);
 
-  verbose 4, "destdir = $destdir";
+  verbose 4, "destdir = $destdir", "host-os = $host_os";
+
 
   die "$me: passing --prefix is mandatory\n"
     unless defined $prefix;
@@ -652,9 +704,11 @@ sub wanted
   # libraries.
   my $re =
     (
-     $^O eq 'darwin'
+     $host_os eq 'darwin'
      ? qr{\.(dylib|so)\z}s # Our UObjects are *.so.
-     : qr{\.so(\..*)?\z}s
+     : $host_os eq 'linux'
+     ? qr{\.so(\..*)?\z}s
+     : qr{}s
     );
 
   push @checked, $File::Find::name

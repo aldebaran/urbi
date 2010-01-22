@@ -43,6 +43,7 @@ case $DESTDIR:$URBI_HOST_OS in
     $srcdir/scripts/check-lib-deps              \
       --verbose --verbose --verbose --verbose   \
       --destdir "$DESTDIR"                      \
+      --host-os "$URBI_HOST_OS"                 \
       --prefix "$prefix"                        \
       --libdir "$libdir"                        \
       "$DESTDIR"
