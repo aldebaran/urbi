@@ -12,6 +12,20 @@ Changes
 - '$type' replaces type
 - List derives from Orderable.
 
+urbiscript
+==========
+
+New objects:
+- Location
+- Position
+
+Documentation
+=============
+
+- specs:
+  - Location
+  - Position
+
 
 ***************************
 * New in kernel 2.0 RC 3. *

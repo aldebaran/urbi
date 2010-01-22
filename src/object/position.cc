@@ -98,27 +98,34 @@ namespace urbi
     `-------------*/
 
     rPosition
-    Position::operator - (const rFloat rhs) const
+    Position::operator - (int rhs) const
     {
-      return new Position(pos_ - rhs);
+      return this->operator+(-rhs);
     }
 
     rPosition
-    Position::operator + (const rFloat rhs) const
+    Position::operator + (int rhs) const
     {
-      return new Position(pos_ + rhs);
+      return (new Position(pos_))->columns(rhs);
     }
 
-    void
-    Position::lines(const rFloat count)
+    rPosition
+    Position::lines(int count)
     {
       pos_.lines(count);
+      return this;
     }
 
-    void
-    Position::columns(const rFloat count)
+    rPosition
+    Position::columns(int count)
     {
-      pos_.lines(count);
+      // bison position does not handle cases when the count operand is lower
+      // than (- column).
+      int column = pos_.column;
+      count = std::max(count, -column);
+
+      pos_.columns(count);
+      return this;
     }
 
     /*--------------.
