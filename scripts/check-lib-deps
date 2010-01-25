@@ -615,17 +615,23 @@ Whether C<$lib> is an inner dependence, i.e., it is (already) shipped.
 sub dependency_inner($)
 {
   my ($lib) = @_;
-  my $res;
-  $res = exists $argv{$lib};
+
+  my $res = exists $argv{$lib};
+
+  # On GNU/Linux, the related rpath dependencies are resolved and
+  # made absolute.  Accept them only if they are inside our package.
+  $res ||= exists $argv{installname $lib}
+    if $host_os eq 'linux';
+
   # Under Windows, since we don't have a means to tell cygcheck.exe
   # how to extend its LD_LIBRARY_PATH, it will complete that, for
   # instance, we have a dependency on libuobject.dll (without the full
   # path).  So in this case, just check that we do ship a file that
   # has this name.
-  if ($host_os eq 'windows')
-  {
-    $res ||= scalar (grep { basename $_ eq $lib } keys %argv);
-  }
+  $res ||= scalar (grep { basename $_ eq $lib } keys %argv)
+    if $host_os eq 'windows';
+
+  $res;
 }
 
 =item C<dependency_system($lib)>
