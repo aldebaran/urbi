@@ -218,6 +218,29 @@ sub prefix($$)
 }
 
 
+=item C<unique(@list)>
+
+Return C<@list> removing duplicates.
+
+=cut
+
+sub unique (@)
+{
+  my (@list) = @_;
+  my %seen;
+  my @res;
+  for my $item (@list)
+  {
+    if (! exists $seen{$item})
+    {
+      $seen{$item} = 1;
+      push @res, $item;
+    }
+  }
+  @res;
+}
+}
+
 # Return the list of paths we depend upon.
 sub dependencies ($)
 {
@@ -410,29 +433,6 @@ sub rpath_set($@)
     }
   }
 }
-
-=item C<unique(@list)>
-
-Return C<@list> removing duplicates.
-
-=cut
-
-sub unique (@)
-{
-  my (@list) = @_;
-  my %seen;
-  my @res;
-  for my $item (@list)
-  {
-    if (! exists $seen{$item})
-    {
-      $seen{$item} = 1;
-      push @res, $item;
-    }
-  }
-  @res;
-}
-
 
 =item C<relocate($lib)>
 
