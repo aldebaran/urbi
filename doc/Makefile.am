@@ -28,7 +28,7 @@ TEXI2DVI_FLAGS += -I $(srcdir) -~
 pdf_DATA =
 
 # Use tex4ht.
-TEXI2HTML_FLAGS += --tex4ht --verbose --debug --tex4ht-options=2,sections+
+TEXI2HTML_FLAGS += --tex4ht --verbose --debug --tex4ht-options=urbi-style,2,sections+
 %.htmldir: %.tex $(share_tex_dependencies)
 	-rm -rf $@ $@.tmp
 	-$(mkdir_p) $@.tmp
