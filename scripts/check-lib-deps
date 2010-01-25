@@ -7,6 +7,9 @@ use IO::File;
 use strict;
 
 sub host_os($);
+sub dependency_foreign($);
+sub dependency_inner($);
+sub dependency_system($);
 
 =head1 NAME
 
@@ -590,6 +593,82 @@ sub relocate ($)
   }
 }
 
+=item C<dependency_foreign($lib)>
+
+Whether C<$lib> is a foreign dependence, i.e., neither system nor
+inner.
+
+=cut
+
+sub dependency_foreign($)
+{
+  my ($lib) = @_;
+  ! dependency_inner ($lib) && ! dependency_system ($lib);
+}
+
+=item C<dependency_inner($lib)>
+
+Whether C<$lib> is an inner dependence, i.e., it is (already) shipped.
+
+=cut
+
+sub dependency_inner($)
+{
+  my ($lib) = @_;
+  exists $argv{$lib};
+}
+
+=item C<dependency_system($lib)>
+
+Whether C<$lib> is a system dependence, i.e., it is expected to be on
+the host system: it does not need to be shipped.
+
+=cut
+
+sub dependency_system($)
+{
+  my ($lib) = @_;
+
+  # Recognize a system library.
+  my $system_libs =
+    # On OS X, the relative rpath dependencies are reported
+    # with a relative path starting with @loader_path.
+    $host_os eq 'darwin'
+    ? qr(
+          /opt/local/lib/libICE\.
+        | /opt/local/lib/libSM\.
+        | /opt/local/lib/libX11\.
+        | /opt/local/lib/libXau\.
+        | /opt/local/lib/libXdmcp\.
+        | /opt/local/lib/libXext\.
+        | /usr/lib/
+        | \@loader_path/
+        )x
+    : $host_os eq 'linux'
+    ? qr(
+          /lib/
+        | /usr/lib/gcc/
+        | /usr/lib/libICE\.so
+        | /usr/lib/libSM\.so
+        | /usr/lib/libX11\.so
+        | /usr/lib/libXau\.so
+        | /usr/lib/libXdmcp\.so
+        | /usr/lib/libXext\.so
+        | /usr/lib/libstdc\+\+
+        | /usr/lib/libxcb\.so
+        )x
+    # On Windows,
+    : $host_os eq 'windows'
+    ? qr(
+          .*/windows/system32/
+        | msvcp90.dll
+        | msvcr90.dll
+        )ix
+    : ();
+
+  $lib =~ qr{^(?:$system_libs)}o;
+}
+
 =item C<dependencies_foreign($lib)>
 
 The list of dependencies of C<$lib> that are not part of this package,
@@ -602,63 +681,18 @@ sub dependencies_foreign ($)
   my ($lib) = @_;
   my @res;
 
-  # Recognize a system library.
-  my $valid =
-    # On OS X, the relative rpath dependencies are reported
-    # with a relative path starting with @loader_path.
-    $host_os eq 'darwin'
-    ? qr(
-         /opt/local/lib/libICE\.
-         | /opt/local/lib/libSM\.
-         | /opt/local/lib/libX11\.
-         | /opt/local/lib/libXau\.
-         | /opt/local/lib/libXdmcp\.
-         | /opt/local/lib/libXext\.
-         | /usr/lib/
-         | \@loader_path/
-        )x
-    # On GNU/Linux, the related rpath dependencies are resolved and
-    # made absolute.  Accept them only if they are inside our package.
-    : $host_os eq 'linux'
-    ? qr(
-          \Q$destdir\E
-          | /lib/
-          | /usr/lib/gcc/
-          | /usr/lib/libICE\.so
-          | /usr/lib/libSM\.so
-          | /usr/lib/libX11\.so
-          | /usr/lib/libXau\.so
-          | /usr/lib/libXdmcp\.so
-          | /usr/lib/libXext\.so
-          | /usr/lib/libstdc\+\+
-          | /usr/lib/libxcb\.so
-        )x
-    # On Windows,
-    : $host_os eq 'windows'
-    ? qr(
-          .*/windows/system32/
-        | msvcp90.dll
-        | msvcr90.dll
-        )ix
-    : ();
-
-  my $re = qr{^(?:$valid)};
   for my $loc (dependencies($lib))
     {
-      if (exists $argv{$loc})
-        {
-          # Inner library.
-        }
-      elsif ($loc =~ m($re))
-        {
-          # System library.
-          $loc{$loc} = 1;
-        }
-      else
-        {
-          # Foreign library.
-          push @res, $loc;
-        }
+      if (dependency_system($loc))
+      {
+        # System library.
+        $loc{$loc} = 1;
+      }
+      elsif (dependency_foreign($loc))
+      {
+        # Foreign library.
+        push @res, $loc;
+      }
     }
   return @res;
 }
