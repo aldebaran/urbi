@@ -3,6 +3,7 @@
 set -x
 set -e
 
+BOOST_SYSTEM_LDFLAGS='@BOOST_SYSTEM_LDFLAGS@'
 COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'
 PROJECT='@PACKAGE_TARNAME@'
 URBI_HOST_COMP='@URBI_HOST_COMP@'
@@ -13,9 +14,13 @@ host='@host@'
 prefix='@prefix@'
 srcdir='@abs_top_srcdir@'
 
+boost_libdir=$(perl -e "'$BOOST_SYSTEM_LDFLAGS'"' =~ m{-L\s*([\w/]+)}
+                         && print "$1\n"')
+
 # Do not sort by alphabetical order here.  exec_prefix typically use
 # $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
 exec_prefix="@exec_prefix@"
+bindir="@bindir@"
 libdir="@libdir@"
 
 
@@ -46,6 +51,16 @@ case $DESTDIR:$URBI_HOST_OS in
       --host-os "$URBI_HOST_OS"                 \
       --prefix "$prefix"                        \
       --libdir "$libdir"                        \
+      "$DESTDIR"
+    ;;
+  (*:windows)
+    $srcdir/scripts/check-lib-deps              \
+      --verbose --verbose --verbose --verbose   \
+      --destdir "$DESTDIR"                      \
+      --host-os "$URBI_HOST_OS"                 \
+      --prefix "$prefix"                        \
+      --libdir "$libdir"                        \
+      --libpath "$boost_libdir"			\
       "$DESTDIR"
     ;;
 esac
