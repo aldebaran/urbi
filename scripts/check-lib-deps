@@ -80,6 +80,12 @@ Specify that missing dependencies should be installed in
 C<$destdir$libdir>.  If C<$libdir> is not specified, nothing is
 installed.
 
+=item B<-L>, B<--libpath>=I<dir>
+
+When completing for missing foreign dependencies, add the I<dir> to
+the list of library directory.  Needed only on Windows, on the other
+architectures we know how to find these libraries.
+
 =item B<-o>, B<--host-os>=I<host-os>
 
 Specify the host operating system type, i.e., the type of the machine
@@ -98,7 +104,8 @@ C<chrpath>.
 
 =item windows
 
-MS Windows.  Use C<cygcheck.exe>.
+MS Windows.  Use C<cygcheck.exe>.  The support is very incomplete, it
+just does not work yet.
 
 =back
 
@@ -148,6 +155,9 @@ my %installed;
 # The directory in $destdir where missing dependencies should be
 # installed.  Typically C<$prefix/lib>.
 my $libdir;
+
+# Where to look for foreign libraries for package completion.
+my @libpath;
 
 # Accepted resolved libraries.
 my %loc;
@@ -204,6 +214,7 @@ sub host_os($)
   $host_os{$host_os};
 }
 
+
 =item C<prefix($prefix, $string)>
 
 Whether C<$prefix> is a prefix of C<$string>.
@@ -239,9 +250,48 @@ sub unique (@)
   }
   @res;
 }
+
+
+=item C<same_file($path1, $path1)>
+
+Whether C<$path1> and C<$path2> point to the same file.  We do not
+work on path names because there are too many ways to name a single
+file, in particular when winepath goes into the scene.
+
+=cut
+
+sub same_file ($$)
+{
+  my ($path1, $path2) = @_;
+  my ($dev1, $ino1) = stat ($path1);
+  my ($dev2, $ino2) = stat ($path2);
+  $dev1 == $dev2 && $ino1 == $ino2;
 }
 
-# Return the list of paths we depend upon.
+
+=item C<repath_unix($path)>
+
+Normalize the C<$path> to a Unix name.
+
+=cut
+
+sub repath_unix ($)
+{
+  my ($path) = @_;
+  my $res = `winepath -u '$path'`;
+  chomp $res;
+  $res = Cwd::realpath ($res);
+  $res;
+}
+
+
+=item C<dependencies($lib)>
+
+Return the list of paths we depend upon.  C<$lib> can actually be an
+executable or a shared library.
+
+=cut
+
 sub dependencies ($)
 {
   my ($lib) = @_;
@@ -270,7 +320,7 @@ sub dependencies ($)
             }
         }
     }
-  else
+  elsif ($host_os eq 'linux')
     {
       my $ldd = new IO::File("ldd $lib|")
         or die "$me: cannot read ldd $lib: $!\n";
@@ -278,6 +328,9 @@ sub dependencies ($)
         {
           chomp $line;
           if ($line =~ /^\t(.*?)\s+=>\s(.*?)\s\(.*\)$/
+              # Yes, we push "not found" as a dependency.  These are
+              # inner libraries that ldd does not find (we don't have
+              # the LD_LIBRARY_PATH to find it).
               || $line =~ /^\t(.*?)\s+=>\s(not found)$/)
             {
               my ($dep, $loc) = ($1, $2);
@@ -290,6 +343,34 @@ sub dependencies ($)
             }
         }
     }
+  elsif ($host_os eq 'windows')
+    {
+      my $dir = dirname ($lib);
+      my $base = basename ($lib);
+      my $ldd = new IO::File("cd $dir && cygcheck.exe ./$base 2>&1 |")
+        or die "$me: cannot read 'cd $dir && cygcheck.exe ./$base': $!\n";
+      while (my $line = $ldd->getline)
+        {
+          chomp $line;
+          $line =~ s/^\s+//;
+          $line =~ s/\s+$//;
+          if ($line =~ /^cygcheck: track_down: could not find (.*\.dll)/)
+            {
+              push @res, $1;
+            }
+          elsif ($line =~ /(.*\.dll)$/)
+            {
+              my $loc = installname (repath_unix $1);
+              push @res, $loc
+                unless $lib eq $loc;
+            }
+          elsif ($line)
+            {
+              verbose 2, "ignoring the following cycheck output line:", $line;
+            }
+        }
+    }
+
   # If this is really a path (e.g., not using @loader_path), get
   # rid of symlinks.
   map
@@ -297,6 +378,7 @@ sub dependencies ($)
       $_ = Cwd::realpath($_)
         if -f $_;
     } @res;
+  @res = unique @res;
   verbose 4, "$lib depends on", map { "  $_" } @res;
   @res;
 }
@@ -520,40 +602,47 @@ sub dependencies_foreign ($)
   my ($lib) = @_;
   my @res;
 
-  my @valid =
+  # Recognize a system library.
+  my $valid =
     # On OS X, the relative rpath dependencies are reported
     # with a relative path starting with @loader_path.
     $host_os eq 'darwin'
-    ? qw(
-         /opt/local/lib/libICE.
-         /opt/local/lib/libSM.
-         /opt/local/lib/libX11.
-         /opt/local/lib/libXau.
-         /opt/local/lib/libXdmcp.
-         /opt/local/lib/libXext.
-         /usr/lib/
-         @loader_path/
-        )
+    ? qr(
+         /opt/local/lib/libICE\.
+         | /opt/local/lib/libSM\.
+         | /opt/local/lib/libX11\.
+         | /opt/local/lib/libXau\.
+         | /opt/local/lib/libXdmcp\.
+         | /opt/local/lib/libXext\.
+         | /usr/lib/
+         | \@loader_path/
+        )x
     # On GNU/Linux, the related rpath dependencies are resolved and
     # made absolute.  Accept them only if they are inside our package.
     : $host_os eq 'linux'
-    ? ($destdir,
-       qw(
-          /lib/
-          /usr/lib/gcc/
-          /usr/lib/libICE.so
-          /usr/lib/libSM.so
-          /usr/lib/libX11.so
-          /usr/lib/libXau.so
-          /usr/lib/libXdmcp.so
-          /usr/lib/libXext.so
-          /usr/lib/libstdc++
-          /usr/lib/libxcb.so
-         )
-      )
+    ? qr(
+          \Q$destdir\E
+          | /lib/
+          | /usr/lib/gcc/
+          | /usr/lib/libICE\.so
+          | /usr/lib/libSM\.so
+          | /usr/lib/libX11\.so
+          | /usr/lib/libXau\.so
+          | /usr/lib/libXdmcp\.so
+          | /usr/lib/libXext\.so
+          | /usr/lib/libstdc\+\+
+          | /usr/lib/libxcb\.so
+        )x
+    # On Windows,
+    : $host_os eq 'windows'
+    ? qr(
+          .*/windows/system32/
+        | msvcp90.dll
+        | msvcr90.dll
+        )ix
     : ();
 
-  my $re = "^(?:" . join("|", map (quotemeta, @valid)) . ")";
+  my $re = qr{^(?:$valid)};
   for my $loc (dependencies($lib))
     {
       if (exists $argv{$loc})
@@ -618,7 +707,22 @@ sub complete ($)
   my $dir = "$destdir$libdir";
   for my $loc (grep { $_ ne 'not found' } dependencies_foreign($lib))
   {
+    # Where it will be installed.
     my $new = File::Spec->catfile($dir, basename $loc);
+    # Maybe find it.  Store the result in $loc.
+    if ($host_os eq 'windows')
+    {
+      for my $d (@libpath)
+      {
+        if (-f "$d/$loc")
+        {
+          $loc = "$d/$loc";
+          last;
+        }
+      }
+      next
+        unless -f $loc;
+    }
     install $loc, $new;
     $installed{$loc} = 1;
     push @checked, $new;
@@ -669,6 +773,7 @@ sub getopt ()
     "d|destdir=s"   => \$destdir,
     "h|help"        => sub { help ($verbose) },
     "l|libdir=s"    => \$libdir,
+    "L|libpath=s"   => \@libpath,
     "o|host-os=s"   => sub { $host_os = host_os ($_[1]) },
     "p|prefix=s"    => \$prefix,
     "q|quiet"       => sub { --$verbose },
@@ -702,19 +807,26 @@ sub wanted
 {
   # We check the shared lib dependencies on binaries and on shared
   # libraries.
-  my $re =
-    (
-     $host_os eq 'darwin'
-     ? qr{\.(dylib|so)\z}s # Our UObjects are *.so.
-     : $host_os eq 'linux'
-     ? qr{\.so(\..*)?\z}s
-     : qr{}s
-    );
+  my $wanted;
+  if ($host_os eq 'windows')
+    {
+      $wanted = m{\.(dll|exe)\z}s;
+    }
+  else
+    {
+      my $re =
+      (
+       $host_os   eq 'darwin'  ? qr{\.(dylib|so)\z}s # Our UObjects are *.so.
+       : $host_os eq 'linux'   ? qr{\.so(\..*)?\z}s
+       :                         qr{}s
+      );
+      $wanted = (-f $_
+                 && (-x $_ || /$re/)
+                 && `file $_` !~ /shell script|ASCII|libtool library file/)
+    }
 
   push @checked, $File::Find::name
-    if (-f $_
-        && (-x $_ || /$re/)
-        && `file $_` !~ /shell script|ASCII English text|libtool library file/);
+    if $wanted;
 }
 
 ######################################################################
@@ -732,6 +844,8 @@ verbose 4, "using chrpath = " . ($chrpath || "undef");
 File::Find::find({wanted => \&wanted}, @ARGV);
 map {$argv{installname($_)} = 1} @checked;
 
+verbose 2, "Shipped deps:", map { "  $_" } sort keys %argv;
+
 # For each library, relocate it, and make sure there are no forbidden
 # dependencies.
 while (@checked)
@@ -744,7 +858,7 @@ while (@checked)
 }
 
 verbose 2, "Shipped deps:", map { "  $_" } sort keys %argv;
-verbose 1, "Accepted dependencies:", map { "  $_" } sort keys %loc;
+verbose 1, "System dependencies:", map { "  $_" } sort keys %loc;
 verbose (1, "Rejected dependencies:",
          map { ("  $_:", map { "    $_ " } @{$rejected{$_}}) }
          (sort keys %rejected));
