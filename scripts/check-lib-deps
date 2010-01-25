@@ -481,31 +481,31 @@ sub relocate ($)
   # of directories, not libraries.  We use chrpath for two things: to
   # get the list of current RPATH, and to change them.
   elsif ($host_os eq 'linux')
-    {
-      my @rpath;
-      for my $dep (rpath_get($lib))
-        {
-          my $rel =
-            (prefix($prefix, $dep)
-             ? File::Spec->catdir('$ORIGIN',
-                                  File::Spec->abs2rel($dep, $dir))
-             : $dep);
-          verbose 3, "$dep => $rel"
-            if $dep ne $rel;
-          push @rpath, $rel;
-        }
-      # If there are dependencies to installed libraries, include this
-      # libdir in the RPATH.
-      if (grep {exists $installed{$_}} dependencies($lib))
+  {
+    my @rpath;
+    for my $dep (rpath_get($lib))
       {
-        my $rel = File::Spec->catdir('$ORIGIN',
-                                     File::Spec->abs2rel($libdir, $dir));
-        verbose 3, "installing $rel in RPATH";
+        my $rel =
+          (prefix($prefix, $dep)
+           ? File::Spec->catdir('$ORIGIN',
+                                File::Spec->abs2rel($dep, $dir))
+           : $dep);
+        verbose 3, "$dep => $rel"
+          if $dep ne $rel;
         push @rpath, $rel;
       }
-      @rpath = unique @rpath;
-      rpath_set($lib, @rpath);
+    # If there are dependencies to installed libraries, include this
+    # libdir in the RPATH.
+    if (grep {exists $installed{$_}} dependencies($lib))
+    {
+      my $rel = File::Spec->catdir('$ORIGIN',
+                                   File::Spec->abs2rel($libdir, $dir));
+      verbose 3, "installing $rel in RPATH";
+      push @rpath, $rel;
     }
+    @rpath = unique @rpath;
+    rpath_set($lib, @rpath);
+  }
 }
 
 =item C<dependencies_foreign($lib)>
