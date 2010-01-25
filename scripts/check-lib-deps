@@ -615,7 +615,17 @@ Whether C<$lib> is an inner dependence, i.e., it is (already) shipped.
 sub dependency_inner($)
 {
   my ($lib) = @_;
-  exists $argv{$lib};
+  my $res;
+  $res = exists $argv{$lib};
+  # Under Windows, since we don't have a means to tell cygcheck.exe
+  # how to extend its LD_LIBRARY_PATH, it will complete that, for
+  # instance, we have a dependency on libuobject.dll (without the full
+  # path).  So in this case, just check that we do ship a file that
+  # has this name.
+  if ($host_os eq 'windows')
+  {
+    $res ||= scalar (grep { basename $_ eq $lib } keys %argv);
+  }
 }
 
 =item C<dependency_system($lib)>
@@ -830,11 +840,16 @@ sub getopt ()
   # For instance on OS X, /tmp is actually a symlink to private/tmp.
   $destdir = Cwd::realpath($destdir);
 
-  verbose 4, "destdir = $destdir", "host-os = $host_os";
-
-
   die "$me: passing --prefix is mandatory\n"
     unless defined $prefix;
+
+  verbose (4,
+           "destdir = $destdir",
+           "host-os = $host_os",
+           "libdir = $libdir",
+           "libpath = @libpath",
+           "prefix = $prefix",
+    );
 }
 
 sub wanted
