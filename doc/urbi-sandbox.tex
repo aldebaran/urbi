@@ -1,0 +1,31 @@
+\documentclass[openright,twoside,11pt]{book}
+  \usepackage{gostai-documentation}
+
+\title{Urbi Documentation Sandbox}
+\titleImage{figs/urbi}
+\subtitle{Version \VcsDescription}
+\author{Gostai}
+
+% DOCUMENT
+\begin{document}
+
+This document is meant to be used to toy with \LaTeX.
+
+\begin{urbiassert}
+1 == 1;
+\end{urbiassert}
+
+\begin{urbiscript}
+0 != 1;
+[00001234] true
+// Check the syntax highlighting colors.
+if (1 == 0) "yes" else "no";
+[00001234] "no"
+\end{urbiscript}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
