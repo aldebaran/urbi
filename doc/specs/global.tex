@@ -19,15 +19,15 @@ anywhere.
 \begin{itemize}
 \item \lstinline|Barrier|\\
   See \refObject{Barrier}.
+
 \item \lstinline|Binary|\\
   See \refObject{Binary}.
+
 \item \lstinline|CallMessage|\\
   See \refObject{CallMessage}.
 
 \item \lstinline|cerr|\\
-  A predefined stream for error messages.  Note that strings sent to
-  \lstinline|cerr| are not escaped, contrary to regular streams (see
-  \lstinline|cout| for instance).
+  An alias to \lstinline|Global.error|.
 \begin{urbiscript}[firstnumber=last]
 cerr << "Message";
 [00015895:error] Message
@@ -52,8 +52,7 @@ clog << "Message";
   See \refObject{Comparable}.
 
 \item \lstinline|cout|\\
-  A predefined stream for output messages.  Strings are output
-  escaped.
+  An alias to \lstinline|Global.output|.
 \begin{urbiscript}[firstnumber=last]
 cout << "Message";
 [00015895:output] "Message"
@@ -90,7 +89,18 @@ echo(333);
 [00055205] *** 333
 \end{urbiscript}
 
-%% FIXME: [00008757] ***   error : Channel
+\item \lstinline|error|\\
+  A predefined stream for error messages.  Strings sent to it are not
+  escaped, contrary to regular streams (see \lstinline|output| for
+  instance).
+\begin{urbiscript}[firstnumber=last]
+error << "Message";
+[00015895:error] Message
+error << "\"quote\"";
+[00015895:error] "quote"
+\end{urbiscript}
+
+
 %% FIXME: [00008758] ***   evaluate : UVar
 %% FIXME: [00008758] ***     Properties:
 %% FIXME: [00008758] ***      updateHook : Primitive = Primitive_0x120340
@@ -167,7 +177,16 @@ echo(333);
 \item \lstinline|Orderable|\\
   See \refObject{Orderable}.
 
-%% FIXME: [00008775] ***   output : Channel
+\item \lstinline|output|\\
+  A predefined stream for output messages.  Strings are output
+  escaped.
+\begin{urbiscript}[firstnumber=last]
+output << "Message";
+[00015895:output] "Message"
+output << "\"quote\"";
+[00015895:output] "\"quote\""
+\end{urbiscript}
+
 \item \lstinline|OutputStream|\\
   See \refObject{OutputStream}.
 
@@ -237,7 +256,15 @@ echo(333);
 \item \lstinline|Timeout|\\
   See \refObject{Timeout}.
 
-%% FIXME: [00008797] ***   topLevel : Channel
+\item \lstinline|topLevel|\\
+  A predefined stream for regular output.  Strings are output escaped.
+\begin{urbiscript}[firstnumber=last]
+topLevel << "Message";
+[00015895] "Message"
+topLevel << "\"quote\"";
+[00015895] "\"quote\""
+\end{urbiscript}
+
 \item \lstinline|TrajectoryGenerator|\\
   See \refObject{TrajectoryGenerator}.
 
@@ -264,7 +291,18 @@ echo(333);
 %% FIXME: [00008804] ***   void : void
 %% FIXME: [00008804] ***   wall : Code
 %% FIXME: [00008805] ***   warn : Code
-%% FIXME: [00008805] ***   warning : Channel
+
+\item \lstinline|warning|\\
+  A predefined stream for warning messages.  Strings sent to it are
+  not escaped.
+\begin{urbiscript}[firstnumber=last]
+warning << "Message";
+[00015895:warning] Message
+warning << "\"quote\"";
+[00015895:warning] "quote"
+\end{urbiscript}
+
+
 %% FIXME: [00008806] ***   WeakDictionary : Finalizable
 %% FIXME: [00008806] ***   WeakPointer : Finalizable
 

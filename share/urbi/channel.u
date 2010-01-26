@@ -51,7 +51,7 @@ do (Global)
   var cout    = output;
   var cerr    = error;
 
-  // Top-levl channel
+  // Top-level channel.
   var topLevel = Channel.new("");
   Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
 
