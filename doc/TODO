@@ -39,24 +39,6 @@ Notes:
 - page 115 some snippets not in "purple" ?
 - Section 15.5 "comparables" -> "see section 15.5 ..."
 
-- List.range: Why no error here ?
-  l.range(0,-3);
-  [00223264] []
-
-  if error there ?
-  l.range(0,10);
-  [00225394:error] !!! /home/deslandes/install/urbi-sdk-2.0-rc-1-linux-x86-gcc4/share/gostai/urbi/list.u:113.14-20: []: invalid index: 8
-  [00225394:error] !!!    called from: 31.1-13: range
-
-  -> invalid index 8: why not stop *before* ?
-  -> why not return a smaller list ? like std:string ?
-
-  message ??
-  l < 3;
-  [00418064:error] !!! /home/deslandes/install/urbi-sdk-2.0-rc-1-linux-x86-gcc4/share/gostai/urbi/list.u:48.25-31: lookup failed: empty
-
-
-
 
 Questions:
 - diff .asString and .asPrintable ?

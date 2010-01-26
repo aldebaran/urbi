@@ -7,6 +7,8 @@ collections of elements.
 
 \begin{itemize}
 \item \refObject{Object}
+\item \refObject{RangeIterable}
+\item \refObject{Orderable}
 \end{itemize}
 
 \subsection{Construction}
@@ -252,7 +254,6 @@ of results.
   is equivalent to calling \lstinline|range(0, \var{n})|.
 
 \begin{urbiscript}[firstnumber=last]
-[].range(1, 3);
 do ([0, 1, 2, 3])
 {
   assert
@@ -269,6 +270,7 @@ do ([0, 1, 2, 3])
     range(-4, 4)  == [0, 1, 2, 3, 0, 1, 2, 3];
   };
 }|;
+[].range(1, 3);
 [00428697:error] !!! range: invalid index: 1
 \end{urbiscript}
 
@@ -440,6 +442,14 @@ Return the target without all element that equals any element in the
 [0, 1, 2] < [0, 2, 2];
 \end{urbiassert}
 
+  Since List derives from \refObject{Orderable}, the other order-based
+  operators are defined.
+
+\begin{urbiassert}[firstnumber=last]
+ [0, 1, 2] <= [0, 1, 2];
+ [0, 1, 2] >= [0, 1, 2];
+ [0, 1, 2] >  [0, 0, 2];
+\end{urbiassert}
 \end{itemize}
 
 %%% Local Variables:

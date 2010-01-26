@@ -43,6 +43,8 @@ topLevel.enabled = false;
 Object.addProto(Comparable);
 
 load("urbi/orderable.u");
+List.protos.insertBack(Global.Orderable);
+
 load("urbi/updatehook-stack.u");
 
 load("urbi/code.u");

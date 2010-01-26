@@ -10,6 +10,8 @@ Changes
 
 - '$id' replaces id
 - '$type' replaces type
+- List derives from Orderable.
+
 
 ***************************
 * New in kernel 2.0 RC 3. *
