@@ -91,7 +91,10 @@ class Global.Control
   };
 };
 
-// Import those at the global level
-var Global.detach = Control.getSlot("detach");
-var Global.disown = Control.getSlot("disown");
-var Global.persist = Control.getSlot("persist");
+// Provide these at the Global level.
+do (Global)
+{
+  var detach  = Control.getSlot("detach");
+  var disown  = Control.getSlot("disown");
+  var persist = Control.getSlot("persist");
+}|;
