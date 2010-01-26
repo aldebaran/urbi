@@ -30,34 +30,21 @@ libdir="@libdir@"
 
 # Shared lib dependencies.
 #
-# Check that we don't depend on boost.  Or rather, check that we don't
-# have invalid locations.  And possibly make the libraries and
-# executables relocatable.
-case $DESTDIR:$URBI_HOST_OS in
-  ('':*)
-    # This is most probably an install performed by the developper in
-    # her own tree.  Don't try to make it relocatable.
-    ;;
-  (*:linux|*:macos)
-    $srcdir/scripts/check-lib-deps              \
-      --verbose --verbose --verbose --verbose   \
-      --destdir "$DESTDIR"                      \
-      --host-os "$URBI_HOST_OS"                 \
-      --prefix "$prefix"                        \
-      --libdir "$libdir"                        \
-      "$DESTDIR"
-    ;;
-  (*:windows)
-    $srcdir/scripts/check-lib-deps              \
-      --verbose --verbose --verbose --verbose   \
-      --destdir "$DESTDIR"                      \
-      --host-os "$URBI_HOST_OS"                 \
-      --prefix "$prefix"                        \
-      --libdir "$libdir"                        \
-      --libpath "$boost_libdir"			\
-      "$DESTDIR"
-    ;;
-esac
+# Complete the package with missing libraries, make it relocatable,
+# and check there are no missing dependencies.
+#
+# If DESTDIR is null, this is most probably an install performed by
+# the developper in her own tree.  Don't try to make it relocatable.
+if test -n "$DESTDIR"; then
+  $srcdir/scripts/check-lib-deps                \
+    --verbose --verbose --verbose --verbose     \
+    --destdir "$DESTDIR"                        \
+    --host-os "$URBI_HOST_OS"                   \
+    --prefix "$prefix"                          \
+    --libdir "$libdir"                          \
+    --libpath "$boost_libdir"                   \
+    "$DESTDIR"
+fi
 
 # Boost headers.
 #
