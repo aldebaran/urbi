@@ -43,6 +43,7 @@ namespace runner
     raise_urbi(exn_name, to_urbi(r.innermost_call_get()), arg1, arg2, arg3,
                skip);
   }
+
   void
   raise_urbi(libport::Symbol exn_name,
 	     rObject arg1,
