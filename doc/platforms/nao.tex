@@ -19,9 +19,9 @@ If this is the case, you must take the following steps to activate \urbi:
 \begin{itemize}
 \item Log in to your Nao using ssh: \lstinline|ssh root@myNao|
 \item Add a line containing \lstinline|urbistarter| to
-"/opt/naoqi/modules/lib/autoload.ini".
+"/opt/naoqi/preferences/autoload.ini".
 \item Add a line containg
-\lstinline|LaunchThread( "ALUrbiStarter", "runServer", [ ] );| to "/opt/naoqi/modules/python/autolaunch.py".
+\lstinline|LaunchThread( "ALUrbiStarter", "runServer", [ ] );| to "/opt/naoqi/bin/naoqi-autolaunch".
 \item Restart your Nao.
 \end{itemize}
 
@@ -43,11 +43,7 @@ robot.body.arm[right].shoulder.pitch.val = 2 speed:0.9;
 // Activate all motors.
 motors.on;
 // Stand
-motion.walkStraight(0.01, 50);
-// bow
-motion.setBalanceMode(motion.BALANCE_MODE_AUTO);
-motion.gotoTorsoOrientation(0, pi/6, 2, 1);
-motion.gotoTorsoOrientation(0, 0, 2, 1);
+motion.walkTo(0.1,0,0);
 // Start walking...
 tag: robot.walk(1),
 // ... and interrupt the movement
@@ -133,12 +129,6 @@ The Nao camera object is instanciated by default, under the standard name
 \var{camera}. It is deactivated by default, set its \var{load} field to 1 to
 activate.
 
-The camera object uses an optimization minimising the number of copies of the
-image buffer. As a consequence, the image can only be accessed from \us and
-UObject notifyChange callbacks. If you need to access the camera image by
-typing \lstinline|camera.val|, you can disable this optimization by typing
-\lstinline|showCam();|
-
 \subsection{Slots}
 \begin{itemize}
 \item \lstinline|format| \\
@@ -146,20 +136,20 @@ typing \lstinline|camera.val|, you can disable this optimization by typing
 \item \lstinline|formatDetail| \\
   Set the image format, providing more options:
   \begin{itemize}
-  \item \lstinline|0| raw RGB.
-  \item \lstinline|1| raw YUV.
-  \item \lstinline|2| JPEG.
-  \item \lstinline|4| YUV422:  YUYV, 2 bytes/pixel.
-  \item \lstinline|5| Grey8: grey image, 1 byte/pixel.
-  \item \lstinline|6| Grey4: grey image 4 bits/pixel.
+  \item \lstinline|1| raw RGB.
+  \item \lstinline|2| raw YUV.
+  \item \lstinline|3| JPEG.
+  \item \lstinline|4| RGB with a PPM header.
+  \item \lstinline|5| YUV422:  YUYV, 2 bytes/pixel.
+  \item \lstinline|6| Grey8: grey image, 1 byte/pixel.
+  \item \lstinline|7| Grey4: grey image 4 bits/pixel.
   \end{itemize}
   JPEG mode gives the smallest images and uses less bandwidth to access the
   images remotely, but uses more CPU power.
 \item \lstinline|quality| \\
   Set JPEG compression quality, from 0 to 100.
 \item \lstinline|rate| \\
-  Set image frame rate in Hz. The effective framerate will be a bit lower than
-  this value.
+  Set image frame rate in Hz.
 \item \lstinline|resolution| \\
   Set image resolution.  0 gives the max resolution (640x380), 1 divides each
   dimension by two(320x240), 2 divides by four(160x120), 3 by eight(80x60).
@@ -173,17 +163,14 @@ typing \lstinline|camera.val|, you can disable this optimization by typing
 \end{itemize}
 
 
-
-
 \section{Other sensors}
 
 The following sensors are available through a \us variable.
 Reading the variable will give the latest available sensor value.
 
 \begin{itemize}
-\item \lstinline|sonar.val| \\
-    last value from the Sonar module. List of three elements: left value, right
-    value, name of what is detected.
+\item \lstinline|sonarL.val|, \lstinline|sonarR.val| \\
+    last left and right value from the Sonar module.
 \item \lstinline|inertial.val| \\
     name of the position detected by inertial sensors.
 \item \lstinline|bumperL.val|, \lstinline|bumperR.val| \\
@@ -235,10 +222,10 @@ method:
 \begin{urbiunchecked}
 // Instanciate a proxy for the ALMotion module.
 var motion = ALProxy.new( "ALMotion" );
-// Bind its methods, declaring "walkStraight" as a 'long' method.
-motion.generateALBindings(["walkStraight", "walkArk", "walk"]);
-motion.addWalkStraight( 0.1, 60 );
-motion.walk();
+// Bind its methods, declaring "waituntilWalkIsFinished" as a 'long' method.
+motion.generateALBindings(["waituntilWalkIsFinished"]);
+motion.walkTo( 0.1, 0,0 );
+motion.waituntilWalkIsFinished;
 \end{urbiunchecked}
 
 The argument to \lstinline|generateALBindings()| is a list of all the function
