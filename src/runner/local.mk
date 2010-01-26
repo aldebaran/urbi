@@ -1,4 +1,4 @@
-dist_libuobject@LIBSFX@_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=		\
   runner/at-handler.cc				\
   runner/at-handler.hh				\
   runner/fwd.hh					\
@@ -20,8 +20,3 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
   runner/stacks.cc				\
   runner/stacks.hh				\
   runner/stacks.hxx
-
-
-sdk2_runnerdir = $(includedir)/runner
-sdk2_runner_HEADERS =  				\
-  runner/raise.hh

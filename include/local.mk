@@ -3,8 +3,8 @@
 ## -------------------------- ##
 
 if INSTALL_KERNEL_HEADERS
-kernelincludekerneldir = $(kernelincludedir)/kernel
-dist_kernelincludekernel_HEADERS =		\
+kernelinclude_kerneldir = $(kernelincludedir)/kernel
+dist_kernelinclude_kernel_HEADERS =		\
   include/kernel/fwd.hh				\
   include/kernel/uconnection.hh			\
   include/kernel/uconnection.hxx		\
@@ -12,13 +12,13 @@ dist_kernelincludekernel_HEADERS =		\
   include/kernel/userver.hxx			\
   include/kernel/utypes.hh
 
-kernelincludeurbidir = $(kernelincludedir)/urbi
-kernelincludeurbiobjectdir = $(kernelincludedir)/urbi/object
-
-dist_kernelincludeurbi_HEADERS =		\
+kernelinclude_urbidir = $(kernelincludedir)/urbi
+dist_kernelinclude_urbi_HEADERS =		\
   include/urbi/sdk.hh				\
   include/urbi/sdk.hxx
-dist_kernelincludeurbiobject_HEADERS =		\
+
+kernelinclude_urbi_objectdir = $(kernelincludedir)/urbi/object
+dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/any-to-boost-function.hh	\
   include/urbi/object/any-to-boost-function.hxx	\
   include/urbi/object/barrier.hh		\
@@ -52,6 +52,10 @@ dist_kernelincludeurbiobject_HEADERS =		\
   include/urbi/object/string.hh			\
   include/urbi/object/tag.hh			\
   include/urbi/object/task.hh
+
+kernelinclude_urbi_runnerdir = $(kernelincludedir)/urbi/runner
+dist_kernelinclude_urbi_runner_HEADERS =	\
+  include/urbi/runner/raise.hh
 endif
 
 
