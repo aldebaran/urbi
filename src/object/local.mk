@@ -5,9 +5,9 @@
 nodist_libuobject@LIBSFX@_la_SOURCES += 		\
   $(precompiled_symbols_hh)
 
-# We generated this file in builddir so that we can have a single
-# srcdir, but several builddir with different configuration-options
-# that may result in a different set of precompiled symbols.
+# Generate this file in builddir so that a single srcdir can produce
+# several builddirs with different configuration-options that may
+# result in different sets of precompiled symbols.
 precompiled_symbols_hh = object/precompiled-symbols.hh
 precompiled_symbols_stamp = $(precompiled_symbols_hh:.hh=.stamp)
 # filter-out generated files, and precompiled_symbols_hh itself to
