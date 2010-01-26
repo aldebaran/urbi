@@ -8,7 +8,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   runner/interpreter.hxx			\
   runner/interpreter-visit.hxx			\
   runner/raise.cc				\
-  runner/raise.hh				\
   runner/runner.cc				\
   runner/runner.hh				\
   runner/runner.hxx				\
