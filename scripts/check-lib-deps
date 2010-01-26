@@ -786,7 +786,7 @@ sub complete ($)
     # On Linux we keep "not found" as the sign that the library
     # is... not found.  This matters for &check.
     next
-      if $_ eq 'not found';
+      if $loc eq 'not found';
 
     # Where it will be installed.
     my $new = File::Spec->catfile($dir, basename $loc);
