@@ -2,8 +2,8 @@
 ## Installed kernel headers.  ##
 ## -------------------------- ##
 
-kernelincludekerneldir = $(kernelincludedir)/kernel
 if INSTALL_KERNEL_HEADERS
+kernelincludekerneldir = $(kernelincludedir)/kernel
 dist_kernelincludekernel_HEADERS =		\
   include/kernel/fwd.hh				\
   include/kernel/uconnection.hh			\
@@ -11,7 +11,6 @@ dist_kernelincludekernel_HEADERS =		\
   include/kernel/userver.hh			\
   include/kernel/userver.hxx			\
   include/kernel/utypes.hh
-endif
 
 kernelincludeurbidir = $(kernelincludedir)/urbi
 kernelincludeurbiobjectdir = $(kernelincludedir)/urbi/object
@@ -53,11 +52,12 @@ dist_kernelincludeurbiobject_HEADERS =		\
   include/urbi/object/string.hh			\
   include/urbi/object/tag.hh			\
   include/urbi/object/task.hh
+endif
 
 
-## ------- ##
-## Check.  ##
-## ------- ##
+## --------- ##
+## install.  ##
+## --------- ##
 
 install-data-hook: install-boost-headers
 
