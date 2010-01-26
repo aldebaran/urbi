@@ -572,7 +572,7 @@ sub relocate ($)
     for my $dep (rpath_get($lib))
       {
         my $rel =
-          (prefix($prefix, $dep)
+          (directory_inner($dep)
            ? File::Spec->catdir('$ORIGIN',
                                 File::Spec->abs2rel($dep, $dir))
            : $dep);
@@ -738,6 +738,26 @@ sub dependencies_foreign ($)
       }
     }
   return @res;
+}
+
+=item C<directory_inner($dir)>
+
+Whether C<$dir> is an inner directory, i.e., a directory inside our
+package.
+
+We used to simply check that C<$prefix> is a prefix of C<$dir>,
+unfortunately if C<$prefix> is C</>, any (absolute) directory is
+"inner".  So rather, see if this place is a directory of one of our
+shipped libraries.
+
+=cut
+
+sub directory_inner($)
+{
+  my ($dir) = @_;
+  my %inner_dirs;
+  map { $inner_dirs{dirname $_} = 1; } keys %argv;
+  return exists $inner_dirs{$dir};
 }
 
 =item C<install($from, $to)>
