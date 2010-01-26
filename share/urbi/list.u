@@ -91,19 +91,15 @@ do (List)
 
   // We might want separate Range objects, with a literal syntax
   // (a..b, a:b, ...).
-  function range
+  function range(var from, var to = nil)
   {
-    var fr = 0 |
-    var to = size |
-    if (2 <= call.argsCount) // FIXME: throw when > 2
+    if (to.isNil)
     {
-      fr = call.argAt(0)|
-      to = call.argAt(1)
-    }
-    else
-      to = call.argAt(0)|
+      to = from |
+      from = 0  |
+    }|
     var res = []|
-    for (var i = fr; i < to; i++)
+    for| (var i = from; i < to; i++)
       res << this[i] |
     res
   };
