@@ -383,7 +383,7 @@ sub dependencies ($)
     } @res;
   @res = sort unique @res;
   verbose (4, "$lib depends on",
-           map { "  $_ (" . dependency_type($_) . ")" } @res;
+           map { "  $_ (" . dependency_type($_) . ")" } @res);
   @res;
 }
 
