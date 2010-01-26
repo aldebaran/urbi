@@ -103,6 +103,12 @@ namespace urbi
       void addCleanup(T* ptr);
       /// Delete all pointers passed to addCleanup.
       void cleanup();
+      /** Request a context lock from another thread to perform multiple
+       * operations.
+       */
+      virtual void lock() = 0;
+      /// Release lock acquired with lock()
+      virtual void unlock() = 0;
     private:
       std::vector<boost::function0<void> > cleanup_list_;
     };

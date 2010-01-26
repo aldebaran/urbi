@@ -168,6 +168,15 @@ namespace urbi
     }
 
 
+    void
+    RemoteUContextImpl::lock()
+    {
+    }
+
+    void
+    RemoteUContextImpl::unlock()
+    {
+    }
     /*--------------------.
     | RemoteUObjectImpl.  |
     `--------------------*/

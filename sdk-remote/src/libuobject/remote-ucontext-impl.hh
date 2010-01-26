@@ -54,7 +54,8 @@ namespace urbi
       virtual void removeHub(UObjectHub*) ;
       virtual void setHubUpdate(UObjectHub*, ufloat);
       virtual void instanciated(UObject* obj);
-
+      virtual void lock();
+      virtual void unlock();
     public:
       /// Dispatch a message on our connection
       UCallbackAction dispatcher(const UMessage& msg);
