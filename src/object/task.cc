@@ -115,8 +115,10 @@ namespace urbi
     {
       List::value_type res;
       if (const Runner* runner = dynamic_cast<Runner*>(value_.get()))
+      {
         foreach(Runner::frame_type frame, runner->backtrace_get())
           libport::push_front(res, frame);
+      }
       return new List(res);
     }
 
