@@ -381,8 +381,9 @@ sub dependencies ($)
       $_ = Cwd::realpath($_)
         if -f $_;
     } @res;
-  @res = unique @res;
-  verbose 4, "$lib depends on", map { "  $_" } @res;
+  @res = sort unique @res;
+  verbose (4, "$lib depends on",
+           map { "  $_ (" . dependency_type($_) . ")" } @res;
   @res;
 }
 
@@ -705,7 +706,7 @@ sub dependency_type($)
   push @res, "system"
     if dependency_system ($lib);
   my $res = join '-', @res;
-  verbose 5, "$lib: $res dependency";
+  verbose 6, "$lib: $res dependency";
   $res;
 }
 
