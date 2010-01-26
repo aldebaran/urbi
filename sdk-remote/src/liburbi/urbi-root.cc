@@ -367,8 +367,6 @@ typedef int(*urbi_launch_type)(int, const char*[], UrbiRoot&);
 int
 UrbiRoot::urbi_launch(int argc, const char** argv)
 {
-  URBI_ROOT_DEBUG(program_, "loading symbol urbi_launch from ");
-  // Reinterpret-cast fails with gcc3 arm
   urbi_launch_type f =
     xdlsym<urbi_launch_type>(program_,
                              "liburbi-launch", handle_liburbi_,
