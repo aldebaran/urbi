@@ -1,17 +1,17 @@
 \chapter{Parallelism, Concurrent Flow Control}
 \label{sec:tut:concurrent}
 
-Parallelism is one of the major features of \us. So far, all we've
-seen already existed in other language --- although we tried to pick,
-mix and adapt features and paradigm to create a nice scripting
-language. Parallelism is one of the corner stone of its paradigm, and
-what makes it so adapted to high level scripting of interactive
-agents, such as robotics or \ai.
+Parallelism is a major feature of \us. So far, all we've
+seen already existed in other languages --- although we tried to pick,
+mix and adapt features and paradigms to create a nice scripting
+language. Parallelism is one of the corner stones of its paradigm, and
+what makes it so well suited to high-level scripting of interactive
+agents, in fields such as robotics or \ai.
 
 \section{Parallelism operators}
 
 For now, we've separated our different commands with a semicolon
-(\lstinline{;}). There are actually other separators in \us:
+(\lstinline{;}). There are actually four statement separators in \us:
 
 \begin{itemize}
 \item ``\lstinline{;}'': Serialization operator. Wait for the left
@@ -103,10 +103,10 @@ include parallelism anywhere at no syntactical cost.
 
 \section{Detach}
 
-The \lstindex{Control.detach} function backgrounds the execution of its
-argument. Its behavior is the same as the comma (\lstinline{,}) operator,
-except the execution is completely detached, and not waited for at the
-end of the scope.
+The \lstindex{Control.detach} function backgrounds the execution of
+its argument. Its behavior is the same as the comma (\lstinline{,})
+operator, except that the execution is completely detached, and not
+waited for at the end of the scope.
 
 \begin{urbiscript}
 function test()

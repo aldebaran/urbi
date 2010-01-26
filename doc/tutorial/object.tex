@@ -99,8 +99,8 @@ p.protos.head === Pair;
 \end{urbiscript}
 
 Prototypes are the base of the slot lookup mechanism. Slot lookup is
-the action of finding an object slot when \lstinline{getSlot} or the
-dot notation is used. So far, when we typed
+the action of finding an object slot when the dot notation is used.
+So far, when we typed
 \lstinline|\var{obj}.\var{slot}|, \var{slot} was always a slot of
 \var{obj}.  Yet, this call can be valid even if \var{obj} has no
 \var{slot} slot, because slots are also looked up in prototypes. For
@@ -226,7 +226,7 @@ One point might be bothering you though: what if you want to update a
 slot value in a clone of your prototype?
 
 Say we implement a simple prototype, with an \var{x} slot equal to
-\lstinline|0|, and clone it twice. We have three object with an
+\lstinline|0|, and clone it twice. We have three objects with an
 \var{x} slot, yet only one actual \lstinline|0| integer. Will
 modifying \var{x} in one of the clone change the prototype's \var{x},
 thus altering the prototype and the other clone as well?
