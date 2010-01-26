@@ -781,8 +781,13 @@ sub complete ($)
   my ($lib) = @_;
   verbose 3, "complete($lib) @ $libdir";
   my $dir = "$destdir$libdir";
-  for my $loc (grep { $_ ne 'not found' } dependencies_foreign($lib))
+  for my $loc (dependencies_foreign($lib))
   {
+    # On Linux we keep "not found" as the sign that the library
+    # is... not found.  This matters for &check.
+    next
+      if $_ eq 'not found';
+
     # Where it will be installed.
     my $new = File::Spec->catfile($dir, basename $loc);
     # Maybe find it.  Store the result in $loc.
