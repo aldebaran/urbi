@@ -27,8 +27,10 @@ if test ! -f  "$incline"/version.hpp; then
     exit 1
 fi
 
-if test -L "$incline"; then
-    incline=$(readlink "$incline")
-fi
+# Symlinks.
+incline=$(perl -mCwd -e 'print Cwd::realpath($ARGV[0]), "\n";' -- "$incline")
 
 cp -pRP "$incline" "$DESTDIR$prefix/include"
+
+# Fix rights: the owner is allowed to change the headers.
+chmod -R u+w "$DESTDIR$prefix/include"
