@@ -685,6 +685,31 @@ sub dependency_system($)
   $lib =~ qr{^(?:$system_libs)}o;
 }
 
+
+=item C<dependency_type($lib)>
+
+Return the type of C<$lib> among C<inner>, C<foreign>, and C<system>.
+
+=cut
+
+sub dependency_type($)
+{
+  my ($lib) = @_;
+  # Designed on purpose to catch errors such as multiple-type
+  # dependencies.
+  my @res;
+  push @res, "foreign"
+    if dependency_foreign ($lib);
+  push @res, "inner"
+    if dependency_inner ($lib);
+  push @res, "system"
+    if dependency_system ($lib);
+  my $res = join '-', @res;
+  verbose 5, "$lib: $res dependency";
+  $res;
+}
+
+
 =item C<dependencies_foreign($lib)>
 
 The list of dependencies of C<$lib> that are not part of this package,
@@ -699,12 +724,13 @@ sub dependencies_foreign ($)
 
   for my $loc (dependencies($lib))
     {
-      if (dependency_system($loc))
+      my $type = dependency_type($loc);
+      if ($type eq 'system')
       {
         # System library.
         $loc{$loc} = 1;
       }
-      elsif (dependency_foreign($loc))
+      elsif ($type eq 'foreign')
       {
         # Foreign library.
         push @res, $loc;
