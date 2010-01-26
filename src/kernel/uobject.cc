@@ -101,7 +101,10 @@ namespace urbi {
       virtual void removeHub(UObjectHub*) ;
       virtual void setHubUpdate(UObjectHub*, ufloat);
       virtual void instanciated(UObject* uob);
+      virtual void lock();
+      virtual void unlock();
       static inline KernelUContextImpl* instance() {return instance_;}
+
     private:
       static KernelUContextImpl* instance_;
     };
@@ -791,6 +794,18 @@ namespace urbi
     void
     KernelUContextImpl::instanciated(UObject*)
     {
+    }
+
+    void
+    KernelUContextImpl::lock()
+    {
+      kernel::urbiserver->synchronizer_get().lock();
+    }
+
+    void
+    KernelUContextImpl::unlock()
+    {
+      kernel::urbiserver->synchronizer_get().unlock();
     }
 
     void
