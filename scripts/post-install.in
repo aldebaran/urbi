@@ -28,12 +28,6 @@ libdir="@libdir@"
 ## Post-install.  ##
 ## -------------- ##
 
-# We have some problems with the *.la files.  For instance, although
-# we use Boost as static libraries, they appear as runtime
-# dependencies.  We could try to fix the *.la files, but it appears to
-# work well without them.
-find "$DESTDIR$prefix" -name '*.la' -delete
-
 # Shared lib dependencies.
 #
 # Check that we don't depend on boost.  Or rather, check that we don't
@@ -137,6 +131,12 @@ if test -n "$STRIP"; then
                    ')' |
     xargs $STRIP || true
 fi
+
+# We have some problems with the *.la files.  For instance, although
+# we use Boost as static libraries, they appear as runtime
+# dependencies.  We could try to fix the *.la files, but it appears to
+# work well without them.
+find "$DESTDIR$prefix" -name '*.la' -delete
 
 # MANIFEST.
 #
