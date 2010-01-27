@@ -345,7 +345,8 @@ def print_visitor(node, header, inline, impl):
 
   urbi::object::rObject %(name)s::eval(runner::Interpreter& r) const
   {
-    return assert_exp(r.visit(this));
+    urbi::object::rObject res = r.visit(this);
+    return assert_exp(res);
   }
 
   std::string %(name)s::node_type() const
