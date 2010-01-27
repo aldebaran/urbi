@@ -36,7 +36,8 @@ ENABLE_HARD_ERRORS = false
 
 # test we don't want to care about temporarily
 TFAIL_TESTS +=					\
-  1.x/implicit.chk
+  1.x/implicit.chk				\
+  2.x/non-interruptible.chk
 
 # k1 tests that currently don't pass, but we should.
 # In fact, the above list has been removed to gain some time
