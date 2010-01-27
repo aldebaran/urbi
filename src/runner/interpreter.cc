@@ -191,6 +191,13 @@ namespace runner
     // parent.
     CAPTURE_GLOBAL(Exception);
     object::rObject Scheduling = Exception->slot_get(SYMBOL(Scheduling));
+    if (non_interruptible_get())
+    { // The user requested non-interruptible mode for a reason, honor it
+      // and try to throw in this job.
+      Scheduling->call(SYMBOL(throwNew), object::to_urbi(msg));
+      return;
+    }
+
     object::objects_type args;
     args << object::to_urbi(msg);
     sched::rJob child =
@@ -203,13 +210,6 @@ namespace runner
 
     try
     {
-      // Clear the non-interruptible flag so that we do not
-      // run into an error while waiting for our child.
-      bool non_interruptible = non_interruptible_get();
-      Job* job = this;
-      FINALLY(((Job*, job))((bool, non_interruptible)),
-              job->non_interruptible_set(non_interruptible));
-      non_interruptible_set(false);
       yield_until_terminated(*child);
     }
     catch (const sched::ChildException& ce)
