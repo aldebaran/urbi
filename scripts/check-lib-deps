@@ -680,6 +680,12 @@ sub dependency_system($)
           .*/windows/system32/
         | msvcp90.dll
         | msvcr90.dll
+	| msvcp90d.dll
+	| msvcr90d.dll
+        | msvcp80.dll
+        | msvcr80.dll
+        | msvcp80d.dll
+        | msvcr80d.dll
         )ix
     : ();
 
