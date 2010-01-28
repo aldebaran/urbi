@@ -23,9 +23,18 @@ if (1 == 0) "yes" else "no";
 [00001234] "no"
 \end{urbiscript}
 
+\begin{urbiunchecked}[escapeinside=<>,firstnumber=last]
+#<Été>;
+[00048238:error] !!! invalid character: `#'
+[00048239:error] !!! invalid character: `\xc3'
+[00048239:error] !!! invalid character: `\x89'
+[00048239:error] !!! invalid character: `\xc3'
+[00048239:error] !!! invalid character: `\xa9'
+\end{urbiunchecked}
 \end{document}
 
 %%% Local Variables:
 %%% mode: latex
+%%% coding: utf-8
 %%% TeX-master: t
 %%% End:
