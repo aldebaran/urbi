@@ -306,6 +306,13 @@ sub process_listing ($$$)
     $res{label} =~ s/\.tex//;
   }
 
+  # escapeinside: meta-character to tell lstlisting to delegate the
+  # processing to LaTeX.  Must be ignored for test extraction.
+  if (defined $res{escapeinside})
+  {
+    $res{'_contents'} =~ s/[$res{escapeinside}]//g;
+  }
+
   # Make dislikes colon in file names.
   $res{label} =~ s/:/-/g;
 
