@@ -19,6 +19,10 @@ New objects:
 - Location
 - Position
 
+New features:
+- File.remove
+- File.rename
+
 Documentation
 =============
 
