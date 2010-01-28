@@ -193,20 +193,21 @@ matches the Z-axis, as depicted in the figure below:
 \end{center}
 
 Several geometric qualifiers can be used at the same time to further
-refine the position. As a convention, height information (U/I/D) comes first,
+refine the position. In this case, multiple Localizer nodes are used.
+As a convention, height information (U/I/D) comes first,
 followed by depth information (F/M/H), and then side information (R/C/L).
 
 \begin{urbiunchecked}
 // Front-left wheel of a four-wheeled robot:
-robot.body.wheel[frontleft];
+robot.body.wheel[front][left];
 // Front laser of a robot equipped with multiple sonars:
 robot.body.laser[front];
 // Left camera from a robot with a stereo camera at the end of an arm:
 robot.body.arm.camera[left];
 // Top-left LED of the left eye.
-robot.body.head.eye[left].led[topleft].val = 1;
+robot.body.head.eye[left].led[up][left].val = 1;
 // Touch sensor at the end of the front-left leg of a four-legged robot:
-robot.body.leg[frontleft].foot.touch;
+robot.body.leg[front][left].foot.touch;
 \end{urbiunchecked}
 
 You can further qualify a side+depth localization with an additional
@@ -225,12 +226,17 @@ the front, up, or left. For instance, an insectoid robot with 3 legs on each
 side will use
 \code{robot.body.leg[left][0]} to address the frontleft leg.
 
+Layouts with identical components aranged in a circle can also use numeric
+localization. The component with index 0 should be the uppermost, or frontmost
+if non applicable. Index should increase counterclockwise.
+
 Some components like spines or tails are highly articulated with a set
 of identical sub-components. When talking about these sub-components,
 the above localization should be replaced by an array with a numbering
 starting at 0. The smaller the number, the closer the sub-component is
 to the robot main body. For surface-like sub-components, like skin
 touch sensors, the array can be two dimensional.
+
 
 Other possible localization for sensors are the X, Y and Z axis
 themselves, like for example for an accelerometer or a gyro sensor,

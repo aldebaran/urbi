@@ -27,18 +27,6 @@ class Global.Localization {} | do (Localization)
   {
     name
   };
-  function addEnum
-  {
-    var args = call.evalArgs|
-    var idx = args[0] |
-    args.removeFront |
-    var l = Localization.new(idx, args.join,
-                             args.map(function(x){x[0].toUpper}).join) |
-    setSlot(l.name, l) |
-    setSlot(args.join("-"), l)|
-    setSlot(args.join("_"), l)|
-    setSlot(args.join(" "), l)
-  };
   makeEnum(Localization,
            up,
            inbetween,
@@ -51,28 +39,11 @@ class Global.Localization {} | do (Localization)
            back,
            x,
            y,
-           z);
-  {
-    var idx = 12 |
-    for| (var i: [up, down])
-    for| (var j: [front, back])
-    for| (var k: [left, right])
-      addEnum(idx++, i.name , j.name , k.name)|
-    for| (var i: [up, down])
-    for| (var j: [front, back])
-      addEnum(idx++, i.name , j.name)|
-    for| (var i: [up, down])
-    for| (var k: [left, right])
-      addEnum(idx++, i.name , k.name)|
-    for| (var j: [front, back])
-    for| (var k: [left, right])
-      addEnum(idx++, j.name , k.name)|
-  }|
-  var sequence = [[]]*9;
+           z)|
+  var sequence = [[]]*5;
   sequence[1] = [up];
   sequence[2] = [up, down];
   sequence[4] = [up, right, down, left];
-  sequence[8] = [up, upright, right, downright, down, downleft, left, upleft];
 };
 
 /** Component containing a set of Localized sub-components.
