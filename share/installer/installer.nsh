@@ -34,7 +34,7 @@ Section
   File /r share
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateDirectory "$SMPROGRAMS\Gostai"
-  CreateShortcut  "$SMPROGRAMS\Gostai\runtime.lnk" "$INSTDIR\bin\urbi.exe" "--port 54000"
+  CreateShortcut  "$SMPROGRAMS\Gostai\runtime.lnk" "$INSTDIR\bin\urbi.exe" "--interactive" "--port 54000"
   CreateShortcut  "$SMPROGRAMS\Gostai\doc.lnk" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf"
   CreateShortcut  "$SMPROGRAMS\Gostai\uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
@@ -47,6 +47,7 @@ Section
 ; Install our visual studio wizard
 ;
 ; This is done by creating two files in the vcprojects directory.
+  ClearErrors
   ReadEnvStr $1 VS90COMNTOOLS
   IfErrors enverror
   FileOpen $0 $1\..\..\VC\vcprojects\uobject.vsdir w
@@ -95,6 +96,10 @@ Section uninstall
   RMDir /r $INSTDIR\include
   Delete  $INSTDIR\Uninstall.exe
   Delete  $INSTDIR\urbi.bat
+  Delete  "$SMPROGRAMS\Gostai\runtime.lnk"
+  Delete  "$SMPROGRAMS\Gostai\doc.lnk"
+  Delete  "$SMPROGRAMS\Gostai\uninstall.lnk"
+  RMDir "$SMPROGRAMS\Gostai"
   ReadEnvStr $1 VS90COMNTOOLS
   IfErrors done
   Delete  $1\..\..\VC\vcprojects\uobject.vsdir
