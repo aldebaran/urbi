@@ -65,6 +65,26 @@ assert(File.new("file.txt").content.data == "1\n2\n");
 
 assert(File.create("new.txt").content.empty);
 \end{urbiscript}
+
+\item \lstinline|remove|\\
+  Remove the current file.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >file.txt")|;
+File.new("file.txt").remove;
+assert(!Path.new("file.txt").exists);
+\end{urbiscript}
+
+\item \lstinline|rename(\var{name})|\\
+  Rename the file to \var{name}.  If the target exists, it is replaced by
+  the opened file.
+\begin{urbiscript}[firstnumber=last]
+System.system("(echo 1; echo 2) >foo.txt")|;
+File.new("foo.txt").rename("bar.txt");
+assert(!Path.new("foo.txt").exists);
+assert(File.new("bar.txt").content.data == "1\n2\n");
+\end{urbiscript}
+
+
 \end{itemize}
 
 
