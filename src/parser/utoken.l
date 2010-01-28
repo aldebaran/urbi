@@ -49,7 +49,7 @@ static size_t bin_split(char* yytext, size_t yyleng, char*& keywords);
 
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
-static Out lexical_cast(parser::ParserImpl& up, const yy::location& loc, In t);
+static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 
 /*--------------------.
@@ -232,7 +232,7 @@ static Out lexical_cast(parser::ParserImpl& up, const yy::location& loc, In t);
     PRE_SKIP();                                                         \
     yytext[yyleng - UnitLength] = 0;                                    \
     RETURN_VALUE(Token,                                                 \
-                 boost::lexical_cast<ufloat>(yytext) / (From) * (To));  \
+                 lexical_cast<ufloat>(up, loc, yytext) / (From) * (To)); \
   }
 
 
@@ -483,7 +483,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 {HEXA}        RETURN_VALUE(FLOAT, strtoll(yytext + 2, 0, 16));
 {NATURAL}     |
-{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(*up, loc, yytext));
+{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(up, loc, yytext));
 
 [\"\']        {
                 grown_string.clear();
@@ -902,16 +902,15 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
 Out
-lexical_cast (parser::ParserImpl& up, const yy::location& loc, In t)
+lexical_cast (parser::ParserImpl* up, const yy::location& loc, In t)
 {
   try
   {
     return boost::lexical_cast<Out>(t);
   }
-  catch (boost::bad_lexical_cast)
+  catch (const boost::bad_lexical_cast&)
   {
-    up.error(loc,
-             (boost::format ("invalid numerical literal: %1%") % t).str());
+    SCAN_ERROR("invalid numerical literal: %1%", t);
     return 0;
   }
 }
