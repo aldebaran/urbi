@@ -763,7 +763,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\t        GROW_VAL('\t');
      \\v        GROW_VAL('\v');
      \\[\\\"\'] GROW_VAL(yytext[1]);
-     \\.        SCAN_ERROR("invalid escape: `%s'", yytext);
+     \\.        SCAN_ERROR("invalid escape: `%s'", libport::escape(yytext));
 
      "\\B("[0-9]+")("    {
        // Binary escape.
@@ -842,7 +842,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          break;
        default:
          SCAN_ERROR("unexpected '%s' for closing \\B, expected ')'",
-                    (char)c);
+                    libport::escape((char)c));
          break;
        }
      }
@@ -892,7 +892,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 <*>{
    .      {
-             SCAN_ERROR("invalid character: `%s'", yytext);
+             SCAN_ERROR("invalid character: `%s'", libport::escape(yytext));
              STEP();
           }
 }

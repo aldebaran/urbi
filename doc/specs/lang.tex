@@ -3,6 +3,36 @@
 
 \section{Syntax}
 
+\subsection{Characters, encoding}
+\index{encoding}
+\index{ASCII}
+\index{UTF-8}
+
+Currently \us makes no asumptions about the encoding used in the
+programs, but the streams are handled as 8-bit characters.
+
+While you are allowed to use whatever character you want in the string
+literals (especially using the binary escapes,
+\autoref{sec:us-syn-lit-string}), only plain ASCII characters are
+allowed in the program body.  Invalid characters are reported,
+possibly escaped if they are not ``printable''.  If you enter UTF-8
+characters, since they possibly span over several 8-bit characters, a
+single (UTF-8) character may be reported as several invalid (8-bit)
+characters.
+
+%% UTF-8 is not supported by lstlisting, we need to escape to TeX.
+%% TeX4ht produces ugly results when using lstnewenvironment.  Worse,
+%% here it creates a new <pre> on each side of the escape characters.
+%% So let's hope Eitan fixes this some day.
+\begin{urbiscript}[escapeinside=<>,firstnumber=last]
+#<Été>;
+[00048238:error] !!! invalid character: `#'
+[00048239:error] !!! invalid character: `\xc3'
+[00048239:error] !!! invalid character: `\x89'
+[00048239:error] !!! invalid character: `\xc3'
+[00048239:error] !!! invalid character: `\xa9'
+\end{urbiscript}
+
 \subsection{Comments}
 
 \dfn{Comments} are used to document the code, they are ignored by the
@@ -17,7 +47,7 @@
   comment will end after two \lstinline|*/|, not one.
 \end{itemize}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 // C++ style comment
 /* C style comment */
 /* These comments /* do */ nest */
@@ -2441,12 +2471,13 @@ iterations are done.
 \end{urbiscript}
 
 
-%% \section{Pattern matching}
+%% FIXME: \section{Pattern matching}
 
-%% \section{Trajectories}
+%% FIXME: \section{Trajectories}
 
 % Local Variables:
 %%% mode: latex
+%%% coding: utf-8
 %%% TeX-master: "urbi-specs"
 %%% End:
 
