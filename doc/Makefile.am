@@ -21,14 +21,13 @@ EXTRA_DIST += $(call ls_files,img/*)
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps) $(PNG_IMAGES:.png=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
-# Find local *.sty files, workaround some strange behavior of texi2dvi
-# that wants to play tricks with ~ (which becomes a tilda, instead of
-# a nonbreakable space).
-TEXI2DVI_FLAGS += -I $(srcdir) -~
+# Find local *.sty files.
+TEXI2DVI_FLAGS += -I $(srcdir)
 pdf_DATA =
 
 # Use tex4ht.
-TEXI2HTML_FLAGS += --tex4ht --verbose --debug --tex4ht-options=urbi-style,2,sections+
+TEX4HT_FLAGS = urbi-style,2,sections+
+TEXI2HTML_FLAGS += --tex4ht --verbose --tex4ht-options=$(TEX4HT_FLAGS)
 %.htmldir: %.tex $(share_tex_dependencies)
 	-rm -rf $@ $@.tmp
 	-$(mkdir_p) $@.tmp
