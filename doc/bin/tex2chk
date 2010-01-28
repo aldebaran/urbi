@@ -112,9 +112,12 @@ my $operators =
     }x;
 
 
-# strip $STRING
-# -------------
-# Kill leading/trailing spaces.
+=item C<strip($string)>
+
+Return C<$string> stripped from leading/trailing spaces.
+
+=cut
+
 sub strip ($)
 {
   local ($_) = @_;
@@ -123,9 +126,13 @@ sub strip ($)
   $_;
 }
 
-# lineno
-# ------
-# Issue an urbiscript //#line for test $lst.
+
+=item C<line(\%lst)>
+
+Issue an urbiscript //#line for test $lst.
+
+=cut
+
 sub lineno (\%)
 {
   my ($lst) = @_;
@@ -136,9 +143,13 @@ sub lineno (\%)
   . ($synclines ? "//#line $line \"$file\"\n" : "")
 }
 
-# register ($FILE, $LINE, \%LST)
-# ------------------------------
-# Register a listing.
+
+=item C<register($file, $line, \%lst)>
+
+Register a listing.
+
+=cut
+
 sub register ($$\%)
 {
   my ($file, $line, $lst) = @_;
@@ -322,9 +333,13 @@ sub process_listing ($$$)
   return %res;
 }
 
-# process_file $FILE
-# ------------------
-# $FILE is a complete path, including the $ENV{srcdir} part.
+
+=item C<process_file($file)>
+
+C<$file> is a complete path, including the C<$ENV{srcdir}> part.
+
+=cut
+
 sub process_file ($)
 {
   my ($file) = @_;
@@ -368,12 +383,16 @@ sub process_file ($)
   }
 }
 
-# dump_chk $DIR
-# -------------
-# Generate all the *chk files and their associated test.mk.  Remove
-# the old test files that remain in $DIR.  Remove them *after* having
-# generated the new ones: removing them all beforehand kills the
-# timestamps and will rerun test cases uselessly.
+
+=item C<dump_chk($dir)>
+
+Generate all the *chk files and their associated test.mk.  Remove the
+old test files that remain in C<$dir>.  Remove them *after* having
+generated the new ones: removing them all beforehand kills the
+timestamps and will rerun test cases uselessly.
+
+=cut
+
 sub dump_chk ($)
 {
   my ($dir) = @_;
@@ -443,6 +462,7 @@ sub translate ($)
   dump_chk $dir;
 }
 
+
 =item C<help>
 
 Generate the B<--help> message.  Generates the full man page when
@@ -460,6 +480,12 @@ sub help ($)
                -verbose => $verbose,
                -output  => \*STDOUT });
 }
+
+=item C<getopt>
+
+Process the command line options.
+
+=cut
 
 sub getopt ()
 {
