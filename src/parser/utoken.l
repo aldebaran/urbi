@@ -333,6 +333,8 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 %option noreject noyymore
 /* We don't need an interactive scanner. */
 %option batch
+/* Even in -Cf mode, support 8 bit characters. */
+%option 8bit
 
 %x SC_C_COMMENT SC_STRING_OR_SYMBOL
  // Ignore lines starting with "[000000:tag]", we are fed with a chk file.
