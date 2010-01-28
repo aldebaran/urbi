@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Gostai S.A.S.
+ * Copyright (C) 2009-2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -50,9 +50,6 @@ static size_t bin_split(char* yytext, size_t yyleng, char*& keywords);
 // Safe conversion to a numeric value.
 template <typename Out, typename In>
 static Out lexical_cast(parser::ParserImpl& up, const yy::location& loc, In t);
-
-template <typename Out, typename In>
-static Out numeric_cast(parser::ParserImpl& up, const yy::location& loc, In t);
 
 
 /*--------------------.
@@ -918,23 +915,6 @@ lexical_cast (parser::ParserImpl& up, const yy::location& loc, In t)
     return 0;
   }
 }
-
-template <typename Out, typename In>
-Out
-numeric_cast (parser::ParserImpl& up, const yy::location& loc, In t)
-{
-  try
-  {
-    return boost::numeric_cast<Out>(t);
-  }
-  catch (boost::bad_numeric_cast)
-  {
-    up.error(loc,
-             (boost::format ("invalid numerical literal: %1%") % t).str());
-    return 0;
-  }
-}
-
 
 /// Split yytext which matches
 /// "BIN"({BLANKS}{ID})*{NATURAL}{BLANKS}";" setting \a keywords to
