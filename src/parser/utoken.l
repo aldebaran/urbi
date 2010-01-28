@@ -749,10 +749,10 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
      \\[0-7]{3}         {
        long c = strtol (yytext + 1, 0, 8);
-       if (255 < c)
-         SCAN_ERROR("invalid escape: `%s'", yytext);
-       else
+       if (c < 256)
          GROW_VAL(c);
+       else
+         SCAN_ERROR("invalid number after \\-escape: `%s'", yytext + 1);
      }
 
      \\x[0-9a-fA-F]{2}   GROW_VAL(strtol (yytext + 2, 0, 16));
@@ -765,7 +765,10 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      \\t        GROW_VAL('\t');
      \\v        GROW_VAL('\v');
      \\[\\\"\'] GROW_VAL(yytext[1]);
-     \\.        SCAN_ERROR("invalid escape: `%s'", libport::escape(yytext));
+     \\.        {
+                  SCAN_ERROR("invalid character after \\-escape: `%s'",
+                             libport::escape(yytext + 1));
+     }
 
      "\\B("[0-9]+")("    {
        // Binary escape.
@@ -790,7 +793,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          yyin->seekg(0, std::ios_base::end);
          size_t streamlen = yyin->tellg();
          // Check that we can read it all.
-         if (pos + len + 1 - eat > streamlen)
+         if (streamlen < pos + len + 1 - eat)
          {
            // No, eat it all to reach EOF.
            passert(up, !up);
