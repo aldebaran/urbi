@@ -199,6 +199,13 @@ sub register ($$\%)
     }
 }
 
+=item C<assert_name($op)>
+
+Map an operator name to its (alphabetical) suffix for assert.  For
+instance C<==> maps to C<eq>.
+
+=cut
+
 sub assert_name($)
 {
   my ($op) = @_;
@@ -216,12 +223,20 @@ sub assert_name($)
   "assert_" . $op{$op};
 }
 
+=item C<process_listing($file, $line, $lst)>
+
+Process the lstlisting environment C<$lst>, which was found in
+C<$file> at C<$line>.  C<$lst> is the full environment, from its
+C<\begin> to its C<\end>.
+
+=cut
+
 sub process_listing ($$$)
 {
   my ($file, $line, $lst) = @_;
 #  print STDERR "[[[$lst]]]\n";
 
-  my $loc = "$file:$line";
+  my $loc = sprintf "%s:%04d", $file, $line;
   my %res;
   $res{'_file'} = $file;
   $res{'_line'} = $line;
