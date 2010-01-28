@@ -15,7 +15,7 @@
 # include <urbi/object/cxx-primitive.hh>
 # include <urbi/object/primitive.hh>
 # include <urbi/object/string.hh>
-# include <runner/raise.hh>
+# include <urbi/runner/raise.hh>
 
 namespace urbi
 {

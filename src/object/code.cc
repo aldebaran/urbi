@@ -25,7 +25,7 @@
 #include <urbi/object/object.hh>
 #include <object/symbols.hh>
 
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace urbi

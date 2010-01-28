@@ -18,7 +18,7 @@
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
 #include <object/uvar.hh>
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 #include <urbi/uvalue.hh>
 
 urbi::UDataType uvalue_type(const object::rObject& o)

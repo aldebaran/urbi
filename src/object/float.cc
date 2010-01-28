@@ -35,7 +35,7 @@
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
 
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 
 namespace urbi
 {

@@ -28,7 +28,7 @@
 #include <urbi/object/path.hh>
 #include <object/symbols.hh>
 
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 
 using libport::BlockLock;
 

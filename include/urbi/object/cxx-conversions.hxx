@@ -21,7 +21,7 @@
 # include <urbi/object/list.hh>
 # include <urbi/object/path.hh>
 # include <urbi/object/string.hh>
-# include <runner/raise.hh>
+# include <urbi/runner/raise.hh>
 
 # include <urbi/object/cxx-object.hh>
 

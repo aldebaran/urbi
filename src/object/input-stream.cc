@@ -20,7 +20,7 @@
 #include <object/symbols.hh>
 
 #include <urbi/sdk.hh>
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 
 namespace urbi
 {

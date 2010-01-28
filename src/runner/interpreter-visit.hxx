@@ -28,7 +28,7 @@
 # include <object/symbols.hh>
 
 # include <runner/interpreter.hh>
-# include <runner/raise.hh>
+# include <urbi/runner/raise.hh>
 
 # include <sched/exception.hh>
 

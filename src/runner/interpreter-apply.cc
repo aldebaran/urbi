@@ -36,7 +36,7 @@
 #include <urbi/object/slot.hh>
 
 #include <runner/interpreter.hh>
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 
 namespace runner
 {

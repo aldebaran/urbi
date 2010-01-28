@@ -35,7 +35,7 @@
 #include <object/symbols.hh>
 #include <object/urbi-exception.hh>
 
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
 
 namespace urbi

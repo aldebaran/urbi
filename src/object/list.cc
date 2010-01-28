@@ -29,7 +29,7 @@
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
 #include <runner/interpreter.hh>
 

@@ -43,7 +43,7 @@
 #include <object/system.hh>
 #include <object/urbi-exception.hh>
 #include <object/uvar.hh>
-#include <runner/raise.hh>
+#include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
 
 #include <urbi/uobject.hh>

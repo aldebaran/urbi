@@ -11,7 +11,7 @@
 # define OBJECT_SLOT_HXX
 
 # include <urbi/object/cxx-conversions.hh>
-# include <runner/raise.hh>
+# include <urbi/runner/raise.hh>
 
 namespace urbi
 {
