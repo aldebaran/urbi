@@ -432,10 +432,10 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
     *strchr(file, '"') = 0;
   }
 
-  loc.initialize(!file || libport::streq(file, "-") ?
-		 0 :
-		 new libport::Symbol(file));
-  loc.lines(lexical_cast<unsigned>(*up, loc, line) - 1);
+  loc.initialize(!file || libport::streq(file, "-")
+		 ? 0
+		 : new libport::Symbol(file));
+  loc.lines(lexical_cast<unsigned>(up, loc, line) - 1);
   loc.step();
 }
 
