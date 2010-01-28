@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef CXX_OBJECT_HXX
 # define CXX_OBJECT_HXX
 
@@ -22,14 +23,14 @@ namespace urbi
   namespace object
   {
     inline void
-    check_arg_count (unsigned effective, unsigned formal)
+    check_arg_count(unsigned effective, unsigned formal)
     {
       if (formal != effective)
         runner::raise_arity_error(effective, formal);
     }
 
     inline void
-    check_arg_count (unsigned effective, unsigned min, unsigned max)
+    check_arg_count(unsigned effective, unsigned min, unsigned max)
     {
       if (min == max)
         check_arg_count(effective, min);
@@ -90,14 +91,20 @@ namespace urbi
     {
       using boost::bind;
 
+      // $type.
       static libport::Symbol type("$type");
+      res_->slot_set(type,
+                     new String(T::type_name()), true);
+      // clone.
       static libport::Symbol clone("clone");
-      res_->slot_set(type, new String(T::type_name()), true);
-      res_->slot_set(clone, new Primitive(bind(cxx_object_clone<T>, _1)), true);
+      res_->slot_set(clone,
+                     new Primitive(bind(cxx_object_clone<T>, _1)), true);
+
       Binder<T> b(res_);
       T::initialize(b);
 
-      libport::Symbol name = libport::Symbol(std::string("as") + T::type_name());
+      // asFoo.
+      libport::Symbol name(std::string("as") + T::type_name());
       if (!res_->slot_locate(name, false).first)
         res_->slot_set(name, new Primitive(bind(cxx_object_id<T>, _1)), true);
       return res_;
@@ -150,7 +157,9 @@ namespace urbi
       using libport::intrusive_ptr;
 
       typedef boost::function1<rObject, intrusive_ptr<T> > urbi_getter_type;
-      typedef boost::function3<rObject, intrusive_ptr<T>, const std::string&, const A&> urbi_setter_type;
+      typedef boost::function3<rObject,
+                               intrusive_ptr<T>, const std::string&, const A&>
+              urbi_setter_type;
 
       urbi_getter_type get(boost::bind(&getter<T, A>, _1, attr));
       tgt_->slot_set(name, make_primitive(get), true);
@@ -186,7 +195,9 @@ namespace urbi
       using libport::intrusive_ptr;
 
       typedef boost::function1<rObject, intrusive_ptr<T> > urbi_getter_type;
-      typedef boost::function3<rObject, intrusive_ptr<T>, const std::string&, const A&> urbi_setter_type;
+      typedef boost::function3<rObject,
+                               intrusive_ptr<T>, const std::string&, const A&>
+              urbi_setter_type;
 
       urbi_getter_type get(boost::bind(&refgetter<T, A>, _1, ref));
       tgt_->slot_set(name, make_primitive(get), true);
