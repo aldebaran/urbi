@@ -37,6 +37,7 @@ namespace urbi
     virtual ~UTimerCallback();
 
     virtual void call() = 0;
+    void registerCallback();
     TimerHandle handle_get() { return handle_;}
     ufloat period;
     ufloat lastTimeCalled;
@@ -60,7 +61,9 @@ namespace urbi
       , obj(obj)                                                \
       , fun##Const(fun)                                         \
       , is_const_(IsConst)                                      \
-    {}
+    {                                                           \
+      registerCallback();                                       \
+    }
 
     MKUTimerCallBackObj (/**/, false);
     MKUTimerCallBackObj (const, true);

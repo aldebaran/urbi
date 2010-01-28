@@ -260,8 +260,12 @@ namespace urbi
     , ctx_(ctx)
   {
     lastTimeCalled = -9999999;
+  }
 
-    handle_ = ctx_->setTimer(this);
+  void
+  UTimerCallback::registerCallback()
+  {
+     handle_ = ctx_->setTimer(this);
   }
 
   UTimerCallback::~UTimerCallback()
