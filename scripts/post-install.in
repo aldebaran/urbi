@@ -14,7 +14,7 @@ host='@host@'
 prefix='@prefix@'
 srcdir='@abs_top_srcdir@'
 
-boost_libdir=$(perl -e "'$BOOST_SYSTEM_LDFLAGS'"' =~ m{-L\s*([\w/]+)}
+boost_libdir=$(perl -e "'$BOOST_SYSTEM_LDFLAGS'"' =~ m{-L\s*([\-\w/.]+)}
                          && print "$1\n"')
 
 # Do not sort by alphabetical order here.  exec_prefix typically use
