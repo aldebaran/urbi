@@ -295,9 +295,11 @@ executable or a shared library.
 
 =cut
 
-sub dependencies ($)
+sub dependencies
 {
-  my ($lib) = @_;
+  my ($lib, $lpath) = @_;
+  $lpath = ""
+    unless defined $lpath;
   verbose 3, "dependencies($lib)";
   my @res;
   if ($host_os eq 'darwin')
@@ -325,7 +327,7 @@ sub dependencies ($)
     }
   elsif ($host_os eq 'linux')
     {
-      my $ldd = new IO::File("ldd $lib|")
+     my $ldd = new IO::File("LD_LIBRARY_PATH=$lpath ldd $lib|")
         or die "$me: cannot read ldd $lib: $!\n";
       while (my $line = $ldd->getline)
         {
@@ -381,7 +383,8 @@ sub dependencies ($)
       $_ = Cwd::realpath($_)
         if -f $_;
     } @res;
-  @res = sort unique @res;
+  @res = unique (@res);
+  @res = sort (@res);
   verbose (4, "$lib depends on",
            map { "  $_ (" . dependency_type($_) . ")" } @res);
   @res;
@@ -582,7 +585,7 @@ sub relocate ($)
       }
     # If there are dependencies to installed libraries, include this
     # libdir in the RPATH.
-    if (grep {exists $installed{$_}} dependencies($lib))
+    if (grep {exists $installed{$_}} dependencies($lib, join (':', @libpath)))
     {
       my $rel = File::Spec->catdir('$ORIGIN',
                                    File::Spec->abs2rel($libdir, $dir));
@@ -724,12 +727,12 @@ and are not accepted.
 
 =cut
 
-sub dependencies_foreign ($)
+sub dependencies_foreign
 {
-  my ($lib) = @_;
+  my ($lib, $lpath) = @_;
   my @res;
 
-  for my $loc (dependencies($lib))
+  for my $loc (dependencies($lib, $lpath))
     {
       my $type = dependency_type($loc);
       if ($type eq 'system')
@@ -808,7 +811,8 @@ sub complete ($)
   my ($lib) = @_;
   verbose 3, "complete($lib) @ $libdir";
   my $dir = "$destdir$libdir";
-  for my $loc (dependencies_foreign($lib))
+  my $lpath = join(':', @libpath);
+  for my $loc (dependencies_foreign($lib, $lpath))
   {
     # On Linux we keep "not found" as the sign that the library
     # is... not found.  This matters for &check.
