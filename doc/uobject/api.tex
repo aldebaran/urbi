@@ -224,6 +224,11 @@ You can read and write all the \urbi properties of an \UVar by
 reading and writing the appropriate \lstinline{UProp} object in the
 \UVar.
 
+\section{UObject and Threads}
+
+The \UObject API is thread-safe in both plugin and remote mode: All API calls
+including operationg on \UVar can be performed from any thread.
+
 \section{Using binary types}
 
 \urbi can store binary objects of any type in a generic container, and
