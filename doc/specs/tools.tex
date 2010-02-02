@@ -1,3 +1,22 @@
+\newcommand{\optionDebug}{
+  Set the verbosity level of traces.
+  This option is mostly for developpers, but it is very useful when
+  tracking problems such as a UObject that fails to load properly.
+  Valid values for \var{level} are, in increasing verbosity order:
+  \begin{enumerate}
+  \item \code{NONE}, no log messages at all.
+  \item \code{LOG}, the default value.
+  \item \code{TRACE}
+  \item \code{DEBUG}
+  \item \code{DUMP}, maximum verbosity.
+  \end{enumerate}
+}
+\newcommand{\optionHelp}
+  {Display the help message and exit successfully.}
+
+\newcommand{\optionVersion}
+  {Display version information and exit successfully.}
+
 \chapter{Programs}
 \label{sec:tools}
 
@@ -89,8 +108,40 @@ simpler to use than, \command{urbi-launch}
 
 \subsection{Options}
 
+\paragraph{General Options}
+
+\begin{options}
+\item[-h, --help] \optionHelp
+\item[--version] \optionVersion
+\end{options}
+
 \paragraph{Tuning}
 \begin{options}
+\item[-d, --debug=\var{level}] \optionDebug
+\item[-F, --fast]
+  Ignore system time, go as fast as possible.  Do not use this option
+  unless you know exactly what you are doing.
+
+  The \option{--fast} flag makes the kernel run the program in
+  ``simulated time'', as fast as possible. A \lstinline|sleep| in fast
+  mode will not actually wait (from the wall-clock point of view), but
+  the kernel will internally increase its simulated time.
+
+  For instance, the following session behaves equally in fast and
+  non-fast mode:
+
+\begin{urbiscript}
+{ sleep(2s); echo("after") } & { sleep(1s); echo("before") };
+[000000463] *** before
+[000001463] *** after
+\end{urbiscript}
+
+  \noindent
+  However, in non fast mode the execution will take two seconds (wall
+  clock time), while it be instantaneous in fast mode. This option was
+  designed for testing purpose; \emph{it does not preserve the program
+    semantics}.
+
 \item[-s, --stack-size=\var{size}] set the coroutine \dfn{stack size}.
   The unit of \var{size} is KB; it defaults to 128.
 
@@ -101,9 +152,7 @@ simpler to use than, \command{urbi-launch}
   Alternatively you can define the environment variable
   \env{URBI\_STACK\_SIZE}.  The option \option{--stack-size} has
   precedence over the \env{URBI\_STACK\_SIZE}.
-\end{options}
 
-\begin{options}
 \item[-q, --quiet] do not send the welcome banner to incoming clients.
 \end{options}
 
@@ -175,21 +224,11 @@ The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.
 
 \paragraph{Urbi-launch options}
 \begin{options}
-\item[-h, --help] display the help message and exit successfully.
-\item[--version] display version information and exit successfully.
+\item[-h, --help] \optionHelp
+\item[--version] \optionVersion
 \item[-c, --customize=\var{file}] start the \urbi server in
   \var{file}.  This option is mostly for developpers.
-\item[-d, --debug=\var{level}] Set the verbosity level of traces.
-  This option is mostly for developpers, but it is very useful when
-  tracking problems such as a UObject that fails to load properly.
-  Valid values for \var{level} are, in increasing verbosity order:
-  \begin{enumerate}
-  \item \code{NONE}, no log messages at all.
-  \item \code{LOG}, the default value.
-  \item \code{TRACE}
-  \item \code{DEBUG}
-  \item \code{DUMP}, maximum verbosity.
-  \end{enumerate}
+\item[-d, --debug=\var{level}] \optionDebug
 \end{options}
 
 \paragraph{Mode selection}
@@ -247,7 +286,7 @@ as \key{C-c} under a Unix terminal).
 \item[-e, --expression=\var{script}] send \var{script} to the server.
 \item[-f, --file=\var{file}] send the contents of \var{file} to the
   server.
-\item[-h, --help] display this message and exit successfully.
+\item[-h, --help] \optionHelp
 \item[-H, --host=\var{host}] address to listen to.
 \item[-P, --port=\var{port}] port to listen to, 0 for automatic
   selection.
@@ -260,7 +299,7 @@ as \key{C-c} under a Unix terminal).
 
   Without this option, \command{urbi-send} prompts the user to hit
   \key{C-c} to end the connection.
-\item[--version] display version information
+\item[--version] \optionVersion
 \end{options}
 
 
@@ -301,9 +340,9 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
 \begin{options}
 \item[-D, --debug] turn on shell debugging (\lstinline|set -x|) to
   track \command{umake} problems.
-\item[-h, --help] display this help message and exit successfully.
+\item[-h, --help] \optionHelp
 \item[-q, --quiet] no output unless errors.
-\item[-v, --version] display version information and exit successfully.
+\item[-v, --version] \optionVersion
 \item[-V, --verbose] report on what is done.
 \end{options}
 
@@ -326,7 +365,7 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
 \paragraph{Developper options}
 \begin{options}
 \item[-p, --prefix=\var{dir}] library file location
-\item[-P, --param-mk=\var{file}] param.mk location
+\item[-P, --param-mk=\var{file}] \file{param.mk} location
 \item[-k, --kernel=\var{dir}] kernel location
 \end{options}
 

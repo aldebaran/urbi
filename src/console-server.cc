@@ -295,11 +295,11 @@ namespace urbi
       libport::OptionParser parser;
       parser
         << "Options:"
-        << arg_fast
         << libport::opts::help
         << libport::opts::version
-        << libport::opts::debug
         << "Tuning:"
+        << libport::opts::debug
+        << arg_fast
         << arg_stack
         << arg_no_banner
         << "Networking:"
