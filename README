@@ -53,7 +53,7 @@ package: bc
 ** Boost 1.39 or later
 Don't try to build it yourself, ask your distro's management to
 install it.
-deb: libboost-devel
+deb: libboost-dev
 MacPorts: boost
 windows: http://www.boostpro.com/download
 
@@ -107,7 +107,8 @@ package: help2man
 
 ** ImageMagick
 Used to convert some of the figures in the documentation.
-package: ImageMagick
+MacPorts: ImageMagick
+deb: imagemagick
 
 ** Libtool 2.2 or later
 Actually it should no longer be needed, as we embed all the file we
@@ -122,9 +123,9 @@ MacPorts: texlive texlive_texmf-full
 You need xml/sax, which seems to be part only of Python 2.6.  Using
 python_select can be useful to state that you want to use Python 2.6
 by default (sudo python_select python26).
-package: python26
+deb: python2.6
+MacPorts: python26
 MacPorts: python_select
-deb:   python-xml
 
 ** py-docutils
 This is not a requirement, but it's better to have it.  Used by the
