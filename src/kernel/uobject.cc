@@ -39,6 +39,7 @@
 #include <urbi/object/object.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
+#include <urbi/object/tag.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/urbi-exception.hh>
@@ -359,9 +360,16 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
   l.array.push_back(new urbi::UValue());
   l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
-  ugc->__evalcall(l);
+  ugc->eval(l);
   Stats::add(ol.front().get(), traceName, libport::utime() - t);
   return object::void_class;
+}
+
+static void write_and_unfreeze(urbi::UValue& r, object::rTag tag,
+                               urbi::UValue& v)
+{
+  r = v;
+  tag->unfreeze();
 }
 
 static rObject wrap_ucallback(const object::objects_type& ol,
@@ -380,7 +388,22 @@ static rObject wrap_ucallback(const object::objects_type& ol,
     l.array.push_back(new urbi::UValue(v));
   }
   libport::utime_t start = libport::utime();
-  urbi::UValue r = ugc->__evalcall(l);
+  urbi::UValue r;
+  // This if is there to optimize the synchronous case.
+  if (ugc->isSynchronous())
+    r = ugc->__evalcall(l);
+  else
+  {
+    libport::Finally f;
+    object::rTag tag(new object::Tag);
+    getCurrentRunner().apply_tag(tag, &f);
+    // Tricky: tag->freeze() yields, but we must freeze tag before calling
+    // eval or there will be a race if asyncEval goes to fast and unfreeze
+    // before we freeze. So go throug backend.
+    tag->value_get()->freeze();
+    ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(r), tag, _1));
+    getCurrentRunner().yield();
+  }
   start = libport::utime() - start;
   Stats::add(ol.front().get(), message, start);
   return object_cast(r);
