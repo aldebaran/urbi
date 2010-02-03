@@ -53,7 +53,7 @@ namespace urbi
         {
           args.setOffset(2);
           foreach (UGenericCallback* c, *cs)
-            c->__evalcall(args);
+            c->eval(args);
           args.setOffset(0);
         }
       }
@@ -316,6 +316,36 @@ namespace urbi
       return false;
     }
 
+    static void
+    call_result(UAbstractClient * client, std::string var,
+                const UValue& retval)
+    {
+      GD_FINFO_DUMP("...dispatch of %s done", var);
+      switch (retval.type)
+      {
+      case DATA_BINARY:
+        // Send it
+        // URBI_SEND_COMMAND does not now how to send binary since it
+        // depends on the kernel version.
+        // Careful, 'var x=1,' has no effect as ',' scopes.
+        client->startPack();
+        *client << " var  " << var << "|" << var << "=";
+        client->send(retval);
+        *client << ",";
+        client->endPack();
+        break;
+
+      case DATA_VOID:
+        URBI_SEND_COMMAND_C((*client), "var " << var);
+        break;
+
+      default:
+        URBI_SEND_COMMA_COMMAND_C((*client), "var " << var << "|"
+                                  << var << "=" << retval);
+        break;
+      }
+    }
+
     UCallbackAction
     RemoteUContextImpl::dispatcher(const UMessage& msg)
     {
@@ -384,7 +414,7 @@ namespace urbi
             UList u;
             u.array.push_back(new UValue());
             u[0].storage = c->target;
-            c->__evalcall(u);
+            c->eval(u);
           }
         }
       }
@@ -399,32 +429,8 @@ namespace urbi
         if (tmpfunit == tmpfun.end())
           throw std::runtime_error("no callback found");
 	array.setOffset(3);
-	UValue retval = (*tmpfunit)->__evalcall(array);
-	array.setOffset(0);
-        GD_FINFO_DUMP("...dispatch of %s done", array[1]);
-	switch (retval.type)
-        {
-        case DATA_BINARY:
-	  // Send it
-          // URBI_SEND_COMMAND does not now how to send binary since it
-          // depends on the kernel version.
-          // Careful, 'var x=1,' has no effect as ',' scopes.
-          client_->startPack();
-          *client_ << " var  " << var << "|" << var << "=";
-          client_->send(retval);
-          *client_ << ",";
-          client_->endPack();
-          break;
-
-        case DATA_VOID:
-          URBI_SEND_COMMAND_C((*client_), "var " << var);
-          break;
-
-        default:
-          URBI_SEND_COMMA_COMMAND_C((*client_), "var " << var << "|"
-                                     << var << "=" << retval);
-          break;
-        }
+        (*tmpfunit)->eval(array, boost::bind(&call_result, client_, var, _1));
+        break;
       }
       break;
 

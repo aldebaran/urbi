@@ -23,6 +23,7 @@
 # include <string>
 
 # include <libport/meta.hh>
+# include <libport/thread-pool.hh>
 # include <urbi/export.hh>
 # include <urbi/fwd.hh>
 # include <urbi/utable.hh>
@@ -76,6 +77,14 @@ namespace urbi
       return name;
     }
 
+    /// Set this callback to asynchronous mode using \b mode locking mode.
+    void setAsync(libport::ThreadPool::rTaskLock lock);
+    /** Start evaluation, call onDone with result when done.
+     * Synchronous if isSynchronous(), asynchronous else.
+     */
+    void eval(UList& param, boost::function1<void, UValue&> onDone=0);
+    /// Force synchronous evaluation.
+    void syncEval(UList& param, boost::function1<void, UValue&> onDone=0);
     virtual UValue __evalcall(UList& param)  = 0;
 
     /// Period of timers.
@@ -93,7 +102,15 @@ namespace urbi
     UVar* target;
     impl::UGenericCallbackImpl* impl_;
     UObject& owner;
+    /// Returns wether the call is synchronous or not.
+    bool isSynchronous() const;
+    /// Return the thread pool to use
+    static libport::ThreadPool& threadPool();
   protected:
+    /// TaskLock to use.
+    libport::ThreadPool::rTaskLock taskLock;
+    /// True if call must be made synchronously.
+    bool synchronous_;
     template<typename T>
     static inline impl::UContextImpl* fetchContext(T* ptr, libport::meta::True)
     {

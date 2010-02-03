@@ -25,6 +25,7 @@ using namespace urbi;
 class Threaded: public UObject
 {
 public:
+  CREATE_CLASS_LOCK
   Threaded(const std::string& n)
   :UObject(n)
   {
@@ -32,6 +33,11 @@ public:
     UBindFunction(Threaded, queueOp);
     UBindFunction(Threaded, getLastRead);
     UBindFunction(Threaded, startThread);
+    UBindThreadedFunction(Threaded, lockNoneDelayOp, LOCK_NONE);
+    UBindThreadedFunction(Threaded, lockInstanceDelayOp, LOCK_INSTANCE);
+    UBindThreadedFunction(Threaded, lockClassDelayOp, LOCK_CLASS);
+    UBindThreadedFunction(Threaded, lockModuleDelayOp, LOCK_MODULE);
+    UBindThreadedFunction(Threaded, lockFunctionDelayOp, LOCK_FUNCTION);
     UBindVar(Threaded, updated);
     updated = 0;
     UBindVar(Threaded, timerUpdated);
@@ -44,6 +50,12 @@ public:
       init();
   }
   ~Threaded();
+  void lockNoneDelayOp(int id, int delay) { delayOp(id, delay);}
+  void lockInstanceDelayOp(int id, int delay) { delayOp(id, delay);}
+  void lockFunctionDelayOp(int id, int delay) { delayOp(id, delay);}
+  void lockClassDelayOp(int id, int delay) { delayOp(id, delay);}
+  void lockModuleDelayOp(int id, int delay) { delayOp(id, delay);}
+  void delayOp(int id, int delay);
   void terminate();
   UVar updated;
   UVar timerUpdated;
@@ -51,6 +63,7 @@ public:
   UVar lastAccess;
   int init();
   virtual int update();
+  int onChangeDelay(UVar& v);
   int onChange(UVar& v);
   int onAccess(UVar& v);
   int onTimer();
@@ -79,7 +92,10 @@ public:
     UNNOTIFY,
     GETUOBJECT,
     DELAY,
-    DIE
+    DIE,
+    SET_UOWNED,
+    SET_BYPASS,
+    WRITE_BINARY
   };
 
   struct Operation
@@ -127,6 +143,9 @@ static const char* opname[] =
     "GETUOBJECT",
     "DELAY",
     "DIE",
+    "SET_UOWNED",
+    "SET_BYPASS",
+    "WRITE_BINARY",
     0
   };
 int Threaded::init()
@@ -189,6 +208,12 @@ UValue Threaded::getLastRead(unsigned tid)
   return ops[tid]->lastRead;
 }
 
+void Threaded::delayOp(int id, int delay)
+{
+  usleep(delay);
+  threadLoopBody(id);
+}
+
 bool Threaded::threadLoopBody(int id)
 {
   #define type0 (op.args[0].type)
@@ -210,11 +235,34 @@ bool Threaded::threadLoopBody(int id)
     }
     switch(op.op)
     {
+    case SET_BYPASS:
+      ctx.vars[int0]->setBypass(true);
+      break;
+    case SET_UOWNED:
+      ctx.vars[int0]->setOwned();
+      break;
+    case WRITE_BINARY:
+      {
+        UBinary b;
+        b.type = BINARY_IMAGE;
+        b.image.width = 3;
+        b.image.height = 3;
+        b.image.imageFormat = IMAGE_RGB;
+        b.image.size = 9;
+        b.image.data = (unsigned char*)const_cast<char*>("abcdefghi");
+        *( ctx.vars[int0]) = b;
+        b.image.data = 0;
+      }
+      break;
     case WRITE_VAR:
       if (type0 == DATA_STRING)
       {
         UVar v(string0);
-        v = op.args[1];
+        if (op.args.size() > 2)
+          for(int i=0; i<op.args[2].val; ++i)
+            v = op.args[1];
+        else
+          v = op.args[1];
       }
       else
       {
@@ -255,10 +303,19 @@ bool Threaded::threadLoopBody(int id)
       }
       break;
     case NOTIFY_CHANGE:
-      if (type0 == DATA_STRING)
-        UNotifyChange(string0, &Threaded::onChange);
+      // Bind in async mode if an extra arg is given.
+      if (op.args.size() > 1)
+        if (type0 == DATA_STRING)
+          UNotifyThreadedChange(string0, &Threaded::onChangeDelay,
+                                LOCK_FUNCTION);
+        else
+          UNotifyThreadedChange(*ctx.vars[int0], &Threaded::onChangeDelay,
+                                LOCK_FUNCTION);
       else
-        UNotifyChange(*ctx.vars[int0], &Threaded::onChange);
+        if (type0 == DATA_STRING)
+          UNotifyChange(string0, &Threaded::onChange);
+        else
+          UNotifyChange(*ctx.vars[int0], &Threaded::onChange);
       break;
     case NOTIFY_ACCESS:
        if (type0 == DATA_STRING)
@@ -336,6 +393,15 @@ void Threaded::threadLoop(int id)
 int Threaded::update()
 {
   updated = (int)updated + 1;
+  return 0;
+}
+
+int Threaded::onChangeDelay(UVar& v)
+{
+  usleep(300000);
+  UList l = lastChange;
+  l.array.push_back(new UValue(v.get_name()));
+  lastChange = l;
   return 0;
 }
 

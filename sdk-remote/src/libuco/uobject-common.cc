@@ -75,6 +75,7 @@ namespace urbi
     , name(name)
     , target(target)
     , owner(owner)
+    , synchronous_(true)
   {
     impl_ = ctx_->getGenericCallbackImpl();
     impl_->initialize(this, target?target->owned:false);
@@ -91,6 +92,7 @@ namespace urbi
     , name(name)
     , target(target)
     , owner(owner)
+    , synchronous_(true)
   {
     impl_ = ctx_->getGenericCallbackImpl();
     impl_->initialize(this);
@@ -107,6 +109,63 @@ namespace urbi
     impl_->registerCallback();
   }
 
+  bool
+  UGenericCallback::isSynchronous() const
+  {
+    return synchronous_;
+  }
+
+  void
+  UGenericCallback::syncEval(UList& params,
+                             boost::function1<void, UValue&> onDone)
+  {
+    UValue res = __evalcall(params);
+    if (onDone)
+      onDone(res);
+  }
+
+  void
+  UGenericCallback::eval(UList& params,
+                              boost::function1<void, UValue&> onDone)
+  {
+    if (synchronous_)
+    {
+      UValue res = __evalcall(params);
+      if (onDone)
+        onDone(res);
+    }
+    else
+    {
+      threadPool().queueTask(
+                             boost::function0<void>(
+        boost::bind(&UGenericCallback::syncEval, this, params, onDone)),
+        taskLock);
+    }
+  }
+
+  /* Note: to implement the LOCK_MODULE mode, we must delegate search of the
+   * TaskLock to use to a function within the calling module.
+   * That is why we take the TaskLock here and we do not find it ourselve.
+   */
+  void
+  UGenericCallback::setAsync(libport::ThreadPool::rTaskLock l)
+  {
+    synchronous_ = false;
+    taskLock = l;
+  }
+
+  libport::ThreadPool&
+  UGenericCallback::threadPool()
+  {
+    static libport::ThreadPool tp;
+    return tp;
+  }
+
+  void
+  setThreadLimit(size_t nThreads)
+  {
+    UGenericCallback::threadPool().resize(nThreads);
+  }
 
   /*----------.
   | UObject.  |
@@ -120,6 +179,7 @@ namespace urbi
     , autogroup(false)
     , remote(true)
     , impl_(ctx_->getObjectImpl())
+    , taskLock_(new libport::ThreadPool::TaskLock)
   {
     impl_->initialize(this);
     objecthub = 0;
@@ -134,6 +194,7 @@ namespace urbi
     , autogroup(false)
     , remote(true)
     , impl_(ctx_->getObjectImpl())
+    , taskLock_(new libport::ThreadPool::TaskLock)
   {
     impl_->initialize(this);
     objecthub = 0;
@@ -170,6 +231,13 @@ namespace urbi
   {
     std::string groupregister = "addgroup " + gpname +" { "+__name+"};";
     send(groupregister);
+  }
+
+  libport::ThreadPool::rTaskLock
+  UObject::getClassTaskLock()
+  {
+    throw std::runtime_error("You must redefine getClassTaskLock to use"
+                             " asynchronous calls with LOCK_CLASS locking");
   }
 
   /*---------------.

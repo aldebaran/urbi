@@ -70,6 +70,42 @@ namespace urbi
     return impl_;
   }
 
+  inline
+  libport::ThreadPool::rTaskLock
+  UObject::getTaskLock(LockMode m, const std::string& what)
+  {
+    typedef libport::ThreadPool::rTaskLock rTaskLock;
+    typedef libport::ThreadPool::TaskLock TaskLock;
+    // Static in inlined functions are per-module.
+    static rTaskLock module_lock(new TaskLock);
+    switch(m)
+    {
+    case LOCK_NONE:
+      return 0;
+      break;
+    case LOCK_FUNCTION:
+      {
+        rTaskLock& res = taskLocks_[what];
+        if (!res)
+          res = new TaskLock;
+        return res;
+      }
+      break;
+    case LOCK_INSTANCE:
+      return taskLock_;
+      break;
+    case LOCK_CLASS:
+      return getClassTaskLock();
+      break;
+    case LOCK_MODULE:
+      return module_lock;
+      break;
+    }
+    // Unreachable
+    assert(false);
+  }
+
+
   inline UObject*
   uvalue_caster<UObject*>::operator()(UValue& v)
   {

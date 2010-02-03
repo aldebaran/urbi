@@ -18,6 +18,7 @@
 
 # include <libport/compiler.hh>
 # include <libport/fwd.hh>
+# include <libport/thread-pool.hh>
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
 
@@ -57,6 +58,13 @@
 # define USensor(X) \
   UOwned(X)
 
+/// Call me inside your class declaration if you need a LOCK_CLASS task lock.
+#define CREATE_CLASS_LOCK   \
+virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
+  static libport::ThreadPool::rTaskLock tl(new libport::ThreadPool::TaskLock); \
+  return tl;  \
+}
+
 /** Bind the function X in current Urbi object to the C++ member
  function of same name.  The return value and arguments must be of
  a basic integral or floating types, char *, std::string, UValue,
@@ -66,6 +74,16 @@
   ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
                           (&Obj::X), __name + "." #X)
 
+/** Bind the function so that it gets executed in a separate thread.
+ *  @param Obj the UObject class name
+ *  @param X the unquoted function name
+ *  @param lockMode (LockMode) which lock to use. This lock can be used to
+ *  prevent multiple parallel execution of functions.
+ */
+# define UBindThreadedFunction(Obj, X, lockMode)                            \
+  ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
+                          (&Obj::X), __name + "." #X)                    \
+  ->setAsync(getTaskLock(lockMode, #X))
 /** Registers a function X in current object that will be called each
  time the event of same name is triggered. The function will be
  called only if the number of arguments match between the function
@@ -73,6 +91,11 @@
 # define UBindEvent(Obj, X)                             \
 ::urbi::createUCallback(*this, 0, "event", this,  \
 			  (&Obj::X), __name + "." #X)
+
+/// Same as UBindEvent() but executes the code in a separate thread.
+# define UBindThreadedEvent(Obj, X, lockMode)                             \
+  UBindEvent(Obj, X)->setAsync(getTaskLock(lockMode, #X))
+
 
 /** Registers a function \a X in current object that will be called each
  * time the event of same name is triggered, and a function fun called
@@ -83,6 +106,9 @@
 # define UBindEventEnd(Obj, X, Fun)					\
   ::urbi::createUCallback(*this, 0, "eventend", this,			\
 			  (&Obj::X),(&Obj::Fun), __name + "." #X)
+
+# define UBindThreadedEventEnd(Obj, X, Fun, lock)			\
+  UBindEventEnd(Obj, X, Fun)->>setAsync(getTaskLock(lockMode, #X))
 
 /// Register current object to the UObjectHub named \a Hub.
 # define URegister(Hub)						\
@@ -151,6 +177,17 @@
 namespace urbi
 {
 
+  /** Locking model.
+   * This enum is used in UBindThreadedFunction to tell what locking model
+   * should be used
+   */
+  enum LockMode {
+      LOCK_NONE,      ///< No locking is performed
+      LOCK_FUNCTION,  ///< Prevent parallel call to the same function
+      LOCK_INSTANCE,  ///< Prevent parallel call to any function of this object
+      LOCK_CLASS,     ///< Prevent parallel call to any function of this class
+      LOCK_MODULE     ///< Prevent parallel call to any function of this module
+    };
   UObjectHub* getUObjectHub(const std::string& n);
   UObject* getUObject(const std::string& n);
   void uobject_unarmorAndSend(const char* str);
@@ -160,6 +197,11 @@ namespace urbi
   UObjectMode getRunningMode();
   bool isPluginMode();
   bool isRemoteMode();
+
+
+
+  /// Set maximum number of threads to use for threaded calls (0=unlimited).
+  URBI_SDK_API void setThreadLimit(size_t nThreads);
 
   typedef int UReturn;
   /** Main UObject class definition
@@ -204,6 +246,13 @@ namespace urbi
     void UNotifyChange(UVar& v, int (UObject::*fun)(UVar&));
 
     /*!
+    \brief Similar to UNotifyChange(), but run function in a thread.
+    \param v the variable to monitor.
+    \param fun the function to call.
+    \param the locking mode to use.
+    */
+    void UNotifyThreadedChange(UVar& v, int (UObject::*fun)(UVar&), LockMode m);
+    /*!
     \brief Call a function each time a new variable value is available.
     \param v the variable to monitor.
     \param fun the function to call each time the variable \b v is modified.
@@ -222,6 +271,7 @@ namespace urbi
     \b fun the opportunity to modify it.
     */
     void UNotifyAccess(UVar& v, int (UObject::*fun)(UVar&));
+    void UNotifyThreadedAccess(UVar& v, int (UObject::*fun)(UVar&), LockMode m);
 
     /// Call \a fun every \a t milliseconds.
     template <class T>
@@ -238,7 +288,16 @@ namespace urbi
     {                                                           \
 	createUCallback(*this, StoreArg, TypeString,            \
                         dynamic_cast<T*>(this),                 \
-                        fun, Name);	\
+                        fun, Name);	                        \
+    }                                                           \
+    template <class T>                                          \
+    void UNotifyThreaded##Type(Notified, int (T::*fun) (Arg) Const, \
+                               LockMode lockMode)               \
+    {                                                           \
+	createUCallback(*this, StoreArg, TypeString,            \
+                        dynamic_cast<T*>(this),                 \
+                        fun, Name)                              \
+        ->setAsync(getTaskLock(lockMode, Name));	        \
     }
 
     /// \internal Handle functions taking a UVar& or nothing, const or not.
@@ -351,6 +410,9 @@ namespace urbi
     /// Remove all bindings, this method is called by the destructor.
     void clean();
 
+    /// Find the TaskLock associated with lock mode \b m.
+    libport::ThreadPool::rTaskLock getTaskLock(LockMode m,
+                                               const std::string& what);
 
     /// The load attribute is standard and can be used to control the
     /// activity of the object.
@@ -359,12 +421,19 @@ namespace urbi
     baseURBIStarter* cloner;
 
     impl::UObjectImpl* impl_get();
+
+    // Override me to have your own LOCK_CLASS task lock.
+    virtual libport::ThreadPool::rTaskLock getClassTaskLock();
   private:
     /// Pointer to a globalData structure specific to the
     /// remote/plugin architectures who defines it.
     UObjectData* objectData;
 
     impl::UObjectImpl* impl_;
+    boost::unordered_map<std::string, libport::ThreadPool::rTaskLock>
+    taskLocks_;
+    /// Instance task lock.
+    libport::ThreadPool::rTaskLock taskLock_;
   };
 
   // Provide cast support to UObject*
