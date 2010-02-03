@@ -9,6 +9,7 @@
  */
 #include <cstdarg>
 #include <libport/cstdio>
+#include <libport/debug.hh>
 
 #include <boost/thread.hpp>
 
@@ -19,6 +20,8 @@
 #include <urbi/uobject.hh>
 #include <urbi/ustarter.hh>
 #include <urbi/ucontext-factory.hh>
+
+GD_ADD_CATEGORY(UObject);
 
 namespace urbi
 {
@@ -177,11 +180,13 @@ namespace urbi
     void
     UContextImpl::init()
     {
+      GD_CATEGORY(UObject);
       setCurrentContext(this);
       foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
       {
         if (!libport::mhas(initialized, s))
         {
+          GD_FINFO_TRACE("initializing UObject hub: %s", s->name);
           newUObjectHubClass(s);
           initialized.insert(s);
         }
@@ -190,6 +195,7 @@ namespace urbi
       {
         if (!libport::mhas(initialized, s))
         {
+          GD_FINFO_TRACE("initializing UObject: %s", s->name);
           newUObjectClass(s);
           initialized.insert(s);
         }
