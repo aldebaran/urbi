@@ -61,6 +61,16 @@ if test x"$no_x" != xyes; then
   AC_SUBST([X11_LDADD],
            ['$(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)'])
 fi
+# We use -isystem for Boost if possible.  But then, if X11 is
+# installed in the same place as another copy of Boost, because system
+# directories are processed last, the Boost headers that will be used
+# are those where X11 is installed (think of /opt/local/include on OS
+# X for instance).  So look make X11 header's location isystem too.
+#
+# Note by the way that isystem is a tremendous help to fight Boost
+# warnings.
+AC_SUBST([X11_CPPFLAGS], [$X_CFLAGS])
+URBI_ISYSTEM([X11_CPPFLAGS])
 
 
 # Examples.
