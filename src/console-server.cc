@@ -298,7 +298,9 @@ namespace urbi
         << libport::opts::help
         << libport::opts::version
         << "Tuning:"
+# ifndef LIBPORT_DEBUG_DISABLE
         << libport::opts::debug
+# endif
         << arg_fast
         << arg_stack
         << arg_no_banner
