@@ -128,7 +128,9 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
 	     << libport::opts::help
 	     << libport::opts::version
 	     << arg_custom
+#ifndef LIBPORT_DEBUG_DISABLE
 	     << libport::opts::debug
+#endif
 	     << "Mode selection:"
 	     << arg_plugin
 	     << arg_remote
