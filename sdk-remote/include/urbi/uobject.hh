@@ -183,20 +183,23 @@ namespace urbi
    */
   enum LockMode {
       LOCK_NONE,      ///< No locking is performed
-      LOCK_FUNCTION,  ///< Prevent parallel call to the same function
+      /** Prevent parallel call to the same function. For notifies, it prevent
+       * multiple parallel notifies on the same variable
+       */
+      LOCK_FUNCTION,
       LOCK_INSTANCE,  ///< Prevent parallel call to any function of this object
       LOCK_CLASS,     ///< Prevent parallel call to any function of this class
       LOCK_MODULE     ///< Prevent parallel call to any function of this module
     };
-  UObjectHub* getUObjectHub(const std::string& n);
-  UObject* getUObject(const std::string& n);
-  void uobject_unarmorAndSend(const char* str);
-  void send(const char* str);
-  void send(const std::string&s);
-  void send(const void* buf, size_t size);
-  UObjectMode getRunningMode();
-  bool isPluginMode();
-  bool isRemoteMode();
+  URBI_SDK_API UObjectHub* getUObjectHub(const std::string& n);
+  URBI_SDK_API UObject* getUObject(const std::string& n);
+  URBI_SDK_API void uobject_unarmorAndSend(const char* str);
+  URBI_SDK_API void send(const char* str);
+  URBI_SDK_API void send(const std::string&s);
+  URBI_SDK_API void send(const void* buf, size_t size);
+  URBI_SDK_API UObjectMode getRunningMode();
+  URBI_SDK_API bool isPluginMode();
+  URBI_SDK_API bool isRemoteMode();
 
 
 
