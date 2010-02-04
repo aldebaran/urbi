@@ -500,6 +500,7 @@ namespace
 	object = new UObjectStruct(*v.object);
 	break;
       case DATA_VOID:
+        storage = v.storage;
 	break;
     }
     return *this;
