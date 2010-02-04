@@ -451,9 +451,15 @@ namespace urbi
     }
 
     rObject
-    Object::urbi_getSlot(key_type name)
+    Object::getSlot(key_type name)
     {
       return slot_get(name);
+    }
+
+    rObject
+    Object::getSlot(const std::string& name)
+    {
+      return slot_get(libport::Symbol(name));
     }
 
     rObject

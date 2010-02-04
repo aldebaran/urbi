@@ -244,7 +244,8 @@ namespace urbi
       `-------------*/
 
       void urbi_createSlot(key_type k);
-      rObject urbi_getSlot(key_type k);
+      rObject getSlot(key_type k);
+      rObject getSlot(const std::string& k);
       rObject urbi_locateSlot(key_type k);
       rDictionary urbi_properties(key_type slotName);
       rObject urbi_removeSlot(key_type k);
