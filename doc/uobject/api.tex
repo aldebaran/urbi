@@ -3,6 +3,7 @@
 \newcommand{\UBinary}{\lstinline{UBinary}\xspace}
 \newcommand{\USound}{\lstinline{USound}\xspace}
 \newcommand{\UImage}{\lstinline{UImage}\xspace}
+\newcommand{\UList}{\lstinline{UList}\xspace}
 \newcommand{\UVar}{\lstinline{UVar}\xspace}
 \newcommand{\UObject}{\lstinline{UObject}\xspace}
 \newcommand{\UObjectHub}{\lstinline{UObjectHub}\xspace}
@@ -89,6 +90,58 @@ class. New instances can be created from \urbi using the
 corresponding instance of the \Cxx object is created. You can get the
 arguments passed to the constructor by defining and binding a method
 named \lstinline|init| with the appropriate number of arguments.
+
+\section{Binding functions}
+
+\subsection{Simple binding}
+
+You can register any member function of your \UObject using the macro
+\lstinline{UBindFunction(classname, functionname)}. Once done, the function
+can be called from \us.
+
+The following types for arguments and return value are supported:
+
+\begin{itemize}
+\item Basic integer and floating types (int, double, float...).
+\item \lstinline{const std::string&} or \lstinline{const char*}.
+\item \lstinline{urbi::UValue} or any of its subtypes (\UBinary, \UList...).
+\item \lstinline{std::list} or \lstinline{std::vector} of the above types.
+\end{itemize}
+
+\subsection{Asynchronous binding}
+Functions bound using \lstinline{UBindFunction} are called synchronously, and
+thus block everything until they return.
+
+If you wish to bind a function that requires a non-negligible amount of time
+to execute, you can have it execute in a separate thread by calling
+
+\lstinline{UBindThreadedFunction(classname, functionname, lockMode)}.
+
+The function code will be executed in a separate thread without breaking the
+\us execution semantic.
+
+The \lstinline{lockMode} argument can be used to prevent parallel execution
+of multiple bound functions if your code is not thread-safe. It can be any of
+LOCK\_NONE, LOCK\_FUNCTION, LOCK\_INSTANCE, LOCK\_CLASS or LOCK\_MODULE.
+When set to LOCK\_NONE, no locking is performed. Otherwise, it limits
+parallel execution to:
+
+\begin{itemize}
+\item One instance of the bound function for LOCK\_FUNCTION.
+\item One bound function for each object instance for LOCK\_INSTANCE.
+\item One bound function for the class for LOCK\_CLASS.
+\item One bound function for the whole module (shared object) for LOCK\_MODULE.
+\end{itemize}
+
+There is however a restriction: you cannot mix multiple locking modes: for
+instance a function bound with LOCK\_FUNCTION mode will not prevent another
+function bound with LOCK\_INSTANCE from executing in parallel.
+
+You can perform your own locking using semaphores if your code needs a more
+complex locking model.
+
+You can limit the maximum number of threads that can run in parallel by using
+the \lstinline{setThreadLimit} function.
 
 \section{Notification of a variable change or access}
 
@@ -227,7 +280,7 @@ reading and writing the appropriate \lstinline{UProp} object in the
 \section{UObject and Threads}
 
 The \UObject API is thread-safe in both plugin and remote mode: All API calls
-including operationg on \UVar can be performed from any thread.
+including operations on \UVar can be performed from any thread.
 
 \section{Using binary types}
 
@@ -257,7 +310,7 @@ In plugin mode, you can setup any \UVar in 0-copy mode by calling
 is not copied, but a reference is kept.
 As a consequence, the data is only available from within registered
 notifyChange callbacks. Those callbacks can use \lstinline|UVar::val()| or
-cast the \UVar to a \UBinary\& to retreive the reference.
+cast the \UVar to a \UBinary\& to retrieve the reference.
 Attempts to read the \UVar from outside notifyChange will result in
 \lstinline{nil} being returned.
 
@@ -291,6 +344,14 @@ pair of parentheses:
 send ("myTag:1+1;");
 
 URBI (( at (myEvent?(var x)) { myTag:echo x; }; ));
+\end{urbiunchecked}
+
+You can also use the \lstinline{call} method to make an urbiscript function
+call:
+
+\begin{urbiunchecked}
+// C++ equivalent of urbiscript 'System.someFunc(12, "foo");'
+call("System", "someFunc", 12, "foo");
 \end{urbiunchecked}
 
 
