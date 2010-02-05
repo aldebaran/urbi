@@ -398,7 +398,7 @@ int Threaded::update()
 
 int Threaded::onChangeDelay(UVar& v)
 {
-  usleep(300000);
+  usleep(500000);
   UList l = lastChange;
   l.array.push_back(new UValue(v.get_name()));
   lastChange = l;
