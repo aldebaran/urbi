@@ -101,8 +101,7 @@ namespace urbi
       return module_lock;
       break;
     }
-    // Unreachable
-    assert(false);
+    return 0;
   }
 
 
