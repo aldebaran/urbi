@@ -191,15 +191,15 @@ namespace urbi
       LOCK_CLASS,     ///< Prevent parallel call to any function of this class
       LOCK_MODULE     ///< Prevent parallel call to any function of this module
     };
-  URBI_SDK_API UObjectHub* getUObjectHub(const std::string& n);
-  URBI_SDK_API UObject* getUObject(const std::string& n);
-  URBI_SDK_API void uobject_unarmorAndSend(const char* str);
-  URBI_SDK_API void send(const char* str);
-  URBI_SDK_API void send(const std::string&s);
-  URBI_SDK_API void send(const void* buf, size_t size);
-  URBI_SDK_API UObjectMode getRunningMode();
-  URBI_SDK_API bool isPluginMode();
-  URBI_SDK_API bool isRemoteMode();
+  UObjectHub* getUObjectHub(const std::string& n);
+  UObject* getUObject(const std::string& n);
+  void uobject_unarmorAndSend(const char* str);
+  void send(const char* str);
+  void send(const std::string&s);
+  void send(const void* buf, size_t size);
+  UObjectMode getRunningMode();
+  bool isPluginMode();
+  bool isRemoteMode();
 
 
 
