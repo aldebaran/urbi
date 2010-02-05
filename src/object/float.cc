@@ -44,7 +44,7 @@ namespace urbi
     Float::Float(value_type value)
       : value_(value)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Float::Float(const rFloat& model)

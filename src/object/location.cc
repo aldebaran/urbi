@@ -27,13 +27,13 @@ namespace urbi
     Location::Location()
       : loc_()
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Location::Location(const value_type& loc)
       : loc_(loc)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Location::Location(rLocation model)

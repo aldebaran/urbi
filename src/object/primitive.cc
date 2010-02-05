@@ -38,7 +38,7 @@ namespace urbi
     Primitive::Primitive(value_type value)
       : content_(value)
     {
-      proto_add(proto ? proto : Executable::proto);
+      proto_add(proto ? rExecutable(proto) : Executable::proto);
     }
 
     Primitive::value_type Primitive::value_get() const

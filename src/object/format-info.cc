@@ -32,7 +32,7 @@ namespace urbi
       , uppercase_(Case::UNDEFINED)
       , width_(0)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     FormatInfo::FormatInfo(rFormatInfo model)

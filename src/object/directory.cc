@@ -128,7 +128,7 @@ namespace urbi
     Directory::Directory(const std::string& value)
       : path_(new Path(value))
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     void

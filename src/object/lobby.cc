@@ -44,7 +44,7 @@ namespace urbi
     {
       // Only the Lobby prototype is expected to have a null connection.
       assert(!proto || c);
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
 
       if (c)
       {

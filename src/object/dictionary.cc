@@ -27,7 +27,7 @@ namespace urbi
   {
     Dictionary::Dictionary()
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Dictionary::Dictionary(const value_type& value)

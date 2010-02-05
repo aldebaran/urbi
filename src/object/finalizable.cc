@@ -25,7 +25,7 @@ namespace urbi
     Finalizable::Finalizable()
       : CxxObject()
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Finalizable::Finalizable(rFinalizable model)

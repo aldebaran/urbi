@@ -29,19 +29,19 @@ namespace urbi
     Position::Position()
       : pos_()
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Position::Position(const value_type& pos)
       : pos_(pos)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Position::Position(libport::Symbol* f, unsigned int l, unsigned int c)
       : pos_(f, l, c)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Position::Position(rPosition model)

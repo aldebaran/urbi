@@ -22,7 +22,7 @@
 public:                                                                 \
   static const ::std::string& type_name();                              \
   virtual ::std::string type_name_get() const;                          \
-  static ::urbi::object::rObject proto;                                 \
+  static ::libport::intrusive_ptr<Name> proto;                          \
   virtual bool valid_proto(const ::urbi::object::Object& o) const;      \
 private:                                                                \
   friend class ::urbi::object::CxxObject::TypeInitializer<Name>;        \
@@ -41,7 +41,7 @@ public:                                                                 \
     return res;                                                         \
   }                                                                     \
                                                                         \
-  ::urbi::object::rObject Name::proto;                                  \
+  ::libport::intrusive_ptr<Name> Name::proto;                           \
                                                                         \
   std::string                                                           \
   Name::type_name_get() const                                           \
@@ -104,13 +104,11 @@ namespace urbi
       class URBI_SDK_API Initializer
       {
       public:
-        Initializer(rObject& tgt);
+        Initializer();
         virtual ~Initializer();
         virtual rObject make_class() = 0;
         virtual void create() = 0;
         virtual libport::Symbol name() = 0;
-      protected:
-        rObject& res_;
       };
 
       template <typename T>
@@ -121,6 +119,8 @@ namespace urbi
         virtual rObject make_class();
         virtual void create();
         virtual libport::Symbol name();
+      protected:
+        libport::intrusive_ptr<T>& res_;
       };
 
       typedef std::list<Initializer*> initializers_type;

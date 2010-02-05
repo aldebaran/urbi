@@ -30,7 +30,7 @@ namespace urbi
       : fd_(fd)
       , own_(own)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     OutputStream::OutputStream(rOutputStream model)

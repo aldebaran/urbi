@@ -114,7 +114,7 @@ namespace urbi
       , waiterCount_(0)
     {
       protos_set(new List);
-      proto_add(proto ? proto : Primitive::proto);
+      proto_add(proto ? rPrimitive(proto) : Primitive::proto);
       slot_set(SYMBOL(waiterTag), new Tag());
     }
 
@@ -125,7 +125,7 @@ namespace urbi
       , waiterCount_(0)
     {
       protos_set(new List);
-      proto_add(proto ? proto : Primitive::proto);
+      proto_add(proto ? rPrimitive(proto) : Primitive::proto);
       slot_set(SYMBOL(waiterTag), new Tag());
     }
 
@@ -283,21 +283,21 @@ namespace urbi
       : bypassMode_(false)
     {
       protos_set(new List);
-      proto_add(proto ? proto : CxxObject::proto);
+      proto_add(proto ? rObject(proto) : CxxObject::proto);
     }
 
     UValue::UValue(libport::intrusive_ptr<UValue>)
       : bypassMode_(false)
     {
       protos_set(new List);
-      proto_add(proto ? proto : CxxObject::proto);
+      proto_add(proto ? rObject(proto) : CxxObject::proto);
     }
 
     UValue::UValue(const urbi::UValue& v, bool bypass)
       : bypassMode_(false)
     {
       protos_set(new List);
-      proto_add(proto ? proto : CxxObject::proto);
+      proto_add(proto ? rObject(proto) : CxxObject::proto);
       put(v, bypass);
     }
 

@@ -48,7 +48,8 @@ namespace urbi
 
     template <typename T>
     CxxObject::TypeInitializer<T>::TypeInitializer()
-      : Initializer(T::proto)
+      : Initializer()
+      , res_(T::proto)
     {}
 
     namespace

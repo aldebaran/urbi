@@ -31,7 +31,7 @@ namespace urbi
     Tag::Tag()
       : value_(new sched::Tag(libport::Symbol::make_empty()))
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Tag::Tag(const value_type& value)

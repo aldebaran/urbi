@@ -24,8 +24,7 @@ namespace urbi
 
     }
 
-    CxxObject::Initializer::Initializer(rObject& tgt)
-      : res_(tgt)
+    CxxObject::Initializer::Initializer()
     {}
 
     CxxObject::Initializer::~Initializer()

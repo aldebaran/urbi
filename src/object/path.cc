@@ -71,7 +71,7 @@ namespace urbi
     Path::Path(const std::string& value)
       : path_(value)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     void Path::init(const std::string& path)

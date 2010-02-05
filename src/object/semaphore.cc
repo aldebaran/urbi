@@ -21,7 +21,7 @@ namespace urbi
   {
     Semaphore::Semaphore()
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Semaphore::Semaphore(rSemaphore model)

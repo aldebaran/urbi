@@ -20,7 +20,7 @@ namespace urbi
     Regexp::Regexp(const std::string& rg)
       : re_(rg)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Regexp::Regexp(rRegexp model)

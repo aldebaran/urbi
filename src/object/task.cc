@@ -36,7 +36,7 @@ namespace urbi
     Task::Task()
       : value_(0)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Task::Task(const value_type& value)

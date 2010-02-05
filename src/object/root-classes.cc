@@ -241,8 +241,9 @@ namespace urbi
 
     namespace
     {
-      static void
-      cleanup_object(rObject& o)
+      template <typename T>
+      static inline void
+      cleanup_object(libport::intrusive_ptr<T>& o)
       {
         o->protos_set(new object::List(object::List::value_type()));
         o.reset();

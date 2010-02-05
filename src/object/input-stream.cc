@@ -36,7 +36,7 @@ namespace urbi
       , pos_(0)
       , size_(0)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     InputStream::InputStream(rInputStream model)

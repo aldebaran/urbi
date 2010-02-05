@@ -74,7 +74,7 @@ namespace urbi
       , argv_(argv)
       , status_(-1)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Process::Process(rProcess model)

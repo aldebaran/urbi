@@ -45,7 +45,7 @@ namespace urbi
     String::String()
       : content_()
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     String::String(rString model)

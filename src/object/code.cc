@@ -38,7 +38,7 @@ namespace urbi
       , self_()
       , call_()
     {
-      proto_add(proto ? proto : Executable::proto);
+      proto_add(proto ? rExecutable(proto) : Executable::proto);
     }
 
     Code::Code(rCode model)

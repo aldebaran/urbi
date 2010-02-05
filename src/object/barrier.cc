@@ -31,7 +31,7 @@ namespace urbi
     Barrier::Barrier(const value_type& value)
       : value_(value)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     struct BarrierException : public sched::SchedulerException

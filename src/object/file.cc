@@ -56,7 +56,7 @@ namespace urbi
     File::File(const std::string& value)
       : path_(new Path(value))
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     rFile File::create(rObject, const std::string& p)

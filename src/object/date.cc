@@ -25,13 +25,13 @@ namespace urbi
     Date::Date()
       : time_(0)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Date::Date(value_type t)
       : time_(t)
     {
-      proto_add(proto ? proto : Object::proto);
+      proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Date::Date(rDate time)
