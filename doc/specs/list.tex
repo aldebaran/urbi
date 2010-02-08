@@ -106,6 +106,17 @@ assert(x.clear == []);
 [00000000] *** 4
 \end{urbiscript}
 
+\item \lstinline|eachi(\var{fun})|\\
+  Apply the given functional value \var{fun} on all members
+  sequentially, additionally passing the current element index.
+
+\begin{urbiscript}[firstnumber=last]
+["a", "b", "c"].eachi(function (v, i) {echo ("%s: %s" % [i, v])});
+[00000000] *** 0: a
+[00000000] *** 1: b
+[00000000] *** 2: c
+\end{urbiscript}
+
 \item \lstinline|'each&'(\var{fun})|\\
 Apply the given functional value on all members simultaneously.
 
