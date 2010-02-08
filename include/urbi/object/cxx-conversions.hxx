@@ -171,6 +171,8 @@ namespace urbi
     CONVERT(unsigned char);
     CONVERT(unsigned short);
     CONVERT(unsigned long);
+    CONVERT(short);
+    CONVERT(long);
 #undef CONVERT
 
 

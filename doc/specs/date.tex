@@ -43,6 +43,15 @@ Date.new("2003-10-10 20");
 [00094386] 2003-10-10 20:00:00
 \end{urbiscript}
 
+If you create a date with a numeric argument which cannot be interpreted as
+a date you should get an error message warning you that the value cannot be
+converted into a integer
+
+\begin{urbiscript}[firstnumber=last]
+Date.new(0.1);
+[00095042:error] !!! new: bad numeric conversion: overflow or non empty fractional part: 0.1
+\end{urbiscript}
+
 \subsection{Slots}
 
 \begin{itemize}

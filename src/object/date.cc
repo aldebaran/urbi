@@ -63,7 +63,7 @@ namespace urbi
         return;
       }
 
-      time_ = from_urbi<unsigned>(args[0]);
+      time_ = from_urbi<time_t>(args[0]);
     }
 
     /*-------------.
