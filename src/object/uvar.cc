@@ -101,6 +101,8 @@ namespace urbi
         args.front()
         ->slot_get(libport::Symbol(args[1]->as<String>()->value_get())).value()
         .unsafe_cast<UVar>();
+      if (!rvar)
+        RAISE("UVar updatehook called on non-uvar slot");
       rvar->update_(args[2]);
       return void_class;
     }

@@ -181,6 +181,12 @@ do (getSlot("UVar"))
   {
     "\"" + ownerName + "." + initialName + "\""
   };
+  /// Copy this UVar under slot \b slotName of \b targetObj
+  function copy(targetObj, slotName)
+  {
+    targetObj.setSlot(slotName, this)|
+    targetObj.setProperty(slotName, "updateHook", getSlot("update_bounce"))
+  };
   function init(parent, name)
   {
     if (parent.hasSlot("__uobjectName"))
@@ -236,8 +242,11 @@ do (getSlot("UVar"))
   var hookChanged = !getenv("URBI_UVAR_HOOK_CHANGED");
   function newPropertyHook_(parent, name, prop, value)
   {
-   parent.getSlot(name).setProperty("val", prop, value)|
-   parent.removeProperty(name, prop)
+    if (parent.getSlot(name).isA(UVar) && prop != "updateHook")
+    {
+      parent.getSlot(name).setProperty("val", prop, value)|
+      parent.removeProperty(name, prop)
+    }
   };
   var __clone = getSlot("clone");
 
