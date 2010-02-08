@@ -2,6 +2,17 @@
   \usepackage{gostai-documentation}
   \usepackage{nameref}
 
+
+\usepackage{multicol}
+\newcommand{\urbitrajectory}[1]
+{
+  \begin{multicols}{2}
+    \lstinputlisting[language=Urbi,style=UrbiSDKEnv]{trajectories/#1.utraj}
+  \columnbreak
+    \includegraphics[width=\linewidth]{trajectories/#1}
+  \end{multicols}
+}
+
 \usepackage{config}
 \newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
 

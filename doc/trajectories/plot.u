@@ -1,0 +1,23 @@
+function sample//(Source, Number, Period)
+{
+  var number = call.evalArgAt(1)|
+  var period = call.evalArgAt(2)|
+  var t0 = time |
+  var res = [[time - t0, call.evalArgAt(0)]] |
+  for (number - 1)
+  {
+    sleep(period)|
+    res << [time - t0, call.evalArgAt(0)] |
+  }|
+  res
+}|;
+
+function plot(dat, values)
+{
+  if (Path.new(dat).exists)
+    File.new(dat).remove;
+  var o = OutputStream.new(File.create(dat));
+  for (var p : values)
+    o << "%s %s\n" % p;
+  o.close;
+}|;

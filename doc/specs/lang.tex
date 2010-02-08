@@ -2473,7 +2473,38 @@ iterations are done.
 
 %% FIXME: \section{Pattern matching}
 
-%% FIXME: \section{Trajectories}
+\section{Trajectories}
+\label{sec:lang:traj}
+
+In robotics, \dfn[trajectory]{trajectories} are often used: they are a
+means to change the value of a variable (actually, a slot) over time.
+This can be done using detached executions, for instance using a
+combination of \lstinline|every| and \lstinline|detach|, but \us
+provides syntactic sugar to this end.
+
+For instance the following drawing shows how the \lstinline|y|
+variable is moved smoothly from its \dfn{initial value}
+(\lstinline|0|) to its \dfn{target value} (\lstinline|100|) in 3
+seconds (the value given to the \lstinline|smooth| \dfn{attribute}.
+
+\urbitrajectory{smooth}
+
+Trajectories can be frozen and unfrozen, using tags
+(\autoref{sec:tut:tags}).  In that case, ``time is suspended'', and
+the trajectory resumes as if the trajectory was never interrupted.
+
+\urbitrajectory{smooth-frozen}
+
+When the target value is reached, the trajectory generator is detached
+from the variables: changes to the value of the variable no longer
+trigger the trajectory generator.
+
+\urbitrajectory{smooth-continued}
+
+See the specifications of \refObject{TrajectoryGenerator} for the list
+of supported trajectories.
+
+
 
 % Local Variables:
 %%% mode: latex

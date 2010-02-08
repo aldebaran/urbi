@@ -1,0 +1,6 @@
+var y = 0;
+{
+  sleep(0.5s);
+  y = 100 smooth:3s,
+},
+

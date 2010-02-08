@@ -1,0 +1,9 @@
+var y = 0;
+{
+  sleep(0.5s);
+  assign: y = 100 smooth:2s,
+  sleep(1s);
+  assign.freeze;
+  sleep(1s);
+  assign.unfreeze;
+},

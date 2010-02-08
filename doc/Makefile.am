@@ -112,6 +112,8 @@ FIG2DEV = fig2dev
 	fi
 
 
+include trajectories/local.mk
+
 ## --------- ##
 ## install.  ##
 ## --------- ##

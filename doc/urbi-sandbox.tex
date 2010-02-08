@@ -1,5 +1,6 @@
 \documentclass[openright,twoside,11pt]{book}
   \usepackage{gostai-documentation}
+  \usepackage{multicol}
 
 \title{Urbi Documentation Sandbox}
 \titleImage{figs/urbi}
@@ -9,13 +10,13 @@
 % DOCUMENT
 \begin{document}
 
-This document is meant to be used to toy with \LaTeX.
+This document is meant to be used to toy with \LaTeX{}.
 
 \begin{urbiassert}
 1 == 1;
 \end{urbiassert}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=last]
 0 != 1;
 [00001234] true
 // Check the syntax highlighting colors.
@@ -31,6 +32,34 @@ if (1 == 0) "yes" else "no";
 [00048239:error] !!! invalid character: `\xc3'
 [00048239:error] !!! invalid character: `\xa9'
 \end{urbiunchecked}
+
+% \newcommand{\urbitrajectory}[1]
+% {
+%   \begin{multicols}{2}
+%     \lstinputlisting[language=Urbi,style=UrbiSDKEnv]{trajectories/#1.utraj}
+%     \columnbreak
+%     \includegraphics[width=\linewidth]{trajectories/#1}
+%   \end{multicols}
+% }
+
+\lstnewenvironment{urbitrajectory}[1]
+{
+  \gdef\urbitrajectoryName{trajectories/#1}
+  \begin{minipage}[c]{0.45\linewidth}
+    \lstset{language=[interactive]urbi,style=UrbiSDKEnv}
+  }
+  {
+  \end{minipage}
+%    \includegraphics[width=\linewidth]{\urbitrajectoryName}
+%  \end{multicols}
+}
+
+\begin{urbitrajectory}{smooth}
+var y = 0;
+y = 100 smooth:2s,
+\end{urbitrajectory}
+
+
 \end{document}
 
 %%% Local Variables:

@@ -1,0 +1,146 @@
+\section{TrajectoryGenerator}
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Examples}
+\label{sec:traj:examples}
+
+%% \subsubsection{Trajectory Name}
+%% -------------------------------
+\let\subsubsectionOrig\subsubsection
+\renewcommand{\subsubsection}[1]
+{%
+  \subsubsectionOrig{\label{sec:traj:#1}#1}%
+  \index{#1@\lstinline{#1}}%
+}
+
+\subsubsection{Accel}
+
+The \lstinline{Accel} trajectory reaches a target value at a fixed
+acceleration (\lstinline{accel} attribute).
+
+\urbitrajectory{accel}
+
+\subsubsection{Cos}
+
+The \lstinline{Cos} trajectory implements a cosine around the target
+value, given an amplitude (\lstinline{ampli} attribute) and period
+(\lstinline{cos} attribute).
+
+This trajectory is not ``smooth'': the initial value of the variable
+is not taken into account.
+
+\urbitrajectory{cos}
+
+\subsubsection{Sin}
+
+The \lstinline{Sin} trajectory implements a sine around the target
+value, given an amplitude (\lstinline{ampli} attribute) and period
+(\lstinline{sin} attribute).
+
+This trajectory is not ``smooth'': the initial value of the variable
+is not taken into account.
+
+\urbitrajectory{sin}
+
+\subsubsection{Smooth}
+
+The \lstinline{Smooth} trajectory implements a sigmoid.  It changes
+the variable from its current value to the target value ``smoothly''
+in a given amount of time (\lstinline{smooth} attribute).
+
+\urbitrajectory{smooth}
+
+\subsubsection{Speed}
+
+The \lstinline{Speed} trajectory changes the value of the variable
+from its current value to the target value at a fixed speed (the
+\lstinline{speed} attribute).
+
+\urbitrajectory{speed}
+
+If the \lstinline{adaptive} attribute is set to true, then the
+duration of the trajectory is constantly reevaluated.
+
+\urbitrajectory{speed-adaptive}
+
+\subsubsection{Time}
+
+The \lstinline{Time} trajectory changes the value of the variable from
+its current value to the target value within a given duration (the
+\lstinline{time} attribute).
+
+\urbitrajectory{time}
+
+If the \lstinline{adaptive} attribute is set to true, then the
+duration of the trajectory is constantly reevaluated.
+
+\urbitrajectory{time-adaptive}
+
+%% Restore the definition of \subsubsection.
+\let\subsubsection\subsubsectionOrig
+
+\subsection{Construction}
+
+You are not expected to construct trajectory generators by hand, using
+modifiers is the recommended way to construct trajectories.  See
+\autoref{sec:lang:traj} for details about trajectories, and see
+\autoref{sec:traj:examples} for an extensive set of examples.
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|TrajectoryGenerator.Accel|~\\
+  This class implements the \lstinline|Accel| trajectory
+  (\autoref{sec:traj:Accel}).  It derives from
+  \lstinline|TrajectoryGenerator.OpenLoop|.
+
+\item \lstinline|TrajectoryGenerator.ClosedLoop|~\\
+  This class factors the implementation of the \dfn{closed-loop}
+  trajectories, i.e., the trajectories that constantly compute the
+  next value based on the current value of the variable.  Contrary to
+  open-loop trajectories, they are sensitive to changes made elsewhere
+  to the variable.  It derives from
+  \lstinline|TrajectoryGenerator.OpenLoop|.
+
+\item \lstinline|TrajectoryGenerator.OpenLoop|~\\
+  This class factors the implementation of the \dfn{open-loop}
+  trajectories, i.e., the trajectories that depend only on the initial
+  and/or target value of the variable.  Contrary to closed-loop
+  trajectories, they are insensitive to changes made elsewhere to the
+  variable.  It derives from \lstinline|TrajectoryGenerator.OpenLoop|.
+
+\item \lstinline|TrajectoryGenerator.Sin|~\\
+  This class implements the \lstinline|Cos| and \lstinline|Sin|
+  trajectories (\autoref{sec:traj:Cos}, \autoref{sec:traj:Sin}).  It
+  derives from \lstinline|TrajectoryGenerator.OpenLoop|.
+
+\item \lstinline|TrajectoryGenerator.Smooth|~\\
+  This class implements the \lstinline|Smooth| trajectory
+  (\autoref{sec:traj:Smooth}).  It derives from
+  \lstinline|TrajectoryGenerator.OpenLoop|.
+
+\item \lstinline|TrajectoryGenerator.SpeedAdaptive|~\\
+  This class implements the \lstinline|Speed| trajectory when the
+  \lstinline|adaptive| attribute is given (\autoref{sec:traj:Speed}).
+  It derives from \lstinline|TrajectoryGenerator.ClosedLoop|.
+
+\item \lstinline|TrajectoryGenerator.Time|~\\
+  This class implements the non-adaptive \lstinline|Speed| and
+  \lstinline|Time| trajectories (\autoref{sec:traj:Speed},
+  \autoref{sec:traj:Time}).  It derives from
+  \lstinline|TrajectoryGenerator.OpenLoop|.
+
+\item \lstinline|TrajectoryGenerator.TimeAdaptive|~\\
+  This class implements the \lstinline|Time| trajectory when the
+  \lstinline|adaptive| attribute is given (\autoref{sec:traj:Time}).
+  It derives from \lstinline|TrajectoryGenerator.ClosedLoop|.
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% End:

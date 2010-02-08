@@ -1,0 +1,10 @@
+var y = 0;
+{
+  sleep(1s);
+  assign: y = 10 smooth:2s,
+  sleep(1s);
+  y = 0;
+  sleep(1s);
+  y = 0;
+},
+
