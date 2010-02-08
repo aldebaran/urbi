@@ -913,13 +913,26 @@ precedence.
 
 \subsection{Scopes}
 
-% FIXME: This is wrong: the last separator isn't ignored; a pipe voids
-% the result, for instance.
 \dfn{Scopes} are sequences of statements, enclosed in curly brackets
 (\lstinline|{}|). Statements are separated with the four statements
-separators (see \autoref{sec:lang:separators}). The last separator is
-optional and ignored if present. Scopes are themselves expressions,
-and can thus be used in composite expressions, nested, and so forth.
+separators (see \autoref{sec:lang:separators}).  A trailing \samp{;}
+or \samp{,} is ignored.  A trailing \samp{\&} or \samp{|} behaves as
+if \lstinline|& {}| or \lstinline'| {}' was used.  This particular
+case is heavily used by \us programmers to discard the value of an
+expression:
+
+\begin{urbiscript}[firstnumber=last]
+// Return value is 1.  Displayed.
+1;
+[00000000] 1
+// Return value is that of {}, i.e., void.  Nothing displayed.
+1 | {};
+// Same as "1 | {}", a valueless expression.
+1|;
+\end{urbiscript}
+
+Scopes are themselves expressions, and can thus be used in composite
+expressions, nested, and so forth.
 
 \begin{urbiscript}[firstnumber=last]
 // Scopes evaluate to their last expression
