@@ -12,6 +12,7 @@
 #include <iostream>
 #include <sstream>
 #include <list>
+#include <libport/containers.hh>
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
 #include <libport/unistd.h>
@@ -223,60 +224,28 @@ namespace urbi
     void
     RemoteUObjectImpl::setUpdate(ufloat t)
     {
-      RemoteUContextImpl& ctx =
-        dynamic_cast<RemoteUContextImpl&>(*(owner_->ctx_));
-      // Forge names for callback and tag.
-      std::string tagName = "maintimer_" + owner_->__name;
-      std::string cbName = owner_->__name + ".maintimer";
-
-      // Stop any previous update
-      if (2 <= kernelMajor())
-        URBI_SEND_COMMAND_C(*ctx.getClient(),
-                            (libport::format("if (!%s.hasLocalSlot(\"%s\"))\n"
-                                             "  var %s.%s = Tag.new(\"%s\")|\n"
-                                             " %s.%s.stop",
-                                             owner_->__name, tagName,
-                                             owner_->__name, tagName, tagName,
-                                             owner_->__name, tagName)));
-      else
-        URBI_SEND_COMMAND_C(*ctx.getClient(), "stop " << tagName);
-
-      // Find previous update timer on this object and delete.
+      if (updateHandler)
       {
-        std::string cbFullName = cbName + "__0";
-        UTable::callbacks_type & cs = ctx.eventmap()[cbFullName];
-        typedef UTable::callbacks_type::iterator iterator;
-        for (iterator i = cs.begin(); i != cs.end(); ++i)
-          if ((*i)->getName() == cbFullName)
-          {
-            delete *i;
-            cs.erase(i);
-            break;
-          }
+        updateHandler->cancel();
+        updateHandler.reset();
       }
-
-      // Set period value.
       period = t;
-      // Do nothing more if negative value given
-      if (period < 0)
-        return;
+      onUpdate();
+    }
 
-      // FIXME: setting update at 0 put the kernel in infinite loop
-      //        and memory usage goes up to 100%
-      if (period == 0)
-        period = 1;
-
-      // Create callback
-      createUCallback(*owner_, 0, "event",
-                      owner_, &UObject::update, cbName);
-
-      // Set update at given period
-      std::string base = 2 <= kernelMajor() ? owner_->__name + "." : "";
-      URBI_SEND_COMMAND_C
-        (*ctx.getClient(),
-         base << tagName << ": every(" << period << "ms)"
-         "                     { " << compatibility::emit(cbName) << ";},");
-      return;
+    void
+    RemoteUObjectImpl::onUpdate()
+    {
+      if (period > 0)
+      {
+        owner_->update();
+        updateHandler =
+          libport::asyncCall(boost::bind(&RemoteUObjectImpl::onUpdate, this),
+                           period * 1000);
+        // The user's UVar= will emit commands ending with '|', we must do
+        // dispatch's job and send the terminating ';'.
+        owner_->send(";");
+      }
     }
 
     void RemoteUContextImpl::yield() const
@@ -498,17 +467,31 @@ namespace urbi
 
     TimerHandle RemoteUContextImpl::setTimer(UTimerCallback* cb)
     {
-      // Register ourself as an event.
+      cb->call();
+      libport::AsyncCallHandler h = libport::asyncCall(
+        boost::bind(&RemoteUContextImpl::onTimer, this, cb),
+        cb->period * 1000);
+      libport::BlockLock bl(mapLock);
       std::string cbname = "timer" + string_cast(cb);
-      std::string event = cb->objname + "." + cbname;
-      createUCallback(*(UObject*)0, 0, "event", cb,
-                      &UTimerCallback::call,
-                      event);
-      URBI_SEND_COMMAND_C((*client_),
-                          "timer_" << cb->objname << ": every("
-                          << cb->period << "ms)"
-                          "{ " << compatibility::emit(event) << ";},");
-      return TimerHandle(new std::string("timer_" + cb->objname));
+      timerMap[cbname] = h;
+      return TimerHandle(new std::string(cbname));
+    }
+
+    void
+    RemoteUContextImpl::onTimer(UTimerCallback* cb)
+    {
+      std::string cbname = "timer" + string_cast(cb);
+      {
+        libport::BlockLock bl(mapLock);
+        if (!libport::mhas(timerMap, cbname))
+          return;
+      }
+      cb->call();
+      libport::BlockLock bl(mapLock);
+      libport::AsyncCallHandler h = libport::asyncCall(
+        boost::bind(&RemoteUContextImpl::onTimer, this, cb),
+        cb->period * 1000);
+      timerMap[cbname] = h;
     }
 
     bool
@@ -516,10 +499,13 @@ namespace urbi
     {
       if (!h)
         return false;
-      UClient* client =
-        dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
-      URBI_SEND_COMMAND_C(*client,
-        compatibility::stop(*h, client->kernelMajor()) << ",");
+      RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
+      libport::BlockLock bl(ctx->mapLock);
+      // Should not happen, but you never know...
+      if (!libport::mhas(ctx->timerMap, *h))
+        return false;
+      ctx->timerMap[*h]->cancel();
+      ctx->timerMap.erase(*h);
       h.reset();
       return true;
     }

@@ -83,7 +83,11 @@ namespace urbi
       UCallbackAction clientError(const UMessage&);
       // Create it on demand.
       UObject* getDummyUObject();
+      void onTimer(UTimerCallback* cb);
       UObject* dummyUObject;
+      boost::unordered_map<std::string, libport::AsyncCallHandler>
+      timerMap;
+      libport::Lockable mapLock;
     };
 
     class URBI_SDK_API RemoteUObjectImpl: public UObjectImpl
@@ -94,9 +98,12 @@ namespace urbi
       virtual void clean();
       virtual void setUpdate(ufloat period);
       virtual bool removeTimer(TimerHandle h);
+      void onUpdate();
+
     private:
       UObject* owner_;
       ufloat period;
+      libport::AsyncCallHandler updateHandler;
     };
     class RemoteUGenericCallbackImpl;
     class URBI_SDK_API RemoteUVarImpl: public UVarImpl
