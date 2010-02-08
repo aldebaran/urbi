@@ -195,13 +195,14 @@ namespace urbi
     }
 
     void
-    List::each_common(const rObject& f, bool yielding)
+    List::each_common(const rObject& f, bool yielding, bool idx)
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
+      bool must_yield = false;
+      int i = 0;
       // Beware of iterations that modify the list in place: make a
       // copy.
-      bool must_yield = false;
       foreach (const rObject& o, value_type(content_))
       {
         if (must_yield)
@@ -210,6 +211,8 @@ namespace urbi
         objects_type args;
         args.push_back(f);
         args.push_back(o);
+        if (idx)
+          args.push_back(to_urbi(i++));
         r.apply(f, SYMBOL(each), args);
       }
     }
@@ -217,13 +220,19 @@ namespace urbi
     void
     List::each(const rObject& f)
     {
-      each_common(f, true);
+      each_common(f, true, false);
+    }
+
+    void
+    List::eachi(const rObject& f)
+    {
+      each_common(f, true, true);
     }
 
     void
     List::each_pipe(const rObject& f)
     {
-      each_common(f, false);
+      each_common(f, false, false);
     }
 
     void
@@ -349,6 +358,7 @@ namespace urbi
       DECLARE(each,           each            );
       DECLARE(each_AMPERSAND, each_and        );
       DECLARE(each_PIPE,      each_pipe       );
+      DECLARE(eachi,          eachi           );
       DECLARE(empty,          empty           );
       DECLARE(front,          front           );
       DECLARE(SBL_SBR,        operator[]      );
