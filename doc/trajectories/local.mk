@@ -18,17 +18,13 @@ $(srcdir)/%.dat: %.utraj
 	mv $@.tmp $@
 
 
+TRAJECTORIES = $(call ls_files,trajectories/*.utraj)
+
 # Not only is this true (i.e., we do want these intermediate files to
 # be kept, as we store them in our repository), but it is also
 # mandated by GNU Make, who, otherwise, does not seem to understand
 # how to go from utraj to pdf with an intermediate step in $(srcdir).
 .SECONDARY: $(addprefix $(srcdir)/,$(TRAJECTORIES:.utraj=.dat))
-
-dgb:
-	echo $(TRAJECTORIES)
-	echo $(TRAJECTORIES:.utraj=.pdf)
-
-TRAJECTORIES = $(call ls_files,trajectories/*.utraj)
 
 PDF_IMAGES +=					\
   $(TRAJECTORIES:.utraj=.pdf)
