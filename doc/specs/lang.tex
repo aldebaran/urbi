@@ -1521,7 +1521,7 @@ The \lstinline|do| construct changes the target (\lstinline|this|)
 when evaluating an expression.  It is a convenient means to avoid
 repeating the same target several times.
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 do (\var{target})
 {
   \var{body}
@@ -1548,7 +1548,7 @@ do (1024)
 As in most programming languages, conditionals are expressed with
 \lstinline|if|.
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 if (\var{condition}) \var{then-clause}
 if (\var{condition}) \var{then-clause} else \var{else-clause}
 \end{urbiunchecked}
@@ -1612,7 +1612,7 @@ if (var xx = 123) xx | xx;
 
 \us support the classical \C-like \lstinline|for| construct.
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 for (\var{initialization}; \var{condition}; \var{increment})
   \var{body}
 \end{urbiunchecked}
@@ -1637,7 +1637,7 @@ It has the exact same behavior as \C's \lstinline|for|:
 \us supports iteration over a collection with another form of the
 \lstinline|for| loop.
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 for (var \var{name} : \var{collection})
    \var{body};
 \end{urbiunchecked}
@@ -1721,7 +1721,7 @@ iterable value can be used.
 
 \us supports the usual \lstinline|if| constructs.
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 if (\var{condition})
   \var{action};
 
@@ -1783,7 +1783,7 @@ equivalent to \lstinline|while (true)|.  The loop evaluates to
 
 The \lstinline|switch| statement in \us is similar to \C's one.
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 switch (\var{value})
 {
   case \var{value_one}:
@@ -1839,7 +1839,7 @@ sw("foobar");
 
 The \lstinline|while| loop is similar to \C's one.
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 while (\var{condition})
   \var{body};
 \end{urbiunchecked}
@@ -1866,7 +1866,7 @@ The default flavor for \lstinline|while| is \lstinline|while;|.
 
 The semantics of
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 while; (\var{condition})
   \var{body};
 \end{urbiunchecked}
@@ -1874,7 +1874,7 @@ while; (\var{condition})
 \noindent
 is the same as
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 \var{condition} | \var{body} ; \var{condition} | \var{body} ; ...
 \end{urbiunchecked}
 
@@ -1908,7 +1908,7 @@ is skipped, and the next iteration is started.
 
 The semantics of
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 while| (\var{condition})
   \var{body};
 \end{urbiunchecked}
@@ -1916,7 +1916,7 @@ while| (\var{condition})
 \noindent
 is the same as
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 \var{condition} | \var{body} | \var{condition} | \var{body} | ...
 \end{urbiunchecked}
 
@@ -2412,7 +2412,7 @@ modify \lstinline|n| simultaneously.  This would happen had
 This construct provides a means to run concurrently multiple instances
 of statements.  The semantics of
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 while, (\var{condition})
   \var{body};
 \end{urbiunchecked}
@@ -2420,7 +2420,7 @@ while, (\var{condition})
 \noindent
 is the same as
 
-\begin{urbiunchecked}[frame=, backgroundcolor=, ]
+\begin{urbiunchecked}
 \var{condition} | \var{body} , \var{condition} | \var{body} , ...
 \end{urbiunchecked}
 
