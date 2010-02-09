@@ -115,27 +115,32 @@ thus block everything until they return.
 If you wish to bind a function that requires a non-negligible amount of time
 to execute, you can have it execute in a separate thread by calling
 
+% Separate line since lstinline does not word-wrap and this one is quite long.
 \lstinline{UBindThreadedFunction(classname, functionname, lockMode)}.
 
 The function code will be executed in a separate thread without breaking the
-\us execution semantic.
+\us execution semantics.
 
 The \lstinline{lockMode} argument can be used to prevent parallel execution
 of multiple bound functions if your code is not thread-safe. It can be any of
-LOCK\_NONE, LOCK\_FUNCTION, LOCK\_INSTANCE, LOCK\_CLASS or LOCK\_MODULE.
-When set to LOCK\_NONE, no locking is performed. Otherwise, it limits
-parallel execution to:
+\lstinline{LOCK_NONE}, \lstinline{LOCK_FUNCTION}, \lstinline{LOCK_INSTANCE},
+\lstinline{LOCK_CLASS} or \lstinline{LOCK_MODULE}.
+When set to \lstinline{LOCK_NONE}, no locking is performed. Otherwise, it
+limits parallel executions to:
 
 \begin{itemize}
-\item One instance of the bound function for LOCK\_FUNCTION.
-\item One bound function for each object instance for LOCK\_INSTANCE.
-\item One bound function for the class for LOCK\_CLASS.
-\item One bound function for the whole module (shared object) for LOCK\_MODULE.
+\item One instance of the bound function for \lstinline{LOCK_FUNCTION}.
+\item One bound function for each object instance for
+\lstinline{LOCK_INSTANCE}.
+\item One bound function for the class for \lstinline{LOCK_CLASS}.
+\item One bound function for the whole module (shared object) for
+\lstinline{LOCK_MODULE}.
 \end{itemize}
 
 There is however a restriction: you cannot mix multiple locking modes: for
-instance a function bound with LOCK\_FUNCTION mode will not prevent another
-function bound with LOCK\_INSTANCE from executing in parallel.
+instance a function bound with \lstinline{LOCK_FUNCTION} mode will not prevent
+another function bound with \lstinline{LOCK_INSTANCE} from executing in
+parallel.
 
 You can perform your own locking using semaphores if your code needs a more
 complex locking model.
