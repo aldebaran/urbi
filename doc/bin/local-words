@@ -1,0 +1,57 @@
+#! /usr/bin/perl -w
+
+use strict;
+use IO::File;
+
+# This tool reads files with "LocalWords:" comments.  It removes these
+# comment lines from the file, and at the end, produces on stdout a
+# sorted list of all the words that were found.
+#
+# This helps migrating from a local list of words to a unique personal
+# dictionary.
+
+my %word;
+
+sub process_file ($)
+{
+  my ($file) = @_;
+  my $tmp = "$file.tmp";
+  my $out = new IO::File(">$tmp")
+    or die;
+  my $in = new IO::File("$file");
+  while (my $line = $in->getline)
+  {
+    if ($line =~ /^.*LocalWords:\s*(.*)$/)
+      {
+        my $words = $1;
+        map { $word{$_} = 1 } split (/\s+/, $words);
+        next;
+      }
+    print $out $line;
+  }
+  $in->close;
+  $out->close;
+  # Do not leave output from move-if-change in stdout.
+  system ("move-if-change --color $tmp $file >&2");
+}
+
+map { process_file($_) } @ARGV;
+map { print "$_\n"; } sort keys %word;
+
+### Setup "GNU" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: 0
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: 0
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:
+
