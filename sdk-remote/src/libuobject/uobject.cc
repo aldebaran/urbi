@@ -60,7 +60,8 @@ namespace urbi
       }
     }
 
-    typedef boost::unordered_map<std::string, impl::UContextImpl*> contexts_type;
+    typedef boost::unordered_map<std::string, impl::UContextImpl*>
+            contexts_type;
     static contexts_type contexts;
 
     impl::UContextImpl*
@@ -236,12 +237,12 @@ namespace urbi
     void
     RemoteUObjectImpl::onUpdate()
     {
-      if (period > 0)
+      if (0 < period)
       {
         owner_->update();
         updateHandler =
           libport::asyncCall(boost::bind(&RemoteUObjectImpl::onUpdate, this),
-                           period * 1000);
+                             useconds_t(period * 1000));
         // The user's UVar= will emit commands ending with '|', we must do
         // dispatch's job and send the terminating ';'.
         owner_->send(";");
@@ -468,9 +469,10 @@ namespace urbi
     TimerHandle RemoteUContextImpl::setTimer(UTimerCallback* cb)
     {
       cb->call();
-      libport::AsyncCallHandler h = libport::asyncCall(
-        boost::bind(&RemoteUContextImpl::onTimer, this, cb),
-        cb->period * 1000);
+      libport::AsyncCallHandler h =
+        libport::asyncCall(
+                           boost::bind(&RemoteUContextImpl::onTimer, this, cb),
+                           useconds_t(cb->period * 1000));
       libport::BlockLock bl(mapLock);
       std::string cbname = "timer" + string_cast(cb);
       timerMap[cbname] = h;
@@ -488,9 +490,10 @@ namespace urbi
       }
       cb->call();
       libport::BlockLock bl(mapLock);
-      libport::AsyncCallHandler h = libport::asyncCall(
-        boost::bind(&RemoteUContextImpl::onTimer, this, cb),
-        cb->period * 1000);
+      libport::AsyncCallHandler h =
+        libport::asyncCall(
+                           boost::bind(&RemoteUContextImpl::onTimer, this, cb),
+                           useconds_t(cb->period * 1000));
       timerMap[cbname] = h;
     }
 
