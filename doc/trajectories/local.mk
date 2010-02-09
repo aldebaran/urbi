@@ -5,6 +5,7 @@
 URBI = $(top_builddir)/tests/bin/urbi
 GNUPLOT = gnuplot
 $(srcdir)/%.dat: %.utraj
+	$(ENSURE_TARGET_DIR)
 	$(URBI) -f $(srcdir)/trajectories/plot.u	\
 	     -f '$<'					\
 	     -e 'plot("$@.tmp", sample(y, 40, 0.1s));'	\
@@ -12,6 +13,7 @@ $(srcdir)/%.dat: %.utraj
 	mv $@.tmp $@
 
 %.pdf: %.dat
+	$(ENSURE_TARGET_DIR)
 	$(GNUPLOT) -e 'set terminal pdf;'			\
 	        -e 'plot "$<" using 1:2 with linespoints'	\
 	        >$@.tmp
