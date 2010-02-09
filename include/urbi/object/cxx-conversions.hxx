@@ -173,6 +173,7 @@ namespace urbi
     CONVERT(unsigned long);
     CONVERT(short);
     CONVERT(long);
+    CONVERT(long long);
 #undef CONVERT
 
 
