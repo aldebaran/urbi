@@ -1,11 +1,13 @@
-personal_ws-1.1 en 299 utf-8
+personal_ws-1.1 en 328 utf-8
 succ
 goto
 ary
 UProp
+fastMachine
 arccosine
 URegister
 Arity
+TimerHandle
 ident
 loopn
 insertBack
@@ -14,11 +16,13 @@ headYaw
 TemperatureSensor
 asFoo
 faq
+dll
 versa
 softdevice
 getVal
 Synclines
 synclines
+src
 plugin
 RotationalMotor
 args
@@ -27,6 +31,7 @@ Uowned
 UOwned
 VideoIn
 someevent
+Libtool
 uid
 removeBack
 netcat
@@ -44,6 +49,7 @@ locateSlot
 yfov
 ufloat
 elt
+UReturn
 GyroSensor
 microL
 Tri
@@ -53,9 +59,12 @@ UObjectHub
 trunc
 setPID
 wav
+uob
 microR
 memoization
 onleave
+UList
+slowMachine
 cameraL
 Frodo
 setNth
@@ -75,6 +84,7 @@ TouchSensor
 eration
 UTF
 addDevice
+ufactory
 UFactory
 xfF
 RGBLed
@@ -87,6 +97,7 @@ newImage
 notifyChange
 enum
 AccelerationSensor
+dlopen
 BallTracker
 asFloat
 exn
@@ -99,9 +110,11 @@ UStartHub
 prepended
 asBool
 elbowR
+socat
 getImage
 accessFrame
 rshift
+ubuild
 varname
 bitor
 inline
@@ -110,6 +123,7 @@ UValue
 myFunction
 Localizer
 localizer
+UBindThreadedFunction
 createSlot
 fingerLR
 requestValue
@@ -139,13 +153,16 @@ uobjects
 UObjects
 proto
 abcdef
+setThreadLimit
 variadic
 ClosedLoop
+someFunc
 setPosition
 verylightgray
 bc
 UBindFunction
 basicstyle
+deepclean
 localhost
 asString
 USound
@@ -169,6 +186,7 @@ animaloid
 eq
 accel
 realloc
+hh
 afoodef
 lang
 cond
@@ -192,6 +210,7 @@ speakerR
 myEvent
 functionalities
 ko
+ObjectTracker
 POSIX
 IGain
 nb
@@ -205,6 +224,7 @@ stopif
 wheelR
 scopeTag
 ok
+lockMode
 rangemin
 Gostai
 lst
@@ -220,6 +240,7 @@ frontleft
 valueChanged
 msg
 px
+cout
 sameAs
 gyrometer
 protos
@@ -227,13 +248,16 @@ py
 makeCompactNames
 callmsg
 removeProto
+TwoMachineFactory
 iterable
+onImage
 ss
 wb
 getHeight
 TrajectoryGenerator
 sw
 desugared
+unnotify
 PID
 zA
 typedef
@@ -248,10 +272,12 @@ UObject
 distanceMax
 xfov
 destructor
+setBypass
 classname
 timestamp
 baz
 ndebug
+umake
 UBinary
 subscopes
 TimeAdaptive
@@ -259,6 +285,7 @@ backgrounded
 pidChanged
 localSlotNames
 stdlib
+UVars
 Libport
 RGB
 USetUpdate
@@ -286,6 +313,7 @@ rhs
 evalArgAt
 arg
 xADDR
+myTag
 mytag
 sqrt
 evalArgs
@@ -296,5 +324,6 @@ arith
 foobarbaz
 asm
 SpeedAdaptive
+typedefed
 FIXME
 sgn

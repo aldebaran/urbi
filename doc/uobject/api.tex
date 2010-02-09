@@ -96,8 +96,8 @@ named \lstinline|init| with the appropriate number of arguments.
 \subsection{Simple binding}
 
 You can register any member function of your \UObject using the macro
-\lstinline{UBindFunction(classname, functionname)}. Once done, the function
-can be called from \us.
+\lstinline|UBindFunction(\var{class-name}, \var{function-name})|. Once
+done, the function can be called from \us.
 
 The following types for arguments and return value are supported:
 
@@ -116,7 +116,7 @@ If you wish to bind a function that requires a non-negligible amount of time
 to execute, you can have it execute in a separate thread by calling
 
 % Separate line since lstinline does not word-wrap and this one is quite long.
-\lstinline{UBindThreadedFunction(classname, functionname, lockMode)}.
+\lstinline|UBindThreadedFunction(\var{class-name}, \var{function-name}, \var{lockMode})|.
 
 The function code will be executed in a separate thread without breaking the
 \us execution semantics.
