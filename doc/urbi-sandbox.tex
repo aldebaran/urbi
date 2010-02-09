@@ -33,32 +33,9 @@ if (1 == 0) "yes" else "no";
 [00048239:error] !!! invalid character: `\xa9'
 \end{urbiunchecked}
 
-% \newcommand{\urbitrajectory}[1]
-% {
-%   \begin{multicols}{2}
-%     \lstinputlisting[language=Urbi,style=UrbiSDKEnv]{trajectories/#1.utraj}
-%     \columnbreak
-%     \includegraphics[width=\linewidth]{trajectories/#1}
-%   \end{multicols}
-% }
+\urbitrajectory{smooth}
 
-\lstnewenvironment{urbitrajectory}[1]
-{
-  \gdef\urbitrajectoryName{trajectories/#1}
-  \begin{minipage}[c]{0.45\linewidth}
-    \lstset{language=[interactive]urbi,style=UrbiSDKEnv}
-  }
-  {
-  \end{minipage}
-%    \includegraphics[width=\linewidth]{\urbitrajectoryName}
-%  \end{multicols}
-}
-
-\begin{urbitrajectory}{smooth}
-var y = 0;
-y = 100 smooth:2s,
-\end{urbitrajectory}
-
+\urbitrajectory{accel}
 
 \end{document}
 
