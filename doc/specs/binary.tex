@@ -49,7 +49,7 @@ Binary.new("0", "0") != Binary.new("1", "0");
 \item \lstinline|asString|\\
   Display using the syntactic rules of the UObject/UValue protocol.
   Incoming binaries must use a semicolon to separate the header part
-  from the content, while outgoing binaries use a cariage-return.
+  from the content, while outgoing binaries use a carriage-return.
 \begin{urbiscript}[firstnumber=last]
 assert(Binary.new("head", "content").asString
        == "BIN 7 head\ncontent");

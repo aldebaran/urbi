@@ -1,5 +1,21 @@
 \section{TrajectoryGenerator}
 
+The trajectory generators change the value of a given variable from an
+\dfn{initial value} to a \dfn{target value}.  They can be \dfn{open
+  loop}, i.e., the intermediate values depend only on the initial
+and/or target value of the variable; or \dfn{closed loop}, i.e., the
+intermediate values also depend on the current value value of the
+variable.
+
+Open-loop trajectories are insensitive to changes made elsewhere to
+the variable.  Closed-loop trajectories \emph{are} sensitive to
+changes made elsewhere to the variable --- for instance when the human
+physically changes the position of a robot's motor.
+
+Trajectory generators are not made to be used directly, rather use the
+``continuous assignment'' syntax (\autoref{sec:lang:traj}).
+
+
 \subsection{Prototypes}
 \begin{itemize}
 \item \refObject{Object}
@@ -100,18 +116,11 @@ modifiers is the recommended way to construct trajectories.  See
 
 \item \lstinline|TrajectoryGenerator.ClosedLoop|~\\
   This class factors the implementation of the \dfn{closed-loop}
-  trajectories, i.e., the trajectories that constantly compute the
-  next value based on the current value of the variable.  Contrary to
-  open-loop trajectories, they are sensitive to changes made elsewhere
-  to the variable.  It derives from
-  \lstinline|TrajectoryGenerator.OpenLoop|.
+  trajectories.  It derives from \lstinline|TrajectoryGenerator|.
 
 \item \lstinline|TrajectoryGenerator.OpenLoop|~\\
   This class factors the implementation of the \dfn{open-loop}
-  trajectories, i.e., the trajectories that depend only on the initial
-  and/or target value of the variable.  Contrary to closed-loop
-  trajectories, they are insensitive to changes made elsewhere to the
-  variable.  It derives from \lstinline|TrajectoryGenerator.OpenLoop|.
+  trajectories.  It derives from \lstinline|TrajectoryGenerator|.
 
 \item \lstinline|TrajectoryGenerator.Sin|~\\
   This class implements the \lstinline|Cos| and \lstinline|Sin|

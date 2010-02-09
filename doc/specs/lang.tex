@@ -395,7 +395,7 @@ content is printed with echo for instance.
 [00000000] ""
 "foo";
 [00000000] "foo"
-"a\nb"; // urbiScript escapes string when dumping them
+"a\nb"; // urbiscript escapes string when dumping them
 [00000000] "a\nb"
 echo("a\nb"); // We can see there is an actual line feed
 [00000000] *** a
@@ -437,7 +437,7 @@ session, both results are displayed.
 
 The \samp{,}-connector sends the first statement in background for
 concurrent execution, and starts the second statement when possible.
-When used in interactive sessions, the value of backgrounded
+When used in interactive sessions, the value of back-grounded
 statements are \emph{not} printed --- the time of their arrival being
 unpredictable, such results would clutter the output randomly.  Use
 \refObject[s]{Channel} or \refObject[s]{Event} to return results
@@ -467,7 +467,7 @@ asynchronously.
 
 Both \samp{;} and \samp{,} have equal precedence.  They are scoped
 too: the execution follow ``waits'' for the end of the jobs
-backgrounded with \samp{,} before proceeding.  Compare the two
+back-grounded with \samp{,} before proceeding.  Compare the two
 following executions.
 
 \begin{urbiscript}[firstnumber=last]
@@ -979,7 +979,7 @@ u.isVoid;
 
 The lifespan of local variables is the same as their enclosing scope. They
 are thus only accessible from their scope and its
-subscopes\footnote{Local variables can actually escape their scope
+sub-scopes\footnote{Local variables can actually escape their scope
   with lexical closures, see \autoref{sec:us-fun-closures}.}. Two
 variables with the same name cannot be defined in the same scope. A
 variable with the same name can be defined in an inner scope, in which
@@ -2517,9 +2517,7 @@ trigger the trajectory generator.
 See the specifications of \refObject{TrajectoryGenerator} for the list
 of supported trajectories.
 
-
-
-% Local Variables:
+%%% Local Variables:
 %%% mode: latex
 %%% coding: utf-8
 %%% TeX-master: "urbi-specs"

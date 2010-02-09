@@ -42,8 +42,7 @@ d.getWithDefault("four", 4);
 
 \subsection{Construction}
 
-Dictionnary are created like any other object. The constructor can
-take couples of argument to store them in the dictionary.
+The Dictionary constructor takes arguments by pair (key, value).
 
 \begin{urbiscript}[firstnumber=last]
 Dictionary.new("one", 1, "two", 2);
@@ -175,7 +174,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 \item \lstinline|set(\var{key}, \var{value})|\\
   Map \lstinline|\var{key}| to \lstinline|\var{value}| and return
   \lstinline|this| so that invocations to \lstinline|set| can be
-  chained.  The possibly existing previous mapping is overriden.
+  chained.  The possibly existing previous mapping is overridden.
 
 \begin{urbiscript}[firstnumber=last]
 Dictionary.new.set("one", 2).set("one", 1);
