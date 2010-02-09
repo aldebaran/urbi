@@ -8,7 +8,7 @@
 \index{ASCII}
 \index{UTF-8}
 
-Currently \us makes no asumptions about the encoding used in the
+Currently \us makes no assumptions about the encoding used in the
 programs, but the streams are handled as 8-bit characters.
 
 While you are allowed to use whatever character you want in the string
@@ -600,8 +600,8 @@ documentation of the classes that provide them.
 \newcommand{\operatorneq}    {\boperator {!=}   {Non Associative}  {Inequality}             }
 \newcommand{\operatorpeq}    {\boperator {===}  {Non Associative}  {Physical equality}      }
 \newcommand{\operatorpneq}   {\boperator {!==}  {Non Associative}  {Physical Inequality}    }
-\newcommand{\operatoraeq}    {\boperator {\~=}  {Non Associative}  {Relative Approximative equality} }
-\newcommand{\operatoreqaeq}  {\boperator {=~=}  {Non Associative}  {Absolute Approximative equality} }
+\newcommand{\operatoraeq}    {\boperator {\~=}  {Non Associative}  {Relative Approximate equality} }
+\newcommand{\operatoreqaeq}  {\boperator {=~=}  {Non Associative}  {Absolute Approximate equality} }
 \newcommand{\operatorinf}    {\boperator {<}    {Non Associative}  {Less than}              }
 \newcommand{\operatorinfeq}  {\boperator {<=}   {Non Associative}  {Less than or equal to}  }
 \newcommand{\operatorsup}    {\boperator {>}    {Non Associative}  {Greater than}           }
@@ -2033,10 +2033,10 @@ catch (var e)
 \label{sec:assertions}
 
 \dfn[assertion]{Assertions} allow to embed consistency checks in the
-code.  They are particularly useful when developping a program since
+code.  They are particularly useful when developing a program since
 they allow early catching of errors.  Yet, they can be costly in
 production mode: the run-time cost of verifying every single assertion
-might be prohitive.  Therefore, as in \C-like languages, assertions
+might be prohibitive.  Therefore, as in \C-like languages, assertions
 are disabled when \lstinline|System.ndebug| is true, see \refObject{System}.
 
 \us supports assertions in two different ways: with a function-like
@@ -2532,4 +2532,6 @@ of supported trajectories.
 % LocalWords:  updateSlot bitwise variadic abcdef bc afoodef isVoid subscopes
 % LocalWords:  arg CallMessage evalArgAt createSlot getSlot setSlot asString sw
 % LocalWords:  localSlotNames protos addProto removeProto lookup prepended p's
-% LocalWords:  msg sqrt sqr Frodo iterable cond exn
+% LocalWords:  msg sqrt sqr Frodo iterable cond exn UTF Été syncline synclines
+% LocalWords:  sequentiality backgrounded arith Arity ndebug scopeTag
+% LocalWords:  TrajectoryGenerator
