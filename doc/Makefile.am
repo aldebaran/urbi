@@ -8,6 +8,7 @@ share_dir = $(top_srcdir)/doc/document-aux
 share_bin_dir = $(share_dir)/bin
 share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
+include document-aux/make/pdf-figs.mk
 
 # img/.
 DOT_IMAGES = $(call ls_files,img/*.dot)
@@ -92,25 +93,6 @@ view: $(pdf_DATA)
 %.eps: %.pdf
 	mkdir -p $(dir $@) || true
 	$(CONVERT) "$<" "$@"
-
-%.eps: %.png
-	mkdir -p $(dir $@) || true
-	$(CONVERT) "$<" "$@"
-
-FIG2DEV = fig2dev
-%.pdf: %.dot
-	mkdir -p $(dir $@) || true
-# Some versions of dot don't support PDF output.
-	if $(DOT) -Tpdf </dev/null 2>/dev/null; then	\
-	  $(DOT) -Tpdf $< -o $@.tmp &&			\
-	  $(PDFCROP) $@.tmp $@ &&			\
-	  rm $@.tmp;					\
-	else						\
-	  $(DOT) -Tfig $< -o $*.fig &&			\
-	  $(FIG2DEV) -Lpdf -p dummy $*.fig $@ &&	\
-	  rm $*.fig;					\
-	fi
-
 
 include trajectories/local.mk
 
