@@ -90,6 +90,10 @@ We need the GNU version of sha1sum.  On Mac Ports it is part of the
 coreutils package.
 package: coreutils
 
+** Gnuplot
+Required to generate charts of trajectories for the documentation.
+package: gnuplot
+
 ** GraphViz
 Used to generate some of the figures in the documentation.  There is
 no GraphViz package for CygWin, so download the MSI file from
@@ -141,6 +145,10 @@ MacPorts: texlive_texmf-full
 ** Texinfo
 Needed to compile Bison.
 package: texinfo
+
+** Transfig
+Needed to convert some figures for documentation (using fig2dev).
+package: transfig
 
 ** yaml for Python
 The AST is generated from a description written in YAML.  Our (Python)
