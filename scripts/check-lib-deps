@@ -574,14 +574,14 @@ sub relocate ($)
     my @rpath;
     for my $dep (rpath_get($lib))
       {
-        my $rel =
-          (directory_inner($dep)
-           ? File::Spec->catdir('$ORIGIN',
-                                File::Spec->abs2rel($dep, $dir))
-           : $dep);
-        verbose 3, "$dep => $rel"
-          if $dep ne $rel;
-        push @rpath, $rel;
+        if (directory_inner($dep))
+          {
+            my $rel = File::Spec->catdir('$ORIGIN',
+                                         File::Spec->abs2rel($dep, $dir));
+            verbose 3, "$dep => $rel"
+              if $dep ne $rel;
+            push @rpath, $rel;
+          }
       }
     # If there are dependencies to installed libraries, include this
     # libdir in the RPATH.
@@ -677,7 +677,6 @@ sub dependency_system($)
         | /usr/lib/libstdc\+\+
         | /usr/lib/libxcb\.so
         )x
-    # On Windows,
     : $host_os eq 'windows'
     ? qr(
           .*/windows/system32/
