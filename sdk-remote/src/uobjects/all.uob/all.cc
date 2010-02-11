@@ -16,7 +16,7 @@
 
 #include <urbi/uobject.hh>
 
-GD_CATEGORY(all);
+GD_ADD_CATEGORY(all);
 
 class all: public urbi::UObject
 {
