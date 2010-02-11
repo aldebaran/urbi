@@ -32,7 +32,10 @@ namespace urbi
     int write_jpeg(const unsigned char* src, size_t w, size_t h, bool ycrcb,
 		   unsigned char* dst, size_t& sz, int quality);
 
-
+    inline unsigned char clamp(int v)
+    {
+      return v<0? 0:(v>255?255:v);
+    }
     inline unsigned char clamp(float v)
     {
       if (v < 0)
@@ -60,9 +63,9 @@ namespace urbi
 	Cr = V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128
 	Cb = U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128
       */
-      out[i] = clamp((0.257 * r) + (0.504 * g) + (0.098 * b) + 16);
-      out[i + 1] = clamp((0.439 * r) - (0.368 * g) - (0.071 * b) + 128);
-      out[i + 2] = clamp(-(0.148 * r) - (0.291 * g) + (0.439 * b) + 128);
+      out[i] = clamp((0.257f * r) + (0.504f * g) + (0.098f * b) + 16.0f);
+      out[i + 1] = clamp((0.439f * r) - (0.368f * g) - (0.071f * b) + 128.0f);
+      out[i + 2] = clamp(-(0.148f * r) - (0.291f * g) + (0.439f * b) + 128.0f);
     }
     return 1;
   }
@@ -91,22 +94,27 @@ namespace urbi
 		    size_t bufferSize,
 		    byte* destinationImage)
   {
+    // http://en.wikipedia.org/wiki/YUV#Converting_between_Y.27UV_and_RGB
     unsigned char *in = (unsigned char *) sourceImage;
     unsigned char *out = (unsigned char *) destinationImage;
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
+      int c = in[i]-16;
+      int c298 = c * 298;
+      int d = in[i+1] - 128;
+      int e = in[i+2] - 128;
+      out[i] = clamp((c298 + 409*e + 128) >> 8);
+      out[i+1] = clamp((c298 + 100*d - 20*e + 128) >> 8);
+      out[i+2] = clamp((c298 + 516*d + 128) >> 8);
+      /* Float version, 5 times slower on p4.
       float y = in[i];
       float cb = in[i + 1];
       float cr = in[i + 2];
-      /*
-	out[i+2]=clamp(y+1.403*cb);
-	out[i+1]=clamp(y-0.344*cr-0.714*cb);
-	out[i]=clamp(y+1.77*cr);
-      */
       out[i] = clamp(1.164 * (y - 16) + 1.596 * (cr - 128));
       out[i + 1] = clamp(1.164 * (y - 16) - 0.813 * (cr - 128) -
 			 0.392 * (cb - 128));
       out[i + 2] = clamp(1.164 * (y - 16) + 2.017 * (cb - 128));
+      */
     }
     return 1;
   }
