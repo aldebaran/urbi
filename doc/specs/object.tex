@@ -21,7 +21,7 @@ Object.new;
 \end{urbiscript}
 
 The keyword \lstindex{class} also allows to define objects which are
-intented to serve as prototype of a familly of objects, similarly to
+intended to serve as prototype of a family of objects, similarly to
 classes in traditional object-oriented programming languages (see
 \autoref{sec:tut:class}).
 
@@ -39,7 +39,7 @@ classes in traditional object-oriented programming languages (see
     Foo.'$type' == "Foo";
   };
 };
-\end{urbiscript} % fix color $
+\end{urbiscript}
 
 
 \subsection{Slots}
@@ -190,7 +190,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 
 \item \lstinline|hasLocalSlot(\var{slot})|\\
   Whether \lstinline|this| features a slot \var{slot}, locally, not
-  from some ancester.  See also \lstinline|Object.hasSlot|.
+  from some ancestor.  See also \lstinline|Object.hasSlot|.
 
 \begin{urbiscript}[firstnumber=last]
 class Base         { var this.base = 23; } |;
@@ -201,7 +201,7 @@ assert(!Derive.hasLocalSlot("base"));
 
 \item \lstinline|hasSlot(\var{slot})|\\
   Whether \lstinline|this| has the slot \var{slot}, locally, or from
-  some ancester.  See also \lstinline|Object.hasLocalSlot|.
+  some ancestor.  See also \lstinline|Object.hasLocalSlot|.
 
 \begin{urbiassert}[firstnumber=last]
 Derive.hasSlot("derive");
@@ -332,7 +332,7 @@ theObject === Object;
 \item \lstinline|'$type'|\\ % fix color $
 
 \item \lstinline|uid|\\
-  Returns ths unique id of \lstinline|this|.
+  Returns the unique id of \lstinline|this|.
 
 \item \lstinline|unacceptvoid|\\
   Return \lstinline|this|.  See \refObject{void} to know why.

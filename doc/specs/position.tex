@@ -26,16 +26,16 @@ Position.new(Position.new(2, 3));
 [00000001] 2.3
 \end{urbiscript}
 
-With two float arguments \var{l} and \var{c}, the newly constructed Position
-has its line and column defined and an empty file name.
+With two float arguments \var{l} and \var{c}, the newly constructed
+Position has its line and column defined and an empty file name.
 
 \begin{urbiscript}[firstnumber=last]
 Position.new(2, 3);
 [00000001] 2.3
 \end{urbiscript}
 
-With three arguments \var{f}, \var{l} and \var{c}, the newly constructed Position
-has its file name, line and column defined.
+With three arguments \var{f}, \var{l} and \var{c}, the newly
+constructed Position has its file name, line and column defined.
 
 \begin{urbiscript}[firstnumber=last]
 Position.new("file.u", 2, 3);
@@ -46,16 +46,16 @@ Position.new("file.u", 2, 3);
 
 \begin{itemize}
 \item \lstinline|'+'(\var{n})|\\
-  Return a new Position which is shifted from \var{n} columns to the right.  The minimal
-  value of the new position column is 1.
+  Return a new Position which is shifted from \var{n} columns to the
+  right.  The minimal value of the new position column is 1.
 \begin{urbiassert}[firstnumber=last]
 Position.new(2, 3) + 2 == Position.new(2, 5);
 Position.new(2, 3) + -4 == Position.new(2, 1);
 \end{urbiassert}
 
 \item \lstinline|'-'(\var{n})|\\
-  Return a new Position which is shifted from \var{n} columns to the left.  The minimal
-  value of the new Position column is 1.
+  Return a new Position which is shifted from \var{n} columns to the
+  left.  The minimal value of the new Position column is 1.
 \begin{urbiassert}[firstnumber=last]
 Position.new(2, 3) - 1 == Position.new(2, 2);
 Position.new(2, 3) - -4 == Position.new(2, 7);
