@@ -40,7 +40,7 @@ instructions.
 
 \subsubsection{Linux}
 
-To install \uwebots{} in your \webots{} on linux, you must download an
+To install \uwebots{} in your \webots{} on Linux, you must download an
 archive of the form
 \texttt{urbi-for-webots-\var{version}-linux-x86-gcc4-release.tar.bz2}.
 You may choose an other archive format than \texttt{.tar.bz2}, but you
@@ -188,17 +188,17 @@ controller will display the following message in the \webots console:
 \begin{lstlisting}
 **************************************************
 * URBI: Invalid or missing license.
-* Urbi for Webots will qui after five minutes.
+* Urbi for Webots will quit after five minutes.
 **************************************************
 \end{lstlisting}
 
-In order to run \uwebots unlimitedly you must provide it with a
+In order to run \uwebots without constraints you must provide it with a
 licence file, as described in the following section.
 
 \subsubsection{Setting up a license}
 \newcommand{\webotskey}{\file{webots.key}\xspace}
 \newcommand{\urbikey}{\file{urbi.key}\xspace}
-\newcommand{\webotskeydir}{\file{webots/ressources/}\xspace}
+\newcommand{\webotskeydir}{\file{webots/resources/}\xspace}
 \newcommand{\contactemail}{\email{contact@gostai.com}\xspace}
 \newcommand{\webotsworldsdir}{\file{projects/packages/urbi2.0/worlds/}\xspace}
 
@@ -465,7 +465,7 @@ represented as separated motors in \urbi.
 
 \begin{itemize}
 \item \var{node\_name} Name of the \webots node.
-\item \var{left} A boolean: attach to the left wheel if true, to the
+\item \var{left} A Boolean: attach to the left wheel if true, to the
   right otherwise.
 \end{itemize}
 
@@ -485,7 +485,7 @@ represented as separated motors in \urbi.
 \end{itemize}
 
 \paragraph{Note:} The differential wheels won't work correctly unless
-you instanciate both left and right objects.
+you instantiate both left and right objects.
 
 \subsubsection{Distance Sensor}
 
@@ -1157,7 +1157,7 @@ you instanciate both left and right objects.
 
   Force currently deployed by the motor to achieve the desired
   motion. Available only if \var{force\_feedback} was turned on at
-  contruction time.
+  construction time.
 \end{attribute}
 \end{itemize}
 
@@ -1376,3 +1376,11 @@ enable to control the simulation in an omnipotent manner.
 % \item[error] In case of error, this attribute contains a readable
 %   error message corresponding to the error.
 % \end{description}
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% End:

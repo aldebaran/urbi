@@ -13,15 +13,18 @@ microphones, accelerometers, ultrasound and IR sensors...
 
 Nao comes with an installed version of \urbi.
 
-On some versions of Nao, \urbi is not automatically started upon startup.
+On some versions of Nao, \urbi is not automatically started upon start-up.
 If this is the case, you must take the following steps to activate \urbi:
 
 \begin{itemize}
 \item Log in to your Nao using ssh: \lstinline|ssh root@myNao|
 \item Add a line containing \lstinline|urbistarter| to
-"/opt/naoqi/preferences/autoload.ini".
-\item Add a line containg
-\lstinline|LaunchThread( "ALUrbiStarter", "runServer", [ ] );| to "/opt/naoqi/bin/naoqi-autolaunch".
+  \file{/opt/naoqi/preferences/autoload.ini}.
+\item Add a line containing
+  %%
+  \lstinline|LaunchThread("ALUrbiStarter", "runServer", [ ]);|
+  %%
+  to \file{/opt/naoqi/bin/naoqi-autolaunch}.
 \item Restart your Nao.
 \end{itemize}
 
@@ -54,7 +57,7 @@ robot.dump;
 
 \section{Accessing joints}
 All the Nao joints are accessible through their standard Nao and \urbi names,
-and respect the \urbi standard specifications for servo motors: Basicaly each
+and respect the \urbi standard specifications for servo motors: Basically each
 motor has a \var{load} field that is linked to the motor stiffness, and a
 \var{val} field that can be used to read or write the motor position.
 
@@ -79,8 +82,8 @@ tag: headYaw.val = 0 sin:2s ampli:0.5,
 tag.stop;
 \end{urbiunchecked}
 
-The two hands are purposefuly not included in the 'motors' group.
-Although you can control them using the \var{val} slot, it is recommanded that
+The two hands are purposefully not included in the 'motors' group.
+Although you can control them using the \var{val} slot, it is recommended that
 you use the \var{open()} and \var{close()} methods, since they stop the motors
 once the movement is finished.
 
@@ -90,42 +93,42 @@ once the movement is finished.
 
 The trajectory generators will issue write command at a period given by the
 \var{Object.getPeriod} variable. The default is 10ms which is the native period
-of Naoqi.
+of \naoqi.
 
-\subsubsection{Motor backend method}
+\subsubsection{Motor back-end method}
 
 \urbi can use two different methods to send the joint commands:
 \lstinline|DCM::send()|, or \lstinline|ALMotor::setAngle()|.
 The mode can be changed by calling \lstinline|motor.setDCMWrite(bool)|.
 
 In \lstinline|setAngle()| mode, each write operation to a joint will
-synchronously call the \command{setAngle()} Naoqi method.
+synchronously call the \command{setAngle()} \naoqi method.
 
-In DCM mode, \urbi will set a hook on the DCM update,
-and send all commands in this hook using the \command{send()} method.
-\urbi will send commands S milliseconds in the future. S
-defaults to 50ms, and can be changed by calling
-\lstinline|ALMotor.setDCMShift(shiftValue)|
+In DCM mode, \urbi will set a hook on the DCM update, and send all
+commands in this hook using the \command{send()} method.  \urbi will
+send commands S milliseconds in the future. S defaults to 50ms, and
+can be changed by calling \lstinline|ALMotor.setDCMShift(shiftValue)|.
 
-\subsubsection{Motor command debuging}
+\subsubsection{Motor command debugging}
 
-The motors implements a debugging mode that can be activated by calling
-ALMotor::setTrace(1). While activated, it will write all sent commands to the
-file /tmp/traj.log. Each line  will contain the motor number, the command
-timestamp, and the command position.
-Be careful not to let this feature active while not using it, as it would
-quickly fill-up the memory.
+The motors implements a debugging mode that can be activated by
+calling \lstinline|ALMotor::setTrace(1)|. While activated, it will
+write all sent commands to the file /tmp/traj.log. Each line will
+contain the motor number, the command timestamp, and the command
+position.  Be careful not to let this feature active while not using
+it, as it would quickly fill-up the memory.
 
 \section{Leds}
 
-All Nao's leds and led groups, as defined by \naoqi, are available as objects in
-\us. You can set the led values by writting to the slots \var{val} (intensity
-between 0 and 1), \var{r}, \var{g}, \var{b} (color intensity between 0 and 1)
- or \var{rgb} (RGB value, one byte each, i.e. 0xFF0000 is red).
+All Nao's leds and led groups, as defined by \naoqi, are available as
+objects in \us. You can set the led values by writing to the slots
+\var{val} (intensity between 0 and 1), \var{r}, \var{g}, \var{b}
+(color intensity between 0 and 1) or \var{rgb} (RGB value, one byte
+each, i.e. 0xFF0000 is red).
 
 \section{Camera}
 
-The Nao camera object is instanciated by default, under the standard name
+The Nao camera object is instantiated by default, under the standard name
 \var{camera}. It is deactivated by default, set its \var{load} field to 1 to
 activate.
 
@@ -187,32 +190,32 @@ Reading the variable will give the latest available sensor value.
 
 \section{Interfacing with \naoqi}
 
-\subsection{Accessing the \naoqi shared memory region.}
+\subsection{Accessing the \naoqi shared memory region}
 
-Many \naoqi modules communicate through a shared hash table handled by the
-\lstinline|ALMemory| module. This module is available under the \lstinline|stm|
-name in \urbi, and has the following slots:
+Many \naoqi modules communicate through a shared hash table handled by
+the \lstinline|ALMemory| module. This module is available under the
+\lstinline|stm| name in \urbi, and has the following slots:
 
 \begin{itemize}
 \item \lstinline|get(\var{name})| \\
   Return the value of memory location \var{name}.
 \item \lstinline|set(\var{name}, \var{value})| \\
   Set memory location \var{name} to \var{value}.
-\item \lstinline|bindRenameVariable(\var{memoryName}, \var{variableName}| \\
+\item \lstinline|bindRenameVariable(\var{memoryName}, \var{variableName})| \\
   Create a \us slot named \var{variableName}, and synchronise it with memory
   location \var{memoryName}. Only read support is available.
-  \var{variableName} can be of the form "a.b", in wich case it will create
+  \var{variableName} can be of the form "a.b", in which case it will create
   variable "b" in object "a", or of the form "b", in which case variable "b"
   will be created in object "stm".
 \end{itemize}
 
-\subsection{Accessing standard \naoqi modules.}
+\subsection{Accessing standard \naoqi modules}
 
 All standard \naoqi modules (ALMemory, ALLogger, ALMotion, ALFrameManager,
 ALTextToSpeech, ALAudioPlayer...) are available in \urbi. You can call all
 their methods directly.
 
-\subsection{Binding new \naoqi modules in Urbi.}
+\subsection{Binding new \naoqi modules in Urbi}
 
 You can create a proxy on every \naoqi module, local or remote.
 The method is similar to what is done in C++, with the addition that all the
@@ -220,7 +223,7 @@ module's methods can be directly called without using the meta-call 'call'
 method:
 
 \begin{urbiunchecked}
-// Instanciate a proxy for the ALMotion module.
+// Instantiate a proxy for the ALMotion module.
 var motion = ALProxy.new( "ALMotion" );
 // Bind its methods, declaring "waituntilWalkIsFinished" as a 'long' method.
 motion.generateALBindings(["waituntilWalkIsFinished"]);
@@ -228,39 +231,39 @@ motion.walkTo( 0.1, 0,0 );
 motion.waituntilWalkIsFinished;
 \end{urbiunchecked}
 
-The argument to \lstinline|generateALBindings()| is a list of all the function
-names that you want to be asynchronous. You must pass in this list
-all the functions that takes a long(more than a few milliseconds)
+The argument to \lstinline|generateALBindings()| is a list of all the
+function names that you want to be asynchronous. You must pass in this
+list all the functions that takes a long(more than a few milliseconds)
 time to execute.
 
 Synchronous calls have less overhead, but will freeze the \us
 interpreter for the duration of the call.
 
-Most of the standard modules are loaded by the initialization script URBI.INI.
+Most of the standard modules are loaded by the initialization script
+\file{URBI.INI}.
 
-\subsection{Writting \naoqi modules in Urbi.}
+\subsection{Writing \naoqi modules in \urbi}
 
-You can create independant modules capable of answering requests and services
-from other \naoqi modules, written in C++, urbiScript or ruby. Let's see an
-example:
+You can create independent modules capable of answering requests and
+services from other \naoqi modules, written in \Cxx, \us or
+ruby. Let's see an example:
 
 \begin{urbiunchecked}
-
 // ----------------------------------
 // Simple module creation samples
 // ----------------------------------
 // the name of your variable and of the module must be the SAME!
-var urbiHelloWorld = ALModule.new( "urbiHelloWorld" );
+var urbiHelloWorld = ALModule.new("urbiHelloWorld");
 
 // create a new method doing some interesting things
 function urbiHelloWorld.sayHello()
 {
-  // Use ALTextToSpeech, instanciated by URBI.INI
-  tts.say( "Hello" );
+  // Use ALTextToSpeech, instantiated by URBI.INI
+  tts.say("Hello");
 };
 
 // inform the world that there's a new method, and what it's doing
-urbiHelloWorld.bindUrbiMethod( "sayHello", "Nao will say 'Hello'", [], [] );
+urbiHelloWorld.bindUrbiMethod("sayHello", "Nao will say 'Hello'", [], []);
 
 // to test it outside of Urbi, you can for example type in a browser:
 // http://<Nao's IP>:9559/?eval=urbiHelloWorld.version(); or
@@ -270,23 +273,29 @@ urbiHelloWorld.bindUrbiMethod( "sayHello", "Nao will say 'Hello'", [], [] );
 // ----------------------------------
 // another module example
 // ----------------------------------
-var mathematic = ALModule.new( "mathematic" );
+var mathematics = ALModule.new("mathematics");
 
-function mathematic.add( a, b )
+function mathematics.add(a, b)
 {
   var res = a + b;
-  echo( "mathematic.add => " + res );
+  echo("mathematics.add => " + res);
   return res;
 };
 
-mathematic.setModuleDescription(
-  "A powerfull module to make remote computing in urbiscript :)" );
-mathematic.bindUrbiMethod( "add", "Compute the sum of two numbers",
-[["a","first number of the addition"],
-["b","second number of the addition"]],
-["sum", "the sum of the addition"] );
+mathematics.setModuleDescription(
+  "A powerful module to make remote computing in urbiscript :)");
+mathematics.bindUrbiMethod( "add", "Compute the sum of two numbers",
+[["a",   "first number of the addition"],
+ ["b",   "second number of the addition"]],
+ ["sum", "the sum of the addition"] );
 
 // to test it outside of urbi, you can for example enter in a browser:
-// http://<Nao's IP>:9559/?eval=mathematic.add(2,3)
+// http://<Nao's IP>:9559/?eval=mathematics.add(2,3)
 \end{urbiunchecked}
 
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% End:
