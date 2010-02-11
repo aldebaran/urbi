@@ -24,6 +24,9 @@ do (Lobby)
   {
     connected = false |
     Lobby.systemLobby.echo("disconnecting " + this) |
+    // Break the reference loop of notifyChange local to this lobby.
+    if (hasLocalSlot("handle") && handle.isA(Finalizable))
+      removeSlot("handle")|
     onDisconnect!(this)
   };
 
