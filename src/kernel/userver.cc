@@ -139,6 +139,7 @@ namespace kernel
     dynamic_cast<libport::ConcreteSocket*>(wake_up_pipe_.first)
     ->onRead(boost::bind(&waker_socket_on_read, scheduler_, _1, _2));
     synchronizer_.setOnLock(boost::bind(&UServer::wake_up, this));
+    // Tell the scheduler we will handle job destruction ourself.
     scheduler_->keep_terminated_jobs_set(true);
   }
 
@@ -600,9 +601,12 @@ namespace kernel
     sched::jobs_type dead_jobs;
     while (true)
     {
+      // Handle job destruction with a one-cycle delay (The scheduler seems
+      // to keep reference to dead jobs for one cycle).
       dead_jobs.clear();
       dead_jobs = scheduler_->terminated_jobs_get();
-      scheduler_->terminated_jobs_clear();
+      scheduler_->terminated_jobs_clear(); // let refcounting do the job.
+
       r.side_effect_free_set(true);
       // We cannot yield within check, or an other OS thread will jump stack!
       r.non_interruptible_set(true);
