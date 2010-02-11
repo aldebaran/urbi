@@ -1,0 +1,13 @@
+This is how to install urbi dependencies on Debian and Ubuntu.
+First add the following line to your /etc/apt/sources.list file:
+
+deb file:/<urbi_kernel_sources_path>/share/debian ./
+
+Then update your repositories (as root), and install urbi-deps:
+
+$ apt-get update
+$ apt-get install urbi-deps
+
+Makefile is only provided for the sole purpose of building urbi-deps*.deb and
+the corresponding Packages.gz (needed by apt).
+
