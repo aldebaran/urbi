@@ -139,6 +139,7 @@ namespace kernel
     dynamic_cast<libport::ConcreteSocket*>(wake_up_pipe_.first)
     ->onRead(boost::bind(&waker_socket_on_read, scheduler_, _1, _2));
     synchronizer_.setOnLock(boost::bind(&UServer::wake_up, this));
+    scheduler_->keep_terminated_jobs_set(true);
   }
 
   UErrorValue
@@ -596,8 +597,12 @@ namespace kernel
   UServer::handle_synchronizer_(const object::objects_type&)
   {
     runner::Runner& r = getCurrentRunner();
+    sched::jobs_type dead_jobs;
     while (true)
     {
+      dead_jobs.clear();
+      dead_jobs = scheduler_->terminated_jobs_get();
+      scheduler_->terminated_jobs_clear();
       r.side_effect_free_set(true);
       // We cannot yield within check, or an other OS thread will jump stack!
       r.non_interruptible_set(true);
