@@ -360,10 +360,13 @@ This interface is used to describe a generic motor controller.
 
 This interface is used to describe a linear motor controller.
 
+A wheel can fall in this category, if the reported position is the distance
+travelled by a point at the surface of the wheel.
+
 \begin{slots}
   \slot{position}%
   {%
-    Position of the motor in centimeters.  Pointed to by the
+    Position of the motor in meters.  Pointed to by the
     \code{val} slot.%
   }
 
@@ -375,10 +378,22 @@ This interface is used to describe a linear motor controller.
 
 \end{slots}
 
+\interface[Motor]{LinearSpeedMotor}
+
+Motor similar to \code{LinearMotor}, but controlled by its translation speed.
+
+\begin{slots}
+  \slot{speed}%
+  {%
+    Translation speed in meters per second. Pointed to by the \code{val} slot.%
+  }
+\end{slots}
+
+
 \interface[Motor]{RotationalMotor}
 
 
-This interface is used to describe a rotational motor controller.
+This interface is used to describe a position-controlled rotational motor controller.
 
 \begin{slots}
   \slot{angle}%
@@ -401,6 +416,17 @@ This interface is used to describe a rotational motor controller.
 
 \end{slots}
 
+\interface[Motor]{RotationalSpeedMotor}
+
+Interface describing a motor similar to \code{RotationalMotor} controlled
+by its rotation speed.
+
+\begin{slots}
+  \slot{speed}%
+   {%
+     Rotation speed in radians per second.%
+   }
+\end{slots}
 
 \interface{Sensor}
 
@@ -879,6 +905,18 @@ Tri-color led.
   }
 \end{slots}
 
+\interface{Battery}
+
+Power source of any kind.
+
+\begin{slots}
+  \slot{remain}{Estimation of the remaining energy between 0 and 1.}
+  \slot{capacity}{Storage capacity in Amp.Hour.}
+  \slot{current}{Current current consumption in Amp.}
+  \slot{voltage}{Current voltage in Volt.}
+\end{slots}
+
+
 \section{Standard Components}
 
 Standard components correspond to components typically found in wheeled
@@ -1106,27 +1144,45 @@ robot.
     %%
   }
 
-  \component{yaw}{neck knee ankle shoulder elbow wrist
-    torso}{}{Rotational\-Motor}{
+  \component{yaw}{body neck knee ankle shoulder elbow wrist
+    torso}{}{Rotational\-Motor Rotational\-Speed\-Motor}{
     %%
     Rotational articulation around the Z axis in the
     robot. See \autoref{sec:naming:ypr}.
     %%
   }
 
-  \component{pitch}{neck knee ankle shoulder elbow wrist
-    torso}{}{Rotational\-Motor}{
+  \component{pitch}{body neck knee ankle shoulder elbow wrist
+    torso}{}{Rotational\-Motor Rotational\-Speed\-Motor}{
     %%
     Rotational articulation around the Y axis in the
     robot.  See \autoref{sec:naming:ypr}.
     %%
   }
 
-  \component{roll}{neck knee ankle shoulder elbow wrist
-    torso}{}{Rotational\-Motor}{
+  \component{roll}{body neck knee ankle shoulder elbow wrist
+    torso}{}{Rotational\-Motor Rotational\-Speed\-Motor}{
     %%
     Rotational articulation around the X axis in the robot. See
     \autoref{sec:naming:ypr}.
+    %%
+  }
+
+  \component{x}{body arm}{}{Linear\-Motor Linear\-Speed\-Motor}{
+    %%
+    Translational movement along the X axis.
+    %%
+  }
+
+  \component{y}{body arm}{}{Linear\-Motor Linear\-Speed\-Motor}{
+    %%
+    Translational movement along the Y axis.
+    %%
+  }
+
+  \component{z}{body arm}{}{Linear\-Motor Linear\-Speed\-Motor}{
+    %%
+    Translational movement along the Z axis.
     %%
   }
 
