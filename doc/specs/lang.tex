@@ -2152,7 +2152,7 @@ x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
 \end{urbiscript}
 
 
-\subsection{Scoping at \lstinline'at'}
+\subsubsection{Scoping at \lstinline'at'}
 
 \lstinline'at' statements are not scoped.  But, using a
 \refObject{Tag} object, one can control them.  In the following
@@ -2451,9 +2451,248 @@ modify \lstinline|n| simultaneously.  This would happen had
 \end{urbiassert}
 
 \subsection{\lstinline|waituntil|}
-%%% FIXME:
+\label{sec:lang:waituntil}
+
+The \lstinline|waituntil| construct is used to hold the execution
+until some condition is verified.  Similarly to \lstinline|at|
+(\autoref{sec:lang:at}) and the other event-based constructs,
+\lstinline|waituntil| may work on events, or on Boolean expressions.
+
+\subsubsection{\lstinline'waituntil' on Events}
+
+When the execution flow enters a \lstinline|waituntil|, the execution
+flow is held until the event is fired.  Once caught, the event is
+consumed, another \lstinline|waituntil| will require another event
+emission.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var e = Event.new;
+  {
+    waituntil (e?);
+    echo ("caught e");
+  },
+  e!;
+[00021054] *** caught e
+  e!;
+};
+\end{urbiscript}
+
+In the case of lasting events (see \lstinline|Event.trigger|), the
+condition remains verified as long as the event is ``on''.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var e = Event.new;
+  e.trigger;
+  {
+    waituntil (e?);
+    echo ("caught e");
+  };
+[00021054] *** caught e
+  {
+    waituntil (e?);
+    echo ("caught e");
+  };
+[00021054] *** caught e
+  {
+    waituntil (e?);
+    echo ("caught e");
+  };
+[00021054] *** caught e
+};
+\end{urbiscript}
+
+The event specification may use pattern-matching to specify the
+accepted events.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var e = Event.new;
+  {
+    waituntil (e?(1, var b));
+    echo ("caught e(1, %s)" % b);
+  },
+  e!;
+  e!(1);
+  e!(2, 2);
+  e!(1, 2);
+[00021054] *** caught e(1, 2)
+  e!(1, 2);
+};
+\end{urbiscript}
+
+Events sent before do not release the construct.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var e = Event.new;
+  e!;
+  {
+    waituntil (e?);
+    echo ("caught e");
+  },
+  e!;
+[00021054] *** caught e
+};
+\end{urbiscript}
+
+\subsubsection{\lstinline'waituntil' on Boolean Expressions}
+
+You may use any expression that evaluates to a truth value as argument
+to \lstinline'waituntil'.
+
+\begin{urbiscript}[firstnumber=last]
+{
+  var foo = Object.new;
+  {
+    waituntil (foo.hasLocalSlot("bar"));
+    echo(foo.getLocalSlot("bar"));
+  },
+  var foo.bar = 123|;
+};
+[00021054] *** 123
+\end{urbiscript}
+
 \subsection{\lstinline|whenever|}
-%%% FIXME:
+
+The \lstinline|whenever| construct really behaves like a never-ending
+\lstinline|loop if| construct.  It also works on events and Boolean
+expressions, and triggers each time the condition \emph{becomes}
+verified.
+
+\begin{urbiunchecked}
+whenever (\var{condition})
+  \var{statement1}
+\end{urbiunchecked}
+
+It supports an optional \lstinline|else| clause, which is run whenever
+the condition changes ``from true to false''.
+
+\begin{urbiunchecked}
+whenever (\var{condition})
+  \var{statement1}
+else
+  \var{statement2}
+\end{urbiunchecked}
+
+The execution of a \lstinline|whenever| clause is ``instantaneous'',
+there is no mean to use \samp{,} to put it in background.  It is also
+asynchronous with respect to the condition: the emission of an event
+is not held until all its watchers have completed their job.
+
+\subsubsection{\lstinline'whenever' on Events}
+
+A \lstinline'whenever' clause can be used to catch events with or
+without payloads.
+
+\begin{urbiscript}
+var e = Event.new|;
+whenever (e?)
+  echo("e on")
+else
+  echo("e off");
+e!;
+[00021054] *** e on
+[00021054] *** e off
+e!(1) & e!(2);
+[00021054] *** e on
+[00021054] *** e off
+[00021054] *** e on
+[00021054] *** e off
+\end{urbiscript}
+
+The payload is available in both bodies.  The pattern-matching and
+guard on the payload is available.
+
+\begin{urbiscript}
+var e = Event.new|;
+whenever (e?("arg", var arg) if arg % 2)
+  echo("e (%s) on" % arg)
+else
+  echo("e (%s) off" % arg);
+e!("param", 23);
+e!("arg", 52);
+e!("arg", 23);
+[00000002] *** e (23) on
+[00000003] *** e (23) off
+e!("arg", 52);
+e!("arg", 17);
+[00000004] *** e (17) on
+[00000005] *** e (17) off
+\end{urbiscript}
+
+
+If the body of the \lstinline|whenever| lasts for a long time, it is
+possible that two executions be run concurrently.
+
+\begin{urbiscript}
+var e = Event.new|;
+whenever (e?(var d))
+  {
+    echo("e (%s) on begin" % d);
+    sleep(d);
+    echo("e (%s) on end" % d);
+  }
+else
+  {
+    echo("e (%s) off begin" % d);
+    sleep(d);
+    echo("e (%s) off end" % d);
+  };
+
+e!(0.3s) & e!(1s);
+sleep(3s);
+[00000202] *** e (0.3) on begin
+[00000202] *** e (1) on begin
+[00000508] *** e (0.3) on end
+[00000508] *** e (0.3) off begin
+[00000810] *** e (0.3) off end
+[00001208] *** e (1) on end
+[00001208] *** e (1) off begin
+[00002210] *** e (1) off end
+\end{urbiscript}
+
+\subsubsection{\lstinline'whenever' on Boolean Expressions}
+
+A \lstinline'whenever' construct will repeatedly evaluate its body as
+long as its condition holds.  The number of evaluation of the bodies
+is typically non-deterministic, as not only does it depend on how
+long the condition holds, but also ``how fast'' the \urbi kernel runs.
+
+\begin{urbiscript}
+var x = 0|;
+var count = 0|;
+var t = Tag.new|;
+t:
+  whenever (x % 2)
+  {
+    if (!count)
+      echo("x is now odd (%s)" % x);
+    count++;
+  }
+  else
+  {
+    if (!count)
+      echo("x is now even (%s)" % x);
+    count++;
+  };
+
+t:
+  whenever (100 < count)
+  {
+    count = 0 |
+    x++;
+  };
+waituntil(x == 4);
+[00000769] *** x is now even (0)
+[00000809] *** x is now odd (1)
+[00000846] *** x is now even (2)
+[00000886] *** x is now odd (3)
+[00000924] *** x is now even (4)
+t.stop;
+\end{urbiscript}
+
 
 \subsection{While}
 \subsubsection{\lstinline|while,|}

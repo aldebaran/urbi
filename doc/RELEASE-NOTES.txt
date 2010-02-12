@@ -19,6 +19,14 @@ UObjects
   the kernel.
 - UVars can be copied using the UVar.copy method.
 
+Documentation
+=============
+
+- Tracjectories
+- TrajectoryGenerator
+- waituntil clauses
+- whenever clauses
+
 ***************************
 * New in kernel 2.0 RC 4. *
 ***************************
