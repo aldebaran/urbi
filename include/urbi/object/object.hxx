@@ -40,12 +40,13 @@ namespace urbi
     Object::proto_remove(const rObject& p)
     {
       assert(p);
-      protos_type::iterator i = protos_->begin();
-      while (i != protos_->end())
+      for (protos_type::iterator i = protos_->begin();
+           i != protos_->end();
+           /* nothing */)
         if (*i == p)
-  	i = protos_->erase(i);
+          i = protos_->erase(i);
         else
-  	++i;
+          ++i;
       return *this;
     }
 
@@ -63,14 +64,14 @@ namespace urbi
 
     inline
     rSlot
-    Object::local_slot_get(const key_type& k) const
+    Object::local_slot_get(key_type k) const
     {
       return slots_.get(this, k);
     }
 
     inline
     Object&
-    Object::slot_remove(const key_type& k)
+    Object::slot_remove(key_type k)
     {
       slots_.erase(this, k);
       return *this;
@@ -113,7 +114,7 @@ namespace urbi
       objects.push_back(r);
       foreach(const rObject& p, r->protos_get())
         if (for_all_protos(p, f, objects))
-  	return true;
+          return true;
       return false;
     }
     template<class F> bool

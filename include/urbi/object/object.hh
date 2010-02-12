@@ -94,7 +94,7 @@ namespace urbi
       /// Whether \a this has a \a k slot
       /// \param k         Slot name.
       /// \return Whether the \a k slot exists
-      bool slot_has(const key_type& k) const;
+      bool slot_has(key_type k) const;
 
       typedef std::pair<rObject, rSlot> location_type;
       /// Lookup field in object hierarchy.
@@ -103,29 +103,24 @@ namespace urbi
       ///                  when the slot does not exist.
       /// \return the Object containing slot \a k and the slot,
       /// or (0, 0) if not found.
-      location_type
-        slot_locate(const key_type& k, bool fallback = true) const;
+      location_type slot_locate(key_type k, bool fallback = true) const;
 
       /// Same as slot_locate, but raise Exception.Lookup if not found.
       /// \throw Exception.Lookup if the lookup fails.
-      location_type
-        safe_slot_locate(const key_type& k) const;
+      location_type safe_slot_locate(key_type k) const;
 
       /// Lookup field in object hierarchy.
       /// \param name The name of the slot to search
       /// \throw Exception.Lookup if the slot isn't found.
-      rObject
-        slot_get(const key_type& k) const;
-      Slot&
-        slot_get(const key_type& k);
+      rObject slot_get(key_type k) const;
+      Slot& slot_get(key_type k);
 
       /// Implement copy-on-write if the owner of the scope is not this.
       /// \param r        Runner to run the updateHook.
       /// \param k	The slot to update
       /// \param o	The new value
       /// \param hook	Whether to trigger the potential updateHook
-      rObject
-        slot_update(const key_type& k, const rObject& o, bool hook = true);
+      rObject slot_update(key_type k, const rObject& o, bool hook = true);
 
 
       /// \brief Update value in slot.
@@ -133,8 +128,8 @@ namespace urbi
       /// Set slot value in local slot.
       /// \precondition the slot does not exist in this.
       /// \return    *this.
-      Object& slot_set(const key_type& k, rObject o, bool constant = false);
-      Object& slot_set(const key_type& k, Slot* o);
+      Object& slot_set(key_type k, rObject o, bool constant = false);
+      Object& slot_set(key_type k, Slot* o);
 
       /// \brief Copy another object's slot.
       ///
@@ -144,14 +139,14 @@ namespace urbi
       /// \param name The name of the slot to copy
       /// \param from The object to copy the slot from
       /// \return this
-      Object& slot_copy(const key_type& name, const rObject& from);
+      Object& slot_copy(key_type name, const rObject& from);
 
       /// Get the object pointed to by the *local* slot.
       /// \return 0 if there is no such slot.
-      rSlot local_slot_get(const key_type& k) const;
+      rSlot local_slot_get(key_type k) const;
 
       /// Remove slot.
-      Object& slot_remove(const key_type& k);
+      Object& slot_remove(key_type k);
       /// Read only access to slots.
       const slots_implem& slots_get() const;
 
@@ -164,17 +159,17 @@ namespace urbi
       /// a Dictionary.  Must be an "own" slot.
       rDictionary properties_get();
       /// Return the dictionary of the properties of slot \a k, or 0.
-      rDictionary properties_get(const key_type& k);
+      rDictionary properties_get(key_type k);
       /// Return the property \a p of slot \a k, or 0.
-      rObject property_get(const key_type& k, const key_type& p);
+      rObject property_get(key_type k, key_type p);
       /// Return whether slot \a k has a property \a p.
-      bool property_has(const key_type& k, const key_type& p);
+      bool property_has(key_type k, key_type p);
       /// self.k->p = val.
       /// Ensures that self.property exists.
-      rObject property_set(const key_type& k, const key_type& p,
+      rObject property_set(key_type k, key_type p,
                            const rObject& val);
       /// Remove property \a p from slot \a k. Returns what was removed.
-      rObject property_remove(const key_type& k, const key_type& p);
+      rObject property_remove(key_type k, key_type p);
       /// \}
 
       /// \name Printing.
@@ -261,8 +256,7 @@ namespace urbi
       void bind(const std::string& name, T);
 
       private:
-      location_type
-        slot_locate_(const key_type& k, bool fallback) const;
+      location_type slot_locate_(key_type k, bool fallback) const;
 
       /// The protos.
       protos_type* protos_;

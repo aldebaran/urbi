@@ -101,7 +101,7 @@ namespace urbi
     static int lookup_id = 0;
 
     inline Object::location_type
-    Object::slot_locate_(const key_type& k, bool fallback) const
+    Object::slot_locate_(key_type k, bool fallback) const
     {
       if (lookup_id_ == lookup_id)
         return location_type(0, 0);
@@ -121,7 +121,7 @@ namespace urbi
     }
 
     Object::location_type
-    Object::slot_locate(const key_type& k,
+    Object::slot_locate(key_type k,
                         bool fallback) const
     {
       ++lookup_id;
@@ -129,7 +129,7 @@ namespace urbi
     }
 
     Object::location_type
-    Object::safe_slot_locate(const key_type& k) const
+    Object::safe_slot_locate(key_type k) const
     {
       location_type r = slot_locate(k, true);
       if (!r.first)
@@ -138,20 +138,20 @@ namespace urbi
     }
 
     rObject
-    Object::slot_get(const key_type& k) const
+    Object::slot_get(key_type k) const
     {
       return const_cast<Object*>(this)->slot_get(k);
     }
 
     Slot&
-    Object::slot_get(const key_type& k)
+    Object::slot_get(key_type k)
     {
       return *safe_slot_locate(k).second;
     }
 
 
     Object&
-    Object::slot_set(const key_type& k, rObject o, bool constant)
+    Object::slot_set(key_type k, rObject o, bool constant)
     {
       Slot* slot = new Slot(o);
       slot->constant_set(constant);
@@ -159,7 +159,7 @@ namespace urbi
     }
 
     Object&
-    Object::slot_set(const key_type& k, Slot* o)
+    Object::slot_set(key_type k, Slot* o)
     {
       if (!slots_.set(this, k, o))
         runner::raise_urbi_skip(SYMBOL(Redefinition), to_urbi(k));
@@ -167,20 +167,20 @@ namespace urbi
     }
 
     Object&
-    Object::slot_copy(const key_type& name, const rObject& from)
+    Object::slot_copy(key_type name, const rObject& from)
     {
       this->slot_set(name, from->slot_get(name));
       return *this;
     }
 
     bool
-    Object::slot_has(const key_type& k) const
+    Object::slot_has(key_type k) const
     {
       return slot_locate(k).first;
     }
 
     rObject
-    Object::slot_update(const key_type& k, const rObject& o,
+    Object::slot_update(key_type k, const rObject& o,
                         bool hook)
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
@@ -238,7 +238,7 @@ namespace urbi
     }
 
     rDictionary
-    Object::properties_get(const key_type& k)
+    Object::properties_get(key_type k)
     {
       if (Slot::properties_type* props = slot_get(k).properties_get())
         return new Dictionary(*props);
@@ -247,20 +247,20 @@ namespace urbi
     }
 
     rObject
-    Object::property_get(const key_type& k, const key_type& p)
+    Object::property_get(key_type k, key_type p)
     {
       return slot_get(k).property_get(p);
     }
 
     bool
-    Object::property_has(const key_type& k, const key_type& p)
+    Object::property_has(key_type k, key_type p)
     {
       return slot_get(k).property_has(p);
     }
 
     rObject
-    Object::property_set(const key_type& k,
-                         const key_type& p,
+    Object::property_set(key_type k,
+                         key_type p,
                          const rObject& value)
     {
       // CoW
@@ -275,7 +275,7 @@ namespace urbi
     }
 
     rObject
-    Object::property_remove(const key_type& k, const key_type& p)
+    Object::property_remove(key_type k, key_type p)
     {
       Slot& slot = slot_get(k);
       rObject res = slot.property_get(p);
