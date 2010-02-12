@@ -22,23 +22,52 @@ Timeout.new(300ms, false);
 
 \subsection{Examples}
 
-Use it as a tag :
+Use it as a tag:
 
 \begin{urbiscript}[firstnumber=last]
 var t = Timeout.new(300ms);
+[00000000] Timeout_0x133ec0
 t:{
   echo("This will be displayed.");
   sleep(500ms);
   echo("This will not.");
 };
 [00000000] *** This will be displayed.
+[00000007:error] !!! Timeout_0x133ec0 has timed out.
 \end{urbiscript}
+
+The same Timeout, \lstinline|t| can be reused.  It is armed again each
+time it is used to tag some code.
+
+\begin{urbiscript}[firstnumber=last]
+t: { echo("Open"); sleep(1s); echo("Close"); };
+[00000007] *** Open
+[00000007:error] !!! Timeout_0x133ec0 has timed out.
+t: { echo("Open"); sleep(1s); echo("Close"); };
+[00000007] *** Open
+[00000007:error] !!! Timeout_0x133ec0 has timed out.
+\end{urbiscript}
+
+%%% FIXME: Something is wrong here.
+%%%
+%%%A Timeout cannot be used several times at the same time though.
+%%%
+%%%\begin{urbiscript}[firstnumber=last]
+%%%// Note the commas.
+%%%t: { echo("Open"); sleep(1s); echo("Close"); },
+%%%[00035424:error] !!! Timeout_0x44e89e0 is already running
+%%%t: { echo("Open"); sleep(1s); echo("Close"); },
+%%%[00000007] *** Open
+%%%[00000007:error] !!! Timeout_0x133ec0 has timed out.
+%%%sleep(2s);
+%%%\end{urbiscript}
 
 Even if exceptions have been disabled, you can check whether the
 count-down expired with \lstinline|timedOut|.
 
 \begin{urbiscript}[firstnumber=last]
 t:sleep(500ms);
+[00000007:error] !!! Timeout_0x133ec0 has timed out.
 if (t.timedOut)
   echo("The Timeout expired.");
 [00000000] *** The Timeout expired.
