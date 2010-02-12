@@ -457,9 +457,12 @@ namespace urbi
     }
 
     rObject
-    Object::getSlot(const std::string& name)
+    Object::getLocalSlot(key_type name)
     {
-      return slot_get(libport::Symbol(name));
+      if (rSlot s = local_slot_get(name))
+        return s->value();
+      else
+        runner::raise_lookup_error(name, const_cast<Object*>(this));
     }
 
     rObject
@@ -483,9 +486,9 @@ namespace urbi
     }
 
     rObject
-    Object::setSlot(const std::string& slot, const rObject& value)
+    Object::setSlot(key_type slot, const rObject& value)
     {
-      slot_set(libport::Symbol(slot), value);
+      slot_set(slot, value);
       return value;
     }
 

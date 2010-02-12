@@ -5,6 +5,13 @@ release.
 * New in kernel 2.0 RC 5. *
 ***************************
 
+urbiscript
+==========
+
+New features:
+
+- Object.getLocalSlot.
+
 UObjects
 ========
 

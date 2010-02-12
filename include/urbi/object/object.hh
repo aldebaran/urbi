@@ -239,17 +239,19 @@ namespace urbi
       rObject call_with_this(libport::Symbol name, const objects_type& args);
 
 
-      /*-------------.
-      | Urbi methods |
-      `-------------*/
+      /*---------------.
+      | Urbi methods.  |
+      `---------------*/
 
       void urbi_createSlot(key_type k);
       rObject getSlot(key_type k);
-      rObject getSlot(const std::string& k);
+      /// Return the associated value.
+      /// \throw Exception.Lookup if not available locally.
+      rObject getLocalSlot(key_type k);
       rObject urbi_locateSlot(key_type k);
       rDictionary urbi_properties(key_type slotName);
       rObject urbi_removeSlot(key_type k);
-      rObject setSlot(const std::string& slot, const rObject& value);
+      rObject setSlot(key_type slot, const rObject& value);
       rObject urbi_setConstSlot(key_type k, const rObject& o);
       rObject urbi_updateSlot(key_type k, const rObject& o);
       rObject asPrintable() const;

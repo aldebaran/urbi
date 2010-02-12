@@ -179,12 +179,52 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 
 \item \lstinline|getProperty|\\
 
-\item \lstinline|getSlot(\var{name})|\\
-  Return the value associated to \var{name}.
+\item \lstinline|getLocalSlot(\var{name})|\\
+  The value associated to \var{name} in \lstinline|this|, excluding
+  its ancestors (contrary to \lstinline|getSlot|).
 
-\begin{urbiassert}[firstnumber=last]
-!Object.getSlot("getSlot").isVoid;
-\end{urbiassert}
+\begin{urbiscript}[firstnumber=last]
+var a = Object.new|;
+
+// Local slot.
+var a.slot = 21|;
+assert
+{
+  a.locateSlot("slot") == a;
+  a.getLocalSlot("slot") == 21;
+};
+
+// Inherited slot are not looked-up.
+assert { a.locateSlot("init") == Object };
+a.getLocalSlot("init");
+[00041066:error] !!! lookup failed: init
+\end{urbiscript}
+
+\item \lstinline|getSlot(\var{name})|\\
+  The value associated to \var{name} in \lstinline|this|, possibly
+  after a look-up in its prototypes (contrary to
+  \lstinline|getLocalSlot|).
+
+\begin{urbiscript}[firstnumber=last]
+var b = Object.new|;
+var b.slot = 21|;
+
+assert
+{
+  // Local slot.
+  b.locateSlot("slot") == b;
+  b.getSlot("slot") == 21;
+
+  // Inherited slot.
+  b.locateSlot("init") == Object;
+  b.getSlot("init") == Object.getSlot("init");
+};
+
+// Unknown slot.
+assert { b.locateSlot("ENOENT") == nil; };
+b.getSlot("ENOENT");
+[00041066:error] !!! lookup failed: ENOENT
+\end{urbiscript}
 
 \item \lstinline|hasProperty|\\
 

@@ -45,9 +45,9 @@ namespace urbi
       void constant_set(bool c);
       bool constant_get() const;
 
-      /*-----------.
-      | Properties |
-      `-----------*/
+      /*-------------.
+      | Properties.  |
+      `-------------*/
 
       /// The \a k property for this slot, or 0 if there is none.
       rObject
