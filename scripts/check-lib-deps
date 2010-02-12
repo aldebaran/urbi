@@ -128,10 +128,6 @@ Be more verbose.  Accumulates.
 
 =back
 
-=head1 FUNCTIONS
-
-=over 4
-
 =cut
 
 # The dependencies that are inside our package.  A simple set (i.e.,
@@ -179,6 +175,10 @@ my %rejected;
 
 # Verbosity level.
 my $verbose = 1;
+
+=head1 FUNCTIONS
+
+=over 4
 
 =item C<verbose($level, @message)>
 
