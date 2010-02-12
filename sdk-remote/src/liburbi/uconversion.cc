@@ -50,6 +50,12 @@ namespace urbi
     }
   } // namespace
 
+  /** Convert a buffer named \a sourceImage which contains an RGB image to a
+      buffer for the \a destinationImage which will contain a YCrCb image.
+
+      The \a sourceImage and \a destinationImage are expected to be pointers
+      to a valid memory area of size equal to \a bufferSize.
+   */
   int
   convertRGBtoYCrCb(const byte* sourceImage,
 		    size_t bufferSize,
@@ -74,6 +80,14 @@ namespace urbi
     return 1;
   }
 
+  /** Convert a buffer named \a sourceImage which contains an YCrCb image to
+      a buffer for the \a destinationImage which will contain a YCbCr image.
+      This function is its own reverse operation and can be used to convert
+      YCbCr image into YCrCb.
+
+      The \a sourceImage and \a destinationImage are expected to be pointers
+      to a valid memory area of size equal to \a bufferSize.
+  */
   int
   convertYCrCbtoYCbCr(const byte* sourceImage,
 		      size_t bufferSize,
@@ -93,6 +107,12 @@ namespace urbi
   }
 
 
+  /** Convert a buffer named \a sourceImage which contains an YCrCb image to a
+      buffer for the \a destinationImage which will contain a RGB image.
+
+      The \a sourceImage and \a destinationImage are expected to be pointers
+      to a valid memory area of size equal to \a bufferSize.
+   */
   int
   convertYCrCbtoRGB(const byte* sourceImage,
 		    size_t bufferSize,
@@ -124,14 +144,35 @@ namespace urbi
   }
 
 
+  /** Convert a buffer named \a source which contains an JPEG image to a
+      buffer for the \a dest which will contain a YCrCb image.
+
+      The \a source buffer is expected to be a pointer to a valid memory
+      area of size equal to \a sourcelen.
+
+      If \a dest buffer pointer is nul, then it will be changed to target
+      the allocated YCrCb image of size \a size.  Otherwise a part of the
+      YCrCb image will be copied in the buffer in the limit of the \a size
+      argument.
+
+      The property \a w and \a h respectively correspond to the width and
+      the height which are retrieved during the convertion of the convertion
+      of the data.
+
+      This function return 1 if it succeeds.
+   */
   int
   convertJPEGtoYCrCb(const byte* source, size_t sourcelen,
                      byte** dest, size_t& size, size_t& w, size_t& h)
   {
     size_t sz;
+
+    if (!dest)
+      return 0;
+
     void *destination = read_jpeg((const char*) source, sourcelen, false,
                                   sz, w, h);
-    if (!destination || !dest)
+    if (!destination)
     {
       size = 0;
       return 0;
@@ -149,14 +190,35 @@ namespace urbi
     return 1;
   }
 
+  /** Convert a buffer named \a source which contains an JPEG image to a
+      buffer for the \a dest which will contain a RGB image.
+
+      The \a source buffer is expected to be a pointer to a valid memory
+      area of size equal to \a sourcelen.
+
+      If \a dest buffer pointer is nul, then it will be changed to target
+      the allocated RGB image of size \a size.  Otherwise a part of the RGB
+      image will be copied in the buffer in the limit of the \a size
+      argument.
+
+      The property \a w and \a h respectively correspond to the width and
+      the height which are retrieved during the convertion of the convertion
+      of the data.
+
+      This function return 1 if it succeeds.
+   */
   int
   convertJPEGtoRGB(const byte* source, size_t sourcelen,
                    byte** dest, size_t& size, size_t& w, size_t& h)
   {
     size_t sz;
+
+    if (!dest)
+      return 0;
+
     void *destination = read_jpeg((const char*) source, sourcelen, true,
                                   sz, w, h);
-    if (!destination || !dest)
+    if (!destination)
     {
       size = 0;
       return 0;
@@ -174,6 +236,18 @@ namespace urbi
     return 1;
   }
 
+
+  /** Convert a buffer named \a source which contains an RGB image to a
+      buffer for the \a dest which will contain a JPEG image.
+
+      The \a source and \a dest are expected to be pointers to a valid
+      memory area of size equal to \a size.  The \a size argument is
+      modified to represent the size of the JPEG data inside the \a dest
+      buffer.
+
+      Arguments \a w, \a h and \a quality are used to respectively define
+      the width, the height and the quality of the compressed image.
+   */
   int convertRGBtoJPEG(const byte* source,
 		       size_t w, size_t h, byte* dest,
                        size_t& size, int quality)
@@ -182,6 +256,17 @@ namespace urbi
   }
 
 
+  /** Convert a buffer named \a source which contains an YCrCb image to a
+      buffer for the \a dest which will contain a JPEG image.
+
+      The \a source and \a dest are expected to be pointers to a valid
+      memory area of size equal to \a size.  The \a size argument is
+      modified to represent the size of the JPEG data inside the \a dest
+      buffer.
+
+      Arguments \a w, \a h and \a quality are used to respectively define
+      the width, the height and the quality of the compressed image.
+   */
   int convertYCrCbtoJPEG(const byte* source,
 			 size_t w, size_t h, byte* dest,
                          size_t& size, int quality)
@@ -423,7 +508,14 @@ namespace urbi
 
   } // anonymous namespace
 
-  /** Convert between various image formats, takes care of everything
+  /** Convert the image \a src to the image \a dest.
+   *
+   * The image format of the destination has to be initialized.  If other
+   * fields are empty, they are supposed to be identical to the source
+   * image.
+   *
+   * The destination image can only have one of the following type rgb, ppm,
+   * YCbCr or jpeg.
    */
   int convert(const UImage& src, UImage& dest)
   {
