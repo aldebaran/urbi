@@ -290,6 +290,10 @@ namespace urbi
     call_result(UAbstractClient * client, std::string var,
                 const UValue& retval)
     {
+      // This method can be called by a thread from the Thread Pool because
+      // it is used as a callback function.  Thus we have to declare the
+      // category for the debugger used by the current thread.
+      GD_CATEGORY(Libuobject);
       GD_FINFO_DUMP("...dispatch of %s done", var);
       switch (retval.type)
       {
