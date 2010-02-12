@@ -14,10 +14,17 @@ AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
 AM_CPPFLAGS += -I$(top_srcdir)/include
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
-AM_LDADD =					\
+AM_LDADD =						\
   $(top_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
   $(top_builddir)/jpeg/libjpeg$(LIBSFX).la		\
   $(PTHREAD_LIBS)
+# We should not need to report the -rpath to Boost here, since we
+# don't depend directly from it (it is liburbi.la which does, via
+# libport).  Yet Libtool does not propagate the rpath, so we need it
+# here.
+AM_LDFLAGS +=					\
+  $(BOOST_THREAD_LDFLAGS)			\
+  $(PTHREAD_LDFLAGS)
 
 # tests(*).
 check_PROGRAMS = bin/tests
