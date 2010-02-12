@@ -9,44 +9,46 @@ code in limited time.
 \end{itemize}
 
 \subsection{Construction}
-A Timeout can be constructed like any other Tag but without name and
-with time and optional if you want object Timeout to throw exception
-or not in case of timeout. By default, Timeout throws exception.
+At construction, a Timeout takes a duration, and a \refObject{Boolean}
+stating whether an exception should be thrown on timeout (by default,
+it does).
 
-\begin{urbiscript}
-var t = Timeout.new(300ms, false);
+\begin{urbiscript}[firstnumber=last]
+Timeout.new(300ms);
+[00000000] Timeout_0x953c1e0
+Timeout.new(300ms, false);
 [00000000] Timeout_0x953c1e0
 \end{urbiscript}
+
+\subsection{Examples}
 
 Use it as a tag :
 
 \begin{urbiscript}[firstnumber=last]
+var t = Timeout.new(300ms);
 t:{
-  echo("This code will execute.");
+  echo("This will be displayed.");
   sleep(500ms);
-  echo("But not this one.");
+  echo("This will not.");
 };
-[00000000] *** This code will execute.
+[00000000] *** This will be displayed.
 \end{urbiscript}
 
-Even if exception has been disabled in constructor, you can know if
-your piece of code has timed out or not using the member ``timedOut''.
+Even if exceptions have been disabled, you can check whether the
+count-down expired with \lstinline|timedOut|.
 
 \begin{urbiscript}[firstnumber=last]
 t:sleep(500ms);
 if (t.timedOut)
-  echo("Your code has just timed out !");
-[00000000] *** Your code has just timed out !
+  echo("The Timeout expired.");
+[00000000] *** The Timeout expired.
 \end{urbiscript}
 
 \subsection{Slots}
 \begin{itemize}
-\item \lstinline|count|\\
-  Fire \lstinline|this|.
-
 \item \lstinline|launch|\\
   Fire \lstinline|this|.
-
+%%FIXME: there must be more
 \end{itemize}
 
 %%% Local Variables:
