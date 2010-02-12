@@ -20,8 +20,8 @@ var t = Tuple.new([1, 2, 3]);
 \end{urbiscript}
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|asString|\\
+\begin{urbiscriptapi}
+\item[asString]
   Generate the string \samp{(\var{first}, \var{second}, ...)} using
   \code{asPrintable} to convert members to strings.
 
@@ -61,7 +61,7 @@ Tuple.new([0, 1]) < Tuple.new([1, 0]);
   Tuple.new([1, 2]) == Tuple.new([1, 2]);
 !(Tuple.new([1, 1]) == Tuple.new([2, 2]));
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 
 

@@ -94,6 +94,12 @@ view: $(pdf_DATA)
 	mkdir -p $(dir $@) || true
 	$(CONVERT) "$<" "$@"
 
+# Compile urbi-sandbox, to see if some construct works well.
+.PHONY: sandbox
+sandbox: urbi-sandbox.htmldir urbi-sandbox.pdf
+	open urbi-sandbox.pdf
+	open urbi-sandbox.htmldir/index.html
+
 include trajectories/local.mk
 
 ## --------- ##
