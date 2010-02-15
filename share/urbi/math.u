@@ -4,7 +4,7 @@ class Global.Math
 
   for (var fn: ["abs", "acos", "asin", "atan", "cos", "exp", "log", "random",
                "round", "sign", "sin", "sqr", "sqrt", "tan", "trunc"])
-    setSlot(fn, bounce_named(fn));
+    setSlot(fn, bounce(fn));
 
   function atan2(x, y)
   {

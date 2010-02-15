@@ -103,17 +103,12 @@ do (Object)
     res
   };
 
-  function bounce_named (fn)
+  function bounce(fn)
   {
     function (x)
     {
       x.getSlot(fn).apply([x])
     }
-  };
-
-  function bounce
-  {
-    bounce_named (call.argString (1))
   };
 
   // Tasks.

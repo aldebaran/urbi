@@ -91,7 +91,16 @@ void.asBool;
 [00000421:error] !!! unexpected void
 \end{urbiscript}
 
-\item \lstinline|bounce|\\
+\item \lstinline|bounce(\var{name})|\\
+  Return \lstinline|this.\var{name}| transformed from a method into a
+  function that takes its target (its ``\lstinline|this|'') as first
+  and only argument.  \lstinline|this.\var{name}| must take no
+  argument.
+\begin{urbiassert}[firstnumber=last]
+{ var myCos = Object.bounce("cos"); myCos(0) }    == 0.cos;
+{ var myType = bounce("$type"); myType(Object); } == "Object";
+{ var myType = bounce("$type"); myType(3.14); }   == "Float";
+\end{urbiassert}
 
 \item \lstinline|bounce_named|\\
 
