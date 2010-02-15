@@ -40,7 +40,7 @@ equal to \lstinline|nil| --- which is a reasonable default value. To
 get a pair of our own, we simply clone \lstinline|Pair|.  We can then
 use it as a regular pair.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var p = Pair.clone;
 [00000000] (nil, nil)
 p.first = "101010";
@@ -57,7 +57,7 @@ Since \lstinline|Pair| is a regular pair object, you can modify and
 use it at will. Yet this is not a good idea, since you will alter your
 base prototype, which alters any derivative, future and even past.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var before = Pair.clone;
 [00000000] (nil, nil)
 Pair.first = false;
@@ -89,7 +89,7 @@ As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|,
 which is how \lstinline|Pair| displays itself. We can check this as
 presented below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // List.head returns the first element.
 p.protos.head;
 [00000000] (nil, nil)
@@ -257,7 +257,7 @@ o1.x;
 This work thanks to copy-on-write: slots are first duplicated to the
 local object when they're updated, as we can check below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // This is the continuation of previous example.
 
 // As expected, o2 finds "x" in proto
@@ -390,7 +390,7 @@ then in its prototypes.
 
 The following example provides arithmetics between pairs.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 class ArithPair
 {
   var first = nil;

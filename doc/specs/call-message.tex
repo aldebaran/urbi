@@ -33,7 +33,7 @@ callTwice(2, echo("foo"), echo("bar"));
 
 Strict functions do support \lstinline|call|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function strict(x)
 {
   echo("Entering");
@@ -55,7 +55,7 @@ strict({echo("1"); 1});
 \begin{itemize}
 \item \lstinline|args|\\
   The list of unevaluated arguments.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function args { call.args }|
 assert
 {
@@ -70,7 +70,7 @@ assert
 
 \item \lstinline|argsCount|\\
   Return the number of arguments.  Do not evaluate them.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function argsCount { call.argsCount }|;
 assert
 {
@@ -83,7 +83,7 @@ assert
 
 \item \lstinline|code|\\
   The body of the called function as a \refObject{Code}.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function code { call.getSlot("code") }|
 assert (code == getSlot("code"));
 \end{urbiscript}
@@ -93,7 +93,7 @@ assert (code == getSlot("code"));
   must evaluate to an non-negative integer.  Repeated invocations
   repeat the evaluation, see
   \autoref{sec:std-callmsg-examples-several}.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function sumTwice
 {
   var n = call.evalArgAt(0);
@@ -122,7 +122,7 @@ sumTwice(3.14, one, one);
 \item \lstinline|evalArgs|\\
   Call \lstinline|evalArgAt| for each argument, return the list of
   values.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function twice
 {
   call.evalArgs + call.evalArgs
@@ -137,7 +137,7 @@ twice({echo(1); 1}, {echo(2); 2});
 
 \item \lstinline|message|\\
   The name under which the function was called.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function myself { call.message }|
 assert(myself == "myself");
 \end{urbiscript}

@@ -66,7 +66,7 @@ future \us might support dictionaries whose indices are not only
 strings, but in the meanwhile, convert the arguments into
 strings, as the following sample object demonstrates.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 class UnaryLazy
 {
   function init(f)
@@ -120,7 +120,7 @@ automatically when a lazy function call is made (see
 standard \lstinline|new| method of \lstinline|Lazy|, giving it an
 argument-less function which evaluates to the lazified value.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Lazy.new(closure () { /* Value to lazify */ 0 });
 [00000000] 0
 \end{urbiscript}
@@ -131,11 +131,11 @@ Lazy.new(closure () { /* Value to lazify */ 0 });
 \item \lstinline|==(\var{that})|\\
   Whether \lstinline|this| and \var{that} are the same source code and
   value (an unevaluated Lazy is never equal to an evaluated one).
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Lazy.new(closure () { 1 + 1 }) == Lazy.new(closure () { 1 + 1 });
 Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
 \end{urbiassert}
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var l1 = Lazy.new(closure () { 1 + 1 });
   var l2 = Lazy.new(closure () { 1 + 1 });
@@ -150,7 +150,7 @@ Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
 \item \lstinline|asString|\\
   The conversion to \refObject{String} of the body of a non-evaluated
   argument.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Lazy.new(closure () { echo(1); 1 }).asString == "echo(1);\n1";
 \end{urbiassert}
 

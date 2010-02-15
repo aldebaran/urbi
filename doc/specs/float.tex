@@ -28,7 +28,7 @@ In other words, float literals match the
 \lstinline|[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?|
 regular expression.  For instance:
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0 == 0000.0000;
 // This is actually a call to the unary '+'.
 +1 == 1;
@@ -41,7 +41,7 @@ regular expression.  For instance:
 There are also some special numbers, \lstinline|nan|, \lstinline|inf|
 (see below).
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Math.log(0) == -inf;
 Math.exp(-inf) == 0;
 (inf/inf).asString == "nan";
@@ -50,7 +50,7 @@ Math.exp(-inf) == 0;
 A null float can also be obtained with \lstinline|Float|'s
 \lstinline|new| method.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.new == 0;
 \end{urbiassert}
 
@@ -59,7 +59,7 @@ Float.new == 0;
 \begin{itemize}
 \item \lstinline|abs|\\
   Absolute value of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (-5).abs == 5;
   0 .abs == 0;
   5 .abs == 5;
@@ -67,14 +67,14 @@ Float.new == 0;
 
 \item \lstinline|acos|\\
   Arccosine of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0.acos == Float.pi/2;
 1.acos == 0;
 \end{urbiassert}
 
 \item \lstinline|asBool|\\
   Whether non null.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0.asBool == false;
 0.1.asBool == true;
 (-0.1).asBool == true;
@@ -84,14 +84,14 @@ nan.asBool == true;
 
 \item \lstinline|asFloat|\\
   Return the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 51.asFloat == 51;
 \end{urbiassert}
 
 \item \lstinline|asList|\\
   Bounces to \lstinline|seq|.  It is therefore possible to use the
   various flavors of \lstinline|for|-range loops on integers:
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 {
   var res = [];
   for (var i : 3)
@@ -119,38 +119,38 @@ nan.asBool == true;
 
 \item \lstinline|asin|\\
   Arcsine of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0.asin == 0;
 \end{urbiassert}
 
 \item \lstinline|asString|\\
   Return a string representing the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 42.asString == "42";
 \end{urbiassert}
 
 \item \lstinline|atan|\\
   Return the arctangent of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0.atan == 0;
 1.atan == Float.pi/4;
 \end{urbiassert}
 
 \item \lstinline|'bitand'(\var{that})|\\
   The bitwise-and between \lstinline|this| and \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (3 bitand 6) == 2;
 \end{urbiassert}
 
 \item \lstinline|'bitor'(\var{that})|\\
   Bitwise-or between \lstinline|this| and \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (3 bitor 6) == 7;
 \end{urbiassert}
 
 \item \lstinline|clone|\\
   Return a fresh Float with the same value as the target.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var x = 0;
 [00000000] 0
 var y = x.clone;
@@ -161,14 +161,14 @@ x === y;
 
 \item \lstinline|compl|\\
   The complement to 1 of the target interpreted as a 32 bits integer.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 compl 0 == 4294967295;
 compl 4294967295 == 0;
 \end{urbiassert}
 
 \item \lstinline|cos|\\
   Cosine of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0.cos == 1;
 Float.pi.cos == -1;
 \end{urbiassert}
@@ -176,7 +176,7 @@ Float.pi.cos == -1;
 \item \lstinline|each(\var{fun})|\\
   Call the functional argument \var{fun} on every integer from 0 to
   target - 1, sequentially.  The number must be non-negative.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 {
   var res = [];
   3.each(function (i) { res << 100 + i });
@@ -203,7 +203,7 @@ Float.pi.cos == -1;
   Call the functional argument \var{fun} on every integer from 0 to
   target - 1, with tight sequentiality.  The number must be
   non-negative.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 {
   var res = [];
   3.'each|'(function (i) { res << 100 + i });
@@ -222,7 +222,7 @@ Float.pi.cos == -1;
 \item \lstinline|each&(\var{fun})|\\
   Call the functional argument \var{fun} on every integer from 0 to
   target - 1, concurrently.  The number must be non-negative.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 {
   var res = [];
   for& (var x : 3) { res << x; sleep(30ms); res << (100 + x) };
@@ -233,7 +233,7 @@ Float.pi.cos == -1;
 
 \item \lstinline|exp|\\
   Exponential of the target.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 1.exp;
 [00000000] 2.71828
 \end{urbiscript}
@@ -248,7 +248,7 @@ Float.pi.cos == -1;
   \begin{windows}
     Under Windows the behavior differs slightly.
   \end{windows}
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 "%1.0d" % 0.1 == "0.1";
 "%1.0d" % 1.1 == {if (System.Platform.isWindows) "1.1" else "1"};
 
@@ -258,7 +258,7 @@ Float.pi.cos == -1;
 
 \item \lstinline|inf|\\
   Return the infinity.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Float.inf;
 [00000000] inf
 \end{urbiscript}
@@ -266,28 +266,28 @@ Float.inf;
 \item \lstinline|limit_digits|\\
   Number of digits (in \lstinline|Float.limit_radix| base) in the
   mantissa.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.limit_digits;
 \end{urbiassert}
 
 \item \lstinline|limit_digits10|\\
   Number of digits (in decimal base) that can be represented without
   change.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.limit_digits10;
 \end{urbiassert}
 
 \item \lstinline|limit_epsilon|\\
   Machine epsilon (the difference between 1 and the least value
   greater than 1 that is representable).
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1 != 1 + Float.limit_epsilon;
 1 == 1 + Float.limit_epsilon / 2;
 \end{urbiassert}
 
 \item \lstinline|limit_max|\\
   Maximum finite value.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.limit_max     != Float.inf;
 Float.limit_max * 2 == Float.inf;
 \end{urbiassert}
@@ -295,7 +295,7 @@ Float.limit_max * 2 == Float.inf;
 \item \lstinline|limit_max_exponent|\\
   Maximum integer value for the exponent that generates a normalized
   floating-point number.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.inf != Float.limit_radix ** (Float.limit_max_exponent - 1);
 Float.inf == Float.limit_radix ** Float.limit_max_exponent;
 \end{urbiassert}
@@ -303,40 +303,40 @@ Float.inf == Float.limit_radix ** Float.limit_max_exponent;
 \item \lstinline|limit_max_exponent10|\\
   Maximum integer value such that 10 raised to that power generates a
   normalized finite floating-point number.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.inf != 10 ** Float.limit_max_exponent10;
 Float.inf == 10 ** (Float.limit_max_exponent10 + 1);
 \end{urbiassert}
 
 \item \lstinline|limit_min|\\
   Minimum positive normalized value.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0 != Float.limit_min;
 \end{urbiassert}
 
 \item \lstinline|limit_min_exponent|\\
   Minimum negative integer value for the exponent that generates a
   normalized floating-point number.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0 != Float.limit_radix ** Float.limit_min_exponent;
 \end{urbiassert}
 
 \item \lstinline|limit_min_exponent10|\\
   Minimum negative integer value such that 10 raised to that power
   generates a normalized floating-point number.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0 != 10 ** Float.limit_min_exponent10;
 \end{urbiassert}
 
 \item \lstinline|limit_radix|\\
   Base of the exponent of the representation.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.limit_radix == 2;
 \end{urbiassert}
 
 \item \lstinline|log|\\
   The logarithm of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0.log == -inf;
 1.log == 0;
 1.exp.log == 1;
@@ -344,7 +344,7 @@ Float.limit_radix == 2;
 
 \item \lstinline|max(\var{arg1}, ...)|\\
   Bounces to \lstinline|List.max| on \lstinline|[this, \var{arg1}, ...]|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1.max == 1;
 1.max(2, 3) == 3;
 3.max(1, 2) == 3;
@@ -352,7 +352,7 @@ Float.limit_radix == 2;
 
 \item \lstinline|min(\var{arg1}, ...)|\\
   Bounces to \lstinline|List.min| on \lstinline|[this, \var{arg1}, ...]|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1.min == 1;
 1.min(2, 3) == 1;
 3.min(1, 2) == 1;
@@ -362,7 +362,7 @@ Float.limit_radix == 2;
   The ``not a number'' special float value.  More precisely, this
   returns the ``quiet NaN'', i.e., it is propagated in the various
   computations, it does not raise exceptions.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Float.nan;
 [00000000] nan
 (Float.nan + Float.nan) / (Float.nan - Float.nan);
@@ -372,27 +372,27 @@ Float.nan;
 A {NaN} has one distinctive property over the other Floats: it is
 equal to no other float, not even itself.  This behavior is mandated
 by the \wref[IEEE_754-2008]{IEEE 754-2008} standard.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 { var n = Float.nan; n === n};
 { var n = Float.nan; n  != n};
 \end{urbiassert}
 
 \item \lstinline|pi|\\
   $\pi$.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \end{urbiassert}
 
 \item \lstinline|random|\\
   A random integer between 0 (included) and the target (excluded).
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 20.map(function (dummy) { 5.random });
 [00000000] [1, 2, 1, 3, 2, 3, 2, 2, 4, 4, 4, 1, 0, 0, 0, 3, 2, 4, 3, 2]
 \end{urbiscript}
 
 \item \lstinline|round|\\
   The target, rounded to the nearest integer.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1.6.round == 2;
 1.4.round == 1;
 \end{urbiassert}
@@ -400,7 +400,7 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \item \lstinline|seq|\\
   The sequence of integers from 0 to \lstinline|this| - 1 as a list.
   The number must be non-negative.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 3.seq == [0, 1, 2];
 0.seq == [];
 (-1).seq;
@@ -410,7 +410,7 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \item \lstinline|sign|\\
   Return 1 if \lstinline|this| is positive, 0 if it is null, -1
   otherwise.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (-1164).sign == -1;
 0.sign       == 0;
 (1164).sign  == 1;
@@ -418,27 +418,27 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 
 \item \lstinline|sin|\\
   The sine of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 0.sin == 0;
 \end{urbiassert}
 
 \item \lstinline|sqr|\\
   Square of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 32.sqr == 1024;
 32.sqr == 32 ** 2;
 \end{urbiassert}
 
 \item \lstinline|sqrt|\\
   The square root of the target.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1024.sqrt == 32;
 1024.sqrt == 1024 ** 0.5;
 \end{urbiassert}
 
 \item \lstinline|tan|\\
   Tangent of the target.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(0.tan == 0);
 (Float.pi/4).tan;
 [00000000] 1
@@ -447,7 +447,7 @@ assert(0.tan == 0);
 \item \lstinline|times(\var{fun})|\\
   Call the functional argument \var{fun} \lstinline|this| times.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 3.times(function () { echo("ping")});
 [00000000] *** ping
 [00000000] *** ping
@@ -456,20 +456,20 @@ assert(0.tan == 0);
 
 \item \lstinline|trunc|\\
   Return the target truncated.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1.9.trunc == 1;
 (-1.9).trunc == -1;
 \end{urbiassert}
 
 \item \lstinline|'^'(\var{that})|\\
   Bitwise exclusive or between \lstinline|this| and \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (3 ^ 6) == 5;
 \end{urbiassert}
 
 \item \lstinline|'>>'(\var{that})|\\%>>
   \lstinline|this| shifted by \var{that} bits towards the right.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 4 >> 2 == 1;
 \end{urbiassert}
 
@@ -477,57 +477,57 @@ assert(0.tan == 0);
   Whether \lstinline|this| is less than \var{b}. The other comparison
   operators (\lstinline|<=|, \lstinline|>|, \ldots) can thus also be
   applied on floats since Float inherits \refObject{Orderable}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
   0 < 1;
 !(1 < 0);
 \end{urbiassert}
 
 \item \lstinline|'<<'(\var{that})|\\
   \lstinline|this| shifted by \var{that} bit towards the left.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 4 << 2 == 16;
 \end{urbiassert}
 
 \item \lstinline|'-'(\var{that})|\\
   \lstinline|this| subtracted by \var{b}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 6 - 3 == 3;
 \end{urbiassert}
 
 \item \lstinline|'+'(\var{that})|\\
   The sum of \lstinline|this| and \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1 + 1 == 2;
 \end{urbiassert}
 
 \item \lstinline|'/'(\var{that})|\\
   The quotient of \lstinline|this| divided by \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 50 / 10 == 5;
 10 / 50 == 0.2;
 \end{urbiassert}
 
 \item \lstinline|'%'(\var{that})|\\
   \lstinline|this| modulo \var{b}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 50 % 11 == 6;
 \end{urbiassert}
 
 \item \lstinline|'*'(\var{that})|\\
   Product of \lstinline|this| by \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 2 * 3 == 6;
 \end{urbiassert}
 
 \item \lstinline|'**'(\var{that})|\\
   \lstinline|this| to the \var{that} power (${this}^{that}$).
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 2 ** 10 == 1024;
 \end{urbiassert}
 
 \item \lstinline|'=='(\var{that})|\\
   Whether \lstinline|this| equals \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
   1 == 1;
 !(1 == 2);
 \end{urbiassert}

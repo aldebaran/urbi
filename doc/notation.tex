@@ -57,7 +57,7 @@ server start with a label that includes a timestamp (here
 \samp{00000001}), and possibly a channel name, \samp{output} in the
 following example.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 cout << "toto";
 [00000002:output] "toto"
 \end{urbiscript}
@@ -68,7 +68,7 @@ cout << "toto";
 \us features assertions blocks, see \autoref{sec:assertions}.  The
 following assertion frame:
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1 == 2 / 2;
 1 < 2;
 true;
@@ -81,7 +81,7 @@ Dictionary.new.empty;
 actually denotes the following assertion-block in an \us-session
 frame:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert
 {
   true;

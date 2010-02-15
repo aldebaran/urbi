@@ -49,7 +49,7 @@ $10^{80}$).
 Urbi is based on prototypes. To create a new Object derivative (which
 will inherit all the Object methods), you can do:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var myObject = Object.new;
 [00000001] Object_0x76543210
 \end{urbiscript}
@@ -80,7 +80,7 @@ to proceed to give the right visibility to variables.
 
 For instance, this code might seem confusing at first:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var mind = 42;
 [00000001] 42
 function get()
@@ -105,7 +105,7 @@ object referring to another object, like members in \Cxx. They can be
 defined with the \lstinline|setSlot| method, or with the
 \lstinline|var| keyword.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Add an `x' slot in Object, with value 51.
 Object.setSlot("x", 51);
 [00000000] 51
@@ -123,7 +123,7 @@ the execution stack: their lifetime spans from their declaration point
 to the end of the current scope. They are declared with the `var'
 keyword.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function foo()
 {
   // Declare an `x' local variable, with value 51.
@@ -141,7 +141,7 @@ owning object is specified with the dot notation, as in %
 \lstinline|var owner.slot|, and a local variable if only an
 unqualified name is given, as in \lstinline|var name|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   // Store a `kyle' slot in Object.
   var Object.kyle = 42;
@@ -164,7 +164,7 @@ There is however an exception to this rule: \lstinline|do| and
 store slots. Thus, in \lstinline|do| and \lstinline|class| scopes,
 even unqualified \lstinline|var| uses declare slots in the target.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Classical scope.
 {
   var arm = 64; // Local to the scope.
@@ -208,7 +208,7 @@ plus the fact that at the toplevel \lstinline|this| is
 \lstinline|lobby|, we can understand better what happens when defining
 and accessing variables at the toplevel:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Since we are at the toplevel, this stores x in the lobby.
 // It is equivalent to `var lobby.x'.
 var x = "hello";
@@ -226,7 +226,7 @@ We now know all the scoping rules required to explain the behavior of
 the first code snippet. First, let's determine why the first access to
 \lstinline|mind| works:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // This is equivalent to `var lobby.myMind = 42'.
 var myMind = 42;
 [00000001] 42
@@ -255,7 +255,7 @@ Step by step:
 
 We can also explain why the second test fails:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Create the `hisMind' slot in the lobby.
 var hisMind = 42;
 [00000000] 42
@@ -295,7 +295,7 @@ must always be accessible through \lstinline|this|. One way to achieve
 this is to store the slot in \lstinline|Object|, the ancestor of any
 object:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var Object.global = 1664;
 [00000000] 1664
 
@@ -318,7 +318,7 @@ Object, so all his slots are accessible from Object, and thus from
 anywhere. So, creating a genuine global variable is as simple as
 storing it in \lstinline|Global|:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var Global.g = "I'm global!";
 [00000000] "I'm global!"
 \end{urbiscript}
@@ -328,7 +328,7 @@ and create your own object to store your related variables in a more
 tidy fashion. This is for instance what is done for mathematical
 constants:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Store all constants here
 class Constants
 {
@@ -356,7 +356,7 @@ To add a slot to an object \lstinline{O}, you have to use the
 \lstinline{var} keyword, which is syntactic sugar for the
 \lstinline{setSlot} method:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var O2 = Object.new |
 // Syntax...
 var O2.mySlot1 = 42;
@@ -371,7 +371,7 @@ Note that in a method, \lstinline{this} designates the current
 object.  It is needed to distinguish the name of a slot in the current
 object, versus a local variable name:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   // Create a new slot in the current object.
   var this.bar = 42;
@@ -391,7 +391,7 @@ bar;
 Use the \lstinline|=| operator, which is syntactic sugar for the
 \lstinline|updateSlot| method.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 class O
 {
   var mySlot = 42;
@@ -408,7 +408,7 @@ O.updateSlot("mySlot", 23);
 \subsubsection{How do I create or modify a local variable?}
 Use \lstinline|var| and \lstinline|=|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // In two steps: definition, and initial assignment.
 var myLocalVariable;
 myLocalVariable = "foo";
@@ -573,7 +573,7 @@ whatever value is present in the event that triggered the
 Use the \lstinline{for} construct (\autoref{sec:lang:for:each}), or
 the \lstinline|each| method (\refObject{List}):
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 for (var i: [10, 11, 12]) echo (i);
 [00000001] *** 10
 [00000002] *** 11
@@ -606,7 +606,7 @@ is preferable to subscribe to the variable to be notified when it is
 changed, and then to check that your conditions are verified.  For
 instance, instead of the costly following program:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var x = 0;
   at (x == 1)
@@ -626,7 +626,7 @@ instance, instead of the costly following program:
 \noindent
 use the following implementation:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var x = 0;
   at (x->changed?)
@@ -649,7 +649,7 @@ You may also use the event guard using %
 
 % I have no idea why I need this.  Looks like a bug in lstlisting...
 \clearpage
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var x = 0;
   at (x->changed? if x == 1)
@@ -677,14 +677,14 @@ body, you may \lstinline|sleep| for a little while, say 20ms.  This is
 especially useful when there is no value that changes, such as the
 creation of a new slot.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 waituntil(Object.hasSlot("foo")) | echo (Object.foo),
 var Object.foo = "foo"|;
 sleep(100ms);
 [00000003] *** foo
 \end{urbiscript}
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 while (!Object.hasSlot("bar"))
   sleep(20ms) |
 echo (Object.bar),

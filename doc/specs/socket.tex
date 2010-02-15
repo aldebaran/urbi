@@ -15,7 +15,7 @@ into \lstinline|Global| so that both the server and client can read
 it.  \lstinline|Dialogue.reply(var \var{s})| returns the reply to a
 message \var{s}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 class Global.Dialogue
 {
   var lines =
@@ -44,7 +44,7 @@ for incoming messages, notified by the \lstinline|received?| event.
 Its reaction to this event is to send the following line of the
 dialogue.  At the end of the dialogue, the socket is disconnected.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var server =
   do (Server.new)
   {
@@ -64,7 +64,7 @@ The client, an instance of \refObject{Socket} expects incoming
 messages, notified by the \lstinline|received?| event.  Its reaction
 is to send the following line of the dialogue.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var client =
   do (Socket.new)
   {
@@ -79,7 +79,7 @@ var client =
 
 As of today, \us's socket machinery requires to be regularly polled.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 every (100ms)
   Socket.poll,
 \end{urbiscript}
@@ -87,14 +87,14 @@ every (100ms)
 The server is then activated, listening to incoming connections on a
 port that will be chosen by the system amongst the free ones.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 server.listen("localhost", "0");
 clog << "connecting to %s:%s" % [server.host, server.port];
 \end{urbiscript}
 
 The client connects to the server, and initiates the dialogue.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 client.connect(server.host, server.port);
 echo("client: " + Dialogue.lines[0]);
 client.write(Dialogue.lines[0]);
@@ -104,7 +104,7 @@ client.write(Dialogue.lines[0]);
 Because this dialogue is asynchronous, the easiest way to wait for the
 dialogue to finish is to wait for the \lstinline|disconnected?| event.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 waituntil(client.disconnected?);
 [00000004] *** server: Hey!
 [00000005] *** client: Hey you doin'?
@@ -124,7 +124,7 @@ A \lstinline|Socket| is constructed with no argument. At creation, a
 new \lstinline|Socket| has four own slots: \lstinline|connected|,
 \lstinline|disconnected|, \lstinline|error| and \lstinline|received|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var s = Socket.new|
 \end{urbiscript}
 

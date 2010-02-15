@@ -29,7 +29,7 @@ Actually, formatting patterns are translated into
 \item \lstinline|asList|\\
   Return the content of the \dfn{formatter} as a list of strings and
   \refObject{FormatInfo}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Formatter.new("Name:%s, Surname:%s;").asList.asString
        == "[\"Name:\", %s, \", Surname:\", %s, \";\"]";
 \end{urbiassert}
@@ -43,27 +43,27 @@ Formatter.new("Name:%s, Surname:%s;").asList.asString
   This operator concatenates regular strings and the strings that are
   result of \lstinline|asString| called on members of \var{args} with
   the appropriate \refObject{FormatInfo}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Formatter.new("Name:%s, Surname:%s;") % ["Foo", "Bar"]
        == "Name:Foo, Surname:Bar;";
 \end{urbiassert}
 
   If \var{args} is not a \refObject{List}, then the call is equivalent
   to calling |'%'([\var{args}])|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Formatter.new("%06.3f") % Math.pi
        == "03.142";
 \end{urbiassert}
 
   Note that \lstinline|String.'%'| provides a nicer interface to this
   operator:
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 "%06.3f" % Math.pi == "03.142";
 \end{urbiassert}
 
   It is nevertheless interesting to use the Formatter for performance
   reasons if the format is reused many times.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   // Some large database of people.
   var people =

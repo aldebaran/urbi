@@ -31,7 +31,7 @@ the system, although not preceded by a timestamp.
   Return a new Binary whose keywords are those of \lstinline|this| if
   not empty, otherwise those of \var{that}, and whose data is the
   concatenation of both.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Binary.new("0", "0") + Binary.new("1", "1")
        == Binary.new("0", "01");
 Binary.new("", "0") + Binary.new("1", "1")
@@ -40,7 +40,7 @@ Binary.new("", "0") + Binary.new("1", "1")
 
 \item \lstinline|'=='(\var{other})|\\
   Whether \lstinline|keywords| and \lstinline|data| are equal.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Binary.new("0", "0") == Binary.new("0", "0");
 Binary.new("0", "0") != Binary.new("0", "1");
 Binary.new("0", "0") != Binary.new("1", "0");
@@ -50,7 +50,7 @@ Binary.new("0", "0") != Binary.new("1", "0");
   Display using the syntactic rules of the UObject/UValue protocol.
   Incoming binaries must use a semicolon to separate the header part
   from the content, while outgoing binaries use a carriage-return.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(Binary.new("head", "content").asString
        == "BIN 7 head\ncontent");
 var b = BIN 7 header;content;
@@ -64,7 +64,7 @@ is \emph{partially} supported in \us, but it is strongly discouraged.
 Rather, use the \lstinline|\B(\var{size})(\var{data})| special escape
 (see \autoref{sec:us-syn-lit-string}):
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Binary.new("head", "\B(7)(content)").asString
        == "BIN 7 head\ncontent";
 \end{urbiassert}
@@ -72,20 +72,20 @@ Binary.new("head", "\B(7)(content)").asString
 
 \item \lstinline|data|\\
   The data carried by the Binary.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Binary.new("head", "content").data == "content";
 \end{urbiassert}
 
 \item \lstinline|empty|\\
   Whether the data is empty.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Binary.new("head", "").empty;
 !Binary.new("head", "content").empty;
 \end{urbiassert}
 
 \item \lstinline|keywords|\\
   The headers carried by the Binary.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Binary.new("head", "content").keywords == "head";
 \end{urbiassert}
 \end{itemize}

@@ -47,7 +47,7 @@ characters.
   comment will end after two \lstinline|*/|, not one.
 \end{itemize}
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // C++ style comment
 /* C style comment */
 /* These comments /* do */ nest */
@@ -102,7 +102,7 @@ reserved words\footnote{
 between simple quotes (\lstinline|'|), in which case they may contain
 any character.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var x;
 var foobar51;
 var this.a_name_with_underscores;
@@ -263,7 +263,7 @@ equivalent are presented in \autoref{tab:angle}.
   \label{tab:angle}
 \end{table}
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 pi == 180deg;
 pi == 200grad;
 \end{urbiassert}
@@ -294,7 +294,7 @@ in \autoref{tab:duration}.
   \label{tab:duration}
 \end{table}
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 1d == 24h;
 1h == 60min;
 1min == 60s;
@@ -314,7 +314,7 @@ in \autoref{tab:duration}.
 floating-point literals.  See \refObject{Float} for more details.
 Examples include:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 1;
 [00000000] 1
 1.234e6;
@@ -329,7 +329,7 @@ empty list of arbitrary expressions enclosed in square brackets
 (\lstinline|[]|), as shown in the listing below.  See
 \refObject{List} for more details.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 []; // The empty list
 [00000000] []
 [1, 2, 3];
@@ -380,7 +380,7 @@ Consecutive string literals are glued together into a unique string.
 This is useful to split large strings into chunks that fit usual
 programming widths.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 "foo" "bar" "baz" == "foobarbaz";
 "\B(3)("\")" == "\"\\\"";
 \end{urbiassert}
@@ -390,7 +390,7 @@ will be printed out as \lstinline|\n| when a string result is dumped
 and so forth. An actual line feed will of course be output if a string
 content is printed with echo for instance.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 "";
 [00000000] ""
 "foo";
@@ -426,7 +426,7 @@ The \samp{;}-connector waits for the first statement to finish before
 starting the second statement.  When used in the top-level interactive
 session, both results are displayed.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 1; 2; 3;
 [00000000] 1
 [00000000] 2
@@ -443,7 +443,7 @@ unpredictable, such results would clutter the output randomly.  Use
 \refObject[s]{Channel} or \refObject[s]{Event} to return results
 asynchronously.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   for (3)
   {
@@ -470,7 +470,7 @@ too: the execution follow ``waits'' for the end of the jobs
 back-grounded with \samp{,} before proceeding.  Compare the two
 following executions.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   sleep(100ms) | echo("1"),
   sleep(400ms) | echo("2"),
@@ -481,7 +481,7 @@ following executions.
 [00000316] *** 2
 \end{urbiscript}
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   sleep(100ms) | echo("1"),
   sleep(400ms) | echo("2"),
@@ -499,7 +499,7 @@ other commands between the first and the second statement.  The
 \samp{|} does not yield between both statements.  It is therefore more
 efficient, and, in a way, provides some atomicity for concurrent tasks.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   { echo("11") ; sleep(100ms) ; echo("12") },
   { echo("21") ; sleep(400ms) ; echo("22") },
@@ -511,7 +511,7 @@ efficient, and, in a way, provides some atomicity for concurrent tasks.
 \end{urbiscript}
 
 %% Cannot use sleep here, as it yields, which makes the point moot.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   { echo("11") | echo("12") },
   { echo("21") | echo("22") },
@@ -640,7 +640,7 @@ below.
   \label{tab:arith}
 \end{table}
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
    1 + 1 ==    2;
    1 - 2 ==   -1;
    2 * 3 ==    6;
@@ -679,7 +679,7 @@ below.
 %  x %= 3;
 
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var y = 0;
 [00000000] 0
 y = 10;
@@ -716,7 +716,7 @@ listing below.
   \label{tab:bitwise}
 \end{table}
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 4 << 2 == 16;
 4 >> 2 ==  1;
 \end{urbiassert}
@@ -744,7 +744,7 @@ short-circuiting: their right-hand side is evaluated only if needed.
   \label{tab:boolean}
 \end{table}
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 true && true;
 true || false;
 !true == false;
@@ -779,7 +779,7 @@ true || (1 / 0);
   \label{tab:comparison}
 \end{table}
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert
 {
  ! (0 < 0);
@@ -819,7 +819,7 @@ targeted object.
   \caption{Miscellaneous operators}
 \end{table}
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // On lists.
 var l = [1, 2, 3, 4, 5];
 [00000000] [1, 2, 3, 4, 5]
@@ -921,7 +921,7 @@ if \lstinline|& {}| or \lstinline'| {}' was used.  This particular
 case is heavily used by \us programmers to discard the value of an
 expression:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Return value is 1.  Displayed.
 1;
 [00000000] 1
@@ -934,7 +934,7 @@ expression:
 Scopes are themselves expressions, and can thus be used in composite
 expressions, nested, and so forth.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Scopes evaluate to their last expression
 {
   1;
@@ -959,7 +959,7 @@ name. Their value can be changed with the assignment operator; such an
 assignment expression returns the new value. The use of local
 variables is illustrated below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // This declare variable x with value 42, and evaluates to 42.
 var t = 42;
 [00000000] 42
@@ -985,7 +985,7 @@ variables with the same name cannot be defined in the same scope. A
 variable with the same name can be defined in an inner scope, in which
 case references refer to the innermost variable, as shown below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var x = "x";
   var y = "outer y";
@@ -1026,7 +1026,7 @@ list of identifiers.  Non-empty lists of formal arguments may
 optionally end with a trailing comma. The listing below illustrates
 this.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function () { echo(0) };
 [00000000] function () {
 [:]  echo(0)
@@ -1053,7 +1053,7 @@ Usually functions are bound to an identifier to be invoked later.
 The listing below shows a short-hand to define a named
 function.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Functions are often stored in variables to call them later.
 var f1 = function () {
   echo("hello")
@@ -1080,7 +1080,7 @@ effective arguments is not checked, and arguments themselves are not
 evaluated. Arguments can then be manipulated with the call message,
 explained below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var f = function(a, b) {
   echo(b + a);
 }|
@@ -1094,7 +1094,7 @@ f(0, 1, 2);
 \end{urbiscript}
 
 Non-empty lists of effective arguments may end with an optional comma.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 f(
   "bar",
   "foo",
@@ -1113,7 +1113,7 @@ which case the evaluation of the function is stopped. If
 \lstinline|return| is used with no value, the function returns
 \lstinline|void|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function g1(a, b)
 {
   echo(a);
@@ -1165,7 +1165,7 @@ Functions defined with a (possibly empty) list of formal arguments in
 parentheses are strict: the effective arguments are first evaluated,
 and then their value is given to the called function.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function first1(a, b) {
   echo(a); echo(b)
 }|
@@ -1182,7 +1182,7 @@ call message to manipulate its \emph{unevaluated} arguments.
 The listing below gives an example.  More information about
 this can be found in the \refObject{CallMessage} class documentation.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function first2
 {
   echo(call.evalArgAt(0));
@@ -1200,7 +1200,7 @@ A lazy function may implement a strict interface by evaluating its
 arguments and storing them as local variables, see below.  This is
 less efficient than defining a strict function.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function first3
 {
   var a = call.evalArgAt(0);
@@ -1224,7 +1224,7 @@ in the current context. \us supports read/write lexical closures,
 meaning that the variable is shared between the function and the outer
 environment, as shown below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var n = 0|
 function cl()
 {
@@ -1245,7 +1245,7 @@ cl();
 The following listing illustrate that local variables can even
 escape their declaration scope by lexical closure.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function wrapper()
 {
   // Normally, x is local to 'wrapper', and is limited to this scope.
@@ -1293,7 +1293,7 @@ the object slot's name. The listing below shows how to manipulate
 slots. More documentation about these methods can be found in
 \autorefObject{Object}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var o = Object.new|
 o.localSlotNames;
 [00000000] []
@@ -1335,7 +1335,7 @@ given by the \lstinline|protos| method; they can be added or removed
 with \lstinline|addProto| and \lstinline|removeProto|.  See
 \autorefObject{Object} for more documentation.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var ob = Object.new|
 ob.protos;
 [00000000] [Object]
@@ -1370,7 +1370,7 @@ is, when looking for a slot in an object:
 
 This listing shows how slots are inherited.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var a = Object.new|
 var b = Object.new|
 var c = Object.new|
@@ -1404,7 +1404,7 @@ with the new value. This process is called \dfn{copy on write}; thanks
 to it, prototypes are not altered when the slot is overridden in a
 child object.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var p = Object.new|
 var p.slot = 0|
 var d = Object.new|
@@ -1457,7 +1457,7 @@ When a message \var{msg} is sent to object \lstinline|obj|:
 
 Such message sending is illustrated below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var obj = Object.new|
 var obj.a = 42|
 var obj.b = function (x) { x + 1 }|
@@ -1482,7 +1482,7 @@ obj.b(50);
 When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|break| makes the execution jump after the loop.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var i = 5|
 for (; true; echo(i))
 {
@@ -1502,7 +1502,7 @@ When encountered within a \lstinline|for| or a \lstinline|while| loop,
 \lstinline|continue| short-circuits the rest of the loop-body, and
 runs the next iteration (if there remains one).
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 for (var i = 0; i < 8; i++)
 {
   if (i % 2 != 0)
@@ -1532,7 +1532,7 @@ It evaluates \var{body}, with \lstinline|this| being \var{target}, as
 shown below.  The whole construct evaluates to the value
 of \var{body}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 do (1024)
 {
   assert(this == 1024);
@@ -1557,7 +1557,7 @@ First \var{condition} is evaluated; if it evaluates to a value which
 is true (\autoref{sec:truth}), evaluate \var{then-clause}, otherwise,
 if applicable, evaluate \var{else-clause}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 if (true) assert(true) else assert(false);
 if (false) assert(false) else assert(true);
 if (true) assert(true);
@@ -1566,7 +1566,7 @@ if (true) assert(true);
 Beware that \emph{there must not be a terminator after the
   \var{then-clause}}:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 if (true)
   assert(true);
 else
@@ -1581,7 +1581,7 @@ construct.  Unfortunately, due to syntactic constraints inherited from
 expression.  But as everywhere else in \us, to use a statement where
 an expression is expected, use braces:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(1 + if (true) 3 else 4 == 4);
 [00000003:error] !!! syntax error, unexpected if
 assert(1 + { if (true) 3 else 4 } == 4);
@@ -1591,7 +1591,7 @@ The \var{condition} can be any statement list.  Variables which it
 declares are visible in both the \var{then-clause} and the
 \var{else-clause}, but do not escape the \lstinline|if| construct.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert({if (false) 10 else 20} == 20);
 assert({if (true)  10 else 20} == 10);
 
@@ -1647,7 +1647,7 @@ evaluates to \lstinline|void|.  Inside \var{body}, the current element
 is accessible via the \var{name} local variable. The listing below
 illustrates this.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 for (var x : [0, 1, 2, 3, 4])
   echo(x.sqr);
 [00000000] *** 0
@@ -1663,7 +1663,7 @@ current element and performs \lstinline|action| over it. Thus, you can
 make any object acceptable in a \lstinline|for| by defining an
 adequate \lstinline|each| method.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var Hobbits = Object.new|
 function Hobbits.each (action)
 {
@@ -1696,7 +1696,7 @@ equivalent to \lstinline|for (var i: n)|.  It supports the same
 flavors: \lstinline|for;|, \lstinline{for|}, and \lstinline|for&|. The
 loop evaluates to \lstinline|void|.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 { var res = []; for (3) { res << 1; res << 2 } ; res }
         == [1, 2, 1, 2, 1, 2];
 
@@ -1711,7 +1711,7 @@ Note that since these \lstinline|for| loops are merely anonymous
 foreach-style loops, the argument needs not being an integer, any
 iterable value can be used.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 3 == { var r = 0; for ([1, 2, 3]) r += 1; r};
 3 == { var r = 0; for ("123")     r += 1; r};
 \end{urbiassert}
@@ -1745,7 +1745,7 @@ equivalent to \lstinline|while (true)|.  The loop evaluates to
 \lstinline'loop;', are supported.  The default flavor is
 \lstinline|loop;|.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 {
   var n = 10|;
   var res = []|;
@@ -1762,7 +1762,7 @@ equivalent to \lstinline|while (true)|.  The loop evaluates to
 [9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
 \end{urbiassert}
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 {
   var n = 10|;
   var res = []|;
@@ -1813,7 +1813,7 @@ clauses: execution will never span over several cases.  Since the
 comparisons are performed with the generic \lstinline|==| operator,
 \lstinline|switch| can be performed on any comparable data type.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function sw(v)
 {
   switch (v)
@@ -1848,7 +1848,7 @@ If \var{condition} evaluation, is true, \var{body} is evaluated and
 execution jumps before the \lstinline|while|, otherwise execution
 jumps after the \lstinline|while|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var j = 3|
 while (0 < j)
 {
@@ -1883,7 +1883,7 @@ as long as \var{cond} evaluates to true, or until \lstinline|break| is
 invoked.  If \lstinline|continue| is evaluated, the rest of the body
 is skipped, and the next iteration is started.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var i = 4|
   while (true)
@@ -1923,7 +1923,7 @@ is the same as
 The execution is can be controlled by \lstinline|break| and
 \lstinline|continue|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var i = 4|
   while| (true)
@@ -1955,7 +1955,7 @@ the top-level --- as in \Cxx.  Contrary to \Cxx, exceptions reaching
 the top-level are printed, and won't abort the kernel --- other and new
 connections will continue to execute normally.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 throw 42;
 [00000000:error] !!! 42
 function inner() { throw "exn" } |
@@ -1984,7 +1984,7 @@ control jumps after the whole try/catch block. If no catch clause
 matches, the exceptions isn't stopped and continues
 upward.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function test(e)
 {
   try
@@ -2008,7 +2008,7 @@ test(51);
 An \refObject{Exception} is a regular object, on which introspection
 can be performed.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 try
 {
   Math.cos(3,1415);
@@ -2046,7 +2046,7 @@ to group claims together.
 The \lstinline|assert(\var{expression})| bounces to the
 \lstinline|System.'assert'| function, see \refObject{System}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(true);
 assert(42);
 assert(1 == 1 + 1);
@@ -2057,7 +2057,7 @@ Groups of assertions are more readable when used with the
 \lstinline|assert{\var{exp1}; \var{exp2}; ...}| construct.  The
 (possibly empty) list of claims may be ended with a semicolon.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert
 {
   true;
@@ -2070,7 +2070,7 @@ assert
 For sake of readability and compactness, this documentation shows
 assertion blocks as follows.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 true;
 42;
 1 == 1 + 1;
@@ -2183,7 +2183,7 @@ x = 2 | assert(!x_is_two);
 The \lstindex{every} statement enables to execute a block of code
 repeatedly, with the given period.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Print out a message every second.
 timeout (2.1s)
   every (1s)
@@ -2205,7 +2205,7 @@ expected, at the given period.
 
 % We used to use 100ms instead of 1s, but severely loaded machines
 % (the Mac Mini) fail way too often.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var count = 4;
   var start = time;
@@ -2237,7 +2237,7 @@ iteration takes too long, the following iterations are delayed. That
 is, the next iterations will start immediately after the end of the
 current one, and next iterations will occur normally from this point.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var too_long = true|;
 
@@ -2274,7 +2274,7 @@ current one, and next iterations will occur normally from this point.
 The flow-control constructs \lstinline|break| and \lstinline|continue|
 are supported.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var count = 0;
   every| (250ms)
@@ -2297,7 +2297,7 @@ are supported.
 The default flavor, \lstinline|every,| launches the execution of the
 block in the background every given period. Iterations may overlap.
 
-% Cut the previous every, no [firstnumber=last]
+% Cut the previous every, no 
 \begin{urbiscript}[firstnumber=1]
 // If an iteration is longer than the given period, it will overlap
 // with the next one.
@@ -2329,7 +2329,7 @@ actual kind of \lstinline|for| loop.
 \lstinline|for,| is syntactic sugar for \lstinline|while,|, see
 \autoref{sec:lang:while:comma}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 for, (var i = 3; 0 < i; i -= 1)
 {
   var j = i |
@@ -2347,7 +2347,7 @@ echo ("done");
 [00000446] *** done
 \end{urbiscript}
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 for, (var i = 9; 0 < i; i -= 1)
 {
   var j = i;
@@ -2370,7 +2370,7 @@ echo("done");
 
 One can iterate concurrently over the members of a collection.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 for& (var i: [0, 1, 2])
 {
   echo (i * i);
@@ -2387,7 +2387,7 @@ for& (var i: [0, 1, 2])
 If an iteration executes \lstinline|continue|, it is stopped; the
 other iterations are not affected.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 for& (var i: [0, 1, 2])
 {
   var j = i;
@@ -2403,7 +2403,7 @@ for& (var i: [0, 1, 2])
 %%% If an iteration executes \lstinline|break|, all the iterations
 %%% including this one, are stopped.
 %%%
-%%% \begin{urbiscript}[firstnumber=last]
+%%% \begin{urbiscript}
 %%% for& (var i: [0, 1, 2])
 %%% {
 %%%   var j = i;
@@ -2433,7 +2433,7 @@ following example, care must be taken that concurrent executions don't
 modify \lstinline|n| simultaneously.  This would happen had
 \lstinline|;| been used instead of \lstinline'|'.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 {
   var n = 10|;
   var res = []|;
@@ -2465,7 +2465,7 @@ flow is held until the event is fired.  Once caught, the event is
 consumed, another \lstinline|waituntil| will require another event
 emission.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var e = Event.new;
   {
@@ -2481,7 +2481,7 @@ emission.
 In the case of lasting events (see \lstinline|Event.trigger|), the
 condition remains verified as long as the event is ``on''.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var e = Event.new;
   e.trigger;
@@ -2506,7 +2506,7 @@ condition remains verified as long as the event is ``on''.
 The event specification may use pattern-matching to specify the
 accepted events.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var e = Event.new;
   {
@@ -2524,7 +2524,7 @@ accepted events.
 
 Events sent before do not release the construct.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var e = Event.new;
   e!;
@@ -2542,7 +2542,7 @@ Events sent before do not release the construct.
 You may use any expression that evaluates to a truth value as argument
 to \lstinline'waituntil'.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var foo = Object.new;
   {
@@ -2723,7 +2723,7 @@ share a common access to the environment, therefore if, for instance,
 you want to keep the value of some index variable, use a local
 variable inside the loop body:
 
-% Cut the previous every, no [firstnumber=last]
+% Cut the previous every, no 
 \begin{urbiscript}[firstnumber=1]
 {
   var i = 4|
@@ -2757,7 +2757,7 @@ iterations finish'', so do not rely on this feature.
 Control flow is passed to the following statement when all the
 iterations are done.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var i = 10|
   while, (i)

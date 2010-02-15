@@ -26,7 +26,7 @@ class Foo
 The \lstinline{localSlotNames} method lists the names of the slots of
 an object (\refObject{Object}).
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Inspect it.
 Foo.localSlotNames;
 [00000000] ["$type", "a", "asFoo", "b"]
@@ -35,7 +35,7 @@ Foo.localSlotNames;
 You can get an object's slot value by using the dot (\lstinline{.})
 operator on this object, followed by the name of the slot.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // We now know the name of its slots. Let's see their value.
 Foo.a;
 [00000000] 42
@@ -46,7 +46,7 @@ Foo.b;
 It's as simple as this.  The \lstinline|inspect| method provides a
 convenient short-hand to discover an object (\refObject{Object}).
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Foo.inspect;
 [00000009] *** Inspecting Foo
 [00000010] *** ** Prototypes:
@@ -66,7 +66,7 @@ prototypes later). An instance of object, is an empty, neutral object,
 so let's start by instantiating one with the \lstinline{clone} method
 of \lstinline{Object}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Create the o variable as a fresh object.
 var o = Object.clone;
 [00000000] Object_0x00000000
@@ -95,7 +95,7 @@ slots, \lstinline{a} and \lstinline{b}, with values \lstinline|42| and
 \lstinline{setSlot} method, which takes the slot name and
 its value.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 o.setSlot("a", 42);
 [00000000] 42
 o.inspect;
@@ -109,7 +109,7 @@ o.inspect;
 Here we successfully created our first slot, \lstinline|a|. A good
 shorthand for setting slot is using the \lstinline{var} keyword.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // This is equivalent to o.setSlot("b", "foo").
 var o.b = "foo";
 [00000000] "foo"
@@ -133,7 +133,7 @@ names are unknown at code-writing time.
 
 % mefyl: FIXME: I never introduced that '+' concatenates strings.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function set(object, name, value)
 {
   // We have to use setSlot here, since we don't
@@ -168,7 +168,7 @@ one, and it's named\ldots \lstinline{updateSlot} (originality
 award). Getting back to our \lstinline{o} object, let's try to update one
 of its slots.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 o.a;
 [00000000] 42
 o.updateSlot("a", 51);
@@ -180,7 +180,7 @@ o.a;
 Again, there's a shorthand for \lstinline{updateSlot}: operator
 \lstinline{=}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 o.b;
 [00000000] "foo"
 // Equivalent to o.updateSlot("b", "bar")
@@ -198,7 +198,7 @@ Note that defining the same slot twice, be it with \lstinline{setSlot} or
 \lstinline{var}, is an error. The slot must be defined once with setSlot,
 and subsequent writes must be done with \lstinline{updateSlot}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var o.c = 0;
 [00000000] 0
 // Can't redefine a slot like this
@@ -211,7 +211,7 @@ o.c = 1;
 
 Finally, use \lstinline{removeSlot} to delete a slot from an object.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 o.localSlotNames;
 [00000000] ["a", "b", "c"]
 o.removeSlot("c");
@@ -225,7 +225,7 @@ hesitate to explore \us objects you'll encounter through this
 documentation like this. Last point: reading, updating or removing a
 slot which does not exist is, of course, an error.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 o.d;
 [00000000:error] !!! lookup failed: d
 o.d = 0;
@@ -275,7 +275,7 @@ interface, since the parentheses are optional.
 This implies that \lstinline|getSlot| can be a better tool for object
 inspection to avoid invoking slots, as shown below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // The 'empty' method of strings returns whether the string is empty.
 "foo".empty;
 [00000000] false
@@ -291,7 +291,7 @@ inspection to avoid invoking slots, as shown below.
 The \lstinline|asList| function simply bounces the task to
 \lstinline|split|.  Let's try \lstinline{getSlot}'ing another method:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 "foo".size;
 [00000000] 3
 "foo".getSlot("size");
@@ -309,7 +309,7 @@ If you're wondering what is an object and what is not, the answer is
 simple: every single bit of value you manipulate in \us is an
 object, including primitive types, types themselves, functions, \ldots
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var x = 0;
 [00000000] 0
 x.localSlotNames;
@@ -363,7 +363,7 @@ equal. The second operator is \lstinline{===}, which is the
 are the same object, which is equivalent to having the same uid. This
 can seem a bit confusing; let's have an example.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var a = 42;
 [00000000] 42
 var b = 42;
@@ -408,7 +408,7 @@ integer, while \lstinline|b| points to a second one. This a
 non-trivial fact: any modification on \lstinline|a| will affect
 \lstinline|c| as well, as shown below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 a.localSlotNames;
 [00000000] []
 b.localSlotNames;

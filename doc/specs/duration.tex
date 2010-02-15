@@ -21,7 +21,7 @@ Duration.new(1h);
 
 Durations can be negative.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Duration.new(-1);
 [00000001] Duration(-1s)
 \end{urbiscript}
@@ -32,19 +32,19 @@ Duration.new(-1);
 \begin{itemize}
 \item \lstinline|asFloat|\\
   Return the duration as a \refObject{Float}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Duration.new(1000).asFloat == 1000;
 \end{urbiassert}
 
 \item \lstinline|asString|\\
   Return the duration as a \refObject{String}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Duration.new(1000).asString == "1000s";
 \end{urbiassert}
 
 \item \lstinline|seconds|\\
   Return the duration as a \refObject{Float}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Duration.new(1000).seconds == 1000;
 \end{urbiassert}
 \end{itemize}

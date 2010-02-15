@@ -14,7 +14,7 @@ A \lstinline|Server| is constructed with no argument. At creation, a
 new \lstinline|Server| has its own slot \lstinline|connection|. This
 slot is an event that is launched when a connection establishes.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var s = Server.new|
 s.localSlotNames;
 [00000001] ["connection"]
@@ -25,7 +25,7 @@ s.localSlotNames;
 \item \lstinline|connection|\\
   The event launched at each incoming connection. This event is
   launched with one argument: the socket of the established connection.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 at (s.connection?(var socket))
 {
   // This code is run at each connection. 'socket' is the incoming
@@ -36,7 +36,7 @@ at (s.connection?(var socket))
 \item \lstinline|host|\\
   The host on which \lstinline|this| is listening. Raise an error if
   \lstinline|this| is not listening.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Server.host;
 [00000003:error] !!! host: server not listening
 \end{urbiscript}
@@ -47,7 +47,7 @@ Server.host;
 \item \lstinline|port|\\
   The port on which \lstinline|this| is listening. Raise an error if
   \lstinline|this| is not listening.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Server.port;
 [00000004:error] !!! port: server not listening
 \end{urbiscript}

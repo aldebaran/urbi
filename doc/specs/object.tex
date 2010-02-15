@@ -25,7 +25,7 @@ intended to serve as prototype of a family of objects, similarly to
 classes in traditional object-oriented programming languages (see
 \autoref{sec:tut:class}).
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   class Foo
   {
@@ -47,7 +47,7 @@ classes in traditional object-oriented programming languages (see
 \begin{itemize}
 \item \lstinline|acceptVoid|\\
   Return \lstinline|this|.  See \refObject{void} to know why.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var o = Object.new;
   assert(o.acceptVoid === o);
@@ -57,7 +57,7 @@ classes in traditional object-oriented programming languages (see
 
 \item \lstinline|addProto(\var{proto})|\\
   Add \var{proto} into the list of prototypes of \lstinline|this|.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var o = Object.new;
   o.addProto(Orderable);
@@ -69,14 +69,14 @@ classes in traditional object-oriented programming languages (see
   Return a list with \lstinline|this|, all parents of
   \lstinline|this|, the parents of the parents of
   \lstinline|this|,\ldots
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 123.allProtos.size == 12;
 \end{urbiassert}
 
 \item \lstinline|allSlotNames|\\
   Return a list with the slot names of \lstinline|this| and its
   ancesters.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Object.localSlotNames
   .subset(Object.allSlotNames);
 Object.protos.foldl(function (var r, var p) { r + p.localSlotNames },
@@ -88,7 +88,7 @@ Object.protos.foldl(function (var r, var p) { r + p.localSlotNames },
   ``Invoke \lstinline|this|''.  The size of the argument list,
   \var{args}, must be one.  This argument is ignored.  This function
   exists for compatibility with \lstinline|Code.apply|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Object.apply([this]) === Object;
 Object.apply([1])    === Object;
 \end{urbiassert}
@@ -97,7 +97,7 @@ Object.apply([1])    === Object;
   Convert \lstinline|this| to \var{type}.  This is syntactic sugar for
   \lstinline|as\var{Type}| when \var{Type} is the \lstinline|$type| of
   \var{type}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 12.as(Float) == 12;
 "12".as(Float) == 12;
 12.as(String) == "12";
@@ -107,7 +107,7 @@ Object.as(Object) === Object;
 \item \lstinline|asBool|\\
   Whether \lstinline|this| is ``true'', see \autoref{sec:truth}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(Global.asBool == true);
 assert(nil.asBool ==    false);
 void.asBool;
@@ -119,7 +119,7 @@ void.asBool;
   function that takes its target (its ``\lstinline|this|'') as first
   and only argument.  \lstinline|this.\var{name}| must take no
   argument.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 { var myCos = Object.bounce("cos"); myCos(0) }    == 0.cos;
 { var myType = bounce("$type"); myType(Object); } == "Object";
 { var myType = bounce("$type"); myType(3.14); }   == "Float";
@@ -132,7 +132,7 @@ void.asBool;
 \item \lstinline|clone|\\
   Clone \lstinline|this|, i.e., create a fresh, empty, object, which
   sole prototype is \lstinline|this|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Object.clone.protos == [Object];
 Object.clone.localSlotNames == [];
 \end{urbiassert}
@@ -141,7 +141,7 @@ Object.clone.localSlotNames == [];
   Set the new slot \var{to} using a clone of \var{from}. This can only
   be used into the same object.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var foo = Object.new |;
 cloneSlot("foo", "bar") |;
 assert(!(foo === bar));
@@ -151,7 +151,7 @@ assert(!(foo === bar));
   Same as \lstinline|cloneSlot|, but the slot aren't cloned, so the
   two slot are the same.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var moo = Object.new |;
 cloneSlot("moo", "loo") |;
 assert(!(moo === loo));
@@ -161,7 +161,7 @@ assert(!(moo === loo));
   Create an empty slot (which actually means it is bound to
   \lstinline|void|) named \var{name}.  Raise an error if \var{name}
   was already defined.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 do (Object.new)
 {
   assert(!hasSlot("foo"));
@@ -176,7 +176,7 @@ do (Object.new)
   the more detailed.  This method is mostly useful for debugging
   low-level issues, for a more human-readable interface, see also
   \lstinline|Object.inspect|.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(0);
 [00015137] *** Float_0x240550 {
 [00015137] ***   /* Special slots */
@@ -217,7 +217,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
   The value associated to \var{name} in \lstinline|this|, excluding
   its ancestors (contrary to \lstinline|getSlot|).
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var a = Object.new|;
 
 // Local slot.
@@ -239,7 +239,7 @@ a.getLocalSlot("init");
   after a look-up in its prototypes (contrary to
   \lstinline|getLocalSlot|).
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var b = Object.new|;
 var b.slot = 21|;
 
@@ -266,7 +266,7 @@ b.getSlot("ENOENT");
   Whether \lstinline|this| features a slot \var{slot}, locally, not
   from some ancestor.  See also \lstinline|Object.hasSlot|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 class Base         { var this.base = 23; } |;
 class Derive: Base { var this.derive = 43 } |;
 assert(Derive.hasLocalSlot("derive"));
@@ -277,7 +277,7 @@ assert(!Derive.hasLocalSlot("base"));
   Whether \lstinline|this| has the slot \var{slot}, locally, or from
   some ancestor.  See also \lstinline|Object.hasLocalSlot|.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Derive.hasSlot("derive");
 Derive.hasSlot("base");
 !Base.hasSlot("derive");
@@ -289,7 +289,7 @@ Derive.hasSlot("base");
   Describe \lstinline|this|: its prototypes and slots, and their
   properties.  If \var{deep}, all the slots are described, not only
   the local slots. See also \lstinline|Object.dump|.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
 [00001227] *** Inspecting 2
 [00001227] *** ** Prototypes:
@@ -304,7 +304,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
   Return true if \lstinline|this| has \var{obj} in his parents, false
   otherwise.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.isA(Orderable);
 !(String.isA(Float));
 \end{urbiassert}
@@ -312,7 +312,7 @@ Float.isA(Orderable);
 \item \lstinline|isNil|\\
   Return true if \lstinline|this| is \refObject{nil}, false otherwise.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 nil.isNil;
 !(0.isNil);
 \end{urbiassert}
@@ -320,7 +320,7 @@ nil.isNil;
 \item \lstinline|isProto|\\
   Return true if \lstinline|this| is a prototype, false otherwise;
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Float.isProto;
 !(42.isProto);
 \end{urbiassert}
@@ -328,7 +328,7 @@ Float.isProto;
 \item \lstinline|isVoid|\\
   Return true if \lstinline|this| is \lstinline|void|.  See
   \refObject{void}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 void.isVoid;
 !(42.isVoid);
 \end{urbiassert}
@@ -338,7 +338,7 @@ void.isVoid;
   \lstinline|slot|. Otherwise it returns the first lowest owner of
   \lstinline|slot| of \lstinline|this|.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 locateSlot("init") == Channel;
 locateSlot("doesNotExist").isNil;
 \end{urbiassert}
@@ -347,7 +347,7 @@ locateSlot("doesNotExist").isNil;
 
 \item \lstinline|protos|\\
   Return the list of prototypes of \lstinline|this|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 12.protos == [0];
 \end{urbiassert}
 
@@ -355,7 +355,7 @@ locateSlot("doesNotExist").isNil;
   Return a dictionary of the properties of slot \var{slotName}.
   Return an empty dictionary if the slot has not property, raise an
   error if the slot does not exists.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 2;
 [00001228] 2
 2.properties("foo");
@@ -377,7 +377,7 @@ do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
 \item \lstinline|setConstSlot|\\
   Like \lstinline|setSlot| but the created slot is const.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(setConstSlot("fortyTwo", 42) == 42);
 fortyTwo = 51;
 [00000000:error] !!! cannot modify const slot
@@ -391,7 +391,7 @@ fortyTwo = 51;
   Create a slot \var{name} mapping to \var{value}. Raise an error if
   \var{name} was already defined.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Object.setSlot("theObject", Object) === Object;
 Object.theObject === Object;
 theObject === Object;
@@ -410,7 +410,7 @@ theObject === Object;
 
 \item \lstinline|unacceptvoid|\\
   Return \lstinline|this|.  See \refObject{void} to know why.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var o = Object.new|
   assert(o.unacceptVoid === o);
@@ -422,7 +422,7 @@ theObject === Object;
 \item \lstinline|updateSlot(\var{name}, \var{value})|\\
   Map the existing slot named \var{name} to \var{value}. Raise an
   error if \var{name} was not defined.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Object.setSlot("one", 1)    == 1;
 Object.updateSlot("one", 2) == 2;
 Object.one                  == 2;
@@ -432,7 +432,7 @@ Object.one                  == 2;
   Short-circuiting logical and. If \lstinline|this| evaluates to true
   evaluate and return \var{that}, otherwise return \lstinline|this|
   without evaluating \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (0 && "foo") == 0;
 (2 && "foo") == "foo";
 
@@ -444,7 +444,7 @@ Object.one                  == 2;
   Short-circuiting logical or. If \lstinline|this| evaluates to false
   evaluate and return \var{that}, otherwise return \lstinline|this|
   without evaluating \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (0 || "foo") == "foo";
 (2 ||  1/0) ==  2;
 
@@ -455,7 +455,7 @@ Object.one                  == 2;
 \item \lstinline|'!'|\\
   Logical negation. If \lstinline|this| evaluates to false return
   \lstinline|true| and vice-versa.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 !1 == false;
 !0 == true;
 

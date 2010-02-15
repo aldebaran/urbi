@@ -33,7 +33,7 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
   Return whether all the members of the target verify the predicate
   \var{fun}.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 // Are all elements positive?
 ! [-2, 0, 2, 4].all(function (e) { e > 0 });
 // Are all elements even?
@@ -45,7 +45,7 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
   Whether at least one of the members of the target verifies the
   predicate \var{fun}.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 // Is there any even element?
 ! [-3, 1, -1].any(function (e) { e % 2 == 0 });
 // Is there any positive element?
@@ -54,7 +54,7 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 
 \item \lstinline|asBool|\\
   Whether not empty.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [].asBool == false;
 [1].asBool == true;
 \end{urbiassert}
@@ -62,7 +62,7 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 \item \lstinline|asList|\\
 Return the target.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1, 2].asList == [0, 1, 2];
 \end{urbiassert}
 
@@ -70,14 +70,14 @@ Return the target.
   A string describing the list.  Uses \lstinline|asPrintable| on its
   members, so that, for instance, strings are displayed with quotes.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, [1], "2"].asString == "[0, [1], \"2\"]";
 \end{urbiassert}
 
 \item \lstinline|back|\\
 Return the last element of the target. An error if the target is empty.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert([0, 1, 2].back == 2);
 [].back;
 [00000000:error] !!! back: cannot be applied onto empty list
@@ -86,7 +86,7 @@ assert([0, 1, 2].back == 2);
 \item \lstinline|clear|\\
   Empty the target.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var x = [0, 1, 2];
 [00000000] [0, 1, 2]
 assert(x.clear == []);
@@ -96,7 +96,7 @@ assert(x.clear == []);
   Apply the given functional value \var{fun} on all members,
   sequentially.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 [0, 1, 2].each(function (v) {echo (v * v); echo (v * v)});
 [00000000] *** 0
 [00000000] *** 0
@@ -110,7 +110,7 @@ assert(x.clear == []);
   Apply the given functional value \var{fun} on all members
   sequentially, additionally passing the current element index.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 ["a", "b", "c"].eachi(function (v, i) {echo ("%s: %s" % [i, v])});
 [00000000] *** 0: a
 [00000000] *** 1: b
@@ -120,7 +120,7 @@ assert(x.clear == []);
 \item \lstinline|'each&'(\var{fun})|\\
 Apply the given functional value on all members simultaneously.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 [0, 1, 2].'each&'(function (v) {echo (v * v); echo (v * v)});
 [00000000] *** 0
 [00000000] *** 1
@@ -133,7 +133,7 @@ Apply the given functional value on all members simultaneously.
 \item \lstinline|empty|\\
   Whether the target is empty.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [].empty;
 ! [1].empty;
 \end{urbiassert}
@@ -142,7 +142,7 @@ Apply the given functional value on all members simultaneously.
   The list of all the members of the target that verify the predicate
   \var{fun}.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 // Keep only odd numbers.
 [0, 1, 2, 3, 4, 5].filter(function (v) {v % 2 == 1}) == [1, 3, 5];
 \end{urbiassert}
@@ -157,7 +157,7 @@ Apply the given functional value on all members simultaneously.
   folding a list would compute the sum of the list, including for
   empty lists.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 [].foldl(function (a, b) { a + b }, 0);
 [00000000] 0
 [1, 2, 3].foldl(function (a, b) { a + b }, 0);
@@ -170,7 +170,7 @@ Apply the given functional value on all members simultaneously.
   Return the first element of the target. An error if the target is
   empty.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert([0, 1, 2].front == 0);
 [].front;
 [00000000:error] !!! front: cannot be applied onto empty list
@@ -179,7 +179,7 @@ assert([0, 1, 2].front == 0);
 \item \lstinline|has(\var{that})|\\
   Whether one of the members of the target equals the argument.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1, 2].has(1);
 ! [0, 1, 2].has(5);
 \end{urbiassert}
@@ -188,7 +188,7 @@ assert([0, 1, 2].front == 0);
   Return whether one of the member of the target is physically equal
   to the argument.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var y = 1;
 [00000000:hide] 1
 [0, y, 2].hasSame(1);
@@ -203,7 +203,7 @@ var y = 1;
 \item \lstinline|insertBack(\var{that})|\\
   Insert the given element at the end of the target.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var z = [0, 1];
 [00000000] [0, 1]
 assert(z.insertBack(2) == [0, 1, 2]);
@@ -213,7 +213,7 @@ assert(z == [0, 1, 2]);
 \item \lstinline|insertFront(\var{that})|\\
   Insert the given element at the beginning of the target.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var a = [1, 2];
 [00000000] [1, 2]
 assert(a.insertFront(0) == [0, 1, 2]);
@@ -223,7 +223,7 @@ assert(a == [0, 1, 2]);
 \item \lstinline|join(\var{sep} = "", \var{prefix} = "", \var{suffix} = "")|\\
   Bounces to \lstinline|String.join|, see \refObject{String}.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 ["", "ob", ""].join                == "ob";
 ["", "ob", ""].join("a")           == "aoba";
 ["", "ob", ""].join("a", "B", "b") == "Baobab";
@@ -233,7 +233,7 @@ assert(a == [0, 1, 2]);
   The list of valid indexes.  This allows uniform iteration over a
   \refObject{Dictionary} or a \refObject{List}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var l = ["a", "b", "c"];
   assert(l.keys == [0, 1, 2]);
@@ -251,7 +251,7 @@ assert(a == [0, 1, 2]);
 Apply the given functional value on every member, and return the list
 of results.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1, 2, 3].map(function (v) { v % 2 == 0})
         == [true, false, true, false];
 \end{urbiassert}
@@ -264,7 +264,7 @@ of results.
   If \var{end} is \lstinline|nil|, calling \lstinline|range(\var{n})|
   is equivalent to calling \lstinline|range(0, \var{n})|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 do ([0, 1, 2, 3])
 {
   assert
@@ -288,7 +288,7 @@ do ([0, 1, 2, 3])
 \item \lstinline|remove(\var{val})|\\
   Remove all elements from the target that equals \var{val}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var c = [0, 1, 0, 2, 0, 3];
 [00000000] [0, 1, 0, 2, 0, 3]
 assert(c.remove(0) == [1, 2, 3]);
@@ -299,7 +299,7 @@ assert(c == [1, 2, 3]);
   Remove and return the last element of the target. An error if the
   target is empty.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var t = [0, 1, 2];
 [00000000] [0, 1, 2]
 assert(t.removeBack == 2);
@@ -312,7 +312,7 @@ assert(t == [0, 1]);
   Remove all elements from the target that physically equals
   \var{that}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var d = 1;
 [00000000] 1
 var e = [0, 1, d, 1, 2];
@@ -325,7 +325,7 @@ assert(e == [0, 1, 1, 2]);
 Remove and return the first element from the target. An error if the
 target is empty.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var g = [0, 1, 2];
 [00000000] [0, 1, 2]
 assert(g.removeFront == 0);
@@ -337,14 +337,14 @@ assert(g == [1, 2]);
 \item \lstinline|reverse|\\
 Return the target with the order of elements inverted.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1, 2].reverse == [2, 1, 0];
 \end{urbiassert}
 
 \item \lstinline|size|\\
 Return the number of elements in the target.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1, 2].size == 3;
 [].size == 0;
 \end{urbiassert}
@@ -352,14 +352,14 @@ Return the number of elements in the target.
 \item \lstinline|sort|\\
 Return the target, sorted with respect to the \lstinline|<| criteria.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [1, 0, 3, 2].sort == [0, 1, 2, 3];
 \end{urbiassert}
 
 \item \lstinline|subset(\var{that})|\\
   Whether the members of \lstinline|this| are members of \var{that}.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [].subset([]);
 [].subset([1, 2, 3]);
 [3, 2, 1].subset([1, 2, 3]);
@@ -374,7 +374,7 @@ Return the target, sorted with respect to the \lstinline|<| criteria.
   Return the target, minus the first element. An error if the target
   is empty.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert([0, 1, 2].tail == [1, 2]);
 [].tail;
 [00000000:error] !!! tail: cannot be applied onto empty list
@@ -384,7 +384,7 @@ assert([0, 1, 2].tail == [1, 2]);
 Check whether all elements in the target and \var{that}, are
 equal two by two.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1, 2] == [0, 1, 2];
 !([0, 1, 2] == [0, 0, 2]);
 \end{urbiassert}
@@ -394,7 +394,7 @@ equal two by two.
   zero-based). If \var{n} is negative, start from the end.  An error
   if out of bounds.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(["0", "1", "2"][0] == "0");
 assert(["0", "1", "2"][2] == "2");
 ["0", "1", "2"][3];
@@ -410,7 +410,7 @@ assert(["0", "1", "2"][-3] == "0");
   Assign \var{value} to the element of the target at the given
   \var{index}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var f = [0, 1, 2];
 [00000000] [0, 1, 2]
 f[1] = 42;
@@ -420,7 +420,7 @@ assert(f == [0, 42, 2]);
 
 \item \lstinline|'*'(\var{n})|\\
   Return the target, concatenated \var{n} times to itself.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1] * 3 == [0, 1, 0, 1, 0, 1];
 \end{urbiassert}
 
@@ -428,7 +428,7 @@ assert(f == [0, 42, 2]);
   concatenated (the content is not cloned), side-effects on one item
   will reflect on ``all the items''.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var l = [[]] * 3;
 [00000000] [[], [], []]
 l[0] << 1;
@@ -440,7 +440,7 @@ l;
 \item \lstinline|'+'(\var{other})|\\
 Return the concatenation of the target and the \var{other} list.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1] + [2, 3] == [0, 1, 2, 3];
 \end{urbiassert}
 
@@ -448,7 +448,7 @@ Return the concatenation of the target and the \var{other} list.
 Return the target without all element that equals any element in the
 \var(other) list.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 [0, 1, 0, 2, 3] - [1, 2] == [0, 0, 3];
 \end{urbiassert}
 
@@ -461,7 +461,7 @@ Return the target without all element that equals any element in the
   from the other, and the first differing element is inferior to the
   other.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 !([0, 1, 2] < [0, 1, 2]);
 !([0, 1, 2] < [0, 0, 2]);
 [0, 1, 2] < [0, 2, 2];
@@ -470,7 +470,7 @@ Return the target without all element that equals any element in the
   Since List derives from \refObject{Orderable}, the other order-based
   operators are defined.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
  [0, 1, 2] <= [0, 1, 2];
  [0, 1, 2] >= [0, 1, 2];
  [0, 1, 2] >  [0, 0, 2];

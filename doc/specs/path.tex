@@ -22,7 +22,7 @@ Path.new("/path/file.u");
 Some minor simplifications are made, such as stripping useless
 \file{./} occurrences.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Path.new("././///.//foo/");
 [00000002] Path("foo")
 \end{urbiscript}
@@ -31,7 +31,7 @@ Path.new("././///.//foo/");
 \begin{itemize}
 \item \lstinline|absolute|\\
   Whether \lstinline|this| is absolute.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.new("/abs/path").absolute;
 !Path.new("rel/path").absolute;
 \end{urbiassert}
@@ -40,25 +40,25 @@ Path.new("/abs/path").absolute;
   List of names used in path (directories and possibly file), from
   bottom up. There is no difference between relative path and absolute
   path.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.new("/path/to/file.u").asList == ["path", "to", "file.u"];
 Path.new("/path").asList           == Path.new("path").asList;
 \end{urbiassert}
 
 \item \lstinline|asPrintable|\\
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.new("file.txt").asPrintable == "Path(\"file.txt\")";
 \end{urbiassert}
 
 \item \lstinline|asString|\\
   The name of the file.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.new("file.txt").asString == "file.txt";
 \end{urbiassert}
 
 \item \lstinline|basename|\\
   Base name of the path.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.new("/absolute/path/file.u").basename == "file.u";
 Path.new("relative/path/file.u").basename  == "file.u";
 \end{urbiassert}
@@ -74,7 +74,7 @@ Path.new("relative/path/file.u").basename  == "file.u";
 % assert(Path.cwd         == Path.new("/"));
 % which is wrong on Windows, because cwd (like cd) returns Z:/ instead
 % of /.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   // Save current directory.
   var pwd = Path.cwd|
@@ -89,7 +89,7 @@ Path.new("relative/path/file.u").basename  == "file.u";
 
 \item \lstinline|dirname|\\
   Directory name of the path.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.new("/abs/path/file.u").dirname == Path.new("/abs/path");
 Path.new("rel/path/file.u").dirname  == Path.new("rel/path");
 \end{urbiassert}
@@ -97,7 +97,7 @@ Path.new("rel/path/file.u").dirname  == Path.new("rel/path");
 \item \lstinline|exists|\\
   Whether something (a file, a directory, \ldots) exists where
   \lstinline|this| points to.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.cwd.exists;
 Path.new("/").exists;
 !Path.new("/this/path/does/not/exists").exists;
@@ -105,13 +105,13 @@ Path.new("/").exists;
 
 \item \lstinline|isDir|\\
   Whether \lstinline|this| is a directory.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.cwd.isDir;
 \end{urbiassert}
 
 \item \lstinline|isReg|\\
   Whether \lstinline|this| is a regular file.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 !Path.cwd.isReg;
 \end{urbiassert}
 
@@ -122,13 +122,13 @@ Path.cwd.isDir;
 
 \item \lstinline|readable|\\
   Whether \lstinline|this| is readable.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.new(".").readable;
 \end{urbiassert}
 
 \item \lstinline|writable|\\
   Whether \lstinline|this| is writable.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Path.new(".").writable;
 \end{urbiassert}
 
@@ -136,7 +136,7 @@ Path.new(".").writable;
   Create a new \dfn{Path} that is the concatenation of
   \lstinline|this| and \lstinline|\var{rhs}|. \lstinline|\var{rhs}|
   can be a \dfn{Path} or a \dfn{String} and cannot be absolute.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(Path.new("/con/ca") / Path.new("te/na/tion")
        == Path.new("/con/ca/te/na/tion"));
 Path.cwd / Path.new("/tmp/foo");
@@ -147,7 +147,7 @@ Path.cwd / Path.new("/tmp/foo");
   Same as comparing the string versions of \lstinline|this| and
   \var{that}.  Beware that two paths may be different and point to the
   very same location.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
   Path.new("/a")  == Path.new("/a");
 !(Path.new("/a")  == Path.new("a")  );
 \end{urbiassert}
@@ -155,7 +155,7 @@ Path.cwd / Path.new("/tmp/foo");
 \item \lstinline|'<'(\var{that})|\\
   Same as comparing the string versions of \lstinline|this| and
   \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
   Path.new("/a")   < Path.new("/a/b");
 !(Path.new("/a/b") < Path.new("/a")  );
 \end{urbiassert}

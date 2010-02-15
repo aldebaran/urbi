@@ -26,7 +26,7 @@ void.isVoid;
 \item \lstinline|acceptVoid|\\
   Trick \lstinline|this| so that, even if it is \lstinline|void| it
   can be used as a value.  See also \lstinline|unacceptVoid|.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 void.foo;
 [00096374:error] !!! unexpected void
 void.acceptVoid.foo;
@@ -36,7 +36,7 @@ void.acceptVoid.foo;
 \item \lstinline|isVoid|\\
   Whether \lstinline|this| is \lstinline|void|.  Therefore, return
   \lstinline|true|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 void.isVoid;
 void.acceptVoid.isVoid;
 ! 123.isVoid;
@@ -46,7 +46,7 @@ void.acceptVoid.isVoid;
   Remove the magic from \lstinline|this| that allowed to manipulate it
   as a value, even if it \lstinline|void|.  See also
   \lstinline|acceptVoid|.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 void.acceptVoid.unacceptVoid.foo;
 [00096374:error] !!! unexpected void
 \end{urbiscript}

@@ -44,7 +44,7 @@ d.getWithDefault("four", 4);
 
 The Dictionary constructor takes arguments by pair (key, value).
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Dictionary.new("one", 1, "two", 2);
 [00000000] Dictionary {"one" => 1, "two" => 2}
 \end{urbiscript}
@@ -54,7 +54,7 @@ Dictionary.new("one", 1, "two", 2);
 \begin{itemize}
 \item \lstinline|asBool|\\
   Negation of \lstinline|Dictionary.empty|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Dictionary.new.asBool == false;
 Dictionary.new.set("key", "value").asBool == true;
 \end{urbiassert}
@@ -66,7 +66,7 @@ Dictionary.new.set("key", "value").asBool == true;
   using a range-\lstinline|for| (\autoref{sec:lang:for:each}).  No
   particular order is ensured.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(Dictionary.new("one", 1, "two", 2).asList
        == [Pair.new("one", 1), Pair.new("two", 2)]);
 {
@@ -80,14 +80,14 @@ assert(Dictionary.new("one", 1, "two", 2).asList
 \item \lstinline|clear|\\
   Empty the dictionary.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Dictionary.new("one", 1).clear.empty();
 \end{urbiassert}
 
 \item \lstinline|empty|\\
   Whether the dictionary is empty.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Dictionary.new.empty;
 !Dictionary.new.set("key", "value").empty;
 \end{urbiassert}
@@ -95,7 +95,7 @@ Dictionary.new.empty;
 \item \lstinline|erase(\var{key})|\\
   Remove the mapping for \lstinline|\var{key}|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Dictionary.new("one", 1, "two", 2).erase("two");
 [00386250] Dictionary {"one" => 1}
 \end{urbiscript}
@@ -106,7 +106,7 @@ Dictionary.new("one", 1, "two", 2).erase("two");
 
 % FIXME: the following excpetion test should be rewritte when (if) we
 % introduce the throw assertion.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(Dictionary.new("one", 1, "two", 2).get("one") == 1);
 try
 {
@@ -124,7 +124,7 @@ catch (var e if e.isA(Dictionary.KeyError))
   Return the value associated to  \lstinline|\var{key}| if it exists,
   \lstinline|\var{default-value}| otherwise.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 do (Dictionary.new("one", 1, "two", 2))
 {
   assert(getWithDefault("one",  -1) == 1);
@@ -136,7 +136,7 @@ do (Dictionary.new("one", 1, "two", 2))
 \item \lstinline|has(\var{key})|\\
   Whether the dictionary has a mapping for \lstinline|\var{key}|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 do (Dictionary.new("one", 1))
 {
   assert(has("one"));
@@ -148,7 +148,7 @@ do (Dictionary.new("one", 1))
   Insert the mapping from \lstinline|\var{key1}| to
   \lstinline|\var{value1}| and so forth.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Dictionary.clone.init("one", 1, "two", 2);
 [00000000] Dictionary {"one" => 1, "two" => 2}
 \end{urbiscript}
@@ -157,7 +157,7 @@ Dictionary.clone.init("one", 1, "two", 2);
   The list of all the keys.  No particular order is ensured.  Since
   \refObject{List} features the same function, uniform iteration over
   a List or a Dictionary is possible.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var d = Dictionary.new("one", 1, "two", 2);
   assert(d.keys == ["one", "two"]);
@@ -176,7 +176,7 @@ Dictionary.clone.init("one", 1, "two", 2);
   \lstinline|this| so that invocations to \lstinline|set| can be
   chained.  The possibly existing previous mapping is overridden.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Dictionary.new.set("one", 2).set("one", 1);
 [00000000] Dictionary {"one" => 1}
 \end{urbiscript}
@@ -184,7 +184,7 @@ Dictionary.new.set("one", 2).set("one", 1);
 \item \lstinline|size|\\
   Number of element in the dictionary.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var d = Dictionary.new;
   assert(d.size == 0);
@@ -201,7 +201,7 @@ Dictionary.new.set("one", 2).set("one", 1);
   Syntactic sugar for \lstinline|set(\var{key}, \var{value})|, but
   returns \var{value}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var d = Dictionary.new("one", "2");
   assert((d["one"] = 1) == 1);
@@ -212,7 +212,7 @@ Dictionary.new.set("one", 2).set("one", 1);
 \item \lstinline|[](\var{key})|\\
   Syntactic sugar for \lstinline|get(\var{key})|.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Dictionary.new("one", 1)["one"] == 1;
 \end{urbiassert}
 

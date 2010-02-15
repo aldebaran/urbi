@@ -16,7 +16,7 @@ This document is meant to be used to toy with \LaTeX{}.
 1 == 1;
 \end{urbiassert}
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 0 != 1;
 [00001234] true
 // Check the syntax highlighting colors.
@@ -24,7 +24,7 @@ if (1 == 0) "yes" else "no";
 [00001234] "no"
 \end{urbiscript}
 
-\begin{urbiunchecked}[escapeinside=<>,firstnumber=last]
+\begin{urbiunchecked}[escapeinside=<>]
 #<Été>;
 [00048238:error] !!! invalid character: `#'
 [00048239:error] !!! invalid character: `\xc3'

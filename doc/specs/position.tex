@@ -21,7 +21,7 @@ Position.new;
 With a position argument \var{p}, the newly constructed Position is a clone
 of \var{p}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Position.new(Position.new(2, 3));
 [00000001] 2.3
 \end{urbiscript}
@@ -29,7 +29,7 @@ Position.new(Position.new(2, 3));
 With two float arguments \var{l} and \var{c}, the newly constructed
 Position has its line and column defined and an empty file name.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Position.new(2, 3);
 [00000001] 2.3
 \end{urbiscript}
@@ -37,7 +37,7 @@ Position.new(2, 3);
 With three arguments \var{f}, \var{l} and \var{c}, the newly
 constructed Position has its file name, line and column defined.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Position.new("file.u", 2, 3);
 [00000001] file.u:2.3
 \end{urbiscript}
@@ -48,7 +48,7 @@ Position.new("file.u", 2, 3);
 \item \lstinline|'+'(\var{n})|\\
   Return a new Position which is shifted from \var{n} columns to the
   right.  The minimal value of the new position column is 1.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new(2, 3) + 2 == Position.new(2, 5);
 Position.new(2, 3) + -4 == Position.new(2, 1);
 \end{urbiassert}
@@ -56,14 +56,14 @@ Position.new(2, 3) + -4 == Position.new(2, 1);
 \item \lstinline|'-'(\var{n})|\\
   Return a new Position which is shifted from \var{n} columns to the
   left.  The minimal value of the new Position column is 1.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new(2, 3) - 1 == Position.new(2, 2);
 Position.new(2, 3) - -4 == Position.new(2, 7);
 \end{urbiassert}
 
 \item \lstinline|'=='(\var{other})|\\
   Compare the lines and columns of two Positions.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new(2, 3) == Position.new(2, 3);
 Position.new("a.u", 2, 3) == Position.new("b.u", 2, 3);
 Position.new(2, 3) != Position.new(2, 2);
@@ -71,7 +71,7 @@ Position.new(2, 3) != Position.new(2, 2);
 
 \item \lstinline|'<'(\var{other})|\\
   Order comparison of lines and columns.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new(2, 3) < Position.new(2, 4);
 Position.new(2, 3) < Position.new(3, 1);
 \end{urbiassert}
@@ -79,40 +79,40 @@ Position.new(2, 3) < Position.new(3, 1);
 \item \lstinline|asString|\\
   Present as \samp{\var{file}:\var{line}.\var{column}}, the file name is
   omitted if it is not defined.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Position.new("file.u", 2, 3);
 [00000001] file.u:2.3
 \end{urbiscript}
 
 \item \lstinline|column|\\
   Field which give access to the column number of the Position.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new(2, 3).column == 3;
 \end{urbiassert}
 
 \item \lstinline|columns(\var{n})|\\
   Identical to \lstinline|'+'(\var{n})|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new(2, 3).columns(2) == Position.new(2, 5);
 Position.new(2, 3).columns(-4) == Position.new(2, 1);
 \end{urbiassert}
 
 \item \lstinline|file|\\
   The \lstinline|Path| of the Position file.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new("file.u", 2, 3).file == Path.new("file.u");
 Position.new(2, 3).file == nil;
 \end{urbiassert}
 
 \item \lstinline|line|\\
   Field which give access to the line number of the Position.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new(2, 3).line == 2;
 \end{urbiassert}
 
 \item \lstinline|lines(\var{n})|\\
   Add \var{n} lines and reset the column number to 1.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Position.new(2, 3).lines(2) == Position.new(4, 1);
 Position.new(2, 3).lines(-1) == Position.new(1, 1);
 \end{urbiassert}

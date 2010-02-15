@@ -16,7 +16,7 @@ Objects that can be ``invoked'', comparable to \Cxx's Function Objects.
 \item \lstinline|==(\var{that})|\\
   Whether \lstinline|this| and \var{that} are the same source code.
   It actually checks that both have the same \lstinline|asString|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 function () { 1 } == function () { 1 };
 function () { 1 } != closure  () { 1 };
 closure  () { 1 } != function () { 1 };
@@ -32,14 +32,14 @@ function () { 1 } != function (ignored) { 1 };
   Invoke the routine, with all the arguments.  The target,
   \lstinline|this|, will be set to \lstinline|\var{args}[0]| and the
   remaining arguments with be given as arguments.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 function (x, y) { x+y }.apply([nil, 10, 20]) == 30;
 function () { this }.apply([123]) == 123;
 
 // There is Object.apply.
 1.apply([this]) == 1;
 \end{urbiassert}
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function () {}.apply([]);
 [00000001:error] !!! apply: list of arguments must begin with `this'
 
@@ -49,14 +49,14 @@ function () {}.apply([1, 2]);
 
 \item \lstinline|asString|\\
   Conversion to \refObject{String}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 closure  () { 1 }.asString == "closure () {\n  1\n}";
 function () { 1 }.asString == "function () {\n  1\n}";
 \end{urbiassert}
 
 \item \lstinline|bodyString|\\
   Conversion to \refObject{String} of the routine body.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 closure  () { 1 }.bodyString == "1";
 function () { 1 }.bodyString == "1";
 \end{urbiassert}

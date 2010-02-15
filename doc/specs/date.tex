@@ -22,7 +22,7 @@ Date.new;
 With a numeric argument \var{s}, refers to the date that is \var{s}
 seconds after the epoch.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Date.new(1234567890);
 [00023593] 2009-02-14 00:31:30
 \end{urbiscript}
@@ -34,7 +34,7 @@ and \var{ss} are optional. If the block \samp{\var{hh}:\var{mn}:\var{ss}}
 is absent, the behavior is undefined.
 
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Date.new("2003-10-10 20:10:50");
 [00086457] 2003-10-10 20:10:50
 Date.new("2003-10-10 20:10");
@@ -47,7 +47,7 @@ If you create a date with a numeric argument which cannot be interpreted as
 a date you should get an error message warning you that the value cannot be
 converted into a integer
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Date.new(0.1);
 [00095042:error] !!! new: bad numeric conversion: overflow or non empty fractional part: 0.1
 \end{urbiscript}
@@ -58,7 +58,7 @@ Date.new(0.1);
 \item \lstinline|+(\var{that})|\\
   Return the date which is corresponds to waiting \refObject{Duration}
   \var{that} after \lstinline|this|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Date.new(1000) + Duration.new(100) == Date.new(1100);
 Date.new(1000) + Duration.new(-100) == Date.new(900);
 \end{urbiassert}
@@ -66,28 +66,28 @@ Date.new(1000) + Duration.new(-100) == Date.new(900);
 \item \lstinline|-(\var{that})|\\
   Compute the difference between two dates.  Return a
   \refObject{Duration}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Date.new(100) - Date.new(0) == Duration.new(100);
 Date.new(0) - Date.new(100) == Duration.new(-100);
 \end{urbiassert}
 
 \item \lstinline|==(\var{that})|\\
   Equality test.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Date.new(11223344) == Date.new(11223344);
 Date.new(11111111) != Date.new(22222222);
 \end{urbiassert}
 
 \item \lstinline|<(\var{that})|\\
   Order comparison.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Date.new(11111111) < Date.new(22222222);
 \end{urbiassert}
 
 \item \lstinline|asFloat|\\
   Give the numeric value of the date that refers to the date that is \var{s}
 seconds after the epoch.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Date.new("2002-01-20 23:59:59").asFloat == 1011567599;
 \end{urbiassert}
 
@@ -99,14 +99,14 @@ Date.new("2002-01-20 23:59:59").asFloat == 1011567599;
   hour (from 0 to 23), \var{mn} the two-digit number of minutes in the
   hour (from 0 to 59), and \var{ss} the two-digit number of seconds in
   the minute (from 0 to 59).
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Date.new(1234567890).asString == "2009-02-14 00:31:30";
 \end{urbiassert}
 
 \item \lstinline|epoch|\\
   A fixed value, the ``origin of times'': January 1st 1970, at
   midnight.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Date.epoch == Date;
 
 Date.epoch == Date.new(0);

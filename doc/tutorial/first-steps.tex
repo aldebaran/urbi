@@ -44,7 +44,7 @@ several other literals, such as:
 
 These literal values can be obtained with the syntax presented below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 42; // Integer literal.
 [00000000] 42
 3.14; // Floating point number literal.
@@ -68,7 +68,7 @@ This listing highlights some point:
 
 You can call functions with the classical, mathematical notation.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 cos(0); // Compute cosine
 [00000000] 1
 max(1, 3); // Get the maximum of the arguments.
@@ -82,7 +82,7 @@ that function in \us can be variadic, that is, take different number
 of arguments, such as the \lstinline{max} function. Let's now try the
 \lstinline{echo} function, that prints out its argument.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 echo("Hello world!");
 [00000000] *** Hello world!
 \end{urbiscript}
@@ -96,7 +96,7 @@ Variables can be introduced with the \lstinline{var} keyword, given a
 name and an initial value. They can be assigned new values with the
 \lstinline{=} operator.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var x = 42;
 [00000000] 42
 echo(x);
@@ -115,7 +115,7 @@ characters and underscores, but they may not start with a digit.
 You may omit the initialization value, in which case it defaults to
 \lstinline|void|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var y;
 y;
 // Remember, the interpreter remains silent
@@ -133,7 +133,7 @@ Scopes are introduced with curly brackets (\lstinline|{}|).  They can
 contain any number of statements. Variables declared in a scope only
 exist within this scope.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var x = "test";
   echo(x);
@@ -152,7 +152,7 @@ Methods are called on objects with the dot (\lstinline{.}) notation as in
 \Cxx. Method calls can be chained. Methods with no arguments don't
 require the parentheses.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 0.cos();
 [00000000] 1
 "a-b-c".split("-");
@@ -178,7 +178,7 @@ some. Functions can be declared thanks to the \lstinline{function}
 keyword, followed by the comma separated, parentheses surrounded list
 of formal arguments, and the body between curly brackets.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Define myFunction
 function myFunction()
 {
@@ -206,7 +206,7 @@ definition yields the new function, and as always, the interpreter
 prints out the evaluation result, thus showing you the function
 again:
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 // Work in a scope.
 {
   // Define f
@@ -246,7 +246,7 @@ in this documentation using the \lstinline'|{};' trick (or even
 server first evaluates \var{code}, then evaluates \lstinline'{}' and
 return its value, \lstinline'void', which prints to nothing.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function sum(a, b, c)
 {
   return a + b + c;
@@ -259,7 +259,7 @@ The \lstinline{return} keyword enables to return a value from the
 function. If no \lstinline{return} statement is executed, the
 evaluation of the last expression is returned.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function succ(i) { i + 1 } | {};
 succ(50);
 [00000000] 51

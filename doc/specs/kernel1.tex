@@ -60,7 +60,7 @@ echo (b);
 
 \item \lstinline|ping|\\
   Return \lstinline|time| verbosely, see \refObject{System}.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Kernel1.ping;
 [00000421] *** pong time=0.12s
 \end{urbiscript}
@@ -78,7 +78,7 @@ Kernel1.ping;
 \item \lstinline|size(\var{list})|\\
   Obsolete syntax for \lstinline|\var{list}.size|, see
   \refObject{List}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Kernel1.size([1, 2, 3]) == [1, 2, 3].size;
 [00000002:warning] *** `size(list)' is deprecated, use `list.size'
 \end{urbiassert}
@@ -89,7 +89,7 @@ Kernel1.size([1, 2, 3]) == [1, 2, 3].size;
 \item \lstinline|strlen(\var{string})|\\
   Obsolete syntax for \lstinline|\var{string}.length|, see
   \refObject{String}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Kernel1.strlen("123") == "123".length;
 [00000002:warning] *** `strlen(string)' is deprecated, use `string.length'
 \end{urbiassert}

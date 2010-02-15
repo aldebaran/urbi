@@ -30,7 +30,7 @@ Scopes can be nested. Variables can be redefined in sub-scopes. In
 this case, the inner variables hide the outer ones, as illustrated
 below.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var x = 0;   // Define the outer x.
 [00000000] 0
 {
@@ -57,7 +57,7 @@ about anywhere. These functions' visibility are limited to the scope
 they're defined in, like variables. This enables for instance to write
 local helper functions like ``max2'' in the example belox.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function max3(a, b, c) // Max of three values
 {
   function max2(a, b)
@@ -78,7 +78,7 @@ function. \us supports lexical closure: functions can refer to outer
 local variables, as long as they are visible (in scope) from where
 the function is defined.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 function printSalaries(rate)
 {
   var charges = 100;
@@ -100,7 +100,7 @@ printSalaries(15);
 Closures can also write to captured variables, as shown below.
 
 % Fixme: these are not actually closures because of the toplevel ...
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var a = 0;
 [00000000] 0
 var b = 0;

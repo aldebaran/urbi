@@ -14,7 +14,7 @@ connection to an \urbi server.
 A lobby is implicitly created at each connection. At the top level,
 \lstinline|this| is a \dfn{Lobby}.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 this.protos;
 [00000001] [Lobby]
 this.protos[0].protos;
@@ -24,7 +24,7 @@ this.protos[0].protos;
 Lobbies cannot be cloned, they must be created using
 \lstinline|create|.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Lobby.new;
 [00000177:error] !!! new: `Lobby' objects cannot be cloned
 Lobby.create;
@@ -37,7 +37,7 @@ Lobby.create;
 Since every lobby is-a \refObject{Channel}, one can use the methods of
 Channel.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 lobby << 123;
 [00478679] 123
 lobby << "foo";
@@ -48,7 +48,7 @@ lobby << "foo";
 \begin{itemize}
 \item \lstinline|connected|\\
   Whether \lstinline|this| is connected.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 connected;
 \end{urbiassert}
 
@@ -57,7 +57,7 @@ connected;
 
 \item \lstinline|create|\\
   Instantiate a new Lobby.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Lobby.create;
 \end{urbiassert}
 
@@ -66,7 +66,7 @@ Lobby.create;
   by the \refObject{String} \var{channel} name if specified.  This is
   the preferred way to send informative messages (prefixed with
   \samp{***}).
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 lobby.echo("111", "foo");
 [00015895:foo] *** 111
 lobby.echo(222, "");
@@ -80,7 +80,7 @@ lobby.echo(333);
 
 \item \lstinline|lobby|\\
   Return the current lobby, i.e., \lstinline|this|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 lobby === this;
 \end{urbiassert}
 
@@ -98,7 +98,7 @@ lobby === this;
   processed: for instance, if you load a file which, in its middle,
   uses \lstinline|lobby.receive("foo")|, then \lstinline|"foo"| will
   be appended after the end of the file.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 Lobby.create.receive("12;");
 [00478679] 12
 \end{urbiscript}
@@ -107,7 +107,7 @@ Lobby.create.receive("12;");
   This is low-level routine.  Send the \refObject{String} \var{value}
   to \lstinline|this|, prefixed by the \refObject{String}
   \var{channel} name if specified.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 lobby.send("111", "foo");
 [00015895:foo] 111
 lobby.send("222", "");
@@ -120,7 +120,7 @@ lobby.send("333");
   This is low-level routine.  Send the \refObject{String} \var{value}
   to the connection.  Note that because of buffering, the output might
   not be visible before an end-of-line character is output.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 lobby.write("[");
 lobby.write("999999999:");
 lobby.write("myTag] ");

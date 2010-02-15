@@ -336,7 +336,7 @@ class TwoMachineFactory
 
 Using this class is straightforward.
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 var f = TwoMachineFactory.new|;
 f.assemble([1, 2, 3, 4, 5, 6]);
 [00000002] *** Used the slow machine
@@ -362,7 +362,7 @@ The genuine power of \us is when concurrency comes into play.
 First of all, why should we wait for the slow job to finish if we have
 a fast machine available?
 
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 f.assemble([1, 2, 3, 4, 5, 6]),
 f.assemble([1]),
 [00000004] *** Used the fast machine
@@ -383,7 +383,7 @@ are confusing (see the inversion here).
 Channels (\refObject{Channel}) are useful to ``send'' asynchronous
 answers.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 //for, (var list = [1, 2, 3, 4, 5, 6, 7];
 //      !list.empty;
 //      list.removeBack)

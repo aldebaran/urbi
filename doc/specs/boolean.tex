@@ -52,7 +52,7 @@ by default objects as considered ``true'', objects evaluating to
 
 The method \lstinline|Object.asBool| is in charge of converting some
 arbitrary value into a Boolean.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert(Global.asBool == true);
 assert(nil.asBool ==    false);
 void.asBool;
@@ -68,7 +68,7 @@ void.asBool;
   \lstinline|true| evaluate and return \var{that}.  If
   \lstinline|this| is \lstinline|false|, return itself without
   evaluating \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (true && 2) == 2;
 (false && 1 / 0) == false;
 \end{urbiassert}
@@ -78,7 +78,7 @@ void.asBool;
   \lstinline|false| evaluate and return \var{that}.  If
   \lstinline|this| is \lstinline|true|, return itself without
   evaluating \var{that}.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (true || 1/0) == true;
 (false || 2)  == 2;
 \end{urbiassert}
@@ -86,14 +86,14 @@ void.asBool;
 \item \lstinline|'!'|\\
   Logical negation. If \lstinline|this| is \lstinline|false| return
   \lstinline|true| and vice-versa.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 !true == false;
 !false == true;
 \end{urbiassert}
 
 \item \lstinline|asBool|\\
   Identity.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 true.asBool ==  true;
 false.asBool == false;
 \end{urbiassert}

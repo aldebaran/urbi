@@ -46,7 +46,7 @@ Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
   \item \samp{\var{file}:\var{ll}.\var{cc}-\var{ll}.\var{cc}}
   \end{itemize}
   or the same without file name when the file name is not defined.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Location.new(Position.new("file.u",14,25)).asString == "file.u:14.25";
 Location.new(Position.new(14,25)).asString == "14.25";
 
@@ -74,7 +74,7 @@ Location.new(
 \item \lstinline|begin|\\
   The begin Position used by the Location.  Modifying a copy of this field
   does not modify the Location.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Location.new(
   Position.new("file.u",14,25),
   Position.new("file.u",16,35)
@@ -84,7 +84,7 @@ Location.new(
 \item \lstinline|end|\\
   The end Position used by the Location.  Modifying a copy of this field
   does not modify the Location.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 Location.new(
   Position.new("file.u",14,25),
   Position.new("file.u",16,35)

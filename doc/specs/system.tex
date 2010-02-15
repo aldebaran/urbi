@@ -30,7 +30,7 @@ Details on the architecture the \urbi server runs on.
 
 \item \lstinline|aliveJobs|\\
   The number of detached routines currently running.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var nJobs = aliveJobs;
   for (var i: [1s, 2s, 3s])
@@ -65,7 +65,7 @@ $ ./echo -x 12 -v "foo"
 \item \lstinline|assert_(\var{assertion}, \var{message})|\\
   If \var{assertion} does not evaluate to true, throw the failure
   \var{message}.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert_(true,       "true failed");
 assert_(42,         "42 failed");
 assert_(1 == 1 + 1, "one is not two");
@@ -76,7 +76,7 @@ assert_(1 == 1 + 1, "one is not two");
   Unless \lstinline|System.ndebug| is true, throw an error if
   \var{assertion} is not verified.  See also the assertion support in
   \us, \autoref{sec:assertions}.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 'assert'(true);
 'assert'(42);
 'assert'(1 == 1 + 1);
@@ -86,7 +86,7 @@ assert_(1 == 1 + 1, "one is not two");
 \item \lstinline|assert_op(\var{operator}, \var{lhs}, \var{rhs})|\\
   Unless \lstinline|System.ndebug| is true, throw an error if
   \lstinline|\var{lhs} \var{operator} \var{rhs}| is not verified.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 assert_op("<",  1, 1 + 1);
 assert_op("<=", 1, 1 + 1);
 assert_op(">",  1, 1 + 1);
@@ -95,7 +95,7 @@ assert_op(">",  1, 1 + 1);
 
 \item \lstinline|backtrace|\experimental\\
   Display the call stack on the channel \code{backtrace}.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 //#push 100 "foo.u"
 function innermost () { backtrace }|;
 function inner ()     { innermost }|;
@@ -111,7 +111,7 @@ outermost;
 
 \item \lstinline|cycle|\experimental\\
   The number of execution cycles since the beginning.
-\begin{urbiscript}[firstnumber=last]
+\begin{urbiscript}
 {
   var first = cycle ; var second = cycle ;
   assert(first + 1 == second);
@@ -126,7 +126,7 @@ outermost;
   is not required.  The evaluation is performed in the context of the
   current object (\lstinline|this|), in particular, to create local
   variables, create scopes.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 eval("1+2") == 1+2;
 eval("\"x\" * 10") == "x" * 10;
 eval("eval(\"1\")") ==  1;
@@ -141,7 +141,7 @@ x == 23;
   Return the value of the environment variable \var{name} as a
   \refObject{String} if set, \lstinline|nil| otherwise.  See also
   \lstinline|System.setenv| and \lstinline|System.unsetenv|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 getenv("UndefinedEnvironmentVariable").isNil;
 !getenv("PATH").isNil;
 \end{urbiassert}
@@ -150,7 +150,7 @@ getenv("UndefinedEnvironmentVariable").isNil;
   Load the \us file \var{file}.  Throw a \lstinline|FileNotFound|
   error if the file cannot be found.  Return the last value of the
   file.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 // Create the file ``123.u'' that contains exactly ``123;''.
 System.system("echo '123;' >123.u") == 0;
 loadFile("123.u") == 123;
@@ -160,7 +160,7 @@ loadFile("123.u") == 123;
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}),
   and load it.  Throw a \lstinline|FileNotFound| error if the file
   cannot be found.  Return the last value of the file.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 // Create the file ``123.u'' that contains exactly ``123;''.
 System.system("echo '123;' >123.u") == 0;
 load("123.u") == 123;
@@ -185,7 +185,7 @@ load("123.u") == 123;
   \var{channelName} is non-empty, announce on it that \var{file} is
   about to be loaded, and load it.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 // Create the file ``123.u'' that contains exactly ``123;''.
 System.system("echo '123;' >123.u") == 0;
 maybeLoad("123.u") == 123;
@@ -202,7 +202,7 @@ maybeLoad("u.123").isVoid;
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars})
   and return its \refObject{Path}.  Throw a \lstinline|FileNotFound|
   error if the file cannot be found.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 System.system("echo '123;' >123.u") == 0;
 searchFile("123.u") == Path.cwd / Path.new("123.u");
 \end{urbiassert}
@@ -216,7 +216,7 @@ searchFile("123.u") == Path.cwd / Path.new("123.u");
     undefining.
   \end{windows}
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 setenv("MyVar", 12) == "12";
 getenv("MyVar") == "12";
 
@@ -242,7 +242,7 @@ getenv("MyVar").isNil == Platform.isWindows;
   Suspend the execution for \var{duration} seconds.  No CPU cycle is
   wasted during this wait.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 (time - {sleep(1s); time}).round == -1;
 \end{urbiassert}
 
@@ -250,7 +250,7 @@ getenv("MyVar").isNil == Platform.isWindows;
   Return the number of seconds elapsed since the \urbi server was
   launched.  Contrary to \lstinline|System.time|, time spent in frozen
   code is not counted.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 { var t0 = shiftedTime | sleep(1s) | shiftedTime - t0 }.round ~= 1;
 
   1 ==
@@ -283,7 +283,7 @@ getenv("MyVar").isNil == Platform.isWindows;
     Under Windows, the exit status is always 0.
   \end{windows}
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 System.system("exit 0") == 0;
 System.system("exit 23") >> 8
        == { if (System.Platform.isWindows) 0 else 23 };
@@ -294,7 +294,7 @@ System.system("exit 23") >> 8
   Return the number of seconds elapsed since the \urbi server was
   launched.  In presence of a frozen \refObject{Tag}, see also
   \lstinline|System.shiftedTime|.
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 { var t0 = time | sleep(1s) | time - t0 }.round ~= 1;
 
   2 ==
@@ -316,7 +316,7 @@ System.system("exit 23") >> 8
   value.  See also \lstinline|System.getenv| and
   \lstinline|System.setenv|.
 
-\begin{urbiassert}[firstnumber=last]
+\begin{urbiassert}
 setenv("MyVar", 12) == "12";
 !getenv("MyVar").isNil;
 unsetenv("MyVar") == "12";
