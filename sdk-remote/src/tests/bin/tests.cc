@@ -24,7 +24,8 @@
 using libport::program_name;
 
 GD_INIT();
-GD_ADD_CATEGORY(TEST);
+// The category is alreday added by bin/tests.hh
+//GD_ADD_CATEGORY(TEST);
 
 // Use this semaphore in tests that require one.  dump() takes it.
 libport::Semaphore dumpSem;
@@ -117,7 +118,7 @@ sget_error(urbi::USyncClient& c, const std::string& msg)
 int
 main(int argc, char* argv[])
 {
-  GD_CATEGORY(Test);
+  GD_CATEGORY(TEST);
 
   // Actually argv[0] is verbose and not interesting.
   libport::program_initialize(argc, argv);

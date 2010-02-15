@@ -43,6 +43,8 @@ Test file layout
   D|E|S for data, error, system
 */
 
+/// Register the message category for each file including this header.
+GD_ADD_CATEGORY(TEST);
 
 /// Display a debug message.
 #define VERBOSE(S)                              \
