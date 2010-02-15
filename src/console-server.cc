@@ -45,6 +45,8 @@
 
 #include <libltdl/ltdl.h>
 
+#include <sched/coroutine-data.hh>
+
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <kernel/uqueue.hh>
 #include <kernel/userver.hh>
@@ -63,7 +65,7 @@
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 
-GD_INIT();
+GD_INIT_DEBUG_PER(::libport::localdata::ThreadCoroutine);
 GD_ADD_CATEGORY(URBI);
 
 #define URBI_EXIT(Status, ...)                 \
