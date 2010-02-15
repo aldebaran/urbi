@@ -104,17 +104,23 @@ do (List)
     res
   };
 
+  /// Whether the members of this are members of that.
+  function subset(var that)
+  {
+    all(function (var m) { m in that })
+  };
+
 
   /*-------------------------.
   | Functional programming.  |
   `-------------------------*/
 
   // Build a new list containing the result of \a f applied to all elements
-  function map (f)
+  function map(f)
   {
     var res = [] |
     for| (var i: this)
-      res.insertBack (f (i)) |
+      res.insertBack(f(i)) |
     res
   };
 

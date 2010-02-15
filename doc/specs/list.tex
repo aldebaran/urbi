@@ -356,9 +356,23 @@ Return the target, sorted with respect to the \lstinline|<| criteria.
 [1, 0, 3, 2].sort == [0, 1, 2, 3];
 \end{urbiassert}
 
+\item \lstinline|subset(\var{that})|\\
+  Whether the members of \lstinline|this| are members of \var{that}.
+
+\begin{urbiassert}[firstnumber=last]
+[].subset([]);
+[].subset([1, 2, 3]);
+[3, 2, 1].subset([1, 2, 3]);
+[1, 3].subset([1, 2, 3]);
+[1, 1].subset([1, 2, 3]);
+![3].subset([]);
+![3, 2].subset([1, 2]);
+![1, 2, 3].subset([1, 2]);
+\end{urbiassert}
+
 \item \lstinline|tail|\\
-Return the target, minus the first element. An error if the target is
-empty.
+  Return the target, minus the first element. An error if the target
+  is empty.
 
 \begin{urbiscript}[firstnumber=last]
 assert([0, 1, 2].tail == [1, 2]);
