@@ -20,9 +20,8 @@ numbering).  Listings with the same "name" are glued togeter.  This
 is especially needed when a listing uses objects defined in earlier
 listings.
 
-Another means to glue together urbiscript snippets is to use the
-attribute firstnumber=last in the snippet that should be fused with
-the previous one.
+Unnamed snippets are merged by default, unless the (second one) has
+the attribute [firstnumber=1].
 
 =head1 OPTIONS
 
@@ -181,10 +180,16 @@ sub register ($$\%)
         "  $chk{$label}{_location}: first definition\n",
         "  $file:$line: second definition\n";
     }
-  # Accept that we use "[firstnumber=last]" without a preceding one.
-  elsif (exists $$lst{firstnumber}
-         && $$lst{firstnumber} eq "last"
-         && defined $previous_label)
+  # By default, fuse the test cases.  Unless we use "[firstnumber=1]"
+  # and there is a preceding one.
+  elsif (!defined $previous_label
+         || (exists $$lst{firstnumber}
+             && $$lst{firstnumber} eq "1"))
+    {
+      $chk{$label} = $lst;
+      $previous_label = $label;
+    }
+  else
     {
       # Extension of the previous listing.
       $chk{$previous_label}{_contents} .=
@@ -202,11 +207,6 @@ sub register ($$\%)
 
       $chk{$previous_label}{_contents} .=
         $$lst{_contents};
-    }
-  else
-    {
-      $chk{$label} = $lst;
-      $previous_label = $label;
     }
 }
 
