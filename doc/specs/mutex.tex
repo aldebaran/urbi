@@ -10,14 +10,14 @@
 \subsection{Construction}
 A Mutex can be constructed like any other Tag but without name.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var m = Mutex.new;
 [00000000] Mutex_0x964ed40
 \end{urbiscript}
 
 You can define critical sections by tagging your code using the Mutex.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var m = Mutex.new |
 m: echo("this is critical section");
 [00000001] *** this is critical section

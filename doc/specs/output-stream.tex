@@ -14,7 +14,7 @@ requires a \refObject{File}.  If the file already exists, content is
 \emph{appended} to it.  Remove the file beforehand if you want to
 override its content.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 System.system("(echo 1; echo 2) >file.txt")|;
 OutputStream.new(File.new("file.txt"));
 [00000001] OutputStream_0x827000

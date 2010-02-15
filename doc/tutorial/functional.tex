@@ -13,7 +13,7 @@ them as arguments. For instance, you don't need to write
 object, you can simply use \lstinline{setSlot}.
 
 % FIXME: doesn't work, toplevel, puke, etc
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var o = Object.clone | {};
 // Here we can use f as any regular value
 o.setSlot("m1", function () { echo("Hello") }) | {};

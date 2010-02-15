@@ -13,7 +13,7 @@ An object in \us is a rather simple concept: a list of slots. A
 list of slot names, each of which indexes a value --- just like a
 dictionary.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // Create a fresh object with two slots.
 class Foo
 {
@@ -242,7 +242,7 @@ illustrated below. Inside a method, \lstinline|this| gives access to
 the target --- as in \Cxx.  It can be omitted if there is no ambiguity
 with local variables.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var o = Object.clone;
 [00000000] Object_0x0
 // This syntax stores the function in the 'f' slot of 'o'.
@@ -340,7 +340,7 @@ variables point to the same object.  For this, we introduce
 another, their values in this documentation are dummy, yet not null to
 be able to differentiate them.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var o = Object.clone;
 [00000000] Object_0x100000
 o.uid;
@@ -386,7 +386,7 @@ defining a local variable or a slot, you're not copying any value (as
 you would be in \C or \Cxx), you're only making it refer to an already
 existing value (as you would in \ruby or \java).
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var a = 42;
 [00000000] 42
 var b = 42;
@@ -427,7 +427,7 @@ c.localSlotNames;
 Updating slots or local variables does not update the referenced
 value. It simply redirects the variable to the new given value.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var a = 42;
 [00000000] 42
 var b = a;
@@ -450,7 +450,7 @@ of what your variable are referring to.
 Finally, function and method arguments are also passed by reference:
 they can be modified by the function.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 function test(arg)
 {
   var arg.flag;  // add a slot in arg
@@ -469,7 +469,7 @@ x.localSlotNames;
 Beware however that arguments are passed by reference, and the
 behavior might not be what you may expected.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 function test(arg)
 {
   // Updates the local variable arg to refer 1.

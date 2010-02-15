@@ -24,7 +24,7 @@ characters.
 %% TeX4ht produces ugly results when using lstnewenvironment.  Worse,
 %% here it creates a new <pre> on each side of the escape characters.
 %% So let's hope Eitan fixes this some day.
-\begin{urbiscript}[escapeinside=<>,firstnumber=last]
+\begin{urbiscript}[firstnumber=1,escapeinside=<>]
 #<Été>;
 [00048238:error] !!! invalid character: `#'
 [00048239:error] !!! invalid character: `\xc3'
@@ -2114,7 +2114,7 @@ statements to watch events.
 The \lstinline|at| construct can be used to watch a given Boolean
 expression.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var x = 0 |
 var x_is_two = false |
 at (x == 2)
@@ -2132,7 +2132,7 @@ It can also wait for some condition to hold long enough:
 \lstinline|\var{exp} ~ \var{duration}|, as a condition, denotes the
 fact that \var{exp} was true for \var{duration} seconds.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var x = 0 |
 var x_was_two_for_two_seconds = false |
 at (x == 2 ~ 2s)
@@ -2160,7 +2160,7 @@ example, \lstinline|scopeTag| is used to label the \lstinline|at|
 statement.  When the function ends, the \lstinline|at| is no longer
 active.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var x = 0 |
 var x_is_two = false |;
 
@@ -2298,7 +2298,7 @@ The default flavor, \lstinline|every,| launches the execution of the
 block in the background every given period. Iterations may overlap.
 
 % Cut the previous every, no [firstnumber=last]
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // If an iteration is longer than the given period, it will overlap
 // with the next one.
 timeout (2.8s)
@@ -2586,7 +2586,7 @@ is not held until all its watchers have completed their job.
 A \lstinline'whenever' clause can be used to catch events with or
 without payloads.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var e = Event.new|;
 whenever (e?)
   echo("e on")
@@ -2605,7 +2605,7 @@ e!(1) & e!(2);
 The payload is available in both bodies.  The pattern-matching and
 guard on the payload is available.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var e = Event.new|;
 whenever (e?("arg", var arg) if arg % 2)
   echo("e (%s) on" % arg)
@@ -2626,7 +2626,7 @@ e!("arg", 17);
 If the body of the \lstinline|whenever| lasts for a long time, it is
 possible that two executions be run concurrently.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var e = Event.new|;
 whenever (e?(var d))
   {
@@ -2660,7 +2660,7 @@ long as its condition holds.  The number of evaluation of the bodies
 is typically non-deterministic, as not only does it depend on how
 long the condition holds, but also ``how fast'' the \urbi kernel runs.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var x = 0|;
 var count = 0|;
 var t = Tag.new|;
@@ -2724,7 +2724,7 @@ you want to keep the value of some index variable, use a local
 variable inside the loop body:
 
 % Cut the previous every, no [firstnumber=last]
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 {
   var i = 4|
   while, (i)

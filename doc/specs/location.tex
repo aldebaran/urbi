@@ -13,7 +13,7 @@ in error messages.
 Without argument, a newly constructed Location has its Positions initialized
 to the first line and the first column.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 Location.new;
 [00000001] 1.1
 \end{urbiscript}
@@ -21,7 +21,7 @@ Location.new;
 With a Position argument \var{p}, the Location will clone the Position into
 the begin and end Positions.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 Location.new(Position.new("file.u",14,25));
 [00000001] file.u:14.25
 \end{urbiscript}
@@ -29,7 +29,7 @@ Location.new(Position.new("file.u",14,25));
 With two Positions arguments \var{begin} and \var{end}, the Location will
 clone both Positions into its own fields.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
 [00000001] file.u:14.25-34
 \end{urbiscript}

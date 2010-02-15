@@ -28,7 +28,7 @@ For now, we've separated our different commands with a semicolon
 The example below demonstrates the use of \lstinline{&} to launch two
 functions in parallel.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 function test(name)
 {
   echo(name + ": 1");
@@ -73,7 +73,7 @@ rather subtle:
   its children have finished.
 \end{itemize}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 function test(name)
 {
   echo(name + ": 1");
@@ -108,7 +108,7 @@ its argument. Its behavior is the same as the comma (\lstinline{,})
 operator, except that the execution is completely detached, and not
 waited for at the end of the scope.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 function test()
 {
   // Wait for one second, and echo "foo".
@@ -132,7 +132,7 @@ and a colon (\lstinline{:}). Tag can be created with
 a good idea since it will be used for many features. The example below
 illustrates how to tag chunks of code.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // Create a new tag
 var mytag = Tag.new("name");
 [00000000] Tag<name>
@@ -154,7 +154,7 @@ feature can be used when inputting test code in the top level to avoid
 bothering to declare each tag, yet it is considered poor
 practice in regular code.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // Since mytag is not declared, this will first do:
 // var Tag.mytag = Tag.new("mytag");
 mytag : 42;
@@ -183,7 +183,7 @@ parallel. Tags have a few control methods (see \refObject{Tag}):
 
 The three following examples illustrate these features.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // Launch in background (using the comma) code that prints "ping"
 // every second.  Tag it to keep control over it.
 mytag:
@@ -208,7 +208,7 @@ sleep(0.1s);
 [00007000] *** ping
 \end{urbiscript}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // Now, we print out a message when we get out of the tag.
 {
   mytag:
@@ -233,7 +233,7 @@ mytag.stop;
 mytag.unfreeze;
 \end{urbiscript}
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // Now, print out a message when we get out of the tag.
 loop
 {
@@ -282,7 +282,7 @@ execution takes longer than the given timeout, it aborts it, prints
 \end{itemize}
 
 % FIXME: doesn't work (inner return)
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // timeout (Code, Duration).
 function timeOut
 {

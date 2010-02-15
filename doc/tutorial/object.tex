@@ -30,7 +30,7 @@ values, \lstinline|first| and \lstinline|second|, like an
 \lstinline{std::pair} in \Cxx. Since \us is prototype-based, there is
 no pair class. Instead, \lstinline|Pair| is really a pair (object).
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 Pair;
 [00000000] (nil, nil)
 \end{urbiscript}
@@ -78,7 +78,7 @@ of some type) and inheritance relations (extending another type) are
 simplified in a single relation: prototyping. You can inspect an
 object prototypes with the \lstinline{protos} method.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var p = Pair.clone;
 [00000000] (nil, nil)
 p.protos;
@@ -110,7 +110,7 @@ instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
 are present in \lstinline|Pair|, which is \lstinline|p|'s
 prototype. This is illustrated below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var p = Pair.clone;
 [00000000] (nil, nil)
 // p has no slots of its own.
@@ -133,7 +133,7 @@ Let's experience slot lookup by ourselves. In \us, you can add and
 remove prototypes from an object thanks to \lstinline{addProto} and
 \lstinline{removeProto}.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // We create a fresh object.
 var c = Object.clone;
 [00000000] Object_0x1
@@ -169,7 +169,7 @@ from \var{x}:
 Thus, slots from the last prototype added take precedence over other
 prototype's slots.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var proto1 = Object.clone;
 [00000000] Object_0x10000000
 var proto2 = Object.clone;
@@ -202,7 +202,7 @@ You can check where in the prototype hierarchy a slot is found with
 the \lstinline{locateSlot} method. This is a very
 handful tool when inspecting an object.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var p = Pair.clone;
 [00000000] (nil, nil)
 // Check that the 'first' slot is found in Pair
@@ -233,7 +233,7 @@ thus altering the prototype and the other clone as well?
 
 The answer is, of course, no, as illustrated below.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var proto = Object.clone;
 [00000000] Object_0x1
 var proto.x = 0;
@@ -298,7 +298,7 @@ slots. For this we use the \lstinline{do} scope described in
 used to customize pairs printing --- don't give it too much attention
 for now.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var MyPair = Object.clone;
 [00000000] Object_0x1
 do (MyPair)
@@ -328,7 +328,7 @@ That's it, we defined a pair that can be cloned at will! \us
 provides a shorthand to define classes as we did above: the
 \lstinline{class} keyword.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 class MyPair
 {
   var first = nil;
@@ -350,7 +350,7 @@ to obtain an identical object. Yet, some classes provide more
 elaborate constructors, accessible by calling \lstinline{new} instead
 of \lstinline{clone}, potentially passing arguments.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var p = Pair.new("foo", false);
 [00000000] ("foo", false)
 \end{urbiscript}
@@ -365,7 +365,7 @@ To define such constructors, prototypes only need to provide an
 new. For instance, we can improve our previous \lstinline{Pair} class
 with a constructor.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 class MyPair
 {
   var first = nil;

@@ -12,7 +12,7 @@ Tags are objects, and must be created as any object by using
 The name is optional, it makes easier to display a tag and remember
 what it is.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 // Anonymous tag.
 var t1 = Tag.new;
 [00000001] Tag<tag_8>
@@ -30,7 +30,7 @@ var t2 = Tag.new("cool name");
 To \dfn{stop} a tag means to kill all the code currently running that
 it labels.  It does not affect ``newcomers''.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var t = Tag.new|;
 var t0 = time|;
 t: every(1s) echo("foo"),
@@ -55,7 +55,7 @@ t.stop;
 \lstinline|System.stop| can be used to inject a return value to a
 tagged expression.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var t = Tag.new|;
 var res;
 detach(res = { t: every(1s) echo("computing") });
@@ -76,7 +76,7 @@ misleading: \lstinline|\var{var} = \var{tag}: \var{exp}| is read as
 following example, which is most probably an error from the user, with
 the previous, correct, one.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var t = Tag.new("t")|;
 var res;
 res = t: every(1s) echo("computing"),
@@ -106,7 +106,7 @@ One can \dfn{unblock} the tag.  Contrary to
 \lstinline|freeze|/\lstinline|unfreeze|, tagged code does not resume
 the execution.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var ping = Tag.new("ping")|;
 ping:
   every (1s)
@@ -142,7 +142,7 @@ sleep(2.1s);
 As with \lstinline|stop|, one can force the value of stopped
 expressions.
 
-\begin{urbiassert}
+\begin{urbiassert}[firstnumber=1]
 ["foo", "foo", "foo"]
 ==
 {
@@ -161,7 +161,7 @@ expressions.
 To \dfn{freeze} a tag means holding the execution of code it labels.
 This applies to code already being run, and ``arriving'' pieces of code.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var t = Tag.new|;
 var t0 = time|;
 t: every(1s) echo("time   : %.0f" % (time - t0)),
@@ -196,7 +196,7 @@ Scopes feature a \lstindex{scopeTag}, i.e., a tag which will be stop
 when the execution reaches the end of the current scope.  This is
 handy to implement cleanups, how ever the scope was exited from.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 {
   var t = scopeTag;
   t: every(1s)
@@ -227,7 +227,7 @@ sleep(2s);
 Tags provide two events, \lstinline|enter| and \lstinline|leave|, that
 trigger whenever flow control enters or leaves statements the tag.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var t = Tag.new("t");
 [00000000] Tag<t>
 

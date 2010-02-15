@@ -13,7 +13,7 @@ a condition, and an expression, \lstinline|at| will evaluate the
 expression every time the condition becomes true. That is,
 when a rising edge occurs on the condition.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var x = 0;
 [00000000] 0
 at (x > 5)
@@ -39,7 +39,7 @@ x = 10;
 An \lstinline|onleave| block can be appended to execute an expression
 when the expression \emph{becomes} false --- that is, on falling edges.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var x = false;
 [00000000] false
 at (x)
@@ -61,7 +61,7 @@ The \lstinline|whenever| construct is similar to \lstinline|at|,
 except the expression evaluation is systematically restarted when it
 finishes as long as the condition stands true.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var x = false;
 [00000000] false
 whenever (x)
@@ -85,7 +85,7 @@ Just like \lstinline|at| has \lstinline|onleave|, \lstinline|whenever|
 has \lstinline|else|: the given expression is evaluated as long as the
 condition is false.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var x = false;
 [00002000] false
 whenever (x)
@@ -122,7 +122,7 @@ sleep (2s);
 can create events by cloning the \lstinline|Event| prototype. They can
 then be emitted with the \lstinline|!| keyword.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var myEvent = Event.new;
 [00000000] Event_0x0
 at (myEvent?)
@@ -140,7 +140,7 @@ punctual events. However, if you emit an event for a given duration,
 \lstinline|whenever| will keep triggering for this duration, contrary
 to \lstinline|at|.
 
-\begin{urbiscript}
+\begin{urbiscript}[firstnumber=1]
 var myEvent = Event.new;
 [00000000] Event_0x0
 whenever (myEvent?)
