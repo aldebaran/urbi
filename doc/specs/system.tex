@@ -192,6 +192,14 @@ maybeLoad("123.u") == 123;
 maybeLoad("u.123").isVoid;
 \end{urbiassert}
 
+\item \lstinline|period|\\
+  The \dfn{period} of the \urbi kernel.  Influences the trajectories
+  (\refObject{TrajectoryGenerator}), and the \uobject monitoring.
+  Defaults to 20ms.
+\begin{urbiassert}
+System.period == 20ms;
+\end{urbiassert}
+
 \item \lstinline|Platform|\\
   See \refObject{System.Platform}
 

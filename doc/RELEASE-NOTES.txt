@@ -8,6 +8,10 @@ release.
 urbiscript
 ==========
 
+Changes:
+
+- Object.getPeriod is deprecated in favor of System.period.
+
 New features:
 
 - List.subset

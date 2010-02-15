@@ -1,7 +1,5 @@
 /* Urbi side of 2.0 UObject plugin/remote implementation.
 */
-/// FIXME: implement in C++ to get the period passed on command line.
-var Object.getPeriod = 20ms;
 
 // We cannot use the "class Global.UObject: Finalizable" syntax here,
 // because of specific constraints of Finalizable.
@@ -10,7 +8,7 @@ do (Global.UObject)
 {
   var '$type' = "UObject";
 
-  var minimumInterval = Object.getPeriod;
+  var minimumInterval = System.period;
   var updateTask = 0;
   var timerTask = 0;
   var updateInterval = 0;
@@ -328,7 +326,7 @@ do (UValue)
 // Force reevaluation of all at exprs when at least one notifyaccess is present.
 // FIXME: find a way to stop when callbacks are removed.
 at (getSlot("UVar").onHasNotifyAccess?)
-  getSlot("UVar").nAccessTag: loop { sleep(getPeriod)};
+  getSlot("UVar").nAccessTag: loop { sleep(System.period)};
 
 
 class Global.uobjects {};
@@ -416,7 +414,7 @@ class Global.'external'
       // FIXME: Use waituntil once it is efficient.
       while(!(Global.uobjects.hasSlot(u)
               && Global.uobjects.getSlot(u).hasLocalSlot("init")))
-        sleep(getPeriod) |
+        sleep(System.period) |
       var ret = Global.uobjects.getSlot(u);
       ret.protos = [this];
       ret
@@ -518,7 +516,7 @@ class Global.'external'
                 "Global.uobjects." + u ] + args;
       // FIXME: Use waituntil once it is efficient.
       while (!Global.uobjects.hasSlot(u))
-        sleep(getPeriod) |
+        sleep(System.period) |
       var res = Global.uobjects.getSlot(u).acceptVoid;
       Global.uobjects.removeSlot(u);
       res.unacceptVoid

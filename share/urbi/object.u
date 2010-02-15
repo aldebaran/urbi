@@ -23,6 +23,13 @@ do (Object)
     setSlot(to, getSlot(from))
   };
 
+  /// FIXME: implement in C++ to get the period passed on command line.
+  function getPeriod()
+  {
+    Kernel1.deprecated("Object.getPeriod", "System.period") |
+    System.period
+  };
+
   // Change the whole set of parents.
   function setProtos(ps)
   {

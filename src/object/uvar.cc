@@ -133,25 +133,29 @@ namespace urbi
     UVar::loopCheck()
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      // Prepare a call to System.period.  Keep its computation in the
+      // loop, so that we can change it at run time.
+      CAPTURE_GLOBAL(System);
+      objects_type args;
+      args << System;
+
       // Loop if we have both notifychange and notifyaccess callbacs.
       // Listeners on the changed event counts as notifychange
       if (!looping_
           &&
-          (   !slot_get(SYMBOL(change))->call(SYMBOL(empty))->as_bool()
-              || slot_get(SYMBOL(changed))->call(SYMBOL(hasSubscribers))->as_bool()
-            )
+          (!slot_get(SYMBOL(change))->call(SYMBOL(empty))->as_bool()
+           || slot_get(SYMBOL(changed))->call(SYMBOL(hasSubscribers))->as_bool()
+           )
           && !slot_get(SYMBOL(access))->call(SYMBOL(empty))->as_bool())
       {
         looping_ = true;
         while (true)
         {
           accessor();
-          objects_type args;
-          args.push_back(global_class);
-          rObject period = args[0]->call_with_this(SYMBOL(getPeriod), args);
+          rObject period = args[0]->call_with_this(SYMBOL(period), args);
           r.yield_until(libport::utime() +
-                        static_cast<libport::utime_t>(period->as<Float>()->value_get()
-                                                      * 1000000.0));
+                        libport::utime_t(period->as<Float>()->value_get()
+                                         * 1000000.0));
         }
       }
     }

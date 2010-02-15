@@ -137,6 +137,9 @@ do (System)
     callMessage(call)
   };
 
+  var period = 20ms;
+
+  // systemFiles.
   systemFiles->updateHook = function(slot, value)
   {
     setSystemFiles(value) |

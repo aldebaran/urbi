@@ -101,7 +101,7 @@ class Global.TrajectoryGenerator
     var tag = Tag.new|
     tag:
     {
-      every|(getPeriod)
+      every|(System.period)
       {
 	if (isOver)
           tag.stop|
@@ -143,7 +143,7 @@ class TrajectoryGenerator.Until : TrajectoryGenerator
       if (until)
         gen.isOver = true
       else
-        sleep(getPeriod)
+        sleep(System.period)
     }|
   };
 };
@@ -319,7 +319,7 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
     if (done(currentVal))
       return targetValue |
     var res = currentVal
-      + speed * (targetValue - currentVal).sign * getPeriod |
+      + speed * (targetValue - currentVal).sign * System.period |
     if ((currentVal < targetValue && targetValue < res)
       || (res < targetValue && targetValue < currentVal))
     {
@@ -349,7 +349,7 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
   {
     if (done(currentVal))
       return targetValue |
-    var stat = getPeriod / ( startTime + duration - time) |
+    var stat = System.period / ( startTime + duration - time) |
     if (stat < 0 || 1 < stat)
       return targetValue |
     currentVal + stat *  (targetValue - currentVal)
