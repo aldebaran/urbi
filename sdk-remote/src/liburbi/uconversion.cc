@@ -559,12 +559,12 @@ namespace urbi
 	if (format == 1)
 	  convertYCrCbtoJPEG((byte*) uncompressedData,
 			     dest.width ,dest.height,
-			     (byte*) dest.data, dsz, 90);
+			     (byte*) dest.data, dsz, 80);
 	else
 	  convertRGBtoJPEG((byte*) uncompressedData,
 			   dest.width , dest.height,
-			   (byte*) dest.data, dsz, 90);
-
+			   (byte*) dest.data, dsz, 80);
+        dest.size = dsz;
 	break;
       default:
         printf("Image conversion to format %s is not implemented\n",
