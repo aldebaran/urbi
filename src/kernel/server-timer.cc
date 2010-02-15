@@ -15,6 +15,8 @@
 # include <libport/lexical-cast.hh>
 # include <libport/tokenizer.hh>
 
+GD_ADD_CATEGORY(URBI);
+
 namespace kernel
 {
   libport::timer server_timer;
