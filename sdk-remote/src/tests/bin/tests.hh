@@ -78,7 +78,7 @@ sget(urbi::USyncClient& c, const std::string& msg)
 {
   VERBOSE("syncGet: Asking " << msg);
   T res;
-  assert(urbi::getValue(c.syncGet(msg), res));
+  urbi::getValue(c.syncGet(msg), res);
   return res;
 }
 
