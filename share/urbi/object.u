@@ -111,19 +111,7 @@ do (Object)
     }
   };
 
-  // Tasks.
-  var tasks = [];
-
-  function eachBg(f, list)
-  {
-    if (list.size)
-    {
-      Object.tasks += [detach (f (list.head))];
-      eachBg (f, list.tail)
-    };
-  };
-
-  function inspect (var deep = false)
+  function inspect(var deep = false)
   {
     function '<' (l, r) { l.toLower < r.toLower };
     echo("Inspecting " + this.asPrintable);
