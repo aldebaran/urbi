@@ -199,7 +199,7 @@ var a = Object.new|;
 var a.slot = 21|;
 assert
 {
-  a.locateSlot("slot") == a;
+  a.locateSlot("slot") === a;
   a.getLocalSlot("slot") == 21;
 };
 
@@ -221,11 +221,11 @@ var b.slot = 21|;
 assert
 {
   // Local slot.
-  b.locateSlot("slot") == b;
+  b.locateSlot("slot") === b;
   b.getSlot("slot") == 21;
 
   // Inherited slot.
-  b.locateSlot("init") == Object;
+  b.locateSlot("init") === Object;
   b.getSlot("init") == Object.getSlot("init");
 };
 
