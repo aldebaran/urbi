@@ -74,12 +74,35 @@ classes in traditional object-oriented programming languages (see
 \end{urbiassert}
 
 \item \lstinline|allSlotNames|\\
-  Return a list with the slot names of \lstinline|this| and of all
-  parents in the hierarchy of \lstinline|this|.
+  Return a list with the slot names of \lstinline|this| and its
+  ancesters.
+\begin{urbiassert}[firstnumber=last]
+Object.localSlotNames
+  .subset(Object.allSlotNames);
+Object.protos.foldl(function (var r, var p) { r + p.localSlotNames },
+                    [])
+  .subset(Object.allSlotNames);
+\end{urbiassert}
 
-\item \lstinline|apply|\\
+\item \lstinline|apply(\var{args})|\\
+  ``Invoke \lstinline|this|''.  The size of the argument list,
+  \var{args}, must be one.  This argument is ignored.  This function
+  exists for compatibility with \lstinline|Code.apply|.
+\begin{urbiassert}[firstnumber=last]
+Object.apply([this]) === Object;
+Object.apply([1])    === Object;
+\end{urbiassert}
 
-\item \lstinline|as|\\
+\item \lstinline|as(\var{type})|\\
+  Convert \lstinline|this| to \var{type}.  This is syntactic sugar for
+  \lstinline|as\var{Type}| when \var{Type} is the \lstinline|$type| of
+  \var{type}.
+\begin{urbiassert}[firstnumber=last]
+12.as(Float) == 12;
+"12".as(Float) == 12;
+12.as(String) == "12";
+Object.as(Object) === Object;
+\end{urbiassert}
 
 \item \lstinline|asBool|\\
   Whether \lstinline|this| is ``true'', see \autoref{sec:truth}.
@@ -107,6 +130,12 @@ void.asBool;
 \item \lstinline|callMessage|\\
 
 \item \lstinline|clone|\\
+  Clone \lstinline|this|, i.e., create a fresh, empty, object, which
+  sole prototype is \lstinline|this|.
+\begin{urbiassert}[firstnumber=last]
+Object.clone.protos == [Object];
+Object.clone.localSlotNames == [];
+\end{urbiassert}
 
 \item \lstinline|cloneSlot(\var{from}, \var{to})|\\
   Set the new slot \var{to} using a clone of \var{from}. This can only
