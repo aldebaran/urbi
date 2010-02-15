@@ -34,7 +34,7 @@ do (Object)
       add.apply([this, p]) |
   };
 
-  function '!==' (rhs)
+  function '!=='(rhs)
   {
     !(this === rhs)
   };
@@ -97,7 +97,7 @@ do (Object)
   // Gives type, + uid if relevant
   function '$id'()
   {
-    var res = '$type' | 
+    var res = '$type' |
     if (!isProto)
       res += "_" + uid |
     res
@@ -107,7 +107,7 @@ do (Object)
   {
     function (x)
     {
-      x.getSlot (fn) .apply ([x])
+      x.getSlot(fn).apply([x])
     }
   };
 

@@ -138,7 +138,7 @@ do (List)
   };
 
   // Whether at least one element verifies the \a f predicate.
-  function any (f)
+  function any(f)
   {
     for| (var i: this)
       if (f (i))

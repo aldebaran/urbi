@@ -21,7 +21,7 @@ class Global.Math
     return call.evalArgs.max
   };
 
-  for (var v: ["inf", "pi", "nan"])
+  for (var v: ["inf", "nan", "pi"])
     setSlot(v, Float.getSlot(v));
 };
 Global.addProto(Global.Math);
