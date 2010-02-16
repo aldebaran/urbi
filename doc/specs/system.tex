@@ -175,7 +175,7 @@ load("123.u") == 123;
   \lstinline|loadModule|.
 
 \item \lstinline|loadModule(\var{module})|\\
-  Load the UObject \var{module}.  Same as \lstinline|loadLibrary|,
+  Load the \UObject \var{module}.  Same as \lstinline|loadLibrary|,
   except that the low-level \Cxx symbols are not made ``global'' (in
   the sense of the shared library loader).
 
@@ -194,7 +194,7 @@ maybeLoad("u.123").isVoid;
 
 \item \lstinline|period|\\
   The \dfn{period} of the \urbi kernel.  Influences the trajectories
-  (\refObject{TrajectoryGenerator}), and the \uobject monitoring.
+  (\refObject{TrajectoryGenerator}), and the \UObject monitoring.
   Defaults to 20ms.
 \begin{urbiassert}
 System.period == 20ms;
