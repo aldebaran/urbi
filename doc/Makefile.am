@@ -72,6 +72,7 @@ endif
 # support installing directories.
 html_DIR = urbi-sdk.htmldir
 install-data-hook: install-html-dir
+.PHONY: install-html-dir
 if ENABLE_DOC_HTML
 noinst_DATA += $(html_DIR)
 install-html-dir: $(html_DIR)
