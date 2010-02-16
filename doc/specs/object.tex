@@ -57,12 +57,16 @@ classes in traditional object-oriented programming languages (see
 
 \item \lstinline|addProto(\var{proto})|\\
   Add \var{proto} into the list of prototypes of \lstinline|this|.
+  Return \lstinline|this|.
 \begin{urbiscript}
+do (Object.new)
 {
-  var o = Object.new;
-  o.addProto(Orderable);
-  assert(o.protos == [Orderable, Object]);
-};
+  assert
+  {
+    addProto(Orderable) === this;
+    protos == [Orderable, Object];
+  };
+}|;
 \end{urbiscript}
 
 \item \lstinline|allProto|\\
@@ -106,7 +110,6 @@ Object.as(Object) === Object;
 
 \item \lstinline|asBool|\\
   Whether \lstinline|this| is ``true'', see \autoref{sec:truth}.
-
 \begin{urbiscript}
 assert(Global.asBool == true);
 assert(nil.asBool ==    false);
@@ -165,7 +168,6 @@ assert(!(foo === bar));
 \item \lstinline|copySlot(\var{from}, \var{to})|\\
   Same as \lstinline|cloneSlot|, but the slot aren't cloned, so the
   two slot are the same.
-
 \begin{urbiscript}
 var moo = Object.new |;
 cloneSlot("moo", "loo") |;
@@ -240,7 +242,6 @@ assert
 \item \lstinline|getLocalSlot(\var{name})|\\
   The value associated to \var{name} in \lstinline|this|, excluding
   its ancestors (contrary to \lstinline|getSlot|).
-
 \begin{urbiscript}
 var a = Object.new|;
 
@@ -262,7 +263,6 @@ a.getLocalSlot("init");
   The value associated to \var{name} in \lstinline|this|, possibly
   after a look-up in its prototypes (contrary to
   \lstinline|getLocalSlot|).
-
 \begin{urbiscript}
 var b = Object.new|;
 var b.slot = 21|;
@@ -287,7 +287,6 @@ b.getSlot("ENOENT");
 \item \lstinline|hasLocalSlot(\var{slot})|\\
   Whether \lstinline|this| features a slot \var{slot}, locally, not
   from some ancestor.  See also \lstinline|Object.hasSlot|.
-
 \begin{urbiscript}
 class Base         { var this.base = 23; } |;
 class Derive: Base { var this.derive = 43 } |;
@@ -337,7 +336,6 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
 \item \lstinline|isA(\var{obj})|\\
   Return true if \lstinline|this| has \var{obj} in his parents, false
   otherwise.
-
 \begin{urbiassert}
 Float.isA(Orderable);
 !(String.isA(Float));
@@ -345,7 +343,6 @@ Float.isA(Orderable);
 
 \item \lstinline|isNil|\\
   Return true if \lstinline|this| is \refObject{nil}, false otherwise.
-
 \begin{urbiassert}
 nil.isNil;
 !(0.isNil);
@@ -353,7 +350,6 @@ nil.isNil;
 
 \item \lstinline|isProto|\\
   Return true if \lstinline|this| is a prototype, false otherwise;
-
 \begin{urbiassert}
 Float.isProto;
 !(42.isProto);
@@ -371,13 +367,19 @@ void.isVoid;
   Return \lstinline|nil| if \lstinline|this| don't have the slot
   \lstinline|slot|. Otherwise it returns the first lowest owner of
   \lstinline|slot| of \lstinline|this|.
-
 \begin{urbiassert}
 locateSlot("init") == Channel;
 locateSlot("doesNotExist").isNil;
 \end{urbiassert}
 
 \item \lstinline|print|\\
+  Send \lstinline|print| to the \lstinline|topLevel| channel.
+\begin{urbiscript}
+1.print;
+[00001228] 1
+[1, "12"].print;
+[00001228] [1, "12"]
+\end{urbiscript}
 
 \item \lstinline|protos|\\
   Return the list of prototypes of \lstinline|this|.
@@ -421,28 +423,103 @@ do (2)
 \end{urbiscript}
 
 \item \lstinline|removeProto(\var{proto})|\\
-  Remove \var{proto} from the list of prototypes of \lstinline|this|.
+  Remove \var{proto} from the list of prototypes of \lstinline|this|,
+  and return \lstinline|this|.  Do nothing if \var{proto} is not a
+  prototype of \lstinline|this|.
+\begin{urbiscript}
+do (Object.new)
+{
+  assert
+  {
+    addProto(Orderable);
+    removeProto(123) === this;
+    protos == [Orderable, Object];
+    removeProto(Orderable) === this;
+    protos == [Object];
+  };
+}|;
+\end{urbiscript}
 
 \item \lstinline|removeSlot(\var(slot))|\\
-  Remove \var{slot} from the list of slots of \lstinline|this|.
+  Remove \var{slot} from the (local) list of slots of
+  \lstinline|this|, and return \lstinline|this|.  Do nothing if
+  \var{slot} does not exist.
+\begin{urbiscript}
+{
+  var base = Object.new;
+  var base.slot = "base";
+
+  var derive = Base.new;
+  var derive.slot = "derive";
+
+  do (derive)
+  {
+    assert
+    {
+      removeSlot("no such slot") === this;
+      removeSlot("slot") === this;
+      localSlotNames == [];
+      base.slot == "base";
+      removeSlot("slot") === this;
+      base.slot == "base";
+    };
+  }|;
+};
+\end{urbiscript}
+
 
 \item \lstinline|setConstSlot|\\
   Like \lstinline|setSlot| but the created slot is const.
-
 \begin{urbiscript}
 assert(setConstSlot("fortyTwo", 42) == 42);
 fortyTwo = 51;
 [00000000:error] !!! cannot modify const slot
 \end{urbiscript}
 
-\item \lstinline|setProperty|\\
+\item \lstinline|setProperty(\var{slotName}, \var{propName}, \var{value}|\\
+  Set the property \var{propName} of slot \var{slotName} to
+  \var{value}.  Raise an error in \var{slotName} does not exist.
+  Return \var{value}.  This is what
+  \lstinline|\var{slotName}->\var{propName} = \var{value}| actually
+  performs.
+\begin{urbiscript}
+do (Object.new)
+{
+  var slot = "slot";
+  var value = "value";
+  assert
+  {
+    setProperty("slot", "prop", value) === value;
+    "prop" in properties("slot");
+    getProperty("slot", "prop") === value;
+    slot->prop === value;
+    setProperty("slot", "noSuchProperty", value) === value;
+ };
+}|;
+setProperty("noSuchSlot", "prop", "12");
+[00000081:error] !!! lookup failed: noSuchSlot
+\end{urbiscript}
 
-\item \lstinline|setProtos|\\
+
+\item \lstinline|setProtos(\var{protos})|\\
+  Set the list of prototypes of \lstinline|this| to \var{protos}.
+  Return \lstinline|void|.
+\begin{urbiscript}
+do (Object.new)
+{
+  assert
+  {
+    protos == [Object];
+    setProtos([Orderable, Object, Comparable]).isVoid;
+    protos == [Orderable, Object, Comparable];
+  };
+}|;
+\end{urbiscript}
 
 \item \lstinline|setSlot(\var{name}, \var{value})|\\
   Create a slot \var{name} mapping to \var{value}. Raise an error if
-  \var{name} was already defined.
-
+  \var{name} was already defined.  This is what
+  \lstinline|var \var{name} = \var{value}| actually performs.
 \begin{urbiassert}
 Object.setSlot("theObject", Object) === Object;
 Object.theObject === Object;
@@ -450,15 +527,40 @@ theObject === Object;
 \end{urbiassert}
 
 \item \lstinline|slotNames|\\
-  Returns the list of slot owned by \lstinline|this|.
-
-\item \lstinline|tasks|\\
-  Returns the list of the current running tasks;
+  Deprecated in favor of \lstinline|localSlotNames| and
+  \lstinline|allSlotNames|.  Currently return the list of the names of
+  the slots owned by \lstinline|this|, but will eventually return the
+  list of all the slot names.
 
 \item \lstinline|'$type'|\\ % fix color $
+  The name of the type of \lstinline|this|.  The \lstinline|class|
+  construct defines this slot to the name of the class
+  (\autoref{sec:tut:class}).  This is used to display the name of
+  ``instances''.
+\begin{urbiscript}
+class Example {};
+[00000081] Example
+assert
+{
+  Example.'$type' == "Example";
+};
+Example.new;
+[00000081] Example_0x6fb2720
+\end{urbiscript}
 
 \item \lstinline|uid|\\
   Returns the unique id of \lstinline|this|.
+\begin{urbiscript}
+{
+  var foo = Object.new;
+  var bar = Object.new;
+  assert
+  {
+    foo.uid == foo.uid;
+    foo.uid != bar.uid;
+  };
+};
+\end{urbiscript}
 
 \item \lstinline|unacceptvoid|\\
   Return \lstinline|this|.  See \refObject{void} to know why.
