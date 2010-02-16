@@ -30,6 +30,11 @@ do (Object)
     System.period
   };
 
+  function print()
+  {
+    topLevel << this
+  };
+
   // Change the whole set of parents.
   function setProtos(ps)
   {

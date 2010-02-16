@@ -2,11 +2,6 @@
 | Channel.  |
 `----------*/
 
-function Object.print()
-{
-  topLevel << this
-};
-
 // Does not have anything special.  Yet.
 class Global.Channel
 {
