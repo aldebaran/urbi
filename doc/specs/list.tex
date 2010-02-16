@@ -169,7 +169,6 @@ Apply the given functional value on all members simultaneously.
 \item \lstinline|front|\\
   Return the first element of the target. An error if the target is
   empty.
-
 \begin{urbiscript}
 assert([0, 1, 2].front == 0);
 [].front;
@@ -185,12 +184,10 @@ assert([0, 1, 2].front == 0);
 \end{urbiassert}
 
 \item \lstinline|hasSame(\var{that})|\\
-  Return whether one of the member of the target is physically equal
-  to the argument.
-
+  Whether one of the members of the target is physically equal to
+  \var{that}.
 \begin{urbiscript}
-var y = 1;
-[00000000:hide] 1
+var y = 1|;
 [0, y, 2].hasSame(1);
 [00000000] false
 [0, y, 2].hasSame(y);
@@ -199,6 +196,11 @@ var y = 1;
 
 \item \lstinline|head|\\
   Synonym for \lstinline|front|.
+\begin{urbiscript}
+assert([0, 1, 2].head == 0);
+[].head;
+[00000000:error] !!! head: cannot be applied onto empty list
+\end{urbiscript}
 
 \item \lstinline|insertBack(\var{that})|\\
   Insert the given element at the end of the target.
