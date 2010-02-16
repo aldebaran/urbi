@@ -28,17 +28,12 @@ namespace urbi
         }
         return changed_;
       }
-      if (k == SYMBOL(constant))
-        return to_urbi(constant_);
-      if (!properties_)
-        return 0;
-      properties_type::iterator it = properties_->find(k);
-      if (it == properties_->end())
-        return 0;
-      else
-        return it->second;
+      if (properties_)
+        return libport::find0(*properties_, k);
+      return 0;
     }
 
+    /// FIXME: does not work with "changed".
     bool
     Slot::property_has(libport::Symbol k) const
     {
@@ -66,6 +61,7 @@ namespace urbi
         properties_->erase(k);
     }
 
+    // FIXME: Does not work with changed.
     Slot::properties_type*
     Slot::properties_get()
     {
@@ -76,6 +72,7 @@ namespace urbi
     Slot::constant_set(bool c)
     {
       constant_ = c;
+      property_set(SYMBOL(constant), c ? true_class : false_class);
     }
 
     bool

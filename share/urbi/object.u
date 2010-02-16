@@ -141,6 +141,9 @@ do (Object)
     for (var s: slots.sort ('<'))
     {
       var o = locateSlot(s);
+      var ps = o.properties(s);
+      var constant = ps["constant"];
+      ps.erase("constant");
       echo({
              if (!deep)
                "  "
@@ -149,9 +152,11 @@ do (Object)
              else
                "  %s." % o.asPrintable
            }
-           + "%s : %s"
-              % [s, o.getSlot(s).'$type']);
-      if (var ps = o.properties(s))
+           + "%s : %s%s"
+              % [s,
+                 { if (constant) "const " else "" },
+                 o.getSlot(s).'$type']);
+      if (ps)
       {
         echo("    Properties:");
         for (var p: ps.keys.sort('<'))

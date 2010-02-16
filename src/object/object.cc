@@ -299,11 +299,18 @@ namespace urbi
                       int depth_max) const
     {
       o << slot.first.second << " = ";
+      if (slot.second->constant_get())
+        o << "const ";
       slot.second->value()->dump(o, depth_max) << libport::iendl;
-      if (Slot::properties_type* props = slot.second->properties_get())
+
+      Slot::properties_type props;
+      if (Slot::properties_type* ps = slot.second->properties_get())
+        props = *ps;
+      props.erase(SYMBOL(constant));
+      if (!props.empty())
       {
         o << "  /* Properties */" << libport::incendl;
-        foreach (const Slot::properties_type::value_type& p, *props)
+        foreach (const Slot::properties_type::value_type& p, props)
         {
           o << p.first << " = ";
           p.second->dump(o, depth_max);

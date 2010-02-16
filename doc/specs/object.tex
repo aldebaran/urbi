@@ -225,7 +225,17 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 \item \lstinline|getPeriod|\\
   Deprecated.  Use \lstinline|Syste.period| instead.
 
-\item \lstinline|getProperty|\\
+\item \lstinline|getProperty(\var{slotName}, \var{propName})|\\
+  Return the value of the \var{propName} property associated to the
+  slot \var{slotName} if defined, \lstinline|void| otherwise.
+\begin{urbiscript}
+const var myPi = 3.14|;
+assert
+{
+  getProperty("myPi", "constant");
+  getProperty("myPi", "foobar").isVoid;
+};
+\end{urbiscript}
 
 \item \lstinline|getLocalSlot(\var{name})|\\
   The value associated to \var{name} in \lstinline|this|, excluding
@@ -274,8 +284,6 @@ b.getSlot("ENOENT");
 [00041066:error] !!! lookup failed: ENOENT
 \end{urbiscript}
 
-\item \lstinline|hasProperty|\\
-
 \item \lstinline|hasLocalSlot(\var{slot})|\\
   Whether \lstinline|this| features a slot \var{slot}, locally, not
   from some ancestor.  See also \lstinline|Object.hasSlot|.
@@ -285,6 +293,18 @@ class Base         { var this.base = 23; } |;
 class Derive: Base { var this.derive = 43 } |;
 assert(Derive.hasLocalSlot("derive"));
 assert(!Derive.hasLocalSlot("base"));
+\end{urbiscript}
+
+\item \lstinline|hasProperty(\var{slotName}, \var{propName})|\\
+  Whether the slot \var{slotName} of \lstinline|this| has a property
+  \var{propName}.
+\begin{urbiscript}
+const var halfPi = pi / 2|;
+assert
+{
+  hasProperty("halfPi", "constant");
+  !hasProperty("halfPi", "foobar");
+};
 \end{urbiscript}
 
 \item \lstinline|hasSlot(\var{slot})|\\
@@ -366,21 +386,39 @@ locateSlot("doesNotExist").isNil;
 \end{urbiassert}
 
 \item \lstinline|properties(\var{slotName})|\\
-  Return a dictionary of the properties of slot \var{slotName}.
-  Return an empty dictionary if the slot has not property, raise an
-  error if the slot does not exists.
+  Return a dictionary of the properties of slot \var{slotName}.  Raise
+  an error if the slot does not exist.
 \begin{urbiscript}
-2;
-[00001228] 2
 2.properties("foo");
 [00238495:error] !!! lookup failed: foo
 do (2) { var foo = "foo" }.properties("foo");
-[00238501] Dictionary {}
+[00238501] Dictionary {"constant" => false}
 do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
-[00238502] Dictionary {"bar" => "bar"}
+[00238502] Dictionary {"bar" => "bar", "constant" => false}
 \end{urbiscript}
 
-\item \lstinline|removeProperty|\\
+\item \lstinline|removeProperty(\var{slotName}, \var{propName})|\\
+  Remove the property \var{propName} from the slot \var{slotName}.
+  Raise an error if the slot does not exist, do nothing if the
+  property does not exist.
+\begin{urbiscript}
+do (2)
+{
+  var foo = "foo";
+  foo->bar = "bar";
+  removeProperty("foo", "bar");
+}.properties("foo");
+[00238502] Dictionary {"constant" => false}
+
+2.removeProperty("foo", "bar");
+[00000072:error] !!! lookup failed: foo
+
+do (2)
+{
+  var foo = "foo";
+  removeProperty("foo", "bar");
+}|;
+\end{urbiscript}
 
 \item \lstinline|removeProto(\var{proto})|\\
   Remove \var{proto} from the list of prototypes of \lstinline|this|.
