@@ -40,11 +40,9 @@ namespace urbi
     }
 
     bool
-    Slot::property_has(libport::Symbol k)
+    Slot::property_has(libport::Symbol k) const
     {
-      if (!properties_)
-        return false;
-      return properties_->find(k) != properties_->end();
+      return properties_ && libport::mhas(*properties_, k);
     }
 
     bool
