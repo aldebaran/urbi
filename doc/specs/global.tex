@@ -31,7 +31,8 @@ cerr << "\"quote\"";
 
 \item[Channel] See \refObject{Channel}.
 
-\item[clog] A predefined stream for log messages.  Strings are output escaped.
+\item[clog] A predefined stream for log messages.  Strings are output
+  escaped.
 \begin{urbiscript}
 clog << "Message";
 [00015895:clog] "Message"
@@ -54,7 +55,6 @@ cout << "\"quote\"";
   Bounce to \lstinline|Control.detach|, see \refObject{Control}.
 
 \item[Dictionary] See \refObject{Dictionary}.
-
 \item[Directory] See \refObject{Directory}.
 
 \item \lstinline|disown(\var{exp})|\\
@@ -116,7 +116,7 @@ error << "\"quote\"";
 \item[Math] See \refObject{Math}.
 %% FIXME: [00008773] ***   methodToFunction : Code
 \item[Mutex] See \refObject{Mutex}.
-%% FIXME: [00008774] ***   nil : nil
+\item[nil] See \refObject{nil}.
 \item[Object] See \refObject{Object}.
 \item[Orderable] See \refObject{Orderable}.
 \item[output] A predefined stream for output messages.  Strings are
@@ -177,8 +177,7 @@ topLevel << "\"quote\"";
 \item[UValue] See \refObject{UValue}.
 
 \item[UVar] See \refObject{UVar}.
-
-%% FIXME: [00008804] ***   void : void
+\item[void] See \refObject{void}.
 %% FIXME: [00008804] ***   wall : Code
 %% FIXME: [00008805] ***   warn : Code
 
@@ -190,11 +189,8 @@ warning << "Message";
 warning << "\"quote\"";
 [00015895:warning] "quote"
 \end{urbiscript}
-
-
 %% FIXME: [00008806] ***   WeakDictionary : Finalizable
 %% FIXME: [00008806] ***   WeakPointer : Finalizable
-
 \end{urbiscriptapi}
 
 %%% Local Variables:

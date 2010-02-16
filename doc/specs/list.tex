@@ -188,10 +188,11 @@ assert([0, 1, 2].front == 0);
   \var{that}.
 \begin{urbiscript}
 var y = 1|;
-[0, y, 2].hasSame(1);
-[00000000] false
-[0, y, 2].hasSame(y);
-[00000000] true
+assert
+{
+  [0, y, 2].hasSame(y);
+  ![0, y, 2].hasSame(1);
+};
 \end{urbiscript}
 
 \item \lstinline|head|\\
@@ -440,18 +441,22 @@ l;
 \end{urbiscript}
 
 \item \lstinline|'+'(\var{other})|\\
-Return the concatenation of the target and the \var{other} list.
+  Return the concatenation of the target and the \var{other} list.
 
 \begin{urbiassert}
 [0, 1] + [2, 3] == [0, 1, 2, 3];
+[] + [2, 3] == [2, 3];
+[0, 1] + [] == [0, 1];
+[] + [] == [];
 \end{urbiassert}
 
 \item \lstinline|'-'(\var{other})|\\
-Return the target without all element that equals any element in the
-\var(other) list.
+  Return the target without the elements that are equal to any element
+  in the \var{other} list.
 
 \begin{urbiassert}
 [0, 1, 0, 2, 3] - [1, 2] == [0, 0, 3];
+[0, 1, 0, 1, 0] - [1, 2] == [0, 0, 0];
 \end{urbiassert}
 
 \item \lstinline|'<<'(\var{that})|\\
