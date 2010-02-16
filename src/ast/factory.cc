@@ -81,7 +81,7 @@ static ast::ParametricAst& flavor_error(const char* keyword, ast::flavor_type fl
   (FLAVOR_IS2(Flav1, Flav2) || FLAVOR_IS(Flav3))
 
 #define FLAVOR_IS4(Flav1, Flav2, Flav3, Flav4)          \
-  (FLAVOR_IS2(Flav1, Flav2, Flav3) || FLAVOR_IS(Flav4))
+  (FLAVOR_IS3(Flav1, Flav2, Flav3) || FLAVOR_IS(Flav4))
 
 /// Generate a parse error for invalid keyword/flavor combination.
 /// The check is performed by the parser, not the scanner, because
