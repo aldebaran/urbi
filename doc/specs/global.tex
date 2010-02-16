@@ -16,18 +16,12 @@ anywhere.
 \end{itemize}
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|Barrier|\\
-  See \refObject{Barrier}.
+\begin{urbiscriptapi}
+\item[Barrier] See \refObject{Barrier}.
+\item[Binary] See \refObject{Binary}.
+\item[CallMessage] See \refObject{CallMessage}.
 
-\item \lstinline|Binary|\\
-  See \refObject{Binary}.
-
-\item \lstinline|CallMessage|\\
-  See \refObject{CallMessage}.
-
-\item \lstinline|cerr|\\
-  An alias to \lstinline|Global.error|.
+\item[cerr] An alias to \lstinline|Global.error|.
 \begin{urbiscript}
 cerr << "Message";
 [00015895:error] Message
@@ -35,24 +29,18 @@ cerr << "\"quote\"";
 [00015895:error] "quote"
 \end{urbiscript}
 
-\item \lstinline|Channel|\\
-  See \refObject{Channel}.
+\item[Channel] See \refObject{Channel}.
 
-\item \lstinline|clog|\\
-  A predefined stream for log messages.  Strings are output escaped.
+\item[clog] A predefined stream for log messages.  Strings are output escaped.
 \begin{urbiscript}
 clog << "Message";
 [00015895:clog] "Message"
 \end{urbiscript}
 
-\item \lstinline|Code|\\
-  See \refObject{Code}.
+\item[Code] See \refObject{Code}.
+\item[Comparable] See \refObject{Comparable}.
 
-\item \lstinline|Comparable|\\
-  See \refObject{Comparable}.
-
-\item \lstinline|cout|\\
-  An alias to \lstinline|Global.output|.
+\item[cout] An alias to \lstinline|Global.output|.
 \begin{urbiscript}
 cout << "Message";
 [00015895:output] "Message"
@@ -60,23 +48,19 @@ cout << "\"quote\"";
 [00015895:output] "\"quote\""
 \end{urbiscript}
 
-\item \lstinline|Date|\\
-  See \refObject{Date}.
+\item[Date] See \refObject{Date}.
 
 \item \lstinline|detach(\var{exp})|\\
   Bounce to \lstinline|Control.detach|, see \refObject{Control}.
 
-\item \lstinline|Dictionary|\\
-  See \refObject{Dictionary}.
+\item[Dictionary] See \refObject{Dictionary}.
 
-\item \lstinline|Directory|\\
-  See \refObject{Directory}.
+\item[Directory] See \refObject{Directory}.
 
 \item \lstinline|disown(\var{exp})|\\
   Bounce to \lstinline|Control.disown|, see \refObject{Control}.
 
-\item \lstinline|Duration|\\
-  See \refObject{Duration}.
+\item[Duration] See \refObject{Duration}.
 
 \item \lstinline|echo(\var{value}, \var{channel} = ""|\\
   Bounce to \lstinline|lobby.echo|, see \refObject{Lobby}.
@@ -89,8 +73,7 @@ echo(333);
 [00055205] *** 333
 \end{urbiscript}
 
-\item \lstinline|error|\\
-  A predefined stream for error messages.  Strings sent to it are not
+\item[error] A predefined stream for error messages.  Strings sent to it are not
   escaped, contrary to regular streams (see \lstinline|output| for
   instance).
 \begin{urbiscript}
@@ -109,77 +92,35 @@ error << "\"quote\"";
 %% FIXME: [00008760] ***      updateHook : Code = function (slot, value) {
 %% FIXME:   var min = parent . getSlot(name) . getProperty("val", "rangemin") | var max = parent . getSlot(name) . getProperty("val", "rangemax") | parent . updateSlot(name, min . '+'(max . '-'(min) . '*'(value)))
 %% FIXME: }
-\item \lstinline|Event|\\
-  See \refObject{Event}.
-
-\item \lstinline|Exception|\\
-  See \refObject{Exception}.
-
-\item \lstinline|Executable|\\
-  See \refObject{Executable}.
-
+\item[Event] See \refObject{Event}.
+\item[Exception] See \refObject{Exception}.
+\item[Executable] See \refObject{Executable}.
 %% FIXME: [00008762] ***   external : external
-%% FIXME: [00008763] ***   false : false
-\item \lstinline|File|\\
-  See \refObject{File}.
-
-\item \lstinline|Finalizable|\\
-  See \refObject{Finalizable}.
-
-\item \lstinline|Float|\\
-  See \refObject{Float}.
-
-\item \lstinline|FormatInfo|\\
-  See \refObject{FormatInfo}.
-
-\item \lstinline|Formatter|\\
-  See \refObject{Formatter}.
-
+\item[false]  See \autoref{sec:truth}.
+\item[File] See \refObject{File}.
+\item[Finalizable] See \refObject{Finalizable}.
+\item[Float] See \refObject{Float}.
+\item[FormatInfo] See \refObject{FormatInfo}.
+\item[Formatter] See \refObject{Formatter}.
 %% FIXME: [00008766] ***   getProperty : Code
-\item \lstinline|Global|\\
-  See \refObject{Global}.
-
-\item \lstinline|Group|\\
-  See \refObject{Group}.
-
-\item \lstinline|InputStream|\\
-  See \refObject{InputStream}.
-
+\item[Global] See \refObject{Global}.
+\item[Group] See \refObject{Group}.
+\item[InputStream] See \refObject{InputStream}.
 %% FIXME: [00008768] ***   installUpdateHookStack : Code
 %% FIXME: [00008769] ***   isdef : Code
-
-\item \lstinline|Kernel1|\\
-  See \refObject{Kernel1}.
-
-\item \lstinline|Lazy|\\
-  See \refObject{Lazy}.
-
-\item \lstinline|List|\\
-  See \refObject{List}.
-
-\item \lstinline|Loadable|\\
-  See \refObject{Loadable}.
-
-\item \lstinline|Lobby|\\
-  See \refObject{Lobby}.
-
-\item \lstinline|Math|\\
-  See \refObject{Math}.
-
+\item[Kernel1] See \refObject{Kernel1}.
+\item[Lazy] See \refObject{Lazy}.
+\item[List] See \refObject{List}.
+\item[Loadable] See \refObject{Loadable}.
+\item[Lobby] See \refObject{Lobby}.
+\item[Math] See \refObject{Math}.
 %% FIXME: [00008773] ***   methodToFunction : Code
-\item \lstinline|Mutex|\\
-  See \refObject{Mutex}.
-
+\item[Mutex] See \refObject{Mutex}.
 %% FIXME: [00008774] ***   nil : nil
-\item \lstinline|Object|\\
-  See \refObject{Object}.
-
-\item \lstinline|Orderable|\\
-  See \refObject{Orderable}.
-
-\item \lstinline|output|\\
-  A predefined stream for output messages.  Strings are output
-  escaped.
+\item[Object] See \refObject{Object}.
+\item[Orderable] See \refObject{Orderable}.
+\item[output] A predefined stream for output messages.  Strings are
+  output escaped.
 \begin{urbiscript}
 output << "Message";
 [00015895:output] "Message"
@@ -187,77 +128,34 @@ output << "\"quote\"";
 [00015895:output] "\"quote\""
 \end{urbiscript}
 
-\item \lstinline|OutputStream|\\
-  See \refObject{OutputStream}.
-
-\item \lstinline|Pair|\\
-  See \refObject{Pair}.
-
-\item \lstinline|Path|\\
-  See \refObject{Path}.
-
-\item \lstinline|Pattern|\\
-  See \refObject{Pattern}.
+\item[OutputStream] See \refObject{OutputStream}.
+\item[Pair] See \refObject{Pair}.
+\item[Path] See \refObject{Path}.
+\item[Pattern] See \refObject{Pattern}.
 
 \item \lstinline|persist(\var{exp})|\\
   Bounce to \lstinline|Control.persist|, see \refObject{Control}.
 
-\item \lstinline|Position|\\
-  See \refObject{Position}.
-
-\item \lstinline|Primitive|\\
-  See \refObject{Primitive}.
-
-\item \lstinline|Process|\\
-  See \refObject{Process}.
-
-\item \lstinline|Profiling|\\
-  See \refObject{Profiling}.
-
-\item \lstinline|PseudoLazy|\\
-  See \refObject{PseudoLazy}.
-
-\item \lstinline|PubSub|\\
-  See \refObject{PubSub}.
-
-\item \lstinline|RangeIterable|\\
-  See \refObject{RangeIterable}.
-
-\item \lstinline|Regexp|\\
-  See \refObject{Regexp}.
-
-\item \lstinline|Semaphore|\\
-  See \refObject{Semaphore}.
-
-\item \lstinline|Server|\\
-  See \refObject{Server}.
-
-\item \lstinline|Singleton|\\
-  See \refObject{Singleton}.
-
-\item \lstinline|Socket|\\
-  See \refObject{Socket}.
-
-\item \lstinline|String|\\
-  See \refObject{String}.
-
-\item \lstinline|System|\\
-  See \refObject{System}.
-
-\item \lstinline|Tag|\\
-  See \refObject{Tag}.
-
-\item \lstinline|Tags|\\
-  See \refObject{Tags}.
-
-\item \lstinline|Task|\\
-  See \refObject{Task}.
-
-\item \lstinline|Timeout|\\
-  See \refObject{Timeout}.
-
-\item \lstinline|topLevel|\\
-  A predefined stream for regular output.  Strings are output escaped.
+\item[Position] See \refObject{Position}.
+\item[Primitive] See \refObject{Primitive}.
+\item[Process] See \refObject{Process}.
+\item[Profiling] See \refObject{Profiling}.
+\item[PseudoLazy] See \refObject{PseudoLazy}.
+\item[PubSub] See \refObject{PubSub}.
+\item[RangeIterable] See \refObject{RangeIterable}.
+\item[Regexp] See \refObject{Regexp}.
+\item[Semaphore] See \refObject{Semaphore}.
+\item[Server] See \refObject{Server}.
+\item[Singleton] See \refObject{Singleton}.
+\item[Socket] See \refObject{Socket}.
+\item[String] See \refObject{String}.
+\item[System] See \refObject{System}.
+\item[Tag] See \refObject{Tag}.
+\item[Tags] See \refObject{Tags}.
+\item[Task] See \refObject{Task}.
+\item[Timeout] See \refObject{Timeout}.
+\item[topLevel] A predefined stream for regular output.  Strings are
+  output escaped.
 \begin{urbiscript}
 topLevel << "Message";
 [00015895] "Message"
@@ -265,36 +163,27 @@ topLevel << "\"quote\"";
 [00015895] "\"quote\""
 \end{urbiscript}
 
-\item \lstinline|TrajectoryGenerator|\\
-  See \refObject{TrajectoryGenerator}.
-
-\item \lstinline|Triplet|\\
-  See \refObject{Triplet}.
-
-%% FIXME: [00008798] ***   true : true
-\item \lstinline|Tuple|\\
-  See \refObject{Tuple}.
+\item[TrajectoryGenerator] See \refObject{TrajectoryGenerator}.
+\item[Triplet] See \refObject{Triplet}.
+\item[true]  See \autoref{sec:truth}.
+\item[Tuple] See \refObject{Tuple}.
 
 %% FIXME: [00008800] ***   uimg : Channel
-\item \lstinline|UObject|\\
-  See \refObject{UObject}.
+\item[UObject] See \refObject{UObject}.
 
 %% FIXME: [00008801] ***   uobjects : uobjects
 %% FIXME: [00008801] ***   uobjects_handle : Finalizable
 %% FIXME: [00008802] ***   UpdateHookStack : Code
-\item \lstinline|UValue|\\
-  See \refObject{UValue}.
+\item[UValue] See \refObject{UValue}.
 
-\item \lstinline|UVar|\\
-  See \refObject{UVar}.
+\item[UVar] See \refObject{UVar}.
 
 %% FIXME: [00008804] ***   void : void
 %% FIXME: [00008804] ***   wall : Code
 %% FIXME: [00008805] ***   warn : Code
 
-\item \lstinline|warning|\\
-  A predefined stream for warning messages.  Strings sent to it are
-  not escaped.
+\item[warning] A predefined stream for warning messages.  Strings sent
+  to it are not escaped.
 \begin{urbiscript}
 warning << "Message";
 [00015895:warning] Message
@@ -306,7 +195,7 @@ warning << "\"quote\"";
 %% FIXME: [00008806] ***   WeakDictionary : Finalizable
 %% FIXME: [00008806] ***   WeakPointer : Finalizable
 
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex
