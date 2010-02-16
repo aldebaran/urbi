@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_FILE_HH
 # define OBJECT_FILE_HH
 

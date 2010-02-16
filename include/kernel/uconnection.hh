@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file kernel/uconnection.hh
 /// \brief Declaration of UConnection.
 

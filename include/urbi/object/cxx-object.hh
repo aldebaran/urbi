@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_CXX_OBJECT_HH
 # define OBJECT_CXX_OBJECT_HH
 

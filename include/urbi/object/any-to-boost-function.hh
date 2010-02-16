@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef ANY_TO_BOOST_FUNCTION_HH
 # define ANY_TO_BOOST_FUNCTION_HH
 

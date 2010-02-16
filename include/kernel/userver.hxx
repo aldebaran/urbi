@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file kernel/userver.hxx
 /// \brief Inline implementation of UServer.
 

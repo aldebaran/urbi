@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef URBI_SDK_HXX
 # define URBI_SDK_HXX
 

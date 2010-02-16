@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file urbi/object/object.hh
  ** \brief Definition of object::Object.

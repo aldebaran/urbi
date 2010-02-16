@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/fwd.hh
  ** \brief Forward declarations of all node-classes of OBJECT

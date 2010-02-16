@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_SLOT_HXX
 # define OBJECT_SLOT_HXX
 

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef CXX_CONVERSIONS_HXX
 # define CXX_CONVERSIONS_HXX
 

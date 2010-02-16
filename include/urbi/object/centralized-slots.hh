@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_CENTRALIZED_SLOTS_HH
 # define OBJECT_CENTRALIZED_SLOTS_HH
 

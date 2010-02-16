@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/lobby-class.hh
  ** \brief Definition of the URBI object lobby.
