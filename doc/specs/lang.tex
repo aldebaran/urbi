@@ -2399,21 +2399,25 @@ for& (var i: [0, 1, 2])
 [00021054] *** 2
 \end{urbiscript}
 
-%%% FIXME:
-%%% If an iteration executes \lstinline|break|, all the iterations
-%%% including this one, are stopped.
-%%%
-%%% \begin{urbiscript}
-%%% for& (var i: [0, 1, 2])
-%%% {
-%%%   var j = i;
-%%%   sleep(1s);
-%%%   if (j == 1)
-%%%    { echo ("break");
-%%%     break;};
-%%%   echo (j);
-%%% };
-%%% \end{urbiscript}
+If an iteration executes \lstinline|break|, all the iterations
+including this one, are stopped.
+
+\begin{urbiscript}
+for& (var i: [0, 1, 2])
+{
+  var j = i;
+  echo (j);
+  if (j == 1)
+   { echo ("break");
+    break;};
+  sleep(1s);
+  echo (j);
+};
+[00000001] *** 0
+[00000001] *** 1
+[00000001] *** 2
+[00000002] *** break
+\end{urbiscript}
 
 \subsubsection{for\& (n)}
 
