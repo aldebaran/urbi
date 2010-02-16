@@ -53,9 +53,9 @@ private:
 
 
 subsumption::subsumption(const std::string& n)
-: UObject(n)
-, target_(0)
-, writeCount_(0)
+  : UObject(n)
+  , target_(0)
+  , writeCount_(0)
 {
   UBindFunction(subsumption, init);
 }
@@ -105,9 +105,9 @@ subsumption::onWrite(UVar& v)
       int oldLevel = level;
       level = sv.level_;
       // Keep this line after the previous one.
-      libport::asyncCall(boost::bind(&subsumption::resetLevel, this, oldLevel,
-                                     writeCount_),
-                         sv.timer_ * 1000000.0);
+      libport::asyncCall(boost::bind(&subsumption::resetLevel, this,
+                                     oldLevel, writeCount_),
+                         useconds_t(sv.timer_ * 1000000.0));
     }
   }
   return 0;
@@ -115,9 +115,9 @@ subsumption::onWrite(UVar& v)
 
 subsumption::SUVar::SUVar(const std::string& obj, const std::string& var,
                           int level, ufloat delay)
-: UVar(obj, var)
-, level_(level)
-, timer_(delay)
+  : UVar(obj, var)
+  , level_(level)
+  , timer_(delay)
 {
 }
 
