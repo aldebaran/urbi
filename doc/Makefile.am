@@ -59,19 +59,25 @@ dist_doc_DATA =					\
 ## urbi-sdk.pdf.  ##
 ## -------------- ##
 
-pdf_DATA +=					\
+PDFS =						\
   urbi-faq.pdf					\
   urbi-naming.pdf				\
   urbi-sdk.pdf
+EXTRA_DATA += $(PDFS)
+if ENABLE_DOC_PDF
+  pdf_DATA += $(PDFS)
+endif
 
 # We cannot simply use html_DATA here, since Automake does not
 # support installing directories.
 html_DIR = urbi-sdk.htmldir
-noinst_DATA += $(html_DIR)
 install-data-hook: install-html-dir
+if ENABLE_DOC_HTML
+noinst_DATA += $(html_DIR)
 install-html-dir: $(html_DIR)
 	$(mkdir_p) $(DESTDIR)$(htmldir)
 	tar cf - $(html_DIR) | (cd $(DESTDIR)/$(htmldir) && tar xf -)
+endif
 
 CLEANFILES += $(pdf_DATA)
 urbi_sdk_sources = $(call ls_files,*.tex)

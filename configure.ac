@@ -26,14 +26,8 @@ AM_INIT_AUTOMAKE([1.10.1 foreign tar-ustar nostdinc subdir-objects
 
 URBI_PACKAGE_KIND([kernel])
 
-URBI_PROG_PDFLATEX_REQUIRED
 URBI_DOC
 AC_CONFIG_FILES([doc/config.sty])
-
-URBI_REQUIRE_PROGS([CONVERT], [convert], [ImageMagick])
-URBI_REQUIRE_PROGS([DOT],     [dot],     [GraphViz])
-URBI_REQUIRE_PROGS([PDFCROP], [pdfcrop], [TeXlive])
-URBI_REQUIRE_PROGS([TEX4HT],  [tex4ht],  [TeX4HT])
 
 ## ------------- ##
 ## Compilation.  ##
