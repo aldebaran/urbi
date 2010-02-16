@@ -392,7 +392,7 @@ namespace urbi
       // Check if asString was found, especially for bootstrap: asString
       // is implemented in urbi/urbi.u, but print is called to show
       // result in the toplevel before its definition.
-      catch (UrbiException&)
+      catch (const UrbiException&)
       {
         // If no asString method is supplied, print the unique id
         return o << std::hex << this;
