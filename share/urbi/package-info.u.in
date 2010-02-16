@@ -50,8 +50,8 @@ load("urbi/package-info-libport.u");
 
 do (System.PackageInfo)
 {
-  var copyright_holder = "Gostai SAS.";
-  var copyright_years = "2005-2009";
+  var copyright_holder = "@PACKAGE_COPYRIGHT_HOLDER@";
+  var copyright_years = "@PACKAGE_COPYRIGHT_YEARS@";
   do (components["Urbi SDK"])
   {
     depend(components["Urbi SDK Remote"]);
