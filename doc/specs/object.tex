@@ -78,14 +78,9 @@ do (Object.new)
 \end{urbiassert}
 
 \item \lstinline|allSlotNames|\\
-  Return a list with the slot names of \lstinline|this| and its
-  ancesters.
+  Deprecated alias for \lstinline|Object.slotNames|.
 \begin{urbiassert}
-Object.localSlotNames
-  .subset(Object.allSlotNames);
-Object.protos.foldl(function (var r, var p) { r + p.localSlotNames },
-                    [])
-  .subset(Object.allSlotNames);
+Object.allSlotNames == Object.slotNames;
 \end{urbiassert}
 
 \item \lstinline|apply(\var{args})|\\
@@ -225,7 +220,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 \end{urbiscript}
 
 \item \lstinline|getPeriod|\\
-  Deprecated.  Use \lstinline|Syste.period| instead.
+  Deprecated.  Use \lstinline|System.period| instead.
 
 \item \lstinline|getProperty(\var{slotName}, \var{propName})|\\
   Return the value of the \var{propName} property associated to the
@@ -527,10 +522,15 @@ theObject === Object;
 \end{urbiassert}
 
 \item \lstinline|slotNames|\\
-  Deprecated in favor of \lstinline|localSlotNames| and
-  \lstinline|allSlotNames|.  Currently return the list of the names of
-  the slots owned by \lstinline|this|, but will eventually return the
-  list of all the slot names.
+  Return a list with the slot names of \lstinline|this| and its
+  ancesters.
+\begin{urbiassert}
+Object.localSlotNames
+  .subset(Object.allSlotNames);
+Object.protos.foldl(function (var r, var p) { r + p.localSlotNames },
+                    [])
+  .subset(Object.allSlotNames);
+\end{urbiassert}
 
 \item \lstinline|'$type'|\\ % fix color $
   The name of the type of \lstinline|this|.  The \lstinline|class|

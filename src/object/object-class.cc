@@ -259,7 +259,7 @@ namespace urbi
     }
 
     static rObject
-    object_class_allSlotNames(const objects_type& args)
+    object_class_slotNames(const objects_type& args)
     {
       check_arg_count(args.size() - 1, 0);
       std::vector<libport::Symbol> slot_names;
@@ -305,7 +305,6 @@ namespace urbi
       DECLARE(EQ_EQ_EQ);
       DECLARE(addProto);
       DECLARE(allProtos);
-      DECLARE(allSlotNames);
       DECLARE(apply);
       DECLARE(callMessage);
       DECLARE(clone);
@@ -314,6 +313,7 @@ namespace urbi
       DECLARE(localSlotNames);
       DECLARE(protos);
       DECLARE(removeProto);
+      DECLARE(slotNames);
       DECLARE(uid);
 #undef DECLARE
 

@@ -12,6 +12,12 @@ Changes:
 
 - Object.getPeriod is deprecated in favor of System.period.
 
+- As announced long ago, and as displayed by warnings,
+  Object.slotNames now returns all the slot names, ancesters included.
+  Use localSlotNames to get the list of the names of the slot the
+  object owns.
+
+
 New features:
 
 - List.subset

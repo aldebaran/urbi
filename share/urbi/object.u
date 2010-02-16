@@ -86,24 +86,20 @@ do (Object)
   /*--------.
   | Slots.  |
   `--------*/
-  function ownsSlot(s)
+  function allSlotNames()
   {
-    warn("`o.ownsSlot(s)' is deprecated, use `o.hasLocalSlot(s)'") |
-    hasLocalSlot(s)
-  };
-
-  function slotNames()
-  {
-    warn("the semantics of `slotNames' is about to change from"
-         " `localSlotNames' to `allSlotNames', consistently with"
-         " `hasLocalSlot'/`hasSlot'.  In the meanwhile please use"
-         "  either `localSlotNames' or `allSlotNames'") |
-    localSlotNames
+    slotNames
   };
 
   function isProto()
   {
     hasLocalSlot("$type")
+  };
+
+  function ownsSlot(s)
+  {
+    warn("`o.ownsSlot(s)' is deprecated, use `o.hasLocalSlot(s)'") |
+    hasLocalSlot(s)
   };
 
   // Gives type, + uid if relevant
@@ -135,7 +131,7 @@ do (Object)
         if (deep)
         {
           echo("** All Slots:");
-          allSlotNames;
+          slotNames;
         }
         else
         {
