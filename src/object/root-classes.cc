@@ -136,13 +136,10 @@ namespace urbi
 #define CLASS_CREATE(What, Name)                \
       What = Object::proto->clone();
 
-// Alias unmatched by symbols-generate.pl
-#define SYMBOL_ SYMBOL
-
 #define CLASS_INIT(What, Name)                  \
       What->slot_set(SYMBOL(DOLLAR_type),       \
                      new String(SYMBOL(Name))); \
-      What->slot_set(SYMBOL_(as ## Name),       \
+      What->slot_set(SYMBOL(as ## Name),        \
                      new Primitive(id));
 
 #define CLASS_REGISTER(What, Name)                      \
