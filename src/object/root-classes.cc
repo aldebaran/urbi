@@ -163,6 +163,14 @@ namespace urbi
       // Object is a special case: it is not built as a clone of itself.
       Object::proto = new Object();
 
+      // These guys are used in the property system, we need them
+      // early.  But completing their initialization requires String
+      // support.  So this is performed below.
+      true_class = new Object();
+      true_class->proto_add(Object::proto);
+      false_class = new Object();
+      false_class->proto_add(Object::proto);
+
       // Our current initialization system does not track
       // dependencies, we have to address them by hand until some
       // better scheme is found.
@@ -200,12 +208,9 @@ namespace urbi
       global_class->slot_set(SYMBOL(Object), Object::proto, true);
       CxxObject::initialize(global_class);
 
-      true_class = new Object();
-      false_class = new Object();
-      true_class->proto_add(Object::proto);
-      false_class->proto_add(Object::proto);
-      EXISTING_CLASS_SETUP(false_class, false);
+      // Completion cannot be done before String is complete.
       EXISTING_CLASS_SETUP(true_class, true);
+      EXISTING_CLASS_SETUP(false_class, false);
 
       CLASS_SETUP(nil_class, nil);
       CLASS_SETUP(system_class, System);
