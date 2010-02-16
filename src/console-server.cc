@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 //#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 

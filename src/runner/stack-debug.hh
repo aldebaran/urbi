@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file runner/stack-debug.hh
  ** \brief Debugging macro for the stacks

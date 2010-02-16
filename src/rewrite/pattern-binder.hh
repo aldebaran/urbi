@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef REWRITE_PATTERN_BINDER_HH
 # define REWRITE_PATTERN_BINDER_HH
 

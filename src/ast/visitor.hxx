@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/visitor.hxx
  ** \brief Definition of ast::Visitor.

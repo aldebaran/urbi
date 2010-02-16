@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file binder/binder.hh
  ** \brief Definition of binder::Binder.

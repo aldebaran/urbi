@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_FORMAT_INFO_HXX
 # define OBJECT_FORMAT_INFO_HXX
 

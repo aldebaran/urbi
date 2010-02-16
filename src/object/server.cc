@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <urbi/object/global.hh>
 #include <object/server.hh>
 #include <object/symbols.hh>

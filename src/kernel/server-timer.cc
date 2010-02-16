@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <kernel/server-timer.hh>
 
 #ifndef COMPILATION_MODE_SPEED

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/global.cc
  ** \brief Creation of the Urbi object Global.

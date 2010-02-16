@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/parametric-ast.hh
  ** \brief Declaration of ast::ParametricAst.

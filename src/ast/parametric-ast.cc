@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/parametric-ast.cc
  ** \brief Implementation of ast::ParametricAst.

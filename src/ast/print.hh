@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/print.hh
  ** \brief Definition of operator<< for Ast.

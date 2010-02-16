@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef RUNNER_INTERPRETER_VISIT_HXX
 # define RUNNER_INTERPRETER_VISIT_HXX
 

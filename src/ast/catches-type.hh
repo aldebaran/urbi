@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef AST_CATCHES_TYPE_HH
 # define AST_CATCHES_TYPE_HH
 

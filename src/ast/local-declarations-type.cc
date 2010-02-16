@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/indent.hh>
 #include <libport/separate.hh>
 

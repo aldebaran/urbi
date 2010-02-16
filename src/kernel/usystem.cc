@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file kernel/usystem.cc
 /// \brief Implementation of the USystem class.
 

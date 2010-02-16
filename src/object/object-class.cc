@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file urbi/object/object.class.cc
  ** \brief Creation of the URBI object object.

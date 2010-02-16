@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef KERNEL_UOBJECT_HH
 # define KERNEL_UOBJECT_HH
 

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/urbi-exception.hxx
  ** \brief Implementation of Exception

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <urbi/object/object.hh>
 #include <object/vector-slots.hh>
 

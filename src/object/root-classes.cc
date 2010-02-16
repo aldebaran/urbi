@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/root-classes.cc
  ** \brief Creation of the root Objects.

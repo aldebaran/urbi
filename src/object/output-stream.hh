@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_OUTPUT_STREAM_HH
 # define OBJECT_OUTPUT_STREAM_HH
 

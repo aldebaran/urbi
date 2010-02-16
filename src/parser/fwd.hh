@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file parser/fwd.hh
  ** \brief Forward declarations of all parser classes

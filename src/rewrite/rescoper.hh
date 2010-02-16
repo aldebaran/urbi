@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef REWRITE_RESCOPER_HH
 # define REWRITE_RESCOPER_HH
 

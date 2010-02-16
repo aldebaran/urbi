@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef AST_FLAVOR_HXX
 # define AST_FLAVOR_HXX
 

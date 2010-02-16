@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_STRING_UVAR_HH
 # define OBJECT_STRING_UVAR_HH
 

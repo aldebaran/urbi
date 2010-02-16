@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <cstdarg>
 
 #include <boost/assign.hpp>

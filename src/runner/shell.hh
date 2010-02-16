@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef RUNNER_SHELL_HH
 # define RUNNER_SHELL_HH
 

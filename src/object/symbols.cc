@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/symbols.cc
  ** \brief Frequently used symbol names.

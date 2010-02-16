@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file parser/parser-impl.cc
 
 #include <kernel/config.h> // YYDEBUG.

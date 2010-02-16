@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/new-clone.hh
  ** \brief Declaration of ast::new_clone().

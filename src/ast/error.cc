@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/error.cc
  ** \brief Implementation of ast::Error.

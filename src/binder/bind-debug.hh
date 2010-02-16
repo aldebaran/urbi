@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file binder/bind-debug.hh
  ** \brief Debugging macro for the bind

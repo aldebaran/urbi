@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef PARSER_UTOKEN_HH
 # define PARSER_UTOKEN_HH
 

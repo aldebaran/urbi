@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <urbi/object/global.hh>
 #include <urbi/object/slot.hh>
 #include <urbi/object/slot.hxx>

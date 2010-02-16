@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <urbi/object/centralized-slots.hh>
 
 namespace urbi

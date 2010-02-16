@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file parser/is-keyword.hh
 
 #ifndef PARSER_IS_KEYWORD_HH

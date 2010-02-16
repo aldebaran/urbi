@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/list-class.cc
  ** \brief Creation of the URBI object list.

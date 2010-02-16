@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef RUNNER_SNEAKER_HH
 # define RUNNER_SNEAKER_HH
 

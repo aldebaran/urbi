@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef PARSER_PRESCAN_HH
 # define PARSER_PRESCAN_HH
 

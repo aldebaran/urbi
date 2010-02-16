@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 // The main point of this file is to save cycles: version.hh changes
 // frequently, so include it in a small file instead of userver.cc
 // which is demanding.

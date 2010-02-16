@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/new-clone.hxx
  ** \brief Inline implementation of ast::new_clone().

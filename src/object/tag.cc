@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/tag-class.cc
  ** \brief Creation of the URBI object tag.

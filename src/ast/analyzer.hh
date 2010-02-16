@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/analyzer.hh
  ** \brief Declaration of ast::Analyzer.

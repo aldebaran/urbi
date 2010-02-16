@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file binder/fwd.hh
  ** \brief Forward declarations for the namespace binder.

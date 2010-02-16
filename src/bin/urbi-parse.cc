@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <ast/serialize.hh>
 #include <bin/arg.hh>
 #include <parser/parse.hh>

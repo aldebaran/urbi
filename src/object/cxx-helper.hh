@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef CXX_HELPER_HH
 # define CXX_HELPER_HH
 

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <ast/catches-type.hh>
 #include <ast/print.hh>
 #include <libport/indent.hh>

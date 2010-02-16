@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file parser/event-match.cc
  ** \brief EventMatch implementation.

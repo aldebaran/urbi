@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef REWRITE_FWD_HH
 # define REWRITE_FWD_HH
 

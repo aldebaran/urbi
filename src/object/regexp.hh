@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_REGEXP_HH
 # define OBJECT_REGEXP_HH
 

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef REWRITE_REWRITE_HH
 # define REWRITE_REWRITE_HH
 

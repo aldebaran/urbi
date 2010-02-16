@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_SOCKET_HH
 # define OBJECT_SOCKET_HH
 

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file parser/uparser.hh
 
 #ifndef PARSER_UPARSER_HH

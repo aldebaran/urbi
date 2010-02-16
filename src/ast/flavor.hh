@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/flavor.hh
  ** \brief Declaration of ast::flavor_type.

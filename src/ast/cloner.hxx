@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/cloner.hxx
  ** \brief Template methods of ast::Cloner.

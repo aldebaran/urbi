@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/flavor.cc
  ** \brief Implementation of ast::flavor_type.

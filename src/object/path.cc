@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 // For stat, getcwd
 #include <libport/cerrno>
 #include <libport/cstring>

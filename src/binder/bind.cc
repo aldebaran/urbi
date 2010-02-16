@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <ast/nary.hh>
 #include <binder/bind.hh>
 #include <binder/binder.hh>

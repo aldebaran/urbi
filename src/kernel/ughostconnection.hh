@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file kernel/ughostconnection.hh
 
 #ifndef KERNEL_UGHOSTCONNECTION_HH

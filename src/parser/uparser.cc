@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file parser/uparser.cc
 
 #include <parser/uparser.hh>

@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <sstream>
 
 #include <libport/buffer-stream.hh>

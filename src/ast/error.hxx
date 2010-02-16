@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/error.hxx
  ** \brief Inline methods of ast::Error.

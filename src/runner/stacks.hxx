@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef RUNNER_STACKS_HXX
 # define RUNNER_STACKS_HXX
 

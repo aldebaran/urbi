@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <kernel/userver.hh>
 #include <urbi/object/code.hh>
 #include <urbi/object/float.hh>

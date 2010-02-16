@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef AST_SERIALIZE_HH
 # define AST_SERIALIZE_HH
 

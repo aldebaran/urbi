@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/loc.hh
  ** \brief Definition of ast::loc.

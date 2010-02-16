@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file rewrite/rescoper.cc
  ** \brief Implementation of rewrite::Rescoper.

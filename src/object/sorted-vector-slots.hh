@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_SORTED_VECTOR_SLOTS_HH
 # define OBJECT_SORTED_VECTOR_SLOTS_HH
 

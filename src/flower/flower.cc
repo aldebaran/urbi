@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/finally.hh>
 
 #include <ast/cloner.hxx>

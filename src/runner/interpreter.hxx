@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file runner/interpreter.hxx
  ** \brief Inline implementation of runner::Interpreter.

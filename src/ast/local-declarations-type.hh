@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef AST_DECLARATIONS_TYPE_HH
 # define AST_DECLARATIONS_TYPE_HH
 

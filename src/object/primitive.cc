@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/primitive-class.cc
  ** \brief Creation of the URBI object primitive.

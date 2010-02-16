@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef OBJECT_SERVER_HH
 # define OBJECT_SERVER_HH
 

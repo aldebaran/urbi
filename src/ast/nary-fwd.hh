@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file ast/nary-fwd.hh
  ** \brief Forward declarations of some AST classes

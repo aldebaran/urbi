@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file kernel/uqueue.hh
 
 #ifndef KERNEL_UQUEUE_HH

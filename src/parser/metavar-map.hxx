@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file parser/metavar-map.hxx
  ** \brief Implementation of parse::MetavarMap.

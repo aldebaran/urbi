@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file runner/stacks.hh
  ** \brief Definition of runner::Stacks.

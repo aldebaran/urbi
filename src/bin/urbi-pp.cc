@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <iostream>
 
 #include <ast/serialize.hh>

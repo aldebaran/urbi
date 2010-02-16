@@ -8,7 +8,6 @@
  * See the LICENSE file for more information.
  */
 
-
 #ifndef AST_EVENT_MATCH_HH
 # define AST_EVENT_MATCH_HH
 

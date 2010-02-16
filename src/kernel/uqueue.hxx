@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef KERNEL_UQUEUE_HXX
 # define KERNEL_UQUEUE_HXX
 

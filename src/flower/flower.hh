@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef FLOWER_FLOWER_HH
 # define FLOWER_FLOWER_HH
 

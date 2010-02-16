@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/containers.hh>
 
 #include <urbi/object/object.hh>

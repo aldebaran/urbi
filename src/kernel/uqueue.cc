@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file uqueue.cc
 /// \brief Implementation of UQueue.
 

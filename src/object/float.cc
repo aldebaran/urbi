@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/float-class.cc
  ** \brief Creation of the URBI object float.

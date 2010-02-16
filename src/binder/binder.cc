@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file binder/binder.cc
  ** \brief Implementation of binder::Binder.

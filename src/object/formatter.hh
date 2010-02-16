@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
  ** \file object/formatter.hh
  ** \brief Definition of the Urbi object formatter.

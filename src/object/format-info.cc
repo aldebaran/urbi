@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <cctype>
 
 #include <libport/lexical-cast.hh>

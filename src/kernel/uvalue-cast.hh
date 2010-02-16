@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef KERNEL_UVALUE_CAST_HH
 # define KERNEL_UVALUE_CAST_HH
 
