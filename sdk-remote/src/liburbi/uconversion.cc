@@ -801,10 +801,14 @@ namespace urbi
   }
 
   /** Conversion between various sound formats.
-      If any of destination's channel, sampleSize, rate or sampleFormat
-      parameter is 0, values from source will be used.  If the destination's
-      datasize is too small, data will be realloc()ed, which means one can set
-      data and datasize to zero, and let convert allocate the memory.
+
+      Supported sound formats are RAW format and WAV format.  The \a dest
+      sound must have its sound format defined and any other zero properties
+      (channel, sampleSize, rate, sampleFormat) are copied from the \a
+      source sound.
+
+      The function handles memory reallocation of the destination data if
+      the size is to small to contains the converted sound.
   */
   int
   convert (const USound &source, USound &dest)
