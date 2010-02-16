@@ -64,7 +64,11 @@ namespace std
 #define SYNTAX_ERROR(Loc, ...)                   \
   throw yy::parser::syntax_error(Loc, libport::format(__VA_ARGS__))
 
-static ast::ParametricAst& flavor_error(const char* keyword, ast::flavor_type flavor, const ast::Factory::location& flavor_loc)
+static
+ast::ParametricAst&
+flavor_error(const char* keyword,
+             ast::flavor_type flavor,
+             const ast::Factory::location& flavor_loc)
 {
   SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", keyword, flavor);
 }
@@ -655,7 +659,10 @@ namespace ast
       unsigned int i = 0;
       exps_type* args = new ast::exps_type();
       foreach(rExp e, *sub->arguments_get())
-        args->push_back(make_call(lvalue->location_get(), libport::Symbol(libport::format("$arg%u", i++))));
+        args->push_back(make_call(
+          lvalue->location_get(),
+          libport::Symbol(libport::format("$arg%u", i++))
+        ));
       return new Subscript(lvalue->location_get(), args, tmp);
     }
 
