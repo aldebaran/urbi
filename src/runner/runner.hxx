@@ -97,6 +97,12 @@ namespace runner
     tag_stack_.clear();
   }
 
+  LIBPORT_SPEED_INLINE const tag_stack_type&
+  Runner::tag_stack_get_all() const
+  {
+    return tag_stack_;
+  }
+
   LIBPORT_SPEED_INLINE void
   Runner::tag_stack_set(const tag_stack_type& tag_stack)
   {

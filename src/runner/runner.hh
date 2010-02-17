@@ -154,6 +154,10 @@ namespace runner
 
   protected:
 
+    /// Retrieve all the tags including the flow control tags.  It is only
+    /// intended for internal usage.
+    const tag_stack_type& tag_stack_get_all() const;
+
     /// Set the tag stack.
     void tag_stack_set(const tag_stack_type&);
 
