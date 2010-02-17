@@ -98,11 +98,28 @@ namespace urbi
       hubs_type hubs;
       std::set<void*> initialized;
 
+      /** Cleanup Stack RAII. Useful to delete temporaries created by
+       * UValue casters.
+       * The UObject API instanciates one for each call to a bound function or
+       * notify.
+       */
+      class CleanupStack
+      {
+      public:
+        CleanupStack(UContextImpl& owner);
+        ~CleanupStack();
+      private:
+        UContextImpl& owner_;
+      };
       /// Add \b ptr to the list of objects to delete whean cleanup() is called.
       template<typename T>
       void addCleanup(T* ptr);
-      /// Delete all pointers passed to addCleanup.
-      void cleanup();
+
+      /// Push a new cleanup stack.
+      void pushCleanupStack();
+     /// Delete all pointers passed to addCleanup in current stack and pop.
+      void popCleanupStack();
+
       /** Request a context lock from another thread to perform multiple
        * operations.
        */
@@ -110,7 +127,7 @@ namespace urbi
       /// Release lock acquired with lock()
       virtual void unlock() = 0;
     private:
-      std::vector<boost::function0<void> > cleanup_list_;
+      std::vector<std::vector<boost::function0<void> > > cleanup_list_;
     };
 
     class URBI_SDK_API UObjectImpl

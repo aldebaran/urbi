@@ -162,6 +162,7 @@ namespace urbi
 
     virtual UValue __evalcall(UList& param)
     {
+      impl::UContextImpl::CleanupStack s_(*ctx_);
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
@@ -169,7 +170,6 @@ namespace urbi
 	(is_const_)
 	? ((*obj).*funconst)(%%%,% uvalue_cast<P%>(param[% - 1]) %%)
 	: ((*obj).*fun)     (%%%,% uvalue_cast<P%>(param[% - 1]) %%);
-      ctx_->cleanup();
       return res;
     }
 
@@ -212,9 +212,9 @@ namespace urbi
 
     virtual UValue __evalcall(UList&)
     {
+      impl::UContextImpl::CleanupStack s_(*ctx_);
       UValue res;
       res(), (is_const_) ? ((*obj).*func)() : ((*obj).*fun)();
-      ctx_->cleanup();
       return res;
     }
 
@@ -244,11 +244,11 @@ namespace urbi
 
     virtual UValue __evalcall(UList& param)
     {
+      impl::UContextImpl::CleanupStack s_(*ctx_);
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
       res(), (*fun)(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
-      ctx_->cleanup();
       return res;
     }
 
