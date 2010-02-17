@@ -46,6 +46,7 @@ private:
   };
   int onLevelChange(UVar& v);
   int onWrite(UVar& v);
+  int onRead(UVar& v);
   void resetLevel(int oldLevel, int writeCount);
   UVar* target_;
   int writeCount_;
@@ -77,20 +78,30 @@ subsumption::init(UVar& target)
 void
 subsumption::createOverride(const std::string& name, int level)
 {
-  UNotifyChange(*new SUVar(__name, name, level), &subsumption::onWrite);
+  createTimedOverride(name, level, 0);
 }
 
 void
 subsumption::createTimedOverride(const std::string& name, int level,
                                  ufloat timer)
 {
-  UNotifyChange(*new SUVar(__name, name, level, timer), &subsumption::onWrite);
+  SUVar* v = new SUVar(__name, name, level, timer);
+  v->setOwned();
+  UNotifyChange(*v, &subsumption::onWrite);
+  UNotifyAccess(*v, &subsumption::onRead);
 }
 
 int
 subsumption::onLevelChange(UVar&)
 {
   writeCount_++;
+  return 0;
+}
+
+int
+subsumption::onRead(UVar& v)
+{
+  v = target_->val();
   return 0;
 }
 
