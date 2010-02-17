@@ -63,12 +63,13 @@ subsumption::subsumption(const std::string& n)
 int
 subsumption::init(UVar& target)
 {
+  std::string targetName = target.get_name();
   UBindVar(subsumption, level);
   UBindFunction(subsumption, createOverride);
   UBindFunction(subsumption, createTimedOverride);
   UNotifyChange(level, &subsumption::onLevelChange);
   level = 0;
-  target_ = new UVar(target.get_name());
+  target_ = new UVar(targetName);
   createOverride("val", 0);
   return 0;
 }
