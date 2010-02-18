@@ -17,12 +17,12 @@ DIST_SUBDIRS = $(SUBDIRS) bison
 
 # build-aux.
 EXTRA_DIST +=					\
-  build-aux/bison++.in				\
-  build-aux/flex++.in				\
-  build-aux/fuse-switch				\
-  build-aux/move-if-change			\
-  build-aux/output-to-dot			\
-  build-aux/studentize
+  build-aux/bin/bison++.in			\
+  build-aux/bin/flex++.in			\
+  build-aux/bin/fuse-switch			\
+  build-aux/bin/move-if-change			\
+  build-aux/bin/output-to-dot			\
+  build-aux/bin/studentize
 
 # dev.
 devdir = dev/

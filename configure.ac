@@ -35,7 +35,7 @@ AC_CONFIG_FILES([doc/config.sty])
 
 
 # Bison.
-URBI_CONFIG_SCRIPTS([build-aux/bison++])
+URBI_CONFIG_SCRIPTS([build-aux/bin/bison++])
 # If we have our own Bison, use it.
 if test -d $srcdir/bison; then
   # Run in a subshell, since we change the environment.
@@ -62,7 +62,7 @@ fi
 
 # Flex.  2.3.33 has a problem with REJECT and produces a scanner that
 # does not compile.
-URBI_CONFIG_SCRIPTS([build-aux/flex++])
+URBI_CONFIG_SCRIPTS([build-aux/bin/flex++])
 TC_PROG([flex],  [>= 2.5.35], [FLEX],  [fast lexical analyzer generator])
 
 URBI_COMPILATION_MODE

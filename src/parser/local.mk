@@ -28,16 +28,16 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
 ## --------------------- ##
 
 # A Bison wrapper for C++.
-BISONXX = $(top_builddir)/build-aux/bison++
-BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
+BISONXX = $(top_builddir)/build-aux/bin/bison++
+BISONXX_IN = $(top_srcdir)/build-aux/bin/bison++.in
 $(BISONXX): $(BISONXX_IN)
 	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/bison++
 
 # A Flex wrapper for C++.
-FLEXXX = $(top_builddir)/build-aux/flex++
-FLEXXX_IN = $(top_srcdir)/build-aux/flex++.in
+FLEXXX = $(top_builddir)/build-aux/bin/flex++
+FLEXXX_IN = $(top_srcdir)/build-aux/bin/flex++.in
 $(FLEXXX): $(FLEXXX_IN)
-	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/flex++
+	$(MAKE) -C $(top_builddir) $(AM_MAKEFLAGS) build-aux/bin/flex++
 
 ## From flex.info.
 ##
@@ -97,7 +97,7 @@ EXTRA_DIST += parser/ugrammar.y
 precompiled_symbols_hh_deps += parser/ugrammar.y
 ugrammar_deps =					\
   $(BISONXX_IN)					\
-  $(top_srcdir)/build-aux/fuse-switch		\
+  $(top_srcdir)/build-aux/bin/fuse-switch	\
   parser/local.mk				\
   $(wildcard $(top_srcdir)/bison/data/*.c)	\
   $(wildcard $(top_srcdir)/bison/data/*.cc)	\
