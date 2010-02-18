@@ -2297,7 +2297,7 @@ are supported.
 The default flavor, \lstinline|every,| launches the execution of the
 block in the background every given period. Iterations may overlap.
 
-% Cut the previous every, no 
+% Cut the previous every, no
 \begin{urbiscript}[firstnumber=1]
 // If an iteration is longer than the given period, it will overlap
 // with the next one.
@@ -2559,6 +2559,7 @@ to \lstinline'waituntil'.
 \end{urbiscript}
 
 \subsection{\lstinline|whenever|}
+\label{sec:lang:whenever}
 
 The \lstinline|whenever| construct really behaves like a never-ending
 \lstinline|loop if| construct.  It also works on events and Boolean
@@ -2727,7 +2728,7 @@ share a common access to the environment, therefore if, for instance,
 you want to keep the value of some index variable, use a local
 variable inside the loop body:
 
-% Cut the previous every, no 
+% Cut the previous every, no
 \begin{urbiscript}[firstnumber=1]
 {
   var i = 4|
