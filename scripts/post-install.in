@@ -3,7 +3,7 @@
 set -x
 set -e
 
-BOOST_SYSTEM_LDFLAGS='@BOOST_SYSTEM_LDFLAGS@'
+BOOST_LDPATH='@BOOST_LDPATH@'
 COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'
 PROJECT='@PACKAGE_TARNAME@'
 URBI_HOST_COMP='@URBI_HOST_COMP@'
@@ -13,9 +13,6 @@ builddir='@abs_top_builddir@'
 host='@host@'
 prefix='@prefix@'
 srcdir='@abs_top_srcdir@'
-
-boost_libdir=$(perl -e "'$BOOST_SYSTEM_LDFLAGS'"' =~ m{-L\s*([\-\w/.]+)}
-                         && print "$1\n"')
 
 # Do not sort by alphabetical order here.  exec_prefix typically use
 # $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
@@ -36,13 +33,13 @@ libdir="@libdir@"
 # If DESTDIR is null, this is most probably an install performed by
 # the developper in her own tree.  Don't try to make it relocatable.
 if test -n "$DESTDIR"; then
-  $srcdir/scripts/check-lib-deps                \
+  $srcdir/build-aux/check-lib-deps              \
     --verbose --verbose --verbose --verbose     \
     --destdir "$DESTDIR"                        \
     --host-os "$URBI_HOST_OS"                   \
     --prefix "$prefix"                          \
     --libdir "$libdir"                          \
-    --libpath "$boost_libdir"                   \
+    --libpath "$BOOST_LDPATH"                   \
     "$DESTDIR"
 fi
 
