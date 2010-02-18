@@ -10,22 +10,22 @@ for narg in range(9):
     args = range(1, narg + 1)
     types = collapse(args, lambda n: ', typename T%s' % n)
     formals = collapse(args, lambda n: ', T%s arg%s' % (n, n))
-    push = collapse(args, lambda n: '\n    args.push_back(CxxConvert<T%s>::from(arg%s));' % (n, n))
+    push = collapse(args, lambda n: '\n           << CxxConvert<T%s>::from(arg%s)' % (n, n))
     prototypes += \
     '''
-    template <typename S%s>
-    rObject operator()(S self%s);
-    ''' % (types, formals)
+      template <typename S%s>
+      rObject operator()(S self%s);
+''' % (types, formals)
     implems += \
-    '''
-  template <typename S%s>
-  rObject Executable::operator()(S self%s)
-  {
-    objects_type args;
-    args.push_back(CxxConvert<S>::from(self));%s
-    return operator()(args);
-  }
-  ''' % (types, formals, push)
+'''
+    template <typename S%s>
+    rObject Executable::operator()(S self%s)
+    {
+      objects_type args;
+      args << CxxConvert<S>::from(self)%s;
+      return operator()(args);
+    }
+''' % (types, formals, push)
 
 print '''#ifndef OBJECT_EXECUTABLE_HH
 # define OBJECT_EXECUTABLE_HH
