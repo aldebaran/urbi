@@ -60,8 +60,8 @@ namespace urbi
       if (args->value_get().empty())
         RAISE("list of arguments must begin with `this'");
       objects_type a = args->value_get();
-      return ::kernel::urbiserver->getCurrentRunner().apply(this, SYMBOL(apply),
-                                                            a);
+      return (::kernel::urbiserver->getCurrentRunner()
+              .apply(this, SYMBOL(apply), a));
     }
 
     rObject Primitive::operator() (object::objects_type args)
