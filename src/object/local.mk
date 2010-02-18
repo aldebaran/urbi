@@ -51,37 +51,11 @@ $(precompiled_symbols_hh): $(precompiled_symbols_stamp)
 	fi
 BUILT_SOURCES += $(precompiled_symbols_hh)
 
-## ------------------------ ##
-## Generated source files.  ##
-## ------------------------ ##
-
-FROM_PY =							\
-  $(top_builddir)/include/urbi/object/any-to-boost-function.hxx	\
-  $(top_builddir)/include/urbi/object/cxx-primitive.hxx		\
-  $(top_builddir)/include/urbi/object/executable.hh
-
-nodist_libuobject@LIBSFX@_la_SOURCES += $(FROM_PY)
-EXTRA_DIST += $(FROM_PY:=.py)
-
-%.hxx: %.hxx.py
-	rm -f $@ $@.tmp
-	mkdir -p $(dir $@)
-	$< > $@.tmp
-	chmod a-w $@.tmp
-	mv $@.tmp $@
-
-%.hh: %.hh.py
-	rm -f $@ $@.tmp
-	mkdir -p $(dir $@)
-	$< > $@.tmp
-	chmod a-w $@.tmp
-	mv $@.tmp $@
-
 ## ----------------- ##
 ## Regular sources.  ##
 ## ----------------- ##
 
-dist_libuobject@LIBSFX@_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/barrier.cc				\
   object/centralized-slots.cc			\
   object/code.cc				\
@@ -93,7 +67,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
   object/duration.cc				\
   object/executable.cc				\
   object/file.cc				\
-  object/finalizable.cc                         \
+  object/finalizable.cc				\
   object/finalizable.hh				\
   object/float.cc				\
   object/global.cc				\
@@ -125,18 +99,18 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
   object/urbi-exception.cc			\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\
-  object/uvar.cc                                \
-  object/uvar.hh                                \
+  object/uvar.cc				\
+  object/uvar.hh				\
   object/vector-slots.hh			\
   object/vector-slots.hxx
 
 if !COMPILATION_MODE_SPACE
-  dist_libuobject@LIBSFX@_la_SOURCES +=			\
-    object/format-info.cc                       \
-    object/format-info.hh                       \
-    object/format-info.hxx                      \
-    object/formatter.cc                         \
-    object/formatter.hh                         \
+  dist_libuobject@LIBSFX@_la_SOURCES +=		\
+    object/format-info.cc			\
+    object/format-info.hh			\
+    object/format-info.hxx			\
+    object/formatter.cc				\
+    object/formatter.hh				\
     object/input-stream.cc			\
     object/input-stream.hh			\
     object/output-stream.cc			\
@@ -150,8 +124,8 @@ if !COMPILATION_MODE_SPACE
 
 # Too hard currently...
 if !WIN32
-  dist_libuobject@LIBSFX@_la_SOURCES +=			\
+  dist_libuobject@LIBSFX@_la_SOURCES +=		\
     object/process.cc				\
     object/process.hh
-endif
-endif
+endif !WIN32
+endif !COMPILATION_MODE_SPACE

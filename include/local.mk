@@ -20,7 +20,6 @@ dist_kernelinclude_urbi_HEADERS =		\
 kernelinclude_urbi_objectdir = $(kernelincludedir)/urbi/object
 dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/any-to-boost-function.hh	\
-  include/urbi/object/any-to-boost-function.hxx	\
   include/urbi/object/barrier.hh		\
   include/urbi/object/centralized-slots.hh	\
   include/urbi/object/centralized-slots.hxx	\
@@ -30,13 +29,11 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/cxx-object.hh		\
   include/urbi/object/cxx-object.hxx		\
   include/urbi/object/cxx-primitive.hh		\
-  include/urbi/object/cxx-primitive.hxx		\
   include/urbi/object/date.hh			\
   include/urbi/object/dictionary.hh		\
   include/urbi/object/directory.hh		\
   include/urbi/object/equality-comparable.hh	\
   include/urbi/object/equality-comparable.hxx	\
-  include/urbi/object/executable.hh		\
   include/urbi/object/file.hh			\
   include/urbi/object/float.hh			\
   include/urbi/object/fwd.hh			\
@@ -60,8 +57,36 @@ dist_kernelinclude_urbi_object_HEADERS =	\
 kernelinclude_urbi_runnerdir = $(kernelincludedir)/urbi/runner
 dist_kernelinclude_urbi_runner_HEADERS =	\
   include/urbi/runner/raise.hh
-endif
+endif INSTALL_KERNEL_HEADERS
 
+
+## ------------------------ ##
+## Generated source files.  ##
+## ------------------------ ##
+
+FROM_PY =					\
+  include/urbi/object/any-to-boost-function.hxx	\
+  include/urbi/object/cxx-primitive.hxx		\
+  include/urbi/object/executable.hh
+
+if INSTALL_KERNEL_HEADERS
+dist_kernelinclude_urbi_object_HEADERS += $(FROM_PY)
+endif INSTALL_KERNEL_HEADERS
+EXTRA_DIST += $(FROM_PY:=.py)
+
+%.hh: %.hh.py
+	rm -f $@ $@.tmp
+	mkdir -p $(dir $@)
+	$< > $@.tmp
+	chmod a-w $@.tmp
+	mv $@.tmp $@
+
+%.hxx: %.hxx.py
+	rm -f $@ $@.tmp
+	mkdir -p $(dir $@)
+	$< > $@.tmp
+	chmod a-w $@.tmp
+	mv $@.tmp $@
 
 ## --------- ##
 ## install.  ##
