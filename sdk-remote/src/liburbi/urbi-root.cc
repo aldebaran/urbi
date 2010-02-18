@@ -18,6 +18,7 @@
 
 #include <libport/config.h>
 #include <libport/foreach.hh>
+#include <libport/sysexits.hh>
 
 #include <urbi/urbi-root.hh>
 #include <libport/config.h>
@@ -172,18 +173,21 @@ split(std::string lib)
 }
 
 /// \a path does not include the extension.
-static RTLD_HANDLE
+static
+RTLD_HANDLE
 xdlopen(const std::string& program,
         const std::string& msg,
         std::string path,
+        sysexit status = EX_FAIL,
         int flags = RTLD_LAZY | RTLD_GLOBAL)
 {
+  path += LIBPORT_LIBSFX;
   path += libext;
   URBI_ROOT_DEBUG(program, "loading library: " << path << " (" << msg << ")");
   if (RTLD_HANDLE res = dlopen(path.c_str(), flags))
     return res;
   else
-    URBI_ROOT_FATAL(program, 1,
+    URBI_ROOT_FATAL(program, status,
                     "cannot open library: " << path << ": " << dlerror());
 }
 
@@ -309,7 +313,7 @@ UrbiRoot::library_load(const std::string& base)
     xdlopen(program_,
             base,
             mygetenv(envvar,
-                    root(libdir / "lib" + base + LIBPORT_LIBSFX)));
+                    root(libdir / "lib" + base)));
 }
 
 std::string
@@ -339,28 +343,35 @@ UrbiRoot::share_path(const std::string& path) const
 void
 UrbiRoot::load_plugin()
 {
-  handle_libuobject_ = xdlopen(program_,
-                               "plugin UObject implementation",
-                               core_path() / "engine"
-                               / "libuobject" LIBPORT_LIBSFX);
+  handle_libuobject_ =
+    xdlopen(program_,
+            "plugin UObject implementation",
+            core_path() / "engine" / "libuobject",
+            // This exit status is understood by the test suite.  It
+            // helps it skipping SDK Remote tests that cannot run
+            // without Urbi SDK.
+            EX_OSFILE);
 }
 
 /// Location of Urbi remote libuobject
 void
 UrbiRoot::load_remote()
 {
-  handle_libuobject_ = xdlopen(program_,
-                               "remote UObject implementation",
-                               core_path() / "remote"
-                               / "libuobject" LIBPORT_LIBSFX);
+  handle_libuobject_ =
+    xdlopen(program_,
+            "remote UObject implementation",
+            core_path() / "remote" / "libuobject",
+            EX_OSFILE);
 }
 
 void
 UrbiRoot::load_custom(const std::string& path_)
 {
-  handle_libuobject_ = xdlopen(program_,
-                               "custom UObject implementation",
-                               path_ / "libuobject" LIBPORT_LIBSFX);
+  handle_libuobject_ =
+    xdlopen(program_,
+            "custom UObject implementation",
+            path_ / "libuobject",
+            EX_OSFILE);
 }
 
 typedef int(*urbi_launch_type)(int, const char*[], UrbiRoot&);
