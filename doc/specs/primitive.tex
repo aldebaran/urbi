@@ -1,5 +1,35 @@
 \section{Primitive}
-\Cxx code callable from \us.
+\Cxx routine callable from \us.
+
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Executable}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Construction}
+
+It is not possible to construct a Primitive.
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item \lstinline|apply(\var{args})|\\
+  Invoke a primitive.  The argument list, \var{args}, must start with
+  the target.
+\begin{urbiassert}
+Float.getSlot("+").isA(Global.getSlot("Primitive"));
+Float.getSlot("+").apply([1, 2]) == 3;
+
+String.getSlot("+").isA(Global.getSlot("Primitive"));
+String.getSlot("+").apply(["1", "2"]);
+\end{urbiassert}
+
+\item[asPrimitive] Return \lstinline|this|.
+\begin{urbiassert}
+Float.getSlot("+").asPrimitive === Float.getSlot("+");
+\end{urbiassert}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

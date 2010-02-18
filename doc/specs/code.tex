@@ -1,6 +1,6 @@
 \section{Code}
 
-Objects that can be ``invoked'', comparable to \Cxx's Function Objects.
+Functions written in \us.
 
 \subsection{Prototypes}
 
@@ -9,6 +9,16 @@ Objects that can be ``invoked'', comparable to \Cxx's Function Objects.
 \item[Executable]
 \item[Object]
 \end{refObjects}
+
+\subsection{Construction}
+
+The keywords \lstinline|function| and \lstinline|closure| build Code
+instances.
+
+\begin{urbiassert}
+function(){}.protos[0] === getSlot("Code");
+closure(){}.protos[0] === getSlot("Code");
+\end{urbiassert}
 
 \subsection{Slots}
 
