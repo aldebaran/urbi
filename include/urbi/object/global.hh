@@ -30,12 +30,19 @@ namespace urbi
     extern URBI_SDK_API rObject global_class;
 
     /// Initialize the Global class.
-    void global_class_initialize ();
+    void global_class_initialize();
   }; // namespace object
 }
 
-# define CAPTURE_GLOBAL(Name)                                           \
-  static ::urbi::object::rObject Name =                                 \
-    ::urbi::object::global_class->slot_get(::libport::Symbol(#Name))
+# define CAPTURE_(Name, From)                                  \
+  static ::urbi::object::rObject Name =                        \
+    (From)->slot_get(::libport::Symbol(#Name))
+
+# define CAPTURE_GLOBAL(Name)                           \
+  CAPTURE_(Name, ::urbi::object::global_class)
+
+# define CAPTURE_GLOBAL2(Name, Member)          \
+  CAPTURE_GLOBAL(Name);                         \
+  CAPTURE_(Member, Name)
 
 #endif // !OBJECT_GLOBAL_CLASS_HH

@@ -10,22 +10,12 @@
 
 do (Global.Tag)
 {
-  var SystemTag = Tag.new("SystemTag");
-
   function asString()
   {
     if (this === Tag)
-      "Tag"
+      '$type'
     else
-      "Tag<" + name + ">"
-  };
-
-  function end()
-  {
-    var res = clone;
-    at (res.leave?)
-      echo("%s: end" % res.name);
-    return res;
+      "%s<%s>" % ['$type', name]
   };
 
   function begin()
@@ -36,17 +26,29 @@ do (Global.Tag)
     return res;
   };
 
+  function end()
+  {
+    var res = clone;
+    at (res.leave?)
+      echo("%s: end" % res.name);
+    return res;
+  };
+
+  var SystemTag = new("SystemTag");
+
+  class tags
+  {
+    function 'new'(name)
+    {
+      return Tag.new(name)
+    };
+  };
+
   function waitUntilStopped(time_out=inf)
   {
     this: sleep(time_out)
   };
+
 };
 
-class Global.Tags
-{
-  function 'new'(name)
-  {
-    return Tag.new(name)
-  };
-};
-Global.addProto(Global.Tags);
+Global.addProto(Tag.tags);

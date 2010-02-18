@@ -363,38 +363,38 @@ mytag.begin.end: echo(3);
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|block(\var{result} = void)|\\
   Block any code tagged by \lstinline|this|.  Blocked tags can be
   unblocked using \lstinline|Tag.unblock|.  If some \var{result} was
   specified, let stopped code return \var{result} as value.  See
   \autoref{sec:specs:tag:block}.
 
-\item \lstinline|begin|\\
+\item[begin]
   A subtag that prints out "tag\_name: begin" everytime flow control
   enters the tagged code. See \autoref{sec:specs:tag:begin-end}.
 
-\item \lstinline|blocked|\\
+\item[blocked]
   Whether code tagged by \lstinline|this| is blocked.  See
   \autoref{sec:specs:tag:block}.
 
-\item \lstinline|end|\\
+\item[end]
   A subtag that prints out "tag\_name: end" everytime flow control
   leaves the tagged code. See \autoref{sec:specs:tag:begin-end}.
 
-\item \lstinline|enter|\\
+\item[enter]
   An event that trigger everytime flow control enter the tagged code.
   See \autoref{sec:specs:tag:enter-leave}.
 
-\item \lstinline|freeze|\\
+\item[freeze]
   Suspend code tagged by \lstinline|this|, already running or
   forthcoming.  Frozen code can be later unfrozen using
   \lstinline|Tag.unfreeze|.  See \autoref{sec:specs:tag:freeze}.
 
-\item \lstinline|frozen|\\
+\item[frozen]
   Whether the tag is frozen. See  \autoref{sec:specs:tag:freeze}.
 
-\item \lstinline|leave|\\
+\item[leave]
   An event that trigger everytime flow control leaves the tagged code.
   See \autoref{sec:specs:tag:enter-leave}.
 
@@ -403,13 +403,24 @@ mytag.begin.end: echo(3);
   specified, let stopped code return \var{result} as value.
   See \autoref{sec:specs:tag:stop}.
 
-\item \lstinline|unblock|\\
+\item[tags] All the undeclared tags are created as slots in this
+  object.  Using this feature is non recommanded.
+\begin{urbiscript}
+{
+  assert ("brandNewTag" not in Tag.tags.localSlotNames);
+  brandNewTag: 1;
+  assert ("brandNewTag" in Tag.tags.localSlotNames);
+  assert (Tag.tags.brandNewTag.isA(Tag));
+};
+\end{urbiscript}
+
+\item[unblock]
   Unblock \lstinline|this|.  See \autoref{sec:specs:tag:block}.
 
 \item \lstinline|unfreeze|\\
   Unfreeze code tagged by \lstinline|this|.  See
   \autoref{sec:specs:tag:freeze}.
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

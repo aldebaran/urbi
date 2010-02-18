@@ -10,6 +10,8 @@ urbiscript
 
 Changes:
 
+- Global.Tags is renamed as Tag.tags.
+
 - Object.getPeriod is deprecated in favor of System.period.
 
 - As announced long ago, and as displayed by warnings,
