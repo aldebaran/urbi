@@ -86,7 +86,7 @@ repath ()
 urbi_lib ()
 {
   local base=$1
-  local path=$2
+  local path="$2$LIBSFX"
   repath "$path"
   setenv "URBI_ROOT_LIB$base" $repath_res
 }
@@ -134,11 +134,11 @@ ld_path_add $libport_builddir/lib/*/.libs               \
             $sdk_remote_builddir/*/.libs                \
             $sdk_remote_builddir/src/liburbi/.libs
 
-urbi_lib JPEG      "$sdk_remote_builddir/jpeg/.libs/libjpeg$LIBSFX"
-urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport$LIBSFX"
-urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched$LIBSFX"
-urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize$LIBSFX"
-urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi$LIBSFX"
+urbi_lib JPEG      "$sdk_remote_builddir/jpeg/.libs/libjpeg"
+urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport"
+urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched"
+urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize"
+urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi"
 
 verbose "running $program $*"
 exec "$program" "$@"
