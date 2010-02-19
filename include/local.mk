@@ -68,6 +68,7 @@ FROM_PY =					\
   include/urbi/object/any-to-boost-function.hxx	\
   include/urbi/object/cxx-primitive.hxx		\
   include/urbi/object/executable.hh
+BUILT_SOURCES += $(FROM_PY)
 
 if INSTALL_KERNEL_HEADERS
 dist_kernelinclude_urbi_object_HEADERS += $(FROM_PY)
