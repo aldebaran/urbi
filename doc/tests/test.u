@@ -16,6 +16,9 @@ Exception.Lookup.fixSpelling = false |
 // A channel for synclines.
 var Global.syncline = Channel.new("syncline")|
 
+// Too verbose when we launch another urbi from urbi.
+System.unsetenv("GD_LEVEL")|;
+
 function Object.override(slot, value)
 {
   copySlot(slot, "old" + slot);
