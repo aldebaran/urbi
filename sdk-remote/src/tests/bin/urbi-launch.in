@@ -3,6 +3,8 @@
 
 : ${EXEEXT='@EXEEXT@'}
 : ${LIBSFX='@LIBSFX@'}
+: ${kernel_builddir='@abs_top_builddir@/..'}
+: ${kernel_srcdir='@abs_top_srcdir@/..'}
 : ${sdk_remote_builddir='@abs_top_builddir@'}
 : ${sdk_remote_srcdir='@abs_top_srcdir@'}
 
@@ -83,49 +85,31 @@ repath ()
   esac
 }
 
-# urbi_lib BASENAME PATH
+# urbi_lib ENVBASENAME PATH
+# -------------------------
 urbi_lib ()
 {
-  local base=$1
+  local env="URBI_ROOT_LIB$1"
   local path="$2$LIBSFX"
   repath "$path"
-  setenv "URBI_ROOT_LIB$base" $repath_res
+  setenv $env $repath_res
 }
 
 ###################### Common between urbi-launch.in and urbi.in: end.
 
-# The libuobject we load depends on the usage.
-verbose "$*"
-case " $* " in
-  (*' --start '* | *' -s '*)
-    # Spawning a new server, which requires a server.  Two cases:
-    # this package is part of a kernel package, in which case we
-    # should find libuobject.la in it.  Otherwise we hope a kernel
-    # was installed, and the real urbi-launch will look for it at the
-    # right place.
-    if test -f $sdk_remote_builddir/../src/Makefile; then
-      libuobjectdir=$sdk_remote_builddir/../src
-      # Be sure to find the shipped Urbi files.
-      URBI_PATH="$sdk_remote_srcdir/../share:$sdk_remote_builddir/../share:$URBI_PATH"
-      case $(uname -o 2>/dev/null) in
-        (Cygwin)
-          # We use colon as separators, not semicolon.
-          URBI_PATH=$(cygpath -p -w "$URBI_PATH" | sed -e 's/;/:/g')
-          ;;
-      esac
-      export URBI_PATH
-    fi
-    ;;
-  (*)
-     libuobjectdir=$sdk_remote_builddir/src/libuobject;;
-esac
-
-if test -n "$libuobjectdir"; then
-  libuobject=$libuobjectdir/.libs
-  repath "$libuobject"
-  libuobject=$repath_res
-  set x -c "$libuobject" "$@"
-  shift
+# If this SDK-Remote is inside an Urbi SDK, then use that very Urbi
+# SDK, otherwise use the installed one.
+if test -f $sdk_remote_builddir/../src/Makefile; then
+  urbi_lib PLUGIN "$kernel_builddir/src/.libs/libuobject"
+  # Use the shipped Urbi files.
+  URBI_PATH="$kernel_srcdir/share:$kernel_builddir/share:$URBI_PATH"
+  case $(uname -o 2>/dev/null) in
+    (Cygwin)
+      # We use colon as separators, not semicolon.
+      URBI_PATH=$(cygpath -p -w "$URBI_PATH" | sed -e 's/;/:/g')
+      ;;
+  esac
+  export URBI_PATH
 fi
 
 # Find the noninstalled libport libraries.
@@ -140,6 +124,7 @@ urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport"
 urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched"
 urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize"
 urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi"
+urbi_lib REMOTE    "$sdk_remote_builddir/src/libuobject/.libs/libuobject"
 
 verbose "running $program $*"
 exec "$program" "$@"

@@ -346,7 +346,8 @@ UrbiRoot::load_plugin()
   handle_libuobject_ =
     xdlopen(program_,
             "plugin UObject implementation",
-            core_path() / "engine" / "libuobject",
+            mygetenv("URBI_ROOT_LIBPLUGIN",
+                     core_path() / "engine" / "libuobject"),
             // This exit status is understood by the test suite.  It
             // helps it skipping SDK Remote tests that cannot run
             // without Urbi SDK.
@@ -360,7 +361,8 @@ UrbiRoot::load_remote()
   handle_libuobject_ =
     xdlopen(program_,
             "remote UObject implementation",
-            core_path() / "remote" / "libuobject",
+            mygetenv("URBI_ROOT_LIBREMOTE",
+                     core_path() / "remote" / "libuobject"),
             EX_OSFILE);
 }
 
