@@ -99,15 +99,6 @@ namespace urbi
 
     Process::~Process()
     {
-      if (pid_)
-      {
-        XCLOSE(stdin_fd_[1]);
-        if (stdout_fd_[0] != -1)
-        {
-          XCLOSE(stdout_fd_[0]);
-          XCLOSE(stderr_fd_[0]);
-        }
-      }
     }
 
     std::string
@@ -137,42 +128,46 @@ namespace urbi
       if (pid_)
         RAISE("Process was already run");
 
-      if (pipe(stdin_fd_))
+      int stdin_fd[2];
+      if (pipe(stdin_fd))
         FRAISE("pipe failed: %s", libport::strerror(errno));
+
+      int stdout_fd[2];
+      int stderr_fd[2];
       if (!outFile)
       {
-        if (pipe(stdout_fd_))
+        if (pipe(stdout_fd))
         {
           int err = errno;
-          XCLOSE(stdin_fd_[0]);
-          XCLOSE(stdin_fd_[1]);
+          XCLOSE(stdin_fd[0]);
+          XCLOSE(stdin_fd[1]);
           FRAISE("pipe failed: %s:", libport::strerror(err));
         }
-        if (pipe(stderr_fd_))
+        if (pipe(stderr_fd))
         {
           int err = errno;
-          XCLOSE(stdout_fd_[0]);
-          XCLOSE(stdout_fd_[1]);
-          XCLOSE(stdin_fd_[0]);
-          XCLOSE(stdin_fd_[1]);
+          XCLOSE(stdout_fd[0]);
+          XCLOSE(stdout_fd[1]);
+          XCLOSE(stdin_fd[0]);
+          XCLOSE(stdin_fd[1]);
           FRAISE("pipe failed: %s:", libport::strerror(err));
         }
       }
       else
-        stdout_fd_[0] = -1;
+        stdout_fd[0] = -1;
       pid_ = fork();
 
       if (pid_ < 0)
       {
         int err = errno;
-        XCLOSE(stdin_fd_[0]);
-        XCLOSE(stdin_fd_[1]);
+        XCLOSE(stdin_fd[0]);
+        XCLOSE(stdin_fd[1]);
         if (!outFile)
         {
-          XCLOSE(stdout_fd_[0]);
-          XCLOSE(stdout_fd_[1]);
-          XCLOSE(stderr_fd_[0]);
-          XCLOSE(stderr_fd_[1]);
+          XCLOSE(stdout_fd[0]);
+          XCLOSE(stdout_fd[1]);
+          XCLOSE(stderr_fd[0]);
+          XCLOSE(stderr_fd[1]);
         }
         pid_ = 0;
         FRAISE("fork failed: %s", libport::strerror(err));
@@ -181,15 +176,15 @@ namespace urbi
       if (pid_)
       {
         // Parent.
-        XCLOSE(stdin_fd_[0]);
+        XCLOSE(stdin_fd[0]);
         if (!outFile)
         {
-          XCLOSE(stdout_fd_[1]);
-          XCLOSE(stderr_fd_[1]);
-          slot_set(SYMBOL(stdout), new InputStream(stdout_fd_[0], false));
-          slot_set(SYMBOL(stderr), new InputStream(stderr_fd_[0], false));
+          XCLOSE(stdout_fd[1]);
+          XCLOSE(stderr_fd[1]);
+          slot_set(SYMBOL(stdout), new InputStream(stdout_fd[0], true));
+          slot_set(SYMBOL(stderr), new InputStream(stderr_fd[0], true));
         }
-        slot_set(SYMBOL(stdin), new OutputStream(stdin_fd_[1], false));
+        slot_set(SYMBOL(stdin), new OutputStream(stdin_fd[1], true));
 
         {
           libport::BlockLock lock(mutex);
@@ -201,11 +196,11 @@ namespace urbi
         // Child
         // Ask to be killed when the parent dies.
         prctl(PR_SET_PDEATHSIG, SIGKILL);
-        XCLOSE(stdin_fd_[1]);
+        XCLOSE(stdin_fd[1]);
         if (!outFile)
         {
-          XCLOSE(stdout_fd_[0]);
-          XCLOSE(stderr_fd_[0]);
+          XCLOSE(stdout_fd[0]);
+          XCLOSE(stderr_fd[0]);
         }
         else
         {
@@ -213,11 +208,11 @@ namespace urbi
                         00600);
           if (fd == -1)
             errnoabort("open " + outFile.get());
-          stdout_fd_[1] = stderr_fd_[1] = fd;
+          stdout_fd[1] = stderr_fd[1] = fd;
         }
-        XRUN(dup2, (stdout_fd_[1], STDOUT_FILENO));
-        XRUN(dup2, (stderr_fd_[1], STDERR_FILENO));
-        XRUN(dup2, (stdin_fd_[0],  STDIN_FILENO));
+        XRUN(dup2, (stdout_fd[1], STDOUT_FILENO));
+        XRUN(dup2, (stderr_fd[1], STDERR_FILENO));
+        XRUN(dup2, (stdin_fd[0],  STDIN_FILENO));
 
         try
         {

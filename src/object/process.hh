@@ -41,7 +41,7 @@ namespace urbi
       void init(const std::string& binary,
                 const arguments_type& argv);
       void run();
-      /// Run, writting stderr and stdout to filename
+      /// Run, writing stderr and stdout to filename.
       void runTo(const std::string& filename);
       void join() const;
       void kill();
@@ -63,9 +63,6 @@ namespace urbi
       std::string binary_;
       arguments_type argv_;
       int status_;
-      int stdout_fd_[2];
-      int stderr_fd_[2];
-      int stdin_fd_[2];
       URBI_CXX_OBJECT_(Process);
     };
   }
