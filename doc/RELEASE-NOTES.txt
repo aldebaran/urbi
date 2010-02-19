@@ -35,6 +35,7 @@ UObjects
 Documentation
 =============
 
+- Pattern
 - Tracjectories
 - TrajectoryGenerator
 - waituntil clauses

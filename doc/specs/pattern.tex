@@ -1,0 +1,128 @@
+\section{Pattern}
+
+\lstinline|Pattern| class is used to make correspondances between a pattern
+and another \lstinline|Object|.  The visit is done either on the pattern or
+on the element against which is pattern is compared.
+
+\lstinline|Pattern| are used for the implementation of the pattern matching.
+So any class made compatilble with the pattern matching implemented by this
+class will allow you to use it implicitly in your scripts.
+
+\begin{urbiscript}[firstnumber=1]
+[1, var a, var b] = [1, 2, 3];
+[00000000] [1, 2, 3]
+a;
+[00000000] 2
+b;
+[00000000] 3
+\end{urbiscript}
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+A \lstinline|Pattern| can be created with any objects which can be matched.
+
+\begin{urbiscript}
+Pattern.new([1]); // create a pattern to match the list [1].
+[00000000] Pattern_0x189ea80
+Pattern.new(Pattern.Binding.new("a")); // match anything into "a".
+[00000000] Pattern_0x18d98b0
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item[Binding]
+  A class used to create pattern variables.
+
+\begin{urbiscript}
+Pattern.Binding.new("a");
+[00000000] var a
+\end{urbiscript}
+
+\item[bindings]
+
+  A \lstinline|Dictionary| which is filled by the match function for each
+  \lstinline|Pattern.Binding| contained inside the pattern.
+
+\begin{urbiscript}
+{
+  var p = Pattern.new([Pattern.Binding.new("a"), Pattern.Binding.new("b")]);
+  assert {
+    p.match([1, 2]) == true
+  };
+  p.bindings
+};
+[00000000] Dictionary {"a" => 1, "b" => 2}
+\end{urbiscript}
+
+
+\item \lstinline|match(\var{value})|\\
+
+  Use the value to unify the current pattern with this value.  This function
+  returns the status of the match.
+  \begin{itemize}
+    \item If the match is correct, then the \var{bindings} member will
+      contains the result of every matched values.
+    \item If the match is incorrect, then the \var{bindings} member should
+      not be used.
+  \end{itemize}
+  If the pattern contains multiple \lstinline|Pattern.Binding| with the same
+  name, then the behaviour is not determined.
+
+\begin{urbiassert}
+Pattern.new(1).match(1);
+Pattern.new([1, 2]).match([1, 2]);
+! Pattern.new([1, 2]).match([1, 3]);
+! Pattern.new([1, 2]).match([1, 2, 3]);
+Pattern.new(Pattern.Binding.new("a")).match(0);
+Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
+! Pattern.new([1, Pattern.Binding.new("a")]).match(0);
+\end{urbiassert}
+
+
+\item \lstinline|matchPattern(\var{pattern}, \var{value})|\\
+
+  This function is used as a callback function to store all bindings in the
+  same place.  This function is useful inside objects which are implementing
+  a match or matchAgainst function which need to continue the match deeper.
+  This returns a boolean the status of the match.
+
+  The \var{pattern} should provide a method
+  \lstinline|match(\var{handler},\var{value})| otherwise the value method
+  \lstinline|matchAgainst(\var{handler}, \var{pattern})| is used.  If none
+  are provided the \lstinline|'=='| operator is used.
+
+  To see how to use it, you can have a look at the implementation of
+  \lstinline|List.matchAgainst|.
+
+%% This function is indirectly tested with the match of Pattern.Binding
+%% inside lists.
+
+
+\item[pattern]
+
+  This field is used to store the pattern given at the creation.
+
+\begin{urbiassert}
+Pattern.new(1).pattern == 1;
+Pattern.new([1, 2]).pattern == [1, 2];
+{
+  var pattern = [1, Pattern.Binding.new("a")];
+  Pattern.new(pattern).pattern == pattern
+};
+\end{urbiassert}
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% End:
