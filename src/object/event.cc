@@ -14,6 +14,7 @@
 #include <object/symbols.hh>
 #include <runner/interpreter.hh>
 #include <urbi/object/event.hh>
+#include <urbi/object/lobby.hh>
 #include <urbi/sdk.hh>
 
 namespace urbi
