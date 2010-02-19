@@ -14,7 +14,6 @@ Details on the architecture the \urbi server runs on.
 %% \item \lstinline|lobbies|
 %% \item \lstinline|lobby|
 %% \item \lstinline|nonInterruptible|
-%% \item \lstinline|programName|
 %% \item \lstinline|registerAtJob|
 %% \item \lstinline|resetStats|
 %% \item \lstinline|searchPath|
@@ -202,6 +201,14 @@ System.period == 20ms;
 
 \item \lstinline|Platform|\\
   See \refObject{System.Platform}
+
+\item \lstinline|programName|\\
+  The path under which the \urbi process was called.  This is
+  typically \file{.../urbi} (\autoref{sec:tools:urbi}) or
+  \file{.../urbi-launch} (\autoref{sec:tools:urbi-launch}).
+\begin{urbiassert}
+Path.new(System.programName).basename in ["urbi", "urbi-launch"];
+\end{urbiassert}
 
 \item \lstinline|reboot|\\
   Restart the \urbi server.  Architecture dependent.
