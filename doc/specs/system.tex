@@ -7,19 +7,19 @@ Details on the architecture the \urbi server runs on.
 \end{itemize}
 
 \subsection{Slots}
-\begin{itemize}
-%% \item \lstinline|breakpoint|
-%% \item \lstinline|currentRunner|
-%% \item \lstinline|jobs|
-%% \item \lstinline|lobbies|
-%% \item \lstinline|lobby|
-%% \item \lstinline|nonInterruptible|
-%% \item \lstinline|registerAtJob|
-%% \item \lstinline|resetStats|
-%% \item \lstinline|searchPath|
-%% \item \lstinline|spawn|
-%% \item \lstinline|stats|
-%% \item \lstinline|stopall|
+\begin{urbiscriptapi}
+%% \item[breakpoint]
+%% \item[currentRunner]
+%% \item[jobs]
+%% \item[lobbies]
+%% \item[lobby]
+%% \item[nonInterruptible]
+%% \item[registerAtJob]
+%% \item[resetStats]
+%% \item[searchPath]
+%% \item[spawn]
+%% \item[stats]
+%% \item[stopall]
 
 \item \lstinline|_exit(\var{status})|\\
   Shut the server down brutally: the connections are not closed, and
@@ -27,8 +27,7 @@ Details on the architecture the \urbi server runs on.
   reclaims most of them: memory, file descriptors and so forth).
   Architecture dependent.
 
-\item \lstinline|aliveJobs|\\
-  The number of detached routines currently running.
+\item[aliveJobs] The number of detached routines currently running.
 \begin{urbiscript}
 {
   var nJobs = aliveJobs;
@@ -45,8 +44,7 @@ Details on the architecture the \urbi server runs on.
 };
 \end{urbiscript}
 
-\item \lstinline|arguments|\\
-  The list of the command line arguments passed to the user script.
+\item[arguments] The list of the command line arguments passed to the user script.
   This is especially useful in scripts.
 \begin{shell}[alsolanguage={[Interactive]Urbi}]
 $ cat >echo <<EOF
@@ -191,27 +189,23 @@ maybeLoad("123.u") == 123;
 maybeLoad("u.123").isVoid;
 \end{urbiassert}
 
-\item \lstinline|period|\\
-  The \dfn{period} of the \urbi kernel.  Influences the trajectories
-  (\refObject{TrajectoryGenerator}), and the \UObject monitoring.
-  Defaults to 20ms.
+\item[period] The \dfn{period} of the \urbi kernel.  Influences the
+  trajectories (\refObject{TrajectoryGenerator}), and the \UObject
+  monitoring.  Defaults to 20ms.
 \begin{urbiassert}
 System.period == 20ms;
 \end{urbiassert}
 
-\item \lstinline|Platform|\\
-  See \refObject{System.Platform}
+\item[Platform] See \refObject{System.Platform}
 
-\item \lstinline|programName|\\
-  The path under which the \urbi process was called.  This is
-  typically \file{.../urbi} (\autoref{sec:tools:urbi}) or
+\item[programName] The path under which the \urbi process was called.
+  This is typically \file{.../urbi} (\autoref{sec:tools:urbi}) or
   \file{.../urbi-launch} (\autoref{sec:tools:urbi-launch}).
 \begin{urbiassert}
 Path.new(System.programName).basename in ["urbi", "urbi-launch"];
 \end{urbiassert}
 
-\item \lstinline|reboot|\\
-  Restart the \urbi server.  Architecture dependent.
+\item[reboot] Restart the \urbi server.  Architecture dependent.
 
 \item \lstinline|searchFile(\var{file})|\\
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars})
@@ -247,10 +241,9 @@ setenv("MyVar", "") == "";
 getenv("MyVar").isNil == Platform.isWindows;
 \end{urbiassert}
 
-\item \lstinline|scopeTag|\\
-  Return a fresh Tag whose \lstinline|stop| will be invoked a the end
-  of the current scope.  This function is likely to be removed, or
-  maybe just moved into \refObject{Tag}.  See
+\item[scopeTag] Return a fresh Tag whose \lstinline|stop| will be
+  invoked a the end of the current scope.  This function is likely to
+  be removed, or maybe just moved into \refObject{Tag}.  See
   \autoref{sec:specs:tag:scope}.
 
 \item \lstinline|sleep(\var{duration})|\\
@@ -261,10 +254,9 @@ getenv("MyVar").isNil == Platform.isWindows;
 (time - {sleep(1s); time}).round == -1;
 \end{urbiassert}
 
-\item \lstinline|shiftedTime|\\
-  Return the number of seconds elapsed since the \urbi server was
-  launched.  Contrary to \lstinline|System.time|, time spent in frozen
-  code is not counted.
+\item[shiftedTime] Return the number of seconds elapsed since the
+  \urbi server was launched.  Contrary to \lstinline|System.time|,
+  time spent in frozen code is not counted.
 \begin{urbiassert}
 { var t0 = shiftedTime | sleep(1s) | shiftedTime - t0 }.round ~= 1;
 
@@ -282,9 +274,8 @@ getenv("MyVar").isNil == Platform.isWindows;
   };
 \end{urbiassert}
 
-\item \lstinline|shutdown|\\
-  Have the \urbi server shut down.  All the connections are closed,
-  the resources are released.  Architecture dependent.
+\item[shutdown] Have the \urbi server shut down.  All the connections
+  are closed, the resources are released.  Architecture dependent.
 
 \item \lstinline|system(\var{command})|\\
   Ask the operating system to run the \var{command}.  This is
@@ -305,10 +296,9 @@ System.system("exit 23") >> 8
 \end{urbiassert}
 
 
-\item \lstinline|time|\\
-  Return the number of seconds elapsed since the \urbi server was
-  launched.  In presence of a frozen \refObject{Tag}, see also
-  \lstinline|System.shiftedTime|.
+\item[time] Return the number of seconds elapsed since the \urbi
+  server was launched.  In presence of a frozen \refObject{Tag}, see
+  also \lstinline|System.shiftedTime|.
 \begin{urbiassert}
 { var t0 = time | sleep(1s) | time - t0 }.round ~= 1;
 
@@ -339,7 +329,7 @@ getenv("MyVar").isNil;
 \end{urbiassert}
 
 
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex
