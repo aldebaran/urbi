@@ -202,7 +202,8 @@ System.period == 20ms;
   This is typically \file{.../urbi} (\autoref{sec:tools:urbi}) or
   \file{.../urbi-launch} (\autoref{sec:tools:urbi-launch}).
 \begin{urbiassert}
-Path.new(System.programName).basename in ["urbi", "urbi-launch"];
+Path.new(System.programName).basename
+  in ["urbi", "urbi.exe", "urbi-launch", "urbi-launch.exe"];
 \end{urbiassert}
 
 \item[reboot] Restart the \urbi server.  Architecture dependent.
