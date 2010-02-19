@@ -1196,6 +1196,9 @@ unsigned:
   "float" { $$ = static_cast<unsigned int>($1); }
 ;
 
+// This token is used to move declaration of variable made in the current
+// scope to the /n/ parent scope.  This is useful when desugaring variable
+// declarations.
 %token PERCENT_UNSCOPE_COLON "%unscope:";
 exp:
   "%unscope:" unsigned
