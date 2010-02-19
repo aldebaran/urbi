@@ -49,9 +49,18 @@ namespace urbi
         Actions(rExecutable g, rExecutable e, rExecutable l)
           : guard(g), enter(e), leave(l)
         {}
+
+        bool
+        operator==(const Actions& other)
+        {
+          return guard == other.guard && enter == other.enter && leave == other.leave;
+        }
+
         rExecutable guard, enter, leave;
       };
-      std::vector<Actions> listeners_;
+      void unregister(Actions);
+      typedef std::vector<Actions> Listeners;
+      Listeners listeners_;
 
       /// Job waiting for this event.
       typedef std::pair<runner::rRunner, rObject> waiter_type;

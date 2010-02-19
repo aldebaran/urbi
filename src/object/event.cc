@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+#include <algorithm>
+
 #include <kernel/userver.hh>
 #include <object/symbols.hh>
 #include <runner/interpreter.hh>
@@ -35,6 +37,14 @@ namespace urbi
       slot_set(SYMBOL(payload), payload);
     }
 
+    void
+    Event::unregister(Actions a)
+    {
+      Listeners::iterator it = std::find(listeners_.begin(), listeners_.end(), a);
+      if (it != listeners_.end())
+        listeners_.erase(it);
+    }
+
     /*---------------.
     | Urbi functions |
     `---------------*/
@@ -42,7 +52,13 @@ namespace urbi
     void
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave)
     {
-      listeners_ << Actions(guard, enter, leave);
+      Actions actions(guard, enter, leave);
+
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      foreach (object::rTag tag, r.tag_stack_get())
+        tag->value_get()->stop_hook_get().connect(boost::bind(&Event::unregister, this, actions));
+
+      listeners_ << actions;
       foreach (const actives_type::value_type& active, _active)
         active.first->trigger_job(guard, enter, leave);
     }

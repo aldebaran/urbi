@@ -49,6 +49,12 @@ namespace urbi
         parent_ = model;
     }
 
+    Tag::value_type&
+    Tag::value_get()
+    {
+      return value_;
+    }
+
     const Tag::value_type&
     Tag::value_get() const
     {

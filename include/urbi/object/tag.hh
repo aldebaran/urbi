@@ -32,6 +32,7 @@ namespace urbi
       Tag();
       Tag(const value_type& value);
       Tag(rTag model);
+      value_type& value_get();
       const value_type& value_get() const;
 
       void block(const objects_type&);
