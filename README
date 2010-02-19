@@ -50,12 +50,15 @@ package: autoconf automake
 Needed by the test suite.
 package: bc
 
-** Boost 1.39 or later
+** Boost 1.38 or later
 Don't try to build it yourself, ask your distro's management to
 install it.
 deb: libboost-dev
 MacPorts: boost
 windows: http://www.boostpro.com/download
+
+At Gostai, you can use the script common/install/install-boost to set
+up Boost as we use it.
 
 ** Ccache
 Not a requirement, but it's better to have it.
@@ -187,6 +190,15 @@ Unfortunately Git's support for recursive submodules is not nice.  We
 have scripts in common (named git-my-*, also available as git my-*)
 that make this easier.  Since they call each other, set your PATH to
 go into common/git.
+
+** Git 1.6.6 or higher
+
+  git clone --branch master --recursive git@git.gostai.com:kernel
+
+** Old versions of Git
+
+The following sequence expects that you have common/git (common being
+the Gostai repository) in your PATH.
 
   git my-clone git@git.gostai.com:kernel
   cd kernel
