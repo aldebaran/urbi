@@ -343,6 +343,11 @@ Enable Bison parser traces.
 ** URBI_REPORT
 Display stats about execution rounds performed by the kernel.
 
+** URBI_ROOT_LIB<NAME>
+The location of the libraries to load, without the extension.  The
+LIB<NAME> are:, LIBJPEG, LIBPLUGIN (libuobject plugin), LIBPORT,
+LIBREMOTE (libuobject remote), LIBSCHED, LIBSERIALIZE, LIBURBI.
+
 ** URBI_SCANNER
 Enable Flex scanner traces.
 
