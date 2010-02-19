@@ -2,10 +2,11 @@
 # @configure_input@
 
 : ${EXEEXT='@EXEEXT@'}
-: ${sdk_remote_srcdir='@abs_top_srcdir@'}
-: ${sdk_remote_builddir='@abs_top_builddir@'}
-: ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT}
 : ${LIBSFX='@LIBSFX@'}
+: ${sdk_remote_builddir='@abs_top_builddir@'}
+: ${sdk_remote_srcdir='@abs_top_srcdir@'}
+
+: ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT}
 
 ###################### Common between urbi-launch.in and urbi.in: begin.
 
