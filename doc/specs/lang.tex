@@ -2591,41 +2591,50 @@ is not held until all its watchers have completed their job.
 A \lstinline'whenever' clause can be used to catch events with or
 without payloads.
 
-\begin{urbiscript}[firstnumber=1]
+\begin{urbiunchecked}[firstnumber=1]
 var e = Event.new|;
 whenever (e?)
   echo("e on")
 else
   echo("e off");
+[00000001] *** e off
+[00000002] *** e off
+[00000003] *** ...
 e!;
-[00021054] *** e on
-[00021054] *** e off
+[00000004] *** e on
+[00000005] *** e off
+[00000006] *** e off
+[00000007] *** ...
 e!(1) & e!(2);
-[00021054] *** e on
-[00021054] *** e off
-[00021054] *** e on
-[00021054] *** e off
-\end{urbiscript}
+[00000008] *** e on
+[00000009] *** e on
+[00000010] *** e off
+[00000011] *** e off
+[00000012] *** ...
+\end{urbiunchecked}
 
-The payload is available in both bodies.  The pattern-matching and
-guard on the payload is available.
+The pattern-matching and guard on the payload is available.
 
-\begin{urbiscript}[firstnumber=1]
+\begin{urbiunchecked}[firstnumber=1]
 var e = Event.new|;
 whenever (e?("arg", var arg) if arg % 2)
   echo("e (%s) on" % arg)
 else
-  echo("e (%s) off" % arg);
+  echo("e off");
 e!("param", 23);
 e!("arg", 52);
 e!("arg", 23);
-[00000002] *** e (23) on
-[00000003] *** e (23) off
+[00000001] *** e (23) on
+[00000002] *** e off
+[00000003] *** e off
+[00000004] *** ...
 e!("arg", 52);
 e!("arg", 17);
-[00000004] *** e (17) on
-[00000005] *** e (17) off
-\end{urbiscript}
+[00000005] *** e (17) on
+[00000006] *** e off
+[00000007] *** e off
+[00000008] *** ...
+\end{urbiunchecked}
 
 
 If the body of the \lstinline|whenever| lasts for a long time, it is
@@ -2634,28 +2643,18 @@ possible that two executions be run concurrently.
 \begin{urbiscript}[firstnumber=1]
 var e = Event.new|;
 whenever (e?(var d))
-  {
-    echo("e (%s) on begin" % d);
-    sleep(d);
-    echo("e (%s) on end" % d);
-  }
-else
-  {
-    echo("e (%s) off begin" % d);
-    sleep(d);
-    echo("e (%s) off end" % d);
-  };
+{
+  echo("e (%s) on begin" % d);
+  sleep(d);
+  echo("e (%s) on end" % d);
+};
 
 e!(0.3s) & e!(1s);
 sleep(3s);
-[00000202] *** e (0.3) on begin
 [00000202] *** e (1) on begin
+[00000202] *** e (0.3) on begin
 [00000508] *** e (0.3) on end
-[00000508] *** e (0.3) off begin
-[00000810] *** e (0.3) off end
 [00001208] *** e (1) on end
-[00001208] *** e (1) off begin
-[00002210] *** e (1) off end
 \end{urbiscript}
 
 \subsubsection{\lstinline'whenever' on Boolean Expressions}
