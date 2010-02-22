@@ -34,6 +34,27 @@ atomic_types:
 # compound_types:
 # - "DecsList::decs_type"
 
+# Text to include on top of any generated file.  Typically the
+# license.
+file_prologue: |2
+  /*
+   * Copyright (C) 2010, Gostai S.A.S.
+   *
+   * This software is provided "as is" without warranty of any kind,
+   * either expressed or implied, including but not limited to the
+   * implied warranties of fitness for a particular purpose.
+   *
+   * See the LICENSE file for more information.
+   */
+
+  // Generated, do not edit by hand.
+
+  /**
+   ** \file %(file)s
+   ** \brief %(brief)s
+   */
+
+
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:

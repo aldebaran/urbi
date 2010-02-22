@@ -59,7 +59,8 @@ namespace %(ns)s
 
 #endif
 """ % {
-  'banner' : tools.banner("ast/dot-generator.hh",
+  'banner' : tools.banner(ast_params,
+                          "ast/dot-generator.hh",
                           "Declaration of %s::Cloner." % namespace),
   'ns'     : namespace,
   'super'  : 'ast::ConstVisitor',
@@ -210,7 +211,8 @@ namespace %(ns)s
   %(visit)s
 }
 """ % {
-  'banner': tools.banner("ast/dot-generator.cc",
+  'banner': tools.banner(ast_params,
+                         "ast/dot-generator.cc",
 			 "Implementation of %s::Cloner." % namespace),
   'ns': namespace,
   'visit': visit

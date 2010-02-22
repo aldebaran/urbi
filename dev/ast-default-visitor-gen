@@ -26,8 +26,9 @@ arr.sort (lambda x, y: cmp(x.name, y.name))
 
 visitor_hh = file("default-visitor.hh.tmp", "w")
 
-print >>visitor_hh, tools.banner("ast/default-visitor.hh",
-		   "Definition of ast::DefaultVisitor.") + """
+print >>visitor_hh, tools.banner(ast_params,
+                                 "ast/default-visitor.hh",
+                                 "Definition of ast::DefaultVisitor.") + """
 %(default_visitor_hh_prologue)s
 
 namespace ast
@@ -85,7 +86,8 @@ print >>visitor_hh, """    /// \\}
 visitor_hxx = file("default-visitor.hxx.tmp", "w")
 sys.stdout = visitor_hxx
 
-print >>visitor_hxx, tools.banner("ast/default-visitor.hxx",
+print >>visitor_hxx, tools.banner(ast_params,
+                                  "ast/default-visitor.hxx",
 				  "Implementation of ast::DefaultVisitor.") + """
 # include <ast/default-visitor.hh>
 # include <ast/all.hh>

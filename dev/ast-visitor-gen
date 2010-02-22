@@ -16,7 +16,8 @@ concrete = ast.concrete(nodes)
 visitor_hh = file("visitor.hh.tmp", "w")
 sys.stdout = visitor_hh
 
-print tools.banner("ast/visitor.hh",
+print tools.banner(ast_params,
+                         "ast/visitor.hh",
 		   "Definition of ast::Visitor.") + """
 """ + ast_params['visitor_hh_prologue'] + """
 

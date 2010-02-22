@@ -12,7 +12,8 @@ loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
 
 all_hh = file ("all.hh.tmp", "w")
-print >>all_hh, tools.banner("ast/all.hh",
+print >>all_hh, tools.banner(ast_params,
+                             "ast/all.hh",
 			     """Include all the exported headers.""") + """
 # include <ast/fwd.hh>
 """

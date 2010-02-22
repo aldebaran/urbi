@@ -12,7 +12,8 @@ loader = ast.Loader ()
 nodes, ast_params = loader.load (sys.stdin)
 
 fwd_hh = file ("fwd.hh.tmp", "w")
-print >>fwd_hh, tools.banner("ast/fwd.hh",
+print >>fwd_hh, tools.banner(ast_params,
+                             "ast/fwd.hh",
 			     """Forward declarations of all AST classes
  ** (needed by the visitors).""")
 

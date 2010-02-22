@@ -23,7 +23,8 @@ guard = tools.define_id(clonerlib + "/cloner.hh")
 cloner_hh = file("cloner.hh.tmp", "w")
 sys.stdout = cloner_hh
 
-print tools.banner(clonerlib + "/cloner.hh",
+print tools.banner(ast_params,
+                   clonerlib + "/cloner.hh",
 		   "Declaration of " + clonerlib + "::Cloner.") + """
 # include <boost/type_traits/remove_const.hpp>
 # include <boost/optional.hpp>

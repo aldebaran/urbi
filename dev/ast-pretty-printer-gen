@@ -22,7 +22,8 @@ arr = filter ((lambda node: 'printer' in node.__dict__), arr)
 visitor_hh = file("pretty-printer.hh.tmp", "w")
 sys.stdout = visitor_hh
 
-print tools.banner("ast/pretty-printer.hh",
+print tools.banner(ast_params,
+                   "ast/pretty-printer.hh",
 		   "Definition of ast::PrettyPrinter.") + """
 # include <iosfwd>
 
@@ -76,7 +77,8 @@ print """
 visitor_cc = file("pretty-printer.cc.tmp", "w")
 sys.stdout = visitor_cc
 
-print tools.banner("ast/pretty-printer.cc",
+print tools.banner(ast_params,
+                   "ast/pretty-printer.cc",
 		   "Implementation of ast::PrettyPrinter.") + """
 #include <ostream>
 

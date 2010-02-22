@@ -9,7 +9,6 @@ def warning (msg):
   "Display a warning."
   print >>sys.stderr, "Warning: " + msg
 
-
 def error (msg):
   "Display an error message and exit."
   print >>sys.stderr, "Error: " + msg
@@ -97,21 +96,13 @@ def wrap_proto (fundec, width):
   output += line
   return output
 
-def banner(name, description):
+def banner(ast_params, file, brief):
   '''Given a name and description, return the file's banner, including
   its CPP guard when needed.'''
-  res = """\
-//<<-
-// Generated, do not edit by hand.
-//->>
-/**
- ** \\file """ + name + """
- ** \\brief """ + description + """
- */
-"""
+  res = ast_params['file_prologue'] % { 'file': file, 'brief': brief }
   # Header and inline implementation files want guards.
-  if re.match(".*\\.(hh|hxx)", name):
+  if re.match(".*\\.(hh|hxx)", file):
     res += "\n"
-    res += "#ifndef " + define_id(name) + "\n"
-    res += "# define " + define_id(name) + "\n"
+    res += "#ifndef " + define_id(file) + "\n"
+    res += "# define " + define_id(file) + "\n"
   return res

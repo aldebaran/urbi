@@ -21,7 +21,8 @@ def print_inline_code (node, file, where):
     print str
 
 def print_banner(file, name, doc):
-  print >>file, tools.banner("ast/" + name,  doc)
+  print >>file, tools.banner(ast_params,
+                             "ast/" + name,  doc)
 
 def print_guard_close (file, node, ext):
   print >>file, "#endif // !" + node.guard(ext)

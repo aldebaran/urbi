@@ -29,7 +29,8 @@ dec_subclasses = \
 all_hh = file("all.hh.tmp", "w")
 sys.stdout = all_hh
 
-print tools.banner("transform/all.hh",
+print tools.banner(ast_params,
+                   "transform/all.hh",
                    """Declaration of the visitor combinator transform::All.""") + """
 # include "transform/visitor.hh"
 
@@ -128,7 +129,8 @@ def node_all_attributes (node):
 all_cc = file("all.cc.tmp", "w")
 sys.stdout = all_cc
 
-print tools.banner("transform/all.cc",
+print tools.banner(ast_params,
+                         "transform/all.cc",
                    "Implementation of the visitor combinator transform::All.") + """
 #include <ast/all.hh>
 #include <transform/all.hh>

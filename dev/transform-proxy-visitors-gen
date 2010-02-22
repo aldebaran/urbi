@@ -15,7 +15,8 @@ nodes, ast_params = loader.load (sys.stdin)
 proxy_visitors_hh = file("proxy-visitors.hh.tmp", "w")
 sys.stdout = proxy_visitors_hh
 
-print tools.banner("transform/proxy-visitors.hh",
+print tools.banner(ast_params,
+                   "transform/proxy-visitors.hh",
                    """Declaration of proxy visitors used by voyagers.""") + """
 // FIXME: Document.
 # include <ast/visitor.hh>
