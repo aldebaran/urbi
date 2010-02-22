@@ -189,12 +189,17 @@ namespace ast
       leave = exp(noop);
     }
 
-    // if (event.guard)
-    // {
-    //   PARAMETRIC_AST(desugar_guard,
-    //                  "if (%exp:1) %exp:2;");
-    //   body = exp(desugar_guard % event.guard % body);
-    // }
+    rExp guard;
+    if (event.guard)
+    {
+      PARAMETRIC_AST(desugar_guard, "if (%exp:1) '$pattern' else void");
+      guard = exp(desugar_guard % event.guard);
+    }
+    else
+    {
+      PARAMETRIC_AST(desugar_guard, "'$pattern'");
+      guard = exp(desugar_guard);
+    }
 
     if (event.pattern)
     {
@@ -206,13 +211,8 @@ namespace ast
       rExp positive;
       if (event.guard)
       {
-        PARAMETRIC_AST(desugar,
-          "%exp:1|"
-          "if (%exp:2)"
-          "  '$pattern'"
-          "else"
-          "  void");
-        positive = exp(desugar % bind.bindings_get() % event.guard);
+        PARAMETRIC_AST(desugar, "%exp:1| %exp:2");
+        positive = exp(desugar % bind.bindings_get() % guard);
       }
       else
       {
@@ -258,11 +258,11 @@ namespace ast
         (desugar_no_pattern,
          "{\n"
          "  %exp:1.onEvent(\n"
-         "  closure ('$evt') { true },\n"
-         "  closure ('$evt', '$pattern') { %exp:2 },\n"
-         "  closure ('$evt', '$pattern') { %exp:3 })\n"
+         "  closure ('$evt') { var '$pattern' = true | %exp:2 },\n"
+         "  closure ('$evt', '$pattern') { %exp:3 },\n"
+         "  closure ('$evt', '$pattern') { %exp:4 })\n"
          "}\n");
-      return exp(desugar_no_pattern % event.event % enter % leave);
+      return exp(desugar_no_pattern % event.event % guard % enter % leave);
     }
   }
 
