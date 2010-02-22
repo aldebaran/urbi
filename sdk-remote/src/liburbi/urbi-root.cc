@@ -181,7 +181,6 @@ xdlopen(const std::string& program,
         sysexit status = EX_FAIL,
         int flags = RTLD_LAZY | RTLD_GLOBAL)
 {
-  path += LIBPORT_LIBSFX;
   path += libext;
   URBI_ROOT_DEBUG(program, "loading library: " << path << " (" << msg << ")");
   if (RTLD_HANDLE res = dlopen(path.c_str(), flags))
@@ -313,7 +312,7 @@ UrbiRoot::library_load(const std::string& base)
     xdlopen(program_,
             base,
             mygetenv(envvar,
-                    root(libdir / "lib" + base)));
+                    root(libdir / "lib" + base + LIBPORT_LIBSFX)));
 }
 
 std::string
