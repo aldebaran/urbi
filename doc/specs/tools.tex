@@ -1,6 +1,6 @@
 \newcommand{\optionDebug}{
   Set the verbosity level of traces.
-  This option is mostly for developpers, but it is very useful when
+  This option is mostly for developers, but it is very useful when
   tracking problems such as a UObject that fails to load properly.
   Valid values for \var{level} are, in increasing verbosity order:
   \begin{enumerate}
@@ -227,7 +227,7 @@ The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.
 \item[-h, --help] \optionHelp
 \item[--version] \optionVersion
 \item[-c, --customize=\var{file}] start the \urbi server in
-  \var{file}.  This option is mostly for developpers.
+  \var{file}.  This option is mostly for developers.
 \item[-d, --debug=\var{level}] \optionDebug
 \end{options}
 
@@ -278,7 +278,7 @@ urbi-send \var{option}...
 \end{shell}
 
 Connect to an \urbi server, and send commands or file contents to it.
-Stay connected, until server disconnection, or user interuption (such
+Stay connected, until server disconnection, or user interruption (such
 as \key{C-c} under a Unix terminal).
 
 \begin{options}
@@ -308,7 +308,7 @@ as \key{C-c} under a Unix terminal).
 
 The \command{umake} programs builds loadable modules, UObjects, to be
 later run using \command{urbi-launch}
-(autoref{sec:tools:urbi-launch}).  Using it is not mandatory: users
+(\autoref{sec:tools:urbi-launch}).  Using it is not mandatory: users
 familiar with their compilation tools will probably prefer using them
 directly.  Yet \command{umake} makes things more uniform and simpler,
 at the cost of less control.
@@ -362,7 +362,7 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
 \item[-m, --disable-automain] do not add the \lstinline|main| function.
 \end{options}
 
-\paragraph{Developper options}
+\paragraph{Developer options}
 \begin{options}
 \item[-p, --prefix=\var{dir}] library file location
 \item[-P, --param-mk=\var{file}] \file{param.mk} location
@@ -381,7 +381,7 @@ provided:
   same arguments.  Same as \samp{umake --deep-clean}.
 \item[\command{umake-shared}] --- Compiling Shared UObjects\\
   Build a shared object to be later run using \command{urbi-launch}
-  (autoref{sec:tools:urbi-launch}).  Same as \samp{umake
+  (\autoref{sec:tools:urbi-launch}).  Same as \samp{umake
     --shared-library}.
 \end{description}
 

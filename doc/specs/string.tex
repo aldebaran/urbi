@@ -38,7 +38,7 @@ assert("23.03".asFloat == 23.03);
 \end{urbiscript}
 
 \item \lstinline|asList|\\
-  Return a List of one-letter Strings that, concataneted, equal
+  Return a List of one-letter Strings that, concatenated, equal
   \lstinline|this|.  This allows to use \lstinline|for| to iterate
   over the string.
 \begin{urbiscript}
@@ -217,7 +217,7 @@ String.fresh == "_5";
 
 \item \lstinline|'[]'(\var{from})|\\
   \lstinline|'[]'(\var{from}, \var{to})|\\
-  Return the substring starting at \var{from}, up to and not including
+  Return the sub-string starting at \var{from}, up to and not including
   \var{to} (which defaults to \var{to} + 1).
 \begin{urbiassert}
 "foobar"[0, 3] == "foo";
@@ -226,7 +226,7 @@ String.fresh == "_5";
 
 \item \lstinline|'[]='(\var{from}, \var{other})|\\
   \lstinline|'[]='(\var{from}, \var{to}, \var{other})|\\
-  Replace the substring starting at \var{from}, up to and not including
+  Replace the sub-string starting at \var{from}, up to and not including
   \var{to} (which defaults to \var{to} + 1), by \var{other}.  Return
   \var{other}.
 

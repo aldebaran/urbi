@@ -1,7 +1,7 @@
 \section{Tag}
 
 A Tag is an object which you can use to label blocks of code in order
-to control them externally.  Tagged code can be freezed, resumed,
+to control them externally.  Tagged code can be frozen, resumed,
 stopped\ldots See also \autoref{sec:tut:tags}.
 
 \subsection{Construction}
@@ -371,7 +371,7 @@ mytag.begin.end: echo(3);
   \autoref{sec:specs:tag:block}.
 
 \item[begin]
-  A subtag that prints out "tag\_name: begin" everytime flow control
+  A sub-tag that prints out "tag\_name: begin" each time flow control
   enters the tagged code. See \autoref{sec:specs:tag:begin-end}.
 
 \item[blocked]
@@ -379,11 +379,11 @@ mytag.begin.end: echo(3);
   \autoref{sec:specs:tag:block}.
 
 \item[end]
-  A subtag that prints out "tag\_name: end" everytime flow control
+  A sub-tag that prints out "tag\_name: end" each time flow control
   leaves the tagged code. See \autoref{sec:specs:tag:begin-end}.
 
 \item[enter]
-  An event that trigger everytime flow control enter the tagged code.
+  An event that trigger each time flow control enter the tagged code.
   See \autoref{sec:specs:tag:enter-leave}.
 
 \item[freeze]
@@ -395,7 +395,7 @@ mytag.begin.end: echo(3);
   Whether the tag is frozen. See  \autoref{sec:specs:tag:freeze}.
 
 \item[leave]
-  An event that trigger everytime flow control leaves the tagged code.
+  An event that trigger each time flow control leaves the tagged code.
   See \autoref{sec:specs:tag:enter-leave}.
 
 \item \lstinline|stop(\var{result} = void)|\\
@@ -404,7 +404,7 @@ mytag.begin.end: echo(3);
   See \autoref{sec:specs:tag:stop}.
 
 \item[tags] All the undeclared tags are created as slots in this
-  object.  Using this feature is non recommanded.
+  object.  Using this feature is discouraged.
 \begin{urbiscript}
 {
   assert ("brandNewTag" not in Tag.tags.localSlotNames);

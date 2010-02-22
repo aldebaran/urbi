@@ -116,12 +116,12 @@ p.value(1);
 
 Lazies are seldom instantiated manually. They are mainly created
 automatically when a lazy function call is made (see
-\autoref{sec:us-fun-callmsg}). One can however create a lazy value with the
-standard \lstinline|new| method of \lstinline|Lazy|, giving it an
-argument-less function which evaluates to the lazified value.
+\autoref{sec:us-fun-callmsg}). One can however create a lazy value
+with the standard \lstinline|new| method of \lstinline|Lazy|, giving
+it an argument-less function which evaluates to the value made lazy.
 
 \begin{urbiscript}
-Lazy.new(closure () { /* Value to lazify */ 0 });
+Lazy.new(closure () { /* Value to make lazy */ 0 });
 [00000000] 0
 \end{urbiscript}
 

@@ -223,7 +223,7 @@ searchFile("123.u") == Path.cwd / Path.new("123.u");
   \lstinline|System.getenv| and \lstinline|System.unsetenv|.
   \begin{windows}
     Under Windows, setting to an empty value is equivalent to
-    undefining.
+    making undefined.
   \end{windows}
 
 \begin{urbiassert}
@@ -237,7 +237,7 @@ setenv("MyVar", 23) == "23";
 System.system("exit $MyVar") >> 8 ==
        {if (Platform.isWindows) 0 else 23};
 
-// Defining to empty is not undefining, unless you are on Windows.
+// Defining to empty is defining, unless you are on Windows.
 setenv("MyVar", "") == "";
 getenv("MyVar").isNil == Platform.isWindows;
 \end{urbiassert}

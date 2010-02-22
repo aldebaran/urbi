@@ -8,15 +8,15 @@ connections.
 The following example demonstrates how both the \refObject{Server} and
 \refObject{Socket} object work.
 
-This simple example will establish a dialogue between
+This simple example will establish a dialog between
 \lstinline|server| and \lstinline|client|.  The following object,
-\lstinline|Dialogue|, contains the script of this exchange.  It is put
+\lstinline|Dialog|, contains the script of this exchange.  It is put
 into \lstinline|Global| so that both the server and client can read
-it.  \lstinline|Dialogue.reply(var \var{s})| returns the reply to a
+it.  \lstinline|Dialog.reply(var \var{s})| returns the reply to a
 message \var{s}.
 
 \begin{urbiscript}
-class Global.Dialogue
+class Global.Dialog
 {
   var lines =
   [
@@ -42,7 +42,7 @@ connections, notified by the socket's \lstinline|connection?| event.
 Once the connection establish, it listens to the \lstinline|socket|
 for incoming messages, notified by the \lstinline|received?| event.
 Its reaction to this event is to send the following line of the
-dialogue.  At the end of the dialogue, the socket is disconnected.
+dialog.  At the end of the dialog, the socket is disconnected.
 
 \begin{urbiscript}
 var server =
@@ -51,7 +51,7 @@ var server =
     at (connection?(var socket))
       at (socket.received?(var data))
       {
-        var reply = Dialogue.reply(data);
+        var reply = Dialog.reply(data);
         socket.write(reply);
         echo("server: " + reply);
         if (reply == "off")
@@ -62,7 +62,7 @@ var server =
 
 The client, an instance of \refObject{Socket} expects incoming
 messages, notified by the \lstinline|received?| event.  Its reaction
-is to send the following line of the dialogue.
+is to send the following line of the dialog.
 
 \begin{urbiscript}
 var client =
@@ -70,7 +70,7 @@ var client =
   {
     at (received?(var data))
     {
-      var reply = Dialogue.reply(data);
+      var reply = Dialog.reply(data);
       write(reply);
       echo("client: " + reply);
     };
@@ -92,17 +92,17 @@ server.listen("localhost", "0");
 clog << "connecting to %s:%s" % [server.host, server.port];
 \end{urbiscript}
 
-The client connects to the server, and initiates the dialogue.
+The client connects to the server, and initiates the dialog.
 
 \begin{urbiscript}
 client.connect(server.host, server.port);
-echo("client: " + Dialogue.lines[0]);
-client.write(Dialogue.lines[0]);
+echo("client: " + Dialog.lines[0]);
+client.write(Dialog.lines[0]);
 [00000003] *** client: Hi!
 \end{urbiscript}
 
-Because this dialogue is asynchronous, the easiest way to wait for the
-dialogue to finish is to wait for the \lstinline|disconnected?| event.
+Because this dialog is asynchronous, the easiest way to wait for the
+dialog to finish is to wait for the \lstinline|disconnected?| event.
 
 \begin{urbiscript}
 waituntil(client.disconnected?);
@@ -140,9 +140,9 @@ var s = Socket.new|
 \item \lstinline|connected|\\
   Event launched when the connection is established.
 
-\item \lstinline|connectSerial(\var{device}, \var{baudrate})|\\
+\item \lstinline|connectSerial(\var{device}, \var{baudRate})|\\
   Connect \lstinline|this| to the serial port \var{device}, with given
-  \var{baudrate}.
+  \var{baudRate}.
 
 \item \lstinline|disconnect|\\
   Close the connection.
@@ -166,7 +166,7 @@ var s = Socket.new|
   default, the loop is executed every \lstinline|pollInterval|.
 
 \item \lstinline|pollInterval|\\
-  Each \lstinline|pollInterval| amout of time, \lstinline|Socket.poll|
+  Each \lstinline|pollInterval| amount of time, \lstinline|Socket.poll|
   is called. If \lstinline|pollInterval| equals zero,
   \lstinline|Socket.poll| is not called.
 
