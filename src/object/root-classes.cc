@@ -192,8 +192,8 @@ namespace urbi
       INIT(Duration);
 
       // Primitive derives from Executable.
-      INIT(Primitive);
       INIT(Executable);
+      INIT(Primitive);
 #undef INIT
 
       CxxObject::create();
