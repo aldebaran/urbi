@@ -121,13 +121,13 @@ Path.cwd.isDir;
   \refObject{File} and \refObject{Directory}.
 
 \item \lstinline|readable|\\
-  Whether \lstinline|this| is readable.
+  Whether \lstinline|this| is readable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").readable;
 \end{urbiassert}
 
 \item \lstinline|writable|\\
-  Whether \lstinline|this| is writable.
+  Whether \lstinline|this| is writable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").writable;
 \end{urbiassert}

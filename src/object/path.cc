@@ -99,11 +99,6 @@ namespace urbi
       return path_.absolute_get();
     }
 
-    bool Path::exists() const
-    {
-      return path_.exists();
-    }
-
     struct stat Path::stat() const
     {
       struct stat res;
@@ -116,42 +111,42 @@ namespace urbi
 
     bool Path::is_dir() const
     {
-      if (!exists())
-        handle_any_error();
-      return boost::filesystem::is_directory(path_.value_get());
+      return stat().st_mode & S_IFDIR;
     }
 
     bool Path::is_reg() const
     {
-      if (!exists())
-        handle_any_error();
-      return boost::filesystem::is_regular_file(path_.value_get());
+      return stat().st_mode & S_IFREG;
     }
 
-    // A macro to avoid visibility issues.
-#define ACCESS_CHECK(Mode)                              \
-    do {                                                \
-      if (!::access(path_.to_string().c_str(), Mode))   \
-        return true;                                    \
-      if (errno == EACCES)                              \
-        return false;                                   \
-      handle_any_error();                               \
-    } while (false)
-
+    bool Path::exists() const
+    {
+      if (!::access(path_.to_string().c_str(), F_OK))
+        return true;
+      if (errno == ENOENT)
+        return false;
+      handle_any_error();
+    }
 
     bool Path::readable() const
     {
-      ACCESS_CHECK(R_OK);
+      if (!::access(path_.to_string().c_str(), R_OK))
+        return true;
+      if (errno == EACCES)
+        return false;
+      handle_any_error();
     }
 
     bool Path::writable() const
     {
-      ACCESS_CHECK(W_OK);
+      if (!::access(path_.to_string().c_str(), W_OK))
+        return true;
+      if (errno == EACCES || errno == EROFS)
+        return false;
+      handle_any_error();
     }
-#undef ACCESS_CHECK
 
-    // Operations
-
+    // Operations.
     std::string Path::basename() const
     {
       return path_.basename();
