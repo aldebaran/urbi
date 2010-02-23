@@ -116,11 +116,15 @@ namespace urbi
 
     bool Path::is_dir() const
     {
+      if (!exists())
+        handle_any_error();
       return boost::filesystem::is_directory(path_.value_get());
     }
 
     bool Path::is_reg() const
     {
+      if (!exists())
+        handle_any_error();
       return boost::filesystem::is_regular_file(path_.value_get());
     }
 
