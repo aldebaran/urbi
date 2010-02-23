@@ -18,7 +18,7 @@ class Global.Profiling
   /// e.g. timen(2+2, 42).
   function timen
   {
-    echo (this.new(call.argAt(0), call.argAt(0)))
+    echo (this.new(call.argAt(0), call.argAt(1)))
   };
 
   /// timen(CODE, #ITERATIONS).
@@ -50,8 +50,8 @@ class Global.Profiling
     + "  Expression:       " + expr + "\n"
     + "  Iterations:       " + niters + "\n"
     + "  Cycles:           " + ncycles + "\n"
-    + "  Total time:       " + expired + " ms\n"
-    + "  Single iteration: " + expired / niters + " ms\n"
+    + "  Total time:       " + expired + " s\n"
+    + "  Single iteration: " + expired / niters + " s\n"
     + "                    " + ncycles / niters + " cycles";
   };
 };
