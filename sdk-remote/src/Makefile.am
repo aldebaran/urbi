@@ -67,13 +67,18 @@ core: libs bin/urbi-launch$(EXEEXT)
 ## --------- ##
 install-exec-hook: post-install
 post-install:
-	if test -n "$(DESTDIR)"; then			\
-	  $(build_aux_dir)/bin/check-lib-deps		\
-	    --verbose --verbose --verbose --verbose	\
-	    --destdir "$(DESTDIR)"			\
-	    --host-os "$(URBI_HOST_OS)"			\
-	    --prefix "$(prefix)"			\
-	    --libdir "$(libdir)"			\
-	    --libpath "$(BOOST_LDPATH)"			\
-	    "$(DESTDIR)";				\
+# If we are used as a module of Urbi SDK, there is no need to run this
+# post-install step here, Urbi SDK.  Besides, under some
+# circumstances, running it twice can result in failure.
+	if test -n "$(DESTDIR)" &&					  \
+	   grep 'PACKAGE_TARNAME = urbi-sdk' $(top_builddir)/../Makefile; \
+	then								  \
+	  $(build_aux_dir)/bin/check-lib-deps				  \
+	    --verbose --verbose --verbose --verbose			  \
+	    --destdir "$(DESTDIR)"					  \
+	    --host-os "$(URBI_HOST_OS)"					  \
+	    --prefix "$(prefix)"					  \
+	    --libdir "$(libdir)"					  \
+	    --libpath "$(BOOST_LDPATH)"					  \
+	    "$(DESTDIR)";						  \
 	fi
