@@ -85,7 +85,7 @@ namespace runner
 
     rCode code = operator()(e->children_get().front().get())
       .unsafe_cast<object::Code>();
-    assert(code);
+    aver(code);
 
     try
     {
@@ -177,7 +177,7 @@ namespace runner
              *e->captured_variables_get())
     {
       ast::rLocal local = dec->value_get().unsafe_cast<ast::Local>();
-      assert(local);
+      aver(local);
       res->captures_get().push_back(stacks_.rget(local));
     }
 
@@ -529,7 +529,7 @@ namespace runner
   {
     object::rDictionary res = new object::Dictionary();
     /// Dictonary with a base was caught at parse time.
-    assert(!e->base_get());
+    aver(!e->base_get());
     foreach (ast::modifiers_type::value_type exp, e->value_get())
     {
       rObject v = operator()(exp.second.get());

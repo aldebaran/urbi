@@ -131,12 +131,12 @@ namespace ast
     return exp(a % cond);
   }
 
-  /// assert(%exps).
+  /// aver(%exps).
   rExp
   Factory::make_assert(const yy::location&,
                        exps_type* cond) /* const */
   {
-    assert(cond);
+    aver(cond);
     foreach (rExp& c, *cond)
       c = make_assert(c->location_get(), c);
     rNary res = new Nary;
@@ -284,8 +284,8 @@ namespace ast
                     flavor_type op,
                     rExp lhs, rExp rhs) // const
   {
-    assert(lhs);
-    assert(rhs);
+    aver(lhs);
+    aver(rhs);
     rExp res = 0;
     switch (op)
     {

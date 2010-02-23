@@ -204,7 +204,7 @@ namespace runner
   void
   Stacks::def(unsigned local, bool captured, rSlot v)
   {
-    assert(v);
+    aver(v);
 #define DBG                                                     \
     STACK_NECHO(") @[" << idx << "] = " << " @" << v.get() << std::endl)
     if (captured)

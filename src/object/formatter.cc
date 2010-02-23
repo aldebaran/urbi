@@ -83,7 +83,7 @@ namespace urbi
         else
           str = c;
 
-        assert(str);
+        aver(str);
         if (!str->is_a<String>())
         {
           // Need this because operator<< is not const.

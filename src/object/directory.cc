@@ -92,7 +92,7 @@ namespace urbi
           rObject event;
           {
             BlockLock lock(_watch_map_lock);
-            assert(libport::mhas(_watch_map, evt.wd));
+            aver(libport::mhas(_watch_map, evt.wd));
             if (evt.mask & IN_CREATE)
               event = _watch_map[evt.wd].first;
             else if (evt.mask & IN_DELETE)

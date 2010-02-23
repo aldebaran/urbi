@@ -91,7 +91,7 @@ namespace urbi
       {
         type_check<String>(args[2]);
         const rString& arg2 = args[2].unsafe_cast<String>();
-        assert(arg2);
+        aver(arg2);
         tag = arg2->value_get();
       }
 

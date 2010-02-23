@@ -19,6 +19,7 @@
 #include <libport/format.hh>
 #include <boost/lambda/lambda.hpp>
 
+#include <libport/cassert>
 #include <libport/containers.hh>
 #include <libport/contract.hh>
 #include <libport/foreach.hh>
@@ -427,7 +428,7 @@ namespace urbi
     Object&
     Object::proto_add(const rObject& p)
     {
-      assert(p);
+      aver(p);
       // Inheriting from atoms is a problem: we cannot morph in place
       // the C++ object to give him the right primitive type. For now,
       // we forbid inheriting from atoms.

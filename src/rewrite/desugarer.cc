@@ -49,7 +49,7 @@ namespace rewrite
   {
     libport::Finally finally;
     finally << libport::scoped_set(allow_subdecl_, true);
-    assert(s);
+    aver(s);
     return recurse(s);
   }
 
@@ -119,7 +119,7 @@ namespace rewrite
     // Handle modifiers.
     if (assign->modifiers_get())
       return desugar_modifiers(assign);
-    assert(!assign->modifiers_get());
+    aver(!assign->modifiers_get());
 
     // Simple declaration: var x = value.
     if (ast::rBinding what = assign->what_get().unsafe_cast<ast::Binding>())

@@ -214,7 +214,7 @@ namespace kernel
       {
         LIBPORT_DEBUG("parsed: {{{" << *ast << "}}}");
         ast = parser::transform(ast);
-        assert(ast);
+        aver(ast);
         LIBPORT_DEBUG("bound and flowed: {{{" << *ast << "}}}");
         // Append to the current list.
         active_command->splice_back(ast);

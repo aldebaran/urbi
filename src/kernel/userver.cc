@@ -562,7 +562,7 @@ namespace kernel
   void
   UServer::connection_add(UConnection* c)
   {
-    assert(c);
+    aver(c);
     if (c->uerror_ != USUCCESS)
       DEBUG(("UConnection constructor failed"));
     else

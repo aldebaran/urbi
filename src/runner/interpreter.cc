@@ -168,7 +168,7 @@ namespace runner
   {
     try
     {
-      assert(ast_ || code_);
+      aver(ast_ || code_);
       check_for_pending_exception();
       if (ast_)
 	result_ = operator()(ast_.get());
@@ -347,7 +347,7 @@ namespace runner
     CAPTURE_GLOBAL(Exception);
     if (is_a(exn, Exception))
     {
-      assert(innermost_node_);
+      aver(innermost_node_);
       boost::optional<ast::loc> l;
       if (object::is_system_location(innermost_node_->location_get()))
       {

@@ -284,7 +284,7 @@ namespace urbi
         }
         else
         {
-          assert(WIFSIGNALED(status));
+          aver(WIFSIGNALED(status));
           signaled = true;
           int sig = WTERMSIG(status);
           res->slot_set(SYMBOL(exitSignal), to_urbi(sig));

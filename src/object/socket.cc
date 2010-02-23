@@ -143,7 +143,7 @@ namespace urbi
     {
       EMIT1(error, err.message());
       EMIT(disconnected);
-      assert(disconnect_);
+      aver(disconnect_);
       disconnect_->call(SYMBOL(stop));
     }
 
@@ -164,7 +164,7 @@ namespace urbi
     void
     Socket::write(const std::string& data)
     {
-      assert(isConnected());
+      aver(isConnected());
       libport::Socket::send(data);
     }
 

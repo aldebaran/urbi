@@ -34,7 +34,7 @@ namespace ast
     Cloner cloner(true);
     cloner(ast.get());
     libport::intrusive_ptr<T> res = libport::unsafe_cast<T>(cloner.result_get());
-    assert (res);
+    aver(res);
     return res;
   }
 

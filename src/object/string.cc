@@ -58,7 +58,7 @@ namespace urbi
     String::String(const value_type& v)
       : content_(v)
     {
-      assert(proto);
+      aver(proto);
       proto_add(proto);
     }
 

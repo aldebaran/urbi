@@ -28,7 +28,7 @@ namespace parser
     // In prescanner mode, return 1 if complete, -1 on EOF, 0 if incomplete.
     yy::parser::symbol_type s = scanner.yylex();
     yy::parser::token_type t = s.token();
-    assert(t == yy::parser::token::TOK_PRE_EOF
+    aver(t == yy::parser::token::TOK_PRE_EOF
            || t == yy::parser::token::TOK_PRE_WANTS_MORE
            || t == yy::parser::token::TOK_PRE_COMPLETE);
     // The number of read bytes.

@@ -40,7 +40,7 @@ namespace urbi
     Object&
     Object::proto_remove(const rObject& p)
     {
-      assert(p);
+      aver(p);
       for (protos_type::iterator i = protos_->begin();
            i != protos_->end();
            /* nothing */)

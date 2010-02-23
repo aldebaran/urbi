@@ -66,7 +66,7 @@ namespace binder
       return 0;
     else
     {
-      assert(env_[name].back().second.first > 0);
+      aver(env_[name].back().second.first > 0);
       return env_[name].back().second.first;
     }
   }
@@ -78,7 +78,7 @@ namespace binder
       return 0;
     else
     {
-      assert(env_[name].back().second.second > 0);
+      aver(env_[name].back().second.second > 0);
       return env_[name].back().second.second;
     }
   }
@@ -86,7 +86,7 @@ namespace binder
   ast::rLocalDeclaration
   Binder::decl_get(const libport::Symbol& name)
   {
-    assert (!env_[name].empty());
+    aver(!env_[name].empty());
     return env_[name].back().first;
   }
 
@@ -148,7 +148,7 @@ namespace binder
   ast::rRoutine
   Binder::routine() const
   {
-    assert(!routine_stack_.empty());
+    aver(!routine_stack_.empty());
     return routine_stack_.back();
   }
 
@@ -164,7 +164,7 @@ namespace binder
   bool
   Binder::set_on_self(unsigned up)
   {
-    assert(setOnSelf_.size() > up);
+    aver(setOnSelf_.size() > up);
     return *(setOnSelf_.end() - up - 1);
   }
 
@@ -517,7 +517,7 @@ namespace binder
   void
   Binder::bind(ast::rLocalDeclaration decl)
   {
-    assert(decl);
+    aver(decl);
 
     // If we are at the toplevel, we can't determine the local index.
     if (routine_stack_.empty())

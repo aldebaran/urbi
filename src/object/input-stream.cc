@@ -46,7 +46,7 @@ namespace urbi
       , pos_(0)
       , size_(0)
     {
-      assert(model);
+      aver(model);
       proto_add(model);
     }
 

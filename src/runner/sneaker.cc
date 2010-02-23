@@ -87,21 +87,21 @@ namespace dbg
   void
   dump(const object::rObject& o, int depth)
   {
-    assert(sneaker);
+    aver(sneaker);
     o->dump(std::cerr, depth);
   }
 
   void
   pp(ast::rAst ast)
   {
-    assert(sneaker);
+    aver(sneaker);
     std::cerr << *ast;
   }
 
   object::rObject
   eval(const char* command)
   {
-    assert(sneaker);
+    aver(sneaker);
     return
       object::execute_parsed(parser::parse(command, LOCATION_HERE),
                              SYMBOL(eval),
@@ -119,7 +119,7 @@ namespace dbg
   void
   ps()
   {
-    assert(sneaker);
+    aver(sneaker);
     std::cerr << "system_class: " << object::system_class.get() << std::endl;
     try
     {

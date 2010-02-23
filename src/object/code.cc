@@ -137,7 +137,7 @@ namespace urbi
     Code::operator() (object::objects_type args)
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      assert(!args.empty());
+      aver(!args.empty());
       return r.apply(this, libport::Symbol::make_empty(), args);
     }
 

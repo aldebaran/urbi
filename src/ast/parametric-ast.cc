@@ -84,7 +84,7 @@ namespace ast
   ParametricAst::visit(const ast::MetaExp* e)
   {
     result_ = exp_map_type::take_(e->id_get () - 1);
-    assert(result_);
+    aver(result_);
   }
 
   void
@@ -98,8 +98,8 @@ namespace ast
   ParametricAst::visit(const ast::MetaLValue* e)
   {
     result_ = exp_map_type::take_(e->id_get () - 1);
-    assert(result_.unsafe_cast<const ast::LValue>());
-    assert(result_);
+    aver(result_.unsafe_cast<const ast::LValue>());
+    aver(result_);
   }
 
   bool

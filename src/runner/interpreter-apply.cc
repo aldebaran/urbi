@@ -261,7 +261,7 @@ namespace runner
     if (ast->closure_get())
     {
       self = function->self_get();
-      assert(self);
+      aver(self);
       call = function->call_get();
     }
     else
