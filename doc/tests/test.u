@@ -87,7 +87,8 @@ if (System.Platform.isWindows)
   do (System)
   {
     var binshs = ["/bin/sh", "/bin/sh.exe",
-                  "\\cygwin\\bin\\sh", "\\cygwin\\bin\\sh.exe"];
+                  "\\cygwin\\bin\\sh", "\\cygwin\\bin\\sh.exe",
+		  "Z:\\bin\\sh"];
     for (var p : binshs)
     {
       if (Path.new(p).exists)
