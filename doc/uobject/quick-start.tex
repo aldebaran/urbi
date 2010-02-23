@@ -148,9 +148,12 @@ and \file{ufactory.dll} on Windows.
 To abstract away from these differences, we will simply use the base
 name, \file{ufactory} with the \urbi tool chain.
 
-There are several options to compile our factory as a UObject.  You
-can use directly your regular compiler tool chain.  You may also use
-\command{umake-shared} from the \file{umake-*} family of programs
+There are several options to compile our factory as a UObject.
+If you are using Microsoft Visual Studio, the \urbi SDK installer created a
+``UObject'' project template accessible through the ``New project'' wizard.
+Otherwise, you can use directly your regular compiler tool chain.
+You may also use \command{umake-shared} from the \file{umake-*} family of
+programs
 (\autoref{sec:tools:umake:wrappers}):
 
 \begin{shell}
