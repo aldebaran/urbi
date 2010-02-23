@@ -178,8 +178,10 @@ namespace urbi
 #define INIT(Class)                                     \
       CxxObject::push_initializer_to_back<Class>()
 
-      INIT(Code);
+      // Primitive derives from Executable.
+      INIT(Executable);
       INIT(Primitive);
+      INIT(Code);
 
       INIT(UVar);
 
@@ -191,9 +193,9 @@ namespace urbi
       INIT(Float);
       INIT(Duration);
 
-      // Primitive derives from Executable.
-      INIT(Executable);
-      INIT(Primitive);
+      // Events use Lists.
+      INIT(List);
+      INIT(Event);
 #undef INIT
 
       CxxObject::create();
