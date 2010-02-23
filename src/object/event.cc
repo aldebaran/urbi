@@ -41,7 +41,7 @@ namespace urbi
     void
     Event::unregister(Actions a)
     {
-      Listeners::iterator it = std::find(listeners_.begin(), listeners_.end(), a);
+      Listeners::iterator it = libport::find(listeners_, a);
       if (it != listeners_.end())
         listeners_.erase(it);
     }
@@ -57,7 +57,10 @@ namespace urbi
 
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       foreach (object::rTag tag, r.tag_stack_get())
-        tag->value_get()->stop_hook_get().connect(boost::bind(&Event::unregister, this, actions));
+        tag
+        ->value_get()
+        ->stop_hook_get()
+        .connect(boost::bind(&Event::unregister, this, actions));
 
       listeners_ << actions;
       foreach (const actives_type::value_type& active, _active)

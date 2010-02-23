@@ -135,31 +135,31 @@ namespace urbi
       // and 4.  CLASS_SETUP runs 1 to 4.
 
 #define CLASS_CREATE(What, Name)                \
-      What = Object::proto->clone();
+      What = Object::proto->clone()
 
 #define CLASS_INIT(What, Name)                  \
       What->slot_set(SYMBOL(DOLLAR_type),       \
                      new String(SYMBOL(Name))); \
       What->slot_set(SYMBOL(as ## Name),        \
-                     new Primitive(id));
+                     new Primitive(id))
 
 #define CLASS_REGISTER(What, Name)                      \
       What ## _initialize();                            \
-      global_class->slot_set(SYMBOL(Name), What, true);
+      global_class->slot_set(SYMBOL(Name), What, true)
 
 
 #define CLASS_SETUP(What, Name)                 \
-      CLASS_CREATE(What, Name)                  \
-        CLASS_INIT(What, Name)                  \
-        CLASS_REGISTER(What, Name)
+      CLASS_CREATE(What, Name);                 \
+      CLASS_INIT(What, Name);                   \
+      CLASS_REGISTER(What, Name)
 
 #define ANONYMOUS_CLASS_SETUP(What, Name)       \
-      CLASS_CREATE(What, Name)                  \
-        CLASS_REGISTER(What, Name)
+      CLASS_CREATE(What, Name);                 \
+      CLASS_REGISTER(What, Name)
 
 #define EXISTING_CLASS_SETUP(What, Name)        \
-      CLASS_INIT(What, Name)                    \
-        CLASS_REGISTER(What, Name)
+      CLASS_INIT(What, Name);                   \
+      CLASS_REGISTER(What, Name)
 
       // Object is a special case: it is not built as a clone of itself.
       Object::proto = new Object();
