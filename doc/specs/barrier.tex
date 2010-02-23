@@ -1,0 +1,81 @@
+\section{Barrier}
+
+\lstinline|Barrier| is used to wait until another job raise a signal.  This
+can be used to implements blocking calls which are waiting until a ressource
+is made available.
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+A \lstinline|Barrier| can be created with no argument.  Signals and wait
+calls done on this instance are restricted to this instance.
+
+\begin{urbiscript}[firstnumber=1]
+Barrier.new;
+[00000000] Barrier_0x25d2280
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item \lstinline|signal(\var{payload})|
+  Wake up one of the job waiting for a signal.  The \var{payload} is sent to
+  the \var{wait} method.  This method returns the number of job woken up.
+
+\begin{urbiscript}
+{ var b = Barrier.new |
+  echo(b.wait) &
+  echo(b.wait) &
+  assert {
+    b.signal(1) == 1;
+    b.signal(2) == 1
+  }
+};
+[00000000] *** 1
+[00000000] *** 2
+\end{urbiscript}
+
+
+\item \lstinline|signalAll(\var{payload})|
+  Wake up all of the job waiting for a signal.  The \var{payload} is sent to
+  all \var{wait} methods.  This method returns the number of job woken up.
+
+\begin{urbiscript}
+{ var b = Barrier.new |
+  echo(b.wait) &
+  echo(b.wait) &
+  assert {
+    b.signalAll(1) == 2;
+    b.signalAll(2) == 0
+  }
+};
+[00000000] *** 1
+[00000000] *** 1
+\end{urbiscript}
+
+
+\item[wait]
+  Block until a signal is received.  The \var{payload} sent with the signal
+  function is returned by the \lstinline|wait| method.
+
+\begin{urbiscript}
+{ var b = Barrier.new |
+  echo(b.wait) &
+  b.signal(1)
+};
+[00000000] *** 1
+\end{urbiscript}
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% End:
