@@ -428,7 +428,10 @@ namespace urbi
     Object&
     Object::proto_add(const rObject& p)
     {
-      aver(p);
+      passert(p,
+              "refering to a not-yet-initialized class\n"
+              "See the stack trace to find the dependency to add in "
+              "root_classes_initialize().");
       // Inheriting from atoms is a problem: we cannot morph in place
       // the C++ object to give him the right primitive type. For now,
       // we forbid inheriting from atoms.

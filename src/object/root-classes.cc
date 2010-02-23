@@ -109,7 +109,7 @@ namespace urbi
     /// For instance, String is a clone of Object, but Object.type is a
     /// String.  So we need to control the initialization sequence.
     void
-    root_classes_initialize ()
+    root_classes_initialize()
     {
       if (root_classes_initialized)
         return;
