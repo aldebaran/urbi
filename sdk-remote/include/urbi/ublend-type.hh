@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 // This file is part of UObject Component Architecture\n
 // (c) 2006 Gostai S.A.S.
 //

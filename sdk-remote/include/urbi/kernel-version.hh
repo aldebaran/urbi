@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file urbi/kernel-version.hh
 
 #ifndef URBI_KERNEL_VERSION_HH

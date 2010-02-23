@@ -228,7 +228,7 @@ namespace urbi
   {
     // Looks bizarre, but might happen without have the "print" die
     // (it *has* happened).
-    assert(&v);
+    aver(&v);
     return v.print(s);
   }
 

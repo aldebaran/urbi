@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef URBI_PACKAGE_INFO_HH
 # define URBI_PACKAGE_INFO_HH
 

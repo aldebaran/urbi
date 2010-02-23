@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef URBI_EXPORT_HH
 # define URBI_SDK_EXPORT_HH
 

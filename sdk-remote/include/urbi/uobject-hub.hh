@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file urbi/uobject.hh
 
 #ifndef URBI_UOBJECT_HUB_HH

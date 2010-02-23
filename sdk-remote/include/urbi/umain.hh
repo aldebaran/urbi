@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file urbi/umain.hh
 
 #ifndef URBI_UMAIN_HH

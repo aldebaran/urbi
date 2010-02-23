@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file urbi/uobject.hxx
 
 #ifndef URBI_UOBJECT_HXX
@@ -37,7 +38,7 @@ namespace urbi
   void
   UObject::clean()
   {
-    assert(impl_);
+    aver(impl_);
     impl_->clean();
   }
 
@@ -45,7 +46,7 @@ namespace urbi
   void
   UObject::USetUpdate(ufloat period)
   {
-    assert(impl_);
+    aver(impl_);
     impl_->setUpdate(period);
   }
 

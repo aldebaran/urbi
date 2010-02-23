@@ -28,7 +28,7 @@ namespace urbi
   /** UVar class definition
 
      Each UVar instance corresponds to one URBI variable. The class
-     provides access to the variable properties, and reading/writting
+     provides access to the variable properties, and reading/writing
      the value to/from all known types.  */
   class URBI_SDK_API UVar: public UContext
   {

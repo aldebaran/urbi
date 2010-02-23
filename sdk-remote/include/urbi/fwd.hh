@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file   urbi/fwd.hh
 /// \brief  Forward declarations.
 

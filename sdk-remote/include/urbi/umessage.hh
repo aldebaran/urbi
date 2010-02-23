@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file urbi/umessage.hh
 
 #ifndef URBI_UMESSAGE_HH

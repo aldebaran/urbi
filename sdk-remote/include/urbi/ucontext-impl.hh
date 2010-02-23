@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef UCONTEXT_IMPL_HH
 # define UCONTEXT_IMPL_HH
 

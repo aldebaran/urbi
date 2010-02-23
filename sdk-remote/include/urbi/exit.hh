@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef URBI_EXIT_HH
 # define URBI_EXIT_HH
 
