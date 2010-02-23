@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /**
    Send a binary file to the URBI server, to be saved in a variable.
 */

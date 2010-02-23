@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef LIBUOBJECT_COMPATIBILITY_HH
 # define LIBUOBJECT_COMPATIBILITY_HH
 

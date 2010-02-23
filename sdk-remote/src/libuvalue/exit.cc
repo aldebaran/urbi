@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <urbi/exit.hh>
 
 namespace urbi

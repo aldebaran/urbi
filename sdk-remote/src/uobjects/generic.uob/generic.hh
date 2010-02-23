@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef GENERIC_GENERIC_HH
 # define GENERIC_GENERIC_HH
 

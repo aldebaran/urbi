@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef SDK_REMOTE_TESTS_TESTS_HH
 # define SDK_REMOTE_TESTS_TESTS_HH
 

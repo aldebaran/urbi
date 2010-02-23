@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file libuobject/ucallbacks.cc
 
 #include <iostream>

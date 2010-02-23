@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/compiler.hh>
 #include <libport/debug.hh>
 #include <iostream>

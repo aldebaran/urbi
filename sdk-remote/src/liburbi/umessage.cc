@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file liburbi/umessage.cc
 
 #include <libport/cstdlib>

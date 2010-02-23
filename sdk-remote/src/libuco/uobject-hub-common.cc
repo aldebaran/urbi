@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file libuco/uobject-hub-common.cc
 
 #include <urbi/uobject.hh>

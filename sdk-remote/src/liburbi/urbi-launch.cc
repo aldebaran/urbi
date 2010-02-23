@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <string>
 #include <libport/cassert>
 #include <cstdarg>

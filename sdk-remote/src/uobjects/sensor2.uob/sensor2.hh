@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef SENSOR2_HH
 # define SENSOR2_HH
 

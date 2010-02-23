@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file libuobject/uvar.cc
 
 #include <libport/format.hh>
@@ -83,7 +84,7 @@ namespace urbi
   {
     UMessage* m = client_->syncGet("%s->%s", owner_->get_name().c_str(),
                                   urbi::name(p));
-    assert(m->value);
+    aver(m->value);
     UValue res = *m->value;
     delete m;
     return res;

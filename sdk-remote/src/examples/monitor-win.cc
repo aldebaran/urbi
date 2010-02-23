@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include "monitor-win.h"
 static LRESULT CALLBACK windowProc(HWND hwnd,
     UINT uMsg,

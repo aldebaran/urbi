@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <bin/tests.hh>
 
 BEGIN_TEST(ping, client, syncClient)

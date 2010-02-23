@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef UCHANGE_HH
 # define UCHANGE_HH
 

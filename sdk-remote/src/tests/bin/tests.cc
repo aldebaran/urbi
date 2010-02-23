@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <libport/lexical-cast.hh>
 
 #include <libport/cli.hh>
@@ -108,7 +109,7 @@ sget_error(urbi::USyncClient& c, const std::string& msg)
 {
   VERBOSE("get_erroneous: Asking " << msg);
   urbi::UMessage* m = c.syncGet(msg);
-  assert(m && m->type == urbi::MESSAGE_ERROR);
+  aver(m && m->type == urbi::MESSAGE_ERROR);
   std::string res(m->message);
   delete m;
   return res;

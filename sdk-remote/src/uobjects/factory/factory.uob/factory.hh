@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #ifndef FACTORY_FACTORY_HH
 # define FACTORY_FACTORY_HH
 

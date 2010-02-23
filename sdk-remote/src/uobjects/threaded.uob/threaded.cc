@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 #include <urbi/uobject.hh>
 #include <libport/foreach.hh>
 #include <libport/thread.hh>

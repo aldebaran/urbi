@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 // A wrapper around Boost.Foreach.
 #include <libport/foreach.hh>
 
@@ -54,7 +55,7 @@ UFactory::init(ufloat d)
 int
 UFactory::duration_set(urbi::UVar& v)
 {
-  //assert(factory);
+  //aver(factory);
   ufloat d = static_cast<ufloat>(v);
   if (0 <= d)
   {
@@ -71,7 +72,7 @@ UFactory::duration_set(urbi::UVar& v)
 std::string
 UFactory::assemble(std::list<std::string> components)
 {
-  //assert(factory);
+  //aver(factory);
 
   // duration is in seconds.
   useconds_t one_second = 1000 * 1000;

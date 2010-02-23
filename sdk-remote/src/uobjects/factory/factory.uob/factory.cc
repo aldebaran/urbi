@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 // A wrapper around Boost.Foreach.
 #include <libport/foreach.hh>
 
@@ -15,7 +16,7 @@
 Factory::Factory(float d)
   : duration(d)
 {
-  assert(0 <= d);
+  aver(0 <= d);
 }
 
 std::string

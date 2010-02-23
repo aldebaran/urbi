@@ -7,6 +7,7 @@
  *
  * See the LICENSE file for more information.
  */
+
 /// \file liburbi/uabstractclient.cc
 
 #include <algorithm>
