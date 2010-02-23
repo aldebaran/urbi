@@ -32,16 +32,16 @@ libdir="@libdir@"
 #
 # If DESTDIR is null, this is most probably an install performed by
 # the developper in her own tree.  Don't try to make it relocatable.
-# if test -n "$DESTDIR"; then
-#   $srcdir/build-aux/bin/check-lib-deps          \
-#     --verbose --verbose --verbose --verbose     \
-#     --destdir "$DESTDIR"                        \
-#     --host-os "$URBI_HOST_OS"                   \
-#     --prefix "$prefix"                          \
-#     --libdir "$libdir"                          \
-#     --libpath "$BOOST_LDPATH"                   \
-#     "$DESTDIR"
-# fi
+if test -n "$DESTDIR"; then
+  $srcdir/build-aux/bin/check-lib-deps          \
+    --verbose --verbose --verbose --verbose     \
+    --destdir "$DESTDIR"                        \
+    --host-os "$URBI_HOST_OS"                   \
+    --prefix "$prefix"                          \
+    --libdir "$libdir"                          \
+    --libpath "$BOOST_LDPATH"                   \
+    "$DESTDIR"
+fi
 
 # Boost headers.
 #
