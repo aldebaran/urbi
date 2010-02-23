@@ -20,9 +20,9 @@ bin_ast_dump_LDADD = libuobject$(LIBSFX).la
 
 # urbi.
 bin_PROGRAMS += bin/urbi
+bin_urbi_SOURCES = bin/urbi.cc ../sdk-remote/src/bin/urbi-root.cc
 bin_urbi_CPPFLAGS = -DURBI_ROOT_NOT_DLL $(AM_CPPFLAGS)
 bin_urbi_LDADD = $(LTDL_LIBS)
-bin_urbi_SOURCES = bin/urbi.cc ../sdk-remote/src/bin/urbi-root.cc
 
 # urbi-parse.
 dist_bin_urbi_parse_SOURCES = bin/urbi-parse.cc

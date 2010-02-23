@@ -61,7 +61,7 @@ main(int argc, char* argv[])
     for (unsigned j = 0; j < args_libuobject.size(); ++j)
       argv_bounce[i++] = args_libuobject[j].c_str();
     argv_bounce[i] = 0;
-    aver(i == argc_bounce);
+    assert(i == argc_bounce);
   }
 
   return urbi_root.urbi_launch(argc_bounce, argv_bounce);
