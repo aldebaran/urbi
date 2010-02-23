@@ -32,9 +32,9 @@
 #endif
 
 
-/*--------.
-| Helpers |
-`--------*/
+/*----------.
+| Helpers.  |
+`----------*/
 
 static std::string
 mygetenv(const std::string& var, const std::string& val = "")
