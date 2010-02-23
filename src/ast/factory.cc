@@ -817,11 +817,11 @@ namespace ast
   Factory::make_scope(const location& l,
                       rExp target, rExp e) // const
   {
-    if (rScope res = e.unsafe_cast<Scope>())
-    {
-      passert(target, !target);
+    // If we have a Scope and a target, maybe we should convert this
+    // scope to a Do node? But are we sure we won't loose any property
+    // from the original Scope node? For now, put the scope in a Do.
+    if (rScope res = e.unsafe_cast<Scope>() && !target)
       return res;
-    }
     else if (target)
       return new Do(l, e, target);
     else
