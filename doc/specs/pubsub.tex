@@ -1,0 +1,74 @@
+\section{PubSub}
+
+\lstinline|PubSub| provides an abstraction over \lstinline|Barrier|
+\refObject{Barrier} to queue signals for each subscriber.
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+A \lstinline|PubSub| can be created with no arguments.  Values can be
+published and read by each subscriber.
+
+\begin{urbiscript}[firstnumber=1]
+var ps = PubSub.new;
+[00000000] PubSub_0x28c1bc0
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item \lstinline|publish(\var{ev})|
+  Enqueue the value \var{ev} to the queue of each subscriber.  This method
+  returns the value \var{ev}.
+
+\begin{urbiscript}
+{ var sub = ps.subscribe;
+  assert {
+    ps.publish(2) == 2;
+    sub.getOne == 2;
+  };
+  ps.unsubscribe(sub)
+} | {};
+\end{urbiscript}
+
+\item[subscribe]
+  Create a \lstinline|PubSub.Subscriber| and insert it inside the list of
+  subscribers.
+
+\begin{urbiscript}
+var sub = ps.subscribe |
+ps.subscribers == [sub];
+[00000000] true
+\end{urbiscript}
+
+\item[Subscriber] See \refObject{PubSub.Subscriber}
+
+\item[subscribers]
+  Field containing the list of \lstinline|PubSub.Subscriber| which are
+  watching published values.  This field only exists in instances of
+  \lstinline|PubSub|.
+
+\item \lstinline|unsubscribe(\var{sub})|
+  Remove a subscriber from the list of subscriber watching the published
+  values.
+
+\begin{urbiscript}
+ps.unsubscribe(sub) |
+ps.subscribers;
+[00000000] []
+\end{urbiscript}
+
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% End:

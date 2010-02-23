@@ -37,6 +37,8 @@ Documentation
 
 - Barrier
 - Pattern
+- PubSub
+- PubSub.Subscriber
 - Tracjectories
 - TrajectoryGenerator
 - waituntil clauses

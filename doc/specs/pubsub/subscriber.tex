@@ -1,0 +1,69 @@
+\section{PubSub.Subscriber}
+
+\lstinline|Subscriber| is a class returned by the \lstinline|subscribe|
+method of a \lstinline|PubSub| instance.  It provides some methods to access
+the list of value published with \lstinline|PubSub| instances.
+
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+A \lstinline|PubSub.Subscriber| can be created with a call to method
+\lstinline|subscribe| of a \lstinline|PubSub| instance.  This way of
+creating a \lstinline|Subscriber| add the subscriber as a watcher of values
+published on the instance of \lstinline|PubSub|.
+
+\begin{urbiscript}[firstnumber=1]
+var ps = PubSub.new | {};
+var sub = ps.subscribe;
+[00000000] Subscriber_0x28607c0
+\end{urbiscript}
+
+%% PubSub.Subscriber.new is not documented because there is no method to add
+%% a subscriber into the list of subscribers of a PubSub instance except by
+%% doing it in a dirty way.  This may allow to have a subscriber watching
+%% multiple published values.
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+%% \lstinline|enqueue(\var{ev})| is not documented because I assume it is an
+%% implementation detail of PubSub.
+
+\item[getOne]
+  Block until a value is accessible and return it.  If a value is already
+  queued, then the method returns it without blocking.
+
+\begin{urbiscript}
+echo(sub.getOne) &
+ps.publish(3);
+[00000000] *** 3
+\end{urbiscript}
+
+
+\item[getAll]
+  Block until a value is accessible.  This method returns the list of value
+  queued.  If values are already queued, then the method returns them
+  without blocking.
+
+\begin{urbiscript}
+ps.publish(4) |
+ps.publish(5) |
+echo(sub.getAll);
+[00000000] *** [4, 5]
+\end{urbiscript}
+
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../../urbi-sdk"
+%%% ispell-personal-dictionary: "../../urbi.dict"
+%%% End:
