@@ -36,6 +36,7 @@ include $(top_srcdir)/build-aux/check.mk
 # is the default with "make check-am".
 just-check: $(nodist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
+	$(MAKE) $(AM_MAKEFLAGS) spell-check
 
 
 TEST_LOGS = $(TESTS:.chk=.log)
