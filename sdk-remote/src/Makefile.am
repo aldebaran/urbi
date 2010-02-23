@@ -30,7 +30,7 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 # To be linked in all the executables (urbi-launch, examples/ etc.).
 AM_LDADD =					\
-  liburbi/liburbi$(LIBSFX).la				\
+  liburbi/liburbi$(LIBSFX).la			\
   $(JPEG_LIBS)					\
   $(PTHREAD_LIBS)				\
   $(LIBPORT_LIBS)
