@@ -71,7 +71,7 @@ post-install:
 # post-install step here, Urbi SDK.  Besides, under some
 # circumstances, running it twice can result in failure.
 	if test -n "$(DESTDIR)" &&					  \
-	   grep 'PACKAGE_TARNAME = urbi-sdk' $(top_builddir)/../Makefile; \
+	   ! grep 'PACKAGE_TARNAME = urbi-sdk' $(top_builddir)/../Makefile; \
 	then								  \
 	  $(build_aux_dir)/bin/check-lib-deps				  \
 	    --verbose --verbose --verbose --verbose			  \
