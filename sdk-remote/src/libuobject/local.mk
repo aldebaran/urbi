@@ -5,7 +5,7 @@
 # Hook to install-exec, not install-data.
 execenvdir = $(envdir)
 execenv_LTLIBRARIES = libuobject/libuobject@LIBSFX@.la
-libuobject_libuobject@LIBSFX@_la_SOURCES =		\
+libuobject_libuobject@LIBSFX@_la_SOURCES =	\
   libuobject/main.cc				\
   libuobject/remote-ucontext-impl.hh		\
   libuobject/ucallbacks.cc			\
@@ -13,10 +13,13 @@ libuobject_libuobject@LIBSFX@_la_SOURCES =		\
   libuobject/usystem.cc				\
   libuobject/utimer-callback.cc			\
   libuobject/uvar.cc
-libuobject_libuobject@LIBSFX@_la_CPPFLAGS =		\
+libuobject_libuobject@LIBSFX@_la_CPPFLAGS =	\
   $(AM_CPPFLAGS)				\
   -DBUILDING_URBI_SDK
-libuobject_libuobject@LIBSFX@_la_LIBADD = $(LIBADD) libuco/libuco.la liburbi/liburbi$(LIBSFX).la
+libuobject_libuobject@LIBSFX@_la_LIBADD =	\
+  $(LIBADD)					\
+  libuco/libuco.la				\
+  liburbi/liburbi$(LIBSFX).la
 libuobject_libuobject@LIBSFX@_la_LDFLAGS = -avoid-version -no-undefined
 
 # libuobject depends on liburbi, and make install installs them (and
