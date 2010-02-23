@@ -67,7 +67,7 @@ core: libs bin/urbi-launch$(EXEEXT)
 ## --------- ##
 install-exec-hook: post-install
 post-install:
-	if test -n "$(DESTDIR);" then			\
+	if test -n "$(DESTDIR)"; then			\
 	  $(build_aux_dir)/bin/check-lib-deps		\
 	    --verbose --verbose --verbose --verbose	\
 	    --destdir "$(DESTDIR)"			\
