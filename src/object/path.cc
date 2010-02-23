@@ -8,34 +8,28 @@
  * See the LICENSE file for more information.
  */
 
-// For stat, getcwd
+
+#include <exception> // bad_alloc
 #include <libport/cerrno>
 #include <libport/cstring>
 #include <libport/fcntl.h>
-#include <libport/sys/types.h>
-#include <libport/sys/stat.h>
-
-#include <libport/unistd.h>
 #include <libport/file-system.hh>
-#include <libport/lexical-cast.hh>
-
-// For bad_alloc
-#include <exception>
-
 #include <libport/format.hh>
+#include <libport/lexical-cast.hh>
+#include <libport/sys/stat.h>
+#include <libport/sys/types.h>
+#include <libport/unistd.h> // For stat, getcwd
 
+#include <object/symbols.hh>
 #include <urbi/object/directory.hh>
 #include <urbi/object/file.hh>
 #include <urbi/object/path.hh>
-#include <object/symbols.hh>
 #include <urbi/runner/raise.hh>
 
 namespace urbi
 {
   namespace object
   {
-    using boost::format;
-
     /*--------------.
     | C++ methods.  |
     `--------------*/
@@ -91,28 +85,26 @@ namespace urbi
     | Global information.  |
     `---------------------*/
 
-    rPath Path::cwd()
+    rPath
+    Path::cwd()
     {
       return new Path(libport::get_current_directory());
     }
 
     // Stats
 
-    bool Path::absolute()
+    bool
+    Path::absolute() const
     {
       return path_.absolute_get();
     }
 
-    bool Path::exists()
+    bool Path::exists() const
     {
-      if (!::access(path_.to_string().c_str(), F_OK))
-        return true;
-      if (errno == ENOENT)
-        return false;
-      handle_any_error();
+      return path_.exists();
     }
 
-    struct stat Path::stat()
+    struct stat Path::stat() const
     {
       struct stat res;
 
@@ -122,49 +114,53 @@ namespace urbi
       return res;
     }
 
-    bool Path::is_dir()
+    bool Path::is_dir() const
     {
-      return stat().st_mode & S_IFDIR;
+      return boost::filesystem::is_directory(path_.value_get());
     }
 
-    bool Path::is_reg()
+    bool Path::is_reg() const
     {
-      return stat().st_mode & S_IFREG;
+      return boost::filesystem::is_regular_file(path_.value_get());
     }
 
-    bool Path::readable()
+    // A macro to avoid visibility issues.
+#define ACCESS_CHECK(Mode)                              \
+    do {                                                \
+      if (!::access(path_.to_string().c_str(), Mode))   \
+        return true;                                    \
+      if (errno == EACCES)                              \
+        return false;                                   \
+      handle_any_error();                               \
+    } while (false)
+
+
+    bool Path::readable() const
     {
-      if (!::access(path_.to_string().c_str(), R_OK))
-        return true;
-      if (errno == EACCES)
-        return false;
-      handle_any_error();
+      ACCESS_CHECK(R_OK);
     }
 
-    bool Path::writable()
+    bool Path::writable() const
     {
-      if (!::access(path_.to_string().c_str(), W_OK))
-        return true;
-      if (errno == EACCES || errno == EROFS)
-        return false;
-      handle_any_error();
+      ACCESS_CHECK(W_OK);
     }
+#undef ACCESS_CHECK
 
     // Operations
 
-    std::string Path::basename()
+    std::string Path::basename() const
     {
       return path_.basename();
     }
 
-    rPath Path::cd()
+    rPath Path::cd() const
     {
       if (chdir(as_string().c_str()))
         handle_any_error();
       return cwd();
     }
 
-    rPath Path::path_concat(rPath other)
+    rPath Path::path_concat(rPath other) const
     {
       try
       {
@@ -176,7 +172,7 @@ namespace urbi
       }
     }
 
-    rPath Path::string_concat(rString other)
+    rPath Path::string_concat(rString other) const
     {
       return path_concat(new Path(other->value_get()));
     }
@@ -185,12 +181,12 @@ namespace urbi
                   Path, &Path::path_concat,
                   String, &Path::string_concat);
 
-    rPath Path::dirname()
+    rPath Path::dirname() const
     {
       return new Path(path_.dirname());
     }
 
-    rObject Path::open()
+    rObject Path::open() const
     {
       if (is_dir())
         return new Directory(path_);
@@ -201,17 +197,17 @@ namespace urbi
 
     // Conversions
 
-    std::string Path::as_string()
+    std::string Path::as_string() const
     {
       return path_.to_string();
     }
 
-    std::string Path::as_printable()
+    std::string Path::as_printable() const
     {
-      return str(format("Path(\"%s\")") % as_string());
+      return libport::format("Path(\"%s\")", as_string());
     }
 
-    rList Path::as_list()
+    rList Path::as_list() const
     {
       List::value_type res;
       foreach (const std::string& c, path_.components())
@@ -220,18 +216,18 @@ namespace urbi
     }
 
 
-    /*--------.
-    | Details |
-    `--------*/
+    /*----------.
+    | Details.  |
+    `----------*/
 
-    void Path::handle_any_error()
+    void Path::handle_any_error() const
     {
       FRAISE("%1%: %2%", strerror(errno), path_);
     }
 
-    /*---------------.
-    | Binding system |
-    `---------------*/
+    /*-----------------.
+    | Binding system.  |
+    `-----------------*/
 
     void Path::initialize(CxxObject::Binder<Path>& bind)
     {
@@ -262,13 +258,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Path)
-      : path_(
-#ifdef WIN32
-        "C:\\"
-#else
-        "/"
-#endif
-        )
+      : path_(WIN32_IF("C:\\", "/"))
     {}
 
   }

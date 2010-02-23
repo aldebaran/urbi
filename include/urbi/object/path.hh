@@ -43,7 +43,7 @@ namespace urbi
 
     public:
 
-      // Construction
+      // Construction.
       Path();
       Path(rPath model);
       Path(const std::string& value);
@@ -52,29 +52,29 @@ namespace urbi
       // Comparison.
       bool operator<=(const rPath& rhs) const;
 
-      // Global informations
+      // Global informations.
       static rPath cwd();
 
-      // Operations
-      std::string basename();
-      rPath cd();
-      rPath path_concat(rPath other);
-      rPath string_concat(rString other);
-      rPath dirname();
-      rObject open();
+      // Operations.
+      std::string basename() const;
+      rPath cd() const;
+      rPath path_concat(rPath other) const;
+      rPath string_concat(rString other) const;
+      rPath dirname() const;
+      rObject open() const;
 
-      // Stat
-      bool absolute();
-      bool exists();
-      bool is_dir();
-      bool is_reg();
-      bool readable();
-      bool writable();
+      // Stat.
+      bool absolute() const;
+      bool exists() const;
+      bool is_dir() const;
+      bool is_reg() const;
+      bool readable() const;
+      bool writable() const;
 
-      // Conversions
-      rList as_list();
-      std::string as_string();
-      std::string as_printable();
+      // Conversions.
+      rList as_list() const;
+      std::string as_string() const;
+      std::string as_printable() const;
 
     /*----------.
     | Details.  |
@@ -84,12 +84,12 @@ namespace urbi
       value_type path_;
 
       ATTRIBUTE_NORETURN
-      void handle_any_error();
+      void handle_any_error() const;
 
       friend class Directory;
 
       // Stat the file and handle all errors
-      struct stat stat();
+      struct stat stat() const;
 
       URBI_CXX_OBJECT_(Path);
     };
