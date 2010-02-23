@@ -32,6 +32,7 @@ namespace urbi
       Slot(const Slot& model);
       template <typename T>
       Slot(const T& value);
+      ~Slot();
       template <typename T>
       T get();
       template <typename T>

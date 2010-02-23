@@ -103,6 +103,12 @@ namespace urbi
     {
       return value_;
     }
+
+    inline
+    Slot::~Slot()
+    {
+      delete properties_;
+    }
   }
 }
 
