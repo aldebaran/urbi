@@ -91,11 +91,14 @@ if (System.Platform.isWindows)
 		  "Z:\\bin\\sh"];
     for (var p : binshs)
     {
-      if (Path.new(p).exists)
-      {
-        var this.binsh = p;
-        break;
-      };
+      try {
+        if (Path.new(p).exists)
+        {
+          var this.binsh = p;
+          break;
+        };
+      }
+      catch(var e) {}
     };
     if (!hasLocalSlot("binsh"))
       throw Exception.new("cannot find /bin/sh: " + binshs);
