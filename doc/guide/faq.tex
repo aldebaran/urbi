@@ -186,7 +186,7 @@ echo(chocolate);
 [00000000] *** 64
 \end{urbiscript}
 
-Last tricky rule you must keep in mind: the toplevel of your
+Last tricky rule you must keep in mind: the top level of your
 connection --- your interactive session --- is a %
 \lstinline|do (lobby)| scope. That is, when you type \lstinline|var x|
 directly in your connection, it stores an \lstinline|x| slot in the
@@ -198,18 +198,18 @@ connection has its \lstinline|lobby| that inherits the
 accessible from any connection, while variables stored in a
 connection's \lstinline|lobby| are local to this connection.
 
-To fully understand how lobbies and the toplevel work, we must
+To fully understand how lobbies and the top-level work, we must
 understand how calls --- message passing --- work in \us.  In \us,
 every call has a target. For instance, in \lstinline|Object.x|,
 \lstinline|Object| is the target of the \lstinline|x| call. If no
 target is specified, as in \lstinline|x| alone, the target defaults to
 \lstinline|this|, yielding \lstinline|this.x|. Knowing this rules,
-plus the fact that at the toplevel \lstinline|this| is
+plus the fact that at the top-level \lstinline|this| is
 \lstinline|lobby|, we can understand better what happens when defining
-and accessing variables at the toplevel:
+and accessing variables at the top-level:
 
 \begin{urbiscript}
-// Since we are at the toplevel, this stores x in the lobby.
+// Since we are at the top-level, this stores x in the lobby.
 // It is equivalent to `var lobby.x'.
 var x = "hello";
 [00000000] "hello"
@@ -285,7 +285,7 @@ Object has no such slot.
 The key to understanding this behavior is that any unqualified call
 --- unless it refers to a local variable --- is destined to
 \lstinline|this|. Thus, variables stored in the lobby are only
-accessible from the toplevel, or from functions that are targeted on
+accessible from the top-level, or from functions that are targeted on
 the lobby.
 
 \paragraph{So, where to store global variables?}
@@ -400,7 +400,7 @@ class O
 O.mySlot = 51;
 [00000001] 51
 
-// Sugarfree.
+// Sugar-free.
 O.updateSlot("mySlot", 23);
 [00000001] 23
 \end{urbiscript}
@@ -560,7 +560,7 @@ at(ev?(1, var msg))
 \end{urbiunchecked}
 
 The \lstinline{?} marker indicates that we are looking for an event
-instead of a boolean condition. The construct \lstinline{var msg}
+instead of a Boolean condition. The construct \lstinline{var msg}
 indicates that the \lstinline{msg} variable will be bound (as a local
 variable) in the body part of the \lstinline{at} construct, with
 whatever value is present in the event that triggered the
@@ -783,7 +783,7 @@ kernel is not stuck: other pieces of code are still running.
 
 The liburbi and the UObject API in remote mode are thread safe. All
 operations can be performed in any thread. As always, care must be
-taken for all non-atomic operations. For exemple, the following
+taken for all non-atomic operations. For example, the following
 function is not thread safe:
 
 \begin{cxx}
@@ -848,5 +848,6 @@ users.
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:

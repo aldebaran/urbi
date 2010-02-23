@@ -113,7 +113,7 @@ can be changed by calling \lstinline|ALMotor.setDCMShift(shiftValue)|.
 
 The motors implements a debugging mode that can be activated by
 calling \lstinline|ALMotor::setTrace(1)|. While activated, it will
-write all sent commands to the file /tmp/traj.log. Each line will
+write all sent commands to the file \file{/tmp/traj.log}. Each line will
 contain the motor number, the command timestamp, and the command
 position.  Be careful not to let this feature active while not using
 it, as it would quickly fill-up the memory.
@@ -144,8 +144,8 @@ activate.
   \item \lstinline|3| JPEG.
   \item \lstinline|4| RGB with a PPM header.
   \item \lstinline|5| YUV422:  YUYV, 2 bytes/pixel.
-  \item \lstinline|6| Grey8: grey image, 1 byte/pixel.
-  \item \lstinline|7| Grey4: grey image 4 bits/pixel.
+  \item \lstinline|6| Grey8: gray image, 1 byte/pixel.
+  \item \lstinline|7| Grey4: gray image 4 bits/pixel.
   \end{itemize}
   JPEG mode gives the smallest images and uses less bandwidth to access the
   images remotely, but uses more CPU power.
@@ -202,7 +202,7 @@ the \lstinline|ALMemory| module. This module is available under the
 \item \lstinline|set(\var{name}, \var{value})| \\
   Set memory location \var{name} to \var{value}.
 \item \lstinline|bindRenameVariable(\var{memoryName}, \var{variableName})| \\
-  Create a \us slot named \var{variableName}, and synchronise it with memory
+  Create a \us slot named \var{variableName}, and synchronize it with memory
   location \var{memoryName}. Only read support is available.
   \var{variableName} can be of the form "a.b", in which case it will create
   variable "b" in object "a", or of the form "b", in which case variable "b"
@@ -297,5 +297,6 @@ mathematics.bindUrbiMethod( "add", "Compute the sum of two numbers",
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:

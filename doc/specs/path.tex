@@ -137,8 +137,8 @@ Path.new(".").writable;
   \lstinline|this| and \lstinline|\var{rhs}|. \lstinline|\var{rhs}|
   can be a \dfn{Path} or a \dfn{String} and cannot be absolute.
 \begin{urbiscript}
-assert(Path.new("/con/ca") / Path.new("te/na/tion")
-       == Path.new("/con/ca/te/na/tion"));
+assert(Path.new("/foo/bar") / Path.new("baz/qux/quux")
+       == Path.new("/foo/bar/baz/qux/quux"));
 Path.cwd / Path.new("/tmp/foo");
 [00000003:error] !!! /: Rhs of concatenation is absolute: /tmp/foo
 \end{urbiscript}
@@ -166,5 +166,6 @@ Path.cwd / Path.new("/tmp/foo");
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:

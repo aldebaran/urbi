@@ -286,7 +286,7 @@ including operations on \UVar can be performed from any thread.
 \urbi can store binary objects of any type in a generic container, and
 provides specific structures for sound and images. The generic
 containers is called \UBinary and is defined in the
-\lstinline{urbi/ubinary.hh} header. It contains an enum field type
+\file{urbi/ubinary.hh} header. It contains an enum field type
 giving the type of the binary (\lstinline{UNKNOWN}, \lstinline{SOUND}
 or \lstinline{IMAGE}), and an union of a \USound and
 \UImage struct containing a pointer to the data, the size
@@ -357,6 +357,7 @@ call("System", "someFunc", 12, "foo");
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:
 

@@ -13,14 +13,14 @@ functions that support some \us 1 features.
 \subsection{\$(Foo)}
 \label{sec:k122:dollar}
 
-This construct was designed to build identifiers at runtime.  This
+This construct was designed to build identifiers at run-time.  This
 used to be a common idiom to work around some limitations of \us 1
 which are typically \emph{no longer needed in \us 2}.  For instance,
 genuine local variables are simpler and safer to use than identifiers
-forged by hand for unicity.  In order to associate information to a
+forged by hand to be unique.  In order to associate information to a
 string, use a \refObject{Dictionary}.
 
-If you really need to forge identifiers at runtime, use
+If you really need to forge identifiers at run-time, use
 \lstinline{setSlot}, \lstinline{updateSlot}, and \lstinline{getSlot},
 which all work with strings, and possibly \lstinline{asString}, which
 converts arbitrary expressions into strings.  The
@@ -207,5 +207,6 @@ use the \lstinline{leave?} method of the \refObject{Tag} object:
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:

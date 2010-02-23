@@ -1,11 +1,11 @@
 \section{Pattern}
 
-\lstinline|Pattern| class is used to make correspondances between a pattern
+\lstinline|Pattern| class is used to make correspondences between a pattern
 and another \lstinline|Object|.  The visit is done either on the pattern or
 on the element against which is pattern is compared.
 
 \lstinline|Pattern| are used for the implementation of the pattern matching.
-So any class made compatilble with the pattern matching implemented by this
+So any class made compatible with the pattern matching implemented by this
 class will allow you to use it implicitly in your scripts.
 
 \begin{urbiscript}[firstnumber=1]
@@ -74,7 +74,7 @@ Pattern.Binding.new("a");
       not be used.
   \end{itemize}
   If the pattern contains multiple \lstinline|Pattern.Binding| with the same
-  name, then the behaviour is not determined.
+  name, then the behavior is not determined.
 
 \begin{urbiassert}
 Pattern.new(1).match(1);
@@ -92,7 +92,7 @@ Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
   This function is used as a callback function to store all bindings in the
   same place.  This function is useful inside objects which are implementing
   a match or matchAgainst function which need to continue the match deeper.
-  This returns a boolean the status of the match.
+  This returns a Boolean the status of the match.
 
   The \var{pattern} should provide a method
   \lstinline|match(\var{handler},\var{value})| otherwise the value method
@@ -124,5 +124,6 @@ Pattern.new([1, 2]).pattern == [1, 2];
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:

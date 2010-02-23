@@ -7,8 +7,8 @@ object model of \us, and how to define and use classes.
 \section{Prototype-based programing in \us}
 
 You're probably already familiar with class-based object programing,
-since this is the \Cxx model.  Classes and objects are very differents
-entities.  Types are static entities that do not exist at runtime,
+since this is the \Cxx model.  Classes and objects are very different
+entities.  Types are static entities that do not exist at run-time,
 while objects are dynamic entities that do not exist at compile time.
 
 Prototype-based object programing is different: the difference between
@@ -20,7 +20,7 @@ programming was introduced by the Self language, and is used in
 several popular script languages such as \io or \js.
 
 Class-based programming can be considered with an industrial
-metaphore: classes are moulds, from which objects are generated.
+metaphor: classes are molds, from which objects are generated.
 Prototype-based programming is more biological: an prototype object is
 cloned into another object which which can be modified during its
 lifetime.
@@ -340,7 +340,7 @@ class MyPair
 
 The \lstinline{class} keyword simply creates \lstinline|MyPair| with
 \lstinline|MyPair|Object.clone|, and provides you with a
-\lstinline|do (MyPair)| scope. It actually also predefines a few
+\lstinline|do (MyPair)| scope. It actually also pre-defines a few
 slots, but this is not the point here.
 
 \section{Constructors}
@@ -382,13 +382,13 @@ MyPair.new(0, 1);
 \label{sec:tut:operators}
 
 In \us, operators such as \lstinline|+|, \lstinline|&&| and others,
-are regular function that benefit from a bit of syntactic suggar.  To
+are regular function that benefit from a bit of syntactic sugar.  To
 be more precise, \lstinline|\var{a}+\var{b}| is exactly the same as
 \lstinline|\var{a}.'+'(\var{b})|.  The rules to resolve slot names
 apply too, i.e., the \lstinline|'+'| slot is looked for in \var{a},
 then in its prototypes.
 
-The following example provides arithmetics between pairs.
+The following example provides arithmetic between pairs.
 
 \begin{urbiscript}
 class ArithPair
@@ -413,5 +413,6 @@ ArithPair.new(1, 10) + ArithPair.new(2, 20) * ArithPair.new(3, 30);
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:
