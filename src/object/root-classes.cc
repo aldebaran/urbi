@@ -190,6 +190,10 @@ namespace urbi
       // Duration derives from Float.
       INIT(Float);
       INIT(Duration);
+
+      // Primitive derives from Executable.
+      INIT(Primitive);
+      INIT(Executable);
 #undef INIT
 
       CxxObject::create();
