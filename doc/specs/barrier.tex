@@ -38,7 +38,7 @@ do (Barrier.new)
     signal(1) == 1;
     signal(2) == 1
   }
-};
+}|;
 [00000000] *** 1
 [00000000] *** 2
 \end{urbiscript}
@@ -58,7 +58,7 @@ do (Barrier.new)
     signalAll(1) == 2;
     signalAll(2) == 0
   }
-};
+}|;
 [00000000] *** 1
 [00000000] *** 1
 \end{urbiscript}
@@ -73,7 +73,7 @@ do (Barrier.new)
 {
   echo(wait) &
   signal(1)
-};
+}|;
 [00000000] *** 1
 \end{urbiscript}
 
