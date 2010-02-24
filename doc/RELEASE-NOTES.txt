@@ -39,6 +39,7 @@ Documentation
 - Pattern
 - PubSub
 - PubSub.Subscriber
+- Profiling
 - Tracjectories
 - TrajectoryGenerator
 - waituntil clauses
