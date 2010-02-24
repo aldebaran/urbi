@@ -99,6 +99,7 @@ children_wait 10
 
 # Ignore the "client errors" and ping maintenance.
 sed -e '/^E End of file/d'     \
+    -e '/^E client_error Operation canceled/d'  \
     -e '/^E __gostai_private__connection_timeout Operation canceled/d'     \
   remote.out.raw >remote.out.eff
 
