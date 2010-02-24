@@ -29,10 +29,12 @@ Barrier.new;
   the \var{wait} method.  This method returns the number of job woken up.
 
 \begin{urbiscript}
-{ var b = Barrier.new |
+{
+  var b = Barrier.new |
   echo(b.wait) &
   echo(b.wait) &
-  assert {
+  assert
+  {
     b.signal(1) == 1;
     b.signal(2) == 1
   }
@@ -47,10 +49,12 @@ Barrier.new;
   all \var{wait} methods.  This method returns the number of job woken up.
 
 \begin{urbiscript}
-{ var b = Barrier.new |
+{
+  var b = Barrier.new |
   echo(b.wait) &
   echo(b.wait) &
-  assert {
+  assert
+  {
     b.signalAll(1) == 2;
     b.signalAll(2) == 0
   }
@@ -65,7 +69,8 @@ Barrier.new;
   function is returned by the \lstinline|wait| method.
 
 \begin{urbiscript}
-{ var b = Barrier.new |
+{
+  var b = Barrier.new |
   echo(b.wait) &
   b.signal(1)
 };
@@ -77,5 +82,6 @@ Barrier.new;
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:

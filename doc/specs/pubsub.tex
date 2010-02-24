@@ -28,8 +28,10 @@ var ps = PubSub.new;
   returns the value \var{ev}.
 
 \begin{urbiscript}
-{ var sub = ps.subscribe;
-  assert {
+{
+  var sub = ps.subscribe;
+  assert
+  {
     ps.publish(2) == 2;
     sub.getOne == 2;
   };
@@ -70,5 +72,6 @@ ps.subscribers;
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:
