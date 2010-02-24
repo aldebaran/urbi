@@ -1,0 +1,113 @@
+\section{Semaphore}
+
+\lstinline|Semaphore| are useful to limit the number of access to a limited
+number of ressources.
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+A \lstinline|Semaphore| can be created with as argument the number of
+processes allowed to enter critical sections at the same time.
+
+\begin{urbiscript}[firstnumber=1]
+Semaphore.new(1);
+[00000000] Semaphore_0x8c1e80
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item \lstinline|criticalSection(function () {\var{code}})|
+  Put the piece of \var{code} inside a critical section which can be
+  executed simultaneously at most the number of time given at the creation
+  of the \lstinline|Semaphore|.  This method is similar to a call to
+  \lstinline|p| and a call to \lstinline|v| when the code ends by any means.
+
+\begin{urbiscript}
+{
+  var s = Semaphore.new(1);
+  for& (var i : [0, 1, 2, 3])
+  {
+    s.criticalSection(function () {
+      echo("start " + i);
+      echo("end " + i);
+    })
+  }
+};
+[00000000] *** start 0
+[00000000] *** end 0
+[00000000] *** start 1
+[00000000] *** end 1
+[00000000] *** start 2
+[00000000] *** end 2
+[00000000] *** start 3
+[00000000] *** end 3
+
+
+{
+  var s = Semaphore.new(2);
+  for& (var i : [0, 1, 2, 3])
+  {
+    s.criticalSection(function () {
+      echo("start " + i);
+
+      // Illustrate that processes can be intertwined
+      sleep(i * 10ms);
+
+      echo("end " + i);
+    })
+  }
+};
+[00000000] *** start 0
+[00000000] *** start 1
+[00000000] *** end 0
+[00000000] *** start 2
+[00000000] *** end 1
+[00000000] *** start 3
+[00000000] *** end 2
+[00000000] *** end 3
+\end{urbiscript}
+
+
+\item[p] Wait to enter a critical section delimited by the execution of
+  \lstinline|p| and \lstinline|v|.  Enter the critical section when the
+  number of processes inside it goes below the maximum allowed.
+
+\item[v] Leave a cirtical section delimited by the execution of
+  \lstinline|p| and \lstinline|v|.
+
+\begin{urbiscript}
+{
+  var s = Semaphore.new(1);
+  for& (var i : [0, 1, 2, 3])
+  {
+    s.p;
+    echo("start " + i);
+    echo("end " + i);
+    s.v;
+  }
+};
+[00000000] *** start 0
+[00000000] *** end 0
+[00000000] *** start 1
+[00000000] *** end 1
+[00000000] *** start 2
+[00000000] *** end 2
+[00000000] *** start 3
+[00000000] *** end 3
+\end{urbiscript}
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% End:
