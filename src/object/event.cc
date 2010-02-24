@@ -105,7 +105,8 @@ namespace urbi
     void
     Event::syncEmit(const objects_type& pl)
     {
-      rEvent instance = new Event(this, new List(pl));
+      rEvent instance = new Event(this,
+                                  new List(pl));
 
       instance->slot_update(SYMBOL(active), to_urbi(false));
       instance->localTrigger(pl);
@@ -194,6 +195,7 @@ namespace urbi
       foreach (const stop_job_type& stop_job, stop_jobs_)
         (*stop_job.first)(stop_job.second);
       source()->_active.erase(this);
+      stop_jobs_.clear();
     }
 
     void
