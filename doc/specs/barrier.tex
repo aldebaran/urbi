@@ -1,8 +1,8 @@
 \section{Barrier}
 
-\lstinline|Barrier| is used to wait until another job raise a signal.  This
-can be used to implements blocking calls which are waiting until a ressource
-is made available.
+\lstinline|Barrier| is used to wait until another job raise a signal.
+This can be used to implements blocking calls which are waiting until
+a resource is made available.
 
 \subsection{Prototypes}
 
@@ -29,14 +29,14 @@ Barrier.new;
   the \var{wait} method.  This method returns the number of job woken up.
 
 \begin{urbiscript}
+do (Barrier.new)
 {
-  var b = Barrier.new |
-  echo(b.wait) &
-  echo(b.wait) &
+  echo(wait) &
+  echo(wait) &
   assert
   {
-    b.signal(1) == 1;
-    b.signal(2) == 1
+    signal(1) == 1;
+    signal(2) == 1
   }
 };
 [00000000] *** 1
@@ -49,14 +49,14 @@ Barrier.new;
   all \var{wait} methods.  This method returns the number of job woken up.
 
 \begin{urbiscript}
+do (Barrier.new)
 {
-  var b = Barrier.new |
-  echo(b.wait) &
-  echo(b.wait) &
+  echo(wait) &
+  echo(wait) &
   assert
   {
-    b.signalAll(1) == 2;
-    b.signalAll(2) == 0
+    signalAll(1) == 2;
+    signalAll(2) == 0
   }
 };
 [00000000] *** 1
@@ -69,10 +69,10 @@ Barrier.new;
   function is returned by the \lstinline|wait| method.
 
 \begin{urbiscript}
+do (Barrier.new)
 {
-  var b = Barrier.new |
-  echo(b.wait) &
-  b.signal(1)
+  echo(wait) &
+  signal(1)
 };
 [00000000] *** 1
 \end{urbiscript}

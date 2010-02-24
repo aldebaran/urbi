@@ -24,7 +24,7 @@ var ps = PubSub.new;
 \begin{urbiscriptapi}
 
 \item \lstinline|publish(\var{ev})|
-  Enqueue the value \var{ev} to the queue of each subscriber.  This method
+  Queue the value \var{ev} to the queue of each subscriber.  This method
   returns the value \var{ev}.
 
 \begin{urbiscript}
@@ -36,7 +36,7 @@ var ps = PubSub.new;
     sub.getOne == 2;
   };
   ps.unsubscribe(sub)
-} | {};
+}|;
 \end{urbiscript}
 
 \item[subscribe]
@@ -49,7 +49,7 @@ ps.subscribers == [sub];
 [00000000] true
 \end{urbiscript}
 
-\item[Subscriber] See \refObject{PubSub.Subscriber}
+\item[Subscriber] See \refObject{PubSub.Subscriber}.
 
 \item[subscribers]
   Field containing the list of \lstinline|PubSub.Subscriber| which are

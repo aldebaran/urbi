@@ -1,4 +1,4 @@
-personal_ws-1.1 en 689 utf-8
+personal_ws-1.1 en 696 utf-8
 UStartHub
 bindUrbiMethod
 tuples
@@ -10,7 +10,6 @@ Formatters
 rangemin
 setThreadLimit
 api
-API
 quuxbar
 DYLD
 unary
@@ -37,6 +36,7 @@ requestValue
 USetUpdate
 asBool
 ary
+unsubscribe
 Constness
 ALMotor
 IGain
@@ -57,9 +57,10 @@ quux
 onboard
 cpp
 runningcommands
-dll
 faq
+dll
 iterable
+OpenSSL
 automain
 cpu
 cloneSlot
@@ -141,6 +142,7 @@ sumTwice
 UNotifyOnRequest
 func
 cancelFindBase
+myUObject
 myuobject
 uids
 cameraval
@@ -157,8 +159,8 @@ verylightgray
 getPeriod
 sometag
 hpp
-freezeif
 myAnd
+freezeif
 sqrt
 ing
 myMind
@@ -168,8 +170,8 @@ cerr
 hisMind
 succ
 param
-islower
 isLower
+islower
 LinearSpeedMotor
 slotNames
 setPositions
@@ -189,8 +191,8 @@ slowMachine
 loopn
 ufloat
 DistanceSensor
-varname
 varName
+varname
 basename
 isdigit
 isDigit
@@ -280,6 +282,7 @@ FormatInfo
 typename
 Orderable
 bitand
+signalAll
 attr
 Bonjour
 desugared
@@ -319,8 +322,8 @@ getMine
 realloc
 socat
 argsCount
-osx
 pos
+osx
 getLocalSlot
 pre
 RotationalSpeedMotor
@@ -379,6 +382,7 @@ connectSerial
 typedefed
 qux
 callMessage
+UImageFormat
 getSlot
 getslot
 physicsReset
@@ -405,14 +409,13 @@ UVar
 cosinus
 BallTracker
 sizeof
-urbiScript
 urbiscript
+urbiScript
 stm
 setDCMShift
 ledR
 bumperL
 leds
-Leds
 UBindThreadedFunction
 myObj
 str
@@ -432,8 +435,8 @@ wav
 uob
 TextTo
 getProperty
-voicexml
 VoiceXML
+voicexml
 getImage
 wbt
 getenv
@@ -448,8 +451,8 @@ notifyAccess
 elbowR
 middleware
 tts
-UObjects
 uobjects
+UObjects
 USB
 timestamp
 loadFile
@@ -459,8 +462,8 @@ UTF
 SIGKILL
 arity
 xfov
-xFF
 xfF
+xFF
 writeToVar
 distanceMin
 usr
@@ -498,8 +501,8 @@ waituntil
 htmldir
 ArithPair
 ArgumentType
-isvoid
 isVoid
+isvoid
 chmod
 searchFile
 bc
@@ -538,11 +541,12 @@ az
 cp
 fA
 chargeStop
+ubinary
 UBinary
 fb
 fooobar
-myTag
 mytag
+myTag
 valueChanged
 bz
 UValues
@@ -606,19 +610,20 @@ rlwrap
 trackL
 oo
 UProp
-o's
 os
+o's
 MyVar
 trackR
 allProto
 accelX
+ps
 p's
 accelY
 accelZ
 zxf
 playSound
-ufactory
 UFactory
+ufactory
 px
 py
 te
@@ -645,6 +650,7 @@ compl
 zA
 ALLogger
 abc
+removeTimer
 kneeL
 dlerror
 DifferentialWheels
@@ -662,6 +668,7 @@ netcat
 UList
 headLed
 redefinable
+getOne
 ImageConversion
 abcdef
 aibo
@@ -688,8 +695,3 @@ encoderResolution
 ImplicitTagComponent
 newImage
 BadInteger
-myUObject
-ubinary
-UImageFormat
-removeTimer
-OpenSSL
