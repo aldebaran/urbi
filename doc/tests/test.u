@@ -84,8 +84,19 @@ do (String)
 
 // Keep sync with urbivalid/test.u.
 if (System.Platform.isWindows)
+{
+  class Global.Process
+  {
+    function init
+    {
+      cerr << "Process is not supported under Windows";
+      System._exit(176)
+    };
+  };
+
   do (System)
   {
+    // System.system.
     var binshs = ["/bin/sh", "/bin/sh.exe",
                   "\\cygwin\\bin\\sh", "\\cygwin\\bin\\sh.exe",
 		  "Z:\\bin\\sh"];
@@ -106,9 +117,8 @@ if (System.Platform.isWindows)
     var this.count = 1;
 
     // On Windows, use /bin/sh to please our tests.
-    var 'system.orig' = getSlot("system");
-    system->constant = false;
-    system = function (command)
+    override("system",
+    function (command)
     {
       // For some reason I don't understand, the command is
       // backgrounded on Windows (or by Wine).  So use some stamp file
@@ -128,13 +138,13 @@ if (System.Platform.isWindows)
       cmd += "\"" |
 
       // Run the command, wait for the stamp.
-      'system.orig'(cmd) |
+      oldsystem(cmd) |
       while| (!stamp.exists)
         sleep(20ms)|
       var res = File.new(stamp).asList[0].asFloat |
       clog << ("system wrapper: " + command + ": " + cmd + ": " + res) |
       res
-    };
-  }|
-
+    });
+  }
+}|
 ;
