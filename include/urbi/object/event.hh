@@ -39,15 +39,11 @@ namespace urbi
 
     private:
 
-      void waituntil_release(rObject payload);
-      rEvent source();
-      void trigger_job(rExecutable guard, rExecutable enter, rExecutable leave);
-
       /// Callbacks listening on this event.
       struct Actions
       {
         Actions(rExecutable g, rExecutable e, rExecutable l)
-          : guard(g), enter(e), leave(l)
+          : guard(g), enter(e), leave(l), active(true)
         {}
 
         bool
@@ -57,8 +53,16 @@ namespace urbi
         }
 
         rExecutable guard, enter, leave;
+        bool active;
       };
+
+      void waituntil_release(rObject payload);
+      rEvent source();
+      void trigger_job(const Actions& actions);
+
       void unregister(Actions);
+      void freeze(Actions);
+      void unfreeze(Actions);
       typedef std::vector<Actions> Listeners;
       Listeners listeners_;
 

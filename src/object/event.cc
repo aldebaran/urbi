@@ -46,6 +46,22 @@ namespace urbi
         listeners_.erase(it);
     }
 
+    void
+    Event::freeze(Actions a)
+    {
+      Listeners::iterator it = libport::find(listeners_, a);
+      if (it != listeners_.end())
+        it->active = false;
+    }
+
+    void
+    Event::unfreeze(Actions a)
+    {
+      Listeners::iterator it = libport::find(listeners_, a);
+      if (it != listeners_.end())
+        it->active = true;
+    }
+
     /*---------------.
     | Urbi functions |
     `---------------*/
@@ -57,27 +73,32 @@ namespace urbi
 
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       foreach (object::rTag tag, r.tag_stack_get())
-        tag
-        ->value_get()
-        ->stop_hook_get()
-        .connect(boost::bind(&Event::unregister, this, actions));
+      {
+        sched::rTag t = tag->value_get();
+        using boost::bind;
+        t->stop_hook_get().connect(bind(&Event::unregister, this, actions));
+        t->freeze_hook_get().connect(bind(&Event::freeze, this, actions));
+        t->unfreeze_hook_get().connect(bind(&Event::unfreeze, this, actions));
+      }
 
       listeners_ << actions;
       foreach (const actives_type::value_type& active, _active)
-        active.first->trigger_job(guard, enter, leave);
+        active.first->trigger_job(Actions(guard, enter, leave));
     }
 
     void
-    Event::trigger_job(rExecutable guard, rExecutable enter, rExecutable leave)
+    Event::trigger_job(const Actions& actions)
     {
+      if (!actions.active)
+        return;
       objects_type args;
       args << this << this;
-      rObject pattern = (*guard)(args);
+      rObject pattern = (*actions.guard)(args);
       if (pattern != void_class)
       {
         args << pattern;
-        register_stop_job(stop_job_type(leave, args));
-        (*enter)(args);
+        register_stop_job(stop_job_type(actions.leave, args));
+        (*actions.enter)(args);
       }
     }
 
@@ -156,7 +177,7 @@ namespace urbi
       rList payload = new List(pl);
       source()->_active[this] = payload;
       foreach (const Event::Actions& actions, listeners_)
-        trigger_job(actions.guard, actions.enter, actions.leave);
+        trigger_job(actions);
       waituntil_release(payload);
     }
 
