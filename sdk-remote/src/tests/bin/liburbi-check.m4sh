@@ -101,6 +101,7 @@ children_wait 10
 sed -e '/^E End of file/d'     \
     -e '/^E client_error End of file/d'       \
     -e '/^E client_error Operation canceled/d'  \
+    -e '/^E __gostai_private__connection_timeout End of file/d'            \
     -e '/^E __gostai_private__connection_timeout Operation canceled/d'     \
   remote.out.raw >remote.out.eff
 
