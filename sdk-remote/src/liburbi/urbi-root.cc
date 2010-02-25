@@ -288,9 +288,6 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
                     "Unable to find Urbi SDK installation location. "
                     "Please set URBI_ROOT.");
 
-  // const std::string urbi_path = root_ / "share" / "gostai";
-  // xsetenv("URBI_PATH", mygetenv("URBI_PATH") + ":" + urbi_path, true);
-  // URBI_ROOT_DEBUG("append to URBI_PATH: " << urbi_path);
   if (!static_build)
   {
     handle_libjpeg_      = library_load("jpeg");
@@ -312,31 +309,31 @@ UrbiRoot::library_load(const std::string& base)
     xdlopen(program_,
             base,
             mygetenv(envvar,
-                    root(libdir / "lib" + base + LIBPORT_LIBSFX)));
+                     root() / libdir / "lib" + base + LIBPORT_LIBSFX));
+}
+
+const std::string&
+UrbiRoot::root() const
+{
+  return root_;
 }
 
 std::string
-UrbiRoot::root(const std::string& path) const
+UrbiRoot::core_path() const
 {
-  return root_ / path;
+  return root() / "gostai";
 }
 
 std::string
-UrbiRoot::core_path(const std::string& path) const
+UrbiRoot::uobjects_path() const
 {
-  return root_ / "gostai" / "core" / LIBPORT_URBI_HOST / path;
+  return core_path() / "uobjects";
 }
 
 std::string
-UrbiRoot::uobjects_path(const std::string& path) const
+UrbiRoot::share_path() const
 {
-  return core_path("uobjects" / path);
-}
-
-std::string
-UrbiRoot::share_path(const std::string& path) const
-{
-  return root_ / "share" / "gostai" / path;
+  return root() / "gostai" / "share";
 }
 
 void
