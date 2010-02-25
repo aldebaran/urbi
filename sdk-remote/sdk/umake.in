@@ -354,8 +354,6 @@ if test -z "$LIBNAME"; then
        UMAKE_LIBNAME=libuobject
        UMAKE_EXTRALIB="${libdir}/liburbi$LIBSFX.la ${libdir}/libjpeg$LIBSFX.la"
        core=engine;;
-    (aibo)
-       UMAKE_LIBNAME=libaibo;;
   esac
 else
   UMAKE_LIBNAME=$LIBNAME
@@ -424,11 +422,6 @@ exist_error 4 f $(param_mk) param-mk
 
 # Check if target is valid for host
 #dirlist_error 6 core "$branddir/core/$host" "$core"
-
-# Extra test for aibo engine
-#if test $core = aibo -a $host != mipsel-linux; then
-#   error 7 "you are building an urbiengine-aibo for $host"
-#fi
 
 # Invoke make.
 if $verb; then

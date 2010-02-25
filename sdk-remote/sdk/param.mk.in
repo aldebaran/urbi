@@ -46,15 +46,6 @@ LD = @CC@
 LIBS = $(SDK_LIBS)
 LDFLAGS = @LDFLAGS@ @BOOST_THREAD_LDFLAGS@ $(SDK_LDFLAGS)
 
-if URBI_ENV_AIBO
-# Aibo.
-MKBIN = @MKBIN@
-MKBIN_FLAGS = @MKBIN_FLAGS@
-OPEN_R_SDK = @OPEN_R_SDK@
-OPEN_R_LDFLAGS = @OPEN_R_LDFLAGS@
-STRIP = @STRIP@
-endif
-
 # Libtool.
 LIBTOOL = $(hostdir)/libtool
 HOBJECTS = $(OBJECTS:.o=.$(URBI_HOST).o)
@@ -124,20 +115,11 @@ LINK =						\
   --host='$(URBI_HOST)'				\
   --
 $(OUTBIN): $(LTOBJECTS) $(ARGUMENT_LIBS)
-if URBI_ENV_AIBO
-	 $(LINK) \
-            $(MKBIN) $(MKBIN_FLAGS) -o $@.BIN $(envdir)/URBI.ocf \
-            $(envdir)/URBIStub.o $(ARGUMENT_LIBS) $(LTOBJECTS) \
-	    $(envdir)/$(LIBNAME).la \
-            $(OPEN_R_LDFLAGS) $(EXTRA_LDFLAGS)
-	$(STRIP) $@.BIN
-else
 	$(LINK) \
 	    $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ \
 	    $(ARGUMENT_LIBS) $(LIBS) $(LTOBJECTS) \
 	    $(envdir)/$(LIBNAME).la $(UMAKE_EXTRALIB) \
 	    $(EXTRA_LDFLAGS)
-endif
 
 clean:
 	$(RM) *.lo *.o

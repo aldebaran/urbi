@@ -34,7 +34,6 @@ gen_wrapper ()
     target=$(basename "$1" | sed -e 's/^umake-//')
     dir=$(dirname "$1")
     case $target in
-	(aibo)	     args="--core=aibo --host=mipsel-linux";;
 	(deepclean)  args="--deep-clean";;
 	(engine)     args="--core=engine";;
 	(fullengine) args="--core=fullengine";;
@@ -75,21 +74,6 @@ fi
     echo >&2 "\$me: cannot run umake: \$UMAKE"
     exit 1
   }
-EOF
-
-    case $target in
-        (aibo)
-	cat >>$wrapper <<EOF
-
-# Remove remaining files from
-rm -f *.BIN.*
-echo >&2 "\$me: Removed Aibo build files."
-
-EOF
-        ;;
-    esac
-
-    cat >>$wrapper <<EOF
 
 exec \$UMAKE $args "\$@"
 EOF

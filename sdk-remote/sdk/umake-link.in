@@ -20,7 +20,7 @@ General options:
 
 Specific options:
   -L, --libtool=PATH    path to libtool
-  -E, --env=URBI-ENV    urbi environment name (e.g., engine, aibo)
+  -E, --env=URBI-ENV    urbi environment name (e.g., engine)
   -H, --host=URBI-HOST  urbi host name        (e.g.. mipsel-linux)
 
 Report bugs to @PACKAGE_BUGREPORT@.
@@ -127,17 +127,12 @@ case $($libtool --config) in
   command=$($libtool -n --tag=CXX --mode=link "$@" |
       # libtool 2.2 outputs additional prefixes.
       sed -e 's/^libtool: link: //')
-  case $urbi_env:$urbi_host in
-    (aibo:*)
-      command=$(echo "$command" |
-        sed -e 's/-lc / /' \
-	   -e 's/ \([a-zA-Z0-9.\/_-]*\.a\( \|$\)\)/ --whole-archive \1 --no-whole-archive /g')
-      ;;
-    (*:*darwin*)
+  case $urbi_host in
+    (*darwin*)
       command=$(echo "$command" |
         sed -e 's/ \([a-zA-Z0-9.\/_-]*\.a\( \|$\)\)/ -Wl,-all_load \1 /g')
       ;;
-    (*:*)
+    (*)
       command=$(echo "$command" |
         sed -e 's/ \([a-zA-Z0-9.\/_-]*\.a\( \|$\)\)/ -Wl,-whole-archive \1 -Wl,-no-whole-archive /')
       ;;

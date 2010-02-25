@@ -5,7 +5,6 @@ host_SCRIPTS += $(top_builddir)/libtool
 nodist_env_DATA = sdk/param.mk
 
 UMAKE_WRAPPERS =                                \
-  sdk/umake-aibo                                \
   sdk/umake-deepclean                           \
   sdk/umake-engine                              \
   sdk/umake-fullengine                          \
