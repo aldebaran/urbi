@@ -1,5 +1,5 @@
 # libtool is required by umake.
-host_SCRIPTS += $(top_builddir)/libtool
+brandlibexec_SCRIPTS += $(top_builddir)/libtool
 
 # This file tells umake how to build things.
 nodist_env_DATA = sdk/param.mk

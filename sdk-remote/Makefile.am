@@ -28,8 +28,7 @@ BUILT_SOURCES +=				\
   sdk/config.h
 
 
-host_SCRIPTS =
-nodist_host_DATA =
+brandlibexec_SCRIPTS =
 AM_CPPFLAGS +=					\
   $(LIBPORT_CPPFLAGS)				\
   -I$(srcdir)/lib				\

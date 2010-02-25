@@ -1,10 +1,9 @@
 # Don't set prefix, umake does.
 PACKAGE_BRAND = @PACKAGE_BRAND@
+brandlibdir = @brandlibdir@
+brandlibexecdir = @brandlibexecdir@
 URBI_ENV = $(UMAKE_URBI_ENV)
-URBI_HOST = @URBI_HOST@
-branddir = @branddir@
-hostdir = @hostdir@
-envdir = @hostdir@/$(URBI_ENV)
+envdir = $(brandlibdir)/$(URBI_ENV)
 builddir = $(UMAKE_BUILD_DIR)
 DLMODEXT = @DLMODEXT@
 
@@ -47,7 +46,7 @@ LIBS = $(SDK_LIBS)
 LDFLAGS = @LDFLAGS@ @BOOST_THREAD_LDFLAGS@ $(SDK_LDFLAGS)
 
 # Libtool.
-LIBTOOL = $(hostdir)/libtool
+LIBTOOL = $(brandlibexecdir)/libtool
 HOBJECTS = $(OBJECTS:.o=.$(URBI_HOST).o)
 LTOBJECTS = $(HOBJECTS:.o=.lo)
 OUTBIN = nothing
@@ -96,7 +95,7 @@ lalib = $(OUTSHLIB:$(DLMODEXT)=.la)
 libbase = $(OUTSHLIB:$(DLMODEXT)=)
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lalib)	\
-	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)	-rpath $(hostdir) $(LIBADD)
+	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)	-rpath $(envdir) $(LIBADD)
 	cp $$(ls $(dir $(libbase))/.libs/$(notdir $(libbase))*$(DLMODEXT) \
 	  | head -n 1) $(OUTSHLIB)
 
