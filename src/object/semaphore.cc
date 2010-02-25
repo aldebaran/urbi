@@ -95,9 +95,6 @@ namespace urbi
       bind(SYMBOL(criticalSection), &Semaphore::criticalSection);
       bind(SYMBOL(acquire),         &Semaphore::acquire);
       bind(SYMBOL(release),         &Semaphore::release);
-      // Backward compatibility.
-      // bind(SYMBOL(p),               &Semaphore::acquire);
-      // bind(SYMBOL(v),               &Semaphore::release);
     }
 
     URBI_CXX_OBJECT_REGISTER(Semaphore)
