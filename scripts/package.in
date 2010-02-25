@@ -112,3 +112,15 @@ packagedir="$updir/$name"
 rm -rf "$packagedir"
 mkdir -p "$packagedir"
 (cd "$DESTDIR$prefix" && tar cf - .) | (cd "$packagedir" && tar xpBf -)
+
+# Create a run-time version of the package.
+rtname=$(echo "$name" | sed -e 's/urbi-sdk/urbi-runtime/')
+if test $name != $rtname; then
+  packagedir="$updir/$rtname"
+  rm -rf "$packagedir"
+  mkdir -p "$packagedir"
+  (cd "$DESTDIR$prefix" && tar cf - .) | (cd "$packagedir" && tar xpBf -)
+  # Keep only the lib sub-hierarchy.
+  (cd "$packagedir" && rm -rf *.txt MANIFEST bin include libexec)
+  (cd "$packagedir" && ls -R)
+fi
