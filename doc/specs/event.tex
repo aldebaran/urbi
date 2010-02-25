@@ -51,6 +51,26 @@ var e = Event.new;
   time. Calling this function launches and keeps the event triggered
   and returns an object whose \lstinline|stop| method stops launching
   the event.
+
+\item \lstinline,||(\var{other}),\\
+  Logical or on events: a new Event that triggers whenever \var{this}
+  or \var{other} triggers.
+
+\begin{urbiscript}
+var e1 = Event.new;
+[00000001] Event_0xADDR
+var e2 = Event.new;
+[00000002] Event_0xADDR
+var e_or = e1 || e2;
+[00000003] Event_0xADDR
+at (e_or?)
+  echo("!");
+e1!;
+[00000004] *** !
+e2!;
+[00000005] *** !
+\end{urbiscript}
+
 \end{itemize}
 
 %%% Local Variables:

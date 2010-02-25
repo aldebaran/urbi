@@ -10,96 +10,15 @@
 
 // Completion of events code
 
-class Global.Event
+do (Event)
 {
-  function init()
+  function '||' (rhs)
   {
-    var this.on_pubsub = PubSub.new |
-    var this.wu_pubsub = PubSub.new |
-    var this.alive = [] |
-    var this.listeners = [] |
-  };
-
-  function 'emit'
-  {
-    var res = clone |
-    var res.payload = call.evalArgs |
-    var res.active = false |
-    on_pubsub.publish(res) |
-    wu_pubsub.publish(res) |
-    void
-  };
-
-  function syncEmit
-  {
-    var res = clone |
-    var res.payload = call.evalArgs |
-    var res.active = false |
-    // Publish event on the waituntil channel, to unfreeze other
-    // waiting jobs.
-    wu_pubsub.publish(res) |
-    // Then call synchronously 'at' subscribers.
-    for& (var code : listeners)
-      code(res) |
-    void
-  };
-
-  function trigger
-  {
-    var res = clone |
-    var res.payload = call.evalArgs |
-    var res.active = true |
-    alive.insertBack(res) |
-    on_pubsub.publish(res) |
-    wu_pubsub.publish(res) |
-    res
-  };
-
-  function stop()
-  {
-    alive.removeById(this) |
-    active = false |
-    this
-  };
-
-  function onEvent(code)
-  {
-    if (hasLocalSlot("onSubscribe"))
-      onSubscribe! |
-    listeners << code |
-    var sub = on_pubsub.subscribe |
-    // We cannot replace these for loops of detached code with a for&,
-    // since it would delay subsequent onEvent execution if code
-    // doesn't return immediately.
-    for| (var evt : alive)
-      detach(code(evt)) |
-    while| (true)
-      for| (var evt : sub.getAll)
-        detach(code(evt)) |
-  };
-
-  function 'waituntil'(pattern)
-  {
-    if (hasLocalSlot("onSubscribe"))
-      onSubscribe! |
-    var sub = wu_pubsub.subscribe |
-    for| (var e: alive)
-      if (pattern.isNil || pattern.match(e.payload))
-      {
-        wu_pubsub.unsubscribe(sub) |
-        return
-      } |
-    while| (true)
-      for| (var e: sub.getAll)
-        if (pattern.isNil || pattern.match(e.payload))
-        {
-          wu_pubsub.unsubscribe(sub) |
-          return
-        }
-  };
-
-  function hasSubscribers()
-  {
-    !wu_pubsub.subscribers.empty || !on_pubsub.subscribers.empty
-  };
+    var res = Event.new;
+    at (this?)
+      res!;
+    at (rhs?)
+      res!;
+    return res;
+  }
 };
