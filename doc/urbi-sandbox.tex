@@ -6,7 +6,11 @@
 \subtitle{Version \VcsDescription}
 \author{Gostai}
 
+
 \begin{document}
+
+\let\deepChapter\chapter
+\NewSection\deepChapter{\thechapter}
 
 \maketitle
 
@@ -65,7 +69,7 @@ This is the second chapter.
 
 This is the second part.
 
-\chapter{Chapter II.1}
+\deepChapter{Chapter II.1}
 Body of Chapter II.1.
 
 \section{Section II.1.1}
@@ -74,8 +78,20 @@ Body of Section II.1.1.
 \subsection{Subsection II.1.1.1}
 Body of Subsection II.1.1.1.
 
-\subsection{Subsection II.1.1.1}
-Body of Subsection II.1.1.1.
+\subsubsection{Subsubsection II.1.1.1.a}
+Body of Subsection II.1.1.1.a.
+
+\subsubsection{Subsubsection II.1.1.1.b}
+Body of Subsection II.1.1.1.b.
+
+\subsection{Subsection II.1.1.2}
+Body of Subsection II.1.1.2.
+
+\subsubsection{Subsubsection II.1.1.2.a}
+Body of Subsection II.1.1.2.a.
+
+\subsubsection{Subsubsection II.1.1.2.b}
+Body of Subsection II.1.1.2.b.
 
 \section{Section II.1.2}
 Body of Section II.1.2.
