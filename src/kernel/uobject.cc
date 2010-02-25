@@ -390,20 +390,31 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   }
   libport::utime_t start = libport::utime();
   urbi::UValue r;
-  // This if is there to optimize the synchronous case.
-  if (ugc->isSynchronous())
-    r = ugc->__evalcall(l);
-  else
+  try
   {
-    libport::Finally f;
-    object::rTag tag(new object::Tag);
-    getCurrentRunner().apply_tag(tag, &f);
-    // Tricky: tag->freeze() yields, but we must freeze tag before calling
-    // eval or there will be a race if asyncEval goes to fast and unfreeze
-    // before we freeze. So go throug backend.
-    tag->value_get()->freeze();
-    ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(r), tag, _1));
-    getCurrentRunner().yield();
+    // This if is there to optimize the synchronous case.
+    if (ugc->isSynchronous())
+      r = ugc->__evalcall(l);
+    else
+    {
+      libport::Finally f;
+      object::rTag tag(new object::Tag);
+      getCurrentRunner().apply_tag(tag, &f);
+      // Tricky: tag->freeze() yields, but we must freeze tag before calling
+      // eval or there will be a race if asyncEval goes to fast and unfreeze
+      // before we freeze. So go throug backend.
+      tag->value_get()->freeze();
+      ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(r), tag, _1));
+      getCurrentRunner().yield();
+    }
+  }
+  catch(std::exception& e)
+  {
+    FRAISE("Exception caught while calling " + ugc->getName() +": " + e.what());
+  }
+  catch(...)
+  {
+    FRAISE("Unknown exception caught while calling " + ugc->getName());
   }
   start = libport::utime() - start;
   Stats::add(ol.front().get(), message, start);
