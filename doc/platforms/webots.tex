@@ -42,7 +42,7 @@ instructions.
 
 To install \uwebots{} in your \webots{} on Linux, you must download an
 archive of the form
-\texttt{urbi-for-webots-\var{version}-linux-x86-gcc4-release.tar.bz2}.
+\file{urbi-for-webots-\var{version}-linux-x86-gcc4-release.tar.bz2}.
 You may choose an other archive format than \texttt{.tar.bz2}, but you
 will need to slightly adjust the following instruction accordingly.
 
@@ -50,13 +50,13 @@ The archive is structured to blend into the \webots hierarchy, as
 follow:
 
 \begin{itemize}
-\item \texttt{urbi-for-webots-\var{version}/projects/default/controllers/urbi2.0/}\\ \urbi{} SDK and
+\item \file{urbi-for-webots-\var{version}/projects/default/controllers/urbi2.0/}\\ \urbi{} SDK and
   \webots{} controller.
-\item \texttt{urbi-for-webots-\var{version}/projects/packages/urbi2.0/share/robot-name/}\\ Shared
+\item \file{urbi-for-webots-\var{version}/projects/packages/urbi2.0/share/robot-name/}\\ Shared
   \us{} robot behaviors.
-\item \texttt{urbi-for-webots-\var{version}/projects/packages/urbi2.0/controllers/robot-name/}\\
+\item \file{urbi-for-webots-\var{version}/projects/packages/urbi2.0/controllers/robot-name/}\\
   Demonstration controllers for each robot.
-\item \texttt{urbi-for-webots-\var{version}/projects/packages/urbi2.0/worlds/}\\ Demonstration
+\item \file{urbi-for-webots-\var{version}/projects/packages/urbi2.0/worlds/}\\ Demonstration
   worlds.
 \end{itemize}
 
@@ -67,22 +67,22 @@ merge the packaged \texttt{project} directory with your \webots{}'
 
 This can be easily done with the following \texttt{tar} command:
 
-\begin{lstlisting}[language=sh]
+\begin{shell}
 tar -xvjf urbi-for-webots.tar.bz2 -C /path/to/webots --strip-components 1
-\end{lstlisting}
+\end{shell}
 
 Otherwise, you can also merge the directory after extracting the archive:
 
-\begin{lstlisting}[language=sh]
+\begin{shell}
 cp --archive urbi-for-webots/project /path/to/webots
-\end{lstlisting}
+\end{shell}
 
 You can check your installation works correctly by starting a test world:
 
-\begin{lstlisting}[language=sh]
+\begin{shell}
 cd /path/to/webots
 ./webots projects/packages/urbi2.0/worlds/aibo-ball-tracking.wbt
-\end{lstlisting}
+\end{shell}
 
 You should see an \aibo{} looking at a moving ball.
 
@@ -332,10 +332,10 @@ those \urbi objects for your robots devices (motors, sensors,
 \ldots). For instance, a binding for a minimalist robot that only has
 a servomotor and a distance sensor could be:
 
-\begin{lstlisting}
+\begin{urbiunchecked}
 var motor = Servo.new("webots_motor_node_name");
 var distance = DistanceSensor.new("webots_sensor_node_name");
-\end{lstlisting}
+\end{urbiunchecked}
 
 Note that, whenever possible, your \webots binding should be strictly
 identical to the actual robot binding (if any) so as the same \urbi
