@@ -12,6 +12,7 @@
 #include <libport/debug.hh>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 #include <libport/unistd.h>
 
@@ -100,6 +101,7 @@ public:
     UBindFunction(all, invalidRead);
     UBindFunction(all, invalidWrite);
 
+    UBindFunction(all, throwException);
     vars[0] = &a;
     vars[1] = &b;
     vars[2] = &c;
@@ -556,6 +558,15 @@ public:
        throw std::runtime_error("Not implemented");
      }
   }
+
+  void throwException(bool stdexcept)
+  {
+    if (stdexcept)
+      throw std::runtime_error("KABOOM");
+    else
+      throw "KABOOM";
+  }
+
   urbi::UVar a,b,c;
   urbi::UVar* vars[3];
 
