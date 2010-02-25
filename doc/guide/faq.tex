@@ -4,7 +4,6 @@
 \section{Tools}
 \subsection{urbi-launch and urbi}
 \subsubsection{The server dies with ``stack exhaustion''}
-\index{stack!size}
 Your program might be deeply recursive, or use large temporary
 objects.  Use \option{--stack-size} to augment the stack size, see
 \autoref{sec:tools:urbi}.
@@ -15,11 +14,11 @@ where sequential programs can fail.  For instance the following
 program is very likely to quickly exhaust the (single) stack.
 
 \begin{urbiunchecked}
-function consume (num)
+function consume (var num)
 {
   if (num)
     consume(num - 1) | consume(num - 1)
-} |
+}|;
 consume (512);
 \end{urbiunchecked}
 
@@ -28,11 +27,11 @@ recursive call to \lstinline{consume} will be spawn with a fresh
 stack, and therefore none will run out of stack space:
 
 \begin{urbiunchecked}
-function consume (num)
+function consume (var num)
 {
   if (num)
     consume(num - 1) & consume(num - 1)
-} |
+}|;
 consume (512);
 \end{urbiunchecked}
 
