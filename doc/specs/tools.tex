@@ -69,7 +69,15 @@ URBI_PATH=C:\cygwin\home\jessie\urbi:C:\cygwin\usr\local\urbi
 
 \subsection{Environment Variables}
 \begin{envs}
-\item[URBI\_PATH] The search-path for \us source files.
+\item[URBI\_PATH] The search-path for \us source files (i.e.,
+  \file{*.u} files.
+
+\item[URBI\_ROOT] The \urbi is relocatable: its components know the
+  relative location of each other.  Yet they need to ``guess'' the
+  \urbi root, i.e., the path to the directory that contains the files.
+  This variable also to override that guess.  Do not use it unless you
+  know exactly what you are doing.
+
 \item[URBI\_UOBJECT\_PATH] The search-path for UObjects files.
   This is used by \command{urbi-launch}, by
   \lstinline|System.loadModule| and \lstinline|System.loadLibrary|.

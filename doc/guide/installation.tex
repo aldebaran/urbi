@@ -14,7 +14,7 @@ where
   \code{2.0-beta3-137-g28f8880}.  In that case,
   \begin{description}
   \item[2.0] is the version of the urbiscript Kernel,
-  \item[beta3] designates the third priceless,
+  \item[beta3] designates the third pre-release,
   \item[137] is the number of changes since beta3 (not counting
     changes in sub-packages),
   \item[g28f8880] is a version control identifier, used internally to
@@ -25,9 +25,10 @@ where
 \item[\var{os}] is the operating system: \code{linux} for GNU/Linux,
   \code{osx} for Mac OS X, or \code{windows} for Microsoft Windows.
 %% FIXME: We do not display the compiler name in the packages.
-\item[\var{compiler}] is the tool chain used to compile the
-  programs: \code{gcc} for the GNU Compiler Collection, \code{vcxx}
-  for Microsoft Visual \Cxx.
+\item[\var{compiler}] is the tool chain used to compile the programs:
+  \code{gcc4} for the GNU Compiler Collection 4.x, \code{vcxx2005} for
+  Microsoft Visual \Cxx 2005, \code{vcxx2008} for Microsoft Visual
+  \Cxx 2008.
 \item[\var{ext}] is the package format extension: \code{tar.gz} for
   Unix style tar balls (uncompressed with \command{tar zxf
     \var{tarfile}}), and \code{zip} for Windows style zip files.
@@ -35,48 +36,30 @@ where
 
 \section{Install}
 
-\subsection{Linux and MacOS}
+The package is \dfn{relocatable}, i.e., it does not need to be put at
+a specific location, nor does it need special environment variables to
+be set.  It is not necessary to be a super-user to install it.  The
+\dfn{root} of the package, denoted by \var{urbi-root} hereafter, is
+the absolute name of the directory which contains the package.
 
-Decompress the package where you want to install it.  The package is
-built to be installed as \file{/usr/local/gostai}, but this can be
-changed --- see below.  It might be interesting to keep several
-versions of our packages, in which case using symbolic links (aka
-\emph{aliases}) proves to be handy.  The installation sequence should
-look like:
+\subsection{GNU/Linux and Mac OS X}
+
+Decompress the package where you want to install it:
 
 \begin{shell}
-$ tar zxf urbi-sdk-2.0-beta3-linux-x86.tar.gz
-$ sudo mv urbi-sdk-2.0-beta3-linux-x86 /usr/local
-$ cd /usr/local
-$ ln -sf urbi-sdk-2.0-beta3-linux-x86 gostai
+$ rm -rf \var{urbi-root}
+$ cd /tmp
+$ tar zxf \var{path-to}/urbi-sdk-2.0-linux-x86-gcc4.tar.gz
+$ mv urbi-sdk-2.0-linux-x86-gcc4 \var{urbi-root}
 \end{shell}
 
-The \dfn{root} of the package, denoted by \var{urbi-root} hereafter,
-is the absolute name of the directory which contains the package.  The
-default root is \file{/usr/local/gostai}.  The directory
-\var{urbi-root} should contain \file{bin}, \file{FAQ.txt} and so forth.
+This directory, \var{urbi-root}, should contain \file{bin},
+\file{FAQ.txt} and so forth.  Do not move things around inside this
+directory.  In order to have an easy access to the \urbi executable,
+set up your \env{PATH}:
 
-If your \var{urbi-root} is not \file{/usr/local/gostai}, you will need
-some adjustments.  Define the environment variable \index{urbi
-  root@\env{URBI\_ROOT}}\emphdfn{\env{URBI\_ROOT}} to point to
-\var{urbi-root}, and adjust the library\footnote{%
-%%
-  Mac OS X users need to extend \env{DYLD\_LIBRARY\_PATH}, not
-  \env{LD\_LIBRARY\_PATH}.
-%%
-} and executable paths.
-
-\begin{shell}[escapeinside=`']
-$ export URBI_ROOT=`\var{urbi\_root}'
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$URBI_ROOT/lib
-$ export PATH=$PATH:$URBI_ROOT/bin
-\end{shell}%$
-
-If you want to be able to launch the urbi tools without specifying
-their full path, don't forget to extend your \env{PATH} variable:
-
-\begin{shell}[escapeinside=`']
-$ export PATH="`\var{urbi\_root}'/bin:$PATH"
+\begin{shell}
+$ export PATH="\var{urbi\_root}/bin:$PATH"
 \end{shell}%$
 
 \subsection{Windows}
@@ -93,37 +76,28 @@ installation.
 \begin{shell}
 # Check that urbi is properly set up.
 $ urbi --version
+
 # Check that urbi-launch is properly installed.
 $ urbi-launch --version
 # Check that urbi-launch can find its dependencies.
 $ urbi-launch -- --version
+
+# Check that Urbi can compute.
+$ urbi -e '1+2*3; shutdown;'
+[00000175] 7
 \end{shell}%$
 
 \subsection{Windows}
 
-Execute the \file{urbi.bat} script located at the root of the
+Execute the script \file{urbi.bat}, located at the root of the
 uncompressed package. It should open a terminal with an interactive
 Urbi session.
 
 % FIXME: add a listing with the urbi banner under windows?
 
-\section{\env{URBI\_PATH}}
-\index{urbi path@\env{URBI\_PATH}}
-
-The environment variable \env{URBI\_ROOT} is used to locate the \us
-standard files.  You may extend the search path so that your own \us
-files can be found easily.  This is the role of the environment
-variable \env{URBI\_PATH}, which contains a list of directory names
-separated by colons (even on Windows).
-
-Note \env{URBI\_PATH} is also designed to be able to \emph{override}
-the default standard files.  Use a lone colon to specify where the
-standard, \env{URBI\_ROOT}-based, search path must be inserted.  See
-\autoref{sec:tools:envvars} for more details on the syntax.
-
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "urbi-sdk"
+%%% TeX-master: "../urbi-sdk"
 %%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:
