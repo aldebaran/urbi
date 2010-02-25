@@ -319,10 +319,12 @@ namespace runner
     {
       static boost::format format("Invalid exception `%s' caught");
       send_message("error", str(format % e.what()));
+      res = object::void_class;
     }
     catch (...)
     {
       send_message("error", "Invalid unknown exception caught");
+      res = object::void_class;
     }
 
     if (exception_to_throw.get())
