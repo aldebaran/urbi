@@ -321,7 +321,7 @@ UrbiRoot::root() const
 std::string
 UrbiRoot::core_path() const
 {
-  return root() / "lib" / "gostai";
+  return root() / LIBPORT_LIBDIRNAME / "gostai";
 }
 
 std::string
