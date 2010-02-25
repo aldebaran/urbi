@@ -39,27 +39,26 @@ namespace urbi
     }
 
     void
-    Event::unregister(Actions a)
+    Event::unregister(rActions a)
     {
       Listeners::iterator it = libport::find(listeners_, a);
       if (it != listeners_.end())
         listeners_.erase(it);
+      foreach(boost::signals::connection& c, a->connections)
+        c.disconnect();
+      a->connections.clear();
     }
 
     void
-    Event::freeze(Actions a)
+    Event::freeze(rActions a)
     {
-      Listeners::iterator it = libport::find(listeners_, a);
-      if (it != listeners_.end())
-        it->active = false;
+      a->active = false;
     }
 
     void
-    Event::unfreeze(Actions a)
+    Event::unfreeze(rActions a)
     {
-      Listeners::iterator it = libport::find(listeners_, a);
-      if (it != listeners_.end())
-        it->active = true;
+      a->active = true;
     }
 
     /*---------------.
@@ -69,36 +68,39 @@ namespace urbi
     void
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave)
     {
-      Actions actions(guard, enter, leave);
+      rActions actions(new Actions(guard, enter, leave));
 
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       foreach (object::rTag tag, r.tag_stack_get())
       {
         sched::rTag t = tag->value_get();
         using boost::bind;
-        t->stop_hook_get().connect(bind(&Event::unregister, this, actions));
-        t->freeze_hook_get().connect(bind(&Event::freeze, this, actions));
-        t->unfreeze_hook_get().connect(bind(&Event::unfreeze, this, actions));
+        actions->connections.push_back(
+          t->stop_hook_get().connect(bind(&Event::unregister, this, actions)));
+        actions->connections.push_back(
+          t->freeze_hook_get().connect(bind(&Event::freeze, this, actions)));
+        actions->connections.push_back(
+          t->unfreeze_hook_get().connect(bind(&Event::unfreeze, this, actions)));
       }
 
       listeners_ << actions;
       foreach (const actives_type::value_type& active, _active)
-        active.first->trigger_job(Actions(guard, enter, leave));
+        active.first->trigger_job(actions);
     }
 
     void
-    Event::trigger_job(const Actions& actions)
+    Event::trigger_job(const rActions& actions)
     {
-      if (!actions.active)
+      if (!actions->active)
         return;
       objects_type args;
       args << this << this;
-      rObject pattern = (*actions.guard)(args);
+      rObject pattern = (*actions->guard)(args);
       if (pattern != void_class)
       {
         args << pattern;
-        register_stop_job(stop_job_type(actions.leave, args));
-        (*actions.enter)(args);
+        register_stop_job(stop_job_type(actions->leave, args));
+        (*actions->enter)(args);
       }
     }
 
@@ -177,7 +179,7 @@ namespace urbi
     {
       rList payload = new List(pl);
       source()->_active[this] = payload;
-      foreach (const Event::Actions& actions, listeners_)
+      foreach (const Event::rActions& actions, listeners_)
         trigger_job(actions);
       waituntil_release(payload);
     }

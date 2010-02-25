@@ -40,7 +40,7 @@ namespace urbi
     private:
 
       /// Callbacks listening on this event.
-      struct Actions
+      struct Actions: public libport::RefCounted
       {
         Actions(rExecutable g, rExecutable e, rExecutable l)
           : guard(g), enter(e), leave(l), active(true)
@@ -54,16 +54,18 @@ namespace urbi
 
         rExecutable guard, enter, leave;
         bool active;
+        std::vector<boost::signals::connection> connections;
       };
+      typedef libport::intrusive_ptr<Actions> rActions;
 
       void waituntil_release(rObject payload);
       rEvent source();
-      void trigger_job(const Actions& actions);
+      void trigger_job(const rActions& actions);
 
-      void unregister(Actions);
-      void freeze(Actions);
-      void unfreeze(Actions);
-      typedef std::vector<Actions> Listeners;
+      void unregister(rActions);
+      void freeze(rActions);
+      void unfreeze(rActions);
+      typedef std::vector<rActions> Listeners;
       Listeners listeners_;
 
       /// Job waiting for this event.
