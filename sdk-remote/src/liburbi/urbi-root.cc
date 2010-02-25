@@ -333,7 +333,7 @@ UrbiRoot::uobjects_path() const
 std::string
 UrbiRoot::share_path() const
 {
-  return root() / "gostai" / "share";
+  return root() / "share" / "gostai";
 }
 
 void
