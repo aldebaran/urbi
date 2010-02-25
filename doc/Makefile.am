@@ -29,7 +29,7 @@ pdf_DATA =
 # Use tex4ht.
 TEX4HT_FLAGS = urbi-style,2,sections+
 TEXI2HTML_FLAGS += --tex4ht --verbose --tex4ht-options=$(TEX4HT_FLAGS)
-%.htmldir: %.tex $(share_tex_dependencies)
+%.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
 	-rm -rf $@ $@.tmp
 	-$(mkdir_p) $@.tmp
 	$(TEXI2HTML) $(TEXI2HTML_FLAGS) -o $@.tmp/$(notdir $*).html $<

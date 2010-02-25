@@ -1,21 +1,31 @@
 \documentclass[openright,twoside,11pt]{book}
   \usepackage{gostai-documentation}
-  \usepackage{multicol}
 
 \title{Urbi Documentation Sandbox}
 \titleImage{figs/urbi}
 \subtitle{Version \VcsDescription}
 \author{Gostai}
 
-% DOCUMENT
 \begin{document}
+
+\maketitle
 
 This document is meant to be used to toy with \LaTeX{}.
 
+\tableofcontents
+\part{First Part}
+\chapter{First Chapter}
+
+This is the first chapter.
+
+\section{First Section}
+
+\subsection{First Subsection}
 \begin{urbiassert}[firstnumber=1]
 1 == 1;
 \end{urbiassert}
 
+\subsection{Second Subsection}
 \begin{urbiscript}
 0 != 1;
 [00001234] true
@@ -24,6 +34,7 @@ if (1 == 0) "yes" else "no";
 [00001234] "no"
 \end{urbiscript}
 
+\section{Second Section}
 \begin{urbiunchecked}[escapeinside=<>]
 #<Été>;
 [00048238:error] !!! invalid character: `#'
@@ -32,6 +43,10 @@ if (1 == 0) "yes" else "no";
 [00048239:error] !!! invalid character: `\xc3'
 [00048239:error] !!! invalid character: `\xa9'
 \end{urbiunchecked}
+
+\chapter{Second Chapter}
+
+This is the second chapter.
 
 \urbitrajectory{smooth}
 
@@ -45,6 +60,29 @@ if (1 == 0) "yes" else "no";
   Fire \lstinline|this|.
 
 \end{urbiscriptapi}
+
+\part{Second Part}
+
+This is the second part.
+
+\chapter{Chapter II.1}
+Body of Chapter II.1.
+
+\section{Section II.1.1}
+Body of Section II.1.1.
+
+\subsection{Subsection II.1.1.1}
+Body of Subsection II.1.1.1.
+
+\subsection{Subsection II.1.1.1}
+Body of Subsection II.1.1.1.
+
+\section{Section II.1.2}
+Body of Section II.1.2.
+
+\chapter{Chapter II.2}
+Body of Chapter II.2.
+
 
 \end{document}
 
