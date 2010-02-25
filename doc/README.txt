@@ -21,7 +21,7 @@ Decompress the package where you want to install it:
 
 This directory, URBI_ROOT, should contain "bin", "FAQ.txt" and so
 forth.  Do not move things around inside this directory.  In order to
-have an easy access to the Urbi executables, set up your PATH:
+have an easy access to the Urbi programs, set up your PATH:
 
   $ export PATH="\var{urbi\_root}/bin:$PATH"
 
@@ -65,7 +65,7 @@ The complete Urbi SDK documentation.  It includes:
 
 *** Frequently Asked Questions
 
-*** The urbiScript reference manual
+*** The urbiscript reference manual
 the language, the standard libraries, and the tools.
 
 ** REPORTING-BUGS.txt

@@ -15,7 +15,7 @@ Changes:
 - Object.getPeriod is deprecated in favor of System.period.
 
 - As announced long ago, and as displayed by warnings,
-  Object.slotNames now returns all the slot names, ancesters included.
+  Object.slotNames now returns all the slot names, ancestors included.
   Use localSlotNames to get the list of the names of the slot the
   object owns.
 
@@ -41,7 +41,7 @@ Documentation
 - PubSub.Subscriber
 - Profiling
 - Semaphore
-- Tracjectories
+- Trajectories
 - TrajectoryGenerator
 - waituntil clauses
 - whenever clauses
@@ -227,7 +227,7 @@ UObjects
   urbiscript is now to use 'camera.getSlot("val")' instead of '"camera.val"'.
 
 - Add a 0-copy mode for UVars: If UVar::enableBypass(true) is called on an
-  UVar, notifyChange on this UVar can recover the uncopied data by using
+  UVar, notifyChange on this UVar can recover the not-copied data by using
   UVar.get(), returning an UValue&. However, the data is only accessible
   from within notifyChange: reading the UVar directly will return nil.
 
@@ -254,7 +254,7 @@ UObjects
 
 - fixed multiple notifications of event trigger in remote UObjects
 
-- Many other bugfixes and performance improvments.
+- Many other bug fixes and performance improvements.
 
 - an exception is now thrown if the C++ init method failed.
 
@@ -265,7 +265,7 @@ Documentation
 The documentation was fixed, completed, and extended.  Its layout was
 also improved.  Changes include, but are not limited to:
 
-- various executables
+- various programs
   urbi, urbi-launch, urbi-send etc.
 - environment variables
   URBI_UOBJECT_PATH, URBI_PATH, URBI_ROOT.
@@ -355,12 +355,12 @@ in various programming languages.
 URBI Remote SDK
 ===============
 
-The API for pliugged-in UObjects is not thread safe, and never was:
+The API for plugged-in UObjects is not thread safe, and never was:
 calls to the API must be done only in the very same thread that runs
-the Urbi code.  Assertions (runtime failures) are now triggered for
+the Urbi code.  Assertions (run-time failures) are now triggered for
 invalid calls.
 
-Be sure to read the article from the Developpers' Blog.
+Be sure to read the article from the Developers' Blog.
 http://devblog.gostai.com/index.php/2008/12/02/uobjects-and-thread-safeness/
 
 
@@ -636,8 +636,8 @@ Standard library
 The "List.insert" method now uses an index as its first argument and
 inserts the given element before the index position:
 
-  ["a", "b", "c"].insert(1, "xyzzy");
-  [00000001] ["a", "xyzzy", "b", "c"]
+  ["a", "b", "c"].insert(1, "foo");
+  [00000001] ["a", "foo", "b", "c"]
 
 "List.sort" method
 ------------------
@@ -840,7 +840,7 @@ The optional fourth argument indicates whether to keep empty elements
   "foobar".split("o", -1, false, false);
   [00000001] ["f", "bar"]
 
-Calling "split" with no arguments will tokenize the string over " ",
+Calling "split" with no arguments will decompose the string over " ",
 "\t", "\n" and "\r":
 
   "  abc  def\tghi\n".split;
@@ -912,8 +912,8 @@ It is now possible to get the type of a "UVar" by calling its "type()"
 method, which returns a "UDataType" (see "urbi/uvalue.hh" for the
 types declarations).
 
-Runtime
-=======
+Run-time
+========
 
 Stack exhaustion check on Windows
 ---------------------------------
@@ -982,11 +982,3 @@ with the Urbi command-line tool-box.  For instance while "urbisend"
 used to require exactly two arguments (host-name, file to send), it
 now supports options (e.g., --help, --port to specify the port etc.),
 and as many files as provided on the command line.
-
-
- LocalWords:  txt myObject myArgs removeSlot isA Urbi myEvent xyzzy Baz toLower
- LocalWords:  searchPath urbi INI getenv ne isNil criticalSection UObjects UVar
- LocalWords:  Coroutine UObject API coroutine init waituntil uobjects hasSlot
- LocalWords:  MyRemote asString asList aaa bbb ccc abc tghi ghi indices xADDR
- LocalWords:  mytag UDataType Runtime SchedulingError ampli lookup dir isdef
- LocalWords:  syncValue getSlot locateSlot slotNames SDK urbisend

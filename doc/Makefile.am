@@ -119,7 +119,8 @@ SPELL_CHECK = ../build-aux/bin/spell-check
 EXTRA_DIST += $(SPELL_CHECK)
 spell-check:
 	cd $(srcdir) &&						\
-	$(SPELL_CHECK) -p urbi.dict $(urbi_sdk_sources)
+	$(SPELL_CHECK) -p urbi.dict $(urbi_sdk_sources) $(dist_doc_DATA)
+
 
 ## --------- ##
 ## install.  ##

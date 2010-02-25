@@ -75,7 +75,7 @@ or otherwise transfer the Urbi SDK or Licensee’s right to use the Urbi
 SDK; (iv) remove or modify any copyright, trademark, or other
 proprietary notices of Gostai affixed to the media containing the Urbi
 SDK or contained within the Urbi SDK; or (v) use the Urbi SDK in any
-manner not expressly authorised by this License Agreement.
+manner not expressly authorized by this License Agreement.
 
 2.3 For the avoidance of doubt: Licensee shall only be permitted to
 distribute the Urbi SDK pursuant to a separate commercial license
@@ -202,13 +202,13 @@ hereunder with reasonable dispatch whenever such causes are removed.
 understanding between the parties with respect to the subject matter
 hereof and supersedes all prior agreements, oral and written, made
 with respect to the subject matter hereof, and (ii) cannot be altered
-except by agreement in writing executed by an authorised
+except by agreement in writing executed by an authorized
 representative of each party.  No purchase order and/or standard terms
 of purchase provided by Licensee shall supersede this License
 Agreement.
 
 
 Gostai S.A.S.
-15, rue Vergniaud
+15, rue Jean-Baptiste Berlier
 75013 Paris
 France

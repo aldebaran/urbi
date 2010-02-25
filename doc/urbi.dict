@@ -1,4 +1,4 @@
-personal_ws-1.1 en 698 utf-8
+personal_ws-1.1 en 732 utf-8
 UStartHub
 bindUrbiMethod
 tuples
@@ -11,8 +11,10 @@ rangemin
 setThreadLimit
 api
 quuxbar
+backtraces
 DYLD
 unary
+getStats
 eval
 nJobs
 arg
@@ -22,6 +24,7 @@ ENOENT
 animaloid
 ampli
 stderr
+decompile
 setConfigValue
 typeid
 DCM
@@ -52,6 +55,7 @@ asFloat
 Levenshtein
 dir
 urbistarter
+Berlier
 jessie
 quux
 onboard
@@ -112,7 +116,9 @@ timeOut
 backtrace
 fmt
 NegativeNumber
+USensor
 stdlib
+binList
 findBase
 mooh
 softdevice
@@ -127,10 +133,12 @@ exe
 ispunct
 myCamera
 halfPi
+PrimitiveError
 RGBLed
 cameraL
 exn
 iff
+README
 arccosine
 cameraR
 setModuleDescription
@@ -140,6 +148,7 @@ ALMotion
 asProcess
 sumTwice
 UNotifyOnRequest
+TerminateException
 func
 cancelFindBase
 myuobject
@@ -154,6 +163,7 @@ APIS
 foldl
 UndefinedEnvironmentVariable
 liburbi
+sublicense
 goto
 verylightgray
 getPeriod
@@ -166,6 +176,7 @@ ing
 myMind
 flatDump
 INI
+clearStats
 cerr
 hisMind
 succ
@@ -178,6 +189,7 @@ setPositions
 sequentiality
 accessFrame
 setProtos
+ownsSlot
 updateSlot
 isA
 UnaryLazy
@@ -186,6 +198,7 @@ sudo
 removeProto
 args
 synclines
+Blog
 isWindows
 slowMachine
 loopn
@@ -209,6 +222,7 @@ hxx
 aliveJobs
 printf
 frontleft
+urbiscript's
 NewSingleton
 unacceptvoid
 unacceptVoid
@@ -228,8 +242,8 @@ ALUrbiStarter
 getLine
 xADDR
 myCos
-USetTimer
 criticalSection
+USetTimer
 emitEvent
 OutputStream
 NaN
@@ -266,12 +280,14 @@ RangeIterable
 bool
 UMIX
 AccelerationSensor
+WeakPointer
 pushback
 lst
 VideoIn
 eration
 YUYV
 namespace
+headTouch
 noSuchProperty
 setenv
 pdf
@@ -304,6 +320,7 @@ callNumber
 proto's
 protos
 valueAccessed
+injunctive
 MyPair
 init
 num
@@ -315,6 +332,8 @@ generateALBindings
 ppc
 maybeLoad
 urbi
+RCS
+removeThrowingCallbacks
 setTrace
 getAll
 rgb
@@ -362,12 +381,15 @@ cond
 yyyy
 monomethods
 sgn
+WeakDictionary
 WiFi
 asString
 makeCompactNames
 lang
 MYNODE
 TimerHandle
+TCP
+nonterminable
 myOtherLocalVariable
 UBindVar
 getWidth
@@ -383,10 +405,12 @@ setDCMWrite
 connectSerial
 typedefed
 qux
+toAscii
 callMessage
+UDP
 UImageFormat
-getSlot
 getslot
+getSlot
 physicsReset
 src
 cout
@@ -418,6 +442,7 @@ ledR
 bumperL
 leds
 UBindThreadedFunction
+PackageInfo
 myObj
 str
 bumperR
@@ -461,6 +486,7 @@ doin
 angleMin
 UTF
 SIGKILL
+resendBanner
 arity
 xfov
 xFF
@@ -495,6 +521,7 @@ setNth
 unnotify
 subscope
 ident
+sendbin
 BadNumber
 fortyTwo
 PGain
@@ -553,6 +580,7 @@ bz
 UValues
 memoryName
 channelName
+hookChanged
 eq
 bindRenameVariable
 theObject
@@ -562,6 +590,7 @@ hasLocalSlot
 ev
 hh
 formatDetail
+ie
 addProto
 someFunc
 popfront
@@ -633,6 +662,7 @@ eachi
 th
 ALProxy
 sp
+fromAscii
 enum
 ss
 ObjectTracker
@@ -643,6 +673,7 @@ sw
 OpenGL
 Un
 Nao's
+remoteIP
 inline
 tx
 removeBack
@@ -654,6 +685,7 @@ ALLogger
 abc
 removeTimer
 kneeL
+allSlotName
 dlerror
 DifferentialWheels
 myType
@@ -664,6 +696,7 @@ microL
 coroutine
 sameAs
 ManipulateNode
+Autoconf
 hisResult
 microR
 netcat
@@ -675,6 +708,7 @@ ImageConversion
 abcdef
 aibo
 getUObjectHub
+enableStats
 TrajectoryGenerator
 gyroX
 gyroY
@@ -697,3 +731,19 @@ encoderResolution
 ImplicitTagComponent
 newImage
 BadInteger
+MyRemote
+SchedulingError
+UDataType
+aaa
+bbb
+ccc
+enableBypass
+ghi
+isdef
+myArgs
+ne
+searchPath
+syncValue
+tghi
+urbisend
+uvalue

@@ -20,5 +20,5 @@ workaround so that your developments are not delayed.
 In your bug report, make sure that you indicate the Urbi version you
 are using (use "urbi --version" to check it out) and whether this bug
 is blocking you or not. Also, please keep "k2-beta@lists.gostai.com"
-in copy of all your correspondance, and do not reply individually to a
+in copy of all your correspondence, and do not reply individually to a
 member of our team as this may slow down the handling of the report.
