@@ -35,8 +35,8 @@ namespace urbi
       value_type& value_get();
 
       static rSemaphore _new(rObject sem, rFloat count);
-      void p();
-      void v();
+      void acquire();
+      void release();
       rObject criticalSection(rCode);
 
     private:

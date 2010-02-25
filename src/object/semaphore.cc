@@ -50,7 +50,7 @@ namespace urbi
     }
 
     void
-    Semaphore::p()
+    Semaphore::acquire()
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
@@ -69,7 +69,7 @@ namespace urbi
     }
 
     void
-    Semaphore::v()
+    Semaphore::release()
     {
       if (++value_.first <= 0)
       {
@@ -84,8 +84,8 @@ namespace urbi
       objects_type args;
       args.push_back(this);
 
-      p();
-      libport::Finally finally(boost::bind(&Semaphore::v, this));
+      acquire();
+      libport::Finally finally(boost::bind(&Semaphore::release, this));
       return (*f)(args);
     }
 
@@ -93,8 +93,11 @@ namespace urbi
     {
       bind(SYMBOL(new),             &Semaphore::_new);
       bind(SYMBOL(criticalSection), &Semaphore::criticalSection);
-      bind(SYMBOL(p),               &Semaphore::p);
-      bind(SYMBOL(v),               &Semaphore::v);
+      bind(SYMBOL(acquire),         &Semaphore::acquire);
+      bind(SYMBOL(release),         &Semaphore::release);
+      // Backward compatibility.
+      // bind(SYMBOL(p),               &Semaphore::acquire);
+      // bind(SYMBOL(v),               &Semaphore::release);
     }
 
     URBI_CXX_OBJECT_REGISTER(Semaphore)

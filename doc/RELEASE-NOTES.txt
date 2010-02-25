@@ -19,6 +19,8 @@ Changes:
   Use localSlotNames to get the list of the names of the slot the
   object owns.
 
+- Global.Sempahore.p and Global.Sempahore.v are deprecated in favor of
+  Global.Sempahore.acquire and Global.Sempahore.release.
 
 New features:
 

@@ -24,12 +24,12 @@ do (Mutex)
 
   function lock()
   {
-    this.sem.p;
+    this.sem.acquire;
   };
 
   function unlock()
   {
-    this.sem.v;
+    this.sem.release;
   };
 
   function '!'()

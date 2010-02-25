@@ -27,7 +27,8 @@ Semaphore.new(1);
   Put the piece of \var{code} inside a critical section which can be
   executed simultaneously at most the number of time given at the creation
   of the \lstinline|Semaphore|.  This method is similar to a call to
-  \lstinline|p| and a call to \lstinline|v| when the code ends by any means.
+  \lstinline|acquire| and a call to \lstinline|release| when the code ends
+  by any means.
 
 \begin{urbiscript}
 {
@@ -75,9 +76,10 @@ Semaphore.new(1);
 \end{urbiscript}
 
 
-\item[p] Wait to enter a critical section delimited by the execution of
-  \lstinline|p| and \lstinline|v|.  Enter the critical section when the
-  number of processes inside it goes below the maximum allowed.
+\item[acquire] Wait to enter a critical section delimited by the execution
+  of \lstinline|acquire| and \lstinline|release|.  Enter the critical
+  section when the number of processes inside it goes below the maximum
+  allowed.
 
 \item[v] Leave a critical section delimited by the execution of
   \lstinline|p| and \lstinline|v|.
@@ -87,10 +89,10 @@ Semaphore.new(1);
   var s = Semaphore.new(1);
   for& (var i : [0, 1, 2, 3])
   {
-    s.p;
+    s.acquire;
     echo("start " + i);
     echo("end " + i);
-    s.v;
+    s.release;
   }
 };
 [00000000] *** start 0
