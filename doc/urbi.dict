@@ -1,4 +1,4 @@
-personal_ws-1.1 en 697 utf-8
+personal_ws-1.1 en 698 utf-8
 UStartHub
 bindUrbiMethod
 tuples
@@ -229,6 +229,7 @@ getLine
 xADDR
 myCos
 USetTimer
+criticalSection
 emitEvent
 OutputStream
 NaN
@@ -615,6 +616,7 @@ os
 MyVar
 trackR
 allProto
+rf
 accelX
 p's
 ps
