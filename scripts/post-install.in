@@ -122,6 +122,11 @@ fi
 # work well without them.
 find "$DESTDIR$prefix" -name '*.la' -delete
 
+# Get rid of empty directories, recursively.  Of course it is better
+# not to create these directories, but Automake is not helping us
+# here.
+find "$DESTDIR$prefix" -empty -a -type d -delete
+
 # MANIFEST.
 #
 # Build a MANIFEST with the list of files to install into the final
