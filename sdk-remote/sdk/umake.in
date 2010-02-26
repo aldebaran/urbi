@@ -268,8 +268,8 @@ $shared || libext=.a
 
 # Select target name if unspecified.
 case $target:$core in
-  (:)   target=uobject-$host$libext;;
-  (:*)  target=urbiengine-$host-$core$EXEEXT;;
+  (:)   target=uobject$libext;;
+  (:*)  target=urbiengine-$core$EXEEXT;;
 
   # The user can provide $target with or without extension.  Be sure
   # to give it the proper extension.
@@ -386,7 +386,7 @@ bintype="'$core' binary"
 if test -z "$core"; then
   bintype="library"
 fi
-stderr "" "$line" "running to build $bintype, for '$host' host." "$line" ""
+stderr "" "$line" "running to build $bintype." "$line" ""
 
 
 # Check if base directory exists
