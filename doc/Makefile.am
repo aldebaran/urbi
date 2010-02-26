@@ -51,8 +51,7 @@ include tutorial/local.mk
 dist_doc_DATA =					\
   LICENSE.txt					\
   README.txt					\
-  RELEASE-NOTES.txt				\
-  REPORTING-BUGS.txt
+  RELEASE-NOTES.txt
 
 
 ## -------------- ##

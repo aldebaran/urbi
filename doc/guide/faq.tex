@@ -831,17 +831,38 @@ Note that this problem is Mac OS X and Linux specific.
 
 \section{Miscellaneous}
 \subsection{Releases}
-\subsubsection{How can I know what has changed since the latest beta release I got?}
+\subsubsection{What has changed since the latest release?}
 The file \file{RELEASE-NOTES.txt} at the top of the distribution
 contains the list of user-visible changes between consecutive
 releases.
 
 \subsection{Bugs}
 \subsubsection{How do I report a bug?}
-See the file \file{REPORTING-BUGS.txt} at the top of the
-distribution. We insist on keeping \email{k2-beta@lists.gostai.com} in
-copy at all times, because it helps us to track conversations with our
-users.
+
+Bug reports should be sent to \email{kernel-bugs@lists.gostai.com}, it
+will be addressed as fast as possible.  Please, be sure to read the
+FAQ (possibly updated on our web site), and to have checked that no
+more recent release fixed your issue.
+
+Each bug report should contain a self-contained example, which can be
+tested by our team. Using self-contained code, that is code which does
+not depend on other code, helps ensuring that we will be able to
+duplicate the problem and analyze it promptly. It will also helps us
+integrating the code snippet into our non-regression test suite so
+that the bug does not reappear in the future.
+
+If it appears that your report identifies a bug in the Urbi kernel or
+its dependencies, we will prepare a fix to be integrated in a later
+release. If the bug takes some time to fix, we may provide you with a
+workaround so that your developments are not delayed.
+
+In your bug report, make sure that you indicate the Urbi version you
+are using (use \samp{urbi --version} to check it out) and whether this
+bug is blocking you or not. Also, please keep
+\email{kernel-bugs@lists.gostai.com} in copy of all your
+correspondence, and do not reply individually to a member of our team
+as this may slow down the handling of the report.
+
 
 
 %%% Local Variables:
