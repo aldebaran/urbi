@@ -87,7 +87,7 @@ Group.new(1, "two");
 
 \item \lstinline|getProperty(\var{slot}, \var{prop})|\\
   Bounced to the members so that
-  \lstinline|this.var{slot}->\var{prop}| actually collects the values
+  \lstinline|this.\var{slot}->\var{prop}| actually collects the values
   of the property \var{prop} of the slots \var{slot} of the group
   members.
 
@@ -100,7 +100,7 @@ Group.new(1, "two");
 
 \item \lstinline|setProperty(\var{slot}, \var{prop}, \var{value})|\\
   Bounced to the members so that
-  \lstinline|this.var{slot}->\var{prop} = \var{value}|
+  \lstinline|this.\var{slot}->\var{prop} = \var{value}|
   actually updates the value of the property \var{prop}
   in the slots \var{slot} of the group members.
 

@@ -471,7 +471,7 @@ fortyTwo = 51;
 [00000000:error] !!! cannot modify const slot
 \end{urbiscript}
 
-\item \lstinline|setProperty(\var{slotName}, \var{propName}, \var{value}|\\
+\item \lstinline|setProperty(\var{slotName}, \var{propName}, \var{value})|\\
   Set the property \var{propName} of slot \var{slotName} to
   \var{value}.  Raise an error in \var{slotName} does not exist.
   Return \var{value}.  This is what
@@ -489,7 +489,7 @@ do (Object.new)
     getProperty("slot", "prop") === value;
     slot->prop === value;
     setProperty("slot", "noSuchProperty", value) === value;
- };
+  };
 }|;
 setProperty("noSuchSlot", "prop", "12");
 [00000081:error] !!! lookup failed: noSuchSlot
