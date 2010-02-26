@@ -408,6 +408,10 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       getCurrentRunner().yield();
     }
   }
+  catch(sched::exception& )
+  {
+    throw;
+  }
   catch(std::exception& e)
   {
     FRAISE("Exception caught while calling " + ugc->getName() +": " + e.what());
