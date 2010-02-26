@@ -128,7 +128,7 @@ get_options ()
       (-v | --version) version;;
 
       (-l | --library)       core= ; shared=false ;;
-      (-s | --shared-library) core= ; shared=true ;;
+      (-s | --shared-library) core= ; shared=true ; automain=false ;;
       (     --deep-clean)    deep_clean ;;
       (-c | --clean)         clean=true ;;
       (-j | --jobs)  shift; append "-j $1" " ";;
