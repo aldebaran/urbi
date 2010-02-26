@@ -568,6 +568,8 @@ documentation of the classes that provide them.
 
 \newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}          {Not redefinable}       }
 \newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}          {Not redefinable}       }
+\newcommand{\operatorprop}   {\operator  {->}   {a->b}             {-}     {Property access}          {getProperty("a", "b")} }
+\newcommand{\operatorpropass}{\operator  {->}   {a->b = v}         {-}     {Property assignment}    {setProperty("a", "b", v)}}
 \newcommand{\operatorsub}    {\operator  {[]}   {a[args]}          {-}     {Subscript}                {a.'[]'(args)}          }
 \newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}      {-}     {Subscript assignment}     {a.'[]='(args, v)}      }
 \newcommand{\operatorass}[2][ ]    {\operator[#1]
@@ -812,6 +814,9 @@ targeted object.
     \operatordot
     \operatordota
     \hline
+    \operatorprop
+    \operatorpropass
+    \hline
     \operatorsub
     \operatorsubass
     \hline
@@ -859,6 +864,9 @@ precedence.
     \hline
     \operatordot
     \operatordota
+    \hline
+    \operatorprop
+    \operatorpropass
     \hline
     \operatorsub
     \operatorsubass
