@@ -55,28 +55,19 @@ EOF
 # Return the location of param_mk
 param_mk ()
 {
-  # If we are building a library, there is no core, so use param.mk from
-  # the remote core which is always present.
-  if test -z $core; then
-    lcore=remote
-  else
-    lcore=$core
-  fi
   if test -n "$param_mk"; then
     echo "$param_mk"
   else
-    echo "$branddir/core/$host/$lcore/param.mk"
+    # If we are building a library, there is no core, so use param.mk
+    # from the remote core which is always present.
+    echo "$brandlibdir/${core:-remote}/param.mk"
   fi
 }
 
 # Return the location of the kernel
 kernel ()
 {
-  if test -n "$kernel"; then
-    echo "$kernel"
-  else
-    echo "$prefix"
-  fi
+  echo "${kernel+$prefix}"
 }
 
 
@@ -231,18 +222,15 @@ builddir_pref="_ubuild"
 if test ! -d "$prefix" ; then
  prefix=$(dirname $0)/..
 fi
+
+# Keep the variables in that order, they have dependencies.
 : ${PACKAGE_BRAND="@PACKAGE_BRAND@"}
-: ${branddir="@branddir@"}
-#prefix="$dir/"
-#prefix="${prefix%/bin*}"
-
-
+: ${exec_prefix="@exec_prefix@"}
+: ${libdir="@libdir@"}
+: ${brandlibdir="@brandlibdir@"}
 
 # Target name.
 target=
-
-libdir=${prefix}/lib
-
 libs=
 sources=
 headers=

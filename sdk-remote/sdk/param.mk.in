@@ -1,11 +1,16 @@
 # Don't set prefix, umake does.
+DLMODEXT = @DLMODEXT@
 PACKAGE_BRAND = @PACKAGE_BRAND@
+URBI_ENV = $(UMAKE_URBI_ENV)
+brandincludedir = @brandincludedir@
 brandlibdir = @brandlibdir@
 brandlibexecdir = @brandlibexecdir@
-URBI_ENV = $(UMAKE_URBI_ENV)
-envdir = $(brandlibdir)/$(URBI_ENV)
 builddir = $(UMAKE_BUILD_DIR)
-DLMODEXT = @DLMODEXT@
+envdir = $(brandlibdir)/$(URBI_ENV)
+exec_prefix = @exec_prefix@
+includedir = @includedir@
+libdir = @libdir@
+libexecdir = @libexecdir@
 
 # The basename (no extension) of the library we should link against.
 # This default value is for backward compatibility: find the
@@ -25,10 +30,7 @@ URBI_KERNEL_PATH = @URBI_KERNEL_PATH@
 # Upper case.
 URBI_ENV_CPPFLAGS = -DURBI_ENV_$(shell echo "$(URBI_ENV)" | tr 'a-z' 'A-Z')
 
-CPPFLAGS =							\
-  @CPPFLAGS@ -I$(prefix)/include				\
-  -I$(URBI_KERNEL_PATH)/gostai/kernel/include			\
-  $(URBI_ENV_CPPFLAGS)
+CPPFLAGS = @CPPFLAGS@ -I$(brandincludedir) $(URBI_ENV_CPPFLAGS)
 ALL_CPPFLAGS = $(PRE_CPPFLAGS) $(CPPFLAGS) $(EXTRA_CPPFLAGS)
 
 # C.
@@ -47,8 +49,7 @@ LDFLAGS = @LDFLAGS@ @BOOST_THREAD_LDFLAGS@ $(SDK_LDFLAGS)
 
 # Libtool.
 LIBTOOL = $(brandlibexecdir)/libtool
-HOBJECTS = $(OBJECTS:.o=.$(URBI_HOST).o)
-LTOBJECTS = $(HOBJECTS:.o=.lo)
+LTOBJECTS = $(OBJECTS:.o=.lo)
 OUTBIN = nothing
 OUTLIB = nothing2
 
@@ -78,13 +79,13 @@ CXXLINK = $(LIBTOOL) --tag=CXX --mode=link \
 #
 #    which tells how to make `.o' files from `.c' files, and makes all `.o'
 #    files using this pattern rule also depend on `foo.h'.
-$(builddir)/%.$(URBI_HOST).lo: %.c $(HEADERS)
+$(builddir)/%.lo: %.c $(HEADERS)
 	$(LTCOMPILE) -c -o $@ $<
 
-$(builddir)/%.$(URBI_HOST).lo: %.cc $(HEADERS)
+$(builddir)/%.lo: %.cc $(HEADERS)
 	$(LTCXXCOMPILE) -c -o $@ $<
 
-$(builddir)/%.$(URBI_HOST).lo: %.cpp $(HEADERS)
+$(builddir)/%.lo: %.cpp $(HEADERS)
 	$(LTCXXCOMPILE) -c -o $@ $<
 
 # UObject target.
@@ -111,7 +112,6 @@ LINK =						\
   $(UMAKE_LINK)					\
   --libtool='$(LIBTOOL)'			\
   --env='$(URBI_ENV)'				\
-  --host='$(URBI_HOST)'				\
   --
 $(OUTBIN): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(LINK) \
