@@ -1,16 +1,30 @@
 \documentclass[openright,twoside,11pt]{book}
   \usepackage{gostai-documentation}
 
+
 \title{Urbi Documentation Sandbox}
 \titleImage{figs/urbi}
 \subtitle{Version \VcsDescription}
 \author{Gostai}
 
-
 \begin{document}
+\NewSection\faqsection {\thesubsubsection}
 
-\let\deepChapter\chapter
-\NewSection\deepChapter{\thechapter}
+\Configure{faqsection}
+  {}
+  {}
+  {\addtocounter{subsubsection}{1}%
+    \HCode{<h5 class="subsubsectionHead">}
+    \HCode{<span class="titlemark">}\thesubsubsection   \HCode{</span>}}
+  {\HCode{</h5>}}
+
+\ConfigureToc{faqsection}
+  {\HCode{<span class="subsubsectionToc" >}}
+  { } % Put something here (e.g., a space), we want to display the section name.
+  {} % Put nothing in here, we don't want to display the page number.
+  {\HCode{</span><br />}}
+
+\TocAt*{chapter,section,subsection,subsubsection,faqsection}
 
 \maketitle
 
@@ -25,6 +39,16 @@ This is the first chapter.
 \section{First Section}
 
 \subsection{First Subsection}
+\subsubsection{Subsubsection I.1.1.1.a}
+Body of Subsection I.1.1.1.a.
+
+\begin{urbiassert}[firstnumber=1]
+1 == 1;
+\end{urbiassert}
+
+\subsubsection{Subsubsection I.1.1.1.b}
+Body of Subsection I.1.1.1.b.
+
 \begin{urbiassert}[firstnumber=1]
 1 == 1;
 \end{urbiassert}
@@ -69,7 +93,7 @@ This is the second chapter.
 
 This is the second part.
 
-\deepChapter{Chapter II.1}
+\chapter{Chapter II.1}
 Body of Chapter II.1.
 
 \section{Section II.1.1}
@@ -78,19 +102,19 @@ Body of Section II.1.1.
 \subsection{Subsection II.1.1.1}
 Body of Subsection II.1.1.1.
 
-\subsubsection{Subsubsection II.1.1.1.a}
+\faqsection{FAQsection TITI II.1.1.1.a}
 Body of Subsection II.1.1.1.a.
 
-\subsubsection{Subsubsection II.1.1.1.b}
+\faqsection{FAQsection II.1.1.1.b}
 Body of Subsection II.1.1.1.b.
 
 \subsection{Subsection II.1.1.2}
 Body of Subsection II.1.1.2.
 
-\subsubsection{Subsubsection II.1.1.2.a}
+\faqsection{FAQsection II.1.1.2.a}
 Body of Subsection II.1.1.2.a.
 
-\subsubsection{Subsubsection II.1.1.2.b}
+\faqsection{FAQsection II.1.1.2.b}
 Body of Subsection II.1.1.2.b.
 
 \section{Section II.1.2}
