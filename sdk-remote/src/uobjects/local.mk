@@ -20,11 +20,11 @@ clean-uobjects:
 # When clean is concurrent, we might even have "rm" be given
 # directories that no longer exist.  So forget about the exit status.
 	-$(UMAKE_SHARED) --deep-clean ||			\
-	  find . -name "_ubuild-*" -a -type d | xargs rm -rf
+	  find uobjects -name "_ubuild-*" -a -type d | xargs rm -rf
 # This is a bug in deep-clean: we don't clean the .libs files.  But it
 # is not so simple, as several builds may share a common .libs, so one
 # build cannot remove this directory.
-	-find . -name ".libs" -a -type d | xargs rm -rf
+	-find uobjects -name ".libs" -a -type d | xargs rm -rf
 	-rm -f $(uobjects_DATA) $(uobjects_DATA:$(DLMODEXT)=.la)
 
 # Help to restart broken builds.
