@@ -55,8 +55,7 @@ core libs:
 # check-html, check-clean, check-uob etc.
 check-%:
 	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
-installcheck-buildfarm check-buildfarm recheck recheck-html:
-	-$(build_aux_dir)/semaphore-clean.sh
+installcheck-buildfarm check-buildfarm recheck recheck-html: clean-semaphores
 	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
 
 
