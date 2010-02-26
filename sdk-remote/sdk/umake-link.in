@@ -21,7 +21,7 @@ General options:
 Specific options:
   -L, --libtool=PATH    path to libtool
   -E, --env=URBI-ENV    urbi environment name (e.g., engine)
-  -H, --host=URBI-HOST  urbi host name        (e.g.. mipsel-linux)
+  -H, --host=URBI-HOST  urbi host name        (e.g., mipsel-linux)
 
 Report bugs to @PACKAGE_BUGREPORT@.
 EOF

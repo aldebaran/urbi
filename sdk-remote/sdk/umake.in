@@ -404,24 +404,8 @@ stderr "" "$line" "running to build $bintype, for '$host' host." "$line" ""
 # Check if base directory exists
 exist_error 4 d "$prefix" prefix
 
-# Check if given base directory has gostai and core subdirs
-#exist_error 4 d "$branddir" prefix
-#exist_error 4 d "$branddir/core" prefix
-
 # Check param.mk file
 exist_error 4 f $(param_mk) param-mk
-
-# Check lib existence
-#exist_error 4 f $(dirname $(param_mk))/$core/${UMAKE_LIBNAME}.la param-mk
-
-# Check for kernel directory if building engine
-#test "$core" == "engine" && exist_error 4 d $(kernel) kernel
-
-# Check if host exists
-#dirlist_error 5 host "$branddir/core/" "$host"
-
-# Check if target is valid for host
-#dirlist_error 6 core "$branddir/core/$host" "$core"
 
 # Invoke make.
 if $verb; then
