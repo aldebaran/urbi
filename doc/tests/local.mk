@@ -97,6 +97,4 @@ CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
 %heck-buildfarm:
 	$(MAKE) $(AM_MAKEFLAGS) $*heck-html $(CHECK_BUILDFARM_FLAGS)
 
-.PHONY check-TESTS: check-clean-semaphores
-check-clean-semaphores:
-	-$(build_aux_dir)/semaphore-clean.sh
+.check-TESTS: clean-semaphores

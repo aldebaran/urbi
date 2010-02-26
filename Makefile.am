@@ -82,8 +82,7 @@ install-doc:
 # The target run by the buildfarm.
 .PHONY: check-buildfarm check-sdk-uobjects-buildfarm
 CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
-%check-buildfarm:
-	-$(build_aux_dir)/semaphore-clean.sh
+%check-buildfarm: clean-semaphores
 	$(MAKE) $(AM_MAKEFLAGS) -C tests $*check-html $(CHECK_BUILDFARM_FLAGS)
 
 # The target used by the build farm to create the uobjects used in our
