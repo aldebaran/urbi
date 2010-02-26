@@ -121,9 +121,5 @@ if test $name != $rtname; then
   mkdir -p "$packagedir"
   (cd "$DESTDIR$prefix" && tar cf - .) | (cd "$packagedir" && tar xpBf -)
   # Keep only the lib sub-hierarchy.
-  (cd "$packagedir" && rm -rf *.txt MANIFEST bin include libexec share/doc)
-  find "$packagedir" -type f -print |
-    sed -e "s,^$packagedir/,,"      \
-    >"$packagedir/MANIFEST"
-  (cd "$packagedir" && ls -R)
+  (cd "$packagedir" && rm -rf *.txt bin include libexec share/doc)
 fi
