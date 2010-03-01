@@ -33,11 +33,14 @@ namespace urbi
       void syncEmit(const objects_type& args);
       rEvent syncTrigger(const objects_type& args);
       rEvent trigger(const objects_type& args);
-      void localTrigger(const objects_type& args);
+      void localTrigger(const objects_type& args, bool detach);
       void waituntil(rObject pattern);
       bool hasSubscribers() const;
 
     private:
+      void emit_backend(const objects_type& args, bool detach);
+      rEvent trigger_backend(const objects_type& args, bool detach);
+      void stop_backend(bool detach);
 
       /// Callbacks listening on this event.
       struct Actions: public libport::RefCounted
@@ -60,7 +63,7 @@ namespace urbi
 
       void waituntil_release(rObject payload);
       rEvent source();
-      void trigger_job(const rActions& actions);
+      void trigger_job(const rActions& actions, bool detach);
 
       void unregister(rActions);
       void freeze(rActions);

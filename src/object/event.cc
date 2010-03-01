@@ -85,12 +85,13 @@ namespace urbi
 
       listeners_ << actions;
       foreach (const actives_type::value_type& active, _active)
-        active.first->trigger_job(actions);
+        active.first->trigger_job(actions, true);
     }
 
     void
-    Event::trigger_job(const rActions& actions)
+    Event::trigger_job(const rActions& actions, bool detach)
     {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       if (!actions->active)
         return;
       objects_type args;
@@ -100,31 +101,39 @@ namespace urbi
       {
         args << pattern;
         register_stop_job(stop_job_type(actions->leave, args));
-        (*actions->enter)(args);
+        if (detach)
+        {
+          sched::rJob job = new runner::Interpreter
+            (r.lobby_get(), r.scheduler_get(),
+             boost::bind(static_cast<rObject(Executable::*)(objects_type)>(&Executable::operator()), actions->enter.get(), args),
+             this, SYMBOL(at));
+          job->start_job();
+        }
+        else
+          (*actions->enter)(args);
       }
+    }
+
+    void
+    Event::emit_backend(const objects_type& pl, bool detach)
+    {
+      rEvent instance = new Event(this, new List(pl));
+
+      instance->slot_update(SYMBOL(active), to_urbi(false));
+      instance->localTrigger(pl, detach);
+      instance->stop_backend(detach);
     }
 
     void
     Event::syncEmit(const objects_type& pl)
     {
-      rEvent instance = new Event(this,
-                                  new List(pl));
-
-      instance->slot_update(SYMBOL(active), to_urbi(false));
-      instance->localTrigger(pl);
-      instance->stop();
+      emit_backend(pl, false);
     }
 
     void
     Event::emit(const objects_type& args)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-
-      rObject code = slot_get(SYMBOL(syncEmit));
-      sched::rJob job = new runner::Interpreter
-        (r.lobby_get(), r.scheduler_get(), code,
-         SYMBOL(syncEmit), rObject(this), args);
-      job->start_job();
+      emit_backend(args, true);
     }
 
     void
@@ -144,26 +153,24 @@ namespace urbi
     }
 
     rEvent
-    Event::syncTrigger(const objects_type& pl)
+    Event::trigger_backend(const objects_type& pl, bool detach)
     {
       rEvent instance = new Event(this, new List(pl));
 
-      instance->localTrigger(pl);
+      instance->localTrigger(pl, detach);
       return instance;
     }
 
     rEvent
-    Event::trigger(const objects_type& args)
+    Event::syncTrigger(const objects_type& pl)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      rEvent instance = new Event(this, new List(args));
+      return trigger_backend(pl, false);
+    }
 
-      rObject code = slot_get(SYMBOL(localTrigger));
-      sched::rJob job = new runner::Interpreter
-        (r.lobby_get(), r.scheduler_get(), code,
-         SYMBOL(localTrigger), instance, args);
-      job->start_job();
-      return instance;
+    rEvent
+    Event::trigger(const objects_type& pl)
+    {
+      return trigger_backend(pl, true);
     }
 
     rEvent
@@ -175,13 +182,13 @@ namespace urbi
     }
 
     void
-    Event::localTrigger(const objects_type& pl)
+    Event::localTrigger(const objects_type& pl, bool detach)
     {
       rList payload = new List(pl);
       source()->_active[this] = payload;
-      foreach (const Event::rActions& actions, listeners_)
-        trigger_job(actions);
       waituntil_release(payload);
+      foreach (Event::rActions actions, listeners_)
+        trigger_job(actions, detach);
     }
 
     void
@@ -193,9 +200,30 @@ namespace urbi
     void
     Event::stop()
     {
+      stop_backend(false);
+    }
+
+    void
+    Event::stop_backend(bool detach)
+    {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       slot_update(SYMBOL(active), to_urbi(false));
-      foreach (const stop_job_type& stop_job, stop_jobs_)
-        (*stop_job.first)(stop_job.second);
+      if (detach)
+      {
+        sched::jobs_type children;
+        foreach (const stop_job_type& stop_job, stop_jobs_)
+        {
+          sched::rJob job = new runner::Interpreter
+            (r.lobby_get(), r.scheduler_get(),
+             boost::bind(static_cast<rObject(Executable::*)(objects_type)>(&Executable::operator()), stop_job.first.get(), stop_job.second),
+             this, SYMBOL(onleave));
+          job->start_job();
+        }
+        r.yield_until_terminated(children);
+      }
+      else
+        foreach (const stop_job_type& stop_job, stop_jobs_)
+          (*stop_job.first)(stop_job.second);
       source()->_active.erase(this);
       stop_jobs_.clear();
     }
