@@ -72,6 +72,12 @@ namespace runner
                 rObject self,
                 const objects_type& args);
 
+    Interpreter(rLobby lobby,
+                sched::Scheduler& scheduler,
+                boost::function0<void> task,
+                rObject self,
+                const libport::Symbol& name);
+
     /// Create a copy of a runner starting with another ast.
     Interpreter(const Interpreter&,
                 ast::rConstAst ast,
@@ -213,9 +219,10 @@ namespace runner
   private:
     /// The root of the AST being executed.
     ast::rConstAst ast_;
-
     /// The urbi Code object to execute
     rObject code_;
+    /// The task to execute
+    boost::function0<void> task_;
     /// Its potential target
     rObject self_;
     /// Its arguments

@@ -27,7 +27,7 @@ namespace runner
 	       const libport::Symbol& name)
     : Interpreter(lobby,
 		  scheduler,
-		  0,
+		  ast::rConstAst(),
 		  name)
     , executing_(false)
   {

@@ -139,6 +139,23 @@ namespace runner
     init();
   }
 
+
+  Interpreter::Interpreter(rLobby lobby,
+                           sched::Scheduler& sched,
+                           boost::function0<void> task,
+                           rObject self,
+                           const libport::Symbol& name)
+    : Runner(lobby, sched, name)
+    , ast_(0)
+    , code_(0)
+    , task_(task)
+    , result_(0)
+    , stacks_(self)
+  {
+    init();
+    apply_tag(lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>(), 0);
+  }
+
   Interpreter::~Interpreter()
   {
   }
@@ -168,15 +185,17 @@ namespace runner
   {
     try
     {
-      aver(ast_ || code_);
+      aver(ast_ || code_ || task_);
       check_for_pending_exception();
       if (ast_)
 	result_ = operator()(ast_.get());
-      else
+      else if (code_)
       {
         libport::push_front(args_, self_ ? self_ : rObject(lobby_));
 	result_ = apply(code_, libport::Symbol::make_empty(), args_);
       }
+      else
+        task_();
     }
     catch (object::UrbiException& exn)
     {

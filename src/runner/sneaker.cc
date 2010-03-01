@@ -54,7 +54,7 @@ namespace dbg
 
   Sneaker::Sneaker(object::rLobby lobby,
 		       sched::Scheduler& scheduler)
-    : Interpreter(lobby, scheduler, 0, SYMBOL(LT_sneaker_GT))
+    : Interpreter(lobby, scheduler, ast::rConstAst(), SYMBOL(LT_sneaker_GT))
   {
     non_interruptible_set(true);
   }
