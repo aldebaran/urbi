@@ -1451,8 +1451,10 @@ obj.msg;
 When a message \var{msg} is sent to object \lstinline|obj|:
 
 \begin{itemize}
+% !!! \lstinline|obj.getSlot("\var{msg}")| does not escape the \var because it
+% is inside a string.
 \item The \var{msg} slot of \lstinline|obj| is retrieved (i.e.,
-  \lstinline|obj.getSlot("\var{msg}")|). If the slot is not found, the
+  \lstinline|obj.getSlot("msg")|). If the slot is not found, the
   classic lookup error is raised.
 \item If the object is a \dfn{routine} (either a primitive, written in
   \Cxx for instance, or a function implemented in \us), it is invoked

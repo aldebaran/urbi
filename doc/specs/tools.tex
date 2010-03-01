@@ -241,9 +241,11 @@ The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.
 
 \paragraph{Mode selection}
 \begin{options}
+% !!! \lstinline|loadModule("\var{module}")| does not escape the \var
+% because it is inside a string.
 \item[-p, --plugin] attach the \var{module} onto a currently running
   \urbi server (identified by \var{host} and \var{port}).  This is
-  equivalent to running \lstinline|loadModule("\var{module}")| on the
+  equivalent to running \lstinline|loadModule("module")| on the
   corresponding server.
 
 \item[-r, --remote] run the \var{modules} as separated processes,
