@@ -143,7 +143,7 @@ namespace
       << parser;
     throw urbi::Exit(EX_OK, output.str());
   }
-#endif
+
   static
   void
   version()
@@ -159,6 +159,7 @@ namespace
       URBI_EXIT(EX_USAGE,
                 "unrecognized command line option: %s", arg);
   }
+#endif
 }
 
 namespace urbi
