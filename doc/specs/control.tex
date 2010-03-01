@@ -1,0 +1,96 @@
+\section{Control}
+
+\lstinline|Control| is designed as a namespace for control sequences.
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item \lstinline|detach(\var{exp})|
+  Detach the evaluation of the expression \var{exp} from the current
+  evaluation.  The \var{exp} is evaluated in parallel to the current code
+  and keep the current tag which are attached to it.
+
+\begin{urbiscript}
+for| (var i : [0, 1, 2])
+{
+  detach({
+    echo(i);
+    echo(i)
+  }) |
+  if (i == 2)
+    break
+}|;
+[00000000] *** 0
+[00000000] *** 1
+[00000000] *** 0
+\end{urbiscript}
+
+\item \lstinline|disown(\var{exp})|
+  Does the same as \lstinline|detach(\var{exp})| except that tags used to
+  tag the \lstinline|disown| call are not inherited inside the expression.
+
+\begin{urbiscript}
+for| (var i : [0, 1, 2])
+{
+  disown({
+    echo(i);
+    echo(i)
+  }) |
+  if (i == 2)
+    break
+}|;
+[00000000] *** 0
+[00000000] *** 1
+[00000000] *** 0
+[00000000] *** 2
+[00000000] *** 1
+[00000000] *** 2
+\end{urbiscript}
+
+\item \lstinline|persist(\var{expression}, \var{delay})|
+   Returns an object whose \var{val} slot evaluates to true if the
+   \var{expression} has been continously true for this \var{delay} and false
+   otherwise.
+  
+   This function is used to implement
+
+\begin{urbiunchecked}
+at (condition ~ delay)
+  action
+\end{urbiunchecked}
+
+   as
+
+\begin{urbiunchecked}
+var u = persist (condition, delay);
+at (u.val)
+  action
+\end{urbiunchecked}
+  
+   The \lstinline|persist| action will be controlled by the same tags as the
+   initial \lstinline|at| block.
+
+
+\item \lstinline|finally(\var{action}, \var{reaction})|
+  This function executes the \var{reaction} function at the end of the evaluation of
+  the \var{action} function.  This function is equivalent to
+
+\begin{urbiunchecked}
+{
+  var t = Tag.new |
+  at (t.leave?)
+    reaction() |
+  t: action()
+}
+\end{urbiunchecked}
+
+
+\end{urbiscriptapi}
+
