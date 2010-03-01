@@ -33,7 +33,10 @@ def print_guards_close (node, header, inline, impl):
   print_inline_code (node, "header", "epilogue")
 
   # Close protection
-  print >>header, "# include <serialize/serialize.hh>"
+  print >>header, """
+#if ENABLE_SERIALIZATION
+# include <serialize/serialize.hh>
+#endif"""
   print >>header, "# include <ast/" + node.hxx () + ">"
   print >>header, ""
   print_guard_close (header, node, "hh")
@@ -76,6 +79,10 @@ def print_includes (node, header, inline, impl):
   print_inline_code (node, "header", "prologue")
   print >>header, "# include <urbi/object/fwd.hh>"
   print >>header, "# include <kernel/config.h>"
+  print >>header, """
+#if ENABLE_SERIALIZATION
+# include <serialize/serialize.hh>
+#endif"""
 
   # *.hxx
   sys.stdout = inline
