@@ -49,6 +49,7 @@ Documentation
 =============
 
 - Barrier
+- Date.now
 - Pattern
 - PubSub
 - PubSub.Subscriber
