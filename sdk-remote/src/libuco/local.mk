@@ -20,3 +20,11 @@ dist_libuco_libuco_la_SOURCES =			\
   libuco/ustarter.cc				\
   libuco/utable.cc				\
   libuco/uvar-common.cc
+
+
+## ---------- ##
+## umain.cc.  ##
+## ---------- ##
+
+dist_umain_DATA = liburbi/umain.cc liburbi/urbi-root.cc
+

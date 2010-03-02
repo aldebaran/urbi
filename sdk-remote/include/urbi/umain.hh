@@ -18,12 +18,18 @@
 # include <urbi/uobject.hh>
 # include <urbi/urbi-root.hh>
 
+# ifdef STATIC_BUILD
+#  define UMAIN_URBIROOT_STATIC true
+# else
+#  define UMAIN_URBIROOT_STATIC false
+# endif
+
 # define UMAIN()                                                \
                                                                 \
   int                                                           \
   main(int argc, const char** argv)                             \
   {                                                             \
-    UrbiRoot urbi_root(argv[0]);                                \
+    UrbiRoot urbi_root(argv[0], UMAIN_URBIROOT_STATIC);         \
     std::vector<std::string> args(argv, argv + argc);           \
     return urbi_root.urbi_main(args, true, true);               \
   }                                                             \

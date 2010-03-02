@@ -30,9 +30,3 @@ liburbi_liburbi@LIBSFX@_la_LIBADD =		\
   libuvalue/libuvalue.la			\
   $(JPEG_LIBS)
 liburbi_liburbi@LIBSFX@_la_LDFLAGS = -avoid-version -no-undefined
-
-## ---------- ##
-## umain.cc.  ##
-## ---------- ##
-
-dist_umain_DATA = liburbi/umain.cc liburbi/urbi-root.cc

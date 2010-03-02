@@ -21,6 +21,9 @@
 #include <libport/sysexits.hh>
 
 #include <urbi/urbi-root.hh>
+#ifdef STATIC_BUILD
+# include <urbi/umain.hh>
+#endif
 #include <libport/config.h>
 
 #if defined WIN32
@@ -293,7 +296,9 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
     handle_libjpeg_      = library_load("jpeg");
     handle_libport_      = library_load("port");
     handle_libsched_     = library_load("sched");
+#ifdef ENABLE_SERIALIZATION
     handle_libserialize_ = library_load("serialize");
+#endif
     handle_liburbi_      = library_load("urbi");
   }
 }
@@ -396,6 +401,9 @@ int
 UrbiRoot::urbi_main(const std::vector<std::string>& args,
                     bool block, bool errors)
 {
+#ifdef STATIC_BUILD
+  return ::urbi_main_args(args, *this, block, errors);
+#else
   urbi_main_type f =
     xdlsym<urbi_main_type>(program_,
                            "libuobject", handle_libuobject_,
@@ -405,4 +413,5 @@ UrbiRoot::urbi_main(const std::vector<std::string>& args,
     URBI_ROOT_DEBUG(program_, "  " << arg);
 
   return f(args, *this, block, errors);
+#endif
 }
