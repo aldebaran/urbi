@@ -306,6 +306,12 @@ namespace urbi
       runner::raise_bad_integer_error(value_get(), fmt);
     }
 
+    void
+    Float::srandom() const
+    {
+      srand(to_unsigned_type());
+    }
+
 
 #define DEFINE(Urbi, Op)                                          \
     Float::value_type                                             \
@@ -429,6 +435,7 @@ namespace urbi
       DECLARE(log, log);
       DECLARE(nan, nan);
       DECLARE(random, random);
+      DECLARE(srandom, srandom);
       DECLARE(round, round);
       DECLARE(seq, seq);
       DECLARE(sign, sign);

@@ -150,6 +150,7 @@ namespace urbi
       value_type operator %(value_type rhs) const;
 
       unsigned_type random() const;
+      void srandom() const;
       value_type round() const;
       rList seq() const;
       /// -1, 0, or 1.
