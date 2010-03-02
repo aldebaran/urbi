@@ -243,6 +243,8 @@ namespace urbi
       (void)b;
       Date        date;
       Directory   d;
+      Event       e(0);
+      (void)e;
       File        f;
       Path        p;
       Semaphore   s;
