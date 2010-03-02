@@ -11,6 +11,7 @@
 #ifndef URBI_OBJECT_EVENT_HH
 # define URBI_OBJECT_EVENT_HH
 
+# include <boost/signal.hpp>
 # include <boost/unordered_map.hpp>
 
 # include <urbi/object/cxx-object.hh>
