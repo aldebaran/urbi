@@ -20,7 +20,8 @@
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/equality-comparable.hh>
 
-# include <kernel/config.h>
+// FIXME: Restore when someone can repair install-kernel-headers (?)
+// # include <kernel/config.h>
 
 namespace urbi
 {
