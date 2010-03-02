@@ -73,7 +73,7 @@ namespace urbi
       Listeners listeners_;
 
       /// Job waiting for this event.
-      typedef std::pair<runner::rRunner, rObject> waiter_type;
+      typedef std::pair<libport::intrusive_ptr<libport::RefCounted>, rObject> waiter_type;
       std::vector<waiter_type> waiters_;
 
       /// Leave callbacks to trigger on stop.

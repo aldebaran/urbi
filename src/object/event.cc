@@ -234,7 +234,7 @@ namespace urbi
       rEvent src = source();
       foreach (const waiter_type& waiter, src->waiters_)
         if (waiter.second == nil_class || waiter.second->call(SYMBOL(match), payload)->as_bool())
-          waiter.first->frozen_set(false);
+          waiter.first.unchecked_cast<runner::Runner>()->frozen_set(false);
     }
 
     bool
