@@ -30,6 +30,8 @@ namespace urbi
     public:
       void emit(const objects_type& args);
       void onEvent(rExecutable guard, rExecutable enter, rExecutable leave);
+      typedef boost::function1<void, const objects_type&> callback_type;
+      void onEvent(const callback_type& cb);
       void stop();
       void syncEmit(const objects_type& args);
       rEvent syncTrigger(const objects_type& args);
@@ -84,6 +86,9 @@ namespace urbi
       /// Active instances of this event (handler => payload).
       typedef boost::unordered_map<rEvent, rList> actives_type;
       actives_type _active;
+
+      /// C++ callbacks
+      std::vector<callback_type> callbacks_;
     };
   }
 }

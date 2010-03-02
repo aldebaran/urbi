@@ -32,6 +32,7 @@ namespace urbi
     Event::Event(rEvent parent, rList payload)
       : listeners_(parent->listeners_)
       , waiters_()
+      , callbacks_(parent->callbacks_)
     {
       proto_add(parent);
       slot_set(SYMBOL(active), to_urbi(true));
@@ -86,6 +87,12 @@ namespace urbi
       listeners_ << actions;
       foreach (const actives_type::value_type& active, _active)
         active.first->trigger_job(actions, true);
+    }
+
+    void
+    Event::onEvent(const callback_type& cb)
+    {
+      callbacks_ << cb;
     }
 
     void
@@ -187,6 +194,8 @@ namespace urbi
       rList payload = new List(pl);
       source()->_active[this] = payload;
       waituntil_release(payload);
+      foreach (const callback_type& cb, callbacks_)
+        cb(pl);
       foreach (Event::rActions actions, listeners_)
         trigger_job(actions, detach);
     }
@@ -252,7 +261,7 @@ namespace urbi
       bind(SYMBOL(emit), &Event::emit);
       bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
       bind(SYMBOL(localTrigger), &Event::localTrigger);
-      bind(SYMBOL(onEvent), &Event::onEvent);
+      bind(SYMBOL(onEvent), static_cast<void (Event::*)(rExecutable guard, rExecutable enter, rExecutable leave)>(&Event::onEvent));
       bind(SYMBOL(stop), &Event::stop);
       bind(SYMBOL(syncEmit), &Event::syncEmit);
       bind(SYMBOL(syncTrigger), &Event::syncTrigger);
