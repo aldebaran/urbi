@@ -436,6 +436,23 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 1024.sqrt == 1024 ** 0.5;
 \end{urbiassert}
 
+\item \lstinline|srandom|\\
+  Initialized the seed used by the random function.  As opposed to common
+  usage, you should not use
+\begin{urbiunchecked}
+{
+  var now = Date.now.timestamp;
+  now.srandom;
+  var list1 = 20.map(function (dummy) { 5.random });
+  now.srandom;
+  var list2 = 20.map(function (dummy) { 5.random });
+  assert
+  {
+    list1 == list2;
+  }
+};
+\end{urbiunchecked}
+
 \item \lstinline|tan|\\
   Tangent of the target.
 \begin{urbiscript}

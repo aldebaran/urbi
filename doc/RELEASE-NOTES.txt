@@ -26,6 +26,7 @@ New features:
 
 - List.subset
 - Object.getLocalSlot.
+- Float.srandom
 
 - Dictionary can now be created with literals.
 
@@ -50,6 +51,7 @@ Documentation
 
 - Barrier
 - Date.now
+- Float.srandom
 - Pattern
 - PubSub
 - PubSub.Subscriber
