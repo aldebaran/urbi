@@ -242,6 +242,26 @@ setenv("MyVar", "") == "";
 getenv("MyVar").isNil == Platform.isWindows;
 \end{urbiassert}
 
+\item[redefinitionMode] Switch the current job in redefinition mode
+  until the end of the current scope.  While in redefinition mode,
+  setSlot on already existing slots will overwrite the slot instead of
+  erring.
+
+\begin{urbiscript}
+var Global.x = 0;
+[00000001] 0
+{
+  System.redefinitionMode;
+  // Not an error
+  var Global.x = 1;
+  echo(Global.x);
+};
+[00000002] *** 1
+// redefinitionMode applies only to the scope.
+var Global.x = 0;
+[00000003:error] !!! slot redefinition: x
+\end{urbiscript}
+
 \item[scopeTag] Return a fresh Tag whose \lstinline|stop| will be
   invoked a the end of the current scope.  This function is likely to
   be removed, or maybe just moved into \refObject{Tag}.  See

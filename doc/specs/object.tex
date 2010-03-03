@@ -521,6 +521,11 @@ Object.theObject === Object;
 theObject === Object;
 \end{urbiassert}
 
+  If the current job is in redefinition mode, \lstinline|setSlot| on
+  an already defined slot is not an error and overwrites the slot like
+  \lstinline|updateSlot| would. See the \lstinline|redefinitionMode|
+  method in \refObject{System}.
+
 \item \lstinline|slotNames|\\
   Return a list with the slot names of \lstinline|this| and its
   ancestors.
