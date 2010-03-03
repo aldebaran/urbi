@@ -10,6 +10,7 @@
 /doc/Makefile.in
 /include/urbi/ucallbacks.hh
 /sdk/config.h.in
+/sdk/config.h.in~
 /src/Makefile.in
 /src/swig/Makefile.in
 /src/tests/Makefile.in
