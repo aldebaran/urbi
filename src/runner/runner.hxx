@@ -29,6 +29,7 @@ namespace runner
   Runner::Runner(rLobby lobby, sched::Scheduler& sched,
 		 const libport::Symbol& name)
     : sched::Job(sched, name)
+    , redefinition_mode_(false)
     , lobby_(lobby)
     , prio_(sched::UPRIO_DEFAULT)
     , frozen_(false)
@@ -38,6 +39,7 @@ namespace runner
   LIBPORT_SPEED_INLINE
   Runner::Runner(const Runner& model, const libport::Symbol& name)
     : sched::Job(model, name)
+    , redefinition_mode_(model.redefinition_mode_)
     , lobby_(model.lobby_)
     , prio_(sched::UPRIO_DEFAULT)
     , frozen_(false)

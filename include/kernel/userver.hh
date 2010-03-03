@@ -206,6 +206,7 @@ namespace kernel
     sched::Scheduler& scheduler_get();
 
     runner::Runner& getCurrentRunner() const;
+    runner::Runner* getCurrentRunnerOpt() const;
 
     boost::asio::io_service& get_io_service();
 

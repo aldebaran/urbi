@@ -492,7 +492,9 @@ namespace runner
   {
     Interpreter* i = this;
     bool non_interruptible = non_interruptible_;
+    bool redefinition_mode = redefinition_mode_get();
     FINALLY_Scope(USE);
+
     create_scope_tag();
     return operator()(e->body_get().get());
   }

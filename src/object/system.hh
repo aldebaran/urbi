@@ -50,6 +50,8 @@ namespace urbi
     typedef std::set<libport::Symbol> system_files_type;
     /// Return the list of loaded system files.
     system_files_type& system_files_get();
+
+    void system_redefinitionMode();
   }; // namespace object
 }
 

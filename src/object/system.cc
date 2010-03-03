@@ -515,6 +515,13 @@ namespace urbi
     }
 
     void
+    system_redefinitionMode()
+    {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      r.redefinition_mode_set(true);
+    }
+
+    void
     system_class_initialize()
     {
 #define DECLARE(Name)                                           \
@@ -539,6 +546,7 @@ namespace urbi
       DECLARE(nonInterruptible);
       DECLARE(programName);
       DECLARE(reboot);
+      DECLARE(redefinitionMode);
       DECLARE(registerAtJob);
       DECLARE(resetStats);
       DECLARE(scopeTag);

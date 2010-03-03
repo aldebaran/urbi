@@ -160,10 +160,16 @@ namespace urbi
       return slot_set(k, slot);
     }
 
+    static bool redefinition_mode()
+    {
+      runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt();
+      return r && r->redefinition_mode_get();
+    }
+
     Object&
     Object::slot_set(key_type k, Slot* o)
     {
-      if (!slots_.set(this, k, o))
+      if (!slots_.set(this, k, o, redefinition_mode()))
         runner::raise_urbi_skip(SYMBOL(Redefinition), to_urbi(k));
       return *this;
     }
@@ -171,7 +177,7 @@ namespace urbi
     Object&
     Object::slot_copy(key_type name, const rObject& from)
     {
-      this->slot_set(name, from->slot_get(name));
+      this->slot_set(name, from->slot_get(name), redefinition_mode());
       return *this;
     }
 

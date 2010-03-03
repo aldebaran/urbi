@@ -74,6 +74,13 @@ namespace runner
     rLobby lobby_get();
     /// \}
 
+    /// \ name Properties.
+    /// \{
+  public:
+    /// Whether to err on redefinition or overwrite the slot.
+    ATTRIBUTE_RW(bool, redefinition_mode);
+    /// \}
+
     /// Change lobby on fly
     void lobby_set(rLobby);
 

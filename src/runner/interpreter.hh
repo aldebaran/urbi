@@ -251,9 +251,11 @@ namespace runner
     FINALLY_ ## DefineOrUse(Scope,                                      \
                             ((Interpreter*, i))                         \
                             ((bool&, non_interruptible_))               \
-                            ((bool, non_interruptible)),                \
+                            ((bool, non_interruptible))                 \
+                            ((bool, redefinition_mode)),                \
                             i->cleanup_scope_tag();                     \
-                            non_interruptible_ = non_interruptible;)
+                            non_interruptible_ = non_interruptible;     \
+                            i->redefinition_mode_set(redefinition_mode);)
 
 #define FINALLY_Do(DefineOrUse)                                 \
     FINALLY_ ## DefineOrUse(Do,                                 \

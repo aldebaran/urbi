@@ -68,10 +68,16 @@ namespace urbi
     }
 
     inline bool
-    CentralizedSlots::set(Object* owner, const key_type& key, value_type v)
+    CentralizedSlots::set(Object* owner, const key_type& key, value_type v, bool overwrite)
     {
-      if (has(owner, key))
-        return false;
+      loc_index_type::iterator it = where(owner, key);
+      if (it != content_->end())
+      {
+        if (overwrite)
+          erase(owner, key);
+        else
+          return false;
+      }
       content_->insert(content(owner, key, v));
       return true;
     }

@@ -589,6 +589,15 @@ namespace kernel
     return dynamic_cast<runner::Runner&> (scheduler_->current_job());
   }
 
+  runner::Runner*
+  UServer::getCurrentRunnerOpt() const
+  {
+    sched::Job* j = scheduler_->current_job_opt();
+    if (j)
+      return dynamic_cast<runner::Runner*>(j);
+    return 0;
+  }
+
   bool
   UServer::isAnotherThread() const
   {
