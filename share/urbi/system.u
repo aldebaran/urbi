@@ -34,12 +34,12 @@ do (System)
   function assert_neg_op (op)
   {
     var ops =
-      (
-        '==':  "!="
-        '===': "!=="
-        '<':   ">="
-        '<=':  ">"
-      );
+      [
+        "=="  => "!=",
+        "===" => "!==",
+        "<"   => ">=",
+        "<="  => ">"
+      ];
     for (var p: ops)
       ops[p.second] = p.first;
     ops.getWithDefault(op, "(! %s)" % op);
@@ -76,14 +76,14 @@ do (System)
   /// assert_eq(Lhs, Rhs) and so forth.
   // Cannot do this, as we don't have Dictionary.each yet.
   //for (var p :
-  //      (
-  //        assert_eq: "=="
-  //        assert_ge: ">="
-  //        assert_gt: ">"
-  //        assert_le: "<="
-  //        assert_lt: "<"
-  //        assert_ne: "!="
-  //      ))
+  //      [
+  //        "assert_eq" => "=="
+  //        "assert_ge" => ">="
+  //        "assert_gt" => ">"
+  //        "assert_le" => "<="
+  //        "assert_lt" => "<"
+  //        "assert_ne" => "!="
+  //      ])
   //  setSlot(p.first,
   //          function () {
   //            call.args.insertFront(p.second) |

@@ -44,13 +44,15 @@ do (Global.Dictionary)
   function asString()
   {
     var sep = "" |
-    var res = "Dictionary {" |
+    var res = "[" |
     for| (var k: keys)
     {
       res += sep + k.asPrintable + " => " + get(k).asPrintable |
       sep = ", " |
     }|
-    res +  "}"
+    if (!size)
+      res += " => " |
+    res +  "]"
   };
 
   function getWithDefault(name, otherwise, insert = false)

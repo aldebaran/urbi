@@ -560,6 +560,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "<="            RETURN_OP(LT_EQ);
 "<<"            RETURN_OP(LT_LT);
 "=="            RETURN_OP(EQ_EQ);
+"=>"            RETURN(EQ_GT);
 "==="           RETURN_OP(EQ_EQ_EQ);
 "!="            RETURN_OP(BANG_EQ);
 "!=="           RETURN_OP(BANG_EQ_EQ);
@@ -588,7 +589,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "]"             PRE_POP();     RETURN(RBRACKET);
 "{"             PRE_PUSH('}'); RETURN(LBRACE);
 "}"             PRE_POP();     RETURN(RBRACE);
-
 
 "&"             RETURN_FLAVOR(AMPERSAND, and);
 "|"             RETURN_FLAVOR(PIPE, pipe);

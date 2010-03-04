@@ -16,7 +16,7 @@ objects.
 
 \begin{urbiscript}[firstnumber=1]
 var d = Dictionary.new("one", 1, "two", 2);
-[00000001] Dictionary {"one" => 1, "two" => 2}
+[00000001] ["one" => 1, "two" => 2]
 for (var p : d)
   echo (p.first + " -> " + p.second);
 [00000003] *** one -> 1
@@ -32,7 +32,6 @@ d.getWithDefault("four", 4);
 [00000007] 4
 \end{urbiscript}
 
-
 \subsection{Prototypes}
 
 \begin{itemize}
@@ -46,7 +45,7 @@ The Dictionary constructor takes arguments by pair (key, value).
 
 \begin{urbiscript}
 Dictionary.new("one", 1, "two", 2);
-[00000000] Dictionary {"one" => 1, "two" => 2}
+[00000000] ["one" => 1, "two" => 2]
 \end{urbiscript}
 
 \subsection{Slots}
@@ -97,7 +96,7 @@ Dictionary.new.empty;
 
 \begin{urbiscript}
 Dictionary.new("one", 1, "two", 2).erase("two");
-[00386250] Dictionary {"one" => 1}
+[00386250] ["one" => 1]
 \end{urbiscript}
 
 \item \lstinline|get(\var{key})|\\
@@ -150,7 +149,7 @@ do (Dictionary.new("one", 1))
 
 \begin{urbiscript}
 Dictionary.clone.init("one", 1, "two", 2);
-[00000000] Dictionary {"one" => 1, "two" => 2}
+[00000000] ["one" => 1, "two" => 2]
 \end{urbiscript}
 
 \item \lstinline|keys()|\\
@@ -178,7 +177,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 
 \begin{urbiscript}
 Dictionary.new.set("one", 2).set("one", 1);
-[00000000] Dictionary {"one" => 1}
+[00000000] ["one" => 1]
 \end{urbiscript}
 
 \item \lstinline|size|\\

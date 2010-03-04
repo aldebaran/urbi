@@ -100,6 +100,17 @@
       mods[mod.first] = mod.second;
     }
 
+    static void
+    assocs_add(parser::ParserImpl& up, const ast::loc& loc,
+                  ast::modifiers_type& mods,
+                  const ::ast::Factory::modifier_type& mod)
+    {
+      if (libport::mhas(mods, mod.first))
+        up.warn(loc,
+                libport::format("key redefined: %s", mod.first));
+      mods[mod.first] = mod.second;
+    }
+
     /// Use the scanner in the right parser::ParserImpl.
     static
     inline
@@ -298,6 +309,7 @@
 %left  "*" "/" "%"
 %right "!" "compl" "++" "--" UNARY     /* Negation--unary minus */
 %right "**"
+%nonassoc "=>"
 %left  "("
 %nonassoc "["
 %left  "."
@@ -554,7 +566,6 @@ k1_id:
 
 
 %type <::ast::Factory::modifier_type> modifier;
-%type <ast::rDictionary> dictionary;
 
 modifier:
   "identifier" ":" exp
@@ -563,18 +574,6 @@ modifier:
     $$.second = $3;
   }
 ;
-
-dictionary:
-  dictionary modifier
-  {
-    std::swap($$, $1);
-    modifiers_add(up, @2, $$->value_get(), $2);
-  }
-| modifier
-  {
-    $$ = new ast::Dictionary(@$, 0, ast::modifiers_type());
-    modifiers_add(up, @1, $$->value_get(), $1);
-  }
 
 /*-------------------.
 | Stmt: Assignment.  |
@@ -591,10 +590,6 @@ exp:
                            new ast::modifiers_type(d->value_get()));
     else
       $$ = new ast::Assign(@$, $1, $3, 0);
-  }
-| "(" dictionary ")"
-  {
-    $$ = $2;
   }
 | exp modifier
   {
@@ -997,6 +992,47 @@ duration:
 | duration "duration" { $$ = $1 + $2; }
 ;
 
+/*-------------.
+| Dictionary.  |
+`-------------*/
+
+%token EQ_GT "=>";
+
+%type <ast::Factory::modifier_type> assoc;
+%type <ast::rDictionary> assocs.1 dictionary;
+
+assoc:
+  string "=>" exp
+  {
+    $$.first = libport::Symbol($1);
+    $$.second = $3;
+  }
+;
+
+assocs.1:
+  assoc
+  {
+    $$ = new ast::Dictionary(@$, 0, ast::modifiers_type());
+    assocs_add(up, @1, $$->value_get(), $1);
+  }
+| assocs.1 "," assoc
+  {
+    std::swap($$, $1);
+    assocs_add(up, @3, $$->value_get(), $3);
+  }
+;
+
+dictionary:
+  "[" "=>" "]"
+  {
+    $$ = new ast::Dictionary(@$, 0, ast::modifiers_type());
+  }
+| "[" assocs.1 "]"
+  {
+    std::swap($$, $2);
+  }
+;
+
 
 /*-----------.
 | Literals.  |
@@ -1008,6 +1044,7 @@ exp:
 | duration       { $$ = MAKE(float, @$, $1);  }
 | string         { $$ = MAKE(string, @$, $1); }
 | "[" exps "]"   { $$ = MAKE(list, @$, $2); }
+| dictionary     { $$ = $1; }
 ;
 
 %token <std::string> STRING "string";

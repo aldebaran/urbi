@@ -389,9 +389,9 @@ locateSlot("doesNotExist").isNil;
 2.properties("foo");
 [00238495:error] !!! lookup failed: foo
 do (2) { var foo = "foo" }.properties("foo");
-[00238501] Dictionary {"constant" => false}
+[00238501] ["constant" => false]
 do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
-[00238502] Dictionary {"bar" => "bar", "constant" => false}
+[00238502] ["bar" => "bar", "constant" => false]
 \end{urbiscript}
 
 \item \lstinline|removeProperty(\var{slotName}, \var{propName})|\\
@@ -405,7 +405,7 @@ do (2)
   foo->bar = "bar";
   removeProperty("foo", "bar");
 }.properties("foo");
-[00238502] Dictionary {"constant" => false}
+[00238502] ["constant" => false]
 
 2.removeProperty("foo", "bar");
 [00000072:error] !!! lookup failed: foo
