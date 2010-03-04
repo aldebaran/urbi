@@ -999,7 +999,7 @@ duration:
 %token EQ_GT "=>";
 
 %type <ast::Factory::modifier_type> assoc;
-%type <ast::rDictionary> assocs.1 dictionary;
+%type <ast::rDictionary> assocs assocs.1 dictionary;
 
 assoc:
   string "=>" exp
@@ -1022,12 +1022,17 @@ assocs.1:
   }
 ;
 
+assocs:
+  assocs.1     { std::swap($$, $1); }
+| assocs.1 "," { std::swap($$, $1); }
+;
+
 dictionary:
   "[" "=>" "]"
   {
     $$ = new ast::Dictionary(@$, 0, ast::modifiers_type());
   }
-| "[" assocs.1 "]"
+| "[" assocs "]"
   {
     std::swap($$, $2);
   }
