@@ -11,12 +11,12 @@
 class Global.Pattern
 {
   var pattern;
-  var bindings = Dictionary.new;
+  var bindings = [ => ];
 
   function init(p)
   {
     pattern = p |
-    bindings = Dictionary.new |
+    bindings = [ => ] |
   };
 
   function match(value)

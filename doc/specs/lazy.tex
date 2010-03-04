@@ -71,7 +71,7 @@ class UnaryLazy
 {
   function init(f)
   {
-    results = Dictionary.new;
+    results = [ => ];
     func = f;
   };
   function value(p)

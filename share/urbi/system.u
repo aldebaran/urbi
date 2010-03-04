@@ -38,7 +38,7 @@ do (System)
         "=="  => "!=",
         "===" => "!==",
         "<"   => ">=",
-        "<="  => ">"
+        "<="  => ">",
       ];
     for (var p: ops)
       ops[p.second] = p.first;
@@ -77,12 +77,12 @@ do (System)
   // Cannot do this, as we don't have Dictionary.each yet.
   //for (var p :
   //      [
-  //        "assert_eq" => "=="
-  //        "assert_ge" => ">="
-  //        "assert_gt" => ">"
-  //        "assert_le" => "<="
-  //        "assert_lt" => "<"
-  //        "assert_ne" => "!="
+  //        "assert_eq" => "==",
+  //        "assert_ge" => ">=",
+  //        "assert_gt" => ">",
+  //        "assert_le" => "<=",
+  //        "assert_lt" => "<",
+  //        "assert_ne" => "!=",
   //      ])
   //  setSlot(p.first,
   //          function () {

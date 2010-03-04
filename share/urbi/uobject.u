@@ -51,9 +51,9 @@ do (Global.UObject)
   {
     // COW
     updateTask = Tag.new;
-    remoteEventMap = Dictionary.new;
+    remoteEventMap = [ => ];
     var this.handle = WeakPointer.new;
-    timerTask = Dictionary.new;
+    timerTask = [ => ];
   };
 
   function destroy()
@@ -121,7 +121,7 @@ do (Global.UObject)
     if (interval < minimumInterval)
       interval = minimumInterval;
     if (!hasLocalSlot("timerTask"))
-      timerTask = Dictionary.new;
+      timerTask = [ => ];
     var tag = Tag.new;
     tag: detach({loop{ func(); sleep(interval)}}) |
     timerTask[tagName] = tag;
@@ -411,7 +411,7 @@ class Global.'external'
       uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s)) |
     lobby.removeSlot(objname)|
     uobjects.getSlot(objname).setSlot("lobby", lobby) |
-    uobjects.getSlot(objname).setSlot("notifies", Dictionary.new) |
+    uobjects.getSlot(objname).setSlot("notifies", [ => ]) |
     uobjects.getSlot(objname).init() |
     ("external object "+objname).print|
     var chan = Channel.new(MODULE_TAG)|
@@ -454,8 +454,8 @@ class Global.'external'
     // Refcount number of binds to this var
     if (!lobby.hasLocalSlot("__bindingCount"))
     {
-      var lobby.__bindingCount = Dictionary.new |
-      var lobby.__bindingFunc = Dictionary.new
+      var lobby.__bindingCount = [ => ] |
+      var lobby.__bindingFunc = [ => ]
     } |
     var currentCount = lobby.__bindingCount.getWithDefault(fullname, 0) |
     lobby.__bindingCount[fullname] = currentCount + 1 |

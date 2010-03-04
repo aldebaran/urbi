@@ -18,9 +18,9 @@ objects.
 var d = Dictionary.new("one", 1, "two", 2);
 [00000001] ["one" => 1, "two" => 2]
 for (var p : d)
-  echo (p.first + " -> " + p.second);
-[00000003] *** one -> 1
-[00000002] *** two -> 2
+  echo (p.first + " => " + p.second);
+[00000003] *** one => 1
+[00000002] *** two => 2
 "three" in d;
 [00000004] false
 d["three"];
@@ -45,6 +45,27 @@ The Dictionary constructor takes arguments by pair (key, value).
 
 \begin{urbiscript}
 Dictionary.new("one", 1, "two", 2);
+[00000000] ["one" => 1, "two" => 2]
+\end{urbiscript}
+
+The output generated for dictionary can also be used to create a
+Dictionary.  This syntax is similar to Lists.
+
+\begin{urbiscript}
+["one" => 1, "two" => 2];
+[00000000] ["one" => 1, "two" => 2]
+[ => ];
+[00000000] [ => ]
+\end{urbiscript}
+
+An extra comma can be added at the end of the list without changing the
+created Dictionary.
+
+\begin{urbiscript}
+[
+  "one" => 1,
+  "two" => 2,
+];
 [00000000] ["one" => 1, "two" => 2]
 \end{urbiscript}
 

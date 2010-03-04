@@ -10,7 +10,7 @@
 
 class System.PackageInfo
 {
-  var components = Dictionary.new;
+  var components = [ => ];
 
   var dependencies = [];
   function init (var name)

@@ -85,7 +85,9 @@ namespace rewrite
           % new ast::Assign(loc, new_clone(tgt),
                             factory_->make_call(loc, SYMBOL(v)), 0));
 
-    PARAMETRIC_AST(dict, "Dictionary.new");
+    // Generating a filled Dictionary would be more efficient because the
+    // ast::Dictionary node is converted into the object by the interpreter.
+    PARAMETRIC_AST(dict, "[ => ]");
     ast::rExp modifiers = exp(dict);
     foreach (const ast::modifiers_type::value_type& elt, source)
     {
