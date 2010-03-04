@@ -27,6 +27,17 @@ New features:
 - List.subset
 - Object.getLocalSlot.
 
+- Dictionary can now be created with literals.
+
+     [ => ]
+     ["a" => 1, "b" => 2, "c" => 3]
+
+  in addition to
+
+     Dictionary.new
+     Dictionary.new("a", 1, "b", 2, "c", 3)
+
+
 UObjects
 ========
 
