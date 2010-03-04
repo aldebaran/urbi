@@ -38,6 +38,7 @@ several other literals, such as:
 \item[floats] floating point numbers.
 \item[strings] character strings.
 \item[lists] ordered collection of values.
+\item[dictionary] unordered collection of associations.
 \item[nil] neutral value. Think of it as the value that fits anywhere.
 \item[void] absence of value. Think of it as the value that fits nowhere.
 \end{description}
@@ -53,14 +54,16 @@ These literal values can be obtained with the syntax presented below.
 [00000000] "string"
 [1, 2, "a", "b"]; // List literal.
 [00000000] [1, 2, "a", "b"]
+["a" => 1, "b" => 2]; // Dictionary literal.
+[00000000] ["a" => 1, "b" => 2]
 nil;
 void;
 \end{urbiscript}
 
 This listing highlights some point:
 \begin{itemize}
-\item Lists in \us are heterogeneous. That is, one list can hold
-  values of different types.
+\item Lists and Dictionaries in \us are heterogeneous. That is, one list can
+  hold values of different types.
 \item The printing of nil and void is empty.
 \end{itemize}
 

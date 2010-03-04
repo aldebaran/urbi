@@ -268,6 +268,25 @@ pi == 180deg;
 pi == 200grad;
 \end{urbiassert}
 
+\subsubsection{Dictionaries}
+\label{sec:us-syn-lit-dictionary}
+
+Literal \dfn{dictionaries} are represented with a comma-separated,
+potentially empty list of arbitrary associations enclosed in square brackets
+(\lstinline|[]|), as shown in the listing below.  Empty dictionaries are
+represented with an association arrow between the brackets to avoid
+confusion with empty lists.  See \refObject{Dictionary} for more details.
+
+Each association is composed of a key, which is represented by a string, an
+arrow (\lstinline|=>|) and an expression.
+
+\begin{urbiscript}
+[ => ]; // The empty dictionary
+[00000000] [ => ]
+["a" => 1, "b" => 2, "c" => 3];
+[00000000] ["a" => 1, "b" => 2, "c" => 3]
+\end{urbiscript}
+
 \subsubsection{Durations}
 
 \dfn{Durations} are floats (see \autoref{sec:us-syn-lit-float})
