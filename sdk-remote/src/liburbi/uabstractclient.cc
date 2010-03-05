@@ -316,6 +316,29 @@ namespace urbi
       return send("]");
     }
     break;
+    case DATA_DICTIONARY:
+    {
+      send("[");
+      UDictionary::const_iterator i = v.dictionary->begin();
+      UDictionary::const_iterator i_end = v.dictionary->end();
+      if (i == i_end)
+        send("=>");
+      else
+      {
+        while (true)
+        {
+          send("\"%s\"=>", i->first.c_str());
+          send(i->second);
+          if (++i != i_end)
+          {
+            send(" , ");
+            break;
+          }
+        }
+      }
+      return send("]");
+    }
+    break;
     case DATA_OBJECT:
     {
       send("OBJ %s [", v.object->refName.c_str());

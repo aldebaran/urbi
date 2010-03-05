@@ -311,6 +311,7 @@ namespace urbi
 
   UVALUE_CASTER_DECLARE(UBinary);
   UVALUE_CASTER_DECLARE(UList);
+  UVALUE_CASTER_DECLARE(UDictionary);
   UVALUE_CASTER_DECLARE(UObjectStruct);
   UVALUE_CASTER_DECLARE(const char*);
 

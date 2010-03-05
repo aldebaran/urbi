@@ -50,6 +50,14 @@ namespace urbi
     return UList();
   }
 
+  UDictionary
+  uvalue_caster<UDictionary>::operator() (UValue& v)
+  {
+    if (v.type == DATA_DICTIONARY)
+      return UDictionary(*v.dictionary);
+    return UDictionary();
+  }
+
   UObjectStruct
   uvalue_caster<UObjectStruct>::operator() (UValue& v)
   {
@@ -276,6 +284,9 @@ namespace urbi
       case DATA_LIST:
 	s << *list;
         break;
+      case DATA_DICTIONARY:
+        dictionary_print(s);
+        break;
       case DATA_OBJECT:
 	s << *object;
         break;
@@ -283,6 +294,33 @@ namespace urbi
         break;
     }
     return s;
+  }
+
+  std::ostream&
+  UValue::dictionary_print(std::ostream& s) const
+  {
+    if (type != DATA_DICTIONARY)
+      return s;
+
+    s << "[";
+    UDictionary::const_iterator i = dictionary->begin();
+    UDictionary::const_iterator i_end = dictionary->end();
+    if (i == i_end)
+      s << "=>";
+    else
+    {
+      while (true)
+      {
+        s << "\"" << i->first << "\"" << "=>";
+        i->second.print(s);
+        if (++i != i_end)
+        {
+          s << " , ";
+          break;
+        }
+      }
+    }
+    return s << "]";
   }
 
 
@@ -383,6 +421,9 @@ namespace
       case DATA_LIST:
 	delete list;
 	break;
+      case DATA_DICTIONARY:
+        delete dictionary;
+        break;
       case DATA_OBJECT:
 	delete object;
 	break;
@@ -408,6 +449,7 @@ namespace
         return lexical_cast<ufloat>(*stringValue);
       case DATA_BINARY:
       case DATA_LIST:
+      case DATA_DICTIONARY:
       case DATA_OBJECT:
       case DATA_VOID:
         break;
@@ -496,6 +538,9 @@ namespace
       case DATA_LIST:
 	list = new UList(*v.list);
 	break;
+      case DATA_DICTIONARY:
+        dictionary = new UDictionary(*v.dictionary);
+        break;
       case DATA_OBJECT:
 	object = new UObjectStruct(*v.object);
 	break;

@@ -16,6 +16,7 @@
 
 # include <vector>
 
+# include <libport/hash.hh>
 # include <libport/traits.hh>
 # include <libport/ufloat.h>
 
@@ -35,6 +36,7 @@ namespace urbi
     DATA_STRING,
     DATA_BINARY,
     DATA_LIST,
+    DATA_DICTIONARY,
     DATA_OBJECT,
     DATA_VOID
   };
@@ -90,6 +92,12 @@ namespace urbi
 
   URBI_SDK_API
   std::ostream& operator<< (std::ostream& o, const UList& t);
+
+
+  /*--------------.
+  | UDictionary.  |
+  `--------------*/
+  typedef boost::unordered_map<std::string, UValue> UDictionary;
 
 
   /*--------------.
@@ -154,6 +162,7 @@ namespace urbi
       std::string* stringValue; ///< value if of type DATA_STRING
       UBinary* binary;          ///< value if of type DATA_BINARY
       UList* list;              ///< value if of type DATA_LIST
+      UDictionary* dictionary;  ///< value if of type DATA_DICTIONARY
       UObjectStruct* object;    ///< value if of type DATA_OBJ
       void* storage;            ///< internal
     };
@@ -201,6 +210,7 @@ namespace urbi
     // Others.
     CTOR_AND_ASSIGN_AND_COMMA(const UBinary&);
     CTOR_AND_ASSIGN_AND_COMMA(const UList&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UDictionary&);
     CTOR_AND_ASSIGN_AND_COMMA(const UObjectStruct&);
     CTOR_AND_ASSIGN_AND_COMMA(const USound&);
     CTOR_AND_ASSIGN_AND_COMMA(const UImage&);
@@ -220,6 +230,9 @@ namespace urbi
 
     /// Deep copy.
     operator UList() const;
+
+    /// Deep copy.
+    operator UDictionary() const;
 
     /// Shallow copy.
     operator UImage() const;
@@ -242,6 +255,10 @@ namespace urbi
 
     /// Print itself on \c s, and return it.
     std::ostream& print(std::ostream& s) const;
+
+    /// Print the dictionary on \c s and return it.
+    std::ostream& dictionary_print(std::ostream& s) const;
+
     // Huge hack.
     static const bool copy = true;
   };
