@@ -334,7 +334,19 @@ namespace urbi
       }
       std::stringstream s;
       value_.print(s);
-      return s.str();
+      std::string res = s.str();
+      if (value_.type == urbi::DATA_BINARY)
+      {
+        /** Problem:  the Binary was printed with ';' as a separator, and we
+        *  need '\n'. The clean thing would be to convert the UBinary to
+        * its rObject version and call asPrintable, but it implies an extra
+        * copy.
+        */
+        size_t pos = res.find_first_of(";");
+        if (pos != res.npos)
+          res[pos] = '\n';
+      }
+      return res;
     }
 
     const urbi::UValue&
