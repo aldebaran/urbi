@@ -16,6 +16,7 @@
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
+#include <urbi/object/dictionary.hh>
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
 #include <object/uvar.hh>
@@ -33,6 +34,8 @@ urbi::UDataType uvalue_type(const object::rObject& o)
     return urbi::DATA_STRING;
   if (o->as<object::List>())
     return urbi::DATA_LIST;
+  if (o->as<object::Dictionary>())
+    return urbi::DATA_DICTIONARY;
   if (is_a(o, Binary))
     return urbi::DATA_BINARY;
   if (o == object::void_class)
@@ -63,6 +66,14 @@ urbi::UValue uvalue_cast(const object::rObject& o)
     object::List::value_type& t = o.cast<object::List>()->value_get();
     foreach (const object::rObject& co, t)
       res.list->array.push_back(new urbi::UValue(uvalue_cast(co)));
+  }
+  else if (object::rDictionary s = o->as<object::Dictionary>())
+  {
+    res.type = urbi::DATA_DICTIONARY;
+    res.dictionary = new urbi::UDictionary;
+    object::Dictionary::value_type& r = s->value_get();
+    foreach (const object::Dictionary::value_type::value_type& d, r)
+      (*res.dictionary)[libport::Symbol(d.first)] = uvalue_cast(d.second);
   }
   else if (is_a(o, Binary))
   {
@@ -124,6 +135,15 @@ object_cast(const urbi::UValue& v)
       foreach (urbi::UValue *cv, v.list->array)
 	l->value_get().push_back(object_cast(*cv));
       res = l;
+      break;
+    }
+
+    case urbi::DATA_DICTIONARY:
+    {
+      object::rDictionary r = new object::Dictionary();
+      foreach (const urbi::UDictionary::value_type& d, *v.dictionary)
+        r->set(libport::Symbol(d.first), object_cast(d.second));
+      res = r;
       break;
     }
 
