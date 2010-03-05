@@ -34,10 +34,11 @@ d.getWithDefault("four", 4);
 
 \subsection{Prototypes}
 
-\begin{itemize}
-\item \refObject{Object}
-\item \refObject{RangeIterable}
-\end{itemize}
+\begin{refObjects}
+\item[Comparable]
+\item[Object]
+\item[RangeIterable]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -234,6 +235,14 @@ Dictionary.new.set("one", 2).set("one", 1);
 
 \begin{urbiassert}
 Dictionary.new("one", 1)["one"] == 1;
+\end{urbiassert}
+
+\item \lstinline|'=='(\var{that})|\\
+  Whether \lstinline|this| equals \var{that}.  This suppose that elements
+  contained inside the dictionary are \lstinline|Comparable|.
+\begin{urbiassert}
+[ => ] == [ => ];
+["a" => 1, "b" => 2] == ["b" => 2, "a" => 1];
 \end{urbiassert}
 
 \end{itemize}

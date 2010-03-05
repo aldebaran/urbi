@@ -10,7 +10,8 @@
 
 do (Global.Dictionary)
 {
-  protos << Global.RangeIterable;
+  protos << Global.RangeIterable
+         << Global.Comparable;
 
   class KeyError: Exception
   {
@@ -75,5 +76,15 @@ do (Global.Dictionary)
     v
   };
 
-};
+  // Compare two dictionaries.  This suppose that elements are Comparable.
+  function '==' (rhs)
+  {
+    if (size != rhs.size)
+      return false |
+    for (var k: keys)
+      if (!rhs.has(k) || get(k) != rhs.get(k))
+        return false |
+    return true
+  };
 
+};
