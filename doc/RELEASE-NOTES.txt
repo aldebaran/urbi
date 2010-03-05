@@ -38,6 +38,18 @@ New features:
      Dictionary.new
      Dictionary.new("a", 1, "b", 2, "c", 3)
 
+- Tuple can now be created with literals.
+
+     ()
+     (1,)
+     (1, 2, 3)
+
+  in addition to
+
+     Tuple.new([]);
+     Tuple.new([1]);
+     Tuple.new([1, 2, 3]);
+
 
 UObjects
 ========

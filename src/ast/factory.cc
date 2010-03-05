@@ -951,6 +951,14 @@ namespace ast
     return exp(desugar % duration % body);
   }
 
+  // (a, b, c) --> Tuple.new([a, b, c])
+  rExp
+  Factory::make_tuple(const location& loc,
+                      exps_type* exps) // const
+  {
+    PARAMETRIC_AST(ast, "Tuple.new(%exp:1)");
+    return exp(ast % make_list(loc, exps));
+  }
 
   rExp
   Factory::make_waituntil(const location&,

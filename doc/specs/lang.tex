@@ -425,6 +425,29 @@ echo("a\\nb");
 
 See \refObject{String} for more details.
 
+\subsubsection{Tuples}
+\label{sec:us-syn-lit-tuples}
+
+Literal \dfn{tuples} are represented with a comma-separated, potentially
+empty list of arbitrary elements enclosed in parenthesis (\lstinline|()|),
+as shown in the listing below.  One extra comma can be added after the last
+element.  To avoid confusion between a 1 member \lstinline|Tuple| and a
+parenthesized expression, the extra comma must be added.  See
+\refObject{Tuple} for more details.
+
+\begin{urbiscript}
+();
+[00000000] ()
+(1,);
+[00000000] (1,)
+(1, 2);
+[00000000] (1, 2)
+(1, 2, 3, 4,);
+[00000000] (1, 2, 3, 4)
+\end{urbiscript}
+
+
+
 \subsection{Statement Separators}
 \label{sec:lang:separators}
 

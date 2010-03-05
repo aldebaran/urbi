@@ -1038,6 +1038,22 @@ dictionary:
   }
 ;
 
+/*--------.
+| Tuple.  |
+`--------*/
+
+%type <ast::exps_type*> tuple.exps tuple;
+// %type <ast::rExp> tuple tuple.exps;
+
+tuple.exps:
+  /* empty */ { $$ = new ast::exps_type; }
+| exps.1 ","  { std::swap($$, $1); }
+| exps.2      { std::swap($$, $1); }
+;
+
+tuple:
+  "(" tuple.exps ")"   { $$ = $2; }
+;
 
 /*-----------.
 | Literals.  |
@@ -1050,6 +1066,7 @@ exp:
 | string         { $$ = MAKE(string, @$, $1); }
 | "[" exps "]"   { $$ = MAKE(list, @$, $2); }
 | dictionary     { $$ = $1; }
+| tuple          { $$ = MAKE(tuple, @$, $1); }
 ;
 
 %token <std::string> STRING "string";
@@ -1297,7 +1314,7 @@ exp:
 | Expressions.  |
 `--------------*/
 
-%type <ast::exps_type*> claims claims.1 exps exps.1 args args.opt;
+%type <ast::exps_type*> claims claims.1 exps exps.1 exps.2 args args.opt;
 
 // claims: a list of "exp"s separated/terminated with semicolons.
 claims:
@@ -1322,6 +1339,10 @@ exps:
 exps.1:
   exp             { $$ = new ast::exps_type; $$->push_back($1); }
 | exps.1 "," exp  { std::swap($$, $1); $$->push_back($3); }
+;
+
+exps.2:
+  exps.1 "," exp  { std::swap($$, $1); $$->push_back($3); }
 ;
 
 // Effective arguments: 0 or more arguments in parens, or nothing.

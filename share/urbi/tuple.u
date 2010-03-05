@@ -19,7 +19,11 @@ class Global.Tuple
 
   function asString ()
   {
-    "(" + members.map(methodToFunction("asPrintable")).join(", ") + ")"
+    var res = "(" |
+    res += members.map(methodToFunction("asPrintable")).join(", ") |
+    if (members.size == 1)
+      res += "," |
+    res + ")"
   };
 
   function '=='(other)

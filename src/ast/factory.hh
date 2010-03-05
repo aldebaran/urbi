@@ -331,6 +331,13 @@ namespace ast
     rExp
     make_timeout(const rExp& duration, const rExp& body) /* const */;
 
+    // (a, b, c) --> Tuple.new([a, b, c])
+    static
+    rExp
+    make_tuple(const location& loc,
+              exps_type* exps = 0) /* const */;
+
+
     /// waituntil (cond ~ duration);
     /// \param duration can be 0.
     static
