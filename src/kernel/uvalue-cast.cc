@@ -146,7 +146,7 @@ object_cast(const urbi::UValue& v)
     break;
 
     case urbi::DATA_VOID:
-      res = object::void_class;
+      res = object::nil_class;
     break;
 
     default:
