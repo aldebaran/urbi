@@ -87,4 +87,15 @@ do (Global.Dictionary)
     return true
   };
 
+  // Pattern matching.
+  function matchAgainst(handler, pattern)
+  {
+    if (!pattern.isA(Dictionary))
+      return false |
+    for| (var k: pattern.keys)
+      if (!has(k) || !handler.matchPattern(pattern[k], this[k]))
+        return false |
+    return true
+  };
+
 };

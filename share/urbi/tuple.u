@@ -45,6 +45,14 @@ class Global.Tuple
   {
     members[n] = v
   };
+
+  // Pattern matching.
+  function matchAgainst(handler, pattern)
+  {
+    if (!pattern.isA(Tuple))
+      return false |
+    return members.matchAgainst(handler, pattern.members)
+  };
 };
 
 {
