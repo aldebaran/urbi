@@ -25,6 +25,7 @@
 #include <libport/cstring>
 #include <libport/debug.hh>
 #include <libport/escape.hh>
+#include <libport/lexical-cast.hh>
 #include <libport/lockable.hh>
 #include <libport/sys/stat.h>
 #include <libport/unistd.h>
@@ -290,12 +291,8 @@ namespace urbi
     {
     case DATA_DOUBLE:
     case DATA_STRING:
-    {
-      std::stringstream s;
-      s << v;
-      return send("%s", s.str().c_str());
-    }
-    break;
+      return send("%s", string_cast(v).c_str());
+      break;
     case DATA_BINARY:
       if (v.binary->type != BINARY_NONE
           && v.binary->type != BINARY_UNKNOWN)
@@ -321,19 +318,18 @@ namespace urbi
       send("[");
       UDictionary::const_iterator i = v.dictionary->begin();
       UDictionary::const_iterator i_end = v.dictionary->end();
+      // Empty dictionary: [=>]
       if (i == i_end)
         send("=>");
       else
       {
-        while (true)
+        while (i != i_end)
         {
-          send("\"%s\"=>", i->first.c_str());
+          send("\"%s\"=>", string_cast(libport::escape(i->first)).c_str());
           send(i->second);
-          if (++i != i_end)
-          {
-            send(" , ");
-            break;
-          }
+          ++i;
+          if (i != i_end)
+            send(",");
         }
       }
       return send("]");

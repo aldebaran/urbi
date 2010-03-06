@@ -95,6 +95,7 @@ namespace urbi
   SET(const UBinary&)
   SET(const UImage&)
   SET(const UList&)
+  SET(const UDictionary&)
   SET(const USound&)
   SET(const std::string&)
   SET(ufloat)
@@ -109,6 +110,7 @@ namespace urbi
 
   GET(UImage)
   GET(UList)
+  GET(UDictionary)
   GET(USound)
   GET(const UBinary&)
   GET(int)

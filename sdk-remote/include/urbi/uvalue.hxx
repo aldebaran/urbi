@@ -13,7 +13,6 @@
 #include <boost/foreach.hpp>
 
 #include <libport/cassert>
-#include <libport/cassert>
 
 namespace urbi
 {
@@ -186,6 +185,7 @@ namespace urbi
   // Others.
   CTOR_AND_ASSIGN_AND_COMMA(const UBinary&);
   CTOR_AND_ASSIGN_AND_COMMA(const UList&);
+  CTOR_AND_ASSIGN_AND_COMMA(const UDictionary&);
   CTOR_AND_ASSIGN_AND_COMMA(const UObjectStruct&);
   CTOR_AND_ASSIGN_AND_COMMA(const USound&);
   CTOR_AND_ASSIGN_AND_COMMA(const UImage&);

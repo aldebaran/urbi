@@ -145,26 +145,79 @@ namespace urbi
 
     if (message[pos] == '[')
     {
-      //list message
-      type = DATA_LIST;
-      list = new UList();
+      // list or dictionary message
       ++pos;
+      int n_elt = 0;
       while (message[pos])
       {
 	SKIP_SPACES();
+        if (!n_elt && message[pos] == '=' && message[pos+1] == '>')
+        {
+          // Detect empty dictionaries.
+          type = DATA_DICTIONARY;
+          dictionary = new UDictionary();
+          pos += 2;
+          SKIP_SPACES();
+          continue;
+        }
 	if (message[pos] == ']')
+        {
+          if (type == DATA_VOID)
+          {
+            type = DATA_LIST;
+            list = new UList();
+          }
 	  break;
-	UValue* v = new UValue();
-	int p = v->parse(message, pos, bins, binpos);
-	if (p < 0)
-	  return p;
-	list->array.push_back(v);
-	pos = p;
+        }
+        UValue* v = new UValue();
+	pos = v->parse(message, pos, bins, binpos);
+	if (pos < 0)
+        {
+          delete v;
+	  return pos;
+        }
+        SKIP_SPACES();
+        // Here is a dictionary key.
+        if ((type == DATA_DICTIONARY || type == DATA_VOID)
+            && message[pos] == '=' && message[pos+1] == '>'
+            && v->type == DATA_STRING)
+        {
+          if (type == DATA_VOID)
+          {
+            type = DATA_DICTIONARY;
+            dictionary = new UDictionary();
+          }
+
+          pos += 2;
+          SKIP_SPACES();
+          // Handle value associated with given key.
+          std::string key = *(v->stringValue);
+          (*dictionary)[key] = UValue();
+          pos = (*dictionary)[key].parse(message, pos, bins, binpos);
+          if (pos < 0)
+          {
+            delete v;
+            return pos;
+          }
+          GD_INFO_DUMP("Is a dictionary.");
+        }
+        else
+        {
+          GD_FINFO_DUMP("Is a list. type:%lu vtype:%lu pos:%lu char:%c ",
+                        type, v->type, pos, message[pos]);
+          if (type == DATA_VOID)
+          {
+            type = DATA_LIST;
+            list = new UList();
+          }
+          list->array.push_back(v);
+        }
 	SKIP_SPACES();
 	//expect , or rbracket
 	if (message[pos] == ']')
 	  break;
         EXPECT(',');
+        ++n_elt;
 	++pos;
       }
 
@@ -305,19 +358,18 @@ namespace urbi
     s << "[";
     UDictionary::const_iterator i = dictionary->begin();
     UDictionary::const_iterator i_end = dictionary->end();
+    // Empty dictionary: [=>]
     if (i == i_end)
       s << "=>";
     else
     {
-      while (true)
+      while (i != i_end)
       {
-        s << "\"" << i->first << "\"" << "=>";
+        s << "\"" << libport::escape(i->first) << "\"=>";
         i->second.print(s);
-        if (++i != i_end)
-        {
-          s << " , ";
-          break;
-        }
+        ++i;
+        if (i != i_end)
+          s << ",";
       }
     }
     return s << "]";
@@ -402,6 +454,8 @@ namespace
 #undef UVALUE_BINARY
 
   UVALUE_OPERATORS(const UList& v, DATA_LIST, list, new UList(v))
+  UVALUE_OPERATORS(const UDictionary& d,
+                   DATA_DICTIONARY, dictionary, new UDictionary(d));
   UVALUE_OPERATORS(const UObjectStruct& v,
 		   DATA_OBJECT, object, new UObjectStruct(v))
 
@@ -509,6 +563,13 @@ namespace
     if (type == DATA_LIST)
       return UList(*list);
     return UList();
+  }
+
+  UValue::operator UDictionary() const
+  {
+    if (type == DATA_DICTIONARY)
+      return UDictionary(*dictionary);
+    return UDictionary();
   }
 
   UValue& UValue::operator= (const UValue& v)

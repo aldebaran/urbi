@@ -63,15 +63,17 @@ namespace urbi
     UVar& operator=(ufloat);
     UVar& operator=(const std::string&);
     /// Deep copy.
-    UVar& operator=(const UBinary &);
+    UVar& operator=(const UBinary&);
     /// Deep copy.
-    UVar& operator=(const UImage &i);
+    UVar& operator=(const UImage& i);
     /// Deep copy.
-    UVar& operator=(const USound &s);
+    UVar& operator=(const USound& s);
 
-    UVar& operator=(const UList &l);
+    UVar& operator=(const UList& l);
 
-    UVar& operator=(const UValue &v);
+    UVar& operator=(const UDictionary& d);
+
+    UVar& operator=(const UValue& v);
 
     operator int() const;
     operator bool() const;
@@ -95,6 +97,7 @@ namespace urbi
     operator ufloat() const;
     operator std::string() const;
     operator UList() const;
+    operator UDictionary() const;
 
     /// No effect in plugin mode. In remote mode, updates the value
     /// once asynchronously.
