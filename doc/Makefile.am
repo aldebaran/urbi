@@ -59,7 +59,6 @@ dist_doc_DATA =					\
 ## -------------- ##
 
 PDFS =						\
-  urbi-faq.pdf					\
   urbi-naming.pdf				\
   urbi-sdk.pdf
 EXTRA_DATA += $(PDFS)
