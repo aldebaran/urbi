@@ -1,4 +1,4 @@
-personal_ws-1.1 en 751 utf-8
+personal_ws-1.1 en 752 utf-8
 UStartHub
 bindUrbiMethod
 tuples
@@ -64,8 +64,8 @@ quux
 onboard
 cpp
 runningcommands
-dll
 faq
+dll
 iterable
 OpenSSL
 automain
@@ -143,8 +143,8 @@ myCamera
 halfPi
 PrimitiveError
 RGBLed
-cameraL
 Subsubsection
+cameraL
 exn
 README
 iff
@@ -160,8 +160,8 @@ UNotifyOnRequest
 TerminateException
 func
 cancelFindBase
-myuobject
 myUObject
+myuobject
 uids
 cameraval
 waituntilWalkIsFinished
@@ -190,8 +190,8 @@ cerr
 hisMind
 succ
 param
-islower
 isLower
+islower
 LinearSpeedMotor
 slotNames
 setPositions
@@ -352,8 +352,8 @@ getMine
 realloc
 socat
 argsCount
-osx
 pos
+osx
 getLocalSlot
 pre
 RotationalSpeedMotor
@@ -380,6 +380,7 @@ headSensorM
 timesTen
 Damerau
 GyroSensor
+nonInterruptible
 sep
 getLazyLocalSlot
 headSensorR
@@ -420,8 +421,8 @@ toAscii
 callMessage
 UDP
 UImageFormat
-getslot
 getSlot
+getslot
 physicsReset
 src
 cout
@@ -472,8 +473,8 @@ wav
 uob
 TextTo
 getProperty
-voicexml
 VoiceXML
+voicexml
 getImage
 wbt
 getenv
@@ -488,8 +489,8 @@ notifyAccess
 elbowR
 middleware
 tts
-UObjects
 uobjects
+UObjects
 USB
 timestamp
 loadFile
@@ -500,8 +501,8 @@ SIGKILL
 resendBanner
 arity
 xfov
-xFF
 xfF
+xFF
 writeToVar
 distanceMin
 usr
@@ -543,8 +544,8 @@ waituntil
 htmldir
 ArithPair
 ArgumentType
-isvoid
 isVoid
+isvoid
 chmod
 searchFile
 bc
@@ -583,12 +584,12 @@ az
 cp
 fA
 chargeStop
-UBinary
 ubinary
+UBinary
 fb
 fooobar
-myTag
 mytag
+myTag
 valueChanged
 bz
 UValues
@@ -655,21 +656,21 @@ rlwrap
 trackL
 oo
 UProp
-o's
 os
+o's
 MyVar
 trackR
 allProto
 rf
 accelX
-p's
 ps
+p's
 accelY
 accelZ
 zxf
 playSound
-ufactory
 UFactory
+ufactory
 px
 py
 te
