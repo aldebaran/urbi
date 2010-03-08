@@ -138,11 +138,13 @@ namespace rewrite
     // Simple assignment: x = value.
     if (ast::rCall call = assign->what_get().unsafe_cast<ast::Call>())
     {
-      if (call->arguments_get())
-        errors_.error(assign->location_get(), "cannot assign a routine call");
-      result_ = new ast::Assignment(loc, call, assign->value_get());
-      result_ = recurse(result_);
-      return;
+      // except for f(...) which is considered as a pattern matching.
+      if (!call->arguments_get())
+      {
+        result_ = new ast::Assignment(loc, call, assign->value_get());
+        result_ = recurse(result_);
+        return;
+      }
     }
 
     // Subscript assignment: x[y] = value.
@@ -184,7 +186,7 @@ namespace rewrite
 
     ast::rExp pattern = assign->what_get();
     rewrite::PatternBinder bind
-      (factory_->make_call(loc, SYMBOL(DOLLAR_pattern)), loc, true);
+      (factory_->make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
     bind(pattern.get());
 
     rewrite.location_set(assign->location_get());

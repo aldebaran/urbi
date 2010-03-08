@@ -52,6 +52,17 @@ expressions are also accepted.
 \item \lstinline|matchAgainst(\var{handler}, \var{pattern})|\\
   See \refObject{Pattern}.
 
+\begin{urbiscript}
+{
+  // match a tuple
+  (var first, var second) = (1, 2);
+  echo(first);
+  echo(second);
+};
+[00000000] *** 1
+[00000000] *** 2
+\end{urbiscript}
+
 \item \lstinline|'[]'(\var{index})|\\
   Return the \var{index}-th element.  \var{index} must be in bounds.
 \begin{urbiassert}

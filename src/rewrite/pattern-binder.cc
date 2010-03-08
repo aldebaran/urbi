@@ -18,12 +18,10 @@
 namespace rewrite
 {
   PatternBinder::PatternBinder(ast::rLValue pattern,
-                               const ast::loc& loc,
-                               bool assign)
+                               const ast::loc& loc)
     : bindings_(new ast::Pipe(loc, ast::exps_type()))
     , pattern_(pattern)
     , i_(0)
-    , assign_(assign)
     , factory_(new ast::Factory())
   {}
 
@@ -69,47 +67,6 @@ namespace rewrite
     i_++;
     result_ = to_binding(binding);
     bind(binding->what_get(), true);
-  }
-
-  void
-  PatternBinder::visit(const ast::Call* call)
-  {
-    if (call->arguments_get() || !assign_)
-    {
-      super_type::visit(call);
-      return;
-    }
-    i_++;
-    result_ = to_binding(call);
-    bind(call, false);
-  }
-
-  void
-  PatternBinder::visit(const ast::Property* prop)
-  {
-    if (!assign_)
-    {
-      super_type::visit(prop);
-      return;
-    }
-
-    i_++;
-    result_ = to_binding(prop);
-    bind(prop, false);
-  }
-
-  void
-  PatternBinder::visit(const ast::Subscript* sub)
-  {
-    if (!assign_)
-    {
-      super_type::visit(sub);
-      return;
-    }
-
-    i_++;
-    result_ = to_binding(sub);
-    bind(sub, false);
   }
 
   ast::rPipe

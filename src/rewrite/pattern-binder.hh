@@ -22,8 +22,7 @@ namespace rewrite
   public:
     typedef ast::Cloner super_type;
     PatternBinder(ast::rLValue pattern,
-                  const ast::loc& loc,
-                  bool assign = false);
+                  const ast::loc& loc);
     ast::rPipe bindings_get() const;
     ast::rExp value_get();
 
@@ -31,9 +30,6 @@ namespace rewrite
     using super_type::visit;
     CONST_VISITOR_VISIT_NODES(
       (Binding)
-      (Call)
-      (Property)
-      (Subscript)
       );
 
   private:
@@ -44,7 +40,6 @@ namespace rewrite
     ast::rPipe declarations_;
     ast::rLValue pattern_;
     int i_;
-    bool assign_;
     std::auto_ptr<ast::Factory> factory_;
   };
 }
