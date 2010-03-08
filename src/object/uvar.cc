@@ -33,23 +33,26 @@ namespace urbi
   namespace object
   {
     static inline void
-    show_exception_message(runner::Runner& r, rObject self, const char* m1,
-                           const char* m2)
+    show_exception_message(runner::Runner& r, rObject self,
+                           const char* m1, const char* m2 = "")
     {
+      std::string msg =
+        libport::format("!!! %s %s.%s%s",
+                        m1,
+                        (self->slot_get(SYMBOL(ownerName))
+                         ->as<String>()->value_get()),
+                        (self->slot_get(SYMBOL(initialName))
+                         ->as<String>()->value_get()),
+                        m2);
+
       r.lobby_get()->call(SYMBOL(send),
-                          new object::String(
-                            m1
-                            + libport::format(
-                              "%s.%s",
-                              self->slot_get(SYMBOL(ownerName))->as<String>()->value_get(),
-                              self->slot_get(SYMBOL(initialName))->as<String>()->value_get()
-                              )
-                            + m2),
-                          new object::String("error"));
+                          new String(msg),
+                          new String("error"));
     }
 
-    static inline void callNotify(runner::Runner& r, rObject self,
-                                  libport::Symbol notifyList)
+    static inline void
+    callNotify(runner::Runner& r, rObject self,
+               libport::Symbol notifyList)
     {
       rList l =
         self->slot_get(notifyList)->slot_get(SYMBOL(values))->as<List>();
@@ -67,8 +70,9 @@ namespace urbi
         }
         catch(UrbiException& e)
         {
-          show_exception_message(r, self,
-                                 "!!! Exception caught while processing notify on ", " :");
+          show_exception_message
+            (r, self,
+             "Exception caught while processing notify on", ":");
           runner::Interpreter& in = dynamic_cast<runner::Interpreter&>(r);
           in.show_exception(e);
 
@@ -79,8 +83,9 @@ namespace urbi
         }
         catch(...)
         {
-          show_exception_message(r, self,
-                                 "!!! Unknown exception called while processing notify on ", "");
+          show_exception_message
+            (r, self,
+             "Unknown exception called while processing notify on");
         }
         if (failed && self->slot_get(SYMBOL(eraseThrowingCallbacks))->as_bool())
         {
