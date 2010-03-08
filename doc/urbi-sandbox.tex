@@ -8,23 +8,6 @@
 \author{Gostai}
 
 \begin{document}
-\NewSection\faqsection {\thesubsubsection}
-
-\Configure{faqsection}
-  {}
-  {}
-  {\addtocounter{subsubsection}{1}%
-    \HCode{<h5 class="subsubsectionHead">}
-    \HCode{<span class="titlemark">}\thesubsubsection   \HCode{</span>}}
-  {\HCode{</h5>}}
-
-\ConfigureToc{faqsection}
-  {\HCode{<span class="subsubsectionToc" >}}
-  { } % Put something here (e.g., a space), we want to display the section name.
-  {} % Put nothing in here, we don't want to display the page number.
-  {\HCode{</span><br />}}
-
-\TocAt*{chapter,section,subsection,subsubsection,faqsection}
 
 \maketitle
 
@@ -96,16 +79,18 @@ This is the second part.
 \chapter{Chapter II.1}
 Body of Chapter II.1.
 
+\let\subsubsectionSave\subsubsection
+\let\subsubsection\faqsection
 \section{Section II.1.1}
 Body of Section II.1.1.
 
 \subsection{Subsection II.1.1.1}
 Body of Subsection II.1.1.1.
 
-\faqsection{FAQsection TITI II.1.1.1.a}
+\faqsection{FAQ II.1.1.1.a}
 Body of Subsection II.1.1.1.a.
 
-\faqsection{FAQsection II.1.1.1.b}
+\faqsection{FAQ II.1.1.1.b}
 Body of Subsection II.1.1.1.b.
 
 \subsection{Subsection II.1.1.2}
@@ -116,6 +101,8 @@ Body of Subsection II.1.1.2.a.
 
 \faqsection{FAQsection II.1.1.2.b}
 Body of Subsection II.1.1.2.b.
+
+\let\subsubsection\subsubsectionSave
 
 \section{Section II.1.2}
 Body of Section II.1.2.
