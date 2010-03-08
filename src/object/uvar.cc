@@ -186,8 +186,8 @@ namespace urbi
     rObject
     UVar::update_(rObject val)
     {
-      // Do not bother with object::UValue for numeric types.
-      if (rUValue uval = val->as<object::UValue>())
+      // Do not bother with UValue for numeric types.
+      if (rUValue uval = val->as<UValue>())
        if (uval->value_get().type == urbi::DATA_DOUBLE)
          val = uval->extract();
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
@@ -234,7 +234,7 @@ namespace urbi
                              : SYMBOL(val));
       if (!fromCXX)
       {
-        if (object::rUValue bv = res->as<object::UValue>())
+        if (rUValue bv = res->as<UValue>())
         {
           if (bv->bypassMode_ && bv->extract() == nil_class)
           {
@@ -255,7 +255,7 @@ namespace urbi
             res = slot_get(slot_get(SYMBOL(owned))->as_bool()
                            ? SYMBOL(valsensor)
                            : SYMBOL(val));
-            if (object::rUValue bv = res->as<object::UValue>())
+            if (rUValue bv = res->as<UValue>())
               return bv->extract();
             else
               return res;
