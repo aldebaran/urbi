@@ -14,7 +14,7 @@ deb:
 				 help2man, imagemagick, libboost-dev,               \
 				 python-yaml, python2.6, socat, tex4ht,             \
 				 texinfo, texlive-base, texlive-latex-extra,        \
-				 valgrind, gnuplot, transfig"
+				 valgrind, gnuplot, transfig, flex"
 	rm description-pak
-	dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
+	dpkg-scanpackages -m . /dev/null | gzip -9c > Packages.gz
 
