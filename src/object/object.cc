@@ -497,6 +497,12 @@ namespace urbi
     }
 
     rObject
+    Object::getSlot(const std::string& name)
+    {
+      return getSlot(libport::Symbol(name));
+    }
+
+    rObject
     Object::getLocalSlot(key_type name)
     {
       if (rSlot s = local_slot_get(name))
@@ -530,6 +536,12 @@ namespace urbi
     {
       slot_set(slot, value);
       return value;
+    }
+
+    rObject
+    Object::setSlot(const std::string& slot, const rObject& value)
+    {
+      return setSlot(libport::Symbol(slot), value);
     }
 
     rObject

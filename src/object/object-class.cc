@@ -320,28 +320,29 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Name, Code)                                             \
-      Object::proto->slot_set(SYMBOL(Name), make_primitive(&Object::Code))
+      Object::proto->slot_set(SYMBOL(Name), make_primitive(Code))
 
-      DECLARE(asBool             , as_bool);
-      DECLARE(asPrintable        , asPrintable);
-      DECLARE(asToplevelPrintable, asToplevelPrintable);
-      DECLARE(changed            , changed_get);
-      DECLARE(createSlot         , urbi_createSlot);
-      DECLARE(getProperty        , property_get);
-      DECLARE(getLocalSlot       , getLocalSlot);
-      DECLARE(getSlot            , getSlot);
-      DECLARE(hasProperty        , property_has);
-      DECLARE(hasSlot            , slot_has);
-      DECLARE(locateSlot         , urbi_locateSlot);
-      DECLARE(properties         , urbi_properties);
-      DECLARE(removeProperty     , property_remove);
-      DECLARE(removeSlot         , urbi_removeSlot);
-      DECLARE(setConstSlot       , urbi_setConstSlot);
-      DECLARE(setProperty        , property_set);
-      DECLARE(setSlot            , setSlot);
-      DECLARE(updateSlot         , urbi_updateSlot);
+      DECLARE(asBool             , &Object::as_bool);
+      DECLARE(asPrintable        , &Object::asPrintable);
+      DECLARE(asToplevelPrintable, &Object::asToplevelPrintable);
+      DECLARE(changed            , &Object::changed_get);
+      DECLARE(createSlot         , &Object::urbi_createSlot);
+      DECLARE(getLocalSlot       , &Object::getLocalSlot);
+      DECLARE(getProperty        , &Object::property_get);
+      DECLARE(getSlot            ,
+              static_cast<rObject (Object::*)(Object::key_type)>(&Object::getSlot));
+      DECLARE(hasProperty        , &Object::property_has);
+      DECLARE(hasSlot            , &Object::slot_has);
+      DECLARE(locateSlot         , &Object::urbi_locateSlot);
+      DECLARE(properties         , &Object::urbi_properties);
+      DECLARE(removeProperty     , &Object::property_remove);
+      DECLARE(removeSlot         , &Object::urbi_removeSlot);
+      DECLARE(setConstSlot       , &Object::urbi_setConstSlot);
+      DECLARE(setProperty        , &Object::property_set);
+      DECLARE(setSlot            ,
+              static_cast<rObject (Object::*)(Object::key_type, const rObject&)>(&Object::setSlot));
+      DECLARE(updateSlot         , &Object::urbi_updateSlot);
 #undef DECLARE
     }
-
   }; // namespace object
 }

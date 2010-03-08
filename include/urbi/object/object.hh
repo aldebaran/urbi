@@ -254,6 +254,8 @@ namespace urbi
     public:
       void urbi_createSlot(key_type k);
       rObject getSlot(key_type k);
+      // Convenience overload because Symbols don't cast to strings.
+      rObject getSlot(const std::string& k);
       /// Return the associated value.
       /// \throw Exception.Lookup if not available locally.
       rObject getLocalSlot(key_type k);
@@ -261,6 +263,8 @@ namespace urbi
       rDictionary urbi_properties(key_type slotName);
       rObject urbi_removeSlot(key_type k);
       rObject setSlot(key_type slot, const rObject& value);
+      // Convenience overload because Symbols don't cast to strings.
+      rObject setSlot(const std::string& slot, const rObject& value);
       rObject urbi_setConstSlot(key_type k, const rObject& o);
       rObject urbi_updateSlot(key_type k, const rObject& o);
       rObject asPrintable() const;
