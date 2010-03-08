@@ -79,8 +79,11 @@ This is the second part.
 \chapter{Chapter II.1}
 Body of Chapter II.1.
 
-\let\subsubsectionSave\subsubsection
-\let\subsubsection\faqsection
+\ifx\ifHtml\undefined\else
+  \let\subsubsectionSave\subsubsection
+  \let\subsubsection\faqsection
+\fi
+
 \section{Section II.1.1}
 Body of Section II.1.1.
 
@@ -96,13 +99,16 @@ Body of Subsection II.1.1.1.b.
 \subsection{Subsection II.1.1.2}
 Body of Subsection II.1.1.2.
 
-\faqsection{FAQsection II.1.1.2.a}
+\faqsection{FAQ II.1.1.2.a}
 Body of Subsection II.1.1.2.a.
 
-\faqsection{FAQsection II.1.1.2.b}
+\faqsection{FAQ II.1.1.2.b}
 Body of Subsection II.1.1.2.b.
 
-\let\subsubsection\subsubsectionSave
+
+\ifx\ifHtml\undefined\else
+  \let\subsubsection\subsubsectionSave
+\fi
 
 \section{Section II.1.2}
 Body of Section II.1.2.
