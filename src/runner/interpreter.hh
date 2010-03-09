@@ -74,7 +74,7 @@ namespace runner
 
     Interpreter(rLobby lobby,
                 sched::Scheduler& scheduler,
-                boost::function0<void> task,
+                boost::function0<void> job,
                 rObject self,
                 const libport::Symbol& name);
 
@@ -221,8 +221,8 @@ namespace runner
     ast::rConstAst ast_;
     /// The urbi Code object to execute
     rObject code_;
-    /// The task to execute
-    boost::function0<void> task_;
+    /// The job to execute
+    boost::function0<void> job_;
     /// Its potential target
     rObject self_;
     /// Its arguments

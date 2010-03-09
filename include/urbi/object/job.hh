@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/task-class.hh
- ** \brief Definition of the URBI object task.
+ ** \file object/job.hh
+ ** \brief Definition of the Urbi object job.
  */
 
-#ifndef OBJECT_TASK_CLASS_HH
-# define OBJECT_TASK_CLASS_HH
+#ifndef OBJECT_JOB_CLASS_HH
+# define OBJECT_JOB_CLASS_HH
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
@@ -25,14 +25,14 @@ namespace urbi
 {
   namespace object
   {
-    class Task : public object::CxxObject
+    class Job : public object::CxxObject
     {
     public:
       typedef sched::rJob value_type;
 
-      Task();
-      Task(const value_type& value);
-      Task(rTask model);
+      Job();
+      Job(const value_type& value);
+      Job(rJob model);
       const value_type& value_get() const;
 
       rList backtrace();
@@ -48,10 +48,10 @@ namespace urbi
     private:
       value_type value_;
 
-    URBI_CXX_OBJECT_(Task);
+    URBI_CXX_OBJECT_(Job);
     };
 
   }; // namespace object
 }
 
-#endif // !OBJECT_TASK_CLASS_HH
+#endif // !OBJECT_JOB_CLASS_HH

@@ -8,12 +8,12 @@
  * See the LICENSE file for more information.
  */
 
-do (Task)
+do (Job)
 {
 
    function dumpState()
    {
-     echo("Task: " + name)|
+     echo("Job: " + name)|
      echo("  State: " + status) |
      var t = timeShift |
      if (t)

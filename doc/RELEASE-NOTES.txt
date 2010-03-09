@@ -12,6 +12,8 @@ Changes:
 
 - Global.Tags is renamed as Tag.tags.
 
+- Global.Task is renamed as Global.Job.
+
 - Object.getPeriod is deprecated in favor of System.period.
 
 - As announced long ago, and as displayed by warnings,

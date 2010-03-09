@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -9,8 +9,8 @@
  */
 
 /**
- ** \file object/task-class.cc
- ** \brief Creation of the URBI object task.
+ ** \file object/job.cc
+ ** \brief Creation of the Urbi object job.
  */
 
 #include <sstream>
@@ -24,7 +24,7 @@
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
 #include <urbi/object/tag.hh>
-#include <urbi/object/task.hh>
+#include <urbi/object/job.hh>
 #include <runner/interpreter.hh>
 #include <runner/runner.hh>
 
@@ -34,50 +34,50 @@ namespace urbi
   {
     using runner::Runner;
 
-    Task::Task()
+    Job::Job()
       : value_(0)
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
 
-    Task::Task(const value_type& value)
+    Job::Job(const value_type& value)
       : value_(value)
     {
-      proto_add(Task::proto);
+      proto_add(Job::proto);
       slot_set(SYMBOL(exceptionHandlerTag), nil_class);
     }
 
-    Task::Task(rTask model)
+    Job::Job(rJob model)
       : value_(model->value_)
     {
       proto_add(Tag::proto);
     }
 
-    const Task::value_type&
-    Task::value_get() const
+    const Job::value_type&
+    Job::value_get() const
     {
       return value_;
     }
 
     libport::Symbol
-    Task::name()
+    Job::name()
     {
       return value_->name_get();
     }
 
     const runner::tag_stack_type
-    Task::tags()
+    Job::tags()
     {
       return dynamic_cast<runner::Interpreter*>(value_.get())->tag_stack_get();
     }
 
     std::string
-    Task::status()
+    Job::status()
     {
       Runner& r = ::kernel::urbiserver->getCurrentRunner();
 
       std::stringstream status;
-      switch(value_->state_get())
+      switch (value_->state_get())
       {
         case sched::to_start:
           status << "starting";
@@ -99,7 +99,7 @@ namespace urbi
           break;
       }
       if (value_ == &r)
-        status << " (current task)";
+        status << " (current job)";
       if (value_->frozen())
         status << " (frozen)";
       if (value_->has_pending_exception())
@@ -112,7 +112,7 @@ namespace urbi
     }
 
     rList
-    Task::backtrace()
+    Job::backtrace()
     {
       List::value_type res;
       if (const Runner* runner = dynamic_cast<Runner*>(value_.get()))
@@ -124,52 +124,52 @@ namespace urbi
     }
 
     void
-    Task::waitForTermination()
+    Job::waitForTermination()
     {
       Runner& r = ::kernel::urbiserver->getCurrentRunner();
       r.yield_until_terminated(*value_);
     }
 
     void
-    Task::waitForChanges()
+    Job::waitForChanges()
     {
       Runner& r = ::kernel::urbiserver->getCurrentRunner();
       r.yield_until_things_changed();
     }
 
     void
-    Task::terminate()
+    Job::terminate()
     {
       value_->terminate_now();
     }
 
     void
-    Task::setSideEffectFree(rObject b)
+    Job::setSideEffectFree(rObject b)
     {
       value_->side_effect_free_set(b->as_bool());
     }
 
     rFloat
-    Task::timeShift()
+    Job::timeShift()
     {
       return new Float(value_->time_shift_get() / 1000000.0);
     }
 
     void
-    Task::initialize(CxxObject::Binder<Task>& bind)
+    Job::initialize(CxxObject::Binder<Job>& bind)
     {
-      bind(SYMBOL(backtrace), &Task::backtrace);
-      bind(SYMBOL(name), &Task::name);
-      bind(SYMBOL(setSideEffectFree), &Task::setSideEffectFree);
-      bind(SYMBOL(status), &Task::status);
-      bind(SYMBOL(tags), &Task::tags);
-      bind(SYMBOL(terminate), &Task::terminate);
-      bind(SYMBOL(timeShift), &Task::timeShift);
-      bind(SYMBOL(waitForChanges), &Task::waitForChanges);
-      bind(SYMBOL(waitForTermination), &Task::waitForTermination);
+      bind(SYMBOL(backtrace), &Job::backtrace);
+      bind(SYMBOL(name), &Job::name);
+      bind(SYMBOL(setSideEffectFree), &Job::setSideEffectFree);
+      bind(SYMBOL(status), &Job::status);
+      bind(SYMBOL(tags), &Job::tags);
+      bind(SYMBOL(terminate), &Job::terminate);
+      bind(SYMBOL(timeShift), &Job::timeShift);
+      bind(SYMBOL(waitForChanges), &Job::waitForChanges);
+      bind(SYMBOL(waitForTermination), &Job::waitForTermination);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Task)
+    URBI_CXX_OBJECT_REGISTER(Job)
     {}
 
   }; // namespace object

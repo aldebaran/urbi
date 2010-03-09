@@ -19,10 +19,10 @@
 
 #include <object/symbols.hh>
 
+#include <urbi/object/job.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/slot.hh>
 #include <urbi/object/tag.hh>
-#include <urbi/object/task.hh>
 
 #include <runner/runner.hh>
 
@@ -83,20 +83,21 @@ namespace runner
   void
   Runner::terminate_cleanup()
   {
-    // Do not keep a reference on a task which keeps a reference onto ourselves.
-    task_ = 0;
+    // Do not keep a reference on a job which keeps a reference onto
+    // ourselves.
+    job_ = 0;
     // Parent cleanup.
     super_type::terminate_cleanup();
   }
 
   object::rObject
-  Runner::as_task()
+  Runner::as_job()
   {
     if (terminated())
       return object::nil_class;
-    if (!task_)
-      task_ = new object::Task(this);
-    return task_;
+    if (!job_)
+      job_ = new object::Job(this);
+    return job_;
   }
 
   bool

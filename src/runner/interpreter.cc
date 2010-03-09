@@ -48,7 +48,7 @@
 #include <urbi/object/global.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/location.hh>
-#include <urbi/object/task.hh>
+#include <urbi/object/job.hh>
 
 namespace runner
 {
@@ -142,13 +142,13 @@ namespace runner
 
   Interpreter::Interpreter(rLobby lobby,
                            sched::Scheduler& sched,
-                           boost::function0<void> task,
+                           boost::function0<void> job,
                            rObject self,
                            const libport::Symbol& name)
     : Runner(lobby, sched, name)
     , ast_(0)
     , code_(0)
-    , task_(task)
+    , job_(job)
     , result_(0)
     , stacks_(self)
   {
@@ -185,7 +185,7 @@ namespace runner
   {
     try
     {
-      aver(ast_ || code_ || task_);
+      aver(ast_ || code_ || job_);
       check_for_pending_exception();
       if (ast_)
 	result_ = operator()(ast_.get());
@@ -195,7 +195,7 @@ namespace runner
 	result_ = apply(code_, libport::Symbol::make_empty(), args_);
       }
       else
-        task_();
+        job_();
     }
     catch (object::UrbiException& exn)
     {
@@ -224,7 +224,7 @@ namespace runner
     // near exhaustion, we cannot reasonably hope that we will get
     // enough stack space to build an exception, which potentially
     // requires a non-negligible amount of calls. For this reason, we
-    // create another job whose task is to build the exception (in a
+    // create another job whose job is to build the exception (in a
     // freshly allocated stack) and propagate it to us as we are its
     // parent.
     CAPTURE_GLOBAL(Exception);
@@ -383,7 +383,7 @@ namespace runner
         exn->slot_update(SYMBOL(location),
                          new object::String(string_cast(*l)));
       exn->slot_update(SYMBOL(backtrace),
-                       as_task()->as<object::Task>()->backtrace());
+                       as_job()->as<object::Job>()->backtrace());
     }
     call_stack_type bt = call_stack_get();
     if (skip_last && !bt.empty())

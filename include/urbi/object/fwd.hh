@@ -47,21 +47,21 @@ namespace urbi
     Macro(FormatInfo);                          \
     Macro(Formatter);                           \
     Macro(InputStream);                         \
+    Macro(Job);                                 \
     Macro(List);                                \
     Macro(Lobby);                               \
     Macro(Location);                            \
     Macro(OutputStream);                        \
     Macro(Path);                                \
+    Macro(Position);                            \
     Macro(Primitive);                           \
     Macro(Process);                             \
-    Macro(Position);                            \
     Macro(Regexp);                              \
     Macro(Semaphore);                           \
     Macro(Server);                              \
     Macro(Socket);                              \
     Macro(String);                              \
     Macro(Tag);                                 \
-    Macro(Task);                                \
     Macro(TextOutputStream)                     \
 
 # define APPLY_ON_ALL_OBJECTS(Macro)            \
@@ -76,12 +76,12 @@ namespace urbi
       SYMBOL(Code)
       SYMBOL(Float)
       SYMBOL(Integer)
+      SYMBOL(Job)
       SYMBOL(List)
       SYMBOL(Lobby)
       SYMBOL(Object)
       SYMBOL(Primitive)
       SYMBOL(String)
-      SYMBOL(Task)
 
     */
 

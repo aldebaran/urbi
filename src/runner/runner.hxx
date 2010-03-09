@@ -20,7 +20,6 @@
 
 # include <urbi/object/lobby.hh>
 # include <urbi/object/tag.hh>
-# include <urbi/object/task.hh>
 
 namespace runner
 {

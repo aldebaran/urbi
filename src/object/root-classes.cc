@@ -13,7 +13,6 @@
  ** \brief Creation of the root Objects.
  */
 
-#include <urbi/object/global.hh>
 #include <object/object-class.hh>
 #include <object/output-stream.hh>
 #include <object/root-classes.hh>
@@ -31,6 +30,8 @@
 #include <urbi/object/event.hh>
 #include <urbi/object/file.hh>
 #include <urbi/object/float.hh>
+#include <urbi/object/global.hh>
+#include <urbi/object/job.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
@@ -38,7 +39,6 @@
 #include <urbi/object/primitive.hh>
 #include <urbi/object/string.hh>
 #include <urbi/object/tag.hh>
-#include <urbi/object/task.hh>
 
 namespace urbi
 {
@@ -66,13 +66,13 @@ namespace urbi
        SYMBOL(asFloat);
        SYMBOL(asGlobal);
        SYMBOL(asInteger);
+       SYMBOL(asJob);
        SYMBOL(asList);
        SYMBOL(asLobby);
        SYMBOL(asObject);
        SYMBOL(asPrimitive);
        SYMBOL(asSystem);
        SYMBOL(asTag);
-       SYMBOL(asTask);
        SYMBOL(asfalse);
        SYMBOL(asnil);
        SYMBOL(astrue);
@@ -268,17 +268,17 @@ namespace urbi
       cleanup_object(Barrier::proto);
       cleanup_object(Code::proto);
       cleanup_object(Dictionary::proto);
-      cleanup_object(false_class);
       cleanup_object(Float::proto);
-      cleanup_object(global_class);
+      cleanup_object(Job::proto);
       cleanup_object(Lobby::proto);
       cleanup_object(Object::proto); // FIXME
       cleanup_object(Primitive::proto);
       cleanup_object(Semaphore::proto);
       cleanup_object(String::proto);
-      cleanup_object(system_class);
       cleanup_object(Tag::proto);
-      cleanup_object(Task::proto);
+      cleanup_object(false_class);
+      cleanup_object(global_class);
+      cleanup_object(system_class);
       cleanup_object(true_class);
       cleanup_object(void_class);
       // List must be last, because it is used in cleanup_object.

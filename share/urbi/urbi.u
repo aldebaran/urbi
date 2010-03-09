@@ -57,35 +57,35 @@ List.protos.insertBack(Global.Orderable);
 
 load("urbi/updatehook-stack.u");
 
+load("urbi/binary.u");
 load("urbi/code.u");
 load("urbi/date.u");
-load("urbi/duration.u");
-load("urbi/float.u");
-load("urbi/trajectory-generator.u");
-load("urbi/path.u");
-load("urbi/string.u");
-load("urbi/file.u");
-load("urbi/formatter.u");
-load("urbi/kernel1.u");
-load("urbi/math.u");
-load("urbi/group.u");
-load("urbi/binary.u");
-load("urbi/profiling.u");
-load("urbi/loadable.u");
-load("urbi/tuple.u");
 load("urbi/dictionary.u");
-load("urbi/weak-pointer.u");
-load("urbi/pattern.u");
-load("urbi/package-info.u");
-load("urbi/task.u");
-load("urbi/pubsub.u");
+load("urbi/duration.u");
 load("urbi/event.u");
-load("urbi/tag.u");
+load("urbi/file.u");
+load("urbi/float.u");
+load("urbi/formatter.u");
+load("urbi/group.u");
+load("urbi/job.u");
+load("urbi/kernel1.u");
+load("urbi/loadable.u");
 load("urbi/lobby.u");
+load("urbi/math.u");
 load("urbi/mutex.u");
-load("urbi/timeout.u");
+load("urbi/package-info.u");
+load("urbi/path.u");
+load("urbi/pattern.u");
+load("urbi/profiling.u");
+load("urbi/pubsub.u");
 load("urbi/socket.u");
 load("urbi/stack-frame.u");
+load("urbi/string.u");
+load("urbi/tag.u");
+load("urbi/timeout.u");
+load("urbi/trajectory-generator.u");
+load("urbi/tuple.u");
+load("urbi/weak-pointer.u");
 
 /*----------.
 | UObject.  |

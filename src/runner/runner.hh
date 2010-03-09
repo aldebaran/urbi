@@ -128,9 +128,9 @@ namespace runner
     /// Return the current scope_tag, after creating it if needed.
     const sched::rTag& scope_tag();
 
-    /// Get the current runner as an Urbi Task or nil if the task is
+    /// Get the current runner as an Urbi Job or nil if the job is
     /// terminated.
-    rObject as_task();
+    rObject as_job();
 
     ATTRIBUTE_NORETURN
     virtual void raise(rObject exn, bool skip_last = false) = 0;
@@ -218,8 +218,8 @@ namespace runner
     /// enable to list current tags from Urbi.
     tag_stack_type tag_stack_;
 
-    /// The runner seen as an Urbi Task.
-    object::rTask task_;
+    /// The runner seen as an Urbi Job.
+    object::rJob job_;
 
     /// Current priority.
     sched::prio_type prio_;

@@ -39,7 +39,7 @@
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <urbi/object/tag.hh>
-#include <urbi/object/task.hh>
+#include <urbi/object/job.hh>
 #include <parser/transform.hh>
 #include <runner/at-handler.hh>
 #include <runner/interpreter.hh>
@@ -236,7 +236,7 @@ namespace urbi
     static rObject
     system_currentRunner()
     {
-      return runner().as_task();
+      return runner().as_job();
     }
 
     static float
@@ -332,7 +332,7 @@ namespace urbi
     {
       List::value_type res;
       foreach(sched::rJob job, scheduler().jobs_get())
-        res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_task());
+        res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_job());
       return res;
     }
 
