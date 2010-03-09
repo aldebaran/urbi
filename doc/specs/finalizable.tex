@@ -1,18 +1,68 @@
 \section{Finalizable}
 
-%% FIXME:
-%%
-%% \subsection{Prototypes}
-%%
-%% \begin{refObjects}
-%% \item[Object]
-%% \end{refObjects}
-%%
-%% \subsection{Slots}
-%%
-%% \begin{urbiscriptapi}
-%%
-%% \end{urbiscriptapi}
+Objects that derive from this object will execute their
+\lstinline|finalize| routine right before being destroyed (reclaimed)
+by the system.  It is comparable to the a \dfn{destructor}.
+
+\subsection{Example}
+
+The following object is set up to die verbosely.
+
+\begin{urbiscript}
+var obj =
+  do (Finalizable.new)
+  {
+    function finalize ()
+    {
+      echo ("Ouch");
+    }
+  }|;
+\end{urbiscript}
+
+\noindent
+It is reclaimed by the system when it is no longer referenced by any
+other object.
+
+\begin{urbiscript}
+var alias = obj|;
+obj = nil|;
+\end{urbiscript}
+
+\noindent
+Here, the object is still alive, since \lstinline|alias| references
+it.   Once it no longer does, the object dies.
+
+\begin{urbiscript}
+alias = nil|;
+[00000004] *** Ouch
+\end{urbiscript}
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+The constructor takes no argument.
+
+\begin{urbiscript}
+Finalizable.new;
+[00000527] Finalizable_0x135360
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[finalize] a simple function that takes no argument that will be
+  evaluated when the object is reclaimed.  Its return value is
+  ignored.
+\begin{urbiscript}
+Finalizable.new.setSlot("finalize", function() { echo("Ouch") })|;
+[00033240] *** Ouch
+\end{urbiscript}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex
