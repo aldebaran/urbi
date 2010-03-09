@@ -1,6 +1,5 @@
 m4_pattern_allow([^URBI_(PATH|SERVER)$])         -*- shell-script -*-
 URBI_INIT
-m4_include([children-check-skip.m4sh])
 
 # Avoid zombies and preserve debugging information.
 cleanup ()
