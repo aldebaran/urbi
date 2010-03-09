@@ -16,7 +16,7 @@ cleanup ()
   children_check_skip
   children_report
 
-  local children_sta=$(children_status remote)
+  local children_sta=$(children_status)
   # Don't clean before calling children_status...
   # test x$VERBOSE != x || children_clean
 
