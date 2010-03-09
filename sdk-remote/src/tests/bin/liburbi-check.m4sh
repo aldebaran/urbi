@@ -1,5 +1,6 @@
 m4_pattern_allow([^URBI_(PATH|SERVER)$])         -*- shell-script -*-
 URBI_INIT
+m4_include([children-check-skip.m4sh])
 
 # Avoid zombies and preserve debugging information.
 cleanup ()
@@ -13,6 +14,7 @@ cleanup ()
   # In case we were caught by set -e, kill the children.
   children_kill
   children_harvest
+  children_check_skip
   children_report
 
   local children_sta=$(children_status remote)

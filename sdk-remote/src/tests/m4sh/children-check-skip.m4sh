@@ -1,0 +1,22 @@
+# We may be running a Windows application with Wine.  Some "syscalls"
+# are not supported, in which case "skip" the test, instead of
+# reporting an error.
+#
+# fixme:winsock:WSAIoctl SIO_GET_EXTENSION_FUNCTION_POINTER {b5367df1-cbac-11cf-95ca-00805f48a192}: stub
+# fixme:winsock:WSAIoctl SIO_GET_EXTENSION_FUNCTION_POINTER {b5367df2-cbac-11cf-95ca-00805f48a192}: stub
+# fixme:winsock:WSAIoctl SIO_GET_EXTENSION_FUNCTION_POINTER {b5367df0-cbac-11cf-95ca-00805f48a192}: stub
+children_check_skip ()
+{
+  children_check_skip_result=false
+  local i_
+  for i_ in $children
+  do
+    if grep '^fixme:winsock:WSAIoctl.*stub' <$i_.err >/dev/null; then
+      stderr "The test uses Windows features Wine does not support." \
+             "See $i_.err for more information."
+      exit_status=$(ex_to_int SKIP)
+      echo $exit_status >$i_.sta
+      children_check_skip_result=true
+    fi
+  done
+}
