@@ -199,12 +199,9 @@ namespace urbi
             delete v;
             return pos;
           }
-          GD_INFO_DUMP("Is a dictionary.");
         }
         else
         {
-          GD_FINFO_DUMP("Is a list. type:%lu vtype:%lu pos:%lu char:%c ",
-                        type, v->type, pos, message[pos]);
           if (type == DATA_VOID)
           {
             type = DATA_LIST;
