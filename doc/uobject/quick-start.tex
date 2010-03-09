@@ -8,50 +8,6 @@ to other sections of this document are liberally provided to point the
 reader to the more complete documentation; they should be ignored
 during the first reading.
 
-\section{\urbi is a Middleware}
-
-\urbi SDK is meant to make easier the orchestration of independent,
-concurrent, components.  It was first designed for robotics: it
-provides all the needed features to coordinate the execution of
-various components (actuators, sensors, software devices that provide
-features such as text-to-speech, face recognition and so forth).
-Traditional languages such as \Cxx are definitely very adequate to
-program the local, low-level, handling of these hardware or software
-devices; indeed one needs efficiency, small memory footprint, and
-access to low-level hardware details.  Yet, when it comes to
-orchestration and to coordination between components, in a word, when
-it comes to \emph{address concurrency}, such languages are no longer
-an adequate model.
-
-Rather, one has to select a middleware infrastructure in order to be
-able to use remote components as if they were local, to allow
-concurrent execution, to make synchronous or asynchronous requests and
-so forth.  The \dfn{UObject} architecture provide exactly this: a
-common API which allows conforming components to be used seamlessly in
-highly concurrent settings.  Components need not be designed with
-UObjects in mind, rather, UObjects are typically ``shells'' around
-``regular'' components.
-
-As a quite magical feature that comes for free, components with an
-UObject interface are naturally supported by the \us programming
-language.  This can be a tremendous help: one can interact with these
-components (making queries, changing them, observing their state,
-monitoring various kinds of events and so forth), which provides a
-huge speed-up during development.
-
-Finally, note that, although made with robots in mind, the UObject
-architecture is well suited to tame any heavily concurrent
-environment, such as video games.
-
-\subsection{The \urbi Architecture}
-
-%  * Description approche Urbi, philosophie (orchestration etc) => un
-%  exemple de code Urbiscript qui orchestre 3 UObject de manière simple
-%  mais non triviale, avec at, \&, events, tags et qui servira de fil
-%  conducteur au quickstart (le but du quickstart est de refaire cet
-%  exemple initial).
-
-
 \section{UObject Basics}
 
 As a simple running example, consider a (very) basic factory.  Raw

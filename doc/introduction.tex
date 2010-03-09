@@ -1,10 +1,38 @@
 \chapter{Introduction}
-% \phantomsection % otherwise hyperlinks to previous chapter.
-\ifx \Htmltrue\else
-  % TeX4ht already takes care of this.
-  \addcontentsline{toc}{chapter}{Introduction}
-\fi
 
+\section{\urbi and UObjects}
+
+\urbi makes easier the orchestration of independent, concurrent,
+components.  It was first designed for robotics: it provides all the
+needed features to coordinate the execution of various components
+(actuators, sensors, software devices that provide features such as
+text-to-speech, face recognition and so forth).  Traditional languages
+such as \Cxx are definitely very adequate to program the local,
+low-level, handling of these hardware or software devices; indeed one
+needs efficiency, small memory footprint, and access to low-level
+hardware details.  Yet, when it comes to orchestration and to
+coordination between components, in a word, when it comes to
+\emph{addressing concurrency}, such languages are no longer adequate.
+
+Rather, one has to select a middleware infrastructure in order to be
+able to use remote components as if they were local, to allow
+concurrent execution, to make synchronous or asynchronous requests and
+so forth.  The \dfn{UObject} architecture provides exactly this: a
+common API which allows conforming components to be used seamlessly in
+highly concurrent settings.  Components need not be designed with
+UObjects in mind, rather, UObjects are typically ``shells'' around
+``regular'' components.
+
+As a quite magical feature that comes for free, components with an
+UObject interface are naturally supported by the \us programming
+language.  This can be a tremendous help: one can interact with these
+components (making queries, changing them, observing their state,
+monitoring various kinds of events and so forth), which provides a
+huge speed-up during development.
+
+Finally, note that, although made with robots in mind, the UObject
+architecture is well suited to tame any heavily concurrent
+environment, such as video games.
 
 \section{\urbi and \us}
 
@@ -16,35 +44,28 @@ and language constructs.
 
 Its main features are:
 \begin{itemize}
-\item \us is designed to be syntactically close to \Cxx. If you know
-  \C or \Cxx, you can easily write \us programs.
-\item \us is fully integrated with \Cxx. You can bind \Cxx classes
-  in \us seamlessly. \us is also integrated with many other
-  languages such as \java, \matlab or \python.
-\item \us is object oriented. It supports encapsulation, inheritance
-  and inclusion polymorphism. Dynamic dispatching is available through
+\item designed to be syntactically close to \Cxx. If you know \C or
+  \Cxx, you can easily write \us programs.
+\item fully integrated with \Cxx. You can bind \Cxx classes in \us
+  seamlessly. \us is also integrated with many other languages such as
+  \java, \matlab or \python.
+\item object-oriented. It supports encapsulation, inheritance and
+  inclusion polymorphism. Dynamic dispatching is available through
   monomethods --- just as \Cxx, \Cs or \java.
-\item \us includes parallelism at the core of its semantics. It
-  provides you with natural constructs to run and control high numbers
-  of interacting concurrent tasks.
-\item \us supports event-based programming. Triggering events and
-  reacting to them is absolutely straightforward.
+\item parallelism at the core of its semantics. It provides you with
+  natural constructs to run and control high numbers of interacting
+  concurrent tasks.
+\item event-based programming. Triggering events and reacting to them
+  is absolutely straightforward.
 \item \us supports functional programming, inspired from languages
   such as \lisp or \caml. This includes first class functions and
   pattern matching.
-\item \us uses a client/server architecture: the interpreter accepts
-  multiple connections from different sources (human users, robots,
-  other servers \ldots) and enables them to interact.
-\item \us supports distributed architectures: you can run objects in
-  different processes, potentially on another computer across the
-  network.
+\item client/server architecture.  The interpreter accepts multiple
+  connections from different sources (human users, robots, other
+  servers \ldots) and enables them to interact.
+\item distributed architecture.  You can run objects in different
+  processes, potentially remote computers across the network.
 \end{itemize}
-
-This documentation is far from complete.  It is updated regularly on
-the Gostai Web site, in \href{\docurl}{\docurl}, both as a PDF
-document, \href{\docurl/urbi-sdk.pdf}{urbi-sdk.pdf}, and as HTML
-pages, \href{\docurl/urbi-sdk.htmldir}{urbi-sdk.htmldir}.
-
 
 \section{Outline}
 
