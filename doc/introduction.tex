@@ -62,116 +62,27 @@ This multi-part document provides a complete guide to Urbi.
 }
 
 \begin{description}
-\begin{partDescription}{part:tut}
-  {%
-    This 50-page tutorial will guide the new comer into the Urbi
-    world.  It goes from the installation steps up to concurrent and
-    event-based programming.
-
-    No specific knowledge is expected from the reader.
-    %
-  }
-\item[sec:tut:started]
-  Quick-install guide.
-\item[sec:tut:first]
-  First contact with \us.
-\item[sec:tut:value]
-  A quick introduction to objects and values.
-\item[sec:tut:flow]
-  Basic control flow: \lstinline{if}, \lstinline{for} and the like.
-\item[sec:tut:function]
-  Details about functions, scoped, and lexical closures.
-\item[sec:tut:object]
-  A more in-depth introduction to object-oriented programming in \us.
-\item[sec:tut:functional]
-  Functions are first-class citizens.
-\item[sec:tut:concurrent]
-  The \us operators for concurrency, tags.
-\item[sec:tut:event-prog]
-  Support for event-driven concurrency in \us.
-\end{partDescription}
-
-\begin{partDescription}{part:uobject}
-  {
-    %
-    The core of Urbi is its middleware architecture, the UObjects.
-    UObjects are components written in fast, static languages such as
-    \Cxx.  Urbi provides means to coordinate them.  This part explains
-    how to create new UObjects and how to wrap existing code into
-    UObjects.  It also shows how \us exploits these UObjects.
-    %
-  }
-%\item[sec:uob:quick] This chapter, self-contained, shows the potential
-%  of \urbi used as a middleware.
-\item[sec:uob:api]
-  Building simple UObjects.
-\item[sec:uob:uses]
-  Interfacing a servomotor device as an example on how to use the
-  UObject architecture as a middleware.
-\end{partDescription}
-
-\begin{partDescription}{part:guide}
-  {
-    %
-    This part contains guides to some specific aspects of \urbi SDK.
-    %
-  }
-\item[sec:installation]
-  Complete instructions on how to install \urbi SDK.
-\item[sec:faq]
-  Some answers to common questions.
-\item[sec:k1] This chapter is intended to people who want to migrate
-  programs in \us 1 to \us 2.
-\end{partDescription}
-
-\begin{partDescription}{part:specs}
-  {
-    %
-    This part is the reference manual about \urbi SDK.  It describes
-    all the components (tools, \us, \us standard library) in a rather
-    terse way.
-    %
-  }
-\item[sec:tools]
-  Presentation and usage of the different tools available with the
-  \urbi framework related to \us, such as the \urbi server, the
-  command line client, \umake, \ldots
-
-\item[sec:lang]
-  Core constructs of the language and their behavior.
-
-\item[sec:stdlib]
-  Listing of all classes and methods provided in the standard library.
-
-\item[sec:naming]
-  Also known as ``The \urbi Naming Standard'': naming conventions in
-  for standard hardware/software devices and components implemented as
-  UObject and the corresponding slots/events to access them.
-
-%\item[sec:sdk]
-%  The \urbi software development kit that enable to
-%  interact with \urbi from \Cxx.
-\end{partDescription}
-
-\begin{partDescription}{part:platforms}
-  {
-    %
-    Some of the supported platforms with specific features are
-    described in this part.  Environments not described in this part
-    are covered by stand-alone documentations.
-    %
-  }
-\item[sec:nao]
-  Programming Aldebaran's Nao using \urbi.
-
-\item[sec:spykee] The Spykee is a WiFi-enabled robot built by Meccano
-  (known as Erector in the United States). It is equipped with a
-  camera, speaker, microphone, and moves using two tracks.
-
-\item[sec:webots] Using Cyberbotics' Webots simulation environment
-  with \urbi.
-\end{partDescription}
+\input{tutorial/abstract}
+\input{uobject/abstract}
+\input{guide/abstract}
+\input{specs/abstract}
+\input{platforms/abstract}
+\input{tables/abstract}
 \end{description}
+
+%% Redefine this environment so that next time the */abstract.tex
+%% files are read, they create the part instead of referencing to it.
+
+\renewenvironment{partDescription}[2]
+{%
+  \chapter*{About This Part}
+  #2
+  \begin{description}%
+    \let\itemOrig\item%
+    \renewcommand{\item}[1][]{\itemOrig[~~\autoref{##1} --- \nameref{##1}]~\\}%
+  }{%
+  \end{description}%
+}
 
 
 %% \paragraph{Thanks}

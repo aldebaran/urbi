@@ -1,0 +1,41 @@
+\begin{partDescription}{part:uobject}
+  {
+    %
+    This part guides you through the various steps of writing an \urbi
+    \Cxx component using the UObject API. This API can be used to add
+    new objects written in \Cxx to the \us language, and to interact
+    from \Cxx with the objects that are already defined. We cover the
+    use cases of controlling a physical device (servomotor, speaker,
+    camera\ldots), and interfacing higher-lever components (voice
+    recognition, object detection\ldots) with \urbi.
+
+    The API defines the UObject class. Each instance of a derived
+    class in your \Cxx code will correspond to an \us object sharing
+    some of its methods and attributes. The API provides methods to
+    declare which elements of your object are to be shared. To share a
+    variable with \urbi, you have to give it the type UVar. This type
+    is a container that provides cast and assignment operators for all
+    types known to \urbi: double, string and char*, and the
+    binary-holding structures UBinary, USound and UImage. This type
+    can also read from and write to the liburbi UValue class. The API
+    provides methods to set up callbacks functions that will be
+    notified when a variable is modified or read from \urbi
+    code. Instance methods of any prototype can be rendered accessible
+    from \us, providing all the parameters types and the return type
+    can be converted to/from UValue.
+  }
+%\item[sec:uob:quick] This chapter, self-contained, shows the potential
+%  of \urbi used as a middleware.
+\item[sec:uob:api]
+  Building simple UObjects.
+\item[sec:uob:uses]
+  Interfacing a servomotor device as an example on how to use the
+  UObject architecture as a middleware.
+\end{partDescription}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% End:
