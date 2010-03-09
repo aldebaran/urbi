@@ -12,6 +12,7 @@ INSTRUMENTATION = false
 
 # The wrappers around our embedded SDK-Remote tools.
 sdk_remote_builddir = $(abs_top_builddir)/sdk-remote
+sdk_remote_srcdir = $(abs_top_srcdir)/sdk-remote
 
 # Environment used both in check and installcheck.
 CHECK_ENVIRONMENT +=				\
