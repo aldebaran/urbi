@@ -285,7 +285,7 @@ do (getSlot("UVar"))
     var wasEmpty = change.empty |
     change[handle] = f |
     if (wasEmpty)
-      detach(loopCheck) |
+      disown(loopCheck) |
     void
   };
   function notifyChangeOwned(handle, f)
@@ -300,7 +300,7 @@ do (getSlot("UVar"))
     var wasEmpty = access.empty |
     access[handle] = f |
     if (wasEmpty)
-      detach(loopCheck) |
+      disown(loopCheck) |
     if (getSlot("UVar").nAccess == 1)
       onHasNotifyAccess! |
     void
