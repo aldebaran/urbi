@@ -16,9 +16,17 @@ cleanup ()
   children_check_skip
   children_report
 
-  local children_sta=$(children_status)
+  local server_sta=$(children_status server)
+  local children_sta=$(children_status remote)
   # Don't clean before calling children_status...
   # test x$VERBOSE != x || children_clean
+
+  case $exit_status:$server_sta in
+    (0:142)
+	 verbose "Server killed after a timeout.";;
+    (0:*) # Maybe a children exited for SKIP etc.
+	 exit $server_sta;;
+  esac
 
   case $exit_status:$children_sta in
     (0:0) ;;
