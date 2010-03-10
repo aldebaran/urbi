@@ -28,7 +28,6 @@
 # include <sched/job.hh>
 
 # include <urbi/object/fwd.hh>
-# include <urbi/object/list.hh>
 
 namespace runner
 {
