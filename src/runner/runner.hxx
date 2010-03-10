@@ -19,6 +19,7 @@
 # include <libport/compilation.hh>
 
 # include <urbi/object/lobby.hh>
+# include <urbi/object/job.hh> // To destroy Runner::job_.
 # include <urbi/object/tag.hh>
 
 namespace runner
