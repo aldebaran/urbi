@@ -1231,8 +1231,6 @@ namespace urbi
         // traceName is objName__obj__var
         traceName = ((&owner_->owner)? owner_->owner.__name:"unknown")
           + "__" + p.first + "__" + p.second;
-        if ( owner_->type == "varaccess")
-          traceName += "__access";
         rObject var = me->slot_get(Symbol(method));
         assertion(var);
         Symbol sym(SYMBOL(notifyAccess));
