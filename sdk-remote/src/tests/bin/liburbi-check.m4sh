@@ -17,17 +17,17 @@ cleanup ()
   children_report
 
   local server_sta=$(children_status server)
-  local children_sta=$(children_status remote)
-  # Don't clean before calling children_status...
-  # test x$VERBOSE != x || children_clean
-
-  case $exit_status:$server_sta in
+  case $exit_status:$server_sta:$children_sta in
     (0:142)
 	 verbose "Server killed after a timeout.";;
-    (0:*) # Maybe a children exited for SKIP etc.
+    (0:*) # Maybe the server exited for SKIP etc.
 	 exit $server_sta;;
   esac
 
+  # Don't check for before because the server may failed before any other
+  # children get started.
+
+  local children_sta=$(children_status)
   case $exit_status:$children_sta in
     (0:0) ;;
     (0:*) # Maybe a children exited for SKIP etc.
@@ -35,6 +35,9 @@ cleanup ()
     (*:*) # If the checker failed, there is a big problem.
 	 error SOFTWARE "$0 itself failed with $exit_status";;
   esac
+  # Don't clean before calling children_status...
+  # test x$VERBOSE != x || children_clean
+
   # rst_expect sets exit=false if it saw a failure.
   $exit
 }
