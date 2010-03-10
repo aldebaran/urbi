@@ -25,8 +25,9 @@ function List.insertUnique(a)
  * This class can output a string in dot format describing the data flow
  * between UObjects. The amount of details displayed can be configured.
  */
-class Global.DataFlow
+var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
 {
+  var __uobjectName = "DataFlow";
   class CustomString
   {
     var s_ = "";
@@ -62,6 +63,7 @@ class Global.DataFlow
   var showOwnership = false;
   /// Show UObject statistics if available (enabled by enableStats(1)).
   var showStats = true;
+  var debug = false;
   /// Start monitoring UVar read/write/bind
   function startMonitor()
   {
@@ -75,17 +77,21 @@ class Global.DataFlow
     };
     monitor: at(UVar.traceSet?(var obj, var uvar, var ctx))
     {
+      try {
       uvarSetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
         .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar)|
       //if (uvar.ownerName != ctx[ctx.size-1][0])
         usedVars[uvar.asString] = 1
+      } catch(var e){}
     };
     monitor: at(UVar.traceGet?(var obj, var uvar, var ctx))
     {
+      try {
       uvarGetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
         .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar) |
       //if (uvar.ownerName != ctx[ctx.size-1][0])
         usedVars[uvar.asString] = 1
+      } catch(var e) {}
     };
   };
   /// Stop monitoring
@@ -109,6 +115,12 @@ class Global.DataFlow
       p[0] = getSlot(p[0]).compactName;
     p.join(".");
   };
+  function isUVar(m)
+  {
+    wall("isuvar " + m);
+    var comps = m.split(".");
+    getSlot(comps[0]).getSlot(comps[1]).isA(UVar)
+  };
   /// Return a dot-formatted string with the data flow graph.
   function makeDot()
   {
@@ -119,11 +131,11 @@ class Global.DataFlow
   {
     var nodes = Dictionary.new;
     var edges = [];
-    // check all uobjects
+    // check all uobjects, pass 1: create UVar nodes
     for| (var s: uobjects.localSlotNames)
     {
       var o = uobjects.getSlot(s);
-      wall("processing " + o);
+      if (debug) wall("processing " + o);
       if (!o.isA(UObject) || !o.hasLocalSlot("__uobjectName"))
         continue;
       var oname = o.__uobjectName;
@@ -162,17 +174,38 @@ class Global.DataFlow
         if (showOwnership)
           edges.insertBack([oname, vname,
             ["len" => 0.5 , "arrowhead" => "dot", "kind" => "owns"]]);
+      }
+    };
+    // check all uobjects, pass 2: create links
+    for| (var s: uobjects.localSlotNames)
+    {
+      var o = uobjects.getSlot(s);
+      if (debug) wall("processing " + o);
+      if (!o.isA(UObject) || !o.hasLocalSlot("__uobjectName"))
+        continue;
+      var oname = o.__uobjectName;
+      var olabel = {if(o.hasLocalSlot("compactName")) o.compactName else oname};
+      // Check all its uvars
+      for| (var vn: o.localSlotNames)
+      {
+        var v = o.getSlot(vn);
+        if (!v.isA(UVar))
+          continue;
+        if (v.change.dict.empty && v.access.dict.empty
+            && !usedVars.has(v.asString))
+          continue;
+        var vname = v.asString.replace(".", "__");
+        var vlabel = { if (showOwnership) vn else olabel + "." + vn};
         // One edge with notifyChange
-        for|(var c: v.change.dict)
-        for|(var p: c.second.second)
+        var handleNotify = closure(p, kind, arrowkind)
         {
           if (!p.hasSlot("target"))
             continue;
           // Create a node for the notifychange method
           var targetname = p.target + "__" + vname;
           var mlabel =
-            { if (showOwnership) "onChange"
-            else niceName(p.target + ".onChange")};
+            { if (showOwnership) kind
+            else niceName(p.target + "." + kind)};
           nodes[targetname] =
             ["shape" => "box", "label" => mlabel, "kind" => "method"];
           // Edge the node to the owner
@@ -181,7 +214,17 @@ class Global.DataFlow
             ["len" => 0.5, "arrowhead" => "dot", "kind" =>"owns"]]);
           // Edge the node to the uvar
           edges.insertBack([vname, targetname,
-                ["len" => 1, "arrowhead" => "empty", "kind" => "onChange"]]);
+                ["len" => 1, "arrowhead" => arrowkind, "kind" => kind]]);
+        };
+        for|(var c: v.change.dict)
+        for|(var p: c.second.second)
+        {
+         handleNotify(p, "onChange", "empty");
+        };
+        for|(var c: v.access.dict)
+        for|(var p: c.second.second)
+        {
+         handleNotify(p, "onAccess", "invempty");
         }
       };
       // Handle runtime uvarSetters data
@@ -189,7 +232,9 @@ class Global.DataFlow
       {
         var method = e.first;
         // Create a node for the method if none exists
-        var mname = { if(method.split(".").size >1) "" else oname + "__"}
+        // The method can be a function name, or a UVar name, in which case
+        // it means notify on the uvar
+        var mname = { if (isUVar(method)) oname + "__" else ""}
           + method.replace(".", "__");
         var hasEdges = false;
         // e.second is the list of UVars this method writes to
@@ -224,7 +269,8 @@ class Global.DataFlow
         var mname = oname + "__" + method.replace(".", "__");
         if (!nodes.has(mname))
         {
-          nodes[mname] = ["shape" => "box", "label" => niceName(method)];
+          nodes[mname] =
+            ["shape" => "box", "label" => niceName(method), "kind" => "method"];
           if (showOwnership)
           edges.insertBack([oname, mname,
             ["len" => 0.5, "arrowhead" => "dot", "kind" => "owns"]]);
@@ -245,7 +291,7 @@ class Global.DataFlow
     {
       if (n.second["kind"] == "var" && !n.second["useCount"])
       {
-        wall("Filtering out "  + n.first);
+        if (debug) wall("Filtering out "  + n.first);
         // Remove the edge between the uvar and its owner
         nodes.erase(n.first);
         edges = edges.filter(closure(x) { x[1] != n.first});
@@ -302,7 +348,7 @@ class Global.DataFlow
       // notifychange, (funcowner__varowner__varname -> itself)
       if (n.second["kind"] == "method" && sname.split("__").size == 2)
         sname = sname.replace("__", ".");
-      wall("scanning for " + n.second["kind"] + " " + sname);
+      if (debug) wall("scanning for " + n.second["kind"] + " " + sname);
       if (!stats.has(sname))
         continue;
       var stat = stats[sname];
@@ -359,11 +405,37 @@ class Global.DataFlow
     res += "}\n";
     res
   };
+  function step()
+  {
+    var f = File.create("/tmp/dataflow.dot");
+    var d = dotify(addStats(makeGraph));
+    f.remove;
+    OutputStream.new(f) << d;
+    var p = Process.new("neato", ["-Tjpeg", "/tmp/dataflow.dot"]);
+    p.runTo("/tmp/dataflow.jpg");
+    waituntil(p.done);
+    //sleep(300ms);
+    var content = File.new("/tmp/dataflow.jpg").content;
+    File.new("/tmp/dataflow.jpg").remove;
+    content.keywords = "jpeg 100 100";
+    val = content;
+  };
+  function run(period)
+  {
+    startMonitor;
+    var f = File.create("/tmp/dataflow.dot");
+    every|(period)
+    {
+      step()
+    }
+  };
   var monitor = Tag.new;
   var uvarBindings = Dictionary.new;
   var uvarSetters = Dictionary.new;
   var uvarGetters = Dictionary.new;
   var usedVars = Dictionary.new;
+
+  UVar.new(this, "val");
 };
 
 /* Test sequence
@@ -375,4 +447,8 @@ a.setNotifyChangeByName(b.getSlot("c"));
 all.setNotifyChangeByName(a.getSlot("lastChangeVal"));
 b.c = 12;
 all2.writeByName(b.getSlot("c"), 15);
+b.b = 12;
+b.setNotifyAccess(1);
+all.setNotifyChangeByName(b.getSlot("lastAccessVal"));
+b.b;
 */
