@@ -17,10 +17,10 @@ cleanup ()
   children_report
 
   local server_sta=$(children_status server)
-  case $exit_status:$server_sta:$children_sta in
+  case $exit_status:$server_sta in
     (0:142)
 	 verbose "Server killed after a timeout.";;
-    (0:*) # Maybe the server exited for SKIP etc.
+    (0:*|176:*) # Maybe the server exited for SKIP etc.
 	 exit $server_sta;;
   esac
 
