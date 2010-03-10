@@ -181,11 +181,31 @@ namespace urbi {
   }
 }
 
+typedef std::pair<std::string, std::string> StringPair;
 // Where to store uobjects
 static rObject where;
 typedef boost::unordered_map<std::string, urbi::UObject*> uobject_to_robject_type;
 static uobject_to_robject_type uobject_to_robject;
 static std::set<void*> initialized;
+static bool trace_uvars = 0;
+
+static rObject get_base(const std::string& objname);
+
+/// Split a string of the form "a.b" in two
+static StringPair split_name(const std::string& name)
+{
+  size_t p = name.find_last_of(".");
+  std::string oname = name.substr(0, p);
+  std::string slot = name.substr(p + 1, name.npos);
+  return StringPair(oname, slot);
+}
+
+static void setTrace(rObject, bool v)
+{
+  trace_uvars = v;
+}
+// Object,method names of last call
+static std::vector<std::pair<std::string, std::string> > bound_context;
 
 #define MAKE_VOIDCALL(ptr, cls, meth)                   \
   object::make_primitive(                               \
@@ -264,6 +284,17 @@ namespace Stats
   }
 };
 
+static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
+{
+  if (trace_uvars)
+  {
+    StringPair p = split_name(v->get_name());
+    rObject o = get_base(p.first);
+    object::global_class->slot_get(SYMBOL(UVar))->slot_get(op)
+    ->call(SYMBOL(syncEmit), o, o->slot_get(Symbol(p.second)),
+           object::to_urbi(bound_context));
+  }
+}
 static inline runner::Runner& getCurrentRunner()
 {
   return ::kernel::urbiserver->getCurrentRunner();
@@ -318,17 +349,6 @@ static rObject uvar_uowned_get(const std::string& name);
 static rObject uvar_uowned_set(const std::string& name, rObject val);
 
 
-typedef std::pair<std::string, std::string> StringPair;
-
-/// Split a string of the form "a.b" in two
-static StringPair split_name(const std::string& name)
-{
-  size_t p = name.find_last_of(".");
-  std::string oname = name.substr(0, p);
-  std::string slot = name.substr(p + 1, name.npos);
-  return StringPair(oname, slot);
-}
-
 void uobjects_reload()
 {
   urbi::impl::KernelUContextImpl::instance()->init();
@@ -351,6 +371,7 @@ rObject uobject_initialize(const objects_type& args)
 {
   urbi::setCurrentContext(new urbi::impl::KernelUContextImpl());
   where = args.front();
+  where->slot_set(SYMBOL(setTrace), object::make_primitive(&setTrace));
   uobjects_reload();
   where->slot_set(SYMBOL(getStats),    object::make_primitive(&Stats::get));
   where->slot_set(SYMBOL(clearStats),  object::make_primitive(&Stats::clear));
@@ -367,6 +388,12 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
 {
   LIBPORT_DEBUG("uvwrapnotify");
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
+  bound_context.push_back(std::make_pair(
+      (&ugc->owner)? ugc->owner.__name:"unknown",
+      ugc->name
+      ));
+  bool dummy;
+  FINALLY(((bool, dummy)), bound_context.pop_back());
   urbi::UList l;
   l.array << new urbi::UValue();
   l[0].storage = ugc->target;
@@ -400,6 +427,12 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   }
   libport::utime_t start = libport::utime();
   urbi::UValue r;
+
+  bound_context.push_back(std::make_pair(
+      (&ugc->owner)? ugc->owner.__name:"unknown",
+      ugc->name
+      ));
+  FINALLY(((bool, tail)), bound_context.pop_back());
   try
   {
     // This if is there to optimize the synchronous case.
@@ -520,6 +553,8 @@ uobject_new(rObject proto, bool forceName)
     if (i->name == cname)
     {
       LIBPORT_DEBUG("Instanciating a new " << cname << " named "<< name);
+      bound_context.push_back(std::make_pair(name, name + ".new"));
+      FINALLY(((std::string, name)), bound_context.pop_back());
       i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
       return r;
     }
@@ -997,8 +1032,10 @@ namespace urbi
       bool prevState = runner.non_interruptible_get();
       FINALLY(
         ((bool, prevState))
-        ((runner::Runner&, runner)),
-        runner.non_interruptible_set(prevState););
+        ((runner::Runner&, runner))
+        ((UVar*, owner)),
+        runner.non_interruptible_set(prevState);
+        traceOperation(owner, SYMBOL(traceBind)););
       runner.non_interruptible_set(true);
       owner_ = owner;
       LIBPORT_DEBUG("__init " << owner_->get_name());
@@ -1060,6 +1097,7 @@ namespace urbi
     void KernelUVarImpl::set(const UValue& v)
     {
       LOCK_KERNEL;
+      traceOperation(owner_, SYMBOL(traceSet));
       LIBPORT_DEBUG("uvar = operator for "<<owner_->get_name());
       object::rUValue ov(new object::UValue());
       ov->put(v, bypassMode_);
@@ -1073,6 +1111,7 @@ namespace urbi
     const UValue& KernelUVarImpl::get() const
     {
       LOCK_KERNEL;
+      traceOperation(owner_, SYMBOL(traceGet));
       LIBPORT_DEBUG("uvar cast operator for "<<owner_->get_name());
       try {
         rObject o = (owner_->owned
@@ -1181,6 +1220,7 @@ namespace urbi
         + string_cast((void*)this);
       if (owner_->type == "function")
       {
+        traceName = owner_->name; // object.function, unique
         LIBPORT_DEBUG("binding " << p.first << "." << owner_->method);
         me->slot_set(libport::Symbol(method), object::make_primitive(
                        boost::function1<rObject, const objects_type&>
@@ -1188,6 +1228,11 @@ namespace urbi
       }
       if (owner_->type == "var" || owner_->type == "varaccess")
       {
+        // traceName is objName__obj__var
+        traceName = ((&owner_->owner)? owner_->owner.__name:"unknown")
+          + "__" + p.first + "__" + p.second;
+        if ( owner_->type == "varaccess")
+          traceName += "__access";
         rObject var = me->slot_get(Symbol(method));
         assertion(var);
         Symbol sym(SYMBOL(notifyAccess));
@@ -1206,7 +1251,9 @@ namespace urbi
         callback_ = object::make_primitive(
             boost::function1<rObject, const objects_type&>
             (boost::bind(&wrap_ucallback_notify, _1, owner_,
-                         traceName + " " + owner_->type)));
+                         traceName)));
+        callback_->slot_set(SYMBOL(target), new object::String(
+          (&owner_->owner)? owner_->owner.__name:"unknown"));
         object::objects_type args = list_of
           (var)
           (handle)

@@ -185,12 +185,19 @@ do (Global.UObject)
  */
 do (getSlot("UVar"))
 {
+  var traceSet = Event.new;
+  var traceGet = Event.new;
+  var traceBind = Event.new;
   var ownerName = "<unknown>";
   // If this is true, callbacks that throw will be removed from callback lists.
   var eraseThrowingCallbacks = true;
-  function asString()
+  function asPrintable()
   {
     "\"%s.%s\"" % [ownerName, initialName]
+  };
+  function asString()
+  {
+    "" + ownerName + "." + initialName
   };
   /// Copy this UVar under slot \b slotName of \b targetObj
   function copy(targetObj, slotName)
