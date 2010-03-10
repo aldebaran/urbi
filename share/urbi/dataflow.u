@@ -1,0 +1,378 @@
+/*
+ * Copyright (C) 2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+Global.removeSlot("DataFlow");
+
+List.removeSlot("insertUnique");
+function List.insertUnique(a)
+{
+  if (!has(a))
+    insertBack(a)
+};
+
+/** Extract the Data Flow from the UObjects.
+ *
+ * Part of the information is gathered from the UVars, the rest by monitoring
+ * the execution, using the engine hooks on UVar bind/read/write.
+ *
+ * This class can output a string in dot format describing the data flow
+ * between UObjects. The amount of details displayed can be configured.
+ */
+class Global.DataFlow
+{
+  class CustomString
+  {
+    var s_ = "";
+    var delim_ = "<>";
+    function init(s, delim="<>")
+    {
+      var this.s_ = s;
+      var this.delim_ = delim;
+    };
+    function asString()
+    {
+      s_.asString
+    };
+    function asPrintable()
+    {
+      delim_[0] + s_.asString + delim_[1]
+    };
+  };
+  /** Edge Filtering level.
+   * 0: none
+   * 1: Hide write to own uvars in init and new
+   * 2: Hide write to own uvars
+   */
+  var filter = 1;
+  /** Node filtering level
+   * 0: none
+   * 1: Hide unused UVars
+   */
+  var filterNode = 1;
+  /// Show dotted lines for UVar bindings (weak information)
+  var showBind = false;
+  /// Make edges for UVar and method ownership (between var and owner object)
+  var showOwnership = false;
+  /// Show UObject statistics if available (enabled by enableStats(1)).
+  var showStats = true;
+  /// Start monitoring UVar read/write/bind
+  function startMonitor()
+  {
+    uobjects.setTrace(1);
+    monitor: at(UVar.traceBind?(var obj, var uvar, var ctx))
+    { // Only remember the binding object and not the function
+      uvarBindings.getWithDefault(ctx[ctx.size-1][0], [], true)
+        .insertUnique(uvar)|
+      //if (uvar.ownerName != ctx[ctx.size-1][0])
+        usedVars[uvar.asString] = 1
+    };
+    monitor: at(UVar.traceSet?(var obj, var uvar, var ctx))
+    {
+      uvarSetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
+        .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar)|
+      //if (uvar.ownerName != ctx[ctx.size-1][0])
+        usedVars[uvar.asString] = 1
+    };
+    monitor: at(UVar.traceGet?(var obj, var uvar, var ctx))
+    {
+      uvarGetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
+        .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar) |
+      //if (uvar.ownerName != ctx[ctx.size-1][0])
+        usedVars[uvar.asString] = 1
+    };
+  };
+  /// Stop monitoring
+  function stopMonitor()
+  {
+    uobjects.setTrace(0);
+    monitor.stop;
+  };
+  /// Clear all data acquired by monitoring.
+  function reset()
+  {
+    usedVars.clear();
+    uvarBindings.clear();
+    uvarSetters.clear();
+    uvarGetters.clear();
+  };
+  function niceName(v)
+  {
+    var p = v.split(".");
+    if (hasSlot(p[0]) && getSlot(p[0]).hasSlot("compactName"))
+      p[0] = getSlot(p[0]).compactName;
+    p.join(".");
+  };
+  /// Return a dot-formatted string with the data flow graph.
+  function makeDot()
+  {
+    dotify(makeGraph)
+  };
+  /// Return the dataflow graph as [nodes, edges].
+  function makeGraph()
+  {
+    var nodes = Dictionary.new;
+    var edges = [];
+    // check all uobjects
+    for| (var s: uobjects.localSlotNames)
+    {
+      var o = uobjects.getSlot(s);
+      wall("processing " + o);
+      if (!o.isA(UObject) || !o.hasLocalSlot("__uobjectName"))
+        continue;
+      var oname = o.__uobjectName;
+      if (nodes.has(oname))
+        continue;
+      var olabel = {if(o.hasLocalSlot("compactName")) o.compactName else oname};
+      if (showBind || showOwnership)
+        nodes[oname] = ["protoName" => oname, "kind" => "object",
+        "label"=>olabel];
+      // process uvarbindings
+      if (showBind)
+      for|(var v: uvarBindings.getWithDefault(oname, []))
+      {
+        var vname = v.asString.replace(".", "__");
+        wall("checking " + oname +"<>" + vname.split("__")[0]);
+        if (vname.split("__")[0] == oname)
+          continue;
+        edges.insertBack([oname, vname, ["len" => 2,  "style" => "dotted"]]);
+      };
+      // Check all its uvars
+      for| (var vn: o.localSlotNames)
+      {
+        var v = o.getSlot(vn);
+        if (!v.isA(UVar))
+          continue;
+        if (v.change.dict.empty && v.access.dict.empty
+            && !usedVars.has(v.asString))
+          continue;
+        var vname = v.asString.replace(".", "__");
+        var vlabel = { if (showOwnership) vn else olabel + "." + vn};
+        // One node for the UVar.
+        nodes[vname] =
+          ["shape" => "diamond",  "label" => vlabel, "kind" =>"var",
+          "useCount"=>0];
+        // One edge to its owner.
+        if (showOwnership)
+          edges.insertBack([oname, vname,
+            ["len" => 0.5 , "arrowhead" => "dot", "kind" => "owns"]]);
+        // One edge with notifyChange
+        for|(var c: v.change.dict)
+        for|(var p: c.second.second)
+        {
+          if (!p.hasSlot("target"))
+            continue;
+          // Create a node for the notifychange method
+          var targetname = p.target + "__" + vname;
+          var mlabel =
+            { if (showOwnership) "onChange"
+            else niceName(p.target + ".onChange")};
+          nodes[targetname] =
+            ["shape" => "box", "label" => mlabel, "kind" => "method"];
+          // Edge the node to the owner
+          if (showOwnership)
+          edges.insertBack([p.target, targetname,
+            ["len" => 0.5, "arrowhead" => "dot", "kind" =>"owns"]]);
+          // Edge the node to the uvar
+          edges.insertBack([vname, targetname,
+                ["len" => 1, "arrowhead" => "empty", "kind" => "onChange"]]);
+        }
+      };
+      // Handle runtime uvarSetters data
+      for|(var e: uvarSetters.getWithDefault(oname, [], false))
+      {
+        var method = e.first;
+        // Create a node for the method if none exists
+        var mname = { if(method.split(".").size >1) "" else oname + "__"}
+          + method.replace(".", "__");
+        var hasEdges = false;
+        // e.second is the list of UVars this method writes to
+        for| (var v: e.second)
+        {
+          if (v.ownerName == oname &&
+              ( filter >=2 ||
+                 (filter >=1 && ["init", "new"].has(method.split(".")[1]))))
+            continue;
+          var vname = v.asString.replace(".", "__");
+          nodes[vname]["useCount"]++;
+          edges.insertBack([mname, vname,
+              ["len" => 1, "arrowhead" => "normal",  "kind" => "writes"]]);
+          hasEdges = true;
+        };
+        // Only insert a node for the method if we kept an edge at least.
+        if (hasEdges)
+          if (!nodes.has(mname))
+        {
+          nodes[mname] =
+            ["shape" => "box", "label" => niceName(method), "kind" => "method"];
+          if (showOwnership)
+          edges.insertBack([oname, mname,
+                   ["len" => 0.5, "arrowhead" => "dot", "kind" => "owns"]]);
+        };
+      };
+       // Handle runtime uvarGetters data
+      for|(var e: uvarGetters.getWithDefault(oname, [], false))
+      {
+        var method = e.first;
+        // Create a node for the method if none exists
+        var mname = oname + "__" + method.replace(".", "__");
+        if (!nodes.has(mname))
+        {
+          nodes[mname] = ["shape" => "box", "label" => niceName(method)];
+          if (showOwnership)
+          edges.insertBack([oname, mname,
+            ["len" => 0.5, "arrowhead" => "dot", "kind" => "owns"]]);
+        };
+        // e.second is the list of UVars this method writes to
+        for| (var v: e.second)
+        {
+          var vname = v.asString.replace(".", "__");
+          nodes[vname]["useCount"]++;
+          edges.insertBack([mname, vname,
+              ["len" => 1, "arrowhead" => "inv", "kind" => "reads"]]);
+        }
+      };
+    };
+    // Remove unwanted nodes.
+    if (filterNode)
+    for|(var n: nodes)
+    {
+      if (n.second["kind"] == "var" && !n.second["useCount"])
+      {
+        wall("Filtering out "  + n.first);
+        // Remove the edge between the uvar and its owner
+        nodes.erase(n.first);
+        edges = edges.filter(closure(x) { x[1] != n.first});
+      }
+    };
+    // Output result
+    [nodes, edges]
+  };
+  /// Make a 'short' version with one node per UObject from the full graph
+  function shortGraph(graph)
+  {
+    var onodes = graph[0];
+    var oedges = graph[1];
+    var nodes  = Dictionary.new;
+    var edges = List.new;
+    var hashedEdges = Dictionary.new;
+    for|(var e:oedges)
+    {
+      var o1 = e[0].split("__")[0];
+      var o2 = e[1].split("__")[0];
+      if (o1 == o2)
+        continue;
+      nodes[o1] = ["label" => niceName(o1)];
+      nodes[o2] = ["label" => niceName(o2)];
+      var ne;
+      var hash = o1 +"+" + o2;
+      if (hashedEdges.has(hash))
+        ne = hashedEdges[hash]
+      else
+        ne = hashedEdges[hash] = [o1, o2,
+          ["label" => "", "arrowhead" => "normal"]];
+      if (!ne[2]["label"].empty)
+        ne[2]["label"] += " , ";
+      ne[2]["label"] += { switch(e[2]["kind"]) {
+      case "owns":
+      case "writes":
+        "writes " + niceName(e[1].replace("__", "."))
+      case "reads":
+        "reads " + niceName(e[1].replace("__", "."))
+      case "onChange":
+        "on " + niceName(e[0].replace("__", ".")) + " change"
+      }};
+    };
+    [nodes, hashedEdges.asList.map(function(v) { v.second})]
+  };
+  /// Add UObject statistics data to the graph. Modifies the graph inplace.
+  function addStats(graph, stats=uobjects.getStats)
+  {
+    for|(var n: graph[0])
+    {
+      // Map node name to stats name
+      var sname = n.first;
+      // Sublte, we have two kind of methods: bound methods (a__b -> a.b), and
+      // notifychange, (funcowner__varowner__varname -> itself)
+      if (n.second["kind"] == "method" && sname.split("__").size == 2)
+        sname = sname.replace("__", ".");
+      wall("scanning for " + n.second["kind"] + " " + sname);
+      if (!stats.has(sname))
+        continue;
+      var stat = stats[sname];
+      var statString
+      = "Called %s times<br/>Avg time: %s us<br/>"
+        "Max time: %s us <br/>Min time: %s us"
+        % [stat[3], stat[0], stat[2], stat[1]];
+      n.second["label"] = CustomString.new(n.second["label"]
+                                           + "<br/><FONT POINT-SIZE=\"8\">"
+                                           + statString
+                                           + "</FONT>")
+    };
+    graph
+  };
+  /// Output a dot-format string from nodes and edges.
+  function dotify(graph)
+  {
+    var nodes = graph[0];
+    var edges = graph[1];
+    var res = "graph {\n graph [overlap=\"scale\"];\n";
+    for|(var n: nodes)
+    {
+      res += n.first + "[";
+      var noprop = true;
+      for| (var e: n.second)
+      {
+        if (["shape", "label"].has(e.first))
+        {
+          if (!noprop)
+            res += ", ";
+          noprop = false;
+          res += e.first + "=" + e.second.asPrintable +" ";
+        }
+      };
+      res += "];\n";
+    };
+    for|(var e: edges)
+    {
+      res += e[0] + " -- " + e[1] + " [";
+      var noprop = true;
+      if (e.size > 2)
+        for|(var n: e[2])
+      {
+        if (["shape", "len", "arrowhead", "label"].has(n.first))
+        {
+          if (!noprop)
+            res += ", ";
+          noprop = false;
+          res += n.first + " = " + n.second.asPrintable;
+        }
+      };
+      res += "]" + ";\n";
+    };
+    res += "}\n";
+    res
+  };
+  var monitor = Tag.new;
+  var uvarBindings = Dictionary.new;
+  var uvarSetters = Dictionary.new;
+  var uvarGetters = Dictionary.new;
+  var usedVars = Dictionary.new;
+};
+
+/* Test sequence
+var a = all.new(0);
+var b = all.new(0);
+var a.compactName = "a";
+var b.compactName = "b";
+a.setNotifyChangeByName(b.getSlot("c"));
+all.setNotifyChangeByName(a.getSlot("lastChangeVal"));
+b.c = 12;
+all2.writeByName(b.getSlot("c"), 15);
+*/
