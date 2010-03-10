@@ -29,6 +29,7 @@ namespace urbi
 
     public:
       void emit(const objects_type& args);
+      void emit();
       void onEvent(rExecutable guard, rExecutable enter, rExecutable leave);
       typedef boost::function1<void, const objects_type&> callback_type;
       void onEvent(const callback_type& cb);

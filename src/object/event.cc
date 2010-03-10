@@ -144,6 +144,12 @@ namespace urbi
     }
 
     void
+    Event::emit()
+    {
+      emit(objects_type());
+    }
+
+    void
     Event::waituntil(rObject pattern)
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
@@ -258,7 +264,7 @@ namespace urbi
 
     URBI_CXX_OBJECT_REGISTER(Event)
     {
-      bind(SYMBOL(emit), &Event::emit);
+      bind(SYMBOL(emit), static_cast<void (Event::*)(const objects_type&)>(&Event::emit));
       bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
       bind(SYMBOL(localTrigger), &Event::localTrigger);
       bind(SYMBOL(onEvent), static_cast<void (Event::*)(rExecutable guard, rExecutable enter, rExecutable leave)>(&Event::onEvent));
