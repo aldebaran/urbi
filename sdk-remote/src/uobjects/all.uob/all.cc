@@ -58,6 +58,7 @@ public:
     UBindVar(all,a);
     UBindVar(all,b);
     UBindVar(all,c);
+    UBindVar(all,d);
     UBindVar(all, initCalled);
     initCalled = 0;
     UBindVar(all, lastChange);
@@ -74,6 +75,7 @@ public:
     UBindFunction(all, writeD);
     UBindFunction(all, writeS);
     UBindFunction(all, writeL);
+    UBindFunction(all, writeM);
     UBindFunction(all, writeB);
     UBindFunction(all, makeCall);
     UBindFunction(all, writeBNone);
@@ -85,6 +87,7 @@ public:
     UBindFunction(all, transmitD);
     UBindFunction(all, transmitS);
     UBindFunction(all, transmitL);
+    UBindFunction(all, transmitM);
     UBindFunction(all, transmitB);
     UBindFunction(all, transmitI);
     UBindFunction(all, transmitSnd);
@@ -105,6 +108,7 @@ public:
     vars[0] = &a;
     vars[1] = &b;
     vars[2] = &c;
+    vars[3] = &d;
   }
 
   ~all()
@@ -369,6 +373,18 @@ public:
     return 0;
   }
 
+  int writeM(const std::string &name, const std::string &val)
+  {
+    GD_CATEGORY(all);
+    GD_FERROR("writeM %s", name);
+    urbi::UVar v(name);
+    urbi::UDictionary d;
+    d[val] = 42;
+    d["foo"] = urbi::UList();
+    v = d;
+    return 0;
+  }
+
   int writeB(const std::string &name, const std::string &content)
   {
     urbi::UVar v(name);
@@ -455,6 +471,13 @@ public:
     return r;
   }
 
+  urbi::UDictionary transmitM(urbi::UDictionary d)
+  {
+    urbi::UDictionary r;
+    foreach (const urbi::UDictionary::value_type& t, d)
+      r[t.first] = t.second;
+    return r;
+  }
 
   std::string transmitS(const std::string &name)
   {
@@ -567,8 +590,8 @@ public:
       throw "KABOOM";
   }
 
-  urbi::UVar a,b,c;
-  urbi::UVar* vars[3];
+  urbi::UVar a, b, c, d;
+  urbi::UVar* vars[4];
 
   //name of var that trigerred notifyChange
   urbi::UVar lastChange;
