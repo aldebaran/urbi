@@ -6,11 +6,11 @@
 
 =head1 SYNOPSIS
 
-  git-version-gen [OPTIONS...]
+  tex2chk [OPTIONS...] FILE...
 
 =head1 DESCRIPTION
 
-Read a LaTeX file, and extract chk files for each urbiscript
+Read LaTeX files, and extract chk files for each urbiscript
 environment listing.  The label is used to name the created chk
 file.  If there is no label, FILE:LINE is used to name the file.
 
@@ -33,30 +33,37 @@ General options:
 
 Don't generate the special //#line lines.
 
+=item B<-q>, B<--quiet>
+
+Be less verbose.  Accumulates.
+
+=item B<-v>, B<--verbose>
+
+Be more verbose.  Accumulates.
+
 =back
-
-=head1 FUNCTIONS
-
-=over 4
 
 =cut
 
 use strict;
-use English;
-use IO::File;
+use File::Basename;
 use File::Path qw(mkpath rmtree);
+use IO::File;
+
+# Tests with a name.
+my %by_name;
 
 # All the tests.
 my %chk;
 
-# Those with a name.
-my %by_name;
-
-# The name of the previous test.
-my $previous_label = undef;
+# The prefix for the log messages.
+my $me = basename($0);
 
 # move-if-changed.
 my $move_if_change = $ENV{move_if_change} || "move-if-change";
+
+# The name of the previous test.
+my $previous_label = undef;
 
 # Whether we should generate the synclines.
 my $synclines = 1;
@@ -110,6 +117,23 @@ my $operators =
       (?![=])
     }x;
 
+
+=head1 FUNCTIONS
+
+=over 4
+
+=item C<verbose($level, @message)>
+
+Report the C<@message> is C<$level> E<lt>= C<$verbose>.
+
+=cut
+
+sub verbose($@)
+{
+  my ($level, @message) = @_;
+  map { print STDERR "$me: " . "  " x $level . "$_\n" } @message
+    if $level <= $verbose;
+}
 
 =item C<strip($string)>
 
@@ -175,10 +199,10 @@ sub register ($$\%)
   if ($chk{$label})
     {
       # Collision.
-      print STDERR
-        "warning: label `$label' defined twice\n",
-        "  $chk{$label}{_location}: first definition\n",
-        "  $file:$line: second definition\n";
+      verbose 0,
+        "warning: label `$label' defined twice",
+        "  $chk{$label}{_location}: first definition",
+        "  $file:$line: second definition";
     }
   # By default, fuse the test cases.  Unless we use "[firstnumber=1]"
   # and there is a preceding one.
@@ -463,7 +487,7 @@ sub translate ($)
 }
 
 
-=item C<help>
+=item C<help($verbose)>
 
 Generate the B<--help> message.  Generates the full man page when
 C<$verbose>.
@@ -493,6 +517,8 @@ sub getopt ()
   my %option = (
     "h|help"        => sub { help ($verbose) },
     "l|no-lines"    => sub { $synclines = 0 },
+    "q|quiet"       => sub { --$verbose },
+    "v|verbose"     => sub { ++$verbose },
     );
   Getopt::Long::Configure ("bundling", "pass_through");
   GetOptions (%option)
