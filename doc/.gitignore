@@ -1,0 +1,15 @@
+/Makefile.in
+/tests/getting-started/
+/tests/guide/
+/tests/introduction/
+/tests/licenses/
+/tests/platforms/
+/tests/specs/
+/tests/tables/
+/tests/tutorial/
+/tests/uobject/
+/tests/urbi-faq/
+/tests/urbi-naming/
+/tests/urbi-sandbox/
+/tests/urbi-sdk/
+/tests/urbiscript
