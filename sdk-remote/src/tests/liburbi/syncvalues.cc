@@ -14,14 +14,23 @@ BEGIN_TEST(syncvalues, client, syncClient)
 syncClient.setErrorCallback(callback(&dump));
 syncClient.setCallback(callback(&dump), "output");
 
+SSEND("cout << 1;");
+//= D output 1
+
 assert_eq(SGET(int, "1+2*3;"), 7);
+
+SSEND("cout << 2;");
+//= D output 2
 
 assert_eq(SGET(std::string, "\"Hello,\" + \" World!\";"), "Hello, World!");
 
+SSEND("cout << 3;");
+//= D output 3
+
 assert_eq(SGET_ERROR("1/0;"), "3.1-3: /: division by 0");
 
-SSEND("output << 1234;");
-//= D output 1234
+SSEND("cout << 4;");
+//= D output 4
 
 assert_eq(SGET(int, "1+2*3;"), 7);
 
