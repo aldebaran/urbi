@@ -59,8 +59,13 @@ GD_ADD_CATEGORY(TEST);
 /// Send S to the Client.
 #define SEND_(Client, S)                                \
   do {							\
-    VERBOSE("Sending: " << S);				\
-    Client.send("%s\n", (S));                           \
+    if (Client.isConnected())                           \
+    {                                                   \
+      VERBOSE("Sending: " << S);                        \
+      Client.send("%s\n", (S));                         \
+    }                                                   \
+    else                                                \
+      VERBOSE("Not connected, cannot send: " << S);     \
   } while (0)
 
 /// Send S to client/syncclient.
@@ -111,10 +116,11 @@ urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
   {                                                     \
     VERBOSE("starting test " << #Name);
 
-#define END_TEST                                \
-    sleep(3);                                   \
-    SSEND("quit;");                             \
-    SEND("shutdown;");                          \
+#define END_TEST                                                \
+    sleep(3);                                                   \
+    /* Handle the case when the other connection is down */     \
+    SSEND("disown({ sleep(0.5); shutdown }); quit;");           \
+    SEND("shutdown;");                                          \
   }
 
 void dispatch(const std::string& method, urbi::UClient& client,

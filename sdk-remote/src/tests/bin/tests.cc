@@ -96,14 +96,6 @@ removeOnZero(const urbi::UMessage& msg)
   return urbi::URBI_CONTINUE;
 }
 
-urbi::UCallbackAction
-doExit(const urbi::UMessage& /* msg */)
-{
-  VERBOSE("Exiting");
-  exit(0);
-}
-
-
 std::string
 sget_error(urbi::USyncClient& c, const std::string& msg)
 {
@@ -151,7 +143,6 @@ main(int argc, char* argv[])
 
   urbi::UClient client(host, port);
   VERBOSE("client(" << host << ", " << port << ") @ " << &client);
-  client.setClientErrorCallback(callback(&doExit));
   if (client.error())
     std::cerr << "Failed to set up properly the client" << std::endl
               << libport::exit(EX_SOFTWARE);
