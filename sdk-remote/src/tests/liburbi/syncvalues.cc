@@ -27,7 +27,7 @@ assert_eq(SGET(std::string, "\"Hello,\" + \" World!\";"), "Hello, World!");
 SSEND("cout << 3;");
 //= D output 3
 
-assert_eq(SGET_ERROR("1/0;"), "3.1-3: /: division by 0");
+assert_eq(SGET_ERROR("1/0;"), "6.1-3: /: division by 0");
 
 SSEND("cout << 4;");
 //= D output 4
