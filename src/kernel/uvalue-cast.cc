@@ -146,6 +146,9 @@ object_cast(const urbi::UValue& v)
     break;
 
     case urbi::DATA_VOID:
+    // UObject: cast 'void' UValue (default ctor) into nil, not void.
+    // Otherwise, you can end up with nasty stuffs like void in Lists.
+    // Void is no value, UValue is, so UValue cannot be void.
       res = object::nil_class;
     break;
 
