@@ -161,7 +161,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       // Check all its uvars
       for| (var vn: o.localSlotNames)
       {
-        var v = o.getSlot(vn);
+        var v = o.getSlot(vn).acceptVoid;
         if (!v.isA(UVar))
           continue;
         if (v.change.dict.empty && v.access.dict.empty
@@ -184,7 +184,8 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     {
       var o = uobjects.getSlot(s);
       if (debug) wall("processing " + o);
-      if (!o.isA(UObject) || !o.hasLocalSlot("__uobjectName"))
+      if (!o.isA(UObject) || !o.hasLocalSlot("__uobjectName")
+          || o.__uobjectName != s)
         continue;
       var oname = o.__uobjectName;
       var olabel = niceName(s);
@@ -192,7 +193,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       // Check all its uvars
       for| (var vn: o.localSlotNames)
       {
-        var v = o.getSlot(vn);
+        var v = o.getSlot(vn).acceptVoid;
         if (!v.isA(UVar))
           continue;
         if (v.change.dict.empty && v.access.dict.empty
@@ -231,8 +232,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
          handleNotify(p, "onAccess", "invempty");
         }
       };
-      // Handle runtime uvarSetters data
-      for|(var e: uvarSetters.getWithDefault(oname, [], false))
+      var handleSetGet = closure(e, arrowHead, kind)
       {
         var method = e.first;
         // Create a node for the method if none exists
@@ -253,7 +253,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
             continue;
           nodes[vname]["useCount"]++;
           edges.insertBack([mname, vname,
-              ["len" => 1, "arrowhead" => "normal",  "kind" => "writes"]]);
+              ["len" => 1, "arrowhead" =>arrowHead,  "kind" => kind]]);
           hasEdges = true;
         };
         // Only insert a node for the method if we kept an edge at least.
@@ -267,31 +267,10 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
                    ["len" => 0.5, "arrowhead" => "dot", "kind" => "owns"]]);
         };
       };
-       // Handle runtime uvarGetters data
-      for|(var e: uvarGetters.getWithDefault(oname, [], false))
-      {
-        var method = e.first;
-        // Create a node for the method if none exists
-        var mname = oname + "__" + method.replace(".", "__");
-        if (!nodes.has(mname))
-        {
-          nodes[mname] =
-            ["shape" => "box", "label" => niceName(method), "kind" => "method"];
-          if (showOwnership)
-          edges.insertBack([oname, mname,
-            ["len" => 0.5, "arrowhead" => "dot", "kind" => "owns"]]);
-        };
-        // e.second is the list of UVars this method writes to
-        for| (var v: e.second)
-        {
-          var vname = v.asString.replace(".", "__");
-          if (!nodes.has(vname))
-            continue;
-          nodes[vname]["useCount"]++;
-          edges.insertBack([mname, vname,
-              ["len" => 1, "arrowhead" => "inv", "kind" => "reads"]]);
-        }
-      };
+      for|(var e: uvarSetters.getWithDefault(oname, [], false))
+        handleSetGet(e, "normal", "writes");
+      for|(var e: uvarSetters.getWithDefault(oname, [], false))
+        handleSetGet(e, "inv", "reads");
     };
     // Remove unwanted nodes.
     if (filterNode)
@@ -371,6 +350,97 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     };
     graph
   };
+  function killEdges(edges, name)
+  {
+    edges.filter(function(x) { x[0]!= name && x[1] != name})
+  };
+  function getUVar(name)
+  {
+    var names = name.split(".");
+    if (hasSlot(names[0]) && getSlot(names[0]).hasSlot(names[1]))
+      getSlot(names[0]).getSlot(names[1])
+    else
+      nil
+  };
+  // Handle RTC components.
+  function filterRTC(graph)
+  {
+    var nodes = graph[0];
+    var edges = graph[1];
+    // First reshape UVars into PortProfile and kill internal methods
+    for|( var n: nodes)
+    {
+      if (n.second["kind"] == "var")
+      {
+        var names = n.first.split("__");
+        var ob = getSlot(names[0]);
+        if (ob.hasLocalSlot("get_context_handle"))
+        { // look for it in port_profiles
+          for|(var pp: ob.get_component_profile["port_profiles"])
+          {
+            if (pp["name"] == names[1])
+            { // gotcha, this is a port_profiles.
+              // Change shape
+              n.second["shape"] = ["invtriangle", "triangle"][pp["polarity"]];
+              // Remote internal notifyAccess
+              var notifyNodeName = names[0] + "__" + n.first;
+              nodes.erase(notifyNodeName);
+              edges = killEdges(edges, notifyNodeName);
+            }
+          }
+        }
+      }
+      else if (n.second["kind"] == "method")
+      {
+        var names = n.first.split("__");
+        var ob = getSlot(names[0]);
+        if (ob.hasLocalSlot("get_kind") // executioncontext method: internal
+         || ["connect_uvar", "get_component_profile_", "connect",
+            "create_output_port"].has(names[1])
+            )
+        {
+          edges = killEdges(edges, n.first);
+          nodes.erase(n.first);
+        }
+      }
+    };
+    // Now create connector_profiles and links.
+    for|(var on: uobjects.localSlotNames)
+    {
+      var o = getSlot(on);
+      if (o.hasSlot("get_component_profile_") && o.__uobjectName == on)
+        for|(var pp: o.get_component_profile["port_profiles"])
+        for|(var c: pp["connectors"])
+        {
+          var cn = "connector_" + c["uid"];
+          var clabel = c["name"];
+          if (!nodes.has(cn))
+          { // Connector not registered yet. Create its node.
+            nodes[cn] = ["shape" => "ellipse", "kind" => "connector",
+            "label" => clabel];
+            // And create the edges to each port member
+            for| (var m: c["portnames"])
+            {
+              var polarity = 0;
+              var v = getUVar(m);
+              // The above should always work but just be sure.
+              if (v) { // beware, use the node is using the uobject name
+                // and not the component name
+                polarity = v.polarity;
+                m = v.ownerName + "." + v.initialName;
+              };
+              var edge = [m.replace(".", "__"), cn];
+              if (polarity)
+                edge = edge.reverse;
+              edge.insertBack(
+                ["kind" => "connection", "arrowhead" => "normal"]);
+              edges.insertBack(edge);
+            }
+          }
+        }
+    };
+    [nodes, edges]
+  };
   /// Output a dot-format string from nodes and edges.
   function dotify(graph)
   {
@@ -416,7 +486,8 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   function step()
   {
     var f = File.create("/tmp/dataflow.dot");
-    var d = dotify(addStats(makeGraph));
+    graph = filterRTC(addStats(makeGraph));
+    var d = dotify(graph);
     f.remove;
     OutputStream.new(f) << d;
     var p = Process.new("neato", ["-Tjpeg", "/tmp/dataflow.dot"]);
@@ -444,6 +515,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   var usedVars = Dictionary.new;
 
   UVar.new(this, "val");
+  var graph;
 };
 
 /* Test sequence
@@ -466,7 +538,15 @@ var a.compactName = "a";
 create_component(FileSink, "fsink");
 fsink.set_output_file("/tmp/out.fsink");
 var cp = fsink.create_connector_profile;
+var cp2 = fsink.create_connector_profile;
 fsink.connect("val", cp);
 a.connect("a", cp);
-
+create_component(FileSink, "fsink2");
+fsink2.set_output_file("/tmp/out.fsink2");
+fsink.connect("val", cp2);
+fsink2.connect("val", cp2);
+a.connect("b", cp);
+a.connect("b", cp2);
+all2.writeByName(a.getSlot("b"), 15);
+all2.writeByName(a.getSlot("a"), 15);
 */
