@@ -42,8 +42,6 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	cp $(share_dir)/figs/gostai.png $@.tmp/urbi-sdk1x.png
 	mv $@.tmp $@
 
-include specs/local.mk
-include tutorial/local.mk
 
 ## ------------------------------- ##
 ## Additional text documentation.  ##
