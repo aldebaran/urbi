@@ -112,7 +112,9 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   {
     var p = v.split(".");
     if (hasSlot(p[0]) && getSlot(p[0]).hasSlot("compactName"))
-      p[0] = getSlot(p[0]).compactName;
+      p[0] = getSlot(p[0]).compactName
+    else if  (hasSlot(p[0]) && getSlot(p[0]).hasSlot("componentName"))
+      p[0] = getSlot(p[0]).componentName;
     p.join(".");
   };
   function isUVar(m)
@@ -141,7 +143,8 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       var oname = o.__uobjectName;
       if (nodes.has(oname))
         continue;
-      var olabel = {if(o.hasLocalSlot("compactName")) o.compactName else oname};
+      var olabel = niceName(s);
+      //{if(o.hasLocalSlot("compactName")) o.compactName else oname};
       if (showBind || showOwnership)
         nodes[oname] = ["protoName" => oname, "kind" => "object",
         "label"=>olabel];
@@ -184,7 +187,8 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       if (!o.isA(UObject) || !o.hasLocalSlot("__uobjectName"))
         continue;
       var oname = o.__uobjectName;
-      var olabel = {if(o.hasLocalSlot("compactName")) o.compactName else oname};
+      var olabel = niceName(s);
+      //{if(o.hasLocalSlot("compactName")) o.compactName else oname};
       // Check all its uvars
       for| (var vn: o.localSlotNames)
       {
@@ -245,6 +249,8 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
                  (filter >=1 && ["init", "new"].has(method.split(".")[1]))))
             continue;
           var vname = v.asString.replace(".", "__");
+          if (!nodes.has(vname))
+            continue;
           nodes[vname]["useCount"]++;
           edges.insertBack([mname, vname,
               ["len" => 1, "arrowhead" => "normal",  "kind" => "writes"]]);
@@ -279,6 +285,8 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
         for| (var v: e.second)
         {
           var vname = v.asString.replace(".", "__");
+          if (!nodes.has(vname))
+            continue;
           nodes[vname]["useCount"]++;
           edges.insertBack([mname, vname,
               ["len" => 1, "arrowhead" => "inv", "kind" => "reads"]]);
@@ -451,4 +459,14 @@ b.b = 12;
 b.setNotifyAccess(1);
 all.setNotifyChangeByName(b.getSlot("lastAccessVal"));
 b.b;
+*/
+/* RTC test sequence
+var a = all.new(0);
+var a.compactName = "a";
+create_component(FileSink, "fsink");
+fsink.set_output_file("/tmp/out.fsink");
+var cp = fsink.create_connector_profile;
+fsink.connect("val", cp);
+a.connect("a", cp);
+
 */
