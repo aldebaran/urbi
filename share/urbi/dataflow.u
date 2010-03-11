@@ -119,7 +119,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   };
   function isUVar(m)
   {
-    wall("isuvar " + m);
+    //wall("isuvar " + m);
     var comps = m.split(".");
     getSlot(comps[0]).getSlot(comps[1]).isA(UVar)
   };
@@ -144,7 +144,6 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       if (nodes.has(oname))
         continue;
       var olabel = niceName(s);
-      //{if(o.hasLocalSlot("compactName")) o.compactName else oname};
       if (showBind || showOwnership)
         nodes[oname] = ["protoName" => oname, "kind" => "object",
         "label"=>olabel];
@@ -189,7 +188,6 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
         continue;
       var oname = o.__uobjectName;
       var olabel = niceName(s);
-      //{if(o.hasLocalSlot("compactName")) o.compactName else oname};
       // Check all its uvars
       for| (var vn: o.localSlotNames)
       {
@@ -367,30 +365,10 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   {
     var nodes = graph[0];
     var edges = graph[1];
-    // First reshape UVars into PortProfile and kill internal methods
+    // First kill internal methods
     for|( var n: nodes)
     {
-      if (n.second["kind"] == "var")
-      {
-        var names = n.first.split("__");
-        var ob = getSlot(names[0]);
-        if (ob.hasLocalSlot("get_context_handle"))
-        { // look for it in port_profiles
-          for|(var pp: ob.get_component_profile["port_profiles"])
-          {
-            if (pp["name"] == names[1])
-            { // gotcha, this is a port_profiles.
-              // Change shape
-              n.second["shape"] = ["invtriangle", "triangle"][pp["polarity"]];
-              // Remote internal notifyAccess
-              var notifyNodeName = names[0] + "__" + n.first;
-              nodes.erase(notifyNodeName);
-              edges = killEdges(edges, notifyNodeName);
-            }
-          }
-        }
-      }
-      else if (n.second["kind"] == "method")
+      if (n.second["kind"] == "method")
       {
         var names = n.first.split("__");
         var ob = getSlot(names[0]);
@@ -404,12 +382,24 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
         }
       }
     };
-    // Now create connector_profiles and links.
+    // Now create connector_profiles and links, update/create UVars
     for|(var on: uobjects.localSlotNames)
     {
       var o = getSlot(on);
       if (o.hasSlot("get_component_profile_") && o.__uobjectName == on)
         for|(var pp: o.get_component_profile["port_profiles"])
+      {
+        var nodeName = on +"__" + pp["name"];
+        if (!nodes.has(nodeName))
+          nodes[nodeName] =
+                 [ "kind"=>"uvar", "label" => niceName(on+"."+pp["name"]),
+                 "shape" => ["invtriangle", "triangle"][pp["polarity"]]]
+        else
+          nodes[nodeName]["shape"] =["invtriangle", "triangle"][pp["polarity"]];
+        // Remove internal notifyAccess
+        var notifyNodeName = on + "__" + on + "__" + pp["name"];
+        nodes.erase(notifyNodeName);
+        edges = killEdges(edges, notifyNodeName);
         for|(var c: pp["connectors"])
         {
           var cn = "connector_" + c["uid"];
@@ -421,13 +411,18 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
             // And create the edges to each port member
             for| (var m: c["portnames"])
             {
+              var origm = m;
               var polarity = 0;
               var v = getUVar(m);
               // The above should always work but just be sure.
               if (v) { // beware, use the node is using the uobject name
                 // and not the component name
-                polarity = v.polarity;
-                m = v.ownerName + "." + v.initialName;
+                 m = v.ownerName + "." + v.initialName;
+                 polarity = v.polarity;
+                 if (!nodes.has(m.replace(".", "__"))) // was filtered out
+                   nodes[m.replace(".", "__")] =
+                 [ "kind"=>"uvar", "label" => origm,
+                 "shape" => ["invtriangle", "triangle"][polarity]];
               };
               var edge = [m.replace(".", "__"), cn];
               if (polarity)
@@ -438,6 +433,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
             }
           }
         }
+      }
     };
     [nodes, edges]
   };
