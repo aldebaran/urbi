@@ -194,6 +194,12 @@ main (int argc, char *argv[])
 
   if (fileName)
   {
+    FILE *f = fopen(fileName, "w");
+    if (!f)
+      std::cerr << program_name() << ": cannot create file " << fileName
+                << ": " << strerror(errno)
+                << libport::exit(EX_OSERR);
+
     int fmt = format(arg_format);
     /* Use syncGetImage to save one image to a file. */
     char buff[1000000];
@@ -205,17 +211,10 @@ main (int argc, char *argv[])
 			 ? urbi::URBI_TRANSMIT_JPEG
 			 : urbi::URBI_TRANSMIT_YCbCr),
 			w, h);
-
-    if (FILE *f = fopen(fileName, "w"))
-    {
-      // FIXME: Don't ignore return value.
-      (void) fwrite(buff, 1, sz, f);
-      fclose(f);
-    }
-    else
-      std::cerr << program_name() << ": cannot create file " << fileName
-                << ": " << strerror(errno)
-                << libport::exit(EX_OSERR);
+    size_t written = fwrite(buff, 1, sz, f);
+    (void) written;
+    assert_eq(sz, written);
+    fclose(f);
   }
   else
   {
