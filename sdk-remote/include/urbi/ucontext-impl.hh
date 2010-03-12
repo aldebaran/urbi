@@ -62,6 +62,15 @@ namespace urbi
                         UAutoValue v7 = UAutoValue(),
                         UAutoValue v8 = UAutoValue()) = 0;
 
+      virtual void declare_event(const UEvent* owner) = 0;
+
+      virtual void emit(const std::string& object,
+                        UAutoValue& v1,
+                        UAutoValue& v2,
+                        UAutoValue& v3,
+                        UAutoValue& v4,
+                        UAutoValue& v5) = 0;
+
       /// Return the mode in which the code is running.
       virtual UObjectMode getRunningMode() const = 0;
       /// Get the kernel major,minor version

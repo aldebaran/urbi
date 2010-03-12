@@ -543,6 +543,33 @@ namespace urbi
       URBI_SEND_COMMA_COMMAND_C((*client_), r);
     }
 
+    void
+    RemoteUContextImpl::declare_event(const UEvent* owner)
+    {
+      std::string r = "var " + owner->get_name() + " = Event.new()|;";
+      URBI_SEND_COMMAND_C((*client_), r);
+    }
+
+    void
+    RemoteUContextImpl::emit(const std::string& object,
+                             UAutoValue& v1,
+                             UAutoValue& v2,
+                             UAutoValue& v3,
+                             UAutoValue& v4,
+                             UAutoValue& v5)
+    {
+      std::stringstream s;
+      s << object << "!(";
+#define CHECK(v) if (v.type != DATA_VOID) s << v << ","
+      CHECK(v1); CHECK(v2); CHECK(v3); CHECK(v4); CHECK(v5);
+#undef CHECK
+      std::string r = s.str();
+      if (v1.type != DATA_VOID)
+        r = r.substr(0, r.length() - 1);
+      r += ')';
+      URBI_SEND_COMMAND_C((*client_), r);
+    }
+
     UVarImpl*
     RemoteUContextImpl::getVarImpl()
     {

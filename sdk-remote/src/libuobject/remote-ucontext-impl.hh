@@ -39,6 +39,13 @@ namespace urbi
                         UAutoValue v6 = UAutoValue(),
                         UAutoValue v7 = UAutoValue(),
                         UAutoValue v8 = UAutoValue());
+      virtual void declare_event(const UEvent* owner);
+      virtual void emit(const std::string& object,
+                        UAutoValue& v1,
+                        UAutoValue& v2,
+                        UAutoValue& v3,
+                        UAutoValue& v4,
+                        UAutoValue& v5);
       virtual UObjectMode getRunningMode() const;
       virtual std::pair<int, int> kernelVersion() const;
       virtual void yield() const;

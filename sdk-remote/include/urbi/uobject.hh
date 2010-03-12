@@ -27,6 +27,7 @@
 # include <urbi/fwd.hh>
 # include <urbi/kernel-version.hh>
 # include <urbi/ucallbacks.hh>
+# include <urbi/uevent.hh>
 # include <urbi/utimer-callback.hh>
 # include <urbi/uvar.hh>
 # include <urbi/uobject-hub.hh>
@@ -44,6 +45,16 @@
  with the same name in the corresponding Urbi object.  */
 # define UBindVar(Obj,X) \
   (X).init(__name, #X, ctx_)
+
+
+/** Bind an event to an object.
+
+ This macro can only be called from within a class inheriting from
+ UObject.  It binds the UEvent x within the object to a variable
+ with the same name in the corresponding Urbi object.  */
+# define UBindEvent(Obj,X) \
+  (X).init(__name, #X, ctx_)
+
 
 /** This macro inverts a UVar in/out accesses.
 

@@ -26,6 +26,7 @@ namespace urbi
   class UCallbackList;
   class UCallbackWrapper;
   class UClient;
+  class UEvent;
   class UGenericCallback;
   class UImage;
   class UList;

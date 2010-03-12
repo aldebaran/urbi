@@ -20,6 +20,8 @@ urbiinclude_HEADERS =				\
   include/urbi/ucontext.hxx			\
   include/urbi/uconversion.hh			\
   include/urbi/uexternal.hh			\
+  include/urbi/uevent.hh			\
+  include/urbi/uevent.hxx			\
   include/urbi/uimage.hh			\
   include/urbi/umain.hh				\
   include/urbi/umessage.hh			\
