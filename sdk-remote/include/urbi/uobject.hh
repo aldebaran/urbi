@@ -71,7 +71,7 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
  a basic integral or floating types, char *, std::string, UValue,
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
-# define UBindFunction(Obj, X)                                          \
+# define UBindFunction(Obj, X)                                           \
   ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
                           (&Obj::X), __name + "." #X)
 
@@ -81,7 +81,7 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
  *  @param lockMode (LockMode) which lock to use. This lock can be used to
  *  prevent multiple parallel execution of functions.
  */
-# define UBindThreadedFunction(Obj, X, lockMode)                            \
+# define UBindThreadedFunction(Obj, X, lockMode)                         \
   ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
                           (&Obj::X), __name + "." #X)                    \
   ->setAsync(getTaskLock(lockMode, #X))
@@ -89,13 +89,13 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
  time the event of same name is triggered. The function will be
  called only if the number of arguments match between the function
  prototype and the Urbi event.  */
-# define UBindEvent(Obj, X)                             \
-::urbi::createUCallback(*this, 0, "event", this,  \
+# define UAt(Obj, X)                                                    \
+::urbi::createUCallback(*this, 0, "event", this,                        \
 			  (&Obj::X), __name + "." #X)
 
-/// Same as UBindEvent() but executes the code in a separate thread.
-# define UBindThreadedEvent(Obj, X, lockMode)                             \
-  UBindEvent(Obj, X)->setAsync(getTaskLock(lockMode, #X))
+/// Same as UAt() but executes the code in a separate thread.
+# define UThreadedAt(Obj, X, lockMode)                                  \
+  UAt(Obj, X)->setAsync(getTaskLock(lockMode, #X))
 
 
 /** Registers a function \a X in current object that will be called each
@@ -104,12 +104,12 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
  * of arguments match between the function prototype and the Urbi
  * event.
  */
-# define UBindEventEnd(Obj, X, Fun)					\
+# define UAtEnd(Obj, X, Fun)					        \
   ::urbi::createUCallback(*this, 0, "eventend", this,			\
 			  (&Obj::X),(&Obj::Fun), __name + "." #X)
 
-# define UBindThreadedEventEnd(Obj, X, Fun, lock)			\
-  UBindEventEnd(Obj, X, Fun)->>setAsync(getTaskLock(lockMode, #X))
+# define UThreadedAtEnd(Obj, X, Fun, lock)			        \
+  UAtEnd(Obj, X, Fun)->>setAsync(getTaskLock(lockMode, #X))
 
 /// Register current object to the UObjectHub named \a Hub.
 # define URegister(Hub)						\
