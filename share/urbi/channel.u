@@ -50,9 +50,6 @@ do (Global)
   cerr.quote = false;
   var clog = Channel.new("clog");
 
-  // Used by urbi-image.
-  var uimg = Channel.new("uimg");
-
   // Top-level channel.
   var topLevel = Channel.new("");
   Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
