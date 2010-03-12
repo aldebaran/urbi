@@ -163,12 +163,14 @@ main (int argc, char *argv[])
 
   if (libport::opts::help.get())
     usage(opt_parser);
-  const char* device = arg_dev.value("camera").c_str();
+
+  std::string device = arg_dev.value("camera");
 
   std::string arg_format;
   if (arg_form.filled())
     arg_format = arg_form.value();
   scale = arg_scale.get<float>(1.0);
+
   if (arg_out.filled())
     fileName = arg_out.value().c_str();
 
@@ -181,16 +183,15 @@ main (int argc, char *argv[])
               << libport::exit(1);
 
   if (1 < client.kernelMajor())
-    client.send("uimg = Channel.new(\"uimg\")|;");
+    client.send("var uimg = Channel.new(\"uimg\")|;\n");
   client.setCallback(showImage, "uimg");
 
-  client.send("%s.resolution  = %s;",
-              device, arg_resolution.value("0").c_str());
-  client.send("%s.jpegfactor = %d;",
-              device, arg_jpeg.get<int>(70));
-
-  client << device << ".reconstruct = " << (arg_rec.get() ? 1 : 0)
-	 << urbi::semicolon;
+  client.send("%s.resolution = %s;\n",
+              device.c_str(), arg_resolution.value("0").c_str());
+  client.send("%s.jpegfactor = %d;\n",
+              device.c_str(), arg_jpeg.get<int>(70));
+  client.send("%s.reconstruct = %d;\n",
+              device.c_str(), arg_rec.get() ? 1 : 0);
 
   if (fileName)
   {
@@ -205,7 +206,7 @@ main (int argc, char *argv[])
     char buff[1000000];
     size_t sz = sizeof buff;
     size_t w, h;
-    client.syncGetImage(device, buff, sz,
+    client.syncGetImage(device.c_str(), buff, sz,
 			fmt,
 			(fmt == urbi::IMAGE_JPEG
 			 ? urbi::URBI_TRANSMIT_JPEG
@@ -220,19 +221,19 @@ main (int argc, char *argv[])
   {
     imcount = 0;
     int fmt = (arg_format[0] == 'r') ? 0 : 1;
-    client.send("%s.format = %d;", device, fmt);
+    client.send("%s.format = %d;\n", device.c_str(), fmt);
     client.waitForKernelVersion(true);
     if (int period = arg_period.get<int>(0))
-      client.send("every (%dms) uimg << %s.val,", period, device);
+      client.send("every (%dms) uimg << %s.val,", period, device.c_str());
     else if (1 < client.kernelMajor())
       client.send("var handle = WeakPointer.new;\n"
                   "%s.getSlot(\"val\").notifyChange(handle, closure() {\n"
                   "  connectionTag:\n"
                   "    this.send(%s.val.asString, \"uimg\")\n"
                   "});",
-                  device, device);
+                  device.c_str(), device.c_str());
     else
-      client.send("loop { uimg << %s.val; noop },", device);
+      client.send("loop { uimg << %s.val; noop },", device.c_str());
     urbi::execute();
   }
 
