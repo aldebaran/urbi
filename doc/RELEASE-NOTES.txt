@@ -14,6 +14,9 @@ Changes:
 
 - Global.Task is renamed as Global.Job.
 
+- Global.output, Global.error are removed, they were deprecated in
+  favor of cout and cerr.
+
 - Object.getPeriod is deprecated in favor of System.period.
 
 - As announced long ago, and as displayed by warnings,

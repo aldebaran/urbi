@@ -28,6 +28,9 @@ class Global.Channel
     var this.name = x
   };
 
+  var warning = new("warning");
+  warning.quote = false;
+
   function '<<'(x)
   {
     if (enabled)
@@ -42,26 +45,22 @@ class Global.Channel
 // Default channels.
 do (Global)
 {
-  // Long names are k1 compatible.
-  var output  = Channel.new("output");
-  var error   = Channel.new("error");
-  error.quote = false;
-  var warning = Channel.new("warning");
-  warning.quote = false;
-  var clog    = Channel.new("clog");
-  // This one is used by urbiimage.
-  var uimg    = Channel.new("uimg");
+  var cout = Channel.new("output");
+  var cerr = Channel.new("error");
+  cerr.quote = false;
+  var clog = Channel.new("clog");
 
-  // Short names are user compatible.
-  var cout    = output;
-  var cerr    = error;
+  // Used by urbi-image.
+  var uimg = Channel.new("uimg");
 
   // Top-level channel.
   var topLevel = Channel.new("");
   Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
 
-  function warn(msg) { echo (msg, "warning") };
+  function warn(msg)
+  {
+    echo (msg, "warning")
+  };
 };
-
 
 {} // Global.asString is not yet defined: evaluate to void to avoid an error.

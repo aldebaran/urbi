@@ -19,8 +19,7 @@ var c = Channel.new("my_label") | {};
 
 \subsection{Slots}
 
-\begin{itemize}
-
+\begin{urbiscriptapi}
 \item \lstinline|'<<'(\var{value})|\\
 Returns the given \var{value} tagged by the label of \lstinline|this|
 
@@ -29,7 +28,15 @@ c << 42;
 [00000000:my_label] 42
 \end{urbiscript}
 
-\end{itemize}
+\item[warning] A predefined stream for warning messages.  Strings sent
+  to it are not escaped.
+\begin{urbiscript}
+Channel.warning << "Message";
+[00015895:warning] Message
+Channel.warning << "\"quote\"";
+[00015895:warning] "quote"
+\end{urbiscript}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

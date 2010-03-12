@@ -20,7 +20,9 @@ anywhere.
 \item[Binary] See \refObject{Binary}.
 \item[CallMessage] See \refObject{CallMessage}.
 
-\item[cerr] An alias to \lstinline|Global.error|.
+\item[cerr] A predefined stream for error messages.  Strings sent to
+  it are not escaped, contrary to regular streams (see
+  \lstinline|output| for instance).
 \begin{urbiscript}
 cerr << "Message";
 [00015895:error] Message
@@ -40,7 +42,8 @@ clog << "Message";
 \item[Code] See \refObject{Code}.
 \item[Comparable] See \refObject{Comparable}.
 
-\item[cout] An alias to \lstinline|Global.output|.
+\item[cout] A predefined stream for output messages.  Strings are
+  output escaped.
 \begin{urbiscript}
 cout << "Message";
 [00015895:output] "Message"
@@ -70,16 +73,6 @@ echo(222, "");
 [00051909] *** 222
 echo(333);
 [00055205] *** 333
-\end{urbiscript}
-
-\item[error] A predefined stream for error messages.  Strings sent to it are not
-  escaped, contrary to regular streams (see \lstinline|output| for
-  instance).
-\begin{urbiscript}
-error << "Message";
-[00015895:error] Message
-error << "\"quote\"";
-[00015895:error] "quote"
 \end{urbiscript}
 
 \item[evaluate] This \refObject{UVar} provides a synchronous interface
@@ -142,15 +135,6 @@ evaluate = "1/0;";
 \item[nil] See \refObject{nil}.
 \item[Object] See \refObject{Object}.
 \item[Orderable] See \refObject{Orderable}.
-\item[output] A predefined stream for output messages.  Strings are
-  output escaped.
-\begin{urbiscript}
-output << "Message";
-[00015895:output] "Message"
-output << "\"quote\"";
-[00015895:output] "\"quote\""
-\end{urbiscript}
-
 \item[OutputStream] See \refObject{OutputStream}.
 \item[Pair] See \refObject{Pair}.
 \item[Path] See \refObject{Path}.
@@ -201,15 +185,6 @@ topLevel << "\"quote\"";
 \item[void] See \refObject{void}.
 %% FIXME: [00008804] ***   wall : Code
 %% FIXME: [00008805] ***   warn : Code
-
-\item[warning] A predefined stream for warning messages.  Strings sent
-  to it are not escaped.
-\begin{urbiscript}
-warning << "Message";
-[00015895:warning] Message
-warning << "\"quote\"";
-[00015895:warning] "quote"
-\end{urbiscript}
 %% FIXME: [00008806] ***   WeakDictionary : Finalizable
 %% FIXME: [00008806] ***   WeakPointer : Finalizable
 \end{urbiscriptapi}

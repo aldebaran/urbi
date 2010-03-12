@@ -27,6 +27,12 @@ class Global.Kernel1
     b.copy
   };
 
+  function error()
+  {
+    deprecated("error", "cerr") |
+    cerr
+  };
+
   function isvoid
   {
     deprecated("isvoid(o)", "o.isVoid") |
@@ -36,6 +42,12 @@ class Global.Kernel1
   function noop()
   {
     deprecated("noop", "{}")
+  };
+
+  function output()
+  {
+    deprecated("output", "cout") |
+    cout
   };
 
   function ping()
@@ -61,7 +73,7 @@ class Global.Kernel1
     s.length
   };
 
-  function system
+  function system()
   {
     deprecated("system", "System") |
     System
