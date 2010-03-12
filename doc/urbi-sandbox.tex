@@ -20,6 +20,41 @@ This document is meant to be used to toy with \LaTeX{}.
 This is the first chapter.
 
 \section{First Section}
+\newcommand{\optionHelp}
+  {Display the help message and exit successfully.}
+
+\newcommand{\optionVersion}
+  {Display version information and exit successfully.}
+
+\begin{options}
+\item[h]{help} \optionHelp
+  \begin{sublist}
+    \begin{description}
+    \item[foo] foo.
+    \item[bar] bar.
+    \end{description}
+  \end{sublist}
+
+  \begin{sublist}
+    \begin{itemize}
+    \item foo
+    \item bar
+    \end{itemize}
+  \end{sublist}
+
+\item{version} \optionVersion
+  \begin{sublist}
+    \begin{description}
+    \item[foo] foo.
+    \item[bar] bar.
+    \end{description}
+
+    \begin{itemize}
+    \item foo
+    \item bar
+    \end{itemize}
+  \end{sublist}
+\end{options}
 
 \subsection{First Subsection}
 \subsubsection{Subsubsection I.1.1.1.a}
@@ -64,7 +99,7 @@ This is the second chapter.
 \urbitrajectory{accel}
 
 \begin{urbiscriptapi}
-\item[count]Return the count.
+\item[count] Return the count.
 \item[launch]
   Fire \lstinline|this|.
 \item \lstinline|launch|~\\
@@ -90,19 +125,19 @@ Body of Section II.1.1.
 \subsection{Subsection II.1.1.1}
 Body of Subsection II.1.1.1.
 
-\faqsection{FAQ II.1.1.1.a}
+\subsubsection{FAQ II.1.1.1.a}
 Body of Subsection II.1.1.1.a.
 
-\faqsection{FAQ II.1.1.1.b}
+\subsubsection{FAQ II.1.1.1.b}
 Body of Subsection II.1.1.1.b.
 
 \subsection{Subsection II.1.1.2}
 Body of Subsection II.1.1.2.
 
-\faqsection{FAQ II.1.1.2.a}
+\subsubsection{FAQ II.1.1.2.a}
 Body of Subsection II.1.1.2.a.
 
-\faqsection{FAQ II.1.1.2.b}
+\subsubsection{FAQ II.1.1.2.b}
 Body of Subsection II.1.1.2.b.
 
 

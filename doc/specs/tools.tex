@@ -3,13 +3,15 @@
   This option is mostly for developers, but it is very useful when
   tracking problems such as a UObject that fails to load properly.
   Valid values for \var{level} are, in increasing verbosity order:
-  \begin{enumerate}
-  \item \code{NONE}, no log messages at all.
-  \item \code{LOG}, the default value.
-  \item \code{TRACE}
-  \item \code{DEBUG}
-  \item \code{DUMP}, maximum verbosity.
-  \end{enumerate}
+  \begin{sublist}
+    \begin{enumerate}
+    \item \code{NONE}, no log messages at all.
+    \item \code{LOG}, the default value.
+    \item \code{TRACE}
+    \item \code{DEBUG}
+    \item \code{DUMP}, maximum verbosity.
+    \end{enumerate}
+  \end{sublist}
 }
 \newcommand{\optionHelp}
   {Display the help message and exit successfully.}
@@ -119,14 +121,14 @@ simpler to use than, \command{urbi-launch}
 \paragraph{General Options}
 
 \begin{options}
-\item[-h, --help] \optionHelp
-\item[--version] \optionVersion
+\item[h]{help} \optionHelp
+\item{version} \optionVersion
 \end{options}
 
 \paragraph{Tuning}
 \begin{options}
-\item[-d, --debug=\var{level}] \optionDebug
-\item[-F, --fast]
+\item[d]{debug=\var{level}} \optionDebug
+\item[F]{fast}
   Ignore system time, go as fast as possible.  Do not use this option
   unless you know exactly what you are doing.
 
@@ -150,7 +152,7 @@ simpler to use than, \command{urbi-launch}
   designed for testing purpose; \emph{it does not preserve the program
     semantics}.
 
-\item[-s, --stack-size=\var{size}] set the coroutine \dfn{stack size}.
+\item[s]{stack-size=\var{size}} Set the coroutine \dfn{stack size}.
   The unit of \var{size} is KB; it defaults to 128.
 
   This option should not be needed unless you have ``stack exhausted''
@@ -161,27 +163,29 @@ simpler to use than, \command{urbi-launch}
   \env{URBI\_STACK\_SIZE}.  The option \option{--stack-size} has
   precedence over the \env{URBI\_STACK\_SIZE}.
 
-\item[-q, --quiet] do not send the welcome banner to incoming clients.
+\item[q]{quiet} Do not send the welcome banner to incoming clients.
 \end{options}
 
 \paragraph{Networking}
 \begin{options}
-\item[-H, --host=\var{address}] Set the \var{address} on which network
+\item[H]{host=\var{address}} Set the \var{address} on which network
   connections are listened to.  Typical values of \var{address}
   include:
-  \begin{description}
-  \item[localhost] only local connections are allowed (no other
-    computer can reach this server).
-  \item[127.0.0.1] same as \code{localhost}.
-  \item[0.0.0.0] any IP v4 connection is allowed, including from
-    remote computers.
+  \begin{sublist}
+    \begin{description}
+    \item[localhost] only local connections are allowed (no other
+      computer can reach this server).
+    \item[127.0.0.1] same as \code{localhost}.
+    \item[0.0.0.0] any IP v4 connection is allowed, including from
+      remote computers.
   \end{description}
+  \end{sublist}
   Defaults to \code{0.0.0.0}.
-\item[-P, --port=\var{port}] Set the port to listen incoming
+\item[P]{port=\var{port}} Set the port to listen incoming
   connections to.  If \var{port} is \code{-1}, no networking.  If
   \var{port} is \code{0}, then the system will chose any available
   port (see \option{--port-file}).  Defaults to \code{-1}.
-\item[-w, --port-file=\var{file}] When the system is up and running,
+\item[w]{port-file=\var{file}} When the system is up and running,
   and when it is ready for network connections, create the file named
   \var{file} which contains the number of the port the server listens
   to.
@@ -190,11 +194,11 @@ simpler to use than, \command{urbi-launch}
 
 \paragraph{Execution}
 \begin{options}
-\item[-e, --expression=\var{exp}] send the \us expression \var{exp}.
+\item[e]{expression=\var{exp}} Send the \us expression \var{exp}.
   No separator is added, you have to pass yours.
-\item[-f, --file=\var{file}] send the contents of the file \var{file}.
+\item[f]{file=\var{file}} Send the contents of the file \var{file}.
   No separator is added, you have to pass yours.
-\item[-i, --interactive] start an interactive session.
+\item[i]{interactive} Start an interactive session.
 \end{options}
 
 The options \option{-e}, \option{-f} accumulate, and are run in the
@@ -232,27 +236,27 @@ The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.
 
 \paragraph{Urbi-launch options}
 \begin{options}
-\item[-h, --help] \optionHelp
-\item[--version] \optionVersion
-\item[-c, --customize=\var{file}] start the \urbi server in
+\item[h]{help} \optionHelp
+\item{version} \optionVersion
+\item[c]{customize=\var{file}} Start the \urbi server in
   \var{file}.  This option is mostly for developers.
-\item[-d, --debug=\var{level}] \optionDebug
+\item[d]{debug=\var{level}} \optionDebug
 \end{options}
 
 \paragraph{Mode selection}
 \begin{options}
 % !!! \lstinline|loadModule("\var{module}")| does not escape the \var
 % because it is inside a string.
-\item[-p, --plugin] attach the \var{module} onto a currently running
+\item[p]{plugin} Attach the \var{module} onto a currently running
   \urbi server (identified by \var{host} and \var{port}).  This is
   equivalent to running \lstinline|loadModule("module")| on the
   corresponding server.
 
-\item[-r, --remote] run the \var{modules} as separated processes,
+\item[r]{remote} Run the \var{modules} as separated processes,
   connected to a running Urbi server (identified by \var{host} and
   \var{port}) via network connection.
 
-\item[-s, --start] Start an Urbi server with plugged-in
+\item[s]{start} Start an Urbi server with plugged-in
   \var{modules}.  In this case, the \var{module-option} are exactly
   the options supported by \command{urbi}.
 \end{options}
@@ -292,16 +296,17 @@ Stay connected, until server disconnection, or user interruption (such
 as \key{C-c} under a Unix terminal).
 
 \begin{options}
-\item[-b, --banner] do not hide the server-sent banner.
-\item[-e, --expression=\var{script}] send \var{script} to the server.
-\item[-f, --file=\var{file}] send the contents of \var{file} to the
+\item[b]{banner} Do not hide the banner from the server.
+\item[e]{expression=\var{script}} Send \var{script} to the server.
+\item[f]{file=\var{file}} Send the contents of \var{file} to the
   server.
-\item[-h, --help] \optionHelp
-\item[-H, --host=\var{host}] address to listen to.
-\item[-P, --port=\var{port}] port to listen to, 0 for automatic
+\item[h]{help} \optionHelp
+\item[H]{host=\var{host}} Address to listen to.
+\item[P]{port=\var{port}} Port to listen to, 0 for automatic
   selection.
-\item[--port-file=\var{file}] file containing the port to listen to.
-\item[-q, --quit] disconnect from the server immediately after having
+\item{port-file=\var{file}} Listen to the port contained in the file
+  \var{file}.
+\item[q]{quit} Disconnect from the server immediately after having
   sent all the commands.  This is equivalent to \samp{-e 'quit;'}.
   This is inappropriate if code running in background is expected to
   deliver its result asynchronously: the connection will be closed
@@ -309,7 +314,7 @@ as \key{C-c} under a Unix terminal).
 
   Without this option, \command{urbi-send} prompts the user to hit
   \key{C-c} to end the connection.
-\item[--version] \optionVersion
+\item{version} \optionVersion
 \end{options}
 
 
@@ -348,35 +353,35 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
 
 \paragraph{General options}
 \begin{options}
-\item[-D, --debug] turn on shell debugging (\lstinline|set -x|) to
+\item[D]{debug} Turn on shell debugging (\lstinline|set -x|) to
   track \command{umake} problems.
-\item[-h, --help] \optionHelp
-\item[-q, --quiet] no output unless errors.
-\item[-v, --version] \optionVersion
-\item[-V, --verbose] report on what is done.
+\item[h]{help} \optionHelp
+\item[q]{quiet} Produce no output except errors.
+\item[v]{version} \optionVersion
+\item[V]{verbose} Report on what is done.
 \end{options}
 
 \paragraph{Compilation options}
 \begin{options}
-\item[--deep-clean] remove all building directories and exit.
-\item[-c, --clean] clean building directory before compilation.
-\item[-j, --jobs=\var{jobs}] specify the numbers of compilation
+\item{deep-clean} Remove all building directories and exit.
+\item[c]{clean} Clean building directory before compilation.
+\item[j]{jobs=\var{jobs}} Specify the numbers of compilation
   commands to run simultaneously.
-\item[-l, --library] produce a library, don't link to a particular
+\item[l]{library} Produce a library, don't link to a particular
   core.
-\item[-s, --shared-library] produce a shared library loadable by any
+\item[s]{shared-library} Produce a shared library loadable by any
   core.
-\item[-o, --output=\var{output}] output file name.
-\item[-C, --core=\var{core}] build type.
-\item[-H, --host=\var{host}] destination host.
-\item[-m, --disable-automain] do not add the \lstinline|main| function.
+\item[o]{output=\var{output}} Set the output file name.
+\item[C]{core=\var{core}} Set the build type.
+\item[H]{host=\var{host}} Set the destination host.
+\item[m]{disable-automain} Do not add the \lstinline|main| function.
 \end{options}
 
 \paragraph{Developer options}
 \begin{options}
-\item[-p, --prefix=\var{dir}] library file location
-\item[-P, --param-mk=\var{file}] \file{param.mk} location
-\item[-k, --kernel=\var{dir}] kernel location
+\item[p]{prefix=\var{dir}} Set library files location.
+\item[P]{param-mk=\var{file}} Set \file{param.mk} location.
+\item[k]{kernel=\var{dir}} Set the kernel location.
 \end{options}
 
 
