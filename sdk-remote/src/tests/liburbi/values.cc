@@ -12,16 +12,16 @@
 
 BEGIN_TEST(values, client, syncClient)
 client.setErrorCallback(callback(&dump));
-client.setCallback(callback(&dump), "output");
+client.setCallback(callback(&dump), "cout");
 
-SEND("output << 1;");
+SEND("cout << 1;");
 //= D output 1
-SEND("output << \"coin\";");
+SEND("cout << \"coin\";");
 //= D output "coin"
 SEND("error << nonexistent;");
 //= E error 3.10-20: lookup failed: nonexistent
-SEND("var mybin = BIN 10 mybin header;1234567890;output << mybin;");
+SEND("var mybin = BIN 10 mybin header;1234567890;cout << mybin;");
 //= D output BIN 10 mybin header;1234567890
-SEND("output << [\"coin\", 5, [3, mybin, 0]];");
+SEND("cout << [\"coin\", 5, [3, mybin, 0]];");
 //= D output ["coin", 5, [3, BIN 10 mybin header;1234567890, 0]]
 END_TEST
