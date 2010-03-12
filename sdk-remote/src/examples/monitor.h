@@ -1,12 +1,12 @@
-/*******************************************************************************
-
-	   filename             : monitor.h
-	   description          : Class definition
-
-	   copyright            : (C) 2004, 2006 by Jean-Christophe Baillie
-	   email                : jean-christophe.baillie@m4x.org
-
-********************************************************************************/
+/*
+ * Copyright (C) 2004, 2006-2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
 
 #ifndef _MONITOR_H
 # define _MONITOR_H
@@ -14,17 +14,17 @@
 # ifdef WIN32
 #  include "monitor-win.h"
 # else
-# include "libport/cstring"
-# include <libport/cerrno>
-# include <libport/cassert>
-# include <iostream>
-# include <X11/X.h>
-# include <X11/Xlib.h>
-# include <X11/Xutil.h>
-# include <list>
-# include <sys/ipc.h>
-# include <sys/shm.h>
-# include <X11/extensions/XShm.h>
+#  include "libport/cstring"
+#  include <libport/cerrno>
+#  include <libport/cassert>
+#  include <iostream>
+#  include <X11/X.h>
+#  include <X11/Xlib.h>
+#  include <X11/Xutil.h>
+#  include <list>
+#  include <sys/ipc.h>
+#  include <sys/shm.h>
+#  include <X11/extensions/XShm.h>
 
 typedef unsigned char bits8;
 
