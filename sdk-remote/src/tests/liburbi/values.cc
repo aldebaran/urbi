@@ -12,7 +12,7 @@
 
 BEGIN_TEST
 client.setErrorCallback(callback(&dump));
-client.setCallback(callback(&dump), "cout");
+client.setCallback(callback(&dump), "output");
 
 SEND("cout << 1;");
 //= D output 1
