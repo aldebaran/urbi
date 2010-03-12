@@ -38,8 +38,11 @@ do (Global.UObject)
     call.message = "init" |
     var ret = res.callMessage(call)|
     if (ret != 0)
+    {
+      res.destroy|
       throw Exception.new("%s construction failed: init returned %s."
-                          % [__uobjectName, ret])|
+                          % [__uobjectName, ret])
+    }|
     res
   };
 
