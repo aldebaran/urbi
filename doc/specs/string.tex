@@ -177,6 +177,17 @@ String.fresh == "_5";
 "Hello, World!".toUpper == "HELLO, WORLD!";
 \end{urbiassert}
 
+\item \lstinline|'=='(\var{that})|\\
+  Whether \lstinline|this| and \var{that} are the same string.
+\begin{urbiassert}
+  "" == "";        !("" != "");
+!("" == "\0");       "" != "\0";
+
+  "0" == "0";      !("0" != "0");
+!("0" == "1");       "0" != "1";
+!("1" == "0");       "1" != "0";
+\end{urbiassert}
+
 \item \lstinline|'%'(\var{args})|\\
   It is an equivalent of \lstinline|Formatter.new(this) % \var{args}|.
   See \refObject{Formatter}.

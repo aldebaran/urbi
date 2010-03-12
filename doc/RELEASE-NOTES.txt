@@ -29,10 +29,6 @@ Changes:
 
 New features:
 
-- List.subset
-- Object.getLocalSlot.
-- Float.srandom
-
 - Dictionary can now be created with literals.
 
      [ => ]
@@ -42,6 +38,12 @@ New features:
 
      Dictionary.new
      Dictionary.new("a", 1, "b", 2, "c", 3)
+
+- Float.srandom
+- List.subset
+- Object.getLocalSlot.
+- String escapes accept one- and two-digit octal numbers.
+  For instance "\0" == "\00" == "\000".
 
 - Tuple can now be created with literals.
 

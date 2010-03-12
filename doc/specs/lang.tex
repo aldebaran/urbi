@@ -368,6 +368,7 @@ below.  The escapes sequences are defined in \autoref{tab:escapes}.
   \begin{tabular}{|c|p{.6\linewidth}|}
     \hline
     \lstinline|\\| & backslash             \\
+    \lstinline|\"| & double-quote          \\
     \lstinline|\a| & bell ring             \\
     \lstinline|\b| & backspace             \\
     \lstinline|\f| & form feed             \\
@@ -376,9 +377,13 @@ below.  The escapes sequences are defined in \autoref{tab:escapes}.
     \lstinline|\t| & tabulation            \\
     \lstinline|\v| & vertical tabulation   \\
 
-    \lstinline|\[0-7]{3}|
-    & eight-bit character corresponding to a three-digit octal number.
-    For instance, \lstinline|\000| and \lstinline|177|. \\
+    \lstinline|\[0-7]{1,3}|
+    & eight-bit character corresponding to a one-, two- or three-digit
+    octal number.  For instance, \lstinline|\0|, \lstinline|\000| and
+    \lstinline|177|.  The matching is greedy: as many digits as
+    possible are taken: \lstinline|\0|, \lstinline|\000| are both
+    resolved in the null character.
+    \\
 
     \lstinline|\x[0-9a-fA-F]{2}|
     & eight-bit character corresponding to a two-digit hexadecimal
@@ -395,13 +400,39 @@ below.  The escapes sequences are defined in \autoref{tab:escapes}.
   \label{tab:escapes}
 \end{table}
 
+\begin{urbiassert}
+// Special characters.
+"\"" == "\"";
+"\\" == "\\";
+
+// ASCII characters.
+"\a" == "\007"; "\a" == "\x07";
+"\b" == "\010"; "\b" == "\x08";
+"\f" == "\014"; "\f" == "\x0c";
+"\n" == "\012"; "\n" == "\x0a";
+"\r" == "\015"; "\r" == "\x0d";
+"\t" == "\011"; "\t" == "\x09";
+"\v" == "\013"; "\v" == "\x0b";
+
+// Octal escapes.
+"\0" == "\00"; "\0" == "\000";
+"\0000" == "\0""0";
+"\062\063" == "23";
+
+// Hexadecimal escapes.
+"\x00" == "\0";
+"\x32\x33" == "23";
+
+// Binary blob escape.
+"\B(3)("\")" == "\"\\\"";
+\end{urbiassert}
+
 Consecutive string literals are glued together into a unique string.
 This is useful to split large strings into chunks that fit usual
 programming widths.
 
 \begin{urbiassert}
 "foo" "bar" "baz" == "foobarbaz";
-"\B(3)("\")" == "\"\\\"";
 \end{urbiassert}
 
 The interpreter prints the strings escaped; for instance, line feed

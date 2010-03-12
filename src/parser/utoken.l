@@ -747,7 +747,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          GROW_VAL(*yytext);
      }
 
-     \\[0-7]{3}         {
+     \\[0-7]{1,3}         {
        long c = strtol (yytext + 1, 0, 8);
        if (c < 256)
          GROW_VAL(c);
