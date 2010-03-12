@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <memory>
 #include <libport/cstring>
 
 #include <boost/function.hpp>
@@ -179,7 +180,7 @@ namespace urbi
     bool fast;
     /// Whether network connections are enabled.
     bool network;
-    ConsoleServer* server;
+    std::auto_ptr<ConsoleServer> server;
   };
 
   int main_loop(LoopData& l);
@@ -382,8 +383,9 @@ namespace urbi
       sched::configuration.default_stack_size = arg_stack_size;
     }
 
-    data.server = new ConsoleServer(data.fast, urbi_root);
-    ConsoleServer& s = *data.server;
+    data.server =
+      std::auto_ptr<ConsoleServer>(new ConsoleServer(data.fast, urbi_root));
+    ConsoleServer& s = *data.server.get();
 
     /*----------.
     | --quiet.  |

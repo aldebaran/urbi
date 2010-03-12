@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+#include <memory>
+
 #include <libport/cstdlib>
 
 #include <libport/compiler.hh>
@@ -39,15 +41,16 @@ namespace dbg
   };
 
   // The sole sneaker instance.
-  static Sneaker* sneaker;
+  static std::auto_ptr<Sneaker> sneaker;
 
   runner::Runner&
   runner_or_sneaker_get()
   {
     if (kernel::urbiserver->scheduler_get().is_current_job(0))
     {
-      passert(sneaker, sneaker);
-      return *sneaker;
+      Sneaker *s = sneaker.get();
+      passert(s, s);
+      return *s;
     }
     return ::kernel::urbiserver->getCurrentRunner();
   }
@@ -78,8 +81,8 @@ namespace dbg
   create_sneaker_if_needed
     (object::rLobby lobby, sched::Scheduler& scheduler)
   {
-    if (!sneaker)
-      sneaker = new Sneaker(lobby, scheduler);
+    if (!sneaker.get())
+      sneaker = std::auto_ptr<Sneaker>(new Sneaker(lobby, scheduler));
     // Do not start the sneaker, we do not want to register it with the
     // scheduler.
   }
@@ -87,21 +90,21 @@ namespace dbg
   void
   dump(const object::rObject& o, int depth)
   {
-    aver(sneaker);
+    aver(sneaker.get());
     o->dump(std::cerr, depth);
   }
 
   void
   pp(ast::rAst ast)
   {
-    aver(sneaker);
+    aver(sneaker.get());
     std::cerr << *ast;
   }
 
   object::rObject
   eval(const char* command)
   {
-    aver(sneaker);
+    aver(sneaker.get());
     return
       object::execute_parsed(parser::parse(command, LOCATION_HERE),
                              SYMBOL(eval),
@@ -119,7 +122,7 @@ namespace dbg
   void
   ps()
   {
-    aver(sneaker);
+    aver(sneaker.get());
     std::cerr << "system_class: " << object::system_class.get() << std::endl;
     try
     {
