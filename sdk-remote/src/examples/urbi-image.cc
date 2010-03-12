@@ -208,7 +208,8 @@ main (int argc, char *argv[])
 
     if (FILE *f = fopen(fileName, "w"))
     {
-      fwrite(buff, 1, sz, f);
+      // FIXME: Don't ignore return value.
+      (void) fwrite(buff, 1, sz, f);
       fclose(f);
     }
     else
