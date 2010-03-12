@@ -137,7 +137,7 @@ namespace urbi
   {
     client->sendBufferLock.lock();
     size_t clen = strlen(client->sendBuffer);
-    if (client->sendBuflen < clen + 1 + n)
+    if (client->sendBufSize < clen + 1 + n)
     {
       client->effective_send(client->sendBuffer);
       client->sendBuffer[0] = 0;
@@ -205,8 +205,8 @@ namespace urbi
     , host_(host)
     , port_(port)
     , server_(server)
-    , sendBuflen(buflen)
-    , recvBuflen(buflen)
+    , sendBufSize(buflen)
+    , recvBufSize(buflen)
     , rc(0)
 
     , recvBuffer(new char[buflen])
@@ -344,7 +344,7 @@ namespace urbi
     sendBufferLock.lock();
     while (is.good() && !rc)
     {
-      is.read(sendBuffer, sendBuflen);
+      is.read(sendBuffer, sendBufSize);
       rc = effectiveSend(sendBuffer, is.gcount());
     }
     sendBuffer[0] = 0;
@@ -382,10 +382,10 @@ namespace urbi
       // Don't print if we overflow the buffer.  It would be nice to
       // rely on the behavior of the GNU LibC which accepts 0 as
       // destination buffer to query the space needed.  But it is not
-      // portable (e.g., segv on OSX).  So rather, try to vsnprintf,
+      // portable (e.g., segv on OS X).  So rather, try to vsnprintf,
       // and upon failure, revert the buffer in its previous state.
       size_t slen = strlen(sendBuffer);
-      size_t msize = sendBuflen - slen;
+      size_t msize = sendBufSize - slen;
       int r = vsnprintf(sendBuffer + slen, msize, command, arg);
       if (r < 0 || static_cast<int>(msize) <= r)
       {
