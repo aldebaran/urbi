@@ -21,7 +21,7 @@
 #include <urbi/uconversion.hh>
 
 #ifndef LIBURBI_OPENR
-# include "monitor.h"
+# include "monitor.hh"
 Monitor* mon = NULL;
 #endif
 

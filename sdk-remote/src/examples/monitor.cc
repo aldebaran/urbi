@@ -14,22 +14,20 @@
 #include <libport/pthread.h>
 #include <libport/windows.hh>
 
-#include "monitor.h"
+#include "monitor.hh"
 
 #ifdef WIN32
 # include "monitor-win.cpp"
 #else
 
+static const char* AtomWMDeleteWindowName = "WM_DELETE_WINDOW";
 
-static char *AtomWMDeleteWindowName = (char *) "WM_DELETE_WINDOW";
-
-
-Display    *Monitor::display;
+Display* Monitor::display;
 std::list<Monitor*> Monitor::monitorList;
-pthread_mutex_t      Monitor::lock=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t Monitor::lock=PTHREAD_MUTEX_INITIALIZER;
 
-static void *
-wrapper(void *)
+static void*
+wrapper(void*)
 {
   Monitor::processMessages();
   return 0;
@@ -39,25 +37,25 @@ void
 Monitor::addList(Monitor *mon)
 {
   if (monitorList.empty())
+  {
+    display = NULL;
+    mon->gc = 0;
+
+    // Open display
+    if ((display = XOpenDisplay(NULL)) == NULL)
     {
-      display = NULL;
-      mon->gc = 0;
-
-      // Open display
-      if ((display = XOpenDisplay(NULL)) == NULL)
-	{
-	  // NULL for DISPLAY
-	  printf("Error: XOpenDisplay() failed\n");
-	  exit(1);
-	}
-
-      mon->gc = DefaultGC(display, DefaultScreen(display));
-      XSetForeground(display, mon->gc, 255 + 256 * 255 + 256 * 256 * 255);
-      pthread_t *pt=new pthread_t;
-      monitorList.push_back(mon);
-
-      pthread_create(pt, 0, &wrapper, 0);
+      // NULL for DISPLAY
+      printf("Error: XOpenDisplay() failed\n");
+      exit(1);
     }
+
+    mon->gc = DefaultGC(display, DefaultScreen(display));
+    XSetForeground(display, mon->gc, 255 + 256 * 255 + 256 * 256 * 255);
+    pthread_t *pt=new pthread_t;
+    monitorList.push_back(mon);
+
+    pthread_create(pt, 0, &wrapper, 0);
+  }
   else
     monitorList.push_back(mon);
 }
@@ -68,11 +66,11 @@ Monitor::removeList(Monitor * mon)
 {
   monitorList.remove(mon);
   XFreeGC(display, mon->gc);
-  if (monitorList.empty() && display != NULL)
-    {
-      XCloseDisplay(display);
-      display = NULL;
-    }
+  if (monitorList.empty() && display)
+  {
+    XCloseDisplay(display);
+    display = NULL;
+  }
 }
 
 
@@ -83,45 +81,45 @@ Monitor::processMessages()
   //plan b
   printf("Processmessages spawned\n");
   while (!monitorList.empty())
-    {
-      pthread_mutex_lock(&lock);
-      while (XPending(display) > 0)
-	XNextEvent(display, &event);
-      for (std::list<Monitor *>::iterator it=monitorList.begin();
-	   it != monitorList.end(); ++it)
-	(*it)->put();
-      pthread_mutex_unlock(&lock);
-      usleep(300000);
-    }
+  {
+    pthread_mutex_lock(&lock);
+    while (XPending(display) > 0)
+      XNextEvent(display, &event);
+    for (std::list<Monitor *>::iterator it=monitorList.begin();
+         it != monitorList.end(); ++it)
+      (*it)->put();
+    pthread_mutex_unlock(&lock);
+    usleep(300000);
+  }
   return;
 
   while (!monitorList.empty())
+  {
+    bool found = false;
+    XNextEvent(display, &event);
+    switch (event.type)
     {
-      bool found = false;
-      XNextEvent(display, &event);
-      switch (event.type)
-	{
-	case Expose:
-	  if (event.xexpose.count == 0)
-	    {
-	      for (std::list<Monitor *>::iterator it=monitorList.begin();
-		   it != monitorList.end(); ++it)
-		if ((*it)->window == event.xexpose.window)
-		  {
-		    (*it)->put();
-		    // FIXME: What can be done here instead of these
-		    // two casts?
-		    printf("repainting %d\n",
-			   static_cast<int>(event.xexpose.window));
-		    found = true;
-		    break;
-		  }
-	      if (!found)
-		printf("error: expose event for unknown window %d\n",
-		       static_cast<int>(event.xexpose.window));
-	    }
-	}
+    case Expose:
+      if (event.xexpose.count == 0)
+      {
+        for (std::list<Monitor *>::iterator it=monitorList.begin();
+             it != monitorList.end(); ++it)
+          if ((*it)->window == event.xexpose.window)
+          {
+            (*it)->put();
+            // FIXME: What can be done here instead of these
+            // two casts?
+            printf("repainting %d\n",
+                   static_cast<int>(event.xexpose.window));
+            found = true;
+            break;
+          }
+        if (!found)
+          printf("error: expose event for unknown window %d\n",
+                 static_cast<int>(event.xexpose.window));
+      }
     }
+  }
 }
 
 /*-----------------------------------------------------------------------------*/
@@ -146,32 +144,32 @@ Monitor::Monitor(int _w, int _h, const char * name, bool _fastMode)
   w = _w;
   h = _h;
   if (! _fastMode)
-    {
-      addList(this);
-      localDisplay = display;
-    }
+  {
+    addList(this);
+    localDisplay = display;
+  }
   else
-    {
-      // Open display
+  {
+    // Open display
 
-      if ((localDisplay = XOpenDisplay(NULL)) == NULL)
-	{
-	  // NULL for DISPLAY
-	  printf("Error: XOpenDisplay() failed\n");
-	  exit(1);
-	}
-      gc = DefaultGC(localDisplay, DefaultScreen(localDisplay));
-      XSetForeground(localDisplay, gc, 255 + 256 * 255 + 256 * 256 * 255);
+    if ((localDisplay = XOpenDisplay(NULL)) == NULL)
+    {
+      // NULL for DISPLAY
+      printf("Error: XOpenDisplay() failed\n");
+      exit(1);
     }
+    gc = DefaultGC(localDisplay, DefaultScreen(localDisplay));
+    XSetForeground(localDisplay, gc, 255 + 256 * 255 + 256 * 256 * 255);
+  }
 
   // Obtain WM protocols atom for ClientMessage exit event
   pthread_mutex_lock(&lock);
   atomWMDeleteWindow = XInternAtom(localDisplay, AtomWMDeleteWindowName, True);
   if (atomWMDeleteWindow == None)
-    {
-      printf("Error: %s atom does not exist\n", AtomWMDeleteWindowName);
-      exit(1);
-    }
+  {
+    printf("Error: %s atom does not exist\n", AtomWMDeleteWindowName);
+    exit(1);
+  }
 
   createWindow(name ? name : "XImage - XShm optimized");
   pthread_mutex_unlock(&lock);
@@ -216,7 +214,7 @@ int Monitor::createImage()
     free(d);
   }
 
-  if (getenv("DISABLE_SHM") != 0)
+  if (getenv("DISABLE_SHM"))
     isShared = false;
   try {
     errno = 0;
@@ -270,13 +268,13 @@ int Monitor::createImage()
       if ((xImage = XCreateImage(localDisplay, visual, depth, ZPixmap, 0,
 				 NULL, w, h, 16, 0)) == NULL)
       {
-	throw ("XCreateImage");
+	throw "XCreateImage";
       }
       if ((xImage->data = static_cast<char *> (malloc (xImage->bytes_per_line
 						       * xImage->height)))
 	   == NULL)
       {
-	throw ("malloc");
+	throw "malloc";
       }
     }
     return 0;
@@ -300,16 +298,16 @@ int Monitor::destroyImage()
     return 0;	// Nothing to do
 
   if (isShared)
+  {
+    if (shmInfo.shmid >= 0)
     {
-      if (shmInfo.shmid >= 0)
-	{
-	  XShmDetach(localDisplay, &shmInfo);	// X detaches
-	  shmdt(shmInfo.shmaddr);	// We detach
-	  shmInfo.shmaddr = NULL;
-	  shmctl(shmInfo.shmid, IPC_RMID, 0);	// Destroy segment
-	  shmInfo.shmid = -1;
-	}
+      XShmDetach(localDisplay, &shmInfo);	// X detaches
+      shmdt(shmInfo.shmaddr);	// We detach
+      shmInfo.shmaddr = NULL;
+      shmctl(shmInfo.shmid, IPC_RMID, 0);	// Destroy segment
+      shmInfo.shmid = -1;
     }
+  }
   else if (xImage->data != NULL)
     free(xImage->data);
 
@@ -320,10 +318,10 @@ int Monitor::destroyImage()
   xImage = NULL;
 
   if (sharedPixmap != None)
-    {
-      XFreePixmap(localDisplay, sharedPixmap);
-      sharedPixmap = None;
-    }
+  {
+    XFreePixmap(localDisplay, sharedPixmap);
+    sharedPixmap = None;
+  }
 
   return 0;
 }
@@ -432,27 +430,27 @@ Monitor::createWindow(const char *name)
        && (windowAttributes.visual->c_class != PseudoColor))
       || ((windowAttributes.depth > 8)
 	  && (windowAttributes.visual->c_class != TrueColor)))
-    {
-      printf("Error: Visual not supported\n");
-      exit(1);
-    }
+  {
+    printf("Error: Visual not supported\n");
+    exit(1);
+  }
 
   // Create PseudoColor HI240 colormap, if needed
 
   if (windowAttributes.depth == 8)
-    {
-      printf("Error : display must be 32bits depth");
-      exit(1);
-    }
+  {
+    printf("Error : display must be 32bits depth");
+    exit(1);
+  }
 
 
   // Create image
 
   if (createImage() < 0)
-    {
-      printf("Error: image.Create() failed\n");
-      exit(1);
-    }
+  {
+    printf("Error: image.Create() failed\n");
+    exit(1);
+  }
 
   clear();
 

@@ -40,7 +40,7 @@ monitor_programs =				\
 if WIN32
 #bin_PROGRAMS += $(monitor_programs)
 monitor_sources =				\
-  examples/monitor-win.h			\
+  examples/monitor-win.hh			\
   examples/monitor-win.cc
 X11_LDADD += -lgdi32 -luser32
 endif
@@ -48,7 +48,7 @@ endif
 if X11
 bin_PROGRAMS += $(monitor_programs)
 monitor_sources =				\
-  examples/monitor.h				\
+  examples/monitor.hh				\
   examples/monitor.cc
 endif
 

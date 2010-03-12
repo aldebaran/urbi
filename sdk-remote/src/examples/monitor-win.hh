@@ -8,8 +8,8 @@
  * See the LICENSE file for more information.
  */
 
-#ifndef MONITOR_WIN_H_
-# define MONITOR_WIN_H_
+#ifndef MONITOR_WIN_HH
+# define MONITOR_WIN_HH
 
 typedef unsigned char bits8;
 
@@ -22,10 +22,10 @@ class Monitor
   Monitor(int, int, const char * name=NULL);
   ~Monitor();
 
-  int   setImage(bits8*, int);
+  int setImage(bits8*, int);
 
  private:
   int w, h;
   HWND window;
 };
-#endif /* !MONITOR_WIN_H_ */
+#endif // !MONITOR_WIN_HH

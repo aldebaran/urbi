@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2004, 2006-2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-/// \brief Sample image acqusition urbi client.
+/// \brief Sample image acquisition urbi client.
 
 /* This simple demonstration program display or save images from an
  * Urbi server.
@@ -25,86 +25,100 @@
 #include <urbi/uconversion.hh>
 #include <urbi/usyncclient.hh>
 
-#include "monitor.h"
-
-// FIXME: those return value should not be ignored
-static size_t ignore;
+#include "monitor.hh"
 
 using libport::program_name;
 
-int imcount;
-int format;
+size_t imcount;
 Monitor* mon = 0;
-unsigned char* buffer=NULL;
 float scale;
 urbi::UImage im;
 
 /* Our callback function */
-static
-urbi::UCallbackAction
-showImage(const urbi::UMessage &msg)
+namespace
 {
-  if (msg.type != urbi::MESSAGE_DATA
-      || msg.value->type != urbi::DATA_BINARY
-      || msg.value->binary->type != urbi::BINARY_IMAGE)
+  static
+  urbi::UCallbackAction
+  showImage(const urbi::UMessage &msg)
+  {
+    if (msg.type != urbi::MESSAGE_DATA
+        || msg.value->type != urbi::DATA_BINARY
+        || msg.value->binary->type != urbi::BINARY_IMAGE)
+      return urbi::URBI_CONTINUE;
+
+    urbi::UImage& img = msg.value->binary->image;
+    im.width = static_cast<int>(static_cast<float>(img.width) * scale);
+    im.height = static_cast<int>(static_cast<float>(img.height) * scale);
+    convert(img, im);
+
+    size_t sz = 3*im.width*im.height;
+    /* Calculate framerate. */
+    if (!(imcount % 20))
+      {
+        static int tme = 0;
+        if (tme)
+  	{
+  	  float it = msg.client.getCurrentTime() - tme;
+  	  it = 20000.0 / it;
+  	  printf("***Framerate: %f fps***\n", it);
+  	}
+        tme = msg.client.getCurrentTime();
+      }
+
+    if (!mon)
+      mon = new Monitor(im.width, im.height, "image");
+
+    mon->setImage((bits8 *) im.data, sz);
+    ++imcount;
     return urbi::URBI_CONTINUE;
+  }
 
-  urbi::UImage& img = msg.value->binary->image;
-  im.width = static_cast<int>(static_cast<float>(img.width) * scale);
-  im.height = static_cast<int>(static_cast<float>(img.height) * scale);
-  convert(img, im);
+  static void
+  closeandquit (int)
+  {
+    delete urbi::getDefaultClient();
+    urbi::exit(0);
+  }
 
-  size_t sz = 3*im.width*im.height;
-  static int tme = 0;
-  /* Calculate framerate. */
-  if (!(imcount % 20))
+
+  static void
+  usage(libport::OptionParser& parser)
+  {
+    std::cout <<
+      "usage: " << program_name() << " [options]\n"
+      "Display images from an urbi server, or save one image if -o is given\n";
+    parser.options_doc(std::cout);
+    std::cout << std::endl <<
+      "transfer Format : jpeg=transfer jpeg, raw=transfer raw\n"
+      "save     Format : rgb , ycrcb, jpeg, ppm"
+                << std::endl;
+    ::exit(EX_OK);
+  }
+
+  static
+  int
+  format(const std::string& s)
+  {
+    switch (s[0])
     {
-      if (tme)
-	{
-	  float it = msg.client.getCurrentTime() - tme;
-	  it = 20000.0 / it;
-	  printf("***Framerate: %f fps***\n", it);
-	}
-      tme = msg.client.getCurrentTime();
-    }
-
-  if (!mon)
-    mon = new Monitor(im.width, im.height, "image");
-
-  mon->setImage((bits8 *) im.data, sz);
-  ++imcount;
-  return urbi::URBI_CONTINUE;
+    case 'r': return urbi::IMAGE_RGB;
+    case 'y': return urbi::IMAGE_YCbCr;
+    case 'p': return urbi::IMAGE_PPM;
+    case 'j': return urbi::IMAGE_JPEG;
+    default:
+      std::cerr << program_name() << ": invalid format :"
+                << s << std::endl
+                << libport::exit(EX_USAGE);
+    };
+  }
 }
 
-static void
-closeandquit (int)
-{
-  delete urbi::getDefaultClient();
-  urbi::exit(0);
-}
-
-
-static void
-usage(libport::OptionParser& parser)
-{
-  std::cout <<
-    "usage: " << program_name() << " [options]\n"
-    "Display images from an urbi server, or save one image if -o is given\n";
-  parser.options_doc(std::cout);
-  std::cout << std::endl <<
-    "transfer Format : jpeg=transfer jpeg, raw=transfer raw\n"
-    "save     Format : rgb , ycrcb, jpeg, ppm"
-              << std::endl;
-  ::exit(EX_OK);
-}
 
 int
 main (int argc, char *argv[])
 {
   libport::program_initialize(argc, argv);
   signal(SIGINT, closeandquit);
-  const char* device;
-  std::string arg_format;
   const char* fileName = 0;
   mon = NULL;
   im.width = im.height = 0;
@@ -149,7 +163,9 @@ main (int argc, char *argv[])
 
   if (libport::opts::help.get())
     usage(opt_parser);
-  device = arg_dev.value("camera").c_str();
+  const char* device = arg_dev.value("camera").c_str();
+
+  std::string arg_format;
   if (arg_form.filled())
     arg_format = arg_form.value();
   scale = arg_scale.get<float>(1.0);
@@ -164,57 +180,35 @@ main (int argc, char *argv[])
 	      << std::endl
               << libport::exit(1);
 
+  if (1 < client.kernelMajor())
+    client.send("uimg = Channel.new(\"uimg\")|;");
   client.setCallback(showImage, "uimg");
 
-  client.send("%s.resolution  = %s;", device,
-              arg_resolution.value("0").c_str());
-  client.send("%s.jpegfactor = %d;", device, arg_jpeg.get<int>(70));
+  client.send("%s.resolution  = %s;",
+              device, arg_resolution.value("0").c_str());
+  client.send("%s.jpegfactor = %d;",
+              device, arg_jpeg.get<int>(70));
 
   client << device << ".reconstruct = " << (arg_rec.get() ? 1 : 0)
 	 << urbi::semicolon;
 
-  if (!fileName)
+  if (fileName)
   {
-    imcount = 0;
-    format = (arg_format[0] == 'r') ? 0 : 1;
-    client.send("%s.format = %d;", device, format);
-    client.waitForKernelVersion(true);
-    if (int period = arg_period.get<int>(0))
-      client.send("every (%dms) uimg << %s.val,", period, device);
-    else
-      if (client.kernelMajor() > 1)
-        client.send("var handle = WeakPointer.new; %s.getSlot(\"val\").notifyChange(handle, closure() { connectionTag: this.send(%s.val.asString, \"uimg\")});", device, device);
-      else
-        client.send("loop { uimg << %s.val; noop },", device);
-    urbi::execute();
-  }
-  else
-  {
-    switch (arg_format[0])
-    {
-      case 'r':	format = urbi::IMAGE_RGB;	break;
-      case 'y':	format = urbi::IMAGE_YCbCr;	break;
-      case 'p':	format = urbi::IMAGE_PPM;	break;
-      case 'j':	format = urbi::IMAGE_JPEG;	break;
-      default:
-	std::cerr << program_name() << ": invalid format :"
-                  << arg_format << std::endl
-                  << libport::exit(EX_USAGE);
-    };
+    int fmt = format(arg_format);
     /* Use syncGetImage to save one image to a file. */
     char buff[1000000];
     size_t sz = sizeof buff;
     size_t w, h;
     client.syncGetImage(device, buff, sz,
-			format,
-			(format == urbi::IMAGE_JPEG
+			fmt,
+			(fmt == urbi::IMAGE_JPEG
 			 ? urbi::URBI_TRANSMIT_JPEG
 			 : urbi::URBI_TRANSMIT_YCbCr),
 			w, h);
 
     if (FILE *f = fopen(fileName, "w"))
     {
-      ignore = fwrite(buff, 1, sz, f);
+      fwrite(buff, 1, sz, f);
       fclose(f);
     }
     else
@@ -222,6 +216,26 @@ main (int argc, char *argv[])
                 << ": " << strerror(errno)
                 << libport::exit(EX_OSERR);
   }
+  else
+  {
+    imcount = 0;
+    int fmt = (arg_format[0] == 'r') ? 0 : 1;
+    client.send("%s.format = %d;", device, fmt);
+    client.waitForKernelVersion(true);
+    if (int period = arg_period.get<int>(0))
+      client.send("every (%dms) uimg << %s.val,", period, device);
+    else if (1 < client.kernelMajor())
+      client.send("var handle = WeakPointer.new;\n"
+                  "%s.getSlot(\"val\").notifyChange(handle, closure() {\n"
+                  "  connectionTag:\n"
+                  "    this.send(%s.val.asString, \"uimg\")\n"
+                  "});",
+                  device, device);
+    else
+      client.send("loop { uimg << %s.val; noop },", device);
+    urbi::execute();
+  }
+
 
   return 0;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -8,11 +8,11 @@
  * See the LICENSE file for more information.
  */
 
-#ifndef _MONITOR_H
-# define _MONITOR_H
+#ifndef _MONITOR_HH
+# define _MONITOR_HH
 
 # ifdef WIN32
-#  include "monitor-win.h"
+#  include "monitor-win.hh"
 # else
 #  include "libport/cstring"
 #  include <libport/cerrno>
