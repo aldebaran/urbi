@@ -13,7 +13,6 @@
 #include <libport/cli.hh>
 #include <libport/debug.hh>
 #include <libport/foreach.hh>
-#include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 
 #include <urbi/uabstractclient.hh>
@@ -21,8 +20,6 @@
 #include <urbi/usyncclient.hh>
 
 #include <bin/tests.hh>
-
-using libport::program_name;
 
 GD_INIT();
 // The category is alreday added by bin/tests.hh
@@ -118,9 +115,6 @@ main(int argc, char* argv[])
   std::string host = urbi::UClient::default_host();
   int port = urbi::UAbstractClient::URBI_PORT;
 
-  /// The command line test requested.
-  std::vector<std::string> tests;
-
   VERBOSE("Processing option");
   for (int i = 1; i < argc; ++i)
   {
@@ -135,10 +129,8 @@ main(int argc, char* argv[])
       port =
         (libport::file_contents_get<int>
          (libport::convert_argument<const char*>(arg, argv[++i])));
-    else if (arg[0] == '-')
-      libport::invalid_option(arg);
     else
-      tests.push_back(arg);
+      libport::invalid_option(arg);
   }
 
   urbi::UClient client(host, port);
@@ -153,9 +145,16 @@ main(int argc, char* argv[])
     std::cerr << "Failed to set up properly the syncClient" << std::endl
               << libport::exit(EX_SOFTWARE);
 
-  foreach (const std::string& s, tests)
-  {
-    VERBOSE("test " << s);
-    dispatch(s, client, syncClient);
-  }
+  VERBOSE("Starting");
+
+  test(client, syncClient);
+
+  VERBOSE("Epilogue");
+
+  sleep(3);                                                     \
+  /* Handle the case when the other connection is down */       \
+  SSEND("disown({ sleep(0.5); shutdown }); quit;");             \
+  SEND("shutdown;");                                            \
+
+  VERBOSE("End");
 }

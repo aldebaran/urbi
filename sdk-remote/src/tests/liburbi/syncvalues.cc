@@ -10,7 +10,8 @@
 
 #include <bin/tests.hh>
 
-BEGIN_TEST(syncvalues, client, syncClient)
+BEGIN_TEST
+
 syncClient.setErrorCallback(callback(&dump));
 syncClient.setCallback(callback(&dump), "output");
 

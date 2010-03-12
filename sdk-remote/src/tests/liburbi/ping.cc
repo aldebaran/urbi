@@ -13,9 +13,9 @@
 
 INSTRUMENTFLAGS(--mode=none);
 
-BEGIN_TEST(ping, client, syncClient)
+BEGIN_TEST
 client.setErrorCallback(callback(&dump));
-client.setCallback(callback(&dump), "cout");
+client.setCallback(callback(&dump), "output");
 client.setCallback(callback(&dump), "__gostai_private__internal_pong");
 
 // Test from without ping to with ping.

@@ -101,7 +101,7 @@ spawn_urbi_server
 
 # Start the test.
 instrument -o "remote.val" -- \
-  ../../bin/tests$EXEEXT --port-file server.port $meraw
+  ../../liburbi/$meraw$EXEEXT --port-file server.port
 echo "$instrument_result" >remote.cmd
 $instrument_result >remote.out.raw 2>remote.err &
 children_register remote

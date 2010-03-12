@@ -11,6 +11,8 @@
 #ifndef SDK_REMOTE_TESTS_TESTS_HH
 # define SDK_REMOTE_TESTS_TESTS_HH
 
+# include <iostream>
+
 # include <libport/debug.hh>
 # include <libport/semaphore.hh>
 # include <libport/program-name.hh>
@@ -18,6 +20,8 @@
 
 # include <urbi/uclient.hh>
 # include <urbi/usyncclient.hh>
+
+using libport::program_name;
 
 /* Liburbi test suite
 = Architecture =
@@ -51,9 +55,7 @@ GD_ADD_CATEGORY(TEST);
 #define VERBOSE(S)                              \
   do {                                          \
     GD_CATEGORY(TEST);                          \
-    std::ostringstream o;                       \
-    o << S;                                     \
-    GD_INFO(o.str());                           \
+    GD_SINFO(program_name () << ": " << S);     \
   } while (0)
 
 /// Send S to the Client.
@@ -108,34 +110,15 @@ urbi::UCallbackAction dump(const urbi::UMessage& msg);
 /// display the value, incremente dumpSem remove callback if 0
 urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
 
+#define BEGIN_TEST                              \
+  void                                          \
+  test(urbi::UClient& client,                   \
+       urbi::USyncClient& syncClient)           \
+  {
 
-#define BEGIN_TEST(Name, ClientName, SyncClientName)    \
-  void                                                  \
-  Name(urbi::UClient& ClientName,                       \
-       urbi::USyncClient& SyncClientName)               \
-  {                                                     \
-    VERBOSE("starting test " << #Name);
-
-#define END_TEST                                                \
-    sleep(3);                                                   \
-    /* Handle the case when the other connection is down */     \
-    SSEND("disown({ sleep(0.5); shutdown }); quit;");           \
-    SEND("shutdown;");                                          \
+#define END_TEST                                \
   }
 
-void dispatch(const std::string& method, urbi::UClient& client,
-	      urbi::USyncClient& syncClient);
-
-/// \a Name is the base name of the C++ file containing the function
-/// \a Name.
-#define TESTS_RUN(Name)							\
-  do {									\
-    if (method == #Name)						\
-    {									\
-      void Name(urbi::UClient&, urbi::USyncClient&);			\
-      Name(client, syncClient);						\
-      return;								\
-    }									\
-  } while (0)
+void test(urbi::UClient& client, urbi::USyncClient& syncClient);
 
 #endif // SDK_REMOTE_TESTS_TESTS_HH

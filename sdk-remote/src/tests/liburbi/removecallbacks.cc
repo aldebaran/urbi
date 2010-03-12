@@ -10,10 +10,10 @@
 
 #include <bin/tests.hh>
 
-BEGIN_TEST(removecallbacks, client, syncClient)
-client.setCallback(&dump, "cerr"); // ping
-urbi::UCallbackID i1 = client.setCallback(&dump, "cout");
-urbi::UCallbackID i2 = client.setCallback(&dump, "cout");
+BEGIN_TEST
+client.setCallback(&dump, "error"); // ping
+urbi::UCallbackID i1 = client.setCallback(&dump, "output");
+urbi::UCallbackID i2 = client.setCallback(&dump, "output");
 
 SEND("cout << 1;");
 //= D output 1

@@ -10,7 +10,7 @@
 
 #include <bin/tests.hh>
 
-BEGIN_TEST(values, client, syncClient)
+BEGIN_TEST
 client.setErrorCallback(callback(&dump));
 client.setCallback(callback(&dump), "cout");
 
