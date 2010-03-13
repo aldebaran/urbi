@@ -18,8 +18,8 @@ SEND("cout << 1;");
 //= D output 1
 SEND("cout << \"coin\";");
 //= D output "coin"
-SEND("error << nonexistent;");
-//= E error 3.10-20: lookup failed: nonexistent
+SEND("cerr << nonexistent;");
+//= E error 3.9-19: lookup failed: nonexistent
 SEND("var mybin = BIN 10 mybin header;1234567890;cout << mybin;");
 //= D output BIN 10 mybin header;1234567890
 SEND("cout << [\"coin\", 5, [3, mybin, 0]];");

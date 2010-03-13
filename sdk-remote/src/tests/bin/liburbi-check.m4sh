@@ -20,7 +20,7 @@ cleanup ()
   case $exit_status:$server_sta in
     (0:142)
 	 verbose "Server killed after a timeout.";;
-    (0:*|176:*) # Maybe the server exited for SKIP etc.
+    (176:*) # Maybe the server exited for SKIP etc.
 	 exit $server_sta;;
   esac
 

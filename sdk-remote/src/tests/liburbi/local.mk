@@ -9,7 +9,11 @@ LIBURBI_TESTS =					\
   liburbi/ping.cc				\
   liburbi/removecallbacks.cc			\
   liburbi/syncvalues.cc				\
-  liburbi/values.cc
+  liburbi/values.cc				\
+  liburbi/xfail.cc
+
+# This is on purpose, see xfail.cc.
+XFAIL_TESTS += liburbi/xfail$(EXEEXT)
 
 TESTS += $(LIBURBI_TESTS)
 
@@ -44,6 +48,7 @@ liburbi_ping_SOURCES            = bin/tests.hh bin/tests.cc liburbi/ping.cc
 liburbi_removecallbacks_SOURCES = bin/tests.hh bin/tests.cc liburbi/removecallbacks.cc
 liburbi_syncvalues_SOURCES      = bin/tests.hh bin/tests.cc liburbi/syncvalues.cc
 liburbi_values_SOURCES          = bin/tests.hh bin/tests.cc liburbi/values.cc
+liburbi_xfail_SOURCES           = bin/tests.hh bin/tests.cc liburbi/xfail.cc
 
 # --------------- #
 # liburbi-check.  #
