@@ -57,11 +57,11 @@ namespace
       {
         static int tme = 0;
         if (tme)
-  	{
-  	  float it = msg.client.getCurrentTime() - tme;
-  	  it = 20000.0 / it;
-  	  printf("***Framerate: %f fps***\n", it);
-  	}
+        {
+          float it = msg.client.getCurrentTime() - tme;
+          it = 20000.0 / it;
+          printf("***Framerate: %f fps***\n", it);
+        }
         tme = msg.client.getCurrentTime();
       }
 
