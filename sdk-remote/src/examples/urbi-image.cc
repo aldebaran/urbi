@@ -52,23 +52,23 @@ namespace
     im.height = static_cast<int>(static_cast<float>(img.height) * scale);
     convert(img, im);
 
-    size_t sz = 3*im.width*im.height;
     /* Calculate framerate. */
     if (!(imcount % 20))
+    {
+      static int tme = 0;
+      if (tme)
       {
-        static int tme = 0;
-        if (tme)
-        {
-          float it = msg.client.getCurrentTime() - tme;
-          it = 20000.0 / it;
-          printf("***Framerate: %f fps***\n", it);
-        }
-        tme = msg.client.getCurrentTime();
+        float it = msg.client.getCurrentTime() - tme;
+        it = 20000.0 / it;
+        printf("***Framerate: %f fps***\n", it);
       }
+      tme = msg.client.getCurrentTime();
+    }
 
     if (!mon)
       mon = new Monitor(im.width, im.height, "image");
 
+    size_t sz = 3*im.width*im.height;
     mon->setImage((bits8 *) im.data, sz);
     ++imcount;
     return urbi::URBI_CONTINUE;
@@ -110,7 +110,7 @@ namespace
       std::cerr << program_name() << ": invalid format: "
                 << s << std::endl
                 << libport::exit(EX_USAGE);
-    };
+    }
   }
 }
 
@@ -120,7 +120,6 @@ main (int argc, char *argv[])
 {
   libport::program_initialize(argc, argv);
   signal(SIGINT, closeandquit);
-  const char* fileName = 0;
   mon = NULL;
   im.width = im.height = 0;
   im.size = 0;
@@ -170,9 +169,6 @@ main (int argc, char *argv[])
   std::string arg_format = arg_form.value("jpeg");
   scale = arg_scale.get<float>(1.0);
 
-  if (arg_out.filled())
-    fileName = arg_out.value().c_str();
-
   urbi::USyncClient
     client(libport::opts::host.value(urbi::UClient::default_host()),
            libport::opts::port.get<int>(urbi::UClient::URBI_PORT));
@@ -192,11 +188,12 @@ main (int argc, char *argv[])
               device.c_str(), arg_jpeg.get<int>(70),
               device.c_str(), arg_rec.get() ? 1 : 0);
 
-  if (fileName)
+  if (arg_out.filled())
   {
-    FILE *f = fopen(fileName, "w");
+    const char *file = arg_out.value().c_str();
+    FILE *f = fopen(file, "w");
     if (!f)
-      std::cerr << program_name() << ": cannot create file " << fileName
+      std::cerr << program_name() << ": cannot create file " << file
                 << ": " << strerror(errno)
                 << libport::exit(EX_OSERR);
 
