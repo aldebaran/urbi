@@ -9,4 +9,4 @@
  */
 
 //                                      -*- urbi -*-
-load("urbi/test/test.u");
+load("urbi/test-suite.u");
