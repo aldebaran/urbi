@@ -101,9 +101,9 @@ namespace kernel
     /// expected to load "local.u".
     void initialize();
 
-    /*-----------------------.
-    | Send/receive functions |
-    \-----------------------*/
+    /*-------------------------.
+    | Send/receive functions.  |
+    `-------------------------*/
 
     /// The "base" high-level send function. Calls the send_queue() function.
     void
@@ -112,6 +112,9 @@ namespace kernel
     /// Overload using 'strlen' to compute buf size.
     void
     send(const char* buf, const char* tag = 0, bool flush = true);
+
+    /// Overload for C++.
+    void send(const std::string& s, const char* tag = 0, bool flush = true);
 
     //! Send at most packetSize bytes in the connection, calling effective_send()
 

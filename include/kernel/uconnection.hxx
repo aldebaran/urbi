@@ -117,6 +117,13 @@ namespace kernel
 
   inline
   void
+  UConnection::send(const std::string&s, const char* tag, bool flush)
+  {
+    send(s.c_str(), s.length(), tag, flush);
+  }
+
+  inline
+  void
   UConnection::send_queue(const std::string& s)
   {
     send_queue(s.c_str(), s.length());

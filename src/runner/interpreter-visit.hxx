@@ -291,8 +291,7 @@ namespace runner
             rObject result = res->call(SYMBOL(asToplevelPrintable));
             std::ostringstream os;
             result->print(os);
-            std::string r = os.str();
-            lobby_->connection_get().send(r.c_str(), r.size());
+            lobby_->connection_get().send(os.str());
             lobby_->connection_get().endline();
           }
           catch (object::UrbiException&)
