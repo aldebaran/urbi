@@ -631,24 +631,30 @@ operators. Their semantics is described in \autoref{sec:stdlib} in the
 documentation of the classes that provide them.
 
 % Operator generators
-\newcommand{\operatorhead}{Operator & Use & Associativity & Original semantic
-  & Equivalence\\}
+\newcommand{\operatorhead}{
+  \strong{\ifx\ifHtml\undefined{Oper.}\else{Operator}\fi}
+  & \strong{Syntax}
+  & \strong{\ifx\ifHtml\undefined{Assoc.}\else{Associativity}\fi}
+  & \strong{Semantics}
+  & \strong{Equivalence}
+  \\
+}
 
 
 \newcommand{\operator}[6][ ]{\lstinline@#2@&\lstinline@#3@&#4&#5&\lstinline@#6@#1\\}
 \newcommand{\boperator}[3]{\operator{#1}{a #1 b}{#2}{#3}{a.'#1'(b)}}
 \newcommand{\poperator}[3]{\operator{#1}{#1a}{#2}{#3}{a.'#1'()}}
 
-\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}          {Not redefinable}       }
-\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}          {Not redefinable}       }
-\newcommand{\operatorprop}   {\operator  {->}   {a->b}             {-}     {Property access}          {getProperty("a", "b")} }
+\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}        {Not redefinable}       }
+\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}        {Not redefinable}       }
+\newcommand{\operatorprop}   {\operator  {->}   {a->b}             {-}     {Property access}        {getProperty("a", "b")} }
 \newcommand{\operatorpropass}{\operator  {->}   {a->b = v}         {-}     {Property assignment}    {setProperty("a", "b", v)}}
-\newcommand{\operatorsub}    {\operator  {[]}   {a[args]}          {-}     {Subscript}                {a.'[]'(args)}          }
-\newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}      {-}     {Subscript assignment}     {a.'[]='(args, v)}      }
+\newcommand{\operatorsub}    {\operator  {[]}   {a[args]}          {-}     {Subscript}              {a.'[]'(args)}          }
+\newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}      {-}     {Subscript assignment}   {a.'[]='(args, v)}      }
 \newcommand{\operatorass}[2][ ]    {\operator[#1]
-                                         {=}    {a = b}            {Right} {Assignment}               {updateSlot("a", b)}    }
+                                         {=}    {a = b}            {Right} {Assignment}             {updateSlot("a", b)}    }
 
-\newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}      {a = a #1 b}            }
+\newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}    {a = a #1 b}            }
 \newcommand{\operatorsiass}  {
     \operatoriass{+}
     \operatoriass{-}
@@ -658,33 +664,33 @@ documentation of the classes that provide them.
     \operatoriass{\^}
 %    \operatoriass{\~}
 }
-\newcommand{\operatorinc}    {\operator  {++}   {a++}              {-}     {Incrementation}           {(a = a + 1) - 1}       }
-\newcommand{\operatordec}    {\operator  {--}   {a--}              {-}     {Incrementation}           {(a = a - 1) + 1}       }
+\newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation}           {(a = a + 1) - 1}       }
+\newcommand{\operatordec}    {\operator  {--}   {a--}  {-}     {Incrementation}           {(a = a - 1) + 1}       }
 
-\newcommand{\operatoruplus}  {\poperator {+}    {-}                {Identity}               }
-\newcommand{\operatorumin}   {\poperator {-}    {-}                {Opposite}               }
-\newcommand{\operatorexp}    {\boperator {**}   {Right}            {Exponentiation}         }
-\newcommand{\operatormult}   {\boperator {*}    {Left}             {Multiplication}         }
-\newcommand{\operatordiv}    {\boperator {/}    {Left}             {Division}               }
-\newcommand{\operatormod}    {\boperator {\%}   {Left}             {Modulo}                 }
-\newcommand{\operatorplus}   {\boperator {+}    {Left}             {Sum}                    }
-\newcommand{\operatorminus}  {\boperator {-}    {Left}             {Difference}             }
-\newcommand{\operatorlshift} {\boperator {<<}   {Left}             {Left bit shift}         }
-\newcommand{\operatorrshift} {\boperator {>>}   {Left}             {Right bit shift}        }
-\newcommand{\operatoreq}     {\boperator {==}   {Non Associative}  {Equality}               }
-\newcommand{\operatorneq}    {\boperator {!=}   {Non Associative}  {Inequality}             }
-\newcommand{\operatorpeq}    {\boperator {===}  {Non Associative}  {Physical equality}      }
-\newcommand{\operatorpneq}   {\boperator {!==}  {Non Associative}  {Physical Inequality}    }
-\newcommand{\operatoraeq}    {\boperator {\~=}  {Non Associative}  {Relative Approximate equality} }
-\newcommand{\operatoreqaeq}  {\boperator {=~=}  {Non Associative}  {Absolute Approximate equality} }
-\newcommand{\operatorinf}    {\boperator {<}    {Non Associative}  {Less than}              }
-\newcommand{\operatorinfeq}  {\boperator {<=}   {Non Associative}  {Less than or equal to}  }
-\newcommand{\operatorsup}    {\boperator {>}    {Non Associative}  {Greater than}           }
-\newcommand{\operatorsupeq}  {\boperator {>=}   {Non Associative}  {Greater than or equal to}}
-\newcommand{\operatorbxor}   {\boperator {^}    {Left}             {Bitwise exclusive or}   }
-\newcommand{\operatorneg}    {\poperator {!}    {Left}             {Logical negation}       }
-\newcommand{\operatorand}    {\boperator {\&\&} {Left}             {Logical and}            }
-\newcommand{\operatoror}     {\boperator {||}   {Left}             {Logical or}             }
+\newcommand{\operatoruplus}  {\poperator {+}    {-}    {Identity}               }
+\newcommand{\operatorumin}   {\poperator {-}    {-}    {Opposite}               }
+\newcommand{\operatorexp}    {\boperator {**}   {Right}{Exponentiation}         }
+\newcommand{\operatormult}   {\boperator {*}    {Left} {Multiplication}         }
+\newcommand{\operatordiv}    {\boperator {/}    {Left} {Division}               }
+\newcommand{\operatormod}    {\boperator {\%}   {Left} {Modulo}                 }
+\newcommand{\operatorplus}   {\boperator {+}    {Left} {Sum}                    }
+\newcommand{\operatorminus}  {\boperator {-}    {Left} {Difference}             }
+\newcommand{\operatorlshift} {\boperator {<<}   {Left} {Left bit shift}         }
+\newcommand{\operatorrshift} {\boperator {>>}   {Left} {Right bit shift}        }
+\newcommand{\operatoreq}     {\boperator {==}   {None} {Equality}               }
+\newcommand{\operatorneq}    {\boperator {!=}   {None} {Inequality}             }
+\newcommand{\operatorpeq}    {\boperator {===}  {None} {Physical equality}      }
+\newcommand{\operatorpneq}   {\boperator {!==}  {None} {Physical inequality}    }
+\newcommand{\operatoraeq}    {\boperator {\~=}  {None} {Relative approximate equality} }
+\newcommand{\operatoreqaeq}  {\boperator {=~=}  {None} {Absolute approximate equality} }
+\newcommand{\operatorinf}    {\boperator {<}    {None} {Less than}              }
+\newcommand{\operatorinfeq}  {\boperator {<=}   {None} {Less than or equal to}  }
+\newcommand{\operatorsup}    {\boperator {>}    {None} {Greater than}           }
+\newcommand{\operatorsupeq}  {\boperator {>=}   {None} {Greater than or equal to}}
+\newcommand{\operatorbxor}   {\boperator {^}    {Left} {Bitwise exclusive or}   }
+\newcommand{\operatorneg}    {\poperator {!}    {Left} {Logical negation}       }
+\newcommand{\operatorand}    {\boperator {\&\&} {Left} {Logical and}            }
+\newcommand{\operatoror}     {\boperator {||}   {Left} {Logical or}             }
 
 \subsubsection{Arithmetic operators}
 
@@ -692,28 +698,43 @@ documentation of the classes that provide them.
 semantics on numeric values. See \autoref{tab:arith} and the listing
 below.
 
-\begin{table}[\floatposh]
-  \centering
-  \begin{tabular}{|c|c|c|c|c|c|}
+\newenvironment{operatorTabular}
+{
+  \begin{tabular}{|*{5}{c|}}
     \hline
     \operatorhead
     \hline
-    \operatoruplus
-    \operatorumin
-    \hline
-    \operatorexp
-    \hline
-    \operatormult
-    \operatordiv
-    \operatormod
-    \hline
-    \operatorplus
-    \operatorminus
+  }{
     \hline
   \end{tabular}
-  \caption{Arithmetic operators}
-  \label{tab:arith}
-\end{table}
+}
+
+\newenvironment{operatorTable}[2]
+{
+  \def\operatorTableLabel{#1}%
+  \def\operatorTableCaption{#2}%
+  \begin{table}[\floatposh]
+    \begin{operatorTabular}
+    }{
+    \end{operatorTabular}
+    \caption{\operatorTableCaption}
+    \label{\operatorTableLabel}
+  \end{table}
+}
+
+\begin{operatorTable}{tab:arith}{Arithmetic operators}
+  \operatoruplus
+  \operatorumin
+  \hline
+  \operatorexp
+  \hline
+  \operatormult
+  \operatordiv
+  \operatormod
+  \hline
+  \operatorplus
+  \operatorminus
+\end{operatorTable}
 
 \begin{urbiassert}
    1 + 1 ==    2;
@@ -733,19 +754,10 @@ with another operator. See \autoref{tab:assignment} and the listing
 below.
 
 
-\begin{table}[\floatposh]
-  \centering
-  \begin{tabular}{|c|c|c|c|c|c|}
-    \hline
-    \operatorhead
-    \hline
-    \operatorass[\footnotemark]{}
-    \operatorsiass
-    \hline
-  \end{tabular}
-  \caption{Assignment operators}
-  \label{tab:assignment}
-\end{table}
+\begin{operatorTable}{tab:assignment}{Assignment operators}
+  \operatorass[\footnotemark]{}
+  \operatorsiass
+\end{operatorTable}
 \footnotetext{For object fields only. Assignment to local variables
   cannot be redefined. }
 
@@ -775,21 +787,12 @@ y;
 purpose than bit-related operations. See \autoref{tab:bitwise} and the
 listing below.
 
-\begin{table}[\floatposh]
-  \centering
-  \begin{tabular}{|c|c|c|c|c|c|}
-    \hline
-    \operatorhead
-    \hline
-    \operatorlshift
-    \operatorrshift
-    \hline
-    \operatorbxor
-    \hline
-  \end{tabular}
-  \caption{Bitwise operators}
-  \label{tab:bitwise}
-\end{table}
+\begin{operatorTable}{tab:bitwise}{Bitwise operators}
+  \operatorlshift
+  \operatorrshift
+  \hline
+  \operatorbxor
+\end{operatorTable}
 
 \begin{urbiassert}
 4 << 2 == 16;
@@ -802,22 +805,13 @@ listing below.
 listing below. The operators \lstinline|&&| and \lstinline-||- are
 short-circuiting: their right-hand side is evaluated only if needed.
 
-\begin{table}[\floatposh]
-  \centering
-  \begin{tabular}{|c|c|c|c|c|c|}
-    \hline
-    \operatorhead
-    \hline
-    \operatorneg
-    \hline
-    \operatorand
-    \hline
-    \operatoror
-    \hline
-  \end{tabular}
-  \caption{Boolean operators}
-  \label{tab:boolean}
-\end{table}
+\begin{operatorTable}{tab:boolean}{Boolean operators}
+  \operatorneg
+  \hline
+  \operatorand
+  \hline
+  \operatoror
+\end{operatorTable}
 
 \begin{urbiassert}
 true && true;
@@ -832,27 +826,18 @@ true || (1 / 0);
 \us supports classical \dfn{comparison operators}. See
 \autoref{tab:comparison} and the listing below.
 
-\begin{table}[\floatposh]
-  \centering
-  \begin{tabular}{|c|c|c|c|c|c|}
-    \hline
-    \operatorhead
-    \hline
-    \operatoreq
-    \operatorneq
-    \operatorpeq
-    \operatorpneq
-    \operatoraeq
-    \operatoreqaeq
-    \operatorinf
-    \operatorinfeq
-    \operatorsup
-    \operatorsupeq
-    \hline
-  \end{tabular}
-  \caption{Comparison operators}
-  \label{tab:comparison}
-\end{table}
+\begin{operatorTable}{tab:comparison}{Comparison operators}
+  \operatoreq
+  \operatorneq
+  \operatorpeq
+  \operatorpneq
+  \operatoraeq
+  \operatoreqaeq
+  \operatorinf
+  \operatorinfeq
+  \operatorsup
+  \operatorsupeq
+\end{operatorTable}
 
 \begin{urbiscript}
 assert
@@ -879,23 +864,16 @@ the listing below. Note that the \dfn[operator!subscript]{subscript}
 arguments that will be passed to the \lstinline|'[]'| method of the
 targeted object.
 
-\begin{table}[\floatposh]
-  \begin{tabular}{|c|c|c|c|c|c|}
-    \hline
-    \operatorhead
-    \hline
-    \operatordot
-    \operatordota
-    \hline
-    \operatorprop
-    \operatorpropass
-    \hline
-    \operatorsub
-    \operatorsubass
-    \hline
-  \end{tabular}
-  \caption{Miscellaneous operators}
-\end{table}
+\begin{operatorTable}{tab:operators-summary}{Miscellaneous operators}
+  \operatordot
+  \operatordota
+  \hline
+  \operatorprop
+  \operatorpropass
+  \hline
+  \operatorsub
+  \operatorsubass
+\end{operatorTable}
 
 \begin{urbiscript}
 // On lists.
@@ -929,65 +907,56 @@ highlight the overall precedences. Operators are sorted by decreasing
 precedence. Groups of rows represent operators with the same
 precedence.
 
-\begin{table}[\floatposh]
-  \begin{tabular}{|c|c|c|c|c|c|}
-    \hline
-    Operator               & Use                                    & Associativity
-    & Original semantic    & Equivalence                            \\
-    \hline
-    \operatordot
-    \operatordota
-    \hline
-    \operatorprop
-    \operatorpropass
-    \hline
-    \operatorsub
-    \operatorsubass
-    \hline
-    \operatoruplus
-    \operatorumin
-    \hline
-    \operatorexp
-    \hline
-    \operatormult
-    \operatordiv
-    \operatormod
-    \hline
-    \operatorplus
-    \operatorminus
-    \hline
-    \operatorlshift
-    \operatorrshift
-    \hline
-    \operatoreq
-    \operatorneq
-    \operatorpeq
-    \operatorpneq
-    \operatoreqaeq
-    \operatoraeq
-    \operatorinf
-    \operatorinfeq
-    \operatorsup
-    \operatorsupeq
-    \hline
-    \operatorbxor
-    \hline
-    \operatorneg
-    \hline
-    \operatorand
-    \hline
-    \operatoror
-    \hline
-    \operatorass
-    \operatorsiass
-    \hline
-    \operatorinc
-    \operatordec
-    \hline
-  \end{tabular}
-  \caption{Operators summary}
-  \label{tab:operators-summary}
-\end{table}
+\begin{operatorTable}{sec:us-fun-callmsg}{Operators summary}
+  \operatordot
+  \operatordota
+  \hline
+  \operatorprop
+  \operatorpropass
+  \hline
+  \operatorsub
+  \operatorsubass
+  \hline
+  \operatoruplus
+  \operatorumin
+  \hline
+  \operatorexp
+  \hline
+  \operatormult
+  \operatordiv
+  \operatormod
+  \hline
+  \operatorplus
+  \operatorminus
+  \hline
+  \operatorlshift
+  \operatorrshift
+  \hline
+  \operatoreq
+  \operatorneq
+  \operatorpeq
+  \operatorpneq
+  \operatoreqaeq
+  \operatoraeq
+  \operatorinf
+  \operatorinfeq
+  \operatorsup
+  \operatorsupeq
+  \hline
+  \operatorbxor
+  \hline
+  \operatorneg
+  \hline
+  \operatorand
+  \hline
+  \operatoror
+  \hline
+  \operatorass
+  \operatorsiass
+  \hline
+  \operatorinc
+  \operatordec
+\end{operatorTable}
 
 
 \section{Scopes and local variables}

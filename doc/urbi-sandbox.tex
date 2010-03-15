@@ -1,5 +1,6 @@
 \documentclass[openright,twoside,11pt]{book}
   \usepackage{gostai-documentation}
+  \usepackage{rotating}
 
 
 \title{Urbi Documentation Sandbox}
@@ -18,6 +19,32 @@ This document is meant to be used to toy with \LaTeX{}.
 \chapter{First Chapter}
 
 This is the first chapter.
+
+\newcommand{\tilt}[1]{\multicolumn{1}{c}{\begin{turn}{60}\textbf{#1}\end{turn}}}
+\newcommand{\operatorhead}{
+  \tilt{Operator}
+  & \tilt{Use}
+  & \tilt{Associativity}
+  & \tilt{Original semantics}
+  & \tilt{Equivalence}
+}
+
+
+\newcommand{\operator}[6][ ]{\lstinline@#2@&\lstinline@#3@&#4&#5&\lstinline@#6@#1\\}
+
+\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}          {Not redefinable}       }
+\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}          {Not redefinable}       }
+
+
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  \operatorhead
+  \\
+  \hline
+  \operatordot
+  \operatordota
+  \hline
+\end{tabular}
 
 \section{First Section}
 \newcommand{\optionHelp}
