@@ -10,19 +10,17 @@
 
 /// \brief Sample image acquisition urbi client.
 
-/* This simple demonstration program display or save images from an
- * Urbi server.
- */
-
 #include <libport/cstdio>
 #include <libport/csignal>
 
 #include <libport/cli.hh>
+#include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/option-parser.hh>
 #include <libport/sysexits.hh>
 
 #include <liburbi/compatibility.hh>
+#include <urbi/package-info.hh>
 #include <urbi/uconversion.hh>
 #include <urbi/usyncclient.hh>
 
@@ -77,7 +75,9 @@ namespace
   static void
   closeandquit (int)
   {
+    std::cerr << "ARG" << std::endl;
     delete urbi::getDefaultClient();
+    std::cerr << "ARGAIE" << std::endl;
     urbi::exit(0);
   }
 
@@ -96,6 +96,16 @@ namespace
     ::exit(EX_OK);
   }
 
+  static
+  void
+  version()
+  {
+    std::cout << "urbi-image" << std::endl
+              << urbi::package_info() << std::endl
+              << libport::exit(EX_OK);
+  }
+
+  /// Decode the image format string \s s.
   static
   int
   format(const std::string& s)
@@ -148,6 +158,7 @@ main (int argc, char *argv[])
   libport::OptionParser opt_parser;
   opt_parser << "Options:"
 	     << libport::opts::help
+	     << libport::opts::version
 	     << libport::opts::host
 	     << libport::opts::port
 	     << arg_period
@@ -163,6 +174,8 @@ main (int argc, char *argv[])
 
   if (libport::opts::help.get())
     usage(opt_parser);
+  if (libport::opts::version.get())
+    version();
 
   std::string device = arg_dev.value("camera");
 
