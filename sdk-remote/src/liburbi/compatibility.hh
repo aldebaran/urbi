@@ -24,6 +24,11 @@
 #define SYNCLINE_POP()                          \
   "//#pop\n"
 
+#define SYNCLINE_WRAP(This)                     \
+  SYNCLINE_PUSH()                               \
+  This                                          \
+  SYNCLINE_POP()
+
 namespace urbi
 {
   namespace compatibility

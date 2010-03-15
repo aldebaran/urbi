@@ -387,15 +387,19 @@ namespace urbi
 			    size_t& width, size_t& height,
 			    libport::utime_t useconds)
   {
-    int f = format == IMAGE_JPEG  || transmitFormat == URBI_TRANSMIT_JPEG;
-    //XXX required to ensure format change is applied
-    send("%s.format = %d;\n"
-         "noop;\n"
-         "noop;\n", camera, f);
+    int f = format == IMAGE_JPEG || transmitFormat == URBI_TRANSMIT_JPEG;
+    if (kernelMajor_ < 2)
+    // FIXME: required to ensure format change is applied
+      send("%s.format = %d;\n"
+           "noop;\n"
+           "noop;\n", camera, f);
+    else
+      send(SYNCLINE_WRAP("%s.format = %d|;\n"), camera, f);
     UMessage *m = syncGet(useconds, "%s.val", camera);
-    if (!m)
-      return 0;
-    if (m->value->binary->type != BINARY_IMAGE)
+    if (!m
+        || m->type != MESSAGE_DATA
+        || m->value->type != DATA_BINARY
+        || m->value->binary->type != BINARY_IMAGE)
     {
       delete m;
       return 0;
@@ -404,7 +408,7 @@ namespace urbi
     height = m->value->binary->image.height;
 
     size_t osize = buffersize;
-    if (f == 1  && format != IMAGE_JPEG)
+    if (f == 1 && format != IMAGE_JPEG)
     {
       size_t w, h;
       //uncompress jpeg
@@ -497,21 +501,29 @@ namespace urbi
   USyncClient::syncGetSound(const char* device, int duration, USound& sound,
 			    libport::utime_t useconds)
   {
-    send("syncgetsound = BIN 0;\n"
-	 "loopsound: loop syncgetsound = syncgetsound +  %s.val,\n"
-	 " {\n"
-	 "   sleep(%d);\n"
-	 "   stop loopsound;\n"
-	 "   noop;\n"
-	 "   noop;\n"
-	 " };\n", device, duration);
+    if (kernelMajor_ < 2)
+      send("syncgetsound = BIN 0;\n"
+           "loopsound: loop syncgetsound = syncgetsound + %s.val,\n"
+           "{\n"
+           "  sleep(%d);\n"
+           "  stop loopsound;\n"
+             "  noop;\n"
+           "  noop;\n"
+           "};\n",
+           device, duration);
+    else
+      send(SYNCLINE_WRAP(
+             "syncgetsound = BIN 0;\n"
+             "loopsound: loop syncgetsound = syncgetsound + %s.val,\n"
+             "{\n"
+             "  sleep(%d);\n"
+             "  loopsound.stop;\n"
+             "};\n"), device, duration);
+
     UMessage* m = syncGet(useconds, "%s", "syncgetsound;");
-
-    if (!m)
-      return 0;
-
-    if (m->type != MESSAGE_DATA
-	|| m->value->type != DATA_BINARY
+    if (!m
+        || m->type != MESSAGE_DATA
+        || m->value->type != DATA_BINARY
 	|| m->value->binary->type != BINARY_SOUND)
     {
       delete m;
