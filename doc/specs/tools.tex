@@ -72,9 +72,9 @@ URBI_PATH=C:\cygwin\home\jessie\urbi:C:\cygwin\usr\local\urbi
 \subsection{Environment Variables}
 \begin{envs}
 \item[URBI\_PATH] The search-path for \us source files (i.e.,
-  \file{*.u} files.
+  \file{*.u} files).
 
-\item[URBI\_ROOT] The \urbi is relocatable: its components know the
+\item[URBI\_ROOT] The \urbi SDK is relocatable: its components know the
   relative location of each other.  Yet they need to ``guess'' the
   \urbi root, i.e., the path to the directory that contains the files.
   This variable also to override that guess.  Do not use it unless you
@@ -89,6 +89,8 @@ URBI_PATH=C:\cygwin\home\jessie\urbi:C:\cygwin\usr\local\urbi
 \label{sec:tools:files}
 
 \begin{files}
+\item[CLIENT.INI] This is the obsolete name for \file{global.u}.
+
 \item[global.u] If found in the \env{URBI\_PATH} (see
   \autoref{sec:tools:envvars}), this file is loaded by \urbi server upon
   start-up.  It is the appropriate place to install features you
@@ -98,14 +100,12 @@ URBI_PATH=C:\cygwin\home\jessie\urbi:C:\cygwin\usr\local\urbi
   users; global modifications should be made in globally visible
   objects, say \refObject{Global}.
 
-\item[URBI.INI] This is the obsolete name for \file{global.u}.
-
 \item[local.u] If found in the \env{URBI\_PATH} (see
   \autoref{sec:tools:envvars}), this file is loaded by every
   connection established with an \urbi server.  This is the
   appropriate place for enhancements local to a lobby.
 
-\item[CLIENT.INI] This is the obsolete name for \file{global.u}.
+\item[URBI.INI] This is the obsolete name for \file{global.u}.
 \end{files}
 
 \section{\command{urbi} --- Running an Urbi Server}
@@ -214,6 +214,39 @@ $ echo "var two = 2;" >two.u
 one + two;
 [00000000] 3
 \end{shell}%$
+
+\section{\command{urbi-image} --- Querying Images from a Server}
+\label{sec:tools:urbi-image}
+
+\begin{shell}
+urbi-image \var{option}...
+\end{shell}
+
+Connect to an \urbi server, and fetch images from it, for instance
+from its camera.
+
+\subsection{Options}
+
+\begin{options}
+\item[h]{help} \optionHelp
+\item[H]{host=\var{host}} Address to connect to.
+\item[P]{port=\var{port}} Port to connect to.
+\item[p]{period=\var{period}} Specify the period, in millisecond, at
+  which images are queried.
+\item[F]{format=\var{format}} Select format of the image (rgb, ycrcb,
+  jpeg, ppm).
+\item[r]{reconstruct} Use reconstruct mode (for aibo).
+\item[j]{jpeg=\var{factor}} JPEG compression factor (from 0 to 100,
+  defaults to 70).
+\item[d]{device=\var{device}} Query image on \var{device}.val
+  (default: \code{camera}).
+\item[o]{output=\var{file}} Query and save one image to \var{file}.
+\item[R]{resolution=\var{resolution}} Select resolution of the image
+  (0=biggest).
+\item[s]{scale=\var{factor}} Rescale image with given \var{factor}
+  (display only).
+\end{options}
+
 
 \section{\command{urbi-launch} --- Running a UObject}
 \label{sec:tools:urbi-launch}
