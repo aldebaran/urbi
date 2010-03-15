@@ -110,11 +110,11 @@ children_register remote
 children_wait 10
 
 # Ignore the "client errors" and ping maintenance.
-sed -e '/^E End of file/d'     \
-    -e '/^E client_error End of file/d'       \
-    -e '/^E client_error Operation canceled/d'  \
-    -e '/^E __gostai_private__connection_timeout End of file/d'            \
-    -e '/^E __gostai_private__connection_timeout Operation canceled/d'     \
+# Ignore "__gostai_private__connection_timeout" because it duplicates "client errors" mesages.
+sed -e '/^E End of file/d'                              \
+    -e '/^E client_error End of file/d'                 \
+    -e '/^E client_error Operation canceled/d'          \
+    -e '/^E __gostai_private__connection_timeout .*/d'  \
   remote.out.raw >remote.out.eff
 
 # Compare expected output with actual output.
