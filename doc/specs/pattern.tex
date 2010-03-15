@@ -2,9 +2,9 @@
 
 \lstinline|Pattern| class is used to make correspondences between a pattern
 and another \lstinline|Object|.  The visit is done either on the pattern or
-on the element against which is pattern is compared.
+on the element against which the pattern is compared.
 
-\lstinline|Pattern| are used for the implementation of the pattern matching.
+\lstinline|Pattern|s are used for the implementation of the pattern matching.
 So any class made compatible with the pattern matching implemented by this
 class will allow you to use it implicitly in your scripts.
 
@@ -25,7 +25,7 @@ b;
 
 \subsection{Construction}
 
-A \lstinline|Pattern| can be created with any objects which can be matched.
+A \lstinline|Pattern| can be created with any object that can be matched.
 
 \begin{urbiscript}
 Pattern.new([1]); // create a pattern to match the list [1].
@@ -48,15 +48,13 @@ Pattern.Binding.new("a");
 
 \item[bindings]
 
-  A \lstinline|Dictionary| which is filled by the match function for each
+  A \lstinline|Dictionary| filled by the match function for each
   \lstinline|Pattern.Binding| contained inside the pattern.
 
 \begin{urbiscript}
 {
   var p = Pattern.new([Pattern.Binding.new("a"), Pattern.Binding.new("b")]);
-  assert {
-    p.match([1, 2]) == true
-  };
+  assert (p.match([1, 2]));
   p.bindings
 };
 [00000000] ["a" => 1, "b" => 2]
@@ -65,16 +63,16 @@ Pattern.Binding.new("a");
 
 \item \lstinline|match(\var{value})|\\
 
-  Use the value to unify the current pattern with this value.  This function
-  returns the status of the match.
+  Use \var{value} to unify the current pattern with this value.
+  Return the status of the match.
   \begin{itemize}
     \item If the match is correct, then the \var{bindings} member will
-      contains the result of every matched values.
+      contain the result of every matched values.
     \item If the match is incorrect, then the \var{bindings} member should
       not be used.
   \end{itemize}
-  If the pattern contains multiple \lstinline|Pattern.Binding| with the same
-  name, then the behavior is not determined.
+  If the pattern contains multiple \lstinline|Pattern.Binding| with
+  the same name, then the behavior is undefined.
 
 \begin{urbiassert}
 Pattern.new(1).match(1);
@@ -89,10 +87,11 @@ Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
 
 \item \lstinline|matchPattern(\var{pattern}, \var{value})|\\
 
-  This function is used as a callback function to store all bindings in the
-  same place.  This function is useful inside objects which are implementing
-  a match or matchAgainst function which need to continue the match deeper.
-  This returns a Boolean the status of the match.
+  This function is used as a callback function to store all bindings
+  in the same place.  This function is useful inside objects that
+  implement a \lstinline|match| or \lstinline|matchAgainst| function
+  that need to continue the match deeper.  Return the status of the
+  match (a Boolean).
 
   The \var{pattern} should provide a method
   \lstinline|match(\var{handler},\var{value})| otherwise the value method
@@ -107,15 +106,13 @@ Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
 
 
 \item[pattern]
-
-  This field is used to store the pattern given at the creation.
-
+  The pattern given at the creation.
 \begin{urbiassert}
 Pattern.new(1).pattern == 1;
 Pattern.new([1, 2]).pattern == [1, 2];
 {
   var pattern = [1, Pattern.Binding.new("a")];
-  Pattern.new(pattern).pattern == pattern
+  Pattern.new(pattern).pattern === pattern
 };
 \end{urbiassert}
 

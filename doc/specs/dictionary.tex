@@ -193,17 +193,15 @@ Dictionary.clone.init("one", 1, "two", 2);
 \end{urbiscript}
 
 \item \lstinline|matchAgainst(\var{handler}, \var{pattern})|\\
-  This method enable pattern matching of members of Dictionary.  See
-  \refObject{Pattern}.
+  Pattern matching on members.  See \refObject{Pattern}.
 
 \begin{urbiscript}
 {
-  // match a subset of the dictionary
+  // Match a subset of the dictionary.
   ["a" => var a] = ["a" => 1, "b" => 2];
   // get the matched value.
-  a;
+  assert(a == 1);
 };
-[00000000] 1
 \end{urbiscript}
 
 \item \lstinline|set(\var{key}, \var{value})|\\

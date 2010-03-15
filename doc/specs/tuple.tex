@@ -50,17 +50,14 @@ expressions are also accepted.
   \code{asPrintable} to convert members to strings.
 
 \item \lstinline|matchAgainst(\var{handler}, \var{pattern})|\\
-  See \refObject{Pattern}.
+  Pattern matching on members.  See \refObject{Pattern}.
 
 \begin{urbiscript}
 {
-  // match a tuple
+  // Match a tuple.
   (var first, var second) = (1, 2);
-  echo(first);
-  echo(second);
+  assert { first == 1; second == 2 };
 };
-[00000000] *** 1
-[00000000] *** 2
 \end{urbiscript}
 
 \item \lstinline|'[]'(\var{index})|\\
