@@ -1,0 +1,150 @@
+/*
+ * Copyright (C) 2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+//                                      -*- urbi -*-
+
+// Too many unpredictable changes in the error messages.
+Exception.Lookup.fixSpelling = false |
+
+// A channel for synclines.
+var Global.syncline = Channel.new("syncline")|
+
+// Too verbose when we launch another urbi from urbi.
+System.unsetenv("GD_LEVEL")|;
+
+function Object.override(slot, value)
+{
+  copySlot(slot, "old" + slot);
+  setProperty(slot, "constant", false);
+  updateSlot(slot, value);
+}|;
+
+// Determinism: asList and asString.
+Dictionary.override("keys",
+   function ()
+    {
+      oldkeys.sort;
+    }
+)|;
+
+
+// We want random to become deterministic.
+do (Float)
+{
+  var this.random_counter = 0;
+  // chosen by fair dice roll.  guaranteed to be random.
+  // 200.map(function (v) { 100.random }).join(", ");
+  var random_value = [1, 97, 71, 28, 37, 58, 77, 97, 94, 4, 9, 31, 45,
+    75, 35, 98, 42, 99, 68, 12, 60, 57, 94, 8, 95, 68, 13, 30, 6, 62,
+    42, 65, 82, 52, 67, 21, 95, 12, 71, 1, 90, 31, 38, 57, 16, 90, 40,
+    79, 35, 6, 72, 98, 95, 19, 54, 23, 89, 60, 5, 26, 23, 6, 13, 70,
+    38, 94, 20, 44, 66, 34, 26, 94, 63, 38, 44, 90, 50, 59, 23, 47,
+    85, 17, 72, 39, 47, 85, 96, 85, 23, 20, 44, 68, 35, 15, 25, 34,
+    42, 11, 79, 52, 44, 95, 18, 96, 92, 15, 91, 33, 69, 97, 53, 47,
+    25, 10, 62, 11, 8, 77, 61, 25, 35, 68, 95, 76, 67, 39, 74, 31, 56,
+    1, 72, 60, 94, 84, 55, 89, 7, 15, 93, 69, 80, 55, 55, 6, 63, 2,
+    76, 8, 49, 31, 44, 38, 8, 97, 51, 49, 3, 31, 31, 14, 19, 75, 9,
+    80, 29, 23, 54, 60, 37, 45, 17, 25, 0, 56, 64, 97, 48, 4, 50, 50,
+    76, 12, 54, 97, 4, 81, 48, 65, 78, 99, 9, 29, 53, 83, 47, 7, 73,
+    22, 5, 76];
+
+  override("random",
+  function ()
+  {
+    // We don't want COW here.
+    random_value[(Float.random_counter++) % random_value.size] % this;
+  });
+}|
+
+// Deterministic localSlotNames.
+Object.override("localSlotNames",
+  function ()
+    {
+      oldlocalSlotNames.sort;
+    }
+)|
+
+// Deterministic String.fresh.
+do (String)
+{
+  var counter_ = 5;
+  fresh->constant = false;
+  fresh = function ()
+  {
+    this + "_" + counter_++;
+  }
+}|
+
+// Keep sync with urbivalid/test.u.
+if (System.Platform.isWindows)
+{
+  class Global.Process
+  {
+    function init
+    {
+      cerr << "Process is not supported under Windows";
+      System._exit(176)
+    };
+  };
+
+  do (System)
+  {
+    // System.system.
+    var binshs = ["/bin/sh", "/bin/sh.exe",
+                  "\\cygwin\\bin\\sh", "\\cygwin\\bin\\sh.exe",
+		  "Z:\\bin\\sh"];
+    for (var p : binshs)
+    {
+      try {
+        if (Path.new(p).exists)
+        {
+          var this.binsh = p;
+          break;
+        };
+      }
+      catch(var e) {}
+    };
+    if (!hasLocalSlot("binsh"))
+      throw Exception.new("cannot find /bin/sh: " + binshs);
+
+    var this.count = 1;
+
+    // On Windows, use /bin/sh to please our tests.
+    override("system",
+    function (command)
+    {
+      // For some reason I don't understand, the command is
+      // backgrounded on Windows (or by Wine).  So use some stamp file
+      // to mark the end of the command.  This also provides a means
+      // to get the real exit status with Wine.
+      var stamp = Path.new("%s.stamp" % count) |
+      count += 1 |
+      // As a subshell, not a subcommand ({ %s; }) so that if the
+      // command includes an "exit", then the stamp file is really
+      // created anyway with the right value.
+      command = "( %s ); echo $? >%s" % [command, stamp]|
+
+      // Escape all the quotes and backslashes, and call /bin/sh.
+      var cmd = binsh + " -c \"" |
+      for| (var c: command)
+        cmd += {if (c in ["\\", "\""]) "\\" else ""} + c |
+      cmd += "\"" |
+
+      // Run the command, wait for the stamp.
+      oldsystem(cmd) |
+      while| (!stamp.exists)
+        sleep(20ms)|
+      var res = File.new(stamp).asList[0].asFloat |
+      clog << ("system wrapper: " + command + ": " + cmd + ": " + res) |
+      res
+    });
+  }
+}|
+;
