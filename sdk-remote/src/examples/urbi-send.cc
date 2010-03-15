@@ -1,25 +1,14 @@
-/****************************************************************************
- * Sample urbi client that sends commands contained in a file.
+/*
+ * Copyright (C) 2004, 2006-2010, Gostai S.A.S.
  *
- * Copyright (C) 2004, 2006, 2007, 2008, 2009 Jean-Christophe Baillie.
- * All rights reserved.
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-**********************************************************************/
+ * See the LICENSE file for more information.
+ */
 
-/* This demonstration program sends commands to an Urbi server. */
+/// \brief Send commands to an Urbi server.
 
 #include <libport/bind.hh>
 #include <libport/cli.hh>
@@ -147,8 +136,6 @@ main(int argc, char* argv[])
 try
 {
   libport::program_initialize(argc, argv);
-  /// Display the server's banner.
-  bool banner = false;
 
   // Parse the command line.
   libport::OptionValue
@@ -174,15 +161,17 @@ try
 
   if (libport::opts::help.get())
     usage(opt_parser);
-  banner = arg_banner.get();
+  if (libport::opts::version.get())
+    version();
+
+  /// Display the server's banner.
+  bool banner = arg_banner.get();
   /// Server host name.
   std::string host = libport::opts::host_l.value(urbi::UClient::default_host());
   /// Server port.
   int port = libport::opts::port_l.get<int>(urbi::UClient::URBI_PORT);
   if (arg_pfile.filled())
     port = libport::file_contents_get<int>(arg_pfile.value());
-  if (libport::opts::version.get())
-    version();
 
   foreach(std::string arg, remainings_args)
     if (arg[0] == '-' && arg[1] != 0)
