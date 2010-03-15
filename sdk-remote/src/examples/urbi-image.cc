@@ -131,7 +131,7 @@ main (int argc, char *argv[])
                "period", 'p', "PERIOD"),
     arg_jpeg("jpeg compression factor (from 0 to 100, def 70)",
              "jpeg", 'j', "FACTOR"),
-    arg_dev("query image on DEVICE.val (default: camera.val)",
+    arg_dev("query image on DEVICE.val (default: camera)",
             "device", 'd', "DEVICE"),
     arg_out("query and save one image to FILE",
             "output", 'o', "FILE"),
