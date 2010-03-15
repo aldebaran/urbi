@@ -81,7 +81,7 @@ do (String)
   fresh->constant = false;
   fresh = function ()
   {
-    this + "_" + counter_++;
+    this + "_" + String.counter_++;
   }
 }|
 
