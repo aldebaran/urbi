@@ -28,6 +28,10 @@ class Global.Channel
     var this.name = x
   };
 
+  // Top-level channel.
+  var topLevel = new("");
+  Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
+
   var warning = new("warning");
   warning.quote = false;
 
@@ -49,10 +53,6 @@ do (Global)
   var cerr = Channel.new("error");
   cerr.quote = false;
   var clog = Channel.new("clog");
-
-  // Top-level channel.
-  var topLevel = Channel.new("");
-  Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
 
   function warn(msg)
   {

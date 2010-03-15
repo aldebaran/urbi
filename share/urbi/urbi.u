@@ -47,7 +47,7 @@ load("urbi/control.u");
 load("urbi/channel.u");
 
 // Disable top-level display
-topLevel.enabled = false;
+Channel.topLevel.enabled = false;
 
 // Provide !=.
 Object.addProto(Comparable);
@@ -96,6 +96,6 @@ load("urbi/uobject.u");
 
 // This variable is used by initialization code to detect the end of
 // urbi.u.
-topLevel.enabled = true |
+Channel.topLevel.enabled = true |
 System.defaultIsSystem = false |
 var Object.loaded = 1 |;

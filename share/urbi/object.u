@@ -42,7 +42,7 @@ do (Object)
 
   function print()
   {
-    topLevel << this
+    Channel.topLevel << this
   };
 
   // Change the whole set of parents.

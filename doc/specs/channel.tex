@@ -28,6 +28,15 @@ c << 42;
 [00000000:my_label] 42
 \end{urbiscript}
 
+\item[topLevel] A predefined stream for regular output.  Strings are
+  output escaped.
+\begin{urbiscript}
+Channel.topLevel << "Message";
+[00015895] "Message"
+Channel.topLevel << "\"quote\"";
+[00015895] "\"quote\""
+\end{urbiscript}
+
 \item[warning] A predefined stream for warning messages.  Strings sent
   to it are not escaped.
 \begin{urbiscript}

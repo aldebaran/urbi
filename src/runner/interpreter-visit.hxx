@@ -281,9 +281,21 @@ namespace runner
         // (yet) defined, do nothing, unless this environment variable
         // is set.
         static bool toplevel_debug = getenv("URBI_TOPLEVEL");
-        if (rSlot topLevel =
-            object::global_class->slot_locate(SYMBOL(topLevel), false).second)
-          topLevel->value()->call(SYMBOL(LT_LT), res);
+
+        // Find Global.Channel.topLevel and store it once we have it.
+        static rObject topLevel;
+        if (!topLevel)
+        {
+          rSlot Channel =
+            object::global_class->slot_locate(SYMBOL(Channel), false).second;
+          if (Channel)
+            if (rSlot top =
+                Channel->value()->slot_locate(SYMBOL(topLevel), false).second)
+              topLevel = top->value();
+        }
+
+        if (topLevel)
+          topLevel->call(SYMBOL(LT_LT), res);
         else if (toplevel_debug)
         {
           try
