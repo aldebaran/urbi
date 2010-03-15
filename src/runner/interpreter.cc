@@ -364,9 +364,12 @@ namespace runner
   Interpreter::raise(rObject exn, bool skip_last)
   {
     CAPTURE_GLOBAL(Exception);
-    if (is_a(exn, Exception))
+
+    // innermost_node_ can be empty is the interpreter has not interpreted
+    // any urbiscript.  i-e: slot_set can raise an exception only from the
+    // C++ side.  Best would be to produce a C++ backtrace instead.
+    if (is_a(exn, Exception) && !innermost_node_)
     {
-      aver(innermost_node_);
       boost::optional<ast::loc> l;
       if (object::is_system_location(innermost_node_->location_get()))
       {
