@@ -106,7 +106,7 @@ namespace
     case 'p': return urbi::IMAGE_PPM;
     case 'j': return urbi::IMAGE_JPEG;
     default:
-      std::cerr << program_name() << ": invalid format :"
+      std::cerr << program_name() << ": invalid format: "
                 << s << std::endl
                 << libport::exit(EX_USAGE);
     };
