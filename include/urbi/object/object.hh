@@ -99,7 +99,7 @@ namespace urbi
       /// \return Whether the \a k slot exists
       bool slot_has(key_type k) const;
 
-      typedef std::pair<rObject, rSlot> location_type;
+      typedef std::pair<Object*, rSlot> location_type;
       /// Lookup field in object hierarchy.
       /// \param k         Slot name.
       /// \param fallback  Whether we agree to use the "fallback" method
