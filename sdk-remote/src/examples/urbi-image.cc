@@ -22,6 +22,7 @@
 #include <libport/option-parser.hh>
 #include <libport/sysexits.hh>
 
+#include <liburbi/compatibility.hh>
 #include <urbi/uconversion.hh>
 #include <urbi/usyncclient.hh>
 
@@ -166,9 +167,7 @@ main (int argc, char *argv[])
 
   std::string device = arg_dev.value("camera");
 
-  std::string arg_format;
-  if (arg_form.filled())
-    arg_format = arg_form.value();
+  std::string arg_format = arg_form.value("jpeg");
   scale = arg_scale.get<float>(1.0);
 
   if (arg_out.filled())
@@ -183,14 +182,14 @@ main (int argc, char *argv[])
               << libport::exit(1);
 
   if (1 < client.kernelMajor())
-    client.send("var uimg = Channel.new(\"uimg\")|;\n");
+    client.send(SYNCLINE_WRAP("var uimg = Channel.new(\"uimg\")|;\n"));
   client.setCallback(showImage, "uimg");
 
-  client.send("%s.resolution = %s;\n",
-              device.c_str(), arg_resolution.value("0").c_str());
-  client.send("%s.jpegfactor = %d;\n",
-              device.c_str(), arg_jpeg.get<int>(70));
-  client.send("%s.reconstruct = %d;\n",
+  client.send(SYNCLINE_WRAP("%s.resolution = %s|;\n"
+                            "%s.jpegfactor = %d|;\n"
+                            "%s.reconstruct = %d|;\n"),
+              device.c_str(), arg_resolution.value("0").c_str(),
+              device.c_str(), arg_jpeg.get<int>(70),
               device.c_str(), arg_rec.get() ? 1 : 0);
 
   if (fileName)
@@ -221,22 +220,24 @@ main (int argc, char *argv[])
   {
     imcount = 0;
     int fmt = (arg_format[0] == 'r') ? 0 : 1;
-    client.send("%s.format = %d;\n", device.c_str(), fmt);
+    client.send(SYNCLINE_WRAP("%s.format = %d|;\n"), device.c_str(), fmt);
     client.waitForKernelVersion(true);
     if (int period = arg_period.get<int>(0))
-      client.send("every (%dms) uimg << %s.val,", period, device.c_str());
-    else if (1 < client.kernelMajor())
-      client.send("var handle = WeakPointer.new;\n"
-                  "%s.getSlot(\"val\").notifyChange(handle, closure() {\n"
-                  "  connectionTag:\n"
-                  "    this.send(%s.val.asString, \"uimg\")\n"
-                  "});",
-                  device.c_str(), device.c_str());
+      client.send(SYNCLINE_WRAP("every (%dms) uimg << %s.val,\n"),
+                  period, device.c_str());
+    else if (client.kernelMajor() < 2)
+      client.send(SYNCLINE_WRAP("loop { uimg << %s.val; noop },\n"),
+                  device.c_str());
     else
-      client.send("loop { uimg << %s.val; noop },", device.c_str());
+      client.send(
+        SYNCLINE_WRAP("var handle = WeakPointer.new|;\n"
+                      "%s.getSlot(\"val\").notifyChange(handle, closure() {\n"
+                      "  connectionTag:\n"
+                      "    this.send(%s.val.asString, \"uimg\")\n"
+                      "});\n"),
+        device.c_str(), device.c_str());
     urbi::execute();
   }
-
 
   return 0;
 }
