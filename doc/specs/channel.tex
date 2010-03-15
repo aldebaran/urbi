@@ -14,19 +14,72 @@ Channels are created like any other object. The constructor must be
 called with a string which will be the label.
 
 \begin{urbiscript}[firstnumber=1]
-var c = Channel.new("my_label") | {};
+var ch1 = Channel.new("my_label");
+[00000201] Channel_0x7985810
+
+ch1 << 1;
+[00000201:my_label] 1
+
+var ch2 = ch1;
+[00000201] Channel_0x7985810
+
+ch2 << 1/2;
+[00000201:my_label] 0.5
 \end{urbiscript}
 
 \subsection{Slots}
 
 \begin{urbiscriptapi}
 \item \lstinline|'<<'(\var{value})|\\
-Returns the given \var{value} tagged by the label of \lstinline|this|
+  Send \var{value} to \lstinline|this| tagged by its label if non-empty.
 
 \begin{urbiscript}
-c << 42;
-[00000000:my_label] 42
+Channel.new("label") << 42;
+[00000000:label] 42
+
+Channel.new("") << 51;
+[00000000] 51
 \end{urbiscript}
+
+\item[enabled] Whether the Channel is enabled.  Disabled Channels
+  produce no output.
+\begin{urbiscript}
+var c = Channel.new("")|;
+
+c << "enabled";
+[00000000] "enabled"
+
+c.enabled = false|;
+c << "disabled";
+
+c.enabled = true|;
+c << "enabled";
+[00000000] "enabled"
+\end{urbiscript}
+
+\item[quote] Whether the strings are output escaped (the default)
+  instead of raw strings.
+\begin{urbiscript}
+var d = Channel.new("")|;
+
+assert(d.enabled);
+d << "A \"String\"";
+[00000000] "A \"String\""
+
+d.quote = false|;
+d << "A \"String\"";
+[00000000] A "String"
+\end{urbiscript}
+
+\item[name] The name of the Channel, used to label the output.
+\begin{urbiscript}
+assert
+{
+  Channel.new("").name == "";
+  Channel.new("foo").name == "foo";
+};
+\end{urbiscript}
+
 
 \item[topLevel] A predefined stream for regular output.  Strings are
   output escaped.
