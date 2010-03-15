@@ -78,6 +78,7 @@ Documentation
 - Semaphore
 - Trajectories
 - TrajectoryGenerator
+- urbi-image
 - waituntil clauses
 - whenever clauses
 

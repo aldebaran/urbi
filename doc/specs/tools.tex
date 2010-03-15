@@ -118,15 +118,12 @@ simpler to use than, \command{urbi-launch}
 
 \subsection{Options}
 
-\paragraph{General Options}
-
-\begin{options}
+\begin{options}[General Options]
 \item[h]{help} \optionHelp
 \item{version} \optionVersion
 \end{options}
 
-\paragraph{Tuning}
-\begin{options}
+\begin{options}[Tuning]
 \item[d]{debug=\var{level}} \optionDebug
 \item[F]{fast}
   Ignore system time, go as fast as possible.  Do not use this option
@@ -166,8 +163,7 @@ simpler to use than, \command{urbi-launch}
 \item[q]{quiet} Do not send the welcome banner to incoming clients.
 \end{options}
 
-\paragraph{Networking}
-\begin{options}
+\begin{options}[Networking]
 \item[H]{host=\var{address}} Set the \var{address} on which network
   connections are listened to.  Typical values of \var{address}
   include:
@@ -192,8 +188,7 @@ simpler to use than, \command{urbi-launch}
 \end{options}
 
 
-\paragraph{Execution}
-\begin{options}
+\begin{options}[Execution]
 \item[e]{expression=\var{exp}} Send the \us expression \var{exp}.
   No separator is added, you have to pass yours.
 \item[f]{file=\var{file}} Send the contents of the file \var{file}.
@@ -227,10 +222,17 @@ from its camera.
 
 \subsection{Options}
 
-\begin{options}
+\begin{options}[General Options]
 \item[h]{help} \optionHelp
+\item{version} \optionVersion
+\end{options}
+
+\begin{options}[Networking]
 \item[H]{host=\var{host}} Address to connect to.
 \item[P]{port=\var{port}} Port to connect to.
+\end{options}
+
+\begin{options}[Tuning]
 \item[p]{period=\var{period}} Specify the period, in millisecond, at
   which images are queried.
 \item[F]{format=\var{format}} Select format of the image (rgb, ycrcb,
@@ -267,8 +269,7 @@ urbi-launch [\var{urbi-launch-option}...] \var{module}... [-- \var{module-option
 
 The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.
 
-\paragraph{Urbi-launch options}
-\begin{options}
+\begin{options}[Urbi-launch options]
 \item[h]{help} \optionHelp
 \item{version} \optionVersion
 \item[c]{customize=\var{file}} Start the \urbi server in
@@ -276,8 +277,7 @@ The \var{module}s are looked for in the \env{URBI\_UOBJECT\_PATH}.
 \item[d]{debug=\var{level}} \optionDebug
 \end{options}
 
-\paragraph{Mode selection}
-\begin{options}
+\begin{options}[Mode selection]
 % !!! \lstinline|loadModule("\var{module}")| does not escape the \var
 % because it is inside a string.
 \item[p]{plugin} Attach the \var{module} onto a currently running
@@ -384,8 +384,7 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
   types are gathered as if they were given on the command line.
 \end{itemize}
 
-\paragraph{General options}
-\begin{options}
+\begin{options}[General options]
 \item[D]{debug} Turn on shell debugging (\lstinline|set -x|) to
   track \command{umake} problems.
 \item[h]{help} \optionHelp
@@ -394,8 +393,7 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
 \item[V]{verbose} Report on what is done.
 \end{options}
 
-\paragraph{Compilation options}
-\begin{options}
+\begin{options}[Compilation options]
 \item{deep-clean} Remove all building directories and exit.
 \item[c]{clean} Clean building directory before compilation.
 \item[j]{jobs=\var{jobs}} Specify the numbers of compilation
@@ -410,8 +408,7 @@ Compile the \var{file}.  The \var{files} can be of different kinds:
 \item[m]{disable-automain} Do not add the \lstinline|main| function.
 \end{options}
 
-\paragraph{Developer options}
-\begin{options}
+\begin{options}[Developer options]
 \item[p]{prefix=\var{dir}} Set library files location.
 \item[P]{param-mk=\var{file}} Set \file{param.mk} location.
 \item[k]{kernel=\var{dir}} Set the kernel location.
