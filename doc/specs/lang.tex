@@ -630,18 +630,9 @@ This section defines the syntax, precedence and associativity of the
 operators. Their semantics is described in \autoref{sec:stdlib} in the
 documentation of the classes that provide them.
 
-% Operator generators
-\newcommand{\operatorhead}{
-  \strong{\ifx\ifHtml\undefined{Oper.}\else{Operator}\fi}
-  & \strong{Syntax}
-  & \strong{\ifx\ifHtml\undefined{Assoc.}\else{Associativity}\fi}
-  & \strong{Semantics}
-  & \strong{Equivalence}
-  \\
-}
 
-
-\newcommand{\operator}[6][ ]{\lstinline@#2@&\lstinline@#3@&#4&#5&\lstinline@#6@#1\\}
+% Operator generators.
+\newcommand{\operator}[6][]{\lstinline@#2@&\lstinline@#3@&#4&#5&\lstinline@#6@#1}
 \newcommand{\boperator}[3]{\operator{#1}{a #1 b}{#2}{#3}{a.'#1'(b)}}
 \newcommand{\poperator}[3]{\operator{#1}{#1a}{#2}{#3}{a.'#1'()}}
 
@@ -651,18 +642,18 @@ documentation of the classes that provide them.
 \newcommand{\operatorpropass}{\operator  {->}   {a->b = v}         {-}     {Property assignment}    {setProperty("a", "b", v)}}
 \newcommand{\operatorsub}    {\operator  {[]}   {a[args]}          {-}     {Subscript}              {a.'[]'(args)}          }
 \newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}      {-}     {Subscript assignment}   {a.'[]='(args, v)}      }
-\newcommand{\operatorass}[2][ ]    {\operator[#1]
+\newcommand{\operatorass}[1][]{\operator[#1]
                                          {=}    {a = b}            {Right} {Assignment}             {updateSlot("a", b)}    }
 
 \newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}    {a = a #1 b}            }
 \newcommand{\operatorsiass}  {
-    \operatoriass{+}
-    \operatoriass{-}
-    \operatoriass{*}
-    \operatoriass{/}
-    \operatoriass{\%}
-    \operatoriass{\^}
-%    \operatoriass{\~}
+  \operatoriass{+}\\
+  \operatoriass{-}\\
+  \operatoriass{*}\\
+  \operatoriass{/}\\
+  \operatoriass{\%}\\
+  \operatoriass{\^}
+  % \operatoriass{\~}
 }
 \newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation}           {(a = a + 1) - 1}       }
 \newcommand{\operatordec}    {\operator  {--}   {a--}  {-}     {Incrementation}           {(a = a - 1) + 1}       }
@@ -698,22 +689,47 @@ documentation of the classes that provide them.
 semantics on numeric values. See \autoref{tab:arith} and the listing
 below.
 
+% \whetherHtml{HTML OUTPUT}{NOT-HTML OUTPUT}
+% ------------------------------------------
+\newcommand{\whetherHtml}[2]{%
+  \ifx\ifHtml\undefined%
+    #2%
+  \else%
+    #1%
+  \fi%
+}
+
+%% \begin{operatorTabular}
+%%   1 & 2 & 3 & 4 & 5 \\
+%%   \hline
+%% \end{operatorTabular}
 \newenvironment{operatorTabular}
 {
   \begin{tabular}{|*{5}{c|}}
     \hline
-    \operatorhead
+    \strong{\whetherHtml{Operator}{Oper.}}
+    & \strong{Syntax}
+    & \strong{\whetherHtml{Associativity}{Assoc.}}
+    & \strong{Semantics}
+    & \strong{Equivalence}
+    \\
     \hline
   }{
+    \\
     \hline
   \end{tabular}
 }
 
+%% \begin{operatorTable}{tab:foo}{Foo Operators}
+%%   1 & 2 & 3 & 4 & 5 \\
+%%   \hline
+%% \end{operatorTable}
 \newenvironment{operatorTable}[2]
 {
   \def\operatorTableLabel{#1}%
   \def\operatorTableCaption{#2}%
   \begin{table}[\floatposh]
+    \centering
     \begin{operatorTabular}
     }{
     \end{operatorTabular}
@@ -723,17 +739,17 @@ below.
 }
 
 \begin{operatorTable}{tab:arith}{Arithmetic operators}
-  \operatoruplus
-  \operatorumin
+  \operatoruplus\\
+  \operatorumin \\
   \hline
-  \operatorexp
+  \operatorexp\\
   \hline
-  \operatormult
-  \operatordiv
-  \operatormod
+  \operatormult\\
+  \operatordiv\\
+  \operatormod\\
   \hline
-  \operatorplus
-  \operatorminus
+  \operatorplus\\
+  \operatorminus\\
 \end{operatorTable}
 
 \begin{urbiassert}
@@ -755,7 +771,7 @@ below.
 
 
 \begin{operatorTable}{tab:assignment}{Assignment operators}
-  \operatorass[\footnotemark]{}
+  \operatorass[\footnotemark]\\
   \operatorsiass
 \end{operatorTable}
 \footnotetext{For object fields only. Assignment to local variables
@@ -788,8 +804,8 @@ purpose than bit-related operations. See \autoref{tab:bitwise} and the
 listing below.
 
 \begin{operatorTable}{tab:bitwise}{Bitwise operators}
-  \operatorlshift
-  \operatorrshift
+  \operatorlshift\\
+  \operatorrshift\\
   \hline
   \operatorbxor
 \end{operatorTable}
@@ -806,9 +822,9 @@ listing below. The operators \lstinline|&&| and \lstinline-||- are
 short-circuiting: their right-hand side is evaluated only if needed.
 
 \begin{operatorTable}{tab:boolean}{Boolean operators}
-  \operatorneg
+  \operatorneg\\
   \hline
-  \operatorand
+  \operatorand\\
   \hline
   \operatoror
 \end{operatorTable}
@@ -827,15 +843,15 @@ true || (1 / 0);
 \autoref{tab:comparison} and the listing below.
 
 \begin{operatorTable}{tab:comparison}{Comparison operators}
-  \operatoreq
-  \operatorneq
-  \operatorpeq
-  \operatorpneq
-  \operatoraeq
-  \operatoreqaeq
-  \operatorinf
-  \operatorinfeq
-  \operatorsup
+  \operatoreq\\
+  \operatorneq\\
+  \operatorpeq\\
+  \operatorpneq\\
+  \operatoraeq\\
+  \operatoreqaeq\\
+  \operatorinf\\
+  \operatorinfeq\\
+  \operatorsup\\
   \operatorsupeq
 \end{operatorTable}
 
@@ -865,13 +881,13 @@ arguments that will be passed to the \lstinline|'[]'| method of the
 targeted object.
 
 \begin{operatorTable}{tab:operators-summary}{Miscellaneous operators}
-  \operatordot
-  \operatordota
+  \operatordot\\
+  \operatordota\\
   \hline
-  \operatorprop
-  \operatorpropass
+  \operatorprop\\
+  \operatorpropass\\
   \hline
-  \operatorsub
+  \operatorsub\\
   \operatorsubass
 \end{operatorTable}
 
@@ -908,53 +924,53 @@ precedence. Groups of rows represent operators with the same
 precedence.
 
 \begin{operatorTable}{sec:us-fun-callmsg}{Operators summary}
-  \operatordot
-  \operatordota
+  \operatordot\\
+  \operatordota\\
   \hline
-  \operatorprop
-  \operatorpropass
+  \operatorprop\\
+  \operatorpropass\\
   \hline
-  \operatorsub
-  \operatorsubass
+  \operatorsub\\
+  \operatorsubass\\
   \hline
-  \operatoruplus
-  \operatorumin
+  \operatoruplus\\
+  \operatorumin\\
   \hline
-  \operatorexp
+  \operatorexp\\
   \hline
-  \operatormult
-  \operatordiv
-  \operatormod
+  \operatormult\\
+  \operatordiv\\
+  \operatormod\\
   \hline
-  \operatorplus
-  \operatorminus
+  \operatorplus\\
+  \operatorminus\\
   \hline
-  \operatorlshift
-  \operatorrshift
+  \operatorlshift\\
+  \operatorrshift\\
   \hline
-  \operatoreq
-  \operatorneq
-  \operatorpeq
-  \operatorpneq
-  \operatoreqaeq
-  \operatoraeq
-  \operatorinf
-  \operatorinfeq
-  \operatorsup
-  \operatorsupeq
+  \operatoreq\\
+  \operatorneq\\
+  \operatorpeq\\
+  \operatorpneq\\
+  \operatoreqaeq\\
+  \operatoraeq\\
+  \operatorinf\\
+  \operatorinfeq\\
+  \operatorsup\\
+  \operatorsupeq\\
   \hline
-  \operatorbxor
+  \operatorbxor\\
   \hline
-  \operatorneg
+  \operatorneg\\
   \hline
-  \operatorand
+  \operatorand\\
   \hline
-  \operatoror
+  \operatoror\\
   \hline
-  \operatorass
-  \operatorsiass
+  \operatorass\\
+  \operatorsiass\\
   \hline
-  \operatorinc
+  \operatorinc\\
   \operatordec
 \end{operatorTable}
 
