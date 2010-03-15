@@ -35,6 +35,8 @@
 #include <urbi/object/cxx-primitive.hh>
 #include <urbi/object/dictionary.hh>
 #include <object/finalizable.hh>
+#include <urbi/uevent.hh>
+#include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/object.hh>
@@ -55,6 +57,7 @@
 
 // Make it more readable.
 using namespace boost::assign;
+using object::rEvent;
 using object::rObject;
 using object::rLobby;
 using object::objects_type;
@@ -88,6 +91,13 @@ namespace urbi {
                          UAutoValue v6 = UAutoValue(),
                          UAutoValue v7 = UAutoValue(),
                          UAutoValue v8 = UAutoValue());
+      virtual void declare_event(const UEvent* owner);
+      virtual void emit(const std::string& object,
+                        UAutoValue& v1,
+                        UAutoValue& v2,
+                        UAutoValue& v3,
+                        UAutoValue& v4,
+                        UAutoValue& v5);
       virtual UObjectMode getRunningMode() const;
       virtual std::pair<int, int> kernelVersion() const;
       virtual void yield() const;
@@ -741,6 +751,38 @@ namespace urbi
       CHECK(1);CHECK(2);CHECK(3);CHECK(4);CHECK(5);CHECK(6);CHECK(7);CHECK(8);
 #undef CHECK
       b->call_with_this(libport::Symbol(method), args);
+    }
+
+    void
+    KernelUContextImpl::declare_event(const UEvent* owner)
+    {
+      LOCK_KERNEL;
+      rEvent e = new object::Event(object::Event::proto);
+      StringPair p = split_name(owner->get_name());
+      rObject o = get_base(p.first);
+      if (!o)
+        FRAISE("UEvent creation on non existing object: %s", p.first);
+      else if (!o->slot_has(Symbol(p.second)))
+        o->slot_set(Symbol(p.second), e);
+    }
+
+    void
+    KernelUContextImpl::emit(const std::string& object,
+                             UAutoValue& v1,
+                             UAutoValue& v2,
+                             UAutoValue& v3,
+                             UAutoValue& v4,
+                             UAutoValue& v5)
+    {
+      StringPair p = split_name(object);
+      rObject o = get_base(p.first)->slot_get(libport::Symbol(p.second));
+
+      object::objects_type args;
+#define CHECK(i) if (v##i.type != DATA_VOID)    \
+        args.push_back(object_cast(v##i))
+      CHECK(1);CHECK(2);CHECK(3);CHECK(4);CHECK(5);
+#undef CHECK
+      o->call(SYMBOL(emit), args);
     }
 
     void
