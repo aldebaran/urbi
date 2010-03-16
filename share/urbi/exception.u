@@ -32,7 +32,7 @@ class Global.Exception
   {
     var res = message |
     if (!location.isVoid)
-      res = "%s: %s" % [location.asString, res] |
+      res = "%s: %s" % [location, res] |
     return res
   };
 
