@@ -14,6 +14,37 @@
 
 namespace urbi
 {
+
+  /*---------------.
+  | UImageFormat.  |
+  `---------------*/
+
+  static const char* formats[] =
+  {
+    "image_unknown",
+    "rgb",
+    "YCbCr",
+    "jpeg",
+    "ppm",
+    "YUV422",
+    "grey8",
+    "grey4",
+    "image_unknown",
+  };
+
+  const char*
+  format_string(UImageFormat fmt)
+  {
+    int f = static_cast<int>(fmt);
+    if (0 <= f && f <= int(sizeof formats / sizeof *formats))
+      return formats[f];
+    return "image_unknown";
+  }
+
+  /*---------.
+  | UImage.  |
+  `---------*/
+
   UImage
   UImage::make()
   {
@@ -24,25 +55,10 @@ namespace urbi
     return res;
   }
 
-  static const char* formats[] = {
-      "rgb",
-      "YCbCr",
-      "jpeg",
-      "ppm",
-      "YUV422",
-      "grey8",
-      "grey4",
-      "image_unknown",
-      ""
-    };
-
   const char*
   UImage::format_string() const
   {
-    int f = static_cast<int>(imageFormat);
-    if (f<=0 || f> IMAGE_UNKNOWN)
-      return "image_unknown";
-    return formats[f-1];
+    return ::urbi::format_string(imageFormat);
   }
 
   UImageFormat
