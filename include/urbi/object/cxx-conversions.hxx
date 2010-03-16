@@ -20,6 +20,7 @@
 
 # include <urbi/object/float.hh>
 # include <urbi/object/list.hh>
+# include <urbi/object/location.hh>
 # include <urbi/object/path.hh>
 # include <urbi/object/string.hh>
 # include <urbi/runner/raise.hh>
@@ -326,6 +327,28 @@ namespace urbi
     CONVERT(const char*);
 
 #undef CONVERT
+
+    /*-------------.
+    | ::ast::loc.  |
+    `-------------*/
+
+    template <>
+    struct CxxConvert<Location::value_type>
+    {
+      typedef Location::value_type target_type;
+      static target_type
+      to(const rObject& o, unsigned idx)
+      {
+        type_check<Location>(o, idx);
+        return o->as<Location>()->value_get();
+      }
+
+      static rObject
+      from(target_type v)
+      {
+        return new Location(v);
+      }
+    };
 
 
     /*------------------.

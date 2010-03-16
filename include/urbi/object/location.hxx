@@ -41,28 +41,6 @@ namespace urbi
       return &loc_.end;
     }
 
-    /*-------------.
-    | ::ast::loc.  |
-    `-------------*/
-
-    template <>
-    struct CxxConvert<Location::value_type>
-    {
-      typedef Location::value_type target_type;
-      static target_type
-      to(const rObject& o, unsigned idx)
-      {
-        type_check<Location>(o, idx);
-        return o->as<Location>()->value_get();
-      }
-
-      static rObject
-      from(target_type v)
-      {
-        return new Location(v);
-      }
-    };
-
   } // namespace object
 } // namespace urbi
 
