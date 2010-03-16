@@ -110,11 +110,19 @@ children_register remote
 children_wait 10
 
 # Ignore the "client errors" and ping maintenance.
-# Ignore "__gostai_private__connection_timeout" because it duplicates "client errors" mesages.
-sed -e '/^E End of file/d'                              \
-    -e '/^E client_error End of file/d'                 \
-    -e '/^E client_error Operation canceled/d'          \
-    -e '/^E __gostai_private__connection_timeout .*/d'  \
+#
+# Ignore "__gostai_private__connection_timeout" because it duplicates
+# "client errors" mesages.
+#
+# Ignore "warning: no debug symbols in executable (-arch i386)"
+# because on OS X, when instrumenting, valgrind might call dsymutil
+# which dumps this message on stdout (!)  if the executable does not
+# have debug symbols.
+sed -e '/^E End of file/d'                                              \
+    -e '/^E client_error End of file/d'                                 \
+    -e '/^E client_error Operation canceled/d'                          \
+    -e '/^E __gostai_private__connection_timeout .*/d'                  \
+    -e '/^warning: no debug symbols in executable (-arch i386)/d'       \
   remote.out.raw >remote.out.eff
 
 # Compare expected output with actual output.
