@@ -38,7 +38,9 @@ class Global.Exception
 
   function asPrintable()
   {
-    "%s `%s'" % ['$type', message]
+    "%s%s `%s'" %
+      [{if ('$type' == "Exception") "" else "Exception."},
+       '$type', asString]
   };
 };
 
