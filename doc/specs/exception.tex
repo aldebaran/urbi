@@ -30,6 +30,69 @@ Exception.Arity.new("myRoutine", 1, 10, 23);
 
 
 \subsection{Slots}
+
+Exception has many slots which are specific exceptions.  See
+\autoref{sec:specs:except:sub} for their documentation.
+
+\begin{urbiscriptapi}
+\item[backtrace] The call stack at the moment the exception was thrown
+  (not created), as a \refObject{List} from the innermost to the
+  outermost call.
+\begin{urbiscript}
+//#push 1 "file.u"
+try
+{
+  function innermost () { throw Exception.new("Ouch") };
+  function inner     () { innermost() };
+  function outer     () { inner() };
+  function outermost () { outer() };
+
+  outermost();
+}
+catch (var e)
+{
+  assert
+  {
+    e.backtrace[0].location.asString == "file.u:4.27-37";
+    e.backtrace[0].name == "innermost";
+
+    e.backtrace[1].location.asString == "file.u:5.27-33";
+    e.backtrace[1].name == "inner";
+
+    e.backtrace[2].location.asString == "file.u:6.27-33";
+    e.backtrace[2].name == "outer";
+
+    e.backtrace[3].location.asString == "file.u:8.3-13";
+    e.backtrace[3].name == "outermost";
+  };
+};
+//#pop
+\end{urbiscript}
+
+\item[location] The location from which the exception was thrown (not
+  created).
+\begin{urbiscript}
+eval("1/0");
+[00090441:error] !!! 1.1-3: /: division by 0
+try
+{
+  eval("1/0");
+}
+catch (var e)
+{
+  assert (e.location == "1.1-3");
+};
+\end{urbiscript}
+
+\item[message] The error message provided at construction.
+\begin{urbiassert}
+Exception.new("Ouch").message == "Ouch";
+\end{urbiassert}
+\end{urbiscriptapi}
+
+\subsection{Specific Exceptions}
+\label{sec:specs:except:sub}
+
 \begin{itemize}
 \item \lstinline|ArgumentType.new(\var{routine}, \var{index}, \var{effective}, \var{expected})|\\
   Derives from \lstinline|Exception.Type|.  The \var{routine} was
