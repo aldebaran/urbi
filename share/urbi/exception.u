@@ -11,8 +11,11 @@
 class Global.Exception
 {
   var message = "<no message>";
+
+  // location and backtrace are defined by the raise function of the
+  // interpreter.
   var backtrace;
-  var location = "";
+  var location;
 
   function init(msg)
   {
@@ -28,8 +31,8 @@ class Global.Exception
   function asString()
   {
     var res = message |
-    if (!location.empty)
-      res = "%s: %s" % [location, res] |
+    if (!location.isVoid)
+      res = "%s: %s" % [location.asString, res] |
     return res
   };
 

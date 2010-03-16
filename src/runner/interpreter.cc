@@ -382,9 +382,7 @@ namespace runner
       }
       else
         l = innermost_node_->location_get();
-      if (l)
-        exn->slot_update(SYMBOL(location),
-                         new object::String(string_cast(*l)));
+      exn->slot_update(SYMBOL(location), object::to_urbi(l));
       exn->slot_update(SYMBOL(backtrace),
                        as_job()->as<object::Job>()->backtrace());
     }
