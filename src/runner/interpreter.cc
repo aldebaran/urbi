@@ -365,10 +365,10 @@ namespace runner
   {
     CAPTURE_GLOBAL(Exception);
 
-    // innermost_node_ can be empty is the interpreter has not interpreted
-    // any urbiscript.  i-e: slot_set can raise an exception only from the
-    // C++ side.  Best would be to produce a C++ backtrace instead.
-    if (is_a(exn, Exception) && !innermost_node_)
+    // innermost_node_ can be empty if the interpreter has not interpreted
+    // any urbiscript.  E.g., slot_set can raise an exception only from the
+    // C++ side.  It would be better to produce a C++ backtrace instead.
+    if (is_a(exn, Exception) && innermost_node_)
     {
       boost::optional<ast::loc> l;
       if (object::is_system_location(innermost_node_->location_get()))
