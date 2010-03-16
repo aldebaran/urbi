@@ -137,12 +137,12 @@ class Exception.MatchFailure: Exception
 
 class Exception.Primitive: Exception
 {
-  var routine;
+  var routine = "<no routine>";
 
   function asString()
   {
     var res = "%s: %s" % [routine, message] |
-    if (!location.empty)
+    if (!location.isVoid)
       res = "%s: %s" % [location, res] |
     return res
   };

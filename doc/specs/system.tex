@@ -150,9 +150,9 @@ catch (var e)
   assert
   {
     e.isA(Exception.Primitive);
-    e.location  == "1.1-3";
-    e.routine   == "/";
-    e.message   == "division by 0";
+    e.location.asString  == "1.1-3";
+    e.routine            == "/";
+    e.message            == "division by 0";
   }
 };
 \end{urbiscript}
