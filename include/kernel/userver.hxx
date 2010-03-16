@@ -47,6 +47,12 @@ namespace kernel
   {
     return synchronizer_;
   }
+
+  inline UrbiRoot&
+  UServer::urbi_root_get()
+  {
+    return urbi_root_;
+  }
 }
 
 #endif // !KERNEL_USERVER_HXX

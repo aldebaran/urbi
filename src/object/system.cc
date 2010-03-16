@@ -396,7 +396,8 @@ namespace urbi
       libport::xlt_advise dl;
       dl.ext().global(global).path()
         .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"), ":");
-
+      dl.ext().path().push_back(
+        kernel::urbiserver->urbi_root_get().uobjects_path());
       libport::xlt_handle handle;
       try
       {

@@ -262,6 +262,8 @@ namespace kernel
     bool isAnotherThread() const;
 
     libport::Synchronizer& synchronizer_get();
+
+    UrbiRoot& urbi_root_get();
   private:
     /// Store the time on the last call to updateTime().
     libport::utime_t lastTime_;

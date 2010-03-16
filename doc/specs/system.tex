@@ -166,9 +166,9 @@ load("123.u") == 123;
 \item \lstinline|loadLibrary(\var{library})|\\
   Load the library \var{library}, to be found in the
   \env{URBI\_UOBJECT\_PATH} search-path (see
-  \autoref{sec:tools:envvars}).  The \var{library} may be a
-  \refObject{String} or a \refObject{Path}.  The \Cxx symbols are made
-  available to the other \Cxx components.  See also
+  \autoref{sec:tools:envvars}), or the default UObject path.
+  The \var{library} may be a \refObject{String} or a \refObject{Path}.
+  The \Cxx symbols are made available to the other \Cxx components.  See also
   \lstinline|loadModule|.
 
 \item \lstinline|loadModule(\var{module})|\\
