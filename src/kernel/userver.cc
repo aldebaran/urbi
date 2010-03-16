@@ -442,6 +442,11 @@ namespace kernel
 
   static void bounce_disconnection(UConnection* uc)
   {
+    // We cannot closed it yet because it is used to close all other
+    // connections.
+    if (&kernel::urbiserver->ghost_connection_get() == uc)
+      return;
+
     // This is executed from a job: we have a runner.
     uc->lobby_get()->disconnect();
     delete uc;
