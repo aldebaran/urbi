@@ -311,7 +311,8 @@ namespace kernel
     // the ghostconnection too.
     ghost_->initialize();
     object::rPrimitive p = new object::Primitive(
-      object::Primitive::value_type(boost::bind(&UServer::handle_synchronizer_, this, _1)));
+      object::Primitive::value_type(
+        boost::bind(&UServer::handle_synchronizer_, this, _1)));
     sched::rJob interpreter =
     new runner::Interpreter(
                             *ghost_->shell_get().get(),
