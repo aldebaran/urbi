@@ -103,6 +103,11 @@ public:
     UBindFunction(all, invalidRead);
     UBindFunction(all, invalidWrite);
 
+    UBindEvent(all, ev);
+    UBindFunction(all, sendEvent);
+    UBindFunction(all, sendEvent2Args);
+    UBindFunction(all, sendNamedEvent);
+
     UBindFunction(all, throwException);
     vars[0] = &a;
     vars[1] = &b;
@@ -297,6 +302,25 @@ public:
       removeNotify = "";
     }
     return 0;
+  }
+
+  void
+  sendEvent()
+  {
+    ev.emit();
+  }
+
+  void
+  sendEvent2Args(urbi::UValue v1, urbi::UValue v2)
+  {
+    ev.emit(v1, v2);
+  }
+
+  void
+  sendNamedEvent(const std::string& name)
+  {
+    urbi::UEvent tempEv(name);
+    tempEv.emit();
   }
 
   /// Return the value of the properties of the variable \a name.
@@ -591,6 +615,7 @@ public:
 
   urbi::UVar a, b, c, d;
   urbi::UVar* vars[4];
+  urbi::UEvent ev;
 
   //name of var that trigerred notifyChange
   urbi::UVar lastChange;
