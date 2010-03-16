@@ -120,19 +120,42 @@ outermost;
 \item \lstinline|eval(\var{source})|\\
   Evaluate the \us \var{source}, and return its result.  The
   \var{source} must be complete, yet the terminator (e.g., \samp{;})
-  is not required.  The evaluation is performed in the context of the
-  current object (\lstinline|this|), in particular, to create local
-  variables, create scopes.
+  is not required.
 \begin{urbiassert}
 eval("1+2") == 1+2;
 eval("\"x\" * 10") == "x" * 10;
 eval("eval(\"1\")") ==  1;
 eval("{ var x = 1; x + x; }") ==  2;
+\end{urbiassert}
 
+  The evaluation is performed in the context of the current object
+  (\lstinline|this|), in particular, to create local variables, create
+  scopes.
+\begin{urbiassert}
 // This creates a slot in the current object.
 eval("var x = 23;") == 23;
 x == 23;
 \end{urbiassert}
+
+  Exceptions are thrown on error.
+\begin{urbiscript}
+eval("1/0");
+[00008316:error] !!! 1.1-3: /: division by 0
+try
+{
+  eval ("1/0")
+}
+catch (var e)
+{
+  assert
+  {
+    e.isA(Exception.Primitive);
+    e.location  == "1.1-3";
+    e.routine   == "/";
+    e.message   == "division by 0";
+  }
+};
+\end{urbiscript}
 
 \item \lstinline|getenv(\var{name})|\\
   Return the value of the environment variable \var{name} as a
