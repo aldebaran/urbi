@@ -1,4 +1,4 @@
-personal_ws-1.1 en 752 utf-8
+personal_ws-1.1 en 753 utf-8
 UStartHub
 bindUrbiMethod
 tuples
@@ -64,8 +64,8 @@ quux
 onboard
 cpp
 runningcommands
-faq
 dll
+faq
 iterable
 OpenSSL
 automain
@@ -160,8 +160,8 @@ UNotifyOnRequest
 TerminateException
 func
 cancelFindBase
-myUObject
 myuobject
+myUObject
 uids
 cameraval
 waituntilWalkIsFinished
@@ -190,8 +190,8 @@ cerr
 hisMind
 succ
 param
-isLower
 islower
+isLower
 LinearSpeedMotor
 slotNames
 setPositions
@@ -336,6 +336,7 @@ num
 callmsg
 lshift
 insertBack
+Oper
 computeSalary
 generateALBindings
 ppc
@@ -352,8 +353,8 @@ getMine
 realloc
 socat
 argsCount
-pos
 osx
+pos
 getLocalSlot
 pre
 RotationalSpeedMotor
@@ -421,8 +422,8 @@ toAscii
 callMessage
 UDP
 UImageFormat
-getSlot
 getslot
+getSlot
 physicsReset
 src
 cout
@@ -473,8 +474,8 @@ wav
 uob
 TextTo
 getProperty
-VoiceXML
 voicexml
+VoiceXML
 getImage
 wbt
 getenv
@@ -489,8 +490,8 @@ notifyAccess
 elbowR
 middleware
 tts
-uobjects
 UObjects
+uobjects
 USB
 timestamp
 loadFile
@@ -501,8 +502,8 @@ SIGKILL
 resendBanner
 arity
 xfov
-xfF
 xFF
+xfF
 writeToVar
 distanceMin
 usr
@@ -544,8 +545,8 @@ waituntil
 htmldir
 ArithPair
 ArgumentType
-isVoid
 isvoid
+isVoid
 chmod
 searchFile
 bc
@@ -584,12 +585,12 @@ az
 cp
 fA
 chargeStop
-ubinary
 UBinary
+ubinary
 fb
 fooobar
-mytag
 myTag
+mytag
 valueChanged
 bz
 UValues
@@ -656,21 +657,21 @@ rlwrap
 trackL
 oo
 UProp
-os
 o's
+os
 MyVar
 trackR
 allProto
 rf
 accelX
-ps
 p's
+ps
 accelY
 accelZ
 zxf
 playSound
-UFactory
 ufactory
+UFactory
 px
 py
 te
