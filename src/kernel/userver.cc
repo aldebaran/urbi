@@ -33,7 +33,6 @@
 #include <libport/compiler.hh>
 #include <libport/config.h>
 #include <libport/cstdio>
-#include <libport/debug.hh>
 #include <libport/detect-win32.h>
 #include <libport/finally.hh>
 #include <libport/foreach.hh>
@@ -291,9 +290,9 @@ namespace kernel
     // The order is important: ghost connection, plugins, urbi.u.
 
     // Ghost connection
-    GD_INFO_DEBUG("Setting up ghost connection...");
-    ghost_ = std::auto_ptr<UGhostConnection>(new UGhostConnection(*this, interactive));
-    GD_INFO_DEBUG("done\n");
+    DEBUG(("Setting up ghost connection..."));
+    ghost_ = new UGhostConnection(*this, interactive);
+    DEBUG(("done\n"));
 
     xload_init_file("urbi/urbi.u");
 
@@ -524,7 +523,7 @@ namespace kernel
   UErrorValue
   UServer::load_file(const std::string& base, UQueue& q, QueueType type)
   {
-    GD_FINFO_DEBUG("Looking for %s...", base);
+    DEBUG(("Looking for %s...", base));
     std::istream *is;
     libport::Finally finally;
     if (base == "/dev/stdin")
@@ -536,11 +535,11 @@ namespace kernel
         std::string file = find_file(base);
         is = new std::ifstream(file.c_str(), std::ios::binary);
         finally << boost::bind(boost::checked_delete<std::istream>, is);
-        GD_FINFO_DEBUG("Loading %s...", file);
+        DEBUG(("Loading %s...", file));
       }
       catch (libport::file_library::Not_found&)
       {
-        GD_INFO_DEBUG("not found");
+        DEBUG(("not found\n"));
         errno = ENOENT;
         return UFAIL;
       }
@@ -561,7 +560,7 @@ namespace kernel
       is->read(buf, sizeof buf);
       q.push(buf, is->gcount());
     }
-    GD_INFO_DEBUG("done");
+    DEBUG(("done\n"));
     return USUCCESS;
   }
 
@@ -571,7 +570,7 @@ namespace kernel
   {
     aver(c);
     if (c->uerror_ != USUCCESS)
-      GD_INFO_DEBUG("UConnection constructor failed");
+      DEBUG(("UConnection constructor failed"));
     else
       connections_->add(c);
   }
@@ -586,7 +585,7 @@ namespace kernel
   UConnection&
   UServer::ghost_connection_get()
   {
-    return *ghost_.get();
+    return *ghost_;
   }
 
   runner::Runner&

@@ -274,7 +274,7 @@ namespace kernel
     /// The ghost connection used for urbi.u, URBI.INI, etc.
     // Does not need to be an auto_ptr, as it is stored in connections_
     // which handles memory management.
-    std::auto_ptr<UGhostConnection> ghost_;
+    UGhostConnection* ghost_;
 
     /// Store the server thread Id.
     pthread_t thread_id_;
