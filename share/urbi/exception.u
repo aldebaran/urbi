@@ -39,49 +39,6 @@ class Global.Exception
   };
 };
 
-class Exception.Constness: Exception
-{
-  function init()
-  {
-    '$Exception'("cannot modify const slot")
-  }
-};
-
-class Exception.ImplicitTagComponent: Exception
-{
-  function init()
-  {
-    '$Exception'("invalid component in implicit tag")
-  }
-};
-
-class Exception.Scheduling: Exception
-{
-  function throwNew(msg)
-  {
-    throw Exception.Scheduling.new(msg)
-  }
-};
-
-class Exception.UnexpectedVoid: Exception
-{
-  function init()
-  {
-    '$Exception'("unexpected void")
-  }
-};
-
-class Exception.Primitive: Exception
-{
-  var routine;
-
-  function init(routine, msg)
-  {
-    this.routine = routine |
-    '$Exception'("%s: %s" % [routine, msg])
-  };
-};
-
 class Exception.Arity: Exception
 {
   var routine;
@@ -138,6 +95,75 @@ class Exception.NonPositiveNumber: Exception.BadNumber
   };
 };
 
+class Exception.Constness: Exception
+{
+  function init()
+  {
+    '$Exception'("cannot modify const slot")
+  }
+};
+
+class Exception.FileNotFound: Exception
+{
+  var path;
+
+  function init(p)
+  {
+    path = p|
+    '$Exception'("file not found: %s" % p)
+  }
+};
+
+class Exception.ImplicitTagComponent: Exception
+{
+  function init()
+  {
+    '$Exception'("invalid component in implicit tag")
+  }
+};
+
+class Exception.MatchFailure: Exception
+{
+  function init()
+  {
+    '$Exception'("pattern did not match");
+  }
+};
+
+class Exception.Primitive: Exception
+{
+  var routine;
+
+  function init(routine, msg)
+  {
+    this.routine = routine |
+    '$Exception'("%s: %s" % [routine, msg])
+  };
+};
+
+class Exception.Redefinition: Exception
+{
+  var slot;
+
+  function init(s)
+  {
+    slot = s |
+    '$Exception'("slot redefinition: %s" % s)
+  }
+};
+
+class Exception.Scheduling: Exception
+{
+  function throwNew(msg)
+  {
+    throw Exception.Scheduling.new(msg)
+  }
+};
+
+/*----------------------.
+| Type and subobjects.  |
+`----------------------*/
+
 class Exception.Type: Exception
 {
   var expected;
@@ -166,6 +192,10 @@ class Exception.ArgumentType: Exception.Type
               % [routine, effective.asPrintable, index, expected.'$type']
   }
 };
+
+/*---------.
+| Lookup.  |
+`---------*/
 
 class Exception.Lookup: Exception
 {
@@ -221,32 +251,11 @@ class Exception.Lookup: Exception
   }
 };
 
-class Exception.Redefinition: Exception
-{
-  var slot;
-
-  function init(s)
-  {
-    slot = s |
-    '$Exception'("slot redefinition: %s" % s)
-  }
-};
-
-class Exception.FileNotFound: Exception
-{
-  var path;
-
-  function init(p)
-  {
-    path = p|
-    '$Exception'("file not found: %s" % p)
-  }
-};
-
-class Exception.MatchFailure: Exception
+class Exception.UnexpectedVoid: Exception
 {
   function init()
   {
-    '$Exception'("pattern did not match");
+    '$Exception'("unexpected void")
   }
 };
+
