@@ -18,15 +18,9 @@ On some versions of Nao, \urbi is not automatically started upon start-up.
 If this is the case, you must take the following steps to activate \urbi:
 
 \begin{itemize}
-\item Log in to your Nao using ssh: \lstinline|ssh root@myNao|
+\item Log in to your Nao using ssh: \lstinline|ssh nao@myNao|
 \item Add a line containing \lstinline|urbistarter| to
   \file{/opt/naoqi/preferences/autoload.ini}.
-\item Add a line containing
-  %%
-  \lstinline|LaunchThread("ALUrbiStarter", "runServer", [ ]);|
-  %%
-  to\\
-  \file{/opt/naoqi/bin/naoqi-autolaunch}.
 \item Restart your Nao.
 \end{itemize}
 
