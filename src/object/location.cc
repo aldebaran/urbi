@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+#include <libport/lexical-cast.hh>
+
 #include <object/symbols.hh>
 
 #include <urbi/object/cxx-conversions.hh>

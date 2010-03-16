@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+#include <libport/lexical-cast.hh>
+
 #include <object/symbols.hh>
 
 #include <urbi/object/cxx-conversions.hh>
@@ -135,9 +137,7 @@ namespace urbi
     std::string
     Position::as_string() const
     {
-      std::ostringstream o;
-      o << pos_;
-      return o.str();
+      return string_cast(pos_);
     }
 
     /*-----------.
