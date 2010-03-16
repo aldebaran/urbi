@@ -120,6 +120,7 @@ if test $name != $rtname; then
   rm -rf "$packagedir"
   mkdir -p "$packagedir"
   (cd "$DESTDIR$prefix" && tar cf - .) | (cd "$packagedir" && tar xpBf -)
-  # Keep only the lib sub-hierarchy.
-  (cd "$packagedir" && rm -rf *.txt bin include libexec share/doc)
+  # Keep only the bin, lib, and share/urbi directories.
+  # Don't forget bin is lib on Windows.
+  (cd "$packagedir" && rm -rf *.txt include libexec share/doc)
 fi
