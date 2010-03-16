@@ -139,10 +139,18 @@ class Exception.Primitive: Exception
 {
   var routine;
 
+  function asString()
+  {
+    var res = "%s: %s" % [routine, message] |
+    if (!location.empty)
+      res = "%s: %s" % [location, res] |
+    return res
+  };
+
   function init(routine, msg)
   {
     this.routine = routine |
-    '$Exception'("%s: %s" % [routine, msg])
+    '$Exception'(msg)
   };
 };
 
