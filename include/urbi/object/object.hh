@@ -23,7 +23,9 @@
 # include <boost/function.hpp>
 # include <boost/shared_ptr.hpp>
 
+# include <libport/attributes.hh>
 # include <libport/intrusive-ptr.hh>
+
 # include <urbi/object/fwd.hh>
 # include <urbi/object/centralized-slots.hh>
 # include <urbi/export.hh>
@@ -234,11 +236,22 @@ namespace urbi
       /// as arg0.  UrbiScript's "this" must be args[0].
       rObject call_with_this(libport::Symbol name, const objects_type& args);
 
+      /*------------------.
+      | 'changed' event.  |
+      `------------------*/
+
+      public:
+      /// Fire the 'changed' event.
+      void changed();
+
+      private:
+      ATTRIBUTE_r(rEvent, changed);
 
       /*---------------.
       | Urbi methods.  |
       `---------------*/
 
+      public:
       void urbi_createSlot(key_type k);
       rObject getSlot(key_type k);
       /// Return the associated value.

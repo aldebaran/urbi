@@ -26,17 +26,18 @@
 
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>
+#include <object/object-class.hh>
+#include <object/symbols.hh>
+#include <runner/runner.hh>
 #include <urbi/object/cxx-primitive.hh>
 #include <urbi/object/dictionary.hh>
+#include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
-#include <object/object-class.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
-#include <object/symbols.hh>
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
 
 namespace urbi
 {
@@ -324,6 +325,7 @@ namespace urbi
       DECLARE(asBool             , as_bool);
       DECLARE(asPrintable        , asPrintable);
       DECLARE(asToplevelPrintable, asToplevelPrintable);
+      DECLARE(changed            , changed_get);
       DECLARE(createSlot         , urbi_createSlot);
       DECLARE(getProperty        , property_get);
       DECLARE(getLocalSlot       , getLocalSlot);

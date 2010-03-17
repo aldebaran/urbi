@@ -29,6 +29,7 @@
 
 #include <urbi/object/cxx-conversions.hh>
 #include <urbi/object/dictionary.hh>
+#include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
@@ -171,6 +172,7 @@ namespace urbi
     {
       if (!slots_.set(this, k, o, redefinition_mode()))
         runner::raise_urbi_skip(SYMBOL(Redefinition), to_urbi(k));
+      changed();
       return *this;
     }
 
@@ -226,6 +228,7 @@ namespace urbi
         *slot = v;
         slot_set(k, slot);
       }
+      changed();
       return v;
     };
 
@@ -456,6 +459,25 @@ namespace urbi
     Object::type_name_get() const
     {
       return "Object";
+    }
+
+    /*------------------.
+    | 'changed' event.  |
+    `------------------*/
+
+    void
+    Object::changed()
+    {
+      if (changed_)
+        changed_->emit();
+    }
+
+    const rEvent&
+    Object::changed_get() const
+    {
+      if (!changed_)
+        const_cast<Object*>(this)->changed_ = new Event;
+      return changed_;
     }
 
     /*---------------.
