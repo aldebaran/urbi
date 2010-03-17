@@ -21,6 +21,14 @@ namespace urbi
 {
   namespace object
   {
+    Event::Event()
+      : listeners_()
+      , waiters_()
+    {
+      proto_add(proto);
+      slot_set(SYMBOL(active), to_urbi(false));
+    }
+
     Event::Event(rEvent model)
       : listeners_(model->listeners_)
       , waiters_()

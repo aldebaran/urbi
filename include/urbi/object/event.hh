@@ -23,6 +23,7 @@ namespace urbi
     class URBI_SDK_API Event: public CxxObject
     {
     public:
+      Event();
       Event(rEvent model);
       Event(rEvent model, rList payload);
       URBI_CXX_OBJECT(Event);
