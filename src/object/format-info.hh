@@ -66,8 +66,7 @@ namespace urbi
       mutable bool consistent_;
       ATTRIBUTE_R(std::string, group);
       ATTRIBUTE_R(std::string, pad);
-      mutable std::string pattern_;
-      const std::string& pattern_get() const;
+      ATTRIBUTE_r(std::string, pattern, , , mutable);
       ATTRIBUTE_R(unsigned int, precision);
       ATTRIBUTE_R(std::string, prefix);
       ATTRIBUTE_R(std::string, spec);
