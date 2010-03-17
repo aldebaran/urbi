@@ -105,7 +105,8 @@ evaluate = "1/0;";
 \item[Event] See \refObject{Event}.
 \item[Exception] See \refObject{Exception}.
 \item[Executable] See \refObject{Executable}.
-%% FIXME: [00008762] ***   external : external
+\item[external] An system object used to implement UObject support in
+  \us.
 \item[false]  See \autoref{sec:truth}.
 \item[File] See \refObject{File}.
 \item[Finalizable] See \refObject{Finalizable}.
@@ -113,7 +114,7 @@ evaluate = "1/0;";
 \item[FormatInfo] See \refObject{FormatInfo}.
 \item[Formatter] See \refObject{Formatter}.
 
-\item \lstinline|getProperty((\var{slotName}, \var{propName})| This
+\item \lstinline|getProperty(\var{slotName}, \var{propName})| This
   wrapper around \lstinline|Object.getProperty| is actually a
   by-product of the existence of the \lstinline|Global.evaluate|
   \refObject{UVar}.
@@ -122,7 +123,47 @@ evaluate = "1/0;";
 \item[Group] See \refObject{Group}.
 \item[InputStream] See \refObject{InputStream}.
 %% FIXME: [00008768] ***   installUpdateHookStack : Code
-%% FIXME: [00008769] ***   isdef : Code
+\item \lstinline|isdef(\var{qualified-identifier})|\\
+  Whether the \var{qualified-identifier} is defined.  It features some
+  (fragile) magic to support an argument passed as a literal
+  (\lstinline|isdef(foo)|), not a string (\lstinline|isdef("foo")|).
+  It is not recommended to use this feature, which is provided for \us
+  compatibility.  See \lstinline|Object.hasSlot| for a safer
+  alternative.
+\begin{urbiscript}
+assert
+{
+  !isdef(a);
+  !isdef(a.b);
+  !isdef(a.b.c);
+};
+
+var a = Object.new|;
+assert
+{
+   isdef(a);
+  !isdef(a.b);
+  !isdef(a.b.c);
+};
+
+var a.b = Object.new|;
+assert
+{
+   isdef(a);
+   isdef(a.b);
+  !isdef(a.b.c);
+};
+
+var a.b.c = Object.new|;
+assert
+{
+   isdef(a);
+   isdef(a.b);
+   isdef(a.b.c);
+};
+\end{urbiscript}
+
+
 \item[Job] See \refObject{Job}.
 \item[Kernel1] See \refObject{Kernel1}.
 \item[Lazy] See \refObject{Lazy}.
@@ -130,7 +171,26 @@ evaluate = "1/0;";
 \item[Loadable] See \refObject{Loadable}.
 \item[Lobby] See \refObject{Lobby}.
 \item[Math] See \refObject{Math}.
-%% FIXME: [00008773] ***   methodToFunction : Code
+\item \lstinline|methodToFunction(\var{methodName})|\\
+  Create a function from \var{methodName} so that calling the function
+  which arguments \lstinline|(\var{a}, \var{b}, ...)| is that same as
+  calling \lstinline|\var{a}.\var{methodName}(\var{b}, ...)|.
+\begin{urbiscript}
+var uid_of = methodToFunction("uid")|;
+assert
+{
+  uid_of(Object) == Object.uid;
+  uid_of(Global) == Global.uid;
+};
+var '+_of' = methodToFunction("+")|;
+assert
+{
+  '+_of'( 1,   2)  ==  1  + 2;
+  '+_of'("1", "2") == "1" + "2";
+  '+_of'([1], [2]) == [1] + [2];
+};
+\end{urbiscript}
+
 \item[Mutex] See \refObject{Mutex}.
 \item[nil] See \refObject{nil}.
 \item[Object] See \refObject{Object}.
@@ -173,8 +233,24 @@ evaluate = "1/0;";
 
 \item[UVar] See \refObject{UVar}.
 \item[void] See \refObject{void}.
-%% FIXME: [00008804] ***   wall : Code
-%% FIXME: [00008805] ***   warn : Code
+\item \lstinline|wall(\var{value}, \var{channel} = "")|\\
+  Bounce to \lstinline|lobby.wall|, see \refObject{Lobby}.
+\begin{urbiscript}
+wall("111", "foo");
+[00015895:foo] *** 111
+wall(222, "");
+[00051909] *** 222
+wall(333);
+[00055205] *** 333
+\end{urbiscript}
+
+\item \lstinline|warn(\var{message})|\\
+  Issue a warning \var{message}.
+\begin{urbiscript}
+warn("cave canem");
+[00015895:warning] *** cave canem
+\end{urbiscript}
+
 %% FIXME: [00008806] ***   WeakDictionary : Finalizable
 %% FIXME: [00008806] ***   WeakPointer : Finalizable
 \end{urbiscriptapi}
