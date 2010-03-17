@@ -75,11 +75,13 @@ namespace runner
 
     /// \ name Properties.
     /// \{
-  public:
     /// Whether to err on redefinition or overwrite the slot.
     ATTRIBUTE_RW(bool, redefinition_mode);
+    /// Whether to err if void is used as a value.
+    ATTRIBUTE_RW(bool, void_error);
     /// \}
 
+  public:
     /// Change lobby on fly
     void lobby_set(rLobby);
 

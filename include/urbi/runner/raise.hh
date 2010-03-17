@@ -109,7 +109,6 @@ namespace runner
   void raise_type_error(object::rObject effective,
                         object::rObject expected);
 
-  ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_unexpected_void_error();
 }

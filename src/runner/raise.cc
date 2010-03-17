@@ -187,7 +187,7 @@ namespace runner
   void
   raise_unexpected_void_error()
   {
-    raise_urbi_skip(SYMBOL(UnexpectedVoid));
+    if (::kernel::urbiserver->getCurrentRunner().void_error_get())
+      raise_urbi_skip(SYMBOL(UnexpectedVoid));
   }
-
 }

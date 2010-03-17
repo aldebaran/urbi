@@ -523,6 +523,13 @@ namespace urbi
     }
 
     void
+    system_noVoidError()
+    {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      r.void_error_set(false);
+    }
+
+    void
     system_class_initialize()
     {
 #define DECLARE(Name)                                           \
@@ -545,6 +552,7 @@ namespace urbi
       DECLARE(lobbies);
       DECLARE(lobby);
       DECLARE(nonInterruptible);
+      DECLARE(noVoidError);
       DECLARE(programName);
       DECLARE(reboot);
       DECLARE(redefinitionMode);

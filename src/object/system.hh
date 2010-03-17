@@ -51,7 +51,10 @@ namespace urbi
     /// Return the list of loaded system files.
     system_files_type& system_files_get();
 
+    /// Switch to redefinition mode in the current scope
     void system_redefinitionMode();
+    /// Deactivate void errors in the current scope
+    void system_noVoidError();
   }; // namespace object
 }
 

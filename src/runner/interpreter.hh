@@ -252,10 +252,13 @@ namespace runner
                             ((Interpreter*, i))                         \
                             ((bool&, non_interruptible_))               \
                             ((bool, non_interruptible))                 \
-                            ((bool, redefinition_mode)),                \
+                            ((bool, redefinition_mode))                 \
+                            ((bool, void_error)),                       \
                             i->cleanup_scope_tag();                     \
                             non_interruptible_ = non_interruptible;     \
-                            i->redefinition_mode_set(redefinition_mode);)
+                            i->redefinition_mode_set(redefinition_mode); \
+                            i->void_error_set(void_error);              \
+    )                                                                   \
 
 #define FINALLY_Do(DefineOrUse)                                 \
     FINALLY_ ## DefineOrUse(Do,                                 \
