@@ -68,6 +68,7 @@ endif
 # We cannot simply use html_DATA here, since Automake does not
 # support installing directories.
 html_DIR = urbi-sdk.htmldir
+EXTRA_html_DIR = urbi-sandbox.htmldir
 install-data-hook: install-html-dir
 .PHONY: install-html-dir
 if ENABLE_DOC_HTML
@@ -87,9 +88,9 @@ urbi_sdk_deps = 				\
   $(call ls_files,*.sty *.cls)			\
   $(urbi_sdk_sources)
 
-urbi-sandbox.pdf $(pdf_DATA) $(pdf_DATA:.pdf=.dvi) $(html_DIR): $(urbi_sdk_deps)
+urbi-sandbox.pdf $(pdf_DATA) $(pdf_DATA:.pdf=.dvi) $(html_DIR) $(EXTRA_html_DIR): $(urbi_sdk_deps)
 urbi-sandbox.pdf $(pdf_DATA): $(PDF_IMAGES)
-$(pdf_DATA:.pdf=.dvi) $(html_DIR): $(EPS_IMAGES)
+$(pdf_DATA:.pdf=.dvi) $(html_DIR) $(EXTRA_html_DIR): $(EPS_IMAGES)
 
 view: $(pdf_DATA)
 	xpdf $<
