@@ -653,7 +653,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "using"            |
 "virtual"          |
 "volatile"         |
-"wchar_t"          RESERVED_ERROR;
+"wchar_t"          |
+"when"             RESERVED_ERROR;
+
   /*>no-space>*/
 
   /*----------------------.
