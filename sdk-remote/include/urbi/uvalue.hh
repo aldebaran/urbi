@@ -259,9 +259,6 @@ namespace urbi
     /// Print itself on \c s, and return it.
     std::ostream& print(std::ostream& s) const;
 
-    /// Print the dictionary on \c s and return it.
-    std::ostream& dictionary_print(std::ostream& s) const;
-
     // Huge hack.
     static const bool copy = true;
   };
