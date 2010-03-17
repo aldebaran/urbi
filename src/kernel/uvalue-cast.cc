@@ -73,7 +73,7 @@ urbi::UValue uvalue_cast(const object::rObject& o)
     res.dictionary = new urbi::UDictionary;
     object::Dictionary::value_type& r = s->value_get();
     foreach (const object::Dictionary::value_type::value_type& d, r)
-      (*res.dictionary)[libport::Symbol(d.first)] = uvalue_cast(d.second);
+      (*res.dictionary)[d.first] = uvalue_cast(d.second);
   }
   else if (is_a(o, Binary))
   {
