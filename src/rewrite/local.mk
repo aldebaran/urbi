@@ -1,4 +1,6 @@
-dist_libuobject@LIBSFX@_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=		\
+rewrite/call-extractor.cc			\
+rewrite/call-extractor.hh			\
 rewrite/desugarer.cc				\
 rewrite/desugarer.hh				\
 rewrite/fwd.hh					\

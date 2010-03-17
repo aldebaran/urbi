@@ -38,6 +38,12 @@ ast.hh
 ast.hh~
 ast.hxx
 ast.hxx~
+at-exp.cc
+at-exp.cc~
+at-exp.hh
+at-exp.hh~
+at-exp.hxx
+at-exp.hxx~
 binding.cc
 binding.cc~
 binding.hh

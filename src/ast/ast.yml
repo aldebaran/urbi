@@ -1379,6 +1379,42 @@ Unscope:
     - '"%unscope:"'
     - $count
 
+AtExp:
+  super: Exp
+  attributes:
+    - cond:
+        type: rExp
+        access: rwW
+    - body:
+        type: rExp
+        access: rwW
+    - onleave:
+        type: rExp
+        access: rwW
+        mandatory: false
+    - duration:
+        type: rExp
+        access: rwW
+        mandatory: false
+  printer:
+    - '"at ("'
+    - ~cond
+    - '")"'
+    - 'libport::iendl'
+    - '"{"'
+    - 'libport::iendl'
+    - ~body
+    - 'libport::iendl'
+    - '"}"'
+    - 'libport::iendl'
+    - '"onleave"'
+    - 'libport::iendl'
+    - '"{"'
+    - 'libport::iendl'
+    - ~onleave
+    - '"}"'
+    - 'libport::iendl'
+
 # Local Variables:
 # mode: yaml
 # End:

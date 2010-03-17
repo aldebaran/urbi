@@ -181,6 +181,7 @@ namespace kernel
     | Connections.  |
     `--------------*/
 
+    public:
     /// Add a new connection to the connection list.
     /// Take ownership on c. Also perform some error testing on the connection
     /// value and UError return code

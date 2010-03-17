@@ -19,6 +19,7 @@
 #include <ast/factory.hh>
 #include <parser/parse.hh>
 
+#include <rewrite/call-extractor.hh>
 #include <rewrite/desugarer.hh>
 #include <rewrite/pattern-binder.hh>
 
@@ -196,6 +197,95 @@ namespace rewrite
                         % bind.bindings_get());
     res->location_set(assign->location_get());
     result_ = recurse(res);
+  }
+
+  void
+  Desugarer::visit(const ast::AtExp* at)
+  {
+    std::cerr << *at->cond_get() << std::endl;
+    ast::loc loc = at->location_get();
+
+    ast::rExp onleave = at->onleave_get();
+    if (!onleave)
+      onleave = new ast::Noop(loc, 0);
+
+    ast::rExp original = new_clone(at->cond_get());
+
+    rewrite::CallExtractor extract;
+
+    extract(at->cond_get().get());
+    ast::rNary decls = new ast::Nary;
+    foreach (ast::rExp decl, extract.declarations_get())
+      decls->push_back(decl, ast::flavor_pipe);
+
+    ast::rExp changed;
+    foreach (ast::rExp evt, extract.changed_get())
+      if (changed)
+      {
+        ast::exps_type* args = new ast::exps_type;
+        args->push_back(evt);
+        changed = new ast::Call(loc, args, changed, SYMBOL(PIPE_PIPE));
+      }
+      else
+        changed = evt;
+
+    ast::rExp duration = at->duration_get();
+    ast::rExp sleep;
+    ast::rExp stop;
+    if (duration)
+    {
+      PARAMETRIC_AST(desugar_sleep, "sleep('$duration')");
+      PARAMETRIC_AST(desugar_stop, "'$tag'.stop");
+      sleep = exp(desugar_sleep);
+      stop = exp(desugar_stop);
+    }
+    else
+    {
+      PARAMETRIC_AST(noop, "{}");
+      PARAMETRIC_AST(zero, "0");
+      duration = exp(zero);
+      sleep = exp(noop);
+      stop = exp(noop);
+    }
+
+    PARAMETRIC_AST(rewrite,
+                   "{"
+                   "  var '$status'|"
+                   "  var '$tag' = Tag.new|"
+                   "  var '$duration' = %exp:1|"
+                   "  var '$trigger' = Event.new|"
+                   "  function '$body'() {'$tag': { %exp:3 | '$status' = true| %exp:4 }|}|"
+                   "  {"
+                   "    nonInterruptible;"
+                   "    noVoidError;"
+                   "    %exp:2;"
+                   "    '$status' = false;"
+                   "    at (('$trigger' || %exp:5)?)"
+                   "    {"
+                   "      var '$new' = %exp:6|"
+                   "      if ('$new' && !'$status')"
+                   "        '$body'()|"
+                   "      if (!'$new')"
+                   "      {"
+                   "        %exp:7 |"
+                   "        if ('$status')"
+                   "        {"
+                   "          '$status' = false |"
+                   "          %exp:8"
+                   "        }"
+                   "      }|"
+                   "    }"
+                   "  }|"
+                   "  '$trigger'!|"
+                   "}");
+
+    ast::rExp res = extract.result_get().unsafe_cast<ast::Exp>();
+    if (!changed)
+    {
+      PARAMETRIC_AST(desugar_evt, "Event.new");
+      changed = exp(desugar_evt);
+    }
+    result_ = recurse(exp(rewrite % duration % decls % sleep % at->body_get() % changed % original % stop % onleave));
   }
 
   void Desugarer::operator()(const ast::Ast* node)

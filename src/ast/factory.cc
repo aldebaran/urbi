@@ -148,34 +148,12 @@ namespace ast
   rExp
   Factory::make_at(const location& loc,
                    const location& flavor_loc, flavor_type flavor,
-                   rExp cond,
-                   rExp body, rExp onleave,
-                   rExp duration) // const
+                   rExp cond, rExp body, rExp onleave, rExp duration) // const
   {
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
-    if (!onleave)
-      onleave = new Noop(loc, 0);
 
-    if (duration)
-    {
-      PARAMETRIC_AST
-        (desugar,
-         "{"
-         "  var '$at' = persist(%exp:1, %exp:2) |"
-         "  at ('$at'()) %exp:3 onleave %exp:4"
-         "}"
-          );
-      return exp(desugar % cond % duration % body % onleave);
-    }
-    else
-    {
-      PARAMETRIC_AST
-        (desugar,
-         "Control.at_(%exp:1, detach(%exp:2), detach(%exp:3))");
-
-      return exp(desugar % cond % body % onleave);
-    }
+    return new ast::AtExp(loc, cond, body, onleave, duration);
   }
 
   rExp
@@ -961,8 +939,7 @@ namespace ast
   }
 
   rExp
-  Factory::make_waituntil(const location&,
-                          const rExp& cond, rExp duration) // const
+  Factory::make_waituntil(const location&, const rExp& cond, rExp duration)
   {
     if (duration)
     {
@@ -977,11 +954,17 @@ namespace ast
     }
     else
     {
+      PARAMETRIC_AST(stop_ast, "'$waituntil'.stop");
+      static const rExp stop = exp(stop_ast);
+
       PARAMETRIC_AST
         (desugar,
-         "{var '$tag' = Tag.new |\n"
-         "'$tag': {at (%exp:1) '$tag'.stop | sleep(inf)}}");
-      return exp(desugar % cond);
+         "{"
+         "  var '$waituntil' = Tag.new |"
+         "  '$waituntil': { at (%exp:1) %exp:2 | sleep(inf) } |"
+         "}");
+      ;
+      return exp(desugar % cond % stop);
     }
   }
 

@@ -46,6 +46,7 @@ namespace rewrite
     using super_type::visit;
     /// Nodes to desugar
     CONST_VISITOR_VISIT_NODES(
+      (AtExp)
       (And)
       (Assign)
       (Binding)
