@@ -32,12 +32,12 @@ namespace urbi
   /// Possible value types a UValue can contain.
   enum UDataType
   {
-    DATA_DOUBLE,
-    DATA_STRING,
     DATA_BINARY,
-    DATA_LIST,
     DATA_DICTIONARY,
+    DATA_DOUBLE,
+    DATA_LIST,
     DATA_OBJECT,
+    DATA_STRING,
     DATA_VOID
   };
 
@@ -190,6 +190,9 @@ namespace urbi
     /// unless expr is void".
     UValue& operator, (const UValue &b);
 
+    /// Return a legible definition of UDataType
+    const char* format_string() const;
+
 #define CTOR_AND_ASSIGN_AND_COMMA(Type)		\
     explicit UValue(Type, bool copy=true);	\
     UValue& operator=(Type);			\
@@ -267,6 +270,9 @@ namespace urbi
   std::ostream&
   operator<<(std::ostream& s, const UValue& v);
 
+  inline
+  std::ostream&
+  operator<<(std::ostream& s, const UDictionary& d);
 
 
   /*----------.

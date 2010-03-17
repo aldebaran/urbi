@@ -86,6 +86,25 @@ namespace urbi
     return instance;
   }
 
+  static const char* formats[] = {
+    "binary",
+    "dictionary",
+    "double",
+    "list",
+    "object",
+    "string",
+    "void"
+  };
+
+  const char*
+  UValue::format_string() const
+  {
+    int f = static_cast<int>(type);
+    if (f < 0 || f > DATA_VOID)
+      return "unknown";
+    return formats[f];
+  }
+
 #define SKIP_SPACES()				\
     while (message[pos] == ' ')			\
       ++pos
@@ -147,11 +166,11 @@ namespace urbi
     {
       // list or dictionary message
       ++pos;
-      int n_elt = 0;
+      bool hasElt = 0;
       while (message[pos])
       {
 	SKIP_SPACES();
-        if (!n_elt && message[pos] == '=' && message[pos+1] == '>')
+        if (!hasElt && !::strncmp(message + pos, "=>", 2))
         {
           // Detect empty dictionaries.
           type = DATA_DICTIONARY;
@@ -162,8 +181,10 @@ namespace urbi
         }
 	if (message[pos] == ']')
         {
+          // End of an empty list / dictionary (created above).
           if (type == DATA_VOID)
           {
+            // End of an empty list, create it.
             type = DATA_LIST;
             list = new UList();
           }
@@ -179,8 +200,7 @@ namespace urbi
         SKIP_SPACES();
         // Here is a dictionary key.
         if ((type == DATA_DICTIONARY || type == DATA_VOID)
-            && message[pos] == '=' && message[pos+1] == '>'
-            && v->type == DATA_STRING)
+            && !::strncmp(message + pos, "=>", 2) && v->type == DATA_STRING)
         {
           if (type == DATA_VOID)
           {
@@ -214,7 +234,7 @@ namespace urbi
 	if (message[pos] == ']')
 	  break;
         EXPECT(',');
-        ++n_elt;
+        hasElt = true;
 	++pos;
       }
 
@@ -335,7 +355,7 @@ namespace urbi
 	s << *list;
         break;
       case DATA_DICTIONARY:
-        dictionary_print(s);
+        s << *dictionary;
         break;
       case DATA_OBJECT:
 	s << *object;
@@ -346,31 +366,6 @@ namespace urbi
     return s;
   }
 
-  std::ostream&
-  UValue::dictionary_print(std::ostream& s) const
-  {
-    if (type != DATA_DICTIONARY)
-      return s;
-
-    s << "[";
-    UDictionary::const_iterator i = dictionary->begin();
-    UDictionary::const_iterator i_end = dictionary->end();
-    // Empty dictionary: [=>]
-    if (i == i_end)
-      s << "=>";
-    else
-    {
-      while (i != i_end)
-      {
-        s << "\"" << libport::escape(i->first) << "\"=>";
-        i->second.print(s);
-        ++i;
-        if (i != i_end)
-          s << ",";
-      }
-    }
-    return s << "]";
-  }
 
 
   /*---------.
@@ -671,6 +666,25 @@ namespace
     return t.print(o);
   }
 
+  std::ostream&
+  operator<<(std::ostream& s, const urbi::UDictionary& d)
+  {
+    s << "[";
+    if (d.empty())
+      s << "=>";
+    else {
+      bool isFirst = true;
+      foreach (const UDictionary::value_type& t, d)
+      {
+        if (!isFirst)
+          s << ",";
+        s << "\"" << libport::escape(t.first) << "\"=>";
+        t.second.print(s);
+        isFirst = false;
+      }
+    }
+    return s << "]";
+  }
   /*----------------.
   | UObjectStruct.  |
   `----------------*/

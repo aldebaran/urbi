@@ -316,20 +316,19 @@ namespace urbi
     case DATA_DICTIONARY:
     {
       send("[");
-      UDictionary::const_iterator i = v.dictionary->begin();
-      UDictionary::const_iterator i_end = v.dictionary->end();
-      // Empty dictionary: [=>]
-      if (i == i_end)
+
+      if (v.dictionary->empty())
         send("=>");
       else
       {
-        while (i != i_end)
+        bool first = true;
+        foreach (const UDictionary::value_type& d, *v.dictionary)
         {
-          send("\"%s\"=>", string_cast(libport::escape(i->first)).c_str());
-          send(i->second);
-          ++i;
-          if (i != i_end)
+          if (!first)
             send(",");
+          send("\"%s\"=>", string_cast(libport::escape(d.first)).c_str());
+          send(d.second);
+          first = false;
         }
       }
       return send("]");

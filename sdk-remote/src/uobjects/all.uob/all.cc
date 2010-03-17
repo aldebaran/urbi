@@ -8,14 +8,13 @@
  * See the LICENSE file for more information.
  */
 
+
+#include <iostream>
 #include <libport/compiler.hh>
 #include <libport/debug.hh>
-#include <iostream>
+#include <libport/unistd.h>
 #include <sstream>
 #include <stdexcept>
-
-#include <libport/unistd.h>
-
 #include <urbi/uobject.hh>
 
 GD_ADD_CATEGORY(all);
@@ -75,7 +74,7 @@ public:
     UBindFunction(all, writeD);
     UBindFunction(all, writeS);
     UBindFunction(all, writeL);
-    UBindFunction(all, writeM);
+    UBindFunction(all, writeM); // M for Map
     UBindFunction(all, writeB);
     UBindFunction(all, makeCall);
     UBindFunction(all, writeBNone);
@@ -189,11 +188,11 @@ public:
     return 0;
   }
 
-  int typeOf(const std::string& name)
+  std::string typeOf(const std::string& name)
   {
     urbi::UVar v(name);
     v.syncValue();
-    return v.type();
+    return v.val().format_string();
   }
 
   int init(bool fail)
