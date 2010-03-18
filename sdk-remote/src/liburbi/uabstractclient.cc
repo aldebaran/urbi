@@ -512,27 +512,6 @@ namespace urbi
 
 
     sendSoundData* s = (sendSoundData*)cb;
-    /*
-      if (msg.type != MESSAGE_SYSTEM)
-      return URBI_CONTINUE;
-      if (strstr(msg.systemValue, "start") && s->startNotify==false)
-      {
-      s->startNotify = true;
-      s->uc->notifyCallbacks(UMessage(*s->uc, 0, s->tag, "*** start"));
-      }
-      if (!strstr(msg.systemValue, "stop"))
-      return URBI_CONTINUE;
-    */
-    /*wavheader wh =
-      {
-      {'R', 'I', 'F', 'F'},
-      44-8,
-      {'W', 'A', 'V', 'E'},
-      {'f', 'm', 't', ' '},
-      16, 1, 1, 16000, 32000, 2, 16,
-      {'d', 'a', 't', 'a'},
-      0}; // no comment...
-    */
     //handle next chunk
     if (s->format == SOUND_WAV && s->pos==0)
       s->pos = sizeof (wavheader);
@@ -543,10 +522,9 @@ namespace urbi
     s->uc->send("%s.val = BIN %lu %s %s;\n",
 		s->device,
 		static_cast<unsigned long>
-                (tosend + ((s->format == SOUND_WAV)?sizeof (wavheader):0)),
-		(s->format == SOUND_WAV)?"wav":"raw",
-		s->formatString
-      );
+                (tosend + ((s->format == SOUND_WAV) ? sizeof (wavheader) : 0)),
+		(s->format == SOUND_WAV) ? "wav" : "raw",
+		s->formatString);
     if (s->format == SOUND_WAV)
     {
       wavheader wh;
