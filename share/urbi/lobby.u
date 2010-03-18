@@ -41,6 +41,13 @@ do (Lobby)
       .'each|'(closure (s) { echo(s) })
   };
 
+  // Output the urbi license
+  function license()
+  {
+    for (var line in File.new(System.urbiRoot / "LICENSE.txt").asList)
+      echo(line);
+  };
+
   function echo
   {
     var tag = ""|
