@@ -15,20 +15,6 @@
 
 #include <urbi/kernel-version.hh>
 
-// Macros to hide internal code sent by liburbi, not by the user, so
-// that her locations are "correct": referring to her messages, not to
-// hers plus those of the machinery.
-#define SYNCLINE_PUSH()                                         \
-  "//#push " BOOST_PP_STRINGIZE(__LINE__) " \"" __FILE__ "\"\n"
-
-#define SYNCLINE_POP()                          \
-  "//#pop\n"
-
-#define SYNCLINE_WRAP(This)                     \
-  SYNCLINE_PUSH()                               \
-  This                                          \
-  SYNCLINE_POP()
-
 namespace urbi
 {
   namespace compatibility

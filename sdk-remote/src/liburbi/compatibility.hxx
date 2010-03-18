@@ -9,6 +9,7 @@
  */
 
 #include <urbi/kernel-version.hh>
+#include <urbi/uabstractclient.hh>
 
 namespace urbi
 {
@@ -27,9 +28,7 @@ namespace urbi
       if (major < 2)
         return name + " << ";
       else
-        return (SYNCLINE_PUSH()
-                "try { Channel.new(\"" + name + "\") << {\n"
-                SYNCLINE_POP());
+        return SYNCLINE_WRAP("try { Channel.new(\"" + name + "\") << {\n");
     }
 
     inline
@@ -40,13 +39,12 @@ namespace urbi
         return ",";
       else
         return ("\n"
-                SYNCLINE_PUSH()
-                "} }\n"
-                "catch (var e)\n"
-                "{\n"
-                "  lobby.send(\"!!! \" + e, \"" + name + "\");\n"
-                "},\n"
-                SYNCLINE_POP());
+                SYNCLINE_WRAP(
+                              "} }\n"
+                              "catch (var e)\n"
+                              "{\n"
+                              "  lobby.send(\"!!! \" + e, \"" + name + "\");\n"
+                              "},\n"));
     }
 
     /*-------.
