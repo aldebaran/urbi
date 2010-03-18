@@ -13,6 +13,8 @@
 
 # include <vector>
 
+# include <libport/attributes.hh>
+
 # include <ast/transformer.hh>
 
 namespace rewrite
@@ -27,20 +29,9 @@ namespace rewrite
     using super_type::visit;
     VISITOR_VISIT_NODES((Call));
 
-    const ast::exps_type& declarations_get()
-    {
-      return decls_;
-    }
-
-    const ast::exps_type& changed_get()
-    {
-      return changed_;
-    }
-
-  private:
-    unsigned idx_;
-    ast::exps_type decls_;
-    ast::exps_type changed_;
+    ATTRIBUTE_R(ast::exps_type, declarations);
+    ATTRIBUTE_R(ast::exps_type, changed);
+    ATTRIBUTE  (unsigned, idx);
   };
 }
 
