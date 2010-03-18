@@ -1,14 +1,14 @@
 END USER LICENSE AGREEMENT (1.2)
 
 PLEASE READ THIS AGREEMENT CAREFULLY.  BY USING ALL OR ANY PORTION OF
-THE SOFTWARE YOU (“YOU” AND “LICENSEE”) ACCEPT THE FOLLOWING TERMS
-FROM GOSTAI S.A.S, FRENCH CORPORATION (“GOSTAI”), REGISTERED AT
-489 244 624 RCS PARIS.  YOU AGREE TO BE BOUND BY ALL THE TERMS AND
+THE SOFTWARE YOU ("YOU" AND "LICENSEE") ACCEPT THE FOLLOWING TERMS
+FROM GOSTAI S.A.S, FRENCH CORPORATION ("GOSTAI"), REGISTERED AT
+489 244 624 RCS PARIS.  YOU AGREE TO BE BOUND BY ALL THE TERMS AND
 CONDITIONS OF THIS AGREEMENT.  YOU AGREE THAT IT IS ENFORCEABLE AS IF
 IT WERE A WRITTEN NEGOTIATED AGREEMENT SIGNED BY YOU.  IF YOU DO NOT
 AGREE TO THE TERMS OF THIS AGREEMENT YOU MUST NOT USE THE SOFTWARE.
 
-This End User License Agreement (the “Agreement”) is a legal agreement
+This End User License Agreement (the "Agreement") is a legal agreement
 between you and Gostai.  It permits you to use the software only for
 non-commercial use. In the event that you sell or bundle the software
 in a commercial product, the use of the Software will be governed by a
@@ -19,13 +19,13 @@ only. Commercial use is subject to a separate license.
 
 1. DEFINITIONS
 
-1.1 “Components” means computer programs which may be used with and/or
-utilized by the Urbi SDK as embedded language objects, or “UObjects”.
+1.1 "Components" means computer programs which may be used with and/or
+utilized by the Urbi SDK as embedded language objects, or "UObjects".
 
-1.2 “Documentation” means the electronic and/or hard copy user manual,
+1.2 "Documentation" means the electronic and/or hard copy user manual,
 if any, supplied with the Urbi SDK.
 
-1.3 “Intellectual Property Rights” means all intellectual property
+1.3 "Intellectual Property Rights" means all intellectual property
 rights, including patents, utility models, trade and service marks,
 trade names, domain names, right in designs, copyrights, moral rights,
 topography rights, rights in databases, trade secrets and know-how, in
@@ -35,16 +35,16 @@ rights to apply for the same, and all rights and forms of protection
 of a similar nature or having equivalent or similar effect to any of
 these anywhere in the world.
 
-1.4 “Urbi Core” means (i) the computer program which can interpret the
-Urbi language and execute routines written using Urbi (“Kernel”); and
+1.4 "Urbi Core" means (i) the computer program which can interpret the
+Urbi language and execute routines written using Urbi ("Kernel"); and
 (ii) the network component which enables the Kernel to receive and
 transmit programs via a TCP/IP protocol.
 
-1.5 “Urbi Remote SDK” means (i) the computer library which interacts
+1.5 "Urbi Remote SDK" means (i) the computer library which interacts
 with an Urbi Core; and (ii) the computer library to build and run
 UObjects.
 
-1.6 “Urbi SDK” means the package of software which includes (i) the
+1.6 "Urbi SDK" means the package of software which includes (i) the
 Urbi Core; and (ii) the Urbi Remote SDK; and (iii) such components for
 controlling certain hardware and software which Gostai makes available
 to the Licensee; and (iv) any bug fixes, enhancements, or other
@@ -53,7 +53,7 @@ modifications of the Urbi SDK provided to Licensee.
 
 2. GRANT OF RIGHTS; RESTRICTIONS
 
-2.1 In consideration of Licensee’s compliance with the terms herein
+2.1 In consideration of Licensee's compliance with the terms herein
 and subject to all the terms and conditions of this License Agreement,
 Gostai hereby grants Licensee a nonterminable, nonexclusive,
 nontransferable license for the Term to use the Urbi SDK for its own
@@ -64,15 +64,15 @@ is in respect of use of the Urbi SDK by the Licensee only and no
 subsidiaries or holding company of the Licensee may use the Urbi SDK.
 
 2.2 Licensee shall not, and shall not permit any third parties to:
-(i) modify, translate, create derivative copies of or copy the Urbi
+(i) modify, translate, create derivative copies of or copy the Urbi
 SDK (other than one backup copy which reproduces all proprietary
 notices), in whole or in part other than for the purpose permitted in
-clause 2.1; (ii) reverse engineer, decompile, disassemble or otherwise
+clause 2.1; (ii) reverse engineer, decompile, disassemble or otherwise
 reduce the object code of the Urbi SDK to source code form;
-(iii) distribute, sublicense, assign, share, timeshare, sell, rent,
+(iii) distribute, sublicense, assign, share, timeshare, sell, rent,
 lease, grant a security interest in, use for service bureau purposes,
-or otherwise transfer the Urbi SDK or Licensee’s right to use the Urbi
-SDK; (iv) remove or modify any copyright, trademark, or other
+or otherwise transfer the Urbi SDK or Licensee's right to use the Urbi
+SDK; (iv) remove or modify any copyright, trademark, or other
 proprietary notices of Gostai affixed to the media containing the Urbi
 SDK or contained within the Urbi SDK; or (v) use the Urbi SDK in any
 manner not expressly authorized by this License Agreement.
@@ -96,24 +96,24 @@ Licensee are reserved by Gostai.
 4. TERM AND TERMINATION
 
 4.1 This License Agreement shall commence on the date of purchase and
-continue until terminated in accordance with this Clause 4.
+continue until terminated in accordance with this Clause 4.
 
 4.2 If either party breaches this License Agreement in any material
 respect, the other party may give written notice to the breaching
 party of its intent to terminate, and if such breach is not cured
-within thirty (30) days after the breaching party’s receipt of such
+within thirty (30) days after the breaching party's receipt of such
 notice, this License Agreement shall terminate without any further
 notice required (but no cure period is required for any breach that
 cannot be cured).
 
 4.3 Upon any termination of this License Agreement and save only as
 permitted to the contrary under any other written agreement between
-the parties which survives this License Agreement (a) the rights and
-licenses granted to Licensee herein shall terminate; (b) Licensee
-shall cease all use of the Urbi SDK; (c) Licensee shall return to
-Gostai all copies of the Urbi SDK and Documentation in Licensee’s
-possession or under its control; and (d) Licensee shall certify in
-writing to Gostai its compliance with the foregoing.  Clauses 2, 3 (to
+the parties which survives this License Agreement (a) the rights and
+licenses granted to Licensee herein shall terminate; (b) Licensee
+shall cease all use of the Urbi SDK; (c) Licensee shall return to
+Gostai all copies of the Urbi SDK and Documentation in Licensee's
+possession or under its control; and (d) Licensee shall certify in
+writing to Gostai its compliance with the foregoing.  Clauses 2, 3 (to
 the extent of unpaid obligations), 5.2, 6 and 7 shall survive any
 termination of this License Agreement.
 
@@ -124,7 +124,7 @@ termination of this License Agreement.
 maintenance services to Licensee. Support and Maintenance or subject
 to separate contract available from Gostai.
 
-5.2 THE WARRANTIES SET FORTH IN THIS CLAUSE 5 ARE EXCLUSIVE AND IN
+5.2 THE WARRANTIES SET FORTH IN THIS CLAUSE 5 ARE EXCLUSIVE AND IN
 LIEU OF ALL OTHER WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT
 LIMITATION THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 PARTICULAR PURPOSE, AND ANY WARRANTIES ARISING BY STATUTE OR OTHERWISE
@@ -160,7 +160,7 @@ LICENSES AND CONSENTS TO USE SUCH THIRD PARTY SOFTWARE.
 7.1 Licensee shall not assign this License Agreement, in whole or in
 part, without the written consent of Gostai.
 
-7.2 Licensee consents to the use by Gostai of Licensee’s name in
+7.2 Licensee consents to the use by Gostai of Licensee's name in
 customer lists and other publicity, including interviews, case
 studies, and conference discussions, provided that such publicity
 accurately describes the nature of the relationship between Licensee
@@ -171,7 +171,7 @@ and construed in accordance with and the parties hereby submit to the
 non-exclusive jurisdiction of the laws of France.
 
 7.4 Licensee agrees that because of the unique nature of the Urbi SDK
-and Gostai’s proprietary rights therein, a demonstrated breach of this
+and Gostai's proprietary rights therein, a demonstrated breach of this
 License Agreement by Licensee would irreparably harm Gostai and
 monetary damages would be inadequate compensation.  Therefore,
 Licensee agrees that Gostai shall be entitled to preliminary and
@@ -189,7 +189,7 @@ provision.
 
 7.6 Any failure by any party to this License Agreement to enforce at
 any time any term or condition under this License Agreement will not
-be considered a waiver of that party’s right thereafter to enforce
+be considered a waiver of that party's right thereafter to enforce
 each and every term and condition of this License Agreement.
 
 7.7 Neither party will be responsible for delays resulting from
@@ -198,10 +198,10 @@ that the nonperforming party uses reasonable efforts to avoid or
 remove such causes of nonperformance and continues performance
 hereunder with reasonable dispatch whenever such causes are removed.
 
-7.8 This License Agreement (i) constitutes the entire agreement and
+7.8 This License Agreement (i) constitutes the entire agreement and
 understanding between the parties with respect to the subject matter
 hereof and supersedes all prior agreements, oral and written, made
-with respect to the subject matter hereof, and (ii) cannot be altered
+with respect to the subject matter hereof, and (ii) cannot be altered
 except by agreement in writing executed by an authorized
 representative of each party.  No purchase order and/or standard terms
 of purchase provided by Licensee shall supersede this License
