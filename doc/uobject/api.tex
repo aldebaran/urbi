@@ -298,6 +298,17 @@ You can read and write all the \urbi properties of an \UVar by
 reading and writing the appropriate \lstinline{UProp} object in the
 \UVar.
 
+\section{Emitting events}
+
+The \UEvent class can be used to create and emit \us events. Instances are
+created and initialized exactly as \UVar: either by using the
+\lstinline{UBindEvent} macro, or by calling one of its constructors or the
+\lstinline{init} function.
+
+Once initialized, the \lstinline{emit} function will trigger the emission of
+the associated \us event. It can be called with any number of arguments, of
+any compatible type.
+
 \section{UObject and Threads}
 
 The \UObject API is thread-safe in both plugin and remote mode: All API calls
