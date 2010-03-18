@@ -19,6 +19,10 @@
 
 namespace rewrite
 {
+  /* Analyze a condition and deduce which events to listen to know
+   * when to recompute the condition.
+   * Result: a first evaluation of the condition.
+   */
   class CallExtractor: public ast::Transformer
   {
   public:
@@ -29,7 +33,9 @@ namespace rewrite
     using super_type::visit;
     VISITOR_VISIT_NODES((Call));
 
+    /// Step-by-step evaluation of the condition. Include these before using res.
     ATTRIBUTE_R(ast::exps_type, declarations);
+    /// The events signaling a potential change in the condition evaluation
     ATTRIBUTE_R(ast::exps_type, changed);
     ATTRIBUTE  (unsigned, idx);
   };
