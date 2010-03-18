@@ -505,19 +505,15 @@ namespace urbi
   {
     //the idea is to cut the sound into small chunks,
     //add a header and send each chunk separately
+
     //create the header.
-    // printf("sound message: %s %d\n", msg.systemValue, msg.type);
     static const size_t CHUNK_SIZE = 32 * 8*60;
-    // static const int SUBCHUNK_SIZE = CHUNK_SIZE; //1024;
-
-
     sendSoundData* s = (sendSoundData*)cb;
     //handle next chunk
     if (s->format == SOUND_WAV && s->pos==0)
       s->pos = sizeof (wavheader);
     size_t tosend = std::min(CHUNK_SIZE, s->length - s->pos);
 
-    //printf("%d start chunk of size %d at offset %d\n", 0, tosend, s->pos);
     int playlength = tosend *1000 / s->bytespersec;
     s->uc->send("%s.val = BIN %lu %s %s;\n",
 		s->device,
@@ -537,21 +533,14 @@ namespace urbi
     s->uc->sendBin(s->buffer+s->pos, tosend);
     s->uc->send("sleep(%s.remain < %d);\n"
 		" %s << ping;\n", s->device, playlength / 2, msg.tag.c_str());
-    // printf("%d end sending chunk\n", 0);
     s->pos += tosend;
     if (s->pos >= s->length)
     {
-      //printf("over: %d %d\n", URBI_REMOVE, URBI_CONTINUE);
-      //if (s->tag && s->tag[0])
-      //  s->uc->notifyCallbacks(UMessage(*s->uc, 0, s->tag, "*** stop"));
-
-      std::string rDevice = s->device ? s->device : "speaker";
-      std::string message = rDevice + ".val->blend=" +
-	rDevice + ".sendsoundsaveblend;";
-      s->uc->send("%s", message.c_str());
+      const char* dev = s->device ? s->device : "speaker";
+      s->uc->send("%s.val->blend = %s.sendsoundsaveblend;", dev, dev);
       if (s->tag && s->tag[0])
 	s->uc->send("%s << 1;\n", s->tag);
-      free(s->buffer);
+      delete[] s->buffer;
       free(s->tag);
       free(s->device);
       delete s;
@@ -591,7 +580,7 @@ namespace urbi
       sendSoundData* s = new sendSoundData();
       s->bytespersec = sound.channels * sound.rate * (sound.sampleSize / 8);
       s->uc = this;
-      s->buffer = static_cast<char*> (malloc (sound.size));
+      s->buffer = new char[sound.size];
       memcpy(s->buffer, sound.data, sound.size);
       s->length = sound.size;
       s->tag = tag ? strdup(tag) : 0;
