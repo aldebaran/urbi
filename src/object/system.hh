@@ -55,6 +55,10 @@ namespace urbi
     void system_redefinitionMode();
     /// Deactivate void errors in the current scope
     void system_noVoidError();
+
+    /// Return the URBI_ROOT path.
+    rPath system_urbiRoot();
+
   }; // namespace object
 }
 
