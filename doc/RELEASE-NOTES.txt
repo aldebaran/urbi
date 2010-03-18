@@ -65,6 +65,9 @@ UObjects
 - Remote timers (USetUpdate, USetTimer) are now handled locally instead of by
   the kernel.
 - UVars can be copied using the UVar.copy method.
+- New UEvent class, similar to UVar. Can be used to emit events.
+- Added support for dictionaries: new UDictionary structure in the UValue
+  union.
 
 Documentation
 =============
