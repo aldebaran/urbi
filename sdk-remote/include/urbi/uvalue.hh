@@ -304,6 +304,19 @@ namespace urbi
 
 } // namespace urbi
 
+#define SYNCLINE_PUSH()                                         \
+  "//#push " BOOST_PP_STRINGIZE(__LINE__) " \"" __FILE__ "\"\n"
+
+#define SYNCLINE_POP()                          \
+  "//#pop\n"
+
+#define SYNCLINE_WRAP(...)                      \
+  SYNCLINE_PUSH()                               \
+  __VA_ARGS__                                   \
+  SYNCLINE_POP()
+
+
+
 # include <urbi/uvalue.hxx>
 
 # include <libport/warning-pop.hh>
