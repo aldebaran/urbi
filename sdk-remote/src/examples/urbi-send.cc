@@ -55,12 +55,8 @@ namespace
 }
 
 static urbi::UCallbackAction
-dump(void* banner, const urbi::UMessage& msg)
+dump(const urbi::UMessage& msg)
 {
-  if ((msg.tag == "start" || msg.tag == "ident")
-      && !*static_cast<bool*>(banner))
-    return urbi::URBI_CONTINUE;
-
   switch (msg.type)
   {
     case urbi::MESSAGE_DATA:
@@ -76,9 +72,9 @@ dump(void* banner, const urbi::UMessage& msg)
 }
 
 static urbi::UCallbackAction
-error(void* banner, const urbi::UMessage& msg)
+error(const urbi::UMessage& msg)
 {
-  dump(banner, msg);
+  dump(msg);
   exit(0);
 }
 
@@ -141,12 +137,10 @@ try
   libport::OptionValue
     arg_pfile("file containing the port to listen to", "port-file", 0, "FILE");
   libport::OptionFlag
-    arg_banner("do not hide the server-sent banner", "banner", 'b'),
     arg_quit("send `quit' at the end to disconnect", "quit", 'q');
 
   libport::OptionParser opt_parser;
   opt_parser << "Options:"
-	     << arg_banner
 	     << libport::opts::arg_exp
 	     << libport::opts::arg_file
 	     << libport::opts::help
@@ -164,8 +158,6 @@ try
   if (libport::opts::version.get())
     version();
 
-  /// Display the server's banner.
-  bool banner = arg_banner.get();
   /// Server host name.
   std::string host = libport::opts::host_l.value(urbi::UClient::default_host());
   /// Server port.
@@ -186,8 +178,8 @@ try
 	      << std::endl
               << libport::exit(1);
 
-  client.setWildcardCallback(callback(&dump, &banner));
-  client.setClientErrorCallback(callback(&error, &banner));
+  client.setWildcardCallback(callback(&dump));
+  client.setClientErrorCallback(callback(&error));
 
   /*----------------.
   | Send contents.  |
@@ -200,7 +192,7 @@ try
     client.send("quit;");
   else
     std::cout << libport::program_name()
-              << ": file sent, hit Ctrl-C to terminate."
+              << ": hit Ctrl-C to terminate."
               << std::endl;
   urbi::execute();
 }
