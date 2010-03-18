@@ -34,13 +34,16 @@ where
     \var{tarfile}}), and \code{zip} for Windows style zip files.
 \end{description}
 
-\section{Install}
+\section{Install \&{} Check}
 
 The package is \dfn{relocatable}, i.e., it does not need to be put at
 a specific location, nor does it need special environment variables to
 be set.  It is not necessary to be a super-user to install it.  The
 \dfn{root} of the package, denoted by \var{urbi-root} hereafter, is
 the absolute name of the directory which contains the package.
+
+After the install, the quickest way to test your installation is to run
+the various programs.
 
 \subsection{GNU/Linux and Mac OS X}
 
@@ -64,17 +67,6 @@ up your \env{PATH}:
 $ export PATH="urbi-root/bin:$PATH"
 \end{shell}%$
 
-\subsection{Windows}
-
-Decompress the zip file wherever you want.
-
-\section{Checks}
-
-Running the various programs is the quickest way to test your urbi
-installation.
-
-\subsection{Linux and MacOS}
-
 \begin{shell}
 # Check that urbi is properly set up.
 $ urbi --version
@@ -91,9 +83,17 @@ $ urbi -e '1+2*3; shutdown;'
 
 \subsection{Windows}
 
+Decompress the zip file wherever you want.
+
 Execute the script \file{urbi.bat}, located at the root of the
 uncompressed package. It should open a terminal with an interactive
 Urbi session.
+
+\begin{cygwin}
+Inputs and outputs of windows native application are buffered under Cygwin.
+Thus, either running the interactive mode of Urbi or watching the output of the
+server under Cygwin is not recommended.
+\end{cygwin}
 
 % FIXME: add a listing with the urbi banner under windows?
 
