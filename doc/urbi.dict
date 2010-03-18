@@ -1,10 +1,11 @@
-personal_ws-1.1 en 753 utf-8
+personal_ws-1.1 en 762 utf-8
 UStartHub
 bindUrbiMethod
 tuples
 runServer
 syncEmit
 gostai
+Gostai's
 multi
 Formatters
 rangemin
@@ -60,12 +61,13 @@ dir
 urbistarter
 Berlier
 jessie
+Cygwin
 quux
 onboard
 cpp
 runningcommands
-dll
 faq
+dll
 iterable
 OpenSSL
 automain
@@ -84,6 +86,7 @@ isDir
 toplevel
 topLevel
 getVal
+UBindEvent
 Whazaaa
 InputStream
 gcc
@@ -160,8 +163,8 @@ UNotifyOnRequest
 TerminateException
 func
 cancelFindBase
-myuobject
 myUObject
+myuobject
 uids
 cameraval
 waituntilWalkIsFinished
@@ -190,8 +193,8 @@ cerr
 hisMind
 succ
 param
-islower
 isLower
+islower
 LinearSpeedMotor
 slotNames
 setPositions
@@ -283,6 +286,7 @@ stdout
 ALTextToSpeech
 onImage
 shiftValue
+american
 acceptVoid
 stdin
 RangeIterable
@@ -336,6 +340,7 @@ num
 callmsg
 lshift
 insertBack
+ispell
 Oper
 computeSalary
 generateALBindings
@@ -353,8 +358,8 @@ getMine
 realloc
 socat
 argsCount
-osx
 pos
+osx
 getLocalSlot
 pre
 RotationalSpeedMotor
@@ -400,6 +405,7 @@ makeCompactNames
 lang
 MYNODE
 TimerHandle
+UDictionary
 TCP
 nonterminable
 myOtherLocalVariable
@@ -422,8 +428,9 @@ toAscii
 callMessage
 UDP
 UImageFormat
-getslot
+canem
 getSlot
+getslot
 physicsReset
 src
 cout
@@ -474,8 +481,8 @@ wav
 uob
 TextTo
 getProperty
-voicexml
 VoiceXML
+voicexml
 getImage
 wbt
 getenv
@@ -490,8 +497,8 @@ notifyAccess
 elbowR
 middleware
 tts
-UObjects
 uobjects
+UObjects
 USB
 timestamp
 loadFile
@@ -502,8 +509,8 @@ SIGKILL
 resendBanner
 arity
 xfov
-xFF
 xfF
+xFF
 writeToVar
 distanceMin
 usr
@@ -545,8 +552,8 @@ waituntil
 htmldir
 ArithPair
 ArgumentType
-isvoid
 isVoid
+isvoid
 chmod
 searchFile
 bc
@@ -585,18 +592,19 @@ az
 cp
 fA
 chargeStop
-UBinary
 ubinary
+UBinary
 fb
 fooobar
-myTag
 mytag
+myTag
 valueChanged
 bz
 UValues
 memoryName
 channelName
 hookChanged
+methodToFunction
 eq
 bindRenameVariable
 theObject
@@ -657,21 +665,22 @@ rlwrap
 trackL
 oo
 UProp
-o's
 os
+o's
 MyVar
+UEvent
 trackR
 allProto
 rf
 accelX
-p's
 ps
+p's
 accelY
 accelZ
 zxf
 playSound
-ufactory
 UFactory
+ufactory
 px
 py
 te
@@ -701,6 +710,7 @@ compl
 zA
 ALLogger
 abc
+pouCharque
 removeTimer
 kneeL
 allSlotName

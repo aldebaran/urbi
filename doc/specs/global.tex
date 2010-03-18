@@ -171,10 +171,10 @@ assert
 \item[Loadable] See \refObject{Loadable}.
 \item[Lobby] See \refObject{Lobby}.
 \item[Math] See \refObject{Math}.
-\item \lstinline|methodToFunction(\var{methodName})|\\
-  Create a function from \var{methodName} so that calling the function
-  which arguments \lstinline|(\var{a}, \var{b}, ...)| is that same as
-  calling \lstinline|\var{a}.\var{methodName}(\var{b}, ...)|.
+\item \lstinline|methodToFunction(\var{name})|\\
+  Create a function from the method \var{name} so that calling the
+  function which arguments \lstinline|(\var{a}, \var{b}, ...)| is that
+  same as calling \lstinline|\var{a}.\var{name}(\var{b}, ...)|.
 \begin{urbiscript}
 var uid_of = methodToFunction("uid")|;
 assert

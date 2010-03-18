@@ -400,8 +400,6 @@ calls to the API must be done only in the very same thread that runs
 the Urbi code.  Assertions (run-time failures) are now triggered for
 invalid calls.
 
-Be sure to read the article from the Developers' Blog.
-http://devblog.gostai.com/index.php/2008/12/02/uobjects-and-thread-safeness/
 
 
 System.Platform
@@ -1022,3 +1020,10 @@ with the Urbi command-line tool-box.  For instance while "urbisend"
 used to require exactly two arguments (host-name, file to send), it
 now supports options (e.g., --help, --port to specify the port etc.),
 and as many files as provided on the command line.
+
+
+---
+Local Variables:
+ispell-dictionary: "american"
+ispell-personal-dictionary: "urbi.dict"
+End:
