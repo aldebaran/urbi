@@ -14,7 +14,7 @@
 #include <libport/cstring>
 #include <libport/windows.hh>
 
-#include <urbi/uabstractclient.hh> // SYNCLINE_WRAP
+#include <urbi/uvalue.hh> // SYNCLINE_WRAP
 
 #include <kernel/ughostconnection.hh>
 #include <kernel/uqueue.hh>

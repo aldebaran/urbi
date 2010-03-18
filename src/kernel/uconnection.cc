@@ -31,7 +31,7 @@
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
-#include <urbi/uabstractclient.hh> // SYNCLINE_WRAP
+#include <urbi/uvalue.hh> // SYNCLINE_WRAP
 
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
