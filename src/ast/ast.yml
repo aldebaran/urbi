@@ -386,7 +386,7 @@ Flavored:
 
 Message:
   super: Exp
-  desc: /// Display a message when visited.
+  desc: /// Display a message when visited.  Used for syntactic issues.
   attributes:
     - text:
         type: 'std::string'
@@ -454,7 +454,8 @@ Nary:
           void push_back(rExp e, flavor_type f = flavor_none);
 
           /// Push a message.
-          void message_push(const std::string& text, const std::string& tag);
+          void message_push(const loc& location, const std::string& text,
+                            const std::string& tag);
 
           /// Sets the flavor of the last child.
           void back_flavor_set(flavor_type k, const loc& l);
@@ -538,9 +539,10 @@ Nary:
         }
 
         void
-        Nary::message_push(const std::string& text, const std::string& tag)
+        Nary::message_push(const loc& location, const std::string& text,
+                           const std::string& tag)
         {
-          children_->push_back(new Message(loc(), text, tag));
+          children_->push_back(new Message(location, text, tag));
         }
 
         template <typename T>

@@ -87,23 +87,28 @@ namespace urbi
       return o->as<String>()->value_get();
     }
 
-
+    /// \param error  if there is an error message, the string to display.
     rObject
     execute_parsed(parser::parse_result_type p,
-                   libport::Symbol fun, std::string e)
+                   libport::Symbol fun, const std::string& context)
     {
       runner::Interpreter& run = interpreter();
-
-      // Report potential errors
+      // Report errors.
+      if (ast::rError errs = p->errors_get())
       {
-        ast::rNary errs = new ast::Nary();
-        p->process_errors(*errs);
-        run(errs.get());
+        // Steal the errors from the ParseResult.  It is tailored to
+        // abort if there are some errors that were not reported to
+        // the user, which is what we are doing now.
+        ast::Error::messages_type ms;
+        std::swap(ms, errs->errors_get());
+        // FIXME: Yes, we actually raise only the first error.
+        foreach (const ast::Error::message_type& s, ms)
+          runner::raise_syntax_error(s.first, s.second, context);
       }
 
       ast::rConstAst ast = parser::transform(p->ast_get());
       if (!ast)
-        RAISE(e);
+        RAISE(context);
 
       runner::Interpreter* sub = new runner::Interpreter(run, ast, fun);
       // So that it will resist to the call to yield_until_terminated,
@@ -173,8 +178,7 @@ namespace urbi
     system_eval(const rObject&, const std::string& code)
     {
       return execute_parsed(parser::parse(code, ast::loc()),
-                            SYMBOL(eval),
-                            "error executing command: " + code);
+                            SYMBOL(eval), code);
     }
 
     static void
@@ -229,8 +233,7 @@ namespace urbi
         runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
 #endif
       return execute_parsed(parser::parse_file(filename),
-                            SYMBOL(loadFile),
-                            "error loading file: " + filename);
+                            SYMBOL(loadFile), filename);
     }
 
     static rObject

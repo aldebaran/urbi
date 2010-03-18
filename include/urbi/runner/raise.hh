@@ -14,6 +14,7 @@
 # include <libport/compiler.hh>
 # include <libport/ufloat.hh>
 
+# include <ast/loc.hh>
 # include <urbi/object/fwd.hh>
 
 namespace runner
@@ -103,6 +104,12 @@ namespace runner
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_primitive_error(const std::string& message);
+
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
+  void raise_syntax_error(const ast::loc& location,
+                          const std::string& message,
+                          const std::string& input);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API

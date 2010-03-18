@@ -30,13 +30,13 @@ namespace parser
   ParseResult::ParseResult()
     : status(-1)
     , ast_(0)
-    , errors_()
+    , errors_(new ast::Error)
   {
   }
 
   ParseResult::ParseResult(ParseResult& rhs)
     : status(rhs.status)
-    , ast_(rhs.ast_) // The ast is stolen here.
+    , ast_(rhs.ast_)
     , errors_(rhs.errors_)
   {
     // It is now up to the most recent object to output the result.
@@ -52,13 +52,13 @@ namespace parser
   {
     return (!status
             && ast_.get()
-            && errors_.good());
+            && errors_->good());
   }
 
   bool
   ParseResult::perfect() const
   {
-    return good() && errors_.empty();
+    return good() && errors_->empty();
   }
 
   std::ostream&
@@ -70,7 +70,7 @@ namespace parser
       << "Ast:"
       << libport::incendl << libport::deref << ast_ << libport ::decendl
       << "Error: "
-      << libport::incendl << errors_ << libport ::decendl
+      << libport::incendl << libport::deref << errors_ << libport ::decendl
       ;
   }
 
@@ -107,17 +107,24 @@ namespace parser
   void
   ParseResult::dump_errors() const
   {
-    if (!errors_.good())
-      std::cerr << errors_;
+    if (!errors_->good())
+      std::cerr << *errors_;
+  }
+
+  ParseResult::error_type
+  ParseResult::errors_get ()
+  {
+    reported_ = true;
+    return errors_;
   }
 
   void
   ParseResult::process_errors(ast::Nary& target)
   {
     reported_ = true;
-    if (!errors_.good())
+    if (!errors_->good())
       ast_.reset();
-    errors_.process_errors(target);
+    errors_->process_errors(target);
   }
 
 }

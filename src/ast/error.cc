@@ -14,8 +14,8 @@
  */
 
 #include <iostream>
-#include <sstream>
 #include <libport/cassert>
+#include <libport/format.hh>
 #include <libport/indent.hh>
 
 #include <ast/error.hh>
@@ -51,9 +51,7 @@ namespace ast
   Error::message_(messages_type& ms, const loc& l, const std::string& msg)
   {
     reported_ = false;
-    std::ostringstream o;
-    o << "!!! " << l << ": " << msg;
-    ms.push_back(o.str());
+    ms << std::make_pair(l, msg);
   }
 
   void
@@ -68,15 +66,27 @@ namespace ast
     message_(warnings_, l, msg);
   }
 
+  const Error::messages_type&
+  Error::errors_get() const
+  {
+    return errors_;
+  }
+
+  Error::messages_type&
+  Error::errors_get()
+  {
+    return errors_;
+  }
+
   namespace
   {
     static
     std::ostream&
     operator<<(std::ostream& o,
-               const std::list<std::string>& ms)
+               const Error::messages_type& ms)
     {
-      std::copy(ms.begin(), ms.end(),
-                std::ostream_iterator<std::string>(o, "\n"));
+      foreach (const Error::message_type& m, ms)
+        o << m.first << ": " << m.second << std::endl;
       return o;
     }
   }
@@ -99,12 +109,12 @@ namespace ast
   {
     reported_ = true;
 
-    foreach(const std::string& e, warnings_)
-      target.message_push(e, "warning");
+    foreach(const message_type& e, warnings_)
+      target.message_push(e.first, e.second, "warning");
     warnings_.clear();
 
-    foreach(const std::string& e, errors_)
-      target.message_push(e, "error");
+    foreach(const message_type& e, errors_)
+      target.message_push(e.first, e.second, "error");
     errors_.clear();
   }
 

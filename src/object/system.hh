@@ -30,12 +30,12 @@ namespace urbi
     ///
     /// Used internally and from the debugging routines.
     ///
-    /// \param p   the parser result.
-    /// \param fun name of the caller.
-    /// \param e   exception to raise on error.
+    /// \param p       the parser result.
+    /// \param fun     name of the caller.
+    /// \param input   the file name, or the string, being parsed
     /// \returns the result of the evaluation.
     rObject execute_parsed(parser::parse_result_type p,
-                           libport::Symbol fun, std::string e);
+                           libport::Symbol fun, const std::string& input);
     /// Set the current script name
     void system_set_program_name(const std::string& name);
     /// Register a new user-argument for the script

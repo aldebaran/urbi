@@ -11,8 +11,9 @@
 /// \file parser/parser-impl.cc
 
 #include <kernel/config.h> // YYDEBUG.
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
-//#define ENABLE_DEBUG_TRACES
 #include <libport/compiler.hh>
 
 #include <libport/cassert>
@@ -144,7 +145,12 @@ namespace parser
   void
   ParserImpl::error(const location_type& l, const std::string& msg)
   {
-    result_->error(l, msg);
+    // We display "syntax error" ourselves.
+    std::string err = msg;
+    const char* synerr = "syntax error, ";
+    if (boost::algorithm::starts_with(err, synerr))
+      boost::algorithm::erase_head(err, strlen(synerr));
+    result_->error(l, err);
   }
 
   void

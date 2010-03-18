@@ -21,14 +21,13 @@
 # include <string>
 
 # include <ast/loc.hh>
+# include <ast/nary-fwd.hh>
 
 namespace ast
 {
 
-  class Nary;
-
   /// Storing (static) errors and warnings about some AST.
-  class Error
+  class Error : public libport::RefCounted
   {
   public:
     Error();
@@ -41,11 +40,23 @@ namespace ast
     bool empty() const;
 
   public:
+    /// Located message.
+    typedef std::pair<ast::loc, std::string> message_type;
+
+    /// Errors and warnings.
+    typedef std::list<message_type> messages_type;
+
     /// Declare an error about \a msg.
     void error(const loc& l, const std::string& msg);
 
     /// Warn about \a msg.
     void warn(const loc& l, const std::string& msg);
+
+    /// The list of errors.
+    const messages_type& errors_get() const;
+
+    /// The list of errors.
+    messages_type& errors_get();
 
     /// Dump all the errors on std::cerr.
     /// For developpers.
@@ -56,9 +67,6 @@ namespace ast
     void process_errors(Nary& target);
 
   private:
-    /// Errors and warnings.
-    typedef std::list<std::string> messages_type;
-
     /// Record a new error/warning.
     void message_(messages_type& ms, const loc& l, const std::string& msg);
 
@@ -78,6 +86,9 @@ namespace ast
 
   /// Dump \a p on \a o for debugging.
   std::ostream& operator<<(std::ostream& o, const Error& p);
+
+  typedef libport::intrusive_ptr<Error> rError;
+  typedef libport::intrusive_ptr<const Error> rConstError;
 
 } // namespace ast
 

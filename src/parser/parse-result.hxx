@@ -20,14 +20,14 @@ namespace parser
   void
   ParseResult::error(const ast::loc& l, const std::string& msg)
   {
-    errors_.error(l, msg);
+    errors_->error(l, msg);
   }
 
   inline
   void
   ParseResult::warn(const ast::loc& l, const std::string& msg)
   {
-    errors_.warn(l, msg);
+    errors_->warn(l, msg);
   }
 
   inline

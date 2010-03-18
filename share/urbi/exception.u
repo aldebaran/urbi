@@ -13,7 +13,8 @@ class Global.Exception
   var message = "<no message>";
 
   // location and backtrace are defined by the raise function of the
-  // interpreter.
+  // interpreter.  They point to where the Exception was thrown, not
+  // created.
   var backtrace;
   var location;
 
@@ -33,7 +34,7 @@ class Global.Exception
     var res = message |
     if (!location.isVoid)
       res = "%s: %s" % [location, res] |
-    return res
+    res
   };
 
   function asPrintable()
@@ -144,7 +145,7 @@ class Exception.Primitive: Exception
     var res = "%s: %s" % [routine, message] |
     if (!location.isVoid)
       res = "%s: %s" % [location, res] |
-    return res
+    res
   };
 
   function init(routine, msg)
@@ -171,6 +172,36 @@ class Exception.Scheduling: Exception
   {
     throw Exception.Scheduling.new(msg)
   }
+};
+
+class Exception.Syntax: Exception
+{
+  var loc = "<no location>";
+  var input = "<no input>";
+
+  function init(var loc, var message, var input)
+  {
+    this.loc = loc |
+    this.input = input |
+    '$Exception'(message)
+  };
+
+  function asString()
+  {
+    if (location.isVoid)
+      "syntax error: %s: %s" % [loc, message]
+      // Don't display the syntax error location if it is the same as
+      // the location from which the exception was thrown.  This
+      // happens for "direct" syntax errors: at the top level, as
+      // opposed to "load"ing and "eval"ing syntax errors.
+
+      // FIXME: Use Location.'=='.
+    else if (location.asString == loc.asString)
+      "%s: syntax error: %s" % [location, message]
+    else
+      "%s: syntax error: %s: %s" % [location, loc, message]
+  };
+
 };
 
 /*----------------------.

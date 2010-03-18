@@ -178,6 +178,15 @@ namespace runner
   }
 
   void
+  raise_syntax_error(const ast::loc& location,
+                     const std::string& message,
+                     const std::string& input)
+  {
+    raise_urbi_skip(SYMBOL(Syntax),
+                    to_urbi(location), to_urbi(message), to_urbi(input));
+  }
+
+  void
   raise_type_error(rObject effective,
                    rObject expected)
   {

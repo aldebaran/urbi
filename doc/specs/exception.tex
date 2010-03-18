@@ -217,6 +217,37 @@ Exception.Scheduling.new("cannot schedule");
 [00000013] Exception.Scheduling `cannot schedule'
 \end{urbiscript}
 
+\item \lstinline|Syntax.new(\var{loc}, \var{message}, \var{input})|\\
+  Declare a syntax error in \var{input}, at location \var{loc},
+  described by \var{message}.  \var{loc} is the location of the syntax
+  error, \var{location} is the place the error was thrown.  They are
+  usually equal, except when the errors are caught while using
+  \lstinline|System.eval| or \lstinline|System.load|.  In that case
+  \var{loc} is really the position of the syntax error, while
+  \var{location} refers to the location of the \lstinline|System.eval|
+  or \lstinline|System.load| invocation.
+\begin{urbiscript}
+Exception.Syntax.new(Location.new(Position.new("file.u", 14, 25)),
+                     "unexpected pouCharque", "file.u");
+[00000013] Exception.Syntax `syntax error: file.u:14.25: unexpected pouCharque'
+
+try
+{
+  eval("1 / / 0");
+}
+catch (var e)
+{
+  assert
+  {
+    e.isA(Exception.Syntax);
+    e.loc.asString == "1.5";
+    e.input == "1 / / 0";
+    e.message == "unexpected /";
+  }
+};
+\end{urbiscript}
+
+
 \item \lstinline|Type.new(\var{effective}, \var{expected})|\\
   A value of type \var{effective} was received, while a value of type
   \var{expected} was expected.

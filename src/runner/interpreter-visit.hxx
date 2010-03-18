@@ -249,7 +249,12 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Message* e)
   {
-    send_message(e->tag_get(), e->text_get());
+    // FIXME: Some more work is needed on syntactic exceptions.
+    if (e->tag_get() == "error")
+      raise_syntax_error(e->location_get(), e->text_get(), "FIXME:");
+    else
+      send_message(e->tag_get(),
+                   libport::format("!!! %s: %s", e->location_get(), e->text_get()));
     return object::void_class;
   }
 

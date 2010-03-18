@@ -35,8 +35,8 @@ namespace parser
   /// Secondly, it allows a very functional style: the parsing returns
   /// a single object containing all the aspects of the result, and
   /// keeps no relation to it.  This is much clearer than a previous
-  /// interfave where the users had to keep the UParser to ask it
-  /// first its ast, then its errors etc.  It was then quite unclear
+  /// interface where the users had to keep the UParser to ask it
+  /// first its AST, then its errors etc.  It was then quite unclear
   /// when such a UParser could be used again for another parsing
   /// session.  Now it's easy: when parsing is done, it's ready for
   /// another one.
@@ -73,6 +73,10 @@ namespace parser
     /// Set \a ast_.
     void ast_set(ast_type ast);
 
+    typedef ast::rError error_type;
+    /// The parse errors and warnings.
+    error_type errors_get();
+
   private:
     /// The resulting AST.
     ast_type ast_;
@@ -86,7 +90,7 @@ namespace parser
     void warn(const ast::loc& l, const std::string& msg);
 
     /// Dump all the errors on std::cerr.
-    /// For developpers.
+    /// For developer.
     void dump_errors() const;
 
     /// Push all warning and error messages in \b target.
@@ -95,7 +99,7 @@ namespace parser
 
   private:
     /// List of parse error messages.
-    ast::Error errors_;
+    error_type errors_;
 
     /// Whether the errors and warnings were output or given.
     mutable bool reported_;

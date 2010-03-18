@@ -26,11 +26,11 @@ characters.
 %% So let's hope Eitan fixes this some day.
 \begin{urbiscript}[firstnumber=1,escapeinside=<>]
 #<Été>;
-[00048238:error] !!! invalid character: `#'
-[00048239:error] !!! invalid character: `\xc3'
-[00048239:error] !!! invalid character: `\x89'
-[00048239:error] !!! invalid character: `\xc3'
-[00048239:error] !!! invalid character: `\xa9'
+[00048238:error] !!! syntax error: invalid character: `#'
+[00048239:error] !!! syntax error: invalid character: `\xc3'
+[00048239:error] !!! syntax error: invalid character: `\x89'
+[00048239:error] !!! syntax error: invalid character: `\xc3'
+[00048239:error] !!! syntax error: invalid character: `\xa9'
 \end{urbiscript}
 
 \subsection{Comments}
@@ -1639,7 +1639,7 @@ if (true)
   assert(true);
 else
   assert(false);
-[00000002:error] !!! syntax error, unexpected else
+[00000002:error] !!! syntax error: unexpected else
 \end{urbiscript}
 
 Contrary to \C/\Cxx, it has value: it also implements the
@@ -1651,7 +1651,7 @@ an expression is expected, use braces:
 
 \begin{urbiscript}
 assert(1 + if (true) 3 else 4 == 4);
-[00000003:error] !!! syntax error, unexpected if
+[00000003:error] !!! syntax error: unexpected if
 assert(1 + { if (true) 3 else 4 } == 4);
 \end{urbiscript}
 
