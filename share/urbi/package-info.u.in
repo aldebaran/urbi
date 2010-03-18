@@ -19,38 +19,39 @@ class System.PackageInfo
     System.PackageInfo.components[name] = this
   };
 
-  function depend(var other)
+  // A function to make initialization dependencies easier to manage.
+  function banner()
   {
-    dependencies += [other]|;
+    ["*" * 65]
+    + copyright(false) +
+    ["",
+     "This program comes with ABSOLUTELY NO WARRANTY.  It can be used",
+     "under certain conditions; see the LICENSE.txt file for details.",
+     "",
+     "Check our community site: http://www.urbiforge.org.",
+     "*" * 65];
   };
 
-  function signature ()
+  function copyright(var deep = true)
   {
-    "%s version %s rev. %s\n"
-    "Copyright (C) %s %s"
-    % [name, version, revision, copyright_years, copyright_holder]
+    [
+      "%s version %s rev. %s" % [name, version, revision],
+      "Copyright (C) %s %s" % [copyright_years, copyright_holder]
+    ]
     +
     {
-      if (dependencies)
-        "\n\n"
-        + dependencies.map(methodToFunction("signature")).join("\n")
+      if (deep && dependencies)
+        dependencies
+          .map(methodToFunction("copyright"))
+          .foldl([].methodToFunction("+"), [""])
       else
-        "";
+        [];
     }
   };
 
-  function banner ()
+  function depend(var other)
   {
-    "**********************************************************\n"
-    "%s\n"
-    "\n"
-    "%s comes with ABSOLUTELY NO WARRANTY.\n"
-    "This software can be used under certain conditions;\n"
-    "see LICENSE file for details.\n"
-    "\n"
-    "See http://www.urbiforge.com for news and updates.\n"
-    "**********************************************************"
-    % [signature, name]
+    dependencies += [other]|;
   };
 };
 

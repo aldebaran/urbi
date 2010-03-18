@@ -22,6 +22,7 @@
 #include <iomanip>
 
 #include <libport/foreach.hh>
+#include <libport/format.hh>
 #include <libport/ref-pt.hh>
 
 #include <ast/nary.hh>
@@ -29,6 +30,8 @@
 
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
+
+#include <urbi/uabstractclient.hh> // SYNCLINE_WRAP
 
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
@@ -97,29 +100,14 @@ namespace kernel
   UConnection::initialize()
   {
     recv_queue_->push
-      (
-       std::string()
-       + "//#push " BOOST_PP_STRINGIZE(__LINE__) " \"" __FILE__ "\"\n"
-       + (::kernel::urbiserver->opt_banner_get()
-          ? "resendBanner;\n"
-          : "")
-       +
-       "maybeLoad(\"CLIENT.INI\", \"start\");\n"
-       "maybeLoad(\"local.u\", \"start\");\n"
-       "//#pop\n"
-       );
+      (SYNCLINE_WRAP(+libport::format("initialize(%s)|;",
+                                      kernel::urbiserver->opt_banner_get())+));
     received("");
   }
 
   void
   UConnection::send(const char* buf, size_t len, const char* tag, bool flush_p)
   {
-    // Don't display the "start" and "ident" channel in batch mode.
-    if (!interactive_p()
-        && tag
-        && (libport::streq(tag, "start") || libport::streq(tag, "ident")))
-      return;
-
     if (tag)
     {
       if (*tag)

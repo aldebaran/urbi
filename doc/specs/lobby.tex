@@ -45,23 +45,56 @@ lobby << "foo";
 \end{urbiscript}
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|connected|\\
+\begin{urbiscriptapi}
+\item[banner] Internal.  Display \urbi SDK banner.
+\begin{urbiscript}
+lobby.banner;
+[00000011] *** *****************************************************************
+[00000012] *** Urbi SDK version 2.0/rc-4 rev. e594893
+[00000013] *** Copyright (C) 2005-2010 Gostai SAS
+[00000014] ***
+[00000015] *** This program comes with ABSOLUTELY NO WARRANTY.  It can be used
+[00000016] *** under certain conditions; see the LICENSE.txt file for details.
+[00000017] ***
+[00000018] *** Check our community site: http://www.urbiforge.org.
+[00000019] *** *****************************************************************
+\end{urbiscript}
+
+\item[connected]
   Whether \lstinline|this| is connected.
 \begin{urbiassert}
 connected;
 \end{urbiassert}
 
-\item \lstinline|connectionTag|\\
+\item[connectionTag]
   The tag of all code executed in the context of \lstinline|this|.
 
-\item \lstinline|create|\\
+\item \lstinline|copyright(var \var{deep} = true)]~\\
+  Internal.  Display the copyright of \urbi SDK.  Include copyright
+  information about sub-components if \var{deep}.
+\begin{urbiscript}
+lobby.copyright(false);
+[00000022] *** Urbi SDK version 2.0/rc-4 rev. e594893
+[00000023] *** Copyright (C) 2005-2010 Gostai SAS
+
+lobby.copyright(true);
+[00000024] *** Urbi SDK version 2.0/rc-4 rev. e594893
+[00000025] *** Copyright (C) 2005-2010 Gostai SAS
+[00000027] ***
+[00000028] *** Urbi SDK Remote version preview/1.6/rc-1 rev. cab1787
+[00000029] *** Copyright (C) 2005-2010 Gostai SAS
+[00000031] ***
+[00000032] *** Libport version releases/1.0 rev. 88f9f61
+[00000033] *** Copyright (C) 2005-2010 Gostai SAS
+\end{urbiscript}
+
+\item[create]
   Instantiate a new Lobby.
 \begin{urbiassert}
 Lobby.create;
 \end{urbiassert}
 
-\item \lstinline|echo(\var{value}, \var{channel} = ""|\\
+\item \lstinline|echo(\var{value}, \var{channel} = "")|\\
   Send \lstinline|\var{value}.asString| to \lstinline|this|, prefixed
   by the \refObject{String} \var{channel} name if specified.  This is
   the preferred way to send informative messages (prefixed with
@@ -78,7 +111,7 @@ lobby.echo(333);
 %\item \lstinline|help|\experimental\\
 %  Launch the tutorial.
 
-\item \lstinline|lobby|\\
+\item[lobby]
   Return the current lobby, i.e., \lstinline|this|.
 \begin{urbiassert}
 lobby === this;
@@ -87,9 +120,9 @@ lobby === this;
 \item \lstinline|onDisconnect(\var{lobby})|\\
   Event launched when \lstinline|this| has disconnected.
 
-\item \lstinline|quit|\\
-  Shutdown this lobby, i.e., close the connection.  The server is
-  still running, see \lstinline|System.shutdown| to quit the server.
+\item[quit] Shut this lobby down, i.e., close the connection.  The
+  server is still running, see \lstinline|System.shutdown| to quit the
+  server.
 
 \item \lstinline|receive(\var{value})|\\
   This is low-level routine.  Pretend the \refObject{String}
@@ -103,7 +136,7 @@ Lobby.create.receive("12;");
 [00478679] 12
 \end{urbiscript}
 
-\item \lstinline|send(\var{value}, \var{channel} = ""|\\
+\item \lstinline|send(\var{value}, \var{channel} = "")|\\
   This is low-level routine.  Send the \refObject{String} \var{value}
   to \lstinline|this|, prefixed by the \refObject{String}
   \var{channel} name if specified.
@@ -114,6 +147,27 @@ lobby.send("222", "");
 [00051909] 222
 lobby.send("333");
 [00055205] 333
+\end{urbiscript}
+
+\item \lstinline|wall(\var{value}, \var{channel} = "")|\\
+  Perform \lstinline|echo(\var{value}, \var{channel})| on all the
+  existing lobbies (except Lobby itself).
+\begin{urbiscript}[firstnumber=1]
+Lobby.wall("111", "foo");
+[00015895:foo] *** 111
+
+Lobby.create|;
+Lobby.wall(222, "");
+[00051909] *** 222
+[00051909] *** 222
+
+Lobby.create|;
+Lobby.create|;
+Lobby.wall(333);
+[00055205] *** 333
+[00055205] *** 333
+[00055205] *** 333
+[00055205] *** 333
 \end{urbiscript}
 
 \item \lstinline|write(\var{value})|\\
@@ -128,7 +182,7 @@ lobby.write("Hello, World!");
 lobby.write("\n");
 [999999999:myTag] Hello, World!
 \end{urbiscript}
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

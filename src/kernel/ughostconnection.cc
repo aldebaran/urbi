@@ -14,6 +14,8 @@
 #include <libport/cstring>
 #include <libport/windows.hh>
 
+#include <urbi/uabstractclient.hh> // SYNCLINE_WRAP
+
 #include <kernel/ughostconnection.hh>
 #include <kernel/uqueue.hh>
 #include <kernel/userver.hh>
@@ -42,22 +44,9 @@ namespace kernel
   void
   UGhostConnection::initialize()
   {
-    // FIXME: Maybe simply call some specific function from the
-    // corresponding Lobby.
     recv_queue_->push
-      (
-       std::string()
-       + "//#push " BOOST_PP_STRINGIZE(__LINE__) " \"" __FILE__ "\"\n"
-       + (::kernel::urbiserver->opt_banner_get()
-          ? "resendBanner;\n"
-          : "")
-       +
-       "maybeLoad(\"URBI.INI\", \"start\");\n"
-       "maybeLoad(\"global.u\", \"start\");\n"
-       "maybeLoad(\"CLIENT.INI\", \"start\");\n"
-       "maybeLoad(\"local.u\", \"start\");\n"
-       "//#pop\n"
-       );
+      (SYNCLINE_WRAP(+libport::format("initialize(%s, true)|;",
+                                      kernel::urbiserver->opt_banner_get())+));
     received("");
   }
 

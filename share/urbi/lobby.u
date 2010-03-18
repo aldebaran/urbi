@@ -22,12 +22,36 @@ do (Lobby)
     return res
   };
 
+  // A function to make initialization dependencies easier to manage.
+  function banner ()
+  {
+    System
+      .PackageInfo
+      .components["Urbi SDK"]
+      .banner
+      .'each|'(closure (s) { echo(s) })
+  };
+
+  function copyright(var deep = true)
+  {
+    System
+      .PackageInfo
+      .components["Urbi SDK"]
+      .copyright(deep)
+      .'each|'(closure (s) { echo(s) })
+  };
+
   function echo
   {
     var tag = ""|
     if (1 < call.argsCount)
       tag = call.evalArgAt(1)|
-    send("*** " + call.evalArgAt(0).asString, tag)
+    var msg = call.evalArgAt(0).asString |
+    // Avoid the trailing space.
+    if (msg)
+      send("*** " + msg, tag)
+    else
+      send("***", tag)
   };
 
   function handleDisconnect()
@@ -40,18 +64,19 @@ do (Lobby)
     onDisconnect!(this)
   };
 
-  // Ready to go.  The "Urbi is up..." string is special and expected
-  // by uconsole-check as the signal that we have loaded urbi.u.  It
-  // ignores messages before this one, this one included.
-  function resendBanner()
+  /// \param displayBanner  whether to send the banner.
+  /// \param isGhost        whether it's the ghostconnection.
+  function initialize(var displayBanner, var isGhost = false)
   {
-    (System
-      .PackageInfo
-      .components["Urbi SDK"]
-      .banner
-      .split("\n")
-      << "Urbi is up and running.")
-      .each(closure (s) { echo(s, "start") })
+    if (displayBanner)
+      banner|
+    if (isGhost)
+    {
+      maybeLoad("URBI.INI") |
+      maybeLoad("global.u")
+    }|
+    maybeLoad("CLIENT.INI") |
+    maybeLoad("local.u")
   };
 
   function wall
