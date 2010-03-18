@@ -110,7 +110,7 @@ function AddConfig(proj, strProjectName)
     var LinkTool = config.Tools('VCLinkerTool');
 
     LinkTool.AdditionalDependencies = 'libjpeg@.lib libport@.lib libsched@.lib libuobject@.lib'.replace(/@/g,'-vc90-d');
-    LinkTool.AdditionalLibraryDirectories = urbiPath + "\\bin;" + urbiPath + "\\gostai\\core\\mingw32\\engine";
+    LinkTool.AdditionalLibraryDirectories = urbiPath + "\\bin;" + urbiPath + "\\bin\\gostai\\engine";
     LinkTool.GenerateDebugInformation = true;
 
     // Rease mode.
@@ -126,7 +126,7 @@ function AddConfig(proj, strProjectName)
     var LinkTool = config.Tools('VCLinkerTool');
 
     LinkTool.AdditionalDependencies = 'libjpeg@.lib libport@.lib libsched@.lib libuobject@.lib'.replace(/@/g,'-vc90');
-    LinkTool.AdditionalLibraryDirectories = urbiPath + "\\bin;" + urbiPath + "\\gostai\\core\\mingw32\\engine";
+    LinkTool.AdditionalLibraryDirectories = urbiPath + "\\bin;" + urbiPath + "\\bin\\gostai\\engine";
 
   }
   catch(e)
