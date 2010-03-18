@@ -522,6 +522,12 @@ namespace urbi
       r.redefinition_mode_set(true);
     }
 
+    rPath
+    system_urbiRoot()
+    {
+      return new Path(::kernel::urbiserver->urbi_root_get().root());
+    }
+
     void
     system_noVoidError()
     {
@@ -571,6 +577,7 @@ namespace urbi
       DECLARE(system);
       DECLARE(time);
       DECLARE(unsetenv);
+      DECLARE(urbiRoot);
 
       DECLARE(addSystemFile);
       DECLARE(setSystemFiles);
