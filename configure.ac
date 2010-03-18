@@ -3,7 +3,7 @@ m4_pattern_forbid([^AX_])
 m4_pattern_forbid([^URBI_])
 
 AC_PREREQ([2.60])
-AC_INIT([Urbi SDK], [UNDEFINED],
+AC_INIT([Urbi SDK], [2.0],
         [kernel-bugs@lists.gostai.com], [urbi-sdk])
 URBI_PACKAGE_VERSION
 # FIXME: Disable the generation of CPP symbols defining the current
