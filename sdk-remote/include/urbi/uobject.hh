@@ -17,6 +17,7 @@
 
 # include <string>
 
+# include <libport/cmath>
 # include <libport/compiler.hh>
 # include <libport/fwd.hh>
 # include <libport/thread-pool.hh>
