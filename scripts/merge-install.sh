@@ -11,6 +11,9 @@ installerargs="/NOCD share/installer/installer.nsh"
 # Location of installer.nsh, will create a symlink to it if set
 instalscriptloc=
 templateloc=
+# Target
+output=
+
 verb ()
 {
   if $verbose; then echo "$@" >&2 ; fi
@@ -29,8 +32,10 @@ usage ()
 	--installarguments|-a 	Arguments for installer ($installargs)
 	--installscriptloc|-s   Directory of installer.nsh ($installscriptloc)
 	--templateloc|-t	Directory with templates ($templateloc)
+	--vcredist		vcredist binary ($vcredist)
 	--debug|-d		Debug mode
 	--verbose|-v		Verbose mode
+	--output|-o		Output file
 EOF
   exit 0
 }
@@ -42,8 +47,10 @@ do
   (--installarguments|-a) shift; installerargs=$1 ;;
   (--installscriptloc|-s) shift; installscriptloc=$1 ;;
   (--templateloc|-t) shift; templateloc=$1;;
+  (--vcredist) shift; vcredist=$1;;
   (--debug|-d) set -x ;;
   (--verbose|-v) verbose=true ;;
+  (--output|-o) shift; output=$1 ;;
   (*) files="$files $1" ;;
   esac
   shift
@@ -95,3 +102,9 @@ fi
 verb "running '$installer' $installerargs"
 verb "Result in $dir"
 "$installer" $installerargs
+
+if test -n "$output"; then
+  cd $dir
+  mv gostai-engin-runtime.exe "$output"
+  cd -
+fi
