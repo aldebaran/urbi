@@ -77,7 +77,7 @@ public:
     : urbi::UObjectHub(name)
   {
     GD_CATEGORY(timer);
-    GD_ERROR("timerhub started");
+    GD_INFO_DEBUG("timerhub started");
     thub = this;
   }
 

@@ -347,7 +347,7 @@ public:
 #undef APPEND_UFLOAT
 #undef APPEND
 
-    GD_FERROR("all.readProps: %s", res);
+    GD_FINFO_DEBUG("all.readProps: %s", res);
     return res;
   }
 
@@ -369,7 +369,7 @@ public:
   int writeD(const std::string &name, double val)
   {
     GD_CATEGORY(all);
-    GD_FERROR("writeD %s", name);
+    GD_FINFO_DEBUG("writeD %s", name);
     urbi::UVar v(name);
     v = val;
     return 0;
@@ -378,7 +378,7 @@ public:
   int writeS(const std::string &name, const std::string &val)
   {
     GD_CATEGORY(all);
-    GD_FERROR("writeS %s", name);
+    GD_FINFO_DEBUG("writeS %s", name);
     urbi::UVar v(name);
     v = val;
     return 0;
@@ -387,7 +387,7 @@ public:
   int writeL(const std::string &name, const std::string &val)
   {
     GD_CATEGORY(all);
-    GD_FERROR("writeL %s", name);
+    GD_FINFO_DEBUG("writeL %s", name);
     urbi::UVar v(name);
     urbi::UList l;
     l.array.push_back(new urbi::UValue(val));
@@ -399,7 +399,7 @@ public:
   int writeM(const std::string &name, const std::string &val)
   {
     GD_CATEGORY(all);
-    GD_FERROR("writeM %s", name);
+    GD_FINFO_DEBUG("writeM %s", name);
     urbi::UVar v(name);
     urbi::UDictionary d;
     d[val] = 42;
