@@ -27,6 +27,24 @@ namespace urbi
       return pos_;
     }
 
+    /*-------------.
+    | Comparison.  |
+    `-------------*/
+
+    inline
+    bool
+    Position::operator ==(rPosition rhs) const
+    {
+      return operator== (*rhs.get());
+    }
+
+    inline
+    bool
+    Position::operator <(rPosition rhs) const
+    {
+      return operator< (*rhs.get());
+    }
+
     /*-----------.
     | Accessor.  |
     `-----------*/

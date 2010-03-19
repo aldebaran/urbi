@@ -38,6 +38,21 @@ Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
 
 \begin{itemize}
 
+\item \lstinline|'=='(\var{other})|\\
+  Compare the begin and end \lstinline|Position|.
+\begin{urbiscript}
+{
+  var p1 = Position.new("file.u",14,25);
+  var p2 = Position.new("file.u",16,35);
+  var p3 = Position.new("file.u",18,45);
+  assert {
+    Location.new(p1, p3) != Location.new(p1, p2);
+    Location.new(p1, p3) == Location.new(p1, p3);
+    Location.new(p1, p3) != Location.new(p2, p3);
+  };
+};
+\end{urbiscript}
+
 \item \lstinline|asString|\\
   Present Locations with less variability as possible as either:
   \begin{itemize}

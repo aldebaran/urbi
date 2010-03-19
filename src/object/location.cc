@@ -65,6 +65,17 @@ namespace urbi
     }
 
     /*--------------.
+    | Comparisons.  |
+    `--------------*/
+
+    bool
+    Location::operator ==(const Location& rhs) const
+    {
+      return Position(loc_.begin) == Position(rhs.loc_.begin)
+          && Position(loc_.end)   == Position(rhs.loc_.end);
+    }
+
+    /*--------------.
     | Conversions.  |
     `--------------*/
 
@@ -83,6 +94,8 @@ namespace urbi
     void
     Location::initialize(CxxObject::Binder<Location>& bind)
     {
+      bind(SYMBOL(EQ_EQ),
+           (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
       bind(SYMBOL(asString), &Location::as_string);
       bind(SYMBOL(init), &Location::init);
 

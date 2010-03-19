@@ -27,6 +27,17 @@ namespace urbi
       return loc_;
     }
 
+    /*--------------.
+    | Comparisons.  |
+    `--------------*/
+
+    inline
+    bool
+    Location::operator ==(rLocation rhs) const
+    {
+      return operator== (*rhs.get());
+    }
+
     /*-----------.
     | Accessor.  |
     `-----------*/

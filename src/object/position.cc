@@ -83,16 +83,16 @@ namespace urbi
     `-------------*/
 
     bool
-    Position::operator ==(rPosition rhs) const
+    Position::operator ==(const Position& rhs) const
     {
-      return pos_.line == rhs->pos_.line && pos_.column == rhs->pos_.column;
+      return pos_.line == rhs.pos_.line && pos_.column == rhs.pos_.column;
     }
 
     bool
-    Position::operator <(rPosition rhs) const
+    Position::operator <(const Position& rhs) const
     {
-      return pos_.line < rhs->pos_.line
-        || ( pos_.line == rhs->pos_.line && pos_.column < rhs->pos_.column);
+      return pos_.line < rhs.pos_.line
+        || ( pos_.line == rhs.pos_.line && pos_.column < rhs.pos_.column);
     }
 
     /*-------------.
@@ -170,7 +170,8 @@ namespace urbi
     void
     Position::initialize(CxxObject::Binder<Position>& bind)
     {
-      bind(SYMBOL(EQ_EQ), &Position::operator ==);
+      bind(SYMBOL(EQ_EQ),
+           (bool (Position::*)(rPosition rhs) const) &Position::operator ==);
       bind(SYMBOL(LT),
            (bool (Position::*)(rPosition rhs) const) &Position::operator <);
       bind(SYMBOL(MINUS), &Position::operator -);

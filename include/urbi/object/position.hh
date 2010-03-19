@@ -43,6 +43,8 @@ namespace urbi
       using Object::operator <;
       bool operator ==(rPosition rhs) const;
       bool operator <(rPosition rhs) const;
+      bool operator ==(const Position& rhs) const;
+      bool operator <(const Position& rhs) const;
 
     /*-------------.
     | Operations.  |

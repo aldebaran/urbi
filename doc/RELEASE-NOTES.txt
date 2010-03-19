@@ -58,6 +58,8 @@ New features:
      Tuple.new([1]);
      Tuple.new([1, 2, 3]);
 
+- Location.'==' function.
+
 
 UObjects
 ========

@@ -36,6 +36,14 @@ namespace urbi
       void init(const objects_type& args);
 
     /*--------------.
+    | Comparisons.  |
+    `--------------*/
+
+    public:
+      bool operator ==(rLocation rhs) const;
+      bool operator ==(const Location& rhs) const;
+
+    /*--------------.
     | Conversions.  |
     `--------------*/
 
