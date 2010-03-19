@@ -25,30 +25,38 @@ usage ()
 {
   cat <<EOF
  usage: $0 [options]
-	--installprogram|-i  	Name of installer generator program ($installer)
-	--installarguments|-a 	Arguments for installer ($installargs)
-	--installscriptloc|-s   Directory of installer.nsh ($installscriptloc)
-	--templateloc|-t	Directory with templates ($templateloc)
-	--debug|-d		Debug mode
-	--verbose|-v		Verbose mode
+
+Options:
+  -i, --installprogram NAME    name of installer generator program
+                               [$installer]
+  -a, --installarguments ARGS  arguments for installer
+                               [$installargs]
+  -s, --installscriptloc DIR   directory of installer.nsh
+                               [$installscriptloc]
+  -t, --templateloc DIR        directory with templates
+                               [$templateloc]
+  -d, --debug                  debug mode
+  -v, --verbose                verbose mode
 EOF
   exit 0
 }
+
 while test $# -ne 0
 do
   case $1 in
-  (--help|-h) usage;;
-  (--installprogram|-i) shift; installer=$1 ;;
-  (--installarguments|-a) shift; installerargs=$1 ;;
-  (--installscriptloc|-s) shift; installscriptloc=$1 ;;
-  (--templateloc|-t) shift; templateloc=$1;;
-  (--debug|-d) set -x ;;
-  (--verbose|-v) verbose=true ;;
-  (*) files="$files $1" ;;
+  (-h|--help) usage;;
+  (-i|--installprogram)   shift; installer=$1 ;;
+  (-a|--installarguments) shift; installerargs=$1 ;;
+  (-s|--installscriptloc) shift; installscriptloc=$1 ;;
+  (-t|--templateloc)      shift; templateloc=$1;;
+  (-d|--debug)            set -x ;;
+  (-v|--verbose)          verbose=true ;;
+  (*)                     files="$files $1" ;;
   esac
   shift
 done
-if test "$(echo $files |wc -w)"  -ne 2; then
+
+if test "$(echo $files |wc -w)" -ne 2; then
   echo "Expected exactly two files."
   exit 1
 fi
