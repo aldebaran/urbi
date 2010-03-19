@@ -204,7 +204,7 @@ do (System)
     }|
     if (!path.isNil)
     {
-      channel << "Loading %s" % path |
+      channel.echo("loading %s." % path) |
       loadFile(path)
     }
   };

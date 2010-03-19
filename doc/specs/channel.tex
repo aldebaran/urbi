@@ -41,6 +41,17 @@ Channel.new("") << 51;
 [00000000] 51
 \end{urbiscript}
 
+\item \lstinline|echo(\var{value})|\\
+  Same as \lstinline|System.echo(\var{value}, name)|.
+
+\begin{urbiscript}
+Channel.new("label").echo(42);
+[00000000:label] *** 42
+
+Channel.new("").echo("Foo");
+[00000000] *** Foo
+\end{urbiscript}
+
 \item[enabled] Whether the Channel is enabled.  Disabled Channels
   produce no output.
 \begin{urbiscript}

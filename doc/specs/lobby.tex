@@ -49,15 +49,16 @@ lobby << "foo";
 \item[banner] Internal.  Display \urbi SDK banner.
 \begin{urbiscript}
 lobby.banner;
-[00000011] *** *****************************************************************
-[00000012] *** Urbi SDK version 2.0/rc-4 rev. e594893
-[00000013] *** Copyright (C) 2005-2010 Gostai SAS
-[00000014] ***
-[00000015] *** This program comes with ABSOLUTELY NO WARRANTY.  It can be used
-[00000016] *** under certain conditions; see the LICENSE.txt file for details.
-[00000017] ***
-[00000018] *** Check our community site: http://www.urbiforge.org.
-[00000019] *** *****************************************************************
+[00000118] *** ********************************************************
+[00000118] *** Urbi SDK version 2.0/rc-4 rev. fb573a2
+[00000118] *** Copyright (C) 2005-2010 Gostai SAS
+[00000118] ***
+[00000118] *** This program comes with ABSOLUTELY NO WARRANTY.
+[00000118] *** It can be used under certain conditions.
+[00000118] *** Type `license;' or `copyright;' for more information.
+[00000118] ***
+[00000118] *** Check our community site: http://www.urbiforge.org.
+[00000118] *** ********************************************************
 \end{urbiscript}
 
 \item[connected]
@@ -169,17 +170,17 @@ lobby.send("333");
   Perform \lstinline|echo(\var{value}, \var{channel})| on all the
   existing lobbies (except Lobby itself).
 \begin{urbiscript}[firstnumber=1]
-Lobby.wall("111", "foo");
+lobby.wall("111", "foo");
 [00015895:foo] *** 111
 
 Lobby.create|;
-Lobby.wall(222, "");
+lobby.wall(222, "");
 [00051909] *** 222
 [00051909] *** 222
 
 Lobby.create|;
 Lobby.create|;
-Lobby.wall(333);
+lobby.wall(333);
 [00055205] *** 333
 [00055205] *** 333
 [00055205] *** 333

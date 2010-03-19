@@ -27,6 +27,11 @@ class Global.Channel
     var this.name = x
   };
 
+  function echo(var msg)
+  {
+    lobby.echo(msg, name)
+  };
+
   // Top-level channel.
   var topLevel = new("");
   Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
@@ -60,7 +65,7 @@ do (Global)
 
   function warn(msg)
   {
-    Channel.warning << ("*** " + msg)
+    Channel.warning.echo(msg)
   };
 };
 

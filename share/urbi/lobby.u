@@ -48,13 +48,10 @@ do (Lobby)
       echo(line);
   };
 
-  function echo
+  function echo(var msg, var tag = "")
   {
-    var tag = ""|
-    if (1 < call.argsCount)
-      tag = call.evalArgAt(1)|
-    var msg = call.evalArgAt(0).asString |
     // Avoid the trailing space.
+    msg = msg.asString |
     if (msg)
       send("*** " + msg, tag)
     else
@@ -86,10 +83,9 @@ do (Lobby)
     maybeLoad("local.u", clog)
   };
 
-  function wall
+  function wall(var msg, var tag = "")
   {
-    call.message = "echo";
     for (var l in lobbies - [Lobby])
-      l.callMessage(call);
+      echo(msg, tag);
   };
 };

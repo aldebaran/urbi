@@ -22,14 +22,15 @@ class System.PackageInfo
   // A function to make initialization dependencies easier to manage.
   function banner()
   {
-    ["*" * 65]
+    ["*" * 56]
     + copyright(false) +
     ["",
-     "This program comes with ABSOLUTELY NO WARRANTY.  It can be used",
-     "under certain conditions; see the LICENSE.txt file for details.",
+     "This program comes with ABSOLUTELY NO WARRANTY.",
+     "It can be used under certain conditions.",
+     "Type `license;' or `copyright;' for more information.",
      "",
      "Check our community site: http://www.urbiforge.org.",
-     "*" * 65];
+     "*" * 56];
   };
 
   function copyright(var deep = true)
