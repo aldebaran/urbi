@@ -269,6 +269,7 @@ do (getSlot("UVar"))
       var change = WeakDictionary.new |
       var changeOwned = WeakDictionary.new |
       var access = WeakDictionary.new |
+      var accessInLoop = nil;
       var owned = false |
       var val |
       var changed = Event.new |

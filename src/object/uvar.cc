@@ -154,10 +154,14 @@ namespace urbi
            )
           && !slot_get(SYMBOL(access))->call(SYMBOL(empty))->as_bool())
       {
+        // There is no need to keep an accessor present if we are going to trigger
+        // it periodicaly.
+        slot_update(SYMBOL(accessInLoop), slot_get(SYMBOL(access)));
+        slot_update(SYMBOL(access), slot_get(SYMBOL(WeakDictionary))->call(SYMBOL(new)));
         looping_ = true;
         while (true)
         {
-          accessor();
+          callNotify(r, rObject(this), SYMBOL(accessInLoop));
           rObject period = args[0]->call_with_this(SYMBOL(period), args);
           r.yield_until(libport::utime() +
                         libport::utime_t(period->as<Float>()->value_get()
