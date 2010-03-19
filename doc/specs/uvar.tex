@@ -1,18 +1,65 @@
 \section{UVar}
 
-%% FIXME:
-%%
-%% \subsection{Prototypes}
-%%
-%% \begin{refObjects}
-%% \item[Object]
-%% \end{refObjects}
-%%
-%% \subsection{Slots}
-%%
-%% \begin{urbiscriptapi}
-%%
-%% \end{urbiscriptapi}
+This class is used internally by the UObject middleware
+(see \autoref{part:uobject}) to represent a variable
+that can be hooked in C++. Each slot on which a C++ \lstinline|urbi::UVar|
+exists contains an instance of this class.
+
+Instances of \lstinline|UVar| are mostly transparent, they appear as
+the value they contain. Thus, since the \lstinline|UVar| evaluates to the
+contained value, you must use \lstinline|getSlot| to manipulate the
+\lstinline|UVar| itself.
+
+\subsection{Construction}
+To instantiate a new \lstinline|UVar|, pass the owner object and the slot
+name to the constructor.
+\begin{urbiscript}
+UVar.new(Global, "x")|
+Global.x = 5;
+[000000001] 5
+x;
+[000000002] 5
+\end{urbiscript}
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item \lstinline|copy(\var{targetObject}, \var{targetName})| \\
+  Copy the \lstinline|UVar| to the slot \var{targetName} of object
+  \var{targetObject}. Since the \lstinline|UVar| is using properties, you must
+  use this method to copy it to an other location.
+
+\item \lstinline|notifyChange(\var{handle}, \var{onChange})| \\
+  Similar to the C++ \lstinline|UNotifyChange|
+  (see \autoref{sec:uobject:uvar-notify}) , register \var{onChange} and
+  call it each time this \lstinline|UVar| is written to.
+  \var{handle} is a \lstinline|WeakPointer| used to automatically unregister
+  the callback. You can use the global \var{uobjects\_handle}.
+\begin{urbiscript}
+UVar.new(Global, "y")|
+Global.getSlot("y").notifyChange(uobjects_handle, closure() {
+  echo("The value is now " + Global.y)
+})|
+Global.y = 12;
+[00000001] *** The value is now 12
+[00000002] 12
+\end{urbiscript}
+
+\item \lstinline|notifyAccess(\var{handle}, \var{onAccess})| \\
+  Similar to the C++ \lstinline|UNotifyAccess|, calls \var{onAccess} each time
+  the \lstinline|UVar| is accessed (read).
+
+\item[owned]
+  True if the \lstinline|UVar| is in owned mode, that is if it contains both a
+  sensor and a command value.
+
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex
