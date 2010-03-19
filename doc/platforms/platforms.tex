@@ -4,9 +4,9 @@
 \input{platforms/abstract}
 
 %% Alphabetical.
-\input{platforms/nao}
-\input{platforms/spykee}
-\input{platforms/webots}
+\ifthen{\boolean{nao}}{\input{platforms/nao}}
+\ifthen{\boolean{spykee}}{\input{platforms/spykee}}
+\ifthen{\boolean{webots}}{\input{platforms/webots}}
 
 %%% Local Variables:
 %%% mode: latex

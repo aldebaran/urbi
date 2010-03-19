@@ -92,7 +92,10 @@ document.
 \input{tutorial/abstract}
 \input{guide/abstract}
 \input{specs/abstract}
-\input{platforms/abstract}
+\ifthen{\boolean{platforms}}
+{
+  \input{platforms/abstract}
+}
 \input{tables/abstract}
 \end{description}
 

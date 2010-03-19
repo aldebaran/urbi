@@ -43,7 +43,10 @@ See \href{\docurl}{\docurl}.
 \input{tutorial/tutorial}
 \input{guide/guide}
 \input{specs/specs}
-\input{platforms/platforms}
+\ifthen{\boolean{platforms}}
+{
+  \input{platforms/platforms}
+}
 \input{tables/tables}
 
 
