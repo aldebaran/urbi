@@ -35,7 +35,7 @@ namespace urbi
     bool
     Location::operator ==(rLocation rhs) const
     {
-      return operator== (*rhs.get());
+      return loc_ == rhs->loc_;
     }
 
     /*-----------.

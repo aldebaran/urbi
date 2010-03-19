@@ -69,10 +69,10 @@ namespace urbi
     `--------------*/
 
     bool
-    Location::operator ==(const Location& rhs) const
+    operator ==(const Location::value_type& lhs,
+                const Location::value_type& rhs)
     {
-      return Position(loc_.begin) == Position(rhs.loc_.begin)
-          && Position(loc_.end)   == Position(rhs.loc_.end);
+      return lhs.begin == rhs.begin && lhs.end == rhs.end;
     }
 
     /*--------------.

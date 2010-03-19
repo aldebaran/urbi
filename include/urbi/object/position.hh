@@ -43,8 +43,6 @@ namespace urbi
       using Object::operator <;
       bool operator ==(rPosition rhs) const;
       bool operator <(rPosition rhs) const;
-      bool operator ==(const Position& rhs) const;
-      bool operator <(const Position& rhs) const;
 
     /*-------------.
     | Operations.  |
@@ -85,6 +83,14 @@ namespace urbi
 
       URBI_CXX_OBJECT_(Position);
     };
+
+    bool
+    operator ==(const Position::value_type& lhs,
+                const Position::value_type& rhs);
+
+    bool
+    operator <(const Position::value_type& lhs,
+               const Position::value_type& rhs);
 
 
   } // namespace object

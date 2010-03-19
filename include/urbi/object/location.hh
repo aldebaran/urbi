@@ -41,7 +41,6 @@ namespace urbi
 
     public:
       bool operator ==(rLocation rhs) const;
-      bool operator ==(const Location& rhs) const;
 
     /*--------------.
     | Conversions.  |
@@ -68,6 +67,10 @@ namespace urbi
 
       URBI_CXX_OBJECT_(Location);
     };
+
+    bool
+    operator ==(const Location::value_type& lhs,
+                const Location::value_type& rhs);
 
   } // namespace object
 } // namespace urbi

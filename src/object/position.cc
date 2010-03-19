@@ -83,16 +83,18 @@ namespace urbi
     `-------------*/
 
     bool
-    Position::operator ==(const Position& rhs) const
+    operator ==(const Position::value_type& lhs,
+                const Position::value_type& rhs)
     {
-      return pos_.line == rhs.pos_.line && pos_.column == rhs.pos_.column;
+      return lhs.line == rhs.line && lhs.column == rhs.column;
     }
 
     bool
-    Position::operator <(const Position& rhs) const
+    operator <(const Position::value_type& lhs,
+               const Position::value_type& rhs)
     {
-      return pos_.line < rhs.pos_.line
-        || ( pos_.line == rhs.pos_.line && pos_.column < rhs.pos_.column);
+      return lhs.line < rhs.line
+        || ( lhs.line == rhs.line && lhs.column < rhs.column);
     }
 
     /*-------------.

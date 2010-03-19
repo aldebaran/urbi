@@ -35,14 +35,14 @@ namespace urbi
     bool
     Position::operator ==(rPosition rhs) const
     {
-      return operator== (*rhs.get());
+      return pos_ == rhs->pos_;
     }
 
     inline
     bool
     Position::operator <(rPosition rhs) const
     {
-      return operator< (*rhs.get());
+      return pos_ < rhs->pos_;;
     }
 
     /*-----------.
