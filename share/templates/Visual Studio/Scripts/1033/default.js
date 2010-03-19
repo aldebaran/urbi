@@ -118,6 +118,8 @@ function AddConfig(proj, strProjectName)
     config.IntermediateDirectory = '$(ConfigurationName)';
     config.OutputDirectory = '$(ConfigurationName)';
     config.ConfigurationType = 2; // dll
+    config.DebugSettings.Command = urbiPath + "\\bin\\urbi-launch.exe";
+    config.DebugSettings.CommandArguments = '-s "$(targetDir)\\$(targetFileName)" -- -i'
 
     var CLTool = config.Tools('VCCLCompilerTool');
 
