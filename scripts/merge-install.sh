@@ -5,7 +5,7 @@
 set -e
 files=
 verbose=false
-vcredist="/mnt/share/tools/vcredist/vcredist_x86-vc90.exe"
+vcredist="/mnt/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
 installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
 installerargs="/NOCD share/installer/installer.nsh"
 # Location of installer.nsh, will create a symlink to it if set
