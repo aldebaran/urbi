@@ -29,8 +29,8 @@ Section
 
   setOutPath $INSTDIR
 
-; Install everything, excluding installer sources and top-level files.
-  File /r /x share/installer /x *.txt /x share /x MANIFEST *
+; Install everything, excluding installer sources and some top-level files.
+  File /r /x share/installer /x share /x MANIFEST *
   File /r share
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateDirectory "$SMPROGRAMS\Gostai"
