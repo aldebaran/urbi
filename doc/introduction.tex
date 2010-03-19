@@ -1,43 +1,42 @@
 \chapter{Introduction}
 
 \urbi SDK is a fully-featured environment to orchestrate complex
-organization of components.  It relies on a middleware architecture
+organizations of components.  It relies on a middleware architecture
 that coordinates components named UObjects.  It also features \us, a
 scripting language that can be used to write orchestration programs.
 
 \section{\urbi and UObjects}
 
-\urbi makes easier the orchestration of independent, concurrent,
-components.  It was first designed for robotics: it provides all the
+\urbi makes the orchestration of independent, concurrent, components
+easier.  It was first designed for robotics: it provides all the
 needed features to coordinate the execution of various components
 (actuators, sensors, software devices that provide features such as
-text-to-speech, face recognition and so forth).  Traditional languages
-such as \Cxx are definitely very adequate to program the local,
-low-level, handling of these hardware or software devices; indeed one
-needs efficiency, small memory footprint, and access to low-level
-hardware details.  Yet, when it comes to orchestration and to
-coordination between components, in a word, when it comes to
-\emph{addressing concurrency}, such languages are no longer adequate.
+text-to-speech, face recognition and so forth).  Languages such as
+\Cxx are well suited to program the local, low-level, handling of
+these hardware or software devices; indeed one needs efficiency, small
+memory footprint, and access to low-level hardware details.  Yet, when
+it comes to component orchestration and coordination, in a word, when
+it comes to addressing concurrency, it can be tedious to use such
+languages.
 
-Rather, one has to select a middleware infrastructure in order to be
-able to use remote components as if they were local, to allow
-concurrent execution, to make synchronous or asynchronous requests and
-so forth.  The \dfn{UObject} architecture provides exactly this: a
-common API which allows conforming components to be used seamlessly in
-highly concurrent settings.  Components need not be designed with
-UObjects in mind, rather, UObjects are typically ``shells'' around
-``regular'' components.
+Middleware infrastructures make possible to use remote components as
+if they were local, to allow concurrent execution, to make synchronous
+or asynchronous requests and so forth.  The \dfn{UObject} \Cxx
+architecture provides exactly this: a common API that allows
+conforming components to be used seamlessly in highly concurrent
+settings.  Components need not be designed with UObjects in mind,
+rather, UObjects are typically ``shells'' around ``regular''
+components.
 
-As a quite magical feature that comes for free, components with an
-UObject interface are naturally supported by the \us programming
-language.  This can be a tremendous help: one can interact with these
-components (making queries, changing them, observing their state,
-monitoring various kinds of events and so forth), which provides a
-huge speed-up during development.
+Components with an UObject interface are naturally supported by the
+\us programming language.  This provides a tremendous help: one can
+interact with these components (making queries, changing them,
+observing their state, monitoring various kinds of events and so
+forth), which provides a huge speed-up during development.
 
 Finally, note that, although made with robots in mind, the UObject
 architecture is well suited to tame any heavily concurrent
-environment, such as video games.
+environment, such as video games or complex systems in general.
 
 \section{\urbi and \us}
 
