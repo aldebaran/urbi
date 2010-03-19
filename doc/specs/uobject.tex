@@ -1,10 +1,10 @@
 \section{UObject}
 
+UObject is used by the \lstinline|UObject| API (see
+\autoref{part:uobject}) to represent a bound \Cxx instance.
 
-UObject is used by the \lstinline|UObject| API (see \autoref{part:uobject})
-to represent a bound C++ instance.
-
-All the UObjects are copied under an unique name as slots of \var{uobjects}.
+All the UObjects are copied under an unique name as slots of
+\lstinline{uobjects}.
 
 \subsection{Prototypes}
 \begin{refObjects}
@@ -16,7 +16,7 @@ All the UObjects are copied under an unique name as slots of \var{uobjects}.
 \begin{urbiscriptapi}
 \item \lstinline|__uobjectName| \\
   Unique name assigned to this object. This is also the slot name of
-  \var{uobjects} containing this \lstinline|UObject|.
+  \lstinline|Global.uobjects| containing this \lstinline|UObject|.
 \end{urbiscriptapi}
 
 %%% Local Variables:
