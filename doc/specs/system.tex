@@ -90,8 +90,8 @@ assert_op(">",  1, 1 + 1);
 [00000003:error] !!! failed assertion: 1 > 1 . '+'(1) (1 <= 2)
 \end{urbiscript}
 
-\item \lstinline|backtrace|\experimental\\
-  Display the call stack on the channel \code{backtrace}.
+\item \lstinline|backtrace|\\
+  Display the call stack on the channel \code{backtrace}. \experimental
 \begin{urbiscript}
 //#push 100 "foo.u"
 function innermost () { backtrace }|;
