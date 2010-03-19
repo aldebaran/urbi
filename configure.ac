@@ -9,7 +9,7 @@ URBI_PACKAGE_VERSION
 # FIXME: Disable the generation of CPP symbols defining the current
 # version, as it is unclear what it should be.
 # URBI_KERNEL_VERSION
-URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2010])
+URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2005-2010])
 URBI_DISTCHECK_CONFIGURE_FLAGS
 
 # Libtoolize needs to see this invocation...
