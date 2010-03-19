@@ -14,6 +14,7 @@
 #include <libport/csignal>
 
 #include <libport/cli.hh>
+#include <libport/debug.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/option-parser.hh>
@@ -124,6 +125,7 @@ namespace
   }
 }
 
+GD_INIT();
 
 int
 main (int argc, char *argv[])
