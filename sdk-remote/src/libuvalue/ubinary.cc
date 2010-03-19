@@ -175,6 +175,8 @@ namespace urbi
     {
       type = BINARY_IMAGE;
       image.size = common.size;
+      // In some cases (jpeg source), image size is not present in headers.
+      image.width = image.height = 0;
       hs >> image.width >> image.height;
       image.imageFormat = image_format;
     }
