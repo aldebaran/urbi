@@ -958,7 +958,11 @@ namespace urbi
         if (v->owner_->type == "var")
           s = Symbol(v->owned_?"changeOwned":"change");
         else if (v->owner_->type == "varaccess")
-          s = SYMBOL(access);
+	{
+          r->slot_get(SYMBOL(access))->call(SYMBOL(remove), v->callback_);
+          r->slot_get(SYMBOL(accessInLoop))->call(SYMBOL(remove), v->callback_);
+          continue;
+	}
         else
           continue;
         r->slot_get(s)->call(SYMBOL(remove), v->callback_);
