@@ -36,6 +36,15 @@ namespace urbi
 
   inline
   void
+  UVar::init(const std::string& objname, const std::string& varname,
+             impl::UContextImpl* ctx)
+  {
+    init(objname + '.' + varname, ctx);
+  }
+
+
+  inline
+  void
   UVar::setOwned()
   {
     check_();

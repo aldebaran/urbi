@@ -60,14 +60,13 @@ namespace urbi
   }
 
   void
-  UVar::init(const std::string& objname, const std::string& varname,
-             impl::UContextImpl* ctx)
+  UVar::init(const std::string& varname, impl::UContextImpl* ctx)
   {
-    ctx_ = ctx;
+     ctx_ = ctx;
     if (!ctx_)
       ctx_ = getCurrentContext();
     impl_ = 0;
-    name = objname + '.' + varname;
+    name = varname;
     __init();
   }
 

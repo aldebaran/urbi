@@ -45,6 +45,7 @@ namespace urbi
     ~UVar();
 
     // Bind to \a object.slot.
+    void init(const std::string& varname, impl::UContextImpl* = 0);
     void init(const std::string& object, const std::string& slot,
               impl::UContextImpl* = 0);
     void setOwned();
