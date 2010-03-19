@@ -41,6 +41,12 @@ var e = Event.new;
   the \lstinline|emit| call before all the watchers have finished
   their execution.
 
+\item \lstinline|onSubscribe|\\
+  This slot is not set by default. You can optionnaly assign an event
+  to it. In this case, onSubscribe is triggered each time some code
+  starts watching this event (by setting up an \lstinline|at| or
+  a \lstinline|waituntil| on it for instance).
+
 \item \lstinline|syncEmit|\\
   Throw a synchronized event. This call awaits that all functions that
   have to react to this event have returned.  This function can have

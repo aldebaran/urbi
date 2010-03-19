@@ -95,6 +95,8 @@ namespace urbi
       listeners_ << actions;
       foreach (const actives_type::value_type& active, _active)
         active.first->trigger_job(actions, true);
+      if (slot_has(SYMBOL(onSubscribe)))
+        slot_get(SYMBOL(onSubscribe))->call(SYMBOL(emit));
     }
 
     void
@@ -163,6 +165,8 @@ namespace urbi
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       waiters_.push_back(std::make_pair(runner::rRunner(&r), pattern));
 
+      if (slot_has(SYMBOL(onSubscribe)))
+        slot_get(SYMBOL(onSubscribe))->call(SYMBOL(emit));
       // Check whether there's already a matching instance.
       foreach (const actives_type::value_type& active, _active)
         if (pattern == nil_class || pattern->call(SYMBOL(match), active.second)->as_bool())
