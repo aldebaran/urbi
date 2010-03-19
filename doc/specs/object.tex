@@ -33,7 +33,7 @@ classes in traditional object-oriented programming languages (see
   };
   assert
   {
-    Foo.localSlotNames.sort == ["asFoo", "attr", "type"];
+    Foo.localSlotNames == ["asFoo", "attr", "type"];
     Foo.asFoo === Foo;
     Foo.attr == 23;
     Foo.type == "Foo";
