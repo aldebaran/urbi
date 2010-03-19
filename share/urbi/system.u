@@ -191,23 +191,22 @@ do (System)
     loadFile(searchFile(file));
   };
 
-  // Look for file, and load verbosely on channel it if found.
-  function maybeLoad(file, channelName = "")
+  // Look for file, and load it if found.
+  function maybeLoad(var file, var channel = Global.clog)
   {
-    var path = nil;
+    var path = nil |
     try
     {
-      path = searchFile(file);
+      path = searchFile(file)
     }
     catch (var e if e.isA(Exception.FileNotFound))
     {
-    }|;
+    }|
     if (!path.isNil)
     {
-      if (channelName)
-        echo("Loading %s" % [path], channelName);
-      loadFile(path);
-    };
+      channel << "Loading %s" % path |
+      loadFile(path)
+    }
   };
 
   function ps()

@@ -79,11 +79,11 @@ do (Lobby)
       banner|
     if (isGhost)
     {
-      maybeLoad("URBI.INI") |
-      maybeLoad("global.u")
+      maybeLoad("URBI.INI", clog) |
+      maybeLoad("global.u", clog)
     }|
-    maybeLoad("CLIENT.INI") |
-    maybeLoad("local.u")
+    maybeLoad("CLIENT.INI", clog) |
+    maybeLoad("local.u", clog)
   };
 
   function wall

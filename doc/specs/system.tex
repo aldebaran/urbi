@@ -199,10 +199,9 @@ load("123.u") == 123;
   except that the low-level \Cxx symbols are not made ``global'' (in
   the sense of the shared library loader).
 
-\item \lstinline|maybeLoad(\var{file}, \var{channelName} = "")|\\
-  Look for \var{file} in the \urbi path
-  (\autoref{sec:tools:envvars}).  If the file is found and
-  \var{channelName} is non-empty, announce on it that \var{file} is
+\item \lstinline|maybeLoad(\var{file}, \var{channel} = Channel.null)|\\
+  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}).
+  If the file is found announce on \var{Channel} that \var{file} is
   about to be loaded, and load it.
 
 \begin{urbiassert}

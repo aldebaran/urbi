@@ -12,7 +12,6 @@
 | Channel.  |
 `----------*/
 
-// Does not have anything special.  Yet.
 class Global.Channel
 {
   /// Display nothing if false.
@@ -32,8 +31,13 @@ class Global.Channel
   var topLevel = new("");
   Lobby.setProtos([topLevel]); //Now 'lobby << 1' displays in "lobby"'s context.
 
+  // Warning messages.
   var warning = new("warning");
   warning.quote = false;
+
+  // Sort of /dev/null.
+  var null = new("null");
+  null.enabled = false;
 
   function '<<'(x)
   {
@@ -56,7 +60,7 @@ do (Global)
 
   function warn(msg)
   {
-    echo (msg, "warning")
+    Channel.warning << ("*** " + msg)
   };
 };
 

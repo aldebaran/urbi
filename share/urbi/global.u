@@ -13,6 +13,11 @@ do (Global)
   // Import the primitives.
   addProto(System);
 
+  function echo
+  {
+    lobby.callMessage(call);
+  };
+
   /// Returns true if argument is defined. Argument can be of the form a.b.c.
   function isdef
   {
@@ -55,11 +60,6 @@ do (Global)
     }
   };
 
-  // Bounce 'echo' and 'wall' to the same slots in lobby.
-  function echo
-  {
-    lobby.callMessage(call);
-  };
   function wall
   {
     lobby.callMessage(call);
