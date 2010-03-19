@@ -9,9 +9,6 @@
  */
 
 #include <bin/tests.hh>
-#include <libport/instrument.hh>
-
-INSTRUMENTFLAGS(--mode=none);
 
 BEGIN_TEST
 client.setErrorCallback(callback(&dump));

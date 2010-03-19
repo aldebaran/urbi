@@ -66,9 +66,8 @@ check_dir abs_builddir bin/liburbi-check
 
 # Make it absolute.
 chk=$(absolute "$1")
-if test ! -f "$chk.cc"; then
+test -f "$chk.cc" ||
   fatal "no such file: $chk.cc"
-fi
 
 # ./../../../tests/2.x/andexp-pipeexp.chk -> 2.x
 medir=$(basename $(dirname "$chk"))
@@ -95,6 +94,18 @@ find_urbi_server
 sed -n -e 's,//= ,,p' $chk.cc >output.exp
 touch error.exp
 echo 0 >status.exp
+
+# FIXME: Do something more clever.  instrument should support a
+# --query mode that says if it will instrument or not.
+#
+# The ping test cannot be run with a Valgrind'ed server.  The problem
+# is not runing the ping remote under Valgrind, but really the server.
+case $me in
+  (ping) echo "$me fails when running the server under Valgrind."
+         echo "Setting INSTRUMENTATION to 0."
+         export INSTRUMENTATION=0
+         ;;
+esac
 
 # Start it.
 spawn_urbi_server
