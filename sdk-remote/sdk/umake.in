@@ -218,10 +218,9 @@ shared=true
 builddir=
 builddir_pref="_ubuild"
 
-: ${prefix="@prefix@"}
-if test ! -d "$prefix" ; then
- prefix=$(dirname $0)/..
-fi
+# Make the package relocatable: the urbi-root contains the bin
+# directory that contains this tool.
+prefix=$(dirname $0)/..
 
 # Keep the variables in that order, they have dependencies.
 : ${PACKAGE_BRAND="@PACKAGE_BRAND@"}

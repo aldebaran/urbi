@@ -31,3 +31,16 @@ clean-uobjects:
 $(UMAKE_SHARED):
 	$(MAKE) $(AM_MAKEFLAGS) -C tests bin/umake-shared
 	$(MAKE) $(AM_MAKEFLAGS) -C $(top_builddir) sdk/umake-shared sdk/umake
+
+
+## -------------- ##
+## installcheck.  ##
+## -------------- ##
+
+# Check that we can clean and make again the UObjects with the
+# installed SDK Remote, not the build one.
+installcheck installcheck-html: installcheck-umake
+installcheck-umake:
+	PATH="$(DESTDIR)$(bindir):$$PATH" &&				      \
+	  $(MAKE) $(AM_MAKEFLAGS) UMAKE_SHARED=umake-shared clean-uobjects && \
+	  $(MAKE) $(AM_MAKEFLAGS) UMAKE_SHARED=umake-shared $(uobjects_DATA)

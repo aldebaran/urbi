@@ -48,7 +48,7 @@ case $me in
   (umake-link)
       ;;
   (*)
-      set x -P "$param_mk" ${1+"$@"}
+      set x --param-mk "$param_mk" "$@"
       shift
       ;;
 esac
