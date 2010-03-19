@@ -21,3 +21,12 @@ examples/urbi-sendbin.log: examples/urbi-sendbin
 
 # Does not work, I don't know why :(
 #TFAIL_TESTS +=  examples/urbi-sendbin
+
+# urbi-image
+EXTRA_DIST += examples/urbi-image.m4sh
+nodist_check_SCRIPTS += examples/urbi-image
+m4sh_scripts += examples/urbi-image
+
+examples/urbi-image.log: examples/urbi-image
+	@$(am__check_pre) $${dir}$< $(am__check_post)
+EXAMPLES_TESTS += examples/urbi-image
