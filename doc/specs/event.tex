@@ -42,7 +42,7 @@ var e = Event.new;
   their execution.
 
 \item[onSubscribe]
-  This slot is not set by default. You can optionnaly assign an event
+  This slot is not set by default. You can optionally assign an event
   to it. In this case, onSubscribe is triggered each time some code
   starts watching this event (by setting up an \lstinline|at| or
   a \lstinline|waituntil| on it for instance).
@@ -62,12 +62,9 @@ var e = Event.new;
   or \var{other} triggers.
 
 \begin{urbiscript}
-var e1 = Event.new;
-[00000001] Event_0xADDR
-var e2 = Event.new;
-[00000002] Event_0xADDR
-var e_or = e1 || e2;
-[00000003] Event_0xADDR
+var e1 = Event.new|;
+var e2 = Event.new|;
+var e_or = e1 || e2|;
 at (e_or?)
   echo("!");
 e1!;
