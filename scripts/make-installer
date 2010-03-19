@@ -103,7 +103,7 @@ if test -r "$updir/$my_zip" -a -r "$updir/$other_zip" -a "$updir/$my_zip" -nt "$
   cp "$updir/$other_zip" "$tmp/$other_zip"
 
   # Merge zips.
-  merge-install.sh -v                                                   \
+  $srcdir/scripts/merge-install.sh -v                                                   \
       -vcredist "~/share/tools/vcredist/vcredist_x86-${COMP}.exe"       \
       -t "$srcdir/share/templates" -s "$srcdir/share/installer/"        \
       "$tmp/$my_zip" "$tmp/$other_zip" -o "$tmp/$installer"
