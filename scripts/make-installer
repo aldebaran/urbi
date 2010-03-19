@@ -65,41 +65,42 @@ check_equal ()
   fi
 }
 
-check_equal ARCH         URBI_HOST_CPU
-check_equal COMP         URBI_HOST_COMP
-check_equal OS           URBI_HOST_OS
-check_equal builddir     abs_top_buildir
-check_equal srcdir       abs_top_srcdir
+#check_equal ARCH         URBI_HOST_CPU
+#check_equal COMP         URBI_HOST_COMP
+#check_equal OS           URBI_HOST_OS
+#check_equal builddir     abs_top_buildir
+#check_equal srcdir       abs_top_srcdir
 
 tmp=$(mktemp -d "$TMPDIR/kernel-make-installer.XXXXXX")
 trap "cd / && rm -rf $tmp" 0 1 2 13 15
 
-updir=$(dirname "${upname}")
+updir=$(dirname "$upname")
 basename=$(basename "${upname%-${MODE}}")
 
-release_zip="${basename}.zip"
-debug_zip="${basename}-debug_dynamic.zip"
-installer="${basename}.exe"
+release_zip="$basename.zip"
+debug_zip="$basename-debug_dynamic.zip"
+installer="$basename.exe"
 
+# my_zip represents the archive build by this slave.
 case $MODE in
   (release)
-    my_zip="$up_dir/$release_zip"
-    other_zip="$up_dir/$debug_zip"
+    my_zip="$release_zip"
+    other_zip="$debug_zip"
     ;;
   (debug*)
-    my_zip="$up_dir/$debug_zip"
-    other_zip="$up_dir/$release_zip"
+    my_zip="$debug_zip"
+    other_zip="$release_zip"
     ;;
 esac
 
-if test -r "$my_zip" -a -r "$other_zip" -a "$my_zip" -nt "$other_zip"; then
+if test -r "$updir/$my_zip" -a -r "$updir/$other_zip" -a "$updir/$my_zip" -nt "$updir/$other_zip"; then
   # My zip is the newest, do the merge-install.
 
   # Fetch the zip and copy them
   cd $tmp
 
-  cp "$up_dir/$my_zip" "$tmp/$my_zip"
-  cp "$up_dir/$other_zip" "$tmp/$other_zip"
+  cp "$updir/$my_zip" "$tmp/$my_zip"
+  cp "$updir/$other_zip" "$tmp/$other_zip"
 
   # Merge zips.
   merge-install.sh -v                                                   \
@@ -109,7 +110,7 @@ if test -r "$my_zip" -a -r "$other_zip" -a "$my_zip" -nt "$other_zip"; then
 
   # Upload the installer
 
-  cp "$tmp/$installer" "$up_dir/$installer"
+  cp "$tmp/$installer" "$updir/$installer"
 
 else
   # My zip is not the newest, leave the merge-install to an other slave.
