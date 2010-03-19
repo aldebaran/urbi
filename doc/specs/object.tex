@@ -33,10 +33,10 @@ classes in traditional object-oriented programming languages (see
   };
   assert
   {
-    Foo.localSlotNames == ["$type", "asFoo", "attr"];
+    Foo.localSlotNames.sort == ["asFoo", "attr", "type"];
     Foo.asFoo === Foo;
     Foo.attr == 23;
-    Foo.'$type' == "Foo";
+    Foo.type == "Foo";
   };
 };
 \end{urbiscript}
@@ -94,7 +94,7 @@ Object.apply([1])    === Object;
 
 \item \lstinline|as(\var{type})|\\
   Convert \lstinline|this| to \var{type}.  This is syntactic sugar for
-  \lstinline|as\var{Type}| when \var{Type} is the \lstinline|$type| of
+  \lstinline|as\var{Type}| when \var{Type} is the \lstinline|type| of
   \var{type}.
 \begin{urbiassert}
 12.as(Float) == 12;
@@ -119,8 +119,8 @@ void.asBool;
   argument.
 \begin{urbiassert}
 { var myCos = Object.bounce("cos"); myCos(0) }    == 0.cos;
-{ var myType = bounce("$type"); myType(Object); } == "Object";
-{ var myType = bounce("$type"); myType(3.14); }   == "Float";
+{ var myType = bounce("type"); myType(Object); } == "Object";
+{ var myType = bounce("type"); myType(3.14); }   == "Float";
 \end{urbiassert}
 
 \item \lstinline|callMessage(\var{msg})|\\
@@ -137,7 +137,7 @@ void.asBool;
 %%% }|;
 %%% assert
 %%% {
-%%%   f(Object, "$type", []) == "Object.f(1, 2)";
+%%%   f(Object, "type", []) == "Object.f(1, 2)";
 %%%
 %%% };
 %%% \end{urbiscript}
@@ -537,7 +537,7 @@ Object.protos.foldl(function (var r, var p) { r + p.localSlotNames },
   .subset(Object.allSlotNames);
 \end{urbiassert}
 
-\item \lstinline|'$type'|\\ % fix color $
+\item \lstinline|type|\\ % fix color $
   The name of the type of \lstinline|this|.  The \lstinline|class|
   construct defines this slot to the name of the class
   (\autoref{sec:tut:class}).  This is used to display the name of
@@ -547,7 +547,7 @@ class Example {};
 [00000081] Example
 assert
 {
-  Example.'$type' == "Example";
+  Example.type == "Example";
 };
 Example.new;
 [00000081] Example_0x6fb2720

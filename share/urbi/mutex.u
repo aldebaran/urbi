@@ -11,7 +11,7 @@
 const var Global.Mutex = Tag.new;
 do (Mutex)
 {
-  var '$type' = "Mutex" |
+  var type = "Mutex" |
   var asMutex = this |
   var asString = Object.getSlot("asString");
 

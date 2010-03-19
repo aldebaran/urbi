@@ -496,7 +496,7 @@ uobject_new(rObject proto, bool forceName)
   std::string name;
   if (forceName)
   {
-    r->slot_set(SYMBOL(DOLLAR_type), rcName);
+    r->slot_set(SYMBOL(type), rcName);
     name = cname;
   }
   else

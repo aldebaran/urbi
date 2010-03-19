@@ -60,6 +60,8 @@ New features:
 
 - Location.'==' function.
 
+- type replaces 'type'
+
 
 UObjects
 ========

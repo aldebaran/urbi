@@ -92,8 +92,8 @@ namespace urbi
     {
       using boost::bind;
 
-      // $type.
-      static libport::Symbol type("$type");
+      // type.
+      static libport::Symbol type("type");
       res_->slot_set(type,
                      new String(T::type_name()), true);
       // clone.

@@ -13,9 +13,9 @@ do (Global.Tag)
   function asString()
   {
     if (this === Tag)
-      '$type'
+      type
     else
-      "%s<%s>" % ['$type', name]
+      "%s<%s>" % [type, name]
   };
 
   function begin()

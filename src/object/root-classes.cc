@@ -139,7 +139,7 @@ namespace urbi
       What = Object::proto->clone()
 
 #define CLASS_INIT(What, Name)                  \
-      What->slot_set(SYMBOL(DOLLAR_type),       \
+      What->slot_set(SYMBOL(type),       \
                      new String(SYMBOL(Name))); \
       What->slot_set(SYMBOL(as ## Name),        \
                      new Primitive(id))

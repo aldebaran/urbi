@@ -40,8 +40,8 @@ class Global.Exception
   function asPrintable()
   {
     "%s%s `%s'" %
-      [{if ('$type' == "Exception") "" else "Exception."},
-       '$type', asString]
+      [{if (type == "Exception") "" else "Exception."},
+       type, asString]
   };
 };
 
@@ -218,7 +218,7 @@ class Exception.Type: Exception
     this.expected = expected |
     this.effective = effective |
     message = "unexpected %s, expected a %s"
-              % [effective.asPrintable, expected.'$type']
+              % [effective.asPrintable, expected.type]
   }
 };
 
@@ -233,7 +233,7 @@ class Exception.ArgumentType: Exception.Type
     this.routine = routine |
     this.index = index |
     message = "%s: unexpected %s for argument %s, expected a %s"
-              % [routine, effective.asPrintable, index, expected.'$type']
+              % [routine, effective.asPrintable, index, expected.type]
   }
 };
 

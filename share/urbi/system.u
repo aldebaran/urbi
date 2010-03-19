@@ -61,7 +61,7 @@ do (System)
       // or a partially lazy one, to ease bouncing from assert_eq.
       var opStr =
         {
-          if (call.args[0].'$type' == "String")
+          if (call.args[0].type == "String")
             call.args[0]
           else
             call.argAt(0);

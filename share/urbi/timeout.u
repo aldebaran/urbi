@@ -11,7 +11,7 @@
 const var Global.Timeout = Tag.new;
 do (Timeout)
 {
-  var '$type' = "Timeout" |
+  var type = "Timeout" |
   var asTimeout = this |
   var timedOut = false |
   var asString = Object.getSlot("asString");

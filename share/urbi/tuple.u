@@ -62,7 +62,7 @@ class Global.Tuple
 
     class Res : Tuple
     {
-      '$type' = name;
+      type = name;
       var members = [nil] * size;
       var size = size;
 

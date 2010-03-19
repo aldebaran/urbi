@@ -16,7 +16,7 @@
 var Global.UObject = Finalizable.new;
 do (Global.UObject)
 {
-  var '$type' = "UObject";
+  var type = "UObject";
 
   var minimumInterval = System.period;
   var updateTask = 0;

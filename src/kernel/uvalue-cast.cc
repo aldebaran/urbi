@@ -107,7 +107,7 @@ urbi::UValue uvalue_cast(const object::rObject& o)
   else // We could not find how to cast this value
   {
     const object::rString& rs =
-      o->slot_get(SYMBOL(DOLLAR_type))->as<object::String>();
+      o->slot_get(SYMBOL(type))->as<object::String>();
     runner::raise_argument_type_error
       (0, rs, object::to_urbi(SYMBOL(LT_exportable_SP_object_GT)),
        object::to_urbi(SYMBOL(cast)));
