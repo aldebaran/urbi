@@ -14,8 +14,25 @@
 \usepackage{config}
 \newcommand{\uobjectsDir}{\absTopSrcdir/sdk-remote/src/uobjects}
 
-\newcommand{\experimental}{\marginpar{Experimental feature that might
-    be changed in the future.}}
+%% -------------- %%
+%% Experimental.  %%
+%% -------------- %%
+
+\newcommand{\experimentalremoved}
+{%
+  \begin{quote}%
+    This feature is experimental.  It might be changed, or even removed.%
+    Feedback on its use would be appreciated.%
+  \end{quote}%
+}
+
+\newcommand{\experimental}
+{%
+  \begin{quote}%
+    This feature is experimental.  It might be changed in the future.
+    Feedback on its use would be appreciated.%
+  \end{quote}%
+}
 
 \title{The Urbi Software Development Kit}
 \titleImage{figs/urbi}
