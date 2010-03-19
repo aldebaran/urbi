@@ -60,7 +60,7 @@ New features:
 
 - Location.'==' function.
 
-- type replaces 'type'
+- type replaces '$type'
 
 
 UObjects
