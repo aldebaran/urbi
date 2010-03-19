@@ -29,7 +29,7 @@ an object (\refObject{Object}).
 \begin{urbiscript}
 // Inspect it.
 Foo.localSlotNames;
-[00000000] ["type", "a", "asFoo", "b"]
+[00000000] ["a", "asFoo", "b", "type"]
 \end{urbiscript} % fix color $
 
 You can get an object's slot value by using the dot (\lstinline{.})
@@ -52,10 +52,10 @@ Foo.inspect;
 [00000010] *** ** Prototypes:
 [00000011] ***   Object
 [00000012] *** ** Local Slots:
-[00000013] ***   type : String
 [00000014] ***   a : Float
 [00000015] ***   asFoo : Code
 [00000016] ***   b : String
+[00000013] ***   type : String
 \end{urbiscript} % fix color $
 
 Let's now try to build such an object. First, we want a fresh object
