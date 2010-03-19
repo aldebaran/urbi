@@ -202,7 +202,6 @@ namespace rewrite
   void
   Desugarer::visit(const ast::AtExp* at)
   {
-    std::cerr << *at->cond_get() << std::endl;
     ast::loc loc = at->location_get();
 
     ast::rExp onleave = at->onleave_get();
