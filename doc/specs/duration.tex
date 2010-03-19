@@ -4,9 +4,9 @@ This class records differences between \refObject[s]{Date}.  It is
 experimental, and very likely to be changed in the future.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Float}
-\end{itemize}
+\begin{refObjects}
+\item[Float]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -29,25 +29,25 @@ Duration.new(-1);
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|asFloat|\\
+\begin{urbiscriptapi}
+\item[asFloat]
   Return the duration as a \refObject{Float}.
 \begin{urbiassert}
 Duration.new(1000).asFloat == 1000;
 \end{urbiassert}
 
-\item \lstinline|asString|\\
+\item[asString]
   Return the duration as a \refObject{String}.
 \begin{urbiassert}
 Duration.new(1000).asString == "1000s";
 \end{urbiassert}
 
-\item \lstinline|seconds|\\
+\item[seconds]
   Return the duration as a \refObject{Float}.
 \begin{urbiassert}
 Duration.new(1000).seconds == 1000;
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

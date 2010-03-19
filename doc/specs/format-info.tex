@@ -6,9 +6,9 @@ can extract from the pattern.
 
 \subsection{Prototypes}
 
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -68,8 +68,8 @@ following:
 \end{center}
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|alignment|\\
+\begin{urbiscriptapi}
+\item[alignment]
   Requested alignment: \lstinline|-1| for left, \lstinline|0| for
   centered, \lstinline|1| for right (default).
 \begin{urbiassert}
@@ -78,14 +78,14 @@ FormatInfo.new("%=s").alignment == 0;
 FormatInfo.new("%-s").alignment == -1;
 \end{urbiassert}
 
-\item \lstinline|alt|\\
+\item[alt]
   Whether the ``alternative'' display is requested (\samp{\#}).
 \begin{urbiassert}
 FormatInfo.new("%s").alt == false;
 FormatInfo.new("%#s").alt == true;
 \end{urbiassert}
 
-\item \lstinline|group|\\
+\item[group]
   Separator to use for thousands.  Corresponds to the \samp{'}
   \var{option}.
 \begin{urbiassert}
@@ -93,20 +93,20 @@ FormatInfo.new("%s").group == "";
 FormatInfo.new("%'s").group == " ";
 \end{urbiassert}
 
-\item \lstinline|pad|\\
+\item[pad]
   The padding character to use for alignment requests.  Defaults to space.
 \begin{urbiassert}
 FormatInfo.new("%s").pad == " ";
 FormatInfo.new("%0s").pad == "0";
 \end{urbiassert}
 
-\item \lstinline|pattern|\\
+\item[pattern]
   The pattern given to the constructor.
 \begin{urbiassert}
 FormatInfo.new("%#'12.8s").pattern == "%#'12.8s";
 \end{urbiassert}
 
-\item \lstinline|precision|\\
+\item[precision]
   When formatting a \refObject{Float}, the maximum number of digits
   after decimal point when in fixed or scientific mode, and in total
   when in default mode.  When formatting other objects with spec-char
@@ -118,7 +118,7 @@ FormatInfo.new("%s").precision == 6;
 FormatInfo.new("%23.3s").precision == 3;
 \end{urbiassert}
 
-\item \lstinline|prefix|\\
+\item[prefix]
   The string to display before positive numbers.  Defaults to empty.
 \begin{urbiassert}
 FormatInfo.new("%s").prefix == "";
@@ -126,7 +126,7 @@ FormatInfo.new("% s").prefix == " ";
 FormatInfo.new("%+s").prefix == "+";
 \end{urbiassert}
 
-\item \lstinline|spec|\\
+\item[spec]
   The specification character, regardless of the case conversion
   requests.
 \begin{urbiassert}
@@ -135,7 +135,7 @@ FormatInfo.new("%23.3s").spec == "s";
 FormatInfo.new("%'X").spec == "x";
 \end{urbiassert}
 
-\item \lstinline|uppercase|\\
+\item[uppercase]
   Case conversion: \lstinline|-1| for lower case, \lstinline|0| for no
   conversion (default), \lstinline|1| for conversion to uppercase.
   The value depends on the case of specification character, except for
@@ -148,13 +148,13 @@ FormatInfo.new("%x").uppercase == -1;
 FormatInfo.new("%X").uppercase == 1;
 \end{urbiassert}
 
-\item \lstinline|width|\\
+\item[width]
   Width requested for alignment.
 \begin{urbiassert}
 FormatInfo.new("%s").width == 0;
 FormatInfo.new("%10s").width == 10;
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

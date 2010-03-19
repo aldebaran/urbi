@@ -22,8 +22,8 @@ void.isVoid;
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|acceptVoid|\\
+\begin{urbiscriptapi}
+\item[acceptVoid]
   Trick \lstinline|this| so that, even if it is \lstinline|void| it
   can be used as a value.  See also \lstinline|unacceptVoid|.
 \begin{urbiscript}
@@ -33,7 +33,7 @@ void.acceptVoid.foo;
 [00102358:error] !!! lookup failed: foo
 \end{urbiscript}
 
-\item \lstinline|isVoid|\\
+\item[isVoid]
   Whether \lstinline|this| is \lstinline|void|.  Therefore, return
   \lstinline|true|.
 \begin{urbiassert}
@@ -42,7 +42,7 @@ void.acceptVoid.isVoid;
 ! 123.isVoid;
 \end{urbiassert}
 
-\item \lstinline|unacceptVoid|\\
+\item[unacceptVoid]
   Remove the magic from \lstinline|this| that allowed to manipulate it
   as a value, even if it \lstinline|void|.  See also
   \lstinline|acceptVoid|.
@@ -51,7 +51,7 @@ void.acceptVoid.unacceptVoid.foo;
 [00096374:error] !!! unexpected void
 \end{urbiscript}
 
-\end{itemize}
+\end{urbiscriptapi}
 
 
 

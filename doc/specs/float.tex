@@ -5,11 +5,11 @@ version of \us, to represent integers.
 
 \subsection{Prototypes}
 
-\begin{itemize}
-\item \refObject{Comparable}
-\item \refObject{Orderable}
-\item \refObject{RangeIterable}
-\end{itemize}
+\begin{refObjects}
+\item[Comparable]
+\item[Orderable]
+\item[RangeIterable]
+\end{refObjects}
 
 \subsection{Construction}
 \label{sec:float:ctor}
@@ -56,8 +56,8 @@ Float.new == 0;
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|abs|\\
+\begin{urbiscriptapi}
+\item[abs]
   Absolute value of the target.
 \begin{urbiassert}
 (-5).abs == 5;
@@ -65,14 +65,14 @@ Float.new == 0;
   5 .abs == 5;
 \end{urbiassert}
 
-\item \lstinline|acos|\\
+\item[acos]
   Arccosine of the target.
 \begin{urbiassert}
 0.acos == Float.pi/2;
 1.acos == 0;
 \end{urbiassert}
 
-\item \lstinline|asBool|\\
+\item[asBool]
   Whether non null.
 \begin{urbiassert}
 0.asBool == false;
@@ -82,13 +82,13 @@ inf.asBool == true;
 nan.asBool == true;
 \end{urbiassert}
 
-\item \lstinline|asFloat|\\
+\item[asFloat]
   Return the target.
 \begin{urbiassert}
 51.asFloat == 51;
 \end{urbiassert}
 
-\item \lstinline|asList|\\
+\item[asList]
   Bounces to \lstinline|seq|.  It is therefore possible to use the
   various flavors of \lstinline|for|-range loops on integers:
 \begin{urbiassert}
@@ -117,19 +117,19 @@ nan.asBool == true;
 == [0, 1, 2];
 \end{urbiassert}%>>
 
-\item \lstinline|asin|\\
+\item[asin]
   Arcsine of the target.
 \begin{urbiassert}
 0.asin == 0;
 \end{urbiassert}
 
-\item \lstinline|asString|\\
+\item[asString]
   Return a string representing the target.
 \begin{urbiassert}
 42.asString == "42";
 \end{urbiassert}
 
-\item \lstinline|atan|\\
+\item[atan]
   Return the arctangent of the target.
 \begin{urbiassert}
 0.atan == 0;
@@ -148,7 +148,7 @@ nan.asBool == true;
 (3 bitor 6) == 7;
 \end{urbiassert}
 
-\item \lstinline|clone|\\
+\item[clone]
   Return a fresh Float with the same value as the target.
 \begin{urbiscript}
 var x = 0;
@@ -159,14 +159,14 @@ x === y;
 [00000000] false
 \end{urbiscript}
 
-\item \lstinline|compl|\\
+\item[compl]
   The complement to 1 of the target interpreted as a 32 bits integer.
 \begin{urbiassert}
 compl 0 == 4294967295;
 compl 4294967295 == 0;
 \end{urbiassert}
 
-\item \lstinline|cos|\\
+\item[cos]
   Cosine of the target.
 \begin{urbiassert}
 0.cos == 1;
@@ -231,7 +231,7 @@ Float.pi.cos == -1;
 == [0, 1, 2, 100, 101, 102];
 \end{urbiassert}%>>>>
 
-\item \lstinline|exp|\\
+\item[exp]
   Exponential of the target.
 \begin{urbiscript}
 1.exp;
@@ -256,28 +256,28 @@ Float.pi.cos == -1;
 "%1.0f" % 1.1 == "1";
 \end{urbiassert}
 
-\item \lstinline|inf|\\
+\item[inf]
   Return the infinity.
 \begin{urbiscript}
 Float.inf;
 [00000000] inf
 \end{urbiscript}
 
-\item \lstinline|limit_digits|\\
+\item[limit_digits]
   Number of digits (in \lstinline|Float.limit_radix| base) in the
   mantissa.
 \begin{urbiassert}
 Float.limit_digits;
 \end{urbiassert}
 
-\item \lstinline|limit_digits10|\\
+\item[limit_digits10]
   Number of digits (in decimal base) that can be represented without
   change.
 \begin{urbiassert}
 Float.limit_digits10;
 \end{urbiassert}
 
-\item \lstinline|limit_epsilon|\\
+\item[limit_epsilon]
   Machine epsilon (the difference between 1 and the least value
   greater than 1 that is representable).
 \begin{urbiassert}
@@ -285,14 +285,14 @@ Float.limit_digits10;
 1 == 1 + Float.limit_epsilon / 2;
 \end{urbiassert}
 
-\item \lstinline|limit_max|\\
+\item[limit_max]
   Maximum finite value.
 \begin{urbiassert}
 Float.limit_max     != Float.inf;
 Float.limit_max * 2 == Float.inf;
 \end{urbiassert}
 
-\item \lstinline|limit_max_exponent|\\
+\item[limit_max_exponent]
   Maximum integer value for the exponent that generates a normalized
   floating-point number.
 \begin{urbiassert}
@@ -300,7 +300,7 @@ Float.inf != Float.limit_radix ** (Float.limit_max_exponent - 1);
 Float.inf == Float.limit_radix ** Float.limit_max_exponent;
 \end{urbiassert}
 
-\item \lstinline|limit_max_exponent10|\\
+\item[limit_max_exponent10]
   Maximum integer value such that 10 raised to that power generates a
   normalized finite floating-point number.
 \begin{urbiassert}
@@ -308,33 +308,33 @@ Float.inf != 10 ** Float.limit_max_exponent10;
 Float.inf == 10 ** (Float.limit_max_exponent10 + 1);
 \end{urbiassert}
 
-\item \lstinline|limit_min|\\
+\item[limit_min]
   Minimum positive normalized value.
 \begin{urbiassert}
 0 != Float.limit_min;
 \end{urbiassert}
 
-\item \lstinline|limit_min_exponent|\\
+\item[limit_min_exponent]
   Minimum negative integer value for the exponent that generates a
   normalized floating-point number.
 \begin{urbiassert}
 0 != Float.limit_radix ** Float.limit_min_exponent;
 \end{urbiassert}
 
-\item \lstinline|limit_min_exponent10|\\
+\item[limit_min_exponent10]
   Minimum negative integer value such that 10 raised to that power
   generates a normalized floating-point number.
 \begin{urbiassert}
 0 != 10 ** Float.limit_min_exponent10;
 \end{urbiassert}
 
-\item \lstinline|limit_radix|\\
+\item[limit_radix]
   Base of the exponent of the representation.
 \begin{urbiassert}
 Float.limit_radix == 2;
 \end{urbiassert}
 
-\item \lstinline|log|\\
+\item[log]
   The logarithm of the target.
 \begin{urbiassert}
 0.log == -inf;
@@ -358,7 +358,7 @@ Float.limit_radix == 2;
 3.min(1, 2) == 1;
 \end{urbiassert}
 
-\item \lstinline|nan|\\
+\item[nan]
   The ``not a number'' special float value.  More precisely, this
   returns the ``quiet NaN'', i.e., it is propagated in the various
   computations, it does not raise exceptions.
@@ -377,27 +377,27 @@ by the \wref[IEEE_754-2008]{IEEE 754-2008} standard.
 { var n = Float.nan; n  != n};
 \end{urbiassert}
 
-\item \lstinline|pi|\\
+\item[pi]
   $\pi$.
 \begin{urbiassert}
 Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \end{urbiassert}
 
-\item \lstinline|random|\\
+\item[random]
   A random integer between 0 (included) and the target (excluded).
 \begin{urbiscript}
 20.map(function (dummy) { 5.random });
 [00000000] [1, 2, 1, 3, 2, 3, 2, 2, 4, 4, 4, 1, 0, 0, 0, 3, 2, 4, 3, 2]
 \end{urbiscript}
 
-\item \lstinline|round|\\
+\item[round]
   The target, rounded to the nearest integer.
 \begin{urbiassert}
 1.6.round == 2;
 1.4.round == 1;
 \end{urbiassert}
 
-\item \lstinline|seq|\\
+\item[seq]
   The sequence of integers from 0 to \lstinline|this| - 1 as a list.
   The number must be non-negative.
 \begin{urbiassert}
@@ -407,7 +407,7 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 [00004586:error] !!! seq: expected non-negative integer, got -1
 \end{urbiassert}
 
-\item \lstinline|sign|\\
+\item[sign]
   Return 1 if \lstinline|this| is positive, 0 if it is null, -1
   otherwise.
 \begin{urbiassert}
@@ -416,27 +416,27 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 (1164).sign  == 1;
 \end{urbiassert}
 
-\item \lstinline|sin|\\
+\item[sin]
   The sine of the target.
 \begin{urbiassert}
 0.sin == 0;
 \end{urbiassert}
 
-\item \lstinline|sqr|\\
+\item[sqr]
   Square of the target.
 \begin{urbiassert}
 32.sqr == 1024;
 32.sqr == 32 ** 2;
 \end{urbiassert}
 
-\item \lstinline|sqrt|\\
+\item[sqrt]
   The square root of the target.
 \begin{urbiassert}
 1024.sqrt == 32;
 1024.sqrt == 1024 ** 0.5;
 \end{urbiassert}
 
-\item \lstinline|srandom|\\
+\item[srandom]
   Initialized the seed used by the random function.  As opposed to common
   usage, you should not use
 \begin{urbiunchecked}
@@ -453,7 +453,7 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 };
 \end{urbiunchecked}
 
-\item \lstinline|tan|\\
+\item[tan]
   Tangent of the target.
 \begin{urbiscript}
 assert(0.tan == 0);
@@ -471,7 +471,7 @@ assert(0.tan == 0);
 [00000000] *** ping
 \end{urbiscript}
 
-\item \lstinline|trunc|\\
+\item[trunc]
   Return the target truncated.
 \begin{urbiassert}
 1.9.trunc == 1;
@@ -548,7 +548,7 @@ assert(0.tan == 0);
   1 == 1;
 !(1 == 2);
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex
@@ -556,4 +556,3 @@ assert(0.tan == 0);
 %%% ispell-dictionary: "american"
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% End:
-

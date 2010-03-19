@@ -4,9 +4,9 @@ This class is used to handle file locations with a line, column and file
 name.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -44,7 +44,7 @@ Position.new("file.u", 2, 3);
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|'+'(\var{n})|\\
   Return a new Position which is shifted from \var{n} columns to the
   right.  The minimal value of the new position column is 1.
@@ -76,7 +76,7 @@ Position.new(2, 3) < Position.new(2, 4);
 Position.new(2, 3) < Position.new(3, 1);
 \end{urbiassert}
 
-\item \lstinline|asString|\\
+\item[asString]
   Present as \samp{\var{file}:\var{line}.\var{column}}, the file name is
   omitted if it is not defined.
 \begin{urbiscript}
@@ -84,7 +84,7 @@ Position.new("file.u", 2, 3);
 [00000001] file.u:2.3
 \end{urbiscript}
 
-\item \lstinline|column|\\
+\item[column]
   Field which give access to the column number of the Position.
 \begin{urbiassert}
 Position.new(2, 3).column == 3;
@@ -97,14 +97,14 @@ Position.new(2, 3).columns(2) == Position.new(2, 5);
 Position.new(2, 3).columns(-4) == Position.new(2, 1);
 \end{urbiassert}
 
-\item \lstinline|file|\\
+\item[file]
   The \lstinline|Path| of the Position file.
 \begin{urbiassert}
 Position.new("file.u", 2, 3).file == Path.new("file.u");
 Position.new(2, 3).file == nil;
 \end{urbiassert}
 
-\item \lstinline|line|\\
+\item[line]
   Field which give access to the line number of the Position.
 \begin{urbiassert}
 Position.new(2, 3).line == 2;
@@ -117,7 +117,7 @@ Position.new(2, 3).lines(2) == Position.new(4, 1);
 Position.new(2, 3).lines(-1) == Position.new(1, 1);
 \end{urbiassert}
 
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

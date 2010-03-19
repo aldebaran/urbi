@@ -6,9 +6,9 @@ single large string, or a list of lines.  \lstinline|InputStream|
 provides a more fine-grained interface to read files.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \begin{windows}
   Beware that because of limitations in the current implementation,
@@ -29,8 +29,8 @@ InputStream.new(File.new("file.txt"));
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|get|\\
+\begin{urbiscriptapi}
+\item[get]
   Get the next available byte as a \refObject{Float}, or
   \lstinline|void| if the end of file was reached.
 \begin{urbiscript}
@@ -48,7 +48,7 @@ assert(
   [49, 10, 50, 10]);
 \end{urbiscript}
 
-\item \lstinline|getChar|\\
+\item[getChar]
   Get the next available byte as a \refObject{String}, or
   \lstinline|void| if the end of file was reached.
 \begin{urbiscript}
@@ -66,7 +66,7 @@ assert(
   ["1", "\n", "2", "\n"]);
 \end{urbiscript}
 
-\item \lstinline|getLine|\\
+\item[getLine]
   Get the next available line as a \refObject{String}, or
   \lstinline|void| if the end of file was reached.
 \begin{urbiscript}
@@ -83,7 +83,7 @@ assert(
   ==
   ["1", "2"]);
 \end{urbiscript}
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

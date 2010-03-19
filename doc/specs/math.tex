@@ -7,9 +7,9 @@ notation.  Indeed, in an object-oriented language, writing
 more usual.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Singleton}
-\end{itemize}
+\begin{refObjects}
+\item[Singleton]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -18,7 +18,7 @@ other instances.
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|abs(\var{float})|\\
   Bounce to \lstinline|\var{float}.abs|.
 \begin{urbiassert}
@@ -56,7 +56,7 @@ Math.cos(pi) ~= -1;
 \item \lstinline|exp(\var{float})|\\
   Bounce to \lstinline|\var{float}.exp|.
 
-\item \lstinline|inf|\\
+\item[inf]
   Bounce to \lstinline|Float.inf|.
 
 \item \lstinline|log(\var{float})|\\
@@ -79,10 +79,10 @@ min( 100,   20,   3 ) ==     3;
 min("100", "20", "3") == "100";
 \end{urbiassert}
 
-\item \lstinline|nan|\\
+\item[nan]
   Bounce to \lstinline|Float.nan|.
 
-\item \lstinline|pi|\\
+\item[pi]
   Bounce to \lstinline|Float.pi|.
 
 \item \lstinline|random(\var{float})|\\
@@ -143,7 +143,7 @@ Math.trunc(1.49) == 1;
 Math.trunc(1.5) == 1;
 Math.trunc(1.51) == 1;
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

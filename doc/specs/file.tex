@@ -1,9 +1,9 @@
 \section{File}
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -26,28 +26,28 @@ read or write to Files.
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|asList|\\
+\begin{urbiscriptapi}
+\item[asList]
   Read the file, and return its content as a list of its lines.
 \begin{urbiscript}
 System.system("(echo 1; echo 2) >file.txt")|;
 assert(File.new("file.txt").asList == ["1", "2"]);
 \end{urbiscript}
 
-\item \lstinline|asPrintable|\\
+\item[asPrintable]
 \begin{urbiscript}
 System.system("(echo 1; echo 2) >file.txt")|;
 assert(File.new("file.txt").asPrintable == "File(\"file.txt\")");
 \end{urbiscript}
 
-\item \lstinline|asString|\\
+\item[asString]
   The name of the opened file.
 \begin{urbiscript}
 System.system("(echo 1; echo 2) >file.txt")|;
 assert(File.new("file.txt").asString == "file.txt");
 \end{urbiscript}
 
-\item \lstinline|content|\\
+\item[content]
   The content of the file as a \refObject{Binary} object.
 \begin{urbiscript}
 System.system("(echo 1; echo 2) >file.txt")|;
@@ -66,7 +66,7 @@ assert(File.new("file.txt").content.data == "1\n2\n");
 assert(File.create("new.txt").content.empty);
 \end{urbiscript}
 
-\item \lstinline|remove|\\
+\item[remove]
   Remove the current file.
 \begin{urbiscript}
 System.system("(echo 1; echo 2) >file.txt")|;
@@ -85,7 +85,7 @@ assert(File.new("bar.txt").content.data == "1\n2\n");
 \end{urbiscript}
 
 
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

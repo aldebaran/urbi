@@ -42,9 +42,9 @@ sum;
 
 \subsection{Prototypes}
 
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -60,11 +60,11 @@ Group.new(1, "two");
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|add(\var{member}, ...)|\\
   Add members to \lstinline|this| group, and return \lstinline|this|.
 
-\item \lstinline|asString|\\
+\item[asString]
   Report the members.
 
 \item \lstinline|each(\var{action})|\\
@@ -77,7 +77,7 @@ Group.new(1, "two");
   Group of the results.  The order is \emph{not} necessarily the same.
   Allows to iterate over a Group via \lstinline|for&|.
 
-\item \lstinline|fallback|\\
+\item[fallback]
   This function is called when a method call on \lstinline|this|
   failed.  It bounces the call to the members of the group, collects
   the results returned as a group.  This allows to chain grouped
@@ -112,7 +112,7 @@ Group.new(1, "two");
 
 \item \lstinline|'<<'(\var{member})|\\
   Syntactic sugar for \lstinline|add|.
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

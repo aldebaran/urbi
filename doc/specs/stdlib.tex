@@ -7,11 +7,14 @@
 %%
 %% The \index cannot be put inside the \section, it breaks tex4ht when
 %% splitting at that boundary.
+%%
+%% We pass [] to lstinline so that it matches the definition in
+%% urbiscriptapi.  Otherwise makeindex makes them different entries.
 \let\sectionOrig\section
 \renewcommand{\section}[1]
 {%
   \sectionOrig{\labelObject{#1}#1}%
-  \index{#1@\lstinline{#1}}%
+  \index{#1@\lstinline[]{#1}}%
 }
 
 \input{specs/barrier}

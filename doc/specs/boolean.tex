@@ -10,9 +10,9 @@ all comparison statement.
 The objects \lstinline|true| and \lstinline|false| have the following
 prototype.
 
-\begin{itemize}
-\item \refObject{Singleton}
-\end{itemize}
+\begin{refObjects}
+\item[Singleton]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -39,9 +39,9 @@ by default objects as considered ``true'', objects evaluating to
 \begin{itemize}
 \item \lstinline|false|, \lstinline|nil|\\
   \lstinline|false|.
-\item \lstinline|void|\\
+\item[void]
   raise an error.
-\item \lstinline|Float|\\
+\item[Float]
   \lstinline|false| iff null (\refObject{Float}).
 \item \lstinline|Dictionary|, \lstinline|List|,  \lstinline|String|\\
   \lstinline|false| iff empty (\refObject{Dictionary},
@@ -62,7 +62,7 @@ void.asBool;
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|'&&'(\var{that})|\\
   Short-circuiting logical and. If \lstinline|this| is
   \lstinline|true| evaluate and return \var{that}.  If
@@ -91,13 +91,13 @@ void.asBool;
 !false == true;
 \end{urbiassert}
 
-\item \lstinline|asBool|\\
+\item[asBool]
   Identity.
 \begin{urbiassert}
 true.asBool ==  true;
 false.asBool == false;
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

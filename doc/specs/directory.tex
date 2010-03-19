@@ -3,9 +3,9 @@
 A \dfn{Directory} represents a directory of the file system.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -21,16 +21,16 @@ Directory.new(Path.new("."));
 \end{urbiscript}
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|asList|\\
+\begin{urbiscriptapi}
+\item[asList]
   The contents of the directory as a \refObject{Path} list.  The
   various paths include the name of the directory \lstinline|this|.
 
-\item \lstinline|content|\\
+\item[content]
   The contents of the directory as a \refObject{String} list.  The
   strings include only the last component name; they do not contain
   the directory name of \lstinline|this|.
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

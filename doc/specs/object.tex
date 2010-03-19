@@ -6,10 +6,10 @@ with many primitives that are mandatory for all object in \us.
 
 \subsection{Prototypes}
 
-\begin{itemize}
-\item \refObject{Orderable}
-\item \refObject{Global}
-\end{itemize}
+\begin{refObjects}
+\item[Orderable]
+\item[Global]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -44,8 +44,8 @@ classes in traditional object-oriented programming languages (see
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|acceptVoid|\\
+\begin{urbiscriptapi}
+\item[acceptVoid]
   Return \lstinline|this|.  See \refObject{void} to know why.
 \begin{urbiscript}
 {
@@ -69,7 +69,7 @@ do (Object.new)
 }|;
 \end{urbiscript}
 
-\item \lstinline|allProto|\\
+\item[allProto]
   Return a list with \lstinline|this|, all parents of
   \lstinline|this|, the parents of the parents of
   \lstinline|this|,\ldots
@@ -77,7 +77,7 @@ do (Object.new)
 123.allProtos.size == 12;
 \end{urbiassert}
 
-\item \lstinline|allSlotNames|\\
+\item[allSlotNames]
   Deprecated alias for \lstinline|Object.slotNames|.
 \begin{urbiassert}
 Object.allSlotNames == Object.slotNames;
@@ -103,7 +103,7 @@ Object.apply([1])    === Object;
 Object.as(Object) === Object;
 \end{urbiassert}
 
-\item \lstinline|asBool|\\
+\item[asBool]
   Whether \lstinline|this| is ``true'', see \autoref{sec:truth}.
 \begin{urbiscript}
 assert(Global.asBool == true);
@@ -142,7 +142,7 @@ void.asBool;
 %%% };
 %%% \end{urbiscript}
 
-\item \lstinline|clone|\\
+\item[clone]
   Clone \lstinline|this|, i.e., create a fresh, empty, object, which
   sole prototype is \lstinline|this|.
 \begin{urbiassert}
@@ -219,7 +219,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 [00020505] ***   }
 \end{urbiscript}
 
-\item \lstinline|getPeriod|\\
+\item[getPeriod]
   Deprecated.  Use \lstinline|System.period| instead.
 
 \item \lstinline|getProperty(\var{slotName}, \var{propName})|\\
@@ -336,21 +336,21 @@ Float.isA(Orderable);
 !(String.isA(Float));
 \end{urbiassert}
 
-\item \lstinline|isNil|\\
+\item[isNil]
   Return true if \lstinline|this| is \refObject{nil}, false otherwise.
 \begin{urbiassert}
 nil.isNil;
 !(0.isNil);
 \end{urbiassert}
 
-\item \lstinline|isProto|\\
+\item[isProto]
   Return true if \lstinline|this| is a prototype, false otherwise;
 \begin{urbiassert}
 Float.isProto;
 !(42.isProto);
 \end{urbiassert}
 
-\item \lstinline|isVoid|\\
+\item[isVoid]
   Return true if \lstinline|this| is \lstinline|void|.  See
   \refObject{void}.
 \begin{urbiassert}
@@ -367,7 +367,7 @@ locateSlot("init") == Channel;
 locateSlot("doesNotExist").isNil;
 \end{urbiassert}
 
-\item \lstinline|print|\\
+\item[print]
   Send \lstinline|print| to the \lstinline|Channel.topLevel| channel.
 \begin{urbiscript}
 1.print;
@@ -376,7 +376,7 @@ locateSlot("doesNotExist").isNil;
 [00001228] [1, "12"]
 \end{urbiscript}
 
-\item \lstinline|protos|\\
+\item[protos]
   Return the list of prototypes of \lstinline|this|.
 \begin{urbiassert}
 12.protos == [0];
@@ -463,7 +463,7 @@ do (Object.new)
 \end{urbiscript}
 
 
-\item \lstinline|setConstSlot|\\
+\item[setConstSlot]
   Like \lstinline|setSlot| but the created slot is const.
 \begin{urbiscript}
 assert(setConstSlot("fortyTwo", 42) == 42);
@@ -526,7 +526,7 @@ theObject === Object;
   \lstinline|updateSlot| would. See the \lstinline|redefinitionMode|
   method in \refObject{System}.
 
-\item \lstinline|slotNames|\\
+\item[slotNames]
   Return a list with the slot names of \lstinline|this| and its
   ancestors.
 \begin{urbiassert}
@@ -553,7 +553,7 @@ Example.new;
 [00000081] Example_0x6fb2720
 \end{urbiscript}
 
-\item \lstinline|uid|\\
+\item[uid]
   Returns the unique id of \lstinline|this|.
 \begin{urbiscript}
 {
@@ -567,7 +567,7 @@ Example.new;
 };
 \end{urbiscript}
 
-\item \lstinline|unacceptvoid|\\
+\item[unacceptvoid]
   Return \lstinline|this|.  See \refObject{void} to know why.
 \begin{urbiscript}
 {
@@ -576,7 +576,7 @@ Example.new;
 };
 \end{urbiscript}
 
-\item \lstinline|uobject_init|\\
+\item[uobject_init]
 
 \item \lstinline|updateSlot(\var{name}, \var{value})|\\
   Map the existing slot named \var{name} to \var{value}. Raise an
@@ -621,7 +621,7 @@ Object.one                  == 2;
 !"foo" == false;
 !"" ==    true;
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

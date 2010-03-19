@@ -108,9 +108,9 @@ p.value(1);
 
 \subsection{Prototypes}
 
-\begin{itemize}
-\item \refObject{Comparable}
-\end{itemize}
+\begin{refObjects}
+\item[Comparable]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -127,7 +127,7 @@ Lazy.new(closure () { /* Value to make lazy */ 0 });
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|==(\var{that})|\\
   Whether \lstinline|this| and \var{that} are the same source code and
   value (an unevaluated Lazy is never equal to an evaluated one).
@@ -147,19 +147,19 @@ Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
 };
 \end{urbiscript}
 
-\item \lstinline|asString|\\
+\item[asString]
   The conversion to \refObject{String} of the body of a non-evaluated
   argument.
 \begin{urbiassert}
 Lazy.new(closure () { echo(1); 1 }).asString == "echo(1);\n1";
 \end{urbiassert}
 
-\item \lstinline|eval|\\
+\item[eval]
   Force the evaluation of the held lazy value. Two calls to
   \lstinline|eval| will systematically evaluate the expression twice,
   which can be useful to duplicate its side effects.
 
-\item \lstinline|value|\\
+\item[value]
   Return the held value, potentially evaluating it
   before. \lstinline|value| performs memoization, that is, only the
   first call will actually evaluate the expression, subsequent calls
@@ -167,7 +167,7 @@ Lazy.new(closure () { echo(1); 1 }).asString == "echo(1);\n1";
   side effects from the expression by evaluating it several time, this
   should be preferred over \lstinline|eval| to avoid evaluating the
   expression several times uselessly.
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

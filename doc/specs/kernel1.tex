@@ -5,9 +5,9 @@ from \us 1.0 are provided for backward compatibility.  Do not use
 these functions, scheduled for removal.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Singleton}
-\end{itemize}
+\begin{refObjects}
+\item[Singleton]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -16,11 +16,11 @@ other instances.
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|commands|\\
+\begin{urbiscriptapi}
+\item[commands]
   Ignored for backward compatibility.
 
-\item \lstinline|connections|\\
+\item[connections]
   Ignored for backward compatibility.
 
 \item \lstinline|copy(\var{binary})|\\
@@ -42,33 +42,33 @@ echo (b);
 [:]0123456789
 \end{urbiscript}
 
-\item \lstinline|devices|\\
+\item[devices]
   Ignored for backward compatibility.
 
-\item \lstinline|events|\\
+\item[events]
   Ignored for backward compatibility.
 
-\item \lstinline|functions|\\
+\item[functions]
   Ignored for backward compatibility.
 
 \item \lstinline|isvoid(\var{obj})|\\
   Obsolete syntax for \lstinline|\var{obj}.isVoid|, see
   \refObject{Object}.
 
-\item \lstinline|noop|\\
+\item[noop]
   Do nothing.  Use \lstinline|{}| instead.
 
-\item \lstinline|ping|\\
+\item[ping]
   Return \lstinline|time| verbosely, see \refObject{System}.
 \begin{urbiscript}
 Kernel1.ping;
 [00000421] *** pong time=0.12s
 \end{urbiscript}
 
-\item \lstinline|reset|\\
+\item[reset]
   Ignored for backward compatibility.
 
-\item \lstinline|runningcommands|\\
+\item[runningcommands]
   Ignored for backward compatibility.
 
 \item \lstinline|seq(\var{number})|\\
@@ -83,7 +83,7 @@ Kernel1.size([1, 2, 3]) == [1, 2, 3].size;
 [00000002:warning] *** `size(list)' is deprecated, use `list.size'
 \end{urbiassert}
 
-\item \lstinline|strict|\\
+\item[strict]
   Ignored for backward compatibility.
 
 \item \lstinline|strlen(\var{string})|\\
@@ -94,21 +94,21 @@ Kernel1.strlen("123") == "123".length;
 [00000002:warning] *** `strlen(string)' is deprecated, use `string.length'
 \end{urbiassert}
 
-\item \lstinline|taglist|\\
+\item[taglist]
   Ignored for backward compatibility.
 
-\item \lstinline|undefall|\\
+\item[undefall]
   Ignored for backward compatibility.
 
-\item \lstinline|unstrict|\\
+\item[unstrict]
   Ignored for backward compatibility.
 
-\item \lstinline|uservars|\\
+\item[uservars]
   Ignored for backward compatibility.
 
-\item \lstinline|vars|\\
+\item[vars]
   Ignored for backward compatibility.
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

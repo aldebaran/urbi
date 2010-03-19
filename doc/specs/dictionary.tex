@@ -72,15 +72,15 @@ created Dictionary.
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|asBool|\\
+\begin{urbiscriptapi}
+\item[asBool]
   Negation of \lstinline|Dictionary.empty|.
 \begin{urbiassert}
 Dictionary.new.asBool == false;
 Dictionary.new.set("key", "value").asBool == true;
 \end{urbiassert}
 
-\item \lstinline|asList|\\
+\item[asList]
   Return the contents of the dictionary as a \refObject{Pair} list
   (\var{key}, \var{value}).  Since Dictionary derives from
   \refObject{RangeIterable}, it is easy to iterate over a Dictionary
@@ -98,14 +98,14 @@ assert(Dictionary.new("one", 1, "two", 2).asList
 };
 \end{urbiscript}
 
-\item \lstinline|clear|\\
+\item[clear]
   Empty the dictionary.
 
 \begin{urbiassert}
 Dictionary.new("one", 1).clear.empty();
 \end{urbiassert}
 
-\item \lstinline|empty|\\
+\item[empty]
   Whether the dictionary is empty.
 
 \begin{urbiassert}
@@ -214,7 +214,7 @@ Dictionary.new.set("one", 2).set("one", 1);
 [00000000] ["one" => 1]
 \end{urbiscript}
 
-\item \lstinline|size|\\
+\item[size]
   Number of element in the dictionary.
 
 \begin{urbiscript}
@@ -257,7 +257,7 @@ Dictionary.new("one", 1)["one"] == 1;
 ["a" => 1, "b" => 2] == ["b" => 2, "a" => 1];
 \end{urbiassert}
 
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

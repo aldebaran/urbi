@@ -3,9 +3,9 @@
 OutputStreams are used to write (possibly binary) files by hand.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -25,7 +25,7 @@ OutputStream.new(File.create("new.txt"));
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|<<(\var{that})|\\
   Output \lstinline|\var{this}.asString|.  Return \lstinline|this| to
   enable chains of calls.
@@ -41,7 +41,7 @@ OutputStream.new(File.create("new.txt"));
 "12[3, [4]]";
 \end{urbiassert}
 
-\item \lstinline|close|\\
+\item[close]
   Flush the buffers, and close the file.
 \begin{urbiassert}
 OutputStream.new(File.create("file.txt")).close.isVoid;
@@ -55,7 +55,7 @@ OutputStream.new(File.create("file.txt")).close.isVoid;
 \begin{urbiassert}
 OutputStream.new(File.create("file.txt")).flush.isVoid;
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

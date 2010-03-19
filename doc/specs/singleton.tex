@@ -4,9 +4,9 @@ A \dfn{singleton} is a prototype that cannot be cloned. All prototypes
 derived of \lstinline{Singleton} are also singletons.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -41,13 +41,13 @@ assert(NewSingleton2 !== Singleton);
 \end{urbiscript}
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|clone|\\
+\begin{urbiscriptapi}
+\item[clone]
   Return \lstinline|this|.
 
 \item \lstinline|'new'|\\
   Return \lstinline|this|.
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

@@ -22,7 +22,7 @@ closure(){}.protos[0] === getSlot("Code");
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|==(\var{that})|\\
   Whether \lstinline|this| and \var{that} are the same source code.
   It actually checks that both have the same \lstinline|asString|.
@@ -57,21 +57,21 @@ function () {}.apply([1, 2]);
 [00000002:error] !!! apply: expected 0 argument, given 1
 \end{urbiscript}
 
-\item \lstinline|asString|\\
+\item[asString]
   Conversion to \refObject{String}.
 \begin{urbiassert}
 closure  () { 1 }.asString == "closure () {\n  1\n}";
 function () { 1 }.asString == "function () {\n  1\n}";
 \end{urbiassert}
 
-\item \lstinline|bodyString|\\
+\item[bodyString]
   Conversion to \refObject{String} of the routine body.
 \begin{urbiassert}
 closure  () { 1 }.bodyString == "1";
 function () { 1 }.bodyString == "1";
 \end{urbiassert}
 
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

@@ -4,9 +4,9 @@ This class aggregates two Positions and provides a way to print them as done
 in error messages.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -36,7 +36,7 @@ Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 
 \item \lstinline|'=='(\var{other})|\\
   Compare the begin and end \lstinline|Position|.
@@ -53,7 +53,7 @@ Location.new(Position.new("file.u",14,25), Position.new("file.u",14,35));
 };
 \end{urbiscript}
 
-\item \lstinline|asString|\\
+\item[asString]
   Present Locations with less variability as possible as either:
   \begin{itemize}
   \item \samp{\var{file}:\var{ll}.\var{cc}}
@@ -86,7 +86,7 @@ Location.new(
 ).asString == "14.25-15.34";
 \end{urbiassert}
 
-\item \lstinline|begin|\\
+\item[begin]
   The begin Position used by the Location.  Modifying a copy of this field
   does not modify the Location.
 \begin{urbiassert}
@@ -96,7 +96,7 @@ Location.new(
 ).begin == Position.new("file.u",14,25);
 \end{urbiassert}
 
-\item \lstinline|end|\\
+\item[end]
   The end Position used by the Location.  Modifying a copy of this field
   does not modify the Location.
 \begin{urbiassert}
@@ -107,7 +107,7 @@ Location.new(
 \end{urbiassert}
 
 
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

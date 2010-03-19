@@ -5,11 +5,11 @@ collections of elements.
 
 \subsection{Prototypes}
 
-\begin{itemize}
-\item \refObject{Object}
-\item \refObject{RangeIterable}
-\item \refObject{Orderable}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+ \item[RangeIterable]
+ \item[Orderable]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -27,7 +27,7 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|all(\var{fun})|\\
   % FIXME: link to predicate glossary entry
   Return whether all the members of the target verify the predicate
@@ -52,21 +52,21 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 [-3, 1, -1].any(function (e) { e > 0 });
 \end{urbiassert}
 
-\item \lstinline|asBool|\\
+\item[asBool]
   Whether not empty.
 \begin{urbiassert}
 [].asBool == false;
 [1].asBool == true;
 \end{urbiassert}
 
-\item \lstinline|asList|\\
+\item[asList]
 Return the target.
 
 \begin{urbiassert}
 [0, 1, 2].asList == [0, 1, 2];
 \end{urbiassert}
 
-\item \lstinline|asString|\\
+\item[asString]
   A string describing the list.  Uses \lstinline|asPrintable| on its
   members, so that, for instance, strings are displayed with quotes.
 
@@ -74,7 +74,7 @@ Return the target.
 [0, [1], "2"].asString == "[0, [1], \"2\"]";
 \end{urbiassert}
 
-\item \lstinline|back|\\
+\item[back]
 Return the last element of the target. An error if the target is empty.
 
 \begin{urbiscript}
@@ -83,7 +83,7 @@ assert([0, 1, 2].back == 2);
 [00000000:error] !!! back: cannot be applied onto empty list
 \end{urbiscript}
 
-\item \lstinline|clear|\\
+\item[clear]
   Empty the target.
 
 \begin{urbiscript}
@@ -130,7 +130,7 @@ Apply the given functional value on all members simultaneously.
 [00000000] *** 4
 \end{urbiscript}
 
-\item \lstinline|empty|\\
+\item[empty]
   Whether the target is empty.
 
 \begin{urbiassert}
@@ -166,7 +166,7 @@ Apply the given functional value on all members simultaneously.
 [00000000] -6
 \end{urbiscript}
 
-\item \lstinline|front|\\
+\item[front]
   Return the first element of the target. An error if the target is
   empty.
 \begin{urbiscript}
@@ -195,7 +195,7 @@ assert
 };
 \end{urbiscript}
 
-\item \lstinline|head|\\
+\item[head]
   Synonym for \lstinline|front|.
 \begin{urbiscript}
 assert([0, 1, 2].head == 0);
@@ -298,7 +298,7 @@ assert(c.remove(0) == [1, 2, 3]);
 assert(c == [1, 2, 3]);
 \end{urbiscript}
 
-\item \lstinline|removeBack|\\
+\item[removeBack]
   Remove and return the last element of the target. An error if the
   target is empty.
 
@@ -324,7 +324,7 @@ assert(e.removeById(d) == [0, 1, 1, 2]);
 assert(e == [0, 1, 1, 2]);
 \end{urbiscript}
 
-\item \lstinline|removeFront|\\
+\item[removeFront]
 Remove and return the first element from the target. An error if the
 target is empty.
 
@@ -337,14 +337,14 @@ assert(g == [1, 2]);
 [00000000:error] !!! removeFront: cannot be applied onto empty list
 \end{urbiscript}
 
-\item \lstinline|reverse|\\
+\item[reverse]
 Return the target with the order of elements inverted.
 
 \begin{urbiassert}
 [0, 1, 2].reverse == [2, 1, 0];
 \end{urbiassert}
 
-\item \lstinline|size|\\
+\item[size]
 Return the number of elements in the target.
 
 \begin{urbiassert}
@@ -352,7 +352,7 @@ Return the number of elements in the target.
 [].size == 0;
 \end{urbiassert}
 
-\item \lstinline|sort|\\
+\item[sort]
 Return the target, sorted with respect to the \lstinline|<| criteria.
 
 \begin{urbiassert}
@@ -373,7 +373,7 @@ Return the target, sorted with respect to the \lstinline|<| criteria.
 ![1, 2, 3].subset([1, 2]);
 \end{urbiassert}
 
-\item \lstinline|tail|\\
+\item[tail]
   Return the target, minus the first element. An error if the target
   is empty.
 
@@ -482,7 +482,7 @@ l;
  [0, 1, 2] >= [0, 1, 2];
  [0, 1, 2] >  [0, 0, 2];
 \end{urbiassert}
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

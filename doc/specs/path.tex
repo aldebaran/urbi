@@ -4,10 +4,10 @@ A \dfn{Path} points to a file system entity (directory, file and so
 forth).
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Comparable}
-\item \refObject{Orderable}
-\end{itemize}
+\begin{refObjects}
+\item[Comparable]
+\item[Orderable]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -28,15 +28,15 @@ Path.new("././///.//foo/");
 \end{urbiscript}
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|absolute|\\
+\begin{urbiscriptapi}
+\item[absolute]
   Whether \lstinline|this| is absolute.
 \begin{urbiassert}
 Path.new("/abs/path").absolute;
 !Path.new("rel/path").absolute;
 \end{urbiassert}
 
-\item \lstinline|asList|\\
+\item[asList]
   List of names used in path (directories and possibly file), from
   bottom up. There is no difference between relative path and absolute
   path.
@@ -45,29 +45,29 @@ Path.new("/path/to/file.u").asList == ["path", "to", "file.u"];
 Path.new("/path").asList           == Path.new("path").asList;
 \end{urbiassert}
 
-\item \lstinline|asPrintable|\\
+\item[asPrintable]
 \begin{urbiassert}
 Path.new("file.txt").asPrintable == "Path(\"file.txt\")";
 \end{urbiassert}
 
-\item \lstinline|asString|\\
+\item[asString]
   The name of the file.
 \begin{urbiassert}
 Path.new("file.txt").asString == "file.txt";
 \end{urbiassert}
 
-\item \lstinline|basename|\\
+\item[basename]
   Base name of the path.
 \begin{urbiassert}
 Path.new("/absolute/path/file.u").basename == "file.u";
 Path.new("relative/path/file.u").basename  == "file.u";
 \end{urbiassert}
 
-\item \lstinline|cd|\\
+\item[cd]
   Change current working directory to \lstinline|this|. Return the new
   current working directory as a \lstinline|Path|.
 
-\item \lstinline|cwd|\\
+\item[cwd]
   The current working directory.
 % We used to write
 % assert(Path.new("/").cd == Path.new("/"));
@@ -87,14 +87,14 @@ Path.new("relative/path/file.u").basename  == "file.u";
 };
 \end{urbiscript}
 
-\item \lstinline|dirname|\\
+\item[dirname]
   Directory name of the path.
 \begin{urbiassert}
 Path.new("/abs/path/file.u").dirname == Path.new("/abs/path");
 Path.new("rel/path/file.u").dirname  == Path.new("rel/path");
 \end{urbiassert}
 
-\item \lstinline|exists|\\
+\item[exists]
   Whether something (a file, a directory, \ldots) exists where
   \lstinline|this| points to.
 \begin{urbiassert}
@@ -103,30 +103,30 @@ Path.new("/").exists;
 !Path.new("/this/path/does/not/exists").exists;
 \end{urbiassert}
 
-\item \lstinline|isDir|\\
+\item[isDir]
   Whether \lstinline|this| is a directory.
 \begin{urbiassert}
 Path.cwd.isDir;
 \end{urbiassert}
 
-\item \lstinline|isReg|\\
+\item[isReg]
   Whether \lstinline|this| is a regular file.
 \begin{urbiassert}
 !Path.cwd.isReg;
 \end{urbiassert}
 
-\item \lstinline|open|\\
+\item[open]
   Open \lstinline|this|. Return either a \dfn{Directory} or a
   \dfn{File} according the type of \lstinline|this|. See
   \refObject{File} and \refObject{Directory}.
 
-\item \lstinline|readable|\\
+\item[readable]
   Whether \lstinline|this| is readable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").readable;
 \end{urbiassert}
 
-\item \lstinline|writable|\\
+\item[writable]
   Whether \lstinline|this| is writable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").writable;
@@ -160,7 +160,7 @@ Path.cwd / Path.new("/tmp/foo");
 !(Path.new("/a/b") < Path.new("/a")  );
 \end{urbiassert}
 
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

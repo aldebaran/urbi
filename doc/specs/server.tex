@@ -4,9 +4,9 @@ A \dfn{Server} can listen to incoming connections.  See
 \refObject{Socket} for an example.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -21,8 +21,8 @@ s.localSlotNames;
 \end{urbiscript}
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|connection|\\
+\begin{urbiscriptapi}
+\item[connection]
   The event launched at each incoming connection. This event is
   launched with one argument: the socket of the established connection.
 \begin{urbiscript}
@@ -33,7 +33,7 @@ at (s.connection?(var socket))
 };
 \end{urbiscript}
 
-\item \lstinline|host|\\
+\item[host]
   The host on which \lstinline|this| is listening. Raise an error if
   \lstinline|this| is not listening.
 \begin{urbiscript}
@@ -44,7 +44,7 @@ Server.host;
 \item \lstinline|listen(\var{host}, \var{port})|\\
   Listen incoming connections with \var{host} and \var{port}.
 
-\item \lstinline|port|\\
+\item[port]
   The port on which \lstinline|this| is listening. Raise an error if
   \lstinline|this| is not listening.
 \begin{urbiscript}
@@ -52,9 +52,9 @@ Server.port;
 [00000004:error] !!! port: server not listening
 \end{urbiscript}
 
-\item \lstinline|sockets|\\
+\item[sockets]
   The list of the sockets created at each incoming connection.
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

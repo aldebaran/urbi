@@ -4,10 +4,10 @@ This class is meant to record dates in time.  It is experimental, and
 very likely to be changed in the future.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Orderable}
-\item \refObject{Comparable}
-\end{itemize}
+\begin{refObjects}
+\item[Orderable]
+\item[Comparable]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -54,7 +54,7 @@ Date.new(0.1);
 
 \subsection{Slots}
 
-\begin{itemize}
+\begin{urbiscriptapi}
 \item \lstinline|+(\var{that})|\\
   Return the date which is corresponds to waiting \refObject{Duration}
   \var{that} after \lstinline|this|.
@@ -84,14 +84,14 @@ Date.new(11111111) != Date.new(22222222);
 Date.new(11111111) < Date.new(22222222);
 \end{urbiassert}
 
-\item \lstinline|asFloat|\\
+\item[asFloat]
   Give the numeric value of the date that refers to the date that is \var{s}
 seconds after the epoch.
 \begin{urbiassert}
 Date.new("2002-01-20 23:59:59").asFloat == 1011567599;
 \end{urbiassert}
 
-\item \lstinline|asString|\\
+\item[asString]
   Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
     \var{hh}:\var{mn}:\var{ss}} where \var{yyyy} is the four-digit
   year, \var{mm} the two-digit month (from 1 to 12), \var{dd} the
@@ -103,7 +103,7 @@ Date.new("2002-01-20 23:59:59").asFloat == 1011567599;
 Date.new(1234567890).asString == "2009-02-14 00:31:30";
 \end{urbiassert}
 
-\item \lstinline|epoch|\\
+\item[epoch]
   A fixed value, the ``origin of times'': January 1st 1970, at
   midnight.
 \begin{urbiassert}
@@ -113,17 +113,17 @@ Date.epoch == Date.new(0);
 Date.epoch == Date.new();
 \end{urbiassert}
 
-\item \lstinline|now|\\
+\item[now]
   Return the current date.
 \begin{urbiunchecked}
 Date.now;
 [00000000] 2012-03-02 15:31:42
 \end{urbiunchecked}
 
-\item \lstinline|timestamp|\\
+\item[timestamp]
 Synonym for \lstinline|Date.asFloat|
 
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

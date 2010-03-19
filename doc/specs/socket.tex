@@ -114,9 +114,9 @@ waituntil(client.disconnected?);
 \end{urbiscript}
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -129,7 +129,7 @@ var s = Socket.new|
 \end{urbiscript}
 
 \subsection{Slots}
-\begin{itemize}
+\begin{urbiscriptapi}
 
 \item \lstinline|connect(\var{host}, \var{port})|\\
   Connect \lstinline|this| to \var{host} and \var{port}.  The
@@ -137,50 +137,50 @@ var s = Socket.new|
   symbolic ports, such as \lstinline|"smtp"|, or \lstinline|"ftp"| and
   so forth.
 
-\item \lstinline|connected|\\
+\item[connected]
   Event launched when the connection is established.
 
 \item \lstinline|connectSerial(\var{device}, \var{baudRate})|\\
   Connect \lstinline|this| to the serial port \var{device}, with given
   \var{baudRate}.
 
-\item \lstinline|disconnect|\\
+\item[disconnect]
   Close the connection.
 
-\item \lstinline|disconnected|\\
+\item[disconnected]
   Event launched when a disconnection happens.
 
-\item \lstinline|error|\\
+\item[error]
   Event launched when an error happens. This event is launched with
   the error message in argument. The event \lstinline|disconnected| is
   also always launched.
 
-\item \lstinline|host|\\
+\item[host]
   The host of the connection.
 
-\item \lstinline|isConnected|\\
+\item[isConnected]
   Whether \lstinline|this| is connected.
 
-\item \lstinline|poll|\\
+\item[poll]
   Runs the event processing loop to execute ready handlers. By
   default, the loop is executed every \lstinline|pollInterval|.
 
-\item \lstinline|pollInterval|\\
+\item[pollInterval]
   Each \lstinline|pollInterval| amount of time, \lstinline|Socket.poll|
   is called. If \lstinline|pollInterval| equals zero,
   \lstinline|Socket.poll| is not called.
 
-\item \lstinline|port|\\
+\item[port]
   The port of the connection.
 
-\item \lstinline|received|\\
+\item[received]
   Event launched when \lstinline|this| has received data. The data is
   given by argument to the event.
 
 \item \lstinline|write(\var{data})|\\
   Sends \var{data} trough the connection.
 
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex
