@@ -60,7 +60,7 @@ char_of(urbi::UMessageType t)
 urbi::UCallbackAction
 dump(const urbi::UMessage& msg)
 {
-  VERBOSE("got a message: " << msg);
+  VERBOSE("Recv: " << msg);
   if (msg.tag == "start" || msg.tag == "ident")
     return urbi::URBI_CONTINUE;
 
@@ -149,12 +149,13 @@ main(int argc, char* argv[])
 
   test(client, syncClient);
 
-  VERBOSE("Epilogue");
+  VERBOSE("Epilogue, Sleep 3s");
+  sleep(3);
 
-  sleep(3);                                                     \
-  /* Handle the case when the other connection is down */       \
-  SSEND("disown({ sleep(0.5); shutdown }); quit;");             \
-  SEND("shutdown;");                                            \
+  VERBOSE("Shutting down");
+  // Handle the case when the other connection is down.
+  SSEND("disown({ sleep(0.5); shutdown }); quit;");
+  SEND("shutdown;");
 
   VERBOSE("End");
 }

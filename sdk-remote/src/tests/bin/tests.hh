@@ -63,7 +63,7 @@ GD_ADD_CATEGORY(TEST);
   do {							\
     if (Client.isConnected())                           \
     {                                                   \
-      VERBOSE("Sending: " << S);                        \
+      VERBOSE("Send: " << S);                           \
       Client.send("%s\n", (S));                         \
     }                                                   \
     else                                                \
