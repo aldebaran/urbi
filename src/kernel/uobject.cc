@@ -196,9 +196,9 @@ static std::set<void*> initialized;
 # define CHECK_MAINTHREAD()
 #else
 # define CHECK_MAINTHREAD()				\
-  if (::kernel::urbiserver->isAnotherThread())		\
-    pabort("UObject API isn't thread safe. "		\
-	   "Do the last call within main thread.")
+  passert(!::kernel::urbiserver->isAnotherThread(),     \
+          "The UObject API isn't thread safe. "         \
+          "Do the last call within the main thread.")
 #endif
 
 namespace Stats
@@ -287,7 +287,7 @@ static void periodic_call(rObject, ufloat interval, rObject method,
 static rObject urbi_get(rObject r, const std::string& slot)
 {
   object::objects_type args;
-  args.push_back(r);
+  args << r;
   Symbol symSlot(slot);
   LIBPORT_DEBUG("applying get for " << slot << "...");
   rObject var = r->slot_get(symSlot);
@@ -368,7 +368,7 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
   LIBPORT_DEBUG("uvwrapnotify");
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
   urbi::UList l;
-  l.array.push_back(new urbi::UValue());
+  l.array << new urbi::UValue();
   l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
   ugc->eval(l);
@@ -396,7 +396,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
     if (!tail++)
       continue;
     urbi::UValue v = uvalue_cast(co);
-    l.array.push_back(new urbi::UValue(v));
+    l.array << new urbi::UValue(v);
   }
   libport::utime_t start = libport::utime();
   urbi::UValue r;
@@ -418,17 +418,19 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       getCurrentRunner().yield();
     }
   }
-  catch(sched::exception& )
+  catch (const sched::exception&)
   {
     throw;
   }
-  catch(std::exception& e)
+  catch(const std::exception& e)
   {
-    FRAISE("Exception caught while calling " + ugc->getName() +": " + e.what());
+    FRAISE("Exception caught while calling %s: %s",
+           ugc->getName(), e.what());
   }
   catch(...)
   {
-    FRAISE("Unknown exception caught while calling " + ugc->getName());
+    FRAISE("Unknown exception caught while calling %s",
+           ugc->getName());
   }
   start = libport::utime() - start;
   Stats::add(ol.front().get(), message, start);
@@ -745,11 +747,22 @@ namespace urbi
       LOCK_KERNEL;
       rObject b = get_base(object);
       object::objects_type args;
-      args.push_back(b);
-#define CHECK(i) if (v##i.type != DATA_VOID)    \
-        args.push_back(object_cast(v##i))
-      CHECK(1);CHECK(2);CHECK(3);CHECK(4);CHECK(5);CHECK(6);CHECK(7);CHECK(8);
-#undef CHECK
+      args << b;
+
+#define ARG(Nth)                               \
+      do {                                     \
+        if (v##Nth.type != DATA_VOID)          \
+          args << object_cast(v##Nth);         \
+      } while (false)
+
+      ARG(1);
+      ARG(2);
+      ARG(3);
+      ARG(4);
+      ARG(5);
+      ARG(6);
+      ARG(7);
+      ARG(8);
       b->call_with_this(libport::Symbol(method), args);
     }
 
@@ -778,10 +791,11 @@ namespace urbi
       rObject o = get_base(p.first)->slot_get(libport::Symbol(p.second));
 
       object::objects_type args;
-#define CHECK(i) if (v##i.type != DATA_VOID)    \
-        args.push_back(object_cast(v##i))
-      CHECK(1);CHECK(2);CHECK(3);CHECK(4);CHECK(5);
-#undef CHECK
+      ARG(1);
+      ARG(2);
+      ARG(3);
+      ARG(4);
+      ARG(5);
       o->call(SYMBOL(emit), args);
     }
 
@@ -918,7 +932,7 @@ namespace urbi
       rObject me = get_base(owner_->__name);
       rObject f = me->slot_get(SYMBOL(setUpdate));
       object::objects_type args;
-      args.push_back(me);
+      args << me;
       std::string meId = getCurrentRunner().apply(
         me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
         ->as<object::String>()->value_get();
@@ -929,8 +943,8 @@ namespace urbi
          (boost::function1<void, rObject>(
            boost::bind(&bounce_update, owner_, me.get(), meId + " update"))));
       args.clear();
-      args.push_back(me);
-      args.push_back(new object::Float(period / 1000.0));
+      args << me
+           << new object::Float(period / 1000.0);
       getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
     }
 
@@ -993,9 +1007,7 @@ namespace urbi
       StringPair p = split_name(owner_->get_name());
       rObject o = get_base(p.first);
       if (!o)
-      {
         FRAISE("UVar creation on non existing object: %s", owner->get_name());
-      }
       Symbol varName(p.second);
       // Force kernel-side variable creation, init to void.
       rObject initVal;
@@ -1202,7 +1214,7 @@ namespace urbi
         runner.apply(f, sym, args);
         if (owner_->target)
           static_cast<KernelUVarImpl*>(owner_->target->impl_)
-            ->callbacks_.push_back(this);
+            ->callbacks_ << this;
       }
     }
     void
