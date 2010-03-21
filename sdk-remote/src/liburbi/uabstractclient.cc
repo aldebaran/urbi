@@ -845,8 +845,7 @@ namespace urbi
           strcpy(currentTag, "UNKNWN");
           //listLock.lock();
           UMessage msg(*this, 0, tag_error,
-                       "!!! UAbstractClient::read,"
-                       " fatal error parsing header",
+                       "!!! UAbstractClient::read, fatal error parsing header",
                        binaries_type());
           notifyCallbacks(msg);
           //unlistLock.lock();
@@ -1013,7 +1012,7 @@ namespace urbi
   void
   UAbstractClient::clientError(std::string message, int erc)
   {
-    // Just like in UMessage's contructor, skip the possible "!!! "
+    // Like in UMessage's constructor, skip the possible "!!! "
     // prefix.
     const char prefix[] = "!!! ";
     if (message.substr(0, sizeof prefix - 1) == prefix)

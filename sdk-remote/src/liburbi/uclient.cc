@@ -153,12 +153,12 @@ namespace urbi
       host_ = getRemoteHost();
       port_ = getRemotePort();
     }
-    catch(std::exception&)
+    catch(const std::exception&)
     { // Ignore the error, next read attempt will trigger onError.
     }
     if (ping_interval_)
       sendPing(link_);
-}
+  }
 
   void
   UClient::onError(boost::system::error_code erc)
