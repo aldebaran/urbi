@@ -104,7 +104,5 @@ verb "Result in $dir"
 "$installer" $installerargs
 
 if test -n "$output"; then
-  cd $dir
-  mv gostai-engine-runtime.exe "$output"
-  cd -
+  mv "$dir/merge/gostai-engine-runtime.exe" "$output"
 fi
