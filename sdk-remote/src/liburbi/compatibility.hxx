@@ -28,7 +28,7 @@ namespace urbi
       if (major < 2)
         return name + " << ";
       else
-        return SYNCLINE_WRAP("try { Channel.new(\"" + name + "\") << {\n");
+        return SYNCLINE_WRAP("try { Channel.new(\"" + name + "\") << {");
     }
 
     inline
@@ -44,7 +44,7 @@ namespace urbi
                               "catch (var e)\n"
                               "{\n"
                               "  lobby.send(\"!!! \" + e, \"" + name + "\");\n"
-                              "},\n"));
+                              "},"));
     }
 
     /*-------.

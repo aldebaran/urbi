@@ -1048,20 +1048,19 @@ namespace urbi
 # define VERSION_TAG TAG_PRIVATE_PREFIX "__version"
     setCallback(*this, &UAbstractClient::setVersion, VERSION_TAG);
     // We don't know our kernel version yet.
-    send(SYNCLINE_PUSH()
-         "{\n"
-         "  var __ver__ = 2;\n"
-         "  {var __ver__ = 1};\n"
-         "  var " VERSION_TAG ";\n"
-         "  if (__ver__ == 1)\n"
-         "    " VERSION_TAG " << system.version\n"
-         "  else\n"
-         "  {\n"
-         "    " VERSION_TAG " = Channel.new(\"" VERSION_TAG "\");\n"
-         "    " VERSION_TAG " << System.version;\n"
-         "  };\n"
-         "};\n"
-         SYNCLINE_POP());
+    send(SYNCLINE_WRAP(
+           "{\n"
+           "  var __ver__ = 2;\n"
+           "  {var __ver__ = 1};\n"
+           "  var " VERSION_TAG ";\n"
+           "  if (__ver__ == 1)\n"
+           "    " VERSION_TAG " << system.version\n"
+           "  else\n"
+           "  {\n"
+           "    " VERSION_TAG " = Channel.new(\"" VERSION_TAG "\");\n"
+           "    " VERSION_TAG " << System.version;\n"
+           "  };\n"
+           "};\n"));
 # undef VERSION_TAG
   }
 
@@ -1125,11 +1124,10 @@ namespace urbi
     // Have the connectionId sent on __ident.
 # define IDENT_TAG TAG_PRIVATE_PREFIX "__ident"
     setCallback(*this, &UAbstractClient::setConnectionID, IDENT_TAG);
-    send(SYNCLINE_PUSH());
     send(kernelMajor_ < 2
          ? IDENT_TAG " << local.connectionID;\n"
-         : "Channel.new(\"" IDENT_TAG "\") << connectionTag.name;\n");
-    send(SYNCLINE_POP());
+         : SYNCLINE_WRAP("Channel.new(\"" IDENT_TAG "\")"
+                         " << connectionTag.name;\n"));
     return URBI_REMOVE;
 # undef IDENT_TAG
   }

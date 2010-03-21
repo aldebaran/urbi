@@ -313,6 +313,7 @@ namespace urbi
 #define SYNCLINE_WRAP(...)                      \
   SYNCLINE_PUSH()                               \
   __VA_ARGS__                                   \
+  "\n"                                          \
   SYNCLINE_POP()
 
 
