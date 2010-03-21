@@ -475,9 +475,8 @@ namespace urbi
     else
     {
       sendBufferLock.lock();
-      *this << "Global.Binary.new(\""
-            << libport::escape(header)
-            << "\", \"\\B(" << len << ")(";
+      *this << libport::format("Global.Binary.new(\"%s\", \"\\B(%s)(",
+                               libport::escape(header), len);
       send(0);
       effectiveSend(data, len);
       *this << ")\")";
@@ -573,10 +572,9 @@ namespace urbi
     case SOUND_WAV:
     case SOUND_RAW:
     {
-      std::string rDevice = device ? device : "speaker";
-      std::string message = "var " + rDevice + ".sendsoundsaveblend = " +
-	rDevice + ".val->blend;" + rDevice + ".val->blend=queue;";
-      send("%s", message.c_str());
+      const char* dev = device ? device : "speaker";
+      send("var %s.sendsoundsaveblend = %s.val->blend; %s.val->blend=queue;",
+           dev, dev, dev);
       sendSoundData* s = new sendSoundData();
       s->bytespersec = sound.channels * sound.rate * (sound.sampleSize / 8);
       s->uc = this;
