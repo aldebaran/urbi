@@ -105,6 +105,6 @@ verb "Result in $dir"
 
 if test -n "$output"; then
   cd $dir
-  mv gostai-engin-runtime.exe "$output"
+  mv gostai-engine-runtime.exe "$output"
   cd -
 fi
