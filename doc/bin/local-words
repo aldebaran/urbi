@@ -54,4 +54,3 @@ map { print "$_\n"; } sort keys %word;
 ## cperl-merge-trailing-else: nil
 ## cperl-continued-statement-offset: 2
 ## End:
-

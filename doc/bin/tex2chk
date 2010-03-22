@@ -548,4 +548,3 @@ map { translate $_; } @ARGV;
 ## cperl-merge-trailing-else: nil
 ## cperl-continued-statement-offset: 2
 ## End:
-
