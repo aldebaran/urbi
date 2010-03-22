@@ -92,5 +92,6 @@ dumpSem--;
 SEND("__gostai_private__internal_pong.enabled = false;");
 SEND("sleep(0.1);");
 //= E client_error Lost connection with server: ping timeout
+dumpSem--;
 
 END_TEST
