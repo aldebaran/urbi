@@ -166,7 +166,7 @@ namespace urbi
     rc = -1;
     resetAsyncCalls_();
     clientError("!!! " + erc.message());
-    notifyCallbacks(UMessage(*this, 0, connectionTimeoutTag,
+    notifyCallbacks(UMessage(*this, 0, CLIENTERROR_TAG,
                              ("!!! " + erc.message()).c_str()));
     return;
   }
