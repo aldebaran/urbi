@@ -62,6 +62,11 @@ fi
 
 verb "merging archives $files"
 dir=$(mktemp -d)
+
+if test -n "$output"; then
+  trap "cd / && rm -rf $dir" 0 1 2 13 15
+fi
+
 verb "Will work in $dir"
 cd $dir
 mkdir temp
@@ -100,9 +105,10 @@ if ! test -z "templateloc" ; then
 fi
 
 verb "running '$installer' $installerargs"
-verb "Result in $dir"
 "$installer" $installerargs
 
 if test -n "$output"; then
   mv "$dir/merge/gostai-engine-runtime.exe" "$output"
+else
+  verb "Result in $dir"
 fi
