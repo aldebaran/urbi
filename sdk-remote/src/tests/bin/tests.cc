@@ -61,8 +61,6 @@ urbi::UCallbackAction
 dump(const urbi::UMessage& msg)
 {
   VERBOSE("Recv: " << msg);
-  if (msg.tag == "start" || msg.tag == "ident")
-    return urbi::URBI_CONTINUE;
 
   std::cout << char_of(msg.type) << ' ' << msg.tag << ' ';
   switch (msg.type)
