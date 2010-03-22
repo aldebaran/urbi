@@ -71,6 +71,12 @@ check_equal ()
 #check_equal builddir     abs_top_buildir
 #check_equal srcdir       abs_top_srcdir
 
+# Do not produce anything if we are not working on windows builds.
+case $OS in
+  (windows) ;;
+  (*) exit 0;;
+esac
+
 tmp=$(mktemp -d "$TMPDIR/kernel-make-installer.XXXXXX")
 trap "cd / && rm -rf $tmp" 0 1 2 13 15
 
