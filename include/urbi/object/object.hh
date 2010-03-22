@@ -275,6 +275,9 @@ namespace urbi
       template <typename T>
       void bind(const std::string& name, T);
 
+      template <typename F1, typename F2>
+      void bind(const std::string& getter_name, F1 getter, const std::string& setter_name, F2 setter);
+
       private:
       location_type slot_locate_(key_type k, bool fallback) const;
 
