@@ -86,6 +86,6 @@ do (Lobby)
   function wall(var msg, var tag = "")
   {
     for (var l in lobbies - [Lobby])
-      echo(msg, tag);
+      l.echo(msg, tag);
   };
 };
