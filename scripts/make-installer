@@ -1,0 +1,124 @@
+#! /bin/sh
+#
+
+set -x
+set -e
+
+stderr ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$0: $i"
+  done
+}
+
+error ()
+{
+  local status="$1"
+  shift
+  stderr "$@"
+  finalize
+  exit $status
+}
+
+finalize ()
+{
+  $RM -rf "$tmp"
+}
+
+## ----------- ##
+## Variables.  ##
+## ----------- ##
+
+: ${TMPDIR=/tmp}
+
+case $# in
+  (8);;
+  (*) fatal "not enough arguments: $#, expecting 8";;
+esac
+
+# Those would best be set through configure (except "updir"
+# which sets the destination).
+
+ARCH=$1       # ARM|x86|ppc
+OS=$2         # linux|windows|macos
+COMP=$3       # ex. gcc4
+MODE=$4       # [release|debug]_[static|dynamic]
+srcdir=$5
+builddir=$6
+DESTDIR=$7
+upname=$8
+
+check_equal ()
+{
+  local lhs
+  local rhs
+  eval "lhs=\$$1"
+  eval "rhs=\$$2"
+  if test "$lhs" != "$rhs"; then
+    stderr "*******************"                \
+           "$1 != $2"                           \
+           "($lhs != $rhs)"                     \
+           "proceeding with $1 = $rhs"
+    eval "$1=\$$2"
+  fi
+}
+
+#check_equal ARCH         URBI_HOST_CPU
+#check_equal COMP         URBI_HOST_COMP
+#check_equal OS           URBI_HOST_OS
+#check_equal builddir     abs_top_buildir
+#check_equal srcdir       abs_top_srcdir
+
+# Do not produce anything if we are not working on windows builds.
+case $OS in
+  (windows) ;;
+  (*) exit 0;;
+esac
+
+tmp=$(mktemp -d "$TMPDIR/kernel-make-installer.XXXXXX")
+trap "cd / && rm -rf $tmp" 0 1 2 13 15
+
+updir=$(dirname "$upname")
+basename=$(basename "${upname%-${MODE}}")
+
+release_zip="$basename.zip"
+debug_zip="$basename-debug_dynamic.zip"
+installer="$basename.exe"
+
+# my_zip represents the archive build by this slave.
+case $MODE in
+  (release)
+    my_zip="$release_zip"
+    other_zip="$debug_zip"
+    ;;
+  (debug*)
+    my_zip="$debug_zip"
+    other_zip="$release_zip"
+    ;;
+esac
+
+if test -r "$updir/$my_zip" -a -r "$updir/$other_zip" -a "$updir/$my_zip" -nt "$updir/$other_zip"; then
+  # My zip is the newest, do the merge-install.
+
+  # Fetch the zip and copy them
+  cd $tmp
+
+  cp "$updir/$my_zip" "$tmp/$my_zip"
+  cp "$updir/$other_zip" "$tmp/$other_zip"
+
+  # Merge zips.
+  $srcdir/scripts/merge-install.sh -v                                           \
+      --vcredist "/home/build/share/tools/vcredist/vcredist_x86-${COMP}.exe"    \
+      -t "$srcdir/share/templates" -s "$srcdir/share/installer/"                \
+      "$tmp/$my_zip" "$tmp/$other_zip" -o "$tmp/$installer"
+
+  # Upload the installer
+
+  cp "$tmp/$installer" "$updir/$installer"
+
+else
+  # My zip is not the newest, leave the merge-install to an other slave.
+  :;
+fi

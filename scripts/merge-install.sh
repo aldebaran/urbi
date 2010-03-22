@@ -11,6 +11,9 @@ installerargs="/NOCD share/installer/installer.nsh"
 # Location of installer.nsh, will create a symlink to it if set
 instalscriptloc=
 templateloc=
+# Target
+output=
+
 verb ()
 {
   if $verbose; then echo "$@" >&2 ; fi
@@ -27,16 +30,19 @@ usage ()
  usage: $0 [options]
 
 Options:
-  -i, --installprogram NAME    name of installer generator program
-                               [$installer]
-  -a, --installarguments ARGS  arguments for installer
-                               [$installargs]
-  -s, --installscriptloc DIR   directory of installer.nsh
-                               [$installscriptloc]
-  -t, --templateloc DIR        directory with templates
-                               [$templateloc]
-  -d, --debug                  debug mode
-  -v, --verbose                verbose mode
+  -i, --installprogram          Name of installer generator program
+                                [$installer]
+  -a, --installarguments        Arguments for installer
+                                [$installargs]
+  -s, --installscriptloc        Directory of installer.nsh
+                                [$installscriptloc]
+  -t, --templateloc             Directory with templates
+                                [$templateloc]
+  --vcredist                    vcredist binary
+                                [$vcredist]
+  -d, --debug                   Debug mode
+  -v, --verbose                 Verbose mode
+  -o, --output                  Output file
 EOF
   exit 0
 }
@@ -45,13 +51,15 @@ while test $# -ne 0
 do
   case $1 in
   (-h|--help) usage;;
-  (-i|--installprogram)   shift; installer=$1 ;;
+  (-i|--installprogram) shift; installer=$1 ;;
   (-a|--installarguments) shift; installerargs=$1 ;;
   (-s|--installscriptloc) shift; installscriptloc=$1 ;;
-  (-t|--templateloc)      shift; templateloc=$1;;
-  (-d|--debug)            set -x ;;
-  (-v|--verbose)          verbose=true ;;
-  (*)                     files="$files $1" ;;
+  (-t|--templateloc) shift; templateloc=$1;;
+  (--vcredist) shift; vcredist=$1;;
+  (-d|--debug) set -x ;;
+  (-v|--verbose) verbose=true ;;
+  (-o|--output) shift; output=$1 ;;
+  (*) files="$files $1" ;;
   esac
   shift
 done
@@ -63,6 +71,11 @@ fi
 
 verb "merging archives $files"
 dir=$(mktemp -d)
+
+if test -n "$output"; then
+  trap "cd / && rm -rf $dir" 0 1 2 13 15
+fi
+
 verb "Will work in $dir"
 cd $dir
 mkdir temp
@@ -101,5 +114,10 @@ if ! test -z "templateloc" ; then
 fi
 
 verb "running '$installer' $installerargs"
-verb "Result in $dir"
 "$installer" $installerargs
+
+if test -n "$output"; then
+  mv "$dir/merge/gostai-engine-runtime.exe" "$output"
+else
+  verb "Result in $dir"
+fi
