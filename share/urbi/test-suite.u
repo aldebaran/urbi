@@ -10,11 +10,60 @@
 
 //                                      -*- urbi -*-
 
-// This file contains changes used by the testing framework.  It is
-// not part of Urbi itself.  Do not depend on it.
+clog << "Loading test-suite.u.";
+clog << "This file modifies the behavior of urbiscript.";
+clog << "It is not part of Urbi itself.  Do not depend on it.";
 
 // Too many unpredictable changes in the error messages.
 Exception.Lookup.fixSpelling = false|;
+
+// A fake camera.
+class Global.camera
+{
+  var count = 0;
+  var max = 19;
+  var name = "gostai-head-%2d.jpg";
+  var val;
+
+  var sharedir =
+    {
+      if (var s = getenv("URBI_SHARE"))
+        Path.new(s)
+      else
+        System.urbiRoot / "share" / "gostai"
+    };
+
+
+  var images;
+  function loadImages ()
+  {
+    if (images.isVoid)
+    {
+      var dir = sharedir / "images" / "gostai-logo";
+      clog << "Loading images from %s." % dir;
+      images =
+        Directory.new(dir)
+        .asList
+        .map (function (var path)
+              { var res = File.new(path).content;
+                res.keywords = "jpeg";
+                res });
+      clog << "Loaded %s images." % images.size;
+    }
+  };
+
+  // When the camera is active, loop on the images.
+  var load = false;
+  at (load)
+  {
+    loadImages;
+    every (period)
+    {
+      camera.val = images[count];
+      count = (count + 1) % max;
+    }
+  };
+};
 
 // A channel for synclines.
 var Global.syncline = Channel.new("syncline")|;
