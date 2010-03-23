@@ -123,12 +123,6 @@ AM_CONDITIONAL([BUILD_PROGRAMS],
                [test x$enable_programs = xyes])
 
 
-# Where we look for the installed files.
-# Do not use $package here, kernel is a too generic name.
-pkgdatadir=${datadir}/gostai
-AC_SUBST([urbidir], [${pkgdatadir}/urbi])
-
-
 ## ------------ ##
 ## Components.  ##
 ## ------------ ##

@@ -1,4 +1,4 @@
-# Yes, this is not by the book, but it is so cooler.
+urbidir = $(brandsharedir)/urbi
 dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
 
 nodist_urbi_DATA =				\
