@@ -329,16 +329,77 @@ in \autoref{tab:duration}.
 \subsubsection{Floats}
 \label{sec:us-syn-lit-float}
 
-\us supports the so called \dfn{scientific notation} for
-floating-point literals.  See \refObject{Float} for more details.
-Examples include:
+\us supports the \dfn{scientific notation} for floating-point
+literals.  See \refObject{Float} for more details.  Examples include:
+
+\begin{urbiassert}
+            1 == 1;
+            1 == 1.0;
+          1.2 == 1.2000;
+      1.234e6 == 1234000;
+     0.000001 == 1e-06;
+    0.0000001 == 1e-07;
+0.00000000001 == 1e-11;
+        1e+11 == 1E+11;
+\end{urbiassert}
+
+Numbers are displayed rounded by the top level, but internally, as
+seen above, they keep their accurate value.
+
+%% Don't try 1E-4: it is not portably output equally.  On OS X it
+%% is output as 0.0001, but other architectures output 1e-4.  And
+%% they seem to be right according to
+%% http://www.opengroup.org/onlinepubs/007908799/xsh/fprintf.html
+%%
+%%  g, G
+%%
+%%  The double argument is converted in the style f or e (or in the style
+%%  E in the case of a G conversion character), with the precision
+%%  specifying the number of significant digits. If an explicit precision
+%%  is 0, it is taken as 1. The style used depends on the value converted;
+%%  style e (or E) will be used only if the exponent resulting from such a
+%%  conversion is less than -4 or greater than or equal to the
+%%  precision. Trailing zeros are removed from the fractional portion of
+%%  the result; a radix character appears only if it is followed by a
+%%  digit. The fprintf() family of functions may make available character
+%%  string representations for infinity and NaN.
+%%
+\begin{urbiscript}
+0.000001;
+[00000011] 1e-06
+
+0.0000001;
+[00000012] 1e-07
+
+0.00000000001;
+[00000013] 1e-11
+
+1e+3;
+[00000014] 1000
+
+1E-5;
+[00000014] 1e-05
+\end{urbiscript}
+
+In order to make numbers with units (\lstinline|1cm|) and calling a
+method on a number (\lstinline|1.cm|), numbers that include a period
+must have a fractional part.  In other words, \lstinline|1.|, if not
+followed by digits, is available read as \lstinline|1 .|:
 
 \begin{urbiscript}
-1;
-[00000000] 1
-1.234e6;
-[00000000] 1234000
+1.;
+[00004701:error] !!! syntax error: unexpected ;
 \end{urbiscript}
+
+Hexadecimal notation is supported for integers: \lstinline|0x|
+followed by one or more hexadecimal digits, whose case is irrelevant.
+
+\begin{urbiassert}
+    0x2a == 42;
+    0x2A == 42;
+0xabcdef == 11259375;
+0xABCDEF == 11259375
+\end{urbiassert}
 
 \subsubsection{Lists}
 \label{sec:us-syn-lit-list}
@@ -753,12 +814,16 @@ below.
 \end{operatorTable}
 
 \begin{urbiassert}
-   1 + 1 ==    2;
-   1 - 2 ==   -1;
-   2 * 3 ==    6;
-  10 / 2 ==    5;
- 2 ** 10 == 1024;
--(1 + 2) ==   -3;
+       1 + 1 ==    2;
+       1 - 2 ==   -1;
+       2 * 3 ==    6;
+      10 / 2 ==    5;
+     2 ** 10 == 1024;
+    -(1 + 2) ==   -3;
+   1 + 2 * 3 ==    7;
+ (1 + 2) * 3 ==    9;
+     -2 ** 2 ==   -4;
+   - - - - 1 ==    1;
 \end{urbiassert}
 
 \subsubsection{Assignment operators}
