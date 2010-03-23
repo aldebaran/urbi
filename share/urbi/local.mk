@@ -11,7 +11,7 @@ BUILT_SOURCES += $(nodist_urbi_DATA)
 ## PackageInfos ##
 ## ------------ ##
 
-REVISION = $(build_aux_dir)/git-version-gen
+REVISION = $(build_aux_dir)/bin/git-version-gen
 REVISIONFLAGS = --urbi --directory
 REVISION_RUN = $(REVISION) $(REVISIONFLAGS) --cache=$< --output=$@
 
