@@ -42,8 +42,8 @@ me=$as_me
 medir=$(absolute "$0").dir
 mkcd $medir
 
-xrun "--help"    urbi-send$EXEEXT --help
-xrun "--version" urbi-send$EXEEXT --version
+xrun "--help"    urbi-image$EXEEXT --help
+xrun "--version" urbi-image$EXEEXT --version
 
 # Send a file and check the output.
 
@@ -57,6 +57,19 @@ spawn_urbi_server
 ## Test.  ##
 ## ------ ##
 
-urbi-send --port-file server.port -e 'load("urbi/test.u");' -q
-urbi-image -o camera.jpg --port $(cat server.port)
+xrun "server init"                              \
+   urbi-send --port-file server.port            \
+             -e 'load("urbi/test-suite.u");'    \
+             -e 'camera.load = true;'           \
+             -e 'sleep(1s);'                    \
+             -e 'quit;'
+
+xrun "urbi-image"                                       \
+     urbi-image -o camera.jpg --port $(cat server.port)
+
+xrun "shutdown"                                 \
+  urbi-send --port-file server.port             \
+            -e 'shutdown;'                      \
+            -q
+
 file camera.jpg | grep -q JPEG
