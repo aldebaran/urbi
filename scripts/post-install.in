@@ -45,7 +45,7 @@ fi
 
 # Boost headers.
 #
-$srcdir/scripts/check-include-deps              \
+$srcdir/build-aux/bin/check-include-deps        \
   --include-dir "$DESTDIR$prefix/include"       \
   --verbose                                     \
   $builddir
