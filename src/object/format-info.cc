@@ -82,7 +82,7 @@ namespace urbi
              && flags.npos != flags.find(current = pattern[cursor]))
       {
         if (excludes.npos != excludes.find(current))
-          FRAISE("format: '%s' conflics whese one of these flags: \"%s\".",
+          FRAISE("format: '%s' conflicts with one of these flags: \"%s\".",
                  current, excludes);
         switch (current)
         {

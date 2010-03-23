@@ -33,7 +33,7 @@ To bootstrap this package from its repository, and then to compile it,
 the following tools are needed.
 
 ** Autoconf 2.63 or later
-** Automake 1.10.2 or later
+** Automake 1.11 or later
 Note that if you have to install automake by hand (as opposed by "with
 your distro's system), you have to tell its aclocal that it should
 also look at the files from the system's aclocal.  If
@@ -398,7 +398,7 @@ You may either just update the time stamps:
     make stamps             # Update the timestamps.
     make check -C tests     # All passes again.
 
-or completely disable the test suite lazyness:
+or completely disable the test suite laziness:
 
    make check -C tests LAZY_TEST_SUITE=
 
@@ -413,7 +413,7 @@ Checks liburbi, and some of the executables we ship.  Requires the
 kernel to be compiled in order to be able to test some of the uobjects.
 
 *** tests/test-suite.log: make check -C tests
-Tests the kernel and uobectfs.  Partial runs can be invoked:
+Tests the kernel and uobjects.  Partial runs can be invoked:
 
       make check -C tests TESTS='2.x/echo.chk'
 
@@ -429,10 +429,10 @@ To check remote uobjects tests:
 The snippets of code displayed in the documentation are transformed
 into test files.
 
-* FAQ/Troubleshouting
+* FAQ/Troubleshooting
 
 ** Complaints about +=
-At randowm places we use += in /bin/sh scripts, which dash does not
+At random places we use += in /bin/sh scripts, which dash does not
 support.  Please, use bash instead of dash as /bin/sh.
 
 ** error: `<anonymous>' is used uninitialized in this function
@@ -477,3 +477,10 @@ overcome this situation, so:
   $ git submodule update --init
 
 et voila.
+
+
+---
+Local Variables:
+ispell-dictionary: "american"
+ispell-personal-dictionary: "doc/urbi.dict"
+End:

@@ -103,3 +103,10 @@ is blocking you or not. Also, please keep
 "kernel-bugs@lists.gostai.com" in copy of all your correspondence, and
 do not reply individually to a member of our team as this may slow
 down the handling of the report.
+
+
+---
+Local Variables:
+ispell-dictionary: "american"
+ispell-personal-dictionary: "urbi.dict"
+End:
