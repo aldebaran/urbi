@@ -277,7 +277,7 @@ do (getSlot("UVar"))
       {
         var changed.onSubscribe = Event.new |
         at (changed.onSubscribe?)
-          loopCheck
+          disown(loopCheck)
       }|
       var valsensor = 0 |
       var isUVar = 1
