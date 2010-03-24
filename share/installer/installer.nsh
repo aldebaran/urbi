@@ -94,8 +94,15 @@ Section uninstall
   RMDir /r $INSTDIR\share
   RMDir /r $INSTDIR\gostai
   RMDir /r $INSTDIR\include
+  RMDir /r $INSTDIR\libexec
   Delete  $INSTDIR\Uninstall.exe
   Delete  $INSTDIR\urbi.bat
+  Delete  $INSTDIR\urbi-d.bat
+  Delete  $INSTDIR\LICENSE.txt
+  Delete  $INSTDIR\README.txt
+  Delete  $INSTDIR\RELEASE-NOTES.txt
+  Delete  $INSTDIR\vcredist-x86.exe
+  RMDir   $INSTDIR
   Delete  "$SMPROGRAMS\Gostai\runtime.lnk"
   Delete  "$SMPROGRAMS\Gostai\doc.lnk"
   Delete  "$SMPROGRAMS\Gostai\uninstall.lnk"
