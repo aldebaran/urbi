@@ -11,6 +11,7 @@ installerargs="/NOCD share/installer/installer.nsh"
 # Location of installer.nsh, will create a symlink to it if set
 instalscriptloc=
 templateloc=
+urbiconsole=
 # Target
 output=
 
@@ -40,6 +41,8 @@ Options:
                                 [$templateloc]
   --vcredist                    vcredist binary
                                 [$vcredist]
+  --urbi-console		urbi-console installer
+				[$urbiconsole]
   -d, --debug                   Debug mode
   -v, --verbose                 Verbose mode
   -o, --output                  Output file
@@ -56,6 +59,7 @@ do
   (-s|--installscriptloc) shift; installscriptloc=$1 ;;
   (-t|--templateloc) shift; templateloc=$1;;
   (--vcredist) shift; vcredist=$1;;
+  (--urbi-console) shift; urbiconsole=$1;;
   (-d|--debug) set -x ;;
   (-v|--verbose) verbose=true ;;
   (-o|--output) shift; output=$1 ;;
@@ -108,13 +112,18 @@ if ! test -z "$installscriptloc" ; then
   ln -s $installscriptloc share/installer
 fi
 
+if ! test -z "$urbiconsole" ; then
+  verb "Copying urbi-console installer from $urbiconsole"
+  cp "$urbiconsole" ./urbi-console-installer.exe
+fi
+
 if ! test -z "templateloc" ; then
   verb "Setting up symlink to $templateloc"
   ln -s $templateloc share/templates
 fi
 
 verb "running '$installer' $installerargs"
-"$installer" $installerargs
+wine "$installer" $installerargs
 
 if test -n "$output"; then
   mv "$dir/merge/gostai-engine-runtime.exe" "$output"

@@ -110,8 +110,9 @@ if test -r "$updir/$my_zip" -a -r "$updir/$other_zip" -a "$updir/$my_zip" -nt "$
 
   # Merge zips.
   $srcdir/scripts/merge-install.sh -v                                           \
-      --vcredist "/home/build/share/tools/vcredist/vcredist_x86-${COMP}.exe"    \
+      --vcredist "$HOME/share/tools/vcredist/vcredist_x86-${COMP}.exe"    \
       -t "$srcdir/share/templates" -s "$srcdir/share/installer/"                \
+      --urbi-console  "$HOME/share/tools/urbi-console/Gostai urbiConsole 2.1-win32.exe"  \
       "$tmp/$my_zip" "$tmp/$other_zip" -o "$tmp/$installer"
 
   # Upload the installer

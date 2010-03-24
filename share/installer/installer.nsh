@@ -44,6 +44,10 @@ Section
 ; Use this line if you use the standalone one from www.microsoft.com
   ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a /c:\\\"VCREDI~1.EXE /q:a /c:\\\"\\\"msiexec /i vcredist.msi /qn\\\"\\\" \\\"'
 
+; Install urbi console
+  IfFileExists $INSTDIR\urbi-console-installer.exe 0 +2
+  ExecWait '"$INSTDIR\\urbi-console-installer.exe"'
+
 ; Install our visual studio wizard
 ;
 ; This is done by creating two files in the vcprojects directory.
