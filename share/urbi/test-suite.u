@@ -21,7 +21,7 @@ Exception.Lookup.fixSpelling = false|;
 class Global.camera: Loadable
 {
   var count = 0;
-  var val;
+  UVar.new(this, "val");
 
   var sharedir =
     {
