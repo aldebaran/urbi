@@ -18,11 +18,9 @@ clog << "It is not part of Urbi itself.  Do not depend on it.";
 Exception.Lookup.fixSpelling = false|;
 
 // A fake camera.
-class Global.camera
+class Global.camera: Loadable
 {
   var count = 0;
-  var max = 19;
-  var name = "gostai-head-%2d.jpg";
   var val;
 
   var sharedir =
@@ -59,8 +57,8 @@ class Global.camera
     loadImages;
     every (period)
     {
-      camera.val = images[count];
-      count = (count + 1) % max;
+      val = images[count];
+      count = (count + 1) % images.size;
     }
   };
 };
