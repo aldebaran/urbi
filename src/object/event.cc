@@ -78,9 +78,9 @@ namespace urbi
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave)
     {
       rActions actions(new Actions(guard, enter, leave));
-
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      foreach (object::rTag tag, r.tag_stack_get())
+      actions->tag_stack = r.tag_stack_get();
+      foreach (object::rTag tag, actions->tag_stack)
       {
         sched::rTag t = tag->value_get();
         using boost::bind;
@@ -268,6 +268,12 @@ namespace urbi
     Event::hasSubscribers() const
     {
       return !listeners_.empty() || !waiters_.empty();
+    }
+
+    Event::Actions::~Actions()
+    {
+      foreach(boost::signals::connection& c, connections)
+        c.disconnect();
     }
 
     /*-------------.

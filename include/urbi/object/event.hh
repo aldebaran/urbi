@@ -16,6 +16,8 @@
 
 # include <urbi/object/cxx-object.hh>
 
+# include <runner/interpreter.hh>
+
 namespace urbi
 {
   namespace object
@@ -53,6 +55,7 @@ namespace urbi
         Actions(rExecutable g, rExecutable e, rExecutable l)
           : guard(g), enter(e), leave(l), active(true)
         {}
+	~Actions();
 
         bool
         operator==(const Actions& other)
@@ -63,6 +66,7 @@ namespace urbi
         rExecutable guard, enter, leave;
         bool active;
         std::vector<boost::signals::connection> connections;
+        runner::tag_stack_type tag_stack;
       };
       typedef libport::intrusive_ptr<Actions> rActions;
 
