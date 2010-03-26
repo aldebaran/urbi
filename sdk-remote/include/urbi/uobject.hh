@@ -41,20 +41,26 @@
 
 /** Bind a variable to an object.
 
- This macro can only be called from within a class inheriting from
- UObject.  It binds the UVar x within the object to a variable
- with the same name in the corresponding Urbi object.  */
+ These macros can only be called from within a class inheriting from
+ UObject.  They bind the UVar X within the object to a variable
+ with Uname as variable name in the corresponding Urbi object.  */
+# define UBindVarRename(Obj,X,Uname) \
+  (X).init(__name, Uname, ctx_)
+
 # define UBindVar(Obj,X) \
-  (X).init(__name, #X, ctx_)
+  UBindVarRename(Obj, X, #X)
 
 
 /** Bind an event to an object.
 
- This macro can only be called from within a class inheriting from
- UObject.  It binds the UEvent x within the object to a variable
- with the same name in the corresponding Urbi object.  */
+ These macros can only be called from within a class inheriting from
+ UObject.  They bind the UEvent X within the object to a variable
+ with uName as variable name in the corresponding Urbi object.  */
+# define UBindEventRename(Obj,X,Uname) \
+  (X).init(__name, Uname, ctx_)
+
 # define UBindEvent(Obj,X) \
-  (X).init(__name, #X, ctx_)
+  UBindEventRename(Obj, X, #X)
 
 
 /** This macro inverts a UVar in/out accesses.
@@ -83,20 +89,30 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
  a basic integral or floating types, char *, std::string, UValue,
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
+# define UBindFunctionRename(Obj, X, Uname) \
+   ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
+                          (&Obj::X), __name + "." Uname)
+
 # define UBindFunction(Obj, X)                                           \
-  ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
-                          (&Obj::X), __name + "." #X)
+  UBindFunctionRename(Obj, X, #X)
+
 
 /** Bind the function so that it gets executed in a separate thread.
  *  @param Obj the UObject class name
  *  @param X the unquoted function name
+ *  @param Uname the urbiscript name of the method
  *  @param lockMode (LockMode) which lock to use. This lock can be used to
  *  prevent multiple parallel execution of functions.
  */
-# define UBindThreadedFunction(Obj, X, lockMode)                         \
+# define UBindThreadedFunctionRename(Obj, X, Uname, lockMode) \
   ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
-                          (&Obj::X), __name + "." #X)                    \
-  ->setAsync(getTaskLock(lockMode, #X))
+                          (&Obj::X), __name + "." Uname)                 \
+  ->setAsync(getTaskLock(lockMode, Uname))
+
+# define UBindThreadedFunction(Obj, X, lockMode)                         \
+  UBindThreadedFunctionRename(Obj, X, #X, lockMode);
+
+
 /** Registers a function X in current object that will be called each
  time the event of same name is triggered. The function will be
  called only if the number of arguments match between the function
