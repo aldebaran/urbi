@@ -14,7 +14,6 @@ endif !WIN32
 endif BUILD_PROGRAMS
 
 # ast-dump.
-dist_bin_ast_dump_SOURCES = bin/ast-dump.cc
 bin_ast_dump_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
 bin_ast_dump_LDADD = libuobject$(LIBSFX).la
 
@@ -25,16 +24,13 @@ bin_urbi_CPPFLAGS = -DURBI_ROOT_NOT_DLL $(AM_CPPFLAGS)
 bin_urbi_LDADD = $(LTDL_LIBS)
 
 # urbi-parse.
-dist_bin_urbi_parse_SOURCES = bin/urbi-parse.cc
 bin_urbi_parse_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
 bin_urbi_parse_LDADD = libuobject$(LIBSFX).la
 
 # urbi-pp.
-dist_bin_urbi_pp_SOURCES = bin/urbi-pp.cc
 bin_urbi_pp_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
 bin_urbi_pp_LDADD = libuobject$(LIBSFX).la
 
 # urbi-compile.
-dist_bin_urbi_compile_SOURCES = bin/urbi-compile.cc
 bin_urbi_compile_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
 bin_urbi_compile_LDADD = libuobject$(LIBSFX).la
