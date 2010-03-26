@@ -81,8 +81,8 @@ namespace urbi
 
     void File::init(rPath path)
     {
-      if (!path->is_reg())
-        FRAISE("Not a regular file: %s", path->as_string());
+      if (!path->exists() || path->is_dir())
+        FRAISE("No such file: %s", path->as_string());
       path_ = path;
     }
 
