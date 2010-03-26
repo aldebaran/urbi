@@ -60,10 +60,12 @@ assert(File.new("file.txt").content.data == "1\n2\n");
   for methods to add content to the file.
 \begin{urbiscript}
 System.system("(echo 1; echo 2) >file.txt")|;
-assert(File.create("file.txt").asPrintable == "File(\"file.txt\")");
-assert(File.new("file.txt").content.data == "1\n2\n");
-
-assert(File.create("new.txt").content.empty);
+assert
+{
+  File.create("file.txt").asPrintable == "File(\"file.txt\")";
+  File.new("file.txt").content.data == "1\n2\n";
+  File.create("new.txt").content.empty;
+};
 \end{urbiscript}
 
 \item[remove]
@@ -80,8 +82,11 @@ assert(!Path.new("file.txt").exists);
 \begin{urbiscript}
 System.system("(echo 1; echo 2) >foo.txt")|;
 File.new("foo.txt").rename("bar.txt");
-assert(!Path.new("foo.txt").exists);
-assert(File.new("bar.txt").content.data == "1\n2\n");
+assert
+{
+  !Path.new("foo.txt").exists;
+  File.new("bar.txt").content.data == "1\n2\n";
+};
 \end{urbiscript}
 
 
