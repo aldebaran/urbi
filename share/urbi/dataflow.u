@@ -64,6 +64,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   /// Show UObject statistics if available (enabled by enableStats(1)).
   var showStats = true;
   var debug = false;
+  var makeShortGraph = false;
   /// Start monitoring UVar read/write/bind
   function startMonitor()
   {
@@ -481,9 +482,14 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
   };
   function step()
   {
-    var f = File.create("/tmp/dataflow.dot");
-    graph = filterRTC(addStats(makeGraph));
+    var ngraph = filterRTC(addStats(makeGraph));
+    if (makeShortGraph)
+      ngraph = shortGraph(ngraph)|
+    if (ngraph.asString.size == graph.asString.size)
+      return;
+    graph = ngraph;
     var d = dotify(graph);
+    var f = File.create("/tmp/dataflow.dot");
     f.remove;
     OutputStream.new(f) << d;
     var p = Process.new("neato", ["-Tjpeg", "/tmp/dataflow.dot"]);
