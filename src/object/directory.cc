@@ -36,8 +36,6 @@ namespace urbi
 {
   namespace object
   {
-    using boost::format;
-
     /*--------------.
     | C++ methods.  |
     `--------------*/
@@ -143,8 +141,10 @@ namespace urbi
 
     void Directory::init(rPath path)
     {
+      if (!path->exists())
+        FRAISE("does not exist: %s", path->as_string());
       if (!path->is_dir())
-        FRAISE("Not a directory: '%s'", path->as_string());
+        FRAISE("not a directory: '%s'", path->as_string());
       path_ = path;
 
 #if HAVE_SYS_INOTIFY_H
@@ -167,14 +167,14 @@ namespace urbi
 
     // Conversions
 
-    std::string Directory::as_string()
+    std::string Directory::as_string() const
     {
       return path_->as_string();
     }
 
-    std::string Directory::as_printable()
+    std::string Directory::as_printable() const
     {
-      return (boost::format("Directory(\"%s\")") % path_->as_string()).str();
+      return libport::format("Directory(\"%s\")", path_->as_string());
     }
 
     // Stat

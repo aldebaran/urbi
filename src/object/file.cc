@@ -70,19 +70,21 @@ namespace urbi
     void File::rename(const std::string& dst)
     {
       libport::path path = path_->value_get();
-      path.rename (dst);
+      path.rename(dst);
       path_->value_set(path);
     }
 
     void File::remove()
     {
-      path_->value_get().remove ();
+      path_->value_get().remove();
     }
 
     void File::init(rPath path)
     {
-      if (!path->exists() || path->is_dir())
-        FRAISE("No such file: %s", path->as_string());
+      if (!path->exists())
+        FRAISE("does not exist: %s", path->as_string());
+      if (path->is_dir())
+        FRAISE("is a directory: %s", path->as_string());
       path_ = path;
     }
 

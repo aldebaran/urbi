@@ -62,8 +62,8 @@ namespace urbi
     `--------------*/
 
     public:
-      std::string as_string();
-      std::string as_printable();
+      std::string as_string() const;
+      std::string as_printable() const;
 
       // Stat.
       template <rObject (*F) (Directory& d, const std::string& entry)>
