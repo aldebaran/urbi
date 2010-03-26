@@ -45,19 +45,24 @@ Be more verbose.  Accumulates.
 
 =cut
 
+BEGIN
+{
+  use File::Basename;
+  unshift @INC, dirname($0) . '/../../build-aux/perl';
+}
+
 use strict;
 use File::Basename;
-use File::Path qw(mkpath rmtree);
-use IO::File;
+use BuildAux::FileUtils;
+use BuildAux::Getopt;
+use BuildAux::Verbose;
+use BuildAux::XFile;
 
 # Tests with a name.
 my %by_name;
 
 # All the tests.
 my %chk;
-
-# The prefix for the log messages.
-my $me = basename($0);
 
 # move-if-changed.
 my $move_if_change = $ENV{move_if_change} || "move-if-change";
@@ -67,9 +72,6 @@ my $previous_label = undef;
 
 # Whether we should generate the synclines.
 my $synclines = 1;
-
-# Verbosity level.  Ignored.
-my $verbose = 2;
 
 # A regexp that matches 0 or more repetitions of either a
 # non-backtracking word with no parens/braces, or a braced group, or a
@@ -121,19 +123,6 @@ my $operators =
 =head1 FUNCTIONS
 
 =over 4
-
-=item C<verbose($level, @message)>
-
-Report the C<@message> is C<$level> E<lt>= C<$verbose>.
-
-=cut
-
-sub verbose($@)
-{
-  my ($level, @message) = @_;
-  map { print STDERR "$me: " . "  " x $level . "$_\n" } @message
-    if $level <= $verbose;
-}
 
 =item C<strip($string)>
 
@@ -367,8 +356,7 @@ C<$file> is a complete path, including the C<$ENV{srcdir}> part.
 sub process_file ($)
 {
   my ($file) = @_;
-  my $in = new IO::File $file
-      or die "cannot open $file";
+  my $in = new BuildAux::XFile $file;
 
   # The last part of the file name, i.e., without the $ENV{srcdir}
   # part.  (../../doc/tests/specs/boolean/boolean-24.chk ->
@@ -433,8 +421,7 @@ sub dump_chk ($)
     my %c = %{$chk{$k}};
     my $file = "$dir/$c{label}.chk";
     $file{$file} = 1;
-    my $out = new IO::File ">$file.tmp"
-        or die "cannot create $file.tmp: $!";
+    my $out = new BuildAux::XFile ">$file.tmp";
     print $out lineno(%c);
     print $out "$c{_contents}\n";
     system ("$move_if_change --color -I '^//' $file.tmp $file") == 0
@@ -446,8 +433,7 @@ sub dump_chk ($)
 
   # Generate the Makefile.
   my $local_mk = "$dir/test.mk";
-  my $mk = new IO::File ">$local_mk"
-      or die "cannot create $local_mk: $!";
+  my $mk = new BuildAux::XFile ">$local_mk";
 
   my @file = keys %file;
   # Do not include the ../.. stuff in the Makefile.
@@ -478,34 +464,12 @@ sub translate ($)
     if defined $ENV{srcdir};
   $dir =~ s/\.tex$//;
 
-  if (! -d $dir)
-    {
-      mkpath $dir
-        or die "cannot mkpath $dir: $!";
-    }
+  ensure_dir $dir;
   dump_chk $dir;
 }
 
 
-=item C<help($verbose)>
-
-Generate the B<--help> message.  Generates the full man page when
-C<$verbose>.
-
-=cut
-
-sub help ($)
-{
-  my ($verbose) = @_;
-  use Pod::Usage;
-  # See <URL:http://perldoc.perl.org/pod2man.html#NOTES>.
-  pod2usage( { -message => "Generate Urbi *.chk files from LaTeX files",
-               -exitval => 0,
-               -verbose => $verbose,
-               -output  => \*STDOUT });
-}
-
-=item C<getopt>
+=item C<getopt()>
 
 Process the command line options.
 
@@ -513,16 +477,12 @@ Process the command line options.
 
 sub getopt ()
 {
-  use Getopt::Long;
-  my %option = (
-    "h|help"        => sub { help ($verbose) },
-    "l|no-lines"    => sub { $synclines = 0 },
-    "q|quiet"       => sub { --$verbose },
-    "v|verbose"     => sub { ++$verbose },
+  use BuildAux::Getopt qw($message);
+  $message = "Generate Urbi *.chk files from LaTeX files";
+  BuildAux::Getopt::getopt
+    (
+     "l|no-lines" => sub { $synclines = 0 },
     );
-  Getopt::Long::Configure ("bundling", "pass_through");
-  GetOptions (%option)
-    or exit 1;
 }
 
 ## ------ ##
@@ -532,17 +492,18 @@ sub getopt ()
 getopt;
 map { translate $_; } @ARGV;
 
-### Setup "GNU" style for perl-mode and cperl-mode.
+
+### Setup "Gostai" style for perl-mode and cperl-mode.
 ## Local Variables:
 ## perl-indent-level: 2
 ## perl-continued-statement-offset: 2
-## perl-continued-brace-offset: 0
+## perl-continued-brace-offset: -2
 ## perl-brace-offset: 0
 ## perl-brace-imaginary-offset: 0
 ## perl-label-offset: -2
 ## cperl-indent-level: 2
 ## cperl-brace-offset: 0
-## cperl-continued-brace-offset: 0
+## cperl-continued-brace-offset: -2
 ## cperl-label-offset: -2
 ## cperl-extra-newline-before-brace: t
 ## cperl-merge-trailing-else: nil
