@@ -1,8 +1,8 @@
 \section{Barrier}
 
-\lstinline|Barrier| is used to wait until another job raise a signal.
-This can be used to implements blocking calls which are waiting until
-a resource is made available.
+\lstinline|Barrier| is used to wait until another job raises a signal.
+This can be used to implement blocking calls waiting until a resource
+is available.
 
 \subsection{Prototypes}
 
@@ -36,7 +36,7 @@ do (Barrier.new)
   assert
   {
     signal(1) == 1;
-    signal(2) == 1
+    signal(2) == 1;
   }
 }|;
 [00000000] *** 1
@@ -44,9 +44,9 @@ do (Barrier.new)
 \end{urbiscript}
 
 
-\item \lstinline|signalAll(\var{payload})|
-  Wake up all of the job waiting for a signal.  The \var{payload} is sent to
-  all \var{wait} methods.  This method returns the number of job woken up.
+\item \lstinline|signalAll(\var{payload})|\\
+  Wake up all the jobs waiting for a signal.  The \var{payload} is
+  sent to all \var{wait} methods.  Return the number of jobs woken up.
 
 \begin{urbiscript}
 do (Barrier.new)
@@ -56,7 +56,7 @@ do (Barrier.new)
   assert
   {
     signalAll(1) == 2;
-    signalAll(2) == 0
+    signalAll(2) == 0;
   }
 }|;
 [00000000] *** 1
