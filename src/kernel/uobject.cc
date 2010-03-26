@@ -1034,8 +1034,7 @@ namespace urbi
         ((bool, prevState))
         ((runner::Runner&, runner))
         ((UVar*, owner)),
-        runner.non_interruptible_set(prevState);
-        traceOperation(owner, SYMBOL(traceBind)););
+        runner.non_interruptible_set(prevState););
       runner.non_interruptible_set(true);
       owner_ = owner;
       LIBPORT_DEBUG("__init " << owner_->get_name());
@@ -1053,7 +1052,10 @@ namespace urbi
         initVal = o->local_slot_get(varName)->value();
         // Check if the variable exists and is an uvar.
         if (initVal->slot_has(SYMBOL(owned)))
+        {
+          traceOperation(owner, SYMBOL(traceBind));
           return;
+        }
         else
           o->slot_remove(varName);
       }
@@ -1065,6 +1067,7 @@ namespace urbi
       // If the variable existed but was not an uvar, copy its old value.
       if (initVal)
         o->slot_get(varName)->slot_update(SYMBOL(val), initVal);
+      traceOperation(owner, SYMBOL(traceBind));
     }
     void KernelUVarImpl::clean()
     {
