@@ -392,7 +392,7 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
       (&ugc->owner)? ugc->owner.__name:"unknown",
       ugc->name
       ));
-  bool dummy;
+  bool dummy = false;
   FINALLY(((bool, dummy)), bound_context.pop_back());
   urbi::UList l;
   l.array << new urbi::UValue();
