@@ -71,17 +71,18 @@ post-install:
 # If we are used as a module of Urbi SDK, there is no need to run this
 # post-install step here, Urbi SDK.  Besides, under some
 # circumstances, running it twice can result in failure.
-	if test -n "$(DESTDIR)" &&					  \
+	if test -n "$(DESTDIR)" &&					    \
+	   test -f $(top_builddir)/../Makefile &&			    \
 	   ! grep 'PACKAGE_TARNAME = urbi-sdk' $(top_builddir)/../Makefile; \
-	then								  \
-	  $(build_aux_dir)/bin/check-lib-deps				  \
-	    --verbose --verbose --verbose --verbose			  \
-	    --destdir "$(DESTDIR)"					  \
-	    --host-os "$(URBI_HOST_OS)"					  \
-	    --prefix "$(prefix)"					  \
-	    --libdir "$(libdir)"					  \
-	    --libpath "$(BOOST_LDPATH)"					  \
-	    "$(DESTDIR)";						  \
+	then								    \
+	  $(build_aux_dir)/bin/check-lib-deps				    \
+	    --verbose --verbose --verbose --verbose			    \
+	    --destdir "$(DESTDIR)"					    \
+	    --host-os "$(URBI_HOST_OS)"					    \
+	    --prefix "$(prefix)"					    \
+	    --libdir "$(libdir)"					    \
+	    --libpath "$(BOOST_LDPATH)"					    \
+	    "$(DESTDIR)";						    \
 	fi
 
 ## ----------- ##
