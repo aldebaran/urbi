@@ -273,29 +273,29 @@
 //    "identifier"  [reduce using rule 89 (id)]
 //
 // Obviously the shift should win.
-%left "new";
-%left "identifier";
+%precedence "new";
+%precedence "identifier";
 
 // ":" > "identifier", to get the iteration:
 //   for (var i : [1, 2, 3]) ;
 //
 // not the tagged statement:
 //   for ((var i) : 42) ;
-%nonassoc ":";
+%precedence ":";
 
 
-// Precedences are increasing)
-%left  "," ";"
-%left  "|"
-%left  "&"
-%left  CMDBLOCK
-%left  "else" "onleave"
+// Precedences, increasing.
+%precedence "," ";"
+%left "|"
+%left "&"
+%precedence CMDBLOCK
+%precedence "else" "onleave"
 
-%right  "=" "+=" "-=" "*=" "/=" "^=" "%="
+%right "=" "+=" "-=" "*=" "/=" "^=" "%="
 
-%left "const" "var"
+%precedence "const" "var"
 
-%nonassoc "~" // This is not the same as in C++, this is for durations.
+%precedence "~" // This is not the same as in C++, this is for durations.
 %left  "||"
 %left  "&&"
 %nonassoc "in"
@@ -309,10 +309,10 @@
 %left  "*" "/" "%"
 %right "!" "compl" "++" "--" UNARY     /* Negation--unary minus */
 %right "**"
-%nonassoc "=>"
-%left  "("
-%nonassoc "["
-%left  "."
+%precedence "=>"
+%precedence "("
+%precedence "["
+%precedence  "."
 
 /* URBI Grammar */
 %%
