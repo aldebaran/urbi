@@ -27,7 +27,7 @@ monitor_programs =				\
  examples/urbi-image
 
 if WIN32
-#bin_PROGRAMS += $(monitor_programs)
+bin_PROGRAMS += $(monitor_programs)
 monitor_sources =				\
   examples/monitor-win.hh			\
   examples/monitor-win.cc
