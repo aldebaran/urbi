@@ -33,11 +33,13 @@ namespace urbi
       /// Like accessor, but if fromCxx is true and the value is an UValue,
       /// return it instead of its content.
       rObject getter(bool fromCXX);
+      /// Check if we have both in/out callbaks, periodicaly trigger if so.
       void loopCheck();
       rObject writeOwned(rObject newval);
     private:
       /// Check and unlock getters stuck waiting.
       void checkBypassCopy();
+      void changeAccessLoop();
       bool looping_;
       /// Set of runners currently in a notifyChange.
       std::set<void*> inChange_;

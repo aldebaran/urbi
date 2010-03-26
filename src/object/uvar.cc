@@ -136,15 +136,30 @@ namespace urbi
     }
 
     void
-    UVar::loopCheck()
+    UVar::changeAccessLoop()
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       // Prepare a call to System.period.  Keep its computation in the
       // loop, so that we can change it at run time.
       CAPTURE_GLOBAL(System);
-      objects_type args;
-      args << System;
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      while (true)
+      {
+        callNotify(r, rObject(this), SYMBOL(accessInLoop));
+        rObject period = System->call(SYMBOL(period));
+        r.yield_until(libport::utime() +
+                        libport::utime_t(period->as<Float>()->value_get()
+                                         * 1000000.0));
+      }
+    }
 
+    void
+    UVar::loopCheck()
+    {
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      bool prevState = r.non_interruptible_get();
+      FINALLY(((runner::Runner&, r))((bool, prevState)),
+        r.non_interruptible_set(prevState));
+      r.non_interruptible_set(true);
       // Loop if we have both notifychange and notifyaccess callbacs.
       // Listeners on the changed event counts as notifychange
       if (!looping_
@@ -159,15 +174,12 @@ namespace urbi
         slot_update(SYMBOL(accessInLoop), slot_get(SYMBOL(access)));
         slot_update(SYMBOL(access), slot_get(SYMBOL(WeakDictionary))->call(SYMBOL(new)));
         looping_ = true;
-        while (true)
-        {
-          callNotify(r, rObject(this), SYMBOL(accessInLoop));
-          rObject period = args[0]->call_with_this(SYMBOL(period), args);
-          r.yield_until(libport::utime() +
-                        libport::utime_t(period->as<Float>()->value_get()
-                                         * 1000000.0));
-        }
-      }
+	runner::Interpreter* nr = new runner::Interpreter(r.lobby_get(),
+	  r.scheduler_get(), boost::bind(&UVar::changeAccessLoop, this),
+	  this, SYMBOL(changeAccessLoop));
+	nr->tag_stack_clear();
+	nr->start_job();
+       }
     }
 
     void
