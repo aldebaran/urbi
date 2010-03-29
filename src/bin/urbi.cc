@@ -10,6 +10,7 @@
 
 #include <config.h>
 
+#include <libport/cassert>
 #include <libport/cerrno>
 #include <iostream>
 #include <string>
