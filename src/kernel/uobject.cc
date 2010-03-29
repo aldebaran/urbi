@@ -822,6 +822,7 @@ namespace urbi
                              UAutoValue& v4,
                              UAutoValue& v5)
     {
+      LOCK_KERNEL;
       StringPair p = split_name(object);
       rObject o = get_base(p.first)->slot_get(libport::Symbol(p.second));
 
