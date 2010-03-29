@@ -216,7 +216,7 @@ namespace urbi
 
     , kernelMajor_(-1)
     , kernelMinor_(-1)
-    , binaryBuffer(NULL)
+    , binaryBuffer(0)
     , parsePosition(0)
     , inString(false)
     , nBracket(0)
@@ -235,10 +235,9 @@ namespace urbi
 
   UAbstractClient::~UAbstractClient()
   {
-    // No more default client if delete
-    if ((void*)getDefaultClient () == (void*)this)
-      setDefaultClient (0);
-
+    // No more default client if delete.
+    if ((void*)getDefaultClient() == (void*)this)
+      setDefaultClient(0);
     delete [] recvBuffer;
     delete [] sendBuffer;
   }
@@ -1166,7 +1165,7 @@ namespace urbi
     return *getDefaultClient();
   }
 
-  void setDefaultClient(UClient * cl)
+  void setDefaultClient(UClient* cl)
   {
     defaultClient = cl;
   }

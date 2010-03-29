@@ -11,7 +11,6 @@
 /// \brief Sample image acquisition urbi client.
 
 #include <libport/cstdio>
-#include <libport/csignal>
 
 #include <libport/cli.hh>
 #include <libport/debug.hh>
@@ -73,17 +72,8 @@ namespace
     return urbi::URBI_CONTINUE;
   }
 
-  static void
-  closeandquit (int)
-  {
-    std::cerr << "ARG" << std::endl;
-    delete urbi::getDefaultClient();
-    std::cerr << "ARGAIE" << std::endl;
-    urbi::exit(0);
-  }
-
-
-  static void
+  static
+  void
   usage(libport::OptionParser& parser)
   {
     std::cout <<
@@ -131,8 +121,7 @@ int
 main (int argc, char *argv[])
 {
   libport::program_initialize(argc, argv);
-  signal(SIGINT, closeandquit);
-  mon = NULL;
+  mon = 0;
   im.width = im.height = 0;
   im.size = 0;
   im.data = 0;
