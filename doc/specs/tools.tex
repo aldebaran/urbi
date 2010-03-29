@@ -230,6 +230,8 @@ from its camera.
 \begin{options}[Networking]
 \item[H]{host=\var{host}} Address to connect to.
 \item[P]{port=\var{port}} Port to connect to.
+\item{port-file=\var{file}} Connect to the port contained in the file
+  \var{file}.
 \end{options}
 
 \begin{options}[Tuning]
@@ -333,10 +335,9 @@ as \key{C-c} under a Unix terminal).
 \item[f]{file=\var{file}} Send the contents of \var{file} to the
   server.
 \item[h]{help} \optionHelp
-\item[H]{host=\var{host}} Address to listen to.
-\item[P]{port=\var{port}} Port to listen to, 0 for automatic
-  selection.
-\item{port-file=\var{file}} Listen to the port contained in the file
+\item[H]{host=\var{host}} Address to connect to.
+\item[P]{port=\var{port}} Port to connect to.
+\item{port-file=\var{file}} Connect to the port contained in the file
   \var{file}.
 \item[q]{quit} Disconnect from the server immediately after having
   sent all the commands.  This is equivalent to \samp{-e 'quit;'}.

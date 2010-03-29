@@ -290,8 +290,6 @@ namespace urbi
                     "quiet", 'q');
 
     libport::OptionValue
-      arg_port_file("write port number to the specified file.",
-                    "port-file", 'w', "FILE"),
       arg_stack    ("set the job stack size in KB",
                     "stack-size", 's', "SIZE");
 
@@ -312,11 +310,11 @@ namespace urbi
         << "Networking:"
         << libport::opts::host_l
         << libport::opts::port_l
-        << arg_port_file
+        << libport::opts::port_file_l
         << arg_no_net
         << "Execution:"
-        << libport::opts::arg_exp
-        << libport::opts::arg_file
+        << libport::opts::exp
+        << libport::opts::file
         << arg_interactive
         << arg_remaining
         ;
@@ -434,8 +432,8 @@ namespace urbi
     // Write the port file after initialize returned; that is, after
     // urbi.u is loaded.
     IF_OPTION_PARSER(
-    if (arg_port_file.filled())
-      std::ofstream(arg_port_file.value().c_str(), std::ios::out)
+    if (libport::opts::port_file_l.filled())
+      std::ofstream(libport::opts::port_file_l.value().c_str(), std::ios::out)
         << port << std::endl;,
     )
 
