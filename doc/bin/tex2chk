@@ -54,7 +54,6 @@ BEGIN
 use strict;
 use File::Basename;
 use BuildAux::FileUtils;
-use BuildAux::Getopt;
 use BuildAux::Verbose;
 use BuildAux::XFile;
 
