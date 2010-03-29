@@ -487,19 +487,14 @@ namespace urbi
         if (data.interactive)
           select_time = std::min(100000LL, select_time);
       }
+
       if (select_time)
-      {
         // Return without delay after the first operation, but perform all
         // pending operations
         libport::pollFor(select_time, true, s.get_io_service());
-        s.get_io_service().reset();
-        s.get_io_service().poll();
-      }
-      else
-      {
-        s.get_io_service().reset();
-        s.get_io_service().poll();
-      }
+
+      s.get_io_service().reset();
+      s.get_io_service().poll();
 
       next_time = s.work();
       if (next_time == sched::SCHED_EXIT)
