@@ -134,19 +134,17 @@ try
   libport::program_initialize(argc, argv);
 
   // Parse the command line.
-  libport::OptionValue
-    arg_pfile("file containing the port to listen to", "port-file", 0, "FILE");
   libport::OptionFlag
     arg_quit("send `quit' at the end to disconnect", "quit", 'q');
 
   libport::OptionParser opt_parser;
   opt_parser << "Options:"
-	     << libport::opts::arg_exp
-	     << libport::opts::arg_file
+	     << libport::opts::exp
+	     << libport::opts::file
 	     << libport::opts::help
-	     << libport::opts::host_l
-	     << libport::opts::port_l
-	     << arg_pfile
+	     << libport::opts::host
+	     << libport::opts::port
+	     << libport::opts::port_file
 	     << libport::opts::version
              << arg_quit;
 
@@ -159,13 +157,13 @@ try
     version();
 
   /// Server host name.
-  std::string host = libport::opts::host_l.value(urbi::UClient::default_host());
+  std::string host = libport::opts::host.value(urbi::UClient::default_host());
   /// Server port.
-  int port = libport::opts::port_l.get<int>(urbi::UClient::URBI_PORT);
-  if (arg_pfile.filled())
-    port = libport::file_contents_get<int>(arg_pfile.value());
+  int port = libport::opts::port.get<int>(urbi::UClient::URBI_PORT);
+  if (libport::opts::port_file.filled())
+    port = libport::file_contents_get<int>(libport::opts::port_file.value());
 
-  foreach(std::string arg, remainings_args)
+  foreach(const std::string& arg, remainings_args)
     if (arg[0] == '-' && arg[1] != 0)
       libport::invalid_option(arg);
     else

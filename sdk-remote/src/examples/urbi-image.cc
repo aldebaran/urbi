@@ -152,6 +152,7 @@ main (int argc, char *argv[])
 	     << libport::opts::version
 	     << libport::opts::host
 	     << libport::opts::port
+	     << libport::opts::port_file
 	     << arg_period
 	     << arg_form
 	     << arg_rec
@@ -173,9 +174,14 @@ main (int argc, char *argv[])
   std::string arg_format = arg_form.value("jpeg");
   scale = arg_scale.get<float>(1.0);
 
+  /// Server port.
+  int port = libport::opts::port.get<int>(urbi::UClient::URBI_PORT);
+  if (libport::opts::port_file.filled())
+    port = libport::file_contents_get<int>(libport::opts::port_file.value());
   urbi::USyncClient
     client(libport::opts::host.value(urbi::UClient::default_host()),
-           libport::opts::port.get<int>(urbi::UClient::URBI_PORT));
+           port);
+
   if (client.error())
     std::cerr << libport::program_name() << ": client failed to set up"
 	      << std::endl
