@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2010, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -61,7 +61,7 @@ main(int argc, char* argv[])
     for (unsigned j = 0; j < args_libuobject.size(); ++j)
       argv_bounce[i++] = args_libuobject[j].c_str();
     argv_bounce[i] = 0;
-    assert(i == argc_bounce);
+    aver(i == argc_bounce);
   }
 
   return urbi_root.urbi_launch(argc_bounce, argv_bounce);
