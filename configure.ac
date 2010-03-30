@@ -122,6 +122,14 @@ URBI_ARG_ENABLE([enable-programs],
 AM_CONDITIONAL([BUILD_PROGRAMS],
                [test x$enable_programs = xyes])
 
+URBI_ARG_ENABLE([enable-static-build],
+                [Static build], [yes|no], [no])
+AM_CONDITIONAL([STATIC_BUILD],
+               [test x$enable_static_build = xyes])
+if test x$enable_static_build = xyes; then
+  AC_DEFINE([STATIC_BUILD], [1],
+            [Define to 1 if this is a static build.])
+fi
 
 ## ------------ ##
 ## Components.  ##

@@ -23,6 +23,10 @@ bin_urbi_SOURCES = bin/urbi.cc ../sdk-remote/src/bin/urbi-root.cc
 bin_urbi_CPPFLAGS = -DURBI_ROOT_NOT_DLL $(AM_CPPFLAGS)
 bin_urbi_LDADD = $(LIBPORT_LIBS)
 
+if STATIC_BUILD
+bin_urbi_LDADD += $(top_builddir)/sdk-remote/src/libuvalue/libuvalue.la libuobject.la
+endif
+
 # urbi-parse.
 bin_urbi_parse_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
 bin_urbi_parse_LDADD = libuobject$(LIBSFX).la
