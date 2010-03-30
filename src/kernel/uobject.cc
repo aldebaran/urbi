@@ -403,10 +403,14 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
   return object::void_class;
 }
 
-static void write_and_unfreeze(urbi::UValue& r, object::rTag tag,
-                               urbi::UValue& v)
+static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
+                               object::rTag tag,
+                               urbi::UValue& v, const std::exception* e)
 {
-  r = v;
+  if (e)
+    exception = e->what();
+  else
+    r = v;
   tag->unfreeze();
 }
 
@@ -447,8 +451,12 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       // eval or there will be a race if asyncEval goes to fast and unfreeze
       // before we freeze. So go throug backend.
       tag->value_get()->freeze();
-      ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(r), tag, _1));
+      std::string exception;
+      ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(r),
+                               boost::ref(exception), tag, _1, _2));
       getCurrentRunner().yield();
+      if (!exception.empty())
+        throw std::runtime_error("Exception in threaded call: " + exception);
     }
   }
   catch (const sched::exception&)

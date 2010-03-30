@@ -539,7 +539,10 @@ class Global.'external'
         sleep(System.period) |
       var res = Global.uobjects.getSlot(u).acceptVoid;
       Global.uobjects.removeSlot(u);
-      res.unacceptVoid
+      if (res.isA(Exception))
+        throw res
+      else
+        res.unacceptVoid
     }|
     Global.uobjects.getSlot(objname).setSlot(fname, f)|
     void
