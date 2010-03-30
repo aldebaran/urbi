@@ -79,12 +79,14 @@ namespace urbi
 
     /// Set this callback to asynchronous mode using \b mode locking mode.
     void setAsync(libport::ThreadPool::rTaskLock lock);
+
+    typedef boost::function2<void, UValue&, const std::exception*> OnDone;
     /** Start evaluation, call onDone with result when done.
      * Synchronous if isSynchronous(), asynchronous else.
      */
-    void eval(UList& param, boost::function1<void, UValue&> onDone=0);
+    void eval(UList& param, OnDone onDone=0);
     /// Force synchronous evaluation.
-    void syncEval(UList& param, boost::function1<void, UValue&> onDone=0);
+    void syncEval(UList& param, OnDone onDone=0);
     virtual UValue __evalcall(UList& param)  = 0;
 
     /// Period of timers.

@@ -117,23 +117,35 @@ namespace urbi
   }
 
   void
-  UGenericCallback::syncEval(UList& params,
-                             boost::function1<void, UValue&> onDone)
+  UGenericCallback::syncEval(UList& params, OnDone onDone)
   {
-    UValue res = __evalcall(params);
-    if (onDone)
-      onDone(res);
+    UValue res;
+    try {
+      res = __evalcall(params);
+      if (onDone)
+        onDone(res, 0);
+    }
+    catch(const std::exception& e)
+    {
+      if (onDone)
+        onDone(res, &e);
+    }
+    catch(...)
+    {
+      if (onDone)
+      {
+        std::runtime_error e("Invalid exception");
+        onDone(res, &e);
+      }
+    }
   }
 
   void
-  UGenericCallback::eval(UList& params,
-                              boost::function1<void, UValue&> onDone)
+  UGenericCallback::eval(UList& params, OnDone onDone)
   {
     if (synchronous_)
     {
-      UValue res = __evalcall(params);
-      if (onDone)
-        onDone(res);
+      syncEval(params, onDone);
     }
     else
     {

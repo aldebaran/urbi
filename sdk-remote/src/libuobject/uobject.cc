@@ -14,6 +14,7 @@
 #include <sstream>
 #include <list>
 #include <libport/containers.hh>
+#include <libport/escape.hh>
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
 #include <libport/unistd.h>
@@ -289,13 +290,20 @@ namespace urbi
 
     static void
     call_result(UAbstractClient * client, std::string var,
-                const UValue& retval)
+                const UValue& retval, const std::exception* e)
     {
       // This method can be called by a thread from the Thread Pool because
       // it is used as a callback function.  Thus we have to declare the
       // category for the debugger used by the current thread.
       GD_CATEGORY(Libuobject);
       GD_FINFO_DUMP("...dispatch of %s done", var);
+      if (e)
+      {
+         URBI_SEND_COMMA_COMMAND_C((*client), "var " << var << "|"
+             << var << "=" << "Exception.new(\""
+             << "Exception while calling remote bound method: "
+             << libport::escape(e->what()) << "\")");
+      }
       switch (retval.type)
       {
       case DATA_BINARY:
@@ -404,7 +412,8 @@ namespace urbi
         if (tmpfunit == tmpfun.end())
           throw std::runtime_error("no callback found");
 	array.setOffset(3);
-        (*tmpfunit)->eval(array, boost::bind(&call_result, client_, var, _1));
+        (*tmpfunit)->eval(array,
+                          boost::bind(&call_result, client_, var, _1,_2));
         break;
       }
       break;

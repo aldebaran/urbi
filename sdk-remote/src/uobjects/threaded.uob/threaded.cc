@@ -34,6 +34,7 @@ public:
     UBindFunction(Threaded, queueOp);
     UBindFunction(Threaded, getLastRead);
     UBindFunction(Threaded, startThread);
+    UBindThreadedFunction(Threaded, throwException, LOCK_NONE);
     UBindThreadedFunction(Threaded, lockNoneDelayOp, LOCK_NONE);
     UBindThreadedFunction(Threaded, lockInstanceDelayOp, LOCK_INSTANCE);
     UBindThreadedFunction(Threaded, lockClassDelayOp, LOCK_CLASS);
@@ -71,6 +72,7 @@ public:
   UValue getLastRead(unsigned id);
   /// Queue asynchronous op on thread \b tid.
   int queueOp(unsigned tid, int op, UList args);
+  void throwException(int what);
   /// Start a new thread and return its id
   int startThread();
   // Thread main loop body, returns false when it wants to end.
@@ -369,6 +371,16 @@ bool Threaded::threadLoopBody(int id)
   return true;
 }
 
+void Threaded::throwException(int what)
+{
+  switch(what)
+  {
+  case 0:
+    throw 42;
+  default:
+    throw std::runtime_error("pan");
+  }
+}
 
 void Threaded::threadLoop(int id)
 {
