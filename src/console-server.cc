@@ -420,12 +420,10 @@ namespace urbi
     }
     data.network = 0 < port;
     // In Urbi: System.listenPort = <port>.
+    s.initialize(data.interactive);
     object::system_class->slot_set(SYMBOL(listenPort),
                                    object::to_urbi(port),
                                    true);
-
-    s.initialize(data.interactive);
-
     /*--------------.
     | --port-file.  |
     `--------------*/
