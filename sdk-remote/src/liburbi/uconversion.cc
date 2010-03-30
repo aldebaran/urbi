@@ -575,7 +575,7 @@ namespace urbi
 	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
 	break;
       case IMAGE_PPM:
-	sprintf((char*) dest.data, "P6\n%ud %ud\n255\n",
+	sprintf((char*) dest.data, "P6\n%lu %lu\n255\n",
 		dest.width, dest.height);
 	if (format == 1)
 	  convertYCrCbtoRGB((byte*) uncompressedData,
