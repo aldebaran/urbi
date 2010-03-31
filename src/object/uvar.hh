@@ -20,6 +20,7 @@ namespace urbi
 {
   namespace object
   {
+
     /** class providing access and change notification of a slot.
      *
      *  See uobject.u for the urbi part.
@@ -47,10 +48,7 @@ namespace urbi
       bool inAccess_;
       URBI_CXX_OBJECT_(UVar);
       int waiterCount_;
-      friend class UValue;
     };
-    typedef libport::intrusive_ptr<UVar> rUVar;
-
   }
 }
 #endif

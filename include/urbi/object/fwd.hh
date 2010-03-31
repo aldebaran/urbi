@@ -62,7 +62,9 @@ namespace urbi
     Macro(Socket);                              \
     Macro(String);                              \
     Macro(Tag);                                 \
-    Macro(TextOutputStream)                     \
+    Macro(TextOutputStream);                    \
+    Macro(UValue);                              \
+    Macro(UVar);
 
 # define APPLY_ON_ALL_OBJECTS(Macro)            \
     APPLY_ON_ALL_PRIMITIVES(Macro);             \

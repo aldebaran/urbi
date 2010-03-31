@@ -14,8 +14,6 @@
 # include <urbi/object/cxx-object.hh>
 # include <runner/runner.hh>
 
-# include <urbi/uvalue.hh>
-
 namespace urbi
 {
   namespace object
@@ -49,10 +47,10 @@ namespace urbi
       bool allocated_;
       rObject cache_;
       bool bypassMode_;
-      friend class UVar;
+      friend class ::urbi::object::UVar;
       URBI_CXX_OBJECT_(UValue);
     };
-    typedef libport::intrusive_ptr<UValue> rUValue;
+
   }
 }
 #endif // !OBJECT_STRING_UVALUE_HH
