@@ -290,9 +290,11 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
   {
     StringPair p = split_name(v->get_name());
     rObject o = get_base(p.first);
-    object::global_class->slot_get(SYMBOL(UVar))->slot_get(op)
-    ->call(SYMBOL(syncEmit), o, o->slot_get(Symbol(p.second)),
-           object::to_urbi(bound_context));
+    object::global_class
+      ->slot_get(SYMBOL(UVar))
+      ->slot_get(op)
+      ->call(SYMBOL(syncEmit), o, o->slot_get(Symbol(p.second)),
+             object::to_urbi(bound_context));
   }
 }
 static inline runner::Runner& getCurrentRunner()
@@ -508,13 +510,14 @@ uobject_finalize(const object::objects_type& args)
 rObject
 uobject_make_proto(const std::string& name)
 {
-  rObject oc = object::Object::proto->slot_get(SYMBOL(UObject))->call(
-             SYMBOL(clone));
-  oc->call(SYMBOL(uobject_init));
+  rObject oc =
+    object::Object::proto
+    ->slot_get(SYMBOL(UObject))
+    ->call(SYMBOL(clone));
+  oc->call(SYMBOL(uobjectInit));
   oc->call(SYMBOL(init));
   oc->slot_set(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
-  oc->slot_set(SYMBOL(__uobject_cname),
-	       new object::String(name));
+  oc->slot_set(SYMBOL(__uobject_cname), new object::String(name));
   oc->slot_set(SYMBOL(__uobject_base), oc);
   oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
   oc->slot_set(SYMBOL(periodicCall), object::make_primitive(&periodic_call));
@@ -554,7 +557,7 @@ uobject_new(rObject proto, bool forceName)
   }
   uobject_map[name] = r.get();
   r->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
-  r->call(SYMBOL(uobject_init));
+  r->call(SYMBOL(uobjectInit));
   // Instanciate UObject.
   foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
   {

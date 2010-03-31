@@ -50,7 +50,7 @@ do (Global.UObject)
   {
     0
   };
-  function uobject_init()
+  function uobjectInit()
   {
     // COW
     updateTask = Tag.new;
@@ -363,7 +363,7 @@ Global.getSlot("evaluate").notifyChangeOwned(uobjects_handle, function()
     Global.getSlot("evaluate").writeOwned(res)
 })|;
 
-Global.uobjects.uobject_init();
+Global.uobjects.uobjectInit();
 
 Global.addProto(uobjects);
 
@@ -412,7 +412,7 @@ class Global.'external'
     uobjects.setSlot(objname, UObject.new) |
     uobjects.getSlot(objname).setSlot("__uobjectName", objname) |
     uobjects.getSlot(objname).setSlot("isRemote", true) |
-    uobjects.getSlot(objname).uobject_init |
+    uobjects.getSlot(objname).uobjectInit |
     if (!lobby.hasLocalSlot(objname))
     {
       wall("ERROR: lobby has no slot " + objname)
