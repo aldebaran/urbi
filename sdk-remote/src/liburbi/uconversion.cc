@@ -10,6 +10,7 @@
 
 #include <libport/cstdlib>
 #include <libport/cstdio>
+#include <libport/format.hh>
 
 #include <urbi/uconversion.hh>
 
@@ -575,8 +576,9 @@ namespace urbi
 	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
 	break;
       case IMAGE_PPM:
-	sprintf((char*) dest.data, "P6\n%lu %lu\n255\n",
-		dest.width, dest.height);
+        strcat((char*) dest.data,
+               libport::format("P6\n%s %s\n255\n",
+                               dest.width, dest.height).c_str());
 	if (format == 1)
 	  convertYCrCbtoRGB((byte*) uncompressedData,
 			    dest.width * dest.height * 3,
