@@ -171,12 +171,16 @@ namespace urbi
       {
         // There is no need to keep an accessor present if we are going to trigger
         // it periodicaly.
-        slot_update(SYMBOL(accessInLoop), slot_get(SYMBOL(access)));
-        slot_update(SYMBOL(access), slot_get(SYMBOL(WeakDictionary))->call(SYMBOL(new)));
+        slot_update(SYMBOL(accessInLoop),
+                    slot_get(SYMBOL(access)));
+        slot_update(SYMBOL(access),
+                    slot_get(SYMBOL(WeakDictionary))->call(SYMBOL(new)));
         looping_ = true;
-	runner::Interpreter* nr = new runner::Interpreter(r.lobby_get(),
-	  r.scheduler_get(), boost::bind(&UVar::changeAccessLoop, this),
-	  this, SYMBOL(changeAccessLoop));
+	runner::Interpreter* nr =
+          new runner::Interpreter(r.lobby_get(),
+                                  r.scheduler_get(),
+                                  boost::bind(&UVar::changeAccessLoop, this),
+                                  this, SYMBOL(changeAccessLoop));
 	nr->tag_stack_clear();
 	nr->start_job();
        }
@@ -300,7 +304,7 @@ namespace urbi
       bind(SYMBOL(update_), &UVar::update_);
       bind(SYMBOL(loopCheck), &UVar::loopCheck);
       bind(SYMBOL(accessor), &UVar::accessor);
-      proto->slot_set(SYMBOL(update_bounce), new Primitive(&update_bounce));
+      proto->slot_set(SYMBOL(updateBounce), new Primitive(&update_bounce));
     }
 
     URBI_CXX_OBJECT_REGISTER(UVar)

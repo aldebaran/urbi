@@ -203,7 +203,7 @@ do (getSlot("UVar"))
   function copy(targetObj, slotName)
   {
     targetObj.setSlot(slotName, this)|
-    targetObj.setProperty(slotName, "updateHook", getSlot("update_bounce"))
+    targetObj.setProperty(slotName, "updateHook", getSlot("updateBounce"))
   };
   function init(parent, name)
   {
@@ -213,7 +213,7 @@ do (getSlot("UVar"))
       ownerName = parent.asString|
     var this.initialName = name|
     parent.setSlot(name, this)|
-    parent.setProperty(name, "updateHook", getSlot("update_bounce"))|
+    parent.setProperty(name, "updateHook", getSlot("updateBounce"))|
     var this.newPropertyHook = getSlot("newPropertyHook_")|
     var slotName = name + "_quote_n"|
     // If the slot was containing a float, it already has a *_quote_n
