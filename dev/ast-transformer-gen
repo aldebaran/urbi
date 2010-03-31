@@ -133,10 +133,10 @@ def attr_transform(attr):
 
   if attr.root_type () in ast_params['collections']:
     return '    transform_collection(node->%s_get());\n' % attr.name
-  elif not attr.visitable_p():
-    return ''
-  else:
+  elif attr.visitable_p():
     return '    transform(node->%s_get());\n' % attr.name
+  else:
+    return ''
 
 def node_transform(node):
 
