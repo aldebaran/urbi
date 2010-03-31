@@ -1,16 +1,15 @@
 \section{Tag}
 
-A Tag is an object which you can use to label blocks of code in order
-to control them externally.  Tagged code can be frozen, resumed,
+A \dfn{tag} is an object meant to label blocks of code in order to
+control them externally.  Tagged code can be frozen, resumed,
 stopped\ldots See also \autoref{sec:tut:tags}.
 
 \subsection{Construction}
 \label{stdlib:tag:ctor}
 
-Tags are objects, and must be created as any object by using
-\lstinline{new} to create derivatives of the \lstinline{Tag} object.
-The name is optional, it makes easier to display a tag and remember
-what it is.
+As any object, tags are created using \lstinline{new} to create
+derivatives of the \lstinline{Tag} object.  The name is optional, it
+makes easier to display a tag and remember what it is.
 
 \begin{urbiscript}[firstnumber=1]
 // Anonymous tag.
@@ -68,7 +67,7 @@ t.stop("result");
 assert(res == "result");
 \end{urbiscript}
 
-Be extremely cautious, as of today the precedence rules are
+Be extremely cautious, the precedence rules can be
 misleading: \lstinline|\var{var} = \var{tag}: \var{exp}| is read as
 \lstinline|(\var{var} = \var{tag}): \var{exp}| (i.e., defining
 \var{var} as an alias to \var{tag} and using it to tag \var{exp}), not as
@@ -382,9 +381,8 @@ mytag.begin.end: echo(3);
   A sub-tag that prints out "tag\_name: end" each time flow control
   leaves the tagged code. See \autoref{sec:specs:tag:begin-end}.
 
-\item[enter]
-  An event that trigger each time flow control enter the tagged code.
-  See \autoref{sec:specs:tag:enter-leave}.
+\item[enter] An event triggered each time the flow control enters the
+  tagged code.  See \autoref{sec:specs:tag:enter-leave}.
 
 \item[freeze]
   Suspend code tagged by \lstinline|this|, already running or
@@ -394,9 +392,8 @@ mytag.begin.end: echo(3);
 \item[frozen]
   Whether the tag is frozen. See  \autoref{sec:specs:tag:freeze}.
 
-\item[leave]
-  An event that trigger each time flow control leaves the tagged code.
-  See \autoref{sec:specs:tag:enter-leave}.
+\item[leave] An event tiggered each time flow control leaves the
+  tagged code.  See \autoref{sec:specs:tag:enter-leave}.
 
 \item \lstinline|stop(\var{result} = void)|\\
   Stop any code tagged by \lstinline|this|.  If some \var{result} was
