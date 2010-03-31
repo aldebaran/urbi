@@ -15,7 +15,7 @@ The following session demonstrates the features of the Dictionary
 objects.
 
 \begin{urbiscript}[firstnumber=1]
-var d = Dictionary.new("one", 1, "two", 2);
+var d = ["one" => 1, "two" => 2];
 [00000001] ["one" => 1, "two" => 2]
 for (var p : d)
   echo (p.first + " => " + p.second);
@@ -47,20 +47,21 @@ The Dictionary constructor takes arguments by pair (key, value).
 \begin{urbiscript}
 Dictionary.new("one", 1, "two", 2);
 [00000000] ["one" => 1, "two" => 2]
+Dictionary.new;
+[00000000] [ => ]
 \end{urbiscript}
 
-The output generated for dictionary can also be used to create a
-Dictionary.  This syntax is similar to Lists.
+Yet you are encouraged to use the specific syntax for Dictionary
+literals:
 
 \begin{urbiscript}
 ["one" => 1, "two" => 2];
 [00000000] ["one" => 1, "two" => 2]
-[ => ];
+[=>];
 [00000000] [ => ]
 \end{urbiscript}
 
-An extra comma can be added at the end of the list without changing the
-created Dictionary.
+An extra comma can be added at the end of the list.
 
 \begin{urbiscript}
 [
@@ -76,23 +77,26 @@ created Dictionary.
 \item[asBool]
   Negation of \lstinline|Dictionary.empty|.
 \begin{urbiassert}
-Dictionary.new.asBool == false;
-Dictionary.new.set("key", "value").asBool == true;
+[=>].asBool == false;
+[=>].set("key", "value").asBool == true;
 \end{urbiassert}
 
 \item[asList]
   Return the contents of the dictionary as a \refObject{Pair} list
-  (\var{key}, \var{value}).  Since Dictionary derives from
-  \refObject{RangeIterable}, it is easy to iterate over a Dictionary
-  using a range-\lstinline|for| (\autoref{sec:lang:for:each}).  No
-  particular order is ensured.
+  (\var{key}, \var{value}).
 
+\begin{urbiassert}
+["one" => 1, "two" => 2].asList == [("one", 1), ("two", 2)];
+\end{urbiassert}
+
+  \noindent
+  Since Dictionary derives from \refObject{RangeIterable}, it is easy
+  to iterate over a Dictionary using a range-\lstinline|for|
+  (\autoref{sec:lang:for:each}).  No particular order is ensured.
 \begin{urbiscript}
-assert(Dictionary.new("one", 1, "two", 2).asList
-       == [Pair.new("one", 1), Pair.new("two", 2)]);
 {
   var res = [];
-  for| (var entry: Dictionary.new("one", 1, "two", 2))
+  for| (var entry: ["one" => 1, "two" => 2])
     res << entry.second;
   assert(res == [1, 2]);
 };
@@ -102,36 +106,35 @@ assert(Dictionary.new("one", 1, "two", 2).asList
   Empty the dictionary.
 
 \begin{urbiassert}
-Dictionary.new("one", 1).clear.empty();
+["one" => 1].clear.empty;
 \end{urbiassert}
 
 \item[empty]
   Whether the dictionary is empty.
 
 \begin{urbiassert}
-Dictionary.new.empty;
-!Dictionary.new.set("key", "value").empty;
+ [=>].empty;
+!["key" => "value"].empty;
 \end{urbiassert}
 
 \item \lstinline|erase(\var{key})|\\
   Remove the mapping for \lstinline|\var{key}|.
 
-\begin{urbiscript}
-Dictionary.new("one", 1, "two", 2).erase("two");
-[00386250] ["one" => 1]
-\end{urbiscript}
+\begin{urbiassert}
+["one" => 1, "two" => 2].erase("two") == ["one" => 1]
+\end{urbiassert}
 
 \item \lstinline|get(\var{key})|\\
   Return the value associated to \lstinline|\var{key}|.  A
   Dictionary.KeyError exception is thrown if the key is missing.
 
-% FIXME: the following excpetion test should be rewritte when (if) we
-% introduce the throw assertion.
+  % FIXME: the following exception test should be rewritten when (if)
+  % we introduce the throw assertion.
 \begin{urbiscript}
-assert(Dictionary.new("one", 1, "two", 2).get("one") == 1);
+assert(["one" => 1, "two" => 2].get("one") == 1);
 try
 {
-  Dictionary.new("one", 1, "two", 2).get("three");
+  ["one" => 1, "two" => 2].get("three");
   echo("never reached");
 }
 catch (var e if e.isA(Dictionary.KeyError))
@@ -146,10 +149,13 @@ catch (var e if e.isA(Dictionary.KeyError))
   \lstinline|\var{default-value}| otherwise.
 
 \begin{urbiscript}
-do (Dictionary.new("one", 1, "two", 2))
+do (["one" => 1, "two" => 2])
 {
-  assert(getWithDefault("one",  -1) == 1);
-  assert(getWithDefault("three", 3) == 3);
+  assert
+  {
+    getWithDefault("one",  -1) == 1;
+    getWithDefault("three", 3) == 3;
+  };
 }|;
 \end{urbiscript}
 
@@ -158,7 +164,7 @@ do (Dictionary.new("one", 1, "two", 2))
   Whether the dictionary has a mapping for \lstinline|\var{key}|.
 
 \begin{urbiscript}
-do (Dictionary.new("one", 1))
+do (["one" => 1])
 {
   assert(has("one"));
   assert(!has("zero"));
@@ -182,13 +188,13 @@ Dictionary.clone.init("one", 1, "two", 2);
 [00000000] ["one" => 1, "two" => 2]
 \end{urbiscript}
 
-\item \lstinline|keys()|\\
+\item[keys]\\
   The list of all the keys.  No particular order is ensured.  Since
   \refObject{List} features the same function, uniform iteration over
   a List or a Dictionary is possible.
 \begin{urbiscript}
 {
-  var d = Dictionary.new("one", 1, "two", 2);
+  var d = ["one" => 1, "two" => 2];
   assert(d.keys == ["one", "two"]);
   assert({
            var res = [];
@@ -218,7 +224,7 @@ Dictionary.clone.init("one", 1, "two", 2);
   chained.  The possibly existing previous mapping is overridden.
 
 \begin{urbiscript}
-Dictionary.new.set("one", 2).set("one", 1);
+[=>].set("one", 2).set("one", 1);
 [00000000] ["one" => 1]
 \end{urbiscript}
 
@@ -227,7 +233,7 @@ Dictionary.new.set("one", 2).set("one", 1);
 
 \begin{urbiscript}
 {
-  var d = Dictionary.new;
+  var d = [=>];
   assert(d.size == 0);
   d["a"] = 0;
   assert(d.size == 1);
@@ -244,9 +250,12 @@ Dictionary.new.set("one", 2).set("one", 1);
 
 \begin{urbiscript}
 {
-  var d = Dictionary.new("one", "2");
-  assert((d["one"] = 1) == 1);
-  assert(d["one"] == 1);
+  var d = ["one" =>"2"];
+  assert
+  {
+    (d["one"] = 1) == 1;
+    d["one"] == 1;
+  };
 };
 \end{urbiscript}
 
@@ -254,7 +263,7 @@ Dictionary.new.set("one", 2).set("one", 1);
   Syntactic sugar for \lstinline|get(\var{key})|.
 
 \begin{urbiassert}
-Dictionary.new("one", 1)["one"] == 1;
+["one" => 1]["one"] == 1;
 \end{urbiassert}
 
 \item \lstinline|'=='(\var{that})|\\
