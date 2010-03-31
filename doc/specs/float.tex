@@ -263,76 +263,76 @@ Float.inf;
 [00000000] inf
 \end{urbiscript}
 
-\item[limit_digits]
-  Number of digits (in \lstinline|Float.limit_radix| base) in the
-  mantissa.
-\begin{urbiassert}
-Float.limit_digits;
-\end{urbiassert}
-
-\item[limit_digits10]
-  Number of digits (in decimal base) that can be represented without
-  change.
-\begin{urbiassert}
-Float.limit_digits10;
-\end{urbiassert}
-
-\item[limit_epsilon]
-  Machine epsilon (the difference between 1 and the least value
-  greater than 1 that is representable).
-\begin{urbiassert}
-1 != 1 + Float.limit_epsilon;
-1 == 1 + Float.limit_epsilon / 2;
-\end{urbiassert}
-
-\item[limit_max]
-  Maximum finite value.
-\begin{urbiassert}
-Float.limit_max     != Float.inf;
-Float.limit_max * 2 == Float.inf;
-\end{urbiassert}
-
-\item[limit_max_exponent]
-  Maximum integer value for the exponent that generates a normalized
-  floating-point number.
-\begin{urbiassert}
-Float.inf != Float.limit_radix ** (Float.limit_max_exponent - 1);
-Float.inf == Float.limit_radix ** Float.limit_max_exponent;
-\end{urbiassert}
-
-\item[limit_max_exponent10]
-  Maximum integer value such that 10 raised to that power generates a
-  normalized finite floating-point number.
-\begin{urbiassert}
-Float.inf != 10 ** Float.limit_max_exponent10;
-Float.inf == 10 ** (Float.limit_max_exponent10 + 1);
-\end{urbiassert}
-
-\item[limit_min]
-  Minimum positive normalized value.
-\begin{urbiassert}
-0 != Float.limit_min;
-\end{urbiassert}
-
-\item[limit_min_exponent]
-  Minimum negative integer value for the exponent that generates a
-  normalized floating-point number.
-\begin{urbiassert}
-0 != Float.limit_radix ** Float.limit_min_exponent;
-\end{urbiassert}
-
-\item[limit_min_exponent10]
-  Minimum negative integer value such that 10 raised to that power
-  generates a normalized floating-point number.
-\begin{urbiassert}
-0 != 10 ** Float.limit_min_exponent10;
-\end{urbiassert}
-
-\item[limit_radix]
-  Base of the exponent of the representation.
-\begin{urbiassert}
-Float.limit_radix == 2;
-\end{urbiassert}
+%% FIXME: \item[limit_digits]
+%% FIXME:   Number of digits (in \lstinline|Float.limit_radix| base) in the
+%% FIXME:   mantissa.
+%% FIXME: \begin{urbiassert}
+%% FIXME: Float.limit_digits;
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_digits10]
+%% FIXME:   Number of digits (in decimal base) that can be represented without
+%% FIXME:   change.
+%% FIXME: \begin{urbiassert}
+%% FIXME: Float.limit_digits10;
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_epsilon]
+%% FIXME:   Machine epsilon (the difference between 1 and the least value
+%% FIXME:   greater than 1 that is representable).
+%% FIXME: \begin{urbiassert}
+%% FIXME: 1 != 1 + Float.limit_epsilon;
+%% FIXME: 1 == 1 + Float.limit_epsilon / 2;
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_max]
+%% FIXME:   Maximum finite value.
+%% FIXME: \begin{urbiassert}
+%% FIXME: Float.limit_max     != Float.inf;
+%% FIXME: Float.limit_max * 2 == Float.inf;
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_max_exponent]
+%% FIXME:   Maximum integer value for the exponent that generates a normalized
+%% FIXME:   floating-point number.
+%% FIXME: \begin{urbiassert}
+%% FIXME: Float.inf != Float.limit_radix ** (Float.limit_max_exponent - 1);
+%% FIXME: Float.inf == Float.limit_radix ** Float.limit_max_exponent;
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_max_exponent10]
+%% FIXME:   Maximum integer value such that 10 raised to that power generates a
+%% FIXME:   normalized finite floating-point number.
+%% FIXME: \begin{urbiassert}
+%% FIXME: Float.inf != 10 ** Float.limit_max_exponent10;
+%% FIXME: Float.inf == 10 ** (Float.limit_max_exponent10 + 1);
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_min]
+%% FIXME:   Minimum positive normalized value.
+%% FIXME: \begin{urbiassert}
+%% FIXME: 0 != Float.limit_min;
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_min_exponent]
+%% FIXME:   Minimum negative integer value for the exponent that generates a
+%% FIXME:   normalized floating-point number.
+%% FIXME: \begin{urbiassert}
+%% FIXME: 0 != Float.limit_radix ** Float.limit_min_exponent;
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_min_exponent10]
+%% FIXME:   Minimum negative integer value such that 10 raised to that power
+%% FIXME:   generates a normalized floating-point number.
+%% FIXME: \begin{urbiassert}
+%% FIXME: 0 != 10 ** Float.limit_min_exponent10;
+%% FIXME: \end{urbiassert}
+%% FIXME:
+%% FIXME: \item[limit_radix]
+%% FIXME:   Base of the exponent of the representation.
+%% FIXME: \begin{urbiassert}
+%% FIXME: Float.limit_radix == 2;
+%% FIXME: \end{urbiassert}
 
 \item[log]
   The logarithm of the target.

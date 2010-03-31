@@ -422,16 +422,16 @@ namespace urbi
       DECLARE(format, format);
 #endif
       DECLARE(inf, inf);
-      DECLARE(limit_digits,   limit_digits);
-      DECLARE(limit_digits10, limit_digits10);
-      DECLARE(limit_min, limit_min);
-      DECLARE(limit_max, limit_max);
-      DECLARE(limit_epsilon, limit_epsilon);
-      DECLARE(limit_min_exponent, limit_min_exponent);
-      DECLARE(limit_min_exponent10, limit_min_exponent10);
-      DECLARE(limit_max_exponent, limit_max_exponent);
-      DECLARE(limit_max_exponent10, limit_max_exponent10);
-      DECLARE(limit_radix, limit_radix);
+// FIXME:       DECLARE(limit_digits,   limit_digits);
+// FIXME:       DECLARE(limit_digits10, limit_digits10);
+// FIXME:       DECLARE(limit_min, limit_min);
+// FIXME:       DECLARE(limit_max, limit_max);
+// FIXME:       DECLARE(limit_epsilon, limit_epsilon);
+// FIXME:       DECLARE(limit_min_exponent, limit_min_exponent);
+// FIXME:       DECLARE(limit_min_exponent10, limit_min_exponent10);
+// FIXME:       DECLARE(limit_max_exponent, limit_max_exponent);
+// FIXME:       DECLARE(limit_max_exponent10, limit_max_exponent10);
+// FIXME:       DECLARE(limit_radix, limit_radix);
       DECLARE(log, log);
       DECLARE(nan, nan);
       DECLARE(random, random);
