@@ -60,14 +60,25 @@ use BuildAux::XFile;
 # Tests with a name.
 my %by_name;
 
-# All the tests.
+# All the tests, by label.  A test is a hash defined as:
+#
+#  label     => the LaTeX label, if specified.
+#  _contents => the body of the test.
+#  _location => location in the LaTeX sources.
+#  name      => the LaTeX name if specified, otherwise a counter.
+#
+# and also key => value for all the [key=value] entries given to the
+# lstlisting environment.
 my %chk;
+
+# The file number, if not named.
+my $count = 0;
 
 # move-if-changed.
 my $move_if_change = $ENV{move_if_change} || "move-if-change";
 
-# The name of the previous test.
-my $previous_label = undef;
+# Reference to the previous test.
+my $previous_test = undef;
 
 # Whether we should generate the synclines.
 my $synclines = 1;
@@ -157,7 +168,8 @@ sub lineno (\%)
 
 =item C<register($file, $line, \%lst)>
 
-Register a listing.
+Register a listing.  I.e., glue it to the previous one if needed, put
+it in C<%chk> and C<%by_name>.
 
 =cut
 
@@ -168,58 +180,48 @@ sub register ($$\%)
   # this existing listing.
   my $name = $$lst{name};
   if ($name)
+  {
+    if ($by_name{$name})
     {
-      if ($by_name{$name})
-        {
-          $by_name{$name}{_contents} .=
-            "\n\n"
-            . lineno(%$lst)
-            . $$lst{_contents};
-          return;
-        }
-      else
-        {
-          $by_name{$name} = $lst;
-        }
+      $by_name{$name}{_contents} .=
+        "\n\n"
+        . lineno(%$lst)
+        . $$lst{_contents};
+      return;
     }
+    else
+    {
+      $by_name{$name} = $lst;
+    }
+  }
 
-  my $label = $$lst{label};
-  if ($chk{$label})
-    {
-      # Collision.
-      verbose 0,
-        "warning: label `$label' defined twice",
-        "  $chk{$label}{_location}: first definition",
-        "  $file:$line: second definition";
-    }
   # By default, fuse the test cases.  Unless we use "[firstnumber=1]"
   # and there is a preceding one.
-  elsif (!defined $previous_label
-         || (exists $$lst{firstnumber}
-             && $$lst{firstnumber} eq "1"))
-    {
-      $chk{$label} = $lst;
-      $previous_label = $label;
-    }
+  if (defined $previous_test
+      && (!exists $lst->{firstnumber}
+          || $lst->{firstnumber} ne "1"))
+  {
+    # Extension of the previous listing.
+    $previous_test->{_contents} .= "\n";
+
+    # Do not issue a syncline if the content to append starts with a
+    # result.  This happens for instance in slides where the input
+    # is on lhs, and the result on rhs.  In which case, our
+    # (verbose) synclines would insert an intermediate output (the
+    # syncline) that would cause some misaligned results.
+    $previous_test->{_contents} .= ("\n"
+                                    . lineno(%$lst))
+      unless $lst->{_contents} =~ /^\n*\[\d{8}\]/s;
+
+    $previous_test->{_contents} .= $lst->{_contents};
+  }
   else
-    {
-      # Extension of the previous listing.
-      $chk{$previous_label}{_contents} .=
-        "\n";
-
-      # Do not issue a syncline if the content to append starts with a
-      # result.  This happens for instance in slides where the input
-      # is on lhs, and the result on rhs.  In which case, our
-      # (verbose) synclines would insert an intermediate output (the
-      # syncline) that would cause some misaligned results.
-      $chk{$previous_label}{_contents} .=
-        "\n"
-        . lineno(%$lst)
-        unless $$lst{_contents} =~ /^\n*\[\d{8}\]/s;
-
-      $chk{$previous_label}{_contents} .=
-        $$lst{_contents};
-    }
+  {
+    my $name = sprintf "%02d", $count++;
+    $lst->{name} = $name;
+    $chk{$name} = $lst;
+    $previous_test = $lst;
+  }
 }
 
 =item C<assert_name($op)>
@@ -311,7 +313,7 @@ sub process_listing ($$$)
     }
   }
 
-  # If there is no label defined, use the location.
+  # Clean up the label, so that it may be used if we want to.
   if (defined $res{label})
   {
     # Get rid of the "lst:" prefix from the labels.
@@ -320,13 +322,8 @@ sub process_listing ($$$)
     (my $base = $file) =~ s,.*/,,;
     $base =~ s,\..*,,;
     $res{label} =~ s/^$base-//;
-  }
-  else
-  {
-    $res{label} = $res{_location};
-    # Remove the directory part of the file.
-    $res{label} =~ s,^.*/,,;
-    $res{label} =~ s/\.tex//;
+    # Make dislikes colons in file names.
+    $res{label} =~ s/:/-/g;
   }
 
   # escapeinside: meta-character to tell lstlisting to delegate the
@@ -335,9 +332,6 @@ sub process_listing ($$$)
   {
     $res{'_contents'} =~ s/[$res{escapeinside}]//g;
   }
-
-  # Make dislikes colon in file names.
-  $res{label} =~ s/:/-/g;
 
   # Clean up the contents.
   $res{_contents} =~ s/:hide\]/\]/g;
@@ -418,7 +412,7 @@ sub dump_chk ($)
   for my $k (keys %chk)
   {
     my %c = %{$chk{$k}};
-    my $file = "$dir/$c{label}.chk";
+    my $file = "$dir/$c{name}.chk";
     $file{$file} = 1;
     my $out = new BuildAux::XFile ">$file.tmp";
     print $out lineno(%c);
