@@ -46,7 +46,7 @@ namespace urbi
     private:
       urbi::UValue value_;
       /// False if the value was constructed with copy=false.
-      bool alocated_;
+      bool allocated_;
       rObject cache_;
       bool bypassMode_;
       friend class UVar;

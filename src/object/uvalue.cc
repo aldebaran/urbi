@@ -96,14 +96,14 @@ namespace urbi
       if (!cache_ || cache_ == nil_class)
         return dummy;
       value_ = ::uvalue_cast(cache_);
-      alocated_ = true;
+      allocated_ = true;
       return value_;
     }
 
     void
     UValue::invalidate()
     {
-      if (!alocated_)
+      if (!allocated_)
         value_ = urbi::UValue();
     }
 
@@ -111,7 +111,7 @@ namespace urbi
     UValue::put(const urbi::UValue& v,  bool bypass)
     {
       bypassMode_ = bypass;
-      alocated_ = !bypass;
+      allocated_ = !bypass;
       value_.set(v, !bypass);
       cache_ = 0;
     }
