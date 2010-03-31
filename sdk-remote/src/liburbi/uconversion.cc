@@ -27,24 +27,24 @@ namespace urbi
 
   namespace
   {
-    void *read_jpeg(const char *jpgbuffer, size_t jpgbuffer_size,
+    void *read_jpeg(const char* jpgbuffer, size_t jpgbuffer_size,
 		    bool RGB, size_t& output_size, size_t& w, size_t& h);
 
-    int write_jpeg(const unsigned char* src, size_t w, size_t h, bool ycrcb,
-		   unsigned char* dst, size_t& sz, int quality);
+    int write_jpeg(const byte* src, size_t w, size_t h, bool ycrcb,
+		   byte* dst, size_t& sz, int quality);
 
-    inline unsigned char clamp(int v)
+    inline byte clamp(int v)
     {
       return (v < 0     ? 0
               : 255 < v ? 255
               :           v);
     }
 
-    inline unsigned char clamp(float v)
+    inline byte clamp(float v)
     {
       return (v < 0     ? 0
               : 255 < v ? 255
-              :           (unsigned char) v);
+              :           (byte) v);
     }
   } // namespace
 
@@ -53,8 +53,8 @@ namespace urbi
 		    size_t bufferSize,
 		    byte* destinationImage)
   {
-    unsigned char *in = (unsigned char *) sourceImage;
-    unsigned char *out = (unsigned char *) destinationImage;
+    byte* in = (byte*) sourceImage;
+    byte* out = (byte*) destinationImage;
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
       float r = in[i];
@@ -73,15 +73,15 @@ namespace urbi
   }
 
   int
-  convertYCrCbtoYCbCr(const byte * sourceImage,
+  convertYCrCbtoYCbCr(const byte* sourceImage,
 		      size_t bufferSize,
-		      byte * destinationImage)
+		      byte* destinationImage)
   {
-    unsigned char *in = (unsigned char *) sourceImage;
-    unsigned char *out = (unsigned char *) destinationImage;
+    byte*in = (byte*) sourceImage;
+    byte*out = (byte*) destinationImage;
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
-      unsigned char tmp; // If source == destination
+      byte tmp; // If source == destination
       out[i]     = in[i];
       tmp        = in[i + 1];
       out[i + 1] = in[i + 2];
@@ -97,8 +97,8 @@ namespace urbi
 		    byte* destinationImage)
   {
     // http://en.wikipedia.org/wiki/YUV#Converting_between_Y.27UV_and_RGB
-    unsigned char *in = (unsigned char *) sourceImage;
-    unsigned char *out = (unsigned char *) destinationImage;
+    byte*in = (byte*) sourceImage;
+    byte*out = (byte*) destinationImage;
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
       int c = in[i]-16;
@@ -127,7 +127,7 @@ namespace urbi
                      byte** dest, size_t& size, size_t& w, size_t& h)
   {
     size_t sz;
-    void *destination = read_jpeg((const char *) source, sourcelen, false,
+    void *destination = read_jpeg((const char*) source, sourcelen, false,
                                   sz, w, h);
     if (!destination || !dest)
     {
@@ -136,7 +136,7 @@ namespace urbi
     }
     if (!*dest)
     {
-      *dest = (byte *) destination;
+      *dest = (byte*) destination;
       size = sz;
       return 1;
     }
@@ -152,7 +152,7 @@ namespace urbi
                    byte** dest, size_t& size, size_t& w, size_t& h)
   {
     size_t sz;
-    void *destination = read_jpeg((const char *) source, sourcelen, true,
+    void *destination = read_jpeg((const char*) source, sourcelen, true,
                                   sz, w, h);
     if (!destination || !dest)
     {
@@ -161,7 +161,7 @@ namespace urbi
     }
     if (!*dest)
     {
-      *dest = (byte *) destination;
+      *dest = (byte*) destination;
       size = sz;
       return 1;
     }
@@ -271,8 +271,8 @@ namespace urbi
   namespace
   {
     int
-    write_jpeg(const unsigned char* src, size_t w, size_t h, bool ycrcb,
-	       unsigned char* dst, size_t& sz, int quality)
+    write_jpeg(const byte* src, size_t w, size_t h, bool ycrcb,
+	       byte* dst, size_t& sz, int quality)
     {
       struct jpeg_compress_struct cinfo;
       struct jpeg_error_mgr jerr;
@@ -322,7 +322,7 @@ namespace urbi
 
     /*! Convert a jpeg image to YCrCb or RGB. Allocate the buffer with malloc.
      */
-    void *read_jpeg(const char *jpgbuffer, size_t jpgbuffer_size, bool RGB,
+    void *read_jpeg(const char* jpgbuffer, size_t jpgbuffer_size, bool RGB,
 		    size_t& output_size, size_t& w, size_t& h)
     {
       struct jpeg_decompress_struct cinfo;
@@ -371,7 +371,7 @@ namespace urbi
 	 */
 	JSAMPROW row_pointer[1];
 	row_pointer[0] =
-          (JOCTET *) & ((char *) buffer)[cinfo.output_scanline
+          (JOCTET *) & ((char*) buffer)[cinfo.output_scanline
                                          * cinfo.output_components
                                          * cinfo.output_width];
 	jpeg_read_scanlines(&cinfo, row_pointer, 1);
@@ -385,8 +385,8 @@ namespace urbi
 
 
     //scale putting (scx, scy) at the center of destination image
-    void scaleColorImage(unsigned char * src, int sw, int sh,
-			 int scx, int scy, unsigned char * dst,
+    void scaleColorImage(byte* src, int sw, int sh,
+			 int scx, int scy, byte* dst,
 			 int dw, int dh, float sx, float sy)
     {
       for (int x = 0; x < dw; ++x)
@@ -413,7 +413,7 @@ namespace urbi
 		+ (float) src[(srcx + 1 + (srcy + 1) * sw) * 3 + color]
 		* xfactor;
 	      float result = up * (1.0 - yfactor) + down * yfactor;
-	      dst[(x + y * dw) * 3 + color] = (unsigned char) result;
+	      dst[(x + y * dw) * 3 + color] = (byte) result;
 	    }
 	  }
 	}
@@ -427,7 +427,7 @@ namespace urbi
   {
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
     bool allocated = false; // true if uncompressedData must be freed
-    unsigned char* uncompressedData = 0;
+    byte* uncompressedData = 0;
     size_t w, h;
     size_t usz;
     int format = 42; //0 rgb 1 ycbcr
@@ -503,7 +503,7 @@ namespace urbi
 	break;
       case IMAGE_YUV422:
         format = 1;
-        uncompressedData = (unsigned char*)malloc(src.width * src.height * 3);
+        uncompressedData = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
         for (unsigned i=0; i< src.width*src.height; i+=2)
         {
@@ -517,7 +517,7 @@ namespace urbi
         break;
       case IMAGE_GREY8:
         format = 1;
-        uncompressedData = (unsigned char*)malloc(src.width * src.height * 3);
+        uncompressedData = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
         memset(uncompressedData, 127, src.width * src.height * 3);
         for (unsigned i=0; i< src.width*src.height; ++i)
@@ -525,7 +525,7 @@ namespace urbi
         break;
       case IMAGE_GREY4:
         format = 1;
-        uncompressedData = (unsigned char*)malloc(src.width * src.height * 3);
+        uncompressedData = (byte*)malloc(src.width * src.height * 3);
         allocated = true;
         memset(uncompressedData, 127, src.width * src.height * 3);
         for (unsigned i=0; i< src.width*src.height; i+=2)
@@ -547,18 +547,18 @@ namespace urbi
     {
       void* scaled = malloc(dest.width * dest.height * 3);
       scaleColorImage(uncompressedData, w, h, w/2, h/2,
-		      (unsigned char*) scaled, dest.width, dest.height,
+		      (byte*) scaled, dest.width, dest.height,
 		      (float) dest.width / (float) w,
 		      (float) dest.height / (float) h);
       if (allocated)
         free(uncompressedData);
-      uncompressedData = (unsigned char*)scaled;
+      uncompressedData = (byte*)scaled;
       allocated = true;
     }
 
     //then convert to destination format
     dest.size = dest.width * dest.height * 3 + 20;
-    dest.data = static_cast<unsigned char*> (realloc(dest.data, dest.size));
+    dest.data = static_cast<byte*> (realloc(dest.data, dest.size));
     size_t dsz = dest.size;
     switch (dest.imageFormat)
     {
@@ -624,10 +624,10 @@ namespace urbi
       src++;
     }
   }
-  void dup(unsigned char* dst, unsigned char* src, int count)
+  void dup(byte* dst, byte* src, int count)
   {
     unsigned short* idst = (unsigned short*)dst;
-    unsigned char* end = src + count;
+    byte* end = src + count;
     while (src != end)
     {
       *(idst++) = (unsigned short)(*src) << 8 | (unsigned short)(*src);
@@ -798,7 +798,7 @@ namespace urbi
     {
       case 8008:
         if (srate == dest.rate && schannels == 1 && dest.channels == 2)
-          dup((unsigned char*)sbuffer, (unsigned char*)dbuffer, elementCount);
+          dup((byte*)sbuffer, (byte*)dbuffer, elementCount);
         else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
           pud(sbuffer, dbuffer, elementCount);
         else
@@ -807,7 +807,7 @@ namespace urbi
 	     SAMPLE_SIGNED);
 	break;
       case 16008:
-	copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate,
+	copy((short*)sbuffer, dbuffer, schannels, dest.channels, srate,
 	     dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
 	     dest.sampleFormat == SAMPLE_SIGNED);
 	break;
@@ -821,12 +821,12 @@ namespace urbi
               (unsigned short*)dbuffer,
               elementCount);
         else
-	  copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels,
+	  copy((short*)sbuffer, (short*)dbuffer, schannels, dest.channels,
 	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
 	     dest.sampleFormat == SAMPLE_SIGNED);
 	break;
       case 8016:
-	copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels,
+	copy((char*)sbuffer, (short*)dbuffer, schannels, dest.channels,
 	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
 	     dest.sampleFormat == SAMPLE_SIGNED);
 	break;
