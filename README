@@ -1,5 +1,3 @@
-        					-*- outline -*-
-
    .--------------------------------------------------------------------.
    |          _   _      _     _    ____  ____  _  __   ____            |
    |         | | | |_ __| |__ (_)  / ___||  _ \| |/ /  |___ \           |
@@ -481,6 +479,7 @@ et voila.
 
 ---
 Local Variables:
+mode: outline
 ispell-dictionary: "american"
 ispell-personal-dictionary: "doc/urbi.dict"
 End:

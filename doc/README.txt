@@ -1,4 +1,11 @@
-                                                -*- outline -*-
+   .--------------------------------------------------------------------.
+   |          _   _      _     _    ____  ____  _  __   ____            |
+   |         | | | |_ __| |__ (_)  / ___||  _ \| |/ /  |___ \           |
+   |         | | | | '__| '_ \| |  \___ \| | | | ' /     __) |          |
+   |         | |_| | |  | |_) | |   ___) | |_| | . \    / __/           |
+   |          \___/|_|  |_.__/|_|  |____/|____/|_|\_\  |_____|          |
+   |                                                                    |
+   `--------------------------------------------------------------------'
 
 This package contains the Urbi Software Development Kit.
 
@@ -120,6 +127,7 @@ down the handling of the report.
 
 ---
 Local Variables:
+mode: outline
 ispell-dictionary: "american"
 ispell-personal-dictionary: "urbi.dict"
 End:
