@@ -112,14 +112,14 @@ namespace urbi
       return res;
     }
 
-    sched::prio_type
-    Tag::prio() const
+    Tag::priority_type
+    Tag::priority() const
     {
       return value_->prio_get();
     }
 
-    sched::prio_type
-    Tag::prio_set(sched::prio_type prio)
+    Tag::priority_type
+    Tag::priority_set(priority_type prio)
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       return value_->prio_set(r.scheduler_get(), prio);
@@ -218,8 +218,8 @@ namespace urbi
       DECLARE(leave, leave);
       DECLARE(name, name);
       DECLARE(newFlowControl, new_flow_control);
-      DECLARE(prio, prio);
-      DECLARE(prio_set, prio_set);
+      DECLARE(priority, priority);
+      DECLARE(setPriority, priority_set);
       DECLARE(stop, stop);
       DECLARE(unblock, unblock);
       DECLARE(unfreeze, unfreeze);

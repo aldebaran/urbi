@@ -40,8 +40,11 @@ namespace urbi
       void freeze();
       libport::Symbol name() const;
       static rTag new_flow_control(const objects_type&);
-      sched::prio_type prio() const;
-      sched::prio_type prio_set(sched::prio_type);
+
+      typedef sched::prio_type priority_type;
+      priority_type priority() const;
+      priority_type priority_set(priority_type);
+
       void stop(const objects_type&);
       void unblock();
       void unfreeze();
