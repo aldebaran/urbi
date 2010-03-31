@@ -46,6 +46,7 @@
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/urbi-exception.hh>
+#include <object/uvalue.hh>
 #include <object/uvar.hh>
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
