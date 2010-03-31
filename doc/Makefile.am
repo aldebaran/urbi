@@ -112,7 +112,7 @@ include trajectories/local.mk
 
 .PHONY: spell-check
 SPELL_CHECK = $(abs_top_srcdir)/build-aux/bin/spell-check
-EXTRA_DIST += $(SPELL_CHECK)
+EXTRA_DIST += $(top_srcdir)/build-aux/bin/spell-check
 spell-check:
 	cd $(srcdir) &&						\
 	$(SPELL_CHECK) -p urbi.dict $(urbi_sdk_sources) $(dist_doc_DATA)
