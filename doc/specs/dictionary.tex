@@ -165,6 +165,14 @@ do (Dictionary.new("one", 1))
 }|;
 \end{urbiscript}
 
+  The infix operators \lstinline|in| and \lstinline|not in| use
+  \lstinline|has| (see \autoref{sec:lang:operators:containers}).
+
+\begin{urbiassert}
+"one" in     ["one" => 1];
+"two" not in ["one" => 1];
+\end{urbiassert}
+
 \item \lstinline|init(\var{key1}, \var{value1}, ...)|~\\
   Insert the mapping from \lstinline|\var{key1}| to
   \lstinline|\var{value1}| and so forth.

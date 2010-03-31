@@ -489,7 +489,7 @@ below.  The escapes sequences are defined in \autoref{tab:escapes}.
 "\B(3)("\")" == "\"\\\"";
 \end{urbiassert}
 
-Consecutive string literals are glued together into a unique string.
+Consecutive string literals are glued together into a single string.
 This is useful to split large strings into chunks that fit usual
 programming widths.
 
@@ -698,12 +698,17 @@ documentation of the classes that provide them.
 \newcommand{\boperator}[3]{\operator{#1}{a #1 b}{#2}{#3}{a.'#1'(b)}}
 \newcommand{\poperator}[3]{\operator{#1}{#1a}{#2}{#3}{a.'#1'()}}
 
-\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}        {Not redefinable}       }
-\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}        {Not redefinable}       }
+% Container operators.
+\newcommand{\operatorin}     {\operator  {in}     {a in b}       {-}     {Membership}            {b.has(a)}          }
+\newcommand{\operatornotin}  {\operator  {not in} {a not in b}   {-}     {Non-membership}        {! b.has(a)}      }
+\newcommand{\operatorsub}    {\operator  {[]}   {a[args]}        {-}     {Subscript}             {a.'[]'(args)}          }
+\newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}    {-}     {Subscript assignment}  {a.'[]='(args, v)}      }
+
+% Object operators.
 \newcommand{\operatorprop}   {\operator  {->}   {a->b}             {-}     {Property access}        {getProperty("a", "b")} }
 \newcommand{\operatorpropass}{\operator  {->}   {a->b = v}         {-}     {Property assignment}    {setProperty("a", "b", v)}}
-\newcommand{\operatorsub}    {\operator  {[]}   {a[args]}          {-}     {Subscript}              {a.'[]'(args)}          }
-\newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}      {-}     {Subscript assignment}   {a.'[]='(args, v)}      }
+\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}        {Not redefinable}       }
+\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}        {Not redefinable}       }
 \newcommand{\operatorass}[1][]{\operator[#1]
                                          {=}    {a = b}            {Right} {Assignment}             {updateSlot("a", b)}    }
 
@@ -938,24 +943,35 @@ assert
 };
 \end{urbiscript}
 
-\subsubsection{Miscellaneous operators}
+\subsubsection{Container operators}
+\label{sec:lang:operators:containers}
 
-These operators do not fit the previous categories. See
-\autoref{tab:operators:misc} and the listing below. Note that the
-\dfn[operator!subscript]{subscript} (square bracket) operator is
-\dfn{variadic}: it takes any number of arguments that will be passed
-to the \lstinline|'[]'| method of the targeted object.
-
-\begin{operatorTable}{tab:operators:misc}{Miscellaneous operators}
-  \operatordot\\
-  \operatordota\\
-  \hline
-  \operatorprop\\
-  \operatorpropass\\
+These operators work on containers and their members. See
+\autoref{tab:operators:containers}.
+\begin{operatorTable}{tab:operators:containers}{Container operators}
+  \operatorin\\
+  \operatornotin\\
   \hline
   \operatorsub\\
   \operatorsubass
 \end{operatorTable}
+
+The \dfn{in} and \dfn{not in} operators test the membership of an
+element in a container.  They bounce to the container's
+\lstinline|has| method.  They are non-associative.
+
+\begin{urbiassert}
+1     in [0, 1, 2];
+3 not in [0, 1, 2];
+
+"one"   in     ["zero" => 0, "one" => 1, "two" => 2];
+"three" not in ["zero" => 0, "one" => 1, "two" => 2];
+\end{urbiassert}
+
+The following operators use an index. Note that the
+\dfn[operator!subscript]{subscript} (square bracket) operator is
+\dfn{variadic}: it takes any number of arguments that will be passed
+to the \lstinline|'[]'| method of the targeted object.
 
 \begin{urbiscript}
 // On lists.
@@ -981,7 +997,20 @@ assert
 };
 \end{urbiscript}
 
-% \clearpage
+
+\subsubsection{Object operators}
+
+These core operators provide access to slots and their properties. See
+\autoref{tab:operators:misc}.
+
+\begin{operatorTable}{tab:operators:object}{Object operators}
+  \operatordot\\
+  \operatordota\\
+  \hline
+  \operatorprop\\
+  \operatorpropass\\
+\end{operatorTable}
+
 \subsubsection{All operators summary}
 
 \autoref{tab:operators-summary} is a summary of all operators, to
@@ -1028,6 +1057,9 @@ precedence.
   \operatorbxor\\
   \hline
   \operatorneg\\
+  \hline
+  \operatorin\\
+  \operatornotin\\
   \hline
   \operatorand\\
   \hline
@@ -1291,7 +1323,7 @@ arguments, the name of the function, the target \ldots
 evaluated before invoking the function, and \dfn[function!lazy]{lazy}
 function calls, arguments are passed as-is to the function.  As a
 matter of fact, the difference is rather that there are strict
-functions and lazy function.
+functions and lazy functions.
 
 Functions defined with a (possibly empty) list of formal arguments in
 parentheses are strict: the effective arguments are first evaluated,
