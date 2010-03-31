@@ -82,9 +82,7 @@ namespace urbi
     std::string
     Location::as_string() const
     {
-      std::ostringstream o;
-      o << loc_;
-      return o.str();
+      return string_cast(loc_);
     }
 
     /*-----------------.
