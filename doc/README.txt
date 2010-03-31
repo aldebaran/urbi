@@ -59,31 +59,44 @@ The following documents will guide you to install and run Urbi.
 ** README.txt
 These notes.
 
-** RELEASE-NOTES.txt
-A list of changes since the previous releases.
+** <file:share/doc/urbi-sdk/urbi-sdk.htmldir/>
 
-** share/doc/urbi-sdk/urbi-sdk.pdf
-The complete Urbi SDK documentation.  It includes:
+The complete Urbi SDK documentation in HTML.  It includes:
 
-*** A tutorial about urbiscript
+*** Getting Started
+<file:share/doc/urbi-sdk/urbi-sdk.htmldir/getting-started.html>
+Installing Urbi SDK 2.0, and run the first commands.
 
-*** A chapter on the installation
+*** The urbiscript User manual
+<file:share/doc/urbi-sdk/urbi-sdk.htmldir/urbiscript-user-manual.html>
+The tutorial about the urbiscript language.
 
 *** Frequently Asked Questions
+<file:share/doc/urbi-sdk/urbi-sdk.htmldir/faq.html>
+Answers to common questions.
 
-*** The urbiscript reference manual
-the language, the standard libraries, and the tools.
+*** The Urbi SDK Reference Manual
+<file:share/doc/urbi-sdk/urbi-sdk.htmldir/urbi-sdk-reference-manual.html>
+The language, the standard libraries, and the tools.
+
+*** Release notes
+<file:share/doc/urbi-sdk/urbi-sdk.htmldir/release-notes.html>
+The user visible changes between Urbi SDK releases.
+
+** share/doc/urbi-sdk/urbi-sdk.pdf
+Same as above, but in PDF.
 
 * Frequently Asked Questions
 
-See the chapter "Frequently Asked Questions" in
+See <file:share/doc/urbi-sdk/urbi-sdk.htmldir/faq.html>, or the
+chapter "Frequently Asked Questions" in
 share/doc/urbi-sdk/urbi-sdk.pdf.
 
 * Reporting Bugs
 
-Bug reports should be sent to "kernel-bugs@lists.gostai.com", it will
-be addressed as fast as possible.  Please, be sure to read the FAQ,
-and to have checked that no more recent release fixed your issue.
+Bug reports should be sent to "kernel-bugs@lists.gostai.com".  They
+will be addressed as fast as possible.  Please, be sure to read the
+FAQ, and to have checked that no more recent release fixed your issue.
 
 Each bug report should contain a self-contained example, which can be
 tested by our team. Using self-contained code, that is code which does
