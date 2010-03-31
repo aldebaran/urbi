@@ -27,11 +27,13 @@ namespace urbi
 
   namespace
   {
-    void *read_jpeg(const char* jpgbuffer, size_t jpgbuffer_size,
-		    bool RGB, size_t& output_size, size_t& w, size_t& h);
+    void*
+    read_jpeg(const char* jpgbuffer, size_t jpgbuffer_size,
+              bool RGB, size_t& output_size, size_t& w, size_t& h);
 
-    int write_jpeg(const byte* src, size_t w, size_t h, bool ycrcb,
-		   byte* dst, size_t& sz, int quality);
+    int
+    write_jpeg(const byte* src, size_t w, size_t h, bool ycrcb,
+               byte* dst, size_t& sz, int quality);
 
     inline byte clamp(int v)
     {
