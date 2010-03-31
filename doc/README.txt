@@ -25,7 +25,7 @@ Decompress the package where you want to install it:
   $ tar zxf .../urbi-sdk-2.0-linux-x86-gcc4.tar.gz
   $ mv urbi-sdk-2.0-linux-x86-gcc4 <urbi-root>
 
-This directory, <urbi-root>, should contain "bin", "FAQ.txt" and so
+This directory, <urbi-root>, should contain "bin", "README.txt" and so
 forth.  Do not move things around inside this directory.  In order to
 have an easy access to the Urbi programs, set up your PATH:
 
