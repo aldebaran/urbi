@@ -11,13 +11,14 @@
 =head1 DESCRIPTION
 
 Read LaTeX files, and extract chk files for each urbiscript
-environment listing.  The label is used to name the created chk
-file.  If there is no label, FILE:LINE is used to name the file.
+environment listing.  The C<name> attribute (if given to the
+lstlisting environment) is used to name the created chk file.
+Otherwise a simple counter is used.
 
 lstlisting has a notion of split listing, using the attribute "name"
 to decide how pieces must be glued together (this is used when
-numbering).  Listings with the same "name" are glued togeter.  This
-is especially needed when a listing uses objects defined in earlier
+numbering).  Listings with the same "name" are glued togeter.  This is
+especially needed when a listing uses objects defined in earlier
 listings.
 
 Unnamed snippets are merged by default, unless the (second one) has
@@ -311,19 +312,6 @@ sub process_listing ($$$)
       $opt =~ /(\w+)\s*=\s*(.*)/;
       $res{$1} = $2;
     }
-  }
-
-  # Clean up the label, so that it may be used if we want to.
-  if (defined $res{label})
-  {
-    # Get rid of the "lst:" prefix from the labels.
-    $res{label} =~ s/^lst://;
-    # float-new -> new, since we're in float/ anyway.
-    (my $base = $file) =~ s,.*/,,;
-    $base =~ s,\..*,,;
-    $res{label} =~ s/^$base-//;
-    # Make dislikes colons in file names.
-    $res{label} =~ s/:/-/g;
   }
 
   # escapeinside: meta-character to tell lstlisting to delegate the
