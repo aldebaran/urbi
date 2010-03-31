@@ -1064,9 +1064,9 @@ cleaner semantics.
   In some cases, the \lstinline|__name| macro could not be used with
   plugged uobjects, for example in the following expression:
 
-\begin{urbiuchecked}
+\begin{urbiunchecked}
 send(__name + ".val = 1;");
-\end{urbiuchecked}
+\end{urbiunchecked}
   \noindent
   This has been fixed. \lstinline|__name| contains a valid slot name
   of \lstinline|uobjects|.
