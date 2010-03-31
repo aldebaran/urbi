@@ -191,15 +191,9 @@ def children_copy (node):
 cloner_cc = file("cloner.cc.tmp", "w")
 sys.stdout = cloner_cc
 
-print """\
-//<<-
-// Generated, do not edit by hand.
-//->>
-/**
- ** \\file %(clonerlib)s/cloner.cc
- ** \\brief Implementation of %(clonerlib)s::Cloner.
- */
-
+print (tools.banner(ast_params,
+                   "%(clonerlib)s/cloner.cc",
+                   "Implementation of %(clonerlib)s::Cloner.") + """\
 #include "kernel/config.h"
 #include "%(ast_basedir)sall.hh"
 #include "%(clonerlib)s/cloner.hh"
@@ -254,7 +248,7 @@ namespace %(clonerlib)s
       map_[(long)e] = result_;
   }
 
-""" % ast_params
+""") % ast_params
 
 for node in concrete:
   print "  void"

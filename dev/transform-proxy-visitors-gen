@@ -111,19 +111,9 @@ tools.lazy_overwrite (os.path.join (srcdir, "proxy-visitors.hh"),
 proxy_visitors_hxx = file("proxy-visitors.hxx.tmp", "w")
 sys.stdout = proxy_visitors_hxx
 
-print """\
-//<<-
-// Generated, do not edit by hand.
-//->>
-/**
- ** \\file transform/proxy-visitors.hxx
- ** \\brief Implementation of proxy visitors used by voyagers.
- */
-
-"""
-
-print """#ifndef TRANSFORM_PROXY_VISITORS_HXX
-# define TRANSFORM_PROXY_VISITORS_HXX
+print tools.banner(ast_params,
+                   "transform/proxy-visitors.hxx",
+                   "Implementation of proxy visitors used by voyagers.") + """\
 
 # include "transform/proxy-visitors.hh"
 

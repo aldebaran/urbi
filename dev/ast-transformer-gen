@@ -16,10 +16,9 @@ arr.sort (lambda x, y: cmp (x.name, y.name))
 header = file("transformer.hh.tmp", "w")
 implem = file("transformer.cc.tmp", "w")
 
-print >> header, """\
-#ifndef AST_TRANSFORMER_HH
-# define AST_TRANSFORMER_HH
-
+print >> header, tools.banner(ast_params,
+                              "ast/transformer.hh",
+                              "Declaration of ast::Transformer.") + """\
 # include <set>
 
 # include <libport/cassert>
@@ -160,7 +159,9 @@ def nodes_transform():
   names.sort()
   return ''.join(map(lambda k: node_transform(nodes[k]), names))
 
-print >> implem, """\
+print >> implem, tools.banner(ast_params,
+                              "ast/transformer.cc",
+                              "Implementation of ast::Transformer.") + """\
 #include <ast/transformer.hh>
 
 namespace ast
