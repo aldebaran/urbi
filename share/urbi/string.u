@@ -17,12 +17,12 @@ do (String)
   // Comparable.!= that bounce endlessly one on the other.
   setProtos([Orderable, Comparable, RangeIterable]);
 
+  // Allow to use a string in a "for" loop.
+  function asList() { split("") };
+
   // It is more natural to refer to the length of a string.  Besides,
   // other encodings will make a difference between size and length.
   copySlot("size", "length");
-
-  // Allow to use a string in a "for" loop.
-  function asList() { split("") };
 
   // If the Formatter object is not present, provide a simple implementation
   // of '%', only handling '%s'.
