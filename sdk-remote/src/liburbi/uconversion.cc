@@ -35,15 +35,16 @@ namespace urbi
 
     inline unsigned char clamp(int v)
     {
-      return v<0? 0:(v>255?255:v);
+      return (v < 0     ? 0
+              : 255 < v ? 255
+              :           v);
     }
+
     inline unsigned char clamp(float v)
     {
-      if (v < 0)
-	return 0;
-      if (255 < v)
-	return 255;
-      return (unsigned char) v;
+      return (v < 0     ? 0
+              : 255 < v ? 255
+              :           (unsigned char) v);
     }
   } // namespace
 
