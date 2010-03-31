@@ -244,7 +244,7 @@ sqlite, and DBI.
 
 It might fail.  The most important part is
 
-      perl -MCPAN -e 'install DBD:SQLite'
+      perl -MCPAN -e 'install DBD::SQLite'
 
 It might suffice, I don't know...
 
