@@ -94,7 +94,7 @@ EXTRA_DIST += $(FROM_PY:=.py)
 ## install.  ##
 ## --------- ##
 
-# install-data-hook: install-boost-headers
+install-data-hook: install-boost-headers
 
-# install-boost-headers:
-# 	sh -x $(builddir)/scripts/install-boost-headers
+install-boost-headers:
+	sh -x $(builddir)/scripts/install-boost-headers
