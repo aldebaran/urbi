@@ -259,7 +259,6 @@ getPeriod
 getPosition
 getProperty
 getSlot
-getslot
 getStats
 gettext
 getUObjectHub
@@ -305,7 +304,6 @@ htmldir
 http
 Huho
 hxx
-ident
 ie
 IEEE
 iff
