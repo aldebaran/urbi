@@ -124,5 +124,5 @@ if test $name != $rtname; then
   # bin is lib on Windows.  Leave LICENSE.txt since it is used by
   # Lobby.license.
   (cd "$packagedir" &&
-      rm -rf {README,RELEASE-NOTES}.txt include libexec share/doc)
+      rm -rf README.txt include libexec share/doc)
 fi

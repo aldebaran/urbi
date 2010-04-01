@@ -104,7 +104,6 @@ Section uninstall
   Delete  $INSTDIR\urbi-d.bat
   Delete  $INSTDIR\LICENSE.txt
   Delete  $INSTDIR\README.txt
-  Delete  $INSTDIR\RELEASE-NOTES.txt
   Delete  $INSTDIR\vcredist-x86.exe
   RMDir   $INSTDIR
   Delete  "$SMPROGRAMS\Gostai\runtime.lnk"
