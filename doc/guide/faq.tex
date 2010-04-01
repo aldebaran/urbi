@@ -712,14 +712,12 @@ In \dfn{plugin mode}, all the UObject callbacks (timer, bound
 functions, notifyChange and notifyAccess targets) are called
 synchronously in the same thread that executes \us code. All reads and
 writes to \urbi variables, through \dfn{UVar}, are done
-synchronously. \strong{The UObject plugin API is not thread-safe.} If
-your code uses other threads, they must not attempt to read or to
-write UVars.
+synchronously. Access to the UObject API (reading/writting UVars, using
+\lstinline|call()|...) is possible from other threads, though those operations
+are currently using one serialization lock with the main thread: each UObject
+API call from an other thread will wait until the main thread is ready to
+process it.
 
-If your other threads need to write to UVars, or to send \us code, the
-simplest solution is to queue those requests in a list (locked by a
-mutex), and dequeue and execute those requests in the update function
-of an UObject.
 
 \subsubsection{Remote mode}
 
