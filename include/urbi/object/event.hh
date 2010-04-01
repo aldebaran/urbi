@@ -49,7 +49,11 @@ namespace urbi
       rEvent trigger_backend(const objects_type& args, bool detach);
       void stop_backend(bool detach);
 
-      /// Callbacks listening on this event.
+      /** Callbacks listening on this event.
+       *
+       *  /!\ Keep me private, if an Actions survives its owner Event, it will
+       *  SEGV.
+       */
       struct Actions: public libport::RefCounted
       {
         Actions(rExecutable g, rExecutable e, rExecutable l)
@@ -74,9 +78,14 @@ namespace urbi
       rEvent source();
       void trigger_job(const rActions& actions, bool detach);
 
-      void unregister(rActions);
-      void freeze(rActions);
-      void unfreeze(rActions);
+      /** The following three functions are callbacks installed on tags.
+       *  The Actions argument is stored in the boost::bind.
+       *  Since the callbacks are removed in ~Actions(), it is safe not to
+       *  take shared pointers here.
+       */
+      void unregister(Actions*);
+      void freeze(Actions*);
+      void unfreeze(Actions*);
       typedef std::vector<rActions> Listeners;
       Listeners listeners_;
 

@@ -48,8 +48,10 @@ namespace urbi
     }
 
     void
-    Event::unregister(rActions a)
+    Event::unregister(Actions* a)
     {
+      // The erase might make us loose the last counted ref on a.
+      rActions ra(a);
       Listeners::iterator it = libport::find(listeners_, a);
       if (it != listeners_.end())
         listeners_.erase(it);
@@ -59,13 +61,13 @@ namespace urbi
     }
 
     void
-    Event::freeze(rActions a)
+    Event::freeze(Actions* a)
     {
       a->active = false;
     }
 
     void
-    Event::unfreeze(rActions a)
+    Event::unfreeze(Actions* a)
     {
       a->active = true;
     }
@@ -85,11 +87,14 @@ namespace urbi
         sched::rTag t = tag->value_get();
         using boost::bind;
         actions->connections.push_back(
-          t->stop_hook_get().connect(bind(&Event::unregister, this, actions)));
+          t->stop_hook_get().connect(bind(&Event::unregister, this,
+                                          actions.get())));
         actions->connections.push_back(
-          t->freeze_hook_get().connect(bind(&Event::freeze, this, actions)));
+          t->freeze_hook_get().connect(bind(&Event::freeze, this,
+                                            actions.get())));
         actions->connections.push_back(
-          t->unfreeze_hook_get().connect(bind(&Event::unfreeze, this, actions)));
+          t->unfreeze_hook_get().connect(bind(&Event::unfreeze, this,
+                                              actions.get())));
       }
 
       listeners_ << actions;
