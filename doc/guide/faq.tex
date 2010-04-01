@@ -599,11 +599,11 @@ In \dfn{plugin mode}, all the UObject callbacks (timer, bound
 functions, notifyChange and notifyAccess targets) are called
 synchronously in the same thread that executes \us code. All reads and
 writes to \urbi variables, through \dfn{UVar}, are done
-synchronously. Access to the UObject API (reading/writting UVars, using
-\lstinline|call()|...) is possible from other threads, though those operations
-are currently using one serialization lock with the main thread: each UObject
-API call from an other thread will wait until the main thread is ready to
-process it.
+synchronously. Access to the UObject API (reading/writing UVars, using
+\lstinline|call()|...) is possible from other threads, though those
+operations are currently using one serialization lock with the main
+thread: each UObject API call from an other thread will wait until the
+main thread is ready to process it.
 
 
 \subsubsection{Remote mode}
