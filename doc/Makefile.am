@@ -112,7 +112,7 @@ include trajectories/local.mk
 
 .PHONY: spell-check
 SPELL_CHECK = $(abs_top_srcdir)/build-aux/bin/spell-check
-AM_SPELL_CHECKFLAGS = -p urbi.dict
+AM_SPELL_CHECKFLAGS = -p urbi.dict --clean
 EXTRA_DIST += $(top_srcdir)/build-aux/bin/spell-check
 RUN_SPELL_CHECK = $(SPELL_CHECK) $(AM_SPELL_CHECKFLAGS) $(SPELL_CHECKFLAGS)
 spell-check:
