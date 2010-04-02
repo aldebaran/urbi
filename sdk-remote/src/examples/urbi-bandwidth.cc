@@ -36,13 +36,14 @@ bw(const urbi::UMessage &msg)
 		+ 20);
 
   if (msg.tag != "be")
-    {
-      msg.client.printf("received %d bytes in %d miliseconds: bandwidth is %d bytes per second.\n",
-			totalsize,
-			msg.client.getCurrentTime()-starttime,
-			totalsize*1000/(msg.client.getCurrentTime()-starttime));
+  {
+    msg.client.printf("received %d bytes in %d miliseconds: "
+                      "bandwidth is %d bytes per second.\n",
+                      totalsize,
+                      msg.client.getCurrentTime()-starttime,
+                      totalsize*1000/(msg.client.getCurrentTime()-starttime));
 
-      over=true;
+    over = true;
   }
 
   return urbi::URBI_CONTINUE;
@@ -50,27 +51,37 @@ bw(const urbi::UMessage &msg)
 
 int main(int argc, char * argv[])
 {
- if (argc != 2)
-   {
-     printf("usage: %s robot\n", argv[0]);
-     urbi::exit(1);
-   }
+  if (argc != 2)
+  {
+    printf("usage: %s robot\n", argv[0]);
+    urbi::exit(1);
+  }
 
- urbi::UClient c (argv[1]);
+  urbi::UClient c (argv[1]);
 
- if (c.error())
-   urbi::exit(1);
+  if (c.error())
+    urbi::exit(1);
 
- c.printf("requesting raw images from server to test bandwidth...\n");
+  c.printf("Requesting raw images from server to test bandwidth...\n");
 
- c.setCallback(bw,"bw");
- c.setCallback(bw,"be");
+  c.setCallback(bw,"bw");
+  c.setCallback(bw,"be");
 
- c << "camera.format = 0;camera.resolution = 0;noop;noop;"
-      "if (isdef(Channel)) {var Global.bw = Channel.new(\"bw\"); var Global.be = Channel.new(\"be\")|;};";
+  c <<
+    "camera.format = 0;\n"
+    "camera.resolution = 0;\n"
+    "noop;\n"
+    "noop;\n"
+    "if (isdef(Channel))\n"
+    "{\n"
+    "  var Global.bw = Channel.new(\"bw\");\n"
+    "  var Global.be = Channel.new(\"be\")|;\n"
+    "};\n";
 
- starttime=c.getCurrentTime();
- c << " for (var i=0;i<9;i++) bw << camera.val|";
- c << "be << camera.val;";
- urbi::execute();
+  starttime = c.getCurrentTime();
+  c <<
+    "for (var i = 0; i < 9 ; i++)\n"
+    "  bw << camera.val|\n"
+    "be << camera.val;\n";
+  urbi::execute();
 }
