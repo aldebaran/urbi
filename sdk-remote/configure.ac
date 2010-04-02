@@ -158,17 +158,6 @@ case $enable_programs in
   (*)  URBI_APPEND_CONFIGUREFLAGS([--disable-programs]);;
 esac
 
-# --enable-serialization.
-# FIXME: find a way to extract this information from configured libport source.
-URBI_ARG_ENABLE([enable-serialization],
-                [Build with support for serialization], [yes|no], [yes])
-AM_CONDITIONAL([ENABLE_SERIALIZATION],
-               [test x$enable_serialization = xyes])
-if test x$enable_serialization = xyes; then
-  AC_DEFINE([ENABLE_SERIALIZATION], [1],
-            [Define to 1 if serialization is enabled.])
-fi
-
 # Let libjpeg use the same libdir as us.
 URBI_APPEND_CONFIGUREFLAGS(["libdir='${libdir}'"])
 AC_CONFIG_SUBDIRS([jpeg])
