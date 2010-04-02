@@ -63,13 +63,14 @@ namespace urbi
     void
     Event::freeze(Actions* a)
     {
-      a->active = false;
+      a->frozen++;
     }
 
     void
     Event::unfreeze(Actions* a)
     {
-      a->active = true;
+      aver(a->frozen);
+      a->frozen--;
     }
 
     /*---------------.
@@ -114,7 +115,7 @@ namespace urbi
     Event::trigger_job(const rActions& actions, bool detach)
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      if (!actions->active)
+      if (actions->frozen)
         return;
       objects_type args;
       args << this << this;

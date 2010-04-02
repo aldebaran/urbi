@@ -57,7 +57,7 @@ namespace urbi
       struct Actions: public libport::RefCounted
       {
         Actions(rExecutable g, rExecutable e, rExecutable l)
-          : guard(g), enter(e), leave(l), active(true)
+          : guard(g), enter(e), leave(l), frozen(0)
         {}
 	~Actions();
 
@@ -68,7 +68,8 @@ namespace urbi
         }
 
         rExecutable guard, enter, leave;
-        bool active;
+	/// Number of frozen tag this Actions is marked with.
+        unsigned int frozen;
         std::vector<boost::signals::connection> connections;
         runner::tag_stack_type tag_stack;
       };
