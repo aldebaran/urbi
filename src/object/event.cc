@@ -269,7 +269,7 @@ namespace urbi
       for(unsigned i=0; i< src->waiters_.size();)
       {
 	waiter_type& waiter = src->waiters_[i];
-	if (waiter.second == nil_class 
+	if (waiter.second == nil_class
 	  || waiter.second->call(SYMBOL(match), payload)->as_bool())
 	{
 	  waiter.first.unchecked_cast<runner::Runner>()->frozen_set(false);
