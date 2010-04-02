@@ -1,0 +1,589 @@
+\chapter{Building \urbi SDK}
+\label{sec:build}
+
+\lstnewenvironment{package}[1][]
+  {\cxxPre%
+    \lstset{language={},
+      style=UrbiSDKEnv,
+      #1}}
+  {\cxxPost}
+
+This section is meant for people who want to \emph{build} the \urbi
+SDK.  If you just want to install a pre-built \urbi SDK, see
+\autoref{sec:installation}.
+
+\section{Requirements}
+\label{sec:build:req}
+
+To bootstrap this package from its repository, and then to compile it,
+the following tools are needed.
+
+\begin{description}
+\item[Autoconf 2.63 or later]~\\
+
+\begin{package}
+package: autoconf
+\end{package}
+
+\item[Automake 1.11.1 or later] Note that if you have to install
+  Automake by hand (as opposed to ``with your distro's system''), you
+  have to tell its \command{aclocal} that it should also look at the
+  files from the system's aclocal.  If \file{/usr/local/bin/aclocal}
+  is the one you just installed, and \file{/usr/bin/aclocal} is the
+  system's one, then run something like this:
+
+\begin{shell}
+$ dirlist=$(/usr/local/bin/aclocal --print-ac-dir)/dirlist
+$ sudo mkdir -p $(dirname $dirlist)
+$ sudo /usr/bin/aclocal --print-ac-dir >>$dirlist
+\end{shell}
+
+\begin{package}
+package: automake
+\end{package}
+
+\item[bc]
+  Needed by the test suite.
+\begin{package}
+package: bc
+\end{package}
+
+\item[Boost 1.38 or later]
+  Don't try to build it yourself, ask your distro's management to
+  install it.
+\begin{package}
+deb: libboost-dev
+MacPorts: boost
+windows: http://www.boostpro.com/download
+\end{package}
+
+At Gostai, you can use the script \file{common/install/install-boost}
+to set up Boost as we use it.
+
+\item[Ccache]
+  Not a requirement, but it's better to have it.
+\begin{package}
+package: ccache
+\end{package}
+
+\item[Cvs]
+  This surprising requirement comes from the system Bison uses to fetch
+  the current version of the message translations.
+\begin{package}
+package: cvs
+\end{package}
+
+\item[Flex 2.5.35 or later]
+  Beware that 2.5.33 has bugs than prevents this package from building
+  correctly.
+\begin{package}
+package: flex
+\end{package}
+
+\item[G++ 4.0 or later]
+  GCC 4.2 or better is a better option.  Beware that we have a problem
+  with GCC-4.4 which rejects some Bison generated code.  See the FAQ.
+\begin{package}
+deb: g++-4.2
+MacPorts: gcc42
+\end{package}
+
+\item[Git 1.6 or later]
+  Beware that older version behave poorly with submodules.
+\begin{package}
+package: git-core
+\end{package}
+
+\item[Gettext 1.17]
+  Required to bootstrap Bison.  In particular it provides autopoint.
+\begin{package}
+package: gettext
+\end{package}
+
+\item[GNU sha1sum]
+  We need the GNU version of sha1sum.  On Mac Ports it is part of the
+  coreutils package.
+\begin{package}
+package: coreutils
+\end{package}
+
+\item[Gnuplot]
+  Required to generate charts of trajectories for the documentation.
+\begin{package}
+package: gnuplot
+\end{package}
+
+\item[GraphViz] Used to generate some of the figures in the
+  documentation.  There is no GraphViz package for CygWin, so download
+  the MSI file from GraphViz' site, and install it.  Then change your
+  path to go into its bin directory.
+
+\begin{shell}
+wget http://www.graphviz.org/pub/graphviz/stable/windows/graphviz-2.26.msi
+PATH=/cygdrive/c/Program\ Files/Graphviz2.26/bin:$PATH
+\end{shell}
+
+\begin{package}
+package: graphviz
+\end{package}
+
+\item[Help2man]
+Needed by Bison.
+\begin{package}
+package: help2man
+\end{package}
+
+\item[ImageMagick] Used to convert some of the figures in the
+  documentation.
+\begin{package}
+MacPorts: ImageMagick
+deb: imagemagick
+\end{package}
+
+\item[Libtool 2.2 or later] Actually it should no longer be needed, as
+  we embed all the file we need in libport.
+
+\item[PDFLaTeX] TeX Live is the most common distro nowadays.
+\begin{package}
+deb: texlive-base texlive-latex-extra
+MacPorts: texlive texlive_texmf-full
+\end{package}
+
+\item[Python] You need \file{xml/sax}, which seems to be part only of
+  Python 2.6.  Using \command{python\_select} can be useful to state
+  that you want to use Python 2.6 by default (\samp{sudo
+    python\_select python26}).
+\begin{package}
+deb: python2.6
+MacPorts: python26
+MacPorts: python_select
+\end{package}
+
+\item[py-docutils] This is not a requirement, but it's better to have
+  it.  Used by the test suite.  Unfortunately the name of the package
+  varies between distros.  It provides \command{rst2html}.  MacPorts:
+  py26-docutils
+
+\item[socat] Needed by the test suite to send message to an \urbi
+  server.
+\begin{package}
+package: socat
+\end{package}
+
+\item[TeX4HT] Used to generate the HTML documentation.
+\begin{package}
+deb: tex4ht
+MacPorts: texlive_texmf-full
+\end{package}
+
+\item[Texinfo] Needed to compile Bison.
+\begin{package}
+package: texinfo
+\end{package}
+
+\item[Transfig] Needed to convert some figures for documentation
+  (using fig2dev).
+\begin{package}
+package: transfig
+\end{package}
+
+\item[Valgrind] Not needed, but if present, used by the test suite.
+\begin{package}
+package: valgrind
+\end{package}
+
+\item[xsltproc] This is not a requirement, but it's better to have it.
+
+\item[yaml for Python] The AST is generated from a description written
+  in YAML.  Our (Python) tools need to read these files to generate
+  the AST classes.  See \url{http://pyyaml.org/wiki/PyYAML}.  The
+  installation procedure on CygWin is:
+
+\begin{shell}
+$ cd /tmp
+$ wget http://pyyaml.org/download/pyyaml/PyYAML-3.09.zip
+$ unzip PyYAML-3.09.zip
+$ cd pyYAML-3.09
+$ python setup.py install
+\end{shell}
+
+\begin{package}
+MacPorts: py26-yaml
+deb:   python-yaml
+\end{package}
+
+At least on OS X you also need to specify the PYTHONPATH:
+
+\begin{shell}
+export PYTHONPATH="\
+/opt/local/Library/Frameworks/Python.framework/Versions/2.6\
+/lib/python2.6/site-packages:$PYTHONPATH"
+\end{shell}
+\end{description}
+
+\section{Check out}
+We heavily use Git submodules, i.e., we subscribe to other Git
+repositories, which themselves may depend on other submodules.
+Unfortunately Git's support for recursive submodules is not nice.  We
+have scripts in common (named \file{git-my-\var{foo}}, also available
+as \samp{git my-\var{foo}}) that make this easier.  Since they call each
+other, set your PATH to go into common/git.
+
+\begin{description}
+\item[Git 1.6.6 or higher]  There is direct support for submodules
+  from \code{clone}.
+
+\begin{shell}
+$ git clone --branch master --recursive git@git.gostai.com:kernel
+\end{shell}
+
+\item[Old versions of Git] The following sequence expects that you
+  have common/git (common being the Gostai repository) in your PATH.
+
+\begin{shell}
+$ git my-clone git@git.gostai.com:kernel
+$ cd kernel
+$ git checkout -b master --track origin/master
+$ git my-update
+\end{shell}
+\end{description}
+
+\section{Bootstrap}
+Run
+
+\begin{shell}
+$ ./bootstrap
+\end{shell}
+
+\section{Configure}
+You should really compile in another directory than the one containing
+the sources.
+
+\begin{shell}
+$ mkdir _build
+$ cd _build
+$ ../configure OPTIONS...
+\end{shell}
+
+\subsection{configuration options}
+See \samp{../configure --help} for detailed information.  Unless you
+want to do funky stuff, you probably need no option.
+
+To use ccache, pass \samp{CC='ccache gcc' CXX='ccache g++'} as
+arguments to configure:
+
+\begin{shell}
+$ ../configure CC='ccache gcc' CXX='ccache g++' ...
+\end{shell}
+
+\subsection{Windows: CygWin}
+The builds for windows use our wrappers.  These wrappers use a
+database to store the dependencies (actually, to speed up their
+computation).  We use Perl, and its DBI module.  So be sort to have
+sqlite, and DBI.
+
+\begin{shell}
+$ perl -MCPAN -e 'install Bundle::DBI'
+\end{shell}
+
+It might fail.  The most important part is
+
+\begin{shell}
+$ perl -MCPAN -e 'install DBD::SQLite'
+\end{shell}
+
+It might suffice, I don't know...
+
+\subsection{building for Windows.}
+
+We support two builds: using Wine on top of Unix, and using Cygwin on
+top of Windows.
+
+Both builds use our wrappers around MSVC's cl.exe and link.exe.  It
+is still unclear whether it was a good or a bad idea, but the wrappers
+use the same names.  Yet libtool will also need to use the genuine
+link.exe.  So to set up Libtool properly, you will need to pass the
+following as argument to configure:
+
+\begin{shell}
+$ AR=lib.exe                                                    \
+  CC='ccache cl.exe'                                            \
+  CC_FOR_BUILD=gcc                                              \
+  CXX='ccache cl.exe'                                           \
+  LD=link.exe                                                   \
+  DUMPBIN='/cygdrive/c/vcxx8/VC/bin/link.exe -dump -symbols'    \
+  RANLIB=:                                                      \
+  host_alias=mingw32                                            \
+  --host=mingw32
+\end{shell}
+
+where:
+\begin{itemize}
+\item \file{lib.exe}, \file{cl.exe}, \file{link.exe} are the wrappers
+\item \file{/cygdrive/c/vcxx8/VC/bin/link.exe} is the genuine MSVC
+  tool.
+\end{itemize}
+
+Since we are cross-compiling, we also need to specify
+\env{CC\_FOR\_BUILD} so that \command{config.guess} can properly guess
+the type of the build machine.
+
+\subsection{building for Windows using cygwin}
+
+We use our cl.exe wrappers, which is something that Libtool cannot
+know.  So we need to tell it that we are on Windows with Cygwin, and
+pretend we use GCC, so we pretend we run mingw.
+
+The following options have been used with success to compile Urbi SDK
+with Visual C++ 2005.  Adjust to your own case (in particular the
+location of Boost).
+
+Note that `cl.exe'
+
+\begin{shell}
+$ ../configure                                                  \
+  -C                                                            \
+  --prefix=/usr/local/gostai                                    \
+  --enable-compilation-mode=debug                               \
+  --enable-shared                                               \
+  --disable-static                                              \
+  --enable-dependency-tracking                                  \
+  --with-boost=/cygdrive/c/gt-win32-2/d/boost_1_39              \
+  AR=lib.exe                                                    \
+  CC='ccache cl.exe'                                            \
+  CC_FOR_BUILD=gcc                                              \
+  CXX='ccache cl.exe'                                           \
+  LD=link.exe                                                   \
+  DUMPBIN='/cygdrive/c/vcxx8/VC/bin/link.exe -dump -symbols'    \
+  RANLIB=:                                                      \
+  host_alias=mingw32                                            \
+  --host=mingw32
+\end{shell}
+
+%%% FIXME: Obsolete I think.
+%%%
+%%% For some reason, the building of \file{libuobject.dll} will fail.
+%%% You need to remove the reference to \file{libltld.la} from the
+%%% libtool invocation.  This will be simplified later.
+
+\section{Compile}
+Should be straightforward.
+
+\begin{shell}
+$ make -j3
+\end{shell}
+
+Using distcc and ccache is recommended.
+
+\section{Run}
+
+There are some special variables in addition to the environment
+variables documented in the manual.
+
+\begin{envs}
+\item[URBI\_CONSOLE\_MODE] Skip lines in input that look like shell
+  output.  A way to accept *.chk as input.
+
+\item[URBI\_DESUGAR] Display the desugared ASTs instead of the
+  original one.
+
+\item[URBI\_IGNORE\_URBI\_U] Ignore failures (such as differences bw
+  kernel revision and urbi.u revision) during the initialization.
+
+\item[URBI\_LAUNCH] The path the urbi-launch that urbi.exe will exec.
+
+\item[URBI\_NO\_ICE\_CATCHER] Don't try to catch SEGVs.
+
+\item[URBI\_PARSER] Enable Bison parser traces.
+
+\item[URBI\_REPORT] Display stats about execution rounds performed by
+  the kernel.
+
+\item[URBI\_ROOT\_LIB\var{name}] The location of the libraries to
+  load, without the extension.  The \code{LIB\var{name}} are: LIBJPEG,
+  LIBPLUGIN (libuobject plugin), LIBPORT, LIBREMOTE (libuobject
+  remote), LIBSCHED, LIBSERIALIZE, LIBURBI.
+
+\item[URBI\_SCANNER] Enable Flex scanner traces.
+
+\item[URBI\_TOPLEVEL] Force the display the result of the top-level
+  evaluation into the lobby.
+\end{envs}
+
+\section{Check}
+There are several test suites that will be run if you run \samp{make
+  check} (\samp{-j4} works on most machines).  To rerun only the tests
+that failed, use \samp{make recheck}.
+
+\subsection{Lazy test suites}
+The test suites are declared as ``lazy'', i.e., unless its
+dependencies changed, a successful test will be run only once ---
+failing tests do not ``cache'' their results.  Because spelling out
+the dependencies is painful, we rely on a few timestamps:
+
+\begin{files}
+\item[libraries.stamp] Updated when a library is updated (libport,
+  libuobject, etc.).
+
+\item[executables.stamp] Updated when an executable is updated
+  (urbi-launch, etc.).  Depends on libraries.stamp.
+
+\item[urbi.stamp] When Urbi sources (\file{share/urbi/*.u}) are
+  updated.
+
+\item[all.stamp] Updated when any of the three aforementioned
+  timestamps is.
+\end{files}
+
+These timestamps are updated \strong{only} when \command{make} is run
+in the top-level.  Therefore, the following sequence does not work as
+expected:
+
+\begin{shell}
+$ make check -C tests     # All passes.
+$ emacs share/urbi/foo.u
+$ make check -C tests     # All passes again.
+\end{shell}
+
+\noindent
+because the timestamps were not given a chance to notice that some
+Urbi source changed, so Make did not notice the tests really needed to
+be rerun and \strong{the tests were not run}.
+
+You may either just update the timestamps:
+
+\begin{shell}
+$ make check -C tests     # All passes.
+$ emacs share/urbi/foo.u
+$ make stamps             # Update the timestamps.
+$ make check -C tests     # All passes again.
+\end{shell}
+
+or completely disable the test suite laziness:
+
+\begin{shell}
+$ make check -C tests LAZY_TEST_SUITE=
+\end{shell}
+
+\subsection{Partial test suite runs}
+You can run each test suite individually by hand as follows:
+\begin{files}
+\item[sdk-remote/libport/test-suite.log] Tests libport.
+\begin{shell}
+$ make check -C sdk-remote/libport
+\end{shell}
+
+\item[sdk-remote/src/tests/test-suite.log]
+Checks liburbi, and some of the executables we ship.  Requires the
+kernel to be compiled in order to be able to test some of the uobjects.
+
+\begin{shell}
+$ make check -C sdk-remote/src/tests
+\end{shell}
+
+\item[tests/test-suite.log]
+Tests the kernel and uobjects.
+\begin{shell}
+$ make check -C tests
+\end{shell}
+
+\noindent
+Partial runs can be invoked:
+
+\begin{shell}
+$ make check -C tests TESTS='2.x/echo.chk'
+\end{shell}
+
+\noindent
+wildcards are supported:
+
+\begin{shell}
+$ make check -C tests TESTS='2.x/*'
+\end{shell}
+
+\noindent
+To check remote uobjects tests:
+
+\begin{shell}
+$ make check -C tests TESTS='uob/remote/*'
+\end{shell}
+
+\item[doc/tests/test-suite.log] The snippets of code displayed in the
+  documentation are transformed into test files.
+\begin{shell}
+$ make check -C doc
+\end{shell}
+\end{files}
+
+\section{FAQ/Troubleshooting}
+
+\subsection{Complaints about \samp{+=}}
+At random places we use \samp{+=} in \command{/bin/sh} scripts, which
+\command{dash} does not support.  Please, use \command{bash} or
+\command{zsh} instead of \command{dash} as \command{/bin/sh}.
+
+\subsection{error: `<anonymous>' is used uninitialized in this function}
+If you encounter this error:
+
+\begin{lstlisting}[language={}]
+cc1plus: warnings being treated as errors
+parser/ugrammar.hh: In member function \
+  `void yy::parser::yypush_(const char*, int, yy::parser::symbol_type&)':
+parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized \
+  in this function
+parser/ugrammar.cc:1305: note: `<anonymous>' was declared here
+parser/ugrammar.hh: In member function \
+  `void yy::parser::yypush_(const char*, yy::parser::stack_symbol_type&)':
+parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized \
+  in this function
+parser/ugrammar.cc:1475: note: `<anonymous>' was declared here
+\end{lstlisting}
+
+\noindent
+then you found a problem that we don't know how to resolved currently.
+Downgrade from GCC-4.4 to GCC-4.3.
+
+\subsection{AM\_LANGINFO\_CODESET}
+
+If at bootstrap you have something like:
+
+\begin{lstlisting}[language={}]
+configure:12176: error: possibly undefined macro: AM_LANGINFO_CODESET
+ If this token and others are legitimate, please use m4_pattern_allow.
+ See the Autoconf documentation.
+configure:12246: error: possibly undefined macro: gl_GLIBC21
+\end{lstlisting}
+
+\noindent
+it probably means your Automake installation is incomplete.  See the
+Automake item in \autoref{sec:build:req}.
+
+\subsection{git: fatal: Needed a single revision}
+You may experience something like this:
+
+\begin{shell}
+$ git submodule update --init
+fatal: Needed a single revision
+Unable to find current revision in submodule path 'gnulib'
+\end{shell}
+
+\noindent
+this is the sign that the initial checkout of \file{gnulib} went
+completely wrong (I don't know what makes this happen).  Chances are
+that the directory exists, but is empty.  Git does not seem to be able
+to overcome this situation, so:
+
+\begin{shell}
+$ rm -rf gnulib
+$ git submodule update --init
+\end{shell}
+
+\noindent
+et voila.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% End:

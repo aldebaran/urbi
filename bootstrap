@@ -27,7 +27,7 @@ fatal ()
 # packages PACKAGE-SYSTEM-NAME REGEXP
 packages ()
 {
-  perl -n                                     \
+  perl -n                                      \
     -e "my \$package = '$1';"                  \
     -e "my \$regexp = '$2';"                   \
     -e '
@@ -48,9 +48,9 @@ packages ()
       print "At least the following packages are required:\n\n";
       print "$install$Text::Wrap::separator";
       print wrap("   ", "   ", sort @out), "\n\n";
-      print "See README for more information.\n";
+      print "See urbi-sdk.htmldir/build.html for more information.\n";
       print "*" x 66, "\n";
-    }' <README
+    }' <doc/guide/build.tex
 }
 
 if test -x /opt/local/bin/port; then
