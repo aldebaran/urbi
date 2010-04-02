@@ -106,16 +106,6 @@ URBI_ARG_ENABLE([enable-headers-install],
 AM_CONDITIONAL([INSTALL_KERNEL_HEADERS],
                [test x$enable_headers_install = xyes])
 
-# --enable-serialization.
-URBI_ARG_ENABLE([enable-serialization],
-                [Build with support for serialization], [yes|no], [yes])
-AM_CONDITIONAL([ENABLE_SERIALIZATION],
-               [test x$enable_serialization = xyes])
-if test x$enable_serialization = xyes; then
-  AC_DEFINE([ENABLE_SERIALIZATION], [1],
-            [Define to 1 if serialization is enabled.])
-fi
-
 # --enable-programs.
 URBI_ARG_ENABLE([enable-programs],
                 [Build extra programs], [yes|no], [no])
