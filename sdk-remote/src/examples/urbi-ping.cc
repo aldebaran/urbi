@@ -23,7 +23,7 @@ unsigned maxtime;
 unsigned avgtime=0;
 unsigned pingCount=0;
 bool over=false;
-char * rname;
+char* rname;
 bool received;
 unsigned count;
 bool flood = false;
@@ -38,7 +38,8 @@ pong(const urbi::UMessage& msg)
     maxtime = ptime;
 
   avgtime+=ptime;
-  printf("ping reply from %s: seq=%d time=%d ms\n", rname, pingCount+1, ptime);
+  printf("ping reply from %s: seq=%d time=%d ms\n",
+         rname, pingCount+1, ptime);
   ++pingCount;
   received=true;
   if (pingCount == count)
@@ -63,12 +64,14 @@ static void showstats(int)
 }
 
 
-int main(int argc, char * argv[])
+int
+main(int argc, char* argv[])
 {
   signal(SIGINT, showstats);
-  if (argc<2)
+  if (argc < 2)
   {
-    printf("usage: %s robot [msinterval] [count]\n",argv[0]); exit(1);
+    printf("usage: %s robot [msinterval] [count]\n",argv[0]);
+    exit(1);
   }
 
   rname = argv[1];
@@ -76,15 +79,16 @@ int main(int argc, char * argv[])
   // Client initialization
   c = new urbi::UClient(argv[1]);
   c->start();
-  if (c->error()) exit(1);
+  if (c->error())
+    exit(1);
 
-  int interval=1000;
+  int interval = 1000;
 
-  if (argc>2)
+  if (2 < argc)
     interval=strtol(argv[2],NULL,0);
 
   // count initialization
-  if (argc>3)
+  if (3 < argc)
     count = strtol(argv[3],NULL,0);
   else
     count = 0;
@@ -93,13 +97,8 @@ int main(int argc, char * argv[])
 
   received=true;
 
-  if (!interval)
-    {
-    flood = true;
-    c->send("uping << ping;");
-    }
-  else
-    for (unsigned i=0; i<count || !count; ++i)
+  if (interval)
+    for (unsigned i = 0; i < count || !count; ++i)
     {
       while (!received)
 	usleep(200);
@@ -108,6 +107,11 @@ int main(int argc, char * argv[])
       c->send("uping << ping;");
       usleep(interval*1000);
     }
+  else
+  {
+    flood = true;
+    c->send("uping << ping;");
+  }
 
   while (!over)
     usleep(1000000);
