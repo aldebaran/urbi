@@ -264,9 +264,21 @@ namespace urbi
     Event::waituntil_release(rObject payload)
     {
       rEvent src = source();
-      foreach (const waiter_type& waiter, src->waiters_)
-        if (waiter.second == nil_class || waiter.second->call(SYMBOL(match), payload)->as_bool())
-          waiter.first.unchecked_cast<runner::Runner>()->frozen_set(false);
+      // This iteration needs to remove some elements as it goes.
+      for(unsigned i=0; i< src->waiters_.size();)
+      {
+	waiter_type& waiter = src->waiters_[i];
+	if (waiter.second == nil_class 
+	  || waiter.second->call(SYMBOL(match), payload)->as_bool())
+	{
+	  waiter.first.unchecked_cast<runner::Runner>()->frozen_set(false);
+	  // Yes this is also valid for the last element.
+	  src->waiters_[i] = src->waiters_[src->waiters_.size()-1];
+	  src->waiters_.pop_back();
+	}
+	else
+	  ++i;
+      }
     }
 
     bool
