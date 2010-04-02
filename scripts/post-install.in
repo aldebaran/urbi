@@ -25,7 +25,53 @@ libdir="@libdir@"
 ## Post-install.  ##
 ## -------------- ##
 
-# Shared lib dependencies.
+# It is more logical to strip after having run check-lib-deps, since
+# the latter complete the package by installing the foreign
+# dependencies, which might have to be stripped too.  Unfortunately
+# this triggers a bug in the binutils' strip utility.  Read the BUGS
+# section of patchelf
+# (http://hydra.nixos.org/build/114505/download/1/README).
+#
+# It might be better to call strip from check-lib-deps itself.
+
+# Strip (before check-lib-deps).
+#
+# When building a release for non-Windows platforms, strip the
+# binaries and the libraries.  Pay attention that on OS X strip
+# when given no option behaves as "strip -S -x -X":
+#
+# -S Remove the debugging symbol table entries (those created by
+# -the -g option to cc(1) and other compilers).
+#
+# -X Remove the local symbols whose names begin with `L'.
+#
+# -x Remove all local symbols (saving only global symbols).
+#
+# As a result, the build (on Leopard) works on Leopard, but not
+# on Snow Leopard (I don't know why exactly).  On Linux, too
+# "strip" does more than simply "strip -S", but since it seems to
+# work and it does save space, use the fully blown strip:
+#  58M libuobject.so     no strip
+# 7.8M libuobject.2.so   strip -S
+# 6.4M libuobject.3.so   strip
+case $COMPILATION_MODE_DEBUG:$URBI_HOST_OS in
+  (false:macos) : ${STRIP='strip -S'};;
+  (false:linux) : ${STRIP=strip};;
+esac
+if test -n "$STRIP"; then
+  # Do not show errors -- there are shell scripts there.
+  find "$DESTDIR$prefix/bin" -type f |
+    xargs $STRIP 2>/dev/null || true
+  find "$DESTDIR$prefix"                    \
+          -type f '(' -name '*.so.*'        \
+                   -o -name '*.so'          \
+                   -o -name '*.dylib'       \
+                   -o -name '*.a'           \
+                   ')' |
+    xargs $STRIP || true
+fi
+
+# Shared lib dependencies (after strip).
 #
 # Complete the package with missing libraries, make it relocatable,
 # and check there are no missing dependencies.
@@ -78,43 +124,6 @@ find "$DESTDIR$prefix" -name libtool -exec chmod u+x '{}' ';'
 
 # Set more permissive access rights.
 chmod -R a+rX "$DESTDIR$prefix"
-
-# Strip.
-#
-# When building a release for non-Windows platforms, strip the
-# binaries and the libraries.  Pay attention that on OS X strip
-# when given no option behaves as "strip -S -x -X":
-#
-# -S Remove the debugging symbol table entries (those created by
-# -the -g option to cc(1) and other compilers).
-#
-# -X Remove the local symbols whose names begin with `L'.
-#
-# -x Remove all local symbols (saving only global symbols).
-#
-# As a result, the build (on Leopard) works on Leopard, but not
-# on Snow Leopard (I don't know why exactly).  On Linux, too
-# "strip" does more than simply "strip -S", but since it seems to
-# work and it does save space, use the fully blown strip:
-#  58M libuobject.so     no strip
-# 7.8M libuobject.2.so   strip -S
-# 6.4M libuobject.3.so   strip
-case $COMPILATION_MODE_DEBUG:$URBI_HOST_OS in
-  (false:macos) : ${STRIP='strip -S'};;
-  (false:linux) : ${STRIP=strip};;
-esac
-if test -n "$STRIP"; then
-  # Do not show errors -- there are shell scripts there.
-  find "$DESTDIR$prefix/bin" -type f |
-    xargs $STRIP 2>/dev/null || true
-  find "$DESTDIR$prefix"                    \
-          -type f '(' -name '*.so.*'        \
-                   -o -name '*.so'          \
-                   -o -name '*.dylib'       \
-                   -o -name '*.a'           \
-                   ')' |
-    xargs $STRIP || true
-fi
 
 # We have some problems with the *.la files.  For instance, although
 # we use Boost as static libraries, they appear as runtime
