@@ -53,19 +53,9 @@
 namespace kernel
 {
 
-  static
-  inline
-  std::string
-  uid(const void* p)
-  {
-    std::ostringstream o;
-    o << 'U' << (ptrdiff_t) p;
-    return o.str();
-  }
-
   UConnection::UConnection(UServer& server, size_t packetSize)
     : uerror_(USUCCESS)
-    , connection_tag_(uid(this))
+    , connection_tag_(libport::format("U%p", this))
     , closing_(false)
     , receiving_(false)
     , server_(server)
