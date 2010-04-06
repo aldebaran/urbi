@@ -76,6 +76,7 @@ namespace urbi
       typedef libport::intrusive_ptr<Actions> rActions;
 
       void waituntil_release(rObject payload);
+      void waituntil_remove(libport::intrusive_ptr<libport::RefCounted> what);
       rEvent source();
       void trigger_job(const rActions& actions, bool detach);
 

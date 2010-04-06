@@ -169,7 +169,6 @@ namespace urbi
     Event::waituntil(rObject pattern)
     {
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      waiters_.push_back(std::make_pair(runner::rRunner(&r), pattern));
 
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
@@ -178,9 +177,24 @@ namespace urbi
         if (pattern == nil_class || pattern->call(SYMBOL(match), active.second)->as_bool())
           return;
 
-      r.frozen_set(true);
-      // Yield for the frozen state to be taken in account.
-      yield();
+      rTag t(new Tag);
+      waiters_.push_back(std::make_pair(t, pattern));
+      libport::Finally f;
+      r.apply_tag(t, &f);
+      f << boost::bind(&Event::waituntil_remove, this, t);
+      t->freeze();// Will yield
+    }
+
+    void
+    Event::waituntil_remove(libport::intrusive_ptr<libport::RefCounted> what)
+    {
+      for(unsigned i=0; i < waiters_.size(); ++i)
+        if (waiters_[i].first == what)
+        {
+          waiters_[i] = waiters_[waiters_.size()-1];
+          waiters_.pop_back();
+          return;
+        }
     }
 
     rEvent
@@ -272,7 +286,7 @@ namespace urbi
 	if (waiter.second == nil_class
 	  || waiter.second->call(SYMBOL(match), payload)->as_bool())
 	{
-	  waiter.first.unchecked_cast<runner::Runner>()->frozen_set(false);
+	  waiter.first.unchecked_cast<object::Tag>()->unfreeze();
 	  // Yes this is also valid for the last element.
 	  src->waiters_[i] = src->waiters_[src->waiters_.size()-1];
 	  src->waiters_.pop_back();
