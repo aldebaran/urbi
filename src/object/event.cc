@@ -178,7 +178,7 @@ namespace urbi
           return;
 
       rTag t(new Tag);
-      waiters_.push_back(std::make_pair(t, pattern));
+      waiters_.push_back(Waiter(t, &r, pattern));
       libport::Finally f;
       r.apply_tag(t, &f);
       f << boost::bind(&Event::waituntil_remove, this, t);
@@ -186,10 +186,10 @@ namespace urbi
     }
 
     void
-    Event::waituntil_remove(libport::intrusive_ptr<libport::RefCounted> what)
+    Event::waituntil_remove(rTag what)
     {
       for(unsigned i=0; i < waiters_.size(); ++i)
-        if (waiters_[i].first == what)
+        if (waiters_[i].controlTag == what)
         {
           waiters_[i] = waiters_[waiters_.size()-1];
           waiters_.pop_back();
@@ -282,11 +282,26 @@ namespace urbi
       // This iteration needs to remove some elements as it goes.
       for(unsigned i=0; i< src->waiters_.size();)
       {
-	waiter_type& waiter = src->waiters_[i];
-	if (waiter.second == nil_class
-	  || waiter.second->call(SYMBOL(match), payload)->as_bool())
+	Waiter& waiter = src->waiters_[i];
+	if (waiter.pattern == nil_class
+	  || waiter.pattern->call(SYMBOL(match), payload)->as_bool())
 	{
-	  waiter.first.unchecked_cast<object::Tag>()->unfreeze();
+          // Check if any tag is frozen beside the first one
+          bool frozen = false;
+          foreach(const rTag& t, waiter.runner->tag_stack_get_all())
+          {
+            if (t!= waiter.controlTag && t->frozen())
+            {
+              frozen = true;
+              break;
+            }
+          }
+          if (frozen) // Do not trigger a frozen at.
+          {
+            ++i;
+            continue;
+          }
+	  waiter.controlTag->unfreeze();
 	  // Yes this is also valid for the last element.
 	  src->waiters_[i] = src->waiters_[src->waiters_.size()-1];
 	  src->waiters_.pop_back();

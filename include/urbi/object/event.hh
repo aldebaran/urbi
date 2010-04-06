@@ -76,7 +76,7 @@ namespace urbi
       typedef libport::intrusive_ptr<Actions> rActions;
 
       void waituntil_release(rObject payload);
-      void waituntil_remove(libport::intrusive_ptr<libport::RefCounted> what);
+      void waituntil_remove(rTag what);
       rEvent source();
       void trigger_job(const rActions& actions, bool detach);
 
@@ -91,9 +91,16 @@ namespace urbi
       typedef std::vector<rActions> Listeners;
       Listeners listeners_;
 
+      struct Waiter
+      {
+        Waiter(rTag ct, runner::Runner* r, rObject& p)
+        : controlTag(ct), runner(r), pattern(p) {}
+        rTag controlTag;
+        runner::Runner* runner;
+        rObject pattern;
+      };
       /// Job waiting for this event.
-      typedef std::pair<libport::intrusive_ptr<libport::RefCounted>, rObject> waiter_type;
-      std::vector<waiter_type> waiters_;
+      std::vector<Waiter> waiters_;
 
       /// Leave callbacks to trigger on stop.
       typedef std::pair<rExecutable, objects_type> stop_job_type;
