@@ -78,8 +78,8 @@ namespace urbi
     }
     catch (const libport::Exception& e)
     {
-      LIBPORT_ECHO(e.what());
     }
     return res;
   }
 }
+
