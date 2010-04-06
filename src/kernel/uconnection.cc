@@ -100,8 +100,8 @@ namespace kernel
   UConnection::initialize()
   {
     recv_queue_->push
-      (SYNCLINE_WRAP(+libport::format("initialize(%s)|;",
-                                      kernel::urbiserver->opt_banner_get())+));
+      (libport::format(SYNCLINE_WRAP("initialize(%s)|;"),
+                       kernel::urbiserver->opt_banner_get()));
     received("");
   }
 

@@ -45,8 +45,8 @@ namespace kernel
   UGhostConnection::initialize()
   {
     recv_queue_->push
-      (SYNCLINE_WRAP(+libport::format("initialize(%s, true)|;",
-                                      kernel::urbiserver->opt_banner_get())+));
+      (libport::format(SYNCLINE_WRAP("initialize(%s, true)|;"),
+                       kernel::urbiserver->opt_banner_get()));
     received("");
   }
 
