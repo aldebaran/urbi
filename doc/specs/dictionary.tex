@@ -78,7 +78,7 @@ An extra comma can be added at the end of the list.
   Negation of \lstinline|Dictionary.empty|.
 \begin{urbiassert}
 [=>].asBool == false;
-[=>].set("key", "value").asBool == true;
+["key" => "value"].asBool == true;
 \end{urbiassert}
 
 \item[asList]
@@ -113,8 +113,8 @@ An extra comma can be added at the end of the list.
   Whether the dictionary is empty.
 
 \begin{urbiassert}
- [=>].empty;
-!["key" => "value"].empty;
+[=>].empty == true;
+["key" => "value"].empty == false;
 \end{urbiassert}
 
 \item \lstinline|erase(\var{key})|\\
