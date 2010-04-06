@@ -94,10 +94,19 @@ class Global.Control
 
   function finally(action, reaction)
   {
+    var s = Semaphore.new(0) |
     var t = Tag.new |
-    at (t.leave?)
-      reaction() |
-    t: action()
+    // We want to ensure that reaction is called on the end no matter what,
+    // so we must disown from the tag stack.
+    // We do not know how long disown takes to start, so be safe and use a lock.
+    disown({
+      {waituntil(t.leave?) | reaction()}
+      & s.release
+           }) &
+    {
+      s.acquire |
+      t: action()
+    }
   };
 };
 
