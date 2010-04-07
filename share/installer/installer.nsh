@@ -38,11 +38,21 @@ Section
   CreateShortcut  "$SMPROGRAMS\Gostai\doc.lnk" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf"
   CreateShortcut  "$SMPROGRAMS\Gostai\uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
+
 ; Run vcredist to install Visual Studio libraries.
+; msiexec arguments are /qn (mute) or /qb! (no user interactions)
 ; Use this simpler line if you use the vcredist shipped with visual studio
-;  ExecWait '"$INSTDIR\\vcredist_x86.exe" /q:a /c:"msiexec /i vcredist.msi /qn"'
+;  ExecWait '"$INSTDIR\vcredist-x86.exe" /q:a /c:"msiexec /i vcredist.msi /qn"' $R0
 ; Use this line if you use the standalone one from www.microsoft.com
-  ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a /c:\\\"VCREDI~1.EXE /q:a /c:\\\"\\\"msiexec /i vcredist.msi /qn\\\"\\\" \\\"'
+;  ExecWait '"$INSTDIR\vcredist-x86.exe" /q:a /c:"VCREDI~1.EXE /q:a /c:""msiexec /i vcredist.msi /qn"" "' $R0
+
+; Do not mute the installation of vcredist because it may raised an error
+; message which cannot be catch with the exit code.  However the /q option
+; is used to avoid user interactions.
+  ExecWait '"$INSTDIR\vcredist-x86.exe" /q'
+
+; Error 1723 => Need to update the Windows Installer to a newer version.
+
 
 ; Install urbi console
   IfFileExists $INSTDIR\urbi-console-installer.exe 0 +2
