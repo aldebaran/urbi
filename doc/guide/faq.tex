@@ -502,45 +502,33 @@ class myObject
 
 \subsection{Tags}
 \index{tag}
+
+See \autoref{sec:tut:tags}, in the \us User Manual, for an
+introduction about Tags.  Then for a definition of the Tag objects
+(construction, use, slots, etc.), see \refObject{Tag}.
+
 \subsubsection{How do I create a tag?}
 See \autoref{stdlib:tag:ctor}.
 
 \subsubsection{How do I stop a tag?}
-
-Use the \lstinline|stop| method.
+Use the \lstinline|stop| method (see \autoref{sec:specs:tag:stop}).
 \begin{urbiunchecked}
 myTag.stop;
 \end{urbiunchecked}
 
 \subsubsection{Can tagged statements return a value?}
-By default, tagged statements will return the value of last evaluated
-expression if they have not been stopped:
+Yes, by giving it as a parameter to \lstinline{stop}.  See
+\autoref{sec:specs:tag:stop}.
 
-\begin{urbiunchecked}
-var myTag = Tag.new;
-var res;
-res = { myTag: { do_something; 42 } };
-\end{urbiunchecked}
-
-After the execution, \lstinline{res} will contain 42.
-
-However, when a tag is stopped, all the statements tagged with that
-tag may be forced to return a value, by giving it as a parameter to
-\lstinline{stop}:
-
-\begin{urbiunchecked}
-var myTag = Tag.new;
-var res;
-{ res = { myTag: sleep(inf) } }, // Sleep forever (infinite amount of time),
-                                 // note the "," to put the tagged statement in
-                                 // the background
-myTag.stop(42);
-res;
-[00000001] 42
-\end{urbiunchecked}
 
 \subsection{Events}
 \index{event}
+
+See \autoref{sec:tut:event-prog}, in the \us User Manual, for an
+introduction about event-based programming.  Then for a definition of
+the Event objects (construction, use, slots, etc.), see
+\refObject{Event}.
+
 \subsubsection{How do I create an event?}
 Events are objects, and must be created as any object by using
 \lstinline{new} to create derivatives of the \lstinline{Event} object.
@@ -548,6 +536,8 @@ Events are objects, and must be created as any object by using
 \begin{urbiunchecked}
 var ev = Event.new;
 \end{urbiunchecked}
+
+See \autoref{sec:stdlib:event:ctor}.
 
 \subsubsection{How do I emit an event?}
 Use the \lstinline|!| operator.
@@ -557,7 +547,8 @@ ev!(1, "foo");
 \end{urbiunchecked}
 
 \subsubsection{How do I catch an event?}
-Use the \lstinline|at(\var{event}?\var{args})| construct.
+Use the \lstinline|at(\var{event}?\var{args})| construct (see
+\autoref{sec:lang:at}).
 
 \begin{urbiunchecked}
 at(ev?(1, var msg))
@@ -571,10 +562,10 @@ variable) in the body part of the \lstinline{at} construct, with
 whatever value is present in the event that triggered the
 \lstinline{at}.
 
-\subsection{Lists}
-\index{list}
-\subsubsection{How can I iterate over a list?}
+\subsection{Standard Library}
 
+\subsubsection{How can I iterate over a list?}
+\index{list}
 Use the \lstinline{for} construct (\autoref{sec:lang:for:each}), or
 the \lstinline|each| method (\refObject{List}):
 
@@ -721,12 +712,10 @@ all its attempts to load a file to stderr.
 Note that this problem is Mac OS X and Linux specific.
 
 \section{Miscellaneous}
-\subsection{Releases}
-\subsubsection{What has changed since the latest release?}
+\subsection{What has changed since the latest release?}
 See \autoref{sec:news}.
 
-\subsection{Bugs}
-\subsubsection{How do I report a bug?}
+\subsection{How do I report a bug?}
 
 Bug reports should be sent to \email{kernel-bugs@lists.gostai.com}, it
 will be addressed as fast as possible.  Please, be sure to read the
