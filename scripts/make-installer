@@ -24,7 +24,7 @@ error ()
 
 finalize ()
 {
-  $RM -rf "$tmp"
+  rm -rf "$tmp"
 }
 
 ## ----------- ##
