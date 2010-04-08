@@ -1364,6 +1364,8 @@ hierarchy. You can access those classes by including the files
 \file{urbi/naming-standard.u} and \file{urbi/component.h}.
 
 \subsection{Interface}
+\labelObject{Interface}
+
 The \code{Interface} class contains \us objects for all the interfaces defined
 in this document. Implementations must inherit from the correct interface.
 
@@ -1378,6 +1380,8 @@ The \code{Interface.interfaces} method can be called to get a list of all
 the interfaces an object implements.
 
 \subsection{Component}
+\labelObject{Component}
+
 The \code{Component} class can be used to create intermediate nodes of the
 hierarchy. It provides the following methods:
 
@@ -1393,21 +1397,21 @@ hierarchy. It provides the following methods:
   \lstinline|\var{name}|. The device must inherit from at least one Interface.
 
 \item \lstinline|makeCompactNames| \\
-  This function must be called once on the root node (\code{robot}) after the
-  hierarchy is completed.
-  It automatically computes the short name of all the devices, and insert them as
-  slots of the \code{Global} object.
+  This function must be called once on the root node (\code{robot})
+  after the hierarchy is completed.  It automatically computes the
+  short name of all the devices, and insert them as slots of the
+  \code{Global} object.
 
 \item \lstinline|dump| \\
   Display a hierarchical view of the component hierarchy.
 
 \item \lstinline|flatDump| \\
-  Display all the devices in the hierarchy, sorted by the Interface they
-  implement.
-
+  Display all the devices in the hierarchy, sorted by the Interface
+  they implement.
 \end{itemize}
 
 \subsection{Localizer}
+\labelObject{Localizer}
 
 The \code{Localizer} class is a special type of \code{Component} that stores
 other components based on their localization. It provides a \code{[]} operator
