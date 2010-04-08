@@ -8,8 +8,9 @@ device (servomotor, speaker, camera\ldots), and interfacing
 higher-lever components (voice recognition, object detection\ldots)
 with \urbi.
 
-The API defines the UObject class. Each instance of a derived class in
-your \Cxx code will correspond to an \us object sharing some of its
+The \Cxx API defines the UObject class. To each instance of a \Cxx class
+deriving from UObject
+will correspond an \us object sharing some of its
 methods and attributes. The API provides methods to declare which
 elements of your object are to be shared. To share a variable with
 \urbi, you have to give it the type UVar. This type is a container
@@ -112,8 +113,11 @@ named \lstinline|init| with the appropriate number of arguments.
 \subsection{Simple binding}
 
 You can register any member function of your \UObject using the macro
-\lstinline|UBindFunction(\var{class-name}, \var{function-name})|. Once
-done, the function can be called from \us.
+
+% Fix line wrap.
+\lstinline|UBindFunction(\var{class-name}, \var{function-name})|.
+
+Once done, the function can be called from \us.
 
 The following types for arguments and return value are supported:
 

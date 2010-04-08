@@ -16,13 +16,14 @@ For now, we've separated our different commands with a semicolon
 \begin{itemize}
 \item ``\lstinline{;}'': Serialization operator. Wait for the left
   operand to finish before continuing.
-\item ``\lstinline{&}'': Parallelism n-ary operator. All operands are
-  started simultaneously, and executed in parallel. The \lstinline{&}
-  block itself finishes when both operands finish. \lstinline{&} has
+\item ``\lstinline{&}'': Parallelism n-ary operator. All its operands are
+  started simultaneously, and executed in parallel. The \lstinline{&} block
+  itself finishes when all the operands have finished. \lstinline{&} has
   higher precedence than other separators.
-\item ``\lstinline{,}'': Background operator. Left operand is started,
-  and evaluation continues immediately. End of execution of the left
-  operand is waited at the exit of the scope.
+\item ``\lstinline{,}'': Background operator. Its left operand is started,
+  and then it proceeds immediately to its right operand.  This operator is
+  bound to scopes: when used inside a scope, the scope itself finishes only
+  when all the statements backgrounded with \samp{,} have finished.
 \end{itemize}
 
 The example below demonstrates the use of \lstinline{&} to launch two
@@ -66,9 +67,11 @@ The difference between ``\lstinline{&}'' and ``\lstinline{,}'' is
 rather subtle:
 
 \begin{itemize}
-\item In the top level, will wait for you to terminate your
-  ``\lstinline{&}'' block to start executing anything, while it will
-  run the code terminated by ``\lstinline{,}'' immediately.
+\item In the top level, no operand of a job will start ``\lstinline{&}''
+  until all are known.  So if you send a line ending with ``\lstinline{&}'',
+  the system will wait for the right operand (in fact, it will wait for a
+  ``\lstinline{,}'' or a ``\lstinline{;}'') before firing its left operand.
+  A statement ending with ``\lstinline{,}'' will be fired immediately.
 \item Execution is blocked after a ``\lstinline{&}'' group until all
   its children have finished.
 \end{itemize}
