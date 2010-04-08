@@ -100,6 +100,8 @@ fileerror:
 
 gettingStarted:
     MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to start using URBI now?" IDNO done
+    ReadEnvStr $2 COMSPEC
+    Exec '"$2" /K "cd $INSTDIR\bin"'
     ExecShell "open" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.htmldir\getting-started.html"
 
 done:
