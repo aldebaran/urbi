@@ -4,23 +4,6 @@ A \dfn{tag} is an object meant to label blocks of code in order to
 control them externally.  Tagged code can be frozen, resumed,
 stopped\ldots See also \autoref{sec:tut:tags}.
 
-\subsection{Construction}
-\label{stdlib:tag:ctor}
-
-As any object, tags are created using \lstinline{new} to create
-derivatives of the \lstinline{Tag} object.  The name is optional, it
-makes easier to display a tag and remember what it is.
-
-\begin{urbiscript}[firstnumber=1]
-// Anonymous tag.
-var t1 = Tag.new;
-[00000001] Tag<tag_8>
-
-// Named tag.
-var t2 = Tag.new("cool name");
-[00000001] Tag<cool name>
-\end{urbiscript}
-
 \subsection{Examples}
 
 \subsubsection{Stop}
@@ -358,6 +341,23 @@ mytag.begin.end: echo(3);
 [00000000] *** mytag: begin
 [00000000] *** 3
 [00000000] *** mytag: end
+\end{urbiscript}
+
+\subsection{Construction}
+\label{stdlib:tag:ctor}
+
+As any object, tags are created using \lstinline{new} to create
+derivatives of the \lstinline{Tag} object.  The name is optional, it
+makes easier to display a tag and remember what it is.
+
+\begin{urbiscript}[firstnumber=1]
+// Anonymous tag.
+var t1 = Tag.new;
+[00000001] Tag<tag_8>
+
+// Named tag.
+var t2 = Tag.new("cool name");
+[00000001] Tag<cool name>
 \end{urbiscript}
 
 \subsection{Slots}
