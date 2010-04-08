@@ -25,12 +25,12 @@ the following tools are needed.
 package: autoconf
 \end{package}
 
-\item[Automake 1.11.1 or later] Note that if you have to install
-  Automake by hand (as opposed to ``with your distro's system''), you
-  have to tell its \command{aclocal} that it should also look at the
-  files from the system's aclocal.  If \file{/usr/local/bin/aclocal}
-  is the one you just installed, and \file{/usr/bin/aclocal} is the
-  system's one, then run something like this:
+\item[Automake 1.11.1 or later] Note that if you have to install Automake by
+  hand (as opposed to ``with your distribution's system''), you have to tell
+  its \command{aclocal} that it should also look at the files from the
+  system's aclocal.  If \file{/usr/local/bin/aclocal} is the one you just
+  installed, and \file{/usr/bin/aclocal} is the system's one, then run
+  something like this:
 
 \begin{shell}
 $ dirlist=$(/usr/local/bin/aclocal --print-ac-dir)/dirlist
@@ -48,9 +48,8 @@ package: automake
 package: bc
 \end{package}
 
-\item[Boost 1.38 or later]
-  Don't try to build it yourself, ask your distro's management to
-  install it.
+\item[Boost 1.38 or later] Don't try to build it yourself, ask your
+  distribution's management to install it.
 \begin{package}
 deb: libboost-dev
 MacPorts: boost
@@ -114,7 +113,7 @@ package: gnuplot
 \end{package}
 
 \item[GraphViz] Used to generate some of the figures in the
-  documentation.  There is no GraphViz package for CygWin, so download
+  documentation.  There is no GraphViz package for Cygwin, so download
   the MSI file from GraphViz' site, and install it.  Then change your
   path to go into its bin directory.
 
@@ -143,7 +142,7 @@ deb: imagemagick
 \item[Libtool 2.2 or later] Actually it should no longer be needed, as
   we embed all the file we need in libport.
 
-\item[PDFLaTeX] TeX Live is the most common distro nowadays.
+\item[PDFLaTeX] TeX Live is the most common \TeX{} distribution nowadays.
 \begin{package}
 deb: texlive-base texlive-latex-extra
 MacPorts: texlive texlive_texmf-full
@@ -161,7 +160,7 @@ MacPorts: python_select
 
 \item[py-docutils] This is not a requirement, but it's better to have
   it.  Used by the test suite.  Unfortunately the name of the package
-  varies between distros.  It provides \command{rst2html}.  MacPorts:
+  varies between distributions.  It provides \command{rst2html}.  MacPorts:
   py26-docutils
 
 \item[socat] Needed by the test suite to send message to an \urbi
@@ -197,7 +196,7 @@ package: valgrind
 \item[yaml for Python] The AST is generated from a description written
   in YAML.  Our (Python) tools need to read these files to generate
   the AST classes.  See \url{http://pyyaml.org/wiki/PyYAML}.  The
-  installation procedure on CygWin is:
+  installation procedure on Cygwin is:
 
 \begin{shell}
 $ cd /tmp
@@ -276,7 +275,7 @@ arguments to configure:
 $ ../configure CC='ccache gcc' CXX='ccache g++' ...
 \end{shell}
 
-\subsection{Windows: CygWin}
+\subsection{Windows: Cygwin}
 The builds for windows use our wrappers.  These wrappers use a
 database to store the dependencies (actually, to speed up their
 computation).  We use Perl, and its DBI module.  So be sort to have
@@ -294,7 +293,7 @@ $ perl -MCPAN -e 'install DBD::SQLite'
 
 It might suffice, I don't know...
 
-\subsection{building for Windows.}
+\subsection{building For Windows}
 
 We support two builds: using Wine on top of Unix, and using Cygwin on
 top of Windows.
@@ -328,7 +327,7 @@ Since we are cross-compiling, we also need to specify
 \env{CC\_FOR\_BUILD} so that \command{config.guess} can properly guess
 the type of the build machine.
 
-\subsection{building for Windows using cygwin}
+\subsection{Building for Windows using Cygwin}
 
 We use our cl.exe wrappers, which is something that Libtool cannot
 know.  So we need to tell it that we are on Windows with Cygwin, and
@@ -337,8 +336,6 @@ pretend we use GCC, so we pretend we run mingw.
 The following options have been used with success to compile Urbi SDK
 with Visual C++ 2005.  Adjust to your own case (in particular the
 location of Boost).
-
-Note that `cl.exe'
 
 \begin{shell}
 $ ../configure                                                  \
@@ -387,7 +384,7 @@ variables documented in the manual.
 \item[URBI\_DESUGAR] Display the desugared ASTs instead of the
   original one.
 
-\item[URBI\_IGNORE\_URBI\_U] Ignore failures (such as differences bw
+\item[URBI\_IGNORE\_URBI\_U] Ignore failures (such as differences between
   kernel revision and urbi.u revision) during the initialization.
 
 \item[URBI\_LAUNCH] The path the urbi-launch that urbi.exe will exec.

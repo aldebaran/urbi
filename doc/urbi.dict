@@ -1,4 +1,4 @@
-personal_ws-1.1 en 840 utf-8
+personal_ws-1.1 en 867 utf-8
 aaa
 abc
 abcdef
@@ -151,13 +151,16 @@ cvs
 cwd
 CXX
 Cyberbotics
+cygcheck
 cygdrive
-cygwin
+Cygwin
 Damerau
 DBD
+DBI
 DCM
 decompile
 deepclean
+DependencyWalker
 dequeue
 dereferenced
 destructor
@@ -169,6 +172,7 @@ dev
 DGain
 DifferentialWheels
 dir
+dirlist
 dirname
 distanceMax
 distanceMin
@@ -182,8 +186,12 @@ doesNotExist
 doin
 DUMPBIN
 DYLD
+dyld
+dylib
 eachBg
 eachi
+eae
+eba
 ec
 eE
 elbowR
@@ -200,6 +208,7 @@ env
 EOF
 eq
 eration
+et
 ev
 eval
 evalArgAt
@@ -213,7 +222,9 @@ faq
 fastMachine
 fb
 fbar
+fe
 FileNotFound
+filesystem
 Finalizable
 findBase
 finfo
@@ -361,11 +372,13 @@ lang
 LANGINFO
 LaunchThread
 LD
+ldd
 ledL
 ledR
 leds
 Levenshtein
 lhs
+libboost
 LIBJPEG
 libltdl
 libltld
@@ -392,6 +405,7 @@ locateSlot
 lockMode
 lookup
 loopn
+lport
 lshift
 lst
 ltrace
@@ -420,7 +434,9 @@ Monde
 monomethods
 mooh
 msg
+MSI
 MSVC
+MSVC's
 multi
 mutex
 mv
@@ -490,6 +506,7 @@ Oper
 Orderable
 os
 osx
+otool
 OutputStream
 OutputStreams
 ownsSlot
@@ -571,8 +588,10 @@ rlwrap
 RotationalMotor
 RotationalSpeedMotor
 rshift
+rst
 runningcommands
 runServer
+runtime
 runTo
 sameAs
 SAS
@@ -606,6 +625,7 @@ setSlot
 setThreadLimit
 setTrace
 sgn
+sha
 shiftedTime
 shiftValue
 shoulderPitchR
@@ -632,6 +652,7 @@ SpeechRecognizer
 SpeedAdaptive
 spykee
 SQLite
+sqlite
 sqr
 sqrt
 srandom
@@ -729,6 +750,7 @@ UEvent
 UFactory
 ufactory
 ufloat
+ugrammar
 uid
 uids
 UImage
@@ -769,6 +791,7 @@ urbi
 urbiHelloWorld
 urbiscript
 urbiscript's
+UrbiSDKEnv
 urbisend
 urbistarter
 URegister
@@ -796,6 +819,7 @@ variableName
 variadic
 varName
 varname
+VC
 vcxx
 versa
 verylightgray
@@ -825,6 +849,7 @@ writeToVar
 xABCDEF
 xabcdef
 xADDR
+xb
 xFF
 xfF
 xfov
@@ -835,7 +860,10 @@ yaml
 yfov
 yuv
 YUYV
+yy
+yypush
 yyyy
 zA
+zsh
 zxf
 Été
