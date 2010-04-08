@@ -50,27 +50,6 @@ builddir=$6
 DESTDIR=$7
 upname=$8
 
-check_equal ()
-{
-  local lhs
-  local rhs
-  eval "lhs=\$$1"
-  eval "rhs=\$$2"
-  if test "$lhs" != "$rhs"; then
-    stderr "*******************"                \
-           "$1 != $2"                           \
-           "($lhs != $rhs)"                     \
-           "proceeding with $1 = $rhs"
-    eval "$1=\$$2"
-  fi
-}
-
-#check_equal ARCH         URBI_HOST_CPU
-#check_equal COMP         URBI_HOST_COMP
-#check_equal OS           URBI_HOST_OS
-#check_equal builddir     abs_top_buildir
-#check_equal srcdir       abs_top_srcdir
-
 # Do not produce anything if we are not working on windows builds.
 case $OS in
   (windows) ;;
