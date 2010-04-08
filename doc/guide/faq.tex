@@ -7,9 +7,9 @@
   \let\subsubsection\faqsection
 \fi
 
-\section{Tools}
-\subsection{urbi-launch and urbi}
-\subsubsection{The server dies with ``stack exhaustion''}
+\section{Troubleshooting}
+
+\subsection{The server dies with ``stack exhaustion''}
 Your program might be deeply recursive, or use large temporary
 objects.  Use \option{--stack-size} to augment the stack size, see
 \autoref{sec:tools:urbi}.
@@ -46,6 +46,163 @@ concurrent program aims at creating no less than $2^{513}$ threads,
 about $2.68 \times 10^{156}$ (a 156-digit long number, by far larger
 than the number of atoms in the observable universe, estimated to
 $10^{80}$).
+
+\subsection{'myuobject: file not found'. What can I do?}
+If \command{urbi-launch} (or \command{urbi}) fails to load an UObject (a
+shared library or \acronym{DLL}) although the file exists, then the most
+probable cause is an undefined symbol in your shared library.
+
+\paragraph{Getting a better diagnostic}
+First, set the \env{GD\_LEVEL} environment variable (see
+\autoref{sec:tools:env}) to some high level, say \code{DUMP}, to log
+messages from \command{urbi-launch}.  You might notice that your library is
+not exactly where you thought \command{urbi-launch} was looking at.
+
+\paragraph{GNU/Linux}
+A libltdl quirk prevents us from displaying a more accurate error message.
+You can use a tool named \command{ltrace} to obtain the exact error message.
+Ltrace is a standard package on most Linux distributions.  Run it with
+\samp{ltrace -C -s 1024 urbi-launch ...}, and look for lines containing
+\samp{dlerror} in the output. One will contain the exact message that
+occurred while trying to load your shared library.
+
+It is also useful to use \command{ldd} to check that the dependencies of
+your object are correct.  See the documentation of \command{ldd} on your
+machine (\samp{man ldd}).  The following run is successful: every request
+(left-hand side of \lstinline{=>}) is satisfied (by the file shown on the
+right-hand side).
+
+\begin{shell}
+$ all.so
+	linux-gate.so.1 =>  (0xb7fe8000)
+	libstdc++.so.6 => \
+          /usr/lib/gcc/i686-pc-linux-gnu/4.4.1/libstdc++.so.6 (0xb7eba000)
+	libm.so.6 => /lib/libm.so.6 (0xb7e94000)
+	libc.so.6 => /lib/libc.so.6 (0xb7d51000)
+	libgcc_s.so.1 => \
+          /usr/lib/gcc/i686-pc-linux-gnu/4.4.1/libgcc_s.so.1 (0xb7d35000)
+	/lib/ld-linux.so.2 (0xb7fe9000)
+\end{shell}
+
+The following run shows a broken dependency.
+
+\begin{shell}
+# A simple C++ program.
+$ echo 'int main() {}' >foo.cc
+
+# Compile it, and depend on the libport shared library.
+$ g++ foo.cc -L\var{urbi-root}/gostai/lib -lport -o foo
+
+# Run it.
+$ ./foo
+./foo: error while loading shared libraries: \
+  libport.so: cannot open shared object file: No such file or directory
+
+# See that ldd is unhappy.
+$ ldd foo
+	linux-gate.so.1 =>  (0xb7fa4000)
+	libport.so => not found
+	libstdc++.so.6 => \
+          /usr/lib/gcc/i686-pc-linux-gnu/4.4.1/libstdc++.so.6 (0xb7eae000)
+	libm.so.6 => /lib/libm.so.6 (0xb7e88000)
+	libgcc_s.so.1 => \
+          /usr/lib/gcc/i686-pc-linux-gnu/4.4.1/libgcc_s.so.1 (0xb7e6c000)
+	libc.so.6 => /lib/libc.so.6 (0xb7d29000)
+	/lib/ld-linux.so.2 (0xb7fa5000)
+\end{shell}
+
+Notice the \samp{not found} message.  The shared object could not be loaded
+because it is not found in the \dfn{runtime path}, which is the list of
+directories where the system looks for shared objects to be loaded when
+running a program.
+
+You may extend your \env{LD\_LIBRARY\_PATH} to include the missing
+directory.
+
+\begin{shell}
+$ export LD_LIBRARY_PATH=\var{urbi-root}/gostai/lib:$LD_LIBRARY_PATH
+# Run it.
+$ ./foo
+\end{shell}
+
+\paragraph{Mac OS X}
+Set the \env{DYLD\_PRINT\_LIBRARIES} environment variable to 1 to make the
+shared library loader report the libraries it loads on the standard error
+stream.
+
+Use \command{otool} to check whether a shared object ``finds'' all its
+dependencies.
+
+\begin{shell}
+$ otool -L all.so
+all.so:
+	/usr/lib/libstdc++.6.dylib \
+          (compatibility version 7.0.0, current version 7.4.0)
+	/usr/lib/libgcc_s.1.dylib \
+          (compatibility version 1.0.0, current version 1.0.0)
+	/usr/lib/libSystem.B.dylib \
+          (compatibility version 1.0.0, current version 111.1.4)
+\end{shell}
+
+The following run shows a broken dependency.
+
+\begin{shell}
+# A simple C++ program.
+$ echo 'int main() {}' >foo.cc
+
+# Compile it, and depend on the libport shared library.
+$ g++ foo.cc -L\var{urbi-root}/gostai/lib -lport -o foo
+
+# Run it.
+$ ./foo
+dyld: Library not loaded: @loader_path/libport.dylib
+  Referenced from: /private/tmp/./foo
+  Reason: image not found
+
+# See that otool is unhappy.
+$ otool -L ./foo
+./foo:
+	@loader_path/libport.dylib \
+          (compatibility version 0.0.0, current version 0.0.0)
+	/usr/lib/libstdc++.6.dylib \
+          (compatibility version 7.0.0, current version 7.4.0)
+	/usr/lib/libgcc_s.1.dylib \
+          (compatibility version 1.0.0, current version 1.0.0)
+	/usr/lib/libSystem.B.dylib \
+          (compatibility version 1.0.0, current version 111.1.5)
+\end{shell}
+
+The fact that the \file{libport.dylib} was not found shows by the unresolved
+relative runtime-path: \samp{@loader\_path} still shows.  Use
+\env{DYLD\_LIBRARY\_PATH} to specify additional directories where the system
+should look for runtime dependencies.
+
+\begin{shell}
+$ DYLD_PRINT_LIBRARIES=1 \
+  DYLD_LIBRARY_PATH=\var{urbi-root}/lib:$DYLD_LIBRARY_PATH \
+  ./foo
+dyld: loaded: /private/tmp/./foo
+dyld: loaded: \var{urbi-root}/lib/libport.dylib
+dyld: loaded: /usr/lib/libstdc++.6.dylib
+dyld: loaded: /usr/lib/libgcc_s.1.dylib
+dyld: loaded: /usr/lib/libSystem.B.dylib
+dyld: loaded: \var{urbi-root}/lib/libboost_filesystem-mt.dylib
+dyld: loaded: \var{urbi-root}/lib/libboost_signals-mt.dylib
+dyld: loaded: \var{urbi-root}/lib/libboost_system-mt.dylib
+dyld: loaded: \var{urbi-root}/lib/libboost_thread-mt.dylib
+dyld: loaded: /usr/lib/system/libmathCommon.A.dylib
+$
+\end{shell}
+
+\paragraph{Windows}
+
+In plain native Windows, use \command{DependencyWalker} (see
+\url{http://dependencywalker.com}) to check that a given \acronym{DLL} finds
+all its dependencies.
+
+Alternatively, under Cygwin, you can use the \command{cygcheck.exe} program
+to check dependencies.
+
 
 \section{\us}
 \subsection{Objects lifetime}
@@ -693,23 +850,6 @@ writeToVar(UClient* cl, std::string varName, std::string value)
 since a single call to UClient's \lstinline[language=C++]|operator <<|
 is thread-safe.
 
-
-\subsection{Shared library dependencies}
-\subsubsection{urbi-launch fails with 'myuobject: file not found'. What can I do?}
-If you are sure the file is there, the most probable cause is an
-undefined symbol in your shared library. A libltdl quirk prevents us
-from displaying a more accurate error message.  You can use a tool
-named \command{ltrace} to obtain the exact error message.  Ltrace is a
-standard package on most Linux distributions.  Run it with
-\samp{ltrace -C -s 1024 urbi-launch ...}, and look for lines
-containing \samp{dlerror} in the output. One will contain the exact
-message that occurred while trying to load your shared library.
-
-Under Mac OS X, the \env{DYLD\_PRINT\_APIS} environment variable can
-be set to 1 to make the shared library loader more verbose and display
-all its attempts to load a file to stderr.
-
-Note that this problem is Mac OS X and Linux specific.
 
 \section{Miscellaneous}
 \subsection{What has changed since the latest release?}
