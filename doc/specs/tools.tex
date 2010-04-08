@@ -1,18 +1,7 @@
-\newcommand{\optionDebug}{
-  Set the verbosity level of traces.
-  This option is mostly for developers, but it is very useful when
-  tracking problems such as a UObject that fails to load properly.
-  Valid values for \var{level} are, in increasing verbosity order:
-  \begin{sublist}
-    \begin{enumerate}
-    \item \code{NONE}, no log messages at all.
-    \item \code{LOG}, the default value.
-    \item \code{TRACE}
-    \item \code{DEBUG}
-    \item \code{DUMP}, maximum verbosity.
-    \end{enumerate}
-  \end{sublist}
-}
+\newcommand{\optionDebug}
+  {Set the verbosity level of traces.  See the \env{GD\_LEVEL} documentation
+   (\autoref{sec:tools:env}).}
+
 \newcommand{\optionHelp}
   {Display the help message and exit successfully.}
 
@@ -70,7 +59,20 @@ URBI_PATH=C:\cygwin\home\jessie\urbi:C:\cygwin\usr\local\urbi
 \end{windows}
 
 \subsection{Environment Variables}
+\label{sec:tools:env}
 \begin{envs}
+\item[GD\_LEVEL] Set the verbosity level of traces.  This environment
+  variable is meant for the developers of \urbi SDK, yet it is very useful
+  when tracking problems such as a UObject that fails to load properly.
+  Valid values are, in increasing verbosity order:
+  \begin{enumerate}
+  \item \code{NONE}, no log messages at all.
+  \item \code{LOG}, the default value.
+  \item \code{TRACE}
+  \item \code{DEBUG}
+  \item \code{DUMP}, maximum verbosity.
+  \end{enumerate}
+
 \item[URBI\_PATH] The search-path for \us source files (i.e.,
   \file{*.u} files).
 
