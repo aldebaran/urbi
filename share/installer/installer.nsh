@@ -90,13 +90,18 @@ Section
   FileWriteByte $0 "13"
   FileWriteByte $0 "10"
   FileClose $0
-  GoTo done
+  GoTo gettingStarted
 enverror:
     MessageBox MB_OK "Microsoft Visual Studio 2008 not detected, not installing the UObject wizard."
-    GoTo done
+    GoTo gettingStarted
 fileerror:
     MessageBox MB_OK "Problem installing the Microsof Visual Studio Wizard: Error opening file for writing."
-    GoTo done
+    GoTo gettingStarted
+
+gettingStarted:
+    MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to start using URBI now?" IDNO done
+    ExecShell "open" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.htmldir\getting-started.html"
+
 done:
 SectionEnd
 
