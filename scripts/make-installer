@@ -93,13 +93,13 @@ if test -r "$updir/$my_zip"                             \
   tools=$HOME/share/tools
   vcredist="$tools/vcredist/vcredist_x86-${COMP}.exe"
   urbi_console="$tools/urbi-console/Gostai urbiConsole 2.1-win32.exe"
-  $srcdir/scripts/merge-install.sh -v           \
-      --vcredist "$vcredist"                    \
-      -t "$srcdir/share/templates"              \
-      -s "$srcdir/share/installer/"             \
-      --urbi-console "$urbi_console"            \
-      "$tmp/$my_zip" "$tmp/$other_zip"          \
-      -o "$tmp/$installer"
+  $srcdir/scripts/merge-install.sh -v                   \
+      --vcredist "$vcredist"                            \
+      --templateloc "$srcdir/share/templates"           \
+      --installscriptloc "$srcdir/share/installer/"     \
+      --urbi-console "$urbi_console"                    \
+      --output "$tmp/$installer"                        \
+      "$tmp/$my_zip" "$tmp/$other_zip"
 
   # Upload the installer
   cp "$tmp/$installer" "$updir/$installer"
