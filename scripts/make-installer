@@ -95,6 +95,7 @@ if test -r "$updir/$my_zip"                             \
   urbi_console="$tools/urbi-console/Gostai urbiConsole 2.1-win32.exe"
   $srcdir/scripts/merge-install.sh -v                   \
       --vcredist "$vcredist"                            \
+      --comp "${COMP}"                                  \
       --templateloc "$srcdir/share/templates"           \
       --installscriptloc "$srcdir/share/installer/"     \
       --urbi-console "$urbi_console"                    \

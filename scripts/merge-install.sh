@@ -6,6 +6,7 @@ set -e
 files=
 verbose=false
 vcredist="/mnt/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
+comp="vcxx-2008"
 installer="$HOME/.wine/drive_c/Program Files/NSIS/makensis.exe"
 installerargs="/NOCD share/installer/installer.nsh"
 # Location of installer.nsh, will create a symlink to it if set
@@ -41,6 +42,8 @@ Options:
                                 [$templateloc]
   --vcredist                    vcredist binary
                                 [$vcredist]
+  --comp                        version of visual studio
+                                [$comp]
   --urbi-console		urbi-console installer
 				[$urbiconsole]
   -d, --debug                   Debug mode
@@ -59,6 +62,7 @@ do
   (-s|--installscriptloc) shift; installscriptloc=$1 ;;
   (-t|--templateloc) shift; templateloc=$1;;
   (--vcredist) shift; vcredist=$1;;
+  (--comp) shift; comp=$1;;
   (--urbi-console) shift; urbiconsole=$1;;
   (-d|--debug) set -x ;;
   (-v|--verbose) verbose=true ;;
@@ -122,8 +126,8 @@ if ! test -z "templateloc" ; then
   ln -s $templateloc share/templates
 fi
 
-verb "running '$installer' $installerargs"
-wine "$installer" $installerargs
+verb "running '$installer' /Dcomp=$comp $installerargs"
+wine "$installer" "/Dcomp=$comp" $installerargs
 
 if test -n "$output"; then
   mv "$dir/merge/gostai-engine-runtime.exe" "$output"

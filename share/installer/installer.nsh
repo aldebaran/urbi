@@ -62,6 +62,7 @@ Section
 ;
 ; This is done by creating two files in the vcprojects directory.
   ClearErrors
+  StrCmp $comp vcxx-2008 0 gettingStarted
   ReadEnvStr $1 VS90COMNTOOLS
   IfErrors enverror
   FileOpen $0 $1\..\..\VC\vcprojects\uobject.vsdir w
