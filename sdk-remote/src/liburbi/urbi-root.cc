@@ -154,24 +154,55 @@ static strings_type
 split(std::string lib)
 {
   strings_type res;
-  size_t pos;
-  while ((pos = lib.find(':')) != lib.npos)
+  size_t pos = lib.find(':');
+
+  if ((pos = lib.find(':')) == lib.npos)
+  {
+    res.push_back(lib);
+    return res;
+  }
+
+  do
   {
     std::string s = lib.substr(0, pos);
-    lib = lib.substr(pos + 1, lib.npos);
-#ifdef WIN32
-    // In case we split "c:\foo" into "c" and "\foo", glue them
-    // together again.
-    if (s[0] == '\\'
-        && !res.empty()
-        && res.back().length() == 1)
-      res.back() += ':' + s;
+    if (pos != lib.npos)
+    {
+      lib = lib.substr(pos + 1, lib.npos);
+      pos = lib.find(':');
+    }
     else
-#endif
+      lib.clear();
+
+#ifdef WIN32
+    // Colon could be used as a path separator under cygwin and as a volume
+    // separator under windows.
+    if (s[0] == '\\' && !res.empty())
+    {
+      std::string& back = res.back();
+      size_t back_len = back.length();
+
+      // In case we split "c:\foo" into "c" and "\foo", glue them
+      // together again.
+      if (back_len == 1)
+        back += ':' + s;
+
+      // In case we split "bar;c:\foo" into "bar;c" and "\foo", split them
+      // into "bar" and "c:\foo"
+      else if (back_len >= 2 && back[back_len - 2] == ';')
+      {
+        s = std::string("") + back[back_len - 1] + ':' + s;
+        back = back.substr(0, back_len - 2);
+        res.push_back(s);
+      }
+    }
+    else
       res.push_back(s);
-  }
-  if (!lib.empty())
-    res.push_back(lib);
+#else
+    res.push_back(s);
+#endif
+
+  } while (!lib.empty());
+
   return res;
 }
 
