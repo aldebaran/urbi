@@ -9,6 +9,7 @@
  */
 
 #include <libport/sys/stat.h>
+#include <libport/unistd.h>
 
 #include <libport/cassert>
 #include <libport/cstring>
@@ -286,26 +287,57 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 
 #ifdef WIN32
     size_t pos = argv0.find_last_of("/\\");
+    {
+      size_t dot = argv0.find_last_of(".");
+      if (dot == argv0.npos || argv0.substr(dot + 1) != "exe")
+        argv0 += ".exe";
+    }
 #else
     size_t pos = argv0.rfind('/');
 #endif
     if (pos == std::string::npos)
     {
+      struct stat stats;
+      std::string dir, file;
+      bool found = false;
+
+#ifdef WIN32
       URBI_ROOT_DEBUG(program_,
-                      "invoked from the path, looking for ourselves in PATH");
-      strings_type path = split(mygetenv("PATH"));
-      foreach (const std::string& dir, path)
+                      "check if invoked from the current directory");
+
       {
-        struct stat stats;
-        std::string file = dir / argv0;
-        if (stat(file.c_str(), &stats) == 0)
-        {
-          URBI_ROOT_DEBUG(program_, "found: " << file);
-          root_ = dir / "..";
-          URBI_ROOT_DEBUG(program_, "root directory is: " << root_);
-          break;
-        }
+        char *dir_buf = getcwd(0, 0);
+        std::string dir(dir_buf);
+        free(dir_buf);
+        file = dir / argv0;
+      }
+
+      if (!(found = stat(file.c_str(), &stats) == 0))
+      {
         URBI_ROOT_DEBUG(program_, "not found: " << file);
+#endif
+        URBI_ROOT_DEBUG(program_,
+                        "check if invoked from the path");
+        strings_type path = split(mygetenv("PATH"));
+        foreach (const std::string& dir_, path)
+        {
+          file = dir_ / argv0;
+          if (found = (stat(file.c_str(), &stats) == 0))
+          {
+            dir = dir_;
+            break;
+          }
+          URBI_ROOT_DEBUG(program_, "not found: " << file);
+        }
+#ifdef WIN32
+      }
+#endif
+
+      if (found)
+      {
+        URBI_ROOT_DEBUG(program_, "found: " << file);
+        root_ = dir / "..";
+        URBI_ROOT_DEBUG(program_, "root directory is: " << root_);
       }
     }
     else
