@@ -33,12 +33,17 @@ site.  Don't forget to tag it if it is a release.
 RELEASE can be specified (e.g., \`2.0-rc-1'), otherwise it is computed
 automatically from the latest time stamp.
 
+The packages to publish are looked for in:
+  from=$from
+The packages will be publish in:
+  to=$to
+
 Options:
   -h, --help        display this message and exit successfully
   -u, --user NAME   use NAME to log on gate [$login]
 EOF
+  exit 0
 }
-
 getargs ()
 {
   while test $# -ne 0;
@@ -53,12 +58,41 @@ getargs ()
   done
 }
 
-# The machine that has the built tarballs.
-gate=bf-2.gostai.com
-# The login to access the tarball.s
-login=build
-# The shared directory that contains the packages.
-dir=share/built/kernel-2.0/archives
+# From an scp-like location, return the user.
+# foo@bar.baz.com:my/path -> foo
+scp_user ()
+{
+  echo "$1" | sed -e 's/@.*//'
+}
+
+# From an scp-like location, return the host name.
+# foo@bar.baz.com:my/path -> bar.baz.com
+scp_host ()
+{
+  echo "$1" | sed -e 's/.*@//;s/:.*//'
+}
+
+# From a scp-like location, return the path.
+# foo@bar.baz.com:my/path -> my/path
+scp_dir ()
+{
+  echo "$1" | sed -e 's/.*://'
+}
+
+# From a scp-like location, return the connection-point.
+# foo@bar.baz.com:my/path -> foo@bar.baz.com
+scp_point ()
+{
+  echo "$1" | sed -e 's/:.*//'
+}
+
+
+
+# The (scp-like) directory that contains the tarballs.
+from=build@bf-1:share/built/kernel-2.0/archives
+
+# The (scp-like) location into which the per-architecture directories are.
+to=downloads@www.gostai.com:gostai.com-downloads/urbi-sdk-2.0
 
 oses="windows linux macos"
 
@@ -72,17 +106,19 @@ getargs "$@"
 # urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug_dynamic.tar.gz
 # urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86.tar.gz
 # urbi-sdk-2.0-beta2-498-g4f7f361-macos-x86.tar.gz
-all=$(ssh $login@$gate "cd $dir && ls -1t *windows*.zip *linux*.gz *macos-*.gz")
+all=$(ssh $(scp_point "$from") \
+        "cd $(scp_dir "$from") && \
+           ls -1t *linux*.gz *macos-*.gz *windows*.exe *windows*.zip")
 
 # Make sure that we have the same version for the three architectures.
 test -n "$latest" ||
   latest=$(echo "$all" |
-      perl -n -e 'if (m/((:?kernel-2.0|urbi-sdk)
+      perl -n -e 'if (m/((:?kernel-2.0|urbi-(?:runtime|sdk))
                         -(?:beta|rc-)\d
                         (?:-\d+-g[\da-f]{7})?)
                         -(?:linux|macos|windows)
                         -(ARM|ppc|x86)
-                        (?:-gcc4-debug_dynamic)?/x)
+                        (?:-gcc4-debug_dynamic|vcxx200\d)?/x)
                   { print "$1\n"; exit 0; }')
 
 test -n "$latest" ||
@@ -102,9 +138,9 @@ do
     echo " --------------- $pack ---------------- "
     # For some reason, "scp A B" does not work, so
     # "scp A localhost && scp localhost B".
-    cmd="scp \"$login@$gate:$dir/$pack\" /tmp/$pack &&
-     scp /tmp/$pack downloads@www.gostai.com:urbi-sdk-2.0_beta/$os/$pack &&
-     ssh downloads@www.gostai.com 'chmod 640 urbi-sdk-2.0_beta/$os/$pack'"
+    cmd="scp \"$from/$pack\" /tmp/$pack &&
+     scp /tmp/$pack $to/$os/$pack &&
+     ssh $(scp_point "$to") 'chmod 640 $(scp_dir "$to")/$os/$pack'"
     stderr "$cmd"
     eval "$cmd"
   done
