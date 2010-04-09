@@ -70,6 +70,6 @@ xrun "urbi-image"                                       \
 xrun "shutdown"                                 \
   urbi-send --port-file server.port             \
             -e 'shutdown;'                      \
-            -q
+            --quit
 
 file camera.jpg | grep -q JPEG

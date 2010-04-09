@@ -135,7 +135,7 @@ try
 
   // Parse the command line.
   libport::OptionFlag
-    arg_quit("send `quit' at the end to disconnect", "quit", 'q');
+    arg_quit("disconnect when everything is sent", "quit", 'Q');
 
   libport::OptionParser opt_parser;
   opt_parser << "Options:"

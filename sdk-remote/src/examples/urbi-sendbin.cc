@@ -152,7 +152,8 @@ try
       host = argv[++i];
     else if (arg == "--port" || arg == "-p")
       port = libport::convert_argument<int> (arg, argv[++i]);
-    else if (arg == "--quit" || arg == "-q")
+    // FIXME: Remove -q some day.
+    else if (arg == "--quit" || arg == "-Q" || arg == "-q")
       quit = true;
     else if (arg == "--version" || arg == "-v")
       version();
