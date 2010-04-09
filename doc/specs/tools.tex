@@ -205,7 +205,7 @@ following session is valid:
 \begin{shell}[alsolanguage={[interactive]Urbi}]
 # Create a file "two.u".
 $ echo "var two = 2;" >two.u
-# urbi -e 'var one = 1;' -f two.u -i
+# urbi -q -e 'var one = 1;' -f two.u -i
 [00000000] 1
 [00000000] 2
 one + two;
@@ -341,7 +341,7 @@ as \key{C-c} under a Unix terminal).
 \item[P]{port=\var{port}} Port to connect to.
 \item{port-file=\var{file}} Connect to the port contained in the file
   \var{file}.
-\item[q]{quit} Disconnect from the server immediately after having
+\item[Q]{quit} Disconnect from the server immediately after having
   sent all the commands.  This is equivalent to \samp{-e 'quit;'}.
   This is inappropriate if code running in background is expected to
   deliver its result asynchronously: the connection will be closed

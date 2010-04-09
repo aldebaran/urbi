@@ -18,13 +18,13 @@ questions.
 # Make sure urbi is properly installed.
 $ urbi --version
 Urbi Kernel version preview/2.0/beta3-425 rev. 000913e
-Copyright (C) 2005-2009 Gostai SAS.
+Copyright (C) 2005-2010 Gostai SAS.
 
 URBI SDK Remote version preview/1.6/beta1-666 rev. 92ec3b4
-Copyright (C) 2004-2009 Gostai SAS.
+Copyright (C) 2004-2010 Gostai SAS.
 
 Libport version preview/1.0/beta1-1048 rev. f1c5170
-Copyright (C) 2005-2009 Gostai SAS.
+Copyright (C) 2005-2010 Gostai SAS.
 \end{shell}%$
 
 
@@ -40,7 +40,7 @@ programs should end by calling \lstinline{shutdown}:
 
 \begin{shell}[alsolanguage={[interactive]Urbi}]
 # A classical program.
-$ urbi -e 'echo("Hello, World!");' -e 'shutdown;'
+$ urbi -q -e 'echo("Hello, World!");' -e 'shutdown;'
 [00000004] *** Hello, World!
 \end{shell}%$
 

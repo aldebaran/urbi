@@ -294,7 +294,7 @@ detach({ every (1s) echo("foo"); });
 \end{urbiunchecked}
 
 \item Tag: begin and end now simply print the tag name followed by
-  'begin' or 'end'.
+  \samp{begin} or \samp{end}.
 \item System-code is now hidden from the backtraces.
 \item Code.apply: the call message can be changed by passing it as an extra
   argument.
@@ -356,20 +356,20 @@ The documentation was fixed, completed, and extended.  Its layout was
 also improved.  Changes include, but are not limited to:
 
 \begin{itemize}
-\item various programs
-  urbi, urbi-launch, urbi-send etc.
-\item environment variables
-  \env{URBI\_UOBJECT\_PATH}, \env{URBI\_PATH}, \env{URBI\_ROOT}.
-\item special files
-  \file{global.u}, \file{local.u}.
-\item k1-to-k2
-  Conversion idioms from urbiscript 1 to urbiscript 2
-\item \autoref{sec:faq}
+\item various programs: \command{urbi}, \command{urbi-launch},
+  \command{urbi-send} etc. (\autoref{sec:tools}).
+\item environment variables: \env{URBI\_UOBJECT\_PATH}, \env{URBI\_PATH},
+  \env{URBI\_ROOT} (\autoref{sec:tools:envvars}).
+\item special files \file{global.u}, \file{local.u}
+  (\autoref{sec:tools:files}).
+\item k1-to-k2: Conversion idioms from urbiscript 1 to urbiscript 2
+  (\autoref{sec:k1}).
+\item FAQ (\autoref{sec:faq})
   \begin{itemize}
   \item stack exhaustion
   \item at and waituntil: performance considerations
   \end{itemize}
-\item specs:
+\item Specifications:
   \begin{itemize}
   \item completion of the definition of the control flow constructs
     (\lstinline|every|, \lstinline{every|}, \lstinline|if|,
@@ -406,12 +406,12 @@ also improved.  Changes include, but are not limited to:
 \begin{itemize}
 \item Text files are converted to DOS end-of-lines for Windows packages.
 
-\item urbi-send supports --quit.
+\item \command{urbi-send} supports \option{--quit}.
 
 \item The files \file{global.u}/\file{local.u} replace
   \file{URBI.INI}/\file{CLIENT.INI}.
 
-\item urbi supports --quiet to inhibit the banner.
+\item \command{urbi} supports \option{--quiet} to inhibit the banner.
 \end{itemize}
 
 \section{\urbi SDK 2.0 RC 1}
@@ -420,7 +420,7 @@ also improved.  Changes include, but are not limited to:
 
 \begin{itemize}
 \item \command{urbi-send} no longer displays the server version
-  banner, unless given -b/--banner.
+  banner, unless given \option{-b}/\option{--banner}.
 \item \command{urbi-console} is now called simply \command{urbi}.
 \item \command{urbi.bat} should now work out of the box under windows.
 \end{itemize}
