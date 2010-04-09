@@ -222,9 +222,11 @@ builddir_pref="_ubuild"
 # directory that contains this tool.
 prefix=$(dirname $0)/..
 
-# Keep the variables in that order, they have dependencies.
+# Keep the variables in that order, they have dependencies.  bindir is
+# needed at least on Windows, where libdir is defined as $bindir.
 : ${PACKAGE_BRAND="@PACKAGE_BRAND@"}
 : ${exec_prefix="@exec_prefix@"}
+: ${bindir="@bindir@"}
 : ${libdir="@libdir@"}
 : ${brandlibdir="@brandlibdir@"}
 
