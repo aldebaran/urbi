@@ -118,16 +118,18 @@ quit;
 Under Windows, instead of using \command{telnet}, you may use
 \command{urbi-console} (part of the package), which provides a Graphical
 User Interface to a network-connection to an \urbi server.  To launch the
-server and the client, run:
+server, run:
 
 \begin{shell}[alsolanguage={[interactive]Urbi},caption={Starting an interactive session under Windows.}]
 C:\...> start urbi --port 54000
-C:\...> urbi-console
 \end{shell}
 
-Then, the interaction proceeds in the \command{urbi-console} windows.
+and to launch the client, click on \command{urbiConsole} which is installed
+by the installer.
+
+Then, the interaction proceeds in the \command{urbiConsole} windows.
 Specify the host name and port to use (\samp{127.0.0.1:54000}) in the text
-field in the top of the window.
+field in the top of the window and click on the right to start the connection.
 
 \begin{center}
   \includegraphics[width=.8\linewidth]{img/urbi-console}
@@ -138,7 +140,7 @@ a nice interface to send batches of instructions (and/or files) to a running
 server.
 
 \begin{shell}[alsolanguage={[interactive]Urbi}]
-$ urbi-send -p 54000 -e "1+2*3;" -Q
+$ urbi-send -P 54000 -e "1+2*3;" -Q
 [00018032] 7
 # Have the server shutdown;
 $ urbi-send -P 54000 -e "shutdown;"
