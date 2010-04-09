@@ -2,7 +2,8 @@ include uobjects/uobjects.mk
 
 EXTRA_DIST += $(addprefix uobjects/,$(UOBJECTS:=.uob))
 
-uobjects_DATA = $(addprefix uobjects/,$(UOBJECTS:=$(DLMODEXT)))
+# _SCRIPTS so that we preserve the executable bit.
+uobjects_SCRIPTS = $(addprefix uobjects/,$(UOBJECTS:=$(DLMODEXT)))
 CLEANFILES += $(uobjects_DATA) $(uobjects_DATA:$(DLMODEXT)=.la)
 
 UMAKE_SHARED = tests/bin/umake-shared
