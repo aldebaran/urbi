@@ -9,6 +9,8 @@ builddir = $(UMAKE_BUILD_DIR)
 envdir = $(brandlibdir)/$(URBI_ENV)
 exec_prefix = @exec_prefix@
 includedir = @includedir@
+# On Windows, libdir is defined as ${bindir}.
+bindir = @bindir@
 libdir = @libdir@
 libexecdir = @libexecdir@
 
