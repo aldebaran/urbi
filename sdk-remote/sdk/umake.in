@@ -1,5 +1,5 @@
 @UMAKE_COMMON@
-LIBSFX=@LIBSFX@
+
 usage ()
 {
   cat <<EOF
@@ -118,7 +118,7 @@ get_options ()
       (-q | --quiet  ) quiet=true;;
       (-v | --version) version;;
 
-      (-l | --library)       core= ; shared=false ;;
+      (-l | --library)        core= ; shared=false ;;
       (-s | --shared-library) core= ; shared=true ; automain=false ;;
       (     --deep-clean)    deep_clean ;;
       (-c | --clean)         clean=true ;;
@@ -202,8 +202,10 @@ get_options ()
 ## Main.  ##
 ## ------ ##
 
-: ${EXEEXT=@EXEEXT@}
 : ${DLMODEXT=@DLMODEXT@}
+: ${EXEEXT=@EXEEXT@}
+: ${LIBSFX=@LIBSFX@}
+
 clean=false
 : ${URBI_ENV='@URBI_ENV@'}
 core=
@@ -248,10 +250,6 @@ vpath=.
 
 get_options "$@"
 initialize
-
-if test x$core = xdefault; then
-  core=$URBI_ENV
-fi
 
 # Use default main.
 if $automain; then
@@ -313,7 +311,12 @@ esac
 if $shared; then
   case $host in
       (*pw32*|*mingw32*)
-      append LIBADD "-no-undefined \${envdir}/libuobject$LIBSFX.la"
+      # Pass the true library, not the *.la file, since it contains
+      # hard-coded locations to where the libraries we depend on were
+      # installed.  In other words, *.la files are not relocatable.
+      #
+      # This is not an issue in the present case.
+      append LIBADD "\${envdir}/libuobject$LIBSFX.dll"
       ;;
   esac
 fi
@@ -339,10 +342,10 @@ fi
 # Define lib to link against.
 if test -z "$LIBNAME"; then
   case $core in
-    (remote|engine|webots)
-       UMAKE_LIBNAME=libuobject;;
+    (''|remote|engine|webots)
+       UMAKE_LIBNAME=libuobject${LIBSFX};;
     (fullengine)
-       UMAKE_LIBNAME=libuobject
+       UMAKE_LIBNAME=libuobject${LIBSFX}
        UMAKE_EXTRALIB="${libdir}/liburbi$LIBSFX.la ${libdir}/libjpeg$LIBSFX.la"
        core=engine;;
   esac
@@ -408,7 +411,7 @@ verbose "invoking make -f $(param_mk) $target"
 run eval make -f "$(param_mk)"                  \
     "$target"                                   \
     UMAKE_BUILD_DIR="$builddir"                 \
-    UMAKE_URBI_ENV="$core"                      \
+    UMAKE_URBI_ENV="${core:-remote}"            \
     URBI_KERNEL_PATH="$(kernel)"                \
     UMAKE_LIBNAME="$UMAKE_LIBNAME"              \
     UMAKE_EXTRALIB="\"$UMAKE_EXTRALIB\""        \

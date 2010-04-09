@@ -1,5 +1,7 @@
 @UMAKE_COMMON@
 
+: ${URBI_HOST=@URBI_HOST@}
+
 dir=$medir
 
 usage ()
@@ -21,7 +23,6 @@ General options:
 Specific options:
   -L, --libtool=PATH    path to libtool
   -E, --env=URBI-ENV    urbi environment name (e.g., engine)
-  -H, --host=URBI-HOST  urbi host name        (e.g., mipsel-linux)
 
 Report bugs to @PACKAGE_BUGREPORT@.
 EOF
@@ -77,7 +78,6 @@ do
 
     (-L | --libtool) shift; libtool=$1;;
     (-E | --env)     shift; urbi_env=$1;;
-    (-H | --host)    shift; urbi_host=$1;;
 
     (--) # What remains are not options.
       shift
@@ -127,7 +127,7 @@ case $($libtool --config) in
   command=$($libtool -n --tag=CXX --mode=link "$@" |
       # libtool 2.2 outputs additional prefixes.
       sed -e 's/^libtool: link: //')
-  case $urbi_host in
+  case $URBI_HOST in
     (*darwin*)
       command=$(echo "$command" |
         sed -e 's/ \([a-zA-Z0-9.\/_-]*\.a\( \|$\)\)/ -Wl,-all_load \1 /g')

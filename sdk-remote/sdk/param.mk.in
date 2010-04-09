@@ -2,11 +2,12 @@
 DLMODEXT = @DLMODEXT@
 PACKAGE_BRAND = @PACKAGE_BRAND@
 URBI_ENV = $(UMAKE_URBI_ENV)
+URBI_HOST = @URBI_HOST@
 brandincludedir = @brandincludedir@
 brandlibdir = @brandlibdir@
 brandlibexecdir = @brandlibexecdir@
 builddir = $(UMAKE_BUILD_DIR)
-envdir = $(brandlibdir)/$(URBI_ENV)
+envdir = @envdir@
 exec_prefix = @exec_prefix@
 includedir = @includedir@
 # On Windows, libdir is defined as ${bindir}.
@@ -114,12 +115,13 @@ LINK =						\
   $(UMAKE_LINK)					\
   --libtool='$(LIBTOOL)'			\
   --env='$(URBI_ENV)'				\
+  --host='$(URBI_HOST)'				\
   --
 $(OUTBIN): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(LINK) \
 	    $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ \
 	    $(ARGUMENT_LIBS) $(LIBS) $(LTOBJECTS) \
-	    $(envdir)/$(LIBNAME).la $(UMAKE_EXTRALIB) \
+	    $(envdir)/$(LIBNAME)$(DLMODEXT) $(UMAKE_EXTRALIB) \
 	    $(EXTRA_LDFLAGS)
 
 clean:
