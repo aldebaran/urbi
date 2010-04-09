@@ -556,13 +556,15 @@ denotes the place where the URBI\_ROOT path is taken into account.
 
 \subsubsection{Scripting}
 
-To enable writing (batch) scripts seamlessly in Urbi, urbi-console
--f/--fast is now renamed as -F/--fast.  Please, never use short
-options in batch programs, as they are likely to change.
+To enable writing (batch) scripts seamlessly in Urbi, \command{urbi-console}
+\option{-f}/\option{--fast} is now renamed as \option{-F}/\option{--fast}.
+Please, never use short options in batch programs, as they are likely to
+change.
 
-Two new option pairs, -e/--expression and -f/--file, plus the ability
-to reach the command line arguments from Urbi make it possible to
-write simple batch Urbi programs.  For instance:
+Two new option pairs, \option{-e}/\option{--expression} and
+\option{-f}/\option{--file}, plus the ability to reach the command line
+arguments from Urbi make it possible to write simple batch Urbi programs.
+For instance:
 
 \begin{shell}
 $ cat demo
@@ -591,8 +593,9 @@ urbi-launch --start -- arg1 arg2...
 
 
 \subsubsection{Auxiliary programs}
-The command line interface of "urbi-sendbin" has been updated.
-"urbi-send" now supports -e/--expression and -f/--file.  For instance
+The command line interface of \command{urbi-sendbin} has been updated.
+\command{urbi-send} now supports \option{-e}/\option{--expression} and
+\option{-f}/\option{--file}.  For instance
 
 \begin{urbiunchecked}
 $ urbi-send -e 'var x;' -e "x = $value;" -e 'shutdown;'
@@ -612,7 +615,7 @@ by our users during the beta-test period.
 \subsubsection{Fixes}
 
 \begin{itemize}
-\item If a file loaded from "URBI.INI" cannot be found, it is now
+\item If a file loaded from \file{URBI.INI} cannot be found, it is now
   properly reported.
 \end{itemize}
 
@@ -745,8 +748,8 @@ be case-sensitive (the default) or not:
 
 \item["System.searchPath" method]
 
-It is now possible to get the search path for files such as "urbi.u"
-or "URBI.INI" by using "System.searchPath".
+  It is now possible to get the search path for files such as \file{urbi.u}
+  or \file{URBI.INI} by using \lstinline|System.searchPath|.
 
 \item["System.getenv" method]
 
@@ -832,9 +835,9 @@ is now safe.
 \subsection{Auxiliary programs}
 
 \begin{description}
-\item[urbi-launch] Now, options for "urbi-launch" are separated from
-  options to give to the underlying program (in remote and start
-  modes) by using "--". Use "urbi-launch --help" to get the full usage
+\item[urbi-launch] Now, options for \command{urbi-launch} are separated from
+  options to give to the underlying program (in remote and start modes) by
+  using \option{--}. Use \samp{urbi-launch --help} to get the full usage
   information.
 \end{description}
 
@@ -1013,7 +1016,7 @@ block, the "every" expression is stopped and the exception displayed.
 \item["UVar::type()" method]
 
 It is now possible to get the type of a "UVar" by calling its "type()"
-method, which returns a "UDataType" (see "urbi/uvalue.hh" for the
+method, which returns a "UDataType" (see \file{urbi/uvalue.hh} for the
 types declarations).
 \end{description}
 
@@ -1075,15 +1078,15 @@ send(__name + ".val = 1;");
 
 \subsection{Auxiliary programs}
 
-
 The sample programs demonstrating the SDK Remote, i.e., how to write a
-client for the Urbi server, have been renamed from "urbi*" to
-"urbi-*".  For instance "urbisend" is now spelled "urbi-send".
+client for the Urbi server, have been renamed from \command{urbi*} to
+\command{urbi-*}.  For instance \command{urbisend} is now spelled
+\command{urbi-send}.
 
-Besides, their interfaces are being overhauled to be more consistent
-with the Urbi command-line tool-box.  For instance while "urbisend"
-used to require exactly two arguments (host-name, file to send), it
-now supports options (e.g., --help, --port to specify the port etc.),
+Besides, their interfaces are being overhauled to be more consistent with
+the Urbi command-line tool-box.  For instance while \command{urbisend} used
+to require exactly two arguments (host-name, file to send), it now supports
+options (e.g., \option{--help}, \option{--port} to specify the port etc.),
 and as many files as provided on the command line.
 
 
