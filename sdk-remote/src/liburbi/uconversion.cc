@@ -50,8 +50,8 @@ namespace urbi
     }
   } // namespace
 
-  /** Convert a buffer named \a sourceImage which contains an RGB image to a
-      buffer for the \a destinationImage which will contain a YCrCb image.
+  /** Convert a buffer \a sourceImage, which contains an RGB image, to a
+      buffer for the \a destinationImage, which will contain a YCrCb image.
 
       The \a sourceImage and \a destinationImage are expected to be pointers
       to a valid memory area of size equal to \a bufferSize.
@@ -80,8 +80,8 @@ namespace urbi
     return 1;
   }
 
-  /** Convert a buffer named \a sourceImage which contains an YCrCb image to
-      a buffer for the \a destinationImage which will contain a YCbCr image.
+  /** Convert a buffer \a sourceImage, which contains an YCrCb, image to
+      a buffer for the \a destinationImage, which will contain a YCbCr image.
       This function is its own reverse operation and can be used to convert
       YCbCr image into YCrCb.
 
@@ -107,8 +107,8 @@ namespace urbi
   }
 
 
-  /** Convert a buffer named \a sourceImage which contains an YCrCb image to a
-      buffer for the \a destinationImage which will contain a RGB image.
+  /** Convert a buffer \a sourceImage, which contains an YCrCb, image to a
+      buffer for the \a destinationImage, which will contain a RGB image.
 
       The \a sourceImage and \a destinationImage are expected to be pointers
       to a valid memory area of size equal to \a bufferSize.
@@ -144,8 +144,8 @@ namespace urbi
   }
 
 
-  /** Convert a buffer named \a source which contains an JPEG image to a
-      buffer for the \a dest which will contain a YCrCb image.
+  /** Convert a buffer \a source, which contains an JPEG image, to a
+      buffer for the \a dest, which will contain a YCrCb image.
 
       The \a source buffer is expected to be a pointer to a valid memory
       area of size equal to \a sourcelen.
@@ -156,7 +156,7 @@ namespace urbi
       argument.
 
       The property \a w and \a h respectively correspond to the width and
-      the height which are retrieved during the convertion of the convertion
+      the height that are retrieved during the convertion of the convertion
       of the data.
 
       This function return 1 if it succeeds.
@@ -190,8 +190,8 @@ namespace urbi
     return 1;
   }
 
-  /** Convert a buffer named \a source which contains an JPEG image to a
-      buffer for the \a dest which will contain a RGB image.
+  /** Convert a buffer \a source, which contains an JPEG image, to a
+      buffer for the \a dest, which will contain a RGB image.
 
       The \a source buffer is expected to be a pointer to a valid memory
       area of size equal to \a sourcelen.
@@ -202,7 +202,7 @@ namespace urbi
       argument.
 
       The property \a w and \a h respectively correspond to the width and
-      the height which are retrieved during the convertion of the convertion
+      the height that are retrieved during the convertion of the convertion
       of the data.
 
       This function return 1 if it succeeds.
@@ -237,8 +237,8 @@ namespace urbi
   }
 
 
-  /** Convert a buffer named \a source which contains an RGB image to a
-      buffer for the \a dest which will contain a JPEG image.
+  /** Convert a buffer \a source, which contains an RGB image, to a
+      buffer for the \a dest, which will contain a JPEG image.
 
       The \a source and \a dest are expected to be pointers to a valid
       memory area of size equal to \a size.  The \a size argument is
@@ -256,8 +256,8 @@ namespace urbi
   }
 
 
-  /** Convert a buffer named \a source which contains an YCrCb image to a
-      buffer for the \a dest which will contain a JPEG image.
+  /** Convert a buffer \a source, which contains an YCrCb image, to a
+      buffer for the \a dest, which will contain a JPEG image.
 
       The \a source and \a dest are expected to be pointers to a valid
       memory area of size equal to \a size.  The \a size argument is
