@@ -126,8 +126,8 @@ if ! test -z "templateloc" ; then
   ln -s $templateloc share/templates
 fi
 
-verb "running '$installer' /Dcomp=$comp $installerargs"
-wine "$installer" "/Dcomp=$comp" $installerargs
+verb "running '$installer' /D$comp $installerargs"
+wine "$installer" "/D$comp" $installerargs
 
 if test -n "$output"; then
   mv "$dir/merge/gostai-engine-runtime.exe" "$output"

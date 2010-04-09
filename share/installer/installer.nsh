@@ -62,7 +62,8 @@ Section
 ;
 ; This is done by creating two files in the vcprojects directory.
   ClearErrors
-  StrCmp $comp vcxx-2008 0 gettingStarted
+
+!ifdef vcxx-2008
   ReadEnvStr $1 VS90COMNTOOLS
   IfErrors enverror
   FileOpen $0 $1\..\..\VC\vcprojects\uobject.vsdir w
@@ -98,6 +99,7 @@ enverror:
 fileerror:
     MessageBox MB_OK "Problem installing the Microsof Visual Studio Wizard: Error opening file for writing."
     GoTo gettingStarted
+!endif
 
 gettingStarted:
     MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to start using URBI now?" IDNO done
