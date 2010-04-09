@@ -312,7 +312,8 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
         file = dir / argv0;
       }
 
-      if (!(found = stat(file.c_str(), &stats) == 0))
+      found = stat(file.c_str(), &stats) == 0;
+      if (!found)
       {
         URBI_ROOT_DEBUG(program_, "not found: " << file);
 #endif
@@ -322,7 +323,8 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
         foreach (const std::string& dir_, path)
         {
           file = dir_ / argv0;
-          if (found = (stat(file.c_str(), &stats) == 0))
+          found = stat(file.c_str(), &stats) == 0;
+          if (found)
           {
             dir = dir_;
             break;
