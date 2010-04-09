@@ -9,24 +9,25 @@
 
 \section{Troubleshooting}
 
-\subsection{When launching urbi.bat, the library MSVC*.DLL is not found?}
-
-This library is necessary to start running any application.  If you have
-used the installer, you may find a file named vcredist-x86.exe in your
-install directory.  Otherwise you may have to download the version
-corresponding to the downloaded zip file.
-
-Run vcredist-x86.exe to install the missing libraries.
-
-\subsection{While installing, I got the error 1723: "A DLL required for
-this install to complete could not be run."?}
+\subsection{Error 1723: "A DLL required for this install to complete could
+  not be run."}
 
 This error is raised when you try to install a program like
-vcredist-x86.exe.  This program use the ``Windows Installer'' which is
-probably outdated on your system.
+\command{vcredist-x86.exe}.  This program use the ``Windows Installer''
+which is probably outdated on your system.
 
-To fix this problem, you should update the ``Windows Installer'' and
-re-start the installation of vcredist which should no longer fail.
+To fix this problem, update the ``Windows Installer'' and re-start the
+installation of vcredist which should no longer fail.
+
+\subsection{When launching \command{urbi.bat}, the library \file{MSVC*.DLL} is not found}
+
+This library is necessary to start running any application.  Run
+\file{vcredist-x86.exe} to install the missing libraries.
+
+If you have used the \urbi SDK installer, it is \file{vcredist-x86.exe} in
+your install directory.  Otherwise download it from the Microsoft web site.
+Be sure to get the one corresponding to the right Visual \Cxx version.
+
 
 \subsection{The server dies with ``stack exhaustion''}
 Your program might be deeply recursive, or use large temporary
