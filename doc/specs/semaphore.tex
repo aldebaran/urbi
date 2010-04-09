@@ -81,7 +81,9 @@ Semaphore.new(1);
   section when the number of processes inside it goes below the maximum
   allowed.
 
-\item[v] Leave a critical section delimited by the execution of
+\item[p] Historical synonym for \lstinline|acquire|.
+
+\item[release] Leave a critical section delimited by the execution of
   \lstinline|p| and \lstinline|v|.
 
 \begin{urbiscript}
@@ -105,6 +107,7 @@ Semaphore.new(1);
 [00000000] *** end 3
 \end{urbiscript}
 
+\item[v] Historical synonym for \lstinline|release|.
 \end{urbiscriptapi}
 
 %%% Local Variables:

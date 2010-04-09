@@ -27,8 +27,8 @@ SDK.
   Use localSlotNames to get the list of the names of the slot the
   object owns.
 
-\item Global.Sempahore.p and Global.Sempahore.v are deprecated in favor of
-  Global.Sempahore.acquire and Global.Sempahore.release.
+\item \lstinline|Semaphore.acquire| and \lstinline|Semaphore.release| are
+  promoted over \lstinline|Semaphore.p| and \lstinline|Semaphore.v|.
 \end{itemize}
 
 \subsubsection{New features}
@@ -779,12 +779,12 @@ names instead of signaling an error.
 
 \item["Semaphore.criticalSection"]
 
-It is now possible to define a critical section associated with
-a semaphore. The "p" method will be called at the beginning,
-and if after that the operation is interrupted by any means the
-"v" operation will be called before going on. If there are no
-interruption, the "v" operation will also be called at the end
-of the callback :
+  It is now possible to define a critical section associated with a
+  semaphore. The \lstinline|acquire| method will be called at the beginning,
+  and if after that the operation is interrupted by any means the
+  \lstinline|release| operation will be called before going on. If there are
+  no interruption, the \lstinline|release| operation will also be called at
+  the end of the callback:
 
 \begin{urbiunchecked}
 var s = Semaphore.new(1);
@@ -829,6 +829,7 @@ Remote bound methods can now return void.
 waituntil(uobjects.hasSlot("MyRemote")) | var m = MyRemote.new();
 \end{urbiunchecked}
 
+\noindent
 is now safe.
 \end{description}
 

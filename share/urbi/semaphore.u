@@ -8,21 +8,17 @@
  * See the LICENSE file for more information.
  */
 
-/*------------.
-| Semaphore.  |
-`------------*/
-
 do (Semaphore)
 {
-  // Backward compatibility
+  // Historical compatibility.
   function p()
   {
-    acquire()
+    acquire
   };
 
-  // Backward compatibility
+  // Historical compatibility.
   function v()
   {
-    release()
+    release
   };
 };
