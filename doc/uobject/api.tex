@@ -23,6 +23,97 @@ from \urbi code. Instance methods of any prototype can be rendered
 accessible from \us, providing all the parameters types and the return
 type can be converted to/from UValue.
 
+\section{Compiling UObjects}
+
+UObjects can be compiled easily directly with any regular compiler.
+Nevertheless, \urbi SDK provides two tools to compile UObject seamlessly.
+
+In the following sections, we will try to compile a shared library named
+\file{factory.so} (or \file{factory.dll} on Windows platforms) from a set of
+four files (\file{factory.hh}, \file{factory.cc}, \file{ufactory.hh},
+\file{ufactory.cc}).  These files are stored in a \file{factory.uob}
+directory; its name bares no importance, yet the \file{*.uob} extension
+makes clear that it is a UObject.
+
+In what follows, \var{urbi-root} denotes the top-level directory of your
+\urbi SDK package, see \autoref{sec:install:install}.
+
+\subsection{Compiling by hand}
+
+On Unix platforms, compiling by hand into a shared library is
+straightforward:
+
+\begin{shell}
+$ g++ -I \var{urbi-root}/include \
+      -fPIC -shared \
+      factory.uob/*cc -o factory.so
+$ file factory.so
+factory.so: ELF 32-bit LSB shared object, Intel 80386, \
+  version 1 (SYSV), dynamically linked, not stripped
+\end{shell}
+
+On Mac OS X the flags \option{-Wl,-undefined,dynamic\_lookup} are needed:
+
+\begin{shell}
+$ g++ -I \var{urbi-root}/include \
+      -shared -Wl,-undefined,dynamic_lookup \
+      factory.uob/*.cc -o factory.so
+$ file factory.so
+factory.so: Mach-O 64-bit dynamically linked shared library x86_64
+\end{shell}
+
+\subsection{The \command{umake-*} family of tools}
+
+\command{umake} can be used to compile UObjects.  See
+\autoref{sec:tools:umake} for its documentation.
+
+You can give it a list of files to compile:
+\begin{shell}
+$ umake -q --shared-library factory.uob/*.cc -o factory.so
+umake: running to build library.
+\end{shell}
+
+\noindent
+or directories in which \Cxx sources are looked for:
+
+\begin{shell}
+$ umake -q --shared-library factory.uob -o factory.so
+umake: running to build library.
+\end{shell}
+
+\noindent
+or finally, if you give no argument at all, the sources in the current
+directory:
+
+\begin{shell}
+$ cd factory.uob
+$ umake -q --shared-library -o factory.so
+umake: running to build library.
+\end{shell}
+
+
+\subsection{Using the Visual \Cxx Wizard}
+
+If you installed \urbi SDK using its installer, and if you had Visual \Cxx
+installed, then the UObject wizard was installed.  Use it to create your
+UObject code:
+
+\begin{center}
+  \includegraphics[width=0.6\linewidth]{img/visual-wizard-1}
+\end{center}
+
+Then, compile your UObject.
+
+\begin{center}
+  \includegraphics[width=0.6\linewidth]{img/visual-wizard-2}
+\end{center}
+
+And run it.
+
+\begin{center}
+  \includegraphics[width=0.6\linewidth]{img/visual-wizard-3}
+\end{center}
+
 
 \section{Creating a class, binding variables and functions}
 \label{sec:uob:api:bind}
