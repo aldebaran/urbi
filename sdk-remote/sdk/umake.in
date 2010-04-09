@@ -219,8 +219,10 @@ builddir=
 builddir_pref="_ubuild"
 
 # Make the package relocatable: the urbi-root contains the bin
-# directory that contains this tool.
-prefix=$(dirname $0)/..
+# directory that contains this tool.  Yet, make it absolute.  For
+# instance because libtool does not want relative rpath, and prefix
+# contributes to libdir.
+prefix=$(cd $(dirname $0)/.. && pwd)
 
 # Keep the variables in that order, they have dependencies.  bindir is
 # needed at least on Windows, where libdir is defined as $bindir.
