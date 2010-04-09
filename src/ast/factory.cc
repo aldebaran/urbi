@@ -679,7 +679,7 @@ namespace ast
     PARAMETRIC_AST
       (wrap,
        "{\n"
-       "  var '$tmp' = %exp:1;\n"
+       "  var '$tmp' = %exp:1 |\n"
        "  %exp:2;\n"
        "}\n");
 
