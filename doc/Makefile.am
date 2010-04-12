@@ -147,7 +147,7 @@ install-data-hook:
 ## ------------- ##
 .PHONY: install-doc
 doc_host = downloads@www.gostai.com
-doc_dir = gostai.com-downloads/urbi-sdk-2.0
+doc_dir = gostai.com-downloads/$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
 doc_files = $(pdf_DATA) $(html_DIR)
 install-doc: $(doc_files)
 	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new && \
