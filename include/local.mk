@@ -32,6 +32,7 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/date.hh			\
   include/urbi/object/dictionary.hh		\
   include/urbi/object/directory.hh		\
+  include/urbi/object/duration.hh		\
   include/urbi/object/equality-comparable.hh	\
   include/urbi/object/equality-comparable.hxx	\
   include/urbi/object/event.hh			\

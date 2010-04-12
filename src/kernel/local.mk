@@ -18,6 +18,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
   kernel/uobject.cc				\
   kernel/uobject.hh				\
   kernel/uqueue.hh				\
+  kernel/uqueue.hxx				\
   kernel/uqueue.cc				\
   kernel/userver.cc				\
   kernel/usystem.cc				\
