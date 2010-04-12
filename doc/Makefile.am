@@ -4,7 +4,7 @@ include $(top_srcdir)/build-aux/revision.mk
 include tests/local.mk
 
 # Document aux.
-share_dir = $(top_srcdir)/doc/document-aux
+share_dir = $(srcdir)/document-aux
 share_bin_dir = $(share_dir)/bin
 share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
@@ -15,15 +15,16 @@ DOT_IMAGES = $(call ls_files,img/*.dot)
 PNG_IMAGES = $(call ls_files,img/*.png)
 PDF_IMAGES =					\
   $(call ls_files,img/*.pdf)			\
-  $(share_dir)/figs/gostai.pdf			\
-  $(share_dir)/figs/urbi.pdf			\
+  document-aux/figs/gostai.pdf			\
+  document-aux/figs/urbi.pdf			\
   $(DOT_IMAGES:.dot=.pdf)
 EXTRA_DIST += $(call ls_files,img/*)
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps) $(PNG_IMAGES:.png=.eps)
 CLEANFILES += $(EPS_IMAGES)
 
-# Find local *.sty files.
-TEXI2DVI_FLAGS += -I $(srcdir)
+# Find local *.sty files.  Find conversions of images from
+# document-aux.
+TEXI2DVI_FLAGS += -I $(srcdir) -I $(builddir)/document-aux
 pdf_DATA =
 
 # Use tex4ht.
