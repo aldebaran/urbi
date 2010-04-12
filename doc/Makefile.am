@@ -153,12 +153,18 @@ install-doc: $(doc_files)
 			 mkdir -p $(doc_dir)/doc.new'
 	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
 	ssh $(doc_host)				\
-	  'bak=$$(date +"%F-%T") &&		\
-	   cd $(doc_dir) &&			\
-	   { 					\
-	     mv doc doc.$$bak &&		\
-	     mv doc.new doc;			\
-	   } || mv doc.$$bak doc'
+	  'cd $(doc_dir) &&			\
+	   if test -d doc; then			\
+	     bak=$$(date +"%F-%T") &&		\
+	     {					\
+	       mv doc doc.$$bak &&		\
+	       mv doc.new doc;			\
+	     } ||				\
+	    mv doc.$$bak doc;			\
+	  else					\
+	    mv doc.new doc;			\
+	  fi'
+
 
 ## -------------- ##
 ## document-aux.  ##
