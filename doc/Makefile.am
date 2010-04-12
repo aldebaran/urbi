@@ -24,17 +24,17 @@ CLEANFILES += $(EPS_IMAGES)
 
 # Find local *.sty files.  Find conversions of images from
 # document-aux.
-TEXI2DVI_FLAGS += -I $(srcdir) -I $(builddir)/document-aux
+TEXI2DVIFLAGS += -I $(srcdir) -I $(builddir)/document-aux
 pdf_DATA =
 
 # Use tex4ht.
-TEX4HT_FLAGS = urbi-style,2,sections+
-TEXI2HTML_FLAGS += --tex4ht --verbose --tex4ht-options=$(TEX4HT_FLAGS)
+TEX4HTFLAGS = urbi-style,2,sections+
+TEXI2HTMLFLAGS += --tex4ht --verbose --tex4ht-options=$(TEX4HTFLAGS)
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 %.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
 	-rm -rf $@ $@.tmp
 	-$(mkdir_p) $@.tmp
-	$(TEXI2HTML) $(TEXI2HTML_FLAGS) -o $@.tmp/$(notdir $*).html $<
+	$(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(notdir $*).html $<
 	cd $@.tmp && $(TEX4HT_POST) -v -v --index $(notdir $*).html $(notdir $*)*.html
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
