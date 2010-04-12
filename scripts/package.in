@@ -88,12 +88,29 @@ check_equal ()
 
 check_equal ARCH         URBI_HOST_CPU
 check_equal COMP         URBI_HOST_COMP
-check_equal OS           URBI_HOST_OS
+# check_equal OS           URBI_HOST_OS
 check_equal builddir     abs_top_buildir
 check_equal prefix       buildprefix
 check_equal release_mode COMPILATION_MODE_RELEASE
 check_equal srcdir       abs_top_srcdir
 
+# OS and URBI_HOST_OS.
+#
+# OS might be different from URBI_HOST_OS.  For instance
+# URBI_HOST_OS=linux, but OS=linux-bleeding-edge.  If we drop the
+# bleeding-edge part, we will make bleeding-edge tarballs not labeled
+# as such, so we might ship bleeding-edge tarballs instead of the old
+# Debian etch.
+#
+# Don't accept - in the OS.
+OS=$(echo "$OS" | sed -e 's/-/_/g')
+if test "$OS" = "$URBI_HOST_OS"; then
+  stderr "OS = URBI_HOST_OS = $OS"
+else
+  stderr "OS = $OS" "URBI_HOST_OS = $URBI_HOST_OS" \
+         "proceeding with $OS"
+  URBI_HOST_OS=$OS
+fi
 
 
 # Determine the version from the latest component of the tag. This will
