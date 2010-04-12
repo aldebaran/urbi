@@ -27,7 +27,8 @@ AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.10.1 foreign tar-ustar nostdinc subdir-objects
+# FIXME: Require 1.11.1 when we make source tarballs.
+AM_INIT_AUTOMAKE([1.11 foreign tar-ustar nostdinc subdir-objects
                   -Wall -Wno-portability])
 
 ## ------------ ##
