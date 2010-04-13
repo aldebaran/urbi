@@ -95,8 +95,7 @@ view: $(pdf_DATA)
 	xpdf $<
 
 %.eps: %.pdf
-	mkdir -p $(dir $@) || true
-	$(CONVERT) "$<" "$@"
+	$(CONVERT_TO_PDF)
 
 # Compile urbi-sandbox, to see if some construct works well.
 .PHONY: sandbox
