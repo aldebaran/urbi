@@ -1,4 +1,4 @@
-\newcommand{\slot}[2]{%
+\newcommand{\reqSlot}[2]{%
   \lstindex{#1} & #2 \\\hline%
 }%
 
@@ -286,7 +286,7 @@ brackets in the following table.
 Contains information about the robot identity.
 
 \begin{slots}
-  \slot{type}
+  \reqSlot{type}
   {
     This describes the robot category among: humanoid, four-legged,
     wheeled, industrial arm. It gives a general idea of the robot
@@ -294,17 +294,17 @@ Contains information about the robot identity.
     services by investigating the list of attributes of the object.
   }
 
-  \slot{name}%
+  \reqSlot{name}%
   {%
     Name of the robot.%
   }
 
-  \slot{model}%
+  \reqSlot{model}%
   {%
     Model of the robot.%
   }
 
-  \slot{serial}%
+  \reqSlot{serial}%
   {%
     Serial number (if available).%
   }
@@ -317,7 +317,7 @@ Contains information about the robot identity.
 Contains information about the network identification of the robot.
 
 \begin{slots}
-  \slot{IP}%
+  \reqSlot{IP}%
   {%
     IP address of the robot.%
   }
@@ -329,7 +329,7 @@ Contains information about the network identification of the robot.
 This interface is used to describe a generic motor controller.
 
 \begin{slots}
-  \slot{val}%
+  \reqSlot{val}%
   {%
     This slot is a generic pointer to a more specific slot describing
     the motor position, like \code{position} or \code{angle},
@@ -364,13 +364,13 @@ A wheel can fall in this category, if the reported position is the distance
 traveled by a point at the surface of the wheel.
 
 \begin{slots}
-  \slot{position}%
+  \reqSlot{position}%
   {%
     Position of the motor in meters.  Pointed to by the
     \code{val} slot.%
   }
 
-  \slot{force}%
+  \reqSlot{force}%
   {%
     Intensity of the measured or estimated force applied on a linear
     motor.%
@@ -383,7 +383,7 @@ traveled by a point at the surface of the wheel.
 Motor similar to \code{LinearMotor}, but controlled by its translation speed.
 
 \begin{slots}
-  \slot{speed}%
+  \reqSlot{speed}%
   {%
     Translation speed in meters per second. Pointed to by the \code{val} slot.%
   }
@@ -396,19 +396,19 @@ Motor similar to \code{LinearMotor}, but controlled by its translation speed.
 This interface is used to describe a position-controlled rotational motor controller.
 
 \begin{slots}
-  \slot{angle}%
+  \reqSlot{angle}%
   {%
     Angle of the motor in radian, modulo $2\pi$. Pointed to by the
     \code{val} slot.%
   }
 
-  \slot{turn}%
+  \reqSlot{turn}%
   {%
     Absolute angular position of the motor, expressed in number of
     turns.%
   }
 
-  \slot{torque}%
+  \reqSlot{torque}%
   {%
     Intensity of the measured or estimated torque applied on the
     motor.%
@@ -422,7 +422,7 @@ Interface describing a motor similar to \code{RotationalMotor} controlled
 by its rotation speed.
 
 \begin{slots}
-  \slot{speed}%
+  \reqSlot{speed}%
    {%
      Rotation speed in radians per second.%
    }
@@ -433,7 +433,7 @@ by its rotation speed.
 This interface is used to describe a generic sensor.
 
 \begin{slots}
-  \slot{val}%
+  \reqSlot{val}%
   {%
     This slot is a generic pointer to a more specific slot describing
     the sensor value, like \code{distance} or \code{temperature},
@@ -451,7 +451,7 @@ This interface is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
 
 \begin{slots}
-  \slot{distance}%
+  \reqSlot{distance}%
   {%
     Measured distance expressed in meters.  Pointed to by the
     \code{val} slot.%
@@ -466,7 +466,7 @@ This interface is used to describe a touch pressure sensor (contact,
 induction,...).
 
 \begin{slots}
-  \slot{pressure}%
+  \reqSlot{pressure}%
   {%
     Intensity of the pressure put on the touch sensor. Can be 0/1 for
     simple buttons or expressed in Pascal units. Pointed to by the
@@ -481,7 +481,7 @@ induction,...).
 This interface is used to describe an accelerometer.
 
 \begin{slots}
-  \slot{acceleration}%
+  \reqSlot{acceleration}%
   {%
     Acceleration expressed in $m/s^2$.  Pointed to by the \code{val}
     slot.%
@@ -493,7 +493,7 @@ This interface is used to describe an accelerometer.
 This interface is used to describe an gyrometer.
 
 \begin{slots}
-  \slot{speed}%
+  \reqSlot{speed}%
   {%
     Rotational speed in $\mathrm{rad}/s$.  Pointed to by the
     \code{val} slot.%
@@ -504,7 +504,7 @@ This interface is used to describe an gyrometer.
 This interface is used to describe a temperature sensor.
 
 \begin{slots}
-  \slot{temperature}%
+  \reqSlot{temperature}%
   {%
     Measured temperature in Celsius degrees.  Pointed to by the
     \code{val} slot.%
@@ -515,33 +515,33 @@ This interface is used to describe a temperature sensor.
 Interface for a scanning laser rangefinder, or other similar technologies.
 
 \begin{slots}
-  \slot{val}%
+  \reqSlot{val}%
   {%
     Last scan result. Can be either a list of ufloat, or a binary containing
     a packed array of doubles.
   }
 
-  \slot{angleMin}
+  \reqSlot{angleMin}
   {%
     Start scan angle in radians, relative to the front of the device.%
   }
 
-  \slot{angleMax}
+  \reqSlot{angleMax}
   {%
     End scan angle in radians, relative to the front of the device.%
   }
 
-  \slot{resolution}
+  \reqSlot{resolution}
   {%
     Angular resolution of the scan, in radians.%
   }
 
-  \slot{distanceMin}
+  \reqSlot{distanceMin}
   {%
     Minimum measurable distance.%
   }
 
-  \slot{distanceMax}
+  \reqSlot{distanceMax}
   {%
     Maximum measurable distance.%
   }
@@ -565,13 +565,13 @@ Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
 
 \begin{slots}
-  \slot{go(x)}%
+  \reqSlot{go(x)}%
   {%
     Move approximately x meters forward if x is positive, backward
     otherwise.%
   }
 
-  \slot{turn(x)}%
+  \reqSlot{turn(x)}%
   {%
     Turn right approximately \var{x} radians.  \var{x} can be a
     positive or negative value.%
@@ -588,13 +588,13 @@ motion can be achieved, whether it is done with a pan/tilt camera or
 with whole body motion or a combination of both.
 
 \begin{slots}
-  \slot{yaw}%
+  \reqSlot{yaw}%
   {%
     Rotational articulation around the Z axis in the robot, expressed
     in radians.%
   }
 
-  \slot{pitch}%
+  \reqSlot{pitch}%
   {%
     Rotational articulation around the Y axis in the robot, expressed
     in radians.%
@@ -608,28 +608,28 @@ The VideoIn interface groups every information relative to cameras or any
 image sensor.
 
 \begin{slots}
-  \slot{val}%
+  \reqSlot{val}%
   {%
     Image represented as a \code{Binary} value. %
   }
 
-  \slot{xfov}%
+  \reqSlot{xfov}%
   {%
     The x field of view of the camera expressed in radians.%
   }
 
-  \slot{yfov}%
+  \reqSlot{yfov}%
   {%
     The y field of view of the camera expressed in radians.%
   }
 
-  \slot{height}%
+  \reqSlot{height}%
   {%
     Height of the image in the current resolution, expressed in
     pixels%
   }
 
-  \slot{width}%
+  \reqSlot{width}%
   {%
     Width of the image in the current resolution, expressed in pixels%
   }
@@ -696,7 +696,7 @@ if (!robot.body.head.camera.hasSlot("jpeg"))
 The AudioOut interface groups every information relative to speakers.
 
 \begin{slots}
-  \slot{val}%
+  \reqSlot{val}%
   {%
     The speaker value, expressed as a binary, in the format given by
     the binary header during the assignment.
@@ -707,13 +707,13 @@ The AudioOut interface groups every information relative to speakers.
     not a requirement.%
   }
 
-  \slot{remain}%
+  \reqSlot{remain}%
   {%
     The amount of time remaining to play in the speaker sound buffer
     (expressed in \textit{ms} as a default unit).%
   }
 
-  \slot{playing}%
+  \reqSlot{playing}%
   {%
     This is a Boolean value which is true when there is a sound
     currently playing (the buffer is not empty)%
@@ -732,7 +732,7 @@ The AudioOut interface groups every information relative to speakers.
 The AudioIn interface groups every information relative to microphones.
 
 \begin{slots}
-  \slot{val}%
+  \reqSlot{val}%
   {%
     Binary value corresponding to the sound heard, expressed in the
     current unit (wav, mp3...). The unit can be changed like any other
@@ -741,7 +741,7 @@ The AudioIn interface groups every information relative to microphones.
     The content is the sound heard by the microphone since the last
     update event.%
   }
-  \slot{duration}%
+  \reqSlot{duration}%
   {%
     Amount of sound in the val attribute, expressed in \textit{ms}.%
   }
@@ -760,29 +760,29 @@ that fits some criteria and define a \dfn{blob} accordingly. Here are
 the typical slots expected:
 
 \begin{slots}
-  \slot{x}%
+  \reqSlot{x}%
   {%
     The x position of the center of the blob in the image%
   }
 
-  \slot{y}%
+  \reqSlot{y}%
   {%
     The y position of the center of the blob in the image%
   }
 
-  \slot{ratio}%
+  \reqSlot{ratio}%
   {%
     The size of the blob expressed as a normalized image size: 1 =
     full image, 0 = nothing.%
   }
 
-  \slot{visible}%
+  \reqSlot{visible}%
   {%
     A Boolean expressing whether there is a blob in the image or not
     (see threshold)%
   }
 
-  \slot{threshold}%
+  \reqSlot{threshold}%
   {%
     The minimum value of ratio to decide that the blob is visible.%
   }
@@ -841,7 +841,7 @@ their default sound output.
     developer.%
   }
 
-  \slot{say(s)}%
+  \reqSlot{say(s)}%
   {%
     Speak the sentence given in parameter \var{s}.%
   }
@@ -875,7 +875,7 @@ should use the \code{micro} component as their default sound input.
 \end{slots}
 
 \begin{events}
-  \slot{hear(s)}%
+  \reqSlot{hear(s)}%
   {%
     This event has one parameter which is the string describing what
     the speech engine has recognized (can be a word or a sentence).%
@@ -887,7 +887,7 @@ should use the \code{micro} component as their default sound input.
 Simple uni-color Led.
 
 \begin{slots}
-  \slot{val}%
+  \reqSlot{val}%
   {%
     Led intensity between 0 and 1.%
   }
@@ -899,7 +899,7 @@ Simple uni-color Led.
 Tri-color led.
 
 \begin{slots}
-  \slot{r,g,b}%
+  \reqSlot{r,g,b}%
   {%
     Intensity of the r, g, and b components, between 0 and 1.%
   }
@@ -910,10 +910,10 @@ Tri-color led.
 Power source of any kind.
 
 \begin{slots}
-  \slot{remain}{Estimation of the remaining energy between 0 and 1.}
-  \slot{capacity}{Storage capacity in Amp.Hour.}
-  \slot{current}{Current current consumption in Amp.}
-  \slot{voltage}{Current voltage in Volt.}
+  \reqSlot{remain}{Estimation of the remaining energy between 0 and 1.}
+  \reqSlot{capacity}{Storage capacity in Amp.Hour.}
+  \reqSlot{current}{Current current consumption in Amp.}
+  \reqSlot{voltage}{Current voltage in Volt.}
 \end{slots}
 
 
