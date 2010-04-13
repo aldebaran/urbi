@@ -78,7 +78,7 @@ for (var v : "123")
 \item[fresh]
   Return a String that has never been used as an identifier, prefixed
   by \lstinline|this|.  It can safely be used with
-  \lstinline|Object.setSlot| and so forth.
+  \refSlot{Object}{setSlot} and so forth.
 \begin{urbiassert}
 String.fresh == "_5";
 "foo".fresh == "foo_6";

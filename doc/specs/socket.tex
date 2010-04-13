@@ -166,9 +166,9 @@ var s = Socket.new|
   default, the loop is executed every \lstinline|pollInterval|.
 
 \item[pollInterval]
-  Each \lstinline|pollInterval| amount of time, \lstinline|Socket.poll|
+  Each \lstinline|pollInterval| amount of time, \refSlot{Socket}{poll}
   is called. If \lstinline|pollInterval| equals zero,
-  \lstinline|Socket.poll| is not called.
+  \refSlot{Socket}{poll} is not called.
 
 \item[port]
   The port of the connection.

@@ -78,7 +78,7 @@ do (Object.new)
 \end{urbiassert}
 
 \item[allSlotNames]
-  Deprecated alias for \lstinline|Object.slotNames|.
+  Deprecated alias for \refSlot{Object}{slotNames}.
 \begin{urbiassert}
 Object.allSlotNames == Object.slotNames;
 \end{urbiassert}
@@ -86,7 +86,7 @@ Object.allSlotNames == Object.slotNames;
 \item \lstinline|apply(\var{args})|\\
   ``Invoke \lstinline|this|''.  The size of the argument list,
   \var{args}, must be one.  This argument is ignored.  This function
-  exists for compatibility with \lstinline|Code.apply|.
+  exists for compatibility with \refSlot{Code}{apply}.
 \begin{urbiassert}
 Object.apply([this]) === Object;
 Object.apply([1])    === Object;
@@ -187,7 +187,7 @@ do (Object.new)
   \var{depth} specifies how recursive the description is: the greater,
   the more detailed.  This method is mostly useful for debugging
   low-level issues, for a more human-readable interface, see also
-  \lstinline|Object.inspect|.
+  \refSlot{Object}{inspect}.
 \begin{urbiscript}
 do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(0);
 [00015137] *** Float_0x240550 {
@@ -220,7 +220,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 \end{urbiscript}
 
 \item[getPeriod]
-  Deprecated.  Use \lstinline|System.period| instead.
+  Deprecated.  Use \refSlot{System}{period} instead.
 
 \item \lstinline|getProperty(\var{slotName}, \var{propName})|\\
   Return the value of the \var{propName} property associated to the
@@ -281,7 +281,7 @@ b.getSlot("ENOENT");
 
 \item \lstinline|hasLocalSlot(\var{slot})|\\
   Whether \lstinline|this| features a slot \var{slot}, locally, not
-  from some ancestor.  See also \lstinline|Object.hasSlot|.
+  from some ancestor.  See also \refSlot{Object}{hasSlot}.
 \begin{urbiscript}
 class Base         { var this.base = 23; } |;
 class Derive: Base { var this.derive = 43 } |;
@@ -303,7 +303,7 @@ assert
 
 \item \lstinline|hasSlot(\var{slot})|\\
   Whether \lstinline|this| has the slot \var{slot}, locally, or from
-  some ancestor.  See also \lstinline|Object.hasLocalSlot|.
+  some ancestor.  See also \refSlot{Object}{hasLocalSlot}.
 
 \begin{urbiassert}
 Derive.hasSlot("derive");
@@ -316,7 +316,7 @@ Derive.hasSlot("base");
 \item \lstinline|inspect(\var{deep} = false)|\\
   Describe \lstinline|this|: its prototypes and slots, and their
   properties.  If \var{deep}, all the slots are described, not only
-  the local slots. See also \lstinline|Object.dump|.
+  the local slots. See also \refSlot{Object}{dump}.
 \begin{urbiscript}
 do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
 [00001227] *** Inspecting 2
@@ -368,7 +368,7 @@ locateSlot("doesNotExist").isNil;
 \end{urbiassert}
 
 \item[print]
-  Send \lstinline|print| to the \lstinline|Channel.topLevel| channel.
+  Send \lstinline|print| to the \refSlot{Channel}{topLevel} channel.
 \begin{urbiscript}
 1.print;
 [00001228] 1

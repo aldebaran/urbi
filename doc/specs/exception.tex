@@ -95,7 +95,7 @@ Exception.new("Ouch").message == "Ouch";
 
 \begin{itemize}
 \item \lstinline|ArgumentType.new(\var{routine}, \var{index}, \var{effective}, \var{expected})|\\
-  Derives from \lstinline|Exception.Type|.  The \var{routine} was
+  Derives from \refSlot{Exception}{Type}.  The \var{routine} was
   called with a \var{index}-nth argument of type \var{effective}
   instead of \var{expected}.
 \begin{urbiscript}
@@ -125,7 +125,7 @@ Exception.Arity.new("myRoutine", 1, 10, 23);
   The \var{routine} was called with an inappropriate integer
   (\var{effective}).  Use the format \var{fmt} to create an error
   message from \var{effective}.  Derives from
-  \lstinline|Exception.BadNumber|.
+  \refSlot{Exception}{BadNumber}.
 \begin{urbiscript}
 Exception.BadInteger.new("myRoutine", "bad integer: %s", 12);
 [00000005] Exception.BadInteger `myRoutine: bad integer: 12'
@@ -181,7 +181,7 @@ Exception.MatchFailure.new;
 
 \item \lstinline|NegativeNumber.new(\var{routine}, \var{effective})|\\
   The \var{routine} was called with a negative number
-  (\var{effective}).  Derives from \lstinline|Exception.BadNumber|.
+  (\var{effective}).  Derives from \refSlot{Exception}{BadNumber}.
 \begin{urbiscript}
 Exception.NegativeNumber.new("myRoutine", -12);
 [00000005] Exception.NegativeNumber `myRoutine: expected non-negative number, got -12'
@@ -189,7 +189,7 @@ Exception.NegativeNumber.new("myRoutine", -12);
 
 \item \lstinline|NonPositiveNumber.new(\var{routine}, \var{effective})|\\
   The \var{routine} was called with a non-positive number
-  (\var{effective}).  Derives from \lstinline|Exception.BadNumber|.
+  (\var{effective}).  Derives from \refSlot{Exception}{BadNumber}.
 \begin{urbiscript}
 Exception.NonPositiveNumber.new("myRoutine", -12);
 [00000005] Exception.NonPositiveNumber `myRoutine: expected positive number, got -12'
@@ -222,10 +222,10 @@ Exception.Scheduling.new("cannot schedule");
   described by \var{message}.  \var{loc} is the location of the syntax
   error, \var{location} is the place the error was thrown.  They are
   usually equal, except when the errors are caught while using
-  \lstinline|System.eval| or \lstinline|System.load|.  In that case
+  \refSlot{System}{eval} or \refSlot{System}{load}.  In that case
   \var{loc} is really the position of the syntax error, while
-  \var{location} refers to the location of the \lstinline|System.eval|
-  or \lstinline|System.load| invocation.
+  \var{location} refers to the location of the \refSlot{System}{eval}
+  or \refSlot{System}{load} invocation.
 \begin{urbiscript}
 Exception.Syntax.new(Location.new(Position.new("file.u", 14, 25)),
                      "unexpected pouCharque", "file.u");
@@ -256,7 +256,7 @@ Exception.Type.new("hisResult", "myExceptation");
 [00000014] Exception.Type `unexpected "hisResult", expected a String'
 \end{urbiscript}
 
-\item \lstinline|UnexpectedVoid.new|\\
+\item \refSlot{UnexpectedVoid}{new}\\
   An attempt was made to read the value of \lstinline|void|.
 \begin{urbiscript}
 Exception.UnexpectedVoid.new;

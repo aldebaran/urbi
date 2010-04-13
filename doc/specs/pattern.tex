@@ -49,7 +49,7 @@ Pattern.Binding.new("a");
 \item[bindings]
 
   A \lstinline|Dictionary| filled by the match function for each
-  \lstinline|Pattern.Binding| contained inside the pattern.
+  \refSlot{Pattern}{Binding} contained inside the pattern.
 
 \begin{urbiscript}
 {
@@ -71,7 +71,7 @@ Pattern.Binding.new("a");
     \item If the match is incorrect, then the \var{bindings} member should
       not be used.
   \end{itemize}
-  If the pattern contains multiple \lstinline|Pattern.Binding| with
+  If the pattern contains multiple \refSlot{Pattern}{Binding} with
   the same name, then the behavior is undefined.
 
 \begin{urbiassert}
@@ -99,7 +99,7 @@ Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
   are provided the \lstinline|'=='| operator is used.
 
   To see how to use it, you can have a look at the implementation of
-  \lstinline|List.matchAgainst|.
+  \refSlot{List}{matchAgainst}.
 
 %% This function is indirectly tested with the match of Pattern.Binding
 %% inside lists.

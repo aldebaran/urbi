@@ -264,7 +264,7 @@ Float.inf;
 \end{urbiscript}
 
 %% FIXME: \item[limit_digits]
-%% FIXME:   Number of digits (in \lstinline|Float.limit_radix| base) in the
+%% FIXME:   Number of digits (in \refSlot{Float}{limit_radix} base) in the
 %% FIXME:   mantissa.
 %% FIXME: \begin{urbiassert}
 %% FIXME: Float.limit_digits;
@@ -343,7 +343,7 @@ Float.inf;
 \end{urbiassert}
 
 \item \lstinline|max(\var{arg1}, ...)|\\
-  Bounces to \lstinline|List.max| on \lstinline|[this, \var{arg1}, ...]|.
+  Bounces to \refSlot{List}{max} on \lstinline|[this, \var{arg1}, ...]|.
 \begin{urbiassert}
 1.max == 1;
 1.max(2, 3) == 3;
@@ -351,7 +351,7 @@ Float.inf;
 \end{urbiassert}
 
 \item \lstinline|min(\var{arg1}, ...)|\\
-  Bounces to \lstinline|List.min| on \lstinline|[this, \var{arg1}, ...]|.
+  Bounces to \refSlot{List}{min} on \lstinline|[this, \var{arg1}, ...]|.
 \begin{urbiassert}
 1.min == 1;
 1.min(2, 3) == 1;
