@@ -95,7 +95,9 @@ view: $(pdf_DATA)
 	xpdf $<
 
 %.eps: %.pdf
-	$(CONVERT_TO_PDF)
+	$(ENSURE_TARGET_DIR)
+	$(CONVERT) $< eps:$@.tmp
+	mv $@.tmp $@
 
 # Compile urbi-sandbox, to see if some construct works well.
 .PHONY: sandbox
