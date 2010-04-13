@@ -246,6 +246,7 @@ FormatInfo
 formatter
 Formatters
 fortyTwo
+fPIC
 freezeif
 Frodo
 fromAscii
@@ -406,6 +407,7 @@ lockMode
 lookup
 loopn
 lport
+LSB
 lshift
 lst
 ltrace
@@ -683,6 +685,7 @@ syncEmit
 syncline
 synclines
 syncValue
+SYSV
 taglist
 tarfile
 targetMine
@@ -788,6 +791,7 @@ Uowned
 updateSlot
 UProp
 urbi
+urbiConsole
 urbiHelloWorld
 urbiscript
 urbiscript's
@@ -845,6 +849,7 @@ wheelR
 wheelRadius
 WiFi
 wildcards
+Wl
 woot
 writeToVar
 xABCDEF

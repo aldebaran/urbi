@@ -714,8 +714,8 @@ at (?myEvent((var x), (var y), 1))
 
 \item[Waituntil and bindings]
 
-Bindings performed in "waituntil" constructs are now available in its
-context:
+  Bindings performed in "waituntil" constructs are now available in its
+  context:
 
 \begin{urbiunchecked}
 waituntil(?event(var x));
@@ -725,8 +725,8 @@ echo (x);
 
 \item["\refSlot{List}{insert}" method]
 
-The "\refSlot{List}{insert}" method now uses an index as its first argument and
-inserts the given element before the index position:
+  Now uses an index as its first argument and inserts the given element
+  before the index position:
 
 \begin{urbiscript}
 ["a", "b", "c"].insert(1, "foo");
@@ -735,10 +735,9 @@ inserts the given element before the index position:
 
 \item["\refSlot{List}{sort}" method]
 
-The "\refSlot{List}{sort}" method now takes an optional argument, which is a
-function to call instead of the "<" operator. Here are two examples
-illustrating how to sort strings, depending on whether we want to
-be case-sensitive (the default) or not:
+  Now takes an optional argument, which is a function to call instead of the
+  "<" operator. Here are two examples illustrating how to sort strings,
+  depending on whether we want to be case-sensitive (the default) or not:
 
 \begin{urbiscript}
 ["foo", "bar", "Baz"].sort;
@@ -754,38 +753,37 @@ be case-sensitive (the default) or not:
 
 \item["\refSlot{System}{getenv}" method]
 
-"\refSlot{System}{getenv}" now returns "nil" if a variable cannot be found in
-the environment instead of "void". This allows you do to things such
-as :
+  Now returns "nil" if a variable cannot be found in the environment instead
+  of "void". This allows you do to things such as:
 
 \begin{urbiscript}
-var ne = \refSlot{System}{getenv}("nonexistent");
+var ne = System.getenv("nonexistent");
 if (!ne.isNil) do_something(ne);
 \end{urbiscript}
 
-while previously you had to retrieve the environment variable twice,
-once to check for its existence and once to get its content.
+  \noindent
+  while previously you had to retrieve the environment variable twice, once
+  to check for its existence and once to get its content.
 
 \item["disown"]
 
-It is now possible to start executing code in background while
-dropping all the tags beforehand, including the connection tag. The
-code will still continue to execute after the connection that created
-it has died.
+  It is now possible to start executing code in background while dropping
+  all the tags beforehand, including the connection tag. The code will still
+  continue to execute after the connection that created it has died.
 
 \item["\refSlot{Object}{removeSlot}"]
 
-The "removeSlot" method now silently accepts non-existing slot
-names instead of signaling an error.
+  Now silently accepts non-existing slot names instead of signaling an
+  error.
 
 \item["\refSlot{Semaphore}{criticalSection}"]
 
   It is now possible to define a critical section associated with a
-  semaphore. The \lstinline|acquire| method will be called at the beginning,
-  and if after that the operation is interrupted by any means the
-  \lstinline|release| operation will be called before going on. If there are
-  no interruption, the \lstinline|release| operation will also be called at
-  the end of the callback:
+  semaphore. The \refSlot{Semaphore}{acquire} method will be called at the
+  beginning, and if after that the operation is interrupted by any means the
+  \refSlot{Semaphore}{release} operation will be called before going on. If
+  there are no interruption, the \refSlot{Semaphore}{release} operation will
+  also be called at the end of the callback:
 
 \begin{urbiunchecked}
 var s = \refSlot{Semaphore}{new}(1);
@@ -999,9 +997,9 @@ For example, -1 designates the last element, and -2 the one before that.
   their "name" slot apparent. They are now displayed as "Tag<name>":
 
 \begin{urbiscript}
-\refSlot{Tag}{new};
+Tag.new;
 [00000001] Tag<tag_1>
-\refSlot{Tag}{new}("mytag");
+Tag.new("mytag");
 [00000002] Tag<mytag>
 \end{urbiscript}
 
