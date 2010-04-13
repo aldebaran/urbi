@@ -11,15 +11,14 @@ SDK.
 \subsubsection{Changes}
 
 \begin{itemize}
-\item \refSlot{Global}{Tags} is renamed as \refSlot{Tag}{tags}.
+\item \slot{Global}{Tags} is renamed as \refSlot{Tag}{tags}.
 
-\item \refSlot{Global}{Task} is renamed as \refSlot{Global}{Job}.
+\item \slot{Global}{Task} is renamed as \refSlot{Global}{Job}.
 
-\item \refSlot{Global}{topLevel} is renamed as \refSlot{Channel}{topLevel}.
+\item \slot{Global}{topLevel} is renamed as \refSlot{Channel}{topLevel}.
 
-\item \refSlot{Global}{output}, \refSlot{Global}{error} are removed, they
-  were deprecated in favor of \refSlot{Global}{cout} and
-  \refSlot{Global}{cerr}.
+\item \slot{Global}{output}, \slot{Global}{error} are removed, they were
+  deprecated in favor of \refSlot{Global}{cout} and \refSlot{Global}{cerr}.
 
 \item \refSlot{Object}{getPeriod} is deprecated in favor of
   \refSlot{System}{period}.
@@ -76,7 +75,7 @@ SDK.
     \end{tabular}
   \end{center}
 
-\item Location.'==' function.
+\item Location.'=='.
 
 \item type replaces \lstinline|'$type'|
 \end{itemize}
@@ -155,7 +154,7 @@ SDK.
 
 \subsubsection{Changes}
 \begin{itemize}
-\item \refSlot{Lobby}{quit} replaces \refSlot{System}{quit}.
+\item \refSlot{Lobby}{quit} replaces \slot{System}{quit}.
 \item \refSlot{Socket}{connect} accepts integers
 \item UObject remote notifyChange on USensor variable now works as expected.
 \item UObject timers can now be removed with UObject::removeTimer().
@@ -900,8 +899,7 @@ for (var c: "foo") echo (c);
 
 \item["\refSlot{String}{split}" method]
 
-The "split" method of "String" has been enhanced. It will not aggregate
-components anymore by default:
+  It no longer aggregate components by default:
 
 \begin{urbiscript}
 "foobar".split("o");
