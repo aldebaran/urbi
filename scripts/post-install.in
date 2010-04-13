@@ -3,12 +3,14 @@
 set -x
 set -e
 
-BOOST_LDPATH='@BOOST_LDPATH@'
-COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'
-PROJECT='@PACKAGE_TARNAME@'
-URBI_HOST_COMP='@URBI_HOST_COMP@'
-URBI_HOST_CPU='@URBI_HOST_CPU@'
-URBI_HOST_OS='@URBI_HOST_OS@'
+: ${BOOST_LDPATH='@BOOST_LDPATH@'}
+: ${COMPILATION_MODE_DEBUG='@COMPILATION_MODE_DEBUG@'}
+: ${PROJECT='@PACKAGE_TARNAME@'}
+: ${STRIP='@STRIP@'}
+: ${URBI_HOST_COMP='@URBI_HOST_COMP@'}
+: ${URBI_HOST_CPU='@URBI_HOST_CPU@'}
+: ${URBI_HOST_OS='@URBI_HOST_OS@'}
+
 builddir='@abs_top_builddir@'
 host='@host@'
 prefix='@prefix@'
@@ -55,8 +57,11 @@ libdir="@libdir@"
 # 7.8M libuobject.2.so   strip -S
 # 6.4M libuobject.3.so   strip
 case $COMPILATION_MODE_DEBUG:$URBI_HOST_OS in
-  (false:macos) : ${STRIP='strip -S'};;
-  (false:linux) : ${STRIP=strip};;
+  (false:macos) $STRIP="$STRIP -s";;
+  (false:linux) ;;
+  (*) # Do not use STRIP here.
+      STRIP=
+      ;;
 esac
 if test -n "$STRIP"; then
   # Do not show errors -- there are shell scripts there.
