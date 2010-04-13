@@ -16,98 +16,27 @@ This document is meant to be used to toy with \LaTeX{}.
 
 \tableofcontents
 \part{First Part}
+
 \chapter{First Chapter}
 
 This is the first chapter.
 
-\newcommand{\tilt}[1]{\multicolumn{1}{c}{\begin{turn}{60}\textbf{#1}\end{turn}}}
-\newcommand{\operatorhead}{
-  \tilt{Operator}
-  & \tilt{Use}
-  & \tilt{Associativity}
-  & \tilt{Original semantics}
-  & \tilt{Equivalence}
-}
+\sectionObject{Bar}
 
+\begin{urbiscriptapi}
+\item[bar] This is Bar.bar.
+\item[foo] This is Bar.foo.
+\end{urbiscriptapi}
 
-\newcommand{\operator}[6][ ]{\lstinline@#2@&\lstinline@#3@&#4&#5&\lstinline@#6@#1\\}
+\sectionObject{Foo}
 
-\newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}          {Not redefinable}       }
-\newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}          {Not redefinable}       }
-
-
-\begin{tabular}{|c|c|c|c|c|c|}
-  \hline
-  \operatorhead
-  \\
-  \hline
-  \operatordot
-  \operatordota
-  \hline
-\end{tabular}
-
-\section{First Section}
-\newcommand{\optionHelp}
-  {Display the help message and exit successfully.}
-
-\newcommand{\optionVersion}
-  {Display version information and exit successfully.}
-
-\begin{options}
-\item[h]{help} \optionHelp
-  \begin{sublist}
-    \begin{description}
-    \item[foo] foo.
-    \item[bar] bar.
-    \end{description}
-  \end{sublist}
-
-  \begin{sublist}
-    \begin{itemize}
-    \item foo
-    \item bar
-    \end{itemize}
-  \end{sublist}
-
-\item{version} \optionVersion
-  \begin{sublist}
-    \begin{description}
-    \item[foo] foo.
-    \item[bar] bar.
-    \end{description}
-
-    \begin{itemize}
-    \item foo
-    \item bar
-    \end{itemize}
-  \end{sublist}
-\end{options}
-
-\subsection{First Subsection}
-\subsubsection{Subsubsection I.1.1.1.a}
-Body of Subsection I.1.1.1.a.
-
-\begin{urbiassert}[firstnumber=1]
-1 == 1;
-\end{urbiassert}
-
-\subsubsection{Subsubsection I.1.1.1.b}
-Body of Subsection I.1.1.1.b.
-
-\begin{urbiassert}[firstnumber=1]
-1 == 1;
-\end{urbiassert}
-
-\subsection{Second Subsection}
-\begin{urbiscript}
-0 != 1;
-[00001234] true
-// Check the syntax highlighting colors.
-if (1 == 0) "yes" else "no";
-[00001234] "no"
-\end{urbiscript}
+\begin{urbiscriptapi}
+\item[bar] This is Foo.bar.
+\item[foo] This is Foo.foo.
+\end{urbiscriptapi}
 
 \section{Second Section}
+
 \begin{urbiunchecked}[escapeinside=<>]
 #<Été>;
 [00048238:error] !!! invalid character: `#'
@@ -139,45 +68,8 @@ This is the second chapter.
 This is the second part.
 
 \chapter{Chapter II.1}
-Body of Chapter II.1.
 
-\ifx\ifHtml\undefined\else
-  \let\subsubsectionSave\subsubsection
-  \let\subsubsection\faqsection
-\fi
-
-\section{Section II.1.1}
-Body of Section II.1.1.
-
-\subsection{Subsection II.1.1.1}
-Body of Subsection II.1.1.1.
-
-\subsubsection{FAQ II.1.1.1.a}
-Body of Subsection II.1.1.1.a.
-
-\subsubsection{FAQ II.1.1.1.b}
-Body of Subsection II.1.1.1.b.
-
-\subsection{Subsection II.1.1.2}
-Body of Subsection II.1.1.2.
-
-\subsubsection{FAQ II.1.1.2.a}
-Body of Subsection II.1.1.2.a.
-
-\subsubsection{FAQ II.1.1.2.b}
-Body of Subsection II.1.1.2.b.
-
-
-\ifx\ifHtml\undefined\else
-  \let\subsubsection\subsubsectionSave
-\fi
-
-\section{Section II.1.2}
-Body of Section II.1.2.
-
-\chapter{Chapter II.2}
-Body of Chapter II.2.
-
+You want to use \refSlot{Foo}{foo}, and possibly \refSlot{Bar}{foo}.
 
 \end{document}
 
