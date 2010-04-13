@@ -17,6 +17,8 @@ class Global.Exception
   // created.
   var backtrace;
   var location;
+  var slot;
+  var routine;
 
   function init(msg)
   {
@@ -29,9 +31,14 @@ class Global.Exception
     Exception.getSlot("init").apply([this, msg])
   };
 
+  // <loc>: <slot or routine>: <message>
   function asString()
   {
     var res = message |
+    if (!slot.isVoid)
+      res = "%s: %s" % [slot, res]
+    else if (!routine.isVoid)
+      res = "%s: %s" % [routine, res] |
     if (!location.isVoid)
       res = "%s: %s" % [location, res] |
     res
@@ -45,35 +52,95 @@ class Global.Exception
   };
 };
 
+
+// These functions should not be visible outside of this file.  The
+// exception indentation is not done to minize differences.
+{
+  function makeFmtException(name, inherit, locSlots, fmt, fmtSlots)
+  {
+    var locSize = locSlots.size;
+    var fmtSize = fmtSlots.size;
+
+    class Res : inherit
+    {
+      type = name;
+      var fmt = fmt;
+
+      function init
+      {
+        if (call.argsCount != locSize + fmtSize)
+          throw Exception.Arity.new("%s.%s" % [name, "init"],
+                                    call.argsCount,
+                                    size) |
+        var values = call.evalArgs |
+        for (var i: locSize)
+          this.updateSlot(locSlots[i], values[i]) |
+        for (var i: fmtSize)
+          this.setSlot(fmtSlots[i], values[i + locSize])
+      };
+
+      function message()
+      {
+        var l = [];
+        for (var i: fmtSize)
+          l << this.getSlot(fmtSlots[i]) |
+        fmt % l
+      };
+    };
+
+    Exception.setSlot(name, Res);
+  };
+
+  function makeMsgException(name, inherit, locSlots, msg)
+  {
+    makeFmtException(name, inherit, locSlots, "", []);
+    Exception.getSlot(name).removeSlot("fmt");
+    Exception.getSlot(name).message = msg;
+  };
+
+  function makeException(name, inherit, locSlots)
+  {
+    makeMsgException(name, inherit, locSlots, Exception.message);
+  };
+
 class Exception.Arity: Exception
 {
-  var routine;
   var effective;
+  var min;
+  var max;
 
   function init(routine, effective, min, max = void)
   {
     this.routine = routine |
     this.effective = effective |
+    this.min = min |
+    if (!max.isVoid)
+      this.max = max |
+  };
 
-    if (max.isVoid)
-      '$Exception'("%s: expected %s argument%s, given %s"
-                   % [routine, min, {if (1 < min) "s" else ""}, effective])
+  function message()
+  {
+     if (max.isVoid)
+      "expected %s argument%s, given %s"
+      % [min, {if (1 < min) "s" else ""}, effective]
     else
-      '$Exception'("%s: expected between %s and %s argument%s, given %s"
-                   % [routine, min, max, {if (1 < max) "s" else ""}, effective])
-  }
+      "expected between %s and %s argument%s, given %s"
+      % [min, max, {if (1 < max) "s" else ""}, effective]
+  };
 };
 
 class Exception.BadNumber: Exception
 {
-  var routine;
-  var effective;
-
   function init(routine, fmt, effective)
   {
-    this.routine = routine |
-    this.effective = effective |
-    '$Exception'("%s: %s" % [routine, fmt % effective])
+    this.routine = routine;
+    var this.fmt = fmt;
+    var this.effective = effective;
+  };
+
+  function message()
+  {
+    fmt % effective
   };
 };
 
@@ -81,101 +148,58 @@ class Exception.BadInteger: Exception.BadNumber
 {
 };
 
-class Exception.NegativeNumber: Exception.BadNumber
-{
-  function init(routine, effective)
-  {
-    Exception.BadNumber
-      .getSlot("init")
-      .apply([this, routine, "expected non-negative number, got %s", effective])
-  };
-};
+makeFmtException(
+  "NegativeNumber", Exception.BadNumber, ["routine"],
+  "expected non-negative number, got %s", ["effective"]
+);
 
-class Exception.NonPositiveNumber: Exception.BadNumber
-{
-  function init(routine, effective)
-  {
-    Exception.BadNumber
-      .getSlot("init")
-      .apply([this, routine, "expected positive number, got %s", effective])
-  };
-};
+makeFmtException(
+  "NonPositiveNumber", Exception.BadNumber, ["routine"],
+  "expected positive number, got %s", ["effective"]
+);
 
-class Exception.Constness: Exception
-{
-  function init()
-  {
-    '$Exception'("cannot modify const slot")
-  }
-};
+makeMsgException(
+  "Constness", Exception.BadNumber, [],
+  "cannot modify const slot"
+);
 
-class Exception.FileNotFound: Exception
-{
-  var path;
+makeFmtException(
+  "FileNotFound", Exception, [],
+  "file not found: %s", ["path"]
+);
 
-  function init(p)
-  {
-    path = p|
-    '$Exception'("file not found: %s" % p)
-  }
-};
+makeMsgException(
+  "ImplicitTagComponent", Exception, [],
+  "invalid component in implicit tag"
+);
 
-class Exception.ImplicitTagComponent: Exception
-{
-  function init()
-  {
-    '$Exception'("invalid component in implicit tag")
-  }
-};
+makeMsgException(
+  "MatchFailure", Exception, [],
+  "pattern did not match"
+);
 
-class Exception.MatchFailure: Exception
-{
-  function init()
-  {
-    '$Exception'("pattern did not match");
-  }
-};
+makeException(
+  "Primitive", Exception, ["routine", "message"]
+);
 
-class Exception.Primitive: Exception
-{
-  var routine = "<no routine>";
-
-  function asString()
-  {
-    var res = "%s: %s" % [routine, message] |
-    if (!location.isVoid)
-      res = "%s: %s" % [location, res] |
-    res
-  };
-
-  function init(routine, msg)
-  {
-    this.routine = routine |
-    '$Exception'(msg)
-  };
-};
-
-class Exception.Redefinition: Exception
-{
-  var slot;
-
-  function init(s)
-  {
-    slot = s |
-    '$Exception'("slot redefinition: %s" % s)
-  }
-};
+// Should move the slot in the location instead of adding it at the end of
+// the message.
+makeFmtException(
+  "Redefinition", Exception, [],
+  "slot redefinition: %s", ["slot_name"]
+);
 
 class Exception.Scheduling: Exception
 {
   function throwNew(msg)
   {
     throw Exception.Scheduling.new(msg)
-  }
+  };
 };
 
 class Exception.Syntax: Exception
 {
+  var error = "syntax error";
   var loc = "<no location>";
   var input = "<no input>";
 
@@ -210,16 +234,20 @@ class Exception.Syntax: Exception
 
 class Exception.Type: Exception
 {
-  var expected;
+  var expectedType;
   var effective;
 
   function init(effective, expected)
   {
-    this.expected = expected |
-    this.effective = effective |
-    message = "unexpected %s, expected a %s"
-              % [effective.asPrintable, expected.type]
-  }
+    this.expectedType = expected.type |
+    this.effective = effective
+  };
+
+  function message()
+  {
+    "unexpected %s, expected a %s"
+      % [effective.asPrintable, expectedType]
+  };
 };
 
 class Exception.ArgumentType: Exception.Type
@@ -231,10 +259,14 @@ class Exception.ArgumentType: Exception.Type
   {
     Exception.Type.getSlot("init").apply([this, effective, expected]) |
     this.routine = routine |
-    this.index = index |
-    message = "%s: unexpected %s for argument %s, expected a %s"
-              % [routine, effective.asPrintable, index, expected.type]
-  }
+    this.index = index
+  };
+
+  function message()
+  {
+    "unexpected %s for argument %s, expected a %s"
+      % [effective.asPrintable, index, expectedType]
+  };
 };
 
 /*---------.
@@ -245,6 +277,7 @@ class Exception.Lookup: Exception
 {
   var msg;
   var obj;
+  var suggested = nil;
 
   var fixSpelling = true;
 
@@ -252,13 +285,16 @@ class Exception.Lookup: Exception
   {
     msg = m |
     obj = o |
-    var explanation = "lookup failed: %s" % m |
-    var closest = nil |
     if (fixSpelling)
-      closest = mispelling(m, o) |
-    if (closest)
-      explanation += " (possible mispelling of %s)" % closest |
-    '$Exception'(explanation)
+      suggested = mispelling(m, o)
+  };
+
+  function message()
+  {
+    var res = "lookup failed: %s" % msg;
+    if (suggested)
+      res += " (possible mispelling of %s)" % suggested |
+    res
   };
 
   // Return the most probable slot in "o" (recursively) ressembling "m"
@@ -295,11 +331,11 @@ class Exception.Lookup: Exception
   }
 };
 
-class Exception.UnexpectedVoid: Exception
-{
-  function init()
-  {
-    '$Exception'("unexpected void")
-  }
-};
+makeMsgException(
+  "UnexpectedVoid", Exception, [],
+  "unexpected void"
+);
 
+
+// Close the scope of make*Exception functions.
+};
