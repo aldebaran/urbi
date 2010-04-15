@@ -1,4 +1,4 @@
-\chapter{Building \urbi SDK}
+\chapter{Building \usdk}
 \label{sec:build}
 
 \lstnewenvironment{package}[1][]
@@ -8,9 +8,8 @@
       #1}}
   {\cxxPost}
 
-This section is meant for people who want to \emph{build} the \urbi
-SDK.  If you just want to install a pre-built \urbi SDK, see
-\autoref{sec:installation}.
+This section is meant for people who want to \emph{build} the \usdk.  If
+you just want to install a pre-built \usdk, see \autoref{sec:installation}.
 
 \section{Requirements}
 \label{sec:build:req}
@@ -333,7 +332,7 @@ We use our cl.exe wrappers, which is something that Libtool cannot
 know.  So we need to tell it that we are on Windows with Cygwin, and
 pretend we use GCC, so we pretend we run mingw.
 
-The following options have been used with success to compile Urbi SDK
+The following options have been used with success to compile \usdk
 with Visual C++ 2005.  Adjust to your own case (in particular the
 location of Boost).
 
@@ -385,9 +384,10 @@ variables documented in the manual.
   original one.
 
 \item[URBI\_IGNORE\_URBI\_U] Ignore failures (such as differences between
-  kernel revision and urbi.u revision) during the initialization.
+  kernel revision and \file{urbi.u} revision) during the initialization.
 
-\item[URBI\_LAUNCH] The path the urbi-launch that urbi.exe will exec.
+\item[URBI\_LAUNCH] The path to \command{urbi-launch} that
+  \command{urbi.exe} will exec.
 
 \item[URBI\_NO\_ICE\_CATCHER] Don't try to catch SEGVs.
 
@@ -423,10 +423,9 @@ the dependencies is painful, we rely on a few timestamps:
   libuobject, etc.).
 
 \item[executables.stamp] Updated when an executable is updated
-  (urbi-launch, etc.).  Depends on libraries.stamp.
+  (\command{urbi-launch}, etc.).  Depends on libraries.stamp.
 
-\item[urbi.stamp] When Urbi sources (\file{share/urbi/*.u}) are
-  updated.
+\item[urbi.stamp] When \urbi sources (\file{share/urbi/*.u}) are updated.
 
 \item[all.stamp] Updated when any of the three aforementioned
   timestamps is.
@@ -444,7 +443,7 @@ $ make check -C tests     # All passes again.
 
 \noindent
 because the timestamps were not given a chance to notice that some
-Urbi source changed, so Make did not notice the tests really needed to
+\urbi source changed, so Make did not notice the tests really needed to
 be rerun and \strong{the tests were not run}.
 
 You may either just update the timestamps:
