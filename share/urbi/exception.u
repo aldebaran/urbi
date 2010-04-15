@@ -293,7 +293,7 @@ class Exception.Lookup: Exception
   {
     var res = "lookup failed: %s" % msg;
     if (suggested)
-      res += " (possible mispelling of %s)" % suggested |
+      res += " (possible misspelling of %s)" % suggested |
     res
   };
 
