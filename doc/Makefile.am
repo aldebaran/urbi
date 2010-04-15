@@ -10,7 +10,11 @@ share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
 include document-aux/make/pdf-figs.mk
 
-# img/.
+
+## -------- ##
+## Images.  ##
+## -------- ##
+
 DOT_IMAGES = $(call ls_files,img/*.dot)
 PNG_IMAGES = $(call ls_files,img/*.png)
 PDF_IMAGES =					\
@@ -19,11 +23,24 @@ PDF_IMAGES =					\
   document-aux/figs/urbi.pdf			\
   $(DOT_IMAGES:.dot=.pdf)
 EXTRA_DIST += $(call ls_files,img/*)
+
 EPS_IMAGES = $(PDF_IMAGES:.pdf=.eps) $(PNG_IMAGES:.png=.eps)
+CONVERT_TO_EPS =				\
+  { $(ENSURE_TARGET_DIR) ; } &&			\
+  $(CONVERT) $< eps:$@.tmp &&			\
+  mv $@.tmp $@
+
+%.eps: %.pdf
+	$(CONVERT_TO_EPS)
+# We have png => pdf => eps, but the result is poor, and it even fails
+# with old versions of ghostscript.
+%.eps: %.png
+	$(CONVERT_TO_EPS)
 CLEANFILES += $(EPS_IMAGES)
 
-# Find local *.sty files.  Find conversions of images from
-# document-aux.
+
+
+# Find local *.sty files.  Find converted images from document-aux.
 TEXI2DVIFLAGS += -I $(srcdir) -I $(builddir)/document-aux
 pdf_DATA =
 
@@ -93,11 +110,6 @@ $(pdf_DATA:.pdf=.dvi) $(html_DIR) $(EXTRA_html_DIR): $(EPS_IMAGES)
 
 view: $(pdf_DATA)
 	xpdf $<
-
-%.eps: %.pdf
-	$(ENSURE_TARGET_DIR)
-	$(CONVERT) $< eps:$@.tmp
-	mv $@.tmp $@
 
 # Compile urbi-sandbox, to see if some construct works well.
 .PHONY: sandbox
