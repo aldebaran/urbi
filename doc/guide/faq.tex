@@ -7,6 +7,77 @@
   \let\subsubsection\faqsection
 \fi
 
+\section{Build Issues}
+\label{sec:faq:build}
+
+\subsection{Complaints about \samp{+=}}
+At random places we use \samp{+=} in \command{/bin/sh} scripts, which Ash
+(aka, \command{dash} and \command{sash}) does not support.  Please, use
+\command{bash} or \command{zsh} instead of Ash as \command{/bin/sh}.
+
+\subsection{error: `<anonymous>' is used uninitialized in this function}
+\label{sec:faq:build:uninitialized}
+
+If you encounter this error:
+
+\begin{lstlisting}[language={}]
+cc1plus: warnings being treated as errors
+parser/ugrammar.hh: In member function \
+  `void yy::parser::yypush_(const char*, int, yy::parser::symbol_type&)':
+parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized \
+  in this function
+parser/ugrammar.cc:1305: note: `<anonymous>' was declared here
+parser/ugrammar.hh: In member function \
+  `void yy::parser::yypush_(const char*, yy::parser::stack_symbol_type&)':
+parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized \
+  in this function
+parser/ugrammar.cc:1475: note: `<anonymous>' was declared here
+\end{lstlisting}
+
+\noindent
+then you found a problem that we don't know how to resolved currently.
+Downgrade from GCC-4.4 to GCC-4.3.
+
+\subsection{AM\_LANGINFO\_CODESET}
+
+If at bootstrap you have something like:
+
+\begin{lstlisting}[language={}]
+configure:12176: error: possibly undefined macro: AM_LANGINFO_CODESET
+ If this token and others are legitimate, please use m4_pattern_allow.
+ See the Autoconf documentation.
+configure:12246: error: possibly undefined macro: gl_GLIBC21
+\end{lstlisting}
+
+\noindent
+it probably means your Automake installation is incomplete.  See the
+Automake item in \autoref{sec:build:req}.
+
+\subsection{git: fatal: Needed a single revision}
+You may experience something like this:
+
+\begin{shell}
+$ git submodule update --init
+fatal: Needed a single revision
+Unable to find current revision in submodule path 'gnulib'
+\end{shell}
+
+\noindent
+this is the sign that the initial checkout of \file{gnulib} went
+completely wrong (I don't know what makes this happen).  Chances are
+that the directory exists, but is empty.  Git does not seem to be able
+to overcome this situation, so:
+
+\begin{shell}
+$ rm -rf gnulib
+$ git submodule update --init
+\end{shell}
+
+\noindent
+et voila.
+
+
+
 \section{Troubleshooting}
 
 \subsection{Error 1723: "A DLL required for this install to complete could

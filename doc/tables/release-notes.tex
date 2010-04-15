@@ -509,11 +509,10 @@ library specifications) is included.
   As a consequence it is now an error to pass negative operands to
   these operations.
 
-\item[\refSlot{System}{PackageInfo}] This new object provides version information
-  about the Urbi package.  It is also used to ensure that the
-  initialization process uses matching Urbi and C++ files.  This
-  should prevent accidental mismatches due to incomplete installation
-  processes.
+\item[\refSlot{System}{PackageInfo}] This new object provides version
+  information about the Urbi package.  It is also used to ensure that the
+  initialization process uses matching Urbi and C++ files.  This should
+  prevent accidental mismatches due to incomplete installation processes.
 
 \item[Precedence of operator **] In conformance with the usage in
   mathematics, the operator ** now has a stronger precedence than the
@@ -608,15 +607,15 @@ $ urbi-send -e 'var x;' -e "x = $value;" -e 'shutdown;'
 
 \subsection{Documentation}
 
-A new document "\refSlot{FAQ}{txt}" addresses the questions most frequently asked
-by our users during the beta-test period.
+A new document, \file{FAQ.txt}, addresses the questions most frequently
+asked by our users during the beta-test period.
 
 \subsection{\us}
 
 \subsubsection{Fixes}
 
 \begin{itemize}
-\item If a file loaded from \file{\refSlot{URBI}{INI}} cannot be found, it is now
+\item If a file loaded from \file{URBI.INI} cannot be found, it is now
   properly reported.
 \end{itemize}
 
@@ -749,7 +748,7 @@ echo (x);
 \item["\refSlot{System}{searchPath}" method]
 
   It is now possible to get the search path for files such as \file{urbi.u}
-  or \file{\refSlot{URBI}{INI}} by using \refSlot{System}{searchPath}.
+  or \file{URBI.INI} by using \refSlot{System}{searchPath}.
 
 \item["\refSlot{System}{getenv}" method]
 

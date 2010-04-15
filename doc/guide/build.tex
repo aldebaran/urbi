@@ -79,16 +79,16 @@ package: cvs
 package: flex
 \end{package}
 
-\item[G++ 4.0 or later]
-  GCC 4.2 or better is a better option.  Beware that we have a problem
-  with GCC-4.4 which rejects some Bison generated code.  See the FAQ.
+\item[G++ 4.0 or later] GCC 4.2 or later is a better option.  Beware that we
+  have a problem with GCC-4.4 which rejects some Bison generated code.  See
+  \autoref{sec:faq:build:uninitialized}.
 \begin{package}
 deb: g++-4.2
 MacPorts: gcc42
 \end{package}
 
 \item[Git 1.6 or later]
-  Beware that older version behave poorly with submodules.
+  Beware that older versions behave poorly with submodules.
 \begin{package}
 package: git-core
 \end{package}
@@ -100,8 +100,7 @@ package: gettext
 \end{package}
 
 \item[GNU sha1sum]
-  We need the GNU version of sha1sum.  On Mac Ports it is part of the
-  coreutils package.
+  We need the GNU version of sha1sum.
 \begin{package}
 package: coreutils
 \end{package}
@@ -160,11 +159,13 @@ MacPorts: python_select
 
 \item[py-docutils] This is not a requirement, but it's better to have
   it.  Used by the test suite.  Unfortunately the name of the package
-  varies between distributions.  It provides \command{rst2html}.  MacPorts:
-  py26-docutils
+  varies between distributions.  It provides \command{rst2html}.
 
-\item[socat] Needed by the test suite to send message to an \urbi
-  server.
+\begin{package}
+MacPorts: py26-docutils
+\end{package}
+
+\item[socat] Needed by the test suite to send messages to an \urbi server.
 \begin{package}
 package: socat
 \end{package}
@@ -511,72 +512,6 @@ $ make check -C tests TESTS='uob/remote/*'
 $ make check -C doc
 \end{shell}
 \end{files}
-
-\section{FAQ/Troubleshooting}
-
-\subsection{Complaints about \samp{+=}}
-At random places we use \samp{+=} in \command{/bin/sh} scripts, which
-\command{dash} does not support.  Please, use \command{bash} or
-\command{zsh} instead of \command{dash} as \command{/bin/sh}.
-
-\subsection{error: `<anonymous>' is used uninitialized in this function}
-If you encounter this error:
-
-\begin{lstlisting}[language={}]
-cc1plus: warnings being treated as errors
-parser/ugrammar.hh: In member function \
-  `void yy::parser::yypush_(const char*, int, yy::parser::symbol_type&)':
-parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized \
-  in this function
-parser/ugrammar.cc:1305: note: `<anonymous>' was declared here
-parser/ugrammar.hh: In member function \
-  `void yy::parser::yypush_(const char*, yy::parser::stack_symbol_type&)':
-parser/ugrammar.hh:1240: error: `<anonymous>' is used uninitialized \
-  in this function
-parser/ugrammar.cc:1475: note: `<anonymous>' was declared here
-\end{lstlisting}
-
-\noindent
-then you found a problem that we don't know how to resolved currently.
-Downgrade from GCC-4.4 to GCC-4.3.
-
-\subsection{AM\_LANGINFO\_CODESET}
-
-If at bootstrap you have something like:
-
-\begin{lstlisting}[language={}]
-configure:12176: error: possibly undefined macro: AM_LANGINFO_CODESET
- If this token and others are legitimate, please use m4_pattern_allow.
- See the Autoconf documentation.
-configure:12246: error: possibly undefined macro: gl_GLIBC21
-\end{lstlisting}
-
-\noindent
-it probably means your Automake installation is incomplete.  See the
-Automake item in \autoref{sec:build:req}.
-
-\subsection{git: fatal: Needed a single revision}
-You may experience something like this:
-
-\begin{shell}
-$ git submodule update --init
-fatal: Needed a single revision
-Unable to find current revision in submodule path 'gnulib'
-\end{shell}
-
-\noindent
-this is the sign that the initial checkout of \file{gnulib} went
-completely wrong (I don't know what makes this happen).  Chances are
-that the directory exists, but is empty.  Git does not seem to be able
-to overcome this situation, so:
-
-\begin{shell}
-$ rm -rf gnulib
-$ git submodule update --init
-\end{shell}
-
-\noindent
-et voila.
 
 %%% Local Variables:
 %%% mode: latex
