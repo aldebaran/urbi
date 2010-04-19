@@ -122,7 +122,7 @@ namespace urbi
       (*client_) << owner_->get_name() << "=";
       client_->sendBinary(b.common.data, b.common.size,
                             b.getMessage());
-      (*client_) << ";";
+      (*client_) << "|;";
       client_->endPack();
     }
     else if (v.type == DATA_STRING)
