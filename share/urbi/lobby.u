@@ -23,31 +23,30 @@ do (Lobby)
   };
 
   // A function to make initialization dependencies easier to manage.
-  function banner ()
+  function banner()
   {
-    System
-      .PackageInfo
-      .components["Urbi SDK"]
-      .banner
-      .'each|'(closure (s) { echo(s) })
+    echoEach(System
+             .PackageInfo
+             .components["Urbi SDK"]
+             .banner)
   };
 
+  // Echo the copyright notice.
   function copyright(var deep = true)
   {
-    System
-      .PackageInfo
-      .components["Urbi SDK"]
-      .copyright(deep)
-      .'each|'(closure (s) { echo(s) })
+    echoEach(System
+             .PackageInfo
+             .components["Urbi SDK"]
+             .copyright(deep))
   };
 
-  // Output the urbi license
+  // Echo the Urbi license.
   function license()
   {
-    for (var line in File.new(System.urbiRoot / "LICENSE.txt").asList)
-      echo(line);
+    echoEach(File.new(System.urbiRoot / "LICENSE.txt"));
   };
 
+  // Echo \a msg "on tag" \a tag.
   function echo(var msg, var tag = "")
   {
     // Avoid the trailing space.
@@ -56,6 +55,13 @@ do (Lobby)
       send("*** " + msg, tag)
     else
       send("***", tag)
+  };
+
+  // Each each member or \a lines as a line, on \a tag.
+  function echoEach(var lines, var tag = "")
+  {
+    for (var line: lines)
+      echo(line, tag);
   };
 
   function handleDisconnect()

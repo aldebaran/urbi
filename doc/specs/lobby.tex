@@ -117,6 +117,20 @@ lobby.echo(333);
 [00055205] *** 333
 \end{urbiscript}
 
+\item \lstinline|echoEach(\var{list}, \var{channel} = "")|\\
+  Apply \lstinline|echo(\var{m}, \var{channel}| for each member \var{m} of
+  \var{list}.
+\begin{urbiscript}
+lobby.echo([1, "2"], "foo");
+[00015895:foo] *** [1, "2"]
+
+lobby.echoEach([1, "2"], "foo");
+[00015895:foo] *** 1
+[00015895:foo] *** 2
+
+lobby.echoEach([], "foo");
+\end{urbiscript}
+
 %\item \lstinline|help|\experimental\\
 %  Launch the tutorial.
 
