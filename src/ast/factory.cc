@@ -153,10 +153,10 @@ namespace ast
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
 
-    return new AtExp(loc, make_strip(cond),
-                     make_scope(loc, body),
-                     onleave ? make_scope(loc, onleave) : new Noop(loc, 0),
-                     duration);
+    return new At(loc, make_strip(cond),
+                  make_scope(loc, body),
+                  onleave ? make_scope(loc, onleave) : new Noop(loc, 0),
+                  duration);
   }
 
   rExp

@@ -200,7 +200,7 @@ namespace rewrite
   }
 
   void
-  Desugarer::visit(const ast::AtExp* at)
+  Desugarer::visit(const ast::At* at)
   {
     ast::loc loc = at->location_get();
     ast::rExp original = new_clone(at->cond_get());
