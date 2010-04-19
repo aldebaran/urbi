@@ -785,12 +785,18 @@ Dictionary:
        access: rw
        desc: Stored dictionary
   printer:
+    - '"["'
     - '{
-         ostr_ << "(";
-         foreach (modifiers_type::value_type exp, n->value_get())
-           ostr_ << exp.first <<":" << *exp.second.get()<< " ";
-         ostr_ << ")";
+         if (!n->value_get().empty())
+         {
+           ostr_ << libport::incindent;
+           foreach (modifiers_type::value_type exp, n->value_get())
+             ostr_  << libport::iendl
+                    << exp.first << " => " << *exp.second.get() << ",";
+           ostr_ << libport::decendl;
+         }
        }'
+    - '"]"'
   default: |2
     /* Kind of dump to iterate on vals without the keys */
     foreach (modifiers_type::value_type exp, n->value_get())
