@@ -296,16 +296,31 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
 {
   /// Stop adaptive trajectory if error is below this value.
-  var delta = 2;
+  var delta = 0;
+  var lastVal;
 
   function nextValue()
   {
     get(getter)
   };
 
+  function reset()
+  {
+    TrajectoryGenerator.getSlot("reset").apply([this]) |
+    lastVal = getter
+  };
+
+  // compute a float mean for the relative positionning errors.
+  function errorLevel(currentVal)
+  {
+    delta = abs(currentVal - lastVal) * 0.02 + delta * 0.98 |
+    lastVal = currentVal |
+    delta
+  };
+
   function done(currentVal)
   {
-    if (abs(currentVal - targetValue) < delta)
+    if (abs(currentVal - targetValue) <= errorLevel(currentVal))
       isOver = true |
     return isOver
   };
@@ -321,7 +336,6 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
   function reset ()
   {
     TrajectoryGenerator.ClosedLoop.getSlot("reset").apply([this]) |
-    var this.duration = duration(speed)
   };
 
   function get(currentVal)
@@ -341,6 +355,8 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
 
 class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
 {
+  var duration;
+
   function init (args)
   {
   };
@@ -351,7 +367,7 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
     // speed instead of duration.  But since this relies on the
     // current time, it must be call in reset, not init.
     TrajectoryGenerator.ClosedLoop.getSlot("reset").apply([this]) |
-    var this.duration =
+    duration =
       { if ("time" in args) args["time"] else duration(args["speed"]) }
   };
 
