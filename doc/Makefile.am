@@ -65,8 +65,10 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 ## ------------------------------- ##
 
 dist_doc_DATA =					\
+  AUTHORS.txt					\
   LICENSE.txt					\
-  README.txt
+  README.txt					\
+  THANKS.txt
 
 ## -------------- ##
 ## urbi-sdk.pdf.  ##

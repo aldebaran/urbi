@@ -22,6 +22,13 @@ do (Lobby)
     return res
   };
 
+  // Echo the Urbi authors.
+  function authors()
+  {
+    echoEach(File.new(System.urbiRoot / "AUTHORS.txt").asList
+             + ["", "See also `thanks;'."]);
+  };
+
   // A function to make initialization dependencies easier to manage.
   function banner()
   {
@@ -87,6 +94,13 @@ do (Lobby)
     }|
     maybeLoad("CLIENT.INI", clog) |
     maybeLoad("local.u", clog)
+  };
+
+  // Echo the Urbi contributors.
+  function thanks()
+  {
+    echoEach(File.new(System.urbiRoot / "THANKS.txt").asList
+             + ["", "See also `authors;'."]);
   };
 
   function wall(var msg, var tag = "")

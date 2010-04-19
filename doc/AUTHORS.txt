@@ -1,0 +1,6 @@
+Authors of Urbi SDK:
+
+ - Akim Demaille
+ - Jean-Christophe Baillie
+ - Matthieu Nottale
+ - Quentin Hocquet
