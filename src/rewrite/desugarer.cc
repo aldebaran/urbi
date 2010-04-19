@@ -203,11 +203,6 @@ namespace rewrite
   Desugarer::visit(const ast::AtExp* at)
   {
     ast::loc loc = at->location_get();
-
-    ast::rExp onleave = at->onleave_get();
-    if (!onleave)
-      onleave = new ast::Noop(loc, 0);
-
     ast::rExp original = new_clone(at->cond_get());
 
     rewrite::CallExtractor extract;
@@ -285,7 +280,15 @@ namespace rewrite
       PARAMETRIC_AST(desugar_evt, "Event.new");
       changed = exp(desugar_evt);
     }
-    result_ = recurse(exp(rewrite % duration % decls % sleep % at->body_get() % changed % original % stop % onleave));
+    result_ = recurse(exp(rewrite
+                          % duration
+                          % decls
+                          % sleep
+                          % at->body_get()
+                          % changed
+                          % original
+                          % stop
+                          % at->onleave_get()));
   }
 
   void Desugarer::operator()(const ast::Ast* node)

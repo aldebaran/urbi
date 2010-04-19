@@ -1403,19 +1403,11 @@ AtExp:
     - ~cond
     - '")"'
     - 'libport::iendl'
-    - '"{"'
-    - 'libport::iendl'
     - ~body
     - 'libport::iendl'
-    - '"}"'
-    - 'libport::iendl'
     - '"onleave"'
-    - 'libport::iendl'
-    - '"{"'
-    - 'libport::iendl'
+    - libport::iendl
     - ~onleave
-    - '"}"'
-    - 'libport::iendl'
 
 # Local Variables:
 # mode: yaml
