@@ -184,7 +184,7 @@ namespace ast
 
     if (event.pattern)
     {
-      rExp pattern = new List(loc, event.pattern);
+      rExp pattern = make_list(loc, event.pattern);
       rewrite::PatternBinder
         bind(make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
       bind(pattern.get());
@@ -773,9 +773,9 @@ namespace ast
     PARAMETRIC_AST(pos, "Position.new(%exp:1, %exp:2, %exp:3)");
     const libport::Symbol* fn = loc.begin.filename;
     return exp(pos
-               % (fn ? new String(loc, fn->name_get()) : make_nil())
-               % new Float(loc, loc.begin.line)
-               % new Float(loc, loc.begin.column));
+               % (fn ? make_string(loc, fn->name_get()) : make_nil())
+               % make_float(loc, loc.begin.line)
+               % make_float(loc, loc.begin.column));
   }
 
   rRoutine
@@ -992,7 +992,7 @@ namespace ast
        "  }\n"
        "}");
 
-    rList d_payload = new List(loc, payload);
+    rList d_payload = make_list(loc, payload);
 
     rewrite::PatternBinder bind(make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
     bind(d_payload.get());
