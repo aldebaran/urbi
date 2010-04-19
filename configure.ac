@@ -95,7 +95,7 @@ AM_PROG_AS
 # requires us to be one.
 AC_ENABLE_STATIC([no])
 URBI_LIBTOOL
-
+URBI_SHLIBEXT
 
 ## ---------------- ##
 ## Build variants.  ##
