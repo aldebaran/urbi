@@ -71,7 +71,7 @@ class Global.Tuple
         if (call.argsCount != size)
           throw Exception.Arity.new("%s.%s" % [name, "init"],
                                     call.argsCount,
-                                    size);
+                                    size)|
         var m = call.evalArgs |
         m += m.range(size - m.size) |
         Tuple.getSlot("init").apply([this, m])
