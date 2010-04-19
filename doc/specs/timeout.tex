@@ -1,3 +1,11 @@
+%% Copyright (C) 2009-2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
 \section{Timeout}
 
 Timeout objects can be used as \refObject[s]{Tag} to execute some
@@ -61,7 +69,6 @@ t: { echo("Open"); sleep(1s); echo("Close"); };
 %%%[00000007:error] !!! Timeout_0x133ec0 has timed out.
 %%%sleep(2s);
 %%%\end{urbiscript}
-
 Even if exceptions have been disabled, you can check whether the
 count-down expired with \lstinline|timedOut|.
 

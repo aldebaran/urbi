@@ -1,3 +1,11 @@
+%% Copyright (C) 2009-2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
 \section{Object}
 
 All objects in \us must have \refObject{Object} in their
@@ -141,7 +149,6 @@ void.asBool;
 %%%
 %%% };
 %%% \end{urbiscript}
-
 \item[clone]
   Clone \lstinline|this|, i.e., create a fresh, empty, object, which
   sole prototype is \lstinline|this|.
@@ -577,7 +584,6 @@ Example.new;
 \end{urbiscript}
 
 %%% FIXME: \item[uobjectInit]
-
 \item \lstinline|updateSlot(\var{name}, \var{value})|\\
   Map the existing slot named \var{name} to \var{value}. Raise an
   error if \var{name} was not defined.

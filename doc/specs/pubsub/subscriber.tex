@@ -1,3 +1,11 @@
+%% Copyright (C) 2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
 \section{PubSub.Subscriber}
 
 \lstinline|Subscriber| is created by \lstinline|PubSub.subscribe|.  It
@@ -27,14 +35,12 @@ var sub = ps.subscribe;
 %% a subscriber into the list of subscribers of a PubSub instance except by
 %% doing it in a dirty way.  This may allow to have a subscriber watching
 %% multiple published values.
-
 \subsection{Slots}
 
 \begin{urbiscriptapi}
 
 %% \lstinline|enqueue(\var{ev})| is not documented because I assume it is an
 %% implementation detail of PubSub.
-
 \item[getOne]
   Block until a value is accessible and return it.  If a value is already
   queued, then the method returns it without blocking.
