@@ -61,7 +61,7 @@ namespace std
   }
 }
 
-#define SYNTAX_ERROR(Loc, ...)                   \
+#define SYNTAX_ERROR(Loc, ...)                                          \
   throw yy::parser::syntax_error(Loc, libport::format(__VA_ARGS__))
 
 static
@@ -81,7 +81,7 @@ flavor_error(const char* keyword,
 #define FLAVOR_IS2(Flav1, Flav2)                \
   (FLAVOR_IS(Flav1) || FLAVOR_IS(Flav2))
 
-#define FLAVOR_IS3(Flav1, Flav2, Flav3)                \
+#define FLAVOR_IS3(Flav1, Flav2, Flav3)                 \
   (FLAVOR_IS2(Flav1, Flav2) || FLAVOR_IS(Flav3))
 
 #define FLAVOR_IS4(Flav1, Flav2, Flav3, Flav4)          \
@@ -115,9 +115,9 @@ flavor_error(const char* keyword,
 namespace ast
 {
   bool
-  implicit(const ast::rExp e)
+  implicit(const rExp e)
   {
-    ast::rConstNoop noop = e.unsafe_cast<const ast::Noop>();
+    rConstNoop noop = e.unsafe_cast<const Noop>();
     return noop;
   }
 
@@ -390,7 +390,7 @@ namespace ast
                       rLValue lvalue,
                       exps_type* protos, rExp block) /* const */
   {
-    return new ast::Class(l, lvalue, protos, block);
+    return new Class(l, lvalue, protos, block);
   }
 
   rExp
@@ -516,9 +516,9 @@ namespace ast
     FLAVOR_CHECK3("for", semicolon, pipe, and);
     return
       new Foreach(loc, flavor,
-                       new LocalDeclaration(id_loc, id,
-                                                 new Implicit(id_loc)),
-                       iterable, make_scope(loc, body));
+                  new LocalDeclaration(id_loc, id,
+                                       new Implicit(id_loc)),
+                  iterable, make_scope(loc, body));
   }
 
 
@@ -613,7 +613,7 @@ namespace ast
   Factory::make_list(const location& loc,
                      exps_type* exps) /* const */
   {
-    return new ast::List(loc, exps ? exps : new exps_type);
+    return new List(loc, exps ? exps : new exps_type);
   }
 
   // loop %body.
@@ -661,12 +661,10 @@ namespace ast
     else if (rSubscript sub = dynamic_cast<Subscript*>(lvalue.get()))
     {
       unsigned int i = 0;
-      exps_type* args = new ast::exps_type();
+      exps_type* args = new exps_type();
       foreach(rExp e, *sub->arguments_get())
-        args->push_back(make_call(
-          lvalue->location_get(),
-          libport::Symbol(libport::format("$arg%u", i++))
-        ));
+        *args << make_call(lvalue->location_get(),
+                           libport::Symbol(libport::format("$arg%u", i++)));
       return new Subscript(lvalue->location_get(), args, tmp);
     }
 
@@ -726,7 +724,7 @@ namespace ast
   rNary
   Factory::make_nary(const location& loc, const rExp& e)
   {
-    rNary res = new ast::Nary(loc);
+    rNary res = new Nary(loc);
     if (!implicit(e))
       res->push_back(e);
     return res;
@@ -738,7 +736,7 @@ namespace ast
                      const location& flavor_loc, flavor_type flavor,
                      const rExp& e)
   {
-    if (lhs->back_flavor_get() == ast::flavor_none)
+    if (lhs->back_flavor_get() == flavor_none)
       lhs->back_flavor_set(flavor, flavor_loc);
     if (!implicit(e))
       lhs->push_back(e);
@@ -775,9 +773,9 @@ namespace ast
     PARAMETRIC_AST(pos, "Position.new(%exp:1, %exp:2, %exp:3)");
     const libport::Symbol* fn = loc.begin.filename;
     return exp(pos
-               % (fn ? new ast::String(loc, fn->name_get()) : make_nil())
-               % new ast::Float(loc, loc.begin.line)
-               % new ast::Float(loc, loc.begin.column));
+               % (fn ? new String(loc, fn->name_get()) : make_nil())
+               % new Float(loc, loc.begin.line)
+               % new Float(loc, loc.begin.column));
   }
 
   rRoutine
@@ -788,8 +786,8 @@ namespace ast
     if (closure && !f)
       SYNTAX_ERROR(loc, "closure cannot be lazy");
     return new Routine(loc, closure,
-                            symbols_to_decs(floc, f),
-                            make_scope(bloc, b));
+                       symbols_to_decs(floc, f),
+                       make_scope(bloc, b));
   }
 
 
@@ -952,7 +950,7 @@ namespace ast
          "  var '$waituntil' = persist(%exp:1, %exp:2) |\n"
          "  waituntil('$waituntil'())\n"
          "}\n"
-        );
+          );
       return exp(desugar % cond % duration);
     }
     else
