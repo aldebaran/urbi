@@ -286,7 +286,7 @@ class Exception.Lookup: Exception
     msg = m |
     obj = o |
     if (fixSpelling)
-      suggested = mispelling(m, o)
+      suggested = misspelling(m, o)
   };
 
   function message()
@@ -299,7 +299,7 @@ class Exception.Lookup: Exception
 
   // Return the most probable slot in "o" (recursively) ressembling "m"
   // or "nil" if we have no satisfying answer.
-  function mispelling(m, o)
+  function misspelling(var m, var o)
   {
     // One character is too short.
     if (m.size == 1)
