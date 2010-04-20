@@ -23,6 +23,37 @@ do (String)
     split("")
   };
 
+  // Look in \a set for the string that is the closest to this.
+  function closest(var set)
+  {
+    // One character is too short.
+    if (size == 1)
+      return nil |
+
+    var lcm = toLower |
+    var min = 999 |
+    var res = nil |
+    for| (var n: set)
+    {
+      var d = lcm.distance(n.toLower) |
+      if (d < min)
+      {
+        min = d |
+        res = n |
+	if (min == 0)      // Case mismatch only, that must be it.
+          return res
+      }
+    } |
+    // Do not overcorrect. Two errors, not including case mismatches,
+    // ought to be enough for everybody. Also, do not try to correct
+    // words with less than three letters unless we got a case
+    // mismatch (caught above) or only one case-sensitive change.
+    if (2 < min
+        || (size < 3 && res.size < 3 && 1 < distance(res)))
+      return nil |
+    res
+  };
+
   // It is more natural to refer to the length of a string.  Besides,
   // other encodings will make a difference between size and length.
   copySlot("size", "length");

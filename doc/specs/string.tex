@@ -71,6 +71,17 @@ for (var v : "123")
 "\"foo\"".asString == "\"foo\"";
 \end{urbiassert}
 
+\item \lstinline|closest(\var{set})|\\
+  Return the string in \var{set} that is the closest (in the sense of
+  \refSlot{String}{distance}) to \lstinline|this|.  If there is no
+  convincing match, return \lstinline|nil|.
+\begin{urbiassert}
+"foo".closest(["foo", "baz", "qux", "quux"]) == "foo";
+"bar".closest(["foo", "baz", "qux", "quux"]) == "baz";
+"FOO".closest(["foo", "bar", "baz"])         == "foo";
+"qux".closest(["foo", "bar", "baz"])         == nil;
+\end{urbiassert}
+
 \item \lstinline|distance(\var{other})|\\
   Return the
   \href{http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance}
