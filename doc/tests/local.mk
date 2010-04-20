@@ -10,15 +10,32 @@ tests-check-programs:
 TESTS =
 TEST_SUITE_LOG = tests/test-suite.log
 
+# The list of LaTeX source files from the Kernel documentation that
+# will be turned into tests.
+test_tex = 					\
+  $(filter-out document-aux/%,			\
+    $(call ls_files,*.tex))
+
+# Look in addons/ if there are additional LaTeX files that should
+# generate test cases.  To this end, we call `ls-file
+# @{addons/foo}/*.tex for each foo in addons/.
+test_tex +=					\
+  $(call ls_files,				\
+    $(patsubst $(srcdir)/%,@{%}/*.tex,		\
+      $(wildcard $(srcdir)/addons/*)))
+
+# From each LaTeX source a test.mk is generated.  E.g.,
+# specs/string.tex => $(srcdir)/tests/specs/strings/test.mk.  This is
+# the set of these test.mk files.
+test_mks =					\
+  $(patsubst %.tex,$(srcdir)/tests/%/test.mk,	\
+     $(test_tex))
+
+-include $(test_mks)
+
 # The tests are generated in the src tree, but since it changes often,
 # we don't put them in the repository.  That's no reason to forget to
 # ship it.
-test_mks =					\
-  $(patsubst %.tex,$(srcdir)/tests/%/test.mk,	\
-    $(filter-out document-aux/%,		\
-      $(call ls_files,*.tex)))
--include $(test_mks)
-
 EXTRA_DIST +=					\
   $(test_mks)					\
   $(TESTS)					\

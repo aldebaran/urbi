@@ -1,4 +1,6 @@
 /Makefile.in
+/addons/
+/tests/addons/
 /tests/getting-started/
 /tests/guide/
 /tests/introduction/
