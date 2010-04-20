@@ -31,7 +31,12 @@ do (String)
   // -----------
   // If the Formatter object is not present, provide a simple
   // implementation of '%', only handling '%s'.
-  if (!hasSlot("Formatter"))
+  if (hasSlot("Formatter"))
+    var this.'%' = function(list)
+    {
+      Formatter.new(this) % list
+    }
+  else
     var this.'%' = function(list)
     {
       if (!list.isA(List))
@@ -47,10 +52,5 @@ do (String)
           res += list.removeFront
       }|
       res
-    }
-  else
-    var this.'%' = function(list)
-    {
-      Formatter.new(this) % list
     };
 };
