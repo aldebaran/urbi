@@ -91,7 +91,9 @@ namespace runner
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
-  void raise_lookup_error(libport::Symbol msg, const object::rObject& obj);
+  void raise_lookup_error(libport::Symbol msg,
+                          const object::rObject& obj,
+                          bool deep = true);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API

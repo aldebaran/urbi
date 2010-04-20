@@ -502,7 +502,7 @@ namespace urbi
       if (rSlot s = local_slot_get(name))
         return s->value();
       else
-        runner::raise_lookup_error(name, const_cast<Object*>(this));
+        runner::raise_lookup_error(name, const_cast<Object*>(this), false);
     }
 
     rObject

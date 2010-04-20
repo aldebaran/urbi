@@ -281,12 +281,15 @@ class Exception.Lookup: Exception
 
   var fixSpelling = true;
 
-  function init(m, o)
+  // \param m     the invalid slot name
+  // \param o     the object into which the lookup is performed
+  // \param deep  whether to report inherited slot names too.
+  function init(var m, var o, var deep = true)
   {
     msg = m |
     obj = o |
     if (fixSpelling)
-      suggested = misspelling(m, o)
+      suggested = m.closest({ if (deep) o.slotNames else o.localSlotNames })|
   };
 
   function message()
@@ -296,39 +299,6 @@ class Exception.Lookup: Exception
       res += " (possible misspelling of %s)" % suggested |
     res
   };
-
-  // Return the most probable slot in "o" (recursively) ressembling "m"
-  // or "nil" if we have no satisfying answer.
-  function misspelling(var m, var o)
-  {
-    // One character is too short.
-    if (m.size == 1)
-      return nil |
-
-    var lcm = m.toLower |
-    var allNames = o.allSlotNames |
-    var min = 999 |
-    var closest = nil |
-    for| (var n: allNames)
-    {
-      var d = lcm.distance(n.toLower) |
-      if (d < min)
-      {
-        min = d |
-        closest = n |
-	if (min == 0)      // Case mismatch only, that must be it.
-          return closest
-      }
-    } |
-    // Do not overcorrect. Two errors, not including case mismatches,
-    // ought to be enough for everybody. Also, do not try to correct
-    // words with less than three letters unless we got a case
-    // mismatch (caught above) or only one case-sensitive change.
-    if (2 < min
-        || (m.size < 3 && closest.size < 3 && 1 < m.distance(closest)))
-      return nil |
-    closest
-  }
 };
 
 makeMsgException(

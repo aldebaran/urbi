@@ -145,12 +145,14 @@ namespace runner
   }
 
   void
-  raise_lookup_error(libport::Symbol msg, const object::rObject& obj)
+  raise_lookup_error(libport::Symbol msg, const object::rObject& obj,
+                     bool deep)
   {
     // assert_user_mode("Lookup", msg);
     raise_urbi_skip(SYMBOL(Lookup),
                     to_urbi(msg),
-                    obj);
+                    obj,
+                    to_urbi(deep));
   }
 
   void
