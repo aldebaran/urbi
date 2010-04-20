@@ -59,10 +59,10 @@ srcdir=$2
 builddir=$3
 DESTDIR=$4
 updir=$5
-ARCH=$6       # ARM|x86|ppc
-OS=$7         # linux|windows|macos
-COMP=$8       # ex. gcc4
-MODE=$9       # [release|debug]_[static|dynamic]
+ARCH=$6       # ARM|ppc|x86|x86_64.
+OS=$7         # linux|macos|windows.
+COMP=$8       # ex. gcc4, vcxx2005.
+MODE=$9       # [release|debug]_[static|dynamic].
 prefix=${10}
 # Set release_mode depending on whether we are building a release version
 # or a development version.
