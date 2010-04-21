@@ -166,7 +166,7 @@ namespace rewrite
       result_ = new ast::PropertyWrite(prop->location_get(),
                                        recurse(prop->owner_get()),
                                        prop->name_get(),
-                                       assign->value_get());
+                                       recurse(assign->value_get()));
       return;
     }
 
