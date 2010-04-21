@@ -67,7 +67,7 @@ class Global.TrajectoryGenerator
   function duration(speed)
   {
     if (speed)
-      abs(startValue - targetValue)  / speed
+      abs(startValue - targetValue) / speed
     else
       Float.inf
   }|
@@ -212,7 +212,8 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 
   function get()
   {
-    if (duration < time - startTime)
+    var time = time |
+    if (duration - System.period < time - startTime)
     {
       isOver = true |
       return targetValue
@@ -246,12 +247,13 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
 
   function get()
   {
-    var stat =  (time - startTime) / duration |
-    if (1 < stat)
+    var time = time |
+    if (duration - System.period < time - startTime)
     {
       isOver = true|
       return targetValue
     } |
+    var stat = (time - startTime) / duration |
     startValue +
       (targetValue - startValue) * ( sin ( - pi / 2.0 + pi * stat) +1) / 2.0
   };
@@ -275,12 +277,13 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 
   function get()
   {
-    var stat =  (time - startTime) / duration |
-    if (1 < stat)
+    var time = time |
+    if (duration - System.period < time - startTime)
     {
       isOver = true|
       return targetValue
     } |
+    var stat = (time - startTime) / duration |
     startValue + (targetValue - startValue) * stat
   };
 
@@ -375,9 +378,10 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
   {
     if (done(currentVal))
       return targetValue |
-    var stat = System.period / ( startTime + duration - time) |
-    if (stat < 0 || 1 < stat)
+    var time = time |
+    if (startTime + duration - System.period < time)
       return targetValue |
-    currentVal + stat *  (targetValue - currentVal)
+    var stat = System.period / ( startTime + duration - time) |
+    currentVal + stat * (targetValue - currentVal)
   };
 };
