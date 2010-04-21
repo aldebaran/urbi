@@ -34,12 +34,14 @@ namespace urbi
       : content_(model->value_get())
     {
       proto_add(proto);
+      proto_remove(Object::proto);
     }
 
     Primitive::Primitive(value_type value)
       : content_(value)
     {
-      proto_add(proto ? rExecutable(proto) : Executable::proto);
+      proto_add(proto);
+      proto_remove(Object::proto);
     }
 
     Primitive::value_type Primitive::value_get() const
@@ -78,6 +80,7 @@ namespace urbi
       : content_(nil)
     {
       proto_add(Executable::proto);
+      proto_remove(Object::proto);
     }
 
   }; // namespace object

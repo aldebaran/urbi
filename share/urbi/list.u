@@ -14,7 +14,7 @@
 
 do (List)
 {
-  protos.insertBack(Global.RangeIterable);
+  protos = [Global.RangeIterable];
 
   // Whether e is in the list.
   function has(e)

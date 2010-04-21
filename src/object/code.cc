@@ -39,7 +39,8 @@ namespace urbi
       , self_()
       , call_()
     {
-      proto_add(proto ? rExecutable(proto) : Executable::proto);
+      proto_add(proto);
+      proto_remove(Object::proto);
     }
 
     Code::Code(rCode model)
@@ -49,6 +50,7 @@ namespace urbi
       , call_(model->call_)
     {
       proto_add(model);
+      proto_remove(Object::proto);
     }
 
     Code::ast_type Code::ast_get() const
@@ -147,6 +149,7 @@ namespace urbi
       PARAMETRIC_AST(ast, "function () {}");
       ast_ = ast.result<const ast::Routine>();
       proto_add(Executable::proto);
+      proto_remove(Object::proto);
     }
 
   } // namespace object
