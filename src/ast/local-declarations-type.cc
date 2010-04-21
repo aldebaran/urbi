@@ -24,7 +24,7 @@ namespace ast
     {
       if (tail++)
         o << ", ";
-      o << dec->what_get();
+      o << "var " << dec->what_get();
     }
     return o;
   }

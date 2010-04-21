@@ -19,7 +19,7 @@
 namespace ast
 {
 
-  /// List of declarations
+  /// List of declarations.
   typedef std::vector<rLocalDeclaration> local_declarations_type;
 
   /// Separated by commas.
