@@ -19,10 +19,15 @@ test_tex = 					\
 # Look in addons/ if there are additional LaTeX files that should
 # generate test cases.  To this end, we call `ls-file
 # @{addons/foo}/*.tex for each foo in addons/.
+addons = 					\
+  $(patsubst $(srcdir)/%,%,			\
+    $(wildcard $(srcdir)/addons/*))
+
 test_tex +=					\
-  $(call ls_files,				\
-    $(patsubst $(srcdir)/%,@{%}/*.tex,		\
-      $(wildcard $(srcdir)/addons/*)))
+  $(if $(addons),				\
+    $(call ls_files,				\
+      $(patsubst %,@{%}/*.tex,			\
+        $(addons))))
 
 # From each LaTeX source a test.mk is generated.  E.g.,
 # specs/string.tex => $(srcdir)/tests/specs/strings/test.mk.  This is
