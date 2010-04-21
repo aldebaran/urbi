@@ -66,14 +66,14 @@ check-clean-local:
 ## ------------------- ##
 
 # Our system leaves trailing unused *chk files.
-MAINTAINERCLEANFILES +=						\
+MAINTAINERCLEANFILES +=				\
   $(shell find $(srcdir) -name '*.chk')
 
 # Use the wrappers to run the non-installed executables.
 CHECK_ENVIRONMENT +=				\
   srcdir=$(srcdir)
 
-BUILDCHECK_ENVIRONMENT +=					\
+BUILDCHECK_ENVIRONMENT +=				\
   PATH=$(sdk_remote_builddir)/src/tests/bin:$$PATH
 
 INSTALLCHECK_ENVIRONMENT +=			\
