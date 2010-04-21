@@ -10,7 +10,7 @@
 
 /**
  ** \file object/global-class.hh
- ** \brief Definition of the URBI object global.
+ ** \brief Definition of the Urbi object global.
  */
 
 #ifndef OBJECT_GLOBAL_CLASS_HH

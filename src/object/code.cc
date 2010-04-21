@@ -10,7 +10,7 @@
 
 /**
  ** \file object/code-class.cc
- ** \brief Creation of the URBI object code.
+ ** \brief Creation of the Urbi object code.
  */
 
 #include <libport/lexical-cast.hh>

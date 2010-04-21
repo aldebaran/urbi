@@ -47,12 +47,12 @@ namespace kernel
   extern URBI_SDK_API class UServer* urbiserver;
 
 
-  //! Handle all URBI system processing.
+  //! Handle all Urbi system processing.
   /*! There must be one UServer defined in the program and it must be overloaded
       to make it specific to the particular robot.
 
       UServer is used to store the UConnection list and the UDevice list.
-      This object does all the internal processing of URBI and handles the pool
+      This object does all the internal processing of Urbi and handles the pool
       of UCommand's.
   */
   class URBI_SDK_API UServer
@@ -64,7 +64,7 @@ namespace kernel
   public:
     //! Initialization of the server. Displays the header message & init stuff
     /*! This function must be called once the server is operational and
-     * able to print messages. It is a requirement for URBI compliance to print
+     * able to print messages. It is a requirement for Urbi compliance to print
      * the header at start, so this function *must* be called. Beside, it also
      * do initalization work for the devices and system variables.
      *
@@ -92,7 +92,7 @@ namespace kernel
     /// \return the time when should be called again.
     libport::utime_t work();
 
-    /// Set the system.args list in URBI.
+    /// Set the system.args list in Urbi.
     void main(int argc, const char* argv[]);
 
     /// Package information about this server.
@@ -113,9 +113,9 @@ namespace kernel
     /// Type of UCommandQueue
     enum QueueType
     {
-      /// The UComandQueue contains URBI code.
+      /// The UCommandQueue contains urbiscript code.
       QUEUE_URBI,
-      /// THe UCommandQueu contains data, not to be messed with.
+      /// The UCommandQueue contains data, not to be messed with.
       QUEUE_DATA
     };
 

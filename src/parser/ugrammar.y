@@ -314,7 +314,7 @@
 %precedence "["
 %precedence  "."
 
-/* URBI Grammar */
+/* Urbi Grammar */
 %%
 
 %start start;

@@ -10,7 +10,7 @@
 
 /**
  ** \file object/tag-class.hh
- ** \brief Definition of the URBI object tag.
+ ** \brief Definition of the Urbi object tag.
  */
 
 #ifndef OBJECT_TAG_CLASS_HH

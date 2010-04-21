@@ -10,7 +10,7 @@
 
 /**
  ** \file object/primitive-class.hh
- ** \brief Definition of the URBI object primitive.
+ ** \brief Definition of the Urbi object primitive.
  */
 
 #ifndef OBJECT_PRIMITIVE_CLASS_HH

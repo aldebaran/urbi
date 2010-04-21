@@ -10,7 +10,7 @@
 
 /**
  ** \file object/system-class.hh
- ** \brief Definition of the URBI object system.
+ ** \brief Definition of the Urbi object system.
  */
 
 #ifndef OBJECT_SYSTEM_CLASS_HH

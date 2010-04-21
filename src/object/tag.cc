@@ -10,7 +10,7 @@
 
 /**
  ** \file object/tag-class.cc
- ** \brief Creation of the URBI object tag.
+ ** \brief Creation of the Urbi object tag.
  */
 
 #include <kernel/userver.hh>

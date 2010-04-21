@@ -10,7 +10,7 @@
 
 /**
  ** \file object/string-class.cc
- ** \brief Creation of the URBI object string.
+ ** \brief Creation of the Urbi object string.
  */
 
 #include <cctype>
@@ -58,7 +58,6 @@ namespace urbi
     String::String(const value_type& v)
       : content_(v)
     {
-      aver(proto);
       proto_add(proto);
     }
 

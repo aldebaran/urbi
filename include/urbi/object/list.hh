@@ -10,7 +10,7 @@
 
 /**
  ** \file object/list-class.hh
- ** \brief Definition of the URBI object list.
+ ** \brief Definition of the Urbi object list.
  */
 
 #ifndef OBJECT_LIST_CLASS_HH

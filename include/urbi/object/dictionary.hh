@@ -10,7 +10,7 @@
 
 /**
  ** \file object/dictionary-class.hh
- ** \brief Definition of the URBI object dictionary.
+ ** \brief Definition of the Urbi object dictionary.
  */
 
 #ifndef OBJECT_DICTIONARY_CLASS_HH

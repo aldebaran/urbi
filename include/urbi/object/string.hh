@@ -10,7 +10,7 @@
 
 /**
  ** \file object/string-class.hh
- ** \brief Definition of the URBI object string.
+ ** \brief Definition of the Urbi object string.
  */
 
 #ifndef OBJECT_STRING_CLASS_HH

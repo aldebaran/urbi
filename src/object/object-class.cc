@@ -10,7 +10,7 @@
 
 /**
  ** \file urbi/object/object.class.cc
- ** \brief Creation of the URBI object object.
+ ** \brief Creation of the Urbi object object.
  */
 
 //#define ENABLE_DEBUG_TRACES

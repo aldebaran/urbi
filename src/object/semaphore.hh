@@ -10,7 +10,7 @@
 
 /**
  ** \file object/semaphore-class.hh
- ** \brief Definition of the URBI object semaphore.
+ ** \brief Definition of the Urbi object semaphore.
  */
 
 #ifndef OBJECT_SEMAPHORE_CLASS_HH

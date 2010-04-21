@@ -10,7 +10,7 @@
 
 /**
  ** \file object/lobby-class.cc
- ** \brief Creation of the URBI object lobby.
+ ** \brief Creation of the Urbi object lobby.
  */
 
 #include <boost/algorithm/string.hpp>

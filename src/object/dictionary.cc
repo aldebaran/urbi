@@ -10,7 +10,7 @@
 
 /**
  ** \file object/dictionary-class.cc
- ** \brief Creation of the URBI object dictionary.
+ ** \brief Creation of the Urbi object dictionary.
  */
 
 #include <libport/containers.hh>

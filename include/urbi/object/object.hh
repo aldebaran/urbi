@@ -39,7 +39,7 @@ namespace urbi
     {
       /// \name Ctor & dtor.
       /// \{
-      public:
+    public:
       /// Create a new Object.
       Object();
 
@@ -240,18 +240,18 @@ namespace urbi
       | 'changed' event.  |
       `------------------*/
 
-      public:
+    public:
       /// Fire the 'changed' event.
       void changed();
 
-      private:
+    private:
       ATTRIBUTE_r(rEvent, changed);
 
       /*---------------.
       | Urbi methods.  |
       `---------------*/
 
-      public:
+    public:
       void urbi_createSlot(key_type k);
       rObject getSlot(key_type k);
       /// Return the associated value.

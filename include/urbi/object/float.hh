@@ -10,7 +10,7 @@
 
 /**
  ** \file object/float-class.hh
- ** \brief Definition of the URBI object float.
+ ** \brief Definition of the Urbi object float.
  */
 
 #ifndef OBJECT_FLOAT_CLASS_HH

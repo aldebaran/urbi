@@ -10,7 +10,7 @@
 
 /**
  ** \file object/lobby-class.hh
- ** \brief Definition of the URBI object lobby.
+ ** \brief Definition of the Urbi object lobby.
  */
 
 #ifndef OBJECT_LOBBY_CLASS_HH

@@ -255,7 +255,7 @@ namespace kernel
         << "---------- CURRENT C++ BACKTRACE ----------"
         << libport::Backtrace()
         << ""
-        << "---------- CURRENT URBI BACKTRACE ----------";
+        << "---------- CURRENT Urbi BACKTRACE ----------";
       static const std::string notag = "";
       r.show_backtrace(notag);
       if (object::system_class->slot_has(SYMBOL(ps)))

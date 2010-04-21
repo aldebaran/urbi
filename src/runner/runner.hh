@@ -200,7 +200,7 @@ namespace runner
     /// Ditto, but may return 0 if there are no scope tag.
     const sched::rTag& scope_tag_get() const;
 
-    /// The URBI Lobby used to evaluate.
+    /// The Urbi Lobby used to evaluate.
     /// Wraps an UConnection (ATM).
     rLobby lobby_;
 

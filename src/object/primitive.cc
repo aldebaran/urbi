@@ -10,7 +10,7 @@
 
 /**
  ** \file object/primitive-class.cc
- ** \brief Creation of the URBI object primitive.
+ ** \brief Creation of the Urbi object primitive.
  */
 
 #include <kernel/userver.hh>

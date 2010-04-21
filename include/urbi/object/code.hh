@@ -10,7 +10,7 @@
 
 /**
  ** \file object/code-class.hh
- ** \brief Definition of the URBI object code.
+ ** \brief Definition of the Urbi object code.
  */
 
 #ifndef OBJECT_CODE_CLASS_HH

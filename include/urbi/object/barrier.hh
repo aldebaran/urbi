@@ -10,7 +10,7 @@
 
 /**
  ** \file object/barrier-class.hh
- ** \brief Definition of the URBI object barrier.
+ ** \brief Definition of the Urbi object barrier.
  */
 
 #ifndef OBJECT_BARRIER_CLASS_HH

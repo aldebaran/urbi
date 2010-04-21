@@ -10,7 +10,7 @@
 
 /**
  ** \file object/list-class.cc
- ** \brief Creation of the URBI object list.
+ ** \brief Creation of the Urbi object list.
  */
 
 #include <libport/bind.hh>
@@ -46,13 +46,13 @@ namespace urbi
     List::List(const value_type& value)
       : content_(value)
     {
-      proto_add(List::proto);
+      proto_add(proto);
     }
 
     List::List(const rList& model)
       : content_(model->content_)
     {
-      proto_add(List::proto);
+      proto_add(proto);
     }
 
     const List::value_type& List::value_get() const
