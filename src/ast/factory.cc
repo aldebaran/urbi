@@ -117,8 +117,7 @@ namespace ast
   bool
   implicit(const rExp e)
   {
-    rConstNoop noop = e.unsafe_cast<const Noop>();
-    return noop;
+    return e.is_a<const Noop>();
   }
 
   rExp
