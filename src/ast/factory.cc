@@ -297,16 +297,8 @@ namespace ast
       res = rand;
       break;
     }
-    case flavor_comma:
-    case flavor_semicolon:
-    {
-      rNary nary = new Nary(l);
-      nary->push_back(lhs, op);
-      nary->push_back(rhs);
-      res = nary;
-      break;
-    }
-    case flavor_none:
+
+    default:
       pabort(op);
     }
     return res;

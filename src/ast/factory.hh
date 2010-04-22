@@ -63,7 +63,7 @@ namespace ast
                   rExp body, rExp onleave = 0) /* const */;
 
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-    /// \param op can be any of the four cases.
+    /// \param op can be flavor_and or flavor_pipe.
     static
     rExp
     make_bin(const yy::location& l,
