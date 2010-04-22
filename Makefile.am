@@ -37,7 +37,7 @@ EXTRA_DIST += urbi-sdk.key
 # Make sure the packaging script is up-to-date.
 all-local: scripts/package
 
-# Make sure the autotools didn't screw up.
+# Make sure check-include-deps didn't screw up.
 all-local: scripts/install-boost-headers
 
 ## ------------------------------------- ##

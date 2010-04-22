@@ -1,6 +1,7 @@
 Contributors to Urbi SDK:
 
  - Benoît Sigoure
+ - Guillaume Deslandes
  - Nicolas Pierron
  - Romain Bezut
  - Samuel Tardieu
