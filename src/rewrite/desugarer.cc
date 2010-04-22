@@ -153,7 +153,7 @@ namespace rewrite
         assign->what_get().unsafe_cast<ast::Subscript>())
     {
       ast::exps_type* args = maybe_recurse_collection(sub->arguments_get());
-      args->push_back(recurse(assign->value_get()));
+      *args << recurse(assign->value_get());
       result_ = factory_->make_call(loc, recurse(sub->target_get()),
                                     SYMBOL(SBL_SBR_EQ), args);
       return;
@@ -215,11 +215,7 @@ namespace rewrite
     ast::rExp changed;
     foreach (ast::rExp evt, extract.changed_get())
       if (changed)
-      {
-        ast::exps_type* args = new ast::exps_type;
-        args->push_back(evt);
-        changed = new ast::Call(loc, args, changed, SYMBOL(PIPE_PIPE));
-      }
+        changed = factory_->make_call(loc, changed, SYMBOL(PIPE_PIPE), evt);
       else
         changed = evt;
 
@@ -469,8 +465,8 @@ namespace rewrite
         match->original_set(c->match_get());
       }
       res->handlers_get()
-        .push_back(new ast::Catch(loc, match,
-                                  recurse_with_subdecl(c->body_get())));
+        << new ast::Catch(loc, match,
+                          recurse_with_subdecl(c->body_get()));
     }
     result_ = res;
   }
