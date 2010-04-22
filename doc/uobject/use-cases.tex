@@ -629,7 +629,7 @@ image in its argument, and updates the variables.
 int
 BallTracker::newImage (urbi::UVar& v)
 {
-  //cast to UImage
+  // Cast to UImage.
   urbi::UImage i = v;
   int px,py;
   bool found = detectBall (i.data, i.width, i.height, &px, &py);
@@ -654,4 +654,3 @@ BallTracker::newImage (urbi::UVar& v)
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% fill-column: 76
 %%% End:
-

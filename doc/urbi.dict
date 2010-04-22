@@ -386,6 +386,7 @@ leds
 Levenshtein
 lhs
 libboost
+libcoroutine
 LIBJPEG
 libltdl
 libltld

@@ -22,9 +22,11 @@ will correspond an \us object sharing some of its
 methods and attributes. The API provides methods to declare which
 elements of your object are to be shared. To share a variable with
 \urbi, you have to give it the type UVar. This type is a container
-that provides cast and assignment operators for all types known to
-\urbi: double, string and char*, and the binary-holding structures
-UBinary, USound and UImage. This type can also read from and write to
+that provides conversion and assignment operators for all types known to
+\urbi: \lstinline{double}, \lstinline{std::string} and \lstinline{char*},
+and the binary-holding structures
+\lstinline{UBinary}, \lstinline{USound} and \lstinline{UImage}. This type
+can also read from and write to
 the liburbi UValue class. The API provides methods to set up callbacks
 functions that will be notified when a variable is modified or read
 from \urbi code. Instance methods of any prototype can be rendered
