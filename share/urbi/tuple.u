@@ -46,6 +46,11 @@ class Global.Tuple
     members[n] = v
   };
 
+  function size()
+  {
+    members.size;
+  };
+
   // Pattern matching.
   function matchAgainst(handler, pattern)
   {

@@ -28,7 +28,7 @@ var t = Tuple.new([1, 2, 3]);
 \end{urbiscript}
 
 The output generated for a \lstinline|Tuple| can also be used to create a
-\lstinline|Tuple|.  Expressions are put inside parenthesis and separated by
+\lstinline|Tuple|.  Expressions are put inside parentheses and separated by
 commas.  One extra comma is allowed after the last element.  To avoid
 confusion between a 1 member \lstinline|Tuple| and a parenthesized
 expression, the extra comma must be added.  \lstinline|Tuple| with no
@@ -59,7 +59,6 @@ expressions are also accepted.
 
 \item \lstinline|matchAgainst(\var{handler}, \var{pattern})|\\
   Pattern matching on members.  See \refObject{Pattern}.
-
 \begin{urbiscript}
 {
   // Match a tuple.
@@ -67,6 +66,14 @@ expressions are also accepted.
   assert { first == 1; second == 2 };
 };
 \end{urbiscript}
+
+\item[size] Number of members.
+\begin{urbiassert}
+           ().size == 0;
+         (1,).size == 1;
+ (1, 2, 3, 4).size == 4;
+(1, 2, 3, 4,).size == 4;
+\end{urbiassert}
 
 \item \lstinline|'[]'(\var{index})|\\
   Return the \var{index}-th element.  \var{index} must be in bounds.
