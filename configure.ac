@@ -93,7 +93,7 @@ AM_PROG_AS
 
 # Disable static libraries. Loading modules as shared libraries
 # requires us to be one.
-AC_ENABLE_STATIC([no])
+AC_DISABLE_STATIC
 URBI_LIBTOOL
 URBI_SHLIBEXT
 
