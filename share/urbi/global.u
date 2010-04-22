@@ -12,6 +12,7 @@ do (Global)
 {
   // Import the primitives.
   addProto(System);
+  removeProto(Object);
 
   function echo
   {

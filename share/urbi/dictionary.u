@@ -10,8 +10,7 @@
 
 do (Global.Dictionary)
 {
-  protos << Global.RangeIterable
-         << Global.Comparable;
+  protos = [Global.RangeIterable, Global.Comparable];
 
   class KeyError: Exception
   {

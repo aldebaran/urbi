@@ -11,6 +11,7 @@
 class Global.Binary
 {
   addProto(Comparable);
+  removeProto(Object);
 
   // The semantics is mandated by K1 compatibility.
   function '+'(rhs)
