@@ -371,15 +371,15 @@ var t2 = Tag.new("cool name");
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item[begin]
+  A sub-tag that prints out "tag\_name: begin" each time flow control
+  enters the tagged code. See \autoref{sec:specs:tag:begin-end}.
+
 \item \lstinline|block(\var{result} = void)|\\
   Block any code tagged by \lstinline|this|.  Blocked tags can be
   unblocked using \refSlot{Tag}{unblock}.  If some \var{result} was
   specified, let stopped code return \var{result} as value.  See
   \autoref{sec:specs:tag:block}.
-
-\item[begin]
-  A sub-tag that prints out "tag\_name: begin" each time flow control
-  enters the tagged code. See \autoref{sec:specs:tag:begin-end}.
 
 \item[blocked]
   Whether code tagged by \lstinline|this| is blocked.  See
