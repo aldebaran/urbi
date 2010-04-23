@@ -17,6 +17,10 @@ SDK.
 \subsection{\us}
 \begin{itemize}
 \item Minor bug fixes.
+\item The short option \option{-v} is reserved for \option{--verbose}.
+  Tools that mistakenly used \option{-V} for \option{--verbose} and
+  \option{-v} for \option{--version} have been corrected (short options are
+  swapped).  Use long options in scripts, not short options.
 \item \refSlot{Lobby}{echoEach}: new.
 \item \refSlot{String}{closest}: new.
 \item \refSlot{Tuple}{size}: new.
