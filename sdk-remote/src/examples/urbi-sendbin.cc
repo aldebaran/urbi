@@ -49,7 +49,7 @@ namespace
       "\n"
       "Options:\n"
       "  -h, --help        display this message and exit\n"
-      "  -v, --version     display version information and exit\n"
+      "  -V, --version     display version information and exit\n"
       "  -H, --host ADDR   the host running the Urbi server"
                 << " [" << urbi::UClient::default_host() << "]\n"
       "  -p, --port PORT   the Urbi server port ["
@@ -155,7 +155,8 @@ try
     // FIXME: Remove -q some day.
     else if (arg == "--quit" || arg == "-Q" || arg == "-q")
       quit = true;
-    else if (arg == "--version" || arg == "-v")
+    // FIXME: Remove -v some day.
+    else if (arg == "--version" || arg == "-V" || arg == "-v")
       version();
     else if (arg[0] == '-' && arg[1] != 0)
       libport::invalid_option (arg);

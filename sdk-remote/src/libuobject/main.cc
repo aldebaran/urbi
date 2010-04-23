@@ -75,7 +75,7 @@ namespace urbi
       "  -p, --port PORT       tcp port URBI will listen to"
 		 << " [" << UAbstractClient::URBI_PORT << "]\n"
       "  -r, --port-file FILE  file containing the port to listen to\n"
-      "  -v, --version         print version information and exit\n"
+      "  -V, --version         print version information and exit\n"
       "  -d, --disconnect      exit program if disconnected(defaults)\n"
       "  -s, --stay-alive      do not exit program if disconnected\n"
 		 << libport::exit (EX_OK);
@@ -198,7 +198,8 @@ namespace urbi
            (libport::convert_argument<const char*>(args, i++)));
       else if (arg == "--server")
 	server = true;
-      else if (arg == "--version" || arg == "-v")
+      // FIXME: Remove -v some day.
+      else if (arg == "--version" || arg == "-V" || arg == "-v")
 	version();
       else if (arg[0] == '-')
 	libport::invalid_option(arg);
