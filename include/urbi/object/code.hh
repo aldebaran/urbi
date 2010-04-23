@@ -22,6 +22,7 @@
 # include <urbi/object/executable.hh>
 # include <urbi/object/fwd.hh>
 # include <urbi/object/slot.hh>
+# include <urbi/object/lobby.hh>
 
 namespace urbi
 {
@@ -38,6 +39,7 @@ namespace urbi
       ast_type ast_get() const;
       rObject call_get() const;
       const captures_type& captures_get() const;
+      rLobby lobby_get() const;
       rObject self_get() const;
       void self_set(rObject v);
       virtual rObject operator() (object::objects_type args);
@@ -45,6 +47,7 @@ namespace urbi
       ast_type& ast_get();
       rObject& call_get();
       captures_type& captures_get();
+      rLobby& lobby_get();
 
       /// Urbi methods
       rObject apply(const object::objects_type& args);
@@ -58,8 +61,9 @@ namespace urbi
       ast_type ast_;
       /// Value of the captured variables
       captures_type captures_;
-      /// Captured 'this' and 'call'. Only set for closures.
+      /// Captured 'this' and 'call' and 'lobby'. Only set for closures.
       rObject self_, call_;
+      rLobby lobby_;
 
     URBI_CXX_OBJECT_(Code);
     };

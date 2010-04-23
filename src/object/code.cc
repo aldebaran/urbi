@@ -38,6 +38,7 @@ namespace urbi
       , captures_()
       , self_()
       , call_()
+      , lobby_()
     {
       proto_add(proto);
       proto_remove(Object::proto);
@@ -48,6 +49,7 @@ namespace urbi
       , captures_(model->captures_)
       , self_(model->self_)
       , call_(model->call_)
+      , lobby_(model->lobby_)
     {
       proto_add(model);
       proto_remove(Object::proto);
@@ -68,6 +70,11 @@ namespace urbi
       return captures_;
     }
 
+    rLobby Code::lobby_get() const
+    {
+      return lobby_;
+    }
+
     rObject Code::self_get() const
     {
       return self_;
@@ -86,6 +93,11 @@ namespace urbi
     Code::captures_type& Code::captures_get()
     {
       return captures_;
+    }
+
+    rLobby& Code::lobby_get()
+    {
+      return lobby_;
     }
 
     void Code::self_set(rObject v)

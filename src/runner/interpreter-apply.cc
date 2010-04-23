@@ -258,6 +258,7 @@ namespace runner
     // Determine the function's 'this' and 'call'
     rObject self;
     rObject call;
+    rLobby caller_lobby = lobby_get();
     if (ast->closure_get())
     {
       self = function->self_get();
@@ -274,11 +275,17 @@ namespace runner
     size_t captured_pointer = stacks_.captured_pointer();
     size_t local = ast->local_size_get();
     size_t captured = ast->captured_variables_get()->size();
+    // Use closure's lobby if there is one.
+    if (ast->closure_get() && function->lobby_get())
+      lobby_set(function->lobby_get());
     // Push new frames on the stacks
     stacks_.push_frame(msg, local, captured, self, call);
     FINALLY(((Stacks&, stacks_))((libport::Symbol, msg))
-            ((size_t, local_pointer))((size_t, captured_pointer)),
-            stacks_.pop_frame(msg, local_pointer, captured_pointer));
+            ((size_t, local_pointer))((size_t, captured_pointer))
+            ((rLobby&, lobby_))((rLobby, caller_lobby)),
+            stacks_.pop_frame(msg, local_pointer, captured_pointer);
+            lobby_ = caller_lobby;
+    );
 
     // Push captured variables
     foreach (const ast::rConstLocalDeclaration& dec,
