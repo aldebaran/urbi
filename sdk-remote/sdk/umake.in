@@ -311,13 +311,20 @@ esac
 # dlopened later by urbi-launch.
 if $shared; then
   case $host in
-      (*pw32*|*mingw32*)
-      # Pass the true library, not the *.la file, since it contains
-      # hard-coded locations to where the libraries we depend on were
-      # installed.  In other words, *.la files are not relocatable.
+    (*pw32*|*mingw32*)
+      # The following does not work:
       #
-      # This is not an issue in the present case.
-      append LIBADD "\${envdir}/libuobject$LIBSFX.dll"
+      # # Pass the true library, not the *.la file, since it contains
+      # # hard-coded locations to where the libraries we depend on were
+      # # installed.  In other words, *.la files are not relocatable.
+      # #
+      # # This is not an issue in the present case.
+      # append LIBADD "\${envdir}/libuobject$LIBSFX.dll"
+      #
+      # because for some reason libtool then refuses to build a dll.
+      # So we will probably have to find a means to fix relocatability
+      # elsewhere.
+      append LIBADD "\${envdir}/libuobject$LIBSFX.la"
       ;;
   esac
 fi
