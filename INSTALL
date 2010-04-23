@@ -1,9 +1,0 @@
-# INSTALL is following the standard autoconf procedure:
-
-./configure
-make
-make check
-make install
-
-You might need to specify --with-boost=PREFIX if you installed Boost under
-PREFIX which is not a standard location.
