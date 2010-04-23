@@ -324,7 +324,7 @@ if $shared; then
       # because for some reason libtool then refuses to build a dll.
       # So we will probably have to find a means to fix relocatability
       # elsewhere.
-      append LIBADD "\${envdir}/libuobject$LIBSFX.la"
+      append LIBADD "-no-undefined \${envdir}/libuobject$LIBSFX.la"
       ;;
   esac
 fi
