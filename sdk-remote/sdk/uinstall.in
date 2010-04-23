@@ -7,7 +7,7 @@ Usage: $me <install_dir>
 
 General options:
   -h, --help           display this help and exit successfully
-  -v, --version        display version information and exit successfully
+  -V, --version        display version information and exit successfully
 
 Report bugs to @PACKAGE_BUGREPORT@.
 EOF
@@ -43,7 +43,7 @@ get_options ()
   do
     # Handle --option=value by splitting apart and putting back on argv.
     case $1 in
-      --*=*)
+      (--*=*)
 	opt=`echo "$1" | sed -e 's/=.*//'`
 	val=`echo "$1" | sed -e 's/[^=]*=//'`
 	shift
@@ -52,10 +52,10 @@ get_options ()
     esac
 
     case $1 in
-      -h | --help   ) usage;;
-      -v | --version) version;;
+      (-h | --help   ) usage;;
+      (-V | --version) version;;
 
-      --) # What remains are not options.
+      (--) # What remains are not options.
 	shift
 	while test x"$1" != x"$arg_sep"
 	do
@@ -64,11 +64,11 @@ get_options ()
 	done
 	break
 	;;
-      -*)
+      (-*)
 	error 2 "Unknown or ambiguous option \`$1'." \
 	      "Try \`--help' for more information."
 	;;
-      *) set dummy ${1+"$@"} "$1"; shift;;
+      (*) set dummy ${1+"$@"} "$1"; shift;;
      esac
      shift
   done
@@ -77,16 +77,10 @@ get_options ()
 
   # Interpret remaining command line args as filenames.
   case $# in
-   0)
-    error 2 "Missing install directory on command line."
-    ;;
-   1)
-    installdir=$1
-    ;;
-   *)
-    installdir=$1
-    stderr "Extra unused arguments after install directory."
-    ;;
+   (0) error 2 "Missing install directory on command line.";;
+   (1) installdir=$1;;
+   (*) installdir=$1
+       stderr "Extra unused arguments after install directory.";;
   esac
 }
 

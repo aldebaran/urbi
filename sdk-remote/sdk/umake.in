@@ -9,8 +9,8 @@ General options:
   -D, --debug       turn on shell debugging (set -x)
   -h, --help        display this help and exit successfully
   -q, --quiet       no output unless errors
-  -v, --version     display version information and exit successfully
-  -V, --verbose     report on what is done
+  -V, --version     display version information and exit successfully
+  -v, --verbose     report on what is done
 
 Compilation options:
       --deep-clean        remove all building directories
@@ -113,10 +113,10 @@ get_options ()
 
     case $1 in
       (-D | --debug  ) debug=true;;
-      (-V | --verbose) verb=true;;
+      (-v | --verbose) verb=true;;
       (-h | --help   ) usage;;
       (-q | --quiet  ) quiet=true;;
-      (-v | --version) version;;
+      (-V | --version) version;;
 
       (-l | --library)        core= ; shared=false ;;
       (-s | --shared-library) core= ; shared=true ; automain=false ;;
