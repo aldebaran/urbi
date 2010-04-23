@@ -25,7 +25,7 @@
 #ifdef STATIC_BUILD
 # include <urbi/umain.hh>
 #endif
-#include <libport/config.h>
+#include <sdk/config.h>
 
 #if defined WIN32
 # define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Windows
@@ -358,7 +358,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 
   if (!static_build)
   {
-    handle_libjpeg_      = library_load("jpeg");
+    handle_libjpeg_      = library_load(LIBJPEG_NAME);
     handle_libport_      = library_load("port");
     handle_libsched_     = library_load("sched");
 #ifdef LIBPORT_ENABLE_SERIALIZATION

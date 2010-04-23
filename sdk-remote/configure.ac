@@ -158,6 +158,14 @@ case $enable_programs in
   (*)  URBI_APPEND_CONFIGUREFLAGS([--disable-programs]);;
 esac
 
+# Rename libjpeg to libjpeg-urbi to avoid conflicts with system
+# versions of the library.
+AC_SUBST([LIBJPEG_NAME], [jpeg4urbi])
+AC_DEFINE_UNQUOTED([LIBJPEG_NAME], ["$LIBJPEG_NAME"],
+                   [Define to the name of the jpeg library (without
+                   the "lib" prefix, e.g., "jpeg").])
+URBI_APPEND_CONFIGUREFLAGS([LIBJPEG_NAME=$LIBJPEG_NAME])
+
 # Let libjpeg use the same libdir as us.
 URBI_APPEND_CONFIGUREFLAGS(["libdir='${libdir}'"])
 AC_CONFIG_SUBDIRS([jpeg])

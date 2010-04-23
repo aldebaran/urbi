@@ -34,7 +34,7 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 AM_LDADD =						\
   $(top_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
-  $(top_builddir)/jpeg/libjpeg$(LIBSFX).la		\
+  $(top_builddir)/jpeg/lib$(LIBJPEG_NAME)$(LIBSFX).la	\
   $(PTHREAD_LIBS)
 # We should not need to report the -rpath to Boost here, since we
 # don't depend directly from it (it is liburbi.la which does, via

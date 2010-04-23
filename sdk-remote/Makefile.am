@@ -20,7 +20,7 @@ SUBDIRS =					\
   doc
 
 # Also fix libjpeg.la.
-LTLIBRARIES_TO_FIX += jpeg/libjpeg$(LIBSFX).la
+LTLIBRARIES_TO_FIX += jpeg/lib$(LIBJPEG_NAME)$(LIBSFX).la
 
 # Work around a problem in Automake that needs to the be tracked.
 BUILT_SOURCES +=				\
