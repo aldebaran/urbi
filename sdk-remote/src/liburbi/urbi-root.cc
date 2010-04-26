@@ -358,7 +358,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 
   if (!static_build)
   {
-    handle_libjpeg_      = library_load(LIBJPEG_NAME);
+    handle_libjpeg_      = library_load(LIBJPEG_NAME, "jpeg");
     handle_libport_      = library_load("port");
     handle_libsched_     = library_load("sched");
 #ifdef LIBPORT_ENABLE_SERIALIZATION
@@ -369,9 +369,13 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 }
 
 RTLD_HANDLE
-UrbiRoot::library_load(const std::string& base)
+UrbiRoot::library_load(const std::string& base, const std::string& env_suffix)
 {
-  std::string envvar = "URBI_ROOT_LIB" + base;
+  std::string envvar;
+  if (env_suffix.empty())
+    envvar = "URBI_ROOT_LIB" + base;
+  else
+    envvar = "URBI_ROOT_LIB" + env_suffix;
   foreach (char& s, envvar)
     s = toupper(s);
 
