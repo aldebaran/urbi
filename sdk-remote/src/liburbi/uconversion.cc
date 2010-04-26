@@ -671,7 +671,7 @@ namespace urbi
 	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
 	break;
       case IMAGE_PPM:
-        strcat((char*) dest.data,
+        strcpy((char*) dest.data,
                libport::format("P6\n%s %s\n255\n",
                                dest.width, dest.height).c_str());
 	if (format == 1)
