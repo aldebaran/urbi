@@ -86,6 +86,14 @@ do (Global.Dictionary)
     return true
   };
 
+  // Extends the dictionary with the one provided in its argument.
+  function extend (ext)
+  {
+    for|(var item: ext)
+      set(item.first, item.second) |
+    this
+  };
+
   // Pattern matching.
   function matchAgainst(handler, pattern)
   {
