@@ -619,8 +619,11 @@ namespace runner
       trigger_leave(applied);
       return res;
     }
-    catch (sched::StopException& e)
+    catch (sched::StopException& e_)
     {
+      // trigger_leave will yield, which migth throw and crush our exception
+      // so copy it
+      sched::StopException e(e_);
       trigger_leave(applied);
       // Rewind up to the appropriate depth.
       if (e.depth_get() < result_depth)
