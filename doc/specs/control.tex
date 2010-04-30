@@ -27,6 +27,7 @@ much less change it.
   Detach the evaluation of the expression \var{exp} from the current
   evaluation.  The \var{exp} is evaluated in parallel to the current code
   and keep the current tag which are attached to it.
+  Return the spawned job.
 
 \begin{urbiscript}
 for (var i : [0, 1, 2])
@@ -46,6 +47,7 @@ for (var i : [0, 1, 2])
 \item \lstinline|disown(\var{exp})|%
   Same as \lstinline|detach(\var{exp})| except that tags used to tag
   the \lstinline|disown| call are not inherited inside the expression.
+  Return the spawned job.
 
 \begin{urbiscript}
 for (var i : [0, 1, 2])

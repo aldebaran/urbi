@@ -260,7 +260,7 @@ namespace urbi
       runner().non_interruptible_set(true);
     }
 
-    static void
+    static rObject
     system_spawn(const rObject&,
                  const rCode& code,
                  const rObject& clear_tags)
@@ -276,6 +276,7 @@ namespace urbi
 
       new_runner->time_shift_set(r.time_shift_get());
       new_runner->start_job();
+      return new_runner->as_job();
     }
 
     static rObject

@@ -127,10 +127,12 @@ function test()
 }|;
 test();
 echo("Not blocked");
+[00000000] Job_0x1d2cb80
 [00000000] *** Not blocked
-sleep(1s);
-[00005000] *** foo
-/*(*/sleep(200ms);/*)*/
+sleep(2s);
+echo("End of sleep");
+[00001000] *** foo
+[00002000] *** End of sleep
 \end{urbiscript}
 
 \section{Tags for parallel control flows}
