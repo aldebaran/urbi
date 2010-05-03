@@ -102,7 +102,7 @@ REVISIONFLAGS = --latex
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi_sdk_deps = 				\
   $(REVISION_FILE)				\
-  $(call ls_files,*.sty *.cls)			\
+  $(call ls_files,*.sty)			\
   $(urbi_sdk_sources)
 
 urbi-sandbox.pdf $(pdf_DATA) $(pdf_DATA:.pdf=.dvi) $(html_DIR) $(EXTRA_html_DIR): $(urbi_sdk_deps)
