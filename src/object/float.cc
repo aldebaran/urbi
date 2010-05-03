@@ -359,14 +359,14 @@ namespace urbi
               :               -1);
     }
 
-    rList
+    List::value_type
     Float::seq() const
     {
       Float::unsigned_type n = to_unsigned_type();
       List::value_type res;
       for (unsigned int i = 0; i < n; i++)
-        res.push_back(new Float(i));
-      return new List(res);
+        res << new Float(i);
+      return res;
     }
 
     /*----------.

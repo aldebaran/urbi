@@ -20,6 +20,7 @@
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
+# include <urbi/object/list.hh>
 # include <urbi/object/equality-comparable.hh>
 
 namespace urbi
@@ -152,7 +153,7 @@ namespace urbi
       unsigned_type random() const;
       void srandom() const;
       value_type round() const;
-      rList seq() const;
+      List::value_type seq() const;
       /// -1, 0, or 1.
       int_type sign() const;
       value_type sin() const;
