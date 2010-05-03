@@ -151,7 +151,7 @@ CLEANFILES += $(pdf_DATA)
 urbi_sdk_sty = $(call ls_files,*.sty)
 urbi_sdk_tex = $(call ls_files,*.tex)
 # The license files.
-urbi_sdk_txt = $(call ls_files,tables/*.txtx)
+urbi_sdk_txt = $(call ls_files,tables/*.txt)
 urbi_sdk_sources = $(urbi_sdk_sty) $(urbi_sdk_tex) $(urbi_sdk_txt)
 REVISION_FILE = revision.sty
 REVISIONFLAGS = --latex
