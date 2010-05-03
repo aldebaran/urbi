@@ -148,13 +148,16 @@ install-html-dir: $(html_DIR)
 endif
 
 CLEANFILES += $(pdf_DATA)
-urbi_sdk_sources = $(call ls_files,*.tex)
+urbi_sdk_sty = $(call ls_files,*.sty)
+urbi_sdk_tex = $(call ls_files,*.tex)
+# The license files.
+urbi_sdk_txt = $(call ls_files,tables/*.txtx)
+urbi_sdk_sources = $(urbi_sdk_sty) $(urbi_sdk_tex) $(urbi_sdk_txt)
 REVISION_FILE = revision.sty
 REVISIONFLAGS = --latex
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi_sdk_deps = 				\
   $(REVISION_FILE)				\
-  $(call ls_files,*.sty)			\
   $(urbi_sdk_sources)
 
 urbi-sandbox.pdf $(pdf_DATA) $(pdf_DATA:.pdf=.dvi) $(html_DIR) $(EXTRA_html_DIR): $(urbi_sdk_deps)
@@ -184,7 +187,7 @@ EXTRA_DIST += $(top_srcdir)/build-aux/bin/spell-check
 RUN_SPELL_CHECK = $(SPELL_CHECK) $(AM_SPELL_CHECKFLAGS) $(SPELL_CHECKFLAGS)
 spell-check:
 	cd $(srcdir) &&						\
-	$(RUN_SPELL_CHECK) $(urbi_sdk_sources) $(dist_doc_DATA)
+	$(RUN_SPELL_CHECK) $(urbi_sdk_tex) $(dist_doc_DATA)
 
 
 ## --------- ##
