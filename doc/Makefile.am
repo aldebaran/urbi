@@ -10,6 +10,59 @@ share_make_dir = $(share_dir)/make
 include document-aux/make/tex.mk
 include document-aux/make/pdf-figs.mk
 
+# Ship what we need from document-aux.  Something more automatic is
+# needed.
+EXTRA_DIST +=					\
+  document-aux/bin/texi2dvi			\
+  document-aux/figs/gostai.pdf			\
+  document-aux/figs/gostai.png			\
+  document-aux/figs/urbi.pdf			\
+  document-aux/figs/urbi.png			\
+  document-aux/make/pdf-figs.mk			\
+  document-aux/styles/fixme.sty			\
+  document-aux/styles/gostai-documentation.sty	\
+  document-aux/styles/gostai-report.sty		\
+  document-aux/styles/hevea.sty			\
+  document-aux/styles/ldf/asf.sty		\
+  document-aux/styles/ldf/asn1.sty		\
+  document-aux/styles/ldf/aterm.sty		\
+  document-aux/styles/ldf/bibtex.sty		\
+  document-aux/styles/ldf/bnf.sty		\
+  document-aux/styles/ldf/box.sty		\
+  document-aux/styles/ldf/c++.sty		\
+  document-aux/styles/ldf/d.sty			\
+  document-aux/styles/ldf/dot.sty		\
+  document-aux/styles/ldf/grammar.sty		\
+  document-aux/styles/ldf/hir.sty		\
+  document-aux/styles/ldf/leopard.sty		\
+  document-aux/styles/ldf/lex.sty		\
+  document-aux/styles/ldf/mips.sty		\
+  document-aux/styles/ldf/nemerle.sty		\
+  document-aux/styles/ldf/parse-testsuite.sty	\
+  document-aux/styles/ldf/prism.sty		\
+  document-aux/styles/ldf/reactive-modules.sty	\
+  document-aux/styles/ldf/rtg.sty		\
+  document-aux/styles/ldf/scool.sty		\
+  document-aux/styles/ldf/sdf.sty		\
+  document-aux/styles/ldf/stl.sty		\
+  document-aux/styles/ldf/stratego.sty		\
+  document-aux/styles/ldf/tiger.sty		\
+  document-aux/styles/ldf/treecc.sty		\
+  document-aux/styles/ldf/urbiscript.sty	\
+  document-aux/styles/ldf/vaucanson.sty		\
+  document-aux/styles/ldf/yacc.sty		\
+  document-aux/styles/misc.hva			\
+  document-aux/styles/misc.sty			\
+  document-aux/styles/mycxx.sty			\
+  document-aux/styles/myhyperref.sty		\
+  document-aux/styles/myifthen.hva		\
+  document-aux/styles/myifthen.sty		\
+  document-aux/styles/myindex.sty		\
+  document-aux/styles/mylistings.hva		\
+  document-aux/styles/mylistings.sty		\
+  document-aux/styles/texi.hva			\
+  document-aux/styles/texi.sty
+
 
 ## -------- ##
 ## Images.  ##
@@ -139,7 +192,7 @@ spell-check:
 ## install.  ##
 ## --------- ##
 
-# Made the *.txt documentation more accessible.
+# Make the *.txt documentation more accessible.
 install-data-hook:
 	cd "$(DESTDIR)$(prefix)" &&		\
 	for i in share/doc/urbi-sdk/*.txt; do	\
