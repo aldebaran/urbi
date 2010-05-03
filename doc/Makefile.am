@@ -18,7 +18,6 @@ EXTRA_DIST +=					\
   document-aux/figs/gostai.png			\
   document-aux/figs/urbi.pdf			\
   document-aux/figs/urbi.png			\
-  document-aux/make/pdf-figs.mk			\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
   document-aux/styles/gostai-report.sty		\
