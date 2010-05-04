@@ -1,0 +1,1685 @@
+2007-01-20  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (getContextClass): Fix so PreProcess doesn't break.
+
+2007-01-19  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (thisClassLoader): New field.
+	(getContextClass): New static method.
+	(getReflectClass): Use getContextClass.
+
+2007-01-14  Per Bothner  <per@bothner.com>
+
+	* ArrayClassLoader.java: Change to use Java 1.2 delegation model.
+	I.e. implement findClass rather than loadClass if JAVA2 is enabled.
+	(<init>): New constructor, to pass in parent ClassLoader.
+
+2007-01-02  Per Bothner  <per@bothner.com>
+
+	* Method.java (makeCloneMethod): New method.
+	* ObjectType.java (getMethods): New method, "moved up" from ClassType.
+	* ArrayType.java (getMethods): New method.
+	* Type.java (clone_method): New static Method field.
+
+2006-12-05  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (setInterface): Also set/clear Access.ABSTRACT.
+
+	* ClassType.java (compare): tostring_type is less specific than Object.
+
+	* Method.java (types): Add generic parameters if JAVA5.
+	* ZipLoader.java (loadedClasses): Likewise.
+	* Type.java (mapClassToType, mapNameToType): Likewise.
+	(lookupType, getType, registerTypeForClass, make, <clinit>):
+	Update, add synchronization.
+	* ClassType.java (readResolve): Likewise.
+	* ObjectType.java: Suppress warning.
+
+2006-11-25  Per Bothner  <per@bothner.com>
+
+	* PrimType.java (compare): Add some more special cases.
+
+2006-11-22  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (calculateSplit): Make static.
+
+2006-11-20  Per Bothner  <per@bothner.com>
+
+	* Variable.java (dead): Make public.
+
+	* CodeAttr.java (emitWithCleanupStart): Use emitTryStart.
+	(emitWithCleanupCatch): Need to save and then clear stack_types.
+	(emitWithCleanupDone): Restore stack_types.
+	* TryState.java (savedTypes): New field.
+
+2006-11-18  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java: Share some code between JAVA2 and non-JAVA2 case.
+
+	* Type.java (getSizeInWords): New method.
+	* Variable.java (reserveLocal): Use getSizeInWords.
+
+2006-11-15  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (isInstance): New method - handle nullType.
+
+2006-11-07  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (instructionLineMode): New static option field.
+	(assignConstants): Handle instructionLineMode.
+
+2006-10-31  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (compare): Compare wapped always if not ClassType.
+	For example for XDataType.  Also a simplification.
+
+	* Type.java (mapClassToType): Use WeakHashMap if JAVA2.
+
+2006-09-11  Per Bothner  <per@bothner.com>
+
+	* SourceDebugExtAttr.java: Remove unused local variable.
+
+2006-06-12  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (isSubclass): New method.
+
+2006-05-30  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (classfileFormatVersion): New field.
+	(major_version, minor_version): Remove constants.
+	(getClassfileMajorVersion, getClassfileMinorVersion.
+	setClassfileVersion, setClassfileVersionJava5): New me thods.
+	(writeToStream): Write major/minor version values instead of constants
+	* ClassFileInput.java (readHeader): Read and remember version numbers.
+
+2006-05-23  Per Bothner  <per@bothner.com>
+
+	* ClassFileInput.java: Remove unused local variables.
+	* ClassType.java: Likewise.
+	* ListCodeSize.java: Likewise.
+	* SourceDebugExtAttr.java: Likewise.
+
+2006-05-20  Per Bothner  <per@bothner.com>
+
+	* Field.java (setConstantValue): Allocate constant pool if needed.
+
+2006-04-10  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getField): Also check super-interfaces.
+
+2006-03-07  Per Bothner  <per@bothner.com>
+
+	* Type.java (<init>(Type)): New copy constructor.
+
+2006-03-01  Per Bothner  <per@bothner.com>
+
+	* Method.java (cleanupAfterCompilation): New method.
+	* ClassType.java (cleanupAfterCompilation): New method.
+
+2006-02-19  thomas kirk  <tk@research.att.com>
+	    Per Bothner  <per@bothner.com>
+
+	* ZipLoader.java (loadAllClasses): Return first class
+	in archive (i.e. the main class).
+
+2006-02-19  Per Bothner  <per@bothner.com>
+
+	* Member.java: New interface.
+	* Makefile.am: Update coordingly.
+	* Field.java: Implements Member.
+	* Method.java: Implement Member.
+
+2006-02-01  Per Bothner  <per@bothner.com>
+
+	* ListCodeSize.java: New utility application class.
+	* Makefile.am: Update accordingly.
+	* Method.java (listParameters): New method.
+	(toString): Use listParameters.
+
+	* ArrayClassLoader.java: Remove unneeded import.
+
+2006-01-24  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getDeclaredMethod): If arg_types[i] is null,
+	match any parameter type.
+	(getMethod): Don't check that method is public; let caller
+	check that method is accessible.
+
+2005-12-31  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (getReflectClass): Un-tab-ify conditional text.
+
+2005-12-11  Per Bothner  <per@bothner.com>
+
+	* ArrayClassLoader.java (context): New field.
+	(getResourceContext, setResourceContext, findResource): New methods.
+
+2005-11-23  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getOuterLinkType): New method.
+	(setOuterLink): Change to return link Field instead of void.
+
+2005-11-22  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getField): New method, takes mask.
+	(getField): Old method now just calls new method.
+	(addFields): Now add all fields, not just public|protected ones.
+	(addmethods): Likewise.
+	(getMethod): Only match public methods.
+
+	* ClassType.java (addMethod): Reimplement using shared code.
+
+2005-11-21  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (HAS_OUTER_LINK): New flag,
+	* ClassType.java (hasOuterLink, setOuterLink): New methods.
+	(addField): Set HAS_OUTER_LINK if "this$0" field seen.
+	(getDeclaredMethod): Adjust if hasOuterLink().
+	* Method.java (signature): Make non-private so ClassType can clear it.
+
+2005-11-16  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getPackageName): Fix thinko.
+
+2005-11-14  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getMethod): Also search implemented interfaces.
+
+2005-10-27  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getSuperclass): Only getReflectClass() if isExisting.
+
+2005-10-16  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (isAccessible): Fix thinko.
+
+	* CodeAttr.java (castNeeded): New static hekp method that handles
+	ArrayTypes as well as ClassTypes.
+	(emitCheckcast): Make use of castNeeded.
+
+2005-09-25  Per Bothner  <per@bothner.com>
+
+	* Type.java (make): Remove redundant statement.
+
+2005-07-28  Dean Ferreyra <dean@octw.com>
+
+	* ClassType.java (getInterfaces): Add missing needed synchornized.
+
+2005-05-30  Per Bothner  <per@bothner.com>
+
+	* Variable.java (isArtificial, setArtificial): Remove unused methods.
+	(ARTIFICIAL_FLAG): Remove unused constant.
+
+2005-05-16  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (pushScope): All our own enterScope, so setStartPC is
+	called, and the start label is allocated,
+
+	* ClassFileInput.java (readAttribute): Minor optmization.
+
+2005-05-10  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getMethod): New method.
+
+2005-04-18  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (getReflectClass): Update PreProcess names.
+
+2005-04-17  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (getReflectClass): Do initCause on wrapper
+	RuntimeException, if Java4, which is now the default.
+
+2005-04-03  Per Bothner  <per@bothner.com>
+
+	* Method.java: Remove bogus @return in javadoc comment.
+	* Variable.java: Likewise.
+
+2005-03-22  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitTryStart): Create new TryState *after* we
+	save any stack values, so saves come before exception range start.
+
+2005-03-02  Per Bothner  <per@bothner.com>
+
+	* Field.java (setConstantValue): Handle boolean and char fields.
+
+2005-02-25  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (pushScope): Don't do a getLabel - it's redundant,
+	since enterScope also does it, via setStartPC.
+
+2005-01-30  Per Bothner  <per@bothner.com>
+
+	* Access.java (toString): Fix typo.
+
+	* InnerClassesAttr.java (print): Specificy class access flags.
+
+2005-01-28  Per Bothner  <per@bothner.com>
+
+	* Type.java (java_lang_Class_type):  New static field.
+
+	* CodeAttr.java (emitPushClass): New method.
+
+2005-01-19  Per Bothner  <per@bothner.com>
+
+	* Access.java (CLASS_MODIFIERS, FIELD_MODIFIERS, METHOD_MODIFIERS):
+	New bit-mask constants.
+	(toString): Mask off inappropriate flags.
+
+	* ClassTypeWriter.java: Make some methods public.
+
+2005-01-15  Per Bothner  <per@bothner.com>
+
+	* Access.java (BRIDGE, VARARGS, STRICT, SYNTHETIC, ANNOTATION):
+	Add new JDK 1.4 and 1.5 modifiers.
+	(toString(int,char)):  Update for new flags.
+
+	* Type.java (setName): New protected method.
+	* ObjectType.java (<init>(String)): Make public.  It makes more sense
+	for "funny" types like NodeType to be ObjectType but not ClassType.
+	To be used for gnu.NodeType.
+	* ClassType.java (setName): Stylistic improvement.
+
+2005-01-09  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (writeExternal): Simplify. Non-existing classes
+	are now handled specialy in LitTable.
+
+2005-01-05  Per Bothner  <per@bothner.com>
+
+	* Type.java (array_type): New field.
+	* ArrayType.java (make(Type)): Use array_type of argument.
+	(make(String)): New non-public static method.
+	* Type.java (getType): Use ArrayType.make(String).
+	(signatureToType): Use ArrayType.make(Type).
+
+	* Type.java (hashCode): New method.
+
+	* ClassType.java (getDeclaredMethod): Compare argument types
+	by comparing signatures, not only by identity.
+
+2005-01-02  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java: Change "select" (preprocessor) syntax.
+
+2004-12-30  Per Bothner  <per@bothner.com>
+
+	* ClassFileInput.java (readAttribute): Link in scopes read from
+	LocalVariableTable table into Scope tree structure.
+
+	* Variable.java (shouldEmit): Trivial performance fix
+
+2004-12-29  Per Bothner  <per@bothner.com>
+
+	* Type.java (setReflectClass): New method.
+
+2004-12-25  Per Bothner  <per@bothner.com>
+
+	* SourceDebugExtAttr.java (addFile): Clear curLineIndex "cache".
+
+2004-12-24  Per Bothner  <per@bothner.com>
+
+	* Method.java (compile_linenumber): Remove no-longer used method.
+
+	* ClassType.java (setSourceFile): Fix off-by-one error.
+
+	* ClassType.java (setSourceFile): Don't include directories in
+	SourceFile attribute, following class file spec.
+
+2004-12-23  Per Bothner  <per@bothner.com>
+
+	* ClassFileInput.java (readAttribute): Fix NullPointerException if
+	end unset in parameter_scope, when reading "LocalVariableTable".
+
+	* SourceDebugExtAttr.java: New class, extends Attribute.
+	* Makefile.am: Update accordingly.
+	* ClassFileInput.java (readAttribute): Handle "SourceDebugExtension".
+	* ClassType.java (sourceDbgExt): New field.
+	(setStratum): New method, allocates SourceDebugExtAttr.
+	(setSourceFile): Add new file to sourceDbgExt.
+	* CodeAttr.java (sourceDbgExt): New field.
+	(putLineNumber): If sourceDbgExt, have it do fixLine.
+	(putLineNumber): New overloaded method.
+	* Method.java (initCode): Copy sourceDbgExt from classfile.
+	* SourceFileAttr.java (fixSourceFile): New static helper method.
+	(setSourceFile): Use fixSourceFile here, and in SourceDebugExtAttr.
+
+2004-11-22  Per Bothner  <per@bothner.com>
+
+	* Type.java (tostring_type, pointer_type, ...): Make final.
+
+	* ClassType.java (writeExternal): Better error message.
+
+2004-08-05  Per Bothner  <per@bothner.com>
+
+	* PrimType.java (emitIsInstance):  New method.
+
+2004-08-03  Per Bothner  <per@bothner.com>
+
+	* Variable.java (shouldEmit):  Require that scope's start and end
+	labels are non-null.  Minor optimization tweaking.
+
+2004-07-31  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (label):  Remove field.
+	(FIXUP_NONE, FIXUP_DEFINE, FIXUP_SWITCH, FIXUP_CASE, FIXUP_GOTO,
+	FIXUP_JSR, FIXUP_TRANFER, FIXUP_TRANFER2, FIXUP_DELETE3, FIXUP_MOVE,
+	FIXUP_MOVE_TO_END, FIXUP_TRY, FIXUP_CATCH, FIXUP_LINE_PC,
+	FIXUP_LINE_NUMBER):  New constants - fixup kinds.
+	(processFixups):  New big method - does what it says.
+	(finalize_labels):  Removed method.
+	(invert_opcode):  New method.
+	(reserve):  Don't need to check for "spring" to long jump.
+	(putLineNumber, emitTransfer, emitGoto.emitJsr):  Use new fixup
+	mechanism.
+	(addhandler):  Likewise.  Change parameters to take labels.
+	(emitGoto):  Remove 2-parameter version.
+	(emitTryStart, emitTryEnd):  Use no-argument Label constructor.
+	(fragments, fragmentStack):  Remove fields.
+	(beginFragment/endFragmenrt):  Use new fixup mechanism.
+	(assignConstants):  Don't need to handle fragments.  Do processFixups.
+	(readPC):  Remove field, and places that access it.
+	* Label.java (relocate_fixups, relocate_wide, emit_spring, emit,
+	emit_wide, add_fixup, add_wide_fixup, hasFixups):  Remove methods.
+	(next, fixups, wide_fixups, spring_position):  Remove fields.
+	(first_fixup):  New field.
+	(<init>):  New simplified constructors.
+	(define):  Change to note fixup_count and fixupAdd.
+	* Method.java (reachableHere):  Invoke CodeAttr's method.
+	* CodeAttr.java (unreachable_here):  Make private.
+	* SwitchState.java:  Use fixupChain to avoid goto to switch.
+	Also padding is now deferred to processFixups time.
+	* TryState.java (start_pc, end_pc):  Replace int fields by ...
+	(start_try, end_try):  ... new Label fields.
+	* CodeFragment.java:  Removed - replaced by new fragment mechanism.
+	* Makefile.am:  Remove CodeFragment.java.
+
+2004-07-31  Per Bothner  <per@bothner.com>
+
+	* Scope.java (start, end):  New fields
+	(start_pc, end_pc):  Remove fields - use start and end fields instead.
+	(<init>):  New constructor tkaing Labels.
+	(addVariable, addVariableAfter):  Set scope of Variable.
+	Don't set start_pc - set implicitly via scope.
+	(setStartPC):  Change to take a CodeAttr instead of a PC.
+	Set the start label from code, instead of setting start_pc fields.
+	* Variable.java (shouldEmit):  Moved here from LocalVarsAttr.java.
+	(scope):  New field.
+	(start_pc, end_pc):  Remove fields - get them via scope instead.
+	(freeLocal):  Don't set end_pc - set implicitly via scope.
+	* Label.java (<init>):  New constructor takes PC.
+	* LocalVarsAttr.java (shouldEmit):  Move to Variable.
+	(write, print):  Update since start_pc and end_pc replaced by Labels.
+	* CodeAttr.java (getLabel):  New method.
+	(enterScope):  Use updated setStartPc.
+	(pushScope, popScope):  Use getLabel instead of explicit start_pc.
+	(emitTailCall):  Use emitGoto instead of "inlining" it.
+	* ClassFileInput.java (readAttribute):  Update handling of 
+	LocalVariableTable since PC ranges are now indirected through Labels.
+
+	* Variable.java (LIVE_FLAG):  New constant.
+	(dead):  Use LIVE_FLAG.
+	(reserveLocal):  Set LIVE_FLAG.
+	(freeLocal):  Clean LIVE_FLAG.
+
+2004-07-20  Per Bothner  <per@bothner.com>
+
+	* CodeFragment.java:  Remove useless import statements.
+	* IfState.java:  Likewise.
+	* Label.java:  Likewise.
+	* Location.java:  Likewise.
+	* PrimType.java:  Likewise.
+	* Scope.java:  Likewise.
+	* TryState.java:  Likewise.
+	* Type.java:  Likewise.
+	* Variable.java:  Likewise.
+	* ZipArchive.java:  Likewise.
+	* dump.java:  Likewise.
+
+2004-05-13  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getFields, getDeclaredMethods):  Make synchronized.
+	(getDeclaredField):  Use getFields.
+	(getDeclaredMethod [2 overloads]):  Use getDeclaredMethods.
+	Fixes Savannah bug #8817.
+
+2004-02-20  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitTryEnd):  Don't emitStore if ! reachableHere().
+	Fixes bug reported by dominique.boucher@nuecho.com 2/20.
+
+2004-02-19  Daniel Bonniot  <Daniel.Bonniot@inria.fr>
+
+	* ClassType.java (getPackageName):  Use lastIndexOf, not indexOf.
+
+2004-02-10  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (isAccessible):  New method.
+
+2003-11-03  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitIfIntEqZero):  New method.
+
+2003-10-28  Per Bothner  <per@bothner.com>
+
+	* dump-main.cc:  Belatedly remove unused file.
+
+2003-10-09  Per Bothner  <per@bothner.com>
+
+	* ZipArchive.java:  Remove all fields and non-static methods,
+	leaving only main and usage/copy, which main uses.
+	There is no point any more, given the existence of java.util.zip.
+	(main):  Implement 'q' command using ZipOutputStream and ZipEntry.
+	* ZipMember.java:  Remove file.  No longer used.
+	* Makefile.am:  Update accordingly.
+
+2003-09-30  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitWithCleanupStart, emitWithCleanupCatch,
+	emitWithCleanupDone):  New methods.
+
+2003-09-24  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitTryStart):  Clean up internal logic.  Fix bug
+	where testing for non-zero SP would never true at that point.
+
+2003-07-16  Chris Dean  <Chris.Dean@sokitomi.com>
+
+	* PrimType.java (compare):  Guard againt null otherName.
+
+2003-06-18  Jim White  <jim@pagesmiths.com>
+
+	* Type.java (mapNameToType):  Initialize statically.
+
+2003-06-22  Per Bothner  <per@bothner.com>
+
+	* PrimType.java (emitCoerceToObject):  Fix handling of boolean case.
+	Fixes bug reported by Wen-Chun Ni <wcn@tbcommerce.com>.
+
+2003-05-17  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getModifiers, getInterfaces):  Only call
+	getReflectClass if isExisting.
+
+2003-05-13  Per Bothner  <per@bothner.com>
+
+	* Type.java:  Make default constructor protected.
+
+2003-04-29  Jim White  <jim@pagesmiths.com>
+
+	* ObjectType.java (getReflectClass):  Move comment to separate line.
+	Lined for Ant support.
+
+2003-04-25  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (getReflectClass):  Pass false to initialize argument
+	of Class.forName - but only if Java2 is selected.
+
+2003-04-21  Per Bothner  <per@bothner.com>
+
+	* ArrayClassLoader.java:  Rewrite to use a Hashtable.
+
+2003-04-04  Per Bothner  <per@bothner.com>
+
+	* Access.java (toString(int,char)):  New overloaded method.
+	Allows printing 'super' instead of 'synchronized' for a class.
+	* ClassTypeWriter.java printClassInfo, printFields, printMethods):
+	Use new method.
+
+2003-03-13  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (getSP):  New method.
+
+	* CodeAttr.java (emitPushString):  Don't do redundant pushType
+	if we call emitPushNull.
+
+2002-11-19  Daniel Bonniot  <bonniot@users.sourceforge.net>
+
+	* CodeAttr.java (emitSwap):  Handle two word values.
+
+2002-10-21  Daniel Bonniot  <bonniot@users.sourceforge.net>
+
+	* CodeAttr.java (doPendingFinalizers): Fix verification error
+	when returning a value inside a try/finally.
+
+2002-08-16  Per Bothner  <per@bothner.com>
+
+	* PrimType.java (compare):  tostring_type is more general.
+	* ArrayType.java (compare):  Likewise.
+
+2002-08-06  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (isExisting):  New method.
+
+2002-08-04  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitCheckcast):  Check if already isSubclass.
+
+2002-07-21  Per Bothner  <per@bothner.com>
+
+	* Field.java (toString):  New method.
+
+2002-06-13  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (writeExternal):  Fix typo in exception message.
+
+2002-06-05  Per Bothner  <per@bothner.com>
+
+	* PrimType.java (emitCoerceToObject):  New method.
+
+2002-05-19  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (doPendingFinalizers):  New public method.
+	(emitReturn):  Call doPendingFinalizers.
+	(getCurrentTry):  New method.
+
+2002-05-06  Per Bothner  <per@bothner.com>
+
+	* Method.java (toString):  Use '.' before method name.
+
+2002-04-19  Daniel Bonniot  <bonniot@users.sourceforge.net>
+
+	* ClassType.java (addMethods): Prevents addMethods to incorrectly list
+	twice the methods of the class.
+
+2002-04-18  Per Bothner  <per@bothner.com>
+
+	* ArrayClassLoader.java:  New default constructor.
+	(addClass(Class), addClass(ClassType)):  New overloaded methods.
+
+	* ClassType.java (writeToArray):  Handle IOException.
+
+	* CodeAttr.java (emitInvoke):  If method name is "<init>",
+	do invokeSpecial.
+
+	* CodeAttr.java (emitGotoIfCompare2):  Support object eq/ne compares.
+	(emitGotoIfEq,  emitGotoIfNE):  Re-implement using emitGotoIfCompare2.
+
+	* Method.java (startCode):  New convenience method.
+
+2002-04-16  Phil Walker  <phil_walker@hp.com>
+
+	* InnerClassesAttr.java (write):  Multiple index by 4.
+
+2002-04-02  Daniel Bonniot  <bonniot@users.sourceforge.net>
+
+	* CodeAttr.java (emitShift): New method.
+	(emitShl, emitShr, emitUshr): Handle a long first argument.
+
+2002-03-07  Per Bothner  <per@bothner.com>
+
+	* Scope.java (preserved):  New flag.
+	(freeLocals)  New method.
+	* CodeAttr.java (popScpe):  Use new freeLocals method.
+	* LocalVarsAttr.java (preserveVariablesUpto):  New method.
+
+	* Scope.java (lookup):  Make public.
+
+2002-03-02  Per Bothner  <per@bothner.com>
+
+	* Makefile.am (dump):  Remove rule for making executable.
+
+	* README:  Remove obsolete file.
+
+	* CodeAttr.java (emitGotoIfCompare2):  ALso allow ifeq and ifne.
+
+2002-02-01  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (sourcefile):  Remove unused field.
+	Reported by Daniel Bonniot  <bonniot@users.sourceforge.net>.
+
+2002-01-31  Per Bothner  <per@bothner.com>
+
+	* ClassType.java:  Implement Externalizable.
+	(writeExternal, readExternal, readResolve):  New methods.
+
+2002-01-21  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (calculateSplit):  New helper method.
+	(emitPushString):  Handle the case a String too long for CONSTANT_Utf8.
+
+2002-01-07  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitPushPrimArray):  New method.
+	Replaces gnu.expr.LitTable.emitPrimArray.
+
+2001-12-27  Daniel Bonniot  <bonniot@users.sourceforge.net>
+
+	* CodeAttr.java (various):  Replace emitGoto(L, 168) by emitJsr(L).
+
+	* CodeAttr.java (emitReturn): Jump to the finally blocks before return.
+
+2001-12-24  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitPushString):  Tolerate null String argument.
+
+	* CodeAttr.java (emitThen):  New method.
+
+	* package.html:  Remove "http:" from relative URLs.
+
+	* Method.java (toString):  Use getName of declaring class to avoid
+	prefixing by "Class Type ".  Fixes bug reported by Daniel Bonniot.
+
+2001-11-23  Per Bothner  <per@bothner.com>
+
+	* ClassType.java  (isSubclass):  Handle other class an interface,
+	(compare):  Simplify, due to above change.
+
+	* ClassType.java  (isSubclass):  Special test for tostring_type.
+	(compare):  Likewise.
+	* ObjectType.java (coerceFromObject):  Allow null when tostring_type.
+	(emitCoerceFromObject):  Emit code that tests input for null.
+
+2001-11-21  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (noClasses):  New static field.
+	(getInterfaces):  Use getReflectClass().
+	Use noClasses when there are no intefaces.
+	(getMethods):  Search interface also of super-classes.
+	Fixes problem reported by Valtteri Vuorikoski.
+
+	* ClassType.java (getMethods):  Context is now a package name, rather
+	than a ClassType.  Fixes problem reported by Walter Pelissero, where
+	Sun has a private java.lang.UnixProcess which we considered to be in
+	the same package as java.lang.Object, which used to mean "any class",
+
+2001-11-17  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getPackageName):  New method.
+	(getMethods):  New overload uses Vector.
+
+	* Type.java (make):  Don't set interface flag here since it prevents
+	future getModifiers calls from getting the reflectClass's modifiers. 
+
+2001-11-05  Per Bothner  <per@bothner.com>
+
+	* ArrayType.java (getImplementationType):  New method
+
+	* ClassType.java (compare):  Handle case when both are interfaces.
+
+	* Type.java (string_type):  Is now a normal Java class.
+	(tostring_type):  New class;  String that uses toString to convert.
+	* ObjectType.java (coerceFromObject, emitCoerceFromObject):  Check if
+	this is new Type.tostring_type
+	(getImplementationType):  Map tostring_type to string_type.
+
+2001-10-23  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitJsr):  New method.
+
+2001-09-20  Per Bothner  <per@bothner.com>
+
+	* PrimType.java (compare):  All types are subtypes of Object.
+
+2001-09-14  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (promote):  Convert nullType to pointer_type;
+	(getImplementationType):  Likewise.
+
+2001-09-12  Per Bothner  <per@bothner.com>
+
+	* Type.java (neverReturnsType):  Use different constructor, to
+	avoid it being registered in place of void_type.
+
+2001-08-23  Per Bothner  <per@bothner.com>
+
+	* Access.java (SUPER):  New constant.
+
+	* CodeAttr.java (emitInvoke):  Was testing isInterface on wrong class.
+
+	* CodeAttr.java (emitElse):  Fix bug (null pointer access)
+	reported by Felix S Klock II <pnkfelix@MIT.EDU>.
+
+	* Type.java (signatureToPrimitive):  Change return type.
+
+	* Type.java (getImplementationType):  New method.
+
+2001-08-15  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getSuperclass):  Don't call getReflectClass of
+	this is an interface or is Object.
+
+	* ClassType.java (setInterface):  New method.
+
+	* ClassType.java (getMethods(Filter,int)):  New method overloads.
+	(countMethods):  New method.
+	
+	* Method.java (isAbstract):  New method.
+
+2001-08-07  Brian Jones <cbj@gnu.org>
+
+	* LineNumbersAttr.java (getLineCount, getLineNumberTable): New methods.
+
+2001-07-16  Per Bothner  <per@bothner.com>
+
+	* PrimType.java (booleanValue):  Make static.
+
+	* Scope.java (find_var):  Renamed to ...
+	(getvariable): ... new name.
+	* CodeAttr.java (getArg):  Update accordingly.
+	(getCurrentScope):  New method.
+
+	* CodeAttr.java (getCurrentScope):  New method.
+
+2001-04-23  Per Bothner  <per@bothner.com>
+
+	* CodeFragment.java (linenumbers):  New field.
+	(emit):  Also emit linenumbers.
+	* CodeAttr.java (endFragment):  Save linenumbers in fragment.
+
+2001-04-07  Thomas Kirk  <tk@research.att.com>
+
+	* ZipLoader.java (loadAllClasses):  New method to force load
+	of all classes from the zip archive, close archive.
+	(close):  New Method to prevent leaking open ZipFiles when 
+	archive is not completely read.
+	(loadClass):  Reopen the zip file if it has been closed prematurely.
+
+	* ZipLoader.java (zipname):  New field to hold name of zipfile
+	in case it must be reopened.
+
+2001-03-29  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (emitTryStart):  If the stack needs to be saved,
+	do so before setting the TryState's start_pc.
+	Fixes bug reported by Bob Bane <bane@gst.com>.
+
+2001-03-08  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getSuperclass):  Call getReflectClass if needed.
+
+	* ClassType.java (implementsInterface):  New method.
+	(compare):  Use implementsInterface to compare interfaces.
+
+2001-02-26  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (doFixups):  Move method fixups to Method, CodeAttr.
+	* CodeAttr.java (assignConstants):  Handle CodeFragments, labels here.
+	* Method.java (assign_constants):  REname to assignConstants.
+
+2000-11-21  Brian R. Lewis <brlewis@users.sourceforge.net>
+
+	* ArrayClassLoader.java:  Handle custom classloader by using
+	Class.forName() instead of findSystemClass().
+	* ZipLoader.java:  Likewise.
+
+2000-10-09  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (setExisting):  New method.
+	* Type.java (getType):  Don't try to load reflectClass yet.
+
+	* ObjectType.java (getInternalName):  New method.
+	(getNameOrSignature):  Removed, replaced by getInternalName.
+	(getReflectClass):  Update to use getInternalName.
+	* ArrayType.java (getInternalName):  New method, replaces ...
+	(getNameOrSignature):  Removed, replaced by getInternalName.
+	* ConstantPool.java (addClass):  Update to use getInternalName.
+
+	* ObjectType.java (coerceFromObject):  Minor optimization.
+
+2000-08-23  Daniel Bonniot <bonniot@cma.ensmp.fr>
+
+	* CodeAttr.java (emitDup, emitDupX):  New methods.
+
+2000-08-16  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (addParamLocals):  New method.
+	* Method.java (init_param_slots):  Use CodeAttr's new addParamLocals.
+
+	* Type.java (make):  If an existing type has same name but different
+	reflectClass (i.e. different ClassLoader), treat it as different type.
+
+2000-06-10  Per Bothner  <per@bothner.com>
+
+	* Type.java (nullType):  New static field.
+	* ObjectType.java:  No longer abstract - used for nullType.
+	(ObjectType):  New constructor.
+	(getNameOrSignature):  Moved here from ClassType.
+	(compare):  New method - handle nullType.
+	* ArrayType.java (compare):  Handle nullType.
+	* ClassType.java (compare):  Handle nullType.
+	(getNameOrSignature):  Now inherited.
+
+2000-06-09  Per Bothner  <per@bothner.com>
+
+	* Field.java (setConstantValue):  New method.
+
+2000-05-22  Per Bothner  <per@bothner.com>
+
+	* Filter.java:  New interface.
+	* Makefile.am (java_JAVA):  Add Filter.java.
+
+	* ClassType.java (addMethod):  Use existing method even if it
+	has extra access flags.
+	(getDeclaredMethods, getMethods):  New methods.
+
+	* Type.java (make(Class)):  If a regular class, set EXISTING_CLASS.
+	Bind reflectClass, but avoid calling Class.forName (runs <clinit>).
+
+	* Type.java (isSubType):  Make final.  Just call compare.
+	* ArrayType.java (compare):  To compare AraryTypes, compare elements.
+	* PrimType.java (compare):  Implement Java char->number widening rules.
+
+2000-05-09  Per Bothner  <per@bothner.com>
+
+	* Type.java (getType):  Class Class.forName to get reflectClass;
+	only set EXISTING_CLASS if it succeeds.
+
+	* Scope.java (addVariable):  New different Variable constructor.
+
+	* LocalVarsAttr.java (shouldEmit):  New method.  Return false if
+	start_pc/end_pc are invalid.
+	(getCount, write):  Use shouldEmit.
+
+2000-04-21  Per Bothner  <per@bothner.com>
+
+	* PrimType.java:  New "copying" constructor.
+
+2000-04-12  Per Bothner  <per@bothner.com>
+
+	* ConstantValueAttr.java:  New class, extends Attribute,
+	* Makefile.am (java_JAVA):  Added ConstantValueAttr.java.
+	* ClassFileInput.java (readAttribute): Handle ConstantValue attribute. 
+	* ClassTypeWriter.java (printQuotedString):  New method.
+	* CpoolUtf8.java (print):  Use ClassTypeWriter's printQuotedString.
+	* Field.java (constant_value_index):  Remove field.
+	(write):  Replace constant_value_index usage by attribute handling.
+	(assign_constants):  Likewise.
+
+	* Field.java (sourceName, rfield):  New fields.
+	(getReflectField, setSourceName, getSourceName, searcField):  New.
+	* ClassType.java (writeToStream): Set ADD_FIELDS_DONE|ADD_METHODS_DONE.
+
+	* Field.java (getModifiers):  New method.
+
+	* ClassType.java (writeToFile):  Use File.separatorChar.
+
+2000-03-05  Per Bothner  <per@bothner.com>
+
+	* ZipLoader.java (loadClass):  Use DataInputStream.readFully to force
+	all of a class member to be read.  Fixes VerifyError under JDK1.2.
+	Throw ClassNotFoundException rather than Error.
+
+2000-03-02  Per Bothner  <per@bothner.com>
+
+	* Type.java (neverReturnsType):  New static final Type.
+	(lowestCommonSuperType):  Handle neverReturnsType.
+
+2000-03-02  Daniel Bonniot  <d.bonniot@mail.dotcom.fr>
+
+	* CodeAttr.java (words):  New private method.
+	(emitInvokeMethod):  Use new words method.
+
+	* CodeAttr.java:  Update two error messages.
+
+2000-02-27  Per Bothner  <per@bothner.com>
+
+	Various tweaks for better javadoc processing.
+	* overview.html:  Renamed to package.html.
+
+2000-02-25  Daniel Bonniot  <d.bonniot@mail.dotcom.fr>
+
+	* ClassType.java (getInterfaces):  Fix thinko.
+
+2000-02-12  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (addInterface):  New method.
+
+2000-02-10  Per Bothner  <per@bothner.com>
+
+	* Type.java (mapNameToType):  New static replaces ClassType.classTable.
+	(lookupType, getType):  New static methods.
+	(make):  Use ArrayType.make.
+	* ArrayType.java (make):  New static method.
+	* ClassType.java (classTable):  Replaced by Type,mapNameToType.
+	(make):  Use Type.getType.
+	(getDeclaredMethod(String,int)):  New overloaded method.
+	(addMethods):  Also add constructore.
+
+2000-02-01  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getInterfaces):  Style tweaks.
+
+	* IfState.java (<init>):  New constructor.
+	* CodeAttr.java (emitIfThen):  Use new IfState constructor to avoid
+	that doesn't set end_label (which may be unneeded).
+	(emitElse, emitFi):  Only set end_label if defined.
+
+2000-01-19  Daniel Bonniot  <d.bonniot@mail.dotcom.fr>
+
+        * CodeAttr.java (emitConvert):  Ensured that conversion from a
+        primitive type to itself always succeeds, and that no code is
+        generated.
+
+	* Type.java (lowestCommonSuperType): New method.
+
+	* Type.java (make):  Set INTERFACE flag if appropriate.
+
+	* gnu/bytecode/ClassType.java (getInterfaces):  Get from reflectClass.
+
+2000-01-22  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (addField):  Remove redundant setName, type setting.
+	(getDeclaredMethod):  Minor optimization.
+
+	* CodeAttr.java (emitInvoke):  New method.
+ 	(adjusrTypedOp, emitBinop, emitAdd, emitSub):  New method overloads.
+	(emitIfIntLEqZero):  New method.
+	(emitElse, emitFi):  Add (fragile) support for stack skrinking.
+	* IfState.java (stack_growth):  New field.
+
+	* LocalVarsAttr.java (enterScope):  Tweak error message.
+
+	* Method.java (toString):  Emit types in Java-source form, instead
+	of using getSignature.
+
+	* Type.java (int_type etc):  Change type from Type to Primtype.
+
+1999-12-24  Per Bothner  <per@bothner.com>
+
+	* Variable.java:  New constructors.
+	(toString):  New method.
+	* Scope.java (setStartPC):  New method.
+	(addVariable):  If code is null, don't call allocateLocal.
+	* LocalVarsAttr.java (enterScope)  Don't set start_pc of variables.
+	* CodeAttr.java (locals):  Make field public.
+	(enterScope):  Call scope.setStartPC.
+
+1999-12-16  Luke Gorrie <luke@vegetable.org>
+
+	* ClassType.java (getSuperclass):  Check for null superclass.
+
+1999-12-16  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (isInterface):  Use getModifiers().
+
+	* ClassType.java (getFields):  Call addFields if an existing class.
+
+1999-12-02  Per Bothner  <per@bothner.com>
+
+	* Attribute.java (addToFrontOf):  New method.
+	* CodeAttr.java, ExceptionsAttr.java, InnerClassesAttr.java,
+	LineNumbersAttr.java, LocalVarsAttr.java, SourceFileAttr.java 
+	(<init>):  Use new addToFrontOf method.
+	* LocalVarsAttr.java (isEmpty):  New method.
+	(<init>):  New (overloaded) constructor.
+	* CodeAttr.java (pushScope):  Use new LocalVarsAttr constructor.
+	(assignConstants):  If we have something to emit in a (non-empty)
+	LocalVars attribute, link it into the attribute list.
+
+1999-11-18  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getModifiers):  Update access_flags after calling
+	reflectClass.getModifiers().
+	* ConstantPool.java (addMethodRef):  Use getModifiers() to check
+	if class is interface.  (This calls getReflectClass if needed.)
+	* ObjectType.java (getReflectClass):  If Class.forName fails, and
+	EXISTING_CLASS flag is set, throw an exception.
+
+1999-11-15  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (flags):  New variable.
+	(ADD_FIELDS_DONE, ADD_METHODS_DONE, EXISTING_CLASS):  New constants.
+	* ClassType.java (addFields):  New method.
+	(getDeclaredField):  New method.  May call addFields. 
+	(getDeclaredMethod, getMethod):  New methods.  May call addMethods.
+
+1999-11-03  Per Bothner  <per@bothner.com>
+
+	* Type.java (isSubtype):  Use new isSubclass method from ClassType.
+	(compare):  New virtual method.
+	(swappedCompareResult):  New static method.
+	* ClassType (compare, isSubclass, isInterface):  New methods.
+	* PrimType.java (compare):  New virtual method.
+	(compare):  New static method.
+	* ArrayType.java (compare):  New virtual method.
+
+1999-10-25  Per Bothner  <per@bothner.com>
+
+	* ObjectType.java (coerceFromObject):  Allow null as input.
+
+1999-08-30  Geoff Berry  <gcb@gnu.org>
+
+	* CodeAttr.java (emitPushDouble, emitPushFloat): Handle
+          pushing of -0.0.
+
+1999-09-08  Per Bothner  <per@bothner.com>
+
+	* Method.java (write):  Remove unused Variable var.
+
+1999-09-02  Per Bothner  <per@bothner.com>
+
+	* CodeFragment.java (unreachable_save):  New feld.
+	* CodeAttr.java (various places):  Use setUnreachable().
+	(beginFragment):  Save value of unreachable_here.
+	(endFragment):  Restore it.
+
+	* Variable.java (setFlag):  New private convenience method.
+	(setSimple, setParameter, serArtificial):  Use it.
+
+1999-08-26  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (getSuperclass):  If superClass unset, but
+	reflectClass is set, call java.lang.Class.getSuperclass.
+
+1999-08-22  Per Bothner  <per@bothner.com>
+
+	* ClassType.java (adMethods, getMatchingMethods):  New methods.
+
+	* CodeAttr.java (setReachable, setUnreachable):  New methods.
+	(emitNewArray):  Use anewarray even if element type is ArrayType.
+	* Method.java (toSTring):  Make safe even if arg_types is null.
+
+	* ZipArchive.java (append):  Remove version using byte[] name.
+
+1999-08-08  Per Bothner  <per@bothner.com>
+
+	* ArrayClassLoader.java (addClass): New method.
+
+1999-08-06  Per Bothner  <per@bothner.com>
+
+	* CodeFragment.java:  New class.
+	* ClassType.java (doFixups):  Emit any pending fragments.
+	* CodeAttr.java (getPC, isInTry):  New methods.
+	(beginFragment, endFragment):  New methods.
+
+1999-07-15  Per Bothner  <per@bothner.com>
+
+	* CodeAttr.java (popType):  Use Type.isVoid method.
+	* Type.java (isSubtype):  Add more logic for testing superclasses if
+	reflctive classes not available.
+
+1999-04-25  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* Variable.java (offset):  Make non-public.
+
+1999-04-22  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* ZipMember.java:  Inherit from java.util.zip.ZipEntry.
+	Various related changes.
+	* ZipArchive.java:  Add casts and other changes from ZipMember changes.
+	(copy - two overload variants):  New methods.
+	(doit):  Removed.
+	(main):  Use java.util.zip classes (except for 'q' command).
+
+1999-04-17  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* ClassFileInput.java (readAttribute):  Revert previous change.
+	* InnerClassesAttr.java (print):  Mask short data by 0xFFFF.
+	* LineNumbersAttr.java (print):  Mask short data by 0xFFFF.
+
+	* Type.java (isSubtype, isMoreSpecic):  New methods.
+
+1999-04-15  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* ClassFileInput.java (readAttribute): Use readUnsignedShort (twice).
+	(From Jay Krell <jay.krell@cornell.edu>.)
+
+	* CodeAttr.java (emitStore):  Add missing space in error message.
+	
+1999-04-05  Geoff Berry  <gcb@duke.edu>
+
+	* ClassFileInput.java (readAttribute): Handle Exceptions attribute.
+
+	* CpoolClass.java (getClassType):  New method.
+	* Method.java (getExceptionAttr, setExceptions(short[]),
+	setExceptions(ClassType[]), getExceptions): New methods.
+	* ExceptionsAttr.java:  New file.
+	* Makefile.am (java_JAVA):  Add ExceptionsAttr.java.
+
+Sat Mar 20 10:59:28 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* Type.java (getSize, isVoid):  New methods.
+	* CodeAttr.java (pushType, emitInvokeMethod, emitReturn):
+	Handle other void types (size==0) besides Type.void_type.
+
+1999-03-13  Geoff Berry  <gcb@duke.edu>
+
+	* SwitchState.java (addDefault(Label,CodeAttr)): New method.
+	(addCase(int,Label,CodeAttr)): 	Fix binary search.
+	(finish):  Move pushType call.
+
+Tue Mar 16 20:49:08 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* PrimType.java (emitCoerceFromObject):  Handle coercing to void.
+
+	* ClassType.java (getModifiers):  If access_flags is 0,
+	check reflectClass.getModifiers().  (Bit of a hack.)
+
+Thu Feb 11 16:14:30 1999  Zvi Har'El  <rl@math.technion.ac.il>
+
+	* InnerClassesAttr.java (print): Fix for anonymous classes.
+
+1999-02-28  Geoff Berry  <gcb@duke.edu>
+
+	* CodeAttr.java (emitArrayLength): Add type check for incoming
+	array.
+	(emitNewArray(Type,int)): New method to support the
+	`multianewarray' instruction.
+	(emitInc): New method to support the `iinc' instruction.
+	(emitGotoIfEq): Fix double case to use `dcmpl'.
+	(emitGotoIfLt, emitGotoIfGe, emitGotoIfGt, emitGotoIfLe,
+	emitGotoIfCompare2): New methods.
+	(emitIfCompare1): Add type check for incoming int.
+	(emitIfRefCompare1, emitIfNotNull, emitIfNull): New methods.
+	(emitIfLt, emitIfGe, emitIfGt, emitIfLe): New methods.
+	(disAssemble): Fix invokeinterface handling.	
+	* ConstantPool.java (addClass): Change parameter type from
+	ClassType to ObjectType to allow ArrayTypes to be added.
+
+Mon Feb 22 23:17:08 1999  Per Bothner  <bothner@cygnus.com>
+
+	* ObjectType.java (getReflectClass):  Replace '/' by '.' in
+	signature before passing it to Class.forName.  Needed for array types.
+
+Tue Feb  9 09:52:36 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* CodeAttr.java (emitNewArray):  Result is appropriate ArrayType.
+	(saveStackTypeState, restoreStackTypeState):  New methods.
+	(emitReturn):  Note unreachable_here.
+	* Method.java (setModifiers):  New method.
+	* SwitchState.java (restoreStack):  Rmeove method.
+	(<init>):  Call CodeAttr.saveStackTypeState.
+ 	(addCase, addDefault):  Use CodeAttr.restoreStackTypeState
+	(finish):  Push eror string *after* new'ing exception..
+
+Sat Jan 16 09:29:34 1999  Per Bothner  <bothner@Magnus.Cygnus.COM>
+
+	* CodeAttr.java (reorder_fixups):  Only reorder if oldest != null.
+	(print):  Fix two small bugs for tableswitch.
+
+	* LocalVarsAttr.java (enterScope):  Set start_pc of local Variables.
+
+	* SwitchState.java (addCase):  Fix typo.  Increment numCases.
+	(finish):  Add defaultLabel, if none was specified.  Fix thinko.
+
+	* ClassTypeWriter.java:  Remove some useless commented-out code.
+
+1998-12-08  Geoff Berry  <gcb@cs.duke.edu>
+
+	* gnu/bytecode/CodeAttr.java (emitShl, emitShr, emitUshr,
+	emitInvokeInterface): New methods.
+
+	* gnu/bytecode/Field.java (getDeclaringClass, setStaticFlag,
+	getStaticFlag, getFlags): New methods.
+
+	* gnu/bytecode/Method.java (toString): New method.
+
+Sat Nov  7 09:46:18 1998  Per Bothner  <bothner@cygnus.com>
+
+	* ConstantPool.java (rehash):  New method.
+	(addUtf8, addClass, addValue1, addvalue2, addString, addNameAndType,
+	addRef):  Call rehash if no hashTab.
+	(<init>(DataInputStream)):  Don't lock.
+	* CpoolEntry.java (add_hashed):  Make package private.
+	(<init>):  Handle creating or growing hashTab by ConstantPool.rehash.
+	* CpoolClass.java, CpoolNameAndType.java, CpoolRef.java,
+	CpoolString.java, CpoolUtf8.java, CpoolValue1.java, CpoolValue2.java
+ 	(hashCode):  Add new non-static override - recalculate if hash is 0.
+	* LineNumbersAttr.java (<init>):  Set code.lines to this.
+	* LocalVarsAttr.java (<init>):  Set code.locals to this.
+	* CodeAttr.java (<init>):  Set meth.code to this.
+
+1998-10-06  Geoff Berry  <gcb@cs.duke.edu>
+
+	* CodeAttr.java: (lookup(String)): Make public.
+	(addLocal(Type,String)): Make public.
+
+Sat Oct 17 13:04:32 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (emitNot):  Use explicit parameter instead of topType.
+	(emitConvert):  Remove single-argument form.
+	(emitMonitorEnter, emitMonitorExit):  New methods.
+	(emitTryStart):  Always save result (in local var) if there is one.
+	(disAssembler):  Fix typo moniorenter -> monitorenter.
+
+	* Scope.java (addVariable):  Make public.
+	* Type.java (throwable_type):  New static.
+
+Fri Sep 11 20:05:59 1998  Per Bothner  <bothner@cygnus.com>
+
+	* ClassType.java (make):  New static overload.
+	(setname):  Make public.
+	(getSuperclass):  New method.
+	* PrimType.java (charValue, booleanValue):  New coercions.
+
+Sat Aug 29 20:24:39 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Method.java (getModifiers):  New method.
+
+	* Type.java (make):  Do (many) ClassType.make instead of new ClassType.
+
+	* Variable.java (allocateLocal):  If assigned, return immediately.
+
+	* ZipLoader.java (loadClass):  Fix small logic error.
+
+Sat Aug 29 09:14:00 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Method.java (assign_local):  Removed.
+
+	* Scope.java (addVariableAfter):  New method.
+	* CodeAttr.java (beginScope):  Removed.  Not needed after all.
+
+1998-08-28  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (beginScope):  New method.
+	(enterScope):  Note PC in start_pc.
+	(emitTailCall):  Take extra Scope argument.
+	* Label.java (hasFixups): New method.
+
+Wed Jul 29 09:47:09 1998  PARMELAN Edouard <parmee@postecss.ncrfran.france.ncr.com>
+
+	* ClassTypeWritter,java (printSignature):  Add missing commas.
+
+Wed Jul 22 22:18:24 1998  Per Bothner  <bothner@cygnus.com>
+
+	* ZipLoader.java (loadClass):  Fix variable clash.
+	(Reported by Lynn Quam <quam@ai.sri.com>.)
+
+	* CodeAttr.java (emitMaybeWide):  New function.
+	(emitLoad, emitStore):  Fix bug using emitMaybeWide.
+	(disAssemble):  Fix a few buglets.
+
+	* LineNumbersAttr.java (write):  Minor optimization.
+
+	* ArrayClassLoader.java:  Moved from ../../kawa/lang/SchemeLoader.java.
+	* Makefile.am:  Update.
+	(install-html):  Subsumed by install-subdir-html in ../Makefile.am.
+
+Mon Jun 29 18:56:04 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Method.java (compile_tailcall):  Replaced by ...
+	* CodeAttr.java (emitTailCall):   ... new method.
+
+Thu Jun 25 22:40:05 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (stack_types):  Make non-private (for SwitchState).
+
+Mon Jun 22 18:33:13 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Access.java (toString):  Print unrecognized flags as hex value.
+	* ClassTypeWriter.java (printClassInfo):  Don't print hex access flags.
+	* CpoolClass.java (getStringName):  New method.
+
+	* Label.java:  Fix bugs in how relocations were implemented.
+
+	* ClassFileInput.java (readAttribute):  Handle "InnerClasses".
+	* InnerClassesAttr.java:  New, for JDK 1.1 "InnerClasses" attribute.
+	* SwitchState.java:  New - state for a switch statement.
+	* Makefile.am:  Add new classes.
+
+Mon Apr 27 13:18:01 1998  Jeff Haynes  <jhaynes@dascom.com>
+
+        * ClassType.java, ConstantPool.java, CpoolClass.java, CpoolUtf8.java,
+	CpoolNameAndType.java, CpoolRef.java, CpoolString.java,
+	CpoolValue1.java, CpoolValue2.java, Field.java, Method.java:
+	Add public access methods for class members so that I can
+	interogate a class from outside this java package.
+
+Fri May 15 21:33:19 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Type.java (registerTypeForClass):  New static method.
+	(make):  Call registerTypeForClass.
+	* PrimType.java (<init>):  Call registerTypeForClass.
+
+Tue Apr 21 00:04:41 1998  Per Bothner  <bothner@cygnus.com>
+
+	* dump-main.cc:  New file - a main() wrapper for dump.main.
+	* Makefile.am:  Add rules to build stand-alone executable
+	for dump, when compiled by gcc, and linked with libjava.
+
+Sat Apr  4 17:36:03 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (readPC):  New instance variable.
+	Set it most places that read the PC.
+	(emitPushConstant, emitPushFloat):  New methods.
+	(emitAnd, andIOR, emitXOr, emitNot):  New methods.
+	(emitGotoIfInt{Eq,New,Lt,Ge,Gt,Le}Zero, emitIfEq):  New methods.
+	(emitRet):  Add missing calls to reserve.
+	* Label.java (define):  Remove version that takes a Method.
+	(define):  If label follows goto of label, try to optimize away goto.
+	* IfState.java (<init>):  Default start_stack_size to code.PC.
+
+	* CodeAttr.java (emitTryStart):  Extra result_type argument.
+	Generate code to save stack (if non-empty) in new Variables.
+	(emiTryCatchEnd):  Restore stack.
+	Code to save result moved here from TryExp.
+	* TryState.java (savedStack):  Save stack here.
+	(saved_result)  New variable to store final result.
+
+	* Makefile.am:  Re-write to compile all out-of-date *.java at once.
+
+Wed Mar 18 12:06:13 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (emitRet):  Add missing reserve calls.
+
+Sat Mar  7 08:27:38 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Add and fix various comments for javadoc.
+	* overview.html:  New file (derived from README).
+	* README:  Now mainly just a link to overview.html.
+	* LineNumbersAttr.java (put):  Make public.
+	* Location.java:  Make class public.
+	* Makefile.am (HTML_HOME, install-html):  New for installing html.
+	* CodeAttr.java (adjustTypedOp):  New private method.
+	(emitLoad, emitStore):  Used new adjustTypedOp.
+	(emitBinop, emitAdd, emitSub, emitMul, emitDiv, emitRem):  New here.
+	* Method.java (compile_binop, compile_primop, compile_add,
+	compile_sub, compile_mul, compile_div, compile_rem):  Removed here.
+
+	* Type.java (coerceFromObject):  Made abstract.
+	* ObjectType.java (coerceFromObject):  Moved here from Type.
+	Add special handling for Type.string_type.
+
+Mon Mar  2 22:56:44 1998  Per Bothner  <bothner@cygnus.com>
+
+	* Type.java (make):  New static method.
+	* ArrayType.java (getComponentType):  New method.
+	* ClassType.java (getField):  New method.
+	(addMethod):  Re-use existing Method if there is a match.
+ 	(getReflectClass, emitCoerceFromObject):  Move to ObjectType.
+	* ObjectType.java:  New abstract class.
+	* Makefile.am, Makefile.in (OBJ):  Added ObjectType.class.
+
+	* CodeAttr (emitTypedOp):  New private method.
+	(emitArrayStore, emitArrayLoad, emitNewArray):  New methods.
+	* Method.java (compile_array_store, compile_array_load):  Removed.
+
+Mon Feb 23 22:50:46 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (emitConvert):  Fix thinko - s/to_sig/from_sig/.
+
+Sun Feb  8 23:29:37 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (emitGotoIfEq):  Use signature to select opcode.
+
+Tue Feb  3 12:33:46 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (emitPushThis, emitInvokeMethod, emitInvokeVirtual,
+	emitInvokeSpecial, emitInvokeStatic, emotGotoIfEq, emitGotoIfNE,
+	emitGotoIf, emitIfIntNotZero, emitIfIntCompare, EmitIfIntLt, emitIfNEq,
+	emitConvert, emitInstanceof):  New methods based on old ones in Method.
+	* Method.java (compile_convert, compile_goto_ifeq, compile_goto_ifne,
+	compile_goto_if, compile_if_neq_0, compile_if_icmp, compile_ifi_lt,
+	compile_ifneq, compile_invoke_method, compile_invoke_virtual,
+	compile_invoke_special, compile_invoke_static):  Removed methods.
+
+	* Type.java (byte_type etc): Change types from Type to PrimType.
+	(toString, isInstance, emitIsInstance, coerceFromObject,
+	coerceToObject, emitCoerceToObject):  New virtual methods.
+	(compileCoerceFromObject):  Rename to emitCoerceFromObject and
+	change argument type.
+	* ClassType.java (compileCoerceFromObject): Likewise.
+	* PrimType.java:  New class - extends type.
+	* Makefile.am, Makefile.in (OBJ):  Add PrimType.class.
+
+Mon Jan 26 16:24:46 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (emitCheckcast):  New method, base on
+	Method.compile_checkcast.
+	* Method.java (Method.compile_checkcast):  Now just a stub.
+	* Type.java (isValidJavaTypeName):  New method.
+
+Sun Jan 11 15:51:51 1998  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (emitFinallyStart): Re-set end_pc.
+
+	* Type.java (reflectClass):  New field.
+	(getReflectClass):  New method.
+	(<init>):  Take extra reflectClass argument.
+	* ClassType.java (getReflectClass, toString):  New methods.
+	* ArrayType.java (getReflectClass):  New method.
+	
+Sun Dec 14 15:55:22 1997  Per Bothner  <bothner@cygnus.com>
+
+	* ClassFileInput.java (readClassType):
+	(readClassInfo):  Read interface indexes correctly.
+
+	* CodeAttr.java (emitLoad, emitThrow):  New methods.
+	Fix various problems with exception table support.
+	* Method.java (compile_push_value):  Replaced by CodeAttr.emitLoad.
+
+	* ZipMember.java (getData):  New method, based on ZipArchive.contents.
+	* ZipArchive.java (contents):  Move to ZipMember.  Update callers.
+	* ZipLoader.java:  Re-write to use java.util.zip.ZipFile.
+
+Thu Nov 27 21:22:16 1997  Per Bothner  <bothner@cygnus.com>
+
+	* TryState.java:  New class, for exception handling.
+	* Makefile.am:  Added TryState.class.
+	* Method.java:  Move mone methods to CodeAttr.java.
+	* CodeAttr.java:  Rename compile_xxx to emitXxx.
+	(addhandler, emitTryStart, emitTryEnd. emitCatchStart, emitCatchEnd,
+	emitFinallyStart, emitFinallyEnd, emitTryCatchEnd):  New methods
+	to support exception handling.
+	* ClassFileInput.java:  Create exception table.
+	* Scope.java (various places):  Pass CodeAttr instead of Method.
+	* Variable.java:  Moved functionality here from Method.java.
+	
+
+Mon Nov 10 16:57:28 1997  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java (disAssemble):  New method.
+	* ClassTypeWriter.java (printConstantOperand):  New method.
+	* ClassFileInput.java (readAttribute):  Don't use Method.assign_local
+	to set LocalVariableTable offsets, since that doesn't like overlaps.
+
+Sun Nov  2 13:39:48 1997  Per Bothner  <bothner@cygnus.com>
+
+	* CodeAttr.java, LineNumbersAttr.java, LocalVarsAttr.java:
+	New classes to represent more standard attributes.
+	* Location.java:  New class - shared stuff from Field and Variable.
+	* Field.java, Variable.java:  Inherit from Location; move stuff there.
+	* Attribute.java (isSkipped, setSkipped, getlengthAll):  New methods.
+	* ClassFileInput.java (readAttributes):  Make more robust.
+	Read Code, lineNumberTable, and LocalVariableTable attributes.
+	* ClassType.java (addMethod):  Use new Method.setSignature.
+	* ClassTypeWriter.java (printSignature):  New method.  Use it.
+	* Label.java (relocate_fixups, relocate_wide, emit_spring,
+	add_fixup, emit, emit_wide):  Charge arg from Method to CodeAttr.
+	* Makefile.am:  Add new classes.  Add JCFLAGS.
+	* Method.java:  Many variables and methods moved to CodeAttr,
+	LineNumbersAtrr or LocalsVarsAttr.  Update accordingly.
+	(setSignature, setName, assign_constants):  New methods.
+	* ClassType.java, IfState.java:  Update for stuff moved around.
+
+	* VarEnumerator.java (reset):  Tolerate null scope.
+	* Type.java (signatureToType):  Add overloading with offset and length.
+
+Fri Sep 26 21:12:29 1997  Per Bothner  <bothner@cygnus.com>
+
+	* Attribute.java, AttrContainer.java, MiscAttr.java,
+	SourceFileAttr.java, dump.java:  New classes.
+	* Makefile.am, Makefile.in:  Update for new classes and new automake.
+	* ClassFileInput.java:  Add support for reading Attributes.
+	(main):  Moved to new dump.java.
+	* ClassTypeWriter.java:  Add support for printing Attributes.
+	* ClassType.java, Field.java, Method.java:  Implement AttrContainer.
+	* ClassType.java:  Move some stuff to SourceFileAttr.java.
+
+Fri Sep 26 21:01:25 1997  Per Bothner  <bothner@cygnus.com>
+
+	* CpoolUtf8.java (intern):  New method.
+	* CpoolValue2.java (CpoolValue2):  Extra slot count increment needed.
+	* CpoolEntry.java (getIndex):  New method.
+
+Sun Jun 22 14:00:10 1997  Per Bothner  <bothner@cygnus.com>
+
+	* ConstantPool.java:  Add missing break, missing increment.
+	Replace most readShort by readUnsignedShort.
+	* ClassFileInput.java:  Likewise.
+ 	Fixes from Jay Krell <jay.krell@cornell.edu>.
+	* ClassTypeWriter.java:  Change to extend PrintWriter, not PrintStream.
+	* ZipMember.java (print):  Fix to use ps argument, not System.out.
+
+Sun Mar 30 22:54:48 1997  Per Bothner  <bothner@cygnus.com>
+
+	* LICENSE:  New file - and new license!
+	* *.java:  Added copyright notice.
+
+	* Access.java (toString):  New static method.
+	* ClassFileInput.java:  New class for reading .class files.
+	* ClassType.java"  Remove get_*_const methods.
+	Rename various fields.  Avoid creating constant pool until needed.
+	* ClassTypeWriter.java:  New class, for printing a ClassType.
+	* ConstantPool.java:  New class - manage constant pool.
+	* Cpool*.java:  Add getTag method.  Rename hash_of to hashCode.
+	Add print methods, and new default constructors.
+	* CpoolInt.java, CpoolFloat.java:  Combined into CpoolValue1.java.
+	* CpoolLong.java, CpoolDouble.java:  Combined into CpoolValue2.java.
+	* Type.java (signatureToPrimitive, signatureToType, signatureLength,
+	signatureToName):  New methods.
+
+Tue Mar 25 13:26:29 1997  Per Bothner  <bothner@kalessin.cygnus.com>
+
+	Move this package from codegen to gnu.bytecode.
+	Change all names and signatures from byte[] (Utf8) to String.
+	Rename some methods to be more "conventional" (e.g.
+	strName -> getName; set_class_name -> setname.
+
+Mon Mar 24 13:35:46 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* Method.java:  Add more char->byte casts.
+
+Wed Mar 19 11:04:02 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* CpoolRef.java (get_const):  Set tags to CONSTANT_InterfaceMethodref
+	if method's class is an interface.
+	* Method.java (compile_invoke_method): Handle invokeinterface properly,
+
+Mon Mar 17 17:15:28 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* ArrayType.java, Type.java:  Cast char literals to byte.
+	* ClassType.java:  Rename set_super -> setSuper.
+	* Method.java (compile_arraylength, compile_if_icmp,
+	compile_ifi_lt):  New methods.
+	(compile_invoke_nonvirtual):  Renamed to compile_invoke_special.
+
+Tue Feb  4 22:13:40 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* ZipArchive.java:  Add char-constant -> byte casts.
+
+Mon Feb  3 17:16:17 1997  Per Bothner  <bothner@kalessin.cygnus.com>
+
+	* ClassType.java (getClassName):  Removed.
+	(compileCoerceFromObject):  New methods.
+	(this_name):  Moved to Type.
+	* Type.java (getName):  New method.
+	(compileCoerceFromObject):  New methods.
+	* Method.java (set_static):  Renamed to setStaticFlag.
+	(compile_convert, compile_goto_if, compile_primop,
+	getDeclaringClass, getReturnType, getParameterTypes, getName): New
+
+Fri Jan  3 18:52:20 1997  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* Access:  Make class public.
+	(VALATILE -> VOLATILE):  Fix typo.
+	* ArrayType.java (elements):  Make public.
+	* Method.java (compile_array_store, compile_array_load):
+	Boolean arrays use baload/bastore (byte load/store) op.
+	* Type.java (pointer_type, string_type):  Make types specific.
+
+Sat Nov 16 14:52:45 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* IfState.java:  New class.
+	* Makefile.am, Makefile.in:  Add IfState.class.
+	* Method.java (if_stack):  New field.
+	(compile_ifneq, compile_else, compile_fi):  New methods.	
+
+Sat Oct 26 08:59:10 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* *.java:  Remove redundant 'import codegen.*'. (MS j++ complains.)
+
+Mon Sep 16 11:09:40 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* CpoolDouble.java:  New class, for CONSTANT_Double.
+	* Makefile.{am,in}:  Add CpoolDouble.class.
+	* Method.java (compile_push_double):  New method.
+	* ZipArchive.java:  Fix usage string.
+	
+	* Makefile.{am,in}: (javadir):  Use $(subdir)
+	{DEP_,}DISTFILES):  Do not include DATA (i.e. *.class).
+	Replace generated EXTRA_DIST with ditto SOURCES.
+
+Thu Sep 12 17:21:20 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* CpoolLong.java:  New class, for CONSTANT_Long.
+	* Method.java (compile_push_long):  New method.
+	* codegen/Makefile.{am,in}:  Add EXTRA_DIST rule.
+	Use $*.java instead of possibly-less-portable $(<F).
+
+Sun Sep  8 22:26:14 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* Makefile.{am,in} (JAVAC): Fix -classpath argument.
+
+Sat Sep  7 13:00:07 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* {ClassType,Method}.java:  Support emitting "SourceFile" attribute.
+	(setSourceFile):  New method to set SourceFile.
+	* Method.java (compile_checkcast):  Combine overloaded methods.
+
+Tue Sep  3 19:44:28 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* ZipArchive.java:  Move ZipMember to ...
+	* ZipMember.java:  ... new file (and make it public).
+	* ZipLoader.java:  New class (derived from kawa.lang.SchemeLoader).
+	* Makefile.{am,in}:  Add new classes.
+	Fix broken suffix handling.
+
+	* ClassType.java (getClassName):  New method.
+	* Method.java (compile_linenumber):  New method.
+	(LineNumberTable_name_index):  New field.
+	(linenumber_count, linenumber_table):  New fields.
+	(write):  Emit line numbers.
+	(compile_invoke_method):  Generalize to support invokestatic.
+	(compile_invoke_virtual, compile_invoke_nonvirtual,
+	compile_invoke_static):  Update accordingly.
+	
+Sat Jul 20 17:32:28 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* Makefile.am, Makefile.in (OBJ): Add ZipArchive.class.
+	(CLEANFILES):  Add ZipMember.class.
+
+	* Method.java (compile_tailcall, reachableHere):  New methods.
+
+Tue Jul 16 23:18:20 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* ZipArchive.java:  New class, for handling .zip archives.
+
+	* Field.java (strName):  New method.
+	* Method.java (assign_local):  Fix type lossage.
+	(compile_checkcast, maybe_compile_checkcast):  New methods for arrays.
+	(compile_dup):  Gneeralize to handle all the dup* instructions.
+	(compile_invoke_static):  Don't push_stack_type if returning void.
+
+Thu Jul 11 14:44:21 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* ClassType.java:  Add support for implementing interfaces.
+	* CpoolUtf8.java (get_const):  Use proper equals to compare bytes.
+	* Method.java:  Support emitting debug info: LocalVariableTable.
+	New methods enterScope, assign_local.
+	New methods compile_new, compile_array_load, compile_swap,
+	copile_store_value, compile_{get,put}{field,static},
+	* Scope.java:  Renamed field prev -> parent.
+	New fields nextSibling, firstChile, lastChild.
+	New method linkChild (to enter in tree).
+	* VarEnumerator.java:  New class.
+	* Makefile.am, Makefile.in:  Add VarEnumerator.class.
+	* Variable.java: New fields offset, flags, name_index, signature_index.
+	New methods for accessing flags and iterating.
+
+Tue Jul  2 11:23:44 1996  Anthony Green  <green@csk3.cygnus.com>
+
+	* Makefile.am, Makefile.in: New files to support building codegen
+ 	package.
+
+	* Makefile.am, Makefile.in: Added "make clean" support.
+
+Mon Jul  1 23:11:46 1996  Per Bothner  <bothner@deneb.cygnus.com>
+
+	* Access.java, ArrayType.java, ClassType.java, CpoolClass.java,
+	CpoolEntry.java, CpoolInt.java, CpoolNameAndType.java, CpoolRef.java,
+	CpoolString.java, CpoolUtf8.java, Field.java, Label.java, Method.java,
+	Scope.java, Type.java, Variable.java:  New classes in new package.
+	This provides a medium-level interface to generating .class files.

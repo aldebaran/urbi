@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2002-2004 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+
+<project default="examples" name="liburbi" basedir=".">
+  <property name="exampledir" value="./examples/">
+  </property>
+  <property name="srcdir" value="./liburbi/">
+  </property>
+  <property name="libdir" value=".">
+  </property>
+  <property name="classesdir" value="./classes">
+  </property>
+  <property name="javadocdir" value="./doc/html/">
+  </property>
+  <property name="jarpath" value="./lib">
+  </property>
+  <property name="distdir" value="./dist/">
+  </property>
+  <property name="name" value="liburbijava">
+  </property>
+
+
+  <property name="exampledir-test" value="${exampledir}/test">
+  </property>
+  <property name="manifestpath-test" value="${exampledir}/test/manifest">
+  </property>
+  <property name="builddir-test" value="${exampledir-test}/">
+  </property>
+  <property name="name-test" value="test">
+  </property>
+
+  <property name="exampledir-URBIBallTrackingHead" value="${exampledir}/urbiballtrackinghead">
+  </property>
+  <property name="manifestpath-URBIBallTrackingHead" value="${exampledir}/urbiballtrackinghead/manifest">
+  </property>
+  <property name="builddir-URBIBallTrackingHead" value="${exampledir-URBIBallTrackingHead}/">
+  </property>
+  <property name="name-URBIBallTrackingHead" value="URBIBallTrackingHead">
+  </property>
+
+  <property name="exampledir-URBIBandWidth" value="${exampledir}/urbibandwidth">
+  </property>
+  <property name="manifestpath-URBIBandWidth" value="${exampledir}/urbibandwidth/manifest">
+  </property>
+  <property name="builddir-URBIBandWidth" value="${exampledir-URBIBandWidth}/">
+  </property>
+  <property name="name-URBIBandWidth" value="URBIBandWidth">
+  </property>
+
+  <property name="exampledir-URBIImage" value="${exampledir}/urbiimage">
+  </property>
+  <property name="manifestpath-URBIImage" value="${exampledir}/urbiimage/manifest">
+  </property>
+  <property name="builddir-URBIImage" value="${exampledir-URBIImage}/">
+  </property>
+  <property name="name-URBIImage" value="URBIImage">
+  </property>
+
+  <property name="exampledir-URBIMirror" value="${exampledir}/urbimirror">
+  </property>
+  <property name="manifestpath-URBIMirror" value="${exampledir}/urbimirror/manifest">
+  </property>
+  <property name="builddir-URBIMirror" value="${exampledir-URBIMirror}/">
+  </property>
+  <property name="name-URBIMirror" value="URBIMirror">
+  </property>
+
+  <property name="exampledir-URBIPing" value="${exampledir}/urbiping">
+  </property>
+  <property name="manifestpath-URBIPing" value="${exampledir}/urbiping/manifest">
+  </property>
+  <property name="builddir-URBIPing" value="${exampledir-URBIPing}/">
+  </property>
+  <property name="name-URBIPing" value="URBIPing">
+  </property>
+
+  <property name="exampledir-URBIPlay" value="${exampledir}/urbiplay">
+  </property>
+  <property name="manifestpath-URBIPlay" value="${exampledir}/urbiplay/manifest">
+  </property>
+  <property name="builddir-URBIPlay" value="${exampledir-URBIPlay}/">
+  </property>
+  <property name="name-URBIPlay" value="URBIPlay">
+  </property>
+
+  <property name="exampledir-URBIRecord" value="${exampledir}/urbirecord">
+  </property>
+  <property name="manifestpath-URBIRecord" value="${exampledir}/urbirecord/manifest">
+  </property>
+  <property name="builddir-URBIRecord" value="${exampledir-URBIRecord}/">
+  </property>
+  <property name="name-URBIRecord" value="URBIRecord">
+  </property>
+
+  <property name="exampledir-URBISend" value="${exampledir}/urbisend">
+  </property>
+  <property name="manifestpath-URBISend" value="${exampledir}/urbisend/manifest">
+  </property>
+  <property name="builddir-URBISend" value="${exampledir-URBISend}/">
+  </property>
+  <property name="name-URBISend" value="URBISend">
+  </property>
+
+  <property name="exampledir-URBISound" value="${exampledir}/urbisound">
+  </property>
+  <property name="manifestpath-URBISound" value="${exampledir}/urbisound/manifest">
+  </property>
+  <property name="builddir-URBISound" value="${exampledir-URBISound}/">
+  </property>
+  <property name="name-URBISound" value="URBISound">
+  </property>
+
+  <property name="exampledir-URBITalkie" value="${exampledir}/urbitalkie">
+  </property>
+  <property name="manifestpath-URBITalkie" value="${exampledir}/urbitalkie/manifest">
+  </property>
+  <property name="builddir-URBITalkie" value="${exampledir-URBITalkie}/">
+  </property>
+  <property name="name-URBITalkie" value="URBITalkie">
+  </property>
+
+  <target name="compile" description="* Compile the code">
+    <mkdir dir="${classesdir}">
+    </mkdir>
+    <javac destdir="${classesdir}" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${srcdir}/image/">
+         </pathelement>
+         <pathelement location="${srcdir}/sound/">
+         </pathelement>
+         <pathelement location="${srcdir}/main/">
+         </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
+  <target name="jar" description="* Create the jar" depends="compile">
+    <jar destfile="${jarpath}/URBITalkie.jar" basedir="${classesdir}">
+    </jar>
+  </target>
+
+
+  <target name="compile-test" description="* Compile the test example" depends="jar">
+    <mkdir dir="${builddir-test}/classes">
+    </mkdir>
+    <javac destdir="${builddir-test}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-test}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-test" description="* Create the jar of the test example" depends="compile-test">
+    <jar destfile="${builddir-test}/${name-test}.jar" manifest="${manifestpath-test}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-test}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBIBallTrackingHead" description="* Compile the URBIBallTrackingHead example" depends="jar">
+    <mkdir dir="${builddir-URBIBallTrackingHead}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBIBallTrackingHead}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBIBallTrackingHead}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBIBallTrackingHead" description="* Create the jar of the URBIBallTrackingHead example" depends="compile-URBIBallTrackingHead">
+    <jar destfile="${builddir-URBIBallTrackingHead}/${name-URBIBallTrackingHead}.jar" manifest="${manifestpath-URBIBallTrackingHead}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBIBallTrackingHead}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBIBandWidth" description="* Compile the URBIBandWidth example" depends="jar">
+    <mkdir dir="${builddir-URBIBandWidth}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBIBandWidth}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBIBandWidth}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBIBandWidth" description="* Create the jar of the URBIBandWidth example" depends="compile-URBIBandWidth">
+    <jar destfile="${builddir-URBIBandWidth}/${name-URBIBandWidth}.jar" manifest="${manifestpath-URBIBandWidth}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBIBandWidth}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBIImage" description="* Compile the URBIImage example" depends="jar">
+    <mkdir dir="${builddir-URBIImage}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBIImage}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBIImage}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBIImage" description="* Create the jar of the URBIImage example" depends="compile-URBIImage">
+    <jar destfile="${builddir-URBIImage}/${name-URBIImage}.jar" manifest="${manifestpath-URBIImage}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBIImage}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBIMirror" description="* Compile the URBIMirror example" depends="jar">
+    <mkdir dir="${builddir-URBIMirror}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBIMirror}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBIMirror}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBIMirror" description="* Create the jar of the URBIMirror example" depends="compile-URBIMirror">
+    <jar destfile="${builddir-URBIMirror}/${name-URBIMirror}.jar" manifest="${manifestpath-URBIMirror}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBIMirror}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBIPing" description="* Compile the URBIPing example" depends="jar">
+    <mkdir dir="${builddir-URBIPing}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBIPing}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBIPing}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBIPing" description="* Create the jar of the URBIPing example" depends="compile-URBIPing">
+    <jar destfile="${builddir-URBIPing}/${name-URBIPing}.jar" manifest="${manifestpath-URBIPing}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBIPing}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBIPlay" description="* Compile the URBIPlay example" depends="jar">
+    <mkdir dir="${builddir-URBIPlay}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBIPlay}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBIPlay}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBIPlay" description="* Create the jar of the URBIPlay example" depends="compile-URBIPlay">
+    <jar destfile="${builddir-URBIPlay}/${name-URBIPlay}.jar" manifest="${manifestpath-URBIPlay}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBIPlay}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBIRecord" description="* Compile the URBIRecord example" depends="jar">
+    <mkdir dir="${builddir-URBIRecord}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBIRecord}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBIRecord}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBIRecord" description="* Create the jar of the URBIRecord example" depends="compile-URBIRecord">
+    <jar destfile="${builddir-URBIRecord}/${name-URBIRecord}.jar" manifest="${manifestpath-URBIRecord}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBIRecord}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBISend" description="* Compile the URBISend example" depends="jar">
+    <mkdir dir="${builddir-URBISend}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBISend}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBISend}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBISend" description="* Create the jar of the URBISend example" depends="compile-URBISend">
+    <jar destfile="${builddir-URBISend}/${name-URBISend}.jar" manifest="${manifestpath-URBISend}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBISend}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBISound" description="* Compile the URBISound example" depends="jar">
+    <mkdir dir="${builddir-URBISound}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBISound}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBISound}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBISound" description="* Create the jar of the URBISound example" depends="compile-URBISound">
+    <jar destfile="${builddir-URBISound}/${name-URBISound}.jar" manifest="${manifestpath-URBISound}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBISound}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+
+  <target name="compile-URBITalkie" description="* Compile the URBITalkie example" depends="jar">
+    <mkdir dir="${builddir-URBITalkie}/classes">
+    </mkdir>
+    <javac destdir="${builddir-URBITalkie}/classes" deprecation="true" debug="true" optimize="false">
+      <src>
+         <pathelement location="${exampledir-URBITalkie}">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      <pathelement path="${classesdir}">
+      </pathelement>
+     </classpath>
+   </javac>
+  </target>
+  <target name="jar-URBITalkie" description="* Create the jar of the URBITalkie example" depends="compile-URBITalkie">
+    <jar destfile="${builddir-URBITalkie}/${name-URBITalkie}.jar" manifest="${manifestpath-URBITalkie}">
+       <fileset dir="${classesdir}">
+        </fileset>
+       <fileset dir="${builddir-URBITalkie}/classes">
+        </fileset>
+    </jar>
+  </target>
+
+<target name="examples" description="* Create the jars of the examples" depends="jar-test, jar-URBIBallTrackingHead, jar-URBIBandWidth, jar-URBIImage, jar-URBIMirror, jar-URBIPing, jar-URBIPlay, jar-URBIRecord, jar-URBISend, jar-URBISound, jar-URBITalkie">
+  </target>
+
+  <target name="clean" description="* Clean up the generated directories">
+	<delete>
+		<fileset dir="${jarpath}" includes="**/*~"/>
+	</delete>
+
+	<delete file="${jarpath}/${name}.jar">
+	</delete>
+	<delete file="${exampledir-test}/${name-test}.jar">
+	</delete>
+	<delete file="${exampledir-URBIBallTrackingHead}/${name-URBIBallTrackingHead}.jar">
+	</delete>
+	<delete file="${exampledir-URBIBandWidth}/${name-URBIBandWidth}.jar">
+	</delete>
+	<delete file="${exampledir-URBIImage}/${name-URBIImage}.jar">
+	</delete>
+	<delete file="${exampledir-URBIMirror}/${name-URBIMirror}.jar">
+	</delete>
+	<delete file="${exampledir-URBIPing}/${name-URBIPing}.jar">
+	</delete>
+	<delete file="${exampledir-URBIPlay}/${name-URBIPlay}.jar">
+	</delete>
+	<delete file="${exampledir-URBIRecord}/${name-URBIRecord}.jar">
+	</delete>
+	<delete file="${exampledir-URBISend}/${name-URBISend}.jar">
+	</delete>
+	<delete file="${exampledir-URBISound}/${name-URBISound}.jar">
+	</delete>
+	<delete file="${exampledir-URBITalkie}/${name-URBITalkie}.jar">
+	</delete>
+    <delete dir="${classesdir}">
+    </delete>
+    <delete dir="${exampledir-test}/classes">
+    </delete>
+    <delete dir="${exampledir-URBIBallTrackingHead}/classes">
+    </delete>
+    <delete dir="${exampledir-URBIBandWidth}/classes">
+    </delete>
+    <delete dir="${exampledir-URBIImage}/classes">
+    </delete>
+    <delete dir="${exampledir-URBIMirror}/classes">
+    </delete>
+    <delete dir="${exampledir-URBIPing}/classes">
+    </delete>
+    <delete dir="${exampledir-URBIPlay}/classes">
+    </delete>
+    <delete dir="${exampledir-URBIRecord}/classes">
+    </delete>
+    <delete dir="${exampledir-URBISend}/classes">
+    </delete>
+    <delete dir="${exampledir-URBISound}/classes">
+    </delete>
+    <delete dir="${exampledir-URBITalkie}/classes">
+    </delete>
+  </target>
+
+  <target name="dist" description="* Create a distribution" depends="jar, doc">
+    <mkdir dir="${distdir}">
+    </mkdir>
+    <copy todir="${distdir}">
+      <fileset dir="${jarpath}" includes="*.jar">
+      </fileset>
+      <fileset dir="${libdir}" includes="*.jar">
+      </fileset>
+      <fileset dir="." includes="LICENSE*, NOTICE*, README*">
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="doc" description="* Generate javadoc">
+    <mkdir dir="${javadocdir}">
+    </mkdir>
+    <property name="copyright" value="Copyright URBI Project. All Rights Reserved.">
+    </property>
+    <property name="title" value="Liburbi Java">
+    </property>
+    <javadoc use="true" private="true" destdir="${javadocdir}" author="true" version="true" sourcepath="java" packagenames="liburbi.*">
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+        <pathelement location="${jarpath}/${name}.jar">
+        </pathelement>
+      </classpath>
+    </javadoc>
+  </target>
+</project>

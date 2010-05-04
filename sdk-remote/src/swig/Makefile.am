@@ -1,93 +1,88 @@
-## Copyright (C) 2006, 2008, 2010, Gostai S.A.S.
-##
-## This software is provided "as is" without warranty of any kind,
-## either expressed or implied, including but not limited to the
-## implied warranties of fitness for a particular purpose.
-##
-## See the LICENSE file for more information.
+SUBDIRS = . java
 
-include $(top_srcdir)/build-aux/init.mk
+AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi/swig
+AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS) -fpic
 
-AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/swig
-AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS) -fpic
+EXTRA_DIST = liburbi.i
 
-dist_bin_SCRIPTS +=				\
-  sample.cs					\
-  sample.java					\
-  sample.lua					\
-  sample.php					\
-  sample.pl					\
-  sample.py					\
-  sample.rb
-
-EXTRA_DIST += liburbi.i
-
-if BINDING_CSHARP
-lib_LTLIBRARIES += liburbiCSharp.la
-nodist_liburbiCSharp_la_SOURCES = liburbi_csharp.cc
-endif
+## -------------- ##
+## Bindings java  ##
+## -------------- ##
 
 if BINDING_JAVA
-lib_LTLIBRARIES += liburbiJava.la
-nodist_liburbiJava_la_SOURCES = liburbi_java.cc
-liburbiJava_la_CXXFLAGS =			\
-  -I/usr/local/jdk1.5.0_08/include		\
-  -I/usr/local/jdk1.5.0_08/include/linux
-endif
 
-if BINDING_LUA
-lib_LTLIBRARIES += liburbiLua.la
-nodist_liburbiLua_la_SOURCES = liburbi_lua.cc
-liburbiLua_la_CXXFLAGS = -I/usr/include/lua5.1
-endif
+java_src_outdir = java/liburbi/main
+java_package = liburbi.main
 
-if BINDING_PERL
-lib_LTLIBRARIES += liburbiPerl.la
-nodist_liburbiPerl_la_SOURCES = liburbi_perl.cc
-liburbiPerl_la_CXXFLAGS = -I/usr/lib/perl/5.8.7/CORE
-endif
+SWIG_FLAGS =					\
+	-c++ -java -Wall			\
+	-outdir $(java_src_outdir)		\
+	-I$(top_srcdir)/src/liburbi/uobject/	\
+	-I$(top_srcdir)/include/		\
+	-package $(java_package)
 
-if BINDING_PHP
-lib_LTLIBRARIES += liburbiPhp.la
-nodist_liburbiPhp_la_SOURCES = liburbi_php.cc
-liburbiPhp_la_CXXFLAGS =			\
-  -I/usr/include/php4				\
-  -I/usr/include/php4/main			\
-  -I/usr/include/php4/regex			\
-  -I/usr/include/php4/TSRM			\
-  -I/usr/include/php4/Zend
-endif
-
-if BINDING_PYTHON
-lib_LTLIBRARIES += liburbiPython.la
-nodist_liburbiPython_la_SOURCES = liburbi_python.cc swig_python.hh
-liburbiPython_la_CXXFLAGS = -I/usr/include/python2.4
-endif
-
-if BINDING_RUBY
-lib_LTLIBRARIES += liburbiRuby.la
-nodist_liburbiRuby_la_SOURCES = liburbi_ruby.cc swig_ruby.hh
-liburbiRuby_la_CXXFLAGS = -I/usr/lib/ruby/1.8/i486-linux
-endif
-
-
-liburbi_csharp.cc: liburbi.i
-	$(SWIG) -csharp $(SWIG_ARGS) -o $@ $<
-
+# Invoque Swig and generate: java sources & C++ jni code (liburbi_java.cc)
 liburbi_java.cc: liburbi.i
-	$(SWIG) -java $(SWIG_ARGS) -o $@ $<
+	$(mkdir_p) $(java_src_outdir)
+	$(SWIG) $(SWIG_FLAGS) $(SWIG_ARGS) -o $@.tmp $<
+	perl -pi -e 's/FillMeInAsSizeCannotBeDeterminedAutomatically/(arg1)->size/g' $@.tmp
+	mv $@.tmp $@
 
-liburbi_lua.cc: liburbi.i
-	$(SWIG) -lua $(SWIG_ARGS) -o $@ $<
+lib_LTLIBRARIES = liburbijava.la
 
-liburbi_perl.cc: liburbi.i
-	$(SWIG) -perl $(SWIG_ARGS) -o $@ $<
+liburbijava_la_SOURCES = 			\
+	liburbi_java.cc				\
+	liburbi_java.cc.h			\
+	callbacks-caller.hh			\
+	callbacks-caller.cc			\
+	call-macros.hh				\
+	liburbi_main_UObjectJava.h		\
+	liburbi_main_UObjectJava.cc
 
-liburbi_php.cc: liburbi.i
-	$(SWIG) -php4 $(SWIG_ARGS) -o $@ $<
+liburbijava_la_LIBADD = $(top_builddir)/src/liburbi/liburbi.la $(top_builddir)/src/libuobject/libuobject.la
+liburbijava_la_CPPFLAGS = -I/usr/lib/jvm/default-java/include
 
-liburbi_python.cc: liburbi.i swig_python.hh
-	$(SWIG) -python $(SWIG_ARGS) -o $@ $<
+CLEANFILES =					\
+	liburbi_java.cc.h			\
+	liburbi_java.cc				\
+	$(wildcard $(java_src_outdir)/*.java)
 
-liburbi_ruby.cc: liburbi.i swig_ruby.hh
-	$(SWIG) -ruby $(SWIG_ARGS) -o $@ $<
+
+if WIN32
+liburbijava_la_LDFLAGS = -Wl,--add-stdcall-alias
+
+# Add generation of jvm library dll link file, because in java lib folder
+# there is only the static version jvm.lib and libtool complains and doesn't
+# want to create a shared library using it.
+libjvm.dll.a:
+	echo -e "EXPORTS\\nJNI_CreateJavaVM@12\\nJNI_GetDefaultJavaVMInitArgs@4\\nJNI_GetCreatedJavaVMs@12" > jvm.def
+	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
+
+BUILT_SOURCES = libjvm.dll.a
+
+CLEANFILES += 					\
+	libjvm.dll.a				\
+	jvm.def
+
+# link with the generated jvm link file
+liburbijava_la_LIBADD += -L. -ljvm
+
+endif
+liburbijava_la_CXXFLAGS =	-I$$JAVA_HOME/include				\
+				-I$$JAVA_HOME/include/$(JAVA_INCLUDE_DIR)	\
+				-I$(top_srcdir)/include/			\
+				-I$(top_srcdir)/src/liburbi/uobject/		\
+				-I$(top_builddir)/include/			\
+				$(BOOST_CPPFLAGS)
+
+# Under windows path are set to C:/cygwin... in libdir, which
+# then prevent us to install the .la in a place with a DESTDIR
+# libtool complains that he want some path ending in "C:/cygwin..."
+# So we remote the C:/cygwin
+# On other Os we assume paths do not contains C:/cygwin
+dirty-fix:
+	perl -pi -e "s,libdir='C:/cygwin,libdir=',g" liburbijava.la
+
+install-exec-local: dirty-fix
+
+endif
