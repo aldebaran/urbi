@@ -148,6 +148,8 @@ AM_CONDITIONAL([BINDING_PYTHON],
 AM_CONDITIONAL([BINDING_RUBY],
                 [echo "$enable_bindings" | grep -w ruby >/dev/null])
 
+
+
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.
  AC_ENABLE_SHARED
@@ -156,6 +158,15 @@ if test x"$enable_bindings" != xno; then
    AC_MSG_ERROR([SWIG 1.3.40 is required to build bindings.])
    SWIG_ENABLE_CXX
  fi
+
+
+ ## -------------------------- ##
+ ## liburbi java configuration ##
+ ## -------------------------- ##
+# if test x"$java_binding" != x; then
+ m4_include([src/swig/java/liburbijava.ac])
+# fi
+ ac_configure_args=" $ac_configure_args --disable-programs"
 fi
 
 WITH_XENOMAI
@@ -222,6 +233,7 @@ AC_CONFIG_FILES([
   Makefile
     src/Makefile
       src/swig/Makefile
+        src/swig/java/Makefile
       src/tests/Makefile
 ])
 
