@@ -1,4 +1,4 @@
-personal_ws-1.1 en 867 utf-8
+personal_ws-1.1 en 893 utf-8
 aaa
 abc
 abcdef
@@ -22,7 +22,6 @@ ALFrameManager
 aliveJobs
 ALLogger
 allProto
-allSlotName
 allSlotNames
 ALMemory
 ALModule
@@ -57,6 +56,7 @@ asExecutable
 asFloat
 asFoo
 asin
+asJob
 asList
 asm
 asPrimitive
@@ -189,6 +189,7 @@ docutils
 doesNotExist
 doin
 DUMPBIN
+dumpState
 DYLD
 dyld
 dylib
@@ -634,6 +635,7 @@ setPosition
 setPositions
 setProperty
 setProtos
+setSideEffectFree
 setSlot
 setThreadLimit
 setTrace
@@ -722,6 +724,7 @@ TimeAdaptive
 timedOut
 timeOut
 TimerHandle
+timeShift
 timestamp
 timesTen
 tmp
@@ -844,6 +847,8 @@ verylightgray
 VideoIn
 VoiceXML
 voicexml
+waitForChanges
+waitForTermination
 waituntil
 waituntilWalkIsFinished
 walkTo

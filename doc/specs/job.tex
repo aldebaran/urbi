@@ -6,29 +6,110 @@
 %%
 %% See the LICENSE file for more information.
 
-%% Copyright (C) 2010, Gostai S.A.S.
-%%
-%% This software is provided "as is" without warranty of any kind,
-%% either expressed or implied, including but not limited to the
-%% implied warranties of fitness for a particular purpose.
-%%
-%% See the LICENSE file for more information.
-
 \section{Job}
 
+Jobs are independent threads of executions.  Jobs can run concurrently.
+They can also be managed using \refObject[s]{Tag}.
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+A Job is typically constructed via \refSlot{Control}{detach},
+\refSlot{Control}{disown}, or \refSlot{System}{spawn}.
+
+\begin{urbiscript}
+detach(sleep(10));
+[00202654] Job_0x108507950
+
+disown(sleep(10));
+[00204195] Job_0x10851b020
+
+spawn (function () { sleep(10) }, false);
+[00274160] Job_0x101b516c0
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[asJob]
+  Return \lstinline|this|.
+
+\item[backtrace]
+  Return the current backtrace of the job.
+
+\begin{urbiscript}
+//#push 1 "file.u"
+var s = detach(sleep(10))|;
+// Leave some time for s to be started.
+sleep(1);
+assert
+{
+  s.backtrace[0].asString == "file.u:1.16-24: sleep";
+  s.backtrace[1].asString == "file.u:1.9-25: detach";
+};
+//#pop
+\end{urbiscript}
+
+\item[clone]
+
+\item[dumpState]
+  Pretty-print the state of the job.
+
+\begin{urbiscript}
+//#push 1 "file.u"
+var t = detach(sleep(10))|;
+// Leave some time for s to be started.
+sleep(1);
+t.dumpState;
+[00004295] *** Job: shell_10
+[00004295] ***   State: sleeping
+[00004295] ***   Tags:
+[00004295] ***     Tag<U0x1004043a0>
+[00004297] ***   Backtrace:
+[00004297] ***     file.u:1.16-24: sleep
+[00004297] ***     file.u:1.9-25: detach
+//#pop
+\end{urbiscript}
+
+\item[name]  The name of the job.
+\begin{urbiscript}
+detach(sleep(10)).name;
+[00004297] "shell_5"
+\end{urbiscript}
+
+\item[setSideEffectFree]
+
+%%\item[status]
+%%  The current status of the job.
+
+\item[tags] The list of \refObject[s]{Tag} that manage this job.
+
+\item[terminate]  Kill this job.
+\begin{urbiscript}
+var r = detach({ sleep(1s); echo("done") })|;
+assert (r in jobs);
+r.terminate;
+assert (r not in jobs);
+sleep(2s);
+\end{urbiscript}
+
+\item[timeShift]
 %% FIXME:
-%%
-%% \subsection{Prototypes}
-%%
-%% \begin{refObjects}
-%% \item[Object]
-%% \end{refObjects}
-%%
-%% \subsection{Slots}
-%%
-%% \begin{urbiscriptapi}
-%%
-%% \end{urbiscriptapi}
+
+\item[waitForChanges]
+%% FIXME:
+
+\item[waitForTermination]
+%% FIXME:
+
+\end{urbiscriptapi}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
