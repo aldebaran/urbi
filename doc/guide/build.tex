@@ -230,31 +230,10 @@ export PYTHONPATH="\
 \end{description}
 
 \section{Check out}
-We heavily use Git submodules, i.e., we subscribe to other Git
-repositories, which themselves may depend on other submodules.
-Unfortunately Git's support for recursive submodules is not nice.  We
-have scripts in common (named \file{git-my-\var{foo}}, also available
-as \samp{git my-\var{foo}}) that make this easier.  Since they call each
-other, set your PATH to go into common/git.
 
-\begin{description}
-\item[Git 1.6.6 or higher]  There is direct support for submodules
-  from \code{clone}.
-
-\begin{shell}
-$ git clone --branch master --recursive git@git.gostai.com:kernel
-\end{shell}
-
-\item[Old versions of Git] The following sequence expects that you
-  have common/git (common being the Gostai repository) in your PATH.
-
-\begin{shell}
-$ git my-clone git@git.gostai.com:kernel
-$ cd kernel
-$ git checkout -b master --track origin/master
-$ git my-update
-\end{shell}
-\end{description}
+Get the open source version tarball from
+\url{http://www.urbiforge.com/index.php/Main/Downloads} and uncompress it.
+With these version, the bootstrap step can be skipped.
 
 \section{Bootstrap}
 Run
