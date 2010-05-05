@@ -132,15 +132,17 @@ An extra comma can be added at the end of the list.
 ["one" => 1, "two" => 2].erase("two") == ["one" => 1]
 \end{urbiassert}
 
-\item \lstinline|extend(\var{ext})|\\
-  Extend with the dictionary \lstinline|\var{ext}|.
-  Return the value of the new dictionary.
-\begin{urbiscript}
-d = ["one" => 1, "two" => 2];
-[00000001] ["one" => 1, "two" => 2]
-d.extend(["one" => 0, "three" => 3]);
-[00000002] ["one" => 0, "three" => 3, "two" => 2]
-\end{urbiscript}
+%% commented until a consensus is reached.
+%%
+%% \item \lstinline|extend(\var{ext})|\\
+%%   Extend with the dictionary \lstinline|\var{ext}|.
+%%   Return the value of the new dictionary.
+%% \begin{urbiscript}
+%% d = ["one" => 1, "two" => 2];
+%% [00000001] ["one" => 1, "two" => 2]
+%% d.extend(["one" => 0, "three" => 3]);
+%% [00000002] ["one" => 0, "three" => 3, "two" => 2]
+%% \end{urbiscript}
 
 
 \item \lstinline|get(\var{key})|\\
