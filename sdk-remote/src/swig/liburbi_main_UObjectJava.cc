@@ -367,6 +367,13 @@ Java_liburbi_main_UObjectJava_registerTimerFunction(JNIEnv *env,
 						    &CallbacksCaller::callNotifyChange_0,
 						    ::urbi::timermap);
       */
+      new urbi::UTimerCallbackobj<CallbacksCaller> (obj_name_,
+						    (double) period,
+						    f,
+						    &CallbacksCaller::callNotifyChange_0,
+						    urbi::getCurrentContext());
+      //->handle_get();
+
       break;
   }
 
