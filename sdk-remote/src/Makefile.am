@@ -46,13 +46,17 @@ AM_LDADD =					\
 # The order matters: build dependencies first.
 include libuvalue/local.mk
 include libuco/local.mk
-include libuobject/local.mk
 
 .PHONY: installcheck-umake
 if SDK_REMOTE
 include bin/local.mk
 include liburbi/local.mk
+
+if !STATIC_BUILD
 include uobjects/local.mk
+endif !STATIC_BUILD
+
+include libuobject/local.mk
 endif SDK_REMOTE
 
 if EXAMPLES

@@ -17,3 +17,8 @@ bin_urbi_launch_CPPFLAGS = -DURBI_ROOT_NOT_DLL $(LTDL_CPPFLAGS) $(AM_CPPFLAGS)
 bin_urbi_launch_SOURCES  = bin/urbi-launch.cc liburbi/urbi-root.cc
 bin_urbi_launch_LDFLAGS  = $(AM_LDFLAGS)
 bin_urbi_launch_LDADD    = $(LTDL_LIBS)
+
+if STATIC_BUILD
+bin_urbi_launch_LDADD += $(top_builddir)/src/libuvalue/libuvalue.la \
+  $(top_builddir)/src/libuobject/libuobject.la
+endif
