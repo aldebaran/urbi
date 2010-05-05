@@ -43,9 +43,9 @@ Exception has many slots which are specific exceptions.  See
 \autoref{sec:specs:except:sub} for their documentation.
 
 \begin{urbiscriptapi}
-\item[backtrace] The call stack at the moment the exception was thrown
-  (not created), as a \refObject{List} from the innermost to the
-  outermost call.
+\item[backtrace] The call stack at the moment the exception was thrown (not
+  created), as a \refObject{List} of \refObject[s]{StackFrame}, from the
+  innermost to the outermost call.
 \begin{urbiscript}
 //#push 1 "file.u"
 try
