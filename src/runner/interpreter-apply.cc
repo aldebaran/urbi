@@ -169,7 +169,7 @@ namespace runner
     if (const rCode& code = function->as<object::Code>())
       return apply_urbi(code, msg, args, call_message);
     else if (const object::rPrimitive& p = function->as<object::Primitive>())
-      return p->value_get()(args);
+      return (*p)(args);
     else
     {
       if (args.size() != 1)

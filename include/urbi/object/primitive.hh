@@ -28,18 +28,20 @@ namespace urbi
     {
       public:
       typedef boost::function1<rObject, const objects_type&> value_type;
+      typedef std::vector<value_type> values_type;
 
       ATTRIBUTE_NORETURN Primitive();
       Primitive(rPrimitive model);
       Primitive(value_type value);
-      value_type value_get() const;
+      values_type& value_get();
+      const values_type& value_get() const;
       virtual rObject operator() (object::objects_type args);
 
       // Urbi methods
       rObject apply(rList args);
 
       private:
-      value_type content_;
+      values_type content_;
 
       URBI_CXX_OBJECT_(Primitive);
     };

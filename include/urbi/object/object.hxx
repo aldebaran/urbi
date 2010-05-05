@@ -175,7 +175,15 @@ namespace urbi
     inline void
     Object::bind(const std::string& name, T p)
     {
-      slot_set(libport::Symbol(name), make_primitive(p));
+      libport::Symbol sym(name);
+      if (!local_slot_get(sym))
+        slot_set(sym, make_primitive(p));
+      else
+      {
+        rSlot v = local_slot_get(sym);
+        if (rPrimitive prim = (*v)->as<Primitive>())
+          extend_primitive(prim, p);
+      }
     }
 
   } // namespace object

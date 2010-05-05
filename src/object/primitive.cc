@@ -38,13 +38,21 @@ namespace urbi
     }
 
     Primitive::Primitive(value_type value)
-      : content_(value)
+      : content_()
     {
+      content_ << value;
       proto_add(proto);
       proto_remove(Object::proto);
     }
 
-    Primitive::value_type Primitive::value_get() const
+    const Primitive::values_type&
+    Primitive::value_get() const
+    {
+      return content_;
+    }
+
+    Primitive::values_type&
+    Primitive::value_get()
     {
       return content_;
     }
@@ -68,7 +76,17 @@ namespace urbi
 
     rObject Primitive::operator() (object::objects_type args)
     {
-      return content_(args);
+      values_type::iterator it = content_.begin();
+      while (true)
+        try
+        {
+          return (*it)(args);
+        }
+        catch (...)
+        {
+          if (++it == content_.end())
+            throw;
+        }
     }
 
     static rObject nil(const objects_type&)
@@ -77,8 +95,9 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Primitive)
-      : content_(nil)
+      : content_()
     {
+      content_ << nil;
       proto_add(Executable::proto);
       proto_remove(Object::proto);
     }

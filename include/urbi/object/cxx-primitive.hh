@@ -22,6 +22,9 @@ namespace urbi
   {
     template<typename M>
     rPrimitive make_primitive(M f);
+
+    template<typename M>
+    void extend_primitive(rPrimitive p, M f);
   }
 }
 
