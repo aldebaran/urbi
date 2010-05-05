@@ -183,6 +183,64 @@ String.fresh == "_5";
 "".size == 0;
 \end{urbiassert}
 
+\item \lstinline|split(\var{sep} = [" ", "\t", "\n", "\r"], \var{lim} = -1, \var{keepSep} = false, \var{keepEmpty} = true)|
+  Split \lstinline|this| on the separator \var{sep}, in at most \var{limit}
+  components, which include the separator if \var{keepSep}, and the
+  empty components of \var{keepEmpty}.  Return a list of strings.
+
+  The separator, \var{sep}, can be a string.
+
+\begin{urbiassert}
+       "a,b;c".split(",") == ["a", "b;c"];
+       "a,b;c".split(";") == ["a,b", "c"];
+      "foobar".split("x") == ["foobar"];
+     "foobar".split("ob") == ["fo", "ar"];
+\end{urbiassert}
+
+\noindent
+It can also be a list of strings.
+
+\begin{urbiassert}
+"a,b;c".split([",", ";"]) == ["a", "b", "c"];
+\end{urbiassert}
+
+\noindent
+By default splitting is performed on white-spaces:
+
+\begin{urbiassert}
+"  abc  def\tghi\n".split == ["abc", "def", "ghi"];
+\end{urbiassert}
+
+\noindent
+Splitting on the empty string stands for splitting between each character:
+
+\begin{urbiassert}
+"foobar".split("") == ["f", "o", "o", "b", "a", "r"];
+\end{urbiassert}
+
+The limit \var{lim} indicates a maximum number of splits that can occur. A
+negative number corresponds to no limit:
+
+\begin{urbiassert}
+"a:b:c".split(":",  1) == ["a", "b:c"];
+"a:b:c".split(":", -1) == ["a", "b", "c"];
+\end{urbiassert}
+
+\var{keepSep} indicates whether to keep delimiters in the result:
+
+\begin{urbiassert}
+"aaa:bbb;ccc".split([":", ";"], -1, false) == ["aaa",      "bbb",      "ccc"];
+"aaa:bbb;ccc".split([":", ";"], -1, true)  == ["aaa", ":", "bbb", ";", "ccc"];
+\end{urbiassert}
+
+\var{keepEmpty} indicates whether to keep empty elements:
+
+\begin{urbiassert}
+"foobar".split("o")                   == ["f", "", "bar"];
+"foobar".split("o", -1, false, true)  == ["f", "", "bar"];
+"foobar".split("o", -1, false, false) == ["f",     "bar"];
+\end{urbiassert}
+
 \item[toLower]
   Make lower case every upper case character in \lstinline|this| and
   return the result.  \lstinline|this| is not modified.

@@ -22,6 +22,7 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \begin{itemize}
 \item \refObject{StackFrame}
+\item \refSlot{String}{split}
 \end{itemize}
 
 \section{\usdk 2.0.1}
@@ -943,57 +944,7 @@ for (var c: "foo") echo (c);
 [00000003] *** o
 \end{urbiscript}
 
-\item["\refSlot{String}{split}" method]
-
-  It no longer aggregate components by default:
-
-\begin{urbiscript}
-"foobar".split("o");
-[00000001] ["f", "", "bar"]
-\end{urbiscript}
-
-It moreover now supports a list of separators:
-
-\begin{urbiscript}
-"a:b;c".split([":", ";"]);
-[00000001] ["a", "b", "c"]
-\end{urbiscript}
-
-The optional fourth argument indicates a maximum number of splits that
-can occur. A negative number, which is the default, corresponds to
-"no limit":
-
-\begin{urbiscript}
-"a:b:c".split(":", 1);
-[00000001] ["a", "b:c"]
-"a:b:c".split(":", -1);
-[00000002] ["a", "b", "c"]
-\end{urbiscript}
-
-The optional third argument indicates whether to keep delimiters in
-the resulting list (default: false):
-
-\begin{urbiscript}
-"aaa:bbb;ccc".split([":", ";"], -1, true);
-[00000001] ["aaa", ":", "bbb", ";", "ccc"]
-\end{urbiscript}
-
-The optional fourth argument indicates whether to keep empty elements
-(default: true):
-
-\begin{urbiscript}
-"foobar".split("o", -1, false, false);
-[00000001] ["f", "bar"]
-\end{urbiscript}
-
-Calling "split" with no arguments will decompose the string over
-\lstinline|" "|, \lstinline|"\t"|, \lstinline|"\n"| and
-\lstinline|"\r"|:
-
-\begin{urbiscript}
-"  abc  def\tghi\n".split;
-[00000001] ["abc", "def", "ghi"]
-\end{urbiscript}
+\item["\refSlot{String}{split}" method] Largely improved.
 
 %%% FIXME: \item["\refSlot{String}{join}" method]
 %%% FIXME:
