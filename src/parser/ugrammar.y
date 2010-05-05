@@ -82,6 +82,8 @@
 #include <parser/parser-impl.hh>
 #include <parser/utoken.hh>
 
+#pragma GCC diagnostic ignored "-Wuninitialized"
+
   namespace
   {
 
