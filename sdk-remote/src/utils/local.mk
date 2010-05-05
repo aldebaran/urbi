@@ -11,12 +11,5 @@ bin_PROGRAMS +=					\
   utils/urbi-reverse				\
   utils/urbi-scale
 
-utils_urbi_cycle_SOURCES =			\
-  utils/parse-header.hh				\
-  utils/urbi-cycle.cc
-utils_urbi_reverse_SOURCES =			\
-  utils/parse-header.hh				\
-  utils/urbi-reverse.cc
-utils_urbi_scale_SOURCES =			\
-  utils/parse-header.hh				\
-  utils/urbi-scale.cc
+noinst_HEADERS =				\
+  utils/parse-header.hh
