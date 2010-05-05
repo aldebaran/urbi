@@ -399,71 +399,50 @@ namespace urbi
       return value_get()[0];
     }
 
-    OVERLOAD_2
-    (sub_bouncer, 2,
-     (std::string (String::*) (unsigned) const) (&String::sub),
-     (std::string (String::*) (unsigned, unsigned) const) (&String::sub)
-      );
-
-    OVERLOAD_2
-    (sub_eq_bouncer, 3,
-     (std::string (String::*) (unsigned, const std::string&))
-     (&String::sub_eq),
-     (std::string (String::*) (unsigned, unsigned, const std::string&))
-     (&String::sub_eq)
-      );
-
-    void String::initialize(CxxObject::Binder<String>& bind)
-    {
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (self_type::*)(const rObject&) const>
-           (&self_type::operator==));
-#define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &String::Function)
-
-      DECLARE(LT_EQ       , operator<=);
-      DECLARE(PLUS        , plus);
-      DECLARE(STAR        , star);
-      DECLARE(asBool      , as_bool);
-      DECLARE(asFloat     , as_float);
-      DECLARE(asPrintable , as_printable);
-      DECLARE(asString    , as_string);
-      DECLARE(distance    , distance);
-      DECLARE(empty       , empty);
-#if !defined COMPILATION_MODE_SPACE
-      DECLARE(format      , format);
-#endif
-      DECLARE(fresh       , fresh);
-      DECLARE(fromAscii   , fromAscii);
-      DECLARE(isAlnum     , is_alnum);
-      DECLARE(isAlpha     , is_alpha);
-      DECLARE(isCntrl     , is_cntrl);
-      DECLARE(isDigit     , is_digit);
-      DECLARE(isGraph     , is_graph);
-      DECLARE(isLower     , is_lower);
-      DECLARE(isPrint     , is_print);
-      DECLARE(isPunct     , is_punct);
-      DECLARE(isSpace     , is_space);
-      DECLARE(isUpper     , is_upper);
-      DECLARE(isXdigit    , is_xdigit);
-      DECLARE(join        , join);
-      DECLARE(replace     , replace);
-      DECLARE(set         , set);
-      DECLARE(size        , size);
-      DECLARE(toAscii     , toAscii);
-      DECLARE(toLower     , to_lower);
-      DECLARE(toUpper     , to_upper);
-
-#undef DECLARE
-
-      bind(SYMBOL(split), split_bouncer);
-
-      proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
-      proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
-    }
-
     URBI_CXX_OBJECT_REGISTER(String)
-    {}
+    {
+      std::cerr << Object::proto.get() << std::endl;
+      proto_add(Object::proto);
+
+      bind("==", static_cast<bool (self_type::*)(const rObject&) const>(&self_type::operator==));
+      bind("[]", static_cast<std::string (String::*) (unsigned) const>(&String::sub));
+      bind("[]", static_cast<std::string (String::*) (unsigned, unsigned) const>(&String::sub));
+      bind("[]=", static_cast<std::string (String::*) (unsigned, const std::string&)>(&String::sub_eq));
+      bind("[]=", static_cast<std::string (String::*) (unsigned, unsigned, const std::string&)>(&String::sub_eq));
+      bind("<=", &String::operator<=);
+      bind("+", &String::plus);
+      bind("*", &String::star);
+      bind("asBool", &String::as_bool);
+      bind("asFloat", &String::as_float);
+      bind("asPrintable", &String::as_printable);
+      bind("asString", &String::as_string);
+      bind("distance", &String::distance);
+      bind("empty", &String::empty);
+#if !defined COMPILATION_MODE_SPACE
+      bind("format", &String::format);
+#endif
+      bind("fresh", &String::fresh);
+      bind("fromAscii", &String::fromAscii);
+      bind("isAlnum", &String::is_alnum);
+      bind("isAlpha", &String::is_alpha);
+      bind("isCntrl", &String::is_cntrl);
+      bind("isDigit", &String::is_digit);
+      bind("isGraph", &String::is_graph);
+      bind("isLower", &String::is_lower);
+      bind("isPrint", &String::is_print);
+      bind("isPunct", &String::is_punct);
+      bind("isSpace", &String::is_space);
+      bind("isUpper", &String::is_upper);
+      bind("isXdigit", &String::is_xdigit);
+      bind("join", &String::join);
+      bind("replace", &String::replace);
+      bind("set", &String::set);
+      bind("size", &String::size);
+      bind("split", split_bouncer);
+      bind("toAscii", &String::toAscii);
+      bind("toLower", &String::to_lower);
+      bind("toUpper", &String::to_upper);
+    }
 
   } // namespace object
 }
