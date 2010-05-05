@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2010, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -6,10 +6,35 @@
 %%
 %% See the LICENSE file for more information.
 
-\section{Date}
+\section{StackFrame}
 
 This class is meant to record backtrace (see \refSlot{Exception}{backtrace})
 information.
+
+For convenience, all snippets of code are supposed to be run after these
+function definitions.  In this code, the \lstinline|getStackFrame| function
+is used to get the first \lstinline|StackFrame| of an exception backtrace.
+Backtrace of \refObject{Exception} are filled with \lstinline|StackFrame|s
+when the is thrown.
+
+\begin{urbiscript}
+//#push 1 "foo.u"
+function inner () { throw Exception.new("test") }|;
+
+function getStackFrame()
+{
+  try
+  {
+    inner
+  }
+  catch(var e)
+  {
+    e.backtrace[0]
+  };
+}|;
+//pop
+\end{urbiscript}
+
 \experimental{}
 
 %% \subsection{Prototypes}
@@ -21,22 +46,17 @@ information.
 \subsection{Construction}
 
 \lstinline|StackFrame| are not made to be manually constructed.  The
-initialization function expect 2 arguments, which are the name of the
-called function and the \refObject{Location} which has called it.
+initialization function expect 2 arguments, which are the name of the called
+function and the \refObject{Location} from which it has been called.
 
-\begin{urbiscript}[firstline=1]
-//#line 1 "foo.u"
-function inner () { throw Exception.new("test") }|;
-function outer () { inner }|;
-try
-{
-  outer
-}
-catch(var e)
-{
-  e.backtrace
-};
-[00002329] [foo.u:2.21-25: inner, foo.u:5.3-7: outer]
+\begin{urbiscript}
+StackFrame.new("inner",
+  Location.new(
+    Position.new("foo.u", 7, 5),
+    Position.new("foo.u", 7, 10)
+  )
+);
+[00000001] foo.u:7.5-9: inner
 \end{urbiscript}
 
 \subsection{Slots}
@@ -44,51 +64,21 @@ catch(var e)
 \begin{urbiscriptapi}
 \item[name] \refObject{String}, representing the name of the called
   function.
-\begin{urbiscript}[firstline=1]
-//#line 1 "foo.u"
-function inner () { throw Exception.new("test") }|;
-function outer () { inner }|;
-try
-{
-  outer
-}
-catch(var e)
-{
-  e.backtrace[0].name
-};
-[00002329] "inner"
+\begin{urbiscript}
+getStackFrame.name;
+[00000002] "inner"
 \end{urbiscript}
 
 \item[location] \refObject{Location} of the function call.
-\begin{urbiscript}[firstline=1]
-//#line 1 "foo.u"
-function inner () { throw Exception.new("test") }|;
-function outer () { inner }|;
-try
-{
-  outer
-}
-catch(var e)
-{
-  e.backtrace[0].location
-};
-[00002329] foo.u:2.21-25
+\begin{urbiscript}
+getStackFrame.location;
+[00000003] foo.u:7.5-9
 \end{urbiscript}
 
 \item[asString] Clean display of the call location.
-\begin{urbiscript}[firstline=1]
-//#line 1 "foo.u"
-function inner () { throw Exception.new("test") }|;
-function outer () { inner }|;
-try
-{
-  outer
-}
-catch(var e)
-{
-  e.backtrace[0]
-};
-[00002329] foo.u:2.21-25: inner
+\begin{urbiscript}
+getStackFrame;
+[00000004] foo.u:7.5-9: inner
 \end{urbiscript}
 
 \end{urbiscriptapi}
