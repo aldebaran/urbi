@@ -23,11 +23,18 @@ you just want to install a pre-built \usdk, see \autoref{sec:installation}.
 \section{Requirements}
 \label{sec:build:req}
 
+This section lists all the dependencies of this package.  Some of them are
+required to \dfn{bootstrap} the package, i.e., to build it from the
+repository.  Others are required to \dfn{build} the package, i.e., to
+compile it from a tarball, or after a bootstrap.
+
+\subsection{Bootstrap}
+
 To bootstrap this package from its repository, and then to compile it,
 the following tools are needed.
 
 \begin{description}
-\item[Autoconf 2.63 or later]~\\
+\item[Autoconf 2.64 or later]~\\
 
 \begin{package}
 package: autoconf
@@ -50,46 +57,11 @@ $ sudo /usr/bin/aclocal --print-ac-dir >>$dirlist
 package: automake
 \end{package}
 
-\item[bc]
-  Needed by the test suite.
-\begin{package}
-package: bc
-\end{package}
-
-\item[Boost 1.38 or later] Don't try to build it yourself, ask your
-  distribution's management to install it.
-\begin{package}
-deb: libboost-dev
-MacPorts: boost
-windows: http://www.boostpro.com/download
-\end{package}
-
-\item[Ccache]
-  Not a requirement, but it's better to have it.
-\begin{package}
-package: ccache
-\end{package}
-
 \item[Cvs]
   This surprising requirement comes from the system Bison uses to fetch
   the current version of the message translations.
 \begin{package}
 package: cvs
-\end{package}
-
-\item[Flex 2.5.35 or later]
-  Beware that 2.5.33 has bugs than prevents this package from building
-  correctly.
-\begin{package}
-package: flex
-\end{package}
-
-\item[G++ 4.0 or later] GCC 4.2 or later is a better option.  Beware that we
-  have a problem with GCC-4.4 which rejects some Bison generated code.  See
-  \autoref{sec:faq:build:uninitialized}.
-\begin{package}
-deb: g++-4.2
-MacPorts: gcc42
 \end{package}
 
 \item[Git 1.6 or later]
@@ -110,46 +82,10 @@ package: gettext
 package: coreutils
 \end{package}
 
-\item[Gnuplot]
-  Required to generate charts of trajectories for the documentation.
-\begin{package}
-package: gnuplot
-\end{package}
-
-\item[GraphViz] Used to generate some of the figures in the
-  documentation.  There is no GraphViz package for Cygwin, so download
-  the MSI file from GraphViz' site, and install it.  Then change your
-  path to go into its bin directory.
-
-\begin{shell}
-wget http://www.graphviz.org/pub/graphviz/stable/windows/graphviz-2.26.msi
-PATH=/cygdrive/c/Program\ Files/Graphviz2.26/bin:$PATH
-\end{shell}
-
-\begin{package}
-package: graphviz
-\end{package}
-
 \item[Help2man]
 Needed by Bison.
 \begin{package}
 package: help2man
-\end{package}
-
-\item[ImageMagick] Used to convert some of the figures in the
-  documentation.
-\begin{package}
-MacPorts: ImageMagick
-deb: imagemagick
-\end{package}
-
-\item[Libtool 2.2 or later] Actually it should no longer be needed, as
-  we embed all the file we need in libport.
-
-\item[PDFLaTeX] TeX Live is the most common \TeX{} distribution nowadays.
-\begin{package}
-deb: texlive-base texlive-latex-extra
-MacPorts: texlive texlive_texmf-full
 \end{package}
 
 \item[Python] You need \file{xml/sax}, which seems to be part only of
@@ -162,42 +98,10 @@ MacPorts: python26
 MacPorts: python_select
 \end{package}
 
-\item[py-docutils] This is not a requirement, but it's better to have
-  it.  Used by the test suite.  Unfortunately the name of the package
-  varies between distributions.  It provides \command{rst2html}.
-
-\begin{package}
-MacPorts: py26-docutils
-\end{package}
-
-\item[socat] Needed by the test suite to send messages to an \urbi server.
-\begin{package}
-package: socat
-\end{package}
-
-\item[TeX4HT] Used to generate the HTML documentation.
-\begin{package}
-deb: tex4ht
-MacPorts: texlive_texmf-full
-\end{package}
-
 \item[Texinfo] Needed to compile Bison.
 \begin{package}
 package: texinfo
 \end{package}
-
-\item[Transfig] Needed to convert some figures for documentation
-  (using fig2dev).
-\begin{package}
-package: transfig
-\end{package}
-
-\item[Valgrind] Not needed, but if present, used by the test suite.
-\begin{package}
-package: valgrind
-\end{package}
-
-\item[xsltproc] This is not a requirement, but it's better to have it.
 
 \item[yaml for Python] The AST is generated from a description written
   in YAML.  Our (Python) tools need to read these files to generate
@@ -226,6 +130,110 @@ export PYTHONPATH="\
 \end{shell}
 \end{description}
 
+\subsection{Build}
+
+\begin{description}
+\item[bc]
+  Needed by the test suite.
+\begin{package}
+package: bc
+\end{package}
+
+\item[Boost 1.38 or later] Don't try to build it yourself, ask your
+  distribution's management to install it.
+\begin{package}
+deb: libboost-dev
+MacPorts: boost
+windows: http://www.boostpro.com/download
+\end{package}
+
+\item[Ccache]
+  Not a requirement, but it's better to have it.
+\begin{package}
+package: ccache
+\end{package}
+
+\item[Flex 2.5.35 or later]
+  Beware that 2.5.33 has bugs than prevents this package from building
+  correctly.
+\begin{package}
+package: flex
+\end{package}
+
+\item[G++ 4.0 or later] GCC 4.2 or later is a better option.  Beware that we
+  have a problem with GCC-4.4 which rejects some Bison generated code.  See
+  \autoref{sec:faq:build:uninitialized}.
+\begin{package}
+deb: g++-4.2
+MacPorts: gcc42
+\end{package}
+
+\item[Gnuplot]
+  Required to generate charts of trajectories for the documentation.
+\begin{package}
+package: gnuplot
+\end{package}
+
+\item[GraphViz] Used to generate some of the figures in the
+  documentation.  There is no GraphViz package for Cygwin, so download
+  the MSI file from GraphViz' site, and install it.  Then change your
+  path to go into its bin directory.
+
+\begin{shell}
+wget http://www.graphviz.org/pub/graphviz/stable/windows/graphviz-2.26.msi
+PATH=/cygdrive/c/Program\ Files/Graphviz2.26/bin:$PATH
+\end{shell}
+
+\begin{package}
+package: graphviz
+\end{package}
+
+\item[ImageMagick] Used to convert some of the figures in the
+  documentation.
+\begin{package}
+MacPorts: ImageMagick
+deb: imagemagick
+\end{package}
+
+\item[PDFLaTeX] TeX Live is the most common \TeX{} distribution nowadays.
+\begin{package}
+deb: texlive-base texlive-latex-extra
+MacPorts: texlive texlive_texmf-full
+\end{package}
+
+\item[py-docutils] This is not a requirement, but it's better to have
+  it.  Used by the test suite.  Unfortunately the name of the package
+  varies between distributions.  It provides \command{rst2html}.
+
+\begin{package}
+MacPorts: py26-docutils
+\end{package}
+
+\item[socat] Needed by the test suite to send messages to an \urbi server.
+\begin{package}
+package: socat
+\end{package}
+
+\item[TeX4HT] Used to generate the HTML documentation.
+\begin{package}
+deb: tex4ht
+MacPorts: texlive_texmf-full
+\end{package}
+
+\item[Transfig] Needed to convert some figures for documentation
+  (using fig2dev).
+\begin{package}
+package: transfig
+\end{package}
+
+\item[Valgrind] Not needed, but if present, used by the test suite.
+\begin{package}
+package: valgrind
+\end{package}
+
+\item[xsltproc] This is not a requirement, but it's better to have it.
+\end{description}
+
 \section{Check out}
 
 Get the open source version tarball from
@@ -240,8 +248,7 @@ $ ./bootstrap
 \end{shell}
 
 \section{Configure}
-You should really compile in another directory than the one containing
-the sources.
+You should compile in another directory than the one containing the sources.
 
 \begin{shell}
 $ mkdir _build
@@ -355,7 +362,7 @@ Should be straightforward.
 $ make -j3
 \end{shell}
 
-Using distcc and ccache is recommended.
+Using \command{distcc} and \command{ccache} is recommended.
 
 \section{Run}
 
