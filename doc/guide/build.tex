@@ -401,9 +401,32 @@ variables documented in the manual.
 \end{envs}
 
 \section{Check}
+\label{sec:build:check}
 There are several test suites that will be run if you run \samp{make
-  check} (\samp{-j4} works on most machines).  To rerun only the tests
-that failed, use \samp{make recheck}.
+  check} (\samp{-j4} works on most machines).
+
+To rerun only the tests that failed, use \samp{make recheck}.  Some tests
+have explicit dependencies, and they are not rerun if nothing was changed
+(unless they had failed the previous time).  It is therefore expected that
+after one (long) run of \samp{make check}, the second one will be
+``instantaneous'': the previous log files are reused.
+
+Note that running \samp{make} in the top-level is needed when you change
+something deep in the package.  If you forget this \samp{make} run, the
+timestamps on which the test suite depends will not be updated, and
+therefore the results of the previous state of the package will be used,
+instead of your fresh changes.
+
+Some tests are extremely ``touchy''.  Because the test suite exercises \urbi
+under extreme conditions, some tests may fail not because of a problem in
+\urbi, but because of nondeterminism in the test itself.  In this case,
+another run of \samp{make check} will give an opportunity for the test to
+pass (remind that the tests that passed will not be run again).  Also, using
+\samp{make check -j16} is a sure means to have the \urbi scheduler behave
+insufficiently well for the test to pass.  \strong{Do not send bug reports
+  for such failures.}.  Before reporting bugs, make sure that the failures
+remain after a few \samp{make check -j1} invocations.
+
 
 \subsection{Lazy test suites}
 The test suites are declared as ``lazy'', i.e., unless its

@@ -84,7 +84,12 @@ $ git submodule update --init
 \noindent
 et voila.
 
+\subsection{\samp{make check} fails}
 
+Be sure to read \autoref{sec:build:check}.  In particular, run \samp{make
+  check} several times (see \autoref{sec:build:check} to know why).  If the
+failures remain, please submit the \file{test-suite.log} file(s) (see
+\autoref{sec:bug}).
 
 \section{Troubleshooting}
 
@@ -961,31 +966,32 @@ is thread-safe.
 See \autoref{sec:news}.
 
 \subsection{How do I report a bug?}
+\label{sec:bug}
+Bug reports should be sent to \email{kernel-bugs@lists.gostai.com}, it will
+be addressed as fast as possible.  Please, be sure to read the FAQ (possibly
+updated on our web site), and to have checked that no more recent release
+fixed your issue.
 
-Bug reports should be sent to \email{kernel-bugs@lists.gostai.com}, it
-will be addressed as fast as possible.  Please, be sure to read the
-FAQ (possibly updated on our web site), and to have checked that no
-more recent release fixed your issue.
+Each bug report should contain a self-contained example, which can be tested
+by our team. Using self-contained code, i.e., code that does not depend on
+other code, helps ensuring that we will be able to duplicate the problem and
+analyze it promptly. It will also help us integrating the code snippet into
+our non-regression test suite so that the bug does not reappear in the
+future.
 
-Each bug report should contain a self-contained example, which can be
-tested by our team. Using self-contained code, that is code which does
-not depend on other code, helps ensuring that we will be able to
-duplicate the problem and analyze it promptly. It will also helps us
-integrating the code snippet into our non-regression test suite so
-that the bug does not reappear in the future.
+If your report identifies a bug in the \urbi kernel or its dependencies, we
+will prepare a fix to be integrated in a later release. If the bug takes
+some time to fix, we may provide you with a workaround so that your
+developments are not delayed.
 
-If it appears that your report identifies a bug in the Urbi kernel or
-its dependencies, we will prepare a fix to be integrated in a later
-release. If the bug takes some time to fix, we may provide you with a
-workaround so that your developments are not delayed.
+In your bug report, make sure that you indicate the \urbi version you are
+using (use \samp{urbi --version} to check it out) and whether this bug is
+blocking you or not. Also, please keep \email{kernel-bugs@lists.gostai.com}
+in copy of all your correspondence, and do not reply individually to a
+member of our team as this may slow down the handling of the report.
 
-In your bug report, make sure that you indicate the Urbi version you
-are using (use \samp{urbi --version} to check it out) and whether this
-bug is blocking you or not. Also, please keep
-\email{kernel-bugs@lists.gostai.com} in copy of all your
-correspondence, and do not reply individually to a member of our team
-as this may slow down the handling of the report.
-
+If your bug report is about a failing \samp{make check}, first be sure to
+read \autoref{sec:build:check}.
 
 \ifx\ifHtml\undefined\else
   \let\subsubsection\subsubsectionSave
