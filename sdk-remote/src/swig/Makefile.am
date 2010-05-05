@@ -1,7 +1,14 @@
 SUBDIRS = . java
 
+# Try to disable -O2 by all means (or liburbiJNI.SWIGURBIStarterJavaUpcast from wont work)
 AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi/swig
-AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS) -fpic
+#AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS) -fpic
+AM_CXXFLAGS =
+AM_CFLAGS =
+
+CFLAGS=
+CXXFLAGS=
+CPPFLAGS=
 
 EXTRA_DIST = liburbi.i
 
@@ -72,7 +79,7 @@ liburbijava_la_CXXFLAGS =	-I$$JAVA_HOME/include				\
 				-I$$JAVA_HOME/include/$(JAVA_INCLUDE_DIR)	\
 				-I$(top_srcdir)/include/			\
 				-I$(top_srcdir)/src/liburbi/uobject/		\
-				-I$(top_builddir)/include/			\
+				-I$(top_builddir)/include/ \
 				$(BOOST_CPPFLAGS)
 
 # Under windows path are set to C:/cygwin... in libdir, which
