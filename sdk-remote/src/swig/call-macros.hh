@@ -14,7 +14,7 @@
 # define CALL_METHOD_0(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_0 ()		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
 	  ret env_->Call##Type##Method(obj, mid);		\
           ret_snd;						\
@@ -23,7 +23,7 @@
 # define CALL_METHOD_1(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_1 (const urbi::UValue& uval1)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
 	  ret env_->Call##Type##Method(obj, mid, obj1);		\
@@ -33,7 +33,7 @@
 # define CALL_METHOD_2(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_2 (const urbi::UValue& uval1, const urbi::UValue& uval2)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -44,7 +44,7 @@
 # define CALL_METHOD_3(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_3 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -56,7 +56,7 @@
 # define CALL_METHOD_4(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_4 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -69,7 +69,7 @@
 # define CALL_METHOD_5(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_5 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -83,7 +83,7 @@
 # define CALL_METHOD_6(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_6 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -98,7 +98,7 @@
 # define CALL_METHOD_7(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_7 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -114,7 +114,7 @@
 # define CALL_METHOD_8(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_8 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -131,7 +131,7 @@
 # define CALL_METHOD_9(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_9 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -149,7 +149,7 @@
 # define CALL_METHOD_10(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_10 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -168,7 +168,7 @@
 # define CALL_METHOD_11(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_11 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -188,7 +188,7 @@
 # define CALL_METHOD_12(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_12 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -209,7 +209,7 @@
 # define CALL_METHOD_13(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_13 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12, const urbi::UValue& uval13)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -231,7 +231,7 @@
 # define CALL_METHOD_14(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_14 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12, const urbi::UValue& uval13, const urbi::UValue& uval14)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -254,7 +254,7 @@
 # define CALL_METHOD_15(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_15 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12, const urbi::UValue& uval13, const urbi::UValue& uval14, const urbi::UValue& uval15)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\
@@ -278,7 +278,7 @@
 # define CALL_METHOD_16(Name, Type, JavaType, error_val, ret, ret_snd)\
 	JavaType call##Name##_16 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12, const urbi::UValue& uval13, const urbi::UValue& uval14, const urbi::UValue& uval15, const urbi::UValue& uval16)		\
 	{							\
-	  if (!env_ && !init_env ())				       	\
+	  if (!init_env ())				       	\
 	    return error_val;					\
           jobject obj1 = getObjectFromUValue (uval1);		\
           jobject obj2 = getObjectFromUValue (uval2);		\

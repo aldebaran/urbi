@@ -11,7 +11,6 @@
 #include "callbacks-caller.hh"
 
 
-JNIEnv*		CallbacksCaller::env_ = 0;
 jmethodID	CallbacksCaller::uvalue_ctor_id = 0;
 jfieldID	CallbacksCaller::uvalue_swigptr_id = 0;
 jclass		CallbacksCaller::uvalue_cls = 0;
@@ -25,13 +24,15 @@ bool		CallbacksCaller::jni_variables_cached_ = false;
 
 CallbacksCaller::CallbacksCaller ()
   : mid (0),
-    obj (0)
+    obj (0),
+    jvm (0),
+    env_ (0)
 {}
 
 int
 CallbacksCaller::callNotifyChange_0 ()
 {
-  if (!env_ && !init_env ())
+  if (!init_env ())
     return 0;
   return env_->CallIntMethod(obj, mid);
 }
@@ -39,25 +40,25 @@ CallbacksCaller::callNotifyChange_0 ()
 int
 CallbacksCaller::callNotifyChange_1 (urbi::UVar& v)
 {
-  if (!env_ && !init_env ())
+  if (!init_env ())
     return 0;
   jobject obj1 = getObjectFromUVar (v);
   return env_->CallIntMethod(obj, mid, obj1);
 }
 
-
 bool
 CallbacksCaller::init_env ()
 {
-  JavaVM *jvm_buff[1];
-  jsize size;
-  JNI_GetCreatedJavaVMs(jvm_buff, 1, &size);
-  if (!size)
+  if (!env_ || !jvm)
   {
-    std::cerr << "Error retrivieving created JavaVMs." << std::endl;
-    return false;
+    jsize size;
+    JNI_GetCreatedJavaVMs(&jvm, 1, &size);
+    if (!size)
+    {
+      std::cerr << "Error retrivieving created JavaVMs." << std::endl;
+      return false;
+    }
   }
-  JavaVM* jvm = jvm_buff[0];
   jvm->AttachCurrentThread((void**) &env_, 0);
 
   if (!env_)
@@ -65,7 +66,6 @@ CallbacksCaller::init_env ()
     std::cerr << "Error retrivieving JNIEnv pointer." << std::endl;
     return false;
   }
-
   return true;
 }
 
@@ -190,11 +190,11 @@ CallbacksCaller::getGlobalRef (JNIEnv* env, const char* classname)
 }
 
 urbi::UObject*
-CallbacksCaller::getUObjectFromObject (jobject obj)
+CallbacksCaller::getUObjectFromObject (jobject obj, JNIEnv* env)
 {
   if (obj)
   {
-    jlong ptr = env_->GetLongField(obj, uobject_swigptr_id);
+    jlong ptr = env->GetLongField(obj, uobject_swigptr_id);
     if (ptr)  /// Java alocated memory, prefer allocate mine
       return (urbi::UObject*) ptr;
     else

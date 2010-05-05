@@ -15,6 +15,7 @@
 #include "call-macros.hh"
 #include "urbi/uvar.hh"
 #include "urbi/ucallbacks.hh"
+#include "urbi/utimer-callback.hh"
 
 /// This class allow to register Java callbacks in C++.
 ///
@@ -83,9 +84,9 @@ private:
 
 public:
 
-  static urbi::UValue	getUValueFromObject (jobject obj);
-  static urbi::UVar*	getUVarFromObject (jobject obj);
-  static urbi::UObject*	getUObjectFromObject (jobject obj);
+  urbi::UValue	getUValueFromObject (jobject obj);
+  urbi::UVar*	getUVarFromObject (jobject obj);
+  static urbi::UObject*	getUObjectFromObject (jobject obj, JNIEnv* env);
 
 private:
 
@@ -98,9 +99,11 @@ private:
 
 private:
 
+  JavaVM* jvm;
+
   /// Java interface pointer. Initialised the first time one of the calllbacks
   /// is triggered.
-  static JNIEnv*	env_;
+  JNIEnv*	env_;
 
   /// All theses variables below are used in the conversion functions to
   /// convert from jobject to UVar or UValue or UObject.

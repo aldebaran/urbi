@@ -206,8 +206,7 @@ void registerNotify (JNIEnv *env,
   const char* uvar_name = env->GetStringUTFChars(var_name, 0);
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
-  urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj);
-  //urbi::UVar* uvar = CallbacksCaller::getUVarFromObject(var);
+  urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
   if (!uob)
   {
     delete f;
@@ -309,7 +308,7 @@ Java_liburbi_main_UObjectJava_registerFunction(JNIEnv *env,
   const char* return_type_ = env->GetStringUTFChars(return_type, 0);
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
-  urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj);
+  urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
   if (!uob)
   {
     delete f;
