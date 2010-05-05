@@ -21,6 +21,7 @@
 #include <libport/iostream>
 #include <libport/lexical-cast.hh>
 #include <sstream>
+#include <iomanip>
 
 #include <urbi/ubinary.hh>
 #include <urbi/uvalue.hh>
@@ -343,7 +344,7 @@ namespace urbi
     switch (type)
     {
       case DATA_DOUBLE:
-	s << static_cast<ufloat>(val);
+	s << std::setprecision(21) <<  static_cast<ufloat>(val);
 	break;
       case DATA_STRING:
 	s << '"' << libport::escape(*stringValue, '"') << '"';
