@@ -61,28 +61,28 @@ configure:12246: error: possibly undefined macro: gl_GLIBC21
 it probably means your Automake installation is incomplete.  See the
 Automake item in \autoref{sec:build:req}.
 
-\subsection{git: fatal: Needed a single revision}
-You may experience something like this:
-
-\begin{shell}
-$ git submodule update --init
-fatal: Needed a single revision
-Unable to find current revision in submodule path 'gnulib'
-\end{shell}
-
-\noindent
-this is the sign that the initial checkout of \file{gnulib} went
-completely wrong (I don't know what makes this happen).  Chances are
-that the directory exists, but is empty.  Git does not seem to be able
-to overcome this situation, so:
-
-\begin{shell}
-$ rm -rf gnulib
-$ git submodule update --init
-\end{shell}
-
-\noindent
-et voila.
+%% \subsection{git: fatal: Needed a single revision}
+%% You may experience something like this:
+%%
+%% \begin{shell}
+%% $ git submodule update --init
+%% fatal: Needed a single revision
+%% Unable to find current revision in submodule path 'gnulib'
+%% \end{shell}
+%%
+%% \noindent
+%% this is the sign that the initial checkout of \file{gnulib} went
+%% completely wrong (I don't know what makes this happen).  Chances are
+%% that the directory exists, but is empty.  Git does not seem to be able
+%% to overcome this situation, so:
+%%
+%% \begin{shell}
+%% $ rm -rf gnulib
+%% $ git submodule update --init
+%% \end{shell}
+%%
+%% \noindent
+%% et voila.
 
 \subsection{\samp{make check} fails}
 
