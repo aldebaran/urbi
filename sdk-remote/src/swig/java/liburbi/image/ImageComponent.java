@@ -4,7 +4,7 @@
  File: ImageComponent.java
  Implementation of the ImageComponent class.
 
- This file is part of 
+ This file is part of
  liburbi
  (c) Bastien Saltel, 2004.
 

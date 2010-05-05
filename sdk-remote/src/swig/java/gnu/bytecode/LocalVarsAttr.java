@@ -125,7 +125,7 @@ public class LocalVarsAttr extends Attribute
     VarEnumerator vars = allVars ();
     Variable var;
     dstr.writeShort (getCount());
-	    
+
     for (vars.reset (); (var = vars.nextVar ()) != null; )
       {
 	if (var.shouldEmit())
@@ -142,7 +142,7 @@ public class LocalVarsAttr extends Attribute
       }
   }
 
-  public void print (ClassTypeWriter dst) 
+  public void print (ClassTypeWriter dst)
   {
     VarEnumerator vars = allVars ();
     dst.print("Attribute \"");
@@ -151,7 +151,7 @@ public class LocalVarsAttr extends Attribute
     dst.print(getLength());
     dst.print(", count: ");
     dst.println(getCount());
-	    
+
     Variable var;
     for (vars.reset (); (var = vars.nextVar ()) != null; )
       {

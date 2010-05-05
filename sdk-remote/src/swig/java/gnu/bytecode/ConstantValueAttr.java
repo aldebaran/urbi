@@ -49,10 +49,10 @@ public class ConstantValueAttr extends Attribute
   }
 
   public ConstantValueAttr (int index)
-  { 
+  {
     super("ConstantValue");
     this.value_index = index;
-  } 
+  }
 
   public void assignConstants (ClassType cl)
   {

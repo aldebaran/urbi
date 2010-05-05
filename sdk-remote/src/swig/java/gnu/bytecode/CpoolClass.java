@@ -39,7 +39,7 @@ public class CpoolClass extends CpoolEntry {
     else
       return ClassType.make (name.replace ('/', '.'));
   }
-  
+
   final static int hashCode (CpoolUtf8 name)
   {
     return name.hashCode() ^ 0xF0F;

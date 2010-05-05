@@ -31,7 +31,7 @@ public abstract class Attribute
   public void addToFrontOf(AttrContainer container)
   {
     setContainer(container);
-    setNext(container.getAttributes()); 
+    setNext(container.getAttributes());
     container.setAttributes(this);
   }
 

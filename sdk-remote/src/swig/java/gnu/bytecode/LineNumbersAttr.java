@@ -68,7 +68,7 @@ public class LineNumbersAttr extends Attribute
       }
   }
 
-  public void print (ClassTypeWriter dst) 
+  public void print (ClassTypeWriter dst)
   {
     dst.print("Attribute \"");
     dst.print(getName());

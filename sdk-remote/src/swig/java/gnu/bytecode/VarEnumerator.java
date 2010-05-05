@@ -51,7 +51,7 @@ public class VarEnumerator implements java.util.Enumeration
       }
   }
 
-  /** Return the next Variable in the Scope tree, or null if done. */ 
+  /** Return the next Variable in the Scope tree, or null if done. */
   public final Variable nextVar ()
   {
     Variable result = next;
@@ -78,5 +78,5 @@ public class VarEnumerator implements java.util.Enumeration
   }
 
 
-  
+
 }

@@ -415,7 +415,7 @@
 	(enterScope):  Use updated setStartPc.
 	(pushScope, popScope):  Use getLabel instead of explicit start_pc.
 	(emitTailCall):  Use emitGoto instead of "inlining" it.
-	* ClassFileInput.java (readAttribute):  Update handling of 
+	* ClassFileInput.java (readAttribute):  Update handling of
 	LocalVariableTable since PC ranges are now indirected through Labels.
 
 	* Variable.java (LIVE_FLAG):  New constant.
@@ -690,7 +690,7 @@
 	(getMethods):  New overload uses Vector.
 
 	* Type.java (make):  Don't set interface flag here since it prevents
-	future getModifiers calls from getting the reflectClass's modifiers. 
+	future getModifiers calls from getting the reflectClass's modifiers.
 
 2001-11-05  Per Bothner  <per@bothner.com>
 
@@ -744,7 +744,7 @@
 
 	* ClassType.java (getMethods(Filter,int)):  New method overloads.
 	(countMethods):  New method.
-	
+
 	* Method.java (isAbstract):  New method.
 
 2001-08-07  Brian Jones <cbj@gnu.org>
@@ -772,7 +772,7 @@
 
 	* ZipLoader.java (loadAllClasses):  New method to force load
 	of all classes from the zip archive, close archive.
-	(close):  New Method to prevent leaking open ZipFiles when 
+	(close):  New Method to prevent leaking open ZipFiles when
 	archive is not completely read.
 	(loadClass):  Reopen the zip file if it has been closed prematurely.
 
@@ -880,7 +880,7 @@
 
 	* ConstantValueAttr.java:  New class, extends Attribute,
 	* Makefile.am (java_JAVA):  Added ConstantValueAttr.java.
-	* ClassFileInput.java (readAttribute): Handle ConstantValue attribute. 
+	* ClassFileInput.java (readAttribute): Handle ConstantValue attribute.
 	* ClassTypeWriter.java (printQuotedString):  New method.
 	* CpoolUtf8.java (print):  Use ClassTypeWriter's printQuotedString.
 	* Field.java (constant_value_index):  Remove field.
@@ -1000,7 +1000,7 @@
 
 	* Attribute.java (addToFrontOf):  New method.
 	* CodeAttr.java, ExceptionsAttr.java, InnerClassesAttr.java,
-	LineNumbersAttr.java, LocalVarsAttr.java, SourceFileAttr.java 
+	LineNumbersAttr.java, LocalVarsAttr.java, SourceFileAttr.java
 	(<init>):  Use new addToFrontOf method.
 	* LocalVarsAttr.java (isEmpty):  New method.
 	(<init>):  New (overloaded) constructor.
@@ -1022,7 +1022,7 @@
 	* ObjectType.java (flags):  New variable.
 	(ADD_FIELDS_DONE, ADD_METHODS_DONE, EXISTING_CLASS):  New constants.
 	* ClassType.java (addFields):  New method.
-	(getDeclaredField):  New method.  May call addFields. 
+	(getDeclaredField):  New method.  May call addFields.
 	(getDeclaredMethod, getMethod):  New methods.  May call addMethods.
 
 1999-11-03  Per Bothner  <per@bothner.com>
@@ -1117,7 +1117,7 @@
 	(From Jay Krell <jay.krell@cornell.edu>.)
 
 	* CodeAttr.java (emitStore):  Add missing space in error message.
-	
+
 1999-04-05  Geoff Berry  <gcb@duke.edu>
 
 	* ClassFileInput.java (readAttribute): Handle Exceptions attribute.
@@ -1164,7 +1164,7 @@ Thu Feb 11 16:14:30 1999  Zvi Har'El  <rl@math.technion.ac.il>
 	(emitIfCompare1): Add type check for incoming int.
 	(emitIfRefCompare1, emitIfNotNull, emitIfNull): New methods.
 	(emitIfLt, emitIfGe, emitIfGt, emitIfLe): New methods.
-	(disAssemble): Fix invokeinterface handling.	
+	(disAssemble): Fix invokeinterface handling.
 	* ConstantPool.java (addClass): Change parameter type from
 	ClassType to ObjectType to allow ArrayTypes to be added.
 
@@ -1430,7 +1430,7 @@ Sun Jan 11 15:51:51 1998  Per Bothner  <bothner@cygnus.com>
 	(<init>):  Take extra reflectClass argument.
 	* ClassType.java (getReflectClass, toString):  New methods.
 	* ArrayType.java (getReflectClass):  New method.
-	
+
 Sun Dec 14 15:55:22 1997  Per Bothner  <bothner@cygnus.com>
 
 	* ClassFileInput.java (readClassType):
@@ -1456,7 +1456,7 @@ Thu Nov 27 21:22:16 1997  Per Bothner  <bothner@cygnus.com>
 	* ClassFileInput.java:  Create exception table.
 	* Scope.java (various places):  Pass CodeAttr instead of Method.
 	* Variable.java:  Moved functionality here from Method.java.
-	
+
 
 Mon Nov 10 16:57:28 1997  Per Bothner  <bothner@cygnus.com>
 
@@ -1585,7 +1585,7 @@ Sat Nov 16 14:52:45 1996  Per Bothner  <bothner@deneb.cygnus.com>
 	* IfState.java:  New class.
 	* Makefile.am, Makefile.in:  Add IfState.class.
 	* Method.java (if_stack):  New field.
-	(compile_ifneq, compile_else, compile_fi):  New methods.	
+	(compile_ifneq, compile_else, compile_fi):  New methods.
 
 Sat Oct 26 08:59:10 1996  Per Bothner  <bothner@deneb.cygnus.com>
 
@@ -1597,7 +1597,7 @@ Mon Sep 16 11:09:40 1996  Per Bothner  <bothner@deneb.cygnus.com>
 	* Makefile.{am,in}:  Add CpoolDouble.class.
 	* Method.java (compile_push_double):  New method.
 	* ZipArchive.java:  Fix usage string.
-	
+
 	* Makefile.{am,in}: (javadir):  Use $(subdir)
 	{DEP_,}DISTFILES):  Do not include DATA (i.e. *.class).
 	Replace generated EXTRA_DIST with ditto SOURCES.
@@ -1635,7 +1635,7 @@ Tue Sep  3 19:44:28 1996  Per Bothner  <bothner@deneb.cygnus.com>
 	(compile_invoke_method):  Generalize to support invokestatic.
 	(compile_invoke_virtual, compile_invoke_nonvirtual,
 	compile_invoke_static):  Update accordingly.
-	
+
 Sat Jul 20 17:32:28 1996  Per Bothner  <bothner@deneb.cygnus.com>
 
 	* Makefile.am, Makefile.in (OBJ): Add ZipArchive.class.

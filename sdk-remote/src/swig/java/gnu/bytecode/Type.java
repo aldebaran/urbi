@@ -113,7 +113,7 @@ public abstract class Type {
   public synchronized static Type make(Class reflectClass)
   {
     Type type;
-    
+
     if (mapClassToType != null)
       {
 	Object t = mapClassToType.get(reflectClass);

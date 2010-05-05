@@ -5,7 +5,7 @@ package gnu.bytecode;
 import java.io.*;
 import java.util.Vector;
 
-public class ClassType extends ObjectType 
+public class ClassType extends ObjectType
   implements AttrContainer, Externalizable
 {
   // An old but generally valid default value.
@@ -452,7 +452,7 @@ public class ClassType extends ObjectType
   public final int getMethodCount() {
     return methods_count;
   }
- 
+
   Method addMethod () {
     return new Method (this, 0);
   }
@@ -922,7 +922,7 @@ public class ClassType extends ObjectType
       {
 	throw new InternalError(ex.toString());
       }
-    return stream.toByteArray ();    
+    return stream.toByteArray ();
   }
 
   /**

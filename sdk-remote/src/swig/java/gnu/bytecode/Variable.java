@@ -66,7 +66,7 @@ public class Variable extends Location implements java.util.Enumeration
   {
     return (flags & SIMPLE_FLAG) != 0;
   }
-  
+
   public final void setSimple (boolean simple)
   { setFlag(simple, SIMPLE_FLAG); }
 
@@ -74,7 +74,7 @@ public class Variable extends Location implements java.util.Enumeration
   {
     return (flags & PARAMETER_FLAG) != 0;
   }
-  
+
   public final void setParameter (boolean parameter)
   {
     setFlag(parameter, PARAMETER_FLAG);

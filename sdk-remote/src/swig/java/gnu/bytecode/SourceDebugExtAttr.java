@@ -141,7 +141,7 @@ public class SourceDebugExtAttr  extends Attribute
 
     if (curFileIndex >= 0 && fentry.equals(fileNames[curFileIndex]))
       return;
-    
+
     int n = fileCount;
     for (int i = 0;  i < n;  i++)
       {
@@ -290,7 +290,7 @@ public class SourceDebugExtAttr  extends Attribute
     dstr.write(data, 0, dlength);
   }
 
-  public void print (ClassTypeWriter dst) 
+  public void print (ClassTypeWriter dst)
   {
     dst.print("Attribute \"");
     dst.print(getName());

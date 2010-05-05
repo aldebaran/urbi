@@ -32,7 +32,7 @@ public class CpoolNameAndType extends CpoolEntry
   {
     return type;
   }
- 
+
   final static int hashCode (CpoolUtf8 name, CpoolUtf8 type)
   {
     return name.hashCode() ^ type.hashCode();

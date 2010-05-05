@@ -4,7 +4,7 @@
  File: ImageSampler.java
  Implementation of the ImageSampler class.
 
- This file is part of 
+ This file is part of
  liburbi
  (c) Bastien Saltel, 2004.
 
@@ -100,7 +100,7 @@ public class	ImageSampler extends Frame
 	private void	createConvolutions()
 	{
 		float	ninth = 1.0f / 9.0f;
-		float[]	blurKernel = 
+		float[]	blurKernel =
 			{
 				ninth, ninth, ninth,
 				ninth, ninth, ninth,

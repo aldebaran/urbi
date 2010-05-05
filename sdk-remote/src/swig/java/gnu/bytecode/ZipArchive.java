@@ -28,7 +28,7 @@ public class ZipArchive
 	int count = in.read(buffer);
 	if (count <= 0)
 	  return total;
-	out.write(buffer, 0, count); 
+	out.write(buffer, 0, count);
 	total += count;
       }
   }

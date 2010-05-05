@@ -511,7 +511,7 @@ public class CodeAttr extends Attribute implements AttrContainer
     if (locals == null)
       locals = new LocalVarsAttr(getMethod());
     enterScope(scope);
-    if (locals.parameter_scope == null) 
+    if (locals.parameter_scope == null)
       locals.parameter_scope = scope;
     return scope;
   }
@@ -929,7 +929,7 @@ public class CodeAttr extends Attribute implements AttrContainer
   {
     if (! (popType() instanceof ArrayType))
       throw new Error( "non-array type in emitArrayLength" );
-    
+
     reserve(1);
     put1(190);  // arraylength
     pushType(Type.int_type);
@@ -1236,7 +1236,7 @@ public class CodeAttr extends Attribute implements AttrContainer
       put1(inc);
     }
   }
-  
+
 
   private final void emitFieldop (Field field, int opcode)
   {
@@ -1359,7 +1359,7 @@ public class CodeAttr extends Attribute implements AttrContainer
   {
     emitInvokeMethod(method, 185);  // invokeinterface
   }
-  
+
   final void emitTransfer (Label label, int opcode)
   {
     fixupAdd(FIXUP_TRANSFER, label);
@@ -1408,10 +1408,10 @@ public class CodeAttr extends Attribute implements AttrContainer
   { emitGotoIfCompare1(label, 158); }
 
   public final void emitGotoIfCompare2 (Label label, int logop)
-  { 
+  {
     if( logop < 153 || logop > 158 )
       throw new Error ("emitGotoIfCompare2: logop must be one of ifeq...ifle");
-    
+
     Type type2 = popType().promote();
     Type type1 = popType().promote();
     reserve(4);
@@ -1511,8 +1511,8 @@ public class CodeAttr extends Attribute implements AttrContainer
     reserve(3);
     emitTransfer (new_if.end_label, opcode);
     new_if.start_stack_size = SP;
-  }  
-  
+  }
+
   /** Compile start of conditional:  if (x != null) */
   public final void emitIfNotNull()
   {
@@ -1523,8 +1523,8 @@ public class CodeAttr extends Attribute implements AttrContainer
   public final void emitIfNull()
   {
     emitIfRefCompare1(199); // ifnonnull
-  }  
-  
+  }
+
   /** Compile start of a conditional:  if (!(x OPCODE y)) ...
    * The value of x and y must already have been pushed. */
   public final void emitIfIntCompare(int opcode)
@@ -1652,7 +1652,7 @@ public class CodeAttr extends Attribute implements AttrContainer
     SP = if_stack.start_stack_size;
     if (else_label != null)
       else_label.define (this);
-    if_stack.doing_else = true;    
+    if_stack.doing_else = true;
   }
 
   /** Compile end of conditional. */
@@ -1778,7 +1778,7 @@ public class CodeAttr extends Attribute implements AttrContainer
     else
       throw new Error ("unimplemented type " + type
 		       + " in emitCheckcast/emitInstanceof");
-  } 
+  }
 
   public static boolean castNeeded (Type top, Type required)
   {
@@ -2080,7 +2080,7 @@ public class CodeAttr extends Attribute implements AttrContainer
     emitJsr(try_stack.finally_subr);
     emitLoad(except);
     emitThrow();
-    
+
     try_stack.finally_subr.define(this);
     Type ret_addr_type = Type.pointer_type;
     try_stack.finally_ret_addr = addLocal(ret_addr_type);
@@ -2472,7 +2472,7 @@ public class CodeAttr extends Attribute implements AttrContainer
     Attribute.writeAll(this, dstr);
   }
 
-  public void print (ClassTypeWriter dst) 
+  public void print (ClassTypeWriter dst)
   {
     dst.print("Attribute \"");
     dst.print(getName());
@@ -2763,7 +2763,7 @@ public class CodeAttr extends Attribute implements AttrContainer
 			    code_offset = readInt(i);  i += 4;
 			    dst.println();
 			    dst.print("  ");  dst.print(low);
-			    dst.print(": ");  dst.print(oldpc + code_offset); 
+			    dst.print(": ");  dst.print(oldpc + code_offset);
 			  }
 		      }
 		    else
@@ -2778,7 +2778,7 @@ public class CodeAttr extends Attribute implements AttrContainer
 			    code_offset = readInt(i);  i += 4;
 			    dst.println();
 			    dst.print("  ");  dst.print(match);
-			    dst.print(": ");  dst.print(oldpc + code_offset); 
+			    dst.print(": ");  dst.print(oldpc + code_offset);
 			  }
 		      }
 		  }
@@ -2823,7 +2823,7 @@ public class CodeAttr extends Attribute implements AttrContainer
 			else
 			  dst.print(type);
 		      }
-			
+
 		  }
 		else if (op == 196) // wide
 		  {

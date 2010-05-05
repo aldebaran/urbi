@@ -6,7 +6,6 @@
  * implied warranties of fitness for a particular purpose.
  *
  * See the LICENSE file for more information.
- * For comments, bug reports and feedback: http://www.urbiforge.com
  */
 
 #ifndef CALLBACKS_CALLER_HH_

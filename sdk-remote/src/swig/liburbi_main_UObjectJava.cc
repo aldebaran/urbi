@@ -6,16 +6,14 @@
  * implied warranties of fitness for a particular purpose.
  *
  * See the LICENSE file for more information.
- * For comments, bug reports and feedback: http://www.urbiforge.com
  */
-
 
 /// The code in this file is associated to the java class:
 /// liburbi.main.UObjectJava
 
 #include <iostream>
-#include <cstdlib>
-#include <cstdio>
+#include <libport/cstdlib>
+#include <libport/cstdio>
 #include "callbacks-caller.hh"
 #include "liburbi_main_UObjectJava.h"
 

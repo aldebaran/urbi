@@ -53,11 +53,11 @@ public class Field extends Location implements AttrContainer, Member {
   public final int getFlags() {
     return flags;
   }
-  
+
   public final int getModifiers() {
     return flags;
   }
-  
+
   void write (DataOutputStream dstr, ClassType classfile)
        throws java.io.IOException
   {
@@ -67,7 +67,7 @@ public class Field extends Location implements AttrContainer, Member {
 
     Attribute.writeAll(this, dstr);
   }
-  
+
   void assign_constants (ClassType classfile)
   {
     ConstantPool constants = classfile.constants;

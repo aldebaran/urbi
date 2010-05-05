@@ -40,7 +40,7 @@ public class InnerClassesAttr  extends Attribute
       }
   }
 
-  public void print (ClassTypeWriter dst) 
+  public void print (ClassTypeWriter dst)
   {
     ClassType ctype = (ClassType) container;
     ConstantPool constants = ctype.getConstants();

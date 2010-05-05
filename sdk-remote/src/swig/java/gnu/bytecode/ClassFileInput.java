@@ -34,7 +34,7 @@ public class ClassFileInput extends DataInputStream
     readMethods();
     readAttributes(ctype);
   }
- 
+
   /** Read a class (in .class format) from an InputStream.
     * @return A new ClassType object representing the class that was read.
     */
@@ -119,7 +119,7 @@ public class ClassFileInput extends DataInputStream
 		last = next;
 	      }
 	  }
-	
+
 	int index = readUnsignedShort();
 	CpoolUtf8 nameConstant = (CpoolUtf8)
 	  ctype.constants.getForced(index, ConstantPool.UTF8);
@@ -158,7 +158,7 @@ public class ClassFileInput extends DataInputStream
 	  {
 	    if (read() < 0)
 	      throw new java.io.EOFException
-		("EOF while reading class files attributes"); 
+		("EOF while reading class files attributes");
 	    skipped = 1;
 	  }
 	read += skipped;
@@ -249,7 +249,7 @@ public class ClassFileInput extends DataInputStream
     else if (name == "InnerClasses" && container instanceof ClassType)
       {
         int count = 4 * readUnsignedShort();
-	short[] data = new short[count]; 
+	short[] data = new short[count];
 	for (int i = 0;  i < count;  i++)
 	  {
 	    data[i] = readShort();

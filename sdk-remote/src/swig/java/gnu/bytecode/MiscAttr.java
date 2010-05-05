@@ -21,12 +21,12 @@ public class MiscAttr extends Attribute
     this.offset = offset;
     this.length = length;
   }
-  
+
   public MiscAttr(String name, byte[] data)
   {
     this(name, data, 0, data.length);
   }
-  
+
   public int getLength() { return length; }
 
   public void write (DataOutputStream dstr)

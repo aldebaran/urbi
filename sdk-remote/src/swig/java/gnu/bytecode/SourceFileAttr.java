@@ -54,13 +54,13 @@ public class SourceFileAttr extends Attribute
   }
 
   public SourceFileAttr (int index, ClassType ctype)
-  { 
+  {
     super("SourceFile");
     CpoolUtf8 filenameConstant = (CpoolUtf8)
       ctype.constants.getForced(index, ConstantPool.UTF8);
     this.filename = filenameConstant.string;
     this.filename_index = index;
-  } 
+  }
 
 
   public void assignConstants (ClassType cl)

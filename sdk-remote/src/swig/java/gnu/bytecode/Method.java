@@ -111,7 +111,7 @@ public class Method implements AttrContainer, Member {
   {
     return classfile.constants;
   }
-    
+
   public Scope pushScope () {
     prepareCode(0);
     return code.pushScope();
@@ -207,7 +207,7 @@ public class Method implements AttrContainer, Member {
    */
   public void compile_push_value (Variable var) { code.emitLoad(var); }
 
-  /** 
+  /**
     * @deprecated
    */
   public void compile_store_value (Variable var)
@@ -237,7 +237,7 @@ public class Method implements AttrContainer, Member {
     if (signature == null)
       {
 	StringBuffer buf = new StringBuffer(100);
-	int args_count = arg_types.length; 
+	int args_count = arg_types.length;
 	buf.append('(');
 	for (int i = 0; i < args_count; i++)
 	  buf.append (arg_types[i].getSignature());
@@ -338,7 +338,7 @@ public class Method implements AttrContainer, Member {
 
   public void listParameters (StringBuffer sbuf)
   {
-    int args_count = arg_types.length; 
+    int args_count = arg_types.length;
     sbuf.append('(');
     for (int i = 0; i < args_count; i++)
       {

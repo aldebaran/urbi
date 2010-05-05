@@ -50,5 +50,5 @@ public class Label {
     code.fixupAdd(CodeAttr.FIXUP_DEFINE, this);
   }
 
-  
+
 }
