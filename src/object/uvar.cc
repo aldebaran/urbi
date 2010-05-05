@@ -194,10 +194,14 @@ namespace urbi
       // temporary value, and unblock them.
       if (waiterCount_)
       {
-        rUValue val = slot_get(slot_get(SYMBOL(owned))->as_bool()
-                               ? SYMBOL(valsensor)
-                               : SYMBOL(val))
-                      ->as<UValue>();
+        /* Split val declaration and assignment to work around g++ 4.3.3 wich warns:
+         * intrusive-ptr.hxx:89: error: 'val.libport::intrusive_ptr<urbi::object::UValue>::pointee_'
+         *                              may be used uninitialized in this function.
+         */
+        rUValue val;
+        val = slot_get(slot_get(SYMBOL(owned))->as_bool()
+                       ? SYMBOL(valsensor)
+                       : SYMBOL(val))->as<UValue>();
         if (val)
           val->extract();
         slot_get(SYMBOL(waiterTag))->call(SYMBOL(stop));
