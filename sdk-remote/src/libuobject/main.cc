@@ -114,7 +114,7 @@ namespace urbi
         << std::endl;
       UClient::options o;
       o.server(server);
-      defaultClient = new UClient(host, port, buflen, o);
+      setDefaultClient(new UClient(host, port, buflen, o));
     }
     if (exitOnDisconnect)
     {
