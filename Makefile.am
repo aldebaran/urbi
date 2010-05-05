@@ -154,6 +154,11 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 install-exec-hook: post-install
 post-install: scripts/post-install
 	scripts/post-install
+# Used by post-install.
+EXTRA_DIST +=					\
+  build-aux/bin/check-lib-deps			\
+  build-aux/bin/check-include-deps		\
+  src/find-boost.cc
 
 if WIN32
   topleveldir = $(prefix)

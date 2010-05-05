@@ -9,22 +9,23 @@ host="@host@"
 # standard include directory, no variable will tell us that.  So go
 # the configure way and ask the compiler.
 BOOST_FIND_FILE="utils/find-boost.ii"
-make -C  $builddir/sdk-remote/src "$BOOST_FIND_FILE"
+make -C $builddir/src "$BOOST_FIND_FILE"
 incline=$(perl -n \
     -e 'if (/^#.*"(.*).foreach.hpp"/)
-	                {
-	                  print "$1\n";
-	                  exit 0;
-	                }' "$builddir/sdk-remote/src/$BOOST_FIND_FILE"
+	{
+	  print "$1\n";
+	  exit 0;
+	}' "$builddir/src/$BOOST_FIND_FILE"
 )
+
 case $build:$host in
-    (*cygwin:*) incline=$(cygpath  -u "$incline");;
-    (*:*mingw32) incline=$(winepath -u "$incline");;
+  (*cygwin:*) incline=$(cygpath  -u "$incline");;
+  (*:*mingw32) incline=$(winepath -u "$incline");;
 esac
 	# Ensure we got it right.
 if test ! -f  "$incline"/version.hpp; then
-    echo >&2 "failed to find boost include directory, got '$incline'"
-    exit 1
+  echo >&2 "failed to find boost include directory, got '$incline'"
+  exit 1
 fi
 
 # Symlinks.
