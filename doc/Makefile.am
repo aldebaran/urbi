@@ -190,26 +190,6 @@ spell-check:
 	$(RUN_SPELL_CHECK) $(urbi_sdk_tex) $(dist_doc_DATA)
 
 
-## --------- ##
-## install.  ##
-## --------- ##
-
-# Make the *.txt documentation more accessible.
-install-data-hook:
-	cd "$(DESTDIR)$(prefix)" &&		\
-	for i in share/doc/urbi-sdk/*.txt; do	\
-	  case $(URBI_HOST_OS) in		\
-	    (windows)				\
-	      unix2dos "$$i" &&			\
-	      cp -f "$$i" .			\
-	      ;;				\
-	    (*)					\
-	      $(LN_S) -f "$$i"			\
-	      ;;				\
-	  esac					\
-	done
-
-
 
 ## ------------- ##
 ## install-doc.  ##
