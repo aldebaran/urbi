@@ -72,6 +72,7 @@ namespace urbi
       "  -H, --host ADDR       server host name"
                  << " [" << UClient::default_host() << "]\n"
       "      --server          put remote in server mode\n"
+      "      --no-sync-client  Use UClient instead of USyncClient\n"
       "  -p, --port PORT       tcp port URBI will listen to"
 		 << " [" << UAbstractClient::URBI_PORT << "]\n"
       "  -r, --port-file FILE  file containing the port to listen to\n"
@@ -92,16 +93,29 @@ namespace urbi
   typedef std::vector<std::string> files_type;
   int
   initialize(const std::string& host, int port, size_t buflen,
-	     bool exitOnDisconnect, bool server, const files_type& files)
+	     bool exitOnDisconnect, bool server, const files_type& files,
+             bool useSyncClient)
   {
     std::cerr << program_name()
 	      << ": " << urbi::package_info() << std::endl
 	      << program_name()
 	      << ": Remote Component Running on "
 	      << host << " " << port << std::endl;
-    USyncClient::options o;
-    o.server(server);
-    new USyncClient(host, port, buflen, o);
+    if (useSyncClient)
+    {
+      USyncClient::options o;
+      o.server(server);
+      new USyncClient(host, port, buflen, o);
+    }
+    else
+    {
+      std::cerr << "#WARNING: the no-sync-client mode is dangerous.\n"
+	"Any attempt to use synchronous operation will crash your program."
+        << std::endl;
+      UClient::options o;
+      o.server(server);
+      defaultClient = new UClient(host, port, buflen, o);
+    }
     if (exitOnDisconnect)
     {
       if (!getDefaultClient() || getDefaultClient()->error())
@@ -112,7 +126,7 @@ namespace urbi
     if (!getDefaultClient() || getDefaultClient()->error())
       return 1;
     defaultContext = new impl::RemoteUContextImpl(
-      dynamic_cast<USyncClient*>(getDefaultClient()));
+      (USyncClient*)dynamic_cast<UClient*>(getDefaultClient()));
 
 #ifdef LIBURBIDEBUG
     getDefaultClient()->setWildcardCallback(callback(&debug));
@@ -162,13 +176,14 @@ namespace urbi
   }
 
 
-  int
+  URBI_SDK_API int
   main(const libport::cli_args_type& args, UrbiRoot&, bool block, bool)
   {
     std::string host = UClient::default_host();
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;
     bool server = false;
+    bool useSyncClient = true;
     size_t buflen = UAbstractClient::URBI_BUFLEN;
     // Files to load
     files_type files;
@@ -190,6 +205,8 @@ namespace urbi
 	usage();
       else if (arg == "--host" || arg == "-H")
 	host = libport::convert_argument<std::string>(args, i++);
+      else if (arg == "--no-sync-client")
+        useSyncClient = false;
       else if (arg == "--port" || arg == "-p")
 	port = libport::convert_argument<unsigned>(args, i++);
       else if (arg == "--port-file" || arg == "-r")
@@ -221,7 +238,8 @@ namespace urbi
 	}
     }
 
-    initialize(host, port, buflen, exitOnDisconnect, server, files);
+    initialize(host, port, buflen, exitOnDisconnect, server, files,
+               useSyncClient);
 
     if (block)
       while (true)
