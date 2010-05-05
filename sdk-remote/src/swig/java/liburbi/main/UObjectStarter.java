@@ -23,13 +23,14 @@ public class UObjectStarter extends URBIStarterJAVA
     public UObjectStarter (String name, Constructor ctor) {
 	super (name);
 	uobject_ctor = ctor;
+	uobject_name = name;
     }
 
     public UObject instanciate(UContextImpl ctx, String n)
     {
 	String rn = n;
 	if (rn.isEmpty())
-	    rn = getName();
+	    rn = uobject_name; //getName();
 	liburbi.setCurrentContext (ctx);
 	UObject res = null;
 	try
@@ -47,6 +48,7 @@ public class UObjectStarter extends URBIStarterJAVA
     }
 
     private Constructor uobject_ctor;
+    private String uobject_name;
 
 }
 
