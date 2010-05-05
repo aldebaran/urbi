@@ -21,8 +21,7 @@ namespace urbi
   namespace object
   {
     template<typename M>
-    // FIXME: Why qualify rPrimitive?
-    ::urbi::object::rPrimitive make_primitive(M f);
+    rPrimitive make_primitive(M f);
   }
 }
 
