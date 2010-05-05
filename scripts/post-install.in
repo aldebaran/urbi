@@ -23,9 +23,22 @@ bindir="@bindir@"
 libdir="@libdir@"
 
 
+
+# Complete the package with dependencies (libraries and headers we
+# need).  Do this only when building packages.  Currently, "building a
+# package" is defined by "using DESTDIR".
+test -n "$DESTDIR" ||
+  exit 0
+
+
 ## -------------- ##
 ## Post-install.  ##
 ## -------------- ##
+
+
+# ------- #
+# Strip.  #
+# ------- #
 
 # It is more logical to strip after having run check-lib-deps, since
 # the latter complete the package by installing the foreign
@@ -76,23 +89,22 @@ if test -n "$STRIP"; then
     xargs $STRIP || true
 fi
 
+# --------------------------- #
+# Completion/relocatability.  #
+# --------------------------- #
+
 # Shared lib dependencies (after strip).
 #
 # Complete the package with missing libraries, make it relocatable,
 # and check there are no missing dependencies.
-#
-# If DESTDIR is null, this is most probably an install performed by
-# the developper in her own tree.  Don't try to make it relocatable.
-if test -n "$DESTDIR"; then
-  $srcdir/build-aux/bin/check-lib-deps          \
-    --verbose --verbose --verbose --verbose     \
-    --destdir "$DESTDIR"                        \
-    --host-os "$URBI_HOST_OS"                   \
-    --prefix "$prefix"                          \
-    --libdir "$libdir"                          \
-    --libpath "$BOOST_LDPATH"                   \
-    "$DESTDIR"
-fi
+$srcdir/build-aux/bin/check-lib-deps          \
+  --verbose --verbose --verbose --verbose     \
+  --destdir "$DESTDIR"                        \
+  --host-os "$URBI_HOST_OS"                   \
+  --prefix "$prefix"                          \
+  --libdir "$libdir"                          \
+  --libpath "$BOOST_LDPATH"                   \
+  "$DESTDIR"
 
 # Boost headers.
 #
@@ -100,6 +112,12 @@ $srcdir/build-aux/bin/check-include-deps        \
   --include-dir "$DESTDIR$prefix/include"       \
   --verbose                                     \
   $builddir
+
+
+
+# ------- #
+# Fixes.  #
+# ------- #
 
 # 1. Fix libtool usage of +=.
 # 2. Remove -nostdlib and explicit stdlib from libtool.
@@ -129,6 +147,11 @@ find "$DESTDIR$prefix" -name libtool -exec chmod u+x '{}' ';'
 
 # Set more permissive access rights.
 chmod -R a+rX "$DESTDIR$prefix"
+
+
+# ---------- #
+# Removals.  #
+# ---------- #
 
 # We have some problems with the *.la files.  For instance, although
 # we use Boost as static libraries, they appear as runtime
