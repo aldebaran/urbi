@@ -13,9 +13,16 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \section{\usdk 2.0.2}
 
+\subsection{\us}
+\begin{itemize}
+\item \refSlot{Control}{detach} and \refSlot{Control}{disown} return the
+  \refObject{Job}.
+\end{itemize}
+
 \subsection{Fixes}
 \begin{itemize}
 \item \samp{make install} failures are addressed.
+\item \lstinline|freezeif| can be used more than once inside a scope.
 \end{itemize}
 
 \subsection{Documentation}
@@ -37,8 +44,6 @@ This chapter lists the user-visible changes in \usdk releases.
 \item \refSlot{Lobby}{echoEach}: new.
 \item \refSlot{String}{closest}: new.
 \item \refSlot{Tuple}{size}: new.
-\item \refSlot{Control}{detach} and \refSlot{Control}{disown} return the
-  \refObject{Job}.
 \end{itemize}
 
 \subsection{Documentation}
