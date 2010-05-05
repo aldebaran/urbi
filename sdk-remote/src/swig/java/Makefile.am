@@ -73,7 +73,11 @@ generated_SOURCES =				\
 testUObject_SOURCES =				\
 	examples/uobjectjava/Main.java		\
 	examples/uobjectjava/Adder.java		\
-	examples/uobjectjava/Feature.java	\
+	examples/uobjectjava/Feature1.java	\
+	examples/uobjectjava/Feature2.java	\
+	examples/uobjectjava/Feature3.java	\
+	examples/uobjectjava/Feature4.java	\
+	examples/uobjectjava/Feature5.java	\
 	examples/uobjectjava/Colormap.java	\
 	examples/uobjectjava/SimpleUObject.java
 

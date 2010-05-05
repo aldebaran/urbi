@@ -41,8 +41,20 @@ public class Main {
     public static void main(String argv[]) {
 	try
 	{
-	    /// Start the 'Feature' UObject
-	    UObjectJava.UStart (Feature.class);
+	    /// Start the 'Feature1' UObject
+	    UObjectJava.UStart (Feature1.class);
+
+	    /// Start the 'Feature2' UObject
+	    UObjectJava.UStart (Feature2.class);
+
+	    /// Start the 'Feature3' UObject
+	    UObjectJava.UStart (Feature3.class);
+
+	    /// Start the 'Feature4' UObject
+	    UObjectJava.UStart (Feature4.class);
+
+	    /// Start the 'Feature6' UObject
+	    UObjectJava.UStart (Feature5.class);
 
 	    /// Start the 'Colormap' UObject
 	    UObjectJava.UStart (Colormap.class);
