@@ -17,13 +17,8 @@
 #include "callbacks-caller.hh"
 #include "liburbi_main_UObjectJava.h"
 
-
-//  ::urbi::createUCallback(obj_name, "function", obj, fun,
-//			  func_name, ::urbi::functionmap, false)
-
-#define CREATE_FUN_CALLBACK(uobj, obj, fun, func_name)		\
-  ::urbi::createUCallback(*uobj, 0, "function", obj,		\
-                          fun, obj_name + "." + func_name)
+#define CREATE_FUN_CALLBACK(uobj, obj, fun, func_name)			\
+  ::urbi::createUCallback(*uobj, 0, "function", obj, fun, func_name)
 
 
 

@@ -90,17 +90,6 @@ namespace urbi
     virtual UObject* instanciate(impl::UContextImpl* ctx,
 				 const std::string& n)
     {
-      /*
-      std::string rn = n;
-      if (rn.empty())
-        rn = name;
-      // FIXME: not exception-safe
-      setCurrentContext(ctx);
-      UObject* res =  new T(rn);
-      ctx->instanciated(res);
-      res->cloner = this;
-      return res;
-      */
       assert(0);
       return 0;
     }
