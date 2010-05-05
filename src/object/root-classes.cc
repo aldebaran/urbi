@@ -199,9 +199,6 @@ namespace urbi
       // Events use Lists.
       INIT(List);
       INIT(Event);
-
-      // String uses Primitive.
-      INIT(String);
 #undef INIT
 
       CxxObject::create();
