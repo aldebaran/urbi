@@ -12,11 +12,13 @@
  ** \file object/root-classes.cc
  ** \brief Creation of the root Objects.
  */
-
+#include <urbi/object/fwd.hh>
 #include <object/object-class.hh>
 #include <object/output-stream.hh>
 #include <object/root-classes.hh>
 #include <object/semaphore.hh>
+#include <object/server.hh>
+#include <object/socket.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/uvar.hh>
@@ -249,6 +251,7 @@ namespace urbi
       Path        p;
       Semaphore   s;
       UVar        v;
+      Socket      so;
     }
 
     namespace

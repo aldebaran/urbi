@@ -97,6 +97,10 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/semaphore.cc				\
   object/semaphore.hh				\
   object/slot.cc				\
+  object/socket.cc                              \
+  object/socket.hh                              \
+  object/server.cc                              \
+  object/server.hh                              \
   object/sorted-vector-slots.hh			\
   object/sorted-vector-slots.hxx		\
   object/string.cc				\
@@ -127,11 +131,7 @@ if !COMPILATION_MODE_SPACE
     object/output-stream.cc			\
     object/output-stream.hh			\
     object/regexp.cc				\
-    object/regexp.hh				\
-    object/socket.cc				\
-    object/socket.hh				\
-    object/server.cc				\
-    object/server.hh
+    object/regexp.hh
 
 # Too hard currently...
 if !WIN32
