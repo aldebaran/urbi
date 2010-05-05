@@ -82,7 +82,9 @@
 #include <parser/parser-impl.hh>
 #include <parser/utoken.hh>
 
-#pragma GCC diagnostic ignored "-Wuninitialized"
+#if defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 4
+# pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
 
   namespace
   {
