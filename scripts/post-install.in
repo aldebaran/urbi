@@ -89,26 +89,6 @@ if test -n "$STRIP"; then
     xargs $STRIP || true
 fi
 
-# ------------ #
-# Completion.  #
-# ------------ #
-
-# Make the *.txt documentation more accessible.
-here=$(pwd)
-cd "$DESTDIR$prefix"
-  for i in share/doc/urbi-sdk/*.txt; do
-    case $URBI_HOST_OS in
-      (windows)
-        unix2dos "$i"
-        cp -f "$i" .
-        ;;
-      (*)
-        ln -sf "$i"
-        ;;
-    esac
-  done
-cd "$here"
-
 # --------------------------- #
 # Completion/relocatability.  #
 # --------------------------- #
