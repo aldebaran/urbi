@@ -10,26 +10,26 @@
 
 do (Job)
 {
+  function dumpState()
+  {
+    echo("Job: " + name)|
+    echo("  State: " + status) |
 
-   function dumpState()
-   {
-     echo("Job: " + name)|
-     echo("  State: " + status) |
-     if (var t = timeShift)
-       echo("  Timeshift: " + t + "ms") |
-     if (var ts = tags)
-     {
-       echo("  Tags:") |
-       for| (var t : tags)
-         echo("    " + t);
-     } |
+    if (var t = timeShift)
+      echo("  Timeshift: " + t + "ms") |
 
-     if (var b = backtrace)
-     {
-       echo("  Backtrace:") |
-       for| (var l : b)
-         echo("    " + l);
-     }
-   }
+    if (var ts = tags)
+    {
+      echo("  Tags:") |
+      for| (var t : tags)
+        echo("    " + t);
+    } |
 
+    if (var b = backtrace)
+    {
+      echo("  Backtrace:") |
+      for| (var l : b)
+        echo("    " + l);
+    }
+  }
 };
