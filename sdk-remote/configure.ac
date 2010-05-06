@@ -116,8 +116,8 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 ## --------- ##
 ## Bindings  ##
 ## --------- ##
-URBI_ARGLIST_ENABLE([enable-bindings], [enable some bindings],
-                    [yes|no|csharp|java|perl|php|python|ruby], [no])
+URBI_ARGLIST_ENABLE([enable-bindings], [disable the bindings],
+                    [yes|no|csharp|java|perl|php|python|ruby], [yes])
 AC_MSG_CHECKING([the bindings to activate])
 save_IFS=$IFS
 IFS=,
@@ -163,9 +163,8 @@ if test x"$enable_bindings" != xno; then
  ## -------------------------- ##
  ## liburbi java configuration ##
  ## -------------------------- ##
-# if test x"$java_binding" != x; then
  m4_include([src/swig/java/liburbijava.ac])
-# fi
+
  ac_configure_args=" $ac_configure_args --disable-programs"
 fi
 
