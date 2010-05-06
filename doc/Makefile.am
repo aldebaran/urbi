@@ -194,21 +194,25 @@ spell-check:
 ## install.  ##
 ## --------- ##
 
-# Make the *.txt documentation more accessible.
+# Make the *.txt documentation more accessible.  Cannot be handled in
+# script/post-install since it is launched at the end of install-exec
+# in the top-level diretory, which is processed before this `doc'
+# directory.
 install-data-hook:
-	cd "$(DESTDIR)$(prefix)" &&		\
-	for i in share/doc/urbi-sdk/*.txt; do	\
-	  case $(URBI_HOST_OS) in		\
-	    (windows)				\
-	      unix2dos "$$i" &&			\
-	      cp -f "$$i" .			\
-	      ;;				\
-	    (*)					\
-	      $(LN_S) -f "$$i"			\
-	      ;;				\
-	  esac					\
-	done
-
+	if test -n "$(DESTDIR)"; then		\
+	  cd "$(DESTDIR)$(prefix)" &&		\
+	  for i in share/doc/urbi-sdk/*.txt; do	\
+	    case $(URBI_HOST_OS) in		\
+	      (windows)				\
+	        unix2dos "$$i" &&		\
+	        cp -f "$$i" .			\
+	        ;;				\
+	      (*)				\
+	        $(LN_S) -f "$$i"		\
+	        ;;				\
+	    esac				\
+	  done					\
+	fi
 
 
 ## ------------- ##
