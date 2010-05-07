@@ -45,12 +45,12 @@ namespace urbi
 
     void IoService::pollFor(double d)
     {
-      libport::pollFor(d*1000000.0, false, *this);
+      libport::pollFor(static_cast<useconds_t>(d*1000000.0), false, *this);
     }
 
     void IoService::pollOneFor(double d)
     {
-      libport::pollFor(d*1000000.0, true, *this);
+      libport::pollFor(static_cast<useconds_t>(d*1000000.0), true, *this);
     }
 
     void IoService::poll()
