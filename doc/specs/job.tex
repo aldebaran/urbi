@@ -24,13 +24,13 @@ A Job is typically constructed via \refSlot{Control}{detach},
 
 \begin{urbiscript}
 detach(sleep(10));
-[00202654] Job_0x108507950
+[00202654] Job<shell_4>
 
 disown(sleep(10));
-[00204195] Job_0x10851b020
+[00204195] Job<shell_5>
 
 spawn (function () { sleep(10) }, false);
-[00274160] Job_0x101b516c0
+[00274160] Job<shell_6>
 \end{urbiscript}
 
 \subsection{Slots}
@@ -38,6 +38,9 @@ spawn (function () { sleep(10) }, false);
 \begin{urbiscriptapi}
 \item[asJob]
   Return \lstinline|this|.
+
+\item[asString] The string \lstinline|Job<\var{name}>| where \var{name} is
+  the name of the job.
 
 \item[backtrace] The current backtrace of the job as a list of
   \refObject[s]{StackFrame}.
