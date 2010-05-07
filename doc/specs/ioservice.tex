@@ -1,0 +1,101 @@
+%% Copyright (C) 2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{IoService}
+
+A \dfn{IoService} is used to manage the various operations of a set of
+\refObject{Socket}.
+
+All \refObject{Socket} and \refObject{Server} are by default using the
+default \reofObject{IoService} which is polled regularily by the system.
+
+\subsection{Example}
+
+Using a different \refObject{IoService} is required if you need to perform
+synchronous read operations.
+
+The \refObject{Socket} must be created by the \refObject{IoService} that will
+handle it using its \lstinline|makeSocket| function.
+
+\begin{urbiscript}
+var io = IoService.new|;
+var s = io.makeSocket|;
+\end{urbiscript}
+
+You can then use this socket like any other.
+
+\begin{urbiscript}
+// Make a simple hello server.
+var serverPort = 0|
+do(Server.new)
+{
+  listen("127.0.0.1", "0");
+  lobby.serverPort = port;
+  at(connection?(var s))
+  {
+    s.write("hello");
+  }
+}|;
+// Connect to it using our socket.
+s.connect("0.0.0.0", serverPort);
+at(s.received?(var data))
+  echo("received something");
+s.write("1;");
+\end{urbiscript}
+
+... except that nothing will be read from the socket unless you call one of the
+\lstinline|poll| functions of \lstinline|io|.
+
+\begin{urbiscript}
+sleep(200ms);
+s.isConnected(); // Nothing was received yet
+[00000001] true
+io.poll();
+[00000002] *** received something
+sleep(200ms);
+\end{urbiscript}
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+A \lstinline|IoService| is constructed with no argument. 
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[makeServer]
+  Create and return a new \refObject{Server} using this \refObject{IoService}.
+
+\item[makeSocket]
+  Create and return a new \refObject{Socket} using this \refObject{IoService}.
+
+\item[poll]
+  Handle all pending socket operations(read, write, accept) that can be
+  performed without waiting.
+
+\item \lstinline|pollFor(\var{duration})|\\
+  Will block for \var{duration} seconds, and handle all ready socket operations
+  during this period.
+
+\item \lstinline|pollOneFor(\var{duration})|\\
+  Will block for at most \var{duration}, and handle the first ready socket
+  operation and immediately return.
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:

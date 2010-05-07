@@ -9,7 +9,9 @@
  */
 
 #include <urbi/object/global.hh>
+#include <object/ioservice.hh>
 #include <object/server.hh>
+#include <object/socket.hh>
 #include <object/symbols.hh>
 
 namespace urbi
@@ -17,16 +19,26 @@ namespace urbi
   namespace object
   {
     Server::Server()
-      : libport::Socket(object::Socket::get_io_service())
+      : libport::Socket(*object::Socket::get_default_io_service().get())
+      , io_service_(object::Socket::get_default_io_service())
     {
       proto_add(Object::proto);
 //    initialize();
     }
 
     Server::Server(rServer model)
-      : libport::Socket(object::Socket::get_io_service())
+      : libport::Socket(*object::Socket::get_default_io_service().get())
+      , io_service_(object::Socket::get_default_io_service())
     {
       proto_add(model);
+      initialize();
+    }
+
+    Server::Server(rIoService io_service)
+      : libport::Socket(*io_service.get())
+      , io_service_(io_service)
+    {
+      proto_add(proto);
       initialize();
     }
 
@@ -81,8 +93,14 @@ namespace urbi
       return sockets_;
     }
 
+    rIoService Server::getIoService() const
+    {
+      return io_service_;
+    }
+
     void Server::initialize(CxxObject::Binder<Server>& bind)
     {
+      bind(SYMBOL(getIoService), &Server::getIoService);
       bind(SYMBOL(host),    &Server::host);
       bind(SYMBOL(listen),  &Server::listen);
       bind(SYMBOL(port),    &Server::port);

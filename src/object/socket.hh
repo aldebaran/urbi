@@ -15,16 +15,20 @@
 
 # include <urbi/object/cxx-object.hh>
 
+# include <object/ioservice.hh>
+
 namespace urbi
 {
   namespace object
   {
+
     class URBI_SDK_API Socket: public CxxObject, public libport::Socket
     {
       public:
       Socket();
       Socket(rServer server);
       Socket(rSocket model);
+      Socket(rIoService io_service);
       void connect(const std::string& host, const std::string& port);
       void connect(const std::string& host, unsigned port);
       void connectSerial(const std::string& device, unsigned int baudrate);
@@ -34,15 +38,20 @@ namespace urbi
       virtual void onError(boost::system::error_code);
       virtual size_t onRead(const void* data, size_t length);
       void write(const std::string& data);
+      void syncWrite(const std::string& data);
       bool isConnected() const;
-      static void poll();
+      void poll();
       std::string host() const;
       unsigned short port() const;
-      static boost::asio::io_service& get_io_service();
+      std::string localHost() const;
+      unsigned short localPort() const;
+      rIoService getIoService() const;
+      static rIoService get_default_io_service();
       private:
       void slots_create();
       rServer server_;
       rObject disconnect_;
+      rIoService io_service_;
       URBI_CXX_OBJECT_(Socket);
     };
   }

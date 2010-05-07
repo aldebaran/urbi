@@ -32,7 +32,8 @@ s.localSlotNames;
 \begin{urbiscriptapi}
 \item[connection]
   The event launched at each incoming connection. This event is
-  launched with one argument: the socket of the established connection.
+  launched with one argument: the socket of the established connection. This
+  connection uses the same \refObject{IoService} as the server.
 \begin{urbiscript}
 at (s.connection?(var socket))
 {
@@ -40,6 +41,10 @@ at (s.connection?(var socket))
   // connection.
 };
 \end{urbiscript}
+
+\item[getIoService]
+  Return the \refObject{IoService} used by this socket. Only the default
+  \lstinline|IoService| is automatically polled.
 
 \item[host]
   The host on which \lstinline|this| is listening. Raise an error if
