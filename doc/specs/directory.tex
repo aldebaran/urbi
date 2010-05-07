@@ -43,33 +43,32 @@ Directory.new(Path.new("."));
   Event launched when a file is created inside the directory.
 
 \begin{urbiscript}
-{
-  var d = Directory.new(".");
+// watch the fileCreated event.
+at (Directory.new(".").fileCreated?(var name))
+  echo("File '%s' created." % name);
 
-  // watch the fileCreated event.
-  at (d.fileCreated?(var name))
-    echo("File '%s' created inside '%s'." % [name, d]);
-}
-&
-  // Create a file to launch the fileCreated event.
-  File.create("./dummy-file.txt");
-[00000001] *** File 'dummy-file.txt' created inside '.'.
+// Create a file to launch the fileCreated event.
+File.create("./dummy-file.txt")|;
+
+// wait until the event is reported.
+sleep(1s);
+[00000001] *** File 'dummy-file.txt' created.
 \end{urbiscript}
 
 \item \lstinline|fileDeleted(\var{name)|\\
   Event launched when a file is deleted from the directory.
 
 \begin{urbiscript}
-{
-  var d = Directory.new(".");
+// watch the fileDeleted event.
+at (Directory.new(".").fileDeleted?(var name))
+  echo("File '%s' deleted." % name);
 
-  at (d.fileDeleted?(var name))
-    echo("File '%s' deleted from '%s'." % [name, d]);
-}
-&
-  // Remove a file to launch the fileDeleted event.
-  File.new("./dummy-file.txt").remove;
-[00000001] *** File 'dummy-file.txt' deleted from '.'.
+// Remove a file to launch the fileDeleted event.
+File.new("./dummy-file.txt").remove|;
+
+// wait until the event is reported.
+sleep(1s);
+[00000001] *** File 'dummy-file.txt' deleted.
 \end{urbiscript}
 
 
