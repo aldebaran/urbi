@@ -134,11 +134,13 @@ namespace urbi
     void
     Directory::create_events()
     {
+#if HAVE_SYS_INOTIFY_H
       CAPTURE_GLOBAL(Event);
       on_file_created_ = Event->call("new");
       slot_set(SYMBOL(fileCreated), on_file_created_);
       on_file_deleted_ = Event->call("new");
       slot_set(SYMBOL(fileDeleted), on_file_deleted_);
+#endif
     }
 
     void Directory::init(rPath path)

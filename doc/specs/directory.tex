@@ -40,7 +40,8 @@ Directory.new(Path.new("."));
   the directory name of \lstinline|this|.
 
 \item \lstinline|fileCreated(\var{name)|\\
-  Event launched when a file is created inside the directory.
+  Event launched when a file is created inside the directory.  Be careful,
+  this slot may not exists if the \us interpreter does not support for it.
 
 \begin{urbiscript}
 // watch the fileCreated event.
@@ -56,7 +57,8 @@ sleep(1s);
 \end{urbiscript}
 
 \item \lstinline|fileDeleted(\var{name)|\\
-  Event launched when a file is deleted from the directory.
+  Event launched when a file is deleted from the directory.  Be careful,
+  this slot may not exists if the \us interpreter does not support for it.
 
 \begin{urbiscript}
 // watch the fileDeleted event.
