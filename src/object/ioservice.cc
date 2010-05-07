@@ -45,7 +45,7 @@ namespace urbi
 
     void IoService::pollFor(double d)
     {
-      libport::pollFor(d*1000000.0, false, *this); 
+      libport::pollFor(d*1000000.0, false, *this);
     }
 
     void IoService::pollOneFor(double d)
