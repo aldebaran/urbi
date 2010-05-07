@@ -11,59 +11,59 @@
 const var Global.Mutex = Tag.new;
 do (Mutex)
 {
-  var type = "Mutex" |
-  var asMutex = this |
+  var type = "Mutex";
+  function asMutex() { this };
   var asString = Object.getSlot("asString");
 
   function init()
   {
-    var this.sem = Semaphore.new(1);
-    at (enter?) lock;
-    at (leave?) unlock;
+    var this.sem = Semaphore.new(1)|
+    at (enter?) lock |
+    at (leave?) unlock
   };
 
   function lock()
   {
-    this.sem.acquire;
+    sem.acquire
   };
 
   function unlock()
   {
-    this.sem.release;
+    sem.release
   };
 
   function '!'()
   {
-    return NotMutex.new(this);
+    NotMutex.new(this)
   };
 };
 
 var Global.NotMutex = Mutex.new;
 do (NotMutex)
 {
-  var type = "NotMutex" |
-  var asNotMutex = this |
+  var type = "NotMutex";
+  function asNotMutex() { this };
   var asString = Object.getSlot("asString");
 
-  function init(mtx)
+  function clone()
+  {
+    var res = Mutex.new|
+    res.protos = [NotMutex]|
+    res;
+  };
+
+  function init(var mtx)
   {
     var this.mtx = mtx
   };
 
-  function clone()
-  {
-    var res = Mutex.new;
-    res.protos = [NotMutex];
-    return res;
-  };
-
   function lock()
   {
-    this.mtx.unlock()
+    mtx.unlock
   };
 
   function unlock()
   {
-    this.mtx.lock()
+    mtx.lock
   };
 };
