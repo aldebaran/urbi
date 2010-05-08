@@ -87,8 +87,12 @@ class Global.TrajectoryGenerator
           res = res.head
 
       default:
-        res = 0|
-        "Warning: setting dummy startValue".print
+        // Accept unknown types as long as they have a '+' slot.
+        if (!res.hasSlot("+"))
+        {
+          res = 0|
+          "Warning: setting dummy startValue".print
+        }
     } |
     res
   };
