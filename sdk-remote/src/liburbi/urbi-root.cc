@@ -130,7 +130,7 @@ dlopen(const char* name, int)
 static void*
 dlsym(RTLD_HANDLE module, const char* name)
 {
-  return GetProcAddress(module, name);
+  return static_cast<void*>(GetProcAddress(module, name));
 }
 
 static const char*
