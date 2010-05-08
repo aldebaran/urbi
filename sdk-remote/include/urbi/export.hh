@@ -14,11 +14,15 @@
 # include <libport/detect-win32.h>
 
 # ifdef WIN32
+#if !defined STATIC_BUILD
 #  ifdef BUILDING_URBI_SDK
 #   define URBI_SDK_API __declspec(dllexport)
 #  else
 #   define URBI_SDK_API __declspec(dllimport)
 #  endif
+#else
+#define URBI_SDK_API
+#endif
 # else
 #  define URBI_SDK_API __attribute__((visibility("default")))
 # endif
