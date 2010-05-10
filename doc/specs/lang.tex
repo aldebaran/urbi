@@ -2977,6 +2977,57 @@ trigger the trajectory generator.
 See the specifications of \refObject{TrajectoryGenerator} for the list
 of supported trajectories.
 
+\section{Garbage collection and limitations}
+\label{sec:lang:gc}
+
+\us provides automatic garbage collection. That is, you can create new
+objects and don't have to worry about reclaiming the memory when you're done
+with them. We use a reference counting algorithm for garbage collection:
+every object has a counter indicating how many refererences to it
+exist. When that counter drops to zero, nobody has a reference to the object
+anymore, and it is thus deleted.
+
+\begin{urbiunchecked}
+{
+  var x = List.new; // A new list is allocated
+  x << 42;
+};
+// The list will be automatically freed, since there are no references to it left.
+\end{urbiunchecked}
+
+This is not part of the language interface, and we might change the garbage
+collecting system in the future. This imply you should not rely on the
+current garbage collecting behavior, and especially not on the determinism
+of the objects destruction time.
+
+However, this implementation has a limitation you should be aware of: cycle
+of object references won't be properly reclaimed. Indeed if object A has a
+reference to B, and B has a referance to A, none of them will ever be
+reclaimed since they both have a reference pointing to them. As a
+consequence, you should avoid creating cycles in object references, or if
+you really have to, break the cycle manually before releasing your last
+reference to the object.
+
+\begin{urbiunchecked}
+// Create a reference cycle
+var A = Object.new;
+var A.B = Object.new; // A refers to B
+var A.B.A = A; // B refers back to A
+
+removeSlot("A"); // delete our last reference to A
+// Although we have no reference left to A or B,
+// they won't be deleted since they refer to each other.
+\end{urbiunchecked}
+
+If you really need the cycle, this is how you could break it manually:
+
+\begin{urbiunchecked}
+A.B.removeSlot("A"); // Break the cycle
+removeSlot("A"); // Delete our last reference to A
+// A will be deleted since it's not referred from anywhere.
+// Since A held the last reference to B, B will be deleted too.
+\end{urbiunchecked}
+
 %%% Local Variables:
 %%% mode: latex
 %%% coding: utf-8
