@@ -84,7 +84,7 @@ libuobject@LIBSFX@_la_LIBADD =				\
 
 REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
-dist_noinst_HEADERS = $(REVISION_FILE)
+nodist_noinst_HEADERS = $(REVISION_FILE)
 
 dist_libuobject@LIBSFX@_la_SOURCES =
 nodist_libuobject@LIBSFX@_la_SOURCES =
