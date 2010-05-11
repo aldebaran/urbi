@@ -9,6 +9,8 @@ include build-aux/bootstrap.mk
 AUTOMAKE_OPTIONS += subdir-objects
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
+EXTRA_DIST += LICENSE
+
 libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status $@
 
