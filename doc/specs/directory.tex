@@ -22,15 +22,6 @@ the directory using a \refObject{String} or a \refObject{Path}. It can
 also be constructed by the method open of \refObject{Path}.
 
 \begin{urbiscript}[firstnumber=1]
-Directory.override("init", function {
-  call.message = "oldinit" | callMessage(call) |
-  clog << uid.asString + ": <" + fileCreated + ", " + fileDeleted + ">"
-})|
-Event.override("emit", function {
-  call.message = "oldemit" | callMessage(call) |
-  clog << "emit " + this.asString
-})|;
-
 Directory.new(".");
 [00000001] Directory(".")
 Directory.new(Path.new("."));
@@ -43,6 +34,15 @@ Directory.new(Path.new("."));
   The contents of the directory as a \refObject{Path} list.  The
   various paths include the name of the directory \lstinline|this|.
 
+\item[asList]
+  \refObject{String} containing the path of the directory.
+
+\begin{urbiscript}
+Directory.new(".").asString;
+[00000003] "."
+\end{urbiscript}
+
+
 \item[content]
   The contents of the directory as a \refObject{String} list.  The
   strings include only the last component name; they do not contain
@@ -52,17 +52,23 @@ Directory.new(Path.new("."));
   Event launched when a file is created inside the directory.  Be careful,
   this slot may not exists if the \us interpreter does not support for it.
 
-\begin{urbiscript}
-// watch the fileCreated event.
-at (Directory.new(".").fileCreated?(var name))
-  echo("File '%s' created." % name);
+%% firstline is used to separated inotify test from the others.
+\begin{urbiscript}[firstnumber=1]
+if (Path.new("./dummy.txt").exists)
+  File.new("./dummy.txt").remove;
 
-// Create a file to launch the fileCreated event.
-File.create("./dummy-file.txt")|;
-
-// wait until the event is reported.
-sleep(1s);
-[00000001] *** File 'dummy-file.txt' created.
+{
+  var d = Directory.new(".");
+  waituntil(d.fileCreated?(var name));
+  echo("%s is created." % name);
+  Path.new(d.asString + "/" + name).exists.print;
+} & {
+  // somewhen, a file is created
+  sleep(100ms);
+  File.create("./dummy.txt");
+}|;
+[00000004] *** dummy.txt is created.
+[00000005] true
 \end{urbiscript}
 
 \item \lstinline|fileDeleted(\var{name)|\\
@@ -70,17 +76,23 @@ sleep(1s);
   this slot may not exists if the \us interpreter does not support for it.
 
 \begin{urbiscript}
-// watch the fileDeleted event.
-at (Directory.new(".").fileDeleted?(var name))
-  echo("File '%s' deleted." % name);
+if (!Path.new("./dummy.txt").exists)
+  File.create("./dummy.txt")|;
 
-// Remove a file to launch the fileDeleted event.
-File.new("./dummy-file.txt").remove|;
-
-// wait until the event is reported.
-sleep(1s);
-[00000001] *** File 'dummy-file.txt' deleted.
+{
+  var d = Directory.new(".");
+  waituntil(d.fileDeleted?(var name));
+  echo("%s is deleted." % name);
+  Path.new(d.asString + "/" + name).exists.print;
+} & {
+  // somewhen, a file is deleted
+  sleep(100ms);
+  File.new("./dummy.txt").remove;
+}|;
+[00000006] *** dummy.txt is deleted.
+[00000007] false
 \end{urbiscript}
+%% Use firstline after this test if this is not related to inotify.
 
 
 \end{urbiscriptapi}

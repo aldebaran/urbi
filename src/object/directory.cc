@@ -102,6 +102,8 @@ namespace urbi
           }
 
           {
+            // FIXME: objects are refcounted and urbiserver->schedule is not
+            // thread safe.
             object::objects_type args;
             args << new object::String(evt.name);
             ::kernel::urbiserver->schedule(event, SYMBOL(emit), args);
@@ -148,7 +150,7 @@ namespace urbi
       if (!path->exists())
         FRAISE("does not exist: %s", path->as_string());
       if (!path->is_dir())
-        FRAISE("not a directory: '%s'", path->as_string());
+        FRAISE("not a directory: %s", path->as_string());
       path_ = path;
 
 #if HAVE_SYS_INOTIFY_H
