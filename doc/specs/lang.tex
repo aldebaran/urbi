@@ -2996,17 +2996,17 @@ anymore, and it is thus deleted.
 \end{urbiunchecked}
 
 This is not part of the language interface, and we might change the garbage
-collecting system in the future. This imply you should not rely on the
-current garbage collecting behavior, and especially not on the determinism
-of the objects destruction time.
+collecting system in the future. Therefore, do not rely on the current
+garbage collecting behavior, and especially not on the determinism of the
+destruction time of objects.
 
 However, this implementation has a limitation you should be aware of: cycle
 of object references won't be properly reclaimed. Indeed if object A has a
-reference to B, and B has a referance to A, none of them will ever be
+reference to B, and B has a reference to A, none of them will ever be
 reclaimed since they both have a reference pointing to them. As a
-consequence, you should avoid creating cycles in object references, or if
-you really have to, break the cycle manually before releasing your last
-reference to the object.
+consequence, avoid creating cycles in object references, or if you really
+have to, break the cycle manually before releasing your last reference to
+the object.
 
 \begin{urbiunchecked}
 // Create a reference cycle
