@@ -32,9 +32,9 @@ def type_boost(r, nargs, met):
         args += ['void']
     # Keep trailing space to avoid '>>'
     if met == 1:
-        args += ['libport::intrusive_ptr<S> ']
+        args += ['S* ']
     elif met == 2:
-        args += ['libport::intrusive_ptr<const S> ']
+        args += ['const S* ']
     else:
         args += ['S']
     for i in range(nargs):

@@ -47,6 +47,7 @@ namespace urbi
     Macro(FormatInfo);                          \
     Macro(Formatter);                           \
     Macro(InputStream);                         \
+    Macro(IoService);				\
     Macro(Job);                                 \
     Macro(List);                                \
     Macro(Lobby);                               \

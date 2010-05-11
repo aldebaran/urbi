@@ -130,6 +130,10 @@ object_cast(const urbi::UValue& v)
       return new object::String(*v.stringValue);
       break;
 
+    case urbi::DATA_SLOTNAME:
+      return object::global_class->slot_get(libport::Symbol(*v.stringValue));
+      break;
+
     case urbi::DATA_LIST:
     {
       object::rList l = new object::List();

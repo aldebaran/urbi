@@ -99,7 +99,7 @@ namespace urbi
       /// \return Whether the \a k slot exists
       bool slot_has(key_type k) const;
 
-      typedef std::pair<rObject, rSlot> location_type;
+      typedef std::pair<Object*, rSlot> location_type;
       /// Lookup field in object hierarchy.
       /// \param k         Slot name.
       /// \param fallback  Whether we agree to use the "fallback" method
@@ -254,13 +254,19 @@ namespace urbi
     public:
       void urbi_createSlot(key_type k);
       rObject getSlot(key_type k);
+      // Convenience overload because Symbols don't cast to strings.
+      rObject getSlot(const std::string& k);
       /// Return the associated value.
       /// \throw Exception.Lookup if not available locally.
       rObject getLocalSlot(key_type k);
+      rObject getProperty(const std::string& slot, const std::string& prop);
       rObject urbi_locateSlot(key_type k);
       rDictionary urbi_properties(key_type slotName);
       rObject urbi_removeSlot(key_type k);
+      rObject setProperty(const std::string& slot, const std::string& prop, const rObject& value);
       rObject setSlot(key_type slot, const rObject& value);
+      // Convenience overload because Symbols don't cast to strings.
+      rObject setSlot(const std::string& slot, const rObject& value);
       rObject urbi_setConstSlot(key_type k, const rObject& o);
       rObject urbi_updateSlot(key_type k, const rObject& o);
       rObject asPrintable() const;
@@ -268,6 +274,9 @@ namespace urbi
 
       template <typename T>
       void bind(const std::string& name, T);
+
+      template <typename F1, typename F2>
+      void bind(const std::string& getter_name, F1 getter, const std::string& setter_name, F2 setter);
 
       private:
       location_type slot_locate_(key_type k, bool fallback) const;

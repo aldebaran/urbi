@@ -11,6 +11,7 @@
 #include <kernel/userver.hh>
 
 #include <urbi/object/global.hh>
+#include <object/ioservice.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
 #include <object/symbols.hh>
@@ -21,9 +22,10 @@ namespace urbi
   {
     Socket::Socket()
       : CxxObject()
-      , libport::Socket(Socket::get_io_service())
+      , libport::Socket(*get_default_io_service().get())
       , server_()
       , disconnect_()
+      , io_service_(get_default_io_service())
     {
       proto_add(Object::proto);
       // FIXME: call slots_create here when uobjects load order is fixed
@@ -31,9 +33,10 @@ namespace urbi
 
     Socket::Socket(rServer server)
       : CxxObject()
-      , libport::Socket(Socket::get_io_service())
+      , libport::Socket(*server->getIoService().get())
       , server_(server)
       , disconnect_()
+      , io_service_(server->getIoService())
     {
       proto_add(proto);
       init();
@@ -41,12 +44,22 @@ namespace urbi
 
     Socket::Socket(rSocket)
       : CxxObject()
-      , libport::Socket(Socket::get_io_service())
+      , libport::Socket(*get_default_io_service().get())
       , server_()
       , disconnect_()
+      , io_service_(get_default_io_service())
     {
       proto_add(proto);
       // FIXME: call slots_create here when uobjects load order is fixed
+    }
+
+    Socket::Socket(rIoService io_service)
+      : CxxObject()
+      , libport::Socket(*io_service.get())
+      , io_service_(io_service)
+    {
+      proto_add(proto);
+      init();
     }
 
     void
@@ -66,6 +79,8 @@ namespace urbi
     }
     BOUNCE(std::string, host, getRemoteHost);
     BOUNCE(unsigned short, port, getRemotePort);
+    BOUNCE(std::string, localHost, getLocalHost);
+    BOUNCE(unsigned short, localPort, getLocalPort);
 #undef BOUNCE
 
     void
@@ -157,23 +172,39 @@ namespace urbi
     Socket::onRead(const void* data, size_t length)
     {
       std::string str(reinterpret_cast<const char*>(data), length);
-      EMIT1(received, str);
+      if (slot_has(SYMBOL(receive)))
+        call(SYMBOL(receive), to_urbi(str));
+      else
+        EMIT1(received, str);
       return length;
     }
 
     void
     Socket::write(const std::string& data)
     {
-      aver(isConnected());
+      if (!isConnected())
+        RAISE("socket not connected");
       libport::Socket::send(data);
+    }
+
+    void
+    Socket::syncWrite(const std::string& data)
+    {
+      if (!isConnected())
+        RAISE("socket not connected");
+      libport::Socket::syncWrite(data);
     }
 
     void
     Socket::poll()
     {
-      boost::asio::io_service& ios = get_io_service();
-      ios.reset();
-      ios.poll();
+      getIoService()->poll();
+    }
+
+    rIoService
+    Socket::getIoService() const
+    {
+      return io_service_;
     }
 
     void Socket::initialize(CxxObject::Binder<Socket>& bind)
@@ -186,23 +217,27 @@ namespace urbi
       DECLARE(host);
       DECLARE(init);
       DECLARE(isConnected);
+      DECLARE(localHost);
+      DECLARE(localPort);
       DECLARE(poll);
       DECLARE(port);
       DECLARE(write);
+      DECLARE(syncWrite);
+      DECLARE(getIoService);
 #undef DECLARE
-
       proto->slot_set(SYMBOL(connect), new Primitive(connect_overload));
     }
 
-    boost::asio::io_service&
-    Socket::get_io_service()
+    rIoService
+    Socket::get_default_io_service()
     {
-      static boost::asio::io_service* ios = new boost::asio::io_service;
-      return *ios;
+      static rIoService ios(new IoService);
+      return ios;
     }
 
     URBI_CXX_OBJECT_REGISTER(Socket)
-    {}
-
+    {
+      io_service_ = get_default_io_service();
+    }
   }
 }

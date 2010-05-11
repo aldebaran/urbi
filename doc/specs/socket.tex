@@ -163,15 +163,27 @@ var s = Socket.new|
   the error message in argument. The event \lstinline|disconnected| is
   also always launched.
 
+\item[getIoService]
+  Return the \refObject{IoService} used by this socket. Only the default
+  \lstinline|IoService| is automatically polled.
+
 \item[host]
-  The host of the connection.
+  The remote host of the connection.
 
 \item[isConnected]
   Whether \lstinline|this| is connected.
 
+\item[localHost]
+  The local host of the connection.
+
+\item[localPort]
+  The local port of the connection.
+
 \item[poll]
-  Runs the event processing loop to execute ready handlers. By
-  default, the loop is executed every \lstinline|pollInterval|.
+  Call \lstinline|getIoService.poll()|. This method is called regularily every
+  \lstinline|pollInterval| on the \lstinline|Socket| object. You do not need
+  to call this function on your sockets unless you use your own
+  \refSlot{IoService}.
 
 \item[pollInterval]
   Each \lstinline|pollInterval| amount of time, \refSlot{Socket}{poll}
@@ -179,7 +191,7 @@ var s = Socket.new|
   \refSlot{Socket}{poll} is not called.
 
 \item[port]
-  The port of the connection.
+  The remote port of the connection.
 
 \item[received]
   Event launched when \lstinline|this| has received data. The data is
@@ -187,6 +199,10 @@ var s = Socket.new|
 
 \item \lstinline|write(\var{data})|\\
   Sends \var{data} trough the connection.
+
+\item \lstinline|syncWrite(\var{data})|\\
+  Similar to \lstinline|write|, but forces the operation to complete
+  synchronously. Synchronous and asynchronous write operations cannot be mixed.
 
 \end{urbiscriptapi}
 

@@ -491,9 +491,21 @@ namespace urbi
     }
 
     rObject
+    Object::getProperty(const std::string& slot, const std::string& prop)
+    {
+      return property_get(libport::Symbol(slot), libport::Symbol(prop));
+    }
+
+    rObject
     Object::getSlot(key_type name)
     {
       return slot_get(name);
+    }
+
+    rObject
+    Object::getSlot(const std::string& name)
+    {
+      return getSlot(libport::Symbol(name));
     }
 
     rObject
@@ -526,10 +538,22 @@ namespace urbi
     }
 
     rObject
+    Object::setProperty(const std::string& slot, const std::string& prop, const rObject& value)
+    {
+      return property_set(libport::Symbol(slot), libport::Symbol(prop), value);
+    }
+
+    rObject
     Object::setSlot(key_type slot, const rObject& value)
     {
       slot_set(slot, value);
       return value;
+    }
+
+    rObject
+    Object::setSlot(const std::string& slot, const rObject& value)
+    {
+      return setSlot(libport::Symbol(slot), value);
     }
 
     rObject
