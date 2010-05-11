@@ -141,13 +141,16 @@ all=$(ssh $(scp_point "$from") \
 # Make sure that we have the same version for the three architectures.
 test -n "$latest" ||
   latest=$(echo "$all" |
-      perl -n -e 'if (m/((:?kernel-2.0|urbi-(?:runtime|sdk))
-                        -(?:beta|rc-)\d
-                        (?:-\d+-g[\da-f]{7})?)
+      perl -n -e 'if (m/((?:kernel|urbi-(?:runtime|sdk))
+                        -(?:\d+(?:\.\d+)+)
+                        (?:-(?:beta|rc-))?
+                        (?:-g[\da-f]{7})?)
                         -(?:linux|macos|windows)
-                        -(ARM|ppc|x86)
+                        -(?:ARM|ppc|x86)
                         (?:-gcc4-debug_dynamic|vcxx200\d)?/x)
                   { print "$1\n"; exit 0; }')
+
+stderr "latest: $latest"
 
 test -n "$latest" ||
   fatal "cannot find latest version from:" $all
