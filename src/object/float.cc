@@ -38,6 +38,12 @@
 
 #include <urbi/runner/raise.hh>
 
+#define MANUAL_NAN_INF_COND                                     \
+  /* MSVC displays "1.#INF/1.#QNAN" instead of "inf/nan" */     \
+  defined _MSC_VER ||                                           \
+  /* gcc 4.5.0  inf/inf --> -nan */                             \
+  (defined __GNUC__ && __GNUC__ == 4 && __GNUC_MINOR__ == 5)
+
 namespace urbi
 {
   namespace object
@@ -134,11 +140,10 @@ namespace urbi
     std::string
     Float::format(rFormatInfo finfo) const
     {
-      // MSVC displays "1.#INF/1.#QNAN" instead of "inf/nan".
       // FIXME: We should also support %20s and so forth.  The easiest
       // is then probably to reuse the FormatInfo, but with a string
       // "nan" etc.
-#if defined _MSC_VER
+# if MANUAL_NAN_INF_COND
       if (std::isnan(value_))
         // The "+" prefix is not obeyed, but " " is.
         return finfo->prefix_get() == " " ? " nan" : "nan";
@@ -146,7 +151,7 @@ namespace urbi
         // " inf", "+inf" etc.
         return finfo->prefix_get() + (0 < value_ ? "inf" : "-inf");
       else
-#endif
+# endif
       {
         std::string pattern(finfo->pattern_get());
 
@@ -173,8 +178,7 @@ namespace urbi
     std::string
     Float::as_string() const
     {
-      // MSVC displays "1.#INF/1.#QNAN" instead of "inf/nan".
-#if defined _MSC_VER
+#if MANUAL_NAN_INF_COND
       if (std::isnan(value_))
         return "nan";
       else if (std::isinf(value_))
