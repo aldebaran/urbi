@@ -21,6 +21,9 @@
 
 # include <ostream>
 
+# include <boost/bind.hpp>
+# include <boost/tr1/type_traits.hpp>
+
 # include <libport/containers.hh>
 # include <libport/indent.hh>
 # include <libport/foreach.hh>
@@ -171,9 +174,36 @@ namespace urbi
     | Binding system |
     `---------------*/
 
+    template <bool mem, typename T>
+    struct DispatchBind_
+    {
+      static void
+      res(Object* o, const std::string& name, T p)
+      {
+        o->bindfun_(name, p);
+      }
+    };
+
+    template <typename T>
+    struct DispatchBind_<true, T>
+    {
+      static void
+      res(Object* o, const std::string& name, T p)
+      {
+        o->bindvar_(name, p);
+      }
+    };
+
     template <typename T>
     inline void
     Object::bind(const std::string& name, T p)
+    {
+      DispatchBind_<std::tr1::is_member_object_pointer<T>::value, T>::res(this, name, p);
+    }
+
+    template <typename T>
+    inline void
+    Object::bindfun_(const std::string& name, T p)
     {
       libport::Symbol sym(name);
       if (!local_slot_get(sym))
@@ -184,6 +214,28 @@ namespace urbi
         if (rPrimitive prim = (*v)->as<Primitive>())
           extend_primitive(prim, p);
       }
+    }
+
+    template <typename Self, typename T>
+    T bindvar_getter_(Self* self, T (Self::*Attr))
+    {
+      return self->*Attr;
+    }
+
+    template <typename Self, typename T>
+    T bindvar_setter_(Self* self, const std::string&, T val, T (Self::*Attr))
+    {
+      return self->*Attr = val;
+    }
+
+    template <typename Self, typename T>
+    inline void
+    Object::bindvar_(const std::string& name, T (Self::*attr))
+    {
+      boost::function1<T, Self*> getter(boost::bind(&bindvar_getter_<Self, T>, _1, attr));
+      boost::function3<void, Self*, const std::string&, T> setter(boost::bind(&bindvar_setter_<Self, T>, _1, _2, _3, attr));
+      bind(libport::Symbol(name), getter);
+      setProperty(name, "updateHook", make_primitive(setter));
     }
 
   } // namespace object

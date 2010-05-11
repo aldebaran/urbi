@@ -272,13 +272,23 @@ namespace urbi
       rObject asPrintable() const;
       rObject asToplevelPrintable() const;
 
+      /*--------.
+      | Binding |
+      `--------*/
+    public:
       template <typename T>
       void bind(const std::string& name, T);
-
       template <typename F1, typename F2>
       void bind(const std::string& getter_name, F1 getter, const std::string& setter_name, F2 setter);
+    private:
+      template <bool mem, typename T>
+      friend class DispatchBind_;
+      template <typename T>
+      void bindfun_(const std::string& name, T);
+      template <typename Self, typename T>
+      void bindvar_(const std::string& name, T (Self::*));
 
-      private:
+
       location_type slot_locate_(key_type k, bool fallback) const;
 
       /// The protos.
