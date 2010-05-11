@@ -822,7 +822,7 @@ namespace urbi
       rObject o = get_base(p.first);
       if (!o)
         FRAISE("UEvent creation on non existing object: %s", p.first);
-      else if (!o->slot_has(Symbol(p.second)))
+      else if (!o->local_slot_get(Symbol(p.second)))
         o->slot_set(Symbol(p.second), e);
     }
 
