@@ -787,7 +787,9 @@ Dictionary:
   printer:
     - '"["'
     - '{
-         if (!n->value_get().empty())
+         if (n->value_get().empty())
+           ostr_ << " => ";
+         else
          {
            ostr_ << libport::incindent;
            foreach (modifiers_type::value_type exp, n->value_get())
