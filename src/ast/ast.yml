@@ -794,7 +794,10 @@ Dictionary:
            ostr_ << libport::incindent;
            foreach (modifiers_type::value_type exp, n->value_get())
              ostr_  << libport::iendl
-                    << exp.first << " => " << *exp.second.get() << ",";
+                    << "\"" << exp.first << "\""
+                    << " => "
+                    << *exp.second.get()
+                    << ",";
            ostr_ << libport::decendl;
          }
        }'
