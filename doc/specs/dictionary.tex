@@ -110,6 +110,13 @@ An extra comma can be added at the end of the list.
 };
 \end{urbiscript}
 
+\item[asString] A string representing the dictionary.  There is no guarantee
+  on the order of the output.
+\begin{urbiassert}
+                [=>].asString == "[ => ]";
+["a" => 1, "b" => 2].asString == "[\"a\" => 1, \"b\" => 2]";
+\end{urbiassert}
+
 \item[clear]
   Empty the dictionary.
 

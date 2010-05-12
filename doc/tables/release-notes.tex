@@ -17,12 +17,20 @@ This chapter lists the user-visible changes in \usdk releases.
 \begin{itemize}
 \item \refSlot{Job}{asString}
 \item \refObject{IoService}
-\item Documentation about garbage collection (\autoref{sec:lang:gc}).
 \end{itemize}
 
 \subsection{Fixes}
 \begin{itemize}
 \item \refSlot{Mutex}{asMutex} is fixed.
+\end{itemize}
+
+\subsection{Documentation}
+\begin{itemize}
+\item Garbage collection (\autoref{sec:lang:gc}).
+\item \refSlot{Dictionary}{asString}.
+\item \refSlot{List}{max}, \refSlot{List}{min}.
+\item \refSlot{Mutex}{asMutex}.
+\item \refSlot{Object}{localSlotNames}.
 \end{itemize}
 
 
@@ -310,7 +318,7 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \subsubsection{New features}
 \begin{itemize}
 \item asBool
-\item \refSlot{Channel}{wall}
+\item \refSlot{Lobby}{wall}
 \item \refSlot{Dictionary}{size}
 \item \refSlot{Global}{evaluate}
 \item \refSlot{Group}{each}, \lstinline|Group.each&|

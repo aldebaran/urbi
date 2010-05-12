@@ -365,6 +365,23 @@ void.isVoid;
 !(42.isVoid);
 \end{urbiassert}
 
+\item[localSlotNames] Return a list with the names of the local slots of
+  \lstinline|this|, not including those of its ancestors.  See also
+  \refSlot{Object}{slotNames}.
+\begin{urbiassert}
+var top = Object.new;
+var top.top1 = 1;
+var top.top2 = 2;
+var bot = top.new;
+var bot.bot1 = 10;
+var bot.bot2 = 20;
+assert
+{
+  top.localSlotNames = ["top1", "top2"];
+  bot.localSlotNames = ["bot1", "bot2"];
+};
+\end{urbiassert}
+
 \item[locateSlot](<slot>)%
   Return \lstinline|nil| if \lstinline|this| don't have the slot
   \lstinline|slot|. Otherwise it returns the first lowest owner of
@@ -538,13 +555,13 @@ theObject === Object;
   ancestors.
 \begin{urbiassert}
 Object.localSlotNames
-  .subset(Object.allSlotNames);
+  .subset(Object.slotNames);
 Object.protos.foldl(function (var r, var p) { r + p.localSlotNames },
                     [])
-  .subset(Object.allSlotNames);
+  .subset(Object.slotNames);
 \end{urbiassert}
 
-\item \lstinline|type|\\ % fix color $
+\item[type]%
   The name of the type of \lstinline|this|.  The \lstinline|class|
   construct defines this slot to the name of the class
   (\autoref{sec:tut:class}).  This is used to display the name of

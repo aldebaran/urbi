@@ -34,6 +34,20 @@ m: echo("this is critical section");
 As a critical section, two pieces of code tagged by the same ``Mutex''
 will never be executed at the same time.
 
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[asMutx]  Return \lstinline|this|.
+\begin{urbiscript}
+var m1 = Mutex.new;
+assert
+{
+  m1.asMutex === m1;
+};
+\end{urbiscript}
+\end{urbiscriptapi}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
