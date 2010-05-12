@@ -53,7 +53,9 @@ namespace urbi
 
 #if HAVE_SYS_INOTIFY_H
     // Event polling thread
-    static boost::unordered_map<unsigned, std::pair<rObject, rObject> > _watch_map;
+    typedef std::pair<rObject, rObject> _watch_map_elem_t;
+    typedef boost::unordered_map<unsigned, _watch_map_elem_t> _watch_map_t;
+    static _watch_map_t _watch_map;
     static libport::Lockable _watch_map_lock;
     static int _watch_fd;
 
@@ -100,6 +102,8 @@ namespace urbi
           }
 
           {
+            // FIXME: objects are refcounted and urbiserver->schedule is not
+            // thread safe.
             object::objects_type args;
             args << new object::String(evt.name);
             ::kernel::urbiserver->schedule(event, SYMBOL(emit), args);
@@ -132,11 +136,13 @@ namespace urbi
     void
     Directory::create_events()
     {
+#if HAVE_SYS_INOTIFY_H
       CAPTURE_GLOBAL(Event);
       on_file_created_ = Event->call("new");
       slot_set(SYMBOL(fileCreated), on_file_created_);
       on_file_deleted_ = Event->call("new");
       slot_set(SYMBOL(fileDeleted), on_file_deleted_);
+#endif
     }
 
     void Directory::init(rPath path)
@@ -144,7 +150,7 @@ namespace urbi
       if (!path->exists())
         FRAISE("does not exist: %s", path->as_string());
       if (!path->is_dir())
-        FRAISE("not a directory: '%s'", path->as_string());
+        FRAISE("not a directory: %s", path->as_string());
       path_ = path;
 
 #if HAVE_SYS_INOTIFY_H
@@ -153,9 +159,24 @@ namespace urbi
       if (watch == -1)
         FRAISE("unable to watch directory: %s", libport::strerror(errno));
       {
+        _watch_map_elem_t events(on_file_created_, on_file_deleted_);
         libport::BlockLock lock(_watch_map_lock);
-        _watch_map[watch].first = on_file_created_;
-        _watch_map[watch].second = on_file_deleted_;
+        std::pair<_watch_map_t::iterator, bool> res =
+          _watch_map.insert(_watch_map_t::value_type(watch, events));
+
+        // inotify return a uniq identifier per path.  If events are
+        // registered we just re-use them instead.  This is fine as long as
+        // Directory are not mutable.
+        if (!res.second)
+        {
+          // Update the directory references.
+          events = res.first->second;
+          on_file_created_ = events.first;
+          on_file_deleted_ = events.second;
+          // update the slots to make the modification visible in Urbiscript.
+          slot_update(SYMBOL(fileCreated), on_file_created_, false);
+          slot_update(SYMBOL(fileDeleted), on_file_deleted_, false);
+        }
       }
 #endif
     }

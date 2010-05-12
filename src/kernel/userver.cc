@@ -415,9 +415,19 @@ namespace kernel
       {
         object::rPrimitive p = new object::Primitive
           (boost::bind(method_wrap, job.target, job.method, job.args, _1));
-        sched::rJob interpreter =  new runner::Interpreter
+
+        // Clone the shell to run asynchronous jobs.
+        runner::Interpreter* interpreter =  new runner::Interpreter
           (*ghost_connection_get().shell_get(), p, job.method, job.args);
-        scheduler_->add_job(interpreter);
+
+        // Clean the tag stack because the shell could be frozen and
+        // scheduled jobs have no reason to inherit frozen tags.
+        interpreter->tag_stack_clear();
+
+        // FIXME: clean the stack of the interpreter, this cause strange
+        // issue where scheduled jobs inherit the stack of the primary
+        // shell.
+         scheduler_->add_job(sched::rJob(interpreter));
       }
       async_jobs_.clear();
     }

@@ -216,3 +216,16 @@ function skip_if_windows ()
     System._exit(176)
   }
 }|;
+
+// These would be override if there is a support for inotify.
+do(Directory)
+{
+  var fileCreated = Event.new;
+  fileCreated.'waituntil' = function /* skip_if_no_inotify */
+  {
+    cerr << "this test cannot run without inotify support";
+    System._exit(176)
+  }|;
+
+  var fileDeleted = fileCreated;
+}|;
