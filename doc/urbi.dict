@@ -1,4 +1,4 @@
-personal_ws-1.1 en 900 utf-8
+personal_ws-1.1 en 910 utf-8
 aaa
 abc
 abcdef
@@ -191,7 +191,6 @@ doesNotExist
 doin
 DUMPBIN
 dumpState
-DYLD
 dyld
 dylib
 eachBg
@@ -269,6 +268,7 @@ getenv
 getHeight
 getHis
 getImage
+getIoService
 getLazyLocalSlot
 getLine
 getLocalSlot
@@ -346,6 +346,8 @@ insectoid
 insertBack
 insertFront
 interruptible
+io
+IoService
 IP
 isA
 isalnum
@@ -413,8 +415,10 @@ loadFile
 loadLibrary
 loadModule
 loc
+localHost
 localhost
 localizer
+localPort
 localSlotNames
 locateSlot
 lockMode
@@ -429,6 +433,8 @@ lvalue
 MacOS
 MacPorts
 makeCompactNames
+makeServer
+makeSocket
 ManipulateNode
 matchAgainst
 MatchFailure
@@ -544,7 +550,9 @@ Pierron
 playSound
 plugin
 plusTwo
+pollFor
 pollInterval
+pollOneFor
 popback
 popfront
 pos
@@ -626,6 +634,7 @@ SEGVs
 sendbin
 sep
 sequentiality
+serverPort
 servohub
 setAngle
 setBypass
@@ -706,6 +715,7 @@ syncEmit
 syncline
 synclines
 syncValue
+syncWrite
 SYSV
 taglist
 Tardieu
