@@ -27,7 +27,7 @@ other instances.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item \lstinline|abs(\var{float})|\\
+\item[abs](<float>)%
   Bounce to \lstinline|\var{float}.abs|.
 \begin{urbiassert}
 Math.abs(1) == 1;
@@ -35,52 +35,52 @@ Math.abs(-1) == 1;
 Math.abs(0) == 0;
 Math.abs(3.5) == 3.5;
 \end{urbiassert}
-\item \lstinline|acos(\var{float})|\\
+\item[acos](<float>)%
   Bounce to \lstinline|\var{float}.acos|.
 
-\item \lstinline|asin(\var{float})|\\
+\item[asin](<float>)%
   Bounce to \lstinline|\var{float}.asin|.
 
-\item \lstinline|atan(\var{float})|\\
+\item[atan](<float>)%
   Bounce to \lstinline|\var{float}.atan|.
 \begin{urbiassert}
 Math.atan(1) ~= pi/4;
 \end{urbiassert}
 
-\item \lstinline|atan2(\var{x}, \var{y})|\\
+\item[atan2](<x>, <y>)%
   Bounce to \lstinline|\var{x}.atan2(\var{y})|.
 \begin{urbiassert}
 Math.atan2(2, 2) ~= pi/4;
 Math.atan2(-2, 2) ~= -pi/4;
 \end{urbiassert}
 
-\item \lstinline|cos(\var{float})|\\
+\item[cos](<float>)%
   Bounce to \lstinline|\var{float}.cos|.
 \begin{urbiassert}
 Math.cos(0) == 1;
 Math.cos(pi) ~= -1;
 \end{urbiassert}
 
-\item \lstinline|exp(\var{float})|\\
+\item[exp](<float>)%
   Bounce to \lstinline|\var{float}.exp|.
 
 \item[inf]
   Bounce to \refSlot{Float}{inf}.
 
-\item \lstinline|log(\var{float})|\\
+\item[log](<float>)%
   Bounce to \lstinline|\var{float}.log|.
 \begin{urbiassert}
 Math.log(1) == 0;
 \end{urbiassert}
 
-\item \lstinline|max(\var{arg1}, ...)|\\
+\item[max](<arg1>, ...)%
   Bounce to \lstinline|[\var{arg1}, ...].max|, see \refObject{List}.
 \begin{urbiassert}
 max( 100,   20,   3 ) == 100;
 max("100", "20", "3") == "3";
 \end{urbiassert}
 
-\item \lstinline|min(\var{arg1}, ...)|\\
+\item[min](<arg1>, ...)%
   Bounce to \lstinline|[\var{arg1}, ...].min|, see \refObject{List}.
 \begin{urbiassert}
 min( 100,   20,   3 ) ==     3;
@@ -93,10 +93,10 @@ min("100", "20", "3") == "100";
 \item[pi]
   Bounce to \refSlot{Float}{pi}.
 
-\item \lstinline|random(\var{float})|\\
+\item[random](<float>)%
   Bounce to \lstinline|\var{float}.random|.
 
-\item \lstinline|round(\var{float})|\\
+\item[round](<float>)%
   Bounce to \lstinline|\var{float}.round|.
 \begin{urbiassert}
 Math.round(1) == 1;
@@ -106,7 +106,7 @@ Math.round(1.5) == 2;
 Math.round(1.51) == 2;
 \end{urbiassert}
 
-\item \lstinline|sign(\var{float})|\\
+\item[sign](<float>)%
   Bounce to \lstinline|\var{float}.sign|.
 \begin{urbiassert}
 Math.sign(2)  == 1;
@@ -114,35 +114,35 @@ Math.sign(-2) == -1;
 Math.sign(0)  == 0;
 \end{urbiassert}
 
-\item \lstinline|sin(\var{float})|\\
+\item[sin](<float>)%
   Bounce to \lstinline|\var{float}.sin|.
 \begin{urbiassert}
 Math.sin(0) == 0;
 Math.sin(pi) ~= 0;
 \end{urbiassert}
 
-\item \lstinline|sqr(\var{float})|\\
+\item[sqr](<float>)%
   Bounce to \lstinline|\var{float}.sqr|.
 \begin{urbiassert}
 Math.sqr(2.2) ~= 4.84;
 \end{urbiassert}
 
-\item \lstinline|sqrt(\var{float})|\\
+\item[sqrt](<float>)%
   Bounce to \lstinline|\var{float}.sqrt|.
 \begin{urbiassert}
 Math.sqrt(4) == 2;
 \end{urbiassert}
 
-\item \lstinline|srandom(\var{float})|\\
+\item[srandom](<float>)%
   Bounce to \lstinline|\var{float}.srandom|.
 
-\item \lstinline|tan(\var{float})|\\
+\item[tan](<float>)%
   Bounce to \lstinline|\var{float}.tan|.
 \begin{urbiassert}
 Math.tan(pi/4) ~= 1;
 \end{urbiassert}
 
-\item \lstinline|trunc(\var{float})|\\
+\item[trunc](<float>)%
   Bounce to \lstinline|\var{float}.trunc|.
 \begin{urbiassert}
 Math.trunc(1) == 1;

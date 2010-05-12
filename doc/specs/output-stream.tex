@@ -55,7 +55,7 @@ OutputStream.new(File.create("new.txt"));
 OutputStream.new(File.create("file.txt")).close.isVoid;
 \end{urbiassert}
 
-\item \lstinline|putByte(\var{byte})|\\
+\item[putByte](<byte>)%
   In order to private efficient input/output operations,
   \dfn[buffer]{buffers} are used.  As a consequence, what is put into
   a stream might not be immediately saved on the actual file.  To

@@ -28,7 +28,7 @@ Details on the architecture the \urbi server runs on.
 %% \item[spawn]
 %% \item[stats]
 %% \item[stopall]
-\item \lstinline|_exit(\var{status})|\\
+\item[_exit](<status>)%
   Shut the server down brutally: the connections are not closed, and
   the resources are not explicitly released (the operating system
   reclaims most of them: memory, file descriptors and so forth).
@@ -66,7 +66,7 @@ $ ./echo -x 12 -v "foo"
 [00000172] ["-x", "12", "-v", "foo"]
 \end{shell}
 
-\item \lstinline|assert_(\var{assertion}, \var{message})|\\
+\item[assert_](<assertion>, <message>)%
   If \var{assertion} does not evaluate to true, throw the failure
   \var{message}.
 \begin{urbiscript}
@@ -87,7 +87,7 @@ assert_(1 == 1 + 1, "one is not two");
 [00000002:error] !!! failed assertion: 1 . '=='(1 . '+'(1))
 \end{urbiscript}
 
-\item \lstinline|assert_op(\var{operator}, \var{lhs}, \var{rhs})|\\
+\item[assert_op](<operator>, <lhs>, <rhs>)%
   Unless \refSlot{System}{ndebug} is true, throw an error if
   \lstinline|\var{lhs} \var{operator} \var{rhs}| is not verified.
 \begin{urbiscript}
@@ -124,7 +124,7 @@ outermost;
 };
 \end{urbiscript}
 
-\item \lstinline|eval(\var{source})|\\
+\item[eval](<source>)%
   Evaluate the \us \var{source}, and return its result.  The
   \var{source} must be complete, yet the terminator (e.g., \samp{;})
   is not required.
@@ -164,7 +164,7 @@ catch (var e)
 };
 \end{urbiscript}
 
-\item \lstinline|getenv(\var{name})|\\
+\item[getenv](<name>)%
   Return the value of the environment variable \var{name} as a
   \refObject{String} if set, \lstinline|nil| otherwise.  See also
   \refSlot{System}{setenv} and \refSlot{System}{unsetenv}.
@@ -173,7 +173,7 @@ getenv("UndefinedEnvironmentVariable").isNil;
 !getenv("PATH").isNil;
 \end{urbiassert}
 
-\item \lstinline|loadFile(\var{file})|\\
+\item[loadFile](<file>)%
   Load the \us file \var{file}.  Throw a \lstinline|FileNotFound|
   error if the file cannot be found.  Return the last value of the
   file.
@@ -183,7 +183,7 @@ System.system("echo '123;' >123.u") == 0;
 loadFile("123.u") == 123;
 \end{urbiassert}
 
-\item \lstinline|load(\var{file})|\\
+\item[load](<file>)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}),
   and load it.  Throw a \lstinline|FileNotFound| error if the file
   cannot be found.  Return the last value of the file.
@@ -193,7 +193,7 @@ System.system("echo '123;' >123.u") == 0;
 load("123.u") == 123;
 \end{urbiassert}
 
-\item \lstinline|loadLibrary(\var{library})|\\
+\item[loadLibrary](<library>)%
   Load the library \var{library}, to be found in the
   \env{URBI\_UOBJECT\_PATH} search-path (see
   \autoref{sec:tools:envvars}), or the default UObject path.
@@ -201,12 +201,12 @@ load("123.u") == 123;
   The \Cxx symbols are made available to the other \Cxx components.  See also
   \lstinline|loadModule|.
 
-\item \lstinline|loadModule(\var{module})|\\
+\item[loadModule](<module>)%
   Load the \UObject \var{module}.  Same as \lstinline|loadLibrary|,
   except that the low-level \Cxx symbols are not made ``global'' (in
   the sense of the shared library loader).
 
-\item \lstinline|maybeLoad(\var{file}, \var{channel} = Channel.null)|\\
+\item[maybeLoad](<file>, <channel> = Channel.null)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}).
   If the file is found announce on \var{Channel} that \var{file} is
   about to be loaded, and load it.
@@ -237,7 +237,7 @@ Path.new(System.programName).basename
 
 \item[reboot] Restart the \urbi server.  Architecture dependent.
 
-\item \lstinline|searchFile(\var{file})|\\
+\item[searchFile](<file>)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars})
   and return its \refObject{Path}.  Throw a \lstinline|FileNotFound|
   error if the file cannot be found.
@@ -246,7 +246,7 @@ System.system("echo '123;' >123.u") == 0;
 searchFile("123.u") == Path.cwd / Path.new("123.u");
 \end{urbiassert}
 
-\item \lstinline|setenv(\var{name}, \var{value})|\\
+\item[setenv](<name>, <value>)%
   Set the environment variable \var{name} to
   \lstinline|\var{value}.asString|, and return this value.  See also
   \refSlot{System}{getenv} and \refSlot{System}{unsetenv}.
@@ -296,7 +296,7 @@ var Global.x = 0;
   be removed, or maybe just moved into \refObject{Tag}.  See
   \autoref{sec:specs:tag:scope}.
 
-\item \lstinline|sleep(\var{duration})|\\
+\item[sleep](<duration>)%
   Suspend the execution for \var{duration} seconds.  No CPU cycle is
   wasted during this wait.
 
@@ -327,7 +327,7 @@ var Global.x = 0;
 \item[shutdown] Have the \urbi server shut down.  All the connections
   are closed, the resources are released.  Architecture dependent.
 
-\item \lstinline|system(\var{command})|\\
+\item[system](<command>)%
   Ask the operating system to run the \var{command}.  This is
   typically used to start new processes.  The exact syntax of
   \var{command} depends on your system.  On Unix systems, this is
@@ -366,7 +366,7 @@ System.system("exit 23") >> 8
   };
 \end{urbiassert}
 
-\item \lstinline|unsetenv(\var{name})|\\
+\item[unsetenv](<name>)%
   Undefine the environment variable \var{name}, return its previous
   value.  See also \refSlot{System}{getenv} and
   \refSlot{System}{setenv}.

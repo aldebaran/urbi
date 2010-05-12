@@ -98,7 +98,7 @@ Position.new("file.u", 2, 3);
 Position.new(2, 3).column == 3;
 \end{urbiassert}
 
-\item \lstinline|columns(\var{n})|\\
+\item[columns](<n>)%
   Identical to \lstinline|'+'(\var{n})|.
 \begin{urbiassert}
 Position.new(2, 3).columns(2) == Position.new(2, 5);
@@ -118,7 +118,7 @@ Position.new(2, 3).file == nil;
 Position.new(2, 3).line == 2;
 \end{urbiassert}
 
-\item \lstinline|lines(\var{n})|\\
+\item[lines](<n>)%
   Add \var{n} lines and reset the column number to 1.
 \begin{urbiassert}
 Position.new(2, 3).lines(2) == Position.new(4, 1);

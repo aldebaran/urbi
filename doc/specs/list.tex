@@ -35,7 +35,7 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item \lstinline|all(\var{fun})|\\
+\item[all](<fun>)
   % FIXME: link to predicate glossary entry
   Return whether all the members of the target verify the predicate
   \var{fun}.
@@ -47,7 +47,7 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 [-2, 0, 2, 4].all(function (e) { e % 2 == 0 });
 \end{urbiassert}
 
-\item \lstinline|any(\var{fun})|\\
+\item[any](<fun>)
   % FIXME: link to predicate glossary entry
   Whether at least one of the members of the target verifies the
   predicate \var{fun}.
@@ -99,7 +99,7 @@ var x = [0, 1, 2];
 assert(x.clear == []);
 \end{urbiscript}
 
-\item \lstinline|each(\var{fun})|\\
+\item[each](<fun>)
   Apply the given functional value \var{fun} on all members,
   sequentially.
 
@@ -113,7 +113,7 @@ assert(x.clear == []);
 [00000000] *** 4
 \end{urbiscript}
 
-\item \lstinline|eachi(\var{fun})|\\
+\item[eachi](<fun>)
   Apply the given functional value \var{fun} on all members
   sequentially, additionally passing the current element index.
 
@@ -145,7 +145,7 @@ Apply the given functional value on all members simultaneously.
 ! [1].empty;
 \end{urbiassert}
 
-\item \lstinline|filter(\var{fun})|\\
+\item[filter](<fun>)
   The list of all the members of the target that verify the predicate
   \var{fun}.
 
@@ -164,7 +164,7 @@ do ([0, 1, 2, 3, 4, 5])
 }|;
 \end{urbiscript}
 
-\item \lstinline|foldl(\var{action}, \var{value})|\\
+\item[foldl](<action>, <value>)
   \wref[Fold_(higher-order_function)]{Fold},
   also known as \dfn{reduce} or \dfn{accumulate}, computes a result
   from a list.  Starting from \var{value} as the initial result, apply
@@ -192,7 +192,7 @@ assert([0, 1, 2].front == 0);
 [00000000:error] !!! front: cannot be applied onto empty list
 \end{urbiscript}
 
-\item \lstinline|has(\var{that})|\\
+\item[has](<that>)
   Whether one of the members of the target equals the argument.
 
 \begin{urbiassert}
@@ -210,7 +210,7 @@ assert([0, 1, 2].front == 0);
 !(1 not in [0, 1]);
 \end{urbiassert}
 
-\item \lstinline|hasSame(\var{that})|\\
+\item[hasSame](<that>)
   Whether one of the members of the target is physically equal to
   \var{that}.
 \begin{urbiscript}
@@ -230,7 +230,7 @@ assert([0, 1, 2].head == 0);
 [00000000:error] !!! head: cannot be applied onto empty list
 \end{urbiscript}
 
-\item \lstinline|insertBack(\var{that})|\\
+\item[insertBack](<that>)
   Insert the given element at the end of the target.
 
 \begin{urbiscript}
@@ -244,7 +244,7 @@ do ([0, 1])
 }|;
 \end{urbiscript}
 
-\item \lstinline|insert(\var{where}, \var{what})|\\
+\item[insert](<where>, <what>)
   Insert \var{what} before the value at index \var{where}, return
   \lstinline|this|.
 \begin{urbiscript}
@@ -270,7 +270,7 @@ do ([0, 1])
 \end{urbiscript}
 
 
-\item \lstinline|insertFront(\var{that})|\\
+\item[insertFront](<that>)
   Insert the given element at the beginning of the target.
 
 \begin{urbiscript}
@@ -284,7 +284,7 @@ do ([1, 2])
 }|;
 \end{urbiscript}
 
-\item \lstinline|join(\var{sep} = "", \var{prefix} = "", \var{suffix} = "")|\\
+\item[join](<sep> = "", <prefix> = "", <suffix> = "")
   Bounces to \refSlot{String}{join}, see \refObject{String}.
 
 \begin{urbiassert}
@@ -293,7 +293,7 @@ do ([1, 2])
 ["", "ob", ""].join("a", "B", "b") == "Baobab";
 \end{urbiassert}
 
-\item \lstinline|keys()|\\
+\item[keys]()
   The list of valid indexes.  This allows uniform iteration over a
   \refObject{Dictionary} or a \refObject{List}.
 
@@ -311,7 +311,7 @@ do ([1, 2])
 };
 \end{urbiscript}
 
-\item \lstinline|map(\var{fun})|\\
+\item[map](<fun>)
 Apply the given functional value on every member, and return the list
 of results.
 
@@ -320,7 +320,7 @@ of results.
         == [true, false, true, false];
 \end{urbiassert}
 
-\item \lstinline|range(\var{begin}, \var{end} = nil)|\\
+\item[range](<begin>, <end> = nil)
   Return a sub-range of the list, from the first index included to the
   second index excluded.  An error if out of bounds.  Negative indices
   are valid, and number from the end.
@@ -349,7 +349,7 @@ do ([0, 1, 2, 3])
 [00428697:error] !!! range: invalid index: 1
 \end{urbiscript}
 
-\item \lstinline|remove(\var{val})|\\
+\item[remove](<val>)
   Remove all elements from the target that equals \var{val}.
 
 \begin{urbiscript}
@@ -372,7 +372,7 @@ assert(t == [0, 1]);
 [00000000:error] !!! removeBack: cannot be applied onto empty list
 \end{urbiscript}
 
-\item \lstinline|removeById(\var{that})|\\
+\item[removeById](<that>)
   Remove all elements from the target that physically equals
   \var{that}.
 
@@ -420,7 +420,7 @@ Return the target, sorted with respect to the \lstinline|<| criteria.
 [1, 0, 3, 2].sort == [0, 1, 2, 3];
 \end{urbiassert}
 
-\item \lstinline|subset(\var{that})|\\
+\item[subset](<that>)
   Whether the members of \lstinline|this| are members of \var{that}.
 
 \begin{urbiassert}

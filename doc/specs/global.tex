@@ -61,18 +61,18 @@ cout << "\"quote\"";
 
 \item[Date] See \refObject{Date}.
 
-\item \lstinline|detach(\var{exp})|\\
+\item[detach](<exp>)%
   Bounce to \refSlot{Control}{detach}, see \refObject{Control}.
 
 \item[Dictionary] See \refObject{Dictionary}.
 \item[Directory] See \refObject{Directory}.
 
-\item \lstinline|disown(\var{exp})|\\
+\item[disown](<exp>)%
   Bounce to \refSlot{Control}{disown}, see \refObject{Control}.
 
 \item[Duration] See \refObject{Duration}.
 
-\item \lstinline|echo(\var{value}, \var{channel} = "")|\\
+\item[echo](<value>, <channel> = "")%
   Bounce to \lstinline|lobby.echo|, see \refObject{Lobby}.
 \begin{urbiscript}
 echo("111", "foo");
@@ -131,8 +131,8 @@ evaluate = "1/0;";
 \item[Group] See \refObject{Group}.
 \item[InputStream] See \refObject{InputStream}.
 %% FIXME: [00008768] ***   installUpdateHookStack : Code
-\item \lstinline|isdef(\var{qualified-identifier})|\\
-  Whether the \var{qualified-identifier} is defined.  It features some
+\item[isdef](<qualifiedIdentifier>)%
+  Whether the \var{qualifiedIdentifier} is defined.  It features some
   (fragile) magic to support an argument passed as a literal
   (\lstinline|isdef(foo)|), not a string (\lstinline|isdef("foo")|).  It is
   not recommended to use this feature, which is provided for \us
@@ -178,7 +178,7 @@ assert
 \item[Loadable] See \refObject{Loadable}.
 \item[Lobby] See \refObject{Lobby}.
 \item[Math] See \refObject{Math}.
-\item \lstinline|methodToFunction(\var{name})|\\
+\item[methodToFunction](<name>)%
   Create a function from the method \var{name} so that calling the
   function which arguments \lstinline|(\var{a}, \var{b}, ...)| is that
   same as calling \lstinline|\var{a}.\var{name}(\var{b}, ...)|.
@@ -207,7 +207,7 @@ assert
 \item[Path] See \refObject{Path}.
 \item[Pattern] See \refObject{Pattern}.
 
-\item \lstinline|persist(\var{exp})|\\
+\item[persist](<exp>)%
   Bounce to \refSlot{Control}{persist}, see \refObject{Control}.
 
 \item[Position] See \refObject{Position}.
@@ -240,7 +240,7 @@ assert
 
 \item[UVar] See \refObject{UVar}.
 \item[void] See \refObject{void}.
-\item \lstinline|wall(\var{value}, \var{channel} = "")|\\
+\item[wall](<value>, <channel> = "")%
   Bounce to \lstinline|lobby.wall|, see \refObject{Lobby}.
 \begin{urbiscript}
 wall("111", "foo");
@@ -251,7 +251,7 @@ wall(333);
 [00055205] *** 333
 \end{urbiscript}
 
-\item \lstinline|warn(\var{message})|\\
+\item[warn](<message>)%
   Issue \var{message} on \refSlot{Channel}{warning}.
 \begin{urbiscript}
 warn("cave canem");

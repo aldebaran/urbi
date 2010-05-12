@@ -28,12 +28,15 @@ This document is meant to be used to toy with \LaTeX{}.
 \chapter{First Chapter}
 
 This is the first chapter.
-
 \sectionObject{Bar}
 
 \begin{urbiscriptapi}
 \item[bar] This is Bar.bar.
-\item[foo] This is Bar.foo.
+\item[foo](<x>) This is Bar.foo with arguments.
+\item[set](<key>, <value>)
+  Map \lstinline|\var{key}| to \lstinline|\var{value}| and return
+  \lstinline|this| so that invocations to \lstinline|set| can be
+  chained.  The possibly existing previous mapping is overridden.
 \end{urbiscriptapi}
 
 \sectionObject{Foo}

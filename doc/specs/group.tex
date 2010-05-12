@@ -69,13 +69,13 @@ Group.new(1, "two");
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item \lstinline|add(\var{member}, ...)|\\
+\item[add](<member>, ...)%
   Add members to \lstinline|this| group, and return \lstinline|this|.
 
 \item[asString]
   Report the members.
 
-\item \lstinline|each(\var{action})|\\
+\item[each](<action>)%
   Apply \var{action} to all the members, in sequence, then return the
   Group of the results, in the same order.  Allows to iterate over a
   Group via \lstinline|for|.
@@ -93,26 +93,26 @@ Group.new(1, "two");
   \lstinline|void|, returns a single \lstinline|void|, not a ``group
   of \lstinline|void|''.
 
-\item \lstinline|getProperty(\var{slot}, \var{prop})|\\
+\item[getProperty](<slot>, <prop>)%
   Bounced to the members so that
   \lstinline|this.\var{slot}->\var{prop}| actually collects the values
   of the property \var{prop} of the slots \var{slot} of the group
   members.
 
-\item \lstinline|hasProperty(\var{name})|\\
+\item[hasProperty](<name>)%
   Bounced to the members.
 
-\item \lstinline|remove(\var{member}, ...)|\\
+\item[remove](<member>, ...)%
   Remove members from \lstinline|this| group, and return
   \lstinline|this|.
 
-\item \lstinline|setProperty(\var{slot}, \var{prop}, \var{value})|\\
+\item[setProperty](<slot>, <prop>, <value>)%
   Bounced to the members so that
   \lstinline|this.\var{slot}->\var{prop} = \var{value}|
   actually updates the value of the property \var{prop}
   in the slots \var{slot} of the group members.
 
-\item \lstinline|updateSlot(\var{name}, \var{value})|\\
+\item[updateSlot](<name>, <value>)%
   Bounced to the members so that
   \lstinline|this.\var{name} = \var{value}|
   actually updates the value of the slot \var{name} in

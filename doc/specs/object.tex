@@ -63,7 +63,7 @@ classes in traditional object-oriented programming languages (see
 \end{urbiscript}
 
 
-\item \lstinline|addProto(\var{proto})|\\
+\item[addProto](<proto>)%
   Add \var{proto} into the list of prototypes of \lstinline|this|.
   Return \lstinline|this|.
 \begin{urbiscript}
@@ -91,7 +91,7 @@ do (Object.new)
 Object.allSlotNames == Object.slotNames;
 \end{urbiassert}
 
-\item \lstinline|apply(\var{args})|\\
+\item[apply](<args>)%
   ``Invoke \lstinline|this|''.  The size of the argument list,
   \var{args}, must be one.  This argument is ignored.  This function
   exists for compatibility with \refSlot{Code}{apply}.
@@ -100,7 +100,7 @@ Object.apply([this]) === Object;
 Object.apply([1])    === Object;
 \end{urbiassert}
 
-\item \lstinline|as(\var{type})|\\
+\item[as](<type>)%
   Convert \lstinline|this| to \var{type}.  This is syntactic sugar for
   \lstinline|as\var{Type}| when \var{Type} is the \lstinline|type| of
   \var{type}.
@@ -120,7 +120,7 @@ void.asBool;
 [00000421:error] !!! unexpected void
 \end{urbiscript}
 
-\item \lstinline|bounce(\var{name})|\\
+\item[bounce](<name>)%
   Return \lstinline|this.\var{name}| transformed from a method into a
   function that takes its target (its ``\lstinline|this|'') as first
   and only argument.  \lstinline|this.\var{name}| must take no
@@ -131,7 +131,7 @@ void.asBool;
 { var myType = bounce("type"); myType(3.14); }   == "Float";
 \end{urbiassert}
 
-\item \lstinline|callMessage(\var{msg})|\\
+\item[callMessage](<msg>)%
   Invoke the \refObject{CallMessage} \var{msg} on this.
 %%% \begin{urbiscript}
 %%% function f(var tgt, var msg, var args)
@@ -157,7 +157,7 @@ Object.clone.protos == [Object];
 Object.clone.localSlotNames == [];
 \end{urbiassert}
 
-\item \lstinline|cloneSlot(\var{from}, \var{to})|\\
+\item[cloneSlot](<from>, <to>)%
   Set the new slot \var{to} using a clone of \var{from}. This can only
   be used into the same object.
 
@@ -167,7 +167,7 @@ cloneSlot("foo", "bar") |;
 assert(!(foo === bar));
 \end{urbiscript}
 
-\item \lstinline|copySlot(\var{from}, \var{to})|\\
+\item[copySlot](<from>, <to>)%
   Same as \lstinline|cloneSlot|, but the slot aren't cloned, so the
   two slot are the same.
 \begin{urbiscript}
@@ -176,7 +176,7 @@ cloneSlot("moo", "loo") |;
 assert(!(moo === loo));
 \end{urbiscript}
 
-\item \lstinline|createSlot(\var{name})|\\
+\item[createSlot](<name>)%
   Create an empty slot (which actually means it is bound to
   \lstinline|void|) named \var{name}.  Raise an error if \var{name}
   was already defined.
@@ -189,7 +189,7 @@ do (Object.new)
 }|;
 \end{urbiscript}
 
-\item \lstinline|dump(\var{depth})|\\
+\item[dump](<depth>)%
   Describe \lstinline|this|: its prototypes and slots.  The argument
   \var{depth} specifies how recursive the description is: the greater,
   the more detailed.  This method is mostly useful for debugging
@@ -229,7 +229,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 \item[getPeriod]
   Deprecated.  Use \refSlot{System}{period} instead.
 
-\item \lstinline|getProperty(\var{slotName}, \var{propName})|\\
+\item[getProperty](<slotName>, <propName>)%
   Return the value of the \var{propName} property associated to the
   slot \var{slotName} if defined, \lstinline|void| otherwise.
 \begin{urbiscript}
@@ -241,7 +241,7 @@ assert
 };
 \end{urbiscript}
 
-\item \lstinline|getLocalSlot(\var{name})|\\
+\item[getLocalSlot](<name>)%
   The value associated to \var{name} in \lstinline|this|, excluding
   its ancestors (contrary to \lstinline|getSlot|).
 \begin{urbiscript}
@@ -261,7 +261,7 @@ a.getLocalSlot("init");
 [00041066:error] !!! lookup failed: init
 \end{urbiscript}
 
-\item \lstinline|getSlot(\var{name})|\\
+\item[getSlot](<name>)%
   The value associated to \var{name} in \lstinline|this|, possibly
   after a look-up in its prototypes (contrary to
   \lstinline|getLocalSlot|).
@@ -286,7 +286,7 @@ b.getSlot("ENOENT");
 [00041066:error] !!! lookup failed: ENOENT
 \end{urbiscript}
 
-\item \lstinline|hasLocalSlot(\var{slot})|\\
+\item[hasLocalSlot](<slot>)%
   Whether \lstinline|this| features a slot \var{slot}, locally, not
   from some ancestor.  See also \refSlot{Object}{hasSlot}.
 \begin{urbiscript}
@@ -296,7 +296,7 @@ assert(Derive.hasLocalSlot("derive"));
 assert(!Derive.hasLocalSlot("base"));
 \end{urbiscript}
 
-\item \lstinline|hasProperty(\var{slotName}, \var{propName})|\\
+\item[hasProperty](<slotName>, <propName>)%
   Whether the slot \var{slotName} of \lstinline|this| has a property
   \var{propName}.
 \begin{urbiscript}
@@ -308,7 +308,7 @@ assert
 };
 \end{urbiscript}
 
-\item \lstinline|hasSlot(\var{slot})|\\
+\item[hasSlot](<slot>)%
   Whether \lstinline|this| has the slot \var{slot}, locally, or from
   some ancestor.  See also \refSlot{Object}{hasLocalSlot}.
 
@@ -320,7 +320,7 @@ Derive.hasSlot("base");
 
 \item \lstinline|'$id'|\\ % fix color $
 
-\item \lstinline|inspect(\var{deep} = false)|\\
+\item[inspect](<deep> = false)%
   Describe \lstinline|this|: its prototypes and slots, and their
   properties.  If \var{deep}, all the slots are described, not only
   the local slots. See also \refSlot{Object}{dump}.
@@ -335,7 +335,7 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
 [00001228] ***      prop : String = "bar"
 \end{urbiscript}
 
-\item \lstinline|isA(\var{obj})|\\
+\item[isA](<obj>)%
   Return true if \lstinline|this| has \var{obj} in his parents, false
   otherwise.
 \begin{urbiassert}
@@ -365,7 +365,7 @@ void.isVoid;
 !(42.isVoid);
 \end{urbiassert}
 
-\item \lstinline|locateSlot(\var{slot})|\\
+\item[locateSlot](<slot>)%
   Return \lstinline|nil| if \lstinline|this| don't have the slot
   \lstinline|slot|. Otherwise it returns the first lowest owner of
   \lstinline|slot| of \lstinline|this|.
@@ -389,7 +389,7 @@ locateSlot("doesNotExist").isNil;
 12.protos == [0];
 \end{urbiassert}
 
-\item \lstinline|properties(\var{slotName})|\\
+\item[properties](<slotName>)%
   Return a dictionary of the properties of slot \var{slotName}.  Raise
   an error if the slot does not exist.
 \begin{urbiscript}
@@ -401,7 +401,7 @@ do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
 [00238502] ["bar" => "bar", "constant" => false]
 \end{urbiscript}
 
-\item \lstinline|removeProperty(\var{slotName}, \var{propName})|\\
+\item[removeProperty](<slotName>, <propName>)%
   Remove the property \var{propName} from the slot \var{slotName}.
   Raise an error if the slot does not exist, do nothing if the
   property does not exist.
@@ -424,7 +424,7 @@ do (2)
 }|;
 \end{urbiscript}
 
-\item \lstinline|removeProto(\var{proto})|\\
+\item[removeProto](<proto>)%
   Remove \var{proto} from the list of prototypes of \lstinline|this|,
   and return \lstinline|this|.  Do nothing if \var{proto} is not a
   prototype of \lstinline|this|.
@@ -442,7 +442,7 @@ do (Object.new)
 }|;
 \end{urbiscript}
 
-\item \lstinline|removeSlot(\var{slot})|\\
+\item[removeSlot](<slot>)%
   Remove \var{slot} from the (local) list of slots of
   \lstinline|this|, and return \lstinline|this|.  Do nothing if
   \var{slot} does not exist.
@@ -478,7 +478,7 @@ fortyTwo = 51;
 [00000000:error] !!! cannot modify const slot
 \end{urbiscript}
 
-\item \lstinline|setProperty(\var{slotName}, \var{propName}, \var{value})|\\
+\item[setProperty](<slotName>, <propName>, <value>)%
   Set the property \var{propName} of slot \var{slotName} to
   \var{value}.  Raise an error in \var{slotName} does not exist.
   Return \var{value}.  This is what
@@ -503,7 +503,7 @@ setProperty("noSuchSlot", "prop", "12");
 \end{urbiscript}
 
 
-\item \lstinline|setProtos(\var{protos})|\\
+\item[setProtos](<protos>)%
   Set the list of prototypes of \lstinline|this| to \var{protos}.
   Return \lstinline|void|.
 \begin{urbiscript}
@@ -518,7 +518,7 @@ do (Object.new)
 }|;
 \end{urbiscript}
 
-\item \lstinline|setSlot(\var{name}, \var{value})|\\
+\item[setSlot](<name>, <value>)%
   Create a slot \var{name} mapping to \var{value}. Raise an error if
   \var{name} was already defined.  This is what
   \lstinline|var \var{name} = \var{value}| actually performs.
@@ -584,7 +584,7 @@ Example.new;
 \end{urbiscript}
 
 %%% FIXME: \item[uobjectInit]
-\item \lstinline|updateSlot(\var{name}, \var{value})|\\
+\item[updateSlot](<name>, <value>)%
   Map the existing slot named \var{name} to \var{value}. Raise an
   error if \var{name} was not defined.
 \begin{urbiassert}

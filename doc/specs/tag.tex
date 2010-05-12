@@ -375,7 +375,7 @@ var t2 = Tag.new("cool name");
   A sub-tag that prints out "tag\_name: begin" each time flow control
   enters the tagged code. See \autoref{sec:specs:tag:begin-end}.
 
-\item \lstinline|block(\var{result} = void)|\\
+\item[block](<result> = void)%
   Block any code tagged by \lstinline|this|.  Blocked tags can be
   unblocked using \refSlot{Tag}{unblock}.  If some \var{result} was
   specified, let stopped code return \var{result} as value.  See
@@ -403,7 +403,7 @@ var t2 = Tag.new("cool name");
 \item[leave] An event triggered each time flow control leaves the
   tagged code.  See \autoref{sec:specs:tag:enter-leave}.
 
-\item \lstinline|stop(\var{result} = void)|\\
+\item[stop](<result> = void)%
   Stop any code tagged by \lstinline|this|.  If some \var{result} was
   specified, let stopped code return \var{result} as value.
   See \autoref{sec:specs:tag:stop}.
