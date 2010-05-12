@@ -200,24 +200,19 @@ The three following examples illustrate these features.
 // Launch in background (using the comma) code that prints "ping"
 // every second.  Tag it to keep control over it.
 mytag:
-{
-  loop
-  {
-    echo("ping");
-    sleep(0.5s)
-  }
-},
-sleep(1.6s);
+  every (1s)
+    echo("ping"),
+sleep(2.5s);
 [00000000] *** ping
 [00001000] *** ping
 [00002000] *** ping
 // Suspend execution
 mytag.freeze;
 // No printing anymore
-sleep(1.6s);
+sleep(1s);
 // Resume execution
 mytag.unfreeze;
-sleep(0.1s);
+sleep(1s);
 [00007000] *** ping
 \end{urbiscript}
 
@@ -225,16 +220,12 @@ sleep(0.1s);
 // Now, we print out a message when we get out of the tag.
 {
   mytag:
-  {
-    loop
-    {
-      echo("ping"); sleep(1s)
-    }
-  };
+    every (1s)
+      echo("ping");
   // Execution flow jumps here if mytag is stopped.
   echo("Background job stopped")|
 },
-sleep(3s);
+sleep(2.5s);
 [00000000] *** ping
 [00001000] *** ping
 [00002000] *** ping
