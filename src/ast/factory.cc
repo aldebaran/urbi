@@ -121,9 +121,24 @@ namespace ast
   }
 
   rExp
-  Factory::make_assert(const yy::location&,
+  Factory::make_assert(const yy::location& l,
                        rExp cond) /* const */
   {
+    rCall call;
+    if ((call = dynamic_cast<Call*>(cond.get())) &&
+        !call->target_implicit() &&
+        call->arguments_get() &&
+        call->arguments_get()->size() == 1)
+    {
+      return
+        make_call(l, make_call(l, SYMBOL(System)),
+                  SYMBOL(assert_call),
+                  make_string(l, call->name_get()),
+                  call->target_get(),
+                  (*call->arguments_get())[0]
+                  );
+    }
+
     PARAMETRIC_AST
       (a,
        "System.'assert'(%exp:1)");

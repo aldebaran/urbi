@@ -30,23 +30,34 @@ do (System)
       assert_(call.evalArgAt(0), call.argString(0));
   };
 
-  // Return a string that represents the negation of "op".
-  function assert_neg_op (op)
+  var '$op_unary';
+  var '$op_binary';
+  var '$op_neg';
+
+  // to be executed when we have dictionnaries.
+  function '$register_ops'()
   {
-    var ops =
-      [
-        "=="  => "!=",
-        "===" => "!==",
-        "<"   => ">=",
-        "<="  => ">",
-      ];
-    for (var p: ops)
-      ops[p.second] = p.first;
-    ops.getWithDefault(op, "(! %s)" % op);
+    if (!this.'$op_unary'.isVoid)
+      return |
+    this.'$op_unary' = ["!", "-"] |
+    this.'$op_binary' = [
+      "==", "!=", "===", "!==", "=~=", "~=",
+      "<", ">", "<=", ">=", "in", "not in",
+    ] |
+    this.'$op_neg' = [
+      "==" => "!=",
+      "===" => "!==",
+      "<"   => ">=",
+      "<="  => ">",
+      "in"  => "not in",
+    ] |
+    // add the opposite.
+    for|(var p: this.'$op_neg')
+      this.'$op_neg'[p[1]] = p[0];
   };
 
-  /// assert_op(Operator: String | Lazy, Lhs, Rhs).
-  function assert_op
+  /// assert_call(Message: String | Lazy, Lhs, Rhs).
+  function assert_call
   {
     if (call.args.size != 3)
       throw Exception.Arity.new(call.message, call.args.size, 3) |
@@ -59,19 +70,36 @@ do (System)
 
       // Support lazy invocations (all arguments are lazy),
       // or a partially lazy one, to ease bouncing from assert_eq.
-      var opStr =
+      var message =
         {
           if (call.args[0].type == "String")
             call.args[0]
           else
             call.argAt(0);
-        } |
-      assert_(lhs.getSlot(opStr).apply([lhs, rhs]),
-              "%s %s %s (%s %s %s)"
-                 % [lhsStr, opStr, rhsStr,
-                    lhs.asPrintable, assert_neg_op(opStr), rhs.asPrintable])
+        }|
+
+      '$register_ops' |
+      var msg |
+      var pp_op = message |
+      if (message in '$op_neg')
+      {
+        msg = "%s %s %s (%s %s %s)" |
+        pp_op = '$op_neg'[message]
+      }
+      else
+        msg = "%s.%s(%s) (! %s.%s(%s))" |
+      msg = msg % [
+        lhsStr, message, rhsStr,
+        lhs.asPrintable, pp_op, rhs.asPrintable
+      ] |
+      assert_(lhs.getSlot(message).apply([lhs, rhs]), msg);
     }
   };
+
+
+  /// assert_op(Operator: String | Lazy, Lhs, Rhs).
+  var assert_op = getSlot("assert_call");
+
 
   /// assert_eq(Lhs, Rhs) and so forth.
   // Cannot do this, as we don't have Dictionary.each yet.
