@@ -37,9 +37,7 @@ public:
     UBindFunction(all, selfWriteB);
     UBindFunction(all, selfWriteI);
 
-    UBindFunction(all, setNotifyAccess);
-    UBindFunction(all, setNotifyChangeByName);
-    UBindFunction(all, setNotifyChangeByUVar);
+    UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar);
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
@@ -54,9 +52,7 @@ public:
     UBindFunction(all, uobjectName);
     UBindFunction(all, allUObjectName);
     UBindVar(all,a);
-    UBindVar(all,b);
-    UBindVar(all,c);
-    UBindVar(all,d);
+    UBindVars(all, b, c, d);
     UBindVar(all, initCalled);
     initCalled = 0;
     UBindVar(all, lastChange);

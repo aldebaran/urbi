@@ -13,6 +13,9 @@
 #ifndef URBI_UOBJECT_HXX
 # define URBI_UOBJECT_HXX
 
+#define URBI_BINDVARS(r, obj, v) UBindVar(obj, v);
+#define URBI_BINDFUNCTIONS(r, obj, v) UBindFunction(obj, v);
+#define URBI_BINDEVENTS(r, obj, v) UBindEvent(obj, v);
 namespace urbi
 {
 

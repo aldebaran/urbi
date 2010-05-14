@@ -20,6 +20,7 @@
 # include <libport/cmath>
 # include <libport/compiler.hh>
 # include <libport/fwd.hh>
+# include <libport/preproc.hh>
 # include <libport/thread-pool.hh>
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
@@ -50,6 +51,10 @@
 # define UBindVar(Obj,X) \
   UBindVarRename(Obj, X, #X)
 
+/// Bind multiple variables in one call
+# define UBindVars(Obj, ...) \
+  LIBPORT_VAARGS_APPLY(URBI_BINDVARS, Obj, __VA_ARGS__)
+
 
 /** Bind an event to an object.
 
@@ -62,6 +67,8 @@
 # define UBindEvent(Obj,X) \
   UBindEventRename(Obj, X, #X)
 
+# define UBindEvents(Obj, ...) \
+  LIBPORT_VAARGS_APPLY(URBI_BINDEVENTS, Obj, __VA_ARGS__)
 
 /** This macro inverts a UVar in/out accesses.
 
@@ -96,7 +103,8 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
 # define UBindFunction(Obj, X)                                           \
   UBindFunctionRename(Obj, X, #X)
 
-
+# define UBindFunctions(Obj, ...)  \
+  LIBPORT_VAARGS_APPLY(URBI_BINDFUNCTIONS, Obj, __VA_ARGS__)
 /** Bind the function so that it gets executed in a separate thread.
  *  @param Obj the UObject class name
  *  @param X the unquoted function name
