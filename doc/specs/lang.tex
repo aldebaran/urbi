@@ -2397,7 +2397,7 @@ assert
   42;
   1 == 1 + 1;
 };
-[00000002:error] !!! failed assertion: 1 . '=='(1 . '+'(1))
+[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
 \end{urbiscript}
 
 For sake of readability and compactness, this documentation shows
@@ -2407,7 +2407,7 @@ assertion blocks as follows.
 true;
 42;
 1 == 1 + 1;
-[00000002:error] !!! failed assertion: 1 . '=='(1 . '+'(1))
+[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
 \end{urbiassert}
 
 

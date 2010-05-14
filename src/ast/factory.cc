@@ -128,15 +128,26 @@ namespace ast
     if ((call = dynamic_cast<Call*>(cond.get())) &&
         !call->target_implicit() &&
         call->arguments_get() &&
-        call->arguments_get()->size() == 1)
+        call->arguments_get()->size() >= 1 &&
+
+        // Binary boolean operators are not desugared to respect operator
+        // sequences.
+        call->name_get() != SYMBOL(AMPERSAND_AMPERSAND) &&
+        call->name_get() != SYMBOL(PIPE_PIPE))
     {
-      return
+      rCall res =
         make_call(l, make_call(l, SYMBOL(System)),
                   SYMBOL(assert_call),
-                  make_string(l, call->name_get()),
-                  call->target_get(),
-                  (*call->arguments_get())[0]
-                  );
+                  new exps_type);
+#define ADD_ARG(v)                              \
+      res->arguments_get()->push_back(v)
+
+      ADD_ARG(make_string(l, call->name_get()));
+      ADD_ARG(call->target_get());
+      foreach(rExp e, *call->arguments_get())
+        ADD_ARG(e);
+#undef ADD_ARG
+      return res;
     }
 
     PARAMETRIC_AST

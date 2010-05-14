@@ -30,22 +30,16 @@ do (System)
       assert_(call.evalArgAt(0), call.argString(0));
   };
 
-  var '$op_unary';
-  var '$op_binary';
-  var '$op_neg';
-
   // to be executed when we have dictionnaries.
   function '$register_ops'()
   {
-    if (!this.'$op_unary'.isVoid)
+    if (this.hasSlot("$op_neg"))
       return |
-    this.'$op_unary' = ["!", "-"] |
-    this.'$op_binary' = [
-      "==", "!=", "===", "!==", "=~=", "~=",
-      "<", ">", "<=", ">=", "in", "not in",
+    var this.'$fun_rename' = [
+      "has"  => ("in", [(0, 1)]),
     ] |
-    this.'$op_neg' = [
-      "==" => "!=",
+    var this.'$op_neg' = [
+      "=="  => "!=",
       "===" => "!==",
       "<"   => ">=",
       "<="  => ">",
@@ -59,14 +53,11 @@ do (System)
   /// assert_call(Message: String | Lazy, Lhs, Rhs).
   function assert_call
   {
-    if (call.args.size != 3)
-      throw Exception.Arity.new(call.message, call.args.size, 3) |
+    if (call.args.size < 2)
+      throw Exception.Arity.new(call.message, call.args.size, 2) |
     if (!ndebug)
     {
-      var lhs = call.evalArgAt(1) |
-      var rhs = call.evalArgAt(2) |
-      var lhsStr = call.argString(1) |
-      var rhsStr = call.argString(2) |
+      '$register_ops' |
 
       // Support lazy invocations (all arguments are lazy),
       // or a partially lazy one, to ease bouncing from assert_eq.
@@ -75,24 +66,82 @@ do (System)
           if (call.args[0].type == "String")
             call.args[0]
           else
-            call.argAt(0);
+            call.argAt(0)
         }|
 
-      '$register_ops' |
-      var msg |
-      var pp_op = message |
-      if (message in '$op_neg')
+      // Skip the function name.
+      var args = call.args.tail |
+
+      // Evaluate all arguments, and pretty print them.
+      var argStr = args.map(closure (v) { v.asString }) |
+      var argVal = args.map(closure (v) { v.eval }) |
+      var argPrint = argVal.map(closure (v) { v.asPrintable }) |
+
+      // handle cases where an operator is just a sugar over a function
+      // name, and reorder the argument in consequences.
+      var op = message |
+      if (message in '$fun_rename')
       {
-        msg = "%s %s %s (%s %s %s)" |
-        pp_op = '$op_neg'[message]
+        var renamed = '$fun_rename'[message] |
+        op = renamed[0] |
+        var tmp |
+        for|(var sw: renamed[1])
+        {
+          tmp = argStr[sw[0]] |
+          argStr[sw[0]] = argStr[sw[1]] |
+          argStr[sw[1]] = tmp |
+          tmp = argPrint[sw[0]] |
+          argPrint[sw[0]] = argPrint[sw[1]] |
+          argPrint[sw[1]] = tmp |
+        }
+      } |
+
+      var msg |
+      var simpleMsg |
+      var pp_op = op |
+      if (args.size == 2 && op in '$op_neg')
+      {
+        // Output messages for operators
+        msg = "%s %s %s" |
+        simpleMsg = "%s %s %s" |
+        pp_op = '$op_neg'[op]
       }
       else
-        msg = "%s.%s(%s) (! %s.%s(%s))" |
-      msg = msg % [
-        lhsStr, message, rhsStr,
-        lhs.asPrintable, pp_op, rhs.asPrintable
-      ] |
-      assert_(lhs.getSlot(message).apply([lhs, rhs]), msg);
+      {
+        // Different ouput message in function of the number of arguments.
+        if (args.size == 1)
+          msg = "%s.%s()"
+        else if (args.size == 2)
+          msg = "%s.%s(%s)"
+        else
+          msg = "%s.%s(%s" + (", %s" * args.size - 2) + ")" |
+
+        simpleMsg = "! " + msg |
+      }|
+
+      var msgArgs = [argStr.head, op] + argStr.tail |
+      var simpleMsgArgs = [argPrint.head, pp_op] + argPrint.tail |
+
+      // Check if the simplified message is identical to the complex message
+      // to avoid identical messages.
+      var simple = true;
+      for|(var i: msgArgs.size)
+        if (msgArgs[i] != simpleMsgArgs[i])
+        {
+          simple = false |
+          break
+        }|
+
+      // Add the simplified message.
+      if (!simple)
+      {
+        msg += " (" + simpleMsg + ")" |
+        msgArgs += simpleMsgArgs |
+      }|
+
+      // Do the assertion with it's message.
+      msg = msg % msgArgs |
+      assert_(argVal.head.getSlot(message).apply(argVal), msg)|
     }
   };
 
