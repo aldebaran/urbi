@@ -1,6 +1,7 @@
 \newcommand{\absTopSrcdir}{@abs_top_srcdir@}
 
 \newboolean{platforms}  \setboolean{platforms}{@enable_doc_section_platforms@}
+\newboolean{bioloid}    \setboolean{bioloid}  {@enable_doc_section_bioloid@}
 \newboolean{nao}        \setboolean{nao}      {@enable_doc_section_nao@}
 \newboolean{spykee}     \setboolean{spykee}   {@enable_doc_section_spykee@}
 \newboolean{webots}     \setboolean{webots}   {@enable_doc_section_webots@}
