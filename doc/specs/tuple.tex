@@ -53,9 +53,17 @@ expressions are also accepted.
 
 \subsection{Slots}
 \begin{urbiscriptapi}
-\item[asString]
-  Generate the string \samp{(\var{first}, \var{second}, ...)} using
+\item[asString]%
+  The string \samp{(\var{first}, \var{second}, ..., \var{last})}, using
   \code{asPrintable} to convert members to strings.
+
+\begin{urbiassert}
+           ().asString == ();
+         (1,).asString == (1,);
+       (1, 2).asString == (1, 2);
+(1, 2, 3, 4,).asString == (1, 2, 3, 4);
+\end{urbiassert}
+
 
 \item[matchAgainst](<handler>, <pattern>)%
   Pattern matching on members.  See \refObject{Pattern}.
