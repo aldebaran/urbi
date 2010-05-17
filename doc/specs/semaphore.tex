@@ -35,8 +35,8 @@ Semaphore.new(1);
   Put the piece of \var{code} inside a critical section which can be
   executed simultaneously at most the number of time given at the creation
   of the \lstinline|Semaphore|.  This method is similar to a call to
-  \lstinline|acquire| and a call to \lstinline|release| when the code ends
-  by any means.
+  \refSlot{\currentObject}{acquire} and a call to
+  \refSlot{\currentObject}{release} when the code ends by any means.
 
 \begin{urbiscript}
 {
@@ -85,14 +85,14 @@ Semaphore.new(1);
 
 
 \item[acquire] Wait to enter a critical section delimited by the execution
-  of \lstinline|acquire| and \lstinline|release|.  Enter the critical
-  section when the number of processes inside it goes below the maximum
-  allowed.
+  of \refSlot{\currentObject}{acquire} and
+  \refSlot{\currentObject}{release}.  Enter the critical section when the
+  number of processes inside it goes below the maximum allowed.
 
-\item[p] Historical synonym for \lstinline|acquire|.
+\item[p] Historical synonym for \refSlot{\currentObject}{acquire}.
 
 \item[release] Leave a critical section delimited by the execution of
-  \lstinline|p| and \lstinline|v|.
+  \refSlot{\currentObject}{acquire} and \refSlot{\currentObject}{release}.
 
 \begin{urbiscript}
 {
@@ -115,7 +115,7 @@ Semaphore.new(1);
 [00000000] *** end 3
 \end{urbiscript}
 
-\item[v] Historical synonym for \lstinline|release|.
+\item[v] Historical synonym for \refSlot{\currentObject}{release}.
 \end{urbiscriptapi}
 
 %%% Local Variables:
