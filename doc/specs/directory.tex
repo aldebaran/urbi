@@ -34,13 +34,11 @@ Directory.new(Path.new("."));
   The contents of the directory as a \refObject{Path} list.  The
   various paths include the name of the directory \lstinline|this|.
 
-\item[asList]
-  \refObject{String} containing the path of the directory.
+\item[asString] A \refObject{String} containing the path of the directory.
 
-\begin{urbiscript}
-Directory.new(".").asString;
-[00000003] "."
-\end{urbiscript}
+\begin{urbiassert}
+Directory.new(".").asString == ".";
+\end{urbiassert}
 
 
 \item[content]
@@ -48,7 +46,7 @@ Directory.new(".").asString;
   strings include only the last component name; they do not contain
   the directory name of \lstinline|this|.
 
-\item \lstinline|fileCreated(\var{name)|\\
+\item[fileCreated](<name>)%
   Event launched when a file is created inside the directory.  Be careful,
   this slot may not exists if the \us interpreter does not support for it.
 
