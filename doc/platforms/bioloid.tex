@@ -11,35 +11,35 @@
 
 \section{Introduction}
 
-The \dfn{Bioloid} is a a robot construction kit made of servomotors, sensors and
-frame elements. You can find more information on the manufacturer's official
-website at \url{http://www.robotis.com/zbxe/bioloid_en}.
+The \dfn{Bioloid} is a a robot construction kit made of servomotors, sensors
+and frame elements. You can find more information on the manufacturer's
+official website at \url{http://www.robotis.com/zbxe/bioloid_en}.
 
-Urbi cannot run directly on the Bioloid controller (CM5, CM510). Urbi runs on
-your computer and talks to the Bioloid controller over serial link (RS232, or
-wireless depending on your configuration). Urbi can also talk directly to the
-motor bus if you have an usb2dynamixel.
+Urbi cannot run directly on the Bioloid controller (CM5, CM510). Urbi runs
+on your computer and talks to the Bioloid controller over serial link
+(RS232, or wireless depending on your configuration). Urbi can also talk
+directly to the motor bus if you have an usb2dynamixel.
 
 \section{Installing Urbi for Bioloid}
 
 \subsection{Flashing the firmware}
 
 Urbi for Bioloid is using a custom firmware in the CM-5 controller. You must
-upload the new firmware in your CM-5 using the procedure below. This operation
-is reversible.
+upload the new firmware in your CM-5 using the procedure below. This
+operation is reversible.
 
 Download the firmware file from our website at
 \url{http://www.gostai.com/downloads/bioloid/firmware}.
 
 \begin{itemize}
-\item Start the {\em robot terminal} software from Robotis (installed with your
-bioloid software).
-\item Make sure your CM-5 batteries are fully charged or that it is plugged to a
-power supply.
+\item Start the {\em robot terminal} software from Robotis (installed with
+  your Bioloid software).
+\item Make sure your CM-5 batteries are fully charged or that it is plugged
+  to a power supply.
 \item Connect your CM-5 to the serial port of your computer.
 \item Turn off your CM-5 (using the red on/off button).
-\item Maintain the '\#' key pressed on your keyboard while turning the CM-5 back
-on. A message like this one should be displayed:
+\item Maintain the '\#' key pressed on your keyboard while turning the CM-5
+  back on. A message like this one should be displayed:
 
 \begin{verbatim}
   SYSTEM O.K. (CM5 boot loader V1.xx)
@@ -55,8 +55,8 @@ on. A message like this one should be displayed:
   Ready..
 \end{verbatim}
 
-\item In the menu, select Files, Transmit file (Ctrl+T) and select the firmware
-file you downloaded. After a few seconds, display should turn to:
+\item In the menu, select Files, Transmit file (Ctrl+T) and select the
+  firmware file you downloaded. After a few seconds, display should turn to:
 \begin{verbatim}
   Ready..Success
   (and other information)
@@ -65,28 +65,28 @@ file you downloaded. After a few seconds, display should turn to:
 
 \subsection{Getting Urbi and Urbi for Bioloid}
 
-Look at \url{http://www.urbiforge.com/index.php/Robots/Bioloid} for up-to-date
-information on how to download Urbi for Bioloid.
+Look at \url{http://www.urbiforge.com/index.php/Robots/Bioloid} for
+up-to-date information on how to download Urbi for Bioloid.
 
 \section{First steps}
 
 \subsection{Starting up}
 Connect your CM-5 to the PC and turn it on before starting Urbi.
 
-When you start Urbi, the initialization script in global.u will connect to the
-CM-5 (edit the file to change the port if required), scan for devices and
-instantiate them. It will create:
+When you start Urbi, the initialization script in global.u will connect to
+the CM-5 (edit the file to change the port if required), scan for devices
+and instantiate them. It will create:
 
 \begin{itemize}
 \item one \lstinline|bioloid| object representing the connexion to the CM5.
-\item one object per motor (\refObject{AX12}) named motorID and motors[ID] where ID is the
-motor ID.
-\item one object per sensor (\refObject{AXS1}) named sensorID and sensors[ID] where ID is
-the sensor ID (ex: sensor100, sensors[100].
+\item one object per motor (\refObject{AX12}) named motorID and motors[ID]
+  where ID is the motor ID.
+\item one object per sensor (\refObject{AXS1}) named sensorID and
+  sensors[ID] where ID is the sensor ID (ex: sensor100, sensors[100].
 \end{itemize}
 
-Once initialized, do not disconnect any motor that was detected or everything
-will run very slow.
+Once initialized, do not disconnect any motor that was detected or
+everything will run very slow.
 
 At this point you might want to give motor names more adapted to your model.
 Here is an example:
@@ -103,14 +103,15 @@ do Global{ // Make them available to everyone.
 \subsection{Motor features}
 \labelObject{AX12}
 \def\currentObject{AX12}
-All the AX12 features are exposed in urbiscript. The following section lists the
-main slots with code examples explaining how to use them. You can use
-\refSlot{Object}{localSlotNames} and refer to the AX12 documentation for more
-information.
+
+All the AX12 features are exposed in urbiscript. The following section lists
+the main slots with code examples explaining how to use them. You can use
+\refSlot{Object}{localSlotNames} and refer to the AX12 documentation for
+more information.
 
 \begin{urbiscriptapi}
-\item[val]
-  The current motor position when read, the target position when written to.
+\item[val] The current motor position when read, the target position when
+  written to.
 
 \begin{urbiunchecked}
 // Move motor6 to 90 degrees.
@@ -122,17 +123,15 @@ at(motor6.val > 0) echo("tic") onleave echo("tac");
 motor6.val = 0 sin:1s ampli:20deg,
 \end{urbiunchecked}
 
-\item[cwLimit, ccwLimit]
-  \refSlot{AX12}{cwLimit} and \refSlot{AX12}{ccwLimit} set min an max reachable
-  angles. When
-  they are both equal to 0, the motor is put in continuous rotation mode. In
-  this mode, writting to \refSlot{AX12}{val} has no effect: the motor moves at
-  the speed given by the \refSlot{AX12}{speed} slot.
+\item[cwLimit, ccwLimit] \refSlot{AX12}{cwLimit} and
+  \refSlot{AX12}{ccwLimit} set min an max reachable angles. When they are
+  both equal to 0, the motor is put in continuous rotation mode. In this
+  mode, writing to \refSlot{AX12}{val} has no effect: the motor moves at the
+  speed given by the \refSlot{AX12}{speed} slot.
 
-\item[speed]
-  When read, gives the current rotation speed. When written to, set the
-  speed at which folowing commands will be executed. In continuous rotation
-  mode, start moving the motor at given speed.
+\item[speed] When read, gives the current rotation speed. When written to,
+  set the speed at which following commands will be executed. In continuous
+  rotation mode, start moving the motor at given speed.
 \begin{urbiunchecked}
 // Set speed to two radians/second.
 motor6.speed = 2;
@@ -160,21 +159,21 @@ at(motor6.torque > 5) motor6.load = 0;
 \subsection{Sensor features}
 \labelObject{AXS1}
 \def\currentObject{AXS1}
-All the AXS1 features are exposed in urbiscript. The following section
-lists the main slots with code examples explaining how to use them.
-You can use \refSlot{Object}{localSlotNames} and refer to the AXS1
-documentation for more information.
+
+All the AXS1 features are exposed in urbiscript. The following section lists
+the main slots with code examples explaining how to use them.  You can use
+\refSlot{Object}{localSlotNames} and refer to the AXS1 documentation for
+more information.
 
 \begin{urbiscriptapi}
 
-\item[IRLeft, IRCenter, IRRight]
-  Amount of infrared received by the sensor using the internal emitter. This
-  sensors detect light reflected by objects nearby in the direction of the
-  sensor.
+\item[IRLeft, IRCenter, IRRight] Amount of infrared received by the sensor
+  using the internal emitter. This sensors detect light reflected by objects
+  nearby in the direction of the sensor.
 
-\item[lightLeft, lightCenter, lightRight]
-  Amount of infrared received by the sensor without the emitter. Detects
-  infrared light sources such as incandescent light, candles, ...
+\item[lightLeft, lightCenter, lightRight] Amount of infrared received by the
+  sensor without the emitter. Detects infrared light sources such as
+  incandescent light, candles, ...
 
 \item[buzzerIndex]
   Play a note when written to.
@@ -198,12 +197,16 @@ at(sensor100.clapCount == 4)
   motor6.speed = 0;
 \end{urbiunchecked}
 
-\item[soundVolumeMax]
-  Holds maximum sound volume recorded so far. Write 0 to this slot to reset.
+\item[soundVolumeMax] Holds maximum sound volume recorded so far. Write 0 to
+  this slot to reset.
 
 \end{urbiscriptapi}
 
 
-
-
-
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:

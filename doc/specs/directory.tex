@@ -47,24 +47,25 @@ Directory.new(".").asString == ".";
   the directory name of \lstinline|this|.
 
 \item[fileCreated](<name>)%
-  Event launched when a file is created inside the directory.  Be careful,
-  this slot may not exists if the \us interpreter does not support for it.
+  Event launched when a file is created inside the directory.
+  May not exist if not supported by your architecture.
 
-%% firstline is used to separated inotify test from the others.
+%% firstline is used to separate inotify test from the others.
 \begin{urbiscript}[firstnumber=1]
 if (Path.new("./dummy.txt").exists)
   File.new("./dummy.txt").remove;
 
-{
-  var d = Directory.new(".");
-  waituntil(d.fileCreated?(var name));
-  echo("%s is created." % name);
-  Path.new(d.asString + "/" + name).exists.print;
-} & {
-  // somewhen, a file is created
-  sleep(100ms);
-  File.create("./dummy.txt");
-}|;
+  {
+    var d = Directory.new(".");
+    waituntil(d.fileCreated?(var name));
+    echo("%s is created." % name);
+    Path.new(d.asString + "/" + name).exists.print;
+  }
+&
+  {
+    sleep(100ms);
+    File.create("./dummy.txt");
+  }|;
 [00000004] *** dummy.txt is created.
 [00000005] true
 \end{urbiscript}
@@ -77,16 +78,17 @@ if (Path.new("./dummy.txt").exists)
 if (!Path.new("./dummy.txt").exists)
   File.create("./dummy.txt")|;
 
-{
-  var d = Directory.new(".");
-  waituntil(d.fileDeleted?(var name));
-  echo("%s is deleted." % name);
-  Path.new(d.asString + "/" + name).exists.print;
-} & {
-  // somewhen, a file is deleted
-  sleep(100ms);
-  File.new("./dummy.txt").remove;
-}|;
+  {
+    var d = Directory.new(".");
+    waituntil(d.fileDeleted?(var name));
+    echo("%s is deleted." % name);
+    Path.new(d.asString + "/" + name).exists.print;
+  }
+&
+  {
+    sleep(100ms);
+    File.new("./dummy.txt").remove;
+  }|;
 [00000006] *** dummy.txt is deleted.
 [00000007] false
 \end{urbiscript}
