@@ -1,7 +1,8 @@
 var y = 0;
-assign: y = 20 speed:10,
+assign: y = 20 speed: 5,
 {
-  sleep(2s);
-  y = 30;
+  sleep(1s);
+  y = 10;
+  sleep(1s);
+  y = 4;
 },
-
