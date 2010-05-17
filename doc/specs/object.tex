@@ -362,25 +362,25 @@ Float.isProto;
   \refObject{void}.
 \begin{urbiassert}
 void.isVoid;
-!(42.isVoid);
+! 42.isVoid;
 \end{urbiassert}
 
 \item[localSlotNames] Return a list with the names of the local slots of
   \lstinline|this|, not including those of its ancestors.  See also
   \refSlot{Object}{slotNames}.
-\begin{urbiassert}
-var top = Object.new;
-var top.top1 = 1;
-var top.top2 = 2;
-var bot = top.new;
-var bot.bot1 = 10;
-var bot.bot2 = 20;
+\begin{urbiscript}
+var top = Object.new|;
+var top.top1 = 1|;
+var top.top2 = 2|;
+var bot = top.new|;
+var bot.bot1 = 10|;
+var bot.bot2 = 20|;
 assert
 {
-  top.localSlotNames = ["top1", "top2"];
-  bot.localSlotNames = ["bot1", "bot2"];
+  top.localSlotNames == ["top1", "top2"];
+  bot.localSlotNames == ["bot1", "bot2"];
 };
-\end{urbiassert}
+\end{urbiscript}
 
 \item[locateSlot](<slot>)%
   Return \lstinline|nil| if \lstinline|this| don't have the slot

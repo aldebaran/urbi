@@ -26,7 +26,7 @@ var m = Mutex.new;
 You can define critical sections by tagging your code using the Mutex.
 
 \begin{urbiscript}[firstnumber=1]
-var m = Mutex.new |
+var m = Mutex.new|;
 m: echo("this is critical section");
 [00000001] *** this is critical section
 \end{urbiscript}
@@ -39,7 +39,7 @@ will never be executed at the same time.
 \begin{urbiscriptapi}
 \item[asMutex]  Return \lstinline|this|.
 \begin{urbiscript}
-var m1 = Mutex.new;
+var m1 = Mutex.new|;
 assert
 {
   m1.asMutex === m1;
