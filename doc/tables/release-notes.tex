@@ -22,6 +22,9 @@ This chapter lists the user-visible changes in \usdk releases.
 \subsection{Fixes}
 \begin{itemize}
 \item \refSlot{Mutex}{asMutex} is fixed.
+\item \refObject{Directory} events were not launched if a
+  \refObject{Directory} had already been created on the same
+  \refObject{Path}.
 \end{itemize}
 
 \subsection{Documentation}
@@ -31,8 +34,8 @@ This chapter lists the user-visible changes in \usdk releases.
 \item \refSlot{List}{max}, \refSlot{List}{min}.
 \item \refSlot{Mutex}{asMutex}.
 \item \refSlot{Object}{localSlotNames}.
+\item Document \refSlot{Directory}{fileCreated} and \refSlot{Directory}{fileDeleted}.
 \end{itemize}
-
 
 \section{\usdk 2.0.2}
 
