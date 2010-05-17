@@ -60,6 +60,7 @@ This object should serve as a prototype.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+%\item[\_\_loadable_set\_\_](<val>)%
 \item \lstinline|__loadable_set__(\var{val})|\\
   Set \lstinline|load| to \var{val}, and return \lstinline|this|.
 \begin{urbiassert}
@@ -76,7 +77,7 @@ do (Loadable.new)
 };
 \end{urbiassert}
 
-\item \lstinline|off(\var{val})|\\
+\item[off](<val>)%
   Set \lstinline|load| to \lstinline|false| and return
   \lstinline|this|.
 \begin{urbiassert}
@@ -95,7 +96,7 @@ do (Loadable.new)
 };
 \end{urbiassert}
 
-\item \lstinline|on(\var{val})|\\
+\item[on](<val>)%
   Set \lstinline|load| to \lstinline|true| and return \lstinline|this|.
 \begin{urbiassert}
 do (Loadable.new)

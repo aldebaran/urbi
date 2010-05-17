@@ -110,6 +110,13 @@ An extra comma can be added at the end of the list.
 };
 \end{urbiscript}
 
+\item[asString] A string representing the dictionary.  There is no guarantee
+  on the order of the output.
+\begin{urbiassert}
+                [=>].asString == "[ => ]";
+["a" => 1, "b" => 2].asString == "[\"a\" => 1, \"b\" => 2]";
+\end{urbiassert}
+
 \item[clear]
   Empty the dictionary.
 
@@ -125,7 +132,7 @@ An extra comma can be added at the end of the list.
 ["key" => "value"].empty == false;
 \end{urbiassert}
 
-\item \lstinline|erase(\var{key})|\\
+\item[erase](<key>)
   Remove the mapping for \lstinline|\var{key}|.
 
 \begin{urbiassert}
@@ -134,7 +141,7 @@ An extra comma can be added at the end of the list.
 
 %% commented until a consensus is reached.
 %%
-%% \item \lstinline|extend(\var{ext})|\\
+%% \item[extend](<ext>)
 %%   Extend with the dictionary \lstinline|\var{ext}|.
 %%   Return the value of the new dictionary.
 %% \begin{urbiscript}
@@ -145,7 +152,7 @@ An extra comma can be added at the end of the list.
 %% \end{urbiscript}
 
 
-\item \lstinline|get(\var{key})|\\
+\item[get](<key>)
   Return the value associated to \lstinline|\var{key}|.  A
   Dictionary.KeyError exception is thrown if the key is missing.
 
@@ -165,9 +172,9 @@ catch (var e if e.isA(Dictionary.KeyError))
 \end{urbiscript}
 
 
-\item \lstinline|getWithDefault(\var{key}, \var{default-value})|\\
+\item[getWithDefault](<key>, <defaultValue>)
   Return the value associated to  \lstinline|\var{key}| if it exists,
-  \lstinline|\var{default-value}| otherwise.
+  \lstinline|\var{defaultValue}| otherwise.
 
 \begin{urbiscript}
 do (["one" => 1, "two" => 2])
@@ -181,7 +188,7 @@ do (["one" => 1, "two" => 2])
 \end{urbiscript}
 
 
-\item \lstinline|has(\var{key})|\\
+\item[has](<key>)
   Whether the dictionary has a mapping for \lstinline|\var{key}|.
 
 \begin{urbiscript}
@@ -200,7 +207,7 @@ do (["one" => 1])
 "two" not in ["one" => 1];
 \end{urbiassert}
 
-\item \lstinline|init(\var{key1}, \var{value1}, ...)|~\\
+\item[init](<key1>, <value1>, ...)%~\\
   Insert the mapping from \lstinline|\var{key1}| to
   \lstinline|\var{value1}| and so forth.
 
@@ -227,7 +234,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 };
 \end{urbiscript}
 
-\item \lstinline|matchAgainst(\var{handler}, \var{pattern})|\\
+\item[matchAgainst](<handler>, <pattern>)
   Pattern matching on members.  See \refObject{Pattern}.
 
 \begin{urbiscript}
@@ -239,7 +246,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 };
 \end{urbiscript}
 
-\item \lstinline|set(\var{key}, \var{value})|\\
+\item[set](<key>, <value>)
   Map \lstinline|\var{key}| to \lstinline|\var{value}| and return
   \lstinline|this| so that invocations to \lstinline|set| can be
   chained.  The possibly existing previous mapping is overridden.

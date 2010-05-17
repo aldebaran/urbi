@@ -23,7 +23,7 @@ much less change it.
 
 \begin{urbiscriptapi}
 
-\item \lstinline|detach(\var{exp})|
+\item[detach](<exp>)%
   Detach the evaluation of the expression \var{exp} from the current
   evaluation.  The \var{exp} is evaluated in parallel to the current code
   and keep the current tag which are attached to it.
@@ -44,7 +44,7 @@ for (var i : [0, 1, 2])
 [00000000] *** 0
 \end{urbiscript}
 
-\item \lstinline|disown(\var{exp})|%
+\item[disown](<exp>)%%
   Same as \lstinline|detach(\var{exp})| except that tags used to tag
   the \lstinline|disown| call are not inherited inside the expression.
   Return the spawned job.
@@ -69,7 +69,7 @@ sleep(100ms);
 [00000000] *** 2
 \end{urbiscript}
 
-\item \lstinline|persist(\var{expression}, \var{delay})| Return an
+\item[persist](<expression>, <delay>)% Return an
   object whose \var{val} slot evaluates to true if the
   \var{expression} has been continuously true for this \var{delay} and
   false otherwise.
@@ -94,7 +94,7 @@ at (u.val)
   as the initial \lstinline|at| block.
 
 
-\item \lstinline|finally(\var{action}, \var{reaction})|
+\item[finally](<action>, <reaction>)%
   Execute the \var{reaction} function at the end of the evaluation of
   the \var{action} function.  This is equivalent to
 

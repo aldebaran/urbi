@@ -78,7 +78,7 @@ connected;
 \item[connectionTag]
   The tag of all code executed in the context of \lstinline|this|.
 
-\item \lstinline|copyright(var \var{deep} = true)|~\\
+\item[copyright](var <deep> = true)%~\\
   Display the copyright of \usdk.  Include copyright information
   about sub-components if \var{deep}.
 \begin{urbiscript}
@@ -103,7 +103,7 @@ lobby.copyright(true);
 Lobby.create;
 \end{urbiassert}
 
-\item \lstinline|echo(\var{value}, \var{channel} = "")|\\
+\item[echo](<value>, <channel> = "")%
   Send \lstinline|\var{value}.asString| to \lstinline|this|, prefixed
   by the \refObject{String} \var{channel} name if specified.  This is
   the preferred way to send informative messages (prefixed with
@@ -117,7 +117,7 @@ lobby.echo(333);
 [00055205] *** 333
 \end{urbiscript}
 
-\item \lstinline|echoEach(\var{list}, \var{channel} = "")|\\
+\item[echoEach](<list>, <channel> = "")%
   Apply \lstinline|echo(\var{m}, \var{channel})| for each member \var{m} of
   \var{list}.
 \begin{urbiscript}
@@ -157,14 +157,14 @@ lobby.license;
 lobby === this;
 \end{urbiassert}
 
-\item \lstinline|onDisconnect(\var{lobby})|\\
+\item[onDisconnect](<lobby>)%
   Event launched when \lstinline|this| has disconnected.
 
 \item[quit] Shut this lobby down, i.e., close the connection.  The
   server is still running, see \refSlot{System}{shutdown} to quit the
   server.
 
-\item \lstinline|receive(\var{value})|\\
+\item[receive](<value>)%
   This is low-level routine.  Pretend the \refObject{String}
   \var{value} was received from the connection.  There is no guarantee
   that \var{value} will be the next program block that will be
@@ -176,7 +176,7 @@ Lobby.create.receive("12;");
 [00478679] 12
 \end{urbiscript}
 
-\item \lstinline|send(\var{value}, \var{channel} = "")|\\
+\item[send](<value>, <channel> = "")%
   This is low-level routine.  Send the \refObject{String} \var{value}
   to \lstinline|this|, prefixed by the \refObject{String}
   \var{channel} name if specified.
@@ -189,7 +189,7 @@ lobby.send("333");
 [00055205] 333
 \end{urbiscript}
 
-\item \lstinline|wall(\var{value}, \var{channel} = "")|\\
+\item[wall](<value>, <channel> = "")%
   Perform \lstinline|echo(\var{value}, \var{channel})| on all the
   existing lobbies (except Lobby itself).
 \begin{urbiscript}[firstnumber=1]
@@ -197,7 +197,7 @@ Lobby.wall("111", "foo");
 [00015895:foo] *** 111
 \end{urbiscript}
 
-\item \lstinline|write(\var{value})|\\
+\item[write](<value>)%
   This is low-level routine.  Send the \refObject{String} \var{value}
   to the connection.  Note that because of buffering, the output might
   not be visible before an end-of-line character is output.

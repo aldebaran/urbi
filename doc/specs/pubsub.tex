@@ -31,7 +31,7 @@ var ps = PubSub.new;
 
 \begin{urbiscriptapi}
 
-\item \lstinline|publish(\var{ev})|
+\item[publish](<ev>)%
   Queue the value \var{ev} to the queue of each subscriber.  This method
   returns the value \var{ev}.
 
@@ -64,7 +64,7 @@ ps.subscribers == [sub];
   watching published values.  This field only exists in instances of
   \lstinline|PubSub|.
 
-\item \lstinline|unsubscribe(\var{sub})|
+\item[unsubscribe](<sub>)%
   Remove a subscriber from the list of subscriber watching the published
   values.
 

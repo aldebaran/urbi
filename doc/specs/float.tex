@@ -181,7 +181,7 @@ compl 4294967295 == 0;
 Float.pi.cos == -1;
 \end{urbiassert}
 
-\item \lstinline|each(\var{fun})|\\
+\item[each](<fun>)%
   Call the functional argument \var{fun} on every integer from 0 to
   target - 1, sequentially.  The number must be non-negative.
 \begin{urbiassert}
@@ -246,7 +246,7 @@ Float.pi.cos == -1;
 [00000000] 2.71828
 \end{urbiscript}
 
-\item \lstinline|format(\var{finfo})|\\
+\item[format](<finfo>)%
   Format according to the \refObject{FormatInfo} object \var{finfo}.
   The precision, \lstinline|\var{finfo}.precision|, sets the maximum
   number of digits after decimal point when in fixed or scientific
@@ -349,7 +349,7 @@ Float.inf;
 1.exp.log == 1;
 \end{urbiassert}
 
-\item \lstinline|max(\var{arg1}, ...)|\\
+\item[max](<arg1>, ...)%
   Bounces to \refSlot{List}{max} on \lstinline|[this, \var{arg1}, ...]|.
 \begin{urbiassert}
 1.max == 1;
@@ -357,7 +357,7 @@ Float.inf;
 3.max(1, 2) == 3;
 \end{urbiassert}
 
-\item \lstinline|min(\var{arg1}, ...)|\\
+\item[min](<arg1>, ...)%
   Bounces to \refSlot{List}{min} on \lstinline|[this, \var{arg1}, ...]|.
 \begin{urbiassert}
 1.min == 1;
@@ -468,7 +468,7 @@ assert(0.tan == 0);
 [00000000] 1
 \end{urbiscript}
 
-\item \lstinline|times(\var{fun})|\\
+\item[times](<fun>)%
   Call the functional argument \var{fun} \lstinline|this| times.
 
 \begin{urbiscript}

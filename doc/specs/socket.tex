@@ -139,7 +139,7 @@ var s = Socket.new|
 \subsection{Slots}
 \begin{urbiscriptapi}
 
-\item \lstinline|connect(\var{host}, \var{port})|\\
+\item[connect](<host>, <port>)%
   Connect \lstinline|this| to \var{host} and \var{port}.  The
   \var{port} can be either an integer, or a string that denotes
   symbolic ports, such as \lstinline|"smtp"|, or \lstinline|"ftp"| and
@@ -148,7 +148,7 @@ var s = Socket.new|
 \item[connected]
   Event launched when the connection is established.
 
-\item \lstinline|connectSerial(\var{device}, \var{baudRate})|\\
+\item[connectSerial](<device>, <baudRate>)%
   Connect \lstinline|this| to the serial port \var{device}, with given
   \var{baudRate}.
 
@@ -183,7 +183,7 @@ var s = Socket.new|
   Call \lstinline|getIoService.poll()|. This method is called regularly every
   \lstinline|pollInterval| on the \lstinline|Socket| object. You do not need
   to call this function on your sockets unless you use your own
-  \refSlot{IoService}.
+  \refObject{IoService}.
 
 \item[pollInterval]
   Each \lstinline|pollInterval| amount of time, \refSlot{Socket}{poll}
@@ -197,10 +197,10 @@ var s = Socket.new|
   Event launched when \lstinline|this| has received data. The data is
   given by argument to the event.
 
-\item \lstinline|write(\var{data})|\\
+\item[write](<data>)%
   Sends \var{data} trough the connection.
 
-\item \lstinline|syncWrite(\var{data})|\\
+\item[syncWrite](<data>)%
   Similar to \lstinline|write|, but forces the operation to complete
   synchronously. Synchronous and asynchronous write operations cannot be mixed.
 

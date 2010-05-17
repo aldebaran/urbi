@@ -71,7 +71,7 @@ for (var v : "123")
 "\"foo\"".asString == "\"foo\"";
 \end{urbiassert}
 
-\item \lstinline|closest(\var{set})|\\
+\item[closest](<set>)%
   Return the string in \var{set} that is the closest (in the sense of
   \refSlot{String}{distance}) to \lstinline|this|.  If there is no
   convincing match, return \lstinline|nil|.
@@ -82,7 +82,7 @@ for (var v : "123")
 "qux".closest(["foo", "bar", "baz"])         == nil;
 \end{urbiassert}
 
-\item \lstinline|distance(\var{other})|\\
+\item[distance](<other>)%
   Return the
   \href{http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance}
   {Damerau-Levenshtein distance} between \lstinline|this| and
@@ -157,16 +157,16 @@ String.fresh == "_5";
 \end{urbiassert}
 
 %%% FIXME: Optional arguments.
-\item \lstinline|join(\var{list}, \var{prefix}, \var{suffix})|\\
+\item[join](<list>, <prefix>, <suffix>)%
   Glue the result of \lstinline|asString| applied to the members of
   \var{list}, separated by \lstinline|this|, and embedded in a pair
-  \var{prefix}/var{suffix}.
+  \var{prefix}/\var{suffix}.
 \begin{urbiassert}
 "|".join([1, 2, 3], "(", ")")      == "(1|2|3)";
 ", ".join([1, [2], "3"], "[", "]") == "[1, [2], 3]";
 \end{urbiassert}
 
-\item \lstinline|replace(\var{from}, \var{to})|\\
+\item[replace](<from>, <to>)%
   Replace every occurrence of the string \var{from} in
   \lstinline|this| by \var{to}, and return the result.
   \lstinline|this| is not modified.
@@ -183,7 +183,11 @@ String.fresh == "_5";
 "".size == 0;
 \end{urbiassert}
 
+%%% FIXME: incorrect rendering: we lose the backslashes from the
+%%% separators.
+%\item[split](<sep> = [" ", "\t", "\n", "\r"], <lim> = -1, <keepSep> = false, <keepEmpty> = true)%
 \item \lstinline|split(\var{sep} = [" ", "\t", "\n", "\r"], \var{lim} = -1, \var{keepSep} = false, \var{keepEmpty} = true)|\\
+
   Split \lstinline|this| on the separator \var{sep}, in at most \var{lim}
   components, which include the separator if \var{keepSep}, and the
   empty components of \var{keepEmpty}.  Return a list of strings.

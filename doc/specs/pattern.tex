@@ -69,7 +69,7 @@ Pattern.Binding.new("a");
 \end{urbiscript}
 
 
-\item \lstinline|match(\var{value})|\\
+\item[match](<value>)%
 
   Use \var{value} to unify the current pattern with this value.
   Return the status of the match.
@@ -93,7 +93,7 @@ Pattern.new([1, Pattern.Binding.new("a")]).match([1, 2]);
 \end{urbiassert}
 
 
-\item \lstinline|matchPattern(\var{pattern}, \var{value})|\\
+\item[matchPattern](<pattern>, <value>)%
 
   This function is used as a callback function to store all bindings
   in the same place.  This function is useful inside objects that

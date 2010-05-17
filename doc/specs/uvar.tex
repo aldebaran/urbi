@@ -38,12 +38,12 @@ x;
 
 \begin{urbiscriptapi}
 
-\item \lstinline|copy(\var{targetObject}, \var{targetName})| \\
+\item[copy](<targetObject>, <targetName>)% \\
   Copy the \lstinline|UVar| to the slot \var{targetName} of object
   \var{targetObject}. Since the \lstinline|UVar| is using properties, you must
   use this method to copy it to an other location.
 
-\item \lstinline|notifyChange(\var{handle}, \var{onChange})| \\
+\item[notifyChange](<handle>, <onChange>)% \\
   Similar to the C++ \lstinline|UNotifyChange|
   (see \autoref{sec:uobject:uvar-notify}) , register \var{onChange} and
   call it each time this \lstinline|UVar| is written to.
@@ -59,7 +59,7 @@ Global.y = 12;
 [00000002] 12
 \end{urbiscript}
 
-\item \lstinline|notifyAccess(\var{handle}, \var{onAccess})| \\
+\item[notifyAccess](<handle>, <onAccess>)% \\
   Similar to the C++ \lstinline|UNotifyAccess|, calls \var{onAccess} each time
   the \lstinline|UVar| is accessed (read).
 

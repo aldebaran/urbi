@@ -32,7 +32,7 @@ Barrier.new;
 
 \begin{urbiscriptapi}
 
-\item \lstinline|signal(\var{payload})|
+\item[signal](<payload>)%
   Wake up one of the job waiting for a signal.  The \var{payload} is sent to
   the \var{wait} method.  This method returns the number of job woken up.
 
@@ -52,7 +52,7 @@ do (Barrier.new)
 \end{urbiscript}
 
 
-\item \lstinline|signalAll(\var{payload})|\\
+\item[signalAll](<payload>)%
   Wake up all the jobs waiting for a signal.  The \var{payload} is
   sent to all \var{wait} methods.  Return the number of jobs woken up.
 

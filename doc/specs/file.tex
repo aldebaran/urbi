@@ -62,7 +62,7 @@ System.system("(echo 1; echo 2) >file.txt")|;
 assert(File.new("file.txt").content.data == "1\n2\n");
 \end{urbiscript}
 
-\item \lstinline|create(\var{name})|\\
+\item[create](<name>)%
   If the file \var{name} exists, return a File to it, otherwise create
   an empty one, and return a File to it.  See \refObject{OutputStream}
   for methods to add content to the file.
@@ -84,7 +84,7 @@ File.new("file.txt").remove;
 assert(!Path.new("file.txt").exists);
 \end{urbiscript}
 
-\item \lstinline|rename(\var{name})|\\
+\item[rename](<name>)%
   Rename the file to \var{name}.  If the target exists, it is replaced by
   the opened file.
 \begin{urbiscript}
