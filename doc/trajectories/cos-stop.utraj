@@ -1,0 +1,6 @@
+var y = 0;
+assign: y = 0 cos:2s ampli:10,
+{
+  sleep(1.5s);
+  assign.stop;
+},

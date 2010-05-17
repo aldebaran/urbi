@@ -6,10 +6,11 @@ URBI = $(top_builddir)/tests/bin/urbi
 GNUPLOT = gnuplot
 $(srcdir)/%.dat: %.utraj
 	$(ENSURE_TARGET_DIR)
-	$(URBI) -f $(srcdir)/trajectories/plot.u	\
-	     -f '$<'					\
-	     -e 'plot("$@.tmp", sample(y, 40, 0.1s));'	\
-	     -e 'shutdown;'
+	$(URBI) -q						\
+	        -f $(srcdir)/trajectories/plot.u		\
+	        -f '$<'						\
+	        -e 'plot("$@.tmp", sample(y, 40, 0.1s));'	\
+	        -e 'shutdown;'
 	mv $@.tmp $@
 
 ## pdftex/pdftex_t combined GNU Plot pictures.

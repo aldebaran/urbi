@@ -107,6 +107,21 @@ duration of the trajectory is constantly reevaluated.
 %% Restore the definition of \subsubsection.
 \let\subsubsection\subsubsectionOrig
 
+\subsubsection{Trajectories and Tags}
+
+Trajectories can be managed using \refObject[s]{Tag}.  Stopping or blocking
+a tag that manages a trajectory kill the trajectory.
+
+\urbitrajectory{cos-stop}
+\urbitrajectory{cos-block}
+
+When a trajectory is frozen, its local time is frozen too, the movement
+proceeds from where it was rather than from where it would have been had it
+been not frozen.
+
+\urbitrajectory{cos-freeze}
+
+
 \subsection{Construction}
 
 You are not expected to construct trajectory generators by hand, using
