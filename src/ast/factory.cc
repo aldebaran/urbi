@@ -130,7 +130,7 @@ namespace ast
     return exp(a % cond);
   }
 
-  /// aver(%exps).
+  /// assert(%exps).
   rExp
   Factory::make_assert(const yy::location&,
                        exps_type* cond) /* const */

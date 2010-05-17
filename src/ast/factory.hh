@@ -31,13 +31,13 @@ namespace ast
 
     typedef yy::location location;
 
-    /// aver(%exp).
+    /// assert(%exp).
     static
     rExp
     make_assert(const yy::location& loc,
                 rExp cond) /* const */;
 
-    /// aver(%exps).
+    /// assert(%exps).
     /// Note that \a cond is "reclaimed" do not use it again.
     /// (Actually it is reused to build the result).
     static
