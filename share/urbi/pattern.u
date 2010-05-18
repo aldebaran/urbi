@@ -12,16 +12,19 @@ class Global.Pattern
 {
   var pattern;
   var bindings = [ => ];
+  var guard;
 
-  function init(p)
+  function init(p, g = nil)
   {
     pattern = p |
     bindings = [ => ] |
+    guard = g |
   };
 
   function match(value)
   {
-    return matchPattern(pattern, value) |
+    return matchPattern(pattern, value) &&
+      (getSlot("guard").isNil || guard(this)) |
   };
 
   function matchPattern(pattern, value)

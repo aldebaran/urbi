@@ -349,8 +349,7 @@ namespace ast
     static
     rExp
     make_waituntil_event(const location& loc,
-                         rExp event,
-                         exps_type* payload) /* const */;
+                         EventMatch& event) /* const */;
 
     /// whenever (%cond ~ %duration) {%body} onleave {%else_stmt}
     static

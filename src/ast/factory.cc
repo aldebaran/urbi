@@ -964,19 +964,35 @@ namespace ast
 
   rExp
   Factory::make_waituntil_event(const location& loc,
-                                rExp event,
-                                exps_type* payload) // const
+                                EventMatch& event) // const
   {
-    if (!payload)
+    if (!event.pattern)
     {
       PARAMETRIC_AST(desugar, "%exp:1.'waituntil'(nil)");
-      return exp(desugar % event);
+      return exp(desugar % event.event);
+    }
+
+    rList d_payload = make_list(loc, event.pattern);
+
+    rewrite::PatternBinder bind(make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+    bind(d_payload.get());
+
+    rExp guard;
+    if (event.guard)
+    {
+      PARAMETRIC_AST(desugar_guard, "closure (var '$pattern') { %exp:1 | %exp:2 }");
+      guard = exp(desugar_guard % bind.bindings_get() % event.guard);
+    }
+    else
+    {
+      PARAMETRIC_AST(desugar_guard, "nil");
+      guard = exp(desugar_guard);
     }
 
     PARAMETRIC_AST
       (desugar,
        "{\n"
-       "  var '$pattern' = Pattern.new(%exp:1) |\n"
+       "  var '$pattern' = Pattern.new(%exp:1, %exp:4) |\n"
        "  %exp:2.'waituntil'('$pattern') |\n"
        "  {\n"
        "    %unscope: 2 |\n"
@@ -984,15 +1000,11 @@ namespace ast
        "  }\n"
        "}");
 
-    rList d_payload = make_list(loc, payload);
-
-    rewrite::PatternBinder bind(make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
-    bind(d_payload.get());
-
     return exp(desugar
                % bind.result_get().unchecked_cast<Exp>()
-               % event
-               % bind.bindings_get());
+               % event.event
+               % bind.bindings_get()
+               % guard);
   }
 
   rExp

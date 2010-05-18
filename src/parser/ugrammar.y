@@ -733,7 +733,7 @@ stmt:
     }
 | "waituntil" "(" event_match ")"
     {
-      $$ = MAKE(waituntil_event, @$, $3.event, $3.pattern);
+      $$ = MAKE(waituntil_event, @$, $3);
     }
 | "whenever" "(" exp tilda.opt ")" nstmt else.opt
     {
