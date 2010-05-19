@@ -8,7 +8,7 @@
 
 \section{Date}
 
-This class is meant to record dates in time.  
+This class is meant to record dates in time.
 \experimental{}
 
 \subsection{Prototypes}
@@ -19,8 +19,8 @@ This class is meant to record dates in time.
 
 \subsection{Construction}
 
-Without argument, newly constructed dates refer to the \dfn{epoch}
-(see \refSlot[Date]{epoch}).
+Without argument, newly constructed dates refer to the \dfn{epoch} (see
+\refSlot{epoch}).
 
 \begin{urbiscript}[firstnumber=1]
 Date.new;
@@ -37,7 +37,7 @@ Date.new(1234567890);
 
 With a string argument \var{d}, refers to the date contained in \var{d}.
 The string should be formatted as \samp{\var{yyyy}-\var{mm}-\var{dd}
-    \var{hh}:\var{mn}:\var{ss}} (see \refSlot[Date]{asString}). \var{mn}
+    \var{hh}:\var{mn}:\var{ss}} (see \refSlot{asString}). \var{mn}
 and \var{ss} are optional. If the block \samp{\var{hh}:\var{mn}:\var{ss}}
 is absent, the behavior is undefined.
 
@@ -121,15 +121,13 @@ Date.epoch == Date.new(0);
 Date.epoch == Date.new();
 \end{urbiassert}
 
-\item[now]
-  Return the current date.
+\item[now] The current date.
 \begin{urbiunchecked}
 Date.now;
 [00000000] 2012-03-02 15:31:42
 \end{urbiunchecked}
 
-\item[timestamp]
-Synonym for \refSlot[Date]{asFloat}
+\item[timestamp] Synonym for \refSlot{asFloat}
 
 \end{urbiscriptapi}
 

@@ -86,7 +86,7 @@ do (Object.new)
 \end{urbiassert}
 
 \item[allSlotNames]
-  Deprecated alias for \refSlot[Object]{slotNames}.
+  Deprecated alias for \refSlot{slotNames}.
 \begin{urbiassert}
 Object.allSlotNames == Object.slotNames;
 \end{urbiassert}
@@ -194,7 +194,7 @@ do (Object.new)
   \var{depth} specifies how recursive the description is: the greater,
   the more detailed.  This method is mostly useful for debugging
   low-level issues, for a more human-readable interface, see also
-  \refSlot[Object]{inspect}.
+  \refSlot{inspect}.
 \begin{urbiscript}
 do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(0);
 [00015137] *** Float_0x240550 {
@@ -288,7 +288,7 @@ b.getSlot("ENOENT");
 
 \item[hasLocalSlot](<slot>)%
   Whether \lstinline|this| features a slot \var{slot}, locally, not
-  from some ancestor.  See also \refSlot[Object]{hasSlot}.
+  from some ancestor.  See also \refSlot{hasSlot}.
 \begin{urbiscript}
 class Base         { var this.base = 23; } |;
 class Derive: Base { var this.derive = 43 } |;
@@ -310,7 +310,7 @@ assert
 
 \item[hasSlot](<slot>)%
   Whether \lstinline|this| has the slot \var{slot}, locally, or from
-  some ancestor.  See also \refSlot[Object]{hasLocalSlot}.
+  some ancestor.  See also \refSlot{hasLocalSlot}.
 
 \begin{urbiassert}
 Derive.hasSlot("derive");
@@ -323,7 +323,7 @@ Derive.hasSlot("base");
 \item[inspect](<deep> = false)%
   Describe \lstinline|this|: its prototypes and slots, and their
   properties.  If \var{deep}, all the slots are described, not only
-  the local slots. See also \refSlot[Object]{dump}.
+  the local slots. See also \refSlot{dump}.
 \begin{urbiscript}
 do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
 [00001227] *** Inspecting 2
@@ -367,7 +367,7 @@ void.isVoid;
 
 \item[localSlotNames] Return a list with the names of the local slots of
   \lstinline|this|, not including those of its ancestors.  See also
-  \refSlot[Object]{slotNames}.
+  \refSlot{slotNames}.
 \begin{urbiscript}
 var top = Object.new|;
 var top.top1 = 1|;

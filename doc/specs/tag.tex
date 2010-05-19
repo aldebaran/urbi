@@ -87,9 +87,9 @@ assert(res == "result");
 To \dfn{block} a tag means:
 \begin{itemize}
 \item Stop running pieces of code it labels (as with
-  \refSlot[Tag]{stop}).
+  \refSlot{stop}).
 \item Ignore new pieces of code it labels (this differs from
-  \refSlot[Tag]{stop}).
+  \refSlot{stop}).
 \end{itemize}
 
 One can \dfn{unblock} the tag.  Contrary to
@@ -377,7 +377,7 @@ var t2 = Tag.new("cool name");
 
 \item[block](<result> = void)%
   Block any code tagged by \lstinline|this|.  Blocked tags can be
-  unblocked using \refSlot[Tag]{unblock}.  If some \var{result} was
+  unblocked using \refSlot{unblock}.  If some \var{result} was
   specified, let stopped code return \var{result} as value.  See
   \autoref{sec:specs:tag:block}.
 
@@ -392,10 +392,9 @@ var t2 = Tag.new("cool name");
 \item[enter] An event triggered each time the flow control enters the
   tagged code.  See \autoref{sec:specs:tag:enter-leave}.
 
-\item[freeze]
-  Suspend code tagged by \lstinline|this|, already running or
-  forthcoming.  Frozen code can be later unfrozen using
-  \refSlot[Tag]{unfreeze}.  See \autoref{sec:specs:tag:freeze}.
+\item[freeze] Suspend code tagged by \lstinline|this|, already running or
+  forthcoming.  Frozen code can be later unfrozen using \refSlot{unfreeze}.
+  See \autoref{sec:specs:tag:freeze}.
 
 \item[frozen]
   Whether the tag is frozen. See  \autoref{sec:specs:tag:freeze}.

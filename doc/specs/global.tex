@@ -15,7 +15,7 @@ anywhere.
 
 \subsection{Prototypes}
 \begin{itemize}
-\item \refSlot[Global]{uobjects}, see below.
+\item \refSlot{uobjects}, see below.
 \item \refSlot[Tag]{tags} (see \refObject{Tag})
 \item \refObject{Math}
 \item \refObject{System}
@@ -92,7 +92,7 @@ echo(333);
   requires that it evaluates to the right-hand side argument, reading
   \lstinline|evaluate| after the assignment is needed, which makes
   race conditions likely.  To avoid this, use \lstinline{|} (or better
-  yet, do not use \refSlot[Global]{evaluate} at all in \us).
+  yet, do not use \refSlot{evaluate} at all in \us).
 
 \begin{urbiassert}
 (evaluate = "1+2;") == "1+2;";
@@ -124,7 +124,7 @@ evaluate = "1/0;";
 
 \item[getProperty](<slotName>, <propName>)%
   This wrapper around \refSlot[Object]{getProperty} is actually a by-product
-  of the existence of the \refSlot[Global]{evaluate} \refObject{UVar}.
+  of the existence of the \refSlot{evaluate} \refObject{UVar}.
 
 \item[Global] See \refObject{Global}.
 \item[Group] See \refObject{Group}.

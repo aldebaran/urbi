@@ -15,7 +15,7 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
-\item \refSlot[Float]{limits}
+\item \refObject{Float.limits}
 \item \refSlot[Job]{asString}
 \item \refObject{IoService}
 \end{itemize}
@@ -33,10 +33,10 @@ This chapter lists the user-visible changes in \usdk releases.
 \begin{itemize}
 \item Garbage collection (\autoref{sec:lang:gc}).
 \item \refSlot[Dictionary]{asString}.
+\item \refSlot[Directory]{fileCreated} and \refSlot[Directory]{fileDeleted}.
 \item \refSlot[List]{max}, \refSlot[List]{min}.
 \item \refSlot[Mutex]{asMutex}.
 \item \refSlot[Object]{localSlotNames}.
-\item Document \refSlot[Directory]{fileCreated} and \refSlot[Directory]{fileDeleted}.
 \end{itemize}
 
 \section{\usdk 2.0.2}
@@ -723,9 +723,9 @@ asked by our users during the beta-test period.
   should not be deleted, and a slot can be removed using "removeSlot".  The
   construct "delete object" has been removed from the language.
 
-\item \_\_HERE\_\_
+\item \lstinline|__HERE__|
 
-  The new "\_\_HERE\_\_" pseudo-symbol gives the current position.  It
+  The new \lstinline|__HERE__| pseudo-symbol gives the current position.  It
   features three self explanatory slots: "file", "line", and "column".
 
 \item Operator "()"

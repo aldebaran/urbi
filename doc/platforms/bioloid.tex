@@ -124,11 +124,11 @@ at(motor6.val > 0) echo("tic") onleave echo("tac");
 motor6.val = 0 sin:1s ampli:20deg,
 \end{urbiunchecked}
 
-\item[cwLimit, ccwLimit] \refSlot[AX12]{cwLimit} and
-  \refSlot[AX12]{ccwLimit} set min and max reachable angles. When they are
-  both equal to 0, the motor is put in continuous rotation mode. In this
-  mode, writing to \refSlot[AX12]{val} has no effect: the motor moves at the
-  speed given by the \refSlot[AX12]{speed} slot.
+\item[cwLimit, ccwLimit]%
+  Set min and max reachable angles. When they are both equal to 0, the motor
+  is put in continuous rotation mode. In this mode, writing to \refSlot{val}
+  has no effect: the motor moves at the speed given by the \refSlot{speed}
+  slot.
 
 \item[speed] When read, gives the current rotation speed. When written to,
   set the speed at which following commands will be executed. In continuous
