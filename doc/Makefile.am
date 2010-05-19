@@ -220,7 +220,9 @@ install-data-hook:
 ## ------------- ##
 .PHONY: install-doc
 doc_host = downloads@www.gostai.com
-doc_dir = gostai.com-downloads/$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+doc_upload_dir = gostai.com-downloads
+doc_name = $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+doc_dir = $(doc_upload_dir)/$(doc_name)
 doc_files = $(pdf_DATA) $(html_DIR)
 install-doc: $(doc_files)
 	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new && \
@@ -238,3 +240,7 @@ install-doc: $(doc_files)
 	  else					\
 	    mv doc.new doc;			\
 	  fi'
+## FIXME: Race condition on this script.  It would be better to
+## have the script run ssh rather that the converse.
+	scp $(top_srcdir)/scripts/symlink-to-latest $(doc_host):/tmp
+	ssh $(doc_host) 'perl -f /tmp/symlink-to-latest $(doc_dir)'

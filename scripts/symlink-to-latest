@@ -1,0 +1,38 @@
+#! /usr/bin/perl
+
+# symlink-to-latest PACKAGE
+# e.g.
+# symlink-to-latest foo/urbi-sdk-2.0
+# symlink-to-latest foo/urbi-sdk-2.0.3
+
+## Install a symlink to the latest minor version.  I.e.
+##
+## urbi-sdk-2.0   -> urbi-sdk-2.0.x
+## urbi-sdk-2.0.2 -> urbi-sdk-2.0.x.
+##
+## Do that based on the versions that are available on the server, so
+## that if we happen to install the documentation of 2.0.2 another
+## time after 2.0.3's documentation, 2.0.x still properly points to
+## 2.0.3, which is the latest.
+
+use File::Basename;
+
+$minor = @ARGV[0];
+$minor .= ".0" if $minor =~ /-\d+\.\d+$/;
+$minor =~ s/\.\d+$//;
+($latest = qx{ls -dvr $minor.[0-9]*}) =~ s/\n.*//gm;
+# When installing symlinks, the destination is relative to the
+# location of the source.
+$latest = basename $latest;
+$link = "$minor.x";
+
+# Don't use -e: it returns false if a symlink exists, but points to a
+# non-existing file.
+if (-l $link)
+{
+  unlink $link
+    or die "unlink $link: $!";
+}
+print STDERR "$0: symlinking $link -> $latest\n";
+symlink $latest, $link
+  or die "symlink $latest, $link: $!";
