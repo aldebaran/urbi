@@ -183,9 +183,9 @@ assert(!(moo === loo));
 \begin{urbiscript}
 do (Object.new)
 {
-  assert(!hasSlot("foo"));
+  assert(!hasLocalSlot("foo"));
   assert(createSlot("foo").isVoid);
-  assert(hasSlot("foo"));
+  assert(hasLocalSlot("foo"));
 }|;
 \end{urbiscript}
 
