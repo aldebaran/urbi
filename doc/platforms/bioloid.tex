@@ -32,7 +32,7 @@ Download the firmware file from our website at
 \url{http://www.gostai.com/downloads/bioloid/firmware}.
 
 \begin{itemize}
-\item Start the {\em robot terminal} software from Robotis (installed with
+\item Start the \emph{robot terminal} software from Robotis (installed with
   your Bioloid software).
 \item Make sure your CM-5 batteries are fully charged or that it is plugged
   to a power supply.
@@ -92,11 +92,12 @@ At this point you might want to give motor names more adapted to your model.
 Here is an example:
 
 \begin{urbiunchecked}
-do Global{ // Make them available to everyone.
-  var wheelL = motors[1]; // Left wheel is motor ID 1.
-  var wheelR = motors[2]; // Right wheel is motor ID 2.
-  var headYaw = motors[7]; //Head yaw rotation is motor ID 7.
-  };
+do (Global) // Make them available to everyone.
+{
+  var wheelL = motors[1];  // Left wheel is motor ID 1.
+  var wheelR = motors[2];  // Right wheel is motor ID 2.
+  var headYaw = motors[7]; // Head yaw rotation is motor ID 7.
+};
 \end{urbiunchecked}
 
 
@@ -104,7 +105,7 @@ do Global{ // Make them available to everyone.
 \labelObject{AX12}
 \def\currentObject{AX12}
 
-All the AX12 features are exposed in urbiscript. The following section lists
+All the AX12 features are exposed in \us. The following section lists
 the main slots with code examples explaining how to use them. You can use
 \refSlot{Object}{localSlotNames} and refer to the AX12 documentation for
 more information.
@@ -124,7 +125,7 @@ motor6.val = 0 sin:1s ampli:20deg,
 \end{urbiunchecked}
 
 \item[cwLimit, ccwLimit] \refSlot{AX12}{cwLimit} and
-  \refSlot{AX12}{ccwLimit} set min an max reachable angles. When they are
+  \refSlot{AX12}{ccwLimit} set min and max reachable angles. When they are
   both equal to 0, the motor is put in continuous rotation mode. In this
   mode, writing to \refSlot{AX12}{val} has no effect: the motor moves at the
   speed given by the \refSlot{AX12}{speed} slot.
@@ -189,11 +190,11 @@ more information.
 
 \begin{urbiunchecked}
 // The louder the sound, the faster we go.
-at(sensor100.soundVolume->changed?)
+at (sensor100.soundVolume->changed?)
   motor6.speed = sensor100.soundVolume * 6;
 
 // Stop after 4 claps
-at(sensor100.clapCount == 4)
+at (sensor100.clapCount == 4)
   motor6.speed = 0;
 \end{urbiunchecked}
 
