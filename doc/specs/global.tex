@@ -15,8 +15,8 @@ anywhere.
 
 \subsection{Prototypes}
 \begin{itemize}
-\item \refSlot{Global}{uobjects}, see below.
-\item \refSlot{Tag}{tags} (see \refObject{Tag})
+\item \refSlot[Global]{uobjects}, see below.
+\item \refSlot[Tag]{tags} (see \refObject{Tag})
 \item \refObject{Math}
 \item \refObject{System}
 \item \refObject{Object}
@@ -62,13 +62,13 @@ cout << "\"quote\"";
 \item[Date] See \refObject{Date}.
 
 \item[detach](<exp>)%
-  Bounce to \refSlot{Control}{detach}, see \refObject{Control}.
+  Bounce to \refSlot[Control]{detach}, see \refObject{Control}.
 
 \item[Dictionary] See \refObject{Dictionary}.
 \item[Directory] See \refObject{Directory}.
 
 \item[disown](<exp>)%
-  Bounce to \refSlot{Control}{disown}, see \refObject{Control}.
+  Bounce to \refSlot[Control]{disown}, see \refObject{Control}.
 
 \item[Duration] See \refObject{Duration}.
 
@@ -87,12 +87,12 @@ echo(333);
   to the \urbi engine: write to it to ``send'' an expression to
   compute it, and ``read'' it to get the result.  This UVar is
   designed to be used from the \Cxx; it makes little sense in \us, use
-  \refSlot{System}{eval} instead, if it is really required (see
+  \refSlot[System]{eval} instead, if it is really required (see
   \autoref{sec:k122:dollar}).  Since the semantics of the assignment
   requires that it evaluates to the right-hand side argument, reading
   \lstinline|evaluate| after the assignment is needed, which makes
   race conditions likely.  To avoid this, use \lstinline{|} (or better
-  yet, do not use \refSlot{Global}{evaluate} at all in \us).
+  yet, do not use \refSlot[Global]{evaluate} at all in \us).
 
 \begin{urbiassert}
 (evaluate = "1+2;") == "1+2;";
@@ -123,8 +123,8 @@ evaluate = "1/0;";
 \item[Formatter] See \refObject{Formatter}.
 
 \item[getProperty](<slotName>, <propName>)%
-  This wrapper around \refSlot{Object}{getProperty} is actually a by-product
-  of the existence of the \refSlot{Global}{evaluate} \refObject{UVar}.
+  This wrapper around \refSlot[Object]{getProperty} is actually a by-product
+  of the existence of the \refSlot[Global]{evaluate} \refObject{UVar}.
 
 \item[Global] See \refObject{Global}.
 \item[Group] See \refObject{Group}.
@@ -135,7 +135,7 @@ evaluate = "1/0;";
   (fragile) magic to support an argument passed as a literal
   (\lstinline|isdef(foo)|), not a string (\lstinline|isdef("foo")|).  It is
   not recommended to use this feature, which is provided for \us
-  compatibility.  See \refSlot{Object}{hasSlot} for a safer alternative.
+  compatibility.  See \refSlot[Object]{hasSlot} for a safer alternative.
 \begin{urbiscript}
 assert
 {
@@ -207,7 +207,7 @@ assert
 \item[Pattern] See \refObject{Pattern}.
 
 \item[persist](<exp>)%
-  Bounce to \refSlot{Control}{persist}, see \refObject{Control}.
+  Bounce to \refSlot[Control]{persist}, see \refObject{Control}.
 
 \item[Position] See \refObject{Position}.
 \item[Primitive] See \refObject{Primitive}.
@@ -251,7 +251,7 @@ wall(333);
 \end{urbiscript}
 
 \item[warn](<message>)%
-  Issue \var{message} on \refSlot{Channel}{warning}.
+  Issue \var{message} on \refSlot[Channel]{warning}.
 \begin{urbiscript}
 warn("cave canem");
 [00015895:warning] *** cave canem

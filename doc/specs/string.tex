@@ -73,7 +73,7 @@ for (var v : "123")
 
 \item[closest](<set>)%
   Return the string in \var{set} that is the closest (in the sense of
-  \refSlot{String}{distance}) to \lstinline|this|.  If there is no
+  \refSlot[String]{distance}) to \lstinline|this|.  If there is no
   convincing match, return \lstinline|nil|.
 \begin{urbiassert}
 "foo".closest(["foo", "baz", "qux", "quux"]) == "foo";
@@ -97,7 +97,7 @@ for (var v : "123")
 \item[fresh]
   Return a String that has never been used as an identifier, prefixed
   by \lstinline|this|.  It can safely be used with
-  \refSlot{Object}{setSlot} and so forth.
+  \refSlot[Object]{setSlot} and so forth.
 \begin{urbiassert}
 String.fresh == "_5";
 "foo".fresh == "foo_6";

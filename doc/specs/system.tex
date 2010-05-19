@@ -77,7 +77,7 @@ assert_(1 == 1 + 1, "one is not two");
 \end{urbiscript}
 
 \item \lstinline|'assert'(\var{assertion})|\\
-  Unless \refSlot{System}{ndebug} is true, throw an error if
+  Unless \refSlot[System]{ndebug} is true, throw an error if
   \var{assertion} is not verified.  See also the assertion support in
   \us, \autoref{sec:assertions}.
 \begin{urbiscript}
@@ -88,7 +88,7 @@ assert_(1 == 1 + 1, "one is not two");
 \end{urbiscript}
 
 \item[assert_op](<operator>, <lhs>, <rhs>)%
-  Unless \refSlot{System}{ndebug} is true, throw an error if
+  Unless \refSlot[System]{ndebug} is true, throw an error if
   \lstinline|\var{lhs} \var{operator} \var{rhs}| is not verified.
 \begin{urbiscript}
 assert_op("<",  1, 1 + 1);
@@ -167,7 +167,7 @@ catch (var e)
 \item[getenv](<name>)%
   Return the value of the environment variable \var{name} as a
   \refObject{String} if set, \lstinline|nil| otherwise.  See also
-  \refSlot{System}{setenv} and \refSlot{System}{unsetenv}.
+  \refSlot[System]{setenv} and \refSlot[System]{unsetenv}.
 \begin{urbiassert}
 getenv("UndefinedEnvironmentVariable").isNil;
 !getenv("PATH").isNil;
@@ -249,7 +249,7 @@ searchFile("123.u") == Path.cwd / Path.new("123.u");
 \item[setenv](<name>, <value>)%
   Set the environment variable \var{name} to
   \lstinline|\var{value}.asString|, and return this value.  See also
-  \refSlot{System}{getenv} and \refSlot{System}{unsetenv}.
+  \refSlot[System]{getenv} and \refSlot[System]{unsetenv}.
   \begin{windows}
     Under Windows, setting to an empty value is equivalent to
     making undefined.
@@ -305,7 +305,7 @@ var Global.x = 0;
 \end{urbiassert}
 
 \item[shiftedTime] Return the number of seconds elapsed since the
-  \urbi server was launched.  Contrary to \refSlot{System}{time},
+  \urbi server was launched.  Contrary to \refSlot[System]{time},
   time spent in frozen code is not counted.
 \begin{urbiassert}
 { var t0 = shiftedTime | sleep(1s) | shiftedTime - t0 }.round ~= 1;
@@ -348,7 +348,7 @@ System.system("exit 23") >> 8
 
 \item[time] Return the number of seconds elapsed since the \urbi
   server was launched.  In presence of a frozen \refObject{Tag}, see
-  also \refSlot{System}{shiftedTime}.
+  also \refSlot[System]{shiftedTime}.
 \begin{urbiassert}
 { var t0 = time | sleep(1s) | time - t0 }.round ~= 1;
 
@@ -368,8 +368,8 @@ System.system("exit 23") >> 8
 
 \item[unsetenv](<name>)%
   Undefine the environment variable \var{name}, return its previous
-  value.  See also \refSlot{System}{getenv} and
-  \refSlot{System}{setenv}.
+  value.  See also \refSlot[System]{getenv} and
+  \refSlot[System]{setenv}.
 
 \begin{urbiassert}
 setenv("MyVar", 12) == "12";

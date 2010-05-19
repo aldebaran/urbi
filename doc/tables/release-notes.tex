@@ -15,14 +15,14 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
-\item \refSlot{Float}{limits}
-\item \refSlot{Job}{asString}
+\item \refSlot[Float]{limits}
+\item \refSlot[Job]{asString}
 \item \refObject{IoService}
 \end{itemize}
 
 \subsection{Fixes}
 \begin{itemize}
-\item \refSlot{Mutex}{asMutex} is fixed.
+\item \refSlot[Mutex]{asMutex} is fixed.
 \item \refObject{Directory} events were not launched if a
   \refObject{Directory} had already been created on the same
   \refObject{Path}.
@@ -32,18 +32,18 @@ This chapter lists the user-visible changes in \usdk releases.
 \subsection{Documentation}
 \begin{itemize}
 \item Garbage collection (\autoref{sec:lang:gc}).
-\item \refSlot{Dictionary}{asString}.
-\item \refSlot{List}{max}, \refSlot{List}{min}.
-\item \refSlot{Mutex}{asMutex}.
-\item \refSlot{Object}{localSlotNames}.
-\item Document \refSlot{Directory}{fileCreated} and \refSlot{Directory}{fileDeleted}.
+\item \refSlot[Dictionary]{asString}.
+\item \refSlot[List]{max}, \refSlot[List]{min}.
+\item \refSlot[Mutex]{asMutex}.
+\item \refSlot[Object]{localSlotNames}.
+\item Document \refSlot[Directory]{fileCreated} and \refSlot[Directory]{fileDeleted}.
 \end{itemize}
 
 \section{\usdk 2.0.2}
 
 \subsection{\us}
 \begin{itemize}
-\item \refSlot{Control}{detach} and \refSlot{Control}{disown} return the
+\item \refSlot[Control]{detach} and \refSlot[Control]{disown} return the
   \refObject{Job}.
 \end{itemize}
 
@@ -57,7 +57,7 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \begin{itemize}
 \item \refObject{StackFrame}
-\item \refSlot{String}{split}
+\item \refSlot[String]{split}
 \end{itemize}
 
 \section{\usdk 2.0.1}
@@ -69,16 +69,16 @@ This chapter lists the user-visible changes in \usdk releases.
   Tools that mistakenly used \option{-V} for \option{--verbose} and
   \option{-v} for \option{--version} have been corrected (short options are
   swapped).  Use long options in scripts, not short options.
-\item \refSlot{Lobby}{echoEach}: new.
-\item \refSlot{String}{closest}: new.
-\item \refSlot{Tuple}{size}: new.
+\item \refSlot[Lobby]{echoEach}: new.
+\item \refSlot[String]{closest}: new.
+\item \refSlot[Tuple]{size}: new.
 \end{itemize}
 
 \subsection{Documentation}
 
 \begin{itemize}
 \item How to build \usdk (\autoref{sec:build}).
-\item Hyperlinks to slots (e.g., \refSlot{Float}{asString}).
+\item Hyperlinks to slots (e.g., \refSlot[Float]{asString}).
 \end{itemize}
 
 \subsubsection{Fixes}
@@ -94,25 +94,25 @@ This chapter lists the user-visible changes in \usdk releases.
 \subsubsection{Changes}
 
 \begin{itemize}
-\item \slot{Global}{Tags} is renamed as \refSlot{Tag}{tags}.
+\item \slot{Global}{Tags} is renamed as \refSlot[Tag]{tags}.
 
-\item \slot{Global}{Task} is renamed as \refSlot{Global}{Job}.
+\item \slot{Global}{Task} is renamed as \refSlot[Global]{Job}.
 
-\item \slot{Global}{topLevel} is renamed as \refSlot{Channel}{topLevel}.
+\item \slot{Global}{topLevel} is renamed as \refSlot[Channel]{topLevel}.
 
 \item \slot{Global}{output}, \slot{Global}{error} are removed, they were
-  deprecated in favor of \refSlot{Global}{cout} and \refSlot{Global}{cerr}.
+  deprecated in favor of \refSlot[Global]{cout} and \refSlot[Global]{cerr}.
 
-\item \refSlot{Object}{getPeriod} is deprecated in favor of
-  \refSlot{System}{period}.
+\item \refSlot[Object]{getPeriod} is deprecated in favor of
+  \refSlot[System]{period}.
 
 \item As announced long ago, and as displayed by warnings,
-  \refSlot{Object}{slotNames} now returns all the slot names, ancestors
-  included.  Use \refSlot{Object}{localSlotNames} to get the list of the
+  \refSlot[Object]{slotNames} now returns all the slot names, ancestors
+  included.  Use \refSlot[Object]{localSlotNames} to get the list of the
   names of the slot the object owns.
 
-\item \refSlot{Semaphore}{acquire} and \refSlot{Semaphore}{release} are
-  promoted over \refSlot{Semaphore}{p} and \refSlot{Semaphore}{v}.
+\item \refSlot[Semaphore]{acquire} and \refSlot[Semaphore]{release} are
+  promoted over \refSlot[Semaphore]{p} and \refSlot[Semaphore]{v}.
 \end{itemize}
 
 \subsubsection{New features}
@@ -137,9 +137,9 @@ This chapter lists the user-visible changes in \usdk releases.
     \end{tabular}
   \end{center}
 
-\item \refSlot{Float}{srandom}
-\item \refSlot{List}{subset}
-\item \refSlot{Object}{getLocalSlot}.
+\item \refSlot[Float]{srandom}
+\item \refSlot[List]{subset}
+\item \refSlot[Object]{getLocalSlot}.
 \item String escapes accept one- and two-digit octal numbers.
   For instance \lstinline|"\0"|, \lstinline|"\00"| and
   \lstinline|"\000"| all denote the same value.
@@ -168,7 +168,7 @@ This chapter lists the user-visible changes in \usdk releases.
 \begin{itemize}
 \item Remote timers (USetUpdate, USetTimer) are now handled locally
   instead of by the kernel.
-\item UVars can be copied using the \refSlot{UVar}{copy} method.
+\item UVars can be copied using the \refSlot[UVar]{copy} method.
 \item New UEvent class, similar to UVar. Can be used to emit events.
 \item Added support for dictionaries: new UDictionary structure in the
   UValue union.
@@ -178,8 +178,8 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \begin{itemize}
 \item \refObject{Barrier}
-\item \refSlot{Date}{now}
-\item \refSlot{Float}{srandom}
+\item \refSlot[Date]{now}
+\item \refSlot[Float]{srandom}
 \item \refObject{Pattern}
 \item \refObject{PubSub}
 \item \refObject{PubSub.Subscriber}
@@ -211,8 +211,8 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsubsection{New features}
 \begin{itemize}
-\item \refSlot{File}{remove}
-\item \refSlot{File}{rename}
+\item \refSlot[File]{remove}
+\item \refSlot[File]{rename}
 \end{itemize}
 
 \subsection{UObjects}
@@ -237,8 +237,8 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsubsection{Changes}
 \begin{itemize}
-\item \refSlot{Lobby}{quit} replaces \slot{System}{quit}.
-\item \refSlot{Socket}{connect} accepts integers
+\item \refSlot[Lobby]{quit} replaces \slot{System}{quit}.
+\item \refSlot[Socket]{connect} accepts integers
 \item UObject remote notifyChange on USensor variable now works as expected.
 \item UObject timers can now be removed with UObject::removeTimer().
 \end{itemize}
@@ -323,13 +323,13 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \subsubsection{New features}
 \begin{itemize}
 \item asBool
-\item \refSlot{Lobby}{wall}
-\item \refSlot{Dictionary}{size}
-\item \refSlot{Global}{evaluate}
-\item \refSlot{Group}{each}, \lstinline|Group.each&|
+\item \refSlot[Lobby]{wall}
+\item \refSlot[Dictionary]{size}
+\item \refSlot[Global]{evaluate}
+\item \refSlot[Group]{each}, \lstinline|Group.each&|
 \item Lobby: onDisconnect (actually, an event), remoteIP
   create, received, resendBanner
-\item \refSlot{Object}{inspect}
+\item \refSlot[Object]{inspect}
 \item String: fromAscii, replace, toAscii
 \item System: \lstinline|_exit|, \lstinline|assert_eq|,
   \lstinline|system|, \lstinline|terminate|
@@ -339,7 +339,7 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \begin{itemize}
 \item at constructs do not leak local variables anymore.
 \item Each tag now has its enter and leave events.
-\item \refSlot{File}{content} reads the whole file.
+\item \refSlot[File]{content} reads the whole file.
 \item Invalid assignments such as f(x) = n are now refused as expected.
 \end{itemize}
 
@@ -353,7 +353,7 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \begin{itemize}
 \item empty strings, dictionaries and lists are now evaluated as
   "false" in conditions.
-\item \refSlot{Dictionary}{asString} does not sort the keys.
+\item \refSlot[Dictionary]{asString} does not sort the keys.
 \item Dictionaries.[]= returns the assigned value, not the dictionary.
 \item Dictionaries.[] raises an exception if the key is missing.
 \item Constants is merged into Math.
@@ -380,7 +380,7 @@ detach({ every (1s) echo("foo"); });
 \item Tag: begin and end now simply print the tag name followed by
   \samp{begin} or \samp{end}.
 \item System-code is now hidden from the backtraces.
-\item \refSlot{Code}{apply}: the call message can be changed by passing it
+\item \refSlot[Code]{apply}: the call message can be changed by passing it
   as an extra argument.
 \end{itemize}
 
@@ -410,7 +410,7 @@ at(headTouch.val->changed? if headTouch.val) tts.say("ouch");
 \end{urbiunchecked}
   \noindent
   will now work. This hook costs one at() per UVar, and can be disabled by
-  setting \refSlot{UVar}{hookChanged} to false.
+  setting \refSlot[UVar]{hookChanged} to false.
 
 \item Add a statistics-gathering tool. Enable it by calling
   'uobjects.enableStats(true)'. Reset counters by calling
@@ -549,8 +549,8 @@ in various programming languages.
 \subsubsection{Changes}
 
 \begin{itemize}
-\item \refSlot{System}{Platform} enhances \refSlot{System}{platform}.  Use
-  \refSlot{System}{Platform}.kind instead of \refSlot{System}{platform}.
+\item \refSlot[System]{Platform} enhances \refSlot[System]{platform}.  Use
+  \refSlot[System]{Platform}.kind instead of \refSlot[System]{platform}.
 \end{itemize}
 
 \subsubsection{Fixes}
@@ -585,34 +585,40 @@ library specifications) is included.
 \subsection{\us}
 \subsubsection{Bug fixes}
 
-\begin{description}
-\item[Bitwise operations] The native "long unsigned int" type is now
-  used for all the bitwise operations (\lstinline|&|, \lstinline{|},
-  \lstinline|^|, \lstinline|compl|, \lstinline|<<|, \lstinline|>>|).
-  As a consequence it is now an error to pass negative operands to
-  these operations.
+\begin{itemize}
+\item Bitwise operations.
 
-\item[\refSlot{System}{PackageInfo}] This new object provides version
-  information about the Urbi package.  It is also used to ensure that the
-  initialization process uses matching Urbi and C++ files.  This should
-  prevent accidental mismatches due to incomplete installation processes.
+  The native "long unsigned int" type is now used for all the bitwise
+  operations (\lstinline|&|, \lstinline{|}, \lstinline|^|,
+  \lstinline|compl|, \lstinline|<<|, \lstinline|>>|).  As a consequence it
+  is now an error to pass negative operands to these operations.
 
-\item[Precedence of operator **] In conformance with the usage in
-  mathematics, the operator ** now has a stronger precedence than the
-  unary operators.  Therefore, as in Perl, Python and others, '-2 ** 2
-  == -4' whereas it used to be equal to '4' before (as with GNU bc).
+\item \refSlot[System]{PackageInfo}.
 
-\item[Whenever] Whenever now properly executes the else branch when
-  the condition is false.  It used to wait for the condition to be
-  verified at least once before.
-\end{description}
+  This new object provides version information about the Urbi package.  It
+  is also used to ensure that the initialization process uses matching Urbi
+  and C++ files.  This should prevent accidental mismatches due to
+  incomplete installation processes.
+
+\item Precedence of operator **.
+
+  In conformance with the usage in mathematics, the operator ** now has a
+  stronger precedence than the unary operators.  Therefore, as in Perl,
+  Python and others, '-2 ** 2 == -4' whereas it used to be equal to '4'
+  before (as with GNU bc).
+
+\item \lstinline|whenever| now properly executes the else branch when the
+  condition is false.  It used to wait for the condition to be verified at
+  least once before.
+\end{itemize}
 
 \subsubsection{Changes}
 
-\begin{description}
-\item[\refSlot{String}{asFloat}] This new method has been introduced to transform
-  a string to a float.  It raises a PrimitiveError exception if the
-  conversion fails:
+\begin{itemize}
+\item \refSlot[String]{asFloat}
+
+  This new method has been introduced to transform a string to a float.  It
+  raises a PrimitiveError exception if the conversion fails:
 
 \begin{urbiscript}
 "2.1".asFloat;
@@ -620,7 +626,7 @@ library specifications) is included.
 "2.0a".asFloat;
 [00000003:error] !!! asFloat: unable to convert to float: "2.0a"
 \end{urbiscript}
-\end{description}
+\end{itemize}
 
 \subsection{Programs}
 
@@ -652,7 +658,7 @@ For instance:
 \begin{shell}
 $ cat demo
 #! /usr/bin/env urbi-console
-cout << \refSlot{System}{arguments};
+cout << \refSlot[System]{arguments};
 shutdown;
 
 $ ./demo 1 2 3 | grep output
@@ -706,26 +712,26 @@ asked by our users during the beta-test period.
 \subsubsection{Changes}
 
 \begin{description}
-\item["new" syntax revamped]
-The syntax "new myObject(myArgs)" has been deprecated and now gives a
-warning. The recommended "myObject.new(myArgs)" is suggested.
+\item \lstinline|new| syntax revamped
 
-\item["delete" has been removed]
+  The syntax "new myObject(myArgs)" has been deprecated and now gives a
+  warning. The recommended "myObject.new(myArgs)" is suggested.
 
-"delete" was never the right thing to do. A local variable should
-not be deleted, and a slot can be removed using "removeSlot".
-The construct "delete object" has been removed from the
-language.
+\item \lstinline|delete| has been removed
 
-\item[\_\_HERE\_\_]
+  \lstinline|delete| was never the right thing to do. A local variable
+  should not be deleted, and a slot can be removed using "removeSlot".  The
+  construct "delete object" has been removed from the language.
 
-The new "\_\_HERE\_\_" pseudo-symbol gives the current position.  It
-features three self explanatory slots: "file", "line", and "column".
+\item \_\_HERE\_\_
 
-\item[Operator "()"]
+  The new "\_\_HERE\_\_" pseudo-symbol gives the current position.  It
+  features three self explanatory slots: "file", "line", and "column".
 
-It is now possible to define the "()" operator on objects and have
-it called as soon as at least one parameter is given:
+\item Operator "()"
+
+  It is now possible to define the "()" operator on objects and have it
+  called as soon as at least one parameter is given:
 
 \begin{urbiscript}
 class A {
@@ -739,11 +745,11 @@ A(42);
 [00000003] *** A called with 42
 \end{urbiscript}
 
-\item["catch(<type> <name>)" syntax removed]
+\item "catch(<type> <name>)" syntax removed
 
-The "catch(<type> <name>)", which was used to catch exceptions if and
-only if they inherited <type>, has been removed. This behavior can be
-obtained with the more general guard system:
+  The "catch(<type> <name>)", which was used to catch exceptions if and only
+  if they inherited <type>, has been removed. This behavior can be obtained
+  with the more general guard system:
 
 \begin{urbiunchecked}
 catch (var e if e.isA(<type>)
@@ -752,12 +758,12 @@ catch (var e if e.isA(<type>)
 }
 \end{urbiunchecked}
 
-\item[Pattern matching and guards in catch blocks]
+\item Pattern matching and guards in catch blocks
 
-Exception can now be filtered thanks to pattern matching, just like
-events. Moreover, the pattern can be followed by the "if" keyword and
-an arbitrary guard. The block will catch the exception only if the
-guard is true.
+  Exception can now be filtered thanks to pattern matching, just like
+  events. Moreover, the pattern can be followed by the "if" keyword and an
+  arbitrary guard. The block will catch the exception only if the guard is
+  true.
 
 \begin{urbiunchecked}
 try
@@ -770,18 +776,21 @@ catch (var e)  // Catch any other exception
 { ... }
 \end{urbiunchecked}
 
-\item[Parsing of integer literals] The parser could not read integer
-  literals greater than 2**31-1.  This constraint has been alleviated,
-  and Urbi now accepts integer literals up to 2**63-1.
+\item Parsing of integer literals
 
-\item[Display of integer literals] Some large floating point values
-  could not be displayed correctly at the top level of the
-  interpreter. This limitation has been removed.
+  The parser could not read integer literals greater than 2**31-1.  This
+  constraint has been alleviated, and Urbi now accepts integer literals up
+  to 2**63-1.
 
-\item[Variables binding in event matching]
+\item Display of integer literals
 
-Parentheses around variables bindings ("var x") are no longer required
-in event matching:
+  Some large floating point values could not be displayed correctly at the
+  top level of the interpreter. This limitation has been removed.
+
+\item Variables binding in event matching
+
+  Parentheses around variables bindings ("var x") are no longer required in
+  event matching:
 
 \begin{urbiunchecked}
 at (?myEvent(var x, var y, 1))
@@ -794,7 +803,7 @@ instead of:
 at (?myEvent((var x), (var y), 1))
 \end{urbiunchecked}
 
-\item[Waituntil and bindings]
+\item Waituntil and bindings
 
   Bindings performed in "waituntil" constructs are now available in its
   context:
@@ -805,7 +814,7 @@ waituntil(?event(var x));
 echo (x);
 \end{urbiunchecked}
 
-\item["\refSlot{List}{insert}" method]
+\item "\refSlot[List]{insert}" method
 
   Now uses an index as its first argument and inserts the given element
   before the index position:
@@ -815,7 +824,7 @@ echo (x);
 [00000001] ["a", "foo", "b", "c"]
 \end{urbiscript}
 
-\item["\refSlot{List}{sort}" method]
+\item "\refSlot[List]{sort}" method
 
   Now takes an optional argument, which is a function to call instead of the
   "<" operator. Here are two examples illustrating how to sort strings,
@@ -828,12 +837,12 @@ echo (x);
 [00000002] ["bar", "Baz", "foo"]
 \end{urbiscript}
 
-\item["\refSlot{System}{searchPath}" method]
+\item "\refSlot[System]{searchPath}" method
 
   It is now possible to get the search path for files such as \file{urbi.u}
-  or \file{URBI.INI} by using \refSlot{System}{searchPath}.
+  or \file{URBI.INI} by using \refSlot[System]{searchPath}.
 
-\item["\refSlot{System}{getenv}" method]
+\item "\refSlot[System]{getenv}" method
 
   Now returns "nil" if a variable cannot be found in the environment instead
   of "void". This allows you do to things such as:
@@ -847,32 +856,32 @@ if (!ne.isNil) do_something(ne);
   while previously you had to retrieve the environment variable twice, once
   to check for its existence and once to get its content.
 
-\item["disown"]
+\item "disown"
 
   It is now possible to start executing code in background while dropping
   all the tags beforehand, including the connection tag. The code will still
   continue to execute after the connection that created it has died.
 
-\item["\refSlot{Object}{removeSlot}"]
+\item "\refSlot[Object]{removeSlot}"
 
   Now silently accepts non-existing slot names instead of signaling an
   error.
 
-\item["\refSlot{Semaphore}{criticalSection}"]
+\item "\refSlot[Semaphore]{criticalSection}"
 
   It is now possible to define a critical section associated with a
-  semaphore. The \refSlot{Semaphore}{acquire} method will be called at the
+  semaphore. The \refSlot[Semaphore]{acquire} method will be called at the
   beginning, and if after that the operation is interrupted by any means the
-  \refSlot{Semaphore}{release} operation will be called before going on. If
-  there are no interruption, the \refSlot{Semaphore}{release} operation will
+  \refSlot[Semaphore]{release} operation will be called before going on. If
+  there are no interruption, the \refSlot[Semaphore]{release} operation will
   also be called at the end of the callback:
 
 \begin{urbiunchecked}
-var s = \refSlot{Semaphore}{new}(1);
+var s = \refSlot[Semaphore]{new}(1);
 s.criticalSection(function () { echo ("In the critical section") });
 \end{urbiunchecked}
 
-\item["\refSlot{System}{stats}"]
+\item "\refSlot[System]{stats}"
   Its output is now expressed in seconds rather than milliseconds, for
   consistency with the rest of the kernel.
 \end{description}
@@ -880,14 +889,14 @@ s.criticalSection(function () { echo ("In the critical section") });
 \subsection{UObjects}
 
 \begin{description}
-\item[void]
+\item void
 The error message given to the user trying to cast a void UVar has been
 specialized.
 
 Remote bound methods can now return void.
 
 
-\item[Coroutine interface]
+\item Coroutine interface
 
   The functions \lstinline|yield()|, \lstinline|yield_until()|, and
   \lstinline|yield_until_things_changed()| have been added to the
@@ -898,7 +907,7 @@ Remote bound methods can now return void.
   remote mode: calling yield() will allow the UObject remote library
   to process pending messages from within the user callback.
 
-\item[Remote UObject initialization]
+\item Remote UObject initialization
 
   Remote UObject instantiation is now atomic: the API now ensures that
   all variables and functions bound from the UObject constructor and
@@ -906,7 +915,7 @@ Remote bound methods can now return void.
   like:
 
 \begin{urbiunchecked}
-waituntil(uobjects.hasSlot("MyRemote")) | var m = \refSlot{MyRemote}{new}();
+waituntil(uobjects.hasSlot("MyRemote")) | var m = \refSlot[MyRemote]{new}();
 \end{urbiunchecked}
 
 \noindent
@@ -916,9 +925,11 @@ is now safe.
 \subsection{Auxiliary programs}
 
 \begin{description}
-\item[urbi-launch] Now, options for \command{urbi-launch} are separated from
-  options to give to the underlying program (in remote and start modes) by
-  using \option{--}. Use \samp{urbi-launch --help} to get the full usage
+\item urbi-launch
+
+  Now, options for \command{urbi-launch} are separated from options to give
+  to the underlying program (in remote and start modes) by using
+  \option{--}. Use \samp{urbi-launch --help} to get the full usage
   information.
 \end{description}
 
@@ -929,17 +940,17 @@ is now safe.
 \subsection{\us}
 
 \begin{description}
-\item["object" and "from" as identifiers]
+\item "object" and "from" as identifiers
 
-"object" and "from" are now regular identifiers and can be used as
-other names.  For example, it is now legal to declare:
+  "object" and "from" are now regular identifiers and can be used as other
+  names.  For example, it is now legal to declare:
 
 \begin{urbiscript}
 var object = 1|;
 var from = 1|;
 \end{urbiscript}
 
-\item[Hexadecimal literals]
+\item Hexadecimal literals
   It is now possible to enter (integral) hexadecimal numbers by
   prefixing them with "0x", as in:
 
@@ -951,12 +962,12 @@ var from = 1|;
 Only integral numbers are supported.
 
 %% FIXME: The hexadecimal representation of a number can be obtained by specifying the
-%% FIXME: base to \refSlot{Float}{asString}:
+%% FIXME: base to \refSlot[Float]{asString}:
 %% FIXME:
 %% FIXME: \begin{urbiscript}
 %% FIXME: 42.asString(16);
 %% FIXME: [00000001] "2a"
-%% FIXME: // \refSlot{Float}{hex} is a shortcut:
+%% FIXME: // \refSlot[Float]{hex} is a shortcut:
 %% FIXME: 42.hex;
 %% FIXME: [00000001] "2a"
 %% FIXME: \end{urbiscript}
@@ -965,10 +976,10 @@ Only integral numbers are supported.
 \subsection{Standard library}
 \begin{description}
 
-\item["\refSlot{String}{asList}" method]
+\item \refSlot[String]{asList}
 
-"String" now has a "asList" method, which can be used transparently
-to iterate over the characters of a string:
+  "String" now has a "asList" method, which can be used transparently to
+  iterate over the characters of a string:
 
 \begin{urbiscript}
 for (var c: "foo") echo (c);
@@ -977,9 +988,9 @@ for (var c: "foo") echo (c);
 [00000003] *** o
 \end{urbiscript}
 
-\item["\refSlot{String}{split}" method] Largely improved.
+\item \refSlot[String]{split} method Largely improved.
 
-%%% FIXME: \item["\refSlot{String}{join}" method]
+%%% FIXME: \item "\refSlot[String]{join}" method
 %%% FIXME:
 %%% FIXME:   It is now possible to easily join list members by inserting an
 %%% FIXME:   arbitrary string between them:
@@ -988,7 +999,7 @@ for (var c: "foo") echo (c);
 %%% FIXME: ", ".join(["abc", "def", "ghi"]);
 %%% FIXME: [00000001] "abc, def, ghi"
 %%% FIXME: \end{urbiscript}
-\item["min" and "max"]
+\item "min" and "max"
 
 It is now possible to call "min" and "max" on a list. By default, the
 "<" comparison operator is used, but one explicit `lower than'
@@ -1012,7 +1023,7 @@ min(3, 2, 17);
 [00000001] 2
 \end{urbiscript}
 
-\item[Negative indices]
+\item Negative indices
 
 It is now possible to use negative indices when taking list elements.
 For example, -1 designates the last element, and -2 the one before that.
@@ -1022,7 +1033,7 @@ For example, -1 designates the last element, and -2 the one before that.
 [00000001] "c"
 \end{urbiscript}
 
-\item[Tag names]
+\item Tag names
 
   Tags were displayed as \lstinline|Tag_0xADDR| which did not make
   their "name" slot apparent. They are now displayed as "Tag<name>":
@@ -1034,7 +1045,7 @@ Tag.new("mytag");
 [00000002] Tag<mytag>
 \end{urbiscript}
 
-\item["every" and exceptions]
+\item "every" and exceptions
 
 If an exception is thrown and not caught during the execution of an "every"
 block, the "every" expression is stopped and the exception displayed.
@@ -1042,7 +1053,7 @@ block, the "every" expression is stopped and the exception displayed.
 
 \subsection{UObjects}
 \begin{description}
-\item["UVar::type()" method]
+\item "UVar::type()" method
 
 It is now possible to get the type of a "UVar" by calling its "type()"
 method, which returns a "UDataType" (see \file{urbi/uvalue.hh} for the
@@ -1051,17 +1062,17 @@ types declarations).
 
 \subsection{Run-time}
 \begin{description}
-\item[Stack exhaustion check on Windows]
+\item Stack exhaustion check on Windows
 
-As was done on Linux already, stack exhaustion condition is detected
-on Windows, for example in the case of an infinite recursion. In this
-case, SchedulingError will be raised and can be caught.
+  As was done on Linux already, stack exhaustion condition is detected on
+  Windows, for example in the case of an infinite recursion. In this case,
+  SchedulingError will be raised and can be caught.
 
-\item[Errors from the trajectory generator are propagated]
+\item Errors from the trajectory generator are propagated
 
-If the trajectory generator throws an exception, for example because it
-cannot assign the result of its computation to a non-existent variable,
-the error is propagated and the generator is stopped:
+  If the trajectory generator throws an exception, for example because it
+  cannot assign the result of its computation to a non-existent variable,
+  the error is propagated and the generator is stopped:
 
 \begin{urbiscript}
 xx = 20 ampli:5 sin:10s;
@@ -1071,28 +1082,28 @@ xx = 20 ampli:5 sin:10s;
 
 \subsection{Bug fixes}
 \begin{description}
-\item[Support for Windows shares]
+\item Support for Windows shares
 
   Previous versions of the kernel could not be launched from a Windows
   remote directory whose name is starting with two slashes such as
   \file{//share/some/dir}.
 
-\item[Implement "UVar::syncValue()" in plugged uobjects]
+\item Implement "UVar::syncValue()" in plugged uobjects
 
-Calling "syncValue()" on a "UVar" from a plugged UObject resulted in a
-link error.  This method is now implemented, but does nothing as there
-is nothing to do. However, its presence is required to be able to use
-the same UObject in both remote and engine modes.
+  Calling "syncValue()" on a "UVar" from a plugged UObject resulted in a
+  link error.  This method is now implemented, but does nothing as there is
+  nothing to do. However, its presence is required to be able to use the
+  same UObject in both remote and engine modes.
 
-\item["isdef" works again]
+\item "isdef" works again
 
-The support for k1 compatibility function "isdef" was broken in the
-case of composed names or variables whose content was "void". Note
-that we do not recommend using "isdef" at all. Slots related methods
-such as "getSlot", "hasSlot", "locateSlot", or "slotNames" have much
-cleaner semantics.
+  The support for k1 compatibility function "isdef" was broken in the case
+  of composed names or variables whose content was "void". Note that we do
+  not recommend using "isdef" at all. Slots related methods such as
+  "getSlot", "hasSlot", "locateSlot", or "slotNames" have much cleaner
+  semantics.
 
-\item["\_\_name" macro]
+\item "\_\_name" macro
 
   In some cases, the \lstinline|__name| macro could not be used with
   plugged uobjects, for example in the following expression:
