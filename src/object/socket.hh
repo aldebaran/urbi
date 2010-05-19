@@ -31,7 +31,10 @@ namespace urbi
       Socket(rIoService io_service);
       void connect(const std::string& host, const std::string& port);
       void connect(const std::string& host, unsigned port);
+      // Default argument values is handled with overloads for bound functions.
       void connectSerial(const std::string& device, unsigned int baudrate);
+      void connectSerial(const std::string& device, unsigned int baudrate,
+                         bool asyncRead);
       void disconnect();
       void init();
       virtual void onConnect();
@@ -39,6 +42,7 @@ namespace urbi
       virtual size_t onRead(const void* data, size_t length);
       void write(const std::string& data);
       void syncWrite(const std::string& data);
+      std::string read(size_t len);
       bool isConnected() const;
       void poll();
       std::string host() const;

@@ -129,8 +129,15 @@ namespace urbi
     void
     Socket::connectSerial(const std::string& device, unsigned int baudrate)
     {
+      connectSerial(device, baudrate, true);
+    }
+
+    void
+    Socket::connectSerial(const std::string& device, unsigned int baudrate,
+                          bool asyncRead)
+    {
       if (boost::system::error_code error =
-          libport::Socket::open_serial(device, baudrate))
+          libport::Socket::open_serial(device, baudrate, asyncRead))
         RAISE(error.message());
     }
 
@@ -195,6 +202,12 @@ namespace urbi
       libport::Socket::syncWrite(data);
     }
 
+    std::string
+    Socket::read(size_t len)
+    {
+      return libport::Socket::read(len);
+    }
+
     void
     Socket::poll()
     {
@@ -212,7 +225,9 @@ namespace urbi
 #define DECLARE(Name)                           \
       bind(SYMBOL(Name), &Socket::Name)
 
-      DECLARE(connectSerial);
+      // Uncomment the line below when overloading will work.
+      //bind(SYMBOL(connectSerial), (void (Socket::*)(const std::string&, unsigned int))&Socket::connectSerial);
+      bind(SYMBOL(connectSerial), (void (Socket::*)(const std::string&, unsigned int, bool))&Socket::connectSerial);
       DECLARE(disconnect);
       DECLARE(host);
       DECLARE(init);
@@ -221,6 +236,7 @@ namespace urbi
       DECLARE(localPort);
       DECLARE(poll);
       DECLARE(port);
+      DECLARE(read);
       DECLARE(write);
       DECLARE(syncWrite);
       DECLARE(getIoService);
