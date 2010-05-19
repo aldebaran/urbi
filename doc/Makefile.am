@@ -157,6 +157,7 @@ REVISION_FILE = revision.sty
 REVISIONFLAGS = --latex
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi_sdk_deps = 				\
+  config.sty					\
   $(REVISION_FILE)				\
   $(urbi_sdk_sources)
 

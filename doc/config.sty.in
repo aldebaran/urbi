@@ -1,4 +1,8 @@
 \newcommand{\absTopSrcdir}{@abs_top_srcdir@}
+\newcommand{\packageName}{@PACKAGE_NAME@}
+\newcommand{\packageVersion}{@PACKAGE_VERSION@}
+\newcommand{\gostaiUrl}{http://www.gostai.com}
+\newcommand{\docurl}{\gostaiUrl/downloads/\packageName/\packageVersion/doc}
 
 \newboolean{platforms}  \setboolean{platforms}{@enable_doc_section_platforms@}
 \newboolean{bioloid}    \setboolean{bioloid}  {@enable_doc_section_bioloid@}
