@@ -119,6 +119,9 @@ recheck recheck-html:
 	$(MAKE) $(AM_MAKEFLAGS) -C tests $@
 	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
 
+.PHONY: spell-check
+spell-check:
+	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
 
 ## -------- ##
 ## Stamps.  ##
