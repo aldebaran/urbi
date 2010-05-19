@@ -1,8 +1,13 @@
 \newcommand{\absTopSrcdir}{@abs_top_srcdir@}
+\newcommand{\packageTarname}{@PACKAGE_TARNAME@}
 \newcommand{\packageName}{@PACKAGE_NAME@}
+\newcommand{\packageMajor}{@PACKAGE_MAJOR@}
+\newcommand{\packageMinor}{@PACKAGE_MINOR@}
 \newcommand{\packageVersion}{@PACKAGE_VERSION@}
+\newcommand{\packagePatchlevel}{@PACKAGE_PATCHLEVEL@}
 \newcommand{\gostaiUrl}{http://www.gostai.com}
-\newcommand{\docurl}{\gostaiUrl/downloads/\packageName/\packageVersion/doc}
+\newcommand{\downloadUrl}{\gostaiUrl/downloads}
+\newcommand{\docurl}{\downloadUrl/\packageTarname-\packageVersion/doc}
 
 \newboolean{platforms}  \setboolean{platforms}{@enable_doc_section_platforms@}
 \newboolean{bioloid}    \setboolean{bioloid}  {@enable_doc_section_bioloid@}

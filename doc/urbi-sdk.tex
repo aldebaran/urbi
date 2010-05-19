@@ -51,11 +51,27 @@
 
 \maketitle
 
-This documentation is updated regularly on the Gostai Web site both as
-a PDF document, \href{\docurl/urbi-sdk.pdf}{urbi-sdk.pdf}, and as a
-set of HTML pages, \href{\docurl/urbi-sdk.htmldir}{urbi-sdk.htmldir}.
+This documentation is updated regularly on the Gostai Web site both as a
+\href{\docurl/urbi-sdk.pdf}{PDF document}, and as a
+\href{\docurl/urbi-sdk.htmldir}{set of HTML pages}.  You may also want to
+look at the documentation of the latest versions.
 
-See \href{\docurl}{\docurl}.
+\newcommand{\versionItem}[2]
+{
+\item[\packageName{} #1] #2.
+
+  \begin{itemize}
+  \item \url{\downloadUrl/\packageTarname-#1/doc}
+  \item \url{\downloadUrl/\packageTarname-#1/doc/urbi-sdk.pdf}
+  \item \url{\downloadUrl/\packageTarname-#1/doc/urbi-sdk.htmldir}
+  \end{itemize}
+}
+\begin{description}
+\versionItem{\packageVersion}{This version}
+\versionItem{\packageMajor.\packageMinor.x}{The latest version of the
+  \packageMajor.\packageMinor{} family of versions}
+\versionItem{\packageMajor.x}{The latest version}
+\end{description}
 
 \input{introduction}
 
