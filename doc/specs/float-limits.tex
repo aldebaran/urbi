@@ -1,0 +1,95 @@
+%% Copyright (C) 2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Float.limits}
+\label{sec:float-limits}
+
+This singleton handles various limits related to the Float objects.
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[digits]
+  Number of digits (in \refSlot{Float.limits}{radix} base) in the
+  mantissa.
+\begin{urbiassert}
+Float.limits.digits;
+\end{urbiassert}
+
+\item[digits10]
+  Number of digits (in decimal base) that can be represented without
+  change.
+\begin{urbiassert}
+Float.limits.digits10;
+\end{urbiassert}
+
+\item[epsilon]
+  Machine epsilon (the difference between 1 and the least value
+  greater than 1 that is representable).
+\begin{urbiassert}
+1 != 1 + Float.limits.epsilon;
+1 == 1 + Float.limits.epsilon / 2;
+\end{urbiassert}
+
+\item[max]
+  Maximum finite value.
+\begin{urbiassert}
+Float.limits.max     != Float.inf;
+Float.limits.max * 2 == Float.inf;
+\end{urbiassert}
+
+\item[maxExponent]
+  Maximum integer value for the exponent that generates a normalized
+  floating-point number.
+\begin{urbiassert}
+Float.inf != Float.limits.radix ** (Float.limits.maxExponent - 1);
+Float.inf == Float.limits.radix ** Float.limits.maxExponent;
+\end{urbiassert}
+
+\item[maxExponent10]
+  Maximum integer value such that 10 raised to that power generates a
+  normalized finite floating-point number.
+\begin{urbiassert}
+Float.inf != 10 ** Float.limits.maxExponent10;
+Float.inf == 10 ** (Float.limits.maxExponent10 + 1);
+\end{urbiassert}
+
+\item[min]
+  Minimum positive normalized value.
+\begin{urbiassert}
+0 != Float.limits.min;
+\end{urbiassert}
+
+\item[minExponent]
+  Minimum negative integer value for the exponent that generates a
+  normalized floating-point number.
+\begin{urbiassert}
+0 != Float.limits.radix ** Float.limits.minExponent;
+\end{urbiassert}
+
+\item[minExponent10]
+  Minimum negative integer value such that 10 raised to that power
+  generates a normalized floating-point number.
+\begin{urbiassert}
+0 != 10 ** Float.limits.minExponent10;
+\end{urbiassert}
+
+\item[radix]
+  Base of the exponent of the representation.
+\begin{urbiassert}
+Float.limits.radix == 2;
+\end{urbiassert}
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:

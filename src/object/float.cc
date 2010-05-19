@@ -44,10 +44,13 @@
   /* gcc 4.5.0  inf/inf --> -nan */                             \
   (defined __GNUC__ && __GNUC__ == 4 && __GNUC_MINOR__ == 5)
 
+
 namespace urbi
 {
   namespace object
   {
+    rObject Float::limits;
+
     Float::Float(value_type value)
       : value_(value)
     {
@@ -231,7 +234,6 @@ namespace urbi
       return std::pow(value_get(), rhs);
     }
 
-
     /*------------------.
     | Unary operators.  |
     `------------------*/
@@ -387,13 +389,33 @@ namespace urbi
     /*-----------------.
     | Binding system.  |
     `-----------------*/
-
     void
     Float::initialize(CxxObject::Binder<Float>& bind)
     {
       bind(SYMBOL(EQ_EQ),
            static_cast<bool (self_type::*)(const rObject&) const>
                       (&self_type::operator==));
+
+      limits = urbi::object::Object::proto->clone();
+
+#define DECLARE(Urbi, Cxx)                  \
+      limits->bind(SYMBOL(Urbi), &Float::Cxx)
+
+      DECLARE(digits, limit_digits);
+      DECLARE(digits10, limit_digits10);
+      DECLARE(min, limit_min);
+      DECLARE(max, limit_max);
+      DECLARE(epsilon, limit_epsilon);
+      DECLARE(minExponent, limit_min_exponent);
+      DECLARE(minExponent10, limit_min_exponent10);
+      DECLARE(maxExponent, limit_max_exponent);
+      DECLARE(maxExponent10, limit_max_exponent10);
+      DECLARE(radix, limit_radix);
+
+#undef DECLARE
+
+      proto->slot_set(SYMBOL(limits), Float::limits);
+
 #define DECLARE(Urbi, Cxx)                      \
       bind(SYMBOL(Urbi), &Float::Cxx)
 
@@ -426,16 +448,6 @@ namespace urbi
       DECLARE(format, format);
 #endif
       DECLARE(inf, inf);
-// FIXME:       DECLARE(limit_digits,   limit_digits);
-// FIXME:       DECLARE(limit_digits10, limit_digits10);
-// FIXME:       DECLARE(limit_min, limit_min);
-// FIXME:       DECLARE(limit_max, limit_max);
-// FIXME:       DECLARE(limit_epsilon, limit_epsilon);
-// FIXME:       DECLARE(limit_min_exponent, limit_min_exponent);
-// FIXME:       DECLARE(limit_min_exponent10, limit_min_exponent10);
-// FIXME:       DECLARE(limit_max_exponent, limit_max_exponent);
-// FIXME:       DECLARE(limit_max_exponent10, limit_max_exponent10);
-// FIXME:       DECLARE(limit_radix, limit_radix);
       DECLARE(log, log);
       DECLARE(nan, nan);
       DECLARE(random, random);

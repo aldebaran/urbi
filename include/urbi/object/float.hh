@@ -104,7 +104,11 @@ namespace urbi
       value_type minus(const objects_type& args) const;
       value_type plus(const objects_type& args) const;
 
-      // limits.
+    protected:
+      /// Limit object to be referenced by all Floats.
+      static rObject limits;
+
+    public:
       /// Number of digits (in radix base) in the mantissa.
       static unsigned_type limit_digits();
       /// Number of digits (in decimal base) that can be represented without change.
