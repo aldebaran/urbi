@@ -20,5 +20,23 @@ do (Event)
     at (rhs?)
       res!;
     return res;
-  }
+  };
+
+  // This function does not handle event which have a duration because this
+  // would be costly for the declarations of "at" with conditions.
+  function '<<' (rhs)
+  {
+    rhs.onEvent(
+      closure (var evt) { true },
+      closure (var evt, var pattern) {
+        this.trigger |
+      },
+      closure (var evt, var pattern) {
+        this.stop |
+      },
+    ) |
+
+    // To watch many at once.
+    this
+  };
 };

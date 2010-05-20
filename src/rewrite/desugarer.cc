@@ -212,12 +212,13 @@ namespace rewrite
     foreach (ast::rExp decl, extract.declarations_get())
       decls->push_back(decl, ast::flavor_pipe);
 
-    ast::rExp changed;
+    PARAMETRIC_AST(trigger_var, "'$trigger'");
+    ast::rExp trigger = exp(trigger_var);
     foreach (ast::rExp evt, extract.changed_get())
-      if (changed)
-        changed = factory_->make_call(loc, changed, SYMBOL(PIPE_PIPE), evt);
-      else
-        changed = evt;
+    {
+      PARAMETRIC_AST(watch_changes, "%exp:1 << %exp:2");
+      trigger = exp(watch_changes % trigger % evt);
+    }
 
     ast::rExp duration = at->duration_get();
     ast::rExp sleep;
@@ -251,7 +252,8 @@ namespace rewrite
        "    noVoidError;\n"
        "    %exp:2;\n"
        "    '$status' = false;\n"
-       "    at (('$trigger' || %exp:5)?)\n"
+       "    %exp:5;\n"
+       "    at ('$trigger'?)\n"
        "    {\n"
        "      var '$new' = %exp:6|\n"
        "      if ('$new' && !'$status')\n"
@@ -271,17 +273,12 @@ namespace rewrite
        "}");
 
     ast::rExp res = extract.result_get().unsafe_cast<ast::Exp>();
-    if (!changed)
-    {
-      PARAMETRIC_AST(desugar_evt, "Event.new");
-      changed = exp(desugar_evt);
-    }
     result_ = recurse(exp(rewrite
                           % duration
                           % decls
                           % sleep
                           % at->body_get()
-                          % changed
+                          % trigger
                           % original
                           % stop
                           % at->onleave_get()));
