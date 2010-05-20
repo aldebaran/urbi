@@ -58,6 +58,8 @@ urbi::UValue uvalue_cast(const object::rObject& o)
     res = 1;
   else if (o == object::false_class)
     res = 0;
+  else if (o == object::nil_class)
+    ; // Nothing to do, DATA_VOID is fine.
   else if (object::rString s = o->as<object::String>())
     res = s->value_get();
   else if (object::rList s = o->as<object::List>())
