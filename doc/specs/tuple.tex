@@ -104,7 +104,7 @@ expressions are also accepted.
 };
 \end{urbiscript}
 
-\item \lstinline|'<'(\var{other})|\\
+\item['<'](<other>)|\\
   Lexicographic comparison between two tuples.
 \begin{urbiassert}
 (0, 0) < (0, 1);
@@ -112,7 +112,7 @@ expressions are also accepted.
 (0, 1) < (1, 0);
 \end{urbiassert}
 
-\item \lstinline|'=='(\var{other})|\\
+\item['=='](<other>)|\\
   Whether \this and \lstinline|other| have the same
   contents (equality-wise).
 \begin{urbiassert}
@@ -120,7 +120,7 @@ expressions are also accepted.
 !((1, 1) == (2, 2));
 \end{urbiassert}
 
-\item \lstinline|'*'(\var{value})|\\
+\item['*'](<value>)|\\
   Return a \lstinline|Tuple| in which all elements of \this are multiplied
   by a \var{value}.
 
@@ -129,7 +129,7 @@ expressions are also accepted.
 (1, "foo") * 2 == (2, "foofoo");
 \end{urbiassert}
 
-\item \lstinline|'+'(\var{other})|\\
+\item['+'](<other>)|\\
   Return a \lstinline|Tuple| in which each element of \this is summed with
   its corresponding element in the \var{other} \lstinline|Tuple|.
 
