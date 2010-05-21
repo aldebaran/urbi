@@ -30,24 +30,26 @@ do (System)
       assert_(call.evalArgAt(0), call.argString(0));
   };
 
-  // to be executed when we have dictionnaries.
-  function '$register_ops'()
+  // To be executed when we have dictionnaries.
+  function '$registerOps'()
   {
-    if (this.hasSlot("$op_neg"))
+    if (this.hasSlot("$opNeg"))
       return |
-    var this.'$fun_rename' = [
-      "has"  => ("in", [(0, 1)]),
-    ] |
-    var this.'$op_neg' = [
-      "=="  => "!=",
-      "===" => "!==",
-      "<"   => ">=",
-      "<="  => ">",
-      "in"  => "not in",
-    ] |
+    var this.'$fun_rename' =
+      [
+        "has"  => ("in", [(0, 1)]),
+      ] |
+    var this.'$opNeg' =
+      [
+        "=="  => "!=",
+        "===" => "!==",
+        "<"   => ">=",
+        "<="  => ">",
+        "in"  => "not in",
+      ] |
     // add the opposite.
-    for|(var p: this.'$op_neg')
-      this.'$op_neg'[p[1]] = p[0];
+    for|(var p: this.'$opNeg')
+      this.'$opNeg'[p[1]] = p[0];
   };
 
   /// assert_call(Message: String | Lazy, Lhs, Rhs).
@@ -57,7 +59,7 @@ do (System)
       throw Exception.Arity.new(call.message, call.args.size, 2) |
     if (!ndebug)
     {
-      '$register_ops' |
+      '$registerOps' |
 
       // Support lazy invocations (all arguments are lazy),
       // or a partially lazy one, to ease bouncing from assert_eq.
@@ -99,12 +101,12 @@ do (System)
       var msg |
       var simpleMsg |
       var pp_op = op |
-      if (args.size == 2 && op in '$op_neg')
+      if (args.size == 2 && op in '$opNeg')
       {
         // Output messages for operators
         msg = "%s %s %s" |
         simpleMsg = "%s %s %s" |
-        pp_op = '$op_neg'[op]
+        pp_op = '$opNeg'[op]
       }
       else
       {
@@ -114,7 +116,7 @@ do (System)
         else if (args.size == 2)
           msg = "%s.%s(%s)"
         else
-          msg = "%s.%s(%s" + (", %s" * args.size - 2) + ")" |
+          msg = "%s.%s(%s" + ", %s" * (args.size - 2) + ")" |
 
         simpleMsg = "! " + msg |
       }|
