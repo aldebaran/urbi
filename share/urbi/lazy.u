@@ -44,7 +44,11 @@ class Global.Lazy : Global.Comparable
 
   function asString ()
   {
-    getSlot("code").bodyString
+    var c = getSlot("code") |
+    if (c.hasSlot("bodyString"))
+      c.bodyString
+    else
+      c.asString
   };
 };
 
