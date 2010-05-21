@@ -376,13 +376,13 @@ var t2 = Tag.new("cool name");
   enters the tagged code. See \autoref{sec:specs:tag:begin-end}.
 
 \item[block](<result> = void)%
-  Block any code tagged by \lstinline|this|.  Blocked tags can be
+  Block any code tagged by \this.  Blocked tags can be
   unblocked using \refSlot{unblock}.  If some \var{result} was
   specified, let stopped code return \var{result} as value.  See
   \autoref{sec:specs:tag:block}.
 
 \item[blocked]
-  Whether code tagged by \lstinline|this| is blocked.  See
+  Whether code tagged by \this is blocked.  See
   \autoref{sec:specs:tag:block}.
 
 \item[end]
@@ -392,7 +392,7 @@ var t2 = Tag.new("cool name");
 \item[enter] An event triggered each time the flow control enters the
   tagged code.  See \autoref{sec:specs:tag:enter-leave}.
 
-\item[freeze] Suspend code tagged by \lstinline|this|, already running or
+\item[freeze] Suspend code tagged by \this, already running or
   forthcoming.  Frozen code can be later unfrozen using \refSlot{unfreeze}.
   See \autoref{sec:specs:tag:freeze}.
 
@@ -403,7 +403,7 @@ var t2 = Tag.new("cool name");
   tagged code.  See \autoref{sec:specs:tag:enter-leave}.
 
 \item[stop](<result> = void)%
-  Stop any code tagged by \lstinline|this|.  If some \var{result} was
+  Stop any code tagged by \this.  If some \var{result} was
   specified, let stopped code return \var{result} as value.
   See \autoref{sec:specs:tag:stop}.
 
@@ -419,10 +419,10 @@ var t2 = Tag.new("cool name");
 \end{urbiscript}
 
 \item[unblock]
-  Unblock \lstinline|this|.  See \autoref{sec:specs:tag:block}.
+  Unblock \this.  See \autoref{sec:specs:tag:block}.
 
 \item[unfreeze]
-  Unfreeze code tagged by \lstinline|this|.  See
+  Unfreeze code tagged by \this.  See
   \autoref{sec:specs:tag:freeze}.
 \end{urbiscriptapi}
 

@@ -246,7 +246,7 @@ Methods in \us are simply object slots containing functions. We made a
 little simplification earlier by saying that \lstinline|obj.slot| is
 equivalent to \lstinline|obj.getSlot("slot")|: if the fetched value is
 executable code such as a function, the dot form evaluates it, as
-illustrated below. Inside a method, \lstinline|this| gives access to
+illustrated below. Inside a method, \this gives access to
 the target --- as in \Cxx.  It can be omitted if there is no ambiguity
 with local variables.
 

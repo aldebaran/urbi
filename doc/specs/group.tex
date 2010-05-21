@@ -70,7 +70,7 @@ Group.new(1, "two");
 
 \begin{urbiscriptapi}
 \item[add](<member>, ...)%
-  Add members to \lstinline|this| group, and return \lstinline|this|.
+  Add members to \this group, and return \this.
 
 \item[asString]
   Report the members.
@@ -86,7 +86,7 @@ Group.new(1, "two");
   Allows to iterate over a Group via \lstinline|for&|.
 
 \item[fallback]
-  This function is called when a method call on \lstinline|this|
+  This function is called when a method call on \this
   failed.  It bounces the call to the members of the group, collects
   the results returned as a group.  This allows to chain grouped
   operation in a row.  If the dispatched calls return
@@ -103,8 +103,8 @@ Group.new(1, "two");
   Bounced to the members.
 
 \item[remove](<member>, ...)%
-  Remove members from \lstinline|this| group, and return
-  \lstinline|this|.
+  Remove members from \this group, and return
+  \this.
 
 \item[setProperty](<slot>, <prop>, <value>)%
   Bounced to the members so that

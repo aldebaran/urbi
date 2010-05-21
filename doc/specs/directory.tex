@@ -32,7 +32,7 @@ Directory.new(Path.new("."));
 \begin{urbiscriptapi}
 \item[asList]
   The contents of the directory as a \refObject{Path} list.  The
-  various paths include the name of the directory \lstinline|this|.
+  various paths include the name of the directory \this.
 
 \item[asString] A \refObject{String} containing the path of the directory.
 
@@ -44,7 +44,7 @@ Directory.new(".").asString == ".";
 \item[content]
   The contents of the directory as a \refObject{String} list.  The
   strings include only the last component name; they do not contain
-  the directory name of \lstinline|this|.
+  the directory name of \this.
 
 \item[fileCreated](<name>)%
   Event launched when a file is created inside the directory.

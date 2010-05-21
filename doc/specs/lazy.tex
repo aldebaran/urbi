@@ -137,7 +137,7 @@ Lazy.new(closure () { /* Value to make lazy */ 0 });
 
 \begin{urbiscriptapi}
 \item \lstinline|==(\var{that})|\\
-  Whether \lstinline|this| and \var{that} are the same source code and
+  Whether \this and \var{that} are the same source code and
   value (an unevaluated Lazy is never equal to an evaluated one).
 \begin{urbiassert}
 Lazy.new(closure () { 1 + 1 }) == Lazy.new(closure () { 1 + 1 });

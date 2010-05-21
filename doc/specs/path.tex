@@ -38,7 +38,7 @@ Path.new("././///.//foo/");
 \subsection{Slots}
 \begin{urbiscriptapi}
 \item[absolute]
-  Whether \lstinline|this| is absolute.
+  Whether \this is absolute.
 \begin{urbiassert}
 Path.new("/abs/path").absolute;
 !Path.new("rel/path").absolute;
@@ -72,7 +72,7 @@ Path.new("relative/path/file.u").basename  == "file.u";
 \end{urbiassert}
 
 \item[cd]
-  Change current working directory to \lstinline|this|. Return the new
+  Change current working directory to \this. Return the new
   current working directory as a \lstinline|Path|.
 
 \item[cwd]
@@ -104,7 +104,7 @@ Path.new("rel/path/file.u").dirname  == Path.new("rel/path");
 
 \item[exists]
   Whether something (a file, a directory, \ldots) exists where
-  \lstinline|this| points to.
+  \this points to.
 \begin{urbiassert}
 Path.cwd.exists;
 Path.new("/").exists;
@@ -112,37 +112,37 @@ Path.new("/").exists;
 \end{urbiassert}
 
 \item[isDir]
-  Whether \lstinline|this| is a directory.
+  Whether \this is a directory.
 \begin{urbiassert}
 Path.cwd.isDir;
 \end{urbiassert}
 
 \item[isReg]
-  Whether \lstinline|this| is a regular file.
+  Whether \this is a regular file.
 \begin{urbiassert}
 !Path.cwd.isReg;
 \end{urbiassert}
 
 \item[open]
-  Open \lstinline|this|. Return either a \dfn{Directory} or a
-  \dfn{File} according the type of \lstinline|this|. See
+  Open \this. Return either a \dfn{Directory} or a
+  \dfn{File} according the type of \this. See
   \refObject{File} and \refObject{Directory}.
 
 \item[readable]
-  Whether \lstinline|this| is readable.  Throw if does not even exist.
+  Whether \this is readable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").readable;
 \end{urbiassert}
 
 \item[writable]
-  Whether \lstinline|this| is writable.  Throw if does not even exist.
+  Whether \this is writable.  Throw if does not even exist.
 \begin{urbiassert}
 Path.new(".").writable;
 \end{urbiassert}
 
 \item \lstinline|'/'(\var{rhs})|\\
   Create a new \dfn{Path} that is the concatenation of
-  \lstinline|this| and \lstinline|\var{rhs}|. \lstinline|\var{rhs}|
+  \this and \lstinline|\var{rhs}|. \lstinline|\var{rhs}|
   can be a \dfn{Path} or a \dfn{String} and cannot be absolute.
 \begin{urbiscript}
 assert(Path.new("/foo/bar") / Path.new("baz/qux/quux")
@@ -152,7 +152,7 @@ Path.cwd / Path.new("/tmp/foo");
 \end{urbiscript}
 
 \item \lstinline|'=='(\var{that})|\\
-  Same as comparing the string versions of \lstinline|this| and
+  Same as comparing the string versions of \this and
   \var{that}.  Beware that two paths may be different and point to the
   very same location.
 \begin{urbiassert}
@@ -161,7 +161,7 @@ Path.cwd / Path.new("/tmp/foo");
 \end{urbiassert}
 
 \item \lstinline|'<'(\var{that})|\\
-  Same as comparing the string versions of \lstinline|this| and
+  Same as comparing the string versions of \this and
   \var{that}.
 \begin{urbiassert}
   Path.new("/a")   < Path.new("/a/b");

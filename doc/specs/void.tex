@@ -32,7 +32,7 @@ void.isVoid;
 
 \begin{urbiscriptapi}
 \item[acceptVoid]
-  Trick \lstinline|this| so that, even if it is \lstinline|void| it
+  Trick \this so that, even if it is \lstinline|void| it
   can be used as a value.  See also \lstinline|unacceptVoid|.
 \begin{urbiscript}
 void.foo;
@@ -42,7 +42,7 @@ void.acceptVoid.foo;
 \end{urbiscript}
 
 \item[isVoid]
-  Whether \lstinline|this| is \lstinline|void|.  Therefore, return
+  Whether \this is \lstinline|void|.  Therefore, return
   \lstinline|true|.
 \begin{urbiassert}
 void.isVoid;
@@ -51,7 +51,7 @@ void.acceptVoid.isVoid;
 \end{urbiassert}
 
 \item[unacceptVoid]
-  Remove the magic from \lstinline|this| that allowed to manipulate it
+  Remove the magic from \this that allowed to manipulate it
   as a value, even if it \lstinline|void|.  See also
   \lstinline|acceptVoid|.
 \begin{urbiscript}

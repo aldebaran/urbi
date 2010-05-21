@@ -140,7 +140,7 @@ var s = Socket.new|
 \begin{urbiscriptapi}
 
 \item[connect](<host>, <port>)%
-  Connect \lstinline|this| to \var{host} and \var{port}.  The
+  Connect \this to \var{host} and \var{port}.  The
   \var{port} can be either an integer, or a string that denotes
   symbolic ports, such as \lstinline|"smtp"|, or \lstinline|"ftp"| and
   so forth.
@@ -149,7 +149,7 @@ var s = Socket.new|
   Event launched when the connection is established.
 
 \item[connectSerial](<device>, <baudRate>)%
-  Connect \lstinline|this| to the serial port \var{device}, with given
+  Connect \this to the serial port \var{device}, with given
   \var{baudRate}.
 
 \item[disconnect]
@@ -171,7 +171,7 @@ var s = Socket.new|
   The remote host of the connection.
 
 \item[isConnected]
-  Whether \lstinline|this| is connected.
+  Whether \this is connected.
 
 \item[localHost]
   The local host of the connection.
@@ -193,7 +193,7 @@ var s = Socket.new|
   The remote port of the connection.
 
 \item[received]
-  Event launched when \lstinline|this| has received data. The data is
+  Event launched when \this has received data. The data is
   given by argument to the event.
 
 \item[write](<data>)%

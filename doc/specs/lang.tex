@@ -201,7 +201,7 @@ for instance.  They are listed in \autoref{tab:keywords}.
     \lstinline"enum"              & Reserved                                &
     \lstinline"template"          & Reserved                                \\
                                   &                                         &
-    \lstinline"this"              &                                         \\
+    \this              &                                         \\
     \lstinline"every"             &                                         &
     \lstinline"throw"             & Reserved                                \\
     \lstinline"explicit"          & Reserved                                &
@@ -1689,7 +1689,7 @@ for (var i = 0; i < 8; i++)
 
 \subsection{do}
 
-The \lstinline|do| construct changes the target (\lstinline|this|)
+The \lstinline|do| construct changes the target (\this)
 when evaluating an expression.  It is a convenient means to avoid
 repeating the same target several times.
 
@@ -1700,7 +1700,7 @@ do (\var{target})
 };
 \end{urbiunchecked}
 
-It evaluates \var{body}, with \lstinline|this| being \var{target}, as
+It evaluates \var{body}, with \this being \var{target}, as
 shown below.  The whole construct evaluates to the value
 of \var{body}.
 

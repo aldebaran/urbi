@@ -145,13 +145,13 @@ nan.asBool == true;
 \end{urbiassert}
 
 \item \lstinline|'bitand'(\var{that})|\\
-  The bitwise-and between \lstinline|this| and \var{that}.
+  The bitwise-and between \this and \var{that}.
 \begin{urbiassert}
 (3 bitand 6) == 2;
 \end{urbiassert}
 
 \item \lstinline|'bitor'(\var{that})|\\
-  Bitwise-or between \lstinline|this| and \var{that}.
+  Bitwise-or between \this and \var{that}.
 \begin{urbiassert}
 (3 bitor 6) == 7;
 \end{urbiassert}
@@ -338,7 +338,7 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \end{urbiassert}
 
 \item[seq]
-  The sequence of integers from 0 to \lstinline|this| - 1 as a list.
+  The sequence of integers from 0 to \this - 1 as a list.
   The number must be non-negative.
 \begin{urbiassert}
 3.seq == [0, 1, 2];
@@ -348,7 +348,7 @@ Float.pi.cos ** 2 + Float.pi.sin ** 2 == 1;
 \end{urbiassert}
 
 \item[sign]
-  Return 1 if \lstinline|this| is positive, 0 if it is null, -1
+  Return 1 if \this is positive, 0 if it is null, -1
   otherwise.
 \begin{urbiassert}
 (-1164).sign == -1;
@@ -402,7 +402,7 @@ assert(0.tan == 0);
 \end{urbiscript}
 
 \item[times](<fun>)%
-  Call the functional argument \var{fun} \lstinline|this| times.
+  Call the functional argument \var{fun} \this times.
 
 \begin{urbiscript}
 3.times(function () { echo("ping")});
@@ -419,19 +419,19 @@ assert(0.tan == 0);
 \end{urbiassert}
 
 \item \lstinline|'^'(\var{that})|\\
-  Bitwise exclusive or between \lstinline|this| and \var{that}.
+  Bitwise exclusive or between \this and \var{that}.
 \begin{urbiassert}
 (3 ^ 6) == 5;
 \end{urbiassert}
 
 \item \lstinline|'>>'(\var{that})|\\%>>
-  \lstinline|this| shifted by \var{that} bits towards the right.
+  \this shifted by \var{that} bits towards the right.
 \begin{urbiassert}
 4 >> 2 == 1;
 \end{urbiassert}
 
 \item \lstinline|'<'(\var{that})|\\
-  Whether \lstinline|this| is less than \var{b}. The other comparison
+  Whether \this is less than \var{b}. The other comparison
   operators (\lstinline|<=|, \lstinline|>|, \ldots) can thus also be
   applied on floats since Float inherits \refObject{Orderable}.
 \begin{urbiassert}
@@ -441,50 +441,50 @@ assert(0.tan == 0);
 \end{urbiassert}
 
 \item \lstinline|'<<'(\var{that})|\\
-  \lstinline|this| shifted by \var{that} bit towards the left.
+  \this shifted by \var{that} bit towards the left.
 \begin{urbiassert}
 4 << 2 == 16;
 \end{urbiassert}
 
 \item \lstinline|'-'(\var{that})|\\
-  \lstinline|this| subtracted by \var{b}.
+  \this subtracted by \var{b}.
 \begin{urbiassert}
 6 - 3 == 3;
 \end{urbiassert}
 
 \item \lstinline|'+'(\var{that})|\\
-  The sum of \lstinline|this| and \var{that}.
+  The sum of \this and \var{that}.
 \begin{urbiassert}
 1 + 1 == 2;
 \end{urbiassert}
 
 \item \lstinline|'/'(\var{that})|\\
-  The quotient of \lstinline|this| divided by \var{that}.
+  The quotient of \this divided by \var{that}.
 \begin{urbiassert}
 50 / 10 == 5;
 10 / 50 == 0.2;
 \end{urbiassert}
 
 \item \lstinline|'%'(\var{that})|\\
-  \lstinline|this| modulo \var{b}.
+  \this modulo \var{b}.
 \begin{urbiassert}
 50 % 11 == 6;
 \end{urbiassert}
 
 \item \lstinline|'*'(\var{that})|\\
-  Product of \lstinline|this| by \var{that}.
+  Product of \this by \var{that}.
 \begin{urbiassert}
 2 * 3 == 6;
 \end{urbiassert}
 
 \item \lstinline|'**'(\var{that})|\\
-  \lstinline|this| to the \var{that} power (${this}^{that}$).
+  \this to the \var{that} power (${this}^{that}$).
 \begin{urbiassert}
 2 ** 10 == 1024;
 \end{urbiassert}
 
 \item \lstinline|'=='(\var{that})|\\
-  Whether \lstinline|this| equals \var{that}.
+  Whether \this equals \var{that}.
 \begin{urbiassert}
   1 == 1;
 !(1 == 2);

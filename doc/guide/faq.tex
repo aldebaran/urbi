@@ -475,8 +475,8 @@ understand how calls --- message passing --- work in \us.  In \us,
 every call has a target. For instance, in \lstinline|Object.x|,
 \lstinline|Object| is the target of the \lstinline|x| call. If no
 target is specified, as in \lstinline|x| alone, the target defaults to
-\lstinline|this|, yielding \lstinline|this.x|. Knowing this rules,
-plus the fact that at the top-level \lstinline|this| is
+\this, yielding \lstinline|this.x|. Knowing this rules,
+plus the fact that at the top-level \this is
 \lstinline|lobby|, we can understand better what happens when defining
 and accessing variables at the top-level:
 
@@ -521,7 +521,7 @@ Step by step:
 \item We call the lobby's \lstinline|getMine| method.
 \item We access \lstinline|this.myMind| from within the method. Since
   the method was called with \lstinline|lobby| as targetMine,
-  \lstinline|this| is \lstinline|lobby|, and \lstinline|lobby.x|
+  \this is \lstinline|lobby|, and \lstinline|lobby.x|
   resolves to the previously defined 42.
 \end{itemize}
 
@@ -550,20 +550,20 @@ Step by step:
 \item We call Object's \lstinline|getHis| method.
 \end{itemize}
 
-In the method, \lstinline|this| is \lstinline|Object|. Thus
+In the method, \this is \lstinline|Object|. Thus
 \lstinline|hisMind|, which is \lstinline|this.hisMind|, fails because
 Object has no such slot.
 
 The key to understanding this behavior is that any unqualified call
 --- unless it refers to a local variable --- is destined to
-\lstinline|this|. Thus, variables stored in the lobby are only
+\this. Thus, variables stored in the lobby are only
 accessible from the top-level, or from functions that are targeted on
 the lobby.
 
 \paragraph{So, where to store global variables?}
 From these rules, we can deduce a simple statement: since unqualified
-slots are searched in \lstinline|this|, for a slot to be global, it
-must always be accessible through \lstinline|this|. One way to achieve
+slots are searched in \this, for a slot to be global, it
+must always be accessible through \this. One way to achieve
 this is to store the slot in \lstinline|Object|, the ancestor of any
 object:
 
@@ -579,7 +579,7 @@ function any_object()
 \end{urbiscript}
 
 In the previous example, typing \lstinline|global| will look for the
-\lstinline|global| slot in \lstinline|this|. Since \lstinline|this|
+\lstinline|global| slot in \this. Since \this
 necessarily inherits \lstinline|Object|, it will necessarily be found.
 
 This solution would work; however, storing all global variables in

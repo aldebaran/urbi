@@ -31,7 +31,7 @@ closure(){}.protos[0] === getSlot("Code");
 
 \begin{urbiscriptapi}
 \item \lstinline|==(\var{that})|\\
-  Whether \lstinline|this| and \var{that} are the same source code.
+  Whether \this and \var{that} are the same source code.
   It actually checks that both have the same \lstinline|asString|.
 \begin{urbiassert}
 function () { 1 } == function () { 1 };
@@ -47,7 +47,7 @@ function () { 1 } != function (ignored) { 1 };
 
 \item[apply](<args>)%
   Invoke the routine, with all the arguments.  The target,
-  \lstinline|this|, will be set to \lstinline|\var{args}[0]| and the
+  \this, will be set to \lstinline|\var{args}[0]| and the
   remaining arguments with be given as arguments.
 \begin{urbiassert}
 function (x, y) { x+y }.apply([nil, 10, 20]) == 30;

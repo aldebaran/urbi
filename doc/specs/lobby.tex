@@ -20,7 +20,7 @@ connection to an \urbi server.
 \subsection{Construction}
 
 A lobby is implicitly created at each connection. At the top level,
-\lstinline|this| is a \dfn{Lobby}.
+\this is a \dfn{Lobby}.
 
 \begin{urbiscript}
 this.protos;
@@ -70,13 +70,13 @@ lobby.banner;
 \end{urbiscript}
 
 \item[connected]
-  Whether \lstinline|this| is connected.
+  Whether \this is connected.
 \begin{urbiassert}
 connected;
 \end{urbiassert}
 
 \item[connectionTag]
-  The tag of all code executed in the context of \lstinline|this|.
+  The tag of all code executed in the context of \this.
 
 \item[copyright](var <deep> = true)%~\\
   Display the copyright of \usdk.  Include copyright information
@@ -104,7 +104,7 @@ Lobby.create;
 \end{urbiassert}
 
 \item[echo](<value>, <channel> = "")%
-  Send \lstinline|\var{value}.asString| to \lstinline|this|, prefixed
+  Send \lstinline|\var{value}.asString| to \this, prefixed
   by the \refObject{String} \var{channel} name if specified.  This is
   the preferred way to send informative messages (prefixed with
   \samp{***}).
@@ -152,13 +152,13 @@ lobby.license;
 \end{urbiunchecked}
 
 \item[lobby]
-  Return the current lobby, i.e., \lstinline|this|.
+  Return the current lobby, i.e., \this.
 \begin{urbiassert}
 lobby === this;
 \end{urbiassert}
 
 \item[onDisconnect](<lobby>)%
-  Event launched when \lstinline|this| has disconnected.
+  Event launched when \this has disconnected.
 
 \item[quit] Shut this lobby down, i.e., close the connection.  The
   server is still running, see \refSlot[System]{shutdown} to quit the
@@ -178,7 +178,7 @@ Lobby.create.receive("12;");
 
 \item[send](<value>, <channel> = "")%
   This is low-level routine.  Send the \refObject{String} \var{value}
-  to \lstinline|this|, prefixed by the \refObject{String}
+  to \this, prefixed by the \refObject{String}
   \var{channel} name if specified.
 \begin{urbiscript}
 lobby.send("111", "foo");

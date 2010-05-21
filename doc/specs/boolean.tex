@@ -41,7 +41,7 @@ true.new === true;
 
 As in many programming languages, conditions may be more than only
 \lstinline|true| and \lstinline|false|.  Whether some value is
-considered as true depends on the type of \lstinline|this|.  Actually,
+considered as true depends on the type of \this.  Actually,
 by default objects as considered ``true'', objects evaluating to
 ``false'' are the exception:
 \begin{itemize}
@@ -72,9 +72,9 @@ void.asBool;
 
 \begin{urbiscriptapi}
 \item \lstinline|'&&'(\var{that})|\\
-  Short-circuiting logical and. If \lstinline|this| is
+  Short-circuiting logical and. If \this is
   \lstinline|true| evaluate and return \var{that}.  If
-  \lstinline|this| is \lstinline|false|, return itself without
+  \this is \lstinline|false|, return itself without
   evaluating \var{that}.
 \begin{urbiassert}
 (true && 2) == 2;
@@ -82,9 +82,9 @@ void.asBool;
 \end{urbiassert}
 
 \item \lstinline+'||'(\var{that})+\\
-  Short-circuiting logical or. If \lstinline|this| is
+  Short-circuiting logical or. If \this is
   \lstinline|false| evaluate and return \var{that}.  If
-  \lstinline|this| is \lstinline|true|, return itself without
+  \this is \lstinline|true|, return itself without
   evaluating \var{that}.
 \begin{urbiassert}
 (true || 1/0) == true;
@@ -92,7 +92,7 @@ void.asBool;
 \end{urbiassert}
 
 \item \lstinline|'!'|\\
-  Logical negation. If \lstinline|this| is \lstinline|false| return
+  Logical negation. If \this is \lstinline|false| return
   \lstinline|true| and vice-versa.
 \begin{urbiassert}
 !true == false;

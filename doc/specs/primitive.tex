@@ -32,7 +32,7 @@ String.getSlot("+").isA(Global.getSlot("Primitive"));
 String.getSlot("+").apply(["1", "2"]);
 \end{urbiassert}
 
-\item[asPrimitive] Return \lstinline|this|.
+\item[asPrimitive] Return \this.
 \begin{urbiassert}
 Float.getSlot("+").asPrimitive === Float.getSlot("+");
 \end{urbiassert}
