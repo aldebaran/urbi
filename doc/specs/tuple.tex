@@ -119,6 +119,26 @@ expressions are also accepted.
   (1, 2) == (1, 2);
 !((1, 1) == (2, 2));
 \end{urbiassert}
+
+\item \lstinline|'*'(\var{value})|\\
+  Return a \lstinline|Tuple| in which all elements of \this are multiplied
+  by a \var{value}.
+
+\begin{urbiassert}
+(0, 1, 2, 3) * 3 == (0, 3, 6, 9);
+(1, "foo") * 2 == (2, "foofoo");
+\end{urbiassert}
+
+\item \lstinline|'+'(\var{other})|\\
+  Return a \lstinline|Tuple| in which each element of \this is summed with
+  its corresponding element in the \var{other} \lstinline|Tuple|.
+
+\begin{urbiassert}
+(0, 1) + (2, 3) == (2, 4);
+(1, "foo") + (2, "bar") == (3, "foobar");
+\end{urbiassert}
+
+
 \end{urbiscriptapi}
 
 

@@ -51,6 +51,21 @@ class Global.Tuple
     members.size;
   };
 
+  function '*'(var rhs)
+  {
+    Tuple.new(members.map(
+      closure (var v) { v * rhs }
+    ))
+  };
+
+  function '+'(var rhs)
+  {
+    Tuple.new(members.zip(
+      closure (var lhs, var rhs) { lhs + rhs },
+      rhs.members
+    ))
+  };
+
   // Pattern matching.
   function matchAgainst(handler, pattern)
   {
