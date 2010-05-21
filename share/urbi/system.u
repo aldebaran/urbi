@@ -60,16 +60,15 @@ do (System)
     if (!ndebug)
     {
       '$registerOps' |
-
       // Support lazy invocations (all arguments are lazy),
       // or a partially lazy one, to ease bouncing from functions.
       var message =
-        {
-          if (call.args[0].type == "String")
-            call.args[0]
-          else
-            call.argAt(0)
-        }|
+      {
+        if (call.args[0].type == "String")
+          call.args[0]
+        else
+          call.argAt(0)
+      }|
 
       // Skip the function name.
       var args = call.args.tail |
@@ -79,8 +78,8 @@ do (System)
       var argVal = args.map(closure (v) { v.eval }) |
       var argPrint = argVal.map(closure (v) { v.asPrintable }) |
 
-      // handle cases where an operator is just a sugar over a function
-      // name, and reorder the argument in consequences.
+      // Cases where an operator is just a sugar over a function name,
+      // and reorder the argument in consequences.
       var op = message |
       if (message in '$fun_rename')
       {
@@ -98,52 +97,54 @@ do (System)
         }
       } |
 
-      var msg |
+      // The format string to display the unevaluated assertion.
+      var msg = "" |
+      // The format string to display the assertion with values.
       var simpleMsg |
-      var pp_op = op |
+
+      var msgArgs =       [argStr.head, op] + argStr.tail |
+      var simpleMsgArgs = [argPrint.head, op] + argPrint.tail |
+
+      // Binary operators.
       if (args.size == 2 && op in '$opNeg')
       {
         // Output messages for operators
         msg = "%s %s %s" |
         simpleMsg = "%s %s %s" |
-        pp_op = '$opNeg'[op]
+        simpleMsgArgs[1] = '$opNeg'[op];
       }
       else
       {
-        // Different ouput message in function of the number of arguments.
-        if (args.size == 1)
-          msg = "%s.%s()"
-        else if (args.size == 2)
-          msg = "%s.%s(%s)"
+        // If the assertion is about an implicit target, don't mention
+        // it.
+        if (argStr[0] == "<IMPLICIT>")
+        {
+          msgArgs.removeFront |
+          simpleMsgArgs.removeFront |
+        }
         else
-          msg = "%s.%s(%s" + ", %s" * (args.size - 2) + ")" |
+          msg = "%s."|
+
+        // Message name.
+        msg += "%s" |
+
+        // Arguments.
+        if (2 <= args.size)
+          msg += "(%s" + ", %s" * (args.size - 2) + ")" |
 
         simpleMsg = "! " + msg |
       }|
 
-      var msgArgs = [argStr.head, op] + argStr.tail |
-      var simpleMsgArgs = [argPrint.head, pp_op] + argPrint.tail |
-
-      // Check if the simplified message is identical to the complex message
-      // to avoid identical messages.
-      var simple = true;
-      for|(var i: msgArgs.size)
-        if (msgArgs[i] != simpleMsgArgs[i])
-        {
-          simple = false |
-          break
-        }|
-
-      // Add the simplified message.
-      if (!simple)
+      // Add resolved values, if differerent from the unevaluated
+      // arguments.
+      if (msgArgs != simpleMsgArgs)
       {
         msg += " (" + simpleMsg + ")" |
         msgArgs += simpleMsgArgs |
       }|
 
-      // Do the assertion with it's message.
-      msg = msg % msgArgs |
-      assert_(argVal.head.getSlot(message).apply(argVal), msg)|
+      // Do the assertion with its message.
+      assert_(argVal.head.getSlot(message).apply(argVal), msg % msgArgs)|
     }
   };
 

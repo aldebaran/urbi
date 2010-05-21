@@ -2376,15 +2376,63 @@ are disabled when \refSlot[System]{ndebug} is true, see \refObject{System}.
 syntax, which is adequate for single claims, and a block-like syntax,
 to group claims together.
 
-The \lstinline|assert(\var{expression})| bounces to the
-\lstinline|System.'assert'| function, see \refObject{System}.
+\subsection{Asserting an Expression}
 
 \begin{urbiscript}
 assert(true);
 assert(42);
+\end{urbiscript}
+
+Failed assertions are displayed in a user friendly fashion: first the
+unevaluated assertion is displayed, then the effective values are reported.
+
+\begin{urbiscript}
+function fail { false }|;
+assert (fail);
+[00010239:error] !!! failed assertion: fail
+assert (fail(1+2, "+" * 2));
+[00010241:error] !!! failed assertion: fail(1 . '+'(2), "+" . '*'(2)) (! fail(3, "++"))
+\end{urbiscript}
+
+The following example is more realistic.
+
+\begin{urbiscript}
+function areEqual
+{
+  var res = true;
+  if (!call.args.empty)
+  {
+    var args = call.evalArgs;
+    var a = args[0];
+    for (var b : args.tail)
+      if (a != b)
+      {
+        res = false;
+        break;
+      }
+  };
+  res
+}|;
+assert (areEqual);
+assert (areEqual(1));
+assert (areEqual(1, 0 + 1));
+assert (areEqual(1, 1, 1+1));
+[00001388:error] !!! failed assertion: areEqual(1, 1, 1 . '+'(1)) (! areEqual(1, 1, 2))
+assert (areEqual(1+2, 3+3, 4*6));
+[00001393:error] !!! failed assertion: areEqual(1 . '+'(2), 3 . '+'(3), 4 . '*'(6)) (! areEqual(3, 6, 24))
+\end{urbiscript}
+
+Comparison operators are recognized, and displayed specially:
+\begin{urbiscript}
 assert(1 == 1 + 1);
 [00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
 \end{urbiscript}
+
+Note however that if opposite comparison operators are absurd (i.e., if for
+instance \lstinline|a == b| is not true, but \lstinline|a != b| is not true
+either), them the message is unlikely to make sense.
+
+\subsection{Assertion Blocks}
 
 Groups of assertions are more readable when used with the
 \lstinline|assert{\var{exp1}; \var{exp2}; ...}| construct.  The

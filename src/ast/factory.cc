@@ -126,10 +126,6 @@ namespace ast
   {
     rCall call = dynamic_cast<Call*>(cond.get());
     if (call
-        && !call->target_implicit()
-        && call->arguments_get()
-        && !call->arguments_get()->empty()
-
         // Binary Boolean operators are not desugared to respect
         // operator sequences.
         && call->name_get() != SYMBOL(AMPERSAND_AMPERSAND)
@@ -138,8 +134,9 @@ namespace ast
       const yy::location& loc = call->location_get();
       exps_type* args = new exps_type;
       *args << make_string(loc, call->name_get())
-            << call->target_get()
-            << *call->arguments_get();
+            << call->target_get();
+      if (exps_type* as = call->arguments_get())
+        *args << *as;
       return make_call(loc,
                        make_call(loc, SYMBOL(System)),
                        SYMBOL(assertCall),
