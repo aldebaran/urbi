@@ -2391,7 +2391,7 @@ function fail { false }|;
 assert (fail);
 [00010239:error] !!! failed assertion: fail
 assert (fail(1+2, "+" * 2));
-[00010241:error] !!! failed assertion: fail(1 . '+'(2), "+" . '*'(2)) (! fail(3, "++"))
+[00010241:error] !!! failed assertion: fail(1.'+'(2), "+".'*'(2)) (! fail(3, "++"))
 \end{urbiscript}
 
 The following example is more realistic.
@@ -2417,15 +2417,15 @@ assert (areEqual);
 assert (areEqual(1));
 assert (areEqual(1, 0 + 1));
 assert (areEqual(1, 1, 1+1));
-[00001388:error] !!! failed assertion: areEqual(1, 1, 1 . '+'(1)) (! areEqual(1, 1, 2))
+[00001388:error] !!! failed assertion: areEqual(1, 1, 1.'+'(1)) (! areEqual(1, 1, 2))
 assert (areEqual(1+2, 3+3, 4*6));
-[00001393:error] !!! failed assertion: areEqual(1 . '+'(2), 3 . '+'(3), 4 . '*'(6)) (! areEqual(3, 6, 24))
+[00001393:error] !!! failed assertion: areEqual(1.'+'(2), 3.'+'(3), 4.'*'(6)) (! areEqual(3, 6, 24))
 \end{urbiscript}
 
 Comparison operators are recognized, and displayed specially:
 \begin{urbiscript}
 assert(1 == 1 + 1);
-[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
+[00000002:error] !!! failed assertion: 1 == 1.'+'(1) (1 != 2)
 \end{urbiscript}
 
 Note however that if opposite comparison operators are absurd (i.e., if for
@@ -2445,7 +2445,7 @@ assert
   42;
   1 == 1 + 1;
 };
-[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
+[00000002:error] !!! failed assertion: 1 == 1.'+'(1) (1 != 2)
 \end{urbiscript}
 
 For sake of readability and compactness, this documentation shows
@@ -2455,7 +2455,7 @@ assertion blocks as follows.
 true;
 42;
 1 == 1 + 1;
-[00000002:error] !!! failed assertion: 1 == 1 . '+'(1) (1 != 2)
+[00000002:error] !!! failed assertion: 1 == 1.'+'(1) (1 != 2)
 \end{urbiassert}
 
 

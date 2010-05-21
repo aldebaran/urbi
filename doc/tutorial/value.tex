@@ -262,7 +262,7 @@ function o.f ()
 // The slot value is the function.
 o.getSlot("f");
 [00000001] function () {
-[:]  echo("This is f with target " . '+'(this));
+[:]  echo("This is f with target ".'+'(this));
 [:]  return 42;
 [:]}
 // Huho, the function is invoked!

@@ -891,7 +891,7 @@ Call:
   printer:
     - '{
          if (!(n->target_get()->implicit()))
-           ostr_ << *n->target_get() << " . ";
+           ostr_ << *n->target_get() << ".";
        }'
     - '{
          n->name_get().print_escaped(ostr_);
@@ -1206,7 +1206,7 @@ MetaCall:
         type: unsigned
   printer:
     - ~target
-    - '" . %id:"'
+    - '".%id:"'
     - $id
     - '" "'
     - '{ visit(static_cast<const LValueArgs*>(n)); }'

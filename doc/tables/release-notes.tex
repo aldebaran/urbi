@@ -36,10 +36,10 @@ assert (one == two);
 
 \begin{urbiunchecked}
 assert (one == two);
-[00000002:error] !!! failed assertion: one . '=='(two)
+[00000002:error] !!! failed assertion: one.'=='(two)
 \end{urbiunchecked}
   \noindent
-  previously.  As a consequence, \refSlot[System]{assert_op} is deprecated.
+  previously.  As a consequence, \refSlot[System]{assert\_op} is deprecated.
   The never documented following slots have been removed from
   \refObject{System}: \lstinline{assert_eq}, \lstinline{assert_ge},
   \lstinline{assert_gt}, \lstinline{assert_le}, \lstinline{assert_lt},
@@ -1224,7 +1224,7 @@ and as many files as provided on the command line.
 %%    [09856000] 0
 %%    var counter = function () { counter_ += 1; };
 %%    [09952000] function () {
-%%      counter_ . '+='(1);
+%%      counter_.'+='(1);
 %%    }
 %%    counter;
 %%    [10080000] 1
@@ -1238,7 +1238,7 @@ and as many files as provided on the command line.
 %%    [10432000] 3
 %%    var counter3 = getSlot("counter");
 %%    [10528000] function () {
-%%      counter_ . '+='(1);
+%%      counter_.'+='(1);
 %%    }
 %%    counter3;
 %%    [10656000] 4
