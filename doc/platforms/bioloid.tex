@@ -55,8 +55,9 @@ Download the firmware file from our website at
   Ready..
 \end{verbatim}
 
-\item In the menu, select Files, Transmit file (Ctrl+T) and select the
-  firmware file you downloaded. After a few seconds, display should turn to:
+\item In the menu, select ``Files'', ``Transmit file'' (Control-T) and
+  select the firmware file you downloaded. After a few seconds, display
+  should turn to:
 \begin{verbatim}
   Ready..Success
   (and other information)
@@ -79,10 +80,13 @@ and instantiate them. It will create:
 
 \begin{itemize}
 \item one \lstinline|bioloid| object representing the connexion to the CM5.
-\item one object per motor (\refObject{AX12}) named motorID and motors[ID]
-  where ID is the motor ID.
-\item one object per sensor (\refObject{AXS1}) named sensorID and
-  sensors[ID] where ID is the sensor ID (ex: sensor100, sensors[100].
+\item one object per motor (\refObject{AX12}) named
+  \lstinline|motor\var{id}| and \lstinline|motors[\var{id}]| where \var{id}
+  is the motor identifier.
+\item one object per sensor (\refObject{AXS1}) named
+  \lstinline|sensor\var{id}| and \lstinline|sensors[\var{id}]| where
+  \var{id} is the sensor \var{id} (e.g., \lstinline|sensor100|,
+  \lstinline|sensors[100]|).
 \end{itemize}
 
 Once initialized, do not disconnect any motor that was detected or
@@ -120,7 +124,7 @@ motor6.val = 90deg;
 // Move to 0 in 5 seconds.
 motor6.val = 0 time:5s;
 // Ticking clock.
-at(motor6.val > 0) echo("tic") onleave echo("tac");
+at (motor6.val > 0) echo("tick") onleave echo("tack");
 motor6.val = 0 sin:1s ampli:20deg,
 \end{urbiunchecked}
 
