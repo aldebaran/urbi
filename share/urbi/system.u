@@ -33,7 +33,7 @@ do (System)
   // To be executed when we have dictionnaries.
   function '$registerOps'()
   {
-    if (this.hasSlot("$opNeg"))
+    if (this.hasLocalSlot("$opNeg"))
       return |
     var this.'$fun_rename' =
       [

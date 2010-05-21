@@ -19,7 +19,7 @@ class Global.Binary
     var res = Global.Binary.new(keywords, data + rhs.data)|
     if (keywords.empty)
       res.keywords = rhs.keywords |
-    return res
+    res
   };
 
   function '=='(rhs)

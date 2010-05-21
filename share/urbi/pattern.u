@@ -23,18 +23,18 @@ class Global.Pattern
 
   function match(value)
   {
-    return matchPattern(pattern, value) &&
-      (getSlot("guard").isNil || guard(this)) |
+    matchPattern(pattern, value)
+    && (getSlot("guard").isNil || guard(this))
   };
 
   function matchPattern(pattern, value)
   {
     if (pattern.hasSlot("match"))
-      return pattern.match(this, value)
+      pattern.match(this, value)
     else if (value.hasSlot("matchAgainst"))
-      return value.matchAgainst(this, pattern)
+      value.matchAgainst(this, pattern)
     else
-      return value == pattern |
+      value == pattern
   };
 
   class Binding
@@ -43,18 +43,18 @@ class Global.Pattern
 
     function init(n)
     {
-      name = n |
+      name = n
     };
 
     function asString()
     {
-      return "var " + name |
+      "var " + name
     };
 
     function match(pattern, value)
     {
       pattern.bindings[name] = value |
-      return true |
+      true
     };
   };
 };
