@@ -37,7 +37,7 @@ spawn (function () { sleep(10) }, false);
 
 \begin{urbiscriptapi}
 \item[asJob]
-  Return \this.
+  Return \lstinline|this|.
 
 \item[asString] The string \lstinline|Job<\var{name}>| where \var{name} is
   the name of the job.
@@ -59,6 +59,7 @@ assert
 \end{urbiscript}
 
 \item[clone]
+  Cloning a job is impossible since Job is considered as being an atom.
 
 \item[dumpState]
   Pretty-print the state of the job.
@@ -85,10 +86,15 @@ detach(sleep(10)).name;
 [00004297] "shell_5"
 \end{urbiscript}
 
-\item[setSideEffectFree]
+\item[setSideEffectFree](<value>)
+  If value is true, mark the current job as side-effect free. It indicates
+  whether the current state may influence other parts of the system. This is
+  used by the scheduler to choose whether other jobs need scheduling or not.
+  The default value is false.
 
-%%\item[status]
-%%  The current status of the job.
+\item[status]
+  The current status of the job (starting, running, \ldots), and its
+  properties (frozen, \ldots).
 
 \item[tags] The list of \refObject[s]{Tag} that manage this job.
 
@@ -102,13 +108,24 @@ sleep(2s);
 \end{urbiscript}
 
 \item[timeShift]
-%% FIXME:
+  Get the total amount of time during which we were frozen.
+\begin{urbiscript}
+jtag: r = detach({ sleep(3); echo("done") })|;
+jtag.freeze();
+sleep(2);
+jtag.unfreeze();
+Math.round(r.timeShift);
+[00000001] 2
+\end{urbiscript}
 
 \item[waitForChanges]
-%% FIXME:
+  Resume the scheduler, putting the current Job in a waiting status.
+  Note that the scheduler is free to reschedule the job immediately if it
+  whishes to so.
 
 \item[waitForTermination]
-%% FIXME:
+  Wait for the job to terminate before resuming execution of the current one.
+  If the job has already terminated, the called will continue its execution.
 
 \end{urbiscriptapi}
 
