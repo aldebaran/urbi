@@ -142,7 +142,7 @@ namespace ast
             << *call->arguments_get();
       return make_call(loc,
                        make_call(loc, SYMBOL(System)),
-                       SYMBOL(assert_call),
+                       SYMBOL(assertCall),
                        args);
     }
 

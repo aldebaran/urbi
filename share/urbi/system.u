@@ -52,8 +52,8 @@ do (System)
       this.'$opNeg'[p[1]] = p[0];
   };
 
-  /// assert_call(Message: String | Lazy, Lhs, Rhs).
-  function assert_call
+  /// assertCall(Message: String | Lazy, Lhs, Rhs).
+  function assertCall
   {
     if (call.args.size < 2)
       throw Exception.Arity.new(call.message, call.args.size, 2) |
@@ -62,7 +62,7 @@ do (System)
       '$registerOps' |
 
       // Support lazy invocations (all arguments are lazy),
-      // or a partially lazy one, to ease bouncing from assert_eq.
+      // or a partially lazy one, to ease bouncing from functions.
       var message =
         {
           if (call.args[0].type == "String")
@@ -149,82 +149,7 @@ do (System)
 
 
   /// assert_op(Operator: String | Lazy, Lhs, Rhs).
-  var assert_op = getSlot("assert_call");
-
-
-  /// assert_eq(Lhs, Rhs) and so forth.
-  // Cannot do this, as we don't have Dictionary.each yet.
-  //for (var p :
-  //      [
-  //        "assert_eq" => "==",
-  //        "assert_ge" => ">=",
-  //        "assert_gt" => ">",
-  //        "assert_le" => "<=",
-  //        "assert_lt" => "<",
-  //        "assert_ne" => "!=",
-  //      ])
-  //  setSlot(p.first,
-  //          function () {
-  //            call.args.insertFront(p.second) |
-  //            call.message = "assert_op" |
-  //            callMessage(call)
-  //          });
-
-  function assert_eq
-  {
-    call.args.insertFront("==") |
-    call.message = "assert_op" |
-    callMessage(call)
-  };
-
-  function assert_ge
-  {
-    call.args.insertFront(">=") |
-    call.message = "assert_op" |
-    callMessage(call)
-  };
-
-  function assert_gt
-  {
-    call.args.insertFront(">") |
-    call.message = "assert_op" |
-    callMessage(call)
-  };
-
-  function assert_le
-  {
-    call.args.insertFront("<=") |
-    call.message = "assert_op" |
-    callMessage(call)
-  };
-
-  function assert_lt
-  {
-    call.args.insertFront("<") |
-    call.message = "assert_op" |
-    callMessage(call)
-  };
-
-  function assert_meq
-  {
-    call.args.insertFront("===") |
-    call.message = "assert_op" |
-    callMessage(call)
-  };
-
-  function assert_mne
-  {
-    call.args.insertFront("!==") |
-    call.message = "assert_op" |
-    callMessage(call)
-  };
-
-  function assert_ne
-  {
-    call.args.insertFront("!=") |
-    call.message = "assert_op" |
-    callMessage(call)
-  };
+  var assert_op = getSlot("assertCall");
 
   var period = 20ms;
 

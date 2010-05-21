@@ -84,53 +84,6 @@ my $previous_test = undef;
 # Whether we should generate the synclines.
 my $synclines = 1;
 
-# A regexp that matches 0 or more repetitions of either a
-# non-backtracking word with no parens/braces, or a braced group, or a
-# parenthezied group.
-#
-# Note that since it is greedy and non-backtracking, it might eat too
-# much.  Use $braced instead.
-my $balanced;
-$balanced =
-  qr{
-       (?:
-          (?> [^(){}\[\]]+ )         # Non-parens/braces without backtracking
-        |
-          \( (??{ $balanced }) \)     # Group with matching parens
-        |
-          \{ (??{ $balanced }) \}     # Group with matching braces
-        |
-          \[ (??{ $balanced }) \]     # Group with matching brackets
-       )*
-    }x;
-
-# Same as above, but allow backtracking on non-braced parts, so that
-# we don't eat places where we want to catch operators.
-my $braced =
-  qr{
-      (?:
-          \{ $balanced \}
-        | \( $balanced \)
-        | \[ $balanced \]
-        | [^(){}\[\]]+        # Non-parens/braces with backtracking
-      )*
-    }x;
-
-# The (Boolean) operators in urbiscript.  Beware of operators "nested"
-# in other operators: we must not cut "===" into "==" as operator, and
-# "=" as lhs or rhs.
-my $operators =
-  qr{
-      (?<![!=])
-      (?:
-         [!=]={1, 2} # ==, ===, !=, !==.
-       | [<>]=?      # <, <=, >, >=.
-       | =?~=        # =~=, ~=.
-      )
-      (?![=])
-    }x;
-
-
 =head1 FUNCTIONS
 
 =over 4
@@ -225,30 +178,6 @@ sub register ($$\%)
   }
 }
 
-=item C<assert_name($op)>
-
-Map an operator name to its (alphabetical) suffix for assert.  For
-instance C<==> maps to C<eq>.
-
-=cut
-
-sub assert_name($)
-{
-  my ($op) = @_;
-  my %op =
-    (
-     '!='  => 'ne',
-     '!==' => 'mne',
-     '<'   => 'lt',
-     '<='  => 'le',
-     '=='  => 'eq',
-     '===' => 'meq',
-     '>'   => 'gt',
-     '>='  => 'ge',
-    );
-  "assert_" . $op{$op};
-}
-
 =item C<process_listing($file, $line, $lst)>
 
 Process the lstlisting environment C<$lst>, which was found in
@@ -286,23 +215,6 @@ sub process_listing ($$$)
     ($env eq 'urbiassert') ? "assert {\n$content\n};" : "$content";
 
 #  print STDERR "$2\n";
-
-  # assert_eq is clearer when there are failures, but it is not nice
-  # looking in the documentation.  Beware of === and !== that contain
-  # ==.
-  #
-  # Be also woried about precedence.  1 < 2 == true should not be
-  # cut on `<'.  I don't feel like parsing urbi in Perl...
-  $res{'_contents'} =~
-    s{^(\s*)                 # $1 indentation
-       assert
-       \s*\(
-       ($braced)             # $2 lhs
-       \s*
-       (?<![!=])
-       (<|<=|>|>=|!=|==|===|!==)     # $3 operator
-       (?![=])\s*}
-     { $1 . assert_name($3) . '(' . strip ($2) . ", "}gmsex;
 
   # Decode and normalize the options.
   if ($options)

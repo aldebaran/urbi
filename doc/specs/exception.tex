@@ -125,8 +125,7 @@ Exception.Arity.new("myRoutine", 1, 10, 23);
 %% }
 %% catch (var e)
 %% {
-%%   assert_eq(e,
-%%   Exception.Arity.new("cos", 2, 1));
+%%   assert(e == Exception.Arity.new("cos", 2, 1));
 %% };
 \item \lstinline|BadInteger.new(\var{routine}, \var{fmt}, \var{effective})|\\
   The \var{routine} was called with an inappropriate integer
