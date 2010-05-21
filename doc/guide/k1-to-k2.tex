@@ -16,9 +16,9 @@ of cleaner constructs in \us 2.  When possible, \us 2 supports the
 remaining \us 1 constructs.  The \refObject{Kernel1} object contains
 functions that support some \us 1 features.
 
-\section{One to one translation}
+% \section{One to one translation}
 
-\subsection{\$(Foo)}
+\section{\$(Foo)}
 \label{sec:k122:dollar}
 
 This construct was designed to build identifiers at run-time.  This
@@ -46,7 +46,7 @@ following table lists common patterns.
   \end{tabular}%$
 \end{center}
 
-\subsection{delete Foo}
+\section{delete Foo}
 \label{sec:k122:delete}
 In order to maintain an analogy with the \Cxx language, \us used to
 support \lstinline{delete Foo}, but this was removed for a number of
@@ -96,7 +96,7 @@ Foo.localSlotNames;
 [00000000] []
 \end{urbiscript}
 
-\subsection{emit Foo}
+\section{emit Foo}
 
 The keyword \lstinline{emit} is deprecated in favor of \lstinline{!}.
 
@@ -128,17 +128,17 @@ The \lstinline{?} construct is changed for symmetry.
 \end{center}
 
 
-\subsection{eval(Foo)}
+\section{eval(Foo)}
 \lstinline{eval} is still supported, but its use is discouraged: one
 can often easily do without.  For instance, \lstinline{eval} was often
 used to manipulate forged identifiers; see \autoref{sec:k122:dollar}
 for means of getting rid of them.
 
-\subsection{foreach}
+\section{foreach}
 The same feature with a slightly different syntax is now provided by
 \lstinline|for|.  See \autoref{sec:lang:for:each}.
 
-\subsection{group}
+\section{group}
 Where support for groups was a built-in feature in \us 1, it is now
 provided by the standard library, see \refObject{Group}.  Instead of
 \begin{urbiunchecked}
@@ -150,11 +150,11 @@ write
 var myGroup = Group.new(a,b,c)
 \end{urbiunchecked}
 
-\subsection{loopn}
+\section{loopn}
 The same feature and syntax is now provided by \lstinline|for|.  See
 \autoref{sec:lang:for:n}.
 
-\subsection{new Foo}
+\section{new Foo}
 
 See \autoref{sec:tut:ctor} for details on \lstinline{new}.  The construct
 \lstinline{new Foo} is no longer supported because it is (too) ambiguous:
@@ -176,18 +176,18 @@ simpler, safer, and more consistent method-call-style construct:
 \item \lstinline{new.a(1,2).b(3,4)}
 \end{itemize}
 
-\subsection{self}
+\section{self}
 For consistency with the \Cxx syntax, \us now uses \lstinline{this}.
 
-\subsection{stop Foo}
+\section{stop Foo}
 
 Use \lstinline{Foo.stop} instead, see \refObject{Tag}.
 
-\subsection{\# line}
+\section{\# line}
 
 Use \lstinline{//#line} instead, see \autoref{sec:specs:synclines}.
 
-\subsection{tag+end}
+\section{tag+end}
 
 To detect the end of a statement, instead of
 
