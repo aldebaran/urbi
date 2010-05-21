@@ -623,6 +623,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "bool"             |
 "char"             |
 "const_cast"       |
+"delete"           |
 "double"           |
 "dynamic_cast"     |
 "enum"             |
