@@ -75,7 +75,7 @@ do (System)
 
       // Evaluate all arguments, and pretty print them.
       var argStr = args.map(closure (v) { v.asString }) |
-      var argVal = args.map(closure (v) { v.eval }) |
+      var argVal = args.map(closure (v) { v.eval.acceptVoid }) |
       var argPrint = argVal.map(closure (v) { v.asPrintable }) |
 
       // Cases where an operator is just a sugar over a function name,
