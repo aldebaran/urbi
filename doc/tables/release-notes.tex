@@ -22,6 +22,24 @@ This chapter lists the user-visible changes in \usdk releases.
 \item \refSlot[List]{zip}
 \item \refSlot[Tuple]{'+'}
 \item \refSlot[Tuple]{'*'}
+\item Assertion failures are more legible:
+
+\begin{urbiscript}
+var one = 1|;
+var two = 2|;
+assert (one == two);
+[00000002:error] !!! failed assertion: one == two (1 != 2)
+\end{urbiscript}
+
+  \noindent
+  instead of
+
+\begin{urbiunchecked}
+assert (one == two);
+[00000002:error] !!! failed assertion: one . '=='(two)
+\end{urbiunchecked}
+  \noindent
+  previously.  As a consequence, \refSlot[System]{assert_op} is deprecated.
 \end{itemize}
 
 \subsection{Fixes}

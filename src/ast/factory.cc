@@ -121,7 +121,7 @@ namespace ast
   }
 
   rExp
-  Factory::make_assert(const yy::location& l,
+  Factory::make_assert(const yy::location&,
                        rExp cond) /* const */
   {
     rCall call = dynamic_cast<Call*>(cond.get());
@@ -135,12 +135,15 @@ namespace ast
         && call->name_get() != SYMBOL(AMPERSAND_AMPERSAND)
         && call->name_get() != SYMBOL(PIPE_PIPE))
     {
+      const yy::location& loc = call->location_get();
       exps_type* args = new exps_type;
-      *args << make_string(l, call->name_get())
+      *args << make_string(loc, call->name_get())
             << call->target_get()
             << *call->arguments_get();
-      return make_call(l, make_call(l, SYMBOL(System)),
-                       SYMBOL(assert_call), args);
+      return make_call(loc,
+                       make_call(loc, SYMBOL(System)),
+                       SYMBOL(assert_call),
+                       args);
     }
 
     PARAMETRIC_AST

@@ -88,14 +88,7 @@ assert_(1 == 1 + 1, "one is not two");
 \end{urbiscript}
 
 \item[assert_op](<operator>, <lhs>, <rhs>)%
-  Unless \refSlot{ndebug} is true, throw an error if
-  \lstinline|\var{lhs} \var{operator} \var{rhs}| is not verified.
-\begin{urbiscript}
-assert_op("<",  1, 1 + 1);
-assert_op("<=", 1, 1 + 1);
-assert_op(">",  1, 1 + 1);
-[00000003:error] !!! failed assertion: 1 > 1 . '+'(1) (1 <= 2)
-\end{urbiscript}
+  Deprecated, use \lstinline|assert| instead, see \autoref{sec:assertions}.
 
 \item \lstinline|backtrace|\\
   Display the call stack on the channel \code{backtrace}. \experimental
