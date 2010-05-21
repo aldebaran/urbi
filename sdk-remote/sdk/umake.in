@@ -204,7 +204,6 @@ get_options ()
 
 : ${DLMODEXT='@DLMODEXT@'}
 : ${EXEEXT='@EXEEXT@'}
-: ${LIBJPEG_NAME='@LIBJPEG_NAME@'}
 : ${LIBSFX='@LIBSFX@'}
 
 clean=false
@@ -354,7 +353,7 @@ if test -z "$LIBNAME"; then
        UMAKE_LIBNAME=libuobject${LIBSFX};;
     (fullengine)
        UMAKE_LIBNAME=libuobject${LIBSFX}
-       UMAKE_EXTRALIB="${libdir}/liburbi$LIBSFX.la ${libdir}/lib$LIBJPEG_NAME$LIBSFX.la"
+       UMAKE_EXTRALIB="${libdir}/liburbi$LIBSFX.la ${libdir}/libjpeg4urbi$LIBSFX.la"
        core=engine;;
   esac
 else
