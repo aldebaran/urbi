@@ -22,7 +22,7 @@ do (Event)
     return res;
   };
 
-  // This function does not handle event which have a duration because this
+  // This function does not handle event that have a duration because this
   // would be costly for the declarations of "at" with conditions.
   function '<<' (rhs)
   {
