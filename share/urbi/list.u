@@ -175,6 +175,16 @@ do (List)
     res
   };
 
+  // The list of elements zipped with the \a f function.
+  function zip(f, l)
+  {
+    assert(this.size == l.size) |
+    var res = [] |
+    for| (var i: this.size)
+      res << f(this[i], l[i]) |
+    res
+  };
+
   // Pattern matching.
   function matchAgainst(handler, pattern)
   {

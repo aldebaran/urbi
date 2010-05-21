@@ -480,6 +480,17 @@ assert([0, 1, 2].tail == [1, 2]);
 [00000000:error] !!! tail: cannot be applied onto empty list
 \end{urbiscript}
 
+\item[zip](<fun>, <other>)
+  Zip \this list and the \var{other} list with the \var{fun} function, and
+  return the list of results.
+
+\begin{urbiassert}
+[1, 2, 3].zip(closure (x, y) { (x, y) }, [4, 5, 6])
+       == [(1, 4), (2, 5), (3, 6)];
+[1, 2, 3].zip(closure (x, y) { x + y }, [4, 5, 6])
+       == [5, 7, 9];
+\end{urbiassert}
+
 \item \lstinline|'=='(\var{that})|\\
 Check whether all elements in the target and \var{that}, are
 equal two by two.
