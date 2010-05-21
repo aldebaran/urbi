@@ -1648,6 +1648,166 @@ obj.b(50);
 [00000000] 51
 \end{urbiscript}
 
+\section{Structural Pattern Matching}
+\label{sec:lang:pattern}
+
+Structural \dfn{pattern matching} is useful to deconstruct tuples, lists and
+dictionaries with a small and readable syntax.
+
+These patterns can be used in the following clauses:
+\begin{itemize}
+\item The left hand side of an assignment.
+\item \lstinline{case}
+\item \lstinline{catch}
+\item \lstinline{at}
+\item \lstinline{waituntil}
+\item \lstinline{whenever}
+\end{itemize}
+
+The following examples illustrate the possibilities of \dfn{structural
+  pattern matching} inside \lstinline{case} clauses:
+
+\begin{urbiscript}
+switch ( ("foo", [1, 2]) )
+{
+  // The pattern does not match the values of the list.
+  case ("foo", [2, 1]):
+    echo("fail");
+
+  // The pattern does not match the tuple.
+  case ["foo", [1, 2]]:
+    echo("fail");
+
+  // The pattern matches and binds the variable "l"
+  // but the condition is not verified.
+  case ("foo", var l) if l.size == 0:
+    echo("fail");
+
+  // The pattern matches.
+  case ("foo", [var a, var b]):
+    echo("foo(%s, %s)" % [a, b]);
+};
+[00000000] *** foo(1, 2)
+\end{urbiscript}
+
+\subsection{Basic Pattern Matching}
+
+Matching is used in many locations and allows to match literal values (e.g.,
+\refObject{List}, \refObject{Tuple}, \refObject{Dictionary},
+\refObject{Float}, \refObject{String}).  In the following expressions each
+pattern (on the left hand side) matches the value (on the right hand side).
+
+\begin{urbiscript}
+(1, "foo") = (1, "foo");
+[00000000] (1, "foo")
+[1, "foo"] = [1, "foo"];
+[00000000] [1, "foo"]
+["b" => "foo", "a" => 1] = ["a" => 1, "b" => "foo"];
+[00000000] ["a" => 1, "b" => "foo"]
+\end{urbiscript}
+
+A \refSlot[Exception]{MatchFailure} exception is thrown when a pattern does
+not match.
+
+\begin{urbiscript}
+try
+{
+  (1, 2) = (3, 4)
+}
+catch (var e if e.isA(Exception.MatchFailure))
+{
+  e.message
+};
+[00000000] "pattern did not match"
+\end{urbiscript}
+
+\subsection{Variable}
+
+Patterns can contain variable declarations, to match any value and to bind
+it to a new variable.
+
+\begin{urbiscript}
+{
+  (var a, var b) = (1, 2);
+  echo("a = %d, b = %d" % [a, b]);
+};
+[00000000] *** a = 1, b = 2
+{
+  [var a, var b] = [1, 2];
+  echo("a = %d, b = %d" % [a, b]);
+};
+[00000000] *** a = 1, b = 2
+{
+  ["b" => var b, "a" => var a] = ["a" => 1, "b" => 2, "c" => 3];
+  echo("a = %d, b = %d" % [a, b]);
+};
+[00000000] *** a = 1, b = 2
+\end{urbiscript}
+
+\subsection{Guard}
+
+Patterns used inside a \lstinline{switch}, a \lstinline{catch} or an event
+catching construct accept guards.
+
+\dfn[guard]{Guard} are used by appending a \lstinline{if} after a pattern or
+after a matched event.
+
+The following example is inspired from the \refObject{TrajectoryGenerator}
+where a \refObject{Dictionary} is used to set the trajectory type.
+
+\begin{urbiscript}
+switch (["speed" => 2, "time" => 6s])
+{
+  case ["speed" => var s] if s > 3:
+    echo("Too fast");
+  case ["speed" => var s, "time" => var t] if s * t > 10:
+    echo("Too far");
+};
+[00000000] *** Too far
+\end{urbiscript}
+
+The same guard are available for \lstinline{catch} statement.
+
+\begin{urbiscript}
+try
+{
+  throw ("message", 0)
+}
+catch (var e if e.isA(Exception))
+{
+  echo(e.message)
+}
+catch ((var msg, var value) if value.isA(Float))
+{
+  echo("%s: %d" % [msg, value])
+};
+[00000000] *** message: 0
+\end{urbiscript}
+
+Events catchers can have guards on the pattern arguments.  You can add these
+inside \lstinline{at}, \lstinline{whenever} and \lstinline{waituntil}
+statements.
+
+\begin{urbiscript}
+{
+  var e = Event.new;
+  at (e?(var msg, var value) if value % 2 == 0)
+    echo("%s: %d" % [msg, value]);
+
+  // Does not trigger the "at" because the guard is not verified.
+  e!("message", 1);
+
+  // Trigger the "at".
+  e!("message", 2);
+};
+[00000000] *** message: 2
+\end{urbiscript}
+
+%% \subsection{Extension}
+%% \refObject{Pattern}
+%% \refSlot[Pattern]{Binding}
+%% \refSlot[List]{matchAgainst}
+
 \section{Imperative flow control}
 
 \subsection{break}
