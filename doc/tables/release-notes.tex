@@ -48,6 +48,10 @@ assert (one == two);
 
 \subsection{Fixes}
 \begin{itemize}
+\item \refSlot[List]{<} and \refSlot[Mutex]{<} implement true lexicographic
+  order: \lstinline|[0, 4] < [1, 3]| is true.  List comparison used to
+  implement member-wise comparison; the previous assertion was not verified
+  because \lstinline|4 < 3| is not true.
 \item \refSlot[Mutex]{asMutex} is fixed.
 \item \refObject{Directory} events were not launched if a
   \refObject{Directory} had already been created on the same

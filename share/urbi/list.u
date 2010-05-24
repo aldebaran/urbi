@@ -52,20 +52,16 @@ do (List)
     return true
   };
 
-  function '<' (other)
+  function '<' (var that)
   {
-    var l = this|
-    var r = other|
-    while (!l.empty && !r.empty)
-    {
-      if (l.head < r.head)
-        return true|
-      if (l.head > r.head)
-        return false|
-      l = l.tail|
-      r = r.tail|
-    }|
-    l.empty && !r.empty
+    for| (var i : size.min(that.size).seq)
+      if (this[i] < that[i])
+        return true
+      else if (that[i] < this[i])
+        return false |
+    size < that.size;
+  };
+
   function argMax(var comp = function (a, b) { a < b })
   {
     argMin(function (a, b) {comp(b, a)})

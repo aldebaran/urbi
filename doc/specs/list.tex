@@ -624,24 +624,44 @@ l;
   A synonym for \lstinline|insertBack|.
 
 \item \lstinline|'<'(\var{other})|\\
-  Return whether the target is inferior to the \var{other} list. A
-  list is inferior to another if at least one of its element differs
-  from the other, and the first differing element is inferior to the
-  other.
+  Return whether \this is less than the \var{other} list.  This is the
+  lexicographic comparison: \this is ``less that'' if one of its member is
+  ``less than'' the corresponding member of \var{other}:
 
 \begin{urbiassert}
+  [0, 0, 0] < [0, 0, 1];
+  [0, 1, 2] < [0, 2, 1];
+
 !([0, 1, 2] < [0, 1, 2]);
 !([0, 1, 2] < [0, 0, 2]);
-[0, 1, 2] < [0, 2, 2];
+\end{urbiassert}
+
+  \noindent
+  or \var{other} is a prefix (strict) of \this:
+
+\begin{urbiassert}
+           [] < [0];          !(      [0] < []);
+       [0, 1] < [0, 1, 2];    !([0, 1, 2] < [0, 1]);
+  !([0, 1, 2] < [0, 1, 2]);
 \end{urbiassert}
 
   Since List derives from \refObject{Orderable}, the other order-based
   operators are defined.
 
 \begin{urbiassert}
+        [] <= [];
+        [] <= [0, 1, 2];
  [0, 1, 2] <= [0, 1, 2];
+
+        [] >= [];
+ [0, 1, 2] >= [];
  [0, 1, 2] >= [0, 1, 2];
- [0, 1, 2] >  [0, 0, 2];
+ [0, 1, 2] >= [0, 0, 2];
+
+       !([] > []);
+  [0, 1, 2] > [];
+!([0, 1, 2] > [0, 1, 2]);
+  [0, 1, 2] > [0, 0, 2];
 \end{urbiassert}
 \end{urbiscriptapi}
 
