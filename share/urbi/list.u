@@ -16,26 +16,6 @@ do (List)
 {
   protos = [Global.RangeIterable];
 
-  // Whether e is in the list.
-  function has(e)
-  {
-    any (function (i) { i == e })
-  };
-
-  // FIXME: We need to use a single convention for physical-equality
-  // related functions. The first on used was prefix 'mem', as in
-  // memSameAs, from Caml. We should either rename this method as
-  // memHas, or choose another convention.
-  function hasSame(e)
-  {
-    any (function (i) { i === e })
-  };
-
-  function keys()
-  {
-    size.asList
-  };
-
   function '=='(var that)
   {
     if (size != that.size)
@@ -46,7 +26,7 @@ do (List)
     true
   };
 
-  function '<' (var that)
+  function '<'(var that)
   {
     for| (var i : size.min(that.size).seq)
       if (this[i] < that[i])
@@ -54,6 +34,36 @@ do (List)
       else if (that[i] < this[i])
         return false |
     size < that.size;
+  };
+
+  copySlot("insertBack", "<<");
+
+  // Subtract a list from this.
+  function '-' (rhs)
+  {
+    var res = [] |
+    for| (var i: this)
+      if (i not in rhs)
+	res << i |
+    res
+  };
+
+  // Whether all the elements verify the \a f predicate.
+  function all(f)
+  {
+    for| (var i: this)
+      if (!f (i))
+        return false |
+    true
+  };
+
+  // Whether at least one element verifies the \a f predicate.
+  function any(f)
+  {
+    for| (var i: this)
+      if (f (i))
+        return true |
+    false
   };
 
   function argMax(var comp = function (a, b) { a < b })
@@ -73,32 +83,59 @@ do (List)
     res
   };
 
-  function remove(e)
-  {
-    var res = this - [e] |
-    clear |
-    for| (var i: res)
-      this << i |
-    this
-  };
-
-  // Subtract a list from this.
-  function '-' (rhs)
+  // The list of elements verifying the \a f predicate.
+  function filter(f)
   {
     var res = [] |
-    for| (var i: this)
-      if (i not in rhs)
-	res << i |
+    for| (var elt: this)
+      if (f(elt))
+        res << elt |
     res
   };
 
+  function foldl(action, value)
+  {
+    var res = value|
+    for (var i : size.seq)
+      res = action(res, this[i])|
+    res
+  };
+
+  // Whether e is in the list.
+  function has(e)
+  {
+    any (function (i) { i == e })
+  };
+
+  // FIXME: We need to use a single convention for physical-equality
+  // related functions. The first on used was prefix 'mem', as in
+  // memSameAs, from Caml. We should either rename this method as
+  // memHas, or choose another convention.
+  function hasSame(e)
+  {
+    any (function (i) { i === e })
+  };
+
   copySlot ("front", "head");
-  copySlot ("insertBack", "<<");
 
   // Concatenate the string representation of the members, separated by \a sep
   function join(sep = "", prefix = "", suffix = "")
   {
     sep.join(this, prefix, suffix)
+  };
+
+  function keys()
+  {
+    size.asList
+  };
+
+  // Build a new list containing the result of \a f applied to all elements
+  function map(f)
+  {
+    var res = [] |
+    for| (var i: this)
+      res << f(i) |
+    res
   };
 
   // We might want separate Range objects, with a literal syntax
@@ -116,70 +153,19 @@ do (List)
     res
   };
 
+  function remove(e)
+  {
+    var res = this - [e] |
+    clear |
+    for| (var i: res)
+      this << i |
+    this
+  };
+
   /// Whether the members of this are members of that.
   function subset(var that)
   {
     all(function (var m) { m in that })
-  };
-
-
-  /*-------------------------.
-  | Functional programming.  |
-  `-------------------------*/
-
-  // Build a new list containing the result of \a f applied to all elements
-  function map(f)
-  {
-    var res = [] |
-    for| (var i: this)
-      res << f(i) |
-    res
-  };
-
-  function foldl(action, value)
-  {
-    var res = value|
-    for (var i : size.seq)
-      res = action(res, this[i])|
-    res
-  };
-
-  // Whether at least one element verifies the \a f predicate.
-  function any(f)
-  {
-    for| (var i: this)
-      if (f (i))
-        return true |
-    false
-  };
-
-  // Whether all the elements verify the \a f predicate.
-  function all(f)
-  {
-    for| (var i: this)
-      if (!f (i))
-        return false |
-    true
-  };
-
-  // The list of elements verifying the \a f predicate.
-  function filter(f)
-  {
-    var res = [] |
-    for| (var elt: this)
-      if (f(elt))
-        res << elt |
-    res
-  };
-
-  // The list of elements zipped with the \a f function.
-  function zip(f, l)
-  {
-    assert(this.size == l.size) |
-    var res = [] |
-    for| (var i: this.size)
-      res << f(this[i], l[i]) |
-    res
   };
 
   // Pattern matching.
@@ -198,13 +184,24 @@ do (List)
     return true
   };
 
+  function max(var comp = function (a, b) { a < b })
+  {
+    this[argMax(comp)];
+  };
+
   function min(var comp = function (a, b) { a < b })
   {
     this[argMin(comp)];
   };
 
-  function max(var comp = function (a, b) { a < b })
+  // The list of elements zipped with the \a f function.
+  function zip(f, l)
   {
-    this[argMax(comp)];
+    assert(this.size == l.size) |
+    var res = [] |
+    for| (var i: this.size)
+      res << f(this[i], l[i]) |
+    res
   };
+
 };
