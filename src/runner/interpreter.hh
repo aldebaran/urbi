@@ -102,11 +102,11 @@ namespace runner
     // chunks. This enable to either evaluate the arguments, either
     // build a call message.
     //
-    // * apply_ast(target, function, function, message, args)
+    // * apply_ast(target, function, message, args)
     //
     // Same as above, but both target and function are specified. This
-    // enable to call a method with another target than the holder of
-    // the function
+    // enables to call a method with another target than the holder of
+    // the function.
     //
     // * apply(function, msg, args, call_message)
     //
@@ -131,10 +131,10 @@ namespace runner
     /// \param args  the arguments.  Used as given, they are not evaluated
     ///              here.
     ///
-    /// \param call_message  the callMessage.  Valid only for \a func
-    ///             being Code.
+    /// \param call_message  the callMessage.  Valid only when \a func
+    ///             is a Code.
     ///
-    virtual rObject apply(const rObject& function,
+    virtual rObject apply(const rObject& func,
                           const libport::Symbol msg,
                           const object::objects_type& args,
                           const rObject& call_message = 0);

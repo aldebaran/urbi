@@ -144,7 +144,7 @@ namespace urbi
       check_arg_count(args.size() - 1, 1);
       type_check<List>(args[1]);
       const rList& arg1 = args[1]->as<List>();
-      unsigned nargs = arg1->value_get ().size ();
+      unsigned nargs = arg1->value_get().size();
       if (nargs != 1)
         runner::raise_arity_error(nargs, 1);
       return args[0];

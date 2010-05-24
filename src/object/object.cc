@@ -209,9 +209,9 @@ namespace urbi
         if (rObject hook = s.property_get(SYMBOL(updateHook)))
         {
           objects_type args;
-          args.push_back(rObject(this));
-          args.push_back(new String(k));
-          args.push_back(o);
+          args << rObject(this)
+               << new String(k)
+               << o;
           v = r.apply(hook, SYMBOL(updateHook), args);
           // If the updateHook returned void, do nothing. Otherwise let
           // the slot be overwritten.
@@ -641,8 +641,7 @@ namespace urbi
 
     std::ostream& operator<< (std::ostream& s, Object& o)
     {
-      s << o.call(SYMBOL(asString))->as<String>()->value_get();
-      return s;
+      return s << o.call(SYMBOL(asString))->as<String>()->value_get();
     }
 
     rObject Object::proto;

@@ -110,11 +110,12 @@ namespace urbi
       check_arg_count(apply_args.size(), 1, 2);
       rList args = type_check<List>(apply_args[0], 0u);
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      libport::Symbol s = SYMBOL(apply);
-      if (apply_args.size() > 1)
-        s = libport::Symbol(type_check<String>(apply_args[1], 1u)->value_get());
+      libport::Symbol s =
+        1 < apply_args.size()
+        ? libport::Symbol(type_check<String>(apply_args[1], 1u)->value_get())
+        : SYMBOL(apply);
       if (args->value_get().empty())
-        RAISE("list of arguments must begin with `this'");
+        RAISE("argument list must begin with `this'");
       List::value_type a = args->value_get();
 
       return r.apply(this, s, a);
