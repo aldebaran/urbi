@@ -385,14 +385,17 @@ do ([0, 1, 2, 3])
 [00428697:error] !!! range: invalid index: 1
 \end{urbiscript}
 
-\item[remove](<val>)
-  Remove all elements from the target that equals \var{val}.
+\item[remove](<val>)%
+  Remove all elements from the target that are equal to \var{val}, return
+  \this.
 
 \begin{urbiscript}
-var c = [0, 1, 0, 2, 0, 3];
-[00000000] [0, 1, 0, 2, 0, 3]
-assert(c.remove(0) == [1, 2, 3]);
-assert(c == [1, 2, 3]);
+var c = [0, 1, 0, 2, 0, 3]|;
+assert
+{
+  c.remove(0) === c;   c ==  [1, 2, 3];
+  c.remove(42) === c;  c ==  [1, 2, 3];
+};
 \end{urbiscript}
 
 \item[removeBack]

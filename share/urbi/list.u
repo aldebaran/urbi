@@ -68,15 +68,13 @@ do (List)
     l.empty && !r.empty
   };
 
-  // Same contents except occurrences of e.
-  // Not in place.
   function remove(e)
   {
     var res = this - [e] |
     clear |
     for| (var i: res)
-      insertBack (i) |
-    res
+      this << i |
+    this
   };
 
   // Subtract a list from this.
