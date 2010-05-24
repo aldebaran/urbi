@@ -66,6 +66,21 @@ do (List)
       r = r.tail|
     }|
     l.empty && !r.empty
+  function argMax(var comp = function (a, b) { a < b })
+  {
+    argMin(function (a, b) {comp(b, a)})
+  };
+
+  function argMin(var comp = function (a, b) { a < b })
+  {
+    if (empty)
+      throw Exception.new("list cannot be empty") |
+    var res = 0|
+    var size = this.size |
+    for| (var i = 1; i < size; i += 1)
+      if (comp(this[i], this[res]))
+        res = i |
+    res
   };
 
   function remove(e)
@@ -201,17 +216,11 @@ do (List)
 
   function min(var comp = function (a, b) { a < b })
   {
-    if (empty)
-      throw Exception.new("list cannot be empty") |
-    var res = head|
-    for| (var elt in tail)
-      if (comp(elt, res))
-        res = elt |
-    res
+    this[argMin(comp)];
   };
 
   function max(var comp = function (a, b) { a < b })
   {
-    min(function (a, b) {!comp(a, b)})
+    this[argMax(comp)];
   };
 };

@@ -59,6 +59,47 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 [-3, 1, -1].any(function (e) { e > 0 });
 \end{urbiassert}
 
+\item[argMax](<fun> = function(a, b) { a < b })%
+  The index of the (leftmost) ``largest'' member based on the comparison
+  function \var{fun}.
+\begin{urbiassert}
+           [1].argMax == 0;
+        [1, 2].argMax == 1;
+     [1, 2, 2].argMax == 1;
+        [2, 1].argMax == 0;
+[2, -1, 3, -4].argMax == 2;
+
+[2, -1, 3, -4].argMax (function (a, b) { a.abs < b.abs }) == 3;
+\end{urbiassert}
+
+The list cannot be empty.
+
+\begin{urbiscript}
+[].argMax;
+[00000001:error] !!! list cannot be empty
+\end{urbiscript}
+
+
+\item[argMin](<fun> = function(a, b) { a < b })%
+  The index of the (leftmost) ``smallest'' member based on the comparison
+  function \var{fun}.
+\begin{urbiassert}
+           [1].argMin == 0;
+        [1, 2].argMin == 0;
+     [1, 2, 1].argMin == 0;
+        [2, 1].argMin == 1;
+[2, -1, 3, -4].argMin == 3;
+
+[2, -1, 3, -4].argMin (function (a, b) { a.abs < b.abs }) == 1;
+\end{urbiassert}
+
+The list cannot be empty.
+
+\begin{urbiscript}
+[].argMin;
+[00000001:error] !!! list cannot be empty
+\end{urbiscript}
+
 \item[asBool]
   Whether not empty.
 \begin{urbiassert}
