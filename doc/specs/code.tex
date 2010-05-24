@@ -58,7 +58,7 @@ function () { this }.apply([123]) == 123;
 \end{urbiassert}
 \begin{urbiscript}
 function () {}.apply([]);
-[00000001:error] !!! apply: list of arguments must begin with `this'
+[00000001:error] !!! apply: argument list must begin with `this'
 
 function () {}.apply([1, 2]);
 [00000002:error] !!! apply: expected 0 argument, given 1
