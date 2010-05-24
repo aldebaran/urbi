@@ -93,7 +93,7 @@ namespace runner
       object::objects_type args;
       // FIXME: This is a closure, it won't use its 'this', but this is
       // gory.
-      args.push_back(rObject());
+      args << rObject();
       apply_urbi(code, libport::Symbol::make_empty(), args, 0);
       // Wait for all other jobs to terminate.
       yield_until_terminated(collector);
@@ -178,7 +178,7 @@ namespace runner
     {
       ast::rLocal local = dec->value_get().unsafe_cast<ast::Local>();
       aver(local);
-      res->captures_get().push_back(stacks_.rget(local));
+      res->captures_get() << stacks_.rget(local);
     }
 
     // Capture 'this' and 'call' in closures.
@@ -224,10 +224,9 @@ namespace runner
       // Refuse void in literal lists.
       if (v == object::void_class)
         raise_unexpected_void_error();
-      res.push_back(v);
+      res << v;
     }
     return new object::List(res);
-    //LIBPORT_DEBUG("result: " << *result_);
   }
 
   LIBPORT_SPEED_INLINE object::rObject
@@ -238,7 +237,6 @@ namespace runner
     passert("Local variable read before being set", value);
 
     if (e->arguments_get())
-      // FIXME: Register in the call stack
       return apply_ast(stacks_.self(), value,
                        e->name_get(), e->arguments_get(),
                        e->location_get());
@@ -255,7 +253,8 @@ namespace runner
       raise_syntax_error(e->location_get(), e->text_get(), "FIXME:");
     else
       send_message(e->tag_get(),
-                   libport::format("!!! %s: %s", e->location_get(), e->text_get()));
+                   libport::format("!!! %s: %s",
+                                   e->location_get(), e->text_get()));
     return object::void_class;
   }
 
@@ -600,7 +599,7 @@ namespace runner
           return boost::any_cast<rObject>(urbi_tag->value_get()->payload_get());
         // If tag is frozen, remember it.
         some_frozen = some_frozen || urbi_tag->value_get()->frozen();
-        applied.push_back(urbi_tag);
+        applied << urbi_tag;
         urbi_tag = urbi_tag->parent_get();
       } while (urbi_tag);
       // Apply the tags, starting with the uppermost one in the ancestry
