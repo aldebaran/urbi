@@ -209,7 +209,7 @@ namespace urbi
       {
         runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
         // Never reached
-        assertion(false);
+        aver(false);
         return 0;
       }
     }

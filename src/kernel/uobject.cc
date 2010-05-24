@@ -1224,13 +1224,14 @@ namespace urbi
       StringPair p = split_name(owner_->name);
       std::string method = p.second;
       LIBPORT_DEBUG("ugenericcallback " << owner_->type << " " << p.first << " "
-           << method << "  " << owned_);
+                    << method << "  " << owned_);
       // UObject owning the variable/event to monitor
       rObject me = get_base(p.first); //objname?
-      assertion(me);
+      aver(me);
       object::objects_type args = list_of(me);
-      std::string meId = runner.apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id),
-                                      args)
+      std::string meId =
+        runner.apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id),
+                     args)
         ->as<object::String>()->value_get();
       std::string traceName = meId + "::" + owner_->type + "::"
         + string_cast((void*)this);
@@ -1248,7 +1249,7 @@ namespace urbi
         traceName = ((&owner_->owner)? owner_->owner.__name:"unknown")
           + "__" + p.first + "__" + p.second;
         rObject var = me->slot_get(Symbol(method));
-        assertion(var);
+        aver(var);
         Symbol sym(SYMBOL(notifyAccess));
         if (owner_->type != "varaccess")
         {
@@ -1258,16 +1259,17 @@ namespace urbi
             sym = SYMBOL(notifyChange);
         }
         rObject source = get_base(owner_->objname);
-        assertion(source);
+        aver(source);
         rObject handle = source->slot_get(SYMBOL(handle));
         rObject f = var->slot_get(sym);
-        assertion(f);
+        aver(f);
         callback_ = object::make_primitive(
             boost::function1<rObject, const objects_type&>
             (boost::bind(&wrap_ucallback_notify, _1, owner_,
                          traceName)));
-        callback_->slot_set(SYMBOL(target), new object::String(
-          (&owner_->owner)? owner_->owner.__name:"unknown"));
+        callback_->slot_set
+          (SYMBOL(target),
+           new object::String(&owner_->owner ? owner_->owner.__name:"unknown"));
         object::objects_type args = list_of
           (var)
           (handle)

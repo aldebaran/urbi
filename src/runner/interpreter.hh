@@ -90,6 +90,34 @@ namespace runner
     /// The entry point: visit \a e.
     ATTRIBUTE_ALWAYS_INLINE object::rObject operator() (const ast::Ast* e);
 
+    // Apply methods summary:
+    //
+    // Location in all apply methods is used to register the call
+    // location it the call stack. It is optional because call
+    // originating from C++ have no locations.
+    //
+    // * apply_ast(target, message, args)
+    //
+    // Call %target.%message(%args), args being given as ast
+    // chunks. This enable to either evaluate the arguments, either
+    // build a call message.
+    //
+    // * apply_ast(target, function, function, message, args)
+    //
+    // Same as above, but both target and function are specified. This
+    // enable to call a method with another target than the holder of
+    // the function
+    //
+    // * apply(function, msg, args, call_message)
+    //
+    // Apply %function.  If the function is strict, you must give the
+    // arguments in args, the first being the target.  If it is lazy,
+    // you might either give the call message, either the arguments, in
+    // which case a call message will be forged.  A call message must be
+    // forged when a lazy function is called from C++ or with eval: we
+    // only have the evaluated arguments.
+
+
     /// Execute the code of function \a func with arguments \a args in
     /// the local runner.
     ///
@@ -126,13 +154,25 @@ namespace runner
                                const rObject& call_message,
                                boost::optional<ast::loc> loc);
 
-    /// Apply a function with the arguments as ast chunks.
+    /// Invoke a function with the arguments as ast chunks.
+    /// \param tgt   target (this).
+    /// \param msg   name of the function to look up in tgt.
+    /// \param args  effective argument.
+    /// \param loc   call location to add the call stack.
     rObject apply_ast(const rObject& tgt,
                       const libport::Symbol& msg,
                       const ast::exps_type* args,
                       boost::optional<ast::loc> loc);
+
+    /// Invoke a function with the arguments as ast chunks.
+    /// \param tgt   target (this).
+    /// \param fun   function to invoke
+    /// \param msg   name under which the call is registered in the
+    ///              stack
+    /// \param args  effective argument.
+    /// \param loc   call location to add the call stack.
     rObject apply_ast(const rObject& tgt,
-                      const rObject& f,
+                      const rObject& fun,
                       const libport::Symbol& msg,
                       const ast::exps_type* args,
                       boost::optional<ast::loc> loc);

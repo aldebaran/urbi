@@ -44,33 +44,6 @@ namespace runner
   using object::Slot;
   using object::rSlot;
 
-  // Apply methods summary:
-  //
-  // Location in all apply methods is used to register the call
-  // location it the call stack. It is optional because call
-  // originating from C++ have no locations.
-  //
-  // * apply_ast(target, message, args)
-  //
-  // Call %target.%message(%args), args being given as ast
-  // chunks. This enable to either evaluate the arguments, either
-  // build a call message.
-  //
-  // * apply_ast(target, function, function, message, args)
-  //
-  // Same as above, but both target and function are specified. This
-  // enable to call a method with another target than the holder of
-  // the function
-  //
-  // * apply(function, msg, args, call_message)
-  //
-  // Apply %function.  If the function is strict, you must give the
-  // arguments in args, the first being the target.  If it is lazy,
-  // you might either give the call message, either the arguments, in
-  // which case a call message will be forged.  A call message must be
-  // forged when a lazy function is called from C++ or with eval: we
-  // only have the evaluated arguments.
-
 
   /*-------------------------------------.
   | Apply with arguments as ast chunks.  |
@@ -84,11 +57,11 @@ namespace runner
   {
     // Accept to call methods on void only if void itself is holding
     // the method.
-    if (target == object::void_class)
-      if (!target->local_slot_get(message))
-	raise_unexpected_void_error();
+    if (target == object::void_class
+        && !target->local_slot_get(message))
+      raise_unexpected_void_error();
 
-    // Bounce on apply_ast overload
+    // Bounce on apply_ast overload.
     return apply_ast(target,
                      target->slot_get(message),
                      message,
@@ -102,8 +75,8 @@ namespace runner
                          const ast::exps_type* input_ast_args,
                          boost::optional<ast::loc> loc)
   {
-    assertion(routine);
-    assertion(target);
+    aver(routine);
+    aver(target);
 
     // Evaluated arguments. Even if the function is lazy, it holds the
     // target.
