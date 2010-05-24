@@ -144,11 +144,6 @@ do (List)
     res
   };
 
-  function foldl_head(action)
-  {
-    tail.foldl(action, head)
-  };
-
   // Whether at least one element verifies the \a f predicate.
   function any(f)
   {
