@@ -88,11 +88,10 @@ do (List)
     var res = [] |
     for| (var i: this)
       if (i not in rhs)
-	res.insertBack(i) |
+	res << i |
     res
   };
 
-  // Add head, symmetric of tail
   copySlot ("front", "head");
   copySlot ("insertBack", "<<");
 
@@ -133,7 +132,7 @@ do (List)
   {
     var res = [] |
     for| (var i: this)
-      res.insertBack(f(i)) |
+      res << f(i) |
     res
   };
 
