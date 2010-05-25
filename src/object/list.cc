@@ -110,7 +110,9 @@ namespace urbi
 
     rObject List::set(const rFloat& idx, const rObject& val)
     {
-      return content_[index(idx)] = val;
+      content_[index(idx)] = val;
+      changed();
+      return val;
     }
 
     rFloat List::size()
@@ -120,12 +122,18 @@ namespace urbi
 
     rList List::remove_by_id(const rObject& elt)
     {
+      bool mutated = false;
       value_type::iterator it = content_.begin();
       while (it != content_.end())
         if (*it == elt)
+        {
+          mutated = true;
           it = content_.erase(it);
+        }
         else
           ++it;
+      if (mutated)
+        changed();
       return this;
     }
 
@@ -133,8 +141,12 @@ namespace urbi
     {
       // Copy the list to make a += a work
       value_type other = rhs->value_get();
-      foreach (const rObject& o, other)
-        content_.push_back(o);
+      if (!other.empty())
+      {
+        foreach (const rObject& o, other)
+          content_.push_back(o);
+        changed();
+      }
       return this;
     }
 
@@ -272,22 +284,31 @@ namespace urbi
     List::insertFront(const rObject& o)
     {
       libport::push_front(content_, o);
+      changed();
       return this;
     }
 
-#define BOUNCE(Name, Bounce, Ret, Arg, Check)                   \
+    rList
+    List::insertBack(const rObject& o)
+    {
+      content_.push_back(o);
+      changed();
+      return this;
+    }
+
+#define BOUNCE(Name, Bounce, Ret, Check, Mutate)                \
     IF(Ret, rObject, rList)                                     \
-    List::Name(WHEN(Arg, const rObject& arg))			\
+    List::Name()                                                \
     {                                                           \
       WHEN(Check, CHECK_NON_EMPTY(Name));                       \
-      WHEN(Ret, return) content_.Bounce(WHEN(Arg, arg));        \
+      WHEN(Ret, return) content_.Bounce();                      \
+      WHEN(Mutate, changed());                                  \
       return this;                                              \
     }
 
-    BOUNCE(back,          back,           true,  false, true );
-    BOUNCE(clear,         clear,          false, false, false);
-    BOUNCE(front,         front,          true,  false, true );
-    BOUNCE(insertBack,    push_back,      false, true,  false);
+    BOUNCE(back,          back,           true,  true , false);
+    BOUNCE(clear,         clear,          false, false, true);
+    BOUNCE(front,         front,          true,  true , false);
 
 #undef BOUNCE
 
@@ -295,6 +316,7 @@ namespace urbi
     List::insert(const rFloat& idx, const rObject& elt)
     {
       content_.insert(boost::next(content_.begin(), index(idx)), elt);
+      changed();
       return this;
     }
 
@@ -323,6 +345,7 @@ namespace urbi
       CHECK_NON_EMPTY(pop_back);
       rObject res = content_.back();
       content_.pop_back();
+      changed();
       return res;
     }
 
@@ -332,6 +355,7 @@ namespace urbi
       CHECK_NON_EMPTY(pop_front);
       rObject res = content_.front();
       libport::pop_front(content_);
+      changed();
       return res;
     }
 
