@@ -414,14 +414,14 @@ proto:
 %type <ast::exps_type*> protos.1 protos;
 
 protos.1:
-  proto               { $$ = new ast::exps_type; $$->push_back ($1); }
+  proto           { $$ = new ast::exps_type(1, $1); }
 // Cannot add this part currently, as the prescanner cuts
 //
 //    class A : B, C {};
 //
 // at the comma.
 //
-// | protos.1 "," proto  { std::swap($$, $1); $$->push_back($3); }
+// | protos.1 "," proto  { std::swap($$, $1); *$$ << $3; }
 ;
 
 // A list of parents to derive from.
@@ -781,8 +781,8 @@ onleave.opt:
 %type <::ast::Factory::cases_type> cases;
 
 cases:
-  /* empty */  { $$ = ::ast::Factory::cases_type();   }
-| cases case   { std::swap($$, $1); $$.push_back($2); }
+  /* empty */  {}
+| cases case   { std::swap($$, $1); $$ << $2; }
 ;
 
 %type <::ast::Factory::case_type> case;
@@ -1322,14 +1322,14 @@ exp:
 
 // claims: a list of "exp"s separated/terminated with semicolons.
 claims:
-  /* empty */ { $$ = new ast::exps_type; }
+  /* empty */   { $$ = new ast::exps_type; }
 | claims.1      { std::swap($$, $1); }
 | claims.1 ";"  { std::swap($$, $1); }
 ;
 
 claims.1:
-  exp               { $$ = new ast::exps_type; $$->push_back($1); }
-| claims.1 ";" exp  { std::swap($$, $1); $$->push_back($3); }
+  exp               { $$ = new ast::exps_type(1, $1); }
+| claims.1 ";" exp  { std::swap($$, $1); *$$ << $3; }
 ;
 
 
@@ -1341,12 +1341,12 @@ exps:
 ;
 
 exps.1:
-  exp             { $$ = new ast::exps_type; $$->push_back($1); }
-| exps.1 "," exp  { std::swap($$, $1); $$->push_back($3); }
+  exp             { $$ = new ast::exps_type (1, $1); }
+| exps.1 "," exp  { std::swap($$, $1); *$$ << $3; }
 ;
 
 exps.2:
-  exps.1 "," exp  { std::swap($$, $1); $$->push_back($3); }
+  exps.1 "," exp  { std::swap($$, $1); *$$ << $3; }
 ;
 
 // Effective arguments: 0 or more arguments in parens, or nothing.
@@ -1370,38 +1370,30 @@ var.opt:
 | "var"
 ;
 
-%type <::ast::Factory::formal_type> formal_argument;
-formal_argument:
+%type <::ast::Factory::formal_type> formal;
+formal:
   var.opt "identifier"          { $$ = ::ast::Factory::formal_type($2, 0);  }
 | var.opt "identifier" "=" exp  { $$ = ::ast::Factory::formal_type($2, $4); }
 ;
 
 // One or several comma-separated identifiers.
-%type <::ast::Factory::formals_type*> formal_arguments formal_arguments.1 formals;
-formal_arguments.1:
-  formal_argument
-  {
-    $$ = new ::ast::Factory::formals_type;
-    $$->push_back($1);
-  }
-| formal_arguments.1 "," formal_argument
-  {
-    std::swap($$, $1);
-    $$->push_back($3);
-  }
+%type <::ast::Factory::formals_type*> formals.0 formals.1 formals;
+formals.1:
+  formal                 { $$ = new ::ast::Factory::formals_type(1, $1); }
+| formals.1 "," formal   { std::swap($$, $1); *$$ << $3; }
 ;
 
 // Zero or several comma-separated identifiers.
-formal_arguments:
-  /* empty */             { $$ = new ::ast::Factory::formals_type; }
-| formal_arguments.1      { std::swap($$, $1); }
-| formal_arguments.1 ","  { std::swap($$, $1); }
+formals.0:
+  /* empty */    { $$ = new ::ast::Factory::formals_type; }
+| formals.1      { std::swap($$, $1); }
+| formals.1 ","  { std::swap($$, $1); }
 ;
 
 // Function formal arguments.
 formals:
-  /* empty */              { $$ = 0; }
-| "(" formal_arguments ")" { std::swap($$, $2); }
+  /* empty */         { $$ = 0; }
+| "(" formals.0 ")"   { std::swap($$, $2); }
 ;
 
 %%
