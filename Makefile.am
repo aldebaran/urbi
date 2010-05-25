@@ -175,6 +175,7 @@ endif
 
 # We use the AGPL in source tarballs.
 LICENSE = $(top_srcdir)/build-aux/licenses/agpl-3.0.txt
+EXTRA_DIST += $(LICENSE)
 LICENSES = doc/LICENSE.txt sdk-remote/LICENSE sdk-remote/libport/LICENSE
 dist-hook:
 	for i in $(LICENSES);			\
