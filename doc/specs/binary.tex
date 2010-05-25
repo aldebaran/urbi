@@ -35,7 +35,7 @@ the system, although not preceded by a timestamp.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item \lstinline|'+'(\var{that})|\\
+\item['+'](<that>)%
   Return a new Binary whose keywords are those of \this if
   not empty, otherwise those of \var{that}, and whose data is the
   concatenation of both.
@@ -46,7 +46,7 @@ Binary.new("", "0") + Binary.new("1", "1")
        == Binary.new("1", "01");
 \end{urbiassert}
 
-\item \lstinline|'=='(\var{other})|\\
+\item['=='](<other>)%
   Whether \lstinline|keywords| and \lstinline|data| are equal.
 \begin{urbiassert}
 Binary.new("0", "0") == Binary.new("0", "0");

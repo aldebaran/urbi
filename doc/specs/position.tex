@@ -53,7 +53,7 @@ Position.new("file.u", 2, 3);
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item \lstinline|'+'(\var{n})|\\
+\item['+'](<n>)%
   Return a new Position which is shifted from \var{n} columns to the
   right.  The minimal value of the new position column is 1.
 \begin{urbiassert}
@@ -61,7 +61,7 @@ Position.new(2, 3) + 2 == Position.new(2, 5);
 Position.new(2, 3) + -4 == Position.new(2, 1);
 \end{urbiassert}
 
-\item \lstinline|'-'(\var{n})|\\
+\item['-'](<n>)%
   Return a new Position which is shifted from \var{n} columns to the
   left.  The minimal value of the new Position column is 1.
 \begin{urbiassert}
@@ -69,7 +69,7 @@ Position.new(2, 3) - 1 == Position.new(2, 2);
 Position.new(2, 3) - -4 == Position.new(2, 7);
 \end{urbiassert}
 
-\item \lstinline|'=='(\var{other})|\\
+\item['=='](<other>)%
   Compare the lines and columns of two Positions.
 \begin{urbiassert}
 Position.new(2, 3) == Position.new(2, 3);

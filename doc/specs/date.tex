@@ -63,7 +63,7 @@ Date.new(0.1);
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item \lstinline|'+'(\var{that})|\\
+\item['+'](<that>)%
   Return the date which is corresponds to waiting \refObject{Duration}
   \var{that} after \this.
 \begin{urbiassert}
@@ -71,7 +71,7 @@ Date.new(1000) + Duration.new(100) == Date.new(1100);
 Date.new(1000) + Duration.new(-100) == Date.new(900);
 \end{urbiassert}
 
-\item \lstinline|'-'(\var{that})|\\
+\item['-'](<that>)%
   Compute the difference between two dates.  Return a
   \refObject{Duration}.
 \begin{urbiassert}
@@ -79,7 +79,7 @@ Date.new(100) - Date.new(0) == Duration.new(100);
 Date.new(0) - Date.new(100) == Duration.new(-100);
 \end{urbiassert}
 
-\item \lstinline|'=='(\var{that})|\\
+\item['=='](<that>)%
   Equality test.
 \begin{urbiassert}
 Date.new(11223344) == Date.new(11223344);

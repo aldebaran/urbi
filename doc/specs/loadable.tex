@@ -62,7 +62,7 @@ This object should serve as a prototype.
 \begin{urbiscriptapi}
 %\item[\_\_loadable_set\_\_](<val>)%
 \item \lstinline|__loadable_set__(\var{val})|\\
-  Set \lstinline|load| to \var{val}, and return \this.
+  Set \refSlot{load} to \var{val}, and return \this.
 \begin{urbiassert}
 do (Loadable.new)
 {
@@ -78,8 +78,7 @@ do (Loadable.new)
 \end{urbiassert}
 
 \item[off](<val>)%
-  Set \lstinline|load| to \lstinline|false| and return
-  \this.
+  Set \refSlot{load} to \lstinline|false| and return \this.
 \begin{urbiassert}
 do (Loadable.new)
 {
@@ -97,7 +96,7 @@ do (Loadable.new)
 \end{urbiassert}
 
 \item[on](<val>)%
-  Set \lstinline|load| to \lstinline|true| and return \this.
+  Set \refSlot{load} to \lstinline|true| and return \this.
 \begin{urbiassert}
 do (Loadable.new)
 {
@@ -112,8 +111,8 @@ do (Loadable.new)
 };
 \end{urbiassert}
 
-\item \lstinline|toggle)|\\
-  Set \lstinline|load| from \lstinline|true| to \lstinline|false|, and
+\item[toggle]%
+  Set \refSlot{load} from \lstinline|true| to \lstinline|false|, and
   vice-versa.  Return \var{val}.
 \begin{urbiassert}
 do (Loadable.new)

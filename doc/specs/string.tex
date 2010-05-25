@@ -258,7 +258,7 @@ negative number corresponds to no limit:
 "Hello, World!".toUpper == "HELLO, WORLD!";
 \end{urbiassert}
 
-\item \lstinline|'=='(\var{that})|\\
+\item['=='](<that>)%
   Whether \this and \var{that} are the same string.
 \begin{urbiassert}
   "" == "";        !("" != "");
@@ -288,7 +288,7 @@ negative number corresponds to no limit:
 "foo" * 3 == "foofoofoo";
 \end{urbiassert}
 
-\item \lstinline|'+'(\var{other})|\\
+\item['+'](<other>)%
   Concatenate \this and \lstinline|\var{other}.asString|.
 \begin{urbiassert}
 "foo" + "bar" == "foobar";

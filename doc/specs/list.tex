@@ -535,7 +535,7 @@ assert([0, 1, 2].tail == [1, 2]);
        == [5, 7, 9];
 \end{urbiassert}
 
-\item \lstinline|'=='(\var{that})|\\
+\item['=='](<that>)%
 Check whether all elements in the target and \var{that}, are
 equal two by two.
 
@@ -601,7 +601,7 @@ l;
 [00000000] [[1], [1], [1]]
 \end{urbiscript}
 
-\item \lstinline|'+'(\var{other})|\\
+\item['+'](<other>)%
   Return the concatenation of the target and the \var{other} list.
 
 \begin{urbiassert}
@@ -611,7 +611,7 @@ l;
 [] + [] == [];
 \end{urbiassert}
 
-\item \lstinline|'-'(\var{other})|\\
+\item['-'](<other>)%
   Return the target without the elements that are equal to any element
   in the \var{other} list.
 
