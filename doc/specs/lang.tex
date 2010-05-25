@@ -2535,11 +2535,10 @@ x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
 
 \subsubsection{Scoping at \lstinline'at'}
 
-\lstinline'at' statements are not scoped.  But, using a
-\refObject{Tag} object, one can control them.  In the following
-example, \lstinline|scopeTag| is used to label the \lstinline|at|
-statement.  When the function ends, the \lstinline|at| is no longer
-active.
+\lstinline'at' statements are not scoped.  But, using a \refObject{Tag}
+object, one can control them.  In the following example,
+\refSlot[Tag]{scopeTag} is used to label the \lstinline|at| statement.  When
+the function ends, the \lstinline|at| is no longer active.
 
 \begin{urbiscript}[firstnumber=1]
 var x = 0 |
