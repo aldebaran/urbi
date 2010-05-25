@@ -186,7 +186,6 @@ String.fresh == "_5";
 %%% separators.
 %\item[split](<sep> = [" ", "\t", "\n", "\r"], <lim> = -1, <keepSep> = false, <keepEmpty> = true)%
 \item \lstinline|split(\var{sep} = [" ", "\t", "\n", "\r"], \var{lim} = -1, \var{keepSep} = false, \var{keepEmpty} = true)|\\
-
   Split \this on the separator \var{sep}, in at most \var{lim}
   components, which include the separator if \var{keepSep}, and the
   empty components of \var{keepEmpty}.  Return a list of strings.
@@ -280,7 +279,7 @@ negative number corresponds to no limit:
 "%s + %s = %s" % [1, 2, 3] == "1 + 2 = 3";
 \end{urbiassert}
 
-\item \lstinline|'*'(\var{n})|\\
+\item['*'](<n>)%
   Concatenate \this \var{n} times.
 \begin{urbiassert}
 "foo" * 0 == "";
