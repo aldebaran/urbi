@@ -82,11 +82,10 @@ e2!;
 [00000005] *** !
 \end{urbiscript}
 
-\item \lstinline|'<<'(\var{other})|\\
+\item['<<'](<other>)%
   Watch an \var{other} event status and reproduce it on itself, return
-  \lstinline|this|.  This operator is similar to an optimized \lstinline,||=,
-  operator.  Warning: Do not make events watch for themselves, directly or
-  indirectly.
+  \this.  This operator is similar to an optimized \lstinline,||=, operator.
+  Do not make events watch for themselves, directly or indirectly.
 
 \begin{urbiscript}
 var e3 = Event.new|;
