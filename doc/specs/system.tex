@@ -211,6 +211,8 @@ maybeLoad("123.u") == 123;
 maybeLoad("u.123").isVoid;
 \end{urbiassert}
 
+\item[PackageInfo] See \refObject{System.PackageInfo}.
+
 \item[period] The \dfn{period} of the \urbi kernel.  Influences the
   trajectories (\refObject{TrajectoryGenerator}), and the \UObject
   monitoring.  Defaults to 20ms.
@@ -218,7 +220,7 @@ maybeLoad("u.123").isVoid;
 System.period == 20ms;
 \end{urbiassert}
 
-\item[Platform] See \refObject{System.Platform}
+\item[Platform] See \refObject{System.Platform}.
 
 \item[programName] The path under which the \urbi process was called.
   This is typically \file{.../urbi} (\autoref{sec:tools:urbi}) or

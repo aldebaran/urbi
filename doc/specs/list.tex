@@ -108,11 +108,14 @@ The list cannot be empty.
 \end{urbiassert}
 
 \item[asList]
-Return the target.
+  Return the target.
 
-\begin{urbiassert}
-[0, 1, 2].asList == [0, 1, 2];
-\end{urbiassert}
+\begin{urbiscript}
+{
+  var l = [0, 1, 2];
+  assert (l.asList === l);
+};
+\end{urbiscript}
 
 \item[asString]
   A string describing the list.  Uses \lstinline|asPrintable| on its
@@ -165,7 +168,7 @@ assert(x.clear == []);
 [00000000] *** 2: c
 \end{urbiscript}
 
-\item \lstinline|'each&'(\var{fun})|\\
+\item['each&'](<fun>)%
 Apply the given functional value on all members simultaneously.
 
 \begin{urbiscript}
@@ -182,7 +185,7 @@ Apply the given functional value on all members simultaneously.
   Whether the target is empty.
 
 \begin{urbiassert}
-[].empty;
+   [].empty;
 ! [1].empty;
 \end{urbiassert}
 
@@ -215,14 +218,11 @@ do ([0, 1, 2, 3, 4, 5])
   folding a list would compute the sum of the list, including for
   empty lists.
 
-\begin{urbiscript}
-[].foldl(function (a, b) { a + b }, 0);
-[00000000] 0
-[1, 2, 3].foldl(function (a, b) { a + b }, 0);
-[00000000] 6
-[1, 2, 3].foldl(function (a, b) { a - b }, 0);
-[00000000] -6
-\end{urbiscript}
+\begin{urbiassert}
+       [].foldl(function (a, b) { a + b }, 0) == 0;
+[1, 2, 3].foldl(function (a, b) { a + b }, 0) == 6;
+[1, 2, 3].foldl(function (a, b) { a - b }, 0) == -6;
+\end{urbiassert}
 
 \item[front]
   Return the first element of the target. An error if the target is
@@ -264,7 +264,7 @@ assert
 \end{urbiscript}
 
 \item[head]
-  Synonym for \lstinline|front|.
+  Synonym for \refSlot{front}.
 \begin{urbiscript}
 assert([0, 1, 2].head == 0);
 [].head;
@@ -303,8 +303,7 @@ do ([0, 1])
 [00044239:error] !!! insert: invalid index: 4
 \end{urbiscript}
 
-  The index must be valid, to insert past the end, use
-  \lstinline|insertBack|.
+  The index must be valid, to insert past the end, use \refSlot{insertBack}.
 \begin{urbiscript}
 [].insert(0, "foo");
 [00044239:error] !!! insert: invalid index: 0
@@ -326,7 +325,7 @@ do ([1, 2])
 \end{urbiscript}
 
 \item[join](<sep> = "", <prefix> = "", <suffix> = "")
-  Bounces to \refSlot[String]{join}, see \refObject{String}.
+  Bounce to \refSlot[String]{join}.
 
 \begin{urbiassert}
 ["", "ob", ""].join                == "ob";
@@ -341,14 +340,16 @@ do ([1, 2])
 \begin{urbiscript}
 {
   var l = ["a", "b", "c"];
-  assert(l.keys == [0, 1, 2]);
-  assert({
-           var res = [];
-           for (var k: l.keys)
-             res << l[k];
-           res
-         }
-         == l);
+  assert
+  {
+    l.keys == [0, 1, 2];
+    {
+      var res = [];
+      for (var k: l.keys)
+        res << l[k];
+      res
+    }
+      == l);
 };
 \end{urbiscript}
 
@@ -457,12 +458,13 @@ assert(t == [0, 1]);
   \var{that}.
 
 \begin{urbiscript}
-var d = 1;
-[00000000] 1
-var e = [0, 1, d, 1, 2];
-[00000000] [0, 1, 1, 1, 2]
-assert(e.removeById(d) == [0, 1, 1, 2]);
-assert(e == [0, 1, 1, 2]);
+var d = 1|;
+var e = [0, 1, d, 1, 2]|;
+assert
+{
+  e.removeById(d) == [0, 1, 1, 2];
+  e == [0, 1, 1, 2];
+};
 \end{urbiscript}
 
 \item[removeFront]
@@ -470,10 +472,12 @@ Remove and return the first element from the target. An error if the
 target is empty.
 
 \begin{urbiscript}
-var g = [0, 1, 2];
-[00000000] [0, 1, 2]
-assert(g.removeFront == 0);
-assert(g == [1, 2]);
+var g = [0, 1, 2]|;
+assert
+{
+  g.removeFront == 0;
+  g == [1, 2];
+};
 [].removeFront;
 [00000000:error] !!! removeFront: cannot be applied onto empty list
 \end{urbiscript}
