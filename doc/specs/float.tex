@@ -144,13 +144,13 @@ nan.asBool == true;
 1.atan == Float.pi/4;
 \end{urbiassert}
 
-\item \lstinline|'bitand'(\var{that})|\\
+\item['bitand'](<that>)%
   The bitwise-and between \this and \var{that}.
 \begin{urbiassert}
 (3 bitand 6) == 2;
 \end{urbiassert}
 
-\item \lstinline|'bitor'(\var{that})|\\
+\item['bitor'](<that>)%
   Bitwise-or between \this and \var{that}.
 \begin{urbiassert}
 (3 bitor 6) == 7;
@@ -424,13 +424,13 @@ assert(0.tan == 0);
 (3 ^ 6) == 5;
 \end{urbiassert}
 
-\item \lstinline|'>>'(\var{that})|\\%>>
+\item['>>'](<that>)%%>>
   \this shifted by \var{that} bits towards the right.
 \begin{urbiassert}
 4 >> 2 == 1;
 \end{urbiassert}
 
-\item \lstinline|'<'(\var{that})|\\
+\item['<'](<that>)%
   Whether \this is less than \var{b}. The other comparison
   operators (\lstinline|<=|, \lstinline|>|, \ldots) can thus also be
   applied on floats since Float inherits \refObject{Orderable}.
@@ -440,7 +440,7 @@ assert(0.tan == 0);
 !(0 < 0);
 \end{urbiassert}
 
-\item \lstinline|'<<'(\var{that})|\\
+\item['<<'](<that>)%
   \this shifted by \var{that} bit towards the left.
 \begin{urbiassert}
 4 << 2 == 16;
