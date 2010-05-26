@@ -29,6 +29,8 @@
 
 # include <urbi/object/fwd.hh>
 
+# include <ast/loc.hh>
+
 namespace runner
 {
 
@@ -125,6 +127,10 @@ namespace runner
     virtual rObject apply_call_message(const rObject& function,
                                        const libport::Symbol msg,
                                        const rObject& call_message) = 0;
+    virtual rObject apply_call_message(const rObject& function,
+                                       const libport::Symbol msg,
+                                       const rObject& call_message,
+                                       boost::optional<ast::loc> loc) = 0;
 
     /// Return the current scope_tag, after creating it if needed.
     const sched::rTag& scope_tag();

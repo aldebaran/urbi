@@ -125,7 +125,7 @@ namespace runner
     aver(!args.empty());
     aver(args.front());
 
-    bool reg = !msg.empty() && loc && !object::is_system_location(*loc);
+    bool reg = !msg.empty() && loc;
 
     if (reg)
       call_stack_ << std::make_pair(msg, loc);

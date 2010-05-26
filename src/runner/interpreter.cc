@@ -171,13 +171,7 @@ namespace runner
   void
   Interpreter::show_exception(object::UrbiException& ue)
   {
-    send_message("error",
-                 libport::format("!!! %s",
-                                 (ue.value_get()
-                                  ->call(SYMBOL(asString))
-                                  ->as<object::String>()
-                                  ->value_get())));
-    show_backtrace(ue.backtrace_get(), "error");
+    ue.value_get()->call(SYMBOL(DOLLAR_show));
   }
 
   void
@@ -370,20 +364,9 @@ namespace runner
     // C++ side.  It would be better to produce a C++ backtrace instead.
     if (is_a(exn, Exception) && innermost_node_)
     {
-      boost::optional<ast::loc> l;
-      if (object::is_system_location(innermost_node_->location_get()))
-      {
-        rforeach(const call_type& c, call_stack_get())
-          if (c.second)
-          {
-            l = c.second;
-            break;
-          }
-      }
-      else
-        l = innermost_node_->location_get();
-      exn->slot_update(SYMBOL(location), object::to_urbi(l));
-      exn->slot_update(SYMBOL(backtrace),
+      boost::optional<ast::loc> l = innermost_node_->location_get();
+      exn->slot_update(SYMBOL(DOLLAR_location), object::to_urbi(l));
+      exn->slot_update(SYMBOL(DOLLAR_backtrace),
                        as_job()->as<object::Job>()->backtrace());
     }
     call_stack_type bt = call_stack_get();
