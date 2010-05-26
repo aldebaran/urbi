@@ -1,0 +1,38 @@
+%% Copyright (C) 2009-2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Container}
+
+This object is meant to be used as a prototype for objects that
+support \lstinline|has| and \lstinline|hasNot| methods.
+Any class using this prototype must redefine either has, hasNot or both.
+
+\subsection{Prototypes}
+
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Slots}
+
+\begin{itemize}
+\item \lstinline|has(\var{e})|\\
+  Return \lstinline|true| when the Container has a key or item matching
+  \var{e}.
+\item \lstinline|hasNot(\var{e})|\\
+  Return \lstinline|true| when the Container has no key or item matching
+  \var{e}.
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:

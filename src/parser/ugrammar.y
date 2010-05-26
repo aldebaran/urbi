@@ -1241,7 +1241,7 @@ exp:
 // "!" is a synonym for "not", typing "not in" is "! in" here.
 | exp "!" "in" exp
   {
-    $$ = MAKE(call, @$, MAKE(call, @$, $4, SYMBOL(has), $1), SYMBOL(BANG));
+    $$ = MAKE(call, @$, $4, SYMBOL(hasNot), $1);
   }
 ;
 

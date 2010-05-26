@@ -37,7 +37,8 @@ do (System)
       return |
     var this.'$fun_rename' =
       [
-        "has"  => ("in", [(0, 1)]),
+        "has"    => ("in", [(0, 1)]),
+        "hasNot" => ("not in", [(0, 1)]),
       ] |
     var this.'$opNeg' =
       [

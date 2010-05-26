@@ -36,6 +36,7 @@ System.load("urbi/platform.u");
 load("urbi/exception.u");
 load("urbi/call-message.u");
 load("urbi/comparable.u");
+load("urbi/container.u");
 load("urbi/lazy.u");
 load("urbi/range-iterable.u");
 load("urbi/list.u");

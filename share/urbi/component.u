@@ -12,6 +12,7 @@
  */
 class Global.Localization {} | do (Localization)
 {
+  protos.insertFront(Global.Container);
   function makeEnum
   {
     var type = call.evalArgAt(0) |

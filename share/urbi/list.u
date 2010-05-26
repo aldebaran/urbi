@@ -14,7 +14,7 @@
 
 do (List)
 {
-  protos = [Global.RangeIterable];
+  protos = [Global.RangeIterable, Global.Container];
 
   function '=='(var that)
   {
