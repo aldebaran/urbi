@@ -36,7 +36,7 @@ namespace urbi
     Code::Code(ast_type a)
       : ast_(a)
       , captures_()
-      , self_()
+      , this_()
       , call_()
       , lobby_()
     {
@@ -47,7 +47,7 @@ namespace urbi
     Code::Code(rCode model)
       : ast_(model->ast_)
       , captures_(model->captures_)
-      , self_(model->self_)
+      , this_(model->this_)
       , call_(model->call_)
       , lobby_(model->lobby_)
     {
@@ -75,9 +75,9 @@ namespace urbi
       return lobby_;
     }
 
-    rObject Code::self_get() const
+    rObject Code::this_get() const
     {
-      return self_;
+      return this_;
     }
 
     Code::ast_type& Code::ast_get()
@@ -100,9 +100,9 @@ namespace urbi
       return lobby_;
     }
 
-    void Code::self_set(rObject v)
+    void Code::this_set(rObject v)
     {
-      self_ = v;
+      this_ = v;
     }
 
     rObject Code::apply(const objects_type& apply_args)

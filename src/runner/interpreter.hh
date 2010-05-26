@@ -264,7 +264,7 @@ namespace runner
     /// The job to execute
     boost::function0<void> job_;
     /// Its potential target
-    rObject self_;
+    rObject this_;
     /// Its arguments
     objects_type args_;
 

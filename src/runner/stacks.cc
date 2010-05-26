@@ -32,10 +32,8 @@ namespace runner
     : local_pointer_(0)
     , captured_pointer_(0)
   {
-    // push toplevel's 'this' and 'call'
-    local_stack_.push_back(new Slot(lobby));
-    local_stack_.push_back(new Slot());
-
+    // Push toplevel's 'this' and 'call'.
+    local_stack_ << new Slot(lobby) << new Slot();
     STACK_ECHO("STACKS SPAWNED");
   }
 
@@ -72,12 +70,12 @@ namespace runner
       captured_stack_[i] = new Slot();
 
     // Bind 'this' and 'call'.
-    self_set(self);
+    this_set(self);
     call_set(call);
   }
 
   void
-  Stacks::self_set(rObject s)
+  Stacks::this_set(rObject s)
   {
     STACK_ECHO("Set 'this' @[" << local_pointer_ << "] = " << s.get());
     local_stack_[local_pointer_] = new Slot(s);
@@ -283,22 +281,22 @@ namespace runner
   Stacks::switch_self(rObject v)
   {
     STACK_ECHO("Switching 'this':" << libport::incindent);
-    self_set(v);
+    this_set(v);
     STACK_NECHO(libport::decindent);
   }
 
   void
-  Stacks::switch_self_back(rObject v)
+  Stacks::switch_this_back(rObject v)
   {
     STACK_ECHO("Switching back 'this':" << libport::incindent);
-    self_set(v);
+    this_set(v);
     STACK_NECHO(libport::decindent);
   }
 
   void
   Stacks::execution_starts(const libport::Symbol& STACK_IF_DEBUG(msg))
   {
-      STACK_NECHO(libport::decindent);
-      STACK_ECHO("Execute " << msg << libport::incindent);
+    STACK_NECHO(libport::decindent);
+    STACK_ECHO("Execute " << msg << libport::incindent);
   }
 }

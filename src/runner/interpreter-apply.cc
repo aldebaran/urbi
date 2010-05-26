@@ -234,7 +234,7 @@ namespace runner
     rLobby caller_lobby = lobby_get();
     if (ast->closure_get())
     {
-      self = function->self_get();
+      self = function->this_get();
       aver(self);
       call = function->call_get();
     }
@@ -473,7 +473,7 @@ namespace runner
                          ast::Factory::make_scope(LOCATION_HERE, body));
 
       rCode closure = new object::Code(routine.get());
-      closure->self_set(stacks_.self());
+      closure->this_set(stacks_.self());
       closure->call_get() = stacks_.call();
 
       Rebinder rebind(routine, closure, stacks_);

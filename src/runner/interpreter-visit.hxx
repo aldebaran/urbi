@@ -184,7 +184,7 @@ namespace runner
     // Capture 'this' and 'call' in closures.
     if (e->closure_get())
     {
-      res->self_set(stacks_.self());
+      res->this_set(stacks_.self());
       res->call_get() = stacks_.call();
       res->lobby_get() = lobby_get();
     }

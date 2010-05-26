@@ -40,8 +40,8 @@ namespace urbi
       rObject call_get() const;
       const captures_type& captures_get() const;
       rLobby lobby_get() const;
-      rObject self_get() const;
-      void self_set(rObject v);
+      rObject this_get() const;
+      void this_set(rObject v);
       virtual rObject operator() (object::objects_type args);
 
       ast_type& ast_get();
@@ -57,12 +57,15 @@ namespace urbi
       virtual std::ostream& special_slots_dump (std::ostream& o) const;
 
     private:
-      /// Body of the function
+      /// Body of the function.
       ast_type ast_;
-      /// Value of the captured variables
+      /// Value of the captured variables.
       captures_type captures_;
-      /// Captured 'this' and 'call' and 'lobby'. Only set for closures.
-      rObject self_, call_;
+      /// Captured 'this'. Only for closures.
+      rObject this_;
+      /// Captured 'call'. Only for closures.
+      rObject call_;
+      /// Captured 'lobby'. Only for closures.
       rLobby lobby_;
 
     URBI_CXX_OBJECT_(Code);

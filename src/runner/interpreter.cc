@@ -102,7 +102,7 @@ namespace runner
     : Runner(lobby, sched, name)
     , ast_(0)
     , code_(code)
-    , self_(self)
+    , this_(self)
     , args_(args)
     , result_(0)
     , stacks_(lobby)
@@ -191,7 +191,7 @@ namespace runner
 	result_ = operator()(ast_.get());
       else if (code_)
       {
-        libport::push_front(args_, self_ ? self_ : rObject(lobby_));
+        libport::push_front(args_, this_ ? this_ : rObject(lobby_));
 	result_ = apply(code_, libport::Symbol::make_empty(), args_);
       }
       else

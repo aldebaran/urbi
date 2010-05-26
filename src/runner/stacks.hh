@@ -100,7 +100,7 @@ namespace runner
 
   public:
     /// Set 'this'.
-    void self_set(rObject s);
+    void this_set(rObject s);
     /// Set 'call'.
     void call_set(rObject v);
     /// Update the given value.
@@ -124,8 +124,8 @@ namespace runner
     /// Factored definer
     void def(unsigned local, rObject v);
     void def(unsigned local, bool captured, rSlot v);
-    /// Helper to restore switched 'this'
-    void switch_self_back(rObject v);
+    /// Helper to restore switched 'this'.
+    void switch_this_back(rObject v);
 
   /*--------.
   | Details |
