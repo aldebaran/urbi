@@ -165,5 +165,13 @@ namespace urbi
       proto_remove(Object::proto);
     }
 
+    bool operator==(const Code& lhs, const Code& rhs)
+    {
+#define EQ(Attr)                                        \
+      (lhs.Attr ## _get() == rhs.Attr ## _get())
+      return EQ(ast) && EQ(captures) && EQ(this) && EQ(call) && EQ(lobby);
+#undef EQ
+    }
+
   } // namespace object
 }

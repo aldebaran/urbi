@@ -36,18 +36,24 @@ namespace urbi
 
       Code(ast_type a);
       Code(rCode model);
+
       ast_type ast_get() const;
+      ast_type& ast_get();
+
       rObject call_get() const;
-      const captures_type& captures_get() const;
+      rObject& call_get();
+
       rLobby lobby_get() const;
+      rLobby& lobby_get();
+
+      const captures_type& captures_get() const;
+      captures_type& captures_get();
+
       rObject this_get() const;
       void this_set(rObject v);
-      virtual rObject operator() (object::objects_type args);
 
-      ast_type& ast_get();
-      rObject& call_get();
-      captures_type& captures_get();
-      rLobby& lobby_get();
+      /// Execute the closure.
+      virtual rObject operator() (object::objects_type args);
 
       /// Urbi methods
       rObject apply(const object::objects_type& args);
@@ -70,7 +76,9 @@ namespace urbi
 
     URBI_CXX_OBJECT_(Code);
     };
-  }; // namespace object
+
+    bool operator==(const Code& lhs, const Code& rhs);
+  } // namespace object
 }
 
 #endif // !OBJECT_CODE_CLASS_HH
