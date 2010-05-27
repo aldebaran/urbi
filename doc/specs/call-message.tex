@@ -77,7 +77,7 @@ assert
 
 
 \item[argsCount]
-  Return the number of arguments.  Do not evaluate them.
+  The number of arguments.  Do not evaluate them.
 \begin{urbiscript}
 function argsCount { call.argsCount }|;
 assert
@@ -127,9 +127,8 @@ sumTwice(3.14, one, one);
 [00000015:error] !!! evalArgAt: invalid index: 3.14
 \end{urbiscript}
 
-\item[evalArgs]
-  Call \lstinline|evalArgAt| for each argument, return the list of
-  values.
+\item[evalArgs]%
+  Call \refSlot{evalArgAt} for each argument, return the list of values.
 \begin{urbiscript}
 function twice
 {
@@ -148,6 +147,47 @@ twice({echo(1); 1}, {echo(2); 2});
 \begin{urbiscript}
 function myself { call.message }|
 assert(myself == "myself");
+\end{urbiscript}
+
+\item[sender]%
+  The object \emph{from which} the invocation was made (the \dfn{caller} in
+  other languages).  Not to be confused with \refSlot{target}.
+\begin{urbiscript}
+function Global.getSender { call.sender } |
+function Global.callGetSender { getSender } |
+
+assert
+{
+  // Call from the current Lobby, with the Lobby as target.
+  getSender === lobby;
+  // Call from the current Lobbdy, with Global as the target.
+  Global.getSender === lobby;
+  // Ask Lobby to call getSender.
+  callGetSender === lobby;
+  // Ask Global to call getSender.
+  Global.callGetSender === Global;
+};
+\end{urbiscript}
+
+\item[target]%
+  The object \emph{on which} the invocation is made.  In other words, the
+  object that will be bound to \this during the evaluation.  Not to be
+  confused with \refSlot{sender}.
+\begin{urbiscript}
+function Global.getTarget { call.target } |
+function Global.callGetTarget { getTarget } |
+
+assert
+{
+  // Call from the current Lobby, with the Lobby as target.
+  getTarget === lobby;
+  // Call from the current Lobbdy, with Global as the target.
+  Global.getTarget === Global;
+  // Ask Lobby to call getTarget.
+  callGetTarget === lobby;
+  // Ask Global to call getTarget.
+  Global.callGetTarget === Global;
+};
 \end{urbiscript}
 
 \end{urbiscriptapi}
