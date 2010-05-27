@@ -81,7 +81,7 @@ namespace runner
     // Evaluated arguments. Even if the function is lazy, it holds the
     // target.
     object::objects_type args;
-    args.push_back(target);
+    args << target;
     ast::exps_type ast_args =
       input_ast_args ? *input_ast_args : ast::exps_type();
 
@@ -128,7 +128,7 @@ namespace runner
     bool reg = !msg.empty() && loc && !object::is_system_location(*loc);
 
     if (reg)
-      call_stack_.push_back(std::make_pair(msg, loc));
+      call_stack_ << std::make_pair(msg, loc);
     FINALLY(((call_stack_type&, call_stack_))((bool, reg)),
             if (reg)
               call_stack_.pop_back();
@@ -180,7 +180,7 @@ namespace runner
   {
     rObject target = call_message->slot_get(SYMBOL(target));
     object::objects_type args;
-    args.push_back(target);
+    args << target;
     // This function is called when arguments haven't been evaluated:
     // only a call message is provided.  If the called function is
     // strict, we need to extract arguments values for it.  This can
@@ -191,7 +191,7 @@ namespace runner
       rObject urbi_args = call_message->call(SYMBOL(evalArgs));
       foreach (const rObject& arg,
 	       urbi_args->as<object::List>()->value_get())
-	args.push_back(arg);
+	args << arg;
     }
 
     return apply(function, msg, args, call_message, loc);
@@ -216,13 +216,13 @@ namespace runner
     if (ast->uses_call_get() && !call_message)
     {
       object::objects_type lazy_args;
-      lazy_args.push_back(args.front());
+      lazy_args << args.front();
       foreach (const rObject& o, libport::skip_first(args))
       {
 	CAPTURE_GLOBAL(PseudoLazy);
         rObject lazy = PseudoLazy->clone();
         lazy->slot_set(SYMBOL(code), o);
-        lazy_args.push_back(lazy);
+        lazy_args << lazy;
       }
       const_cast<rObject&>(call_message) =
         build_call_message(function, msg, lazy_args);
@@ -320,7 +320,7 @@ namespace runner
       if (val == object::void_class)
 	raise_unexpected_void_error();
       passert (*arg, val);
-      args.push_back (val);
+      args << val;
     }
   }
 
@@ -369,7 +369,8 @@ namespace runner
     virtual void
     visit(ast::Routine* r)
     {
-      foreach (const ast::rLocalDeclaration& decl, *r->captured_variables_get())
+      foreach (const ast::rLocalDeclaration& decl,
+               *r->captured_variables_get())
         transform(decl->value_get());
       result_ = r;
     }
@@ -389,6 +390,7 @@ namespace runner
       super_type::visit(decl);
     }
 
+    /// FIXME: Code duplication.
     virtual void
     visit(ast::LocalAssignment* assignment)
     {
@@ -402,7 +404,7 @@ namespace runner
       }
 
       object::rSlot value = stacks_.rget_assignment(assignment);
-      code_->captures_get().push_back(value);
+      code_->captures_get() << value;
 
       // Capture the variable
       assignment->depth_set(assignment->depth_get() + 1);
@@ -410,7 +412,7 @@ namespace runner
         new ast::LocalDeclaration(d->location_get(),
                                   d->what_get(), d->value_get());
       nd->local_index_set(routine_->captured_variables_get()->size());
-      routine_->captured_variables_get()->push_back(nd);
+      *routine_->captured_variables_get() << nd;
       assignment->declaration_set(0);
       super_type::visit(assignment);
       assignment->declaration_set(nd);
@@ -430,7 +432,7 @@ namespace runner
 
       // Retreive the value to capture.
       object::rSlot value = stacks_.rget(local);
-      code_->captures_get().push_back(value);
+      code_->captures_get() << value;
 
       // Capture the variable
       local->depth_set(local->depth_get() + 1);
@@ -438,7 +440,7 @@ namespace runner
         new ast::LocalDeclaration(d->location_get(),
                                   d->what_get(), d->value_get());
       nd->local_index_set(routine_->captured_variables_get()->size());
-      routine_->captured_variables_get()->push_back(nd);
+      *routine_->captured_variables_get() << nd;
       local->declaration_set(0);
       super_type::visit(local);
       local->declaration_set(nd);
@@ -460,7 +462,7 @@ namespace runner
   {
     // Build the list of lazy arguments
     object::objects_type lazy_args;
-    lazy_args.push_back(tgt);
+    lazy_args << tgt;
     foreach (const ast::rConstExp& e, args)
     {
       // Create the lazy version of arguments.
@@ -480,8 +482,7 @@ namespace runner
       rebind(body.get());
 
       CAPTURE_GLOBAL(Lazy);
-      rObject arg = Lazy->call("clone")->call("init", closure);
-      lazy_args.push_back(arg);
+      lazy_args << Lazy->call("new", closure);
     }
 
     return build_call_message(code, msg, lazy_args);
