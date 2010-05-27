@@ -10,6 +10,8 @@
 
 do (Job)
 {
+  addProto(Global.Traceable);
+
   function asString()
   {
     "%s<%s>" % [type, name]

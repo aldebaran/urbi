@@ -158,7 +158,7 @@ namespace urbi
     void
     Job::initialize(CxxObject::Binder<Job>& bind)
     {
-      bind(SYMBOL(backtrace), &Job::backtrace);
+      bind(SYMBOL(DOLLAR_backtrace), &Job::backtrace);
       bind(SYMBOL(name), &Job::name);
       bind(SYMBOL(setSideEffectFree), &Job::setSideEffectFree);
       bind(SYMBOL(status), &Job::status);
