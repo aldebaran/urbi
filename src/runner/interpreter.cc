@@ -171,7 +171,21 @@ namespace runner
   void
   Interpreter::show_exception(object::UrbiException& ue)
   {
-    ue.value_get()->call(SYMBOL(DOLLAR_show));
+    CAPTURE_GLOBAL(Exception);
+
+    // FIXME: should bounce in all case to Exception.'$show'
+    if (is_a(ue.value_get(), Exception))
+      ue.value_get()->call(SYMBOL(DOLLAR_show));
+    else
+    {
+      send_message("error",
+                   libport::format("!!! %s",
+                                   (ue.value_get()
+                                    ->call(SYMBOL(asString))
+                                    ->as<object::String>()
+                                    ->value_get())));
+      show_backtrace(ue.backtrace_get(), "error");
+    }
   }
 
   void
