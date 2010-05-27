@@ -8,9 +8,9 @@
 
 \section{Container}
 
-This object is meant to be used as a prototype for objects that
-support \lstinline|has| and \lstinline|hasNot| methods.
-Any class using this prototype must redefine either has, hasNot or both.
+This object is meant to be used as a prototype for objects that support
+\refSlot{has} and \refSlot{hasNot} methods.  Any class using this prototype
+must redefine either \refSlot{has}, \refSlot{hasNot} or both.
 
 \subsection{Prototypes}
 
@@ -20,14 +20,47 @@ Any class using this prototype must redefine either has, hasNot or both.
 
 \subsection{Slots}
 
-\begin{itemize}
-\item \lstinline|has(\var{e})|\\
-  Return \lstinline|true| when the Container has a key or item matching
-  \var{e}.
-\item \lstinline|hasNot(\var{e})|\\
-  Return \lstinline|true| when the Container has no key or item matching
-  \var{e}.
-\end{itemize}
+\begin{urbiscriptapi}
+\item[has](<e>)%
+  \lstinline|!hasNot(\var{e})|.  The indented semantics is
+  ``\lstinline|true| when the container has a key (or item) matching
+  \var{e}''.  This is what \lstinline|\var{e} in \var{c}| is mapped onto.
+
+\begin{urbiscript}
+class NotCell : Container
+{
+  var val;
+  function init(var v)   { val = v };
+  function hasNot(var v) { val != v };
+}|;
+var c = NotCell.new(23)|;
+assert
+{
+  c.has(23);     23 in c;
+  c.hasNot(3);    3 not in c;
+};
+\end{urbiscript}
+
+
+\item[hasNot](<e>)%
+  \lstinline|!has(\var{e})|.  The indented semantics is ``\lstinline|true|
+  when the container does not have a key (or item) matching \var{e}''.
+
+\begin{urbiscript}
+class Cell : Container
+{
+  var val;
+  function init(var v) { val = v };
+  function has(var v)  { val == v };
+}|;
+var d = Cell.new(23)|;
+assert
+{
+  d.has(23);     23 in d;
+  d.hasNot(3);    3 not in d;
+};
+\end{urbiscript}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

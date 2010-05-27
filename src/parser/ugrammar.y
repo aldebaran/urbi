@@ -1234,15 +1234,8 @@ exp:
 
 // e in c => c.has(e).
 exp:
-  exp "in" exp
-  {
-    $$ = MAKE(call, @$, $3, SYMBOL(has), $1);
-  }
-// "!" is a synonym for "not", typing "not in" is "! in" here.
-| exp "!" "in" exp
-  {
-    $$ = MAKE(call, @$, $4, SYMBOL(hasNot), $1);
-  }
+  exp[m]     "in" exp[c] { $$ = MAKE(call, @$, $c, SYMBOL(has),    $m); }
+| exp[m] "!" "in" exp[c] { $$ = MAKE(call, @$, $c, SYMBOL(hasNot), $m); }
 ;
 
 exp.opt:

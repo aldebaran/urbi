@@ -8,10 +8,6 @@
  * See the LICENSE file for more information.
  */
 
-/*------------.
-| Orderable.  |
-`------------*/
-
 class Global.Orderable
 {
   // Each operator points to the following one, so that defining one

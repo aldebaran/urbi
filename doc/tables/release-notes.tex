@@ -15,6 +15,11 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
+\item \refObject{Container}, prototype for \refObject{Dictionary},
+  \refObject{List} derive.
+\item \lstinline|\var{e} not in \var{c}| is mapped onto
+  \lstinline|\var{c}.hasNot(\var{e})| instead of
+  \lstinline|!\var{c}.has(\var{e})|.
 \item \refObject{Float.limits}
 \item \refSlot[Job]{asString}
 \item \refObject{IoService}
