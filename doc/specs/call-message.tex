@@ -149,9 +149,13 @@ sumTwice(2, one, one + one);
 [00000013] 4
 
 sumTwice(3, one, one);
-[00000014:error] !!! evalArgAt: invalid index: 3
+[00000014:error] !!! []: invalid index: 3
+[00000014:error] !!!    called from: evalArgAt, indirect call of []
+[00000014:error] !!!    called from: sumTwice
 sumTwice(3.14, one, one);
-[00000015:error] !!! evalArgAt: invalid index: 3.14
+[00000015:error] !!! []: invalid index: 3.14
+[00000015:error] !!!    called from: evalArgAt, indirect call of []
+[00000015:error] !!!    called from: sumTwice
 \end{urbiscript}
 
 \item[evalArgs]%
