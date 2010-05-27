@@ -19,9 +19,11 @@ object, yet it is a good idea to throw only objects that derive from
 \lstinline|Exception|.
 
 \subsection{Prototypes}
-\begin{itemize}
-\item \refObject{Object}
-\end{itemize}
+
+\begin{refObjects}
+\item[Object]
+\item[Traceable]
+\end{refObjects}
 
 \subsection{Construction}
 
@@ -45,7 +47,7 @@ Exception has many slots which are specific exceptions.  See
 \begin{urbiscriptapi}
 \item[backtrace] The call stack at the moment the exception was thrown (not
   created), as a \refObject{List} of \refObject[s]{StackFrame}, from the
-  innermost to the outermost call.
+  innermost to the outermost call.  (see \refSlot[backtrace]{Traceable})
 \begin{urbiscript}
 //#push 1 "file.u"
 try
