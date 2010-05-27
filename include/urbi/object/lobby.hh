@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/lobby-class.hh
+ ** \file object/lobby.hh
  ** \brief Definition of the Urbi object lobby.
  */
 
-#ifndef OBJECT_LOBBY_CLASS_HH
-# define OBJECT_LOBBY_CLASS_HH
+#ifndef OBJECT_LOBBY_HH
+# define OBJECT_LOBBY_HH
 
 # include <libport/compiler.hh>
 # include <libport/instance-tracker.hh>
@@ -67,4 +67,4 @@ namespace urbi
   }; // namespace object
 }
 
-#endif // !OBJECT_LOBBY_CLASS_HH
+#endif // !OBJECT_LOBBY_HH

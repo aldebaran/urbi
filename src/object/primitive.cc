@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/primitive-class.cc
+ ** \file object/primitive.cc
  ** \brief Creation of the Urbi object primitive.
  */
 

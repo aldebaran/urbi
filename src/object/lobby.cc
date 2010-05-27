@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/lobby-class.cc
+ ** \file object/lobby.cc
  ** \brief Creation of the Urbi object lobby.
  */
 

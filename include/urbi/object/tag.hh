@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/tag-class.hh
+ ** \file object/tag.hh
  ** \brief Definition of the Urbi object tag.
  */
 
-#ifndef OBJECT_TAG_CLASS_HH
-# define OBJECT_TAG_CLASS_HH
+#ifndef OBJECT_TAG_HH
+# define OBJECT_TAG_HH
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
@@ -76,4 +76,4 @@ namespace urbi
 
 # include <urbi/object/cxx-object.hxx>
 
-#endif // !OBJECT_TAG_CLASS_HH
+#endif // !OBJECT_TAG_HH

@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/semaphore-class.hh
+ ** \file object/semaphore.hh
  ** \brief Definition of the Urbi object semaphore.
  */
 
-#ifndef OBJECT_SEMAPHORE_CLASS_HH
-# define OBJECT_SEMAPHORE_CLASS_HH
+#ifndef OBJECT_SEMAPHORE_HH
+# define OBJECT_SEMAPHORE_HH
 
 # include <urbi/object/fwd.hh>
 # include <sched/fwd.hh>
@@ -48,4 +48,4 @@ namespace urbi
   }; // namespace object
 }
 
-#endif // OBJECT_SEMAPHORE_CLASS_HH
+#endif // OBJECT_SEMAPHORE_HH

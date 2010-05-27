@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/code-class.cc
+ ** \file object/code.cc
  ** \brief Creation of the Urbi object code.
  */
 

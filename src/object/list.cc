@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/list-class.cc
+ ** \file object/list.cc
  ** \brief Creation of the Urbi object list.
  */
 

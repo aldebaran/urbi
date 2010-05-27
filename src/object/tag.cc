@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/tag-class.cc
+ ** \file object/tag.cc
  ** \brief Creation of the Urbi object tag.
  */
 

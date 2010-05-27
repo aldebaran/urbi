@@ -13,8 +13,8 @@
  ** \brief Definition of the Urbi object job.
  */
 
-#ifndef OBJECT_JOB_CLASS_HH
-# define OBJECT_JOB_CLASS_HH
+#ifndef OBJECT_JOB_HH
+# define OBJECT_JOB_HH
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
@@ -54,4 +54,4 @@ namespace urbi
   }; // namespace object
 }
 
-#endif // !OBJECT_JOB_CLASS_HH
+#endif // !OBJECT_JOB_HH

@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/string-class.hh
+ ** \file object/string.hh
  ** \brief Definition of the Urbi object string.
  */
 
-#ifndef OBJECT_STRING_CLASS_HH
-# define OBJECT_STRING_CLASS_HH
+#ifndef OBJECT_STRING_HH
+# define OBJECT_STRING_HH
 
 # include <libport/ufloat.hh>
 # include <urbi/object/cxx-object.hh>
@@ -135,4 +135,4 @@ namespace urbi
 
 # include <urbi/object/cxx-object.hxx>
 
-#endif // !OBJECT_STRING_CLASS_HH
+#endif // !OBJECT_STRING_HH

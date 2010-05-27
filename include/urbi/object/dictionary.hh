@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/dictionary-class.hh
+ ** \file object/dictionary.hh
  ** \brief Definition of the Urbi object dictionary.
  */
 
-#ifndef OBJECT_DICTIONARY_CLASS_HH
-# define OBJECT_DICTIONARY_CLASS_HH
+#ifndef OBJECT_DICTIONARY_HH
+# define OBJECT_DICTIONARY_HH
 
 # include <libport/hash.hh>
 # include <urbi/object/fwd.hh>
@@ -55,4 +55,4 @@ namespace urbi
   }; // namespace object
 }
 
-#endif // !OBJECT_DICTIONARY_CLASS_HH
+#endif // !OBJECT_DICTIONARY_HH

@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/float-class.hh
+ ** \file object/float.hh
  ** \brief Definition of the Urbi object float.
  */
 
-#ifndef OBJECT_FLOAT_CLASS_HH
-# define OBJECT_FLOAT_CLASS_HH
+#ifndef OBJECT_FLOAT_HH
+# define OBJECT_FLOAT_HH
 
 # include <libport/ufloat.hh>
 
@@ -192,4 +192,4 @@ namespace urbi
 # include <urbi/object/cxx-object.hxx>
 # include <urbi/object/slot.hxx>
 
-#endif // !OBJECT_FLOAT_CLASS_HH
+#endif // !OBJECT_FLOAT_HH

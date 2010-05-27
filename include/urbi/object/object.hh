@@ -328,7 +328,7 @@ namespace urbi
 
 # include <urbi/object/object.hxx>
 
-# ifndef OBJECT_FLOAT_CLASS_HH
+# ifndef OBJECT_FLOAT_HH
 #  include <urbi/object/slot.hh>
 # endif
 

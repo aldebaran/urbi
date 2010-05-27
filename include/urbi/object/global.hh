@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/global-class.hh
+ ** \file object/global.hh
  ** \brief Definition of the Urbi object global.
  */
 
-#ifndef OBJECT_GLOBAL_CLASS_HH
-# define OBJECT_GLOBAL_CLASS_HH
+#ifndef OBJECT_GLOBAL_HH
+# define OBJECT_GLOBAL_HH
 
 # include <libport/symbol.hh>
 
@@ -45,4 +45,4 @@ namespace urbi
   CAPTURE_GLOBAL(Name);                         \
   CAPTURE_(Member, Name)
 
-#endif // !OBJECT_GLOBAL_CLASS_HH
+#endif // !OBJECT_GLOBAL_HH

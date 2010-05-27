@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/system-class.cc
+ ** \file object/system.cc
  ** \brief Creation of the Urbi object system.
  */
 

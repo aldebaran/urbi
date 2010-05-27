@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/system-class.hh
+ ** \file object/system.hh
  ** \brief Definition of the Urbi object system.
  */
 
-#ifndef OBJECT_SYSTEM_CLASS_HH
-# define OBJECT_SYSTEM_CLASS_HH
+#ifndef OBJECT_SYSTEM_HH
+# define OBJECT_SYSTEM_HH
 
 # include <urbi/object/fwd.hh>
 # include <parser/parse.hh>
@@ -62,4 +62,4 @@ namespace urbi
   }; // namespace object
 }
 
-#endif // !OBJECT_SYSTEM_CLASS_HH
+#endif // !OBJECT_SYSTEM_HH

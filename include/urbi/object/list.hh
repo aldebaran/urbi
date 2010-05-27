@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/list-class.hh
+ ** \file object/list.hh
  ** \brief Definition of the Urbi object list.
  */
 
-#ifndef OBJECT_LIST_CLASS_HH
-# define OBJECT_LIST_CLASS_HH
+#ifndef OBJECT_LIST_HH
+# define OBJECT_LIST_HH
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
@@ -88,4 +88,4 @@ namespace urbi
 
 # include <urbi/object/cxx-object.hxx>
 
-#endif // !OBJECT_LIST_CLASS_HH
+#endif // !OBJECT_LIST_HH

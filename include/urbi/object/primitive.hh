@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/primitive-class.hh
+ ** \file object/primitive.hh
  ** \brief Definition of the Urbi object primitive.
  */
 
-#ifndef OBJECT_PRIMITIVE_CLASS_HH
-# define OBJECT_PRIMITIVE_CLASS_HH
+#ifndef OBJECT_PRIMITIVE_HH
+# define OBJECT_PRIMITIVE_HH
 
 # include <libport/compiler.hh>
 # include <urbi/object/executable.hh>
@@ -48,4 +48,4 @@ namespace urbi
   }; // namespace object
 }
 
-#endif // !OBJECT_PRIMITIVE_CLASS_HH
+#endif // !OBJECT_PRIMITIVE_HH

@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/float-class.cc
+ ** \file object/float.cc
  ** \brief Creation of the Urbi object float.
  */
 

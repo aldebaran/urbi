@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/code-class.hh
+ ** \file object/code.hh
  ** \brief Definition of the Urbi object code.
  */
 
-#ifndef OBJECT_CODE_CLASS_HH
-# define OBJECT_CODE_CLASS_HH
+#ifndef OBJECT_CODE_HH
+# define OBJECT_CODE_HH
 
 # include <libport/compiler.hh>
 
@@ -81,4 +81,4 @@ namespace urbi
   } // namespace object
 }
 
-#endif // !OBJECT_CODE_CLASS_HH
+#endif // !OBJECT_CODE_HH

@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/dictionary-class.cc
+ ** \file object/dictionary.cc
  ** \brief Creation of the Urbi object dictionary.
  */
 

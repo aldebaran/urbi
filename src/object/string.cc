@@ -9,7 +9,7 @@
  */
 
 /**
- ** \file object/string-class.cc
+ ** \file object/string.cc
  ** \brief Creation of the Urbi object string.
  */
 

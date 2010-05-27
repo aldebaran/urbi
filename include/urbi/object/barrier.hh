@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file object/barrier-class.hh
+ ** \file object/barrier.hh
  ** \brief Definition of the Urbi object barrier.
  */
 
-#ifndef OBJECT_BARRIER_CLASS_HH
-# define OBJECT_BARRIER_CLASS_HH
+#ifndef OBJECT_BARRIER_HH
+# define OBJECT_BARRIER_HH
 
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
@@ -48,4 +48,4 @@ namespace urbi
   }; // namespace object
 }
 
-#endif // OBJECT_BARRIER_CLASS_HH
+#endif // OBJECT_BARRIER_HH
