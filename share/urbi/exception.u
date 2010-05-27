@@ -10,19 +10,16 @@
 
 class Global.Exception
 {
+  addProto(Global.Traceable);
+
   var message = "<no message>";
 
   // location and backtrace are defined by the raise function of the
   // interpreter.  They point to where the Exception was thrown, not
   // created.
-  var '$backtrace';
   var '$location';
-  var '$backtrace_hideCache' = nil;
-  var '$location_hideCache' = nil;
   var slot;
   var routine;
-
-  var hideSystemFiles = true;
 
   function init(msg)
   {
@@ -40,56 +37,17 @@ class Global.Exception
     if (!hideSystemFiles)
       return '$location'.acceptVoid |
 
-    if (!'$location_hideCache'.isNil)
-      return '$location_hideCache'.acceptVoid |
-
-
-    if ('$location'.isVoid)
-      '$location_hideCache' = {}.acceptVoid
-    else if ('$location'.begin.file.asString not in System.systemFiles)
-      '$location_hideCache' = '$location'
+    if (!'$location'.isVoid
+       && '$location'.begin.file.asString not in System.systemFiles)
+      '$location'
     else
     {
-      if (backtrace.size == 0 || backtrace[0].location.isNil)
-        '$location_hideCache' = {}.acceptVoid
+      var b = backtrace |
+      if (b.size == 0 || b[0].location.isNil)
+        '$location'.acceptVoid
       else
-        '$location_hideCache' = backtrace[0].location
-    } |
-    '$location_hideCache'.acceptVoid
-  };
-
-  function backtrace()
-  {
-    if (!hideSystemFiles)
-      return '$backtrace' |
-    var name = nil |
-
-    if (!'$backtrace_hideCache'.isNil)
-      return '$backtrace_hideCache' |
-
-    '$backtrace_hideCache' = '$backtrace'
-      .foldl(closure (res, sf) {
-        if (sf.location.isNil
-          || sf.location.begin.file.asString in System.systemFiles)
-        {
-          if (name.isNil)
-            name = sf.name
-        }
-        else
-        {
-          if (!name.isNil)
-          {
-            res << StackFrame.new(
-              sf.name + ", indirect call of " + name,
-              sf.location
-            ) |
-            name = nil
-          }
-          else
-            res << sf
-        } |
-        res
-      }, [])
+        b[0].location
+    }
   };
 
   function '$show'()

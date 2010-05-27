@@ -33,6 +33,7 @@ System.loadFile(System.searchFile("urbi/system.u"));
 System.load("urbi/object.u");
 System.load("urbi/global.u");
 System.load("urbi/platform.u");
+load("urbi/traceable.u");
 load("urbi/exception.u");
 load("urbi/call-message.u");
 load("urbi/comparable.u");

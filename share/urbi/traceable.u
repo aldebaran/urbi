@@ -1,0 +1,51 @@
+/*
+ * Copyright (C) 2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+class Global.Traceable
+{
+  var hideSystemFiles = true;
+
+  var '$backtrace';
+
+  function backtrace()
+  {
+    if ('$backtrace'.isVoid)
+      return [] |
+
+    if (!hideSystemFiles)
+      return '$backtrace' |
+
+    var name = nil |
+
+    '$backtrace'
+      .foldl(closure (res, sf) {
+        if (sf.location.isNil
+          || sf.location.begin.file.asString in System.systemFiles)
+        {
+          if (name.isNil)
+            name = sf.name
+        }
+        else
+        {
+          if (!name.isNil)
+          {
+            res << StackFrame.new(
+              sf.name + ", indirect call of " + name,
+              sf.location
+            ) |
+            name = nil
+          }
+          else
+            res << sf
+        } |
+        res
+      }, [])
+  };
+}
