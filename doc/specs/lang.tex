@@ -709,7 +709,7 @@ documentation of the classes that provide them.
 
 % Container operators.
 \newcommand{\operatorin}     {\operator  {in}     {a in b}       {-}     {Membership}            {b.has(a)}          }
-\newcommand{\operatornotin}  {\operator  {not in} {a not in b}   {-}     {Non-membership}        {! b.has(a)}      }
+\newcommand{\operatornotin}  {\operator  {not in} {a not in b}   {-}     {Non-membership}        {b.hasNot(a)}      }
 \newcommand{\operatorsub}    {\operator  {[]}   {a[args]}        {-}     {Subscript}             {a.'[]'(args)}          }
 \newcommand{\operatorsubass} {\operator  {[] =} {a[args] = v}    {-}     {Subscript assignment}  {a.'[]='(args, v)}      }
 
@@ -965,9 +965,10 @@ These operators work on containers and their members. See
   \operatorsubass
 \end{operatorTable}
 
-The \dfn{in} and \dfn{not in} operators test the membership of an
-element in a container.  They bounce to the container's
-\lstinline|has| method.  They are non-associative.
+The \dfn{in} and \dfn{not in} operators test the membership of an element in
+a container.  They bounce to the container's \lstinline|has| and
+\lstinline|hasNot| methods (see \refObject{Container}.  They are
+non-associative.
 
 \begin{urbiassert}
 1     in [0, 1, 2];
