@@ -121,13 +121,14 @@ namespace urbi
       return r.apply(this, s, a);
     }
 
-    std::string Code::as_string(rObject what)
+    std::string
+    Code::as_string() const
     {
-      type_check<Code>(what);
-      return string_cast(*what->as<Code>()->ast_get());
+      return string_cast(*ast_);
     }
 
-    std::string Code::body_string()
+    std::string
+    Code::body_string() const
     {
       if (proto == this)
         return SYMBOL(LT_Code_GT);

@@ -57,8 +57,8 @@ namespace urbi
 
       /// Urbi methods
       rObject apply(const object::objects_type& args);
-      static std::string as_string(rObject what);
-      std::string body_string();
+      std::string as_string() const;
+      std::string body_string() const;
 
       virtual std::ostream& special_slots_dump (std::ostream& o) const;
 
