@@ -33,7 +33,8 @@ namespace runner
     , captured_pointer_(0)
   {
     // Push toplevel's 'this' and 'call'.
-    local_stack_ << new Slot(lobby) << new Slot();
+    local_stack_.push_back(new Slot(lobby));
+    local_stack_.push_back(new Slot());
     STACK_ECHO("STACKS SPAWNED");
   }
 
@@ -89,7 +90,7 @@ namespace runner
   }
 
   Stacks::rObject
-  Stacks::self()
+  Stacks::this_get()
   {
     STACK_ECHO("Read 'this' @[" << local_pointer_ << "] = "
                << local_stack_[local_pointer_].get());
@@ -278,7 +279,7 @@ namespace runner
   }
 
   void
-  Stacks::switch_self(rObject v)
+  Stacks::this_switch(rObject v)
   {
     STACK_ECHO("Switching 'this':" << libport::incindent);
     this_set(v);
@@ -286,7 +287,7 @@ namespace runner
   }
 
   void
-  Stacks::switch_this_back(rObject v)
+  Stacks::this_switch_back(rObject v)
   {
     STACK_ECHO("Switching back 'this':" << libport::incindent);
     this_set(v);

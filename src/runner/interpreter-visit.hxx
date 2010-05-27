@@ -144,7 +144,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Implicit*)
   {
-    return stacks_.self();
+    return stacks_.this_get();
   }
 
 
@@ -184,7 +184,7 @@ namespace runner
     // Capture 'this' and 'call' in closures.
     if (e->closure_get())
     {
-      res->this_set(stacks_.self());
+      res->this_set(stacks_.this_get());
       res->call_get() = stacks_.call();
       res->lobby_get() = lobby_get();
     }
@@ -237,7 +237,7 @@ namespace runner
     passert("Local variable read before being set", value);
 
     if (e->arguments_get())
-      return apply_ast(stacks_.self(), value,
+      return apply_ast(stacks_.this_get(), value,
                        e->name_get(), e->arguments_get(),
                        e->location_get());
     else
@@ -521,8 +521,8 @@ namespace runner
   Interpreter::visit(const ast::Do* e)
   {
     rObject tgt = operator()(e->target_get().get());
-    rObject old_tgt = stacks_.self();
-    stacks_.switch_self(tgt);
+    rObject old_tgt = stacks_.this_get();
+    stacks_.this_switch(tgt);
     FINALLY_Do(USE);
     visit(static_cast<const ast::Scope*>(e));
     // This is arguable. Do, just like Scope, should maybe return
@@ -645,16 +645,16 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::This*)
   {
-    return stacks_.self();
+    return stacks_.this_get();
   }
 
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Throw* e)
   {
-    raise(e->value_get() ?
-          operator()(e->value_get().get()) :
-          current_exception_);
+    raise(e->value_get()
+          ? operator()(e->value_get().get())
+          : current_exception_);
     pabort("Unreachable");
   }
 

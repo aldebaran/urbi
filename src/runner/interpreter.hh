@@ -304,7 +304,7 @@ namespace runner
     FINALLY_ ## DefineOrUse(Do,                                 \
                             ((Stacks&, stacks_))                \
                             ((rObject&, old_tgt)),              \
-                            stacks_.switch_self(old_tgt))
+                            stacks_.this_switch(old_tgt))
 
 #define FINALLY_Try(DefineOrUse)                                \
     FINALLY_ ## DefineOrUse(Try,                                \

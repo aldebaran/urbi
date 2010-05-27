@@ -81,7 +81,7 @@ namespace runner
     rSlot
     rget_assignment(ast::rConstLocalAssignment e);
     /// Get 'this'.
-    rObject self();
+    rObject this_get();
     /// Get 'call'.
     rObject call();
     /// Get the current local pointer.
@@ -113,19 +113,17 @@ namespace runner
     /// Bind given captured variable.
     void def_captured(ast::rConstLocalDeclaration e, rSlot v);
 
-    /// Switch the current 'this'
-    /** \return the action to switch back to the previous 'this'
-     */
-    void switch_self(rObject s);
+    /// Switch the current 'this'.
+    void this_switch(rObject s);
 
   private:
-    /// Factored setter
+    /// Factored setter.
     void set(unsigned local, bool captured, rObject v);
-    /// Factored definer
+    /// Factored definer.
     void def(unsigned local, rObject v);
     void def(unsigned local, bool captured, rSlot v);
-    /// Helper to restore switched 'this'.
-    void switch_this_back(rObject v);
+    /// Restore switched 'this'.
+    void this_switch_back(rObject v);
 
   /*--------.
   | Details |

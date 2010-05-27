@@ -333,7 +333,7 @@ namespace runner
     rObject res = CallMessage->clone();
 
     // Set the sender to be the current self. self must always exist.
-    res->slot_set(SYMBOL(sender), stacks_.self().get());
+    res->slot_set(SYMBOL(sender), stacks_.this_get().get());
 
     // Set the target to be the object on which the function is applied.
     res->slot_set(SYMBOL(target), args.front());
@@ -473,7 +473,7 @@ namespace runner
                          ast::Factory::make_scope(LOCATION_HERE, body));
 
       rCode closure = new object::Code(routine.get());
-      closure->this_set(stacks_.self());
+      closure->this_set(stacks_.this_get());
       closure->call_get() = stacks_.call();
 
       Rebinder rebind(routine, closure, stacks_);

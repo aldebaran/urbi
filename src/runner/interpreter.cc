@@ -287,7 +287,7 @@ namespace runner
       // `Tag.tags' represents the top level tag.
       CAPTURE_GLOBAL2(Tag, tags);
       rObject parent = tags;
-      rObject where = stacks_.self();
+      rObject where = stacks_.this_get();
       tag_chain_type chain = decompose_tag_chain(e);
       rforeach (const libport::Symbol& elt, chain)
       {
