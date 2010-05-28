@@ -135,6 +135,25 @@ namespace urbi
       return
         string_cast(*ast_->body_get()->body_get());
     }
+    bool
+    Code::operator==(const Code& that) const
+    {
+#define EQ(Attr)                                \
+      (Attr ## _get() == that.Attr ## _get())
+      return (EQ(captures)
+              && EQ(this)
+              && EQ(call)
+              && EQ(lobby)
+              && as_string() == that.as_string());
+#undef EQ
+    }
+
+    bool
+    Code::operator==(const rObject& that) const
+    {
+      return (that->is_a<Code>()
+              && *this == *that->as<Code>());
+    }
 
     std::ostream&
     Code::special_slots_dump(std::ostream& o) const
@@ -144,6 +163,9 @@ namespace urbi
 
     void Code::initialize(CxxObject::Binder<Code>& bind)
     {
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+           (&self_type::operator==));
       bind(SYMBOL(apply), &Code::apply);
       bind(SYMBOL(asString), &Code::as_string);
       bind(SYMBOL(bodyString), &Code::body_string);
@@ -164,14 +186,6 @@ namespace urbi
       ast_ = ast.result<const ast::Routine>();
       proto_add(Executable::proto);
       proto_remove(Object::proto);
-    }
-
-    bool operator==(const Code& lhs, const Code& rhs)
-    {
-#define EQ(Attr)                                        \
-      (lhs.Attr ## _get() == rhs.Attr ## _get())
-      return EQ(ast) && EQ(captures) && EQ(this) && EQ(call) && EQ(lobby);
-#undef EQ
     }
 
   } // namespace object

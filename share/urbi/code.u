@@ -11,10 +11,4 @@
 do (Global.getSlot("Code"))
 {
   addProto(Comparable);
-
-  // FIXME: cannot compare ASTs currently, so compare strings.
-  function '=='(var that)
-  {
-    acceptVoid.asString == that.acceptVoid.asString;
-  };
 };

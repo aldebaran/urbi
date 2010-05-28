@@ -31,6 +31,7 @@ namespace urbi
     class Code: public Executable
     {
     public:
+      typedef Code self_type;
       typedef ast::rConstRoutine ast_type;
       typedef std::vector<rSlot> captures_type;
 
@@ -60,6 +61,10 @@ namespace urbi
       std::string as_string() const;
       std::string body_string() const;
 
+      /// Whether same members.
+      bool operator==(const Code& that) const;
+      bool operator==(const rObject& that) const;
+
       virtual std::ostream& special_slots_dump (std::ostream& o) const;
 
     private:
@@ -77,7 +82,6 @@ namespace urbi
     URBI_CXX_OBJECT_(Code);
     };
 
-    bool operator==(const Code& lhs, const Code& rhs);
   } // namespace object
 }
 
