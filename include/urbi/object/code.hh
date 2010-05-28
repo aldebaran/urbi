@@ -35,7 +35,9 @@ namespace urbi
       typedef ast::rConstRoutine ast_type;
       typedef std::vector<rSlot> captures_type;
 
-      Code(ast_type a);
+      Code(ast_type a,
+           rObject call = 0, rLobby lobby = 0, rObject ths = 0,
+           captures_type captures = captures_type());
       Code(rCode model);
 
       ast_type ast_get() const;
@@ -70,14 +72,14 @@ namespace urbi
     private:
       /// Body of the function.
       ast_type ast_;
-      /// Value of the captured variables.
-      captures_type captures_;
-      /// Captured 'this'. Only for closures.
-      rObject this_;
       /// Captured 'call'. Only for closures.
       rObject call_;
+      /// Value of the captured variables.
+      captures_type captures_;
       /// Captured 'lobby'. Only for closures.
       rLobby lobby_;
+      /// Captured 'this'. Only for closures.
+      rObject this_;
 
     URBI_CXX_OBJECT_(Code);
     };

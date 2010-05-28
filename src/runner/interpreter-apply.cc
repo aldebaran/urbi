@@ -474,10 +474,10 @@ namespace runner
                          true, new ast::local_declarations_type,
                          ast::Factory::make_scope(LOCATION_HERE, body));
 
-      rCode closure = new object::Code(routine.get());
-      closure->call_get() = stacks_.call();
-      closure->this_set(stacks_.this_get());
-      closure->lobby_set(lobby_get());
+      rCode closure =
+        // FIXME: something fishy about the lobby here.
+        new object::Code(routine.get(),
+                         stacks_.call(), lobby_get(), stacks_.this_get());
 
       Rebinder rebind(routine, closure, stacks_);
       rebind(body.get());

@@ -33,12 +33,14 @@ namespace urbi
 {
   namespace object
   {
-    Code::Code(ast_type a)
+    Code::Code(ast_type a,
+               rObject call, rLobby lobby, rObject ths,
+               captures_type captures)
       : ast_(a)
-      , captures_()
-      , this_()
-      , call_()
-      , lobby_()
+      , call_(call)
+      , captures_(captures)
+      , lobby_(lobby)
+      , this_(ths)
     {
       proto_add(proto);
       proto_remove(Object::proto);
@@ -46,10 +48,10 @@ namespace urbi
 
     Code::Code(rCode model)
       : ast_(model->ast_)
-      , captures_(model->captures_)
-      , this_(model->this_)
       , call_(model->call_)
+      , captures_(model->captures_)
       , lobby_(model->lobby_)
+      , this_(model->this_)
     {
       proto_add(model);
       proto_remove(Object::proto);
