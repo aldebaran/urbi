@@ -31,24 +31,77 @@ closure(){}.protos[0] === getSlot("Code");
 
 \begin{urbiscriptapi}
 \item[==](<that>)%
-  Whether \this and \var{that} are the same source code.
-  It actually checks that both have the same \lstinline|asString|.
+  Whether \this and \var{that} are the same source code (actually checks
+  that both have the same \refSlot{asString}), and same closed values.
+
+  Closures and functions are different, even if the body is the same.
 \begin{urbiassert}
 function () { 1 } == function () { 1 };
 function () { 1 } != closure  () { 1 };
 closure  () { 1 } != function () { 1 };
-
-function () { 1 + 1 } == function () { 1 + 1 };
-function () { 1 + 2 } != function () { 2 + 1 };
-
-function () { 1 } != function { 1 };
-function () { 1 } != function (ignored) { 1 };
+closure  () { 1 } == closure  () { 1 };
 \end{urbiassert}
 
+No form of equivalence is applied on the body, it must be the same.
+\begin{urbiassert}
+function () { 1 + 1 } == function () { 1 + 1 };
+function () { 1 + 2 } != function () { 2 + 1 };
+\end{urbiassert}
+
+Arguments do matter, even if in practice the functions are the same.
+\begin{urbiassert}
+function (var ignored) {} != function () {};
+function (var x) { x }    != function (y) { y };
+\end{urbiassert}
+
+A lazy function cannot be equal to a strict one.
+\begin{urbiassert}
+function () { 1 } != function { 1 };
+\end{urbiassert}
+
+If the functions capture different variables, they are different.
+\begin{urbiscript}
+{
+  var x;
+  function Global.capture_x() { x };
+  function Global.capture_x_again () { x };
+  {
+    var x;
+    function Global.capture_another_x() { x };
+  }
+}|;
+assert
+{
+  getSlot("capture_x") == getSlot("capture_x_again");
+  getSlot("capture_x") != getSlot("capture_another_x");
+};
+\end{urbiscript}
+
+If the functions capture different targets, they are different.
+\begin{urbiscript}
+class Foo
+{
+  function makeFunction() { function () {} };
+  function makeClosure()  { closure () {} };
+}|;
+
+class Bar
+{
+  function makeFunction() { function () {} };
+  function makeClosure()  { closure () {} };
+}|;
+
+assert
+{
+  Foo.makeFunction() == Bar.makeFunction();
+  Foo.makeClosure()  != Bar.makeClosure();
+};
+\end{urbiscript}
+
 \item[apply](<args>)%
-  Invoke the routine, with all the arguments.  The target,
-  \this, will be set to \lstinline|\var{args}[0]| and the
-  remaining arguments with be given as arguments.
+  Invoke the routine, with all the arguments.  The target, \this, will be
+  set to \lstinline|\var{args}[0]| and the remaining arguments with be given
+  as arguments.
 \begin{urbiassert}
 function (x, y) { x+y }.apply([nil, 10, 20]) == 30;
 function () { this }.apply([123]) == 123;
