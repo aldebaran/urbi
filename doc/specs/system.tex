@@ -51,8 +51,8 @@ Details on the architecture the \urbi server runs on.
 };
 \end{urbiscript}
 
-\item[arguments] The list of the command line arguments passed to the user script.
-  This is especially useful in scripts.
+\item[arguments] The list of the command line arguments passed to the user
+  script.  This is especially useful in scripts.
 \begin{shell}[alsolanguage={[Interactive]Urbi}]
 $ cat >echo <<EOF
 #! /usr/bin/env urbi
@@ -210,6 +210,25 @@ System.system("echo '123;' >123.u") == 0;
 maybeLoad("123.u") == 123;
 maybeLoad("u.123").isVoid;
 \end{urbiassert}
+
+\item[ndebug] If true, do not evaluate the assertions.  See
+  \autoref{sec:assertions}.
+\begin{urbiscript}
+function one() { echo("called!"); 1 }|;
+assert(!System.ndebug);
+
+assert(one);
+[00000617] *** called!
+
+// Beware of copy-on-write.
+System.ndebug = true|;
+assert(one);
+
+System.ndebug = false|;
+assert(one);
+[00000622] *** called!
+\end{urbiscript}
+
 
 \item[PackageInfo] See \refObject{System.PackageInfo}.
 
