@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="liburbi.lib libjpeg.lib ws2_32.lib $(NOINHERIT)"
+				AdditionalDependencies="liburbi.lib libjpeg4urbi.lib ws2_32.lib $(NOINHERIT)"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;liburbi-cpp/lib-vc++&quot;"
 				GenerateDebugInformation="true"
@@ -139,7 +139,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="liburbi.lib libjpeg.lib ws2_32.lib $(NOINHERIT)"
+				AdditionalDependencies="liburbi.lib libjpeg4urbi.lib ws2_32.lib $(NOINHERIT)"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;liburbi-cpp/lib-vc++&quot;"
 				GenerateDebugInformation="true"

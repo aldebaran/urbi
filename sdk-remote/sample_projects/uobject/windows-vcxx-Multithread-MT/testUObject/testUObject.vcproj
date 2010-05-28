@@ -137,7 +137,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="true"
-				AdditionalDependencies="libkernel-remote.lib libjpeg.lib ws2_32.lib $(NOINHERIT)"
+				AdditionalDependencies="libkernel-remote.lib libjpeg4urbi.lib ws2_32.lib $(NOINHERIT)"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;liburbi-cpp/lib-vc++&quot;"
 				GenerateDebugInformation="true"
