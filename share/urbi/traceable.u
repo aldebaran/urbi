@@ -22,30 +22,10 @@ class Global.Traceable
     if (!hideSystemFiles)
       return '$backtrace' |
 
-    var name = nil |
-
     '$backtrace'
-      .foldl(closure (res, sf) {
-        if (sf.location.isNil
-          || sf.location.begin.file.asString in System.systemFiles)
-        {
-          if (name.isNil)
-            name = sf.name
-        }
-        else
-        {
-          if (!name.isNil)
-          {
-            res << StackFrame.new(
-              sf.name + ", indirect call of " + name,
-              sf.location
-            ) |
-            name = nil
-          }
-          else
-            res << sf
-        } |
-        res
-      }, [])
+      .filter(closure (sf) {
+        !sf.location.isNil
+        && sf.location.begin.file.asString not in System.systemFiles
+      })
   };
 }

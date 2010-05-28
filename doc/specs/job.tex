@@ -54,7 +54,7 @@ sleep(1);
 assert
 {
   s.backtrace[0].asString == "file.u:1.16-24: sleep";
-  s.backtrace[1].asString == "file.u:1.9-25: detach, indirect call of code";
+  s.backtrace[1].asString == "file.u:1.9-25: detach";
 };
 //#pop
 \end{urbiscript}
@@ -77,7 +77,7 @@ t.dumpState;
 [00004295] ***     Tag<Lobby_1>
 [00004297] ***   Backtrace:
 [00004297] ***     file.u:1.16-24: sleep
-[00004297] ***     file.u:1.9-25: detach, indirect call of code
+[00004297] ***     file.u:1.9-25: detach
 //#pop
 \end{urbiscript}
 
