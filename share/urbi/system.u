@@ -81,17 +81,18 @@ do (System)
       c.args = args.tail |
 
       // Do the assertion and compute its message if thrown.
-      var res = target.value.callMessage(c) |
+      var res = target.value.acceptVoid.callMessage(c) |
       assert_(res, {
 
-        var unevaluated = Object.new |;
-        var unevaluated.asString = "<unevaluated>" |
+        var unevaluated = Object.new |
+        var unevaluated.asString = "?" |
 
         var args = [target] + c.args |
         // Evaluate all arguments, and pretty print them.
         var argStr = args.map(closure (v) { v.asString }) |
         var argVal = args.map(closure (v) {
-          if (v.val.isVoid)
+          if (v.getSlot("val").isVoid
+            || v.getSlot("val").allProtos.hasSame(Executable))
             unevaluated
           else
             v.val

@@ -148,7 +148,7 @@ assert
 var a = Object.new|;
 assert
 {
-//   isdef(a);
+   isdef(a);
   !isdef(a.b);
   !isdef(a.b.c);
 };
@@ -156,17 +156,17 @@ assert
 var a.b = Object.new|;
 assert
 {
-//   isdef(a);
-//   isdef(a.b);
+   isdef(a);
+   isdef(a.b);
   !isdef(a.b.c);
 };
 
 var a.b.c = Object.new|;
 assert
 {
-//   isdef(a);
-//   isdef(a.b);
-//   isdef(a.b.c);
+   isdef(a);
+   isdef(a.b);
+   isdef(a.b.c);
 };
 \end{urbiscript}
 

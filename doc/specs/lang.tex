@@ -2388,11 +2388,13 @@ Failed assertions are displayed in a user friendly fashion: first the
 unevaluated assertion is displayed, then the effective values are reported.
 
 \begin{urbiscript}
-function fail { false }|;
+function fail () { false }|;
 assert (fail);
 [00010239:error] !!! failed assertion: fail
-assert (fail(1+2, "+" * 2));
-[00010241:error] !!! failed assertion: fail(1.'+'(2), "+".'*'(2)) (! fail(3, "++"))
+
+function lazyFail { call.evalArgAt(0); false }|;
+assert (lazyFail(1+2, "+" * 2));
+[00010241:error] !!! failed assertion: lazyFail(1.'+'(2), "+".'*'(2)) (! lazyFail(3, ?))
 \end{urbiscript}
 
 The following example is more realistic.
