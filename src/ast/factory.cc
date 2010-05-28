@@ -124,12 +124,7 @@ namespace ast
   Factory::make_assert(const yy::location&,
                        rExp cond) /* const */
   {
-    rCall call = dynamic_cast<Call*>(cond.get());
-    if (call
-        // Binary Boolean operators are not desugared to respect
-        // operator sequences.
-        && call->name_get() != SYMBOL(AMPERSAND_AMPERSAND)
-        && call->name_get() != SYMBOL(PIPE_PIPE))
+    if (rCall call = dynamic_cast<Call*>(cond.get()))
     {
       const yy::location& loc = call->location_get();
       exps_type* args = new exps_type;
