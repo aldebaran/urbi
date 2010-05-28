@@ -135,6 +135,21 @@ namespace urbi
       return
         string_cast(*ast_->body_get()->body_get());
     }
+
+    std::ostream&
+    Code::special_slots_dump(std::ostream& o) const
+    {
+#define DISP(Attr)                                                      \
+      << #Attr " = " << libport::deref << Attr ## _get() << libport::iendl
+      return o
+        DISP(ast)
+        DISP(call)
+        DISP(this)
+        DISP(lobby)
+        DISP(captures);
+#undef DISP
+    }
+
     bool
     Code::operator==(const Code& that) const
     {
@@ -153,12 +168,6 @@ namespace urbi
     {
       return (that->is_a<Code>()
               && *this == *that->as<Code>());
-    }
-
-    std::ostream&
-    Code::special_slots_dump(std::ostream& o) const
-    {
-      return o << "value = " << *ast_get() << libport::iendl;
     }
 
     void Code::initialize(CxxObject::Binder<Code>& bind)
