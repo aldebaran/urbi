@@ -8,7 +8,7 @@
 
 \section{Comparable}
 Objects that can be compared for equality and inequality.  See also
-\refObject{Comparable}.
+\refObject{Orderable}.
 
 This object, made to serve as prototype, provides a definition of
 \lstinline{!=} based on \lstinline{==}.  \lstinline{Object} provides
@@ -28,6 +28,40 @@ Foo.new(1) == Foo.new(1);
 Foo.new(1) == Foo.new(2);
 [00000000] false
 \end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[==](<that>)
+  Whether \lstinline|! (this != that)|.
+\begin{urbiscript}
+class FortyTwo : Comparable
+{
+  function '!=' (that) { 42 != that };
+}|;
+assert
+{
+  FortyTwo != 51;
+  FortyTwo == 42;
+};
+\end{urbiscript}
+
+
+\item[!=](<that>)
+  Whether \lstinline|! (this == that)|.
+
+\begin{urbiscript}
+class FiftyOne : Comparable
+{
+  function '==' (that) { 51 == that };
+}|;
+assert
+{
+  FiftyOne == 51;
+  FiftyOne != 42;
+};
+\end{urbiscript}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex
