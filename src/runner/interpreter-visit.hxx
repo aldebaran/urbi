@@ -186,7 +186,7 @@ namespace runner
     {
       res->this_set(stacks_.this_get());
       res->call_get() = stacks_.call();
-      res->lobby_get() = lobby_get();
+      res->lobby_set(lobby_get());
     }
 
     return res;

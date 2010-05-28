@@ -45,7 +45,7 @@ namespace urbi
       rObject& call_get();
 
       rLobby lobby_get() const;
-      rLobby& lobby_get();
+      void lobby_set(const rLobby& l);
 
       const captures_type& captures_get() const;
       captures_type& captures_get();

@@ -75,6 +75,11 @@ namespace urbi
       return lobby_;
     }
 
+    void Code::lobby_set(const rLobby& l)
+    {
+      lobby_ = l;
+    }
+
     rObject Code::this_get() const
     {
       return this_;
@@ -93,11 +98,6 @@ namespace urbi
     Code::captures_type& Code::captures_get()
     {
       return captures_;
-    }
-
-    rLobby& Code::lobby_get()
-    {
-      return lobby_;
     }
 
     void Code::this_set(rObject v)

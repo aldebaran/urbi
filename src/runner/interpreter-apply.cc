@@ -475,8 +475,9 @@ namespace runner
                          ast::Factory::make_scope(LOCATION_HERE, body));
 
       rCode closure = new object::Code(routine.get());
-      closure->this_set(stacks_.this_get());
       closure->call_get() = stacks_.call();
+      closure->this_set(stacks_.this_get());
+      closure->lobby_set(lobby_get());
 
       Rebinder rebind(routine, closure, stacks_);
       rebind(body.get());
