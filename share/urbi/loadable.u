@@ -12,7 +12,7 @@ class Global.Loadable
 {
   var load = false;
 
-  function __loadable_set__(val)
+  function '$loadableSet'(val)
   {
     load = val |
     this
@@ -20,16 +20,16 @@ class Global.Loadable
 
   function on()
   {
-    __loadable_set__(true)
+    '$loadableSet'(true)
   };
 
   function off()
   {
-    __loadable_set__(false)
+    '$loadableSet'(false)
   };
 
   function toggle()
   {
-    __loadable_set__(!load)
+    '$loadableSet'(!load)
   };
 };

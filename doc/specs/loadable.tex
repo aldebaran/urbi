@@ -60,22 +60,7 @@ This object should serve as a prototype.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-%\item[\_\_loadable_set\_\_](<val>)%
-\item \lstinline|__loadable_set__(\var{val})|\\
-  Set \refSlot{load} to \var{val}, and return \this.
-\begin{urbiassert}
-do (Loadable.new)
-{
-  assert
-  {
-    !load;
-    __loadable_set__(true) === this;
-    load;
-    __loadable_set__(false) === this;
-    !load;
-  };
-};
-\end{urbiassert}
+\item[load] The current status.
 
 \item[off](<val>)%
   Set \refSlot{load} to \lstinline|false| and return \this.
