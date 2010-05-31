@@ -252,9 +252,8 @@ do (System)
       t.dumpState
   };
 
-  function scopeTag()
-  {
-    Tag.scope
-  };
+  // Do not make a wrapper function here, as you would get a tag for
+  // the scope of that function, instead of the caller.
+  setSlot("scopeTag", Tag.getSlot("scope"));
 
 };
