@@ -19,8 +19,6 @@ Details on the architecture the \urbi server runs on.
 %% \item[breakpoint]
 %% \item[currentRunner]
 %% \item[jobs]
-%% \item[lobbies]
-%% \item[lobby]
 %% \item[nonInterruptible]
 %% \item[registerAtJob]
 %% \item[resetStats]
@@ -198,6 +196,10 @@ load("123.u") == 123;
   Load the \UObject \var{module}.  Same as \lstinline|loadLibrary|,
   except that the low-level \Cxx symbols are not made ``global'' (in
   the sense of the shared library loader).
+
+\item[lobbies] Bounce to \refSlot[Lobby]{instances}.
+
+\item[lobby]Bounce to \refSlot[Lobby]{lobby}.
 
 \item[maybeLoad](<file>, <channel> = Channel.null)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}).

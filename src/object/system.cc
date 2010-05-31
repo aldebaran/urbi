@@ -34,7 +34,6 @@
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
-#include <urbi/object/lobby.hh>
 #include <urbi/object/path.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
@@ -242,12 +241,6 @@ namespace urbi
       return scheduler().cycle_get();
     }
 
-    static rObject
-    system_lobby()
-    {
-      return runner().lobby_get();
-    }
-
     static void
     system_nonInterruptible()
     {
@@ -378,12 +371,6 @@ namespace urbi
       rObject res = system_getenv(0, name);
       unsetenv(name.c_str());
       return res;
-    }
-
-    static libport::InstanceTracker<Lobby>::set_type
-    system_lobbies()
-    {
-      return Lobby::instances_get();
     }
 
     static void
@@ -553,8 +540,6 @@ namespace urbi
       DECLARE(loadFile);
       DECLARE(loadModule);
       DECLARE(loadLibrary);
-      DECLARE(lobbies);
-      DECLARE(lobby);
       DECLARE(nonInterruptible);
       DECLARE(noVoidError);
       DECLARE(programName);

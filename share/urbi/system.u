@@ -217,6 +217,16 @@ do (System)
     loadFile(searchFile(file));
   };
 
+  function lobbies()
+  {
+    Lobby.instances
+  };
+
+  function lobby()
+  {
+    Lobby.lobby
+  };
+
   // Look for file, and load it if found.
   function maybeLoad(var file, var channel = Global.clog)
   {

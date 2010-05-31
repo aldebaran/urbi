@@ -35,7 +35,7 @@ namespace urbi
   namespace object
   {
     static rLobby
-    lobby(rObject /*this*/, rLobby l)
+    lobby_lobby(rObject /*this*/, rLobby l)
     {
       return l;
     }
@@ -52,7 +52,7 @@ namespace urbi
         // Don't you DARE change this with a slot pointing to `this', as
         // it would be a circular reference to the lobby from itself,
         // making him un-reclaimable.
-        boost::function1<rLobby, rObject> f(boost::bind(lobby, _1, this));
+        boost::function1<rLobby, rObject> f(boost::bind(lobby_lobby, _1, this));
         slot_set(SYMBOL(lobby), make_primitive(f));
 
         // Initialize the connection tag used to reference local
@@ -94,6 +94,19 @@ namespace urbi
     {
       connection_ = 0;
       call(SYMBOL(handleDisconnect));
+    }
+
+    static inline
+    runner::Runner&
+    runner()
+    {
+      return ::kernel::urbiserver->getCurrentRunner();
+    }
+
+    rLobby
+    Lobby::lobby()
+    {
+      return runner().lobby_get();
     }
 
     void
@@ -154,12 +167,16 @@ namespace urbi
       bind(SYMBOL(Name), &Lobby::Name)
 
       DECLARE(create);
+      DECLARE(lobby);
       DECLARE(quit);
       DECLARE(receive);
       DECLARE(send);
       DECLARE(write);
 #undef DECLARE
+
+      bind(SYMBOL(instances), &Lobby::instances_get);
     }
+
 
     URBI_CXX_OBJECT_REGISTER(Lobby)
       : connection_(0)

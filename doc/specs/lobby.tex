@@ -134,6 +134,14 @@ lobby.echoEach([], "foo");
 %\item \lstinline|help|\experimental\\
 %  Launch the tutorial.
 
+\item[instances]
+  A list of the currently alive lobbies.  It contains at least the Lobby
+  object itself, and the current \refSlot{lobby}.
+\begin{urbiassert}
+lobby in Lobby.instances;
+Lobby in Lobby.instances;
+\end{urbiassert}
+
 \item[license]
   Display the end user license agreement of the \usdk.
 \begin{urbiunchecked}
@@ -154,7 +162,7 @@ lobby.license;
 \item[lobby]
   Return the current lobby, i.e., \this.
 \begin{urbiassert}
-lobby === this;
+Lobby.lobby === this;
 \end{urbiassert}
 
 \item[onDisconnect](<lobby>)%

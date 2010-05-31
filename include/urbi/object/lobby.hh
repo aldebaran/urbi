@@ -48,6 +48,12 @@ namespace urbi
       /// Create new lobby attached to a ghost connection.
       rLobby create();
 
+      /// All the existing lobbies.
+      typedef libport::InstanceTracker<Lobby>::set_type lobbies_type;
+
+      /// The lobby we depend on.
+      static rLobby lobby();
+
       /// Mark this lobby as disconnected.
       void disconnect();
 
