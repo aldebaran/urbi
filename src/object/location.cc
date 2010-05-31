@@ -11,6 +11,7 @@
 #include <libport/lexical-cast.hh>
 
 #include <object/symbols.hh>
+#include <object/system.hh>
 
 #include <urbi/object/cxx-conversions.hh>
 #include <urbi/object/global.hh>
@@ -75,6 +76,12 @@ namespace urbi
       return lhs.begin == rhs.begin && lhs.end == rhs.end;
     }
 
+    bool
+    Location::is_system_location() const
+    {
+      return urbi::object::is_system_location(loc_);
+    }
+
     /*--------------.
     | Conversions.  |
     `--------------*/
@@ -96,6 +103,7 @@ namespace urbi
            (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
       bind(SYMBOL(asString), &Location::as_string);
       bind(SYMBOL(init), &Location::init);
+      bind(SYMBOL(isSystemLocation), &Location::is_system_location);
 
 #define DECLARE(Name)                                           \
       bind.var(SYMBOL( Name ), &Location:: Name ## _ref)

@@ -24,8 +24,7 @@ class Global.Traceable
 
     '$backtrace'
       .filter(closure (sf) {
-        !sf.location.isNil
-        && sf.location.begin.file.asString not in System.systemFiles
+        !(sf.location.isNil || sf.location.isSystemLocation)
       })
   };
 }

@@ -41,6 +41,7 @@ namespace urbi
 
     public:
       bool operator ==(rLocation rhs) const;
+      bool is_system_location() const;
 
     /*--------------.
     | Conversions.  |
