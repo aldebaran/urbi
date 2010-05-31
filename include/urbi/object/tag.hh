@@ -41,6 +41,9 @@ namespace urbi
       libport::Symbol name() const;
       static rTag new_flow_control(const objects_type&);
 
+      /// Return a tag for the current urbiscript scope.
+      static rTag scope();
+
       typedef sched::prio_type priority_type;
       priority_type priority() const;
       priority_type priority_set(priority_type);

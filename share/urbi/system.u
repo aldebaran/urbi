@@ -242,4 +242,9 @@ do (System)
       t.dumpState
   };
 
+  function scopeTag()
+  {
+    Tag.scope
+  };
+
 };

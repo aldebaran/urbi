@@ -192,12 +192,6 @@ namespace urbi
     }
 
     static rObject
-    system_scopeTag()
-    {
-      return new Tag(interpreter().scope_tag());
-    }
-
-    static rObject
     system_searchFile(const rObject&, const rObject& f)
     {
       const std::string& filename = filename_get(f);
@@ -568,7 +562,6 @@ namespace urbi
       DECLARE(redefinitionMode);
       DECLARE(registerAtJob);
       DECLARE(resetStats);
-      DECLARE(scopeTag);
       DECLARE(searchFile);
       DECLARE(searchPath);
       DECLARE(setenv);

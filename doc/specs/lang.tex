@@ -2540,7 +2540,7 @@ x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
 
 \lstinline'at' statements are not scoped.  But, using a \refObject{Tag}
 object, one can control them.  In the following example,
-\refSlot[Tag]{scopeTag} is used to label the \lstinline|at| statement.  When
+\refSlot[Tag]{scope} is used to label the \lstinline|at| statement.  When
 the function ends, the \lstinline|at| is no longer active.
 
 \begin{urbiscript}[firstnumber=1]
@@ -2548,7 +2548,7 @@ var x = 0 |
 var x_is_two = false |;
 
 {
-  scopeTag:
+  Tag.scope:
     at (x == 2)
       x_is_two = true
     onleave

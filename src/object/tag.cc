@@ -21,6 +21,7 @@
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
 
+#include <runner/interpreter.hh>
 #include <runner/runner.hh>
 
 #include <sched/tag.hh>
@@ -190,6 +191,26 @@ namespace urbi
       return parent_;
     }
 
+    static inline
+    runner::Runner&
+    runner()
+    {
+      return ::kernel::urbiserver->getCurrentRunner();
+    }
+
+    static inline
+    runner::Interpreter&
+    interpreter()
+    {
+      return dynamic_cast<runner::Interpreter&>(runner());
+    }
+
+    rTag
+    Tag::scope()
+    {
+      return new Tag(interpreter().scope_tag());
+    }
+
     bool
     Tag::frozen() const
     {
@@ -219,6 +240,7 @@ namespace urbi
       DECLARE(name, name);
       DECLARE(newFlowControl, new_flow_control);
       DECLARE(priority, priority);
+      DECLARE(scope, scope);
       DECLARE(setPriority, priority_set);
       DECLARE(stop, stop);
       DECLARE(unblock, unblock);

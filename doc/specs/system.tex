@@ -305,10 +305,7 @@ var Global.x = 0;
 [00000003:error] !!! slot redefinition: x
 \end{urbiscript}
 
-\item[scopeTag] Return a fresh Tag whose \lstinline|stop| will be
-  invoked a the end of the current scope.  This function is likely to
-  be removed, or maybe just moved into \refObject{Tag}.  See
-  \autoref{sec:specs:tag:scope}.
+\item[scopeTag] Bounce to \refSlot[Tag]{scope}.
 
 \item[sleep](<duration>)%
   Suspend the execution for \var{duration} seconds.  No CPU cycle is
