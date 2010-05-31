@@ -529,8 +529,8 @@ do (Object.new)
   assert
   {
     protos == [Object];
-    setProtos([Orderable, Object, Comparable]).isVoid;
-    protos == [Orderable, Object, Comparable];
+    setProtos([Orderable, Object]).isVoid;
+    protos == [Orderable, Object];
   };
 }|;
 \end{urbiscript}
