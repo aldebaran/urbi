@@ -110,23 +110,20 @@ sleep(2s);
 \item[timeShift]
   Get the total amount of time during which we were frozen.
 \begin{urbiscript}
-jtag: r = detach({ sleep(3); echo("done") })|;
-jtag.freeze();
+tag: r = detach({ sleep(3); echo("done") })|;
+tag.freeze();
 sleep(2);
-jtag.unfreeze();
+tag.unfreeze();
 Math.round(r.timeShift);
 [00000001] 2
 \end{urbiscript}
 
-\item[waitForChanges]
-  Resume the scheduler, putting the current Job in a waiting status.
-  Note that the scheduler is free to reschedule the job immediately if it
-  whishes to so.
+\item[waitForChanges] Resume the scheduler, putting the current Job in a
+  waiting status.  The scheduler may reschedule the job immediately.
 
-\item[waitForTermination]
-  Wait for the job to terminate before resuming execution of the current one.
-  If the job has already terminated, the called will continue its execution.
-
+\item[waitForTermination] Wait for the job to terminate before resuming
+  execution of the current one.  If the job has already terminated, return
+  immediately.
 \end{urbiscriptapi}
 
 

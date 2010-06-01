@@ -1,4 +1,4 @@
-personal_ws-1.1 en 936 utf-8
+personal_ws-1.1 en 982 utf-8
 aaa
 abc
 abcdef
@@ -16,6 +16,7 @@ addDevice
 addProto
 addValue
 afoodef
+agg
 aibo
 ALAudioPlayer
 ALFrameManager
@@ -42,7 +43,10 @@ ar
 arccosine
 arcsine
 arctangent
+areEqual
 arg
+argMax
+argMin
 args
 argsCount
 ArgumentType
@@ -99,7 +103,6 @@ Bezut
 bindRenameVariable
 bindUrbiMethod
 binList
-Bioloid
 bioloid
 bitand
 bitor
@@ -115,6 +118,8 @@ bumperR
 buzzerIndex
 buzzerTime
 bz
+callGetSender
+callGetTarget
 callMessage
 callmsg
 callNumber
@@ -131,6 +136,7 @@ cd
 cerr
 channelName
 chargeStop
+checkMaster
 chk
 chmod
 clapCount
@@ -177,6 +183,7 @@ Demaille
 DependencyWalker
 dequeue
 dereferenced
+deserialize
 Deslandes
 destructor
 DESUGAR
@@ -240,6 +247,7 @@ fastMachine
 fb
 fbar
 fe
+FiftyOne
 fileCreated
 fileDeleted
 FileNotFound
@@ -255,6 +263,7 @@ fmt
 fo
 foldl
 foobarbaz
+foofoo
 foofoofoo
 fooobar
 foooobar
@@ -273,6 +282,7 @@ frontleft
 func
 functionalities
 gcc
+ge
 generateALBindings
 getAll
 getChar
@@ -286,14 +296,22 @@ getLazyLocalSlot
 getLine
 getLocalSlot
 getMine
+getName
+getNodes
 getOne
 getPeriod
 getPosition
 getProperty
+getSender
+getService
+getServices
 getSlot
 getStackFrame
 getStats
+getTarget
 gettext
+getTopic
+getTopics
 getUObjectHub
 getVal
 getWidth
@@ -316,6 +334,7 @@ gyroZ
 gz
 halfPi
 hasLocalSlot
+hasNot
 hasProperty
 hasSame
 hasSlot
@@ -402,8 +421,10 @@ ko
 lang
 LANGINFO
 LaunchThread
+lazyFail
 LD
 ldd
+le
 ledL
 ledR
 leds
@@ -447,11 +468,14 @@ lport
 LSB
 lshift
 lst
+lt
 ltrace
 lvalue
 MacOS
 MacPorts
+makeClosure
 makeCompactNames
+makeFunction
 makeServer
 makeSocket
 ManipulateNode
@@ -464,6 +488,7 @@ MCPAN
 Meccano
 memoization
 memoryName
+meq
 methodToFunction
 microL
 microR
@@ -473,6 +498,7 @@ mingw
 mk
 mkdir
 mn
+mne
 Monde
 monomethods
 mooh
@@ -503,6 +529,7 @@ MyPair
 myPi
 MyRemote
 myRoutine
+myservice
 mySlot
 myTag
 mytag
@@ -530,6 +557,7 @@ nonterminable
 noop
 noSuchProperty
 noSuchSlot
+NotCell
 notifyAccess
 notifyChange
 Nottale
@@ -540,9 +568,11 @@ ok
 onAccess
 onboard
 onChange
+onConnect
 onDisconnect
 onImage
 onleave
+onMessage
 onSubscribe
 oo
 OpenGL
@@ -628,14 +658,25 @@ removeProto
 removeSlot
 removeThrowingCallbacks
 removeTimer
+req
+reqStruct
 requestValue
 resendBanner
+resStruct
 rf
 rgb
 RGBLed
 rhs
 rlwrap
 robotis
+ros
+roscore
+roscpp
+roslib
+rosout
+ROSService
+ROSTools
+ROSTopic
 RotationalMotor
 RotationalSpeedMotor
 rshift
@@ -644,6 +685,7 @@ runningcommands
 runServer
 runtime
 runTo
+rxconsole
 sameAs
 SAS
 sayHello
@@ -657,6 +699,7 @@ SEGVs
 sendbin
 sep
 sequentiality
+serv
 serverPort
 servohub
 setAngle
@@ -822,6 +865,7 @@ UMIX
 Un
 unacceptVoid
 unacceptvoid
+unadvertise
 unary
 UnaryLazy
 uncompress
@@ -837,6 +881,8 @@ unregister
 unsetenv
 unstrict
 unsubscribe
+unsubscribed
+unsubscribes
 uob
 UObject
 uobject
@@ -859,7 +905,6 @@ urbisend
 urbistarter
 URegister
 UReturn
-USB
 usb
 USensor
 uservars
@@ -926,6 +971,7 @@ xsltproc
 xvjf
 yaml
 yfov
+yourservice
 yuv
 YUYV
 yy
