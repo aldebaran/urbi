@@ -1367,12 +1367,14 @@ in Java-style notation.
 \end{example}
 
 \section{Support classes}
-The \usdk provides a few support classes in \us to help you build the component
-hierarchy. You can access those classes by including the files
+The \usdk provides a few support \us classes to help you build the component
+hierarchy.  You can access to those classes by including the files
 \file{urbi/naming-standard.u} and \file{urbi/component.h}.
 
+\let\subsectionOrig\subsection
+\let\subsection\subsectionObject
+
 \subsection{Interface}
-\labelObject{Interface}
 
 The \code{Interface} class contains \us objects for all the interfaces defined
 in this document. Implementations must inherit from the correct interface.
@@ -1388,38 +1390,36 @@ The \code{Interface.interfaces} method can be called to get a list of all
 the interfaces an object implements.
 
 \subsection{Component}
-\labelObject{Component}
 
 The \code{Component} class can be used to create intermediate nodes of the
 hierarchy. It provides the following methods:
 
-\begin{itemize}
+\begin{urbiscriptapi}
 
-\item \lstinline|addComponent(\var{name})|\\
-  Add a new sub-component to the current component. \lstinline|\var{name}| can
+\item[addComponent](<name>)%
+  Add a new sub-component to the current component. \var{name} can
   be the name of the new component to create, or an instance of
   \code{Component}.
 
-\item \lstinline|addDevice(\var{name}, \var{value})|\\
-  Add device \lstinline|\var{value}| as sub-component, under the name
-  \lstinline|\var{name}|. The device must inherit from at least one Interface.
+\item[addDevice](<name>, <value>)%
+  Add device \var{value} as sub-component, under the name \var{name}. The
+  device must inherit from at least one Interface.
 
-\item \lstinline|makeCompactNames| \\
+\item[makeCompactNames]%
   This function must be called once on the root node (\code{robot})
   after the hierarchy is completed.  It automatically computes the
   short name of all the devices, and insert them as slots of the
   \code{Global} object.
 
-\item \lstinline|dump| \\
+\item[dump]%
   Display a hierarchical view of the component hierarchy.
 
-\item \lstinline|flatDump| \\
+\item[flatDump]%
   Display all the devices in the hierarchy, sorted by the Interface
   they implement.
-\end{itemize}
+\end{urbiscriptapi}
 
 \subsection{Localizer}
-\labelObject{Localizer}
 
 The \code{Localizer} class is a special type of \code{Component} that stores
 other components based on their localization. It provides a \code{[]} operator
@@ -1466,6 +1466,9 @@ robot.flatDump;
 [00010130] *** RotationalMotor: wheelL wheelR
 [00010130] *** VideoIn: camera
 \end{urbiunchecked}
+
+%% Restore the definition of \section.
+\let\subsection\subsectionOrig
 
 %%% Local Variables:
 %%% mode: latex
