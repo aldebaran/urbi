@@ -6,41 +6,6 @@
 %%
 %% See the LICENSE file for more information.
 
-\newcommand{\reqSlot}[2]{%
-  \lstindex{#1} & #2 \\\hline%
-}%
-
-\newcommand{\optSlot}[2]{%
-  \cellcolor{verylightgray}[\lstindex{#1}] & #2 \\\hline%
-}%
-
-\newenvironment{slotsOrEvents}[1]
-{%
-  % \subparagraph{#1}%
-  \tablehead{%
-    \hline%
-    \textbf{#1} &%
-    \textbf{Description}\\\hline%
-  }%
-  \begin{supertabular}{|m{.15\textwidth}|m{.8\textwidth}|}%
-  }{%
-  \end{supertabular}%
-}
-
-\newenvironment{slots}
-{%
-  \begin{slotsOrEvents}{Slot}%
-  }{%
-  \end{slotsOrEvents}%
-}
-
-\newenvironment{events}
-{%
-  \begin{slotsOrEvents}{Event}%
-  }{%
-  \end{slotsOrEvents}%
-}
-
 \newcommand{\refFacet}[2][]%
   {\hyperref[sec:interface:#2]{\lstinline|#2|#1 (\autoref*{sec:interface:#2})}}
 
@@ -50,6 +15,7 @@
   }{%
     \subsection{#2 (subclass of #1)\index{#2@\lstinline{#2}}}%
   }%
+  \defObject{Interface.#2}%
   \label{sec:interface:#2}
 }
 
@@ -293,75 +259,44 @@ brackets in the following table.
 
 Contains information about the robot identity.
 
-\begin{slots}
-  \reqSlot{type}
-  {
-    This describes the robot category among: humanoid, four-legged,
-    wheeled, industrial arm. It gives a general idea of the robot
-    family, but does not replace a more systematic probe of available
-    services by investigating the list of attributes of the object.
-  }
+\begin{urbiscriptapi}
+\item[type]%
+  This describes the robot category among: humanoid, four-legged, wheeled,
+  industrial arm. It gives a general idea of the robot family, but does not
+  replace a more systematic probe of available services by investigating the
+  list of attributes of the object.
 
-  \reqSlot{name}%
-  {%
-    Name of the robot.%
-  }
+\item[name]%
+  Name of the robot.
 
-  \reqSlot{model}%
-  {%
-    Model of the robot.%
-  }
+\item[model] Model of the robot.
 
-  \reqSlot{serial}%
-  {%
-    Serial number (if available).%
-  }
-
-\end{slots}
+\item[serial] Serial number (if available).
+\end{urbiscriptapi}
 
 
 \interface{Network}
 
 Contains information about the network identification of the robot.
 
-\begin{slots}
-  \reqSlot{IP}%
-  {%
-    IP address of the robot.%
-  }
-
-\end{slots}
+\begin{urbiscriptapi}
+\item[IP] IP address of the robot.
+\end{urbiscriptapi}
 
 \interface{Motor}
 
 This interface is used to describe a generic motor controller.
 
-\begin{slots}
-  \reqSlot{val}%
-  {%
-    This slot is a generic pointer to a more specific slot describing
-    the motor position, like \code{position} or \code{angle},
-    depending on the type of motor. It is mandatory in the Urbi Ready
-    standard as a universal proxy to control an actuator. The more
-    specific slot is described in a subclass of \code{Motor}.%
-  }
-
-  \optSlot{PGain}%
-  {%
-    Controls the P gain of the PID controller.%
-  }
-
-  \optSlot{IGain}%
-  {%
-    Controls the I gain of the PID controller.%
-  }
-
-  \optSlot{DGain}%
-  {%
-    Controls the D gain of the PID controller.%
-  }
-
-\end{slots}
+\begin{urbiscriptapi}
+\item[val] This slot is a generic pointer to a more specific slot describing
+  the motor position, like \code{position} or \code{angle}, depending on the
+  type of motor. It is mandatory in the Urbi Ready standard as a universal
+  proxy to control an actuator. The more specific slot is described in a
+  subclass of \code{Motor}.
+\item[PGain?] Controls the P gain of the PID controller.
+\item[IGain?] Controls the I gain of the PID controller.
+\item[DGain?] Controls the D gain of the PID controller.
+\end{urbiscriptapi}
 
 \interface[Motor]{LinearMotor}
 
@@ -371,86 +306,61 @@ This interface is used to describe a linear motor controller.
 A wheel can fall in this category, if the reported position is the distance
 traveled by a point at the surface of the wheel.
 
-\begin{slots}
-  \reqSlot{position}%
-  {%
-    Position of the motor in meters.  Pointed to by the
-    \code{val} slot.%
-  }
+\begin{urbiscriptapi}
+\item[position] Position of the motor in meters.  Pointed to by the
+  \code{val} slot.
 
-  \reqSlot{force}%
-  {%
-    Intensity of the measured or estimated force applied on a linear
-    motor.%
-  }
-
-\end{slots}
+\item[force] Intensity of the measured or estimated force applied on a
+  linear motor.
+\end{urbiscriptapi}
 
 \interface[Motor]{LinearSpeedMotor}
 
 Motor similar to \code{LinearMotor}, but controlled by its translation speed.
 
-\begin{slots}
-  \reqSlot{speed}%
-  {%
-    Translation speed in meters per second. Pointed to by the \code{val} slot.%
-  }
-\end{slots}
+\begin{urbiscriptapi}
+\item[speed] Translation speed in meters per second. Pointed to by the
+  \code{val} slot.
+\end{urbiscriptapi}
 
 
 \interface[Motor]{RotationalMotor}
 
 
-This interface is used to describe a position-controlled rotational motor controller.
+This interface is used to describe a position-controlled rotational motor
+controller.
 
-\begin{slots}
-  \reqSlot{angle}%
-  {%
-    Angle of the motor in radian, modulo $2\pi$. Pointed to by the
-    \code{val} slot.%
-  }
+\begin{urbiscriptapi}
+\item[angle] Angle of the motor in radian, modulo $2\pi$. Pointed to by the
+  \code{val} slot.
 
-  \reqSlot{turn}%
-  {%
-    Absolute angular position of the motor, expressed in number of
-    turns.%
-  }
+\item[turn] Absolute angular position of the motor, expressed in number of
+  turns.
 
-  \reqSlot{torque}%
-  {%
-    Intensity of the measured or estimated torque applied on the
-    motor.%
-  }
-
-\end{slots}
+\item[torque] Intensity of the measured or estimated torque applied on the
+  motor.
+\end{urbiscriptapi}
 
 \interface[Motor]{RotationalSpeedMotor}
 
 Interface describing a motor similar to \code{RotationalMotor} controlled
 by its rotation speed.
 
-\begin{slots}
-  \reqSlot{speed}%
-   {%
-     Rotation speed in radians per second.%
-   }
-\end{slots}
+\begin{urbiscriptapi}
+\item[speed] Rotation speed in radians per second.
+\end{urbiscriptapi}
 
 \interface{Sensor}
 
 This interface is used to describe a generic sensor.
 
-\begin{slots}
-  \reqSlot{val}%
-  {%
-    This slot is a generic pointer to a more specific slot describing
-    the sensor value, like \code{distance} or \code{temperature},
-    depending on the type of sensor. It is mandatory in the Urbi Ready
-    standard as a universal proxy to read a sensor. The more specific
-    slot is described in a subclass of \code{Sensor}.%
-  }
-
-\end{slots}
+\begin{urbiscriptapi}
+\item[val] This slot is a generic pointer to a more specific slot describing
+  the sensor value, like \code{distance} or \code{temperature}, depending on
+  the type of sensor. It is mandatory in the Urbi Ready standard as a
+  universal proxy to read a sensor. The more specific slot is described in a
+  subclass of \code{Sensor}.
+\end{urbiscriptapi}
 
 
 \interface[Sensor]{DistanceSensor}
@@ -458,14 +368,10 @@ This interface is used to describe a generic sensor.
 This interface is used to describe a distance sensor (infrared, laser,
 ultrasonic...).
 
-\begin{slots}
-  \reqSlot{distance}%
-  {%
-    Measured distance expressed in meters.  Pointed to by the
-    \code{val} slot.%
-  }
-
-\end{slots}
+\begin{urbiscriptapi}
+\item[distance] Measured distance expressed in meters.  Pointed to by the
+  \code{val} slot.
+\end{urbiscriptapi}
 
 
 \interface[Sensor]{TouchSensor}
@@ -473,92 +379,59 @@ ultrasonic...).
 This interface is used to describe a touch pressure sensor (contact,
 induction,...).
 
-\begin{slots}
-  \reqSlot{pressure}%
-  {%
-    Intensity of the pressure put on the touch sensor. Can be 0/1 for
-    simple buttons or expressed in Pascal units. Pointed to by the
-    \code{val} slot.%
-  }
-
-\end{slots}
+\begin{urbiscriptapi}
+\item[pressure] Intensity of the pressure put on the touch sensor. Can be
+  0/1 for simple buttons or expressed in Pascal units. Pointed to by the
+  \code{val} slot.
+\end{urbiscriptapi}
 
 
 \interface[Sensor]{AccelerationSensor}
 
 This interface is used to describe an accelerometer.
 
-\begin{slots}
-  \reqSlot{acceleration}%
-  {%
-    Acceleration expressed in $m/s^2$.  Pointed to by the \code{val}
-    slot.%
-  }
-
-\end{slots}
+\begin{urbiscriptapi}
+\item[acceleration] Acceleration expressed in $m/s^2$.  Pointed to by the
+  \code{val} slot.
+\end{urbiscriptapi}
 
 \interface[Sensor]{GyroSensor}
 This interface is used to describe an gyrometer.
 
-\begin{slots}
-  \reqSlot{speed}%
-  {%
-    Rotational speed in $\mathrm{rad}/s$.  Pointed to by the
-    \code{val} slot.%
-  }
-\end{slots}
+\begin{urbiscriptapi}
+\item[speed] Rotational speed in $\mathrm{rad}/s$.  Pointed to by the
+  \code{val} slot.
+\end{urbiscriptapi}
 
 \interface[Sensor]{TemperatureSensor}
 This interface is used to describe a temperature sensor.
 
-\begin{slots}
-  \reqSlot{temperature}%
-  {%
-    Measured temperature in Celsius degrees.  Pointed to by the
-    \code{val} slot.%
-  }
-\end{slots}
+\begin{urbiscriptapi}
+\item[temperature] Measured temperature in Celsius degrees.  Pointed to by
+  the \code{val} slot.
+\end{urbiscriptapi}
 
 \interface[Sensor]{Laser}
 Interface for a scanning laser rangefinder, or other similar technologies.
 
-\begin{slots}
-  \reqSlot{val}%
-  {%
-    Last scan result. Can be either a list of ufloat, or a binary containing
-    a packed array of doubles.
-  }
+\begin{urbiscriptapi}
+\item[val] Last scan result. Can be either a list of ufloat, or a binary
+  containing a packed array of doubles.
 
-  \reqSlot{angleMin}
-  {%
-    Start scan angle in radians, relative to the front of the device.%
-  }
+\item[angleMin] Start scan angle in radians, relative to the front of the
+  device.
 
-  \reqSlot{angleMax}
-  {%
-    End scan angle in radians, relative to the front of the device.%
-  }
+\item[angleMax] End scan angle in radians, relative to the front of the
+  device.
 
-  \reqSlot{resolution}
-  {%
-    Angular resolution of the scan, in radians.%
-  }
+\item[resolution] Angular resolution of the scan, in radians.
 
-  \reqSlot{distanceMin}
-  {%
-    Minimum measurable distance.%
-  }
+\item[distanceMin] Minimum measurable distance.
 
-  \reqSlot{distanceMax}
-  {%
-    Maximum measurable distance.%
-  }
+\item[distanceMax] Maximum measurable distance.
 
-  \optSlot{rate}
-  {%
-    Number of scans per second.%
-  }
-\end{slots}
+\item[rate?] Number of scans per second.
+\end{urbiscriptapi}
 
 Depending on the implementation, some of the parameters can be read-only, or
 can only accept a few possible values. In that case it is up to the implementer
@@ -572,20 +445,13 @@ what value will actually be used by the implementation.
 Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
 
-\begin{slots}
-  \reqSlot{go(x)}%
-  {%
-    Move approximately x meters forward if x is positive, backward
-    otherwise.%
-  }
+\begin{urbiscriptapi}
+\item[go](<x>) Move approximately \var{x} meters forward if \var{x} is
+  positive, backward otherwise.
 
-  \reqSlot{turn(x)}%
-  {%
-    Turn right approximately \var{x} radians.  \var{x} can be a
-    positive or negative value.%
-  }
-
-\end{slots}
+\item[turn](<x>) Turn right approximately \var{x} radians.  \var{x} can be a
+  positive or negative value.
+\end{urbiscriptapi}
 
 \interface{Tracker}
 
@@ -595,92 +461,52 @@ for many applications. In that case, this interface abstracts how such
 motion can be achieved, whether it is done with a pan/tilt camera or
 with whole body motion or a combination of both.
 
-\begin{slots}
-  \reqSlot{yaw}%
-  {%
-    Rotational articulation around the Z axis in the robot, expressed
-    in radians.%
-  }
-
-  \reqSlot{pitch}%
-  {%
-    Rotational articulation around the Y axis in the robot, expressed
-    in radians.%
-  }
-
-\end{slots}
+\begin{urbiscriptapi}
+\item[yaw] Rotational articulation around the Z axis in the robot, expressed
+  in radians.
+\item[pitch] Rotational articulation around the Y axis in the robot,
+  expressed in radians.
+\end{urbiscriptapi}
 
 \interface{VideoIn}
 
 The VideoIn interface groups every information relative to cameras or any
 image sensor.
 
-\begin{slots}
-  \reqSlot{val}%
-  {%
-    Image represented as a \code{Binary} value. %
-  }
+\begin{urbiscriptapi}
+\item[val] Image represented as a \code{Binary} value.
+\item[xfov] The x field of view of the camera expressed in radians.
+\item[yfov] The y field of view of the camera expressed in radians.
 
-  \reqSlot{xfov}%
-  {%
-    The x field of view of the camera expressed in radians.%
-  }
+\item[height] Height of the image in the current resolution, expressed in
+  pixels.
 
-  \reqSlot{yfov}%
-  {%
-    The y field of view of the camera expressed in radians.%
-  }
+\item[width] Width of the image in the current resolution, expressed in
+  pixels
 
-  \reqSlot{height}%
-  {%
-    Height of the image in the current resolution, expressed in
-    pixels%
-  }
+\item[format?]
+    Format of the image, expressed as an integer in the enum
+    urbi::UImageFormat.  See below for more information.
 
-  \reqSlot{width}%
-  {%
-    Width of the image in the current resolution, expressed in pixels%
-  }
+\item[exposure?] Exposure duration, expressed in seconds. 0 if non
+  applicable.
 
-  \optSlot{format}%
-  {%
-    Format of the image, expressed as an integer in the enum urbi::UImageFormat.
-    See below for more information.%
-  }
+\item[wb?]  White balance (expressed with an integer value depending on the
+  camera documentation). 0 if non applicable.
 
-  \optSlot{exposure}%
-  {%
-    Exposure duration, expressed in seconds. 0 if non applicable.%
-  }
+\item[gain?]  Camera gain amplification (expressed as a coefficient between
+  0 and infinity). 1 if non applicable.
 
-  \optSlot{wb}%
-  {%
-    White balance (expressed with an integer value depending on the
-    camera documentation). 0 if non applicable.%
-  }
+\item[resolution?]  Image resolution, expressed as an integer. 0 corresponds
+  to the maximal resolution of the camera. Successive values correspond to
+  all the supported image sizes in decreasing order.  Once modified, the
+  effective resolution in X/Y can be checked with the width and height
+  slots.
 
-  \optSlot{gain}%
-  {%
-    Camera gain amplification (expressed as a coefficient between 0
-    and infinity). 1 if non applicable.%
-  }
-
-  \optSlot{resolution}%
-  {%
-    Image resolution, expressed as an integer. 0 corresponds to the
-    maximal resolution of the camera. Successive values correspond to
-    all the supported image sizes in decreasing order.
-    Once modified, the effective resolution in X/Y can be checked with
-    the width and height slots.%
-  }
-  \optSlot{quality}%
-  {%
-    If the image is in the jpeg format, this slot sets the compression quality,
-    from 0 (best compression, worst quality) to 100 (best quality, bigger
-    image).%
-  }
-
-\end{slots}
+\item[quality?]  If the image is in the jpeg format, this slot sets the
+  compression quality, from 0 (best compression, worst quality) to 100 (best
+  quality, bigger image).
+\end{urbiscriptapi}
 
 The image sensor is expected to use the cheapest way in term of CPU and/or
 energy consumption to produce images of the requested format.
@@ -703,35 +529,24 @@ if (!robot.body.head.camera.hasSlot("jpeg"))
 \interface{AudioOut}
 The AudioOut interface groups every information relative to speakers.
 
-\begin{slots}
-  \reqSlot{val}%
-  {%
-    The speaker value, expressed as a binary, in the format given by
-    the binary header during the assignment.
+\begin{urbiscriptapi}
+\item[val] The speaker value, expressed as a binary, in the format given by
+  the binary header during the assignment.
 
-    Speakers are write-only devices, so there is not much sense in
-    reading the content of this attribute. At best, it returns the
-    remaining sound to be played if it is not over yet, but this is
-    not a requirement.%
-  }
+  Speakers are write-only devices, so there is not much sense in reading the
+  content of this attribute. At best, it returns the remaining sound to be
+  played if it is not over yet, but this is not a requirement.
 
-  \reqSlot{remain}%
-  {%
-    The amount of time remaining to play in the speaker sound buffer
-    (expressed in \textit{ms} as a default unit).%
-  }
 
-  \reqSlot{playing}%
-  {%
-    This is a Boolean value which is true when there is a sound
-    currently playing (the buffer is not empty)%
-  }
+\item[remain] The amount of time remaining to play in the speaker sound
+  buffer (expressed in \textit{ms} as a default unit).
 
-  \optSlot{volume}%
-  {%
-    Volume of the play back, in decibels.%
-  }
-\end{slots}
+
+\item[playing] This is a Boolean value which is true when there is a sound
+  currently playing (the buffer is not empty)%
+
+\item[volume?] Volume of the play back, in decibels.
+\end{urbiscriptapi}
 
 
 
@@ -739,25 +554,17 @@ The AudioOut interface groups every information relative to speakers.
 
 The AudioIn interface groups every information relative to microphones.
 
-\begin{slots}
-  \reqSlot{val}%
-  {%
-    Binary value corresponding to the sound heard, expressed in the
-    current unit (wav, mp3...). The unit can be changed like any other
-    regular unit in Urbi.
+\begin{urbiscriptapi}
+\item[val] Binary value corresponding to the sound heard, expressed in the
+  current unit (wav, mp3...). The unit can be changed like any other regular
+  unit in Urbi.
 
-    The content is the sound heard by the microphone since the last
-    update event.%
-  }
-  \reqSlot{duration}%
-  {%
-    Amount of sound in the val attribute, expressed in \textit{ms}.%
-  }
-  \optSlot{gain}%
-  {%
-    Microphone gain amplification (expressed between 0 and 1)%
-  }
-\end{slots}
+  The content is the sound heard by the microphone since the last update
+  event.
+\item[duration] Amount of sound in the val attribute, expressed in
+  \textit{ms}.
+\item[gain?] Microphone gain amplification (expressed between 0 and 1).
+\end{urbiscriptapi}
 
 
 \interface{BlobDetector}
@@ -767,105 +574,57 @@ should all share a similar interface. They extract a part of the image
 that fits some criteria and define a \dfn{blob} accordingly. Here are
 the typical slots expected:
 
-\begin{slots}
-  \reqSlot{x}%
-  {%
-    The x position of the center of the blob in the image%
-  }
+\begin{urbiscriptapi}
+\item[x] The x position of the center of the blob in the image
 
-  \reqSlot{y}%
-  {%
-    The y position of the center of the blob in the image%
-  }
+\item[y] The y position of the center of the blob in the image
 
-  \reqSlot{ratio}%
-  {%
-    The size of the blob expressed as a normalized image size: 1 =
-    full image, 0 = nothing.%
-  }
+\item[ratio] The size of the blob expressed as a normalized image size: 1 =
+  full image, 0 = nothing.
 
-  \reqSlot{visible}%
-  {%
-    A Boolean expressing whether there is a blob in the image or not
-    (see threshold)%
-  }
+\item[visible] A Boolean expressing whether there is a blob in the image or
+  not (see \refSlot{threshold}).
 
-  \reqSlot{threshold}%
-  {%
-    The minimum value of ratio to decide that the blob is visible.%
-  }
+\item[threshold] The minimum value of ratio to decide that the blob is
+  visible.
 
-  \optSlot{orientation}%
-  {%
-    Angle of the main ellipsoid axis of the blob (0 = horizontal),
-    expressed in radians.%
-  }
+\item[orientation?]  Angle of the main ellipsoid axis of the blob (0 =
+  horizontal), expressed in radians.
 
-  \optSlot{elongation}%
-  {%
-    Ratio between the main and the second diameter of the blob
-    enveloping ellipse.%
-  }
-
-\end{slots}
+\item[elongation?]  Ratio between the main and the second diameter of the
+  blob enveloping ellipse.
+\end{urbiscriptapi}
 
 \interface{TextToSpeech}
 Text to speech allows to read text using a speech synthesizer. Default
 implementations should use the \code{speaker} component (or alias) as
 their default sound output.
 
-\begin{slots}
-  \optSlot{lang}%
-  {%
-    The language used, in international notation (fr, en, it…): ISO
-    639%
-  }
+\begin{urbiscriptapi}
+\item[lang?]  The language used, in international notation (fr, en, it…):
+  ISO 639
 
-  \optSlot{speed}%
-  {%
-    How fast the voice should go.  A positive number, with 1 standing
-    for ``regular speed''.
-  }
+\item[speed?]  How fast the voice should go.  A positive number, with 1
+  standing for ``regular speed''.
 
-  \optSlot{pitch}%
-  {%
-    Voice pitch.  A positive number, with 1 standing the regular pitch.%
-  }
+\item[pitch?] Voice pitch.  A positive number, with 1 standing the regular
+  pitch.
 
-  \optSlot{gender}%
-  {%
-    Gender of the speaker (0:male/1:female).%
-  }
+\item[gender?] Gender of the speaker (0:male/1:female).
 
-  \optSlot{age}%
-  {%
-    Age of the speaker, if applicable.%
-  }
+\item[age?] Age of the speaker, if applicable.
 
-  \optSlot{voice}%
-  {%
-    Most TTS engines propose several voices, this attribute
-    allows picking one. It's a string identifier specific to the TTS
-    developer.%
-  }
+\item[voice?]
+    Most TTS engines propose several voices, this attribute allows picking
+    one. It's a string identifier specific to the TTS developer.
 
-  \reqSlot{say(s)}%
-  {%
-    Speak the sentence given in parameter \var{s}.%
-  }
+\item[say](s) Speak the sentence given in parameter \var{s}.
 
-  \optSlot{voicexml(s)}%
-  {%
-    Speak the text \var{s} expressed as a VoiceXML string.%
-  }
+\item[voicexml?](s) Speak the text \var{s} expressed as a VoiceXML string.
 
-  \optSlot{script(s)}%
-  {%
-    Speak the text \var{s} augmented by script markups (see specific
-    Gostai documentation) to generate \urbi events.%
-  }
-
-\end{slots}
+\item[script?](s) Speak the text \var{s} augmented by script markups (see
+  specific Gostai documentation) to generate \urbi events.
+\end{urbiscriptapi}
 
 
 \interface{SpeechRecognizer}
@@ -874,55 +633,42 @@ Speech recognition allows to transform a stream of sound into a text
 using various speech recognition algorithms. Implementations
 should use the \code{micro} component as their default sound input.
 
-\begin{slots}
-  \optSlot{lang}%
-  {%
-    The language used, in international notation (fr, en, it…): ISO
-    639%
-  }
-\end{slots}
-
-\begin{events}
-  \reqSlot{hear(s)}%
-  {%
-    This event has one parameter which is the string describing what
-    the speech engine has recognized (can be a word or a sentence).%
-  }
-\end{events}
+\begin{urbiscriptapi}
+\item[lang?]  The language used, in international notation (fr, en, it…):
+  ISO 639.
+\item[hear](s) This event has one parameter which is the string describing
+  what the speech engine has recognized (can be a word or a sentence).
+\end{urbiscriptapi}
 
 \interface{Led}
 
 Simple uni-color Led.
 
-\begin{slots}
-  \reqSlot{val}%
-  {%
-    Led intensity between 0 and 1.%
-  }
-\end{slots}
+\begin{urbiscriptapi}
+\item[val] Led intensity between 0 and 1.
+\end{urbiscriptapi}
 
 
 \interface[Led]{RGBLed}
 
 Tri-color led.
 
-\begin{slots}
-  \reqSlot{r,g,b}%
-  {%
-    Intensity of the r, g, and b components, between 0 and 1.%
-  }
-\end{slots}
+\begin{urbiscriptapi}
+\item[r] Intensity of the red component, between 0 and 1.
+\item[g] Intensity of the green component, between 0 and 1.
+\item[b] Intensity of the blue component, between 0 and 1.
+\end{urbiscriptapi}
 
 \interface{Battery}
 
 Power source of any kind.
 
-\begin{slots}
-  \reqSlot{remain}{Estimation of the remaining energy between 0 and 1.}
-  \reqSlot{capacity}{Storage capacity in Amp.Hour.}
-  \reqSlot{current}{Current current consumption in Amp.}
-  \reqSlot{voltage}{Current voltage in Volt.}
-\end{slots}
+\begin{urbiscriptapi}
+\item[remain] Estimation of the remaining energy between 0 and 1.
+\item[capacity] Storage capacity in Amp.Hour.
+\item[current] Current current consumption in Amp.
+\item[voltage] Current voltage in Volt.
+\end{urbiscriptapi}
 
 
 \section{Standard Components}
