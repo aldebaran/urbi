@@ -19,7 +19,7 @@ ACLOCAL_AMFLAGS = -I build-aux -I tests/m4
 # dependencies first, so process sdk-remote and src before "." (where
 # timestamps are).  It it tests and doc that depend on these time
 # stamps, so handle them after ".".
-SUBDIRS = sdk-remote src . tests doc
+SUBDIRS = sdk-remote src . modules tests doc
 
 DIST_SUBDIRS = $(SUBDIRS) bison
 
