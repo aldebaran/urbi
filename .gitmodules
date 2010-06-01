@@ -13,6 +13,9 @@
 [submodule "doc/document-aux"]
 	path = doc/document-aux
 	url = git@git.gostai.com:document-aux
+[submodule "submodules/modules"]
+	path = submodules/modules
+	url = git@git.gostai.com:modules
 [submodule "fsm"]
 	path = fsm
 	url = git@git.gostai.com:fsm
