@@ -1,1 +1,33 @@
-../submodules/modules/Makefile.am
+## Copyright (C) 2006-2010, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
+
+include build-aux/init.mk
+include build-aux/libport.mk
+
+# This is what modules' configure.ac defines as the variable that
+# points to the install headers.  We use a non-installed kernel.
+#
+# FIXME: When mature, move into urbi-with-urbi-sdk so that we can
+# point to a kernel build-tree instead of an installed kernel.
+URBI_SDK_CPPFLAGS =				\
+  $(LIBPORT_CPPFLAGS)				\
+  -I$(top_srcdir)/../include			\
+  -I$(top_srcdir)/../sdk-remote/include
+
+ACLOCAL_AMFLAGS = -I build-aux
+
+
+EXTRA_DIST += bootstrap
+
+module_LTLIBRARIES =
+moduledir = $(prefix)/lib/gostai/uobjects/
+include modules.mk
+
+installcheck-buildfarm:
+check-buildfarm:
+distcheck-buildfarm:
