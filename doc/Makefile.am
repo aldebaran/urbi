@@ -222,8 +222,7 @@ install-data-hook:
 .PHONY: install-doc
 doc_host = downloads@www.gostai.com
 doc_upload_dir = gostai.com-downloads
-doc_name = $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
-doc_dir = $(doc_upload_dir)/$(doc_name)
+doc_dir = $(doc_upload_dir)/$(PACKAGE_TARNAME)/$(PACKAGE_VERSION)
 doc_files = $(pdf_DATA) $(html_DIR)
 install-doc: $(doc_files)
 	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new && \

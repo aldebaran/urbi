@@ -10,20 +10,38 @@
 ## urbi-sdk-2.0   -> urbi-sdk-2.0.x
 ## urbi-sdk-2.0.2 -> urbi-sdk-2.0.x.
 ##
+## or even
+##
+## urbi-sdk/2.0   -> urbi-sdk/2.0.x
+## urbi-sdk/2.0.2 -> urbi-sdk/2.0.x.
+##
 ## Do that based on the versions that are available on the server, so
 ## that if we happen to install the documentation of 2.0.2 another
 ## time after 2.0.3's documentation, 2.0.x still properly points to
 ## 2.0.3, which is the latest.
 
+sub verbose (@)
+{
+  for my $line (@_)
+  {
+    print STDERR "$0: $line\n";
+  }
+}
+
 use File::Basename;
 
-$minor = @ARGV[0];
-$minor .= ".0" if $minor =~ /-\d+\.\d+$/;
+$minor = $ARGV[0];
+verbose "argument: $minor";
+
+$minor .= ".0" if $minor =~ m{^(?:.*[\-/])?\d+\.\d+$};
 $minor =~ s/\.\d+$//;
-($latest = qx{ls -dvr $minor.[0-9]*}) =~ s/\n.*//gm;
+verbose "minor: $minor";
+
+($latest = qx{ls -dvr $minor $minor.[0-9]*}) =~ s/\n.*//gm;
 # When installing symlinks, the destination is relative to the
 # location of the source.
 $latest = basename $latest;
+verbose "latest: $latest";
 $link = "$minor.x";
 
 # Don't use -e: it returns false if a symlink exists, but points to a
@@ -33,6 +51,6 @@ if (-l $link)
   unlink $link
     or die "unlink $link: $!";
 }
-print STDERR "$0: symlinking $link -> $latest\n";
+verbose "symlinking $link -> $latest";
 symlink $latest, $link
   or die "symlink $latest, $link: $!";
