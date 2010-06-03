@@ -3,7 +3,7 @@
 UCONSOLE_CHECKFLAGS +=
 
 # The test directories we are interested in.
-TESTS_DIRS = 0.x 1.x 2.x demo uob @fsm/tests
+TESTS_DIRS = 0.x 1.x 2.x demo uob @fsm/tests @ros-bridge
 
 # Run server in fast mode
 FAST_MODE = true
