@@ -103,21 +103,19 @@ is already runnable!  No \lstinline|main| function is needed, the
 \urbi system provides one.
 
 \subsubsection{Compiling}
-Of course, beforehand, we need to compile this UObject into some
-loadable module.  The \urbi modules are \dfn{shared objects}, i.e.,
-libraries that can be loaded on demand (and unloaded) during the
-execution of the program.  Their typical file names depend on the
-architecture: \file{ufactory.so} on most Unix (including Mac OS X),
-and \file{ufactory.dll} on Windows.
-To abstract away from these differences, we will simply use the base
-name, \file{ufactory} with the \urbi tool chain.
+Of course, beforehand, we need to compile this UObject into some loadable
+module.  The \urbi modules are \dfn{shared objects}, i.e., libraries that
+can be loaded on demand (and unloaded) during the execution of the program.
+Their typical file names depend on the architecture: \file{ufactory.so} on
+most Unix (including Mac OS X), and \file{ufactory.dll} on Windows.  To
+abstract away from these differences, we will simply use the base name,
+\file{ufactory} with the \urbi tool chain.
 
-There are several options to compile our factory as a UObject.
-If you are using Microsoft Visual Studio, the \usdk installer created a
-``UObject'' project template accessible through the ``New project'' wizard.
-Otherwise, you can use directly your regular compiler tool chain.
-You may also use \command{umake-shared} from the \file{umake-*} family of
-programs
+There are several options to compile our factory as a UObject.  If you are
+using Microsoft Visual Studio, the \usdk installer created a ``UObject''
+project template accessible through the ``New project'' wizard.  Otherwise,
+you can use directly your regular compiler tool chain.  You may also use
+\command{umake-shared} from the \file{umake-*} family of programs
 (\autoref{sec:tools:umake:wrappers}):
 
 \begin{shell}
@@ -127,7 +125,7 @@ $ umake-shared factory.uob -o factory
 # ... Lots of compilation log messages ...
 $ ls
 _ubuild-factory.so  factory.la  factory.so  factory.uob
-\end{shell}%$
+\end{shell}
 
 The various files are:
 \begin{description}
@@ -165,29 +163,29 @@ UFactory in an \urbi server and enter an interactive session.
 \begin{shell}[alsolanguage={[interactive]Urbi}]
 # Launch an Urbi server with UFactory plugged in.
 $ urbi-launch --start ufactory -- --interactive
-[00000118] *** ********************************************************
-[00000118] *** Urbi SDK version 2.0/rc-4 rev. fb573a2
-[00000118] *** Copyright (C) 2005-2010 Gostai S.A.S.
-[00000118] ***
-[00000118] *** This program comes with ABSOLUTELY NO WARRANTY.
-[00000118] *** It can be used under certain conditions.
-[00000118] *** Type `license;' or `copyright;' for more information.
-[00000118] ***
-[00000118] *** Check our community site: http://www.urbiforge.org.
-[00000118] *** ********************************************************
+[00000987] *** ********************************************************
+[00000990] *** Urbi SDK version 2.0.3 rev. d6a568d
+[00001111] *** Copyright (C) 2005-2010 Gostai S.A.S.
+[00001111] ***
+[00001111] *** This program comes with ABSOLUTELY NO WARRANTY.  It can
+[00001112] *** be used under certain conditions.  Type `license;',
+[00001112] *** `authors;', or `copyright;' for more information.
+[00001112] ***
+[00001112] *** Check our community site: http://www.urbiforge.org.
+[00001112] *** ********************************************************
 var f = uobjects.UFactory.new(1s);
 [00020853] UFactory_0x1899c90
 f.assemble(["Hello, ", "World!"]);
 [00038705] "Hello, World!"
 shutdown;
-\end{shell}%$
+\end{shell}
 
 You may also launch the factory UObject in the background, as a
 network component:
 
 \begin{shell}[alsolanguage={[interactive]Urbi}]
 $ urbi-launch --start ufactory --host 0.0.0.0 --port 54000 &
-\end{shell}%$
+\end{shell}
 
 \noindent
 and interact with it using your favorite client (\command{telnet},
@@ -206,7 +204,7 @@ $ urbi-send --port 54000                                            \
             --quit
 [00146148] "3412"
 [00000000:client_error] End of file
-\end{shell}%$
+\end{shell}
 
 
 \subsection{Asynchronicity}

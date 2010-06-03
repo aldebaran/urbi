@@ -25,9 +25,9 @@ class System.PackageInfo
     ["*" * 56]
     + copyright(false) +
     ["",
-     "This program comes with ABSOLUTELY NO WARRANTY.",
-     "It can be used under certain conditions.",
-     "Type `license;' or `copyright;' for more information.",
+     "This program comes with ABSOLUTELY NO WARRANTY.  It can",
+     "be used under certain conditions.  Type `license;',",
+     "`authors;', or `copyright;' for more information.",
      "",
      "Check our community site: http://www.urbiforge.org.",
      "*" * 56];

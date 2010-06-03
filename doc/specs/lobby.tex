@@ -54,19 +54,21 @@ lobby << "foo";
 
 \subsection{Slots}
 \begin{urbiscriptapi}
+\item[authors] Credit the authors of \usdk.
+
 \item[banner] Internal.  Display \usdk banner.
 \begin{urbiscript}
 lobby.banner;
-[00000118] *** ********************************************************
-[00000118] *** Urbi SDK version 2.0/rc-4 rev. fb573a2
-[00000118] *** Copyright (C) 2005-2010 Gostai S.A.S.
-[00000118] ***
-[00000118] *** This program comes with ABSOLUTELY NO WARRANTY.
-[00000118] *** It can be used under certain conditions.
-[00000118] *** Type `license;' or `copyright;' for more information.
-[00000118] ***
-[00000118] *** Check our community site: http://www.urbiforge.org.
-[00000118] *** ********************************************************
+[00000987] *** ********************************************************
+[00000990] *** Urbi SDK version 2.0.3 rev. d6a568d
+[00001111] *** Copyright (C) 2005-2010 Gostai S.A.S.
+[00001111] ***
+[00001111] *** This program comes with ABSOLUTELY NO WARRANTY.  It can
+[00001112] *** be used under certain conditions.  Type `license;',
+[00001112] *** `authors;', or `copyright;' for more information.
+[00001112] ***
+[00001112] *** Check our community site: http://www.urbiforge.org.
+[00001112] *** ********************************************************
 \end{urbiscript}
 
 \item[connected]
@@ -196,6 +198,8 @@ lobby.send("222", "");
 lobby.send("333");
 [00055205] 333
 \end{urbiscript}
+
+\item[thanks] Credit the contributors of \usdk.
 
 \item[wall](<value>, <channel> = "")%
   Perform \lstinline|echo(\var{value}, \var{channel})| on all the
