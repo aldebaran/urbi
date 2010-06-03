@@ -184,3 +184,6 @@ dist-hook:
 	  test -f $(distdir)/$$i;		\
 	  cp -f $(LICENSE) $(distdir)/$$i;	\
 	done
+## A copy at the root of the package, named LICENSE without extension.
+	cp -f $(LICENSE) $(distdir)/LICENSE
+
