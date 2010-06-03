@@ -165,7 +165,7 @@ URBI_TESTS
 AC_SUBST([UOBJECT_PATH],
          [m4_join([:],
                   ['$(abs_top_builddir)/sdk-remote/src/uobjects'],
-                  ['$(abs_top_builddir)/modules/system/ros-bridge'])])
+                  ['$(abs_top_builddir)/modules/system/ros'])])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 
