@@ -25,7 +25,7 @@ ACLOCAL_AMFLAGS = -I build-aux
 EXTRA_DIST += bootstrap
 
 module_LTLIBRARIES =
-moduledir = $(prefix)/lib/gostai/uobjects/
+moduledir = $(uobjectsdir)
 include modules.mk
 
 installcheck-buildfarm:
