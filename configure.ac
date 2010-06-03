@@ -160,7 +160,12 @@ AC_DEFINE_UNQUOTED([SRCDIR], ["$srcdir"],
   [Define to the path from build to source tree.])
 
 URBI_TESTS
-AC_SUBST([UOBJECT_PATH], ['$(abs_top_builddir)/sdk-remote/src/uobjects'])
+# Where to find the non-installed UObjects.
+# FIXME: installcheck should use the installed UObjects.
+AC_SUBST([UOBJECT_PATH],
+         [m4_join([:],
+                  ['$(abs_top_builddir)/sdk-remote/src/uobjects'],
+                  ['$(abs_top_builddir)/modules/system/ros-bridge'])])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 
