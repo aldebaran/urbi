@@ -20,6 +20,11 @@ URBI_SDK_CPPFLAGS =				\
   -I$(top_srcdir)/../include			\
   -I$(top_srcdir)/../sdk-remote/include
 
+# Needed to compile UObjects on Windows.
+LIBUOBJECT_REMOTE_LIBS =						\
+  $(top_builddir)/sdk-remote/src/libuobject/libuobject$(LIBSFX).la
+
+
 ACLOCAL_AMFLAGS = -I build-aux
 
 EXTRA_DIST += bootstrap
