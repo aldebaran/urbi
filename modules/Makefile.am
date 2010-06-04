@@ -16,6 +16,7 @@ include build-aux/libport.mk
 # point to a kernel build-tree instead of an installed kernel.
 URBI_SDK_CPPFLAGS =				\
   $(LIBPORT_CPPFLAGS)				\
+  $(BOOST_CPPFLAGS)				\
   -I$(top_srcdir)/../include			\
   -I$(top_srcdir)/../sdk-remote/include
 
