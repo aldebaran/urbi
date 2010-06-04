@@ -639,9 +639,9 @@ namespace urbi
       return call(libport::Symbol(name), arg1, arg2, arg3, arg4, arg5);
     }
 
-    std::ostream& operator<< (std::ostream& s, Object& o)
+    std::ostream& operator<< (std::ostream& s, const Object& o)
     {
-      return s << o.call(SYMBOL(asString))->as<String>()->value_get();
+      return s << const_cast<Object&>(o).call(SYMBOL(asString))->as<String>()->value_get();
     }
 
     rObject Object::proto;
