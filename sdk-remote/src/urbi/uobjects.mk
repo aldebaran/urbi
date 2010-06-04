@@ -13,7 +13,7 @@ UOBJECTS =					\
   access-and-change/uaccess3			\
   access-and-change/uchange			\
   all						\
-  factory/factory				\
+  factory					\
   generic					\
   lib-urbi					\
   remote					\
@@ -39,7 +39,7 @@ urbi/access-and-change/uaccess2$(DLMODEXT): $(wildcard $(srcdir)/urbi/access-and
 urbi/access-and-change/uaccess3$(DLMODEXT): $(wildcard $(srcdir)/urbi/access-and-change/uaccess3.uob/*)
 urbi/access-and-change/uchange$(DLMODEXT): $(wildcard $(srcdir)/urbi/access-and-change/uchange.uob/*)
 urbi/all$(DLMODEXT): $(wildcard $(srcdir)/urbi/all.uob/*)
-urbi/factory/factory$(DLMODEXT): $(wildcard $(srcdir)/urbi/factory/factory.uob/*)
+urbi/factory$(DLMODEXT): $(wildcard $(srcdir)/urbi/factory.uob/*)
 urbi/generic$(DLMODEXT): $(wildcard $(srcdir)/urbi/generic.uob/*)
 urbi/lib-urbi$(DLMODEXT): $(wildcard $(srcdir)/urbi/liburbi.uob/*)
 urbi/remote$(DLMODEXT): $(wildcard $(srcdir)/urbi/remote.uob/*)
