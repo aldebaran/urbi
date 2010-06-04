@@ -30,12 +30,25 @@ namespace urbi
       Event(rEvent model, rList payload);
       URBI_CXX_OBJECT(Event);
 
+      typedef boost::function1<void, const objects_type&> callback_type;
+
+      class Subscription
+      {
+      public:
+        void stop();
+
+      private:
+        friend class Event;
+        Subscription(rEvent event, const callback_type* cb);
+        rEvent event_;
+        const callback_type* cb_;
+      };
+
     public:
       void emit(const objects_type& args);
       void emit();
       void onEvent(rExecutable guard, rExecutable enter, rExecutable leave);
-      typedef boost::function1<void, const objects_type&> callback_type;
-      void onEvent(const callback_type& cb);
+      Subscription onEvent(const callback_type& cb);
       void stop();
       void syncEmit(const objects_type& args);
       rEvent syncTrigger(const objects_type& args);
@@ -112,7 +125,8 @@ namespace urbi
       actives_type _active;
 
       /// C++ callbacks
-      std::vector<callback_type> callbacks_;
+      typedef std::vector<callback_type*> callbacks_type;
+      callbacks_type callbacks_;
     };
   }
 }

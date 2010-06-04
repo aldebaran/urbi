@@ -105,10 +105,12 @@ namespace urbi
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
     }
 
-    void
+    Event::Subscription
     Event::onEvent(const callback_type& cb)
     {
-      callbacks_ << cb;
+      callback_type* res = new callback_type(cb);
+      callbacks_ << res;
+      return Subscription(this, res);
     }
 
     void
@@ -232,8 +234,8 @@ namespace urbi
       rList payload = new List(pl);
       source()->_active[this] = payload;
       waituntil_release(payload);
-      foreach (const callback_type& cb, callbacks_)
-        cb(pl);
+      foreach (const callback_type* cb, callbacks_)
+        (*cb)(pl);
       foreach (Event::rActions actions, listeners_)
         trigger_job(actions, detach);
     }
@@ -321,6 +323,29 @@ namespace urbi
     {
       foreach(boost::signals::connection& c, connections)
         c.disconnect();
+    }
+
+    /*-------------.
+    | Subscription |
+    `-------------*/
+
+    Event::Subscription::Subscription(rEvent event, const callback_type* cb)
+      : event_(event)
+      , cb_(cb)
+    {}
+
+    void
+    Event::Subscription::stop()
+    {
+      for (Event::callbacks_type::iterator it = event_->callbacks_.begin();
+           it != event_->callbacks_.end();
+           ++it)
+        if (*it == cb_)
+        {
+          delete *it;
+          event_->callbacks_.erase(it);
+          return;
+        }
     }
 
     /*-------------.
