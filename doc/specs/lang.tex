@@ -323,13 +323,14 @@ in \autoref{tab:duration}.
 \end{table}
 
 \begin{urbiassert}
-1d == 24h;
-1h == 60min;
+1d   == 24h;
+0.5d == 12h;
+1h   == 60min;
 1min == 60s;
-1s == 1000ms;
+1s   == 1000ms;
+
 
 1s == 1;
-1s2s3s == 6;
 1s 2s 3s == 6;
 1s 1ms == 1.001;
 1ms 1s == 1.001;
@@ -391,10 +392,10 @@ seen above, they keep their accurate value.
 [00000014] 1e-05
 \end{urbiscript}
 
-In order to make numbers with units (\lstinline|1cm|) and calling a
-method on a number (\lstinline|1.cm|), numbers that include a period
-must have a fractional part.  In other words, \lstinline|1.|, if not
-followed by digits, is available read as \lstinline|1 .|:
+In order to make numbers with units (\samp{1min}) and calling a method on a
+number (\samp{1.min}), numbers that include a period must have a fractional
+part.  In other words, \samp{1.}, if not followed by digits, is always read
+as \samp{1 .}:
 
 \begin{urbiscript}
 1.;
@@ -410,6 +411,19 @@ followed by one or more hexadecimal digits, whose case is irrelevant.
 0xabcdef == 11259375;
 0xABCDEF == 11259375
 \end{urbiassert}
+
+Numbers with unknown suffixes are invalid tokens:
+
+\begin{urbiscript}
+123foo;
+[00005658:error] !!! syntax error: invalid token: `123foo'
+12.3foo;
+[00018827:error] !!! syntax error: invalid token: `12.3foo'
+0xabcdef;
+[00060432] 11259375
+0xabcdefg;
+[00061848:error] !!! syntax error: invalid token: `0xabcdefg'
+\end{urbiscript}
 
 \subsubsection{Lists}
 \label{sec:us-syn-lit-list}

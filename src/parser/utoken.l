@@ -473,6 +473,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   /* Durations. */
 {NUMBER}"d"   RETURN_DURATION(1, 60*60*24);
 {NUMBER}"h"   RETURN_DURATION(1, 60*60);
+{NUMBER}"m"   DEPRECATED(std::string(yytext) + "in");
 {NUMBER}"mn"  RETURN_DURATION(2, 60);
 {NUMBER}"min" RETURN_DURATION(3, 60);
 {NUMBER}"s"   RETURN_DURATION(1, 1);
@@ -486,6 +487,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 {HEXA}        RETURN_VALUE(FLOAT, strtoll(yytext + 2, 0, 16));
 {NATURAL}     |
 {FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(up, loc, yytext));
+
+({NUMBER}|{HEXA}){ID} SCAN_ERROR("invalid token: `%s'", yytext);
 
 [\"\']        {
                 grown_string.clear();
@@ -699,7 +702,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   | Deprecated constructs.  |
   `------------------------*/
 
-{NUMBER}"m"   DEPRECATED(std::string(yytext) + "in");
 "foreach"     DEPRECATED("for");
 "internal"    DEPRECATED("");
 "loopn"       DEPRECATED("for");
