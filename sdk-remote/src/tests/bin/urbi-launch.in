@@ -103,7 +103,7 @@ urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport"
 urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched"
 urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize"
 urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi"
-urbi_lib REMOTE    "$sdk_remote_builddir/src/liburbi/.libs/libuobject"
+urbi_lib REMOTE    "$sdk_remote_builddir/src/libuobject/.libs/libuobject"
 
 # Find the images.
 export URBI_SHARE="$kernel_srcdir/share"
