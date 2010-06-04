@@ -95,14 +95,30 @@ urbi_lib ()
   setenv $env $repath_res
 }
 
+# Find the noninstalled libraries.
+libport_builddir=$sdk_remote_builddir/libport
+
+urbi_lib JPEG4URBI "$sdk_remote_builddir/jpeg/.libs/libjpeg4urbi"
+urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport"
+urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched"
+urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize"
+urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi"
+urbi_lib REMOTE    "$sdk_remote_builddir/src/liburbi/.libs/libuobject"
+
+# Find the images.
+export URBI_SHARE="$kernel_srcdir/share"
+
+# Find the SDK-Remote's uobjects.
+prependenv URBI_UOBJECT_PATH "$sdk_remote_builddir/src:"
+
 ###################### Common between urbi-launch.in and urbi.in: end.
 
 # If this SDK-Remote is inside an Urbi SDK, then use that very Urbi
 # SDK, otherwise use the installed one.
-if test -f $sdk_remote_builddir/../src/Makefile; then
+if test -d $kernel_builddir/src/.libs; then
   urbi_lib PLUGIN "$kernel_builddir/src/.libs/libuobject"
   # Use the shipped Urbi files.
-  URBI_PATH="$kernel_srcdir/share:$kernel_builddir/share:$URBI_PATH"
+  prependenv URBI_PATH "$kernel_srcdir/share:$kernel_builddir/share:"
   case $(uname -o 2>/dev/null) in
     (Cygwin)
       # We use colon as separators, not semicolon.
@@ -112,22 +128,10 @@ if test -f $sdk_remote_builddir/../src/Makefile; then
   export URBI_PATH
 fi
 
-# Find the noninstalled libport libraries.
-libport_builddir=$sdk_remote_builddir/libport
 # Careful, do not add directory containing libuobject.
 ld_path_add $libport_builddir/lib/*/.libs               \
             $sdk_remote_builddir/*/.libs                \
             $sdk_remote_builddir/src/liburbi/.libs
-
-urbi_lib JPEG4URBI "$sdk_remote_builddir/jpeg/.libs/libjpeg4urbi"
-urbi_lib PORT      "$libport_builddir/lib/libport/.libs/libport"
-urbi_lib SCHED     "$libport_builddir/lib/sched/.libs/libsched"
-urbi_lib SERIALIZE "$libport_builddir/lib/serialize/.libs/libserialize"
-urbi_lib URBI      "$sdk_remote_builddir/src/liburbi/.libs/liburbi"
-urbi_lib REMOTE    "$sdk_remote_builddir/src/libuobject/.libs/libuobject"
-
-# Find the images.
-export URBI_SHARE="$kernel_srcdir/share"
 
 verbose "running $program $*"
 exec "$program" "$@"
