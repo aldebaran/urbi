@@ -27,6 +27,7 @@ URBI_PROG_CXX
 URBI_PACKAGE_KIND([sdk])
 URBI_DIRS
 URBI_LIBTOOL
+URBI_LIB_SUFFIX
 
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff
 # below.
