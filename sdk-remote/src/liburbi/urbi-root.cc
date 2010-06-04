@@ -25,7 +25,6 @@
 #ifdef STATIC_BUILD
 # include <urbi/umain.hh>
 #endif
-#include <libport/config.h>
 
 #if defined WIN32
 # define APPLE_LINUX_WINDOWS(Apple, Linux, Windows) Windows
@@ -47,17 +46,6 @@ mygetenv(const std::string& var, const std::string& val = "")
   return res ? std::string(res) : val;
 }
 
-// static void
-// xsetenv(const std::string& var, const std::string& val, int force)
-// {
-// #ifdef WIN32
-//   if (force || mygetenv(var).empty())
-//     _putenv(strdup((var + "=" + val).c_str()));
-// #else
-//   setenv(var.c_str(), val.c_str(), force);
-// #endif
-// }
-
 /*------------.
 | Reporting.  |
 `------------*/
@@ -72,11 +60,11 @@ debug()
 # define URBI_ROOT_ECHO(S)                      \
   std::cerr << S << std::endl                   \
 
-# define URBI_ROOT_DEBUG(Self, S)                       \
-  do {                                                  \
-    if (debug())                                        \
-      URBI_ROOT_ECHO(Self << ": " << S);                \
-  } while (0)                                           \
+# define URBI_ROOT_DEBUG(Self, S)               \
+  do {                                          \
+    if (debug())                                \
+      URBI_ROOT_ECHO(Self << ": " << S);        \
+  } while (0)
 
 # define URBI_ROOT_FATAL(Self, N, S)            \
   do {                                          \
