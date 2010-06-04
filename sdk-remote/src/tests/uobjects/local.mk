@@ -11,15 +11,15 @@
 ## -------------------- ##
 
 # Compile each UObject using umake.
-include $(top_srcdir)/src/uobjects/uobjects.mk
-UOBJECTS_TESTS = $(addprefix uobjects/, $(UOBJECTS:=.uob))
+include $(top_srcdir)/src/urbi/uobjects.mk
+UOBJECTS_TESTS = $(addprefix urbi/, $(UOBJECTS:=.uob))
 
 # uobject-check
 EXTRA_DIST += bin/uobject-check.m4sh
 nodist_check_SCRIPTS += bin/uobject-check
 m4sh_scripts += bin/uobject-check
 
-uobjects/%.log: $(top_builddir)/src/uobjects/%.la bin/uobject-check
+uobjects/%.log: $(top_builddir)/src/urbi/%.la bin/uobject-check
 	@$(am__check_pre) bin/uobject-check $< $(am__check_post)
 
 TESTS += $(UOBJECTS_TESTS)

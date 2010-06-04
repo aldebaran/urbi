@@ -6,13 +6,13 @@
 ##
 ## See the LICENSE file for more information.
 
-include uobjects/uobjects.mk
+include urbi/uobjects.mk
 
-EXTRA_DIST += $(addprefix uobjects/,$(UOBJECTS:=.uob))
+EXTRA_DIST += $(addprefix urbi/,$(UOBJECTS:=.uob))
 
 # _SCRIPTS so that we preserve the executable bit.
-uobjects_SCRIPTS = $(addprefix uobjects/,$(UOBJECTS:=$(DLMODEXT)))
-CLEANFILES += $(uobjects_DATA) $(uobjects_DATA:$(DLMODEXT)=.la)
+urbi_uobjects_SCRIPTS = $(addprefix urbi/,$(UOBJECTS:=$(DLMODEXT)))
+CLEANFILES += $(urbi_uobjects_DATA) $(urbi_uobjects_DATA:$(DLMODEXT)=.la)
 
 UMAKE_SHARED = tests/bin/umake-shared
 
@@ -29,12 +29,12 @@ clean-uobjects:
 # When clean is concurrent, we might even have "rm" be given
 # directories that no longer exist.  So forget about the exit status.
 	-$(UMAKE_SHARED) --deep-clean ||			\
-	  find uobjects -name "_ubuild-*" -a -type d | xargs rm -rf
+	  find urbi -name "_ubuild-*" -a -type d | xargs rm -rf
 # This is a bug in deep-clean: we don't clean the .libs files.  But it
 # is not so simple, as several builds may share a common .libs, so one
 # build cannot remove this directory.
-	-find uobjects -name ".libs" -a -type d | xargs rm -rf
-	-rm -f $(uobjects_DATA) $(uobjects_DATA:$(DLMODEXT)=.la)
+	-find urbi -name ".libs" -a -type d | xargs rm -rf
+	-rm -f $(urbi_uobjects_DATA) $(urbi_uobjects_DATA:$(DLMODEXT)=.la)
 
 # Help to restart broken builds.
 $(UMAKE_SHARED):
@@ -52,4 +52,4 @@ installcheck installcheck-html: installcheck-umake
 installcheck-umake:
 	PATH="$(DESTDIR)$(bindir):$$PATH" &&				      \
 	  $(MAKE) $(AM_MAKEFLAGS) UMAKE_SHARED=umake-shared clean-uobjects && \
-	  $(MAKE) $(AM_MAKEFLAGS) UMAKE_SHARED=umake-shared $(uobjects_DATA)
+	  $(MAKE) $(AM_MAKEFLAGS) UMAKE_SHARED=umake-shared $(urbi_uobjects_DATA)

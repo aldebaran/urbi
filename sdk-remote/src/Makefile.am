@@ -53,7 +53,7 @@ include bin/local.mk
 include liburbi/local.mk
 
 if !STATIC_BUILD
-include uobjects/local.mk
+include urbi/local.mk
 endif !STATIC_BUILD
 
 include libuobject/local.mk
