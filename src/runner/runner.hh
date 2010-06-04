@@ -229,6 +229,15 @@ namespace runner
 
     /// Whether the tag is frozen, even if no applied tag is frozen.
     ATTRIBUTE_RW(bool, frozen);
+
+  public:
+    typedef std::vector<object::rEvent> dependencies_type;
+    const dependencies_type& dependencies() const;
+    bool dependencies_log_get() const;
+    void dependency_add(object::rEvent evt);
+  protected:
+    bool dependencies_log_;
+    dependencies_type dependencies_;
   };
 
   /// Dump \a b on \a o, for debugging.

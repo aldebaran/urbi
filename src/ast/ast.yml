@@ -1387,8 +1387,12 @@ Unscope:
     - $count
 
 At:
-  super: Exp
+  super: Flavored
   attributes:
+    - flavor_location:
+        type: loc
+        access: rW
+        serialize: false
     - cond:
         type: rExp
         access: rwW
@@ -1413,6 +1417,17 @@ At:
     - '"onleave"'
     - libport::iendl
     - ~onleave
+
+Event:
+  super: Exp
+  attributes:
+    - exp:
+        type: rExp
+        access: rwW
+  printer:
+    - '"$event("'
+    - ~exp
+    - '")"'
 
 # Local Variables:
 # mode: yaml

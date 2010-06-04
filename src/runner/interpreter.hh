@@ -310,6 +310,10 @@ namespace runner
     FINALLY_Scope(DEFINE);
     FINALLY_Do(DEFINE);
     FINALLY_Try(DEFINE);
+
+    struct AtEventData;
+    static void
+    at_run(AtEventData* data, const object::objects_type& = object::objects_type());
   };
 
 } // namespace runner

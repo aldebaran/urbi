@@ -166,7 +166,8 @@ namespace ast
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
 
-    return new At(loc, make_strip(cond),
+    return new At(loc, flavor, flavor_loc,
+                  make_strip(cond),
                   make_scope(loc, body),
                   onleave ? make_scope(loc, onleave) : new Noop(loc, 0),
                   duration);

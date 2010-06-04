@@ -16,12 +16,14 @@
 #include <algorithm>
 #include <climits>
 
-#include <libport/format.hh>
 #include <boost/lambda/lambda.hpp>
 
 #include <libport/cassert>
 #include <libport/containers.hh>
+#include <libport/contract.hh>
+#include <libport/debug.hh>
 #include <libport/foreach.hh>
+#include <libport/format.hh>
 #include <libport/lexical-cast.hh>
 
 #include <kernel/userver.hh>
@@ -39,6 +41,8 @@
 
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
+
+GD_ADD_CATEGORY(Urbi);
 
 namespace urbi
 {
@@ -144,10 +148,30 @@ namespace urbi
       return const_cast<Object*>(this)->slot_get(k);
     }
 
+    bool squash = false;
     Slot&
     Object::slot_get(key_type k)
     {
-      return *safe_slot_locate(k).second;
+      rSlot res = safe_slot_locate(k).second;
+      if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
+      {
+        if (!squash && r->dependencies_log_get())
+        {
+          bool prev = squash;
+          FINALLY(((bool&, squash))((bool, prev)), squash = prev);
+          squash = true;
+          GD_CATEGORY(Urbi);
+          GD_FINFO_DUMP("Register slot '%s' for at monitoring", k);
+          r->dependency_add(static_cast<Event*>(res->property_get(SYMBOL(changed)).get()));
+          rObject changed = (*res)->call(SYMBOL(changed));
+          assert(changed);
+          rEvent evt = changed->as<Event>();
+          assert(evt);
+          r->dependency_add(evt.get());
+          GD_INFO_DUMP("Done registering");
+        }
+      }
+      return *res;
     }
 
 
@@ -218,7 +242,12 @@ namespace urbi
         }
       // If return-value of hook is not void, write it to slot.
       if (owner == this)
+      {
+        bool prev = squash;
+        FINALLY(((bool&, squash))((bool, prev)), squash = prev);
+        squash = true;
         s = v;
+      }
       else
       {
         // Here comes the cow

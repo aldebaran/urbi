@@ -24,6 +24,7 @@
 # include <ast/print.hh>
 
 # include <kernel/uconnection.hh>
+# include <kernel/userver.hh>
 
 # include <object/symbols.hh>
 
@@ -33,12 +34,15 @@
 # include <sched/exception.hh>
 
 # include <urbi/object/code.hh>
+# include <urbi/object/event.hh>
 # include <urbi/object/global.hh>
 # include <urbi/object/list.hh>
 # include <urbi/object/dictionary.hh>
 # include <urbi/object/tag.hh>
 # include <urbi/object/slot.hh>
 # include <urbi/object/string.hh>
+
+GD_ADD_CATEGORY(Urbi);
 
 /// Job echo.
 #define JECHO(Title, Content)                                   \
@@ -56,6 +60,14 @@
     yield ();                                           \
   } while (false)
 
+
+namespace urbi
+{
+  namespace object
+  {
+    extern bool squash;
+  }
+}
 
 namespace runner
 {
@@ -122,6 +134,64 @@ namespace runner
     return val;
   }
 
+  struct Interpreter::AtEventData
+  {
+    object::rEvent event;
+    ast::rExp exp;
+    object::rEvent current;
+    std::vector<object::Event::Subscription> subscriptions;
+  };
+
+  void
+  Interpreter::at_run(AtEventData* data, const object::objects_type&)
+  {
+    runner::Interpreter& r = dynamic_cast<runner::Interpreter&>(::kernel::urbiserver->getCurrentRunner());
+    bool v;
+    // FIXME: optimize: do not unregister and reregister the same dependency
+    {
+      foreach (object::Event::Subscription& s, data->subscriptions)
+        s.stop();
+      data->subscriptions.clear();
+
+      bool& squash = object::squash;
+      bool prev = squash;
+
+      bool& dependencies_log = r.dependencies_log_;
+      FINALLY(((bool&, squash))((bool, prev))((bool&, dependencies_log)), squash = prev; dependencies_log = false);
+      dependencies_log = true;
+      squash = false;
+
+      v = object::from_urbi<bool>(r(data->exp.get()));
+      foreach (object::rEvent evt, r.dependencies_)
+        data->subscriptions.push_back(evt->onEvent(boost::bind(at_run, data, _1)));
+      r.dependencies_.clear();
+    }
+    if (v && !data->current)
+      data->current = data->event->trigger(object::objects_type());
+    else if (!v && data->current)
+    {
+      data->current->stop();
+      data->current = 0;
+    }
+  }
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Event* e)
+  {
+    object::rEvent res = new object::Event;
+
+    AtEventData* data(new AtEventData);
+    data->event = res;
+    data->exp = e->exp_get();
+    data->current = 0;
+    at_run(data);
+
+    return res;
+    // std::cerr << "VISIT" << std::endl;
+    // std::cerr << *e << std::endl;
+    // return object::void_class;
+  }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Call* e)
@@ -129,6 +199,9 @@ namespace runner
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = operator()(ast_tgt.get());
+    GD_CATEGORY(Urbi);
+    GD_TRACE();
+    GD_FPUSH("Call %s", e->name_get());
     return apply_ast(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 

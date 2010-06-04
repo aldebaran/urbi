@@ -18,6 +18,7 @@
 
 # include <libport/compilation.hh>
 
+# include <urbi/object/event.hh>
 # include <urbi/object/job.hh> // To destroy Runner::job_.
 # include <urbi/object/lobby.hh>
 # include <urbi/object/tag.hh>
@@ -34,6 +35,8 @@ namespace runner
     , lobby_(lobby)
     , prio_(sched::UPRIO_DEFAULT)
     , frozen_(false)
+    , dependencies_log_(false)
+    , dependencies_()
   {
   }
 
@@ -45,6 +48,8 @@ namespace runner
     , lobby_(model.lobby_)
     , prio_(sched::UPRIO_DEFAULT)
     , frozen_(false)
+    , dependencies_log_(false)
+    , dependencies_()
   {
   }
 

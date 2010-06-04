@@ -29,12 +29,15 @@
 #include <object/symbols.hh>
 #include <object/system.hh>
 
+#include <kernel/userver.hh>
 #include <urbi/object/code.hh>
+#include <urbi/object/event.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/primitive.hh>
 #include <urbi/object/slot.hh>
+
 
 #include <runner/interpreter.hh>
 #include <urbi/runner/raise.hh>
@@ -139,10 +142,11 @@ namespace runner
       if (arg == object::void_class)
 	raise_unexpected_void_error();
 
+    object::rObject res;
     if (const rCode& code = function->as<object::Code>())
-      return apply_urbi(code, msg, args, call_message);
+      res = apply_urbi(code, msg, args, call_message);
     else if (const object::rPrimitive& p = function->as<object::Primitive>())
-      return (*p)(args);
+      res = (*p)(args);
     else
     {
       if (args.size() != 1)
@@ -156,6 +160,19 @@ namespace runner
       object::check_arg_count(args.size()-1, 0);
       return function;
     }
+
+    static bool squash = false;
+    if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
+      if (!squash && r->dependencies_log_get())
+      {
+        bool prev = squash;
+        FINALLY(((bool&, squash))((bool, prev)), squash = prev);
+        squash = true;
+        r->dependency_add(res->call(SYMBOL(changed))->as<object::Event>());
+      }
+
+    return res;
+
   }
 
   /*--------------------------.
