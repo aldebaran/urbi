@@ -21,11 +21,10 @@ URBI_SDK_CPPFLAGS =				\
 
 ACLOCAL_AMFLAGS = -I build-aux
 
-
 EXTRA_DIST += bootstrap
 
 module_LTLIBRARIES =
-moduledir = $(uobjectsdir)
+moduledir = $(urbi_uobjectsdir)
 include modules.mk
 
 installcheck-buildfarm:
