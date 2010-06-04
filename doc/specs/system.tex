@@ -122,15 +122,15 @@ outermost;
 \begin{urbiassert}
 eval("1+2") == 1+2;
 eval("\"x\" * 10") == "x" * 10;
-eval("eval(\"1\")") ==  1;
-eval("{ var x = 1; x + x; }") ==  2;
+eval("eval(\"1\")") == 1;
+eval("{ var x = 1; x + x; }") == 2;
 \end{urbiassert}
 
   The evaluation is performed in the context of the current object
   (\this), in particular, to create local variables, create
   scopes.
 \begin{urbiassert}
-// This creates a slot in the current object.
+// Create a slot in the current object.
 eval("var x = 23;") == 23;
 x == 23;
 \end{urbiassert}
@@ -157,31 +157,30 @@ catch (var e)
 
 \item[getenv](<name>)%
   Return the value of the environment variable \var{name} as a
-  \refObject{String} if set, \lstinline|nil| otherwise.  See also
+  \refObject{String} if set, \refObject{nil} otherwise.  See also
   \refSlot{setenv} and \refSlot{unsetenv}.
 \begin{urbiassert}
 getenv("UndefinedEnvironmentVariable").isNil;
 !getenv("PATH").isNil;
 \end{urbiassert}
 
-\item[loadFile](<file>)%
-  Load the \us file \var{file}.  Throw a \lstinline|FileNotFound|
-  error if the file cannot be found.  Return the last value of the
-  file.
-\begin{urbiassert}
-// Create the file ``123.u'' that contains exactly ``123;''.
-System.system("echo '123;' >123.u") == 0;
-loadFile("123.u") == 123;
-\end{urbiassert}
-
 \item[load](<file>)%
-  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}),
-  and load it.  Throw a \lstinline|FileNotFound| error if the file
+  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}), and
+  load it.  Throw a \refSlot[Exception]{FileNotFound} error if the file
   cannot be found.  Return the last value of the file.
 \begin{urbiassert}
 // Create the file ``123.u'' that contains exactly ``123;''.
 System.system("echo '123;' >123.u") == 0;
 load("123.u") == 123;
+\end{urbiassert}
+
+\item[loadFile](<file>)%
+  Load the \us file \var{file}.  Throw a \refSlot[Exception]{FileNotFound}
+  error if the file cannot be found.  Return the last value of the file.
+\begin{urbiassert}
+// Create the file ``123.u'' that contains exactly ``123;''.
+System.system("echo '123;' >123.u") == 0;
+loadFile("123.u") == 123;
 \end{urbiassert}
 
 \item[loadLibrary](<library>)%
@@ -190,16 +189,16 @@ load("123.u") == 123;
   \autoref{sec:tools:envvars}), or the default UObject path.
   The \var{library} may be a \refObject{String} or a \refObject{Path}.
   The \Cxx symbols are made available to the other \Cxx components.  See also
-  \lstinline|loadModule|.
+  \refSlot{loadModule}.
 
 \item[loadModule](<module>)%
-  Load the \UObject \var{module}.  Same as \lstinline|loadLibrary|,
-  except that the low-level \Cxx symbols are not made ``global'' (in
-  the sense of the shared library loader).
+  Load the \UObject \var{module}.  Same as \refSlot{loadLibrary}, except
+  that the low-level \Cxx symbols are not made ``global'' (in the sense of
+  the shared library loader).
 
 \item[lobbies] Bounce to \refSlot[Lobby]{instances}.
 
-\item[lobby]Bounce to \refSlot[Lobby]{lobby}.
+\item[lobby] Bounce to \refSlot[Lobby]{lobby}.
 
 \item[maybeLoad](<file>, <channel> = Channel.null)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}).
@@ -254,8 +253,8 @@ Path.new(System.programName).basename
 \item[reboot] Restart the \urbi server.  Architecture dependent.
 
 \item[searchFile](<file>)%
-  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars})
-  and return its \refObject{Path}.  Throw a \lstinline|FileNotFound|
+  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}) and
+  return its \refObject{Path}.  Throw a \refSlot[Exception]{FileNotFound}
   error if the file cannot be found.
 \begin{urbiassert}
 System.system("echo '123;' >123.u") == 0;
