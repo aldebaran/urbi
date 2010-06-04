@@ -18,7 +18,6 @@
 # include <urbi/object/object.hh>
 
 
-
 #define URBI_CXX_OBJECT_(Name)                                          \
 public:                                                                 \
   static const ::std::string& type_name();                              \
@@ -35,33 +34,37 @@ public:                                                                 \
   URBI_CXX_OBJECT_(Name)                        \
   {}                                            \
 
-#define URBI_CXX_OBJECT_REGISTER(Name)                                  \
-  const std::string& Name::type_name()                                  \
-  {                                                                     \
-    static std::string res = #Name;                                     \
-    return res;                                                         \
-  }                                                                     \
-                                                                        \
-  ::libport::intrusive_ptr<Name> Name::proto;                           \
-                                                                        \
-  std::string                                                           \
-  Name::type_name_get() const                                           \
-  {                                                                     \
-    return type_name();                                                 \
-  }                                                                     \
-                                                                        \
-  bool Name::valid_proto(const ::urbi::object::Object& o) const         \
-  {                                                                     \
-    return dynamic_cast<const Name*>(&o);                               \
-  }                                                                     \
-                                                                        \
-  struct Name ## _register__                                            \
-  {                                                                     \
-    Name ## _register__() {::urbi::object::CxxObject::add<Name>();}     \
-  };                                                                    \
-  static Name ## _register__ Name ## _registered__;                     \
-                                                                        \
-  Name::Name(const ::urbi::object::FirstPrototypeFlag&)                 \
+#define URBI_CXX_OBJECT_REGISTER(Name)                          \
+  const std::string& Name::type_name()                          \
+  {                                                             \
+    static std::string res = #Name;                             \
+    return res;                                                 \
+  }                                                             \
+                                                                \
+  ::libport::intrusive_ptr<Name> Name::proto;                   \
+                                                                \
+  std::string                                                   \
+  Name::type_name_get() const                                   \
+  {                                                             \
+    return type_name();                                         \
+  }                                                             \
+                                                                \
+  bool Name::valid_proto(const ::urbi::object::Object& o) const \
+  {                                                             \
+    return dynamic_cast<const Name*>(&o);                       \
+  }                                                             \
+                                                                \
+  struct Name ## _register__                                    \
+  {                                                             \
+    Name ## _register__()                                       \
+    {                                                           \
+      ::urbi::object::CxxObject::add<Name>();                   \
+    }                                                           \
+  };                                                            \
+                                                                \
+  static Name ## _register__ Name ## _registered__;             \
+                                                                \
+  Name::Name(const ::urbi::object::FirstPrototypeFlag&)
 
 
 namespace urbi
@@ -73,7 +76,7 @@ namespace urbi
     /// Base class for Urbi bound C++ classes.
     class URBI_SDK_API CxxObject: public Object
     {
-      public:
+    public:
 
       /// Build a CxxObject.
       CxxObject();
@@ -159,16 +162,17 @@ namespace urbi
     /// Raise an exception if \a o is not a \a exp. If \a idx is given,
     /// report the type error for argument \a idx.
     URBI_SDK_API
-    void type_check(const rObject& o, const rObject& exp,
-                    boost::optional<unsigned> idx = boost::optional<unsigned>());
+    void
+    type_check(const rObject& o, const rObject& exp,
+               boost::optional<unsigned> idx = boost::optional<unsigned>());
 
     /// Same as above, but check first with a dynamic_cast in order to handle
     /// atoms more efficiently.
     template<typename T>
     URBI_SDK_API
-    libport::intrusive_ptr<T> type_check(const rObject& o,
-                                         boost::optional<unsigned> idx =
-                                         boost::optional<unsigned>());
+    libport::intrusive_ptr<T>
+    type_check(const rObject& o,
+               boost::optional<unsigned> idx = boost::optional<unsigned>());
 
     /// Throw an exception if formal != effective.
     /// \note: \c self is included in the count.
@@ -185,9 +189,9 @@ namespace urbi
 }
 
 # if ! defined OBJECT_EXECUTABLE_HH             \
-      && ! defined OBJECT_FLOAT_HH        \
-      && ! defined OBJECT_LIST_HH         \
-      && ! defined OBJECT_STRING_HH       \
+      && ! defined OBJECT_FLOAT_HH              \
+      && ! defined OBJECT_LIST_HH               \
+      && ! defined OBJECT_STRING_HH             \
       && ! defined OBJECT_TAG_HH
 #  include <urbi/object/cxx-object.hxx>
 # endif
