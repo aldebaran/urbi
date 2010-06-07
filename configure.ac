@@ -150,7 +150,7 @@ AC_CHECK_HEADERS([sys/inotify.h])
 
 AC_CONFIG_SUBDIRS([sdk-remote])
 AC_CONFIG_SUBDIRS([modules])
-URBI_APPEND_CONFIGUREFLAGS([--enable-modules=md5,ros_bridge])
+URBI_APPEND_CONFIGUREFLAGS([--enable-modules=md5,ros])
 
 ## -------- ##
 ## Output.  ##
