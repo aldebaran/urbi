@@ -17,7 +17,7 @@ Compilation options:
   -c, --clean             clean building directory before compilation
   -j, --jobs=JOBS         specify the numbers of commands to run simultaneously
   -l, --library           produce a library, don't link to a particular core
-  -s, --shared-library    produce a shared library loadable by any core
+  -s, --shared            produce a shared library loadable by any core
   -o, --output=output     output file name
   -C, --core=CORE         build type [$core]
   -H, --host=HOST         destination host [$host]
@@ -118,8 +118,9 @@ get_options ()
       (-q | --quiet  ) quiet=true;;
       (-V | --version) version;;
 
-      (-l | --library)        core= ; shared=false ;;
-      (-s | --shared-library) core= ; shared=true ; automain=false ;;
+      (-l | --library) core= ; shared=false ;;
+      (-s | --shared | --shared-library)
+                       core= ; shared=true ; automain=false ;;
       (     --deep-clean)    deep_clean ;;
       (-c | --clean)         clean=true ;;
       (-j | --jobs)  shift; append "-j $1" " ";;

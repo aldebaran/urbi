@@ -207,10 +207,7 @@ m4_define([URBI_CONFIG_WRAPPER],
 
 # Prepare the umake wrappers.
 URBI_CONFIG_WRAPPER([umake])
-URBI_CONFIG_WRAPPER([umake-engine])
-URBI_CONFIG_WRAPPER([umake-lib])
 URBI_CONFIG_WRAPPER([umake-link])
-URBI_CONFIG_WRAPPER([umake-remote])
 URBI_CONFIG_WRAPPER([umake-shared])
 URBI_CONFIG_SCRIPTS([src/tests/bin/urbi-launch$EXEEXT:src/tests/bin/urbi-launch.in])
 

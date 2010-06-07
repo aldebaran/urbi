@@ -6,11 +6,7 @@ nodist_env_DATA = sdk/param.mk
 
 UMAKE_WRAPPERS =                                \
   sdk/umake-deepclean                           \
-  sdk/umake-engine                              \
-  sdk/umake-fullengine                          \
-  sdk/umake-lib                                 \
-  sdk/umake-shared                              \
-  sdk/umake-remote
+  sdk/umake-shared
 
 UMAKE_CONFIGURED =                              \
   sdk/uinstall                                  \

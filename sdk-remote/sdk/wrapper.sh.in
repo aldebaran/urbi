@@ -35,12 +35,7 @@ gen_wrapper ()
     dir=$(dirname "$1")
     case $target in
 	(deepclean)  args="--deep-clean";;
-	(engine)     args="--core=engine";;
-	(fullengine) args="--core=fullengine";;
-	(lib)	     args="--library";;
-	(remote)     args="--core=remote";;
-	(shared)     args="-s";;
-
+	(shared)     args="--shared";;
 	(link | common) return;; # ignore
 	(*) fatal "unknown target: $target";;
     esac
