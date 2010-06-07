@@ -18,8 +18,10 @@ ACLOCAL_AMFLAGS = -I build-aux -I tests/m4
 # To keep the time stamps up to date, we need to compile our
 # dependencies first, so process sdk-remote and src before "." (where
 # timestamps are).  It it tests and doc that depend on these time
-# stamps, so handle them after ".".
-SUBDIRS = sdk-remote src . modules tests doc
+# stamps, so handle them after ".".  Also, remember that our
+# post-install step is fired from here, so everything that is
+# installed must be installed before hand.
+SUBDIRS = sdk-remote src modules . tests doc
 
 DIST_SUBDIRS = $(SUBDIRS) bison
 
