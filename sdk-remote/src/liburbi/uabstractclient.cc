@@ -23,6 +23,7 @@
 
 #include <libport/cstdio>
 #include <libport/cstring>
+#include <libport/containers.hh>
 #include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
@@ -774,7 +775,7 @@ namespace urbi
       BinaryData bd;
       bd.size = binaryBufferLength;
       bd.data = binaryBuffer;
-      bins.push_back(bd);
+      bins << bd;
       binaryBuffer = 0;
 
       if (nBracket == 0)
