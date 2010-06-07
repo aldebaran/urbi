@@ -266,15 +266,8 @@ int Monitor::createImage()
     {
       if ((xImage = XCreateImage(localDisplay, visual, depth, ZPixmap, 0,
 				 NULL, w, h, 16, 0)) == NULL)
-      {
 	throw "XCreateImage";
-      }
-      if ((xImage->data = static_cast<char *> (malloc (xImage->bytes_per_line
-						       * xImage->height)))
-	   == NULL)
-      {
-	throw "malloc";
-      }
+      xImage->data = new char[xImage->bytes_per_line * xImage->height];
     }
     return 0;
   }
@@ -307,8 +300,8 @@ int Monitor::destroyImage()
       shmInfo.shmid = -1;
     }
   }
-  else if (xImage->data != NULL)
-    free(xImage->data);
+  else
+    delete[] xImage->data;
 
   xImage->data = NULL;
 
