@@ -20,7 +20,8 @@
 namespace urbi
 {
   typedef unsigned char byte;
-/// Image format conversion functions.
+
+  /// Image format conversion functions.
   URBI_SDK_API int convertYCrCbtoYCbCr(const byte* source, size_t sourcelen,
                                        byte* dest);
   URBI_SDK_API int convertRGBtoYCrCb(const byte* source, size_t sourcelen,
@@ -58,12 +59,12 @@ namespace urbi
     size_t datalength;
   };
 
-  //sound format conversion functions.
-  URBI_SDK_API int convert(const USound &source, USound &destination);
+  // Sound format conversion.
+  URBI_SDK_API int convert(const USound& source, USound& destination);
 
 
-  //image format conversion. JPEG compression not impletmented.
-  URBI_SDK_API int convert(const UImage &source, UImage & destination);
+  // Image format conversion. JPEG compression not implemented.
+  URBI_SDK_API int convert(const UImage& source, UImage& destination);
 
 } // namespace urbi
 #endif
