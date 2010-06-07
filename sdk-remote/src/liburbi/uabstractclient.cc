@@ -526,10 +526,10 @@ namespace urbi
     if (s->format == SOUND_WAV)
     {
       wavheader wh;
-      memcpy(&wh, s->buffer, sizeof (wh));
+      memcpy(&wh, s->buffer, sizeof wh);
       wh.datalength=tosend;
       wh.length=tosend+44-8;
-      s->uc->sendBin(&wh, sizeof (wavheader));
+      s->uc->sendBin(&wh, sizeof wh);
     }
 
     s->uc->sendBin(s->buffer+s->pos, tosend);
