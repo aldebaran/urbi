@@ -165,11 +165,10 @@ namespace urbi
   convertJPEGtoYCrCb(const byte* source, size_t sourcelen,
                      byte** dest, size_t& size, size_t& w, size_t& h)
   {
-    size_t sz;
-
     if (!dest)
       return 0;
 
+    size_t sz;
     void *destination = read_jpeg((const char*) source, sourcelen, false,
                                   sz, w, h);
     if (!destination)
@@ -183,7 +182,7 @@ namespace urbi
       size = sz;
       return 1;
     }
-    size_t cplen = sz > size ? size : sz;
+    size_t cplen = std::min(sz, size);
     memcpy(*dest, destination, cplen);
     free(destination);
     size = sz;
@@ -211,11 +210,10 @@ namespace urbi
   convertJPEGtoRGB(const byte* source, size_t sourcelen,
                    byte** dest, size_t& size, size_t& w, size_t& h)
   {
-    size_t sz;
-
     if (!dest)
       return 0;
 
+    size_t sz;
     void *destination = read_jpeg((const char*) source, sourcelen, true,
                                   sz, w, h);
     if (!destination)
@@ -229,7 +227,7 @@ namespace urbi
       size = sz;
       return 1;
     }
-    size_t cplen = sz > size ? size : sz;
+    size_t cplen = std::min(sz, size);
     memcpy(*dest, destination, cplen);
     free(destination);
     size = sz;
