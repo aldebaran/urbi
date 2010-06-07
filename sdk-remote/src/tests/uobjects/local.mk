@@ -12,7 +12,7 @@
 
 # Compile each UObject using umake.
 include $(top_srcdir)/src/urbi/uobjects.mk
-UOBJECTS_TESTS = $(addprefix urbi/, $(UOBJECTS:=.uob))
+UOBJECTS_TESTS = $(addprefix uobjects/, $(UOBJECTS:=.uob))
 
 # uobject-check
 EXTRA_DIST += bin/uobject-check.m4sh
