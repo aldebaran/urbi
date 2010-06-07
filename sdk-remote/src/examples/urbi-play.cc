@@ -54,8 +54,8 @@ parseHeader(FILE *f)
     return false;
   if (fread(&devCount,4,1,f)!=1)
     return false;
-  devices=static_cast<UDev*> (malloc (devCount*sizeof (UDev)));
-  for (int i=0;i<devCount; ++i)
+  devices = new UDev[devCount];
+  for (int i = 0; i < devCount; ++i)
     {
       char device[256];
       int pos=0;
