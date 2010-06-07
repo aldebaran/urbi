@@ -24,6 +24,10 @@ This chapter lists the user-visible changes in \usdk releases.
 \item \samp{123foo} is no longer accepted as a synonym to \samp{123 foo}.
   As a consequence, in case you were using \lstinline|x = 123cos: 1|,
   convert it to \lstinline|x = 123 cos: 1|.
+\item Some old tools that no longer make sense in \usdk 2.0 have been
+  removed: \command{umake-engine}, \command{umake-fullengine},
+  \command{umake-lib}, \command{umake-remote}.  Instead, use
+  \command{umake}, see \autoref{sec:tools:umake}.
 \end{itemize}
 
 \subsection{Documentation}
