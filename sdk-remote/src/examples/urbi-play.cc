@@ -65,7 +65,7 @@ parseHeader(FILE *f)
 	  return false;
       } while (device[pos-1]);
       devices[i].name = strdup(device);
-      if (fread(&devices[i].id,2,1,f)!=1)
+      if (fread(&devices[i].id,2,1,f) != 1)
 	return false;
       int type;
       if ((type=fgetc(f)) == EOF)

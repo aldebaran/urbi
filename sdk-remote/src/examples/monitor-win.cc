@@ -36,7 +36,7 @@ Monitor::Monitor(int w, int h, const char* title)
   window = CreateWindow("Monitor",title, WS_OVERLAPPED | WS_VISIBLE,
                         CW_USEDEFAULT, CW_USEDEFAULT, w, h+40,
                         NULL, NULL, NULL, NULL);
-  //unsigned char * data = static_cast<unsigned char *> (malloc (w*h*4));
+  //unsigned char * data = new unsigned char[w*h*4];
   //memDC = CreateCompatibleDC ( hDC );
   //memBM = CreateCompatibleBitmap ( hDC , w, h);
   //SelectObject ( memDC, memBM );
