@@ -205,13 +205,12 @@ int Monitor::createImage()
 
   if (char *D = getenv("DISPLAY"))
   {
-    char *d = strdup(D);
-    char *delim=strstr(d, ":");
-    if (delim)
-      *delim=0;
-    if (d[0]!=0 && strcmp(d, "localhost") && strcmp(d, "127.0.0.1"))
+    std::string disp = D;
+    size_t p = disp.find_first_of(':');
+    if (p != std::string::npos)
+      disp.resize(p);
+    if (disp != "localhost" && disp != "127.0.0.1")
       isShared = false;
-    free(d);
   }
 
   if (getenv("DISABLE_SHM"))
