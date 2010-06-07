@@ -445,6 +445,10 @@ namespace urbi
     /// Bin object for this command.
     typedef std::list<urbi::BinaryData> binaries_type;
     binaries_type bins;
+
+    /// Empty bins.
+    void bins_clear();
+
     /// Temporary storage of binary data.
     void* binaryBuffer;
     /// Current position in binaryBuffer.

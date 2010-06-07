@@ -166,6 +166,13 @@ namespace urbi
   const char* UAbstractClient::CLIENTERROR_TAG = "client_error";
 
   void
+  UAbstractClient::bins_clear()
+  {
+    for (/* nothing */; !bins.empty(); bins.pop_front())
+      bins.front().clear();
+  }
+
+  void
   UAbstractClient::notifyCallbacks(const UMessage& msg)
   {
     listLock.lock();
@@ -779,8 +786,7 @@ namespace urbi
         notifyCallbacks(msg);
         //unlistLock.lock();
 
-        for (/* nothing */; !bins.empty(); bins.pop_front())
-          free(bins.front().data);
+        bins_clear();
 
         //flush
         parsePosition = 0;
@@ -922,11 +928,7 @@ namespace urbi
           recvBufferPosition = recvBufferPosition - parsePosition - 1;
           recvBuffer[recvBufferPosition] = 0;
           parsePosition = 0;
-          while (!bins.empty())
-          {
-            free(bins.front().data);
-            bins.pop_front();
-          }
+          bins_clear();
           goto line_finished; //restart
         }
 

@@ -69,10 +69,16 @@ namespace urbi
     }
   }
 
+  void
+  UBinary::clear()
+  {
+    if (allocated_)
+      free(common.data);
+  }
+
   UBinary::~UBinary()
   {
-    if (common.data && allocated_)
-      free(common.data);
+    clear();
   }
 
   UBinary& UBinary::operator= (const UBinary& b)
@@ -80,7 +86,7 @@ namespace urbi
     if (this == &b)
       return *this;
 
-    free(common.data);
+    clear();
 
     type = b.type;
     message = b.message;

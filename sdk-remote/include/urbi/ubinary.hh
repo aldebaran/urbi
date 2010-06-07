@@ -32,12 +32,10 @@ namespace urbi
   class URBI_SDK_API BinaryData
   {
   public:
-    BinaryData()
-      : data(0), size(0)
-    {}
-    BinaryData(void *d, size_t s)
-      : data(d), size(s)
-    {}
+    BinaryData();
+    BinaryData(void *d, size_t s);
+    /// Reclaim data.
+    void clear();
     void* data;
     size_t size;
   };
@@ -68,12 +66,18 @@ namespace urbi
     UBinary(const UBinary &b, bool copy = true);
     explicit UBinary(const UImage&, bool copy = true);
     explicit UBinary(const USound&, bool copy = true);
+
     /// Deep copy.
     UBinary & operator = (const UBinary &b);
+
     /// Build message from structures.
     void buildMessage();
     /// Get message extracted from structures.
     std::string getMessage() const;
+
+    /// Clear all the buffers that were allocated by the system.
+    void clear();
+
     /// Frees binary buffer.
     ~UBinary();
     /// Return true on success.
@@ -102,6 +106,8 @@ namespace urbi
     std::string message;
 
   private:
+    /// Whether the memory (common.data) is managed by this object, or
+    /// by the user.
     bool allocated_;
   };
 
@@ -109,5 +115,7 @@ namespace urbi
   std::ostream& operator<< (std::ostream& o, const UBinary& t);
 
 } // end namespace urbi
+
+# include <urbi/ubinary.hxx>
 
 #endif // ! URBI_UBINARY_HH
