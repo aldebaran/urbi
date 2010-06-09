@@ -12,7 +12,7 @@ uob=${la/.la}
 me=$(basename "$uob")
 
 # The directory we work in.
-# The ending part, for our builddir: access-and-change/uaccess.dir.
+# The ending part, for our builddir: all.dir.
 builddir=$(echo "$uob" | sed -e 's,.*/src/uobjects/,uobjects/,').dir
 mkcd $builddir
 

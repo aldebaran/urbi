@@ -8,10 +8,10 @@
 
 # I don't know yet how to avoid this painful list.
 UOBJECTS =					\
-  access-and-change/uaccess			\
-  access-and-change/uaccess2			\
-  access-and-change/uaccess3			\
-  access-and-change/uchange			\
+  uaccess					\
+  uaccess2					\
+  uaccess3					\
+  uchange					\
   all						\
   factory					\
   generic					\
@@ -34,10 +34,10 @@ UOBJECTS =					\
 # do
 #  printf '%s: $(wildcard $(srcdir)/%s/*)\n' ${i%.uob} $i
 # done
-urbi/access-and-change/uaccess$(DLMODEXT): $(wildcard $(srcdir)/urbi/access-and-change/uaccess.uob/*)
-urbi/access-and-change/uaccess2$(DLMODEXT): $(wildcard $(srcdir)/urbi/access-and-change/uaccess2.uob/*)
-urbi/access-and-change/uaccess3$(DLMODEXT): $(wildcard $(srcdir)/urbi/access-and-change/uaccess3.uob/*)
-urbi/access-and-change/uchange$(DLMODEXT): $(wildcard $(srcdir)/urbi/access-and-change/uchange.uob/*)
+urbi/uaccess$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess.uob/*)
+urbi/uaccess2$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess2.uob/*)
+urbi/uaccess3$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess3.uob/*)
+urbi/uchange$(DLMODEXT): $(wildcard $(srcdir)/urbi/uchange.uob/*)
 urbi/all$(DLMODEXT): $(wildcard $(srcdir)/urbi/all.uob/*)
 urbi/factory$(DLMODEXT): $(wildcard $(srcdir)/urbi/factory.uob/*)
 urbi/generic$(DLMODEXT): $(wildcard $(srcdir)/urbi/generic.uob/*)
