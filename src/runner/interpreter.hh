@@ -93,13 +93,13 @@ namespace runner
     // Apply methods summary:
     //
     // Location in all apply methods is used to register the call
-    // location it the call stack. It is optional because call
+    // location in the call stack. It is optional because call
     // originating from C++ have no locations.
     //
     // * apply_ast(target, message, args)
     //
     // Call %target.%message(%args), args being given as ast
-    // chunks. This enable to either evaluate the arguments, either
+    // chunks. This enables to either evaluate the arguments, either
     // build a call message.
     //
     // * apply_ast(target, function, message, args)
@@ -112,10 +112,10 @@ namespace runner
     //
     // Apply %function.  If the function is strict, you must give the
     // arguments in args, the first being the target.  If it is lazy,
-    // you might either give the call message, either the arguments, in
-    // which case a call message will be forged.  A call message must be
-    // forged when a lazy function is called from C++ or with eval: we
-    // only have the evaluated arguments.
+    // you might either give the call message, either the arguments,
+    // in which case a call message will be forged.  A call message
+    // must be forged when a lazy function is called from C++ or with
+    // eval: we only have the evaluated arguments.
 
 
     /// Execute the code of function \a func with arguments \a args in

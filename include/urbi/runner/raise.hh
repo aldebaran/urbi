@@ -22,6 +22,7 @@ namespace runner
 
   class RaiseCurrent {};
   extern RaiseCurrent raise_current_method;
+
   /// Raise an Urbi exception denoted by its name, looked up in
   /// "Global.Exception".  If "raise_current" is passed, the
   /// innermost method name will be looked up in the current runner
@@ -58,16 +59,14 @@ namespace runner
                        object::rObject arg1 = 0,
                        object::rObject arg2 = 0,
                        object::rObject arg3 = 0,
-                       object::rObject arg4 = 0
-                       );
+                       object::rObject arg4 = 0);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
-  void raise_argument_type_error
-    (unsigned idx,
-     object::rObject effective,
-     object::rObject expected,
-     object::rObject method_name = 0);
+  void raise_argument_type_error(unsigned idx,
+                                 object::rObject effective,
+                                 object::rObject expected,
+                                 object::rObject method_name = 0);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API

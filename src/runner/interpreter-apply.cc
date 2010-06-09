@@ -134,7 +134,7 @@ namespace runner
               call_stack_.pop_back();
       );
 
-    // Check if any argument is void
+    // Check if any argument is void.
     foreach (const rObject& arg, libport::skip_first(args))
       if (arg == object::void_class)
 	raise_unexpected_void_error();
@@ -161,7 +161,6 @@ namespace runner
   /*--------------------------.
   | Apply with a call message |
   `--------------------------*/
-
 
   object::rObject
   Interpreter::apply_call_message(const rObject& function,
