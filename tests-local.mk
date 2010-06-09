@@ -41,7 +41,6 @@ XFAIL_TESTS +=					\
 
 # test we don't want to care about temporarily
 TFAIL_TESTS +=					\
-  1.x/implicit.chk				\
   2.x/non-interruptible.chk
 
 # Uobject tests that we fail because features are not implemented
