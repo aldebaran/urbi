@@ -1,5 +1,4 @@
 #! /bin/sh
-# $Id: umake.in 839 2007-04-24 17:16:18Z demaille $
 
 test -f /bin/ksh && test -z "$RUNNING_KSH" \
   && { UNAMES=`uname -s`; test "x$UNAMES" = xULTRIX; } 2>/dev/null \
