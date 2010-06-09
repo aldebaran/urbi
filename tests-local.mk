@@ -39,10 +39,6 @@ ENABLE_HARD_ERRORS = false
 XFAIL_TESTS +=					\
   0.x/2-xfail.chk
 
-# test we don't want to care about temporarily
-TFAIL_TESTS +=					\
-  2.x/non-interruptible.chk
-
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   1.x/at-isdef.chk				\

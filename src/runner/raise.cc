@@ -180,6 +180,12 @@ namespace runner
   }
 
   void
+  raise_scheduling_error(const std::string& message)
+  {
+    raise_urbi_skip(SYMBOL(Scheduling), to_urbi(message));
+  }
+
+  void
   raise_syntax_error(const ast::loc& location,
                      const std::string& message,
                      const std::string& input)

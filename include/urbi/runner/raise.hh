@@ -108,6 +108,10 @@ namespace runner
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
+  void raise_scheduling_error(const std::string& message);
+
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_syntax_error(const ast::loc& location,
                           const std::string& message,
                           const std::string& input);

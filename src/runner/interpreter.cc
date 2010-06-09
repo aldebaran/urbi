@@ -218,8 +218,6 @@ namespace runner
   void
   Interpreter::scheduling_error(const std::string& msg)
   {
-    libport::Finally finally;
-    sched::Job::Collector collector(this);
     // We may have a situation here. If the stack space is running
     // near exhaustion, we cannot reasonably hope that we will get
     // enough stack space to build an exception, which potentially
@@ -227,15 +225,16 @@ namespace runner
     // create another job whose job is to build the exception (in a
     // freshly allocated stack) and propagate it to us as we are its
     // parent.
-    CAPTURE_GLOBAL(Exception);
-    object::rObject Scheduling = Exception->slot_get(SYMBOL(Scheduling));
-    if (non_interruptible_get())
-    { // The user requested non-interruptible mode for a reason, honor it
-      // and try to throw in this job.
-      Scheduling->call(SYMBOL(throwNew), object::to_urbi(msg));
-      return;
-    }
+    //
+    // Yet, if the user asked for non-interruptible mode, we do not
+    // want to fire a new Runner...
 
+    // The user requested non-interruptible mode for a reason, honor
+    // it and try to throw in this job.
+    if (non_interruptible_get())
+      raise_scheduling_error(msg);
+
+    CAPTURE_GLOBAL2(Exception, Scheduling);
     object::objects_type args;
     args << object::to_urbi(msg);
     sched::rJob child =
@@ -243,6 +242,7 @@ namespace runner
                       Scheduling->slot_get(SYMBOL(throwNew)),
                       SYMBOL(Scheduling),
                       args);
+    sched::Job::Collector collector(this);
     register_child(child, collector);
     child->start_job();
 
