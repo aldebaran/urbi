@@ -126,6 +126,8 @@ if test -d $kernel_builddir/src/.libs; then
       ;;
   esac
   export URBI_PATH
+  # Find the modules.
+  prependenv URBI_UOBJECT_PATH "$kernel_builddir/modules:"
 fi
 
 # Careful, do not add directory containing libuobject.
