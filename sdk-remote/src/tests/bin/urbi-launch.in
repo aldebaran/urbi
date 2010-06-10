@@ -10,6 +10,12 @@
 
 : ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT}
 
+# Whether the Kernel tree is available.
+has_kernel=false
+if test -d $kernel_builddir/src/.libs; then
+  has_kernel=true
+fi
+
 ###################### Common between urbi-launch.in and urbi.in: begin.
 
 set -e
@@ -111,14 +117,16 @@ export URBI_SHARE="$kernel_srcdir/share"
 # Find the SDK-Remote's uobjects.
 prependenv URBI_UOBJECT_PATH "$sdk_remote_builddir/src:"
 
-###################### Common between urbi-launch.in and urbi.in: end.
+# Find the noninstalled libraries.
+ld_path_add $libport_builddir/lib/*/.libs               \
+            $sdk_remote_builddir/*/.libs                \
+            $sdk_remote_builddir/src/liburbi/.libs
 
-# If this SDK-Remote is inside an Urbi SDK, then use that very Urbi
-# SDK, otherwise use the installed one.
-if test -d $kernel_builddir/src/.libs; then
+if $has_kernel; then
   urbi_lib PLUGIN "$kernel_builddir/src/.libs/libuobject"
   # Use the shipped Urbi files.
-  prependenv URBI_PATH "$kernel_srcdir/share:$kernel_builddir/share:"
+  prependenv URBI_PATH \
+    "$kernel_srcdir/share:$kernel_builddir/share:$kernel_builddir/modules:"
   case $(uname -o 2>/dev/null) in
     (Cygwin)
       # We use colon as separators, not semicolon.
@@ -128,12 +136,14 @@ if test -d $kernel_builddir/src/.libs; then
   export URBI_PATH
   # Find the modules.
   prependenv URBI_UOBJECT_PATH "$kernel_builddir/modules:"
+
+  ld_path_add $kernel_builddir/src/.libs
 fi
 
-# Careful, do not add directory containing libuobject.
-ld_path_add $libport_builddir/lib/*/.libs               \
-            $sdk_remote_builddir/*/.libs                \
-            $sdk_remote_builddir/src/liburbi/.libs
+# Bounce to the build-tree urbi-launch.
+setenv URBI_LAUNCH "$sdk_remote_builddir/src/tests/bin/urbi-launch$EXEEXT"
+
+###################### Common between urbi-launch.in and urbi.in: end.
 
 verbose "running $program $*"
 exec "$program" "$@"
