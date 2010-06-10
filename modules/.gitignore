@@ -1,7 +1,4 @@
 /Makefile.in
-/aclocal.m4
-/autom4te.cache
 /bootstrap.stamp
-/configure
 /modules.ac
 /modules.mk

@@ -1,1 +1,2 @@
-../submodules/modules/bootstrap
+#! /bin/sh
+exec build-aux/bin/bootstrap-modules
