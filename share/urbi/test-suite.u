@@ -66,6 +66,12 @@ class Global.camera: Loadable
 // A channel for synclines.
 var Global.syncline = Channel.new("syncline")|;
 
+// The test itself declares its status as failed.
+var Global.testFail = function(var message) {
+  echo(message);
+  System._exit(1)
+};
+
 // Too verbose when we launch another urbi from urbi.
 System.unsetenv("GD_LEVEL")|;
 
