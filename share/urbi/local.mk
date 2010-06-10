@@ -2,9 +2,9 @@ urbidir = $(brandsharedir)/urbi
 dist_urbi_DATA := $(call ls_files,share/urbi/*.u)
 
 nodist_urbi_DATA =				\
+  share/urbi/modules.u				\
   share/urbi/package-info.u			\
   share/urbi/platform.u
-  share/urbi/modules.u
 BUILT_SOURCES += $(nodist_urbi_DATA)
 
 
