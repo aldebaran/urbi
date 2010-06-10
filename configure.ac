@@ -144,13 +144,24 @@ WITH_XENOMAI
 # object/directory.
 AC_CHECK_HEADERS([sys/inotify.h])
 
+
+## --------- ##
+## modules.  ##
+## --------- ##
+
+m4_define([modules_prefix], [modules/])
+AC_SUBST([modules_srcdir], ['$(top_srcdir)/modules'])
+m4_include([modules/modules.ac])
+URBI_MODULAR_BUILD
+URBI_MODULE_REPORT
+AC_CONFIG_FILES([modules/Makefile])
+
+
 ## -------------- ##
 ## Sub packages.  ##
 ## -------------- ##
 
 AC_CONFIG_SUBDIRS([sdk-remote])
-AC_CONFIG_SUBDIRS([modules])
-URBI_APPEND_CONFIGUREFLAGS([--enable-modules=md5,ros])
 
 ## -------- ##
 ## Output.  ##

@@ -33,4 +33,8 @@ class System.Platform
   var compilation_mode_debug = @COMPILATION_MODE_DEBUG@;
   var compilation_mode_space = @COMPILATION_MODE_SPACE@;
   var compilation_mode_speed = @COMPILATION_MODE_SPEED@;
+
+  // Modules.
+  var enabledModules = @ENABLED_MODULES_U@|;
+  var disabledModules = @DISABLED_MODULES_U@|;
 };

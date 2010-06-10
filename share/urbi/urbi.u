@@ -73,7 +73,6 @@ load("urbi/kernel1.u");
 load("urbi/loadable.u");
 load("urbi/lobby.u");
 load("urbi/math.u");
-load("urbi/modules.u");
 load("urbi/mutex.u");
 load("urbi/package-info.u");
 load("urbi/path.u");
