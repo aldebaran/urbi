@@ -8,11 +8,9 @@
  * See the LICENSE file for more information.
  */
 
-var Global.enabledModules =
-  @ENABLED_MODULES_U@|;
+do (System.Platform)
+{
+  var this.enabledModules = @ENABLED_MODULES_U@|;
+  var this.disabledModules = @DISABLED_MODULES_U@|;
+}|;
 
-var Global.disabledModules =
-  @DISABLED_MODULES_U@|;
-
-clog << "Enabled modules:  " + enabledModules;
-clog << "Disabled modules: " + disabledModules;

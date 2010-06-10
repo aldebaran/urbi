@@ -67,9 +67,17 @@ class Global.camera: Loadable
 var Global.syncline = Channel.new("syncline")|;
 
 // The test itself declares its status as failed.
-var Global.testFail = function(var message) {
-  echo(message);
+function Global.testFail (var why)
+{
+  echo("Aborting this test: " + why);
   System._exit(1)
+};
+
+// Skip this test.
+function Global.testSkip (var why)
+{
+  cerr << "Skipping this test: " + why;
+  System._exit(176)
 };
 
 // Too verbose when we launch another urbi from urbi.
@@ -145,8 +153,7 @@ if (System.Platform.isWindows)
   {
     function init
     {
-      cerr << "Process is not supported under Windows";
-      System._exit(176)
+      testSkip("Process is not supported under Windows")
     };
   };
 
@@ -208,29 +215,22 @@ if (System.Platform.isWindows)
 function skip_if_space ()
 {
   if (System.Platform.compilation_mode_space)
-  {
-    cerr << "this test cannot run in space compilation-mode";
-    System._exit(176);
-  }
+    testSkip("cannot run in space compilation-mode";
 }|
 
 function skip_if_windows ()
 {
   if (System.Platform.isWindows)
-  {
-    cerr << "this test cannot run on Windows";
-    System._exit(176)
-  }
+    testSkip("cannot run on Windows");
 }|;
 
-// These would be override if there is a support for inotify.
-do(Directory)
+// These would be overridden if there is a support for inotify.
+do (Directory)
 {
   var fileCreated = Event.new;
   fileCreated.'waituntil' = function /* skip_if_no_inotify */
   {
-    cerr << "this test cannot run without inotify support";
-    System._exit(176)
+    testSkip("requires inotify support");
   }|;
 
   var fileDeleted = fileCreated;
