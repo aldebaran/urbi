@@ -376,17 +376,16 @@ namespace urbi
     static void
     load(const rObject& name, bool global)
     {
-      const std::string& filename = filename_get(name);
-
       libport::xlt_advise dl;
-      dl.ext().global(global).path()
-        .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"), ":");
-      dl.ext().path().push_back(
-        kernel::urbiserver->urbi_root_get().uobjects_path());
+      dl.ext()
+        .global(global);
+      (dl.path())
+        .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"), ":")
+        .push_back(kernel::urbiserver->urbi_root_get().uobjects_path());
       libport::xlt_handle handle;
       try
       {
-        handle = dl.open(filename);
+        handle = dl.open(filename_get(name));
       }
       catch(const libport::xlt_advise::exception& e)
       {
