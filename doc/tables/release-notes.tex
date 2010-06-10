@@ -28,6 +28,10 @@ This chapter lists the user-visible changes in \usdk releases.
   removed: \command{umake-engine}, \command{umake-fullengine},
   \command{umake-lib}, \command{umake-remote}.  Instead, use
   \command{umake}, see \autoref{sec:tools:umake}.
+\item On Windows \command{urbi-launch} could possibly miss module files to
+  load if the extension (\samp{.dll}) was not specified.  One may now
+  safely, run \samp{urbi-launch my-module} (instead of \samp{urbi-launch
+    my-module.dll} or \samp{urbi-launch my-module.so}) on all the platforms.
 \end{itemize}
 
 \subsection{Documentation}
