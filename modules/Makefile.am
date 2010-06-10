@@ -31,11 +31,6 @@ LIBUOBJECT_REMOTE_LIBS =						\
   $(sdk_remote_builddir)/src/libuobject/libuobject$(LIBSFX).la
 
 
-urbidir = $(brandsharedir)/urbi
-nodist_urbi_DATA =				\
-  urbi/modules.u
-BUILT_SOURCES += $(nodist_urbi_DATA)
-
 module_LTLIBRARIES =
 moduledir = $(urbi_uobjectsdir)
 include modules.mk
