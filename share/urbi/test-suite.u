@@ -215,7 +215,7 @@ if (System.Platform.isWindows)
 function skip_if_space ()
 {
   if (System.Platform.compilation_mode_space)
-    testSkip("cannot run in space compilation-mode";
+    testSkip("cannot run in space compilation-mode");
 }|
 
 function skip_if_windows ()
