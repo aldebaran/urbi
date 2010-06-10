@@ -31,10 +31,6 @@ URBI_SERVER = urbi-launch$(EXEEXT) --start --
 k2-check:
 	$(MAKE) check TESTS_DIRS=2.x
 
-# k2 is under heavy development, don't catch SEGV and the like as hard errors
-# while running make check.
-ENABLE_HARD_ERRORS = false
-
 # Do not remove this one, it is failing on purpose.
 XFAIL_TESTS +=					\
   0.x/2-xfail.chk
