@@ -41,6 +41,6 @@ m4_include([modules.ac])
 
 URBI_MODULAR_BUILD
 URBI_MODULE_REPORT
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile ../share/urbi/modules.u])
 
 AC_OUTPUT
