@@ -21,12 +21,11 @@ EXTRA_DIST += bootstrap
 URBI_SDK_CPPFLAGS =				\
   $(LIBPORT_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
-  -I$(top_srcdir)/../include			\
-  -I$(top_srcdir)/../sdk-remote/include
+  -I$(top_srcdir)/include			\
+  -I$(top_srcdir)/sdk-remote/include
 
 # Needed to compile UObjects on Windows.
-kernel_builddir = $(top_builddir)/..
-sdk_remote_builddir = $(kernel_builddir)/sdk-remote
+sdk_remote_builddir = $(top_builddir)/sdk-remote
 LIBUOBJECT_REMOTE_LIBS =						\
   $(sdk_remote_builddir)/src/libuobject/libuobject$(LIBSFX).la
 
