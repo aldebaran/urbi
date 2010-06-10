@@ -9,7 +9,10 @@
  */
 
 var Global.enabledModules =
-  @ENABLED_MODULES_U@;
+  @ENABLED_MODULES_U@|;
 
 var Global.disabledModules =
-  @DISABLED_MODULES_U@;
+  @DISABLED_MODULES_U@|;
+
+clog << "Enabled modules:  " + enabledModules;
+clog << "Disabled modules: " + disabledModules;
