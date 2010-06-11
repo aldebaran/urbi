@@ -28,6 +28,7 @@ DIST_SUBDIRS = $(SUBDIRS) bison
 # build-aux.
 EXTRA_DIST +=					\
   build-aux/bin/bison++.in			\
+  build-aux/bin/bootstrap-modules		\
   build-aux/bin/flex++.in			\
   build-aux/bin/fuse-switch			\
   build-aux/bin/move-if-change			\

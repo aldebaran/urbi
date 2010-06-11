@@ -149,7 +149,6 @@ AC_CHECK_HEADERS([sys/inotify.h])
 ## modules.  ##
 ## --------- ##
 
-m4_define([modules_prefix], [modules/])
 AC_SUBST([modules_srcdir], ['$(top_srcdir)/modules'])
 m4_include([modules/modules.ac])
 URBI_MODULAR_BUILD

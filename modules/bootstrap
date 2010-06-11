@@ -1,2 +1,2 @@
 #! /bin/sh
-exec build-aux/bin/bootstrap-modules
+exec ../build-aux/bin/bootstrap-modules 'modules/'

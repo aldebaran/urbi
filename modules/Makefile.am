@@ -6,12 +6,8 @@
 ##
 ## See the LICENSE file for more information.
 
-include build-aux/init.mk
-include build-aux/libport.mk
-
-ACLOCAL_AMFLAGS = -I build-aux
-
-EXTRA_DIST += bootstrap
+include $(top_srcdir)/build-aux/init.mk
+include $(top_srcdir)/build-aux/libport.mk
 
 # This is what modules' configure.ac defines as the variable that
 # points to the install headers.  We use a non-installed kernel.
@@ -28,7 +24,6 @@ URBI_SDK_CPPFLAGS =				\
 sdk_remote_builddir = $(top_builddir)/sdk-remote
 LIBUOBJECT_REMOTE_LIBS =						\
   $(sdk_remote_builddir)/src/libuobject/libuobject$(LIBSFX).la
-
 
 module_LTLIBRARIES =
 moduledir = $(urbi_uobjectsdir)
