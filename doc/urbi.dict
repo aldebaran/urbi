@@ -1,4 +1,4 @@
-personal_ws-1.1 en 982 utf-8
+personal_ws-1.1 en 991 utf-8
 aaa
 abc
 abcdef
@@ -35,6 +35,7 @@ american
 ampli
 angleMax
 angleMin
+angTag
 animaloid
 aoba
 api
@@ -136,6 +137,7 @@ cd
 cerr
 channelName
 chargeStop
+chatTag
 checkMaster
 chk
 chmod
@@ -279,6 +281,7 @@ freezeif
 Frodo
 fromAscii
 frontleft
+fullengine
 func
 functionalities
 gcc
@@ -298,6 +301,7 @@ getLocalSlot
 getMine
 getName
 getNodes
+getNumSubscribers
 getOne
 getPeriod
 getPosition
@@ -504,6 +508,7 @@ monomethods
 mooh
 Moulard
 msg
+msgs
 MSI
 MSVC
 MSVC's
@@ -673,10 +678,13 @@ ros
 roscore
 roscpp
 roslib
+rosmake
 rosout
+rosrun
 ROSService
 ROSTools
 ROSTopic
+ROSTopics
 RotationalMotor
 RotationalSpeedMotor
 rshift
@@ -793,6 +801,7 @@ targetName
 targetObject
 TCP
 te
+teleport
 TemperatureSensor
 TerminateException
 testPi
@@ -829,6 +838,7 @@ trunc
 tts
 tuple
 tuples
+turtlesim
 TwoMachineFactory
 tx
 txt
@@ -961,6 +971,7 @@ woot
 writeToVar
 xABCDEF
 xabcdef
+xabcdefg
 xADDR
 xb
 xFF
