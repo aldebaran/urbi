@@ -323,11 +323,8 @@ namespace runner
                               const std::string& chan)
   {
     rforeach (const call_type& c, bt)
-    {
-      std::ostringstream o;
-      o << "!!!    called from: " << c;
-      send_message(chan, o.str());
-    }
+      send_message(chan,
+                   libport::format("!!!    called from: %s", c));
   }
 
   void
@@ -347,9 +344,8 @@ namespace runner
       if (c.second)
         loc = new object::Location(c.second.get());
       rObject frame =
-        StackFrame
-        ->call("new", new object::String(c.first.name_get()), loc);
-      res.push_back(frame_type(frame));
+        StackFrame->call("new", new object::String(c.first.name_get()), loc);
+      res << frame_type(frame);
     }
     return res;
   }
