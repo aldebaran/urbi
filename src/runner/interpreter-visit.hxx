@@ -16,7 +16,6 @@
 # include <libport/bind.hh>
 # include <libport/compilation.hh>
 # include <libport/compiler.hh>
-# include <libport/contract.hh>
 # include <libport/finally.hh>
 # include <libport/foreach.hh>
 # include <libport/format.hh>

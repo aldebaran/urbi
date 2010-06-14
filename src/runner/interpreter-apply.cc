@@ -121,9 +121,9 @@ namespace runner
                      const rObject& call_message,
                      boost::optional<ast::loc> loc)
   {
-    precondition(function);
-    precondition(!args.empty());
-    precondition(args.front());
+    aver(function);
+    aver(!args.empty());
+    aver(args.front());
 
     bool reg = !msg.empty() && loc && !object::is_system_location(*loc);
 
