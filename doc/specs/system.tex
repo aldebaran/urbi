@@ -16,21 +16,12 @@ Details on the architecture the \urbi server runs on.
 
 \subsection{Slots}
 \begin{urbiscriptapi}
-%% \item[breakpoint]
-%% \item[currentRunner]
-%% \item[jobs]
-%% \item[nonInterruptible]
-%% \item[registerAtJob]
-%% \item[resetStats]
-%% \item[searchPath]
-%% \item[spawn]
-%% \item[stats]
-%% \item[stopall]
 \item[_exit](<status>)%
   Shut the server down brutally: the connections are not closed, and
   the resources are not explicitly released (the operating system
   reclaims most of them: memory, file descriptors and so forth).
   Architecture dependent.
+
 
 \item[aliveJobs] The number of detached routines currently running.
 \begin{urbiscript}
@@ -49,6 +40,7 @@ Details on the architecture the \urbi server runs on.
 };
 \end{urbiscript}
 
+
 \item[arguments] The list of the command line arguments passed to the user
   script.  This is especially useful in scripts.
 \begin{shell}[alsolanguage={[Interactive]Urbi}]
@@ -64,15 +56,6 @@ $ ./echo -x 12 -v "foo"
 [00000172] ["-x", "12", "-v", "foo"]
 \end{shell}
 
-\item[assert_](<assertion>, <message>)%
-  If \var{assertion} does not evaluate to true, throw the failure
-  \var{message}.
-\begin{urbiscript}
-assert_(true,       "true failed");
-assert_(42,         "42 failed");
-assert_(1 == 1 + 1, "one is not two");
-[00000001:error] !!! failed assertion: one is not two
-\end{urbiscript}
 
 \item['assert'](<assertion>)%
   Unless \refSlot{ndebug} is true, throw an error if
@@ -85,8 +68,21 @@ assert_(1 == 1 + 1, "one is not two");
 [00000002:error] !!! failed assertion: 1.'=='(1.'+'(1))
 \end{urbiscript}
 
+
+\item[assert_](<assertion>, <message>)%
+  If \var{assertion} does not evaluate to true, throw the failure
+  \var{message}.
+\begin{urbiscript}
+assert_(true,       "true failed");
+assert_(42,         "42 failed");
+assert_(1 == 1 + 1, "one is not two");
+[00000001:error] !!! failed assertion: one is not two
+\end{urbiscript}
+
+
 \item[assert_op](<operator>, <lhs>, <rhs>)%
   Deprecated, use \lstinline|assert| instead, see \autoref{sec:assertions}.
+
 
 \item[backtrace]%
   Display the call stack on the channel \code{backtrace}. \experimental
@@ -104,6 +100,13 @@ outermost;
 //#pop
 \end{urbiscript}
 
+
+%% \item[breakpoint]
+
+
+%% \item[currentRunner]
+
+
 \item[cycle]%
   The number of execution cycles since the beginning. \experimental
 \begin{urbiscript}
@@ -114,6 +117,7 @@ outermost;
   assert(first == second);
 };
 \end{urbiscript}
+
 
 \item[eval](<source>)%
   Evaluate the \us \var{source}, and return its result.  The
@@ -155,6 +159,7 @@ catch (var e)
 };
 \end{urbiscript}
 
+
 \item[getenv](<name>)%
   Return the value of the environment variable \var{name} as a
   \refObject{String} if set, \refObject{nil} otherwise.  See also
@@ -163,6 +168,10 @@ catch (var e)
 getenv("UndefinedEnvironmentVariable").isNil;
 !getenv("PATH").isNil;
 \end{urbiassert}
+
+
+%% \item[jobs]
+
 
 \item[load](<file>)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}), and
@@ -174,6 +183,7 @@ System.system("echo '123;' >123.u") == 0;
 load("123.u") == 123;
 \end{urbiassert}
 
+
 \item[loadFile](<file>)%
   Load the \us file \var{file}.  Throw a \refSlot[Exception]{FileNotFound}
   error if the file cannot be found.  Return the last value of the file.
@@ -183,6 +193,7 @@ System.system("echo '123;' >123.u") == 0;
 loadFile("123.u") == 123;
 \end{urbiassert}
 
+
 \item[loadLibrary](<library>)%
   Load the library \var{library}, to be found in the
   \env{URBI\_UOBJECT\_PATH} search-path (see
@@ -191,14 +202,18 @@ loadFile("123.u") == 123;
   The \Cxx symbols are made available to the other \Cxx components.  See also
   \refSlot{loadModule}.
 
+
 \item[loadModule](<module>)%
   Load the \UObject \var{module}.  Same as \refSlot{loadLibrary}, except
   that the low-level \Cxx symbols are not made ``global'' (in the sense of
   the shared library loader).
 
+
 \item[lobbies] Bounce to \refSlot[Lobby]{instances}.
 
+
 \item[lobby] Bounce to \refSlot[Lobby]{lobby}.
+
 
 \item[maybeLoad](<file>, <channel> = Channel.null)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}).
@@ -211,6 +226,7 @@ System.system("echo '123;' >123.u") == 0;
 maybeLoad("123.u") == 123;
 maybeLoad("u.123").isVoid;
 \end{urbiassert}
+
 
 \item[ndebug] If true, do not evaluate the assertions.  See
   \autoref{sec:assertions}.
@@ -231,7 +247,11 @@ assert(one);
 \end{urbiscript}
 
 
+%% \item[nonInterruptible]
+
+
 \item[PackageInfo] See \refObject{System.PackageInfo}.
+
 
 \item[period] The \dfn{period} of the \urbi kernel.  Influences the
   trajectories (\refObject{TrajectoryGenerator}), and the \UObject
@@ -240,7 +260,9 @@ assert(one);
 System.period == 20ms;
 \end{urbiassert}
 
+
 \item[Platform] See \refObject{System.Platform}.
+
 
 \item[programName] The path under which the \urbi process was called.
   This is typically \file{.../urbi} (\autoref{sec:tools:urbi}) or
@@ -250,7 +272,9 @@ Path.new(System.programName).basename
   in ["urbi", "urbi.exe", "urbi-launch", "urbi-launch.exe"];
 \end{urbiassert}
 
+
 \item[reboot] Restart the \urbi server.  Architecture dependent.
+
 
 \item[redefinitionMode] Switch the current job in redefinition mode
   until the end of the current scope.  While in redefinition mode,
@@ -272,6 +296,16 @@ var Global.x = 0;
 [00000003:error] !!! slot redefinition: x
 \end{urbiscript}
 
+
+%% \item[registerAtJob]
+
+
+%% \item[resetStats]
+
+
+\item[scopeTag] Bounce to \refSlot[Tag]{scope}.
+
+
 \item[searchFile](<file>)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}) and
   return its \refObject{Path}.  Throw a \refSlot[Exception]{FileNotFound}
@@ -280,6 +314,10 @@ var Global.x = 0;
 System.system("echo '123;' >123.u") == 0;
 searchFile("123.u") == Path.cwd / Path.new("123.u");
 \end{urbiassert}
+
+
+%% \item[searchPath]
+
 
 \item[setenv](<name>, <value>)%
   Set the environment variable \var{name} to
@@ -306,15 +344,6 @@ setenv("MyVar", "") == "";
 getenv("MyVar").isNil == Platform.isWindows;
 \end{urbiassert}
 
-\item[scopeTag] Bounce to \refSlot[Tag]{scope}.
-
-\item[sleep](<duration>)%
-  Suspend the execution for \var{duration} seconds.  No CPU cycle is
-  wasted during this wait.
-
-\begin{urbiassert}
-(time - {sleep(1s); time}).round == -1;
-\end{urbiassert}
 
 \item[shiftedTime] Return the number of seconds elapsed since the
   \urbi server was launched.  Contrary to \refSlot{time},
@@ -336,8 +365,28 @@ getenv("MyVar").isNil == Platform.isWindows;
   };
 \end{urbiassert}
 
+
 \item[shutdown] Have the \urbi server shut down.  All the connections
   are closed, the resources are released.  Architecture dependent.
+
+
+\item[sleep](<duration>)%
+  Suspend the execution for \var{duration} seconds.  No CPU cycle is
+  wasted during this wait.
+
+\begin{urbiassert}
+(time - {sleep(1s); time}).round == -1;
+\end{urbiassert}
+
+
+%% \item[spawn]
+
+
+%% \item[stats]
+
+
+%% \item[stopall]
+
 
 \item[system](<command>)%
   Ask the operating system to run the \var{command}.  This is
@@ -377,6 +426,7 @@ System.system("exit 23") >> 8
     res.round;
   };
 \end{urbiassert}
+
 
 \item[unsetenv](<name>)%
   Undefine the environment variable \var{name}, return its previous value.
