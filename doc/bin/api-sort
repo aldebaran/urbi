@@ -62,27 +62,29 @@ sub transform ($\$)
     <
       verbose 1, "Got an urbiscriptapi section";
       my $body = $1;
-      $body =~ s{(^[% ]*\\item\[(.*?)\].*?)
+      $body =~ s{(
+                   ^[% ]*\\item
+                   (?:\[(?<name>.*?)\]
+                     |\s*\\lstinline\|(?<name>.*?)\()
+                   .*?
+                 )
                  (?=^[% ]*\\item|\z)}
          {
-           # Sort "'assert'" as "assert", not at "'".
-           my ($k, $v) = ($2, $1);
-           verbose 1, "Key: $k";
-           $v =~ s/\s+\z//g;
-           $slot{$k} = $v;
+           verbose 1, "Key: $+{name}";
+           $slot{$+{name}} = $1;
            ""
          }gexsm;
 
-  map { verbose 1, "((($_)))" } (sort slot_cmp keys %slot);
-
        # This is what was not recognized.
-       $body =~ s/\s+\z//g;
        $slot{"ZZZZZ"} = $body;
+
+       # Trailing spaces;
+       map { s/\s+\z//g } values %slot;
 
        ("\\begin{urbiscriptapi}\n"
         . join ("\n\n\n",
                 map { $slot{$_} } (sort slot_cmp keys %slot))
-        . "\\end{urbiscriptapi}");
+        . "\n\\end{urbiscriptapi}");
     >xsge;
   $$contents_ref;
 }

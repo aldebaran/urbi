@@ -83,12 +83,46 @@ An extra comma can be added at the end of the list.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item['=='](<that>)%
+  Whether \this equals \var{that}.  This suppose that elements
+  contained inside the dictionary are \lstinline|Comparable|.
+\begin{urbiassert}
+[ => ] == [ => ];
+["a" => 1, "b" => 2] == ["b" => 2, "a" => 1];
+\end{urbiassert}
+
+
+\item \lstinline|[](\var{key})|\\
+  Syntactic sugar for \lstinline|get(\var{key})|.
+
+\begin{urbiassert}
+["one" => 1]["one"] == 1;
+\end{urbiassert}
+
+
+\item \lstinline|[]=(\var{key}, \var{value})|\\
+  Syntactic sugar for \lstinline|set(\var{key}, \var{value})|, but
+  returns \var{value}.
+
+\begin{urbiscript}
+{
+  var d = ["one" =>"2"];
+  assert
+  {
+    (d["one"] = 1) == 1;
+    d["one"] == 1;
+  };
+};
+\end{urbiscript}
+
+
 \item[asBool]
   Negation of \refSlot{empty}.
 \begin{urbiassert}
 [=>].asBool == false;
 ["key" => "value"].asBool == true;
 \end{urbiassert}
+
 
 \item[asList]
   Return the contents of the dictionary as a \refObject{Pair} list
@@ -111,12 +145,14 @@ An extra comma can be added at the end of the list.
 };
 \end{urbiscript}
 
+
 \item[asString] A string representing the dictionary.  There is no guarantee
   on the order of the output.
 \begin{urbiassert}
                 [=>].asString == "[ => ]";
 ["a" => 1, "b" => 2].asString == "[\"a\" => 1, \"b\" => 2]";
 \end{urbiassert}
+
 
 \item[clear]
   Empty the dictionary.
@@ -125,6 +161,7 @@ An extra comma can be added at the end of the list.
 ["one" => 1].clear.empty;
 \end{urbiassert}
 
+
 \item[empty]
   Whether the dictionary is empty.
 
@@ -132,6 +169,7 @@ An extra comma can be added at the end of the list.
 [=>].empty == true;
 ["key" => "value"].empty == false;
 \end{urbiassert}
+
 
 \item[erase](<key>)
   Remove the mapping for \lstinline|\var{key}|.
@@ -142,6 +180,8 @@ An extra comma can be added at the end of the list.
 
 %% commented until a consensus is reached.
 %%
+
+
 %% \item[extend](<ext>)
 %%   Extend with the dictionary \lstinline|\var{ext}|.
 %%   Return the value of the new dictionary.
@@ -208,6 +248,7 @@ do (["one" => 1])
 "two" not in ["one" => 1];
 \end{urbiassert}
 
+
 \item[init](<key1>, <value1>, ...)%~\\
   Insert the mapping from \lstinline|\var{key1}| to
   \lstinline|\var{value1}| and so forth.
@@ -216,6 +257,7 @@ do (["one" => 1])
 Dictionary.clone.init("one", 1, "two", 2);
 [00000000] ["one" => 1, "two" => 2]
 \end{urbiscript}
+
 
 \item[keys]\\
   The list of all the keys.  No particular order is ensured.  Since
@@ -235,6 +277,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 };
 \end{urbiscript}
 
+
 \item[matchAgainst](<handler>, <pattern>)
   Pattern matching on members.  See \refObject{Pattern}.
 
@@ -247,6 +290,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 };
 \end{urbiscript}
 
+
 \item[set](<key>, <value>)
   Map \lstinline|\var{key}| to \lstinline|\var{value}| and return
   \this so that invocations to \lstinline|set| can be
@@ -256,6 +300,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 [=>].set("one", 2).set("one", 1);
 [00000000] ["one" => 1]
 \end{urbiscript}
+
 
 \item[size]
   Number of element in the dictionary.
@@ -273,35 +318,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 };
 \end{urbiscript}
 
-\item \lstinline|[]=(\var{key}, \var{value})|\\
-  Syntactic sugar for \lstinline|set(\var{key}, \var{value})|, but
-  returns \var{value}.
 
-\begin{urbiscript}
-{
-  var d = ["one" =>"2"];
-  assert
-  {
-    (d["one"] = 1) == 1;
-    d["one"] == 1;
-  };
-};
-\end{urbiscript}
-
-\item \lstinline|[](\var{key})|\\
-  Syntactic sugar for \lstinline|get(\var{key})|.
-
-\begin{urbiassert}
-["one" => 1]["one"] == 1;
-\end{urbiassert}
-
-\item['=='](<that>)%
-  Whether \this equals \var{that}.  This suppose that elements
-  contained inside the dictionary are \lstinline|Comparable|.
-\begin{urbiassert}
-[ => ] == [ => ];
-["a" => 1, "b" => 2] == ["b" => 2, "a" => 1];
-\end{urbiassert}
 
 \end{urbiscriptapi}
 
