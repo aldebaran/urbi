@@ -118,6 +118,12 @@ export URBI_SHARE="$kernel_srcdir/share"
 prependenv URBI_UOBJECT_PATH "$sdk_remote_builddir/src:"
 
 # Find the noninstalled libraries.
+#
+# Do *not* add a path to either libuobjects, since (at least on OS X),
+# even if you pass an absolute path to dlopen, it first takes the base
+# name and makes a DYLD_LIBRARY_PATH look up.  Which is disastrous in
+# our case, since we have two different libuobject that differ only by
+# their path.
 ld_path_add $libport_builddir/lib/*/.libs               \
             $sdk_remote_builddir/*/.libs                \
             $sdk_remote_builddir/src/liburbi/.libs
@@ -136,8 +142,6 @@ if $has_kernel; then
   export URBI_PATH
   # Find the modules.
   prependenv URBI_UOBJECT_PATH "$kernel_builddir/modules:"
-
-  ld_path_add $kernel_builddir/src/.libs
 fi
 
 # Bounce to the build-tree urbi-launch.
