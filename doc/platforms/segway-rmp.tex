@@ -1,0 +1,83 @@
+%% Copyright (C) 2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\chapter{Segway RMP}
+\label{sec:segway-rmp}
+
+The Segway \dfn{RMP} (Robotic Mobility Platform) is a robotic platform based
+on the Segway Personal Transporter.  \urbi for Segway RMP can be downloaded
+from \url{http://www.urbiforge.com/index.php/Robots/Segway}.
+
+\section{RMP}
+\defObject{RMP}
+
+The UObject RMP provides the interface from \urbi.
+
+\subsection{Instantiation}
+
+\begin{urbiunchecked}
+var rmp = new RMP(period);
+\end{urbiunchecked}
+
+\var{period} is the period, in milliseconds, at which orders will be sent
+and coders will be read.
+
+\subsection{Variables}
+
+\paragraph{Raw effector variables}
+
+\begin{urbiscriptapi}
+\item[forwardSpeed] forward speed in meters per second.
+\item[yawSpeed] yaw speed in radian per second.
+\end{urbiscriptapi}
+
+\paragraph{Raw sensors}
+Current speed and coder values.
+\begin{urbiscriptapi}
+\item[forwardSpeed]
+\item[yawSpeed]
+\item[leftSpeed]
+\item[rightSpeed]
+\item[forward]
+\item[yaw]
+\item[left]
+\item[right]
+\end{urbiscriptapi}
+
+\paragraph{Calibration}
+
+\urbi unit per coder unit coefficients.
+
+\begin{urbiscriptapi}
+\item[forwardSpeedCoeff]
+\item[yawSpeedCoeff]
+\item[leftSpeedCoeff]
+\item[rightSpeedCoeff]
+\item[forwardCoeff]
+\item[yawCoeff]
+\item[leftCoeff]
+\item[rightCoeff]
+\end{urbiscriptapi}
+
+The file \file{usegway.u} contains approximate values for meter, seconds,
+radian units.
+
+
+\section{GSRAPI compliance}
+
+The file \file{rmp.u} will initialize the RMP UObject and give it a Gostai
+Standard Robotic API compliant interface.
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
