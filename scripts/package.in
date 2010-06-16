@@ -44,7 +44,7 @@ PROJECT='@PACKAGE_TARNAME@'
 URBI_HOST_COMP='@URBI_HOST_COMP@'
 URBI_HOST_CPU='@URBI_HOST_CPU@'
 URBI_HOST_OS='@URBI_HOST_OS@'
-abs_top_buildir='@abs_top_builddir@'
+abs_top_builddir='@abs_top_builddir@'
 abs_top_srcdir='@abs_top_srcdir@'
 buildprefix='@prefix@'
 host='@host@'
@@ -89,7 +89,7 @@ check_equal ()
 check_equal ARCH         URBI_HOST_CPU
 check_equal COMP         URBI_HOST_COMP
 # check_equal OS           URBI_HOST_OS
-check_equal builddir     abs_top_buildir
+check_equal builddir     abs_top_builddir
 check_equal prefix       buildprefix
 check_equal release_mode COMPILATION_MODE_RELEASE
 check_equal srcdir       abs_top_srcdir
