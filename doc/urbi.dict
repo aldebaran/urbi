@@ -1,4 +1,4 @@
-personal_ws-1.1 en 991 utf-8
+personal_ws-1.1 en 1006 utf-8
 aaa
 abc
 abcdef
@@ -213,6 +213,7 @@ dumpState
 dyld
 dylib
 dynamixel
+Dynamixels
 eachBg
 eachi
 eae
@@ -276,6 +277,9 @@ FormatInfo
 formatter
 Formatters
 fortyTwo
+forwardCoeff
+forwardSpeed
+forwardSpeedCoeff
 fPIC
 freezeif
 Frodo
@@ -299,23 +303,16 @@ getLazyLocalSlot
 getLine
 getLocalSlot
 getMine
-getName
-getNodes
-getNumSubscribers
 getOne
 getPeriod
 getPosition
 getProperty
 getSender
-getService
-getServices
 getSlot
 getStackFrame
 getStats
 getTarget
 gettext
-getTopic
-getTopics
 getUObjectHub
 getVal
 getWidth
@@ -330,6 +327,7 @@ Gostai's
 goto
 GraphViz
 graphviz
+GSRAPI
 gyrometer
 GyroSensor
 gyroX
@@ -432,6 +430,9 @@ le
 ledL
 ledR
 leds
+leftCoeff
+leftSpeed
+leftSpeedCoeff
 Levenshtein
 lhs
 libboost
@@ -497,6 +498,7 @@ methodToFunction
 microL
 microR
 middleware
+Mindstorms
 minExponent
 mingw
 mk
@@ -567,6 +569,7 @@ notifyAccess
 notifyChange
 Nottale
 num
+numSubscribers
 o's
 ObjectTracker
 ok
@@ -672,7 +675,11 @@ rf
 rgb
 RGBLed
 rhs
+rightCoeff
+rightSpeed
+rightSpeedCoeff
 rlwrap
+rmp
 robotis
 ros
 roscore
@@ -704,6 +711,7 @@ sdk
 searchFile
 searchPath
 SEGVs
+segway
 sendbin
 sep
 sequentiality
@@ -916,6 +924,7 @@ urbistarter
 URegister
 UReturn
 usb
+usegway
 USensor
 uservars
 USetTimer
@@ -943,6 +952,7 @@ vcredist
 vcxx
 versa
 verylightgray
+VEXplorer
 VideoIn
 VoiceXML
 voicexml
@@ -981,6 +991,9 @@ xml
 xsltproc
 xvjf
 yaml
+yawCoeff
+yawSpeed
+yawSpeedCoeff
 yfov
 yourservice
 yuv
