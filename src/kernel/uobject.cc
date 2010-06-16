@@ -98,7 +98,11 @@ namespace urbi {
                         UAutoValue& v2,
                         UAutoValue& v3,
                         UAutoValue& v4,
-                        UAutoValue& v5);
+                        UAutoValue& v5,
+                        UAutoValue& v6,
+                        UAutoValue& v7,
+                        UAutoValue& v8
+                        );
       virtual UObjectMode getRunningMode() const;
       virtual std::pair<int, int> kernelVersion() const;
       virtual void yield() const;
@@ -832,7 +836,11 @@ namespace urbi
                              UAutoValue& v2,
                              UAutoValue& v3,
                              UAutoValue& v4,
-                             UAutoValue& v5)
+                             UAutoValue& v5,
+                             UAutoValue& v6,
+                             UAutoValue& v7,
+                             UAutoValue& v8
+                             )
     {
       LOCK_KERNEL;
       StringPair p = split_name(object);
@@ -844,6 +852,9 @@ namespace urbi
       ARG(3);
       ARG(4);
       ARG(5);
+      ARG(6);
+      ARG(7);
+      ARG(8);
       o->call(SYMBOL(emit), args);
     }
 
