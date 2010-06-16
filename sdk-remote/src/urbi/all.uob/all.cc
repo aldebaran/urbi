@@ -22,10 +22,16 @@ class all: public urbi::UObject
 {
 public:
   typedef urbi::UObject super_type;
+  pthread_t mainthread;
 
+  inline void threadCheck()
+  {
+    aver(mainthread == pthread_self());
+  }
   all(const std::string& name)
     : urbi::UObject(name)
   {
+    mainthread = pthread_self();
     if (getenv("CTOR_EXCEPTION") &&
         !strcmp(getenv("CTOR_EXCEPTION"), "true"))
     throw std::runtime_error("constructor failure");
@@ -121,20 +127,24 @@ public:
 
   int setBypassNotifyChangeBinary(const std::string& name)
   {
+    threadCheck();
     UNotifyChange(name, &all::onBinaryBypass);
     return 0;
   }
   int setBypassNotifyChangeImage(const std::string& name)
   {
+    threadCheck();
     UNotifyChange(name, &all::onImageBypass);
     return 0;
   }
   int markBypass(int id, bool state)
   {
+    threadCheck();
     return vars[id]->setBypass(state);
   }
   int onBinaryBypass(urbi::UVar& var)
   {
+    threadCheck();
     const urbi::UBinary& cb = var;
     std::cerr << "onbin cptr " << cb.common.data << std::endl;
     urbi::UBinary& b = const_cast<urbi::UBinary&>(cb);
@@ -144,6 +154,7 @@ public:
   }
   int onImageBypass(urbi::UVar& var)
   {
+    threadCheck();
     const urbi::UImage& cb = var;
     std::cerr << "onimg cptr " << (void*)cb.data << std::endl;
     urbi::UImage& b = const_cast<urbi::UImage&>(cb);
@@ -153,6 +164,7 @@ public:
   }
   std::string selfWriteB(int idx, const std::string& content)
   {
+    threadCheck();
     urbi::UBinary b;
     b.type = urbi::BINARY_IMAGE;
     // Dup since we want to test no-copy op: the other end will write.
@@ -167,6 +179,7 @@ public:
   }
   std::string selfWriteI(int idx, const std::string& content)
   {
+    threadCheck();
     urbi::UImage i;
     i.data = (unsigned char*)strdup(content.c_str());
     std::cerr << "writeI cptr " << (void*)i.data << std::endl;
@@ -179,6 +192,7 @@ public:
   }
   int writeOwnByName(const std::string& name, int val)
   {
+    threadCheck();
     urbi::UVar v(__name + "." + name);
     v = val;
     return 0;
@@ -186,6 +200,7 @@ public:
 
   int urbiWriteOwnByName(const std::string& name, int val)
   {
+    threadCheck();
     std::stringstream ss;
     ss << __name << "." << name << " = " << val << ";";
     send(ss.str());
@@ -194,6 +209,7 @@ public:
 
   std::string typeOf(const std::string& name)
   {
+    threadCheck();
     urbi::UVar v(name);
     v.syncValue();
     return v.val().format_string();
@@ -201,35 +217,41 @@ public:
 
   int init(bool fail)
   {
+    threadCheck();
     initCalled = 1;
     return fail ? 1 : 0;
   }
 
   int setOwned(int id)
   {
+    threadCheck();
     UOwned(*vars[id]);
     return 0;
   }
 
   int setNotifyChange(int id)
   {
+    threadCheck();
     UNotifyChange(*vars[id], &all::onChange);
     return 0;
   }
 
   int setNotifyChangeByUVar(urbi::UVar& v)
   {
+    threadCheck();
     UNotifyChange(v, &all::onChange);
     return 0;
   }
   int setNotifyAccess(int id)
   {
+    threadCheck();
     UNotifyAccess(*vars[id], &all::onAccess);
     return 0;
   }
 
   int setNotifyChangeByName(const std::string& name)
   {
+    threadCheck();
     UNotifyChange(name, &all::onChange);
     return 0;
   }
@@ -237,33 +259,39 @@ public:
 
   int read(int id)
   {
+    threadCheck();
     int v = *vars[id];
     return v;
   }
   int write(int id, int val)
   {
+    threadCheck();
     *vars[id] = val;
     return val;
   }
   void invalidWrite()
   {
+    threadCheck();
     urbi::UVar v;
     v = 12;
   }
   void invalidRead()
   {
+    threadCheck();
     urbi::UVar v;
     int i = v;
     (void)i;
   }
   int readByName(const std::string &name)
   {
+    threadCheck();
     urbi::UVar v(name);
     return v;
   }
 
   int writeByName(const std::string& name, int val)
   {
+    threadCheck();
     urbi::UVar v(name);
     v = val;
     return val;
@@ -271,12 +299,14 @@ public:
 
   int writeByUVar(urbi::UVar v, urbi::UValue val)
   {
+    threadCheck();
     v = val;
     return 0;
   }
 
   int onChange(urbi::UVar& v)
   {
+    threadCheck();
     int val = v;
     lastChange = v.get_name();
     lastChangeVal = val;
@@ -290,6 +320,7 @@ public:
 
   int onAccess(urbi::UVar& v)
   {
+    threadCheck();
     static int val = 0;
     lastAccess = v.get_name();
     val++;
@@ -306,6 +337,7 @@ public:
   void
   sendEvent()
   {
+    threadCheck();
     ev.emit();
   }
 
@@ -332,6 +364,7 @@ public:
   urbi::UList
   readProps(const std::string& name)
   {
+    threadCheck();
     GD_CATEGORY(all);
     urbi::UVar v(name);
     urbi::UList res;
@@ -358,6 +391,7 @@ public:
 
   int writeProps(const std::string &name, double val)
   {
+    threadCheck();
     urbi::UVar v(name);
     v.rangemin = val;
     v.rangemax = val;
@@ -373,6 +407,7 @@ public:
 
   int writeD(const std::string &name, double val)
   {
+    threadCheck();
     GD_CATEGORY(all);
     GD_FINFO_DEBUG("writeD %s", name);
     urbi::UVar v(name);
@@ -488,6 +523,7 @@ public:
   /** Test function parameter and return value **/
   double transmitD(double v)
   {
+    threadCheck();
     return -(double)v;
   }
 
@@ -543,6 +579,7 @@ public:
 
   int sendString(const std::string& s)
   {
+    threadCheck();
     send(s.c_str());
     return 0;
   }
@@ -579,6 +616,7 @@ public:
 
   std::string uobjectName(UObject* n)
   {
+    threadCheck();
     if (!n)
       return std::string();
     else
@@ -593,6 +631,7 @@ public:
   void makeCall(const std::string& obj, const std::string& func,
                 urbi::UList args)
   {
+    threadCheck();
      switch(args.size())
      {
      case 0:

@@ -203,6 +203,11 @@ namespace urbi
                                 "class " << owner_->__name << "{}");
       URBI_SEND_PIPED_COMMAND_C((*client),
                                 "external object " << owner_->__name);
+      // Bind update, we need it since we use a dummy message locally generated
+      // to trigger the periodic call.
+      createUCallback(*owner, 0, "function", owner, &UObject::update,
+                      owner->__name + ".update");
+
       // At this point the child class constructor is called, and will
       // also send piped commands.
       // Then the starter will call instanciated() which will send a semicolon.
@@ -241,13 +246,18 @@ namespace urbi
     {
       if (0 < period)
       {
-        owner_->update();
+        RemoteUContextImpl& ctx = dynamic_cast<RemoteUContextImpl&>
+        (*(owner_->ctx_));
+        ctx.getClient()->notifyCallbacks(UMessage(*ctx.getClient(), 0,
+                                          externalModuleTag.c_str(),
+          ("["
+          + string_cast(UEM_EVALFUNCTION) + ","
+          + '"' + owner_->__name + ".update__0" + '"' + ","
+          + "\"\""
+          +"]").c_str()));
         updateHandler =
           libport::asyncCall(boost::bind(&RemoteUObjectImpl::onUpdate, this),
                              useconds_t(period * 1000));
-        // The user's UVar= will emit commands ending with '|', we must do
-        // dispatch's job and send the terminating ';'.
-        owner_->send(";");
       }
     }
 
@@ -292,6 +302,9 @@ namespace urbi
     call_result(UAbstractClient * client, std::string var,
                 const UValue& retval, const std::exception* e)
     {
+      // var is empty for internally generated messages (such as update())
+      if (var.empty())
+        return;
       // This method can be called by a thread from the Thread Pool because
       // it is used as a callback function.  Thus we have to declare the
       // category for the debugger used by the current thread.
@@ -348,14 +361,6 @@ namespace urbi
 
       UList& array = *msg.value->list;
 
-      if (array.size() < 2)
-      {
-        msg.client.printf("Component Error: Invalid number "
-                          "of arguments in the server message: %lu\n",
-                          static_cast<unsigned long>(array.size()));
-        return URBI_CONTINUE;
-      }
-
       if (array[0].type != DATA_DOUBLE)
       {
         msg.client.printf("Component Error: "
@@ -405,6 +410,13 @@ namespace urbi
 
       case UEM_EVALFUNCTION:
       {
+        if (array.size() < 2)
+        {
+          msg.client.printf("Component Error: Invalid number "
+                            "of arguments in the server message: %lu\n",
+                            static_cast<unsigned long>(array.size()));
+          return URBI_CONTINUE;
+        }
         GD_FINFO_DUMP("dispatching call of %s...", array[1]);
 	callbacks_type tmpfun = functionmap()[array[1]];
         const std::string var = array[2];
@@ -454,7 +466,17 @@ namespace urbi
         objects.erase(i);
       }
       break;
-
+      case UEM_INIT:
+        init();
+        break;
+      case UEM_TIMER:
+        {
+        std::string cbname = array[1];
+        TimerMap::iterator i = timerMap.find(cbname);
+        if (i != timerMap.end())
+          i->second.second->call();
+        }
+        break;
       default:
         msg.client.printf("Component Error: "
                           "unknown server message type number %d\n",
@@ -489,7 +511,7 @@ namespace urbi
                            useconds_t(cb->period * 1000));
       libport::BlockLock bl(mapLock);
       std::string cbname = "timer" + string_cast(cb);
-      timerMap[cbname] = h;
+      timerMap[cbname] = std::make_pair(h, cb);
       return TimerHandle(new std::string(cbname));
     }
 
@@ -502,13 +524,19 @@ namespace urbi
         if (!libport::mhas(timerMap, cbname))
           return;
       }
-      cb->call();
+      client_->notifyCallbacks(UMessage(*client_, 0,
+                                        externalModuleTag.c_str(),
+          ("["
+          + string_cast(UEM_TIMER) + ","
+          + '"' + cbname + '"'
+          +"]").c_str()));
+
       libport::BlockLock bl(mapLock);
       libport::AsyncCallHandler h =
         libport::asyncCall(
                            boost::bind(&RemoteUContextImpl::onTimer, this, cb),
                            useconds_t(cb->period * 1000));
-      timerMap[cbname] = h;
+      timerMap[cbname] = std::make_pair(h, cb);
     }
 
     bool
@@ -521,7 +549,7 @@ namespace urbi
       // Should not happen, but you never know...
       if (!libport::mhas(ctx->timerMap, *h))
         return false;
-      ctx->timerMap[*h]->cancel();
+      ctx->timerMap[*h].first->cancel();
       ctx->timerMap.erase(*h);
       h.reset();
       return true;

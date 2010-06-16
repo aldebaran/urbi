@@ -41,7 +41,9 @@ namespace urbi
     UEM_EMITEVENT,
     UEM_ENDEVENT,
     UEM_NEW,
-    UEM_DELETE
+    UEM_DELETE,
+    UEM_INIT, // Internal, force loading of all uobjects
+    UEM_TIMER // Internal timer messages
   };
 
   static const std::string externalModuleTag = "__ExternalMessage__";

@@ -96,8 +96,9 @@ namespace urbi
       UObject* getDummyUObject();
       void onTimer(UTimerCallback* cb);
       UObject* dummyUObject;
-      boost::unordered_map<std::string, libport::AsyncCallHandler>
-      timerMap;
+      typedef boost::unordered_map<std::string,
+        std::pair<libport::AsyncCallHandler, UTimerCallback*> > TimerMap;
+      TimerMap timerMap;
       libport::Lockable mapLock;
     };
 

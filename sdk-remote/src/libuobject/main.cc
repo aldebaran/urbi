@@ -145,11 +145,13 @@ namespace urbi
     // Waiting for connectionID.
     while (getDefaultClient()
            && getDefaultClient()->connectionID() == "")
-      usleep(5000);
-    defaultContext->init();
-   //baseURBIStarter::init();
-    // Send a ';' since UObject likely sent a serie of piped commands.
-    URBI_SEND_COMMAND("");
+    usleep(5000);
+    // Initialize in the correct thread.
+    getDefaultClient()->notifyCallbacks(UMessage(*getDefaultClient(), 0,
+                             externalModuleTag.c_str(),
+                             ("[" + boost::lexical_cast<std::string>(UEM_INIT)
+                               + "]").c_str()
+                             ));
     // Load initialization files.
     foreach (const std::string& file, files)
       getDefaultClient()->sendFile(file);

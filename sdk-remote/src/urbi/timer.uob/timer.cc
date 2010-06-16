@@ -18,9 +18,17 @@ urbi::UObjectHub* thub;
 class timer: public urbi::UObject
 {
 public:
+  pthread_t mainthread;
+
+  inline void threadCheck()
+  {
+    aver(mainthread == pthread_self());
+  }
+
   timer(const std::string& name)
     : urbi::UObject(name)
   {
+    mainthread = pthread_self();
     UBindVar(timer, updated);
     UBindVar(timer, timerup);
     UBindVar(timer, hupdated);
@@ -35,33 +43,40 @@ public:
   }
   int init()
   {
+    threadCheck();
     return 0;
   }
   int setupUpdate(int d)
   {
+    threadCheck();
     USetUpdate(d);
     return 0;
   }
   std::string setupTimer(int d)
   {
+    threadCheck();
     return *USetTimer(d, &timer::onTimer);
   }
   bool unsetupTimer(const std::string& s)
   {
+    threadCheck();
     return removeTimer(urbi::TimerHandle(new std::string(s)));
   }
   int setupHubUpdate(int d)
   {
+    threadCheck();
     thub->USetUpdate(d);
     return 0;
   }
   virtual int update()
   {
+    threadCheck();
     updated = (int)updated + 1;
     return 0;
   }
   virtual int onTimer()
   {
+    threadCheck();
     timerup = (int)timerup + 1;
     return 0;
   }
