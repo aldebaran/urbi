@@ -114,8 +114,8 @@ namespace urbi
     {
       if (proto == this)
         RAISE("must be called on Lobby derivative");
-
-      connection_get().close();
+      if (&connection_get())
+        connection_get().close();
     }
 
     void
