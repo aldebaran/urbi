@@ -191,6 +191,13 @@ URBI_LIB_SUFFIX
 URBI_APPEND_CONFIGUREFLAGS([LIBSFX=$LIBSFX])
 AC_CONFIG_SUBDIRS([libport])
 
+# For tests/.
+AC_SUBST([kernel_srcdir], ['${abs_top_srcdir}/..'])
+AC_SUBST([kernel_builddir], ['${abs_top_builddir}/..'])
+AC_SUBST([sdk_remote_srcdir], ['${abs_top_srcdir}'])
+AC_SUBST([sdk_remote_builddir], ['${abs_top_builddir}'])
+
+
 AC_CONFIG_FILES([
   Makefile
     src/Makefile

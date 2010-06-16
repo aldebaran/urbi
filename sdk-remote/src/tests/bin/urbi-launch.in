@@ -1,14 +1,21 @@
 #! @SHELL@
 # @configure_input@
 
-: ${EXEEXT='@EXEEXT@'}
-: ${LIBSFX='@LIBSFX@'}
-: ${kernel_builddir='@abs_top_builddir@/..'}
-: ${kernel_srcdir='@abs_top_srcdir@/..'}
-: ${sdk_remote_builddir='@abs_top_builddir@'}
-: ${sdk_remote_srcdir='@abs_top_srcdir@'}
+me=$(basename $0)
 
-: ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT}
+: ${EXEEXT="@EXEEXT@"}
+: ${LIBSFX="@LIBSFX@"}
+: ${abs_top_builddir="@abs_top_builddir@"}
+: ${abs_top_srcdir="@abs_top_srcdir@"}
+: ${kernel_builddir="@kernel_builddir@"}
+: ${kernel_srcdir="@kernel_srcdir@"}
+: ${sdk_remote_builddir="@sdk_remote_builddir@"}
+: ${sdk_remote_srcdir="@sdk_remote_srcdir@"}
+
+case $me in
+  (urbi-launch) : ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT};;
+  (urbi)        : ${program=$kernel_builddir/src/bin/urbi$EXEEXT};;
+esac
 
 # Whether the Kernel tree is available.
 has_kernel=false
