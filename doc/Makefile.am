@@ -230,16 +230,9 @@ install-doc: $(doc_files)
 	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
 	ssh $(doc_host)				\
 	  'cd $(doc_dir) &&			\
-	   if test -d doc; then			\
-	     bak=$$(date +"%F-%T") &&		\
-	     {					\
-	       mv doc doc.$$bak &&		\
-	       mv doc.new doc;			\
-	     } ||				\
-	    mv doc.$$bak doc;			\
-	  else					\
-	    mv doc.new doc;			\
-	  fi'
+	   rm -rf doc &&			\
+	   mv doc.new doc'
+
 ## FIXME: Race condition on this script.  It would be better to
 ## have the script run ssh rather that the converse.
 	scp $(top_srcdir)/scripts/symlink-to-latest $(doc_host):/tmp
