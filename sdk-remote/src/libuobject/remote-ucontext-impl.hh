@@ -45,7 +45,11 @@ namespace urbi
                         UAutoValue& v2,
                         UAutoValue& v3,
                         UAutoValue& v4,
-                        UAutoValue& v5);
+                        UAutoValue& v5,
+                        UAutoValue& v6,
+                        UAutoValue& v7,
+                        UAutoValue& v8
+                        );
       virtual UObjectMode getRunningMode() const;
       virtual std::pair<int, int> kernelVersion() const;
       virtual void yield() const;

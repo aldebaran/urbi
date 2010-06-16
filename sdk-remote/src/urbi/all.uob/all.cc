@@ -37,7 +37,7 @@ public:
     UBindFunction(all, selfWriteB);
     UBindFunction(all, selfWriteI);
 
-    UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar);
+    UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args);
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
@@ -311,6 +311,12 @@ public:
   {
     ev.emit(v1, v2);
   }
+
+  void sendEvent8Args()
+  {
+    ev.emit(0, "foo", 5.1, 4, 5, 6, 7, 8);
+  }
+
 
   void
   sendNamedEvent(const std::string& name)

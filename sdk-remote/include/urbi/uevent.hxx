@@ -39,9 +39,13 @@ namespace urbi
                urbi::UAutoValue v2,
                urbi::UAutoValue v3,
                urbi::UAutoValue v4,
-               urbi::UAutoValue v5)
+               urbi::UAutoValue v5,
+               urbi::UAutoValue v6,
+               urbi::UAutoValue v7,
+               urbi::UAutoValue v8
+               )
   {
-    ctx_->emit(name, v1, v2, v3, v4, v5);
+    ctx_->emit(name, v1, v2, v3, v4, v5, v6, v7, v8);
   }
 } // end namespace urbi
 

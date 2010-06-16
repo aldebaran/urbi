@@ -565,12 +565,17 @@ namespace urbi
                              UAutoValue& v2,
                              UAutoValue& v3,
                              UAutoValue& v4,
-                             UAutoValue& v5)
+                             UAutoValue& v5,
+                             UAutoValue& v6,
+                             UAutoValue& v7,
+                             UAutoValue& v8
+                             )
     {
       std::stringstream s;
       s << object << "!(";
 #define CHECK(v) if (v.type != DATA_VOID) s << v << ","
-      CHECK(v1); CHECK(v2); CHECK(v3); CHECK(v4); CHECK(v5);
+      CHECK(v1); CHECK(v2); CHECK(v3); CHECK(v4);
+      CHECK(v5); CHECK(v6); CHECK(v7); CHECK(v8);
 #undef CHECK
       std::string r = s.str();
       if (v1.type != DATA_VOID)

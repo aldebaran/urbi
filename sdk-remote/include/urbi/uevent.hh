@@ -43,7 +43,11 @@ namespace urbi
               urbi::UAutoValue v2 = UAutoValue(),
               urbi::UAutoValue v3 = UAutoValue(),
               urbi::UAutoValue v4 = UAutoValue(),
-              urbi::UAutoValue v5 = UAutoValue());
+              urbi::UAutoValue v5 = UAutoValue(),
+              urbi::UAutoValue v6 = UAutoValue(),
+              urbi::UAutoValue v7 = UAutoValue(),
+              urbi::UAutoValue v8 = UAutoValue()
+              );
 
  private:
     void __init();

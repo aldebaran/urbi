@@ -69,7 +69,11 @@ namespace urbi
                         UAutoValue& v2,
                         UAutoValue& v3,
                         UAutoValue& v4,
-                        UAutoValue& v5) = 0;
+                        UAutoValue& v5,
+                        UAutoValue& v6,
+                        UAutoValue& v7,
+                        UAutoValue& v8
+                        ) = 0;
 
       /// Return the mode in which the code is running.
       virtual UObjectMode getRunningMode() const = 0;
