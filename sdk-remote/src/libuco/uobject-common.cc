@@ -253,6 +253,26 @@ namespace urbi
                              " asynchronous calls with LOCK_CLASS locking");
   }
 
+
+  #define GENERIC_TRY(desc, code)                         \
+  do {                                                    \
+    std::string estr_;                                    \
+    try {                                                 \
+      code                                                \
+    }                                                     \
+    catch(const std::exception& e)                        \
+    {                                                     \
+      estr_ = e.what();                                   \
+    }                                                     \
+    catch(...)                                            \
+    {                                                     \
+      estr_ = "unknown exception";                        \
+    }                                                     \
+    if (!estr_.empty())                                   \
+      GD_SERROR("Exception " << desc << " : " << estr_);  \
+  } while(0)
+
+
   /*---------------.
   | UContextImpl.  |
   `---------------*/
@@ -268,8 +288,10 @@ namespace urbi
         if (!libport::mhas(initialized, s))
         {
           GD_FINFO_TRACE("initializing UObject hub: %s", s->name);
-          newUObjectHubClass(s);
-          initialized.insert(s);
+          GENERIC_TRY("Instanciating hub" << s,
+                      newUObjectHubClass(s);
+                      initialized.insert(s);
+                      );
         }
       }
       foreach(baseURBIStarter* s, baseURBIStarter::list())
@@ -277,12 +299,14 @@ namespace urbi
         if (!libport::mhas(initialized, s))
         {
           GD_FINFO_TRACE("initializing UObject: %s", s->name);
-          newUObjectClass(s);
-          initialized.insert(s);
+          GENERIC_TRY("Instanciating object" << s,
+                      newUObjectClass(s);
+                      initialized.insert(s);
+                      );
         }
       }
     }
-
+#undef GENERIC_TRY
     bool
     UContextImpl::bind(const std::string& n, std::string rename)
     {

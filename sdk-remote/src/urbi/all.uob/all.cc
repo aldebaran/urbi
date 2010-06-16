@@ -26,6 +26,9 @@ public:
   all(const std::string& name)
     : urbi::UObject(name)
   {
+    if (getenv("CTOR_EXCEPTION") &&
+        !strcmp(getenv("CTOR_EXCEPTION"), "true"))
+    throw std::runtime_error("constructor failure");
     UBindFunction(all, init);
     UBindFunction(all, setOwned);
     UBindFunction(all, setNotifyChange);
