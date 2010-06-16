@@ -79,6 +79,8 @@ namespace urbi
       "  -V, --version         print version information and exit\n"
       "  -d, --disconnect      exit program if disconnected(defaults)\n"
       "  -s, --stay-alive      do not exit program if disconnected\n"
+      "  --describe            describe loaded UObjects and exit\n"
+      "  --describe-file FILE  write the list of present UObjects to FILE\n"
 		 << libport::exit (EX_OK);
   }
 
@@ -184,6 +186,8 @@ namespace urbi
     int port = UAbstractClient::URBI_PORT;
     bool server = false;
     bool useSyncClient = true;
+    bool describeMode = false;
+    std::string describeFile;
     size_t buflen = UAbstractClient::URBI_BUFLEN;
     // Files to load
     files_type files;
@@ -218,6 +222,10 @@ namespace urbi
       // FIXME: Remove -v some day.
       else if (arg == "--version" || arg == "-V" || arg == "-v")
 	version();
+      else if (arg == "--describe")
+	describeMode = true;
+      else if (arg == "--describe-file")
+         describeFile = libport::convert_argument<const char*>(args, i++);
       else if (arg[0] == '-')
 	libport::invalid_option(arg);
       else
@@ -238,6 +246,22 @@ namespace urbi
 	}
     }
 
+    if (describeMode)
+    {
+      foreach(baseURBIStarter* s, baseURBIStarter::list())
+        std::cout << s->name << std::endl;
+      foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
+        std::cout << s->name << std::endl;
+      return 0;
+    }
+    if (!describeFile.empty())
+    {
+      std::ofstream of(describeFile.c_str());
+      foreach(baseURBIStarter* s, baseURBIStarter::list())
+        of << s->name << std::endl;
+      foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
+        of << s->name << std::endl;
+    }
     initialize(host, port, buflen, exitOnDisconnect, server, files,
                useSyncClient);
 
