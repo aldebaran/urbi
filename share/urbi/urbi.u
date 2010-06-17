@@ -95,6 +95,9 @@ load("urbi/weak-pointer.u");
 "Initializing uobjects NOW";
 load("urbi/uobject.u");
 
+if ("ros" in Platform.enabledModules && System.getenv("ROS_ROOT"))
+  loadModule("urbi/ros.so");
+
 // This variable is used by initialization code to detect the end of
 // urbi.u.
 Channel.topLevel.enabled = true |
