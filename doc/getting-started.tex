@@ -48,7 +48,7 @@ event-driven, the server does not ``know'' when a program ends.  Therefore,
 batch programs should end by calling \lstinline{shutdown}.  Using a Unix
 shell:
 
-\begin{shell}[alsolanguage={[interactive]Urbi},caption={A batch session under Unix.}]
+\begin{shell}[alsolanguage={[interactive]urbiscript},caption={A batch session under Unix.}]
 # A classical program.
 $ urbi -q -e 'echo("Hello, World!");' -e 'shutdown;'
 [00000004] *** Hello, World!
@@ -56,7 +56,7 @@ $ urbi -q -e 'echo("Hello, World!");' -e 'shutdown;'
 
 If you are running Windows, then, since the quotation rules differ, run:
 
-\begin{shell}[alsolanguage={[interactive]Urbi},caption={An batch session under Windows.}]
+\begin{shell}[alsolanguage={[interactive]urbiscript},caption={A batch session under Windows.}]
 # A classical program.
 $ urbi -q -e "echo(""Hello, World!"");" -e "shutdown;"
 [00000004] *** Hello, World!
@@ -67,7 +67,7 @@ To run an interactive session, use option
 \option{-i}/\option{--interactive}.  Like most interactive interpreters,
 \urbi will evaluate the given commands and print out the results.
 
-\begin{shell}[alsolanguage={[interactive]Urbi}Unix]
+\begin{shell}[alsolanguage={[interactive]urbiscript},caption={An interactive session under Unix.}]
 $ urbi -i
 [00000987] *** ********************************************************
 [00000990] *** Urbi SDK version 2.0.3 rev. d6a568d
@@ -101,7 +101,7 @@ interactions using option \option{--port \var{port}}.  Note that while
 one interactive session.  In the following example (under Unix) the server
 is still available for other, possibly concurrent, sessions.
 
-\begin{shell}[alsolanguage={[interactive]Urbi},caption={An interactive session under Unix.}]
+\begin{shell}[alsolanguage={[interactive]urbiscript},caption={An interactive session under Unix.}]
 $ urbi --port 54000 &
 [1] 77024
 $ telnet localhost 54000
@@ -128,7 +128,7 @@ Under Windows, instead of using \command{telnet}, you may use
 User Interface to a network-connection to an \urbi server.  To launch the
 server, run:
 
-\begin{shell}[alsolanguage={[interactive]Urbi},caption={Starting an interactive session under Windows.}]
+\begin{shell}[alsolanguage={[interactive]urbiscript},caption={Starting an interactive session under Windows.}]
 C:\...> start urbi --port 54000
 \end{shell}
 
@@ -148,7 +148,7 @@ The program \command{urbi-send} (see \autoref{sec:tools:urbi-send}) provides
 a nice interface to send batches of instructions (and/or files) to a running
 server.
 
-\begin{shell}[alsolanguage={[interactive]Urbi}]
+\begin{shell}[alsolanguage={[interactive]urbiscript}]
 $ urbi-send -P 54000 -e "1+2*3;" -Q
 [00018032] 7
 # Have the server shutdown;

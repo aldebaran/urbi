@@ -210,10 +210,10 @@ The options \option{-e}, \option{-f} accumulate, and are run in the
 same \refObject{Lobby} as \option{-i} if used.  In other words, the
 following session is valid:
 
-\begin{shell}[alsolanguage={[interactive]Urbi}]
+\begin{shell}[alsolanguage={[interactive]urbiscript}]
 # Create a file "two.u".
 $ echo "var two = 2;" >two.u
-# urbi -q -e 'var one = 1;' -f two.u -i
+$ urbi -q -e 'var one = 1;' -f two.u -i
 [00000000] 1
 [00000000] 2
 one + two;
