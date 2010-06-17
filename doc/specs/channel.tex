@@ -76,6 +76,32 @@ c << "enabled";
 [00000000] "enabled"
 \end{urbiscript}
 
+\item[Filter] Filtering channel.
+
+The Filter channel outputs text that can be parsed without error by the liburbi.
+It does this by filtering types not handled by the liburbi, and displaying
+them using \refSlot{echo}.
+
+\begin{urbiscript}
+// Use a filtering channel on our lobby output.
+topLevel = Channel.Filter.new("")|;
+// liburbi knows about List, Dictionary, String and Float, so standard display.
+[1, "foo", ["test" => 5]];
+[00000001] [1, "foo", ["test" => 5]]
+// liburbi does not know 'lobby', so it is escaped with echo:
+lobby;
+[00000002] *** Lobby_0xADDR
+// The following list contains a function which is not handled by liburbi, so
+// it gets escaped too.
+[1, function () {}];
+[00000003] *** [1, function () {}]
+// Restore default display to see the difference.
+topLevel = Channel.topLevel|;
+// The echo is now gone.
+[1, function () {}];
+[00001758] [1, function () {}]
+\end{urbiscript}
+
 \item[quote] Whether the strings are output escaped (the default)
   instead of raw strings.
 \begin{urbiscript}

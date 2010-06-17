@@ -55,6 +55,44 @@ class Global.Channel
   };
 };
 
+/** Filtering channel.
+ *  Stores a list of 'handled' types in 'filter'.
+ *  Items of one of those types are displayed the standard way.
+ *  others are displayed by calling notHandled() which by default use
+ *  echo on each line of the value asToplevelPrintable.
+ */
+class Global.Channel.Filter: Channel
+{
+  function init(name="", filter=Channel.Filter.uclientFilter)
+  {
+    Channel.getSlot("init").apply([this, name]);
+    var this.filter = filter;
+  };
+  function checkFilter(v)
+  {
+    filter.any(function(f) { v.isA(f)}) &&
+    (! v.isA(Container) || v.all(closure(v) {checkFilter(v)}))
+  };
+  function '<<'(v)
+  {
+    var keep = false|
+    if (checkFilter(v))
+      Channel.getSlot("<<").apply([this, v])
+    else
+      notHandled(v)
+  };
+  function notHandled(v)
+  {
+    for|(var l: v.asToplevelPrintable.split("\n"))
+      echo(l)
+  };
+  function uclientFilter()
+  {
+    // Some of those slot does not exist at function definition time
+    ["Float", "String", "List", "Dictionary", "Binary", "UValue", "Tuple"]
+    .map(function(x) { getSlot(x)})
+  };
+};
 // Default channels.
 do (Global)
 {
