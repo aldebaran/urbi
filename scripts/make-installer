@@ -83,12 +83,6 @@ if test -r "$updir/$my_zip"                             \
     -a "$updir/$my_zip" -nt "$updir/$other_zip"; then
   # My zip is the newest, do the merge-install.
 
-  # Fetch the zip and copy them
-  cd $tmp
-
-  cp "$updir/$my_zip" "$tmp/$my_zip"
-  cp "$updir/$other_zip" "$tmp/$other_zip"
-
   # Merge zips.
   tools=$HOME/share/tools
   vcredist="$tools/vcredist/vcredist_x86-${COMP}.exe"
@@ -100,11 +94,8 @@ if test -r "$updir/$my_zip"                             \
       --installscriptloc "$srcdir/share/installer/"     \
       --urbi-console "$urbi_console"                    \
       --output "$tmp/$installer"                        \
-      "$tmp/$my_zip" "$tmp/$other_zip"
+      "$updir/$my_zip" "$updir/$other_zip"
 
   # Upload the installer
   cp "$tmp/$installer" "$updir/$installer"
-else
-  # My zip is not the newest, leave the merge-install to an other slave.
-  :;
 fi
