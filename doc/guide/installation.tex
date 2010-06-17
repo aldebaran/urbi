@@ -70,10 +70,8 @@ This directory, \var{urbi-root}, should contain \file{bin},
 directory.  In order to have an easy access to the \urbi programs, set
 up your \env{PATH}:
 
-% !!! "\var{urbi-root}/bin:$PATH" does not escape the \var because it is
-% inside a string.
-\begin{shell}
-$ export PATH="urbi-root/bin:$PATH"
+\begin{shell}[style=varInString]
+$ export PATH="\var{urbi-root}/bin:$PATH"
 \end{shell}%$
 
 \begin{shell}

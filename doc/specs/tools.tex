@@ -292,11 +292,9 @@ specified.
 \end{options}
 
 \begin{options}[Mode selection]
-% !!! \lstinline|loadModule("\var{module}")| does not escape the \var
-% because it is inside a string.
-\item[p]{plugin} Attach the \var{module} onto a currently running
-  \urbi server (identified by \var{host} and \var{port}).  This is
-  equivalent to running \lstinline|loadModule("module")| on the
+\item[p]{plugin} Attach the \var{module} onto a currently running \urbi
+  server (identified by \var{host} and \var{port}).  This is equivalent to
+  running \lstinline[style=varInString]|loadModule("\var{module}")| on the
   corresponding server.
 
 \item[r]{remote} Run the \var{modules} as separated processes,

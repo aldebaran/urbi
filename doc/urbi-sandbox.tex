@@ -32,13 +32,19 @@ This is the first chapter.
 \begin{urbiscript}
 1+2;
 [00048238] 3
+"foo";
+[00048238] "foo"
 \end{urbiscript}
 
 Another example.
 
-\begin{urbiunchecked}
-1+2;
-[00048238] 4
+\begin{shell}[style=varInString]
+$ export PATH="something:\var{urbi-root}/bin:$PATH"
+\end{shell}%$
+
+\begin{urbiunchecked}[style=varInString]
+"for \var{foo}" * (1+2);
+[00048238] barbazqux
 \end{urbiunchecked}
 
 Last example.
