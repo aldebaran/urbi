@@ -21,26 +21,26 @@ The UObject RMP provides the interface from \urbi.
 \subsection{Instantiation}
 
 \begin{urbiunchecked}
-var rmp = new RMP(period);
+var rmp = RMP.new(\var{period});
 \end{urbiunchecked}
 
-\var{period} is the period, in milliseconds, at which orders will be sent
-and coders will be read.
+\var{period} is the period, in seconds, at which orders will be sent and
+coders will be read.
 
-\subsection{Variables}
+\subsection{Slots}
 
 \paragraph{Raw effector variables}
 
 \begin{urbiscriptapi}
-\item[forwardSpeed] forward speed in meters per second.
-\item[yawSpeed] yaw speed in radian per second.
+\item[forwardSpeed] forward speed in meters per second.  Can be read to
+  (behaves as a sensor), or written to (effector).
+\item[yawSpeed] yaw speed in radian per second.  Can be read and written
+  to.
 \end{urbiscriptapi}
 
 \paragraph{Raw sensors}
 Current speed and coder values.
 \begin{urbiscriptapi}
-\item[forwardSpeed]
-\item[yawSpeed]
 \item[leftSpeed]
 \item[rightSpeed]
 \item[forward]
