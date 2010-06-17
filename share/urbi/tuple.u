@@ -10,6 +10,8 @@
 
 class Global.Tuple
 {
+  protos = [Global.RangeIterable, Global.Container];
+
   var members = [];
 
   function init(m)
@@ -24,6 +26,11 @@ class Global.Tuple
     if (members.size == 1)
       res += "," |
     res + ")"
+  };
+
+  function asList()
+  {
+    members
   };
 
   function '=='(other)

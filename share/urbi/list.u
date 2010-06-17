@@ -48,24 +48,6 @@ do (List)
     res
   };
 
-  // Whether all the elements verify the \a f predicate.
-  function all(f)
-  {
-    for| (var i: this)
-      if (!f (i))
-        return false |
-    true
-  };
-
-  // Whether at least one element verifies the \a f predicate.
-  function any(f)
-  {
-    for| (var i: this)
-      if (f (i))
-        return true |
-    false
-  };
-
   function argMax(var comp = function (a, b) { a < b })
   {
     argMin(function (a, b) {comp(b, a)})

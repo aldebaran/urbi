@@ -36,30 +36,6 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[all](<fun>)
-  % FIXME: link to predicate glossary entry
-  Return whether all the members of the target verify the predicate
-  \var{fun}.
-
-\begin{urbiassert}
-// Are all elements positive?
-! [-2, 0, 2, 4].all(function (e) { e > 0 });
-// Are all elements even?
-[-2, 0, 2, 4].all(function (e) { e % 2 == 0 });
-\end{urbiassert}
-
-\item[any](<fun>)
-  % FIXME: link to predicate glossary entry
-  Whether at least one of the members of the target verifies the
-  predicate \var{fun}.
-
-\begin{urbiassert}
-// Is there any even element?
-! [-3, 1, -1].any(function (e) { e % 2 == 0 });
-// Is there any positive element?
-[-3, 1, -1].any(function (e) { e > 0 });
-\end{urbiassert}
-
 \item[argMax](<fun> = function(a, b) { a < b })%
   The index of the (leftmost) ``largest'' member based on the comparison
   function \var{fun}.

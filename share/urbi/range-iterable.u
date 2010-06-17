@@ -29,4 +29,21 @@ class Global.RangeIterable
     asList.'each|'(action)
   };
 
+  // Whether all the elements verify the \a f predicate.
+  function all(f)
+  {
+    for| (var i: this)
+      if (!f (i))
+        return false |
+    true
+  };
+
+  // Whether at least one element verifies the \a f predicate.
+  function any(f)
+  {
+    for| (var i: this)
+      if (f (i))
+        return true |
+    false
+  };
 };
