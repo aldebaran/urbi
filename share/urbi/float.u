@@ -130,7 +130,7 @@ do (Float)
 
     function rangeminHook(slot, val)
     {
-      var min = getProperty(slot, "rangemin");
+      var min = getProperty(slot, "rangemin")|
       if (val < min)
         min
       else
@@ -139,7 +139,7 @@ do (Float)
 
     function rangemaxHook(slot, val)
     {
-      var max = getProperty(slot, "rangemax");
+      var max = getProperty(slot, "rangemax")|
       if (val > max)
         max
       else

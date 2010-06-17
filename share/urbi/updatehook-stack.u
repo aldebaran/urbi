@@ -10,15 +10,15 @@
 
 function Global.UpdateHookStack (name, value)
 {
-  var myself = getProperty(name, "updateHook");
-  var res = value;
-  for (var hook: myself.hooks)
+  var myself = getProperty(name, "updateHook")|
+  var res = value|
+  for| (var hook: myself.hooks)
   {
-    res = hook(name, res);
+    res = hook(name, res)|
     if (res.isVoid)
-      return value;
-  };
-  return res;
+      return value
+  }|
+  res
 };
 
 do (getSlot("UpdateHookStack"))
