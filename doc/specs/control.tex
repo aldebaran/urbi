@@ -22,7 +22,6 @@ much less change it.
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-
 \item[detach](<exp>)%
   Detach the evaluation of the expression \var{exp} from the current
   evaluation.  The \var{exp} is evaluated in parallel to the current code
@@ -46,6 +45,7 @@ much less change it.
 [00009120] [Job<shell_11>, Job<shell_12>, Job<shell_13>]
 \end{urbiscript}
 
+
 \item[disown](<exp>)%%
   Same as \refSlot{detach} except that tags used to tag the
   \lstinline|disown| call are not inherited inside the expression.  Return
@@ -68,6 +68,21 @@ much less change it.
 };
 [00009120] [Job<shell_14>, Job<shell_15>, Job<shell_16>]
 \end{urbiscript}
+
+
+\item[finally](<action>, <reaction>)%
+  Execute the \var{reaction} function at the end of the evaluation of
+  the \var{action} function.  This is equivalent to
+
+\begin{urbiunchecked}
+{
+  var t = Tag.new |
+  at (t.leave?)
+    reaction() |
+  t: action()
+}
+\end{urbiunchecked}
+
 
 \item[persist](<expression>, <delay>)%
   Return an object whose \var{val} slot evaluates to true if the
@@ -94,18 +109,7 @@ at (u.val)
   as the initial \lstinline|at| block.
 
 
-\item[finally](<action>, <reaction>)%
-  Execute the \var{reaction} function at the end of the evaluation of
-  the \var{action} function.  This is equivalent to
 
-\begin{urbiunchecked}
-{
-  var t = Tag.new |
-  at (t.leave?)
-    reaction() |
-  t: action()
-}
-\end{urbiunchecked}
 \end{urbiscriptapi}
 
 
