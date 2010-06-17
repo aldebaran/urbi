@@ -26,53 +26,53 @@ much less change it.
 \item[detach](<exp>)%
   Detach the evaluation of the expression \var{exp} from the current
   evaluation.  The \var{exp} is evaluated in parallel to the current code
-  and keep the current tag which are attached to it.
-  Return the spawned job.
+  and keep the current tag which are attached to it.  Return the spawned
+  \refObject{Job}.  Same as calling \refSlot[System]{spawn}:
+  \lstinline|System.spawn(closure () { \var{exp} }, true|.
 
 \begin{urbiscript}
-for (var i : [0, 1, 2])
 {
-  detach({
-    echo(i);
-    echo(i)
-  }) |
-  if (i == 2)
-    break
+  var jobs = [];
+  var res = [];
+  for (var i : [0, 1, 2])
+  {
+    jobs << detach({ res << i; res << i }) |
+    if (i == 2)
+      break
+  };
+  assert (res == [0, 1, 0]);
+  jobs
 };
-[00000000] *** 0
-[00000000] *** 1
-[00000000] *** 0
+[00009120] [Job<shell_11>, Job<shell_12>, Job<shell_13>]
 \end{urbiscript}
 
 \item[disown](<exp>)%%
-  Same as \lstinline|detach(\var{exp})| except that tags used to tag
-  the \lstinline|disown| call are not inherited inside the expression.
-  Return the spawned job.
+  Same as \refSlot{detach} except that tags used to tag the
+  \lstinline|disown| call are not inherited inside the expression.  Return
+  the spawned \refObject{Job}.  Same as calling \refSlot[System]{spawn}:
+  \lstinline|System.spawn(closure () { \var{exp} }, true|.
 
 \begin{urbiscript}
-for (var i : [0, 1, 2])
 {
-  disown({
-    echo(i);
-    echo(i)
-  }) |
-  if (i == 2)
-    break
+  var jobs = [];
+  var res = [];
+  for (var i : [0, 1, 2])
+  {
+    jobs << disown({ res << i; res << i }) |
+    if (i == 2)
+      break
+  };
+  jobs.each (function (var j) { j.waitForTermination });
+  assert (res == [0, 1, 0, 2, 1, 2]);
+  jobs
 };
-// Give some time to get the output of the detached expressions.
-sleep(100ms);
-[00000000] *** 0
-[00000000] *** 1
-[00000000] *** 0
-[00000000] *** 2
-[00000000] *** 1
-[00000000] *** 2
+[00009120] [Job<shell_14>, Job<shell_15>, Job<shell_16>]
 \end{urbiscript}
 
-\item[persist](<expression>, <delay>)% Return an
-  object whose \var{val} slot evaluates to true if the
-  \var{expression} has been continuously true for this \var{delay} and
-  false otherwise.
+\item[persist](<expression>, <delay>)%
+  Return an object whose \var{val} slot evaluates to true if the
+  \var{expression} has been continuously true for this \var{delay} and false
+  otherwise.
 
   This function is used to implement
 
@@ -106,8 +106,6 @@ at (u.val)
   t: action()
 }
 \end{urbiunchecked}
-
-
 \end{urbiscriptapi}
 
 

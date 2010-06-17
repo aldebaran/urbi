@@ -379,8 +379,42 @@ getenv("MyVar").isNil == Platform.isWindows;
 \end{urbiassert}
 
 
-%% \item[spawn]
+\item[spawn](<function>, <clear>)%
+  Run the \var{function}, with fresh tags if \var{clear} is true, otherwise
+  under the control of the current tags.  Return the spawn \refObject{Job}.
+\begin{urbiscript}
+var jobs = []|;
+var res = []|;
+for (var i : [0, 1, 2])
+{
+  jobs << System.spawn(closure () { res << i; res << i },
+                       true) |
+  if (i == 2)
+    break
+}|
+jobs;
+[00009120] [Job<shell_11>, Job<shell_12>, Job<shell_13>]
+// Wait for the jobs to be done.
+jobs.each (function (var j) { j.waitForTermination });
+assert (res == [0, 1, 0, 2, 1, 2]);
+\end{urbiscript}
 
+\begin{urbiscript}
+jobs = []|;
+res = []|;
+for (var i : [0, 1, 2])
+{
+  jobs << System.spawn(closure () { res << i; res << i },
+                       false) |
+  if (i == 2)
+    break
+}|
+jobs;
+[00009120] [Job<shell_14>, Job<shell_15>, Job<shell_16>]
+// Give some time to get the output of the detached expressions.
+sleep(100ms);
+assert (res == [0, 1, 0]);
+\end{urbiscript}
 
 %% \item[stats]
 
