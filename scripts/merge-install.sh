@@ -93,12 +93,15 @@ for f in $files; do
   verb merging $f
   unzip $(ifverb "" -q ) $f
   basedir=$(echo *)
-  if echo $f |grep -q debug; then
+  case $f in
+    (*debug*)
     mv $basedir/bin/urbi-launch.exe $basedir/bin/urbi-launch-d.exe
     mv $basedir/bin/urbi.exe $basedir/bin/urbi-d.exe
-    sed  -e 's/urbi-launch/urbi-launch-d/g' $basedir/urbi.bat > $basedir/urbi-d.bat
+    sed -e 's/urbi-launch/urbi-launch-d/g' $basedir/urbi.bat \
+        >$basedir/urbi-d.bat
     rm $basedir/urbi.bat
-  fi
+    ;;
+  esac
   cp -a */* ../merge
   #safer that way
   cd ..
@@ -111,17 +114,18 @@ cd ../merge
 verb "Copying vcredist from $vcredist"
 
 cp $vcredist ./vcredist-x86.exe
-if ! test -z "$installscriptloc" ; then
+
+if test -n "$installscriptloc"; then
   verb "Setting up symlink to $installscriptloc"
   ln -s $installscriptloc share/installer
 fi
 
-if ! test -z "$urbiconsole" ; then
+if test -n "$urbiconsole"; then
   verb "Copying urbi-console installer from $urbiconsole"
   cp "$urbiconsole" ./urbi-console-installer.exe
 fi
 
-if ! test -z "templateloc" ; then
+if test -n "templateloc"; then
   verb "Setting up symlink to $templateloc"
   ln -s $templateloc share/templates
 fi
