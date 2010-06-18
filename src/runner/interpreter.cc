@@ -90,7 +90,7 @@ namespace runner
     , stacks_(lobby)
   {
     init();
-    apply_tag(lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>(), 0);
+    apply_tag(lobby->tag_get());
   }
 
   Interpreter::Interpreter(rLobby lobby,
@@ -108,7 +108,7 @@ namespace runner
     , stacks_(lobby)
   {
     init();
-    apply_tag(lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>(), 0);
+    apply_tag(lobby->tag_get());
   }
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
@@ -153,7 +153,7 @@ namespace runner
     , stacks_(self)
   {
     init();
-    apply_tag(lobby->slot_get(SYMBOL(connectionTag))->as<object::Tag>(), 0);
+    apply_tag(lobby->tag_get());
   }
 
   Interpreter::~Interpreter()

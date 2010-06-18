@@ -40,6 +40,9 @@ namespace urbi
       /// Must not be called, lobbies cannot be cloned.
       ATTRIBUTE_NORETURN Lobby(rLobby model);
 
+      /// The connectionTag.
+      rTag tag_get() const;
+
       void send(const objects_type& args);
       void write(const std::string& data);
       connection_type& connection_get();
@@ -72,5 +75,7 @@ namespace urbi
     };
   }; // namespace object
 }
+
+# include <urbi/object/lobby.hxx>
 
 #endif // !OBJECT_LOBBY_HH

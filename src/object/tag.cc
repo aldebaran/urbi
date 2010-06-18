@@ -81,27 +81,17 @@ namespace urbi
         r.yield();
     }
 
-    libport::Symbol
-    Tag::name() const
-    {
-      return value_->name_get();
-    }
-
     void
     Tag::init(const objects_type& args)
     {
       check_arg_count(args.size(), 0, 1);
-      libport::Symbol tag_short_name;
-
       if (args.empty())
-        tag_short_name = libport::Symbol::fresh("tag");
+        name_set(libport::Symbol::fresh("tag"));
       else
       {
         type_check<String>(args[0]);
-        tag_short_name = libport::Symbol(args[0]->as<String>()->value_get());
+        name_set(libport::Symbol(args[0]->as<String>()->value_get()));
       }
-
-      value_->name_set(tag_short_name);
     }
 
     rTag
@@ -111,12 +101,6 @@ namespace urbi
       rTag res = args[0]->call_with_this(SYMBOL(new), args)->as<Tag>();
       res->value_get()->flow_control_set();
       return res;
-    }
-
-    Tag::priority_type
-    Tag::priority() const
-    {
-      return value_->prio_get();
     }
 
     Tag::priority_type

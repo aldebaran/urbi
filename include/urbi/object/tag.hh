@@ -39,6 +39,7 @@ namespace urbi
       void init(const objects_type& args);
       void freeze();
       libport::Symbol name() const;
+      void name_set(libport::Symbol s);
       static rTag new_flow_control(const objects_type&);
 
       /// Return a tag for the current urbiscript scope.
@@ -78,5 +79,6 @@ namespace urbi
 }
 
 # include <urbi/object/cxx-object.hxx>
+# include <urbi/object/tag.hxx>
 
 #endif // !OBJECT_TAG_HH

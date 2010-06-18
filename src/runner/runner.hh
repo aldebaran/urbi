@@ -151,7 +151,7 @@ namespace runner
     /// \param finally The action executed when the
     ///                tag is removed. No action is
     ///                inserted if 0 is given.
-    void apply_tag(const object::rTag& tag, libport::Finally* finally);
+    void apply_tag(const object::rTag& tag, libport::Finally* finally = 0);
 
     /// Retrieve the tags currently tagging the runned code.
     /// This does not include the flow control tags and is only

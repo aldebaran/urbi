@@ -43,6 +43,7 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/job.hh			\
   include/urbi/object/list.hh			\
   include/urbi/object/lobby.hh			\
+  include/urbi/object/lobby.hxx			\
   include/urbi/object/location.hh		\
   include/urbi/object/location.hxx		\
   include/urbi/object/object.hh			\
@@ -54,7 +55,8 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/slot.hh			\
   include/urbi/object/slot.hxx			\
   include/urbi/object/string.hh			\
-  include/urbi/object/tag.hh
+  include/urbi/object/tag.hh			\
+  include/urbi/object/tag.hxx
 
 kernelinclude_urbi_runnerdir = $(brandincludedir)/urbi/runner
 dist_kernelinclude_urbi_runner_HEADERS =	\
