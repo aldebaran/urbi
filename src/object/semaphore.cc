@@ -52,7 +52,7 @@ namespace urbi
     void
     Semaphore::acquire()
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       if (--value_.first < 0)
       {

@@ -21,19 +21,19 @@ namespace urbi
   void
   yield()
   {
-    ::kernel::urbiserver->getCurrentRunner().yield();
+    ::kernel::runner().yield();
   }
 
   void
   yield_until(libport::utime_t t)
   {
-    ::kernel::urbiserver->getCurrentRunner().yield_until(t);
+    ::kernel::runner().yield_until(t);
   }
 
   void
   yield_for(libport::utime_t t)
   {
-    ::kernel::urbiserver->getCurrentRunner().yield_until(libport::utime() + t);
+    ::kernel::runner().yield_until(libport::utime() + t);
   }
 
   void

@@ -210,7 +210,7 @@ namespace urbi
     void
     List::each_common(const rObject& f, bool yielding, bool idx)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       bool must_yield = false;
       int i = 0;
@@ -251,7 +251,7 @@ namespace urbi
     void
     List::each_and(const rObject& f)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       // Beware of iterations that modify the list in place: make a
       // copy.

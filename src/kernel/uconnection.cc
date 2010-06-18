@@ -79,8 +79,7 @@ namespace kernel
   UConnection::~UConnection()
   {
     lobby_
-      ->slot_get(SYMBOL(connectionTag))
-      ->as<object::Tag>()->value_get()
+      ->tag_get()->value_get()
       ->stop(server_.scheduler_get(), object::void_class);
     shell_->terminate_now();
   }

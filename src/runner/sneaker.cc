@@ -49,7 +49,7 @@ namespace dbg
       passert(sneaker, sneaker);
       return *sneaker;
     }
-    return ::kernel::urbiserver->getCurrentRunner();
+    return ::kernel::runner();
   }
 
   Sneaker::Sneaker(object::rLobby lobby,

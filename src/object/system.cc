@@ -52,29 +52,9 @@ namespace urbi
 {
   namespace object
   {
-    using kernel::urbiserver;
 
-
-    static inline
-    runner::Runner&
-    runner()
-    {
-      return ::kernel::urbiserver->getCurrentRunner();
-    }
-
-    static inline
-    runner::Interpreter&
-    interpreter()
-    {
-      return dynamic_cast<runner::Interpreter&>(runner());
-    }
-
-    static inline
-    sched::Scheduler&
-    scheduler()
-    {
-      return runner().scheduler_get();
-    }
+    using ::kernel::interpreter;
+    using ::kernel::runner;
 
     // Extract a filename from a String or a Path object
     static std::string
@@ -140,7 +120,7 @@ namespace urbi
     static void                                 \
     system_ ## Function()                       \
     {                                           \
-      urbiserver->Function();                   \
+      ::kernel::urbiserver->Function();         \
     }
 
     SERVER_FUNCTION(reboot)
@@ -163,7 +143,7 @@ namespace urbi
     static float
     system_time()
     {
-      return scheduler().get_time() / 1000000.0;
+      return ::kernel::scheduler().get_time() / 1000000.0;
     }
 
     static float
@@ -196,7 +176,7 @@ namespace urbi
       const std::string& filename = filename_get(f);
       try
       {
-        return new Path(urbiserver->find_file(filename));
+        return new Path(::kernel::urbiserver->find_file(filename));
       }
       catch (libport::file_library::Not_found&)
       {
@@ -212,7 +192,7 @@ namespace urbi
     {
       List::value_type res;
       foreach (const libport::path& p,
-               urbiserver->search_path.search_path_get())
+               ::kernel::urbiserver->search_path.search_path_get())
         res.push_back(new Path(p));
       return res;
     }
@@ -238,7 +218,7 @@ namespace urbi
     static float
     system_cycle()
     {
-      return scheduler().cycle_get();
+      return ::kernel::scheduler().cycle_get();
     }
 
     static void
@@ -269,7 +249,8 @@ namespace urbi
     static rObject
     system_stats()
     {
-      const sched::scheduler_stats_type& stats = scheduler().stats_get();
+      const sched::scheduler_stats_type& stats =
+        ::kernel::scheduler().stats_get();
 
       // If statistics have just been reset, return "nil" since we cannot
       // return anything significant.
@@ -295,7 +276,7 @@ namespace urbi
     static void
     system_resetStats()
     {
-      scheduler().stats_reset();
+      ::kernel::scheduler().stats_reset();
     }
 
     // This should give a backtrace as an urbi object.
@@ -322,7 +303,7 @@ namespace urbi
     system_jobs()
     {
       List::value_type res;
-      foreach(sched::rJob job, scheduler().jobs_get())
+      foreach(sched::rJob job, ::kernel::scheduler().jobs_get())
         res.push_back(dynamic_cast<runner::Runner*>(job.get())->as_job());
       return res;
     }
@@ -343,7 +324,7 @@ namespace urbi
     static void                                         \
     system_ ## Function ()                              \
     {                                                   \
-      urbiserver->Variable = Value;                     \
+      ::kernel::urbiserver->Variable = Value;           \
     }
 
     SERVER_SET_VAR(stopall, stopall, true)
@@ -502,8 +483,7 @@ namespace urbi
     void
     system_redefinitionMode()
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      r.redefinition_mode_set(true);
+      runner().redefinition_mode_set(true);
     }
 
     rPath
@@ -515,8 +495,7 @@ namespace urbi
     void
     system_noVoidError()
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      r.void_error_set(false);
+      runner().void_error_set(false);
     }
 
     void

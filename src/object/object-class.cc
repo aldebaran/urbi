@@ -66,7 +66,7 @@ namespace urbi
     static rObject
     object_class_dump(const objects_type& args)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       check_arg_count(args.size() - 1, 1, 2);
 
@@ -153,7 +153,7 @@ namespace urbi
     static rObject
     object_class_callMessage (const objects_type& args)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       check_arg_count(args.size() - 1, 1);
       // We need to set the 'code' slot: make a copy of the call message.

@@ -99,7 +99,7 @@ namespace urbi
     runner::Runner&
     runner()
     {
-      return ::kernel::urbiserver->getCurrentRunner();
+      return ::kernel::runner();
     }
 
     rLobby

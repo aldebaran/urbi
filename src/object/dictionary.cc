@@ -65,13 +65,13 @@ namespace urbi
     rObject
     Dictionary::get(libport::Symbol key)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      static rObject exn = slot_get(SYMBOL(KeyError));
-
       if (libport::mhas(content_, key))
         return content_[key];
       else
-        r.raise(exn->call("new", new String(key)));
+      {
+        static rObject exn = slot_get(SYMBOL(KeyError));
+        ::kernel::runner().raise(exn->call("new", new String(key)));
+      }
       unreachable();
     }
 

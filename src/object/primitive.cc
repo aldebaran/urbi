@@ -70,7 +70,7 @@ namespace urbi
       if (args->value_get().empty())
         RAISE("list of arguments must begin with `this'");
       objects_type a = args->value_get();
-      return (::kernel::urbiserver->getCurrentRunner()
+      return (::kernel::runner()
               .apply(this, SYMBOL(apply), a));
     }
 

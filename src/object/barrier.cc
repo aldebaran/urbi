@@ -22,6 +22,7 @@ namespace urbi
 {
   namespace object
   {
+    using kernel::runner;
 
     Barrier::Barrier(rBarrier model)
       : value_(model->value_)
@@ -58,7 +59,7 @@ namespace urbi
     rObject
     Barrier::wait()
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = runner();
       value_.push_back(&r);
       try
       {

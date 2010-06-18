@@ -46,6 +46,17 @@ namespace kernel
   /// Global variable for the server
   extern URBI_SDK_API class UServer* urbiserver;
 
+  /// The current server.
+  UServer& server();
+
+  /// Convenience wrapper to get urbiserver's current runner.
+  runner::Runner& runner();
+
+  /// Convenience wrapper to get urbiserver's current interpreter.
+  runner::Interpreter& interpreter();
+
+  /// Convenience wrapper to get urbiserver's current scheduler.
+  sched::Scheduler& scheduler();
 
   //! Handle all Urbi system processing.
   /*! There must be one UServer defined in the program and it must be overloaded

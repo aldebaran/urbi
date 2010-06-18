@@ -62,9 +62,9 @@ namespace parser
   class UParser;
 }
 
-
 namespace runner
 {
+  class Interpreter;
   class Runner;
 
   class Shell;

@@ -74,7 +74,7 @@ namespace urbi
     std::string
     Job::status()
     {
-      Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      Runner& r = ::kernel::runner();
 
       std::stringstream status;
       switch (value_->state_get())
@@ -126,14 +126,14 @@ namespace urbi
     void
     Job::waitForTermination()
     {
-      Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      Runner& r = ::kernel::runner();
       r.yield_until_terminated(*value_);
     }
 
     void
     Job::waitForChanges()
     {
-      Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      Runner& r = ::kernel::runner();
       r.yield_until_things_changed();
     }
 

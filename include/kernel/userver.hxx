@@ -18,6 +18,11 @@
 
 namespace kernel
 {
+
+  /*----------.
+  | UServer.  |
+  `----------*/
+
   inline libport::utime_t
   UServer::lastTime()
   {
@@ -53,6 +58,26 @@ namespace kernel
   {
     return urbi_root_;
   }
+
+
+  /*-------------------------.
+  | Freestanding functions.  |
+  `-------------------------*/
+
+  inline
+  UServer&
+  server()
+  {
+    return *urbiserver;
+  }
+
+  inline
+  runner::Runner&
+  runner()
+  {
+    return server().getCurrentRunner();
+  }
+
 }
 
 #endif // !KERNEL_USERVER_HXX

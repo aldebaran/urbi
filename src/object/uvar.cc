@@ -142,7 +142,7 @@ namespace urbi
       // Prepare a call to System.period.  Keep its computation in the
       // loop, so that we can change it at run time.
       CAPTURE_GLOBAL(System);
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       while (true)
       {
         callNotify(r, rObject(this), SYMBOL(accessInLoop));
@@ -156,7 +156,7 @@ namespace urbi
     void
     UVar::loopCheck()
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       bool prevState = r.non_interruptible_get();
       FINALLY(((runner::Runner&, r))((bool, prevState)),
         r.non_interruptible_set(prevState));
@@ -215,7 +215,7 @@ namespace urbi
       if (rUValue uval = val->as<UValue>())
        if (uval->value_get().type == urbi::DATA_DOUBLE)
          val = uval->extract();
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(val), val);
       if (slot_get(SYMBOL(owned))->as_bool())
         callNotify(r, rObject(this), SYMBOL(changeOwned));
@@ -244,7 +244,7 @@ namespace urbi
     rObject
     UVar::getter(bool fromCXX)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       if (this == proto.get())
         return this;
@@ -294,7 +294,7 @@ namespace urbi
     rObject
     UVar::writeOwned(rObject newval)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(valsensor), newval);
       checkBypassCopy();
       callNotify(r, rObject(this), SYMBOL(change));

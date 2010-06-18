@@ -63,7 +63,6 @@ using object::rLobby;
 using object::objects_type;
 using object::void_class;
 using object::nil_class;
-using runner::Runner;
 using libport::Symbol;
 
 // Declare our UObject implementation
@@ -301,15 +300,11 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
              object::to_urbi(bound_context));
   }
 }
-static inline runner::Runner& getCurrentRunner()
-{
-  return ::kernel::urbiserver->getCurrentRunner();
-}
 
 static void periodic_call(rObject, ufloat interval, rObject method,
                           libport::Symbol msg, object::objects_type args)
 {
-  runner::Runner& r = getCurrentRunner();
+  runner::Runner& r = ::kernel::runner();
   libport::utime_t delay = libport::seconds_to_utime(interval);
   while(true)
   {
@@ -332,7 +327,7 @@ static rObject urbi_get(rObject r, const std::string& slot)
   if (object::rUVar uvar = var->as<object::UVar>())
     return uvar->getter(true);
   else
-    return getCurrentRunner().apply(var, symSlot, args);
+    return ::kernel::runner().apply(var, symSlot, args);
 }
 
 /// UObject write to an urbi variable.
@@ -341,8 +336,8 @@ static rObject urbi_set(rObject r, const std::string& slot, rObject v)
   rObject name = new object::String(slot);
   object::objects_type args = list_of (r)(name)(v);
   LIBPORT_DEBUG("applying set...");
-  rObject ret = getCurrentRunner().apply(r->slot_get(SYMBOL(updateSlot)),
-					 SYMBOL(updateSlot), args);
+  rObject ret = ::kernel::runner().apply(r->slot_get(SYMBOL(updateSlot)),
+                               SYMBOL(updateSlot), args);
   LIBPORT_DEBUG("done");
   return ret;
 }
@@ -452,7 +447,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
     {
       libport::Finally f;
       object::rTag tag(new object::Tag);
-      getCurrentRunner().apply_tag(tag, &f);
+      ::kernel::runner().apply_tag(tag, &f);
       // Tricky: tag->freeze() yields, but we must freeze tag before calling
       // eval or there will be a race if asyncEval goes to fast and unfreeze
       // before we freeze. So go throug backend.
@@ -460,7 +455,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       std::string exception;
       ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(r),
                                boost::ref(exception), tag, _1, _2));
-      getCurrentRunner().yield();
+      ::kernel::runner().yield();
       if (!exception.empty())
         throw std::runtime_error("Exception in threaded call: " + exception);
     }
@@ -502,8 +497,7 @@ uobject_finalize(const object::objects_type& args)
   urbi::UObject* uob = urbi::impl::KernelUContextImpl::instance()
     ->getUObject(objName);
   if (!uob)
-    runner::raise_primitive_error("uobject_finalize: No uobject by the name of "
-                                  +objName+" found");
+    FRAISE("uobject_finalize: No uobject by the name of %s found", objName);
   delete uob;
   urbi::impl::KernelUContextImpl::instance()->objects.erase(objName);
   return object::void_class;
@@ -649,7 +643,7 @@ uvar_uowned_set(const std::string& name, rObject val)
   rObject o = get_base(p.first);
   rObject v = o->slot_get(Symbol(p.second));
   object::objects_type args = list_of (v) (val);
-  return getCurrentRunner().apply(v->slot_get(SYMBOL(writeOwned)),
+  return ::kernel::runner().apply(v->slot_get(SYMBOL(writeOwned)),
                                   SYMBOL(writeOwned),
                                   args);
 }
@@ -734,27 +728,27 @@ namespace urbi
     void KernelUContextImpl::yield() const
     {
       CHECK_MAINTHREAD();
-      getCurrentRunner().yield();
+      ::kernel::runner().yield();
     }
     void KernelUContextImpl::yield_until(libport::utime_t deadline) const
     {
       CHECK_MAINTHREAD();
-      getCurrentRunner().yield_until(deadline);
+      ::kernel::runner().yield_until(deadline);
     }
     void KernelUContextImpl::yield_until_things_changed() const
     {
       CHECK_MAINTHREAD();
-      getCurrentRunner().yield_until_things_changed();
+      ::kernel::runner().yield_until_things_changed();
     }
     void KernelUContextImpl::side_effect_free_set(bool s)
     {
       CHECK_MAINTHREAD();
-      getCurrentRunner().side_effect_free_set(s);
+      ::kernel::runner().side_effect_free_set(s);
     }
     bool KernelUContextImpl::side_effect_free_get() const
     {
       CHECK_MAINTHREAD();
-      return getCurrentRunner().side_effect_free_get();
+      return ::kernel::runner().side_effect_free_get();
     }
     UObjectHub*
     KernelUContextImpl::getUObjectHub(const std::string& n)
@@ -901,7 +895,7 @@ namespace urbi
       rObject tag = new object::String(stag);
       rObject call = MAKE_VOIDCALL(cb, urbi::UTimerCallback, call);
       object::objects_type args = list_of (me)(p) (call)(tag);
-      getCurrentRunner().apply(f, SYMBOL(setTimer), args);
+      ::kernel::runner().apply(f, SYMBOL(setTimer), args);
       return TimerHandle(new std::string(stag));
     }
     bool
@@ -934,7 +928,7 @@ namespace urbi
         (rObject(new object::String(hub->get_name())))
         (new object::Float(period / 1000.0))
         (MAKE_VOIDCALL(hub, urbi::UObjectHub, update));
-      getCurrentRunner().apply(f, SYMBOL(setHubUpdate), args);
+      ::kernel::runner().apply(f, SYMBOL(setHubUpdate), args);
     }
 
     std::pair<int, int>
@@ -991,7 +985,7 @@ namespace urbi
       rObject f = me->slot_get(SYMBOL(setUpdate));
       object::objects_type args;
       args << me;
-      std::string meId = getCurrentRunner().apply(
+      std::string meId = ::kernel::runner().apply(
         me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
         ->as<object::String>()->value_get();
 
@@ -1003,7 +997,7 @@ namespace urbi
       args.clear();
       args << me
            << new object::Float(period / 1000.0);
-      getCurrentRunner().apply(f, SYMBOL(setUpdate), args);
+      ::kernel::runner().apply(f, SYMBOL(setUpdate), args);
     }
 
     void
@@ -1051,7 +1045,7 @@ namespace urbi
     {
       LOCK_KERNEL;
       // Protect against multiple parallel creation of the same UVar.
-      runner::Runner& runner = getCurrentRunner();
+      runner::Runner& runner = ::kernel::runner();
       bool prevState = runner.non_interruptible_get();
       FINALLY(
         ((bool, prevState))
@@ -1153,8 +1147,7 @@ namespace urbi
       }
       catch (object::UrbiException&)
       {
-        runner::raise_primitive_error
-          ("Invalid read of void UVar '" + owner_->get_name() + "'");
+        FRAISE("Invalid read of void UVar '%s'", owner_->get_name());
       }
     }
 
@@ -1223,7 +1216,7 @@ namespace urbi
     KernelUGenericCallbackImpl::registerCallback()
     {
       LOCK_KERNEL;
-      runner::Runner& runner = getCurrentRunner();
+      runner::Runner& runner = ::kernel::runner();
       if (registered_)
       {
         std::cerr << "###UGenericcallback on " << owner_->name

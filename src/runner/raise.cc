@@ -204,7 +204,7 @@ namespace runner
   void
   raise_unexpected_void_error()
   {
-    if (::kernel::urbiserver->getCurrentRunner().void_error_get())
+    if (::kernel::runner().void_error_get())
       raise_urbi_skip(SYMBOL(UnexpectedVoid));
   }
 }

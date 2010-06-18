@@ -97,14 +97,26 @@ namespace kernel
       urbi::Exit(EX_OSFILE, "set URBI_IGNORE_URBI_U to ignore.");
   }
 
-
-
-  static size_t waker_socket_on_read(sched::Scheduler* sc, const void*,
-                                     size_t sz)
+  static
+  size_t
+  waker_socket_on_read(sched::Scheduler* sc, const void*, size_t sz)
   {
     sc->signal_world_change();
     return sz;
   }
+
+  runner::Interpreter&
+  interpreter()
+  {
+    return dynamic_cast<runner::Interpreter&>(runner());
+  }
+
+  sched::Scheduler&
+  scheduler()
+  {
+    return runner().scheduler_get();
+  }
+
 
   /*----------.
   | UServer.  |

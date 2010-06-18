@@ -192,7 +192,7 @@ namespace urbi
     Object::slot_update(key_type k, const rObject& o,
                         bool hook)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       // The updated slot
       Slot& s = slot_get(k);
@@ -622,7 +622,7 @@ namespace urbi
     Object::call_with_this(libport::Symbol name,
                            const objects_type& args)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       rObject fun = slot_get(name);
       return r.apply(fun, name, args);
     }

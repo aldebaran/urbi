@@ -65,7 +65,7 @@ namespace urbi
     void
     Tag::block(const objects_type& args)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       check_arg_count(args.size(), 0, 1);
       const rObject& payload = args.empty() ? void_class : args.front();
       value_->block(r.scheduler_get(), payload);
@@ -74,7 +74,7 @@ namespace urbi
     void
     Tag::freeze()
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       value_->freeze();
       if (r.frozen())
@@ -106,14 +106,14 @@ namespace urbi
     Tag::priority_type
     Tag::priority_set(priority_type prio)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       return value_->prio_set(r.scheduler_get(), prio);
     }
 
     void
     Tag::stop(const objects_type& args)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       check_arg_count(args.size(), 0, 1);
       const rObject& payload = args.empty() ? void_class : args.front();
       value_->stop(r.scheduler_get(), payload);
@@ -179,7 +179,7 @@ namespace urbi
     runner::Runner&
     runner()
     {
-      return ::kernel::urbiserver->getCurrentRunner();
+      return ::kernel::runner();
     }
 
     static inline

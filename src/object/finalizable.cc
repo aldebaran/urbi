@@ -41,9 +41,8 @@ namespace urbi
       if (rSlot finalize = slot_locate(SYMBOL(finalize), false).second)
       {
         objects_type args;
-        args.push_back(this);
-        ::kernel::urbiserver->getCurrentRunner().apply
-            (finalize->value(), SYMBOL(finalize), args);
+        args << this;
+        ::kernel::runner().apply(finalize->value(), SYMBOL(finalize), args);
       }
       // We are already in the destructor, we cannot allow a reference to be
       // kept. This check must be outside the above block.

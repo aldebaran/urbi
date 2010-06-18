@@ -33,6 +33,8 @@ namespace urbi
 {
   namespace object
   {
+    using ::kernel::runner;
+
     Code::Code(ast_type a,
                rObject call, rLobby lobby, rObject ths,
                captures_type captures)
@@ -111,7 +113,7 @@ namespace urbi
     {
       check_arg_count(apply_args.size(), 1, 2);
       rList args = type_check<List>(apply_args[0], 0u);
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = runner();
       libport::Symbol s =
         1 < apply_args.size()
         ? libport::Symbol(type_check<String>(apply_args[1], 1u)->value_get())
@@ -185,7 +187,7 @@ namespace urbi
     rObject
     Code::operator() (object::objects_type args)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = runner();
       aver(!args.empty());
       return r.apply(this, libport::Symbol::make_empty(), args);
     }

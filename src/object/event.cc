@@ -81,7 +81,7 @@ namespace urbi
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave)
     {
       rActions actions(new Actions(guard, enter, leave));
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       actions->tag_stack = r.tag_stack_get();
       foreach (object::rTag tag, actions->tag_stack)
       {
@@ -116,7 +116,7 @@ namespace urbi
     void
     Event::trigger_job(const rActions& actions, bool detach)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       if (actions->frozen)
         return;
       objects_type args;
@@ -170,7 +170,7 @@ namespace urbi
     void
     Event::waituntil(rObject pattern)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
 
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
@@ -255,7 +255,7 @@ namespace urbi
     void
     Event::stop_backend(bool detach)
     {
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(active), to_urbi(false));
       if (detach)
       {
