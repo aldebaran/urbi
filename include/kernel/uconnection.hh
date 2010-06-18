@@ -233,9 +233,6 @@ namespace kernel
     /// Error return code for the constructor.
     UErrorValue uerror_;
 
-    /// Virtual device for the connection.
-    std::string connection_tag_;
-
     /// Connection closing.
     bool closing_;
 

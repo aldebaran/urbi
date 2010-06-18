@@ -57,9 +57,7 @@ namespace urbi
 
         // Initialize the connection tag used to reference local
         // variables.
-        slot_set
-          (SYMBOL(connectionTag),
-           new Tag(new sched::Tag(libport::Symbol(c->connection_tag_))));
+        slot_set(SYMBOL(connectionTag), new Tag());
       }
     }
 
