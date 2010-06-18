@@ -21,7 +21,6 @@
 
 #include <libport/cassert>
 #include <libport/containers.hh>
-#include <libport/contract.hh>
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
 

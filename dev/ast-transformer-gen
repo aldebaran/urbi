@@ -22,7 +22,6 @@ print >> header, tools.banner(ast_params,
 # include <set>
 
 # include <libport/cassert>
-# include <libport/contract.hh>
 # include <libport/type-info.hh>
 
 # include <ast/visitor.hh>

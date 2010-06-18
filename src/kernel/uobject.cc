@@ -19,7 +19,6 @@
 #endif
 
 #include <libport/compiler.hh>
-#include <libport/contract.hh>
 #include <libport/foreach.hh>
 #include <libport/hash.hh>
 #include <libport/lexical-cast.hh>

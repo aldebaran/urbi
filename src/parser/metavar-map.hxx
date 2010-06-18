@@ -17,6 +17,7 @@
 # define PARSER_METAVAR_MAP_HXX
 
 # include <sstream>
+# include <libport/format.hh>
 # include <parser/metavar-map.hh>
 
 namespace parser
@@ -49,9 +50,7 @@ namespace parser
   MetavarMap<Data>::append_ (unsigned& count, Data data)
   {
     map_[count] = data;
-    std::string s = "_" + name_ + " (" +
-      boost::lexical_cast<std::string> (count++) + ")";
-    return s;
+    return libport::format("_%s (%s)", name_, count++);
   }
 
   template <typename Data>

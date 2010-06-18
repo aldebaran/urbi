@@ -182,7 +182,7 @@ namespace urbi
       if (!fun)
       {
         type_check<Code>(f);
-        unreached();
+        unreachable();
       }
       objects_type args;
       args << l;

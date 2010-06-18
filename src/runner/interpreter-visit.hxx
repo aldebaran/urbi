@@ -690,7 +690,7 @@ namespace runner
     }
     // No handler matched, rethrow.
     exception->rethrow();
-    unreached();
+    unreachable();
   }
 
 
