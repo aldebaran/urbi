@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1006 utf-8
+personal_ws-1.1 en 1007 utf-8
 aaa
 abc
 abcdef
@@ -789,6 +789,7 @@ submodule
 submodules
 subscope
 subscopes
+subscriberCount
 Subsubsection
 succ
 sudo
@@ -945,6 +946,7 @@ valueAccessed
 valueChanged
 variableName
 variadic
+varInString
 varName
 varname
 VC
