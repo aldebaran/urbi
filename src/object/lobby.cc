@@ -58,6 +58,7 @@ namespace urbi
         // Initialize the connection tag used to reference local
         // variables.
         slot_set(SYMBOL(connectionTag), new Tag());
+        tag_get()->name_set(libport::Symbol::fresh("Lobby"));
       }
     }
 
