@@ -128,9 +128,13 @@ namespace urbi
         register_stop_job(stop_job_type(actions->leave, args));
         if (detach)
         {
-          sched::rJob job = new runner::Interpreter
-            (r.lobby_get(), r.scheduler_get(),
-             boost::bind(static_cast<rObject(Executable::*)(objects_type)>(&Executable::operator()), actions->enter.get(), args),
+          typedef rObject(Executable::*fun_type)(objects_type);
+          sched::rJob job =
+            new runner::Interpreter
+            (r.lobby_get(),
+             r.scheduler_get(),
+             boost::bind(static_cast<fun_type>(&Executable::operator()),
+                         actions->enter.get(), args),
              this, SYMBOL(at));
           job->start_job();
         }
@@ -366,4 +370,3 @@ namespace urbi
     }
   }
 }
-

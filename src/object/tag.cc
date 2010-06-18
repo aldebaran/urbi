@@ -65,10 +65,9 @@ namespace urbi
     void
     Tag::block(const objects_type& args)
     {
-      runner::Runner& r = ::kernel::runner();
       check_arg_count(args.size(), 0, 1);
       const rObject& payload = args.empty() ? void_class : args.front();
-      value_->block(r.scheduler_get(), payload);
+      value_->block(::kernel::scheduler(), payload);
     }
 
     void
@@ -106,17 +105,15 @@ namespace urbi
     Tag::priority_type
     Tag::priority_set(priority_type prio)
     {
-      runner::Runner& r = ::kernel::runner();
-      return value_->prio_set(r.scheduler_get(), prio);
+      return value_->prio_set(::kernel::scheduler(), prio);
     }
 
     void
     Tag::stop(const objects_type& args)
     {
-      runner::Runner& r = ::kernel::runner();
       check_arg_count(args.size(), 0, 1);
       const rObject& payload = args.empty() ? void_class : args.front();
-      value_->stop(r.scheduler_get(), payload);
+      value_->stop(::kernel::scheduler(), payload);
     }
 
     void

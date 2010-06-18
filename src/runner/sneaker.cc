@@ -44,7 +44,7 @@ namespace dbg
   runner::Runner&
   runner_or_sneaker_get()
   {
-    if (kernel::urbiserver->scheduler_get().is_current_job(0))
+    if (kernel::scheduler().is_current_job(0))
     {
       passert(sneaker, sneaker);
       return *sneaker;
@@ -52,8 +52,7 @@ namespace dbg
     return ::kernel::runner();
   }
 
-  Sneaker::Sneaker(object::rLobby lobby,
-		       sched::Scheduler& scheduler)
+  Sneaker::Sneaker(object::rLobby lobby, sched::Scheduler& scheduler)
     : Interpreter(lobby, scheduler, ast::rConstAst(), SYMBOL(LT_sneaker_GT))
   {
     non_interruptible_set(true);
@@ -75,8 +74,7 @@ namespace dbg
   }
 
   void
-  create_sneaker_if_needed
-    (object::rLobby lobby, sched::Scheduler& scheduler)
+  create_sneaker_if_needed(object::rLobby lobby, sched::Scheduler& scheduler)
   {
     if (!sneaker)
       sneaker = new Sneaker(lobby, scheduler);
