@@ -96,7 +96,7 @@ load("urbi/weak-pointer.u");
 load("urbi/uobject.u");
 
 if ("ros" in Platform.enabledModules && System.getenv("ROS_ROOT"))
-  loadModule("urbi/ros.so");
+  loadModule("urbi/ros");
 
 // This variable is used by initialization code to detect the end of
 // urbi.u.
