@@ -77,15 +77,7 @@ case $COMPILATION_MODE_DEBUG:$URBI_HOST_OS in
       ;;
 esac
 if test -n "$STRIP"; then
-  # Do not show errors -- there are shell scripts there.
-  find "$DESTDIR$prefix/bin" -type f |
-    xargs $STRIP 2>/dev/null || true
-  find "$DESTDIR$prefix"                    \
-          -type f '(' -name '*.so.*'        \
-                   -o -name '*.so'          \
-                   -o -name '*.dylib'       \
-                   -o -name '*.a'           \
-                   ')' |
+  find "$DESTDIR$prefix" -type f -name '*.a' |
     xargs $STRIP || true
 fi
 
