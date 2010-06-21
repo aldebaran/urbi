@@ -97,13 +97,14 @@ fi
 #
 # Complete the package with missing libraries, make it relocatable,
 # and check there are no missing dependencies.
-$srcdir/build-aux/bin/check-lib-deps          \
-  --verbose --verbose --verbose --verbose     \
-  --destdir "$DESTDIR"                        \
-  --host-os "$URBI_HOST_OS"                   \
-  --prefix "$prefix"                          \
-  --libdir "$libdir"                          \
-  --libpath "$BOOST_LDPATH"                   \
+$srcdir/build-aux/bin/check-lib-deps            \
+  --verbose --verbose --verbose --verbose       \
+  --destdir "$DESTDIR"                          \
+  --host-os "$URBI_HOST_OS"                     \
+  --prefix "$prefix"                            \
+  --libdir "$libdir"                            \
+  --libpath "$BOOST_LDPATH"                     \
+  --strip "$STRIP"                              \
   "$DESTDIR"
 
 # Boost headers.
