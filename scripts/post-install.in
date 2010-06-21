@@ -70,7 +70,7 @@ test -n "$DESTDIR" ||
 # 7.8M libuobject.2.so   strip -S
 # 6.4M libuobject.3.so   strip
 case $COMPILATION_MODE_DEBUG:$URBI_HOST_OS in
-  (false:macos) STRIP="$STRIP -s";;
+  (false:macos) STRIP="$STRIP -S";;
   (false:linux) ;;
   (*) # Do not use STRIP here.
       STRIP=
