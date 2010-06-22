@@ -333,9 +333,9 @@ namespace urbi
         c.disconnect();
     }
 
-    /*-------------.
-    | Subscription |
-    `-------------*/
+    /*---------------.
+    | Subscription.  |
+    `---------------*/
 
     Event::Subscription::Subscription(rEvent event, const callback_type* cb)
       : event_(event)
@@ -356,9 +356,9 @@ namespace urbi
         }
     }
 
-    /*-------------.
-    | Urbi binding |
-    `-------------*/
+    /*---------------.
+    | Urbi binding.  |
+    `---------------*/
 
     URBI_CXX_OBJECT_REGISTER(Event)
     {
