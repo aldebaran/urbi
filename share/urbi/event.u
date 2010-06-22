@@ -14,27 +14,21 @@ do (Event)
 {
   function '||' (rhs)
   {
-    var res = Event.new;
+    var res = Event.new |
     at (this?)
-      res!;
+      res! |
     at (rhs?)
-      res!;
-    return res;
+      res! |
+    return res
   };
 
   // This function does not handle event that have a duration because this
   // would be costly for the declarations of "at" with conditions.
   function '<<' (rhs)
   {
-    rhs.onEvent(
-      closure (var evt) { true },
-      closure (var evt, var pattern) {
-        this.trigger |
-      },
-      closure (var evt, var pattern) {
-        this.stop |
-      },
-    ) |
+    rhs.onEvent(closure (var evt) { true },
+                closure (var evt, var pattern) { this.trigger },
+                closure (var evt, var pattern) { this.stop }) |
 
     // To watch many at once.
     this
