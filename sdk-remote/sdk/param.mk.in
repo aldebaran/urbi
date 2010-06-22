@@ -100,7 +100,7 @@ libbase = $(OUTSHLIB:$(DLMODEXT)=)
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lalib)	\
 	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)	-rpath $(envdir) $(LIBADD)
-	cp $$(ls $(dir $(libbase))/.libs/$(notdir $(libbase))*$(DLMODEXT) \
+	cp $$(ls $(dir $(libbase)).libs/$(notdir $(libbase))*$(DLMODEXT) \
 	  | head -n 1) $(OUTSHLIB)
 
 
