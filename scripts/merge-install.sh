@@ -3,6 +3,8 @@
 # Merge multiple (2) urbisdk tarballs (one debug and one release)
 # and run the installer generator.
 set -e
+set -x
+
 files=
 verbose=false
 vcredist="/mnt/share/tools/vcredist/vcredist_x86-vcxx-2008.exe"
@@ -90,8 +92,8 @@ mkdir temp
 mkdir merge
 cd temp
 for f in $files; do
-  verb merging $f
-  unzip $(ifverb "" -q ) $f
+  verb "merging $f"
+  unzip $(ifverb "" -q) $f
   basedir=$(echo *)
   case $f in
     (*debug*)
@@ -112,7 +114,6 @@ done
 cd ../merge
 
 verb "Copying vcredist from $vcredist"
-
 cp $vcredist ./vcredist-x86.exe
 
 if test -n "$installscriptloc"; then
