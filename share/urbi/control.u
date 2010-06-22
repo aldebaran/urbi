@@ -21,16 +21,6 @@ class Global.Control
   };
 
 
-  // at_(test, on_true, on_false)
-  //
-  // Takes three expressions, a test and some code to execute each
-  // time the test becomes true and some code to execute each time the
-  // test becomes false.
-  function at_
-  {
-    registerAtJob(call.args[0], call.args[1], call.args[2])
-  };
-
   // 'every,sleep'(deadline, delay)
   //
   // Prepare the next iteration for "every,", which should happen at
