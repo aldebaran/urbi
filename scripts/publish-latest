@@ -117,34 +117,37 @@ scp_point ()
 ## ------ ##
 
 # The (scp-like) directory that contains the tarballs.
-from=build@bf-1:share/built/kernel-2.0/archives
+from=build@bf-1:share/built/urbi-sdk/archives
 
 # The (scp-like) location into which the per-architecture directories are.
-to=downloads@www.gostai.com:gostai.com-downloads/urbi-sdk-2.0
+to=downloads@www.gostai.com:gostai.com-downloads/urbi-sdk
 
-oses="windows linux macos"
+oses="linux windows macos"
 
 getargs "$@"
 
 # Get the content of the directory containing the latest successful builds:
-# urbi-sdk-2.0-beta3-linux-x86.tar.gz
-# urbi-sdk-2.0-beta3-macos-x86.tar.gz
-# urbi-sdk-2.0-beta3-linux-x86-gcc4-debug_dynamic.tar.gz
+# urbi-sdk-2.0-beta3-linux-x86.tar.bz2
+# urbi-sdk-2.0-beta3-macos-x86.tar.bz2
+# urbi-sdk-2.0-beta3-linux-x86-gcc4-debug_dynamic.tar.bz2
 # urbi-sdk-2.0-beta2-498-g4f7f361-windows-x86.zip
-# urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug_dynamic.tar.gz
-# urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86.tar.gz
-# urbi-sdk-2.0-beta2-498-g4f7f361-macos-x86.tar.gz
+# urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug_dynamic.tar.bz2
+# urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86.tar.bz2
+# urbi-sdk-2.0-beta2-498-g4f7f361-macos-x86.tar.bz2
 all=$(ssh $(scp_point "$from") \
         "cd $(scp_dir "$from") && \
-           ls -1t *linux*.gz *macos-*.gz *windows*.exe *windows*.zip")
+           ls -1t *linux*.bz2 *macos-*.bz2 *windows*.exe *windows*.zip")
 
 # Make sure that we have the same version for the three architectures.
 test -n "$latest" ||
   latest=$(echo "$all" |
-      perl -n -e 'if (m/((?:kernel|urbi-(?:runtime|sdk))
-                        -(?:\d+(?:\.\d+)+)
-                        (?:-(?:beta|rc-))?
-                        (?:-g[\da-f]{7})?)
+      perl -n -e 'if (m/(?:kernel|urbi-(?:runtime|sdk))
+                        -
+                        (
+                          (?:\d+(?:\.\d+)+)
+                          (?:-(?:beta|rc-\d+))?
+                          (?:-g[\da-f]{7})?
+                        )
                         -(?:linux|macos|windows)
                         -(?:ARM|ppc|x86)
                         (?:-gcc4-debug_dynamic|vcxx200\d)?/x)
@@ -155,23 +158,27 @@ stderr "latest: $latest"
 test -n "$latest" ||
   fatal "cannot find latest version from:" $all
 
-for os in $oses
+for name in urbi-sdk urbi-runtime
 do
-  pack=$(echo "$all" | grep -e "$latest-$os" | grep -v 'debug' || true)
-  test -n "$pack"||
-    fatal "$latest does not exist for $os"
+  for os in $oses
+  do
+    pack=$(echo "$all" | grep -e "$name-$latest-$os" || true)
+    test -n "$pack"||
+      fatal "$name-$latest does not exist for $os"
+  done
 done
 
 for os in $oses
 do
-  for pack in $(echo "$all" | grep -e "$latest-$os" | grep -v 'debug')
+  for pack in $(echo "$all" | grep -e "$latest-$os")
   do
     echo " --------------- $pack ---------------- "
     # For some reason, "scp A B" does not work, so
     # "scp A localhost && scp localhost B".
     cmd="scp \"$from/$pack\" /tmp/$pack &&
-     scp /tmp/$pack $to/$os/$pack &&
-     ssh $(scp_point "$to") 'chmod 640 $(scp_dir "$to")/$os/$pack'"
+     ssh $(scp_point "$to") 'mkdir -p $(scp_dir "$to")/$latest' &&
+     scp /tmp/$pack $to/$latest/$pack &&
+     ssh $(scp_point "$to") 'chmod 640 $(scp_dir "$to")/$latest/$pack'"
     stderr "$cmd"
     eval "$cmd"
   done
