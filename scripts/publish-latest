@@ -12,6 +12,20 @@ stderr ()
   done
 }
 
+
+# run LINE...
+# --------------
+# Do the "LINE" verbosely.
+run ()
+{
+  local i
+  for i
+  do
+    stderr "$i"
+    eval "$i"
+  done
+}
+
 # error STATUS LINE...
 # ---------------------
 # Issue the lines as error, and exit STATUS.
@@ -101,6 +115,15 @@ scp_dir ()
   echo "$1" | sed -e 's/.*://'
 }
 
+# scp_base LOC
+# ------------
+# From a scp-like location, return the basename of the path.
+# foo@bar.baz.com:my/path -> path
+scp_base ()
+{
+  echo "$1" | sed -e 's/.*://;s,.*/,,'
+}
+
 # scp_point LOC
 # --------------
 # From a scp-like location, return the connection-point.
@@ -110,7 +133,23 @@ scp_point ()
   echo "$1" | sed -e 's/:.*//'
 }
 
+# indirect_scp SRC DST-DIR
+# ------------------------
+# Implement scp SRC DST-DIR, except that it does not work when SRC and
+# DST-DIR are both remote.  So do it via localhost.  DST-DIR is a directory
+# (created if needed), not the qualified name.
+indirect_scp ()
+{
+  local src=$1
+  local dst=$2
+  local base=$(scp_base "$src")
 
+  run                                                           \
+    "scp \"$src\" /tmp/"                                        \
+    "ssh $(scp_point "$dst") 'mkdir -p $(scp_dir $dst)'"        \
+    "scp /tmp/$base $dst"                                       \
+    "ssh $(scp_point "$to") 'chmod 640 $(scp_dir $dst)/$base'"
+}
 
 ## ------ ##
 ## Main.  ##
@@ -122,7 +161,7 @@ from=build@bf-1:share/built/urbi-sdk/archives
 # The (scp-like) location into which the per-architecture directories are.
 to=downloads@www.gostai.com:gostai.com-downloads/urbi-sdk
 
-oses="linux windows macos"
+oses="linux macos windows"
 
 getargs "$@"
 
@@ -153,6 +192,7 @@ test -n "$latest" ||
                         (?:-gcc4-debug_dynamic|vcxx200\d)?/x)
                   { print "$1\n"; exit 0; }')
 
+# The latest version number.
 stderr "latest: $latest"
 
 test -n "$latest" ||
@@ -173,13 +213,6 @@ do
   for pack in $(echo "$all" | grep -e "$latest-$os")
   do
     echo " --------------- $pack ---------------- "
-    # For some reason, "scp A B" does not work, so
-    # "scp A localhost && scp localhost B".
-    cmd="scp \"$from/$pack\" /tmp/$pack &&
-     ssh $(scp_point "$to") 'mkdir -p $(scp_dir "$to")/$latest' &&
-     scp /tmp/$pack $to/$latest/$pack &&
-     ssh $(scp_point "$to") 'chmod 640 $(scp_dir "$to")/$latest/$pack'"
-    stderr "$cmd"
-    eval "$cmd"
+    indirect_scp "$from/$pack" "$to/$latest"
   done
 done
