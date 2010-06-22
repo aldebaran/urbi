@@ -20,7 +20,6 @@
 
 #include <libport/cassert>
 #include <libport/containers.hh>
-#include <libport/contract.hh>
 #include <libport/debug.hh>
 #include <libport/foreach.hh>
 #include <libport/format.hh>

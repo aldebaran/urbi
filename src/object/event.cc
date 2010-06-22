@@ -108,6 +108,7 @@ namespace urbi
     Event::Subscription
     Event::onEvent(const callback_type& cb)
     {
+      aver(!cb.empty());
       callback_type* res = new callback_type(cb);
       callbacks_ << res;
       return Subscription(this, res);
@@ -180,7 +181,8 @@ namespace urbi
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       // Check whether there's already a matching instance.
       foreach (const actives_type::value_type& active, _active)
-        if (pattern == nil_class || pattern->call(SYMBOL(match), active.second)->as_bool())
+        if (pattern == nil_class
+            || pattern->call(SYMBOL(match), active.second)->as_bool())
           return;
 
       rTag t(new Tag);
@@ -266,9 +268,11 @@ namespace urbi
         sched::jobs_type children;
         foreach (const stop_job_type& stop_job, stop_jobs_)
         {
+          typedef rObject(Executable::*fun_type)(objects_type);
           sched::rJob job = new runner::Interpreter
             (r.lobby_get(), r.scheduler_get(),
-             boost::bind(static_cast<rObject(Executable::*)(objects_type)>(&Executable::operator()), stop_job.first.get(), stop_job.second),
+             boost::bind(static_cast<fun_type>(&Executable::operator()),
+                         stop_job.first.get(), stop_job.second),
              this, SYMBOL(onleave));
           job->start_job();
         }
