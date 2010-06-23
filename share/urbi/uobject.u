@@ -209,6 +209,7 @@ do (getSlot("UVar"))
   var traceSet = Event.new;
   var traceGet = Event.new;
   var traceBind = Event.new;
+  var owner;
   var ownerName = "<unknown>";
   var rtp = false;
   // If this is true, callbacks that throw will be removed from callback lists.
@@ -229,6 +230,7 @@ do (getSlot("UVar"))
   };
   function init(parent, name)
   {
+    owner = parent;
     if (parent.hasSlot("__uobjectName"))
       ownerName = parent.__uobjectName
     else
@@ -620,8 +622,9 @@ class Global.'external'
       .acceptVoid |
       if (!v.isNil && !v.isVoid)
         chan << ['external'.UEM_ASSIGNVALUE,
-      fullname,
-      v]
+                 fullname,
+                 v,
+                 uob.getProperty(varname, "timestamp")]
     }|
     lobby.__bindingFunc[fullname] = f |
     if (uobjects.hasLocalSlot(fr))

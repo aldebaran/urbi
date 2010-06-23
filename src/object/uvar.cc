@@ -213,10 +213,18 @@ namespace urbi
     rObject
     UVar::update_(rObject val)
     {
+      return update_timed_(val, libport::utime());
+    }
+
+    rObject
+    UVar::update_timed_(rObject val, time_t timestamp)
+    {
+      getSlot(SYMBOL(owner))->setProperty(from_urbi<std::string>(getSlot(SYMBOL(initialName))),
+                                          SYMBOL(timestamp), to_urbi(timestamp));
       // Do not bother with UValue for numeric types.
       if (rUValue uval = val->as<UValue>())
-       if (uval->value_get().type == urbi::DATA_DOUBLE)
-         val = uval->extract();
+        if (uval->value_get().type == urbi::DATA_DOUBLE)
+          val = uval->extract();
       runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(val), val);
       if (slot_get(SYMBOL(owned))->as_bool())
@@ -309,6 +317,7 @@ namespace urbi
     {
       bind(SYMBOL(writeOwned), &UVar::writeOwned);
       bind(SYMBOL(update_), &UVar::update_);
+      bind(SYMBOL(update_timed_), &UVar::update_timed_);
       bind(SYMBOL(loopCheck), &UVar::loopCheck);
       bind(SYMBOL(accessor), &UVar::accessor);
       proto->slot_set(SYMBOL(updateBounce), new Primitive(&update_bounce));

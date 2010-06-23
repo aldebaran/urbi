@@ -157,6 +157,7 @@ namespace urbi {
       virtual UValue getProp(UProperty prop);
       virtual void setProp(UProperty prop, const UValue& v);
       virtual bool setBypass(bool enable);
+      virtual time_t timestamp() const;
       virtual void unnotify();
       virtual void useRTP(bool enable);
     private:
@@ -608,6 +609,21 @@ get_base(const std::string& objname)
       res = *s.second;
   }
   return res;
+}
+
+
+/// Get the uvar owner from is name
+static rObject
+uvar_owner_get(const std::string& name)
+{
+  return get_base(split_name(name).first);
+}
+
+/// Get the uvar name
+static std::string
+uvar_name_get(const std::string& name)
+{
+  return split_name(name).second;
 }
 
 /// Get an rObject from its uvar name
@@ -1223,6 +1239,13 @@ namespace urbi
       rObject o = get_base(p.first);
       o->slot_get(Symbol(p.second))->slot_set(SYMBOL(rtp),
                                               object::to_urbi(enable));
+    }
+
+    time_t
+    KernelUVarImpl::timestamp() const
+    {
+      return uvar_owner_get(owner_->get_name())->getProperty(uvar_name_get(owner_->get_name()), SYMBOL(timestamp))
+        ->as<object::Float>()->value_get();
     }
 
     void
