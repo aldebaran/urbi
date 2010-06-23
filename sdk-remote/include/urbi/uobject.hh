@@ -271,8 +271,8 @@ namespace urbi
 
     // These macros provide the following callbacks :
     // Notify
-    // Access    | const std::string& | int (T::*fun) ()            | const
-    // Change    | urbi::UVar&        | int (T::*fun) (urbi::UVar&) | non-const
+    // Access    | const std::string& | void (T::*fun) ()            | const
+    // Change    | urbi::UVar&        | void (T::*fun) (urbi::UVar&) | non-const
     // OnRequest |
 
 # ifdef DOXYGEN
@@ -283,7 +283,7 @@ namespace urbi
     \param fun the function to call each time the variable \b v is modified.
     The function is called rigth after the variable v is modified.
     */
-    void UNotifyChange(UVar& v, int (UObject::*fun)(UVar&));
+    void UNotifyChange(UVar& v, void (UObject::*fun)(UVar&));
 
     /*!
     \brief Similar to UNotifyChange(), but run function in a thread.
@@ -291,7 +291,7 @@ namespace urbi
     \param fun the function to call.
     \param the locking mode to use.
     */
-    void UNotifyThreadedChange(UVar& v, int (UObject::*fun)(UVar&), LockMode m);
+    void UNotifyThreadedChange(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
     /*!
     \brief Call a function each time a new variable value is available.
     \param v the variable to monitor.
@@ -301,7 +301,7 @@ namespace urbi
     want the callback function to be called.
     The function is called rigth after the variable v is updated.
     */
-    void UNotifyOnRequest(UVar& v, int (UObject::*fun)(UVar&));
+    void UNotifyOnRequest(UVar& v, void (UObject::*fun)(UVar&));
 
     /*!
     \brief Call a function each time a variable is accessed.
@@ -310,28 +310,28 @@ namespace urbi
     The function is called right \b before the variable \b v is accessed, giving
     \b fun the opportunity to modify it.
     */
-    void UNotifyAccess(UVar& v, int (UObject::*fun)(UVar&));
-    void UNotifyThreadedAccess(UVar& v, int (UObject::*fun)(UVar&), LockMode m);
+    void UNotifyAccess(UVar& v, void (UObject::*fun)(UVar&));
+    void UNotifyThreadedAccess(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
 
     /// Call \a fun every \a t milliseconds.
     template <class T>
     TimerHandle
-    USetTimer(ufloat t, int (T::*fun)());
+    USetTimer(ufloat t, void (T::*fun)());
 # else
 
     /// \internal
 # define MakeNotify(Type, Notified, Arg, Const,                 \
 		    TypeString, Name, Owned,			\
 		    WithArg, StoreArg)                          \
-    template <class T>                                          \
-    void UNotify##Type(Notified, int (T::*fun) (Arg) Const)     \
+    template <class T, typename R>                              \
+    void UNotify##Type(Notified, R (T::*fun) (Arg) Const)       \
     {                                                           \
 	createUCallback(*this, StoreArg, TypeString,            \
                         dynamic_cast<T*>(this),                 \
                         fun, Name);	                        \
     }                                                           \
-    template <class T>                                          \
-    void UNotifyThreaded##Type(Notified, int (T::*fun) (Arg) Const, \
+    template <class T, typename R>                               \
+    void UNotifyThreaded##Type(Notified, R (T::*fun) (Arg) Const, \
                                LockMode lockMode)               \
     {                                                           \
 	createUCallback(*this, StoreArg, TypeString,            \
@@ -375,11 +375,13 @@ namespace urbi
 
     /// \internal
 # define MKUSetTimer(Const, Useless)                                    \
-    template <class T>							\
-    TimerHandle USetTimer(ufloat t, int (T::*fun) () Const)	        \
+    template <class T, class R>						\
+    TimerHandle USetTimer(ufloat t, R (T::*fun) () Const)	        \
     {									\
       return (new UTimerCallbackobj<T> (__name, t,			\
-				dynamic_cast<T*>(this), fun, ctx_))     \
+				dynamic_cast<T*>(this),                 \
+                                boost::bind(fun, dynamic_cast<T*>(this)),\
+                                ctx_))                                  \
         ->handle_get();                                                 \
     }
 

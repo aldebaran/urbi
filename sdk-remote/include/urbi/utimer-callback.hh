@@ -15,6 +15,8 @@
 
 # include <string>
 
+# include <boost/function.hpp>
+
 # include <libport/ufloat.h>
 
 # include <urbi/export.hh>
@@ -53,32 +55,23 @@ namespace urbi
   class UTimerCallbackobj : public UTimerCallback
   {
   public:
-# define MKUTimerCallBackObj(Const, IsConst)                    \
-    UTimerCallbackobj(const std::string& objname,               \
-		      ufloat period, T* obj,                    \
-		      int (T::*fun) () Const, impl::UContextImpl* ctx)  \
-      : UTimerCallback(objname, period, ctx)                     \
-      , obj(obj)                                                \
-      , fun##Const(fun)                                         \
-      , is_const_(IsConst)                                      \
-    {                                                           \
-      registerCallback();                                       \
+    UTimerCallbackobj(const std::string& objname,
+		      ufloat period, T* obj,
+		      boost::function0<void> fun, impl::UContextImpl* ctx)
+      : UTimerCallback(objname, period, ctx)
+      , obj(obj)
+      , fun(fun)
+    {
+      registerCallback();
     }
-
-    MKUTimerCallBackObj (/**/, false);
-    MKUTimerCallBackObj (const, true);
-
-# undef MKUTimerCallBackObj
 
     virtual void call()
     {
-      is_const_ ? ((*obj).*funconst)() : ((*obj).*fun)();
+      fun();
     }
   private:
     T* obj;
-    int (T::*fun) ();
-    int (T::*funconst) () const;
-    bool is_const_;
+    boost::function0<void> fun;
   };
 
 

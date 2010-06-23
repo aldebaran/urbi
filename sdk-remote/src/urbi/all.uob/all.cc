@@ -152,7 +152,7 @@ public:
       ((char*)b.common.data)[i]++;
     return 0;
   }
-  int onImageBypass(urbi::UVar& var)
+  void onImageBypass(urbi::UVar& var)
   {
     threadCheck();
     const urbi::UImage& cb = var;
@@ -160,7 +160,6 @@ public:
     urbi::UImage& b = const_cast<urbi::UImage&>(cb);
     for (unsigned int i=0; i<b.size; ++i)
       b.data[i]++;
-    return 0;
   }
   std::string selfWriteB(int idx, const std::string& content)
   {

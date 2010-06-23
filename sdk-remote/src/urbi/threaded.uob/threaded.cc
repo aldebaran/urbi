@@ -68,7 +68,7 @@ public:
   int onChangeDelay(UVar& v);
   int onChange(UVar& v);
   int onAccess(UVar& v);
-  int onTimer();
+  void onTimer();
   UValue getLastRead(unsigned id);
   /// Queue asynchronous op on thread \b tid.
   int queueOp(unsigned tid, int op, UList args);
@@ -436,10 +436,9 @@ int Threaded::onAccess(UVar& v)
   return 0;
 };
 
-int Threaded::onTimer()
+void Threaded::onTimer()
 {
   timerUpdated = (int)timerUpdated + 1;
-  return 0;
 }
 
 int Threaded::dummy()
