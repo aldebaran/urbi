@@ -29,7 +29,7 @@ bin_ast_dump_LDADD = libuobject$(LIBSFX).la
 bin_PROGRAMS += bin/serialize
 bin_serialize_SOURCES = bin/serialize.cc ast/serializer.cc
 bin_serialize_CPPFLAGS = $(libuobject_la_CPPFLAGS)
-bin_serialize_LDADD = libuobject.la
+bin_serialize_LDADD = libuobject$(LIBSFX).la
 
 # urbi.
 bin_PROGRAMS += bin/urbi
