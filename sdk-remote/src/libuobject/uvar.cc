@@ -111,25 +111,20 @@ namespace urbi
   void
   RemoteUVarImpl::set(const UValue& v)
   {
+    client_->startPack();
+    (*client_) << owner_->get_name() << "=";
     if (v.type == DATA_BINARY)
     {
       UBinary& b = *(v.binary);
-      client_->startPack();
-      // K1 only supports a binary at top level within ';' and no
-      // other separator.
-      if (client_->kernelMajor() < 2)
-        URBI_SEND_COMMAND_C((*client_),"");
-      (*client_) << owner_->get_name() << "=";
       client_->sendBinary(b.common.data, b.common.size,
                             b.getMessage());
       (*client_) << "|;";
-      client_->endPack();
     }
     else if (v.type == DATA_STRING)
-      URBI_SEND_PIPED_COMMAND_C((*client_), owner_->get_name() << "=\""
-                              << libport::escape(*v.stringValue, '"') << '"');
+      (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\"|";
     else
-      URBI_SEND_PIPED_COMMAND_C((*client_), owner_->get_name() << "=" << v);
+      *client_ << v << "|";
+    client_->endPack();
   }
 
   const UValue& RemoteUVarImpl::get() const
