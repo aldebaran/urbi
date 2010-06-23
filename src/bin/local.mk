@@ -16,7 +16,7 @@ if BUILD_PROGRAMS
 if !WIN32
 noinst_PROGRAMS = bin/ast-dump
 if ENABLE_SERIALIZATION
-bin_PROGRAMS += bin/urbi-parse bin/urbi-pp bin/urbi-compile
+bin_PROGRAMS += bin/urbi-parse bin/urbi-pp bin/urbi-compile bin/serialize
 endif
 endif !WIN32
 endif BUILD_PROGRAMS
@@ -26,7 +26,6 @@ bin_ast_dump_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
 bin_ast_dump_LDADD = libuobject$(LIBSFX).la
 
 # serializer dump
-bin_PROGRAMS += bin/serialize
 bin_serialize_SOURCES = bin/serialize.cc ast/serializer.cc
 bin_serialize_CPPFLAGS = $(libuobject@LIBSFX@_la_CPPFLAGS)
 bin_serialize_LDADD = libuobject$(LIBSFX).la
