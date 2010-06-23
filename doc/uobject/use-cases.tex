@@ -50,11 +50,11 @@ public:
   urbi::UVar D;
 
   // callback for val change
-  int valueChanged(UVar& v);
+  void valueChanged(UVar& v);
   //callback for val access
-  int valueAccessed(UVar& v);
+  void valueAccessed(UVar& v);
   // callback for PID change
-  int pidChanged(UVar& v);
+  void pidChanged(UVar& v);
 
   // method to change all values
   void setPID(int p, int i, int d);
@@ -128,25 +128,20 @@ value from the servo, and set \lstinline{val} accordingly.
 
 \begin{cxx}
 // Called each time val is written to.
-int
+void
 servo::valueChanged (urbi::UVar& v)
 {
   // v is a reference to our class member val: you can use both
   // indifferently.
   setPosition (id, (double)val);
-
-  // The return value is ignored for now, just return 0.
-  return 0;
 }
 
 // Called each time val is read.
-int
+void
 servo::valueAccessed (urbi::UVar& v)
 {
   // v is a reference to val.
   val = getPosition (id);
-
-  return 0;
 }
 \end{cxx}
 
@@ -155,12 +150,10 @@ variables is written to. The function \lstinline{servo::setPID} can be
 called directly from \urbi.
 
 \begin{cxx}
-int
+void
 servo::pidChanged (urbi::UVar& v)
 {
   setPID(id, (int)P, (int)I, (int)D);
-
-  return 0;
 }
 
 void
@@ -243,7 +236,7 @@ public:
   // Called periodically.
   virtual int update ();
   // Called periodically.
-  int getVal ();
+  void getVal ();
 
   // Our position variable.
   urbi::UVar val;
@@ -449,7 +442,7 @@ public:
   urbi::UVar height;
 
   // Called on access.
-  int getVal (UVar&);
+  void getVal (UVar&);
 
   // Called periodically.
   virtual int update ();
@@ -530,11 +523,11 @@ mechanism to avoid performing the potentially long operation of
 acquiring an image too often.
 
 \begin{cxx}
-int
+void
 Camera::getVal(urbi::UVar&)
 {
   if (frame == accessFrame)
-    return 1;
+    return;
 
   bin.image.data = getImage (id);
   // Assign image to bin.
@@ -626,7 +619,7 @@ The \lstinline{newImage} function runs the detection algorithm on the
 image in its argument, and updates the variables.
 
 \begin{cxx}
-int
+void
 BallTracker::newImage (urbi::UVar& v)
 {
   // Cast to UImage.
@@ -642,8 +635,6 @@ BallTracker::newImage (urbi::UVar& v)
   }
   else
     visible = 0;
-
-  return 0;
 }
 \end{cxx}
 

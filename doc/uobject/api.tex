@@ -282,10 +282,6 @@ is called after the variable value is changed, whereas the
 \lstinline{notifyAccess} callback is called before the variable is
 accessed, giving you the possibility to update its value.
 
-The callback functions are expected to return a value of type
-\lstinline|UReturn|, currently typedefed as an int. This return value
-is ignored in the current implementation.
-
 Notify functions can be unregistered by calling the
 \lstinline|unnotify| function of the \UVar class.
 
@@ -319,12 +315,11 @@ class ObjectTracker: public urbi::UObject
     UBindVar(ObjectTracker, val);
     return 0;
   }
-  int onImage(UVar& src)
+  void onImage(UVar& src)
   {
     UBinary b = src;
     // Processing here.
     val = processing_result;
-    return 0;
   }
   UVar val;
 };
@@ -354,7 +349,7 @@ The API provides two methods to have a function called periodically:
   \lstinline{UObject::update()} with the specified period (in
   milliseconds).  Disable updates if \var{period} is -1.
 
-\item[urbi::TimerHandle urbi::UObject::USetTimer<T>(ufloat period, int (T::*fun)())]
+\item[urbi::TimerHandle urbi::UObject::USetTimer<T>(ufloat period, void (T::*fun)())]
   Invoke an UObject member function \var{fun} every \var{period}
   milliseconds.  \var{fun} is a regular member-function pointer, for
   instance \lstinline|MyUObject::my_function|.
