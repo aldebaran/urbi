@@ -36,7 +36,7 @@ public:
   servo(const std::string&);
 
   // Urbi  constructor
-  int init(int id);
+  void init(int id);
 
   // main attribute
   urbi::UVar val;
@@ -84,7 +84,7 @@ sets up callback functions.
 
 \begin{cxx}
 // Urbi constructor.
-int
+void
 servo::init (int id)
 {
   id_ = id;
@@ -114,8 +114,6 @@ servo::init (int id)
   UNotifyChange (P, &servo::pidChanged);
   UNotifyChange (I, &servo::pidChanged);
   UNotifyChange (D, &servo::pidChanged);
-
-  return 0;
 }
 \end{cxx}
 
@@ -231,7 +229,7 @@ public:
   servo (const std::string&)
 
   // Urbi constructor.
-  int init (int id);
+  void init (int id);
 
   // Called periodically.
   virtual int update ();
@@ -250,7 +248,7 @@ Constructor is unchanged, \lstinline{init} becomes:
 
 \begin{cxx}
 // Urbi constructor.
-int
+void
 servo::init (int id)
 {
   id_ = id;
@@ -266,8 +264,6 @@ servo::init (int id)
   USetUpdate(1);
   // Idem for getVal ().
   USetTimer (1, &servo::getVal);
-
-  return 0;
 }
 \end{cxx}
 
@@ -433,8 +429,8 @@ public:
   // The class must have a single constructor taking a string.
   Camera(const std::string&);
 
-  // Urbi constructor.
-  int init (int id);
+  // Urbi constructor. Throw in case of error.
+  void init (int id);
 
   // Our image variable and dimensions.
   urbi::UVar val;
@@ -474,7 +470,7 @@ access, and sets a timer up on update. It also initializes the
 \lstinline{UBinary} structure.
 
 \begin{cxx}
-int
+void
 Camera::init (int id)
 {
   //urbi constructor
@@ -483,7 +479,7 @@ Camera::init (int id)
   accessFrame = 0;
 
   if (!initialize (id))
-    return 0;
+    throw std::runtime_error("Failed to initialize camera");
 
   UBindVar (Camera, val);
   UBindVar (Camera, width);
@@ -501,8 +497,6 @@ Camera::init (int id)
 
   // Call update () periodically.
   USetUpdate (1);
-
-  return 0;
 }
 \end{cxx}
 
@@ -575,7 +569,7 @@ class BallTracker : public urbi::UObject
 {
 public:
   BallTracker (const std::string&);
-  int init (const std::string& varname);
+  void init (const std::string& varname);
 
   // Is the ball visible?
   urbi::UVar visible;
@@ -601,7 +595,7 @@ The \lstinline{init} function binds the variables and a callback on
 update of the image variable passed as a argument.
 
 \begin{cxx}
-int
+void
 BallTracker::init (const std::string& cameraval)
 {
   UBindVar (BallTracker, visible);
@@ -610,8 +604,6 @@ BallTracker::init (const std::string& cameraval)
   UNotifyChange (cameraval, &BallTracker::newImage);
 
   visible = 0;
-
-  return 0;
 }
 \end{cxx}
 

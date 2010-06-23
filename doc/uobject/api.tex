@@ -308,12 +308,11 @@ class ObjectTracker: public urbi::UObject
     UBindFunction(ObjectTracker, init);
   }
   // Take our data source in our constructor.
-  int init(UVar& image)
+  void init(UVar& image)
   {
     UNotifyChange(image, &ObjectTracker::onImage);
     // Bind our output variable.
     UBindVar(ObjectTracker, val);
-    return 0;
   }
   void onImage(UVar& src)
   {
