@@ -143,4 +143,10 @@ namespace urbi
     return *this;
   }
 
+  time_t
+  UVar::timestamp() const
+  {
+    return impl_->timestamp();
+  }
+
 } // namespace urbi

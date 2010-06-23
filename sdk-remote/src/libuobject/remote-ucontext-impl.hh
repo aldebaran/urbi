@@ -155,14 +155,17 @@ namespace urbi
       virtual UValue getProp(UProperty prop);
       virtual void setProp(UProperty prop, const UValue& v);
       virtual bool setBypass(bool enable);
+      virtual time_t timestamp() const;
       virtual void unnotify();
-      virtual void useRTP(bool enable);
       void update(const UValue& v);
+      void update(const UValue& v, time_t timestamp);
+      virtual void useRTP(bool enable);
 
     private:
       USyncClient* client_;
       UValue value_;
       UVar* owner_;
+      time_t timestamp_;
       friend class RemoteUGenericCallbackImpl;
       std::vector<RemoteUGenericCallbackImpl*> callbacks_;
     };

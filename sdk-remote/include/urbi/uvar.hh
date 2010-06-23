@@ -141,6 +141,8 @@ namespace urbi
     void useRTP(bool enable=true);
     impl::UVarImpl* impl_;
     const UValue& val() const;
+    time_t timestamp() const;
+
   private:
     /// Check that impl_ is set or throw a runtime error.
     void check_() const;

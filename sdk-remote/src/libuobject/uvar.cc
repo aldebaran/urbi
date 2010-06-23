@@ -182,6 +182,7 @@ namespace urbi
     std::string owner = fullname.substr(0, pos);
     std::string name = fullname.substr(pos + 1);
     RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
+    libport::utime_t time = libport::utime();
     if (v.type == DATA_BINARY)
     {
       bool rtpOK = false;
@@ -210,11 +211,11 @@ namespace urbi
       if (!rtpOK)
       {
         client_->startPack();
-        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update(";
+        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed_(";
         UBinary& b = *(v.binary);
         client_->sendBinary(b.common.data, b.common.size,
                             b.getMessage());
-        (*client_) << ")|;";
+        *client_ << ", " << time << ")|";
         client_->endPack();
       }
     }
@@ -240,11 +241,12 @@ namespace urbi
       if (!rtp)
       {
         client_->startPack();
-        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update(";
+        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed_(";
         if (v.type == DATA_STRING)
-          (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\")|";
+          (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\"";
         else
-          *client_ << v << ")|";
+          *client_ << v ;
+        *client_ << ", " << time << ")|";
         client_->endPack();
       }
     }
@@ -257,6 +259,7 @@ namespace urbi
     remoteMessage.list = &l;
     l.push_back(UEM_ASSIGNVALUE);
     l.push_back(owner_->get_name());
+    l.push_back(time);
     l.array.push_back(const_cast<UValue*>(&v));
     m.value = &remoteMessage;
     ctx->dispatcher(m);
@@ -328,10 +331,17 @@ namespace urbi
       value_ = *m->value;
   }
 
+  time_t
+  RemoteUVarImpl::timestamp() const
+  {
+    return timestamp_;
+  }
+
   void
-  RemoteUVarImpl::update(const UValue& v)
+  RemoteUVarImpl::update(const UValue& v, time_t timestamp)
   {
     value_ = v;
+    timestamp_ = timestamp;
   }
 
   void RemoteUVarImpl::unnotify()

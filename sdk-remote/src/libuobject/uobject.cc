@@ -383,11 +383,11 @@ namespace urbi
       {
       case UEM_ASSIGNVALUE:
       {
-        if (array.size() != 3)
+        if (array.size() != 4)
         {
           msg.client.printf("Component Error: Invalid number "
                             "of arguments in the server message: %lu"
-                            " (expected 3)\n",
+                            " (expected 4)\n",
                             static_cast<unsigned long>(array.size()));
           return URBI_CONTINUE;
         }
@@ -396,7 +396,7 @@ namespace urbi
           foreach (UVar* u, *us)
           {
             if (RemoteUVarImpl* impl = dynamic_cast<RemoteUVarImpl*>(u->impl_))
-              impl->update(array[2]);
+              impl->update(array[2], (int)array[3]);
             else
             {
               GD_FERROR("Unable to cast %x to a RemoteUVarImpl.", u->impl_);

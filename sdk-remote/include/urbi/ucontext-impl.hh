@@ -180,6 +180,7 @@ namespace urbi
       virtual UValue getProp(UProperty prop) = 0;
       virtual void setProp(UProperty prop, const UValue& v) = 0;
       virtual bool setBypass(bool enable) = 0;
+      virtual time_t timestamp() const = 0;
       virtual void unnotify() = 0;
       virtual void useRTP(bool enable) = 0;
     };
