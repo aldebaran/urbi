@@ -214,11 +214,13 @@ public:
     return v.val().format_string();
   }
 
-  int init(bool fail)
+  int init(int fail)
   {
     threadCheck();
     initCalled = 1;
-    return fail ? 1 : 0;
+    if (fail > 1)
+      throw std::runtime_error("KABOOOM");
+    return fail;
   }
 
   int setOwned(int id)

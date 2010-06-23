@@ -63,7 +63,7 @@ public:
   UVar timerUpdated;
   UVar lastChange;
   UVar lastAccess;
-  int init();
+  void init();
   virtual int update();
   int onChangeDelay(UVar& v);
   int onChange(UVar& v);
@@ -151,7 +151,7 @@ static const char* opname[] =
     "WRITE_BINARY",
     0
   };
-int Threaded::init()
+void Threaded::init()
 {
   for (int i=0; opname[i]; ++i)
   {
@@ -159,7 +159,6 @@ int Threaded::init()
     v.init(__name, opname[i]);
     v = i;
   }
-  return 0;
 }
 
 Threaded::~Threaded()
