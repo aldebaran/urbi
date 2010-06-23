@@ -360,9 +360,10 @@ namespace rewrite
       PARAMETRIC_AST
         (emit,
          "{\n"
-         "  var '$emit' = %exp:1.trigger(%exps:2) |\n"
+         "  var '$emit'|\n"
          "  var '$duration' = %exp:3 |\n"
-         "  Control.finally(closure () { sleep('$duration') },\n"
+         "  Control.finally(closure () { '$emit' = %exp:1.trigger(%exps:2)|"
+         "                                sleep('$duration') },\n"
          "                  closure () { '$emit'.stop })\n"
          "}");
 
