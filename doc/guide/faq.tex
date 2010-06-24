@@ -313,6 +313,8 @@ all its dependencies.
 Alternatively, under Cygwin, you can use the \command{cygcheck.exe} program
 to check dependencies.
 
+If you need to add a \acronym{DLL} that was missing, put it somewhere in the
+\env{PATH}, or in the current working directory.
 
 \section{\us}
 \subsection{Objects lifetime}
@@ -964,6 +966,36 @@ is thread-safe.
 \section{Miscellaneous}
 \subsection{What has changed since the latest release?}
 See \autoref{sec:news}.
+
+\subsection{How can I contribute to the code?}
+\label{sec:faq:contribute}
+You are encouraged to submit patches to \email{kernel@lists.gostai.com},
+where they will be reviewed by the \urbi team.  If they fit the project and
+satisfy the quality requirements, they will be accepted.  As of today there
+is no public repository for \usdk (there will be, eventually), patches
+should be made against the latest source tarballs (see
+\url{http://gostai.com/downloads/urbi-sdk/2.x/}).
+
+Even though \usdk is free software (GNU Affero General Public License 3+,
+see the \file{LICENSE.txt} file), licensing patches under GNU AGPL3+ does
+not suffice to support our dual licensed products.  This situation is
+common, see for instance the case of Oracle VM Virtual Box,
+\url{http://www.virtualbox.org/wiki/Contributor_information}.
+
+There are different means to ensure that your contributions to \usdk can be
+accepted.  None require that you ``give away your copyright''.  What is
+needed, is the right to use contributions, which can be achieved in two
+ways:
+\begin{itemize}
+\item Sign the Urbi Open Source Contributor Agreement, see
+  \autoref{sec:license:uosca}.  This may take some time initially, but it
+  will cover all your future contributions.
+\item Submit your contribution under the Expat license (also known as the
+  ``MIT license'', see \autoref{sec:license:expat}), or under the modified
+  BSD license (see \autoref{sec:license:bsd}).
+\end{itemize}
+
+
 
 \subsection{How do I report a bug?}
 \label{sec:bug}
