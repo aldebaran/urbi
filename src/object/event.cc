@@ -244,10 +244,39 @@ namespace urbi
       rList payload = new List(pl);
       source()->_active[this] = payload;
       waituntil_release(payload);
-      foreach (const callback_type* cb, callbacks_)
-        (*cb)(pl);
+      std::cerr << "Processing callbacks..." << std::endl;
+
+      if (getenv("URBI_NEW"))
+      {
+        if (detach)
+        {
+          runner::Runner& r = ::kernel::runner();
+          sched::jobs_type children;
+          foreach (const callback_type* cb, callbacks_)
+          {
+            sched::rJob job = new runner::Interpreter
+              (r.lobby_get(), r.scheduler_get(),
+               boost::bind(*cb, pl),
+               this,
+               SYMBOL(onleave));
+            job->start_job();
+          }
+          r.yield_until_terminated(children);
+        }
+        else
+          foreach (const callback_type* cb, callbacks_)
+            (*cb)(pl);
+      }
+      else
+      {
+        foreach (const callback_type* cb, callbacks_)
+          (*cb)(pl);
+      }
+
+      std::cerr << "Processing listeners..." << std::endl;
       foreach (Event::rActions actions, listeners_)
         trigger_job(actions, detach);
+      std::cerr << "Processing callbacks and listeners: done" << std::endl;
     }
 
     void
