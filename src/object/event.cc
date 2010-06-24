@@ -77,6 +77,10 @@ namespace urbi
     | Urbi functions |
     `---------------*/
 
+    typedef
+    void (Event::*on_event_type)
+    (rExecutable guard, rExecutable enter, rExecutable leave);
+
     void
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave)
     {
@@ -160,6 +164,7 @@ namespace urbi
       emit_backend(pl, false);
     }
 
+    typedef void (Event::*emit_type)(const objects_type& args);
     void
     Event::emit(const objects_type& args)
     {
@@ -175,8 +180,6 @@ namespace urbi
     void
     Event::waituntil(rObject pattern)
     {
-      runner::Runner& r = ::kernel::runner();
-
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       // Check whether there's already a matching instance.
@@ -185,8 +188,9 @@ namespace urbi
             || pattern->call(SYMBOL(match), active.second)->as_bool())
           return;
 
+      runner::Runner& r = ::kernel::runner();
       rTag t(new Tag);
-      waiters_.push_back(Waiter(t, &r, pattern));
+      waiters_ << Waiter(t, &r, pattern);
       libport::Finally f;
       r.apply_tag(t, &f);
       f << boost::bind(&Event::waituntil_remove, this, t);
@@ -290,17 +294,17 @@ namespace urbi
     {
       rEvent src = source();
       // This iteration needs to remove some elements as it goes.
-      for(unsigned i=0; i< src->waiters_.size();)
+      for (unsigned i = 0; i < src->waiters_.size(); )
       {
 	Waiter& waiter = src->waiters_[i];
 	if (waiter.pattern == nil_class
-	  || waiter.pattern->call(SYMBOL(match), payload)->as_bool())
+            || waiter.pattern->call(SYMBOL(match), payload)->as_bool())
 	{
-          // Check if any tag is frozen beside the first one
+          // Check if any tag is frozen beside the first one.
           bool frozen = false;
-          foreach(const rTag& t, waiter.runner->tag_stack_get_all())
+          foreach (const rTag& t, waiter.runner->tag_stack_get_all())
           {
-            if (t!= waiter.controlTag && t->frozen())
+            if (t != waiter.controlTag && t->frozen())
             {
               frozen = true;
               break;
@@ -362,10 +366,10 @@ namespace urbi
 
     URBI_CXX_OBJECT_REGISTER(Event)
     {
-      bind(SYMBOL(emit), static_cast<void (Event::*)(const objects_type&)>(&Event::emit));
+      bind(SYMBOL(emit), static_cast<emit_type>(&Event::emit));
       bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
       bind(SYMBOL(localTrigger), &Event::localTrigger);
-      bind(SYMBOL(onEvent), static_cast<void (Event::*)(rExecutable guard, rExecutable enter, rExecutable leave)>(&Event::onEvent));
+      bind(SYMBOL(onEvent), static_cast<on_event_type>(&Event::onEvent));
       bind(SYMBOL(stop), &Event::stop);
       bind(SYMBOL(syncEmit), &Event::syncEmit);
       bind(SYMBOL(syncTrigger), &Event::syncTrigger);
