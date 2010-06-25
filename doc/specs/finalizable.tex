@@ -8,9 +8,9 @@
 
 \section{Finalizable}
 
-Objects that derive from this object will execute their
-\lstinline|finalize| routine right before being destroyed (reclaimed)
-by the system.  It is comparable to the a \dfn{destructor}.
+Objects that derive from this object will execute their \refSlot{finalize}
+routine right before being destroyed (reclaimed) by the system.  It is
+comparable to a \dfn{destructor}.
 
 \subsection{Example}
 
@@ -59,6 +59,98 @@ The constructor takes no argument.
 Finalizable.new;
 [00000527] Finalizable_0x135360
 \end{urbiscript}
+
+\bigskip
+
+Because of specific constraints of Finalizable, you cannot change the
+prototype of an object to make it ``finalizable'': it \emph{must} be an
+instance of Finalizable from its inception.
+
+There, instead of these two invalid constructs,
+
+\begin{multicols}{2}
+\begin{urbiscript}
+class obj : Finalizable.new
+{
+  function finalize()
+  {
+    echo("Ouch");
+  }
+}|;
+[00000008:error] !!! <empty>: cannot inherit from a Finalizable without being a Finalizable too
+\end{urbiscript}
+
+\begin{urbiscript}
+class o2
+{
+  protos = [Finalizable];
+  function finalize()
+  {
+    echo("Ouch");
+  }
+}|;
+[00000009:error] !!! <empty>: cannot inherit from a Finalizable without being a Finalizable too
+\end{urbiscript}
+\end{multicols}
+
+write:
+
+\begin{urbiscript}
+var o3 =
+  do (Finalizable.new)
+  {
+    function finalize()
+    {
+      echo("Ouch");
+    }
+  }|;
+\end{urbiscript}
+
+\bigskip
+
+If you need multiple prototypes, do as follows.
+
+\begin{urbiscript}
+class Global.Foo
+{
+  function init()
+  {
+    echo("1");
+  };
+}|;
+
+class Global.FinalizableFoo
+{
+  addProto(Foo.new);
+
+  function 'new'()
+  {
+    var r = clone |
+    r.init |
+    Finalizable.new.addProto(r);
+  };
+
+  function init()
+  {
+    echo("2");
+  };
+
+  function finalize()
+  {
+    echo("3");
+  };
+
+}|;
+
+var i = FinalizableFoo.new|;
+[00000117] *** 1
+[00000117] *** 2
+
+i = nil;
+[00000117] *** 3
+\end{urbiscript}
+
+
 
 \subsection{Slots}
 
