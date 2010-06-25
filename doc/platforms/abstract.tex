@@ -19,12 +19,21 @@
   Using the Bioloid robot construction kit with \urbi.
 }
 
+\ifthen{\boolean{nxt}}{
+\item[sec:nxt] LEGO Mindstorms NXT is a programmable robotics
+  kit released by Lego in July 2006, replacing the first-generation
+  LEGO Mindstorms kit. The kit consists of 519 Technic pieces, 3 servo
+  motors, 4 sensors (ultrasonic, sound, touch, and light), 7
+  connection cables, a USB interface cable, and the NXT Intelligent
+  Brick.
+}
+
 \ifthen{\boolean{nao}}{
 \item[sec:nao]
   Programming Aldebaran's Nao using \urbi.
 }
 
-\ifthen{\boolean{segway}}{
+\ifthen{\boolean{rmp}}{
 \item[sec:segway-rmp] The Segway Robotic Mobility Platform is a
   robotic platform based on the Segway Personal Transporter.  }
 
