@@ -170,23 +170,3 @@ if WIN32
   topleveldir = $(prefix)
   toplevel_SCRIPTS = urbi.bat
 endif
-
-
-## ------ ##
-## dist.  ##
-## ------ ##
-
-# We use the AGPL in source tarballs.
-LICENSE = $(top_srcdir)/build-aux/licenses/agpl-3.0.txt
-EXTRA_DIST += $(LICENSE)
-LICENSES = doc/LICENSE.txt sdk-remote/LICENSE sdk-remote/libport/LICENSE
-dist-hook:
-	for i in $(LICENSES);			\
-	do					\
-## Make sure $(LICENSES) is right.
-	  test -f $(distdir)/$$i;		\
-	  cp -f $(LICENSE) $(distdir)/$$i;	\
-	done
-## A copy at the root of the package, named LICENSE without extension.
-	cp -f $(LICENSE) $(distdir)/LICENSE
-
