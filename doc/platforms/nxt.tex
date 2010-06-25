@@ -367,7 +367,7 @@ Three different modes are available by changing the .mode slot.
 \begin{description}
 \item[Reflector] means the sensor lights on its led and measures the light
   reflected.
-\item[Ambiant] lights off the led and measures the ambiant light.
+\item[Ambient] lights off the led and measures the ambient light.
 \item[Normal] lights off the led too and return the raw value measured.
 \end{description}
 Default value is "Reflector".
@@ -454,13 +454,13 @@ The Servo init constructor has the following syntax:
 Servo.new(port);
 \end{urbiunchecked}
 
-where port is either "A", "B" or "C". The created object makes it possible to
-control the motor connected to the port in parameter.
-As an example, in the current TriBot.ini, three Servo objects are created:
+where port is either "A", "B" or "C". The created object makes it possible
+to control the motor connected to the port in parameter.  As an example, in
+the current \file{TriBot.u}, three Servo objects are created:
 \begin{urbiunchecked}
-  wheelL = Servo.new("C");
-  wheelR = Servo.new("A");
-  claw = Servo.new("B");
+wheelL = Servo.new("C");
+wheelR = Servo.new("A");
+claw = Servo.new("B");
 \end{urbiunchecked}
 
 The wheel left is on port C, the wheel right on A and the claw is on port B.
@@ -472,21 +472,23 @@ Switch.new(port);
 \end{urbiunchecked}
 
 where port can be 1, 2, 3 or 4.
-In \file{TriBot.u} the switch is used as a bumper plugged on the port 4 so the
-instancing is:
+
+In \file{TriBot.u} the switch is used as a bumper plugged on the port 4 so
+the instancing is:
 \begin{urbiunchecked}
   bumper  = Switch.new(4);
 \end{urbiunchecked}
 
 UltraSonicSensor objects are created the same way:
 \begin{urbiunchecked}
-UltraSonicSensor.new(port);
+UltraSonicSensor.new(\var{port});
 \end{urbiunchecked}
 
-port can be 1, 2, 3 or 4.
+\var{port} can be 1, 2, 3 or 4.
+
 In \file{TriBot.u} an ultrasonic sensor is connected on port 2:
 \begin{urbiunchecked}
-  sonar = UltraSonicSensor.new(2);
+sonar = UltraSonicSensor.new(2);
 \end{urbiunchecked}
 
 The SoundSensor object has an additional parameter:
@@ -499,22 +501,22 @@ can be "DB" or "DBA", meaning "decibel" or "decibel adjusted" (the last one
 records sounds in the frequency range 200-14000Hz).  In \file{TriBot.u}, the
 sound sensor is on port 1 using decibel adjusted:
 \begin{urbiunchecked}
-  decibel = SoundSensor.new(1,"DBA");
+decibel = SoundSensor.new(1,"DBA");
 \end{urbiunchecked}
 
 LightSensor also has two parameters:
 \begin{urbiunchecked}
-  LightSensor.new(\var{port}, \var{mode});
+LightSensor.new(\var{port}, \var{mode});
 \end{urbiunchecked}
 
 \var{port} can be 1, 2, 3 or 4. \var{mode} sets the sensor mode and it can
-be "Ambiant" (so the sensor measures the ambiant light), "Reflector" (the
+be "Ambient" (so the sensor measures the ambient light), "Reflector" (the
 sensor lights on its led and measures the reflected light) and "Normal" (the
 sensor returns its raw value).
 
 In \file{TriBot.u}, the light sensor is in reflector mode on port 1:
 \begin{urbiunchecked}
-  light = LightSensor.new(3,"Reflector");
+light = LightSensor.new(3,"Reflector");
 \end{urbiunchecked}
 
 
@@ -621,13 +623,11 @@ LightSensor describes a light sensor. A LightSensor instance contains the
 following slots:
 
 \begin{urbiscriptapi}
-
-\item[val]
-The light level measured (from 0 to 1).
+\item[val] The light level measured (from 0 to 1).
 
 \item[mode]
   \begin{itemize}
-  \item "Ambiant" measures the ambiant light.
+  \item "Ambient" measures the ambient light.
   \item "Reflector" lights on a led and measures the reflection.
   \item "Normal" returns the raw value
   \end{itemize}
@@ -639,10 +639,10 @@ The light level measured (from 0 to 1).
   create another device on it).
 
 \item[init](<port>, <mode>) The UObject constructor. \var{port} is a port
-  name. (See previous slot port). \var{mode} is a mode name. (See
-  previous slot mode). Example:
+  name. (See previous slot port). \var{mode} is a mode name. (See previous
+  slot mode). Example:
 \begin{urbiunchecked}
-  light = LightSensor.new(1, "Ambiant");
+  light = LightSensor.new(1, "Ambient");
 \end{urbiunchecked}
 \end{urbiscriptapi}
 
@@ -668,8 +668,8 @@ slots:
 \end{urbiscriptapi}
 
 \subsection{Battery}
-Battery describes a battery device. A Battery instance contains the following
-slots:
+Battery describes a battery device. A Battery instance contains the
+following slots:
 \begin{urbiscriptapi}
 \item[val] Battery remaining power between 0 and 1.
 \item[init] The UObject constructor Example battery = Battery.new();
@@ -681,7 +681,7 @@ methods:
 
 \begin{urbiscriptapi}
 \item[init] The UObject constructor Example beeper = Beeper.new();
-\item[play](<frequency>, <duration<) Plays a beep of a custom frequency for
+\item[play](<frequency>, <duration>) Plays a beep of a custom frequency for
   a custom duration.  \var{frequency} is the frequency of the beep (in Hz),
   between 200 and 14000.  \var{duration} is the duration of the beep (in
   ms), 0 is infinite.  Example:
@@ -747,10 +747,10 @@ Here are the different groups provided in the current layout.
   \hline
   Group Name & Description     \\
   \hline
-  wheels     & The two wheels. \\
-  motors     & All the motors. \\
-  sensors    & All the sensors.\\
-  hardware   & All the devices.\\
+  wheels     & The two wheels  \\
+  motors     & All the motors  \\
+  sensors    & All the sensors \\
+  hardware   & All the devices \\
   \hline
 \end{tabular}
 
