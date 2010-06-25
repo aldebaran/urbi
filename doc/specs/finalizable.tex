@@ -70,7 +70,7 @@ There, instead of these two invalid constructs,
 
 \begin{multicols}{2}
 \begin{urbiscript}
-class obj : Finalizable.new
+class o1 : Finalizable.new
 {
   function finalize()
   {
@@ -89,7 +89,7 @@ class o2
     echo("Ouch");
   }
 }|;
-[00000009:error] !!! <empty>: cannot inherit from a Finalizable without being a Finalizable too
+[00000010:error] !!! updateSlot: cannot inherit from a Finalizable without being a Finalizable too
 \end{urbiscript}
 \end{multicols}
 
