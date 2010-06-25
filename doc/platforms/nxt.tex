@@ -10,15 +10,15 @@
 \label{sec:nxt}
 \setHtmlFileName{nxt}
 
-This documentation contains information about the Lego Mindstorms NXT
-URBI engine.  The first two chapters provide a short tutorial for
-using URBI to control the TriBot robot.  The remainder of the
-documentation contains an exhaustive reference for the Lego Mindstorms
-NXT URBI engine devices.
+This documentation contains information about the LEGO Mindstorms NXT
+\urbi engine.  The first two chapters provide a short tutorial for
+using \urbi to control the TriBot robot.  The remainder of the
+documentation contains an exhaustive reference for the LEGO Mindstorms
+NXT \urbi engine devices.
 
-\section{Launching URBI for Mindstorms NXT}
+\section{Launching \urbi for Mindstorms NXT}
 
-First you should build the TriBot model from the Lego Mindstorms NXT basic
+First you should build the TriBot model from the LEGO Mindstorms NXT basic
 model.
 
 Install the engine Mindstorms by untaring it into the Urbi engine runtime
@@ -27,18 +27,18 @@ folder. Follow instructions in INSTALL and README files
 The file \file{TriBot.u} is loaded by default when server is launched. You
 can remove it by modifying global.u.
 
-\section{First steps with URBI to control Mindstorms NXT}
+\section{First steps with \urbi to control Mindstorms NXT}
 
-This section is a short tutorial for using URBI with the Lego TriBot model with
-the default configuration provided with the URBI server. Users familiar with
-URBI should look directly to the next section for an extensive list of the
+This section is a short tutorial for using \urbi with the LEGO TriBot model with
+the default configuration provided with the \urbi server. Users familiar with
+\urbi should look directly to the next section for an extensive list of the
 available devices.
 
 \subsection{Make basic movements}
 
 We will first move the wheels of the robot.
 
-In URBI, all the motor's speed and the sensor's value in a robot are associated
+In \urbi, all the motor's speed and the sensor's value in a robot are associated
 with variables. You can set the motor's speed or get the sensor's value by
 assigning or reading the values of the corresponding variables.
 
@@ -47,7 +47,7 @@ to variable wheelL and the right wheel is assigned to wheelR\footnote{%
 %%
   To be precise, sensors and motors are associated with objects. The left
   motor is associated with the wheelL object and the left motor speed is
-  associated with the wheelL.speed attribute of this object.
+  associated with the wheelL.speed slot of this object.
 %%
 }. The values of these variables control the corresponding wheel
 speed. First put the TriBot upside-down to avoid any accident, then you can
@@ -75,10 +75,10 @@ The third motor of the TriBot is associated with the claw variable.
 
 \subsection{Improving the movements}
 The commands given so far simply set a speed to the wheels, but you can use
-URBI to make precise sequences of movements. It is for example possible to set
+\urbi to make precise sequences of movements. It is for example possible to set
 a speed for a given time, then stop.
 
-To achieve that, URBI provides a command to wait for a given time: sleep
+To achieve that, \urbi provides a command to wait for a given time: sleep
 (duration). And you can make sequences of commands separated with semicolon
 that will be executed one after another. So the following line:
 \begin{urbiunchecked}
@@ -87,7 +87,7 @@ that will be executed one after another. So the following line:
 
 will make the robot to go forward during 10 seconds then stop.
 
-It is also possible with URBI to control the way the values will change. In the
+It is also possible with \urbi to control the way the values will change. In the
 previous examples, the motor speed goes from 0 to 50 as fast as possible. You
 can use a modifier to the variable assignation to control the way the variable
 value will change. For example, if you want to reach a value in a given time,
@@ -98,12 +98,12 @@ use the time: modifier:
 
 Using this code, the robot will accelerate to reach the speed of 50 after 3
 seconds, then slow down to stop after another 3 seconds.
-Other modifiers are available in URBI, they are described in the URBI tutorial
+Other modifiers are available in \urbi, they are described in the \urbi tutorial
 available at http://www.gostai.com/doc.php.
 
 \subsection{Reading sensors}
 In all the previous steps the commands don't take the environment into account.
-To do that, you need to get the sensor values. In URBI, you just have to type
+To do that, you need to get the sensor values. In \urbi, you just have to type
 the associated variable name. For example when you type:
 \begin{urbiunchecked}
   sonar.val;
@@ -117,7 +117,7 @@ The server returns a message with the ultrasonic sensor value:
 In this message, 146711 is the time (from the server clock) at which the value
 was read, 48.00000 is the value of the sonar sensor, in this case the distance
 to the obstacle in front of it.
-You also need a way to react to the sensor values. In URBI, this is achieved
+You also need a way to react to the sensor values. In \urbi, this is achieved
 using event catching commands. These commands check some condition and launch
 other commands when these conditions are verified. For example the following
 command:
@@ -176,7 +176,7 @@ will resume the command.
 
 \subsection{Playing sounds}
 \label{sec:nxt:sounds}
-The Lego Mindstorms NXT is able to play sounds. The object beeper is associated
+The LEGO Mindstorms NXT is able to play sounds. The object beeper is associated
 with this capacity. However, you can't just assign a value to the variable
 beeper, because playing a sound requires several parameters. You therefore have
 to call a method of the beeper object:
@@ -198,10 +198,10 @@ This plays beeps with a lower frequency as the obstacle comes closer (under 1
 meter).
 
 \subsection{Cyclic moves}
-We now introduce a modifier in URBI that makes it possible to do cyclic moves
+We now introduce a modifier in \urbi that makes it possible to do cyclic moves
 of sinusoidal shape. This modifier has the particularity to make the
 assignation never terminate. To be able to enter new commands after this
-modifier is used, you need to put this command in background so that the URBI
+modifier is used, you need to put this command in background so that the \urbi
 server continues processing new commands. This is achieved by terminating the
 command with a comma instead a semicolon. More details about these command
 separators will be given in \autoref{sec:nxt:para}.
@@ -221,7 +221,7 @@ the speed change from 0 to 100 with a period of 3 seconds, use the command:
 
 \subsection{Parallelism}
 \label{sec:nxt:para}
-URBI handles command parallelism in a very simple way. Parallelism is enforced
+\urbi handles command parallelism in a very simple way. Parallelism is enforced
 through various command separators:
 
 \begin{itemize}
@@ -233,7 +233,7 @@ through various command separators:
 
 will turn the wheels, wait 2 seconds and then stop.
 
-\item In URBI, two commands separated by \lstinline|&| will be executed in
+\item In \urbi, two commands separated by \lstinline|&| will be executed in
   parallel and will start exactly at the same time:
 \begin{urbiunchecked}
   wheelL.speed = 50 & wheelR.speed = -50;
@@ -257,7 +257,7 @@ be the case with the \lstinline|&| separator.
 This explain why the comma was necessary in the previous section. If we finish
 a command that last forever with a semicolon, the server will wait forever
 before starting a new command. If you happen to make this mistake, it is still
-possible to open a new connection to the URBI server using another client and
+possible to open a new connection to the \urbi server using another client and
 using the stop tag; command.
 
 Here is an example where we use parallelism to move the TriBot awkwardly while
@@ -268,12 +268,12 @@ playing sounds:
   beeper.play(200,3s),
 \end{urbiunchecked}
 
-Parallelism handling is a key feature of URBI, which has in fact four command
-separators. See the URBI tutorial available at http://www.gostai.com/doc.php
+Parallelism handling is a key feature of \urbi, which has in fact four command
+separators. See the \urbi tutorial available at http://www.gostai.com/doc.php
 for more information.
 
 \subsection{Using functions}
-As in most programming language, it is possible to write functions in URBI. The
+As in most programming language, it is possible to write functions in \urbi. The
 functions are useful for making more complex programs where the same commands
 are used several times.
 The following example defines a function which moves the robot for a given time
@@ -293,34 +293,34 @@ Once defined, this function can be called simply:
   Global.forward(100,3000);
 \end{urbiunchecked}
 
-More details about functions, objects and variables in URBI are available in
-the URBI tutorial (http://www.gostai.com/doc.php).
+More details about functions, objects and variables in \urbi are available in
+the \urbi tutorial (http://www.gostai.com/doc.php).
 
 \subsection{Loading files}
-When making larger URBI programs, it is easier to save them in files and to
+When making larger \urbi programs, it is easier to save them in files and to
 command the server to load the files.
-The files are simple text files in which you write URBI commands. These files
+The files are simple text files in which you write \urbi commands. These files
 should be saved in the data/ sub-directory of your sever directory. The files
-should use the .u extension which is the extension used for URBI script files.
-An example demo.u is provided with the server. To make the URBI server to
-execute this script, type the URBI command:
+should use the .u extension which is the extension used for \urbi script files.
+An example demo.u is provided with the server. To make the \urbi server to
+execute this script, type the \urbi command:
 \begin{urbiunchecked}
   load("demo.u");
 \end{urbiunchecked}
 
 
 \subsection{Conclusion}
-This chapter has highlighted the main features of URBI with the Mindstorms
+This chapter has highlighted the main features of \urbi with the Mindstorms
 TriBot robot. The next chapter details all the devices available for the
-TriBot in the default layout. For more details about the URBI language,
-please refer to the URBI tutorial available at
+TriBot in the default layout. For more details about the \urbi language,
+please refer to the \urbi tutorial available at
 \url{http://www.gostai.com/doc.php}.
 
 
 \section{Default layout reference}
 
 This chapter describes the objects defined in the \file{TriBot.u} layout
-shipped with the URBI Mindstorms NXT server.
+shipped with the \urbi Mindstorms NXT server.
 \subsection{Motors}
 Three motors are defined, wheelL, wheelR and claw.
 A group, wheels, is defined to group wheelL and wheelR:
@@ -333,11 +333,11 @@ is equivalent to
   wheelL.speed = 10 & wheelR.speed = 10;
 \end{urbiunchecked}
 
-The attribute .speed allows you to set the current speed of the motor. This
+The slot .speed allows you to set the current speed of the motor. This
 value is set between -100 and 100.
 
-Motor position (in degrees) can be accessed using the .val attribute. This
-attribute is set to 0 when you turn the robot on.
+Motor position (in degrees) can be accessed using the .val slot. This
+slot is set to 0 when you turn the robot on.
 
 \subsection{Sensors}
 Sensors are grouped in the sensors group and all hardware devices (sensors +
@@ -352,7 +352,7 @@ Its value is the distance measured by the sensor in centimeters between 0 and
 \subsubsection{Decibel}
 The sound sensor is called decibel.
 Its value relates the level of ambient sound. It is between 0 and 1.
-Two different modes can be used by changing the .mode attribute to "DB" or
+Two different modes can be used by changing the .mode slot to "DB" or
 "DBA".
 \begin{description}
 \item[DBA] is a mode measuring only frequencies between 200 and 14000Hz.
@@ -363,7 +363,7 @@ Default value is "DBA".
 \subsubsection{Light}
 The light sensor is called light.
 The value returned is between 0 an 1 representing the amount of light measured.
-Three different modes are available by changing the .mode attribute.
+Three different modes are available by changing the .mode slot.
 \begin{description}
 \item[Reflector] means the sensor lights on its led and measures the light
   reflected.
@@ -436,8 +436,8 @@ that returns the information on input port 1.
 \section{How to make its own layout}
 
 In this chapter, the method to build a custom layout for a different robot is
-explained. A good understanding of the objects in URBI in useful and the
-reading of the URBI tutorial is advised (available at http://www.gostai.com/
+explained. A good understanding of the objects in \urbi in useful and the
+reading of the \urbi tutorial is advised (available at http://www.gostai.com/
 doc.php).
 
 There are three kind of devices provided by the Mindstorms NXT server:
@@ -543,11 +543,11 @@ beeper = Beeper.new();
 
 \section{Available UObject Devices}
 \label{sec:nxt:specs}
-This appendix exhaustively describes the UObjects available in the Lego
-Mindstorms NXT URBI server.
+This section exhaustively describes the UObjects available in the LEGO
+Mindstorms NXT \urbi server.
 
 \subsection{Servo}
-Servo describes a motor. A Servo instance contains the following attributes:
+Servo describes a motor. A Servo instance contains the following slots:
 
 \begin{urbiscriptapi}
 \item[val] Motor's position.
@@ -561,7 +561,7 @@ Servo describes a motor. A Servo instance contains the following attributes:
   able to create another device on it).
 
 \item[init](<port>) The UObject constructor. \var{port} is a port name. (See
-  previous attribute port). Example:
+  previous slot port). Example:
 \begin{urbiunchecked}
 wheel = Servo.new("A");
 \end{urbiunchecked}
@@ -570,7 +570,7 @@ wheel = Servo.new("A");
 
 \subsection{UltraSonicSensor}
 UltraSonicSensor describes a sonar sensor. A UltraSonicSensor instance
-contains the following attributes:
+contains the following slots:
 
 \begin{urbiscriptapi}
 \item[val] Distance in cm (from 0 to 255).
@@ -582,7 +582,7 @@ contains the following attributes:
   create another device on it).
 
 \item[init](<port>) The UObject constructor. \var{port} is a port name. (See
-  previous attribute port). Example:
+  previous slot port). Example:
 \begin{urbiunchecked}
 sonar = UltraSonicSensor.new(1);
 \end{urbiunchecked}
@@ -591,7 +591,7 @@ sonar = UltraSonicSensor.new(1);
 
 \subsection{SoundSensor}
 SoundSensor describes a sound sensor. A SoundSensor instance contains the
-following attributes:
+following slots:
 
 \begin{urbiscriptapi}
 
@@ -608,8 +608,8 @@ following attributes:
 
 
 \item[init](<port>, <mode>) The UObject constructor. \var{port} is a port
-  name. (See previous attribute port). \var{mode} is a mode name. (See
-  previous attribute mode). Example:
+  name. (See previous slot port). \var{mode} is a mode name. (See
+  previous slot mode). Example:
 \begin{urbiunchecked}
   decibel = SoundSensor.new(1, "DB");
 \end{urbiunchecked}
@@ -618,7 +618,7 @@ following attributes:
 
 \subsection{LightSensor}
 LightSensor describes a light sensor. A LightSensor instance contains the
-following attributes:
+following slots:
 
 \begin{urbiscriptapi}
 
@@ -639,8 +639,8 @@ The light level measured (from 0 to 1).
   create another device on it).
 
 \item[init](<port>, <mode>) The UObject constructor. \var{port} is a port
-  name. (See previous attribute port). \var{mode} is a mode name. (See
-  previous attribute mode). Example:
+  name. (See previous slot port). \var{mode} is a mode name. (See
+  previous slot mode). Example:
 \begin{urbiunchecked}
   light = LightSensor.new(1, "Ambiant");
 \end{urbiunchecked}
@@ -648,7 +648,7 @@ The light level measured (from 0 to 1).
 
 \subsection{Switch}
 Switch describes a touch sensor. A Switch instance contains the following
-attributes:
+slots:
 
 \begin{urbiscriptapi}
 \item[val] The switch status (0 or 1).
@@ -660,7 +660,7 @@ attributes:
   create another device on it).
 
 \item[init](<port>) The UObject constructor. \var{port} is a port name. (See
-  previous attribute port). Example:
+  previous slot port). Example:
 \begin{urbiunchecked}
   bumper = Switch.new(1);
 \end{urbiunchecked}
@@ -669,7 +669,7 @@ attributes:
 
 \subsection{Battery}
 Battery describes a battery device. A Battery instance contains the following
-attributes:
+slots:
 \begin{urbiscriptapi}
 \item[val] Battery remaining power between 0 and 1.
 \item[init] The UObject constructor Example battery = Battery.new();
