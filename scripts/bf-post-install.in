@@ -24,9 +24,6 @@ libdir="@libdir@"
 
 
 
-# Complete the package with dependencies (libraries and headers we
-# need).  Do this only when building packages.  Currently, "building a
-# package" is defined by "using DESTDIR".
 if test -z "$DESTDIR"; then
   echo >&2 "$0: DESTDIR must be defined (and used with make install)"
   exit 1
