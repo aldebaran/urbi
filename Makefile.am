@@ -18,9 +18,7 @@ ACLOCAL_AMFLAGS = -I build-aux -I tests/m4
 # To keep the time stamps up to date, we need to compile our
 # dependencies first, so process sdk-remote and src before "." (where
 # timestamps are).  It it tests and doc that depend on these time
-# stamps, so handle them after ".".  Also, remember that our
-# post-install step is fired from here, so everything that is
-# installed must be installed before hand.
+# stamps, so handle them after ".".
 SUBDIRS = sdk-remote src modules . tests doc
 
 DIST_SUBDIRS = $(SUBDIRS) bison
@@ -157,10 +155,10 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 ## --------- ##
 ## Install.  ##
 ## --------- ##
-install-exec-hook: post-install
-post-install: scripts/post-install
-	scripts/post-install
-# Used by post-install.
+.PHONY: relocatable
+relocatable: make-relocatable
+	make-relocatable
+# Used by make-relocatable.
 EXTRA_DIST +=					\
   build-aux/bin/check-lib-deps			\
   build-aux/bin/check-include-deps		\

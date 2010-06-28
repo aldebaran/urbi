@@ -176,7 +176,7 @@ URBI_TESTS
 AC_CONFIG_FILES([Makefile src/Makefile])
 
 URBI_CONFIG_SCRIPTS([scripts/package],
-                    [scripts/post-install],
+                    [scripts/make-relocatable],
                     [scripts/install-boost-headers])
 
 case $URBI_HOST_OS in
