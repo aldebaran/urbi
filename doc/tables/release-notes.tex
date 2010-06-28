@@ -405,8 +405,8 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \item \refObject{Date}
 \item \refObject{Directory}
 \item \refObject{File}
-\item \refObject{Finalizable}: objects that call
-  \lstinline|finalize()| when they are destroyed.
+\item \refObject{Finalizable}: objects that call \lstinline|finalize()| when
+  destroyed.
 \item \refObject{InputStream}
 \item \refObject{Mutex}
 \item \refObject{OutputStream}
@@ -427,12 +427,14 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \item \refSlot[Dictionary]{size}
 \item \refSlot[Global]{evaluate}
 \item \refSlot[Group]{each}, \lstinline|Group.each&|
-\item Lobby: onDisconnect (actually, an event), remoteIP
-  create, received, resendBanner
+\item \refSlot[Lobby]{onDisconnect} (actually, an event),
+  \refSlot[Lobby]{remoteIP} \refSlot[Lobby]{create},
+  \refSlot[Lobby]{received}, \refSlot[Lobby]{resendBanner}
 \item \refSlot[Object]{inspect}
-\item String: fromAscii, replace, toAscii
+\item \refSlot[String]{fromAscii}, \refSlot[String]{replace},
+  \refSlot[String]{toAscii}
 \item System: \lstinline|_exit|, \lstinline|assert_eq|,
-  \lstinline|system|, \lstinline|terminate|
+  \refSlot[System]{system}, \refSlot[System]{terminate}
 \end{itemize}
 
 \subsubsection{Fixes}
@@ -440,13 +442,16 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \item at constructs do not leak local variables anymore.
 \item Each tag now has its enter and leave events.
 \item \refSlot[File]{content} reads the whole file.
-\item Invalid assignments such as f(x) = n are now refused as expected.
+\item Invalid assignments such as \lstinline|f(x) = n| are now refused as
+  expected.
 \end{itemize}
 
 \subsubsection{Deprecations}
 \begin{itemize}
-\item ownsSlot is deprecated in favor of hasSlot/hasLocalSlot.
-\item slotNames is deprecated in favor of allSlotNames/localSlotNames.
+\item \refObject[Object]{ownsSlot} is deprecated in favor of
+  \refObject[Object]{hasSlot}/\refObject[Object]{hasLocalSlot}.
+\item \refObject[Object]{slotNames} is deprecated in favor of
+  \refObject[Object]{allSlotNames}/\refObject[Object]{localSlotNames}.
 \end{itemize}
 
 \subsubsection{Changes}
@@ -454,8 +459,8 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \item empty strings, dictionaries and lists are now evaluated as
   "false" in conditions.
 \item \refSlot[Dictionary]{asString} does not sort the keys.
-\item Dictionaries.[]= returns the assigned value, not the dictionary.
-\item Dictionaries.[] raises an exception if the key is missing.
+\item \refSlot[Dictionary]{[]=} returns the assigned value, not the dictionary.
+\item \refSlot[Dictionary]{[]} raises an exception if the key is missing.
 \item Constants is merged into Math.
 \item \lstinline|every| no longer goes in background.  Instead of:
 
@@ -486,37 +491,38 @@ detach({ every (1s) echo("foo"); });
 
 \subsection{UObjects}
 \begin{itemize}
-\item Handle UObject destruction. To remove an UObject, call the urbiscript
-  'destroy()' method. The corresponding C++ instance will be deleted.
+\item Handle UObject destruction. To remove an UObject, call the \us
+  \code{destroy} method. The corresponding \Cxx instance will be deleted.
 
 \item Add \lstinline|UVar::unnotify()|. When called, it removes all
   UNotifyChange registered with the UVar.
 
-\item Bound functions using UBindFunction can now take arguments of
-  type \lstinline|UVar&| and \lstinline|UObject*|. The recommended
-  method to pass UVars from urbiscript is now to use
-  'camera.getSlot("val")' instead of '"camera.val"'.
+\item Bound functions using UBindFunction can now take arguments of type
+  \lstinline|UVar&| and \lstinline|UObject*|. The recommended method to pass
+  UVars from urbiscript is now to use \samp{camera.getSlot("val")} instead
+  of \samp{"camera.val"}.
 
-\item Add a 0-copy mode for UVars: If UVar::enableBypass(true) is
-  called on an UVar, notifyChange on this UVar can recover the
-  not-copied data by using \lstinline|UVar.get()|, returning an
-  \lstinline|UValue&|. However, the data is only accessible from
-  within notifyChange: reading the UVar directly will return nil.
+\item Add a 0-copy mode for UVars: If \samp{UVar::enableBypass(true)} is
+  called on an UVar, notifyChange on this UVar can recover the not-copied
+  data by using \lstinline|UVar.get()|, returning an
+  \lstinline|UValue&|. However, the data is only accessible from within
+  notifyChange: reading the UVar directly will return nil.
 
-\item Add support for the changed! event on UVars. Code like:
+\item Add support for the \lstinline|changed!| event on UVars. Code like:
 
 \begin{urbiunchecked}
-at(headTouch.val->changed? if headTouch.val) tts.say("ouch");
+at (headTouch.val->changed? if headTouch.val)
+  tts.say("ouch");
 \end{urbiunchecked}
   \noindent
-  will now work. This hook costs one at() per UVar, and can be disabled by
-  setting \refSlot[UVar]{hookChanged} to false.
+  will now work. This hook costs one \lstinline|at| per UVar, and can be
+  disabled by setting \refSlot[UVar]{hookChanged} to false.
 
 \item Add a statistics-gathering tool. Enable it by calling
-  'uobjects.enableStats(true)'. Reset counters by calling
-  'uobjects.clearStats' 'uobjects.getStats()' will return a dictionary
-  of all bound C++ function called, including timer callbacks, along
-  with the average, min, max call durations, and the number of calls.
+  \samp{uobjects.enableStats(true)}. Reset counters by calling
+  \samp{uobjects.clearStats}. \samp{uobjects.getStats} will return a
+  dictionary of all bound \Cxx function called, including timer callbacks,
+  along with the average, min, max call durations, and the number of calls.
 
 \item When code registered by a notifyChange throws, the exception is
   intercepted to protect other unrelated callbacks. The throwing
@@ -526,7 +532,7 @@ at(headTouch.val->changed? if headTouch.val) tts.say("ouch");
 \item the environment variable \env{URBI\_UOBJECT\_PATH} is used by
   urbi-launch and urbiscript's loadModule to find uobjects.
 
-\item fixed multiple notifications of event trigger in remote UObjects
+\item fixed multiple notifications of event trigger in remote UObjects.
 
 \item Many other bug fixes and performance improvements.
 
@@ -546,8 +552,7 @@ also improved.  Changes include, but are not limited to:
   \env{URBI\_ROOT} (\autoref{sec:tools:envvars}).
 \item special files \file{global.u}, \file{local.u}
   (\autoref{sec:tools:files}).
-\item k1-to-k2: Conversion idioms from urbiscript 1 to urbiscript 2
-  (\autoref{sec:k1}).
+\item k1-to-k2: Conversion idioms from \us 1 to \us 2 (\autoref{sec:k1}).
 \item FAQ (\autoref{sec:faq})
   \begin{itemize}
   \item stack exhaustion
@@ -650,8 +655,8 @@ in various programming languages.
 \subsubsection{Changes}
 
 \begin{itemize}
-\item \refSlot[System]{Platform} enhances former \slot[System]{platform}.
-  Use \refSlot[System]{Platform}.kind instead of \slot[System]{platform}.
+\item \refObject{System.Platform} enhances former \slot[System]{platform}.
+  Use \refSlot[System.Platform]{kind} instead of \slot[System]{platform}.
 \end{itemize}
 
 \subsubsection{Fixes}
@@ -673,7 +678,7 @@ invalid calls.
 
 \subsection{Documentation}
 
-Extended documentation on: Comparable, Orderable.
+Extended documentation on: \refObject{Comparable}, \refObject{Orderable}.
 
 
 \section{\usdk 2.0 beta 4}
@@ -702,12 +707,12 @@ library specifications) is included.
   and C++ files.  This should prevent accidental mismatches due to
   incomplete installation processes.
 
-\item Precedence of operator **.
+\item Precedence of operator \lstinline|**|.
 
-  In conformance with the usage in mathematics, the operator ** now has a
-  stronger precedence than the unary operators.  Therefore, as in Perl,
-  Python and others, '-2 ** 2 == -4' whereas it used to be equal to '4'
-  before (as with GNU bc).
+  In conformance with the usage in mathematics, the operator \lstinline|**|
+  now has a stronger precedence than the unary operators.  Therefore, as in
+  Perl, Python and others, '-2 ** 2 == -4' whereas it used to be equal to
+  '4' before (as with GNU bc).
 
 \item \lstinline|whenever| now properly executes the else branch when the
   condition is false.  It used to wait for the condition to be verified at
@@ -760,7 +765,7 @@ For instance:
 \begin{shell}
 $ cat demo
 #! /usr/bin/env urbi-console
-cout << \refSlot[System]{arguments};
+cout << System.arguments;
 shutdown;
 
 $ ./demo 1 2 3 | grep output
@@ -823,8 +828,9 @@ asked by our users during the beta-test period.
 \item \lstinline|delete| has been removed
 
   \lstinline|delete| was never the right thing to do. A local variable
-  should not be deleted, and a slot can be removed using "removeSlot".  The
-  construct "delete object" has been removed from the language.
+  should not be deleted, and a slot can be removed using
+  \refSlot[Object]{removeSlot}.  The construct "delete object" has been
+  removed from the language.
 
 \item \lstinline|__HERE__|
 
@@ -959,7 +965,7 @@ if (!ne.isNil) do_something(ne);
   while previously you had to retrieve the environment variable twice, once
   to check for its existence and once to get its content.
 
-\item "disown"
+\item "\refSlot[Control]{disown}"
 
   It is now possible to start executing code in background while dropping
   all the tags beforehand, including the connection tag. The code will still
@@ -992,14 +998,13 @@ s.criticalSection(function () { echo ("In the critical section") });
 \subsection{UObjects}
 
 \begin{description}
-\item void
-The error message given to the user trying to cast a void UVar has been
-specialized.
+\item[void] The error message given to the user trying to cast a void UVar
+  has been specialized.
 
-Remote bound methods can now return void.
+  Remote bound methods can now return void.
 
 
-\item Coroutine interface
+\item[Coroutine interface]
 
   The functions \lstinline|yield()|, \lstinline|yield_until()|, and
   \lstinline|yield_until_things_changed()| have been added to the
@@ -1010,7 +1015,7 @@ Remote bound methods can now return void.
   remote mode: calling yield() will allow the UObject remote library
   to process pending messages from within the user callback.
 
-\item Remote UObject initialization
+\item[Remote UObject initialization]
 
   Remote UObject instantiation is now atomic: the API now ensures that
   all variables and functions bound from the UObject constructor and
@@ -1028,11 +1033,9 @@ is now safe.
 \subsection{Auxiliary programs}
 
 \begin{description}
-\item urbi-launch
-
-  Now, options for \command{urbi-launch} are separated from options to give
-  to the underlying program (in remote and start modes) by using
-  \option{--}. Use \samp{urbi-launch --help} to get the full usage
+\item[urbi-launch] Now, options for \command{urbi-launch} are separated from
+  options to give to the underlying program (in remote and start modes) by
+  using \option{--}. Use \samp{urbi-launch --help} to get the full usage
   information.
 \end{description}
 
