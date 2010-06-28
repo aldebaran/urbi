@@ -24,8 +24,8 @@ libdir="@libdir@"
 
 
 
-if test -z "$DESTDIR"; then
-  echo >&2 "$0: DESTDIR must be defined (and used with make install)"
+if test -z "$destdir"; then
+  echo >&2 "$0: destdir must be defined (and used with make install)"
   exit 1
 fi
 
@@ -47,17 +47,17 @@ strip_opt=
 $COMPILATION_MODE_DEBUG || strip_opt=--strip
 $srcdir/build-aux/bin/check-lib-deps            \
   --verbose --verbose --verbose --verbose       \
-  --destdir="$DESTDIR"                          \
+  --destdir="$destdir"                          \
   --host-os="$URBI_HOST_OS"                     \
   --libdir="$libdir"                            \
   --libpath="$BOOST_LDPATH"                     \
   $strip_opt --strip-command="$STRIP"           \
-  "$DESTDIR"
+  "$destdir"
 
 # Boost headers.
 #
 $srcdir/build-aux/bin/check-include-deps        \
-  --include-dir="$DESTDIR$prefix/include"       \
+  --include-dir="$destdir$prefix/include"       \
   --verbose                                     \
   $builddir
 
@@ -72,7 +72,7 @@ $srcdir/build-aux/bin/check-include-deps        \
 #
 # The resulting libtool may not work, but it is not working without
 # patch anyway...
-find "$DESTDIR$prefix" -name libtool |
+find "$destdir$prefix" -name libtool |
   xargs perl -pi                                                        \
        -e 's/^\s*eval "\$1\+=\\\$2"$/eval "\$1=\\\$\$1\\" \$2\\""/;'    \
        -e 's/^predep_objects=.*/#- $&/;'                                \
@@ -82,7 +82,7 @@ find "$DESTDIR$prefix" -name libtool |
 # Remove ccache and -Werror from the param.mk and libtool.
 # Remove also hidden visibility as it prevents linking uobjects using
 # boost symbols inside libport.
-find "$DESTDIR$prefix" '(' -name param.mk -or -name libtool ')' |
+find "$destdir$prefix" '(' -name param.mk -or -name libtool ')' |
   xargs perl -pi \
         -e 's/ccache //;'                       \
         -e 's/g(cc|\+\+)(?:-[\d.]+)/g$1/;'      \
@@ -91,10 +91,10 @@ find "$DESTDIR$prefix" '(' -name param.mk -or -name libtool ')' |
         -e 's/-fvisibility-inlines-hidden//;'
 
 # Restore +x on libtool.
-find "$DESTDIR$prefix" -name libtool -exec chmod u+x '{}' ';'
+find "$destdir$prefix" -name libtool -exec chmod u+x '{}' ';'
 
 # Set more permissive access rights.
-chmod -R a+rX "$DESTDIR$prefix"
+chmod -R a+rX "$destdir$prefix"
 
 
 # ---------- #
@@ -105,9 +105,9 @@ chmod -R a+rX "$DESTDIR$prefix"
 # we use Boost as static libraries, they appear as runtime
 # dependencies.  We could try to fix the *.la files, but it appears to
 # work well without them.
-find "$DESTDIR$prefix" -name '*.la' -delete
+find "$destdir$prefix" -name '*.la' -delete
 
 # Get rid of empty directories, recursively.  Of course it is better
 # not to create these directories, but Automake is not helping us
 # here.
-find "$DESTDIR$prefix" -empty -a -type d -delete
+find "$destdir$prefix" -empty -a -type d -delete
