@@ -156,8 +156,9 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 ## Install.  ##
 ## --------- ##
 .PHONY: relocatable
-relocatable: make-relocatable
-	make-relocatable
+relocatable: scripts/bf-post-install
+	$<
+
 # Used by make-relocatable.
 EXTRA_DIST +=					\
   build-aux/bin/check-lib-deps			\
