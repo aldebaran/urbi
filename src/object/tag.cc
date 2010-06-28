@@ -109,11 +109,16 @@ namespace urbi
     }
 
     void
+    Tag::stop(const rObject& payload)
+    {
+      value_->stop(::kernel::scheduler(), payload);
+    }
+
+    void
     Tag::stop(const objects_type& args)
     {
       check_arg_count(args.size(), 0, 1);
-      const rObject& payload = args.empty() ? void_class : args.front();
-      value_->stop(::kernel::scheduler(), payload);
+      stop(args.empty() ? void_class : args.front());
     }
 
     void
@@ -207,6 +212,8 @@ namespace urbi
     void
     Tag::initialize(CxxObject::Binder<Tag>& bind)
     {
+      typedef void (Tag::*stop_type)(const objects_type& args);
+      bind(SYMBOL(stop), static_cast<stop_type> (&Tag::stop));
 #define DECLARE(Name, Function)                 \
       bind(SYMBOL(Name), &Tag::Function)
 
@@ -223,7 +230,6 @@ namespace urbi
       DECLARE(priority, priority);
       DECLARE(scope, scope);
       DECLARE(setPriority, priority_set);
-      DECLARE(stop, stop);
       DECLARE(unblock, unblock);
       DECLARE(unfreeze, unfreeze);
 #undef DECLARE

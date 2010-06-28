@@ -49,20 +49,22 @@ namespace urbi
       priority_type priority() const;
       priority_type priority_set(priority_type);
 
+      /// Stop the tagged jobs, forcing \a payload as value.
+      void stop(const rObject& payload = void_class);
       void stop(const objects_type&);
       void unblock();
       void unfreeze();
       bool frozen() const;
       bool blocked() const;
 
-      /// Return, potentially creating first, the enter event for \a this
+      /// Return, potentially creating first, the enter event for \a this.
       rObject enter();
-      /// Return, potentially creating first, the leave event for \a this
+      /// Return, potentially creating first, the leave event for \a this.
       rObject leave();
 
-      /// Trigger \a this' enter event
+      /// Trigger \a this' enter event.
       void triggerEnter();
-      /// Trigger \a this' leave event
+      /// Trigger \a this' leave event.
       void triggerLeave();
 
       /// Manipulate parent tag.

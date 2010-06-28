@@ -78,9 +78,7 @@ namespace kernel
 
   UConnection::~UConnection()
   {
-    lobby_
-      ->tag_get()->value_get()
-      ->stop(server_.scheduler_get(), object::void_class);
+    lobby_->tag_get()->stop();
     shell_->terminate_now();
   }
 
