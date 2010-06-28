@@ -364,6 +364,34 @@ $ make -j3
 
 Using \command{distcc} and \command{ccache} is recommended.
 
+\section{Install}
+
+Running \samp{make install} works as expected.  It is a good idea to check
+that your installation works properly: run \samp{make installcheck} (see
+\autoref{sec:build:check}).
+
+
+\section{Relocatable}
+
+If you intend to make a relocatable tree of \usdk (i.e., a self-contained
+tree that can be moved around), then run \samp{make relocatable} after
+\samp{make install}.
+
+This step \emph{requires} that you use a DESTDIR (see the Automake
+documentation for more information).  Basically, the sequence of commands
+should look like:
+
+\begin{shell}
+$ DESTDIR=/tmp/install
+$ rm -rf $DESTDIR
+$ make install DESTDIR=$DESTDIR
+$ make relocatable DESTDIR=$DESTDIR
+$ make installcheck DESTDIR=$DESTDIR
+\end{shell}
+
+You may now move this tree around and expect the executable to work
+properly.
+
 \section{Run}
 
 There are some special variables in addition to the environment
