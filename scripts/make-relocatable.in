@@ -50,7 +50,6 @@ $srcdir/build-aux/bin/check-lib-deps            \
   --verbose --verbose --verbose --verbose       \
   --destdir="$DESTDIR"                          \
   --host-os="$URBI_HOST_OS"                     \
-  --prefix="$prefix"                            \
   --libdir="$libdir"                            \
   --libpath="$BOOST_LDPATH"                     \
   $strip_opt --strip-command="$STRIP"           \
