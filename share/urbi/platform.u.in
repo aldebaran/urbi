@@ -11,15 +11,14 @@
 class System.Platform
 {
   var host = "@host@";
-  var host_alias = "@host_alias@";
-  var host_cpu = "@host_cpu@";
-  var host_os = "@host_os@";
-  var host_vendor = "@host_vendor@";
-  var host_triplet = "@host@";
+  var hostAlias = "@host_alias@";
+  var hostCpu = "@host_cpu@";
+  var hostOs = "@host_os@";
+  var hostVendor = "@host_vendor@";
 
   function isWindows ()
   {
-    return host_os == "mingw32";
+    return hostOs == "mingw32";
   };
 
   function kind ()
@@ -30,9 +29,9 @@ class System.Platform
       "POSIX";
   };
 
-  var compilation_mode_debug = @COMPILATION_MODE_DEBUG@;
-  var compilation_mode_space = @COMPILATION_MODE_SPACE@;
-  var compilation_mode_speed = @COMPILATION_MODE_SPEED@;
+  var compilationModeDebug = @COMPILATION_MODE_DEBUG@;
+  var compilationModeSpace = @COMPILATION_MODE_SPACE@;
+  var compilationModeSpeed = @COMPILATION_MODE_SPEED@;
 
   // Modules.
   var enabledModules = @ENABLED_MODULES_U@|;

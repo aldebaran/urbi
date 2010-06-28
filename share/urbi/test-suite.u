@@ -214,7 +214,7 @@ if (System.Platform.isWindows)
 // Skip tests that cannot run in space builds.
 function skip_if_space ()
 {
-  if (System.Platform.compilation_mode_space)
+  if (System.Platform.compilationModeSpace)
     testSkip("cannot run in space compilation-mode");
 }|
 

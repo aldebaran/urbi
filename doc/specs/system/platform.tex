@@ -9,10 +9,41 @@
 \section{System.Platform}
 A description of the platform (the computer) the server is running on.
 
-\begin{itemize}
-\item \lstinline{kind}\\
-  Either \code{"POSIX"} or \code{"WIN32"}.
-\end{itemize}
+\begin{urbiscriptapi}
+\item[host] The type of system \usdk runs on.  Composed of the CPU, the
+  vendor, and the OS.
+\begin{urbiassert}
+System.Platform.host ==
+  "%s-%s-%s" % [System.Platform.hostCpu,
+                System.Platform.hostVendor,
+                System.Platform.hostOs];
+\end{urbiassert}
+
+\item[hostCpu] The CPU type of system \usdk runs on.  The following values
+  are those for which Gostai provides binary builds.
+\begin{urbiassert}
+System.Platform.hostCpu in ["i386", "i686", "x86_64"];
+\end{urbiassert}
+
+\item[hostOs] The OS type of system \usdk runs on.  For instance
+  \lstinline|darwin9.8.0| or \lstinline|linux-gnu| or \lstinline|mingw32|.
+
+\item[hostVendor] The vendor type of system \usdk runs on.  The following
+  values are those for which Gostai provides binary builds.
+\begin{urbiassert}
+System.Platform.hostVendor in ["apple", "pc"];
+\end{urbiassert}
+
+\item[isWindows] Whether running under Windows.
+\begin{urbiassert}
+System.Platform.isWindows in [true, false];
+\end{urbiassert}
+
+\item[kind] Either \code{"POSIX"} or \code{"WIN32"}.
+\begin{urbiassert}
+System.Platform.kind in ["POSIX", "WIN32"];
+\end{urbiassert}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex
