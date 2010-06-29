@@ -439,7 +439,7 @@ namespace kernel
         // FIXME: clean the stack of the interpreter, this cause strange
         // issue where scheduled jobs inherit the stack of the primary
         // shell.
-         scheduler_->add_job(sched::rJob(interpreter));
+        scheduler_->add_job(sched::rJob(interpreter));
       }
       async_jobs_.clear();
     }
@@ -465,7 +465,7 @@ namespace kernel
 
   static void bounce_disconnection(UConnection* uc)
   {
-    // We cannot closed it yet because it is used to close all other
+    // We cannot close it yet because it is used to close the other
     // connections.
     if (&kernel::urbiserver->ghost_connection_get() == uc)
       return;
