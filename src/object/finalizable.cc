@@ -47,11 +47,9 @@ namespace urbi
       // We are already in the destructor, we cannot allow a reference to be
       // kept. This check must be outside the above block.
       if (counter_get() != 1)
-      {
-        pabort("Object finalizer "+ string_cast((void*)this) + " kept "
-               + string_cast(counter_get()-1)
-               + " reference(s) to this");
-      }
+        pabort("Object finalizer " << (void*)this << " kept "
+                                   << (counter_get()-1)
+                                   << " reference(s) to this");
     }
 
     void Finalizable::__dec()
@@ -62,15 +60,18 @@ namespace urbi
     {
       counter_inc();
     }
-    int Finalizable::__get()
+    int Finalizable::__get() const
     {
       return counter_get();
     }
     void Finalizable::initialize(CxxObject::Binder<Finalizable>& bind)
     {
-      bind(SYMBOL(__dec),         &Finalizable::__dec);
-      bind(SYMBOL(__inc),         &Finalizable::__inc);
-      bind(SYMBOL(__get),         &Finalizable::__get);
+#define DECLARE(Name)                           \
+      bind(SYMBOL(Name), &Finalizable::Name)
+
+      DECLARE(__dec);
+      DECLARE(__inc);
+      DECLARE(__get);
     }
 
     URBI_CXX_OBJECT_REGISTER(Finalizable)

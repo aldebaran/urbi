@@ -26,7 +26,7 @@ namespace urbi
 
       void __inc();
       void __dec();
-      int __get();
+      int __get() const;
       private:
       URBI_CXX_OBJECT_(Finalizable);
     };
