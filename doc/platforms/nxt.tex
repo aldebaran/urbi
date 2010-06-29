@@ -82,7 +82,7 @@ To achieve that, \urbi provides a command to wait for a given time: sleep
 (duration). And you can make sequences of commands separated with semicolon
 that will be executed one after another. So the following line:
 \begin{urbiunchecked}
-  wheels.speed = 50; (10s); wheels.speed = 0;
+  wheels.speed = 50; sleep(10s); wheels.speed = 0;
 \end{urbiunchecked}
 
 will make the robot to go forward during 10 seconds then stop.
@@ -152,7 +152,9 @@ enable you to do that.
 A tag in a name associated to a command. To tag a command with the name mytag,
 create it and simply prefix the command. For example:
 \begin{urbiunchecked}
-  Var mytag = Tag.new; mytag: at (decibel.val > 0.7) wheels.speed = 0;
+  var mytag = Tag.new;
+  mytag: at (decibel.val > 0.7)
+    wheels.speed = 0;
 \end{urbiunchecked}
 
 will launch the event catching command using the decibel sensor with tag mytag.
@@ -190,8 +192,9 @@ The parameters of the method may also be the result of operations, or depend on
 other variables. For example, it is possible to play a sound which frequency
 depends on the obstacle distance:
 \begin{urbiunchecked}
-  var mytag = Tag.new; mytag:whenever (sonar.val < 100) beeper.play
-(200+6*sonar,3ms);
+  var mytag = Tag.new;
+  mytag: whenever (sonar.val < 100)
+    beeper.play(200 + 6 * sonar.val, 3ms);
 \end{urbiunchecked}
 
 This plays beeps with a lower frequency as the obstacle comes closer (under 1
@@ -207,14 +210,16 @@ command with a comma instead a semicolon. More details about these command
 separators will be given in \autoref{sec:nxt:para}.
 The sinus modifier can be used this way:
 \begin{urbiunchecked}
-  var mytag = Tag.new; mytag:wheels.speed = 0 sin:10s ampli:100,
+  var mytag = Tag.new;
+  mytag: wheels.speed = 0 sin:10s ampli:100,
 \end{urbiunchecked}
 
 This command will make the speed of the wheels oscillate around 0, between -100
 et 100 with a period of 10s. Use a tag to be able to stop the command. To make
 the speed change from 0 to 100 with a period of 3 seconds, use the command:
 \begin{urbiunchecked}
-  var tag2 = Tag.new; tag2:wheels.speed = 50 sin:3s ampli:50,
+  var tag2 = Tag.new;
+  tag2: wheels.speed = 50 sin:3s ampli:50,
 \end{urbiunchecked}
 
 
@@ -379,7 +384,7 @@ Its value is the current battery level between 0 and 1, 1 is full charge.
 The beeper device is called beeper.
 You can request the beeper to play a sound using the play method:
 \begin{urbiunchecked}
-  play(frequency, time);
+  beeper.play(frequency, time);
 \end{urbiunchecked}
 
 frequency is an integer between 200 and 14000, which is the frequency of the
@@ -388,7 +393,7 @@ A duration of 0 is infinite.
 The command returns immediately. If you want to wait until the end of the beep,
 use:
 \begin{urbiunchecked}
-  { beeper.play(frequency, duration) & sleep(duration) },
+  { beeper.play(frequency, duration); sleep(duration) },
 \end{urbiunchecked}
 
 \subsection{Command}
@@ -696,9 +701,9 @@ methods:
 \item[play](<frequency>, <duration>) Plays a beep of a custom frequency for
   a custom duration.  \var{frequency} is the frequency of the beep (in Hz),
   between 200 and 14000.  \var{duration} is the duration of the beep (in
-  ms), 0 is infinite.  Example:
+  seconds), 0 is infinite.  Example:
 \begin{urbiunchecked}
-beeper.play(200,1000);
+beeper.play(200,1s);
 \end{urbiunchecked}
 \end{urbiscriptapi}
 
