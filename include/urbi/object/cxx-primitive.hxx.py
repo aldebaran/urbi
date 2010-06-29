@@ -176,47 +176,47 @@ namespace urbi
 {
   namespace object
   {
-      template <typename M>
-      struct MakePrimitive
-      {};
+    template <typename M>
+    struct MakePrimitive
+    {};
 
-      namespace
+    namespace
+    {
+      // Remove const and reference
+      template <typename T>
+      struct Flatten
       {
-        // Remove const and reference
-        template <typename T>
-        struct Flatten
-        {
-          typedef typename boost::remove_const
-          <typename boost::remove_reference<T>::type>::type type;
-        };
-      }
+        typedef typename boost::remove_const
+        <typename boost::remove_reference<T>::type>::type type;
+      };
+    }
 
   %s;
 
-      template<typename M>
-      inline rPrimitive
-      make_primitive(M f)
-      {
-        typedef AnyToBoostFunction<M> C;
-        // If primitive is unfound in MakePrimitive here, you gave an
-        // unsupported type to make Primitive. AnyToBoostFunction must be
-        // able to convert the given values. It handles:
-        // * boost::functions
-        // * function pointers
-        // * method pointers
-        return new Primitive(
-          boost::bind(MakePrimitive<typename C::type>::primitive,
-                      _1, /*_2,*/ C::convert(f)));
-      }
+    template<typename M>
+    inline rPrimitive
+    make_primitive(M f)
+    {
+      typedef AnyToBoostFunction<M> C;
+      // If primitive is unfound in MakePrimitive here, you gave an
+      // unsupported type to make Primitive. AnyToBoostFunction must be
+      // able to convert the given values. It handles:
+      // * boost::functions
+      // * function pointers
+      // * method pointers
+      return new Primitive(
+        boost::bind(MakePrimitive<typename C::type>::primitive,
+                    _1, /*_2,*/ C::convert(f)));
+    }
 
-      template<typename M>
-      inline void
-      extend_primitive(rPrimitive p, M f)
-      {
-        typedef AnyToBoostFunction<M> C;
-        p->value_get() <<
-          boost::bind(MakePrimitive<typename C::type>::primitive,
-                      _1, /*_2,*/ C::convert(f));
-      }
+    template<typename M>
+    inline void
+    extend_primitive(rPrimitive p, M f)
+    {
+      typedef AnyToBoostFunction<M> C;
+      p->value_get() <<
+        boost::bind(MakePrimitive<typename C::type>::primitive,
+                    _1, /*_2,*/ C::convert(f));
+    }
   }
 }''' % primitives
