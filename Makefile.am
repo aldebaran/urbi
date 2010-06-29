@@ -43,11 +43,8 @@ include share/images/local.mk
 
 EXTRA_DIST += urbi-sdk.key
 
-# Make sure the packaging script is up-to-date.
-all-local: scripts/package
-
-# Make sure check-include-deps didn't screw up.
-all-local: scripts/install-boost-headers
+# Make sure the building scripts are up-to-date.
+all-local: scripts/bf-post-install scripts/install-boost-headers scripts/package
 
 ## ------------------------------------- ##
 ## Generate the list of symbols we use.  ##
