@@ -47,18 +47,33 @@ characters.
 \us interpreter. Both \Cxx comment types are supported.
 
 \begin{itemize}
-\item A \lstinline|//| introduces a comment that lasts until the end
-  of the line.
-\item A \lstinline|/*| introduces a comment that lasts until
-  \lstinline|*/| is encountered. Comments nest, contrary to \C/\Cxx:
-  if two \lstinline|/*| are encountered, the
-  comment will end after two \lstinline|*/|, not one.
+\item A \lstinline|//| introduces a comment that lasts until the end of the
+  line.
+\item A \lstinline|/*| introduces a comment that lasts until \lstinline|*/|
+  is encountered. Comments nest, contrary to \C/\Cxx: if two \lstinline|/*|
+  are encountered, the comment will end after two \lstinline|*/|, not one.
 \end{itemize}
 
 \begin{urbiscript}
-// C++ style comment
-/* C style comment */
-/* These comments /* do */ nest */
+1; // This is a one line comment.
+[00000001] 1
+
+2; /* an inner comment */ 3;
+[00000002] 2
+[00000003] 3
+
+4; /* nested /* comments */ 5; */ 6;
+[00000004] 4
+[00000005] 6
+
+7
+  /*
+    /*
+       Multiline.
+    */
+  */
+;
+[00000006] 7
 \end{urbiscript}
 
 \subsection{Synclines}
