@@ -95,17 +95,10 @@ namespace urbi
       call(SYMBOL(handleDisconnect));
     }
 
-    static inline
-    runner::Runner&
-    runner()
-    {
-      return ::kernel::runner();
-    }
-
     rLobby
     Lobby::lobby()
     {
-      return runner().lobby_get();
+      return ::kernel::runner().lobby_get();
     }
 
     void
