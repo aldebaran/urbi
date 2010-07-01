@@ -52,22 +52,28 @@ namespace urbi
     template<typename T> void
     UContextImpl::addCleanup(T* ptr)
     {
-      cleanup_list_.back().push_back(boost::bind(&deletor<T>, ptr));
+      cleanup_list_->back().push_back(boost::bind(&deletor<T>, ptr));
     }
 
     inline void
     UContextImpl::pushCleanupStack()
     {
-      cleanup_list_.resize(cleanup_list_.size()+1);
+      CleanupList* cl = cleanup_list_.get();
+      if (!cl)
+      {
+        cl = new CleanupList;
+        cleanup_list_.reset(cl);
+      }
+      cl->resize(cl->size()+1);
     }
 
     inline void
     UContextImpl::popCleanupStack()
     {
       // I would rather not define 'foreach' in a hxx.
-      BOOST_FOREACH(boost::function0<void>& f, cleanup_list_.back())
+      BOOST_FOREACH(boost::function0<void>& f, cleanup_list_->back())
         f();
-      cleanup_list_.pop_back();
+      cleanup_list_->pop_back();
     }
 
     inline

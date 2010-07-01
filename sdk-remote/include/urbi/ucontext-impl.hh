@@ -14,6 +14,7 @@
 #include <set>
 
 #include <boost/function.hpp>
+#include <boost/thread.hpp>
 
 #include <urbi/fwd.hh>
 #include <urbi/uprop.hh>
@@ -141,7 +142,8 @@ namespace urbi
       /// Release lock acquired with lock()
       virtual void unlock() = 0;
     private:
-      std::vector<std::vector<boost::function0<void> > > cleanup_list_;
+      typedef std::vector<std::vector<boost::function0<void> > > CleanupList;
+      boost::thread_specific_ptr<CleanupList> cleanup_list_;
     };
 
     class URBI_SDK_API UObjectImpl
