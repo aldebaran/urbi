@@ -1,5 +1,11 @@
 #! /usr/bin/python
 
+def iif(cond, iftrue, iffalse):
+    if cond:
+        return iftrue
+    else:
+        return iffalse
+
 ## ----------- ##
 ## Boost types ##
 ## ----------- ##
@@ -103,9 +109,9 @@ def primitive(r, nargs):
     };
     ''' % {
         'args': arguments(nargs),
-        'args_name': 'args' if nargs != -1 else '',
+        'args_name': iif(nargs != -1, 'args', ''),
         'boost': boost_type(r, nargs),
-        'check': 'check_arg_count(args.size() - 1, %s);' % nargs if nargs != -1 else '',
+        'check': iif(nargs != -1, 'check_arg_count(args.size() - 1, %s);', ''),
         'nargs': nargs,
         'param': template_param(r, nargs),
         'return': r,
