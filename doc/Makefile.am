@@ -92,7 +92,8 @@ CLEANFILES += $(EPS_IMAGES)
 
 
 # Find local *.sty files.  Find converted images from document-aux.
-TEXI2DVIFLAGS += -I $(srcdir) -I $(builddir)/document-aux
+TEXI2DVIFLAGS += -I $(srcdir) -I $(builddir)/document-aux   \
+                 -I $(top_srcdir)/submodules/modules/system/ros/doc
 pdf_DATA =
 
 # Use tex4ht.
