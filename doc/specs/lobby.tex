@@ -78,7 +78,30 @@ connected;
 \end{urbiassert}
 
 \item[connectionTag]
-  The tag of all code executed in the context of \this.
+  The tag of all code executed in the context of \this, except the shell
+  itself.  In other words, it controls every thing that was launched from
+  this lobby, yet the lobby itself is still usable.
+\begin{urbiscript}
+every(1s) echo(1), sleep(0.5s); every(1s) echo(2),
+sleep(2.2s);
+connectionTag.stop;
+[00000507] *** 1
+[00001008] *** 2
+[00001507] *** 1
+[00002008] *** 2
+[00002507] *** 1
+[00003008] *** 2
+
+every(1s) echo(3), sleep(0.5s); every(1s) echo(4),
+sleep(2.2s);
+connectionTag.stop;
+[00003208] *** 3
+[00003710] *** 4
+[00004208] *** 3
+[00004710] *** 4
+[00005208] *** 3
+[00005710] *** 4
+\end{urbiscript}
 
 \item[copyright](<deep> = true)%~\\
   Display the copyright of \usdk.  Include copyright information

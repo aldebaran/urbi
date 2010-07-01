@@ -25,7 +25,7 @@ namespace runner
   Shell::Shell(const rLobby& lobby,
 	       sched::Scheduler& scheduler,
 	       const libport::Symbol& name)
-    : Interpreter(lobby, scheduler, ast::rConstAst(), name)
+    : Interpreter(lobby, scheduler, ast::rConstAst(), name, false)
     , executing_(false)
   {
   }

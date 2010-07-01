@@ -40,6 +40,7 @@
 #include <parser/uparser.hh>
 
 #include <runner/interpreter.hh>
+#include <runner/shell.hh>
 #include <urbi/runner/raise.hh>
 
 #include <sched/exception.hh>
@@ -82,7 +83,8 @@ namespace runner
   Interpreter::Interpreter(rLobby lobby,
                            sched::Scheduler& sched,
                            ast::rConstAst ast,
-                           const libport::Symbol& name)
+                           const libport::Symbol& name,
+                           bool tag)
     : Runner(lobby, sched, name)
     , ast_(ast)
     , code_(0)
@@ -90,7 +92,14 @@ namespace runner
     , stacks_(lobby)
   {
     init();
-    apply_tag(lobby->tag_get());
+
+    // Do not tag the Shell itself.
+    //
+    // Then, when an Interpreter is created from another, check if the
+    // latter is actually a shell, in which case, push the Lobby's tag
+    // (which is the connectionTag).
+    if (tag)
+      apply_tag(lobby->tag_get());
   }
 
   Interpreter::Interpreter(rLobby lobby,
@@ -124,6 +133,8 @@ namespace runner
   {
     tag_stack_set(model.tag_stack_get_all());
     init();
+    if (dynamic_cast<const Shell*>(&model))
+      apply_tag(lobby_->tag_get());
   }
 
   Interpreter::Interpreter(const Interpreter& model,
@@ -137,6 +148,8 @@ namespace runner
   {
     tag_stack_set(model.tag_stack_get_all());
     init();
+    if (dynamic_cast<const Shell*>(&model))
+      apply_tag(lobby_->tag_get());
   }
 
 

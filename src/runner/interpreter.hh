@@ -55,10 +55,16 @@ namespace runner
     /// to know its \a scheduler and will execute \a ast.  Memory
     /// ownership of \a ast is transferred to the Interpreter.  The
     /// new runner has no parent.
+    ///
+    /// \param tag  whether the lobby's tag should be applied.
+    ///             defaults to true, set to false when building
+    ///             the Shell, so that the connectionTag does not
+    ///             kill it.
     Interpreter(rLobby lobby,
                 sched::Scheduler& scheduler,
                 ast::rConstAst ast,
-                const libport::Symbol& name);
+                const libport::Symbol& name,
+                bool tag = true);
 
     Interpreter(const Interpreter&,
                 rObject code,
