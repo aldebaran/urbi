@@ -53,7 +53,7 @@ def primitive(r, nargs):
                % (type, n, n)
 
     def make_arg(n):
-        return ', %s' % to(n + 1, 'Arg%s' % n)
+        return to(n + 1, 'Arg%s' % n)
 
     # Generate template parameters list
     def template_param(r, nargs):
@@ -86,12 +86,12 @@ def primitive(r, nargs):
       {
         check_arg_count(args.size() - 1, %(nargs)s);
         %(return)s
-        (f(%(self)s %(args)s));
+        (f(%(args)s));
         %(return_void)s
       }
     };
     ''' % {
-        'args': '\n          '.join(map(make_arg, range(nargs))),
+        'args': ',\n           '.join([to(0, 'S')] + map(make_arg, range(nargs))),
         'boost': boost_type(r, nargs),
         'nargs': nargs,
         'param': template_param(r, nargs),
