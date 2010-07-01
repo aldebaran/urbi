@@ -322,16 +322,15 @@ namespace kernel
     // urbiscript is up and running.  Send local.u and the banner to
     // the ghostconnection too.
     ghost_->initialize();
-    object::rPrimitive p = new object::Primitive(
-      object::Primitive::value_type(
-        boost::bind(&UServer::handle_synchronizer_, this, _1)));
-    sched::rJob interpreter =
-    new runner::Interpreter(
-                            *ghost_->shell_get().get(),
-                            p->as<object::Object>(),
-                            SYMBOL(handle_synchronizer),
-                            object::objects_type());
-    scheduler_->add_job(interpreter);
+
+    object::rPrimitive p =
+      object::make_primitive
+      (boost::function0<void>
+       (boost::bind(&UServer::handle_synchronizer_, this)));
+    scheduler_->add_job
+      (new runner::Interpreter(*ghost_->shell_get().get(),
+                               p->as<object::Object>(),
+                               SYMBOL(handle_synchronizer)));
   }
 
 
@@ -632,8 +631,8 @@ namespace kernel
     return thread_id_ != pthread_self();
   }
 
-  object::rObject
-  UServer::handle_synchronizer_(const object::objects_type&)
+  void
+  UServer::handle_synchronizer_()
   {
     runner::Runner& r = getCurrentRunner();
     sched::jobs_type dead_jobs;
@@ -652,7 +651,6 @@ namespace kernel
       r.non_interruptible_set(false);
       r.yield_until_things_changed();
     }
-    return object::void_class;
   }
 
   void

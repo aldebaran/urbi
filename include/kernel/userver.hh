@@ -265,7 +265,7 @@ namespace kernel
     /// \}
 
     /// Call synchronizer::check() and yield in a loop.
-    object::rObject handle_synchronizer_(const object::objects_type& );
+    void handle_synchronizer_();
   public:
     /// Stops all commands in all connections.
     bool stopall;

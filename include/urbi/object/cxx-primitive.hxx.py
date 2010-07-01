@@ -11,7 +11,8 @@ def boost_param(r, nargs):
         args += ['R']
     else:
         args += ['void']
-    args += 'S'
+    if nargs != -1:
+        args += 'S'
     for i in range(nargs):
         args += ['Arg%s' % i]
     return args
@@ -64,11 +65,21 @@ def primitive(r, nargs):
         args = []
         if r:
             args += ['R']
-        args += ['S']
+        if nargs != -1:
+            args += ['S']
         for i in range(nargs):
             args += ['Arg%s' % i]
         args = map(add_typename, args)
         return ', '.join(args)
+
+    # Generate the list of effective arguments for the wrapped function
+    # as a possibly empty string.
+    def arguments(nargs):
+        if nargs != -1:
+            args = [to(0, 'S')] + map(make_arg, range(nargs))
+            return ',\n           '.join(args)
+        else:
+            return ''
 
     if r:
         r = 'return CxxConvert<typename Flatten<R>::type>::from'
@@ -81,18 +92,20 @@ def primitive(r, nargs):
     template <%(param)s>
     struct MakePrimitive<%(boost)s>
     {
-      static rObject primitive(const object::objects_type& args,
+      static rObject primitive(const object::objects_type& %(args_name)s,
                                %(boost)s f)
       {
-        check_arg_count(args.size() - 1, %(nargs)s);
+        %(check)s
         %(return)s
         (f(%(args)s));
         %(return_void)s
       }
     };
     ''' % {
-        'args': ',\n           '.join([to(0, 'S')] + map(make_arg, range(nargs))),
+        'args': arguments(nargs),
+        'args_name': 'args' if nargs != -1 else '',
         'boost': boost_type(r, nargs),
+        'check': 'check_arg_count(args.size() - 1, %s);' % nargs if nargs != -1 else '',
         'nargs': nargs,
         'param': template_param(r, nargs),
         'return': r,
@@ -155,7 +168,8 @@ def primitive_list(r, met):
 primitives = ''
 
 for ret in [True, False]:
-    for nargs in range(5):
+    # nargs counts "this".  -1 means there is not even a this.
+    for nargs in [-1] + range(5):
         primitives += '\n    // Return: %s, Arguments: %s\n' % (ret, nargs)
         primitives += primitive(ret, nargs)
     for met in [True, False]:
