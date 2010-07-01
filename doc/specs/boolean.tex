@@ -72,9 +72,8 @@ void.asBool;
 
 \begin{urbiscriptapi}
 \item['&&'](<that>)%
-  Short-circuiting logical and. If \this is
-  \lstinline|true| evaluate and return \var{that}.  If
-  \this is \lstinline|false|, return itself without
+  Short-circuiting logical and. If \this is \lstinline|true| evaluate and
+  return \var{that}.  If \this is \lstinline|false|, return itself without
   evaluating \var{that}.
 \begin{urbiassert}
 (true && 2) == 2;
@@ -82,9 +81,8 @@ void.asBool;
 \end{urbiassert}
 
 \item \lstinline+'||'(\var{that})+\\
-  Short-circuiting logical or. If \this is
-  \lstinline|false| evaluate and return \var{that}.  If
-  \this is \lstinline|true|, return itself without
+  Short-circuiting logical or. If \this is \lstinline|false| evaluate and
+  return \var{that}.  If \this is \lstinline|true|, return itself without
   evaluating \var{that}.
 \begin{urbiassert}
 (true || 1/0) == true;
@@ -92,8 +90,8 @@ void.asBool;
 \end{urbiassert}
 
 \item \lstinline|'!'|\\
-  Logical negation. If \this is \lstinline|false| return
-  \lstinline|true| and vice-versa.
+  Logical negation. If \this is \lstinline|false| return \lstinline|true|
+  and vice-versa.
 \begin{urbiassert}
 !true == false;
 !false == true;

@@ -53,21 +53,21 @@ to variable wheelL and the right wheel is assigned to wheelR\footnote{%
 speed. First put the TriBot upside-down to avoid any accident, then you can
 move the left wheel just doing:
 \begin{urbiunchecked}
-  wheelL.speed = 50;
+wheelL.speed = 50;
 \end{urbiunchecked}
 
 Don't omit the semicolon at the end of the line, or the command will not be
 executed. You can also move the right wheel (a negative value is a move
 backward):
 \begin{urbiunchecked}
-  wheelR.speed = -50;
+wheelR.speed = -50;
 \end{urbiunchecked}
 
 A group is also defined so that you can give orders to several motors at the
 same time. In our case, the group wheels contains both robot wheels. Setting
 wheels to a value will set both wheels to this value:
 \begin{urbiunchecked}
-  wheels.speed = 0;
+wheels.speed = 0;
 \end{urbiunchecked}
 
 will stop both wheels.
@@ -82,7 +82,9 @@ To achieve that, \urbi provides a command to wait for a given time: sleep
 (duration). And you can make sequences of commands separated with semicolon
 that will be executed one after another. So the following line:
 \begin{urbiunchecked}
-  wheels.speed = 50; sleep(10s); wheels.speed = 0;
+wheels.speed = 50;
+sleep(10s);
+wheels.speed = 0;
 \end{urbiunchecked}
 
 will make the robot to go forward during 10 seconds then stop.
@@ -93,7 +95,8 @@ can use a modifier to the variable assignation to control the way the variable
 value will change. For example, if you want to reach a value in a given time,
 use the time: modifier:
 \begin{urbiunchecked}
-  wheels.speed = 50 time:3s; wheels.speed = 0 time:3s;
+wheels.speed = 50 time:3s;
+wheels.speed = 0 time:3s;
 \end{urbiunchecked}
 
 Using this code, the robot will accelerate to reach the speed of 50 after 3
@@ -106,12 +109,12 @@ In all the previous steps the commands don't take the environment into account.
 To do that, you need to get the sensor values. In \urbi, you just have to type
 the associated variable name. For example when you type:
 \begin{urbiunchecked}
-  sonar.val;
+sonar.val;
 \end{urbiunchecked}
 
 The server returns a message with the ultrasonic sensor value:
 \begin{urbiunchecked}
-  [146711] 48.000000
+[00146711] 48
 \end{urbiunchecked}
 
 In this message, 146711 is the time (from the server clock) at which the value
@@ -122,21 +125,23 @@ using event catching commands. These commands check some condition and launch
 other commands when these conditions are verified. For example the following
 command:
 \begin{urbiunchecked}
-  at (sonar.val < 50) wheels.speed = 0;
+at (sonar.val < 50)
+  wheels.speed = 0;
 \end{urbiunchecked}
 
 will stop the robot if an obstacle is detected at less than 50 centimeters.
 Note that this command remains active in the server. If you move the robot and
 set a forward speed:
 \begin{urbiunchecked}
-  wheels.speed = 50;
+wheels.speed = 50;
 \end{urbiunchecked}
 
 the robot will stop again when another obstacle is encountered.
 The other sensors available for the TriBot are the sound sensor decibel, the
 bumper sensor bumper and the light sensor light. The following command:
 \begin{urbiunchecked}
-  at (bumper.val == 1) wheels.speed = -50;
+at (bumper.val == 1)
+  wheels.speed = -50;
 \end{urbiunchecked}
 
 will make the robot go backward if something hits the bumper.
@@ -152,26 +157,26 @@ enable you to do that.
 A tag in a name associated to a command. To tag a command with the name mytag,
 create it and simply prefix the command. For example:
 \begin{urbiunchecked}
-  var mytag = Tag.new;
-  mytag: at (decibel.val > 0.7)
-    wheels.speed = 0;
+var mytag = Tag.new;
+mytag: at (decibel.val > 0.7)
+  wheels.speed = 0;
 \end{urbiunchecked}
 
 will launch the event catching command using the decibel sensor with tag mytag.
 Later you will be able to stop that command:
 \begin{urbiunchecked}
-  mytag.stop;
+mytag.stop;
 \end{urbiunchecked}
 
 will stop the previous command and the robot will not react to sound anymore.
 It if also possible to freeze temporarily a command:
 \begin{urbiunchecked}
-  mytag.freeze;
+mytag.freeze;
 \end{urbiunchecked}
 
 will stop the commands tagged with mytag, but it will not be deleted, and
 \begin{urbiunchecked}
-  mytag.unfreeze;
+mytag.unfreeze;
 \end{urbiunchecked}
 
 will resume the command.
@@ -183,7 +188,7 @@ with this capacity. However, you can't just assign a value to the variable
 beeper, because playing a sound requires several parameters. You therefore have
 to call a method of the beeper object:
 \begin{urbiunchecked}
-  beeper.play(200, 3s);
+beeper.play(200, 3s);
 \end{urbiunchecked}
 
 This will play a beep at 200Hz during 3 seconds (beep's frequency must be
@@ -192,34 +197,34 @@ The parameters of the method may also be the result of operations, or depend on
 other variables. For example, it is possible to play a sound which frequency
 depends on the obstacle distance:
 \begin{urbiunchecked}
-  var mytag = Tag.new;
-  mytag: whenever (sonar.val < 100)
-    beeper.play(200 + 6 * sonar.val, 3ms);
+var mytag = Tag.new;
+mytag: whenever (sonar.val < 100)
+  beeper.play(200 + 6 * sonar.val, 3ms);
 \end{urbiunchecked}
 
-This plays beeps with a lower frequency as the obstacle comes closer (under 1
-meter).
+This plays beeps with a lower frequency as the obstacle comes closer (under
+1 meter).
 
 \subsection{Cyclic moves}
-We now introduce a modifier in \urbi that makes it possible to do cyclic moves
-of sinusoidal shape. This modifier has the particularity to make the
+We now introduce a modifier in \urbi that makes it possible to do cyclic
+moves of sinusoidal shape. This modifier has the particularity to make the
 assignation never terminate. To be able to enter new commands after this
-modifier is used, you need to put this command in background so that the \urbi
-server continues processing new commands. This is achieved by terminating the
-command with a comma instead a semicolon. More details about these command
-separators will be given in \autoref{sec:nxt:para}.
-The sinus modifier can be used this way:
+modifier is used, you need to put this command in background so that the
+\urbi server continues processing new commands. This is achieved by
+terminating the command with a comma instead a semicolon. More details about
+these command separators will be given in \autoref{sec:nxt:para}.  The sinus
+modifier can be used this way:
 \begin{urbiunchecked}
-  var mytag = Tag.new;
-  mytag: wheels.speed = 0 sin:10s ampli:100,
+var mytag = Tag.new;
+mytag: wheels.speed = 0 sin:10s ampli:100,
 \end{urbiunchecked}
 
 This command will make the speed of the wheels oscillate around 0, between -100
 et 100 with a period of 10s. Use a tag to be able to stop the command. To make
 the speed change from 0 to 100 with a period of 3 seconds, use the command:
 \begin{urbiunchecked}
-  var tag2 = Tag.new;
-  tag2: wheels.speed = 50 sin:3s ampli:50,
+var tag2 = Tag.new;
+tag2: wheels.speed = 50 sin:3s ampli:50,
 \end{urbiunchecked}
 
 
@@ -233,7 +238,9 @@ through various command separators:
 \item As usual in programming languages, two commands separated by a
   semicolon ";" will be executed one after the other:
 \begin{urbiunchecked}
-  wheels.speed = 100; sleep(2s); wheels.speed = 0;
+wheels.speed = 100;
+sleep(2s);
+wheels.speed = 0;
 \end{urbiunchecked}
 
 will turn the wheels, wait 2 seconds and then stop.
@@ -241,7 +248,7 @@ will turn the wheels, wait 2 seconds and then stop.
 \item In \urbi, two commands separated by \lstinline|&| will be executed in
   parallel and will start exactly at the same time:
 \begin{urbiunchecked}
-  wheelL.speed = 50 & wheelR.speed = -50;
+wheelL.speed = 50 & wheelR.speed = -50;
 \end{urbiunchecked}
 
 will move at the same time the left wheel forward and the right wheel
@@ -251,7 +258,8 @@ backward (so the robot will turn).
   the next one as soon as possible, without enforcing a simultaneous start
   of the two commands:
 \begin{urbiunchecked}
-  wheelL.speed = 50 time:10s, wheelR.speed = -40 time:10s,
+wheelL.speed = 50 time:10s,
+wheelR.speed = -40 time:10s,
 \end{urbiunchecked}
 
 will not wait that wheelL grows to 50 to make wheelR decrease to -40, but
@@ -268,9 +276,9 @@ using the stop tag; command.
 Here is an example where we use parallelism to move the TriBot awkwardly while
 playing sounds:
 \begin{urbiunchecked}
-  wheelR.speed = 0 sin:3s ampli:50 &
-  wheelL.speed = 0 sin:4s ampli:30 &
-  beeper.play(200,3s),
+wheelR.speed = 0 sin:3s ampli:50 &
+wheelL.speed = 0 sin:4s ampli:30 &
+beeper.play(200,3s),
 \end{urbiunchecked}
 
 Parallelism handling is a key feature of \urbi, which has in fact four command
@@ -284,18 +292,18 @@ are used several times.
 The following example defines a function which moves the robot for a given time
 at a given speed:
 \begin{urbiunchecked}
-  function Global.forward(speed,timer)
-  {
-    wheels.speed = speed;
-    sleep(timer);
-    wheels.speed = 0;
-  },
+function Global.forward(speed,timer)
+{
+  wheels.speed = speed;
+  sleep(timer);
+  wheels.speed = 0;
+},
 \end{urbiunchecked}
 
 
 Once defined, this function can be called simply:
 \begin{urbiunchecked}
-  Global.forward(100,3000);
+Global.forward(100,3000);
 \end{urbiunchecked}
 
 More details about functions, objects and variables in \urbi are available in
@@ -330,7 +338,7 @@ shipped with the \urbi Mindstorms NXT server.
 Three motors are defined, wheelL, wheelR and claw.
 A group, wheels, is defined to group wheelL and wheelR:
 \begin{urbiunchecked}
-  wheels.speed = 10;
+wheels.speed = 10;
 \end{urbiunchecked}
 
 is equivalent to
@@ -338,8 +346,8 @@ is equivalent to
   wheelL.speed = 10 & wheelR.speed = 10;
 \end{urbiunchecked}
 
-The slot .speed allows you to set the current speed of the motor. This
-value is set between -100 and 100.
+The slot .speed allows you to set the current speed of the motor. This value
+is set between -100 and 100.
 
 Motor position (in degrees) can be accessed using the .val slot. This
 slot is set to 0 when you turn the robot on.
@@ -348,17 +356,16 @@ slot is set to 0 when you turn the robot on.
 Sensors are grouped in the sensors group and all hardware devices (sensors +
 motors + battery + beeper) are grouped in the hardware group.
 \subsubsection{Bumper}
-The switch device in front of the robot is called bumper. Its value is 1 if it
-is pressed, 0 otherwise.
+The switch device in front of the robot is called bumper. Its value is 1 if
+it is pressed, 0 otherwise.
 \subsubsection{Sonar}
-The ultrasonic sensor is called sonar.
-Its value is the distance measured by the sensor in centimeters between 0 and
-255. When the read operation fails, 255 is returned.
+The ultrasonic sensor is called sonar.  Its value is the distance measured
+by the sensor in centimeters between 0 and 255. When the read operation
+fails, 255 is returned.
 \subsubsection{Decibel}
-The sound sensor is called decibel.
-Its value relates the level of ambient sound. It is between 0 and 1.
-Two different modes can be used by changing the .mode slot to "DB" or
-"DBA".
+The sound sensor is called decibel.  Its value relates the level of ambient
+sound. It is between 0 and 1.  Two different modes can be used by changing
+the .mode slot to "DB" or "DBA".
 \begin{description}
 \item[DBA] is a mode measuring only frequencies between 200 and 14000Hz.
 \item[DB] measures a wider band.
@@ -366,9 +373,9 @@ Two different modes can be used by changing the .mode slot to "DB" or
 Default value is "DBA".
 
 \subsubsection{Light}
-The light sensor is called light.
-The value returned is between 0 an 1 representing the amount of light measured.
-Three different modes are available by changing the .mode slot.
+The light sensor is called light.  The value returned is between 0 an 1
+representing the amount of light measured.  Three different modes are
+available by changing the .mode slot.
 \begin{description}
 \item[Reflector] means the sensor lights on its led and measures the light
   reflected.
@@ -378,13 +385,13 @@ Three different modes are available by changing the .mode slot.
 Default value is "Reflector".
 
 \subsection{Battery}
-The battery device is called battery.
-Its value is the current battery level between 0 and 1, 1 is full charge.
+The battery device is called battery.  Its value is the current battery
+level between 0 and 1, 1 is full charge.
 \subsection{Beeper}
-The beeper device is called beeper.
-You can request the beeper to play a sound using the play method:
+The beeper device is called beeper.  You can request the beeper to play a
+sound using the play method:
 \begin{urbiunchecked}
-  beeper.play(frequency, time);
+beeper.play(frequency, time);
 \end{urbiunchecked}
 
 frequency is an integer between 200 and 14000, which is the frequency of the
@@ -393,7 +400,10 @@ A duration of 0 is infinite.
 The command returns immediately. If you want to wait until the end of the beep,
 use:
 \begin{urbiunchecked}
-  { beeper.play(frequency, duration); sleep(duration) },
+{
+  beeper.play(frequency, duration);
+  sleep(duration)
+},
 \end{urbiunchecked}
 
 \subsection{Command}
@@ -402,7 +412,7 @@ commands as you do with the NXT SDK. You will find more information on http://
 mindstorms.lego.com/
 This object has methods to send and receive data to the NXT:
 \begin{urbiunchecked}
-  Command.send(buff) ;
+Command.send(buff);
 \end{urbiunchecked}
 where:
 \begin{itemize}
@@ -417,7 +427,7 @@ will play a beep.
 
 
 \begin{urbiunchecked}
-  \var{answer} = Command.request(\var{buff}, \var{size}) ;
+\var{answer} = Command.request(\var{buff}, \var{size}) ;
 \end{urbiunchecked}
 
 where:
@@ -433,17 +443,17 @@ This command is designed for expert users. Using it is not recommended if you
 don't know what you are doing and might result in server crashes.
 Here is an example:
 \begin{urbiunchecked}
-  answer = Command.request([7,0], 15);
+answer = Command.request([7,0], 15);
 \end{urbiunchecked}
 
 that returns the information on input port 1.
 
 \section{How to make its own layout}
 
-In this chapter, the method to build a custom layout for a different robot is
-explained. A good understanding of the objects in \urbi in useful and the
-reading of the \urbi tutorial is advised (available at http://www.gostai.com/
-doc.php).
+In this chapter, the method to build a custom layout for a different robot
+is explained. A good understanding of the objects in \urbi in useful and the
+reading of the \urbi tutorial is advised (available at
+\url{http://www.gostai.com/doc.php}).
 
 There are three kind of devices provided by the Mindstorms NXT server:
 motors, sensors and other devices. There is one type of motor called
@@ -481,7 +491,7 @@ where port can be 1, 2, 3 or 4.
 In \file{TriBot.u} the switch is used as a bumper plugged on the port 4 so
 the instancing is:
 \begin{urbiunchecked}
-  bumper  = Switch.new(4);
+bumper  = Switch.new(4);
 \end{urbiunchecked}
 
 UltraSonicSensor objects are created the same way:
@@ -622,7 +632,7 @@ following slots:
   name. (See previous slot port). \var{mode} is a mode name. (See
   previous slot mode). Example:
 \begin{urbiunchecked}
-  decibel = SoundSensor.new(1, "DB");
+decibel = SoundSensor.new(1, "DB");
 \end{urbiunchecked}
 
 \end{urbiscriptapi}
@@ -653,7 +663,7 @@ following slots:
   name. (See previous slot port). \var{mode} is a mode name. (See previous
   slot mode). Example:
 \begin{urbiunchecked}
-  light = LightSensor.new(1, "Ambient");
+light = LightSensor.new(1, "Ambient");
 \end{urbiunchecked}
 \end{urbiscriptapi}
 
@@ -675,7 +685,7 @@ slots:
 \item[init](<port>) The UObject constructor. \var{port} is a port name. (See
   previous slot port). Example:
 \begin{urbiunchecked}
-  bumper = Switch.new(1);
+bumper = Switch.new(1);
 \end{urbiunchecked}
 
 \end{urbiscriptapi}
@@ -716,7 +726,7 @@ following methods:
 \item[send](<buffer>) Sends a command without requiring any answer.
   \var{buffer} must be a list of integers between 0 and 255.  Example:
 \begin{urbiunchecked}
-  Command.send([3,10,10,0,0]);
+Command.send([3,10,10,0,0]);
 \end{urbiunchecked}
 
 that plays a beep.
@@ -734,7 +744,7 @@ that plays a beep.
 
   Example:
 \begin{urbiunchecked}
-  answer = Command.request([7,0], 15);
+answer = Command.request([7,0], 15);
 \end{urbiunchecked}
 
 that returns the information on input port 0.
