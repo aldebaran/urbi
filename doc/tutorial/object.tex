@@ -14,39 +14,37 @@ object model of \us, and how to define and use classes.
 
 \section{Prototype-based programing in \us}
 
-You're probably already familiar with class-based object programing,
-since this is the \Cxx model.  Classes and objects are very different
-entities.  Types are static entities that do not exist at run-time,
-while objects are dynamic entities that do not exist at compile time.
+You're probably already familiar with class-based object programing, since
+this is the \Cxx model.  Classes and objects are very different entities.
+Types are static entities that do not exist at run-time, while objects are
+dynamic entities that do not exist at compile time.
 
 Prototype-based object programing is different: the difference between
-classes and objects, between types and values, is blurred. Instead,
-you have an
-object, that is already an instance, and that you might clone to
-obtain a new one that you can modify afterward. Prototype-based
-programming was introduced by the Self language, and is used in
-several popular script languages such as \io or \js.
+classes and objects, between types and values, is blurred. Instead, you have
+an object, that is already an instance, and that you might clone to obtain a
+new one that you can modify afterward. Prototype-based programming was
+introduced by the Self language, and is used in several popular script
+languages such as \io or \js.
 
-Class-based programming can be considered with an industrial
-metaphor: classes are molds, from which objects are generated.
-Prototype-based programming is more biological: an prototype object is
-cloned into another object which which can be modified during its
-lifetime.
+Class-based programming can be considered with an industrial metaphor:
+classes are molds, from which objects are generated.  Prototype-based
+programming is more biological: a prototype object is cloned into another
+object which can be modified during its lifetime.
 
-Consider pairs for instance (see \refObject{Pair}). Pairs hold two
-values, \lstinline|first| and \lstinline|second|, like an
-\lstinline{std::pair} in \Cxx. Since \us is prototype-based, there is
-no pair class. Instead, \lstinline|Pair| is really a pair (object).
+Consider pairs for instance (see \refObject{Pair}). Pairs hold two values,
+\lstinline|first| and \lstinline|second|, like an \lstinline{std::pair} in
+\Cxx. Since \us is prototype-based, there is no pair class. Instead,
+\lstinline|Pair| is really a pair (object).
 
 \begin{urbiscript}[firstnumber=1]
 Pair;
 [00000000] (nil, nil)
 \end{urbiscript}
 
-We can see here that \lstinline|Pair| is a pair whose two values are
-equal to \lstinline|nil| --- which is a reasonable default value. To
-get a pair of our own, we simply clone \lstinline|Pair|.  We can then
-use it as a regular pair.
+We can see here that \lstinline|Pair| is a pair whose two values are equal
+to \lstinline|nil| --- which is a reasonable default value. To get a pair of
+our own, we simply clone \lstinline|Pair|.  We can then use it as a regular
+pair.
 
 \begin{urbiscript}
 var p = Pair.clone;
