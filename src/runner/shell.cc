@@ -25,10 +25,7 @@ namespace runner
   Shell::Shell(const rLobby& lobby,
 	       sched::Scheduler& scheduler,
 	       const libport::Symbol& name)
-    : Interpreter(lobby,
-		  scheduler,
-		  ast::rConstAst(),
-		  name)
+    : Interpreter(lobby, scheduler, ast::rConstAst(), name)
     , executing_(false)
   {
   }
@@ -80,7 +77,7 @@ namespace runner
       operator()(nary.get());
       if (non_interruptible_get())
       {
-        send_message("error", "the toplevel can not be non-interruptible");
+        send_message("error", "the toplevel cannot be non-interruptible");
         non_interruptible_set(false);
       }
     }
