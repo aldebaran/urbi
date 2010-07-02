@@ -11,13 +11,16 @@
 #include <libport/finally.hh>
 
 #include <ast/nary.hh>
+#include <ast/stmt.hh>
 
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/tag.hh>
 
+#include <kernel/uconnection.hh>
 #include <runner/shell.hh>
 
+#include <sched/job.hh>
 #include <sched/scheduler.hh>
 
 namespace runner
@@ -25,7 +28,7 @@ namespace runner
   Shell::Shell(const rLobby& lobby,
 	       sched::Scheduler& scheduler,
 	       const libport::Symbol& name)
-    : Interpreter(lobby, scheduler, ast::rConstAst(), name, false)
+    : Interpreter(lobby, scheduler, ast::rConstAst(), name)
     , executing_(false)
   {
   }
@@ -39,6 +42,103 @@ namespace runner
       oob_calls_.front()();
       oob_calls_.pop_front();
     }
+  }
+
+
+  void
+  Shell::eval_print(const ast::Exp* exp)
+  {
+    GD_INFO_DUMP("Shell::visit");
+    // Visual Studio on Windows does not rewind the stack before the
+    // end of a "try/catch" block, "catch" included. It means that we
+    // cannot display the exception in the "catch" block in case this
+    // is a scheduling error due to stack exhaustion, as we may need
+    // the stack. The following objects will be set if we have an
+    // exception to show, and it will be printed after the "catch"
+    // block, or if we have an exception to rethrow.
+    boost::scoped_ptr<object::UrbiException> exception_to_show;
+
+    object::rObject res;
+
+    try
+    {
+      const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(exp);
+
+      if (stmt && stmt->flavor_get() == ast::flavor_comma)
+      {
+        sched::rJob subrunner =
+          new Interpreter(*this, operator()(stmt->expression_get().get()),
+                          libport::Symbol::fresh(name_get()));
+        subrunner->start_job();
+      }
+      else
+      {
+        res = operator()(exp);
+      }
+
+      // We need to keep checking for void here because it
+      // cannot be passed to the << function.
+      if (res && res != object::void_class)
+      {
+        GD_INFO_DUMP("shell: returning a result to the connection");
+
+        // Display the value using the topLevel channel.  If it is not
+        // (yet) defined, do nothing, unless this environment variable
+        // is set.
+        static bool toplevel_debug = getenv("URBI_TOPLEVEL");
+
+        rSlot topLevel =
+          lobby_get()->slot_locate(SYMBOL(topLevel), false).second;
+       if (topLevel)
+         topLevel->value()->call(SYMBOL(LT_LT), res);
+        else if (toplevel_debug)
+        {
+          try
+          {
+            rObject result = res->call(SYMBOL(asToplevelPrintable));
+            std::ostringstream os;
+            result->print(os);
+            lobby_->connection_get().send(os.str());
+            lobby_->connection_get().endline();
+          }
+          catch (object::UrbiException&)
+          {
+            // nothing
+          }
+        }
+      }
+    }
+    // Catch and print unhandled exceptions
+    catch (object::UrbiException& exn)
+    {
+      exception_to_show.reset
+        (new object::UrbiException(exn.value_get(),
+                                   exn.backtrace_get()));
+    }
+    // When we receive the exception fired by "connectionTag.stop",
+    // kill the jobs, not the shell.
+    catch (const sched::StopException& e)
+    {
+      GD_FINFO_DUMP("shell: StopException ignored: %s", e.what());
+    }
+    catch (const sched::TerminateException&)
+    {
+      GD_INFO_DUMP("shell: TerminateException");
+      throw;
+    }
+    // Stop invalid exceptions thrown by primitives
+    catch (const std::exception& e)
+    {
+      send_message("error",
+                   libport::format("Invalid exception `%s' caught", e.what()));
+    }
+    catch (...)
+    {
+      send_message("error", "Invalid unknown exception caught");
+    }
+
+    if (exception_to_show.get())
+      show_exception(*exception_to_show);
   }
 
   void
@@ -72,21 +172,23 @@ namespace runner
 	executing_ = true;
       }
 
-      ast::rConstNary nary = commands_.front();
+      ast::rConstExp e = commands_.front();
       commands_.pop_front();
-      operator()(nary.get());
+      eval_print(e.get());
       if (non_interruptible_get())
       {
         send_message("error", "the toplevel cannot be non-interruptible");
         non_interruptible_set(false);
       }
+      yield();
     }
   }
 
   void
   Shell::append_command(const ast::rConstNary& command)
   {
-    commands_ << command;
+    foreach (const ast::rExp& e, command->children_get())
+      commands_ << e;
     scheduler_get().signal_world_change();
   }
 

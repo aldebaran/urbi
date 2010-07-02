@@ -33,9 +33,12 @@ namespace runner
     void insert_oob_call(boost::function0<void> func);
     bool pending_command_get() const;
     void pending_commands_clear();
+
+    void eval_print(const ast::Exp* exp);
   private:
+
     void handle_oob_();
-    std::deque<ast::rConstNary> commands_;
+    std::deque<ast::rConstExp> commands_;
     std::list<boost::function0<void> > oob_calls_;
     bool executing_;
   };
