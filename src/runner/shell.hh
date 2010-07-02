@@ -34,9 +34,14 @@ namespace runner
     bool pending_command_get() const;
     void pending_commands_clear();
 
-    void eval_print(const ast::Exp* exp);
   private:
 
+    /// Evaluate \a exp and print its value.
+    /// \precondition \a exp should be a foreground job.
+    void eval_print_(const ast::Exp* exp);
+    /// Execute the front of commands_.
+    void handle_command_();
+    /// Execute everything in oob_calls_.
     void handle_oob_();
     std::deque<ast::rConstExp> commands_;
     std::list<boost::function0<void> > oob_calls_;

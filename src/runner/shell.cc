@@ -46,7 +46,7 @@ namespace runner
 
 
   void
-  Shell::eval_print(const ast::Exp* exp)
+  Shell::eval_print_(const ast::Exp* exp)
   {
     GD_INFO_DUMP("Shell::visit");
     // Visual Studio on Windows does not rewind the stack before the
@@ -58,23 +58,9 @@ namespace runner
     // block, or if we have an exception to rethrow.
     boost::scoped_ptr<object::UrbiException> exception_to_show;
 
-    object::rObject res;
-
     try
     {
-      const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(exp);
-
-      if (stmt && stmt->flavor_get() == ast::flavor_comma)
-      {
-        sched::rJob subrunner =
-          new Interpreter(*this, operator()(stmt->expression_get().get()),
-                          libport::Symbol::fresh(name_get()));
-        subrunner->start_job();
-      }
-      else
-      {
-        res = operator()(exp);
-      }
+      object::rObject res = operator()(exp);
 
       // We need to keep checking for void here because it
       // cannot be passed to the << function.
@@ -109,11 +95,10 @@ namespace runner
       }
     }
     // Catch and print unhandled exceptions
-    catch (object::UrbiException& exn)
+    catch (object::UrbiException& e)
     {
-      exception_to_show.reset
-        (new object::UrbiException(exn.value_get(),
-                                   exn.backtrace_get()));
+      exception_to_show.reset(new object::UrbiException(e.value_get(),
+                                                        e.backtrace_get()));
     }
     // When we receive the exception fired by "connectionTag.stop",
     // kill the jobs, not the shell.
@@ -139,6 +124,33 @@ namespace runner
 
     if (exception_to_show.get())
       show_exception(*exception_to_show);
+  }
+
+  void
+  Shell::handle_command_()
+  {
+    ast::rConstExp exp = commands_.front();
+    commands_.pop_front();
+
+    const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(exp.get());
+
+    if (stmt && stmt->flavor_get() == ast::flavor_comma)
+    {
+      sched::rJob subrunner =
+        new Interpreter(*this, operator()(stmt->expression_get().get()),
+                        libport::Symbol::fresh(name_get()));
+      subrunner->start_job();
+    }
+    else
+    {
+      eval_print_(exp.get());
+    }
+
+    if (non_interruptible_get())
+    {
+      send_message("error", "the toplevel cannot be non-interruptible");
+      non_interruptible_set(false);
+    }
   }
 
   void
@@ -172,14 +184,7 @@ namespace runner
 	executing_ = true;
       }
 
-      ast::rConstExp e = commands_.front();
-      commands_.pop_front();
-      eval_print(e.get());
-      if (non_interruptible_get())
-      {
-        send_message("error", "the toplevel cannot be non-interruptible");
-        non_interruptible_set(false);
-      }
+      handle_command_();
       yield();
     }
   }
