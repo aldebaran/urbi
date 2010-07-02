@@ -86,14 +86,14 @@ namespace runner
   void
   Shell::append_command(const ast::rConstNary& command)
   {
-    commands_.push_back(command);
+    commands_ << command;
     scheduler_get().signal_world_change();
   }
 
   void
   Shell::insert_oob_call(boost::function0<void> func)
   {
-    oob_calls_.push_back(func);
+    oob_calls_ << func;
     scheduler_get().signal_world_change();
   }
 
