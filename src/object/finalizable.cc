@@ -37,7 +37,7 @@ namespace urbi
     Finalizable::~Finalizable()
     {
       // Prevent further destruction of this object.
-      counter_inc();
+      counter_reset();
       if (rSlot finalize = slot_locate(SYMBOL(finalize), false).second)
       {
         objects_type args;
