@@ -68,7 +68,10 @@ EXTRA_DIST +=					\
 ## -------- ##
 
 DOT_IMAGES = $(call ls_files,img/*.dot)
-PNG_IMAGES = $(call ls_files,img/*.png)
+PNG_IMAGES =						\
+  $(call ls_files,img/*.png)				\
+  $(call ls_files,@{../modules/system/ros}/doc/img/*.png)
+
 PDF_IMAGES =					\
   $(call ls_files,img/*.pdf)			\
   document-aux/figs/gostai.pdf			\
@@ -92,8 +95,11 @@ CLEANFILES += $(EPS_IMAGES)
 
 
 # Find local *.sty files.  Find converted images from document-aux.
-TEXI2DVIFLAGS += -I $(srcdir) -I $(builddir)/document-aux   \
-                 -I $(top_srcdir)/submodules/modules/system/ros/doc
+TEXI2DVIFLAGS += 				\
+ -I $(srcdir)					\
+ -I $(builddir)/document-aux			\
+ -I $(top_srcdir)/modules/system/ros/doc        \
+ -I $(top_builddir)/modules/system/ros/doc
 pdf_DATA =
 
 # Use tex4ht.
