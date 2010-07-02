@@ -190,7 +190,7 @@ namespace runner
 	side_effect_free_set(true);
 	yield_until_things_changed();
       }
-      catch (const TerminateException&)
+      catch (const sched::TerminateException&)
       {
 	// Regular termination.
 	break;
