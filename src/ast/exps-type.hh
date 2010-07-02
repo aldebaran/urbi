@@ -22,7 +22,7 @@ namespace ast
   /// List of expressions, for List, Nary, Call etc.
   typedef std::vector<rExp> exps_type;
 
-  /// Separated by commas.
+  /// Separated by end of lines.
   std::ostream& operator<<(std::ostream& o, const ast::exps_type& ss);
 
 }
