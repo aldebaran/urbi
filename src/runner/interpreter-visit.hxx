@@ -268,12 +268,11 @@ namespace runner
     if (exps.empty())
       return object::void_class;
 
-    // Optimize a common case where an inner (non-toplevel) Nary
-    // contains only one statement not ending with a comma. This is
-    // for example the case of Nary created by a "if" branch without
-    // braces. In this case, we will make a tail-call to avoid
-    // cluttering the stack.
-    if (!e->toplevel_get() && exps.size() == 1)
+    // Optimize a common case where a Nary contains only one statement
+    // not ending with a comma. This is for example the case of Nary
+    // created by a "if" branch without braces. In this case, we will
+    // make a tail-call to avoid cluttering the stack.
+    if (exps.size() == 1)
     {
       const ast::Stmt* stmt =
         dynamic_cast<const ast::Stmt*>(exps.front().get());
@@ -311,8 +310,6 @@ namespace runner
           sched::rJob subrunner =
             new Interpreter(*this, operator()(exp),
                             libport::Symbol::fresh(name_get()));
-          // If the subrunner throws an exception, propagate it here
-          // ASAP.
           register_child(subrunner, collector);
           subrunner->start_job();
         }
@@ -627,8 +624,6 @@ namespace runner
             new Interpreter(*this,
                             operator()(e->body_get().get()),
                             libport::Symbol::fresh(name_get()));
-          // If the subrunner throws an exception, propagate it here
-          // ASAP.
           register_child(subrunner, collector);
           subrunner->start_job();
         }

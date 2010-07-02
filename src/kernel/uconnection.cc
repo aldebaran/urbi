@@ -215,13 +215,6 @@ namespace kernel
       return;
 
     LIBPORT_DEBUG("Command is: {{{" << *active_command << "}}}");
-
-    // Our active_command_ is a ast::Nary, we must now "tell" it that
-    // it's a top-level Nary so that it can send its results back to the
-    // UConnection.  It also entitles the Runner to clear this Nary when
-    // it has evaluated it.
-    active_command->toplevel_set(true);
-
     shell_->append_command(const_cast<const ast::Nary*>(active_command.get()));
 
     LIBPORT_PING();

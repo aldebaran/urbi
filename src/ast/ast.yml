@@ -425,11 +425,6 @@ Nary:
         desc: Subtrees possibly qualified to be background.
         access: rwW
         init: "new exps_type()"
-    - toplevel:
-        type: 'bool'
-        desc: Whether is a top-level node.
-        access: rW
-        init: "false"
   default: |2
     foreach (libport::intrusive_ptr<typename Const<ast::Ast>::type> c, n->children_get())
       operator()(c.get());
@@ -495,7 +490,6 @@ Nary:
         Nary::Nary()
           : Exp(loc())
           , children_(new exps_type())
-          , toplevel_(false)
         {}
 
         void
