@@ -36,7 +36,8 @@ AM_INIT_AUTOMAKE([tar-ustar foreign nostdinc subdir-objects -Wall])
 URBI_PACKAGE_KIND([kernel])
 
 URBI_DOC
-URBI_ENABLE_DOC_SECTIONS
+URBI_ENABLE_DOC_SECTIONS([bioloid, nao, nxt, p3dx, rmp, spykee, webots])
+
 AC_CONFIG_FILES([doc/config.sty])
 
 ## ------------- ##
