@@ -334,11 +334,9 @@ namespace kernel
                                p->as<object::Object>(),
                                SYMBOL(handle_synchronizer)));
     sched::rJob poll =
-    new runner::Interpreter(
-                            *ghost_->shell_get().get(),
-                            object::system_class->slot_get(SYMBOL(pollLoop)),
-                            SYMBOL(pollLoop),
-                            object::objects_type());
+      new runner::Interpreter(*ghost_->shell_get().get(),
+                              object::system_class->slot_get(SYMBOL(pollLoop)),
+                              SYMBOL(pollLoop));
     scheduler_->idle_job_set(poll);
   }
 
