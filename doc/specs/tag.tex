@@ -430,6 +430,55 @@ var t2 = Tag.new("cool name");
   \autoref{sec:specs:tag:freeze}.
 \end{urbiscriptapi}
 
+\subsection{Hierarchical tags}
+
+Tags can be arranged in a parent/child relationship: any operation done on a
+tag - freezing, stopping, \ldots is also performed on its
+descendant. Another way to see it is that tagging a piece of code with the
+child will also tag it with the parent. To create a child Tag, simply clone
+its parent.
+
+\begin{urbiscript}
+var parent = Tag.new |
+var child = parent.clone |
+
+// Stopping parent also stops children.
+{
+  parent: {sleep(100ms); echo("parent")},
+  child:  {sleep(100ms); echo("child")},
+  parent.stop;
+  sleep(200ms);
+  echo("end");
+};
+[00000001] *** end
+
+// Stopping child has no effect on parent.
+{
+  parent: {sleep(100ms); echo("parent")},
+  child:  {sleep(100ms); echo("child")},
+  child.stop;
+  sleep(200ms);
+  echo("end");
+};
+[00000002] *** parent
+[00000003] *** end
+\end{urbiscript}
+
+Hierarchical tags are commonly laid out in slots so as to reflect their tag
+hierarchy.
+
+\begin{urbiunchecked}
+var a = Tag.new;
+var a.b = a.clone;
+var a.b.c = a.b.clone;
+
+a:     foo; // Tagged by a
+a.b:   bar; // Tagged by a and b
+a.b.c: baz; // Tagged by a, b and c
+\end{urbiunchecked}
+
+% FIXME: If we ever restore a sugar to create hierarchical tags, document it here
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
