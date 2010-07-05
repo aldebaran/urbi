@@ -125,7 +125,7 @@ namespace runner
   void
   Runner::recompute_prio(sched::prio_type prio)
   {
-    if (!scheduler_get().real_time_behaviour_get())
+    if (!scheduler_get().real_time_behavior_get())
       return;
     if (prio >= prio_ || tag_stack_.empty())
       recompute_prio();
