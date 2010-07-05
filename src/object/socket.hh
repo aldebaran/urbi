@@ -16,6 +16,7 @@
 # include <urbi/object/cxx-object.hh>
 
 # include <object/ioservice.hh>
+# include <object/server.hh>
 
 namespace urbi
 {
