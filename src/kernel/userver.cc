@@ -10,7 +10,6 @@
 
 /// \file kernel/userver.cc
 
-//#define ENABLE_DEBUG_TRACES
 #include <libport/cassert>
 #include <libport/compiler.hh>
 #include <libport/csignal>
@@ -79,6 +78,8 @@
 using libport::program_name;
 using object::objects_type;
 using object::rObject;
+
+GD_ADD_CATEGORY(URBI);
 
 namespace kernel
 {
@@ -304,9 +305,10 @@ namespace kernel
     // The order is important: ghost connection, plugins, urbi.u.
 
     // Ghost connection
-    DEBUG(("Setting up ghost connection..."));
+    GD_CATEGORY(URBI);
+    GD_INFO_DUMP("Setting up ghost connection...");
     ghost_ = new UGhostConnection(*this, interactive);
-    DEBUG(("done\n"));
+    GD_INFO_DUMP("Setting up ghost connection... done");
 
     xload_init_file("urbi/urbi.u");
 
@@ -533,7 +535,10 @@ namespace kernel
   void
   UServer::shutdown()
   {
+    GD_CATEGORY(URBI);
+    GD_INFO_TRACE("Shutting down: killing all jobs");
     scheduler_->killall_jobs();
+    GD_INFO_TRACE("Shutting down: done");
   }
 
 
@@ -552,7 +557,8 @@ namespace kernel
   UErrorValue
   UServer::load_file(const std::string& base, UQueue& q, QueueType type)
   {
-    DEBUG(("Looking for %s...", base));
+    GD_CATEGORY(URBI);
+    GD_FINFO_DUMP("Looking for %s...", base);
     std::istream *is;
     libport::Finally finally;
     if (base == "/dev/stdin")
@@ -564,11 +570,11 @@ namespace kernel
         std::string file = find_file(base);
         is = new std::ifstream(file.c_str(), std::ios::binary);
         finally << boost::bind(boost::checked_delete<std::istream>, is);
-        DEBUG(("Loading %s...", file));
+        GD_FINFO_DUMP("Loading %s...", file);
       }
       catch (libport::file_library::Not_found&)
       {
-        DEBUG(("not found\n"));
+        GD_FINFO_DUMP("file not found: %s", base);
         errno = ENOENT;
         return UFAIL;
       }
@@ -589,7 +595,7 @@ namespace kernel
       is->read(buf, sizeof buf);
       q.push(buf, is->gcount());
     }
-    DEBUG(("done\n"));
+    GD_FINFO_DUMP("Looking for %s... done", base);
     return USUCCESS;
   }
 
@@ -598,8 +604,9 @@ namespace kernel
   UServer::connection_add(UConnection* c)
   {
     aver(c);
+    GD_CATEGORY(URBI);
     if (c->uerror_ != USUCCESS)
-      DEBUG(("UConnection constructor failed"));
+      GD_INFO_TRACE("UConnection constructor failed");
     else
       connections_->add(c);
   }
