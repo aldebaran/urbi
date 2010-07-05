@@ -52,8 +52,8 @@ namespace binder
     , report_errors_(true)
     , unscope_(0)
   {
-    unbind_.push_back(Finally());
-    setOnSelf_.push_back(true);
+    unbind_ << Finally();
+    setOnSelf_ << true;
   }
 
   Binder::~Binder()
@@ -136,7 +136,7 @@ namespace binder
   void
   Binder::routine_push(ast::rRoutine f)
   {
-    routine_stack_.push_back(f);
+    routine_stack_ << f;
   }
 
   void
@@ -383,10 +383,10 @@ namespace binder
   {
     Finally finally;
 
-    unbind_.push_back(Finally());
+    unbind_ << Finally();
     finally << boost::bind(&unbind_type::pop_back, &unbind_);
 
-    setOnSelf_.push_back(false);
+    setOnSelf_ << false;
     finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
 
     bind(input->index_get());
@@ -421,8 +421,8 @@ namespace binder
     // Push a finally on unbind_, and destroy it at the scope
     // exit. Since bound variables register themselves for unbinding
     // in unbind_'s top element, they will be unbound at scope exit.
-    unbind_.push_back(Finally());
-    setOnSelf_.push_back(set_on_self);
+    unbind_ << Finally();
+    setOnSelf_ << set_on_self;
     return boost::bind(&Binder::scope_close, this);
   }
 
@@ -463,11 +463,11 @@ namespace binder
     finally << boost::bind(&Binder::routine_pop, this);
 
     // Open a new scope
-    unbind_.push_back(Finally());
+    unbind_ << Finally();
     finally << boost::bind(&unbind_type::pop_back, &unbind_);
 
     // Do not setOnSelf in this scope
-    setOnSelf_.push_back(false);
+    setOnSelf_ << false;
     finally << boost::bind(&set_on_self_type::pop_back, &setOnSelf_);
 
     // Increase the nested functions and scopes depth
@@ -530,8 +530,8 @@ namespace binder
     else
       routine()->local_variables_get()->push_back(decl);
 
-    env_[decl->what_get()].push_back(std::make_pair
-      (decl, std::make_pair(routine_depth_, scope_depth_ - unscope_)));
+    env_[decl->what_get()] << std::make_pair
+      (decl, std::make_pair(routine_depth_, scope_depth_ - unscope_));
     unbind_type::iterator it = unbind_.end();
     for (unsigned i = 0; i <= unscope_; ++i)
       it--;
