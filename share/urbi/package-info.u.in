@@ -37,7 +37,7 @@ class System.PackageInfo
   {
     [
       "%s version %s rev. %s" % [name, version, revision],
-      "Copyright (C) %s %s" % [copyright_years, copyright_holder]
+      "Copyright (C) %s %s" % [copyrightYears, copyrightHolder]
     ]
     +
     {
@@ -62,8 +62,8 @@ load("urbi/package-info-libport.u");
 
 do (System.PackageInfo)
 {
-  var copyright_holder = "@PACKAGE_COPYRIGHT_HOLDER@";
-  var copyright_years = "@PACKAGE_COPYRIGHT_YEARS@";
+  var copyrightHolder = "@PACKAGE_COPYRIGHT_HOLDER@";
+  var copyrightYears = "@PACKAGE_COPYRIGHT_YEARS@";
   do (components["Urbi SDK"])
   {
     depend(components["Urbi SDK Remote"]);
