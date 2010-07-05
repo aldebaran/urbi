@@ -48,7 +48,6 @@ namespace runner
   void
   Shell::eval_print_(const ast::Exp* exp)
   {
-    GD_INFO_DUMP("Shell::visit");
     // Visual Studio on Windows does not rewind the stack before the
     // end of a "try/catch" block, "catch" included. It means that we
     // cannot display the exception in the "catch" block in case this
@@ -66,8 +65,6 @@ namespace runner
       // cannot be passed to the << function.
       if (res && res != object::void_class)
       {
-        GD_INFO_DUMP("shell: returning a result to the connection");
-
         // Display the value using the topLevel channel.  If it is not
         // (yet) defined, do nothing, unless this environment variable
         // is set.
