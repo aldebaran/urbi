@@ -462,6 +462,7 @@ namespace kernel
   {
     libport::BlockLock lock(async_jobs_lock_);
     async_jobs_.push_back(AsyncJob(o, method, args));
+    wake_up();
   }
 
   UServer::AsyncJob::AsyncJob(object::rObject t, libport::Symbol m,
