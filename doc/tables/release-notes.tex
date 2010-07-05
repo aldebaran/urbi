@@ -24,6 +24,14 @@ This chapter lists the user-visible changes in \usdk releases.
 \item \refSlot[System.Platform]{host}, \refSlot[System.Platform]{hostAlias},
   \refSlot[System.Platform]{hostCpu}, \refSlot[System.Platform]{hostOs},
   \refSlot[System.Platform]{hostVendor}.
+\item UObject init method and methods bound by notifyChange no longuer need to
+return an int.
+\end{itemize}
+
+\subsection{Optimization}
+\begin{itemize}
+\item Main loop was reorganized to factor all socket polling in a single place:
+latency of \refObject(Socket) is greatly reduced.
 \end{itemize}
 
 \subsection{Documentation}
