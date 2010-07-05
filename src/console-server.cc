@@ -9,6 +9,7 @@
  */
 
 //#define ENABLE_DEBUG_TRACES
+#include <libport/config.h>
 #include <libport/compiler.hh>
 
 #include <libport/unistd.h>
@@ -83,6 +84,7 @@ public:
     , libport::Socket(kernel::UServer::get_io_service())
     , fast(fast)
     , ctime(0)
+    , cinSocket(0)
   {}
 
   virtual ~ConsoleServer()
@@ -116,18 +118,31 @@ public:
     std::cout << t;
   }
 
-  boost::asio::io_service&
-  get_io_service()
-  {
-    return kernel::UServer::get_io_service();
-  }
-
   bool fast;
   libport::utime_t ctime;
+  libport::Socket* cinSocket;
 };
 
 namespace
 {
+#ifndef WIN32
+  static void onReadStdin(boost::asio::posix::stream_descriptor& sd,
+                          boost::asio::streambuf& buffer,
+                          const boost::system::error_code& erc,
+                          size_t len)
+  {
+    if (erc)
+      return;
+    std::istream is(&buffer);
+    std::string s;
+    s.resize(len);
+    is.read(&s[0], len);
+    ::kernel::urbiserver->ghost_connection_get().received(s);
+    boost::asio::async_read(sd, buffer, boost::asio::transfer_at_least(1),
+                            boost::bind(&onReadStdin, boost::ref(sd),
+                                        boost::ref(buffer), _1, _2));
+  }
+#endif
 #ifndef NO_OPTION_PARSER
   static
   void
@@ -380,7 +395,6 @@ namespace urbi
       arg_stack_size = ((arg_stack_size + pagesize - 1) / pagesize) * pagesize;
       sched::configuration.default_stack_size = arg_stack_size;
     }
-
     data.server = new ConsoleServer(data.fast, urbi_root);
     ConsoleServer& s = *data.server;
 
@@ -420,10 +434,17 @@ namespace urbi
     }
     data.network = 0 < port;
     // In Urbi: System.listenPort = <port>.
-    s.initialize(data.interactive);
     object::system_class->slot_set(SYMBOL(listenPort),
                                    object::to_urbi(port),
                                    true);
+    object::system_class->slot_set(SYMBOL(interactive),
+                                   object::to_urbi(data.interactive),
+                                   true);
+    object::system_class->slot_set(SYMBOL(fast),
+                                   object::to_urbi(data.fast),
+                                   true);
+    s.initialize(data.interactive);
+
     /*--------------.
     | --port-file.  |
     `--------------*/
@@ -434,7 +455,19 @@ namespace urbi
       std::ofstream(libport::opts::port_file_l.value().c_str(), std::ios::out)
         << port << std::endl;,
     )
-
+#ifndef WIN32
+    if (data.interactive)
+    {
+      boost::asio::posix::stream_descriptor* sd =
+      new boost::asio::posix::stream_descriptor(
+        s.kernel::UServer::get_io_service());
+      sd->assign(0);
+      boost::asio::streambuf* buffer = new boost::asio::streambuf;
+      boost::asio::async_read(*sd, *buffer, boost::asio::transfer_at_least(1),
+                              boost::bind(&onReadStdin, boost::ref(*sd),
+                                          boost::ref(*buffer), _1, _2));
+    }
+#endif
     kernel::UConnection& c = s.ghost_connection_get();
     GD_INFO_TRACE("got ghost connection");
 
@@ -460,6 +493,7 @@ namespace urbi
     libport::utime_t next_time = 0;
     while (true)
     {
+#ifdef WIN32
       if (data.interactive)
       {
         std::string input;
@@ -476,24 +510,7 @@ namespace urbi
         if (!input.empty())
           s.ghost_connection_get().received(input);
       }
-
-
-      libport::utime_t select_time = 0;
-      if (!data.fast)
-      {
-        select_time = std::max(next_time - libport::utime(), select_time);
-        if (data.interactive)
-          select_time = std::min(100000LL, select_time);
-      }
-
-      if (select_time)
-        // Return without delay after the first operation, but perform all
-        // pending operations
-        libport::pollFor(select_time, true, s.get_io_service());
-
-      s.get_io_service().reset();
-      s.get_io_service().poll();
-
+#endif
       next_time = s.work();
       if (next_time == sched::SCHED_EXIT)
         break;

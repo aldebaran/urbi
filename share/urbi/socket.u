@@ -8,29 +8,3 @@
  * See the LICENSE file for more information.
  */
 
-do (Global.Socket)
-{
-  var pollInterval = 128ms|
-  var pollTag = Tag.new|
-
-  at (pollInterval->changed?)
-  {
-    pollTag.stop;
-    if (pollInterval)
-      pollLoop;
-  };
-
-  function pollLoop
-  {
-    detach({
-      pollTag:loop
-      {
-        sleep(Socket.pollInterval)|
-        Socket.poll;
-      }
-    });
-  };
-
-};
-
-Socket.pollLoop;

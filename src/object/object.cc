@@ -64,7 +64,6 @@ namespace urbi
       , slots_()
       , lookup_id_(INT_MAX)
     {
-      root_classes_initialize();
     }
 
     Object::~Object ()

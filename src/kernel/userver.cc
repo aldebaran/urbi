@@ -59,6 +59,7 @@
 #include <urbi/object/object.hh>
 #include <urbi/object/primitive.hh>
 #include <object/root-classes.hh>
+#include <object/socket.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
 
@@ -134,7 +135,6 @@ namespace kernel
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
     , thread_id_(pthread_self())
-    , io_(*new boost::asio::io_service())
     , urbi_root_(urbi_root)
   {
     lock_check(*this);
@@ -145,15 +145,9 @@ namespace kernel
     // Use line buffering even when stdout is not a TTY.
     setlinebuf(stdout);
 #endif
-    // Setup wakeup mechanism when wake_up_pipe.second is written on.
-    wake_up_pipe_ = std::make_pair(new libport::ConcreteSocket(io_),
-                                   new libport::Socket(io_));
-    libport::makePipe(wake_up_pipe_, io_);
-    dynamic_cast<libport::ConcreteSocket*>(wake_up_pipe_.first)
-    ->onRead(boost::bind(&waker_socket_on_read, scheduler_, _1, _2));
-    synchronizer_.setOnLock(boost::bind(&UServer::wake_up, this));
     // Tell the scheduler we will handle job destruction ourself.
     scheduler_->keep_terminated_jobs_set(true);
+    object::root_classes_initialize();
   }
 
   UErrorValue
@@ -294,6 +288,14 @@ namespace kernel
     // Set the initial time to a valid value.
     updateTime();
 
+    // Setup wakeup mechanism when wake_up_pipe.second is written on.
+    boost::asio::io_service& io = get_io_service();
+    wake_up_pipe_ = std::make_pair(new libport::ConcreteSocket(io),
+                                   new libport::Socket(io));
+    libport::makePipe(wake_up_pipe_, io);
+    dynamic_cast<libport::ConcreteSocket*>(wake_up_pipe_.first)
+    ->onRead(boost::bind(&waker_socket_on_read, scheduler_, _1, _2));
+    synchronizer_.setOnLock(boost::bind(&UServer::wake_up, this));
 
     /*--------.
     | Setup.  |
@@ -331,6 +333,13 @@ namespace kernel
       (new runner::Interpreter(*ghost_->shell_get().get(),
                                p->as<object::Object>(),
                                SYMBOL(handle_synchronizer)));
+    sched::rJob poll =
+    new runner::Interpreter(
+                            *ghost_->shell_get().get(),
+                            object::system_class->slot_get(SYMBOL(pollLoop)),
+                            SYMBOL(pollLoop),
+                            object::objects_type());
+    scheduler_->idle_job_set(poll);
   }
 
 
@@ -659,5 +668,11 @@ namespace kernel
     // Do a synchronous write, which will wake the main loop up from poll.
     char data = 1;
     wake_up_pipe_.second->syncWrite(&data, 1);
+  }
+
+  boost::asio::io_service&
+  UServer::get_io_service ()
+  {
+    return *object::Socket::get_default_io_service().get();
   }
 }

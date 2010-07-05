@@ -293,9 +293,6 @@ namespace kernel
     /// Store the server thread Id.
     pthread_t thread_id_;
 
-    /// io_service used by all our connections
-    boost::asio::io_service& io_;
-
     /// Urbi SDK installation
     UrbiRoot& urbi_root_;
 

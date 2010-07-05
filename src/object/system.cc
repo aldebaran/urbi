@@ -14,6 +14,8 @@
  */
 
 //#define ENABLE_DEBUG_TRACES
+#include <libport/config.h>
+#include <libport/asio.hh>
 #include <libport/compiler.hh>
 #include <libport/cstdlib>
 #include <libport/format.hh>
@@ -498,6 +500,44 @@ namespace urbi
       runner().void_error_set(false);
     }
 
+    static void
+    system_poll()
+    {
+      libport::utime_t select_time = 0;
+      // 0-delay in fast mode
+      if (!system_class->slot_get(SYMBOL(fast))->as_bool())
+      {
+        libport::utime_t deadline =
+          ::kernel::urbiserver->scheduler_get().deadline_get();
+          if (deadline != sched::SCHED_IMMEDIATE)
+            select_time = deadline - libport::utime();
+      }
+#ifdef WIN32
+      // Linux and MacOS are using a POSIX file descriptor integrated in
+      // the io_service for stdin, but not Windows.
+      if (system_class->slot_get(SYMBOL(interactive))->as_bool())
+        select_time = std::min((libport::utime_t)100000, select_time);
+#endif
+      boost::asio::io_service& ios = ::kernel::urbiserver->get_io_service();
+      // Return without delay after the first operation, but perform all
+      // pending operations
+      if (select_time > 0)
+        libport::pollFor(select_time, true, ios);
+      ios.reset();
+      ios.poll();
+    }
+
+    static void
+    system_pollLoop()
+    {
+      while(true)
+      {
+        system_poll();
+        // We just waited the appropriate time, simply yield
+        ::kernel::urbiserver->getCurrentRunner().yield();
+      }
+    }
+
     void
     system_class_initialize()
     {
@@ -520,6 +560,8 @@ namespace urbi
       DECLARE(loadLibrary);
       DECLARE(nonInterruptible);
       DECLARE(noVoidError);
+      DECLARE(poll);
+      DECLARE(pollLoop);
       DECLARE(programName);
       DECLARE(reboot);
       DECLARE(redefinitionMode);

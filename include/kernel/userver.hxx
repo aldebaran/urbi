@@ -41,12 +41,6 @@ namespace kernel
     return *scheduler_;
   }
 
-  inline boost::asio::io_service&
-  UServer::get_io_service ()
-  {
-    return io_;
-  }
-
   inline libport::Synchronizer&
   UServer::synchronizer_get()
   {

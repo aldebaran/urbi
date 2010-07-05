@@ -413,6 +413,8 @@ static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
   else
     r = v;
   tag->unfreeze();
+  // Wake up the poll task.
+  ::kernel::urbiserver->wake_up();
 }
 
 static rObject wrap_ucallback(const object::objects_type& ol,
