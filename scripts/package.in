@@ -37,10 +37,8 @@ case $# in
   (*) fatal "not enough arguments: $#, expecting 10";;
 esac
 
-# Those would best be set through configure (except "updir"
-# which sets the destination).
-
 PROJECT='@PACKAGE_TARNAME@'
+PACKAGE_VERSION='@PACKAGE_VERSION@'
 URBI_HOST_COMP='@URBI_HOST_COMP@'
 URBI_HOST_CPU='@URBI_HOST_CPU@'
 URBI_HOST_OS='@URBI_HOST_OS@'
@@ -58,6 +56,8 @@ fi
 srcdir=$2
 builddir=$3
 DESTDIR=$4
+# Directories/tarballs left in this directory (updir) will be
+# published by the buildfarm's package script.
 updir=$5
 ARCH=$6       # ARM|ppc|x86|x86_64.
 OS=$7         # linux|macos|windows.
@@ -123,6 +123,8 @@ else
   name="$PROJECT-$version-$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP-$MODE"
 fi
 
+# 1. Prebuilt-Urbi SDK.
+#
 # Create a fresh directory in which we put the subdirectories of the
 # $install directory.
 packagedir="$updir/$name"
@@ -130,6 +132,8 @@ rm -rf "$packagedir"
 mkdir -p "$packagedir"
 (cd "$DESTDIR$prefix" && tar cf - .) | (cd "$packagedir" && tar xpBf -)
 
+# 2. Prebuilt-Urbi Runtime.
+#
 # Create a run-time version of the package.
 rtname=$(echo "$name" | sed -e 's/urbi-sdk/urbi-runtime/')
 if test $name != $rtname; then
@@ -142,4 +146,12 @@ if test $name != $rtname; then
   # Lobby.license.
   (cd "$packagedir" &&
       rm -rf README.txt include libexec share/doc)
+fi
+
+# 3. Source tarball.
+#
+# Create a run-time version of the package.
+tarname=$PROJECT-$PACKAGE_VERSION.tar.bz2
+if test -f $abs_top_builddir/$tarname; then
+  cp -v $abs_top_builddir/$tarname $updir
 fi
