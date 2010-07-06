@@ -449,6 +449,11 @@ namespace kernel
         // shell.
         scheduler_->add_job(sched::rJob(interpreter));
       }
+      //FIXME: work around a scheduler bug when adding a job from outside work.
+      // It is supposed to work, but turns on the new job is only scheduled
+      // after we force an extra work() run.
+      if (!async_jobs_.empty())
+        wake_up();
       async_jobs_.clear();
     }
     work_handle_stopall_();
