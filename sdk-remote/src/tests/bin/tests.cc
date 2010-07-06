@@ -58,9 +58,16 @@ char_of(urbi::UMessageType t)
 }
 
 urbi::UCallbackAction
-dump(const urbi::UMessage& msg)
+log(const urbi::UMessage& msg)
 {
   VERBOSE("Recv: " << msg);
+  return urbi::URBI_CONTINUE;
+}
+
+urbi::UCallbackAction
+dump(const urbi::UMessage& msg)
+{
+  log(msg);
 
   std::cout << char_of(msg.type) << ' ' << msg.tag << ' ';
   switch (msg.type)
@@ -74,6 +81,7 @@ dump(const urbi::UMessage& msg)
       std::cout << msg.message << std::endl;
       break;
   }
+
   dumpSem++;
   return urbi::URBI_CONTINUE;
 }
@@ -156,8 +164,12 @@ main(int argc, char* argv[])
 
   VERBOSE("Shutting down");
   // Handle the case when the other connection is down.
-  SSEND("disown({ sleep(0.5); shutdown }) | quit;");
+  SSEND("disown({ sleep(0.5); shutdown })|; quit;");
   SEND("shutdown;");
 
+  // Don't close the connection too soon, as it may result in the
+  // "shutdown" messages to be dropped when the connection is cut.
+  // FIXME: rather, wait for the deconnection from the server.
+  sleep(1);
   VERBOSE("End");
 }

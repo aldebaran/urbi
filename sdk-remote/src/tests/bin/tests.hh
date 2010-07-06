@@ -108,16 +108,25 @@ std::string sget_error(urbi::USyncClient& c, const std::string& msg);
 
 extern libport::Semaphore dumpSem;
 
-/// display the value, increment dumpSem.
+/// Display the value.
+urbi::UCallbackAction log(const urbi::UMessage& msg);
+
+/// Display the value, increment dumpSem.
 urbi::UCallbackAction dump(const urbi::UMessage& msg);
-/// display the value, incremente dumpSem remove callback if 0
+
+/// Display the value, increment dumpSem remove callback if 0.
 urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
 
-#define BEGIN_TEST                              \
-  void                                          \
-  test(urbi::UClient& client,                   \
-       urbi::USyncClient& syncClient)           \
-  {
+#define BEGIN_TEST                                      \
+  void                                                  \
+  test(urbi::UClient& client,                           \
+       urbi::USyncClient& syncClient)                   \
+  {                                                     \
+    client.setErrorCallback(callback(&log));            \
+    client.setCallback(callback(&log), "log");          \
+    syncClient.setErrorCallback(callback(&log));        \
+    syncClient.setCallback(callback(&log), "log");
+
 
 #define END_TEST                                \
   }

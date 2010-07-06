@@ -11,6 +11,7 @@
 #include <bin/tests.hh>
 
 BEGIN_TEST
+
 client.setErrorCallback(callback(&dump));
 client.setCallback(callback(&dump), "output");
 
