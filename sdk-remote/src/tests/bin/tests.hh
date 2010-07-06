@@ -122,11 +122,6 @@ urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
   test(urbi::UClient& client,                           \
        urbi::USyncClient& syncClient)                   \
   {                                                     \
-    client.setErrorCallback(callback(&log));            \
-    client.setCallback(callback(&log), "log");          \
-    syncClient.setErrorCallback(callback(&log));        \
-    syncClient.setCallback(callback(&log), "log");
-
 
 #define END_TEST                                \
   }
