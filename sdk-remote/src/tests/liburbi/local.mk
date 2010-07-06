@@ -14,6 +14,7 @@
 # The test suite.  #
 # ---------------- #
 LIBURBI_TESTS =					\
+  liburbi/0-empty.cc				\
   liburbi/ping.cc				\
   liburbi/removecallbacks.cc			\
   liburbi/syncvalues.cc				\
@@ -42,7 +43,7 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 AM_LDADD =						\
   $(top_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
-  $(top_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la	\
+  $(top_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la		\
   $(PTHREAD_LIBS)
 # We should not need to report the -rpath to Boost here, since we
 # don't depend directly from it (it is liburbi.la which does, via
@@ -52,6 +53,7 @@ AM_LDFLAGS +=					\
   $(BOOST_THREAD_LDFLAGS)			\
   $(PTHREAD_LDFLAGS)
 
+liburbi_0_empty_SOURCES         = bin/tests.hh bin/tests.cc liburbi/0-empty.cc
 liburbi_ping_SOURCES            = bin/tests.hh bin/tests.cc liburbi/ping.cc
 liburbi_removecallbacks_SOURCES = bin/tests.hh bin/tests.cc liburbi/removecallbacks.cc
 liburbi_syncvalues_SOURCES      = bin/tests.hh bin/tests.cc liburbi/syncvalues.cc

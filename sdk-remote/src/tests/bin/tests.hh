@@ -55,24 +55,27 @@ GD_ADD_CATEGORY(TEST);
 #define VERBOSE(S)                              \
   do {                                          \
     GD_CATEGORY(TEST);                          \
-    GD_SINFO(program_name () << ": " << S);     \
+    GD_SINFO(program_name() << ": "             \
+             << getpid() << ": "                \
+             << S);                             \
   } while (0)
 
 /// Send S to the Client.
-#define SEND_(Client, S)                                \
-  do {							\
-    if (Client.isConnected())                           \
-    {                                                   \
-      VERBOSE("Send: " << S);                           \
-      Client.send("%s\n", (S));                         \
-    }                                                   \
-    else                                                \
-      VERBOSE("Not connected, cannot send: " << S);     \
+/// Letter: S for synchronous, A for asynchronous.
+#define SEND_(Letter, Client, S)                                \
+  do {                                                          \
+    if (Client.isConnected())                                   \
+    {                                                           \
+      VERBOSE(Letter "Snd: " << S);                             \
+      Client.send("%s\n", (S));                                 \
+    }                                                           \
+    else                                                        \
+      VERBOSE(#Client " not connected, cannot send: " << S);    \
   } while (0)
 
 /// Send S to client/syncclient.
-#define SEND(S)	  SEND_(client, S)
-#define SSEND(S)  SEND_(syncClient, S)
+#define SEND(S)   SEND_("A", client, S)
+#define SSEND(S)  SEND_("S", syncClient, S)
 
 
 /*----------.

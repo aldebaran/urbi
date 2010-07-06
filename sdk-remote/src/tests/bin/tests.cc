@@ -94,7 +94,7 @@ removeOnZero(const urbi::UMessage& msg)
 std::string
 sget_error(urbi::USyncClient& c, const std::string& msg)
 {
-  VERBOSE("get_erroneous: Asking " << msg);
+  VERBOSE("sget_error: Asking " << msg);
   urbi::UMessage* m = c.syncGet(msg);
   aver(m && m->type == urbi::MESSAGE_ERROR);
   std::string res(m->message);
@@ -108,11 +108,15 @@ main(int argc, char* argv[])
 {
   GD_CATEGORY(TEST);
 
-  // Actually argv[0] is verbose and not interesting.
+  // argv[0] = basename(argv[0]).
+  const char* argv0 = argv[0];
+  if (char* cp = strrchr(argv[0], '/'))
+    argv[0] = cp + 1;
   libport::program_initialize(argc, argv);
   std::string host = urbi::UClient::default_host();
   int port = urbi::UAbstractClient::URBI_PORT;
 
+  VERBOSE("This is " << argv0);
   VERBOSE("Processing option");
   for (int i = 1; i < argc; ++i)
   {
@@ -121,7 +125,7 @@ main(int argc, char* argv[])
       usage();
     else if (arg == "--host" || arg == "-H")
       host = libport::convert_argument<std::string>(arg, argv[++i]);
-    else if (arg == "--port" || arg == "-p")
+    else if (arg == "--port" || arg == "-P")
       port = libport::convert_argument<unsigned>(arg, argv[++i]);
     else if (arg == "--port-file" || arg == "-r")
       port =
@@ -152,7 +156,7 @@ main(int argc, char* argv[])
 
   VERBOSE("Shutting down");
   // Handle the case when the other connection is down.
-  SSEND("disown({ sleep(0.5); shutdown }); quit;");
+  SSEND("disown({ sleep(0.5); shutdown }) | quit;");
   SEND("shutdown;");
 
   VERBOSE("End");
