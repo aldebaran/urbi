@@ -117,11 +117,14 @@ urbi::UCallbackAction dump(const urbi::UMessage& msg);
 /// Display the value, increment dumpSem remove callback if 0.
 urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
 
-#define BEGIN_TEST                                      \
-  void                                                  \
-  test(urbi::UClient& client,                           \
-       urbi::USyncClient& syncClient)                   \
-  {                                                     \
+#define BEGIN_TEST                                              \
+  void                                                          \
+  test(urbi::UClient& client,                                   \
+       urbi::USyncClient& syncClient)                           \
+  {                                                             \
+    /* Pacify the compiler in case we don't use these guys.  */ \
+    (void) client;                                              \
+    (void) syncClient;
 
 #define END_TEST                                \
   }
