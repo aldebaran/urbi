@@ -433,10 +433,9 @@ var t2 = Tag.new("cool name");
 \subsection{Hierarchical tags}
 
 Tags can be arranged in a parent/child relationship: any operation done on a
-tag - freezing, stopping, \ldots is also performed on its
-descendant. Another way to see it is that tagging a piece of code with the
-child will also tag it with the parent. To create a child Tag, simply clone
-its parent.
+tag --- freezing, stopping, \ldots is also performed on its descendants.
+Another way to see it is that tagging a piece of code with a child will also
+tag it with the parent. To create a child Tag, simply clone its parent.
 
 \begin{urbiscript}
 var parent = Tag.new |
@@ -477,7 +476,8 @@ a.b:   bar; // Tagged by a and b
 a.b.c: baz; // Tagged by a, b and c
 \end{urbiunchecked}
 
-% FIXME: If we ever restore a sugar to create hierarchical tags, document it here
+% FIXME: If we ever restore some sugar to create hierarchical tags, document
+% it here
 
 %%% Local Variables:
 %%% mode: latex
