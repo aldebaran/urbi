@@ -9,6 +9,7 @@
 include $(top_srcdir)/build-aux/init.mk
 AUTOMAKE_OPTIONS += subdir-objects
 TESTS =
+AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 include $(top_srcdir)/build-aux/check.mk
 include $(top_srcdir)/build-aux/m4sh.mk
 include $(top_srcdir)/build-aux/libport.mk
