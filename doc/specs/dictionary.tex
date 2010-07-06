@@ -92,7 +92,7 @@ An extra comma can be added at the end of the list.
 \end{urbiassert}
 
 
-\item \lstinline|[](\var{key})|\\
+\item|'[]'|(<key>)
   Syntactic sugar for \lstinline|get(\var{key})|.
 
 \begin{urbiassert}
@@ -100,9 +100,9 @@ An extra comma can be added at the end of the list.
 \end{urbiassert}
 
 
-\item \lstinline|[]=(\var{key}, \var{value})|\\
-  Syntactic sugar for \lstinline|set(\var{key}, \var{value})|, but
-  returns \var{value}.
+\item|'[]='|(<key>, <value>)%
+  Syntactic sugar for \lstinline|set(\var{key}, \var{value})|, but returns
+  \var{value}.
 
 \begin{urbiscript}
 {
@@ -213,9 +213,9 @@ catch (var e if e.isA(Dictionary.KeyError))
 \end{urbiscript}
 
 
-\item[getWithDefault](<key>, <defaultValue>)
-  Return the value associated to  \lstinline|\var{key}| if it exists,
-  \lstinline|\var{defaultValue}| otherwise.
+\item[getWithDefault](<key>, <defaultValue>)%
+  The value associated to \var{key} if it exists, \var{defaultValue}
+  otherwise.
 
 \begin{urbiscript}
 do (["one" => 1, "two" => 2])
@@ -230,7 +230,7 @@ do (["one" => 1, "two" => 2])
 
 
 \item[has](<key>)
-  Whether the dictionary has a mapping for \lstinline|\var{key}|.
+  Whether the dictionary has a mapping for \var{key}.
 
 \begin{urbiscript}
 do (["one" => 1])
@@ -250,8 +250,7 @@ do (["one" => 1])
 
 
 \item[init](<key1>, <value1>, ...)%~\\
-  Insert the mapping from \lstinline|\var{key1}| to
-  \lstinline|\var{value1}| and so forth.
+  Insert the mapping from \var{key1} to \var{value1} and so forth.
 
 \begin{urbiscript}
 Dictionary.clone.init("one", 1, "two", 2);

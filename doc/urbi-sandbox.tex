@@ -10,7 +10,6 @@
   \usepackage{gostai-documentation}
   \usepackage{rotating}
 
-
 \title{Urbi Documentation Sandbox}
 \titleImage{figs/urbi}
 \subtitle{Version \VcsDescription}
@@ -59,10 +58,13 @@ Last example.
 \begin{urbiscriptapi}
 \item[bar] This is Bar.bar.
 \item[foo](<x>) This is Bar.foo with arguments.
-\item[set](<key>, <value>)
-  Map \lstinline|\var{key}| to \lstinline|\var{value}| and return
-  \this so that invocations to \lstinline|set| can be
-  chained.  The possibly existing previous mapping is overridden.
+\item[set](<key>, <value>) Map \var{key} to \var{value} and return \this so
+  that invocations to \lstinline|set| can be chained.  The possibly existing
+  previous mapping is overridden.
+\item \lstinline|I do it myself|
+\item beware (not to catch the first word)
+\item|slot[foo][bar]| a slot
+\item|fun[foo][bar]|(<var>) a function
 \end{urbiscriptapi}
 
 \sectionObject{Foo}
@@ -108,6 +110,7 @@ This is the second part.
 
 You want to use \refSlot[Foo]{foo}, and possibly \refSlot[Bar]{foo}.
 
+\chapterIndex
 \end{document}
 
 %%% Local Variables:

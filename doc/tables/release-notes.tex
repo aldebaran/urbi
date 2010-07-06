@@ -483,8 +483,9 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \item empty strings, dictionaries and lists are now evaluated as
   "false" in conditions.
 \item \refSlot[Dictionary]{asString} does not sort the keys.
-\item \refSlot[Dictionary]{[]=} returns the assigned value, not the dictionary.
-\item \refSlot[Dictionary]{[]} raises an exception if the key is missing.
+\item \refSlot[Dictionary]{'[]='} returns the assigned value, not the
+  dictionary.
+\item \refSlot[Dictionary]{'[]'} raises an exception if the key is missing.
 \item Constants is merged into Math.
 \item \lstinline|every| no longer goes in background.  Instead of:
 
