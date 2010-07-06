@@ -10,23 +10,10 @@
 
 #include <config.h>
 
-#include <libport/cerrno>
-#include <iostream>
 #include <string>
 #include <vector>
 
-#include <libport/lexical-cast.hh>
-
-#include <libport/containers.hh>
-#include <libport/cstdlib>
-#include <libport/cstring>
-#include <libport/sysexits.hh>
-#include <libport/unistd.h>
-
 #include <urbi/urbi-root.hh>
-
-using libport::streq;
-using libport::strneq;
 
 int
 main(int argc, char* argv[])
