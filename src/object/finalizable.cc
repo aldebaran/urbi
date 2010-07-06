@@ -38,7 +38,8 @@ namespace urbi
     {
       // Prevent further destruction of this object.
       counter_reset();
-      if (rSlot finalize = slot_locate(SYMBOL(finalize), false).second)
+      rSlot finalize = 0;
+      if (finalize = slot_locate(SYMBOL(finalize), false).second)
       {
         objects_type args;
         args << this;
