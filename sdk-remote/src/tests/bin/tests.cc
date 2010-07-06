@@ -145,16 +145,16 @@ main(int argc, char* argv[])
 
   urbi::UClient client(host, port);
   VERBOSE("client(" << host << ", " << port << ") @ " << &client);
-  client.setErrorCallback(callback(&log));
-  client.setCallback(callback(&log), "log");
+  client.setErrorCallback(urbi::callback(&log));
+  client.setCallback(urbi::callback(&log), "log");
   if (client.error())
     std::cerr << "Failed to set up properly the client" << std::endl
               << libport::exit(EX_SOFTWARE);
 
   urbi::USyncClient syncClient(host, port);
   VERBOSE("syncClient(" << host << ", " << port << ") @ " << &syncClient);
-  syncClient.setErrorCallback(callback(&log));
-  syncClient.setCallback(callback(&log), "log");
+  syncClient.setErrorCallback(urbi::callback(&log));
+  syncClient.setCallback(urbi::callback(&log), "log");
   if (syncClient.error())
     std::cerr << "Failed to set up properly the syncClient" << std::endl
               << libport::exit(EX_SOFTWARE);
