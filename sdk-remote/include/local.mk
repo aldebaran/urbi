@@ -7,6 +7,7 @@ urbiinclude_HEADERS =				\
   include/urbi/fwd.hh				\
   include/urbi/kernel-version.hh		\
   include/urbi/package-info.hh			\
+  include/urbi/socket.hh			\
   include/urbi/qt_umain.hh			\
   include/urbi/uabstractclient.hh		\
   include/urbi/uabstractclient.hxx		\
