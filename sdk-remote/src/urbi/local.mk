@@ -17,7 +17,8 @@ CLEANFILES += $(urbi_uobjects_DATA) $(urbi_uobjects_DATA:$(DLMODEXT)=.la)
 UMAKE_SHARED = tests/bin/umake-shared
 
 %$(DLMODEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject$(LIBSFX).la
-	$(UMAKE_SHARED) --clean --output=$@ $<
+	echo variable is "EXTRA_$(notdir $*)_cppflags"
+	$(UMAKE_SHARED) EXTRA_CPPFLAGS="$(EXTRA_$(notdir $*)_cppflags)" EXTRA_LDFLAGS="$(EXTRA_$(notdir $*)_ldflags)" --clean --output=$@ $<
 ## umake has dependencies support, so it might not recompile here, in
 ## which case, if this was triggered because of $(UMAKE_SHARED) we
 ## will keep on cycling.

@@ -24,6 +24,14 @@ UOBJECTS =					\
   timer						\
   ultest
 
+if HAVE_ORTP
+  UOBJECTS += rtp
+  urbi/rtp$(DLMODEXT): $(wildcard $(srcdir)/urbi/rtp.uob/*)
+  #use lowercase to avoid confusing automake
+  EXTRA_rtp_ldflags=$(ORTP_LIBS)
+  EXTRA_rtp_cppflags=$(ORTP_CFLAGS)
+endif
+
 ## -------------- ##
 ## Dependencies.  ##
 ## -------------- ##

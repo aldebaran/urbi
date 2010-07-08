@@ -48,6 +48,10 @@ URBI_SOCKETS
 URBI_LIBPORT([libport])
 URBI_BOOST([THREADS])
 
+#ortp
+PKG_CHECK_MODULES([ORTP], [ortp], [HAVE_ORTP=true], [HAVE_ORTP=false])
+AM_CONDITIONAL([HAVE_ORTP], [$HAVE_ORTP])
+
 # X11.
 # AC_PATH_XTRA finds X11 headers even if cross-compiling to windows.
 case $ac_cv_host in
