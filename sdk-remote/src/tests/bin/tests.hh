@@ -87,13 +87,32 @@ inline
 T
 sget(urbi::USyncClient& c, const std::string& msg)
 {
+  pabort("Do not call me");
+}
+
+template <>
+inline
+std::string
+sget<std::string>(urbi::USyncClient& c, const std::string& msg)
+{
   VERBOSE("syncGet: Asking " << msg);
-  T res;
+  std::string res;
   urbi::getValue(c.syncGet(msg), res);
   return res;
 }
 
-/// syncGet E from the syncClient.
+template <>
+inline
+int
+sget<int>(urbi::USyncClient& c, const std::string& msg)
+{
+  VERBOSE("syncGet: Asking " << msg);
+  int res = 0;
+  urbi::getValue(c.syncGet(msg), res);
+  return res;
+}
+
+
 #define SGET(Type, E)                           \
   sget<Type>(syncClient, E)
 
