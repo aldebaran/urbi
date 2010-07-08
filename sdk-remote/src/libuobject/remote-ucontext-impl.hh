@@ -67,6 +67,7 @@ namespace urbi
       virtual void instanciated(UObject* obj);
       virtual void lock();
       virtual void unlock();
+      virtual boost::asio::io_service& getIoService();
     public:
       /// Dispatch a message on our connection
       UCallbackAction dispatcher(const UMessage& msg);

@@ -181,6 +181,13 @@ namespace urbi
     RemoteUContextImpl::unlock()
     {
     }
+
+    boost::asio::io_service&
+    RemoteUContextImpl::getIoService()
+    {
+      return client_->get_io_service();
+    }
+
     /*--------------------.
     | RemoteUObjectImpl.  |
     `--------------------*/

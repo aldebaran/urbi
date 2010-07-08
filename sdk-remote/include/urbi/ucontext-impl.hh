@@ -16,6 +16,8 @@
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
 
+#include <libport/asio.hh>
+
 #include <urbi/fwd.hh>
 #include <urbi/uprop.hh>
 
@@ -141,6 +143,8 @@ namespace urbi
       virtual void lock() = 0;
       /// Release lock acquired with lock()
       virtual void unlock() = 0;
+      /// Get the io_service used by this context
+      virtual boost::asio::io_service& getIoService() = 0;
     private:
       typedef std::vector<std::vector<boost::function0<void> > > CleanupList;
       boost::thread_specific_ptr<CleanupList> cleanup_list_;
