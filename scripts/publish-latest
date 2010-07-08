@@ -161,7 +161,7 @@ from=build@bf-1:share/built/urbi-sdk/archives
 # The (scp-like) location into which the per-architecture directories are.
 to=downloads@www.gostai.com:gostai.com-downloads/urbi-sdk
 
-oses="linux macos windows"
+exts="-linux -macos -windows .tar.bz2"
 
 getargs "$@"
 
@@ -175,9 +175,9 @@ getargs "$@"
 # urbi-sdk-2.0-beta2-498-g4f7f361-macos-x86.tar.bz2
 all=$(ssh $(scp_point "$from") \
         "cd $(scp_dir "$from") && \
-           ls -1t *linux*.bz2 *macos-*.bz2 *windows*.exe *windows*.zip")
+           ls -1t *.bz2 *.exe *.zip")
 
-# Make sure that we have the same version for the three architectures.
+# Make sure that we have the same version for all the architectures.
 test -n "$latest" ||
   latest=$(echo "$all" |
       perl -n -e 'if (m/(?:kernel|urbi-(?:runtime|sdk))
@@ -187,9 +187,12 @@ test -n "$latest" ||
                           (?:-(?:beta|rc-\d+))?
                           (?:-g[\da-f]{7})?
                         )
-                        -(?:linux|macos|windows)
-                        -(?:ARM|ppc|x86)
-                        (?:-gcc4-debug_dynamic|vcxx200\d)?/x)
+                        # Possibly an architecture.
+                        (?:
+                          -(?:linux|macos|windows)
+                          -(?:ARM|ppc|x86)
+                          (?:-gcc4-debug_dynamic|vcxx200\d)?
+                        )?/x)
                   { print "$1\n"; exit 0; }')
 
 # The latest version number.
@@ -200,19 +203,24 @@ test -n "$latest" ||
 
 for name in urbi-sdk urbi-runtime
 do
-  for os in $oses
+  for ext in $exts
   do
-    pack=$(echo "$all" | grep -e "$name-$latest-$os" || true)
-    test -n "$pack"||
-      fatal "$name-$latest does not exist for $os"
+    case $name$ext in
+      # There is no source for the runtime.
+      (urbi-runtime.tar.bz2) continue;;
+    esac
+    pack=$(echo "$all" | grep -F -e "$name-$latest$ext" || true)
+    test -n "$pack" ||
+      fatal "$name-$latest$ext does not exist"
   done
 done
 
-for os in $oses
+for ext in $exts
 do
-  for pack in $(echo "$all" | grep -e "$latest-$os")
+  for pack in $(echo "$all" | grep -e "$latest$ext")
   do
     echo " --------------- $pack ---------------- "
     indirect_scp "$from/$pack" "$to/$latest"
+    indirect_scp "$from/$pack.md5" "$to/$latest"
   done
 done
