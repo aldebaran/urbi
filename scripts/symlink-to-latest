@@ -37,7 +37,9 @@ $minor .= ".0" if $minor =~ m{^(?:.*[\-/])?\d+\.\d+$};
 $minor =~ s/\.\d+$//;
 verbose "minor: $minor";
 
-($latest = qx{ls -dvr $minor $minor.[0-9]*}) =~ s/\n.*//gm;
+# Set patterns that did not match to devnull (when there is only 2.1,
+# "2.1.[0-9]*" will fail).
+($latest = qx{ls -dvr $minor $minor.[0-9]* 2>/dev/null}) =~ s/\n.*//gm;
 # When installing symlinks, the destination is relative to the
 # location of the source.
 $latest = basename $latest;
