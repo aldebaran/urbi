@@ -32,39 +32,67 @@ Regexp.new(".");
 Expressions cannot be empty.
 
 \subsection{Slots}
-\begin{itemize}
-\item \lstinline|match(\var{str})|\\
+\begin{urbiscriptapi}
+\item[asPrintable] A string that shows that \this is a Regexp, and its
+  value.
+\begin{urbiassert}
+           Regexp.new("abc").asPrintable == "Regexp(\"abc\")";
+Regexp.new("\\d+(\\.\\d+)?").asPrintable == "Regexp(\"\\\\d+(\\\\.\\\\d+)?\")";
+\end{urbiassert}
+
+\item[asString] The regular expression that was compiled.
+\begin{urbiassert}
+           Regexp.new("abc").asString == "abc";
+Regexp.new("\\d+(\\.\\d+)?").asString == "\\d+(\\.\\d+)?";
+\end{urbiassert}
+
+\item[match](<str>)%
   Whether \this matches \var{str}.
 \begin{urbiscript}
 // Ordinary characters
 var r = Regexp.new("oo")|
-assert(r.match("oo"));
-assert(r.match("foobar"));
-assert(!r.match("bazquux"));
+assert
+{
+  r.match("oo");
+  r.match("foobar");
+  !r.match("bazquux");
+};
 
 // ^, anchoring at the beginning of line.
 r = Regexp.new("^oo")|
-assert(r.match("oops"));
-assert(!r.match("woot"));
+assert
+{
+  r.match("oops");
+  !r.match("woot");
+};
 
 // $, anchoring at the end of line.
 r = Regexp.new("oo$")|
-assert(r.match("foo"));
-assert(!r.match("mooh"));
+assert
+{
+  r.match("foo");
+  !r.match("mooh");
+};
 
 // *, greedy repetition, 0 or more.
 r = Regexp.new("fo*bar")|
-assert(r.match("fbar"));
-assert(r.match("fooooobar"));
-assert(!r.match("far"));
+assert
+{
+  r.match("fbar");
+  r.match("fooooobar");
+  !r.match("far");
+};
 
 // (), grouping.
 r = Regexp.new("f(oo)*bar")|
-assert(r.match("foooobar"));
-assert(!r.match("fooobar"));
+assert
+{
+  r.match("foooobar");
+  !r.match("fooobar");
+};
 \end{urbiscript}
 
-\end{itemize}
+\end{urbiscriptapi}
 
 %%% Local Variables:
 %%% mode: latex

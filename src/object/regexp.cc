@@ -8,8 +8,9 @@
  * See the LICENSE file for more information.
  */
 
-#include <libport/format.hh>
 #include <libport/escape.hh>
+#include <libport/format.hh>
+#include <libport/lexical-cast.hh>
 
 #include <object/regexp.hh>
 #include <object/symbols.hh>
@@ -18,8 +19,8 @@ namespace urbi
 {
   namespace object
   {
-    Regexp::Regexp(const std::string& rg)
-      : re_(rg)
+    Regexp::Regexp(const std::string& r)
+      : re_(r)
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
@@ -31,27 +32,33 @@ namespace urbi
     }
 
     std::string
-    Regexp::as_string() const
+    Regexp::as_printable() const
     {
       return libport::format("Regexp(\"%s\")", libport::escape(re_));
     }
 
+    std::string
+    Regexp::as_string() const
+    {
+      return string_cast(re_);
+    }
+
     void
-    Regexp::init(const std::string& rg)
+    Regexp::init(const std::string& r)
     {
       // Depending on the version of Boost.Regex, "" might not be valid.
       // Make it always invalid.
-      if (rg.empty())
+      if (r.empty())
         FRAISE("Invalid regular expression \"%s\": %s",
-               libport::escape(rg), "Empty expression");
+               libport::escape(r), "Empty expression");
       try
       {
-        re_ = boost::regex(rg);
+        re_ = boost::regex(r);
       }
       catch (const boost::regex_error& e)
       {
         FRAISE("Invalid regular expression \"%s\": %s",
-               libport::escape(rg), e.what());
+               libport::escape(r), e.what());
       }
     }
 
@@ -67,6 +74,7 @@ namespace urbi
 #define DECLARE(Urbi, Cxx)                      \
       bind(SYMBOL(Urbi), &Regexp::Cxx)
 
+      DECLARE(asPrintable, as_printable);
       DECLARE(asString, as_string);
       DECLARE(init, init);
       DECLARE(match, match);
