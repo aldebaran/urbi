@@ -149,7 +149,7 @@ namespace runner
     std::vector<object::Event::Subscription> subscriptions;
   };
 
-  void
+  inline void
   Interpreter::at_run(AtEventData* data, const object::objects_type&)
   {
     runner::Interpreter& r = dynamic_cast<runner::Interpreter&>(::kernel::urbiserver->getCurrentRunner());
