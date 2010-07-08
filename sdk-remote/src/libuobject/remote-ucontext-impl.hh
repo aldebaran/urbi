@@ -91,6 +91,16 @@ namespace urbi
       TABLE(UVarTable, varmap);
       TABLE(UTimerTable, timermap);
 #undef TABLE
+      UValue localCall(const std::string& object,
+                const std::string& method,
+                UAutoValue v1 = UAutoValue(),
+                UAutoValue v2 = UAutoValue(),
+                UAutoValue v3 = UAutoValue(),
+                UAutoValue v4 = UAutoValue(),
+                UAutoValue v5 = UAutoValue(),
+                UAutoValue v6 = UAutoValue(),
+                UAutoValue v7 = UAutoValue(),
+                UAutoValue v8 = UAutoValue());
       UTable& tableByName(const std::string& n);
       UCallbackAction clientError(const UMessage&);
       // Create it on demand.

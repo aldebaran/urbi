@@ -619,6 +619,38 @@ namespace urbi
       URBI_SEND_COMMAND_C((*client_), r);
     }
 
+    UValue
+    RemoteUContextImpl::localCall(const std::string& object,
+                                  const std::string& method,
+                                  UAutoValue v1,
+                                  UAutoValue v2,
+                                  UAutoValue v3,
+                                  UAutoValue v4,
+                                  UAutoValue v5,
+                                  UAutoValue v6,
+                                  UAutoValue v7,
+                                  UAutoValue v8)
+    {
+      UAutoValue* vals[] = {&v1, &v2, &v3, &v4, &v5, &v6, &v7, &v8};
+      int nargs = 0;
+      while (nargs<8 && vals[nargs]->type != DATA_VOID)
+        ++nargs;
+      std::string name = object + "." + method +"__" + string_cast(nargs);
+      UList l;
+      {
+        FINALLY(((UList&, l)), l.array.clear());
+        for (int i=0; i<nargs; ++i)
+          l.array.push_back(vals[i]);
+        UTable::callbacks_type tmpfun = functionmap()[name];
+        UTable::callbacks_type::iterator tmpfunit = tmpfun.begin();
+        if (tmpfunit == tmpfun.end())
+        throw std::runtime_error("no callback found for " + object +"::"
+                                 + method + " with " + string_cast(nargs)
+                                 +" arguments");
+        return (*tmpfunit)->__evalcall(l);
+      }
+    }
+
     UVarImpl*
     RemoteUContextImpl::getVarImpl()
     {
