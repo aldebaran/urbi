@@ -13,6 +13,7 @@ expression.
 
 \subsection{Prototypes}
 \begin{itemize}
+\item \refObject{Container}
 \item \refObject{Object}
 \end{itemize}
 
@@ -44,6 +45,15 @@ Regexp.new("\\d+(\\.\\d+)?").asPrintable == "Regexp(\"\\\\d+(\\\\.\\\\d+)?\")";
 \begin{urbiassert}
            Regexp.new("abc").asString == "abc";
 Regexp.new("\\d+(\\.\\d+)?").asString == "\\d+(\\.\\d+)?";
+\end{urbiassert}
+
+\item[has](<str>)%
+  An experimental alias to \refSlot{match}, so that the infix operators
+  \lstinline|in| and \lstinline|not in| can be used (see
+  \autoref{sec:lang:operators:containers}).
+\begin{urbiassert}
+"23.03"     in Regexp.new("^\\d+\\.\\d+$");
+"-3.14" not in Regexp.new("^\\d+\\.\\d+$");
 \end{urbiassert}
 
 \item[match](<str>)%
