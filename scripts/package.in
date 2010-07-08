@@ -151,7 +151,7 @@ fi
 # 3. Source tarball.
 #
 # Create a run-time version of the package.
-tarname=$PROJECT-$PACKAGE_VERSION.tar.bz2
+tarname=$PROJECT-$version.tar.bz2
 if test -f $abs_top_builddir/$tarname; then
   cp -v $abs_top_builddir/$tarname $updir
 fi
