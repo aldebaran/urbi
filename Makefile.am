@@ -9,6 +9,7 @@
 include build-aux/init.mk
 include build-aux/package-version.mk
 include build-aux/build-aux.mk
+DISTCHECK_BUILDFARM_HOSTNAME = bf-2
 include build-aux/build-farm.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/bootstrap.mk
