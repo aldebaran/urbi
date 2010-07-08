@@ -83,7 +83,7 @@ connected;
   thing that was launched from this lobby, yet the lobby itself is still
   usable.
 \begin{urbiscript}
-every(1s) echo(1), sleep(0.5s); every(1s) echo(2),
+every (1s) echo(1), sleep(0.5s); every (1s) echo(2),
 sleep(1.2s);
 connectionTag.stop;
 [00000507] *** 1
@@ -91,13 +91,31 @@ connectionTag.stop;
 [00001507] *** 1
 [00002008] *** 2
 
-every(1s) echo(3), sleep(0.5s); every(1s) echo(4),
+"We are alive!";
+[00002008] "We are alive!"
+
+every (1s) echo(3), sleep(0.5s); every (1s) echo(4),
 sleep(1.2s);
 connectionTag.stop;
 [00003208] *** 3
 [00003710] *** 4
 [00004208] *** 3
 [00004710] *** 4
+
+"and kicking!";
+[00002008] "and kicking!"
+\end{urbiscript}
+
+  Of course, a background job may stop a foreground one.
+\begin{urbiscript}
+{ sleep(1.2s); connectionTag.stop; },
+// Note the `;', this is a foreground statement.
+every (1s) echo(5);
+[00005008] *** 5
+[00005508] *** 5
+
+"bye!";
+[00006008] "bye!"
 \end{urbiscript}
 
 \item[copyright](<deep> = true)%~\\
@@ -105,18 +123,18 @@ connectionTag.stop;
   about sub-components if \var{deep}.
 \begin{urbiscript}
 lobby.copyright(false);
-[00000022] *** Urbi SDK version 2.0/rc-4 rev. e594893
-[00000023] *** Copyright (C) 2005-2010 Gostai S.A.S.
+[00006489] *** Urbi SDK version 2.1-rc-2 rev. 35f41b9
+[00006489] *** Copyright (C) 2005-2010 Gostai S.A.S.
 
 lobby.copyright(true);
-[00000024] *** Urbi SDK version 2.0/rc-4 rev. e594893
-[00000025] *** Copyright (C) 2005-2010 Gostai S.A.S.
-[00000027] ***
-[00000028] *** Urbi SDK Remote version preview/1.6/rc-1 rev. cab1787
-[00000029] *** Copyright (C) 2005-2010 Gostai S.A.S.
-[00000031] ***
-[00000032] *** Libport version releases/1.0 rev. 88f9f61
-[00000033] *** Copyright (C) 2005-2010 Gostai S.A.S.
+[00020586] *** Urbi SDK version 2.1-rc-2 rev. 35f41b9
+[00020593] *** Copyright (C) 2005-2010 Gostai S.A.S.
+[00020593] ***
+[00020593] *** Urbi SDK Remote version preview/1.6/rc-1 rev. 7bfac02
+[00020593] *** Copyright (C) 2005-2010 Gostai S.A.S.
+[00020593] ***
+[00020593] *** Libport version releases/1.0 rev. f52545a
+[00020593] *** Copyright (C) 2005-2010 Gostai S.A.S.
 \end{urbiscript}
 
 \item[create]
