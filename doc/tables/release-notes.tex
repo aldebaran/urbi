@@ -11,68 +11,13 @@
 
 This chapter lists the user-visible changes in \usdk releases.
 
-\section{\usdk 2.1 RC 3}
+\section{\usdk 2.1}
+Released on 2010-07-08.
 
 \subsection{Fixes}
 \begin{itemize}
 \item \refSlot[Lobby]{connectionTag} monitors the jobs launched from the
   lobby, but can no longer kill the lobby itself.
-\end{itemize}
-
-\subsection{New Features}
-\begin{itemize}
-\item \refSlot[Regexp]{asPrintable}, \refSlot[Regexp]{asString},
-  \refSlot[Regexp]{has}.
-\item \refSlot[System.Platform]{host}, \refSlot[System.Platform]{hostAlias},
-  \refSlot[System.Platform]{hostCpu}, \refSlot[System.Platform]{hostOs},
-  \refSlot[System.Platform]{hostVendor}.
-\item UObject init method and methods bound by notifyChange no longer need
-  to return an int.
-\end{itemize}
-
-\subsection{Optimization}
-\begin{itemize}
-\item The main loop was reorganized to factor all socket polling in a single
-  place: latency of \refObject{Socket} is greatly reduced.
-\end{itemize}
-
-\subsection{Documentation}
-\begin{itemize}
-\item LEGO Mindstorms NXT support (\autoref{sec:nxt}).
-\item Pioneer D-3X support (\autoref{sec:d3px}).
-\item \refObject{System.PackageInfo}.
-\end{itemize}
-
-
-\section{\usdk 2.1 RC 2}
-
-\subsection{New Features}
-\begin{itemize}
-\item \refSlot[Channel]{Filter}, a \refObject{Channel} that outputs text
-  that can be parsed without error by the liburbi.
-\item \refSlot[RangeIterable]{all}, \refSlot[RangeIterable]{any}, moved from
-  \refObject{List}.
-\end{itemize}
-
-\subsection{Documentation}
-\begin{itemize}
-\item Support for Segway RMP (\autoref{sec:segway-rmp}).
-\item \refSlot[System]{spawn}.
-\end{itemize}
-
-\section{\usdk 2.1 RC 1}
-\subsection{New Features}
-\begin{itemize}
-\item Support for \href{http://www.ros.org}{ROS}, the Robot Operating
-  System.  See \autoref{sec:tut:ros} for an introduction, and
-  \autoref{sec:specs:ros} for the details.
-\item \refSlot[Lobby]{lobby} and \refSlot[Lobby]{instances}, bounced to from
-  \refSlot[System]{lobby} and \refSlot[System]{lobbies}.
-\item \refSlot[Tag]{scope}, bounced to from \refSlot[System]{scopeTag}.
-\end{itemize}
-
-\subsection{Fixes}
-\begin{itemize}
 \item \samp{123foo} is no longer accepted as a synonym to \samp{123 foo}.
   As a consequence, in case you were using \lstinline|x = 123cos: 1|,
   convert it to \lstinline|x = 123 cos: 1|.
@@ -86,10 +31,43 @@ This chapter lists the user-visible changes in \usdk releases.
     my-module.dll} or \samp{urbi-launch my-module.so}) on all the platforms.
 \end{itemize}
 
+\subsection{New Features}
+\begin{itemize}
+\item \refSlot[Regexp]{asPrintable}, \refSlot[Regexp]{asString},
+  \refSlot[Regexp]{has}.
+\item \refSlot[System.Platform]{host}, \refSlot[System.Platform]{hostAlias},
+  \refSlot[System.Platform]{hostCpu}, \refSlot[System.Platform]{hostOs},
+  \refSlot[System.Platform]{hostVendor}.
+\item UObject init method and methods bound by notifyChange no longer need
+  to return an int.
+\item \refSlot[Channel]{Filter}, a \refObject{Channel} that outputs text
+  that can be parsed without error by the liburbi.
+\item \refSlot[RangeIterable]{all}, \refSlot[RangeIterable]{any}, moved from
+  \refObject{List}.
+\item Support for \href{http://www.ros.org}{ROS}, the Robot Operating
+  System.  See \autoref{sec:tut:ros} for an introduction, and
+  \autoref{sec:specs:ros} for the details.
+\item \refSlot[Lobby]{lobby} and \refSlot[Lobby]{instances}, bounced to from
+  \refSlot[System]{lobby} and \refSlot[System]{lobbies}.
+\item \refSlot[Tag]{scope}, bounced to from \refSlot[System]{scopeTag}.
+\end{itemize}
+
+\subsection{Optimization}
+\begin{itemize}
+\item The main loop was reorganized to factor all socket polling in a single
+  place: latency of \refObject{Socket} is greatly reduced.
+\end{itemize}
+
 \subsection{Documentation}
 \begin{itemize}
 \item \refSlot[Lobby]{authors},  \refSlot[Lobby]{thanks}.
+\item \refObject{System.PackageInfo}.
+\item \refSlot[System]{spawn}.
+\item LEGO Mindstorms NXT support (\autoref{sec:nxt}).
+\item Pioneer D-3X support (\autoref{sec:d3px}).
+\item Support for Segway RMP (\autoref{sec:segway-rmp}).
 \end{itemize}
+
 
 \section{\usdk 2.0.3}
 Released on 2010-05-28.
