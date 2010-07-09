@@ -45,7 +45,6 @@ namespace kernel
 {
   /// Global variable for the server
   extern URBI_SDK_API class UServer* urbiserver;
-  extern URBI_SDK_API bool interactive;
 
   /// The current server.
   UServer& server();
@@ -85,6 +84,11 @@ namespace kernel
      *                     nicer is needed.
      */
     void initialize(bool interactive = false);
+
+    /// Accessors for interactive value bound to System.interactive,
+    // also define the behavior when receiving SIGINT.
+    bool interactive_get() const;
+    void interactive_set(bool);
 
     /// Support a kernel and a user mode.
     ///
@@ -290,6 +294,9 @@ namespace kernel
     // Does not need to be an auto_ptr, as it is stored in connections_
     // which handles memory management.
     UGhostConnection* ghost_;
+
+    /// Whether this server is in interactive mode.
+    bool interactive_;
 
     /// Store the server thread Id.
     pthread_t thread_id_;

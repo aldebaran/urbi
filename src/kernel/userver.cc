@@ -91,8 +91,6 @@ namespace kernel
 
   // Global server reference
   UServer* urbiserver = 0;
-  // Whether or not this server in interactive mode.
-  bool interactive = true;
 
   static
   void
@@ -139,6 +137,7 @@ namespace kernel
                                                   boost::ref(*this))))
     , stopall(false)
     , connections_(new kernel::ConnectionSet)
+    , interactive_(true)
     , thread_id_(pthread_self())
     , urbi_root_(urbi_root)
   {
@@ -202,29 +201,6 @@ namespace kernel
         perror("kill");
       // Pacify noreturn.
       exit(EX_HARD);
-    }
-
-    static void sigint_handler(int)
-    {
-      static libport::Time last_call = boost::posix_time::min_date_time;
-      GD_CATEGORY(sched);
-      object::objects_type args;
-
-      if (!kernel::interactive ||
-          libport::time::now() - libport::time::ms(1500) < last_call)
-      {
-        // Restore the default handler in case there is a third SIGINT.
-        signal(SIGINT, SIG_DFL);
-        urbiserver->schedule(urbi::object::global_class,
-                             SYMBOL(shutdown), args);
-        GD_WARN("Shutting down.");
-      }
-      else {
-        urbiserver->ghost_connection_get().shell_get()->async_throw(
-            sched::StopException(-1, object::void_class));
-        GD_WARN("Received SIGINT, killing foreground job.");
-        last_call = libport::time::now();
-      }
     }
 
     static
@@ -302,6 +278,29 @@ namespace kernel
     }
   }
 #endif
+
+  static void sigint_handler(int)
+  {
+    static libport::Time last_call = boost::posix_time::min_date_time;
+    GD_CATEGORY(sched);
+    object::objects_type args;
+
+    if (!kernel::urbiserver->interactive_get() ||
+        libport::time::now() - libport::time::ms(1500) < last_call)
+    {
+      // Restore the default handler in case there is a third SIGINT.
+      signal(SIGINT, SIG_DFL);
+      urbiserver->schedule(urbi::object::global_class,
+                           SYMBOL(shutdown), args);
+      GD_WARN("Shutting down.");
+    }
+    else {
+      urbiserver->ghost_connection_get().shell_get()->async_throw(
+          sched::StopException(-1, object::void_class));
+      GD_WARN("Received SIGINT, killing foreground job.");
+      last_call = libport::time::now();
+    }
+  }
 
   void
   UServer::initialize(bool interactive)

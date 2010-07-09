@@ -503,7 +503,7 @@ namespace urbi
     static bool
     system_interactive()
     {
-      return kernel::interactive;
+      return kernel::urbiserver->interactive_get();
     }
 
     static void
@@ -521,7 +521,7 @@ namespace urbi
 #ifdef WIN32
       // Linux and MacOS are using a POSIX file descriptor integrated in
       // the io_service for stdin, but not Windows.
-      if (kernel::interactive)
+      if (kernel::urbiserver->interactive_get())
         select_time = std::min((libport::utime_t)100000, select_time);
 #endif
       boost::asio::io_service& ios = ::kernel::urbiserver->get_io_service();

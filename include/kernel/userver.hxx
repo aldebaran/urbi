@@ -53,6 +53,18 @@ namespace kernel
     return urbi_root_;
   }
 
+  inline bool
+  UServer::interactive_get() const
+  {
+    return interactive_;
+  }
+
+  inline void
+  UServer::interactive_set(bool i)
+  {
+    interactive_ = i;
+  }
+
 
   /*-------------------------.
   | Freestanding functions.  |

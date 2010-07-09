@@ -437,7 +437,7 @@ namespace urbi
     object::system_class->slot_set(SYMBOL(listenPort),
                                    object::to_urbi(port),
                                    true);
-    kernel::interactive = data.interactive;
+    kernel::urbiserver->interactive_set(data.interactive);
     object::system_class->slot_set(SYMBOL(fast),
                                    object::to_urbi(data.fast),
                                    true);
