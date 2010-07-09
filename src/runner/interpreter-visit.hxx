@@ -311,7 +311,8 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Local* e)
   {
-    const rObject& value = stacks_.get(e);
+    rSlot slot = stacks_.rget(e);
+    rObject value = slot->value();
 
     passert("Local variable read before being set", value);
 
@@ -320,7 +321,18 @@ namespace runner
                        e->name_get(), e->arguments_get(),
                        e->location_get());
     else
+    {
+      if (!object::squash && dependencies_log_get())
+      {
+        bool prev = object::squash;
+        bool& squash = object::squash;
+        FINALLY(((bool&, squash))((bool, prev)), squash = prev);
+        squash = true;
+        dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));
+      }
+
       return value;
+    }
   }
 
 
