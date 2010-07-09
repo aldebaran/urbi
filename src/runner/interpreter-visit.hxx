@@ -136,15 +136,15 @@ namespace runner
 
   struct Interpreter::AtEventData
   {
-    AtEventData(urbi::object::rEvent ev, ast::rExp e)
+    AtEventData(urbi::object::rEvent ev, object::rCode e)
       : event(ev)
       , exp(e)
       , current(0)
       , subscriptions()
     {}
 
-    urbi::object::rEvent event;
-    ast::rExp exp;
+    object::rEvent event;
+    object::rCode exp;
     object::rEvent current;
     std::vector<object::Event::Subscription> subscriptions;
   };
@@ -171,7 +171,9 @@ namespace runner
       dependencies_log = true;
       squash = false;
 
-      v = object::from_urbi<bool>(r(data->exp.get()));
+      object::objects_type args;
+      args.push_back(data->exp);
+      v = object::from_urbi<bool>(r.apply(data->exp, SYMBOL(at_cond), args));
       foreach (object::rEvent evt, r.dependencies_)
         data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
       r.dependencies_.clear();
@@ -189,7 +191,8 @@ namespace runner
   Interpreter::visit(const ast::Event* e)
   {
     object::rEvent res = new object::Event;
-    at_run(new AtEventData (res, e->exp_get()));
+    at_run(new AtEventData(res, dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get())));
+
     return res;
     // std::cerr << "VISIT" << std::endl;
     // std::cerr << *e << std::endl;
