@@ -40,6 +40,7 @@
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
+#include <libport/time.hh>
 #include <libport/tokenizer.hh>
 
 #include <kernel/config.h>
@@ -54,6 +55,7 @@
 #include <ast/ast.hh>
 #include <ast/nary.hh>
 
+#include <urbi/object/global.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/primitive.hh>
@@ -202,6 +204,29 @@ namespace kernel
       exit(EX_HARD);
     }
 
+    static void sigint_handler(int)
+    {
+      static libport::Time last_call = boost::posix_time::min_date_time;
+      GD_CATEGORY(sched);
+      object::objects_type args;
+
+      if (!kernel::interactive ||
+          libport::time::now() - libport::time::ms(1500) < last_call)
+      {
+        // Restore the default handler in case there is a third SIGINT.
+        signal(SIGINT, SIG_DFL);
+        urbiserver->schedule(urbi::object::global_class,
+                             SYMBOL(shutdown), args);
+        GD_WARN("Shutting down.");
+      }
+      else {
+        urbiserver->ghost_connection_get().shell_get()->async_throw(
+            sched::StopException(-1, object::void_class));
+        GD_WARN("Received SIGINT, killing foreground job.");
+        last_call = libport::time::now();
+      }
+    }
+
     static
     inline
     runner::Runner&
@@ -288,6 +313,8 @@ namespace kernel
 # endif
       install_ice_catcher(ice);
 #endif
+    // Setup the handler for Ctrl+C.
+    signal(SIGINT, sigint_handler);
     // Set the initial time to a valid value.
     updateTime();
 
