@@ -295,8 +295,9 @@ namespace kernel
       GD_WARN("Shutting down.");
     }
     else {
-      urbiserver->ghost_connection_get().shell_get()->async_throw(
-          sched::StopException(-1, object::void_class));
+      runner::rShell shell = urbiserver->ghost_connection_get().shell_get();
+      shell->pending_commands_clear();
+      shell->async_throw(sched::StopException(-1, object::void_class));
       GD_WARN("Received SIGINT, killing foreground job.");
       last_call = libport::time::now();
     }
