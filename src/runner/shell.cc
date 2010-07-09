@@ -18,6 +18,7 @@
 #include <urbi/object/tag.hh>
 
 #include <kernel/uconnection.hh>
+#include <kernel/userver.hh>
 #include <runner/shell.hh>
 
 #include <sched/job.hh>
@@ -155,35 +156,50 @@ namespace runner
   {
     while (true)
     {
-      handle_oob_();
-      // Wait until we have some work to do
-      if (commands_.empty())
+      try
       {
-	executing_ = false;
-
-	// The first yield will remember our possible side effect. Subsequent
-	// ones will not and will pretend that we didn't have any side effect,
-	// as we couldn't have influenced the system any further.
-	yield_until_things_changed();
-
-	libport::Finally finally(boost::bind(&Job::side_effect_free_set,
-					     this,
-					     side_effect_free_get()));
-	side_effect_free_set(true);
-	while (commands_.empty())
-	{
-          libport::Finally finally(boost::bind(&Job::side_effect_free_set,
-                                               this,
-                                               side_effect_free_get()));
-	  handle_oob_();
-	  yield_until_things_changed();
-	}
-	executing_ = true;
+        work_();
       }
-
-      handle_command_();
-      yield();
+      // Don't kill the shell when we receive the exception
+      // fired by "connectionTag.stop".
+      catch (const sched::StopException& e)
+      {
+        GD_FINFO_DUMP("shell: StopException ignored: %s", e.what());
+      }
     }
+  }
+
+  void
+  Shell::work_()
+  {
+    handle_oob_();
+    // Wait until we have some work to do
+    if (commands_.empty())
+    {
+      executing_ = false;
+
+      // The first yield will remember our possible side effect. Subsequent
+      // ones will not and will pretend that we didn't have any side effect,
+      // as we couldn't have influenced the system any further.
+      yield_until_things_changed();
+
+      libport::Finally finally(boost::bind(&Job::side_effect_free_set,
+                                           this,
+                                           side_effect_free_get()));
+      side_effect_free_set(true);
+      while (commands_.empty())
+      {
+        libport::Finally finally(boost::bind(&Job::side_effect_free_set,
+                                             this,
+                                             side_effect_free_get()));
+        handle_oob_();
+        yield_until_things_changed();
+      }
+      executing_ = true;
+    }
+
+    handle_command_();
+    yield();
   }
 
   void
@@ -212,5 +228,4 @@ namespace runner
   {
     commands_.clear();
   }
-
 } // namespace runner

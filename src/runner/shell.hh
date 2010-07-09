@@ -29,6 +29,7 @@ namespace runner
 	  sched::Scheduler& scheduler,
 	  const libport::Symbol& name);
     ATTRIBUTE_NORETURN virtual void work();
+    void work_();
     void append_command(const ast::rConstNary& command);
     void insert_oob_call(boost::function0<void> func);
     bool pending_command_get() const;
