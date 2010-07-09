@@ -88,7 +88,9 @@ namespace kernel
   `----------------*/
 
   // Global server reference
-  UServer *urbiserver = 0;
+  UServer* urbiserver = 0;
+  // Whether or not this server in interactive mode.
+  bool interactive = true;
 
   static
   void

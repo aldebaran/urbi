@@ -500,6 +500,12 @@ namespace urbi
       runner().void_error_set(false);
     }
 
+    static bool
+    system_interactive()
+    {
+      return kernel::interactive;
+    }
+
     static void
     system_poll()
     {
@@ -515,7 +521,7 @@ namespace urbi
 #ifdef WIN32
       // Linux and MacOS are using a POSIX file descriptor integrated in
       // the io_service for stdin, but not Windows.
-      if (system_class->slot_get(SYMBOL(interactive))->as_bool())
+      if (kernel::interactive)
         select_time = std::min((libport::utime_t)100000, select_time);
 #endif
       boost::asio::io_service& ios = ::kernel::urbiserver->get_io_service();
@@ -554,12 +560,13 @@ namespace urbi
       DECLARE(cycle);
       DECLARE(eval);
       DECLARE(getenv);
+      DECLARE(interactive);
       DECLARE(jobs);
       DECLARE(loadFile);
-      DECLARE(loadModule);
       DECLARE(loadLibrary);
-      DECLARE(nonInterruptible);
+      DECLARE(loadModule);
       DECLARE(noVoidError);
+      DECLARE(nonInterruptible);
       DECLARE(poll);
       DECLARE(pollLoop);
       DECLARE(programName);

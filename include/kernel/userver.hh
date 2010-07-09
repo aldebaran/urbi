@@ -45,6 +45,7 @@ namespace kernel
 {
   /// Global variable for the server
   extern URBI_SDK_API class UServer* urbiserver;
+  extern URBI_SDK_API bool interactive;
 
   /// The current server.
   UServer& server();
