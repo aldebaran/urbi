@@ -348,7 +348,7 @@ namespace urbi
         version();
 #endif
       data.interactive = IF_OPTION_PARSER(arg_interactive.get(),
-                                           getenv("INTERACTIVE"));
+                                           getenv("URBI_INTERACTIVE"));
       data.fast = IF_OPTION_PARSER(arg_fast.get(), false);
 
 #ifndef NO_OPTION_PARSER
