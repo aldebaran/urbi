@@ -53,6 +53,7 @@ namespace kernel
   void
   UGhostConnection::close()
   {
+    kernel::urbiserver->interactive_set(false);
     closing_ = true;
     error_ = USUCCESS;
   }
