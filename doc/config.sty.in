@@ -7,7 +7,7 @@
 \newcommand{\packagePatchlevel}{@PACKAGE_PATCHLEVEL@}
 \newcommand{\gostaiUrl}{http://www.gostai.com}
 \newcommand{\downloadUrl}{\gostaiUrl/downloads}
-\newcommand{\docurl}{\downloadUrl/\packageTarname-\packageVersion/doc}
+\newcommand{\docurl}{\downloadUrl/\packageTarname/\packageVersion/doc}
 
 % What chapters of "Platforms" should be compiled in?
 @enable_doc_sections@
