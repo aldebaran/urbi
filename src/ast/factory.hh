@@ -135,11 +135,12 @@ namespace ast
                        EventMatch& event,
                        rExp body, rExp onleave) /* const */;
 
-    /// <event> "?" <args> <guard>.
+    /// <event> "?" <args> ~ <duration> if <guard>.
     static
     EventMatch
     make_event_match(const location&,
-                     rExp& event, ast::exps_type* args, ast::rExp guard);
+                     rExp& event, ast::exps_type* args,
+                     ast::rExp duration, ast::rExp guard);
 
     /// Backward compatibility.
     /// "?" <exp> <guard>

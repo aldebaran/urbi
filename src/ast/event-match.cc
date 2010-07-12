@@ -13,6 +13,7 @@
  ** \brief EventMatch implementation.
  */
 
+#include <libport/deref.hh>
 #include <ast/print.hh>
 #include <ast/event-match.hh>
 
@@ -21,17 +22,14 @@ namespace ast
   std::ostream&
   EventMatch::dump(std::ostream& o) const
   {
-    return o << libport::deref << event
-             << " ? "
-             << libport::deref << pattern
-             << " if "
-             << libport::deref << guard;
-  }
-
-  std::ostream&
-  operator<<(std::ostream& o, const EventMatch& e)
-  {
-    return e.dump(o);
+    o << libport::deref << event;
+    if (pattern)
+      o << " ? " << *pattern;
+    if (duration)
+      o << " ~ " << *duration << "s";
+    if (guard)
+      o << " if " << *guard;
+    return o;
   }
 
 }

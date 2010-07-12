@@ -1095,9 +1095,9 @@ exp:
 %token QUEST_MARK "?";
 %type <ast::EventMatch> event_match;
 event_match:
-  exp "?" args.opt guard.opt
+  exp "?" args.opt tilda.opt guard.opt
   {
-    $$ = MAKE(event_match, @$, $[exp], $[args.opt], $[guard.opt]);
+    $$ = MAKE(event_match, @$, $[exp], $[args.opt], $[tilda.opt], $[guard.opt]);
   }
 //<no-space< ? event.
 | "?" exp guard.opt

@@ -409,10 +409,10 @@ namespace ast
   EventMatch
   Factory::make_event_match(const location&,
                             rExp& event,
-                            ast::exps_type* args,
+                            ast::exps_type* args, ast::rExp duration,
                             ast::rExp guard) // const
   {
-    return EventMatch(event, args, guard);
+    return EventMatch(event, args, duration, guard);
   }
 
 
@@ -428,7 +428,7 @@ namespace ast
       aver(args);
       call->arguments_set(0);
     }
-    return make_event_match(l, event, 0, guard);
+    return make_event_match(l, event, 0, 0, guard);
   }
 
 
