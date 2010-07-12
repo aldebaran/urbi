@@ -338,7 +338,11 @@ namespace runner
   {
     CAPTURE_GLOBAL(StackFrame);
     backtrace_type res;
-    foreach (call_type c, call_stack_)
+    /* We need to create StackFrame objects while iterating, which will modify
+     * the call stack, so make a copy.
+     */
+    call_stack_type copy = call_stack_;
+    foreach (call_type c, copy)
     {
       rObject loc = object::nil_class;
       if (c.second)
