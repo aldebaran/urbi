@@ -421,14 +421,14 @@ namespace ast
                             rExp& event,
                             ast::rExp guard) // const
   {
+    ast::exps_type* args = 0;
     ast::rCall call = event.unsafe_cast<ast::Call>();
     if (call && call->arguments_get())
     {
-      ast::exps_type* args = new ast::exps_type(*call->arguments_get());
-      aver(args);
+      args = new ast::exps_type(*call->arguments_get());
       call->arguments_set(0);
     }
-    return make_event_match(l, event, 0, 0, guard);
+    return make_event_match(l, event, args, 0, guard);
   }
 
 
