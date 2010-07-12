@@ -1097,7 +1097,7 @@ exp:
 event_match:
   exp "?" args.opt guard.opt
   {
-    $$ = ast::EventMatch($1, $3, $4);
+    $$ = ast::EventMatch($[exp], $[args.opt], $[guard.opt]);
   }
 //<no-space< ? event.
 | "?" exp guard.opt
@@ -1105,16 +1105,16 @@ event_match:
     up.warn(@$,
             "`?myEvent(Args...)' is deprecated.  "
             "Use `myEvent?(Args...)' instead.");
-    ast::rCall call = $2.unsafe_cast<ast::Call>();
+    ast::rCall call = $[exp].unsafe_cast<ast::Call>();
     if (call && call->arguments_get())
     {
       ast::exps_type* args = new ast::exps_type(*call->arguments_get());
       call->arguments_set(0);
       assert(args);
-      $$ = ast::EventMatch(call, args, $3);
+      $$ = ast::EventMatch(call, args, $[guard.opt]);
     }
     else
-      $$ = ast::EventMatch($2, 0, $3);
+      $$ = ast::EventMatch($[exp], 0, $[guard.opt]);
   }
 //>no-space>
 ;
