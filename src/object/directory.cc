@@ -63,10 +63,6 @@ namespace urbi
     static
     void poll()
     {
-      _watch_fd = inotify_init();
-      if (_watch_fd == -1)
-        FRAISE("unable to start inotify: %s", libport::strerror(errno));
-
       while (true)
       {
         static const size_t name_size_max = 1024;
@@ -75,7 +71,6 @@ namespace urbi
 
         char buffer[buf_size];
         const int len = read(_watch_fd, &buffer, buf_size);
-
         if (len < 0)
         {
           if (errno == EINTR)
@@ -154,6 +149,15 @@ namespace urbi
       path_ = path;
 
 #if HAVE_SYS_INOTIFY_H
+      static bool started = false;
+      if (!started)
+      {
+        _watch_fd = inotify_init();
+        if (_watch_fd == -1)
+          FRAISE("unable to start inotify: %s", libport::strerror(errno));
+        libport::startThread(boost::function0<void>(poll));
+      }
+      started = true;
       int watch = inotify_add_watch(_watch_fd, path->as_string().c_str(),
                                     IN_CREATE | IN_DELETE);
       if (watch == -1)
@@ -266,10 +270,6 @@ namespace urbi
 
       rPrimitive p = new Primitive(&init_bouncer);
       proto->slot_set(SYMBOL(init), p);
-
-#if HAVE_SYS_INOTIFY_H
-      libport::startThread(boost::function0<void>(poll));
-#endif
     }
 
     URBI_CXX_OBJECT_REGISTER(Directory)
