@@ -125,10 +125,10 @@ sleep (2s);
 
 \section{Events}
 \label{sec:tut:events}
-\us enables you to define events, that can be caught with the
-\lstinline|at| and \lstinline|whenever| constructs we saw earlier. You
-can create events by cloning the \lstinline|Event| prototype. They can
-then be emitted with the \lstinline|!| keyword.
+\us enables you to define events, that can be caught with the \lstinline|at|
+and \lstinline|whenever| constructs we saw earlier. You can create events by
+cloning the \refObject{Event} prototype. They can then be emitted with the
+\lstinline|!| keyword.
 
 \begin{urbiscript}[firstnumber=1]
 var myEvent = Event.new;
@@ -145,8 +145,8 @@ myEvent! & myEvent!;
 
 Both \lstinline|at| and \lstinline|whenever| have the same behavior on
 punctual events. However, if you emit an event for a given duration,
-\lstinline|whenever| will keep triggering for this duration, contrary
-to \lstinline|at|.
+\lstinline|whenever| will keep triggering for this duration, contrary to
+\lstinline|at|.
 
 % FIXME: sleep(1s) is required at the end to make this test pass ...
 \begin{urbiunchecked}[firstnumber=1]
