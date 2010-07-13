@@ -11,6 +11,18 @@
 
 This chapter lists the user-visible changes in \usdk releases.
 
+\section{\usdk 2.1.1}
+
+\subsection{New Features}
+\begin{itemize}
+\item Pressing \key{C-c} in the \us shell (\samp{urbi -i}) interrupts the
+  foreground job, and clears the pending commands.  A second \key{C-c} in a
+  row invokes \refSlot[System]{shutdown}, giving a chance to the system to
+  shut down properly.  A third \key{C-c} kills
+  \command{urbi}/\command{urbi-launch}.  See
+  \autoref{sec:tools:urbi:quitting} for more details.
+\end{itemize}
+
 \section{\usdk 2.1}
 Released on 2010-07-08.
 
