@@ -122,16 +122,18 @@ public:
   libport::utime_t ctime;
 };
 
+
+static void onCloseStdin()
+{
+  GD_INFO("stdin Closed.");
+  object::objects_type args;
+  kernel::urbiserver->schedule(urbi::object::global_class,
+                               SYMBOL(shutdown), args);
+}
+
+
 namespace
 {
-  static void onCloseStdin()
-  {
-    GD_INFO("stdin Closed.");
-    object::objects_type args;
-    kernel::urbiserver->schedule(urbi::object::global_class,
-                                 SYMBOL(shutdown), args);
-  }
-
 #ifndef WIN32
   static void onReadStdin(boost::asio::posix::stream_descriptor& sd,
                           boost::asio::streambuf& buffer,
@@ -515,6 +517,7 @@ namespace urbi
           std::cerr << libport::program_name() << ": "
                     << e.what() << std::endl;
           data.interactive = false;
+          onCloseStdin();
         }
         if (!input.empty())
           s.ghost_connection_get().received(input);
