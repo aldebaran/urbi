@@ -30,8 +30,13 @@ class Global.CallMessage
     args.map(function (arg) { arg.eval })
   };
 
-  function argsCount
+  function argsCount()
   {
     args.size
+  };
+
+  function eval()
+  {
+    getSlot("target").callMessage(this)
   };
 };

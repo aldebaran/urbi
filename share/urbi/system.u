@@ -35,10 +35,10 @@ do (System)
   {
     if (this.hasLocalSlot("$opNeg"))
       return |
-    var this.'$fun_rename' =
+    var this.'$funRename' =
       [
-        "has"    => ("in", [(0, 1)]),
-        "hasNot" => ("not in", [(0, 1)]),
+        "has"    => "in",
+        "hasNot" => "not in",
       ] |
     var this.'$opNeg' =
       [
@@ -48,9 +48,60 @@ do (System)
         "<="  => ">",
         "in"  => "not in",
       ] |
-    // add the opposite.
+    // Add the opposite.
     for|(var p: this.'$opNeg')
       this.'$opNeg'[p[1]] = p[0];
+  };
+
+  /// callFormat
+  function callFormat(var res, var message, var args)
+  {
+    '$registerOps' |
+    if (args.size == 1 && message in ["!"])
+      "%s %s" % [message, args[0]]
+    else if (args.size == 2 && message in '$funRename')
+      "%s %s %s" % [args[1], '$funRename'[message], args[0]]
+    else if (args.size == 2 && message in '$opNeg')
+      "%s %s %s" % [args[0], message, args[1]]
+    else if (2 <= args.size)
+    {
+      if (args[0])
+        "%s.%s(%s)" % [args[0], message, args.tail.join(", ")]
+      else
+        "%s(%s)" % [message, args.tail.join(", ")]
+    }
+    else
+    {
+      if (args[0])
+        "%s.%s" % [args[0], message]
+      else
+        "%s" % [message]
+    }
+  };
+
+  /// callNegatedFormat
+  function callNegatedFormat(var res, var message, var args)
+  {
+    if (args.size == 1 && message in ["!"])
+      "%s %s == %s" % [message, args[0], res]
+    else if (args.size == 2 && message in '$funRename')
+      "%s %s %s" % [args[1], '$opNeg'['$funRename'[message]], args[0]]
+    else if (args.size == 2 && message in '$opNeg')
+      "%s %s %s" % [args[0], '$opNeg'[message], args[1]]
+    else if (2 <= args.size)
+    {
+      if (args[0])
+        "%s.%s(%s) == %s" % [args[0], message, args.tail.join(", "), res]
+      else
+        "%s(%s) == %s" % [message, args.tail.join(", "), res]
+    }
+    else
+    {
+      if (args[0])
+        "%s.%s == %s" % [args[0], message, res]
+      else
+        "%s == %s" % [message, res]
+    }
   };
 
   /// assertCall(Message: String | Lazy, Lhs, Rhs).
@@ -60,7 +111,6 @@ do (System)
       throw Exception.Arity.new(call.message, call.args.size, 2) |
     if (!ndebug)
     {
-      '$registerOps' |
       // Support lazy invocations (all arguments are lazy),
       // or a partially lazy one, to ease bouncing from functions.
       var message =
@@ -79,9 +129,11 @@ do (System)
 
       var target = args[0] |
       c.args = args.tail |
+      c.target = target.value.acceptVoid |
 
       // Do the assertion and compute its message if thrown.
-      var res = target.value.acceptVoid.callMessage(c) |
+      var res = c.eval |
+
       assert_(res, {
 
         var unevaluated = Object.new |
@@ -98,73 +150,11 @@ do (System)
             v.val
         }) |
         var argPrint = argVal.map(closure (v) { v.asPrintable }) |
-
-        // Cases where an operator is just a sugar over a function name,
-        // and reorder the argument in consequences.
-        var op = message |
-        if (message in '$fun_rename')
-        {
-          var renamed = '$fun_rename'[message] |
-          op = renamed[0] |
-          var tmp |
-          for|(var sw: renamed[1])
-          {
-            tmp = argStr[sw[0]] |
-            argStr[sw[0]] = argStr[sw[1]] |
-            argStr[sw[1]] = tmp |
-            tmp = argPrint[sw[0]] |
-            argPrint[sw[0]] = argPrint[sw[1]] |
-            argPrint[sw[1]] = tmp |
-          }
-        } |
-
-        // The format string to display the unevaluated assertion.
-        var msg = "" |
-        // The format string to display the assertion with values.
-        var simpleMsg |
-
-        var msgArgs =       [argStr.head, op] + argStr.tail |
-        var simpleMsgArgs = [argPrint.head, op] + argPrint.tail |
-
-        // Binary operators.
-        if (args.size == 2 && op in '$opNeg')
-        {
-          // Output messages for operators
-          msg = "%s %s %s" |
-          simpleMsg = "%s %s %s" |
-          simpleMsgArgs[1] = '$opNeg'[op];
-        }
-        else
-        {
-          // If the assertion is about an implicit target, don't mention
-          // it.
-          if (argStr[0] == "<IMPLICIT>")
-          {
-            msgArgs.removeFront |
-            simpleMsgArgs.removeFront |
-          }
-          else
-            msg = "%s."|
-
-          // Message name.
-          msg += "%s" |
-
-          // Arguments.
-          if (2 <= args.size)
-            msg += "(%s" + ", %s" * (args.size - 2) + ")" |
-
-          simpleMsg = "! " + msg |
-        }|
-
-        // Add resolved values, if differerent from the unevaluated
-        // arguments.
-        if (msgArgs != simpleMsgArgs)
-        {
-          msg += " (" + simpleMsg + ")" |
-          msgArgs += simpleMsgArgs |
-        }|
-
-        msg % msgArgs
+        if (target.asString == "<IMPLICIT>")
+          argStr[0] = argPrint[0] = "" |
+        "%s (%s)"
+          % [callFormat("?", message, argStr),
+             callNegatedFormat(res, message, argPrint)]
       })|
     }
   };
