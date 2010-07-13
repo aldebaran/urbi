@@ -60,6 +60,7 @@
 #include <kernel/connection.hh>
 #include <kernel/ubanner.hh>
 #include <object/symbols.hh>
+#include <urbi/object/global.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/float.hh>
 
@@ -123,6 +124,14 @@ public:
 
 namespace
 {
+  static void onCloseStdin()
+  {
+    GD_INFO("stdin Closed.");
+    object::objects_type args;
+    kernel::urbiserver->schedule(urbi::object::global_class,
+                                 SYMBOL(shutdown), args);
+  }
+
 #ifndef WIN32
   static void onReadStdin(boost::asio::posix::stream_descriptor& sd,
                           boost::asio::streambuf& buffer,
@@ -130,7 +139,11 @@ namespace
                           size_t len)
   {
     if (erc)
+    {
+      if (erc == boost::asio::error::eof)
+        onCloseStdin();
       return;
+    }
     std::istream is(&buffer);
     std::string s;
     s.resize(len);
