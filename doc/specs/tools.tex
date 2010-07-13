@@ -220,6 +220,47 @@ one + two;
 [00000000] 3
 \end{shell}%$
 
+
+\subsection{Quitting}
+\label{sec:tools:urbi:quitting}
+
+To exit \urbi, you can use the command \refSlot[System]{shutdown}, which
+will close the server.
+
+If you are in interactive mode, you can also use the shortcut sequence
+\key{C-d} in the server lobby. The command \lstinline{quit} does not
+shutdown the server, it only closes the current lobby which closes the
+connection while in remote mode (using \command{telnet} for example),
+but only close the interactive mode if performed on the server lobby.
+
+\urbi also comes with a SIGINT handler (action performed when \key{C-c})
+is pressed. If you are in interactive mode, a first \key{C-c} kills the
+foreground job (or does nothing if no job is running on foreground).
+
+For example consider the following piece of code:
+
+\begin{urbiunchecked}
+every (4s)
+  echo("Hello world!");
+\end{urbiunchecked}
+
+If you try to execute this code, you will notice that you can no longer
+execute commands, since the \lstinline{every} job is foreground (because of
+the semi-colon). Now if you press \key{C-c}, the \lstinline{every} job is
+killed, all the commands you may have typed are cleared from the execution
+queue, and you get back with a working interactive mode.
+
+A second \key{C-c} (or SIGINT) within the 1500ms after the first one tries
+to execute \refSlot[System]{shutdown}. And if you press \key{C-c} a third
+time the default behavior is triggered (generally killing the program).
+
+\medskip
+
+In non-interactive mode (after a \refSlot[lobby]{quit} on the server lobby
+for example), the first \key{C-c} tries to execute
+\refSlot[System]{shutdown}, and the second one triggers the default behavior.
+
+
 \section{\command{urbi-image} --- Querying Images from a Server}
 \label{sec:tools:urbi-image}
 
@@ -327,6 +368,10 @@ from any remote host, with \lstinline|UFactory| plugged in, run:
 \begin{shell}
 urbi-launch --start --host 0.0.0.0 --port 54000 ufactory
 \end{shell}
+
+\subsection{Quitting}
+
+Please see \autoref{sec:tools:urbi:quitting}.
 
 
 \section{\command{urbi-send} --- Sending \us Commands to a Server}
