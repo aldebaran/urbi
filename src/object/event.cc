@@ -73,9 +73,9 @@ namespace urbi
       a->frozen--;
     }
 
-    /*---------------.
-    | Urbi functions |
-    `---------------*/
+    /*-----------------.
+    | Urbi functions.  |
+    `-----------------*/
 
     void
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave)
