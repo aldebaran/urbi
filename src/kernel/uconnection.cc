@@ -67,6 +67,8 @@ namespace kernel
     , active_(true)
     , parser_(new parser::UParser())
     , interactive_p_(true)
+    , bytes_sent_(0)
+    , bytes_received_(0)
   {
     // Create the shell.
     shell_ = new runner::Shell(lobby_, server_.scheduler_get(), SYMBOL(shell));
@@ -145,7 +147,7 @@ namespace kernel
     {
       LIBPORT_DEBUG(popData);
       int wasSent = effective_send(popData, toSend);
-
+      bytes_sent_ += wasSent;
       // FIXME: This can never happen, as effective_send
       // returns a size_t which cannot be negative.
       if (wasSent < 0)
@@ -166,6 +168,7 @@ namespace kernel
   void
   UConnection::received(const char* buffer, size_t length)
   {
+    bytes_received_ += length;
     LIBPORT_PING();
 
     recv_queue_->push(buffer, length);

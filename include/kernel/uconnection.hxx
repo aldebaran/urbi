@@ -129,6 +129,19 @@ namespace kernel
     send_queue(s.c_str(), s.length());
   }
 
+  inline
+  size_t
+  UConnection::bytes_sent() const
+  {
+    return bytes_sent_;
+  }
+
+    inline
+  size_t
+  UConnection::bytes_received() const
+  {
+    return bytes_received_;
+  }
 }
 
 #endif // !KERNEL_UCONNECTION_HXX

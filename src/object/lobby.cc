@@ -68,6 +68,22 @@ namespace urbi
       RAISE("`Lobby' objects cannot be cloned");
     }
 
+    size_t
+    Lobby::bytesSent()
+    {
+      if (!connection_)
+        RAISE("Lobby is not connected");
+      return connection_->bytes_sent();
+    }
+
+    size_t
+    Lobby::bytesReceived()
+    {
+      if (!connection_)
+        RAISE("Lobby is not connected");
+      return connection_->bytes_received();
+    }
+
     rLobby
     Lobby::create()
     {
@@ -157,7 +173,8 @@ namespace urbi
     {
 #define DECLARE(Name)                           \
       bind(SYMBOL(Name), &Lobby::Name)
-
+      DECLARE(bytesSent);
+      DECLARE(bytesReceived);
       DECLARE(create);
       DECLARE(lobby);
       DECLARE(quit);

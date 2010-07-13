@@ -210,6 +210,8 @@ namespace kernel
     bool interactive_p() const;
     void interactive_p(bool b);
 
+    size_t bytes_sent() const;
+    size_t bytes_received() const;
   protected:
     //! Sends a buffer through the real connection (redefined in the sub class)
     /*! Must be defined to implement the effective code that sends a
@@ -274,6 +276,11 @@ namespace kernel
 
     /// Whether this connection is interactive.
     bool interactive_p_;
+
+    /// Number of bytes sent so far.
+    size_t bytes_sent_;
+    /// Number of bytes received so far.
+    size_t bytes_received_;
   };
 
 }
