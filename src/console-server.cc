@@ -84,7 +84,6 @@ public:
     , libport::Socket(kernel::UServer::get_io_service())
     , fast(fast)
     , ctime(0)
-    , cinSocket(0)
   {}
 
   virtual ~ConsoleServer()
@@ -120,7 +119,6 @@ public:
 
   bool fast;
   libport::utime_t ctime;
-  libport::Socket* cinSocket;
 };
 
 namespace
