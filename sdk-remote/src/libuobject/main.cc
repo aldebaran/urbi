@@ -18,6 +18,7 @@
 #include <list>
 #include <sstream>
 
+#include <libport/debug.hh>
 #include <libport/cli.hh>
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
@@ -43,8 +44,7 @@ namespace urbi
   UCallbackAction
   debug(const UMessage& msg)
   {
-    msg.client.printf("DEBUG: got a message: %s\n",
-                      string_cast(msg).c_str());
+    GD_SWARN("unexpected message " << msg);
     return URBI_CONTINUE;
   }
 
@@ -52,8 +52,7 @@ namespace urbi
   static
   endProgram(const UMessage& msg)
   {
-    msg.client.printf("ERROR: got a disconnection message: %s\n",
-                      string_cast(msg).c_str());
+    GD_SWARN("got a disconnection message: "<< msg);
     exit(1);
     return URBI_CONTINUE; //stupid gcc
   }
