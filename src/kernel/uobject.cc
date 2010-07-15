@@ -118,6 +118,7 @@ namespace urbi {
       virtual void instanciated(UObject* uob);
       virtual void lock();
       virtual void unlock();
+      virtual boost::asio::io_service& getIoService();
       static inline KernelUContextImpl* instance() {return instance_;}
 
     private:
@@ -900,6 +901,13 @@ namespace urbi
       ::kernel::runner().apply(f, SYMBOL(setTimer), args);
       return TimerHandle(new std::string(stag));
     }
+
+    boost::asio::io_service&
+    KernelUContextImpl::getIoService()
+    {
+      return ::kernel::urbiserver->get_io_service();
+    }
+
     bool
     KernelUObjectImpl::removeTimer(TimerHandle h)
     {
