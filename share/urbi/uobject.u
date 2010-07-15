@@ -177,7 +177,22 @@ do (Global.UObject)
     cnt -= count |
     lobby.__bindingCount[fullname] = cnt |
     if (!cnt && hasSlot(objname) && getSlot(objname).hasSlot(varname))
-      getSlot(objname).getSlot(varname).change.remove(lobby.__bindingFunc[fullname])
+    {
+      // May or may not be present, never mind
+      getSlot(objname).getSlot(varname).change.remove(lobby.__bindingFunc[fullname])|
+      // May be using the shared RTP object
+      if (lobby.hasLocalSlot("sharedRTP")
+          && lobby.__bindingFunc[fullname] === lobby.sharedRTP)
+      {
+        lobby.sharedRTP.unGroupedSendVar(fullname)
+      }|
+      // If specific UObjects are used to handle this binding: destroy them
+      if (lobby.__bindingFunc[fullname].isA(List))
+      {
+        for(var i: lobby.__bindingFunc[fullname])
+          try{i.destroy} catch(var e) {}
+      }
+    }
   };
 };
 
@@ -195,6 +210,7 @@ do (getSlot("UVar"))
   var traceGet = Event.new;
   var traceBind = Event.new;
   var ownerName = "<unknown>";
+  var rtp = false;
   // If this is true, callbacks that throw will be removed from callback lists.
   var eraseThrowingCallbacks = true;
   function asPrintable()
@@ -388,6 +404,9 @@ class Global.'external'
   var UEM_ENDEVENT     = 3;
   var UEM_NEW          = 4;
   var UEM_DELETE       = 5;
+  var UEM_INIT         = 6;
+  var UEM_TIMER        = 7;
+  var UEM_NORTP        = 8; //< Disable RTP for this connection
 
 
   /* external object <objname>: Set clone to send a UEM_NEW message.
@@ -451,6 +470,44 @@ class Global.'external'
     void
   };
 
+  /// Monitor a RTP connexion, call onfail if it does not seem to work
+  function monitorRTP(src, dst, onfail)
+  {
+    while(src.stats["packetSent"] == 0) sleep(period);
+    // Data has been transmitted. Wait a bit...
+    sleep(200ms);
+    // And check if something was received.
+    if (!dst.stats["bytesReceived"])
+    {
+      try
+      {
+        Lobby.systemLobby.echo("RTP connection " + dst.getRemoteHost() + "=>"
+                       + src.getRemoteHost() + " seems to be failing, falling"
+                               "back to TCP");
+      }
+      catch(var e)
+      { // One of the getRemoteHost failed.
+        Lobby.systemLobby.echo("RTP connection with " + lobby.remoteIP
+                               + " seems to be failing, falling back to TCP");
+      };
+      onfail()
+    }
+    // Connection started fine, assume it will stay that way and return.
+  };
+
+  function makeRTPPair()
+  {
+    var rrtp = uobjects.getSlot(lobby._rtp_object_name).new;
+    var port = rrtp.listen("0.0.0.0", "0");
+    var host = lobby.remoteIP;
+    var lrtp = URTP.new;
+    //wall("...connecting to " + host +":" + port);
+    lrtp.connect(host, port);
+    // Destroy local rtp object when the remote disconnects
+    disown({at(Lobby.onDisconnect?(lobby)) try{lrtp.destroy} catch(var e){}});
+    (lrtp, rrtp)
+  };
+
   /// Notify the remote when <objname>.<varname> is modified.
   function 'var'(objname, varname, fr)
   {
@@ -471,6 +528,7 @@ class Global.'external'
     if (!lobby.hasLocalSlot("__bindingCount"))
     {
       var lobby.__bindingCount = [ => ] |
+      // Variable name => bound function for this lobby, or list of UObject
       var lobby.__bindingFunc = [ => ]
     } |
     var currentCount = lobby.__bindingCount.getWithDefault(fullname, 0) |
@@ -491,29 +549,75 @@ class Global.'external'
       if (!v.isVoid())
         obj.updateSlot(varname, v)
     }|
+    // Try to use RTP mode for binaries, or if explicitly requested.
+    if (lobby.hasLocalSlot("_rtp_object_name")
+        && !lobby.hasLocalSlot("noRTP")
+        && (obj.getSlot(varname).rtp
+            ||
+            (!obj.getSlot(varname).val.isVoid
+             && obj.getSlot(varname).val.isA(Binary))))
+    { // Attempt to use RTP mode
+      //wall("attempting RTP connection...");
+      if (!obj.getSlot(varname).val.isVoid
+          && obj.getSlot(varname).val.isA(Binary))
+      {  // each Binary UVar uses its own RTP connection
+        // Those are UObjects, they persist so local variables are fine.
+        (var lrtp, var rrtp) = makeRTPPair;
+        rrtp.localDeliver = objname + "." + varname;
+        lrtp.sendVar(obj.getSlot(varname));
+        lobby.__bindingFunc[fullname] = [rrtp, lrtp];
+        // Fallback to old TCP method if RTP fails.
+        disown(monitorRTP(lrtp, rrtp, closure() { remoteNotifyChange(objname, varname, fr); var lobby.noRTP = true}));
+      }
+      else
+      { // Other data types share one RTP connection
+        if (!lobby.hasSlot("sharedRTP"))
+        {
+          (var lrtp, var rrtp) = makeRTPPair;
+          var lobby.sharedRTP = lrtp;
+          var lobby.remoteSharedRTP = rrtp;
+          disown(monitorRTP(lrtp, rrtp, closure() { remoteNotifyChange(objname, varname, fr); var lobby.noRTP = true}));
+        };
+        lobby.__bindingFunc[fullname] = lobby.sharedRTP;
+        lobby.sharedRTP.groupedSendVar(obj.getSlot(varname));
+      }
+    }
+    else
+    {
+      remoteNotifyChange(objname, varname, fr)
+    }
+  };
+  function remoteNotifyChange(objname, varname, fr)
+  {
     // Create a 'notifyChange' function that generates the UObject
     // message and sends it through the remote connection.
     var uob = uobjects.getSlot(objname)|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
+    var fullname = objname + "." + varname|
     function f()
     {
       var uvar = uob.getSlot(varname) |
       var v = uvar.getSlot({if (uvar.owned) "valsensor" else "val"})
-        .acceptVoid |
+      .acceptVoid |
       if (!v.isNil && !v.isVoid)
         chan << ['external'.UEM_ASSIGNVALUE,
-                 fullname,
-                 v]
+      fullname,
+      v]
     }|
     lobby.__bindingFunc[fullname] = f |
     if (uobjects.hasLocalSlot(fr))
     {
-      uobjects.getSlot(fr).notifies
-       .getWithDefault(objname + "." + varname, [], true) << f|
+        uobjects.getSlot(fr).notifies
+        .getWithDefault(objname + "." + varname, [], true) << f|
     }|
     uobjects.getSlot(objname).getSlot(varname).notifyChange(lobby.handle, f)|
     void
+  };
+
+  function failRTP()
+  {
+    Channel.new(MODULE_TAG) << [UEM_NORTP];
   };
 
   // Bind a function call to the remote side.

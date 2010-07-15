@@ -158,6 +158,7 @@ namespace urbi {
       virtual void setProp(UProperty prop, const UValue& v);
       virtual bool setBypass(bool enable);
       virtual void unnotify();
+      virtual void useRTP(bool enable);
     private:
       UVar* owner_;
       bool bypassMode_;
@@ -1214,6 +1215,14 @@ namespace urbi
     {
       bypassMode_ = enable;
       return true;
+    }
+
+    void KernelUVarImpl::useRTP(bool enable)
+    {
+      StringPair p = split_name(owner_->get_name());
+      rObject o = get_base(p.first);
+      o->slot_get(Symbol(p.second))->slot_set(SYMBOL(rtp),
+                                              object::to_urbi(enable));
     }
 
     void
