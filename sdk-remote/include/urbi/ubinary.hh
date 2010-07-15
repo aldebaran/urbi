@@ -83,10 +83,10 @@ namespace urbi
     /// Return true on success.
     bool parse(std::istringstream& is,
                const std::list<BinaryData>& bins,
-               std::list<BinaryData>::const_iterator& binpos);
+               std::list<BinaryData>::const_iterator& binpos, bool copy=true);
     int parse(const char* message, int pos,
 	      const std::list<BinaryData>& bins,
-	      std::list<BinaryData>::const_iterator& binpos);
+	      std::list<BinaryData>::const_iterator& binpos, bool copy=true);
 
     /// Used by UValue::print for serialization.
     std::ostream& print(std::ostream& o) const;

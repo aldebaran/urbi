@@ -111,10 +111,10 @@ namespace urbi
   int
   UBinary::parse(const char* message, int pos,
 		 const std::list<BinaryData>& bins,
-		 std::list<BinaryData>::const_iterator& binpos)
+		 std::list<BinaryData>::const_iterator& binpos, bool copy)
   {
     std::istringstream is(message + pos);
-    bool ok = parse(is, bins, binpos);
+    bool ok = parse(is, bins, binpos, copy);
     // tellg() might be -1 if we encountered an error.
     int endpos = is.tellg();
     if (endpos == -1)
@@ -125,7 +125,7 @@ namespace urbi
   bool
   UBinary::parse(std::istringstream& is,
 		 const std::list<BinaryData>& bins,
-		 std::list<BinaryData>::const_iterator& binpos)
+		 std::list<BinaryData>::const_iterator& binpos, bool copy)
 
   {
     GD_CATEGORY(UBinary);
@@ -149,9 +149,18 @@ namespace urbi
       GD_FERROR("bin size inconsistency: %s != %s", psize, binpos->size);
       return false;
     }
-    common.size = psize;
-    common.data = malloc(psize);
-    memcpy(common.data, binpos->data, common.size);
+    if (copy)
+    {
+      common.size = psize;
+      common.data = malloc(psize);
+      memcpy(common.data, binpos->data, common.size);
+    }
+    else
+    {
+      common.size = psize;
+      common.data = binpos->data;
+      this->allocated_ = false;
+    }
     ++binpos;
 
     // Skip spaces.
