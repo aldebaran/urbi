@@ -581,14 +581,22 @@ class Global.'external'
   };
   at (Lobby.onDisconnect?(var l))
   {
+    nonInterruptible;
     // Remove all the remote uobjects created by this lobby.
-    for (var o: uobjects.localSlotNames)
+    for| (var o: uobjects.localSlotNames)
     {
-      if (uobjects.getSlot(o).hasSlot("lobby")
-	&& uobjects.getSlot(o).lobby === l)
+      if (!uobjects.getSlot(o).isVoid
+          && uobjects.getSlot(o).hasSlot("lobby")
+          && uobjects.getSlot(o).lobby === l)
       {
         // Destroy will remove the object from uobjects
-        uobjects.getSlot(o).destroy
+        try
+        { // Someone else might be doing the same thing right now, ignore
+          // errors
+          uobjects.getSlot(o).destroy
+        }
+        catch(var e)
+        {}
       }
     }
   };
