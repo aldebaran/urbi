@@ -615,6 +615,8 @@ uvar_get(const std::string& name)
 {
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
+  if (!o)
+    runner::raise_lookup_error(libport::Symbol(name), object::global_class);
   return urbi_get(o, p.second);
 }
 
@@ -624,6 +626,8 @@ uvar_set(const std::string& name, rObject val)
 {
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
+  if (!o)
+    runner::raise_lookup_error(libport::Symbol(name), object::global_class);
   return urbi_set(o, p.second, val);
 }
 
@@ -634,6 +638,8 @@ uvar_uowned_get(const std::string& name)
   LIBPORT_DEBUG("uowned get for "<<name);
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
+  if (!o)
+    runner::raise_lookup_error(libport::Symbol(name), object::global_class);
   return o->slot_get(Symbol(p.second))
     ->slot_get(SYMBOL(val));
 }
@@ -644,6 +650,8 @@ uvar_uowned_set(const std::string& name, rObject val)
   LIBPORT_DEBUG("uowned set for "<<name);
   StringPair p = split_name(name);
   rObject o = get_base(p.first);
+  if (!o)
+    runner::raise_lookup_error(libport::Symbol(name), object::global_class);
   rObject v = o->slot_get(Symbol(p.second));
   object::objects_type args = list_of (v) (val);
   return ::kernel::runner().apply(v->slot_get(SYMBOL(writeOwned)),
@@ -1147,6 +1155,7 @@ namespace urbi
         rObject o = (owner_->owned
                      ? ::uvar_uowned_get(owner_->get_name())
                      : ::uvar_get(owner_->get_name()));
+        aver(o);
         if (object::rUValue bv = o->as<object::UValue>())
           return bv->value_get();
         else
