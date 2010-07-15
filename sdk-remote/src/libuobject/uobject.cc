@@ -596,8 +596,10 @@ namespace urbi
     void
     RemoteUContextImpl::declare_event(const UEvent* owner)
     {
-      std::string r = "var " + owner->get_name() + " = Event.new()|;";
-      URBI_SEND_COMMAND_C((*client_), r);
+      // Event may or may not already exist.
+      std::string r = "try{var " + owner->get_name() + " = Event.new()}"
+      " catch(var e) {}";
+      URBI_SEND_PIPED_COMMAND_C((*client_), r);
     }
 
     void
