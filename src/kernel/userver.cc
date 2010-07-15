@@ -290,16 +290,21 @@ namespace kernel
     {
       // Restore the default handler in case there is a third SIGINT.
       signal(SIGINT, SIG_DFL);
-      urbiserver->schedule(urbi::object::global_class,
-                           SYMBOL(shutdown), args);
-      GD_WARN("Shutting down.");
+      args.push_back(object::to_urbi(std::string("Shutting down.")));
+      urbiserver->schedule(urbiserver->ghost_connection_get().lobby_get(),
+                           SYMBOL(echo), args);
+      args = object::objects_type();
+      urbiserver->schedule(urbi::object::global_class, SYMBOL(shutdown), args);
     }
     else {
       runner::rShell shell = urbiserver->ghost_connection_get().shell_get();
       shell->pending_commands_clear();
       shell->async_throw(sched::StopException(-1, object::void_class));
-      GD_WARN("Received SIGINT, killing foreground job.");
+      args.push_back(object::to_urbi(
+          std::string("Received SIGINT, killing foreground job.")));
       last_call = libport::time::now();
+      urbiserver->schedule(urbiserver->ghost_connection_get().lobby_get(),
+                           SYMBOL(echo), args);
     }
   }
 
