@@ -103,6 +103,8 @@ namespace urbi
 
   UVar::~UVar()
   {
+    if (temp)
+      unnotify();
     if (impl_)
       impl_->clean();
     delete impl_;
