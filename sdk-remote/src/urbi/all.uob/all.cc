@@ -15,6 +15,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <urbi/uobject.hh>
+#include <urbi/uclient.hh>
 
 GD_ADD_CATEGORY(all);
 
@@ -42,11 +43,11 @@ public:
     /** BYPASS check **/
     UBindFunction(all, setBypassNotifyChangeBinary);
     UBindFunction(all, setBypassNotifyChangeImage);
-    UBindFunction(all, markBypass);
+    UBindFunctions(all, markBypass, markRTP);
     UBindFunction(all, selfWriteB);
     UBindFunction(all, selfWriteI);
 
-    UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args);
+    UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args, unnotify);
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
@@ -114,6 +115,9 @@ public:
     UBindFunction(all, sendNamedEvent);
 
     UBindFunction(all, throwException);
+    UBindFunction(all, socketStats);
+    UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate);
+    UNotifyChange(periodicWriteRate, &all::onRateChange);
     vars[0] = &a;
     vars[1] = &b;
     vars[2] = &c;
@@ -125,6 +129,29 @@ public:
     ++destructionCount;
   }
 
+  void onRateChange(urbi::UVar&)
+  {
+    USetUpdate((ufloat)periodicWriteRate * 1000.0);
+  }
+  virtual int update()
+  {
+    int target = periodicWriteTarget;
+    int type = periodicWriteType;
+    switch(type)
+    {
+    case urbi::DATA_STRING:
+      *vars[target] = string_cast(libport::utime());
+      break;
+    case urbi::DATA_BINARY:
+      selfWriteB(target,  string_cast(libport::utime()));
+      break;
+    case urbi::DATA_DOUBLE:
+    default:
+      *vars[target] = libport::utime();
+      break;
+    }
+    return 0;
+  }
   int setBypassNotifyChangeBinary(const std::string& name)
   {
     threadCheck();
@@ -141,6 +168,15 @@ public:
   {
     threadCheck();
     return vars[id]->setBypass(state);
+  }
+  int markRTP(int id, bool state)
+  {
+    vars[id]->useRTP(state);
+    return 0;
+  }
+  void unnotify(int id)
+  {
+    vars[id]->unnotify();
   }
   int onBinaryBypass(urbi::UVar& var)
   {
@@ -308,9 +344,12 @@ public:
   int onChange(urbi::UVar& v)
   {
     threadCheck();
-    int val = v;
     lastChange = v.get_name();
-    lastChangeVal = val;
+    if (v.type() == urbi::DATA_DOUBLE)
+    {
+      int val = v;
+      lastChangeVal = val;
+    }
     if ((std::string)removeNotify == v.get_name())
     {
       v.unnotify();
@@ -663,6 +702,17 @@ public:
       throw "KABOOM";
   }
 
+  std::vector<unsigned long> socketStats()
+  {
+    std::vector<unsigned long> res;
+    urbi::UClient* cl = urbi::getDefaultClient();
+    if (!cl)
+      return res;
+   res.push_back(cl->bytesSent());
+   res.push_back(cl->bytesReceived());
+   return res;
+  }
+
   urbi::UVar a, b, c, d;
   urbi::UVar* vars[4];
   urbi::UEvent ev;
@@ -677,6 +727,14 @@ public:
   urbi::UVar lastAccessVal;
   //Set to 0 in ctor, 1 in init
   urbi::UVar initCalled;
+
+  // Periodic write target (0, 1 or 2 for a, b or c)
+  urbi::UVar periodicWriteTarget;
+  // Write rate (seconds)
+  urbi::UVar periodicWriteRate;
+  // Write data type
+  urbi::UVar periodicWriteType;
+
   // If an UVar with the name in removeNotify reaches a callback,
   // unnotify will be called.
   urbi::UVar removeNotify;

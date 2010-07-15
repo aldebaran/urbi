@@ -138,6 +138,8 @@ namespace urbi
     /// as all callbacks have returned.
     bool setBypass(bool enable=true);
 
+    /// Use RTP mode to transmit this variable if possible.
+    void useRTP(bool enable=true);
     impl::UVarImpl* impl_;
     const UValue& val() const;
   private:
@@ -171,6 +173,8 @@ namespace urbi
 
     /// True if the variable is a temporary and must not be stored in callbacks
     PRIVATE(bool, temp);
+
+    PRIVATE(bool, rtp);
 # undef PRIVATE
 
     // Check that the invariants of this class are verified.

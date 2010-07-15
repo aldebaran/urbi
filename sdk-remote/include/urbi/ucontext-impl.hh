@@ -179,6 +179,7 @@ namespace urbi
       virtual void setProp(UProperty prop, const UValue& v) = 0;
       virtual bool setBypass(bool enable) = 0;
       virtual void unnotify() = 0;
+      virtual void useRTP(bool enable) = 0;
     };
   }
 }

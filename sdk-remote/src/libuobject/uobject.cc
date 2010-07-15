@@ -14,6 +14,7 @@
 #include <sstream>
 #include <list>
 #include <libport/containers.hh>
+#include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
@@ -95,6 +96,7 @@ namespace urbi
       : client_(client)
       , closed_(false)
       , dummyUObject(0)
+      , enableRTP(true)
     {
       client_->setCallback(callback(*this, &RemoteUContextImpl::dispatcher),
                            externalModuleTag.c_str());
@@ -483,6 +485,10 @@ namespace urbi
         if (i != timerMap.end())
           i->second.second->call();
         }
+        break;
+      case UEM_NORTP:
+        GD_WARN("Disabling RTP as requested by engine");
+        enableRTP = false;
         break;
       default:
         msg.client.printf("Component Error: "

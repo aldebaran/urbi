@@ -12,7 +12,9 @@
 
 #include <libport/format.hh>
 
+#include <libport/debug.hh>
 #include <libport/escape.hh>
+#include <libport/lexical-cast.hh>
 
 #include <urbi/uabstractclient.hh>
 #include <urbi/ublend-type.hh>
@@ -107,24 +109,138 @@ namespace urbi
     ctx->varmap().clean(*owner_);
   }
 
+  static std::string getHostname()
+  {
+    char hn[1024];
+    gethostname(hn, 1024);
+    return hn;
+  }
+
+  std::string RemoteUContextImpl::makeRTPLink(const std::string& key)
+  {
+    /* Setup RTP mode
+    * We create two instances of the URTP UObject: one local to this
+    * remote, and one plugged in the engine, and connect them together.
+    */
+    // Spawn a new local RTP instance
+    std::string localRTP = "URTP_" + getHostname() + "_"
+    + string_cast(getpid());
+    RemoteUContextImpl::objects_type::iterator oi =
+    objects.find(localRTP);
+    if (oi == objects.end())
+      return "";
+    baseURBIStarter* bsa = oi->second->cloner;
+    std::string linkName = localRTP + "_" + key;
+    GD_SINFO_TRACE("Instanciating local RTP " << linkName);
+    linkName[linkName.find_first_of(".")] = '_';
+    bsa->instanciate(this, linkName);
+    // Call init
+    localCall(linkName, "init");
+
+    // Spawn a remote RTP instance and bind it.
+    // Also destroy it when this remote disconnects
+    std::string rLinkName = linkName + "_l";
+    *client_ << "var " << rLinkName <<" = URTP.new|"
+    <<"disown({var t = Tag.new | t:at(Lobby.onDisconnect?(lobby)) {"
+    << "wall(\" destroying lRTP...\")|"
+    << "try { " << rLinkName << ".destroy} catch(var e) {};t.stop}})|;";
+    GD_SINFO_TRACE("fetching engine listen port...");
+    UMessage* mport =
+    client_->syncGet(rLinkName +".listen(\"0.0.0.0\", \"0\");");
+    if (!mport || mport->type != MESSAGE_DATA
+        || mport->value->type != DATA_DOUBLE)
+    {
+      GD_SWARN("Failed to get remote RTP port, disabling RTP");
+      enableRTP = false;
+      return "";
+    }
+    int port = mport->value->val;
+    delete mport;
+    GD_SINFO_TRACE("...ok: " << port);
+    // Invoke the connect method on our RTP instance. Having a reference
+    // to URTP symbols would be painful, so pass through our
+    // UGenericCallback mechanism.
+    localCall(linkName, "connect", client_->getRemoteHost(),
+              port);
+    UObject* ob = getUObject(linkName);
+    rtpLinks[key]  = ob;
+    // Monitor this RTP link.
+    (*client_) << "detach('external'.monitorRTP(" << linkName << ","
+    << rLinkName << ", closure() {'external'.failRTP}))|" << std::endl;
+    return linkName;
+  }
 
   void
   RemoteUVarImpl::set(const UValue& v)
   {
-    client_->startPack();
-    (*client_) << owner_->get_name() << "=";
+    RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
     if (v.type == DATA_BINARY)
     {
-      UBinary& b = *(v.binary);
-      client_->sendBinary(b.common.data, b.common.size,
+      bool rtpOK = false;
+      std::string localRTP = "URTP_" + getHostname() + "_"
+      + string_cast(getpid());
+      if (ctx->enableRTP && getUObject(localRTP))
+      {
+        GD_SINFO_TRACE("Trying RTP mode using " << localRTP);
+        RemoteUContextImpl::RTPLinks::iterator i
+          = ctx->rtpLinks.find(owner_->get_name());
+        if (i == ctx->rtpLinks.end())
+        {
+          std::string linkName = ctx->makeRTPLink(owner_->get_name());
+          if (linkName.empty())
+            goto rtpfail;
+
+          std::string rLinkName = linkName + "_l";
+          (*ctx->client_)
+           << rLinkName << ".receiveVar(\"" << owner_->get_name()
+           <<"\")|";
+          i = ctx->rtpLinks.find(owner_->get_name());
+        }
+        ctx->localCall(i->second->__name, "send", v);
+        rtpOK = true;
+      }
+    rtpfail:
+      if (!rtpOK)
+      {
+        client_->startPack();
+        (*client_) << owner_->get_name() << "=";
+        UBinary& b = *(v.binary);
+        client_->sendBinary(b.common.data, b.common.size,
                             b.getMessage());
-      (*client_) << "|;";
+        (*client_) << "|;";
+        client_->endPack();
+      }
     }
-    else if (v.type == DATA_STRING)
-      (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\"|";
     else
-      *client_ << v << "|";
-    client_->endPack();
+    {
+      bool rtp = false;
+      if (ctx->enableRTP && owner_->get_rtp())
+      {
+        RemoteUContextImpl::RTPLinks::iterator i
+          = ctx->rtpLinks.find("_shared_");
+        if (i == ctx->rtpLinks.end())
+        {
+          std::string linkName = ctx->makeRTPLink("_shared_");
+          if (linkName.empty())
+            goto rtpfail2;
+          i = ctx->rtpLinks.find("_shared_");
+        }
+        ctx->localCall(i->second->__name, "sendGrouped",
+                         owner_->get_name(), v);
+        rtp = true;
+      }
+    rtpfail2:
+      if (!rtp)
+      {
+        client_->startPack();
+        (*client_) << owner_->get_name() << "=";
+        if (v.type == DATA_STRING)
+          (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\"|";
+        else
+          *client_ << v << "|";
+        client_->endPack();
+      }
+    }
   }
 
   const UValue& RemoteUVarImpl::get() const
@@ -218,5 +334,14 @@ namespace urbi
     }
     callbacks_.clear();
   };
+  void RemoteUVarImpl::useRTP(bool enable)
+  {
+    std::string name = owner_->get_name();
+    size_t p = name.find_first_of(".");
+    if (p == name.npos)
+      throw std::runtime_error("Invalid argument to unnotify: "+name);
+    send(name.substr(0, p) + ".getSlot(\"" + name.substr(p+1, name.npos)
+         + "\").rtp = " + (enable?"true;":"false;"));
+  }
   }
 } //namespace urbi

@@ -179,6 +179,13 @@ namespace urbi
     if (!impl_)
       throw std::runtime_error("Invalid use of unbound UVar");
   }
+
+  inline void
+  UVar::useRTP(bool state)
+  {
+    rtp = state;
+    impl_->useRTP(state);
+  }
 } // end namespace urbi
 
 #endif // ! URBI_UVAR_HXX

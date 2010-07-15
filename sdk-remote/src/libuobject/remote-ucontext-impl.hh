@@ -72,6 +72,10 @@ namespace urbi
       /// Dispatch a message on our connection
       UCallbackAction dispatcher(const UMessage& msg);
       USyncClient* getClient();
+      /** Make a new RTP link with the engine, using hash key \b key.
+       * @return the local UObject name
+       */
+      std::string makeRTPLink(const std::string& key);
       USyncClient* client_;
       /// True if we received a clientError message.
       bool closed_;
@@ -111,6 +115,11 @@ namespace urbi
         std::pair<libport::AsyncCallHandler, UTimerCallback*> > TimerMap;
       TimerMap timerMap;
       libport::Lockable mapLock;
+      // Pool of RTP connections (key= UVar name)
+      typedef boost::unordered_map<std::string, UObject*> RTPLinks;
+      RTPLinks rtpLinks;
+      // Use RTP connections in this context if available
+      bool enableRTP;
     };
 
     class URBI_SDK_API RemoteUObjectImpl: public UObjectImpl
@@ -147,6 +156,7 @@ namespace urbi
       virtual void setProp(UProperty prop, const UValue& v);
       virtual bool setBypass(bool enable);
       virtual void unnotify();
+      virtual void useRTP(bool enable);
       void update(const UValue& v);
 
     private:

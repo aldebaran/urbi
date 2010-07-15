@@ -43,7 +43,8 @@ namespace urbi
     UEM_NEW,
     UEM_DELETE,
     UEM_INIT, // Internal, force loading of all uobjects
-    UEM_TIMER // Internal timer messages
+    UEM_TIMER, // Internal timer messages
+    UEM_NORTP  // Disable RTP for this connection
   };
 
   static const std::string externalModuleTag = "__ExternalMessage__";
