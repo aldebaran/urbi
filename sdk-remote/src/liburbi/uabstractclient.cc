@@ -1181,6 +1181,8 @@ namespace urbi
   std::ostream&
   unarmorAndSend(const char* a, UAbstractClient* where)
   {
+    aver(a);
+    aver(where);
     std::ostream& s = *where;
     if (strlen(a)>2)
     {
