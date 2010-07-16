@@ -154,7 +154,7 @@ namespace urbi
       enableRTP = false;
       return "";
     }
-    int port = mport->value->val;
+    int port = int(mport->value->val);
     delete mport;
     GD_SINFO_TRACE("...ok: " << port);
     // Invoke the connect method on our RTP instance. Having a reference
