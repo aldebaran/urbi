@@ -769,12 +769,10 @@ namespace urbi
      URBI(()) << "headPan.val="<<12<<";";
   */
 
-# ifdef URBI
-#  undef URBI
-# endif
-
-# define URBI(A)				\
+# ifndef URBI
+#  define URBI(A)				\
   ::urbi::unarmorAndSend(#A)
+# endif
 
   static const char semicolon = ';';
   static const char pipe = '|';

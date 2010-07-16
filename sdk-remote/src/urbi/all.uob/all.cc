@@ -14,8 +14,10 @@
 #include <libport/unistd.h>
 #include <sstream>
 #include <stdexcept>
-#include <urbi/uobject.hh>
+
 #include <urbi/uclient.hh>
+#undef URBI
+#include <urbi/uobject.hh>
 
 GD_ADD_CATEGORY(all);
 
