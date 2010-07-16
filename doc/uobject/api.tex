@@ -229,6 +229,13 @@ The following types for arguments and return value are supported:
 \item \lstinline{std::list} or \lstinline{std::vector} of the above types.
 \end{itemize}
 
+\subsection{Multiple bindings}
+
+If you have multiple functions to bind, you can use the
+\lstinline|UBindFunctions| macro to bind multiple functions at once:
+
+\lstinline|UBindFunctions(\var{class-name}, \var{function1}, \var{function2}...)|.
+
 \subsection{Asynchronous binding}
 Functions bound using \lstinline{UBindFunction} are called synchronously, and
 thus block everything until they return.
@@ -464,9 +471,9 @@ retrieved by calling \lstinline{getUObjectHub (string classname)}. The
 hub also holds the list of registered UObject in its members
 attribute.
 
-\section{Sending \urbi code}
+\section{Sending \us code}
 
-If you need to send \urbi code to the server, the \lstinline{URBI()}
+If you need to send \us code to the server, the \lstinline{URBI()}
 macro is available, as well as the \lstinline{send()} function. You
 can either pass it a string, or directly \urbi code inside a double
 pair of parentheses:
@@ -485,6 +492,29 @@ call:
 call("System", "someFunc", 12, "foo");
 \end{urbiunchecked}
 
+\section{Using RTP transport in remote mode}
+
+By default, \urbi uses TCP connections for all communications between the engine
+and remote UObjects. \urbi also supports the UDP-based RTP protocol for more
+efficient transmission of updated variable values. RTP will provide a lower
+latency at the cost of possible packet loss, especially in bad wireless network
+conditions.
+
+\subsection{Enabling RTP}
+
+To enable RTP connections, both the engine and the remote-mode urbi-launch
+containing your remote \uob must load the rtp \uob. This can be achieved by
+passing \lstinline|urbi/rtp| as an extra argument to both urbi-launch command
+lines (one for the engine, the other for your remote \uob).
+
+Once done, all binary data transfer (like sound and image) in both directions
+will by default use a RTP connection.
+
+\subsection{Per-UVar control of RTP mode}
+
+You can control whether a specific \UVar uses RTP mode by calling its
+\lstinline|useRTP(bool)| function. Each binary-type \UVar will have its own RTP
+connection, and all non-binary \UVar will share one.
 
 %%% Local Variables:
 %%% mode: latex
