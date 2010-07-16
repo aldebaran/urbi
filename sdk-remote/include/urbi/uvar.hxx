@@ -31,6 +31,7 @@ namespace urbi
     , impl_(0)
     , vardata(0)
     , name("noname")
+    , temp(false)
   {
   }
 
