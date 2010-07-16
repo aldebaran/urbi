@@ -408,6 +408,8 @@ namespace urbi
   UVALUE_DOUBLE(unsigned int)
   UVALUE_DOUBLE(long)
   UVALUE_DOUBLE(unsigned long)
+  UVALUE_DOUBLE(long long)
+  UVALUE_DOUBLE(unsigned long long)
 
 #undef UVALUE_DOUBLE
 

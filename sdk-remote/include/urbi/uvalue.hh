@@ -205,6 +205,8 @@ namespace urbi
     CTOR_AND_ASSIGN_AND_COMMA(long);
     CTOR_AND_ASSIGN_AND_COMMA(unsigned int);
     CTOR_AND_ASSIGN_AND_COMMA(unsigned long);
+    CTOR_AND_ASSIGN_AND_COMMA(unsigned long long);
+    CTOR_AND_ASSIGN_AND_COMMA(long long);
 
     // Strings.
     CTOR_AND_ASSIGN_AND_COMMA(const char*);
