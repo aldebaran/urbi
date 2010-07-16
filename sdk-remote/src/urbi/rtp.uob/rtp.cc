@@ -601,7 +601,7 @@ void URTP::sendGrouped(const std::string& name, const UValue& val)
   groupChange->array.back()->list->push_back(val);
   if (first)
     libport::asyncCall(boost::bind(&URTP::commitGroup, this),
-                       (ufloat)commitDelay * 1000000LL,
+                       libport::utime_t((ufloat)commitDelay * 1000000LL),
                        ctx_->getIoService());
 }
 
