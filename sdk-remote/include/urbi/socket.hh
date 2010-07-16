@@ -10,6 +10,7 @@
 
 #ifndef URBI_SOCKET_HH
 # define URBI_SOCKET_HH
+
 #include <libport/asio.hh>
 #include <urbi/uobject.hh>
 namespace urbi
@@ -26,6 +27,8 @@ namespace urbi
     }
     ~UObjectSocket()
     {
+      close();
+      wasDestroyed();
       while (!checkDestructionPermission())
         getCurrentContext()->yield_until(
           libport::utime() + (libport::utime_t)1000);
