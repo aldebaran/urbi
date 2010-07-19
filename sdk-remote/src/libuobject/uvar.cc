@@ -109,13 +109,6 @@ namespace urbi
     ctx->varmap().clean(*owner_);
   }
 
-  static std::string getHostname()
-  {
-    char hn[1024];
-    gethostname(hn, 1024);
-    return hn;
-  }
-
   std::string RemoteUContextImpl::makeRTPLink(const std::string& key)
   {
     /* Setup RTP mode
@@ -123,7 +116,7 @@ namespace urbi
     * remote, and one plugged in the engine, and connect them together.
     */
     // Spawn a new local RTP instance
-    std::string localRTP = "URTP_" + getHostname() + "_"
+    std::string localRTP = "URTP_" + getFilteredHostname() + "_"
     + string_cast(getpid());
     RemoteUContextImpl::objects_type::iterator oi =
     objects.find(localRTP);
@@ -177,7 +170,7 @@ namespace urbi
     if (v.type == DATA_BINARY)
     {
       bool rtpOK = false;
-      std::string localRTP = "URTP_" + getHostname() + "_"
+      std::string localRTP = "URTP_" + getFilteredHostname() + "_"
       + string_cast(getpid());
       if (ctx->enableRTP && getUObject(localRTP))
       {

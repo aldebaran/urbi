@@ -242,6 +242,8 @@ namespace urbi
 
   /// Set maximum number of threads to use for threaded calls (0=unlimited).
   URBI_SDK_API void setThreadLimit(size_t nThreads);
+  /// Return current hostname mangled to fit into an urbiscript variable name.
+  URBI_SDK_API std::string getFilteredHostname();
 
   typedef int UReturn;
   /** Main UObject class definition

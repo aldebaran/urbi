@@ -160,16 +160,10 @@ size_t URTPLink::onRead(const void* data, size_t size)
   return owner_->onRead(data, size);
 }
 
-static std::string getHostname()
-{
-  char hn[1024];
-  gethostname(hn, 1024);
-  return hn;
-}
-
 ::urbi::URBIStarter<URTP>
     starter_URTP(urbi::isPluginMode() ? "URTP"  :
-                 ("URTP_" + getHostname() + "_" + string_cast(getpid())));
+                 ("URTP_" + urbi::getFilteredHostname() + "_"
+                  + string_cast(getpid())));
 
 URTP::URTP(const std::string& n)
  : UObject(n)
