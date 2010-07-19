@@ -66,6 +66,25 @@ case $me in
      ;;
 esac
 
+# Recover EXTRA_CPPFLAGS and EXTRA_LDFLAGS on command line
+set x "$@" myseparator ; shift
+while true; do
+  arg=$1
+  shift
+  case $arg in
+    (EXTRA_CPPFLAGS=*|EXTRA_LDFLAGS=*)
+      var=`echo "$arg" | sed -e 's/=.*//'`
+      val=`echo "$arg" | sed -e 's/[^=]*=//'`
+      eval "$var+=' $val'"
+      ;;
+    (myseparator)
+      break ;;
+    (*)
+      set x "$@" "$arg"; shift
+      ;;
+  esac
+done
+
 # FIXME: Instead of exporting, we should have a means to give
 # it to wrappee only, maybe via command line?
 export UMAKE=$abs_top_builddir/sdk/umake
@@ -80,6 +99,7 @@ set x                                           \
     --kernel="$kernel_dir"                      \
     --prefix="$prefix"                          \
     EXTRA_CPPFLAGS="$EXTRA_CPPFLAGS"            \
+    EXTRA_LDFLAGS="$EXTRA_LDFLAGS"              \
     VPATH="$abs_top_srcdir/src/liburbi"
 shift
 
