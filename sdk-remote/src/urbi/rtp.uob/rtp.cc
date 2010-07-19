@@ -12,6 +12,7 @@
 // Ortp needs a little help to know it's compiling on WIN32.
 #include <libport/config.h>
 #include <libport/detect-win32.h>
+#include <libport/sys/socket.h>
 #include <ortp/ortp.h>
 
 #include <boost/unordered_map.hpp>
