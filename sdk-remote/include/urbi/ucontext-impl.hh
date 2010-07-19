@@ -14,7 +14,9 @@
 #include <set>
 
 #include <boost/function.hpp>
+#include <libport/system-warning-push.hh>
 #include <boost/thread.hpp>
+#include <libport/system-warning-pop.hh>
 
 #include <libport/asio.hh>
 
