@@ -72,5 +72,5 @@ m4sh_scripts += bin/liburbi-check
 # From a test file to a log file.
 # Do not use a regular `.test.log:' rule here, since in that case the
 # following rule (without incoming extension) will mask this one.
-%.log: %$(EXEEXT) $(check_programs)
+$(LIBURBI_TESTS:.cc=.log): %.log: %$(EXEEXT) $(check_programs)
 	@$(am__check_pre) bin/liburbi-check $(srcdir)/$* $(am__check_post)

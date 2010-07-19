@@ -45,10 +45,6 @@ endif
 # do
 #  printf '%s: $(wildcard $(srcdir)/%s/*)\n' ${i%.uob} $i
 # done
-urbi/uaccess$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess.uob/*)
-urbi/uaccess2$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess2.uob/*)
-urbi/uaccess3$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess3.uob/*)
-urbi/uchange$(DLMODEXT): $(wildcard $(srcdir)/urbi/uchange.uob/*)
 urbi/all$(DLMODEXT): $(wildcard $(srcdir)/urbi/all.uob/*)
 urbi/factory$(DLMODEXT): $(wildcard $(srcdir)/urbi/factory.uob/*)
 urbi/generic$(DLMODEXT): $(wildcard $(srcdir)/urbi/generic.uob/*)
@@ -59,4 +55,8 @@ urbi/sensor2$(DLMODEXT): $(wildcard $(srcdir)/urbi/sensor2.uob/*)
 urbi/subsumption$(DLMODEXT): $(wildcard $(srcdir)/urbi/subsumption.uob/*)
 urbi/threaded$(DLMODEXT): $(wildcard $(srcdir)/urbi/threaded.uob/*)
 urbi/timer$(DLMODEXT): $(wildcard $(srcdir)/urbi/timer.uob/*)
+urbi/uaccess$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess.uob/*)
+urbi/uaccess2$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess2.uob/*)
+urbi/uaccess3$(DLMODEXT): $(wildcard $(srcdir)/urbi/uaccess3.uob/*)
+urbi/uchange$(DLMODEXT): $(wildcard $(srcdir)/urbi/uchange.uob/*)
 urbi/ultest$(DLMODEXT): $(wildcard $(srcdir)/urbi/ultest.uob/*)

@@ -19,7 +19,7 @@ EXTRA_DIST += bin/uobject-check.m4sh
 nodist_check_SCRIPTS += bin/uobject-check
 m4sh_scripts += bin/uobject-check
 
-uobjects/%.log: $(top_builddir)/src/urbi/%.la bin/uobject-check
+$(UOBJECTS_TESTS:.uob=.log): uobjects/%.log: $(top_builddir)/src/urbi/%.la bin/uobject-check
 	@$(am__check_pre) bin/uobject-check $< $(am__check_post)
 
 TESTS += $(UOBJECTS_TESTS)
