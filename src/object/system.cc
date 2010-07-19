@@ -513,10 +513,9 @@ namespace urbi
       // 0-delay in fast mode
       if (!system_class->slot_get(SYMBOL(fast))->as_bool())
       {
-        libport::utime_t deadline =
-          ::kernel::urbiserver->scheduler_get().deadline_get();
-          if (deadline != sched::SCHED_IMMEDIATE)
-            select_time = deadline - libport::utime();
+        libport::utime_t deadline = ::kernel::scheduler().deadline_get();
+        if (deadline != sched::SCHED_IMMEDIATE)
+          select_time = deadline - libport::utime();
       }
 #ifdef WIN32
       // Linux and MacOS are using a POSIX file descriptor integrated in
