@@ -29,6 +29,9 @@ if HAVE_ORTP
   urbi/rtp$(DLMODEXT): $(wildcard $(srcdir)/urbi/rtp.uob/*)
   #use lowercase to avoid confusing automake
   EXTRA_rtp_ldflags=$(ORTP_LIBS)
+if  WIN32
+    EXTRA_rtp_ldflags += -lwinmm
+endif WIN32
   EXTRA_rtp_cppflags=$(ORTP_CFLAGS)
 endif
 
