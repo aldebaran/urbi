@@ -28,7 +28,6 @@ SDK_LIBS = @SDK_LIBS@
 
 # CPP.
 CPP = @CPP@
-URBI_KERNEL_PATH = @URBI_KERNEL_PATH@
 
 # Upper case.
 URBI_ENV_CPPFLAGS = -DURBI_ENV_$(shell echo "$(URBI_ENV)" | tr 'a-z' 'A-Z')

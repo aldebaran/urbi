@@ -420,7 +420,6 @@ run eval make -f "$(param_mk)"                  \
     "$target"                                   \
     UMAKE_BUILD_DIR="$builddir"                 \
     UMAKE_URBI_ENV="${core:-remote}"            \
-    URBI_KERNEL_PATH="$(kernel)"                \
     UMAKE_LIBNAME="$UMAKE_LIBNAME"              \
     UMAKE_EXTRALIB="\"$UMAKE_EXTRALIB\""        \
     UMAKE_LINK="$UMAKE_LINK"                    \
