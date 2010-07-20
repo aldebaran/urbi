@@ -184,7 +184,8 @@ public:
   {
     threadCheck();
     const urbi::UBinary& cb = var;
-    std::cerr << "onbin cptr " << cb.common.data << std::endl;
+    GD_CATEGORY(all);
+    GD_FINFO_DEBUG("onbin cptr %s", cb.common.data);
     urbi::UBinary& b = const_cast<urbi::UBinary&>(cb);
     for (unsigned int i=0; i<b.common.size; ++i)
       ((char*)b.common.data)[i]++;
@@ -194,7 +195,8 @@ public:
   {
     threadCheck();
     const urbi::UImage& cb = var;
-    std::cerr << "onimg cptr " << (void*)cb.data << std::endl;
+    GD_CATEGORY(all);
+    GD_FINFO_DEBUG("onimg cptr", (void*)cb.data);
     urbi::UImage& b = const_cast<urbi::UImage&>(cb);
     for (unsigned int i=0; i<b.size; ++i)
       b.data[i]++;
@@ -207,7 +209,8 @@ public:
     // Dup since we want to test no-copy op: the other end will write.
     b.common.data = strdup(content.c_str());
     b.common.size = content.length();
-    std::cerr << "writeB cptr " << b.common.data << std::endl;
+    GD_CATEGORY(all);
+    GD_FINFO_DEBUG("writeB cptr %s", b.common.data);
     *vars[idx] = b;
     std::string res((char*)b.common.data, b.common.size);
     free(b.common.data);
@@ -219,7 +222,8 @@ public:
     threadCheck();
     urbi::UImage i;
     i.data = (unsigned char*)strdup(content.c_str());
-    std::cerr << "writeI cptr " << (void*)i.data << std::endl;
+    GD_CATEGORY(all);
+    GD_FINFO_DEBUG("writeI cptr %s", (void*)i.data);
     i.size = content.length();
     *vars[idx] = i;
     std::string res((char*)i.data, i.size);
