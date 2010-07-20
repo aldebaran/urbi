@@ -10,6 +10,8 @@
 
 class Global.CallMessage
 {
+  // Set/updated by Object.callMessage.
+  var code;
   function argString(i)
   {
     args[i].asString

@@ -493,28 +493,30 @@ call("System", "someFunc", 12, "foo");
 \end{urbiunchecked}
 
 \section{Using RTP transport in remote mode}
+\label{sec:uob:api:rtp}
 
-By default, \urbi uses TCP connections for all communications between the engine
-and remote UObjects. \urbi also supports the UDP-based RTP protocol for more
-efficient transmission of updated variable values. RTP will provide a lower
-latency at the cost of possible packet loss, especially in bad wireless network
-conditions.
+By default, \urbi uses TCP connections for all communications between the
+engine and remote UObjects. \urbi also supports the UDP-based \dfn{RTP}
+protocol for more efficient transmission of updated variable values. RTP
+will provide a lower latency at the cost of possible packet loss, especially
+in bad wireless network conditions.
 
 \subsection{Enabling RTP}
 
 To enable RTP connections, both the engine and the remote-mode urbi-launch
-containing your remote \UObject must load the rtp \UObject. This can be achieved by
-passing \lstinline|urbi/rtp| as an extra argument to both urbi-launch command
-lines (one for the engine, the other for your remote \UObject).
+containing your remote \UObject must load the rtp \UObject. This can be
+achieved by passing \lstinline|urbi/rtp| as an extra argument to both
+urbi-launch command lines (one for the engine, the other for your remote
+\UObject).
 
-Once done, all binary data transfer (like sound and image) in both directions
-will by default use a RTP connection.
+Once done, all binary data transfer (like sound and image) in both
+directions will by default use a RTP connection.
 
 \subsection{Per-UVar control of RTP mode}
 
 You can control whether a specific \UVar uses RTP mode by calling its
-\lstinline|useRTP(bool)| function. Each binary-type \UVar will have its own RTP
-connection, and all non-binary \UVar will share one.
+\lstinline|useRTP(bool)| function. Each binary-type \UVar will have its own
+RTP connection, and all non-binary \UVar will share one.
 
 %%% Local Variables:
 %%% mode: latex

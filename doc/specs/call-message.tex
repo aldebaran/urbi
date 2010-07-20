@@ -96,6 +96,33 @@ function code { call.getSlot("code") }|
 assert (code == getSlot("code"));
 \end{urbiscript}
 
+\item[eval] Evaluate \this, and return the result.
+\begin{urbiscript}
+var c1 = do (CallMessage.new)
+{
+  var this.target = 1;
+  var this.message = "+";
+  var this.args = [Lazy.new(function () {2})];
+}|
+assert { c1.eval == 3 };
+
+// A lazy function that returns the sum of this and the second argument,
+// regardless of the first argument.
+function Float.addSecond
+{
+  this + call.evalArgAt(1);
+}|
+var c2 = do (CallMessage.new)
+{
+  var this.target = 2;
+  var this.message = "addSecond";
+  var this.args = [Lazy.new(function (){ assert (false) }),
+                   Lazy.new(function (){ echo (5); 5 })];
+}|
+assert { c2.eval == 7 };
+[00000454] *** 5
+\end{urbiscript}
+
 \item[evalArgAt](<n>)%
   Evaluate the \var{n}-th argument, and return its value.  \var{n}
   must evaluate to an non-negative integer.  Repeated invocations
