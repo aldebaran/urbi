@@ -98,4 +98,12 @@ namespace urbi
 
 } // end namespace urbi
 
+
+# ifdef _MSC_VER
+// Without this, msvc 2005 fails at link time with:
+// unresolved external symbol "public: __thiscall libport::SafeContainer<class std::list,class urbi::UGenericCallback *>::real_value_type::real_value_type(class urbi::UGenericCallback * const &,class libport::SafeContainer<class std::list,class urbi::UGenericCallback *> &)"
+
+template libport::SafeContainer<std::list, urbi::UGenericCallback*>;
+# endif
+
 #endif // ! URBI_UTABLE_HH
