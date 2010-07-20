@@ -1,3 +1,14 @@
+# This file is part of Urbi SDK.
+# Copyright (C) 2008-2010, Gostai S.A.S.
+#
+# This software is provided "as is" without warranty of any kind,
+# either expressed or implied, including but not limited to the
+# implied warranties of fitness for a particular purpose.
+#
+# See the LICENSE file for more information.
+# For comments, bug reports and feedback: http://www.urbiforge.com
+#
+
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
@@ -15,10 +26,9 @@ AC_DEFUN([URBI_SDK],
 	  [$(URBI_RESOLVE_DIR([$bindir]))])
 AC_SUBST_FILE([UMAKE_COMMON])
 UMAKE_COMMON=$srcdir/sdk/umake-common
-AC_CONFIG_FILES([sdk/umake],      [chmod +x sdk/umake])
-AC_CONFIG_FILES([sdk/uinstall],   [chmod +x sdk/uinstall])
-AC_CONFIG_FILES([sdk/umake-link], [chmod +x sdk/umake-link])
-AC_CONFIG_FILES([sdk/wrapper.sh], [chmod +x sdk/wrapper.sh])
+URBI_CONFIG_SCRIPTS([sdk/umake],
+                    [sdk/umake-link],
+                    [sdk/wrapper.sh])
 AC_CONFIG_HEADERS([sdk/config.h])
 AC_CONFIG_FILES([sdk/param.mk],
 		[perl -w ${srcdir}/sdk/eval_makefile.pl])

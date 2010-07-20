@@ -9,7 +9,6 @@ UMAKE_WRAPPERS =                                \
   sdk/umake-shared
 
 UMAKE_CONFIGURED =                              \
-  sdk/uinstall                                  \
   sdk/umake                                     \
   sdk/umake-link
 
