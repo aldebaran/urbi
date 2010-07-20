@@ -196,7 +196,7 @@ public:
     threadCheck();
     const urbi::UImage& cb = var;
     GD_CATEGORY(all);
-    GD_FINFO_DEBUG("onimg cptr", (void*)cb.data);
+    GD_FINFO_DEBUG("onimg cptr %s", (void*)cb.data);
     urbi::UImage& b = const_cast<urbi::UImage&>(cb);
     for (unsigned int i=0; i<b.size; ++i)
       b.data[i]++;
