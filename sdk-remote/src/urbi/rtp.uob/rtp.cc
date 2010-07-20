@@ -13,7 +13,9 @@
 #include <libport/config.h>
 #include <libport/detect-win32.h>
 #include <libport/sys/socket.h>
+#include <libport/system-warning-push.hh>
 #include <ortp/ortp.h>
+#include <libport/system-warning-pop.hh>
 
 #include <boost/unordered_map.hpp>
 
