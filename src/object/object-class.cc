@@ -329,8 +329,9 @@ namespace urbi
       DECLARE(createSlot         , &Object::urbi_createSlot);
       DECLARE(getLocalSlot       , &Object::getLocalSlot);
       DECLARE(getProperty        , &Object::property_get);
+      typedef rObject (Object::*get_slot_type)(Object::key_type);
       DECLARE(getSlot            ,
-              static_cast<rObject (Object::*)(Object::key_type)>(&Object::getSlot));
+              static_cast<get_slot_type>(&Object::getSlot));
       DECLARE(hasProperty        , &Object::property_has);
       DECLARE(hasSlot            , &Object::slot_has);
       DECLARE(locateSlot         , &Object::urbi_locateSlot);
@@ -339,8 +340,10 @@ namespace urbi
       DECLARE(removeSlot         , &Object::urbi_removeSlot);
       DECLARE(setConstSlot       , &Object::urbi_setConstSlot);
       DECLARE(setProperty        , &Object::property_set);
+      typedef rObject (Object::*set_slot_type)(Object::key_type,
+                                               const rObject&);
       DECLARE(setSlot            ,
-              static_cast<rObject (Object::*)(Object::key_type, const rObject&)>(&Object::setSlot));
+              static_cast<set_slot_type>(&Object::setSlot));
       DECLARE(updateSlot         , &Object::urbi_updateSlot);
 #undef DECLARE
     }

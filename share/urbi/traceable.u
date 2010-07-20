@@ -17,14 +17,13 @@ class Global.Traceable
   function backtrace()
   {
     if ('$backtrace'.isVoid)
-      return [] |
-
-    if (!hideSystemFiles)
-      return '$backtrace' |
-
-    '$backtrace'
-      .filter(closure (sf) {
-        !(sf.location.isNil || sf.location.isSystemLocation)
-      })
+      []
+    else if (!hideSystemFiles)
+      '$backtrace'
+    else
+      '$backtrace'
+        .filter(closure (sf) {
+          !(sf.location.isNil || sf.location.isSystemLocation)
+        })
   };
 }

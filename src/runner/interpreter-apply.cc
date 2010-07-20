@@ -252,9 +252,12 @@ namespace runner
       lobby_set(function->lobby_get());
     // Push new frames on the stacks
     stacks_.push_frame(msg, local, captured, self, call);
-    FINALLY(((Stacks&, stacks_))((libport::Symbol, msg))
-            ((size_t, local_pointer))((size_t, captured_pointer))
-            ((rLobby&, lobby_))((rLobby, caller_lobby)),
+    FINALLY(((Stacks&, stacks_))
+            ((libport::Symbol, msg))
+            ((size_t, local_pointer))
+            ((size_t, captured_pointer))
+            ((rLobby&, lobby_))
+            ((rLobby, caller_lobby)),
             stacks_.pop_frame(msg, local_pointer, captured_pointer);
             lobby_ = caller_lobby;
     );
