@@ -550,16 +550,15 @@ class Global.'external'
         obj.updateSlot(varname, v)
     }|
     // Try to use RTP mode for binaries, or if explicitly requested.
+    var tv = obj.getSlot(varname).apply([obj]).acceptVoid|
     if (lobby.hasLocalSlot("_rtp_object_name")
         && !lobby.hasLocalSlot("noRTP")
         && (obj.getSlot(varname).rtp
             ||
-            (!obj.getSlot(varname).val.isVoid
-             && obj.getSlot(varname).val.isA(Binary))))
+            (tv.isA(Binary))))
     { // Attempt to use RTP mode
       //wall("attempting RTP connection...");
-      if (!obj.getSlot(varname).val.isVoid
-          && obj.getSlot(varname).val.isA(Binary))
+      if (tv.isA(Binary))
       {  // each Binary UVar uses its own RTP connection
         // Those are UObjects, they persist so local variables are fine.
         (var lrtp, var rrtp) = makeRTPPair;
