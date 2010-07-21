@@ -525,12 +525,16 @@ namespace urbi
     size_t tosend = std::min(CHUNK_SIZE, s->length - s->pos);
 
     int playlength = tosend *1000 / s->bytespersec;
-    s->uc->send("%s.val = BIN %lu %s %s;\n",
+    std::string header = ((s->format == SOUND_WAV) ? "wav " : "raw ")
+      + (std::string)s->formatString;
+
+    s->uc->send("%s.val = Global.Binary.new(\"%s\", \"\\B(%lu)(",
 		s->device,
+                header.c_str(),
 		static_cast<unsigned long>
-                (tosend + ((s->format == SOUND_WAV) ? sizeof (wavheader) : 0)),
-		(s->format == SOUND_WAV) ? "wav" : "raw",
-		s->formatString);
+                (tosend + ((s->format == SOUND_WAV) ? sizeof (wavheader) : 0))
+		);
+
     if (s->format == SOUND_WAV)
     {
       wavheader wh;
@@ -539,17 +543,18 @@ namespace urbi
       wh.length=tosend+44-8;
       s->uc->sendBin(&wh, sizeof wh);
     }
-
     s->uc->sendBin(s->buffer+s->pos, tosend);
-    s->uc->send("sleep(%s.remain < %d);\n"
-		" %s << ping;\n", s->device, playlength / 2, msg.tag.c_str());
+    s->uc->send(")\")|;sleep({ if (%s.remain < %d) 1ms else 0});\n"
+		" %s << 1;\n", s->device, playlength / 2, msg.tag.c_str());
     s->pos += tosend;
     if (s->pos >= s->length)
     {
       const char* dev = s->device ? s->device : "speaker";
       s->uc->send("%s.val->blend = %s.sendsoundsaveblend;", dev, dev);
+      ///TODO: make this constant modifiable
       if (s->tag && s->tag[0])
-	s->uc->send("%s << 1;\n", s->tag);
+	s->uc->send("waituntil(%s.remain < 65536) | %s << 1;\n", s->device,
+                    s->tag);
       delete[] s->buffer;
       free(s->tag);
       free(s->device);
@@ -604,6 +609,7 @@ namespace urbi
 	s->formatString[0] = 0;
       s->startNotify = false;
       std::string utag = fresh();
+      (*this) << "var " + utag +" = Channel.new(\"" << utag << "\");";
       UCallbackID cid = setCallback(sendSound_, s, utag.c_str());
       // Invoke it 2 times to queue sound.
       if (sendSound_(s, UMessage(*this, 0, utag.c_str(), "*** stop",

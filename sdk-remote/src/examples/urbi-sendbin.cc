@@ -113,11 +113,9 @@ send_data(urbi::UClient& client, const data_type& data)
   try
   {
     std::string content = libport::read_file(data.file);
-    client.sendBin(content.c_str(), content.size(),
-                   "%s = BIN %lu %s;",
-                   data.variable,
-                   static_cast<unsigned long>(content.size()),
-                   data.headers);
+    client << data.variable << " = ";
+    client.sendBinary(content.c_str(), content.size(), data.headers);
+    client << ";";
   }
   catch (const std::exception& e)
   {

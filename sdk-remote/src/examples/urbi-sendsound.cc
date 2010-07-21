@@ -28,16 +28,6 @@ endProgram(const urbi::UMessage&)
   return urbi::URBI_REMOVE;
 }
 
-static urbi::UCallbackAction
-soundFormat(const urbi::UMessage &msg)
-{
-  urbi::UMessage smsg(msg.client, 0, "",
-		      msg.message.c_str(), std::list<urbi::BinaryData>());
-  snd = smsg.value->binary->sound;
-  //sem_post(&sem);
-  return urbi::URBI_REMOVE;
-}
-
 int
 main(int argc, char * argv [])
 {
@@ -64,9 +54,13 @@ main(int argc, char * argv [])
 
   //sem_init(&sem, false, 0);
   //uc->sendCommand(&soundFormat, "speaker.formatlist;");
-  soundFormat(urbi::UMessage(uc,0,"a",
-			     "*** BIN 0 raw 2 16000 16 1",
-			     std::list<urbi::BinaryData>()));  //forcing sound format
+  snd.data = 0;
+  snd.size = 0;
+  snd.soundFormat = urbi::SOUND_RAW;
+  snd.channels = 2;
+  snd.rate = 16000;
+  snd.sampleSize = 16;
+  snd.sampleFormat = urbi::SAMPLE_SIGNED;
   //sem_wait(&sem);
 
   urbi::USound s;
