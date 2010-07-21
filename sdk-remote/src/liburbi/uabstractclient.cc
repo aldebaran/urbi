@@ -524,7 +524,7 @@ namespace urbi
       s->pos = sizeof (wavheader);
     size_t tosend = std::min(CHUNK_SIZE, s->length - s->pos);
 
-    int playlength = tosend *1000 / s->bytespersec;
+    //int playlength = tosend *1000 / s->bytespersec;
     std::string header = ((s->format == SOUND_WAV) ? "wav " : "raw ")
       + (std::string)s->formatString;
 
@@ -544,17 +544,17 @@ namespace urbi
       s->uc->sendBin(&wh, sizeof wh);
     }
     s->uc->sendBin(s->buffer+s->pos, tosend);
-    s->uc->send(")\")|;sleep({ if (%s.remain < %d) 1ms else 0});\n"
-		" %s << 1;\n", s->device, playlength / 2, msg.tag.c_str());
+    ///TODO: make this constant modifiable
+    s->uc->send(")\")|;waituntil(%s.remain < 1000);\n"
+		" %s << 1;\n", s->device, msg.tag.c_str());
     s->pos += tosend;
     if (s->pos >= s->length)
     {
       const char* dev = s->device ? s->device : "speaker";
       s->uc->send("%s.val->blend = %s.sendsoundsaveblend;", dev, dev);
-      ///TODO: make this constant modifiable
+
       if (s->tag && s->tag[0])
-	s->uc->send("waituntil(%s.remain < 65536) | %s << 1;\n", s->device,
-                    s->tag);
+        s->uc->send("%s << 1;\n", s->tag);
       delete[] s->buffer;
       free(s->tag);
       free(s->device);
