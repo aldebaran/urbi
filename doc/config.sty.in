@@ -9,6 +9,8 @@
 \newcommand{\downloadUrl}{\gostaiUrl/downloads}
 \newcommand{\docurl}{\downloadUrl/\packageTarname/\packageVersion/doc}
 
+\titleImage{figs/urbi-sdk/\packageMajor.\packageMinor/cube-and-disc}
+
 % What chapters of "Platforms" should be compiled in?
 @enable_doc_sections@
 
