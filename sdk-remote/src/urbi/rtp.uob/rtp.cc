@@ -162,10 +162,15 @@ size_t URTPLink::onRead(const void* data, size_t size)
   return owner_->onRead(data, size);
 }
 
+static
+std::string
+rtp_id()
+{
+  return libport::format("URTP_%s_%s", getFilteredHostname(), getpid());
+}
+
 ::urbi::URBIStarter<URTP>
-    starter_URTP(urbi::isPluginMode() ? "URTP"  :
-                 ("URTP_" + urbi::getFilteredHostname() + "_"
-                  + string_cast(getpid())));
+starter_URTP(urbi::isPluginMode() ? "URTP" : rtp_id());
 
 URTP::URTP(const std::string& n)
  : UObject(n)

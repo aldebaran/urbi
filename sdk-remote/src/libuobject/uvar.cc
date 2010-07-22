@@ -109,17 +109,23 @@ namespace urbi
     ctx->varmap().clean(*owner_);
   }
 
-  std::string RemoteUContextImpl::makeRTPLink(const std::string& key)
+  static
+  std::string
+  rtp_id()
+  {
+    return libport::format("URTP_%s_%s", getFilteredHostname(), getpid());
+  }
+
+  std::string
+  RemoteUContextImpl::makeRTPLink(const std::string& key)
   {
     /* Setup RTP mode
     * We create two instances of the URTP UObject: one local to this
     * remote, and one plugged in the engine, and connect them together.
     */
     // Spawn a new local RTP instance
-    std::string localRTP = "URTP_" + getFilteredHostname() + "_"
-    + string_cast(getpid());
-    RemoteUContextImpl::objects_type::iterator oi =
-    objects.find(localRTP);
+    std::string localRTP = rtp_id();
+    RemoteUContextImpl::objects_type::iterator oi = objects.find(localRTP);
     if (oi == objects.end())
       return "";
     baseURBIStarter* bsa = oi->second->cloner;
@@ -170,8 +176,7 @@ namespace urbi
     if (v.type == DATA_BINARY)
     {
       bool rtpOK = false;
-      std::string localRTP = "URTP_" + getFilteredHostname() + "_"
-      + string_cast(getpid());
+      std::string localRTP = rtp_id();
       if (ctx->enableRTP && getUObject(localRTP))
       {
         GD_SINFO_TRACE("Trying RTP mode using " << localRTP);
