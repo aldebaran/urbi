@@ -19,7 +19,7 @@ mkcd $builddir
 
 # Find urbi-launch.
 xfind_prog urbi-launch$EXEEXT
-urbi_launch=$xfind_prog_res
+urbi_launch=$xfind_prog_result
 
 # If urbi-launch cannot work because there is no kernel libuobject,
 # skip the test.  Do pass something that will fail to be loaded,

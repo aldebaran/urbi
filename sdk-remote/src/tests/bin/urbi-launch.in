@@ -89,12 +89,12 @@ ld_path_add ()
 
 # repath PATH
 # -----------
-# Set $repath_res to the native path.
+# Set $repath_result to the native path.
 repath ()
 {
   case $(uname -s) in
-    (CYGWIN*)  repath_res=$(cygpath --windows "$1");;
-    (*)        repath_res=$1;;
+    (CYGWIN*)  repath_result=$(cygpath --windows "$1");;
+    (*)        repath_result=$1;;
   esac
 }
 
@@ -105,7 +105,7 @@ urbi_lib ()
   local env="URBI_ROOT_LIB$1"
   local path="$2$LIBSFX"
   repath "$path"
-  setenv $env $repath_res
+  setenv $env $repath_result
 }
 
 # Find the noninstalled libraries.
