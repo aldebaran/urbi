@@ -139,10 +139,14 @@ namespace urbi
     // Spawn a remote RTP instance and bind it.
     // Also destroy it when this remote disconnects
     std::string rLinkName = linkName + "_l";
-    *client_ << "var " << rLinkName <<" = URTP.new|"
-    <<"disown({var t = Tag.new | t:at(Lobby.onDisconnect?(lobby)) {"
-    << "wall(\" destroying lRTP...\")|"
-    << "try { " << rLinkName << ".destroy} catch(var e) {};t.stop}})|;";
+    *client_
+      << "var " << rLinkName <<" = URTP.new|\n"
+      << "disown({var t = Tag.new | t:at(Lobby.onDisconnect?(lobby))\n"
+      << "{\n"
+      << "  wall(\" destroying lRTP...\")|\n"
+      << "  try { " << rLinkName << ".destroy} catch {}|\n"
+      << "  t.stop\n"
+      << "}})|;\n";
     GD_SINFO_TRACE("fetching engine listen port...");
     UMessage* mport =
     client_->syncGet(rLinkName +".listen(\"0.0.0.0\", \"0\");");
@@ -159,13 +163,13 @@ namespace urbi
     // Invoke the connect method on our RTP instance. Having a reference
     // to URTP symbols would be painful, so pass through our
     // UGenericCallback mechanism.
-    localCall(linkName, "connect", client_->getRemoteHost(),
-              port);
+    localCall(linkName, "connect", client_->getRemoteHost(), port);
     UObject* ob = getUObject(linkName);
     rtpLinks[key]  = ob;
     // Monitor this RTP link.
     (*client_) << "detach('external'.monitorRTP(" << linkName << ","
-    << rLinkName << ", closure() {'external'.failRTP}))|" << std::endl;
+               << rLinkName << ", closure() {'external'.failRTP}))|"
+               << std::endl;
     return linkName;
   }
 
