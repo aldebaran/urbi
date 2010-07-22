@@ -254,9 +254,10 @@ int URTP::listen(const std::string& host, const std::string& port)
   GD_CATEGORY(URTP);
   GD_SINFO_DUMP("Listening on " << host <<":" << port);
   boost::system::error_code erc;
-  unsigned short res = Socket::listenUDP(host, port,
-                          boost::bind(&URTP::readFrom, this, _1, _2, _3),
-                          erc);
+  unsigned short res =
+    Socket::listenUDP(host, port,
+                      boost::bind(&URTP::readFrom, this, _1, _2, _3),
+                      erc);
   if (erc)
     throw std::runtime_error(erc.message());
   return res;
@@ -270,10 +271,13 @@ void URTP::readFrom(const void* data, size_t size,
 
 void URTP::connect(const std::string& host, const std::string& port)
 {
-  boost::system::error_code erc  = Socket::connect(host, port, true);
+  boost::system::error_code erc = Socket::connect(host, port, true);
   if (erc)
     throw std::runtime_error(erc.message());
+#define RTP_SOCKET_CONNECTED (1 << 8)
+  session->flags |= RTP_SOCKET_CONNECTED;
 }
+
 void URTP::onError(boost::system::error_code erc)
 {
   onErrorEvent.emit(erc.message());
