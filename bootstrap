@@ -83,11 +83,5 @@ then you need to install Python Bindings for Yaml.
 See README for instructions."
 fi
 
-# The modules.
-here=$PWD
-cd modules
-../build-aux/bin/bootstrap-modules
-cd $here
-
 # Finally, install the GNU Build System and our submodules.
 exec build-aux/bootstrap "$@"
