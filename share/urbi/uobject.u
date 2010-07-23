@@ -473,7 +473,8 @@ class Global.'external'
   /// Monitor a RTP connexion, call onfail if it does not seem to work
   function monitorRTP(src, dst, onfail)
   {
-    while(src.stats["packetSent"] == 0) sleep(period);
+    while (src.stats["packetSent"] == 0)
+      sleep(period);
     // Data has been transmitted. Wait a bit...
     sleep(200ms);
     // And check if something was received.
@@ -481,14 +482,16 @@ class Global.'external'
     {
       try
       {
-        Lobby.systemLobby.echo("RTP connection " + dst.getRemoteHost() + "=>"
-                       + src.getRemoteHost() + " seems to be failing, falling"
-                               "back to TCP");
+        Lobby.systemLobby.echo("RTP connection %s=>%s seems to be failing,"
+                               " falling back to TCP"
+                               % [dst.getRemoteHost, src.getRemoteHost]);
       }
-      catch(var e)
-      { // One of the getRemoteHost failed.
-        Lobby.systemLobby.echo("RTP connection with " + lobby.remoteIP
-                               + " seems to be failing, falling back to TCP");
+      catch
+      {
+        // One of the getRemoteHost failed.
+        Lobby.systemLobby.echo("RTP connection with %s seems to be failing,"
+                               " falling back to TCP"
+                               % lobby.remoteIP);
       };
       onfail()
     }
