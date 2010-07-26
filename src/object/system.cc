@@ -68,7 +68,7 @@ namespace urbi
       return o->as<String>()->value_get();
     }
 
-    /// \param error  if there is an error message, the string to display.
+    /// \param context  if there is an error message, the string to display.
     rObject
     execute_parsed(parser::parse_result_type p,
                    libport::Symbol fun, const std::string& context)

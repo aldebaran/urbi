@@ -173,7 +173,7 @@ namespace runner
   {
     CAPTURE_GLOBAL(Exception);
 
-    // FIXME: should bounce in all case to Exception.'$show'
+    // FIXME: should bounce in all case to Exception.'$show'.
     if (is_a(ue.value_get(), Exception))
       ue.value_get()->call(SYMBOL(DOLLAR_show));
     else

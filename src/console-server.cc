@@ -27,6 +27,7 @@
 #include <libport/exception.hh>
 #include <libport/foreach.hh>
 #include <libport/format.hh>
+
 #ifndef NO_OPTION_PARSER
 # include <libport/option-parser.hh>
 # include <libport/input-arguments.hh>
@@ -35,6 +36,7 @@
 #else
  #define IF_OPTION_PARSER(a, b) b
 #endif
+
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/read-stdin.hh>

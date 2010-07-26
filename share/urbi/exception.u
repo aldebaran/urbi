@@ -14,7 +14,7 @@ class Global.Exception
 
   var message = "<no message>";
 
-  // location and backtrace are defined by the raise function of the
+  // $location and backtrace are defined by the raise function of the
   // interpreter.  They point to where the Exception was thrown, not
   // created.
   var '$location';
@@ -38,7 +38,7 @@ class Global.Exception
       return '$location'.acceptVoid |
 
     if (!'$location'.isVoid
-       && '$location'.begin.file.asString not in System.systemFiles)
+        && '$location'.begin.file.asString not in System.systemFiles)
       '$location'
     else
     {
@@ -226,6 +226,7 @@ class Exception.Scheduling: Exception
 class Exception.Syntax: Exception
 {
   var error = "syntax error";
+  // The location of the syntactical error.
   var loc = "<no location>";
   var input = "<no input>";
 
