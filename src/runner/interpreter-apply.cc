@@ -51,7 +51,7 @@ namespace runner
 
   Interpreter::rObject
   Interpreter::apply_ast(const rObject& target,
-                         const libport::Symbol& message,
+                         libport::Symbol message,
                          const ast::exps_type* arguments,
                          boost::optional<ast::loc> location)
   {
@@ -71,7 +71,7 @@ namespace runner
   Interpreter::rObject
   Interpreter::apply_ast(const rObject& target,
                          const rObject& routine,
-                         const libport::Symbol& message,
+                         libport::Symbol message,
                          const ast::exps_type* input_ast_args,
                          boost::optional<ast::loc> loc)
   {
@@ -202,7 +202,7 @@ namespace runner
 
   object::rObject
   Interpreter::apply_urbi(const rCode& function,
-                          const libport::Symbol& msg,
+                          libport::Symbol msg,
                           const object::objects_type& args,
                           const rObject& call_message)
   {
@@ -328,7 +328,7 @@ namespace runner
 
   object::rObject
   Interpreter::build_call_message(const rObject& code,
-                                  const libport::Symbol& msg,
+                                  libport::Symbol msg,
                                   const object::objects_type& args)
   {
     CAPTURE_GLOBAL(CallMessage);
@@ -459,7 +459,7 @@ namespace runner
   object::rObject
   Interpreter::build_call_message(const rObject& tgt,
 				  const rObject& code,
-                                  const libport::Symbol& msg,
+                                  libport::Symbol msg,
                                   const ast::exps_type& args)
   {
     // Build the list of lazy arguments

@@ -82,7 +82,7 @@ namespace runner
   Interpreter::Interpreter(rLobby lobby,
                            sched::Scheduler& sched,
                            ast::rConstAst ast,
-                           const libport::Symbol& name)
+                           libport::Symbol name)
     : Runner(lobby, sched, name)
     , ast_(ast)
     , code_(0)
@@ -96,7 +96,7 @@ namespace runner
   Interpreter::Interpreter(rLobby lobby,
                            sched::Scheduler& sched,
                            rObject code,
-                           const libport::Symbol& name,
+                           libport::Symbol name,
                            rObject self,
                            const objects_type& args)
     : Runner(lobby, sched, name)
@@ -112,7 +112,7 @@ namespace runner
   }
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
-			   const libport::Symbol& name,
+			   libport::Symbol name,
                            const objects_type& args)
     : Runner(model, name)
     , ast_(0)
@@ -128,7 +128,7 @@ namespace runner
 
   Interpreter::Interpreter(const Interpreter& model,
 			   ast::rConstAst ast,
-			   const libport::Symbol& name)
+			   libport::Symbol name)
     : Runner(model, name)
     , ast_(ast)
     , code_(0)
@@ -144,7 +144,7 @@ namespace runner
                            sched::Scheduler& sched,
                            boost::function0<void> job,
                            rObject self,
-                           const libport::Symbol& name)
+                           libport::Symbol name)
     : Runner(lobby, sched, name)
     , ast_(0)
     , code_(0)
@@ -297,7 +297,7 @@ namespace runner
       rObject parent = tags;
       rObject where = stacks_.this_get();
       tag_chain_type chain = decompose_tag_chain(e);
-      rforeach (const libport::Symbol& elt, chain)
+      rforeach (libport::Symbol elt, chain)
       {
 	// Check whether the concerned level in the chain already
 	// exists.

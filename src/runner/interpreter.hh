@@ -58,17 +58,17 @@ namespace runner
     Interpreter(rLobby lobby,
                 sched::Scheduler& scheduler,
                 ast::rConstAst ast,
-                const libport::Symbol& name);
+                libport::Symbol name);
 
     Interpreter(const Interpreter&,
                 rObject code,
-                const libport::Symbol& name,
+                libport::Symbol name,
                 const objects_type& args = objects_type());
 
     Interpreter(rLobby lobby,
                 sched::Scheduler& sched,
                 rObject code,
-                const libport::Symbol& name,
+                libport::Symbol name,
                 rObject self,
                 const objects_type& args);
 
@@ -76,12 +76,12 @@ namespace runner
                 sched::Scheduler& scheduler,
                 boost::function0<void> job,
                 rObject self,
-                const libport::Symbol& name);
+                libport::Symbol name);
 
     /// Create a copy of a runner starting with another ast.
     Interpreter(const Interpreter&,
                 ast::rConstAst ast,
-                const libport::Symbol& name);
+                libport::Symbol name);
 
     /// Destroy a Interpreter.
     virtual ~Interpreter();
@@ -135,22 +135,22 @@ namespace runner
     ///             is a Code.
     ///
     virtual rObject apply(const rObject& func,
-                          const libport::Symbol msg,
+                          libport::Symbol msg,
                           const object::objects_type& args,
                           const rObject& call_message = 0);
 
     rObject apply(const rObject& function,
-                  const libport::Symbol msg,
+                  libport::Symbol msg,
                   const object::objects_type& args,
                   const rObject& call_message,
                   boost::optional<ast::loc> loc);
 
     virtual rObject apply_call_message(const rObject& function,
-                               const libport::Symbol msg,
-                               const rObject& call_message);
+                                       libport::Symbol msg,
+                                       const rObject& call_message);
 
     rObject apply_call_message(const rObject& function,
-                               const libport::Symbol msg,
+                               libport::Symbol msg,
                                const rObject& call_message,
                                boost::optional<ast::loc> loc);
 
@@ -160,7 +160,7 @@ namespace runner
     /// \param args  effective argument.
     /// \param loc   call location to add the call stack.
     rObject apply_ast(const rObject& tgt,
-                      const libport::Symbol& msg,
+                      libport::Symbol msg,
                       const ast::exps_type* args,
                       boost::optional<ast::loc> loc);
 
@@ -173,7 +173,7 @@ namespace runner
     /// \param loc   call location to add the call stack.
     rObject apply_ast(const rObject& tgt,
                       const rObject& fun,
-                      const libport::Symbol& msg,
+                      libport::Symbol msg,
                       const ast::exps_type* args,
                       boost::optional<ast::loc> loc);
 
@@ -199,13 +199,13 @@ namespace runner
     /// Build a call message
     virtual rObject
     build_call_message(const rObject& code,
-		       const libport::Symbol& msg,
+		       libport::Symbol msg,
                        const object::objects_type& args);
 
     /// Build a call message
     rObject build_call_message(const rObject& tgt,
 			       const rObject& code,
-			       const libport::Symbol& msg,
+			       libport::Symbol msg,
                                const ast::exps_type& args);
 
   public:
@@ -247,7 +247,7 @@ namespace runner
     void init();
     /// Reset result_, set the location and call stack of ue.
     rObject apply_urbi(const rCode& function,
-                       const libport::Symbol& msg,
+                       libport::Symbol msg,
                        const object::objects_type& args,
                        const rObject& call_message);
 
