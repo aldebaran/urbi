@@ -133,6 +133,7 @@ namespace runner
     , ast_(ast)
     , code_(0)
     , result_(0)
+    , call_stack_(model.call_stack_)
     , stacks_(model.lobby_)
   {
     tag_stack_set(model.tag_stack_get_all());

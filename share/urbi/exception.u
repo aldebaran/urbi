@@ -239,20 +239,8 @@ class Exception.Syntax: Exception
 
   function asString()
   {
-    if (location.isVoid)
-      "syntax error: %s: %s" % [loc, message]
-      // Don't display the syntax error location if it is the same as
-      // the location from which the exception was thrown.  This
-      // happens for "direct" syntax errors: at the top level, as
-      // opposed to "load"ing and "eval"ing syntax errors.
-
-      // FIXME: Use Location.'=='.
-    else if (location.asString == loc.asString)
-      "%s: syntax error: %s" % [location, message]
-    else
-      "%s: syntax error: %s: %s" % [location, loc, message]
+    "%s: syntax error: %s" % [loc, message]
   };
-
 };
 
 /*----------------------.

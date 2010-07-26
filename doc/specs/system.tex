@@ -145,7 +145,7 @@ eval("1/0");
 [00008316:error] !!! 1.1-3: /: division by 0
 try
 {
-  eval ("1/0")
+  eval("1/0")
 }
 catch (var e)
 {
@@ -159,6 +159,24 @@ catch (var e)
 };
 \end{urbiscript}
 
+  Nested calls to \refSlot{eval} behave as expected.
+
+\begin{urbiscript}
+eval("/");
+[00001028:error] !!! 1.1: syntax error: unexpected /
+[00001028:error] !!!    called from: 1.1-9: eval
+
+eval("eval(\"/\")");
+[00001032:error] !!! 1.1: syntax error: unexpected /
+[00001032:error] !!!    called from: 1.1-9: eval
+[00001032:error] !!!    called from: 2.1-19: eval
+
+eval("eval(\"eval(\\\"/\\\")\")");
+[00001035:error] !!! 1.1: syntax error: unexpected /
+[00001035:error] !!!    called from: 1.1-9: eval
+[00001035:error] !!!    called from: 1.1-19: eval
+[00001035:error] !!!    called from: 3.1-33: eval
+\end{urbiscript}
 
 \item[getenv](<name>)%
   Return the value of the environment variable \var{name} as a
