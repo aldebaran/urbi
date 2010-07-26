@@ -27,7 +27,7 @@ namespace runner
   public:
     Shell(const rLobby& lobby,
 	  sched::Scheduler& scheduler,
-	  const libport::Symbol& name);
+	  libport::Symbol name);
     ATTRIBUTE_NORETURN virtual void work();
     void work_();
     void append_command(const ast::rConstNary& command);

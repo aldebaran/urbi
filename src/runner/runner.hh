@@ -120,15 +120,15 @@ namespace runner
     ///
     /// One cannot have both a call message and args.
     virtual rObject apply(const rObject& function,
-			  const libport::Symbol msg,
+			  libport::Symbol msg,
 			  const object::objects_type& args,
 			  const rObject& call_message = 0) = 0;
 
     virtual rObject apply_call_message(const rObject& function,
-                                       const libport::Symbol msg,
+                                       libport::Symbol msg,
                                        const rObject& call_message) = 0;
     virtual rObject apply_call_message(const rObject& function,
-                                       const libport::Symbol msg,
+                                       libport::Symbol msg,
                                        const rObject& call_message,
                                        boost::optional<ast::loc> loc) = 0;
 

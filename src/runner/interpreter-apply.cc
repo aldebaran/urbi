@@ -106,7 +106,7 @@ namespace runner
 
   object::rObject
   Interpreter::apply(const rObject& function,
-                     const libport::Symbol msg,
+                     libport::Symbol msg,
                      const object::objects_type& args,
                      const rObject& call_message)
   {
@@ -116,7 +116,7 @@ namespace runner
 
   object::rObject
   Interpreter::apply(const rObject& function,
-                     const libport::Symbol msg,
+                     libport::Symbol msg,
                      const object::objects_type& args,
                      const rObject& call_message,
                      boost::optional<ast::loc> loc)
@@ -164,7 +164,7 @@ namespace runner
 
   object::rObject
   Interpreter::apply_call_message(const rObject& function,
-                                  const libport::Symbol msg,
+                                  libport::Symbol msg,
                                   const rObject& call_message)
   {
     return apply_call_message(function, msg, call_message,
@@ -173,7 +173,7 @@ namespace runner
 
   object::rObject
   Interpreter::apply_call_message(const rObject& function,
-                                  const libport::Symbol msg,
+                                  libport::Symbol msg,
                                   const rObject& call_message,
                                   boost::optional<ast::loc> loc)
   {
