@@ -244,7 +244,6 @@ namespace urbi
       rList payload = new List(pl);
       source()->_active[this] = payload;
       waituntil_release(payload);
-      std::cerr << "Processing callbacks..." << std::endl;
 
       if (getenv("URBI_NEW"))
       {
@@ -273,10 +272,8 @@ namespace urbi
           (*cb)(pl);
       }
 
-      std::cerr << "Processing listeners..." << std::endl;
       foreach (Event::rActions actions, listeners_)
         trigger_job(actions, detach);
-      std::cerr << "Processing callbacks and listeners: done" << std::endl;
     }
 
     void
