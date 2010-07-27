@@ -312,7 +312,7 @@ sub dump_chk ($)
   for my $k (keys %chk)
   {
     my %c = %{$chk{$k}};
-    my $file = "$dir/$c{name}.chk";
+    my $file = "$dir-$c{name}.chk";
     $file{$file} = 1;
     my $out = new BuildAux::XFile ">$file.tmp";
     print $out lineno(%c);
@@ -325,7 +325,7 @@ sub dump_chk ($)
   unlink grep { !$file{$_} } keys %old_file;
 
   # Generate the Makefile.
-  my $local_mk = "$dir/test.mk";
+  my $local_mk = "$dir-test.mk";
   my $mk = new BuildAux::XFile ">$local_mk";
 
   my @file = keys %file;
@@ -357,7 +357,7 @@ sub translate ($)
     if defined $ENV{srcdir};
   $dir =~ s/\.tex$//;
 
-  ensure_dir $dir;
+  ensure_parent_dir $dir;
   dump_chk $dir;
 }
 

@@ -33,7 +33,7 @@ test_tex +=					\
 # specs/string.tex => $(srcdir)/tests/specs/strings/test.mk.  This is
 # the set of these test.mk files.
 test_mks =					\
-  $(patsubst %.tex,$(srcdir)/tests/%/test.mk,	\
+  $(patsubst %.tex,$(srcdir)/tests/%-test.mk,	\
      $(test_tex))
 
 -include $(test_mks)
@@ -47,7 +47,7 @@ EXTRA_DIST +=					\
   tests/test.u
 
 # Generating the test files.
-$(srcdir)/tests/%/test.mk: %.tex $(srcdir)/bin/tex2chk
+$(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
 	srcdir=$(srcdir) move_if_change=$(move_if_change) \
 	  $(srcdir)/bin/tex2chk $<
 
