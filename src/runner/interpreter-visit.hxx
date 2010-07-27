@@ -335,7 +335,18 @@ namespace runner
         bool& squash = object::squash;
         FINALLY(((bool&, squash))((bool, prev)), squash = prev);
         squash = true;
-        dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));
+
+        {
+          GD_TRACE();
+          GD_CATEGORY(Urbi);
+          GD_FPUSH("Register local variable '%s' for at monitoring", e->name_get());
+          dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));
+          object::rObject changed = (*slot)->call(SYMBOL(changed));
+          assert(changed);
+          object::rEvent evt = changed->as<object::Event>();
+          assert(evt);
+          dependency_add(evt.get());
+        }
       }
 
       return value;
