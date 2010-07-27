@@ -15,3 +15,5 @@
 /tests/urbi-sandbox/
 /tests/urbi-sdk/
 /tests/urbiscript
+/tests/*-test.mk
+/tests/*.chk
