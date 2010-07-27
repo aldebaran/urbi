@@ -57,12 +57,30 @@ namespace urbi
           processes_type::iterator it = processes.begin();
           while (it != processes.end())
           {
-            if (waitpid((*it)->pid_, &(*it)->status_, WNOHANG))
-              it = processes.erase(it);
-            else
+            switch (waitpid((*it)->pid_, &(*it)->status_, WNOHANG))
+            {
+            case -1:
+              errnoabort("waitpid");
+            case 0:
               ++it;
+              break;
+            default:
+              it = processes.erase(it);
+              break;
+            }
           }
         }
+        // For some reason, Valgrind 3.6.0, on OS X Snow Leopard, sees
+        // errors in this sleep.
+        //
+        //  Syscall param __semwait_signal(ts) points to unaddressable byte(s)
+        //     at 0x1002AAEB6: __semwait_signal (in /usr/lib/libSystem.B.dylib)
+        //     by 0x1002F7B13: sleep (in /usr/lib/libSystem.B.dylib)
+        //     by 0x100DE7579: urbi::object::Process::monitor_children() (process.cc:55)
+        //     by 0x10004A95D: libport::_startThread(void*) (function_template.hpp:1013)
+        //     by 0x1002A9455: _pthread_start (in /usr/lib/libSystem.B.dylib)
+        //     by 0x1002A9308: thread_start (in /usr/lib/libSystem.B.dylib)
+        //   Address 0x1 is not stack'd, malloc'd or (recently) free'd
         sleep(1);
       }
     }
