@@ -35,38 +35,54 @@ class Global.Exception
   function location()
   {
     if (!hideSystemFiles)
-      return '$location'.acceptVoid |
-
-    if (!'$location'.isVoid
-        && '$location'.begin.file.asString not in System.systemFiles)
+      '$location'.acceptVoid
+    else if (!'$location'.isVoid
+             && '$location'.begin.file.asString not in System.systemFiles)
       '$location'
     else
     {
       var b = backtrace |
-      if (b.size == 0 || b[0].location.isNil)
-        '$location'.acceptVoid
-      else
+      if (b.size != 0
+          && !b[0].location.isNil)
+      {
+        // FIXME: Nasty hack: we need to avoid displaying
+        // "assertCall:" when an assertion exception is displayed.
+        // Actually, we need a means to "skip" a part of the
+        // backtrace, see what's done in the runner for instance.
+        if (b[0].name not in ["assert", "assert_", "assertCall"])
+          routine = b[0].name|
         b[0].location
+      }
     }
   };
 
   function '$show'()
   {
     cerr << "!!! " + this |
-    for| (var sf: backtrace)
-      cerr << "!!!    called from: " + sf
+    // Don't display the top-level stack frame if it's already
+    // been used as location.
+    var bt = backtrace |
+    if (bt.size != 0 && location.acceptVoid == bt[0].location)
+      bt.removeFront|
+    for| (var sf: bt)
+      // FIXME: Read the fixme above.
+      if (sf.name not in ["assert", "assert_", "assertCall"])
+        cerr << "!!!    called from: " + sf
   };
 
   // <loc>: <slot or routine>: <message>
   function asString()
   {
+    // FIXME: This is a hack: calling location might change 'routine'.
+    // Clear this.
+    var loc = location.acceptVoid |
     var res = message |
     if (!slot.isVoid)
       res = "%s: %s" % [slot, res]
     else if (!routine.isVoid)
       res = "%s: %s" % [routine, res] |
-    if (!location.isVoid)
-      res = "%s: %s" % [location, res] |
+    if (!loc.isVoid)
+      res = "%s: %s" % [loc, res] |
     res
   };
 

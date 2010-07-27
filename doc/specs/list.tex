@@ -53,7 +53,7 @@ The list cannot be empty.
 
 \begin{urbiscript}
 [].argMax;
-[00000001:error] !!! list cannot be empty
+[00000007:error] !!! argMax: list cannot be empty
 \end{urbiscript}
 
 
@@ -74,7 +74,7 @@ The list cannot be empty.
 
 \begin{urbiscript}
 [].argMin;
-[00000001:error] !!! list cannot be empty
+[00000011:error] !!! argMin: list cannot be empty
 \end{urbiscript}
 
 \item[asBool]
@@ -108,7 +108,7 @@ The list cannot be empty.
 \begin{urbiscript}
 assert([0, 1, 2].back == 2);
 [].back;
-[00000000:error] !!! back: cannot be applied onto empty list
+[00000017:error] !!! back: cannot be applied onto empty list
 \end{urbiscript}
 
 \item[clear]
@@ -355,7 +355,7 @@ The list cannot be empty.
 
 \begin{urbiscript}
 [].max;
-[00000001:error] !!! list cannot be empty
+[00000001:error] !!! max: list cannot be empty
 \end{urbiscript}
 
 \item[min](<fun> = function(a, b) { a < b })
@@ -373,7 +373,7 @@ The list cannot be empty.
 
 \begin{urbiscript}
 [].min;
-[00000001:error] !!! list cannot be empty
+[00000001:error] !!! min: list cannot be empty
 \end{urbiscript}
 
 \item[range](<begin>, <end> = nil)
@@ -402,8 +402,7 @@ do ([0, 1, 2, 3])
   };
 }|;
 [].range(1, 3);
-[00428697:error] !!! []: invalid index: 1
-[00428697:error] !!!    called from: range, indirect call of []
+[00428697:error] !!! range: invalid index: 1
 \end{urbiscript}
 
 \item[remove](<val>)%

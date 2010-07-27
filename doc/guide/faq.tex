@@ -369,7 +369,9 @@ function Object.get()
 }|;
 // Where is my mind?
 Object.get;
-[00000000:error] !!! lookup failed: mind
+[00000006:error] !!! lookup failed: mind
+[00000007:error] !!!    called from: echo
+[00000008:error] !!!    called from: get
 \end{urbiscript}
 
 \paragraph{Local variables, slots and targets}
@@ -541,7 +543,9 @@ function Object.getHis()
 }|;
 // Call Object's getHis method.
 Object.getHis;
-[00000000:error] !!! lookup failed: hisMind
+[00000032:error] !!! lookup failed: hisMind
+[00000032:error] !!!    called from: echo
+[00000033:error] !!!    called from: getHis
 \end{urbiscript}
 
 Step by step:

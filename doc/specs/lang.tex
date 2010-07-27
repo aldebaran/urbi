@@ -2324,8 +2324,8 @@ function outer() { inner() }|
 // Exceptions propagate to parent call up to the top-level
 outer();
 [00000000:error] !!! exn
-[00000000:error] !!!    called from: 3.20-26: inner
-[00000000:error] !!!    called from: 4.1-7: outer
+[00000000:error] !!!    called from: inner
+[00000000:error] !!!    called from: outer
 \end{urbiscript}
 
 \subsection{Catching exceptions}
@@ -2361,7 +2361,7 @@ test([22, 20]);
 [00002131] *** 42
 test(51);
 [00002143:error] !!! 51
-[00002143:error] !!!    called from: 12.1-8: test
+[00002143:error] !!!    called from: test
 \end{urbiscript}
 
 \subsection{Inspecting exceptions}
