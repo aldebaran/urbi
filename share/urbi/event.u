@@ -33,4 +33,30 @@ do (Event)
     // To watch many at once.
     this
   };
+
+  // Event that triggers if the original event is up for the given
+  // duration. That is, "this ~ duration".
+  function persists(var duration)
+  {
+    var res = Event.new |
+    var control = Tag.new |
+    at (this?)
+    {
+      control:
+        {
+          sleep(duration)|
+          var '$pattern'.instance = res.trigger|
+        }
+    }
+    onleave
+    {
+      control.stop |
+      if ('$pattern'.hasLocalSlot("instance"))
+      {
+        '$pattern'.instance.stop |
+        '$pattern'.removeSlot("instance") |
+      }
+    };
+    return res
+  };
 };
