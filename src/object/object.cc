@@ -160,14 +160,14 @@ namespace urbi
           FINALLY(((bool&, squash))((bool, prev)), squash = prev);
           squash = true;
           GD_CATEGORY(Urbi);
-          GD_FINFO_DUMP("Register slot '%s' for at monitoring", k);
+          GD_TRACE();
+          GD_FPUSH("Register slot '%s' for at monitoring", k);
           r->dependency_add(static_cast<Event*>(res->property_get(SYMBOL(changed)).get()));
           rObject changed = (*res)->call(SYMBOL(changed));
           assert(changed);
           rEvent evt = changed->as<Event>();
           assert(evt);
           r->dependency_add(evt.get());
-          GD_INFO_DUMP("Done registering");
         }
       }
       return *res;

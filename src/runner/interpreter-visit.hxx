@@ -152,10 +152,13 @@ namespace runner
   inline void
   Interpreter::at_run(AtEventData* data, const object::objects_type&)
   {
+    GD_TRACE();
     runner::Interpreter& r = dynamic_cast<runner::Interpreter&>(::kernel::urbiserver->getCurrentRunner());
     bool v;
     // FIXME: optimize: do not unregister and reregister the same dependency
     {
+      GD_CATEGORY(Urbi);
+      GD_FPUSH("Evaluating at condition: %s", data->exp->body_string());
       foreach (object::Event::Subscription& s, data->subscriptions)
         s.stop();
       data->subscriptions.clear();
@@ -179,9 +182,13 @@ namespace runner
       r.dependencies_.clear();
     }
     if (v && !data->current)
+    {
+      GD_PUSH("Triggering at block (enter)");
       data->current = data->event->trigger(object::objects_type());
+    }
     else if (!v && data->current)
     {
+      GD_PUSH("Triggering at block (exit)");
       data->current->stop();
       data->current = 0;
     }
