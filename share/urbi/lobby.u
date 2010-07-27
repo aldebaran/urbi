@@ -115,7 +115,8 @@ do (Lobby)
   // Create an urbi connection to a remote host.
   function reverseConnect(host, port)
   {
-    do(create) {
+    do (create)
+    {
       var socket = Socket.new|
       var socket.receive = closure(t) { receive(t)}|
       write = function(t) { socket.write(t)}|
@@ -147,13 +148,13 @@ do (Lobby)
   // We received a C-c that makes us clear the foreground jobs.
   function sigint_interrupt()
   {
-    echo("Received SIGINT, killing foreground job.");
+    cerr << "!!! received interruption, killing foreground job."
   };
 
   // We received a C-c that makes us shutdown.
   function sigint_shutdown()
   {
-    echo("Shutting down.");
+    cerr << "!!! received interruption, shutting down." |
     System.shutdown;
   };
 
