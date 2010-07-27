@@ -282,29 +282,25 @@ namespace kernel
   static void sigint_handler(int)
   {
     static libport::Time last_call = boost::posix_time::min_date_time;
-    GD_CATEGORY(sched);
-    object::objects_type args;
 
-    if (!kernel::urbiserver->interactive_get() ||
-        libport::time::now() - libport::time::ms(1500) < last_call)
+    if (kernel::urbiserver->interactive_get()
+        && libport::time::ms(1500) < libport::time::now() - last_call)
     {
-      // Restore the default handler in case there is a third SIGINT.
-      signal(SIGINT, SIG_DFL);
-      args.push_back(object::to_urbi(std::string("Shutting down.")));
-      urbiserver->schedule(urbiserver->ghost_connection_get().lobby_get(),
-                           SYMBOL(echo), args);
-      args = object::objects_type();
-      urbiserver->schedule(urbi::object::global_class, SYMBOL(shutdown), args);
-    }
-    else {
+      // First level interrupt.
       runner::rShell shell = urbiserver->ghost_connection_get().shell_get();
       shell->pending_commands_clear();
       shell->async_throw(sched::StopException(-1, object::void_class));
-      args.push_back(object::to_urbi(
-          std::string("Received SIGINT, killing foreground job.")));
       last_call = libport::time::now();
       urbiserver->schedule(urbiserver->ghost_connection_get().lobby_get(),
-                           SYMBOL(echo), args);
+                           SYMBOL(sigint_interrupt));
+    }
+    else
+    {
+      // Second level interrupt.
+      // Restore the default handler in case there is a third SIGINT.
+      signal(SIGINT, SIG_DFL);
+      urbiserver->schedule(urbiserver->ghost_connection_get().lobby_get(),
+                           SYMBOL(sigint_shutdown));
     }
   }
 

@@ -143,4 +143,18 @@ do (Lobby)
       receive("initialize(true);")
     }
   };
+
+  // We received a C-c that makes us clear the foreground jobs.
+  function sigint_interrupt()
+  {
+    echo("Received SIGINT, killing foreground job.");
+  };
+
+  // We received a C-c that makes us shutdown.
+  function sigint_shutdown()
+  {
+    echo("Shutting down.");
+    System.shutdown;
+  };
+
 };

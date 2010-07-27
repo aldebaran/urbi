@@ -236,7 +236,7 @@ namespace kernel
 
   public:
     void schedule(urbi::object::rObject target, libport::Symbol method,
-                  const urbi::object::objects_type& args);
+                  const urbi::object::objects_type& args = urbi::object::objects_type());
 
   private:
     struct AsyncJob
