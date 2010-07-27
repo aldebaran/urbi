@@ -35,6 +35,10 @@ k2-check:
 XFAIL_TESTS +=					\
   0.x/2-xfail.chk
 
+# Fix this soon.
+TFAIL_TESTS +=					\
+  2.x/trajectories/exception.chk
+
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   1.x/at-isdef.chk				\

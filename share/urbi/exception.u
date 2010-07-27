@@ -34,7 +34,14 @@ class Global.Exception
 
   function location()
   {
-    if (!hideSystemFiles)
+    // Syntax errors are located where the syntax error is, not where
+    // the exception was thrown from (e.g., the "eval" or "load"
+    // call).  This location is stored in 'loc', while '$location' is
+    // always set by the generic exception throwing mechanism
+    // (Interpreter::raise).
+    if (hasLocalSlot("loc"))
+      loc
+    else if (!hideSystemFiles)
       '$location'.acceptVoid
     else if (!'$location'.isVoid
              && '$location'.begin.file.asString not in System.systemFiles)

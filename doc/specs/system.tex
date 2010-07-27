@@ -160,23 +160,25 @@ catch (var e)
 };
 \end{urbiscript}
 
-  Nested calls to \refSlot{eval} behave as expected.
+  Nested calls to \refSlot{eval} behave as expected.  Note that the
+  locations in the inner calls refer to the position inside the evaluated
+  string.
 
 \begin{urbiscript}
 eval("/");
 [00001028:error] !!! 1.1: syntax error: unexpected /
-[00001028:error] !!!    called from: 1.1-9: eval
+[00001028:error] !!!    called from: eval
 
 eval("eval(\"/\")");
 [00001032:error] !!! 1.1: syntax error: unexpected /
 [00001032:error] !!!    called from: 1.1-9: eval
-[00001032:error] !!!    called from: 2.1-19: eval
+[00001032:error] !!!    called from: eval
 
 eval("eval(\"eval(\\\"/\\\")\")");
 [00001035:error] !!! 1.1: syntax error: unexpected /
 [00001035:error] !!!    called from: 1.1-9: eval
 [00001035:error] !!!    called from: 1.1-19: eval
-[00001035:error] !!!    called from: 3.1-33: eval
+[00001035:error] !!!    called from: eval
 \end{urbiscript}
 
 \item[getenv](<name>)%
