@@ -285,7 +285,7 @@ namespace urbi
     void
     Event::stop()
     {
-      stop_backend(false);
+      stop_backend(true);
     }
 
     void
