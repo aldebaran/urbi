@@ -54,7 +54,7 @@ namespace runner
              bool skip)
   {
     // Too dangerous to try to print arg1 etc. here, as it certainly
-    // involves running urbiScript code.
+    // involves running urbiscript code.
     // assert_user_mode(exn_name, "");
     assert_ne(exn_name, SYMBOL(Exception));
     Runner& r = dbg::runner_or_sneaker_get();

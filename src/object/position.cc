@@ -161,8 +161,7 @@ namespace urbi
         delete pos_.filename;
       pos_.filename = 0;
       if (o != nil_class)
-        pos_.filename =
-          new libport::Symbol(from_urbi<std::string>(o));
+        pos_.filename = new libport::Symbol(from_urbi<std::string>(o));
     }
 
     /*-----------------.
@@ -172,10 +171,9 @@ namespace urbi
     void
     Position::initialize(CxxObject::Binder<Position>& bind)
     {
-      bind(SYMBOL(EQ_EQ),
-           (bool (Position::*)(rPosition rhs) const) &Position::operator ==);
-      bind(SYMBOL(LT),
-           (bool (Position::*)(rPosition rhs) const) &Position::operator <);
+      typedef bool (Position::*comparison_type)(rPosition rhs) const;
+      bind(SYMBOL(EQ_EQ), (comparison_type) &Position::operator ==);
+      bind(SYMBOL(LT), (comparison_type) &Position::operator <);
       bind(SYMBOL(MINUS), &Position::operator -);
       bind(SYMBOL(PLUS), &Position::operator +);
       bind(SYMBOL(lines), &Position::lines);
