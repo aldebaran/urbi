@@ -352,6 +352,12 @@ scope.hh
 scope.hh~
 scope.hxx
 scope.hxx~
+serializer.cc
+serializer.cc~
+serializer.hh
+serializer.hh~
+serializer.stamp
+serializer.stamp~
 stmt.cc
 stmt.cc~
 stmt.hh
