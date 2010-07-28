@@ -281,39 +281,62 @@ namespace runner
     /// The current exception when executing a "catch" block.
     rObject current_exception_;
 
-    // Work around limitations of VC++ 8.
-#define FINALLY_Scope(DefineOrUse)                                      \
-    FINALLY_ ## DefineOrUse(Scope,                                      \
-                            ((Interpreter*, i))                         \
-                            ((bool&, non_interruptible_))               \
-                            ((bool, non_interruptible))                 \
-                            ((bool, redefinition_mode))                 \
-                            ((bool, void_error)),                       \
-                            i->cleanup_scope_tag();                     \
-                            non_interruptible_ = non_interruptible;     \
-                            i->redefinition_mode_set(redefinition_mode); \
-                            i->void_error_set(void_error);              \
-    )                                                                   \
-
-#define FINALLY_Do(DefineOrUse)                                 \
-    FINALLY_ ## DefineOrUse(Do,                                 \
-                            ((Stacks&, stacks_))                \
-                            ((rObject&, old_tgt)),              \
-                            stacks_.this_switch(old_tgt))
-
-#define FINALLY_Try(DefineOrUse)                                \
-    FINALLY_ ## DefineOrUse(Try,                                \
-                            ((rObject&, current_exception_))    \
-                            ((rObject&, old_exception)),        \
-                            current_exception_ = old_exception)
-
-    FINALLY_Scope(DEFINE);
-    FINALLY_Do(DEFINE);
-    FINALLY_Try(DEFINE);
-
     struct AtEventData;
     static void
-    at_run(AtEventData* data, const object::objects_type& = object::objects_type());
+    at_run(AtEventData* data,
+           const object::objects_type& = object::objects_type());
+
+
+    // Work around limitations of VC++ 2005.
+#define FINALLY_at_run(DefineOrUse)             \
+    FINALLY_ ## DefineOrUse                     \
+    (at_run,                                    \
+     ((bool&, squash))                          \
+     ((bool, prev))                             \
+     ((bool&, dependencies_log)),               \
+     squash = prev; dependencies_log = false)
+
+#define FINALLY_Do(DefineOrUse)                 \
+    FINALLY_ ## DefineOrUse                     \
+    (Do,                                        \
+     ((Stacks&, stacks_))                       \
+     ((rObject&, old_tgt)),                     \
+     stacks_.this_switch(old_tgt))
+
+#define FINALLY_Local(DefineOrUse)              \
+    FINALLY_ ## DefineOrUse                     \
+    (Local,                                     \
+     ((bool&, squash))                          \
+     ((bool, prev)),                            \
+     squash = prev)
+
+#define FINALLY_Scope(DefineOrUse)                      \
+    FINALLY_ ## DefineOrUse                             \
+    (Scope,                                             \
+     ((Interpreter*, i))                                \
+     ((bool&, non_interruptible_))                      \
+     ((bool, non_interruptible))                        \
+     ((bool, redefinition_mode))                        \
+     ((bool, void_error)),                              \
+     i->cleanup_scope_tag();                            \
+     non_interruptible_ = non_interruptible;            \
+     i->redefinition_mode_set(redefinition_mode);       \
+     i->void_error_set(void_error);                     \
+      )
+
+#define FINALLY_Try(DefineOrUse)                \
+    FINALLY_ ## DefineOrUse                     \
+    (Try,                                       \
+     ((rObject&, current_exception_))           \
+     ((rObject&, old_exception)),               \
+     current_exception_ = old_exception)
+
+    FINALLY_at_run(DEFINE);
+    FINALLY_Do(DEFINE);
+    FINALLY_Local(DEFINE);
+    FINALLY_Scope(DEFINE);
+    FINALLY_Try(DEFINE);
+
   };
 
 } // namespace runner

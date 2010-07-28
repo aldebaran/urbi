@@ -153,7 +153,7 @@ namespace runner
   Interpreter::at_run(AtEventData* data, const object::objects_type&)
   {
     GD_TRACE();
-    runner::Interpreter& r = dynamic_cast<runner::Interpreter&>(::kernel::urbiserver->getCurrentRunner());
+    runner::Interpreter& r = ::kernel::interpreter();
     bool v;
     // FIXME: optimize: do not unregister and reregister the same dependency
     {
@@ -167,10 +167,7 @@ namespace runner
       bool prev = squash;
 
       bool& dependencies_log = r.dependencies_log_;
-      FINALLY(((bool&, squash))
-              ((bool, prev))
-              ((bool&, dependencies_log)),
-              squash = prev; dependencies_log = false);
+      FINALLY_at_run(USE);
       dependencies_log = true;
       squash = false;
 
@@ -198,7 +195,9 @@ namespace runner
   Interpreter::visit(const ast::Event* e)
   {
     object::rEvent res = new object::Event;
-    at_run(new AtEventData(res, dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get())));
+    at_run(new AtEventData
+           (res,
+            dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get())));
 
     return res;
     // std::cerr << "VISIT" << std::endl;
@@ -333,18 +332,19 @@ namespace runner
       {
         bool prev = object::squash;
         bool& squash = object::squash;
-        FINALLY(((bool&, squash))((bool, prev)), squash = prev);
+        FINALLY_Local(USE);
         squash = true;
 
         {
           GD_TRACE();
           GD_CATEGORY(Urbi);
-          GD_FPUSH("Register local variable '%s' for at monitoring", e->name_get());
+          GD_FPUSH("Register local variable '%s' for at monitoring",
+                   e->name_get());
           dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));
           object::rObject changed = (*slot)->call(SYMBOL(changed));
-          assert(changed);
+          aver(changed);
           object::rEvent evt = changed->as<object::Event>();
-          assert(evt);
+          aver(evt);
           dependency_add(evt.get());
         }
       }
@@ -552,7 +552,7 @@ namespace runner
   Interpreter::visit(const ast::Dictionary* e)
   {
     object::rDictionary res = new object::Dictionary();
-    /// Dictonary with a base was caught at parse time.
+    /// Dictionary with a base was caught at parse time.
     aver(!e->base_get());
     foreach (ast::modifiers_type::value_type exp, e->value_get())
     {
