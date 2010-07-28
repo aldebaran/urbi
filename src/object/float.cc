@@ -38,13 +38,6 @@
 
 #include <urbi/runner/raise.hh>
 
-#define MANUAL_NAN_INF_COND                                     \
-  /* MSVC displays "1.#INF/1.#QNAN" instead of "inf/nan" */     \
-  defined _MSC_VER ||                                           \
-  /* gcc 4.5.0  inf/inf --> -nan */                             \
-  (defined __GNUC__ && __GNUC__ == 4 && __GNUC_MINOR__ == 5)
-
-
 namespace urbi
 {
   namespace object
@@ -139,65 +132,76 @@ namespace urbi
       return std::numeric_limits<libport::ufloat>::quiet_NaN();
     }
 
+    static bool
+    format_manual(float value, std::string& res, const std::string& prefix = "")
+    {
+      // We format nan and inf by ourselves because behavior differs
+      // between toolchains, for instance:
+      // * Visual gives "1.#INF" and "1.#QNAN".
+      // * GCC 4.{4,5} gives "-nan" for negative NaNs.
+      // FIXME: this approach does not support %20s and so forth.  The
+      // easiest is then probably to reuse the FormatInfo, but with a
+      // string "nan" etc.
+      if (std::isnan(value))
+      {
+        // The "+" prefix is not obeyed, but " " is.
+        res = prefix == " " ? " nan" : "nan";
+        return true;
+      }
+      else if (std::isinf(value))
+      {
+        // " inf", "+inf" etc.
+        res = prefix + (value < 0 ? "-inf" : "inf");
+        return true;
+      }
+      return false;
+    }
+
 #if !defined COMPILATION_MODE_SPACE
     std::string
     Float::format(rFormatInfo finfo) const
     {
-      // FIXME: We should also support %20s and so forth.  The easiest
-      // is then probably to reuse the FormatInfo, but with a string
-      // "nan" etc.
-# if MANUAL_NAN_INF_COND
-      if (std::isnan(value_))
-        // The "+" prefix is not obeyed, but " " is.
-        return finfo->prefix_get() == " " ? " nan" : "nan";
-      else if (std::isinf(value_))
-        // " inf", "+inf" etc.
-        return finfo->prefix_get() + (0 < value_ ? "inf" : "-inf");
-      else
-# endif
+      std::string manual;
+      if (format_manual(value_, manual, finfo->prefix_get()))
+        return manual;
+
+      std::string pattern(finfo->pattern_get());
+
+      replace(pattern.begin(), pattern.end(), 's', 'g');
+      replace(pattern.begin(), pattern.end(), 'd', 'g');
+      replace(pattern.begin(), pattern.end(), 'D', 'G');
+      try
       {
-        std::string pattern(finfo->pattern_get());
-
-        replace(pattern.begin(), pattern.end(), 's', 'g');
-        replace(pattern.begin(), pattern.end(), 'd', 'g');
-        replace(pattern.begin(), pattern.end(), 'D', 'G');
-        try
-        {
-          return libport::format(pattern,
-                                 libport::numeric_cast<long long>(value_));
-        }
-        catch (const libport::bad_numeric_cast&)
-        {
-          // Do nothing.
-        }
-
-        if (finfo->spec_get() == "x" || finfo->spec_get() == "o")
-          runner::raise_bad_integer_error(value_);
-        return libport::format(pattern, value_);
+        return libport::format(pattern,
+                               libport::numeric_cast<long long>(value_));
       }
+      catch (const libport::bad_numeric_cast&)
+      {
+        // Do nothing.
+      }
+
+      if (finfo->spec_get() == "x" || finfo->spec_get() == "o")
+        runner::raise_bad_integer_error(value_);
+      return libport::format(pattern, value_);
     }
 #endif
 
     std::string
     Float::as_string() const
     {
-#if MANUAL_NAN_INF_COND
-      if (std::isnan(value_))
-        return "nan";
-      else if (std::isinf(value_))
-        // " inf", "+inf" etc.
-        return 0 < value_ ? "inf" : "-inf";
-      else
-#endif
-        try
-        {
-          return libport::format("%1%",
-                                 libport::numeric_cast<long long>(value_));
-        }
-        catch (const libport::bad_numeric_cast&)
-        {
-          return libport::format("%1%", value_);
-        }
+      std::string manual;
+      if (format_manual(value_, manual))
+        return manual;
+
+      try
+      {
+        return libport::format("%1%",
+                               libport::numeric_cast<long long>(value_));
+      }
+      catch (const libport::bad_numeric_cast&)
+      {
+        return libport::format("%1%", value_);
+      }
     }
 
     Float::value_type
