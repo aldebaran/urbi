@@ -8,7 +8,7 @@
 
 \section{PubSub.Subscriber}
 
-\lstinline|Subscriber| is created by \lstinline|PubSub.subscribe|.  It
+\lstinline|Subscriber| is created by \refSlot[PubSub]{subscribe}.  It
 provides methods to access to the list of values published by
 \lstinline|PubSub| instances.
 
@@ -21,9 +21,9 @@ provides methods to access to the list of values published by
 \subsection{Construction}
 
 A \lstinline|PubSub.Subscriber| can be created with a call to
-\lstinline|PubSub.subscribe|.  This way of creating a
-\lstinline|Subscriber| adds the subscriber as a watcher of values
-published on the instance of \lstinline|PubSub|.
+\refSlot[PubSub]{subscribe}.  This way of creating a \lstinline|Subscriber|
+adds the subscriber as a watcher of values published on the instance of
+\refObject{PubSub}.
 
 \begin{urbiscript}[firstnumber=1]
 var ps = PubSub.new |;

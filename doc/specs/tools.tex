@@ -251,14 +251,42 @@ the semicolon). Now if you press \key{C-c}, the \lstinline{every} job is
 killed, all the pending commands you may have typed are cleared from the
 execution queue, and you get back with a working interactive mode.
 
+\begin{urbiunchecked}
+every (1s) echo("Hello world!");
+[00010181] *** Hello world!
+[00011181] *** Hello world!
+// This command is entered while the foreground job blocks the evaluation.
+// It waits to be executed.
+echo("done");
+[00012181] *** Hello world!
+[00013181] *** Hello world!
+
+// Pressing Control-C here:
+[00014100:error] !!! received interruption, killing foreground job.
+// Note that the "echo" is not run, the command queue is flushed.
+
+// New commands are honored.
+echo("interrupted");
+[00019709] *** interrupted
+\end{urbiunchecked}
+
 A second \key{C-c} (or SIGINT) within the 1.5s after the first one tries to
-execute \refSlot[System]{shutdown}.  Pressing \key{C-c} a third time
-triggers the default behavior: killing the program in emergency, by-passing
-all the cleanups.
+execute \refSlot[System]{shutdown}.  This can take a while, in particular if
+you have remote UObjects, since a clean shutdown will first take care of
+disconnecting them cleanly.
+
+\begin{urbiunchecked}
+// Two Control-C in a row.
+[00493865:error] !!! received interruption, killing foreground job.
+[00494672:error] !!! received interruption, shutting down.
+\end{urbiunchecked}
+
+Pressing \key{C-c} a third time triggers the default behavior: killing the
+program in emergency, by-passing all the cleanups.
 
 \medskip
 
-In non-interactive mode (after a \refSlot[lobby]{quit} on the server lobby
+In non-interactive mode (after a \refSlot[Lobby]{quit} on the server lobby
 for example), the first \key{C-c} executes \refSlot[System]{shutdown}, and
 the second one triggers the default behavior.
 

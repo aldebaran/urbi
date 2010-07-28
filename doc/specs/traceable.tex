@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2010, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -18,8 +18,8 @@ This prototype is not made to be constructed.
 
 \begin{urbiscriptapi}
 \item[backtrace] A call stack as a \refObject{List} of
-  \refObject[s]{StackFrame}.  (see \refSlot[backtrace]{Exception} and
-  \refSlot[backtrace]{Job})
+  \refObject[s]{StackFrame}.  Used by \refSlot[Exception]{backtrace} and
+  \refSlot[Job]{backtrace}.
 \begin{urbiscript}
 try
 {
@@ -34,7 +34,7 @@ catch (var e)
 \end{urbiscript}
 
 \item[hideSystemFiles] Remove system files from the backtrace if this value
-  equals \lstinline|true|.  (default: \lstinline|true|)
+  equals \lstinline|true|.  Defaults to \lstinline|true|.
 \begin{urbiscript}
 Traceable.hideSystemFiles = false |
 
@@ -62,4 +62,3 @@ catch (var e)
 %%% ispell-personal-dictionary: "../urbi.dict"
 %%% fill-column: 76
 %%% End:
-

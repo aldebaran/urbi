@@ -9,6 +9,12 @@
 \section{System.Platform}
 A description of the platform (the computer) the server is running on.
 
+\subsection{Prototypes}
+\begin{itemize}
+\item \refObject{Object}
+\end{itemize}
+
+\subsection{Slots}
 \begin{urbiscriptapi}
 \item[host] The type of system \usdk runs on.  Composed of the CPU, the
   vendor, and the OS.
@@ -17,6 +23,13 @@ System.Platform.host ==
   "%s-%s-%s" % [System.Platform.hostCpu,
                 System.Platform.hostVendor,
                 System.Platform.hostOs];
+\end{urbiassert}
+
+\item[hostAlias] The name of the system \usdk runs on as the person who
+  compiled it decided to name it.  Typically empty, it is fragile to depend
+  on it.
+\begin{urbiassert}
+System.Platform.hostAlias.isA(String);
 \end{urbiassert}
 
 \item[hostCpu] The CPU type of system \usdk runs on.  The following values
