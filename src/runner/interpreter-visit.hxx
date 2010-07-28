@@ -24,6 +24,7 @@
 # include <ast/print.hh>
 
 # include <kernel/uconnection.hh>
+# include <kernel/userver.hh>
 
 # include <object/symbols.hh>
 
@@ -33,12 +34,15 @@
 # include <sched/exception.hh>
 
 # include <urbi/object/code.hh>
+# include <urbi/object/event.hh>
 # include <urbi/object/global.hh>
 # include <urbi/object/list.hh>
 # include <urbi/object/dictionary.hh>
 # include <urbi/object/tag.hh>
 # include <urbi/object/slot.hh>
 # include <urbi/object/string.hh>
+
+GD_ADD_CATEGORY(Urbi);
 
 /// Job echo.
 #define JECHO(Title, Content)                                   \
@@ -56,6 +60,14 @@
     yield ();                                           \
   } while (false)
 
+
+namespace urbi
+{
+  namespace object
+  {
+    extern bool squash;
+  }
+}
 
 namespace runner
 {
@@ -122,6 +134,78 @@ namespace runner
     return val;
   }
 
+  struct Interpreter::AtEventData
+  {
+    AtEventData(urbi::object::rEvent ev, object::rCode e)
+      : event(ev)
+      , exp(e)
+      , current(0)
+      , subscriptions()
+    {}
+
+    object::rEvent event;
+    object::rCode exp;
+    object::rEvent current;
+    std::vector<object::Event::Subscription> subscriptions;
+  };
+
+  inline void
+  Interpreter::at_run(AtEventData* data, const object::objects_type&)
+  {
+    GD_TRACE();
+    runner::Interpreter& r = dynamic_cast<runner::Interpreter&>(::kernel::urbiserver->getCurrentRunner());
+    bool v;
+    // FIXME: optimize: do not unregister and reregister the same dependency
+    {
+      GD_CATEGORY(Urbi);
+      GD_FPUSH("Evaluating at condition: %s", data->exp->body_string());
+      foreach (object::Event::Subscription& s, data->subscriptions)
+        s.stop();
+      data->subscriptions.clear();
+
+      bool& squash = object::squash;
+      bool prev = squash;
+
+      bool& dependencies_log = r.dependencies_log_;
+      FINALLY(((bool&, squash))
+              ((bool, prev))
+              ((bool&, dependencies_log)),
+              squash = prev; dependencies_log = false);
+      dependencies_log = true;
+      squash = false;
+
+      object::objects_type args;
+      args.push_back(data->exp);
+      v = object::from_urbi<bool>(r.apply(data->exp, SYMBOL(at_cond), args));
+      foreach (object::rEvent evt, r.dependencies_)
+        data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
+      r.dependencies_.clear();
+    }
+    if (v && !data->current)
+    {
+      GD_PUSH("Triggering at block (enter)");
+      data->current = data->event->trigger(object::objects_type());
+    }
+    else if (!v && data->current)
+    {
+      GD_PUSH("Triggering at block (exit)");
+      data->current->stop();
+      data->current = 0;
+    }
+  }
+
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Event* e)
+  {
+    object::rEvent res = new object::Event;
+    at_run(new AtEventData(res, dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get())));
+
+    return res;
+    // std::cerr << "VISIT" << std::endl;
+    // std::cerr << *e << std::endl;
+    // return object::void_class;
+  }
+
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Call* e)
@@ -129,6 +213,9 @@ namespace runner
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = operator()(ast_tgt.get());
+    GD_CATEGORY(Urbi);
+    GD_TRACE();
+    GD_FPUSH("Call %s", e->name_get());
     return apply_ast(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
@@ -231,7 +318,8 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Local* e)
   {
-    const rObject& value = stacks_.get(e);
+    rSlot slot = stacks_.rget(e);
+    rObject value = slot->value();
 
     passert("Local variable read before being set", value);
 
@@ -240,7 +328,29 @@ namespace runner
                        e->name_get(), e->arguments_get(),
                        e->location_get());
     else
+    {
+      if (!object::squash && dependencies_log_get())
+      {
+        bool prev = object::squash;
+        bool& squash = object::squash;
+        FINALLY(((bool&, squash))((bool, prev)), squash = prev);
+        squash = true;
+
+        {
+          GD_TRACE();
+          GD_CATEGORY(Urbi);
+          GD_FPUSH("Register local variable '%s' for at monitoring", e->name_get());
+          dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));
+          object::rObject changed = (*slot)->call(SYMBOL(changed));
+          assert(changed);
+          object::rEvent evt = changed->as<object::Event>();
+          assert(evt);
+          dependency_add(evt.get());
+        }
+      }
+
       return value;
+    }
   }
 
 

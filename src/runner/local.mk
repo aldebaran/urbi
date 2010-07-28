@@ -7,8 +7,6 @@
 ## See the LICENSE file for more information.
 
 dist_libuobject@LIBSFX@_la_SOURCES +=		\
-  runner/at-handler.cc				\
-  runner/at-handler.hh				\
   runner/fwd.hh					\
   runner/interpreter.cc				\
   runner/interpreter-apply.cc			\

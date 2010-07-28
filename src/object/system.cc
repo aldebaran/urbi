@@ -42,7 +42,6 @@
 #include <urbi/object/tag.hh>
 #include <urbi/object/job.hh>
 #include <parser/transform.hh>
-#include <runner/at-handler.hh>
 #include <runner/interpreter.hh>
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
@@ -160,16 +159,6 @@ namespace urbi
     {
       return execute_parsed(parser::parse(code, ast::loc()),
                             SYMBOL(eval), code);
-    }
-
-    static void
-    system_registerAtJob(const rObject&,
-                         const rObject& condition,
-                         const rObject& clause,
-                         const rObject& on_leave)
-    {
-      runner::register_at_job(interpreter(),
-                              condition, clause, on_leave);
     }
 
     static rObject
@@ -571,7 +560,6 @@ namespace urbi
       DECLARE(programName);
       DECLARE(reboot);
       DECLARE(redefinitionMode);
-      DECLARE(registerAtJob);
       DECLARE(resetStats);
       DECLARE(searchFile);
       DECLARE(searchPath);

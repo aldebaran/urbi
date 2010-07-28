@@ -140,6 +140,12 @@ emit.hh
 emit.hh~
 emit.hxx
 emit.hxx~
+event.cc
+event.cc~
+event.hh
+event.hh~
+event.hxx
+event.hxx~
 exp.cc
 exp.cc~
 exp.hh

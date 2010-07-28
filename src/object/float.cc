@@ -292,6 +292,7 @@ namespace urbi
     BOUNCE(cos,   false, false);
     BOUNCE(exp,   false, false);
     BOUNCE(fabs,  false, false);
+    BOUNCE(floor, false, false);
     BOUNCE(log,   true,  false);
     BOUNCE(round, false, false);
     BOUNCE(sin,   false, false);
@@ -447,6 +448,7 @@ namespace urbi
 #if !defined COMPILATION_MODE_SPACE
       DECLARE(format, format);
 #endif
+      DECLARE(floor, floor);
       DECLARE(inf, inf);
       DECLARE(log, log);
       DECLARE(nan, nan);

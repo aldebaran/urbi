@@ -159,6 +159,25 @@ namespace runner
     return o;
   }
 
+  const Runner::dependencies_type&
+  Runner::dependencies() const
+  {
+    return dependencies_;
+  }
+
+  bool
+  Runner::dependencies_log_get() const
+  {
+    return dependencies_log_;
+  }
+
+  void
+  Runner::dependency_add(object::rEvent evt)
+  {
+    assert(evt);
+    if (dependencies_log_)
+      dependencies_.push_back(evt);
+  }
 } // namespace runner
 
 

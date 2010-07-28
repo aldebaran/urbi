@@ -54,9 +54,7 @@ namespace runner
     /// \name Ctor & dtor.
     /// \{
     /// Construct a \c Runner in the \a lobby.  The runner needs to
-    /// know its \a locals, who is its \a scheduler and will execute
-    /// \a ast.  Memory ownership of \a ast is transferred to the Runner.
-    /// The new runner has no parent.
+    /// know its \a scheduler.  The new runner has no parent.
     Runner(rLobby lobby,
 	   sched::Scheduler& scheduler,
 	   libport::Symbol name);
@@ -172,9 +170,6 @@ namespace runner
     const tag_stack_type& tag_stack_get_all() const;
 
   protected:
-
-
-
     /// Set the tag stack.
     void tag_stack_set(const tag_stack_type&);
 
@@ -235,6 +230,15 @@ namespace runner
 
     /// Whether the tag is frozen, even if no applied tag is frozen.
     ATTRIBUTE_RW(bool, frozen);
+
+  public:
+    typedef std::vector<object::rEvent> dependencies_type;
+    const dependencies_type& dependencies() const;
+    bool dependencies_log_get() const;
+    void dependency_add(object::rEvent evt);
+  protected:
+    bool dependencies_log_;
+    dependencies_type dependencies_;
   };
 
   /// Dump \a b on \a o, for debugging.

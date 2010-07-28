@@ -77,7 +77,9 @@ namespace urbi
         bool
         operator==(const Actions& other)
         {
-          return guard == other.guard && enter == other.enter && leave == other.leave;
+          return (guard == other.guard
+                  && enter == other.enter
+                  && leave == other.leave);
         }
 
         rExecutable guard, enter, leave;

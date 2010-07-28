@@ -166,7 +166,8 @@ namespace ast
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
 
-    return new At(loc, make_strip(cond),
+    return new At(loc, flavor, flavor_loc,
+                  make_strip(cond),
                   make_scope(loc, body),
                   onleave ? make_scope(loc, onleave) : new Noop(loc, 0),
                   duration);
@@ -175,12 +176,20 @@ namespace ast
   rExp
   Factory::make_event_catcher(const location& loc,
                               EventMatch& event,
-                              rExp enter, rExp leave) // const
+                              rExp enter, rExp leave,
+                              rExp duration) // const
   {
     if (!leave)
     {
       PARAMETRIC_AST(noop, "{}");
       leave = exp(noop);
+    }
+
+    rExp evt = event.event;
+    if (duration)
+    {
+      PARAMETRIC_AST(desugar_event, "%exp:1.persists(%exp:2)");
+      evt = exp(desugar_event % evt % duration);
     }
 
     rExp guard;
@@ -238,7 +247,7 @@ namespace ast
          "  })\n"
          "}\n");
       return exp(desugar
-                 % event.event
+                 % evt
                  % bind.result_get().unchecked_cast<Exp>()
                  % positive
                  % bind.bindings_get()
@@ -256,7 +265,7 @@ namespace ast
          "  closure ('$evt', '$pattern') { %exp:3 },\n"
          "  closure ('$evt', '$pattern') { %exp:4 })\n"
          "}\n");
-      return exp(desugar_no_pattern % event.event % guard % enter % leave);
+      return exp(desugar_no_pattern % evt % guard % enter % leave);
     }
   }
 
@@ -265,11 +274,12 @@ namespace ast
   Factory::make_at_event(const location& loc,
                          const location& flavor_loc, flavor_type flavor,
                          EventMatch& event,
-                         rExp body, rExp onleave) // const
+                         rExp body, rExp onleave,
+                         rExp duration) // const
   {
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
-    return make_event_catcher(loc, event, body, onleave);
+    return make_event_catcher(loc, event, body, onleave, duration);
   }
 
 
