@@ -40,8 +40,11 @@ namespace urbi
     Event::Event(rEvent parent, rList payload)
       : listeners_(parent->listeners_)
       , waiters_()
-      , callbacks_(parent->callbacks_)
+      , callbacks_()
+      , callbacks_instance_()
     {
+      foreach (callback_type* cb, parent->callbacks_)
+        callbacks_instance_ << *cb;
       proto_add(parent);
       slot_set(SYMBOL(active), to_urbi(true));
       slot_set(SYMBOL(payload), payload);
@@ -266,8 +269,8 @@ namespace urbi
       }
       else
       {
-        foreach (const callback_type* cb, callbacks_)
-          (*cb)(pl);
+        foreach (const callback_type& cb, callbacks_instance_)
+          cb(pl);
       }
 
       foreach (Event::rActions actions, listeners_)

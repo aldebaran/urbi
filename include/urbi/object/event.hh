@@ -129,6 +129,10 @@ namespace urbi
       /// C++ callbacks
       typedef std::vector<callback_type*> callbacks_type;
       callbacks_type callbacks_;
+      /// Running C++ callbacks of an event instance
+      typedef std::vector<callback_type> callbacks_instance_type;
+      callbacks_instance_type callbacks_instance_;
+
     };
   }
 }
