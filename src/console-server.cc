@@ -27,6 +27,7 @@
 #include <libport/exception.hh>
 #include <libport/foreach.hh>
 #include <libport/format.hh>
+#include <libport/sys/utsname.h>
 
 #ifndef NO_OPTION_PARSER
 # include <libport/option-parser.hh>
@@ -154,11 +155,13 @@ static void onCloseStdin()
 
 namespace
 {
-#ifndef WIN32
-  static void onReadStdin(boost::asio::posix::stream_descriptor& sd,
-                          boost::asio::streambuf& buffer,
-                          const boost::system::error_code& erc,
-                          size_t len)
+#if !defined WIN32
+  static
+  void
+  onReadStdin(boost::asio::posix::stream_descriptor& sd,
+              boost::asio::streambuf& buffer,
+              const boost::system::error_code& erc,
+              size_t len)
   {
     if (erc)
     {
@@ -176,6 +179,7 @@ namespace
                                         boost::ref(buffer), _1, _2));
   }
 #endif
+
 #ifndef NO_OPTION_PARSER
   static
   void
@@ -486,8 +490,14 @@ namespace urbi
       std::ofstream(libport::opts::port_file_l.value().c_str(), std::ios::out)
         << port << std::endl;,
     )
-#ifndef WIN32
-    if (data.interactive)
+#if !defined WIN32
+    libport::utsname machine;
+    // The use of Boost::Asio to handle stdin/stdout does not work at
+    // all on Leopard (major == 9).  On Snow Leopard (major == 10), it
+    // requires some adjustments, see effectiveDisplay.
+    if (data.interactive
+        && (machine.system() != "Darwin"
+            || 10 <= machine.release_major()))
     {
       boost::asio::posix::stream_descriptor* sd =
       new boost::asio::posix::stream_descriptor(
@@ -522,10 +532,15 @@ namespace urbi
   {
     ConsoleServer& s = *data.server;
     libport::utime_t next_time = 0;
+    libport::utsname machine;
+#if defined WIN32 || defined __APPLE__
+    bool needs_read_stdin =
+      (machine.system() != "Darwin" || machine.release_major() < 10);
+#endif
     while (true)
     {
-#ifdef WIN32
-      if (data.interactive)
+#if defined WIN32 || defined __APPLE__
+      if (needs_read_stdin && data.interactive)
       {
         std::string input;
         try
