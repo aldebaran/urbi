@@ -243,6 +243,24 @@ namespace urbi
         client_->endPack();
       }
     }
+    // Loopback notification
+    UMessage m(*ctx->client_);
+    m.type = MESSAGE_DATA;
+    UList l;
+    UValue remoteMessage;
+    remoteMessage.type = DATA_LIST;
+    remoteMessage.list = &l;
+    l.push_back(UEM_ASSIGNVALUE);
+    l.push_back(owner_->get_name());
+    l.array.push_back(const_cast<UValue*>(&v));
+    m.value = &remoteMessage;
+    ctx->dispatcher(m);
+    // Prevent double destruction of v
+    l.array.pop_back();
+    // Prevent double destruction of l
+    remoteMessage.list = 0;
+    // Prevent double destruction of remoteMessage
+    m.value = 0;
   }
 
   const UValue& RemoteUVarImpl::get() const
