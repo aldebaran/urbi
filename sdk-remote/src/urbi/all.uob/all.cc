@@ -34,6 +34,7 @@ public:
   all(const std::string& name)
     : urbi::UObject(name)
   {
+    count = 0;
     mainthread = pthread_self();
     if (getenv("CTOR_EXCEPTION") &&
         !strcmp(getenv("CTOR_EXCEPTION"), "true"))
@@ -118,7 +119,8 @@ public:
 
     UBindFunction(all, throwException);
     UBindFunction(all, socketStats);
-    UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate);
+    UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
+              changeCount);
     UNotifyChange(periodicWriteRate, &all::onRateChange);
     vars[0] = &a;
     vars[1] = &b;
@@ -351,6 +353,7 @@ public:
   {
     threadCheck();
     lastChange = v.get_name();
+    changeCount = ++count;
     if (v.type() == urbi::DATA_DOUBLE)
     {
       int val = v;
@@ -744,6 +747,10 @@ public:
   // If an UVar with the name in removeNotify reaches a callback,
   // unnotify will be called.
   urbi::UVar removeNotify;
+  // Number of calls to onChange
+  urbi::UVar changeCount;
+  // Cached value to ensure consistency in remote mode.
+  int count;
   static int destructionCount;
 };
 
