@@ -52,7 +52,7 @@ There are also some special numbers, \lstinline|nan|, \lstinline|inf|
 \begin{urbiassert}
 Math.log(0) == -inf;
 Math.exp(-inf) == 0;
-(inf/inf).asString == "nan";
+(inf/inf).isNan;
 \end{urbiassert}
 
 A null float can also be obtained with \lstinline|Float|'s
@@ -123,7 +123,7 @@ nan.asBool == true;
   res.sort
 }
 == [0, 1, 2];
-\end{urbiassert}%>>
+\end{urbiassert}
 
 \item[asin]
   Arcsine of the target.
@@ -134,7 +134,9 @@ nan.asBool == true;
 \item[asString]
   Return a string representing the target.
 \begin{urbiassert}
-42.asString == "42";
+         42.asString == "42";
+      42.51.asString == "42.51";
+21474836470.asString == "21474836470";
 \end{urbiassert}
 
 \item[atan]
@@ -284,6 +286,31 @@ Float.pi.cos == -1;
 
 "%1.0f" % 0.1 == "0";
 "%1.0f" % 1.1 == "1";
+\end{urbiassert}
+
+  Conversion to hexadecimal requires \this to be integral.
+\begin{urbiassert}
+"%x" % 42 == "2a";
+"%x" % 0xFFFF == "ffff";
+
+"%x" % 0.5;
+[00000005:error] !!! %: expected integer, got 0.5
+\end{urbiassert}
+
+%%% FIXME: This message is not right, it should be:
+%%% [00000005:error] !!! hex: expected integer, got 0.5
+\item[hex]
+  A String with the conversion of \this in hexadecimal.  Requires \this to
+  be integral.
+\begin{urbiassert}
+         0.hex == "0";
+      0xFF.hex == "ff";
+    0xFFFF.hex == "ffff";
+     65535.hex == "ffff";
+0xffffffff.hex == "ffffffff";
+
+   0.5.hex;
+[00000005:error] !!! format: expected integer, got 0.5
 \end{urbiassert}
 
 \item[inf]
@@ -521,7 +548,11 @@ assert(0.tan == 0);
 \item['**'](<that>)%
   \this to the \var{that} power (${this}^{that}$).
 \begin{urbiassert}
-2 ** 10 == 1024;
+ 2 ** 10 == 1024;
+ 2 ** 31 == 2147483648;
+-2 ** 31 == -2147483648; // This is -(2**31).
+ 2 ** 32 == 4294967296;
+-2 ** 32 == -4294967296; // This is -(2**32).
 \end{urbiassert}
 
 \item['=='](<that>)%

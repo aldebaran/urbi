@@ -367,6 +367,8 @@ literals.  See \refObject{Float} for more details.  Examples include:
           1.2 == 1.2000;
       1.234e6 == 1234000;
         1e+11 == 1E+11;
+         1e10 == 10000000000;
+         1e30 == 1e10 * 1e10 * 1e10;
 \end{urbiassert}
 
 Numbers are displayed rounded by the top level, but internally, as
@@ -421,10 +423,11 @@ Hexadecimal notation is supported for integers: \lstinline|0x|
 followed by one or more hexadecimal digits, whose case is irrelevant.
 
 \begin{urbiassert}
-    0x2a == 42;
-    0x2A == 42;
-0xabcdef == 11259375;
-0xABCDEF == 11259375
+      0x2a == 42;
+      0x2A == 42;
+  0xabcdef == 11259375;
+  0xABCDEF == 11259375;
+0xFFFFFFFF == 21474836470;
 \end{urbiassert}
 
 Numbers with unknown suffixes are invalid tokens:
