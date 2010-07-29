@@ -153,7 +153,7 @@ namespace urbi
 
     rList List::operator+(const rList& rhs)
     {
-      List* res = new List(this);
+      rList res = new List(this);
       *res += rhs;
       return res;
     }
