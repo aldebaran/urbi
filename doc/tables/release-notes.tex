@@ -13,6 +13,18 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \section{\usdk 2.1.1}
 
+\subsection{Fixes}
+\begin{itemize}
+\item The main loop optimization triggered several issues with Mac OS X in
+  interactive sessions (truncated output, possibly blocked input).  All the
+  issues are fixed on Snow Leopard.  On Leopard, the interactive input is
+  still broken.
+\item Deep overall of the event handling primitives.  Watching an expression
+  will succeed in cases where it used to fail.  Support for sustained events
+  if fixed too (see \autoref{sec:lang:at}).
+\end{itemize}
+
+
 \subsection{New Features}
 \begin{itemize}
 \item Pressing \key{C-c} in the \us shell (\samp{urbi -i}) interrupts the
