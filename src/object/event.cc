@@ -91,15 +91,13 @@ namespace urbi
       {
         sched::rTag t = tag->value_get();
         using boost::bind;
-        actions->connections.push_back(
-          t->stop_hook_get().connect(bind(&Event::unregister, this,
-                                          actions.get())));
-        actions->connections.push_back(
-          t->freeze_hook_get().connect(bind(&Event::freeze, this,
-                                            actions.get())));
-        actions->connections.push_back(
-          t->unfreeze_hook_get().connect(bind(&Event::unfreeze, this,
-                                              actions.get())));
+        actions->connections
+          << t->stop_hook_get().connect(
+            bind(&Event::unregister, this, actions.get()))
+          << t->freeze_hook_get().connect(
+            bind(&Event::freeze, this, actions.get()))
+          << t->unfreeze_hook_get().connect(
+            bind(&Event::unfreeze, this, actions.get()));
       }
 
       listeners_ << actions;
