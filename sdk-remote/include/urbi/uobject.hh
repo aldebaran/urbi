@@ -358,9 +358,9 @@ namespace urbi
 # define MakeMetaNotify(Type, TypeString)				\
     MakeMetaNotifyArg(Type, UVar& v, TypeString,			\
                       v.owned, v.get_name (),                           \
-                      v.get_temp()?new UVar(v.get_name()):&v);          \
+                      v.get_temp()?new UVar(v.get_name(), ctx_):&v);    \
     MakeMetaNotifyArg(Type, const std::string& name, TypeString,	\
-                      false, name, new UVar(name));
+                      false, name, new UVar(name, ctx_));
 
     /// \internal
     MakeMetaNotify(Access, "varaccess");
