@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1097 utf-8
+personal_ws-1.1 en 1114 utf-8
 aaa
 abc
 abcdef
@@ -14,6 +14,7 @@ acos
 addComponent
 addDevice
 addProto
+addSecond
 addValue
 Affero
 afoodef
@@ -106,6 +107,7 @@ bc
 Benoît
 Berlier
 Bezut
+bfac
 bindRenameVariable
 bindUrbiMethod
 binList
@@ -144,6 +146,7 @@ ccache
 ccc
 ccwLimit
 cd
+ceil
 cerr
 channelName
 chargeStop
@@ -180,6 +183,7 @@ cpp
 cpu
 createSlot
 criticalSection
+Ctrl
 cvs
 cwd
 cwLimit
@@ -202,6 +206,7 @@ DependencyWalker
 dequeue
 dereferenced
 deserialize
+deserializing
 Deslandes
 DESTDIR
 destructor
@@ -306,6 +311,7 @@ freezeif
 Frodo
 fromAscii
 frontleft
+fsr
 fullengine
 func
 functionalities
@@ -371,6 +377,7 @@ headSensorR
 headTouch
 headYaw
 hh
+hideSystemFiles
 hisMind
 hisResult
 Hocquet
@@ -424,8 +431,10 @@ isDigit
 isdigit
 isDir
 isgraph
+isInf
 isLower
 islower
+isNan
 isNil
 ispell
 isProto
@@ -467,6 +476,7 @@ ledL
 ledR
 leds
 leftCoeff
+leftFootTotalWeight
 leftSpeed
 leftSpeedCoeff
 Levenshtein
@@ -709,6 +719,7 @@ RangeIterable
 rangemax
 rangemin
 ranlib
+rc
 RCS
 README
 realloc
@@ -735,6 +746,7 @@ rgb
 RGBLed
 rhs
 rightCoeff
+rightFootTotalWeight
 rightSpeed
 rightSpeedCoeff
 rlwrap
@@ -756,6 +768,7 @@ RotationalMotor
 RotationalSpeedMotor
 rshift
 rst
+rtp
 runningcommands
 runServer
 runtime
@@ -805,6 +818,7 @@ shiftedTime
 shiftValue
 shoulderPitchR
 shoulderRollR
+SIGINT
 SIGKILL
 signalAll
 Sigoure
@@ -942,6 +956,7 @@ UBinary
 ubinary
 UBindEvent
 UBindFunction
+UBindFunctions
 UBindThreadedFunction
 UBindVar
 ubuild
@@ -1014,6 +1029,7 @@ UReturn
 usb
 usegway
 USensor
+useRTP
 uservars
 USetTimer
 USetUpdate
@@ -1085,6 +1101,7 @@ yaml
 yawCoeff
 yawSpeed
 yawSpeedCoeff
+ycrcb
 yfov
 yourservice
 yuv
