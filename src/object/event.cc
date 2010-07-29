@@ -246,33 +246,8 @@ namespace urbi
       source()->_active[this] = payload;
       waituntil_release(payload);
 
-      if (getenv("URBI_NEW"))
-      {
-        if (detach)
-        {
-          runner::Runner& r = ::kernel::runner();
-          sched::jobs_type children;
-          foreach (const callback_type* cb, callbacks_)
-          {
-            sched::rJob job = new runner::Interpreter
-              (r.lobby_get(), r.scheduler_get(),
-               boost::bind(*cb, pl),
-               this,
-               SYMBOL(onleave));
-            job->start_job();
-          }
-          r.yield_until_terminated(children);
-        }
-        else
-          foreach (const callback_type* cb, callbacks_)
-            (*cb)(pl);
-      }
-      else
-      {
-        foreach (const callback_type& cb, callbacks_instance_)
-          cb(pl);
-      }
-
+      foreach (const callback_type& cb, callbacks_instance_)
+        cb(pl);
       foreach (Event::rActions actions, listeners_)
         trigger_job(actions, detach);
     }
