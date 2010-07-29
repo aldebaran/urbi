@@ -72,7 +72,7 @@ namespace urbi
     } while (0)
 
     rList
-    List::tail()
+    List::tail() const
     {
       CHECK_NON_EMPTY(tail);
       value_type res = content_;
@@ -115,9 +115,10 @@ namespace urbi
       return val;
     }
 
-    rFloat List::size()
+    List::size_type
+    List::size() const
     {
-      return new Float(content_.size());
+      return content_.size();
     }
 
     rList List::remove_by_id(const rObject& elt)
@@ -152,12 +153,12 @@ namespace urbi
 
     rList List::operator+(const rList& rhs)
     {
-      rList res = new List(this);
+      List* res = new List(this);
       *res += rhs;
       return res;
     }
 
-    rList List::operator*(unsigned int times)
+    rList List::operator*(unsigned int times) const
     {
       List::value_type res;
       unsigned int s = content_.size();
@@ -185,9 +186,7 @@ namespace urbi
         unreachable();
       }
       objects_type args;
-      args << l;
-      args << a;
-      args << b;
+      args << l << a << b;
       return (*fun)(args)->as_bool();
     }
 
@@ -222,10 +221,9 @@ namespace urbi
           r.yield();
         must_yield = yielding;
         objects_type args;
-        args.push_back(f);
-        args.push_back(o);
+        args << f << o;
         if (idx)
-          args.push_back(to_urbi(i++));
+          args << to_urbi(i++);
         r.apply(f, SYMBOL(each), args);
       }
     }
@@ -359,7 +357,7 @@ namespace urbi
       return res;
     }
 
-    rList List::reverse()
+    rList List::reverse() const
     {
       value_type res;
       rforeach (const rObject& obj, content_)

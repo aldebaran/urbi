@@ -58,17 +58,15 @@ namespace urbi
       std::string asString() const;
 
       rList   remove_by_id(const rObject& elt);
-      rList   reverse     ();
+      rList   reverse     () const;
       rObject set         (const rFloat& nth, const rObject& value);
-      rFloat  size        ();
-      value_type
-              sort        ();
-      value_type
-              sort        (rObject f);
-      rList   tail        ();
+      size_type  size() const;
+      value_type sort();
+      value_type sort(rObject f);
+      rList tail() const;
       rList   operator+   (const rList& rhs);
       rList   operator+=  (const rList& rhs);
-      rList   operator*   (unsigned int times);
+      rList   operator*   (unsigned int times) const;
       rObject operator[]  (const rFloat& idx);
 
     private:
