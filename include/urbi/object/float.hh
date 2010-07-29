@@ -111,7 +111,8 @@ namespace urbi
     public:
       /// Number of digits (in radix base) in the mantissa.
       static unsigned_type limit_digits();
-      /// Number of digits (in decimal base) that can be represented without change.
+      /// Number of digits (in decimal base) that can be represented
+      /// without change.
       static unsigned_type limit_digits10();
 
       /// Minimum positive normalized value.
@@ -153,6 +154,7 @@ namespace urbi
       value_type operator /(value_type rhs) const;
       value_type operator %(value_type rhs) const;
 
+      value_type ceil() const;
       value_type floor() const;
       unsigned_type random() const;
       void srandom() const;
@@ -172,6 +174,8 @@ namespace urbi
 
     public:
 
+      bool is_inf() const;
+      bool is_nan() const;
       static value_type inf();
       static value_type nan();
 

@@ -126,6 +126,18 @@ namespace urbi
       return std::numeric_limits<libport::ufloat>::infinity();
     }
 
+    bool
+    Float::is_inf() const
+    {
+      return std::isinf(value_);
+    }
+
+    bool
+    Float::is_nan() const
+    {
+      return std::isnan(value_);
+    }
+
     Float::value_type
     Float::nan()
     {
@@ -293,6 +305,7 @@ namespace urbi
     BOUNCE(acos,  false, true);
     BOUNCE(asin,  false, true);
     BOUNCE(atan,  false, false);
+    BOUNCE(ceil,  false, false);
     BOUNCE(cos,   false, false);
     BOUNCE(exp,   false, false);
     BOUNCE(fabs,  false, false);
@@ -446,6 +459,7 @@ namespace urbi
       DECLARE(atan2, atan2);
       DECLARE(bitand, operator&);
       DECLARE(bitor, operator|);
+      DECLARE(ceil, ceil);
       DECLARE(compl, operator~);
       DECLARE(cos, cos);
       DECLARE(exp, exp);
@@ -454,6 +468,8 @@ namespace urbi
 #endif
       DECLARE(floor, floor);
       DECLARE(inf, inf);
+      DECLARE(isInf, is_inf);
+      DECLARE(isNan, is_nan);
       DECLARE(log, log);
       DECLARE(nan, nan);
       DECLARE(random, random);
