@@ -117,9 +117,9 @@ namespace urbi
       bool is_graph() const;
       bool is_print() const;
 
-      static std::string fromAscii(rObject, int code);
+      static std::string fromAscii(rObject, unsigned char code);
 
-      int toAscii() const;
+      unsigned char toAscii() const;
     private:
       value_type content_;
 

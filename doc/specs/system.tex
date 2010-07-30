@@ -325,16 +325,23 @@ var Global.x = 0;
 
 
 \item[searchFile](<file>)%
-  Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}) and
-  return its \refObject{Path}.  Throw a \refSlot[Exception]{FileNotFound}
-  error if the file cannot be found.
+  Look for \var{file} in the \refSlot{searchPath} and return its
+  \refObject{Path}.  Throw a \refSlot[Exception]{FileNotFound} error if the
+  file cannot be found.
 \begin{urbiassert}
 System.system("echo '123;' >123.u") == 0;
 searchFile("123.u") == Path.cwd / Path.new("123.u");
 \end{urbiassert}
 
 
-%% \item[searchPath]
+\item[searchPath] The \urbi path (i.e., the directories where the \us files
+  are looked for, see \autoref{sec:tools:envvars}) as a \refObject{List} of
+  \refObject[s]{Path}.  Currently, changing its value does not change the
+  place where \refSlot{load} looks for.
+\begin{urbiassert}
+System.searchPath.isA(List);
+System.searchPath[0].isA(Path);
+\end{urbiassert}
 
 
 \item[setenv](<name>, <value>)%

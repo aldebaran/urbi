@@ -364,7 +364,7 @@ namespace urbi
       return boost::to_upper_copy(value_get());
     }
 
-    std::string String::fromAscii(rObject, int code)
+    std::string String::fromAscii(rObject, unsigned char code)
     {
       std::string res;
       res += code;
@@ -393,7 +393,7 @@ namespace urbi
     IS(xdigit)
 #undef IS
 
-    int String::toAscii() const
+    unsigned char String::toAscii() const
     {
       check_bounds(0, 1);
       return value_get()[0];

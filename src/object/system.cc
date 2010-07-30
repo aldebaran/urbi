@@ -184,7 +184,7 @@ namespace urbi
       List::value_type res;
       foreach (const libport::path& p,
                ::kernel::urbiserver->search_path.search_path_get())
-        res.push_back(new Path(p));
+        res << new Path(p);
       return res;
     }
 

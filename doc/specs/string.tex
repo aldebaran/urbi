@@ -102,6 +102,19 @@ String.fresh == "_5";
 "foo".fresh == "foo_6";
 \end{urbiassert}
 
+\item[fromAscii(<v>)] The character corresponding to the integer \var{v}
+  according to the \acro{ASCII} coding.  See also \refSlot{toAscii}.
+\begin{urbiassert}
+String.fromAscii(  97) == "a";
+String.fromAscii(  98) == "b";
+String.fromAscii(0xFF) == "\xff";
+[0, 1, 2, 254, 255]
+  .map(function (var v) { String.fromAscii(v) })
+  .map(function (var v) { v.toAscii })
+  == [0, 1, 2, 254, 255];
+\end{urbiassert}
+
+
 \item Character handling functions\\
   Here is a map of how the original 127-character ASCII set is
   considered by each function (a \textbullet{} indicates that the function
@@ -157,7 +170,7 @@ String.fresh == "_5";
 
 %%% FIXME: Optional arguments.
 \item[join](<list>, <prefix>, <suffix>)%
-  Glue the result of \lstinline|asString| applied to the members of
+  Glue the result of \refSlot{asString} applied to the members of
   \var{list}, separated by \this, and embedded in a pair
   \var{prefix}/\var{suffix}.
 \begin{urbiassert}
@@ -242,6 +255,21 @@ negative number corresponds to no limit:
 "foobar".split("o")                   == ["f", "", "bar"];
 "foobar".split("o", -1, false, true)  == ["f", "", "bar"];
 "foobar".split("o", -1, false, false) == ["f",     "bar"];
+\end{urbiassert}
+
+
+\item[toAscii] Convert the first character of \this to its integer value in
+  the \acro{ASCII} coding.  See also \refSlot{fromAscii}.
+\begin{urbiassert}
+   "a".toAscii == 97;
+   "b".toAscii == 98;
+"\xff".toAscii == 0xff;
+"Hello, World!\n"
+  .asList
+  .map(function (var v) { v.toAscii })
+  .map(function (var v) { String.fromAscii(v) })
+  .join
+  == "Hello, World!\n";
 \end{urbiassert}
 
 \item[toLower]

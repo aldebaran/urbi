@@ -32,8 +32,7 @@ var myVar = 42|;
 [00000003] *** var myVar = 42
 \end{urbiscript}
 
-Support for sustained events
-  if fixed too (see \autoref{sec:lang:at}).
+  Support for sustained events is fixed too (see \autoref{sec:lang:at}).
 \end{itemize}
 
 
@@ -45,12 +44,16 @@ Support for sustained events
   shut down properly.  A third \key{C-c} kills
   \command{urbi}/\command{urbi-launch}.  See
   \autoref{sec:tools:urbi:quitting} for more details.
+\item Closing the standard input (e.g., by pressing \key{C-d}) in
+  interactive sessions shuts down the server.
 \item Remote UObjects now support the RTP protocol to exchange value with
   the engine (\autoref{sec:uob:api:rtp}).
 \item \refSlot[CallMessage]{eval}.
 \item \refSlot[Float]{ceil}, \refSlot[Float]{floor}, \refSlot[Float]{isInf},
   \refSlot[Float]{isNan}.
-\item \refObject{Traceable}
+\item \refObject{Traceable}.
+\item Improved context (the call stacks) when error are reported.
+  Especially when using \refSlot[System]{eval}/\refSlot[System]{load}.
 \end{itemize}
 
 \subsection{Documentation}
@@ -485,7 +488,7 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \item \refSlot[String]{fromAscii}, \refSlot[String]{replace},
   \refSlot[String]{toAscii}
 \item System: \lstinline|_exit|, \lstinline|assert_eq|,
-  \refSlot[System]{system}, \refSlot[System]{terminate}
+  \refSlot[System]{system}.
 \end{itemize}
 
 \subsubsection{Fixes}
