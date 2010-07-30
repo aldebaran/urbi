@@ -20,9 +20,7 @@
 #include <libport/format.hh>
 
 #include <kernel/config.h>
-#ifndef HAVE_ROUND
-# include <libport/ufloat.h>
-#endif
+#include <libport/ufloat.h>
 #include <libport/ufloat.hh>
 
 #include <object/cxx-helper.hh>
@@ -293,29 +291,29 @@ namespace urbi
         RAISE("invalid range");                 \
     } while (0)
 
-#define BOUNCE(F, Pos, Range)                           \
+#define BOUNCE(Namespace, F, Pos, Range)                \
     Float::value_type					\
     Float::F() const                                    \
     {                                                   \
       WHEN(Pos, CHECK_POSITIVE(SYMBOL(F)));             \
       WHEN(Range, CHECK_TRIGO_RANGE(SYMBOL(F)));        \
-      return ::F(value_get());				\
+      return Namespace F(value_get());                  \
     }
 
-    BOUNCE(acos,  false, true);
-    BOUNCE(asin,  false, true);
-    BOUNCE(atan,  false, false);
-    BOUNCE(ceil,  false, false);
-    BOUNCE(cos,   false, false);
-    BOUNCE(exp,   false, false);
-    BOUNCE(fabs,  false, false);
-    BOUNCE(floor, false, false);
-    BOUNCE(log,   true,  false);
-    BOUNCE(round, false, false);
-    BOUNCE(sin,   false, false);
-    BOUNCE(sqrt,  true,  false);
-    BOUNCE(tan,   false, false);
-    BOUNCE(trunc, false, false);
+    BOUNCE(::,        acos,  false, true);
+    BOUNCE(::,        asin,  false, true);
+    BOUNCE(::,        atan,  false, false);
+    BOUNCE(::,        ceil,  false, false);
+    BOUNCE(::,        cos,   false, false);
+    BOUNCE(::,        exp,   false, false);
+    BOUNCE(::,        fabs,  false, false);
+    BOUNCE(::,        floor, false, false);
+    BOUNCE(::,        log,   true,  false);
+    BOUNCE(libport::, round, false, false);
+    BOUNCE(::,        sin,   false, false);
+    BOUNCE(::,        sqrt,  true,  false);
+    BOUNCE(::,        tan,   false, false);
+    BOUNCE(libport::, trunc, false, false);
 
 #undef CHECK_POSITIVE
 #undef CHECK_TRIGO_RANGE
