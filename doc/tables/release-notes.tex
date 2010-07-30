@@ -19,7 +19,20 @@ This chapter lists the user-visible changes in \usdk releases.
   interactive sessions (truncated output, possibly blocked input).  These
   issues are fixed on Snow Leopard and Leopard.
 \item Deep overall of the event handling primitives.  Watching an expression
-  will succeed in cases where it used to fail.  Support for sustained events
+  will succeed in cases where it used to fail.  For instance:
+
+\begin{urbiscript}
+at (isdef (myVar))
+  echo("var myVar = " + myVar),
+
+myVar;
+[00000001:error] !!! lookup failed: myVar
+
+var myVar = 42|;
+[00000003] *** var myVar = 42
+\end{urbiscript}
+
+Support for sustained events
   if fixed too (see \autoref{sec:lang:at}).
 \end{itemize}
 
