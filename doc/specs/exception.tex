@@ -104,17 +104,20 @@ Exception.new("Ouch").message == "Ouch";
 \subsection{Specific Exceptions}
 \label{sec:specs:except:sub}
 
-\begin{itemize}
-\item \lstinline|ArgumentType.new(\var{routine}, \var{index}, \var{effective}, \var{expected})|\\
+In the following, since these slots are actually Objects, what is presented
+as arguments to the slots are actually arguments to pass to the constructor
+of the corresponding exception type.
+\begin{urbiscriptapi}
+\item[ArgumentType](<routine>, <index>, <effective>, <expected>)
   Derives from \refSlot{Type}.  The \var{routine} was
   called with a \var{index}-nth argument of type \var{effective}
   instead of \var{expected}.
 \begin{urbiscript}
-Exception.ArgumentType.new("myRoutine", 1, "hisResult", "myExceptation");
+Exception.ArgumentType.new("myRoutine", 1, "hisResult", "Expectation");
 [00000003] Exception.ArgumentType `myRoutine: unexpected "hisResult" for argument 1, expected a String'
 \end{urbiscript}
 
-\item \lstinline|Arity.new(\var{routine}, \var{effective}, \var{min}, \var{max} = void)|\\
+\item[Arity](<routine>, <effective>, <min>, <max> = void)
   The \var{routine} was called with an incorrect number of arguments
   (\var{effective}).  It requires at least \var{min} arguments, and,
   if specified, at most \var{max}.
@@ -130,7 +133,7 @@ Exception.Arity.new("myRoutine", 1, 10, 23);
 %% {
 %%   assert(e == Exception.Arity.new("cos", 2, 1));
 %% };
-\item \lstinline|BadInteger.new(\var{routine}, \var{fmt}, \var{effective})|\\
+\item[BadInteger](<routine>, <fmt>, <effective>)
   The \var{routine} was called with an inappropriate integer
   (\var{effective}).  Use the format \var{fmt} to create an error
   message from \var{effective}.  Derives from
@@ -140,7 +143,7 @@ Exception.BadInteger.new("myRoutine", "bad integer: %s", 12);
 [00000005] Exception.BadInteger `myRoutine: bad integer: 12'
 \end{urbiscript}
 
-\item \lstinline|BadNumber.new(\var{routine}, \var{fmt}, \var{effective})|\\
+\item[BadNumber](<routine>, <fmt>, <effective>)
   The \var{routine} was called with an inappropriate number
   (\var{effective}).  Use the format \var{fmt} to create an error
   message from \var{effective}.
@@ -149,21 +152,21 @@ Exception.BadNumber.new("myRoutine", "bad number: %s", 12.34);
 [00000005] Exception.BadNumber `myRoutine: bad number: 12.34'
 \end{urbiscript}
 
-\item \lstinline|Constness.new(\var{msg})|\\
+\item[Constness](<msg>)
   An attempt was made to change a constant value.
 \begin{urbiscript}
 Exception.Constness.new;
 [00000006] Exception.Constness `cannot modify const slot'
 \end{urbiscript}
 
-\item \lstinline|FileNotFound.new(\var{name})|\\
+\item[FileNotFound](<name>)
   The file named \var{name} cannot be found.
 \begin{urbiscript}
 Exception.FileNotFound.new("foo");
 [00000007] Exception.FileNotFound `file not found: foo'
 \end{urbiscript}
 
-\item \lstinline|ImplicitTagComponent.new(\var{msg})|\\
+\item[ImplicitTagComponent](<msg>)
   An attempt was made to create an implicit tag, a component of which
   being undefined.
 \begin{urbiscript}
@@ -171,7 +174,7 @@ Exception.ImplicitTagComponent.new;
 [00000008] Exception.ImplicitTagComponent `invalid component in implicit tag'
 \end{urbiscript}
 
-\item \lstinline|Lookup.new(\var{object}, \var{name})|\\
+\item[Lookup](<object>, <name>)
   A failed name lookup was performed om \var{object} to find a slot
   named \var{name}.  If \lstinline|Exception.Lookup.fixSpelling| is
   true (which is the default), suggest what the user might have meant
@@ -181,14 +184,14 @@ Exception.Lookup.new(Object, "GetSlot");
 [00000009] Exception.Lookup `lookup failed: Object'
 \end{urbiscript}
 
-\item \lstinline|MatchFailure.new|\\
+\item[MatchFailure]
   A pattern matching failed.
 \begin{urbiscript}
 Exception.MatchFailure.new;
 [00000010] Exception.MatchFailure `pattern did not match'
 \end{urbiscript}
 
-\item \lstinline|NegativeNumber.new(\var{routine}, \var{effective})|\\
+\item[NegativeNumber](<routine>, <effective>)
   The \var{routine} was called with a negative number
   (\var{effective}).  Derives from \refSlot{BadNumber}.
 \begin{urbiscript}
@@ -196,7 +199,7 @@ Exception.NegativeNumber.new("myRoutine", -12);
 [00000005] Exception.NegativeNumber `myRoutine: expected non-negative number, got -12'
 \end{urbiscript}
 
-\item \lstinline|NonPositiveNumber.new(\var{routine}, \var{effective})|\\
+\item[NonPositiveNumber](<routine>, <effective>)
   The \var{routine} was called with a non-positive number
   (\var{effective}).  Derives from \refSlot{BadNumber}.
 \begin{urbiscript}
@@ -204,7 +207,7 @@ Exception.NonPositiveNumber.new("myRoutine", -12);
 [00000005] Exception.NonPositiveNumber `myRoutine: expected positive number, got -12'
 \end{urbiscript}
 
-\item \lstinline|Primitive.new(\var{routine}, \var{msg})|\\
+\item[Primitive](<routine>, <msg>)
   The built-in \var{routine} encountered an error described by
   \var{msg}.
 \begin{urbiscript}
@@ -212,21 +215,21 @@ Exception.Primitive.new("myRoutine", "cannot do that");
 [00000011] Exception.Primitive `myRoutine: cannot do that'
 \end{urbiscript}
 
-\item \lstinline|Redefinition.new(\var{name})|\\
+\item[Redefinition](<name>)
   An attempt was made to refine a slot named \var{name}.
 \begin{urbiscript}
 Exception.Redefinition.new("foo");
 [00000012] Exception.Redefinition `slot redefinition: foo'
 \end{urbiscript}
 
-\item \lstinline|Scheduling.new(\var{msg})|\\
+\item[Scheduling](<msg>)
   Something really bad has happened with the \urbi task scheduler.
 \begin{urbiscript}
 Exception.Scheduling.new("cannot schedule");
 [00000013] Exception.Scheduling `cannot schedule'
 \end{urbiscript}
 
-\item \lstinline|Syntax.new(\var{loc}, \var{message}, \var{input})|\\
+\item[Syntax](<loc>, <message>, <input>)
   Declare a syntax error in \var{input}, at location \var{loc},
   described by \var{message}.  \var{loc} is the location of the syntax
   error, \var{location} is the place the error was thrown.  They are
@@ -257,16 +260,16 @@ catch (var e)
 \end{urbiscript}
 
 
-\item \lstinline|Type.new(\var{effective}, \var{expected})|\\
+\item[Type](<effective>, <expected>)
   A value of type \var{effective} was received, while a value of type
   \var{expected} was expected.
 \begin{urbiscript}
-Exception.Type.new("hisResult", "myExceptation");
+Exception.Type.new("hisResult", "Expectation");
 [00000014] Exception.Type `unexpected "hisResult", expected a String'
 \end{urbiscript}
 
-\item \refSlot[UnexpectedVoid]{new}\\
-  An attempt was made to read the value of \lstinline|void|.
+\item[UnexpectedVoid] An attempt was made to read the value of
+  \lstinline|void|.
 \begin{urbiscript}
 Exception.UnexpectedVoid.new;
 [00000015] Exception.UnexpectedVoid `unexpected void'
@@ -276,7 +279,7 @@ a;
 [00000017:error] !!! lookup failed: a
 \end{urbiscript}
 
-\end{itemize}
+\end{urbiscriptapi}
 
 
 %%% Local Variables:

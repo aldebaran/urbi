@@ -227,10 +227,10 @@ one + two;
 To exit \command{urbi}, use the command \refSlot[System]{shutdown}.
 
 If you are in interactive mode, you can also use the shortcut sequence
-\key{C-d} in the server lobby. The command \refSlot[System]{quit} does not
+\key{C-d} in the server lobby. The command \refSlot[Lobby]{quit} does not
 shutdown the server, it only closes the current lobby which closes the
-connection while in remote mode (using \command{telnet} for example),
-but only closes the interactive mode if performed on the server lobby.
+connection while in remote mode (using \command{telnet} for example), but
+only closes the interactive mode if performed on the server lobby.
 
 On Unix systems, \command{urbi} handles the SIGINT signal (action performed
 when \key{C-c} is pressed). If you are in interactive mode, a first
@@ -424,11 +424,11 @@ as \key{C-c} under a Unix terminal).
 \item[P]{port=\var{port}} Port to connect to.
 \item{port-file=\var{file}} Connect to the port contained in the file
   \var{file}.
-\item[Q]{quit} Disconnect from the server immediately after having
-  sent all the commands.  This is equivalent to \samp{-e 'quit;'}.
-  This is inappropriate if code running in background is expected to
-  deliver its result asynchronously: the connection will be closed
-  before the result was sent.
+\item[Q]{quit} Disconnect from the server immediately after having sent all
+  the commands.  This is equivalent to \samp{-e 'quit;'} at the end of the
+  options.  This is inappropriate if code running in background is expected
+  to deliver its result asynchronously: the connection will be closed before
+  the result was sent.
 
   Without this option, \command{urbi-send} prompts the user to hit
   \key{C-c} to end the connection.

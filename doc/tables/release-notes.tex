@@ -385,13 +385,13 @@ Released on 2010-01-13.
 
 \subsubsection{Fixes}
 \begin{itemize}
-\item local.u works as expected.
+\item \file{local.u} works as expected.
 \end{itemize}
 
 \subsubsection{Changes}
 \begin{itemize}
-\item \refSlot[Lobby]{quit} replaces \slot{System}{quit}.
-\item \refSlot[Socket]{connect} accepts integers
+\item \refSlot[Lobby]{quit} replaces \slot[System]{quit}.
+\item \refSlot[Socket]{connect} accepts integers.
 \item UObject remote notifyChange on USensor variable now works as expected.
 \item UObject timers can now be removed with UObject::removeTimer().
 \end{itemize}
@@ -399,7 +399,7 @@ Released on 2010-01-13.
 \subsection{Documentation}
 
 \begin{itemize}
-\item Socket provides a complete example.
+\item \refObject{Socket} provides a complete example.
 \item The Naming Standard documents the support classes provided to ease
   creation of the component hierarchy.
 \end{itemize}
@@ -412,7 +412,7 @@ not reported below. The following list is by no means exhaustive.
 
 \subsection{Optimization}
 
-The urbiscript engine was considerably optimized in both space and
+The \us engine was considerably optimized in both space and
 time.
 
 \subsection{urbiscript}
@@ -476,17 +476,16 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 
 \subsubsection{New features}
 \begin{itemize}
-\item asBool
-\item \refSlot[Lobby]{wall}
-\item \refSlot[Dictionary]{size}
-\item \refSlot[Global]{evaluate}
+\item \refSlot[Object]{asBool}.
+\item \refSlot[Lobby]{wall}.
+\item \refSlot[Dictionary]{size}.
+\item \refSlot[Global]{evaluate}.
 \item \refSlot[Group]{each}, \lstinline|Group.each&|
-\item \refSlot[Lobby]{onDisconnect} (actually, an event),
-  \refSlot[Lobby]{remoteIP} \refSlot[Lobby]{create},
-  \refSlot[Lobby]{received}, \refSlot[Lobby]{resendBanner}
-\item \refSlot[Object]{inspect}
+\item \refSlot[Lobby]{onDisconnect}, \refSlot[Lobby]{remoteIP}
+  \refSlot[Lobby]{create}.
+\item \refSlot[Object]{inspect}.
 \item \refSlot[String]{fromAscii}, \refSlot[String]{replace},
-  \refSlot[String]{toAscii}
+  \refSlot[String]{toAscii}.
 \item System: \lstinline|_exit|, \lstinline|assert_eq|,
   \refSlot[System]{system}.
 \end{itemize}

@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1114 utf-8
+personal_ws-1.1 en 1119 utf-8
 aaa
 abc
 abcdef
@@ -275,6 +275,8 @@ fastMachine
 fb
 fbar
 fe
+ffff
+ffffffff
 FiftyOne
 fileCreated
 fileDeleted
@@ -580,7 +582,6 @@ myCamera
 myCos
 myduration
 myEvent
-myExceptation
 myFunction
 myGroup
 myInstance
@@ -602,7 +603,7 @@ mytest
 myType
 myUObject
 myuobject
-MyVar
+myVar
 namespace
 NaN
 nao
@@ -1093,6 +1094,10 @@ xADDR
 xb
 xFF
 xfF
+xff
+xFFFF
+xFFFFFFFF
+xffffffff
 xfov
 xml
 xsltproc
