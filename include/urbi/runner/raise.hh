@@ -14,8 +14,18 @@
 # include <libport/compiler.hh>
 # include <libport/ufloat.hh>
 
-# include <ast/loc.hh>
 # include <urbi/object/fwd.hh>
+
+// Do not leak yy::loc in K2 headers.
+namespace yy
+{
+  class location;
+}
+
+namespace ast
+{
+  typedef yy::location loc;
+}
 
 namespace runner
 {

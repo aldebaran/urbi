@@ -20,6 +20,7 @@
 
 #include <urbi/object/cxx-conversions.hh>
 #include <urbi/object/global.hh>
+#include <urbi/object/location.hh>
 
 #define assert_user_mode(Exn, Msg)                              \
   __passert((::kernel::urbiserver->mode_get()                   \
