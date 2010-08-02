@@ -116,6 +116,8 @@ namespace urbi
       aver(!cb.empty());
       callback_type* res = new callback_type(cb);
       callbacks_ << res;
+      if (slot_has(SYMBOL(onSubscribe)))
+        slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       return Subscription(this, res);
     }
 
@@ -330,7 +332,7 @@ namespace urbi
     bool
     Event::hasSubscribers() const
     {
-      return !listeners_.empty() || !waiters_.empty();
+      return !listeners_.empty() || !waiters_.empty() || !callbacks_.empty();
     }
 
     Event::Actions::~Actions()
