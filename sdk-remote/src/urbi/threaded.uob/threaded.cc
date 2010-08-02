@@ -222,7 +222,12 @@ bool Threaded::threadLoopBody(int id)
   #define string0 (*op.args[0].stringValue)
   #define float0 (op.args[0].val)
   #define int0 static_cast<int>(float0)
-  Context& ctx = *ops[id];
+  Context* pctx;
+  {
+    libport::BlockLock bl (opsLock);
+    pctx = ops[id];
+  }
+  Context& ctx = *pctx;
   // Randomize behavior to increase chance of detecting a race condition.
   usleep(rand() % 100000);
   if (ctx.hasOp)
