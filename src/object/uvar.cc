@@ -13,6 +13,7 @@
  ** \brief Creation of the Urbi object UVar.
  */
 
+# include <kernel/uconnection.hh>
 # include <kernel/userver.hh>
 # include <kernel/uvalue-cast.hh>
 
@@ -178,10 +179,11 @@ namespace urbi
                     slot_get(SYMBOL(WeakDictionary))->call(SYMBOL(new)));
         looping_ = true;
 	runner::Interpreter* nr =
-          new runner::Interpreter(r.lobby_get(),
-                                  r.scheduler_get(),
-                                  boost::bind(&UVar::changeAccessLoop, this),
-                                  this, SYMBOL(changeAccessLoop));
+        new runner::Interpreter(
+                   ::kernel::urbiserver->ghost_connection_get().lobby_get(),
+                   r.scheduler_get(),
+                   boost::bind(&UVar::changeAccessLoop, this),
+                   this, SYMBOL(changeAccessLoop));
 	nr->tag_stack_clear();
 	nr->start_job();
        }
