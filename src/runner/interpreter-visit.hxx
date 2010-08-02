@@ -167,13 +167,17 @@ namespace runner
       bool prev = squash;
 
       bool& dependencies_log = r.dependencies_log_;
-      FINALLY_at_run(USE);
-      dependencies_log = true;
-      squash = false;
+      // Do not leave dependencies_log to true while registering on dependencies
+      // below.
+      {
+        FINALLY_at_run(USE);
+        dependencies_log = true;
+        squash = false;
 
-      object::objects_type args;
-      args.push_back(data->exp);
-      v = object::from_urbi<bool>(r.apply(data->exp, SYMBOL(at_cond), args));
+        object::objects_type args;
+        args.push_back(data->exp);
+        v = object::from_urbi<bool>(r.apply(data->exp, SYMBOL(at_cond), args));
+      }
       foreach (object::rEvent evt, r.dependencies_)
         data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
       r.dependencies_.clear();
