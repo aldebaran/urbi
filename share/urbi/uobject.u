@@ -338,6 +338,15 @@ do (getSlot("UVar"))
       onHasNotifyAccess! |
     void
   };
+  // Remote UObject update
+  function update(val)
+  {
+    var cr = currentRunner |
+    if (!cr.hasLocalSlot("$uobjectInUpdate"))
+      var cr.'$uobjectInUpdate' = true|
+    update_(val) |
+    cr.removeSlot("$uobjectInUpdate")
+  };
   void
 };
 
@@ -600,7 +609,7 @@ class Global.'external'
     function f()
     {
       // If source is the current lobby, loopback took care of notification
-      if (lobby == chan.lobby)
+      if (lobby == chan.lobby && currentRunner.hasLocalSlot("$uobjectInUpdate"))
         return|
       var uvar = uob.getSlot(varname) |
       var v = uvar.getSlot({if (uvar.owned) "valsensor" else "val"})
