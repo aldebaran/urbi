@@ -176,6 +176,11 @@ namespace urbi
   void
   RemoteUVarImpl::set(const UValue& v)
   {
+    std::string fullname = owner_->get_name();
+    size_t pos = fullname.rfind(".");
+    assert(pos != std::string::npos);
+    std::string owner = fullname.substr(0, pos);
+    std::string name = fullname.substr(pos + 1);
     RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
     if (v.type == DATA_BINARY)
     {
@@ -205,11 +210,11 @@ namespace urbi
       if (!rtpOK)
       {
         client_->startPack();
-        (*client_) << owner_->get_name() << "=";
+        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update(";
         UBinary& b = *(v.binary);
         client_->sendBinary(b.common.data, b.common.size,
                             b.getMessage());
-        (*client_) << "|;";
+        (*client_) << ")|;";
         client_->endPack();
       }
     }
@@ -235,11 +240,11 @@ namespace urbi
       if (!rtp)
       {
         client_->startPack();
-        (*client_) << owner_->get_name() << "=";
+        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update(";
         if (v.type == DATA_STRING)
-          (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\"|";
+          (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\")|";
         else
-          *client_ << v << "|";
+          *client_ << v << ")|";
         client_->endPack();
       }
     }
