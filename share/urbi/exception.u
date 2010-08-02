@@ -272,8 +272,8 @@ class Exception.Syntax: Exception
 
 class Exception.Type: Exception
 {
-  var expectedType;
-  var effective;
+  var expectedType = nil;
+  var effective = nil;
 
   function init(effective, expected)
   {
@@ -290,8 +290,8 @@ class Exception.Type: Exception
 
 class Exception.ArgumentType: Exception.Type
 {
-  var index;
-  var routine;
+  var index = nil;
+  var routine = nil;
 
   function init(routine, index, effective, expected)
   {
