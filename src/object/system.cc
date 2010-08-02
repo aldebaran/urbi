@@ -511,6 +511,16 @@ namespace urbi
       // the io_service for stdin, but not Windows.
       if (kernel::urbiserver->interactive_get())
         select_time = std::min((libport::utime_t)100000, select_time);
+#else
+      bool interactive =
+        system_class->slot_get(SYMBOL(interactive))->as_bool();
+      int flags = 0;
+      if (interactive)
+      {
+        // Set stdin/out/err to non-blocking io.
+        flags = fcntl(STDOUT_FILENO, F_GETFL);
+        ERRNO_RUN(fcntl, STDOUT_FILENO, F_SETFL, flags | O_NONBLOCK);
+      }
 #endif
       boost::asio::io_service& ios = ::kernel::urbiserver->get_io_service();
       // Return without delay after the first operation, but perform all
@@ -519,6 +529,14 @@ namespace urbi
         libport::pollFor(select_time, true, ios);
       ios.reset();
       ios.poll();
+#ifndef WIN32
+      if (interactive)
+      {
+        // Reset stdin/out/err flags.
+        fcntl(STDOUT_FILENO, F_GETFL);
+        ERRNO_RUN(fcntl, STDOUT_FILENO, F_SETFL, flags & ~O_NONBLOCK);
+      }
+#endif
     }
 
     static void

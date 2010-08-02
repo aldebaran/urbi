@@ -118,25 +118,7 @@ public:
   virtual
   void effectiveDisplay(const char* t)
   {
-    // Under Mac OS X, in interactive sessions, and unless there are
-    // redirections, stdin, stdout, and stderr are bound together:
-    // fcntl on one of them, affects the others.  Our using ASIO has
-    // set stdin in non-blocking mode, thus stdout is in non-blocking
-    // mode too.  This is not what we want.  So set it to blocking
-    // just the time to issue the message.  See the libport
-    // documentation for details.
-#if !defined WIN32
-    // Save and set.
-    int flags = fcntl(STDOUT_FILENO, F_GETFL);
-    if (flags == -1)
-      errnoabort("fcntl");
-    ERRNO_RUN(fcntl, STDOUT_FILENO, F_SETFL, flags & ~O_NONBLOCK);
-#endif
     std::cout << t;
-#if !defined WIN32
-    // Restore.
-    ERRNO_RUN(fcntl, STDOUT_FILENO, F_SETFL, flags);
-#endif
   }
 
   bool fast;
@@ -507,6 +489,14 @@ namespace urbi
       boost::asio::async_read(*sd, *buffer, boost::asio::transfer_at_least(1),
                               boost::bind(&onReadStdin, boost::ref(*sd),
                                           boost::ref(*buffer), _1, _2));
+      // Under Mac OS X and linux, in interactive sessions, and unless there are
+      // redirections, stdin, stdout, and stderr are bound together:
+      // fcntl on one of them, affects the others.  Our using ASIO has
+      // set stdin in non-blocking mode, thus stdout is in non-blocking
+      // mode too.  This is not what we want.  So set it to blocking
+      // all the time, except when we are calling System.poll().
+      int flags = fcntl(STDOUT_FILENO, F_GETFL);
+      ERRNO_RUN(fcntl, STDOUT_FILENO, F_SETFL, flags & ~O_NONBLOCK);
     }
 #endif
     kernel::UConnection& c = s.ghost_connection_get();
