@@ -59,9 +59,18 @@ do (List)
       throw Exception.new("list cannot be empty") |
     var res = 0|
     var size = this.size |
-    for| (var i = 1; i < size; i += 1)
-      if (comp(this[i], this[res]))
-        res = i |
+    var i;
+    try
+    {
+      for| (i = 1; i < size; i += 1)
+        if (comp(this[i], this[res]))
+          res = i |
+    }
+    catch (var e if e.isA(Exception.ArgumentType))
+    {
+      e.index = i;
+      throw
+    };
     res
   };
 
