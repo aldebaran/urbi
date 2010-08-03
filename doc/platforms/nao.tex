@@ -250,7 +250,7 @@ method:
 
 \begin{urbiunchecked}
 // Instantiate a proxy for the ALMotion module.
-var motion = ALProxy.new( "ALMotion" );
+var motion = UALProxy.new( "ALMotion" );
 // Bind its methods, declaring "waituntilWalkIsFinished" as a 'long' method.
 motion.generateALBindings(["waituntilWalkIsFinished"]);
 motion.walkTo( 0.1, 0,0 );
