@@ -47,8 +47,7 @@ public:
     UBindFunction(all, setBypassNotifyChangeBinary);
     UBindFunction(all, setBypassNotifyChangeImage);
     UBindFunctions(all, markBypass, markRTP);
-    UBindFunction(all, selfWriteB);
-    UBindFunction(all, selfWriteI);
+    UBindFunctions(all, selfWriteB, selfWriteI, selfWriteVD);
 
     UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args, unnotify);
     UBindFunction(all, read);
@@ -251,7 +250,10 @@ public:
     send(ss.str());
     return 0;
   }
-
+  void selfWriteVD(int i, std::vector<double> v)
+  {
+    *vars[i] = v;
+  }
   std::string typeOf(const std::string& name)
   {
     threadCheck();

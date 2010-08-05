@@ -76,6 +76,9 @@ namespace urbi
 
     UVar& operator=(const UValue& v);
 
+    template<typename T>
+    UVar& operator=(const T&);
+
     operator int() const;
     operator bool() const;
 

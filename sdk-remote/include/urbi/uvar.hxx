@@ -111,6 +111,16 @@ namespace urbi
   SET(ufloat)
 # undef SET
 
+  template<typename T>
+  UVar& UVar::operator = (const T& v)
+  {
+    check_();
+    UValue val;
+    val, v;
+    impl_->set(val);
+    return *this;
+  }
+
 # define GET(Type)                    \
   inline UVar::operator Type() const  \
   {                                   \
