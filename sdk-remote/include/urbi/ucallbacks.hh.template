@@ -137,7 +137,6 @@ inline
 typename uvar_ref_traits<typename libport::traits::remove_reference<T>::type>::type
 uvar_uvalue_cast(UValue& v)
 {
-  std::cerr <<"generic cast for " << typeid((typename libport::traits::remove_reference<T>::type*)0).name() << std::endl;
   if (v.type == DATA_VOID && v.storage)
   {
     UVar* var = reinterpret_cast<UVar*>(v.storage);
@@ -152,7 +151,6 @@ inline
 UVar&
 uvar_uvalue_cast<UVar&>(UValue& v)
 {
-  std::cerr <<"uvar cast overload" << std::endl;
   return uvalue_cast<UVar>(v);
 }
 
