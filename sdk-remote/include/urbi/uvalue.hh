@@ -17,6 +17,7 @@
 # include <vector>
 
 # include <libport/hash.hh>
+# include <libport/preproc.hh>
 # include <libport/traits.hh>
 # include <libport/ufloat.h>
 
@@ -194,41 +195,40 @@ namespace urbi
     /// Return a legible definition of UDataType
     const char* format_string() const;
 
-#define CTOR_AND_ASSIGN_AND_COMMA(Type)		\
-    explicit UValue(Type, bool copy=true);	\
-    UValue& operator=(Type);			\
-    UValue& operator,(Type rhs)
+#define CTOR_AND_ASSIGN_AND_COMMA(Type)           \
+    explicit UValue(Type, bool copy=true);	  \
+    UValue& operator=(Type);			  \
+    UValue& operator,(Type rhs);
 
-    // UFloats.
-    CTOR_AND_ASSIGN_AND_COMMA(ufloat);
-    CTOR_AND_ASSIGN_AND_COMMA(int);
-    CTOR_AND_ASSIGN_AND_COMMA(long);
-    CTOR_AND_ASSIGN_AND_COMMA(unsigned int);
-    CTOR_AND_ASSIGN_AND_COMMA(unsigned long);
-    CTOR_AND_ASSIGN_AND_COMMA(unsigned long long);
-    CTOR_AND_ASSIGN_AND_COMMA(long long);
+// Types convertibles to DATA_DOUBLE
+#define URBI_DERIVED_NUMERIC_TYPES LIBPORT_LIST( \
+  int, long, unsigned int, unsigned long, \
+  unsigned long long, long long,)
+#define URBI_NUMERIC_TYPES LIBPORT_LIST( \
+  ufloat, int, long, unsigned int, unsigned long, \
+  unsigned long long, long long,)
 
-    // Strings.
-    CTOR_AND_ASSIGN_AND_COMMA(const char*);
-    CTOR_AND_ASSIGN_AND_COMMA(const void*);
-    CTOR_AND_ASSIGN_AND_COMMA(const std::string&);
+// Types convertibles to DATA_STRING
+#define URBI_STRING_TYPES LIBPORT_LIST( \
+  const char*, const void*, const std::string&,)
 
-    // Others.
-    CTOR_AND_ASSIGN_AND_COMMA(const UBinary&);
-    CTOR_AND_ASSIGN_AND_COMMA(const UList&);
-    CTOR_AND_ASSIGN_AND_COMMA(const UDictionary&);
-    CTOR_AND_ASSIGN_AND_COMMA(const UObjectStruct&);
-    CTOR_AND_ASSIGN_AND_COMMA(const USound&);
-    CTOR_AND_ASSIGN_AND_COMMA(const UImage&);
+#define URBI_MISC_TYPES LIBPORT_LIST( \
+  const UBinary&, const UList&, const UDictionary&, const UObjectStruct&, \
+  const USound&, const UImage&,)
+
+    LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_NUMERIC_TYPES)
+    LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_STRING_TYPES)
+    LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_MISC_TYPES)
 
 #undef CTOR_AND_ASSIGN_AND_COMMA
 
-    operator ufloat() const;
+#define CAST_OPERATOR(Type) \
+    operator Type() const;
+
+    LIBPORT_LIST_APPLY(CAST_OPERATOR, URBI_NUMERIC_TYPES)
+#undef CAST_OPERATOR
+
     operator std::string() const;
-    operator int() const;
-    operator unsigned int() const;
-    operator long() const;
-    operator unsigned long() const;
     operator bool() const;
 
     /// Accessor. Gives us an implicit operator UBinary() const

@@ -163,34 +163,18 @@ namespace urbi
 # undef CONTAINER_TO_UVALUE_DECLARE
 
 
-# define CTOR_AND_ASSIGN_AND_COMMA(Type)        \
+# define OP_COMMA(Type)        \
   inline                                        \
   UValue& UValue::operator, (Type rhs)          \
   {						\
     return *this = rhs;                         \
   }
 
-  // UFloats.
-  CTOR_AND_ASSIGN_AND_COMMA(ufloat);
-  CTOR_AND_ASSIGN_AND_COMMA(int);
-  CTOR_AND_ASSIGN_AND_COMMA(long);
-  CTOR_AND_ASSIGN_AND_COMMA(unsigned int);
-  CTOR_AND_ASSIGN_AND_COMMA(unsigned long);
+  LIBPORT_LIST_APPLY(OP_COMMA, URBI_NUMERIC_TYPES)
+  LIBPORT_LIST_APPLY(OP_COMMA, URBI_STRING_TYPES)
+  LIBPORT_LIST_APPLY(OP_COMMA, URBI_MISC_TYPES)
 
-  // Strings.
-  CTOR_AND_ASSIGN_AND_COMMA(const char*);
-  CTOR_AND_ASSIGN_AND_COMMA(const void*);
-  CTOR_AND_ASSIGN_AND_COMMA(const std::string&);
-
-  // Others.
-  CTOR_AND_ASSIGN_AND_COMMA(const UBinary&);
-  CTOR_AND_ASSIGN_AND_COMMA(const UList&);
-  CTOR_AND_ASSIGN_AND_COMMA(const UDictionary&);
-  CTOR_AND_ASSIGN_AND_COMMA(const UObjectStruct&);
-  CTOR_AND_ASSIGN_AND_COMMA(const USound&);
-  CTOR_AND_ASSIGN_AND_COMMA(const UImage&);
-
-# undef CTOR_AND_ASSIGN_AND_COMMA
+# undef OP_COMMA
 
 
 
@@ -201,10 +185,7 @@ namespace urbi
     return static_cast<Type>(static_cast<ufloat>((*this)));     \
   }
 
-  UVALUE_INTEGRAL_CAST(int)
-  UVALUE_INTEGRAL_CAST(unsigned int)
-  UVALUE_INTEGRAL_CAST(long)
-  UVALUE_INTEGRAL_CAST(unsigned long)
+  LIBPORT_LIST_APPLY(UVALUE_INTEGRAL_CAST, URBI_DERIVED_NUMERIC_TYPES)
 # undef UVALUE_INTEGRAL_CAST
 
 
@@ -258,11 +239,7 @@ namespace urbi
     }						\
   };
 
-  UVALUE_CASTER_DEFINE(int);
-  UVALUE_CASTER_DEFINE(unsigned int);
-  UVALUE_CASTER_DEFINE(long);
-  UVALUE_CASTER_DEFINE(unsigned long);
-  UVALUE_CASTER_DEFINE(ufloat);
+  LIBPORT_LIST_APPLY(UVALUE_CASTER_DEFINE, URBI_NUMERIC_TYPES)
   UVALUE_CASTER_DEFINE(std::string);
   UVALUE_CASTER_DEFINE(const std::string);
   UVALUE_CASTER_DEFINE(bool);
