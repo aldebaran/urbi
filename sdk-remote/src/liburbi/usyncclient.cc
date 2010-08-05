@@ -76,7 +76,10 @@ namespace urbi
     // Therefore, start handling connection only in the body of the
     // ctor.
     : UClient(host, port, buflen,
-              UClient::options().server(opts.server()).start(false))
+              UClient::options()
+                .server(opts.server())
+                .asynchronous(opts.asynchronous())
+                .start(false))
     , sem_()
     , queueLock_()
     , message_(0)

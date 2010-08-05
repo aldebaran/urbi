@@ -36,11 +36,13 @@ namespace urbi
     : server_(server)
       // Unless stated otherwise, auto start.
     , start_(true)
+    , asynchronous_(false)
   {
   }
 
   UCLIENT_OPTION_IMPL(UClient, bool, server)
   UCLIENT_OPTION_IMPL(UClient, bool, start)
+  UCLIENT_OPTION_IMPL(UClient, bool, asynchronous)
 
   /*----------.
   | UClient.  |
@@ -55,6 +57,7 @@ namespace urbi
     , link_(new UClient*(this))
     , ping_sent_(libport::utime())
     , ping_sem_(0)
+    , asynchronous_(opt.asynchronous())
   {
     if (opt.start())
       start();
@@ -69,7 +72,8 @@ namespace urbi
   UClient::error_type
   UClient::connect_()
   {
-    if (boost::system::error_code erc = connect(host_, port_))
+    if (boost::system::error_code erc = connect(host_, port_, false, 0,
+                                                asynchronous_))
     {
       libport::boost_error(libport::format("UClient::UClient connect(%s, %s)",
                                            host_, port_),

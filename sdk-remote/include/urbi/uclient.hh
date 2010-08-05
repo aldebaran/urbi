@@ -52,6 +52,8 @@ namespace urbi
       UCLIENT_OPTION(bool, server);
       /// Whether the socket autostarts.
       UCLIENT_OPTION(bool, start);
+      /// Wheteher the connection is established asynchronously.
+      UCLIENT_OPTION(bool, asynchronous);
     };
 
 # define UCLIENT_OPTION_IMPL(Class, Type, Name) \
@@ -145,6 +147,8 @@ namespace urbi
     error_type listen_();
     /// Reset all asynchronous calls.
     void resetAsyncCalls_();
+    /// Make an asynchronous connect.
+    bool asynchronous_;
   };
 
 } // namespace urbi
