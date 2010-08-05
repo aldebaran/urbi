@@ -283,8 +283,11 @@ is modified or accessed (for embedded components only) by calling
 \lstinline{UNotifyChange} and \lstinline{UNotifyAccess}, passing
 either an \UVar or a variable name as first argument, and a member
 function of your \UObject as second argument. This function can take
-zero or one argument: a \UVar reference pointing to the \UVar being
-accessed or modified. The \lstinline{notifyChange} callback function
+zero or one argument of any type. If the argument is of type \lstinline{UVar&},
+the value will be a reference  to the \UVar being accessed or modified.
+If it is of any other type, the system will try to convert the current value
+of the \UVar to this type and pass this value to the function.
+The \lstinline{notifyChange} callback function
 is called after the variable value is changed, whereas the
 \lstinline{notifyAccess} callback is called before the variable is
 accessed, giving you the possibility to update its value.

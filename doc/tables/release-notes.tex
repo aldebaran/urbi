@@ -15,9 +15,9 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{Fixes}
 \begin{itemize}
-\item The main loop optimization triggered several issues with Mac OS X in
-  interactive sessions (truncated output, possibly blocked input).  These
-  issues are fixed on Snow Leopard and Leopard.
+\item The main loop optimization triggered several issues with Linux and
+  Mac OS X in interactive sessions (truncated output, possibly blocked input).
+  These issues are fixed on Snow Leopard and Leopard and Linux.
 \item Deep overall of the event handling primitives.  Watching an expression
   will succeed in cases where it used to fail.  For instance:
 
@@ -48,6 +48,9 @@ var myVar = 42|;
   interactive sessions shuts down the server.
 \item Remote UObjects now support the RTP protocol to exchange value with
   the engine (\autoref{sec:uob:api:rtp}).
+\item NotifyChange/access callbacks can now take any type as argument.
+  \lstinline|UVar&| still has the previous behavior. For any other type,
+  the system will try to convert the value within the UVar to this type.
 \item \refSlot[CallMessage]{eval}.
 \item \refSlot[Float]{ceil}, \refSlot[Float]{floor}, \refSlot[Float]{isInf},
   \refSlot[Float]{isNan}.
