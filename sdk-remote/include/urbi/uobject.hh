@@ -279,6 +279,14 @@ namespace urbi
 
 # ifdef DOXYGEN
     // Doxygen does not handle macros very well so feed it simplified code.
+
+    /** @defgroup notifies Change/Access callback registration.
+     *
+     * All the registered callback functions can take no argument, a
+     * reference to an UVar, or any type convertible from UValue. The last
+     * kind will be called with the current value contained in the UVar.
+     *  @{
+     */
     /*!
     \brief Call a function each time a variable is modified.
     \param v the variable to monitor.
@@ -315,6 +323,8 @@ namespace urbi
     void UNotifyAccess(UVar& v, void (UObject::*fun)(UVar&));
     void UNotifyThreadedAccess(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
 
+    /** @} */
+
     /// Call \a fun every \a t milliseconds.
     template <class T>
     TimerHandle
@@ -322,37 +332,30 @@ namespace urbi
 # else
 
     /// \internal
-# define MakeNotify(Type, Notified, Arg, Const,                 \
+# define MakeNotify(Type, Notified,                             \
 		    TypeString, Name, Owned,			\
-		    WithArg, StoreArg)                          \
-    template <class T, typename R>                              \
-    void UNotify##Type(Notified, R (T::*fun) (Arg) Const)       \
+		    StoreArg)                                   \
+    template <typename F>                  \
+    void UNotify##Type(Notified, F fun)                         \
     {                                                           \
 	createUCallback(*this, StoreArg, TypeString,            \
-                        dynamic_cast<T*>(this),                 \
-                        fun, Name);	                        \
+                        this, fun, Name);	                \
     }                                                           \
-    template <class T, typename R>                               \
-    void UNotifyThreaded##Type(Notified, R (T::*fun) (Arg) Const, \
+    template <typename F>                  \
+    void UNotifyThreaded##Type(Notified, F fun,                 \
                                LockMode lockMode)               \
     {                                                           \
 	createUCallback(*this, StoreArg, TypeString,            \
-                        dynamic_cast<T*>(this),                 \
-                        fun, Name)                              \
+                        this, fun, Name)                        \
         ->setAsync(getTaskLock(lockMode, Name));	        \
     }
 
     /// \internal Handle functions taking a UVar& or nothing, const or not.
 # define MakeMetaNotifyArg(Type, Notified, TypeString, Owned,	\
 			   Name, StoreArg)                      \
-    MakeNotify(Type, Notified, /**/, /**/,   TypeString, Name,  \
-               Owned, false, StoreArg);				\
-    MakeNotify(Type, Notified, /**/, const,  TypeString, Name,  \
-               Owned, false, StoreArg);				\
-    MakeNotify(Type, Notified, UVar&, /**/,  TypeString, Name,  \
-               Owned, true, StoreArg);				\
-    MakeNotify(Type, Notified, UVar&, const, TypeString, Name,  \
-               Owned, true, StoreArg);
+    MakeNotify(Type, Notified, TypeString, Name,                \
+               Owned, StoreArg);
+
 
     /// \internal Define notify by name or by passing an UVar.
 # define MakeMetaNotify(Type, TypeString)				\

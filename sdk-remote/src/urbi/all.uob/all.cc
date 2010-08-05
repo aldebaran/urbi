@@ -126,6 +126,8 @@ public:
     vars[1] = &b;
     vars[2] = &c;
     vars[3] = &d;
+
+    UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB);
   }
 
   ~all()
@@ -676,6 +678,28 @@ public:
   {
     return uobjectName(n);
   }
+
+  void notifyWriteA(const std::string& target, int func)
+  {
+    switch(func)
+    {
+    case 0:
+      UNotifyChange(target, &all::writeAD);
+      break;
+    case 1:
+      UNotifyChange(target, &all::writeAS);
+      break;
+    case 2:
+      UNotifyChange(target, &all::writeAB);
+      break;
+    case 3:
+      UNotifyChange(target, &all::writeAV);
+    }
+  }
+  void writeAD(double d) { a = d; }
+  void writeAS(const std::string& s) {a = s;}
+  void writeAB(urbi::UBinary b) { a=b;}
+  void writeAV(urbi::UValue v) { a=v;}
 
   void makeCall(const std::string& obj, const std::string& func,
                 urbi::UList args)

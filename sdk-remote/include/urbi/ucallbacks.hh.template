@@ -30,6 +30,7 @@
 # include <urbi/utable.hh>
 # include <urbi/uvalue.hh>
 # include <urbi/ucontext.hh>
+# include <urbi/uvar.hh>
 
 # include <boost/function.hpp>
 
@@ -130,6 +131,33 @@ namespace urbi
   };
 
 
+// Support for arbitrary-signature notify callbacks.
+template<typename T>
+inline
+typename uvar_ref_traits<typename libport::traits::remove_reference<T>::type>::type
+uvar_uvalue_cast(UValue& v)
+{
+  std::cerr <<"generic cast for " << typeid((typename libport::traits::remove_reference<T>::type*)0).name() << std::endl;
+  if (v.type == DATA_VOID && v.storage)
+  {
+    UVar* var = reinterpret_cast<UVar*>(v.storage);
+    return uvalue_cast<T>(const_cast<UValue&>(var->val()));
+  }
+  else
+    return uvalue_cast<T>(v);
+}
+
+template<>
+inline
+UVar&
+uvar_uvalue_cast<UVar&>(UValue& v)
+{
+  std::cerr <<"uvar cast overload" << std::endl;
+  return uvalue_cast<UVar>(v);
+}
+
+// TODO: compile-time error if argument is UVar without a ref.
+
   /*------------------------------------------------.
   | This section is generated. Not for human eyes.  |
   `------------------------------------------------*/
@@ -173,8 +201,8 @@ namespace urbi
       UValue res;
       res(),
 	(is_const_)
-	? ((*obj).*funconst)(%%%,% uvalue_cast<P%>(param[% - 1]) %%)
-	: ((*obj).*fun)     (%%%,% uvalue_cast<P%>(param[% - 1]) %%);
+	? ((*obj).*funconst)(%%%,% uvar_uvalue_cast<P%>(param[% - 1]) %%)
+	: ((*obj).*fun)     (%%%,% uvar_uvalue_cast<P%>(param[% - 1]) %%);
       return res;
     }
 
@@ -253,7 +281,7 @@ namespace urbi
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), (*fun)(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
+      res(), (*fun)(%%%,% uvar_uvalue_cast<P%>(param[% - 1]) %%);
       return res;
     }
 
@@ -278,18 +306,18 @@ namespace urbi
 
   // Second argument is useless, it exist only for visual c++ compiler
   // which warn at compilation for a call of MKUCreateCallBack()
+  // Use a by-ref dynamic_cast to throw an exception in case of failure.
 # define MKUCreateCallBack%N%(Const, Useless)                           \
-  template <class OBJ, class R%%, class P% %%>				\
+  template <class OBJ, class EOBJ, class R%%, class P% %%>		\
   UGenericCallback*							\
   createUCallback(UObject& owner, UVar* target,                         \
                   const std::string& type,	                        \
-		  OBJ* obj,						\
+		  EOBJ* obj,						\
 		  R (OBJ::*fun) (%%%,% P% %%) Const,			\
 		  const std::string& funname)	                        \
   {									\
-    return new UCallback%N%<OBJ,R%%, P% %%> (owner, target, type, obj,  \
-                                             fun,	                \
-					     funname);			\
+    return new UCallback%N%<OBJ,R%%, P% %%> (owner, target, type,       \
+       &dynamic_cast<OBJ&>(*obj), fun, funname);			\
   }
 
   MKUCreateCallBack%N% (/**/, /**/);
@@ -299,18 +327,17 @@ namespace urbi
 
   // Special case for eventend notification
 # define MKCreateUCallBackEnd%N%(FConst, EConst)			\
-  template <class OBJ%%, class P% %%>					\
+template <class OBJ, class EOBJ%%, class P% %%>         		\
   UGenericCallback*							\
   createUCallback(UObject& owner, UVar* target,                         \
                   const std::string& type,	                        \
-		  OBJ* obj,						\
+		  EOBJ* obj,						\
 		  void (OBJ::*fun) (%%%,% P% %%) FConst,		\
 		  void (OBJ::*end)() EConst,				\
 		  const std::string& funname)                           \
   {									\
     return new UCallbacknotifyend%N%<OBJ%%, P% %%> (owner, target,	\
-						    type, obj, fun,	\
-						    end,funname);	\
+	type, &dynamic_cast<OBJ&>(*obj), fun, end,funname);	        \
   }
 
   MKCreateUCallBackEnd%N% (/**/, /**/);
@@ -346,7 +373,7 @@ namespace urbi
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), fun(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
+      res(), fun(%%%,% uvar_uvalue_cast<P%>(param[% - 1]) %%);
       return res;
     }
 
