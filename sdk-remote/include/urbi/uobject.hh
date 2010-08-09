@@ -263,19 +263,12 @@ namespace urbi
 
     // This call registers both an UObject (say of type
     // UObjectDerived), and a callback working on it (named here
-    // fun).  createUCallback wants both the object and the callback
-    // to have the same type, which is not the casem this is static
-    // type of the former is UObject (its runtime type is indeed
-    // UObjectDerived though), and the callback wants a
-    // UObjectDerived.  So we need a cast, until a more elegant way
-    // is found (e.g., using free standing functions instead of a
-    // member functions).
+    // fun).
 
     // These macros provide the following callbacks :
     // Notify
-    // Access    | const std::string& | void (T::*fun) ()            | const
-    // Change    | urbi::UVar&        | void (T::*fun) (urbi::UVar&) | non-const
-    // OnRequest |
+    // Access    | const std::string& | F        | const
+    // Change    | urbi::UVar&        | F        | non-const
 
 # ifdef DOXYGEN
     // Doxygen does not handle macros very well so feed it simplified code.
@@ -296,22 +289,19 @@ namespace urbi
     void UNotifyChange(UVar& v, void (UObject::*fun)(UVar&));
 
     /*!
+    \brief UnotifyChange() variant that passes the UVar value as argument to
+    your callback function.
+    */
+    template<typename T>
+    void UNotifyChange(UVar& v, void (UObject::*fun)(T));
+
+    /*!
     \brief Similar to UNotifyChange(), but run function in a thread.
     \param v the variable to monitor.
     \param fun the function to call.
     \param the locking mode to use.
     */
     void UNotifyThreadedChange(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
-    /*!
-    \brief Call a function each time a new variable value is available.
-    \param v the variable to monitor.
-    \param fun the function to call each time the variable \b v is modified.
-    This function is similar to UNotifyChange(), but it does not monitor the
-    changes on \b v. You must explicitly call UVar::requestValue() when you
-    want the callback function to be called.
-    The function is called rigth after the variable v is updated.
-    */
-    void UNotifyOnRequest(UVar& v, void (UObject::*fun)(UVar&));
 
     /*!
     \brief Call a function each time a variable is accessed.
@@ -333,7 +323,7 @@ namespace urbi
 
     /// \internal
 # define MakeNotify(Type, Notified,                             \
-		    TypeString, Name, Owned,			\
+		    TypeString, Owned, Name,			\
 		    StoreArg)                                   \
     template <typename F>                  \
     void UNotify##Type(Notified, F fun)                         \
@@ -350,19 +340,14 @@ namespace urbi
         ->setAsync(getTaskLock(lockMode, Name));	        \
     }
 
-    /// \internal Handle functions taking a UVar& or nothing, const or not.
-# define MakeMetaNotifyArg(Type, Notified, TypeString, Owned,	\
-			   Name, StoreArg)                      \
-    MakeNotify(Type, Notified, TypeString, Name,                \
-               Owned, StoreArg);
 
 
     /// \internal Define notify by name or by passing an UVar.
 # define MakeMetaNotify(Type, TypeString)				\
-    MakeMetaNotifyArg(Type, UVar& v, TypeString,			\
+    MakeNotify(Type, UVar& v, TypeString,			\
                       v.owned, v.get_name (),                           \
                       v.get_temp()?new UVar(v.get_name(), ctx_):&v);    \
-    MakeMetaNotifyArg(Type, const std::string& name, TypeString,	\
+    MakeNotify(Type, const std::string& name, TypeString,	\
                       false, name, new UVar(name, ctx_));
 
     /// \internal
@@ -371,11 +356,7 @@ namespace urbi
     /// \internal
     MakeMetaNotify(Change, "var");
 
-    /// \internal
-    MakeMetaNotify(OnRequest, "var_onrequest");
-
 # undef MakeNotify
-# undef MakeMetaNotifyArg
 # undef MakeMEtaNotify
 
     /// \internal
