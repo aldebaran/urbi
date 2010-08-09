@@ -13,6 +13,10 @@
 #include <iostream>
 #include <sstream>
 #include <list>
+
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include <libport/containers.hh>
 #include <libport/debug.hh>
 #include <libport/escape.hh>
@@ -102,6 +106,15 @@ namespace urbi
                            externalModuleTag.c_str());
       client_->setClientErrorCallback(callback(*this,
                  &RemoteUContextImpl::clientError));
+
+      double year  = client_->syncGet("System.timeReference.year")->value->val;
+      double month = client_->syncGet("System.timeReference.month")->value->val;
+      double day   = client_->syncGet("System.timeReference.day")->value->val;
+      double us    = client_->syncGet("System.timeReference.us")->value->val;
+      libport::utime_reference_set(boost::posix_time::ptime(boost::gregorian::date(year, month, day),
+                                                            boost::posix_time::microseconds(us)));
+      GD_CATEGORY(Libuobject);
+      GD_FINFO_DEBUG("Remote kernel reference timestamp: %s.", to_simple_string(libport::utime_reference()));
     }
 
     RemoteUContextImpl::~RemoteUContextImpl()

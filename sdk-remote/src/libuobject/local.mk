@@ -27,8 +27,9 @@ libuobject_libuobject@LIBSFX@_la_CPPFLAGS =	\
 libuobject_libuobject@LIBSFX@_la_LIBADD =	\
   $(LIBADD)					\
   libuco/libuco.la				\
-  liburbi/liburbi$(LIBSFX).la
-libuobject_libuobject@LIBSFX@_la_LDFLAGS = -avoid-version -no-undefined
+  liburbi/liburbi$(LIBSFX).la			\
+  $(BOOST_DATE_TIME_LIBS)
+libuobject_libuobject@LIBSFX@_la_LDFLAGS = -avoid-version -no-undefined $(BOOST_DATE_TIME_LDFLAGS)
 
 # libuobject depends on liburbi, and make install installs them (and
 # therefore relinks them) in unspecified order.  So be sure to install
