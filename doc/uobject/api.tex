@@ -395,13 +395,10 @@ type.
 
 Some care must be taken in remote mode: changes on the
 variable coming from \urbi code or an other module can take time to propagate
-to the \UVar. To have more control on the bandwidth used, you can
+to the \UVar. By default, all changes to the value will be sent to the remote
+\UObject. To have more control on the bandwidth used, you can
 disable the automatic update by calling \lstinline|unnotify()|. Then you can get
-the value on demand by calling
-\lstinline|UNotifyOnRequest (\var{variable}, \var{function})|. Then to get an
-updated value, call the \lstinline{requestValue} method on the
-\UVar, and your callback function will be called as soon as
-the value is available.
+the value on demand by calling \lstinline|UVar::syncValue()|.
 
 You can read and write all the \urbi properties of an \UVar by
 reading and writing the appropriate \lstinline{UProp} object in the
