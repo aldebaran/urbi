@@ -10,6 +10,8 @@
 
 /// \file kernel/userver.cc
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include <libport/cassert>
 #include <libport/compiler.hh>
 #include <libport/csignal>
@@ -352,6 +354,16 @@ namespace kernel
       work();
     mode_ = mode_user;
     object::Object::proto->slot_remove(SYMBOL(loaded));
+
+    urbi::object::rObject ref = new urbi::object::Object;
+    ref->proto_add(urbi::object::Object::proto);
+    urbi::object::system_class->setSlot(SYMBOL(timeReference), ref);
+
+    const boost::posix_time::ptime& time = libport::utime_reference();
+    ref->setSlot(SYMBOL(us), urbi::object::to_urbi(time.time_of_day().total_microseconds()));
+    ref->setSlot(SYMBOL(day), urbi::object::to_urbi(int(time.date().day())));
+    ref->setSlot(SYMBOL(month), urbi::object::to_urbi(int(time.date().month())));
+    ref->setSlot(SYMBOL(year), urbi::object::to_urbi(int(time.date().year())));
 
     // urbiscript is up and running.  Send local.u and the banner to
     // the ghostconnection too.
