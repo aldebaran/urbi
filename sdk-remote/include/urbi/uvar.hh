@@ -103,10 +103,6 @@ namespace urbi
     operator UList() const;
     operator UDictionary() const;
 
-    /// No effect in plugin mode. In remote mode, updates the value
-    /// once asynchronously.
-    void requestValue();
-
     /// Deactivate all callbacks associated with this UVar and stop synchro.
     void unnotify();
 
