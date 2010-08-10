@@ -1244,8 +1244,9 @@ namespace urbi
     time_t
     KernelUVarImpl::timestamp() const
     {
-      return uvar_owner_get(owner_->get_name())->getProperty(uvar_name_get(owner_->get_name()), SYMBOL(timestamp))
-        ->as<object::Float>()->value_get();
+      rObject v = uvar_owner_get(owner_->get_name())
+        ->getProperty(uvar_name_get(owner_->get_name()), SYMBOL(timestamp));
+      return time_t(v ->as<object::Float>()->value_get());
     }
 
     void
