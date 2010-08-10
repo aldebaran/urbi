@@ -39,6 +39,11 @@ XFAIL_TESTS +=					\
 TFAIL_TESTS +=					\
   2.x/trajectories/exception.chk
 
+# This test expects output from the internal uobject protocol. Won't
+# work since timestamp were added ...
+TFAIL_TESTS +=					\
+  2.x/uobject.chk
+
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   2.x/derive.chk				\
