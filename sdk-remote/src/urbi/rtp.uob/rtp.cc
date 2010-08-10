@@ -304,6 +304,8 @@ transmitRemoteWrite(const std::string& name, const T& val)
   l.push_back(UEM_ASSIGNVALUE);
   l.push_back(name);
   l.push_back(val);
+   // FIXME: timestamps should be transmitted through RTP
+  l.push_back(libport::utime());
   getDefaultClient()->notifyCallbacks(m);
 }
 
