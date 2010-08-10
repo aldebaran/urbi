@@ -101,6 +101,7 @@ namespace urbi
       , closed_(false)
       , dummyUObject(0)
       , enableRTP(true)
+      , dispatchDepth(0)
     {
       client_->setCallback(callback(*this, &RemoteUContextImpl::dispatcher),
                            externalModuleTag.c_str());
@@ -372,6 +373,8 @@ namespace urbi
     {
       if (closed_)
         return URBI_CONTINUE;
+      FINALLY(((unsigned int& , dispatchDepth)), dispatchDepth--);
+      dispatchDepth++;
       GD_CATEGORY(Libuobject);
       setCurrentContext(this);
       typedef UTable::callbacks_type callbacks_type;
@@ -513,7 +516,9 @@ namespace urbi
         return URBI_CONTINUE;
       }
       // Send a terminating ';' since code send by the UObject API uses '|'.
-      URBI_SEND_COMMAND_C((*client_), "");
+      // But only in outermost dispatch call
+      if (dispatchDepth == 1)
+        URBI_SEND_COMMAND_C((*client_), "");
       return URBI_CONTINUE;
     }
     void

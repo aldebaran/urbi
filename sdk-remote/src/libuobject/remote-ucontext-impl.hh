@@ -120,6 +120,7 @@ namespace urbi
       RTPLinks rtpLinks;
       // Use RTP connections in this context if available
       bool enableRTP;
+      unsigned int dispatchDepth;
     };
 
     class URBI_SDK_API RemoteUObjectImpl: public UObjectImpl
