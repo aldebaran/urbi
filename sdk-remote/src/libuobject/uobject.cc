@@ -107,10 +107,12 @@ namespace urbi
       client_->setClientErrorCallback(callback(*this,
                  &RemoteUContextImpl::clientError));
 
-      double year  = client_->syncGet("System.timeReference.year")->value->val;
-      double month = client_->syncGet("System.timeReference.month")->value->val;
-      double day   = client_->syncGet("System.timeReference.day")->value->val;
-      double us    = client_->syncGet("System.timeReference.us")->value->val;
+      typedef long long int us_t;
+      int  year  = int (client_->syncGet("System.timeReference.year")->value->val);
+      int  month = int (client_->syncGet("System.timeReference.month")->value->val);
+      int  day   = int (client_->syncGet("System.timeReference.day")->value->val);
+      us_t us    = us_t(client_->syncGet("System.timeReference.us")->value->val);
+
       libport::utime_reference_set(boost::posix_time::ptime(boost::gregorian::date(year, month, day),
                                                             boost::posix_time::microseconds(us)));
       GD_CATEGORY(Libuobject);
