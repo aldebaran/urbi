@@ -146,6 +146,7 @@ namespace urbi
   time_t
   UVar::timestamp() const
   {
+    check_();
     return impl_->timestamp();
   }
 
