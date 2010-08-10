@@ -220,7 +220,7 @@ namespace urbi
     UVar::update_timed_(rObject val, time_t timestamp)
     {
       getSlot(SYMBOL(owner))->setProperty(from_urbi<std::string>(getSlot(SYMBOL(initialName))),
-                                          SYMBOL(timestamp), to_urbi(timestamp));
+                                          SYMBOL(timestamp), to_urbi(double(timestamp) / 1000000));
       // Do not bother with UValue for numeric types.
       if (rUValue uval = val->as<UValue>())
         if (uval->value_get().type == urbi::DATA_DOUBLE)
