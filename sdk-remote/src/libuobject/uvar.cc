@@ -211,7 +211,7 @@ namespace urbi
       if (!rtpOK)
       {
         client_->startPack();
-        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed_(";
+        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed(";
         UBinary& b = *(v.binary);
         client_->sendBinary(b.common.data, b.common.size,
                             b.getMessage());
@@ -241,7 +241,7 @@ namespace urbi
       if (!rtp)
       {
         client_->startPack();
-        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed_(";
+        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed(";
         if (v.type == DATA_STRING)
           (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\"";
         else
