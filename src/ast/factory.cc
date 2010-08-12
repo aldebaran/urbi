@@ -511,6 +511,14 @@ namespace ast
                % make_string(l, id));
   }
 
+
+  rExp
+  Factory::make_finally(const yy::location& l, rExp body, rExp finally) // const
+  {
+    return new Finally(l, body, finally);
+  }
+
+
   rExp
   Factory::make_float(const location& l, libport::ufloat s) // const
   {

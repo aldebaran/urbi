@@ -181,6 +181,10 @@ namespace ast
 
     static
     rExp
+    make_finally(const yy::location& l, rExp body, rExp finally) /* const */;
+
+    static
+    rExp
     make_float(const yy::location& l, libport::ufloat s) /* const */;
 
 

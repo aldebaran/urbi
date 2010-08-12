@@ -154,6 +154,7 @@
         DEFAULT       "default"
         ELSE         "else"
         EMIT         "emit"
+        FINALLY      "finally"
         FREEZEIF     "freezeif"
         FUNCTION     "function"
         IF           "if"
@@ -504,6 +505,18 @@ stmt:
     $$ = new ast::Emit(@$, $2, $3, $4);
   }
 //>no-space>
+;
+
+/*----------.
+| Finally.  |
+`----------*/
+
+stmt:
+  // FIXME: shouldn't be too hard to remove the second braces pair.
+  block "finally" block
+  {
+    $$ = MAKE(finally, @$, $1, $3);
+  }
 ;
 
 

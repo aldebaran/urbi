@@ -294,9 +294,14 @@ namespace rewrite
          "{\n"
          "  var '$emit'|\n"
          "  var '$duration' = %exp:3 |\n"
-         "  Control.finally(closure () { '$emit' = %exp:1.trigger(%exps:2)|"
-         "                                sleep('$duration') },\n"
-         "                  closure () { '$emit'.stop })\n"
+         "  {\n"
+         "    '$emit' = %exp:1.trigger(%exps:2)|\n"
+         "     sleep('$duration')|\n"
+         "  }\n"
+         "  finally\n"
+         "  {\n"
+         "    '$emit'.stop|\n"
+         "  }\n"
          "}");
 
       // FIXME: children desugared twice

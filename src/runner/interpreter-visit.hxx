@@ -248,6 +248,22 @@ namespace runner
     return res;
   }
 
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::visit(const ast::Finally* f)
+  {
+    rObject res;
+    try
+    {
+      res = operator()(f->body_get().get());
+      operator()(f->finally_get().get());
+    }
+    catch (...)
+    {
+      operator()(f->finally_get().get());
+      throw;
+    }
+    return res;
+  }
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Float* e)

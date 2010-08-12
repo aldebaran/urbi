@@ -663,6 +663,17 @@ While:
     - libport::iendl
     - ~body
 
+Finally:
+  super:
+    - Exp
+  attributes:
+    - body:
+        type: 'rExp'
+    - finally:
+        type: 'rExp'
+  printer:
+    - '"finally"'
+
 Foreach:
   super:
     - Flavored

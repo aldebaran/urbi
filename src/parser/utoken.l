@@ -520,6 +520,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "do"            RETURN(DO);
 "else"          RETURN(ELSE);
 "emit"          RETURN(EMIT);
+"finally"       RETURN(FINALLY);
 "freezeif"      RETURN(FREEZEIF);
 "function"      RETURN(FUNCTION);
 "if"            RETURN(IF);
