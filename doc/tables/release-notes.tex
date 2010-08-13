@@ -11,7 +11,7 @@
 
 This chapter lists the user-visible changes in \usdk releases.
 
-\section{\usdk 2.1.1}
+\section{\usdk 2.2}
 
 \subsection{Fixes}
 \begin{itemize}
@@ -33,6 +33,15 @@ var myVar = 42|;
 \end{urbiscript}
 
   Support for sustained events is fixed too (see \autoref{sec:lang:at}).
+\item \refSlot[List]{max} and \refSlot[List]{min} will now report the right
+  indexes in error messages.
+\item \lstinline|onleave| blocks on lasting events are now run
+  asynchronously, as expected.
+\item \lstinline|at (expression ~ duration)| is now supported.
+\item Fix a bug if emitting an event triggers its unsubscription.
+\item Fix printing of \lstinline|Exception.Type| and
+  \lstinline|Exception.ArgumentType|.
+\item Fix timestamp overflow on Windows after 40 minutes.
 \end{itemize}
 
 
@@ -57,6 +66,21 @@ var myVar = 42|;
 \item \refObject{Traceable}.
 \item Improved context (the call stacks) when error are reported.
   Especially when using \refSlot[System]{eval}/\refSlot[System]{load}.
+\item \lstinline|at (expression)| --- as opposed to \lstinline|at (event?)| ---
+  implementation has been improved: the condition will now be reevaluated even
+  if a parameter not directly in the expression (in a subfunction, for
+  instance) is modified.
+
+\begin{urbiunchecked}
+var x = 0;
+function f() { x == 1 };
+at (f()) echo("OK");
+x = 1;
+[00000001] *** OK
+\end{urbiunchecked}
+
+\item UVar now have the timestamp of their last assignment.
+\item Add of the \lstinline|finally| construct. See \autoref{sec:lang:except:finally}.
 \end{itemize}
 
 \subsection{Documentation}
