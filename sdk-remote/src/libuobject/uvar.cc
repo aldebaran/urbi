@@ -119,7 +119,17 @@ namespace urbi
   std::string
   rtp_id()
   {
-    return libport::format("URTP_%s_%s", getFilteredHostname(), getpid());
+    // Compute once in some thread implementations, each thread has different
+    // PID.
+    static std::string res =
+      libport::format("URTP_%s_%s", getFilteredHostname(),
+#ifdef __UCLIBC__
+   "default"
+#else
+   getpid()
+#endif
+    );
+    return res;
   }
 
   std::string

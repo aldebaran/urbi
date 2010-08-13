@@ -166,7 +166,14 @@ static
 std::string
 rtp_id()
 {
-  return libport::format("URTP_%s_%s", getFilteredHostname(), getpid());
+  return libport::format("URTP_%s_%s", getFilteredHostname(),
+          // Under uclibc, each thread has a different pid.
+#ifdef __UCLIBC__
+   "default"
+#else
+   getpid()
+#endif
+   );
 }
 
 ::urbi::URBIStarter<URTP>
