@@ -157,6 +157,7 @@ namespace urbi
     std::string rLinkName = linkName + "_l";
     *client_
       << "var " << rLinkName <<" = URTP.new|\n"
+      << rLinkName << ".sourceContext = lobby.uid|\n"
       << "disown({var t = Tag.new | t:at(Lobby.onDisconnect?(lobby))\n"
       << "{\n"
       << "  wall(\" destroying lRTP...\")|\n"

@@ -8,10 +8,10 @@
  * See the LICENSE file for more information.
  */
 
-
 // Ortp needs a little help to know it's compiling on WIN32.
 #include <libport/config.h>
 #include <libport/detect-win32.h>
+#include <libport/lexical-cast.hh>
 #include <libport/sys/socket.h>
 #include <libport/system-warning-push.hh>
 #include <ortp/ortp.h>
@@ -26,7 +26,6 @@
 #include <urbi/uclient.hh>
 #include <urbi/uexternal.hh>
 #include <urbi/uobject.hh>
-
 
 using namespace urbi;
 
@@ -87,6 +86,9 @@ public:
   void unGroupedSendVar(UVar& v);
   /// Add this (name, value) pair to next group-send message.
   void sendGrouped(const std::string& name, const UValue& v);
+  /// Add this value to the next group-send message
+  void addToGroup(const UValue& v);
+
   /** Delay in seconds between the time first entry is added to the group, and
    * the time the group is sent.
    */
@@ -102,6 +104,8 @@ public:
   UVar raw;
   /// Session jitter control.
   UVar jitter, jitterAdaptive, jitterTime;
+  /// Context of the remote end.
+  UVar sourceContext;
   /** Force usage of this header when converting RTP data to UBinary.
    * The UVar set by receiveVar() will *not* be honored until a header or
    * a non-default media type is set.
@@ -231,6 +235,7 @@ void URTP::init()
   UBindEventRename(URTP, onErrorEvent, "onError");
   UBindVars(URTP, forceType, mediaType, jitter, jitterAdaptive, jitterTime,
             localDeliver, forceHeader, raw, commitDelay);
+  UBindVars(URTP, sourceContext);
   localDeliver = "";
   jitter = 1;
   jitterAdaptive = 1;
@@ -362,21 +367,42 @@ size_t URTP::onRead(const void* data, size_t sz)
     }
     foreach(UValue* v, m.value->list->array)
     {
-      if (v->type != DATA_LIST || v->list->size() != 2
-          || (*v->list)[0].type != DATA_STRING)
+      if (v->type != DATA_LIST)
       {
         GD_WARN("Malformed 'value' RTP message");
         return sz;
       }
-      std::string name = *v->list->array[0]->stringValue;
-      const UValue& val  = *v->list->array[1];
-      // Transmit the value to the UObject backend directly
-      if (isRemoteMode())
-        transmitRemoteWrite(name, val);
-      else
+      if ((*v->list)[0].type == DATA_STRING)
       {
-        UVar var(name);
-        var = val;
+        if (v->list->size() != 2)
+        {
+          GD_WARN("Malformed 'value' RTP message");
+          return sz;
+        }
+        std::string name = *v->list->array[0]->stringValue;
+        const UValue& val  = *v->list->array[1];
+        // Transmit the value to the UObject backend directly
+        if (isRemoteMode())
+          transmitRemoteWrite(name, val);
+        else
+        {
+          std::string sc = sourceContext;
+          if (sc.empty())
+          {
+            UVar var(name);
+            var = val;
+          }
+          else
+            call("uobjects", "$uobject_writeFromContext", sc, name, val);
+        }
+      }
+      else if ((*v->list)[0].type == DATA_DOUBLE && isRemoteMode())
+      {
+        UMessage m(*getDefaultClient());
+        m.tag = externalModuleTag;
+        m.type = MESSAGE_DATA;
+        m.value = new UValue(*v->list);
+        getDefaultClient()->notifyCallbacks(m);
       }
     }
   }
@@ -428,7 +454,12 @@ size_t URTP::onRead(const void* data, size_t sz)
     if (writeTo)
     {
       GD_SINFO_DUMP("writing to " << writeTo->get_name());
-      *writeTo = b;
+      std::string sc = sourceContext;
+      if (sc.empty())
+        *writeTo = b;
+      else
+        call("uobjects", "$uobject_writeFromContext", sc, writeTo->get_name(),
+             b);
     }
     if (!ld.empty())
     {
@@ -491,6 +522,7 @@ void URTP::send(const UValue& v)
 void URTP::receiveVar(UVar& v)
 {
   writeTo = new UVar(v.get_name());
+  writeTo->unnotify();
 }
 
 void URTP::setHeaderTarget(UVar& v)
@@ -619,6 +651,15 @@ void URTP::sendGrouped(const std::string& name, const UValue& val)
     libport::asyncCall(boost::bind(&URTP::commitGroup, this),
                        libport::utime_t((ufloat)commitDelay * 1000000LL),
                        ctx_->getIoService());
+}
+
+void URTP::addToGroup(const UValue& v)
+{
+  libport::BlockLock bl(lock);
+  bool first = !groupChange;
+  if (first)
+    groupChange = new UList;
+  groupChange->array.push_back(new UValue(v));
 }
 
 void URTP::commitGroup()
