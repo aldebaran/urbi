@@ -38,6 +38,7 @@
 #include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
+#include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
@@ -201,7 +202,8 @@ static std::set<void*> initialized;
 static bool trace_uvars = 0;
 
 static rObject get_base(const std::string& objname);
-
+static void writeFromContext(const std::string& ctx, const std::string& varName,
+                             const urbi::UValue& val);
 /// Split a string of the form "a.b" in two
 static StringPair split_name(const std::string& name)
 {
@@ -682,6 +684,30 @@ uvar_uowned_set(const std::string& name, rObject val)
                                   args);
 }
 
+// Write to an UVar, pretending we are comming from lobby ctx.
+static void writeFromContext(const std::string& ctx,
+                             const std::string& varName,
+                             const urbi::UValue& val)
+{
+  LOCK_KERNEL;
+  if (ctx.substr(0, 2) != "0x")
+    throw std::runtime_error("Invalid context: " + ctx);
+  unsigned long l = strtol(ctx.c_str()+2, 0, 16);
+  rLobby rl((object::Lobby*)l);
+  runner::Runner& r = kernel::urbiserver->getCurrentRunner();
+  rLobby cl = r.lobby_get();
+  FINALLY(((rLobby, cl))((runner::Runner&, r)), r.lobby_set(cl));
+  r.lobby_set(rl);
+  object::rUValue ov(new object::UValue());
+  ov->put(val, false);
+  StringPair p = split_name(varName);
+  rObject o = get_base(p.first);
+  if (!o)
+    runner::raise_lookup_error(libport::Symbol(varName), object::global_class);
+  o->slot_get(Symbol(p.second))->call(SYMBOL(update), ov);
+  ov->invalidate();
+}
+
 namespace urbi
 {
 
@@ -817,6 +843,15 @@ namespace urbi
                              UAutoValue v7,
                              UAutoValue v8)
     {
+      // Bypass writeFromContext to avoid an extra UValue copy.
+      if (method == "$uobject_writeFromContext")
+      {
+        std::string ctx = v1;
+        std::string varname = v2;
+        urbi::UValue val = v3;
+        writeFromContext(v1, v2, v3);
+        return;
+      }
       LOCK_KERNEL;
       rObject b = get_base(object);
       object::objects_type args;
