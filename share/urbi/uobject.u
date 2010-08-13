@@ -451,11 +451,10 @@ class Global.'external'
     uobjects.getSlot(objname).setSlot("isRemote", true) |
     uobjects.getSlot(objname).uobjectInit |
     if (!lobby.hasLocalSlot(objname))
-    {
-      wall("ERROR: lobby has no slot " + objname)
-    }|
-    for| (var s: lobby.getSlot(objname).localSlotNames)
-      uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s)) |
+      wall("ERROR: lobby " + lobby + " has no slot " + objname)
+    else
+      for| (var s: lobby.getSlot(objname).localSlotNames)
+        uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s))|
     lobby.removeSlot(objname)|
     uobjects.getSlot(objname).setSlot("lobby", lobby) |
     uobjects.getSlot(objname).setSlot("notifies", [ => ]) |
