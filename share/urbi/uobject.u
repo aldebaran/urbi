@@ -577,6 +577,9 @@ class Global.'external'
             (tv.isA(Binary))))
     { // Attempt to use RTP mode
       //wall("attempting RTP connection...");
+      // RTP setup will require usage of the connection which is stuck in
+      // the foreground "external var" call, so detach.
+      detach({
       if (tv.isA(Binary))
       {  // each Binary UVar uses its own RTP connection
         // Those are UObjects, they persist so local variables are fine.
@@ -599,6 +602,7 @@ class Global.'external'
         lobby.__bindingFunc[fullname] = lobby.sharedRTP;
         lobby.sharedRTP.groupedSendVar(obj.getSlot(varname));
       }
+      })
     }
     else
     {
