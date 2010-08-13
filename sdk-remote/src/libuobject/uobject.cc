@@ -102,6 +102,7 @@ namespace urbi
       , dummyUObject(0)
       , enableRTP(true)
       , dispatchDepth(0)
+      , dataSent(false)
     {
       client_->setCallback(callback(*this, &RemoteUContextImpl::dispatcher),
                            externalModuleTag.c_str());
@@ -514,8 +515,11 @@ namespace urbi
       }
       // Send a terminating ';' since code send by the UObject API uses '|'.
       // But only in outermost dispatch call
-      if (dispatchDepth == 1)
+      if (dispatchDepth == 1 && dataSent)
+      {
         URBI_SEND_COMMAND_C((*client_), "");
+        dataSent = false;
+      }
       return URBI_CONTINUE;
     }
     void
@@ -609,6 +613,7 @@ namespace urbi
         r = r.substr(0, r.length() - 1);
       r += ')';
       URBI_SEND_COMMA_COMMAND_C((*client_), r);
+      dataSent = true;
     }
 
     void
@@ -618,6 +623,7 @@ namespace urbi
       std::string r = "try{var " + owner->get_name() + " = Event.new()}"
       " catch(var e) {}";
       URBI_SEND_PIPED_COMMAND_C((*client_), r);
+      dataSent = true;
     }
 
     void
@@ -643,6 +649,7 @@ namespace urbi
         r = r.substr(0, r.length() - 1);
       r += ')';
       URBI_SEND_COMMAND_C((*client_), r);
+      dataSent = true;
     }
 
     UValue

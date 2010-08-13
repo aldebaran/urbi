@@ -121,6 +121,8 @@ namespace urbi
       // Use RTP connections in this context if available
       bool enableRTP;
       unsigned int dispatchDepth;
+      // True when something was sent. Reset by dispatcher().
+      bool dataSent;
     };
 
     class URBI_SDK_API RemoteUObjectImpl: public UObjectImpl

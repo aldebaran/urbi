@@ -39,16 +39,17 @@ namespace urbi
   RemoteUVarImpl::initialize(UVar* owner)
   {
     owner_ = owner;
-    RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     client_ = ctx->client_;
     std::string name = owner_->get_name();
     ctx->varmap()[name].push_back(owner_);
     URBI_SEND_PIPED_COMMAND_C((*client_), "if (!isdef(" << name << ")) var "
                             << name);
-    UObject* dummyUObject = ctx->getDummyUObject();
-    createUCallback(*dummyUObject, owner,
-		    "var",
-		    dummyUObject, &UObject::voidfun, name);
+    URBI_SEND_PIPED_COMMAND_C
+          ((*client_),
+           libport::format("external var %s from dummy",
+                           owner_->get_name()));
+    ctx->dataSent = true;
   }
 
   bool RemoteUVarImpl::setBypass(bool enable)
@@ -74,8 +75,10 @@ namespace urbi
   void
   RemoteUVarImpl::setProp(UProperty p, const UValue& v)
   {
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     URBI_SEND_PIPED_COMMAND_C((*client_), owner_->get_name() << "->"
                               << urbi::name(p) << " = " << v);
+    ctx->dataSent = true;
   }
 
   void
@@ -277,6 +280,8 @@ namespace urbi
     remoteMessage.list = 0;
     // Prevent double destruction of remoteMessage
     m.value = 0;
+    if (!rtp)
+      ctx->dataSent = true;
   }
 
   const UValue& RemoteUVarImpl::get() const
@@ -301,11 +306,13 @@ namespace urbi
   void
   RemoteUVarImpl::request()
   {
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
     //build a getvalue message  that will be parsed and returned by the server
     URBI_SEND_PIPED_COMMAND_C((*client_), externalModuleTag << "<<"
                             <<'[' << UEM_ASSIGNVALUE << ","
                             << '"' << name << '"' << ',' << name << ']');
+    ctx->dataSent = true;
   }
 
   void
@@ -354,6 +361,7 @@ namespace urbi
 
   void RemoteUVarImpl::unnotify()
   {
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
@@ -378,15 +386,18 @@ namespace urbi
       owner_->ctx_->addCleanup(c);
     }
     callbacks_.clear();
+    ctx->dataSent = true;
   };
   void RemoteUVarImpl::useRTP(bool enable)
   {
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
-      throw std::runtime_error("Invalid argument to unnotify: "+name);
+      throw std::runtime_error("Invalid argument to useRTP: "+name);
     send(name.substr(0, p) + ".getSlot(\"" + name.substr(p+1, name.npos)
          + "\").rtp = " + (enable?"true;":"false;"));
+    ctx->dataSent = true;
   }
   }
 } //namespace urbi
