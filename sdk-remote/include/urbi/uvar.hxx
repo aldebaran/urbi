@@ -194,7 +194,7 @@ namespace urbi
   inline void
   UVar::useRTP(bool state)
   {
-    rtp = state;
+    rtp = state?RTP_YES:RTP_NO;
     impl_->useRTP(state);
   }
 } // end namespace urbi

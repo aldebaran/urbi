@@ -143,6 +143,12 @@ namespace urbi
     const UValue& val() const;
     libport::utime_t timestamp() const;
 
+
+    enum RtpMode {
+      RTP_DEFAULT, ///< Use RTP if it is the default mode
+      RTP_YES,     ///< Force RTP
+      RTP_NO       ///< Do not use RTP
+    };
   private:
     /// Check that impl_ is set or throw a runtime error.
     void check_() const;
@@ -175,7 +181,7 @@ namespace urbi
     /// True if the variable is a temporary and must not be stored in callbacks
     PRIVATE(bool, temp);
 
-    PRIVATE(bool, rtp);
+    PRIVATE(RtpMode, rtp);
 # undef PRIVATE
 
     // Check that the invariants of this class are verified.

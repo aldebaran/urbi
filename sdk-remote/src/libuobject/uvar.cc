@@ -184,13 +184,14 @@ namespace urbi
     assert(pos != std::string::npos);
     std::string owner = fullname.substr(0, pos);
     std::string name = fullname.substr(pos + 1);
-    RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     libport::utime_t time = libport::utime();
+    bool rtp = false;
     if (v.type == DATA_BINARY)
     {
-      bool rtpOK = false;
       std::string localRTP = rtp_id();
-      if (ctx->enableRTP && getUObject(localRTP))
+      if (ctx->enableRTP && getUObject(localRTP)
+          && owner_->get_rtp() != UVar::RTP_NO)
       {
         GD_SINFO_TRACE("Trying RTP mode using " << localRTP);
         RemoteUContextImpl::RTPLinks::iterator i
@@ -208,10 +209,10 @@ namespace urbi
           i = ctx->rtpLinks.find(owner_->get_name());
         }
         ctx->localCall(i->second->__name, "send", v);
-        rtpOK = true;
+        rtp = true;
       }
     rtpfail:
-      if (!rtpOK)
+      if (!rtp)
       {
         client_->startPack();
         (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed(";
@@ -224,7 +225,6 @@ namespace urbi
     }
     else
     {
-      bool rtp = false;
       if (ctx->enableRTP && owner_->get_rtp())
       {
         RemoteUContextImpl::RTPLinks::iterator i

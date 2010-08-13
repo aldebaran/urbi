@@ -93,7 +93,7 @@ namespace urbi
   {
     owned = false;
     temp = false;
-    rtp = false;
+    rtp = RTP_DEFAULT;
     vardata = 0;
     if (!impl_)
     {
