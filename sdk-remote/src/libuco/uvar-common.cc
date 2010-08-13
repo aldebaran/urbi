@@ -104,10 +104,11 @@ namespace urbi
 
   UVar::~UVar()
   {
-    if (temp)
-      unnotify();
     if (impl_)
+    {
+      unnotify();
       impl_->clean();
+    }
     delete impl_;
   }
 

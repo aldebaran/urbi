@@ -358,10 +358,12 @@ namespace urbi
     size_t p = name.find_first_of(".");
     if (p == name.npos)
       throw std::runtime_error("Invalid argument to unnotify: "+name);
+    // Each UVar creation and each notifychange causes an 'external var'
+    // message, so when the UVar dies, creation count is callbacks.size +1
     send(libport::format(
-                         "UObject.unnotify(\"%s\", \"%s\", %s),",
+                         "UObject.unnotify(\"%s\", \"%s\", %s)|",
                          name.substr(0, p), name.substr(p+1, name.npos),
-                         callbacks_.size()));
+                         callbacks_.size()+1));
     foreach(RemoteUGenericCallbackImpl* c, callbacks_)
     {
       UTable& t =
