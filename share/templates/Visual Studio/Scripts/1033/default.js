@@ -104,6 +104,7 @@ function AddConfig(proj, strProjectName)
     var CLTool = config.Tools('VCCLCompilerTool');
 
     CLTool.AdditionalIncludeDirectories = urbiPath + "\\include";
+    CLTool.PreprocessorDefinitions = 'BOOST_ALL_DYN_LINK;' + CLTool.PreprocessorDefinitions
     CLTool.DebugInformationFormat = debugOption.debugEnabled;
     CLTool.Optimization = optimizeOption.optimizeDisabled;
     CLTool.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDebugDLL;
@@ -124,6 +125,7 @@ function AddConfig(proj, strProjectName)
     var CLTool = config.Tools('VCCLCompilerTool');
 
     CLTool.AdditionalIncludeDirectories = urbiPath + "\\include";
+    CLTool.PreprocessorDefinitions = 'BOOST_ALL_DYN_LINK;' + CLTool.PreprocessorDefinitions
 
     var LinkTool = config.Tools('VCLinkerTool');
 
