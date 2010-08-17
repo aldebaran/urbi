@@ -63,9 +63,28 @@ namespace urbi
     }
 
     bool
-    Regexp::match(const std::string& str) const
+    Regexp::match(const std::string& str)
     {
-      return regex_search(str, re_);
+      boost::match_results<std::string::const_iterator> groups;
+      bool res = regex_search(str, groups, re_);
+      matchs_.clear();
+      for (unsigned i = 0; i < groups.size(); ++i)
+        matchs_.push_back(std::string(groups[i].first, groups[i].second));
+      return res;
+    }
+
+    std::string
+    Regexp::operator[] (unsigned idx)
+    {
+      if (idx >= matchs_.size())
+        FRAISE("out of bound index: %s", idx);
+      return matchs_[idx];
+    }
+
+    Regexp::matchs_type
+    Regexp::matchs() const
+    {
+      return matchs_;
     }
 
     void
@@ -78,7 +97,9 @@ namespace urbi
       DECLARE(asString, as_string);
       DECLARE(init, init);
       DECLARE(match, match);
+      DECLARE(matchs, matchs);
 #undef DECLARE
+      bind(SYMBOL(SBL_SBR), &Regexp::operator[]);
     }
 
     URBI_CXX_OBJECT_REGISTER(Regexp)

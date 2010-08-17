@@ -36,10 +36,14 @@ namespace urbi
       /// "^a*"
       std::string as_string() const;
       void init(const std::string& rg);
-      bool match(const std::string& str) const;
+      bool match(const std::string& str);
+      std::string operator[] (unsigned idx);
+      typedef std::vector<std::string> matchs_type;
+      matchs_type matchs() const;
 
     private:
       boost::regex re_;
+      matchs_type matchs_;
       URBI_CXX_OBJECT_(Regexp);
     };
   }

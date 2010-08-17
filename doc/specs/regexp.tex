@@ -102,6 +102,19 @@ assert
 };
 \end{urbiscript}
 
+\item[matchs](<matchs>)%
+  The matched groups, as delimited by parentheses in the regular
+  expression. The first element is the whole match.
+
+\begin{urbiscript}
+var email_regex = Regexp.new("([a-zA-Z0-9._]+)@([a-zA-Z0-9._]+)");
+[00000001] Regexp("([a-zA-Z0-9._]+)@([a-zA-Z0-9._]+)")
+email_regex.match("Someone <someone@somewhere.com>");
+[00000002] true
+email_regex.matchs;
+[00000003] ["someone@somewhere.com", "someone", "somewhere.com"]
+\end{urbiscript}
+
 \end{urbiscriptapi}
 
 %%% Local Variables:
