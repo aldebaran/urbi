@@ -466,6 +466,7 @@ namespace urbi
 
       case UEM_NEW:
       {
+        impl::UContextImpl::CleanupStack s_(*this);
         objects_type::iterator i = objects.find(std::string(array[2]));
         if (i == objects.end())
           msg.client.printf("No such objects %s\n",
@@ -482,6 +483,7 @@ namespace urbi
 
       case UEM_DELETE:
       {
+        impl::UContextImpl::CleanupStack s_(*this);
         objects_type::iterator i = objects.find(std::string(array[1]));
         if (i == objects.end())
           break;
@@ -671,6 +673,7 @@ namespace urbi
       std::string name = object + "." + method +"__" + string_cast(nargs);
       UList l;
       {
+        // We do not copy the UValues, so do not let the UList destroy them.
         FINALLY(((UList&, l)), l.array.clear());
         for (int i=0; i<nargs; ++i)
           l.array.push_back(vals[i]);
