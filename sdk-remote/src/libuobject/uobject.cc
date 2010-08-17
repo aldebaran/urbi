@@ -407,30 +407,7 @@ namespace urbi
                             static_cast<unsigned long>(array.size()));
           return URBI_CONTINUE;
         }
-        if (std::list<UVar*> *us = varmap().find0(array[1]))
-        {
-          foreach (UVar* u, *us)
-          {
-            if (RemoteUVarImpl* impl = dynamic_cast<RemoteUVarImpl*>(u->impl_))
-              impl->update(array[2], (int)array[3]);
-            else
-            {
-              GD_FERROR("Unable to cast %x to a RemoteUVarImpl.", u->impl_);
-              std::abort();
-            }
-          }
-        }
-        if (callbacks_type* cs = monitormap().find0(array[1]))
-        {
-          foreach (UGenericCallback *c, *cs)
-          {
-            // test of return value here
-            UList u;
-            u.array.push_back(new UValue());
-            u[0].storage = c->target;
-            c->eval(u);
-          }
-        }
+        assignMessage(array[1], array[2], array[3]);
       }
       break;
 
@@ -528,6 +505,41 @@ namespace urbi
       }
       return URBI_CONTINUE;
     }
+
+    void
+    RemoteUContextImpl::assignMessage(const std::string& name,
+                                      const UValue& v, time_t ts
+                                      )
+    {
+      int nv = 0, nc = 0;
+      if (std::list<UVar*> *us = varmap().find0(name))
+      {
+        foreach (UVar* u, *us)
+        {
+          nv++;
+          if (RemoteUVarImpl* impl = dynamic_cast<RemoteUVarImpl*>(u->impl_))
+            impl->update(v, ts);
+          else
+          {
+            GD_FERROR("Unable to cast %x to a RemoteUVarImpl.", u->impl_);
+            std::abort();
+          }
+        }
+      }
+      if (UTable::callbacks_type* cs = monitormap().find0(name))
+      {
+        foreach (UGenericCallback *c, *cs)
+        {
+          nc++;
+          // test of return value here
+          UList u;
+          u.array.push_back(new UValue());
+          u[0].storage = c->target;
+          c->eval(u);
+        }
+      }
+    }
+
     void
     RemoteUContextImpl::newUObjectClass(baseURBIStarter* s)
     {

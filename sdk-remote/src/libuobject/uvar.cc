@@ -268,29 +268,7 @@ namespace urbi
       }
     }
     // Loopback notification
-    UMessage m(*ctx->client_);
-    m.type = MESSAGE_DATA;
-    UList l;
-    // Some UValue arguments (remoteMessage, time_uvalue) are located
-    // on the stack. Pop them out of the UList since it frees its
-    // elements upon destruction.
-    UValue remoteMessage;
-    remoteMessage.type = DATA_LIST;
-    remoteMessage.list = &l;
-    l.push_back(UEM_ASSIGNVALUE);
-    l.push_back(owner_->get_name());
-    l.array.push_back(const_cast<UValue*>(&v));
-    UValue time_uvalue(time);
-    l.array.push_back(&time_uvalue);
-    m.value = &remoteMessage;
-    ctx->dispatcher(m);
-    // Prevent double destruction of UValues located on the stack.
-    l.array.pop_back();
-    l.array.pop_back();
-    // Prevent double destruction of l
-    remoteMessage.list = 0;
-    // Prevent double destruction of remoteMessage
-    m.value = 0;
+    ctx->assignMessage(owner_->get_name(), v, time);
     if (!rtp)
       ctx->dataSent = true;
   }

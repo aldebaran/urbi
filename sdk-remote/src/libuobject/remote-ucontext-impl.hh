@@ -76,6 +76,7 @@ namespace urbi
        * @return the local UObject name
        */
       std::string makeRTPLink(const std::string& key);
+      void assignMessage(const std::string& name, const UValue& v, time_t ts);
       USyncClient* client_;
       /// True if we received a clientError message.
       bool closed_;
