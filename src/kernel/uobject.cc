@@ -408,14 +408,14 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
 }
 
 static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
-                               object::rTag tag,
+                               object::rTag* tag,
                                urbi::UValue& v, const std::exception* e)
 {
   if (e)
     exception = e->what();
   else
     r = v;
-  tag->unfreeze();
+  (*tag)->unfreeze();
   // Wake up the poll task.
   ::kernel::urbiserver->wake_up();
 }
@@ -459,7 +459,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       tag->value_get()->freeze();
       std::string exception;
       ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(r),
-                               boost::ref(exception), tag, _1, _2));
+                               boost::ref(exception), &tag, _1, _2));
       ::kernel::runner().yield();
       if (!exception.empty())
         throw std::runtime_error("Exception in threaded call: " + exception);
