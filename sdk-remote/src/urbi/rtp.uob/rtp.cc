@@ -12,6 +12,7 @@
 #include <libport/config.h>
 #include <libport/detect-win32.h>
 #include <libport/lexical-cast.hh>
+#include <libport/statistics.hh>
 #include <libport/sys/socket.h>
 #include <libport/system-warning-push.hh>
 #include <ortp/ortp.h>
@@ -120,8 +121,12 @@ public:
   };
   /// Set a variable name to which binary headers are written to.
   void setHeaderTarget(UVar& v);
-
-
+  /// Send binary data asynchronously
+  UVar async;
+  /// Use synchronous socket for sending
+  UVar syncSendSocket;
+  /// Use raw UDP instead of RTP.
+  UVar rawUDP;
   virtual void onError(boost::system::error_code erc);
   virtual void onConnect();
   virtual size_t onRead(const void*, size_t);
@@ -132,6 +137,7 @@ public:
   void onJitterChange(UVar&);
   void onLogLevelChange(UVar& v);
   void commitGroup();
+  void send_(const UValue&);
   URTPLink* makeSocket();
   RtpSession* session;
   size_t read_ts;
@@ -141,10 +147,12 @@ public:
   // Name of the uvar to deliver to locally.
   UVar localDeliver;
   UVar logLevel;
-  libport::Lockable lock;
+  libport::Lockable lock; // group protection
   UList* groupChange;
   boost::unordered_map<std::string, UVar*> groupedVars;
   friend class URTPLink;
+  libport::Statistics<libport::utime_t> sendTime;
+  bool sendMode_; // will this socket be used for synchronous sending.
 };
 
 class URTPLink: public libport::Socket
@@ -192,6 +200,7 @@ URTP::URTP(const std::string& n)
  , writeTo(0)
  , headerTarget(0)
  , groupChange(0)
+ , sendMode_(false) // we don't know yet
 {
   UBindFunction(URTP, init);
   static bool ortpInit = false;
@@ -235,7 +244,10 @@ void URTP::init()
   UBindEventRename(URTP, onErrorEvent, "onError");
   UBindVars(URTP, forceType, mediaType, jitter, jitterAdaptive, jitterTime,
             localDeliver, forceHeader, raw, commitDelay);
-  UBindVars(URTP, sourceContext);
+  UBindVars(URTP, sourceContext, async, syncSendSocket, rawUDP);
+  async = 0;
+  syncSendSocket = 0;
+  rawUDP = 0;
   localDeliver = "";
   jitter = 1;
   jitterAdaptive = 1;
@@ -268,7 +280,7 @@ int URTP::listen(const std::string& host, const std::string& port)
   unsigned short res =
     Socket::listenUDP(host, port,
                       boost::bind(&URTP::readFrom, this, _1, _2, _3),
-                      erc);
+                      erc, get_io_service());
   if (erc)
     throw std::runtime_error(erc.message());
   return res;
@@ -323,34 +335,48 @@ transmitRemoteWrite(const std::string& name, const T& val)
 size_t URTP::onRead(const void* data, size_t sz)
 {
   GD_SINFO_DUMP(this << " packet of size " << sz);
-  /* Normal operation of ortp is to call rtp_session_recvm_with_ts which will
-   * read its socket, get a packet and pass it to rtp_session_rtp_parse.
-   * But here we handle the socket ourselve. Fortunately the above sequence
-   * runs fine even if the socket is -1.
-  */
-  mblk_t* mp = allocb(sz, 1);
-  memcpy(mp->b_datap->db_base, data, sz);
-  mp->b_wptr = mp->b_datap->db_base + sz;
-  mp->b_rptr = mp->b_datap->db_base;
-  rtp_session_rtp_parse (session, mp, read_ts,
-                         (struct sockaddr*)0,
-                         0);
-  mblk_t* res = rtp_session_recvm_with_ts(session, read_ts);
-  if (res)
-    read_ts++;
-  GD_SINFO_DUMP("rtp_session_recvm_with_ts " << res);
-  if (!res)
-    return sz; // No data available
+
   unsigned char *payload;
   int payload_size;
-  payload_size=rtp_get_payload(mp,&payload);
-  int type = rtp_get_payload_type(mp);
-  // Do not write if the type did not change.
-  if (type != (int)mediaType)
-    mediaType = type;
-  GD_SINFO_DUMP("rtp payload type " << type);
-  if (forceType)
-    type = forceType;
+  int type;
+  mblk_t* res = 0;
+  if (rawUDP)
+  {
+    payload = (unsigned char*)data;
+    payload_size = sz;
+    type = mediaType;
+    if (forceType)
+      type = forceType;
+  }
+  else
+  {
+    /* Normal operation of ortp is to call rtp_session_recvm_with_ts which will
+    * read its socket, get a packet and pass it to rtp_session_rtp_parse.
+    * But here we handle the socket ourselve. Fortunately the above sequence
+    * runs fine even if the socket is -1.
+    */
+    mblk_t* mp = allocb(sz, 1);
+    memcpy(mp->b_datap->db_base, data, sz);
+    mp->b_wptr = mp->b_datap->db_base + sz;
+    mp->b_rptr = mp->b_datap->db_base;
+    rtp_session_rtp_parse (session, mp, read_ts,
+                           (struct sockaddr*)0,
+                           0);
+    res = rtp_session_recvm_with_ts(session, read_ts);
+    if (res)
+      read_ts++;
+    GD_SINFO_DUMP("rtp_session_recvm_with_ts " << res);
+    if (!res)
+      return sz; // No data available
+    payload_size=rtp_get_payload(mp,&payload);
+    type = rtp_get_payload_type(mp);
+    // Do not write if the type did not change.
+    if (type != (int)mediaType)
+      mediaType = type;
+    GD_SINFO_DUMP("rtp payload type " << type);
+    if (forceType)
+      type = forceType;
+  }
   std::string ld = localDeliver;
   if (type == URBISCRIPT)
     UObject::send(std::string((const char*)payload, payload_size));
@@ -469,13 +495,34 @@ size_t URTP::onRead(const void* data, size_t sz)
       transmitRemoteWrite(ld, b);
     }
     b.common.data = 0;
-    freeb(res);
+    if (res)
+      freeb(res);
   }
   return sz;
 }
 
 void URTP::send(const UValue& v)
 {
+  // The boost::bind will make a copy of v.
+  if (async)
+    libport::asyncCall(boost::bind(&URTP::send_, this, v), 0, get_io_service());
+  else
+    send_(v);
+}
+void URTP::send_(const UValue& v)
+{
+  bool sync = syncSendSocket;
+  if (!sendMode_ && sync)
+  {
+    sendMode_ = true;
+    rtp_session_set_blocking_mode(session, 1);
+  }
+  if (sync)
+  {
+    int flags = fcntl(getFD(), F_GETFL);
+    fcntl(getFD(), F_SETFL, flags & ~O_NONBLOCK);
+  }
+  libport::utime_t start = libport::utime();
   bool craw = (int)raw;
   rtp_session_set_payload_type(session, craw? RAW_BINARY:BINARY);
   const UBinary& b = *v.binary;
@@ -497,10 +544,20 @@ void URTP::send(const UValue& v)
   int res;
   if (craw)
   {
-    mblk_t* p = rtp_session_create_packet(session, RTP_FIXED_HEADER_SIZE,
-                                          (const unsigned char*)b.common.data,
-                                          b.common.size);
-    res = rtp_session_sendm_with_ts(session, p, write_ts++);
+    if (rawUDP)
+    {
+      if (sync)
+        syncWrite(b.common.data, b.common.size);
+      else
+        write(b.common.data, b.common.size);
+    }
+    else
+    {
+      mblk_t* p = rtp_session_create_packet(session, RTP_FIXED_HEADER_SIZE,
+                                            (const unsigned char*)b.common.data,
+                                            b.common.size);
+      res = rtp_session_sendm_with_ts(session, p, write_ts++);
+    }
   }
   else
   {
@@ -508,15 +565,42 @@ void URTP::send(const UValue& v)
     char*d = new char[b.common.size + s.length()];
     memcpy(d, s.c_str(), s.length());
     memcpy(d+s.length(), b.common.data, b.common.size);
-    mblk_t* p = rtp_session_create_packet(session, RTP_FIXED_HEADER_SIZE,
-                                          (const unsigned char*)d,
-                                          b.common.size + s.length());
-    res = rtp_session_sendm_with_ts(session, p, write_ts++);
+    if (rawUDP)
+    {
+     if (sync)
+       syncWrite(d, b.common.size + s.length());
+     else
+       write(d, b.common.size + s.length());
+    }
+    else
+    {
+      mblk_t* p = rtp_session_create_packet(session, RTP_FIXED_HEADER_SIZE,
+                                            (const unsigned char*)d,
+                                            b.common.size + s.length());
+      res = rtp_session_sendm_with_ts(session, p, write_ts++);
+    }
     delete[] d;
   }
   GD_SINFO_DUMP("wrote " << res <<" bytes");
   // But reset it so that it will not attempt to call recvfrom() on our socket.
   session->rtp.socket = -1;
+  if (sync)
+  {
+    int flags = fcntl(getFD(), F_GETFL);
+    fcntl(getFD(), F_SETFL, flags | O_NONBLOCK);
+  }
+  static bool dstats = getenv("STATS");
+  if (dstats)
+  {
+    sendTime.add_sample(libport::utime() - start);
+    if (sendTime.n_samples() == 100)
+    {
+      std::cerr <<"rtp send: " <<  (bool)rawUDP <<" "
+      << sendTime.mean() <<" " << sendTime.max()
+      <<" " << sendTime.min() <<" " << sendTime.variance() << std::endl;
+      sendTime.resize(0); //reset
+    }
+  }
 }
 
 void URTP::receiveVar(UVar& v)
@@ -528,6 +612,7 @@ void URTP::receiveVar(UVar& v)
 void URTP::setHeaderTarget(UVar& v)
 {
   headerTarget = new UVar(v.get_name());
+  headerTarget->unnotify();
 }
 
 void URTP::sendVar(UVar& v)
@@ -664,19 +749,38 @@ void URTP::addToGroup(const UValue& v)
 
 void URTP::commitGroup()
 {
+  libport::utime_t start = libport::utime();
   libport::BlockLock bl(lock);
   std::string s = string_cast(*groupChange);
-  rtp_session_set_payload_type(session, VALUES);
-  mblk_t* p = rtp_session_create_packet(session, RTP_FIXED_HEADER_SIZE,
-                                        (const unsigned char*)s.c_str(),
-                                        s.size());
-  // We let ortp do the socket sending stuff, so give it the handle.
-  session->rtp.socket = getFD();
+  if (rawUDP)
+  {
+    write(s.c_str(), s.length());
+  }
+  else
+  {
+    rtp_session_set_payload_type(session, VALUES);
+    mblk_t* p = rtp_session_create_packet(session, RTP_FIXED_HEADER_SIZE,
+                                          (const unsigned char*)s.c_str(),
+                                          s.size());
+    // We let ortp do the socket sending stuff, so give it the handle.
+    session->rtp.socket = getFD();
 
-  int res = rtp_session_sendm_with_ts(session, p, write_ts++);
-  GD_SINFO_DUMP("wrote " << res <<" bytes");
-  // But reset it so that it will not attempt to call recvfrom() on our socket.
-  session->rtp.socket = -1;
+    int res = rtp_session_sendm_with_ts(session, p, write_ts++);
+    GD_SINFO_DUMP("wrote " << res <<" bytes");
+    // But reset it so that it will not attempt to call recvfrom() on our socket.
+    session->rtp.socket = -1;
+  }
   delete groupChange;
   groupChange = 0;
+  static bool dstats = getenv("STATS");
+  if (dstats)
+  {
+    sendTime.add_sample(libport::utime() - start);
+    if (sendTime.n_samples() == 500)
+    {
+      std::cerr <<"rtp group send: " <<  sendTime.mean() <<" " << sendTime.max()
+      <<" " << sendTime.min() <<" " << sendTime.variance() << std::endl;
+      sendTime.resize(0); //reset
+    }
+  }
 }
