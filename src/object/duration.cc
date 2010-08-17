@@ -27,6 +27,12 @@ namespace urbi
       proto_add(proto);
     }
 
+    Duration::Duration(const boost::posix_time::time_duration& val)
+      : Float(val.total_microseconds() / 1000000)
+    {
+      proto_add(proto);
+    }
+
     Duration::Duration(rDuration model)
       : Float(model->value_get())
     {
@@ -64,6 +70,12 @@ namespace urbi
     Duration::seconds() const
     {
       return value_get();
+    }
+
+    boost::posix_time::time_duration
+    Duration::boost_duration() const
+    {
+      return boost::posix_time::microseconds(value_get() * 1000000);
     }
 
     URBI_CXX_OBJECT_REGISTER(Duration)

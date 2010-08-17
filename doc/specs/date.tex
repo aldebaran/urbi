@@ -8,7 +8,7 @@
 
 \section{Date}
 
-This class is meant to record dates in time.
+This class is meant to record dates in time, with microsecond resolution.
 \experimental{}
 
 \subsection{Prototypes}
@@ -19,21 +19,12 @@ This class is meant to record dates in time.
 
 \subsection{Construction}
 
-Without argument, newly constructed dates refer to the \dfn{epoch} (see
-\refSlot{epoch}).
+Without argument, newly constructed Dates refer to the current date.
 
-\begin{urbiscript}[firstnumber=1]
+\begin{urbiunchecked}[firstnumber=1]
 Date.new;
-[00000001] 1970-01-01 01:00:00
-\end{urbiscript}
-
-With a numeric argument \var{s}, refers to the date that is \var{s}
-seconds after the epoch.
-
-\begin{urbiscript}
-Date.new(1234567890);
-[00023593] 2009-02-14 00:31:30
-\end{urbiscript}
+[00000001] 2010-Aug-17 14:40:52.549726
+\end{urbiunchecked}
 
 With a string argument \var{d}, refers to the date contained in \var{d}.
 The string should be formatted as \samp{\var{yyyy}-\var{mm}-\var{dd}
@@ -44,84 +35,62 @@ is absent, the behavior is undefined.
 
 \begin{urbiscript}
 Date.new("2003-10-10 20:10:50");
-[00086457] 2003-10-10 20:10:50
-Date.new("2003-10-10 20:10");
-[00091439] 2003-10-10 20:10:00
+[00000001] 2003-Oct-10 20:10:50
+Date.new("2003-Oct-10 20:10");
+[00000002] 2003-Oct-10 20:10:00
 Date.new("2003-10-10 20");
-[00094386] 2003-10-10 20:00:00
-\end{urbiscript}
-
-If you create a date with a numeric argument which cannot be interpreted as
-a date you should get an error message warning you that the value cannot be
-converted into a integer
-
-\begin{urbiscript}
-Date.new(0.1);
-[00095042:error] !!! new: bad numeric conversion: overflow or non empty fractional part: 0.1
+[00000003] 2003-Oct-10 20:00:00
 \end{urbiscript}
 
 \subsection{Slots}
 
 \begin{urbiscriptapi}
 \item['+'](<that>)%
-  Return the date which is corresponds to waiting \refObject{Duration}
+  Return the date which corresponds to waiting \refObject{Duration}
   \var{that} after \this.
 \begin{urbiassert}
-Date.new(1000) + Duration.new(100) == Date.new(1100);
-Date.new(1000) + Duration.new(-100) == Date.new(900);
+Date.new("2010-08-17 12:00") + 60s == Date.new("2010-08-17 12:01");
 \end{urbiassert}
 
 \item['-'](<that>)%
   Compute the difference between two dates.  Return a
   \refObject{Duration}.
 \begin{urbiassert}
-Date.new(100) - Date.new(0) == Duration.new(100);
-Date.new(0) - Date.new(100) == Duration.new(-100);
+Date.new("2010-08-17 12:01") - Date.new("2010-08-17 12:00") == 60s;
 \end{urbiassert}
 
 \item['=='](<that>)%
   Equality test.
 \begin{urbiassert}
-Date.new(11223344) == Date.new(11223344);
-Date.new(11111111) != Date.new(22222222);
+Date.new("2010-08-17 12:00") == Date.new("2010-08-17 12:00");
+Date.new("2010-08-17 12:00") != Date.new("2010-08-17 12:01");
 \end{urbiassert}
 
 \item['<'](<that>)%
   Order comparison.
 \begin{urbiassert}
-Date.new(11111111) < Date.new(22222222);
+Date.new("2010-08-17 12:00") < Date.new("2010-08-17 12:01");
 \end{urbiassert}
 
-\item[asFloat]
-  Give the numeric value of the date that refers to the date that is \var{s}
-seconds after the epoch.
-\begin{urbiassert}
-Date.new("2002-01-20 23:59:59").asFloat == 1011567599;
-\end{urbiassert}
-
-\item[asString]
-  Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
-    \var{hh}:\var{mn}:\var{ss}} where \var{yyyy} is the four-digit
-  year, \var{mm} the two-digit month (from 1 to 12), \var{dd} the
-  two-digit day in the month (from 1 to 31), \var{hh} the two-digit
-  hour (from 0 to 23), \var{mn} the two-digit number of minutes in the
-  hour (from 0 to 59), and \var{ss} the two-digit number of seconds in
+\item[asString] Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
+    \var{hh}:\var{mn}:\var{ss}.\var{us}} where \var{yyyy} is the four-digit
+  year, \var{mm} the three letters name of the month (Jan, Feb, ...),
+  \var{dd} the two-digit day in the month (from 1 to 31), \var{hh} the
+  two-digit hour (from 0 to 23), \var{mn} the two-digit number of minutes in
+  the hour (from 0 to 59), and \var{ss} the two-digit number of seconds in
   the minute (from 0 to 59).
 \begin{urbiassert}
-Date.new(1234567890).asString == "2009-02-14 00:31:30";
+Date.new("2009-02-14 00:31:30").asString == "2009-Feb-14 00:31:30";
 \end{urbiassert}
 
 \item[epoch]
   A fixed value, the ``origin of times'': January 1st 1970, at
   midnight.
 \begin{urbiassert}
-Date.epoch == Date;
-
-Date.epoch == Date.new(0);
-Date.epoch == Date.new();
+Date.epoch == Date.new("1970-01-01 00:00");
 \end{urbiassert}
 
-\item[now] The current date.
+\item[now] The current date. Equivalent to Date.new.
 \begin{urbiunchecked}
 Date.now;
 [00000000] 2012-03-02 15:31:42

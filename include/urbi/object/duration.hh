@@ -11,6 +11,8 @@
 #ifndef OBJECT_DURATION_HH
 # define OBJECT_DURATION_HH
 
+# include <boost/date_time/posix_time/posix_time.hpp>
+
 # include <urbi/object/float.hh>
 
 namespace urbi
@@ -25,6 +27,7 @@ namespace urbi
 
     public:
       Duration(value_type seconds = 0);
+      Duration(const boost::posix_time::time_duration& val);
       Duration(rDuration model);
       void init(const objects_type& args);
 
@@ -42,6 +45,7 @@ namespace urbi
 
     public:
       value_type seconds() const;
+      boost::posix_time::time_duration boost_duration() const;
 
     /*----------.
     | Details.  |
@@ -52,5 +56,7 @@ namespace urbi
     };
   }
 }
+
+# include <urbi/object/duration.hxx>
 
 #endif

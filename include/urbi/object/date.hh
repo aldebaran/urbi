@@ -11,6 +11,9 @@
 #ifndef OBJECT_DATE_HH
 # define OBJECT_DATE_HH
 
+# include <boost/date_time/gregorian/gregorian.hpp>
+# include <boost/date_time/posix_time/posix_time.hpp>
+
 # include <libport/ctime>
 
 # include <urbi/object/cxx-object.hh>
@@ -27,10 +30,10 @@ namespace urbi
     `---------------*/
 
     public:
-      typedef time_t value_type;
+      typedef boost::posix_time::ptime value_type;
       Date();
       Date(rDate model);
-      Date(value_type time);
+      Date(const value_type& time);
       void init(const objects_type& args);
 
     /*--------------.
@@ -48,18 +51,17 @@ namespace urbi
 
     public:
       rDuration operator - (rDate rhs) const;
-      Date& operator += (rDuration rhs);
-      rDate operator + (rDuration rhs) const;
+      Date& operator += (const boost::posix_time::time_duration& rhs);
+      rDate operator + (const boost::posix_time::time_duration& rhs) const;
 
     /*--------------.
     | Conversions.  |
     `--------------*/
 
     public:
+      value_type as_boost() const;
       std::string as_string() const;
-      libport::ufloat asFloat () const;
-      libport::ufloat timestamp () const;
-
+      boost::posix_time::time_duration as_timestamp() const;
 
     /*--------.
     | Dates.  |
@@ -67,7 +69,7 @@ namespace urbi
 
     public:
       static rDate now();
-      static rDate epoch();
+      static value_type epoch();
 
     /*----------.
     | Details.  |
@@ -80,5 +82,7 @@ namespace urbi
     };
   }
 }
+
+# include <urbi/object/date.hxx>
 
 #endif

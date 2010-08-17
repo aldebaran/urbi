@@ -12,7 +12,6 @@
 #include <urbi/object/date.hh>
 #include <urbi/object/duration.hh>
 #include <urbi/object/global.hh>
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace urbi
 {
@@ -23,12 +22,12 @@ namespace urbi
     `---------------*/
 
     Date::Date()
-      : time_(0)
+      : time_(boost::posix_time::microsec_clock::local_time())
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
 
-    Date::Date(value_type t)
+    Date::Date(const value_type& t)
       : time_(t)
     {
       proto_add(proto ? rObject(proto) : Object::proto);
@@ -48,22 +47,12 @@ namespace urbi
       check_arg_count(args.size(), 0, 1);
 
       if (args.empty())
+        time_ = boost::posix_time::microsec_clock::local_time();
+      else
       {
-        time_ = 0;
-        return;
+        type_check(args[0], String::proto, 1);
+        time_ = boost::posix_time::time_from_string(args[0]->as<object::String>()->value_get());
       }
-
-      if (rString str = args[0]->as<object::String>())
-      {
-        boost::posix_time::ptime t
-          (boost::posix_time::time_from_string(str->value_get()));
-        tm timeinfo = boost::posix_time::to_tm(t);
-        time_ = mktime (&timeinfo);
-
-        return;
-      }
-
-      time_ = from_urbi<time_t>(args[0]);
     }
 
     /*-------------.
@@ -93,14 +82,14 @@ namespace urbi
     }
 
     Date&
-    Date::operator += (rDuration rhs)
+    Date::operator += (const boost::posix_time::time_duration& rhs)
     {
-      time_ += static_cast<value_type>(rhs->seconds());
+      time_ += rhs;
       return *this;
     }
 
     rDate
-    Date::operator + (rDuration rhs) const
+    Date::operator + (const boost::posix_time::time_duration& rhs) const
     {
       rDate res = new Date(time_);
       *res += rhs;
@@ -111,30 +100,22 @@ namespace urbi
     | Conversions.  |
     `--------------*/
 
-    std::string
-    Date::as_string() const
-    {
-      struct tm date;
-      localtime_r(&time_, &date);
-      return libport::format("%04s-%02s-%02s %02s:%02s:%02s",
-                             1900 + date.tm_year,
-                             date.tm_mon + 1,
-                             date.tm_mday,
-                             date.tm_hour,
-                             date.tm_min,
-                             date.tm_sec);
-    }
-
-    libport::ufloat
-    Date::asFloat() const
+    Date::value_type
+    Date::as_boost() const
     {
       return time_;
     }
 
-    libport::ufloat
-    Date::timestamp() const
+    std::string
+    Date::as_string() const
     {
-      return asFloat ();
+      return to_simple_string(time_);
+    }
+
+    boost::posix_time::time_duration
+    Date::as_timestamp() const
+    {
+      return time_ - epoch();
     }
 
     /*--------.
@@ -142,15 +123,15 @@ namespace urbi
     `--------*/
 
     rDate
-    Date::now ()
+    Date::now()
     {
-      return new Date(time(0));
+      return new Date();
     }
 
-    rDate
-    Date::epoch ()
+    Date::value_type
+    Date::epoch()
     {
-      return new Date(0);
+      return value_type(boost::gregorian::date(1970, 1, 1));
     }
 
 
@@ -165,16 +146,15 @@ namespace urbi
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
       bind(SYMBOL(MINUS), &Date::operator -);
       bind(SYMBOL(PLUS), &Date::operator +);
-      bind(SYMBOL(asFloat), &Date::asFloat);
       bind(SYMBOL(asString), &Date::as_string);
       bind(SYMBOL(epoch), &Date::epoch);
       bind(SYMBOL(init), &Date::init);
       bind(SYMBOL(now), &Date::now);
-      bind(SYMBOL(timestamp), &Date::timestamp);
+      bind(SYMBOL(as_timestamp), &Date::as_timestamp);
     }
 
     URBI_CXX_OBJECT_REGISTER(Date)
-      : time_(0)
+      : time_(boost::posix_time::microsec_clock::local_time())
     {}
   }
 }
