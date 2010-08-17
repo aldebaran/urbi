@@ -443,7 +443,11 @@ namespace urbi
                             static_cast<unsigned long>(array.size()));
           return URBI_CONTINUE;
         }
-        GD_FINFO_DUMP("dispatching call of %s...", array[1]);
+        // This GD call is costing an arm and a leg...
+        # ifndef LIBPORT_DEBUG_DISABLE
+        if (libport::debugger()->enabled(libport::Debug::levels::dump))
+          GD_FINFO_DUMP("dispatching call of %s...", array[1]);
+        #endif
 	callbacks_type tmpfun = functionmap()[array[1]];
         const std::string var = array[2];
 	callbacks_type::iterator tmpfunit = tmpfun.begin();
