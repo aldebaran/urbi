@@ -23,7 +23,8 @@ namespace urbi
       to(const rObject& o, unsigned idx)
       {
         type_check(o, Float::proto, idx);
-        return boost::posix_time::microseconds(o->as<Float>()->value_get() * 1000000);
+        typedef long long time_t;
+        return boost::posix_time::microseconds(time_t(o->as<Float>()->value_get() * 1000000));
       }
 
       static rObject

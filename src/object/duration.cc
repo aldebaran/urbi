@@ -75,7 +75,8 @@ namespace urbi
     boost::posix_time::time_duration
     Duration::boost_duration() const
     {
-      return boost::posix_time::microseconds(value_get() * 1000000);
+      typedef long long time_t;
+      return boost::posix_time::microseconds(time_t(value_get() * 1000000));
     }
 
     URBI_CXX_OBJECT_REGISTER(Duration)
