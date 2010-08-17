@@ -36,6 +36,11 @@ namespace urbi
     UAutoValue(T v)
       : UValue(v)
     {}
+
+    UAutoValue(const UValue& v)
+    {
+      set(v, false);
+    }
   };
 
   /** Methods available in both UObject and UVar

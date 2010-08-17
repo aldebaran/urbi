@@ -301,8 +301,23 @@ namespace urbi
   };
 
   // Run the uvalue_caster<Type> on v.
+
+  /* NM: Why exactly are we moving the const away?
+   * I'm dropping it for UValue as it makes unnecessary copy.
+   */
+
+   template<typename T> struct uvalue_cast_return_type
+   {
+     typedef typename libport::traits::remove_reference<T>::type type;
+   };
+
+   template<> struct uvalue_cast_return_type<const UValue&>
+   {
+     typedef const UValue& type;
+   };
+
   template <typename Type>
-  typename uvar_ref_traits<typename libport::traits::remove_reference<Type>::type>::type
+  typename uvar_ref_traits<typename uvalue_cast_return_type<Type>::type>::type
   uvalue_cast (UValue& v);
 
 } // namespace urbi

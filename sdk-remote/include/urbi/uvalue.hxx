@@ -222,7 +222,7 @@ namespace urbi
 
   // Run the uvalue_caster<Type> on v.
   template <typename Type>
-  typename uvar_ref_traits<typename libport::traits::remove_reference<Type>::type>::type
+  typename uvar_ref_traits<typename uvalue_cast_return_type<Type>::type>::type
   uvalue_cast(UValue& v)
   {
     return uvalue_caster<typename libport::traits::remove_reference<Type>::type>()(v);
@@ -253,11 +253,12 @@ namespace urbi
   | Casting an UValue into an UValue.  |
   `-----------------------------------*/
 
+  // Always return a const UValue&, a copy will be made if required.
 # define UVALUE_CASTER_DEFINE(Type)              \
   template <>                                   \
   struct uvalue_caster<Type>                    \
   {                                             \
-    Type operator()(UValue& v)                  \
+    const UValue& operator()(UValue& v)         \
     {                                           \
       return v;                                 \
     }                                           \

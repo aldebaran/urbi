@@ -132,9 +132,11 @@ namespace urbi
 
 
 // Support for arbitrary-signature notify callbacks.
+
+
 template<typename T>
 inline
-typename uvar_ref_traits<typename libport::traits::remove_reference<T>::type>::type
+typename uvar_ref_traits<typename uvalue_cast_return_type<T>::type>::type
 uvar_uvalue_cast(UValue& v)
 {
   if (v.type == DATA_VOID && v.storage)
