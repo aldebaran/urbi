@@ -273,13 +273,16 @@ namespace urbi
       {
         RemoteUContextImpl& ctx = dynamic_cast<RemoteUContextImpl&>
         (*(owner_->ctx_));
-        ctx.getClient()->notifyCallbacks(UMessage(*ctx.getClient(), 0,
-                                          externalModuleTag.c_str(),
-          ("["
-          + string_cast(UEM_EVALFUNCTION) + ","
-          + '"' + owner_->__name + ".update__0" + '"' + ","
-          + "\"\""
-          +"]").c_str()));
+        UMessage m(*ctx.client_);
+        m.type = MESSAGE_DATA;
+        m.tag = externalModuleTag;
+        m.value = new UValue(UList());
+        m.value->list->push_back(UEM_EVALFUNCTION);
+        m.value->list->push_back(owner_->__name + ".update__0");
+        m.value->list->push_back("");
+        // This is potentialy not the worker thread, cannot call dispatcher()
+        // synchronously.
+        ctx.getClient()->notifyCallbacks(m);
         updateHandler =
           libport::asyncCall(boost::bind(&RemoteUObjectImpl::onUpdate, this),
                              useconds_t(period * 1000));
