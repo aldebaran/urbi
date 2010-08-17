@@ -21,7 +21,8 @@ namespace urbi
   class UObjectSocket: public libport::Socket
   {
   public:
-    UObjectSocket(boost::asio::io_service& io = libport::get_io_service())
+    UObjectSocket(boost::asio::io_service& io =
+                  getCurrentContext()->getIoService())
     : libport::Socket(io)
     {
     }
