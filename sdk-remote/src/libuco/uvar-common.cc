@@ -143,7 +143,7 @@ namespace urbi
     return *this;
   }
 
-  time_t
+  libport::utime_t
   UVar::timestamp() const
   {
     check_();
