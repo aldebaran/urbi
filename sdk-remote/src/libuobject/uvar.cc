@@ -376,6 +376,8 @@ namespace urbi
     }
     callbacks_.clear();
     ctx->dataSent = true;
+    if (std::list<UVar*> *us = ctx->varmap().find0(name))
+      us->remove(owner_);
   };
   void RemoteUVarImpl::useRTP(bool enable)
   {
