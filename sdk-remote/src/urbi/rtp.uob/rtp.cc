@@ -519,8 +519,10 @@ void URTP::send_(const UValue& v)
   }
   if (sync)
   {
+#ifndef WIN32
     int flags = fcntl(getFD(), F_GETFL);
     fcntl(getFD(), F_SETFL, flags & ~O_NONBLOCK);
+#endif
   }
   libport::utime_t start = libport::utime();
   bool craw = (int)raw;
@@ -586,8 +588,10 @@ void URTP::send_(const UValue& v)
   session->rtp.socket = -1;
   if (sync)
   {
+#ifndef WIN32
     int flags = fcntl(getFD(), F_GETFL);
     fcntl(getFD(), F_SETFL, flags | O_NONBLOCK);
+#endif
   }
   static bool dstats = getenv("STATS");
   if (dstats)
