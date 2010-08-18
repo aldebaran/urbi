@@ -411,6 +411,7 @@ static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
                                object::rTag* tag,
                                urbi::UValue& v, const std::exception* e)
 {
+  LOCK_KERNEL;
   if (e)
     exception = e->what();
   else
