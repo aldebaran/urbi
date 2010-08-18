@@ -150,7 +150,7 @@ namespace urbi
       bind(SYMBOL(epoch), &Date::epoch);
       bind(SYMBOL(init), &Date::init);
       bind(SYMBOL(now), &Date::now);
-      bind(SYMBOL(as_timestamp), &Date::as_timestamp);
+      bind(SYMBOL(timestamp), &Date::as_timestamp);
     }
 
     URBI_CXX_OBJECT_REGISTER(Date)
