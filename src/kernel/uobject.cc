@@ -65,6 +65,11 @@ using object::void_class;
 using object::nil_class;
 using libport::Symbol;
 
+// Using RAII, cannot be a function
+#define LOCK_KERNEL \
+  libport::Synchronizer::SynchroPoint \
+  urbi_synchro_point_(kernel::urbiserver->synchronizer_get(), true)
+
 // Declare our UObject implementation
 namespace urbi {
   namespace impl {
@@ -709,11 +714,6 @@ namespace urbi
 
   namespace impl
   {
-    // Using RAII, cannot be a function
-#define LOCK_KERNEL \
-  libport::Synchronizer::SynchroPoint \
-  urbi_synchro_point_(kernel::urbiserver->synchronizer_get(), true)
-
 
     UContextImpl* getPluginContext()
     {
