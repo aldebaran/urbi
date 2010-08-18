@@ -543,7 +543,7 @@ void URTP::send_(const UValue& v)
   }
   // We let ortp do the socket sending stuff, so give it the handle.
   session->rtp.socket = getFD();
-  int res;
+  int res = 0;
   if (craw)
   {
     if (rawUDP)
