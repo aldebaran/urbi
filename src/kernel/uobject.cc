@@ -704,7 +704,8 @@ static void writeFromContext(const std::string& ctx,
   rObject o = get_base(p.first);
   if (!o)
     runner::raise_lookup_error(libport::Symbol(varName), object::global_class);
-  o->slot_get(Symbol(p.second))->call(SYMBOL(update), ov);
+  o->slot_get(Symbol(p.second))->call(SYMBOL(update_timed), ov,
+                                      object::to_urbi(libport::utime()));
   ov->invalidate();
 }
 
