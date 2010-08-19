@@ -14,6 +14,7 @@
 #include <sstream>
 #include <list>
 
+#include <libport/containers.hh>
 #include <libport/debug.hh>
 #include <libport/lexical-cast.hh>
 
@@ -95,6 +96,7 @@ namespace urbi
     void
     RemoteUGenericCallbackImpl::registerCallback()
     {
+      RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
       GD_FINFO("Pushing %s in %s", owner_->name, owner_->type);
       UTable& t =
         dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)
@@ -102,8 +104,15 @@ namespace urbi
       t[callback_name(owner_->name, owner_->type, owner_->nbparam)]
         .push_back(owner_);
       if (owner_->target)
+      {
         static_cast<RemoteUVarImpl*>(owner_->target->impl_)
           ->callbacks_.push_back(this);
+        std::string targetname = owner_->target->get_name();
+        // Register the UVar to be updated if it's not there.
+        std::list<UVar*> &us = ctx->varmap()[targetname];
+        if (!libport::has(us, owner_->target))
+          us.push_back(owner_->target);
+      }
     }
 
   }
