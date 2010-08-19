@@ -266,6 +266,14 @@ namespace urbi
       stop_backend(true);
     }
 
+    // Use an intermediary bouncer to make sure the Executable is
+    // stored in a smart pointer, and not deleted too early.
+    static void
+    executable_bouncer(rExecutable e, objects_type args)
+    {
+      (*e)(args);
+    }
+
     void
     Event::stop_backend(bool detach)
     {
@@ -279,8 +287,8 @@ namespace urbi
           typedef rObject(Executable::*fun_type)(objects_type);
           sched::rJob job = new runner::Interpreter
             (r.lobby_get(), r.scheduler_get(),
-             boost::bind(static_cast<fun_type>(&Executable::operator()),
-                         stop_job.first.get(), stop_job.second),
+             boost::bind(&executable_bouncer,
+                         stop_job.first, stop_job.second),
              this, SYMBOL(onleave));
           job->start_job();
         }

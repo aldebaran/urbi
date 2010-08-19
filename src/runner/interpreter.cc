@@ -50,6 +50,8 @@
 #include <urbi/object/location.hh>
 #include <urbi/object/job.hh>
 
+GD_ADD_CATEGORY(Urbi);
+
 namespace runner
 {
   using libport::Finally;
@@ -153,6 +155,8 @@ namespace runner
     , result_(0)
     , stacks_(self)
   {
+    GD_CATEGORY(Urbi);
+    GD_FINFO_TRACE("Spawn new interpreter \"%s\".", name);
     init();
     apply_tag(lobby->tag_get());
   }
