@@ -50,7 +50,12 @@
 #include <urbi/object/location.hh>
 #include <urbi/object/job.hh>
 
+// If not in speed mode, compile visit methods here.
+#ifndef LIBPORT_COMPILATION_MODE_SPEED
+# include <runner/interpreter-visit.hxx>
+#else
 GD_ADD_CATEGORY(Urbi);
+#endif
 
 namespace runner
 {
@@ -395,8 +400,3 @@ namespace runner
   }
 
 } // namespace runner
-
-// If not in speed mode, compile visit methods here.
-#ifndef LIBPORT_COMPILATION_MODE_SPEED
-# include <runner/interpreter-visit.hxx>
-#endif

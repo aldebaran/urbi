@@ -42,6 +42,8 @@
 # include <urbi/object/slot.hh>
 # include <urbi/object/string.hh>
 
+GD_ADD_CATEGORY(Urbi);
+
 /// Job echo.
 #define JECHO(Title, Content)                                   \
   LIBPORT_DEBUG("job " << ME << ", " Title ": " << Content)
