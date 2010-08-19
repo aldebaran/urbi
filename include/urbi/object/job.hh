@@ -30,7 +30,6 @@ namespace urbi
     public:
       typedef sched::rJob value_type;
 
-      Job();
       Job(const value_type& value);
       Job(rJob model);
       const value_type& value_get() const;

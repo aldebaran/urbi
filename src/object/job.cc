@@ -23,8 +23,9 @@
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
-#include <urbi/object/tag.hh>
+#include <urbi/object/lobby.hh>
 #include <urbi/object/job.hh>
+#include <urbi/object/tag.hh>
 #include <runner/interpreter.hh>
 #include <runner/runner.hh>
 
@@ -33,12 +34,6 @@ namespace urbi
   namespace object
   {
     using runner::Runner;
-
-    Job::Job()
-      : value_(0)
-    {
-      proto_add(proto ? rObject(proto) : Object::proto);
-    }
 
     Job::Job(const value_type& value)
       : value_(value)
@@ -62,18 +57,23 @@ namespace urbi
     libport::Symbol
     Job::name()
     {
-      return value_->name_get();
+      return value_ ? value_->name_get() : SYMBOL(Job);
     }
 
     const runner::tag_stack_type
     Job::tags()
     {
-      return dynamic_cast<runner::Interpreter*>(value_.get())->tag_stack_get();
+      return value_
+        ? dynamic_cast<runner::Interpreter*>(value_.get())->tag_stack_get()
+        : runner::tag_stack_type();
     }
 
     std::string
     Job::status()
     {
+      if (!value_)
+        return "";
+
       Runner& r = ::kernel::runner();
 
       std::stringstream status;
@@ -114,6 +114,9 @@ namespace urbi
     rList
     Job::backtrace()
     {
+      if (!value_)
+        return new List();
+
       List::value_type res;
       if (const Runner* runner = dynamic_cast<Runner*>(value_.get()))
       {
@@ -126,6 +129,8 @@ namespace urbi
     void
     Job::waitForTermination()
     {
+      if (!value_)
+        return;
       Runner& r = ::kernel::runner();
       r.yield_until_terminated(*value_);
     }
@@ -133,6 +138,8 @@ namespace urbi
     void
     Job::waitForChanges()
     {
+      if (!value_)
+        return;
       Runner& r = ::kernel::runner();
       r.yield_until_things_changed();
     }
@@ -140,18 +147,24 @@ namespace urbi
     void
     Job::terminate()
     {
+      if (!value_)
+        return;
       value_->terminate_now();
     }
 
     void
     Job::setSideEffectFree(rObject b)
     {
+      if (!value_)
+        return;
       value_->side_effect_free_set(b->as_bool());
     }
 
     rFloat
     Job::timeShift()
     {
+      if (!value_)
+        return new Float(0);
       return new Float(value_->time_shift_get() / 1000000.0);
     }
 
