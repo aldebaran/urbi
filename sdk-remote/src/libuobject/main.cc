@@ -128,8 +128,6 @@ namespace urbi
     }
     if (!getDefaultClient() || getDefaultClient()->error())
       return 1;
-    defaultContext = new impl::RemoteUContextImpl(
-      (USyncClient*)dynamic_cast<UClient*>(getDefaultClient()));
 
 #ifdef LIBURBIDEBUG
     getDefaultClient()->setWildcardCallback(callback(&debug));
@@ -140,9 +138,11 @@ namespace urbi
     // Wait for client to be connected if in server mode.
     while (getDefaultClient()
            && !getDefaultClient()->error()
-           && !getDefaultClient()->init())
+           && !getDefaultClient()->isConnected())
       usleep(20000);
 
+    defaultContext = new impl::RemoteUContextImpl(
+      (USyncClient*)dynamic_cast<UClient*>(getDefaultClient()));
     // Waiting for connectionID.
     while (getDefaultClient()
            && getDefaultClient()->connectionID() == "")
