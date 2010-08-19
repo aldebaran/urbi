@@ -617,4 +617,10 @@ namespace urbi
     (*res) << boost::bind(&destroySocket, s);
     return res;
   }
+
+  bool
+  USyncClient::isCallbackThread()
+  {
+    return pthread_self() == cbThread;
+  }
 } // namespace urbi

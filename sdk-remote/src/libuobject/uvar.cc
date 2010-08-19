@@ -270,7 +270,12 @@ namespace urbi
     // Loopback notification
     ctx->assignMessage(owner_->get_name(), v, time);
     if (!rtp)
-      ctx->dataSent = true;
+    {
+      if (client_->isCallbackThread() && ctx->dispatchDepth)
+        ctx->dataSent = true;
+      else // we were not called by dispatch: send the terminating ';' ourselve.
+        URBI_SEND_COMMAND_C((*client_), "");
+    }
   }
 
   const UValue& RemoteUVarImpl::get() const
