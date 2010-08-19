@@ -438,6 +438,8 @@ class Global.'external'
   */
   function object(objname)
   {
+    if (!lobby.hasLocalSlot("$uobjectMutex"))
+      lobby.setSlot("$uobjectMutex", Mutex.new)|
     nonInterruptible |
     if (uobjects.hasLocalSlot(objname))
       return|
@@ -591,12 +593,20 @@ class Global.'external'
       }
       else
       { // Other data types share one RTP connection
-        if (!lobby.hasSlot("sharedRTP"))
+        //wall("rtp mode for " + varname)|
+        lobby.'$uobjectMutex': if (!lobby.hasSlot("sharedRTP"))
         {
-          (var lrtp, var rrtp) = makeRTPPair;
-          var lobby.sharedRTP = lrtp;
-          var lobby.remoteSharedRTP = rrtp;
-          disown(monitorRTP(lrtp, rrtp, closure() { remoteNotifyChange(objname, varname, fr); var lobby.noRTP = true}));
+          try {
+            (var lrtp, var rrtp) = makeRTPPair;
+            //wall("instanciating shared rtp for " + lobby +":" + lrtp)|
+            var lobby.sharedRTP = lrtp;
+            var lobby.remoteSharedRTP = rrtp;
+            disown(monitorRTP(lrtp, rrtp, closure() { remoteNotifyChange(objname, varname, fr); var lobby.noRTP = true}))|
+          }
+          catch(var e)
+          {
+            wall("Fatal error setting rtp: " + e)
+          }|
         };
         lobby.__bindingFunc[fullname] = lobby.sharedRTP;
         lobby.sharedRTP.groupedSendVar(obj.getSlot(varname));
