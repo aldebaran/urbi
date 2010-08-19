@@ -127,6 +127,8 @@ public:
   UVar syncSendSocket;
   /// Use raw UDP instead of RTP.
   UVar rawUDP;
+  /// Display the list of variable names in group
+  std::vector<std::string> groupContent();
   virtual void onError(boost::system::error_code erc);
   virtual void onConnect();
   virtual size_t onRead(const void*, size_t);
@@ -149,7 +151,8 @@ public:
   UVar logLevel;
   libport::Lockable lock; // group protection
   UList* groupChange;
-  boost::unordered_map<std::string, UVar*> groupedVars;
+  typedef boost::unordered_map<std::string, UVar*> GroupedVars;
+  GroupedVars groupedVars;
   friend class URTPLink;
   libport::Statistics<libport::utime_t> sendTime;
   bool sendMode_; // will this socket be used for synchronous sending.
@@ -261,7 +264,8 @@ void URTP::init()
                  getLocalHost, getRemoteHost, isConnected, close);
   UBindFunctions(URTP, sendVar, receiveVar, listen, connect, stats, reset,
                  send, setHeaderTarget, sendUrbiscript);
-  UBindFunctions(URTP, groupedSendVar, unGroupedSendVar, sendGrouped);
+  UBindFunctions(URTP, groupedSendVar, unGroupedSendVar, sendGrouped,
+                 groupContent);
   UNotifyChange(mediaType, &URTP::onTypeChange);
   mediaType = 96;
   // Not cool, but otherwise this line gets executed asynchronously in
@@ -787,4 +791,14 @@ void URTP::commitGroup()
       sendTime.resize(0); //reset
     }
   }
+}
+
+
+std::vector<std::string>
+URTP::groupContent()
+{
+  std::vector<std::string> res;
+  foreach(const GroupedVars::value_type& v, groupedVars)
+    res.push_back(v.second->get_name());
+  return res;
 }
