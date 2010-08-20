@@ -64,6 +64,7 @@ load("urbi/code.u");
 load("urbi/date.u");
 load("urbi/dictionary.u");
 load("urbi/duration.u");
+load("urbi/enumerated.u");
 load("urbi/event.u");
 load("urbi/file.u");
 load("urbi/float.u");
