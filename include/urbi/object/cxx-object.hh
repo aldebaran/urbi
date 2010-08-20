@@ -15,8 +15,8 @@
 
 # include <boost/optional.hpp>
 
+# include <urbi/object/enumerated.hh>
 # include <urbi/object/object.hh>
-
 
 #define URBI_CXX_OBJECT_(Name)                                          \
 public:                                                                 \
