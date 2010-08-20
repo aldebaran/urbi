@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+#include <boost/date_time/local_time/local_time.hpp>
+
 #include <object/symbols.hh>
 #include <urbi/object/date.hh>
 #include <urbi/object/duration.hh>
@@ -131,7 +133,13 @@ namespace urbi
     Date::value_type
     Date::epoch()
     {
-      return value_type(boost::gregorian::date(1970, 1, 1));
+      value_type abs(boost::gregorian::date(1970, 1, 1));
+      // FIXME: Crappy way to find the local time offset, but AFAICT,
+      // Boost provides no way to get the current timezone :-(
+      static boost::posix_time::time_duration diff = boost::posix_time::seconds
+        ((boost::posix_time::microsec_clock::local_time()
+          - boost::posix_time::microsec_clock::universal_time()).total_seconds());
+      return abs + diff;
     }
 
 
