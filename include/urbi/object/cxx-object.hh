@@ -184,8 +184,27 @@ namespace urbi
     URBI_SDK_API
     void check_arg_count(unsigned effective,
                          unsigned minformal, unsigned maxformal);
-
   }
+
+  typedef boost::function0<void> Initialization;
+  int initialization_register(const Initialization& action);
+# define URBI_INITIALIZATION_REGISTER(Action)                           \
+                                                                        \
+  static int LIBPORT_CAT(_urbi_initialization, __LINE__)()              \
+  {                                                                     \
+    ::urbi::initialization_register(Action);                            \
+    return 0xbadf00d;                                                   \
+  }                                                                     \
+                                                                        \
+  inline int LIBPORT_CAT(_urbi_initialization_bouncer, __LINE__)()      \
+  {                                                                     \
+    static int dummy = LIBPORT_CAT(_urbi_initialization, __LINE__)();   \
+    return dummy;                                                       \
+  }                                                                     \
+                                                                        \
+  static int LIBPORT_CAT(_urbi_initialization_register_, __LINE__) =    \
+    LIBPORT_CAT(_urbi_initialization_bouncer, __LINE__)()               \
+
 }
 
 # if ! defined OBJECT_EXECUTABLE_HH             \

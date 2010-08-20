@@ -46,6 +46,13 @@
 
 namespace urbi
 {
+  static std::vector<Initialization> initializations_;
+  int initialization_register(const Initialization& action)
+  {
+    initializations_ << action;
+    return 42;
+  }
+
   namespace object
   {
 
@@ -388,6 +395,9 @@ namespace urbi
       CxxObject::create();
       CxxObject::initialize(global_class);
       CxxObject::cleanup();
+
+      foreach (const Initialization& action, initializations_)
+        action();
     }
 
     static void
