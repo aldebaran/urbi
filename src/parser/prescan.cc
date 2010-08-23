@@ -10,6 +10,7 @@
 
 #include <sstream>
 
+#include <libport/echo.hh>
 #include <libport/buffer-stream.hh>
 #include <parser/prescan.hh>
 #include <parser/utoken.hh>

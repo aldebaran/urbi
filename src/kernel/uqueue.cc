@@ -12,7 +12,7 @@
 /// \brief Implementation of UQueue.
 
 //#define ENABLE_DEBUG_TRACES
-#include <libport/compiler.hh>
+#include <libport/echo.hh>
 
 #include <libport/cassert>
 #include <libport/cstring>

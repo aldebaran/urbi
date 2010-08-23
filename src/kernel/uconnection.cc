@@ -11,9 +11,6 @@
 /// \file kernel/uconnection.cc
 /// \brief Implementation of UConnection.
 
-//#define ENABLE_DEBUG_TRACES
-#include <libport/compiler.hh>
-
 #include <libport/config.h>
 #include <libport/cstring>
 #include <libport/cstdio>
@@ -21,6 +18,8 @@
 #include <sstream>
 #include <iomanip>
 
+//#define ENABLE_DEBUG_TRACES
+#include <libport/echo.hh>
 #include <libport/foreach.hh>
 #include <libport/format.hh>
 #include <libport/ref-pt.hh>

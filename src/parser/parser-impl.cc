@@ -14,7 +14,7 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
-#include <libport/compiler.hh>
+#include <libport/echo.hh>
 
 #include <libport/cassert>
 #include <libport/cstdlib>
