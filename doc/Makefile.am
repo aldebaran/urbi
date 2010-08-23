@@ -14,12 +14,12 @@ include document-aux/make/pdf-figs.mk
 # needed.
 EXTRA_DIST +=					\
   document-aux/bin/texi2dvi			\
-  $(call ls_files,@{document-aux}/figs/*)	\
+  $(call ls_files,@{document-aux}/figs/* 	\
+	          @{document-aux}/styles/ldf/*)	\
   document-aux/styles/fixme.sty			\
   document-aux/styles/gostai-documentation.sty	\
   document-aux/styles/gostai-report.sty		\
   document-aux/styles/hevea.sty			\
-  $(call ls_files,@{document-aux}/styles/ldf/*)	\
   document-aux/styles/misc.hva			\
   document-aux/styles/misc.sty			\
   document-aux/styles/mycxx.sty			\
@@ -38,9 +38,9 @@ EXTRA_DIST +=					\
 ## -------- ##
 
 DOT_IMAGES = $(call ls_files,img/*.dot)
-PNG_IMAGES =						\
-  $(call ls_files,img/*.png)				\
-  $(call ls_files,@{../modules/system/ros}/doc/img/*.png)
+PNG_IMAGES =							\
+  $(call ls_files,img/*.png					\
+                  @{../modules/system/ros}/doc/img/*.png)
 
 cube_and_disc = urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)/cube-and-disc
 PDF_IMAGES =					\
@@ -126,11 +126,10 @@ install-html-dir: $(html_DIR)
 endif
 
 CLEANFILES += $(pdf_DATA)
-urbi_sdk_sty = $(call ls_files,*.sty)
 urbi_sdk_tex = $(call ls_files,*.tex)
-# The license files.
-urbi_sdk_txt = $(call ls_files,tables/*.txt)
-urbi_sdk_sources = $(urbi_sdk_sty) $(urbi_sdk_tex) $(urbi_sdk_txt)
+urbi_sdk_sources =				\
+  $(urbi_sdk_tex)				\
+  $(call ls_files,*.sty tables/*.txt)
 REVISION_FILE = revision.sty
 REVISIONFLAGS = --latex
 EXTRA_DIST += $(urbi_sdk_sources)
