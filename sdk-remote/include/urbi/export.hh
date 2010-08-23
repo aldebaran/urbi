@@ -11,20 +11,12 @@
 #ifndef URBI_EXPORT_HH
 # define URBI_SDK_EXPORT_HH
 
-# include <libport/detect-win32.h>
+# include <libport/compiler.hh>
 
-# ifdef WIN32
-#if !defined STATIC_BUILD
-#  ifdef BUILDING_URBI_SDK
-#   define URBI_SDK_API __declspec(dllexport)
-#  else
-#   define URBI_SDK_API __declspec(dllimport)
-#  endif
-#else
-#define URBI_SDK_API
-#endif
+# ifdef BUILDING_URBI_SDK
+#   define URBI_SDK_API ATTRIBUTE_DLLEXPORT
 # else
-#  define URBI_SDK_API __attribute__((visibility("default")))
+#   define URBI_SDK_API ATTRIBUTE_DLLIMPORT
 # endif
 
 #endif // URBI_EXPORT_HH

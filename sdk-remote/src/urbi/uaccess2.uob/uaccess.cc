@@ -9,9 +9,8 @@
  */
 
 #include <iostream>
-//#define ENABLE_DEBUG_TRACES
-//#include "libport/compiler.hh"
 #include "uaccess.hh"
+
 using namespace urbi;
 
 UStart (uaccess);
@@ -31,7 +30,6 @@ int
 uaccess::init ()
 {
   val = 0;
-  LIBPORT_DEBUG("val = " << val);
   return 0;
 }
 
@@ -41,7 +39,6 @@ uaccess::newval (UVar& v)
   static int value = 0;
   value++;
   v = value;
-  LIBPORT_DEBUG("v = " << v << ", val = " << val);
   return 0;
 }
 

@@ -24,7 +24,6 @@ generic::generic(const std::string& s)
   UBindFunction(generic, inc);
 
   UNotifyChange(val, &generic::newval);
-  LIBPORT_PING();
 #if FIXME
   // This feature is deprecated (it is not implemented in k2, and it
   // was considered not relevant).  So unless there are reason to
