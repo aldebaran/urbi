@@ -240,5 +240,25 @@ namespace urbi
         boost::bind(MakePrimitive<typename C::type>::primitive,
                     _1, /*_2,*/ C::convert(f));
     }
+
+
+    inline void
+    setter_bouncer(rObject self,
+                   const std::string&, rObject value, const std::string& name)
+    {
+      self->call(name, value);
+    }
+
+    template <typename F1, typename F2>
+    inline void
+    Object::bind(const std::string& getter_name, F1 getter,
+                 const std::string& setter_name, F2 setter)
+    {
+      slot_set(libport::Symbol(getter_name), make_primitive(getter));
+      slot_set(libport::Symbol(setter_name), make_primitive(setter));
+      boost::function3<void, rObject, const std::string&, rObject>
+        f(boost::bind(&setter_bouncer, _1, _2, _3, setter_name));
+      setProperty(getter_name, "updateHook", make_primitive(f));
+    }
   }
 }''' % primitives
