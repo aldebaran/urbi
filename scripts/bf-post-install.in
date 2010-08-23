@@ -81,13 +81,14 @@ find "$DESTDIR$prefix" -name libtool |
        -e 's/^\s*eval "\$1\+=\\\$2"$/eval "\$1=\\\$\$1\\" \$2\\""/;'    \
        -e 's/^predep_objects=.*/#- $&/;'                                \
        -e 's/postdep_objects=.*/#- $&/;'                                \
-       -e 's/-nostdlib//g;'
+       -e 's/-nostdlib//g;'                                             \
+       -e 's/SED=.*/SED=sed/;'
 
 # Remove ccache and -Werror from the param.mk and libtool.
 # Remove also hidden visibility as it prevents linking uobjects using
 # boost symbols inside libport.
 find "$DESTDIR$prefix" '(' -name param.mk -or -name libtool ')' |
-  xargs perl -pi \
+  xargs perl -pi                                \
         -e 's/ccache //;'                       \
         -e 's/g(cc|\+\+)(?:-[\d.]+)/g$1/;'      \
         -e 's/-Werror//;'                       \
