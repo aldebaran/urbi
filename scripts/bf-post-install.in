@@ -82,7 +82,7 @@ find "$DESTDIR$prefix" -name libtool |
        -e 's/^predep_objects=.*/#- $&/;'                                \
        -e 's/postdep_objects=.*/#- $&/;'                                \
        -e 's/-nostdlib//g;'                                             \
-       -e 's/SED=.*/SED=sed/;'
+       -e 's/^SED=.*/SED=sed/;'
 
 # Remove ccache and -Werror from the param.mk and libtool.
 # Remove also hidden visibility as it prevents linking uobjects using
