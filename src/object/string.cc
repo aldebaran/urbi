@@ -198,10 +198,11 @@ namespace urbi
     }
 
 
+    typedef std::vector<std::string> strings_type;
 
     static
     size_t
-    find_first(const std::vector<std::string>& seps,
+    find_first(const strings_type& seps,
                const std::string& str,
                size_t start,
                std::string& delim)
@@ -221,11 +222,11 @@ namespace urbi
       return res;
     }
 
-    std::vector<std::string>
-    String::split(const std::vector<std::string>& sep, int limit,
+    strings_type
+    String::split(const strings_type& sep, int limit,
                   bool keep_delim, bool keep_empty) const
     {
-      std::vector<std::string> res;
+      strings_type res;
 
       // Special case: splitting on an empty string returns the individual
       // characters.
@@ -256,11 +257,11 @@ namespace urbi
       return res;
     }
 
-    std::vector<std::string>
+    strings_type
     String::split(const std::string& sep, int limit,
                   bool keep_delim, bool keep_empty) const
     {
-      std::vector<std::string> seps;
+      strings_type seps;
       seps << sep;
       return split(seps, limit, keep_delim, keep_empty);
     }
@@ -268,12 +269,10 @@ namespace urbi
     OVERLOAD_TYPE(
       split_overload, 4, 1,
       String,
-      (std::vector<std::string>
-       (String::*)(const std::string&, int, bool, bool) const)
+      (strings_type (String::*)(const std::string&, int, bool, bool) const)
       &String::split,
       List,
-      (std::vector<std::string>
-       (String::*)(const std::vector<std::string>&, int, bool, bool) const)
+      (strings_type (String::*)(const strings_type&, int, bool, bool) const)
       &String::split)
 
     static rObject split_bouncer(const objects_type& _args)
@@ -285,20 +284,20 @@ namespace urbi
       {
         case 1:
         {
-          static std::vector<std::string> seps =
+          static strings_type seps =
             boost::assign::list_of(" ")("\t")("\r")("\n");
-          args.push_back(to_urbi(seps));
-          args.push_back(new Float(-1));
-          args.push_back(object::false_class);
-          args.push_back(object::false_class);
+          args << to_urbi(seps)
+               << new Float(-1)
+               << object::false_class
+               << object::false_class;
           break;
         }
         case 2:
-          args.push_back(new Float(-1));
+          args << new Float(-1);
         case 3:
-          args.push_back(object::false_class);
+          args << object::false_class;
         case 4:
-          args.push_back(object::true_class);
+          args << object::true_class;
         default:
           break;
       }
