@@ -2391,36 +2391,37 @@ catch (var e)
 [00000134] *** Number of effective arguments: 2
 \end{urbiscript}
 
-\subsection{Finally}
-\label{sec:lang:except:finally}
-
-The finally constructs enables you to ensure some code is executed upon
-exiting a scope, be it naturally or through an
-exception, \lstinline|return|, \lstinline|continue|, \ldots
-
-\begin{urbiscript}
-{
-  echo("inside");
-}
-finally
-{
-  echo("finally");
-};
-[00000001] *** inside
-[00000002] *** finally
-{
-  echo("inside");
-  throw 42;
-  echo("never reached");
-}
-finally
-{
-  echo("finally");
-};
-[00000003] *** inside
-[00000004] *** finally
-[00000005:error] !!! 42
-\end{urbiscript}
+%%% FIXME: Akim disagrees with this syntax.
+%%% \subsection{Finally}
+%%% \label{sec:lang:except:finally}
+%%%
+%%% The finally constructs enables you to ensure some code is executed upon
+%%% exiting a scope, be it naturally or through an
+%%% exception, \lstinline|return|, \lstinline|continue|, \ldots
+%%%
+%%% \begin{urbiscript}
+%%% {
+%%%   echo("inside");
+%%% }
+%%% finally
+%%% {
+%%%   echo("finally");
+%%% };
+%%% [00000001] *** inside
+%%% [00000002] *** finally
+%%% {
+%%%   echo("inside");
+%%%   throw 42;
+%%%   echo("never reached");
+%%% }
+%%% finally
+%%% {
+%%%   echo("finally");
+%%% };
+%%% [00000003] *** inside
+%%% [00000004] *** finally
+%%% [00000005:error] !!! 42
+%%% \end{urbiscript}
 
 %% FIXME: \subsection{Exceptions and parallelism}
 
