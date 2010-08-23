@@ -52,6 +52,20 @@ namespace urbi
       return (*v1)(args);                                               \
   }                                                                     \
 
+# define OVERLOAD_TYPE_3(Name, N, Arg, T1, V1, T2, V2, T3, V3)          \
+                                                                        \
+  static rObject Name(const object::objects_type& args)                 \
+  {                                                                     \
+    static rPrimitive v1 = make_primitive(V1);                          \
+    static rPrimitive v2 = make_primitive(V2);                          \
+    static rPrimitive v3 = make_primitive(V3);                          \
+                                                                        \
+    object::check_arg_count (args.size() - 1, N);                       \
+    return (args[Arg]->is_a<T1>()   ? (*v1)(args)                       \
+            : args[Arg]->is_a<T2>() ? (*v2)(args)                       \
+            :                         (*v3)(args));                     \
+  }                                                                     \
+
 /// Make a function that bounces depending on its number of arguments
 /**
  *  @param Name Name of the function to generate
