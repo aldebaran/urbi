@@ -23,7 +23,7 @@ Without argument, newly constructed Dates refer to the current date.
 
 \begin{urbiunchecked}[firstnumber=1]
 Date.new;
-[00000001] 2010-Aug-17 14:40:52.549726
+[00000001] 2010-08-17 14:40:52.549726
 \end{urbiunchecked}
 
 With a string argument \var{d}, refers to the date contained in \var{d}.
@@ -35,11 +35,13 @@ is absent, the behavior is undefined.
 
 \begin{urbiscript}
 Date.new("2003-10-10 20:10:50");
-[00000001] 2003-Oct-10 20:10:50
+[00000001] 2003-10-10 20:10:50
+
 Date.new("2003-Oct-10 20:10");
-[00000002] 2003-Oct-10 20:10:00
+[00000002] 2003-10-10 20:10:00
+
 Date.new("2003-10-10 20");
-[00000003] 2003-Oct-10 20:00:00
+[00000003] 2003-10-10 20:00:00
 \end{urbiscript}
 
 \subsection{Slots}
@@ -100,7 +102,7 @@ assert
   the hour (from 0 to 59), and \var{ss} the two-digit number of seconds in
   the minute (from 0 to 59).
 \begin{urbiassert}
-Date.new("2009-02-14 00:31:30").asString == "2009-Feb-14 00:31:30";
+Date.new("2009-02-14 00:31:30").asString == "2009-02-14 00:31:30";
 \end{urbiassert}
 
 \item[epoch]

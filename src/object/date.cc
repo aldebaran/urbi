@@ -140,7 +140,14 @@ namespace urbi
     std::string
     Date::as_string() const
     {
-      return to_simple_string(time_);
+      return libport::format("%04s-%02s-%02s %02s:%02s:%02s",
+                             time_.date().year(),
+                             // Otherwise we get "Jan", "Feb", etc.
+                             int(time_.date().month()),
+                             time_.date().day(),
+                             time_.time_of_day().hours(),
+                             time_.time_of_day().minutes(),
+                             time_.time_of_day().seconds());
     }
 
     Date::duration_type
