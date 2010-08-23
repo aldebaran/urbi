@@ -126,6 +126,7 @@ function AddConfig(proj, strProjectName)
 
     CLTool.AdditionalIncludeDirectories = urbiPath + "\\include";
     CLTool.PreprocessorDefinitions = 'BOOST_ALL_DYN_LINK;' + CLTool.PreprocessorDefinitions
+    CLTool.RuntimeLibrary = runtimeLibraryOption.rtMultiThreadedDLL;
 
     var LinkTool = config.Tools('VCLinkerTool');
 
