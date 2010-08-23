@@ -46,17 +46,26 @@ Date.new("2003-10-10 20");
 
 \begin{urbiscriptapi}
 \item['+'](<that>)%
-  Return the date which corresponds to waiting \refObject{Duration}
-  \var{that} after \this.
+  The date which corresponds to waiting \refObject{Duration} \var{that}
+  after \this.
 \begin{urbiassert}
 Date.new("2010-08-17 12:00") + 60s == Date.new("2010-08-17 12:01");
 \end{urbiassert}
 
 \item['-'](<that>)%
-  Compute the difference between two dates.  Return a
+  If \var{that} is a Date, the difference between \this and \var{that} as a
   \refObject{Duration}.
 \begin{urbiassert}
-Date.new("2010-08-17 12:01") - Date.new("2010-08-17 12:00") == 60s;
+Date.new("2010-08-17 12:01") - Date.new("2010-08-17 12:00") ==  60s;
+Date.new("2010-08-17 12:00") - Date.new("2010-08-17 12:01") == -60s;
+\end{urbiassert}
+
+If \var{that} is a Duration or a Float, the corresponding Date.
+
+\begin{urbiassert}
+Date.new("2010-08-17 12:01") - 60s == Date.new("2010-08-17 12:00");
+Date.new("2010-08-17 12:01") - 60s
+  == Date.new("2010-08-17 12:01") - Duration.new(60s);
 \end{urbiassert}
 
 \item['=='](<that>)%
@@ -69,8 +78,19 @@ Date.new("2010-08-17 12:00") != Date.new("2010-08-17 12:01");
 \item['<'](<that>)%
   Order comparison.
 \begin{urbiassert}
-Date.new("2010-08-17 12:00") < Date.new("2010-08-17 12:01");
+   Date.new("2010-08-17 12:00") < Date.new("2010-08-17 12:01");
+! (Date.new("2010-08-17 12:01") < Date.new("2010-08-17 12:00"));
 \end{urbiassert}
+
+\item[asFloat] The duration since the \refSlot{epoch}, as a Float.
+\begin{urbiscript}
+var d = Date.new("2002-01-20 23:59:59")|;
+assert
+{
+  d.asFloat == d - d.epoch;
+  d.asFloat.isA(Float);
+};
+\end{urbiscript}
 
 \item[asString] Present as \samp{\var{yyyy}-\var{mm}-\var{dd}
     \var{hh}:\var{mn}:\var{ss}.\var{us}} where \var{yyyy} is the four-digit
@@ -96,8 +116,7 @@ Date.now;
 [00000000] 2012-03-02 15:31:42
 \end{urbiunchecked}
 
-\item[timestamp] Synonym for \refSlot{asFloat}
-
+\item[timestamp] Synonym for \refSlot{asFloat}.
 \end{urbiscriptapi}
 
 

@@ -53,7 +53,8 @@ namespace urbi
       else
       {
         type_check(args[0], String::proto, 1);
-        time_ = boost::posix_time::time_from_string(args[0]->as<object::String>()->value_get());
+        time_ = boost::posix_time::time_from_string
+          (args[0]->as<object::String>()->value_get());
       }
     }
 
@@ -77,25 +78,53 @@ namespace urbi
     | Operations.  |
     `-------------*/
 
-    rDuration
-    Date::operator - (rDate rhs) const
-    {
-      return new Duration(time_ - rhs->time_);
-    }
-
     Date&
-    Date::operator += (const boost::posix_time::time_duration& rhs)
+    Date::operator += (const duration_type& rhs)
     {
       time_ += rhs;
       return *this;
     }
 
     rDate
-    Date::operator + (const boost::posix_time::time_duration& rhs) const
+    Date::operator + (const duration_type& rhs) const
     {
       rDate res = new Date(time_);
       *res += rhs;
       return res;
+    }
+
+    Date&
+    Date::operator -= (const duration_type& rhs)
+    {
+      time_ -= rhs;
+      return *this;
+    }
+
+    rDate
+    Date::operator - (const duration_type& rhs) const
+    {
+      rDate res = new Date(time_);
+      *res -= rhs;
+      return res;
+    }
+
+    rDuration
+    Date::operator - (rDate rhs) const
+    {
+      return new Duration(time_ - rhs->time_);
+    }
+
+    OVERLOAD_TYPE_3(
+      MINUS_overload, 1, 1,
+      Date, (rDuration (Date::*)(rDate) const)     &Date::operator-,
+      Duration, (rDate (Date::*)(const Date::duration_type&) const) &Date::operator-,
+      Float, (rDate (Date::*)(const Date::duration_type&) const) &Date::operator-)
+
+    static rObject MINUS(const objects_type& args)
+    {
+      check_arg_count(args.size() - 1, 0, 1);
+      static rPrimitive actual = make_primitive(MINUS_overload);
+      return (*actual)(args);
     }
 
     /*--------------.
@@ -114,8 +143,8 @@ namespace urbi
       return to_simple_string(time_);
     }
 
-    boost::posix_time::time_duration
-    Date::as_timestamp() const
+    Date::duration_type
+    Date::as_float() const
     {
       return time_ - epoch();
     }
@@ -152,13 +181,13 @@ namespace urbi
     {
       bind(SYMBOL(EQ_EQ), &Date::operator ==);
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
-      bind(SYMBOL(MINUS), &Date::operator -);
+      bind(SYMBOL(MINUS), MINUS);
       bind(SYMBOL(PLUS), &Date::operator +);
+      bind(SYMBOL(asFloat), &Date::as_float);
       bind(SYMBOL(asString), &Date::as_string);
       bind(SYMBOL(epoch), &Date::epoch);
       bind(SYMBOL(init), &Date::init);
       bind(SYMBOL(now), &Date::now);
-      bind(SYMBOL(timestamp), &Date::as_timestamp);
     }
 
     URBI_CXX_OBJECT_REGISTER(Date)

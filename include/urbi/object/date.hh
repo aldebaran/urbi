@@ -31,6 +31,8 @@ namespace urbi
 
     public:
       typedef boost::posix_time::ptime value_type;
+      typedef boost::posix_time::time_duration duration_type;
+
       Date();
       Date(rDate model);
       Date(const value_type& time);
@@ -50,9 +52,14 @@ namespace urbi
     `-------------*/
 
     public:
+      Date& operator += (const duration_type& rhs);
+      rDate operator + (const duration_type& rhs) const;
+
+      Date& operator -= (const duration_type& rhs);
+      rDate operator - (const duration_type& rhs) const;
+
       rDuration operator - (rDate rhs) const;
-      Date& operator += (const boost::posix_time::time_duration& rhs);
-      rDate operator + (const boost::posix_time::time_duration& rhs) const;
+
 
     /*--------------.
     | Conversions.  |
@@ -61,7 +68,7 @@ namespace urbi
     public:
       value_type as_boost() const;
       std::string as_string() const;
-      boost::posix_time::time_duration as_timestamp() const;
+      duration_type as_float() const;
 
     /*--------.
     | Dates.  |

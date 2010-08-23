@@ -11,4 +11,9 @@
 do (Date)
 {
   setProtos([Orderable, Comparable]);
+
+  function timetamp()
+  {
+    asFloat;
+  };
 };
