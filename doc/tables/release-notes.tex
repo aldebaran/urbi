@@ -22,6 +22,18 @@ This chapter lists the user-visible changes in \usdk releases.
 \begin{itemize}
 \item \refSlot[Date]{'-'} accepts a \refObject{Duration} or a
   \refObject{Float} in addition to accepting a \refObject{Date}.
+\item Support for \lstinline|finally| in try clauses
+  (\autoref{sec:lang:except:finally}).  Use it for code that must be run
+  whatever the control flow can be.  For instance:
+\begin{urbiscript}
+try { echo(1) } catch { echo(2) } finally { echo(3) };
+[00002670] *** 1
+[00002670] *** 3
+
+try { throw 1 } catch { echo(2) } finally { echo(3) };
+[00002671] *** 2
+[00002671] *** 3
+\end{urbiscript}
 \end{itemize}
 
 
@@ -98,8 +110,6 @@ x = 1;
 \end{urbiunchecked}
 
 \item UVar now have the timestamp of their last assignment.
-%%FIXME: \item Add of the \lstinline|finally| construct. See
-%%  \autoref{sec:lang:except:finally}.
 \end{itemize}
 
 \subsection{Documentation}

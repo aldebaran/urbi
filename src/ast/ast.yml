@@ -663,6 +663,27 @@ While:
     - libport::iendl
     - ~body
 
+# Syntactically, for the user, this is a possible last clause of
+# try-catch.  Internally, it is easier to handle as a specific node.
+# So
+#
+# try { foo } catch { bar } finally { baz }
+#
+# is actually rendered as
+#
+# Finally (Try (foo, Catch (bar)),
+#          baz).
+#
+# Display it as
+#
+# try
+# {
+#   try { foo } catch { bar }
+# }
+# finally
+# {
+#   baz
+# }
 Finally:
   super:
     - Exp
@@ -672,7 +693,14 @@ Finally:
     - finally:
         type: 'rExp'
   printer:
+    - '"try"'
+    - 'libport::iendl'
+    - ~body
+    - 'libport::iendl'
     - '"finally"'
+    - 'libport::iendl'
+    - ~finally
+    - 'libport::decindent'
 
 Foreach:
   super:

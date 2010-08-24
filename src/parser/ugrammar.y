@@ -507,18 +507,6 @@ stmt:
 //>no-space>
 ;
 
-/*----------.
-| Finally.  |
-`----------*/
-
-stmt:
-  // FIXME: shouldn't be too hard to remove the second braces pair.
-  block "finally" block
-  {
-    $$ = MAKE(finally, @$, $1, $3);
-  }
-;
-
 
 /*------------.
 | Functions.  |
@@ -801,17 +789,17 @@ cases:
 %type <::ast::Factory::case_type> case;
 
 case:
-  "case" match ":" stmts  {  $$ = ::ast::Factory::case_type($2, $4); }
+  "case" match ":" stmts  { $$ = ::ast::Factory::case_type($2, $4); }
 ;
 
 /*-------------.
 | Exceptions.  |
 `-------------*/
 
-%type <ast::catches_type> catches;
-catches:
-  /* empty */   { $$ = ast::catches_type(); }
-| catches catch { std::swap($$, $1); $$.push_back($2); }
+%type <ast::catches_type> catches.1;
+catches.1:
+  catch           { $$ = ast::catches_type(); $$ << $catch; }
+| catches.1 catch { std::swap($$, $1);        $$ << $catch; }
 ;
 
 %type <ast::rMatch> match match.opt;
@@ -831,10 +819,26 @@ catch:
   }
 ;
 
+/*----------.
+| Finally.  |
+`----------*/
+
+%type <ast::rExp> finally.opt;
+finally.opt:
+  /* empty */     { $$ = 0;  }
+| "finally" block { $$ = $2; }
+;
+
 stmt:
-  "try" block catches
+  "try" block catches.1 finally.opt
   {
-    $$ = new ast::Try(@$, MAKE(scope, @$,$2), $3);
+    $$ = new ast::Try(@$, MAKE(scope, @$, $block), $[catches.1]);
+    if ($[finally.opt])
+      $$ = MAKE(finally, @$, $$, $[finally.opt]);
+  }
+| "try" block "finally" block
+  {
+    $$ = MAKE(finally, @$, $2, $4);
   }
 | "throw" exp.opt
   {

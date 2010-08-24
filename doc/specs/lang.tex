@@ -2389,37 +2389,147 @@ catch (var e)
 [00000134] *** Number of effective arguments: 2
 \end{urbiscript}
 
-%%% FIXME: Akim disagrees with this syntax.
-%%% \subsection{Finally}
-%%% \label{sec:lang:except:finally}
-%%%
-%%% The finally constructs enables you to ensure some code is executed upon
-%%% exiting a scope, be it naturally or through an
-%%% exception, \lstinline|return|, \lstinline|continue|, \ldots
-%%%
-%%% \begin{urbiscript}
-%%% {
-%%%   echo("inside");
-%%% }
-%%% finally
-%%% {
-%%%   echo("finally");
-%%% };
-%%% [00000001] *** inside
-%%% [00000002] *** finally
-%%% {
-%%%   echo("inside");
-%%%   throw 42;
-%%%   echo("never reached");
-%%% }
-%%% finally
-%%% {
-%%%   echo("finally");
-%%% };
-%%% [00000003] *** inside
-%%% [00000004] *** finally
-%%% [00000005:error] !!! 42
-%%% \end{urbiscript}
+\subsection{Finally}
+\label{sec:lang:except:finally}
+
+Using the finally-clause construct, you can ensure some code is executed
+upon exiting a try-clause, be it naturally or through an exception,
+\lstinline|return|, \lstinline|continue|, \ldots
+
+\subsubsection{Regular execution}
+
+The finally-clause is executed when the try-clause exits normally.
+
+\begin{urbiscript}
+try
+{
+  echo("inside");
+}
+finally
+{
+  echo("finally");
+};
+[00000001] *** inside
+[00000002] *** finally
+\end{urbiscript}
+
+The value of the whole construct is that of the finally-clause.
+
+\begin{urbiscript}
+try { 51 } finally { 42 };
+[00000001] 51
+\end{urbiscript}
+
+
+\subsubsection{Control-flow}
+
+The finally clause is executed even if \lstinline|return| is run.
+
+\begin{urbiscript}
+function with_return(var enable)
+{
+  try
+  {
+    echo("before return");
+    if (enable)
+      return;
+    echo("after return");
+  }
+  finally
+  {
+    echo("finally");
+  };
+  echo("after try-block")
+}|
+
+with_return(false);
+[00001983] *** before return
+[00001985] *** after return
+[00001985] *** finally
+[00001986] *** after try-block
+
+with_return(true);
+[00001991] *** before return
+[00001992] *** finally
+\end{urbiscript}
+
+It is also the case when the control flow is disrupted by
+\lstinline|continue| or \lstinline|break|.
+
+\begin{urbiscript}
+for (var i : ["1", "continue", "2", "break", "3"])
+  try
+  {
+    echo("before:  " + i);
+    switch (i)
+    {
+      case "break":    break;
+      case "continue": continue;
+    };
+    echo("after:   " + i);
+  }
+  finally
+  {
+    echo("finally: " + i);
+  };
+[00000663] *** before:  1
+[00000671] *** after:   1
+[00000671] *** finally: 1
+[00000673] *** before:  continue
+[00000675] *** finally: continue
+[00000682] *** before:  2
+[00000703] *** after:   2
+[00000703] *** finally: 2
+[00000704] *** before:  break
+[00000705] *** finally: break
+\end{urbiscript}
+
+
+\subsubsection{Exceptions}
+
+Exceptions caught in the try-catch clause are much like a regular execution
+flow.  In particular, the value of the construct is that of the try-catch
+clause.
+
+\begin{urbiscript}
+try           { echo("try");     "try" }
+catch (var e) { echo("catch");   "catch" }
+finally       { echo("finally"); "finally" };
+[00000614] *** try
+[00000615] *** finally
+[00000616] "try"
+
+try                      { echo("throw 42"); throw 42; "try" }
+catch (var e if e == 42) { echo("caught " + e);        "catch" }
+finally                  { echo("finally");            "finally" };
+[00000626] *** throw 42
+[00000626] *** caught 42
+[00000631] *** finally
+[00000631] "catch"
+\end{urbiscript}
+
+
+Uncaught exceptions (i.e., exceptions for which there were no handlers) are
+propagated after the exception of the finally-clause.
+
+\begin{urbiscript}
+try                      { echo("throw"); throw 51; "try" }
+catch (var e if e == 42) { echo("caught " + e);     "catch" }
+finally                  { echo("finally");         "finally" };
+[00000616] *** throw
+[00000617] *** finally
+[00000625:error] !!! 51
+\end{urbiscript}
+
+Exceptions launched in the finally-clause override previous exceptions.
+
+\begin{urbiscript}
+try     { throw "throw" }
+catch   { throw "catch" }
+finally { throw "finally" };
+[00005200:error] !!! finally
+\end{urbiscript}
+
 
 %% FIXME: \subsection{Exceptions and parallelism}
 
