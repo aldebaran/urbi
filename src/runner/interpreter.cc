@@ -67,7 +67,7 @@ namespace runner
   typedef std::vector<libport::Symbol> tag_chain_type;
   static
   tag_chain_type
-  decompose_tag_chain (ast::rConstExp e)
+  decompose_tag_chain(ast::rConstExp e)
   {
     tag_chain_type res;
     while (!e->implicit())
@@ -75,7 +75,7 @@ namespace runner
       ast::rConstCall c = e.unsafe_cast<const ast::Call>();
       if (!c || c->arguments_get())
 	runner::raise_urbi(SYMBOL(ImplicitTagComponent));
-      res.push_back (c->name_get());
+      res << c->name_get();
       e = c->target_get();
     }
     return res;
