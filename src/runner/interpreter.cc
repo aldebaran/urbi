@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 
-#include <libport/compiler.hh>
 #include <libport/config.h>
+#include <libport/echo.hh>
 #include <libport/finally.hh>
 #include <libport/foreach.hh>
 #include <libport/format.hh>
