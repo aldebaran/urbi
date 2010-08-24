@@ -54,7 +54,7 @@
 #ifndef LIBPORT_COMPILATION_MODE_SPEED
 # include <runner/interpreter-visit.hxx>
 #else
-GD_ADD_CATEGORY(Urbi);
+GD_CATEGORY(Urbi);
 #endif
 
 namespace runner
@@ -160,7 +160,6 @@ namespace runner
     , result_(0)
     , stacks_(self)
   {
-    GD_CATEGORY(Urbi);
     GD_FINFO_TRACE("Spawn new interpreter \"%s\".", name);
     init();
     apply_tag(lobby->tag_get());
