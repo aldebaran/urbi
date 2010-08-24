@@ -16,7 +16,7 @@
 # include <libport/lexical-cast.hh>
 # include <libport/tokenizer.hh>
 
-GD_ADD_CATEGORY(URBI);
+GD_CATEGORY(Urbi);
 
 namespace kernel
 {
@@ -27,7 +27,6 @@ namespace kernel
     // We _need_ an intermediate string variable here.
     // See libport/tokenizer.hh.
     std::string s = string_cast(server_timer);
-    GD_CATEGORY(URBI);
     foreach (const std::string& line, libport::lines(s))
       GD_INFO_TRACE(line);
   }

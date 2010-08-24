@@ -42,7 +42,7 @@
 # include <urbi/object/slot.hh>
 # include <urbi/object/string.hh>
 
-GD_ADD_CATEGORY(Urbi);
+GD_CATEGORY(Urbi);
 
 /// Job echo.
 #define JECHO(Title, Content)                                   \
@@ -157,7 +157,6 @@ namespace runner
     bool v;
     // FIXME: optimize: do not unregister and reregister the same dependency
     {
-      GD_CATEGORY(Urbi);
       GD_FPUSH("Evaluating at condition: %s", data->exp->body_string());
       foreach (object::Event::Subscription& s, data->subscriptions)
         s.stop();
@@ -216,7 +215,6 @@ namespace runner
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = operator()(ast_tgt.get());
-    GD_CATEGORY(Urbi);
     GD_TRACE();
     GD_FPUSH("Call %s", e->name_get());
     return apply_ast(tgt, e->name_get(), e->arguments_get(), e->location_get());
@@ -357,7 +355,6 @@ namespace runner
 
         {
           GD_TRACE();
-          GD_CATEGORY(Urbi);
           GD_FPUSH("Register local variable '%s' for at monitoring",
                    e->name_get());
           dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));

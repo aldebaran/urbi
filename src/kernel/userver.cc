@@ -83,7 +83,7 @@ using libport::program_name;
 using object::objects_type;
 using object::rObject;
 
-GD_ADD_CATEGORY(URBI);
+GD_CATEGORY(Urbi);
 
 namespace kernel
 {
@@ -337,7 +337,6 @@ namespace kernel
     // The order is important: ghost connection, plugins, urbi.u.
 
     // Ghost connection
-    GD_CATEGORY(URBI);
     GD_INFO_DUMP("Setting up ghost connection...");
     ghost_ = new UGhostConnection(*this, interactive);
     GD_INFO_DUMP("Setting up ghost connection... done");
@@ -582,7 +581,6 @@ namespace kernel
   void
   UServer::shutdown()
   {
-    GD_CATEGORY(URBI);
     GD_INFO_TRACE("Shutting down: killing all jobs");
     scheduler_->killall_jobs();
     GD_INFO_TRACE("Shutting down: done");
@@ -604,7 +602,6 @@ namespace kernel
   UErrorValue
   UServer::load_file(const std::string& base, UQueue& q, QueueType type)
   {
-    GD_CATEGORY(URBI);
     GD_FINFO_DUMP("Looking for %s...", base);
     std::istream *is;
     libport::Finally finally;
@@ -651,7 +648,6 @@ namespace kernel
   UServer::connection_add(UConnection* c)
   {
     aver(c);
-    GD_CATEGORY(URBI);
     if (c->uerror_ != USUCCESS)
       GD_INFO_TRACE("UConnection constructor failed");
     else

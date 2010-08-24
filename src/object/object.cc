@@ -41,7 +41,7 @@
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
 
-GD_ADD_CATEGORY(Urbi);
+GD_CATEGORY(Urbi);
 
 namespace urbi
 {
@@ -159,7 +159,6 @@ namespace urbi
           bool prev = squash;
           FINALLY(((bool&, squash))((bool, prev)), squash = prev);
           squash = true;
-          GD_CATEGORY(Urbi);
           GD_TRACE();
           GD_FPUSH("Register slot '%s' for at monitoring", k);
           r->dependency_add(static_cast<Event*>(res->property_get(SYMBOL(changed)).get()));

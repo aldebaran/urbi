@@ -26,6 +26,8 @@
 
 namespace runner
 {
+  GD_CATEGORY(Urbi);
+
   Shell::Shell(const rLobby& lobby,
 	       sched::Scheduler& scheduler,
 	       libport::Symbol name)

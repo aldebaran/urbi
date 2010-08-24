@@ -73,7 +73,7 @@
 #include <urbi/uobject.hh>
 
 GD_INIT_DEBUG_PER(::libport::localdata::ThreadCoroutine);
-GD_ADD_CATEGORY(URBI);
+GD_CATEGORY(Urbi);
 
 #define URBI_EXIT(Status, ...)                 \
   throw urbi::Exit(Status, libport::format (__VA_ARGS__))
@@ -287,7 +287,6 @@ namespace urbi
       }
     }
 
-    GD_CATEGORY(URBI);
 
     libport::cli_args_type args = _args;
 
