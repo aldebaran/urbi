@@ -2313,11 +2313,11 @@ The execution is can be controlled by \lstinline|break| and
 \subsection{Throwing exceptions}
 
 Use the \lstinline|throw| keyword to \dfn[exception!throwing]{throw
-  exceptions}, as shown below. Thrown exceptions will
-break the execution upward until they are caught, or until they reach
-the top-level --- as in \Cxx.  Contrary to \Cxx, exceptions reaching
-the top-level are printed, and won't abort the kernel --- other and new
-connections will continue to execute normally.
+  exceptions}, as shown below. Thrown exceptions will break the execution
+upward until they are caught, or until they reach the top-level --- as in
+\Cxx.  Contrary to \Cxx, exceptions reaching the top-level are printed, and
+won't abort the kernel --- other and new connections will continue to
+execute normally.
 
 \begin{urbiscript}
 throw 42;
@@ -2334,19 +2334,17 @@ outer();
 \subsection{Catching exceptions}
 
 Exceptions are \dfn[exception!catching]{caught} with the
-\lstinline|try|/\lstinline|catch| construct. It consists of a first
-block (the \dfn{try-block}), from which we want to catch exceptions,
-and one or more catch clauses to stop the exception
-(\dfn{catch-blocks}). Each catch clause defines a pattern against
-which the thrown exception is matched. If no pattern is specified, the
-catch clause matches systematically (equivalent to
-\lstinline|catch (...)| in \Cxx).
+\lstinline|try|/\lstinline|catch| construct. It consists of a first block
+(the \dfn{try-block}), from which we want to catch exceptions, and one or
+more catch clauses to stop the exception (\dfn{catch-blocks}). Each catch
+clause defines a pattern against which the thrown exception is matched. If
+no pattern is specified, the catch clause matches systematically (equivalent
+to \lstinline|catch (...)| in \Cxx).
 
 Exceptions thrown from the \texttt{try} block are matched sequentially
 against all catch clauses. The first matching clause is executed, and
-control jumps after the whole try/catch block. If no catch clause
-matches, the exceptions isn't stopped and continues
-upward.
+control jumps after the whole try/catch block. If no catch clause matches,
+the exceptions isn't stopped and continues upward.
 
 \begin{urbiscript}
 function test(e)
