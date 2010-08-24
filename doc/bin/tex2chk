@@ -289,21 +289,24 @@ sub process_file ($)
 }
 
 
-=item C<dump_chk($dir)>
+=item C<dump_chk($prefix)>
 
 Generate all the *chk files and their associated test.mk.  Remove the
-old test files that remain in C<$dir>.  Remove them *after* having
+old test files that remain from C<$prefix>.  Remove them *after* having
 generated the new ones: removing them all beforehand kills the
 timestamps and will rerun test cases uselessly.
+
+C<$prefix> is used as a prefix for the generated files: C<$prefix-00.chk>,
+C<$prefix-01.chk>, etc.
 
 =cut
 
 sub dump_chk ($)
 {
-  my ($dir) = @_;
+  my ($prefix) = @_;
 
   # The test files that currently exist.
-  my %old_file = map { $_ => 1 } <$dir/*.chk>;
+  my %old_file = map { $_ => 1 } <$prefix-[0-9][0-9].chk>;
 
   # The created test files.
   my %file;
@@ -312,7 +315,7 @@ sub dump_chk ($)
   for my $k (keys %chk)
   {
     my %c = %{$chk{$k}};
-    my $file = "$dir-$c{name}.chk";
+    my $file = "$prefix-$c{name}.chk";
     $file{$file} = 1;
     my $out = new BuildAux::XFile ">$file.tmp";
     print $out lineno(%c);
@@ -322,10 +325,14 @@ sub dump_chk ($)
   }
 
   # Remove the old test files.
-  unlink grep { !$file{$_} } keys %old_file;
+  if (my @old = grep { !$file{$_} } keys %old_file)
+  {
+    verbose 1, "remove obsolete files from $prefix: @old";
+    unlink @old;
+  }
 
   # Generate the Makefile.
-  my $local_mk = "$dir-test.mk";
+  my $local_mk = "$prefix-test.mk";
   my $mk = new BuildAux::XFile ">$local_mk";
 
   my @file = keys %file;
