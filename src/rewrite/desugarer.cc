@@ -206,11 +206,13 @@ namespace rewrite
 
     ast::loc loc = at->location_get();
     ast::loc cond_loc = at->cond_get()->location_get();
-    ast::rRoutine closure = new ast::Routine(cond_loc, true, new ast::local_declarations_type,
-                                             factory.make_scope(cond_loc, at->cond_get()));
+    ast::rRoutine closure =
+      new ast::Routine(cond_loc, true, new ast::local_declarations_type,
+                       factory.make_scope(cond_loc, at->cond_get()));
 
     ast::EventMatch match(new ast::Event(cond_loc, closure), 0, 0, 0);
-    result_ = factory.make_at_event(loc, at->flavor_location_get(), at->flavor_get(),
+    result_ = factory.make_at_event(loc,
+                                    at->flavor_location_get(), at->flavor_get(),
                                     match, at->body_get(), at->onleave_get(),
                                     at->duration_get());
     recurse(result_);
@@ -294,6 +296,7 @@ namespace rewrite
          "{\n"
          "  var '$emit'|\n"
          "  var '$duration' = %exp:3 |\n"
+         "  try\n"
          "  {\n"
          "    '$emit' = %exp:1.trigger(%exps:2)|\n"
          "     sleep('$duration')|\n"
@@ -305,7 +308,7 @@ namespace rewrite
          "}");
 
       // FIXME: children desugared twice
-      result_ = recurse(exp(emit %  event % args % duration));
+      result_ = recurse(exp(emit % event % args % duration));
     }
     else
     {
