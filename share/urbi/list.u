@@ -18,11 +18,18 @@ do (List)
 
   function '=='(var that)
   {
-    if (size != that.size)
-      return false|
-    for| (var i : size.seq)
-      if (this[i] != that[i])
+    try
+    {
+      if (size != that.size)
         return false|
+      for| (var i : size.seq)
+        if (this[i] != that[i])
+          return false|
+    }
+    catch
+    {
+      return false
+    };
     true
   };
 
