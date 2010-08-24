@@ -22,7 +22,7 @@
 #include <urbi/ustarter.hh>
 #include <urbi/ucontext-factory.hh>
 
-GD_ADD_CATEGORY(UObject);
+GD_CATEGORY(UObject);
 
 namespace urbi
 {
@@ -281,7 +281,6 @@ namespace urbi
     void
     UContextImpl::init()
     {
-      GD_CATEGORY(UObject);
       setCurrentContext(this);
       foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
       {

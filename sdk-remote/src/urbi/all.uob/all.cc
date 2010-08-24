@@ -19,7 +19,7 @@
 #undef URBI
 #include <urbi/uobject.hh>
 
-GD_ADD_CATEGORY(all);
+GD_CATEGORY(all);
 
 class all: public urbi::UObject
 {
@@ -187,7 +187,6 @@ public:
   {
     threadCheck();
     const urbi::UBinary& cb = var;
-    GD_CATEGORY(all);
     GD_FINFO_DEBUG("onbin cptr %s", cb.common.data);
     urbi::UBinary& b = const_cast<urbi::UBinary&>(cb);
     for (unsigned int i=0; i<b.common.size; ++i)
@@ -198,7 +197,6 @@ public:
   {
     threadCheck();
     const urbi::UImage& cb = var;
-    GD_CATEGORY(all);
     GD_FINFO_DEBUG("onimg cptr %s", (void*)cb.data);
     urbi::UImage& b = const_cast<urbi::UImage&>(cb);
     for (unsigned int i=0; i<b.size; ++i)
@@ -212,7 +210,6 @@ public:
     // Dup since we want to test no-copy op: the other end will write.
     b.common.data = strdup(content.c_str());
     b.common.size = content.length();
-    GD_CATEGORY(all);
     GD_FINFO_DEBUG("writeB cptr %s", b.common.data);
     *vars[idx] = b;
     std::string res((char*)b.common.data, b.common.size);
@@ -225,7 +222,6 @@ public:
     threadCheck();
     urbi::UImage i;
     i.data = (unsigned char*)strdup(content.c_str());
-    GD_CATEGORY(all);
     GD_FINFO_DEBUG("writeI cptr %s", (void*)i.data);
     i.size = content.length();
     *vars[idx] = i;
@@ -418,7 +414,6 @@ public:
   readProps(const std::string& name)
   {
     threadCheck();
-    GD_CATEGORY(all);
     urbi::UVar v(name);
     urbi::UList res;
 
@@ -461,7 +456,6 @@ public:
   int writeD(const std::string &name, double val)
   {
     threadCheck();
-    GD_CATEGORY(all);
     GD_FINFO_DEBUG("writeD %s", name);
     urbi::UVar v(name);
     v = val;
@@ -470,7 +464,6 @@ public:
 
   int writeS(const std::string &name, const std::string &val)
   {
-    GD_CATEGORY(all);
     GD_FINFO_DEBUG("writeS %s", name);
     urbi::UVar v(name);
     v = val;
@@ -479,7 +472,6 @@ public:
 
   int writeL(const std::string &name, const std::string &val)
   {
-    GD_CATEGORY(all);
     GD_FINFO_DEBUG("writeL %s", name);
     urbi::UVar v(name);
     urbi::UList l;
@@ -491,7 +483,6 @@ public:
 
   int writeM(const std::string &name, const std::string &val)
   {
-    GD_CATEGORY(all);
     GD_FINFO_DEBUG("writeM %s", name);
     urbi::UVar v(name);
     urbi::UDictionary d;

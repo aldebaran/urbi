@@ -12,7 +12,7 @@
 #include <iostream>
 #include "generic.hh"
 
-GD_ADD_CATEGORY(generic);
+GD_CATEGORY(Generic);
 UStart (generic);
 
 generic::generic(const std::string& s)
@@ -44,7 +44,6 @@ generic::init()
 int
 generic::foo(int x)
 {
-  GD_CATEGORY(generic);
   GD_FINFO_DEBUG("foo(%s)", x);
   val = x;
   return x+1;
@@ -53,7 +52,6 @@ generic::foo(int x)
 IF_VOID(void, int)
 generic::inc()
 {
-  GD_CATEGORY(generic);
   GD_INFO_DEBUG("inc");
   // Yeah, not nicely written...  Study the UVar interface to rewrite
   // this cleanly.
@@ -64,7 +62,6 @@ generic::inc()
 UReturn
 generic::newval(UVar& v)
 {
-  GD_CATEGORY(generic);
   GD_FINFO_DEBUG("newval: %s", (int) v);
   return 0;
 }

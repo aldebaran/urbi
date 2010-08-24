@@ -19,7 +19,7 @@
 #include <urbi/umessage.hh>
 #include <urbi/uvalue.hh>
 
-GD_ADD_CATEGORY(UMessage);
+GD_CATEGORY(UMessage);
 
 namespace urbi
 {
@@ -39,7 +39,6 @@ namespace urbi
     , value(0)
     , rawMessage(msg)
   {
-    GD_CATEGORY(UMessage);
     while (msg[0] == ' ')
       ++msg;
 

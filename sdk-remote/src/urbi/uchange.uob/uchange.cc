@@ -12,7 +12,7 @@
 #include <libport/debug.hh>
 #include "uchange.hh"
 
-GD_ADD_CATEGORY(uchange);
+GD_CATEGORY(UChange);
 
 using namespace urbi;
 
@@ -35,7 +35,6 @@ uchange::init ()
 UReturn
 uchange::newval (UVar& v)
 {
-  GD_CATEGORY(uchange);
   GD_FINFO_DEBUG("newval: %s", (int) v);
   return 0;
 }

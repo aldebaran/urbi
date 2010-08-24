@@ -12,7 +12,7 @@
 #include <iostream>
 #include <urbi/uobject.hh>
 
-GD_ADD_CATEGORY(timer);
+GD_CATEGORY(Timer);
 
 urbi::UObjectHub* thub;
 class timer: public urbi::UObject
@@ -91,7 +91,6 @@ public:
   timerHub(const std::string& name)
     : urbi::UObjectHub(name)
   {
-    GD_CATEGORY(timer);
     GD_INFO_DEBUG("timerhub started");
     thub = this;
   }

@@ -14,7 +14,7 @@
 using namespace urbi;
 
 UStart (uaccess);
-GD_ADD_CATEGORY(uaccess);
+GD_CATEGORY(UAccess);
 
 uaccess::uaccess (const std::string& s)
   : UObject (s)
@@ -38,7 +38,6 @@ uaccess::newval (UVar& v)
 {
   static int value = 0;
   value++;
-  GD_CATEGORY(uaccess);
   GD_FINFO_DEBUG("newval: value = %s", value);
   v = value;
   return 0;

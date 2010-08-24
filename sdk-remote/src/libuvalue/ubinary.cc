@@ -15,7 +15,7 @@
 #include <libport/debug.hh>
 #include <urbi/ubinary.hh>
 
-GD_ADD_CATEGORY(UBinary);
+GD_CATEGORY(UBinary);
 
 namespace urbi
 {
@@ -128,7 +128,6 @@ namespace urbi
 		 std::list<BinaryData>::const_iterator& binpos, bool copy)
 
   {
-    GD_CATEGORY(UBinary);
     // LIBPORT_ECHO("Parsing: {" << is.str() << "}");
     if (binpos == bins.end())
     {

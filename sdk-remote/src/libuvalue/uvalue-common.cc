@@ -26,7 +26,7 @@
 #include <urbi/ubinary.hh>
 #include <urbi/uvalue.hh>
 
-GD_ADD_CATEGORY(UValue);
+GD_CATEGORY(UValue);
 
 namespace urbi
 {
@@ -146,7 +146,6 @@ namespace urbi
 		const std::list<BinaryData>& bins,
 		std::list<BinaryData>::const_iterator& binpos)
   {
-    GD_CATEGORY(UValue);
     SKIP_SPACES();
     if (message[pos] == '"')
     {

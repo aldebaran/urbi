@@ -24,7 +24,7 @@
 
 #include <libuobject/remote-ucontext-impl.hh>
 
-GD_ADD_CATEGORY(Libuobject);
+GD_CATEGORY(LibUObject);
 
 namespace urbi
 {
@@ -48,7 +48,6 @@ namespace urbi
     void
     RemoteUGenericCallbackImpl::initialize(UGenericCallback* owner, bool)
     {
-      GD_CATEGORY(Libuobject);
       owner_ = owner;
       std::string type = owner_->type;
       //owner_->name =
@@ -96,7 +95,6 @@ namespace urbi
     void
     RemoteUGenericCallbackImpl::registerCallback()
     {
-      GD_CATEGORY(Libuobject);
       GD_FINFO("Pushing %s in %s", owner_->name, owner_->type);
       UTable& t =
         dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)

@@ -38,7 +38,7 @@
 #include <urbi/ucontext-factory.hh>
 #include <libuobject/remote-ucontext-impl.hh>
 
-GD_ADD_CATEGORY(Libuobject);
+GD_CATEGORY(LibUObject);
 
 namespace urbi
 {
@@ -116,7 +116,6 @@ namespace urbi
 
       libport::utime_reference_set(boost::posix_time::ptime(boost::gregorian::date(year, month, day),
                                                             boost::posix_time::microseconds(us)));
-      GD_CATEGORY(Libuobject);
       GD_FINFO_DEBUG("Remote kernel reference timestamp: %s.", to_simple_string(libport::utime_reference()));
     }
 
@@ -333,7 +332,6 @@ namespace urbi
       // This method can be called by a thread from the Thread Pool because
       // it is used as a callback function.  Thus we have to declare the
       // category for the debugger used by the current thread.
-      GD_CATEGORY(Libuobject);
       GD_FINFO_DUMP("...dispatch of %s done", var);
       if (e)
       {
@@ -375,7 +373,6 @@ namespace urbi
         return URBI_CONTINUE;
       FINALLY(((unsigned int& , dispatchDepth)), dispatchDepth--);
       dispatchDepth++;
-      GD_CATEGORY(Libuobject);
       setCurrentContext(this);
       typedef UTable::callbacks_type callbacks_type;
       //check message type

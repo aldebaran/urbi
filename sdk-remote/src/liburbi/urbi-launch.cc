@@ -39,6 +39,8 @@ using namespace boost::assign;
 #include <urbi/uclient.hh>
 #include <urbi/urbi-root.hh>
 
+GD_CATEGORY(urbi-launch);
+
 using namespace urbi;
 using libport::program_name;
 

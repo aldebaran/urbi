@@ -30,7 +30,7 @@
 
 using namespace urbi;
 
-GD_ADD_CATEGORY(URTP);
+GD_CATEGORY(URTP);
 extern "C"
 {
   // We are using our own network backend, which requires using a bit of the
@@ -251,7 +251,6 @@ void URTP::init()
 
 int URTP::listen(const std::string& host, const std::string& port)
 {
-  GD_CATEGORY(URTP);
   GD_SINFO_DUMP("Listening on " << host <<":" << port);
   boost::system::error_code erc;
   unsigned short res =
@@ -311,7 +310,6 @@ transmitRemoteWrite(const std::string& name, const T& val)
 
 size_t URTP::onRead(const void* data, size_t sz)
 {
-  GD_CATEGORY(URTP);
   GD_SINFO_DUMP(this << " packet of size " << sz);
   /* Normal operation of ortp is to call rtp_session_recvm_with_ts which will
    * read its socket, get a packet and pass it to rtp_session_rtp_parse.
@@ -525,7 +523,6 @@ void URTP::onTypeChange(UVar& t)
 
 void URTP::onJitterChange(UVar&)
 {
-  GD_CATEGORY(URTP);
   int j = jitter;
   int ja = jitterAdaptive;
   int jt = jitterTime;

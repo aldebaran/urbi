@@ -26,10 +26,13 @@
 #include <liburbi/compatibility.hh>
 
 #include <libuobject/remote-ucontext-impl.hh>
+
 namespace urbi
 {
   namespace impl
   {
+
+  GD_CATEGORY(LibUObject);
 
   //! UVar initialization
   void

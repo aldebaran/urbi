@@ -39,7 +39,7 @@
 
 #include <liburbi/compatibility.hh>
 
-GD_ADD_CATEGORY(UAbstractClient);
+GD_CATEGORY(UAbstractClient);
 
 namespace urbi
 {
@@ -830,7 +830,6 @@ namespace urbi
   bool
   UAbstractClient::process_recv_buffer_text_()
   {
-    GD_CATEGORY(UAbstractClient);
     // Not in binary mode.
     char* endline =
       static_cast<char*> (memchr(recvBuffer+parsePosition, '\n',
@@ -1103,7 +1102,6 @@ namespace urbi
   UCallbackAction
   UAbstractClient::setVersion(const UMessage& msg)
   {
-    GD_CATEGORY(UAbstractClient);
     if (msg.type != MESSAGE_DATA)
       return URBI_CONTINUE;
     passert(msg.value->type, msg.value->type == DATA_STRING);
