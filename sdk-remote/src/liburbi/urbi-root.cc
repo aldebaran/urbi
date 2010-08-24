@@ -46,6 +46,20 @@ mygetenv(const std::string& var, const std::string& val = "")
   return res ? std::string(res) : val;
 }
 
+static std::string
+urbi_getenv(const std::string& self, const std::string& _var, const std::string& val = "")
+{
+  std::string var = "URBI_" + _var;
+  const char* res = getenv(var.c_str());
+  if (res)
+  {
+    std::cerr << self << ": obeying to " << var << " = " << res << std::endl;
+    return res;
+  }
+  else
+    return val;
+}
+
 /*------------.
 | Reporting.  |
 `------------*/
@@ -260,7 +274,7 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
   , handle_libuobject_(0)
 {
   // Find our directory.
-  std::string uroot = mygetenv("URBI_ROOT");
+  std::string uroot = urbi_getenv(program, "ROOT");
   if (!uroot.empty())
   {
     URBI_ROOT_DEBUG(program_,
@@ -361,17 +375,17 @@ UrbiRoot::library_load(const std::string& base, const std::string& env_suffix)
 {
   std::string envvar;
   if (env_suffix.empty())
-    envvar = "URBI_ROOT_LIB" + base;
+    envvar = "ROOT_LIB" + base;
   else
-    envvar = "URBI_ROOT_LIB" + env_suffix;
+    envvar = "ROOT_LIB" + env_suffix;
   foreach (char& s, envvar)
     s = toupper(s);
 
   return
     xdlopen(program_,
             base,
-            mygetenv(envvar,
-                     root() / libdir / "lib" + base + LIBPORT_LIBSFX));
+            urbi_getenv(program_, envvar,
+                        root() / libdir / "lib" + base + LIBPORT_LIBSFX));
 }
 
 const std::string&
@@ -404,8 +418,8 @@ UrbiRoot::load_plugin()
   handle_libuobject_ =
     xdlopen(program_,
             "plugin UObject implementation",
-            mygetenv("URBI_ROOT_LIBPLUGIN",
-                     core_path() / "engine" / "libuobject" LIBPORT_LIBSFX),
+            urbi_getenv(program_, "ROOT_LIBPLUGIN",
+                        core_path() / "engine" / "libuobject" LIBPORT_LIBSFX),
             // This exit status is understood by the test suite.  It
             // helps it skipping SDK Remote tests that cannot run
             // without Urbi SDK.
@@ -419,8 +433,8 @@ UrbiRoot::load_remote()
   handle_libuobject_ =
     xdlopen(program_,
             "remote UObject implementation",
-            mygetenv("URBI_ROOT_LIBREMOTE",
-                     core_path() / "remote" / "libuobject" LIBPORT_LIBSFX),
+            urbi_getenv(program_, "ROOT_LIBREMOTE",
+                        core_path() / "remote" / "libuobject" LIBPORT_LIBSFX),
             EX_OSFILE);
 }
 
