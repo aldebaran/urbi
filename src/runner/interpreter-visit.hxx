@@ -152,12 +152,11 @@ namespace runner
   inline void
   Interpreter::at_run(AtEventData* data, const object::objects_type&)
   {
-    GD_TRACE();
     runner::Interpreter& r = ::kernel::interpreter();
     bool v;
     // FIXME: optimize: do not unregister and reregister the same dependency
     {
-      GD_FPUSH("Evaluating at condition: %s", data->exp->body_string());
+      GD_FPUSH_TRACE("Evaluating at condition: %s", data->exp->body_string());
       foreach (object::Event::Subscription& s, data->subscriptions)
         s.stop();
       data->subscriptions.clear();
@@ -183,12 +182,12 @@ namespace runner
     }
     if (v && !data->current)
     {
-      GD_PUSH("Triggering at block (enter)");
+      GD_PUSH_TRACE("Triggering at block (enter)");
       data->current = data->event->trigger(object::objects_type());
     }
     else if (!v && data->current)
     {
-      GD_PUSH("Triggering at block (exit)");
+      GD_PUSH_TRACE("Triggering at block (exit)");
       data->current->stop();
       data->current = 0;
     }
@@ -215,8 +214,7 @@ namespace runner
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = operator()(ast_tgt.get());
-    GD_TRACE();
-    GD_FPUSH("Call %s", e->name_get());
+    GD_FPUSH_TRACE("Call %s", e->name_get());
     return apply_ast(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
@@ -354,9 +352,8 @@ namespace runner
         squash = true;
 
         {
-          GD_TRACE();
-          GD_FPUSH("Register local variable '%s' for at monitoring",
-                   e->name_get());
+          GD_FPUSH_TRACE("Register local variable '%s' for at monitoring",
+                         e->name_get());
           dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));
           object::rObject changed = (*slot)->call(SYMBOL(changed));
           aver(changed);

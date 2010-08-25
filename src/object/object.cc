@@ -159,8 +159,7 @@ namespace urbi
           bool prev = squash;
           FINALLY(((bool&, squash))((bool, prev)), squash = prev);
           squash = true;
-          GD_TRACE();
-          GD_FPUSH("Register slot '%s' for at monitoring", k);
+          GD_FPUSH_TRACE("Register slot '%s' for at monitoring", k);
           r->dependency_add(static_cast<Event*>(res->property_get(SYMBOL(changed)).get()));
           rObject changed = (*res)->call(SYMBOL(changed));
           assert(changed);
