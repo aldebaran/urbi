@@ -699,8 +699,11 @@ Finally:
     - 'libport::iendl'
     - '"finally"'
     - 'libport::iendl'
+    - '"{"'
+    - 'libport::incendl'
     - ~finally
-    - 'libport::decindent'
+    - 'libport::decendl'
+    - '"}"'
 
 Foreach:
   super:
