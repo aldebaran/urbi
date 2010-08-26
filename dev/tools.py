@@ -29,7 +29,7 @@ def lazy_overwrite (old, new):
       print "> Create: " + old
     shutil.move (new, old)
     if verbose:
-      os.system("diff -uw /dev/null " + old)
+      os.system("colordiff -uw /dev/null " + old)
   elif not filecmp.cmp (old, new):
     if verbose:
       print "> Overwrite: " + old
@@ -39,7 +39,7 @@ def lazy_overwrite (old, new):
     shutil.move (old, old + "~")
     shutil.move (new, old)
     if verbose:
-      os.system("diff -uw " + old + "~ " + old)
+      os.system("colordiff -uw " + old + "~ " + old)
   else:
     os.remove (new)
   # Prevent generated file modifications
