@@ -13,13 +13,16 @@
  ** \brief Inline methods of ast::Error.
  */
 
-#ifndef AST_ERROR_HXX
-# define AST_ERROR_HXX
-
-# include <ast/error.hh>
-
 namespace ast
 {
+  inline
+  Error::message_type::message_type(bool err,
+                                    ast::loc loc, std::string msg)
+    : error(err)
+    , location(loc)
+    , message(msg)
+  {}
+
   inline
   std::ostream&
   operator<< (std::ostream& o, const Error& e)
@@ -29,4 +32,3 @@ namespace ast
 
 } // namespace ast
 
-#endif // !AST_ERROR_HXX

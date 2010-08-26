@@ -41,7 +41,15 @@ namespace ast
 
   public:
     /// Located message.
-    typedef std::pair<ast::loc, std::string> message_type;
+    struct message_type
+    {
+      message_type(bool error, ast::loc location, std::string message);
+
+      /// Whether an error, or a warning.
+      bool error;
+      ast::loc location;
+      std::string message;
+    };
 
     /// Errors and warnings.
     typedef std::list<message_type> messages_type;
@@ -52,11 +60,11 @@ namespace ast
     /// Warn about \a msg.
     void warn(const loc& l, const std::string& msg);
 
-    /// The list of errors.
-    const messages_type& errors_get() const;
+    /// The list of messages.
+    const messages_type& messages_get() const;
 
-    /// The list of errors.
-    messages_type& errors_get();
+    /// The list of messages.
+    messages_type& messages_get();
 
     /// Dump all the errors on std::cerr.
     /// For developpers.
@@ -68,13 +76,10 @@ namespace ast
 
   private:
     /// Record a new error/warning.
-    void message_(messages_type& ms, const loc& l, const std::string& msg);
+    void message_(bool error, const loc& l, const std::string& msg);
 
-    /// List of parse error messages.
-    messages_type errors_;
-
-    /// List of warnings.
-    messages_type warnings_;
+    /// List of parse error/warnings messages.
+    messages_type messages_;
 
     /// Whether the errors and warnings were output or given.
     mutable bool reported_;

@@ -74,10 +74,11 @@ namespace urbi
         // abort if there are some errors that were not reported to
         // the user, which is what we are doing now.
         ast::Error::messages_type ms;
-        std::swap(ms, errs->errors_get());
+        std::swap(ms, errs->messages_get());
         // FIXME: Yes, we actually raise only the first error.
         foreach (const ast::Error::message_type& s, ms)
-          runner::raise_syntax_error(s.first, s.second, context);
+          if (s.error)
+            runner::raise_syntax_error(s.location, s.message, context);
       }
 
       ast::rConstAst ast = parser::transform(p->ast_get());

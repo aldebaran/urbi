@@ -25,8 +25,7 @@ namespace ast
 {
 
   Error::Error()
-    : errors_()
-    , warnings_()
+    : messages_()
     , reported_(false)
   {}
 
@@ -38,44 +37,47 @@ namespace ast
   bool
   Error::empty() const
   {
-    return errors_.empty() && warnings_.empty();
+    return messages_get().empty();
   }
 
   bool
   Error::good() const
   {
-    return errors_.empty();
+    foreach (const message_type& m, messages_get())
+      if (m.error)
+        return false;
+    return true;
   }
 
   void
-  Error::message_(messages_type& ms, const loc& l, const std::string& msg)
+  Error::message_(bool error, const loc& l, const std::string& msg)
   {
     reported_ = false;
-    ms << std::make_pair(l, msg);
+    messages_ << message_type(error, l, msg);
   }
 
   void
   Error::error(const loc& l, const std::string& msg)
   {
-    message_(errors_, l, msg);
+    message_(true, l, msg);
   }
 
   void
   Error::warn(const loc& l, const std::string& msg)
   {
-    message_(warnings_, l, msg);
+    message_(false, l, msg);
   }
 
   const Error::messages_type&
-  Error::errors_get() const
+  Error::messages_get() const
   {
-    return errors_;
+    return messages_;
   }
 
   Error::messages_type&
-  Error::errors_get()
+  Error::messages_get()
   {
-    return errors_;
+    return messages_;
   }
 
   namespace
@@ -86,7 +88,8 @@ namespace ast
                const Error::messages_type& ms)
     {
       foreach (const Error::message_type& m, ms)
-        o << m.first << ": " << m.second << std::endl;
+        o << (m.error ? "error: " : "warning: ")
+          << m.location << ": " << m.message << std::endl;
       return o;
     }
   }
@@ -97,25 +100,18 @@ namespace ast
   {
     reported_ = true;
     return o
-      << "Errors:"
-      << libport::incendl << errors_ << libport::decendl
-      << "Warnings:"
-      << libport::incendl << warnings_ << libport::decindent
-      ;
+      << "Messages:"
+      << libport::incendl << messages_ << libport::decendl;
   }
 
   void
   Error::process_errors(ast::Nary& target)
   {
     reported_ = true;
-
-    foreach(const message_type& e, warnings_)
-      target.message_push(e.first, e.second, "warning");
-    warnings_.clear();
-
-    foreach(const message_type& e, errors_)
-      target.message_push(e.first, e.second, "error");
-    errors_.clear();
+    foreach(const message_type& e, messages_)
+      target.message_push(e.location, e.message,
+                          e.error ? "error" : "warning");
+    messages_.clear();
   }
 
 
