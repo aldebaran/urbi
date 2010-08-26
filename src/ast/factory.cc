@@ -416,6 +416,22 @@ namespace ast
     return exp(a % value);
   }
 
+  /// "enum" name "{" ids "}"
+  rExp
+  Factory::make_enum(const yy::location& l,
+                      libport::Symbol name,
+                      const symbols_type& ids) /* const */
+  {
+    PARAMETRIC_AST(desugar, "var %id:1 = Enumerated.new(%exp:2, %exp:3);");
+
+    exps_type* exps = new exps_type;
+
+    foreach (libport::Symbol id, ids)
+      *exps << make_string(l, id);
+
+    return exp(desugar % name % make_string(l, name) % make_list(l, exps));
+  }
+
 
   EventMatch
   Factory::make_event_match(const location&,

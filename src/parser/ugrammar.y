@@ -435,6 +435,37 @@ stmt:
     }
 ;
 
+/*-------.
+| Enum.  |
+`-------*/
+
+%type <ast::symbols_type> id.0 id.enum;
+
+id.0:
+  /* nothing */ {}
+| id.0 id ","   { std::swap($$, $1); $$.push_back($2); }
+
+
+comma.opt:
+  /* nothing */ {}
+| ","           {}
+;
+
+id.enum:
+  /* nothing */         {}
+| id.0 id comma.opt     { std::swap($$, $1); $$.push_back($2); }
+;
+
+
+%token ENUM "enum";
+stmt:
+  "enum" id "{" id.enum "}"
+  {
+    $$ = MAKE(enum, @$, $2, $4);
+  }
+;
+
+
 /*-----------.
 | Bindings.  |
 `-----------*/

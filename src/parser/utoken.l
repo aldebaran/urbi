@@ -516,6 +516,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "do"            RETURN(DO);
 "else"          RETURN(ELSE);
 "emit"          RETURN(EMIT);
+"enum"          RETURN(ENUM);
 "finally"       RETURN(FINALLY);
 "freezeif"      RETURN(FREEZEIF);
 "function"      RETURN(FUNCTION);
@@ -626,7 +627,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "delete"           |
 "double"           |
 "dynamic_cast"     |
-"enum"             |
 "explicit"         |
 "export"           |
 "extern"           |

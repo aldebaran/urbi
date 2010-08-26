@@ -19,6 +19,7 @@
 # include <ast/exps-type.hh>
 # include <ast/flavor.hh>
 # include <ast/fwd.hh>
+# include <ast/symbols-type.hh>
 
 namespace ast
 {
@@ -129,6 +130,13 @@ namespace ast
     static
     rExp
     make_closure(rExp value) /* const */;
+
+    /// "enum" "{" ids "}"
+    static
+    rExp
+    make_enum(const yy::location& l,
+              libport::Symbol name,
+              const symbols_type& ids) /* const */;
 
     static
     rExp
