@@ -294,7 +294,7 @@
 %left "|"
 %left "&"
 %precedence CMDBLOCK
-%precedence "else" "onleave"
+%precedence "else" "onleave" "finally"
 
 %right "=" "+=" "-=" "*=" "/=" "^=" "%="
 
@@ -752,8 +752,8 @@ stmt:
 | Optional default/else/onleave clauses.  |
 `----------------------------------------*/
 
-// CMDBLOCK < "else" and "onleave" to promote shift in else.opt and
-// onleave.opt.
+// CMDBLOCK < "else", "finally", and "onleave" to promote shift in
+// else.opt, finally.opt and onleave.opt.
 
 %type <ast::rNary> default.opt;
 default.opt:
@@ -819,22 +819,16 @@ catch:
   }
 ;
 
-/*----------.
-| Finally.  |
-`----------*/
-
 %type <ast::rExp> finally.opt;
 finally.opt:
-  /* empty */     { $$ = 0;  }
-| "finally" block { $$ = $2; }
+  /* empty */ %prec CMDBLOCK  { $$ = 0;  }
+| "finally" block             { $$ = $2; }
 ;
 
 stmt:
-  "try" block catches.1 finally.opt
+  "try" block catches.1 else.opt finally.opt
   {
-    $$ = new ast::Try(@$, MAKE(scope, @$, $block), $[catches.1]);
-    if ($[finally.opt])
-      $$ = MAKE(finally, @$, $$, $[finally.opt]);
+    $$ = MAKE(try, @$, $block, $[catches.1], $[else.opt], $[finally.opt]);
   }
 | "try" block "finally" block
   {

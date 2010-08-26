@@ -681,14 +681,21 @@ namespace runner
   {
     // Evaluate the body, catch the exception, and process it.
     sched::exception_ptr exception;
+    object::rObject res;
     try
     {
-      return operator()(e->body_get().get());
+      res = operator()(e->body_get().get());
     }
     catch (object::UrbiException& exn)
     {
       exception = exn.clone();
     }
+
+    // Don't run the "else" clause in this "try", as exceptions in
+    // this "else" are not covered by the "try".
+    if (!exception.get())
+      return (e->elseclause_get() ? operator()(e->elseclause_get().get())
+              : res);
 
     rObject value =
       static_cast<object::UrbiException*>(exception.get())->value_get();

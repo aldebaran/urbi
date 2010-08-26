@@ -28,9 +28,12 @@ do (List)
     }
     catch
     {
-      return false
+      false
+    }
+    else
+    {
+      true
     };
-    true
   };
 
   function '<'(var that)

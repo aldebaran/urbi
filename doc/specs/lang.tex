@@ -2332,18 +2332,22 @@ outer();
 \end{urbiscript}
 
 \subsection{Catching exceptions}
+\label{sec:lang:catch}
 
 Exceptions are \dfn[exception!catching]{caught} with the
 \lstinline|try|/\lstinline|catch| construct. Its syntax is as follows:
 
 \begin{lstlisting}[language=bnf]
 <try-statement>
-  ::= "try" "{" <statement>* "}" <catch-clause>+ <finally-clause>?
+  ::= "try" "{" <statement>* "}" <catch-clause>+ <else-clause>? <finally-clause>?
     | "try" "{" <statement>* "}" <finally-clause>
 
 <catch-clause>
   ::= "catch" "(" <pattern> ")" "{" <statement>* "}"
     | "catch" "{" <statement>* "}"
+
+<else-clause>
+  ::= "else" "{" <statement>* "}"
 
 <finally-clause>
   ::= "finally" "{" <statement>* "}"
@@ -2353,10 +2357,11 @@ It consists of a first block of statements (the \dfn{try-block}), from which
 we want to catch exceptions, and one or more catch clauses to stop the
 exception (\dfn{catch-blocks}).
 
-Each catch clause defines a pattern against which the thrown exception is
-matched. If no pattern is specified, the catch clause matches systematically
-(equivalent to \lstinline|catch (...)| in \Cxx).  It is a syntax error if
-this catch-all clause is followed by a catch-clause with a pattern:
+Each \lstinline|catch| clause defines a pattern against which the thrown
+exception is matched. If no pattern is specified, the catch clause matches
+systematically (equivalent to \lstinline|catch (...)| in \Cxx).  It is a
+syntax error if this catch-all clause is followed by a catch-clause with a
+pattern:
 
 \begin{urbiscript}
 try {} catch {} catch (var e) {};
@@ -2370,7 +2375,7 @@ The catch-all clause, if present, must be last:
 try {} catch (var e) {} catch {};
 \end{urbiscript}
 
-Exceptions thrown from the \texttt{try} block are matched sequentially
+Exceptions thrown from the \lstinline|try| block are matched sequentially
 against all catch clauses. The first matching clause is executed, and
 control jumps after the whole try/catch block. If no catch clause matches,
 the exceptions isn't stopped and continues upward.
@@ -2393,6 +2398,53 @@ test(51);
 [00002143:error] !!! 51
 [00002143:error] !!!    called from: test
 \end{urbiscript}
+
+If an \lstinline|else|-clause is specified, it is executed if the
+\lstinline|try| block did not raise an exception.
+
+\begin{urbiscript}
+try   { echo("try") }
+catch { echo("catch")}
+else  { echo("else")};
+[00002855] *** try
+[00002855] *** else
+
+try   { echo("try"); echo("throw"); throw 0 }
+catch { echo("catch")}
+else  { echo("else")};
+[00002855] *** try
+[00002855] *** throw
+[00002855] *** catch
+\end{urbiscript}
+
+The value of the whole construct is:
+\begin{itemize}
+\item if the \lstinline|try| block raised an exception
+  \begin{itemize}
+  \item if the exception is not caught (or an exception is thrown from the
+    catch-clause), then there is no value, as the control flow is broken;
+  \item if the exception is caught; then it's the value of the corresponding
+    catch clause.
+\begin{urbiscript}
+try { throw 0; "try" } catch (0) { "catch" } else { "else" };
+[00467080] "catch"
+\end{urbiscript}
+  \end{itemize}
+\item if the \lstinline|try| block finish properly, then
+  \begin{itemize}
+  \item if there is an \lstinline|else|-clause, its value.
+\begin{urbiscript}
+try { "try" } catch (0) { "catch" } else { "else" };
+[00467080] "else"
+\end{urbiscript}
+  \item otherwise the value of the \lstinline|try|-block.
+\begin{urbiscript}
+try { "try" } catch (0) { "catch" };
+[00467080] "try"
+\end{urbiscript}
+  \end{itemize}
+\end{itemize}
+
 
 \subsection{Inspecting exceptions}
 
@@ -2518,7 +2570,7 @@ for (var i : ["1", "continue", "2", "break", "3"])
 
 Exceptions caught in the try-catch clause are much like a regular execution
 flow.  In particular, the value of the construct is that of the try-catch
-clause.
+clause regardless of the execution of the \lstinline|finally| clause.
 
 \begin{urbiscript}
 try           { echo("try");     "try" }
@@ -2527,6 +2579,15 @@ finally       { echo("finally"); "finally" };
 [00000614] *** try
 [00000615] *** finally
 [00000616] "try"
+
+try           { echo("try");     "try" }
+catch (var e) { echo("catch");   "catch" }
+else          { echo("else");    "else" }
+finally       { echo("finally"); "finally" };
+[00000614] *** try
+[00000615] *** else
+[00000615] *** finally
+[00000616] "else"
 
 try                      { echo("throw 42"); throw 42; "try" }
 catch (var e if e == 42) { echo("caught " + e);        "catch" }

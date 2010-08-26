@@ -15,6 +15,7 @@
 # include <libport/fwd.hh>
 # include <libport/ufloat.hh>
 
+# include <ast/catches-type.hh>
 # include <ast/exps-type.hh>
 # include <ast/flavor.hh>
 # include <ast/fwd.hh>
@@ -180,7 +181,7 @@ namespace ast
                       libport::Symbol id) /* const */;
 
     static
-    rExp
+    rFinally
     make_finally(const yy::location& l, rExp body, rExp finally) /* const */;
 
     static
@@ -312,6 +313,11 @@ namespace ast
     rScope
     make_scope(const yy::location& l, rExp e) /* const */;
 
+    // Use the location of \a e.
+    static
+    rScope
+    make_scope(rExp e) /* const */;
+
     static
     rExp
     make_stopif(const location& loc,
@@ -348,6 +354,22 @@ namespace ast
     static
     rExp
     make_timeout(const rExp& duration, const rExp& body) /* const */;
+
+    // try <stmt> <catch>+ <else>?
+    static
+    rTry
+    make_try(const location& loc,
+             rExp body,
+             const catches_type& catches = catches_type(),
+             rExp elseclause = 0) /* const */;
+
+    // try <stmt> <catch>+ <else>? <finally>?
+    static
+    rExp
+    make_try(const location& loc,
+             rExp body,
+             const catches_type& catches, rExp elseclause,
+             rExp finally) /* const */;
 
     // (a, b, c) --> Tuple.new([a, b, c])
     static

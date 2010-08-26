@@ -512,10 +512,12 @@ namespace ast
   }
 
 
-  rExp
+  rFinally
   Factory::make_finally(const yy::location& l, rExp body, rExp finally) // const
   {
-    return new Finally(l, body, finally);
+    // This make_scope is mainly for pretty-printing.
+    // IMHO there are too many useless rScopes in the AST -- Akim.
+    return new Finally(l, make_scope(body), finally);
   }
 
 
@@ -865,6 +867,15 @@ namespace ast
     return make_scope(l, 0, e);
   }
 
+  rScope
+  Factory::make_scope(rExp e) // const
+  {
+    if (e)
+      return make_scope(e->location_get(), e);
+    else
+      return 0;
+  }
+
   rExp
   Factory::make_stopif(const location&,
                        rExp cond, rExp body) // const
@@ -979,6 +990,28 @@ namespace ast
        "   }\n"
        "}");
     return exp(desugar % duration % body);
+  }
+
+  rTry
+  Factory::make_try(const location& loc,
+                    rExp body,
+                    const catches_type& catches, rExp elseclause) /* const */
+  {
+    return new ast::Try(loc,
+                        make_scope(body), catches,
+                        make_scope(elseclause));
+  }
+
+  rExp
+  Factory::make_try(const location& loc,
+                    rExp body,
+                    const catches_type& catches, rExp elseclause,
+                    rExp finally) /* const */
+  {
+    rExp res = make_try(loc, body, catches, elseclause);
+    if (finally)
+      res = make_finally(loc, res, finally);
+    return res;
   }
 
   // (a, b, c) --> Tuple.new([a, b, c])

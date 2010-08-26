@@ -1318,12 +1318,22 @@ Try:
     - handlers:
         type: catches_type
         desc: The exception handlers
+    - elseclause:
+        type: rScope
+        desc: Run if no exception was thrown.
+        mandatory: False
   printer:
     - '"try"'
     - 'libport::iendl'
     - ~body
     - 'libport::iendl'
     - 'n->handlers_get()'
+    - '{
+         if (n->elseclause_get())
+           ostr_ << libport::iendl
+                 << "else" << libport::iendl
+                 << *n->elseclause_get();
+       }'
 
 Catch:
   super: Exp

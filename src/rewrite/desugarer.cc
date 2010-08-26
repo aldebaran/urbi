@@ -381,8 +381,7 @@ namespace rewrite
   void Desugarer::visit(const ast::Try* t)
   {
     ast::loc loc = t->location_get();
-    ast::rTry res =
-      new ast::Try(loc, recurse(t->body_get()), ast::catches_type());
+    ast::rTry res = factory_->make_try(loc, recurse(t->body_get()));
 
     foreach (const ast::rCatch& c, t->handlers_get())
     {
@@ -406,6 +405,9 @@ namespace rewrite
         << new ast::Catch(loc, match,
                           recurse_with_subdecl(c->body_get()));
     }
+
+    if (t->elseclause_get())
+      res->elseclause_get() = recurse(t->elseclause_get());
     result_ = res;
   }
 
