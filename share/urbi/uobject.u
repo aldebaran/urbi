@@ -36,7 +36,8 @@ do (Global.UObject)
     var res = call.getSlot("target").clone |
     // Call the "init" from the parent, retargetted to the child.
     call.message = "init" |
-    try {
+    try
+    {
       var ret = res.callMessage(call).acceptVoid|
       if (ret.isA(Float) && ret != 0)
       {
@@ -190,7 +191,7 @@ do (Global.UObject)
       if (lobby.__bindingFunc[fullname].isA(List))
       {
         for(var i: lobby.__bindingFunc[fullname])
-          try{i.destroy} catch(var e) {}
+          try{i.destroy} catch {}
       }
     }
   };
@@ -518,7 +519,7 @@ class Global.'external'
     //wall("...connecting to " + host +":" + port);
     lrtp.connect(host, port);
     // Destroy local rtp object when the remote disconnects
-    disown({at(Lobby.onDisconnect?(lobby)) try{lrtp.destroy} catch(var e){}});
+    disown({at(Lobby.onDisconnect?(lobby)) try{lrtp.destroy} catch {}});
     (lrtp, rrtp)
   };
 
@@ -714,13 +715,14 @@ class Global.'external'
           && uobjects.getSlot(o).hasSlot("lobby")
           && uobjects.getSlot(o).lobby === l)
       {
-        // Destroy will remove the object from uobjects
+        // Destroy will remove the object from uobjects.
+        // Someone else might be doing the same thing right now, ignore
+        // errors.
         try
-        { // Someone else might be doing the same thing right now, ignore
-          // errors
+        {
           uobjects.getSlot(o).destroy
         }
-        catch(var e)
+        catch
         {}
       }
     }

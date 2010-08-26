@@ -78,21 +78,25 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     };
     monitor: at(UVar.traceSet?(var obj, var uvar, var ctx))
     {
-      try {
-      uvarSetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
-        .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar)|
-      //if (uvar.ownerName != ctx[ctx.size-1][0])
+      try
+      {
+        uvarSetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
+          .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar)|
+        //if (uvar.ownerName != ctx[ctx.size-1][0])
         usedVars[uvar.asString] = 1
-      } catch(var e){}
+      }
+      catch {}
     };
     monitor: at(UVar.traceGet?(var obj, var uvar, var ctx))
     {
-      try {
-      uvarGetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
-        .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar) |
-      //if (uvar.ownerName != ctx[ctx.size-1][0])
+      try
+      {
+        uvarGetters.getWithDefault(ctx[ctx.size-1][0], Dictionary.new, true)
+          .getWithDefault(ctx[ctx.size-1][1], [], true).insertUnique(uvar) |
+        //if (uvar.ownerName != ctx[ctx.size-1][0])
         usedVars[uvar.asString] = 1
-      } catch(var e) {}
+      }
+      catch {}
     };
   };
   /// Stop monitoring
