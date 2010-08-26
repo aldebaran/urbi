@@ -13,10 +13,8 @@
  ** \brief Creation of the Urbi object system.
  */
 
-//#define ENABLE_DEBUG_TRACES
 #include <libport/config.h>
 #include <libport/asio.hh>
-#include <libport/compiler.hh>
 #include <libport/cstdlib>
 #include <libport/format.hh>
 #include <libport/program-name.hh>
@@ -26,7 +24,6 @@
 #include <memory>
 #include <sstream>
 
-#include <kernel/uconnection.hh>
 #include <kernel/uobject.hh>
 #include <kernel/userver.hh>
 
@@ -45,9 +42,6 @@
 #include <runner/interpreter.hh>
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
-
-#include <ast/nary.hh>
-#include <ast/routine.hh>
 
 namespace urbi
 {
