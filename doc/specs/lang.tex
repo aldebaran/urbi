@@ -2334,12 +2334,41 @@ outer();
 \subsection{Catching exceptions}
 
 Exceptions are \dfn[exception!catching]{caught} with the
-\lstinline|try|/\lstinline|catch| construct. It consists of a first block
-(the \dfn{try-block}), from which we want to catch exceptions, and one or
-more catch clauses to stop the exception (\dfn{catch-blocks}). Each catch
-clause defines a pattern against which the thrown exception is matched. If
-no pattern is specified, the catch clause matches systematically (equivalent
-to \lstinline|catch (...)| in \Cxx).
+\lstinline|try|/\lstinline|catch| construct. Its syntax is as follows:
+
+\begin{lstlisting}[language=bnf]
+<try-statement>
+  ::= "try" "{" <statement>* "}" <catch-clause>+ <finally-clause>?
+    | "try" "{" <statement>* "}" <finally-clause>
+
+<catch-clause>
+  ::= "catch" "(" <pattern> ")" "{" <statement>* "}"
+    | "catch" "{" <statement>* "}"
+
+<finally-clause>
+  ::= "finally" "{" <statement>* "}"
+\end{lstlisting}
+
+It consists of a first block of statements (the \dfn{try-block}), from which
+we want to catch exceptions, and one or more catch clauses to stop the
+exception (\dfn{catch-blocks}).
+
+Each catch clause defines a pattern against which the thrown exception is
+matched. If no pattern is specified, the catch clause matches systematically
+(equivalent to \lstinline|catch (...)| in \Cxx).  It is a syntax error if
+this catch-all clause is followed by a catch-clause with a pattern:
+
+\begin{urbiscript}
+try {} catch {} catch (var e) {};
+[00000701:error] !!! syntax error: catch: exception already caught by a previous clause
+\end{urbiscript}
+
+\noindent
+The catch-all clause, if present, must be last:
+
+\begin{urbiscript}
+try {} catch (var e) {} catch {};
+\end{urbiscript}
 
 Exceptions thrown from the \texttt{try} block are matched sequentially
 against all catch clauses. The first matching clause is executed, and
