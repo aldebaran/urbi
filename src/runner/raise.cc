@@ -100,11 +100,11 @@ namespace runner
                     effective,
                     expected);
     else
-    raise_urbi_skip(SYMBOL(ArgumentType),
-                    raise_current_method,
-                    to_urbi(idx),
-                    effective,
-                    expected);
+      raise_urbi_skip(SYMBOL(ArgumentType),
+                      raise_current_method,
+                      to_urbi(idx),
+                      effective,
+                      expected);
   }
 
   void
