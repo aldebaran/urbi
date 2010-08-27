@@ -442,20 +442,9 @@ namespace urbi
     rString
     Object::asString() const
     {
-      try
-      {
-        rObject s = const_cast<Object*>(this)->call(SYMBOL(asString));
-        type_check<String>(s);
-        return s->as<String>();
-      }
-      // Check if asString was found, especially for bootstrap: asString
-      // is implemented in urbi/urbi.u, but print is called to show
-      // result in the toplevel before its definition.
-      catch (const UrbiException&)
-      {
-        // If no asString method is supplied, print the unique id
-        return new String(libport::format("%x", this));
-      }
+      rObject s = const_cast<Object*>(this)->call(SYMBOL(asString));
+      type_check<String>(s);
+      return s->as<String>();
     }
 
 
