@@ -75,10 +75,12 @@ namespace urbi
         // the user, which is what we are doing now.
         ast::Error::messages_type ms;
         std::swap(ms, errs->messages_get());
-        // FIXME: Yes, we actually raise only the first error.
-        foreach (const ast::Error::message_type& s, ms)
-          if (s.error)
-            runner::raise_syntax_error(s.location, s.message, context);
+        // FIXME: Yes, we actually raise only the first error.  And
+        // drop the warnings.
+        foreach (ast::rMessage m, ms)
+          if (m->tag_get() == "error")
+            runner::raise_syntax_error(m->location_get(), m->text_get(),
+                                       context);
       }
 
       ast::rConstAst ast = parser::transform(p->ast_get());

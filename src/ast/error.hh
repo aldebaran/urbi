@@ -21,6 +21,7 @@
 # include <string>
 
 # include <ast/loc.hh>
+# include <ast/message.hh>
 # include <ast/nary-fwd.hh>
 
 namespace ast
@@ -40,19 +41,8 @@ namespace ast
     bool empty() const;
 
   public:
-    /// Located message.
-    struct message_type
-    {
-      message_type(bool error, ast::loc location, std::string message);
-
-      /// Whether an error, or a warning.
-      bool error;
-      ast::loc location;
-      std::string message;
-    };
-
     /// Errors and warnings.
-    typedef std::list<message_type> messages_type;
+    typedef std::list<rMessage> messages_type;
 
     /// Declare an error about \a msg.
     void error(const loc& l, const std::string& msg);
@@ -76,7 +66,9 @@ namespace ast
 
   private:
     /// Record a new error/warning.
-    void message_(bool error, const loc& l, const std::string& msg);
+    /// \param kind   "error" or "warning".
+    void message_(const loc& l,
+                  const std::string& kind, const std::string& msg);
 
     /// List of parse error/warnings messages.
     messages_type messages_;

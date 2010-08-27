@@ -20,6 +20,7 @@
 
 #include <ast/error.hh>
 #include <ast/nary.hh>
+#include <ast/print.hh>
 
 namespace ast
 {
@@ -43,29 +44,29 @@ namespace ast
   bool
   Error::good() const
   {
-    foreach (const message_type& m, messages_get())
-      if (m.error)
+    foreach (const rMessage& m, messages_get())
+      if (m->tag_get() == "error")
         return false;
     return true;
   }
 
   void
-  Error::message_(bool error, const loc& l, const std::string& msg)
+  Error::message_(const loc& l, const std::string& kind, const std::string& msg)
   {
     reported_ = false;
-    messages_ << message_type(error, l, msg);
+    messages_ << new Message(l, msg, kind);
   }
 
   void
   Error::error(const loc& l, const std::string& msg)
   {
-    message_(true, l, msg);
+    message_(l, "error", msg);
   }
 
   void
   Error::warn(const loc& l, const std::string& msg)
   {
-    message_(false, l, msg);
+    message_(l, "warning", msg);
   }
 
   const Error::messages_type&
@@ -87,9 +88,8 @@ namespace ast
     operator<<(std::ostream& o,
                const Error::messages_type& ms)
     {
-      foreach (const Error::message_type& m, ms)
-        o << (m.error ? "error: " : "warning: ")
-          << m.location << ": " << m.message << std::endl;
+      foreach (rMessage m, ms)
+        o << *m << std::endl;
       return o;
     }
   }
@@ -108,9 +108,8 @@ namespace ast
   Error::process_errors(ast::Nary& target)
   {
     reported_ = true;
-    foreach(const message_type& e, messages_)
-      target.message_push(e.location, e.message,
-                          e.error ? "error" : "warning");
+    foreach (rMessage e, messages_)
+      target.push_message(e);
     messages_.clear();
   }
 

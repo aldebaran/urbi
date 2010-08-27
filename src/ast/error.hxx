@@ -15,13 +15,6 @@
 
 namespace ast
 {
-  inline
-  Error::message_type::message_type(bool err,
-                                    ast::loc loc, std::string msg)
-    : error(err)
-    , location(loc)
-    , message(msg)
-  {}
 
   inline
   std::ostream&

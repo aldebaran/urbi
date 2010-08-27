@@ -393,10 +393,12 @@ Message:
         desc: The message to display when visited.
     - tag:
         type: 'std::string'
-        desc: The tag for the message.
+        desc: The tag for the message (error or warning).
   printer:
+    - $location
+    - '": "'
     - $tag
-    - '" "'
+    - '": "'
     - $text
 
 Stmt:
@@ -449,8 +451,7 @@ Nary:
           void push_back(rExp e, flavor_type f = flavor_none);
 
           /// Push a message.
-          void message_push(const loc& location, const std::string& text,
-                            const std::string& tag);
+          void push_message(rMessage m);
 
           /// Sets the flavor of the last child.
           void back_flavor_set(flavor_type k, const loc& l);
@@ -528,15 +529,14 @@ Nary:
         void
         Nary::push_back(rExp e, flavor_type f)
         {
-          children_->push_back(stmt(e.get(), f));
+          *children_ << stmt(e.get(), f);
           location_adjust();
         }
 
         void
-        Nary::message_push(const loc& location, const std::string& text,
-                           const std::string& tag)
+        Nary::push_message(rMessage m)
         {
-          children_->push_back(new Message(location, text, tag));
+          *children_ << m;
         }
 
         template <typename T>
@@ -594,7 +594,7 @@ Nary:
         Nary::splice_back(rNary rhs)
         {
           foreach (rExp elt, rhs->children_get())
-            children_->push_back(elt);
+            *children_ << elt;
           rhs->clear();
           location_adjust();
         }
