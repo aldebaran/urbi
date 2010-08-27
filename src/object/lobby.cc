@@ -13,8 +13,6 @@
  ** \brief Creation of the Urbi object lobby.
  */
 
-#include <boost/algorithm/string.hpp>
-
 #include <libport/cassert>
 
 #include <kernel/uconnection.hh>
@@ -69,7 +67,7 @@ namespace urbi
     }
 
     size_t
-    Lobby::bytesSent()
+    Lobby::bytesSent() const
     {
       if (!connection_)
         RAISE("Lobby is not connected");
@@ -77,7 +75,7 @@ namespace urbi
     }
 
     size_t
-    Lobby::bytesReceived()
+    Lobby::bytesReceived() const
     {
       if (!connection_)
         RAISE("Lobby is not connected");
