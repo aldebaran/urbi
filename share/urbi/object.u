@@ -133,30 +133,33 @@ do (Object)
 
   function inspect(var deep = false)
   {
-    function '<' (l, r) { l.toLower < r.toLower };
-    echo("Inspecting " + this.asPrintable);
-    echo("** Prototypes:");
-    for (var p: protos)
-      echo("  " + p.asPrintable);
+    function '<' (l, r) { l.toLower < r.toLower }|
+    // Be sure that "l.inspect" (with l being a Lobby) goes onto the
+    // current Lobby, not onto "l".
+    function echo(m) { lobby.echo(m) }|
+    echo("Inspecting " + this.asPrintable)|
+    echo("** Prototypes:")|
+    for| (var p: protos)
+      echo("  " + p.asPrintable)|
     var slots =
       {
         if (deep)
         {
-          echo("** All Slots:");
-          slotNames;
+          echo("** All Slots:")|
+          slotNames
         }
         else
         {
-          echo("** Local Slots:");
-          localSlotNames;
+          echo("** Local Slots:")|
+          localSlotNames
         }
-      };
-    for (var s: slots.sort ('<'))
+      }|
+    for| (var s: slots.sort('<'))
     {
-      var o = locateSlot(s);
-      var ps = o.properties(s);
-      var constant = ps["constant"];
-      ps.erase("constant");
+      var o = locateSlot(s)|
+      var ps = o.properties(s)|
+      var constant = ps["constant"]|
+      ps.erase("constant")|
       echo({
              if (!deep)
                "  "
@@ -168,13 +171,13 @@ do (Object)
            + "%s : %s%s"
               % [s,
                  { if (constant) "const " else "" },
-                 o.getSlot(s).type]);
+                 o.getSlot(s).type])|
       if (ps)
       {
-        echo("    Properties:");
-        for (var p: ps.keys.sort('<'))
+        echo("    Properties:") |
+        for| (var p: ps.keys.sort('<'))
           echo("     %s : %s = %s"
-               % [p, ps[p].type, ps[p].asPrintable]);
+               % [p, ps[p].type, ps[p].asPrintable])
       }
     };
   };
