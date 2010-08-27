@@ -67,6 +67,7 @@ namespace urbi
                    libport::Symbol fun, const std::string& context)
     {
       runner::Interpreter& run = interpreter();
+
       // Report errors.
       if (ast::rError errs = p->errors_get())
       {
@@ -75,12 +76,27 @@ namespace urbi
         // the user, which is what we are doing now.
         ast::Error::messages_type ms;
         std::swap(ms, errs->messages_get());
-        // FIXME: Yes, we actually raise only the first error.  And
-        // drop the warnings.
+        // FIXME: Yes, we actually raise only the first error.
         foreach (ast::rMessage m, ms)
           if (m->tag_get() == "error")
             runner::raise_syntax_error(m->location_get(), m->text_get(),
                                        context);
+          else
+          {
+            // Raising and catching is not elegant, and probably
+            // costly, as compared to making the exceptions and
+            // displaying with regular functions.  But it's short to
+            // implement, and it is definitely not a hot spot.
+            try
+            {
+              runner::raise_syntax_error(m->location_get(), m->text_get(),
+                                         context, false);
+            }
+            catch (const object::UrbiException& ue)
+            {
+              run.show_exception(ue, "warning");
+            }
+          }
       }
 
       ast::rConstAst ast = parser::transform(p->ast_get());

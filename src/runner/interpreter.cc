@@ -178,7 +178,8 @@ namespace runner
   }
 
   void
-  Interpreter::show_exception(const object::UrbiException& ue) const
+  Interpreter::show_exception(const object::UrbiException& ue,
+                              const std::string& tag) const
   {
     CAPTURE_GLOBAL(Exception);
 
@@ -193,7 +194,7 @@ namespace runner
                                     ->call(SYMBOL(asString))
                                     ->as<object::String>()
                                     ->value_get())));
-      show_backtrace(ue.backtrace_get(), "error");
+      show_backtrace(ue.backtrace_get(), tag);
     }
   }
 

@@ -12,6 +12,8 @@ class Global.Exception
 {
   addProto(Global.Traceable);
 
+  // An error, or a warning?
+  var isError = true;
   var message = "<no message>";
 
   // $location and backtrace are defined by the raise function of the
@@ -65,7 +67,8 @@ class Global.Exception
 
   function '$show'()
   {
-    cerr << "!!! " + this |
+    var chan = { if (isError) cerr else Channel.warning } |
+    chan << "!!! " + this |
     // Don't display the top-level stack frame if it's already
     // been used as location.
     var bt = backtrace |
@@ -74,7 +77,7 @@ class Global.Exception
     for| (var sf: bt)
       // FIXME: Read the fixme above.
       if (sf.name not in ["assert", "assert_", "assertCall"])
-        cerr << "!!!    called from: " + sf
+        chan << "!!!    called from: " + sf
   };
 
   // <loc>: <slot or routine>: <message>
@@ -248,21 +251,26 @@ class Exception.Scheduling: Exception
 
 class Exception.Syntax: Exception
 {
-  var error = "syntax error";
   // The location of the syntactical error.
   var loc = "<no location>";
   var input = "<no input>";
 
-  function init(var loc, var message, var input)
+  function init(var loc, var message, var input, var isError = true)
   {
     this.loc = loc |
     this.input = input |
+    this.isError = isError |
     '$Exception'(message)
   };
 
   function asString()
   {
-    "%s: syntax error: %s" % [loc, message]
+    ({
+      if (isError)
+        "%s: syntax error: %s"
+      else
+        "%s: %s"
+    }) % [loc, message]
   };
 };
 

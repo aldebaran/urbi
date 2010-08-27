@@ -53,6 +53,15 @@ try { throw 1 } catch { echo(2) } else { echo(3) } finally { echo(4) };
 [00002671] *** 2
 [00002671] *** 4
 \end{urbiscript}
+
+\item \refSlot[System]{eval} and \refSlot[System]{load} report syntax
+  warnings.
+\begin{urbiscript}
+eval("new Object");
+[00001388:warning] !!! 1.1-10: deprecated construct. Instead of using 'a = new b(x)', use 'a = b.new(x)'.
+[00001388:warning] !!!    called from: eval
+[00001388] Object_0x1001b2320
+\end{urbiscript}
 \end{itemize}
 
 

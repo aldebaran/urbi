@@ -189,10 +189,12 @@ namespace runner
   void
   raise_syntax_error(const ast::loc& location,
                      const std::string& message,
-                     const std::string& input)
+                     const std::string& input,
+                     bool error)
   {
     raise_urbi_skip(SYMBOL(Syntax),
-                    to_urbi(location), to_urbi(message), to_urbi(input));
+                    to_urbi(location), to_urbi(message), to_urbi(input),
+                    to_urbi(error));
   }
 
   void

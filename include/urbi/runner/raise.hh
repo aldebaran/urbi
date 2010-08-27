@@ -120,11 +120,13 @@ namespace runner
   URBI_SDK_API
   void raise_scheduling_error(const std::string& message);
 
+  /// \param error  whether an error, or a warning.
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_syntax_error(const ast::loc& location,
                           const std::string& message,
-                          const std::string& input);
+                          const std::string& input,
+                          bool error = true);
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API

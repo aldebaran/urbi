@@ -139,7 +139,7 @@ eval("var x = 23;") == 23;
 x == 23;
 \end{urbiassert}
 
-  Exceptions are thrown on error.
+  Exceptions are thrown on error (including syntax errors).
 \begin{urbiscript}
 eval("1/0");
 [00008316:error] !!! 1.1-3: /: division by 0
@@ -160,9 +160,17 @@ catch (var e)
 };
 \end{urbiscript}
 
-  Nested calls to \refSlot{eval} behave as expected.  Note that the
-  locations in the inner calls refer to the position inside the evaluated
-  string.
+  Warnings are reported.
+
+\begin{urbiscript}
+eval("new Object");
+[00001388:warning] !!! 1.1-10: deprecated construct. Instead of using 'a = new b(x)', use 'a = b.new(x)'.
+[00001388:warning] !!!    called from: eval
+[00001388] Object_0x1001b2320
+\end{urbiscript}
+
+  Nested calls to \refSlot{eval} behave as expected.  The locations in the
+  inner calls refer to the position inside the evaluated string.
 
 \begin{urbiscript}
 eval("/");
@@ -182,9 +190,9 @@ eval("eval(\"eval(\\\"/\\\")\")");
 \end{urbiscript}
 
 \item[getenv](<name>)%
-  Return the value of the environment variable \var{name} as a
-  \refObject{String} if set, \refObject{nil} otherwise.  See also
-  \refSlot{setenv} and \refSlot{unsetenv}.
+  The value of the environment variable \var{name} as a \refObject{String}
+  if set, \refObject{nil} otherwise.  See also \refSlot{setenv} and
+  \refSlot{unsetenv}.
 \begin{urbiassert}
 getenv("UndefinedEnvironmentVariable").isNil;
 !getenv("PATH").isNil;

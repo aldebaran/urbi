@@ -240,7 +240,9 @@ namespace runner
 
     virtual libport::Symbol innermost_call_get() const;
 
-    void show_exception(const object::UrbiException& ue) const;
+    /// Report an exception.
+    void show_exception(const object::UrbiException& ue,
+                        const std::string& channel = "error") const;
   protected:
 
   private:
