@@ -200,10 +200,19 @@ lobby.license;
 \end{urbiunchecked}
 
 \item[lobby]
-  Return the current lobby, i.e., \this.
+  The lobby of the current connection.  This is typically \this.
 \begin{urbiassert}
 Lobby.lobby === this;
 \end{urbiassert}
+
+  But when several connections are active (e.g., when there are remote
+  connections), it can be different from the target of the call.
+
+\begin{urbiscript}
+Lobby.create| Lobby.create|;
+for (var l : lobbies)
+  assert (l.lobby == Lobby.lobby);
+\end{urbiscript}
 
 \item[onDisconnect](<lobby>)%
   Event launched when \this has disconnected.
