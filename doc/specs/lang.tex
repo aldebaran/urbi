@@ -213,7 +213,7 @@ for instance.  They are listed in \autoref{tab:keywords}.
     \lstinline"struct"            & Reserved                         \\
     \lstinline"emit"              & Deprecated                       &
     \lstinline"switch"            &                                  \\
-    \lstinline"enum"              & Reserved                         &
+    \lstinline"enum"              &                                  &
     \lstinline"template"          & Reserved                         \\
                                   &                                  &
     \this                         &                                  \\
@@ -1864,6 +1864,70 @@ obj.b();
 [00000000:error] !!! b: expected 1 argument, given 0
 obj.b(50);
 [00000000] 51
+\end{urbiscript}
+
+\section{Enumerated types}
+\label{sec:lang:enum}
+
+Enumerated type enable to create a type represented by a finished set of
+value, just like the \lstinline{enum} statement in \C.
+
+\begin{urbiscript}
+enum Suit
+{
+  hearts,
+  diamonds,
+  clubs,
+  spades, // Last comma is optional
+};
+[00000001] Suit
+\end{urbiscript}
+
+Since everything is an object in \us, enums are too, with
+\refObject{Enumerated} as prototype.
+
+\begin{urbiscript}
+Suit;
+[00000001] Suit
+Suit.protos;
+[00000002] [Enumerated]
+\end{urbiscript}
+
+The possible enum values are stored inside the enum object. They inherit the
+enum object, so you can easily test whether an object is a Suit or
+not.
+
+\begin{urbiscript}
+Suit.hearts;
+[00000001] hearts
+Suit.diamonds;
+[00000002] diamonds
+Suit.clubs.isA(Suit);
+[00000003] true
+42.isA(Suit);
+[00000003] false
+\end{urbiscript}
+
+Enumerated values of course support comparison and pattern matching. You can
+iterate on the enum object to cycle through all possible values.
+
+\begin{urbiscript}
+function find_ace(var suit)
+{
+  switch (suit)
+  {
+    case Suit.spades:
+      return "The only card I need is";
+    default:
+      return "I have";
+  }
+}|;
+for (var suit in Suit)
+  echo("%s the ace of %s." % [find_ace(suit), suit]);
+[00000001] *** I have the ace of hearts.
+[00000002] *** I have the ace of diamonds.
+[00000003] *** I have the ace of clubs.
+[00000004] *** The only card I need is the ace of spades.
 \end{urbiscript}
 
 \section{Structural Pattern Matching}

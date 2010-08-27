@@ -1,0 +1,98 @@
+%% Copyright (C) 2009-2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Enumerated}
+
+Prototype of enumerated types.
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Examples}
+
+See \autoref{sec:lang:enum}.
+
+\subsection{Construction}
+\label{sec:stdlib:event:ctor}
+
+An \lstinline{Enumerated} is created with two arguments: the name of the
+enumerated type, and the list of possible values. Most of the time, it is a
+good idea to store it in a variable with the same name.
+
+\begin{urbiscript}[firstnumber=1]
+var Direction = Enumerated.new("Direction", ["up", "down", "left", "right"]);
+[00000001] Direction
+Direction.up;
+[00000002] up
+\end{urbiscript}
+
+You might however be more familiar with the following syntax, which is an
+equivalent syntactic sugar.
+
+\begin{urbiunchecked}
+enum Direction
+{
+  up,
+  down,
+  left,
+  right
+};
+[00000001] Direction
+\end{urbiunchecked}
+
+\subsection{Slots}
+\begin{urbiscriptapi}
+
+\item[asList]
+  Synonym for \refSlot[Enumarated]{values}.
+
+\item[each]
+  Iterate through the possible values. Enables the use of the
+  \lstinline{for} iteration.
+  \begin{urbiscript}
+for (var d in Direction)
+  echo(d);
+[00000001] *** up
+[00000001] *** down
+[00000001] *** left
+[00000001] *** right
+  \end{urbiscript}
+
+\item[name]
+  The name of the enum, as given at construction time.
+  \begin{urbiscript}
+Direction.name;
+[00000001] "Direction"
+  \end{urbiscript}
+
+\item[size]
+  Number of possible values in the enumarated type. Equivalent to
+  \lstinline{values.size}.
+  \begin{urbiscript}
+Direction.size;
+[00000001] 4
+  \end{urbiscript}
+
+\item[values]
+  The list of values.
+  \begin{urbiscript}
+Direction.values;
+[00000001] [up, down, left, right]
+  \end{urbiscript}
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
