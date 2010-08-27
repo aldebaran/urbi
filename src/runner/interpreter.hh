@@ -226,7 +226,7 @@ namespace runner
     /// \param msg The explanation of the scheduling error.
     virtual void scheduling_error(const std::string& msg);
 
-    virtual void show_backtrace(const std::string& chan);
+    virtual void show_backtrace(const std::string& chan) const;
     virtual backtrace_type backtrace_get() const;
     object::call_stack_type call_stack_get() const;
 
@@ -240,7 +240,7 @@ namespace runner
 
     virtual libport::Symbol innermost_call_get() const;
 
-    void show_exception(object::UrbiException& ue);
+    void show_exception(const object::UrbiException& ue) const;
   protected:
 
   private:
@@ -271,7 +271,7 @@ namespace runner
     typedef object::call_type call_type;
     call_stack_type call_stack_;
     void show_backtrace(const call_stack_type& bt,
-                        const std::string& chan);
+                        const std::string& chan) const;
 
     /// The local variable stacks
     Stacks stacks_;

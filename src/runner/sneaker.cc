@@ -34,8 +34,9 @@ namespace dbg
     Sneaker(rLobby lobby,
 	      sched::Scheduler& scheduler);
     ATTRIBUTE_NORETURN virtual void work();
-    virtual void send_message(const std::string& tag, const std::string& msg);
-  private:
+
+    virtual
+    void send_message(const std::string& tag, const std::string& msg) const;
   };
 
   // The sole sneaker instance.
@@ -66,7 +67,7 @@ namespace dbg
   }
 
   void
-  Sneaker::send_message(const std::string& tag, const std::string& msg)
+  Sneaker::send_message(const std::string& tag, const std::string& msg) const
   {
     if (!tag.empty())
       std::cerr << tag << ": ";

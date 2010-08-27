@@ -178,7 +178,7 @@ namespace runner
   }
 
   void
-  Interpreter::show_exception(object::UrbiException& ue)
+  Interpreter::show_exception(const object::UrbiException& ue) const
   {
     CAPTURE_GLOBAL(Exception);
 
@@ -337,7 +337,7 @@ namespace runner
 
   void
   Interpreter::show_backtrace(const call_stack_type& bt,
-                              const std::string& chan)
+                              const std::string& chan) const
   {
     rforeach (const call_type& c, bt)
       send_message(chan,
@@ -345,7 +345,7 @@ namespace runner
   }
 
   void
-  Interpreter::show_backtrace(const std::string& chan)
+  Interpreter::show_backtrace(const std::string& chan) const
   {
     show_backtrace(call_stack_, chan);
   }

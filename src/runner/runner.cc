@@ -31,7 +31,7 @@ namespace runner
   using object::rSlot;
 
   void
-  Runner::send_message(const std::string& tag, const std::string& msg)
+  Runner::send_message(const std::string& tag, const std::string& msg) const
   {
     // If there is a Channel object with name 'tag', use it.
     rSlot chan_slot = lobby_->slot_locate(libport::Symbol(tag), true).second;

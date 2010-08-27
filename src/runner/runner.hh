@@ -90,7 +90,7 @@ namespace runner
 
     /// Send the current backtrace through the connection.
     /// \param chan The channel to print through.
-    virtual void show_backtrace(const std::string& chan) = 0;
+    virtual void show_backtrace(const std::string& chan) const = 0;
 
     /// Retreive the current backtrace as a list of (function name,
     /// location) pairs
@@ -98,7 +98,8 @@ namespace runner
     typedef std::vector<frame_type> backtrace_type;
     virtual backtrace_type backtrace_get() const = 0;
 
-    virtual void send_message(const std::string& tag, const std::string& msg);
+    virtual
+    void send_message(const std::string& tag, const std::string& msg) const;
 
     /// Execute the code of function \a func with arguments \a args in
     /// the local runner.
