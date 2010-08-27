@@ -34,7 +34,7 @@ namespace urbi
       /// "Regexp(\"^a*\")"
       std::string as_printable() const;
       /// "^a*"
-      std::string as_string() const;
+      virtual std::string as_string() const;
       void init(const std::string& rg);
       bool match(const std::string& str);
       std::string operator[] (unsigned idx);

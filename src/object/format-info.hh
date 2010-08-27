@@ -36,7 +36,7 @@ namespace urbi
 
       void init(const std::string& pattern);
 
-      std::string as_string() const;
+      virtual std::string as_string() const;
 
     public:
       struct Align

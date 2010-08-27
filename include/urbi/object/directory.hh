@@ -62,7 +62,7 @@ namespace urbi
     `--------------*/
 
     public:
-      std::string as_string() const;
+      virtual std::string as_string() const;
       std::string as_printable() const;
 
       // Stat.

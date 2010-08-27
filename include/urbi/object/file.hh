@@ -52,7 +52,7 @@ namespace urbi
 
       // Conversions
       rList as_list() const;
-      std::string as_string() const;
+      virtual std::string as_string() const;
       std::string as_printable() const;
 
       /// The contents of the file.  Might not be a text file, hence it

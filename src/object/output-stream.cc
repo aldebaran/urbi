@@ -90,7 +90,7 @@ namespace urbi
     OutputStream::put(rObject o)
     {
       checkFD_();
-      std::string str = o->call(SYMBOL(asString))->as<String>()->value_get();
+      std::string str = o->as_string();
       size_t str_size = str.size();
       size_t size = write(fd_, str.c_str(), str_size);
       assert_eq(size, str_size);

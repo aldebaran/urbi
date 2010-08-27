@@ -417,21 +417,7 @@ namespace urbi
     std::ostream&
     Object::print(std::ostream& o) const
     {
-      try
-      {
-        rObject s = const_cast<Object*>(this)->call(SYMBOL(asString));
-        type_check<String>(s);
-        o << s->as<String>()->value_get();
-        return o;
-      }
-      // Check if asString was found, especially for bootstrap: asString
-      // is implemented in urbi/urbi.u, but print is called to show
-      // result in the toplevel before its definition.
-      catch (const UrbiException&)
-      {
-        // If no asString method is supplied, print the unique id
-        return o << std::hex << this;
-      }
+      return o << as_string();
     }
 
     bool
@@ -451,6 +437,32 @@ namespace urbi
         runner::raise_unexpected_void_error();
 
       return true;
+    }
+
+    rString
+    Object::asString() const
+    {
+      try
+      {
+        rObject s = const_cast<Object*>(this)->call(SYMBOL(asString));
+        type_check<String>(s);
+        return s->as<String>();
+      }
+      // Check if asString was found, especially for bootstrap: asString
+      // is implemented in urbi/urbi.u, but print is called to show
+      // result in the toplevel before its definition.
+      catch (const UrbiException&)
+      {
+        // If no asString method is supplied, print the unique id
+        return new String(libport::format("%x", this));
+      }
+    }
+
+
+    std::string
+    Object::as_string() const
+    {
+      return asString()->value_get();
     }
 
     bool Object::valid_proto(const Object&) const
@@ -596,7 +608,7 @@ namespace urbi
     rObject
     Object::asPrintable() const
     {
-      return const_cast<Object*>(this)->call(SYMBOL(asString));
+      return asString();
     }
 
     rObject
@@ -665,7 +677,7 @@ namespace urbi
 
     std::ostream& operator<< (std::ostream& s, const Object& o)
     {
-      return s << const_cast<Object&>(o).call(SYMBOL(asString))->as<String>()->value_get();
+      return o.print(s);
     }
 
     rObject Object::proto;

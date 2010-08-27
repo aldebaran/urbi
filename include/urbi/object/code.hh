@@ -60,7 +60,7 @@ namespace urbi
 
       /// Urbi methods
       rObject apply(const object::objects_type& args);
-      std::string as_string() const;
+      virtual std::string as_string() const;
       std::string body_string() const;
 
       /// Whether same members.

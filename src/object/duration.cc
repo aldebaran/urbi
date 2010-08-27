@@ -51,7 +51,7 @@ namespace urbi
     `-----------*/
 
     std::string
-    Duration::asString() const
+    Duration::as_string() const
     {
       return string_cast(value_get()) + "s";
     }
@@ -59,7 +59,7 @@ namespace urbi
     std::string
     Duration::asPrintable() const
     {
-      return libport::format("Duration(%s)", asString());
+      return libport::format("Duration(%s)", *this);
     }
 
     /*--------------.
@@ -85,7 +85,7 @@ namespace urbi
       proto_add(Float::proto);
 
       bind(SYMBOL(asPrintable), &Duration::asPrintable);
-      bind(SYMBOL(asString), &Duration::asString);
+      bind(SYMBOL(asString), &Duration::as_string);
       bind(SYMBOL(init), &Duration::init);
       bind(SYMBOL(seconds), &Duration::seconds);
     }

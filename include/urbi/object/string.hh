@@ -56,7 +56,10 @@ namespace urbi
       libport::ufloat as_float() const;
       /// False iff empty.
       virtual bool as_bool() const;
-      const std::string& as_string() const;
+      /// Can be inefficient depending on the implementation of
+      /// std::string.  If the concrete type is known, consider using
+      /// value_get instead of as_string.
+      virtual std::string as_string() const;
       std::string as_printable() const;
 #if !defined COMPILATION_MODE_SPACE
       std::string format(rFormatInfo finfo) const;

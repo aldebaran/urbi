@@ -88,9 +88,7 @@ namespace urbi
     std::string
     String::plus(rObject rhs) const
     {
-      rObject str = rhs->call(SYMBOL(asString));
-      type_check<String>(str);
-      return content_ + str->as<String>()->value_get();
+      return content_ + rhs->as_string();
     }
 
     String::size_type
@@ -155,7 +153,7 @@ namespace urbi
     }
 #endif
 
-    const std::string&
+    std::string
     String::as_string() const
     {
       return content_;
@@ -190,8 +188,7 @@ namespace urbi
       {
         if (tail++)
           res += content_;
-        // FIXME: Calling asString is a common need we should factor.
-        res += o->call(SYMBOL(asString))->as<String>()->value_get();
+        res += o->as_string();
       }
       res += suffix;
       return res;

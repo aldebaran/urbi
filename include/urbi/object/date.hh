@@ -67,7 +67,7 @@ namespace urbi
 
     public:
       value_type as_boost() const;
-      std::string as_string() const;
+      virtual std::string as_string() const;
       duration_type as_float() const;
 
     /*--------.

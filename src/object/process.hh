@@ -48,7 +48,7 @@ namespace urbi
       bool done() const;
       rObject status() const;
       std::string name() const;
-      std::string as_string() const;
+      virtual std::string as_string() const;
 
     /*--------.
     | Details |

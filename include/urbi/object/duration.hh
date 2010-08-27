@@ -36,7 +36,7 @@ namespace urbi
     `-----------*/
 
     public:
-      std::string asString() const;
+      virtual std::string as_string() const;
       std::string asPrintable() const;
 
     /*--------------.

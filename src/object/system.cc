@@ -33,6 +33,7 @@
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
+#include <urbi/object/object.hh>
 #include <urbi/object/path.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
@@ -291,27 +292,23 @@ namespace urbi
       // bit, because our channeling/message-sending system sucks a lot.
       runner::Runner::backtrace_type bt = runner().backtrace_get();
       bt.pop_back();
-      rforeach (const runner::Runner::frame_type& elt, bt)
-      {
-        std::ostringstream o;
-        o << *elt->slot_get(SYMBOL(name))->call(SYMBOL(asString))
-          << " ("
-          << *elt->slot_get(SYMBOL(location))->call(SYMBOL(asString))
-          << ")";
-        // o << *elt->call(SYMBOL(asString));
-        runner().send_message("backtrace", o.str());
-      }
+      rforeach (runner::Runner::frame_type& i, bt)
+        runner().send_message
+        ("backtrace",
+         libport::format("%s (%s)",
+                         *i->getSlot(SYMBOL(name)),
+                         *i->getSlot(SYMBOL(location))));
     }
 
     static List::value_type
     system_jobs()
     {
       List::value_type res;
-      foreach(sched::rJob job, ::kernel::scheduler().jobs_get())
+      foreach (sched::rJob job, ::kernel::scheduler().jobs_get())
       {
         rObject o = dynamic_cast<runner::Runner*>(job.get())->as_job();
         if (o != nil_class)
-          res.push_back(o);
+          res << o;
       }
       return res;
     }
@@ -349,9 +346,9 @@ namespace urbi
     static rObject
     system_setenv(const rObject&, const std::string& name, rObject value)
     {
-      rString v = value->call(SYMBOL(asString))->as<String>();
-      setenv(name.c_str(), v->value_get().c_str(), 1);
-      return v;
+      std::string v = value->as_string();
+      setenv(name.c_str(), v.c_str(), 1);
+      return new String(v);
     }
 
     static rObject

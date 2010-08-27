@@ -55,7 +55,7 @@ namespace urbi
       rList   insertBack  (const rObject& elt);
       rList   insertFront (const rObject& elt);
 
-      std::string asString() const;
+      virtual std::string as_string() const;
 
       rList   remove_by_id(const rObject& elt);
       rList   reverse     () const;

@@ -48,7 +48,7 @@ namespace urbi
     `--------------*/
 
     public:
-      std::string as_string() const;
+      virtual std::string as_string() const;
       inline value_type& value_get();
 
     /*-----------.

@@ -64,6 +64,14 @@ namespace urbi
       /// will be signalled if void is passed.
       virtual bool as_bool() const;
 
+      /// This should not be overriden.
+      /// To specialized, redefine as_string.
+      /// Conversion to string, using asString in Urbi, if defined.
+      rString asString() const;
+
+      /// Conversion to string, using asString in Urbi, if defined.
+      virtual std::string as_string() const;
+
       /// Convert this to type \a T
       /** \return This seen as a \a T, or 0 if it's not of type \a T
        */

@@ -155,7 +155,7 @@ namespace runner
   operator<<(std::ostream& o, const Runner::backtrace_type& b)
   {
     rforeach (const Runner::frame_type& c, b)
-      o << "    called from: " << c->call(SYMBOL(asString));
+      o << "    called from: " << *c;
     return o;
   }
 

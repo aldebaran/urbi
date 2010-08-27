@@ -322,7 +322,7 @@ namespace urbi
     // FIXME: Really looks like String::join, we should find a means to
     // factor both.
     std::string
-    List::asString() const
+    List::as_string() const
     {
       std::string res = "[";
       bool tail = false;
@@ -375,7 +375,7 @@ namespace urbi
       bind(SYMBOL(Name), &List::Function)
 
       DECLARE(asBool,         as_bool         );
-      DECLARE(asString,       asString        );
+      DECLARE(asString,       as_string       );
       DECLARE(back,           back            );
       DECLARE(clear,          clear           );
       DECLARE(each,           each            );

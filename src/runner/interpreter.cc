@@ -189,11 +189,7 @@ namespace runner
     else
     {
       send_message("error",
-                   libport::format("!!! %s",
-                                   (ue.value_get()
-                                    ->call(SYMBOL(asString))
-                                    ->as<object::String>()
-                                    ->value_get())));
+                   libport::format("!!! %s", *ue.value_get()));
       show_backtrace(ue.backtrace_get(), tag);
     }
   }

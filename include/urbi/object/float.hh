@@ -94,7 +94,7 @@ namespace urbi
       value_type acos() const;
       value_type asin() const;
       std::string format(rFormatInfo finfo) const;
-      std::string as_string() const;
+      virtual std::string as_string() const;
       value_type atan() const;
       value_type atan2(value_type) const;
       value_type cos() const;
