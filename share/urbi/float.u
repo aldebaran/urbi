@@ -159,7 +159,7 @@ do (Float)
 
   function sgn()
   {
-    warn("`Float.sgn' is deprecated, use `Float.sign'") |
+    Kernel1.deprecated("Float.sgn", "Float.sign") |
     sign
   };
 

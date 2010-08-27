@@ -89,10 +89,6 @@
   namespace
   {
 
-    /*---------------.
-    | Warnings etc.  |
-    `---------------*/
-
     static void
     modifiers_add(parser::ParserImpl& up, const ast::loc& loc,
                   ast::modifiers_type& mods,
@@ -499,9 +495,7 @@ stmt:
 //<no-space< Emit.
 | "emit" k1_id args.opt tilda.opt
   {
-    up.warn(@$,
-            "`emit myEvent(Args...)' is deprecated.  "
-            "Use `myEvent!(Args...)' instead.");
+    up.deprecated(@$, "emit event(arg, ...)", "event!(arg, ...)");
     $$ = new ast::Emit(@$, $2, $3, $4);
   }
 //>no-space>
@@ -954,9 +948,7 @@ new:
   {
     // Compiled as "id . new (args)".
     $$ = MAKE(call, @$, MAKE(call, @$, $2), SYMBOL(new), $3);
-    up.warn(@$,
-            "deprecated construct. Instead of using 'a = new b(x)', "
-            "use 'a = b.new(x)'.");
+    up.deprecated(@$, "new Obj(x)", "Obj.new(x)");
   }
 ;
 
@@ -1113,9 +1105,7 @@ event_match:
 //<no-space< ? event.
 | "?" exp guard.opt
   {
-    up.warn(@$,
-            "`?myEvent(Args...)' is deprecated.  "
-            "Use `myEvent?(Args...)' instead.");
+    up.deprecated(@$, "?event(arg, ...)", "event?(arg, ...)");
     $$ = MAKE(event_match, @$, $[exp], $[guard.opt]);
   }
 //>no-space>

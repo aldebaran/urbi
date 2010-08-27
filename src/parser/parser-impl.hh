@@ -56,6 +56,11 @@ namespace parser
     /// Warn at \a l about \a msg.
     void warn(const location_type& l, const std::string& msg);
 
+    /// \param what        the obsolete construct.
+    /// \param suggestion  the replacement.
+    void deprecated(const location_type& loc,
+                    const std::string& what,
+                    const std::string& suggestion = "");
     /// The factory.
     const ast::Factory& factory() const;
 

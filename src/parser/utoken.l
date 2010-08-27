@@ -315,15 +315,12 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.  The braces are
 // needed to scope msg and rewritten.
-#define DEPRECATED(New)                                                 \
-  {                                                                     \
-    PRE_SKIP();                                                         \
-    std::string warn = std::string("`") + yytext + "' is deprecated.";  \
-    std::string rewritten = New;                                        \
-    if (!rewritten.empty())                                             \
-      warn += " Use `" + rewritten + "' instead.";                      \
-    up->warn(loc, warn);                                                \
-    UNPUT(rewritten);                                                   \
+#define DEPRECATED(New)                         \
+  {                                             \
+    PRE_SKIP();                                 \
+    std::string rewritten = New;                \
+    up->deprecated(loc, yytext, rewritten);     \
+    UNPUT(rewritten);                           \
   }
 
 %}

@@ -15,6 +15,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 
 #include <libport/echo.hh>
+#include <libport/format.hh>
 
 #include <libport/cassert>
 #include <libport/cstdlib>
@@ -157,6 +158,19 @@ namespace parser
   ParserImpl::warn(const location_type& l, const std::string& msg)
   {
     result_->warn(l, msg);
+  }
+
+  void
+  ParserImpl::deprecated(const location_type& loc,
+                         const std::string& what,
+                         const std::string& suggestion)
+  {
+    // See Kernel1.deprecated.
+    warn(loc,
+         suggestion.empty()
+         ? libport::format("`%s' is deprecated", what)
+         : libport::format("`%s' is deprecated, use `%s'",
+                           what, suggestion));
   }
 
 }
