@@ -35,9 +35,8 @@ String == "";
 
 \subsection{Slots}
 \begin{urbiscriptapi}
-\item[asFloat]
-  If the whole content of \this is an integer, return its
-  value, otherwise return an error.
+\item[asFloat] If the whole content of \this is an number, return it as a
+  \refObject{Float}, otherwise raise an error.
 \begin{urbiscript}
 assert("23.03".asFloat == 23.03);
 

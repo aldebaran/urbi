@@ -105,17 +105,20 @@ Object.apply([1])    === Object;
   \lstinline|as\var{Type}| when \var{Type} is the \lstinline|type| of
   \var{type}.
 \begin{urbiassert}
-12.as(Float) == 12;
-"12".as(Float) == 12;
-12.as(String) == "12";
+     12.as(Float) == 12;
+   "12".as(Float) == 12;
+    12.as(String) == "12";
 Object.as(Object) === Object;
 \end{urbiassert}
 
 \item[asBool]
   Whether \this is ``true'', see \autoref{sec:truth}.
 \begin{urbiscript}
-assert(Global.asBool == true);
-assert(nil.asBool ==    false);
+assert
+{
+  Global.asBool == true;
+  nil.asBool ==    false;
+};
 void.asBool;
 [00000421:error] !!! unexpected void
 \end{urbiscript}
