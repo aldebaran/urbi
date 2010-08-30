@@ -358,14 +358,26 @@ sub translate ($)
 {
   my ($input) = @_;
   process_file $input;
-  # The directory we will output the tests in.
-  my $dir = $input;
-  $dir =~ s,^$ENV{srcdir},$&/tests,
+  # The file base name we output the tests in.
+  my $base = $input;
+  $base =~ s,^$ENV{srcdir},$&/tests,
     if defined $ENV{srcdir};
-  $dir =~ s/\.tex$//;
+  $base =~ s/\.tex$//;
 
-  ensure_parent_dir $dir;
-  dump_chk $dir;
+  ensure_parent_dir $base;
+  dump_chk $base;
+
+  # If there is a $prefix.u, install it as test.u in the right
+  # directory.
+  my $u = $input;
+  $u =~ s/\.tex$/.u/;
+  print STDERR "Testing $u\n";
+  if (-f $u)
+  {
+    print STDERR "Installing $u\n";
+    my $dir = dirname($base);
+    file_symlink($u, "$dir/test.u");
+  }
 }
 
 
