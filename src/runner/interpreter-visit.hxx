@@ -78,6 +78,15 @@ namespace runner
   using object::Slot;
   using object::Tag;
 
+  static object::Event* slotGet_changed(object::rObject o)
+  {
+    object::rObject changed = o->call(SYMBOL(changed));
+    aver(changed);
+    object::rEvent evt = changed->as<object::Event>();
+    aver(evt);
+    return evt.get();
+  }
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
   {
@@ -229,7 +238,10 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Implicit*)
   {
-    return stacks_.this_get();
+    object::rObject res = stacks_.this_get();
+    if (!object::squash && dependencies_log_get())
+      dependency_add(slotGet_changed(res));
+    return res;
   }
 
 
@@ -355,11 +367,7 @@ namespace runner
           GD_FPUSH_TRACE("Register local variable '%s' for at monitoring",
                          e->name_get());
           dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));
-          object::rObject changed = (*slot)->call(SYMBOL(changed));
-          aver(changed);
-          object::rEvent evt = changed->as<object::Event>();
-          aver(evt);
-          dependency_add(evt.get());
+          dependency_add(slotGet_changed(*slot));
         }
       }
 

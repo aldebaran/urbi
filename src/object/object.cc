@@ -159,8 +159,13 @@ namespace urbi
           bool prev = squash;
           FINALLY(((bool&, squash))((bool, prev)), squash = prev);
           squash = true;
-          GD_FPUSH_TRACE("Register slot '%s' for at monitoring", k);
-          r->dependency_add(static_cast<Event*>(res->property_get(SYMBOL(changed)).get()));
+          // I think this registration is useless, since the parent is
+          // already registered and will trigger its 'changed'
+          // event. Not absolutely sure for all cases though, so I let
+          // it live for a while, in case some at start not being
+          // triggered.
+          // GD_FPUSH_TRACE("Register slot '%s' for at monitoring", k);
+          // r->dependency_add(static_cast<Event*>(res->property_get(SYMBOL(changed)).get()));
           rObject changed = (*res)->call(SYMBOL(changed));
           assert(changed);
           rEvent evt = changed->as<Event>();
