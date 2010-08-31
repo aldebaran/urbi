@@ -52,7 +52,7 @@ namespace urbi
     List::List(const rList& model)
       : content_(model->content_)
     {
-      proto_add(proto);
+      proto_add(model);
     }
 
     const List::value_type& List::value_get() const
