@@ -46,7 +46,7 @@ do (Event)
       control:
         {
           sleep(duration)|
-          var '$pattern'.instance = res.trigger|
+          var '$pattern'.instance = res.getSlot("trigger").apply([res] + '$evt'.payload)|
         }
     }
     onleave
