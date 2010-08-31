@@ -2753,40 +2753,30 @@ clause.
 See \autoref{sec:tut:events} for an example of using \lstinline|at|
 statements to watch events.
 
-% This is not yet implemented, and the expected behavior in the test is
-% green in the test suite because it is PLAIN WRONG! When are we going to
-% realize that the documentation is for users to read and understand???
+\paragraph{Durations}
 
-% \paragraph{Durations}
-%
-% Since events may last for a given duration
-% %% Beware of wrapping.
-% (\lstinline|e! ~ \var{duration}|),
-% %%
-% event handlers may also require an event to be sustained for a given amount
-% of time before being ``accepted'' (\lstinline|at (e? ~ \var{duration})|).
-%
-% \begin{urbiscript}[firstnumber=1]
-% var e = Event.new|;
-% var t0;
-% at (e?(var x) ~ 1s)
-%   echo("%1.1f:      at (e?(%s) ~ 1s)"
-%         % [time() - t0, x])
-% onleave
-%   echo("%1.1f: onleave (e?(%s) ~ 1s)"
-%        % [time() - t0, x]);
-%
-% t0 = time()|;
-% e!;
-%
-% e!("1s") ~ 1s;
-% [00000514] *** 0.0:      at (e?(1s) ~ 1s)
-% [00001515] *** 1.0: onleave (e?(1s) ~ 1s)
-%
-% e!("2s") ~ 2s;
-% [00001517] *** 1.0:      at (e?(2s) ~ 1s)
-% [00003519] *** 3.0: onleave (e?(2s) ~ 1s)
-% \end{urbiscript}
+Since events may last for a given duration
+%% Beware of wrapping.
+(\lstinline|e! ~ \var{duration}|),
+%%
+event handlers may also require an event to be sustained for a given amount
+of time before being ``accepted'' (\lstinline|at (e? ~ \var{duration})|).
+
+\begin{urbiscript}[firstnumber=1]
+var e = Event.new|;
+at (e?(var start) ~ 1s)
+  echo("in : %s" % (time - start).round)
+onleave
+  echo("out: %s" % (time - start).round);
+
+// This emission is too short to trigger the at.
+e!;
+
+// This one is long enough. Note that the body triggers 1s after the emission.
+e!(time) ~ 2s;
+[00001000] *** in : 1
+[00002000] *** out: 2
+\end{urbiscript}
 
 
 \subsubsection{\lstinline'at' on Boolean Expressions}
