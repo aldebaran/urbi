@@ -61,7 +61,7 @@ namespace ast
     make_at_event(const location& loc,
                   const location& flavor_loc, flavor_type flavor,
                   EventMatch& event,
-                  rExp body, rExp onleave = 0, rExp duration = 0) /* const */;
+                  rExp body, rExp onleave = 0) /* const */;
 
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     /// \param op can be flavor_and or flavor_pipe.
@@ -134,7 +134,7 @@ namespace ast
     rExp
     make_event_catcher(const location& loc,
                        EventMatch& event,
-                       rExp body, rExp onleave, rExp duration = 0) /* const */;
+                       rExp body, rExp onleave) /* const */;
 
     /// <event> "?" <args> ~ <duration> if <guard>.
     static

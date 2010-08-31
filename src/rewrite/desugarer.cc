@@ -210,11 +210,10 @@ namespace rewrite
       new ast::Routine(cond_loc, true, new ast::local_declarations_type,
                        factory.make_scope(cond_loc, at->cond_get()));
 
-    ast::EventMatch match(new ast::Event(cond_loc, closure), 0, 0, 0);
+    ast::EventMatch match(new ast::Event(cond_loc, closure), 0, at->duration_get(), 0);
     result_ = factory.make_at_event(loc,
                                     at->flavor_location_get(), at->flavor_get(),
-                                    match, at->body_get(), at->onleave_get(),
-                                    at->duration_get());
+                                    match, at->body_get(), at->onleave_get());
     recurse(result_);
   }
 
