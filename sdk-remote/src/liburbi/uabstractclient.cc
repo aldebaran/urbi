@@ -302,6 +302,7 @@ namespace urbi
     case DATA_STRING:
       return send("%s", string_cast(v).c_str());
       break;
+
     // Use our own sendBinary for binary, who knows how to talk to k1 and k2.
     case DATA_BINARY:
       if (v.binary->type != BINARY_NONE
@@ -310,24 +311,22 @@ namespace urbi
       return sendBinary(v.binary->common.data, v.binary->common.size,
                         v.binary->message);
       break;
+
     // Lists can contain binary, so recurse using this function.
     case DATA_LIST:
-    {
       send("[");
-      size_t sz = v.list->size();
-      for (size_t i = 0; i < sz; ++i)
+      for (size_t i = 0, sz = v.list->size();
+           i < sz; ++i)
       {
         send((*v.list)[i]);
         if (i != sz-1)
           send(" , ");
       }
       return send("]");
-    }
-    break;
-    case DATA_DICTIONARY:
-    {
-      send("[");
+      break;
 
+    case DATA_DICTIONARY:
+      send("[");
       if (v.dictionary->empty())
         send("=>");
       else
@@ -343,13 +342,12 @@ namespace urbi
         }
       }
       return send("]");
-    }
-    break;
+      break;
+
     case DATA_OBJECT:
-    {
       send("OBJ %s [", v.object->refName.c_str());
-      size_t sz = v.object->size();
-      for (size_t i = 0; i < sz; ++i)
+      for (size_t i = 0, sz = v.object->size();
+           i < sz; ++i)
       {
         send("%s :", (*v.object)[i].name.c_str());
         send(*((*v.object)[i].val) );
@@ -357,8 +355,8 @@ namespace urbi
           send(" , ");
       }
       return send("]");
-    }
-    break;
+      break;
+
     case DATA_VOID:
       break;
     };

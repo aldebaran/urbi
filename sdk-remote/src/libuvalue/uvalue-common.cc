@@ -164,7 +164,7 @@ namespace urbi
 
     if (message[pos] == '[')
     {
-      // list or dictionary message
+      // List or Dictionary message.
       ++pos;
       bool hasElt = 0;
       while (message[pos])
@@ -230,7 +230,7 @@ namespace urbi
           list->array.push_back(v);
         }
 	SKIP_SPACES();
-	//expect , or rbracket
+	// Expect "," or "]".
 	if (message[pos] == ']')
 	  break;
         EXPECT(',');
@@ -681,7 +681,8 @@ namespace
     s << "[";
     if (d.empty())
       s << "=>";
-    else {
+    else
+    {
       bool isFirst = true;
       foreach (const UDictionary::value_type& t, d)
       {
