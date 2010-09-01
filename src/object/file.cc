@@ -82,9 +82,9 @@ namespace urbi
     void File::init(rPath path)
     {
       if (!path->exists())
-        FRAISE("does not exist: %s", path->as_string());
+        FRAISE("does not exist: %s", *path);
       if (path->is_dir())
-        FRAISE("is a directory: %s", path->as_string());
+        FRAISE("is a directory: %s", *path);
       path_ = path;
     }
 
@@ -139,7 +139,7 @@ namespace urbi
       {
         get_buf(s, line);
         // Initialized because g++ warns that size may be used
-        // uninitialized otherwise
+        // uninitialized otherwise.
         size_t pos = std::string::npos;
         size_t size = 0;
         while (split_point(line, pos, size))

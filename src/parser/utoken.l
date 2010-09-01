@@ -687,10 +687,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
         break;
     }
   out_of_loop:
-  std::ostringstream rewritten;
-  rewritten << "Global.Binary.new (\"" << keywords << "\", "
-            <<                   " \"" << libport::escape(data, '"') << "\");";
-  UNPUT(rewritten.str());
+  UNPUT(libport::format("Global.Binary.new(\"%s\", \"%s\");",
+                        keywords, libport::escape(data, '"'));
 }
 
 
