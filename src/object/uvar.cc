@@ -217,7 +217,7 @@ namespace urbi
     }
 
     rObject
-    UVar::update_timed_(rObject val, time_t timestamp)
+    UVar::update_timed_(rObject val, libport::utime_t timestamp)
     {
       getSlot(SYMBOL(owner))->setProperty(from_urbi<std::string>(getSlot(SYMBOL(initialName))),
                                           SYMBOL(timestamp), to_urbi(double(timestamp) / 1000000));
