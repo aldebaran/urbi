@@ -49,12 +49,11 @@ Test file layout
 */
 
 /// Register the message category for each file including this header.
-GD_ADD_CATEGORY(TEST);
+GD_CATEGORY(TEST);
 
 /// Display a debug message.
 #define VERBOSE(S)                              \
   do {                                          \
-    GD_CATEGORY(TEST);                          \
     GD_SINFO(program_name() << ": "             \
              << getpid() << ": "                \
              << S);                             \
