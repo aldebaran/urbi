@@ -117,6 +117,7 @@ do (Lobby)
   {
     do (create)
     {
+      var remoteIP = host|
       var socket = Socket.new|
       var socket.receive = closure(t) { receive(t)}|
       write = function(t) { socket.write(t)}|
