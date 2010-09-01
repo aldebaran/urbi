@@ -666,7 +666,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   /* It is used only as a sort of here-doc,
      and it is just as unusable, yet necessary.
 
-     The only supported syntax was "var foo = BIN (keywords)+ SIZE; DATA"
+     The only supported syntax was "var foo = BIN SIZE (keywords)+; DATA"
      with DATA being SIZE long.  Note where the ";" is...
    */
 "BIN"{BLANKS}{NATURAL}({BLANKS}({ID}|{NATURAL}))*{BLANKS}?";"      {
