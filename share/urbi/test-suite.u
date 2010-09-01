@@ -83,21 +83,56 @@ function Global.testSkip (var why)
 // Too verbose when we launch another urbi from urbi.
 System.unsetenv("GD_LEVEL")|;
 
-function Object.override(slot, value)
+/*---------.
+| Object.  |
+`---------*/
+
+do (Object)
 {
-  copySlot(slot, "old" + slot);
-  setProperty(slot, "constant", false);
-  updateSlot(slot, value);
+  function override(slot, value)
+  {
+    copySlot(slot, "old" + slot);
+    setProperty(slot, "constant", false);
+    updateSlot(slot, value);
+  };
+
+  // Deterministic localSlotNames.
+  override("localSlotNames",
+           function () { oldlocalSlotNames.sort });
 }|;
 
-// Determinism: Dictionary.asList and Dictionary.asString.
-Dictionary.override("keys",
-   function ()
-    {
-      oldkeys.sort;
-    }
-)|;
 
+/*-------------.
+| Dictionary.  |
+`-------------*/
+
+// Determinism: Dictionary.asList and Dictionary.asString.
+do (Dictionary)
+{
+  override("keys",
+           function () { oldkeys.sort })|;
+}|;
+
+
+/*------------.
+| Directory.  |
+`------------*/
+
+// These would be overridden if there is a support for inotify.
+do (Directory)
+{
+  var fileCreated = Event.new;
+  fileCreated.'waituntil' = function /* skip_if_no_inotify */
+  {
+    testSkip("requires inotify support");
+  }|;
+
+  var fileDeleted = fileCreated;
+}|;
+
+/*--------.
+| Float.  |
+`--------*/
 
 // We want random to become deterministic.
 do (Float)
@@ -127,13 +162,10 @@ do (Float)
   });
 }|
 
-// Deterministic localSlotNames.
-Object.override("localSlotNames",
-  function ()
-    {
-      oldlocalSlotNames.sort;
-    }
-)|
+
+/*---------.
+| String.  |
+`---------*/
 
 // Deterministic String.fresh.
 do (String)
@@ -145,6 +177,11 @@ do (String)
     this + "_" + String.counter_++;
   }
 }|
+
+
+/*----------.
+| Windows.  |
+`----------*/
 
 // Keep sync with urbivalid/test.u.
 if (System.Platform.isWindows)
@@ -223,16 +260,4 @@ function skip_if_windows ()
 {
   if (System.Platform.isWindows)
     testSkip("cannot run on Windows");
-}|;
-
-// These would be overridden if there is a support for inotify.
-do (Directory)
-{
-  var fileCreated = Event.new;
-  fileCreated.'waituntil' = function /* skip_if_no_inotify */
-  {
-    testSkip("requires inotify support");
-  }|;
-
-  var fileDeleted = fileCreated;
 }|;
