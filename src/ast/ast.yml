@@ -1114,7 +1114,7 @@ OpAssignment:
     - ~what
     - '" "'
     - $op
-    - '"= "'
+    - '" "'
     - ~value
 
 Local:

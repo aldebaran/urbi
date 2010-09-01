@@ -181,4 +181,34 @@ do (Object)
       }
     };
   };
+
+  function '+=' (rhs)
+  {
+    return this + rhs;
+  };
+
+  function '-=' (rhs)
+  {
+    return this - rhs;
+  };
+
+  function '*=' (rhs)
+  {
+    return this * rhs;
+  };
+
+  function '/=' (rhs)
+  {
+    return this / rhs;
+  };
+
+  function '^=' (rhs)
+  {
+    return this ^ rhs;
+  };
+
+  function '%=' (rhs)
+  {
+    return this % rhs;
+  };
 };

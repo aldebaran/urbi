@@ -336,15 +336,12 @@ namespace rewrite
 
   void Desugarer::visit(const ast::OpAssignment* a)
   {
-    PARAMETRIC_AST(desugar, "%lvalue:1 = %exp:2 . %id:3 (%exp:4)");
+    PARAMETRIC_AST(desugar, "%lvalue:1 = %exp:2.%id:3(%exp:4)");
 
     ast::rLValue what = a->what_get();
     ast::rLValue tgt = factory_->make_lvalue_once(what);
 
-    desugar % tgt
-      % new_clone(tgt)
-      % a->op_get()
-      % a->value_get();
+    desugar % tgt % tgt % a->op_get() % a->value_get();
 
     result_ = factory_->make_lvalue_wrap(what, exp(desugar));
     result_ = recurse(result_);

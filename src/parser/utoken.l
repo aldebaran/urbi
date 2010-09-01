@@ -223,7 +223,6 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // Return an assignment operator: its value is the base operator.
 #define RETURN_ASSIGN_OP(Token)                 \
   PRE_SKIP();                                   \
-  yytext[1] = 0;                                \
   RETURN_OP(Token);
 
 // UnitLength is the number of letters used for the unit.
