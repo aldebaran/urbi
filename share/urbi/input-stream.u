@@ -8,6 +8,16 @@
  * See the LICENSE file for more information.
  */
 
-do (File)
+do (InputStream)
 {
+  function asList()
+  {
+    var l;
+    var res = [];
+    for (l = getLine.acceptVoid;
+         !l.isVoid;
+         l = getLine.acceptVoid)
+      res << l;
+    return res;
+  };
 };

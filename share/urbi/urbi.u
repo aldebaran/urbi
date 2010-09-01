@@ -69,6 +69,7 @@ load("urbi/file.u");
 load("urbi/float.u");
 load("urbi/formatter.u");
 load("urbi/group.u");
+load("urbi/input-stream.u");
 load("urbi/job.u");
 load("urbi/kernel1.u");
 load("urbi/loadable.u");
