@@ -76,6 +76,11 @@ namespace urbi
 
     /// Sample format.
     USoundSampleFormat sampleFormat;
+
+  private:
+    friend class UBinary;
+    // The UBinary headers.
+    std::string headers_() const;
   };
 
 

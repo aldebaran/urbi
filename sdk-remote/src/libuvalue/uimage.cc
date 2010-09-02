@@ -10,6 +10,7 @@
 
 /// \file libuvalue/uimage.cc
 
+#include <libport/format.hh>
 #include <urbi/uimage.hh>
 
 namespace urbi
@@ -53,4 +54,12 @@ namespace urbi
         return static_cast<UImageFormat>(i+1);
     return IMAGE_UNKNOWN;
   }
+
+  std::string
+  UImage::headers_() const
+  {
+    return libport::format("%s %s %s",
+                           format_string(), width, height);
+  }
+
 } // namespace urbi

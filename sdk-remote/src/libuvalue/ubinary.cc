@@ -221,30 +221,18 @@ namespace urbi
 
   std::string UBinary::getMessage() const
   {
-    std::ostringstream o;
     switch (type)
     {
-      case BINARY_IMAGE:
-	o << image.format_string()
-	  << ' ' << image.width << ' ' << image.height;
-	break;
-
-      case BINARY_SOUND:
-	o << sound.format_string()
-	  << ' ' << sound.channels
-	  << ' ' << sound.rate
-	  << ' ' << sound.sampleSize
-	  << ' ' << sound.sampleFormat;
-	break;
-
-      case BINARY_UNKNOWN:
-	o << message;
-	break;
-
-      case BINARY_NONE:
-	break;
+    case BINARY_IMAGE:
+      return image.headers_();
+    case BINARY_SOUND:
+      return sound.headers_();
+    case BINARY_UNKNOWN:
+      return message;
+    case BINARY_NONE:
+      return "";
     }
-    return o.str();
+    unreachable();
   }
 
   std::ostream&

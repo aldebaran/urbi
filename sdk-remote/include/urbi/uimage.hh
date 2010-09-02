@@ -53,6 +53,11 @@ namespace urbi
     size_t width, height;
 
     UImageFormat imageFormat;
+
+  private:
+    friend class UBinary;
+    // The UBinary headers.
+    std::string headers_() const;
   };
 
   // Parse an image format string.

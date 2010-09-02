@@ -10,6 +10,7 @@
 
 #include <sstream>
 #include <libport/cstring>
+#include <libport/format.hh>
 
 #include <urbi/usound.hh>
 
@@ -53,6 +54,15 @@ namespace urbi
     //        This is not done because data is stored in an union in UBinary and
     //        union members cannot have constructors.
     return "unknown format";
+  }
+
+  std::string
+  USound::headers_() const
+  {
+    return libport::format("%s %s %s %s %s",
+                           format_string(),
+                           channels, rate,
+                           sampleSize, sampleFormat);
   }
 
   USound::operator std::string() const
