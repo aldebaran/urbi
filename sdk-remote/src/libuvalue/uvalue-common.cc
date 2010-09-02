@@ -516,7 +516,7 @@ namespace
     switch (type)
     {
       case DATA_DOUBLE:
-        return lexical_cast<std::string>(val);
+        return string_cast(val);
       case DATA_STRING:
       case DATA_SLOTNAME:
         return *stringValue;
@@ -526,7 +526,7 @@ namespace
       {
         USound snd(*this);
         if (snd.soundFormat != SOUND_UNKNOWN)
-          return snd;
+          return string_cast(snd);
         break;
       }
       default:

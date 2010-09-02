@@ -19,16 +19,28 @@
 namespace urbi
 {
 
-  /** Backward compatibility **/
+  /*---------------.
+  | USoundFormat.  |
+  `---------------*/
   enum USoundFormat
   {
-    SOUND_RAW,
-    SOUND_WAV,
-    SOUND_MP3,
-    SOUND_OGG,
-    SOUND_UNKNOWN,
+    SOUND_RAW = 0,
+    SOUND_WAV = 1,
+    SOUND_MP3 = 2,
+    SOUND_OGG = 3,
+    SOUND_UNKNOWN = 4,
   };
 
+  /// Parse a sound format string.
+  URBI_SDK_API USoundFormat parse_sound_format(const std::string&);
+
+  /// Conversion to string.
+  URBI_SDK_API const char* format_string(USoundFormat f);
+
+
+  /*---------------------.
+  | USoundSampleFormat.  |
+  `---------------------*/
   enum USoundSampleFormat
   {
     SAMPLE_SIGNED = 1,
@@ -45,7 +57,7 @@ namespace urbi
 
   /** Class encapsulating sound information.
 
-   This class does not handle its memory: the data field msut be
+   This class does not handle its memory: the data field must be
    freed manualy.  */
   class URBI_SDK_API USound
   {
@@ -58,7 +70,9 @@ namespace urbi
     const char* format_string() const;
 
     bool operator==(const USound &b) const;
-    operator std::string() const;
+
+    // For debugging.
+    std::ostream& dump(std::ostream& o) const;
 
     /// Pointer to sound data.
     char* data;
@@ -82,6 +96,9 @@ namespace urbi
     // The UBinary headers.
     std::string headers_() const;
   };
+
+  // Bounce to USound::dump.
+  std::ostream& operator<< (std::ostream& o, const USound& s);
 
 
 } // end namespace urbi

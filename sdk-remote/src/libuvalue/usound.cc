@@ -10,12 +10,79 @@
 
 #include <sstream>
 #include <libport/cstring>
+#include <libport/cassert>
 #include <libport/format.hh>
 
 #include <urbi/usound.hh>
 
+#define cardinality_of(Array) (sizeof (Array) / sizeof (*(Array)))
+
 namespace urbi
 {
+
+  /*---------------.
+  | USoundFormat.  |
+  `---------------*/
+
+  static const char* formats[] =
+  {
+    "raw",
+    "wav",
+    "mp3",
+    "ogg",
+    "unknown format",
+  };
+
+  const char*
+  format_string(USoundFormat f)
+  {
+    aver_le_lt(0, f, int(cardinality_of(formats)));
+    return formats[f];
+  }
+
+  USoundFormat
+  parse_sound_format(const std::string& s)
+  {
+    for (unsigned i = 0; i < cardinality_of(formats); ++i)
+      if (s == formats[i])
+        return static_cast<USoundFormat>(i);
+    return SOUND_UNKNOWN;
+  }
+
+
+  /*---------------------.
+  | USoundSampleFormat.  |
+  `---------------------*/
+
+  std::istream&
+  operator>> (std::istream& is, USoundSampleFormat& f)
+  {
+    int v = 0;
+    is >> v;
+    f = USoundSampleFormat(v);
+    return is;
+  }
+
+  std::ostream&
+  operator<<(std::ostream& o, USoundSampleFormat f)
+  {
+    switch (f)
+    {
+    case SAMPLE_SIGNED:
+      return o << "signed";
+    case SAMPLE_UNSIGNED:
+      return o << "unsigned";
+    default:
+      return o << "unknown[" << (int)f << "]";
+    }
+    unreachable();
+  }
+
+
+  /*---------.
+  | USound.  |
+  `---------*/
+
   USound
   USound::make()
   {
@@ -36,61 +103,34 @@ namespace urbi
   const char*
   USound::format_string() const
   {
-    switch (soundFormat)
-    {
-      case SOUND_RAW:
-	return "raw";
-      case SOUND_WAV:
-	return "wav";
-      case SOUND_MP3:
-	return "mp3";
-      case SOUND_OGG:
-	return "ogg";
-      case SOUND_UNKNOWN:
-	return "unknown format";
-    }
-    // To pacify "warning: control reaches end of non-void function".
-    // FIXME: This should not abort. UImage should be initialized with IMAGE_UKNOWN.
-    //        This is not done because data is stored in an union in UBinary and
-    //        union members cannot have constructors.
-    return "unknown format";
+    return ::urbi::format_string(soundFormat);
   }
 
   std::string
   USound::headers_() const
   {
-    return libport::format("%s %s %s %s %s",
+    return libport::format("%s %s %s %s %d",
                            format_string(),
                            channels, rate,
-                           sampleSize, sampleFormat);
+                           sampleSize, int(sampleFormat));
   }
 
-  USound::operator std::string() const
+  std::ostream&
+  USound::dump(std::ostream& o) const
   {
-    std::ostringstream o;
-    o << "sound(format: " << format_string() << ", "
-      << "size: " << size << ", "
-      << "channels: " << channels << ", "
-      << "rate: " << rate << ", "
-      << "sample size: " << sampleSize << ", "
-      << "sample format: ";
-    switch (sampleFormat)
-    {
-    case SAMPLE_SIGNED:   o << "signed";  break;
-    case SAMPLE_UNSIGNED: o << "unsigned"; break;
-    default:              o << "unknown[" << (int)sampleFormat << "]";
-    }
-    o << ")";
-    return o.str();
+    return o << "sound(format: " << format_string() << ", "
+             << "size: " << size << ", "
+             << "channels: " << channels << ", "
+             << "rate: " << rate << ", "
+             << "sample size: " << sampleSize << ", "
+             << "sample format: " << sampleFormat
+             << ")";
   }
 
-  std::istream&
-  operator>> (std::istream& is, USoundSampleFormat& f)
+  std::ostream&
+  operator<< (std::ostream& o, const USound& s)
   {
-    int v = 0;
-    is >> v;
-    f = USoundSampleFormat(v);
-    return is;
+    return s.dump(o);
   }
 
 }
