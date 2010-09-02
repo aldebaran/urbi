@@ -211,4 +211,14 @@ do (Object)
   {
     return this % rhs;
   };
+
+  function '++' ()
+  {
+    return this.'+='(1);
+  };
+
+  function '--' ()
+  {
+    return this.'-='(1);
+  };
 };
