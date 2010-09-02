@@ -166,7 +166,7 @@ namespace urbi
   {
     bool res = false;
     libport::utime_t startTime = libport::utime();
-    while (timeout < 0 || libport::utime() - startTime <= timeout)
+    do // Always check at least once.
     {
       queueLock_.lock();
       if (queue.empty())
@@ -181,7 +181,7 @@ namespace urbi
       queueLock_.unlock();
       UAbstractClient::notifyCallbacks(*m);
       delete m;
-    }
+    } while (timeout < 0 || libport::utime() - startTime <= timeout);
     return res;
   }
 
