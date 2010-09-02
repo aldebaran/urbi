@@ -38,7 +38,7 @@ namespace urbi
   const char*
   format_string(UImageFormat f)
   {
-    aver_le_lt(0u, f, cardinality_of(formats));
+    aver_le_lt(0, f, int(cardinality_of(formats)));
     return formats[f];
   }
 
@@ -68,7 +68,7 @@ namespace urbi
   const char*
   UImage::format_string() const
   {
-    return format_string(imageFormat);
+    return ::urbi::format_string(imageFormat);
   }
 
   std::string

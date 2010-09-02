@@ -18,6 +18,10 @@
 namespace urbi
 {
 
+  /*---------------.
+  | UImageFormat.  |
+  `---------------*/
+
   enum UImageFormat
   {
     IMAGE_UNKNOWN = 0,
@@ -30,6 +34,19 @@ namespace urbi
     IMAGE_GREY8 = 6,   ///< Grey image, 1 byte/pixel
     IMAGE_GREY4 = 7,   ///< Grey image, two pixels per byte
   };
+
+
+  // Parse an image format string.
+  URBI_SDK_API UImageFormat parse_image_format(const std::string&);
+
+  // Conversion to string.
+  URBI_SDK_API const char* format_string(UImageFormat f);
+
+
+
+  /*---------.
+  | UImage.  |
+  `---------*/
 
   /** Class encapsulating an image.
 
@@ -60,11 +77,6 @@ namespace urbi
     std::string headers_() const;
   };
 
-  // Parse an image format string.
-  URBI_SDK_API UImageFormat parse_image_format(const std::string&);
-
-  // Conversion to string.
-  URBI_SDK_API const char* format_string(UImageFormat f);
 } // end namespace urbi
 
 #endif // ! URBI_UIMAGE_HH
