@@ -64,6 +64,7 @@ namespace rewrite
       (Try)
       (While)
       );
+    void visit_dincrementation(ast::rLValue what, libport::Symbol meth);
 
   private:
     void desugar_modifiers(const ast::Assign* assign);

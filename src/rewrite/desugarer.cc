@@ -267,14 +267,7 @@ namespace rewrite
 
   void Desugarer::visit(const ast::Decrementation* dec)
   {
-    PARAMETRIC_AST(desugar, "{var '$save' = %exp:1 | %lvalue:2 = %exp:3.'--'() | '$save'}");
-
-    ast::rLValue what = dec->exp_get();
-    ast::rLValue tgt = factory_->make_lvalue_once(what);
-
-    desugar % tgt % tgt % tgt;
-    result_ = factory_->make_lvalue_wrap(what, exp(desugar));
-    result_ = recurse(result_);
+    visit_dincrementation(dec->exp_get(), SYMBOL(MINUS_MINUS));
     result_->original_set(dec);
   }
 
@@ -323,15 +316,20 @@ namespace rewrite
 
   void Desugarer::visit(const ast::Incrementation* inc)
   {
-    PARAMETRIC_AST(desugar, "{var '$save' = %exp:1 | %lvalue:2 = %exp:3.'++'() | '$save'}");
+    visit_dincrementation(inc->exp_get(), SYMBOL(PLUS_PLUS));
+    result_->original_set(inc);
+  }
 
-    ast::rLValue what = inc->exp_get();
+
+  void Desugarer::visit_dincrementation(ast::rLValue what, libport::Symbol meth)
+  {
+    PARAMETRIC_AST(desugar, "{var '$save' = %exp:1 | %lvalue:2 = %exp:3.%id:4() | '$save'}");
+
     ast::rLValue tgt = factory_->make_lvalue_once(what);
 
-    desugar % tgt % tgt % tgt;
+    desugar % tgt % tgt % tgt % meth;
     result_ = factory_->make_lvalue_wrap(what, exp(desugar));
     result_ = recurse(result_);
-    result_->original_set(inc);
   }
 
   void Desugarer::visit(const ast::If* s)
