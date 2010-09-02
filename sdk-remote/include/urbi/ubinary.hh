@@ -68,11 +68,11 @@ namespace urbi
     explicit UBinary(const USound&, bool copy = true);
 
     /// Deep copy.
-    UBinary & operator = (const UBinary &b);
+    UBinary& operator= (const UBinary &b);
 
-    /// Build message from structures.
+    /// Store the result of getMessage() in member \a message.
     void buildMessage();
-    /// Get message extracted from structures.
+    /// Get header.
     std::string getMessage() const;
 
     /// Clear all the buffers that were allocated by the system.
@@ -102,7 +102,7 @@ namespace urbi
       UImage image;
       USound sound;
     };
-    /// Extra bin headers (everything after BIN <size> and before ';').
+    /// Headers (everything after BIN <size> and before ';' or \n).
     std::string message;
 
   private:
