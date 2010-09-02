@@ -148,15 +148,14 @@ namespace urbi
       GD_FERROR("bin size inconsistency: %s != %s", psize, binpos->size);
       return false;
     }
+    common.size = psize;
     if (copy)
     {
-      common.size = psize;
-      common.data = malloc(psize);
+      common.data = malloc(common.size);
       memcpy(common.data, binpos->data, common.size);
     }
     else
     {
-      common.size = psize;
       common.data = binpos->data;
       this->allocated_ = false;
     }
