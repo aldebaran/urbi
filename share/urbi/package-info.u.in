@@ -12,10 +12,10 @@ class System.PackageInfo
 {
   var components = [ => ];
 
-  var dependencies = [];
   function init (var name)
   {
     var this.name = name |
+    var this.dependencies = [] |
     System.PackageInfo.components[name] = this
   };
 
