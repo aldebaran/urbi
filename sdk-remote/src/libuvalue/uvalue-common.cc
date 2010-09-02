@@ -143,8 +143,8 @@ namespace urbi
 
   int
   UValue::parse(const char* message, int pos,
-		const std::list<BinaryData>& bins,
-		std::list<BinaryData>::const_iterator& binpos)
+		const binaries_type& bins,
+		binaries_type::const_iterator& binpos)
   {
     SKIP_SPACES();
     if (message[pos] == '"')

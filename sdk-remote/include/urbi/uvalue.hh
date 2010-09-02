@@ -256,8 +256,8 @@ namespace urbi
     /// match -pos of error if error.
     int parse(const char* message,
 	      int pos,
-	      const std::list<BinaryData>& bins,
-	      std::list<BinaryData>::const_iterator& binpos);
+	      const binaries_type& bins,
+	      binaries_type::const_iterator& binpos);
 
     /// Print itself on \c s, and return it.
     std::ostream& print(std::ostream& s) const;

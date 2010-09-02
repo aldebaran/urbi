@@ -35,9 +35,6 @@ namespace urbi
   class URBI_SDK_API UMessage
   {
   public:
-    /// List of the binaries.
-    typedef std::list<urbi::BinaryData> binaries_type;
-
     UMessage(UAbstractClient& client);
 
     /// Parser constructor.

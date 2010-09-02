@@ -344,7 +344,7 @@ size_t URTP::onRead(const void* data, size_t sz)
     UObject::send(std::string((const char*)payload, payload_size));
   else if (type == VALUES)
   {// FIXME: this will not work with binaries
-    std::list<BinaryData> bd;
+    binaries_type bd;
     UMessage m(*(UClient*)0, 0, "",
                std::string((const char*)payload, payload_size).c_str(),
                bd);
@@ -378,7 +378,7 @@ size_t URTP::onRead(const void* data, size_t sz)
     if (!writeTo && ld.empty())
       return sz;
     UBinary b;
-    std::list<BinaryData> bd;
+    binaries_type bd;
     std::string keywords;
     if (type == BINARY)
     { // Just onhor the included header.
@@ -404,7 +404,7 @@ size_t URTP::onRead(const void* data, size_t sz)
       }
       else
       {
-        switch(type)
+        switch (type)
         {
         case 26:
           keywords = string_cast(payload_size) + " jpeg\n";
@@ -416,7 +416,7 @@ size_t URTP::onRead(const void* data, size_t sz)
         }
       }
     }
-    std::list<BinaryData>::const_iterator beg = bd.begin();
+    binaries_type::const_iterator beg = bd.begin();
     b.parse(keywords.c_str(), 0, bd, beg, false);
     if (writeTo)
     {

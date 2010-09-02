@@ -443,7 +443,6 @@ namespace urbi
 
   private:
     /// Bin object for this command.
-    typedef std::list<urbi::BinaryData> binaries_type;
     binaries_type bins;
 
     /// Empty bins.

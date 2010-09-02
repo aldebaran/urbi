@@ -110,8 +110,8 @@ namespace urbi
 
   int
   UBinary::parse(const char* message, int pos,
-		 const std::list<BinaryData>& bins,
-		 std::list<BinaryData>::const_iterator& binpos, bool copy)
+		 const binaries_type& bins,
+		 binaries_type::const_iterator& binpos, bool copy)
   {
     std::istringstream is(message + pos);
     bool ok = parse(is, bins, binpos, copy);
@@ -124,8 +124,8 @@ namespace urbi
 
   bool
   UBinary::parse(std::istringstream& is,
-		 const std::list<BinaryData>& bins,
-		 std::list<BinaryData>::const_iterator& binpos, bool copy)
+		 const binaries_type& bins,
+		 binaries_type::const_iterator& binpos, bool copy)
 
   {
     // LIBPORT_ECHO("Parsing: {" << is.str() << "}");

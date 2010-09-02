@@ -28,7 +28,7 @@ namespace urbi
   | UBinaryData.  |
   `--------------*/
 
-  //internal use: unparsed binary data
+  // Internal use: unparsed binary data.
   class URBI_SDK_API BinaryData
   {
   public:
@@ -40,6 +40,8 @@ namespace urbi
     size_t size;
   };
 
+  /// List of the binaries.
+  typedef std::list<BinaryData> binaries_type;
 
 
   /*----------.
@@ -82,11 +84,11 @@ namespace urbi
     ~UBinary();
     /// Return true on success.
     bool parse(std::istringstream& is,
-               const std::list<BinaryData>& bins,
-               std::list<BinaryData>::const_iterator& binpos, bool copy=true);
+               const binaries_type& bins,
+               binaries_type::const_iterator& binpos, bool copy=true);
     int parse(const char* message, int pos,
-	      const std::list<BinaryData>& bins,
-	      std::list<BinaryData>::const_iterator& binpos, bool copy=true);
+	      const binaries_type& bins,
+	      binaries_type::const_iterator& binpos, bool copy=true);
 
     /// Used by UValue::print for serialization.
     std::ostream& print(std::ostream& o) const;
