@@ -62,6 +62,9 @@ namespace urbi
 
   // Parse an image format string.
   URBI_SDK_API UImageFormat parse_image_format(const std::string&);
+
+  // Conversion to string.
+  URBI_SDK_API const char* format_string(UImageFormat f);
 } // end namespace urbi
 
 #endif // ! URBI_UIMAGE_HH

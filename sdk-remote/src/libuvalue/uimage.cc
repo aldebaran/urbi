@@ -18,15 +18,10 @@
 
 namespace urbi
 {
-  UImage
-  UImage::make()
-  {
-    UImage res;
-    res.data = 0;
-    res.size = res.width = res.height = 0;
-    res.imageFormat = IMAGE_UNKNOWN;
-    return res;
-  }
+
+  /*---------------.
+  | UImageFormat.  |
+  `---------------*/
 
   static const char* formats[] =
   {
@@ -41,10 +36,10 @@ namespace urbi
   };
 
   const char*
-  UImage::format_string() const
+  format_string(UImageFormat f)
   {
-    aver_le_lt(0u, unsigned(imageFormat), cardinality_of(formats));
-    return formats[imageFormat];
+    aver_le_lt(0u, f, cardinality_of(formats));
+    return formats[f];
   }
 
   UImageFormat
@@ -54,6 +49,26 @@ namespace urbi
       if (s == formats[i])
         return static_cast<UImageFormat>(i);
     return IMAGE_UNKNOWN;
+  }
+
+  /*---------.
+  | UImage.  |
+  `---------*/
+
+  UImage
+  UImage::make()
+  {
+    UImage res;
+    res.data = 0;
+    res.size = res.width = res.height = 0;
+    res.imageFormat = IMAGE_UNKNOWN;
+    return res;
+  }
+
+  const char*
+  UImage::format_string() const
+  {
+    return format_string(imageFormat);
   }
 
   std::string
