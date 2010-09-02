@@ -8,25 +8,8 @@
  * See the LICENSE file for more information.
  */
 
-/*! \file libuobject/usystem.cc
- *******************************************************************************
-
- File: libuobject/usystem.cc
- Implementation of the USystem class.
-
- This file is part of UObject Component Architecture\n
- (c) Gostai S.A.S., 2004-2006.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.com
-
- **************************************************************************** */
+/// \file libuobject/usystem.cc
+///\brief Implementation of the USystem class.
 
 #include <urbi/uobject.hh> // echo
 #include <urbi/usystem.hh>
@@ -44,8 +27,9 @@ namespace urbi
   {
   }
 
-  // **************************************************************************
-  // UStringSystemMessage
+  /*-----------------------.
+  | UStringSystemMessage.  |
+  `-----------------------*/
 
   //! UStringSystemMessage constructor.
   UStringSystemMessage::UStringSystemMessage(const std::string& s)
@@ -64,8 +48,9 @@ namespace urbi
     return msg;
   };
 
-  // **************************************************************************
-  // USystem
+  /*----------.
+  | USystem.  |
+  `----------*/
 
   //! USystemMessage constructor.
   USystem::USystem()
