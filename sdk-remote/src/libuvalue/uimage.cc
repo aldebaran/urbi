@@ -10,8 +10,11 @@
 
 /// \file libuvalue/uimage.cc
 
+#include <libport/cassert>
 #include <libport/format.hh>
 #include <urbi/uimage.hh>
+
+#define cardinality_of(Array) (sizeof (Array) / sizeof (*(Array)))
 
 namespace urbi
 {
@@ -25,33 +28,31 @@ namespace urbi
     return res;
   }
 
-  static const char* formats[] = {
-      "rgb",
-      "YCbCr",
-      "jpeg",
-      "ppm",
-      "YUV422",
-      "grey8",
-      "grey4",
-      "image_unknown",
-      ""
-    };
+  static const char* formats[] =
+  {
+    "image_unknown",
+    "rgb",
+    "YCbCr",
+    "jpeg",
+    "ppm",
+    "YUV422",
+    "grey8",
+    "grey4",
+  };
 
   const char*
   UImage::format_string() const
   {
-    int f = static_cast<int>(imageFormat);
-    if (f<=0 || f> IMAGE_UNKNOWN)
-      return "image_unknown";
-    return formats[f-1];
+    aver_le_lt(0u, unsigned(imageFormat), cardinality_of(formats));
+    return formats[imageFormat];
   }
 
   UImageFormat
   parse_image_format(const std::string& s)
   {
-    for (unsigned i = 0; formats[i][0]; ++i)
+    for (unsigned i = 0; i < cardinality_of(formats); ++i)
       if (s == formats[i])
-        return static_cast<UImageFormat>(i+1);
+        return static_cast<UImageFormat>(i);
     return IMAGE_UNKNOWN;
   }
 
