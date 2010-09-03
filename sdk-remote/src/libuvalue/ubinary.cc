@@ -146,7 +146,7 @@ namespace urbi
         if (c == '\n')
         {
           i.ignore();
-          if (c == '\r')
+          if (i.peek() == '\r')
             i.ignore();
         }
         else
