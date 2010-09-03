@@ -50,7 +50,7 @@ OutputStream.new(File.create("close.txt")).close.isVoid;
 \end{urbiassert}
 
 \item[flush]%
-  In order to private efficient input/output operations,
+  In order to provide efficient input/output operations,
   \dfn[buffer]{buffers} are used.  As a consequence, what is put into a
   stream might not be immediately saved on the actual file.  To \dfn{flush}
   a buffer means to dump its content to the file.
