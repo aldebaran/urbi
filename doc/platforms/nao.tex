@@ -250,10 +250,10 @@ method:
 
 \begin{urbiunchecked}
 // Instantiate a proxy for the ALMotion module.
-var motion = UALProxy.new( "ALMotion" );
+var motion = UALProxy.new("ALMotion");
 // Bind its methods, declaring "waituntilWalkIsFinished" as a 'long' method.
 motion.generateALBindings(["waituntilWalkIsFinished"]);
-motion.walkTo( 0.1, 0,0 );
+motion.walkTo(0.1, 0, 0);
 motion.waituntilWalkIsFinished;
 \end{urbiunchecked}
 
@@ -310,7 +310,7 @@ function mathematics.add(a, b)
 
 mathematics.setModuleDescription(
   "A powerful module to make remote computing in urbiscript :)");
-mathematics.bindUrbiMethod( "add", "Compute the sum of two numbers",
+mathematics.bindUrbiMethod("add", "Compute the sum of two numbers",
 [["a",   "first number of the addition"],
  ["b",   "second number of the addition"]],
  ["sum", "the sum of the addition"] );
