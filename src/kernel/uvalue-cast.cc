@@ -160,9 +160,6 @@ object_cast(const urbi::UValue& v)
       res = new object::Object();
       res->proto_add(Binary);
       std::string msg = v.binary->getMessage();
-      // Trim it.
-      if (!msg.empty() && msg[0] == ' ')
-        msg = msg.substr(1, msg.npos);
       res->slot_set(SYMBOL(keywords),
                     new object::String(msg));
       res->slot_set(SYMBOL(data),

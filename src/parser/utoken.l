@@ -42,7 +42,7 @@ typedef yy::parser::token token;
 using libport::ufloat;
 
 /// Split yytext which matches
-/// "BIN"{BLANKS}{NATURAL}({BLANKS}({ID}|{NATURAL}))*{BLANKS}";"
+/// "BIN"{BLANKS}{NATURAL}{BLANKS}[^;]*";"
 /// setting \a keywords to the first char of keyword, and return the
 /// size.
 static size_t bin_split(char* yytext, size_t yyleng, char*& keywords);
@@ -669,7 +669,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      The only supported syntax was "var foo = BIN SIZE (keywords)+; DATA"
      with DATA being SIZE long.  Note where the ";" is...
    */
-"BIN"{BLANKS}{NATURAL}({BLANKS}({ID}|{NATURAL}))*{BLANKS}?";"      {
+"BIN"{BLANKS}{NATURAL}[^;]*";"      {
   char* keywords;
   size_t size = bin_split (yytext, yyleng, keywords);
   // Eat the data.
@@ -921,14 +921,18 @@ lexical_cast (parser::ParserImpl* up, const yy::location& loc, In t)
 }
 
 /// Split yytext which matches
-/// "BIN"({BLANKS}{ID})*{NATURAL}{BLANKS}";" setting \a keywords to
+/// "BIN"{BLANKS}{NATURAL}[^;]*";" setting \a keywords to
 /// the first char of keyword, and return the size.
 static
 size_t
 bin_split (char* yytext, size_t yyleng, char*& keywords)
 {
   // Smash the semicolon.
-  yytext[yyleng - 1] = 0;
+  yytext[--yyleng] = 0;
+  // Remove all the trailing spaces.
+  while (isspace(yytext[yyleng - 1]))
+    yytext[--yyleng] = '\0';
+
   // Skip BIN.
   yytext += 3;
   ++yytext;
