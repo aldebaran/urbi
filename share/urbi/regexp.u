@@ -11,5 +11,12 @@
 do (Regexp)
 {
   protos.insertFront(Global.Container);
+
   copySlot("match", "has");
+
+  function matchs ()
+  {
+    Kernel1.deprecated("Regexp.matchs", "Regexp.matches") |
+    matches
+  };
 };

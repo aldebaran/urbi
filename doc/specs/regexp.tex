@@ -102,17 +102,38 @@ assert
 };
 \end{urbiscript}
 
-\item[matchs](<matchs>)%
-  The matched groups, as delimited by parentheses in the regular
-  expression. The first element is the whole match.
+\item[matches]%
+  If the latest \refSlot{match} was successful, the matched groups, as
+  delimited by parentheses in the regular expression; the first element
+  being the whole match.  Otherwise, the empty list.  See also
+  \refSlot{'[]'}.
 
 \begin{urbiscript}
-var email_regex = Regexp.new("([a-zA-Z0-9._]+)@([a-zA-Z0-9._]+)");
-[00000001] Regexp("([a-zA-Z0-9._]+)@([a-zA-Z0-9._]+)")
-email_regex.match("Someone <someone@somewhere.com>");
-[00000002] true
-email_regex.matchs;
-[00000003] ["someone@somewhere.com", "someone", "somewhere.com"]
+var re = Regexp.new("([a-zA-Z0-9._]+)@([a-zA-Z0-9._]+)")|;
+assert
+{
+  re.match("Someone <someone@somewhere.com>");
+  re.matches == ["someone@somewhere.com", "someone", "somewhere.com"];
+
+  "does not match" not in re;
+  re.matches == [];
+};
+\end{urbiscript}
+
+\item|'[]'|(<n>)%
+  Same as \lstinline|this.matches[\var{n}]|.
+\begin{urbiscript}
+var d = Regexp.new("(1+)(2+)(3+)")|;
+assert
+{
+  "01223334" in d;
+  d[0] == "122333";
+  d[1] == "1";
+  d[2] == "22";
+  d[3] == "333";
+};
+d[4];
+[00000009:error] !!! []: out of bound index: 4
 \end{urbiscript}
 
 \end{urbiscriptapi}

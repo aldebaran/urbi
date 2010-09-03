@@ -49,7 +49,7 @@ namespace urbi
       // Depending on the version of Boost.Regex, "" might not be valid.
       // Make it always invalid.
       if (r.empty())
-        FRAISE("Invalid regular expression \"%s\": %s",
+        FRAISE("invalid regular expression `%s': %s",
                libport::escape(r), "Empty expression");
       try
       {
@@ -57,7 +57,7 @@ namespace urbi
       }
       catch (const boost::regex_error& e)
       {
-        FRAISE("Invalid regular expression \"%s\": %s",
+        FRAISE("invalid regular expression `%s': %s",
                libport::escape(r), e.what());
       }
     }
@@ -67,24 +67,25 @@ namespace urbi
     {
       boost::match_results<std::string::const_iterator> groups;
       bool res = regex_search(str, groups, re_);
-      matchs_.clear();
-      for (unsigned i = 0; i < groups.size(); ++i)
-        matchs_.push_back(std::string(groups[i].first, groups[i].second));
+      matches_.clear();
+      if (res)
+        for (unsigned i = 0; i < groups.size(); ++i)
+          matches_ << std::string(groups[i].first, groups[i].second);
       return res;
     }
 
     std::string
     Regexp::operator[] (unsigned idx)
     {
-      if (idx >= matchs_.size())
+      if (idx >= matches_.size())
         FRAISE("out of bound index: %s", idx);
-      return matchs_[idx];
+      return matches_[idx];
     }
 
-    Regexp::matchs_type
-    Regexp::matchs() const
+    Regexp::matches_type
+    Regexp::matches() const
     {
-      return matchs_;
+      return matches_;
     }
 
     void
@@ -97,7 +98,7 @@ namespace urbi
       DECLARE(asString, as_string);
       DECLARE(init, init);
       DECLARE(match, match);
-      DECLARE(matchs, matchs);
+      DECLARE(matches, matches);
 #undef DECLARE
       bind(SYMBOL(SBL_SBR), &Regexp::operator[]);
     }

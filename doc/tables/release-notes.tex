@@ -21,6 +21,7 @@ This chapter lists the user-visible changes in \usdk releases.
   invoked on another lobby.
 \item \refSlot[Object]{inspect} works properly, even if the target is a
   remote lobby.
+\item \slot[Regexp]{matchs} renamed as \refSlot[Regexp]{matches}.
 \end{itemize}
 
 \subsection{New Features}
@@ -130,7 +131,7 @@ var myVar = 42|;
   implementation has been improved: the condition will now be reevaluated even
   if a parameter not directly in the expression (in a subfunction, for
   instance) is modified.
-\item \refSlot[Regexp]{matchs}.
+\item \slot[Regexp]{matchs}.
 \item \refObject{Date} objects now have microsecond resolution and
   have bit slightly revamped to not rely on Unix's epoch.
 

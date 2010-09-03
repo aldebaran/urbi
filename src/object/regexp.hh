@@ -38,12 +38,12 @@ namespace urbi
       void init(const std::string& rg);
       bool match(const std::string& str);
       std::string operator[] (unsigned idx);
-      typedef std::vector<std::string> matchs_type;
-      matchs_type matchs() const;
+      typedef std::vector<std::string> matches_type;
+      matches_type matches() const;
 
     private:
       boost::regex re_;
-      matchs_type matchs_;
+      matches_type matches_;
       URBI_CXX_OBJECT_(Regexp);
     };
   }
