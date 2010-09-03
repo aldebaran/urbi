@@ -63,7 +63,10 @@ namespace urbi
     rFile File::create(rObject, const std::string& p)
     {
       libport::path path(p);
-      path.create();
+      if (path.exists())
+        path.remove();
+      if (!path.create())
+        FRAISE("cannot create file: %s: %s", path, strerror(errno));
       return new File(p);
     }
 

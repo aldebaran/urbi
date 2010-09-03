@@ -63,16 +63,28 @@ assert(File.new("file.txt").content.data == "1\n2\n");
 \end{urbiscript}
 
 \item[create](<name>)%
-  If the file \var{name} exists, return a File to it, otherwise create
-  an empty one, and return a File to it.  See \refObject{OutputStream}
-  for methods to add content to the file.
+  If the file \var{name} does not exist, create it and a return a File to
+  it.  Otherwise, first empty it.  See \refObject{OutputStream} for methods
+  to add content to the file.
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
+var p = Path.new("create.txt") |
+assert (!p.exists);
+
+// Create the file, and put something in it.
+var f = File.create(p)|;
+var o = OutputStream.new(f)|;
+o << "Hello, World!"|;
+o.close;
+
 assert
 {
-  File.create("file.txt").asPrintable == "File(\"file.txt\")";
-  File.new("file.txt").content.data == "1\n2\n";
-  File.create("new.txt").content.empty;
+  // The file exists, with the expect contents.
+  p.exists;
+  f.content.data == "Hello, World!";
+
+  // If we create is again, it is empty.
+  File.create(p).isA(File);
+  f.content.data == "";
 };
 \end{urbiscript}
 
