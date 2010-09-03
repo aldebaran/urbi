@@ -68,7 +68,15 @@ URBI_PATH=C:\cygwin\home\jessie\urbi:C:\cygwin\usr\local\urbi
 
 \subsection{Environment Variables}
 \label{sec:tools:env}
+
+The following variables control the way the log messages are displayed.
+They are meant for developers.
 \begin{envs}
+\item[GD\_COLOR] If set, force the use of colors in the logs, even if the
+  output device does not seem to support them.  See also \env{GD\_NO\_COLOR}.
+\item[GD\_ENABLE\_CATEGORY] If set, a comma-separated list of categories
+  (e.g., \code{UValue}, \code{Urbi}) to display.  All the others will be
+  discarded.  See also \env{GD\_DISABLE\_CATEGORY}.
 \item[GD\_LEVEL] Set the verbosity level of traces.  This environment
   variable is meant for the developers of \usdk, yet it is very useful
   when tracking problems such as a UObject that fails to load properly.
@@ -81,6 +89,24 @@ URBI_PATH=C:\cygwin\home\jessie\urbi:C:\cygwin\usr\local\urbi
   \item \code{DUMP}, maximum verbosity.
   \end{enumerate}
 
+\item[GD\_LOC] If set, display the location (file, line, function name) from
+  which the log message was issued.
+
+\item[GD\_NO\_COLOR] If set, forbid the use of colors in the logs, even if
+  the output device seems to support them, or if \env{GD\_COLOR} is set.
+
+\item[GD\_PID] If set, display the PID (Process Identity).
+
+\item[GD\_THREAD] If set, display the thread identity.
+
+\item[GD\_TIME] If set, display timestamps.
+
+\item[GD\_TIMESTAMP\_US] If set, display timestamps in microseconds.
+\end{envs}
+
+The following variables control more high-level features, typically to
+override the default behavior.
+\begin{envs}
 \item[URBI\_PATH] The search-path for \us source files (i.e.,
   \file{*.u} files).
 
