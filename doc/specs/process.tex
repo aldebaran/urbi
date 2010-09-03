@@ -182,15 +182,15 @@ do (Process.new("sleep", ["1"]))
 \item[stderr] An \refObject{InputStream} (the output of the Process is
   an input for \urbi) to the standard error stream of the process.
 \begin{urbiscript}
-do (Process.new(System.programName, ["--", "--no-such-option"]))
+do (Process.new("urbi-send", ["--no-such-option"]))
 {
   run;
   join;
   assert
   {
     stderr.asList ==
-    [System.programName + ": invalid option: --no-such-option",
-     "Try `" + System.programName + " --help' for more information."];
+    ["urbi-send: invalid option: --no-such-option",
+     "Try `urbi-send --help' for more information."];
   };
 }|;
 \end{urbiscript}
