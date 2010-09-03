@@ -42,7 +42,7 @@ Formatter.new("Name:%s, Surname:%s;").asList.asString
        == "[\"Name:\", %s, \", Surname:\", %s, \";\"]";
 \end{urbiassert}
 
-\item \lstinline|'%'(\var{args})|\\
+\item['\%'](<args>)%
   Use \this as format string and \var{args} as the list of
   arguments, and return the result (a \refObject{String}).  The arity
   of the Formatter (i.e., the number of expected arguments) and the
@@ -57,7 +57,7 @@ Formatter.new("Name:%s, Surname:%s;") % ["Foo", "Bar"]
 \end{urbiassert}
 
   If \var{args} is not a \refObject{List}, then the call is equivalent
-  to calling |'%'([\var{args}])|.
+  to calling \lstinline|'%'([\var{args}])|.
 \begin{urbiassert}
 Formatter.new("%06.3f") % Math.pi
        == "03.142";

@@ -296,7 +296,7 @@ negative number corresponds to no limit:
 !("1" == "0");       "1" != "0";
 \end{urbiassert}
 
-\item \lstinline|'%'(\var{args})|\\
+\item['\%'](<args>)%
   It is an equivalent of \lstinline|Formatter.new(this) % \var{args}|.
   See \refObject{Formatter}.
 %  This construct is actually more
@@ -334,7 +334,7 @@ negative number corresponds to no limit:
 !("a" < "a");
 \end{urbiassert}
 
-\item \lstinline|'[]'(\var{from})|\\
+\item|'[]'|(<from>)%
   \lstinline|'[]'(\var{from}, \var{to})|\\
   Return the sub-string starting at \var{from}, up to and not including
   \var{to} (which defaults to \var{to} + 1).
@@ -343,7 +343,7 @@ negative number corresponds to no limit:
 "foobar"[0] == "f";
 \end{urbiassert}
 
-\item \lstinline|'[]='(\var{from}, \var{other})|\\
+\item|'[]='|(<from>, <other>)%
   \lstinline|'[]='(\var{from}, \var{to}, \var{other})|\\
   Replace the sub-string starting at \var{from}, up to and not including
   \var{to} (which defaults to \var{to} + 1), by \var{other}.  Return
