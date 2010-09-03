@@ -10,11 +10,13 @@
 
 /// \file libuvalue/uimage.cc
 
-#include <libport/cassert>
+#include <libport/debug.hh>
 #include <libport/format.hh>
 #include <urbi/uimage.hh>
 
 #define cardinality_of(Array) (sizeof (Array) / sizeof (*(Array)))
+
+GD_CATEGORY(UValue);
 
 namespace urbi
 {
@@ -38,7 +40,11 @@ namespace urbi
   const char*
   format_string(UImageFormat f)
   {
-    aver_le_lt(0, f, int(cardinality_of(formats)));
+    if (f < 0 || int(cardinality_of(formats)) <= f)
+    {
+      GD_FERROR("invalid UImageFormat value: %d", f);
+      f = IMAGE_UNKNOWN;
+    }
     return formats[f];
   }
 

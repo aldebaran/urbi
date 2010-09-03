@@ -8,14 +8,18 @@
  * See the LICENSE file for more information.
  */
 
+/// \file libuvalue/usound.cc
+
 #include <sstream>
 #include <libport/cstring>
-#include <libport/cassert>
+#include <libport/debug.hh>
 #include <libport/format.hh>
 
 #include <urbi/usound.hh>
 
 #define cardinality_of(Array) (sizeof (Array) / sizeof (*(Array)))
+
+GD_CATEGORY(UValue);
 
 namespace urbi
 {
@@ -36,7 +40,11 @@ namespace urbi
   const char*
   format_string(USoundFormat f)
   {
-    aver_le_lt(0, f, int(cardinality_of(formats)));
+    if (f < 0 || int(cardinality_of(formats)) <= f)
+    {
+      GD_FERROR("invalid USoundFormat value: %d", f);
+      f = SOUND_UNKNOWN;
+    }
     return formats[f];
   }
 
