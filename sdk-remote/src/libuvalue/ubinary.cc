@@ -13,9 +13,11 @@
 #include <iostream>
 #include <sstream>
 #include <libport/debug.hh>
+#include <libport/escape.hh>
 #include <urbi/ubinary.hh>
+#include <boost/algorithm/string/replace.hpp>
 
-GD_CATEGORY(UBinary);
+GD_CATEGORY(UValue);
 
 namespace urbi
 {
@@ -122,6 +124,40 @@ namespace urbi
     return (ok ? 1:-1) * (pos + endpos);
   }
 
+  namespace
+  {
+    /// Return everything up to the next "\n" or "\n\r" or ";", not included.
+    /// Leave \a i after that delimiter.
+    /// Return empty string on errors.
+    static
+    std::string
+    headers_get(std::istringstream& i)
+    {
+      std::string res;
+      int c = 0;
+      while (!i.eof()
+             && (c = i.get()) && c != '\n' && c != ';')
+        res.append(1, c);
+      if (i.eof())
+        GD_ERROR("unexpected end of file while parsing UBinary headers");
+      else
+      {
+        // Skip the delimiter.
+        if (c == '\n')
+        {
+          i.ignore();
+          if (c == '\r')
+            i.ignore();
+        }
+        else
+          i.ignore();
+      }
+
+      return res;
+    }
+  }
+
+
   bool
   UBinary::parse(std::istringstream& is,
 		 const binaries_type& bins,
@@ -166,14 +202,7 @@ namespace urbi
       is.ignore();
 
     // Get the headers.
-    std::stringbuf sb;
-    is.get(sb);
-    message = sb.str();
-
-    // The contents is after the header (and the end of line:\r\n or \n).
-    if (is.peek() == '\r')
-      is.ignore();
-    is.ignore();
+    message = headers_get(is);
 
     // Analyse the header to decode know UBinary types.
     // Header stream.
@@ -227,7 +256,21 @@ namespace urbi
     case BINARY_SOUND:
       return sound.headers_();
     case BINARY_UNKNOWN:
-      return message;
+      {
+        bool warned = false;
+        std::string res = message;
+        foreach (char& c, res)
+          if (c == '\0' || c == '\n' || c == ';')
+          {
+            if (!warned++)
+              GD_FERROR("invalid UBinary header: "
+                        "prohibited `\\n', `\\0' and `;' will be "
+                        "smashed to space: %s",
+                        libport::escape(message));
+            c = ' ';
+          }
+        return res;
+      }
     case BINARY_NONE:
       return "";
     }
@@ -237,6 +280,7 @@ namespace urbi
   std::ostream&
   UBinary::print(std::ostream& o) const
   {
+    // Format for the Kernel, which wants ';' as header terminator.
     o << "BIN "<< common.size << ' ' << getMessage() << ';';
     o.write((char*) common.data, common.size);
     return o;
