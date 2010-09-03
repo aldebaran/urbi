@@ -225,9 +225,7 @@ namespace urbi
     else if (t == "raw" || t == "wav")
     {
       type = BINARY_SOUND;
-      sound.soundFormat = (t == "raw" ? SOUND_RAW
-                           : t == "wav" ? SOUND_WAV
-                           : SOUND_UNKNOWN);
+      sound.soundFormat = parse_sound_format(t);
       sound.size = common.size;
       hs >> sound.channels
          >> sound.rate
