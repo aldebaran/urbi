@@ -619,7 +619,7 @@ namespace urbi
   }
 
   bool
-  USyncClient::isCallbackThread()
+  USyncClient::isCallbackThread() const
   {
     return pthread_self() == cbThread;
   }

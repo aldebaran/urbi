@@ -239,7 +239,7 @@ namespace urbi
     virtual void onConnect();
 
     /// @return true if the current thread is the callback thread.
-    bool isCallbackThread();
+    bool isCallbackThread() const;
   protected:
     int joinCallbackThread_();
 
