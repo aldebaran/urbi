@@ -16,13 +16,12 @@
 \subsection{Construction}
 
 Files may be created from a \refObject{String}, or from a \refObject{Path}.
-The file must exist on the file system, and must be a file.  You may use
-\refSlot{create} to create a file that does not exist (or to override an
-existing one).
+Using \lstinline|new|, the file must exist on the file system, and must be a
+file.  You may use \refSlot{create} to create a file that does not exist (or
+to override an existing one).
 
 \begin{urbiscript}[firstnumber=1]
-System.system("(echo 1; echo 2) >file.txt")|;
-File.new("file.txt");
+File.create("file.txt");
 [00000001] File("file.txt")
 
 File.new(Path.new("file.txt"));
@@ -38,28 +37,31 @@ read or write to Files.
 \item[asList]
   Read the file, and return its content as a list of its lines.
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
+OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
 assert(File.new("file.txt").asList == ["1", "2"]);
 \end{urbiscript}
 
 \item[asPrintable]
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
+OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
 assert(File.new("file.txt").asPrintable == "File(\"file.txt\")");
 \end{urbiscript}
 
 \item[asString]
   The name of the opened file.
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
+OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
 assert(File.new("file.txt").asString == "file.txt");
 \end{urbiscript}
 
 \item[content]
   The content of the file as a \refObject{Binary} object.
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
-assert(File.new("file.txt").content.data == "1\n2\n");
+OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
+assert
+{
+  File.new("file.txt").content == Binary.new("", "1\n2\n");
+};
 \end{urbiscript}
 
 \item[create](<name>)%
@@ -89,22 +91,31 @@ assert
 \end{urbiscript}
 
 \item[remove]
-  Remove the current file.
-\begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
-File.new("file.txt").remove;
-assert(!Path.new("file.txt").exists);
+  Remove the current file.  Returns void.
+\begin{urbiscript}[firstnumber=1]
+var p = Path.new("foo.txt") |
+p.exists;
+[00000002] false
+
+var f = File.create(p);
+[00000003] File("foo.txt")
+p.exists;
+[00000004] true
+
+f.remove;
+p.exists;
+[00000006] false
 \end{urbiscript}
 
 \item[rename](<name>)%
   Rename the file to \var{name}.  If the target exists, it is replaced by
   the opened file.
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >foo.txt")|;
-File.new("foo.txt").rename("bar.txt");
+OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
+File.new("file.txt").rename("bar.txt");
 assert
 {
-  !Path.new("foo.txt").exists;
+  !Path.new("file.txt").exists;
   File.new("bar.txt").content.data == "1\n2\n";
 };
 \end{urbiscript}

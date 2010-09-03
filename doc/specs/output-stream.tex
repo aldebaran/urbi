@@ -22,13 +22,12 @@ requires a \refObject{File}.  If the file already exists, content is
 \emph{appended} to it.  Remove the file beforehand if you want to
 override its content.
 
-\begin{urbiscript}[firstnumber=1]
-System.system("(echo 1; echo 2) >file.txt")|;
-OutputStream.new(File.new("file.txt"));
+\begin{urbiscript}
+OutputStream.new(File.create("file.txt"));
 [00000001] OutputStream_0x827000
 
-OutputStream.new(File.create("new.txt"));
-[00000001] OutputStream_0x827000
+OutputStream.new(File.new("file.txt"));
+[00000002] OutputStream_0x827000
 \end{urbiscript}
 
 \subsection{Slots}
@@ -37,32 +36,52 @@ OutputStream.new(File.create("new.txt"));
 \item[<<](<that>)%
   Output \lstinline|\var{this}.asString|.  Return \this to
   enable chains of calls.
-\begin{urbiassert}
-{
-  {
-    var o = OutputStream.new(File.create("fresh.txt"));
-    o << 1 << "2" << [3, [4]];
-  };
-  File.new("fresh.txt").content.data;
-}
-==
-"12[3, [4]]";
-\end{urbiassert}
+\begin{urbiscript}
+var o = OutputStream.new(File.create("fresh.txt"))|;
+o << 1 << "2" << [3, [4]]|;
+
+assert (File.new("fresh.txt").content.data == "12[3, [4]]");
+\end{urbiscript}
 
 \item[close]
   Flush the buffers, and close the file.
 \begin{urbiassert}
-OutputStream.new(File.create("file.txt")).close.isVoid;
+OutputStream.new(File.create("close.txt")).close.isVoid;
 \end{urbiassert}
 
-\item[putByte](<byte>)%
+\item[flush]%
   In order to private efficient input/output operations,
-  \dfn[buffer]{buffers} are used.  As a consequence, what is put into
-  a stream might not be immediately saved on the actual file.  To
-  \dfn{flush} a buffer means to dump its content to the file.
+  \dfn[buffer]{buffers} are used.  As a consequence, what is put into a
+  stream might not be immediately saved on the actual file.  To \dfn{flush}
+  a buffer means to dump its content to the file.
 \begin{urbiassert}
 OutputStream.new(File.create("file.txt")).flush.isVoid;
 \end{urbiassert}
+
+\item[put](<byte>)%
+  Output the character corresponding to the numeric code \var{byte} in
+  \this, and return \this.
+\begin{urbiscript}[firstnumber=1]
+var f = File.create("put.txt") |
+var o = OutputStream.new(f) |
+
+assert
+{
+  o.put(0)
+   .put(255)
+   .put(72).put(101).put(108).put(108).put(111)
+  === o;
+  o.close.isVoid;
+  f.content.data == "\0\xffHello";
+};
+o.put(12.5);
+[00029816:error] !!! put: bad numeric conversion: overflow or non empty fractional part: 12.5
+o.put(-1);
+[00034840:error] !!! put: bad numeric conversion: negative overflow: -1
+o.put(256);
+[00039175:error] !!! put: bad numeric conversion: positive overflow: 256
+\end{urbiscript}
+
 \end{urbiscriptapi}
 
 
