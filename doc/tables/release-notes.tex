@@ -30,7 +30,7 @@ This chapter lists the user-visible changes in \usdk releases.
   \refObject{Float} in addition to accepting a \refObject{Date}.
 
 \item Support for \lstinline|else| in \lstinline|try| blocks
-  (\autoref{sec:lang:except:catch}).  Run only when the \lstinline|try|
+  (\autoref{sec:lang:catch}).  Run only when the \lstinline|try|
   block completed properly.
 \begin{urbiscript}
 // Can we run "riskyFeature"?
@@ -998,14 +998,14 @@ A(42);
 [00000003] *** A called with 42
 \end{urbiscript}
 
-\item "catch(<type> <name>)" syntax removed
+\item \lstinline|catch(\var{type} \var{name}| syntax removed
 
-  The "catch(<type> <name>)", which was used to catch exceptions if and only
-  if they inherited <type>, has been removed. This behavior can be obtained
-  with the more general guard system:
+  It was used to catch exceptions if and only if they inherited
+  \var{type}. This behavior can be obtained with the more general guard
+  system:
 
 \begin{urbiunchecked}
-catch (var e if e.isA(<type>)
+catch (var e if e.isA(<type>))
 {
   ...
 }
