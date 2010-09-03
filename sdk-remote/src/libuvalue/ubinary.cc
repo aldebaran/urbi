@@ -15,7 +15,7 @@
 #include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <urbi/ubinary.hh>
-#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 GD_CATEGORY(UValue);
 
@@ -152,7 +152,8 @@ namespace urbi
         else
           i.ignore();
       }
-
+      // Remove leading/trailing spaces.
+      boost::algorithm::trim(res);
       return res;
     }
   }
@@ -267,6 +268,8 @@ namespace urbi
                         libport::escape(message));
             c = ' ';
           }
+        // Remove leading/trailing spaces.
+        boost::algorithm::trim(res);
         return res;
       }
     case BINARY_NONE:
