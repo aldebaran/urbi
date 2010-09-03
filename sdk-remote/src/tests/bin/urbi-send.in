@@ -1,0 +1,17 @@
+#! /bin/sh
+
+# This simple wrapper is here to help the test in
+# doc/specs/process.tex: provide a constant content on stderr.  So we
+# need to cheat to avoid gratuitous issues on argv[0].
+me=$(basename $0)
+
+abs_top_builddir='@abs_top_builddir@'
+lprog=$abs_top_builddir/src/examples/.libs/$me
+prog=$abs_top_builddir/src/examples/$me
+
+err=/tmp/$me-$$.stderr
+"$prog" "$@" 2>$err
+sta=$?
+sed >&2 -e "s,$lprog,$me,;s,$prog,$me," $err
+rm $err
+exit $sta

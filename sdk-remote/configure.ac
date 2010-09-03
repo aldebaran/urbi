@@ -233,4 +233,6 @@ URBI_CONFIG_WRAPPER([umake-link])
 URBI_CONFIG_WRAPPER([umake-shared])
 URBI_CONFIG_SCRIPTS([src/tests/bin/urbi-launch$EXEEXT:src/tests/bin/urbi-launch.in])
 
+URBI_CONFIG_SCRIPTS([src/tests/bin/urbi-send])
+
 AC_OUTPUT

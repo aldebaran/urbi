@@ -25,7 +25,8 @@ include uobjects/local.mk
 configured_scripts =				\
   bin/umake					\
   bin/umake-link				\
-  bin/umake-shared
+  bin/umake-shared				\
+  bin/urbi-send
 
 nodist_noinst_SCRIPTS +=                       \
   $(configured_scripts)                        \
