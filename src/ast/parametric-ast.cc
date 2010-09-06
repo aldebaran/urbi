@@ -26,16 +26,12 @@
 namespace ast
 {
 
+  /*----------------.
+  | ParametricAst.  |
+  `----------------*/
+
   ParametricAst::ParametricAst(const char* s, const loc& l, bool desugar)
-    : Cloner()
-# define CONSTRUCT(Iter, None, Type)                                    \
-      , BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type)        \
-        (BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(2, 1, Type)))
-      URBI_PARAMETRIC_AST_FOREACH(CONSTRUCT)
-#undef CONTSTRUCT
-    , ast_(parser::parse_meta(s, l)->ast_xget())
-    , effective_location_()
-    , count_(0)
+    : ast_(parser::parse_meta(s, l)->ast_xget())
   {
     /*  Simplify the result as much as possible
      *
@@ -60,11 +56,32 @@ namespace ast
 
   ParametricAst::~ParametricAst()
   {
+  }
+
+  /*------------------.
+  | ParameterizedAst.  |
+  `------------------*/
+
+  ParameterizedAst::ParameterizedAst(const ParametricAst& s)
+    : Cloner()
+# define CONSTRUCT(Iter, None, Type)                                    \
+      , BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type)        \
+        (BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(2, 1, Type)))
+      URBI_PARAMETERIZED_AST_FOREACH(CONSTRUCT)
+#undef CONTSTRUCT
+    , ast_(s)
+    , effective_location_()
+    , count_(0)
+  {
+  }
+
+  ParameterizedAst::~ParameterizedAst()
+  {
     passert(*this, empty());
   }
 
   void
-  ParametricAst::visit(const ast::MetaArgs* e)
+  ParameterizedAst::visit(const ast::MetaArgs* e)
   {
     ast::rLValue lvalue = recurse(e->lvalue_get());
     lvalue->call()->arguments_set(exps_map_type::take_(e->id_get () - 1));
@@ -72,7 +89,7 @@ namespace ast
   }
 
   void
-  ParametricAst::visit(const ast::MetaCall* e)
+  ParameterizedAst::visit(const ast::MetaCall* e)
   {
     libport::Symbol name = id_map_type::take_(e->id_get () - 1);
     result_ = new ast::Call(e->location_get(),
@@ -81,21 +98,21 @@ namespace ast
   }
 
   void
-  ParametricAst::visit(const ast::MetaExp* e)
+  ParameterizedAst::visit(const ast::MetaExp* e)
   {
     result_ = exp_map_type::take_(e->id_get () - 1);
     aver(result_);
   }
 
   void
-  ParametricAst::visit(const ast::MetaId* e)
+  ParameterizedAst::visit(const ast::MetaId* e)
   {
     libport::Symbol name = id_map_type::take_(e->id_get () - 1);
     result_ = ast::Factory::make_call(e->location_get(), name);
   }
 
   void
-  ParametricAst::visit(const ast::MetaLValue* e)
+  ParameterizedAst::visit(const ast::MetaLValue* e)
   {
     result_ = exp_map_type::take_(e->id_get () - 1);
     aver(result_.unsafe_cast<const ast::LValue>());
@@ -103,19 +120,19 @@ namespace ast
   }
 
   bool
-  ParametricAst::empty() const
+  ParameterizedAst::empty() const
   {
     return true
 # define TEST(Iter, None, Type)                                         \
       && BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type),                  \
                       _map_type)::empty_()
-      URBI_PARAMETRIC_AST_FOREACH(TEST)
+      URBI_PARAMETERIZED_AST_FOREACH(TEST)
 # undef TEST
       ;
   }
 
   void
-  ParametricAst::reset()
+  ParameterizedAst::reset()
   {
     passert(*this, empty());
 #ifndef NDEBUG
@@ -126,27 +143,27 @@ namespace ast
   }
 
   void
-  ParametricAst::clear()
+  ParameterizedAst::clear()
   {
 # define CLEAR(Iter, None, Type)                                        \
     BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type)::clear_();
-      URBI_PARAMETRIC_AST_FOREACH(CLEAR)
+      URBI_PARAMETERIZED_AST_FOREACH(CLEAR)
 # undef CLEAR
     reset();
   }
 
   std::ostream&
-  ParametricAst::dump(std::ostream& o) const
+  ParameterizedAst::dump(std::ostream& o) const
   {
     return o
-      << "ParametricAst:"
+      << "ParameterizedAst:"
       << libport::incendl
       << "Ast:"
-      << libport::incendl << *ast_ << libport::decendl
+      << libport::incendl << *ast_.get() << libport::decendl
 # define PRINT(Iter, None, Type)                                        \
       << static_cast<const BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), \
                                         _map_type)&>(*this)
-      URBI_PARAMETRIC_AST_FOREACH(PRINT)
+      URBI_PARAMETERIZED_AST_FOREACH(PRINT)
 # undef PRINT
       << libport::decendl;
   }
@@ -157,19 +174,19 @@ namespace ast
   `--------------------------*/
 
   rExp
-  exp(ParametricAst& a)
+  exp(ParameterizedAst& a)
   {
     return a.result<Exp>();
   }
 
   std::ostream&
-  operator<< (std::ostream& o, const ParametricAst& a)
+  operator<< (std::ostream& o, const ParameterizedAst& a)
   {
     return a.dump(o);
   }
 
-  ParametricAst&
-  ParametricAst::operator% (libport::intrusive_ptr<ast::Exp> t)
+  ParameterizedAst&
+  ParameterizedAst::operator% (libport::intrusive_ptr<ast::Exp> t)
   {
     // Strangely, the exp_map_type qualification is required
     // here. Factoring the two % operators in a template method is
@@ -183,15 +200,15 @@ namespace ast
     return *this;
   }
 
-  ParametricAst&
-  ParametricAst::operator% (libport::Symbol id)
+  ParameterizedAst&
+  ParameterizedAst::operator% (libport::Symbol id)
   {
     id_map_type::append_(count_, id);
     return *this;
   }
 
-  ParametricAst&
-  ParametricAst::operator% (ast::exps_type* exps)
+  ParameterizedAst&
+  ParameterizedAst::operator% (ast::exps_type* exps)
   {
 #ifndef NDEBUG
     passert(libport::deref << exps, unique_(exps));

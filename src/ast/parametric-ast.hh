@@ -29,37 +29,26 @@
 
 # include <parser/metavar-map.hh>
 
-# define URBI_PARAMETRIC_AST_TYPES              \
+# define URBI_PARAMETERIZED_AST_TYPES           \
   ((ast::rExp, exp))                            \
   ((libport::Symbol, id))                       \
   ((ast::exps_type*, exps))
 
-# define URBI_PARAMETRIC_AST_FOREACH(Macro)                     \
-  BOOST_PP_SEQ_FOR_EACH(Macro, , URBI_PARAMETRIC_AST_TYPES)
+# define URBI_PARAMETERIZED_AST_FOREACH(Macro)                  \
+  BOOST_PP_SEQ_FOR_EACH(Macro, , URBI_PARAMETERIZED_AST_TYPES)
 
 namespace ast
 {
 
+  /*----------------.
+  | ParametricAst.  |
+  `----------------*/
+
+  class ParameterizedAst;
+
   class ParametricAst
-    : public Cloner
-
-  // Inherit from MetavarMap of all types
-# define INHERIT(Iter, None, Type)                                      \
-  , public parser::MetavarMap<BOOST_PP_TUPLE_ELEM(2, 0, Type)>
-  URBI_PARAMETRIC_AST_FOREACH(INHERIT)
-# undef INHERIT
-
   {
   public:
-    typedef Cloner super_type;
-
-    // Typedef MetavarMap of all types
-#define TYPEDEF(Iter, None, Type)                               \
-    typedef parser::MetavarMap<BOOST_PP_TUPLE_ELEM(2, 0, Type)> \
-      BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type);
-    URBI_PARAMETRIC_AST_FOREACH(TYPEDEF)
-#undef TYPEDEF
-
     /// Build a ParametricAst whose textual part is \a s.
     ParametricAst(const char* s, const loc& l = loc(),
                   bool desugar = false);
@@ -71,8 +60,54 @@ namespace ast
     // The template version of the operator fails with an
     // incomprehensible ambiguity. It's duplicated for now.
 # define PERCENT(Iter, None, Type)              \
-    ParametricAst& operator% (BOOST_PP_TUPLE_ELEM(2, 0, Type));
-  URBI_PARAMETRIC_AST_FOREACH(PERCENT)
+    ParameterizedAst& operator% (BOOST_PP_TUPLE_ELEM(2, 0, Type));
+  URBI_PARAMETERIZED_AST_FOREACH(PERCENT)
+# undef PERCENT
+
+    /// Return the Ast itself.
+    const Ast* get() const;
+
+  private:
+    /// The ast, possibly with meta-variables.
+    rConstAst ast_;
+  };
+
+  /*-------------------.
+  | ParameterizedAst.  |
+  `-------------------*/
+
+  class ParameterizedAst
+    : public Cloner
+
+  // Inherit from MetavarMap of all types
+# define INHERIT(Iter, None, Type)                                      \
+  , public parser::MetavarMap<BOOST_PP_TUPLE_ELEM(2, 0, Type)>
+  URBI_PARAMETERIZED_AST_FOREACH(INHERIT)
+# undef INHERIT
+
+  {
+  public:
+    typedef Cloner super_type;
+
+    // Typedef MetavarMap of all types
+#define TYPEDEF(Iter, None, Type)                               \
+    typedef parser::MetavarMap<BOOST_PP_TUPLE_ELEM(2, 0, Type)> \
+      BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Type), _map_type);
+    URBI_PARAMETERIZED_AST_FOREACH(TYPEDEF)
+#undef TYPEDEF
+
+    /// Build a ParameterizedAst whose textual part is \a s.
+    ParameterizedAst(const ParametricAst& s);
+    /// Destroy the ParameterizedAst.
+    /// \precondition empty()
+    virtual ~ParameterizedAst();
+
+    /// Pass the n-th argument.
+    // The template version of the operator fails with an
+    // incomprehensible ambiguity. It's duplicated for now.
+# define PERCENT(Iter, None, Type)              \
+    ParameterizedAst& operator% (BOOST_PP_TUPLE_ELEM(2, 0, Type));
+  URBI_PARAMETERIZED_AST_FOREACH(PERCENT)
 # undef PERCENT
 
     /// Fire the substitution, and return the result.
@@ -104,15 +139,15 @@ namespace ast
     template <typename T> T take (unsigned s) throw (std::range_error);
 
   private:
+    /// The ast.
+    const ParametricAst& ast_;
+
     /// Check that the tables are empty.
     bool empty() const;
 
     /// Reset for a new instantiation (the ast is kept).
     /// \precondition empty()
     void reset();
-
-    /// The ast, possibly with meta-variables.
-    rConstAst ast_;
 
     /// The location, based on provided arguments.
     loc effective_location_;
@@ -126,25 +161,31 @@ namespace ast
 # endif
   };
 
-  /// Convenience wrapper around ParametricAst::result<Exp>.
-  rExp exp (ParametricAst& t);
+
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
+  /// Convenience wrapper around ParameterizedAst::result<Exp>.
+  rExp exp (ParameterizedAst& t);
 
   /// Dump \a a on \a o.
   /// For debugging.
-  std::ostream& operator<< (std::ostream& o, const ParametricAst& a);
+  std::ostream& operator<< (std::ostream& o, const ParameterizedAst& a);
 
 } // namespace ast
 
 
-/// Define a parametric ast, using the current file and line as location.
-# define PARAMETRIC_AST_HELPER(Name, Content, Desugar)                  \
-  static ::ast::ParametricAst                                           \
-  Name(Content, LOCATION_HERE, Desugar)
+/// Define a parameterized ast, using the current file and line as location.
+# define PARAMETRIC_AST_HELPER(Name, Content, Desugar)          \
+  static ::ast::ParametricAst                                   \
+  Name ## _Ast(Content, LOCATION_HERE, Desugar);                \
+  ::ast::ParameterizedAst Name(Name ## _Ast);
 
-# define PARAMETRIC_AST(Name, Content)                                  \
+# define PARAMETRIC_AST(Name, Content)          \
   PARAMETRIC_AST_HELPER(Name, Content, false)
 
-# define PARAMETRIC_AST_DESUGAR(Name, Content)                          \
+# define PARAMETRIC_AST_DESUGAR(Name, Content)  \
   PARAMETRIC_AST_HELPER(Name, Content, true)
 
 # include <ast/parametric-ast.hxx>

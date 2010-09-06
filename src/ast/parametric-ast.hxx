@@ -25,9 +25,25 @@
 namespace ast
 {
 
+  /*----------------.
+  | ParametricAst.  |
+  `----------------*/
+
+  inline
+  const Ast*
+  ParametricAst::get() const
+  {
+    return ast_.get();
+  }
+
+  /*------------------.
+  | ParametrizedAst.  |
+  `------------------*/
+
   template <typename T>
+  inline
   libport::intrusive_ptr<T>
-  ParametricAst::result()
+  ParameterizedAst::result()
   {
     BOOST_STATIC_ASSERT((boost::is_base_of<Ast, T>::value));
     operator()(ast_.get());
@@ -38,8 +54,9 @@ namespace ast
   }
 
   template <typename T>
+  inline
   T
-  ParametricAst::take(unsigned s) throw (std::range_error)
+  ParameterizedAst::take(unsigned s) throw (std::range_error)
   {
     return parser::MetavarMap<T>::take_(s);
   }
