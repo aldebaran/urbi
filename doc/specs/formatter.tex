@@ -42,7 +42,7 @@ Formatter.new("Name:%s, Surname:%s;").asList.asString
        == "[\"Name:\", %s, \", Surname:\", %s, \";\"]";
 \end{urbiassert}
 
-\item['\%'](<args>)%
+-\item \lstinline|'%'(\var{args})|\\
   Use \this as format string and \var{args} as the list of
   arguments, and return the result (a \refObject{String}).  The arity
   of the Formatter (i.e., the number of expected arguments) and the
