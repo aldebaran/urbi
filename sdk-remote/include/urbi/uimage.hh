@@ -33,6 +33,7 @@ namespace urbi
     IMAGE_YUV422 = 5,  ///< a.k.a YUYV,  2Bytes / pixel, Interlaced (YUYVYUYV)
     IMAGE_GREY8 = 6,   ///< Grey image, 1 byte/pixel
     IMAGE_GREY4 = 7,   ///< Grey image, two pixels per byte
+    IMAGE_YUV411_PLANAR=8, ///< 4y 1u1v planar
   };
 
 

@@ -582,6 +582,25 @@ namespace urbi
           uncompressedData[(i+1)*3 + 2] = src.data[i*2+3];
         }
         break;
+      case IMAGE_YUV411_PLANAR:
+        {
+          format = 1;
+          uncompressedData = (byte*)malloc(src.width * src.height * 3);
+          allocated = true;
+          unsigned char* cy = src.data;
+          unsigned char* u = cy+320*240;
+          unsigned char* v = u+320*240/4;
+          int w = src.width;
+          int h = src.height;
+          for (int x=0; x<w;++x)
+            for (int y=0; y<h; ++y)
+            {
+              uncompressedData[(x+y*w)*3+0] = cy[x+y*w];
+              uncompressedData[(x+y*w)*3+1] = u[x/2 + (y/2)*w/2];
+              uncompressedData[(x+y*w)*3+2] = v[x/2 + (y/2)*w/2];
+            }
+        }
+        break;
       case IMAGE_GREY8:
         format = 1;
         uncompressedData = (byte*)malloc(src.width * src.height * 3);
