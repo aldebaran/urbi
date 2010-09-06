@@ -23,14 +23,22 @@ expression.
 A \lstinline{Regexp} is created with the regular expression once and
 for all, and it can be used many times to match with other strings.
 
-\begin{urbiscript}[firstnumber=1]
+\begin{urbiscript}
 Regexp.new(".");
 [00000001] Regexp(".")
 \end{urbiscript}
 
 \us supports Perl regular expressions, see
 \href{http://perldoc.perl.org/perlre.html}{the perlre man page}.
+
 Expressions cannot be empty.
+
+\begin{urbiscript}
+Regexp.new("");
+[00000001:error] !!! new: invalid regular expression "": Empty expression
+\end{urbiscript}
+
+
 
 \subsection{Slots}
 \begin{urbiscriptapi}
