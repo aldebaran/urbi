@@ -14,6 +14,32 @@
 
 namespace urbi
 {
+
+  /*-------------.
+  | UAutoValue.  |
+  `-------------*/
+
+  inline
+  UAutoValue::UAutoValue()
+    : UValue()
+  {}
+
+  template<typename T>
+  inline
+  UAutoValue::UAutoValue(T v)
+    : UValue(v)
+  {}
+
+  inline
+  UAutoValue::UAutoValue(const UValue& v)
+  {
+    set(v, false);
+  }
+
+  /*-----------.
+  | UContext.  |
+  `-----------*/
+
   inline
   UContext::UContext(impl::UContextImpl* impl)
     : ctx_(impl ? impl : getCurrentContext())

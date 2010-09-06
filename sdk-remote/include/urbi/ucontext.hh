@@ -28,19 +28,10 @@ namespace urbi
   class UAutoValue: public UValue
   {
   public:
-    UAutoValue()
-      : UValue()
-    {}
-
+    UAutoValue();
     template<typename T>
-    UAutoValue(T v)
-      : UValue(v)
-    {}
-
-    UAutoValue(const UValue& v)
-    {
-      set(v, false);
-    }
+    UAutoValue(T v);
+    UAutoValue(const UValue& v);
   };
 
   /** Methods available in both UObject and UVar

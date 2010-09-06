@@ -491,7 +491,7 @@ namespace urbi
     unsigned int counter_;
 
     /// Ourself as a stream.
-    /// It looks useless, accorded, but VC++ wants it.
+    /// It looks useless, agreed, but VC++ wants it.
     std::ostream* stream_;
 
     friend class UClientStreambuf;
