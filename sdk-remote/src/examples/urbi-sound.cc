@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
   client.setCallback(getSound, "usound");
   client.setCallback(endProgram, "end");
 
-  client.send("loopsound:loop usound << micro.val ,"
+  client.send("var end = Channel.new(\"end\"); var usound = Channel.new(\"usound\"); loopsound:at(micro.val->changed?) usound << micro.val ;"
 	      "{ wait(%d); stop loopsound; wait(1000); end << ping }, ", time);
   urbi::execute();
 }
