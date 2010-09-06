@@ -36,8 +36,6 @@ namespace urbi
 
     Finalizable::~Finalizable()
     {
-      // Prevent further destruction of this object.
-      counter_reset();
       rSlot finalize = 0;
       if (finalize = slot_locate(SYMBOL(finalize), false).second)
       {
@@ -45,12 +43,6 @@ namespace urbi
         args << this;
         ::kernel::runner().apply(finalize->value(), SYMBOL(finalize), args);
       }
-      // We are already in the destructor, we cannot allow a reference to be
-      // kept. This check must be outside the above block.
-      if (counter_get() != 1)
-        pabort("Object finalizer " << (void*)this << " kept "
-                                   << (counter_get()-1)
-                                   << " reference(s) to this");
     }
 
     void Finalizable::__dec()
