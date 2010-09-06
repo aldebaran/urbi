@@ -208,7 +208,7 @@ getenv("UndefinedEnvironmentVariable").isNil;
   cannot be found.  Return the last value of the file.
 \begin{urbiassert}
 // Create the file ``123.u'' that contains exactly ``123;''.
-System.system("echo '123;' >123.u") == 0;
+OutputStream.new(File.create("123.u")) << "123;";
 load("123.u") == 123;
 \end{urbiassert}
 
@@ -218,7 +218,7 @@ load("123.u") == 123;
   error if the file cannot be found.  Return the last value of the file.
 \begin{urbiassert}
 // Create the file ``123.u'' that contains exactly ``123;''.
-System.system("echo '123;' >123.u") == 0;
+OutputStream.new(File.create("123.u")) << "123;";
 loadFile("123.u") == 123;
 \end{urbiassert}
 
@@ -251,7 +251,7 @@ loadFile("123.u") == 123;
 
 \begin{urbiassert}
 // Create the file ``123.u'' that contains exactly ``123;''.
-System.system("echo '123;' >123.u") == 0;
+OutputStream.new(File.create("123.u")) << "123;";
 maybeLoad("123.u") == 123;
 maybeLoad("u.123").isVoid;
 \end{urbiassert}
@@ -337,7 +337,8 @@ var Global.x = 0;
   \refObject{Path}.  Throw a \refSlot[Exception]{FileNotFound} error if the
   file cannot be found.
 \begin{urbiassert}
-System.system("echo '123;' >123.u") == 0;
+// Create the file ``123.u'' that contains exactly ``123;''.
+OutputStream.new(File.create("123.u")) << "123;";
 searchFile("123.u") == Path.cwd / Path.new("123.u");
 \end{urbiassert}
 

@@ -30,7 +30,7 @@ An InputStream is a reading-interface to a file, so its constructor
 requires a \refObject{File}.
 
 \begin{urbiscript}[firstnumber=1]
-System.system("(echo 1; echo 2) >file.txt")|;
+OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
 InputStream.new(File.new("file.txt"));
 [00000001] InputStream_0x827000
 \end{urbiscript}
@@ -42,54 +42,50 @@ InputStream.new(File.new("file.txt"));
   Get the next available byte as a \refObject{Float}, or
   \lstinline|void| if the end of file was reached.
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
-assert(
-  {
-    var res = [];
-    var i = InputStream.new(File.new("file.txt"));
-    var x;
-    while (!(x = i.get.acceptVoid).isVoid)
-      res << x;
-    res;
-  }
-  ==
-  [49, 10, 50, 10]);
+{
+  OutputStream.new(File.create("file.txt")) << "1\n2\n";
+  var i = InputStream.new(File.new("file.txt"));
+  var x;
+  while (!(x = i.get.acceptVoid).isVoid)
+    cout << x;
+};
+[00000001:output] 49
+[00000002:output] 10
+[00000003:output] 50
+[00000004:output] 10
 \end{urbiscript}
 
 \item[getChar]
   Get the next available byte as a \refObject{String}, or
   \lstinline|void| if the end of file was reached.
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
-assert(
-  {
-    var res = [];
-    var i = InputStream.new(File.new("file.txt"));
-    var x;
-    while (!(x = i.getChar.acceptVoid).isVoid)
-      res << x;
-    res;
-  }
-  ==
-  ["1", "\n", "2", "\n"]);
+{
+  OutputStream.new(File.create("file.txt")) << "1\n2\n";
+  var i = InputStream.new(File.new("file.txt"));
+  var x;
+  while (!(x = i.getChar.acceptVoid).isVoid)
+    cout << x;
+};
+[00000001:output] "1"
+[00000002:output] "\n"
+[00000003:output] "2"
+[00000004:output] "\n"
 \end{urbiscript}
 
 \item[getLine]
   Get the next available line as a \refObject{String}, or
-  \lstinline|void| if the end of file was reached.
+  \lstinline|void| if the end of file was reached.  The end-of-line
+  characters are trimmed.
 \begin{urbiscript}
-System.system("(echo 1; echo 2) >file.txt")|;
-assert(
-  {
-    var res = [];
-    var i = InputStream.new(File.new("file.txt"));
-    var x;
-    while (!(x = i.getLine.acceptVoid).isVoid)
-      res << x;
-    res;
-  }
-  ==
-  ["1", "2"]);
+{
+  OutputStream.new(File.create("file.txt")) << "1\n2\n";
+  var i = InputStream.new(File.new("file.txt"));
+  var x;
+  while (!(x = i.getLine.acceptVoid).isVoid)
+    cout << x;
+};
+[00000001:output] "1"
+[00000002:output] "2"
 \end{urbiscript}
 \end{urbiscriptapi}
 
