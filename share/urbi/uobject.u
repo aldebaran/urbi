@@ -227,7 +227,15 @@ do (getSlot("UVar"))
   function copy(targetObj, slotName)
   {
     targetObj.setSlot(slotName, this)|
-    targetObj.setProperty(slotName, "updateHook", getSlot("updateBounce"))
+    targetObj.setProperty(slotName, "updateHook", getSlot("updateBounce"))|
+    if (!getProperty("val", "rangemax").isVoid)
+    {
+      targetObj.setProperty(slotName, "rangemax",
+                            getProperty("val", "rangemax"))}|
+    if (!getProperty("val", "rangemin").isVoid)
+      targetObj.setProperty(slotName, "rangemin",
+                            getProperty("val", "rangemin"))|
+    targetObj.updateSlot("getProperty", getSlot("parentGetProperty"))
   };
   function init(parent, name)
   {
@@ -260,22 +268,21 @@ do (getSlot("UVar"))
     if (not parent.hasLocalSlot("__has_uvar"))
     {
       var parent_getprop = parent.getSlot("getProperty")|
-      parent.getProperty = function(varname, propname)
-      {
-        if (getSlot(varname).isA(UVar))
-        {
-          if (propname == "changed")
-            getSlot(varname).changed
-          else
-            getSlot(varname).getProperty("val", propname).acceptVoid
-        }
-        else
-          parent_getprop.apply([this, varname, propname])
-      }|
-      var parent.__has_uvar = true
-    }|
+      parent.getProperty = getSlot("parentGetProperty")
+    }
   };
-
+  var parentGetProperty =  function(varname, propname)
+  {
+    if (getSlot(varname).isA(UVar))
+    {
+      if (propname == "changed")
+        getSlot(varname).changed
+      else
+        getSlot(varname).getProperty("val", propname).acceptVoid
+    }
+    else
+      parent_getprop.apply([this, varname, propname])
+  };
   /// Global number of notifyaccess
   var nAccess = 0;
   var nAccessTag = Tag.new;
