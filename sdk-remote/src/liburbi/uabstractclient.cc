@@ -110,8 +110,15 @@ namespace urbi
   {
   public:
     UClientStreambuf(UAbstractClient* cl)
-      : client(cl)
+      : client_(cl)
     {
+    }
+
+    /// The associate client.
+    UAbstractClient*
+    client_get()
+    {
+      return client_;
     }
 
   protected:
@@ -120,7 +127,7 @@ namespace urbi
     virtual std::streamsize xsputn(const char* s, std::streamsize n);
 
   private:
-    UAbstractClient* client;
+    UAbstractClient* client_;
   };
 
   int
@@ -137,24 +144,24 @@ namespace urbi
   std::streamsize
   UClientStreambuf::xsputn(const char* s, std::streamsize n)
   {
-    client->sendBufferLock.lock();
-    size_t clen = strlen(client->sendBuffer);
-    if (client->sendBufSize < clen + 1 + n)
+    client_->sendBufferLock.lock();
+    size_t clen = strlen(client_->sendBuffer);
+    if (client_->sendBufSize < clen + 1 + n)
     {
-      client->effective_send(client->sendBuffer);
-      client->sendBuffer[0] = 0;
-      client->effectiveSend(s, n);
-      client->sendBufferLock.unlock();
+      client_->effective_send(client_->sendBuffer);
+      client_->sendBuffer[0] = 0;
+      client_->effectiveSend(s, n);
+      client_->sendBufferLock.unlock();
       return n;
     }
-    memcpy(client->sendBuffer + clen, s, n);
-    client->sendBuffer[clen+n] = 0;
-    if (strpbrk(client->sendBuffer+clen, "&|;,"))
+    memcpy(client_->sendBuffer + clen, s, n);
+    client_->sendBuffer[clen+n] = 0;
+    if (strpbrk(client_->sendBuffer+clen, "&|;,"))
     {
-      client->effective_send(client->sendBuffer);
-      client->sendBuffer[0] = 0;
+      client_->effective_send(client_->sendBuffer);
+      client_->sendBuffer[0] = 0;
     }
-    client->sendBufferLock.unlock();
+    client_->sendBufferLock.unlock();
     return n;
   }
 
@@ -1116,7 +1123,7 @@ namespace urbi
       else
         kernelMinor_ = 0;
     }
-    catch(boost::bad_lexical_cast&)
+    catch (boost::bad_lexical_cast&)
     {
       kernelMajor_ = 2;
       kernelMinor_ = 0;
