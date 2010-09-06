@@ -69,8 +69,9 @@ namespace urbi
                           CxxConvert<unsigned>::to(args[1], 1));
         return;
       case 3:
-        libport::Symbol* f =
-          new libport::Symbol(from_urbi<std::string>(args[0]));
+        libport::Symbol* f = 0;
+        if (args[0] != nil_class)
+          f = new libport::Symbol(from_urbi<std::string>(args[0]));
         pos_ = value_type(f,
                           CxxConvert<unsigned>::to(args[1], 1),
                           CxxConvert<unsigned>::to(args[2], 2));
