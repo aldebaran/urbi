@@ -145,12 +145,9 @@ namespace urbi
         // Skip the delimiter.
         if (c == '\n')
         {
-          i.ignore();
           if (i.peek() == '\r')
             i.ignore();
         }
-        else
-          i.ignore();
       }
       // Remove leading/trailing spaces.
       boost::algorithm::trim(res);
