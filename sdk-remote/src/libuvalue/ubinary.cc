@@ -14,8 +14,9 @@
 #include <sstream>
 #include <libport/debug.hh>
 #include <libport/escape.hh>
-#include <urbi/ubinary.hh>
 #include <boost/algorithm/string/trim.hpp>
+#include <urbi/ubinary.hh>
+#include <urbi/uabstractclient.hh>
 
 GD_CATEGORY(UValue);
 
@@ -276,18 +277,29 @@ namespace urbi
   }
 
   std::ostream&
-  UBinary::print(std::ostream& o) const
+  UBinary::print(std::ostream& o, int kernelMajor) const
   {
-    // Format for the Kernel, which wants ';' as header terminator.
-    o << "BIN "<< common.size << ' ' << getMessage() << ';';
-    o.write((char*) common.data, common.size);
+    if (2 <= kernelMajor)
+    {
+      o << libport::format("Global.Binary.new(\"%s\", \"\\B(%s)(",
+                           getMessage(), common.size);
+      o.write((char*) common.data, common.size);
+      o << ")\")";
+    }
+    else
+    {
+      // Format for the Kernel, which wants ';' as header terminator.
+      o << libport::format("BIN %s %s;",
+                           common.size, getMessage());
+      o.write((char*) common.data, common.size);
+    }
     return o;
   }
 
   std::ostream&
   operator<< (std::ostream& o, const UBinary& t)
   {
-    return t.print(o);
+    return t.print(o, ::urbi::kernelMajor(o));
   }
 
 } // namespace urbi

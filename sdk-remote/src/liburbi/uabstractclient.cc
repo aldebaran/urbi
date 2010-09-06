@@ -1133,6 +1133,9 @@ namespace urbi
                kernelMinor_);
     }
 
+    // Set the kernel version of our associated stream.
+    ::urbi::kernelMajor(*this) = kernelMajor_;
+
     // Have the connectionId sent on __ident.
 # define IDENT_TAG TAG_PRIVATE_PREFIX "__ident"
     setCallback(*this, &UAbstractClient::setConnectionID, IDENT_TAG);
@@ -1162,6 +1165,16 @@ namespace urbi
     if (!cli)
       return "";
     return cli->connectionID();
+  }
+
+
+  UAbstractClient*
+  client_get(std::ostream& o)
+  {
+    if (UClientStreambuf* buf = dynamic_cast<UClientStreambuf*>(o.rdbuf()))
+      return buf->client_get();
+    else
+      return 0;
   }
 
 

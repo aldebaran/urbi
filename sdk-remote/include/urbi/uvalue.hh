@@ -28,6 +28,9 @@
 namespace urbi
 {
 
+  /// If a kernel version was associated to this stream, its value.
+  int& kernelMajor(std::ostream& o);
+
   // UValue and other related types
 
   /// Possible value types a UValue can contain.

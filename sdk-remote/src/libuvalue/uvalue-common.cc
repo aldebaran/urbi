@@ -20,6 +20,7 @@
 #include <libport/foreach.hh>
 #include <libport/iostream>
 #include <libport/lexical-cast.hh>
+#include <libport/xalloc.hh>
 #include <sstream>
 #include <iomanip>
 
@@ -30,6 +31,15 @@ GD_CATEGORY(UValue);
 
 namespace urbi
 {
+
+  int&
+  kernelMajor(std::ostream& o)
+  {
+    typedef libport::xalloc<int> version_type;
+    static version_type version;
+    std::cerr << "Kernel Version: " << version(o) << std::endl;
+    return version(o);
+  }
 
   /*---------------.
   | UValue Casts.  |

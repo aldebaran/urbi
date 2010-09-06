@@ -85,13 +85,13 @@ namespace urbi
     /// Return true on success.
     bool parse(std::istringstream& is,
                const binaries_type& bins,
-               binaries_type::const_iterator& binpos, bool copy=true);
+               binaries_type::const_iterator& binpos, bool copy = true);
     int parse(const char* message, int pos,
 	      const binaries_type& bins,
-	      binaries_type::const_iterator& binpos, bool copy=true);
+	      binaries_type::const_iterator& binpos, bool copy = true);
 
     /// Used by UValue::print for serialization.
-    std::ostream& print(std::ostream& o) const;
+    std::ostream& print(std::ostream& o, int kernelMajor = 2) const;
 
     UBinaryType type;
     union
