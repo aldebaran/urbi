@@ -6,5 +6,7 @@
 ##
 ## See the LICENSE file for more information.
 
-dist_libuobject@LIBSFX@_la_SOURCES +=			\
-  urbi/sdk.cc
+dist_libuobject@LIBSFX@_la_SOURCES +=		\
+  urbi/sdk.cc					\
+  urbi/iostream.cc				\
+  urbi/iostream.hh
