@@ -120,7 +120,7 @@ var x = [0, 1, 2];
 assert(x.clear == []);
 \end{urbiscript}
 
-\item[each](<fun>)
+\item[each](<fun>)%
   Apply the given functional value \var{fun} on all members,
   sequentially.
 
@@ -134,7 +134,7 @@ assert(x.clear == []);
 [00000000] *** 4
 \end{urbiscript}
 
-\item[eachi](<fun>)
+\item[eachi](<fun>)%
   Apply the given functional value \var{fun} on all members
   sequentially, additionally passing the current element index.
 
@@ -166,7 +166,7 @@ Apply the given functional value on all members simultaneously.
 ! [1].empty;
 \end{urbiassert}
 
-\item[filter](<fun>)
+\item[filter](<fun>)%
   The list of all the members of the target that verify the predicate
   \var{fun}.
 
@@ -185,7 +185,7 @@ do ([0, 1, 2, 3, 4, 5])
 }|;
 \end{urbiscript}
 
-\item[foldl](<action>, <value>)
+\item[foldl](<action>, <value>)%
   \wref[Fold_(higher-order_function)]{Fold},
   also known as \dfn{reduce} or \dfn{accumulate}, computes a result
   from a list.  Starting from \var{value} as the initial result, apply
@@ -210,7 +210,7 @@ assert([0, 1, 2].front == 0);
 [00000000:error] !!! front: cannot be applied onto empty list
 \end{urbiscript}
 
-\item[has](<that>)
+\item[has](<that>)%
   Whether one of the members of the target equals the argument.
 
 \begin{urbiassert}
@@ -228,7 +228,7 @@ assert([0, 1, 2].front == 0);
 !(1 not in [0, 1]);
 \end{urbiassert}
 
-\item[hasSame](<that>)
+\item[hasSame](<that>)%
   Whether one of the members of the target is physically equal to
   \var{that}.
 \begin{urbiscript}
@@ -248,7 +248,7 @@ assert([0, 1, 2].head == 0);
 [00000000:error] !!! head: cannot be applied onto empty list
 \end{urbiscript}
 
-\item[insertBack](<that>)
+\item[insertBack](<that>)%
   Insert the given element at the end of the target.
 
 \begin{urbiscript}
@@ -262,7 +262,7 @@ do ([0, 1])
 }|;
 \end{urbiscript}
 
-\item[insert](<where>, <what>)
+\item[insert](<where>, <what>)%
   Insert \var{what} before the value at index \var{where}, return
   \this.
 \begin{urbiscript}
@@ -287,7 +287,7 @@ do ([0, 1])
 \end{urbiscript}
 
 
-\item[insertFront](<that>)
+\item[insertFront](<that>)%
   Insert the given element at the beginning of the target.
 
 \begin{urbiscript}
@@ -301,7 +301,7 @@ do ([1, 2])
 }|;
 \end{urbiscript}
 
-\item[join](<sep> = "", <prefix> = "", <suffix> = "")
+\item[join](<sep> = "", <prefix> = "", <suffix> = "")%
   Bounce to \refSlot[String]{join}.
 
 \begin{urbiassert}
@@ -310,7 +310,7 @@ do ([1, 2])
 ["", "ob", ""].join("a", "B", "b") == "Baobab";
 \end{urbiassert}
 
-\item[keys]()
+\item[keys]()%
   The list of valid indexes.  This allows uniform iteration over a
   \refObject{Dictionary} or a \refObject{List}.
 
@@ -331,7 +331,7 @@ do ([1, 2])
 };
 \end{urbiscript}
 
-\item[map](<fun>)
+\item[map](<fun>)%
 Apply the given functional value on every member, and return the list
 of results.
 
@@ -340,7 +340,34 @@ of results.
         == [true, false, true, false];
 \end{urbiassert}
 
-\item[max](<fun> = function(a, b) { a < b })
+\item[matchAgainst](<handler>, <pattern>)%
+  If \var{pattern} is a List of same size, use \var{handler} to match each
+  member of \this against the corresponding \var{pattern}.  Return true if
+  the match succeeded, false in other cases.
+\begin{urbiscript}
+assert
+{
+  ([1, 2] = [1, 2]) == [1, 2];
+
+  ([1, var a] = [1, 2]) == [1, 2];
+  a == 2;
+
+  ([var u, var v, var w] = [1, 2, 3]) == [1, 2, 3];
+  [u, v, w] == [1, 2, 3];
+};
+
+[1, 2] = [2, 1];
+[00005863:error] !!! pattern did not match
+
+[1, var a] = [2, 1];
+[00005864:error] !!! pattern did not match
+[1, var a] = [1];
+[00005865:error] !!! pattern did not match
+[1, var a] = [1, 2, 3];
+[00005865:error] !!! pattern did not match
+\end{urbiscript}
+
+\item[max](<fun> = function(a, b) { a < b })%
   Return the ``largest'' member based on the comparison function \var{fun}.
 \begin{urbiassert}
            [1].max == 1;
@@ -358,7 +385,7 @@ The list cannot be empty.
 [00000001:error] !!! max: list cannot be empty
 \end{urbiscript}
 
-\item[min](<fun> = function(a, b) { a < b })
+\item[min](<fun> = function(a, b) { a < b })%
   Return the ``smallest'' member based on the comparison function \var{fun}.
 \begin{urbiassert}
            [1].min == 1;
@@ -376,7 +403,7 @@ The list cannot be empty.
 [00000001:error] !!! min: list cannot be empty
 \end{urbiscript}
 
-\item[range](<begin>, <end> = nil)
+\item[range](<begin>, <end> = nil)%
   Return a sub-range of the list, from the first index included to the
   second index excluded.  An error if out of bounds.  Negative indices
   are valid, and number from the end.
@@ -431,7 +458,7 @@ assert(t == [0, 1]);
 [00000000:error] !!! removeBack: cannot be applied onto empty list
 \end{urbiscript}
 
-\item[removeById](<that>)
+\item[removeById](<that>)%
   Remove all elements from the target that physically equals
   \var{that}.
 
@@ -482,17 +509,18 @@ Return the target, sorted with respect to the \lstinline|<| criteria.
 [1, 0, 3, 2].sort == [0, 1, 2, 3];
 \end{urbiassert}
 
-\item[subset](<that>)
+\item[subset](<that>)%
   Whether the members of \this are members of \var{that}.
 
 \begin{urbiassert}
-[].subset([]);
-[].subset([1, 2, 3]);
-[3, 2, 1].subset([1, 2, 3]);
-[1, 3].subset([1, 2, 3]);
-[1, 1].subset([1, 2, 3]);
-![3].subset([]);
-![3, 2].subset([1, 2]);
+        [].subset([]);
+        [].subset([1, 2, 3]);
+ [3, 2, 1].subset([1, 2, 3]);
+    [1, 3].subset([1, 2, 3]);
+    [1, 1].subset([1, 2, 3]);
+
+      ![3].subset([]);
+   ![3, 2].subset([1, 2]);
 ![1, 2, 3].subset([1, 2]);
 \end{urbiassert}
 
@@ -506,7 +534,7 @@ assert([0, 1, 2].tail == [1, 2]);
 [00000000:error] !!! tail: cannot be applied onto empty list
 \end{urbiscript}
 
-\item[zip](<fun>, <other>)
+\item[zip](<fun>, <other>)%
   Zip \this list and the \var{other} list with the \var{fun} function, and
   return the list of results.
 

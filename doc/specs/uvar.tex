@@ -43,6 +43,22 @@ x;
   \var{targetObject}. Since the \lstinline|UVar| is using properties, you must
   use this method to copy it to an other location.
 
+\item[hookChanged]%
+  A Boolean that states whether future UVar instantiations support the
+  \lstinline|changed| event.  Code like:
+
+\begin{urbiunchecked}
+at (headTouch.val->changed? if headTouch.val)
+  tts.say("ouch");
+\end{urbiunchecked}
+  \noindent
+  works, but costs one \lstinline|at| per UVar (whose cost is light in
+  recent version of \usdk).  Set \refSlot{hookChanged} to false
+  \emph{before} instantiating new UVars to disable this feature; you may
+  also set it to true to re-enable the feature for UVars that will be
+  instantiating afterward.  See also the environment variable
+  \env{URBI\_UVAR\_HOOK\_CHANGED}, \autoref{sec:tools:env}.
+
 \item[notifyAccess](<handle>, <onAccess>)%
   Similar to the \Cxx \lstinline|UNotifyAccess|, calls \var{onAccess} each
   time the \lstinline|UVar| is accessed (read).
