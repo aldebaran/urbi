@@ -380,37 +380,36 @@ namespace rewrite
     result_ = recurse(result_);
   }
 
+
+  void
+  Desugarer::visit(const ast::Catch* c)
+  {
+    const ast::loc& loc = c->location_get();
+    ast::rMatch match = c->match_get();
+
+    if (match)
+    {
+      rewrite::PatternBinder bind
+        (factory_->make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+      bind(c->match_get()->pattern_get().get());
+      PARAMETRIC_AST(pattern, "var '$pattern' = Pattern.new(%exp:1)");
+      ast::rExp p =
+        exp(pattern % bind.result_get().unchecked_cast<ast::Exp>());
+      p = recurse_with_subdecl(p);
+      match = new ast::Match(loc, p, recurse(c->match_get()->guard_get()));
+      match->bindings_set(recurse(bind.bindings_get()));
+      match->original_set(c->match_get());
+    }
+    result_ = new ast::Catch(loc, match,
+                             recurse_with_subdecl(c->body_get()));
+  }
+
   void Desugarer::visit(const ast::Try* t)
   {
-    ast::loc loc = t->location_get();
-    ast::rTry res = factory_->make_try(loc, recurse(t->body_get()));
-
-    foreach (const ast::rCatch& c, t->handlers_get())
-    {
-      const ast::loc& loc = c->location_get();
-      ast::rMatch match = c->match_get();
-
-      if (match)
-      {
-        rewrite::PatternBinder bind
-          (factory_->make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
-        bind(c->match_get()->pattern_get().get());
-        PARAMETRIC_AST(pattern, "var '$pattern' = Pattern.new(%exp:1)");
-        ast::rExp p =
-          exp(pattern % bind.result_get().unchecked_cast<ast::Exp>());
-        p = recurse_with_subdecl(p);
-        match = new ast::Match(loc, p, recurse(c->match_get()->guard_get()));
-        match->bindings_set(recurse(bind.bindings_get()));
-        match->original_set(c->match_get());
-      }
-      res->handlers_get()
-        << new ast::Catch(loc, match,
-                          recurse_with_subdecl(c->body_get()));
-    }
-
-    if (t->elseclause_get())
-      res->elseclause_get() = recurse(t->elseclause_get());
-    result_ = res;
+    result_ = factory_->make_try(t->location_get(),
+                                 recurse(t->body_get()),
+                                 recurse_collection(t->handlers_get()),
+                                 recurse(t->elseclause_get()));
   }
 
   void Desugarer::visit(const ast::While* s)

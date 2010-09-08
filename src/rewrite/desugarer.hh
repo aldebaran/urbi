@@ -50,6 +50,7 @@ namespace rewrite
       (And)
       (Assign)
       (Binding)
+      (Catch)
       (Class)
       (Decrementation)
       (Do)
