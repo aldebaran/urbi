@@ -830,7 +830,7 @@ stmt:
   }
 | "throw" exp.opt
   {
-    $$ = new ast::Throw(@$, $2);
+    $$ = MAKE(throw, @$, $2);
   }
 ;
 

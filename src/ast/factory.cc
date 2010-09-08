@@ -970,6 +970,12 @@ namespace ast
     return exp(sw % cond % inner);
   }
 
+  rThrow
+  Factory::make_throw(const location& l, const rExp& e) /* const */
+  {
+    return new ast::Throw(l, e);
+  }
+
   rExp
   Factory::make_timeout(const rExp& duration,
                         const rExp& body) // const

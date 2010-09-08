@@ -350,6 +350,11 @@ namespace ast
                 const cases_type& cases, rExp def) /* const */;
 
 
+    /// throw e;
+    static
+    rThrow
+    make_throw(const location& l, const rExp& e) /* const */;
+
     /// timeout(duration) body
     static
     rExp
