@@ -61,17 +61,10 @@ namespace std
   }
 }
 
+
+
 #define SYNTAX_ERROR(Loc, ...)                                          \
   throw yy::parser::syntax_error(Loc, libport::format(__VA_ARGS__))
-
-static
-ast::ParametricAst&
-flavor_error(const char* keyword,
-             ast::flavor_type flavor,
-             const ast::Factory::location& flavor_loc)
-{
-  SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", keyword, flavor);
-}
 
 #define FLAVOR_ERROR(Keyword) flavor_error(Keyword, flavor, flavor_loc)
 
@@ -114,6 +107,19 @@ flavor_error(const char* keyword,
 
 namespace ast
 {
+  namespace
+  {
+    static
+    ParametricAst&
+    flavor_error(const char* keyword,
+                 flavor_type flavor,
+                 const Factory::location& flavor_loc)
+    {
+      SYNTAX_ERROR(flavor_loc, "invalid flavor: %s%s", keyword, flavor);
+    }
+  }
+
+
   bool
   implicit(const rExp e)
   {
@@ -121,12 +127,12 @@ namespace ast
   }
 
   rExp
-  Factory::make_assert(const yy::location&,
+  Factory::make_assert(const location&,
                        rExp cond) /* const */
   {
     if (rCall call = dynamic_cast<Call*>(cond.get()))
     {
-      const yy::location& loc = call->location_get();
+      const location& loc = call->location_get();
       exps_type* args = new exps_type;
       *args << make_string(loc, call->name_get())
             << call->target_get();
@@ -146,7 +152,7 @@ namespace ast
 
   /// assert(%exps).
   rExp
-  Factory::make_assert(const yy::location&,
+  Factory::make_assert(const location&,
                        exps_type* cond) /* const */
   {
     aver(cond);
@@ -294,12 +300,11 @@ namespace ast
     {
       rPipe pipe;
       if (pipe = lhs.unsafe_cast<Pipe>())
-        pipe->children_get().push_back(rhs);
+        pipe->children_get() << rhs;
       else
       {
         pipe = new Pipe(l, exps_type());
-        pipe->children_get().push_back(lhs);
-        pipe->children_get().push_back(rhs);
+        pipe->children_get() << lhs << rhs;
       }
       res = pipe;
       break;
@@ -308,12 +313,11 @@ namespace ast
     {
       rAnd rand;
       if (rand = lhs.unsafe_cast<And>())
-        rand->children_get().push_back(rhs);
+        rand->children_get() << rhs;
       else
       {
         rand = new And(l, exps_type());
-        rand->children_get().push_back(lhs);
-        rand->children_get().push_back(rhs);
+        rand->children_get() << lhs << rhs;
       }
       res = rand;
       break;
@@ -398,7 +402,7 @@ namespace ast
 
   /// "class" lvalue protos block
   rExp
-  Factory::make_class(const yy::location& l,
+  Factory::make_class(const location& l,
                       rLValue lvalue,
                       exps_type* protos, rExp block) /* const */
   {
@@ -416,8 +420,8 @@ namespace ast
   EventMatch
   Factory::make_event_match(const location&,
                             rExp& event,
-                            ast::exps_type* args, ast::rExp duration,
-                            ast::rExp guard) // const
+                            exps_type* args, rExp duration,
+                            rExp guard) // const
   {
     return EventMatch(event, args, duration, guard);
   }
@@ -426,13 +430,13 @@ namespace ast
   EventMatch
   Factory::make_event_match(const location& l,
                             rExp& event,
-                            ast::rExp guard) // const
+                            rExp guard) // const
   {
-    ast::exps_type* args = 0;
-    ast::rCall call = event.unsafe_cast<ast::Call>();
+    exps_type* args = 0;
+    rCall call = event.unsafe_cast<Call>();
     if (call && call->arguments_get())
     {
-      args = new ast::exps_type(*call->arguments_get());
+      args = new exps_type(*call->arguments_get());
       call->arguments_set(0);
     }
     return make_event_match(l, event, args, 0, guard);
@@ -467,7 +471,7 @@ namespace ast
 
 
   rExp
-  Factory::make_external_event_or_function(const yy::location& l,
+  Factory::make_external_event_or_function(const location& l,
                                            libport::Symbol kind,
                                            float arity,
                                            libport::Symbol obj,
@@ -488,7 +492,7 @@ namespace ast
   }
 
   rExp
-  Factory::make_external_object(const yy::location& l,
+  Factory::make_external_object(const location& l,
                                 libport::Symbol id) /* const */
   {
     PARAMETRIC_AST(a, "'external'.object(%exp:1)");
@@ -496,7 +500,7 @@ namespace ast
   }
 
   rExp
-  Factory::make_external_var(const yy::location& l,
+  Factory::make_external_var(const location& l,
                              libport::Symbol obj,
                              libport::Symbol slot,
                              libport::Symbol id) /* const */
@@ -510,7 +514,7 @@ namespace ast
 
 
   rFinally
-  Factory::make_finally(const yy::location& l, rExp body, rExp finally) // const
+  Factory::make_finally(const location& l, rExp body, rExp finally) // const
   {
     // This make_scope is mainly for pretty-printing.
     // IMHO there are too many useless rScopes in the AST -- Akim.
@@ -973,7 +977,7 @@ namespace ast
   rThrow
   Factory::make_throw(const location& l, const rExp& e) /* const */
   {
-    return new ast::Throw(l, e);
+    return new Throw(l, e);
   }
 
   rExp
@@ -1000,9 +1004,9 @@ namespace ast
                     rExp body,
                     const catches_type& catches, rExp elseclause) /* const */
   {
-    return new ast::Try(loc,
-                        make_scope(body), catches,
-                        make_scope(elseclause));
+    return new Try(loc,
+                   make_scope(body), catches,
+                   make_scope(elseclause));
   }
 
   rExp

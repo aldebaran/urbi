@@ -35,7 +35,7 @@ namespace ast
     /// assert(%exp).
     static
     rExp
-    make_assert(const yy::location& loc,
+    make_assert(const location& loc,
                 rExp cond) /* const */;
 
     /// assert(%exps).
@@ -43,13 +43,13 @@ namespace ast
     /// (Actually it is reused to build the result).
     static
     rExp
-    make_assert(const yy::location& loc,
+    make_assert(const location& loc,
                 exps_type* cond) /* const */;
 
     /// at%flavor (%cond ~ %duration) {%body} onleave {%onleave}
     static
     rExp
-    make_at(const yy::location& loc,
+    make_at(const location& loc,
             const location& flavor_loc, flavor_type flavor,
             rExp cond,
             rExp body, rExp onleave = 0,
@@ -67,7 +67,7 @@ namespace ast
     /// \param op can be flavor_and or flavor_pipe.
     static
     rExp
-    make_bin(const yy::location& l,
+    make_bin(const location& l,
              flavor_type op,
              rExp lhs, rExp rhs) /* const */;
 
@@ -77,34 +77,34 @@ namespace ast
     /// It must not be a descendant such as Property.
     static
     rBinding
-    make_binding(const yy::location& l,
+    make_binding(const location& l,
                  bool constant,
-                 const yy::location& exp_loc, rExp exp) /* const */;
+                 const location& exp_loc, rExp exp) /* const */;
 
     /// "<method>"
     static
     rCall
-    make_call(const yy::location& l,
+    make_call(const location& l,
               libport::Symbol method) /* const */;
 
 
     /// "<target> . <method> (args)".
     static
     rCall
-    make_call(const yy::location& l,
+    make_call(const location& l,
               rExp target,
               libport::Symbol method, exps_type* args) /* const */;
 
     /// "<target> . <method> ()".
     static
     rCall
-    make_call(const yy::location& l,
+    make_call(const location& l,
               rExp target, libport::Symbol method) /* const */;
 
     /// "<target> . <method> (<arg1>)".
     static
     rCall
-    make_call(const yy::location& l,
+    make_call(const location& l,
               rExp target, libport::Symbol method, rExp arg1) /* const */;
 
 
@@ -112,7 +112,7 @@ namespace ast
     /// "<target> . <method> (<arg1>, <arg2>, <arg3>)".
     static
     rCall
-    make_call(const yy::location& l,
+    make_call(const location& l,
               rExp target, libport::Symbol method,
               rExp arg1, rExp arg2, rExp arg3 = 0) /* const */;
 
@@ -120,7 +120,7 @@ namespace ast
     /// "class" lvalue protos block
     static
     rExp
-    make_class(const yy::location& l,
+    make_class(const location& l,
                rLValue lvalue,
                exps_type* protos, rExp block) /* const */;
 
@@ -140,20 +140,20 @@ namespace ast
     static
     EventMatch
     make_event_match(const location&,
-                     rExp& event, ast::exps_type* args,
-                     ast::rExp duration, ast::rExp guard);
+                     rExp& event, exps_type* args,
+                     rExp duration, rExp guard);
 
     /// Backward compatibility.
     /// "?" <exp> <guard>
     static
     EventMatch
     make_event_match(const location&,
-                     rExp& event, ast::rExp guard); // const
+                     rExp& event, rExp guard); // const
 
     /// Build an "every" loop.
     static
     rExp
-    make_every(const yy::location& loc,
+    make_every(const location& loc,
                const location& flavor_loc, flavor_type flavor,
                rExp test, rExp body) /* const */;
 
@@ -161,7 +161,7 @@ namespace ast
     /// external event, or external function.
     static
     rExp
-    make_external_event_or_function(const yy::location& loc,
+    make_external_event_or_function(const location& loc,
                                     libport::Symbol kind,
                                     float arity,
                                     libport::Symbol obj,
@@ -170,44 +170,44 @@ namespace ast
 
     static
     rExp
-    make_external_object(const yy::location& l,
+    make_external_object(const location& l,
                          libport::Symbol id) /* const */;
 
     static
     rExp
-    make_external_var(const yy::location& l,
+    make_external_var(const location& l,
                       libport::Symbol obj,
                       libport::Symbol slot,
                       libport::Symbol id) /* const */;
 
     static
     rFinally
-    make_finally(const yy::location& l, rExp body, rExp finally) /* const */;
+    make_finally(const location& l, rExp body, rExp finally) /* const */;
 
     static
     rExp
-    make_float(const yy::location& l, libport::ufloat s) /* const */;
+    make_float(const location& l, libport::ufloat s) /* const */;
 
 
     /// Build a for(iterable) loop.
     static
     rExp
-    make_for(const yy::location&,
+    make_for(const location&,
              const location& flavor_loc, flavor_type flavor,
              rExp iterable, rExp body) /* const */;
 
     // Build a for(var id : iterable) loop.
     static
     rExp
-    make_for(const yy::location& l,
+    make_for(const location& l,
              const location& flavor_loc, flavor_type flavor,
-             const yy::location& id_loc, libport::Symbol id,
+             const location& id_loc, libport::Symbol id,
              rExp iterable, rExp body) /* const */;
 
     /// Build a C-for loop.
     static
     rExp
-    make_for(const yy::location& l,
+    make_for(const location& l,
              const location& flavor_loc, flavor_type flavor,
              rExp init, rExp test, rExp inc,
              rExp body) /* const */;
@@ -222,7 +222,7 @@ namespace ast
     /// \param iffalse can be 0.
     static
     rExp
-    make_if(const yy::location& l,
+    make_if(const location& l,
             rExp cond, rExp iftrue, rExp iffalse) /* const */;
 
 
@@ -307,11 +307,11 @@ namespace ast
     /// Return \a e in a Scope unless it is already one.
     static
     rScope
-    make_scope(const yy::location& l, rExp target, rExp e) /* const */;
+    make_scope(const location& l, rExp target, rExp e) /* const */;
 
     static
     rScope
-    make_scope(const yy::location& l, rExp e) /* const */;
+    make_scope(const location& l, rExp e) /* const */;
 
     // Use the location of \a e.
     static
@@ -325,7 +325,7 @@ namespace ast
 
     static
     rExp
-    make_string(const yy::location& l, const std::string& s) /* const */;
+    make_string(const location& l, const std::string& s) /* const */;
 
 
     /* Simplify \a e in every possible means.  Typically, remove useless
@@ -387,7 +387,7 @@ namespace ast
     /// \param duration can be 0.
     static
     rExp
-    make_waituntil(const yy::location& loc,
+    make_waituntil(const location& loc,
                    const rExp& cond, rExp duration) /* const */;
 
     /// waituntil (?(%event)(%payload))
@@ -399,7 +399,7 @@ namespace ast
     /// whenever (%cond ~ %duration) {%body} onleave {%else_stmt}
     static
     rExp
-    make_whenever(const yy::location& loc,
+    make_whenever(const location& loc,
                   rExp cond,
                   rExp body, rExp else_stmt = 0,
                   rExp duration = 0) /* const */;
@@ -421,7 +421,7 @@ namespace ast
   };
 
   /// Whether the \a e was the empty command.
-  bool implicit(const ast::rExp e);
+  bool implicit(const rExp e);
 
 }
 
