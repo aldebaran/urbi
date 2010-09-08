@@ -221,7 +221,7 @@ do (getSlot("UVar"))
   };
   function asString()
   {
-    "" + ownerName + "." + initialName
+    "%s.%s" % [ownerName, initialName]
   };
   /// Copy this UVar under slot \b slotName of \b targetObj
   function copy(targetObj, slotName)
