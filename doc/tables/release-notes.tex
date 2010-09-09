@@ -77,12 +77,13 @@ eval("new Object");
 
 
 \section{\usdk 2.2}
+Released on 2010-08-23.
 
 \subsection{Fixes}
 \begin{itemize}
-\item The main loop optimization triggered several issues with Linux and
-  Mac OS X in interactive sessions (truncated output, possibly blocked input).
-  These issues are fixed on Snow Leopard and Leopard and Linux.
+\item The main loop optimization triggered several issues with GNU/Linux and
+  Mac OS X in interactive sessions (truncated output, possibly blocked
+  input).  These issues are fixed on Snow Leopard and Leopard and GNU/Linux.
 \item Deep overall of the event handling primitives.  Watching an expression
   will succeed in cases where it used to fail.  For instance:
 
@@ -1320,9 +1321,9 @@ types declarations).
 \begin{description}
 \item Stack exhaustion check on Windows
 
-  As was done on Linux already, stack exhaustion condition is detected on
-  Windows, for example in the case of an infinite recursion. In this case,
-  SchedulingError will be raised and can be caught.
+  As was done on GNU/Linux already, stack exhaustion condition is detected
+  on Windows, for example in the case of an infinite recursion. In this
+  case, SchedulingError will be raised and can be caught.
 
 \item Errors from the trajectory generator are propagated
 
