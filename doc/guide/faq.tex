@@ -162,13 +162,13 @@ If \command{urbi-launch} (or \command{urbi}) fails to load an UObject (a
 shared library or \acro{DLL}) although the file exists, then the most
 probable cause is an undefined symbol in your shared library.
 
-\paragraph{Getting a better diagnostic}
+\subsubsection{Getting a better diagnostic}
 First, set the \env{GD\_LEVEL} environment variable (see
 \autoref{sec:tools:env}) to some high level, say \code{DUMP}, to log
 messages from \command{urbi-launch}.  You might notice that your library is
 not exactly where you thought \command{urbi-launch} was looking at.
 
-\paragraph{GNU/Linux}
+\subsubsection{GNU/Linux}
 A libltdl quirk prevents us from displaying a more accurate error message.
 You can use a tool named \command{ltrace} to obtain the exact error message.
 Ltrace is a standard package on most Linux distributions.  Run it with
@@ -235,7 +235,7 @@ $ export LD_LIBRARY_PATH=\var{urbi-root}/gostai/lib:$LD_LIBRARY_PATH
 $ ./foo
 \end{shell}
 
-\paragraph{Mac OS X}
+\subsubsection{Mac OS X}
 Set the \env{DYLD\_PRINT\_LIBRARIES} environment variable to 1 to make the
 shared library loader report the libraries it loads on the standard error
 stream.
@@ -304,17 +304,74 @@ dyld: loaded: /usr/lib/system/libmathCommon.A.dylib
 $
 \end{shell}
 
-\paragraph{Windows}
+\subsubsection{Windows}
 
-In plain native Windows, use \command{DependencyWalker} (see
+If you are running Cygwin, then have a look at the following section, which
+uses some of its tools.
+
+A specific constraint, for which currently we do not have nice solutions, is
+that when Windows loads a \acro{DLL}, it looks for all its dependencies
+(i.e., other \acro{DLL} that are needed) in the directory from which the
+program was run, or in the \env{PATH}.  There is no way, that we are aware
+of, to embed in a \acro{DLL} the information about where the dependencies
+are.  When trying to load a \acro{DLL} with missing dependencies, say
+\file{foo.dll}, the error message will be something like ``can't open the
+module'', and worse yet, if you read the detailed log messages (by setting
+\env{GD\_LEVEL} to \code{DUMP} for instance) it will report ``failed with
+error 126: The specified module could not be found'' although the file
+\emph{is} there.
+
+So first try to understand what are the missing dependencies.  Under
+Windows, use \command{DependencyWalker} (see
 \url{http://dependencywalker.com}) to check that a given \acro{DLL} finds
-all its dependencies.
+all its dependencies.  If some dependencies are not found either:
+\begin{itemize}
+\item change your \env{PATH} so that it goes via the directories that
+  contain the dependencies of your \acro{DLL}s;
+\item or copy these dependencies in the \file{bin/} directory of \usdk,
+  since that's the directory of the program, \file{urbi-launch}.
+\end{itemize}
 
-Alternatively, under Cygwin, you can use the \command{cygcheck.exe} program
-to check dependencies.
+The first approach is more tractable.  Beware that dependencies may also
+have dependencies\ldots
 
-If you need to add a \acro{DLL} that was missing, put it somewhere in the
-\env{PATH}, or in the current working directory.
+\paragraph{Cygwin}
+
+Use the \command{cygcheck.exe} program to check dependencies.  Beware that
+you must provide a qualified path to the file.  Chances are that if
+
+\begin{shell}
+$ cygcheck foo.dll
+\end{shell}
+
+\noindent
+does not work and will pretend that \file{foo.dll} does not exist (although
+it's \emph{right there}), then this will work:
+
+\begin{shell}
+$ cygcheck ./foo.dll
+\end{shell}
+
+In this output, look for lines like these:
+
+\begin{shell}
+cygcheck: track_down: could not find OgreMain.dll
+cygcheck: track_down: could not find OIS.dll
+cygcheck: track_down: could not find libuobject-vc90.dll
+\end{shell}
+
+\noindent
+and make sure that \file{OgreMain.dll}, \file{OIS.dll} and so forth are
+visible in the \env{PATH} (don't be worry about \file{libuobject-vc90.dll},
+\command{urbi-launch} will take care of it).  Note that when they are
+finally visible from the \env{PATH}, then you can run
+
+\begin{shell}
+$ cygcheck OgreMain.dll
+\end{shell}
+
+\noindent
+without having to specify the path.
 
 \section{\us}
 \subsection{Objects lifetime}
