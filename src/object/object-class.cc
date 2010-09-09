@@ -290,6 +290,34 @@ namespace urbi
       return self->local_slot_get(slot);
     }
 
+#define OPERATOR(funcname)              \
+  static rObject                        \
+  object_class_##funcname##_EQ(rObject lhs, rObject rhs)  \
+  {                                                  \
+    return lhs->call(SYMBOL(funcname), rhs);            \
+  }
+
+    OPERATOR(PLUS)
+    OPERATOR(MINUS)
+    OPERATOR(STAR)
+    OPERATOR(SLASH)
+    OPERATOR(CARET)
+    OPERATOR(PERCENT)
+
+    static rObject
+    object_class_PLUS_PLUS(rObject lhs)
+    {
+      static rObject one = to_urbi(1);
+      return lhs->call(SYMBOL(PLUS_EQ), one);
+    }
+
+    static rObject
+    object_class_MINUS_MINUS(rObject lhs)
+    {
+      static rObject one = to_urbi(1);
+      return lhs->call(SYMBOL(MINUS_EQ), one);
+    }
+
     void
     object_class_initialize()
     {
@@ -300,7 +328,7 @@ namespace urbi
 
 #define DECLARE(Name)                                                   \
       Object::proto->slot_set(SYMBOL(Name),                             \
-                              new Primitive(object_class_##Name),       \
+                              make_primitive(object_class_##Name),       \
                               true)
 
       DECLARE(EQ_EQ);
@@ -317,6 +345,14 @@ namespace urbi
       DECLARE(removeProto);
       DECLARE(slotNames);
       DECLARE(uid);
+      DECLARE(PLUS_EQ);
+      DECLARE(MINUS_EQ);
+      DECLARE(CARET_EQ);
+      DECLARE(PERCENT_EQ);
+      DECLARE(STAR_EQ);
+      DECLARE(SLASH_EQ);
+      DECLARE(PLUS_PLUS);
+      DECLARE(MINUS_MINUS);
 #undef DECLARE
 
 #define DECLARE(Name, Code)                                             \

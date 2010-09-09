@@ -181,14 +181,4 @@ do (Object)
       }
     };
   };
-
-  function '+='(rhs)  { this + rhs };
-  function '-='(rhs)  { this - rhs };
-  function '*='(rhs)  { this * rhs };
-  function '/='(rhs)  { this / rhs };
-  function '^='(rhs)  { this ^ rhs };
-  function '%='(rhs)  { this % rhs };
-
-  function '++'()  { this.'+='(1) };
-  function '--'()  { this.'-='(1) };
 };
