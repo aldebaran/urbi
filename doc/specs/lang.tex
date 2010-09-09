@@ -928,12 +928,12 @@ valueAlias;
 \end{urbiscript}
 
 It would be traitorous for most users that \lstinline|valueAlias| be equal
-to 10 too.  That's why \slot[Float]{'+='} simply bounces to
-\slot[Float]{'+'}.  The ``net result'' of \lstinline|value += 10| is
-therefore \lstinline|value = value.'+'(10)|, i.e., a \emph{new} Float is
-computed from \lstinline|0.'+'(10)|, and \lstinline|value| is rebound to
-it.  The binding from \lstinline|valueAlias| to \lstinline|0| is left as
-is.
+to 10 too.  That's why \slot[Float]{'+='} (which is actually
+\refSlot[Object]{'+='}) simply bounces to \slot[Float]{'+'}.  The ``net
+result'' of \lstinline|value += 10| is therefore
+\lstinline|value = value.'+'(10)|, i.e., a \emph{new} Float is computed from
+\lstinline|0.'+'(10)|, and \lstinline|value| is rebound to it.  The binding
+from \lstinline|valueAlias| to \lstinline|0| is left as is.
 
 On the contrary, large, ``updatable'' objects should provide an
 implementation of \lstinline|'+='| that mutates them.  For instance,
