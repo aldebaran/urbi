@@ -214,25 +214,11 @@ void registerNotify (JNIEnv *env,
   switch ((int) arg_nb)
   {
     case 0:
-      //  ::urbi::createUCallback(obj_name, "function", obj, fun,
-      //			  func_name, ::urbi::functionmap, false)
-
-      // ::urbi::createUCallback(*uobj, 0, "function", obj, fun, obj_name + "." + func_name)
-
-      //::urbi::createUCallback(obj_name_, notify_type, f,
-      //		      (&CallbacksCaller::callNotifyChange_0),
-      //		      uvar_name, ::urbi::monitormap, (bool) is_owned);
-
-
       ::urbi::createUCallback(*uob, (urbi::UVar*) var, notify_type, f,
 			      (&CallbacksCaller::callNotifyChange_0),
 			      uvar_name);
       break;
     case 1:
-      // urbi::UGenericCallback* cb =
-      // 	::urbi::createUCallback(obj_name_, notify_type, f,
-      // 				(&CallbacksCaller::callNotifyChange_1),
-      // 				uvar_name, ::urbi::monitormap, (bool) is_owned);
       ::urbi::createUCallback(*uob, new urbi::UVar(uvar_name), notify_type, f,
 			      (&CallbacksCaller::callNotifyChange_1),
 			      uvar_name);
@@ -355,18 +341,12 @@ Java_liburbi_main_UObjectJava_registerTimerFunction(JNIEnv *env,
   switch ((int) arg_nb)
   {
     case 0:
-      /*
       new urbi::UTimerCallbackobj<CallbacksCaller> (obj_name_,
 						    (double) period,
 						    f,
-						    &CallbacksCaller::callNotifyChange_0,
-						    ::urbi::timermap);
-      */
-      new urbi::UTimerCallbackobj<CallbacksCaller> (obj_name_,
-						    (double) period,
-						    f,
-						    &CallbacksCaller::callNotifyChange_0,
+						    boost::bind(&CallbacksCaller::callNotifyChange_0, f),
 						    urbi::getCurrentContext());
+
       //->handle_get();
 
       break;
