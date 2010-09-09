@@ -26,11 +26,20 @@ sequence of expressions in square brackets, separated by commas.
 Non-empty list may actually \emph{terminate} with a comma, rather than
 \emph{separate}; in other words, an optional trailing comma is accepted.
 
-\begin{urbiscript}[firstnumber=1]
+\begin{urbiscript}
 []; // The empty list
 [00000000] []
 [1, "2", [3,],];
 [00000000] [1, "2", [3]]
+\end{urbiscript}
+
+However, \lstinline|new| can be used as expected.
+
+\begin{urbiscript}
+List.new;
+[00000001] []
+[1, 2, 3].new;
+[00000002] [1, 2, 3]
 \end{urbiscript}
 
 \subsection{Slots}
@@ -395,6 +404,12 @@ The list cannot be empty.
 [00000001:error] !!! max: list cannot be empty
 \end{urbiscript}
 
+The members must be comparable.
+\begin{urbiscript}
+[0, 2, "a", 1].max;
+[00000002:error] !!! max: unexpected "a" for argument 2, expected a Float
+\end{urbiscript}
+
 \item[min](<fun> = function(a, b) { a < b })%
   Return the ``smallest'' member based on the comparison function \var{fun}.
 \begin{urbiassert}
@@ -512,12 +527,23 @@ Return the number of elements in the target.
 [].size == 0;
 \end{urbiassert}
 
-\item[sort]
-Return the target, sorted with respect to the \lstinline|<| criteria.
+\item[sort](<comp> = function(a, b) {a < b})%
+  A new List with the contents of \this, sorted with respect to the
+  \var{comp} comparison function.
 
-\begin{urbiassert}
-[1, 0, 3, 2].sort == [0, 1, 2, 3];
-\end{urbiassert}
+\begin{urbiscript}
+{
+  var l = [3, 0, -2, 1];
+  assert
+  {
+    l.sort == [-2, 0, 1, 3];
+    l      == [3, 0, -2, 1];
+
+    l.sort(function(a, b) {a.abs < b.abs})
+           == [0, 1, -2, 3];
+  };
+};
+\end{urbiscript}
 
 \item[subset](<that>)%
   Whether the members of \this are members of \var{that}.
@@ -570,13 +596,19 @@ equal two by two.
   if out of bounds.
 
 \begin{urbiscript}
-assert(["0", "1", "2"][0] == "0");
-assert(["0", "1", "2"][2] == "2");
+assert
+{
+  ["0", "1", "2"][0] == "0";
+  ["0", "1", "2"][2] == "2";
+};
 ["0", "1", "2"][3];
 [00007061:error] !!! []: invalid index: 3
 
-assert(["0", "1", "2"][-1] == "2");
-assert(["0", "1", "2"][-3] == "0");
+assert
+{
+  ["0", "1", "2"][-1] == "2";
+  ["0", "1", "2"][-3] == "0";
+};
 ["0", "1", "2"][-4];
 [00007061:error] !!! []: invalid index: -4
 \end{urbiscript}
@@ -588,9 +620,15 @@ assert(["0", "1", "2"][-3] == "0");
 \begin{urbiscript}
 var f = [0, 1, 2];
 [00000000] [0, 1, 2]
-f[1] = 42;
-[00000000] 42
-assert(f == [0, 42, 2]);
+assert
+{
+  (f[1] = 42) == 42;
+  f == [0, 42, 2];
+};
+
+for (var i: [0, 1, 2])
+  f[i] = 10 * f[i];
+assert (f == [0, 420, 20]);
 \end{urbiscript}
 
 \item['*'](<n>)%
@@ -626,14 +664,27 @@ l;
 
 \begin{urbiassert}
 [0, 1] + [2, 3] == [0, 1, 2, 3];
-[] + [2, 3] == [2, 3];
-[0, 1] + [] == [0, 1];
-[] + [] == [];
+    [] + [2, 3] == [2, 3];
+[0, 1] + []     == [0, 1];
+    [] + []     == [];
 \end{urbiassert}
+
+The target is left unmodified (contrary to \refSlot{'+='}).
+\begin{urbiscript}
+{
+  var l = [1, 2, 3];
+  assert
+  {
+    l + l == [1, 2, 3, 1, 2, 3];
+    l     == [1, 2, 3];
+  };
+};
+\end{urbiscript}
 
 \item['+='](<that>)%
   Concatenate the contents of the List \var{that} to \this, and return
-  \this.  This function modifies its target.
+  \this.  This function modifies its target, contrary to \refSlot{'+'}.  See
+  also \refSlot{'<<'}.
 
 \begin{urbiscript}
 {
