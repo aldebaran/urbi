@@ -217,6 +217,17 @@ namespace urbi
     }
 
     rObject
+    UVar::update_timed(rObject val, libport::utime_t timestamp)
+    {
+      rObject r =  kernel::urbiserver->getCurrentRunner().as_job();
+      if (!r->slot_has(SYMBOL(DOLLAR_uobjectInUpdate)))
+        r->slot_set(SYMBOL(DOLLAR_uobjectInUpdate), true_class);
+      update_timed_(val, timestamp);
+      r->slot_remove(SYMBOL(DOLLAR_uobjectInUpdate));
+      return void_class;
+    }
+
+    rObject
     UVar::update_timed_(rObject val, libport::utime_t timestamp)
     {
       getSlot(SYMBOL(owner))->setProperty(from_urbi<std::string>(getSlot(SYMBOL(initialName))),
@@ -318,6 +329,7 @@ namespace urbi
       bind(SYMBOL(writeOwned), &UVar::writeOwned);
       bind(SYMBOL(update_), &UVar::update_);
       bind(SYMBOL(update_timed_), &UVar::update_timed_);
+      bind(SYMBOL(update_timed), &UVar::update_timed);
       bind(SYMBOL(loopCheck), &UVar::loopCheck);
       bind(SYMBOL(accessor), &UVar::accessor);
       proto->slot_set(SYMBOL(updateBounce), new Primitive(&update_bounce));

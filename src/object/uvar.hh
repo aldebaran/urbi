@@ -32,6 +32,7 @@ namespace urbi
       UVar(libport::intrusive_ptr<UVar> model);
       rObject update_(rObject arg);
       rObject update_timed_(rObject arg, libport::utime_t timestamp);
+      rObject update_timed(rObject arg, libport::utime_t timestamp);
       rObject accessor();
       /// Like accessor, but if fromCxx is true and the value is an UValue,
       /// return it instead of its content.

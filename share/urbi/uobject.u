@@ -348,15 +348,6 @@ do (getSlot("UVar"))
       onHasNotifyAccess! |
     void
   };
-  // Remote UObject update
-  function update_timed(val, stamp)
-  {
-    var cr = currentRunner |
-    if (!cr.hasLocalSlot("$uobjectInUpdate"))
-      var cr.'$uobjectInUpdate' = true|
-    update_timed_(val, stamp) |
-    cr.removeSlot("$uobjectInUpdate")
-  };
   void
 };
 
