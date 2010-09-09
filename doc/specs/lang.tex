@@ -753,14 +753,14 @@ documentation of the classes that provide them.
 \newcommand{\operatorass}[1][]{\operator[#1]
                                          {=}    {a = b}            {Right} {Assignment}             {updateSlot("a", b)}    }
 
-\newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}    {a = a #1 b}            }
+\newcommand{\operatoriass}[1]{\operator  {#1=}  {a #1= b}          {Right} {In place assignment}    {a = a.'#1='(b)}            }
 \newcommand{\operatorsiass}  {
   \operatoriass{+}\\
   \operatoriass{-}\\
   \operatoriass{*}\\
   \operatoriass{/}\\
   \operatoriass{\%}\\
-  \operatoriass{\^}
+  \operatoriass{\^}%
   % \operatoriass{\~}
 }
 \newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation}           {(a = a + 1) - 1}       }
@@ -822,7 +822,7 @@ below.
     & \strong{Equivalence}
     \\
     \hline
-  }{
+  }{%
     \\
     \hline
   \end{tabular}
@@ -839,7 +839,7 @@ below.
   \begin{table}[\floatposh]
     \centering
     \begin{operatorTabular}
-    }{
+    }{%
     \end{operatorTabular}
     \caption{\operatorTableCaption}
     \label{\operatorTableLabel}
@@ -874,12 +874,10 @@ below.
 \end{urbiassert}
 
 \subsubsection{Assignment operators}
-
-\dfn{Assignment} in \us can be performed with the \lstinline|=|
-operator.  Shorthands such as \lstinline|+=| exist; they are not
-redefinable since they are equivalent to a regular assignment combined
-with another operator. See \autoref{tab:assignment} and the listing
-below.
+\label{sec:lang:iass}
+\dfn{Assignment} in \us can be performed with the \lstinline|=| operator.
+Assignment operators, such as \lstinline|+=|, are supported too, see
+\autoref{tab:assignment} and the examples below.
 
 
 \begin{operatorTable}{tab:assignment}{Assignment operators}
@@ -893,7 +891,8 @@ below.
 %         because %= is a lame Urbi operator.
 %  x %= 3;
 
-
+The following example demonstrates that \lstinline|\var{a} += \var{b}|
+behaves as \lstinline|\var{a} = \var{a} + \var{b}| for Floats.
 \begin{urbiscript}
 var y = 0;
 [00000000] 0
@@ -908,6 +907,84 @@ y++;
 y;
 [00000000] 5
 \end{urbiscript}
+
+These operators are redefinable.  Indeed, \lstinline|\var{a} += \var{b}| is
+actually processed as \lstinline|\var{a} = \var{a}.'+='(\var{b})|.  This
+definition, which is neither that of \C
+(\lstinline|\var{a} = \var{a}.'+'(\var{b})|) nor that of \Cxx
+(\lstinline|\var{a}.'+='(\var{b})|), provides support for both
+\dfn{immutable} and \dfn{mutable} values.
+
+Small objects such as Floats should typically be immutable, i.e., the value
+of a Float cannot change:
+
+\begin{urbiscript}
+var value = 0|;
+var valueAlias = value|;
+value += 10;
+[00002275] 10
+valueAlias;
+[00002301] 0
+\end{urbiscript}
+
+It would be traitorous for most users that \lstinline|valueAlias| be equal
+to 10 too.  That's why \slot[Float]{'+='} simply bounces to
+\slot[Float]{'+'}.  The ``net result'' of \lstinline|value += 10| is
+therefore \lstinline|value = value.'+'(10)|, i.e., a \emph{new} Float is
+computed from \lstinline|0.'+'(10)|, and \lstinline|value| is rebound to
+it.  The binding from \lstinline|valueAlias| to \lstinline|0| is left as
+is.
+
+On the contrary, large, ``updatable'' objects should provide an
+implementation of \lstinline|'+='| that mutates them.  For instance,
+implementing \lstinline|\var{a}.'+='(\var{b})| as
+\lstinline|\var{a}.'+'(\var{b})| would be too costly for
+\refObject[s]{List}.  Each time \lstinline|+=| is used, we need to create a
+new List (whose content is that of \var{a}), then to append the contents of
+\var{b}, and finally throw away the former value of \var{a}.
+
+Not only is this inefficient, this is also wrong (at least from a certain
+point of view).  Indeed, since we no longer update the List pointed to by
+\var{a}, but rather store a new List, everything that was special to the
+original List (its uid or whatever special slot the user may have defined)
+is lost.  The proper implementation of \refSlot[List]{'+='} is therefore to
+bounce on \refSlot[List]{append}, which \emph{modifies} the List.
+
+\begin{urbiscript}
+var myList = []|;
+var myList.specialFeature = 42|;
+myList += [1, 2, 3];
+[00848865] [1, 2, 3]
+myList.specialFeature;
+[00848869] 42
+var myOtherList = myList + [4, 5];
+[00848873] [1, 2, 3, 4, 5]
+myOtherList.specialFeature;
+[00848926:error] !!! 11.1-26: lookup failed: specialFeature
+\end{urbiscript}
+
+Note however that this means that because \lstinline|\var{a} += \var{b}| is
+\emph{not} processed as \lstinline|\var{a} = \var{a} + \var{b}|, aliases to
+\var{a} are possibly modified.
+
+\begin{urbiscript}
+var something = []|;
+var somethingElse = something|;
+something += [1, 2];
+[00008557] [1, 2]
+somethingElse += [3, 4];
+[00008562] [1, 2, 3, 4]
+something;
+[00008566] [1, 2, 3, 4]
+\end{urbiscript}
+
+So basically, the rules to redefine these operators are:
+\begin{description}
+\item[Immutable (small) objects] \lstinline|'+='| should redirect to
+  \lstinline|'+'| (which of course should \emph{not} modify its target).
+\item[Mutable (large) objects] \lstinline|'+='| should update \this and
+  return it.
+\end{description}
 
 \subsubsection{Bitwise operators}
 
@@ -1050,7 +1127,7 @@ These core operators provide access to slots and their properties. See
   \operatordota\\
   \hline
   \operatorprop\\
-  \operatorpropass\\
+  \operatorpropass
 \end{operatorTable}
 
 \subsubsection{All operators summary}

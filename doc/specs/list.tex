@@ -36,6 +36,22 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item[append](<that>)%
+  Concatenate the contents of the list \var{that} to \this, and return
+  \this.  This function modifies its target.
+\begin{urbiscript}
+{
+  var l = [];
+  assert
+  {
+    l.append([1, 2]) == l;
+    l == [1, 2];
+    l.append([3, 4]) == l;
+    l == [1, 2, 3, 4];
+  };
+};
+\end{urbiscript}
+
 \item[argMax](<fun> = function(a, b) { a < b })%
   The index of the (leftmost) ``largest'' member based on the comparison
   function \var{fun}.
@@ -620,6 +636,24 @@ l;
 [0, 1] + [] == [0, 1];
 [] + [] == [];
 \end{urbiassert}
+
+\item['+='](<other>)%
+ Bounce to \refSlot{append}.
+
+\begin{urbiscript}
+{
+  var l = [];
+  var alias = l;
+  assert
+  {
+    (l += [1, 2]) == l;
+    l == [1, 2];
+    (l += [3, 4]) == l;
+    l == [1, 2, 3, 4];
+    alias == [1, 2, 3, 4];
+  };
+};
+\end{urbiscript}
 
 \item['-'](<other>)%
   Return the target without the elements that are equal to any element

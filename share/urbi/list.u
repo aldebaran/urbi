@@ -207,7 +207,6 @@ do (List)
 
   function '+='(var rhs)
   {
-    this.append(rhs) |
-    this
+    this.append(rhs)
   }
 };
