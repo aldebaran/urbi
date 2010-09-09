@@ -30,7 +30,8 @@ AC_CONFIG_MACRO_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.10 -Wall tar-ustar dist-zip nostdinc foreign])
+AM_INIT_AUTOMAKE([1.11 -Wall tar-ustar dist-zip foreign nostdinc silent-rules])
+AM_SILENT_RULES([yes])
 
 # Urbi standard locations.
 URBI_PACKAGE_KIND([sdk])
