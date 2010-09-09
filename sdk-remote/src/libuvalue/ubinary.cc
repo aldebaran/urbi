@@ -16,7 +16,6 @@
 #include <libport/escape.hh>
 #include <boost/algorithm/string/trim.hpp>
 #include <urbi/ubinary.hh>
-#include <urbi/uabstractclient.hh>
 
 GD_CATEGORY(UValue);
 
