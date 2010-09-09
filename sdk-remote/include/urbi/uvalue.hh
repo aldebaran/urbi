@@ -29,6 +29,7 @@ namespace urbi
 {
 
   /// If a kernel version was associated to this stream, its value.
+  URBI_SDK_API
   int& kernelMajor(std::ostream& o);
 
   // UValue and other related types

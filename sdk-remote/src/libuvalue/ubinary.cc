@@ -16,6 +16,7 @@
 #include <libport/escape.hh>
 #include <boost/algorithm/string/trim.hpp>
 #include <urbi/ubinary.hh>
+#include <urbi/uvalue.hh> // kernelMajor.
 
 GD_CATEGORY(UValue);
 
