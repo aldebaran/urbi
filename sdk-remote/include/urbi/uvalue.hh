@@ -221,16 +221,50 @@ namespace urbi
   LIBPORT_LIST(const UBinary&, const UList&, const UDictionary&, \
                const UObjectStruct&, const USound&, const UImage&,)
 
+# ifndef SWIG
     LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_NUMERIC_TYPES)
     LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_STRING_TYPES)
     LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_MISC_TYPES)
+# else
+    // UFloats.
+    CTOR_AND_ASSIGN_AND_COMMA(ufloat);
+    CTOR_AND_ASSIGN_AND_COMMA(int);
+    CTOR_AND_ASSIGN_AND_COMMA(long);
+    CTOR_AND_ASSIGN_AND_COMMA(unsigned int);
+    CTOR_AND_ASSIGN_AND_COMMA(unsigned long);
+    CTOR_AND_ASSIGN_AND_COMMA(unsigned long long);
+    CTOR_AND_ASSIGN_AND_COMMA(long long);
+
+    // Strings.
+    CTOR_AND_ASSIGN_AND_COMMA(const char*);
+    CTOR_AND_ASSIGN_AND_COMMA(const void*);
+    CTOR_AND_ASSIGN_AND_COMMA(const std::string&);
+
+    // Others.
+    CTOR_AND_ASSIGN_AND_COMMA(const UBinary&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UList&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UDictionary&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UObjectStruct&);
+    CTOR_AND_ASSIGN_AND_COMMA(const USound&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UImage&);
+# endif
 
 #undef CTOR_AND_ASSIGN_AND_COMMA
 
 #define CAST_OPERATOR(Type) \
     operator Type() const;
 
+# ifndef SWIG
     LIBPORT_LIST_APPLY(CAST_OPERATOR, URBI_NUMERIC_TYPES)
+# else
+    operator ufloat() const;
+    operator std::string() const;
+    operator int() const;
+    operator unsigned int() const;
+    operator long() const;
+    operator unsigned long() const;
+    operator bool() const;
+# endif
 #undef CAST_OPERATOR
 
 #ifdef DOXYGEN
