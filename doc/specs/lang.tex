@@ -763,8 +763,8 @@ documentation of the classes that provide them.
   \operatoriass{\^}%
   % \operatoriass{\~}
 }
-\newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation}           {(a = a + 1) - 1}       }
-\newcommand{\operatordec}    {\operator  {--}   {a--}  {-}     {Incrementation}           {(a = a - 1) + 1}       }
+\newcommand{\operatorinc}    {\operator  {++}   {a++}  {-}     {Incrementation}           {\{var '$a' = a | a = a.'++' | '$a'\}       }}
+\newcommand{\operatordec}    {\operator  {--}   {a--}  {-}     {Decrementation}           {\{var '$a' = a | a = a.'--' | '$a'\}       }}
 
 \newcommand{\operatoruplus}  {\poperator {+}    {-}    {Identity}               }
 \newcommand{\operatorumin}   {\poperator {-}    {-}    {Opposite}               }
@@ -902,10 +902,6 @@ y += 10;
 [00000000] 20
 y /= 5;
 [00000000] 4
-y++;
-[00000000] 4
-y;
-[00000000] 5
 \end{urbiscript}
 
 These operators are redefinable.  Indeed, \lstinline|\var{a} += \var{b}| is
@@ -915,6 +911,7 @@ definition, which is neither that of \C
 (\lstinline|\var{a}.'+='(\var{b})|), provides support for both
 \dfn{immutable} and \dfn{mutable} values.
 
+\paragraph{Immutable Values}
 Small objects such as Floats should typically be immutable, i.e., the value
 of a Float cannot change:
 
@@ -935,6 +932,7 @@ result'' of \lstinline|value += 10| is therefore
 \lstinline|0.'+'(10)|, and \lstinline|value| is rebound to it.  The binding
 from \lstinline|valueAlias| to \lstinline|0| is left as is.
 
+\paragraph{Mutable Values}
 On the contrary, large, ``updatable'' objects should provide an
 implementation of \lstinline|'+='| that mutates them.  For instance,
 implementing \lstinline|\var{a}.'+='(\var{b})| as
@@ -978,6 +976,7 @@ something;
 [00008566] [1, 2, 3, 4]
 \end{urbiscript}
 
+\paragraph{Example}
 So basically, the rules to redefine these operators are:
 \begin{description}
 \item[Immutable (small) objects] \lstinline|'+='| should redirect to
@@ -985,6 +984,115 @@ So basically, the rules to redefine these operators are:
 \item[Mutable (large) objects] \lstinline|'+='| should update \this and
   return it.
 \end{description}
+
+The following examples contrasts both approaches.
+\begin{urbiscript}
+class Counter
+{
+  var count = 0;
+  function init (n)   { var this.count = n };
+  // Display the value, and the identity.
+  function asString() { "%s @ %s" % [count, uid ] };
+  function '+'(var n) { new(count + n) };
+  function '-'(var n) { new(count - n) };
+}|;
+\end{urbiscript}
+
+\begin{multicols}{2}
+\begin{urbiscript}
+class ImmutableCounter : Counter
+{
+  function '+='(var n) { this + n };
+  function '-='(var n) { this - n };
+}|;
+
+var ic1 = ImmutableCounter.new(0);
+[00010566] 0 @ 0x100354b70
+var ic2 = ic1;
+[00010574] 0 @ 0x100354b70
+
+ic1 += 1;
+[00010588] 1 @ 0x10875bee0
+
+// ic1 points to a new object.
+ic1;
+[00010592] 1 @ 0x10875bee0
+// ic2 still points to its original value.
+ic2;
+[00010594] 0 @ 0x100354b70
+\end{urbiscript}
+\columnbreak
+\begin{urbiscript}
+class MutableCounter : Counter
+{
+  function '+='(var n) { count += n | this };
+  function '-='(var n) { count -= n | this };
+}|;
+
+var mc1 = MutableCounter.new(0);
+[00029902] 0 @ 0x100364e00
+var mc2 = mc1;
+[00029911] 0 @ 0x100364e00
+
+mc1 += 1;
+[00029925] 1 @ 0x100364e00
+
+// mc1 points to the same, updated, object.
+mc1;
+[00029930] 1 @ 0x100364e00
+// mc2 too.
+mc2;
+[00029936] 1 @ 0x100364e00
+\end{urbiscript}
+\end{multicols}
+
+\subsubsection{Postfix Operators}
+\label{sec:lang:postop}
+
+In the tradition of \C, \us provides postfix operators (see
+\autoref{tab:postop}), e.g., \lstinline|\var{b} = \var{a}++|.  Prefix
+operators, however, are not supported.  Rather than \lstinline|++\var{a}|,
+write \lstinline|\var{a} += 1|.
+
+\begin{operatorTable}{tab:postop}{Postfix operators}
+  \operatorinc\\
+  \operatordec
+\end{operatorTable}
+
+These operators \emph{modify} the variable/slot they are applied to, and
+return the \emph{former} value of the variable/slot.
+
+\begin{urbiscript}
+{
+  var count = 0;
+  var countAlias = count;
+  assert
+  {
+    count++ == 0;
+    count   == 1;
+    countAlias == 0;
+    count++ == 1;
+    count   == 2;
+    countAlias == 0;
+    count-- == 2;
+    count   == 1;
+  };
+};
+\end{urbiscript}
+
+Similarly to assignment operators, these operators are redefinable.
+Indeed, \lstinline|\var{a}++| is actually processed like
+% beware of wrapping.
+\lstinline-{ var '$save' = \var{a} | \var{a} = \var{a}.'++' | '$save' }-.
+In other words, you are entitled to redefine the operator \lstinline|'++'|
+whose semantics is ``return the successor of \this''.
+
+Beware that the operator \lstinline|'++'| should \emph{not} modify its
+target, but rather return a fresh value.  Indeed, if it alters \this, the
+copy made in \lstinline|'$save'| will also have its value updated.  In other
+words, the value of \lstinline|\var{a}++| would be its new one, not its
+former one.
+
 
 \subsubsection{Bitwise operators}
 
@@ -1056,7 +1164,7 @@ var z = 0;
 [00000000] 0
 assert
 {
-  z === z;
+     z === z;
   ! (z !== z);
 };
 \end{urbiscript}

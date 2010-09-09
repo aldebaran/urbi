@@ -182,43 +182,13 @@ do (Object)
     };
   };
 
-  function '+=' (rhs)
-  {
-    return this + rhs;
-  };
+  function '+='(rhs)  { this + rhs };
+  function '-='(rhs)  { this - rhs };
+  function '*='(rhs)  { this * rhs };
+  function '/='(rhs)  { this / rhs };
+  function '^='(rhs)  { this ^ rhs };
+  function '%='(rhs)  { this % rhs };
 
-  function '-=' (rhs)
-  {
-    return this - rhs;
-  };
-
-  function '*=' (rhs)
-  {
-    return this * rhs;
-  };
-
-  function '/=' (rhs)
-  {
-    return this / rhs;
-  };
-
-  function '^=' (rhs)
-  {
-    return this ^ rhs;
-  };
-
-  function '%=' (rhs)
-  {
-    return this % rhs;
-  };
-
-  function '++' ()
-  {
-    return this.'+='(1);
-  };
-
-  function '--' ()
-  {
-    return this.'-='(1);
-  };
+  function '++'()  { this.'+='(1) };
+  function '--'()  { this.'-='(1) };
 };
