@@ -442,6 +442,7 @@ namespace std {
 %ignore urbi::UValue::UValue(long, bool);
 %ignore urbi::UValue::UValue(unsigned int, bool);
 %ignore urbi::UValue::UValue(unsigned long, bool);
+%ignore urbi::UValue::UValue(long long, bool);
 %ignore urbi::UValue::operator=(const void*);
 %ignore urbi::UValue::parse;
 %ignore urbi::UValue::print;
@@ -465,7 +466,9 @@ namespace urbi
 
     /// FIXME !!! This can SEGFAULT !!
     ///std::string		getString () { return *self->stringValue; }
-    ///double		getDouble () { return self->val; }
+
+    double		getDouble () { return self->val; }
+
     ///UBinary*		getUBinary () { return self->binary; }
     ///UList*		getUList () { return self->list; }
 
