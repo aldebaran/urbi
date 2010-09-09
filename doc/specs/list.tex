@@ -37,19 +37,13 @@ Non-empty list may actually \emph{terminate} with a comma, rather than
 
 \begin{urbiscriptapi}
 \item[append](<that>)%
-  Concatenate the contents of the list \var{that} to \this, and return
-  \this.  This function modifies its target.
+  Deprecated alias for \refSlot{'+='}.
+
 \begin{urbiscript}
-{
-  var l = [];
-  assert
-  {
-    l.append([1, 2]) == l;
-    l == [1, 2];
-    l.append([3, 4]) == l;
-    l == [1, 2, 3, 4];
-  };
-};
+var one = [1]|;
+one.append(["one", [1]]);
+[00000005:warning] *** `list.append(that)' is deprecated, use `list += that'
+[00000005] [1, "one", [1]]
 \end{urbiscript}
 
 \item[argMax](<fun> = function(a, b) { a < b })%
@@ -637,8 +631,9 @@ l;
 [] + [] == [];
 \end{urbiassert}
 
-\item['+='](<other>)%
- Bounce to \refSlot{append}.
+\item['+='](<that>)%
+  Concatenate the contents of the List \var{that} to \this, and return
+  \this.  This function modifies its target.
 
 \begin{urbiscript}
 {

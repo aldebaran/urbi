@@ -948,7 +948,7 @@ point of view).  Indeed, since we no longer update the List pointed to by
 \var{a}, but rather store a new List, everything that was special to the
 original List (its uid or whatever special slot the user may have defined)
 is lost.  The proper implementation of \refSlot[List]{'+='} is therefore to
-bounce on \refSlot[List]{append}, which \emph{modifies} the List.
+\emph{modify} \this by appending the added members.
 
 \begin{urbiscript}
 var myList = []|;

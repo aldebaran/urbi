@@ -205,8 +205,9 @@ do (List)
     res
   };
 
-  function '+='(var rhs)
+  function append(var rhs)
   {
-    this.append(rhs)
+    Kernel1.deprecated("list.append(that)", "list += that")|
+    '+='(rhs)
   }
 };

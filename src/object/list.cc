@@ -387,7 +387,7 @@ namespace urbi
       DECLARE(SBL_SBR,        operator[]      );
       DECLARE(SBL_SBR_EQ,     set             );
       DECLARE(PLUS,           operator+       );
-      DECLARE(append,         operator+=      );
+      DECLARE(PLUS_EQ,        operator+=      );
       DECLARE(insert,         insert          );
       DECLARE(insertBack,     insertBack      );
       DECLARE(insertFront,    insertFront     );
