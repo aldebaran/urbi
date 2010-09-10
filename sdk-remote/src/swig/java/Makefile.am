@@ -73,7 +73,8 @@ liburbi_SOURCES =				\
 	liburbi/sound/SoundSampler.java		\
 	liburbi/sound/SoundUtilities.java	\
 	liburbi/main/UObjectStarter.java	\
-	liburbi/main/UObjectJava.java
+	liburbi/main/UObjectJava.java		\
+	liburbi/main/UMain.java
 
 generated_SOURCES =				\
 	$(wildcard liburbi/main/*.java)
