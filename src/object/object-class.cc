@@ -174,14 +174,13 @@ namespace urbi
     `---------*/
 
     /// Adding or removing protos. \a Verb is "add" or "remove".
-#define CHANGE_PARENTS(Verb)                    \
-    static rObject                              \
-    object_class_ ## Verb ## Proto (            \
-      const objects_type& args)                 \
-    {                                           \
-      check_arg_count(args.size() - 1, 1);      \
-      args[0]->proto_ ## Verb (args[1]);        \
-      return args[0];                           \
+#define CHANGE_PARENTS(Verb)                                    \
+    static rObject                                              \
+    object_class_ ## Verb ## Proto (const objects_type& args)   \
+    {                                                           \
+      check_arg_count(args.size() - 1, 1);                      \
+      args[0]->proto_ ## Verb (args[1]);                        \
+      return args[0];                                           \
     }
 
     /// Add a proto.
@@ -290,19 +289,20 @@ namespace urbi
       return self->local_slot_get(slot);
     }
 
-#define OPERATOR(funcname)              \
-  static rObject                        \
-  object_class_##funcname##_EQ(rObject lhs, rObject rhs)  \
-  {                                                  \
-    return lhs->call(SYMBOL(funcname), rhs);            \
-  }
+#define OPERATOR(Name)                                          \
+    static rObject                                              \
+    object_class_ ## Name ## _EQ(rObject lhs, rObject rhs)      \
+    {                                                           \
+      return lhs->call(SYMBOL(Name), rhs);                      \
+    }
 
-    OPERATOR(PLUS)
-    OPERATOR(MINUS)
-    OPERATOR(STAR)
-    OPERATOR(SLASH)
     OPERATOR(CARET)
+    OPERATOR(MINUS)
     OPERATOR(PERCENT)
+    OPERATOR(PLUS)
+    OPERATOR(SLASH)
+    OPERATOR(STAR)
+#undef OPERATOR
 
     static rObject
     object_class_PLUS_PLUS(rObject lhs)
