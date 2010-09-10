@@ -11,13 +11,13 @@
 #ifndef OBJECT_OUTPUT_STREAM_HH
 # define OBJECT_OUTPUT_STREAM_HH
 
-# include <urbi/object/cxx-object.hh>
+# include <object/stream.hh>
 
 namespace urbi
 {
   namespace object
   {
-    class OutputStream: public CxxObject
+    class OutputStream: public Stream
     {
 
       /*-----------------------------.
@@ -29,13 +29,6 @@ namespace urbi
       OutputStream(rOutputStream stream);
       ~OutputStream();
 
-      /*--------------.
-      | Data access.  |
-      `--------------*/
-
-    private:
-      void checkFD_() const;
-
       /*---------------.
       | Urbi methods.  |
       `---------------*/
@@ -45,15 +38,12 @@ namespace urbi
       rOutputStream putByte(unsigned char);
       void flush();
       rOutputStream put(rObject o);
-      void close();
 
       /*----------.
       | Details.  |
       `----------*/
 
     private:
-      int fd_;
-      bool own_;
       URBI_CXX_OBJECT_(OutputStream);
     };
   }

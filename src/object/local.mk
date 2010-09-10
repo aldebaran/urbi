@@ -133,7 +133,9 @@ if !COMPILATION_MODE_SPACE
     object/output-stream.cc			\
     object/output-stream.hh			\
     object/regexp.cc				\
-    object/regexp.hh
+    object/regexp.hh				\
+    object/stream.cc				\
+    object/stream.hh
 
 # Too hard currently...
 if !WIN32

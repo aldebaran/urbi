@@ -31,13 +31,25 @@ requires a \refObject{File}.
 
 \begin{urbiscript}[firstnumber=1]
 File.save("file.txt", "1\n2\n");
-InputStream.new(File.new("file.txt"));
+var is = InputStream.new(File.new("file.txt"));
 [00000001] InputStream_0x827000
+\end{urbiscript}
+
+Bear in mind that open streams should be closed
+(\autoref{sec:specs:output-stream:ctor}).
+
+\begin{urbiscript}
+is.close;
 \end{urbiscript}
 
 \subsection{Slots}
 
 \begin{urbiscriptapi}
+\item[close] Close the stream, return void.
+\begin{urbiassert}
+InputStream.new(File.create("file.txt")).close.isVoid;
+\end{urbiassert}
+
 \item[get]
   Get the next available byte as a \refObject{Float}, or
   \lstinline|void| if the end of file was reached.
@@ -48,6 +60,7 @@ InputStream.new(File.new("file.txt"));
   var x;
   while (!(x = i.get.acceptVoid).isVoid)
     cout << x;
+  i.close;
 };
 [00000001:output] 49
 [00000002:output] 10
@@ -65,6 +78,7 @@ InputStream.new(File.new("file.txt"));
   var x;
   while (!(x = i.getChar.acceptVoid).isVoid)
     cout << x;
+  i.close;
 };
 [00000001:output] "1"
 [00000002:output] "\n"
@@ -83,6 +97,7 @@ InputStream.new(File.new("file.txt"));
   var x;
   while (!(x = i.getLine.acceptVoid).isVoid)
     cout << x;
+  i.close;
 };
 [00000001:output] "1"
 [00000002:output] "2"

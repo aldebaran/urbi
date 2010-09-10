@@ -61,6 +61,7 @@ namespace urbi
     Macro(Semaphore);                           \
     Macro(Server);                              \
     Macro(Socket);                              \
+    Macro(Stream);                              \
     Macro(String);                              \
     Macro(Tag);                                 \
     Macro(TextOutputStream);                    \

@@ -28,31 +28,19 @@ namespace urbi
   namespace object
   {
     OutputStream::OutputStream(int fd, bool own)
-      : fd_(fd)
-      , own_(own)
+      : Stream(fd, own)
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     OutputStream::OutputStream(rOutputStream model)
-      : fd_(model->fd_)
-      , own_(false)
+      : Stream(model)
     {
       proto_add(proto);
     }
 
     OutputStream::~OutputStream()
     {
-      if (own_ && fd_ != -1)
-        if (::close(fd_))
-          RAISE(libport::strerror(errno));
-    }
-
-    void
-    OutputStream::checkFD_() const
-    {
-      if (fd_ == -1)
-        RAISE("stream is closed");
     }
 
     /*---------------.
@@ -61,18 +49,13 @@ namespace urbi
 
     void OutputStream::init(rFile f)
     {
-      libport::path path = f->value_get()->value_get();
-      fd_ = open(path.to_string().c_str(),
-                 O_WRONLY | O_APPEND | O_CREAT, S_IRWXU);
-
-      if (fd_ < 0)
-        FRAISE("cannot open file for writing: %s", path);
-      own_ = true;
+      open(f, O_WRONLY | O_APPEND | O_CREAT, S_IRWXU,
+           "cannot open file for writing");
     }
 
     rOutputStream OutputStream::putByte(unsigned char c)
     {
-      checkFD_();
+      check();
       // FIXME: bufferize
       size_t size = write(fd_, &c, 1);
       assert_eq(size, 1u);
@@ -82,29 +65,20 @@ namespace urbi
 
     void OutputStream::flush()
     {
-      checkFD_();
+      check();
       // FIXME: nothing since not bufferized for now
     }
 
     rOutputStream
     OutputStream::put(rObject o)
     {
-      checkFD_();
+      check();
       std::string str = o->as_string();
       size_t str_size = str.size();
       size_t size = write(fd_, str.c_str(), str_size);
       assert_eq(size, str_size);
       (void)size;
       return this;
-    }
-
-    void
-    OutputStream::close()
-    {
-      checkFD_();
-      if (::close(fd_))
-        RAISE(libport::strerror(errno));
-      fd_ = -1;
     }
 
     /*----------------.
@@ -122,8 +96,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(OutputStream)
-      : fd_(STDOUT_FILENO)
-      , own_(false)
+      : Stream(STDOUT_FILENO, false)
     {}
 
   }

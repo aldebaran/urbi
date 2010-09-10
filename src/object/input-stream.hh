@@ -13,13 +13,13 @@
 
 # include <libport/cstdio>
 
-# include <urbi/object/cxx-object.hh>
+# include <object/stream.hh>
 
 namespace urbi
 {
   namespace object
   {
-    class InputStream: public CxxObject
+    class InputStream: public Stream
     {
 
       /*-----------------------------.
@@ -44,9 +44,6 @@ namespace urbi
       /// \return true if something was read.
       bool getBuffer_();
       std::string getSeparator_(char sep, bool incl, bool& ok);
-      int fd_;
-      /// Whether we own fd_, and therefore need to close it.
-      bool own_;
       std::string buffer_;
       unsigned pos_;
       size_t size_;

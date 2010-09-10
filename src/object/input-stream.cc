@@ -32,8 +32,7 @@ namespace urbi
     `-----------------------------*/
 
     InputStream::InputStream(int fd, bool own)
-      : fd_(fd)
-      , own_(own)
+      : Stream(fd, own)
       , pos_(0)
       , size_(0)
     {
@@ -41,8 +40,7 @@ namespace urbi
     }
 
     InputStream::InputStream(rInputStream model)
-      : fd_(model->fd_)
-      , own_(false)
+      : Stream(model)
       , pos_(0)
       , size_(0)
     {
@@ -52,8 +50,6 @@ namespace urbi
 
     InputStream::~InputStream()
     {
-      if (own_ && close(fd_))
-        RAISE(libport::strerror(errno));
     }
 
     /*--------------.
@@ -111,11 +107,7 @@ namespace urbi
     void
     InputStream::init(rFile f)
     {
-      libport::path path = f->value_get()->value_get();
-      fd_ = open(path.to_string().c_str(), O_RDONLY);
-      if (fd_ < 0)
-        FRAISE("cannot open file for reading: %s", path);
-      own_ = true;
+      open(f, O_RDONLY, 0, "cannot open file for reading");
     }
 
     rObject
@@ -153,6 +145,7 @@ namespace urbi
     void
     InputStream::initialize(CxxObject::Binder<InputStream>& bind)
     {
+      bind(SYMBOL(close), &InputStream::close);
       bind(SYMBOL(get), &InputStream::get);
       bind(SYMBOL(getChar), &InputStream::getChar);
       bind(SYMBOL(getLine), &InputStream::getLine);
@@ -160,8 +153,7 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(InputStream)
-      : fd_(STDIN_FILENO)
-      , own_(false)
+      : Stream(STDIN_FILENO, false)
       , pos_(0)
       , size_(0)
     {}
