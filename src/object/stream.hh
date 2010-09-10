@@ -12,6 +12,7 @@
 # define OBJECT_STREAM_HH
 
 # include <libport/cstdio>
+# include <libport/sys/types.h> // mode_t
 
 # include <urbi/object/cxx-object.hh>
 
