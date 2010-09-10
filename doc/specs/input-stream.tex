@@ -45,14 +45,20 @@ is.close;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[close] Close the stream, return void.
-\begin{urbiassert}
-InputStream.new(File.create("file.txt")).close.isVoid;
-\end{urbiassert}
+\item[close] Close the stream, return void.  Raise an error if the file is
+  closed.
+\begin{urbiscript}
+{
+  var i = InputStream.new(File.create("file.txt"));
+  assert(i.close.isVoid);
+  i.close;
+};
+[00000001:error] !!! close: stream is closed
+\end{urbiscript}
 
-\item[get]
-  Get the next available byte as a \refObject{Float}, or
-  \lstinline|void| if the end of file was reached.
+\item[get]%
+  Get the next available byte as a \refObject{Float}, or \lstinline|void| if
+  the end of file was reached.  Raise an error if the file is closed.
 \begin{urbiscript}
 {
   File.save("file.txt", "1\n2\n");
@@ -61,16 +67,18 @@ InputStream.new(File.create("file.txt")).close.isVoid;
   while (!(x = i.get.acceptVoid).isVoid)
     cout << x;
   i.close;
+  i.get;
 };
 [00000001:output] 49
 [00000002:output] 10
 [00000003:output] 50
 [00000004:output] 10
+[00000005:error] !!! get: stream is closed
 \end{urbiscript}
 
-\item[getChar]
-  Get the next available byte as a \refObject{String}, or
-  \lstinline|void| if the end of file was reached.
+\item[getChar]%
+  Get the next available byte as a \refObject{String}, or \lstinline|void|
+  if the end of file was reached.  Raise an error if the file is closed.
 \begin{urbiscript}
 {
   File.save("file.txt", "1\n2\n");
@@ -79,17 +87,19 @@ InputStream.new(File.create("file.txt")).close.isVoid;
   while (!(x = i.getChar.acceptVoid).isVoid)
     cout << x;
   i.close;
+  i.getChar;
 };
 [00000001:output] "1"
 [00000002:output] "\n"
 [00000003:output] "2"
 [00000004:output] "\n"
+[00000005:error] !!! getChar: stream is closed
 \end{urbiscript}
 
-\item[getLine]
-  Get the next available line as a \refObject{String}, or
-  \lstinline|void| if the end of file was reached.  The end-of-line
-  characters are trimmed.
+\item[getLine]%
+  Get the next available line as a \refObject{String}, or \lstinline|void|
+  if the end of file was reached.  The end-of-line characters are trimmed.
+  Raise an error if the file is closed.
 \begin{urbiscript}
 {
   File.save("file.txt", "1\n2\n");
@@ -98,9 +108,11 @@ InputStream.new(File.create("file.txt")).close.isVoid;
   while (!(x = i.getLine.acceptVoid).isVoid)
     cout << x;
   i.close;
+  i.getLine;
 };
 [00000001:output] "1"
 [00000002:output] "2"
+[00000005:error] !!! getLine: stream is closed
 \end{urbiscript}
 \end{urbiscriptapi}
 

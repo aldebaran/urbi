@@ -44,7 +44,6 @@ namespace urbi
       , pos_(0)
       , size_(0)
     {
-      aver(model);
       proto_add(model);
     }
 
@@ -59,6 +58,7 @@ namespace urbi
     int
     InputStream::get_()
     {
+      check();
       if (pos_ == size_ && !getBuffer_())
         return -1;
       return buffer_[pos_++];
@@ -77,6 +77,7 @@ namespace urbi
     std::string
     InputStream::getSeparator_(char sep, bool incl, bool& ok)
     {
+      check();
       ok = false;
       std::string res;
 

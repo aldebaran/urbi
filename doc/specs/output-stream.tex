@@ -48,34 +48,43 @@ o2.close;
 \begin{urbiscriptapi}
 \item[<<](<that>)%
   Output \lstinline|\var{this}.asString|.  Return \this to
-  enable chains of calls.
+  enable chains of calls.  Raise an error if the file is closed.
 \begin{urbiscript}
 var o = OutputStream.new(File.create("fresh.txt"))|;
 o << 1 << "2" << [3, [4]]|;
 o.close;
 assert (File.new("fresh.txt").content.data == "12[3, [4]]");
+o << 1;
+[00000005:error] !!! <<: stream is closed
 \end{urbiscript}
 
-\item[close]
-  Flush the buffers, and close the file.
-\begin{urbiassert}
-OutputStream.new(File.create("close.txt")).close.isVoid;
-\end{urbiassert}
+\item[close] Flush the buffers, close the stream, return void.  Raise an
+  error if the file is closed.
+\begin{urbiscript}
+{
+  var o = OutputStream.new(File.create("file.txt"));
+  assert(o.close.isVoid);
+  o.close;
+};
+[00000001:error] !!! close: stream is closed
+\end{urbiscript}
 
 \item[flush]%
   To provide efficient input/output operations, \dfn[buffer]{buffers} are
   used.  As a consequence, what is put into a stream might not be
   immediately saved on the actual file.  To \dfn{flush} a buffer means to
-  dump its content to the file.
+  dump its content to the file.  Raise an error if the file is closed.
 \begin{urbiscript}
 var s = OutputStream.new(File.create("file.txt"))|
 s.flush;
 s.close;
+s.flush;
+[00039175:error] !!! flush: stream is closed
 \end{urbiscript}
 
 \item[put](<byte>)%
   Output the character corresponding to the numeric code \var{byte} in
-  \this, and return \this.
+  \this, and return \this.  Raise an error if the file is closed.
 \begin{urbiscript}
 var f = File.create("put.txt") |
 var os = OutputStream.new(f) |
@@ -95,6 +104,8 @@ os.put(-1);
 os.put(256);
 [00039175:error] !!! put: bad numeric conversion: positive overflow: 256
 os.close;
+os.put(0);
+[00039179:error] !!! put: stream is closed
 \end{urbiscript}
 
 \end{urbiscriptapi}

@@ -46,8 +46,12 @@ namespace urbi
 
     Stream::~Stream()
     {
+      // Don't play with check here (so don't simplify into calling
+      // close()), since it might RAISE, which catches "this", which
+      // is being destroyed => Boom.
       if (own_ && fd_ != -1)
         if (::close(fd_))
+          // FIXME: RAISING is not a good thing here.
           RAISE(libport::strerror(errno));
     }
 
