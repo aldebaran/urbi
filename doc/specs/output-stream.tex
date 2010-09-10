@@ -23,11 +23,23 @@ requires a \refObject{File}.  If the file already exists, content is
 override its content.
 
 \begin{urbiscript}
-OutputStream.new(File.create("file.txt"));
+var o1 = OutputStream.new(File.create("file.txt"));
 [00000001] OutputStream_0x827000
 
-OutputStream.new(File.new("file.txt"));
+var o2 = OutputStream.new(File.new("file.txt"));
 [00000002] OutputStream_0x827000
+\end{urbiscript}
+
+When an OutputStream is opened on a File, that File cannot be removed.  On
+Unix systems, this is handled gracefully (the references to the file are
+removed, but the content is still there for the streams that were already
+bound to this file); so in practice, the File appears to be removable.  On
+Windows, the File cannot be removed at all.  Therefore, do not forget to
+close the streams you opened.
+
+\begin{urbiscript}
+o1.close;
+o2.close;
 \end{urbiscript}
 
 \subsection{Slots}
@@ -39,7 +51,7 @@ OutputStream.new(File.new("file.txt"));
 \begin{urbiscript}
 var o = OutputStream.new(File.create("fresh.txt"))|;
 o << 1 << "2" << [3, [4]]|;
-
+o.close;
 assert (File.new("fresh.txt").content.data == "12[3, [4]]");
 \end{urbiscript}
 
@@ -54,32 +66,34 @@ OutputStream.new(File.create("close.txt")).close.isVoid;
   used.  As a consequence, what is put into a stream might not be
   immediately saved on the actual file.  To \dfn{flush} a buffer means to
   dump its content to the file.
-\begin{urbiassert}
-OutputStream.new(File.create("file.txt")).flush.isVoid;
-\end{urbiassert}
+\begin{urbiscript}
+var s = OutputStream.new(File.create("file.txt"))|
+s.flush;
+s.close;
+\end{urbiscript}
 
 \item[put](<byte>)%
   Output the character corresponding to the numeric code \var{byte} in
   \this, and return \this.
-\begin{urbiscript}[firstnumber=1]
+\begin{urbiscript}
 var f = File.create("put.txt") |
-var o = OutputStream.new(f) |
+var os = OutputStream.new(f) |
 
 assert
 {
-  o.put(0)
-   .put(255)
-   .put(72).put(101).put(108).put(108).put(111)
-  === o;
-  o.close.isVoid;
+  os.put(0)
+    .put(255)
+    .put(72).put(101).put(108).put(108).put(111)
+  === os;
   f.content.data == "\0\xffHello";
 };
-o.put(12.5);
+os.put(12.5);
 [00029816:error] !!! put: bad numeric conversion: overflow or non empty fractional part: 12.5
-o.put(-1);
+os.put(-1);
 [00034840:error] !!! put: bad numeric conversion: negative overflow: -1
-o.put(256);
+os.put(256);
 [00039175:error] !!! put: bad numeric conversion: positive overflow: 256
+os.close;
 \end{urbiscript}
 
 \end{urbiscriptapi}

@@ -37,27 +37,27 @@ read or write to Files.
 \item[asList]
   Read the file, and return its content as a list of its lines.
 \begin{urbiscript}
-OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
+File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asList == ["1", "2"]);
 \end{urbiscript}
 
 \item[asPrintable]
 \begin{urbiscript}
-OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
+File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asPrintable == "File(\"file.txt\")");
 \end{urbiscript}
 
 \item[asString]
   The name of the opened file.
 \begin{urbiscript}
-OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
+File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asString == "file.txt");
 \end{urbiscript}
 
 \item[content]
   The content of the file as a \refObject{Binary} object.
 \begin{urbiscript}
-OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
+File.save("file.txt", "1\n2\n");
 assert
 {
   File.new("file.txt").content == Binary.new("", "1\n2\n");
@@ -111,7 +111,7 @@ p.exists;
   Rename the file to \var{name}.  If the target exists, it is replaced by
   the opened file.
 \begin{urbiscript}
-OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
+File.save("file.txt", "1\n2\n");
 File.new("file.txt").rename("bar.txt");
 assert
 {
@@ -120,6 +120,13 @@ assert
 };
 \end{urbiscript}
 
+\item[save](<name>, <content>)
+  Use \refSlot{create} to create the File named \var{name}, store the
+  \var{content} in it, and close the file.  Return void.
+\begin{urbiassert}
+File.save("file.txt", "1\n2\n").isVoid;
+File.new("file.txt").content.data == "1\n2\n";
+\end{urbiassert}
 
 \end{urbiscriptapi}
 

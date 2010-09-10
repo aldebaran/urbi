@@ -30,7 +30,7 @@ An InputStream is a reading-interface to a file, so its constructor
 requires a \refObject{File}.
 
 \begin{urbiscript}[firstnumber=1]
-OutputStream.new(File.create("file.txt")) << "1\n2\n"|;
+File.save("file.txt", "1\n2\n");
 InputStream.new(File.new("file.txt"));
 [00000001] InputStream_0x827000
 \end{urbiscript}
@@ -43,7 +43,7 @@ InputStream.new(File.new("file.txt"));
   \lstinline|void| if the end of file was reached.
 \begin{urbiscript}
 {
-  OutputStream.new(File.create("file.txt")) << "1\n2\n";
+  File.save("file.txt", "1\n2\n");
   var i = InputStream.new(File.new("file.txt"));
   var x;
   while (!(x = i.get.acceptVoid).isVoid)
@@ -60,7 +60,7 @@ InputStream.new(File.new("file.txt"));
   \lstinline|void| if the end of file was reached.
 \begin{urbiscript}
 {
-  OutputStream.new(File.create("file.txt")) << "1\n2\n";
+  File.save("file.txt", "1\n2\n");
   var i = InputStream.new(File.new("file.txt"));
   var x;
   while (!(x = i.getChar.acceptVoid).isVoid)
@@ -78,7 +78,7 @@ InputStream.new(File.new("file.txt"));
   characters are trimmed.
 \begin{urbiscript}
 {
-  OutputStream.new(File.create("file.txt")) << "1\n2\n";
+  File.save("file.txt", "1\n2\n");
   var i = InputStream.new(File.new("file.txt"));
   var x;
   while (!(x = i.getLine.acceptVoid).isVoid)

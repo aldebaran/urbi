@@ -206,21 +206,21 @@ getenv("UndefinedEnvironmentVariable").isNil;
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}), and
   load it.  Throw a \refSlot[Exception]{FileNotFound} error if the file
   cannot be found.  Return the last value of the file.
-\begin{urbiassert}
+\begin{urbiscript}
 // Create the file ``123.u'' that contains exactly ``123;''.
-OutputStream.new(File.create("123.u")) << "123;";
-load("123.u") == 123;
-\end{urbiassert}
+File.save("123.u", "123;");
+assert (load("123.u") == 123);
+\end{urbiscript}
 
 
 \item[loadFile](<file>)%
   Load the \us file \var{file}.  Throw a \refSlot[Exception]{FileNotFound}
   error if the file cannot be found.  Return the last value of the file.
-\begin{urbiassert}
+\begin{urbiscript}
 // Create the file ``123.u'' that contains exactly ``123;''.
-OutputStream.new(File.create("123.u")) << "123;";
-loadFile("123.u") == 123;
-\end{urbiassert}
+File.save("123.u", "123;");
+assert (loadFile("123.u") == 123);
+\end{urbiscript}
 
 
 \item[loadLibrary](<library>)%
@@ -249,12 +249,15 @@ loadFile("123.u") == 123;
   If the file is found announce on \var{Channel} that \var{file} is
   about to be loaded, and load it.
 
-\begin{urbiassert}
+\begin{urbiscript}
 // Create the file ``123.u'' that contains exactly ``123;''.
-OutputStream.new(File.create("123.u")) << "123;";
-maybeLoad("123.u") == 123;
-maybeLoad("u.123").isVoid;
-\end{urbiassert}
+File.save("123.u", "123;");
+assert
+{
+  maybeLoad("123.u") == 123;
+  maybeLoad("u.123").isVoid;
+};
+\end{urbiscript}
 
 
 \item[ndebug] If true, do not evaluate the assertions.  See
@@ -336,11 +339,14 @@ var Global.x = 0;
   Look for \var{file} in the \refSlot{searchPath} and return its
   \refObject{Path}.  Throw a \refSlot[Exception]{FileNotFound} error if the
   file cannot be found.
-\begin{urbiassert}
+\begin{urbiscript}
 // Create the file ``123.u'' that contains exactly ``123;''.
-OutputStream.new(File.create("123.u")) << "123;";
-searchFile("123.u") == Path.cwd / Path.new("123.u");
-\end{urbiassert}
+File.save("123.u", "123;");
+assert
+{
+  searchFile("123.u") == Path.cwd / Path.new("123.u");
+};
+\end{urbiscript}
 
 
 \item[searchPath] The \urbi path (i.e., the directories where the \us files

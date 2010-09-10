@@ -10,4 +10,10 @@
 
 do (File)
 {
+  function save(name, content)
+  {
+    var o = OutputStream.new(create(name)) |
+    o << content |
+    o.close
+  };
 };
