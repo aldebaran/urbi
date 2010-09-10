@@ -86,13 +86,15 @@ if test -r "$updir/$my_zip"                             \
   # Merge zips.
   tools=$HOME/share/tools
   vcredist="$tools/vcredist/vcredist_x86-${COMP}.exe"
-  urbi_console="$tools/urbi-console/Gostai urbiConsole 2.1-win32.exe"
+  gostai_console="$tools/gostai-console/Gostai Console 2.5-win32.exe"
+  gostai_editor="$tools/gostai-editor/gostai-editor-2.4.1-win32.exe"
   $srcdir/scripts/merge-install.sh -v                   \
       --vcredist "$vcredist"                            \
       --comp "${COMP}"                                  \
       --templateloc "$srcdir/share/templates"           \
       --installscriptloc "$srcdir/share/installer/"     \
-      --urbi-console "$urbi_console"                    \
+      --gostai-console "$gostai_console"                \
+      --gostai-editor "$gostai_editor"                  \
       --output "$tmp/$installer"                        \
       "$updir/$my_zip" "$updir/$other_zip"
 

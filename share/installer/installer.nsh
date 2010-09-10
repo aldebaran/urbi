@@ -54,9 +54,13 @@ Section
 ; Error 1723 => Need to update the Windows Installer to a newer version.
 
 
-; Install urbi console
-  IfFileExists $INSTDIR\urbi-console-installer.exe 0 +2
-  ExecWait '"$INSTDIR\\urbi-console-installer.exe"'
+; Install Gostai Console
+  IfFileExists $INSTDIR\gostai-console-installer.exe 0 +2
+  ExecWait '"$INSTDIR\\gostai-console-installer.exe"'
+
+; Install Gostai Editor
+  IfFileExists $INSTDIR\gostai-editor-installer.exe 0 +2
+  ExecWait '"$INSTDIR\\gostai-editor-installer.exe"'
 
 ; Install our visual studio wizard
 ;

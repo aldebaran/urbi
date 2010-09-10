@@ -46,8 +46,10 @@ Options:
                                 [$vcredist]
   --comp                        version of visual studio
                                 [$comp]
-  --urbi-console		urbi-console installer
-				[$urbiconsole]
+  --gostai-console		Gostai console installer
+				[$gostaiconsole]
+  --gostai-editor		Gostai editor installer
+				[$gostaieditor]
   -d, --debug                   Debug mode
   -v, --verbose                 Verbose mode
   -o, --output                  Output file
@@ -65,7 +67,8 @@ do
   (-t|--templateloc) shift; templateloc=$1;;
   (--vcredist) shift; vcredist=$1;;
   (--comp) shift; comp=$1;;
-  (--urbi-console) shift; urbiconsole=$1;;
+  (--gostai-console) shift; gostaiconsole=$1;;
+  (--gostai-editor) shift; gostaieditor=$1;;
   (-d|--debug) set -x ;;
   (-v|--verbose) verbose=true ;;
   (-o|--output) shift; output=$1 ;;
@@ -121,9 +124,14 @@ if test -n "$installscriptloc"; then
   ln -s $installscriptloc share/installer
 fi
 
-if test -n "$urbiconsole"; then
-  verb "Copying urbi-console installer from $urbiconsole"
-  cp "$urbiconsole" ./urbi-console-installer.exe
+if test -n "$gostaiconsole"; then
+  verb "Copying gostai-console installer from $gostaiconsole"
+  cp "$gostaiconsole" ./gostai-console-installer.exe
+fi
+
+if test -n "$gostaieditor"; then
+  verb "Copying gostai-editor installer from $gostaieditor"
+  cp "$gostaieditor" ./gostai-editor-installer.exe
 fi
 
 if test -n "templateloc"; then
