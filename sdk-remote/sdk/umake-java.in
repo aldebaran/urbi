@@ -1,0 +1,276 @@
+@UMAKE_COMMON@
+
+usage ()
+{
+  cat <<EOF
+Usage: $me [OPTION]... [FILE]...
+
+General options:
+  -D, --debug       turn on shell debugging (set -x)
+  -h, --help        display this help and exit successfully
+  -q, --quiet       no output unless errors
+  -V, --version     display version information and exit successfully
+  -v, --verbose     report on what is done
+
+Compilation options:
+      --deep-clean        remove all building directories
+  -c, --clean             clean building directory before compilation
+
+Developper options:
+  -p, --prefix=DIR     library file location [$prefix]
+  -k, --kernel=DIR     kernel location [$(kernel)]
+
+Exit codes:
+   1   some tool failed
+   2   invalid command line option
+   3   unknown command line argument
+   4   unable to find file or directory
+
+FILE may be Java source files, jar archives files, or directory that will be searched for such files.
+
+Report bugs to sdk-remote-bugs@gostai.com.
+EOF
+
+  exit 0
+}
+
+version ()
+{
+  cat <<\EOF
+umake @PACKAGE_VERSION@ (@PACKAGE_STRING@)
+@PACKAGE_COPYRIGHT@
+EOF
+  exit 0
+}
+
+# Return the location of param_mk
+param_mk ()
+{
+  if test -n "$param_mk"; then
+    echo "$param_mk"
+  else
+    # If we are building a library, there is no core, so use param.mk
+    # from the remote core which is always present.
+    echo "$brandlibdir/remote/java/param.mk"
+  fi
+}
+
+# Return the location of the kernel
+kernel ()
+{
+  echo "${kernel+$prefix}"
+}
+
+
+# Clean all build directories.
+deep_clean ()
+{
+  if find . -name "${builddir_pref}*" -a -type d | xargs rm -rf; then
+    error 0 "all build directories cleaned."
+  else
+    fatal "cannot clean build directories."
+  fi
+}
+
+
+## ---------------------- ##
+## Command line parsing.  ##
+## ---------------------- ##
+
+get_options ()
+{
+  # Push a token among the arguments that will be used to notice when we
+  # ended options/arguments parsing.
+  # Use "set dummy ...; shift" rather than 'set - ..." because on
+  # Solaris set - turns off set -x (but keeps set -e).
+  # Use ${1+"$@"} rather than "$@" because Digital Unix and Ultrix 4.3
+  # still expand "$@" to a single argument (the empty string) rather
+  # than nothing at all.
+  arg_sep="$$--$$"
+  set dummy ${1+"$@"} "$arg_sep"; shift
+
+  # Parse command line arguments.
+  while test x"$1" != x"$arg_sep"
+  do
+    # Handle --option=value by splitting apart and putting back on argv.
+    case $1 in
+      (--*=*)
+	opt=`echo "$1" | sed -e 's/=.*//'`
+	val=`echo "$1" | sed -e 's/[^=]*=//'`
+	shift
+	set dummy "$opt" "$val" ${1+"$@"}; shift
+	;;
+    esac
+
+    case $1 in
+      (-D | --debug  ) debug=true;;
+      (-v | --verbose) verb=true;;
+      (-h | --help   ) usage;;
+      (-q | --quiet  ) quiet=true;;
+      (-V | --version) version;;
+
+      (     --deep-clean)    deep_clean ;;
+      (-c | --clean)         clean=true ;;
+      (-o | --output) shift; target=$1;;
+
+      (-p | --prefix)   shift; prefix=$1;;
+      (-k | --kernel)   shift; kernel=$1;;
+
+      (--) # What remains are not options.
+	shift
+	while test x"$1" != x"$arg_sep"
+	do
+	  set dummy ${1+"$@"} "$1"; shift
+	  shift
+	done
+	break
+	;;
+      (-*)
+	error 2 "Unknown or ambiguous option \`$1'." \
+	      "Try \`--help' for more information."
+	;;
+      (*) set dummy ${1+"$@"} "$1"; shift;;
+     esac
+     shift
+  done
+  # Pop the token
+  shift
+
+  # Interpret remaining command line args as filenames.
+  case $#:$oname in
+   ([01]:* | *:);;
+   (*) error 2 "Can't use option \`--output' with more than one argument.";;
+  esac
+
+  while test x"$1" != x || test $havearg = false
+  do
+    if test x"$1" = x && test $havearg = false; then
+      set dummy . ${1+"$@"}; shift
+      havearg=true
+    fi
+
+    # If this is a directory, append a slash.
+    case $1$(test -d "$1" && echo '/') in
+      (VPATH=*) vpath=$vpath:$(echo "$1" | sed -e 's/^[^=]*=//');;
+      (*=*)     append makeargs "'$1'";;
+
+      (*.java)    append sources "'$1'";  havearg=true ;;
+      (*.jar)         append jars "'$1'";     havearg=true ;;
+      (*/)
+	# It is a directory.
+	files=$(find "$1"				\
+	    -iname '*.java'				\
+	    -or -iname '*.jar' | grep -Fv "$builddir_pref" ) || true
+	havearg=true;
+	shift
+	set dummy $files ${1+"$@"};;
+      (*)
+        error 3 "unknown type of file '$1'"
+	;;
+    esac
+    shift
+  done
+}
+
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+clean=false
+havearg=false   # we have at least one path or file arg
+
+builddir=
+builddir_pref="classes"
+
+# Make the package relocatable: the urbi-root contains the bin
+# directory that contains this tool.  Yet, make it absolute.  For
+# instance because libtool does not want relative rpath, and prefix
+# contributes to libdir.
+prefix=$(cd $(dirname $0)/.. && pwd)
+
+# Keep the variables in that order, they have dependencies.  bindir is
+# needed at least on Windows, where libdir is defined as $bindir.
+: ${PACKAGE_BRAND="@PACKAGE_BRAND@"}
+: ${exec_prefix="@exec_prefix@"}
+: ${bindir="@bindir@"}
+: ${libdir="@libdir@"}
+: ${brandlibdir="@brandlibdir@"}
+
+# Target name.
+target="uobject"
+sources=
+makeargs=
+classpath=
+
+objects=
+
+get_options "$@"
+initialize
+
+
+for s in $(eval echo "$sources")
+do
+  append objects "'"$(echo "$s" | sed 's/\.[^.]*$/.class/g')"'"
+done
+
+libext=".jar"
+
+target=${target%$libext}$libext
+
+append makeargs "OUTJAR=$target"
+
+# Then pass env.
+append makeargs "prefix=$prefix"
+
+append classpath $prefix/share/sdk-remote/java/lib/liburbijava.jar
+
+# Set and create build dir for temporary files
+builddir="$(dirname $target)/${builddir_pref}-$(basename $target)"
+# Clean target build directory
+if $clean; then
+  if rm -rf "$builddir"; then
+    stderr "build directory cleaned."
+  else
+    fatal "cannot remove $builddir"
+  fi
+fi
+
+# Create target build directory
+mkdir -p "$builddir"
+
+# Generate object fullnames
+obj_fullnames=
+for o in $objects; do
+  obj_fullnames="$obj_fullnames '"${builddir}/$(echo "$o" | tr -d "'")"'"
+done
+objects=$obj_fullnames
+
+# Check if base directory exists
+exist_error 4 d "$prefix" prefix
+
+# Check param.mk file
+exist_error 4 f $(param_mk) param-mk
+
+# Invoke make.
+if $verb; then
+  echo >&2 "$(param_mk):"
+  sed  >&2 's/^/> /' $(param_mk)
+fi
+
+
+verbose "invoking make -f $(param_mk) $target"
+run eval make -f "$(param_mk)"			\
+    "$target"					\
+    UMAKE_BUILD_DIR="$builddir"			\
+    JOBJECTS="'$objects'"			\
+    CLASSPATH="'$classpath'"			\
+    "$makeargs"
+
+verbose "done."
+
+exit 0
+
+# Local variables:
+# mode: shell-script
+# End:

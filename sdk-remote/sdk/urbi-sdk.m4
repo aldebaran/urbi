@@ -28,9 +28,12 @@ AC_SUBST_FILE([UMAKE_COMMON])
 UMAKE_COMMON=$srcdir/sdk/umake-common
 URBI_CONFIG_SCRIPTS([sdk/umake],
                     [sdk/umake-link],
+                    [sdk/umake-java],
                     [sdk/wrapper.sh])
 AC_CONFIG_HEADERS([sdk/config.h])
 AC_CONFIG_FILES([sdk/param.mk],
+		[perl -w ${srcdir}/sdk/eval_makefile.pl])
+AC_CONFIG_FILES([sdk/java/param.mk],
 		[perl -w ${srcdir}/sdk/eval_makefile.pl])
 AC_SUBST([SDK_CFLAGS])
 AC_SUBST([SDK_CXXFLAGS])

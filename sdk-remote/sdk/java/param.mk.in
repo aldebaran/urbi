@@ -1,0 +1,50 @@
+# Don't set prefix, umake does.
+PACKAGE_BRAND = @PACKAGE_BRAND@
+URBI_ENV = $(UMAKE_URBI_ENV)
+URBI_HOST = @URBI_HOST@
+brandincludedir = @brandincludedir@
+brandlibdir = @brandlibdir@
+brandlibexecdir = @brandlibexecdir@
+builddir = $(UMAKE_BUILD_DIR)
+envdir = @envdir@
+exec_prefix = @exec_prefix@
+includedir = @includedir@
+# On Windows, libdir is defined as ${bindir}.
+bindir = @bindir@
+libdir = @libdir@
+libexecdir = @libexecdir@
+
+JAVAC=javac
+JAR=jar
+
+OUTJAR=nothing3
+
+# We use GNU Make pattern rules so that we can provide extra
+# dependencies.  Before changing something, read the doc.
+#
+#    Suffix rules cannot have any prerequisites of their own.  If they
+#    have any, they are treated as normal files with funny names, not as
+#    suffix rules.  Thus, the rule:
+#
+#      .c.o: foo.h
+#              $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+#
+#    tells how to make the file `.c.o' from the prerequisite file `foo.h',
+#    and is not at all like the pattern rule:
+#
+#      %.o: %.c foo.h
+#              $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+#
+#    which tells how to make `.o' files from `.c' files, and makes all `.o'
+#    files using this pattern rule also depend on `foo.h'.
+$(builddir)/%.class: %.java
+	$(JAVAC) -cp $(CLASSPATH) -d $(builddir) $<
+
+$(OUTJAR): $(JOBJECTS)
+	$(JAR) cf $@ $(JOBJECTS)
+
+clean:
+	$(RM) $(JOBJECTS)
+
+distclean: cleanxo
+	$(RM) $(OUTJAR)

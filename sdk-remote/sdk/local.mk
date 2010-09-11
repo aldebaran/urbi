@@ -4,13 +4,17 @@ brandlibexec_SCRIPTS += $(top_builddir)/libtool
 # This file tells umake how to build things.
 nodist_env_DATA = sdk/param.mk
 
+javaenvdir=$(envdir)/java
+nodist_javaenv_DATA = sdk/java/param.mk
+
 UMAKE_WRAPPERS =                                \
   sdk/umake-deepclean                           \
   sdk/umake-shared
 
 UMAKE_CONFIGURED =                              \
   sdk/umake                                     \
-  sdk/umake-link
+  sdk/umake-link				\
+  sdk/umake-java
 
 nodist_bin_SCRIPTS += $(UMAKE_WRAPPERS)
 dist_bin_SCRIPTS   += $(UMAKE_CONFIGURED)
