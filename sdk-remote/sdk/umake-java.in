@@ -241,8 +241,10 @@ mkdir -p "$builddir"
 
 # Generate object fullnames
 obj_fullnames=
+jar_objects=
 for o in $objects; do
   obj_fullnames="$obj_fullnames '"${builddir}/$(echo "$o" | tr -d "'")"'"
+  jar_objects="$jar_objects -C ${builddir} '"$(echo "$o" | tr -d "'")"'"
 done
 objects=$obj_fullnames
 
@@ -264,6 +266,7 @@ run eval make -f "$(param_mk)"			\
     "$target"					\
     UMAKE_BUILD_DIR="$builddir"			\
     JOBJECTS="'$objects'"			\
+    JAROBJECTS="'$jar_objects'"			\
     CLASSPATH="'$classpath'"			\
     "$makeargs"
 

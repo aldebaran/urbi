@@ -41,7 +41,7 @@ $(builddir)/%.class: %.java
 	$(JAVAC) -cp $(CLASSPATH) -d $(builddir) $<
 
 $(OUTJAR): $(JOBJECTS)
-	$(JAR) cf $@ $(JOBJECTS)
+	$(JAR) cf $@ $(JAROBJECTS)
 
 clean:
 	$(RM) $(JOBJECTS)
