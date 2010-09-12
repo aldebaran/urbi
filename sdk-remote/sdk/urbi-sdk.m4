@@ -29,6 +29,7 @@ UMAKE_COMMON=$srcdir/sdk/umake-common
 URBI_CONFIG_SCRIPTS([sdk/umake],
                     [sdk/umake-link],
                     [sdk/umake-java],
+                    [sdk/urbi-launch-java],
                     [sdk/wrapper.sh])
 AC_CONFIG_HEADERS([sdk/config.h])
 AC_CONFIG_FILES([sdk/param.mk],

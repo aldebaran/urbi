@@ -1,0 +1,135 @@
+@UMAKE_COMMON@
+
+usage ()
+{
+  cat <<EOF
+usage: $me [OPTIONS] MODULE_NAMES ... [-- UOPTIONS...]
+Start an UObject in either remote or plugin mode.
+
+Urbi-Launch options:
+  -h, --help         display this message and exit successfully
+      --version      display version information
+  -d, --debug=LEVEL  set the debug level in NONE, LOG (default), TRACE, DEBUG, DUMP
+
+Java options:
+  -cp, --classpath CLASSPATH A : separated list of directories, JAR archives,
+                             and ZIP archives to search for class files.
+
+Urbi-Launch options for plugin mode:
+  -H, --host=HOST       address to connect to
+  -P, --port=PORT       port to connect to
+      --port-file=FILE  file containing the port to listen to
+
+
+MODULE_NAMES is a list of JAR and ZIP archives containings UObjects.
+UOPTIONS are passed to urbi::main.
+
+Exit values:
+  0  success
+  *  other kinds of errors
+EOF
+  exit 0
+}
+
+version ()
+{
+  cat <<\EOF
+umake @PACKAGE_VERSION@ (@PACKAGE_STRING@)
+@PACKAGE_COPYRIGHT@
+EOF
+  exit 0
+}
+
+
+
+## ---------------------- ##
+## Command line parsing.  ##
+## ---------------------- ##
+
+get_options ()
+{
+  # Push a token among the arguments that will be used to notice when we
+  # ended options/arguments parsing.
+  # Use "set dummy ...; shift" rather than 'set - ..." because on
+  # Solaris set - turns off set -x (but keeps set -e).
+  # Use ${1+"$@"} rather than "$@" because Digital Unix and Ultrix 4.3
+  # still expand "$@" to a single argument (the empty string) rather
+  # than nothing at all.
+  arg_sep="$$--$$"
+  set dummy ${1+"$@"} "$arg_sep"; shift
+
+  # Parse command line arguments.
+  while test x"$1" != x"$arg_sep"
+  do
+    # Handle --option=value by splitting apart and putting back on argv.
+    case $1 in
+      (--*=*)
+	opt=`echo "$1" | sed -e 's/=.*//'`
+	val=`echo "$1" | sed -e 's/[^=]*=//'`
+	shift
+	set dummy "$opt" "$val" ${1+"$@"}; shift
+	;;
+    esac
+
+    case $1 in
+      (-d | --debug  )
+        append urbi_launch_args "--debug"
+	debug=true;;
+      (-h | --help   ) usage;;
+      (-V | --version) version;;
+
+      (-cp | --classpath)   shift; append classpath "$1:";;
+      (-H | --host)
+        shift; host=$1
+	append urbi_launch_args "--host $host";;
+      (-P | --port)
+        shift; port=$1
+	append urbi_launch_args "--port $port";;
+      (--port-file)
+        shift; portfile=$1
+	append urbi_launch_args "--port-file $portfile";;
+
+      (--) # What remains are not options.
+	shift
+	append urbi_launch_args "--"
+	while test x"$1" != x"$arg_sep"
+	do
+	  append urbi_launch_args "$1"
+	  set dummy ${1+"$@"} "$1"; shift
+
+	  shift
+	done
+	break
+	;;
+      (-*)
+	error 2 "Unknown or ambiguous option \`$1'." \
+	      "Try \`--help' for more information."
+	;;
+      (*)
+        append uob_archives "$1"
+        set dummy ${1+"$@"} "$1"; shift;;
+     esac
+     shift
+  done
+}
+
+urbi_launch_args=
+uob_archives=
+main=liburbi.main.UMain
+liburbi_jar=@prefix@/share/sdk-remote/java/lib/liburbijava.jar
+library_path=@prefix@/lib
+
+get_options "$@"
+
+append classpath ":$liburbi_jar"
+
+eval java -Djava.library.path="$library_path"	\
+  -classpath "$classpath"  "$main"		\
+  "$uob_archives"				\
+  -- "$urbi_launch_args"
+
+exit 0
+
+# Local variables:
+# mode: shell-script
+# End:
