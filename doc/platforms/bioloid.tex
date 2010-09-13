@@ -74,9 +74,9 @@ up-to-date information on how to download Urbi for Bioloid.
 \subsection{Starting up}
 Connect your CM-5 to the PC and turn it on before starting Urbi.
 
-When you start Urbi, the initialization script in global.u will connect to
-the CM-5 (edit the file to change the port if required), scan for devices
-and instantiate them. It will create:
+When you start \urbi, the initialization script in \file{global.u} will
+connect to the CM-5 (edit the file to change the port if required), scan for
+devices and instantiate them. It will create:
 
 \begin{itemize}
 \item one \lstinline|bioloid| object representing the connexion to the CM5.
@@ -129,10 +129,9 @@ motor6.val = 0 sin:1s ampli:20deg,
 \end{urbiunchecked}
 
 \item[cwLimit, ccwLimit]%
-  Set min and max reachable angles. When they are both equal to 0, the motor
-  is put in continuous rotation mode. In this mode, writing to \refSlot{val}
-  has no effect: the motor moves at the speed given by the \refSlot{speed}
-  slot.
+  Set min and max reachable angles. When both equal to 0, the motor is put
+  in continuous rotation mode. In this mode, writing to \refSlot{val} has no
+  effect: the motor moves at the speed given by the \refSlot{speed} slot.
 
 \item[speed] When read, gives the current rotation speed. When written to,
   set the speed at which following commands will be executed. In continuous
@@ -197,7 +196,7 @@ more information.
 at (sensor100.soundVolume->changed?)
   motor6.speed = sensor100.soundVolume * 6;
 
-// Stop after 4 claps
+// Stop after 4 claps.
 at (sensor100.clapCount == 4)
   motor6.speed = 0;
 \end{urbiunchecked}

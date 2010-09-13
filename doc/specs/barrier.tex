@@ -20,8 +20,9 @@ is available.
 
 \subsection{Construction}
 
-A \lstinline|Barrier| can be created with no argument.  Signals and wait
-calls done on this instance are restricted to this instance.
+A \lstinline|Barrier| can be created with no argument.  Calls to
+\refSlot{signal} and \refSlot{wait} done on this instance are restricted to
+this instance.
 
 \begin{urbiscript}[firstnumber=1]
 Barrier.new;
@@ -34,7 +35,7 @@ Barrier.new;
 
 \item[signal](<payload>)%
   Wake up one of the job waiting for a signal.  The \var{payload} is sent to
-  the \var{wait} method.  This method returns the number of job woken up.
+  the \refSlot{wait} method.  Return the number of jobs woken up.
 
 \begin{urbiscript}
 do (Barrier.new)
@@ -54,7 +55,7 @@ do (Barrier.new)
 
 \item[signalAll](<payload>)%
   Wake up all the jobs waiting for a signal.  The \var{payload} is
-  sent to all \var{wait} methods.  Return the number of jobs woken up.
+  sent to all \refSlot{wait} methods.  Return the number of jobs woken up.
 
 \begin{urbiscript}
 do (Barrier.new)
@@ -74,7 +75,7 @@ do (Barrier.new)
 
 \item[wait]
   Block until a signal is received.  The \var{payload} sent with the signal
-  function is returned by the \lstinline|wait| method.
+  function is returned by the \refSlot{wait} method.
 
 \begin{urbiscript}
 do (Barrier.new)
