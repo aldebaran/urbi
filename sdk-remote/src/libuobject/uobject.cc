@@ -148,9 +148,9 @@ namespace urbi
       unarmorAndSend(a, client_);
     }
 
-    void  RemoteUContextImpl::send(const char* a)
+    void RemoteUContextImpl::send(const char* a)
     {
-      (*client_) << a;
+      *client_ << a;
     }
 
     void RemoteUContextImpl::send(const void* buf, size_t size)
@@ -230,9 +230,9 @@ namespace urbi
       owner_->ctx_->registerObject(owner);
       UClient* client =
         dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
-      URBI_SEND_PIPED_COMMAND_C((*client),
+      URBI_SEND_PIPED_COMMAND_C(*client,
                                 "class " << owner_->__name << "{}");
-      URBI_SEND_PIPED_COMMAND_C((*client),
+      URBI_SEND_PIPED_COMMAND_C(*client,
                                 "external object " << owner_->__name);
       // Bind update, we need it since we use a dummy message locally generated
       // to trigger the periodic call.
@@ -345,7 +345,7 @@ namespace urbi
       GD_FINFO_DUMP("...dispatch of %s done", var);
       if (e)
       {
-         URBI_SEND_COMMA_COMMAND_C((*client), "var " << var << "|"
+         URBI_SEND_COMMA_COMMAND_C(*client, "var " << var << "|"
              << var << "=" << "Exception.new(\""
              << "Exception while calling remote bound method: "
              << libport::escape(e->what()) << "\")");
@@ -366,11 +366,11 @@ namespace urbi
           break;
 
         case DATA_VOID:
-          URBI_SEND_COMMAND_C((*client), "var " << var);
+          URBI_SEND_COMMAND_C(*client, "var " << var);
           break;
 
         default:
-          URBI_SEND_COMMA_COMMAND_C((*client), "var " << var << "|"
+          URBI_SEND_COMMA_COMMAND_C(*client, "var " << var << "|"
                                     << var << "=" << retval);
           break;
         }
@@ -505,7 +505,7 @@ namespace urbi
       // But only in outermost dispatch call
       if (dispatchDepth == 1 && dataSent)
       {
-        URBI_SEND_COMMAND_C((*client_), "");
+        URBI_SEND_COMMAND_C(*client_, "");
         dataSent = false;
       }
       return URBI_CONTINUE;
@@ -635,7 +635,7 @@ namespace urbi
       if (v1.type != DATA_VOID)
         r = r.substr(0, r.length() - 1);
       r += ')';
-      URBI_SEND_COMMA_COMMAND_C((*client_), r);
+      URBI_SEND_COMMA_COMMAND_C(*client_, r);
       dataSent = true;
     }
 
@@ -645,7 +645,7 @@ namespace urbi
       // Event may or may not already exist.
       std::string r = "try{var " + owner->get_name() + " = Event.new()}"
       " catch(var e) {}";
-      URBI_SEND_PIPED_COMMAND_C((*client_), r);
+      URBI_SEND_PIPED_COMMAND_C(*client_, r);
       dataSent = true;
     }
 
@@ -671,7 +671,7 @@ namespace urbi
       if (v1.type != DATA_VOID)
         r = r.substr(0, r.length() - 1);
       r += ')';
-      URBI_SEND_COMMAND_C((*client_), r);
+      URBI_SEND_COMMAND_C(*client_, r);
       dataSent = true;
     }
 

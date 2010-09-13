@@ -182,7 +182,7 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
   do {						\
     std::ostringstream os;			\
     os << Args;					\
-    C << os.str() << std::endl;                 \
+    (C) << os.str() << std::endl;               \
   } while (false)
 /// Send \a Args (which is given to a stream and therefore can use <<)
 /// to the server.
