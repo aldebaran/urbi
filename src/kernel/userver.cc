@@ -535,18 +535,6 @@ namespace kernel
    , callback(c)
    {}
 
-  static void bounce_disconnection(UConnection* uc)
-  {
-    // We cannot close it yet because it is used to close the other
-    // connections.
-    if (&kernel::urbiserver->ghost_connection_get() == uc)
-      return;
-
-    // This is executed from a job: we have a runner.
-    uc->lobby_get()->disconnect();
-    delete uc;
-  }
-
   void
   UServer::work_handle_stopall_()
   {
@@ -556,20 +544,6 @@ namespace kernel
         if (c->active_get() && c->has_pending_command())
           c->drop_pending_commands();
     }
-
-    // Call bounce_disconnection() inside GhostConnection's shell for each
-    // closed connection.
-    foreach (UConnection* c, *connections_)
-    {
-      if (c->closing_get())
-      {
-	ghost_->shell_get()->insert_oob_call(
-	  boost::bind(&bounce_disconnection, c));
-      }
-    }
-
-    connections_->connections_.remove_if(
-     boost::bind(&UConnection::closing_get, _1));
 
     stopall = false;
   }
@@ -740,5 +714,12 @@ namespace kernel
   UServer::get_io_service ()
   {
     return *object::Socket::get_default_io_service().get();
+  }
+
+  void
+  UServer::connection_remove(UConnection& connection)
+  {
+    delete &connection;
+    connections_->connections_.remove(&connection);
   }
 }

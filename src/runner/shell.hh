@@ -30,7 +30,7 @@ namespace runner
 	  sched::Scheduler& scheduler,
 	  libport::Symbol name,
           std::istream& input);
-    ATTRIBUTE_NORETURN virtual void work();
+    virtual void work();
     void work_();
     // void append_command(const ast::rConstNary& command);
     void insert_oob_call(boost::function0<void> func);
@@ -50,6 +50,7 @@ namespace runner
     std::list<boost::function0<void> > oob_calls_;
     bool executing_;
     std::istream& input_;
+    bool stop_;
   };
 
 } // namespace runner

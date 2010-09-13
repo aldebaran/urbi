@@ -41,6 +41,7 @@ namespace runner
     : Interpreter(lobby, scheduler, ast::rConstAst(), name)
     , executing_(false)
     , input_(input)
+    , stop_(false)
   {
     GD_FINFO_TRACE("new shell: %s.", name_get());
   }
@@ -138,6 +139,7 @@ namespace runner
   void
   Shell::handle_command_(ast::rConstExp exp)
   {
+    LIBPORT_SCOPE_SET(executing_, true);
     const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(exp.get());
 
     if (stmt && stmt->flavor_get() == ast::flavor_comma)
@@ -162,7 +164,7 @@ namespace runner
   void
   Shell::work()
   {
-    while (true)
+    while (!stop_)
     {
       try
       {
@@ -175,6 +177,7 @@ namespace runner
         GD_FINFO_DUMP("StopException ignored: %s", e.what());
       }
     }
+    kernel::server().connection_remove(lobby_get()->connection_get());
   }
 
   void
@@ -182,19 +185,34 @@ namespace runner
   {
     parser::UParser parser;
 
-    while (true)
+    while (!stop_)
     {
+      handle_oob_();
       parser::parse_result_type res;
       {
         GD_FPUSH_TRACE("%s: reading command.", name_get());
         res = parser.parse(input_);
       }
-      // FIXME: check parse error
+      if (!res->good())
+      {
+        // FIXME: Now that parsing/execution is synchronous, this is
+        // needlessly complex. Just print the damn message.
+        ast::rNary n = new ast::Nary;
+        res->process_errors(*n);
+        handle_command_(n);
+        continue;
+      }
       ast::rExp ast = parser::transform(res->ast_xget());
       {
         GD_FPUSH_TRACE("%s: executing command.", name_get());
         GD_FINFO_DUMP("%s: command: %s", name_get(), *ast);
         handle_command_(ast);
+      }
+      if (input_.eof())
+      {
+        GD_FPUSH_TRACE("%s: end reached, disconnecting.", name_get());
+        lobby_get()->disconnect();
+        stop_ = true;
       }
     }
   }
