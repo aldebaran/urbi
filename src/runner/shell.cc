@@ -46,18 +46,6 @@ namespace runner
     GD_FINFO_TRACE("new shell: %s.", name_get());
   }
 
-  inline
-  void
-  Shell::handle_oob_()
-  {
-    while (!oob_calls_.empty())
-    {
-      oob_calls_.front()();
-      oob_calls_.pop_front();
-    }
-  }
-
-
   void
   Shell::eval_print_(const ast::Exp* exp)
   {
@@ -187,7 +175,6 @@ namespace runner
 
     while (!stop_)
     {
-      handle_oob_();
       parser::parse_result_type res;
       {
         GD_FPUSH_TRACE("%s: reading command.", name_get());
@@ -215,13 +202,6 @@ namespace runner
         stop_ = true;
       }
     }
-  }
-
-  void
-  Shell::insert_oob_call(boost::function0<void> func)
-  {
-    oob_calls_ << func;
-    scheduler_get().signal_world_change();
   }
 
   bool

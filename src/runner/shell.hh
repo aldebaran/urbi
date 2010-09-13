@@ -32,8 +32,6 @@ namespace runner
           std::istream& input);
     virtual void work();
     void work_();
-    // void append_command(const ast::rConstNary& command);
-    void insert_oob_call(boost::function0<void> func);
     bool pending_command_get() const;
     void pending_commands_clear();
 
@@ -44,10 +42,7 @@ namespace runner
     void eval_print_(const ast::Exp* exp);
     /// Execute the front of commands_.
     void handle_command_(ast::rConstExp exp);
-    /// Execute everything in oob_calls_.
-    void handle_oob_();
     std::deque<ast::rConstExp> commands_;
-    std::list<boost::function0<void> > oob_calls_;
     bool executing_;
     std::istream& input_;
     bool stop_;
