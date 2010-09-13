@@ -72,8 +72,10 @@ using libport::Symbol;
   urbi_synchro_point_(kernel::urbiserver->synchronizer_get(), true)
 
 // Declare our UObject implementation
-namespace urbi {
-  namespace impl {
+namespace urbi
+{
+  namespace impl
+  {
     class KernelUContextImpl: public UContextImpl
     {
     public:
@@ -111,6 +113,7 @@ namespace urbi {
       virtual std::pair<int, int> kernelVersion() const;
       virtual void yield() const;
       virtual void yield_until(libport::utime_t deadline) const;
+      virtual void yield_for(libport::utime_t delay) const;
       virtual void yield_until_things_changed() const;
       virtual void side_effect_free_set(bool s);
       virtual bool side_effect_free_get() const;
@@ -316,7 +319,7 @@ static void periodic_call(rObject, ufloat interval, rObject method,
 {
   runner::Runner& r = ::kernel::runner();
   libport::utime_t delay = libport::seconds_to_utime(interval);
-  while(true)
+  while (true)
   {
     urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
     r.apply(method, msg, args);
@@ -790,6 +793,11 @@ namespace urbi
     {
       CHECK_MAINTHREAD();
       ::kernel::runner().yield_until(deadline);
+    }
+    void KernelUContextImpl::yield_for(libport::utime_t delay) const
+    {
+      CHECK_MAINTHREAD();
+      ::kernel::runner().yield_for(delay);
     }
     void KernelUContextImpl::yield_until_things_changed() const
     {

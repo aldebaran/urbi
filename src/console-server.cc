@@ -99,7 +99,7 @@ public:
   virtual void reboot()
   {}
 
-  virtual libport::utime_t getTime()
+  virtual libport::utime_t getTime() const
   {
     return fast ? ctime : libport::utime();
   }
