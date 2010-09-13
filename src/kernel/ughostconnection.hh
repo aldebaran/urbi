@@ -32,11 +32,11 @@ namespace kernel
     //! UGhostConnection destructor.
     virtual ~UGhostConnection();
 
+  protected:
     //! Close the connection
     /// Does nothing. The ghost connection cannot be closed.
-    virtual void close();
+    virtual void close_();
 
-  protected:
     /// Bounce to UServer::display.
     virtual size_t effective_send(const char* buffer, size_t length);
 

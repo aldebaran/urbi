@@ -22,7 +22,7 @@ namespace kernel
     , Socket(kernel::urbiserver->get_io_service())
   {
     if (uerror_ != USUCCESS)
-      close();
+      UConnection::close();
   }
 
   size_t
@@ -47,7 +47,7 @@ namespace kernel
   }
 
   void
-  Connection::close()
+  Connection::close_()
   {
     // Closing the Socket will call our onError().
     libport::Socket::close();
@@ -56,7 +56,8 @@ namespace kernel
   void
   Connection::onError(boost::system::error_code)
   {
-    closing_ = true;
+    if (!closing_)
+      UConnection::close();
   }
 
   void

@@ -151,13 +151,16 @@ namespace kernel
      */
     void received(const std::string& s);
 
+  public:
+    //! Close the connection.
+    void close();
+
+  protected:
     //! UConnection close. Must be redefined by the robot-specific sub class.
-    /*! The implementation of this function must set 'closing_' to true, to
-      tell the UConnection to stop sending data.
-    */
-    virtual void close() = 0;
+    virtual void close_() = 0;
 
     /// Abstract end of line.
+  public:
     virtual void endline() = 0;
 
     void flush();

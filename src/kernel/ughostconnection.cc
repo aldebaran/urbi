@@ -42,10 +42,9 @@ namespace kernel
   }
 
   void
-  UGhostConnection::close()
+  UGhostConnection::close_()
   {
     kernel::urbiserver->interactive_set(false);
-    closing_ = true;
     error_ = USUCCESS;
   }
 

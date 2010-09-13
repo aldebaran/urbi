@@ -199,4 +199,11 @@ namespace kernel
   {
     interactive_p_ = b;
   }
+
+  void UConnection::close()
+  {
+    closing_ = true;
+    close_();
+    stream_buffer_.close();
+  }
 }

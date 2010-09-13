@@ -32,11 +32,12 @@ namespace kernel
     virtual void onConnect();
 
     // kernel::UConnection virtual methods.
-    virtual void close();
     virtual void onError(boost::system::error_code erc);
     virtual void endline();
 
     virtual size_t effective_send(const char* buffer, size_t length);
+  protected:
+    virtual void close_();
   };
 
 }
