@@ -33,6 +33,7 @@ public class UObjectStarter extends URBIStarterJAVA
 	    rn = uobject_name; //getName();
 	liburbi.setCurrentContext (ctx);
 	UObject res = null;
+
 	try
 	{
 	    Object[] ctor_params = { rn };
@@ -40,9 +41,17 @@ public class UObjectStarter extends URBIStarterJAVA
 	    ctx.instanciated(res);
 	    res.setCloner(this);
 	}
-     	catch (Exception e)
+     	catch (java.lang.InstantiationException e)
      	{
-     	    System.out.println (e);
+	    throw new RuntimeException (e);
+     	}
+	catch (java.lang.IllegalAccessException e)
+     	{
+	    throw new RuntimeException (e);
+     	}
+	catch (java.lang.reflect.InvocationTargetException e)
+     	{
+	    throw new RuntimeException (e);
      	}
 	return res;
     }

@@ -2,74 +2,83 @@
 
 nb_of_args=16
 
+cat <<EOF
+/*
+ * Copyright (C) 2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
 
-echo "/*"
-echo " * Copyright (C) 2010, Gostai S.A.S."
-echo " *"
-echo " * This software is provided \"as is\" without warranty of any kind,"
-echo " * either expressed or implied, including but not limited to the"
-echo " * implied warranties of fitness for a particular purpose."
-echo " *"
-echo " * See the LICENSE file for more information."
-echo " */"
-echo
+/* This file was generated with $0, do not edit directly !*/
 
-echo "#ifndef CALL_MACROS_HH_"
-echo "# define CALL_MACROS_HH_"
-echo
+#ifndef CALL_MACROS_HH_
+# define CALL_MACROS_HH_
+
+EOF
+
+create_var_list ()
+{
+    local i="$1"
+    local var="$2"
+    local arg=""
+    if [ $i -gt 0 ]; then
+	for j in $(seq 1 $(($i-1))); do
+	    arg="$arg ${var}$j,"
+	done
+	arg="$arg ${var}$i"
+    fi
+    echo $arg
+}
+
+print_object_retrieving()
+{
+    local list=""
+    for j in $(seq 1 $i); do
+        list="$list jobject obj$j = getObjectFromUValue (uval$j);"
+    done
+    echo $list
+}
 
 for i in $(seq 0 $nb_of_args); do
-
-    echo "# define CALL_METHOD_$i(Name, Type, JavaType, error_val, ret, ret_snd)\\"
-    echo -n "	JavaType call##Name##_$i ("
-
-    j=1;
-    while [ $j -lt $i ]; do
-	echo -n "const urbi::UValue& uval$j, "
-	j=$(($j + 1))
-    done
+    varlist=$(create_var_list $i "const urbi::UValue& uval")
+    varlist2=$(create_var_list $i "obj")
     if [ $i -gt 0 ]; then
-	echo -n "const urbi::UValue& uval$i"
+	varlist2=", $varlist2"
     fi
-
-    echo ")		\\"
-    echo "	{							\\"
-    echo "	  if (!env_ && !init_env ())				       	\\"
-    echo "	    return error_val;					\\"
-
-    j=1;
-    while [ $j -le $i ]; do
-	echo "          jobject obj$j = getObjectFromUValue (uval$j);		\\"
-	j=$(($j + 1))
-    done
-
-    echo -n "	  ret env_->Call##Type##Method(obj, mid"
-
-    j=1;
-    while [ $j -le $i ]; do
-	echo -n ", obj$j"
-	j=$(($j + 1))
-    done
-
-    echo ");		\\"
-
-
-
-    echo "          ret_snd;						\\"
-    echo "	}"
-    echo
-
+    cat <<EOF
+# define CALL_METHOD_$i(Name, Type, JavaType, error_val, ret, ret_snd)	\\
+	JavaType call##Name##_$i ($varlist)				\\
+	{								\\
+	  if (!init_env ())						\\
+	    return error_val;						\\
+          $(print_object_retrieving)					\\
+	  ret env_->Call##Type##Method(obj, mid$varlist2);		\\
+          testForException();						\\
+          ret_snd;							\\
+	}
+EOF
 done
 
-echo "# define CALL_METHODS(Name, Type, JavaType, error_val, ret, ret_snd)	\\"
 
-j=0;
-while [ $j -lt $nb_of_args ]; do
-    echo "  CALL_METHOD_$j (Name, Type, JavaType, error_val, ret, ret_snd);		\\"
-    j=$(($j + 1))
-done
-echo "  CALL_METHOD_$nb_of_args (Name, Type, JavaType, error_val, ret, ret_snd);"
-echo
+print_call_methods()
+{
+    local list=""
+    for j in $(seq 0 $(($nb_of_args-1))); do
+	list="$list CALL_METHOD_$j (Name, Type, JavaType, error_val, ret, ret_snd);"
+    done
+    echo $list
+}
+
+cat <<EOF
+# define CALL_METHODS(Name, Type, JavaType, error_val, ret, ret_snd)		\\
+  $(print_call_methods)								\\
+  CALL_METHOD_$nb_of_args (Name, Type, JavaType, error_val, ret, ret_snd);
 
 
-echo "#endif"
+
+#endif
+EOF

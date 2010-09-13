@@ -41,14 +41,14 @@ public:
   /// We cast it to 'long'.
   CALL_METHODS (UValue, Object, urbi::UValue, urbi::UValue (), jobject res = , return getUValueFromObject(res););
   CALL_METHODS (Void, Void, void, , ,);
-  CALL_METHODS (Boolean, Boolean, jboolean, 0, return,);
-  CALL_METHODS (Byte, Byte, jbyte, 0, return,);
-  CALL_METHODS (Char, Char, jchar, 0, return,);
-  CALL_METHODS (Short, Short, jshort, 0, return,);
-  CALL_METHODS (Int, Int, jint, 0, return,);
-  CALL_METHODS (Long, Long, long, 0, return,);
-  CALL_METHODS (Float, Float, jfloat, 0, return,);
-  CALL_METHODS (Double, Double, jdouble, 0, return,);
+  CALL_METHODS (Boolean, Boolean, jboolean, 0, jboolean res = , return res;);
+  CALL_METHODS (Byte, Byte, jbyte, 0, jbyte res = , return res;);
+  CALL_METHODS (Char, Char, jchar, 0, jchar res = , return res;);
+  CALL_METHODS (Short, Short, jshort, 0, jshort res = , return res;);
+  CALL_METHODS (Int, Int, jint, 0, jint res = , return res;);
+  CALL_METHODS (Long, Long, long, 0, long res = , return res;);
+  CALL_METHODS (Float, Float, jfloat, 0, jfloat res = , return res;);
+  CALL_METHODS (Double, Double, jdouble, 0, jdouble res = , return res;);
 
 
   /// UNotifyChange callbacks
@@ -82,6 +82,7 @@ private:
   jobject		getObjectFromUValue (const urbi::UValue& v);
   jobject		getObjectFromUVar (urbi::UVar& v);
 
+  void			testForException();
 public:
 
   urbi::UValue	getUValueFromObject (jobject obj);
@@ -153,6 +154,7 @@ void SWIG_JavaThrowException(JNIEnv *jenv,
 			     const char *msg);
 
 # define TROW_RUNTIME(env, msg)					\
-  SWIG_JavaThrowException(env, SWIG_JavaRuntimeException, msg)
+  throw std::runtime_error(msg);
+//  SWIG_JavaThrowException(env, SWIG_JavaRuntimeException, msg)
 
 #endif

@@ -34,7 +34,9 @@ CallbacksCaller::callNotifyChange_0 ()
 {
   if (!init_env ())
     return 0;
-  return env_->CallIntMethod(obj, mid);
+  int ret = env_->CallIntMethod(obj, mid);
+  testForException();
+  return ret;
 }
 
 int
@@ -43,7 +45,9 @@ CallbacksCaller::callNotifyChange_1 (urbi::UVar& v)
   if (!init_env ())
     return 0;
   jobject obj1 = getObjectFromUVar (v);
-  return env_->CallIntMethod(obj, mid, obj1);
+  int ret = env_->CallIntMethod(obj, mid, obj1);
+  testForException();
+  return ret;
 }
 
 bool
@@ -99,7 +103,6 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     TROW_RUNTIME(env, "Can't find UValue class");
     return false;
   }
-
   /// Get UValue (int, bool) Constructor id
   if (!(uvalue_ctor_id = env->GetMethodID(uvalue_cls, "<init>", "(JZ)V")))
   {
@@ -248,11 +251,47 @@ jobject
 CallbacksCaller::getObjectFromUVar (urbi::UVar& v)
 {
   jobject res = env_->NewObject(uvar_cls, uvar_ctor_id, (jlong) &v, false);
-  if (!res)
+  if  (!res)
     std::cerr << "Cannot allocate a new object of type liburbi.main.UVar"
 	      << std::endl;
   return res;
 }
+
+void
+CallbacksCaller::testForException()
+{
+  jthrowable exc = env_->ExceptionOccurred();
+  if (exc) {
+    env_->ExceptionDescribe();
+    env_->ExceptionClear();
+    jclass java_class = env_->GetObjectClass (exc);
+    assert(java_class);
+    jmethodID getMessage = env_->GetMethodID (java_class,
+					     "getMessage",
+					     "()Ljava/lang/String;");
+    assert(getMessage);
+    jstring message =
+      static_cast<jstring>(env_->CallObjectMethod(exc, getMessage));
+    assert(message);
+    char const* utfMessage = env_->GetStringUTFChars(message, 0);
+    jclass clscls = env_->FindClass("java/lang/Class");
+    assert(clscls);
+    jmethodID getName = env_->GetMethodID(clscls,
+					 "getName",
+					 "()Ljava/lang/String;");
+    assert(getName);
+    jstring name =
+      static_cast<jstring>(env_->CallObjectMethod(java_class, getName));
+    assert(name);
+    char const* utfName = env_->GetStringUTFChars(name, 0);
+    std::string m = utfMessage;
+    std::string n = utfName;
+    env_->ReleaseStringUTFChars(message, utfMessage);
+    env_->ReleaseStringUTFChars(name, utfName);
+    throw std::runtime_error(n + ": " + m);
+  }
+};
+
 
 
 void
