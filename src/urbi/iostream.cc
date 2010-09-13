@@ -37,6 +37,7 @@ namespace urbi
     , buffer_read_(&buffer1_)
     , buffer_write_(&buffer2_)
     , frozen_(0)
+    , close_(false)
   {
     GD_INFO_TRACE("new StreamBuffer.");
   }
@@ -46,10 +47,20 @@ namespace urbi
     GD_PUSH_TRACE("requesting new data.");
     if (buffer_write_->used == 0)
     {
+      if (close_)
+      {
+        GD_INFO_DEBUG("closed, return EOF.");
+        return EOF;
+      }
       frozen_ = &::kernel::runner();
       GD_FINFO_DEBUG("no data, going to sleep: %x.", frozen_.get());
       frozen_->frozen_set(true);
       yield();
+      if (close_)
+      {
+        GD_INFO_DEBUG("closed, woken up, return EOF.");
+        return EOF;
+      }
       assert(buffer_write_->used);
       GD_FINFO_DEBUG("%s bytes available, woken up, swapping buffers.", buffer_write_->used);
     }
@@ -67,6 +78,7 @@ namespace urbi
   void
   StreamBuffer::post_data(const std::string& data)
   {
+    aver(!close_);
     post_data(data.c_str(), data.size());
   }
 
@@ -98,6 +110,14 @@ namespace urbi
   StreamBuffer::sync()
   {
     GD_ABORT("write is not implemented for urbi::StreamBuffer.");
+  }
+
+  void
+  StreamBuffer::close()
+  {
+    GD_INFO_TRACE("closing stream.");
+    close_ = true;
+    wake_up_();
   }
 
   void

@@ -31,6 +31,7 @@ namespace urbi
     StreamBuffer();
     void post_data(const char* data, size_t size);
     void post_data(const std::string& data);
+    void close();
 
   protected:
     virtual int underflow();
@@ -53,6 +54,7 @@ namespace urbi
     Buffer* buffer_read_;
     Buffer* buffer_write_;
     runner::rRunner frozen_;
+    bool close_;
   };
 }
 
