@@ -13,6 +13,7 @@
 
 #include <libport/asio.hh>
 #include <urbi/uobject.hh>
+
 namespace urbi
 {
   /** Use this class instead of libport::Socket when you need an UObject which
