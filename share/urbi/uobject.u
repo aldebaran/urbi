@@ -281,7 +281,7 @@ do (getSlot("UVar"))
         getSlot(varname).getProperty("val", propname).acceptVoid
     }
     else
-      parent_getprop.apply([this, varname, propname])
+      Object.getSlot("getProperty").apply([this, varname, propname])
   };
   /// Global number of notifyaccess
   var nAccess = 0;
