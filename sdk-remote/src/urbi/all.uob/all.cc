@@ -100,10 +100,10 @@ public:
     UBindFunction(all, transmitO);
 
     UBindFunction(all, loop_yield);
-    UBindFunction(all, yield_for);
     UBindFunction(urbi::UContext, side_effect_free_get);
     UBindFunction(urbi::UContext, side_effect_free_set);
     UBindFunction(urbi::UContext, yield);
+    UBindFunction(urbi::UContext, yield_for);
     UBindFunction(urbi::UContext, yield_until_things_changed);
 
     UBindFunction(all, getDestructionCount);
@@ -646,11 +646,6 @@ public:
       yield();
       usleep(1000);
     }
-  }
-
-  void yield_for(long duration)
-  {
-    yield_for(duration);
   }
 
   int getDestructionCount()
