@@ -110,14 +110,20 @@ namespace urbi
                  &RemoteUContextImpl::clientError));
 
       typedef long long int us_t;
-      int  year  = int (client_->syncGet("System.timeReference.year")->value->val);
-      int  month = int (client_->syncGet("System.timeReference.month")->value->val);
-      int  day   = int (client_->syncGet("System.timeReference.day")->value->val);
-      us_t us    = us_t(client_->syncGet("System.timeReference.us")->value->val);
+#define GET(Type, Part)                                                 \
+      Type Part =                                                       \
+        Type(client_->syncGet("System.timeReference." #Part)->value->val)
+      GET(int, year);
+      GET(int, month);
+      GET(int, day);
+      GET(us_t, us);
+#undef GET
 
-      libport::utime_reference_set(boost::posix_time::ptime(boost::gregorian::date(year, month, day),
-                                                            boost::posix_time::microseconds(us)));
-      GD_FINFO_DEBUG("Remote kernel reference timestamp: %s.", to_simple_string(libport::utime_reference()));
+      libport::utime_reference_set
+        (boost::posix_time::ptime(boost::gregorian::date(year, month, day),
+                                  boost::posix_time::microseconds(us)));
+      GD_FINFO_DEBUG("Remote kernel reference timestamp: %s.",
+                     to_simple_string(libport::utime_reference()));
     }
 
     RemoteUContextImpl::~RemoteUContextImpl()
