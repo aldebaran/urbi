@@ -86,12 +86,7 @@ namespace urbi
     }
     memcpy(buffer_write_->buffer + buffer_write_->used, data, size);
     buffer_write_->used = needed;
-    if (frozen_)
-    {
-      GD_FINFO_DEBUG("waking the frozen job up: %x.", frozen_.get());
-      frozen_->frozen_set(false);
-      frozen_ = 0;
-    }
+    wake_up_();
   }
 
   int StreamBuffer::overflow(int)
@@ -103,5 +98,16 @@ namespace urbi
   StreamBuffer::sync()
   {
     GD_ABORT("write is not implemented for urbi::StreamBuffer.");
+  }
+
+  void
+  StreamBuffer::wake_up_()
+  {
+    if (frozen_)
+    {
+      GD_FINFO_DEBUG("waking the frozen job up: %x.", frozen_.get());
+      frozen_->frozen_set(false);
+      frozen_ = 0;
+    }
   }
 }

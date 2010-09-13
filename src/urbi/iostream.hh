@@ -40,6 +40,7 @@ namespace urbi
 
   private:
     void grow_(size_t requested);
+    void wake_up_();
     struct Buffer
     {
       Buffer();
