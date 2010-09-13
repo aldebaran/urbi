@@ -11,6 +11,7 @@
 #include <libport/cstdio>
 #include <libport/cstdlib>
 #include <libport/debug.hh>
+#include <libport/escape.hh>
 
 #include <kernel/userver.hh>
 #include <urbi/sdk.hh>
@@ -57,7 +58,7 @@ namespace urbi
     std::swap(buffer_read_, buffer_write_);
     setg(buffer_read_->buffer, buffer_read_->buffer, buffer_read_->buffer + buffer_read_->used);
     buffer_write_->used = 0;
-    GD_FINFO_DUMP("available data: \"%x\".", std::string(buffer_read_->buffer, buffer_read_->used));
+    GD_FINFO_DUMP("available data: \"%x\".", libport::escape(std::string(buffer_read_->buffer, buffer_read_->used)));
     int res = static_cast<unsigned char>(buffer_read_->buffer[0]);
     GD_FINFO_DUMP("return: %x.", res);
     return res;
