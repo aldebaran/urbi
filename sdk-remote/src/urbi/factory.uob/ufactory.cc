@@ -83,7 +83,7 @@ UFactory::assemble(std::list<std::string> components)
   std::string res;
   foreach (const std::string& s, components)
   {
-    yield_until(libport::utime() + duration_us);
+    yield_for(duration_us);
     res += s;
   }
   return res;

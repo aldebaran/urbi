@@ -31,8 +31,7 @@ namespace urbi
       close();
       wasDestroyed();
       while (!checkDestructionPermission())
-        getCurrentContext()->yield_until(
-          libport::utime() + (libport::utime_t)1000);
+        getCurrentContext()->yield_for(1000);
     }
   };
 }

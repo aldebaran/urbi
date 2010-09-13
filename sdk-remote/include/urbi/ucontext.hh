@@ -78,6 +78,9 @@ namespace urbi
     /// Yield execution until \b deadline is met (see libport::utime()).
     void yield_until(libport::utime_t deadline) const;
 
+    /// Yield execution for \b delay.
+    void yield_for(libport::utime_t delay) const;
+
     /** Yield execution until something else is scheduled, or until a message is
      * received in remote mode.
      */

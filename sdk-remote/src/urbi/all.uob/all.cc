@@ -650,7 +650,7 @@ public:
 
   void yield_for(long duration)
   {
-    yield_until(libport::utime() + duration);
+    yield_for(duration);
   }
 
   int getDestructionCount()
