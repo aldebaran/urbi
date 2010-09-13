@@ -94,12 +94,3 @@ EXTRA_DIST += $(FROM_PY:=.py)
 	chmod a-w $@.tmp
 	$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
 	touch $@
-
-## --------- ##
-## install.  ##
-## --------- ##
-
-install-data-hook: install-boost-headers
-
-install-boost-headers:
-	sh -x $(builddir)/scripts/install-boost-headers

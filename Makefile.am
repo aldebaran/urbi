@@ -44,8 +44,6 @@ include share/images/local.mk
 
 EXTRA_DIST += urbi-sdk.key
 
-# Make sure the building scripts are up-to-date.
-all-local: scripts/bf-post-install scripts/install-boost-headers scripts/package
 
 ## ------------------------------------- ##
 ## Generate the list of symbols we use.  ##
@@ -154,7 +152,7 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 ## Install.  ##
 ## --------- ##
 .PHONY: relocatable
-relocatable: scripts/bf-post-install
+relocatable: scripts/bf-post-install scripts/install-boost scripts/package
 	$<
 
 # Used by make-relocatable.

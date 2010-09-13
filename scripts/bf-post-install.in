@@ -43,6 +43,10 @@ fi
 # Completion/relocatability.  #
 # --------------------------- #
 
+# Boost.
+#
+$builddir/scripts/install-boost
+
 # Shared lib dependencies.
 #
 # Complete the package with missing libraries, strip if wanted, make
@@ -58,8 +62,7 @@ $srcdir/build-aux/bin/check-lib-deps            \
   $strip_opt --strip-command="$STRIP"           \
   "$DESTDIR"
 
-# Boost headers.
-#
+# Header completion.  Might have become useless because of install-boost.
 $srcdir/build-aux/bin/check-include-deps        \
   --include-dir="$DESTDIR$prefix/include"       \
   --verbose                                     \

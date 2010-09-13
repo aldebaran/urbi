@@ -178,7 +178,7 @@ URBI_TESTS
 AC_CONFIG_FILES([Makefile src/Makefile])
 
 URBI_CONFIG_SCRIPTS([scripts/bf-post-install],
-                    [scripts/install-boost-headers],
+                    [scripts/install-boost],
                     [scripts/package])
 
 case $URBI_HOST_OS in
