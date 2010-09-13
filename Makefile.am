@@ -152,7 +152,10 @@ all.stamp: urbi.stamp libraries.stamp executables.stamp
 ## Install.  ##
 ## --------- ##
 .PHONY: relocatable
-relocatable: scripts/bf-post-install scripts/install-boost scripts/package
+# The buildfarm calls bf-post-install without using the relocatable
+# target.  So be sure to keep these up to date all the time.
+all-am: scripts/bf-post-install scripts/install-boost scripts/package
+relocatable: scripts/bf-post-install
 	$<
 
 # Used by make-relocatable.

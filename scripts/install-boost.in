@@ -6,16 +6,24 @@ build="@build@"
 host="@host@"
 boost_header_dir='@BOOST_HEADER_DIR@'
 
+fatal ()
+{
+  echo >&2 "$0: $*"
+  exit 1
+}
+
 case $build:$host in
   (*cygwin:*) boost_header_dir=$(cygpath  -u "$boost_header_dir");;
   (*:*mingw32) boost_header_dir=$(winepath -u "$boost_header_dir");;
 esac
 
+test -n "$DESTDIR" ||
+  fatal "DESTDIR is not defined"
+
 # Ensure we got it right.
-if test ! -f  "$boost_header_dir"/version.hpp; then
-  echo >&2 "failed to find boost include directory, got '$boost_header_dir'"
-  exit 1
-fi
+boost_header_dir="$boost_header_dir/boost"
+test -f  "$boost_header_dir"/version.hpp ||
+  fatal "failed to find boost include directory, got '$boost_header_dir'"
 
 # Symlinks.
 boost_header_dir=$(perl -mCwd -e 'print Cwd::realpath($ARGV[0]), "\n";' \

@@ -32,7 +32,7 @@ if test -z "$DESTDIR"; then
   echo >&2 "$0: DESTDIR (or destdir) must be defined (and used with make install)"
   exit 1
 fi
-
+export DESTDIR
 
 ## -------------- ##
 ## Post-install.  ##
