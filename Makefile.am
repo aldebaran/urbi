@@ -158,8 +158,7 @@ relocatable: scripts/bf-post-install scripts/install-boost scripts/package
 # Used by make-relocatable.
 EXTRA_DIST +=					\
   build-aux/bin/check-lib-deps			\
-  build-aux/bin/check-include-deps		\
-  src/find-boost.cc
+  build-aux/bin/check-include-deps
 
 if WIN32
   topleveldir = $(prefix)

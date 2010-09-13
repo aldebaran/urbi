@@ -4,34 +4,24 @@ builddir="@builddir@"
 prefix="@prefix@"
 build="@build@"
 host="@host@"
-
-# First we must figure out where they are. If they were found in a
-# standard include directory, no variable will tell us that.  So go
-# the configure way and ask the compiler.
-make -C $builddir/src find-boost.ii
-incline=$(perl -n \
-    -e 'if (/^#.*"(.*).foreach.hpp"/)
-	{
-	  print "$1\n";
-	  exit 0;
-	}' "$builddir/src/find-boost.ii"
-)
+boost_header_dir='@BOOST_HEADER_DIR@'
 
 case $build:$host in
-  (*cygwin:*) incline=$(cygpath  -u "$incline");;
-  (*:*mingw32) incline=$(winepath -u "$incline");;
+  (*cygwin:*) boost_header_dir=$(cygpath  -u "$boost_header_dir");;
+  (*:*mingw32) boost_header_dir=$(winepath -u "$boost_header_dir");;
 esac
 
 # Ensure we got it right.
-if test ! -f  "$incline"/version.hpp; then
-  echo >&2 "failed to find boost include directory, got '$incline'"
+if test ! -f  "$boost_header_dir"/version.hpp; then
+  echo >&2 "failed to find boost include directory, got '$boost_header_dir'"
   exit 1
 fi
 
 # Symlinks.
-incline=$(perl -mCwd -e 'print Cwd::realpath($ARGV[0]), "\n";' -- "$incline")
+boost_header_dir=$(perl -mCwd -e 'print Cwd::realpath($ARGV[0]), "\n";' \
+                      -- "$boost_header_dir")
 
-cp -pRP "$incline" "$DESTDIR$prefix/include"
+cp -pRP "$boost_header_dir" "$DESTDIR$prefix/include"
 
 # Fix rights: the owner is allowed to change the headers.
 chmod -R u+w "$DESTDIR$prefix/include"
