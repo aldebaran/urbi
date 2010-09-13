@@ -77,8 +77,7 @@ namespace urbi
                         UAutoValue& v5,
                         UAutoValue& v6,
                         UAutoValue& v7,
-                        UAutoValue& v8
-                        ) = 0;
+                        UAutoValue& v8) = 0;
 
       /// Return the mode in which the code is running.
       virtual UObjectMode getRunningMode() const = 0;
@@ -94,7 +93,7 @@ namespace urbi
 
       /// Yield execution for \b delay.
       /// Bounces to yield_until.
-      void yield_for(libport::utime_t delay) const;
+      virtual void yield_for(libport::utime_t delay) const;
 
       /** Yield execution until something else is scheduled,
        *  or until a message is received in remote mode.

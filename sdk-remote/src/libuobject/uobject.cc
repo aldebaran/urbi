@@ -277,8 +277,8 @@ namespace urbi
     {
       if (0 < period)
       {
-        RemoteUContextImpl& ctx = dynamic_cast<RemoteUContextImpl&>
-        (*(owner_->ctx_));
+        RemoteUContextImpl& ctx =
+          dynamic_cast<RemoteUContextImpl&>(*(owner_->ctx_));
         UMessage m(*ctx.client_);
         m.type = MESSAGE_DATA;
         m.tag = externalModuleTag;
@@ -305,8 +305,8 @@ namespace urbi
       // Ensure processEvents is called at least once.
       while (true)
       {
-        bool processed = dynamic_cast<USyncClient*>(client_)
-          ->processEvents(0);
+        bool processed =
+          dynamic_cast<USyncClient*>(client_)->processEvents(0);
         if (deadline < libport::utime())
           return;
         if (!processed)
