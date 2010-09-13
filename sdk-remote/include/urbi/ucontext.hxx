@@ -196,7 +196,7 @@ namespace urbi
   inline void
   UContext::yield_for(libport::utime_t delay) const
   {
-    return ctx_->yield_until(libport::utime() + delay);
+    return ctx_->yield_until(delay);
   }
 
   /** Yield execution until something else is scheduled, or until a message is

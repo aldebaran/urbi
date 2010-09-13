@@ -43,6 +43,19 @@ namespace urbi
     {
     }
 
+    /*---------------.
+    | UContextImpl.  |
+    `---------------*/
+
+    /// Yield execution for \b delay.
+    inline
+    void
+    UContextImpl::yield_for(libport::utime_t delay) const
+    {
+      return yield_until(libport::utime() + delay);
+    }
+
+
     template<typename T> void
     deletor(T* ptr)
     {
