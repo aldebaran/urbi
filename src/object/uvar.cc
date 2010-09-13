@@ -148,9 +148,8 @@ namespace urbi
       {
         callNotify(r, rObject(this), SYMBOL(accessInLoop));
         rObject period = System->call(SYMBOL(period));
-        r.yield_until(libport::utime() +
-                        libport::utime_t(period->as<Float>()->value_get()
-                                         * 1000000.0));
+        r.yield_for(libport::utime_t(period->as<Float>()->value_get()
+                                     * 1000000.0));
       }
     }
 

@@ -151,8 +151,7 @@ namespace urbi
       if (seconds == std::numeric_limits<ufloat>::infinity())
         r.yield_until_terminated(r);
       else
-        r.yield_until(r.scheduler_get().get_time()
-                      + static_cast<libport::utime_t>(seconds * 1000000.0));
+        r.yield_for(libport::utime_t(seconds * 1000000.0));
     }
 
     static float

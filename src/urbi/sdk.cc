@@ -33,12 +33,13 @@ namespace urbi
   void
   yield_for(libport::utime_t t)
   {
-    ::kernel::runner().yield_until(libport::utime() + t);
+    ::kernel::runner().yield_for(t);
   }
 
   void
   yield_for_fd(int fd)
   {
+    aver_le(0, fd);
     fd_set rfds;
     FD_ZERO(&rfds);
     FD_SET(fd, &rfds);
@@ -82,4 +83,3 @@ namespace urbi
     return res;
   }
 }
-

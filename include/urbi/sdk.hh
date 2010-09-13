@@ -39,8 +39,7 @@ namespace urbi
   URBI_SDK_API std::string yield_for_read(int fd);
 
   // FIXME: function isn't ideal
-  inline
-  rObject global();
+  inline rObject global();
 }
 
 # include <urbi/sdk.hxx>
