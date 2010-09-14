@@ -241,7 +241,7 @@ namespace urbi
 	    break;
 	  case 2:
             argument_with_option("port", 'p', args[i]);
-	    port = libport::convert_argument<unsigned> ("port", args[i].c_str());
+	    port = libport::convert_argument<unsigned>("port", args[i]);
 	    break;
 	  default:
 	    std::cerr << "unexpected argument: " << arg << std::endl
