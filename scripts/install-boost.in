@@ -1,24 +1,36 @@
 #!/bin/sh
 
-builddir="@builddir@"
-prefix="@prefix@"
-build="@build@"
-host="@host@"
-boost_header_dir='@BOOST_HEADER_DIR@'
-
 fatal ()
 {
   echo >&2 "$0: $*"
   exit 1
 }
 
+set -e -x
+
+builddir="@builddir@"
+host="@host@"
+prefix="@prefix@"
+build="@build@"
+# Do not sort by alphabetical order here.  exec_prefix typically uses
+# $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
+exec_prefix="@exec_prefix@"
+libdir="@libdir@"
+includedir="@includedir@"
+
+boost_header_dir='@BOOST_HEADER_DIR@'
+boost_library_glob='@BOOST_LIBRARY_GLOB@'
+
+test -n "$DESTDIR" ||
+  fatal "DESTDIR is not defined"
+
+## --------- ##
+## Headers.  ##
+## --------- ##
 case $build:$host in
   (*cygwin:*) boost_header_dir=$(cygpath  -u "$boost_header_dir");;
   (*:*mingw32) boost_header_dir=$(winepath -u "$boost_header_dir");;
 esac
-
-test -n "$DESTDIR" ||
-  fatal "DESTDIR is not defined"
 
 # Ensure we got it right.
 boost_header_dir="$boost_header_dir/boost"
@@ -29,7 +41,14 @@ test -f  "$boost_header_dir"/version.hpp ||
 boost_header_dir=$(perl -mCwd -e 'print Cwd::realpath($ARGV[0]), "\n";' \
                       -- "$boost_header_dir")
 
-cp -pRP "$boost_header_dir" "$DESTDIR$prefix/include"
-
+cp -pRP "$boost_header_dir" "$DESTDIR$includedir"
 # Fix rights: the owner is allowed to change the headers.
-chmod -R u+w "$DESTDIR$prefix/include"
+chmod -R u+w "$DESTDIR$includedir"
+
+## ----------- ##
+## Libraries.  ##
+## ----------- ##
+
+cp -p $boost_library_glob "$DESTDIR$libdir"
+# Fix rights: the owner is allowed to change the libraries.
+chmod -R u+w "$DESTDIR$libdir"

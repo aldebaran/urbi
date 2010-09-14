@@ -16,7 +16,7 @@ host='@host@'
 prefix='@prefix@'
 srcdir='@abs_top_srcdir@'
 
-# Do not sort by alphabetical order here.  exec_prefix typically use
+# Do not sort by alphabetical order here.  exec_prefix typically uses
 # $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
 exec_prefix="@exec_prefix@"
 bindir="@bindir@"
@@ -64,8 +64,8 @@ $srcdir/build-aux/bin/check-lib-deps            \
 
 # Header completion.  Might have become useless because of install-boost.
 $srcdir/build-aux/bin/check-include-deps        \
+  --verbose --verbose --verbose --verbose       \
   --include-dir="$DESTDIR$prefix/include"       \
-  --verbose                                     \
   $builddir
 
 

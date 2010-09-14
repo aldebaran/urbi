@@ -131,7 +131,7 @@ URBI_BOOST([DATE_TIME])
 URBI_BOOST([REGEX])
 URBI_BOOST([SYSTEM])
 URBI_BOOST([TOKENIZER])
-
+URBI_BOOST_LOCATION
 
 # URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff
 # below.
