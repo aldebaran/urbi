@@ -11,6 +11,18 @@
 
 This chapter aggregates the definitions used in the this document.
 
+% \screenshot{FILE-and-LABEL}{CAPTION}
+% ------------------------------------
+\newcommand{\screenshot}[2]
+{
+  \begin{figure}[htp]
+    \centering
+    \includegraphics[width=.8\linewidth]{img/#1}
+    \caption{#2}
+    \label{fig:#1}
+  \end{figure}
+}
+
 \begin{description}
 \item[Bioloid] The Robotis Bioloid is a hobbyist and educational robot kit
   produced by the Korean robot manufacturer Robotis. The Bioloid platform
@@ -26,16 +38,14 @@ This chapter aggregates the definitions used in the this document.
   Windows users are invited to use Gostai Console instead.  See
   \autoref{sec:tut:started}.
 
-  \begin{figure}[htp]
-    \centering
-    \includegraphics[width=.8\linewidth]{img/urbi-console}
-    \caption{Gostai Console}
-    \label{fig:gostai-console}
-  \end{figure}
+  \screenshot{gostai-console}{Gostai Console}
 
+\item[Gostai Editor] Also called UEdit, Gostai \us Editor
+  (\autoref{fig:gostai-editor}) is a lightweight \us source code editor with
+  semantical highlighting. It is available for Windows and GNU/Linux
+  platforms.
 
-\item[Gostai Editor] This tool provides a simple graphical user interface to
-  edit \us programs.
+  \screenshot{gostai-editor}{Gostai Editor}
 
 \item[Gostai Lab] This tool (see \autoref{fig:gostai-lab}), which
   includes the features of Gostai Console, allows to build easily
@@ -43,24 +53,14 @@ This chapter aggregates the definitions used in the this document.
   to visualize data from the robot (including video and sound), and to
   modify the state of the robot.
 
-  \begin{figure}[htp]
-    \centering
-    \includegraphics[width=.8\linewidth]{img/gostai-lab}
-    \caption{Gostai Lab}
-    \label{fig:gostai-lab}
-  \end{figure}
+  \screenshot{gostai-lab}{Gostai Lab}
 
 \item[Gostai Studio] This tool (see \autoref{fig:gostai-studio}),
   includes all the features of Gostai Console and Gostai Lab.  It is a
   high-level Integrated Development Environment for \urbi.  Its
   formalism is based on \dfn{Hierarchical Finite State Machines}.
 
-  \begin{figure}[htp]
-    \centering
-    \includegraphics[width=.8\linewidth]{img/gostai-studio}
-    \caption{Gostai Studio}
-    \label{fig:gostai-studio}
-  \end{figure}
+  \screenshot{gostai-studio}{Gostai Studio}
 
 \item[RMP] The Segway Robotic Mobility Platform is a robotic platform based
   on the Segway Personal Transporter.  See \url{http://rmp.segway.com}.
