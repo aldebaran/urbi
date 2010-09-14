@@ -379,7 +379,7 @@ libsdir="$(dirname $target)/.libs"
 # Clean target build directory
 if $clean; then
   if rm -rf "$builddir"; then
-    stderr "build directory cleaned."
+    verbose "build directory cleaned."
   else
     fatal "cannot remove $builddir"
   fi

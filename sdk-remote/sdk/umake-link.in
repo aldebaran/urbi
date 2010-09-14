@@ -140,7 +140,7 @@ case $($libtool --config) in
   ;;
 esac
 
-stderr "$command"
+verbose "$command"
 eval "$command"
 exit $?
 
