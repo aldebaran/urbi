@@ -84,4 +84,4 @@ See README for instructions."
 fi
 
 # Finally, install the GNU Build System and our submodules.
-exec build-aux/bootstrap "$@"
+exec build-aux/bin/bootstrap "$@"
