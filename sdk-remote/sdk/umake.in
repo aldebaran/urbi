@@ -75,9 +75,10 @@ kernel ()
 deep_clean ()
 {
   if find . -name "${builddir_pref}*" -a -type d | xargs rm -rf; then
-    error 0 "all build directories cleaned."
+    verbose "all build directories cleaned"
+    exit 0
   else
-    fatal "cannot clean build directories."
+    fatal "cannot clean build directories"
   fi
 }
 
@@ -400,7 +401,7 @@ bintype="'$core' binary"
 if test -z "$core"; then
   bintype="library"
 fi
-stderr "" "$line" "running to build $bintype." "$line" ""
+verbose "" "$line" "running to build $bintype." "$line" ""
 
 
 # Check if base directory exists

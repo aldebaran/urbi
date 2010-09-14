@@ -16,8 +16,16 @@ CLEANFILES += $(urbi_uobjects_DATA) $(urbi_uobjects_DATA:$(DLMODEXT)=.la)
 
 UMAKE_SHARED = tests/bin/umake-shared
 
+umake_verbose = $(umake_verbose_$(V))
+umake_verbose_ = $(umake_verbose_$(AM_DEFAULT_VERBOSITY))
+umake_verbose_0 = @echo UMAKE $@;
+
+UMAKE_VERBOSE = $(UMAKE_VERBOSE_$(V))
+UMAKE_VERBOSE_ = $(UMAKE_VERBOSE_$(AM_DEFAULT_VERBOSITY))
+UMAKE_VERBOSE_0 = --quiet
+
 %$(DLMODEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject$(LIBSFX).la
-	$(UMAKE_SHARED)						\
+	$(umake_verbose)$(UMAKE_SHARED) $(UMAKE_VERBOSE)	\
 	  EXTRA_CPPFLAGS="$(EXTRA_$(notdir $*)_cppflags)"	\
 	  EXTRA_LDFLAGS="$(EXTRA_$(notdir $*)_ldflags)"		\
 	  --clean --output=$@ $<
