@@ -18,6 +18,7 @@ srcdir='@abs_top_srcdir@'
 
 # Do not sort by alphabetical order here.  exec_prefix typically uses
 # $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
+# $bindir is needed because on Windows we define libdir as ${bindir}.
 exec_prefix="@exec_prefix@"
 bindir="@bindir@"
 libdir="@libdir@"

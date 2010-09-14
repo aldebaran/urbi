@@ -14,7 +14,9 @@ prefix="@prefix@"
 build="@build@"
 # Do not sort by alphabetical order here.  exec_prefix typically uses
 # $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
+# $bindir is needed because on Windows we define libdir as ${bindir}.
 exec_prefix="@exec_prefix@"
+bindir="@bindir@"
 libdir="@libdir@"
 includedir="@includedir@"
 
@@ -49,6 +51,16 @@ chmod -R u+w "$DESTDIR$includedir"
 ## Libraries.  ##
 ## ----------- ##
 
-cp -p $boost_library_glob "$DESTDIR$libdir"
-# Fix rights: the owner is allowed to change the libraries.
-chmod -R u+w "$DESTDIR$libdir"
+for lib in $boost_library_glob
+do
+  case $lib in
+    (*python*)
+      # Don't install Boost.Python, it is too demanding.
+      ;;
+    (*)
+      # The owner is allowed to change the libraries, and they should
+      # be executable.
+      install -m 0755 "$lib" "$DESTDIR$libdir"
+      ;;
+  esac
+done
