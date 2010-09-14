@@ -26,6 +26,14 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
+\item In addition to Gostai Console, Windows installers of \usdk now include
+  the Gostai Editor.
+
+\item By popular demand, all the Boost libraries is included in the binary
+  packages.  We used to provide only the headers and libraries \usdk depends
+  upon.  Boost.Python, because it has too many dependencies, is not
+  included.
+
 \item Assignment operators such as \lstinline|'+='| are redefinable.  See
   \autoref{sec:lang:iass}.
 
@@ -100,6 +108,17 @@ var myVar = 42|;
 [00000003] *** var myVar = 42
 \end{urbiscript}
 
+\noindent
+or
+
+\begin{urbiunchecked}
+var x = 0|;
+function f() { x == 1 }|;
+at (f()) echo("OK");
+x = 1|;
+[00000001] *** OK
+\end{urbiunchecked}
+
   Support for sustained events is fixed too (see \autoref{sec:lang:at}).
 \item \refSlot[List]{max} and \refSlot[List]{min} will now report the right
   indexes in error messages.
@@ -142,16 +161,7 @@ var myVar = 42|;
 \item \slot[Regexp]{match}s.
 \item \refObject{Date} objects now have microsecond resolution and
   have bit slightly revamped to not rely on Unix's epoch.
-
-\begin{urbiunchecked}
-var x = 0;
-function f() { x == 1 };
-at (f()) echo("OK");
-x = 1;
-[00000001] *** OK
-\end{urbiunchecked}
-
-\item UVar now have the timestamp of their last assignment.
+\item UVars now have the timestamp of their latest assignment.
 \end{itemize}
 
 \subsection{Documentation}
