@@ -16,17 +16,17 @@ REVISIONFLAGS = --urbiscript --directory
 REVISION_RUN = $(REVISION) $(REVISIONFLAGS) --cache=$< --output=$@
 
 nodist_urbi_DATA +=				\
-  share/urbi/package-info-urbi-sdk.u		\
-  share/urbi/package-info-urbi-sdk-remote.u	\
-  share/urbi/package-info-libport.u
+  share/urbi/package-info/urbi-sdk.u		\
+  share/urbi/package-info/urbi-sdk-remote.u	\
+  share/urbi/package-info/libport.u
 
-share/urbi/package-info-urbi-sdk.u: $(top_srcdir)/.version $(REVISION)
+share/urbi/package-info/urbi-sdk.u: $(top_srcdir)/.version $(REVISION)
 	$(REVISION_RUN) --prefix='Urbi SDK'
 	touch $@
-share/urbi/package-info-urbi-sdk-remote.u: $(top_srcdir)/sdk-remote/.version $(REVISION)
+share/urbi/package-info/urbi-sdk-remote.u: $(top_srcdir)/sdk-remote/.version $(REVISION)
 	$(REVISION_RUN) --prefix='Urbi SDK Remote'
 	touch $@
-share/urbi/package-info-libport.u: $(top_srcdir)/sdk-remote/libport/.version $(REVISION)
+share/urbi/package-info/libport.u: $(top_srcdir)/sdk-remote/libport/.version $(REVISION)
 	$(REVISION_RUN) --prefix='Libport'
 	touch $@
 
