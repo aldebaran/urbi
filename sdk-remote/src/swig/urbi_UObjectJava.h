@@ -12,41 +12,41 @@
 #include <jni.h>
 /* Header for class liburbi_main_UObjectJava */
 
-#ifndef _Included_liburbi_main_UObjectJava
-#define _Included_liburbi_main_UObjectJava
+#ifndef _Included_urbi_UObjectJava
+#define _Included_urbi_UObjectJava
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     liburbi_main_UObjectJava
+ * Class:     urbi_UObjectJava
  * Method:    registerNotifyOnRequest
  * Signature: (JLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_liburbi_main_UObjectJava_registerNotifyOnRequest
+JNIEXPORT void JNICALL Java_urbi_UObjectJava_registerNotifyOnRequest
   (JNIEnv *, jobject, jlong, jstring, jboolean, jstring, jstring, jstring, jint);
 
 /*
- * Class:     liburbi_main_UObjectJava
+ * Class:     urbi_UObjectJava
  * Method:    registerNotifyChange
  * Signature: (JLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_liburbi_main_UObjectJava_registerNotifyChange
+JNIEXPORT void JNICALL Java_urbi_UObjectJava_registerNotifyChange
   (JNIEnv *, jobject, jlong, jstring, jboolean, jstring, jstring, jstring, jint);
 
 /*
- * Class:     liburbi_main_UObjectJava
+ * Class:     urbi_UObjectJava
  * Method:    registerFunction
  * Signature: (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_liburbi_main_UObjectJava_registerFunction
+JNIEXPORT void JNICALL Java_urbi_UObjectJava_registerFunction
   (JNIEnv *, jobject, jobject, jstring, jstring, jstring, jstring, jint);
 
 /*
- * Class:     liburbi_main_UObjectJava
+ * Class:     urbi_UObjectJava
  * Method:    registerTimerFunction
  * Signature: (Ljava/lang/Object;Ljava/lang/String;DLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_liburbi_main_UObjectJava_registerTimerFunction
+JNIEXPORT void JNICALL Java_urbi_UObjectJava_registerTimerFunction
   (JNIEnv *, jobject, jobject, jstring, jdouble, jstring, jstring, jstring, jint);
 
 

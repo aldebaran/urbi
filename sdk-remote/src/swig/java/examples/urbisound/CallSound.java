@@ -24,8 +24,8 @@ import java.io.IOException;
 
 import java.io.*;
 
-import liburbi.main.*;
-import liburbi.sound.*;
+import urbi.*;
+import urbi.generated.*;
 import javax.sound.sampled.*;
 
 public class CallSound extends UCallbackInterface implements SoundAction

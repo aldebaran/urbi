@@ -11,7 +11,7 @@
  */
 
 
-package liburbi.main;
+package urbi;
 
 import gnu.bytecode.*;
 import java.lang.Class;
@@ -19,9 +19,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.RuntimeException;
 import java.util.LinkedList;
-
-
-
+import urbi.generated.urbi;
+import urbi.generated.UObject;
+import urbi.generated.UVar;
+import urbi.generated.URBIStarterJAVA;
+import urbi.generated.UContextImpl;
+import urbi.generated.UValue;
+import urbi.generated.UrbiRoot;
 
 /// This class is the base UObject class for Java UObject.
 /// Please have all your Java UObject extends UObjectJava
@@ -415,7 +419,7 @@ public class UObjectJava extends UObject
 	}
 	new_argv[0] = "UObjectJava";
 	UrbiRoot root = new UrbiRoot("urbi-launch", false);
-	liburbi.main (new_argv.length, new_argv, root);
+	urbi.main (new_argv.length, new_argv, root);
     }
 
     /// internal

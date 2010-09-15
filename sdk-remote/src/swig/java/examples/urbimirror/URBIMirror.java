@@ -23,7 +23,8 @@ package examples.urbimirror;
 
 import java.io.IOException;
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 public class	URBIMirror
 {
@@ -86,6 +87,6 @@ public class	URBIMirror
 	c.send(devices[devCount - 1] + "<< " + devices[devCount - 1] + ".val},");
 
 	System.err.println("starting, hit ctrl-c to stop...");
-	liburbi.execute ();
+	urbi.execute ();
     }
 }

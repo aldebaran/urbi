@@ -2,11 +2,11 @@
 package examples.test;
 
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
-import liburbi.image.*;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 

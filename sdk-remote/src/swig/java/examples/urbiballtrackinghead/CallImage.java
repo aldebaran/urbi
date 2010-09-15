@@ -26,12 +26,12 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 
-import liburbi.main.*;
-import liburbi.image.*;
+import urbi.*;
+import urbi.generated.*;
 
 
 
-import liburbi.main.UClient;
+import urbi.generated.UClient;
 
 public class	CallImage extends UCallbackInterface
 {

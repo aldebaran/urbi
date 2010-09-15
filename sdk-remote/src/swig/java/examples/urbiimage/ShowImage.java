@@ -26,10 +26,8 @@ import java.io.IOException;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
-import liburbi.main.*;
-import liburbi.image.*;
-
-import liburbi.main.UClient;
+import urbi.*;
+import urbi.generated.*;
 
 public class	ShowImage extends UCallbackInterface
 {

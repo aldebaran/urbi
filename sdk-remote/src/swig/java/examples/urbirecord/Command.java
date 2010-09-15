@@ -23,7 +23,8 @@ package examples.urbirecord;
 
 import java.io.IOException;
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 public class	Command extends UCallbackInterface
 {

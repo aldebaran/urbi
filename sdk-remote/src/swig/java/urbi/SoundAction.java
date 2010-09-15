@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-package liburbi.sound;
+package urbi;
 
 public interface		SoundAction
 {

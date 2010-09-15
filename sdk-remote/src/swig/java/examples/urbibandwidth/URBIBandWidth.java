@@ -23,11 +23,8 @@ package examples.urbibandwidth;
 
 import java.io.IOException;
 
-import liburbi.main.UClient;
-import liburbi.main.liburbi;
-
-import liburbi.main.*;
-
+import urbi.*;
+import urbi.generated.*;
 
 public class URBIBandWidth
 {
@@ -56,6 +53,6 @@ public class URBIBandWidth
 	c.send ("camera.format = 0;camera.resolution = 0;noop;noop;");
 	starttime = c.getCurrentTime ();
 	c.send (" for (i=0;i<9; i++) bw << camera.val; be << camera.val;");
-	liburbi.execute ();
+	urbi.execute ();
     }
 }

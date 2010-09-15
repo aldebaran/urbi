@@ -23,7 +23,8 @@ package examples.urbitalkie;
 
 import java.io.IOException;
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 import java.io.*;
 

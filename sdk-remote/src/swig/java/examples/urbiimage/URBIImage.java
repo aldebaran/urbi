@@ -23,8 +23,8 @@ For more information, comments, bug reports: http://urbi.sourceforge.net
 
 import java.io.IOException;
 
-import liburbi.main.*;
-import liburbi.image.*;
+import urbi.*;
+import urbi.generated.*;
 
 public class	URBIImage
 {
@@ -64,6 +64,6 @@ public class	URBIImage
 
 	robotC.send("loop cam<<camera.val, ");
 
-	liburbi.execute ();
+	urbi.execute ();
     }
 }

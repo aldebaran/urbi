@@ -23,8 +23,8 @@ For more information, comments, bug reports: http://urbi.sourceforge.net
 
 import java.io.IOException;
 
-import liburbi.main.UClient;
-import liburbi.image.ImageSampler;
+import urbi.generated.UClient;
+import urbi.ImageSampler;
 
 public class	URBIBallTrackingHead
 {

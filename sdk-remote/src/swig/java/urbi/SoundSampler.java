@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-package liburbi.sound;
+package urbi;
 
 import javax.swing.*;
 import javax.swing.border.*;

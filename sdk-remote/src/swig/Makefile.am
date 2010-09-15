@@ -18,7 +18,7 @@ CFLAGS=
 CXXFLAGS=
 CPPFLAGS=
 
-EXTRA_DIST = liburbi.i
+EXTRA_DIST = java.i
 
 ## -------------- ##
 ## Bindings java  ##
@@ -26,8 +26,8 @@ EXTRA_DIST = liburbi.i
 
 if BINDING_JAVA
 
-java_src_outdir = java/liburbi/main
-java_package = liburbi.main
+java_src_outdir = java/urbi/generated/
+java_package = urbi.generated
 
 SWIG_FLAGS =					\
 	-c++ -java -Wall			\
@@ -37,7 +37,7 @@ SWIG_FLAGS =					\
 	-package $(java_package)
 
 # Invoque Swig and generate: java sources & C++ jni code (liburbi_java.cc)
-liburbi_java.cc: liburbi.i
+java.cc: java.i
 	$(mkdir_p) $(java_src_outdir)
 	$(SWIG) $(SWIG_FLAGS) $(SWIG_ARGS) -o $@.tmp $<
 	perl -pi -e 's/FillMeInAsSizeCannotBeDeterminedAutomatically/(arg1)->size/g' $@.tmp
@@ -45,21 +45,21 @@ liburbi_java.cc: liburbi.i
 
 lib_LTLIBRARIES = liburbijava.la
 
-liburbijava_la_SOURCES = 			\
-	liburbi_java.cc				\
-	liburbi_java.cc.h			\
+liburbijava_la_SOURCES =			\
+	java.cc					\
+	java.cc.h				\
 	callbacks-caller.hh			\
 	callbacks-caller.cc			\
 	call-macros.hh				\
-	liburbi_main_UObjectJava.h		\
-	liburbi_main_UObjectJava.cc
+	urbi_UObjectJava.h			\
+	urbi_UObjectJava.cc
 
 liburbijava_la_LIBADD = $(top_builddir)/src/liburbi/liburbi.la $(top_builddir)/src/libuobject/libuobject.la
 liburbijava_la_CPPFLAGS = -I/usr/lib/jvm/default-java/include
 
 CLEANFILES =					\
-	liburbi_java.cc.h			\
-	liburbi_java.cc				\
+	java.cc.h				\
+	java.cc					\
 	$(wildcard $(java_src_outdir)/*.java)
 
 

@@ -23,7 +23,8 @@ package examples.urbisend;
 
 import java.io.IOException;
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 public class	URBISend
 {
@@ -43,7 +44,7 @@ public class	URBISend
 
 	client.sendFile(args[1]);
 	System.out.println("File sent, hit Ctrl-C to terminate.");
-	liburbi.execute ();
+	urbi.execute ();
 
     }
 }

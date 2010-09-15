@@ -2,7 +2,7 @@
 package examples.uobjectjava;
 
 /// Import the liburbi classes in liburbi.main (located in in liburbi.jar).
-import liburbi.main.*;
+import urbi.*;
 import java.util.Map;
 
 /// Main class.

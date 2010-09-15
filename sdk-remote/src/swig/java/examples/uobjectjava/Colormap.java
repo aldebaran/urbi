@@ -1,6 +1,7 @@
 package examples.uobjectjava;
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 import java.lang.Math;
 
 

@@ -1,6 +1,6 @@
 package examples.uobjectjava;
 
-import liburbi.main.UObjectJava;
+import urbi.UObjectJava;
 
 public class SimpleUObject extends UObjectJava {
 

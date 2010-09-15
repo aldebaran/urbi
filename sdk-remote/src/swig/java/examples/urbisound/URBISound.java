@@ -23,8 +23,8 @@ package examples.urbisound;
 
 import java.io.IOException;
 
-import	liburbi.main.*;
-import	liburbi.sound.*;
+import urbi.*;
+import urbi.generated.*;
 
 public class	URBISound
 {
@@ -52,6 +52,6 @@ public class	URBISound
 	soundSampler = new SoundSampler();
 	soundSampler.setAction(sound);
 
-	liburbi.execute ();
+	urbi.execute ();
     }
 }

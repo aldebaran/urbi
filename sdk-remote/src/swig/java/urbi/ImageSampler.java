@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-package liburbi.image;
+package urbi;
 
 import java.awt.*;
 import java.awt.color.*;

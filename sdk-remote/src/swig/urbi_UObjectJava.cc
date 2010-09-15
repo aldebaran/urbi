@@ -15,7 +15,7 @@
 #include <libport/cstdlib>
 #include <libport/cstdio>
 #include "callbacks-caller.hh"
-#include "liburbi_main_UObjectJava.h"
+#include "urbi_UObjectJava.h"
 
 #define CREATE_FUN_CALLBACK(uobj, obj, fun, func_name)			\
   ::urbi::createUCallback(*uobj, 0, "function", obj, fun, func_name)
@@ -230,30 +230,30 @@ void registerNotify (JNIEnv *env,
 
 
 JNIEXPORT void JNICALL
-Java_liburbi_main_UObjectJava_registerNotifyChange(JNIEnv *env,
-						   jobject obj,
-						   jlong var,
-						   jstring var_name,
-						   jboolean is_owned,
-						   jstring obj_name,
-						   jstring method_name,
-						   jstring method_signature,
-						   jint arg_nb)
+Java_urbi_UObjectJava_registerNotifyChange(JNIEnv *env,
+					   jobject obj,
+					   jlong var,
+					   jstring var_name,
+					   jboolean is_owned,
+					   jstring obj_name,
+					   jstring method_name,
+					   jstring method_signature,
+					   jint arg_nb)
 {
   registerNotify (env, obj, var, var_name, is_owned, obj_name,
 		  method_name, method_signature, arg_nb, "var");
 }
 
 JNIEXPORT void JNICALL
-Java_liburbi_main_UObjectJava_registerNotifyOnRequest(JNIEnv *env,
-						      jobject obj,
-						      jlong var,
-						      jstring var_name,
-						      jboolean is_owned,
-						      jstring obj_name,
-						      jstring method_name,
-						      jstring method_signature,
-						      jint arg_nb)
+Java_urbi_UObjectJava_registerNotifyOnRequest(JNIEnv *env,
+					      jobject obj,
+					      jlong var,
+					      jstring var_name,
+					      jboolean is_owned,
+					      jstring obj_name,
+					      jstring method_name,
+					      jstring method_signature,
+					      jint arg_nb)
 {
   registerNotify (env, obj, var, var_name, is_owned, obj_name,
 		  method_name, method_signature, arg_nb, "var_onrequest");
@@ -262,14 +262,14 @@ Java_liburbi_main_UObjectJava_registerNotifyOnRequest(JNIEnv *env,
 
 
 JNIEXPORT void JNICALL
-Java_liburbi_main_UObjectJava_registerFunction(JNIEnv *env,
-					       jobject,
-					       jobject obj,
-					       jstring obj_name,
-					       jstring method_name,
-					       jstring method_signature,
-					       jstring return_type,
-					       jint arg_nb)
+Java_urbi_UObjectJava_registerFunction(JNIEnv *env,
+				       jobject,
+				       jobject obj,
+				       jstring obj_name,
+				       jstring method_name,
+				       jstring method_signature,
+				       jstring return_type,
+				       jint arg_nb)
 {
   /// First, assure that the JNI variables used by the caller are correctly
   /// set. If the are not and we can't set them, return.
@@ -310,15 +310,15 @@ Java_liburbi_main_UObjectJava_registerFunction(JNIEnv *env,
 
 
 JNIEXPORT void JNICALL
-Java_liburbi_main_UObjectJava_registerTimerFunction(JNIEnv *env,
-						    jobject,
-						    jobject obj,
-						    jstring obj_name,
-						    jdouble period,
-						    jstring method_name,
-						    jstring method_signature,
-						    jstring return_type,
-						    jint arg_nb)
+Java_urbi_UObjectJava_registerTimerFunction(JNIEnv *env,
+					    jobject,
+					    jobject obj,
+					    jstring obj_name,
+					    jdouble period,
+					    jstring method_name,
+					    jstring method_signature,
+					    jstring return_type,
+					    jint arg_nb)
 {
   /// First, assure that the JNI variables used by the caller are correctly
   /// set. If the are not and we can't set them, return.

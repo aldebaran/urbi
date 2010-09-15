@@ -1,8 +1,8 @@
-package liburbi.main;
+package urbi;
 
 
 /// Import the liburbi classes in liburbi.main (located in in liburbi.jar).
-import liburbi.main.UObjectJava;
+import urbi.UObjectJava;
 import java.util.Map;
 import java.lang.UnsatisfiedLinkError;
 import java.io.File;

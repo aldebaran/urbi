@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-package liburbi.image;
+package urbi;
 
 /**
  * The ImageFilter class is a useful class to obtain the RGB and YCrCb values of

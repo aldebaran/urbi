@@ -1,4 +1,4 @@
-package liburbi.image;
+package urbi;
 
 import java.util.Vector;
 

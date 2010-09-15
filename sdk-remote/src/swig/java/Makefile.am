@@ -8,6 +8,8 @@
 
 
 javadir = $(pkgdatadir)/java
+JAR=jar
+JAVAC=javac
 
 ## ------------------- ##
 ## Define java sources ##
@@ -63,21 +65,21 @@ gnu_bytecode_SOURCES =				\
 
 
 liburbi_SOURCES =				\
-	liburbi/image/ImageComponent.java	\
-	liburbi/image/ImageFilter.java		\
-	liburbi/image/ImageSampler.java		\
-	liburbi/image/ImageUtilities.java	\
-	liburbi/image/MedianFilter.java		\
-	liburbi/sound/SendSoundSampler.java	\
-	liburbi/sound/SoundAction.java		\
-	liburbi/sound/SoundSampler.java		\
-	liburbi/sound/SoundUtilities.java	\
-	liburbi/main/UObjectStarter.java	\
-	liburbi/main/UObjectJava.java		\
-	liburbi/main/UMain.java
+	urbi/ImageComponent.java		\
+	urbi/ImageFilter.java			\
+	urbi/ImageSampler.java			\
+	urbi/ImageUtilities.java		\
+	urbi/MedianFilter.java			\
+	urbi/SendSoundSampler.java		\
+	urbi/SoundAction.java			\
+	urbi/SoundSampler.java			\
+	urbi/SoundUtilities.java		\
+	urbi/UObjectStarter.java		\
+	urbi/UObjectJava.java			\
+	urbi/UMain.java
 
 generated_SOURCES =				\
-	$(wildcard liburbi/main/*.java)
+	$(wildcard urbi/generated/*.java)
 
 testUObject_SOURCES =				\
 	examples/uobjectjava/Main.java		\
@@ -174,7 +176,7 @@ JAR_FILES =							\
 
 ANT = ant -f build.xml
 
-ant.stamp: ../liburbi_java.cc build.xml $(all_SOURCES) $(testUObject_SOURCES)
+ant.stamp: ../java.cc build.xml $(all_SOURCES)
 	$(mkdir_p) ./lib
 	$(ANT)
 	touch ant.stamp

@@ -24,7 +24,8 @@ package examples.urbiplay;
 import java.io.IOException;
 
 import java.io.*;
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 public class	URBIPlay
 {
@@ -265,6 +266,6 @@ public class	URBIPlay
 	catch (IOException e)
 	{
 	}
-	liburbi.execute ();
+	urbi.execute ();
     }
 }

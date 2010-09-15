@@ -10,13 +10,15 @@
  * For comments, bug reports and feedback: http://www.urbiforge.com
  */
 
-package liburbi.main;
+package urbi;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 
-
-
+import urbi.generated.urbi;
+import urbi.generated.URBIStarterJAVA;
+import urbi.generated.UContextImpl;
+import urbi.generated.UObject;
 
 public class UObjectStarter extends URBIStarterJAVA
 {
@@ -31,7 +33,7 @@ public class UObjectStarter extends URBIStarterJAVA
 	String rn = n;
 	if (rn.isEmpty())
 	    rn = uobject_name; //getName();
-	liburbi.setCurrentContext (ctx);
+	urbi.setCurrentContext (ctx);
 	UObject res = null;
 
 	try

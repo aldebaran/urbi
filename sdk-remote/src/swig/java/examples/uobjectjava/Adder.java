@@ -1,8 +1,8 @@
 package examples.uobjectjava;
 
-import liburbi.main.UObjectJava;
-import liburbi.main.UVar;
-import liburbi.main.UValue;
+import urbi.UObjectJava;
+import urbi.generated.UVar;
+import urbi.generated.UValue;
 
 public class Adder extends UObjectJava // must extends UObjectJava
 {

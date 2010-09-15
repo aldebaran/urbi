@@ -24,7 +24,8 @@ package examples.urbirecord;
 import java.io.IOException;
 import java.io.*;
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 /*
   file format
@@ -143,6 +144,6 @@ public class	URBIRecord
 	c.send(devices[devCount - 1] + "<< " + devices[devCount - 1] + ".val},");
 	System.err.println("starting, hit ctrl-c to stop...");
 
-	liburbi.execute ();
+	urbi.execute ();
     }
 }

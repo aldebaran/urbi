@@ -1,6 +1,6 @@
 package examples.uobjectjava;
 
-import liburbi.main.*;
+import urbi.*;
 
 // ----------------- //
 // UObject: Feature4 //

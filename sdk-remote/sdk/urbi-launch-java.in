@@ -115,7 +115,7 @@ get_options ()
 
 urbi_launch_args=
 uob_archives=
-main=liburbi.main.UMain
+main=urbi.UMain
 liburbi_jar=@prefix@/share/sdk-remote/java/lib/liburbijava.jar
 library_path=@prefix@/lib
 

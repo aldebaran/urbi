@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-package liburbi.image;
+package urbi;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -28,7 +28,7 @@ import java.awt.geom.Line2D;
 
 import javax.swing.*;
 
-import liburbi.main.UClient;
+import urbi.generated.UClient;
 
 /**
  * The ImageComponent class is used to display an image. It subclasses

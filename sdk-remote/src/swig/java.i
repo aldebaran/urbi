@@ -1,6 +1,6 @@
 // -*- C++ -*-
 
-%module(directors="1") liburbi
+%module(directors="1") urbi
 %{
 
 ///
@@ -95,86 +95,6 @@ namespace urbi
     }
 
   };
-
-
-  /*
-  UStartlist& getObjectlist ()
-  {
-    return objectlist;
-  }
-
-  class URBIStarterJAVA : public baseURBIStarter
-  {
-  public:
-    URBIStarterJAVA (const std::string& name, UStartlist& _slist)
-      : baseURBIStarter(name)
-    {
-      slist = &_slist;
-      slist->push_back(this);
-    }
-
-    virtual ~URBIStarterJAVA()
-    {
-      clean();
-    }
-
-    void clean()
-    {
-      /// Delete nothing since allocation is done in the Java side
-      /// (it will be freed by Java GC).
-    }
-
-    void
-    copy(const std::string& objname)
-    {
-      URBIStarterJAVA* ustarter = allocStarter(objname,*slist);
-      ustarter->init(objname);
-      UObject *uso = ustarter->object;
-      getUObject()->members.push_back(uso);
-      uso->derived = true;
-      uso->classname = getUObject()->classname;
-      if (uso->autogroup)
-	uso->addAutoGroup();
-    }
-
-    /// Access to the object from the outside.
-    UObject* getUObject()
-    {
-      return object;
-    }
-
-
-  protected:
-
-    /// To reimplement in Java subclasses
-    /// Theses functions should never be called.
-
-    virtual UObject* allocObject (const std::string& name)
-    {
-      assert (0);
-      return 0;
-    }
-
-    virtual URBIStarterJAVA* allocStarter (const std::string& name, UStartlist& _slist)
-    {
-      assert (0);
-      return 0;
-    }
-
-  protected:
-
-    /// Called when the object is ready to be initialized.
-    void init(const std::string& objname)
-    {
-      object = allocObject(objname);
-    }
-
-    UStartlist  *slist;
-    UObject*	object;
-  };
-
-  */
-
 };
 
 

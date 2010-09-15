@@ -1,7 +1,8 @@
 
 package examples.test;
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 public class test {
   static {

@@ -19,10 +19,10 @@ For more information, comments, bug reports: http://urbi.sourceforge.net
 
 **************************************************************************** */
 
-    package liburbi.sound;
+    package urbi;
 
 import javax.sound.sampled.*;
-import liburbi.main.UClient;
+import urbi.generated.UClient;
 
 import java.io.*;
 

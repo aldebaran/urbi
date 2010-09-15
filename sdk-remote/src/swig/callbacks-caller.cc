@@ -98,7 +98,7 @@ bool
 CallbacksCaller::cacheJNIVariables (JNIEnv* env)
 {
   /// Get the jclass for UValue
-  if (!(uvalue_cls = getGlobalRef (env, "liburbi/main/UValue")))
+  if (!(uvalue_cls = getGlobalRef (env, "urbi/generated/UValue")))
   {
     TROW_RUNTIME(env, "Can't find UValue class");
     return false;
@@ -120,7 +120,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   }
 
   /// Get the jclass for UVar
-  if (!(uvar_cls = getGlobalRef (env, "liburbi/main/UVar")))
+  if (!(uvar_cls = getGlobalRef (env, "urbi/generated/UVar")))
   {
     env->DeleteGlobalRef (uvalue_cls);
     TROW_RUNTIME(env, "Can't find UVar class");
@@ -145,7 +145,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   }
 
   /// Get the jclass for UObject
-  if (!(uobject_cls = getGlobalRef(env, "liburbi/main/UObject")))
+  if (!(uobject_cls = getGlobalRef(env, "urbi/generated/UObject")))
   {
     env->DeleteGlobalRef (uvalue_cls);
     env->DeleteGlobalRef (uvar_cls);
@@ -242,7 +242,7 @@ CallbacksCaller::getObjectFromUValue (const urbi::UValue& v)
 {
   jobject res = env_->NewObject(uvalue_cls, uvalue_ctor_id, (jlong) &v, false);
   if (!res)
-    std::cerr << "Cannot allocate a new object of type liburbi.main.UValue"
+    std::cerr << "Cannot allocate a new object of type urbi.generated.UValue"
 	      << std::endl;
   return res;
 }
@@ -252,7 +252,7 @@ CallbacksCaller::getObjectFromUVar (urbi::UVar& v)
 {
   jobject res = env_->NewObject(uvar_cls, uvar_ctor_id, (jlong) &v, false);
   if  (!res)
-    std::cerr << "Cannot allocate a new object of type liburbi.main.UVar"
+    std::cerr << "Cannot allocate a new object of type urbi.generated.UVar"
 	      << std::endl;
   return res;
 }

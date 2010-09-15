@@ -19,7 +19,7 @@ For more information, comments, bug reports: http://urbi.sourceforge.net
 
 **************************************************************************** */
 
-package liburbi.sound;
+package urbi;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -28,7 +28,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.sound.sampled.*;
 
-import liburbi.main.UClient;
+import urbi.generated.UClient;
 
 public class	SendSoundSampler extends JFrame
 {

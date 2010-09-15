@@ -23,7 +23,8 @@ package examples.urbitalkie;
 
 import java.io.IOException;
 
-import liburbi.main.*;
+import urbi.*;
+import urbi.generated.*;
 
 import java.io.*;
 
@@ -61,6 +62,6 @@ public class	URBITalkie
 	r1.send("loop mic1<<micro.val,");
 	r2.send("loop mic2<<micro.val,");
 
-	liburbi.execute ();
+	urbi.execute ();
     }
 }
