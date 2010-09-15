@@ -30,8 +30,8 @@ import urbi.*;
 ///     // [00007802] Update called 5 times.
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObjectJava'
-public class Feature4 extends UObjectJava
+/// 'liburbi.main.UObject'
+public class Feature4 extends UObject
 {
     /// Some variables used in the functions below
     private int timer_count = 1;
@@ -64,7 +64,7 @@ public class Feature4 extends UObjectJava
 	///
 	///    int update ()
 	///
-	/// That is defined in the class UObjectJava, and set a timer with
+	/// That is defined in the class UObject, and set a timer with
 	///
 	///    void USetUpdate (double period)
 	///

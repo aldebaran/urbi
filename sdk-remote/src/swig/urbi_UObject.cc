@@ -15,7 +15,7 @@
 #include <libport/cstdlib>
 #include <libport/cstdio>
 #include "callbacks-caller.hh"
-#include "urbi_UObjectJava.h"
+#include "urbi_UObject.h"
 
 #define CREATE_FUN_CALLBACK(uobj, obj, fun, func_name)			\
   ::urbi::createUCallback(*uobj, 0, "function", obj, fun, func_name)
@@ -230,7 +230,7 @@ void registerNotify (JNIEnv *env,
 
 
 JNIEXPORT void JNICALL
-Java_urbi_UObjectJava_registerNotifyChange(JNIEnv *env,
+Java_urbi_UObject_registerNotifyChange(JNIEnv *env,
 					   jobject obj,
 					   jlong var,
 					   jstring var_name,
@@ -245,7 +245,7 @@ Java_urbi_UObjectJava_registerNotifyChange(JNIEnv *env,
 }
 
 JNIEXPORT void JNICALL
-Java_urbi_UObjectJava_registerNotifyOnRequest(JNIEnv *env,
+Java_urbi_UObject_registerNotifyOnRequest(JNIEnv *env,
 					      jobject obj,
 					      jlong var,
 					      jstring var_name,
@@ -262,7 +262,7 @@ Java_urbi_UObjectJava_registerNotifyOnRequest(JNIEnv *env,
 
 
 JNIEXPORT void JNICALL
-Java_urbi_UObjectJava_registerFunction(JNIEnv *env,
+Java_urbi_UObject_registerFunction(JNIEnv *env,
 				       jobject,
 				       jobject obj,
 				       jstring obj_name,
@@ -310,7 +310,7 @@ Java_urbi_UObjectJava_registerFunction(JNIEnv *env,
 
 
 JNIEXPORT void JNICALL
-Java_urbi_UObjectJava_registerTimerFunction(JNIEnv *env,
+Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
 					    jobject,
 					    jobject obj,
 					    jstring obj_name,

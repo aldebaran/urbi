@@ -2,7 +2,7 @@ package urbi;
 
 
 /// Import the liburbi classes in liburbi.main (located in in liburbi.jar).
-import urbi.UObjectJava;
+import urbi.UObject;
 import java.util.Map;
 import java.lang.UnsatisfiedLinkError;
 import java.io.File;
@@ -125,7 +125,7 @@ public class UMain {
 	    subargv = new String[0];
 	try
 	{
-	    UObjectJava.main (subargv);
+	    UObject.main (subargv);
 	}
 	catch (Exception e)
 	{

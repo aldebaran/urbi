@@ -1,10 +1,10 @@
 package examples.uobjectjava;
 
-import urbi.UObjectJava;
+import urbi.UObject;
 import urbi.generated.UVar;
 import urbi.generated.UValue;
 
-public class Adder extends UObjectJava // must extends UObjectJava
+public class Adder extends UObject // must extends UObject
 {
     /// Declare a variable v that will be accessible in Urbi
     private UVar v = new UVar ();
@@ -67,7 +67,7 @@ public class Adder extends UObjectJava // must extends UObjectJava
 /// No Urbi Constructor version:
 /// ----------------------------
 
-public class Adder extends UObjectJava // must extends UObjectJava
+public class Adder extends UObject // must extends UObject
 {
     /// Declare a variable v that will be accessible in Urbi
     private UVar v = new UVar ();

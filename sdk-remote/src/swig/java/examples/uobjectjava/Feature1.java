@@ -35,8 +35,8 @@ import urbi.generated.*;
 ///
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObjectJava'
-public class Feature1 extends UObjectJava
+/// 'liburbi.main.UObject'
+public class Feature1 extends UObject
 {
     // -------------------- //
     // Feature1 constructor //

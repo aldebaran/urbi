@@ -8,12 +8,12 @@ import java.util.Map;
 /// Main class.
 ///  - Load the 'urbijava' library
 ///  - Starts all the UObjects
-///  - Call UObjectJava.main
+///  - Call UObject.main
 ///
 /// Please reuse this class in your Java UObjects.
 /// you only need to replace the UObjects names in
 ///
-///  'UObjectJava.UStart'
+///  'UObject.UStart'
 ///
 /// by the names of your own UObjects.
 ///
@@ -42,32 +42,32 @@ public class Main {
 	try
 	{
 	    /// Start the 'Feature1' UObject
-	    UObjectJava.UStart (Feature1.class);
+	    UObject.UStart (Feature1.class);
 
 	    /// Start the 'Feature2' UObject
-	    UObjectJava.UStart (Feature2.class);
+	    UObject.UStart (Feature2.class);
 
 	    /// Start the 'Feature3' UObject
-	    UObjectJava.UStart (Feature3.class);
+	    UObject.UStart (Feature3.class);
 
 	    /// Start the 'Feature4' UObject
-	    UObjectJava.UStart (Feature4.class);
+	    UObject.UStart (Feature4.class);
 
 	    /// Start the 'Feature6' UObject
-	    UObjectJava.UStart (Feature5.class);
+	    UObject.UStart (Feature5.class);
 
 	    /// Start the 'Colormap' UObject
-	    UObjectJava.UStart (Colormap.class);
+	    UObject.UStart (Colormap.class);
 
 	    /// Start the 'Adder' UObject
-	    UObjectJava.UStart (Adder.class);
+	    UObject.UStart (Adder.class);
 
 	    /// Start the 'SimpleUObject' UObject
-	    UObjectJava.UStart (SimpleUObject.class);
+	    UObject.UStart (SimpleUObject.class);
 
-	    /// Call the main in UObjectJava. This main
+	    /// Call the main in UObject. This main
 	    /// will never return.
-	    UObjectJava.main (argv);
+	    UObject.main (argv);
 	}
 	catch (Exception e)
 	{

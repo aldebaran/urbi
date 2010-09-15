@@ -1,13 +1,13 @@
 package examples.uobjectjava;
 
-import urbi.UObjectJava;
+import urbi.UObject;
 
-public class SimpleUObject extends UObjectJava {
+public class SimpleUObject extends UObject {
 
    /// The constructor of your UObject MUST take a string
    /// as parameter.
    public SimpleUObject (String s) {
-     super (s); /// Call the constructor of UObjectJava
+     super (s); /// Call the constructor of UObject
    }
 
 }

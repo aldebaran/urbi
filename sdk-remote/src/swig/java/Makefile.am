@@ -75,7 +75,7 @@ liburbi_SOURCES =				\
 	urbi/SoundSampler.java			\
 	urbi/SoundUtilities.java		\
 	urbi/UObjectStarter.java		\
-	urbi/UObjectJava.java			\
+	urbi/UObject.java			\
 	urbi/UMain.java
 
 generated_SOURCES =				\

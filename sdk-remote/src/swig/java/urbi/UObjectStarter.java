@@ -18,7 +18,7 @@ import java.lang.reflect.Constructor;
 import urbi.generated.urbi;
 import urbi.generated.URBIStarterJAVA;
 import urbi.generated.UContextImpl;
-import urbi.generated.UObject;
+import urbi.generated.UObjectCPP;
 
 public class UObjectStarter extends URBIStarterJAVA
 {
@@ -28,18 +28,18 @@ public class UObjectStarter extends URBIStarterJAVA
 	uobject_name = name;
     }
 
-    public UObject instanciate(UContextImpl ctx, String n)
+    public UObjectCPP instanciate(UContextImpl ctx, String n)
     {
 	String rn = n;
 	if (rn.isEmpty())
 	    rn = uobject_name; //getName();
 	urbi.setCurrentContext (ctx);
-	UObject res = null;
+	UObjectCPP res = null;
 
 	try
 	{
 	    Object[] ctor_params = { rn };
-	    res = (UObject) uobject_ctor.newInstance(ctor_params);
+	    res = (UObjectCPP) uobject_ctor.newInstance(ctor_params);
 	    ctx.instanciated(res);
 	    res.setCloner(this);
 	}

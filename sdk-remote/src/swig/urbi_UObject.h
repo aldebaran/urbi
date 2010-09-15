@@ -12,41 +12,41 @@
 #include <jni.h>
 /* Header for class liburbi_main_UObjectJava */
 
-#ifndef _Included_urbi_UObjectJava
-#define _Included_urbi_UObjectJava
+#ifndef _Included_urbi_UObject
+#define _Included_urbi_UObject
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     urbi_UObjectJava
+ * Class:     urbi_UObject
  * Method:    registerNotifyOnRequest
  * Signature: (JLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_urbi_UObjectJava_registerNotifyOnRequest
+JNIEXPORT void JNICALL Java_urbi_UObject_registerNotifyOnRequest
   (JNIEnv *, jobject, jlong, jstring, jboolean, jstring, jstring, jstring, jint);
 
 /*
- * Class:     urbi_UObjectJava
+ * Class:     urbi_UObject
  * Method:    registerNotifyChange
  * Signature: (JLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_urbi_UObjectJava_registerNotifyChange
+JNIEXPORT void JNICALL Java_urbi_UObject_registerNotifyChange
   (JNIEnv *, jobject, jlong, jstring, jboolean, jstring, jstring, jstring, jint);
 
 /*
- * Class:     urbi_UObjectJava
+ * Class:     urbi_UObject
  * Method:    registerFunction
  * Signature: (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_urbi_UObjectJava_registerFunction
+JNIEXPORT void JNICALL Java_urbi_UObject_registerFunction
   (JNIEnv *, jobject, jobject, jstring, jstring, jstring, jstring, jint);
 
 /*
- * Class:     urbi_UObjectJava
+ * Class:     urbi_UObject
  * Method:    registerTimerFunction
  * Signature: (Ljava/lang/Object;Ljava/lang/String;DLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_urbi_UObjectJava_registerTimerFunction
+JNIEXPORT void JNICALL Java_urbi_UObject_registerTimerFunction
   (JNIEnv *, jobject, jobject, jstring, jdouble, jstring, jstring, jstring, jint);
 
 

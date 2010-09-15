@@ -145,7 +145,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   }
 
   /// Get the jclass for UObject
-  if (!(uobject_cls = getGlobalRef(env, "urbi/generated/UObject")))
+  if (!(uobject_cls = getGlobalRef(env, "urbi/generated/UObjectCPP")))
   {
     env->DeleteGlobalRef (uvalue_cls);
     env->DeleteGlobalRef (uvar_cls);

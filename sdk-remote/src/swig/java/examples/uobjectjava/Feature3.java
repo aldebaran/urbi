@@ -31,8 +31,8 @@ import urbi.generated.*;
 ///    // [00117457] Global.a is changed and is equal to -1
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObjectJava'
-public class Feature3 extends UObjectJava
+/// 'liburbi.main.UObject'
+public class Feature3 extends UObject
 {
 
     private UVar val1 = new UVar ();

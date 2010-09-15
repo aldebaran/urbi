@@ -26,8 +26,8 @@ import urbi.generated.*;
 ///     // [00073470] 41
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObjectJava'
-public class Feature5 extends UObjectJava
+/// 'liburbi.main.UObject'
+public class Feature5 extends UObject
 {
 
     // -------------------- //

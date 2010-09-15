@@ -20,7 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.RuntimeException;
 import java.util.LinkedList;
 import urbi.generated.urbi;
-import urbi.generated.UObject;
+import urbi.generated.UObjectCPP;
 import urbi.generated.UVar;
 import urbi.generated.URBIStarterJAVA;
 import urbi.generated.UContextImpl;
@@ -28,12 +28,12 @@ import urbi.generated.UValue;
 import urbi.generated.UrbiRoot;
 
 /// This class is the base UObject class for Java UObject.
-/// Please have all your Java UObject extends UObjectJava
-public class UObjectJava extends UObject
+/// Please have all your Java UObject extends UObject
+public class UObject extends UObjectCPP
 {
 
     /// Constructor
-    public UObjectJava (String s) {
+    public UObject (String s) {
 	super (s);
     }
 
@@ -417,7 +417,7 @@ public class UObjectJava extends UObject
 	for (int i = 0; i < argv.length; ++i) {
 	    new_argv[i + 1] = argv[i];
 	}
-	new_argv[0] = "UObjectJava";
+	new_argv[0] = "UObject";
 	UrbiRoot root = new UrbiRoot("urbi-launch", false);
 	urbi.main (new_argv.length, new_argv, root);
     }

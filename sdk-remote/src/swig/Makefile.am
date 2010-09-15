@@ -51,8 +51,8 @@ liburbijava_la_SOURCES =			\
 	callbacks-caller.hh			\
 	callbacks-caller.cc			\
 	call-macros.hh				\
-	urbi_UObjectJava.h			\
-	urbi_UObjectJava.cc
+	urbi_UObject.h				\
+	urbi_UObject.cc
 
 liburbijava_la_LIBADD = $(top_builddir)/src/liburbi/liburbi.la $(top_builddir)/src/libuobject/libuobject.la
 liburbijava_la_CPPFLAGS = -I/usr/lib/jvm/default-java/include

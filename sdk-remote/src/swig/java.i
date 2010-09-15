@@ -607,6 +607,9 @@ namespace urbi
 
 %feature("director") urbi::UObject;
 
+%rename("UObjectCPP") urbi::UObject;
+
+
 /// ignore 'load' attribute (swig generate the setter and try to do
 /// load = some_UVar which is not possible since you can't assign
 /// an UVar to an UVar)

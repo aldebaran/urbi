@@ -27,7 +27,7 @@ import java.lang.Math;
 /// Then move the orange ball with the mouse in front of the Nao camera,
 /// and the Nao head will follow it
 ///
-public class Colormap extends UObjectJava
+public class Colormap extends UObject
 {
     /// x position of the color blob in the image
     private UVar x = new UVar ();

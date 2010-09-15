@@ -29,8 +29,8 @@ import urbi.generated.*;
 ///
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObjectJava'
-public class Feature2 extends UObjectJava
+/// 'liburbi.main.UObject'
+public class Feature2 extends UObject
 {
 
     /// Binded UVar val1
