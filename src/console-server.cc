@@ -140,9 +140,10 @@ public:
 };
 
 
-static void onCloseStdin()
+static void onCloseStdin(kernel::UConnection* c)
 {
   GD_INFO("stdin Closed.");
+  c->close();
   object::objects_type args;
   kernel::urbiserver->schedule(urbi::object::global_class,
                                SYMBOL(shutdown), args);
@@ -157,12 +158,12 @@ namespace
   onReadStdin(boost::asio::posix::stream_descriptor& sd,
               boost::asio::streambuf& buffer,
               const boost::system::error_code& erc,
-              size_t len)
+              size_t len, kernel::UConnection* c)
   {
     if (erc)
     {
       if (erc == boost::asio::error::eof)
-        onCloseStdin();
+        onCloseStdin(c);
       return;
     }
     std::istream is(&buffer);
@@ -172,7 +173,7 @@ namespace
     ::kernel::urbiserver->ghost_connection_get().received(s);
     boost::asio::async_read(sd, buffer, boost::asio::transfer_at_least(1),
                             boost::bind(&onReadStdin, boost::ref(sd),
-                                        boost::ref(buffer), _1, _2));
+                                        boost::ref(buffer), _1, _2, c));
   }
 #endif
 
@@ -497,6 +498,8 @@ namespace urbi
       std::ofstream(libport::opts::port_file_l.value().c_str(), std::ios::out)
         << port << std::endl;,
     )
+
+    kernel::UConnection& c = s.ghost_connection_get();
 #if !defined WIN32
     libport::utsname machine;
     // The use of Boost::Asio to handle stdin/stdout does not work at
@@ -513,7 +516,7 @@ namespace urbi
       boost::asio::streambuf* buffer = new boost::asio::streambuf;
       boost::asio::async_read(*sd, *buffer, boost::asio::transfer_at_least(1),
                               boost::bind(&onReadStdin, boost::ref(*sd),
-                                          boost::ref(*buffer), _1, _2));
+                                          boost::ref(*buffer), _1, _2, &c));
       // Under Mac OS X and linux, in interactive sessions, and unless there are
       // redirections, stdin, stdout, and stderr are bound together:
       // fcntl on one of them, affects the others.  Our using ASIO has
@@ -524,7 +527,6 @@ namespace urbi
       ERRNO_RUN(fcntl, STDOUT_FILENO, F_SETFL, flags & ~O_NONBLOCK);
     }
 #endif
-    kernel::UConnection& c = s.ghost_connection_get();
     GD_INFO_TRACE("got ghost connection");
 
 #ifndef NO_OPTION_PARSER
@@ -567,7 +569,7 @@ namespace urbi
           std::cerr << libport::program_name() << ": "
                     << e.what() << std::endl;
           data.interactive = false;
-          onCloseStdin();
+          onCloseStdin(*s.ghost_connection_get());
         }
         if (!input.empty())
           s.ghost_connection_get().received(input);

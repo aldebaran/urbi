@@ -363,9 +363,12 @@ root:
 // An interactive entry: a statement ended by ";" or ",".
 %type <ast::rExp> root_exp;
 root_exp:
-  cstmt.opt ";"  { $$ = MAKE(nary, @$, $1, $2); }
-| cstmt.opt ","  { $$ = MAKE(nary, @$, $1, $2); }
-| cstmt.opt EOF  { $$ = MAKE(nary, @$, $1); }
+  cstmt.opt ";"  { $$ = new ast::Stmt(@$, $2, $1); }
+| cstmt.opt ","  { $$ = new ast::Stmt(@$, $2, $1); }
+| cstmt.opt EOF  { $$ = new ast::Stmt(@$, ast::flavor_none, $1); }
+| error ";"  { $$ = 0; }
+| error ","  { $$ = 0; }
+| error EOF  { $$ = 0; }
 ;
 
 %type <ast::rExp> root_exps;
