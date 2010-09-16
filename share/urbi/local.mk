@@ -15,7 +15,8 @@ REVISION = $(build_aux_dir)/bin/git-version-gen
 REVISIONFLAGS = --urbiscript --directory
 REVISION_RUN = $(REVISION) $(REVISIONFLAGS) --cache=$< --output=$@
 
-nodist_urbi_DATA +=				\
+urbi_package_infodir = $(urbidir)/package-info
+nodist_urbi_package_info_DATA =			\
   share/urbi/package-info/urbi-sdk.u		\
   share/urbi/package-info/urbi-sdk-remote.u	\
   share/urbi/package-info/libport.u
