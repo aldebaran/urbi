@@ -40,10 +40,8 @@ do (Global.UObject)
     {
       var ret = res.callMessage(call).acceptVoid|
       if (ret.isA(Float) && ret != 0)
-      {
         throw Exception.new("%s construction failed: init returned %s."
-                            % [__uobjectName, ret])
-      }|
+                            % [__uobjectName, ret]) |
     }
     catch (var e)
     {
@@ -57,42 +55,39 @@ do (Global.UObject)
   {
     0
   };
+
   function uobjectInit()
   {
     // COW
-    updateTask = Tag.new;
-    remoteEventMap = [ => ];
-    var this.handle = WeakPointer.new;
-    timerTask = [ => ];
+    updateTask = Tag.new|
+    remoteEventMap = [ => ]|
+    var this.handle = WeakPointer.new|
+    timerTask = [ => ]
   };
 
   function destroy()
   {
-    for( var t: timerTask)
+    for| (var t: timerTask)
       t.second.stop |
     updateTask.stop |
     var name = __uobjectName |
     var remote = hasLocalSlot("isRemote") |
-    var lob = lobby; // will find this.lobby if we are a remote uobject
-    uobjects.removeSlot(__uobjectName);
+    var lob = lobby | // will find this.lobby if we are a remote uobject
+    uobjects.removeSlot(__uobjectName)|
     // Deregister all callbacks
-    handle = nil;
+    handle = nil|
     // Remove reference loops induced by closures.
-    for (var f: localSlotNames)
-    {
+    for| (var f: localSlotNames)
       if (getSlot(f).isA(UVar))
-      {
-        removeProperty(f + "_quote_n", "updateHook");
-      }
-    };
-    for (var f: localSlotNames.remove("__uobjectName").remove("finalize"))
-      removeSlot(f) ;
+        removeProperty(f + "_quote_n", "updateHook") |
+    for| (var f: localSlotNames.remove("__uobjectName").remove("finalize"))
+      removeSlot(f)|
     // Destroy C++ UObject instance
     if (!remote)
     {
-      finalize;
+      finalize |
       // Reparent to loose all UObject methods including finalize
-      setProtos([Finalizable]);
+      setProtos([Finalizable])
     }
     else
     {
@@ -100,23 +95,25 @@ do (Global.UObject)
       {
          var chan = Channel.new('external'.MODULE_TAG)|
          var chan.lobby = lob|
-         chan << ['external'.UEM_DELETE, name];
+         chan << ['external'.UEM_DELETE, name]
       }
     }
   };
+
   var bounceSetUpdate = Event.new;
   at(bounceSetUpdate?(var obj))
   {
     if (0 < obj.updateInterval)
       obj.updateTask: detach(obj.periodicCall(obj.updateInterval,
                                           obj.getSlot("update"),
-                                      "update", [obj]));
+                                      "update", [obj]))
   };
+
   /// Set a timer to call update at specified interval in seconds.
   function setUpdate(interval)
   {
     if (0 < interval && interval < minimumInterval)
-      interval = minimumInterval;
+      interval = minimumInterval|
     // Stop current update task.
     updateTask.stop|
     updateInterval = interval|
@@ -129,13 +126,14 @@ do (Global.UObject)
     if (!tagName)
       tagName = String.fresh|
     if (interval < minimumInterval)
-      interval = minimumInterval;
+      interval = minimumInterval|
     if (!hasLocalSlot("timerTask"))
-      timerTask = [ => ];
-    var tag = Tag.new;
-    tag: detach({loop{ func(); sleep(interval)}}) |
-    timerTask[tagName] = tag;
+      timerTask = [ => ]|
+    var tag = Tag.new|
+    tag: detach({loop{ func() | sleep(interval)}}) |
+    timerTask[tagName] = tag
   };
+
   /// Remove timer associated with \b tagName
   function removeTimer(tagName)
   {
@@ -149,20 +147,22 @@ do (Global.UObject)
     else
       false
   };
+
   /// Call hub update function \b for hub \b hubname
   function setHubUpdate(hubname, interval, func)
   {
     if (0 < interval && interval < minimumInterval)
-      interval = minimumInterval;
+      interval = minimumInterval |
     // Ensure only one instance is running using a tag in slot hub<hubname>.
-    var slotName = "hub"+hubname;
+    var slotName = "hub"+hubname |
     if (!hasSlot(slotName))
-      setSlot(slotName, Tag.new);
-    getSlot(slotName).stop;
+      setSlot(slotName, Tag.new) |
+    getSlot(slotName).stop |
     if (0 < interval)
       getSlot(slotName):
-        detach({loop{ func(); sleep(interval)}})
+        detach({loop{ func() | sleep(interval)}})
   };
+
   // Decrease notify refcount for this UVar, stop notify if it reaches 0
   function unnotify(objname, varname, count)
   {
@@ -189,10 +189,8 @@ do (Global.UObject)
       }|
       // If specific UObjects are used to handle this binding: destroy them
       if (lobby.__bindingFunc[fullname].isA(List))
-      {
-        for(var i: lobby.__bindingFunc[fullname])
+        for|(var i: lobby.__bindingFunc[fullname])
           try{i.destroy} catch {}
-      }
     }
   };
 };
@@ -219,10 +217,12 @@ do (getSlot("UVar"))
   {
     "\"%s.%s\"" % [ownerName, initialName]
   };
+
   function asString()
   {
     "%s.%s" % [ownerName, initialName]
   };
+
   /// Copy this UVar under slot \b slotName of \b targetObj
   function copy(targetObj, slotName)
   {
@@ -237,9 +237,10 @@ do (getSlot("UVar"))
                             getProperty("val", "rangemin"))|
     targetObj.updateSlot("getProperty", getSlot("parentGetProperty"))
   };
+
   function init(parent, name)
   {
-    owner = parent;
+    owner = parent|
     if (parent.hasSlot("__uobjectName"))
       ownerName = parent.__uobjectName
     else
@@ -271,6 +272,7 @@ do (getSlot("UVar"))
       parent.getProperty = getSlot("parentGetProperty")
     }
   };
+
   var parentGetProperty =  function(varname, propname)
   {
     if (getSlot(varname).isA(UVar))
@@ -283,12 +285,14 @@ do (getSlot("UVar"))
     else
       Object.getSlot("getProperty").apply([this, varname, propname])
   };
+
   /// Global number of notifyaccess
   var nAccess = 0;
   var nAccessTag = Tag.new;
   var onHasNotifyAccess = Event.new;
   // hooking of changed has a cost of one at per UVar.
   var hookChanged = !getenv("URBI_UVAR_HOOK_CHANGED");
+
   function newPropertyHook_(parent, name, prop, value)
   {
     if (parent.getSlot(name).isA(UVar) && prop != "updateHook")
@@ -297,12 +301,13 @@ do (getSlot("UVar"))
       parent.removeProperty(name, prop)
     }
   };
+
   var __clone = getSlot("clone");
 
   removeSlot("clone");
   const var clone = function()
   {
-    var uv = __clone;
+    var uv = __clone|
     do (uv)
     {
       var change = WeakDictionary.new |
@@ -331,11 +336,13 @@ do (getSlot("UVar"))
       loopCheck |
     void
   };
+
   function notifyChangeOwned(handle, f)
   {
     changeOwned[handle] = f |
     void
   };
+
   function notifyAccess(handle, f)
   {
     //beware of the CoW
@@ -348,6 +355,7 @@ do (getSlot("UVar"))
       onHasNotifyAccess! |
     void
   };
+
   void
 };
 
@@ -464,15 +472,13 @@ class Global.'external'
     var chan.lobby = lobby|
     function cloner()
     {
-      var u = "object".fresh;
-      chan << ['external'.UEM_NEW, u, objname];
+      var u = "object".fresh|
+      chan << ['external'.UEM_NEW, u, objname]|
       // Wait until the remote defines u.init.
-      // FIXME: Use waituntil once it is efficient.
-      while(!(Global.uobjects.hasSlot(u)
-              && Global.uobjects.getSlot(u).hasLocalSlot("init")))
-        sleep(System.period) |
-      var ret = Global.uobjects.getSlot(u);
-      ret.protos = [this];
+      waituntil(Global.uobjects.hasSlot(u)
+                && Global.uobjects.getSlot(u).hasLocalSlot("init")) |
+      var ret = Global.uobjects.getSlot(u)|
+      ret.protos = [this]|
       ret
     }|
     uobjects.getSlot(objname).setSlot("clone", cloner)|
@@ -484,10 +490,9 @@ class Global.'external'
   /// Monitor a RTP connexion, call onfail if it does not seem to work
   function monitorRTP(src, dst, onfail)
   {
-    while (src.stats["packetSent"] == 0)
-      sleep(period);
+    waituntil (src.stats["packetSent"])|
     // Data has been transmitted. Wait a bit...
-    sleep(200ms);
+    sleep(20 * period)|
     // And check if something was received.
     if (!dst.stats["bytesReceived"])
     {
@@ -495,15 +500,15 @@ class Global.'external'
       {
         Lobby.systemLobby.echo("RTP connection %s=>%s seems to be failing,"
                                " falling back to TCP"
-                               % [dst.getRemoteHost, src.getRemoteHost]);
+                               % [dst.getRemoteHost, src.getRemoteHost])
       }
       catch
       {
         // One of the getRemoteHost failed.
         Lobby.systemLobby.echo("RTP connection with %s seems to be failing,"
                                " falling back to TCP"
-                               % lobby.remoteIP);
-      };
+                               % lobby.remoteIP)
+      }|
       onfail()
     }
     // Connection started fine, assume it will stay that way and return.
@@ -511,14 +516,14 @@ class Global.'external'
 
   function makeRTPPair()
   {
-    var rrtp = uobjects.getSlot(lobby._rtp_object_name).new;
-    var port = rrtp.listen("0.0.0.0", "0");
-    var host = lobby.remoteIP;
-    var lrtp = URTP.new;
-    //wall("...connecting to " + host +":" + port);
-    lrtp.connect(host, port);
+    var rrtp = uobjects.getSlot(lobby._rtp_object_name).new|
+    var port = rrtp.listen("0.0.0.0", "0")|
+    var host = lobby.remoteIP|
+    var lrtp = URTP.new|
+    //wall("...connecting to " + host +":" + port)|
+    lrtp.connect(host, port)|
     // Destroy local rtp object when the remote disconnects
-    disown({at(Lobby.onDisconnect?(lobby)) try{lrtp.destroy} catch {}});
+    disown({at(Lobby.onDisconnect?(lobby)) try{lrtp.destroy} catch {}})|
     (lrtp, rrtp)
   };
 
@@ -582,12 +587,17 @@ class Global.'external'
       if (tv.isA(Binary))
       {  // each Binary UVar uses its own RTP connection
         // Those are UObjects, they persist so local variables are fine.
-        (var lrtp, var rrtp) = makeRTPPair;
-        rrtp.localDeliver = objname + "." + varname;
-        lrtp.sendVar(obj.getSlot(varname));
-        lobby.__bindingFunc[fullname] = [rrtp, lrtp];
+        (var lrtp, var rrtp) = makeRTPPair|
+        rrtp.localDeliver = objname + "." + varname|
+        lrtp.sendVar(obj.getSlot(varname))|
+        lobby.__bindingFunc[fullname] = [rrtp, lrtp]|
         // Fallback to old TCP method if RTP fails.
-        disown(monitorRTP(lrtp, rrtp, closure() { remoteNotifyChange(objname, varname, fr); var lobby.noRTP = true}));
+        disown(monitorRTP(lrtp, rrtp,
+               closure()
+               {
+                 remoteNotifyChange(objname, varname, fr)|
+                 var lobby.noRTP = true
+               }))|
       }
       else
       { // Other data types share one RTP connection
@@ -595,19 +605,24 @@ class Global.'external'
         lobby.'$uobjectMutex': if (!lobby.hasSlot("sharedRTP"))
         {
           try {
-            (var lrtp, var rrtp) = makeRTPPair;
+            (var lrtp, var rrtp) = makeRTPPair|
             //wall("instanciating shared rtp for " + lobby +":" + lrtp)|
-            var lobby.sharedRTP = lrtp;
-            var lobby.remoteSharedRTP = rrtp;
-            disown(monitorRTP(lrtp, rrtp, closure() { remoteNotifyChange(objname, varname, fr); var lobby.noRTP = true}))|
+            var lobby.sharedRTP = lrtp|
+            var lobby.remoteSharedRTP = rrtp|
+            disown(monitorRTP(lrtp, rrtp,
+                   closure()
+                   {
+                     remoteNotifyChange(objname, varname, fr)|
+                     var lobby.noRTP = true
+                   }))|
           }
           catch(var e)
           {
             wall("Fatal error setting rtp: " + e)
           }|
-        };
-        lobby.__bindingFunc[fullname] = lobby.sharedRTP;
-        lobby.sharedRTP.groupedSendVar(obj.getSlot(varname));
+        }|
+        lobby.__bindingFunc[fullname] = lobby.sharedRTP|
+        lobby.sharedRTP.groupedSendVar(obj.getSlot(varname))
       }
       })
     }
@@ -616,6 +631,7 @@ class Global.'external'
       remoteNotifyChange(objname, varname, fr)
     }
   };
+
   function remoteNotifyChange(objname, varname, fr)
   {
     // Create a 'notifyChange' function that generates the UObject
@@ -650,7 +666,7 @@ class Global.'external'
 
   function failRTP()
   {
-    Channel.new(MODULE_TAG) << [UEM_NORTP];
+    Channel.new(MODULE_TAG) << [UEM_NORTP]
   };
 
   // Bind a function call to the remote side.
@@ -664,24 +680,22 @@ class Global.'external'
     var chan.lobby = lobby|
     function f
     {
-      var args = call.evalArgs;
+      var args = call.evalArgs |
       // Just to be safe, do not rely on asString for UObject and UVar
       for| (var i: args.size)
         if (args[i].isA(UObject))
           args[i] = args[i].__uobjectName
         else if (args[i].isA(UVar))
-          args[i] = args[i].ownerName + "." + args[i].initialName ;
+          args[i] = args[i].ownerName + "." + args[i].initialName |
       if (args.size != nargs)
-        throw Exception.Arity.new("Remote bound function", args.size, nargs);
-      var u = "function".fresh;
+        throw Exception.Arity.new("Remote bound function", args.size, nargs)|
+      var u = "function".fresh|
       chan << [ 'external'.UEM_EVALFUNCTION,
                 functionName + "__" + args.size.asString,
-                "Global.uobjects." + u ] + args;
-      // FIXME: Use waituntil once it is efficient.
-      while (!Global.uobjects.hasSlot(u))
-        sleep(System.period) |
-      var res = Global.uobjects.getSlot(u).acceptVoid;
-      Global.uobjects.removeSlot(u);
+                "Global.uobjects." + u ] + args|
+      waituntil(Global.uobjects.hasSlot(u))|
+      var res = Global.uobjects.getSlot(u).acceptVoid |
+      Global.uobjects.removeSlot(u) |
       if (res.isA(Exception))
         throw res
       else
@@ -690,12 +704,14 @@ class Global.'external'
     Global.uobjects.getSlot(objname).setSlot(fname, f)|
     void
   };
+
   function eventBounce(starting, evname, args)
   {
     Channel.new(MODULE_TAG) << [
        {if (starting) UEM_EMITEVENT else UEM_ENDEVENT},
        evname] + args
   };
+
   function event(nargs, objname, ename, fr)
   {
     // FIXME: No way to catch an event with payload without generating the 'at'
@@ -716,6 +732,7 @@ class Global.'external'
     % [objname, ename, varargs, fullname, args, fullname, args]|
     eval(code)
   };
+
   at (Lobby.onDisconnect?(var l))
   {
     nonInterruptible;
