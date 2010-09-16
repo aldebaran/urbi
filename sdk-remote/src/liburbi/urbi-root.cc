@@ -406,7 +406,7 @@ UrbiRoot::uobjects_path() const
   std::vector<std::string> res;
   res.push_back(core_path() / "uobjects");
   if (*LIBPORT_LIBSFX)
-    res.push_back(core_path() / "uobjects" / LIBPORT_LIBSFX);
+    res.push_back(core_path() / "uobjects" LIBPORT_LIBSFX);
   return res;
 }
 
