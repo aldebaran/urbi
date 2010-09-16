@@ -94,7 +94,7 @@ public class UMain {
 	    {
 		try {
 		    String jarname = argv[i];
-		    System.err.println("Processing " + jarname);
+		    Log.info("Processing " + jarname);
 		    addFile(jarname);
 		    JarInputStream jis = new JarInputStream(new FileInputStream(jarname));
 		    JarEntry entry = jis.getNextJarEntry();
@@ -104,14 +104,14 @@ public class UMain {
 			    name = name.substring(0, name.length() - 6);
 			    name = name.replace('/', '.');
 			    Class.forName(name);
-			    System.err.println("'" + name + "' loaded");
+			    Log.info("'" + name + "' loaded");
 			}
 			entry = jis.getNextJarEntry();
 		    }
 		} catch (ClassNotFoundException cnfe) {
-		    System.err.println(cnfe);
+		    Log.error(cnfe.toString());
 		} catch (Exception e) {
-		    System.err.println(e);
+		    Log.error(e.toString());
 		}
 	    }
 	}
@@ -129,7 +129,7 @@ public class UMain {
 	}
 	catch (Exception e)
 	{
-	    System.out.println (e);
+	    Log.error (e.toString());
 	}
     }
 }

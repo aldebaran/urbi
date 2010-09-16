@@ -76,7 +76,8 @@ liburbi_SOURCES =				\
 	urbi/SoundUtilities.java		\
 	urbi/UObjectStarter.java		\
 	urbi/UObject.java			\
-	urbi/UMain.java
+	urbi/UMain.java				\
+	urbi/Log.java
 
 generated_SOURCES =				\
 	$(wildcard urbi/generated/*.java)
