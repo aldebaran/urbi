@@ -400,10 +400,14 @@ UrbiRoot::core_path() const
   return root() / LIBPORT_LIBDIRNAME / "gostai";
 }
 
-std::string
+std::vector<std::string>
 UrbiRoot::uobjects_path() const
 {
-  return core_path() / "uobjects";
+  std::vector<std::string> res;
+  res.push_back(core_path() / "uobjects");
+  if (*LIBPORT_LIBSFX)
+    res.push_back(core_path() / "uobjects" / LIBPORT_LIBSFX);
+  return res;
 }
 
 std::string

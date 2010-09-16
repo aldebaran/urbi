@@ -72,8 +72,8 @@ public:
   std::string core_path() const;
   /// Share location. Contains Urbi scripts in the urbi/ subdirectory.
   std::string share_path() const;
-  /// Standard uobjects directory.
-  std::string uobjects_path() const;
+  /// Standard uobjects directories.
+  std::vector<std::string> uobjects_path() const;
 
 private:
   /// Load the library "${libdir}/${base}${ext}", unless the envvar
