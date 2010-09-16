@@ -732,6 +732,11 @@ namespace urbi
 	    int sc, int dc, int sr, int dr, int count, bool sf, bool df)
   {
     long shift = 8 * (sizeof (S) - sizeof (D));
+    if (!shift && sc == dc && sr == dr && sf==df)
+    {
+      memcpy(dst, src, sizeof(S)*sc*count);
+      return;
+    }
     for (int i = 0; i < count; ++i)
     {
       float soffset = (float)i * ((float)sr / (float)dr);
