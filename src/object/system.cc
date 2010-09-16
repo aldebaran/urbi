@@ -365,8 +365,10 @@ namespace urbi
       dl.ext()
         .global(global);
       (dl.path())
-        .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"), ":")
-        .push_back(kernel::urbiserver->urbi_root_get().uobjects_path());
+        .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"), ":");
+      foreach(const std::string& s,
+              kernel::urbiserver->urbi_root_get().uobjects_path())
+        dl.path().push_back(s);
       libport::xlt_handle handle;
       try
       {
