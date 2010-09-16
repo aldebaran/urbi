@@ -40,6 +40,15 @@
 
 GD_CATEGORY(LibUObject);
 
+#define REQUIRE(Cond, ...)                      \
+  do {                                          \
+    if (!(Cond))                                \
+    {                                           \
+      msg.client.printf(__VA_ARGS__);           \
+      return URBI_CONTINUE;                     \
+    }                                           \
+  } while (false)
+
 namespace urbi
 {
   UObjectMode running_mode()
@@ -383,30 +392,18 @@ namespace urbi
         return URBI_CONTINUE;
 
       //check message type
-      if (msg.type != MESSAGE_DATA)
-      {
-        msg.client.printf("Component Error: "
-                          "unknown message content, type %d\n",
-                          msg.type);
-        return URBI_CONTINUE;
-      }
-      if (msg.value->type != DATA_LIST)
-      {
-        msg.client.printf("Component Error: "
-                          "unknown message content, value type %d\n",
-                          msg.value->type);
-        return URBI_CONTINUE;
-      }
+      REQUIRE(msg.type == MESSAGE_DATA,
+              "Component Error: unknown message content, type %d\n",
+              msg.type);
+      REQUIRE(msg.value->type == DATA_LIST,
+              "Component Error: unknown message content, value type %d\n",
+              msg.value->type);
 
       UList& array = *msg.value->list;
 
-      if (array[0].type != DATA_DOUBLE)
-      {
-        msg.client.printf("Component Error: "
-                          "invalid server message type %d\n",
-                          array[0].type);
-        return URBI_CONTINUE;
-      }
+      REQUIRE(array[0].type == DATA_DOUBLE,
+              "Component Error: invalid server message type %d\n",
+              array[0].type);
 
       FINALLY(((unsigned int& , dispatchDepth)), dispatchDepth--);
       dispatchDepth++;
@@ -414,25 +411,18 @@ namespace urbi
       switch ((USystemExternalMessage)(int)array[0])
       {
       case UEM_ASSIGNVALUE:
-        if (array.size() != 4)
-        {
-          msg.client.printf("Component Error: Invalid number "
-                            "of arguments in the server message: %lu"
-                            " (expected 4)\n",
-                            static_cast<unsigned long>(array.size()));
-          return URBI_CONTINUE;
-        }
+        REQUIRE(array.size() == 4,
+                "Component Error: Invalid number "
+                "of arguments in the server message: %lu (expected 4)\n",
+                static_cast<unsigned long>(array.size()));
         assignMessage(array[1], array[2], array[3]);
         break;
 
       case UEM_EVALFUNCTION:
-        if (array.size() < 3)
-        {
-          msg.client.printf("Component Error: Invalid number "
-                            "of arguments in the server message: %lu\n",
-                            static_cast<unsigned long>(array.size()));
-          return URBI_CONTINUE;
-        }
+        REQUIRE(3 <= array.size(),
+                "Component Error: Invalid number "
+                "of arguments in the server message: %lu\n",
+                static_cast<unsigned long>(array.size()));
         evalFunctionMessage(array[1], array[2], array);
         break;
 
@@ -448,16 +438,11 @@ namespace urbi
       {
         impl::UContextImpl::CleanupStack s_(*this);
         objects_type::iterator i = objects.find(std::string(array[2]));
-        if (i == objects.end())
-          msg.client.printf("No such objects %s\n",
-                            std::string(array[2]).c_str());
-        else
-        {
-          baseURBIStarter* bsa = i->second->cloner;
-          std::cerr << "instantiating from " << bsa << std::endl;
-          std::cerr << "name: " << (std::string) array[1] << std::endl;
-          bsa->instanciate(this, (std::string) array[1]);
-        }
+        REQUIRE(i != objects.end(),
+                "No such objects %s\n", std::string(array[2]).c_str());
+        baseURBIStarter* bsa = i->second->cloner;
+        GD_FINFO_DEBUG("instantiating from %s, name: %s", bsa, array[1]);
+        bsa->instanciate(this, (std::string) array[1]);
       }
       break;
 
@@ -490,11 +475,11 @@ namespace urbi
         enableRTP = false;
         break;
       default:
-        msg.client.printf("Component Error: "
-                          "unknown server message type number %d\n",
-                          (int)array[0]);
-        return URBI_CONTINUE;
+        REQUIRE(false,
+                "Component Error: unknown server message type number %d\n",
+                (int)array[0]);
       }
+
       // Send a terminating ';' since code send by the UObject API uses '|'.
       // But only in outermost dispatch call
       if (dispatchDepth == 1 && dataSent)
