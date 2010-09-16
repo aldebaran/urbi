@@ -241,27 +241,21 @@ their methods directly.
 
 \subsection{Binding new \naoqi modules in Urbi}
 
-You can create a proxy on every \naoqi module, local or remote.
-The method is similar to what is done in C++, with the addition that all the
-module's methods can be directly called without using the meta-call 'call'
-method:
+You can create a proxy on every \naoqi module, local or remote. The function
+\lstinline|ALProxy| can be used to ease the process:
 
 \begin{urbiunchecked}
 // Instantiate a proxy for the ALMotion module.
-var motion = UALProxy.new("ALMotion");
-// Bind its methods, declaring "waituntilWalkIsFinished" as a 'long' method.
-motion.generateALBindings(["waituntilWalkIsFinished"]);
+var motion = ALProxy("Motion", [], ["waituntilWalkIsFinished"]);
 motion.walkTo(0.1, 0, 0);
 motion.waituntilWalkIsFinished;
 \end{urbiunchecked}
 
-The argument to \lstinline|generateALBindings()| is a list of all the
-function names that you want to be asynchronous. You must pass in this
-list all the functions that takes a long(more than a few milliseconds)
-time to execute.
-
-Synchronous calls have less overhead, but will freeze the \us
-interpreter for the duration of the call.
+The first argument to \lstinline|ALProxy| is the name of the module without
+the "AL". The second argument is a list of alternate names for the module.
+The third argument is a list of method names that must be called asynchronously.
+You must pass in this list all the functions that takes a long(more than a few
+milliseconds) time to execute. Synchronous calls have less overhead, but will freeze the \us interpreter for the duration of the call.
 
 Most of the standard modules are loaded by the initialization script
 \file{URBI.INI}.
