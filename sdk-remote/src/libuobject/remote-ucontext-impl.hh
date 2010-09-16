@@ -68,6 +68,7 @@ namespace urbi
       virtual void lock();
       virtual void unlock();
       virtual boost::asio::io_service& getIoService();
+
     public:
       /// Dispatch a message on our connection
       UCallbackAction dispatcher(const UMessage& msg);
@@ -76,8 +77,21 @@ namespace urbi
        * @return the local UObject name
        */
       std::string makeRTPLink(const std::string& key);
+
+      /// Handle an assignment request.
       void assignMessage(const std::string& name, const UValue& v, time_t ts);
+
+      /// Handle a function call.
+      /// \param name  function name (should be array[1])
+      /// \param var   where to store the result (should be array[2])
+      /// \param args  an array which *will* shitfed by 3 to find the
+      ///              function call arguments.
+      void evalFunctionMessage(const std::string& name,
+                               const std::string& var,
+                               UList& args);
+
       USyncClient* client_;
+
       /// True if we received a clientError message.
       bool closed_;
 #define TABLE(Type, Name)                       \

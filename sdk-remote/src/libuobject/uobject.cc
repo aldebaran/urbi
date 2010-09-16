@@ -381,16 +381,20 @@ namespace urbi
     {
       if (closed_)
         return URBI_CONTINUE;
-      FINALLY(((unsigned int& , dispatchDepth)), dispatchDepth--);
-      dispatchDepth++;
-      setCurrentContext(this);
-      typedef UTable::callbacks_type callbacks_type;
+
       //check message type
-      if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST)
+      if (msg.type != MESSAGE_DATA)
       {
         msg.client.printf("Component Error: "
                           "unknown message content, type %d\n",
                           msg.type);
+        return URBI_CONTINUE;
+      }
+      if (msg.value->type != DATA_LIST)
+      {
+        msg.client.printf("Component Error: "
+                          "unknown message content, value type %d\n",
+                          msg.value->type);
         return URBI_CONTINUE;
       }
 
@@ -404,10 +408,12 @@ namespace urbi
         return URBI_CONTINUE;
       }
 
+      FINALLY(((unsigned int& , dispatchDepth)), dispatchDepth--);
+      dispatchDepth++;
+      setCurrentContext(this);
       switch ((USystemExternalMessage)(int)array[0])
       {
       case UEM_ASSIGNVALUE:
-      {
         if (array.size() != 4)
         {
           msg.client.printf("Component Error: Invalid number "
@@ -417,30 +423,18 @@ namespace urbi
           return URBI_CONTINUE;
         }
         assignMessage(array[1], array[2], array[3]);
-      }
-      break;
+        break;
 
       case UEM_EVALFUNCTION:
-      {
-        if (array.size() < 2)
+        if (array.size() < 3)
         {
           msg.client.printf("Component Error: Invalid number "
                             "of arguments in the server message: %lu\n",
                             static_cast<unsigned long>(array.size()));
           return URBI_CONTINUE;
         }
-        GD_FINFO_DUMP("dispatching call of %s...", array[1]);
-	callbacks_type tmpfun = functionmap()[array[1]];
-        const std::string var = array[2];
-	callbacks_type::iterator tmpfunit = tmpfun.begin();
-        if (tmpfunit == tmpfun.end())
-          throw std::runtime_error("no callback found");
-	array.setOffset(3);
-        (*tmpfunit)->eval(array,
-                          boost::bind(&call_result, client_, var, _1,_2));
+        evalFunctionMessage(array[1], array[2], array);
         break;
-      }
-      break;
 
       case UEM_EMITEVENT:
         eval_call(eventmap(), array);
@@ -513,8 +507,7 @@ namespace urbi
 
     void
     RemoteUContextImpl::assignMessage(const std::string& name,
-                                      const UValue& v, time_t ts
-                                      )
+                                      const UValue& v, time_t ts)
     {
       int nv = 0, nc = 0;
       if (std::list<UVar*> *us = varmap().find0(name))
@@ -543,6 +536,21 @@ namespace urbi
           c->eval(u);
         }
       }
+    }
+
+    void
+    RemoteUContextImpl::evalFunctionMessage(const std::string& name,
+                                            const std::string& var,
+                                            UList& args)
+    {
+      GD_FINFO_DUMP("dispatching call of %s...", name);
+      UTable::callbacks_type funs = functionmap()[name];
+      UTable::callbacks_type::iterator i = funs.begin();
+      if (i == funs.end())
+        throw std::runtime_error("no callback found");
+      args.setOffset(3);
+      (*i)->eval(args,
+                 boost::bind(&call_result, client_, var, _1, _2));
     }
 
     void

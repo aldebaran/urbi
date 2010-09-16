@@ -449,4 +449,3 @@ int Threaded::dummy()
 {
   return 42;
 }
-
