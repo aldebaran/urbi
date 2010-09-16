@@ -76,7 +76,11 @@ namespace urbi
   UBinary::clear()
   {
     if (allocated_)
+    {
       free(common.data);
+      common.data = 0;
+      common.size = 0;
+    }
   }
 
   UBinary::~UBinary()
