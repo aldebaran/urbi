@@ -172,7 +172,7 @@ An extra comma can be added at the end of the list.
 
 
 \item[erase](<key>)
-  Remove the mapping for \lstinline|\var{key}|.
+  Remove the mapping for \var{key}.
 
 \begin{urbiassert}
 ["one" => 1, "two" => 2].erase("two") == ["one" => 1]
@@ -183,7 +183,7 @@ An extra comma can be added at the end of the list.
 
 
 %% \item[extend](<ext>)
-%%   Extend with the dictionary \lstinline|\var{ext}|.
+%%   Extend with the dictionary \var{ext}.
 %%   Return the value of the new dictionary.
 %% \begin{urbiscript}
 %% d = ["one" => 1, "two" => 2];
@@ -194,7 +194,7 @@ An extra comma can be added at the end of the list.
 
 
 \item[get](<key>)
-  Return the value associated to \lstinline|\var{key}|.  A
+  Return the value associated to \var{key}.  A
   Dictionary.KeyError exception is thrown if the key is missing.
 
   % FIXME: the following exception test should be rewritten when (if)
@@ -290,10 +290,10 @@ Dictionary.clone.init("one", 1, "two", 2);
 \end{urbiscript}
 
 
-\item[set](<key>, <value>)
-  Map \lstinline|\var{key}| to \lstinline|\var{value}| and return
-  \this so that invocations to \lstinline|set| can be
-  chained.  The possibly existing previous mapping is overridden.
+\item[set](<key>, <value>)%
+  Map \var{key} to \var{value} and return \this so that invocations to
+  \refSlot{set} can be chained.  The possibly existing previous mapping is
+  overridden.
 
 \begin{urbiscript}
 [=>].set("one", 2).set("one", 1);
