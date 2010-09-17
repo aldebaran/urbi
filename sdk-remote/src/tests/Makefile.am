@@ -24,8 +24,10 @@ include uobjects/local.mk
 
 configured_scripts =				\
   bin/umake					\
+  bin/umake-java				\
   bin/umake-link				\
   bin/umake-shared				\
+  bin/urbi-launch-java				\
   bin/urbi-send
 
 nodist_noinst_SCRIPTS +=                       \

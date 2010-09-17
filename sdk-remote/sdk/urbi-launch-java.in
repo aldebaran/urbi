@@ -78,7 +78,7 @@ get_options ()
       (-h | --help   ) usage;;
       (-V | --version) version;;
 
-      (-cp | --classpath)   shift; append classpath "$1:";;
+      (-cp | --classpath)   shift; classpath="$classpath:$1";;
       (-H | --host)
         shift; host=$1
 	append urbi_launch_args "--host $host";;
@@ -113,15 +113,18 @@ get_options ()
   done
 }
 
+
+prefix=$(cd $(dirname $0)/.. && pwd)
+
 urbi_launch_args=
 uob_archives=
 main=urbi.UMain
-liburbi_jar=@prefix@/share/sdk-remote/java/lib/liburbijava.jar
-library_path=@prefix@/lib
+: ${liburbi_jar="$prefix/share/sdk-remote/java/lib/liburbijava.jar"}
+: ${library_path="$prefix/lib"}
 
-get_options "$@"
+get_options $@
 
-append classpath ":$liburbi_jar"
+classpath="$classpath:$liburbi_jar"
 
 eval java -Djava.library.path="$library_path"	\
   -classpath "$classpath"  "$main"		\
