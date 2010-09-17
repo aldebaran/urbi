@@ -11,13 +11,14 @@
 #ifndef FLOWER_FLOW_HH
 # define FLOWER_FLOW_HH
 
-# include <ast/nary-fwd.hh>
+# include <ast/exp.hh>
 # include <urbi/export.hh>
 
 namespace flower
 {
-  ast::rNary URBI_SDK_API flow(ast::rConstAst ast);
-
+  template <typename T>
+  URBI_SDK_API libport::intrusive_ptr<const T>
+  flow(libport::intrusive_ptr<const T> ast);
 } // namespace flower
 
 #endif // FLOWER_FLOW_HH

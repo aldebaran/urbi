@@ -19,14 +19,14 @@ namespace parser
 {
   template <typename T>
   libport::intrusive_ptr<T>
-  transform(libport::intrusive_ptr<T> ast)
+  transform(libport::intrusive_ptr<const T> ast)
   {
-    return binder::bind(rewrite::rewrite(ast::rConstNary(flower::flow(ast))));
+    return binder::bind(rewrite::rewrite(flower::flow(ast)));
   }
 
-#define INST(Type)                              \
-  template libport::intrusive_ptr<ast::Type>    \
-  transform(libport::intrusive_ptr<ast::Type>); \
+#define INST(Type)                                    \
+  template libport::intrusive_ptr<ast::Type>          \
+  transform(libport::intrusive_ptr<const ast::Type>); \
 
   INST(Ast);
   INST(Exp);

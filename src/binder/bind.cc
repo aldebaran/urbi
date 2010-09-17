@@ -31,6 +31,8 @@ namespace binder
  template libport::intrusive_ptr<Type> bind<Type>(libport::intrusive_ptr<Type>)
   INSTANTIATE(ast::Ast);
   INSTANTIATE(const ast::Ast);
+  INSTANTIATE(ast::Exp);
+  INSTANTIATE(const ast::Exp);
   INSTANTIATE(ast::Nary);
   INSTANTIATE(const ast::Nary);
 #undef INSTANTIATE

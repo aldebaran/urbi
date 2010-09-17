@@ -18,7 +18,7 @@ namespace parser
 {
   template <typename T>
   URBI_SDK_API libport::intrusive_ptr<T>
-  transform(libport::intrusive_ptr<T> ast);
+  transform(libport::intrusive_ptr<const T> ast);
 } // namespace parser
 
 #endif // PARSER_TRANSFORM_HH

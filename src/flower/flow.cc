@@ -14,14 +14,22 @@
 
 namespace flower
 {
-  ast::rNary
-  flow(ast::rConstAst a)
+  template <typename T>
+  libport::intrusive_ptr<const T>
+  flow(libport::intrusive_ptr<const T> a)
   {
     TIMER_PUSH("flow");
     Flower flow;
     ast::rExp res = ast::analyze(flow, a);
     TIMER_POP("flow");
-    return res ? res.unchecked_cast<ast::Nary>() : ast::rNary();
+    return res.unchecked_cast<T>();
   }
 
+#define INST(Type)                              \
+  template libport::intrusive_ptr<const ast::Type>    \
+  flow(libport::intrusive_ptr<const ast::Type>); \
+
+  INST(Ast);
+  INST(Exp);
+  INST(Nary);
 } // namespace flower
