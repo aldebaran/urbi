@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+#include <libport/escape.hh>
+
 #include <kernel/userver.hh>
 
 #include <object/symbols.hh>
@@ -153,6 +155,15 @@ namespace runner
                      bool deep)
   {
     // assert_user_mode("Lookup", msg);
+
+    static bool raising = false;
+
+    if (raising)
+    {
+      raise_primitive_error(libport::format("Lookup error in lookup error on %s.", libport::escape(msg)));
+    }
+
+    LIBPORT_SCOPE_SET(raising, true);
     raise_urbi_skip(SYMBOL(Lookup),
                     to_urbi(msg),
                     obj,
