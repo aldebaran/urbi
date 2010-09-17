@@ -136,10 +136,14 @@ namespace runner
         new Interpreter(*this, stmt->expression_get().get(),
                         libport::Symbol::fresh(name_get()));
       subrunner->start_job();
+      if (!input_.eof())
+        yield();
     }
     else
     {
       eval_print_(exp.get());
+      if (!input_.eof())
+        yield();
     }
 
     if (non_interruptible_get())
