@@ -132,6 +132,8 @@ namespace runner
 
     if (stmt && stmt->flavor_get() == ast::flavor_comma)
     {
+      GD_FPUSH_TRACE("%s: executing command in background.", name_get());
+      GD_FINFO_DUMP("%s: command: %s", name_get(), *exp);
       sched::rJob subrunner =
         new Interpreter(*this, stmt->expression_get().get(),
                         libport::Symbol::fresh(name_get()));
@@ -141,6 +143,8 @@ namespace runner
     }
     else
     {
+      GD_FPUSH_TRACE("%s: executing command.", name_get());
+      GD_FINFO_DUMP("%s: command: %s", name_get(), *exp);
       eval_print_(exp.get());
       if (!input_.eof())
         yield();
