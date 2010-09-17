@@ -354,10 +354,13 @@ namespace urbi
       GD_FINFO_DUMP("... dispatch %s done", var);
       if (e)
       {
-         URBI_SEND_COMMA_COMMAND_C(*client, "var " << var << "|"
-             << var << "=" << "Exception.new(\""
-             << "Exception while calling remote bound method: "
-             << libport::escape(e->what()) << "\")");
+         URBI_SEND_COMMA_COMMAND_C
+           (*client,
+            "Global.UObject.funCall(\"" << var << "\", "
+            << "Exception.new(\""
+            << "Exception while calling remote bound method: "
+            << libport::escape(e->what())
+            << "\"))");
       }
       else
         switch (retval.type)
@@ -366,21 +369,23 @@ namespace urbi
           // Send it
           // URBI_SEND_COMMAND does not now how to send binary since it
           // depends on the kernel version.
-          // Careful, 'var x=1,' has no effect as ',' scopes.
           client->startPack();
-          *client << "var " << var << "|" << var << "=";
+          *client << "Global.UObject.funCall(\"" << var << "\", ";
           client->send(retval);
-          *client << ",";
+          *client << "),";
           client->endPack();
           break;
 
         case DATA_VOID:
-          URBI_SEND_COMMAND_C(*client, "var " << var);
+          URBI_SEND_COMMAND_C
+            (*client,
+             "Global.UObject.funCall(\"" << var << "\")");
           break;
 
         default:
-          URBI_SEND_COMMA_COMMAND_C(*client, "var " << var << "|"
-                                    << var << "=" << retval);
+          URBI_SEND_COMMA_COMMAND_C
+            (*client,
+             "Global.UObject.funCall(\"" << var << "\", " << retval << ")");
           break;
         }
     }
