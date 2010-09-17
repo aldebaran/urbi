@@ -616,15 +616,10 @@ namespace kernel
       if (!*is)
         return UFAIL;
     }
-    // FIXME: w00t?
-    // if (type == QUEUE_URBI)
-    // {
-    //   q.push(libport::format("//#push 1 \"%1%\"\n", base));
-    //   finally
-    //     << boost::bind(static_cast<void(UQueue::*)(const char*)>
-    //                    (&UQueue::push),
-    //                    &q, "//#pop\n");
-    // }
+    connection.received(libport::format("//#push 1 \"%1%\"\n", base));
+    finally << boost::bind
+      (static_cast<void(UConnection::*)(const std::string&)>(&UConnection::received),
+       &connection, "//#pop\n");
     while (is->good())
     {
       static char buf[BUFSIZ];
