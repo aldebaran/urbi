@@ -193,6 +193,21 @@ do (Global.UObject)
           try{i.destroy} catch {}
     }
   };
+
+  // Helper for implementation of remote UObject function calls.  For
+  // each invocation we create a fresh NAME, and store a Barrier in
+  // barriers[NAME].  The Remote UObject is then sent a request to run
+  // the function call and to invoke Global.UObject.funCall(NAME,
+  // RESULT) while we wait on the Barrier.
+  var barriers = [=>];
+  function funCall(var name, var val = void)
+  {
+    // Get the barrier.
+    var b = barriers[name] |
+    barriers.erase(name) |
+    assert (b.isA(Barrier)) |
+    b.signal(val.acceptVoid)
+  };
 };
 
 /*
@@ -694,13 +709,12 @@ class Global.'external'
           args[i] = "%s.%s" % [args[i].ownerName, args[i].initialName] |
       if (args.size != nargs)
         throw Exception.Arity.new("Remote bound function", args.size, nargs)|
-      var u = "function".fresh|
+      var u = String.fresh |
+      Global.UObject.barriers[u] = Barrier.new |
       chan << [ 'external'.UEM_EVALFUNCTION,
-                functionName + "__" + args.size.asString,
-                "Global.uobjects." + u ] + args|
-      waituntil(Global.uobjects.hasSlot(u))|
-      var res = Global.uobjects.getSlot(u).acceptVoid |
-      Global.uobjects.removeSlot(u) |
+                functionName + "__" + args.size,
+                u ] + args|
+      var res = Global.UObject.barriers[u].wait|
       if (res.isA(Exception))
         throw res
       else
