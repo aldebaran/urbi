@@ -640,13 +640,6 @@ namespace kernel
       connections_->add(c);
   }
 
-  void
-  UServer::connection_remove(UConnection*)
-  {
-    // Do not remove synchronously as it will destroy the object.
-    // remove_closing will handle this.
-  }
-
   UConnection&
   UServer::ghost_connection_get()
   {

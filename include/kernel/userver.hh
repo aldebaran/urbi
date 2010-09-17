@@ -203,12 +203,6 @@ namespace kernel
     /// \precondition c != 0
     void connection_add(UConnection* c);
 
-    /// Remove from connection_.
-    /// Also perform some error testing on the connection
-    /// value and UError return code
-    /// Destroy \a c.
-    void connection_remove(UConnection* c);
-
     /// \returns A usual connection to stop dependencies.
     ///          (kernel/ghost-connection.hh is not public).
     UConnection& ghost_connection_get();
