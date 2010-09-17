@@ -178,6 +178,13 @@ namespace runner
     if (dependencies_log_)
       dependencies_.push_back(evt);
   }
+
+  void
+  Runner::frozen_set(bool v)
+  {
+    frozen_ = v;
+    scheduler_get().signal_world_change();
+  }
 } // namespace runner
 
 

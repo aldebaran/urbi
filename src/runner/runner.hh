@@ -230,7 +230,7 @@ namespace runner
     sched::prio_type prio_;
 
     /// Whether the tag is frozen, even if no applied tag is frozen.
-    ATTRIBUTE_RW(bool, frozen);
+    ATTRIBUTE_Rw(bool, frozen);
 
   public:
     typedef std::vector<object::rEvent> dependencies_type;
