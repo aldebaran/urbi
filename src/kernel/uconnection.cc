@@ -71,6 +71,8 @@ namespace kernel
     , stream_buffer_()
     , stream_(&stream_buffer_)
   {
+    stream_.exceptions(std::ios::badbit);
+
     // Create the shell.
     shell_ = new runner::Shell(lobby_, server_.scheduler_get(), SYMBOL(shell), stream_);
     shell_->start_job();
@@ -202,6 +204,8 @@ namespace kernel
 
   void UConnection::close()
   {
+    if (closing_)
+      return;
     closing_ = true;
     close_();
     stream_buffer_.close();
