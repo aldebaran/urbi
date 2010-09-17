@@ -490,6 +490,11 @@ class Global.'external'
   /// Monitor a RTP connexion, call onfail if it does not seem to work
   function monitorRTP(src, dst, onfail)
   {
+    // Do not use waituntil here, as stats is a primitive which
+    // changes over time.  Something that waituntil does not know to
+    // cope with currently.
+    while (src.stats["packetSent"] == 0)
+      sleep(period)|
     waituntil (src.stats["packetSent"])|
     // Data has been transmitted. Wait a bit...
     sleep(20 * period)|
