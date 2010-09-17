@@ -258,7 +258,7 @@ namespace urbi
     void
     operator()(const libport::opts::TextData& d)
     {
-      connection_.recv_queue_get().push(d.command_.c_str());
+      connection_.received(d.command_);
     }
 
     void
