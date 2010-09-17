@@ -387,9 +387,8 @@ public class UObject extends UObjectCPP
     ///                 ///
     /// --------------- ///
 
-    public static void UStart (Class uobject_cls)
+    public static void UStartRename (Class uobject_cls, String urbi_name)
     {
-	String name = uobject_cls.getName ();
 	/// Get the constructor that take a string
 	Class string_cls;
 	Constructor uobject_ctor;
@@ -404,12 +403,17 @@ public class UObject extends UObjectCPP
 	catch (java.lang.NoSuchMethodException e) {
 	    throw new RuntimeException (e);
 	}
-	String[] urbi_name = name.split ("\\.");
-	if (urbi_name.length > 0) {
-	    starterList.add (new UObjectStarter (urbi_name[urbi_name.length - 1], uobject_ctor));
-	}
+	starterList.add (new UObjectStarter (urbi_name, uobject_ctor));
     }
 
+    public static void UStart (Class uobject_cls)
+    {
+	String name = uobject_cls.getName ();
+	String[] urbi_name = name.split ("\\.");
+	if (urbi_name.length > 0) {
+	    UStartRename(uobject_cls, urbi_name[urbi_name.length - 1]);
+	}
+    }
 
     public static void main (String argv[]) {
 	/// Add program name at the begining of the argv array
