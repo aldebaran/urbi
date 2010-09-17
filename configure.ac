@@ -38,8 +38,7 @@ URBI_PACKAGE_KIND([kernel])
 
 URBI_DOC
 URBI_ENABLE_DOC_SECTIONS([bioloid, nao, nxt, p3dx, rmp, spykee, webots])
-
-AC_CONFIG_FILES([doc/config.sty])
+AC_CONFIG_FILES([doc/config.sty doc/Makefile])
 
 ## ------------- ##
 ## Compilation.  ##
