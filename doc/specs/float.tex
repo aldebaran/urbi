@@ -297,6 +297,20 @@ Float.pi.cos == -1;
 [00000005:error] !!! %: expected integer, got 0.5
 \end{urbiassert}
 
+\item[fresh]%
+  Return a new integer at each call.
+\begin{urbiscript}
+{
+  var res = [];
+  for (var i: 10.seq)
+    res << Float.fresh;
+  assert (res == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  res = [];
+  for (var i: 10.seq)
+    res << Float.fresh;
+  assert (res == [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
+};
+\end{urbiscript}
 
 %%% FIXME: This message is not right, it should be:
 %%% [00000005:error] !!! hex: expected integer, got 0.5

@@ -72,6 +72,12 @@ do (Float)
       action(i)
   };
 
+  var '$fresh' = 0;
+  function fresh()
+  {
+    Float.'$fresh' += 1;
+  };
+
   function hex()
   {
     format(FormatInfo.new("%x"))
