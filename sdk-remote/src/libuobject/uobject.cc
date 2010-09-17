@@ -342,7 +342,7 @@ namespace urbi
     }
 
     static void
-    call_result(UAbstractClient * client, std::string var,
+    call_result(UAbstractClient* client, std::string var,
                 const UValue& retval, const std::exception* e)
     {
       // var is empty for internally generated messages (such as update())
@@ -351,7 +351,7 @@ namespace urbi
       // This method can be called by a thread from the Thread Pool because
       // it is used as a callback function.  Thus we have to declare the
       // category for the debugger used by the current thread.
-      GD_FINFO_DUMP("...dispatch of %s done", var);
+      GD_FINFO_DUMP("... dispatch %s done", var);
       if (e)
       {
          URBI_SEND_COMMA_COMMAND_C(*client, "var " << var << "|"
@@ -368,7 +368,7 @@ namespace urbi
           // depends on the kernel version.
           // Careful, 'var x=1,' has no effect as ',' scopes.
           client->startPack();
-          *client << " var  " << var << "|" << var << "=";
+          *client << "var " << var << "|" << var << "=";
           client->send(retval);
           *client << ",";
           client->endPack();
@@ -528,7 +528,7 @@ namespace urbi
                                             const std::string& var,
                                             UList& args)
     {
-      GD_FINFO_DUMP("dispatching call of %s...", name);
+      GD_FINFO_DUMP("dispatch call %s = %s...", var, name);
       UTable::callbacks_type funs = functionmap()[name];
       UTable::callbacks_type::iterator i = funs.begin();
       if (i == funs.end())
