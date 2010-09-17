@@ -138,6 +138,7 @@ namespace runner
       sched::rJob subrunner =
         new Interpreter(*this, stmt->expression_get().get(),
                         libport::Symbol::fresh(name_get()));
+      jobs_ <<  subrunner;
       subrunner->start_job();
       if (!input_.eof())
         yield();
@@ -174,7 +175,11 @@ namespace runner
         GD_FINFO_DUMP("StopException ignored: %s", e.what());
       }
     }
+
     kernel::server().connection_remove(lobby_get()->connection_get());
+    foreach (const sched::rJob& job, jobs_)
+      job->terminate_now();
+    yield_until_terminated(jobs_);
   }
 
   void
@@ -219,6 +224,13 @@ namespace runner
         GD_FINFO_TRACE("%s: command is invalid, printing errors.", name_get());
         e.print(*this);
       }
+      for (jobs_type::iterator it = jobs_.begin();
+           it != jobs_.end();
+           /* nothing */)
+        if ((*it)->terminated())
+          it = jobs_.erase(it);
+        else
+          ++it;
     }
   }
 

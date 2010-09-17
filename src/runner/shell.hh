@@ -17,6 +17,8 @@
 # include <libport/compiler.hh>
 # include <libport/symbol.hh>
 
+# include <sched/job.hh>
+
 # include <ast/exps-type.hh>
 # include <runner/interpreter.hh>
 
@@ -46,6 +48,8 @@ namespace runner
     bool executing_;
     std::istream& input_;
     bool stop_;
+    typedef sched::jobs_type jobs_type;
+    jobs_type jobs_;
   };
 
 } // namespace runner
