@@ -72,6 +72,9 @@ namespace urbi
 
     /*! Create a new client and tries to connect to the server.
      * Will block until the connection is established or timeouts.
+     * \param host    IP address or name of the robot to connect to.
+     * \param port    TCP port to connect to.
+     * \param buflen  size of send and receive buffers.
      * \param opt  options: whether server, whether autostart.
      */
     UClient(const std::string& host = default_host(),

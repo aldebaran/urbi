@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-/// \file urbi/utimer-callbacks.hh
+/// \file urbi/utimer-callback.hh
 
 #ifndef URBI_UTIMER_CALLBACK_HH
 # define URBI_UTIMER_CALLBACK_HH

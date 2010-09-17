@@ -81,6 +81,7 @@ namespace urbi
    * \param buflen receive and send buffer size (you can use the constant
    *               UAbstractClient::URBI_BUFLEN).
    * \param exitOnDisconnect call exit() if we get disconnected from server.
+   * \param server  whether listens instead of connecting.
    * \return 0 if no error occured.
    */
   int URBI_SDK_API initialize(const std::string& host, int port, size_t buflen,

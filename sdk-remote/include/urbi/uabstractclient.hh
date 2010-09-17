@@ -122,12 +122,13 @@ namespace urbi
     typedef int error_type;
 
     /// Create a new instance and connect to the Urbi server.
-    /*! Initializes sendBuffer and recvBuffer, and copy host and port.
-      \param host    IP address or name of the robot to connect to.
-      \param port    TCP port to connect to.
-      \param buflen  size of send and receive buffers.
-      Implementations should establish the connection in their constructor.
-    */
+    /*! Initialize sendBuffer and recvBuffer, and copy host and port.
+     * \param host    IP address or name of the robot to connect to.
+     * \param port    TCP port to connect to.
+     * \param buflen  size of send and receive buffers.
+     * \param server  whether accepts incoming connections.
+     * Implementations should establish the connection in their constructor.
+     */
     UAbstractClient(const std::string& host = default_host(),
                     unsigned port = URBI_PORT,
 		    size_t buflen = URBI_BUFLEN,
@@ -371,7 +372,7 @@ namespace urbi
     UCallbackID addCallback(const char* tag, UCallbackWrapper& w);
 
     /// Generate a client error message and notify callbacks.
-    /// \param message an optional string describing the error.
+    /// \param msg     an optional string describing the error.
     ///                The possible prefix "!!! " is skipped if present.
     /// \param code    an optional system error code on which strerror is called
     void clientError(std::string msg, int code = 0);

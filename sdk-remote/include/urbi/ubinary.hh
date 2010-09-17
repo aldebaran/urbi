@@ -104,7 +104,7 @@ namespace urbi
       UImage image;
       USound sound;
     };
-    /// Headers (everything after BIN <size> and before ';' or \n).
+    /// Headers (everything after "BIN theSize" and before ';' or \n).
     std::string message;
 
   private:

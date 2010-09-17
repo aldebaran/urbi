@@ -3,6 +3,7 @@ include build-aux/build-aux.mk
 include build-aux/package-version.mk
 include build-aux/fix-libtool-la.mk
 include build-aux/build-farm.mk
+include build-aux/doxygen.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/bootstrap.mk
 
@@ -18,8 +19,7 @@ SUBDIRS =					\
   jpeg						\
   libport					\
   .						\
-  src						\
-  doc
+  src
 
 # Also fix libjpeg.la.
 LTLIBRARIES_TO_FIX += jpeg/libjpeg4urbi$(LIBSFX).la
@@ -60,13 +60,3 @@ check-%:
 installcheck-buildfarm check-buildfarm recheck recheck-html: clean-semaphores
 	$(MAKE) $(AM_MAKEFLAGS) -C src $@
 	$(MAKE) $(AM_MAKEFLAGS) -C src/tests $@
-
-
-## ----- ##
-## Doc.  ##
-## ----- ##
-
-.PHONY: doc html
-
-doc html:
-	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
