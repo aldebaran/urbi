@@ -393,7 +393,7 @@ class Global.uobjects {};
 var Global.uobjects_handle = WeakPointer.new;
 
 // UObjects can use evaluate at initialization-time.
-UVar.new(Global,"evaluate");
+UVar.new(Global, "evaluate");
 Global.getSlot("evaluate").eraseThrowingCallbacks = false;
 Global.getSlot("evaluate").owned = true;
 Global.getSlot("evaluate").notifyChangeOwned(uobjects_handle, function()
@@ -686,7 +686,7 @@ class Global.'external'
         if (args[i].isA(UObject))
           args[i] = args[i].__uobjectName
         else if (args[i].isA(UVar))
-          args[i] = args[i].ownerName + "." + args[i].initialName |
+          args[i] = "%s.%s" % [args[i].ownerName, args[i].initialName] |
       if (args.size != nargs)
         throw Exception.Arity.new("Remote bound function", args.size, nargs)|
       var u = "function".fresh|
@@ -717,7 +717,7 @@ class Global.'external'
     // FIXME: No way to catch an event with payload without generating the 'at'
     // code.
     var obj = uobjects.getSlot(objname)|
-    var fullname = objname+"."+ename+"__" + nargs.asString |
+    var fullname = "%s.%s__%s" % [objname, ename, nargs] |
     var key = lobby.uid + fullname |
     if (obj.remoteEventMap.has(key))
       return |
