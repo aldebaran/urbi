@@ -792,11 +792,11 @@ namespace ast
   }
 
   rNary
-  Factory::make_nary(const location& loc, const rExp& e)
+  Factory::make_nary(const location& loc, const rExp& e, flavor_type flavor)
   {
     rNary res = new Nary(loc);
     if (!implicit(e))
-      res->push_back(e);
+      res->push_back(e, flavor);
     return res;
   }
 
