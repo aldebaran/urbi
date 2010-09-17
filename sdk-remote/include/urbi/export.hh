@@ -9,7 +9,7 @@
  */
 
 #ifndef URBI_EXPORT_HH
-# define URBI_SDK_EXPORT_HH
+# define URBI_EXPORT_HH
 
 # include <libport/compiler.hh>
 
