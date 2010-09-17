@@ -423,6 +423,7 @@ stmt:
 
 block:
   "{" stmts "}"       { $$ = MAKE(strip, $2); }
+| "{" error "}"       { $$ = new ast::Noop(@$, 0); }
 ;
 
 /*----------.
@@ -1237,6 +1238,7 @@ exp:
 | "!" exp                 { $$ = MAKE(call, @$, $2, $1); }
 | "compl" exp             { $$ = MAKE(call, @$, $2, $1); }
 | "(" exp ")"             { std::swap($$, $2); }
+| "(" error ")"           { $$ = new ast::Noop(@$, 0); }
 ;
 
 /*--------.
