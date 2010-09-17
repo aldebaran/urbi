@@ -29,5 +29,6 @@ namespace parser
   transform(libport::intrusive_ptr<ast::Type>); \
 
   INST(Ast);
+  INST(Exp);
   INST(Nary);
 } // namespace parser

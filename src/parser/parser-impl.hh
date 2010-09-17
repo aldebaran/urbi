@@ -17,6 +17,8 @@
 # include <memory>
 # include <string>
 
+# include <boost/optional.hpp>
+
 # include <ast/fwd.hh>
 # include <parser/fwd.hh>
 # include <parser/parse-result.hh>
@@ -30,14 +32,23 @@ namespace parser
   public:
     typedef yy::parser parser_type;
     typedef parser_type::location_type location_type;
+    typedef parser_type::token_type token_type;
     typedef parser_type::symbol_type symbol_type;
 
     ParserImpl();
+    void initial_token_set(token_type initial_token);
+    boost::optional<token_type>& initial_token_get();
 
     /// Parse the command from a buffer.
     /// \param code  the source to parse.
     /// \param loc   the location to use for this parsing.
     parse_result_type parse(const std::string& code,
+                            const location_type* loc = 0);
+
+    /// Parse the command from a stream.
+    /// \param code  the source to parse.
+    /// \param loc   the location to use for this parsing.
+    parse_result_type parse(std::istream& code,
                             const location_type* loc = 0);
 
     /// Parse a file.
@@ -106,6 +117,9 @@ namespace parser
 
     /// Factory.
     std::auto_ptr<ast::Factory> factory_;
+
+    /// Initial token to select mode
+    boost::optional<yy::parser::token_type> initial_token_;
   };
 
 }

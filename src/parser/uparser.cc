@@ -44,12 +44,22 @@ namespace parser
   UParser::parse(const std::string& command,
                  const yy::location* loc)
   {
+    pimpl_->initial_token_set(::yy::parser::token::TOK_MODE_EXPS);
     return pimpl_->parse(command, loc);
+  }
+
+  parse_result_type
+  UParser::parse(std::istream& input,
+                 const yy::location* loc)
+  {
+    pimpl_->initial_token_set(::yy::parser::token::TOK_MODE_EXP);
+    return pimpl_->parse(input, loc);
   }
 
   parse_result_type
   UParser::parse_file(const std::string& fn)
   {
+    pimpl_->initial_token_set(::yy::parser::token::TOK_MODE_EXPS);
     return pimpl_->parse_file(fn);
   }
 

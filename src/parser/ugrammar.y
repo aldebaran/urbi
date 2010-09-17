@@ -126,6 +126,13 @@
     yy::parser::symbol_type
     yylex(parser::ParserImpl& up, yyFlexLexer& scanner)
     {
+      boost::optional< ::yy::parser::token_type>& initial_token(up.initial_token_get());
+      if (initial_token)
+      {
+        ::yy::parser::token_type res = initial_token.get();
+        initial_token = boost::optional< ::yy::parser::token_type>();
+        return yy::parser::symbol_type(res, yy::location());
+      }
       return scanner.yylex(&up);
     }
 
@@ -145,6 +152,9 @@
 /*---------.
 | Tokens.  |
 `---------*/
+
+%token  MODE_EXP
+        MODE_EXPS
 
 %token
         __HERE__     "__HERE__"
@@ -337,14 +347,30 @@ start:
   {
     up.result_->ast_set($1);
     up.loc_ = @$;
+    YYACCEPT;
   }
 ;
 
+%type <ast::rExp> root;
 root:
     /* Minimal error recovery, so that all the tokens are read,
        especially the end-of-lines, to keep error messages in sync. */
-  error  { $$ = 0;  }
-| stmts  { std::swap($$, $1); }
+  error                { $$ = 0; }
+| MODE_EXP  root_exp   { std::swap($$, $2); }
+| MODE_EXPS root_exps  { std::swap($$, $2); }
+;
+
+// An interactive entry: a statement ended by ";" or ",".
+%type <ast::rExp> root_exp;
+root_exp:
+  cstmt.opt ";"  { $$ = MAKE(nary, @$, $1, $2); }
+| cstmt.opt ","  { $$ = MAKE(nary, @$, $1, $2); }
+| cstmt.opt EOF  { $$ = MAKE(nary, @$, $1); }
+;
+
+%type <ast::rExp> root_exps;
+root_exps:
+  stmts  { $$ = $1; }
 ;
 
 
@@ -352,7 +378,7 @@ root:
 | stmts.  |
 `--------*/
 
-%type <ast::rNary> root stmts;
+%type <ast::rNary> stmts;
 
 // Statements: with ";" and ",".
 stmts:

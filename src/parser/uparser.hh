@@ -31,6 +31,12 @@ namespace parser
   class UParser
   {
   public:
+    enum Mode
+    {
+      exp,
+      exps,
+    };
+
     UParser();
     UParser(const UParser&);
     ~UParser();
@@ -44,6 +50,13 @@ namespace parser
     /// If \a loc is defined, use it to parse \a code, otherwise
     /// use the current location and update it.
     parse_result_type parse(const std::string& code,
+                            const yy::location* loc = 0);
+
+    /// Parse the command from a stream.
+    /// \return yyparse's result (0 on success).
+    /// If \a loc is defined, use it to parse \a code, otherwise
+    /// use the current location and update it.
+    parse_result_type parse(std::istream& input,
                             const yy::location* loc = 0);
 
     /// Parse a file.

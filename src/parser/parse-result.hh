@@ -65,7 +65,7 @@ namespace parser
     /// \name The resulting AST.
     /// \{
     /// The type of AST node returned by the parser.
-    typedef ast::rNary ast_type;
+    typedef ast::rExp ast_type;
     /// The latest AST read by parse().
     ast_type ast_get();
     /// Same as \a ast_get, but assert the result.

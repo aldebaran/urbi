@@ -51,7 +51,19 @@ namespace parser
     , debug_(yydebug)
     , meta_(false)
     , factory_(new ast::Factory)
+    , initial_token_()
+  {}
+
+  void
+  ParserImpl::initial_token_set(token_type initial_token)
   {
+    initial_token_ = initial_token;
+  }
+
+  boost::optional<ParserImpl::token_type>&
+  ParserImpl::initial_token_get()
+  {
+    return initial_token_;
   }
 
   bool
@@ -115,6 +127,17 @@ namespace parser
       LIBPORT_ECHO("Parsing: " << s);
     std::istringstream is(s);
     parse_(is, l);
+    if (debug_)
+      LIBPORT_ECHO("Result: " << *result_);
+    return result_;
+  }
+
+  parse_result_type
+  ParserImpl::parse(std::istream& s, const location_type* l)
+  {
+    if (debug_)
+      LIBPORT_ECHO("Parsing: " << s);
+    parse_(s, l);
     if (debug_)
       LIBPORT_ECHO("Result: " << *result_);
     return result_;
