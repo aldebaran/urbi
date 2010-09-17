@@ -133,7 +133,7 @@ namespace runner
     if (stmt && stmt->flavor_get() == ast::flavor_comma)
     {
       sched::rJob subrunner =
-        new Interpreter(*this, operator()(stmt->expression_get().get()),
+        new Interpreter(*this, stmt->expression_get().get(),
                         libport::Symbol::fresh(name_get()));
       subrunner->start_job();
     }
