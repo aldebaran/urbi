@@ -16,6 +16,7 @@
 #ifndef OBJECT_GLOBAL_HH
 # define OBJECT_GLOBAL_HH
 
+# include <libport/debug.hh>
 # include <libport/symbol.hh>
 
 # include <urbi/object/fwd.hh>
@@ -31,12 +32,14 @@ namespace urbi
 
     /// Initialize the Global class.
     void global_class_initialize();
+
+    rObject capture(libport::Symbol name, const rObject& from);
   }; // namespace object
 }
 
-# define CAPTURE_(Name, From)                                  \
-  static ::urbi::object::rObject Name =                        \
-    (From)->slot_get(::libport::Symbol(#Name))
+# define CAPTURE_(Name, From)                                           \
+  static ::urbi::object::rObject Name =                                 \
+    ::urbi::object::capture(libport::Symbol(#Name), From)               \
 
 # define CAPTURE_GLOBAL(Name)                           \
   CAPTURE_(Name, ::urbi::object::global_class)

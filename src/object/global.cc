@@ -13,6 +13,8 @@
  ** \brief Creation of the Urbi object Global.
  */
 
+#include <libport/finally.hh>
+
 #include <object/format-info.hh>
 
 #include <urbi/object/global.hh>
@@ -32,5 +34,16 @@ namespace urbi
     global_class_initialize()
     {}
 
+    rObject
+    capture(libport::Symbol name, const rObject& from)
+    {
+      GD_CATEGORY(Urbi);
+      static bool capturing = false;
+      if (capturing)
+        GD_FABORT("CAPTURE_ from CAPTURE_: %s.", name);
+
+      LIBPORT_SCOPE_SET(capturing, true);
+      return from->slot_get(name);
+    }
   }; // namespace object
 }
