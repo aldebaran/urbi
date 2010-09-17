@@ -218,8 +218,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   // Load the modules using our uobject library path.
   libport::xlt_advise dl;
   dl.ext().path().push_back(uobject_path, ":");
-  foreach(const std::string& s,
-              urbi_root.uobjects_path())
+  foreach(const std::string& s, urbi_root.uobjects_path())
     dl.path().push_back(s);
   foreach (const std::string& s, modules)
     dl.open(s);
