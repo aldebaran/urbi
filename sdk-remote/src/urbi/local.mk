@@ -28,7 +28,7 @@ UMAKE_VERBOSE_0 = --quiet
 	$(umake_verbose)$(UMAKE_SHARED) $(UMAKE_VERBOSE)	\
 	  EXTRA_CPPFLAGS="$(EXTRA_$(notdir $*)_cppflags)"	\
 	  EXTRA_LDFLAGS="$(EXTRA_$(notdir $*)_ldflags)"		\
-	  --clean --output=$@ $<
+	  --clean --output=$@ $< && 				\
 ## umake has dependencies support, so it might not recompile here, in
 ## which case, if this was triggered because of $(UMAKE_SHARED) we
 ## will keep on cycling.
