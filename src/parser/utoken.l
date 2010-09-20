@@ -17,6 +17,7 @@
   // #define ENABLE_DEBUG_TRACES
 
 #include <libport/compiler.hh>
+#include <libport/debug.hh>
 
 #include <libport/cstdio>
 #include <libport/cstdlib>
@@ -33,6 +34,8 @@
 
 #include <parser/parser-impl.hh>
 #include <parser/utoken.hh>
+
+GD_CATEGORY(Urbi.Scanner);
 
 // Shorter access to the tokens.
 typedef yy::parser::token token;
@@ -714,42 +717,23 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        // itself.  Don't use yyinput, it is just not fast enough.
        if (remain < len)
        {
-         // Check available length in stream.
-         size_t pos = yyin->tellg();
-         yyin->seekg(0, std::ios_base::end);
-         size_t streamlen = yyin->tellg();
-         // Check that we can read it all.
-         if (streamlen < pos + len + 1 - eat)
-         {
-           // No, eat it all to reach EOF.
-           passert(up, !up);
-           yyin->seekg(streamlen, std::ios_base::beg);
-           // Read one more to reach EOF state.
-           yyinput();
-           yy_c_buf_p += eat;
-           length_hint = pre_length + len + 1;
-           COLUMNS(eat + streamlen - pos);
-           EOF_ERROR("\\B");
-         }
-         COLUMNS(len);
-         // Yes, go on.
-         aver(up);
+         // Add current buffer
+         grown_string += std::string(yy_c_buf_p, remain);
 
-         // Eat 'eaten' from buffer.
-         grown_string += std::string(yy_c_buf_p, eat);
+         // Read remaining data
          size_t current_size = grown_string.length();
          grown_string.resize(current_size + len - eat);
-         yyin->seekg(pos, std::ios_base::beg);
          yyin->read(const_cast<char*>(grown_string.c_str()) + current_size,
                     len-eat);
+
        }
        else
        {
          // All we have to read is in Flex' buffer.
          aver(up);
          grown_string += std::string(yy_c_buf_p, eat);
-         COLUMNS(eat);
        }
+       COLUMNS(len);
 
        // We played nasty tricks with Flex, tweaking its buffer by
        // hand.  Restore its state: first of all advance the cursor of
