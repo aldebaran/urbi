@@ -1,5 +1,5 @@
 include $(top_srcdir)/build-aux/init.mk
-include $(top_srcdir)/build-aux/doxygen.mk
+# include $(top_srcdir)/build-aux/doxygen.mk
 include $(top_srcdir)/build-aux/revision.mk
 include tests/local.mk
 
@@ -66,11 +66,11 @@ CLEANFILES += $(EPS_IMAGES)
 
 
 # Find local *.sty files.  Find converted images from document-aux.
-TEXI2DVIFLAGS += 				\
- -I $(srcdir)					\
- -I $(builddir)/document-aux			\
- -I $(top_srcdir)/modules/system/ros/doc        \
- -I $(top_builddir)/modules/system/ros/doc
+TEXI2DVIFLAGS +=				\
+  -I $(srcdir)					\
+  -I $(builddir)/document-aux			\
+  -I $(top_srcdir)/modules/system/ros/doc	\
+  -I $(top_builddir)/modules/system/ros/doc
 pdf_DATA =
 
 # Use tex4ht.
