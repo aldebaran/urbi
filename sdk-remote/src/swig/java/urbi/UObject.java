@@ -278,6 +278,13 @@ public class UObject extends UObjectCPP
 	UBindFunction (obj, m);
     }
 
+    protected void UBindFunctions(Object obj,
+				  String ... method_names)
+    {
+	for (String method_name : method_names)
+	    UBindFunction(obj, method_name);
+    }
+
 
 
     protected void UBindFunction (Object obj,
