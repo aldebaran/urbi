@@ -26,6 +26,7 @@ import urbi.generated.URBIStarterJAVA;
 import urbi.generated.UContextImpl;
 import urbi.generated.UValue;
 import urbi.generated.UrbiRoot;
+import urbi.generated.UAutoValue;
 
 /// This class is the base UObject class for Java UObject.
 /// Please have all your Java UObject extends UObject
@@ -518,6 +519,51 @@ public class UObject extends UObjectCPP
 	return params;
     }
 
+
+    public void call(String object, String method, UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6, UValue v7, UValue v8) {
+	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
+		   new UAutoValue(v3), new UAutoValue(v4), new UAutoValue(v5),
+		   new UAutoValue(v6), new UAutoValue(v7), new UAutoValue(v8));
+    }
+
+    public void call(String object, String method, UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6, UValue v7) {
+	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
+		   new UAutoValue(v3), new UAutoValue(v4), new UAutoValue(v5),
+		   new UAutoValue(v6), new UAutoValue(v7));
+    }
+
+    public void call(String object, String method, UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6) {
+	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
+		   new UAutoValue(v3), new UAutoValue(v4), new UAutoValue(v5),
+		   new UAutoValue(v6));
+    }
+
+    public void call(String object, String method, UValue v1, UValue v2, UValue v3, UValue v4, UValue v5) {
+	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
+		   new UAutoValue(v3), new UAutoValue(v4), new UAutoValue(v5));
+    }
+
+    public void call(String object, String method, UValue v1, UValue v2, UValue v3, UValue v4) {
+	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
+		   new UAutoValue(v3), new UAutoValue(v4));
+    }
+
+    public void call(String object, String method, UValue v1, UValue v2, UValue v3) {
+	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
+		   new UAutoValue(v3));
+    }
+
+    public void call(String object, String method, UValue v1, UValue v2) {
+	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2));
+    }
+
+    public void call(String object, String method, UValue v1) {
+	super.call(object, method, new UAutoValue(v1));
+    }
+
+    public void call(String object, String method) {
+	super.call(object, method);
+    }
 
     private static LinkedList<UObjectStarter> starterList = new LinkedList<UObjectStarter>();
 }
