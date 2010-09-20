@@ -290,7 +290,8 @@ do (getSlot("UVar"))
 
   var parentGetProperty =  function(varname, propname)
   {
-    if (getSlot(varname).isA(UVar))
+    // Constant is special and does not trigger newPropertyHook.
+    if (getSlot(varname).isA(UVar) &&  propname != "constant")
     {
       if (propname == "changed")
         getSlot(varname).changed
