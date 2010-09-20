@@ -269,7 +269,8 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
 				       jstring method_name,
 				       jstring method_signature,
 				       jstring return_type,
-				       jint arg_nb)
+				   jint arg_nb,
+				   jobjectArray types)
 {
   /// First, assure that the JNI variables used by the caller are correctly
   /// set. If the are not and we can't set them, return.
@@ -289,6 +290,13 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
   const char* return_type_ = env->GetStringUTFChars(return_type, 0);
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
+  for (int i = 0; i < arg_nb; ++i)
+  {
+    jstring jstr = (jstring) env->GetObjectArrayElement(types, i);
+    const char* type_ = env->GetStringUTFChars(jstr, 0);
+    f->arg_types.push_back(type_);
+    env->ReleaseStringUTFChars(jstr, type_);
+  }
   urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
   if (!uob)
   {

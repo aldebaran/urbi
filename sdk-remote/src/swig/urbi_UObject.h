@@ -39,7 +39,7 @@ JNIEXPORT void JNICALL Java_urbi_UObject_registerNotifyChange
  * Signature: (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
 JNIEXPORT void JNICALL Java_urbi_UObject_registerFunction
-  (JNIEnv *, jobject, jobject, jstring, jstring, jstring, jstring, jint);
+(JNIEnv *, jobject, jobject, jstring, jstring, jstring, jstring, jint, jobjectArray);
 
 /*
  * Class:     urbi_UObject

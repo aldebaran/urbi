@@ -80,14 +80,34 @@ private:
   /// Java object (jobject) to C++ real object type. They are specific for
   /// UValue and UVar.
   jobject		getObjectFromUValue (const urbi::UValue& v);
+  jobject		getObjectFromUBinary (const urbi::UBinary& v);
+  jobject		getObjectFromUList (const urbi::UList& v);
+  jobject		getObjectFromUSound (const urbi::USound& v);
+  jobject		getObjectFromUImage (const urbi::UImage& v);
+  jobject		getObjectFromString (const std::string& v);
+  jobject		getObjectFromInteger (int v);
+  jobject               getObjectFromDouble (double val);
+  jobject               getObjectFromFloat (ufloat val);
+  jobject               getObjectFromLong (long val);
+  jobject               getObjectFromShort (int val);
+  jobject               getObjectFromCharacter (int val);
+  jobject               getObjectFromByte (int val);
+  jobject               getObjectFromBoolean (bool val);
   jobject		getObjectFromUVar (urbi::UVar& v);
+  jvalue		getObjectFrom (const std::string& type_name, const urbi::UValue& v);
 
   void			testForException();
+
+  static void	       	deleteClassRefs(JNIEnv* env);
+
 public:
 
   urbi::UValue	getUValueFromObject (jobject obj);
   urbi::UVar*	getUVarFromObject (jobject obj);
   static urbi::UObject*	getUObjectFromObject (jobject obj, JNIEnv* env);
+
+public:
+  std::vector<std::string> arg_types;
 
 private:
 
@@ -109,6 +129,34 @@ private:
   /// All theses variables below are used in the conversion functions to
   /// convert from jobject to UVar or UValue or UObject.
   /// We cache these variable because it is costly to retrieve them.
+  static jclass		double_cls;
+  static jmethodID	double_valueof_id;
+  static jclass		float_cls;
+  static jmethodID	float_valueof_id;
+  static jclass		long_cls;
+  static jmethodID	long_valueof_id;
+  static jclass		short_cls;
+  static jmethodID	short_valueof_id;
+  static jclass		character_cls;
+  static jmethodID	character_valueof_id;
+  static jclass		byte_cls;
+  static jmethodID	byte_valueof_id;
+  static jclass		boolean_cls;
+  static jmethodID	boolean_valueof_id;
+  static jclass		integer_cls;
+  static jmethodID	integer_valueof_id;
+  static jclass		class_cls;
+  static jmethodID	class_getname_id;
+  static jclass		string_cls;
+  static jmethodID	string_ctor_id;
+  static jclass		ulist_cls;
+  static jmethodID	ulist_ctor_id;
+  static jclass		ubinary_cls;
+  static jmethodID	ubinary_ctor_id;
+  static jclass		uimage_cls;
+  static jmethodID	uimage_ctor_id;
+  static jclass		usound_cls;
+  static jmethodID	usound_ctor_id;
   static jclass		uvar_cls;
   static jmethodID	uvar_ctor_id;
   static jfieldID	uvar_swigptr_id;

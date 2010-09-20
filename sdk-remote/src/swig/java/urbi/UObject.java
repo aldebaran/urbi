@@ -236,7 +236,8 @@ public class UObject extends UObjectCPP
 					    String method,
 					    String signature,
 					    String return_type,
-					    int    arg_number);
+					    int    arg_number,
+					    String[] types);
 
     protected void UBindFunction (Object obj, Method m)
     {
@@ -250,25 +251,18 @@ public class UObject extends UObjectCPP
 	    throw new RuntimeException (msg);
 	}
 
-	for (int i = 0; i < p.length; ++i) {
-
-	    if (p[i] != UValue.class) {
-		String msg = "Parameter " + (i + 1) + " of the function \""
-		    + m.getName () + "\" is of type "+ p[i].getName ()
-		    + ". You can only bind functions with parameters of"
-		    + " type liburbi.main.UValue with UBindFunction.";
-		throw new RuntimeException (msg);
-	    }
-
-	}
-
 	String bytecode_sig = getMethodBytecodeSignature (m);
+	String[] types = new String[p.length];
+	for (int i = 0; i < p.length; ++i) {
+	    types[i] = p[i].toString();
+	}
 	registerFunction (obj,
 			  get__name (),
 			  m.getName (),
 			  bytecode_sig,
 			  m.getReturnType().getName (),
-			  m.getParameterTypes().length);
+			  p.length,
+			  types);
     }
 
     protected void UBindFunction (Object obj,
@@ -451,7 +445,7 @@ public class UObject extends UObjectCPP
 	    String msg = "Parameter 1 of the function \""
 		+ m.getName () + "\" is of type "+ p[0].getName ()
 		+ ". You can only register functions with a parameter of"
-		+ " type liburbi.main.UVar with " + notifyName + ".";
+		+ " type urbi.generated.UVar with " + notifyName + ".";
 	    throw new RuntimeException(msg);
 	}
 

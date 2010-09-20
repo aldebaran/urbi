@@ -38,7 +38,7 @@ print_object_retrieving()
 {
     local list=""
     for j in $(seq 1 $i); do
-        list="$list jobject obj$j = getObjectFromUValue (uval$j);"
+        list="$list const jvalue obj$j = getObjectFrom (arg_types[$(($j - 1))], uval$j);"
     done
     echo $list
 }
@@ -46,9 +46,7 @@ print_object_retrieving()
 for i in $(seq 0 $nb_of_args); do
     varlist=$(create_var_list $i "const urbi::UValue& uval")
     varlist2=$(create_var_list $i "obj")
-    if [ $i -gt 0 ]; then
-	varlist2=", $varlist2"
-    fi
+    varlist2="jvalue argument[] = { $varlist2 };"
     cat <<EOF
 # define CALL_METHOD_$i(Name, Type, JavaType, error_val, ret, ret_snd)	\\
 	JavaType call##Name##_$i ($varlist)				\\
@@ -56,7 +54,8 @@ for i in $(seq 0 $nb_of_args); do
 	  if (!init_env ())						\\
 	    return error_val;						\\
           $(print_object_retrieving)					\\
-	  ret env_->Call##Type##Method(obj, mid$varlist2);		\\
+          $varlist2                                                     \\
+	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\\
           testForException();						\\
           ret_snd;							\\
 	}
