@@ -130,6 +130,7 @@ namespace urbi
     UProp speedmax;
     UProp delta;
     UProp blend;
+    UProp constant;
 
     UValue getProp(UProperty prop);
     void setProp(UProperty prop, const UValue &v);
@@ -210,7 +211,8 @@ namespace urbi
   speedmin(*this, PROP_SPEEDMIN),		\
   speedmax(*this, PROP_SPEEDMAX),		\
   delta(*this, PROP_DELTA),			\
-  blend(*this, PROP_BLEND)
+  blend(*this, PROP_BLEND),                     \
+  constant(*this, PROP_CONSTANT)
 
 } // end namespace urbi
 

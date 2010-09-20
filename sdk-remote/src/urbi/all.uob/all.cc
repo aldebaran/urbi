@@ -430,6 +430,7 @@ public:
     APPEND_UFLOAT(delta);
     urbi::UValue bl = v.blend;
     APPEND(bl);
+    APPEND_UFLOAT(constant);
 #undef APPEND_UFLOAT
 #undef APPEND
 
@@ -447,6 +448,7 @@ public:
     v.speedmax = val;
     v.delta = val;
     v.blend = val;
+    v.constant = (val>0);
     return 0;
   }
 

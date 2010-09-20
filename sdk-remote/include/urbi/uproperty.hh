@@ -28,6 +28,7 @@ namespace urbi
     PROP_SPEEDMAX,
     PROP_BLEND,
     PROP_DELTA,
+    PROP_CONSTANT,
   };
 
   namespace
@@ -40,6 +41,7 @@ namespace urbi
       "speedmax",
       "blend",
       "delta",
+      "constant",
     };
   }
 
@@ -49,7 +51,7 @@ namespace urbi
   is_propertytype (int i)
   {
     return (static_cast<int> (PROP_RANGEMAX) <= i
-	    && i <= static_cast<int> (PROP_DELTA));
+	    && i <= static_cast<int> (PROP_CONSTANT));
   }
 
   // values for enum-like properties
