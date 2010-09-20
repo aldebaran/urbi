@@ -156,8 +156,8 @@ namespace urbi
     /// Send an Urbi command. The syntax is similar to the printf()
     /// function.
     /// Passing `0' is supported as means `""', but with no warning.
-    error_type send(const char* format, ...)
-      __attribute__((__format__(printf, 2, 3)));
+    ATTRIBUTE_PRINTF(2, 3)
+    error_type send(const char* format, ...);
 
     /// Send the value without any prefix or terminator
     error_type send(const urbi::UValue& v);
@@ -173,8 +173,8 @@ namespace urbi
     error_type sendBin(const void*, size_t len);
 
     /// Send an Urbi header followed by binary data.
-    error_type sendBin(const void*, size_t len, const char* header, ...)
-      __attribute__((__format__(printf, 4, 5)));
+    ATTRIBUTE_PRINTF(4, 5)
+    error_type sendBin(const void*, size_t len, const char* header, ...);
 
     /// Lock the send buffer (for backward compatibility, will be
     /// removed in future versions).
@@ -187,8 +187,8 @@ namespace urbi
     /// Append Urbi commands to the send buffer (for backward
     /// compatibility, will be removed in future versions).
     /// Passing `0' is supported as means `""', but with no warning.
-    error_type pack(const char* format, ...)
-      __attribute__((__format__(printf, 2, 3)));
+    ATTRIBUTE_PRINTF(2, 3)
+    error_type pack(const char* format, ...);
 
     /// va_list version of pack.
     /// Passing `0' is supported as means `""', but with no warning.
@@ -200,13 +200,13 @@ namespace urbi
 
     /// Send a command, prefixing it with a tag, and associate the
     /// given callback with this tag.
-    UCallbackID sendCommand(UCallback, const char*, ...)
-      __attribute__((__format__(printf, 3, 4)));
+    ATTRIBUTE_PRINTF(3, 4)
+    UCallbackID sendCommand(UCallback, const char*, ...);
 
     /// Send a command, prefixing it with a tag, and associate the
     /// given callback with this tag.
-    UCallbackID sendCommand(UCustomCallback, void *, const char*, ...)
-      __attribute__((__format__(printf, 4, 5)));
+    ATTRIBUTE_PRINTF(4, 5)
+    UCallbackID sendCommand(UCustomCallback, void *, const char*, ...);
 
     /// Send sound data to the robot for immediate playback.
     error_type sendSound(const char* device,
@@ -306,9 +306,8 @@ namespace urbi
     virtual void notifyCallbacks(const UMessage& msg);
 
     /// Notify of an error.
-    virtual void printf(const char* format, ...)
-      __attribute__((__format__(printf, 2, 3)))
-      = 0;
+    ATTRIBUTE_PRINTF(2, 3)
+    virtual void printf(const char* format, ...) = 0;
 
     /// Get time in milliseconds since an unspecified but constant
     /// reference time.

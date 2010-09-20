@@ -103,9 +103,8 @@ namespace urbi
   URBI_SDK_API impl::UContextImpl* getCurrentContext();
   URBI_SDK_API void setCurrentContext(impl::UContextImpl*);
 
-  URBI_SDK_API void echo(const char* format, ... )
-    __attribute__((__format__(printf, 1, 2)));
-
+  ATTRIBUTE_PRINTF(1, 2)
+  URBI_SDK_API void echo(const char* format, ...);
 }
 
 # include "urbi/ucontext.hxx"

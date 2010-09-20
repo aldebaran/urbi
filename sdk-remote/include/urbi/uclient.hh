@@ -94,7 +94,9 @@ namespace urbi
   public:
     int closeUClient ();
 
-    virtual void printf(const char * format, ...);
+    ATTRIBUTE_PRINTF(2, 3)
+    virtual void printf(const char* format, ...);
+
     virtual unsigned int getCurrentTime() const;
 
     UCallbackAction pong(const UMessage& msg);

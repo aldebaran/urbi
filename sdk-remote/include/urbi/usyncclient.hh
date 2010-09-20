@@ -48,8 +48,8 @@ namespace urbi
      is received.
 
      If you want to call these callbacks in a different
-     thread, call @stopCallbackThread, then regularly call
-     @processEvents. Each call will call callbacks for all pending
+     thread, call stopCallbackThread(), then regularly call
+     processEvents(). Each call will call callbacks for all pending
      messages in the current thread.  */
   class URBI_SDK_API USyncClient: public UClient
   {
@@ -111,11 +111,16 @@ namespace urbi
 
   protected:
     /** Synchronously ask the server for the value of an expression.
-     * \param expression   the Urbi expression to evaluate.
-     *         It must be a single expression and must not start with a tag.
-     * \param mtag    tag to use, or 0 to generate one.
-     * \param mmod    modifier to use on the tag, or 0 for none.
-     * \return the resulting message, or 0 in case of error.
+     * \param expression
+     *   the Urbi expression to evaluate.
+     *   It must be a single expression and must not start with a tag.
+     *   It's a printf-like format string.
+     * \param arg
+     *   the arguments for the expression
+     * \param send_options
+     *   what tag to use and so forth.
+     * \return
+     *   the resulting message, or 0 in case of error.
      */
     UMessage*
     syncGet_(const char* expression, va_list& arg,
@@ -124,6 +129,7 @@ namespace urbi
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
     /// not start with a tag or channel.
+    ATTRIBUTE_PRINTF(2, 3)
     UMessage* syncGet(const char* expression, ...);
 
     /// Synchronously evaluate an Urbi expression. The expression must
@@ -131,13 +137,16 @@ namespace urbi
     UMessage* syncGet(const std::string& exp);
 
     /// Likewise, with a timeout.
+    ATTRIBUTE_PRINTF(3, 4)
     UMessage* syncGet(libport::utime_t useconds,
                       const char* expression, ...);
     /// Synchronously evaluate an Urbi expression, specifying the tag
     /// and modifiers to prepend to it.
+    ATTRIBUTE_PRINTF(2, 5)
     UMessage* syncGetTag(const char* expression,
                          const char* mtag, const char* mmod, ...);
     /// Likewise, with timeout.
+    ATTRIBUTE_PRINTF(3, 6)
     UMessage* syncGetTag(libport::utime_t useconds,
                          const char* expression,
                          const char* mtag, const char* mmod, ...);
