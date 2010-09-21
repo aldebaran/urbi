@@ -196,20 +196,6 @@ namespace runner
           GD_FPUSH_TRACE("%s: reading command.", name_get());
           res = parser.parse(input_);
         }
-        if (!res->perfect())
-        {
-          GD_FINFO_TRACE("%s: reporting errors and warnings.", name_get());
-          // FIXME: Now that parsing/execution is synchronous, this is
-          // needlessly complex. Just print the damn message.
-          ast::rNary n = new ast::Nary;
-          res->process_errors(*n);
-          handle_command_(n);
-        }
-        if (!res->good())
-        {
-          GD_FINFO_TRACE("%s: command is invalid.", name_get());
-          continue;
-        }
         ast::rExp ast = parser::transform(ast::rConstExp(res->ast_xget()));
         handle_command_(ast);
         if (input_.eof())

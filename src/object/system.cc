@@ -109,14 +109,7 @@ namespace urbi
       }
 
       ast::rConstAst ast;
-      try
-      {
-        ast = parser::transform(ast::rConstExp(p->ast_get()));
-      }
-      catch (const runner::Exception& e)
-      {
-        e.raise(context);
-      }
+      ast = parser::transform(ast::rConstExp(p->ast_get()));
 
       return run.eval(ast.get(), self ? self : rObject(run.lobby_get()));
     }
@@ -167,8 +160,15 @@ namespace urbi
     rObject
     eval(const std::string& code, rObject self)
     {
-      return execute_parsed(parser::parse(code, ast::loc()),
-                            SYMBOL(eval), code, self);
+      try
+      {
+        return execute_parsed(parser::parse(code, ast::loc()),
+                              SYMBOL(eval), code, self);
+      }
+      catch (runner::Exception& e)
+      {
+        e.raise(code);
+      }
     }
 
     static rObject
@@ -229,9 +229,15 @@ namespace urbi
       if (!libport::path(filename).exists())
         runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
 #endif
-      rObject res = execute_parsed(parser::parse_file(filename),
-                                   SYMBOL(loadFile), filename, self);
-      return res;
+      try
+      {
+        return execute_parsed(parser::parse_file(filename),
+			      SYMBOL(loadFile), filename, self);
+      }
+      catch (const runner::Exception& e)
+      {
+        e.raise(filename);
+      }
     }
 
     static rObject

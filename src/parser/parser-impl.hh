@@ -23,6 +23,7 @@
 # include <parser/fwd.hh>
 # include <parser/parse-result.hh>
 # include <parser/utoken.hh>
+# include <runner/exception.hh>
 
 namespace parser
 {
@@ -120,6 +121,9 @@ namespace parser
 
     /// Initial token to select mode
     boost::optional<yy::parser::token_type> initial_token_;
+
+    /// Errors so far
+    runner::Exception errors_;
   };
 
 }

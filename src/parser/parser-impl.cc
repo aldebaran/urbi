@@ -118,6 +118,8 @@ namespace parser
                    << *result_);
 
     TIMER_POP("parse");
+    if (!errors_.empty())
+      throw errors_;
   }
 
   parse_result_type
@@ -169,18 +171,17 @@ namespace parser
   void
   ParserImpl::error(const location_type& l, const std::string& msg)
   {
-    // We display "syntax error" ourselves.
     std::string err = msg;
     const char* synerr = "syntax error, ";
     if (boost::algorithm::starts_with(err, synerr))
       boost::algorithm::erase_head(err, strlen(synerr));
-    result_->error(l, err);
+    errors_.err(l, err);
   }
 
   void
   ParserImpl::warn(const location_type& l, const std::string& msg)
   {
-    result_->warn(l, msg);
+    errors_.warn(l, msg);
   }
 
   void
