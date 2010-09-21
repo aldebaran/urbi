@@ -149,6 +149,12 @@ namespace binder
   }
 
   void
+  Binder::err(const ast::loc& loc, const std::string& msg)
+  {
+    errors_.err(loc, msg, "syntax error");
+  }
+
+  void
   Binder::visit(const ast::Declaration* input)
   {
     ast::loc loc = input->location_get();
@@ -171,7 +177,7 @@ namespace binder
       // Check this is not a redefinition
       if (scope_depth_ - unscope_ == scope_depth_get(name))
         if (report_errors_)
-          errors_.err(loc, "variable redefinition: " + name.name_get());
+          err(loc, "variable redefinition: " + name.name_get());
 
       BIND_ECHO("Bind " << name);
 
@@ -336,7 +342,7 @@ namespace binder
       super_type::visit(input);
     }
     else if (report_errors_)
-      errors_.err(input->location_get(), "call: used outside any function");
+      err(input->location_get(), "call: used outside any function");
   }
 
   void
@@ -426,7 +432,7 @@ namespace binder
         if (decl->value_get())
           found = true;
         else if (found)
-          errors_.err(decl->location_get(),
+          err(decl->location_get(),
                         "argument with no default value after arguments"
                         " with default value");
       }

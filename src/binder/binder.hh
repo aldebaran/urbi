@@ -79,6 +79,8 @@ namespace binder
                              unsigned depth);
 
   private:
+    /// Report an error.
+    void err(const ast::loc& loc, const std::string& msg);
     /// Actions to perform at exit of the innermost scope.
     typedef std::list<libport::Finally> unbind_type;
     unbind_type unbind_;
