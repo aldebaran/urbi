@@ -394,7 +394,7 @@ CallbacksCaller::getUValueFromObject (jobject obj)
 }
 
 jvalue
-CallbacksCaller::getObjectFrom (const std::string& type_name, const urbi::UValue& v)
+CallbacksCaller::getObjectFrom (const std::string& type_name, urbi::UValue v)
 {
   jvalue res;
   if (type_name.length() > 10)
@@ -403,6 +403,8 @@ CallbacksCaller::getObjectFrom (const std::string& type_name, const urbi::UValue
       res.l = getObjectFromUValue (v);
     else if (type_name == "class java.lang.String")
       res.l = getObjectFromString (v);
+    else if (type_name == "class urbi.generated.UVar")
+      res.l = getObjectFromUVar (urbi::uvar_uvalue_cast<urbi::UVar>(v));
     else if (type_name == "class urbi.generated.UList")
       res.l = getObjectFromUList (v);
     else if (type_name == "class urbi.generated.UBinary")

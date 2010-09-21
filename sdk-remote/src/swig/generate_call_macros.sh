@@ -44,7 +44,7 @@ print_object_retrieving()
 }
 
 for i in $(seq 0 $nb_of_args); do
-    varlist=$(create_var_list $i "const urbi::UValue& uval")
+    varlist=$(create_var_list $i "urbi::UValue uval")
     varlist2=$(create_var_list $i "obj")
     varlist2="jvalue argument[] = { $varlist2 };"
     cat <<EOF

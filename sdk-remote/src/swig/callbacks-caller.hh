@@ -17,6 +17,7 @@
 #include "urbi/ucallbacks.hh"
 #include "urbi/utimer-callback.hh"
 
+
 /// This class allow to register Java callbacks in C++.
 ///
 /// This class define C++ callbacks, that can be registered in C++
@@ -94,7 +95,7 @@ private:
   jobject               getObjectFromByte (int val);
   jobject               getObjectFromBoolean (bool val);
   jobject		getObjectFromUVar (urbi::UVar& v);
-  jvalue		getObjectFrom (const std::string& type_name, const urbi::UValue& v);
+  jvalue		getObjectFrom (const std::string& type_name, urbi::UValue v);
 
   void			testForException();
 

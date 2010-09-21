@@ -25,7 +25,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_1(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_1 (const urbi::UValue& uval1)				\
+	JavaType call##Name##_1 (urbi::UValue uval1)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -36,7 +36,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_2(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_2 (const urbi::UValue& uval1, const urbi::UValue& uval2)				\
+	JavaType call##Name##_2 (urbi::UValue uval1, urbi::UValue uval2)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -47,7 +47,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_3(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_3 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3)				\
+	JavaType call##Name##_3 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -58,7 +58,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_4(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_4 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4)				\
+	JavaType call##Name##_4 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -69,7 +69,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_5(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_5 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5)				\
+	JavaType call##Name##_5 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -80,7 +80,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_6(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_6 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6)				\
+	JavaType call##Name##_6 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -91,7 +91,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_7(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_7 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7)				\
+	JavaType call##Name##_7 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -102,7 +102,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_8(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_8 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8)				\
+	JavaType call##Name##_8 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -113,7 +113,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_9(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_9 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9)				\
+	JavaType call##Name##_9 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8, urbi::UValue uval9)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -124,7 +124,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_10(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_10 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10)				\
+	JavaType call##Name##_10 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8, urbi::UValue uval9, urbi::UValue uval10)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -135,7 +135,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_11(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_11 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11)				\
+	JavaType call##Name##_11 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8, urbi::UValue uval9, urbi::UValue uval10, urbi::UValue uval11)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -146,7 +146,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_12(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_12 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12)				\
+	JavaType call##Name##_12 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8, urbi::UValue uval9, urbi::UValue uval10, urbi::UValue uval11, urbi::UValue uval12)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -157,7 +157,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_13(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_13 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12, const urbi::UValue& uval13)				\
+	JavaType call##Name##_13 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8, urbi::UValue uval9, urbi::UValue uval10, urbi::UValue uval11, urbi::UValue uval12, urbi::UValue uval13)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -168,7 +168,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_14(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_14 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12, const urbi::UValue& uval13, const urbi::UValue& uval14)				\
+	JavaType call##Name##_14 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8, urbi::UValue uval9, urbi::UValue uval10, urbi::UValue uval11, urbi::UValue uval12, urbi::UValue uval13, urbi::UValue uval14)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -179,7 +179,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_15(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_15 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12, const urbi::UValue& uval13, const urbi::UValue& uval14, const urbi::UValue& uval15)				\
+	JavaType call##Name##_15 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8, urbi::UValue uval9, urbi::UValue uval10, urbi::UValue uval11, urbi::UValue uval12, urbi::UValue uval13, urbi::UValue uval14, urbi::UValue uval15)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
@@ -190,7 +190,7 @@
           ret_snd;							\
 	}
 # define CALL_METHOD_16(Name, Type, JavaType, error_val, ret, ret_snd)	\
-	JavaType call##Name##_16 (const urbi::UValue& uval1, const urbi::UValue& uval2, const urbi::UValue& uval3, const urbi::UValue& uval4, const urbi::UValue& uval5, const urbi::UValue& uval6, const urbi::UValue& uval7, const urbi::UValue& uval8, const urbi::UValue& uval9, const urbi::UValue& uval10, const urbi::UValue& uval11, const urbi::UValue& uval12, const urbi::UValue& uval13, const urbi::UValue& uval14, const urbi::UValue& uval15, const urbi::UValue& uval16)				\
+	JavaType call##Name##_16 (urbi::UValue uval1, urbi::UValue uval2, urbi::UValue uval3, urbi::UValue uval4, urbi::UValue uval5, urbi::UValue uval6, urbi::UValue uval7, urbi::UValue uval8, urbi::UValue uval9, urbi::UValue uval10, urbi::UValue uval11, urbi::UValue uval12, urbi::UValue uval13, urbi::UValue uval14, urbi::UValue uval15, urbi::UValue uval16)				\
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
