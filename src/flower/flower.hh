@@ -12,6 +12,7 @@
 # define FLOWER_FLOWER_HH
 
 # include <ast/analyzer.hh>
+# include <ast/loc.hh>
 
 namespace flower
 {
@@ -41,6 +42,7 @@ namespace flower
 			      (While));
 
   private:
+    void err(const ast::loc& loc, const std::string& msg);
     bool has_break_;
     bool has_continue_;
     bool has_general_catch_;
