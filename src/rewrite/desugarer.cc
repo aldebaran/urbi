@@ -44,6 +44,12 @@ namespace rewrite
     return result_.unsafe_cast<T_no_const>();
   }
 
+  void
+  Desugarer::err(const ast::loc& loc, const std::string& msg)
+  {
+    errors_.err(loc, msg, "syntax error");
+  }
+
   template <typename T>
   libport::intrusive_ptr<typename boost::remove_const<T>::type>
   Desugarer::recurse_with_subdecl(libport::intrusive_ptr<T> s)
@@ -64,8 +70,8 @@ namespace rewrite
   {
     ast::rLValue what = assign->what_get().unsafe_cast<ast::LValue>();
     if (!what)
-      errors_.err(what->location_get(),
-                    "cannot use modifiers on pattern assignments");
+      err(what->location_get(),
+          "cannot use modifiers on pattern assignments");
 
     ast::rConstBinding binding = what.unsafe_cast<const ast::Binding>();
     if (binding)
@@ -128,7 +134,7 @@ namespace rewrite
     if (ast::rBinding what = assign->what_get().unsafe_cast<ast::Binding>())
     {
       if (!allow_decl_)
-        errors_.err(what->location_get(), "declaration not allowed here");
+        err(what->location_get(), "declaration not allowed here");
       ast::rDeclaration res =
         new ast::Declaration(loc, what->what_get(), assign->value_get());
       res->constant_set(what->constant_get());
@@ -229,7 +235,7 @@ namespace rewrite
   Desugarer::visit(const ast::Binding* binding)
   {
     if (!allow_decl_)
-      errors_.err(binding->location_get(), "declaration not allowed here");
+      err(binding->location_get(), "declaration not allowed here");
     ast::loc loc = binding->location_get();
 
     result_ = new ast::Declaration(loc, binding->what_get(), 0);

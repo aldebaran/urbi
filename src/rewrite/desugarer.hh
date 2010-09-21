@@ -16,6 +16,7 @@
 
 # include <ast/analyzer.hh>
 # include <ast/factory.hh>
+# include <ast/loc.hh>
 
 namespace rewrite
 {
@@ -68,6 +69,9 @@ namespace rewrite
     void visit_dincrementation(ast::rLValue what, libport::Symbol meth);
 
   private:
+    /// Report error
+    void err(const ast::loc& loc, const std::string& msg);
+
     void desugar_modifiers(const ast::Assign* assign);
 
     bool pattern_;
