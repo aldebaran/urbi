@@ -334,6 +334,13 @@ namespace urbi
 	self->message = msg;
       }
 
+    void setCommonData(bytetype data, size_t size)
+    {
+      self->common.data = malloc(size);
+      memcpy(self->common.data, data, size);
+      self->common.size = size;
+    }
+
     /// FIXME: we want to be able to retrieve the data in common in arrays
     /// of various type
   }
