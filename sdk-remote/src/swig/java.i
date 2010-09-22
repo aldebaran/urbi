@@ -336,9 +336,17 @@ namespace urbi
 
     void setCommonData(bytetype data, size_t size)
     {
+      void *prevdata = self->common.data;
       self->common.data = malloc(size);
       memcpy(self->common.data, data, size);
       self->common.size = size;
+      if (prevdata)
+	free(prevdata);
+    }
+
+    bytetype getCommonData()
+    {
+      return (signed char*) self->common.data;
     }
 
     /// FIXME: we want to be able to retrieve the data in common in arrays

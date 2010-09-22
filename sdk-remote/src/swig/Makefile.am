@@ -40,7 +40,10 @@ SWIG_FLAGS =					\
 java.cc: java.i
 	$(mkdir_p) $(java_src_outdir)
 	$(SWIG) $(SWIG_FLAGS) $(SWIG_ARGS) -o $@.tmp $<
-	perl -pi -e 's/FillMeInAsSizeCannotBeDeterminedAutomatically/(arg1)->size/g' $@.tmp
+	perl -pi -e 'BEGIN{my $$count = 0; sub counter{ $$count++} };if (/FillMeInAsSizeCannotBeDeterminedAutomatically/) { my $$i = counter(); s/FillMeInAsSizeCannotBeDeterminedAutomatically/FillMeInAsSizeCannotBeDeterminedAutomatically$$i/; }' $@.tmp
+	perl -pi -e 's/FillMeInAsSizeCannotBeDeterminedAutomatically0/(arg1)->size/g' $@.tmp
+	perl -pi -e 's/FillMeInAsSizeCannotBeDeterminedAutomatically1/(arg1)->size/g' $@.tmp
+	perl -pi -e 's/FillMeInAsSizeCannotBeDeterminedAutomatically2/(arg1)->common.size/g' $@.tmp
 	mv $@.tmp $@
 
 lib_LTLIBRARIES = liburbijava.la
