@@ -161,7 +161,7 @@ include trajectories/local.mk
 .PHONY: spell-check
 SPELL_CHECK = $(abs_top_srcdir)/build-aux/bin/spell-check
 AM_SPELL_CHECKFLAGS = -p urbi.dict --clean
-EXTRA_DIST += $(top_srcdir)/build-aux/bin/spell-check
+EXTRA_DIST += $(build_aux_dir)/bin/spell-check
 RUN_SPELL_CHECK = $(SPELL_CHECK) $(AM_SPELL_CHECKFLAGS) $(SPELL_CHECKFLAGS)
 spell-check:
 	cd $(srcdir) &&						\
@@ -209,8 +209,7 @@ install-doc: $(doc_files)
 	  'cd $(doc_dir) &&			\
 	   rm -rf doc &&			\
 	   mv doc.new doc'
-
 ## FIXME: Race condition on this script.  It would be better to
 ## have the script run ssh rather that the converse.
-	scp $(top_srcdir)/scripts/symlink-to-latest $(doc_host):/tmp
+	scp $(build_aux_dir)/bin/symlink-to-latest $(doc_host):/tmp
 	ssh $(doc_host) 'perl -f /tmp/symlink-to-latest $(doc_dir)'
