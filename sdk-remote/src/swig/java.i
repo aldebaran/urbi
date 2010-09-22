@@ -646,6 +646,10 @@ namespace urbi
 %include "urbi/uproperty.hh"
 
 %include "urbi/ucontext-impl.hh"
+
+%ignore urbi::UContext::yield_for(libport::utime_t) const;
+%ignore urbi::UContext::yield_until(libport::utime_t) const;
+
 %include "urbi/ucontext.hh"
 
  //%ignore urbi::UVar::value;
@@ -701,6 +705,16 @@ namespace urbi
     void send(bytetype buf, size_t size)
     {
       self->send(buf, size);
+    }
+
+    void yield_for(long long delay)
+    {
+      self->yield_for(delay);
+    }
+
+    void yield_until(long long delay)
+    {
+      self->yield_until(delay);
     }
   }
 }
