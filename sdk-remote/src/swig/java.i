@@ -348,12 +348,85 @@ namespace urbi
 };
 
 
-
 ////////////////////////////
 ///                      ///
 ///        UList         ///
 ///                      ///
 ////////////////////////////
+
+namespace urbi
+{
+  %extend UList {
+
+    urbi::UList& push_back(const urbi::UValue& v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(const urbi::UList& v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(const urbi::UBinary& v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(const urbi::USound& v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(const urbi::UImage& v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(const std::string& v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(int v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(long v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(double v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(float v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(char v)
+    {
+      return self->push_back(v);
+    }
+
+    urbi::UList& push_back(bool v)
+    {
+      return self->push_back(v);
+    }
+
+    std::string		toString ()
+      {
+	std::ostringstream os;
+	os << *self;
+	return os.str ();
+      }
+
+  }
+}
 
   /// Thanks to
 %include "std_vector.i"
