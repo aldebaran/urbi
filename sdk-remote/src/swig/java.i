@@ -693,6 +693,18 @@ namespace urbi
   }
 };
 
+
+namespace urbi
+{
+  %extend UContext
+  {
+    void send(bytetype buf, size_t size)
+    {
+      self->send(buf, size);
+    }
+  }
+}
+
 %feature("director") urbi::UObject;
 
 %rename("UObjectCPP") urbi::UObject;
