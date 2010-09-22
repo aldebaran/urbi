@@ -41,6 +41,11 @@ public:
   /// NB: long long is not handled in Urbi. jlong is 'long long'.
   /// We cast it to 'long'.
   CALL_METHODS (UValue, Object, urbi::UValue, urbi::UValue (), jobject res = , return getUValueFromObject(res););
+  CALL_METHODS (UBinary, Object, urbi::UBinary, urbi::UBinary (), jobject res = , return getUBinaryFromObject(res););
+  CALL_METHODS (UList, Object, urbi::UList, urbi::UList (), jobject res = , return getUListFromObject(res););
+  CALL_METHODS (USound, Object, urbi::USound, urbi::USound (), jobject res = , return getUSoundFromObject(res););
+  CALL_METHODS (UImage, Object, urbi::UImage, urbi::UImage (), jobject res = , return getUImageFromObject(res););
+  CALL_METHODS (String, Object, std::string, std::string (), jstring res = (jstring), return getStringFromJString(res););
   CALL_METHODS (Void, Void, void, , ,);
   CALL_METHODS (Boolean, Boolean, jboolean, 0, jboolean res = , return res;);
   CALL_METHODS (Byte, Byte, jbyte, 0, jbyte res = , return res;);
@@ -107,7 +112,12 @@ private:
 public:
 
   urbi::UValue	getUValueFromObject (jobject obj);
+  urbi::UBinary	getUBinaryFromObject (jobject obj);
+  urbi::UImage	getUImageFromObject (jobject obj);
+  urbi::USound	getUSoundFromObject (jobject obj);
+  urbi::UList	getUListFromObject (jobject obj);
   urbi::UVar*	getUVarFromObject (jobject obj);
+  std::string	getStringFromJString (jstring obj);
   static urbi::UObject*	getUObjectFromObject (jobject obj, JNIEnv* env);
 
 public:
@@ -155,12 +165,16 @@ private:
   static jmethodID	string_ctor_id;
   static jclass		ulist_cls;
   static jmethodID	ulist_ctor_id;
+  static jfieldID	ulist_swigptr_id;
   static jclass		ubinary_cls;
   static jmethodID	ubinary_ctor_id;
+  static jfieldID	ubinary_swigptr_id;
   static jclass		uimage_cls;
   static jmethodID	uimage_ctor_id;
+  static jfieldID	uimage_swigptr_id;
   static jclass		usound_cls;
   static jmethodID	usound_ctor_id;
+  static jfieldID	usound_swigptr_id;
   static jclass		uvar_cls;
   static jmethodID	uvar_ctor_id;
   static jfieldID	uvar_swigptr_id;

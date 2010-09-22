@@ -33,12 +33,16 @@ jclass  	CallbacksCaller::class_cls = 0;
 jmethodID	CallbacksCaller::string_ctor_id = 0;
 jclass  	CallbacksCaller::string_cls = 0;
 jmethodID	CallbacksCaller::ulist_ctor_id = 0;
+jfieldID	CallbacksCaller::ulist_swigptr_id = 0;
 jclass  	CallbacksCaller::ulist_cls = 0;
 jmethodID	CallbacksCaller::uimage_ctor_id = 0;
+jfieldID	CallbacksCaller::uimage_swigptr_id = 0;
 jclass  	CallbacksCaller::uimage_cls = 0;
 jmethodID	CallbacksCaller::usound_ctor_id = 0;
+jfieldID	CallbacksCaller::usound_swigptr_id = 0;
 jclass  	CallbacksCaller::usound_cls = 0;
 jmethodID	CallbacksCaller::ubinary_ctor_id = 0;
+jfieldID	CallbacksCaller::ubinary_swigptr_id = 0;
 jclass  	CallbacksCaller::ubinary_cls = 0;
 jmethodID	CallbacksCaller::uvalue_ctor_id = 0;
 jfieldID	CallbacksCaller::uvalue_swigptr_id = 0;
@@ -224,6 +228,10 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   if (!(ulist_ctor_id = env->GetMethodID(ulist_cls, "<init>", "(JZ)V")))
     CLEAN_AND_THROW("Can't find UList constructor");
 
+  /// Get UList swigCPtr attribute id
+  if (!(ulist_swigptr_id = env->GetFieldID(ulist_cls, "swigCPtr", "J")))
+    CLEAN_AND_THROW("Can't find UList swigCPtr");
+
   /// Get the jclass for Uimage
   if (!(uimage_cls = getGlobalRef (env, "urbi/generated/UImage")))
     CLEAN_AND_THROW("Can't find UImage class");
@@ -231,6 +239,10 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   /// Get Uimage (int, bool) Constructor id
   if (!(uimage_ctor_id = env->GetMethodID(uimage_cls, "<init>", "(JZ)V")))
     CLEAN_AND_THROW("Can't find UImage constructor");
+
+  /// Get UImage swigCPtr attribute id
+  if (!(uimage_swigptr_id = env->GetFieldID(uimage_cls, "swigCPtr", "J")))
+    CLEAN_AND_THROW("Can't find UImage swigCPtr");
 
   /// Get the jclass for Ubinary
   if (!(ubinary_cls = getGlobalRef (env, "urbi/generated/UBinary")))
@@ -240,6 +252,10 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   if (!(ubinary_ctor_id = env->GetMethodID(ubinary_cls, "<init>", "(JZ)V")))
     CLEAN_AND_THROW("Can't find UBinary constructor");
 
+  /// Get UBinary swigCPtr attribute id
+  if (!(ubinary_swigptr_id = env->GetFieldID(ubinary_cls, "swigCPtr", "J")))
+    CLEAN_AND_THROW("Can't find UBinary swigCPtr");
+
   /// Get the jclass for Usound
   if (!(usound_cls = getGlobalRef (env, "urbi/generated/USound")))
     CLEAN_AND_THROW("Can't find USound class");
@@ -247,6 +263,10 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   /// Get Usound (int, bool) Constructor id
   if (!(usound_ctor_id = env->GetMethodID(usound_cls, "<init>", "(JZ)V")))
     CLEAN_AND_THROW("Can't find USound constructor");
+
+  /// Get Usound swigCPtr attribute id
+  if (!(usound_swigptr_id = env->GetFieldID(usound_cls, "swigCPtr", "J")))
+    CLEAN_AND_THROW("Can't find USound swigCPtr");
 
   /// Get the jclass for UVar
   if (!(uvar_cls = getGlobalRef (env, "urbi/generated/UVar")))
@@ -421,6 +441,74 @@ CallbacksCaller::getUValueFromObject (jobject obj)
   }
   else
     return urbi::UValue ();
+}
+urbi::UBinary
+CallbacksCaller::getUBinaryFromObject (jobject obj)
+{
+  if (obj)
+  {
+    jlong ptr = env_->GetLongField(obj, ubinary_swigptr_id);
+    if (ptr)  /// Java alocated memory, prefer allocate mine
+      return *(urbi::UBinary*) ptr;
+    else
+      return urbi::UBinary ();
+  }
+  else
+    return urbi::UBinary ();
+}
+
+urbi::UImage
+CallbacksCaller::getUImageFromObject (jobject obj)
+{
+  if (obj)
+  {
+    jlong ptr = env_->GetLongField(obj, uimage_swigptr_id);
+    if (ptr)  /// Java alocated memory, prefer allocate mine
+      return *(urbi::UImage*) ptr;
+    else
+      return urbi::UImage ();
+  }
+  else
+    return urbi::UImage ();
+}
+
+urbi::USound
+CallbacksCaller::getUSoundFromObject (jobject obj)
+{
+  if (obj)
+  {
+    jlong ptr = env_->GetLongField(obj, usound_swigptr_id);
+    if (ptr)  /// Java alocated memory, prefer allocate mine
+      return *(urbi::USound*) ptr;
+    else
+      return urbi::USound ();
+  }
+  else
+    return urbi::USound ();
+}
+
+urbi::UList
+CallbacksCaller::getUListFromObject (jobject obj)
+{
+  if (obj)
+  {
+    jlong ptr = env_->GetLongField(obj, ulist_swigptr_id);
+    if (ptr)  /// Java alocated memory, prefer allocate mine
+      return *(urbi::UList*) ptr;
+    else
+      return urbi::UList ();
+  }
+  else
+    return urbi::UList ();
+}
+
+std::string
+CallbacksCaller::getStringFromJString (jstring obj)
+{
+  char const* str = env_->GetStringUTFChars(obj, 0);
+  std::string res = str;
+  env_->ReleaseStringUTFChars(obj, str);
+  return res;
 }
 
 jvalue

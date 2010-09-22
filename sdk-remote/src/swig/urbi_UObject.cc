@@ -88,6 +88,11 @@ createFunctionCallbackType(Long);
 createFunctionCallbackType(Float);
 createFunctionCallbackType(Double);
 createFunctionCallbackType(UValue);
+createFunctionCallbackType(UList);
+createFunctionCallbackType(UBinary);
+createFunctionCallbackType(UImage);
+createFunctionCallbackType(USound);
+createFunctionCallbackType(String);
 
 
 static urbi::UGenericCallback* createFunctionCallback (JNIEnv* env,
@@ -116,8 +121,18 @@ static urbi::UGenericCallback* createFunctionCallback (JNIEnv* env,
     return createFunctionCallbackFloat (env, uobj, obj, obj_name, funcName, argNb);
   else if ("double" == retType)
     return createFunctionCallbackDouble (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("liburbi.main.UValue" == retType)
+  else if ("urbi.generated.UValue" == retType)
     return createFunctionCallbackUValue (env, uobj, obj, obj_name, funcName, argNb);
+  else if ("urbi.generated.UList" == retType)
+    return createFunctionCallbackUList (env, uobj, obj, obj_name, funcName, argNb);
+  else if ("urbi.generated.UBinary" == retType)
+    return createFunctionCallbackUBinary (env, uobj, obj, obj_name, funcName, argNb);
+  else if ("urbi.generated.UImage" == retType)
+    return createFunctionCallbackUImage (env, uobj, obj, obj_name, funcName, argNb);
+  else if ("urbi.generated.USound" == retType)
+    return createFunctionCallbackUSound (env, uobj, obj, obj_name, funcName, argNb);
+  else if ("java.lang.String" == retType)
+    return createFunctionCallbackString (env, uobj, obj, obj_name, funcName, argNb);
 
   std::string msg = "Can't define a callback on a function with return type ";
   msg += retType;
