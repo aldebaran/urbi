@@ -51,33 +51,49 @@ public class UObject extends UObjectCPP
 						  String obj_name,
 						  String method,
 						  String signature,
-						  int    arg_number);
+						  String return_type,
+						  int    arg_number,
+						  String[] types);
 
 
     protected void UNotifyOnRequest (String var_name, Method m)
     {
 	checkNotifyRegisteredMethod (m, "UNotifyOnRequest");
 	String bytecode_sig = getMethodBytecodeSignature (m);
+	Class[] p = m.getParameterTypes();
+	String[] types = new String[p.length];
+	for (int i = 0; i < p.length; ++i) {
+	    types[i] = p[i].toString();
+	}
 	registerNotifyOnRequest (0,
 				 var_name,
 				 false,
 				 get__name (),
 				 m.getName (),
 				 bytecode_sig,
-				 m.getParameterTypes().length);
+				 m.getReturnType().getName (),
+				 p.length,
+				 types);
     }
 
     protected void UNotifyOnRequest (UVar v, Method m)
     {
 	checkNotifyRegisteredMethod (m, "UNotifyOnRequest");
 	String bytecode_sig = getMethodBytecodeSignature (m);
+	Class[] p = m.getParameterTypes();
+	String[] types = new String[p.length];
+	for (int i = 0; i < p.length; ++i) {
+	    types[i] = p[i].toString();
+	}
 	registerNotifyOnRequest (UVar.getCPtr (v),
 				 v.getName(),
 				 v.getOwned (),
 				 get__name (),
 				 m.getName (),
 				 bytecode_sig,
-				 m.getParameterTypes().length);
+				 m.getReturnType().getName (),
+				 p.length,
+				 types);
     }
 
     protected void UNotifyOnRequest (String var_name, String method_name)
@@ -144,32 +160,49 @@ public class UObject extends UObjectCPP
 					       String obj_name,
 					       String method,
 					       String signature,
-					       int    arg_number);
+					       String return_type,
+					       int    arg_number,
+					       String[] types);
 
     protected void UNotifyChange (String var_name, Method m)
     {
 	checkNotifyRegisteredMethod (m, "UNotifyChange");
 	String bytecode_sig = getMethodBytecodeSignature (m);
+
+	Class[] p = m.getParameterTypes();
+	String[] types = new String[p.length];
+	for (int i = 0; i < p.length; ++i) {
+	    types[i] = p[i].toString();
+	}
 	registerNotifyChange (0,
 			      var_name,
 			      false,
 			      get__name (),
 			      m.getName (),
 			      bytecode_sig,
-			      m.getParameterTypes().length);
+			      m.getReturnType().getName (),
+			      p.length,
+			      types);
     }
 
     protected void UNotifyChange (UVar v, Method m)
     {
 	checkNotifyRegisteredMethod (m, "UNotifyChange");
 	String bytecode_sig = getMethodBytecodeSignature (m);
+	Class[] p = m.getParameterTypes();
+	String[] types = new String[p.length];
+	for (int i = 0; i < p.length; ++i) {
+	    types[i] = p[i].toString();
+	}
 	registerNotifyChange (UVar.getCPtr (v),
 			      v.getName(),
 			      v.getOwned (),
 			      get__name (),
 			      m.getName (),
 			      bytecode_sig,
-			      m.getParameterTypes().length);
+			      m.getReturnType().getName (),
+			      p.length,
+			      types);
     }
 
     protected void UNotifyChange (String var_name, String method_name)
@@ -440,20 +473,11 @@ public class UObject extends UObjectCPP
 		+ "1 arguments with " + notifyName + ".";
 	    throw new RuntimeException(msg);
 	}
-
-	if (p.length == 1 && p[0] != UVar.class) {
-	    String msg = "Parameter 1 of the function \""
-		+ m.getName () + "\" is of type "+ p[0].getName ()
-		+ ". You can only register functions with a parameter of"
-		+ " type urbi.generated.UVar with " + notifyName + ".";
-	    throw new RuntimeException(msg);
-	}
-
-	if (m.getReturnType() != int.class) {
+	if ((m.getReturnType() != int.class) && (m.getReturnType() != void.class)) {
 	    String msg = "Return type of the function \""
 		+ m.getName () + "\" is "+ m.getReturnType().getName ()
 		+ ". You can only register functions with a return type of"
-		+ " type int with " + notifyName + ".";
+		+ " type int or void with " + notifyName + ".";
 	    throw new RuntimeException(msg);
 	}
     }

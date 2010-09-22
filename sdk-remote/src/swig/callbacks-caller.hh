@@ -53,8 +53,11 @@ public:
 
 
   /// UNotifyChange callbacks
-  int			callNotifyChange_0 ();
-  int			callNotifyChange_1 (urbi::UVar& v);
+  int			callNotifyChangeInt_0 ();
+  int			callNotifyChangeInt_1 (urbi::UVar& v);
+  void			callNotifyChangeVoid_0 ();
+  void			callNotifyChangeVoid_1 (urbi::UVar& v);
+
 
 public:
 

@@ -180,8 +180,10 @@ void registerNotify (JNIEnv *env,
 		     jstring obj_name,
 		     jstring method_name,
 		     jstring method_signature,
+		     jstring return_type,
 		     jint arg_nb,
-		     const char *notify_type)
+		     const char *notify_type,
+		     jobjectArray types)
 {
   /// First, assure that the JNI variables used by the caller are correctly
   /// set. If the are not and we can't set them, return.
@@ -201,6 +203,13 @@ void registerNotify (JNIEnv *env,
   const char* uvar_name = env->GetStringUTFChars(var_name, 0);
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
+  for (int i = 0; i < arg_nb; ++i)
+  {
+    jstring jstr = (jstring) env->GetObjectArrayElement(types, i);
+    const char* type_ = env->GetStringUTFChars(jstr, 0);
+    f->arg_types.push_back(type_);
+    env->ReleaseStringUTFChars(jstr, type_);
+  }
   urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
   if (!uob)
   {
@@ -211,19 +220,36 @@ void registerNotify (JNIEnv *env,
     return;
   }
 
+  const char* return_type_ = env->GetStringUTFChars(return_type, 0);
+  const std::string ret_type = return_type_;
   switch ((int) arg_nb)
   {
     case 0:
-      ::urbi::createUCallback(*uob, (urbi::UVar*) var, notify_type, f,
-			      (&CallbacksCaller::callNotifyChange_0),
-			      uvar_name);
+      if (ret_type == "int")
+	::urbi::createUCallback(*uob, (urbi::UVar*) var, notify_type, f,
+				(&CallbacksCaller::callNotifyChangeInt_0),
+				uvar_name);
+      else if (ret_type == "void")
+	::urbi::createUCallback(*uob, (urbi::UVar*) var, notify_type, f,
+				(&CallbacksCaller::callNotifyChangeVoid_0),
+				uvar_name);
+      else
+	throw std::runtime_error(libport::format("%s is not supported as a return type for notify change", return_type_));
       break;
     case 1:
-      ::urbi::createUCallback(*uob, new urbi::UVar(uvar_name), notify_type, f,
-			      (&CallbacksCaller::callNotifyChange_1),
-			      uvar_name);
+      if (ret_type == "int")
+	::urbi::createUCallback(*uob, new urbi::UVar(uvar_name), notify_type, f,
+				(&CallbacksCaller::callNotifyChangeInt_1),
+				uvar_name);
+      else if (ret_type == "void")
+	::urbi::createUCallback(*uob, new urbi::UVar(uvar_name), notify_type, f,
+				(&CallbacksCaller::callNotifyChangeVoid_1),
+				uvar_name);
+      else
+	throw std::runtime_error(libport::format("%s is not supported as a return type for notify change", return_type_));
       break;
   }
+  env->ReleaseStringUTFChars(return_type, return_type_);
   env->ReleaseStringUTFChars(obj_name, obj_name_);
   env->ReleaseStringUTFChars(var_name, uvar_name);
 }
@@ -238,10 +264,12 @@ Java_urbi_UObject_registerNotifyChange(JNIEnv *env,
 					   jstring obj_name,
 					   jstring method_name,
 					   jstring method_signature,
-					   jint arg_nb)
+				       jstring return_type,
+					   jint arg_nb,
+				       jobjectArray types)
 {
   registerNotify (env, obj, var, var_name, is_owned, obj_name,
-		  method_name, method_signature, arg_nb, "var");
+		  method_name, method_signature, return_type, arg_nb, "var", types);
 }
 
 JNIEXPORT void JNICALL
@@ -253,10 +281,12 @@ Java_urbi_UObject_registerNotifyOnRequest(JNIEnv *env,
 					      jstring obj_name,
 					      jstring method_name,
 					      jstring method_signature,
-					      jint arg_nb)
+				       jstring return_type,
+					      jint arg_nb,
+					  jobjectArray types)
 {
   registerNotify (env, obj, var, var_name, is_owned, obj_name,
-		  method_name, method_signature, arg_nb, "var_onrequest");
+		  method_name, method_signature, return_type, arg_nb, "var_onrequest", types);
 }
 
 
@@ -352,7 +382,7 @@ Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
       new urbi::UTimerCallbackobj<CallbacksCaller> (obj_name_,
 						    (double) period,
 						    f,
-						    boost::bind(&CallbacksCaller::callNotifyChange_0, f),
+						    boost::bind(&CallbacksCaller::callNotifyChangeInt_0, f),
 						    urbi::getCurrentContext());
 
       //->handle_get();

@@ -23,7 +23,7 @@ extern "C" {
  * Signature: (JLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
 JNIEXPORT void JNICALL Java_urbi_UObject_registerNotifyOnRequest
-  (JNIEnv *, jobject, jlong, jstring, jboolean, jstring, jstring, jstring, jint);
+  (JNIEnv *, jobject, jlong, jstring, jboolean, jstring, jstring, jstring, jstring, jint, jobjectArray);
 
 /*
  * Class:     urbi_UObject
@@ -31,7 +31,7 @@ JNIEXPORT void JNICALL Java_urbi_UObject_registerNotifyOnRequest
  * Signature: (JLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
 JNIEXPORT void JNICALL Java_urbi_UObject_registerNotifyChange
-  (JNIEnv *, jobject, jlong, jstring, jboolean, jstring, jstring, jstring, jint);
+  (JNIEnv *, jobject, jlong, jstring, jboolean, jstring, jstring, jstring, jstring, jint, jobjectArray);
 
 /*
  * Class:     urbi_UObject

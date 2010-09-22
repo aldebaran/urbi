@@ -59,7 +59,7 @@ CallbacksCaller::CallbacksCaller ()
 {}
 
 int
-CallbacksCaller::callNotifyChange_0 ()
+CallbacksCaller::callNotifyChangeInt_0 ()
 {
   if (!init_env ())
     return 0;
@@ -69,15 +69,45 @@ CallbacksCaller::callNotifyChange_0 ()
 }
 
 int
-CallbacksCaller::callNotifyChange_1 (urbi::UVar& v)
+CallbacksCaller::callNotifyChangeInt_1 (urbi::UVar& v)
 {
   if (!init_env ())
     return 0;
-  jobject obj1 = getObjectFromUVar (v);
-  int ret = env_->CallIntMethod(obj, mid, obj1);
+  jvalue obj1;
+  if (arg_types[0] == "class urbi.generated.UVar")
+    obj1.l = getObjectFromUVar (v);
+  else
+    obj1 = getObjectFrom (arg_types[0], v.val());
+  jvalue arg[] = { obj1 };
+  int ret = env_->CallIntMethodA(obj, mid, arg);
   testForException();
   return ret;
 }
+
+void
+CallbacksCaller::callNotifyChangeVoid_0 ()
+{
+  if (!init_env ())
+    return;
+  env_->CallVoidMethod(obj, mid);
+  testForException();
+}
+
+void
+CallbacksCaller::callNotifyChangeVoid_1 (urbi::UVar& v)
+{
+  if (!init_env ())
+    return;
+  jvalue obj1;
+  if (arg_types[0] == "class urbi.generated.UVar")
+    obj1.l = getObjectFromUVar (v);
+  else
+    obj1 = getObjectFrom (arg_types[0], v.val());
+  jvalue arg[] = { obj1 };
+  env_->CallVoidMethodA(obj, mid, arg);
+  testForException();
+}
+
 
 bool
 CallbacksCaller::init_env ()
