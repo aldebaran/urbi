@@ -7,7 +7,6 @@
 /bootstrap.stamp
 /build-aux
 /configure
-/doc/Makefile.in
 /include/urbi/ucallbacks.hh
 /sdk/config.h.in
 /sdk/config.h.in~
