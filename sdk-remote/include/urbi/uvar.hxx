@@ -197,6 +197,32 @@ namespace urbi
     rtp = state?RTP_YES:RTP_NO;
     impl_->useRTP(state);
   }
+
+  template<typename T>
+  T UVar::as() const
+  {
+    return uvalue_cast<T>(const_cast<UValue&>(val()));
+  }
+
+  template<typename T>
+  T UVar::as(T*) const
+  {
+     return uvalue_cast<T>(const_cast<UValue&>(val()));
+  }
+
+  template<typename T>
+  T& UVar::fill(T& v) const
+  {
+    v = uvalue_cast<T>(const_cast<UValue&>(val()));
+    return v;
+  }
+
+  template<typename T>
+  bool
+  UVar::operator == (const T& v) const
+  {
+    return uvalue_cast<T>(const_cast<UValue&>(val())) == v;
+  }
 } // end namespace urbi
 
 #endif // ! URBI_UVAR_HXX

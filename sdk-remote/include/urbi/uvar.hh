@@ -79,6 +79,16 @@ namespace urbi
     template<typename T>
     UVar& operator=(const T&);
 
+    template<typename T>
+    bool operator ==(const T&) const;
+
+    /// Cast operator taking a dummy value of the target type.
+    template<typename T> T as(T*) const;
+    /// Generic cast operator using the extensible uvalue_cast mechanism.
+    template<typename T> T as() const;
+    /// Conveniance wrapper on as().
+    template<typename T> T& fill(T&) const;
+
     operator int() const;
     operator bool() const;
 
