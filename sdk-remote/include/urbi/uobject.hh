@@ -303,7 +303,8 @@ namespace urbi
     \param fun the function to call.
     \param m the locking mode to use.
     */
-    void UNotifyThreadedChange(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
+    void
+    UNotifyThreadedChange(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
 
     /*!
     \brief Call a function each time a variable is accessed.
@@ -312,8 +313,10 @@ namespace urbi
     The function is called right \b before the variable \b v is accessed, giving
     \b fun the opportunity to modify it.
     */
-    void UNotifyAccess(UVar& v, void (UObject::*fun)(UVar&));
-    void UNotifyThreadedAccess(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
+    void
+    UNotifyAccess(UVar& v, void (UObject::*fun)(UVar&));
+    void
+    UNotifyThreadedAccess(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
 
     /** @} */
 
@@ -322,35 +325,35 @@ namespace urbi
     TimerHandle
     USetTimer(ufloat t, void (T::*fun)());
 
-# else
+# else // !DOXYGEN
 
     /// \internal
-# define MakeNotify(Type, Notified,                             \
-		    TypeString, Owned, Name,			\
-		    StoreArg)                                   \
-    template <typename F>                  \
-    void UNotify##Type(Notified, F fun)                         \
-    {                                                           \
-	createUCallback(*this, StoreArg, TypeString,            \
-                        this, fun, Name);	                \
-    }                                                           \
-    template <typename F>                  \
-    void UNotifyThreaded##Type(Notified, F fun,                 \
-                               LockMode lockMode)               \
-    {                                                           \
-	createUCallback(*this, StoreArg, TypeString,            \
-                        this, fun, Name)                        \
-        ->setAsync(getTaskLock(lockMode, Name));	        \
+#  define MakeNotify(Type, Notified,			\
+		    TypeString, Owned, Name,		\
+		    StoreArg)				\
+    template <typename F>				\
+    void UNotify##Type(Notified, F fun)			\
+    {							\
+	createUCallback(*this, StoreArg, TypeString,	\
+                        this, fun, Name);		\
+    }							\
+    template <typename F>				\
+    void UNotifyThreaded##Type(Notified, F fun,		\
+                               LockMode lockMode)	\
+    {							\
+	createUCallback(*this, StoreArg, TypeString,	\
+                        this, fun, Name)		\
+        ->setAsync(getTaskLock(lockMode, Name));	\
     }
 
 
 
     /// \internal Define notify by name or by passing an UVar.
-# define MakeMetaNotify(Type, TypeString)				\
-    MakeNotify(Type, UVar& v, TypeString,			\
+#  define MakeMetaNotify(Type, TypeString)				\
+    MakeNotify(Type, UVar& v, TypeString,				\
                       v.owned, v.get_name (),                           \
                       v.get_temp()?new UVar(v.get_name(), ctx_):&v);    \
-    MakeNotify(Type, const std::string& name, TypeString,	\
+    MakeNotify(Type, const std::string& name, TypeString,		\
                       false, name, new UVar(name, ctx_));
 
     /// \internal
@@ -359,11 +362,12 @@ namespace urbi
     /// \internal
     MakeMetaNotify(Change, "var");
 
-# undef MakeNotify
-# undef MakeMEtaNotify
+#  undef MakeNotify
+#  undef MakeMEtaNotify
 
+#  ifndef SWIG
     /// \internal
-# define MKUSetTimer(Const, Useless)                                    \
+#   define MKUSetTimer(Const, Useless)                                   \
     template <class T, class R>						\
     TimerHandle USetTimer(ufloat t, R (T::*fun) () Const)	        \
     {									\
@@ -377,9 +381,9 @@ namespace urbi
     MKUSetTimer (/**/, /**/);
     MKUSetTimer (const, /**/);
 
-# undef MKUSetTimer
-
-# endif //DOXYGEN
+#   undef MKUSetTimer
+#  endif // !SWIG
+# endif // DOXYGEN
 
     /// Remove a timer registered with USetTimer.
     bool removeTimer(TimerHandle h);

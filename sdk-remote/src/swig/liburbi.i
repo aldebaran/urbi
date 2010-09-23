@@ -14,6 +14,11 @@
 
 %}
 
+// Swig doesn't like these macro
+#define URBI_SDK_API
+#define __attribute__(foobar)
+#define ATTRIBUTE_DEPRECATED
+
 namespace urbi
 {
   typedef unsigned int UCallbackID;
