@@ -36,24 +36,25 @@ namespace parser
     typedef parser_type::token_type token_type;
     typedef parser_type::symbol_type symbol_type;
 
-    ParserImpl();
+    ParserImpl(std::istream& input);
     void initial_token_set(token_type initial_token);
     boost::optional<token_type>& initial_token_get();
 
-    /// Parse the command from a buffer.
-    /// \param code  the source to parse.
-    /// \param loc   the location to use for this parsing.
-    parse_result_type parse(const std::string& code,
-                            const location_type* loc = 0);
 
-    /// Parse the command from a stream.
-    /// \param code  the source to parse.
-    /// \param loc   the location to use for this parsing.
-    parse_result_type parse(std::istream& code,
-                            const location_type* loc = 0);
-
-    /// Parse a file.
-    parse_result_type parse_file(const std::string& fn);
+    /// Parse and store the result in \c result_.
+    /// \param source  what's to parse.
+    /// \param loc     its location
+    ///
+    /// If loc is null, then the parsing proceeds with loc_.
+    /// This is used to implement some "continuity": a single source
+    /// is sent by chunks to this parser, and loc_ keeps track of
+    /// the whole parsing sequence.
+    ///
+    /// If loc is non null, then loc_ is saved, the parsing proceeds
+    /// with loc, and then loc_ is restored.
+    ///
+    /// This behavior is quite complex and should probably be redesigned.
+    parse_result_type parse(const location_type* loc = 0);
 
     /// Whether meta-variables are enabled.
     bool meta() const;
@@ -81,20 +82,8 @@ namespace parser
     friend int parser_type::parse();
     friend YY_DECL;
 
-    /// Parse and store the result in \c result_.
-    /// \param source  what's to parse.
-    /// \param loc     its location
-    ///
-    /// If loc is null, then the parsing proceeds with loc_.
-    /// This is used to implement some "continuity": a single source
-    /// is sent by chunks to this parser, and loc_ keeps track of
-    /// the whole parsing sequence.
-    ///
-    /// If loc is non null, then loc_ is saved, the parsing proceeds
-    /// with loc, and then loc_ is restored.
-    ///
-    /// This behavior is quite complex and should probably be redesigned.
-    void parse_(std::istream& source, const location_type* loc = 0);
+    /// The scanner.
+    yyFlexLexer scanner_;
 
     /// The current location.
     ///

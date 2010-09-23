@@ -185,7 +185,7 @@ namespace runner
   void
   Shell::work_()
   {
-    parser::UParser parser;
+    parser::UParser parser(input_);
 
     while (!stop_)
     {
@@ -194,7 +194,7 @@ namespace runner
         parser::parse_result_type res;
         {
           GD_FPUSH_TRACE("%s: reading command.", name_get());
-          res = parser.parse(input_);
+          res = parser.parse();
         }
         ast::rExp ast = parser::transform(ast::rConstExp(res->ast_xget()));
         handle_command_(ast);

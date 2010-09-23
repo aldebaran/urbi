@@ -44,7 +44,7 @@ namespace parser
 
   static bool yydebug = getenv("URBI_PARSER");
 
-  ParserImpl::ParserImpl()
+  ParserImpl::ParserImpl(std::istream& input)
     : loc_()
     , synclines_()
     , result_(0)
@@ -52,7 +52,9 @@ namespace parser
     , meta_(false)
     , factory_(new ast::Factory)
     , initial_token_()
-  {}
+  {
+    scanner_.switch_streams(&input, 0);
+  }
 
   void
   ParserImpl::initial_token_set(token_type initial_token)
@@ -78,8 +80,8 @@ namespace parser
     meta_ = b;
   }
 
-  void
-  ParserImpl::parse_(std::istream& source, const location_type* l)
+  parse_result_type
+  ParserImpl::parse(const location_type* l)
   {
     TIMER_PUSH("parse");
 
@@ -94,12 +96,8 @@ namespace parser
     // passert(*result_, !result_.get());
     result_.reset(new ParseResult);
 
-    // Set up scanner.
-    yyFlexLexer scanner;
-    scanner.switch_streams(&source, 0);
-
     // Set up parser.
-    parser_type p(*this, scanner);
+    parser_type p(*this, scanner_);
 #if defined YYDEBUG && YYDEBUG
     p.set_debug_level(debug_);
 #endif
@@ -112,62 +110,18 @@ namespace parser
       finally << libport::scoped_set(loc_, *l);
 
     // Parse.
-    if (debug_)
-      LIBPORT_ECHO(loc_ << "====================== Parse begin");
-
     result_->status = p.parse();
     if (debug_)
       LIBPORT_ECHO("====================== Parse end:" << std::endl
                    << *result_);
 
     TIMER_POP("parse");
+    if (debug_)
+      LIBPORT_ECHO("Result: " << *result_);
+
     if (!errors_.empty())
       throw errors_;
-  }
 
-  parse_result_type
-  ParserImpl::parse(const std::string& s, const location_type* l)
-  {
-    if (debug_)
-      LIBPORT_ECHO("Parsing: " << s);
-    std::istringstream is(s);
-    parse_(is, l);
-    if (debug_)
-      LIBPORT_ECHO("Result: " << *result_);
-    return result_;
-  }
-
-  parse_result_type
-  ParserImpl::parse(std::istream& s, const location_type* l)
-  {
-    if (debug_)
-      LIBPORT_ECHO("Parsing: " << s);
-    parse_(s, l);
-    if (debug_)
-      LIBPORT_ECHO("Result: " << *result_);
-    return result_;
-  }
-
-  parse_result_type
-  ParserImpl::parse_file(const std::string& fn)
-  {
-    if (debug_)
-      LIBPORT_ECHO("Parsing file: " << fn);
-    std::ifstream f(fn.c_str());
-    if (!f.good())
-    {
-      // Return an error instead of creating a valid empty ast.
-      result_.reset(new ParseResult);
-      result_->status = 1;
-    }
-    else
-    {
-      // FIXME: Leaks.
-      location_type loc(new libport::Symbol(fn));
-      parse_(f, &loc);
-    }
-    if (debug_)
-      LIBPORT_ECHO("Result: " << *result_);
     return result_;
   }
 

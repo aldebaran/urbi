@@ -10,6 +10,7 @@
 
 #include <libport/cassert>
 #include <libport/indent.hh>
+#include <libport/path.hh>
 
 // FIXME: Understand why.
 #include <ast/nary.hh>
@@ -32,9 +33,9 @@ namespace parser
     parse_(const std::string& cmd, const yy::location& l,
            bool meta_p)
     {
-      UParser p;
+      UParser p(cmd, &l);
       p.meta(meta_p);
-      parse_result_type res = p.parse(cmd, &l);
+      parse_result_type res = p.parse();
       passert(*res, !res->status);
       return res;
     }
@@ -59,8 +60,9 @@ namespace parser
   parse_result_type
   parse_file(const std::string& file)
   {
-    UParser p;
-    parse_result_type res = p.parse_file(file);
+    libport::path path(file);
+    UParser p(path);
+    parse_result_type res = p.parse();
     passert(*res, !res->status);
     return res;
   }

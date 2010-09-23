@@ -16,6 +16,8 @@
 # include <memory>
 # include <string>
 
+# include <libport/path.hh>
+
 # include <parser/fwd.hh>
 # include <parser/location.hh>
 
@@ -37,7 +39,9 @@ namespace parser
       exps,
     };
 
-    UParser();
+    UParser(std::istream& input, const yy::location* loc = 0);
+    UParser(const std::string& code, const yy::location* loc = 0);
+    UParser(const libport::path& file);
     UParser(const UParser&);
     ~UParser();
 
@@ -49,22 +53,15 @@ namespace parser
     /// \return yyparse's result (0 on success).
     /// If \a loc is defined, use it to parse \a code, otherwise
     /// use the current location and update it.
-    parse_result_type parse(const std::string& code,
-                            const yy::location* loc = 0);
-
-    /// Parse the command from a stream.
-    /// \return yyparse's result (0 on success).
-    /// If \a loc is defined, use it to parse \a code, otherwise
-    /// use the current location and update it.
-    parse_result_type parse(std::istream& input,
-                            const yy::location* loc = 0);
-
-    /// Parse a file.
-    /// \return yyparse's result (0 on success).
-    parse_result_type parse_file(const std::string& fn);
+    parse_result_type parse();
 
   private:
-    std::auto_ptr<ParserImpl> pimpl_;
+    ParserImpl* pimpl_;
+    std::istream* stream_;
+    bool stream_delete_;
+    bool oneshot_;
+    const yy::location loc_file_;
+    const yy::location* loc_;
   };
 
 }
