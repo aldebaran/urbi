@@ -40,6 +40,7 @@ namespace urbi
     , close_(false)
   {
     GD_INFO_TRACE("new StreamBuffer.");
+    setg(buffer_read_->buffer, buffer_read_->buffer, buffer_read_->buffer);
   }
 
   int StreamBuffer::underflow()
