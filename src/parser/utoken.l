@@ -58,6 +58,35 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
   while (isspace(*yytext))                      \
     ++yytext;
 
+# define YY_INPUT(buf, result, max_size)        \
+  do                                            \
+  {                                             \
+    if ( yyin->eof() || yyin->fail() )          \
+    {                                           \
+      result = 0;                               \
+      break;                                    \
+    }                                           \
+                                                \
+    GD_PUSH_TRACE("LexerInput");                \
+    yyin->readsome(buf, max_size);              \
+                                                \
+    if (!yyin->gcount() && !yyin->eof())        \
+    {                                           \
+      yyin->peek();                             \
+      yyin->readsome(buf, max_size);            \
+    }                                           \
+                                                \
+    if ( yyin->bad() )                          \
+    {                                           \
+      GD_INFO_DEBUG("BAD");                     \
+      result = -1;                              \
+      break;                                    \
+    }                                           \
+                                                \
+    GD_FINFO_DEBUG("%s bytes", yyin->gcount()); \
+    result = yyin->gcount();                    \
+  } while (0)
+
 # define YY_USER_INIT                                                   \
   static bool flex_debug = getenv("URBI_SCANNER");                      \
   yy_flex_debug = flex_debug;                                           \
@@ -263,7 +292,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 /* Allow faster implements. */
 %option noreject noyymore
 /* We need an interactive scanner. */
-%option interactive
+%option batch
 /* Even in -Cf mode, support 8 bit characters. */
 %option 8bit
 
