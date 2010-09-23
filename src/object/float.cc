@@ -481,6 +481,8 @@ namespace urbi
       DECLARE(trunc, trunc);
 
 #undef DECLARE
+
+      Float::proto->setSlot("pi", new Float(M_PI));
     }
 
     URBI_CXX_OBJECT_REGISTER(Float)

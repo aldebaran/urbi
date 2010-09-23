@@ -161,8 +161,6 @@ do (Float)
     }|
   };
 
-  var pi = 3.14159265358979323846264338327950288;
-
   function sgn()
   {
     Kernel1.deprecated("Float.sgn", "Float.sign") |
