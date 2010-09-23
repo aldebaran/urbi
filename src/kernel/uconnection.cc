@@ -64,7 +64,6 @@ namespace kernel
     , blocked_(false)
       // Initial state of the connection: unblocked, not receiving binary.
     , active_(true)
-    , parser_(new parser::UParser())
     , interactive_p_(true)
     , bytes_sent_(0)
     , bytes_received_(0)

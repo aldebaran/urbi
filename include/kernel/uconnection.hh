@@ -170,7 +170,6 @@ namespace kernel
     `------------*/
 
     UErrorValue error_get() const;
-    parser::UParser& parser_get();
     UServer& server_get() const;
     urbi::object::rLobby& lobby_get();
     runner::rShell& shell_get();
@@ -269,9 +268,6 @@ namespace kernel
     /// True when the connection is reading to send/receive data (usualy
     /// set at "true" on start).
     bool active_;
-
-    /// Our parser.  A pointer to stop dependencies.
-    std::auto_ptr<parser::UParser> parser_;
 
     /// The current shell.
     runner::rShell shell_;
