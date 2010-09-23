@@ -80,7 +80,7 @@ namespace urbi
     UClient(const std::string& host = default_host(),
             unsigned port = URBI_PORT,
 	    size_t buflen = URBI_BUFLEN,
-	    const options& opt = options());
+	    const UClient::options& opt = options());
 
     virtual ~UClient();
 

@@ -29,14 +29,14 @@ namespace urbi
   public:
     /// Creates an unbound UEvent. Call init() to bind it.
     UEvent();
-    UEvent(const std::string&, impl::UContextImpl* = 0);
-    UEvent(const std::string&, const std::string&, impl::UContextImpl* = 0);
-    UEvent(UObject&, const std::string&, impl::UContextImpl* = 0);
+    UEvent(const std::string&, urbi::impl::UContextImpl* = 0);
+    UEvent(const std::string&, const std::string&, urbi::impl::UContextImpl* = 0);
+    UEvent(urbi::UObject&, const std::string&, urbi::impl::UContextImpl* = 0);
     UEvent(const UEvent&);
 
     // Bind to \a object.slot.
     void init(const std::string& object, const std::string& slot,
-              impl::UContextImpl* = 0);
+              urbi::impl::UContextImpl* = 0);
 
     // Emit the event.
     void emit(urbi::UAutoValue v1 = UAutoValue(),

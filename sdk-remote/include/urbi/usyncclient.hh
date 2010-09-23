@@ -87,7 +87,7 @@ namespace urbi
     USyncClient(const std::string& host,
 		unsigned port = URBI_PORT,
 		size_t buflen = URBI_BUFLEN,
-                const options& opt = options());
+                const USyncClient::options& opt = options());
 
     ~USyncClient();
 
@@ -235,9 +235,9 @@ namespace urbi
     using super_type::waitForKernelVersion;
     void waitForKernelVersion(bool hasProcessingThread);
 
-    void setDefaultOptions(const send_options& opt);
-    const send_options& getOptions(const send_options& opt =
-                                   send_options::default_options) const;
+    void setDefaultOptions(const USyncClient::send_options& opt);
+    const USyncClient::send_options& getOptions(const USyncClient::send_options& opt =
+                                   USyncClient::send_options::default_options) const;
 
     /**
      * Listen on the specified host:port pair. Bind an USyncClient on each

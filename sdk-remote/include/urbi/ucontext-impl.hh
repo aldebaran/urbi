@@ -40,8 +40,8 @@ namespace urbi
       /// Inject a specific uobject
       bool bind(const std::string& name, std::string rename = std::string());
       /// Called to instanciate the first Object of class.
-      virtual void newUObjectClass(baseURBIStarter* s) = 0;
-      virtual void newUObjectHubClass(baseURBIStarterHub* s) = 0;
+      virtual void newUObjectClass(urbi::baseURBIStarter* s) = 0;
+      virtual void newUObjectHubClass(urbi::baseURBIStarterHub* s) = 0;
       /// Retrieve a UObjectHub based on its name or return 0 if not found.
       virtual UObjectHub* getUObjectHub(const std::string& n);
       /// Retrieve a UObject based on its name or return 0 if not found.
