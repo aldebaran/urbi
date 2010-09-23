@@ -27,6 +27,7 @@ import urbi.generated.UContextImpl;
 import urbi.generated.UValue;
 import urbi.generated.UrbiRoot;
 import urbi.generated.UAutoValue;
+import urbi.generated.UEvent;
 
 /// This class is the base UObject class for Java UObject.
 /// Please have all your Java UObject extends UObject
@@ -412,9 +413,18 @@ public class UObject extends UObjectCPP
     /// --------------- ///
 
     protected void UBindVar (UVar v, String name) {
-	v.init (get__name (), name);
+	v.init (get__name (), name, getCtx_());
     }
 
+    /// --------------- ///
+    ///                 ///
+    ///   UBindEvent    ///
+    ///                 ///
+    /// --------------- ///
+
+    protected void UBindEvent (UEvent e, String name) {
+	e.init (get__name(), name, getCtx_());
+    }
 
     /// --------------- ///
     ///                 ///
