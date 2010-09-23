@@ -710,7 +710,7 @@ CallbacksCaller::getObjectFromUList (const urbi::UList& v)
 jobject
 CallbacksCaller::getObjectFromUBinary (const urbi::UBinary& v)
 {
-  jobject res = env_->NewObject(ubinary_cls, ubinary_ctor_id, (jlong) new urbi::UBinary(v), true);
+  jobject res = env_->NewObject(ubinary_cls, ubinary_ctor_id, (jlong) new urbi::UBinary(v), false);
   if (!res)
     std::cerr << "Cannot allocate a new object of type urbi.generated.UBinary"
 	      << std::endl;
@@ -720,7 +720,7 @@ CallbacksCaller::getObjectFromUBinary (const urbi::UBinary& v)
 jobject
 CallbacksCaller::getObjectFromUImage (const urbi::UImage& v)
 {
-  jobject res = env_->NewObject(uimage_cls, uimage_ctor_id, (jlong) new urbi::UImage(v), true);
+  jobject res = env_->NewObject(uimage_cls, uimage_ctor_id, (jlong) new urbi::UImage(v), false);
   if (!res)
     std::cerr << "Cannot allocate a new object of type urbi.generated.UImage"
 	      << std::endl;
@@ -730,7 +730,7 @@ CallbacksCaller::getObjectFromUImage (const urbi::UImage& v)
 jobject
 CallbacksCaller::getObjectFromUSound (const urbi::USound& v)
 {
-  jobject res = env_->NewObject(usound_cls, usound_ctor_id, (jlong) new urbi::USound(v), true);
+  jobject res = env_->NewObject(usound_cls, usound_ctor_id, (jlong) new urbi::USound(v), false);
   if (!res)
     std::cerr << "Cannot allocate a new object of type urbi.generated.USound"
 	      << std::endl;
@@ -740,7 +740,7 @@ CallbacksCaller::getObjectFromUSound (const urbi::USound& v)
 jobject
 CallbacksCaller::getObjectFromUDictionary (const urbi::UDictionary& v)
 {
-  jobject res = env_->NewObject(udictionary_cls, udictionary_ctor_id, (jlong) new urbi::UDictionary(v), true);
+  jobject res = env_->NewObject(udictionary_cls, udictionary_ctor_id, (jlong) new urbi::UDictionary(v), false);
   if (!res)
     std::cerr << "Cannot allocate a new object of type urbi.generated.UDictionary"
 	      << std::endl;
@@ -750,7 +750,7 @@ CallbacksCaller::getObjectFromUDictionary (const urbi::UDictionary& v)
 jobject
 CallbacksCaller::getObjectFromUValue (const urbi::UValue& v)
 {
-  jobject res = env_->NewObject(uvalue_cls, uvalue_ctor_id, (jlong) &v, false);
+  jobject res = env_->NewObject(uvalue_cls, uvalue_ctor_id, (jlong) new urbi::UValue(v), false);
   if (!res)
     std::cerr << "Cannot allocate a new object of type urbi.generated.UValue"
 	      << std::endl;
