@@ -126,7 +126,7 @@ public:
     vars[2] = &c;
     vars[3] = &d;
 
-    UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB);
+    UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB, manyWriteTest);
   }
 
   ~all()
@@ -359,7 +359,7 @@ public:
       int val = v;
       lastChangeVal = val;
     }
-    if ((std::string)removeNotify == v.get_name())
+    if (removeNotify == v.get_name())
     {
       v.unnotify();
       removeNotify = "";
@@ -732,6 +732,33 @@ public:
    res.push_back(cl->bytesSent());
    res.push_back(cl->bytesReceived());
    return res;
+  }
+
+  // Test templates UVar.as, UVar.==, UVar.fill
+  void manyWriteTest(int i)
+  {
+    #define CHECK                                     \
+    if (d.size() !=2 || d[0] != 1 || d[1] != 2)       \
+      throw std::runtime_error("vector is not what we expect")
+    std::vector<double> d;
+    d.push_back(1);
+    d.push_back(2);
+    urbi::UVar& v =*vars[i];
+    v = d;
+    d = v.as(&d);
+    CHECK;
+    d = v.as<std::vector<double> >();
+    CHECK;
+    v.fill(d);
+    if (!(v == d))
+      throw std::runtime_error("v != d");
+    CHECK;
+    boost::unordered_map<std::string, UObject*> vu;
+    vu["coin"] = this;
+    a = vu;
+    a.fill(vu);
+    if (!libport::mhas(vu, "coin") || vu["coin"] != this)
+      throw std::runtime_error("hash is not what we expect");
   }
 
   urbi::UVar a, b, c, d;
