@@ -41,6 +41,9 @@ jclass  	CallbacksCaller::uimage_cls = 0;
 jmethodID	CallbacksCaller::usound_ctor_id = 0;
 jfieldID	CallbacksCaller::usound_swigptr_id = 0;
 jclass  	CallbacksCaller::usound_cls = 0;
+jmethodID	CallbacksCaller::udictionary_ctor_id = 0;
+jfieldID	CallbacksCaller::udictionary_swigptr_id = 0;
+jclass  	CallbacksCaller::udictionary_cls = 0;
 jmethodID	CallbacksCaller::ubinary_ctor_id = 0;
 jfieldID	CallbacksCaller::ubinary_swigptr_id = 0;
 jclass  	CallbacksCaller::ubinary_cls = 0;
@@ -193,6 +196,8 @@ CallbacksCaller::deleteClassRefs(JNIEnv* env)
     env->DeleteGlobalRef (usound_cls);
   if (uimage_cls)
     env->DeleteGlobalRef (uimage_cls);
+  if (udictionary_cls)
+    env->DeleteGlobalRef (udictionary_cls);
 }
 
 bool
@@ -267,6 +272,18 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   /// Get Usound swigCPtr attribute id
   if (!(usound_swigptr_id = env->GetFieldID(usound_cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find USound swigCPtr");
+
+  /// Get the jclass for UDictionary
+  if (!(udictionary_cls = getGlobalRef (env, "urbi/generated/UDictionary")))
+    CLEAN_AND_THROW("Can't find UDictionary class");
+
+  /// Get UDictionary (int, bool) Constructor id
+  if (!(udictionary_ctor_id = env->GetMethodID(udictionary_cls, "<init>", "(JZ)V")))
+    CLEAN_AND_THROW("Can't find UDictionary constructor");
+
+  /// Get Udictionary swigCPtr attribute id
+  if (!(udictionary_swigptr_id = env->GetFieldID(udictionary_cls, "swigCPtr", "J")))
+    CLEAN_AND_THROW("Can't find UDictionary swigCPtr");
 
   /// Get the jclass for UVar
   if (!(uvar_cls = getGlobalRef (env, "urbi/generated/UVar")))
@@ -442,6 +459,22 @@ CallbacksCaller::getUValueFromObject (jobject obj)
   else
     return urbi::UValue ();
 }
+
+urbi::UDictionary
+CallbacksCaller::getUDictionaryFromObject (jobject obj)
+{
+  if (obj)
+  {
+    jlong ptr = env_->GetLongField(obj, udictionary_swigptr_id);
+    if (ptr)  /// Java alocated memory, prefer allocate mine
+      return *(urbi::UDictionary*) ptr;
+    else
+      return urbi::UDictionary ();
+  }
+  else
+    return urbi::UDictionary ();
+}
+
 urbi::UBinary
 CallbacksCaller::getUBinaryFromObject (jobject obj)
 {
@@ -700,6 +733,16 @@ CallbacksCaller::getObjectFromUSound (const urbi::USound& v)
   jobject res = env_->NewObject(usound_cls, usound_ctor_id, (jlong) new urbi::USound(v), true);
   if (!res)
     std::cerr << "Cannot allocate a new object of type urbi.generated.USound"
+	      << std::endl;
+  return res;
+}
+
+jobject
+CallbacksCaller::getObjectFromUDictionary (const urbi::UDictionary& v)
+{
+  jobject res = env_->NewObject(udictionary_cls, udictionary_ctor_id, (jlong) new urbi::UDictionary(v), true);
+  if (!res)
+    std::cerr << "Cannot allocate a new object of type urbi.generated.UDictionary"
 	      << std::endl;
   return res;
 }

@@ -45,6 +45,7 @@ public:
   CALL_METHODS (UList, Object, urbi::UList, urbi::UList (), jobject res = , return getUListFromObject(res););
   CALL_METHODS (USound, Object, urbi::USound, urbi::USound (), jobject res = , return getUSoundFromObject(res););
   CALL_METHODS (UImage, Object, urbi::UImage, urbi::UImage (), jobject res = , return getUImageFromObject(res););
+  CALL_METHODS (UDictionary, Object, urbi::UDictionary, urbi::UDictionary (), jobject res = , return getUDictionaryFromObject(res););
   CALL_METHODS (String, Object, std::string, std::string (), jstring res = (jstring), return getStringFromJString(res););
   CALL_METHODS (Void, Void, void, , ,);
   CALL_METHODS (Boolean, Boolean, jboolean, 0, jboolean res = , return res;);
@@ -93,6 +94,7 @@ private:
   jobject		getObjectFromUList (const urbi::UList& v);
   jobject		getObjectFromUSound (const urbi::USound& v);
   jobject		getObjectFromUImage (const urbi::UImage& v);
+  jobject		getObjectFromUDictionary (const urbi::UDictionary& v);
   jobject		getObjectFromString (const std::string& v);
   jobject		getObjectFromInteger (int v);
   jobject               getObjectFromDouble (double val);
@@ -115,6 +117,7 @@ public:
   urbi::UBinary	getUBinaryFromObject (jobject obj);
   urbi::UImage	getUImageFromObject (jobject obj);
   urbi::USound	getUSoundFromObject (jobject obj);
+  urbi::UDictionary	getUDictionaryFromObject (jobject obj);
   urbi::UList	getUListFromObject (jobject obj);
   urbi::UVar*	getUVarFromObject (jobject obj);
   std::string	getStringFromJString (jstring obj);
@@ -175,6 +178,9 @@ private:
   static jclass		usound_cls;
   static jmethodID	usound_ctor_id;
   static jfieldID	usound_swigptr_id;
+  static jclass		udictionary_cls;
+  static jmethodID	udictionary_ctor_id;
+  static jfieldID	udictionary_swigptr_id;
   static jclass		uvar_cls;
   static jmethodID	uvar_ctor_id;
   static jfieldID	uvar_swigptr_id;

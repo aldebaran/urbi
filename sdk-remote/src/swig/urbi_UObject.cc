@@ -92,6 +92,7 @@ createFunctionCallbackType(UList);
 createFunctionCallbackType(UBinary);
 createFunctionCallbackType(UImage);
 createFunctionCallbackType(USound);
+createFunctionCallbackType(UDictionary);
 createFunctionCallbackType(String);
 
 
@@ -131,6 +132,8 @@ static urbi::UGenericCallback* createFunctionCallback (JNIEnv* env,
     return createFunctionCallbackUImage (env, uobj, obj, obj_name, funcName, argNb);
   else if ("urbi.generated.USound" == retType)
     return createFunctionCallbackUSound (env, uobj, obj, obj_name, funcName, argNb);
+  else if ("urbi.generated.UDictionary" == retType)
+    return createFunctionCallbackUDictionary (env, uobj, obj, obj_name, funcName, argNb);
   else if ("java.lang.String" == retType)
     return createFunctionCallbackString (env, uobj, obj, obj_name, funcName, argNb);
 
