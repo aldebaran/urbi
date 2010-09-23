@@ -323,6 +323,38 @@ namespace urbi
 
 # endif
 
+  // Dictionary casters.
+  template<typename V>
+  struct uvalue_caster<boost::unordered_map<std::string, V> >
+  {
+    boost::unordered_map<std::string, V> operator()(UValue& v)
+    {
+      boost::unordered_map<std::string, V> res;
+      if (v.type != DATA_DICTIONARY)
+        throw std::runtime_error("UValue is not a dictionary.");
+      typedef UDictionary::value_type DictVal;
+      BOOST_FOREACH(UDictionary::value_type& val, *v.dictionary)
+        res[val.first] = uvalue_cast<V>(val.second);
+      return res;
+    }
+  };
+  template<typename V>
+  inline UValue&
+  operator,(UValue& v, const boost::unordered_map<std::string, V> & d)
+  {
+    typedef typename boost::unordered_map<std::string, V>::value_type DictVal;
+    v.clear();
+    v.type = DATA_DICTIONARY;
+    v.dictionary = new UDictionary;
+    BOOST_FOREACH(const DictVal & val, d)
+    {
+      UValue nv;
+      nv, val.second;
+      (*v.dictionary)[val.first] = nv;
+     }
+     return v;
+  }
+
   // Uses casters, must be at the end
   template<typename T>
   UList&
