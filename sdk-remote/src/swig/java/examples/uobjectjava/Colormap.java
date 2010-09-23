@@ -128,7 +128,7 @@ public class Colormap extends UObject
 	long x=0,y=0,xx=0,yy=0,xy=0;
 	int size = 0;
 
-	byte[] data = img1.getDataAsByte ();
+	byte[] data = img1.getData ();
 	for (int i = 0; i < w; i++)
 	    for (int j = 0; j < h; j++) {
 

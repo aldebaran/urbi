@@ -84,7 +84,7 @@ public class	CallImage extends UCallbackInterface
 	    return UCallbackAction.URBI_CONTINUE;
 
 	UImage img = bin.getUImage ();
-	byte[] data = img.getDataAsByte ();
+	byte[] data = img.getData ();
 
 	int		nummatch = 0;
 	int		width = (int) img.getWidth();

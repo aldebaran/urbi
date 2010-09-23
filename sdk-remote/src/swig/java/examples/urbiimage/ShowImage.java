@@ -53,7 +53,7 @@ public class	ShowImage extends UCallbackInterface
 	if (!(UBinaryType.BINARY_IMAGE == bin.getType ()))
 	    return UCallbackAction.URBI_CONTINUE;
 	UImage img = bin.getUImage ();
-	byte[] data = img.getDataAsByte ();
+	byte[] data = img.getData ();
 
 	BufferedImage buffer = null;
 	try

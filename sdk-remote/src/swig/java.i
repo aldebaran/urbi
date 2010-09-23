@@ -185,6 +185,57 @@ namespace urbi
 /// a good idea...)
 typedef double ufloat;
 
+%{
+  // Include in the generated wrapper file
+  typedef unsigned int size_t;
+%}
+// Tell SWIG about it
+typedef unsigned int size_t;
+
+// Java typemap
+// change deafult SWIG mapping of unsigned char* return values
+// to byte[]
+//
+// Assumes that there are the following function defined (T is the
+// type of the class possessing the method we currently process):
+// void setSize(T* b, size_t size)
+// size_t getSize(T* b)
+//
+// inspired from
+// https://valelab.ucsf.edu/svn/micromanager2/trunk/MMCoreJ_wrap/MMCoreJ.i (LGPL)
+
+%typemap(jni) unsigned char*        "jbyteArray"
+%typemap(jtype) unsigned char*      "byte[]"
+%typemap(jstype) unsigned char*     "byte[]"
+%typemap(out) unsigned char* %{
+  $result = SWIG_JavaArrayOutSchar(jenv, (signed char*) $1, getSize((arg1)));
+%}
+
+// Map input argument: java byte[] -> C++ unsigned char *
+%typemap(in) unsigned char* {
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null array");
+    return $null;
+  }
+  size_t size = JCALL1(GetArrayLength, jenv, $input);
+  setSize((arg1), size);
+  $1 = (unsigned char *) JCALL2(GetByteArrayElements, jenv, $input, 0);
+}
+
+%typemap(freearg) unsigned char* {
+  // Allow the Java byte array to be garbage collected.
+  // JNI_ABORT = Don't alter the original array.
+  // JCALL3(ReleaseByteArrayElements, jenv, $input, (jbyte *) $1, JNI_ABORT);
+  JCALL3(ReleaseByteArrayElements, jenv, $input, (jbyte *) $1, JNI_COMMIT);
+}
+
+// change Java wrapper output mapping for unsigned char*
+%typemap(javaout) unsigned char* {
+  return $jnicall;
+}
+
+%typemap(javain) unsigned char* "$javainput"
+
 
 ////////////////////////////
 ///                      ///
@@ -212,20 +263,36 @@ namespace urbi
 
 %include "urbi/uimage.hh"
 
+%{
+  void urbi_USound_data_set(urbi::USound* b, unsigned char *data)
+  {
+    b->data = (char*) data;
+  }
+  unsigned char * urbi_USound_data_get(urbi::USound* b)
+  {
+    return (unsigned char *) b->data;
+  }
+  void setSize(urbi::UImage* b, size_t size)
+  {
+    b->size = size;
+  }
+  size_t getSize(urbi::UImage* b)
+  {
+    return b->size;
+  }
+%}
+
 namespace urbi
 {
-  %extend UImage
-  {
-    /// Get the data as a byte[] array
-    bytetype getDataAsByte ()
-      {
-	return (signed char*) self->data;
-      }
-
-    /// FIXME: we might want the data as some other types array
+  %extend UImage {
+    // Delete data if allocated _JAVA_SIDE_
+    void deleteData()
+    {
+      delete[] self->data;
+      self->data = 0;
+    }
   }
-}
-
+};
 
 ////////////////////////////
 ///                      ///
@@ -233,66 +300,36 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
-%ignore urbi::USound::size;
-%ignore urbi::USound::channels;
-%ignore urbi::USound::rate;
-%ignore urbi::USound::sampleSize;
-
-%include "urbi/usound.hh"
 
 namespace urbi
 {
-  %extend USound
-  {
-    /// Get the data as a byte[] array
-    bytetype getDataAsByte ()
-      {
-	return (signed char*) self->data;
-      }
+  %extend USound {
+    // Place this definition of data before the usound.hh header
+    // so that swig consider data as unsigned char and generate correct
+    // setter to -> byte[]
+    unsigned char *data;
 
-    int getChannels()
+    // Delete data if allocated _JAVA_SIDE_
+    void deleteData()
     {
-      return self->channels;
+      delete[] self->data;
+      self->data = 0;
     }
-
-    void setChannels(int channels)
-    {
-      self->channels = channels;
-    }
-
-    int getSize()
-    {
-      return self->size;
-    }
-
-    void setSize(int size)
-    {
-      self->size = size;
-    }
-
-    int getRate()
-    {
-      return self->rate;
-    }
-
-    void setRate(int rate)
-    {
-      self->rate = rate;
-    }
-
-    int getSampleSize()
-    {
-      return self->sampleSize;
-    }
-
-    void setSampleSize(int sampleSize)
-    {
-      self->sampleSize = sampleSize;
-    }
-    /// FIXME: we might want the data as some other types array
   }
-
 };
+
+%include "urbi/usound.hh"
+
+%{
+  void setSize(urbi::USound* b, size_t size)
+  {
+    b->size = size;
+  }
+  size_t getSize(urbi::USound* b)
+  {
+    return b->size;
+  }
+%}
 
 
 ////////////////////////////
@@ -302,6 +339,28 @@ namespace urbi
 ////////////////////////////
 
 %include "urbi/ubinary.hh"
+
+%{
+  void urbi_UBinary_data_set(urbi::UBinary* b, unsigned char *data)
+  {
+    b->common.data = data;
+  }
+
+  unsigned char * urbi_UBinary_data_get(urbi::UBinary* b)
+  {
+    return (unsigned char *) b->common.data;
+  }
+
+  void setSize(urbi::UBinary* b, size_t size)
+  {
+    b->common.size = size;
+  }
+
+  size_t getSize(urbi::UBinary* b)
+  {
+    return b->common.size;
+  }
+%}
 
 namespace urbi
 {
@@ -319,7 +378,7 @@ namespace urbi
 	return self->sound;
       }
 
-    long getSize ()
+    size_t getSize ()
       {
 	return self->common.size;
       }
@@ -329,30 +388,17 @@ namespace urbi
 	return self->message;
       }
 
-    void setExtraHeader (std::string msg)
+    void setExtraHeader (const std::string& msg)
       {
 	self->message = msg;
       }
 
-    void setCommonData(bytetype data, size_t size)
-    {
-      void *prevdata = self->common.data;
-      self->common.data = malloc(size);
-      memcpy(self->common.data, data, size);
-      self->common.size = size;
-      if (prevdata)
-	free(prevdata);
-    }
-
-    bytetype getCommonData()
-    {
-      return (signed char*) self->common.data;
-    }
+    // make swig generate getData and setData
+    unsigned char* data;
 
     /// FIXME: we want to be able to retrieve the data in common in arrays
     /// of various type
   }
-
 };
 
 

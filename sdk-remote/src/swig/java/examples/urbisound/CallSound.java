@@ -62,11 +62,11 @@ public class CallSound extends UCallbackInterface implements SoundAction
 	    return UCallbackAction.URBI_CONTINUE;
 	USound sound = bin.getUSound();
 
-	sampleRate = sound.getRate ();
-	sampleSizeInBits = sound.getSampleSize ();
-	channels = sound.getChannels ();
+	sampleRate = (int) sound.getRate ();
+	sampleSizeInBits = (int) sound.getSampleSize ();
+	channels = (int) sound.getChannels ();
 	signed = (sound.getSampleFormat () == USoundSampleFormat.SAMPLE_SIGNED);
-	byte[] data = sound.getDataAsByte ();
+	byte[] data = sound.getData ();
 	out.write(data, 0, data.length);
 	return UCallbackAction.URBI_CONTINUE;
     }

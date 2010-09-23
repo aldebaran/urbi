@@ -53,7 +53,7 @@ public class testcall extends UCallbackInterface {
 		    System.out.println ("  - heiht: " + img.getHeight ());
 		    System.out.println ("  - size: " + img.getSize ());
 
-		    byte[] data = img.getDataAsByte ();
+		    byte[] data = img.getData ();
 
 		    if (UImageFormat.IMAGE_RGB == img.getImageFormat ())
 			System.out.println ("  - IMAGE_RGB image");
