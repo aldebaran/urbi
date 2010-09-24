@@ -50,8 +50,7 @@ URBI_DOC
 # Override "doc/sdk-remote" so that we still appears as a part
 # of "urbi-sdk"'s documentation.
 AC_SUBST([docdir], [${datarootdir}/doc/urbi-sdk])
-AC_SUBST([DOCDIR], [doc/srcdoc])
-AC_SUBST([DOXYFILE], [doc/Doxyfile])
+AC_CONFIG_FILES([doc/sdk-remote.dox])
 
 ## ------------- ##
 ## Compilation.  ##

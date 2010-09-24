@@ -1,9 +1,16 @@
+## Copyright (C) 2005-2010, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
+
 include build-aux/init.mk
 include build-aux/build-aux.mk
 include build-aux/package-version.mk
 include build-aux/fix-libtool-la.mk
 include build-aux/build-farm.mk
-include build-aux/doxygen.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/bootstrap.mk
 
@@ -38,6 +45,7 @@ AM_CPPFLAGS +=					\
 
 include sdk/local.mk
 include include/local.mk
+include doc/local.mk
 
 
 ## ---------------------- ##
