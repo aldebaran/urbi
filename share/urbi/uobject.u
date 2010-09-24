@@ -716,7 +716,6 @@ class Global.'external'
                 functionName + "__" + args.size,
                 u ] + args|
       var res = Global.UObject.barriers[u].wait|
-      clog << "%s: %s arrived" % [(time * 1000000).round, u] |
       if (res.isA(Exception))
         throw res
       else
