@@ -411,67 +411,31 @@ namespace urbi
 
 namespace urbi
 {
+
+  %define ULIST_PUSH_BACK(value_type)
+    %extend UList {
+      urbi::UList& push_back(value_type v)
+      {
+	return self->push_back(v);
+      }
+    }
+  %enddef
+
+  ULIST_PUSH_BACK(const urbi::UValue&)
+  ULIST_PUSH_BACK(const urbi::UList&)
+  ULIST_PUSH_BACK(const urbi::UBinary&)
+  ULIST_PUSH_BACK(const urbi::USound&)
+  ULIST_PUSH_BACK(const urbi::UImage&)
+  ULIST_PUSH_BACK(const std::string&)
+  ULIST_PUSH_BACK(int)
+  ULIST_PUSH_BACK(long)
+  ULIST_PUSH_BACK(long long)
+  ULIST_PUSH_BACK(double)
+  ULIST_PUSH_BACK(float)
+  ULIST_PUSH_BACK(char)
+  ULIST_PUSH_BACK(bool)
+
   %extend UList {
-
-    urbi::UList& push_back(const urbi::UValue& v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(const urbi::UList& v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(const urbi::UBinary& v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(const urbi::USound& v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(const urbi::UImage& v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(const std::string& v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(int v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(long v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(double v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(float v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(char v)
-    {
-      return self->push_back(v);
-    }
-
-    urbi::UList& push_back(bool v)
-    {
-      return self->push_back(v);
-    }
 
     std::string		toString ()
       {
@@ -492,6 +456,14 @@ namespace urbi
 namespace std {
   %template(UValueVector) vector<urbi::UValue*>;
 };
+
+
+////////////////////////////
+///                      ///
+///     UDictionary      ///
+///                      ///
+////////////////////////////
+
 
 %typemap(javaimports) boost::unordered_map<std::string, urbi::UValue> %{
 import java.util.AbstractMap;
@@ -670,51 +642,27 @@ import java.util.Set;
 namespace boost {
   %template(UDictionary) unordered_map<std::string, urbi::UValue>;
   %template(UDictionaryCPPIterator) iterator_wrapper<std::string, urbi::UValue>;
-};
 
-namespace boost {
+  %define UDIRECTORY_PUT(value_type)
+    %extend unordered_map<std::string, urbi::UValue> {
+    value_type put(const std::string& key, value_type v)
+    {
+      return (*self)[key] = v;
+    }
+  }
+  %enddef
+
+  UDIRECTORY_PUT(const urbi::UList&)
+  UDIRECTORY_PUT(const urbi::UBinary&)
+  UDIRECTORY_PUT(const urbi::USound&)
+  UDIRECTORY_PUT(const urbi::UImage&)
+  UDIRECTORY_PUT(const std::string&)
+  UDIRECTORY_PUT(int)
+  UDIRECTORY_PUT(long long)
+  UDIRECTORY_PUT(double)
+  UDIRECTORY_PUT(bool)
+
   %extend unordered_map<std::string, urbi::UValue> {
-
-
-    const urbi::UList& put(const std::string& key, const urbi::UList& v)
-    {
-      return (*self)[key] = v;
-    }
-
-    const urbi::UBinary& put(const std::string& key, const urbi::UBinary& v)
-    {
-      return (*self)[key] = v;
-    }
-
-    const urbi::USound& put(const std::string& key, const urbi::USound& v)
-    {
-      return (*self)[key] = v;
-    }
-
-    const urbi::UImage& put(const std::string& key, const urbi::UImage& v)
-    {
-      return (*self)[key] = v;
-    }
-
-    const std::string& put(const std::string& key, const std::string& v)
-    {
-      return (*self)[key] = v;
-    }
-
-    int put(const std::string& key, int v)
-    {
-      return (*self)[key] = v;
-    }
-
-    long put(const std::string& key, long long v)
-    {
-      return (*self)[key] = v;
-    }
-
-    double put(const std::string& key, double v)
-    {
-      return (*self)[key] = v;
-    }
 
     float put(const std::string& key, float v)
     {
@@ -725,14 +673,15 @@ namespace boost {
     {
       return (int) ((*self)[key] = v);
     }
-
-    bool put(const std::string& key, bool v)
-    {
-      return (*self)[key] = v;
-    }
   }
 }
 
+
+////////////////////////////
+///                      ///
+///       UValue         ///
+///                      ///
+////////////////////////////
 
 %ignore urbi::UValue::UValue(const void*);
 %ignore urbi::UValue::UValue(long, bool);
@@ -746,13 +695,6 @@ namespace boost {
 
 
 %include "urbi/uvalue.hh"
-
-////////////////////////////
-///                      ///
-///       UValue         ///
-///                      ///
-////////////////////////////
-
 
 namespace urbi
 {
@@ -840,9 +782,6 @@ namespace urbi
 %include "urbi/uevent.hh"
 
 
-%include "urbi/uabstractclient.hh"
-
-
 ////////////////////////////
 ///                      ///
 ///      UMessage        ///
@@ -860,6 +799,32 @@ namespace urbi
 	return self->client;
       }
   }
+};
+
+
+////////////////////////////
+///                      ///
+///   UAbstractClient    ///
+///                      ///
+////////////////////////////
+
+%include "urbi/uabstractclient.hh"
+
+namespace urbi
+{
+  %extend UAbstractClient
+  {
+
+    UCallbackID setCallback (UCallbackInterface& ref, const char * tag)
+    {
+      return self->setCallback (ref, &urbi::UCallbackInterface::onMessage, tag);
+    }
+
+    void sendBin (bytetype bin, int len) { self->sendBin (bin, len); }
+    void sendBin (bytetype bin, int len, char *header) { self->sendBin (bin, len, header); }
+
+  }
+
 };
 
 
@@ -890,29 +855,6 @@ namespace urbi
 };
 
 
-
-////////////////////////////
-///                      ///
-///   UAbstractClient    ///
-///                      ///
-////////////////////////////
-
-namespace urbi
-{
-  %extend UAbstractClient
-  {
-
-    UCallbackID setCallback (UCallbackInterface& ref, const char * tag)
-    {
-      return self->setCallback (ref, &urbi::UCallbackInterface::onMessage, tag);
-    }
-
-    void sendBin (bytetype bin, int len) { self->sendBin (bin, len); }
-    void sendBin (bytetype bin, int len, char *header) { self->sendBin (bin, len, header); }
-
-  }
-
-};
 
 ////////////////////////////
 ///                      ///
@@ -979,10 +921,44 @@ namespace urbi
 
 %include "urbi/ucontext-impl.hh"
 
+
+////////////////////////////
+///                      ///
+///      UContext        ///
+///                      ///
+////////////////////////////
+
 %ignore urbi::UContext::yield_for(libport::utime_t) const;
 %ignore urbi::UContext::yield_until(libport::utime_t) const;
 
 %include "urbi/ucontext.hh"
+
+namespace urbi
+{
+  %extend UContext
+  {
+    void send(bytetype buf, size_t size)
+    {
+      self->send(buf, size);
+    }
+
+    void yield_for(long long delay)
+    {
+      self->yield_for(delay);
+    }
+
+    void yield_until(long long delay)
+    {
+      self->yield_until(delay);
+    }
+  }
+}
+
+////////////////////////////
+///                      ///
+///        UVar          ///
+///                      ///
+////////////////////////////
 
 %ignore urbi::UVar::name;
 %ignore urbi::UVar::set_name;
@@ -1055,26 +1031,11 @@ namespace urbi
 };
 
 
-namespace urbi
-{
-  %extend UContext
-  {
-    void send(bytetype buf, size_t size)
-    {
-      self->send(buf, size);
-    }
-
-    void yield_for(long long delay)
-    {
-      self->yield_for(delay);
-    }
-
-    void yield_until(long long delay)
-    {
-      self->yield_until(delay);
-    }
-  }
-}
+////////////////////////////
+///                      ///
+///      UObject         ///
+///                      ///
+////////////////////////////
 
 %feature("director") urbi::UObject;
 
@@ -1115,15 +1076,20 @@ namespace urbi
   }
 };
 
-//%feature("director") urbi::baseURBIStarter;
+
+////////////////////////////
+///                      ///
+///      UStarter        ///
+///                      ///
+////////////////////////////
+
+
 %feature("director") urbi::URBIStarterJAVA;
 
 /// Tell swig that urbi::URBIStarterJAVA is not abstract
 %feature("notabstract") urbi::URBIStarterJAVA;
 
 %include "urbi/ustarter.hh"
-
-
 
 namespace urbi
 {
