@@ -17,11 +17,17 @@ This chapter lists the user-visible changes in \usdk releases.
 \begin{itemize}
 \item \refSlot[Date]{asFloat} is restored.
 \item \refSlot[File]{create} empties existing files first.
-\item \refSlot[Lobby]{lobby} always returns the current lobby, invoke if
+\item \refSlot[Lobby]{lobby} always returns the current lobby, even if
   invoked on another lobby.
 \item \refSlot[Object]{inspect} works properly, even if the target is a
   remote lobby.
 \item \slot[Regexp]{match}s renamed as \refSlot[Regexp]{matches}.
+\item Fix multiple race conditions in RTP handling code preventing proper
+  initialization of remote UObjects.
+\item Fix windows deployment to have both debug and release UObjects
+  installed.
+\item Fix urbi-sound in the liburbi examples.
+\item Fix server mode of urbi-launch --remote.
 \end{itemize}
 
 \subsection{New Features}
@@ -91,6 +97,13 @@ eval("new Object");
 [00001388:warning] !!!    called from: eval
 [00001388] Object_0x1001b2320
 \end{urbiscript}
+\item New functions \lstinline|as| and \lstinline|fill| on UVar to ease access
+to the generic cast system.
+\item Add support to boost::unordered\_map to UObject casting system.
+\item Optimize remote UObjects: notifies between two objects in the same
+  process instance are transmitted locally.
+\item Provide a CustomUVar class to ease encapsulation of custom data in UVar.
+\item Bind the 'constant' property on UVar.
 \end{itemize}
 
 
