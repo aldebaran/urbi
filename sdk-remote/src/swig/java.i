@@ -744,6 +744,7 @@ namespace boost {
 %ignore urbi::UValue::print;
 %ignore urbi::UValue::copy;
 
+
 %include "urbi/uvalue.hh"
 
 ////////////////////////////
@@ -983,23 +984,53 @@ namespace urbi
 
 %include "urbi/ucontext.hh"
 
- //%ignore urbi::UVar::value;
- //%ignore urbi::UVar::set_value;
- //%ignore urbi::UVar::get_value;
 %ignore urbi::UVar::name;
 %ignore urbi::UVar::set_name;
 %ignore urbi::UVar::get_name;
-//%ignore urbi::UVar::variable;
-//%ignore urbi::UVar::__update;
-//%ignore urbi::UVar::setZombie;
-//%ignore urbi::UVar::in;
-//%ignore urbi::UVar::out;
 %ignore urbi::UVar::rangemin;
 %ignore urbi::UVar::rangemax;
 %ignore urbi::UVar::speedmin;
 %ignore urbi::UVar::speedmax;
 %ignore urbi::UVar::delta;
 %ignore urbi::UVar::blend;
+
+%define CPP_RUNTIME_ERROR_CATCH(function)
+%exception function {
+  try {
+     $action
+  }
+  catch (std::runtime_error &e) {
+    jclass clazz = jenv->FindClass("java/lang/RuntimeException");
+    jenv->ThrowNew(clazz, e.what());
+    return $null;
+  }
+}
+%enddef
+
+// Catch runtime errors thrown by UVar functions (for example when
+// uvar is not binded) and rethrow as Java RuntimeExceptions
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator=)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::setOwned)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::type)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::syncValue)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::val)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::keepSynchronized)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::setProp)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::setBypass)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::getProp)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::unnotify)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UImage)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UList)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UDictionary)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator USound)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UBinary)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator const UBinary&)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator int)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator std::string)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator ufloat)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::operator UBinary*)
+CPP_RUNTIME_ERROR_CATCH(urbi::UVar::getUValue)
+
 %include "urbi/uvar.hh"
 
 namespace urbi
@@ -1010,11 +1041,6 @@ namespace urbi
       {
     	return self->val ();
       }
-
-    // void setUValue (UValue& v)
-    //   {
-    // 	self->set_value (v);
-    //   }
 
     std::string getName ()
       {
