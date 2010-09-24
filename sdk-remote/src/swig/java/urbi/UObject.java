@@ -39,6 +39,25 @@ public class UObject extends UObjectCPP
 	super (s);
     }
 
+    private boolean superdofinalize = true;
+
+    protected void finalize() {
+	// Call super finalize only when destruction originate from
+	// JAVA.
+	if (superdofinalize)
+	    super.finalize();
+    }
+
+    // Hack to have java subclasses finalize() called when destruction
+    // originare from C++.
+    protected void swigDirectorDisconnect() {
+	// Destruction originate from C++
+	superdofinalize = false;
+	// call subclass finalize if there are any
+	finalize();
+	// then let swig do its work
+	super.swigDirectorDisconnect ();
+    }
 
     /// ------------------ ///
     ///                    ///
