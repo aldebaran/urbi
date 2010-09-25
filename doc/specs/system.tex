@@ -514,6 +514,12 @@ getenv("MyVar").isNil;
 \end{urbiassert}
 
 
+\item[version]%
+  The version of \usdk.  A string composed of two or more numbers separated
+  by periods: \samp{"\packageVersion"}.
+\begin{urbiassert}
+System.version in Regexp.new("\\d+(\\.\\d+)+");
+\end{urbiassert}
 \end{urbiscriptapi}
 
 %%% Local Variables:

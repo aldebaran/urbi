@@ -10,8 +10,6 @@
 
 do (System)
 {
-  const var version = "2.0";
-
   // Assertion control.
   var ndebug = false;
 
@@ -246,5 +244,10 @@ do (System)
   // Do not make a wrapper function here, as you would get a tag for
   // the scope of that function, instead of the caller.
   setSlot("scopeTag", Tag.getSlot("scope"));
+
+  function version()
+  {
+    PackageInfo.components["Urbi SDK"].version
+  };
 
 };
