@@ -105,6 +105,12 @@ dist_doc_DATA =					\
 ## urbi-sdk.pdf.  ##
 ## -------------- ##
 
+# All the documents that can be compiled.  Used only for dependencies.
+MASTERS =					\
+  urbi-naming.tex				\
+  urbi-sandbox.tex				\
+  urbi-sdk.tex
+
 PDFS =						\
   urbi-naming.pdf				\
   urbi-sdk.pdf
@@ -115,8 +121,9 @@ endif
 
 # We cannot simply use html_DATA here, since Automake does not
 # support installing directories.
-html_DIR = urbi-sdk.htmldir
-other_html_DIR = urbi-sandbox.htmldir
+if ENABLE_DOC_HTML
+  html_DIR += urbi-sdk.htmldir
+endif
 
 CLEANFILES += $(pdf_DATA)
 urbi_sdk_tex = $(call ls_files,*.tex)
@@ -131,9 +138,8 @@ urbi_sdk_deps = 				\
   $(REVISION_FILE)				\
   $(urbi_sdk_sources)
 
-urbi-sandbox.pdf $(pdf_DATA) $(pdf_DATA:.pdf=.dvi) $(html_DIR) $(other_html_DIR): $(urbi_sdk_deps)
-urbi-sandbox.pdf $(pdf_DATA): $(PDF_IMAGES)
-$(pdf_DATA:.pdf=.dvi) $(html_DIR) $(other_html_DIR): $(EPS_IMAGES)
+$(MASTERS:.tex=.pdf): $(urbi_sdk_deps) $(PDF_IMAGES)
+$(MASTERS:.tex=.dvi) $(MASTERS:.tex=.htmldir): $(urbi_sdk_deps) $(EPS_IMAGES)
 
 view: $(pdf_DATA)
 	xpdf $<
