@@ -150,7 +150,7 @@ fi
 # Bounce to the build-tree urbi-launch.
 setenv URBI_LAUNCH_JAVA "$sdk_remote_builddir/src/tests/bin/urbi-launch$EXEEXT"
 setenv liburbi_jar "$sdk_remote_builddir/src/swig/java/lib/liburbijava.jar"
-setenv library_path "$sdk_remote_builddir/src/swig/.libs/"
+setenv library_path "$sdk_remote_builddir/src/swig/java/.libs/"
 
 args=
 for i in $@; do
