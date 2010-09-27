@@ -370,6 +370,14 @@ namespace urbi
       return res;
     }
 
+    void
+    initializations_run()
+    {
+      foreach (const Initialization& action, initializations_())
+        action();
+      initializations_().clear();
+    }
+
     static void
     load(const rObject& name, bool global)
     {

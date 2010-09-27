@@ -61,6 +61,8 @@ namespace urbi
     /// Return the URBI_ROOT path.
     rPath system_urbiRoot();
 
+    /// Run actions registered with URBI_INITIALIZATION_REGISTER.
+    void initializations_run();
   }; // namespace object
 }
 
