@@ -25,46 +25,46 @@
     static ::libport::intrusive_ptr<Name> proto;                        \
     virtual bool valid_proto(const ::urbi::object::Object& o) const;    \
   private:                                                              \
-    friend class ::urbi::object::CxxObject::TypeInitializer<Name>;      \
     Name(const ::urbi::object::FirstPrototypeFlag&);                    \
+    friend class CxxObject;                                             \
   public:                                                               \
-    static void initialize(::urbi::object::CxxObject::Binder<Name>&)    \
+    static void initialize(::urbi::object::CxxObject::Binder<Name>&)
 
 
 #define URBI_CXX_OBJECT(Name)                   \
   URBI_CXX_OBJECT_(Name)                        \
   {}                                            \
 
-#define URBI_CXX_OBJECT_REGISTER(Name)                          \
-  const std::string& Name::type_name()                          \
-  {                                                             \
-    static std::string res = #Name;                             \
-    return res;                                                 \
-  }                                                             \
-                                                                \
-  ::libport::intrusive_ptr<Name> Name::proto;                   \
-                                                                \
-  std::string                                                   \
-  Name::type_name_get() const                                   \
-  {                                                             \
-    return type_name();                                         \
-  }                                                             \
-                                                                \
-  bool Name::valid_proto(const ::urbi::object::Object& o) const \
-  {                                                             \
-    return dynamic_cast<const Name*>(&o);                       \
-  }                                                             \
-                                                                \
-  struct Name ## _register__                                    \
-  {                                                             \
-    Name ## _register__()                                       \
-    {                                                           \
-      ::urbi::object::CxxObject::add<Name>();                   \
-    }                                                           \
-  };                                                            \
-                                                                \
-  static Name ## _register__ Name ## _registered__;             \
-                                                                \
+#define URBI_CXX_OBJECT_REGISTER(Name)                                  \
+  const std::string& Name::type_name()                                  \
+  {                                                                     \
+    static std::string res = #Name;                                     \
+    return res;                                                         \
+  }                                                                     \
+                                                                        \
+  ::libport::intrusive_ptr<Name> Name::proto;                           \
+                                                                        \
+  std::string                                                           \
+  Name::type_name_get() const                                           \
+  {                                                                     \
+    return type_name();                                                 \
+  }                                                                     \
+                                                                        \
+  bool Name::valid_proto(const ::urbi::object::Object& o) const         \
+  {                                                                     \
+    return dynamic_cast<const Name*>(&o);                               \
+  }                                                                     \
+                                                                        \
+  static void                                                           \
+  LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__)()           \
+  {                                                                     \
+    GD_CATEGORY(Urbi.CxxObject);                                        \
+    GD_INFO_TRACE("register: " #Name);                                  \
+    ::urbi::object::CxxObject::add<Name>();                             \
+  }                                                                     \
+  URBI_INITIALIZATION_REGISTER                                          \
+  (LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__));          \
+                                                                        \
   Name::Name(const ::urbi::object::FirstPrototypeFlag&)
 
 
@@ -82,54 +82,17 @@ namespace urbi
       /// Build a CxxObject.
       CxxObject();
 
-      /// Bind all registered objects.
-      /** This function should be called once to bind C++ objects.
-       *  \param global Where to store the new classes.
-       */
-      static void initialize(rObject global);
-      static void create();
-      static void cleanup();
-
-      /// Push initializer for class T to the back of the initialization list.
-      template<typename T>
-        static void push_initializer_to_back();
-
       /// Register a C++ class to be bound on the urbi side.
       /** \param T      The class to bind.
        *  \param name   Name of the class on the Urbi side.
        *  \param tgt    Where to store the result.
        */
       template<typename T>
-        static bool add();
+      static void add();
 
       virtual std::string type_name_get() const = 0;
 
-      protected:
-
-      class URBI_SDK_API Initializer
-      {
-      public:
-        Initializer();
-        virtual ~Initializer();
-        virtual rObject make_class() = 0;
-        virtual void create() = 0;
-        virtual libport::Symbol name() = 0;
-      };
-
-      template <typename T>
-        class TypeInitializer: public Initializer
-      {
-      public:
-        TypeInitializer();
-        virtual rObject make_class();
-        virtual void create();
-        virtual libport::Symbol name();
-      protected:
-        libport::intrusive_ptr<T>& res_;
-      };
-
-      typedef std::list<Initializer*> initializers_type;
-      static initializers_type& initializers_get();
+    protected:
 
       public:
       /// Functor to bind methods on the urbi side.
@@ -151,10 +114,8 @@ namespace urbi
         rObject proto() { return tgt_; }
 
       private:
+        friend class CxxObject;
         Binder(rObject tgt);
-        // This method is allowed to construct a Binder.
-        // VC++ is not a friend of friend method templates, so friend the class.
-        friend class TypeInitializer<T>;
         rObject tgt_;
       };
 

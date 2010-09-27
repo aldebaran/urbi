@@ -58,6 +58,10 @@ namespace urbi
     String::String(const value_type& v)
       : content_(v)
     {
+      // Initialization hack: bootstraping String - and even Primitive
+      // before that - instantiates Strings.
+      if (!proto)
+        proto = new String(FirstPrototypeFlag());
       proto_add(proto);
     }
 

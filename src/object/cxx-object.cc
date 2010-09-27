@@ -16,49 +16,14 @@
 
 #include <runner/runner.hh>
 
+GD_CATEGORY(Urbi.CxxObject);
+
 namespace urbi
 {
   namespace object
   {
     CxxObject::CxxObject()
-    {
-
-    }
-
-    CxxObject::Initializer::Initializer()
     {}
-
-    CxxObject::Initializer::~Initializer()
-    {}
-
-    void
-    CxxObject::create()
-    {
-      foreach (Initializer* init, initializers_get())
-        init->create();
-    }
-
-    void
-    CxxObject::initialize(rObject global)
-    {
-      foreach (Initializer* init, initializers_get())
-        global->slot_set(init->name(), init->make_class(), true);
-    }
-
-    CxxObject::initializers_type&
-    CxxObject::initializers_get()
-    {
-      static initializers_type res;
-      return res;
-    }
-
-    void
-    CxxObject::cleanup()
-    {
-      foreach (Initializer* init, initializers_get())
-        delete init;
-      initializers_get().clear();
-    }
 
     void
     type_check(const rObject& o, const rObject& exp,

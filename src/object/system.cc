@@ -404,13 +404,7 @@ namespace urbi
       // Reload uobjects
       uobjects_reload();
 
-      // Reload CxxObjects
-      CxxObject::create();
-      CxxObject::initialize(global_class);
-      CxxObject::cleanup();
-
-      foreach (const Initialization& action, initializations_)
-        action();
+      initializations_run();
     }
 
     static void

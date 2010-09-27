@@ -39,19 +39,6 @@ namespace urbi
           runner::raise_arity_error(effective, min, max);
     }
 
-    template <typename T>
-    bool CxxObject::add()
-    {
-      initializers_get().push_back(new TypeInitializer<T>());
-      return true;
-    }
-
-    template <typename T>
-    CxxObject::TypeInitializer<T>::TypeInitializer()
-      : Initializer()
-      , res_(T::proto)
-    {}
-
     namespace
     {
       template <typename T>
@@ -76,46 +63,41 @@ namespace urbi
     }
 
     template <typename T>
-    void
-    CxxObject::TypeInitializer<T>::create()
-    {
-      res_ = new T(FirstPrototypeFlag());
-      // If the user didn't specify a prototype, use Object.
-      if (res_->protos_get().empty())
-        res_->proto_add(Object::proto);
-      aver(res_);
-    }
-
-    template <typename T>
-    rObject
-    CxxObject::TypeInitializer<T>::make_class()
+    void CxxObject::add()
     {
       using boost::bind;
 
+      libport::intrusive_ptr<T> res;
+      if (!T::proto)
+      {
+        res = new T(FirstPrototypeFlag());
+        T::proto = res;
+      }
+      else
+        res = T::proto;
+
+      // If the user didn't specify a prototype, use Object.
+      if (res->protos_get().empty())
+        res->proto_add(Object::proto);
+      aver(res);
+
+      Binder<T> b(res);
+      T::initialize(b);
+
       // type.
       static libport::Symbol type("type");
-      res_->slot_set(type,
+      res->slot_set(type,
                      new String(T::type_name()), true);
       // clone.
       static libport::Symbol clone("clone");
-      res_->slot_set(clone,
+      res->slot_set(clone,
                      new Primitive(bind(cxx_object_clone<T>, _1)), true);
-
-      Binder<T> b(res_);
-      T::initialize(b);
 
       // asFoo.
       libport::Symbol name(std::string("as") + T::type_name());
-      if (!res_->slot_locate(name, false).first)
-        res_->slot_set(name, new Primitive(bind(cxx_object_id<T>, _1)), true);
-      return res_;
-    }
-
-    template <typename T>
-    libport::Symbol
-    CxxObject::TypeInitializer<T>::name()
-    {
-      return libport::Symbol(T::type_name());
+      if (!res->slot_locate(name, false).first)
+        res->slot_set(name, new Primitive(bind(cxx_object_id<T>, _1)), true);
+      global_class->setSlot(libport::Symbol(T::type_name()), res);
     }
 
     // BINDER
@@ -221,22 +203,6 @@ namespace urbi
       if (!is_a<T>(o))
         type_check(o, T::proto, idx);
       return o->as<T>();
-    }
-
-    template<typename T>
-    void
-    CxxObject::push_initializer_to_back()
-    {
-      CxxObject::initializers_type &l = CxxObject::initializers_get();
-      for (CxxObject::initializers_type::iterator i = l.begin();
-           i != l.end(); ++i)
-        if (CxxObject::TypeInitializer<T>* v =
-            dynamic_cast<CxxObject::TypeInitializer<T> *>(*i))
-        {
-          l.erase(i);
-          l.push_back(v);
-          break;
-        }
     }
   }
 }

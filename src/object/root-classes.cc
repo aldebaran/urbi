@@ -177,7 +177,9 @@ namespace urbi
 
       global_class = Object::proto->clone();
 
-      CxxObject::create();
+      // Run the initialization hook that where setup at static build
+      // time.
+      object::initializations_run();
 
       // The other primitives.  Because primitive initialization depend
       // a lot on one another (e.g., String is used everywhere for slot
@@ -185,14 +187,12 @@ namespace urbi
       // in the primitive classes), first create them all, then bind
       // them all.
       // Setup boolean entities.
-      global_class = Object::proto->clone();
       CLASS_INIT(global_class, Global);
       CLASS_INIT(Object::proto, Object);
       global_class_initialize();
       global_class->slot_set(SYMBOL(Global), global_class, true);
       object_class_initialize();
       global_class->slot_set(SYMBOL(Object), Object::proto, true);
-      CxxObject::initialize(global_class);
 
       // Completion cannot be done before String is complete.
       EXISTING_CLASS_SETUP(true_class, true);
@@ -208,8 +208,6 @@ namespace urbi
 
       // Object.addProto(Global)
       Object::proto->proto_add(global_class);
-
-      CxxObject::cleanup();
     }
 
     // This is only used to created references on unused classes, so

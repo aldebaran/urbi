@@ -41,6 +41,11 @@ namespace urbi
       : content_()
     {
       content_ << value;
+
+      // Initialization hack: bootstraping Primitive instantiates
+      // Primitives.
+      if (!proto)
+        proto = new Primitive(FirstPrototypeFlag());
       proto_add(proto);
       proto_remove(Object::proto);
     }
