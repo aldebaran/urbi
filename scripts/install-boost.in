@@ -59,8 +59,12 @@ do
       ;;
     (*)
       # The owner is allowed to change the libraries, and they should
-      # be executable.
-      install -m 0755 "$lib" "$DESTDIR$libdir"
+      # be executable.  Do not use "install", as it cannot preserve
+      # symlinks.  And when installing shared libraries, there are
+      # often many.
+      cp -P "$lib" "$DESTDIR$libdir"
+      base=$(basename "$lib")
+      chmod 0755 "$lib" "$DESTDIR$libdir/$base"
       ;;
   esac
 done
