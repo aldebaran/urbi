@@ -175,31 +175,7 @@ namespace urbi
       false_class = new Object();
       false_class->proto_add(Object::proto);
 
-      // Our current initialization system does not track
-      // dependencies, we have to address them by hand until some
-      // better scheme is found.
-#define INIT(Class)                                     \
-      CxxObject::push_initializer_to_back<Class>()
-
-      // Primitive derives from Executable.
-      INIT(Executable);
-      INIT(Primitive);
-      INIT(Code);
-
-      INIT(UVar);
-
-      INIT(Path);
-      INIT(Directory);
-      INIT(OutputStream);
-
-      // Duration derives from Float.
-      INIT(Float);
-      INIT(Duration);
-
-      // Events use Lists.
-      INIT(List);
-      INIT(Event);
-#undef INIT
+      global_class = Object::proto->clone();
 
       CxxObject::create();
 
