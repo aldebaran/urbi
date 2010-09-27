@@ -189,22 +189,35 @@ namespace urbi
 
   typedef boost::function0<void> Initialization;
   int initialization_register(const Initialization& action);
+
 # define URBI_INITIALIZATION_REGISTER(Action)                           \
                                                                         \
-  static int LIBPORT_CAT(_urbi_initialization, __LINE__)()              \
+  static                                                                \
+  int LIBPORT_CAT(_urbi_initialization, __LINE__)()                     \
   {                                                                     \
+    GD_CATEGORY(Urbi.CxxObject);                                        \
+    GD_INFO_TRACE("register initialization: "                           \
+                  BOOST_PP_STRINGIZE(Action));                          \
     ::urbi::initialization_register(Action);                            \
     return 0xbadf00d;                                                   \
   }                                                                     \
                                                                         \
-  inline int LIBPORT_CAT(_urbi_initialization_bouncer, __LINE__)()      \
-  {                                                                     \
-    static int dummy = LIBPORT_CAT(_urbi_initialization, __LINE__)();   \
-    return dummy;                                                       \
-  }                                                                     \
+  static inline                                                         \
+  int LIBPORT_CAT(_urbi_initialization_bouncer, __LINE__)();            \
                                                                         \
   static int LIBPORT_CAT(_urbi_initialization_register_, __LINE__) =    \
-    LIBPORT_CAT(_urbi_initialization_bouncer, __LINE__)()               \
+    LIBPORT_CAT(_urbi_initialization_bouncer, __LINE__)();              \
+                                                                        \
+  static inline                                                         \
+  int LIBPORT_CAT(_urbi_initialization_bouncer, __LINE__)()             \
+  {                                                                     \
+    static int dummy = LIBPORT_CAT(_urbi_initialization, __LINE__)();   \
+    /* Avoid unused warnings */                                         \
+    LIBPORT_CAT(_urbi_initialization_register_, __LINE__) =             \
+      LIBPORT_CAT(_urbi_initialization_register_, __LINE__);            \
+    return dummy;                                                       \
+  }                                                                     \
+
 
 }
 
