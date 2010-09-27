@@ -46,10 +46,16 @@
 
 namespace urbi
 {
-  static std::vector<Initialization> initializations_;
+  static std::vector<Initialization>&
+  initializations_()
+  {
+    static std::vector<Initialization> initializations;
+    return initializations;
+  }
+
   int initialization_register(const Initialization& action)
   {
-    initializations_ << action;
+    initializations_() << action;
     return 42;
   }
 
