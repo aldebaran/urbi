@@ -78,6 +78,7 @@ print '''\
 #ifndef ANY_TO_BOOST_FUNCTION_HXX
 # define ANY_TO_BOOST_FUNCTION_HXX
 
+# include <boost/bind.hpp>
 # include <boost/function.hpp>
 # include <urbi/object/fwd.hh>
 
