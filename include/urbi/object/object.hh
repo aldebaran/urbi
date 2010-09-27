@@ -268,6 +268,8 @@ namespace urbi
       /// \throw Exception.Lookup if not available locally.
       rObject getLocalSlot(key_type k);
       rObject getProperty(const std::string& slot, const std::string& prop);
+      bool    hasSlot(const std::string& k);
+      bool    hasLocalSlot(const std::string& k);
       rObject urbi_locateSlot(key_type k);
       rDictionary urbi_properties(key_type slotName);
       rObject urbi_removeSlot(key_type k);

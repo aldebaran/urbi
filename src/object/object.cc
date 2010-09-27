@@ -538,6 +538,18 @@ namespace urbi
       return getSlot(libport::Symbol(name));
     }
 
+    bool
+    Object::hasSlot(const std::string& name)
+    {
+      return slot_has(libport::Symbol(name));
+    }
+
+    bool
+    Object::hasLocalSlot(const std::string& name)
+    {
+      return local_slot_get(libport::Symbol(name));
+    }
+
     rObject
     Object::getLocalSlot(key_type name)
     {
