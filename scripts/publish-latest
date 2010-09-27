@@ -156,7 +156,7 @@ indirect_scp ()
 ## ------ ##
 
 # The (scp-like) directory that contains the tarballs.
-from=build@bf-1:share/built/urbi-sdk/archives
+from=build@bf-1:share/built/urbi-sdk/releases
 
 # The (scp-like) location into which the per-architecture directories are.
 to=downloads@www.gostai.com:gostai.com-downloads/urbi-sdk
@@ -173,8 +173,11 @@ getargs "$@"
 # urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86-gcc4-debug_dynamic.tar.bz2
 # urbi-sdk-2.0-beta2-498-g4f7f361-linux-x86.tar.bz2
 # urbi-sdk-2.0-beta2-498-g4f7f361-macos-x86.tar.bz2
-all=$(ssh $(scp_point "$from") \
+version=$(ssh $(scp_point "$from") \
         "cd $(scp_dir "$from") && \
+           ls -1t | sed 1q")
+all=$(ssh $(scp_point "$from") \
+        "cd $(scp_dir "$from")/$version && \
            ls -1t *.bz2 *.exe *.zip")
 
 # Make sure that we have the same version for all the architectures.
