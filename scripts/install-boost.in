@@ -62,9 +62,12 @@ do
       # be executable.  Do not use "install", as it cannot preserve
       # symlinks.  And when installing shared libraries, there are
       # often many.
-      cp -P "$lib" "$DESTDIR$libdir"
       base=$(basename "$lib")
-      chmod 0755 "$lib" "$DESTDIR$libdir/$base"
+      dest=$DESTDIR$libdir/$base
+      cp -P "$lib" "$dest"
+      if test ! -L "$dest"; then
+        chmod 0755 "$dest"
+      fi
       ;;
   esac
 done

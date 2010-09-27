@@ -66,6 +66,7 @@ $srcdir/build-aux/bin/check-lib-deps            \
 # Header completion.  Might have become useless because of install-boost.
 $srcdir/build-aux/bin/check-include-deps        \
   --verbose --verbose --verbose --verbose       \
+  --check                                       \
   --include-dir="$DESTDIR$prefix/include"       \
   $builddir
 
