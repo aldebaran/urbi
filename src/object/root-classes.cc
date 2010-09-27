@@ -252,6 +252,7 @@ namespace urbi
       Semaphore   s;
       UVar        v;
       Socket      so;
+      Tag         t;
     }
 
     namespace

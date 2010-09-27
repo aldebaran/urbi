@@ -142,7 +142,5 @@ namespace urbi
 #undef DECLARE
     }
 
-    URBI_CXX_OBJECT_REGISTER(Dictionary)
-    {}
   }
 }

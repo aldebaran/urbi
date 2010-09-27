@@ -201,9 +201,5 @@ namespace urbi
 #undef DECLARE
     }
 
-    URBI_CXX_OBJECT_REGISTER(Position)
-      : pos_()
-    {}
-
   } // namespace object
 } // namespace urbi

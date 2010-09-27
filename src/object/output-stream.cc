@@ -95,9 +95,5 @@ namespace urbi
       bind(SYMBOL(put),   &OutputStream::putByte);
     }
 
-    URBI_CXX_OBJECT_REGISTER(OutputStream)
-      : Stream(STDOUT_FILENO, false)
-    {}
-
   }
 }

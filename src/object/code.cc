@@ -192,14 +192,5 @@ namespace urbi
       return r.apply(this, libport::Symbol::make_empty(), args);
     }
 
-
-    URBI_CXX_OBJECT_REGISTER(Code)
-    {
-      PARAMETRIC_AST(ast, "function () {}");
-      ast_ = ast.result<const ast::Routine>();
-      proto_add(Executable::proto);
-      proto_remove(Object::proto);
-    }
-
   } // namespace object
 }

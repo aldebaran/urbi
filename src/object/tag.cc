@@ -235,9 +235,5 @@ namespace urbi
 #undef DECLARE
     }
 
-    URBI_CXX_OBJECT_REGISTER(Tag)
-      : value_(new sched::Tag(libport::Symbol::make_empty()))
-    {}
-
   } // namespace object
 }

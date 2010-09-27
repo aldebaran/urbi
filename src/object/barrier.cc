@@ -111,8 +111,5 @@ namespace urbi
       bind(SYMBOL(wait),      &Barrier::wait);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Barrier)
-    {}
-
   } // namespace object
 }

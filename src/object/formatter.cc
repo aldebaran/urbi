@@ -119,8 +119,5 @@ namespace urbi
     }
 #undef OPERATOR_PCT
 
-    URBI_CXX_OBJECT_REGISTER(Formatter)
-    {}
-
   } // namespace object
 }

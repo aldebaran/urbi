@@ -251,10 +251,5 @@ namespace urbi
       return ios;
     }
 
-    URBI_CXX_OBJECT_REGISTER(Socket)
-    : libport::Socket(*get_default_io_service().get())
-    {
-      io_service_ = get_default_io_service();
-    }
   }
 }

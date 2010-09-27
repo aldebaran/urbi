@@ -272,8 +272,5 @@ namespace urbi
       proto->slot_set(SYMBOL(init), p);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Directory)
-      : path_(new Path())
-    {}
   }
 }

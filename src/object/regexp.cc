@@ -103,9 +103,5 @@ namespace urbi
       bind(SYMBOL(SBL_SBR), &Regexp::operator[]);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Regexp)
-      : re_(".")
-    {}
-
   }
 }

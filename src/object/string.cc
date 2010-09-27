@@ -458,8 +458,5 @@ namespace urbi
       proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
     }
 
-    URBI_CXX_OBJECT_REGISTER(String)
-    {}
-
   } // namespace object
 }

@@ -485,9 +485,5 @@ namespace urbi
       Float::proto->setSlot("pi", new Float(M_PI));
     }
 
-    URBI_CXX_OBJECT_REGISTER(Float)
-      : value_(0)
-    {}
-
   }; // namespace object
 }

@@ -403,8 +403,5 @@ namespace urbi
       bind(SYMBOL(sort),      &sort_bouncer          );
     }
 
-    URBI_CXX_OBJECT_REGISTER(List)
-    {}
-
   } // namespace object
 }

@@ -80,10 +80,6 @@ namespace urbi
     | Urbi functions.  |
     `-----------------*/
 
-    typedef
-    void (Event::*on_event_type)
-    (rExecutable guard, rExecutable enter, rExecutable leave);
-
     void
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave)
     {
@@ -167,7 +163,6 @@ namespace urbi
       emit_backend(pl, false);
     }
 
-    typedef void (Event::*emit_type)(const objects_type& args);
     void
     Event::emit(const objects_type& args)
     {
@@ -370,23 +365,6 @@ namespace urbi
           event_->callbacks_.erase(it);
           return;
         }
-    }
-
-    /*---------------.
-    | Urbi binding.  |
-    `---------------*/
-
-    URBI_CXX_OBJECT_REGISTER(Event)
-    {
-      bind(SYMBOL(emit), static_cast<emit_type>(&Event::emit));
-      bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
-      bind(SYMBOL(localTrigger), &Event::localTrigger);
-      bind(SYMBOL(onEvent), static_cast<on_event_type>(&Event::onEvent));
-      bind(SYMBOL(stop), &Event::stop);
-      bind(SYMBOL(syncEmit), &Event::syncEmit);
-      bind(SYMBOL(syncTrigger), &Event::syncTrigger);
-      bind(SYMBOL(trigger), &Event::trigger);
-      bind(SYMBOL(waituntil), &Event::waituntil);
     }
   }
 }

@@ -334,11 +334,5 @@ namespace urbi
       proto->slot_set(SYMBOL(updateBounce), new Primitive(&update_bounce));
     }
 
-    URBI_CXX_OBJECT_REGISTER(UVar)
-      : Primitive( boost::bind(&UVar::accessor, this))
-      , looping_(false)
-      , inAccess_(false)
-    {}
-
   }
 }

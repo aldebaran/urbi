@@ -89,18 +89,5 @@ namespace urbi
         }
     }
 
-    static rObject nil(const objects_type&)
-    {
-      return void_class;
-    }
-
-    URBI_CXX_OBJECT_REGISTER(Primitive)
-      : content_()
-    {
-      content_ << boost::function1<rObject, const objects_type&>(nil);
-      proto_add(Executable::proto);
-      proto_remove(Object::proto);
-    }
-
   }; // namespace object
 }

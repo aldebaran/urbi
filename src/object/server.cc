@@ -107,10 +107,5 @@ namespace urbi
       bind(SYMBOL(sockets), &Server::sockets);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Server)
-    : libport::Socket(*object::Socket::get_default_io_service().get())
-      , io_service_(object::Socket::get_default_io_service())
-    {}
-
   }
 }

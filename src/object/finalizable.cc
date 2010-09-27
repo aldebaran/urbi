@@ -78,7 +78,5 @@ namespace urbi
       DECLARE(__get);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Finalizable)
-    {}
   }
 }

@@ -133,7 +133,5 @@ namespace urbi
       bind(SYMBOL(put), (void (UValue::*)(rObject))&UValue::put);
     }
 
-    URBI_CXX_OBJECT_REGISTER(UValue)
-    {}
   }
 }

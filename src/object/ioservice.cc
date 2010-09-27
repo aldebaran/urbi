@@ -69,8 +69,5 @@ namespace urbi
       return rServer(new Server(this));
     }
 
-    URBI_CXX_OBJECT_REGISTER(IoService)
-    {
-    }
   }
 }

@@ -97,8 +97,5 @@ namespace urbi
       bind(SYMBOL(release),         &Semaphore::release);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Semaphore)
-    {}
-
   } // namespace object
 }

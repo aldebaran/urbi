@@ -174,10 +174,5 @@ namespace urbi
       bind(SYMBOL(instances), &Lobby::instances_get);
     }
 
-
-    URBI_CXX_OBJECT_REGISTER(Lobby)
-      : connection_(0)
-    {}
-
   }; // namespace object
 }

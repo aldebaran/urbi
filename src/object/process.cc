@@ -333,15 +333,5 @@ namespace urbi
 
       libport::startThread(boost::function0<void>(&Process::monitor_children));
     }
-
-    URBI_CXX_OBJECT_REGISTER(Process)
-      : name_(libport::path("true").basename())
-      , pid_(0)
-      , binary_("/bin/true")
-      , argv_()
-      , status_(-1)
-    {
-      argv_ << binary_;
-    }
   }
 }

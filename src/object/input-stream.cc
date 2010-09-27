@@ -153,11 +153,5 @@ namespace urbi
       bind(SYMBOL(init), &InputStream::init);
     }
 
-    URBI_CXX_OBJECT_REGISTER(InputStream)
-      : Stream(STDIN_FILENO, false)
-      , pos_(0)
-      , size_(0)
-    {}
-
   }
 }

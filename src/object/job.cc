@@ -182,8 +182,5 @@ namespace urbi
       bind(SYMBOL(waitForTermination), &Job::waitForTermination);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Job)
-    {}
-
   }; // namespace object
 }

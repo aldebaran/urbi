@@ -255,9 +255,5 @@ namespace urbi
       DECLARE(writable, writable);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Path)
-      : path_(WIN32_IF("C:\\", "/"))
-    {}
-
   }
 }

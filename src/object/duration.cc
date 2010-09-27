@@ -79,15 +79,5 @@ namespace urbi
       return boost::posix_time::microseconds(time_t(value_get() * 1000000));
     }
 
-    URBI_CXX_OBJECT_REGISTER(Duration)
-      : Float(0)
-    {
-      proto_add(Float::proto);
-
-      bind(SYMBOL(asPrintable), &Duration::asPrintable);
-      bind(SYMBOL(asString), &Duration::as_string);
-      bind(SYMBOL(init), &Duration::init);
-      bind(SYMBOL(seconds), &Duration::seconds);
-    }
   }
 }

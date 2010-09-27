@@ -204,8 +204,5 @@ namespace urbi
       bind(SYMBOL(now), &Date::now);
     }
 
-    URBI_CXX_OBJECT_REGISTER(Date)
-      : time_(boost::posix_time::microsec_clock::local_time())
-    {}
   }
 }

@@ -113,10 +113,5 @@ namespace urbi
 #undef DECLARE
     }
 
-    URBI_CXX_OBJECT_REGISTER(Location)
-      : loc_()
-    {}
-
-
   } // namespace object
 } // namespace urbi

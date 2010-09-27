@@ -11,8 +11,9 @@
 #ifndef OBJECT_STRING_UVALUE_HH
 # define OBJECT_STRING_UVALUE_HH
 
-# include <urbi/object/cxx-object.hh>
 # include <runner/runner.hh>
+# include <urbi/object/cxx-object.hh>
+# include <urbi/uvalue.hh>
 
 namespace urbi
 {

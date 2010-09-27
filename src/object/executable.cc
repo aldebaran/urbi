@@ -34,9 +34,5 @@ namespace urbi
     void Executable::initialize(CxxObject::Binder<Executable>&)
     {}
 
-    URBI_CXX_OBJECT_REGISTER(Executable)
-    {
-
-    }
   }
 }
