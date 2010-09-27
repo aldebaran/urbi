@@ -22,3 +22,11 @@ doc/sdk-remote.htmldir: $(call ls_files, *.hh *.hxx *.cc)
 if ENABLE_DOC_DOXYGEN
 html_DIR += doc/sdk-remote.htmldir
 endif
+
+## ------------- ##
+## install-doc.  ##
+## ------------- ##
+.PHONY: install-doc
+doc_files = doc/sdk-remote.htmldir
+install-doc: $(doc_files)
+	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
