@@ -7,6 +7,118 @@
 ## See the LICENSE file for more information.
 
 
+# This makefile does several things:
+# - call SWIG to parse C++ headers files, and generate Java (.java)
+#   sources files, and C++ sources files (this C++ code does the
+#   binding between Java code and Urbi SDK)
+# - compile the C++ generated code, plus some code I provide in the
+#   src folder in order to create the library liburbijava.so
+# - then compile the Java code (all the .java) generated plus the java
+#   code of the examples and the java code of the tests. This is done
+#   by giving all java sources to tobuild_JAVA variable (and automake
+#   <<makes the coffee>>...)
+# - finally it takes all the java objects (.class files) and create
+#   several jars files (one main jar for the liburbijava, and several
+#   for example code and test code)
+
+# Since the rules depends from the result of each other, this makefile
+# is quite hackish:
+# - compilation of java code depends on generation of java sources by
+#   swig
+# - creation of jar files depends on compilation of java sources
+#   (since jars aggregate java objects)
+
+# Try to disable -O2 by all means (or liburbiJNI.SWIGURBIStarterJavaUpcast from wont work)
+AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi/swig/java
+AM_CXXFLAGS =
+AM_CFLAGS =
+
+CFLAGS=
+CXXFLAGS=
+CPPFLAGS=
+
+EXTRA_DIST =					\
+  swig/boost_unordered_map.i			\
+  swig/java.i					\
+  swig/udictionary-javacode.i
+
+java_src_outdir = urbi/generated/
+java_package = urbi.generated
+
+SWIG_FLAGS =					\
+	-c++ -java -Wall			\
+	-outdir $(java_src_outdir)		\
+	-I$(top_srcdir)/src/liburbi/uobject/	\
+	-I$(top_srcdir)/include/		\
+	-package $(java_package)
+
+# Invoque Swig and generate: java sources & C++ jni code (liburbi_java.cc)
+java.cc: swig/java.i
+	$(mkdir_p) $(java_src_outdir)
+	$(SWIG) $(SWIG_FLAGS) $(SWIG_ARGS) -o $@.tmp $<
+	mv $@.tmp $@
+
+BUILT_SOURCES = java.cc java.cc.h
+
+lib_LTLIBRARIES = liburbijava.la
+
+liburbijava_la_SOURCES =			\
+  java.cc					\
+  java.cc.h					\
+  src/callbacks-caller.hh			\
+  src/callbacks-caller.cc			\
+  src/call-macros.hh				\
+  src/urbi_UObject.h				\
+  src/urbi_UObject.cc				\
+  src/urbi_Log.cc				\
+  src/urbi_Log.h
+
+liburbijava_la_LIBADD = $(top_builddir)/src/liburbi/liburbi.la $(top_builddir)/src/libuobject/libuobject.la
+liburbijava_la_CPPFLAGS = -I/usr/lib/jvm/default-java/include -I$(top_srcdir)/libport/include
+
+CLEANFILES =					\
+	java.cc.h				\
+	java.cc					\
+	$(wildcard $(java_src_outdir)/*.java)
+
+
+if WIN32
+liburbijava_la_LDFLAGS = -Wl,--add-stdcall-alias
+
+# Add generation of jvm library dll link file, because in java lib folder
+# there is only the static version jvm.lib and libtool complains and doesn't
+# want to create a shared library using it.
+libjvm.dll.a:
+	echo -e "EXPORTS\\nJNI_CreateJavaVM@12\\nJNI_GetDefaultJavaVMInitArgs@4\\nJNI_GetCreatedJavaVMs@12" > jvm.def
+	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
+
+BUILT_SOURCES += libjvm.dll.a
+
+CLEANFILES += 					\
+	libjvm.dll.a				\
+	jvm.def
+
+# link with the generated jvm link file
+liburbijava_la_LIBADD += -L. -ljvm
+
+endif
+liburbijava_la_CXXFLAGS =	-I$$JAVA_HOME/include				\
+				-I$$JAVA_HOME/include/$(JAVA_INCLUDE_DIR)	\
+				-I$(top_srcdir)/include/			\
+				-I$(top_srcdir)/src/liburbi/uobject/		\
+				-I$(top_builddir)/include/ 			\
+				$(BOOST_CPPFLAGS)
+
+# Under windows path are set to C:/cygwin... in libdir, which
+# then prevent us to install the .la in a place with a DESTDIR
+# libtool complains that he want some path ending in "C:/cygwin..."
+# So we remote the C:/cygwin
+# On other Os we assume paths do not contains C:/cygwin
+dirty-fix:
+	perl -pi -e "s,libdir='C:/cygwin,libdir=',g" liburbijava.la
+
+install-exec-local: dirty-fix
+
 javadir = $(pkgdatadir)/java
 JAVAROOT = .
 
@@ -14,7 +126,7 @@ JAVAROOT = .
 ##   SDK Java   ##
 ## ------------ ##
 
-gnu_bytecode_SOURCES =				\
+gnu_bytecode_SRC =				\
 	gnu/bytecode/Access.java		\
 	gnu/bytecode/ArrayClassLoader.java	\
 	gnu/bytecode/ArrayType.java		\
@@ -61,7 +173,9 @@ gnu_bytecode_SOURCES =				\
 	gnu/bytecode/ZipArchive.java		\
 	gnu/bytecode/ZipLoader.java
 
-liburbi_SOURCES =				\
+gnu_bytecode_OBJ = $(gnu_bytecode_SRC:.java=.class)
+
+liburbi_SRC =				\
 	urbi/ImageComponent.java		\
 	urbi/ImageFilter.java			\
 	urbi/ImageSampler.java			\
@@ -76,20 +190,30 @@ liburbi_SOURCES =				\
 	urbi/UMain.java				\
 	urbi/Log.java
 
+liburbi_OBJ = $(wildcard urbi/*.class)
 
-generated_SOURCES =				\
-	$(wildcard urbi/generated/*.java)
+generated_SRC = $(wildcard urbi/generated/*.java)
+
+# javac generate objects files (.class) that contains $ in their name,
+# so escape them before constructing .jar file.
+plop = $(wildcard urbi/generated/*.class)
+generated_OBJ = $(foreach file,$(plop),'$(file)')
 
 liburbijava_JAR = lib/liburbijava.jar
-liburbijava_SRC = $(gnu_bytecode_SOURCES) $(liburbi_SOURCES) $(generated_SOURCES)
+liburbijava_SRC = $(gnu_bytecode_SRC) $(liburbi_SRC) $(generated_SRC)
 liburbijavadir = $(javadir)
-liburbijava_OBJECTS = $(liburbijava_SRC:.java=.class)
+liburbijava_OBJECTS = $(gnu_bytecode_OBJ) $(liburbi_OBJ) $(generated_OBJ)
 
-$(liburbijava_JAR): $(liburbijava_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(liburbijava_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+# Below this is a HUGE hack so that we construct a .jar containing
+# _all_ java objects ie, .class from the normal java sources + .class
+# from the generated java sources
+gen-liburbi-java:
+	$(JAR) -cvf $$(basename $(liburbijava_JAR)) $(liburbijava_OBJECTS)
+	mkdir -p $$(dirname $(liburbijava_JAR))
+	mv $$(basename $(liburbijava_JAR)) $$(dirname $(liburbijava_JAR))
 
+$(liburbijava_JAR): java.cc
+	make -C . gen-liburbi-java
 
 ## ------------ ##
 ##   Examples   ##
@@ -242,6 +366,8 @@ ALL_SOURCES = 					\
 	$(talkie_SRC)				\
 	$(all_SRC)
 
+ALL_OBJECTS= $(ALL_SOURCES:.java=.class)
+
 JAR_FILES =					\
 	$(liburbijava_JAR) 			\
 	$(uobjectjava_JAR)			\
@@ -271,6 +397,7 @@ tobuilddir = $(javadir)
 # Install liburbi java sources and examples sources
 nobase_dist_java_DATA = $(ALL_SOURCES)
 nobase_nodist_java_DATA = $(JAR_FILES)
+
 
 # Install examples manifests
 nobase_dist_java_DATA +=			\
@@ -310,6 +437,5 @@ dist_java_DATA =				\
 	sample/URBISound.launch			\
 	sample/URBITalkie.launch
 
-
 clean-local:
-	$(RM) $(liburbijava_OBJECTS) $(JAR_FILES)
+	$(RM) $(ALL_OBJECTS) $(JAR_FILES)
