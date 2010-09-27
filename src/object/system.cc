@@ -181,6 +181,11 @@ namespace urbi
                             SYMBOL(eval), code);
     }
 
+    rObject eval(const std::string& code)
+    {
+      return system_eval(0, code);
+    }
+
     static rObject
     system_searchFile(const rObject&, const rObject& f)
     {

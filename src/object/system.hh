@@ -40,6 +40,8 @@ namespace urbi
     void system_set_program_name(const std::string& name);
     /// Register a new user-argument for the script
     void system_push_argument(const std::string& arg);
+    /// System.eval
+    rObject eval(const std::string& code);
 
     /// Initialize the System class.
     void system_class_initialize();
