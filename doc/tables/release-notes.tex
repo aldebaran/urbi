@@ -12,13 +12,7 @@
 This chapter lists the user-visible changes in \usdk releases.
 
 \section{\usdk 2.3}
-\subsection{Fixes}
-\begin{itemize}
-\item \refSlot[System]{version} Really returns the current version.
-\end{itemize}
-
-
-\section{\usdk 2.2.1}
+Released on 2010-09-27.
 
 \subsection{Fixes}
 \begin{itemize}
@@ -29,12 +23,13 @@ This chapter lists the user-visible changes in \usdk releases.
 \item \refSlot[Object]{inspect} works properly, even if the target is a
   remote lobby.
 \item \slot[Regexp]{match}s renamed as \refSlot[Regexp]{matches}.
+\item \refSlot[System]{version} Really returns the current version.
 \item Fix multiple race conditions in RTP handling code preventing proper
   initialization of remote UObjects.
 \item Fix windows deployment to have both debug and release UObjects
   installed.
-\item Fix urbi-sound in the liburbi examples.
-\item Fix server mode of urbi-launch --remote.
+\item Fix \command{urbi-sound} in the liburbi examples.
+\item Fix server mode of \samp{urbi-launch --remote}.
 \end{itemize}
 
 \subsection{New Features}
@@ -48,9 +43,9 @@ This chapter lists the user-visible changes in \usdk releases.
 \item In addition to Gostai Console, Windows installers of \usdk now include
   the Gostai Editor.
 
-\item By popular demand, all the Boost libraries is included in the binary
-  packages.  We used to provide only the headers and libraries \usdk depends
-  upon.  Boost.Python, because it has too many dependencies, is not
+\item By popular demand, all the Boost libraries (1.38) are included in the
+  binary packages.  We used to provide only the headers and libraries \usdk
+  depends upon.  Boost.Python, because it has too many dependencies, is not
   included.
 
 \item Assignment operators such as \lstinline|'+='| are redefinable.  See
