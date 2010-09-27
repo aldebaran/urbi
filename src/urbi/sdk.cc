@@ -14,10 +14,23 @@
 
 #include <urbi/sdk.hh>
 #include <kernel/userver.hh>
+#include <object/system.hh>
 #include <runner/runner.hh>
 
 namespace urbi
 {
+  object::rObject
+  run(const std::string& code)
+  {
+    return object::eval(code);
+  }
+
+  object::rObject
+  run_bg(const std::string& code)
+  {
+    return object::eval("detach({" + code + "});");
+  }
+
   void
   yield()
   {
