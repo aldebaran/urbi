@@ -366,10 +366,11 @@ namespace urbi
         version();
 #endif
       data.interactive = IF_OPTION_PARSER(arg_interactive.get(),
-                                           getenv("URBI_INTERACTIVE"));
-      data.fast = IF_OPTION_PARSER(arg_fast.get(), false);
-
+                                          getenv("URBI_INTERACTIVE"));
 #ifndef NO_OPTION_PARSER
+
+      data.fast = arg_fast.get();
+
       arg_stack_size = arg_stack.get<size_t>(static_cast<size_t>(0));
 
      // Since arg_remaining ate everything, args should be empty
@@ -413,6 +414,7 @@ namespace urbi
       arg_stack_size = ((arg_stack_size + pagesize - 1) / pagesize) * pagesize;
       sched::configuration.default_stack_size = arg_stack_size;
     }
+
     data.server = new ConsoleServer(data.fast, urbi_root);
     ConsoleServer& s = *data.server;
 
@@ -451,6 +453,12 @@ namespace urbi
       }
     }
     data.network = 0 < port;
+
+    // If neither -e, -f, or -P is used, enable -i.
+    if (! data.network
+        && libport::opts::input_arguments.empty())
+      data.interactive = true;
+
     // In Urbi: System.listenPort = <port>.
     object::system_class->slot_set(SYMBOL(listenPort),
                                    object::to_urbi(port),

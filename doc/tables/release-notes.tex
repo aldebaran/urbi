@@ -11,6 +11,15 @@
 
 This chapter lists the user-visible changes in \usdk releases.
 
+\section{\usdk 2.3.1}
+
+\subsection{New Features}
+\begin{itemize}
+\item When launched with no input (i.e., none of the options
+  \option{-e}/\option{--expression}, \option{-f}/\option{--file},
+  \option{-P}/\option{--port} were given), the interpreter is interactive.
+\end{itemize}
+
 \section{\usdk 2.3}
 Released on 2010-09-27.
 
@@ -26,7 +35,7 @@ Released on 2010-09-27.
 \item \refSlot[System]{version} Really returns the current version.
 \item Fix multiple race conditions in RTP handling code preventing proper
   initialization of remote UObjects.
-\item Fix windows deployment to have both debug and release UObjects
+\item Fix Windows deployment to have both debug and release UObjects
   installed.
 \item Fix \command{urbi-sound} in the liburbi examples.
 \item Fix server mode of \samp{urbi-launch --remote}.
@@ -38,7 +47,8 @@ Released on 2010-09-27.
   communicate with an \urbi server --- either by hand or via the UObjects
   ---, is included in the binary packages (in
   \file{share/doc/urbi-sdk/sdk-remote.htmldir/index.html}.  It is also
-  available on-line at \url{}.
+  available on-line at
+  \url{\downloadUrl/\packageTarname/\packageVersion/doc/sdk-remote.htmldir}.
 
 \item In addition to Gostai Console, Windows installers of \usdk now include
   the Gostai Editor.
@@ -101,11 +111,12 @@ eval("new Object");
 \end{urbiscript}
 \item New functions \lstinline|as| and \lstinline|fill| on UVar to ease access
 to the generic cast system.
-\item Add support to boost::unordered\_map to UObject casting system.
+\item Add support to \code{boost::unordered\_map} to UObject casting system.
 \item Optimize remote UObjects: notifies between two objects in the same
   process instance are transmitted locally.
-\item Provide a CustomUVar class to ease encapsulation of custom data in UVar.
-\item Bind the 'constant' property on UVar.
+\item Provide a \code{CustomUVar} class to ease encapsulation of custom data
+  in UVar.
+\item Bind the \code{constant} property on UVar.
 \end{itemize}
 
 
