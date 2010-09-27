@@ -76,8 +76,34 @@ libs:
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src libs
 	$(MAKE) $(AM_MAKEFLAGS) -C src libuobject$(LIBSFX).la
 
+
+
+## ------------- ##
+## install-doc.  ##
+## ------------- ##
+
+doc_host = downloads@www.gostai.com
+doc_upload_dir = gostai.com-downloads
+doc_dir = $(doc_upload_dir)/$(PACKAGE_TARNAME)/$(PACKAGE_VERSION)-experiment
 install-doc:
-	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
+	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new $(doc_dir)/doc.old && \
+			 mkdir -p $(doc_dir)/doc.new'
+	for i in doc sdk-remote;		\
+	do					\
+	  $(MAKE) $(AM_MAKEFLAGS)		\
+	    doc_host='$(doc_host)'		\
+	    doc_dir='$(doc_dir)'		\
+	    -C $$i $@;				\
+	done
+	ssh $(doc_host)					\
+	  'cd $(doc_dir) &&				\
+	   { test ! -e doc || mv doc doc.old; } &&	\
+	   mv doc.new doc &&				\
+	   rm -rf doc.old'
+## FIXME: Race condition on this script.  It would be better to
+## have the script run ssh rather that the converse.
+	scp $(build_aux_dir)/bin/symlink-to-latest $(doc_host):/tmp
+	ssh $(doc_host) 'perl -f /tmp/symlink-to-latest $(doc_dir)'
 
 
 ## ------- ##

@@ -196,19 +196,6 @@ install-data-hook:
 ## install-doc.  ##
 ## ------------- ##
 .PHONY: install-doc
-doc_host = downloads@www.gostai.com
-doc_upload_dir = gostai.com-downloads
-doc_dir = $(doc_upload_dir)/$(PACKAGE_TARNAME)/$(PACKAGE_VERSION)
-doc_files = $(pdf_DATA) $(html_DIR)
+doc_files = $(pdf_DATA) urbi-sdk.htmldir
 install-doc: $(doc_files)
-	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new && \
-			 mkdir -p $(doc_dir)/doc.new'
 	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new
-	ssh $(doc_host)				\
-	  'cd $(doc_dir) &&			\
-	   rm -rf doc &&			\
-	   mv doc.new doc'
-## FIXME: Race condition on this script.  It would be better to
-## have the script run ssh rather that the converse.
-	scp $(build_aux_dir)/bin/symlink-to-latest $(doc_host):/tmp
-	ssh $(doc_host) 'perl -f /tmp/symlink-to-latest $(doc_dir)'
