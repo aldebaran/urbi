@@ -51,6 +51,29 @@ chmod -R u+w "$DESTDIR$includedir"
 ## Libraries.  ##
 ## ----------- ##
 
+# symstack_cp SOURCE DIR
+# ----------------------
+# Copy SOURCE to DIR.  If it is a symlink, also copy what it points to
+# in DIR (and recursively).
+symstack_cp ()
+{
+  local source=$1
+  local base=$(basename "$source")
+  local dir=$2
+  local dest=$dir/$base
+
+  # The owner is allowed to change the libraries, and they should be
+  # executable.  Do not use "install", as it cannot preserve symlinks.
+  # And when installing shared libraries, there are often many.
+  cp -P "$source" "$dest"
+  if test -L "$source"; then
+    linked=$(readlink $source)
+    symstack_cp "$linked" "$dir"
+  else
+    chmod 0755 "$dest"
+  fi
+}
+
 for lib in $boost_library_glob
 do
   case $lib in
@@ -58,16 +81,7 @@ do
       # Don't install Boost.Python, it is too demanding.
       ;;
     (*)
-      # The owner is allowed to change the libraries, and they should
-      # be executable.  Do not use "install", as it cannot preserve
-      # symlinks.  And when installing shared libraries, there are
-      # often many.
-      base=$(basename "$lib")
-      dest=$DESTDIR$libdir/$base
-      cp -P "$lib" "$dest"
-      if test ! -L "$dest"; then
-        chmod 0755 "$dest"
-      fi
+      symstack_cp "$lib" "$DESTDIR$libdir"
       ;;
   esac
 done
