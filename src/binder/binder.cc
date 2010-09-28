@@ -109,26 +109,6 @@ namespace binder
     return recurse(ast::rCall(call.result<ast::Call>()));
   }
 
-  ast::rExp
-  Binder::changeSlot(const ast::loc& l,
-                     const ast::rExp& target,
-                     const libport::Symbol& name,
-                     ast::rConstExp value)
-  {
-    PARAMETRIC_AST(document,
-                   "{"
-                   "  %exp:1 . createSlot(%exp:2) | "
-                   "  %exp:7"
-                   "}");
-
-    ast::rExp res = changeSlot(l, target, name, SYMBOL(updateSlot), value);
-    document
-      % target
-      % new ast::String(l, name)
-      % res;
-    return (exp(document));
-  }
-
   /*----------------.
   | Routine stack.  |
   `----------------*/

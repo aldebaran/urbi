@@ -142,10 +142,6 @@ namespace binder
                           const libport::Symbol& name,
                           const libport::Symbol& method,
                           ast::rConstExp value = 0);
-    ast::rExp changeSlot(const ast::loc& l,
-                         const ast::rExp& target,
-                         const libport::Symbol& name,
-                         ast::rConstExp value = 0);
 
     /// Make a lazy from \a arg.
     ast::rExp lazify(ast::rExp arg);
