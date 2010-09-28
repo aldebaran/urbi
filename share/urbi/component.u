@@ -184,6 +184,7 @@ class Global.Component
     if (value.isA(String))
       value = Component.new(value) |
     setSlot(value.componentName, value) |
+    setProperty(value.componentName, "constant", true) |
     this << value |
     Object.getSlot("updateSlot").apply([value, "parentComponent", this]) |
     value
@@ -192,6 +193,7 @@ class Global.Component
   function addDevice(name, value)
   {
     setSlot(name, value) |
+    setProperty(name, "constant", true) |
     // Device inherits from at least a facet which has those slots
     value.updateSlot("parentComponent", this) |
     value.updateSlot("componentName", name) |
@@ -377,7 +379,10 @@ class Global.Component
     }|
     name = name + localizers |
     if (!where.hasLocalSlot(name))
+    {
         where.setSlot(name, this) |
+        where.setProperty(name, "constant", true)
+    }|
     removeSlot("compactName") | setSlot("compactName", name)
   }|;
 
