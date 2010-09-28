@@ -11,17 +11,8 @@
 
 This chapter lists the user-visible changes in \usdk releases.
 
-\section{\usdk 2.3.1}
-
-\subsection{New Features}
-\begin{itemize}
-\item When launched with no input (i.e., none of the options
-  \option{-e}/\option{--expression}, \option{-f}/\option{--file},
-  \option{-P}/\option{--port} were given), the interpreter is interactive.
-\end{itemize}
-
 \section{\usdk 2.3}
-Released on 2010-09-27.
+Released on 2010-09-28.
 
 \subsection{Fixes}
 \begin{itemize}
@@ -50,13 +41,17 @@ Released on 2010-09-27.
   available on-line at
   \url{\downloadUrl/\packageTarname/\packageVersion/doc/sdk-remote.htmldir}.
 
-\item In addition to Gostai Console, Windows installers of \usdk now include
-  the Gostai Editor.
+\item In addition to Gostai Console 2.5, Windows installers of \usdk now
+  include the Gostai Editor 2.4.1.
 
 \item By popular demand, all the Boost libraries (1.38) are included in the
   binary packages.  We used to provide only the headers and libraries \usdk
   depends upon.  Boost.Python, because it has too many dependencies, is not
   included.
+
+\item When launched with no input (i.e., none of the options
+  \option{-e}/\option{--expression}, \option{-f}/\option{--file},
+  \option{-P}/\option{--port} were given), the interpreter is interactive.
 
 \item Assignment operators such as \lstinline|'+='| are redefinable.  See
   \autoref{sec:lang:iass}.
