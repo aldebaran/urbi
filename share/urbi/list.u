@@ -22,7 +22,7 @@ do (List)
     {
       if (size != that.size)
         return false|
-      for| (var i : size.seq)
+      for| (var i : size)
         if (this[i] != that[i])
           return false|
     }
@@ -97,7 +97,7 @@ do (List)
   function foldl(action, value)
   {
     var res = value|
-    for (var i : size.seq)
+    for (var i : size)
       res = action(res, this[i])|
     res
   };
