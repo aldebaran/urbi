@@ -38,7 +38,7 @@ do (List)
 
   function '<'(var that)
   {
-    for| (var i : size.min(that.size).seq)
+    for| (var i : size.min(that.size))
       if (this[i] < that[i])
         return true
       else if (that[i] < this[i])
