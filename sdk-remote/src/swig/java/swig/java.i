@@ -113,7 +113,7 @@ namespace urbi
 #define URBI_SDK_API
 #define __attribute__(foobar)
 #define ATTRIBUTE_DEPRECATED
-
+#define ATTRIBUTE_PRINTF(foo, barx)
 
 /**************************************************************************\
 |                                                                          |
