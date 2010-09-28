@@ -69,17 +69,14 @@ import java.util.Set;
       this.value = value;
     }
 
-    @Override
     public String getKey() {
       return key;
     }
 
-    @Override
     public UValue getValue() {
       return value;
     }
 
-    @Override
     public UValue setValue(UValue value) {
       UValue old = this.value;
       this.value = value;
@@ -155,12 +152,10 @@ import java.util.Set;
       this.iterator = d.getIterator();
     }
 
-    @Override
     public boolean hasNext() {
       return iterator.hasNext();
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public UDictionaryEntry next() {
       UDictionaryEntry res = new UDictionaryEntry(dict, iterator.getKey(), iterator.getValue());
@@ -173,7 +168,6 @@ import java.util.Set;
      * <p>
      * Unsupported
      */
-    @Override
     public void remove() {
       throw new UnsupportedOperationException();
     }

@@ -31,7 +31,7 @@ public class UObjectStarter extends URBIStarterJAVA
     public UObjectCPP instanciate(UContextImpl ctx, String n)
     {
 	String rn = n;
-	if (rn.isEmpty())
+	if (("").equals(rn))
 	    rn = uobject_name; //getName();
 	urbi.setCurrentContext (ctx);
 	UObjectCPP res = null;
