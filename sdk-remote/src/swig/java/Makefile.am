@@ -46,11 +46,11 @@ java_src_outdir = urbi/generated/
 java_package = urbi.generated
 
 SWIG_FLAGS =					\
-	-c++ -java -Wall			\
-	-outdir $(java_src_outdir)		\
-	-I$(top_srcdir)/src/liburbi/uobject/	\
-	-I$(top_srcdir)/include/		\
-	-package $(java_package)
+  -c++ -java -Wall				\
+  -outdir $(java_src_outdir)			\
+  -I$(top_srcdir)/src/liburbi/uobject/		\
+  -I$(top_srcdir)/include/			\
+  -package $(java_package)
 
 # Invoque Swig and generate: java sources & C++ jni code (liburbi_java.cc)
 java.cc: swig/java.i
@@ -72,14 +72,19 @@ liburbijava_la_SOURCES =			\
   src/urbi_UObject.cc				\
   src/urbi_Log.cc				\
   src/urbi_Log.h
-
-liburbijava_la_LIBADD = $(top_builddir)/src/liburbi/liburbi.la $(top_builddir)/src/libuobject/libuobject.la
-liburbijava_la_CPPFLAGS = -I$(JAVAPREFIX)/include -I$(JAVAPREFIX)/include/linux -I$(top_srcdir)/libport/include  -I$(top_builddir)/libport/include
+liburbijava_la_LIBADD = 			\
+  $(top_builddir)/src/liburbi/liburbi.la	\
+  $(top_builddir)/src/libuobject/libuobject.la
+liburbijava_la_CPPFLAGS =			\
+  -I$$JAVA_HOME/include				\
+  -I$$JAVA_HOME/include/linux			\
+  -I$(top_srcdir)/libport/include		\
+  -I$(top_builddir)/libport/include
 
 CLEANFILES =					\
-	java.cc.h				\
-	java.cc					\
-	$(wildcard $(java_src_outdir)/*.java)
+  java.cc.h					\
+  java.cc					\
+  $(wildcard $(java_src_outdir)/*.java)
 
 
 if WIN32
@@ -102,12 +107,14 @@ CLEANFILES += 					\
 liburbijava_la_LIBADD += -L. -ljvm
 
 endif
-liburbijava_la_CXXFLAGS =	-I$$JAVA_HOME/include				\
-				-I$$JAVA_HOME/include/$(JAVA_INCLUDE_DIR)	\
-				-I$(top_srcdir)/include/			\
-				-I$(top_srcdir)/src/liburbi/uobject/		\
-				-I$(top_builddir)/include/ 			\
-				$(BOOST_CPPFLAGS)
+
+liburbijava_la_CXXFLAGS =			\
+  -I$(JAVA_PREFIX)/include			\
+  -I$(JAVA_PREFIX)/include/$(JAVA_INCLUDE_DIR)	\
+  -I$(top_srcdir)/include/			\
+  -I$(top_srcdir)/src/liburbi/uobject/		\
+  -I$(top_builddir)/include/			\
+  $(BOOST_CPPFLAGS)
 
 # Under windows path are set to C:/cygwin... in libdir, which
 # then prevent us to install the .la in a place with a DESTDIR
@@ -126,7 +133,8 @@ JAVAROOT = .
 ##   SDK Java   ##
 ## ------------ ##
 
-gnu_bytecode_SRC =				\
+liburbijava_SRC=
+liburbijava_SRC +=				\
 	gnu/bytecode/Access.java		\
 	gnu/bytecode/ArrayClassLoader.java	\
 	gnu/bytecode/ArrayType.java		\
@@ -173,9 +181,7 @@ gnu_bytecode_SRC =				\
 	gnu/bytecode/ZipArchive.java		\
 	gnu/bytecode/ZipLoader.java
 
-gnu_bytecode_OBJ = $(gnu_bytecode_SRC:.java=.class)
-
-liburbi_SRC =				\
+liburbijava_SRC +=				\
 	urbi/ImageComponent.java		\
 	urbi/ImageFilter.java			\
 	urbi/ImageSampler.java			\
@@ -190,19 +196,17 @@ liburbi_SRC =				\
 	urbi/UMain.java				\
 	urbi/Log.java
 
-liburbi_OBJ = $(wildcard urbi/*.class)
-
-generated_SRC = $(wildcard urbi/generated/*.java)
+liburbijava_SRC += $(wildcard urbi/generated/*.java)
 
 # javac generate objects files (.class) that contains $ in their name,
 # so escape them before constructing .jar file.
-plop = $(wildcard urbi/generated/*.class)
-generated_OBJ = $(foreach file,$(plop),'$(file)')
+liburbijava_OBJECTS =
+liburbijava_OBJECTS += $(foreach file,$(wildcard gnu/bytecode/*.class),'$(file)')
+liburbijava_OBJECTS += $(foreach file,$(wildcard urbi/*.class),'$(file)')
+liburbijava_OBJECTS += $(foreach file,$(wildcard urbi/generated/*.class),'$(file)')
 
 liburbijava_JAR = lib/liburbijava.jar
-liburbijava_SRC = $(gnu_bytecode_SRC) $(liburbi_SRC) $(generated_SRC)
 liburbijavadir = $(javadir)
-liburbijava_OBJECTS = $(gnu_bytecode_OBJ) $(liburbi_OBJ) $(generated_OBJ)
 
 # Below this is a HUGE hack so that we construct a .jar containing
 # _all_ java objects ie, .class from the normal java sources + .class
@@ -215,173 +219,118 @@ gen-liburbi-java:
 $(liburbijava_JAR): java.cc
 	make -C . gen-liburbi-java
 
+JAR_RULES=
+
 ## ------------ ##
 ##   Examples   ##
 ## ------------ ##
 
 uobjectjava_SRC =				\
-	examples/uobjectjava/Main.java		\
-	examples/uobjectjava/Adder.java		\
-	examples/uobjectjava/Feature1.java	\
-	examples/uobjectjava/Feature2.java	\
-	examples/uobjectjava/Feature3.java	\
-	examples/uobjectjava/Feature4.java	\
-	examples/uobjectjava/Feature5.java	\
-	examples/uobjectjava/Colormap.java	\
-	examples/uobjectjava/SimpleUObject.java
-
+  examples/uobjectjava/Main.java		\
+  examples/uobjectjava/Adder.java		\
+  examples/uobjectjava/Feature1.java		\
+  examples/uobjectjava/Feature2.java		\
+  examples/uobjectjava/Feature3.java		\
+  examples/uobjectjava/Feature4.java		\
+  examples/uobjectjava/Feature5.java		\
+  examples/uobjectjava/Colormap.java		\
+  examples/uobjectjava/SimpleUObject.java
 uobjectjava_JAR = examples/uobjectjava/UObjectJava.jar
-uobjectjava_OBJECTS = $(uobjectjava_SRC:.java=.class)
-$(uobjectjava_JAR): $(uobjectjava_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(uobjectjava_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += uobjectjava
+$(uobjectjava_JAR): uobjectjava
 
-balltrack_SRC =						\
-	examples/urbiballtrackinghead/URBIBallTrackingHead.java	\
-	examples/urbiballtrackinghead/CallImage.java
+balltrack_SRC =							\
+  examples/urbiballtrackinghead/URBIBallTrackingHead.java	\
+  examples/urbiballtrackinghead/CallImage.java
 balltrack_JAR = examples/urbiballtrackinghead/URBIBallTrackingHead.jar
-balltrack_OBJECTS = $(balltrack_SRC:.java=.class)
-$(balltrack_JAR): $(balltrack_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(balltrack_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += balltrack
+$(balltrack_JAR): balltrack
 
 bandwidth_SRC =					\
-	examples/urbibandwidth/URBIBandWidth.java	\
-	examples/urbibandwidth/BW.java
+  examples/urbibandwidth/URBIBandWidth.java	\
+  examples/urbibandwidth/BW.java
 bandwidth_JAR = examples/urbibandwidth/URBIBandWidth.jar
-bandwidth_OBJECTS = $(bandwidth_SRC:.java=.class)
-$(bandwidth_JAR): $(bandwidth_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(bandwidth_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += bandwidth
+$(bandwidth_JAR): bandwidth
 
 ping_SRC =					\
-	examples/urbiping/URBIPing.java		\
-	examples/urbiping/UPing.java
+  examples/urbiping/URBIPing.java		\
+  examples/urbiping/UPing.java
 ping_JAR = examples/urbiping/URBIPing.jar
 ping_OBJECTS = $(ping_SRC:.java=.class)
-$(ping_JAR): $(ping_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(ping_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += ping
+$(ping_JAR): ping
 
 image_SRC =					\
-	examples/urbiimage/ShowImage.java	\
-	examples/urbiimage/URBIImage.java
+  examples/urbiimage/ShowImage.java		\
+  examples/urbiimage/URBIImage.java
 image_JAR = examples/urbiimage/URBIImage.jar
-image_OBJECTS = $(image_SRC:.java=.class)
-$(image_JAR): $(image_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(image_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += image
+$(image_JAR): image
 
-mirror_SRC =				\
-	examples/urbimirror/Command.java	\
-	examples/urbimirror/URBIMirror.java
+mirror_SRC =					\
+  examples/urbimirror/Command.java		\
+  examples/urbimirror/URBIMirror.java
 mirror_JAR = examples/urbimirror/URBIMirror.jar
-mirror_OBJECTS = $(mirror_SRC:.java=.class)
-$(mirror_JAR): $(mirror_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(mirror_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += mirror
+$(mirror_JAR): mirror
 
-play_SRC =					\
-	examples/urbiplay/URBIPlay.java
+play_SRC = examples/urbiplay/URBIPlay.java
 play_JAR = examples/urbiplay/URBIPlay.jar
-play_OBJECTS = $(play_SRC:.java=.class)
-$(play_JAR): $(play_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(play_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += play
+$(play_JAR): play
 
-record_SRC =				\
-	examples/urbirecord/URBIRecord.java	\
-	examples/urbirecord/Command.java
+record_SRC =					\
+  examples/urbirecord/URBIRecord.java		\
+  examples/urbirecord/Command.java
 record_JAR = examples/urbirecord/URBIRecord.jar
-record_OBJECTS = $(record_SRC:.java=.class)
-$(record_JAR): $(record_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(record_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += record
+$(record_JAR): record
 
-send_SRC =					\
-	examples/urbisend/URBISend.java
+send_SRC = examples/urbisend/URBISend.java
 send_JAR = examples/urbisend/URBISend.jar
-send_OBJECTS = $(send_SRC:.java=.class)
-$(send_JAR): $(send_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(send_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += send
+$(send_JAR): send
 
 sound_SRC =					\
-	examples/urbisound/CallSound.java	\
-	examples/urbisound/URBISound.java
+  examples/urbisound/CallSound.java		\
+  examples/urbisound/URBISound.java
 sound_JAR = examples/urbisound/URBISound.jar
-sound_OBJECTS = $(sound_SRC:.java=.class)
-$(sound_JAR): $(sound_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(sound_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += sound
+$(sound_JAR): sound
 
-talkie_SRC =				\
-	examples/urbitalkie/MicroNotify1.java	\
-	examples/urbitalkie/MicroNotify2.java	\
-	examples/urbitalkie/URBITalkie.java
+talkie_SRC =					\
+  examples/urbitalkie/MicroNotify1.java		\
+  examples/urbitalkie/MicroNotify2.java		\
+  examples/urbitalkie/URBITalkie.java
 talkie_JAR = examples/urbitalkie/URBITalkie.jar
-talkie_OBJECTS = $(talkie_SRC:.java=.class)
-$(talkie_JAR): $(talkie_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(talkie_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+JAR_RULES += talkie
+$(talkie_JAR): talkie
 
 
 ## ------------ ##
 ##    Tests     ##
 ## ------------ ##
 
-all_SRC = tests/all/All.java
-all_JAR = tests/all/All.jar
-all_OBJECTS = $(all_SRC:.java=.class)
-$(all_JAR): $(all_OBJECTS)
-	$(JAR) -cvf $$(basename $@) $(all_OBJECTS)
-	mkdir -p $$(dirname $@)
-	mv $$(basename $@) $$(dirname $@)
+test_all_SRC = tests/all/All.java
+test_all_JAR = tests/all/All.jar
+JAR_RULES += test_all
+$(test_all_JAR): test_all
 
 
+# Generate all jars files
+.SECONDEXPANSION:
+$(JAR_RULES): $$(patsubst %.java,%.class,$$($$@_SRC))
+	$(JAR) -cvf $$(basename $($@_JAR)) $+
+	mkdir -p $$(dirname $($@_JAR))
+	mv $$(basename $($@_JAR)) $$(dirname $($@_JAR))
 
-ALL_SOURCES = 					\
-	$(liburbijava_SRC)			\
-	$(uobjectjava_SRC) 			\
-	$(balltrack_SRC) 			\
-	$(bandwidth_SRC) 			\
-	$(ping_SRC) 				\
-	$(image_SRC) 				\
-	$(mirror_SRC) 				\
-	$(play_SRC) 				\
-	$(record_SRC) 				\
-	$(send_SRC) 				\
-	$(sound_SRC) 				\
-	$(talkie_SRC)				\
-	$(all_SRC)
 
+ALL_SOURCES = $(liburbijava_SRC)
+ALL_SOURCES += $(foreach name,$(JAR_RULES),$($(name)_SRC))
 ALL_OBJECTS= $(ALL_SOURCES:.java=.class)
-
-JAR_FILES =					\
-	$(liburbijava_JAR) 			\
-	$(uobjectjava_JAR)			\
-	$(balltrack_JAR) 			\
-	$(bandwidth_JAR) 			\
-	$(ping_JAR) 				\
-	$(image_JAR) 				\
-	$(mirror_JAR) 				\
-	$(play_JAR) 				\
-	$(record_JAR) 				\
-	$(send_JAR) 				\
-	$(sound_JAR) 				\
-	$(talkie_JAR)				\
-	$(all_JAR)
+ALL_JARS = $(liburbijava_JAR)
+ALL_JARS += $(foreach name,$(JAR_RULES),$($(name)_JAR))
 
 ## -------------------- ##
 ## Compile java sources ##
@@ -396,8 +345,7 @@ tobuilddir = $(javadir)
 
 # Install liburbi java sources and examples sources
 nobase_dist_java_DATA = $(ALL_SOURCES)
-nobase_nodist_java_DATA = $(JAR_FILES)
-
+nobase_nodist_java_DATA = $(ALL_JARS)
 
 # Install examples manifests
 nobase_dist_java_DATA +=			\
@@ -438,4 +386,4 @@ dist_java_DATA =				\
 	sample/URBITalkie.launch
 
 clean-local:
-	$(RM) $(ALL_OBJECTS) $(JAR_FILES)
+	$(RM) $(ALL_OBJECTS) $(ALL_JARS)
