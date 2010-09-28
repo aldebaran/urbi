@@ -76,10 +76,14 @@ much less change it.
 
 \begin{urbiunchecked}
 {
-  var t = Tag.new |
-  at (t.leave?)
-    reaction() |
-  t: action()
+  try
+  {
+    action()
+  }
+  finally
+  {
+    reaction()
+  }
 }
 \end{urbiunchecked}
 
