@@ -74,7 +74,7 @@ liburbijava_la_SOURCES =			\
   src/urbi_Log.h
 
 liburbijava_la_LIBADD = $(top_builddir)/src/liburbi/liburbi.la $(top_builddir)/src/libuobject/libuobject.la
-liburbijava_la_CPPFLAGS = -I/usr/lib/jvm/default-java/include -I$(top_srcdir)/libport/include
+liburbijava_la_CPPFLAGS = -I$(JAVAPREFIX)/include -I$(JAVAPREFIX)/include/linux -I$(top_srcdir)/libport/include  -I$(top_builddir)/libport/include
 
 CLEANFILES =					\
 	java.cc.h				\
