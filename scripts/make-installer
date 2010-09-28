@@ -4,6 +4,19 @@
 set -x
 set -e
 
+find_prog ()
+{
+  find_prog_res=
+  local i
+  for i in "$@"
+  do
+    if $i --version >/dev/null 2>&1; then
+      find_prog_res=$i
+      break
+    fi
+  done
+}
+
 stderr ()
 {
   local i
@@ -56,25 +69,30 @@ case $OS in
   (*) exit 0;;
 esac
 
+find_prog $MD5SUM gmd5sum md5sum
+MD5SUM=$find_prog_res
+test -n "$MD5SUM" ||
+  fatal "cannot find md5sum"
+
 tmp=$(mktemp -d "$TMPDIR/kernel-make-installer.XXXXXX")
 trap "cd / && rm -rf $tmp" 0 1 2 13 15
 
 updir=$(dirname "$upname")
-basename=$(basename "${upname%-${MODE}}")
+basename=$(basename "${upname%-$MODE}")
 
-release_zip="$basename.zip"
-debug_zip="$basename-debug_dynamic.zip"
-installer="$basename.exe"
+release_zip=$basename.zip
+debug_zip=$basename-debug_dynamic.zip
+installer=$basename.exe
 
 # my_zip represents the archive build by this slave.
 case $MODE in
   (release)
-    my_zip="$release_zip"
-    other_zip="$debug_zip"
+    my_zip=$release_zip
+    other_zip=$debug_zip
     ;;
   (debug*)
-    my_zip="$debug_zip"
-    other_zip="$release_zip"
+    my_zip=$debug_zip
+    other_zip=$release_zip
     ;;
 esac
 
@@ -99,5 +117,6 @@ if test -r "$updir/$my_zip"                             \
       "$updir/$my_zip" "$updir/$other_zip"
 
   # Upload the installer
-  cp "$tmp/$installer" "$updir/$installer"
+  $MD5SUM "$tmp/$installer" >"$tmp/$install.md5"
+  cp "$tmp/$installer" "$tmp/$installer.md5" "$updir"
 fi
