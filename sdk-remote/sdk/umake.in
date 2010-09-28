@@ -22,7 +22,9 @@ Compilation options:
   -C, --core=CORE         build type [$core]
   -H, --host=HOST         destination host [$host]
   -m, --disable-automain  do not add the main function
-
+  -I<path>                pass unchanged to compiler
+  -L<path>                pass unchanged to linker
+  -l<lib>                 pass unchanged to linker
 Developper options:
   -p, --prefix=DIR     library file location [$prefix]
   -P, --param-mk=FILE  param.mk location [$(param_mk)]
@@ -133,7 +135,9 @@ get_options ()
       (-p | --prefix)   shift; prefix=$1;;
       (-P | --param-mk) shift; param_mk=$1;;
       (-k | --kernel)   shift; kernel=$1;;
-
+      (-I*) append EXTRA_CPPFLAGS $1 ;;
+      (-L*) append EXTRA_LDFLAGS $1 ;;
+      (-l*) append EXTRA_LDFLAGS $1 ;;
       (--) # What remains are not options.
 	shift
 	while test x"$1" != x"$arg_sep"
@@ -170,6 +174,10 @@ get_options ()
     # If this is a directory, append a slash.
     case $1$(test -d "$1" && echo '/') in
       (VPATH=*) vpath=$vpath:$(echo "$1" | sed -e 's/^[^=]*=//');;
+      (EXTRA_CPPFLAGS=*)
+          append EXTRA_CPPFLAGS "$(echo "$1" | sed -e 's/^[^=]*=//')" ;;
+      (EXTRA_LDFLAGS=*)
+          append EXTRA_LDFLAGS "$(echo "$1" | sed -e 's/^[^=]*=//')" ;;
       (*=*)     append makeargs "'$1'";;
 
       (*.h |*.hh|*.hxx|*.hpp) append headers "'$1'";  havearg=true ;;
@@ -424,6 +432,8 @@ run eval make -f "$(param_mk)"                  \
     UMAKE_LIBNAME="$UMAKE_LIBNAME"              \
     UMAKE_EXTRALIB="\"$UMAKE_EXTRALIB\""        \
     UMAKE_LINK="$UMAKE_LINK"                    \
+    EXTRA_CPPFLAGS="'$EXTRA_CPPFLAGS'"            \
+    EXTRA_LDFLAGS="'$EXTRA_LDFLAGS'"              \
     ARGUMENT_LIBS="'$libs'"                     \
     LIBADD="'$LIBADD'"                          \
     HEADERS="'$headers'"                        \
