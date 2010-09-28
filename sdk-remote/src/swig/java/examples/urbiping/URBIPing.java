@@ -23,7 +23,7 @@ package examples.urbiping;
 
 import java.io.IOException;
 
-import urbi.generated.UClient;
+import urbi.UClient;
 
 public class URBIPing
 {

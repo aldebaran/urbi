@@ -28,7 +28,7 @@ import java.awt.event.*;
 import java.io.*;
 import javax.sound.sampled.*;
 
-import urbi.generated.UClient;
+import urbi.UClient;
 
 public class	SendSoundSampler extends JFrame
 {

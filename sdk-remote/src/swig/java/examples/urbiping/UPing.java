@@ -24,7 +24,7 @@ package examples.urbiping;
 import java.io.IOException;
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 public class	UPing extends UCallbackInterface
 {

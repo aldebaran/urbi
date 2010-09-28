@@ -22,7 +22,7 @@ For more information, comments, bug reports: http://urbi.sourceforge.net
     package urbi;
 
 import javax.sound.sampled.*;
-import urbi.generated.UClient;
+import urbi.UClient;
 
 import java.io.*;
 

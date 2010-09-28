@@ -1,8 +1,8 @@
 package examples.uobjectjava;
 
 import urbi.UObject;
-import urbi.generated.UVar;
-import urbi.generated.UValue;
+import urbi.UVar;
+import urbi.UValue;
 
 public class Adder extends UObject // must extends UObject
 {

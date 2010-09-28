@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.*;
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 /*
   file format

@@ -122,17 +122,17 @@ static urbi::UGenericCallback* createFunctionCallback (JNIEnv* env,
     return createFunctionCallbackFloat (env, uobj, obj, obj_name, funcName, argNb);
   else if ("double" == retType)
     return createFunctionCallbackDouble (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.generated.UValue" == retType)
+  else if ("urbi.UValue" == retType)
     return createFunctionCallbackUValue (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.generated.UList" == retType)
+  else if ("urbi.UList" == retType)
     return createFunctionCallbackUList (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.generated.UBinary" == retType)
+  else if ("urbi.UBinary" == retType)
     return createFunctionCallbackUBinary (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.generated.UImage" == retType)
+  else if ("urbi.UImage" == retType)
     return createFunctionCallbackUImage (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.generated.USound" == retType)
+  else if ("urbi.USound" == retType)
     return createFunctionCallbackUSound (env, uobj, obj, obj_name, funcName, argNb);
-  else if ("urbi.generated.UDictionary" == retType)
+  else if ("urbi.UDictionary" == retType)
     return createFunctionCallbackUDictionary (env, uobj, obj, obj_name, funcName, argNb);
   else if ("java.lang.String" == retType)
     return createFunctionCallbackString (env, uobj, obj, obj_name, funcName, argNb);

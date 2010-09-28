@@ -28,7 +28,7 @@ import java.awt.geom.Line2D;
 
 import javax.swing.*;
 
-import urbi.generated.UClient;
+import urbi.UClient;
 
 /**
  * The ImageComponent class is used to display an image. It subclasses

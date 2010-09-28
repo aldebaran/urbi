@@ -24,7 +24,7 @@ package examples.urbisend;
 import java.io.IOException;
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 public class	URBISend
 {

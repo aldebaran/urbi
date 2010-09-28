@@ -15,10 +15,10 @@ package urbi;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 
-import urbi.generated.urbi;
-import urbi.generated.URBIStarterJAVA;
-import urbi.generated.UContextImpl;
-import urbi.generated.UObjectCPP;
+import urbi.urbi;
+import urbi.URBIStarterJAVA;
+import urbi.UContextImpl;
+import urbi.UObjectCPP;
 
 public class UObjectStarter extends URBIStarterJAVA
 {

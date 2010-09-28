@@ -1,7 +1,7 @@
 package examples.uobjectjava;
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 // ----------------- //
 // UObject: Feature3 //

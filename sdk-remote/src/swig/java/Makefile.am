@@ -42,8 +42,8 @@ EXTRA_DIST =					\
   swig/java.i					\
   swig/udictionary-javacode.i
 
-java_src_outdir = urbi/generated/
-java_package = urbi.generated
+java_src_outdir = urbi/
+java_package = urbi
 
 SWIG_FLAGS =					\
   -c++ -java -Wall				\
@@ -196,14 +196,13 @@ liburbijava_SRC +=				\
 	urbi/UMain.java				\
 	urbi/Log.java
 
-liburbijava_SRC += $(wildcard urbi/generated/*.java)
+liburbijava_SRC += $(wildcard urbi/*.java)
 
 # javac generate objects files (.class) that contains $ in their name,
 # so escape them before constructing .jar file.
 liburbijava_OBJECTS =
 liburbijava_OBJECTS += $(foreach file,$(wildcard gnu/bytecode/*.class),'$(file)')
 liburbijava_OBJECTS += $(foreach file,$(wildcard urbi/*.class),'$(file)')
-liburbijava_OBJECTS += $(foreach file,$(wildcard urbi/generated/*.class),'$(file)')
 
 liburbijava_JAR = lib/liburbijava.jar
 liburbijavadir = $(javadir)

@@ -11,21 +11,21 @@ package tests.all;
 
 import urbi.Log;
 import urbi.UObject;
-import urbi.generated.UBinary;
-import urbi.generated.UBinaryType;
-import urbi.generated.UDataType;
-import urbi.generated.UDictionary;
-import urbi.generated.UEvent;
-import urbi.generated.UImage;
-import urbi.generated.UImageFormat;
-import urbi.generated.UList;
-import urbi.generated.UProperty;
-import urbi.generated.USound;
-import urbi.generated.USoundFormat;
-import urbi.generated.USoundSampleFormat;
-import urbi.generated.UValue;
-import urbi.generated.UValueVector;
-import urbi.generated.UVar;
+import urbi.UBinary;
+import urbi.UBinaryType;
+import urbi.UDataType;
+import urbi.UDictionary;
+import urbi.UEvent;
+import urbi.UImage;
+import urbi.UImageFormat;
+import urbi.UList;
+import urbi.UProperty;
+import urbi.USound;
+import urbi.USoundFormat;
+import urbi.USoundSampleFormat;
+import urbi.UValue;
+import urbi.UValueVector;
+import urbi.UVar;
 import java.util.Map;
 
 // TODO:

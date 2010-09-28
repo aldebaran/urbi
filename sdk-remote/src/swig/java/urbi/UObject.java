@@ -19,15 +19,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.RuntimeException;
 import java.util.LinkedList;
-import urbi.generated.urbi;
-import urbi.generated.UObjectCPP;
-import urbi.generated.UVar;
-import urbi.generated.URBIStarterJAVA;
-import urbi.generated.UContextImpl;
-import urbi.generated.UValue;
-import urbi.generated.UrbiRoot;
-import urbi.generated.UAutoValue;
-import urbi.generated.UEvent;
+import urbi.urbi;
+import urbi.UObjectCPP;
+import urbi.UVar;
+import urbi.URBIStarterJAVA;
+import urbi.UContextImpl;
+import urbi.UValue;
+import urbi.UrbiRoot;
+import urbi.UAutoValue;
+import urbi.UEvent;
 
 /// This class is the base UObject class for Java UObject.
 /// Please have all your Java UObject extends UObject

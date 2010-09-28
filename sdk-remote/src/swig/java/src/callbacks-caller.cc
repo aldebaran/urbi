@@ -81,7 +81,7 @@ CallbacksCaller::callNotifyChangeInt_1 (urbi::UVar& v)
   if (!init_env ())
     return 0;
   jvalue obj1;
-  if (arg_types[0] == "class urbi.generated.UVar")
+  if (arg_types[0] == "class urbi.UVar")
     obj1.l = getObjectFromUVar (v);
   else
     obj1 = getObjectFrom (arg_types[0], v.val());
@@ -106,7 +106,7 @@ CallbacksCaller::callNotifyChangeVoid_1 (urbi::UVar& v)
   if (!init_env ())
     return;
   jvalue obj1;
-  if (arg_types[0] == "class urbi.generated.UVar")
+  if (arg_types[0] == "class urbi.UVar")
     obj1.l = getObjectFromUVar (v);
   else
     obj1 = getObjectFrom (arg_types[0], v.val());
@@ -214,7 +214,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
 
 
   /// Get the jclass for UValue
-  if (!(uvalue_cls = getGlobalRef (env, "urbi/generated/UValue")))
+  if (!(uvalue_cls = getGlobalRef (env, "urbi/UValue")))
     CLEAN_AND_THROW("Can't find UValue class");
 
   /// Get UValue (int, bool) Constructor id
@@ -226,7 +226,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     CLEAN_AND_THROW("Can't find UValue swigCPtr");
 
   /// Get the jclass for Ulist
-  if (!(ulist_cls = getGlobalRef (env, "urbi/generated/UList")))
+  if (!(ulist_cls = getGlobalRef (env, "urbi/UList")))
     CLEAN_AND_THROW("Can't find UList class");
 
   /// Get Ulist (int, bool) Constructor id
@@ -238,7 +238,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     CLEAN_AND_THROW("Can't find UList swigCPtr");
 
   /// Get the jclass for Uimage
-  if (!(uimage_cls = getGlobalRef (env, "urbi/generated/UImage")))
+  if (!(uimage_cls = getGlobalRef (env, "urbi/UImage")))
     CLEAN_AND_THROW("Can't find UImage class");
 
   /// Get Uimage (int, bool) Constructor id
@@ -250,7 +250,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     CLEAN_AND_THROW("Can't find UImage swigCPtr");
 
   /// Get the jclass for Ubinary
-  if (!(ubinary_cls = getGlobalRef (env, "urbi/generated/UBinary")))
+  if (!(ubinary_cls = getGlobalRef (env, "urbi/UBinary")))
     CLEAN_AND_THROW("Can't find UBinary class");
 
   /// Get Ubinary (int, bool) Constructor id
@@ -262,7 +262,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     CLEAN_AND_THROW("Can't find UBinary swigCPtr");
 
   /// Get the jclass for Usound
-  if (!(usound_cls = getGlobalRef (env, "urbi/generated/USound")))
+  if (!(usound_cls = getGlobalRef (env, "urbi/USound")))
     CLEAN_AND_THROW("Can't find USound class");
 
   /// Get Usound (int, bool) Constructor id
@@ -274,7 +274,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     CLEAN_AND_THROW("Can't find USound swigCPtr");
 
   /// Get the jclass for UDictionary
-  if (!(udictionary_cls = getGlobalRef (env, "urbi/generated/UDictionary")))
+  if (!(udictionary_cls = getGlobalRef (env, "urbi/UDictionary")))
     CLEAN_AND_THROW("Can't find UDictionary class");
 
   /// Get UDictionary (int, bool) Constructor id
@@ -286,7 +286,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     CLEAN_AND_THROW("Can't find UDictionary swigCPtr");
 
   /// Get the jclass for UVar
-  if (!(uvar_cls = getGlobalRef (env, "urbi/generated/UVar")))
+  if (!(uvar_cls = getGlobalRef (env, "urbi/UVar")))
     CLEAN_AND_THROW("Can't find UVar class");
 
   if (!(uvar_ctor_id = env->GetMethodID(uvar_cls, "<init>", "(JZ)V")))
@@ -297,7 +297,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     CLEAN_AND_THROW("Can't find UVar swigCPtr");
 
   /// Get the jclass for UObject
-  if (!(uobject_cls = getGlobalRef(env, "urbi/generated/UObjectCPP")))
+  if (!(uobject_cls = getGlobalRef(env, "urbi/UObjectCPP")))
     CLEAN_AND_THROW("Can't find UObject class");
 
   /// Get UObject swigCPtr attribute id
@@ -702,7 +702,7 @@ CallbacksCaller::getObjectFromUList (const urbi::UList& v)
 {
   jobject res = env_->NewObject(ulist_cls, ulist_ctor_id, (jlong) new urbi::UList(v), true);
   if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.generated.UList"
+    std::cerr << "Cannot allocate a new object of type urbi.UList"
 	      << std::endl;
   return res;
 }
@@ -712,7 +712,7 @@ CallbacksCaller::getObjectFromUBinary (const urbi::UBinary& v)
 {
   jobject res = env_->NewObject(ubinary_cls, ubinary_ctor_id, (jlong) new urbi::UBinary(v), false);
   if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.generated.UBinary"
+    std::cerr << "Cannot allocate a new object of type urbi.UBinary"
 	      << std::endl;
   return res;
 }
@@ -722,7 +722,7 @@ CallbacksCaller::getObjectFromUImage (const urbi::UImage& v)
 {
   jobject res = env_->NewObject(uimage_cls, uimage_ctor_id, (jlong) new urbi::UImage(v), false);
   if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.generated.UImage"
+    std::cerr << "Cannot allocate a new object of type urbi.UImage"
 	      << std::endl;
   return res;
 }
@@ -732,7 +732,7 @@ CallbacksCaller::getObjectFromUSound (const urbi::USound& v)
 {
   jobject res = env_->NewObject(usound_cls, usound_ctor_id, (jlong) new urbi::USound(v), false);
   if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.generated.USound"
+    std::cerr << "Cannot allocate a new object of type urbi.USound"
 	      << std::endl;
   return res;
 }
@@ -742,7 +742,7 @@ CallbacksCaller::getObjectFromUDictionary (const urbi::UDictionary& v)
 {
   jobject res = env_->NewObject(udictionary_cls, udictionary_ctor_id, (jlong) new urbi::UDictionary(v), false);
   if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.generated.UDictionary"
+    std::cerr << "Cannot allocate a new object of type urbi.UDictionary"
 	      << std::endl;
   return res;
 }
@@ -752,7 +752,7 @@ CallbacksCaller::getObjectFromUValue (const urbi::UValue& v)
 {
   jobject res = env_->NewObject(uvalue_cls, uvalue_ctor_id, (jlong) new urbi::UValue(v), false);
   if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.generated.UValue"
+    std::cerr << "Cannot allocate a new object of type urbi.UValue"
 	      << std::endl;
   return res;
 }
@@ -762,7 +762,7 @@ CallbacksCaller::getObjectFromUVar (urbi::UVar& v)
 {
   jobject res = env_->NewObject(uvar_cls, uvar_ctor_id, (jlong) &v, false);
   if  (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.generated.UVar"
+    std::cerr << "Cannot allocate a new object of type urbi.UVar"
 	      << std::endl;
   return res;
 }

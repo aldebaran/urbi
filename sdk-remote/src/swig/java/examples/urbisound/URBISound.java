@@ -24,7 +24,7 @@ package examples.urbisound;
 import java.io.IOException;
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 public class	URBISound
 {

@@ -1,7 +1,7 @@
 package examples.uobjectjava;
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 // ----------------- //
 // UObject: Feature1 //
@@ -78,8 +78,8 @@ public class Feature1 extends UObject
 
         /// You can specify the arguments if there is more than one
         /// function with the same name in your UObject:
-        String[] parameters = { "urbi.generated.UValue",
-                                "urbi.generated.UValue" };
+        String[] parameters = { "urbi.UValue",
+                                "urbi.UValue" };
         UBindFunction (this, "testFunction2", parameters);
 
         /// You can also bind functions that are in other class, and

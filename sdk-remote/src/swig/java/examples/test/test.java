@@ -2,7 +2,7 @@
 package examples.test;
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 public class test {
   static {

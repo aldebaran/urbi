@@ -24,7 +24,7 @@ For more information, comments, bug reports: http://urbi.sourceforge.net
 import java.io.IOException;
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 public class BW extends UCallbackInterface
 {

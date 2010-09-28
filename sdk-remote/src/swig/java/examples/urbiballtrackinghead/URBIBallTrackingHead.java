@@ -23,7 +23,7 @@ For more information, comments, bug reports: http://urbi.sourceforge.net
 
 import java.io.IOException;
 
-import urbi.generated.UClient;
+import urbi.UClient;
 import urbi.ImageSampler;
 
 public class	URBIBallTrackingHead

@@ -3,7 +3,7 @@ package examples.test;
 
 
 import urbi.*;
-import urbi.generated.*;
+import urbi.*;
 
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
