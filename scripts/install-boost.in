@@ -67,8 +67,9 @@ symstack_cp ()
   # And when installing shared libraries, there are often many.
   cp -P "$source" "$dest"
   if test -L "$source"; then
-    linked=$(readlink $source)
-    symstack_cp "$linked" "$dir"
+    local linked=$(readlink $source)
+    local srcdir=$(dirname "$source")
+    symstack_cp "$srcdir/$linked" "$dir"
   else
     chmod 0755 "$dest"
   fi
