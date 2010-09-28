@@ -22,6 +22,7 @@ Compilation options:
   -C, --core=CORE         build type [$core]
   -H, --host=HOST         destination host [$host]
   -m, --disable-automain  do not add the main function
+  --package=PACKAGE       use pkg-config to add flags required by PACKAGE
   -I<path>                pass unchanged to compiler
   -L<path>                pass unchanged to linker
   -l<lib>                 pass unchanged to linker
@@ -138,6 +139,11 @@ get_options ()
       (-I*) append EXTRA_CPPFLAGS $1 ;;
       (-L*) append EXTRA_LDFLAGS $1 ;;
       (-l*) append EXTRA_LDFLAGS $1 ;;
+      (--package) shift;
+        pkg-config --print-errors --exists $1
+        append EXTRA_CPPFLAGS "$(pkg-config --cflags $1)"
+        append EXTRA_LDFLAGS "$(pkg-config --libs $1)"
+        ;;
       (--) # What remains are not options.
 	shift
 	while test x"$1" != x"$arg_sep"
