@@ -25,12 +25,14 @@ name of the directory which contains the package.
 
 ** GNU/Linux and Mac OS X
 
-Decompress the package where you want to install it:
+Decompress the package where you want to install it.  If
+<urbi-sdk-2.x> denotes the version of Urbi SDK you downloaded (say,
+<urbi-sdk-2.x> = "urbi-sdk-2.3-linux-x86-gcc4"), run something like:
 
   $ rm -rf <urbi-root>
   $ cd /tmp
-  $ tar zxf .../urbi-sdk-2.0-linux-x86-gcc4.tar.gz
-  $ mv urbi-sdk-2.0-linux-x86-gcc4 <urbi-root>
+  $ tar xf <path-to>/<urbi-sdk-2.x>.tar.bz2
+  $ mv <urbi-sdk-2.x> <urbi-root>
 
 This directory, <urbi-root>, should contain "bin", "README.txt" and so
 forth.  Do not move things around inside this directory.  In order to
@@ -72,7 +74,7 @@ The complete Urbi SDK documentation in HTML.  It includes:
 
 *** Getting Started
 <file:share/doc/urbi-sdk/urbi-sdk.htmldir/getting-started.html>
-Installing Urbi SDK 2.0, and run the first commands.
+Installing Urbi SDK 2.x, and run the first commands.
 
 *** The urbiscript User manual
 <file:share/doc/urbi-sdk/urbi-sdk.htmldir/urbiscript-user-manual.html>

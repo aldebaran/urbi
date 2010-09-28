@@ -21,7 +21,7 @@ where
   using.  It can be simple, \code{2.0}, or more complex,
   \code{2.0-beta3-137-g28f8880}.  In that case,
   \begin{description}
-  \item[2.0] is the version of the urbiscript Kernel,
+  \item[2.0] is the version of the \urbi Kernel,
   \item[beta3] designates the third pre-release,
   \item[137] is the number of changes since beta3 (not counting
     changes in sub-packages),
@@ -32,14 +32,18 @@ where
   \code{ARM}, \code{ppc}, or \code{x86}.
 \item[\var{os}] is the operating system: \code{linux} for GNU/Linux,
   \code{osx} for Mac OS X, or \code{windows} for Microsoft Windows.
-%% FIXME: We do not display the compiler name in the packages.
 \item[\var{compiler}] is the tool chain used to compile the programs:
   \code{gcc4} for the GNU Compiler Collection 4.x, \code{vcxx2005} for
   Microsoft Visual \Cxx 2005, \code{vcxx2008} for Microsoft Visual
   \Cxx 2008.
-\item[\var{ext}] is the package format extension: \code{tar.gz} for
-  Unix style tar balls (uncompressed with \command{tar zxf
-    \var{tarfile}}), and \code{zip} for Windows style zip files.
+\item[\var{ext}] is the package format extension.  For Unix architectures,
+  \code{tar.bz2}; uncompress them with \command{tar xf \var{tarfile}}.  For
+  Windows hosts, we provide zip files (\file{*.zip}) for both ``release''
+  and ``debug'' flavors, and installers (for instance \file{*.exe}).  You
+  are encouraged to use the installers, since in addition to installing
+  headers and libraries, they also install Visual \Cxx Wizards to create
+  UObjects, they take care of installing the Visual Runtime if needed, and
+  they install Gostai Console and Gostai Editor.
 \end{description}
 
 \section{Install \&{} Check}
@@ -56,19 +60,20 @@ the various programs.
 
 \subsection{GNU/Linux and Mac OS X}
 
-Decompress the package where you want to install it:
+Decompress the package where you want to install it.  If \var{urbi-sdk-2.x}
+denotes the version of Urbi SDK you downloaded (say, \var{urbi-sdk-2.x} is
+\file{urbi-sdk-2.3-linux-x86-gcc4}), run something like:
 
 \begin{shell}
 $ rm -rf \var{urbi-root}
 $ cd /tmp
-$ tar zxf \var{path-to}/urbi-sdk-2.0-linux-x86-gcc4.tar.gz
-$ mv urbi-sdk-2.0-linux-x86-gcc4 \var{urbi-root}
+$ tar xf \var{path-to}/\var{urbi-sdk-2.x}.tar.bz2
+$ mv \var{urbi-sdk-2.x} \var{urbi-root}
 \end{shell}
 
-This directory, \var{urbi-root}, should contain \file{bin},
-\file{FAQ.txt} and so forth.  Do not move things around inside this
-directory.  In order to have an easy access to the \urbi programs, set
-up your \env{PATH}:
+This directory, \var{urbi-root}, should contain \file{bin}, \file{FAQ.txt}
+and so forth.  Do not move things around inside this directory.  In order to
+have an easy access to the \urbi programs, set up your \env{PATH}:
 
 \begin{shell}[style=varInString]
 $ export PATH="\var{urbi-root}/bin:$PATH"
