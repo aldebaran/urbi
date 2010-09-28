@@ -805,6 +805,7 @@ namespace urbi
 %ignore urbi::UVar::speedmax;
 %ignore urbi::UVar::delta;
 %ignore urbi::UVar::blend;
+%ignore urbi::UVar::constant;
 
 %define CPP_RUNTIME_ERROR_CATCH(function)
 %exception function {
