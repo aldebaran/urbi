@@ -42,6 +42,28 @@ def type_boost(r, nargs, met):
 
     return 'boost::function%s<%s>' % (len(args) - 1, ', '.join(args))
 
+def boost_function_to_boost_function(n):
+
+    params = ['R'] + map(lambda n: 'A%s' % n, range(n))
+    boost = 'boost::function%s<%s>' % (n, ', '.join(params))
+    return '''\
+    template <%(params)s>
+    struct AnyToBoostFunction<%(boost)s >
+    {
+      typedef %(boost)s type;
+      enum { arity = %(n)s };
+      static type
+      convert(type v)
+      {
+        return v;
+      }
+    };
+''' % {
+        'boost': boost,
+        'n': n + 1,
+        'params': ', '.join(map(lambda p: 'typename %s' % p, params)),
+        }
+
 
 def any_to_boost_function(r, nargs, met):
 
@@ -60,6 +82,7 @@ def any_to_boost_function(r, nargs, met):
     struct AnyToBoostFunction<%(fun)s>
     {
       typedef %(boost)s type;
+      enum { arity = %(arity)s };
       static type
       convert(%(named_fun)s)
       {
@@ -67,6 +90,7 @@ def any_to_boost_function(r, nargs, met):
       }
     };
 ''' % {
+        'arity': nargs + 1,
         'body': body,
         'boost': type_boost(r, nargs, met),
         'fun': type_fun(r, nargs, '', met),
@@ -104,6 +128,9 @@ for r in [True]:
                   % (r, met, n)
             print any_to_boost_function(r, n, met)
 
+for n in range(5):
+    print boost_function_to_boost_function(n)
+
 print '''\
 
     // Treat the case of argument-less functions manually
@@ -117,6 +144,7 @@ print '''\
     struct AnyToBoostFunction<R (*) ()>
     {
       typedef boost::function1<R, urbi::object::rObject> type;
+      enum { arity = 1 };
       static type
       convert(R (*f) ())
       {
