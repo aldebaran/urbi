@@ -81,18 +81,6 @@ class Global.Control
                  detach({ res = false | tag.stop })) |
     function () { res }
   };
-
-  finally(action, reaction)
-  {
-    try
-    {
-      action()
-    }
-    finally
-    {
-      reaction()
-    }
-  };
 };
 
 // Provide these at the Global level.
