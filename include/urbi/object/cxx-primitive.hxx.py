@@ -177,7 +177,7 @@ primitives = ''
 
 for ret in [True, False]:
     # nargs counts "this".  -1 means there is not even a this.
-    for nargs in [-1] + range(5):
+    for nargs in [-1] + range(10):
         primitives += '\n    // Return: %s, Arguments: %s\n' % (ret, nargs)
         primitives += primitive(ret, nargs)
     for met in [True, False]:

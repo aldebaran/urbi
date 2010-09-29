@@ -123,12 +123,12 @@ namespace urbi
 # For now, only the r case is needed, and !r fails with visual studio
 for r in [True]:
     for met in [0, 1, 2]:
-        for n in range(5):
+        for n in range(10):
             print '    // Return: %s, Method: %s, Arguments: %s'\
                   % (r, met, n)
             print any_to_boost_function(r, n, met)
 
-for n in range(5):
+for n in range(10):
     print boost_function_to_boost_function(n)
 
 print '''\
