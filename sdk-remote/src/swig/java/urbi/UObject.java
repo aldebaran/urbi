@@ -76,15 +76,21 @@ public class UObject extends UObjectCPP
 						  String[] types);
 
 
+    private String[] classToStringArray(Class[] p) {
+	String[] types = new String[p.length];
+	for (int i = 0; i < p.length; ++i) {
+	    types[i] = p[i].toString();
+	}
+	return types;
+    }
+
+
     protected void UNotifyOnRequest (String var_name, Method m)
     {
 	checkNotifyRegisteredMethod (m, "UNotifyOnRequest");
 	String bytecode_sig = getMethodBytecodeSignature (m);
 	Class[] p = m.getParameterTypes();
-	String[] types = new String[p.length];
-	for (int i = 0; i < p.length; ++i) {
-	    types[i] = p[i].toString();
-	}
+	String[] types = classToStringArray(p);
 	registerNotifyOnRequest (0,
 				 var_name,
 				 false,
@@ -101,10 +107,7 @@ public class UObject extends UObjectCPP
 	checkNotifyRegisteredMethod (m, "UNotifyOnRequest");
 	String bytecode_sig = getMethodBytecodeSignature (m);
 	Class[] p = m.getParameterTypes();
-	String[] types = new String[p.length];
-	for (int i = 0; i < p.length; ++i) {
-	    types[i] = p[i].toString();
-	}
+	String[] types = classToStringArray(p);
 	registerNotifyOnRequest (UVar.getCPtr (v),
 				 v.getName(),
 				 v.getOwned (),
@@ -188,12 +191,8 @@ public class UObject extends UObjectCPP
     {
 	checkNotifyRegisteredMethod (m, "UNotifyChange");
 	String bytecode_sig = getMethodBytecodeSignature (m);
-
 	Class[] p = m.getParameterTypes();
-	String[] types = new String[p.length];
-	for (int i = 0; i < p.length; ++i) {
-	    types[i] = p[i].toString();
-	}
+	String[] types = classToStringArray(p);
 	registerNotifyChange (0,
 			      var_name,
 			      false,
@@ -210,10 +209,7 @@ public class UObject extends UObjectCPP
 	checkNotifyRegisteredMethod (m, "UNotifyChange");
 	String bytecode_sig = getMethodBytecodeSignature (m);
 	Class[] p = m.getParameterTypes();
-	String[] types = new String[p.length];
-	for (int i = 0; i < p.length; ++i) {
-	    types[i] = p[i].toString();
-	}
+	String[] types = classToStringArray(p);
 	registerNotifyChange (UVar.getCPtr (v),
 			      v.getName(),
 			      v.getOwned (),
@@ -305,10 +301,7 @@ public class UObject extends UObjectCPP
 	}
 
 	String bytecode_sig = getMethodBytecodeSignature (m);
-	String[] types = new String[p.length];
-	for (int i = 0; i < p.length; ++i) {
-	    types[i] = p[i].toString();
-	}
+	String[] types = classToStringArray(p);
 	registerFunction (obj,
 			  get__name (),
 			  m.getName (),
@@ -325,6 +318,12 @@ public class UObject extends UObjectCPP
 	UBindFunction (obj, m);
     }
 
+    protected void UBindFunction (String method_name)
+    {
+	Method m = findMethodFromName (this, method_name);
+	UBindFunction (this, m);
+    }
+
     protected void UBindFunctions(Object obj,
 				  String ... method_names)
     {
@@ -332,6 +331,11 @@ public class UObject extends UObjectCPP
 	    UBindFunction(obj, method_name);
     }
 
+    protected void UBindFunctions(String ... method_names)
+    {
+	for (String method_name : method_names)
+	    UBindFunction(this, method_name);
+    }
 
 
     protected void UBindFunction (Object obj,

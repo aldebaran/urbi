@@ -63,29 +63,29 @@ public class All extends UObject
 	//    !strcmp(getenv("CTOR_EXCEPTION"), "true"))
 	//    throw std::runtime_error("constructor failure");
 
-	UBindFunction(this, "init");
+	UBindFunction("init");
 	//UBindFunction(all, setOwned);
-	UBindFunction(this, "setNotifyChange");
+	UBindFunction("setNotifyChange");
 
 	///** BYPASS check **/
-	UBindFunction(this, "setBypassNotifyChangeBinary");
-	UBindFunction(this, "setBypassNotifyChangeImage");
-	UBindFunctions(this, "markBypass"/*, markRTP*/);
-	UBindFunctions(this, "selfWriteB", "selfWriteI"/*, "selfWriteVD"*/);
+	UBindFunction("setBypassNotifyChangeBinary");
+	UBindFunction("setBypassNotifyChangeImage");
+	UBindFunctions("markBypass"/*, markRTP*/);
+	UBindFunctions("selfWriteB", "selfWriteI"/*, "selfWriteVD"*/);
 
-	UBindFunctions(this, "setNotifyChangeByName", "setNotifyChangeByUVar");
+	UBindFunctions("setNotifyChangeByName", "setNotifyChangeByUVar");
 	//UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args, unnotify);
 	//UBindFunction(all, read);
 	//UBindFunction(all, write);
-	UBindFunction(this, "readByName");
-	UBindFunction(this, "writeByName");
-	UBindFunction(this, "writeByUVar");
-	UBindFunction(this, "writeOwnByName");
-	UBindFunction(this, "urbiWriteOwnByName");
-	UBindFunction(this, "sendString");
-	UBindFunction(this, "sendBuf");
+	UBindFunction("readByName");
+	UBindFunction("writeByName");
+	UBindFunction("writeByUVar");
+	UBindFunction("writeOwnByName");
+	UBindFunction("urbiWriteOwnByName");
+	UBindFunction("sendString");
+	UBindFunction("sendBuf");
 	//UBindFunction(all, sendPar);
-	UBindFunction(this, "typeOf");
+	UBindFunction("typeOf");
 	//UBindFunction(all, uobjectName);
 	//UBindFunction(all, allUObjectName);
 	UBindVar(a, "a");
@@ -103,26 +103,26 @@ public class All extends UObject
 	UBindVar(removeNotify, "removeNotify");
 	removeNotify.set("");
 	// Properties.
-	UBindFunction(this, "readProps");
-	UBindFunction(this, "writeProps");
+	UBindFunction("readProps");
+	UBindFunction("writeProps");
 
-	UBindFunction(this, "writeD");
-	UBindFunction(this, "writeS");
-	UBindFunction(this, "writeL");
-	UBindFunction(this, "writeM"); // M for Map
-	UBindFunction(this, "writeB");
-	UBindFunction(this, "makeCall");
-	UBindFunction(this, "writeBNone");
-	UBindFunction(this, "writeI");
-	UBindFunction(this, "writeSnd");
+	UBindFunction("writeD");
+	UBindFunction("writeS");
+	UBindFunction("writeL");
+	UBindFunction("writeM"); // M for Map
+	UBindFunction("writeB");
+	UBindFunction("makeCall");
+	UBindFunction("writeBNone");
+	UBindFunction("writeI");
+	UBindFunction("writeSnd");
 	//UBindFunction(all, writeRI);
 	//UBindFunction(all, writeRSnd);
 	//
-	UBindFunction(this, "transmitD");
-	UBindFunction(this, "transmitS");
-	UBindFunction(this, "transmitL");
-	UBindFunction(this, "transmitM");
-	UBindFunction(this, "transmitB");
+	UBindFunction("transmitD");
+	UBindFunction("transmitS");
+	UBindFunction("transmitL");
+	UBindFunction("transmitM");
+	UBindFunction("transmitB");
 	//UBindFunction(all, transmitI);
 	//UBindFunction(all, transmitSnd);
 	//UBindFunction(this, "transmitO");
@@ -130,21 +130,21 @@ public class All extends UObject
 	//UBindFunction(all, loop_yield);
 	//UBindFunction(urbi::UContext, side_effect_free_get);
 	//UBindFunction(urbi::UContext, side_effect_free_set);
-	UBindFunction(this, "yield");
-	UBindFunction(this, "yield_for");
-	UBindFunction(this, "yield_until_things_changed");
+	UBindFunction("yield");
+	UBindFunction("yield_for");
+	UBindFunction("yield_until_things_changed");
 
-	UBindFunction(this, "getDestructionCount");
+	UBindFunction("getDestructionCount");
 
-	UBindFunction(this, "invalidRead");
-	UBindFunction(this, "invalidWrite");
+	UBindFunction("invalidRead");
+	UBindFunction("invalidWrite");
 
 	UBindEvent(ev, "ev");
-	UBindFunction(this, "sendEvent");
-	UBindFunction(this, "sendEvent2Args");
-	UBindFunction(this, "sendNamedEvent");
+	UBindFunction("sendEvent");
+	UBindFunction("sendEvent2Args");
+	UBindFunction("sendNamedEvent");
 
-	UBindFunction(this, "throwException");
+	UBindFunction("throwException");
 	//UBindFunction(all, socketStats);
 	//UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
 	//	  changeCount);
@@ -155,7 +155,7 @@ public class All extends UObject
 	vars[2] = c;
 	vars[3] = d;
 	//
-	UBindFunctions(this, "notifyWriteA", "writeAD", "writeAS", "writeAB");
+	UBindFunctions("notifyWriteA", "writeAD", "writeAS", "writeAB");
     }
 
 
