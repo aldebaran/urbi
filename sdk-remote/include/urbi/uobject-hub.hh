@@ -33,8 +33,8 @@ namespace urbi
     void USetUpdate(ufloat period);
     virtual int update() {return 0;}
 
-    UObjectList  members;
-    UObjectList* getSubClass(const std::string&);
+    urbi::UObjectList  members;
+    urbi::UObjectList* getSubClass(const std::string&);
     //   UObjectList* getAllSubClass(const std::string&); //TODO
     const std::string& get_name() { return name;}
   protected:
