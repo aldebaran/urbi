@@ -559,7 +559,7 @@ namespace urbi
       s->uc->send("%s.val->blend = %s.sendsoundsaveblend;", dev, dev);
 
       if (s->tag && s->tag[0])
-        s->uc->send("%s << 1;\n", s->tag);
+        s->uc->send("Channel.new(\"%s\") << 1;\n", s->tag);
       delete[] s->buffer;
       free(s->tag);
       free(s->device);
@@ -594,8 +594,8 @@ namespace urbi
     case SOUND_RAW:
     {
       const char* dev = device ? device : "speaker";
-      send("var %s.sendsoundsaveblend = %s.val->blend; %s.val->blend=queue;",
-           dev, dev, dev);
+      send("%s.removeSlot(\"sendsoundsaveblend\") | var %s.sendsoundsaveblend = %s.val->blend; %s.val->blend=\"queue\";",
+           dev, dev, dev, dev);
       sendSoundData* s = new sendSoundData();
       s->bytespersec = sound.channels * sound.rate * (sound.sampleSize / 8);
       s->uc = this;
