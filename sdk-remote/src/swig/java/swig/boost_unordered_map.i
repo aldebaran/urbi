@@ -81,8 +81,8 @@ namespace boost
     bool empty() const;
     void clear();
 
-    boost::unordered_map<K, T>::iterator begin();
-    boost::unordered_map<K, T>::iterator end();
+    //boost::unordered_map<K, T>::iterator begin();
+    //boost::unordered_map<K, T>::iterator end();
 
     %extend {
       bool isEmpty() const {

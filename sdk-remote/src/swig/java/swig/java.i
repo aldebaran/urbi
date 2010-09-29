@@ -115,6 +115,52 @@ namespace urbi
 #define ATTRIBUTE_DEPRECATED
 #define ATTRIBUTE_PRINTF(foo, barx)
 
+
+
+namespace urbi
+{
+  class UAbstractClient;
+  class UAutoValue;
+  class UBinary;
+  class UCallback;
+  class UCallbackList;
+  class UCallbackWrapper;
+  class UClient;
+  class UContext;
+  class UEvent;
+  class UGenericCallback;
+  class UImage;
+  class UList;
+  class UMessage;
+  class UObject;
+  class UObjectData;
+  class UObjectHub;
+  class USound;
+  class UTimerCallback;
+  class UValue;
+  class UVar;
+  class UVardata;
+
+  typedef std::list<UObject*> UObjectList;
+
+  class UVariable;
+
+  namespace impl
+  {
+    class UContextImpl;
+    class UGenericCallbackImpl;
+    class UObjectImpl;
+    class UVarImpl;
+    class UGenericCallbackImpl;
+  }
+  typedef boost::shared_ptr<std::string> TimerHandle;
+  class baseURBIStarter;
+  class baseURBIStarterHub;
+
+  enum UObjectMode;
+};
+
+
 /**************************************************************************\
 |                                                                          |
 |                              Liburbi                                     |
@@ -161,17 +207,18 @@ namespace urbi
 
 %ignore wavheader;
 
-/// Ignore the attribute message
-/// Because swig generate a accessor named getMessage
-/// which conflict with getMessage method.
-/// We manually rewrite the accessor in %extend UBinary
-%ignore urbi::UBinary::message;
-
-/// Ignore attribute client (setter/getter conflict)
-%ignore urbi::UMessage::client;
-
 /// Ignore global variable defaultClient (setter/getter conflict)
 %ignore urbi::defaultClient;
+%ignore urbi::default_stream;
+%ignore urbi::kernelMajor;
+%ignore urbi::unarmorAndSend;
+%ignore urbi_main_args;
+%ignore urbi::main(const libport::cli_args_type&, UrbiRoot&, bool, bool);
+%ignore urbi::main(const libport::cli_args_type&, UrbiRoot&, bool);
+%ignore urbi::main(const libport::cli_args_type&, UrbiRoot&);
+%ignore urbi::callback(UCustomCallback, void*);
+%ignore urbi::callback(UCallback);
+%ignore urbi::send(const void*, size_t);
 
 /// Tell swig that UClient is not abstract
 %feature("notabstract") UClient;
@@ -193,6 +240,12 @@ namespace urbi
 /// Tell swig that ufloat is a double (I wonder if it's that much
 /// a good idea...)
 typedef double ufloat;
+
+namespace libport
+{
+  /// Microseconds.
+  typedef long long utime_t;
+};
 
 %{
   // Include in the generated wrapper file
@@ -273,14 +326,6 @@ namespace urbi
 %include "urbi/uimage.hh"
 
 %{
-  void urbi_USound_data_set(urbi::USound* b, unsigned char *data)
-  {
-    b->data = (char*) data;
-  }
-  unsigned char * urbi_USound_data_get(urbi::USound* b)
-  {
-    return (unsigned char *) b->data;
-  }
   void setSize(urbi::UImage* b, size_t size)
   {
     b->size = size;
@@ -309,6 +354,7 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
+%ignore urbi::USound::dump;
 
 namespace urbi
 {
@@ -330,6 +376,14 @@ namespace urbi
 %include "urbi/usound.hh"
 
 %{
+  void urbi_USound_data_set(urbi::USound* b, unsigned char *data)
+  {
+    b->data = (char*) data;
+  }
+  unsigned char * urbi_USound_data_get(urbi::USound* b)
+  {
+    return (unsigned char *) b->data;
+  }
   void setSize(urbi::USound* b, size_t size)
   {
     b->size = size;
@@ -346,6 +400,17 @@ namespace urbi
 ///       UBinary        ///
 ///                      ///
 ////////////////////////////
+
+%ignore urbi::BinaryData;
+
+/// Ignore the attribute message
+/// Because swig generate a accessor named getMessage
+/// which conflict with getMessage method.
+/// We manually rewrite the accessor in %extend UBinary
+%ignore urbi::UBinary::message;
+%ignore urbi::UBinary::print;
+%ignore urbi::UBinary::parse;
+
 
 %include "urbi/ubinary.hh"
 
@@ -417,6 +482,8 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
+%ignore urbi::UList::print;
+
 namespace urbi
 {
 
@@ -463,7 +530,22 @@ namespace urbi
   /// manipulate the Vector of UValue
 namespace std {
   %template(UValueVector) vector<urbi::UValue*>;
+  %template(StringVector) vector<std::string>;
+  %template(UNamedValueVector) std::vector<urbi::UNamedValue>;
 };
+
+%include "std_pair.i"
+
+namespace std {
+  %template(IntPair) std::pair<int, int>;
+}
+
+%include "boost_shared_ptr.i"
+
+namespace boost {
+  %template(FinallySharedPtr) boost::shared_ptr<libport::Finally>;
+  %template(TimerHandle) boost::shared_ptr<std::string>;
+}
 
 
 ////////////////////////////
@@ -519,7 +601,10 @@ namespace boost {
 ///                      ///
 ////////////////////////////
 
+%ignore urbi::UObjectStruct::print;
+
 %ignore urbi::UValue::UValue(const void*);
+%ignore urbi::UValue::UValue(const void*, bool);
 %ignore urbi::UValue::UValue(long, bool);
 %ignore urbi::UValue::UValue(unsigned int, bool);
 %ignore urbi::UValue::UValue(unsigned long, bool);
@@ -537,15 +622,7 @@ namespace urbi
 
   %extend UValue {
 
-    ///bool isStringNull () { return self->stringValue == 0; }
-
-    /// FIXME !!! This can SEGFAULT !!
-    ///std::string		getString () { return *self->stringValue; }
-
     double		getDouble () { return self->val; }
-
-    ///UBinary*		getUBinary () { return self->binary; }
-    ///UList*		getUList () { return self->list; }
 
     void		setString (std::string s)
       {
@@ -624,6 +701,12 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
+%ignore urbi::UMessage::UMessage(UAbstractClient&, int, const char*, const char*, const binaries_type&);
+
+/// Ignore attribute client (setter/getter conflict)
+%ignore urbi::UMessage::client;
+%ignore urbi::UMessage::print;
+
 %include "urbi/umessage.hh"
 
 namespace urbi
@@ -637,12 +720,26 @@ namespace urbi
   }
 };
 
-
 ////////////////////////////
 ///                      ///
 ///   UAbstractClient    ///
 ///                      ///
 ////////////////////////////
+
+%ignore urbi::UAbstractClient::vpack;
+%ignore urbi::UAbstractClient::sendBinary;
+%ignore urbi::UAbstractClient::sendBin(const void*, size_t);
+%ignore urbi::UAbstractClient::sendBin(const void*, size_t, const char*, ...);
+%ignore urbi::UAbstractClient::stream_get;
+%ignore urbi::UAbstractClient::send(std::istream&);
+%ignore urbi::UAbstractClient::sendCommand(UCallback, const char*, ...);
+%ignore urbi::UAbstractClient::sendCommand(UCustomCallback, void *, const char*, ...);
+%ignore urbi::UAbstractClient::putFile(const void*, size_t, const char*);
+%ignore urbi::UAbstractClient::setCallback(UCallback, const char*);
+%ignore urbi::UAbstractClient::setCallback(UCustomCallback, void*, const char*);
+
+%ignore urbi::UCallbackWrapperF;
+%ignore urbi::UCallbackWrapperCF;
 
 %include "urbi/uabstractclient.hh"
 
@@ -698,6 +795,11 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
+// FIXME: handle options
+
+%ignore urbi::UClient::UClient(const std::string&, unsigned, size_t, const UClient::options&);
+%ignore urbi::UClient::send(std::istream&);
+
 /// Generate code for UClient:
 %include "urbi/uclient.hh"
 
@@ -707,6 +809,25 @@ namespace urbi
 ///     USyncClient      ///
 ///                      ///
 ////////////////////////////
+
+%ignore urbi::USyncClient::USyncClient(const std::string&, unsigned, size_t, const USyncClient::options&);
+%ignore urbi::USyncClient::syncGetDevice(const char*, double &, libport::utime_t);
+%ignore urbi::USyncClient::syncGetResult(const char*, double &, libport::utime_t);
+%ignore urbi::USyncClient::syncGetNormalizedDevice(const char*, double &, libport::utime_t);
+%ignore urbi::USyncClient::syncGetDevice(const char*, const char*, double &, libport::utime_t);
+%ignore urbi::USyncClient::syncGetDevice(const char*, double &);
+%ignore urbi::USyncClient::syncGetResult(const char*, double &);
+%ignore urbi::USyncClient::syncGetNormalizedDevice(const char*, double &);
+%ignore urbi::USyncClient::syncGetDevice(const char*, const char*, double &);
+%ignore urbi::USyncClient::syncSend(const void*, size_t);
+%ignore urbi::USyncClient::syncGetImage(const char*, void*, size_t&, int, int, size_t&, size_t&, libport::utime_t);
+%ignore urbi::USyncClient::syncGetImage(const char*, void*, size_t&, int, int, size_t&, size_t&);
+%ignore urbi::USyncClient::setDefaultOptions;
+%ignore urbi::USyncClient::getOptions;
+%ignore urbi::USyncClient::listen;
+
+// FIXME: handle options (and setDefaultOptions and getOptions)
+// FIXME: handle listen ?
 
 /// Generate code for UClient:
 %include "urbi/usyncclient.hh"
@@ -744,16 +865,22 @@ namespace urbi
 
 /// and apply the transformation to const char* argv[]
 %apply char**STRING_ARRAY {const char* argv[]};
+%apply char**STRING_ARRAY {const char** argv};
+%apply char**STRING_ARRAY {char* argv[]};
+%apply char**STRING_ARRAY {char** argv};
 
-namespace urbi
-{
-  class UVar;
-  class UObject;
-  class UObjectHub;
-  class UStartlistobjectlist;
-};
 
 %include "urbi/uproperty.hh"
+
+%ignore urbi::impl::UVarImpl::timestamp;
+
+%ignore urbi::impl::UContextImpl::getIoService;
+%ignore urbi::impl::UContextImpl::send(const void*, size_t);
+%ignore urbi::impl::UContextImpl::setTimer;
+%ignore urbi::impl::UContextImpl::getGenericCallbackImpl;
+%ignore urbi::impl::UContextImpl::hubs;
+%ignore urbi::impl::UContextImpl::objects;
+%ignore urbi::impl::UContextImpl::initialized;
 
 %include "urbi/ucontext-impl.hh"
 
@@ -764,8 +891,10 @@ namespace urbi
 ///                      ///
 ////////////////////////////
 
+
 %ignore urbi::UContext::yield_for(libport::utime_t) const;
 %ignore urbi::UContext::yield_until(libport::utime_t) const;
+%ignore urbi::UContext::send(const void*, size_t);
 
 %include "urbi/ucontext.hh"
 
@@ -806,6 +935,8 @@ namespace urbi
 %ignore urbi::UVar::delta;
 %ignore urbi::UVar::blend;
 %ignore urbi::UVar::constant;
+%ignore urbi::UVar::in;
+%ignore urbi::UVar::out;
 
 %define CPP_RUNTIME_ERROR_CATCH(function)
 %exception function {
@@ -864,6 +995,7 @@ namespace urbi
       {
 	self->set_name (name);
       }
+
   }
 };
 
@@ -913,6 +1045,17 @@ namespace urbi
   }
 };
 
+////////////////////////////
+///                      ///
+///    UObjectHub        ///
+///                      ///
+////////////////////////////
+
+// FIXME: handle UObjectList (so handle std_list)
+%ignore urbi::UObjectHub::members;
+%ignore urbi::UObjectHub::getSubClass;
+
+%include "urbi/uobject-hub.hh"
 
 ////////////////////////////
 ///                      ///
@@ -925,6 +1068,9 @@ namespace urbi
 
 /// Tell swig that urbi::URBIStarterJAVA is not abstract
 %feature("notabstract") urbi::URBIStarterJAVA;
+
+%ignore urbi::baseURBIStarter::list;
+%ignore urbi::baseURBIStarterHub::list;
 
 %include "urbi/ustarter.hh"
 
