@@ -70,20 +70,6 @@ much less change it.
 \end{urbiscript}
 
 
-\item[finally](<action>, <reaction>)%
-  Execute the \var{reaction} function at the end of the evaluation of
-  the \var{action} function.  This is equivalent to
-
-\begin{urbiunchecked}
-{
-  var t = Tag.new |
-  at (t.leave?)
-    reaction() |
-  t: action()
-}
-\end{urbiunchecked}
-
-
 \item[persist](<expression>, <delay>)%
   Return an object whose \var{val} slot evaluates to true if the
   \var{expression} has been continuously true for this \var{delay} and false
