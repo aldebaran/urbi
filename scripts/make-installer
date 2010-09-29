@@ -74,8 +74,16 @@ MD5SUM=$find_prog_res
 test -n "$MD5SUM" ||
   fatal "cannot find md5sum"
 
+cleanup ()
+{
+  status=$?
+  cd /
+  ls -l $tmp
+  rm -rf $tmp
+  exit $?
+}
 tmp=$(mktemp -d "$TMPDIR/kernel-make-installer.XXXXXX")
-trap "cd / && rm -rf $tmp" 0 1 2 13 15
+trap cleanup 0 1 2 13 15
 
 updir=$(dirname "$upname")
 basename=$(basename "${upname%-$MODE}")
@@ -103,12 +111,12 @@ if test -r "$updir/$my_zip"                             \
 
   # Merge zips.
   tools=$HOME/share/tools
-  vcredist="$tools/vcredist/vcredist_x86-${COMP}.exe"
+  vcredist="$tools/vcredist/vcredist_x86-$COMP.exe"
   gostai_console="$tools/gostai-console/Gostai Console 2.5-win32.exe"
   gostai_editor="$tools/gostai-editor/gostai-editor-2.4.1-win32.exe"
   $srcdir/scripts/merge-install.sh -v                   \
       --vcredist "$vcredist"                            \
-      --comp "${COMP}"                                  \
+      --comp "$COMP"                                    \
       --templateloc "$srcdir/share/templates"           \
       --installscriptloc "$srcdir/share/installer/"     \
       --gostai-console "$gostai_console"                \
@@ -116,7 +124,11 @@ if test -r "$updir/$my_zip"                             \
       --output "$tmp/$installer"                        \
       "$updir/$my_zip" "$updir/$other_zip"
 
-  # Upload the installer
-  $MD5SUM "$tmp/$installer" >"$tmp/$installer.md5"
-  cp "$tmp/$installer" "$tmp/$installer.md5" "$updir"
+  # Upload the installer and its MD5.  Be sure to generate an MD5sum
+  # file that does not include a path: cd into
+  here=$(pwd)
+  cd $tmp
+  $MD5SUM "$installer" >"$installer.md5"
+  cp "$installer" "$installer.md5" "$updir"
+  cd $here
 fi
