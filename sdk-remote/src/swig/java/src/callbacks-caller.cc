@@ -8,6 +8,7 @@
  * See the LICENSE file for more information.
  */
 
+#include <libport/cmath>
 #include <libport/format.hh>
 #include "callbacks-caller.hh"
 

@@ -14,6 +14,7 @@
 ///
 /// liburbi includes:
 ///
+#include <libport/cmath>
 #include <sstream>
 #include <urbi/ubinary.hh>
 #include <urbi/uimage.hh>
