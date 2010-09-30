@@ -6,13 +6,11 @@
 ##
 ## See the LICENSE file for more information.
 
-dist_libuobject@LIBSFX@_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=		\
   kernel/connection.cc				\
   kernel/connection.hh				\
   kernel/connection-set.cc			\
   kernel/connection-set.hh			\
-  kernel/debug.cc				\
-  kernel/debug.hh				\
   kernel/lock.cc				\
   kernel/lock.hh				\
   kernel/server-timer.hh			\

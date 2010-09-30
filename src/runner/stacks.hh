@@ -48,7 +48,7 @@ namespace runner
 
   public:
     /// Signal the stacks a new execution is starting
-    void execution_starts(const libport::Symbol& msg);
+    void execution_starts(libport::Symbol msg);
 
     /// Push new frames on the stacks to execute a function
     /** \param msg      Name of the function being invoked (debug purpose only)
@@ -59,12 +59,12 @@ namespace runner
      *  \param call     Value of 'call' in the new frame.
      */
     void
-    push_frame(const libport::Symbol& msg,
+    push_frame(libport::Symbol msg,
                unsigned local, unsigned captured,
                rObject self, rObject call);
 
     /// Helper to restore a previous frame state
-    void pop_frame(const libport::Symbol& msg,
+    void pop_frame(libport::Symbol msg,
                    unsigned local, unsigned captured);
 
 

@@ -21,7 +21,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   runner/shell.hh				\
   runner/sneaker.cc				\
   runner/sneaker.hh				\
-  runner/stack-debug.hh				\
   runner/stacks.cc				\
   runner/stacks.hh				\
   runner/stacks.hxx
