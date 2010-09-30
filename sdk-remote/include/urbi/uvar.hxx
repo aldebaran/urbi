@@ -32,6 +32,7 @@ namespace urbi
     , vardata(0)
     , name("noname")
     , temp(false)
+    , local(false)
   {
   }
 

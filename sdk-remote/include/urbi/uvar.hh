@@ -185,7 +185,6 @@ namespace urbi
   private:					\
     Type Name;
 
-
     /// Full name of the variable as seen in URBI.
     PRIVATE(std::string, name)
 
@@ -193,6 +192,9 @@ namespace urbi
     PRIVATE(bool, temp);
 
     PRIVATE(RtpMode, rtp);
+
+    /// If set, this variable will never export its content remotely.
+    PRIVATE(bool, local);
 # undef PRIVATE
 
     // Check that the invariants of this class are verified.

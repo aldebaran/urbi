@@ -193,13 +193,23 @@ namespace urbi
   void
   RemoteUVarImpl::set(const UValue& v)
   {
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
+    libport::utime_t time = libport::utime();
+    if (!owner_->get_local())
+      transmit(v, time);
+    // Loopback notification
+    ctx->assignMessage(owner_->get_name(), v, time);
+  }
+
+  void
+  RemoteUVarImpl::transmit(const UValue& v, libport::utime_t time)
+  {
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string fullname = owner_->get_name();
     size_t pos = fullname.rfind(".");
     assert(pos != std::string::npos);
     std::string owner = fullname.substr(0, pos);
     std::string name = fullname.substr(pos + 1);
-    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
-    libport::utime_t time = libport::utime();
     bool rtp = false;
     if (v.type == DATA_BINARY)
     {
@@ -267,8 +277,6 @@ namespace urbi
         client_->endPack();
       }
     }
-    // Loopback notification
-    ctx->assignMessage(owner_->get_name(), v, time);
     if (!rtp)
     {
       if (client_->isCallbackThread() && ctx->dispatchDepth)

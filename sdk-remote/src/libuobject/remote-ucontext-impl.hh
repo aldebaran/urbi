@@ -180,6 +180,8 @@ namespace urbi
       virtual void useRTP(bool enable);
 
     private:
+      // transmit the value to the remote kernel
+      void transmit(const UValue& v, libport::utime_t timestamp);
       USyncClient* client_;
       UValue value_;
       UVar* owner_;

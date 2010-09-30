@@ -94,6 +94,7 @@ namespace urbi
     owned = false;
     temp = false;
     rtp = RTP_DEFAULT;
+    local = false;
     vardata = 0;
     if (!impl_)
     {
