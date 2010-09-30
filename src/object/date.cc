@@ -53,8 +53,15 @@ namespace urbi
       else
       {
         type_check(args[0], String::proto, 1);
-        time_ = boost::posix_time::time_from_string
-          (args[0]->as<object::String>()->value_get());
+        const std::string& s = args[0]->as<object::String>()->value_get();
+        try
+        {
+          time_ = boost::posix_time::time_from_string(s);
+        }
+        catch (const boost::bad_lexical_cast&)
+        {
+          FRAISE("cannot convert to date: %s", s);
+        }
       }
     }
 
