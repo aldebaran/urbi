@@ -159,45 +159,33 @@ CallbacksCaller::areJNIVariablesCached ()
   return jni_variables_cached_;
 }
 
+static void condDeleteGlobalRef(JNIEnv* env, jclass cls)
+{
+  if (cls)
+    env->DeleteGlobalRef (cls);
+}
+
 void
 CallbacksCaller::deleteClassRefs(JNIEnv* env)
 {
-  if (uvalue_cls)
-    env->DeleteGlobalRef (uvalue_cls);
-  if (uvar_cls)
-    env->DeleteGlobalRef (uvar_cls);
-  if (uobject_cls)
-    env->DeleteGlobalRef (uobject_cls);
-  if (string_cls)
-    env->DeleteGlobalRef (string_cls);
-  if (class_cls)
-    env->DeleteGlobalRef (class_cls);
-  if (integer_cls)
-    env->DeleteGlobalRef (integer_cls);
-  if (boolean_cls)
-    env->DeleteGlobalRef (boolean_cls);
-  if (byte_cls)
-    env->DeleteGlobalRef (byte_cls);
-  if (character_cls)
-    env->DeleteGlobalRef (character_cls);
-  if (short_cls)
-    env->DeleteGlobalRef (short_cls);
-  if (long_cls)
-    env->DeleteGlobalRef (long_cls);
-  if (float_cls)
-    env->DeleteGlobalRef (float_cls);
-  if (double_cls)
-    env->DeleteGlobalRef (double_cls);
-  if (ulist_cls)
-    env->DeleteGlobalRef (ulist_cls);
-  if (ubinary_cls)
-    env->DeleteGlobalRef (ubinary_cls);
-  if (usound_cls)
-    env->DeleteGlobalRef (usound_cls);
-  if (uimage_cls)
-    env->DeleteGlobalRef (uimage_cls);
-  if (udictionary_cls)
-    env->DeleteGlobalRef (udictionary_cls);
+  condDeleteGlobalRef(env, uvalue_cls);
+  condDeleteGlobalRef(env, uvar_cls);
+  condDeleteGlobalRef(env, uobject_cls);
+  condDeleteGlobalRef(env, string_cls);
+  condDeleteGlobalRef(env, class_cls);
+  condDeleteGlobalRef(env, integer_cls);
+  condDeleteGlobalRef(env, boolean_cls);
+  condDeleteGlobalRef(env, byte_cls);
+  condDeleteGlobalRef(env, character_cls);
+  condDeleteGlobalRef(env, short_cls);
+  condDeleteGlobalRef(env, long_cls);
+  condDeleteGlobalRef(env, float_cls);
+  condDeleteGlobalRef(env, double_cls);
+  condDeleteGlobalRef(env, ulist_cls);
+  condDeleteGlobalRef(env, ubinary_cls);
+  condDeleteGlobalRef(env, usound_cls);
+  condDeleteGlobalRef(env, uimage_cls);
+  condDeleteGlobalRef(env, udictionary_cls);
 }
 
 bool
@@ -397,17 +385,13 @@ CallbacksCaller::getGlobalRef (JNIEnv* env, const char* classname)
   jclass tmp, res;
   if (!(tmp = env->FindClass(classname)))
   {
-    std::string msg = "Can't find class ";
-    msg += classname;
-    TROW_RUNTIME (env, msg.c_str ());
+    TROW_RUNTIME (env, libport::format("Can't find class %s", classname));
     return false;
   }
 
   if (!(res = (jclass) env->NewGlobalRef(tmp)))
   {
-    std::string msg = "Can't create Global Ref for class  ";
-    msg += classname;
-    TROW_RUNTIME (env, msg.c_str ());
+    TROW_RUNTIME (env, libport::format("Can't create Global Ref for class %s", classname));
     return false;
   }
 
@@ -550,38 +534,48 @@ CallbacksCaller::getObjectFrom (const std::string& type_name, urbi::UValue v)
   jvalue res;
   if (type_name.length() > 10)
   {
-    if (type_name == "class urbi.generated.UValue")
-      res.l = getObjectFromUValue (v);
-    else if (type_name == "class java.lang.String")
-      res.l = getObjectFromString (v);
-    else if (type_name == "class urbi.generated.UVar")
-      res.l = getObjectFromUVar (urbi::uvar_uvalue_cast<urbi::UVar>(v));
-    else if (type_name == "class urbi.generated.UList")
-      res.l = getObjectFromUList (v);
-    else if (type_name == "class urbi.generated.UBinary")
-      res.l = getObjectFromUBinary (v);
-    else if (type_name == "class urbi.generated.UImage")
-      res.l = getObjectFromUImage (v);
-    else if (type_name == "class urbi.generated.USound")
-      res.l = getObjectFromUSound (v);
-    else if (type_name == "class java.lang.Integer")
-      res.l = getObjectFromInteger(v);
-    else if (type_name == "class java.lang.Boolean")
-      res.l = getObjectFromBoolean(v);
-    else if (type_name == "class java.lang.Double")
-      res.l = getObjectFromDouble(v);
-    else if (type_name == "class java.lang.Float")
-      res.l = getObjectFromFloat(v);
-    else if (type_name == "class java.lang.Long")
-      res.l = getObjectFromLong(v);
-    else if (type_name == "class java.lang.Short")
-      res.l = getObjectFromShort(v);
-    else if (type_name == "class java.lang.Character")
-      res.l = getObjectFromCharacter(v);
-    else if (type_name == "class java.lang.Byte")
-      res.l = getObjectFromByte(v);
+    if (type_name[6] == 'u')
+    {
+      if (type_name == "class urbi.UValue")
+	res.l = getObjectFromUValue (v);
+      else if (type_name == "class urbi.UVar")
+	res.l = getObjectFromUVar (urbi::uvar_uvalue_cast<urbi::UVar>(v));
+      else if (type_name == "class urbi.UList")
+	res.l = getObjectFromUList (v);
+      else if (type_name == "class urbi.UBinary")
+	res.l = getObjectFromUBinary (v);
+      else if (type_name == "class urbi.UImage")
+	res.l = getObjectFromUImage (v);
+      else if (type_name == "class urbi.USound")
+	res.l = getObjectFromUSound (v);
+      else if (type_name == "class urbi.UDictionary")
+	res.l = getObjectFromUDictionary (v);
+      else
+	throw std::runtime_error(libport::format("type %s not supported", type_name));
+    }
     else
-      throw std::runtime_error(libport::format("type %s not supported", type_name));
+    {
+      if (type_name == "class java.lang.String")
+	res.l = getObjectFromString (v);
+      else if (type_name == "class java.lang.Integer")
+	res.l = getObjectFromInteger(v);
+      else if (type_name == "class java.lang.Boolean")
+	res.l = getObjectFromBoolean(v);
+      else if (type_name == "class java.lang.Double")
+	res.l = getObjectFromDouble(v);
+      else if (type_name == "class java.lang.Float")
+	res.l = getObjectFromFloat(v);
+      else if (type_name == "class java.lang.Long")
+	res.l = getObjectFromLong(v);
+      else if (type_name == "class java.lang.Short")
+	res.l = getObjectFromShort(v);
+      else if (type_name == "class java.lang.Character")
+	res.l = getObjectFromCharacter(v);
+      else if (type_name == "class java.lang.Byte")
+	res.l = getObjectFromByte(v);
+      else
+	throw std::runtime_error(libport::format("type %s not supported", type_name));
+    }
   }
   else
   {
