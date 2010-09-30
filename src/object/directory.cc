@@ -154,14 +154,14 @@ namespace urbi
       {
         _watch_fd = inotify_init();
         if (_watch_fd == -1)
-          FRAISE("unable to start inotify: %s", libport::strerror(errno));
+          FRAISE("cannot start inotify: %s", libport::strerror(errno));
         libport::startThread(boost::function0<void>(poll));
       }
       started = true;
       int watch = inotify_add_watch(_watch_fd, path->as_string().c_str(),
                                     IN_CREATE | IN_DELETE);
       if (watch == -1)
-        FRAISE("unable to watch directory: %s", libport::strerror(errno));
+        FRAISE("cannot watch directory: %s", libport::strerror(errno));
       {
         _watch_map_elem_t events(on_file_created_, on_file_deleted_);
         libport::BlockLock lock(_watch_map_lock);
@@ -217,7 +217,7 @@ namespace urbi
       while (dirent* entry = readdir(dir))
       {
         if (!entry)
-  	path_->handle_any_error();
+	path_->handle_any_error();
         std::string name = entry->d_name;
         if (name == "." || name == "..")
           continue;
