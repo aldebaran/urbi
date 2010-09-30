@@ -893,11 +893,11 @@ namespace urbi
     {
       case 8008:
         if (srate == dest.rate && schannels == 1 && dest.channels == 2)
-          dup((byte*)sbuffer, (byte*)dbuffer, elementCount);
+          dup((byte*)dbuffer, (byte*)sbuffer, elementCount);
         else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
-          pud(sbuffer, dbuffer, elementCount);
+          pud(dbuffer, sbuffer, elementCount);
         else
-	  copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate,
+	  copy(dbuffer, sbuffer, schannels, dest.channels, srate, dest.rate,
 	     elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
 	     SAMPLE_SIGNED);
 	break;
@@ -908,12 +908,12 @@ namespace urbi
 	break;
       case 16016: // Data is short, but convertions needs an unsigned short.
          if (srate == dest.rate && schannels == 1 && dest.channels == 2)
-          dup((unsigned short*)sbuffer,
-              (unsigned short*)dbuffer,
+          dup((unsigned short*)dbuffer,
+              (unsigned short*)sbuffer,
               elementCount);
         else if (srate == dest.rate && schannels == 2 && dest.channels == 1)
-          pud((unsigned short*)sbuffer,
-              (unsigned short*)dbuffer,
+          pud((unsigned short*)dbuffer,
+              (unsigned short*)sbuffer,
               elementCount);
         else
 	  copy((short*)sbuffer, (short*)dbuffer, schannels, dest.channels,
