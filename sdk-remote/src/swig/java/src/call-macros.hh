@@ -19,8 +19,8 @@
 	  if (!init_env ())						\
 	    return error_val;						\
           					\
-          jvalue argument[] = {  };                                                     \
-	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
+                                                               \
+	  ret env_->Call##Type##Method(obj, mid);   		\
           testForException();						\
           ret_snd;							\
 	}

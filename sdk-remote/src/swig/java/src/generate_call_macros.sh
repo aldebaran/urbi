@@ -46,7 +46,12 @@ print_object_retrieving()
 for i in $(seq 0 $nb_of_args); do
     varlist=$(create_var_list $i "urbi::UValue uval")
     varlist2=$(create_var_list $i "obj")
-    varlist2="jvalue argument[] = { $varlist2 };"
+    method_call="env_->Call##Type##MethodA(obj, mid, argument);"
+    if test "x$varlist" != "x"; then
+	varlist2="jvalue argument[] = { $varlist2 };"
+    else
+	method_call="env_->Call##Type##Method(obj, mid);"
+    fi
     cat <<EOF
 # define CALL_METHOD_$i(Name, Type, JavaType, error_val, ret, ret_snd)	\\
 	JavaType call##Name##_$i ($varlist)				\\
@@ -55,7 +60,7 @@ for i in $(seq 0 $nb_of_args); do
 	    return error_val;						\\
           $(print_object_retrieving)					\\
           $varlist2                                                     \\
-	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\\
+	  ret $method_call   		\\
           testForException();						\\
           ret_snd;							\\
 	}
