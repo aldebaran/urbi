@@ -11,6 +11,7 @@
 ## ------------ ##
 
 REVISION_FILE = libuvalue/version.hh
+REVISIONFLAGS = --stub
 include $(top_srcdir)/build-aux/revision.mk
 
 nodist_env_DATA = $(REVISION_FILE)
