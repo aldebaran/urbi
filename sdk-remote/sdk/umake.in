@@ -35,7 +35,7 @@ Exit codes:
    1   some tool failed
    2   invalid command line option
    3   unknown command line argument
-   4   unable to find file or directory
+   4   cannot find file or directory
 
 FILE may be C/C++ source files, headers, libraries or directory that
 will be searched for such files.
