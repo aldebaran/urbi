@@ -17,10 +17,18 @@ include build-aux/make/html-dir.mk
 # modify something which is not part of our sources.
 doc/sdk-remote.htmldir: $(call ls_files, *.hh *.hxx *.cc)
 
+# Take into account Java sources and generated sources for java Doxygen
+JAVA_FILES =                                           \
+  $(call ls_files, src/swig/java/urbi/*.java)          \
+  $(wildcard $(top_builddir)/src/swig/java/urbi/*.java)
+doc/sdk-remote-java.htmldir: $(JAVA_FILES)
+
+
 # We cannot simply use html_DATA here, since Automake does not
 # support installing directories.
 if ENABLE_DOC_DOXYGEN
 html_DIR += doc/sdk-remote.htmldir
+html_DIR += doc/sdk-remote-java.htmldir
 endif
 
 ## ------------- ##
@@ -28,5 +36,6 @@ endif
 ## ------------- ##
 .PHONY: install-doc
 doc_files = doc/sdk-remote.htmldir
+doc_files += doc/sdk-remote-java.htmldir
 install-doc: $(doc_files)
 	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new

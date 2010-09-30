@@ -51,6 +51,7 @@ URBI_DOC
 # of "urbi-sdk"'s documentation.
 AC_SUBST([docdir], [${datarootdir}/doc/urbi-sdk])
 AC_CONFIG_FILES([doc/sdk-remote.dox])
+AC_CONFIG_FILES([doc/sdk-remote-java.dox])
 
 ## ------------- ##
 ## Compilation.  ##
