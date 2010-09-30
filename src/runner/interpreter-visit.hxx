@@ -670,7 +670,10 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::This*)
   {
-    return stacks_.this_get();
+    object::rObject res = stacks_.this_get();
+    if (!object::squash && dependencies_log_get())
+      dependency_add(slotGet_changed(res));
+    return res;
   }
 
 
