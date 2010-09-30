@@ -53,6 +53,8 @@ AC_SUBST([docdir], [${datarootdir}/doc/urbi-sdk])
 AC_CONFIG_FILES([doc/sdk-remote.dox])
 AC_CONFIG_FILES([doc/sdk-remote-java.dox])
 
+URBI_APPLE
+
 ## ------------- ##
 ## Compilation.  ##
 ## ------------- ##

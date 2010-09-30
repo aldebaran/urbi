@@ -249,10 +249,20 @@ namespace libport
 
 %{
   // Include in the generated wrapper file
+#ifdef __APPLE__
+  typedef unsigned long __darwin_size_t;
+  typedef __darwin_size_t size_t;
+#else
   typedef unsigned int size_t;
+#endif
 %}
 // Tell SWIG about it
-typedef unsigned int size_t;
+#ifdef APPLE
+  typedef unsigned long __darwin_size_t;
+  typedef __darwin_size_t size_t;
+#else
+  typedef unsigned int size_t;
+#endif
 
 // Java typemap
 // change deafult SWIG mapping of unsigned char* return values

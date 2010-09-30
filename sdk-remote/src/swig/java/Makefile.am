@@ -52,6 +52,10 @@ SWIG_FLAGS =					\
   -I$(top_srcdir)/include/			\
   -package $(java_package)
 
+if APPLE
+SWIG_FLAGS += -DAPPLE
+endif
+
 # Invoque Swig and generate: java sources & C++ jni code (liburbi_java.cc)
 java.cc: swig/java.i
 	$(mkdir_p) $(java_src_outdir)
