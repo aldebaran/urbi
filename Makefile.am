@@ -44,6 +44,10 @@ include share/images/local.mk
 
 EXTRA_DIST += urbi-sdk.key
 
+# Replace the git-version-stubs in this library.
+VERSION_STUBS =					\
+  src/libuobject/.libs/libuobject$(SHLIBEXT)
+
 
 ## ------------------------------------- ##
 ## Generate the list of symbols we use.  ##

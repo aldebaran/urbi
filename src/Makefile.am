@@ -83,6 +83,7 @@ libuobject@LIBSFX@_la_LIBADD =				\
 ## ------------ ##
 
 REVISION_FILE = version.hh
+REVISIONFLAGS = --stub
 include $(top_srcdir)/build-aux/revision.mk
 nodist_noinst_HEADERS = $(REVISION_FILE)
 
