@@ -70,7 +70,7 @@ public class Feature5 extends UObject
 
 	/// Create an UVar with the name of an existing UVar, and
 	/// retrieve its value synchronously:
-	String name = varname.getString ();
+	String name = varname.stringValue ();
 	UVar tmp = new UVar (name);
 	tmp.syncValue(); /// ! WARNING ! This call can freeze your
 			 /// UObject if the server does not answer.
@@ -84,10 +84,10 @@ public class Feature5 extends UObject
     public void setValue (UValue name, UValue value) {
 
 	/// Create an UVar with the name of an existing UVar
-	UVar tmp = new UVar (name.getString ());
+	UVar tmp = new UVar (name.stringValue ());
 	/// And assign a value to it. The walue will be set on the
 	/// UVar existing on the server. All is transparent.
-	tmp.set(value);
+	tmp.setValue(value);
     }
 
 

@@ -179,24 +179,24 @@ namespace urbi
 %javaconst(1);
 
 // Rename all operators
-%rename("set") operator=;
+%rename("setValue") operator=;
 %rename("get") operator[];
 %rename("getConst") operator[](int) const;
 
 %rename("isEqual") operator ==;
-%rename("getDouble") operator ufloat;
-%rename("getString") operator std::string;
-%rename("getInt") operator int;
-%rename("getUnsignedInt") operator unsigned int;
-%rename("getLong") operator long;
-%rename("getUnsignedLong") operator unsigned long;
-%rename("getBool") operator bool;
-%rename("getUBinary") operator UBinary*;
-%rename("getUBinary") operator const UBinary&;
-%rename("getUList") operator UList;
-%rename("getUImage") operator UImage;
-%rename("getUSound") operator USound;
-%rename("getUDictionary") operator UDictionary;
+%rename("doubleValue") operator ufloat;
+%rename("stringValue") operator std::string;
+%rename("intValue") operator int;
+%rename("longValue") operator unsigned int;
+%rename("intValue") operator long;
+%rename("longValue") operator unsigned long;
+%rename("booleanValue") operator bool;
+%rename("ubinaryValue") operator UBinary*;
+%rename("ubinaryValue") operator const UBinary&;
+%rename("ulistValue") operator UList;
+%rename("uimageValue") operator UImage;
+%rename("usoundValue") operator USound;
+%rename("udictionaryValue") operator UDictionary;
 //%rename("getUValue") operator urbi::UValue;
 
 
@@ -452,13 +452,13 @@ namespace urbi
   %extend UBinary
   {
     /// Accessor for the UImage
-    UImage getUImage ()
+    UImage uimageValue ()
       {
 	return self->image;
       }
 
     /// Accessor for the USound
-    USound getUSound ()
+    USound usoundValue ()
       {
 	return self->sound;
       }
@@ -633,21 +633,21 @@ namespace urbi
 
   %extend UValue {
 
-    double		getDouble () { return self->val; }
+    double		doubleValue () { return self->val; }
 
-    void		setString (std::string s)
+    void		setValue (std::string s)
       {
 	self->stringValue = new std::string (s);
       }
 
-    void		setDouble (double d) { self->val = d; }
+    void		setValue (double d) { self->val = d; }
 
-    void		setUBinary (UBinary& b)
+    void		setValue (UBinary& b)
       {
 	self->binary = new urbi::UBinary (b);
       }
 
-    void		setUList (UList& l)
+    void		setValue (UList& l)
       {
 	self->list = new urbi::UList (l);
       }

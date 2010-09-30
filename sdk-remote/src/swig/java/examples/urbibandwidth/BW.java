@@ -48,13 +48,13 @@ public class BW extends UCallbackInterface
 	    System.err.println ("Error: received non binary message.");
 	    return UCallbackAction.URBI_CONTINUE;
 	}
-	UBinary bin = value.getUBinary ();
+	UBinary bin = value.ubinaryValue ();
 	if (!(UBinaryType.BINARY_IMAGE == bin.getType ()))
 	{
 	    System.err.println ("Error: received non image message.");
 	    return UCallbackAction.URBI_CONTINUE;
 	}
-	UImage img = bin.getUImage ();
+	UImage img = bin.uimageValue ();
 
 	totalsize += (img.getSize () + msg.getTag ().length () + 20);
 

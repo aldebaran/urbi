@@ -39,7 +39,7 @@ public class Command extends UCallbackInterface
 	    !(UDataType.DATA_DOUBLE == msg.getValue ().getType ()))
 	    return UCallbackAction.URBI_CONTINUE;
 
-	double val = msg.getValue ().getDouble ();
+	double val = msg.getValue ().doubleValue ();
 	URBIMirror.d.send (msg.getTag() + ".val = " + val + ";");
 	return UCallbackAction.URBI_CONTINUE;
     }

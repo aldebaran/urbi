@@ -34,12 +34,12 @@ public class testcall extends UCallbackInterface {
 	    //System.out.println ("Received: " + value);
 
 	    if (UDataType.DATA_DOUBLE == value.getType ())
-		System.out.println (" DATA_DOUBLE value: " + value.getDouble ());
+		System.out.println (" DATA_DOUBLE value: " + value.doubleValue ());
 	    else if (UDataType.DATA_STRING == value.getType ())
-		System.out.println (" DATA_STRING value: " + value.getString ());
+		System.out.println (" DATA_STRING value: " + value.stringValue ());
 	    else if (UDataType.DATA_BINARY == value.getType ())
 	    {
-		UBinary bin = value.getUBinary ();
+		UBinary bin = value.ubinaryValue ();
 		System.out.println (" DATA_BINARY value");
 		if (UBinaryType.BINARY_NONE == bin.getType ())
 		    System.out.println ("  BINARY_NONE binary");
@@ -48,7 +48,7 @@ public class testcall extends UCallbackInterface {
 		else if (UBinaryType.BINARY_IMAGE == bin.getType ())
 		{
 		    System.out.println ("  BINARY_IMAGE binary");
-		    UImage img = bin.getUImage ();
+		    UImage img = bin.uimageValue ();
 		    System.out.println ("  - width: " + img.getWidth ());
 		    System.out.println ("  - heiht: " + img.getHeight ());
 		    System.out.println ("  - size: " + img.getSize ());
@@ -91,7 +91,7 @@ public class testcall extends UCallbackInterface {
 	    else if (UDataType.DATA_LIST == value.getType ())
 	    {
 		System.out.println (" DATA_LIST value: ");
-		UList l = value.getUList ();
+		UList l = value.ulistValue ();
 		int i;
 		for (i = 0; i < l.size (); ++i)
 		{

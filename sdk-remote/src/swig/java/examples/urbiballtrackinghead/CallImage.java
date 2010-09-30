@@ -78,12 +78,12 @@ public class	CallImage extends UCallbackInterface
 	if (!(UDataType.DATA_BINARY == value.getType ()))
 	    return UCallbackAction.URBI_CONTINUE;
 
-	UBinary bin = value.getUBinary ();
+	UBinary bin = value.ubinaryValue ();
 
 	if (!(UBinaryType.BINARY_IMAGE == bin.getType ()))
 	    return UCallbackAction.URBI_CONTINUE;
 
-	UImage img = bin.getUImage ();
+	UImage img = bin.uimageValue ();
 	byte[] data = img.getData ();
 
 	int		nummatch = 0;

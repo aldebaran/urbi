@@ -85,20 +85,20 @@ public class Colormap extends UObject
 	    UBindVar(crmin, "crmin");
 	    UBindVar(crmax, "crmax");
 
-	    UNotifyChange(source.getString (), "newImage");
+	    UNotifyChange(source.stringValue (), "newImage");
 
 	    // initialization
-	    ymin.set (_Ymin);
-	    ymax.set (_Ymax);
-	    cbmin.set (_Cbmin);
-	    cbmax.set (_Cbmax);
-	    crmin.set (_Crmin);
-	    crmax.set (_Crmax);
-	    threshold.set (_threshold);
-	    x.set (-1);
-	    y.set (-1);
-	    visible.set (0);
-	    ratio.set (0);
+	    ymin.setValue (_Ymin);
+	    ymax.setValue (_Ymax);
+	    cbmin.setValue (_Cbmin);
+	    cbmax.setValue (_Cbmax);
+	    crmin.setValue (_Crmin);
+	    crmax.setValue (_Crmax);
+	    threshold.setValue (_threshold);
+	    x.setValue (-1);
+	    y.setValue (-1);
+	    visible.setValue (0);
+	    ratio.setValue (0);
 	}
 	catch (Exception e) {
 	    System.out.println (e);
@@ -110,20 +110,20 @@ public class Colormap extends UObject
 
     public int newImage(UVar img)
     {
-	if (getLoad ().getDouble () < 0.5)
+	if (getLoad ().doubleValue () < 0.5)
 	    return 1;
 
-	UImage img1 = img.getUImage ();  //ptr copy
+	UImage img1 = img.uimageValue ();  //ptr copy
 	long w = img1.getWidth ();
 	long h = img1.getHeight ();
 
 	//lets cache things
-	int ymax = this.ymax.getInt ();
-	int ymin = this.ymin.getInt ();
-	int crmin = this.crmin.getInt ();
-	int crmax = this.crmax.getInt ();
-	int cbmin = this.cbmin.getInt ();
-	int cbmax = this.cbmax.getInt ();
+	int ymax = this.ymax.intValue ();
+	int ymin = this.ymin.intValue ();
+	int crmin = this.crmin.intValue ();
+	int crmax = this.crmax.intValue ();
+	int cbmin = this.cbmin.intValue ();
+	int cbmax = this.cbmax.intValue ();
 
 	long x=0,y=0,xx=0,yy=0,xy=0;
 	int size = 0;
@@ -151,17 +151,17 @@ public class Colormap extends UObject
 		}
 	    }
 
-	this.ratio.set ((double)size / (double)(w*h));
-	if (size > (int)(threshold.getDouble () * (double)(w*h)))
+	this.ratio.setValue ((double)size / (double)(w*h));
+	if (size > (int)(threshold.doubleValue () * (double)(w*h)))
 	{
-	    this.visible.set (1);
-	    this.x.set (0.5 - ((double)x / ((double)size * (double)w)));
-	    this.y.set (0.5 - ((double)y / ((double)size * (double)h)));
+	    this.visible.setValue (1);
+	    this.x.setValue (0.5 - ((double)x / ((double)size * (double)w)));
+	    this.y.setValue (0.5 - ((double)y / ((double)size * (double)h)));
 	}
 	else {
-	    this.x.set (-1);
-	    this.y.set (-1);
-	    this.visible.set (0);
+	    this.x.setValue (-1);
+	    this.y.setValue (-1);
+	    this.visible.setValue (0);
 	}
 
 	return 1;

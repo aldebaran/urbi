@@ -43,11 +43,11 @@ public class MicroNotify2 extends UCallbackInterface
 
 	if (!(UDataType.DATA_BINARY == value.getType ()))
 	    return UCallbackAction.URBI_CONTINUE;
-	UBinary bin = value.getUBinary ();
+	UBinary bin = value.ubinaryValue ();
 
 	if (!(UBinaryType.BINARY_SOUND == bin.getType ()))
 	    return UCallbackAction.URBI_CONTINUE;
-	USound sound = bin.getUSound ();
+	USound sound = bin.usoundValue ();
 	byte[] data = sound.getData ();
 
 	synchronized (URBITalkie.out2)

@@ -56,9 +56,9 @@ public class Feature3 extends UObject
         throws Exception {
 
         UBindVar (val1, "val1");
-        val1.set ("some string");
+        val1.setValue ("some string");
         UBindVar (val2, "val2");
-        val2.set (42);
+        val2.setValue (42);
 
         // --------------------- //
         // Notify Change binding //
@@ -99,7 +99,7 @@ public class Feature3 extends UObject
         /// this UObject takes one argument, an UValue. If the user
         /// gives a string with the name of an existing Urbiscript variable,
         /// we bind it to the function "somevarChange"
-        String name = somevar_name.getString ();
+        String name = somevar_name.stringValue ();
         if (name.compareTo("") != 0) {
 
             /// Then each time the variable named "name" will changed,

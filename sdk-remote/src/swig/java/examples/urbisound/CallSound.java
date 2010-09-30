@@ -56,11 +56,11 @@ public class CallSound extends UCallbackInterface implements SoundAction
 
 	if (!(UDataType.DATA_BINARY == msg.getValue ().getType ()))
 	    return UCallbackAction.URBI_CONTINUE;
-	UBinary bin = value.getUBinary ();
+	UBinary bin = value.ubinaryValue ();
 
 	if (!(UBinaryType.BINARY_SOUND == bin.getType ()))
 	    return UCallbackAction.URBI_CONTINUE;
-	USound sound = bin.getUSound();
+	USound sound = bin.usoundValue();
 
 	sampleRate = (int) sound.getRate ();
 	sampleSizeInBits = (int) sound.getSampleSize ();

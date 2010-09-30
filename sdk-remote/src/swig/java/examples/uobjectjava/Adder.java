@@ -36,7 +36,7 @@ public class Adder extends UObject // must extends UObject
 
 	    /// Initialise our UVar v to the value given in the
 	    /// constructor
-	    v.set(v_init.getDouble ());
+	    v.setValue(v_init.doubleValue ());
 
 	    /// Bind the function add to Urbi
 	    UBindFunction (this, "add");
@@ -54,10 +54,10 @@ public class Adder extends UObject // must extends UObject
     /// parameters.
     public double add (UValue rhs) {
     	/// Convert the UValue to a double
-    	double drhs = rhs.getDouble ();
+    	double drhs = rhs.doubleValue ();
     	/// Return the value of our UVar v (converted to double)
     	/// plus the value of the argument of the function.
-    	return v.getDouble () + drhs;
+    	return v.doubleValue () + drhs;
     }
 }
 
@@ -83,7 +83,7 @@ public class Adder extends UObject // must extends UObject
 
     		/// Initialise our UVar v to some value
     		/// (we choose 42 :)
-    	 	v.set(42);
+    	 	v.setValue(42);
 
     		/// Bind the function add to Urbi
     		UBindFunction (this, "add");
@@ -98,10 +98,10 @@ public class Adder extends UObject // must extends UObject
     /// parameters.
     public double add (UValue rhs) {
     	/// Convert the UValue to a double
-    	double drhs = rhs.getDouble ();
+    	double drhs = rhs.doubleValue ();
     	/// Return the value of our UVar v (converted to double)
     	/// plus the value of the argument of the function.
-    	return v.getDouble () + drhs;
+    	return v.doubleValue () + drhs;
     }
 }
 

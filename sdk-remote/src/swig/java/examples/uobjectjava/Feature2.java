@@ -67,13 +67,13 @@ public class Feature2 extends UObject
         UBindVar (val1, "val1");
         /// Assign the value "some string" to val1.  NB: now the type
         /// of the UVar is String.
-        val1.set ("some string");
+        val1.setValue ("some string");
 
         /// Bind the val2 UVar, so that it appears in urbiscript.
         UBindVar (val2, "val2");
         /// Assign the value 42 to val2 NB: now the type of the UVar
         /// is UFloat (float).
-        val2.set (42);
+        val2.setValue (42);
 
         return 0;
     }

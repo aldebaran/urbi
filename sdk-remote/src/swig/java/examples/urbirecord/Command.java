@@ -46,7 +46,7 @@ public class	Command extends UCallbackInterface
 		URBIRecord.out.write(URBIRecord.convertShortToByte((short)i), 0, 2);
 		URBIRecord.out.write((byte)0);
 		URBIRecord.out.write((byte)0);
-		URBIRecord.out.write(URBIRecord.convertIntToByte(Float.floatToIntBits((float) (msg.getValue ().getDouble ()))), 0, 4);
+		URBIRecord.out.write(URBIRecord.convertIntToByte(Float.floatToIntBits((float) (msg.getValue ().doubleValue ()))), 0, 4);
 		tilt++;
 		if ((tilt % 100) == 0)
 		{
@@ -60,7 +60,7 @@ public class	Command extends UCallbackInterface
 		return UCallbackAction.URBI_CONTINUE;
 	    }
 	}
-	System.err.println("Error: no device " + msg.getTag() + " (in " + msg.getValue ().getDouble () + ")");
+	System.err.println("Error: no device " + msg.getTag() + " (in " + msg.getValue ().doubleValue () + ")");
 	return UCallbackAction.URBI_CONTINUE;
     }
 }

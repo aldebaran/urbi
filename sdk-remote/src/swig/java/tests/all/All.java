@@ -40,12 +40,15 @@ import java.util.Map;
 // - http://svn.osgeo.org/gdal/trunk/gdal/swig/include/java/ogr_java.i
 //   https://valelab.ucsf.edu/svn/micromanager2/trunk/MMCoreJ_wrap/MMCoreJ.i
 // - tester plus en détail UDictionary
-// - changer la hierarchie pour avoir tout dans urbi.*
 // - checker pkoi dans list ils font new UValue(val) plutot que val
 //   tout court dans all.cc
 // - arreter de checker les types a l'appel des fonctions bindées,
 //   mais plutot au setting (mettre pointeur sur fct)
 // - uniformiser UBindFunction et UBindVar ?
+// - generer javadoc
+
+// DONE.
+// - changer la hierarchie pour avoir tout dans urbi.*
 
 public class All extends UObject
 {
@@ -94,14 +97,14 @@ public class All extends UObject
 	UBindVar(d, "d");
 	//UBindVars(all, b, c, d);
 	UBindVar(initCalled, "initCalled");
-	initCalled.set(0);
+	initCalled.setValue(0);
 	UBindVar(lastChange, "lastChange");
 	UBindVar(lastAccess, "lastAccess");
 	UBindVar(lastChangeVal, "lastChangeVal");
-	lastChangeVal.set(-1);
+	lastChangeVal.setValue(-1);
 	UBindVar(lastAccessVal, "lastAccessVal");
 	UBindVar(removeNotify, "removeNotify");
-	removeNotify.set("");
+	removeNotify.setValue("");
 	// Properties.
 	UBindFunction("readProps");
 	UBindFunction("writeProps");
@@ -214,7 +217,7 @@ public class All extends UObject
 //    }
     public int onBinaryBypass(UVar var)
     {
-	final UBinary cb = var.getUBinary();
+	final UBinary cb = var.ubinaryValue();
 	UBinary b = cb;
 	byte[] data = b.getData();
 	for (int i=0; i<b.getSize(); ++i)
@@ -223,7 +226,7 @@ public class All extends UObject
     }
     void onImageBypass(UVar var)
     {
-	final UImage cb = var.getUImage();
+	final UImage cb = var.uimageValue();
 	UImage b = cb;
 	byte[] data = b.getData();
 	for (int i=0; i<b.getSize(); ++i)
@@ -238,7 +241,7 @@ public class All extends UObject
 	byte[] array2 = new byte[array.length];
 	System.arraycopy(array, 0, array2, 0, array.length);
 	b.setData(array2);
-	vars[idx].set(b);
+	vars[idx].setValue(b);
 	String res = new String(b.getData());
 	// FIXME: free b.data array ?
 	return res;
@@ -250,7 +253,7 @@ public class All extends UObject
 	byte[] array2 = new byte[array.length];
 	System.arraycopy(array, 0, array2, 0, array.length);
 	i.setData(array2);
-	vars[idx].set(i);
+	vars[idx].setValue(i);
 	String res = new String(i.getData());
 	// FIXME: free i.data array ?
 	return res;
@@ -259,7 +262,7 @@ public class All extends UObject
     public int writeOwnByName(String name, int val)
     {
 	UVar v = new UVar(get__name() + "." + name);
-	v.set(val);
+	v.setValue(val);
 	return 0;
     }
 
@@ -281,7 +284,7 @@ public class All extends UObject
 
     public int init(int fail)
     {
-	initCalled.set(1);
+	initCalled.setValue(1);
 	if (fail > 1)
 	    throw new RuntimeException("KABOOOM");
 	return fail;
@@ -335,46 +338,46 @@ public class All extends UObject
     public void invalidWrite()
     {
 	UVar v = new UVar();
-	v.set(12);
+	v.setValue(12);
     }
     public void invalidRead()
     {
 	UVar v = new UVar();
-	int i = v.getInt();
+	int i = v.intValue();
     }
     public int readByName(String name)
     {
 	UVar v = new UVar(name);
 	v.syncValue();
-	return v.getInt();
+	return v.intValue();
     }
 
     public int writeByName(String name, int val)
     {
 	UVar v = new UVar(name);
-	v.set(val);
+	v.setValue(val);
 	return val;
     }
 
     public int writeByUVar(UVar v, UValue val)
     {
-	v.set(val);
+	v.setValue(val);
 	return 0;
     }
 
     public int onChange(UVar v)
     {
-	lastChange.set(v.getName());
-	changeCount.set(++count);
+	lastChange.setValue(v.getName());
+	changeCount.setValue(++count);
 	if (v.type() == UDataType.DATA_DOUBLE)
 	{
-	    int val = v.getInt();
-	    lastChangeVal.set(val);
+	    int val = v.intValue();
+	    lastChangeVal.setValue(val);
 	}
-	if (removeNotify.getString().equals(v.getName()))
+	if (removeNotify.stringValue().equals(v.getName()))
 	{
 	    v.unnotify();
-	    removeNotify.set("");
+	    removeNotify.setValue("");
 	}
 	return 0;
    }
@@ -422,11 +425,11 @@ public class All extends UObject
     {
 	UVar v = new UVar(name);
 	UList res = new UList();
-	res.push_back(v.getProp(UProperty.PROP_RANGEMIN).getDouble());
-	res.push_back(v.getProp(UProperty.PROP_RANGEMAX).getDouble());
-	res.push_back(v.getProp(UProperty.PROP_SPEEDMIN).getDouble());
-	res.push_back(v.getProp(UProperty.PROP_SPEEDMAX).getDouble());
-	res.push_back(v.getProp(UProperty.PROP_DELTA).getDouble());
+	res.push_back(v.getProp(UProperty.PROP_RANGEMIN).doubleValue());
+	res.push_back(v.getProp(UProperty.PROP_RANGEMAX).doubleValue());
+	res.push_back(v.getProp(UProperty.PROP_SPEEDMIN).doubleValue());
+	res.push_back(v.getProp(UProperty.PROP_SPEEDMAX).doubleValue());
+	res.push_back(v.getProp(UProperty.PROP_DELTA).doubleValue());
 	res.push_back(v.getProp(UProperty.PROP_BLEND));
 	Log.info("all.readProps: " + res.toString());
 	return res;
@@ -451,7 +454,7 @@ public class All extends UObject
     {
 	Log.info("writeD " + name);
 	UVar v = new UVar (name);
-	v.set(val);
+	v.setValue(val);
 	return 0;
    }
 
@@ -459,7 +462,7 @@ public class All extends UObject
     {
 	Log.info("writeS " + name);
 	UVar v = new UVar(name);
-	v.set(val);
+	v.setValue(val);
 	return 0;
     }
 
@@ -470,7 +473,7 @@ public class All extends UObject
 	UList l = new UList();
 	l.push_back(val);
 	l.push_back(42);
-	v.set(l);
+	v.setValue(l);
 	return 0;
    }
 
@@ -481,7 +484,7 @@ public class All extends UObject
 	UDictionary d = new UDictionary();
 	d.put(val, 42);
 	d.put("foo", new UList());
-	v.set(d);
+	v.setValue(d);
 	return 0;
     }
 
@@ -491,7 +494,7 @@ public class All extends UObject
 	UBinary val = new UBinary();
 	val.setType(UBinaryType.BINARY_UNKNOWN);
 	val.setData(content.getBytes());
-	v.set(val);
+	v.setValue(val);
 	return 0;
    }
 
@@ -500,7 +503,7 @@ public class All extends UObject
 	UVar v = new UVar(name);
 	UBinary val = new UBinary();
 	val.setData(content.getBytes());
-	v.set(val);
+	v.setValue(val);
 	return 0;
     }
 
@@ -512,7 +515,7 @@ public class All extends UObject
 	i.setWidth(42);
 	i.setHeight(42);
 	i.setData(content.getBytes());
-	v.set(i);
+	v.setValue(i);
 	i.deleteData();	// WARNING: this function is used only when data was allocated JAVA side
 	return 0;
    }
@@ -527,7 +530,7 @@ public class All extends UObject
 	s.setSampleSize(8);
 	s.setSampleFormat(USoundSampleFormat.SAMPLE_UNSIGNED);
 	s.setData(content.getBytes());
-	v.set(s);
+	v.setValue(s);
 	s.deleteData();
 	return 0;
    }
@@ -674,10 +677,10 @@ public class All extends UObject
 	}
     }
 
-    public void writeAD(double d) { a.set(d); }
-    public void writeAS(String s) { a.set(s); }
-    public void writeAB(UBinary b) { a.set(b); }
-    public void writeAV(UValue v) { a.set(v); }
+    public void writeAD(double d) { a.setValue(d); }
+    public void writeAS(String s) { a.setValue(s); }
+    public void writeAB(UBinary b) { a.setValue(b); }
+    public void writeAV(UValue v) { a.setValue(v); }
 
     public void makeCall(String obj, String func,
 			 UList args)
