@@ -31,9 +31,9 @@ SUBDIRS =					\
 # Also fix libjpeg.la.
 LTLIBRARIES_TO_FIX += jpeg/libjpeg4urbi$(LIBSFX).la
 
-# Replace the git-version-stubs in these libraries.  The get it from
-# revision.cc in libuvalue, which is a convenience libraries inlined
-# in these two.
+# Replace the git-version-stubs in these libraries.  They get it from
+# revision.cc in libuvalue, which is a convenience library included in
+# these two.
 VERSION_STUBS =					\
   src/libuobject/.libs/libuobject$(SHLIBEXT)	\
   src/liburbi/.libs/liburbi$(SHLIBEXT)
