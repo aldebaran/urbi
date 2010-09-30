@@ -27,7 +27,7 @@ examples.
 A null String can also be obtained with \lstinline|String|'s
 \lstinline|new| method.
 
-\begin{urbiassert}[firstnumber=1]
+\begin{urbiassert}
 String.new == "";
 String == "";
 "123".new == "123";
@@ -38,10 +38,14 @@ String == "";
 \item[asFloat] If the whole content of \this is an number, return it as a
   \refObject{Float}, otherwise raise an error.
 \begin{urbiscript}
-assert("23.03".asFloat == 23.03);
+assert
+{
+     "23".asFloat == 23;
+  "23.03".asFloat == 23.03;
+};
 
 "123abc".asFloat;
-[00000001:error] !!! asFloat: unable to convert to float: "123abc"
+[00000001:error] !!! asFloat: cannot convert to float: "123abc"
 \end{urbiscript}
 
 \item[asList]
@@ -91,6 +95,13 @@ for (var v : "123")
 "foo".distance("foo") == 0;
 "bar".distance("baz") == 1;
 "foo".distance("bar") == 3;
+\end{urbiassert}
+
+
+\item[empty] Whether this is the empty string.
+\begin{urbiassert}
+  "".empty;
+!"x".empty;
 \end{urbiassert}
 
 \item[fresh] Return a String that has never been used as an identifier,
@@ -177,6 +188,15 @@ String.fromAscii(0xFF) == "\xff";
 ", ".join([1, [2], "3"], "[", "]") == "[1, [2], 3]";
 \end{urbiassert}
 
+
+\item[length] The number of characters in the string.  Currently, this is a
+  synonym of \refSlot{size}.
+\begin{urbiassert}
+"foo".length == 3;
+   "".length == 0;
+\end{urbiassert}
+
+
 \item[replace](<from>, <to>)%
   Replace every occurrence of the string \var{from} in
   \this by \var{to}, and return the result.
@@ -188,10 +208,10 @@ String.fromAscii(0xFF) == "\xff";
 \end{urbiassert}
 
 \item[size]
-  Return the size of the string.
+  The size of the string.
 \begin{urbiassert}
 "foo".size == 3;
-"".size == 0;
+   "".size == 0;
 \end{urbiassert}
 
 %%% FIXME: incorrect rendering: we lose the backslashes from the

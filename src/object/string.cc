@@ -118,7 +118,7 @@ namespace urbi
       }
       catch (const boost::bad_lexical_cast&)
       {
-        FRAISE("unable to convert to float: %s", as_printable());
+        FRAISE("cannot convert to float: %s", as_printable());
       }
     }
 
