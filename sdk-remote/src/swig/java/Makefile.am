@@ -64,9 +64,9 @@ java.cc: swig/java.i
 
 BUILT_SOURCES = java.cc java.cc.h
 
-lib_LTLIBRARIES = liburbijava.la
+lib_LTLIBRARIES = liburbijava@LIBSFX@.la
 
-liburbijava_la_SOURCES =			\
+liburbijava@LIBSFX@_la_SOURCES =		\
   java.cc					\
   java.cc.h					\
   src/callbacks-caller.hh			\
@@ -76,10 +76,10 @@ liburbijava_la_SOURCES =			\
   src/urbi_UObject.cc				\
   src/urbi_Log.cc				\
   src/urbi_Log.h
-liburbijava_la_LIBADD = 			\
-  $(top_builddir)/src/liburbi/liburbi.la	\
-  $(top_builddir)/src/libuobject/libuobject.la
-liburbijava_la_CPPFLAGS =			\
+liburbijava@LIBSFX@_la_LIBADD =				\
+  $(top_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
+  $(top_builddir)/src/libuobject/libuobject$(LIBSFX).la
+liburbijava@LIBSFX@_la_CPPFLAGS =		\
   -I$$JAVA_HOME/include				\
   -I$$JAVA_HOME/include/linux			\
   -I$(top_srcdir)/libport/include		\
@@ -92,27 +92,27 @@ CLEANFILES =					\
 
 
 if WIN32
-liburbijava_la_LDFLAGS = -Wl,--add-stdcall-alias
+liburbijava@LIBSFX@_la_LDFLAGS = -Wl,--add-stdcall-alias
 
 # Add generation of jvm library dll link file, because in java lib folder
 # there is only the static version jvm.lib and libtool complains and doesn't
 # want to create a shared library using it.
-libjvm.dll.a:
-	echo -e "EXPORTS\\nJNI_CreateJavaVM@12\\nJNI_GetDefaultJavaVMInitArgs@4\\nJNI_GetCreatedJavaVMs@12" > jvm.def
-	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
+#libjvm.dll.a:
+#	echo -e "EXPORTS\\nJNI_CreateJavaVM@12\\nJNI_GetDefaultJavaVMInitArgs@4\\nJNI_GetCreatedJavaVMs@12" > jvm.def
+#	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
 
-BUILT_SOURCES += libjvm.dll.a
+#BUILT_SOURCES += libjvm.dll.a
 
 CLEANFILES += 					\
 	libjvm.dll.a				\
 	jvm.def
 
 # link with the generated jvm link file
-liburbijava_la_LIBADD += -L. -ljvm
+liburbijava@LIBSFX@_la_LIBADD += -L. -ljvm
 
 endif
 
-liburbijava_la_CXXFLAGS =			\
+liburbijava@LIBSFX@_la_CXXFLAGS =		\
   -I$(JAVA_PREFIX)/include			\
   -I$(JAVA_PREFIX)/include/$(JAVA_INCLUDE_DIR)	\
   -I$(top_srcdir)/include/			\
@@ -120,15 +120,16 @@ liburbijava_la_CXXFLAGS =			\
   -I$(top_builddir)/include/			\
   $(BOOST_CPPFLAGS)
 
+
 # Under windows path are set to C:/cygwin... in libdir, which
 # then prevent us to install the .la in a place with a DESTDIR
 # libtool complains that he want some path ending in "C:/cygwin..."
 # So we remote the C:/cygwin
 # On other Os we assume paths do not contains C:/cygwin
-dirty-fix:
-	perl -pi -e "s,libdir='C:/cygwin,libdir=',g" liburbijava.la
+#dirty-fix:
+#	perl -pi -e "s,libdir='C:/cygwin,libdir=',g" liburbijava@LIBSFX@.la
 
-install-exec-local: dirty-fix
+#install-exec-local: dirty-fix
 
 javadir = $(pkgdatadir)/java
 JAVAROOT = .

@@ -15,7 +15,7 @@ UMAKE_CONFIGURED =                              \
   sdk/umake                                     \
   sdk/umake-link				\
   sdk/umake-java				\
-  sdk/urbi-launch-java
+  sdk/urbi-launch-java$(EXEEXT)
 
 nodist_bin_SCRIPTS += $(UMAKE_WRAPPERS)
 dist_bin_SCRIPTS   += $(UMAKE_CONFIGURED)

@@ -27,7 +27,7 @@ configured_scripts =				\
   bin/umake-java				\
   bin/umake-link				\
   bin/umake-shared				\
-  bin/urbi-launch-java				\
+  bin/urbi-launch-java$(EXEEXT)			\
   bin/urbi-send
 
 nodist_noinst_SCRIPTS +=                       \
