@@ -62,6 +62,8 @@ java.cc: swig/java.i
 	$(SWIG) $(SWIG_FLAGS) $(SWIG_ARGS) -o $@.tmp $<
 	mv $@.tmp $@
 
+java.cc.h: java.cc
+
 BUILT_SOURCES = java.cc java.cc.h
 
 lib_LTLIBRARIES = liburbijava@LIBSFX@.la
@@ -81,7 +83,6 @@ liburbijava@LIBSFX@_la_LIBADD =				\
   $(top_builddir)/src/libuobject/libuobject$(LIBSFX).la
 liburbijava@LIBSFX@_la_CPPFLAGS =		\
   -I$$JAVA_HOME/include				\
-  -I$$JAVA_HOME/include/linux			\
   -I$(top_srcdir)/libport/include		\
   -I$(top_builddir)/libport/include
 
@@ -109,6 +110,13 @@ CLEANFILES += 					\
 
 # link with the generated jvm link file
 liburbijava@LIBSFX@_la_LIBADD += -L. -ljvm
+
+liburbijava@LIBSFX@_la_CPPFLAGS += -I$$JAVA_HOME/include/win32
+
+else
+
+liburbijava@LIBSFX@_la_CPPFLAGS += -I$$JAVA_HOME/include/linux
+
 
 endif
 
