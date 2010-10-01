@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1123 utf-8
+personal_ws-1.1 en 1144 utf-8
 aaa
 abc
 abcdef
@@ -175,6 +175,7 @@ copySlot
 coreutils
 coroutine
 cosinus
+countAlias
 cout
 coveredAngle
 coveredDistance
@@ -184,6 +185,7 @@ cpu
 createSlot
 criticalSection
 Ctrl
+CustomUVar
 cvs
 cwd
 cwLimit
@@ -199,6 +201,7 @@ DBI
 DCM
 dcon
 decompile
+Decrementation
 deepclean
 defaultValue
 Demaille
@@ -232,6 +235,7 @@ dlopen
 docutils
 doesNotExist
 doin
+Doxygen
 DUMPBIN
 dumpState
 dx
@@ -299,6 +303,8 @@ foofoofoo
 fooobar
 foooobar
 fooooobar
+footTouchL
+footTouchR
 foreach
 formatDetail
 FormatInfo
@@ -395,6 +401,7 @@ htmlxml
 http
 Huho
 hxx
+ic
 ie
 IEEE
 iff
@@ -402,6 +409,7 @@ IGain
 ImageConversion
 ImageMagick
 imagemagick
+ImmutableCounter
 ImplicitTagComponent
 indices
 ing
@@ -544,6 +552,7 @@ MatchFailure
 matchPattern
 maxExponent
 maybeLoad
+mc
 MCPAN
 Meccano
 memoization
@@ -574,6 +583,7 @@ MSI
 MSVC
 MSVC's
 multi
+MutableCounter
 mutex
 mv
 myAnd
@@ -585,11 +595,13 @@ myEvent
 myFunction
 myGroup
 myInstance
+myList
 myLocalVariable
 myMind
 MYNODE
 myObj
 myObject
+myOtherList
 myOtherLocalVariable
 MyPair
 myPi
@@ -637,6 +649,8 @@ ObjectTracker
 Odometric
 odometryAlpha
 odometryDelta
+OgreMain
+OIS
 ok
 onAccess
 onboard
@@ -685,6 +699,8 @@ popback
 popfront
 pos
 POSIX
+postfix
+postop
 pouCharque
 pown
 ppc
@@ -836,6 +852,7 @@ softdevice
 someevent
 someFunc
 sometag
+somethingElse
 sonarL
 sonarLoad
 SONARNL
@@ -848,6 +865,7 @@ soundVolumeMax
 sp
 speakerL
 speakerR
+specialFeature
 SpeechRecognizer
 SpeedAdaptive
 speedAlpha
@@ -968,6 +986,7 @@ UClient's
 UDataType
 UDictionary
 UDP
+UEdit
 UEvent
 UFactory
 ufactory
@@ -1019,6 +1038,7 @@ uobjects
 UOwned
 Uowned
 UPATH
+updatable
 updateSlot
 UProp
 urbi
@@ -1051,13 +1071,14 @@ UVars
 valgrind
 vals
 valueAccessed
+valueAlias
 valueChanged
 variableName
 variadic
 varInString
 varName
 varname
-VC
+vc
 vcredist
 vcxx
 versa
@@ -1096,6 +1117,7 @@ xabcdef
 xabcdefg
 xADDR
 xb
+xf
 xFF
 xfF
 xff
