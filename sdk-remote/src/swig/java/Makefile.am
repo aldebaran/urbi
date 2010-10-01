@@ -29,13 +29,7 @@
 #   (since jars aggregate java objects)
 
 # Try to disable -O2 by all means (or liburbiJNI.SWIGURBIStarterJavaUpcast from wont work)
-AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi/swig/java
-AM_CXXFLAGS =
-AM_CFLAGS =
-
-CFLAGS=
-CXXFLAGS=
-CPPFLAGS=
+CXXFLAGS = 
 
 EXTRA_DIST =					\
   swig/boost_unordered_map.i			\
@@ -85,51 +79,25 @@ liburbijava@LIBSFX@_la_LIBADD =				\
   $(top_builddir)/src/libuobject/libuobject$(LIBSFX).la
 liburbijava@LIBSFX@_la_CPPFLAGS =		\
   -I$$JAVA_HOME/include				\
+  $(BOOST_CPPFLAGS)				\
   -I$(top_srcdir)/libport/include		\
-  -I$(top_builddir)/libport/include
+  -I$(top_builddir)/libport/include		\
+  -I$(top_srcdir)/include/
 
 CLEANFILES =					\
   java.cc.h					\
   java.cc					\
   $(wildcard $(java_src_outdir)/*.java)
 
-
 if WIN32
-liburbijava@LIBSFX@_la_LDFLAGS = -Wl,--add-stdcall-alias
-
-# Add generation of jvm library dll link file, because in java lib folder
-# there is only the static version jvm.lib and libtool complains and doesn't
-# want to create a shared library using it.
-#libjvm.dll.a:
-#	echo -e "EXPORTS\\nJNI_CreateJavaVM@12\\nJNI_GetDefaultJavaVMInitArgs@4\\nJNI_GetCreatedJavaVMs@12" > jvm.def
-#	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
-
-#BUILT_SOURCES += libjvm.dll.a
-
-CLEANFILES += 					\
-	libjvm.dll.a				\
-	jvm.def
-
+#liburbijava@LIBSFX@_la_LDFLAGS = -Wl,--add-stdcall-alias
+liburbijava@LIBSFX@_la_LDFLAGS = -no-undefined
 # link with the generated jvm link file
-liburbijava@LIBSFX@_la_LIBADD += -L. -ljvm
-
+liburbijava@LIBSFX@_la_LIBADD += -L$$JAVA_HOME/lib -ljvm
 liburbijava@LIBSFX@_la_CPPFLAGS += -I$$JAVA_HOME/include/win32
-
 else
-
 liburbijava@LIBSFX@_la_CPPFLAGS += -I$$JAVA_HOME/include/linux
-
-
 endif
-
-liburbijava@LIBSFX@_la_CXXFLAGS =		\
-  -I$(JAVA_PREFIX)/include			\
-  -I$(JAVA_PREFIX)/include/$(JAVA_INCLUDE_DIR)	\
-  -I$(top_srcdir)/include/			\
-  -I$(top_srcdir)/src/liburbi/uobject/		\
-  -I$(top_builddir)/include/			\
-  $(BOOST_CPPFLAGS)
-
 
 # Under windows path are set to C:/cygwin... in libdir, which
 # then prevent us to install the .la in a place with a DESTDIR
