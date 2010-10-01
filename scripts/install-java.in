@@ -1,0 +1,38 @@
+#!/bin/sh
+
+fatal ()
+{
+  echo >&2 "$0: $*"
+  exit 1
+}
+
+set -e -x
+
+builddir="@builddir@"
+host="@host@"
+prefix="@prefix@"
+build="@build@"
+# Do not sort by alphabetical order here.  exec_prefix typically uses
+# $prefix, and libdir uses $exec_prefix.  Hence the double quotes too.
+# $bindir is needed because on Windows we define libdir as ${bindir}.
+exec_prefix="@exec_prefix@"
+bindir="@bindir@"
+libdir="@libdir@"
+includedir="@includedir@"
+
+
+java_library_glob="$JAVA_HOME/bin/client/jvm.dll"
+
+test -n "$DESTDIR" ||
+  fatal "DESTDIR is not defined"
+
+## ----------- ##
+## Libraries.  ##
+## ----------- ##
+
+base=$(basename "$java_library_glob")
+dest=$DESTDIR$libdir/$base
+cp -P "$java_library_glob" "$dest"
+if test ! -L "$dest"; then
+    chmod 0755 "$dest"
+fi
