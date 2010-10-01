@@ -826,6 +826,7 @@ namespace urbi
 
 %ignore urbi::UClient::UClient(const std::string&, unsigned, size_t, const UClient::options&);
 %ignore urbi::UClient::send(std::istream&);
+%ignore urbi::UClient::pong;
 
 /// Generate code for UClient:
 %include "urbi/uclient.hh"
@@ -1097,6 +1098,7 @@ namespace urbi
 %feature("notabstract") urbi::URBIStarterJAVA;
 
 %ignore urbi::baseURBIStarter::list;
+%ignore urbi::baseURBIStarter::getFullName;
 %ignore urbi::baseURBIStarterHub::list;
 
 %include "urbi/ustarter.hh"
