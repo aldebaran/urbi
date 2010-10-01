@@ -627,6 +627,7 @@ namespace boost {
 %ignore urbi::UValue::print;
 %ignore urbi::UValue::copy;
 
+%rename("setValue") urbi::UValue::set;
 
 %include "urbi/uvalue.hh"
 
