@@ -65,13 +65,17 @@ namespace urbi
    * urbi::main(argc, argv) after your work is done.
    * This function returns if block is set to false.
    */
-  URBI_SDK_API int main(const libport::cli_args_type& args, UrbiRoot& root,
-                        bool block = true, bool errors = false);
+  URBI_SDK_API
+  int
+  main(const libport::cli_args_type& args, UrbiRoot& root,
+       bool block = true, bool errors = false);
 
   /** Initialisation method using C style arguments.
    */
-  URBI_SDK_API int main(int argc, const char *argv[], UrbiRoot& root,
-                        bool block = true, bool errors = false);
+  URBI_SDK_API
+  int
+  main(int argc, const char *argv[], UrbiRoot& root,
+       bool block = true, bool errors = false);
 
 
   /** Initialisation method, for remote mode only, that returns.
@@ -86,11 +90,12 @@ namespace urbi
    * \param useSyncClient use a UClient instead of USyncClient if false.
    * \return 0 if no error occured.
    */
-  int URBI_SDK_API initialize(const std::string& host, int port, size_t buflen,
-                              bool exitOnDisconnect, bool server = false,
-                              const std::vector<std::string>&
-                                files = std::vector<std::string>(),
-                              bool useSyncClient = true);
+  int
+  URBI_SDK_API
+  initialize(const std::string& host, int port, size_t buflen,
+             bool exitOnDisconnect, bool server = false,
+             const std::vector<std::string>& files = std::vector<std::string>(),
+             bool useSyncClient = true);
 }
 
 #endif /* !URBI_UMAIN_HH */
