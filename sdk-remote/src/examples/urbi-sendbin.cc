@@ -18,6 +18,7 @@
 #include <libport/sys/stat.h>
 
 #include <libport/cli.hh>
+#include <libport/debug.hh>
 #include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/read-stdin.hh>
@@ -124,6 +125,7 @@ send_data(urbi::UClient& client, const data_type& data)
   }
 }
 
+GD_INIT();
 
 int
 main(int argc, char * argv[])

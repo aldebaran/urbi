@@ -12,6 +12,7 @@
 
 #include <libport/bind.hh>
 #include <libport/cli.hh>
+#include <libport/debug.hh>
 #include <libport/cstdio>
 #include <libport/foreach.hh>
 #include <libport/input-arguments.hh>
@@ -126,6 +127,8 @@ struct DataSender : libport::opts::DataVisitor
 /*-------.
 | Main.  |
 `-------*/
+
+GD_INIT();
 
 int
 main(int argc, char* argv[])
