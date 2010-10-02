@@ -29,7 +29,7 @@
 #   (since jars aggregate java objects)
 
 # Try to disable -O2 by all means (or liburbiJNI.SWIGURBIStarterJavaUpcast from wont work)
-CXXFLAGS = 
+override CXXFLAGS:=$(filter-out -O%,$(CXXFLAGS))
 
 EXTRA_DIST =					\
   swig/boost_unordered_map.i			\
