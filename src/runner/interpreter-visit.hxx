@@ -223,7 +223,6 @@ namespace runner
     // The invoked slot (probably a function).
     const ast::rConstExp& ast_tgt = e->target_get();
     rObject tgt = operator()(ast_tgt.get());
-    GD_FPUSH_TRACE("Call %s", e->name_get());
     return apply_ast(tgt, e->name_get(), e->arguments_get(), e->location_get());
   }
 
