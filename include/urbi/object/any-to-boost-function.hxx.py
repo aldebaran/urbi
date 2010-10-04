@@ -60,7 +60,7 @@ def boost_function_to_boost_function(n):
     };
 ''' % {
         'boost': boost,
-        'n': n + 1,
+        'n': n,
         'params': ', '.join(map(lambda p: 'typename %s' % p, params)),
         }
 

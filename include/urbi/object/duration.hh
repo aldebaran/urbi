@@ -29,7 +29,8 @@ namespace urbi
       Duration(value_type seconds = 0);
       Duration(const boost::posix_time::time_duration& val);
       Duration(rDuration model);
-      void init(const objects_type& args);
+      void init();
+      void init(const value_type& v);
 
     /*-----------.
     | Printing.  |

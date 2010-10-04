@@ -116,7 +116,7 @@ namespace urbi
     }
 
     UVar::UVar()
-      : Primitive( boost::bind(&UVar::accessor, this))
+      : Primitive(boost::function1<rObject, objects_type>(boost::bind(&UVar::accessor, this, _1)))
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
@@ -127,7 +127,7 @@ namespace urbi
     }
 
     UVar::UVar(libport::intrusive_ptr<UVar>)
-      : Primitive( boost::bind(&UVar::accessor, this))
+      : Primitive(boost::function1<rObject, const objects_type&>(boost::bind(&UVar::accessor, this, _1)))
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
@@ -256,7 +256,7 @@ namespace urbi
     }
 
     rObject
-    UVar::accessor()
+    UVar::accessor(const objects_type&)
     {
       return getter(false);
     }

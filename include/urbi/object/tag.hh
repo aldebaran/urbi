@@ -35,8 +35,10 @@ namespace urbi
       value_type& value_get();
       const value_type& value_get() const;
 
-      void block(const objects_type&);
-      void init(const objects_type& args);
+      void block();
+      void block(rObject payload);
+      void init();
+      void init(const libport::Symbol& name);
       void freeze();
       libport::Symbol name() const;
       void name_set(libport::Symbol s);
@@ -50,8 +52,8 @@ namespace urbi
       priority_type priority_set(priority_type);
 
       /// Stop the tagged jobs, forcing \a payload as value.
-      void stop(const rObject& payload = void_class);
-      void stop(const objects_type&);
+      void stop();
+      void stop(rObject payload);
       void unblock();
       void unfreeze();
       bool frozen() const;

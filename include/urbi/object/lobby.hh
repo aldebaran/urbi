@@ -43,7 +43,8 @@ namespace urbi
       /// The connectionTag.
       rTag tag_get() const;
 
-      void send(const objects_type& args);
+      void send(const std::string& data);
+      void send(const std::string& data, const std::string& tag);
       void write(const std::string& data);
       connection_type& connection_get();
       const connection_type& connection_get() const;

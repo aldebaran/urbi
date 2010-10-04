@@ -46,23 +46,20 @@ namespace urbi
     }
 
     void
-    Location::init(const objects_type& args)
+    Location::init()
+    {}
+
+    void
+    Location::init(const Position::value_type& begin)
     {
-      check_arg_count(args.size(), 0, 2);
-      switch (args.size())
-      {
-      case 1:
-        {
-          Position::value_type pos =
-            type_check<Position>(args[0])->value_get();
-          loc_ = value_type(pos, pos + 1);
-        }
-        return;
-      case 2:
-        loc_ = value_type(type_check<Position>(args[0], 0u)->value_get(),
-                          type_check<Position>(args[1], 1u)->value_get());
-        return;
-      }
+      init(begin, begin + 1);
+    }
+
+    void
+    Location::init(const Position::value_type& begin,
+                   const Position::value_type& end)
+    {
+      loc_ = value_type(begin, end);
     }
 
     /*--------------.
@@ -102,15 +99,7 @@ namespace urbi
       bind(SYMBOL(EQ_EQ),
            (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
       bind(SYMBOL(asString), &Location::as_string);
-      bind(SYMBOL(init), &Location::init);
       bind(SYMBOL(isSystemLocation), &Location::is_system_location);
-
-#define DECLARE(Name)                                           \
-      bind.var(SYMBOL( Name ), &Location:: Name ## _ref)
-
-      DECLARE(begin);
-      DECLARE(end);
-#undef DECLARE
     }
 
   } // namespace object

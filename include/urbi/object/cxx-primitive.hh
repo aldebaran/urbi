@@ -21,10 +21,10 @@ namespace urbi
   namespace object
   {
     template<typename M>
-    rPrimitive make_primitive(M f);
+    rPrimitive primitive(M f);
 
     template<typename M>
-    void extend_primitive(rPrimitive p, M f);
+    rPrimitive primitive(rPrimitive extend, M f);
   }
 }
 
@@ -42,8 +42,8 @@ namespace urbi
                                                                         \
   static rObject Name(const object::objects_type& args)                 \
   {                                                                     \
-    static rPrimitive v1 = make_primitive(V1);                          \
-    static rPrimitive v2 = make_primitive(V2);                          \
+    static rPrimitive v1 = primitive(V1);                               \
+    static rPrimitive v2 = primitive(V2);                               \
                                                                         \
     object::check_arg_count (args.size() - 1, N);                       \
     if (args[Arg]->is_a<T2>())                                          \
@@ -56,9 +56,9 @@ namespace urbi
                                                                         \
   static rObject Name(const object::objects_type& args)                 \
   {                                                                     \
-    static rPrimitive v1 = make_primitive(V1);                          \
-    static rPrimitive v2 = make_primitive(V2);                          \
-    static rPrimitive v3 = make_primitive(V3);                          \
+    static rPrimitive v1 = primitive(V1);                               \
+    static rPrimitive v2 = primitive(V2);                               \
+    static rPrimitive v3 = primitive(V3);                               \
                                                                         \
     object::check_arg_count (args.size() - 1, N);                       \
     return (args[Arg]->is_a<T1>()   ? (*v1)(args)                       \
@@ -77,8 +77,8 @@ namespace urbi
                                                                         \
   static rObject Name(const object::objects_type& args)                 \
   {                                                                     \
-    static rPrimitive v1 = make_primitive(V1);                          \
-    static rPrimitive v2 = make_primitive(V2);                          \
+    static rPrimitive v1 = primitive(V1);                               \
+    static rPrimitive v2 = primitive(V2);                               \
                                                                         \
     object::check_arg_count (args.size() - 1, N - 1, N);                \
     switch (args.size())                                                \
@@ -106,7 +106,7 @@ namespace urbi
   static rObject Name(const object::objects_type& args_)                \
   {                                                                     \
     object::objects_type args = args_;                                  \
-    static rPrimitive primitive = make_primitive(P);                    \
+    static rPrimitive primitive = primitive(P);                         \
     int arity = args.size() - 1;                                        \
                                                                         \
     object::check_arg_count(arity, N, N + 1);                           \

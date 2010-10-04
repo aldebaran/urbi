@@ -259,7 +259,7 @@ namespace urbi
       bind(SYMBOL(Name), &FormatInfo::Name ##_get);                     \
       bind.proto()->property_set(SYMBOL(Name),                          \
                                  SYMBOL(updateHook),                    \
-                                 make_primitive(&FormatInfo::update_hook))
+                                 primitive(&FormatInfo::update_hook))   \
 
       DECLARE(alignment);
       DECLARE(alt);

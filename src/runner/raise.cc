@@ -29,6 +29,8 @@
             << Msg                                              \
             << dbg::runner_or_sneaker_get().backtrace_get())
 
+GD_CATEGORY(Urbi);
+
 namespace runner
 {
   using namespace object;
@@ -54,6 +56,7 @@ namespace runner
 	     rObject arg4,
              bool skip)
   {
+    GD_FPUSH_TRACE("raise exception: %s", exn_name);
     // Too dangerous to try to print arg1 etc. here, as it certainly
     // involves running urbiscript code.
     // assert_user_mode(exn_name, "");

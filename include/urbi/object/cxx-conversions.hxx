@@ -123,6 +123,24 @@ namespace urbi
       }
     };
 
+    template <typename Urbi>
+    struct CxxConvert<Urbi&>
+    {
+      typedef Urbi& target_type;
+      static target_type
+      to(const rObject& o, unsigned idx)
+      {
+        type_check<Urbi>(o, idx);
+        return *o->as<Urbi>().get();
+      }
+
+      static rObject
+      from(target_type v)
+      {
+        return &v;
+      }
+    };
+
 
     /*------.
     | int.  |
@@ -491,8 +509,6 @@ namespace urbi
         return new List(content);
       }
     };
-
-
 
     /*--------------------.
     | to_urbi/from_urbi.  |

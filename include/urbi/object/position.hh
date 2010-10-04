@@ -33,7 +33,10 @@ namespace urbi
       Position(const value_type& pos);
       Position(libport::Symbol* f, unsigned int l, unsigned int c);
       Position(rPosition model);
-      void init(const objects_type& args);
+      void init();
+      void init(const value_type& pos);
+      void init(unsigned from, unsigned to);
+      void init(rObject file, unsigned from, unsigned to);
 
     /*--------------.
     | Comparisons.  |

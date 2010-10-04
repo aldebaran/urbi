@@ -63,10 +63,14 @@ namespace urbi
     }
 
     void
-    Tag::block(const objects_type& args)
+    Tag::block()
     {
-      check_arg_count(args.size(), 0, 1);
-      const rObject& payload = args.empty() ? void_class : args.front();
+      block(void_class);
+    }
+
+    void
+    Tag::block(rObject payload)
+    {
       value_->block(::kernel::scheduler(), payload);
     }
 
@@ -81,16 +85,15 @@ namespace urbi
     }
 
     void
-    Tag::init(const objects_type& args)
+    Tag::init()
     {
-      check_arg_count(args.size(), 0, 1);
-      if (args.empty())
-        name_set(libport::Symbol::fresh("tag"));
-      else
-      {
-        type_check<String>(args[0]);
-        name_set(libport::Symbol(args[0]->as<String>()->value_get()));
-      }
+      init(libport::Symbol::fresh("tag"));
+    }
+
+    void
+    Tag::init(const libport::Symbol& name)
+    {
+      name_set(name);
     }
 
     rTag
@@ -109,16 +112,15 @@ namespace urbi
     }
 
     void
-    Tag::stop(const rObject& payload)
+    Tag::stop()
     {
-      value_->stop(::kernel::scheduler(), payload);
+      stop(void_class);
     }
 
     void
-    Tag::stop(const objects_type& args)
+    Tag::stop(rObject payload)
     {
-      check_arg_count(args.size(), 0, 1);
-      stop(args.empty() ? void_class : args.front());
+      value_->stop(::kernel::scheduler(), payload);
     }
 
     void
@@ -212,21 +214,16 @@ namespace urbi
     void
     Tag::initialize(CxxObject::Binder<Tag>& bind)
     {
-      typedef void (Tag::*stop_type)(const objects_type& args);
-      bind(SYMBOL(stop), static_cast<stop_type> (&Tag::stop));
 #define DECLARE(Name, Function)                 \
       bind(SYMBOL(Name), &Tag::Function)
 
-      DECLARE(block, block);
       DECLARE(blocked, blocked);
       DECLARE(enter, enter);
       DECLARE(freeze, freeze);
       DECLARE(frozen, frozen);
       DECLARE(getParent, parent_get);
-      DECLARE(init, init);
       DECLARE(leave, leave);
       DECLARE(name, name);
-      DECLARE(newFlowControl, new_flow_control);
       DECLARE(priority, priority);
       DECLARE(scope, scope);
       DECLARE(setPriority, priority_set);

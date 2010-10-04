@@ -179,7 +179,6 @@ namespace urbi
       bind(SYMBOL(EQ_EQ),
            static_cast<bool (self_type::*)(const rObject&) const>
            (&self_type::operator==));
-      bind(SYMBOL(apply), &Code::apply);
       bind(SYMBOL(asString), &Code::as_string);
       bind(SYMBOL(bodyString), &Code::body_string);
     }

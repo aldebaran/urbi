@@ -40,10 +40,15 @@ namespace urbi
     }
 
     void
-    Duration::init(const objects_type& args)
+    Duration::init()
     {
-      check_arg_count(args.size(), 0, 1);
-      value_get() = args.empty() ? 0 : from_urbi<value_type>(args[0]);
+      value_get() = 0;
+    }
+
+    void
+    Duration::init(const value_type& v)
+    {
+      value_get() = v;
     }
 
     /*-----------.

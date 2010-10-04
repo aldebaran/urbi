@@ -33,7 +33,7 @@ namespace urbi
       rObject update_(rObject arg);
       rObject update_timed_(rObject arg, libport::utime_t timestamp);
       rObject update_timed(rObject arg, libport::utime_t timestamp);
-      rObject accessor();
+      rObject accessor(const objects_type&);
       /// Like accessor, but if fromCxx is true and the value is an UValue,
       /// return it instead of its content.
       rObject getter(bool fromCXX);

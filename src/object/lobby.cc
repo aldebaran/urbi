@@ -115,28 +115,20 @@ namespace urbi
     }
 
     void
-    Lobby::send(const objects_type& args)
+    Lobby::send(const std::string& data)
+    {
+      send(data, "");
+    }
+
+    void
+    Lobby::send(const std::string& data, const std::string& tag)
     {
       if (proto == this)
         RAISE("must be called on Lobby derivative");
 
-      check_arg_count(args.size(), 1, 2);
       if (!connection_)
         return;
-      // Second argument is the tag name.
-      std::string tag;
-      if (args.size() == 2)
-      {
-        const rString& name = args[1].unsafe_cast<String>();
-        if (!name)
-          runner::raise_argument_type_error(1, args[1], String::proto);
-        tag = name->value_get();
-      }
-      const rString& rdata = args[0].unsafe_cast<String>();
-      if (!rdata)
-        runner::raise_argument_type_error(0, args[0], String::proto);
-      const std::string data = rdata->value_get() + "\n";
-      connection_->send(data.c_str(), data.length(), tag.c_str());
+      connection_->send((data + "\n").c_str(), data.length() + 1, tag.c_str());
     }
 
     void
@@ -167,7 +159,6 @@ namespace urbi
       DECLARE(lobby);
       DECLARE(quit);
       DECLARE(receive);
-      DECLARE(send);
       DECLARE(write);
 #undef DECLARE
 

@@ -55,28 +55,29 @@ namespace urbi
     }
 
     void
-    Position::init(const objects_type& args)
+    Position::init()
+    {}
+
+    void
+    Position::init(const value_type& pos)
     {
-      check_arg_count(args.size(), 0, 3);
-      switch (args.size())
-      {
-      case 1:
-        pos_ = type_check<Position>(args[0])->pos_;
-        return;
-      case 2:
-        pos_ = value_type(0,
-                          CxxConvert<unsigned>::to(args[0], 0),
-                          CxxConvert<unsigned>::to(args[1], 1));
-        return;
-      case 3:
-        libport::Symbol* f = 0;
-        if (args[0] != nil_class)
-          f = new libport::Symbol(from_urbi<std::string>(args[0]));
-        pos_ = value_type(f,
-                          CxxConvert<unsigned>::to(args[1], 1),
-                          CxxConvert<unsigned>::to(args[2], 2));
-        return;
-      }
+      pos_ = pos;
+    }
+
+    void
+    Position::init(unsigned from, unsigned to)
+    {
+      pos_ = value_type(0, from, to);
+    }
+
+    void
+    Position::init(rObject file, unsigned from, unsigned to)
+    {
+      libport::Symbol* f = 0;
+      if (file != nil_class)
+        // FIXME: leak
+        f = new libport::Symbol(from_urbi<std::string>(file));
+      pos_ = value_type(f, from, to);
     }
 
     /*-------------.
@@ -180,7 +181,6 @@ namespace urbi
       bind(SYMBOL(lines), &Position::lines);
       bind(SYMBOL(columns), &Position::columns);
       bind(SYMBOL(asString), &Position::as_string);
-      bind(SYMBOL(init), &Position::init);
 
 #define DECLARE(Name)                                           \
       bind.var(SYMBOL( Name ), &Position:: Name ## _ref)
@@ -191,10 +191,10 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Name)                                                   \
-      bind(SYMBOL(Name), &Position::Name ##_get);                     \
+      bind(SYMBOL(Name), &Position::Name ##_get);                       \
       bind.proto()->property_set(SYMBOL(Name),                          \
                                  SYMBOL(updateHook),                    \
-                                 make_primitive(&Position::Name ##_set))
+                                 primitive(&Position::Name ##_set))
 
       DECLARE(file);
 

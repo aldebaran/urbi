@@ -11,8 +11,11 @@
 #ifndef CXX_OBJECT_HXX
 # define CXX_OBJECT_HXX
 
+# include <boost/function.hpp>
+
 # include <libport/bind.hh>
 
+# include <urbi/object/cxx-conversions.hh>
 # include <urbi/object/cxx-primitive.hh>
 # include <urbi/object/primitive.hh>
 # include <urbi/object/string.hh>
@@ -109,7 +112,7 @@ namespace urbi
       // clone.
       static libport::Symbol clone("clone");
       res->slot_set(clone,
-                     new Primitive(bind(cxx_object_clone<T>, _1)), true);
+                    new Primitive(bind(cxx_object_clone<T>, _1)), true);
 
       // asFoo.
       libport::Symbol name(std::string("as") + T::type_name());
@@ -130,7 +133,7 @@ namespace urbi
     CxxObject::Binder<T>::operator()(const libport::Symbol& name,
                                      M method)
     {
-      tgt_->slot_set(name, make_primitive(method), true);
+      tgt_->slot_set(name, primitive(method), true);
     }
 
     template <typename C, typename T>
@@ -163,11 +166,11 @@ namespace urbi
               urbi_setter_type;
 
       urbi_getter_type get(boost::bind(&getter<T, A>, _1, attr));
-      tgt_->slot_set(name, make_primitive(get), true);
+      tgt_->slot_set(name, primitive(get), true);
 
       urbi_setter_type set(boost::bind(&setter<T, A>, attr, _1, _2, _3));
 #define S(Name) Symbol(#Name)
-      tgt_->property_set(name, libport::S(updateHook), make_primitive(set));
+      tgt_->property_set(name, libport::S(updateHook), primitive(set));
 #undef S
     }
 
@@ -201,11 +204,11 @@ namespace urbi
               urbi_setter_type;
 
       urbi_getter_type get(boost::bind(&refgetter<T, A>, _1, ref));
-      tgt_->slot_set(name, make_primitive(get), true);
+      tgt_->slot_set(name, primitive(get), true);
 
       urbi_setter_type set(boost::bind(&refsetter<T, A>, ref, _1, _2, _3));
 #define S(Name) Symbol(#Name)
-      tgt_->property_set(name, libport::S(updateHook), make_primitive(set));
+      tgt_->property_set(name, libport::S(updateHook), primitive(set));
 #undef S
     }
 

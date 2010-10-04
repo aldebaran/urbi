@@ -335,19 +335,19 @@ namespace urbi
     }
 
 
-#define DEFINE(Urbi, Op)                                          \
-    Float::value_type                                             \
-    Float::Urbi(const objects_type& args) const                   \
-    {                                                             \
-      check_arg_count(args.size(), 0, 1);                         \
-      if (args.empty())                                           \
-        return Op value_get();                                    \
-      else                                                        \
-      {                                                           \
-        type_check<Float>(args[0], 1);                            \
-        return value_get() Op args[0]->as<Float>()->value_get();  \
-      }                                                           \
-    }
+#define DEFINE(Urbi, Op)                        \
+    Float::value_type                           \
+    Float::Urbi() const                         \
+    {                                           \
+      return Op value_get();                    \
+    }                                           \
+                                                \
+    Float::value_type                           \
+    Float::Urbi(value_type rhs) const           \
+    {                                           \
+      return value_get() Op rhs;                \
+    }                                           \
+
 
     DEFINE(plus, +);
     DEFINE(minus, -);
@@ -443,9 +443,7 @@ namespace urbi
       DECLARE(GT_EQ,     operator>=);
       DECLARE(BANG_EQ,   operator!=);
       DECLARE(LT_LT,     operator<<);
-      DECLARE(MINUS, minus);
       DECLARE(PERCENT, operator%);
-      DECLARE(PLUS, plus);
       DECLARE(SLASH, operator/);
       DECLARE(STAR, operator*);
       DECLARE(STAR_STAR, pow);

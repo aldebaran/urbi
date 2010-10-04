@@ -101,8 +101,10 @@ namespace urbi
       value_type exp() const;
       value_type fabs() const;
       value_type log() const;
-      value_type minus(const objects_type& args) const;
-      value_type plus(const objects_type& args) const;
+      value_type minus() const;
+      value_type minus(Float::value_type rhs) const;
+      value_type plus() const;
+      value_type plus(Float::value_type rhs) const;
 
     protected:
       /// Limit object to be referenced by all Floats.

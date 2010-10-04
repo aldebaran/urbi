@@ -33,7 +33,9 @@ namespace urbi
       Location();
       Location(const value_type& loc);
       Location(rLocation model);
-      void init(const objects_type& args);
+      void init();
+      void init(const Position::value_type& begin);
+      void init(const Position::value_type& begin, const Position::value_type& end);
 
     /*--------------.
     | Comparisons.  |
@@ -56,8 +58,8 @@ namespace urbi
     `-----------*/
 
     private:
-      Position::value_type* begin_ref();
-      Position::value_type* end_ref();
+      Position::value_type* begin_ref_;
+      Position::value_type* end_ref_;
 
     /*----------.
     | Details.  |
@@ -81,7 +83,7 @@ namespace urbi
     struct CxxConvert<Location::value_type>
     {
       typedef Location::value_type target_type;
-      static target_type
+      static target_type&
       to(const rObject& o, unsigned idx)
       {
         type_check<Location>(o, idx);

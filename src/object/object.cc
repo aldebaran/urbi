@@ -686,6 +686,13 @@ namespace urbi
       return o.print(s);
     }
 
+    void
+    Object::bind_variadic(const std::string& name,
+                         const boost::function1<rObject, const objects_type&>& val)
+    {
+      setSlot(libport::Symbol(name), new Primitive(val));
+    }
+
     rObject Object::proto;
 
   } // namespace object

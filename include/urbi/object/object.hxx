@@ -25,8 +25,9 @@
 # include <boost/tr1/type_traits.hpp>
 
 # include <libport/containers.hh>
-# include <libport/indent.hh>
+# include <libport/debug.hh>
 # include <libport/foreach.hh>
+# include <libport/indent.hh>
 # include <libport/intrusive-ptr.hh>
 
 # include <urbi/object/object.hh>
@@ -205,37 +206,47 @@ namespace urbi
     inline void
     Object::bindfun_(const std::string& name, T p)
     {
+      GD_CATEGORY(Urbi);
+
       libport::Symbol sym(name);
       if (!local_slot_get(sym))
-        slot_set(sym, make_primitive(p));
+      {
+        GD_FINFO_DEBUG("create primitive %s with C++ routine (type: %s)",
+                       name, typeid(T).name());
+        slot_set(sym, primitive(p), true);
+      }
       else
       {
+        GD_FINFO_DEBUG("extend primitive %s with C++ routine (type: %s)",
+                       name, typeid(T).name());
         rSlot v = local_slot_get(sym);
-        if (rPrimitive prim = (*v)->as<Primitive>())
-          extend_primitive(prim, p);
+        rPrimitive prim = (*v)->as<Primitive>();
+        assert(prim);
+        primitive(prim, p);
+
       }
     }
 
     template <typename Self, typename T>
-    T bindvar_getter_(Self* self, T (Self::*Attr))
+    T bindvar_getter_(Self& self, T (Self::*Attr))
     {
-      return self->*Attr;
+      return self.*Attr;
     }
 
     template <typename Self, typename T>
-    T bindvar_setter_(Self* self, const std::string&, T val, T (Self::*Attr))
+    T bindvar_setter_(Self& self, const std::string&, T val, T (Self::*Attr))
     {
-      return self->*Attr = val;
+      return self.*Attr = val;
     }
 
     template <typename Self, typename T>
     inline void
     Object::bindvar_(const std::string& name, T (Self::*attr))
     {
-      boost::function1<T, Self*> getter(boost::bind(&bindvar_getter_<Self, T>, _1, attr));
-      boost::function3<void, Self*, const std::string&, T> setter(boost::bind(&bindvar_setter_<Self, T>, _1, _2, _3, attr));
+      boost::function1<T, Self&> getter(boost::bind(&bindvar_getter_<Self, T>, _1, attr));
+      boost::function3<void, Self&, const std::string&, T> setter(boost::bind(&bindvar_setter_<Self, T>, _1, _2, _3, attr));
       bind(libport::Symbol(name), getter);
-      setProperty(name, "updateHook", make_primitive(setter));
+      setProperty(name, "updateHook", primitive(setter));
     }
 
   } // namespace object

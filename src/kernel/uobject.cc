@@ -224,9 +224,9 @@ static void setTrace(rObject, bool v)
 static std::vector<std::pair<std::string, std::string> > bound_context;
 
 #define MAKE_VOIDCALL(ptr, cls, meth)                   \
-  object::make_primitive(                               \
+  object::primitive(                                    \
     boost::function1<void, rObject>(                    \
-      boost::bind(&cls::meth, ptr)))
+      boost::bind(&cls::meth, ptr)))                    \
 
 #ifdef SCHED_CORO_OSTHREAD
 # define CHECK_MAINTHREAD()
@@ -385,11 +385,11 @@ rObject uobject_initialize(const objects_type& args)
 {
   urbi::setCurrentContext(new urbi::impl::KernelUContextImpl());
   where = args.front();
-  where->slot_set(SYMBOL(setTrace), object::make_primitive(&setTrace));
+  where->slot_set(SYMBOL(setTrace), object::primitive(&setTrace));
   uobjects_reload();
-  where->slot_set(SYMBOL(getStats),    object::make_primitive(&Stats::get));
-  where->slot_set(SYMBOL(clearStats),  object::make_primitive(&Stats::clear));
-  where->slot_set(SYMBOL(enableStats), object::make_primitive(&Stats::enable));
+  where->slot_set(SYMBOL(getStats),    object::primitive(&Stats::get));
+  where->slot_set(SYMBOL(clearStats),  object::primitive(&Stats::clear));
+  where->slot_set(SYMBOL(enableStats), object::primitive(&Stats::enable));
   return object::void_class;
 }
 
@@ -534,7 +534,7 @@ uobject_make_proto(const std::string& name)
   oc->slot_set(SYMBOL(__uobject_cname), new object::String(name));
   oc->slot_set(SYMBOL(__uobject_base), oc);
   oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
-  oc->slot_set(SYMBOL(periodicCall), object::make_primitive(&periodic_call));
+  oc->slot_set(SYMBOL(periodicCall), object::primitive(&periodic_call));
   return oc;
 }
 
@@ -1071,7 +1071,7 @@ namespace urbi
 
       me->slot_update
         (SYMBOL(update),
-         object::make_primitive
+         object::primitive
          (boost::function1<void, rObject>(
            boost::bind(&bounce_update, owner_, me.get(), meId + " update"))));
       args.clear();
@@ -1339,7 +1339,7 @@ namespace urbi
       {
         traceName = owner_->name; // object.function, unique
         LIBPORT_DEBUG("binding " << p.first << "." << owner_->method);
-        me->slot_set(libport::Symbol(method), object::make_primitive(
+        me->slot_set(libport::Symbol(method), new object::Primitive(
                        boost::function1<rObject, const objects_type&>
                        (boost::bind(&wrap_ucallback, _1, owner_, traceName))));
       }
@@ -1363,7 +1363,7 @@ namespace urbi
         rObject handle = source->slot_get(SYMBOL(handle));
         rObject f = var->slot_get(sym);
         aver(f);
-        callback_ = object::make_primitive(
+        callback_ = new object::Primitive(
             boost::function1<rObject, const objects_type&>
             (boost::bind(&wrap_ucallback_notify, _1, owner_,
                          traceName)));

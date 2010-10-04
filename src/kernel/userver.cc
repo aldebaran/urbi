@@ -369,7 +369,7 @@ namespace kernel
     ghost_->initialize();
 
     object::rPrimitive p =
-      object::make_primitive
+      object::primitive
       (boost::function0<void>
        (boost::bind(&UServer::handle_synchronizer_, this)));
     scheduler_->add_job

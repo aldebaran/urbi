@@ -16,6 +16,8 @@
 #ifndef OBJECT_PRIMITIVE_HH
 # define OBJECT_PRIMITIVE_HH
 
+# include <boost/unordered_map.hpp>
+
 # include <libport/compiler.hh>
 # include <urbi/object/executable.hh>
 # include <urbi/object/fwd.hh>
@@ -28,11 +30,13 @@ namespace urbi
     {
       public:
       typedef boost::function1<rObject, const objects_type&> value_type;
-      typedef std::vector<value_type> values_type;
+      typedef boost::unordered_map<unsigned, value_type> values_type;
 
-      ATTRIBUTE_NORETURN Primitive();
+      Primitive();
+      Primitive(const value_type& p);
       Primitive(rPrimitive model);
-      Primitive(value_type value);
+      template<typename M>
+      void extend(M f);
       values_type& value_get();
       const values_type& value_get() const;
       virtual rObject operator() (object::objects_type args);
@@ -42,6 +46,7 @@ namespace urbi
 
       private:
       values_type content_;
+      value_type default_;
 
       URBI_CXX_OBJECT_(Primitive);
     };

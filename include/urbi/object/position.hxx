@@ -67,7 +67,7 @@ namespace urbi
     struct CxxConvert<Position::value_type>
     {
       typedef Position::value_type target_type;
-      static target_type
+      static target_type&
       to(const rObject& o, unsigned idx)
       {
         type_check<Position>(o, idx);

@@ -175,10 +175,6 @@ namespace urbi
       return path_concat(new Path(other->value_get()));
     }
 
-    OVERLOAD_TYPE(concat_bouncer, 1, 1,
-                  Path, &Path::path_concat,
-                  String, &Path::string_concat);
-
     rPath Path::dirname() const
     {
       return new Path(path_.dirname());
@@ -232,7 +228,6 @@ namespace urbi
       bind(SYMBOL(EQ_EQ),
            static_cast<bool (self_type::*)(const rObject&) const>
            (&self_type::operator==));
-      bind(SYMBOL(SLASH), concat_bouncer);
 
 #define DECLARE(Urbi, Cxx)                      \
       bind(SYMBOL(Urbi), &Path::Cxx)

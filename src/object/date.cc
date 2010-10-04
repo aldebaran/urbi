@@ -121,19 +121,6 @@ namespace urbi
       return new Duration(time_ - rhs->time_);
     }
 
-    OVERLOAD_TYPE_3(
-      MINUS_overload, 1, 1,
-      Date, (rDuration (Date::*)(rDate) const)     &Date::operator-,
-      Duration, (rDate (Date::*)(const Date::duration_type&) const) &Date::operator-,
-      Float, (rDate (Date::*)(const Date::duration_type&) const) &Date::operator-)
-
-    static rObject MINUS(const objects_type& args)
-    {
-      check_arg_count(args.size() - 1, 0, 1);
-      static rPrimitive actual = make_primitive(MINUS_overload);
-      return (*actual)(args);
-    }
-
     /*--------------.
     | Conversions.  |
     `--------------*/
@@ -195,7 +182,6 @@ namespace urbi
     {
       bind(SYMBOL(EQ_EQ), &Date::operator ==);
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
-      bind(SYMBOL(MINUS), MINUS);
       bind(SYMBOL(PLUS), &Date::operator +);
       bind(SYMBOL(asFloat), &Date::as_float);
       bind(SYMBOL(asString), &Date::as_string);

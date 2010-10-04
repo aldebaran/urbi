@@ -139,29 +139,23 @@ namespace urbi
     }
 
     static rObject
-    object_class_apply(const objects_type& args)
+    object_class_apply(rObject self, const objects_type& args)
     {
-      check_arg_count(args.size() - 1, 1);
-      type_check<List>(args[1]);
-      const rList& arg1 = args[1]->as<List>();
-      unsigned nargs = arg1->value_get().size();
+      unsigned nargs = args.size();
       if (nargs != 1)
         runner::raise_arity_error(nargs, 1);
-      return args[0];
+      return self;
     }
 
     static rObject
-    object_class_callMessage (const objects_type& args)
+    object_class_callMessage (rObject target, rObject call_message)
     {
       runner::Runner& r = ::kernel::runner();
 
-      check_arg_count(args.size() - 1, 1);
       // We need to set the 'code' slot: make a copy of the call message.
-      rObject call_message = args[1]->clone();
       const rObject& message = call_message->slot_get(SYMBOL(message));
       type_check<String>(message);
       const libport::Symbol msg(message->as<String>()->value_get());
-      const rObject& target = args[0];
       const rObject& code = target->slot_get(msg);
       call_message->slot_update(SYMBOL(code), code);
       call_message->slot_update(SYMBOL(target), target);
@@ -322,21 +316,19 @@ namespace urbi
     object_class_initialize()
     {
       Object::proto->slot_set(SYMBOL(isA),
-                              make_primitive(object_class_isA));
+                              primitive(object_class_isA));
       Object::proto->slot_set(SYMBOL(hasLocalSlot),
-                              make_primitive(&object_class_hasLocalSlot));
+                              primitive(&object_class_hasLocalSlot));
 
 #define DECLARE(Name)                                                   \
       Object::proto->slot_set(SYMBOL(Name),                             \
-                              make_primitive(object_class_##Name),       \
-                              true)
+                              new Primitive(object_class_##Name),       \
+                              true)                                     \
 
       DECLARE(EQ_EQ);
       DECLARE(EQ_EQ_EQ);
       DECLARE(addProto);
       DECLARE(allProtos);
-      DECLARE(apply);
-      DECLARE(callMessage);
       DECLARE(clone);
       DECLARE(dump);
       DECLARE(init);
@@ -345,22 +337,24 @@ namespace urbi
       DECLARE(removeProto);
       DECLARE(slotNames);
       DECLARE(uid);
-      DECLARE(PLUS_EQ);
-      DECLARE(MINUS_EQ);
-      DECLARE(CARET_EQ);
-      DECLARE(PERCENT_EQ);
-      DECLARE(STAR_EQ);
-      DECLARE(SLASH_EQ);
-      DECLARE(PLUS_PLUS);
-      DECLARE(MINUS_MINUS);
 #undef DECLARE
 
 #define DECLARE(Name, Code)                                             \
-      Object::proto->slot_set(SYMBOL(Name), make_primitive(Code))
+      Object::proto->slot_set(SYMBOL(Name), primitive(Code))
 
+      DECLARE(CARET_EQ           , object_class_CARET_EQ);
+      DECLARE(MINUS_EQ           , object_class_MINUS_EQ);
+      DECLARE(MINUS_MINUS        , object_class_MINUS_MINUS);
+      DECLARE(PERCENT_EQ         , object_class_PERCENT_EQ);
+      DECLARE(PLUS_EQ            , object_class_PLUS_EQ);
+      DECLARE(PLUS_PLUS          , object_class_PLUS_PLUS);
+      DECLARE(SLASH_EQ           , object_class_SLASH_EQ);
+      DECLARE(STAR_EQ            , object_class_STAR_EQ);
+      DECLARE(apply              , object_class_apply);
       DECLARE(asBool             , &Object::as_bool);
       DECLARE(asPrintable        , &Object::asPrintable);
       DECLARE(asToplevelPrintable, &Object::asToplevelPrintable);
+      DECLARE(callMessage        , object_class_callMessage);
       DECLARE(changed            , &Object::changed_get);
       DECLARE(createSlot         , &Object::urbi_createSlot);
       DECLARE(getLocalSlot       , &Object::getLocalSlot);

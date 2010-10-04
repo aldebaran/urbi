@@ -21,13 +21,15 @@
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
 
+GD_CATEGORY(Urbi);
+
 namespace urbi
 {
   namespace object
   {
     Primitive::Primitive()
     {
-      RAISE("`Primitive' objects cannot be cloned");
+      proto_add(proto);
     }
 
     Primitive::Primitive(rPrimitive model)
@@ -37,17 +39,12 @@ namespace urbi
       proto_remove(Object::proto);
     }
 
-    Primitive::Primitive(value_type value)
-      : content_()
+    Primitive::Primitive(const value_type& p)
+      : default_(p)
     {
-      content_ << value;
-
-      // Initialization hack: bootstraping Primitive instantiates
-      // Primitives.
       if (!proto)
         proto = new Primitive(FirstPrototypeFlag());
       proto_add(proto);
-      proto_remove(Object::proto);
     }
 
     const Primitive::values_type&
@@ -81,17 +78,38 @@ namespace urbi
 
     rObject Primitive::operator() (object::objects_type args)
     {
-      values_type::iterator it = content_.begin();
-      while (true)
-        try
+      size_t arity = args.size();
+      if (!libport::mhas(content_, arity))
+      {
+        // Self is always present, accept it even for 0-arity.
+        if (arity == 1 && libport::mhas(content_, 0))
+          return content_[0](args);
+        if (default_)
+          return default_(args);
+
+        size_t min = INT_MAX;
+        size_t max = 0;
+
+        // FIXME: the valid arity range is not necessarilly continue
+        foreach (const Primitive::values_type::value_type& elt, content_)
         {
-          return (*it)(args);
+          min = std::min(min, elt.first);
+          max = std::max(max, elt.first);
         }
-        catch (...)
+        if (min == max)
         {
-          if (++it == content_.end())
-            throw;
+          GD_FINFO_TRACE("arity error for primitive: expected %s, got %s.",
+                         min, arity);
+          runner::raise_arity_error(arity - 1, min - 1);
         }
+        else
+        {
+          GD_FINFO_TRACE("arity error for primitive: expected between %s and %s, got %s.",
+                         min, max, arity);
+          runner::raise_arity_error(arity - 1, min - 1, max - 1);
+        }
+      }
+      return content_[arity](args);
     }
 
   }; // namespace object

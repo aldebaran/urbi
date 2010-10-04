@@ -267,46 +267,6 @@ namespace urbi
       return split(seps, limit, keep_delim, keep_empty);
     }
 
-    OVERLOAD_TYPE(
-      split_overload, 4, 1,
-      String,
-      (strings_type (String::*)(const std::string&, int, bool, bool) const)
-      &String::split,
-      List,
-      (strings_type (String::*)(const strings_type&, int, bool, bool) const)
-      &String::split)
-
-    static rObject split_bouncer(const objects_type& _args)
-    {
-      objects_type args = _args;
-      static rPrimitive actual = make_primitive(split_overload);
-      check_arg_count(args.size() - 1, 0, 4);
-      switch (args.size())
-      {
-        case 1:
-        {
-          static strings_type seps =
-            boost::assign::list_of(" ")("\t")("\r")("\n");
-          args << to_urbi(seps)
-               << new Float(-1)
-               << object::false_class
-               << object::false_class;
-          break;
-        }
-        case 2:
-          args << new Float(-1);
-        case 3:
-          args << object::false_class;
-        case 4:
-          args << object::true_class;
-        default:
-          break;
-      }
-      if (args[2] == object::nil_class)
-        args[2] = new Float(-1);
-      return (*actual)(args);
-    }
-
     std::string
     String::star(size_type times) const
     {
@@ -455,8 +415,6 @@ namespace urbi
       DECLARE(toUpper     , to_upper);
 
 #undef DECLARE
-
-      bind(SYMBOL(split), split_bouncer);
 
       proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
       proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));

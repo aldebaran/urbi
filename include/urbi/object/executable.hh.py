@@ -50,7 +50,7 @@ namespace urbi
   }
 }
 
-# include <urbi/object/cxx-object.hxx>
+# include <urbi/object/cxx-conversions.hxx>
 
 namespace urbi
 {

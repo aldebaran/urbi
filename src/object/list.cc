@@ -365,10 +365,6 @@ namespace urbi
       return new List(res);
     }
 
-    OVERLOAD_2(sort_bouncer, 1,
-               (List::value_type (List::*) ()) &List::sort,
-               (List::value_type (List::*) (rObject f)) &List::sort)
-
     void List::initialize(CxxObject::Binder<List>& bind)
     {
 #define DECLARE(Name, Function)                 \
@@ -400,7 +396,6 @@ namespace urbi
       DECLARE(tail,           tail            );
 
 #undef DECLARE
-      bind(SYMBOL(sort),      &sort_bouncer          );
     }
 
   } // namespace object

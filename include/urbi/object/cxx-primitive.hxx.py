@@ -217,30 +217,35 @@ namespace urbi
 
     template<typename M>
     inline rPrimitive
-    make_primitive(M f)
+    primitive(M f)
     {
-      typedef AnyToBoostFunction<M> C;
+      return primitive(new Primitive, f);
+    }
+
+    template<typename M>
+    inline rPrimitive
+    primitive(rPrimitive p, M f)
+    {
+      p->extend(f);
+      return p;
+    }
+
+    template<typename M>
+    void
+    Primitive::extend(M f)
+    {
       // If primitive is unfound in MakePrimitive here, you gave an
       // unsupported type to make Primitive. AnyToBoostFunction must be
       // able to convert the given values. It handles:
       // * boost::functions
       // * function pointers
       // * method pointers
-      return new Primitive(
-        boost::bind(MakePrimitive<typename C::type>::primitive,
-                    _1, /*_2,*/ C::convert(f)));
-    }
-
-    template<typename M>
-    inline void
-    extend_primitive(rPrimitive p, M f)
-    {
       typedef AnyToBoostFunction<M> C;
-      p->value_get() <<
+      aver(!libport::mhas(content_, C::arity));
+      content_[C::arity] =
         boost::bind(MakePrimitive<typename C::type>::primitive,
                     _1, /*_2,*/ C::convert(f));
     }
-
 
     inline void
     setter_bouncer(rObject self,
@@ -254,11 +259,48 @@ namespace urbi
     Object::bind(const std::string& getter_name, F1 getter,
                  const std::string& setter_name, F2 setter)
     {
-      slot_set(libport::Symbol(getter_name), make_primitive(getter));
-      slot_set(libport::Symbol(setter_name), make_primitive(setter));
+      slot_set(libport::Symbol(getter_name), primitive(getter));
+      slot_set(libport::Symbol(setter_name), primitive(setter));
       boost::function3<void, rObject, const std::string&, rObject>
         f(boost::bind(&setter_bouncer, _1, _2, _3, setter_name));
-      setProperty(getter_name, "updateHook", make_primitive(f));
+      setProperty(getter_name, "updateHook", primitive(f));
+    }
+
+    template <typename Return, typename Self>
+    struct bind_variadic_bouncer
+    {
+      static rObject
+      f(const objects_type& args,
+        const boost::function2<Return, Self*, const objects_type&>& f)
+      {
+        assert(!args.empty());
+        objects_type args_left(args.begin() + 1, args.end());
+        Self* self = CxxConvert<Self*>::to(args[0], 0);
+        return CxxConvert<Return>::from(f(self, args_left));
+      }
+    };
+
+    template <typename Self>
+    struct bind_variadic_bouncer<void, Self>
+    {
+      static rObject
+      f(const objects_type& args,
+        const boost::function2<void, Self*, const objects_type&>& f)
+      {
+        assert(!args.empty());
+        objects_type args_left(args.begin() + 1, args.end());
+        Self* self = CxxConvert<Self*>::to(args[0], 0);
+        f(self, args_left);
+        return void_class;
+      }
+    };
+
+    template <typename Return, typename Self>
+    void
+    Object::bind_variadic(const std::string& name,
+                          const boost::function2<Return, Self*, const objects_type&>& val)
+    {
+      setSlot(name, new Primitive(boost::bind(bind_variadic_bouncer<Return, Self>::f, _1, val)));
     }
   }
 }''' % primitives

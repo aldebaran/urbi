@@ -38,20 +38,6 @@ namespace urbi
       return loc_ == rhs->loc_;
     }
 
-    /*-----------.
-    | Accessor.  |
-    `-----------*/
-
-    inline Position::value_type* Location::begin_ref()
-    {
-      return &loc_.begin;
-    }
-
-    inline Position::value_type* Location::end_ref()
-    {
-      return &loc_.end;
-    }
-
   } // namespace object
 } // namespace urbi
 
