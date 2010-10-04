@@ -15,20 +15,21 @@
 
 # include <boost/optional.hpp>
 
-# include <urbi/object/enumerated.hh>
+# include <urbi/object/enumeration.hh>
 # include <urbi/object/object.hh>
 
 #define URBI_CXX_OBJECT_(Name)                                          \
-public:                                                                 \
-  static const ::std::string& type_name();                              \
-  virtual ::std::string type_name_get() const;                          \
-  static ::libport::intrusive_ptr<Name> proto;                          \
-  virtual bool valid_proto(const ::urbi::object::Object& o) const;      \
-private:                                                                \
-  friend class ::urbi::object::CxxObject::TypeInitializer<Name>;        \
-  Name(const ::urbi::object::FirstPrototypeFlag&);                      \
-public:                                                                 \
-  static void initialize(::urbi::object::CxxObject::Binder<Name>&)      \
+  public:                                                               \
+    static const ::std::string& type_name();                            \
+    virtual ::std::string type_name_get() const;                        \
+    static ::libport::intrusive_ptr<Name> proto;                        \
+    virtual bool valid_proto(const ::urbi::object::Object& o) const;    \
+  private:                                                              \
+    friend class ::urbi::object::CxxObject::TypeInitializer<Name>;      \
+    Name(const ::urbi::object::FirstPrototypeFlag&);                    \
+  public:                                                               \
+    static void initialize(::urbi::object::CxxObject::Binder<Name>&)    \
+
 
 #define URBI_CXX_OBJECT(Name)                   \
   URBI_CXX_OBJECT_(Name)                        \

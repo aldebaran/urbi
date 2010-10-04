@@ -422,7 +422,7 @@ namespace ast
                       libport::Symbol name,
                       const symbols_type& ids) /* const */
   {
-    PARAMETRIC_AST(desugar, "var %id:1 = Enumerated.new(%exp:2, %exp:3);");
+    PARAMETRIC_AST(desugar, "var %id:1 = Enumeration.new(%exp:2, %exp:3);");
 
     exps_type* exps = new exps_type;
 

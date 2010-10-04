@@ -8,8 +8,8 @@
  * See the LICENSE file for more information.
  */
 
-#ifndef URBI_OBJECT_ENUMERATED_HH
-# define URBI_OBJECT_ENUMERATED_HH
+#ifndef URBI_OBJECT_ENUMERATION_HH
+# define URBI_OBJECT_ENUMERATION_HH
 
 # include <libport/preproc.hh>
 # include <libport/symbol.hh>
@@ -17,7 +17,8 @@
 # include <urbi/export.hh>
 # include <urbi/object/global.hh>
 
-# define URBI_ENUM_PUSH(Elt) values.push_back(BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt)));
+# define URBI_ENUM_PUSH(Elt)                            \
+  values << BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt));
 
 # define URBI_ENUM_REG(Elt)                                             \
   LIBPORT_CAT(_urbi_enum_u2c, __LINE__)()                               \
@@ -56,8 +57,8 @@
     LIBPORT_LIST_FLATTEN                                                \
       (LIBPORT_LIST_MAP(URBI_ENUM_PUSH, LIBPORT_LIST(__VA_ARGS__,)));   \
     CAPTURE_GLOBAL(Global);                                             \
-    CAPTURE_GLOBAL(Enumerated);                                         \
-    ::urbi::object::rObject e = Enumerated->call                        \
+    CAPTURE_GLOBAL(Enumeration);                                         \
+    ::urbi::object::rObject e = Enumeration->call                        \
         ("new",                                                         \
          ::urbi::object::to_urbi(name),                                 \
          ::urbi::object::to_urbi(values));                              \

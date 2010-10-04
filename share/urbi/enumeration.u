@@ -8,9 +8,9 @@
  * See the LICENSE file for more information.
  */
 
-class Global.Enumerated : Global.RangeIterable
+class Global.Enumeration : Global.RangeIterable
 {
-  var this.name = "Enumerated";
+  var this.name = "Enumeration";
   var this.values = [];
   protos << Container;
 

@@ -13,6 +13,34 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \section{\usdk 2.x}
 
+\subsection{New Features}
+\begin{itemize}
+\item Enumerations.
+
+  Enumeration types can be created with the usual \C-like syntax.
+  See \autoref{sec:lang:enum} and \refObject{Enumaration}.
+\begin{urbiscript}
+enum Suit
+{
+  hearts,
+  diamonds,
+  clubs,
+  spades, // Last comma is optional
+};
+[00000001] Suit
+
+for (var suit : Suit)
+  if (suit in [Suit.Spades, Suit.Clubs])
+    echo("Black: " + suit)
+  else
+    echo("Red: " + suit);
+[00000001] *** Red: hearts
+[00000002] *** Red: diamonds
+[00000003] *** Black: clubs
+[00000004] *** Black: spades
+\end{urbiscript}
+\end{itemize}
+
 \subsection{Documentation}
 \begin{itemize}
 \item \refSlot[String]{empty}, \refSlot[String]{length}.

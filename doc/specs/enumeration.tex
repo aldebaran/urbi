@@ -6,9 +6,9 @@
 %%
 %% See the LICENSE file for more information.
 
-\section{Enumerated}
+\section{Enumeration}
 
-Prototype of enumerated types.
+Prototype of enumeration types.
 
 \subsection{Prototypes}
 \begin{refObjects}
@@ -22,12 +22,12 @@ See \autoref{sec:lang:enum}.
 
 \subsection{Construction}
 
-An \lstinline{Enumerated} is created with two arguments: the name of the
-enumerated type, and the list of possible values.  Most of the time, it is a
+An \lstinline{Enumeration} is created with two arguments: the name of the
+enumeration type, and the list of possible values.  Most of the time, it is a
 good idea to store it in a variable with the same name.
 
 \begin{urbiscript}[firstnumber=1]
-var Direction = Enumerated.new("Direction", ["up", "down", "left", "right"]);
+var Direction = Enumeration.new("Direction", ["up", "down", "left", "right"]);
 [00000001] Direction
 Direction.up;
 [00000002] up
@@ -46,10 +46,10 @@ enum Direction
 [00000001] Direction
 \end{urbiunchecked}
 
-The created values are derive from the created enumerated type.
+The created values are derive from the created enumeration type.
 
 \begin{urbiassert}
-Direction.isA(Enumerated);
+Direction.isA(Enumeration);
 Direction.up.isA(Direction);
 \end{urbiassert}
 
@@ -63,7 +63,7 @@ Direction.asList
   == [Direction.up, Direction.down, Direction.left, Direction.right];
 \end{urbiassert}
 
-  Since it also derives from \refObjects{RangeIterable}, this enables all
+  Since it also derives from \refObject{RangeIterable}, this enables all
   its features.  For instance:
 
 \begin{urbiscript}
@@ -101,9 +101,9 @@ Direction.asString    == "Direction";
 Direction.up.asString == "up";
 \end{urbiassert}
 
-\item[has](<v>)
-  Whether \var{v} is a member of \this.  Since \refObjects{Enumerated}
-  derives from \refObjects{Container}, it provides all its features.
+\item[has](<v>)%
+  Whether \var{v} is a member of \this.  Since \refObject{Enumeration}
+  derives from \refObject{Container}, it provides all its features.
 \begin{urbiscript}
 enum CardinalDirection { north, east, south, west }|;
 
@@ -116,19 +116,20 @@ assert
 };
 \end{urbiscript}
 
-\item[size]
-  Number of possible values in the enumerated type. Equivalent to
-  \lstinline{values.size}.
-\begin{urbiassert}
-Direction.size == 4;
-\end{urbiassert}
-
 
 \item[name]
   The name of the enumeration.  See also \refSlot{asString}.
 \begin{urbiassert}
 Direction.name    == "Direction";
 Direction.up.name == "Direction";
+\end{urbiassert}
+
+
+\item[size]
+  Number of possible values in the enumeration type. Equivalent to
+  \lstinline{values.size}.
+\begin{urbiassert}
+Direction.size == 4;
 \end{urbiassert}
 
 

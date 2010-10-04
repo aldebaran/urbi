@@ -1866,11 +1866,11 @@ obj.b(50);
 [00000000] 51
 \end{urbiscript}
 
-\section{Enumerated types}
+\section{Enumeration types}
 \label{sec:lang:enum}
 
-Enumerated type enable to create a type represented by a finished set of
-value, just like the \lstinline{enum} statement in \C.
+Enumeration types enable to create types represented by a finite set of
+values, like the \lstinline{enum} declaration in \C.
 
 \begin{urbiscript}
 enum Suit
@@ -1884,13 +1884,13 @@ enum Suit
 \end{urbiscript}
 
 Since everything is an object in \us, enums are too, with
-\refObject{Enumerated} as prototype.
+\refObject{Enumeration} as prototype.
 
 \begin{urbiscript}
 Suit;
 [00000001] Suit
 Suit.protos;
-[00000002] [Enumerated]
+[00000002] [Enumeration]
 \end{urbiscript}
 
 The possible enum values are stored inside the enum object. They inherit the
@@ -1907,18 +1907,16 @@ Suit.clubs.isA(Suit);
 [00000003] false
 \end{urbiscript}
 
-Enumerated values of course support comparison and pattern matching. You can
-iterate on the enum object to cycle through all possible values.
+Enumeration values support comparison and pattern matching. You can iterate
+on the enum object to cycle through all possible values.
 
 \begin{urbiscript}
 function find_ace(var suit)
 {
   switch (suit)
   {
-    case Suit.spades:
-      return "The only card I need is";
-    default:
-      return "I have";
+    case Suit.spades: "The only card I need is";
+    default:          "I have";
   }
 }|;
 
