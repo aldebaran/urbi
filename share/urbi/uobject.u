@@ -225,6 +225,7 @@ do (getSlot("UVar"))
   var traceBind = Event.new;
   var owner;
   var ownerName = "<unknown>";
+  /// Enable RTP for this UVar.
   var rtp = false;
   // If this is true, callbacks that throw will be removed from callback lists.
   var eraseThrowingCallbacks = true;
@@ -255,6 +256,8 @@ do (getSlot("UVar"))
 
   function init(parent, name)
   {
+    var this.rtp = false;
+    var this.rtp_old = false;
     owner = parent|
     if (parent.hasSlot("__uobjectName"))
       ownerName = parent.__uobjectName
@@ -285,6 +288,38 @@ do (getSlot("UVar"))
     {
       var parent_getprop = parent.getSlot("getProperty")|
       parent.getProperty = getSlot("parentGetProperty")
+    };
+    at(rtp->changed? if rtp != rtp_old)
+    { // Propagate to all remotes.
+      // First find the list of lobbies that have remotes
+      rtp_old = rtp|
+      var lobbies = []|
+      var fullname =  ownerName + "." + name|
+      var obj = getSlot(ownerName)|
+      for|(var s: uobjects.localSlotNames)
+      {
+        var o = uobjects.getSlot(s)|
+        if (o.hasLocalSlot("lobby") && !lobbies.has(o.lobby))
+          lobbies << o.lobby
+      }|
+      // Then ask them to use RTP and reset existing notifies.
+      var chan = Channel.new('external'.MODULE_TAG)|
+      var msg = ['external'.UEM_SETRTP, fullname, rtp];
+      var tv = obj.getSlot(name).apply([obj]).acceptVoid|
+      for|(var l: lobbies)
+      {
+        chan.lobby = l |
+        chan << msg |
+        var currentBindings = l.__bindingFunc.getWithDefault(fullname,nil)|
+        if (currentBindings.isA(getSlot("Executable")))
+        { // Standard TCP notifychange, remove it...
+          change.remove(currentBindings);
+          //... and replace it with RTP version
+          'external'.setupRTP(tv.isA(Binary), ownerName, name, l, nil)
+          // Do not change bindingCount.
+        }
+      }
+
     }
   };
 
@@ -412,6 +447,19 @@ Global.getSlot("evaluate").notifyChangeOwned(uobjects_handle, function()
     Global.getSlot("evaluate").writeOwned(res)
 })|;
 
+UVar.new(Global, "currentLobbyId");
+Global.getSlot("currentLobbyId").notifyAccess(uobjects_handle, function()
+{
+  getSlot("currentLobbyId").val = lobby.uid;
+});
+
+UVar.new(Global, "currentRunnerInUObjectUpdate");
+Global.getSlot("currentRunnerInUObjectUpdate").notifyAccess(uobjects_handle, function()
+{
+  getSlot("currentRunnerInUObjectUpdate").val
+    = currentRunner.hasLocalSlot("$uobjectInUpdate");
+});
+
 Global.uobjects.uobjectInit();
 
 Global.addProto(uobjects);
@@ -434,7 +482,7 @@ class Global.'external'
   var UEM_INIT         = 6;
   var UEM_TIMER        = 7;
   var UEM_NORTP        = 8; //< Disable RTP for this connection
-
+  var UEM_SETRTP       = 9;
 
   /* external object <objname>: Set clone to send a UEM_NEW message.
   The remote upon reception of the UEM_NEW message 'instantiate <objname>
@@ -528,14 +576,17 @@ class Global.'external'
     // Connection started fine, assume it will stay that way and return.
   };
 
-  function makeRTPPair()
+  function makeRTPPair(lobby=lobby)
   {
+    if (!lobby.hasLocalSlot("_rtp_object_name"))
+      throw ("RTP subsystem not setup for this lobby: ")|
     var rrtp = uobjects.getSlot(lobby._rtp_object_name).new|
     var port = rrtp.listen("0.0.0.0", "0")|
     var host = lobby.remoteIP|
     var lrtp = URTP.new|
     //wall("...connecting to " + host +":" + port)|
     lrtp.connect(host, port)|
+    var lrtp.lobbyId = lobby.uid|
     // Destroy local rtp object when the remote disconnects
     disown({at(Lobby.onDisconnect?(lobby)) try{lrtp.destroy} catch {}})|
     (lrtp, rrtp)
@@ -593,59 +644,62 @@ class Global.'external'
         && (obj.getSlot(varname).rtp
             ||
             (tv.isA(Binary))))
-    { // Attempt to use RTP mode
-      //wall("attempting RTP connection...");
-      // RTP setup will require usage of the connection which is stuck in
-      // the foreground "external var" call, so detach.
-      detach({
-      if (tv.isA(Binary))
-      {  // each Binary UVar uses its own RTP connection
-        // Those are UObjects, they persist so local variables are fine.
-        (var lrtp, var rrtp) = makeRTPPair|
-        rrtp.localDeliver = objname + "." + varname|
-        lrtp.sendVar(obj.getSlot(varname))|
-        lobby.__bindingFunc[fullname] = [rrtp, lrtp]|
-        // Fallback to old TCP method if RTP fails.
-        disown(monitorRTP(lrtp, rrtp,
-               closure()
-               {
-                 remoteNotifyChange(objname, varname, fr)|
-                 var lobby.noRTP = true
-               }))|
-      }
-      else
-      { // Other data types share one RTP connection
-        //wall("rtp mode for " + varname)|
-        lobby.'$uobjectMutex': if (!lobby.hasSlot("sharedRTP"))
-        {
-          try {
-            (var lrtp, var rrtp) = makeRTPPair|
-            //wall("instanciating shared rtp for " + lobby +":" + lrtp)|
-            var lobby.sharedRTP = lrtp|
-            var lobby.remoteSharedRTP = rrtp|
-            disown(monitorRTP(lrtp, rrtp,
-                   closure()
-                   {
-                     remoteNotifyChange(objname, varname, fr)|
-                     var lobby.noRTP = true
-                   }))|
-          }
-          catch(var e)
-          {
-            wall("Fatal error setting rtp: " + e)
-          }|
-        }|
-        lobby.__bindingFunc[fullname] = lobby.sharedRTP|
-        lobby.sharedRTP.groupedSendVar(obj.getSlot(varname))
-      }
-      })
-    }
+      detach({ setupRTP(tv.isA(Binary), objname, varname, lobby, fr)})
     else
     {
       remoteNotifyChange(objname, varname, fr)
     }
   };
-
+  // Setup RTP connection
+  function setupRTP(isbin, objname, varname, lobby, fr)
+  {
+    // Attempt to use RTP mode
+    // wall("attempting RTP connection...");
+    // RTP setup will require usage of the connection which is stuck in
+    // the foreground "external var" call, so detach.
+    var fullname = objname + "." + varname|
+    var obj = getSlot(objname)|
+    if (isbin)
+    {  // each Binary UVar uses its own RTP connection
+      // Those are UObjects, they persist so local variables are fine.
+      (var lrtp, var rrtp) = makeRTPPair(lobby)|
+      rrtp.localDeliver = fullname|
+      lrtp.sendVar(obj.getSlot(varname))|
+      lobby.__bindingFunc[fullname] = [rrtp, lrtp]|
+      // Fallback to old TCP method if RTP fails.
+      disown(monitorRTP(lrtp, rrtp,
+        closure()
+        {
+                          remoteNotifyChange(objname, varname, fr)|
+                          var lobby.noRTP = true
+        }))|
+    }
+    else
+    { // Other data types share one RTP connection
+      //wall("rtp mode for " + varname)|
+      lobby.'$uobjectMutex': if (!lobby.hasSlot("sharedRTP"))
+      {
+        try {
+          (var lrtp, var rrtp) = makeRTPPair(lobby)|
+          //wall("instanciating shared rtp for " + lobby +":" + lrtp)|
+          var lobby.sharedRTP = lrtp|
+          var lobby.remoteSharedRTP = rrtp|
+          disown(monitorRTP(lrtp, rrtp,
+                            closure()
+                            {
+                              remoteNotifyChange(objname, varname, fr)|
+                              var lobby.noRTP = true
+                            }))|
+        }
+        catch(var e)
+        {
+          wall("Fatal error setting rtp: " + e)
+        }|
+      }|
+      lobby.__bindingFunc[fullname] = lobby.sharedRTP|
+      lobby.sharedRTP.groupedSendVar(obj.getSlot(varname))
+    }
+  };
   function remoteNotifyChange(objname, varname, fr)
   {
     // Create a 'notifyChange' function that generates the UObject
