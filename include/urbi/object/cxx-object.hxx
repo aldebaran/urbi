@@ -63,9 +63,27 @@ namespace urbi
     }
 
     template <typename T>
-    void CxxObject::add()
+    void CxxObject::add(const std::string& ns)
     {
+      GD_CATEGORY(Urbi.CxxObject);
       using boost::bind;
+
+      rObject dest = global_class;
+      if (!ns.empty())
+      {
+        GD_FINFO_TRACE("register C++ object %s in namespace %s", T::type_name(), ns);
+        if (dest->hasLocalSlot(ns))
+          dest = dest->getSlot(ns);
+        else
+        {
+          // FIXME: this is a 'Namespace'
+          dest = dest->setSlot(ns, new Object);
+          dest->proto_add(Object::proto);
+          dest->setSlot(libport::Symbol("asString"), to_urbi(ns));
+        }
+      }
+      else
+        GD_FINFO_TRACE("register C++ object %s", T::type_name());
 
       libport::intrusive_ptr<T> res;
       if (!T::proto)
@@ -97,7 +115,7 @@ namespace urbi
       libport::Symbol name(std::string("as") + T::type_name());
       if (!res->slot_locate(name, false).first)
         res->slot_set(name, new Primitive(bind(cxx_object_id<T>, _1)), true);
-      global_class->setSlot(libport::Symbol(T::type_name()), res);
+      dest->setSlot(libport::Symbol(T::type_name()), res);
     }
 
     // BINDER

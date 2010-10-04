@@ -15,6 +15,9 @@
 
 # include <boost/optional.hpp>
 
+# include <libport/debug.hh>
+# include <libport/preproc.hh>
+
 # include <urbi/object/enumeration.hh>
 # include <urbi/object/object.hh>
 
@@ -35,7 +38,13 @@
   URBI_CXX_OBJECT_(Name)                        \
   {}                                            \
 
-#define URBI_CXX_OBJECT_REGISTER(Name)                                  \
+#define URBI_CXX_OBJECT_REGISTER(Name, ...)                             \
+  URBI_CXX_OBJECT_REGISTER_(Name, LIBPORT_LIST(__VA_ARGS__,))
+
+#define URBI_CXX_OBJECT_REGISTER_(Name, Attrs)                          \
+  URBI_CXX_OBJECT_REGISTER__(Name, LIBPORT_LIST_NTH(0, Attrs))
+
+#define URBI_CXX_OBJECT_REGISTER__(Name, Ns)                            \
   const std::string& Name::type_name()                                  \
   {                                                                     \
     static std::string res = #Name;                                     \
@@ -58,9 +67,7 @@
   static void                                                           \
   LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__)()           \
   {                                                                     \
-    GD_CATEGORY(Urbi.CxxObject);                                        \
-    GD_INFO_TRACE("register: " #Name);                                  \
-    ::urbi::object::CxxObject::add<Name>();                             \
+    ::urbi::object::CxxObject::add<Name>(BOOST_PP_STRINGIZE(Ns));       \
   }                                                                     \
   URBI_INITIALIZATION_REGISTER                                          \
   (LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__));          \
@@ -83,12 +90,11 @@ namespace urbi
       CxxObject();
 
       /// Register a C++ class to be bound on the urbi side.
-      /** \param T      The class to bind.
-       *  \param name   Name of the class on the Urbi side.
-       *  \param tgt    Where to store the result.
+      /** \param T       The class to bind.
+       *  \param ns      Where to store the class.
        */
       template<typename T>
-      static void add();
+      static void add(const std::string& ns = "");
 
       virtual std::string type_name_get() const = 0;
 
