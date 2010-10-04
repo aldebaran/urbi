@@ -700,20 +700,21 @@ namespace urbi
 
 namespace urbi
 {
-  void dup(unsigned short* dst, unsigned short* src, int count)
+  void dup(unsigned short* dst, const unsigned short* src, size_t count)
   {
     unsigned int* idst = (unsigned int*)dst;
-    unsigned short* end = src + count;
+    const unsigned short* end = src + count;
     while (src != end)
     {
       *(idst++) = (unsigned int)(*src) << 16 | (unsigned int)(*src);
       src++;
     }
   }
-  void dup(byte* dst, byte* src, int count)
+
+  void dup(byte* dst, const byte* src, size_t count)
   {
     unsigned short* idst = (unsigned short*)dst;
-    byte* end = src + count;
+    const byte* end = src + count;
     while (src != end)
     {
       *(idst++) = (unsigned short)(*src) << 8 | (unsigned short)(*src);
@@ -722,14 +723,16 @@ namespace urbi
   }
 
   template<typename D> void
-  pud(D* dst, D* src, int count)
+  pud(D* dst, const D* src, int count)
   {
     for (int i=0; i<count/2; i++)
       dst[i] = src[i*2];
   }
+
   template<class S, class D>
-  void copy(S* src, D* dst,
-	    int sc, int dc, int sr, int dr, int count, bool sf, bool df)
+  void copy(const S* src, D* dst,
+	    int sc, int dc, int sr, int dr,
+            size_t count, bool sf, bool df)
   {
     long shift = 8 * (sizeof (S) - sizeof (D));
     if (!shift && sc == dc && sr == dr && sf==df)
@@ -737,7 +740,7 @@ namespace urbi
       memcpy(dst, src, sizeof(S)*sc*count);
       return;
     }
-    for (int i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
     {
       float soffset = (float)i * ((float)sr / (float)dr);
       int so = (int)soffset;
