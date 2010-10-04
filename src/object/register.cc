@@ -82,6 +82,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(String)
     {}
 
+#if !defined WIN32
     URBI_CXX_OBJECT_REGISTER(Process)
       : name_(libport::path("true").basename())
       , pid_(0)
@@ -91,7 +92,9 @@ namespace urbi
     {
       argv_ << binary_;
     }
+#endif
 
+#if !defined COMPILATION_MODE_SPACE
     URBI_CXX_OBJECT_REGISTER(Regexp)
       : re_(".")
     {}
@@ -112,6 +115,7 @@ namespace urbi
       , uppercase_(Case::UNDEFINED)
       , width_(0)
     {}
+#endif
 
     URBI_CXX_OBJECT_REGISTER(UValue)
     {}
@@ -219,6 +223,7 @@ namespace urbi
       : path_(new Path())
     {}
 
+#if !defined COMPILATION_MODE_SPACE
     URBI_CXX_OBJECT_REGISTER(OutputStream)
       : Stream(STDOUT_FILENO, false)
     {}
@@ -228,6 +233,7 @@ namespace urbi
       , pos_(0)
       , size_(0)
     {}
+#endif
 
     URBI_CXX_OBJECT_REGISTER(Dictionary)
     {}
