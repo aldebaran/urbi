@@ -14,6 +14,8 @@
 #include <sstream>
 #include <libport/debug.hh>
 #include <libport/escape.hh>
+#include <libport/foreach.hh>
+#include <libport/format.hh>
 #include <boost/algorithm/string/trim.hpp>
 #include <urbi/ubinary.hh>
 #include <urbi/uvalue.hh> // kernelMajor.

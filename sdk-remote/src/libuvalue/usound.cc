@@ -11,6 +11,7 @@
 /// \file libuvalue/usound.cc
 
 #include <sstream>
+#include <libport/cassert>
 #include <libport/cstring>
 #include <libport/debug.hh>
 #include <libport/format.hh>
