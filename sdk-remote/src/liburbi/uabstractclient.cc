@@ -243,7 +243,6 @@ namespace urbi
   {
     exceptions(std::ostream::eofbit | std::ostream::failbit |
                std::ostream::badbit);
-    stream_get().setf(std::ios::fixed);
     recvBuffer[0] = 0;
     sendBuffer[0] = 0;
   }
