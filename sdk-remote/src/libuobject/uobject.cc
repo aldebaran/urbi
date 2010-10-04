@@ -479,6 +479,13 @@ namespace urbi
         GD_WARN("Disabling RTP as requested by engine");
         enableRTP = false;
         break;
+      case UEM_SETRTP:
+        REQUIRE(array.size() == 3,
+                "Component Error: Invalid number "
+                "of arguments in the server message: %lu (expected 3)\n",
+                static_cast<unsigned long>(array.size()));
+        setRTPMessage(array[1], array[2]);
+        break;
       default:
         REQUIRE(false,
                 "Component Error: unknown server message type number %d\n",
@@ -541,6 +548,19 @@ namespace urbi
       args.setOffset(3);
       (*i)->eval(args,
                  boost::bind(&call_result, client_, var, _1, _2));
+    }
+
+    void
+    RemoteUContextImpl::setRTPMessage(const std::string& varname,
+                                      int state)
+    {
+      if (std::list<UVar*> *us = varmap().find0(varname))
+      {
+        foreach (UVar* u, *us)
+        {
+          u->useRTP(state?UVar::RTP_YES: UVar::RTP_NO);
+        }
+      }
     }
 
     void

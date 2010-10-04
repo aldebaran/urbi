@@ -90,6 +90,12 @@ namespace urbi
                                const std::string& var,
                                UList& args);
 
+      /// Handle a RTP enable/disable message.
+      /// \param varname the variable name on which it applies
+      /// \param state enable rtp if nonzero
+      void setRTPMessage(const std::string& varname,
+                         int state);
+
       USyncClient* client_;
 
       /// True if we received a clientError message.

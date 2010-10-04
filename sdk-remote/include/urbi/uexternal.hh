@@ -34,6 +34,7 @@
 namespace urbi
 {
 
+  // Warning, the values are replicated in uobject.u, keep in sync.
   enum USystemExternalMessage
   {
     UEM_EVALFUNCTION,
@@ -44,7 +45,8 @@ namespace urbi
     UEM_DELETE,
     UEM_INIT, // Internal, force loading of all uobjects
     UEM_TIMER, // Internal timer messages
-    UEM_NORTP  // Disable RTP for this connection
+    UEM_NORTP,  // Disable RTP for this connection
+    UEM_SETRTP, //[varname, state(0:off 1:on)]: Set rtp state.
   };
 
   static const std::string externalModuleTag = "__ExternalMessage__";
