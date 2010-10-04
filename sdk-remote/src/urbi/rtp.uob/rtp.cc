@@ -728,6 +728,22 @@ void URTP::unGroupedSendVar(UVar& v)
 
 void URTP::onGroupedChange(UVar& v)
 {
+  // Protect against loopback: If plugin mode, and remote lobby is the same
+  // as current lobby, do not send.
+  if (isPluginMode())
+  {
+    // Get lobby we are connected to.
+    UVar remoteLobby(__name, "lobbyId"); // lobbyId is set by makeRTPPair().
+    // Get current lobby.
+    UVar currentLobby("Global", "currentLobbyId");
+    // Check if we are in a UVar update.
+    UVar inUpdate("Global", "currentRunnerInUObjectUpdate");
+    // If in uvar update and same lobby, 'our' remote is the source: do not
+    // transmit.
+    if ((std::string)remoteLobby == (std::string)currentLobby
+        && inUpdate)
+      return;
+  }
   sendGrouped(v.get_name(), v.val());
 }
 
