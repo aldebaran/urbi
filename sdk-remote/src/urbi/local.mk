@@ -25,7 +25,7 @@ UMAKE_VERBOSE_ = $(UMAKE_VERBOSE_$(AM_DEFAULT_VERBOSITY))
 UMAKE_VERBOSE_0 = --quiet
 
 %$(DLMODEXT): %.uob $(UMAKE_SHARED) libuobject/libuobject$(LIBSFX).la
-	$(umake_verbose)$(UMAKE_SHARED) $(UMAKE_VERBOSE)	\
+	+$(umake_verbose)$(UMAKE_SHARED) $(UMAKE_VERBOSE)	\
 	  EXTRA_CPPFLAGS="$(EXTRA_$(notdir $*)_cppflags)"	\
 	  EXTRA_LDFLAGS="$(EXTRA_$(notdir $*)_ldflags)"		\
 	  --clean --output=$@ $< && 				\
