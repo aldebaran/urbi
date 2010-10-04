@@ -12,7 +12,8 @@ Prototype of enumerated types.
 
 \subsection{Prototypes}
 \begin{refObjects}
-\item[Object]
+\item[RangeIterable]
+\item[Container]
 \end{refObjects}
 
 \subsection{Examples}
@@ -20,10 +21,9 @@ Prototype of enumerated types.
 See \autoref{sec:lang:enum}.
 
 \subsection{Construction}
-\label{sec:stdlib:event:ctor}
 
 An \lstinline{Enumerated} is created with two arguments: the name of the
-enumerated type, and the list of possible values. Most of the time, it is a
+enumerated type, and the list of possible values.  Most of the time, it is a
 good idea to store it in a variable with the same name.
 
 \begin{urbiscript}[firstnumber=1]
@@ -33,8 +33,7 @@ Direction.up;
 [00000002] up
 \end{urbiscript}
 
-You might however be more familiar with the following syntax, which is an
-equivalent syntactic sugar.
+The following syntax is equivalent.
 
 \begin{urbiunchecked}
 enum Direction
@@ -47,46 +46,98 @@ enum Direction
 [00000001] Direction
 \end{urbiunchecked}
 
+The created values are derive from the created enumerated type.
+
+\begin{urbiassert}
+Direction.isA(Enumerated);
+Direction.up.isA(Direction);
+\end{urbiassert}
+
 \subsection{Slots}
 \begin{urbiscriptapi}
 
 \item[asList]
-  Synonym for \refSlot[Enumarated]{values}.
+  Synonym for \refSlot{values}.
+\begin{urbiassert}
+Direction.asList
+  == [Direction.up, Direction.down, Direction.left, Direction.right];
+\end{urbiassert}
 
-\item[each]
-  Iterate through the possible values. Enables the use of the
-  \lstinline{for} iteration.
-  \begin{urbiscript}
+  Since it also derives from \refObjects{RangeIterable}, this enables all
+  its features.  For instance:
+
+\begin{urbiscript}
+Direction.each(function (var d) { echo(d) });
+[00000001] *** up
+[00000001] *** down
+[00000001] *** left
+[00000001] *** right
+
 for (var d in Direction)
   echo(d);
 [00000001] *** up
 [00000001] *** down
 [00000001] *** left
 [00000001] *** right
-  \end{urbiscript}
 
-\item[name]
-  The name of the enum, as given at construction time.
-  \begin{urbiscript}
-Direction.name;
-[00000001] "Direction"
-  \end{urbiscript}
+for| (var d in Direction)
+  echo(d);
+[00000001] *** up
+[00000001] *** down
+[00000001] *** left
+[00000001] *** right
+
+assert
+{
+  Direction.any(closure (var v) { v == Direction.up });
+};
+\end{urbiscript}
+
+\item[asString]
+  The name of the enumeration, or the name of the member if applied to a
+  member.
+\begin{urbiassert}
+Direction.asString    == "Direction";
+Direction.up.asString == "up";
+\end{urbiassert}
+
+\item[has](<v>)
+  Whether \var{v} is a member of \this.  Since \refObjects{Enumerated}
+  derives from \refObjects{Container}, it provides all its features.
+\begin{urbiscript}
+enum CardinalDirection { north, east, south, west }|;
+
+assert
+{
+  Direction.has(Direction.up);
+  Direction.up in Direction;
+  12 not in Direction;
+  CardinalDirection.south not in Direction;
+};
+\end{urbiscript}
 
 \item[size]
-  Number of possible values in the enumarated type. Equivalent to
+  Number of possible values in the enumerated type. Equivalent to
   \lstinline{values.size}.
-  \begin{urbiscript}
-Direction.size;
-[00000001] 4
-  \end{urbiscript}
+\begin{urbiassert}
+Direction.size == 4;
+\end{urbiassert}
+
+
+\item[name]
+  The name of the enumeration.  See also \refSlot{asString}.
+\begin{urbiassert}
+Direction.name    == "Direction";
+Direction.up.name == "Direction";
+\end{urbiassert}
+
 
 \item[values]
   The list of values.
-  \begin{urbiscript}
-Direction.values;
-[00000001] [up, down, left, right]
-  \end{urbiscript}
-
+\begin{urbiassert}
+Direction.values
+  == [Direction.up, Direction.down, Direction.left, Direction.right];
+\end{urbiassert}
 \end{urbiscriptapi}
 
 %%% Local Variables:

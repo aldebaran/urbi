@@ -1894,8 +1894,7 @@ Suit.protos;
 \end{urbiscript}
 
 The possible enum values are stored inside the enum object. They inherit the
-enum object, so you can easily test whether an object is a Suit or
-not.
+enum object, so you can easily test whether an object is a Suit or not.
 
 \begin{urbiscript}
 Suit.hearts;
@@ -1922,6 +1921,7 @@ function find_ace(var suit)
       return "I have";
   }
 }|;
+
 for (var suit in Suit)
   echo("%s the ace of %s." % [find_ace(suit), suit]);
 [00000001] *** I have the ace of hearts.

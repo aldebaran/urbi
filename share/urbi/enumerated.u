@@ -8,10 +8,11 @@
  * See the LICENSE file for more information.
  */
 
-class Global.Enumerated
+class Global.Enumerated : Global.RangeIterable
 {
   var this.name = "Enumerated";
   var this.values = [];
+  protos << Container;
 
   function init(name, values)
   {
@@ -28,19 +29,14 @@ class Global.Enumerated
     }
   };
 
-  function asString()
-  {
-    this.name
-  };
-
   function asList()
   {
     values
   };
 
-  function each(var f)
+  function asString()
   {
-    asList.each(f)
+    name
   };
 
   function has(var f)
@@ -50,6 +46,6 @@ class Global.Enumerated
 
   function size()
   {
-    values.size
+    asList.size
   };
 };
