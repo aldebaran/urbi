@@ -329,6 +329,16 @@ test_all_JAR = tests/all/All.jar
 JAR_RULES += test_all
 $(test_all_JAR): test_all
 
+test_java_SRC = tests/java/Java.java
+test_java_JAR = tests/java/Java.jar
+JAR_RULES += test_java
+$(test_java_JAR): test_java
+
+test_timer_SRC = tests/timer/Timer.java
+test_timer_JAR = tests/timer/Timer.jar
+JAR_RULES += test_timer
+$(test_timer_JAR): test_timer
+
 
 # Generate all jars files
 .SECONDEXPANSION:
