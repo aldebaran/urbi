@@ -29,7 +29,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1);					\
           jvalue argument[] = { obj1 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -40,7 +40,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2);					\
           jvalue argument[] = { obj1, obj2 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -51,7 +51,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3);					\
           jvalue argument[] = { obj1, obj2, obj3 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -62,7 +62,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -73,7 +73,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -84,7 +84,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -95,7 +95,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -106,7 +106,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -117,7 +117,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8); const jvalue obj9 = getObjectFrom (arg_types[8], uval9);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8); const jvalue obj9 = arg_convert[8](env_, uval9);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -128,7 +128,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8); const jvalue obj9 = getObjectFrom (arg_types[8], uval9); const jvalue obj10 = getObjectFrom (arg_types[9], uval10);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8); const jvalue obj9 = arg_convert[8](env_, uval9); const jvalue obj10 = arg_convert[9](env_, uval10);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -139,7 +139,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8); const jvalue obj9 = getObjectFrom (arg_types[8], uval9); const jvalue obj10 = getObjectFrom (arg_types[9], uval10); const jvalue obj11 = getObjectFrom (arg_types[10], uval11);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8); const jvalue obj9 = arg_convert[8](env_, uval9); const jvalue obj10 = arg_convert[9](env_, uval10); const jvalue obj11 = arg_convert[10](env_, uval11);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -150,7 +150,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8); const jvalue obj9 = getObjectFrom (arg_types[8], uval9); const jvalue obj10 = getObjectFrom (arg_types[9], uval10); const jvalue obj11 = getObjectFrom (arg_types[10], uval11); const jvalue obj12 = getObjectFrom (arg_types[11], uval12);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8); const jvalue obj9 = arg_convert[8](env_, uval9); const jvalue obj10 = arg_convert[9](env_, uval10); const jvalue obj11 = arg_convert[10](env_, uval11); const jvalue obj12 = arg_convert[11](env_, uval12);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -161,7 +161,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8); const jvalue obj9 = getObjectFrom (arg_types[8], uval9); const jvalue obj10 = getObjectFrom (arg_types[9], uval10); const jvalue obj11 = getObjectFrom (arg_types[10], uval11); const jvalue obj12 = getObjectFrom (arg_types[11], uval12); const jvalue obj13 = getObjectFrom (arg_types[12], uval13);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8); const jvalue obj9 = arg_convert[8](env_, uval9); const jvalue obj10 = arg_convert[9](env_, uval10); const jvalue obj11 = arg_convert[10](env_, uval11); const jvalue obj12 = arg_convert[11](env_, uval12); const jvalue obj13 = arg_convert[12](env_, uval13);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -172,7 +172,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8); const jvalue obj9 = getObjectFrom (arg_types[8], uval9); const jvalue obj10 = getObjectFrom (arg_types[9], uval10); const jvalue obj11 = getObjectFrom (arg_types[10], uval11); const jvalue obj12 = getObjectFrom (arg_types[11], uval12); const jvalue obj13 = getObjectFrom (arg_types[12], uval13); const jvalue obj14 = getObjectFrom (arg_types[13], uval14);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8); const jvalue obj9 = arg_convert[8](env_, uval9); const jvalue obj10 = arg_convert[9](env_, uval10); const jvalue obj11 = arg_convert[10](env_, uval11); const jvalue obj12 = arg_convert[11](env_, uval12); const jvalue obj13 = arg_convert[12](env_, uval13); const jvalue obj14 = arg_convert[13](env_, uval14);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -183,7 +183,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8); const jvalue obj9 = getObjectFrom (arg_types[8], uval9); const jvalue obj10 = getObjectFrom (arg_types[9], uval10); const jvalue obj11 = getObjectFrom (arg_types[10], uval11); const jvalue obj12 = getObjectFrom (arg_types[11], uval12); const jvalue obj13 = getObjectFrom (arg_types[12], uval13); const jvalue obj14 = getObjectFrom (arg_types[13], uval14); const jvalue obj15 = getObjectFrom (arg_types[14], uval15);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8); const jvalue obj9 = arg_convert[8](env_, uval9); const jvalue obj10 = arg_convert[9](env_, uval10); const jvalue obj11 = arg_convert[10](env_, uval11); const jvalue obj12 = arg_convert[11](env_, uval12); const jvalue obj13 = arg_convert[12](env_, uval13); const jvalue obj14 = arg_convert[13](env_, uval14); const jvalue obj15 = arg_convert[14](env_, uval15);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14, obj15 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\
@@ -194,7 +194,7 @@
 	{								\
 	  if (!init_env ())						\
 	    return error_val;						\
-          const jvalue obj1 = getObjectFrom (arg_types[0], uval1); const jvalue obj2 = getObjectFrom (arg_types[1], uval2); const jvalue obj3 = getObjectFrom (arg_types[2], uval3); const jvalue obj4 = getObjectFrom (arg_types[3], uval4); const jvalue obj5 = getObjectFrom (arg_types[4], uval5); const jvalue obj6 = getObjectFrom (arg_types[5], uval6); const jvalue obj7 = getObjectFrom (arg_types[6], uval7); const jvalue obj8 = getObjectFrom (arg_types[7], uval8); const jvalue obj9 = getObjectFrom (arg_types[8], uval9); const jvalue obj10 = getObjectFrom (arg_types[9], uval10); const jvalue obj11 = getObjectFrom (arg_types[10], uval11); const jvalue obj12 = getObjectFrom (arg_types[11], uval12); const jvalue obj13 = getObjectFrom (arg_types[12], uval13); const jvalue obj14 = getObjectFrom (arg_types[13], uval14); const jvalue obj15 = getObjectFrom (arg_types[14], uval15); const jvalue obj16 = getObjectFrom (arg_types[15], uval16);					\
+          const jvalue obj1 = arg_convert[0](env_, uval1); const jvalue obj2 = arg_convert[1](env_, uval2); const jvalue obj3 = arg_convert[2](env_, uval3); const jvalue obj4 = arg_convert[3](env_, uval4); const jvalue obj5 = arg_convert[4](env_, uval5); const jvalue obj6 = arg_convert[5](env_, uval6); const jvalue obj7 = arg_convert[6](env_, uval7); const jvalue obj8 = arg_convert[7](env_, uval8); const jvalue obj9 = arg_convert[8](env_, uval9); const jvalue obj10 = arg_convert[9](env_, uval10); const jvalue obj11 = arg_convert[10](env_, uval11); const jvalue obj12 = arg_convert[11](env_, uval12); const jvalue obj13 = arg_convert[12](env_, uval13); const jvalue obj14 = arg_convert[13](env_, uval14); const jvalue obj15 = arg_convert[14](env_, uval15); const jvalue obj16 = arg_convert[15](env_, uval16);					\
           jvalue argument[] = { obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8, obj9, obj10, obj11, obj12, obj13, obj14, obj15, obj16 };                                                     \
 	  ret env_->Call##Type##MethodA(obj, mid, argument);   		\
           testForException();						\

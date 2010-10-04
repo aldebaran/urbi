@@ -38,7 +38,7 @@ print_object_retrieving()
 {
     local list=""
     for j in $(seq 1 $i); do
-        list="$list const jvalue obj$j = getObjectFrom (arg_types[$(($j - 1))], uval$j);"
+        list="$list const jvalue obj$j = arg_convert[$(($j - 1))](env_, uval$j);"
     done
     echo $list
 }

@@ -221,11 +221,13 @@ void registerNotify (JNIEnv *env,
   const char* uvar_name = env->GetStringUTFChars(var_name, 0);
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
-  for (int i = 0; i < arg_nb; ++i)
-  {
-    jstring jstr = (jstring) env->GetObjectArrayElement(types, i);
+  if (arg_nb > 0) {
+
+    jstring jstr = (jstring) env->GetObjectArrayElement(types, 0);
     const char* type_ = env->GetStringUTFChars(jstr, 0);
-    f->arg_types.push_back(type_);
+    ConversionFunc cf = f->typeNameToConversionFunc(type_);
+    f->arg_convert.push_back(cf);
+    f->notify_change_uvar_arg = (std::string(type_) == "class urbi.UVar");
     env->ReleaseStringUTFChars(jstr, type_);
   }
   urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
@@ -342,7 +344,8 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
   {
     jstring jstr = (jstring) env->GetObjectArrayElement(types, i);
     const char* type_ = env->GetStringUTFChars(jstr, 0);
-    f->arg_types.push_back(type_);
+    ConversionFunc cf = f->typeNameToConversionFunc(type_);
+    f->arg_convert.push_back(cf);
     env->ReleaseStringUTFChars(jstr, type_);
   }
   urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
@@ -362,7 +365,6 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
   env->ReleaseStringUTFChars(obj_name, obj_name_);
   env->ReleaseStringUTFChars(return_type, return_type_);
 }
-
 
 
 JNIEXPORT void JNICALL

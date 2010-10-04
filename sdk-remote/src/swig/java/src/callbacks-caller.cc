@@ -82,10 +82,11 @@ CallbacksCaller::callNotifyChangeInt_1 (urbi::UVar& v)
   if (!init_env ())
     return 0;
   jvalue obj1;
-  if (arg_types[0] == "class urbi.UVar")
-    obj1.l = getObjectFromUVar (v);
+  if (notify_change_uvar_arg) {
+    obj1.l = getObjectFromUVar_(env_, v);
+  }
   else
-    obj1 = getObjectFrom (arg_types[0], v.val());
+    obj1 = arg_convert[0](env_, v.val());
   jvalue arg[] = { obj1 };
   int ret = env_->CallIntMethodA(obj, mid, arg);
   testForException();
@@ -107,10 +108,11 @@ CallbacksCaller::callNotifyChangeVoid_1 (urbi::UVar& v)
   if (!init_env ())
     return;
   jvalue obj1;
-  if (arg_types[0] == "class urbi.UVar")
-    obj1.l = getObjectFromUVar (v);
+  if (notify_change_uvar_arg) {
+    obj1.l = getObjectFromUVar_(env_, v);
+  }
   else
-    obj1 = getObjectFrom (arg_types[0], v.val());
+    obj1 = arg_convert[0](env_, v.val());
   jvalue arg[] = { obj1 };
   env_->CallVoidMethodA(obj, mid, arg);
   testForException();
@@ -529,51 +531,51 @@ CallbacksCaller::getStringFromJString (jstring obj)
   return res;
 }
 
-jvalue
-CallbacksCaller::getObjectFrom (const std::string& type_name, urbi::UValue v)
+ConversionFunc
+CallbacksCaller::typeNameToConversionFunc(const std::string& type_name)
 {
-  jvalue res;
+  ConversionFunc f;
   if (type_name.length() > 10)
   {
     if (type_name[6] == 'u')
     {
       if (type_name == "class urbi.UValue")
-	res.l = getObjectFromUValue (v);
+	f = boost::bind(CallbacksCaller::getObjectFromUValue, _1, _2);
       else if (type_name == "class urbi.UVar")
-	res.l = getObjectFromUVar (urbi::uvar_uvalue_cast<urbi::UVar>(v));
+	f = boost::bind(CallbacksCaller::getObjectFromUVar, _1, _2);
       else if (type_name == "class urbi.UList")
-	res.l = getObjectFromUList (v);
+	f = boost::bind(CallbacksCaller::getObjectFromUList, _1, _2);
       else if (type_name == "class urbi.UBinary")
-	res.l = getObjectFromUBinary (v);
+	f = boost::bind(CallbacksCaller::getObjectFromUBinary, _1, _2);
       else if (type_name == "class urbi.UImage")
-	res.l = getObjectFromUImage (v);
+	f = boost::bind(CallbacksCaller::getObjectFromUImage, _1, _2);
       else if (type_name == "class urbi.USound")
-	res.l = getObjectFromUSound (v);
+	f = boost::bind(CallbacksCaller::getObjectFromUSound, _1, _2);
       else if (type_name == "class urbi.UDictionary")
-	res.l = getObjectFromUDictionary (v);
+	f = boost::bind(CallbacksCaller::getObjectFromUDictionary, _1, _2);
       else
 	throw std::runtime_error(libport::format("type %s not supported", type_name));
     }
     else
     {
       if (type_name == "class java.lang.String")
-	res.l = getObjectFromString (v);
+	f = boost::bind(CallbacksCaller::getObjectFromString, _1, _2);
       else if (type_name == "class java.lang.Integer")
-	res.l = getObjectFromInteger(v);
+	f = boost::bind(CallbacksCaller::getObjectFromInteger, _1, _2);
       else if (type_name == "class java.lang.Boolean")
-	res.l = getObjectFromBoolean(v);
+	f = boost::bind(CallbacksCaller::getObjectFromBoolean, _1, _2);
       else if (type_name == "class java.lang.Double")
-	res.l = getObjectFromDouble(v);
+	f = boost::bind(CallbacksCaller::getObjectFromDouble, _1, _2);
       else if (type_name == "class java.lang.Float")
-	res.l = getObjectFromFloat(v);
+	f = boost::bind(CallbacksCaller::getObjectFromFloat, _1, _2);
       else if (type_name == "class java.lang.Long")
-	res.l = getObjectFromLong(v);
+	f = boost::bind(CallbacksCaller::getObjectFromLong, _1, _2);
       else if (type_name == "class java.lang.Short")
-	res.l = getObjectFromShort(v);
+	f = boost::bind(CallbacksCaller::getObjectFromShort, _1, _2);
       else if (type_name == "class java.lang.Character")
-	res.l = getObjectFromCharacter(v);
+	f = boost::bind(CallbacksCaller::getObjectFromCharacter, _1, _2);
       else if (type_name == "class java.lang.Byte")
-	res.l = getObjectFromByte(v);
+	f = boost::bind(CallbacksCaller::getObjectFromByte, _1, _2);
       else
 	throw std::runtime_error(libport::format("type %s not supported", type_name));
     }
@@ -581,186 +583,186 @@ CallbacksCaller::getObjectFrom (const std::string& type_name, urbi::UValue v)
   else
   {
     if (type_name == "int")
-      res.i = (jint) v;
+      f = boost::bind(CallbacksCaller::intFromUValue, _1, _2);
     else if (type_name == "boolean")
-      res.z = (jboolean) (bool) v;
+      f = boost::bind(CallbacksCaller::boolFromUValue, _1, _2);
     else if (type_name == "byte")
-      res.b = (jbyte) (int) v;
+      f = boost::bind(CallbacksCaller::byteFromUValue, _1, _2);
     else if (type_name == "char")
-      res.c = (jchar) (int) v;
+      f = boost::bind(CallbacksCaller::charFromUValue, _1, _2);
     else if (type_name == "short")
-      res.s = (jshort) (int) v;
+      f = boost::bind(CallbacksCaller::shortFromUValue, _1, _2);
     else if (type_name == "long")
-      res.j = (jlong) (long) v;
+      f = boost::bind(CallbacksCaller::longFromUValue, _1, _2);
     else if (type_name == "float")
-      res.f = (jfloat) (ufloat) v;
+      f = boost::bind(CallbacksCaller::floatFromUValue, _1, _2);
     else if (type_name == "double")
-      res.d = (jdouble) v;
+      f = boost::bind(CallbacksCaller::doubleFromUValue, _1, _2);
     else
       throw std::runtime_error(libport::format("type %s not supported", type_name));
   }
+  return f;
+}
+
+#define TEST_ALLOCATION(x, name)				\
+  if (!x) std::cerr << "Cannot allocate a new object of type "	\
+		    << name << std::endl;
+
+jvalue
+CallbacksCaller::getObjectFromDouble (JNIEnv* env_, double val)
+{
+  jvalue res;
+  res.l = env_->CallStaticObjectMethod(double_cls, double_valueof_id, (jdouble) val);
+  TEST_ALLOCATION(res.l, "java.lang.Double");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromFloat (JNIEnv* env_, ufloat val)
+{
+  jvalue res;
+  res.l = env_->CallStaticObjectMethod(float_cls, float_valueof_id, (jfloat) val);
+  TEST_ALLOCATION(res.l, "java.lang.Float");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromLong (JNIEnv* env_, long long val)
+{
+  jvalue res;
+  res.l = env_->CallStaticObjectMethod(long_cls, long_valueof_id, (jlong) val);
+  TEST_ALLOCATION(res.l, "java.lang.Long");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromShort (JNIEnv* env_, int val)
+{
+  jvalue res;
+  res.l = env_->CallStaticObjectMethod(short_cls, short_valueof_id, (jshort) val);
+  TEST_ALLOCATION(res.l, "java.lang.Short");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromCharacter (JNIEnv* env_, int val)
+{
+  jvalue res;
+  res.l = env_->CallStaticObjectMethod(character_cls, character_valueof_id, (jchar) val);
+  TEST_ALLOCATION(res.l, "java.lang.Character");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromByte (JNIEnv* env_, int val)
+{
+  jvalue res;
+  res.l = env_->CallStaticObjectMethod(byte_cls, byte_valueof_id, (jbyte) val);
+  TEST_ALLOCATION(res.l, "java.lang.Byte");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromBoolean (JNIEnv* env_, bool val)
+{
+  jvalue res;
+  res.l = env_->CallStaticObjectMethod(boolean_cls, boolean_valueof_id, (jboolean) val);
+  TEST_ALLOCATION(res.l, "java.lang.Boolean");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromInteger (JNIEnv* env_, long val)
+{
+  jvalue res;
+  res.l = env_->CallStaticObjectMethod(integer_cls, integer_valueof_id, val);
+  TEST_ALLOCATION(res.l, "java.lang.Integer");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromString (JNIEnv* env_, const std::string& val)
+{
+  jvalue res;
+  res.l = env_->NewStringUTF(val.c_str());
+  TEST_ALLOCATION(res.l, "java.lang.String");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromUList (JNIEnv* env_, const urbi::UList& v)
+{
+  jvalue res;
+  res.l = env_->NewObject(ulist_cls, ulist_ctor_id, (jlong) new urbi::UList(v), true);
+  TEST_ALLOCATION(res.l, "urbi.UList");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromUBinary (JNIEnv* env_, const urbi::UBinary& v)
+{
+  jvalue res;
+  res.l = env_->NewObject(ubinary_cls, ubinary_ctor_id, (jlong) new urbi::UBinary(v), false);
+  TEST_ALLOCATION(res.l, "urbi.UBinary");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromUImage (JNIEnv* env_, const urbi::UImage& v)
+{
+  jvalue res;
+  res.l = env_->NewObject(uimage_cls, uimage_ctor_id, (jlong) new urbi::UImage(v), false);
+  TEST_ALLOCATION(res.l, "urbi.UImage");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromUSound (JNIEnv* env_, const urbi::USound& v)
+{
+  jvalue res;
+  res.l = env_->NewObject(usound_cls, usound_ctor_id, (jlong) new urbi::USound(v), false);
+  TEST_ALLOCATION(res.l, "urbi.USound");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromUDictionary (JNIEnv* env_, const urbi::UDictionary& v)
+{
+  jvalue res;
+  res.l = env_->NewObject(udictionary_cls, udictionary_ctor_id, (jlong) new urbi::UDictionary(v), false);
+  TEST_ALLOCATION(res.l, "urbi.UDictionary");
+  return res;
+}
+
+jvalue
+CallbacksCaller::getObjectFromUValue (JNIEnv* env_, const urbi::UValue& v)
+{
+  jvalue res;
+  res.l = env_->NewObject(uvalue_cls, uvalue_ctor_id, (jlong) new urbi::UValue(v), false);
+  TEST_ALLOCATION(res.l, "urbi.UValue");
   return res;
 }
 
 jobject
-CallbacksCaller::getObjectFromDouble (double val)
+CallbacksCaller::getObjectFromUVar_ (JNIEnv* env_, urbi::UVar& v)
 {
-  jobject res = env_->CallStaticObjectMethod(double_cls, double_valueof_id, (jdouble) val);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.Double"
-	      << std::endl;
+  jobject res  = env_->NewObject(uvar_cls, uvar_ctor_id, (jlong) &v, false);
+  TEST_ALLOCATION(res, "urbi.UVar");
   return res;
 }
 
-jobject
-CallbacksCaller::getObjectFromFloat (ufloat val)
+jvalue
+CallbacksCaller::getObjectFromUVar (JNIEnv* env_, urbi::UValue& v)
 {
-  jobject res = env_->CallStaticObjectMethod(float_cls, float_valueof_id, (jfloat) val);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.Float"
-	      << std::endl;
+  jvalue res;
+  urbi::UVar var = urbi::uvar_uvalue_cast<urbi::UVar&>(v);
+  res.l = getObjectFromUVar_ (env_, *new urbi::UVar(var));
+  //res.l = env_->NewObject(uvar_cls, uvar_ctor_id, (jlong) new urbi::UVar(var), false);
+  //TEST_ALLOCATION(res.l, "urbi.UVar");
   return res;
 }
 
-jobject
-CallbacksCaller::getObjectFromLong (long val)
-{
-  jobject res = env_->CallStaticObjectMethod(long_cls, long_valueof_id, (jlong) val);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.Long"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromShort (int val)
-{
-  jobject res = env_->CallStaticObjectMethod(short_cls, short_valueof_id, (jshort) val);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.Short"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromCharacter (int val)
-{
-  jobject res = env_->CallStaticObjectMethod(character_cls, character_valueof_id, (jchar) val);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.Character"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromByte (int val)
-{
-  jobject res = env_->CallStaticObjectMethod(byte_cls, byte_valueof_id, (jbyte) val);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.Byte"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromBoolean (bool val)
-{
-  jobject res = env_->CallStaticObjectMethod(boolean_cls, boolean_valueof_id, (jboolean) val);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.Boolean"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromInteger (int val)
-{
-  jobject res = env_->CallStaticObjectMethod(integer_cls, integer_valueof_id, val);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.Integer"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromString (const std::string& val)
-{
-  jobject res = env_->NewStringUTF(val.c_str());
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type java.lang.String"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromUList (const urbi::UList& v)
-{
-  jobject res = env_->NewObject(ulist_cls, ulist_ctor_id, (jlong) new urbi::UList(v), true);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.UList"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromUBinary (const urbi::UBinary& v)
-{
-  jobject res = env_->NewObject(ubinary_cls, ubinary_ctor_id, (jlong) new urbi::UBinary(v), false);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.UBinary"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromUImage (const urbi::UImage& v)
-{
-  jobject res = env_->NewObject(uimage_cls, uimage_ctor_id, (jlong) new urbi::UImage(v), false);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.UImage"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromUSound (const urbi::USound& v)
-{
-  jobject res = env_->NewObject(usound_cls, usound_ctor_id, (jlong) new urbi::USound(v), false);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.USound"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromUDictionary (const urbi::UDictionary& v)
-{
-  jobject res = env_->NewObject(udictionary_cls, udictionary_ctor_id, (jlong) new urbi::UDictionary(v), false);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.UDictionary"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromUValue (const urbi::UValue& v)
-{
-  jobject res = env_->NewObject(uvalue_cls, uvalue_ctor_id, (jlong) new urbi::UValue(v), false);
-  if (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.UValue"
-	      << std::endl;
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromUVar (urbi::UVar& v)
-{
-  jobject res = env_->NewObject(uvar_cls, uvar_ctor_id, (jlong) &v, false);
-  if  (!res)
-    std::cerr << "Cannot allocate a new object of type urbi.UVar"
-	      << std::endl;
-  return res;
-}
+#undef TEST_ALLOCATION
 
 void
 CallbacksCaller::testForException()

@@ -11,12 +11,16 @@
 #ifndef CALLBACKS_CALLER_HH_
 # define CALLBACKS_CALLER_HH_
 
+#include <boost/function.hpp>
+#include <libport/bind.hh>
 #include <jni.h>
 #include "call-macros.hh"
 #include "urbi/uvar.hh"
 #include "urbi/ucallbacks.hh"
 #include "urbi/utimer-callback.hh"
 
+
+typedef boost::function<jvalue (JNIEnv*, urbi::UValue)> ConversionFunc;
 
 /// This class allow to register Java callbacks in C++.
 ///
@@ -53,7 +57,7 @@ public:
   CALL_METHODS (Char, Char, jchar, 0, jchar res = , return res;);
   CALL_METHODS (Short, Short, jshort, 0, jshort res = , return res;);
   CALL_METHODS (Int, Int, jint, 0, jint res = , return res;);
-  CALL_METHODS (Long, Long, long, 0, long res = , return res;);
+  CALL_METHODS (Long, Long, jlong, 0, jlong res = , return res;);
   CALL_METHODS (Float, Float, jfloat, 0, jfloat res = , return res;);
   CALL_METHODS (Double, Double, jdouble, 0, jdouble res = , return res;);
 
@@ -73,6 +77,33 @@ public:
   /// of the callbacks.
   static bool		cacheJNIVariables (JNIEnv* env);
 
+  static jvalue		getObjectFromUValue (JNIEnv* env, const urbi::UValue& v);
+  static jvalue		getObjectFromUBinary (JNIEnv* env, const urbi::UBinary& v);
+  static jvalue		getObjectFromUList (JNIEnv* env, const urbi::UList& v);
+  static jvalue		getObjectFromUSound (JNIEnv* env, const urbi::USound& v);
+  static jvalue		getObjectFromUImage (JNIEnv* env, const urbi::UImage& v);
+  static jvalue		getObjectFromUDictionary (JNIEnv* env, const urbi::UDictionary& v);
+  static jvalue		getObjectFromString (JNIEnv* env, const std::string& v);
+  static jvalue		getObjectFromInteger (JNIEnv* env, long v);
+  static jvalue		getObjectFromDouble (JNIEnv* env, double val);
+  static jvalue		getObjectFromFloat (JNIEnv* env, ufloat val);
+  static jvalue		getObjectFromLong (JNIEnv* env, long long val);
+  static jvalue		getObjectFromShort (JNIEnv* env, int val);
+  static jvalue		getObjectFromCharacter (JNIEnv* env, int val);
+  static jvalue		getObjectFromByte (JNIEnv* env, int val);
+  static jvalue		getObjectFromBoolean (JNIEnv* env, bool val);
+  static jvalue		getObjectFromUVar (JNIEnv* env, urbi::UValue& v);
+  static jobject       	getObjectFromUVar_ (JNIEnv* env, urbi::UVar& v);
+
+  static jvalue		intFromUValue(JNIEnv* env, long v) { jvalue res; res.i = (jint) v; return res; };
+  static jvalue		boolFromUValue(JNIEnv* env, bool v) { jvalue res; res.z = (jboolean) v; return res; };
+  static jvalue		byteFromUValue(JNIEnv* env, int v) { jvalue res; res.b = (jbyte) v; return res; };
+  static jvalue		charFromUValue(JNIEnv* env, int v) { jvalue res; res.c = (jchar) v; return res; };
+  static jvalue		shortFromUValue(JNIEnv* env, int v) { jvalue res; res.s = (jshort) v; return res; };
+  static jvalue		longFromUValue(JNIEnv* env, long long v) { jvalue res; res.j = (jlong) v; return res; };
+  static jvalue		floatFromUValue(JNIEnv* env, ufloat v) { jvalue res; res.f = (jfloat) v; return res; };
+  static jvalue		doubleFromUValue(JNIEnv* env, double v) { jvalue res; res.d = (jdouble) v; return res; };
+
 private:
 
   /// Initialise the Java environment variable. Indeed, the JNIEnv pointer
@@ -85,34 +116,14 @@ private:
   /// Return a global reference to the class with name 'classname'
   static jclass		getGlobalRef (JNIEnv* env, const char* classname);
 
-
-  /// Private conversion functions. These function are used to convert from
-  /// Java object (jobject) to C++ real object type. They are specific for
-  /// UValue and UVar.
-  jobject		getObjectFromUValue (const urbi::UValue& v);
-  jobject		getObjectFromUBinary (const urbi::UBinary& v);
-  jobject		getObjectFromUList (const urbi::UList& v);
-  jobject		getObjectFromUSound (const urbi::USound& v);
-  jobject		getObjectFromUImage (const urbi::UImage& v);
-  jobject		getObjectFromUDictionary (const urbi::UDictionary& v);
-  jobject		getObjectFromString (const std::string& v);
-  jobject		getObjectFromInteger (int v);
-  jobject               getObjectFromDouble (double val);
-  jobject               getObjectFromFloat (ufloat val);
-  jobject               getObjectFromLong (long val);
-  jobject               getObjectFromShort (int val);
-  jobject               getObjectFromCharacter (int val);
-  jobject               getObjectFromByte (int val);
-  jobject               getObjectFromBoolean (bool val);
-  jobject		getObjectFromUVar (urbi::UVar& v);
-  jvalue		getObjectFrom (const std::string& type_name, urbi::UValue v);
-
   void			testForException();
 
   static void	       	deleteClassRefs(JNIEnv* env);
 
 public:
 
+  /// Private conversion functions. These function are used to convert from
+  /// Java object (jobject) to C++ real object type.
   urbi::UValue	getUValueFromObject (jobject obj);
   urbi::UBinary	getUBinaryFromObject (jobject obj);
   urbi::UImage	getUImageFromObject (jobject obj);
@@ -123,8 +134,13 @@ public:
   std::string	getStringFromJString (jstring obj);
   static urbi::UObject*	getUObjectFromObject (jobject obj, JNIEnv* env);
 
+  ConversionFunc       	typeNameToConversionFunc(const std::string& type_name);
+
 public:
-  std::vector<std::string> arg_types;
+
+  std::vector<ConversionFunc> arg_convert;
+  // Notify change needs special handling
+  bool notify_change_uvar_arg;
 
 private:
 
