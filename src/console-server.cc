@@ -454,10 +454,12 @@ namespace urbi
     }
     data.network = 0 < port;
 
+#ifndef NO_OPTION_PARSER
     // If neither -e, -f, or -P is used, enable -i.
     if (! data.network
         && libport::opts::input_arguments.empty())
       data.interactive = true;
+#endif
 
     // In Urbi: System.listenPort = <port>.
     object::system_class->slot_set(SYMBOL(listenPort),
