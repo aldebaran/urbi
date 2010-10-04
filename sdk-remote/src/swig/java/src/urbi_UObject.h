@@ -46,7 +46,7 @@ JNIEXPORT void JNICALL Java_urbi_UObject_registerFunction
  * Method:    registerTimerFunction
  * Signature: (Ljava/lang/Object;Ljava/lang/String;DLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_urbi_UObject_registerTimerFunction
+JNIEXPORT jstring JNICALL Java_urbi_UObject_registerTimerFunction
   (JNIEnv *, jobject, jobject, jstring, jdouble, jstring, jstring, jstring, jint);
 
 

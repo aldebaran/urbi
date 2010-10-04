@@ -14,6 +14,7 @@
 #include <iostream>
 #include <libport/cstdlib>
 #include <libport/cstdio>
+#include <urbi/fwd.hh>
 #include "callbacks-caller.hh"
 #include "urbi_UObject.h"
 
@@ -367,7 +368,7 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
 }
 
 
-JNIEXPORT void JNICALL
+JNIEXPORT jstring JNICALL
 Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
 					    jobject,
 					    jobject obj,
@@ -382,12 +383,12 @@ Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
   /// set. If the are not and we can't set them, return.
   if (!CallbacksCaller::areJNIVariablesCached ()
       && !CallbacksCaller::cacheJNIVariables (env))
-      return;
+    return (jstring) CallbacksCaller::getObjectFromString(env, "").l;
 
   MethodIdAndUrbiName miaun =
     getMethodIdAndUrbiName (env, obj, obj_name, method_name, method_signature);
   if (!miaun.java_mid)
-    return;
+    return (jstring) CallbacksCaller::getObjectFromString(env, "").l;
 
   CallbacksCaller *f = new CallbacksCaller ();
   f->setObject (env->NewGlobalRef(obj));
@@ -396,20 +397,20 @@ Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
   const char* return_type_ = env->GetStringUTFChars(return_type, 0);
   const char* obj_name_ = env->GetStringUTFChars(obj_name, 0);
 
+  std::string res = "";
   switch ((int) arg_nb)
   {
     case 0:
-      new urbi::UTimerCallbackobj<CallbacksCaller> (obj_name_,
-						    (double) period,
-						    f,
-						    boost::bind(&CallbacksCaller::callNotifyChangeInt_0, f),
-						    urbi::getCurrentContext());
-
-      //->handle_get();
-
+      urbi::TimerHandle th =
+	(new urbi::UTimerCallbackobj<CallbacksCaller> (obj_name_,
+						       (double) period,
+						       f,
+						       boost::bind(&CallbacksCaller::callNotifyChangeInt_0, f),
+						       urbi::getCurrentContext()))->handle_get();
+      res = *th;
       break;
   }
-
   env->ReleaseStringUTFChars(obj_name, obj_name_);
   env->ReleaseStringUTFChars(return_type, return_type_);
+  return (jstring) CallbacksCaller::getObjectFromString(env, res).l;
 }

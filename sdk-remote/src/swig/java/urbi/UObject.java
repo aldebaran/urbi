@@ -363,7 +363,7 @@ public class UObject extends UObjectCPP
     ///                 ///
     /// --------------- ///
 
-    protected native void registerTimerFunction (Object obj,
+    protected native String registerTimerFunction (Object obj,
 						 String obj_name,
 						 double period,
 						 String method,
@@ -371,7 +371,7 @@ public class UObject extends UObjectCPP
 						 String return_type,
 						 int    arg_number);
 
-    protected void USetTimer (double period, Object obj, Method m)
+    protected String USetTimer (double period, Object obj, Method m)
 	throws RuntimeException
     {
 	Class[] p = m.getParameterTypes();
@@ -391,20 +391,20 @@ public class UObject extends UObjectCPP
 	}
 
 	String bytecode_sig = getMethodBytecodeSignature (m);
-	registerTimerFunction (obj,
-			       get__name (),
-			       period,
-			       m.getName (),
-			       bytecode_sig,
-			       m.getReturnType().getName (),
-			       m.getParameterTypes().length);
+	return registerTimerFunction (obj,
+				      get__name (),
+				      period,
+				      m.getName (),
+				      bytecode_sig,
+				      m.getReturnType().getName (),
+				      m.getParameterTypes().length);
     }
 
 
-    protected void USetTimer (double period,
-			      Object obj,
-			      String method_name,
-			      String[] parameters_name)
+    protected String USetTimer (double period,
+				Object obj,
+				String method_name,
+				String[] parameters_name)
     {
 	Method m;
 	try {
@@ -418,15 +418,15 @@ public class UObject extends UObjectCPP
 	catch (java.lang.NoSuchMethodException e) {
 	    throw new RuntimeException (e);
         }
-	USetTimer (period, obj, m);
+	return USetTimer (period, obj, m);
     }
 
-    protected void USetTimer (double period,
-			      Object obj,
-			      String method_name)
+    protected String USetTimer (double period,
+				Object obj,
+				String method_name)
     {
 	Method m = findMethodFromName (obj, method_name);
-	USetTimer (period, obj, m);
+	return USetTimer (period, obj, m);
     }
 
     /// --------------- ///

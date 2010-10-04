@@ -560,6 +560,19 @@ namespace boost {
   %template(TimerHandle) boost::shared_ptr<std::string>;
 }
 
+namespace boost {
+  %extend shared_ptr<std::string> {
+    static boost::shared_ptr<std::string> create(const std::string& s) {
+      return boost::shared_ptr<std::string>(new std::string (s));
+    }
+
+    std::string get()
+    {
+      return **self;
+    }
+  }
+};
+
 
 ////////////////////////////
 ///                      ///
