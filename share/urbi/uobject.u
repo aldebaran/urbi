@@ -398,13 +398,6 @@ do (UValue)
   var asPrintable = getSlot("asToplevelPrintable");
 };
 
-// Can't be in a class or do block.
-// Force reevaluation of all at exprs when at least one notifyaccess is present.
-// FIXME: find a way to stop when callbacks are removed.
-at (getSlot("UVar").onHasNotifyAccess?)
-  getSlot("UVar").nAccessTag: loop { sleep(System.period)};
-
-
 class Global.uobjects {};
 var Global.uobjects_handle = WeakPointer.new;
 
