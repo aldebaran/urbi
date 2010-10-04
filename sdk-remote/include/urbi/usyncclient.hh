@@ -220,6 +220,13 @@ namespace urbi
     void stopCallbackThread();
     void callbackThread();
 
+    /** Enable synchronous transmission of messages to the callbacks.
+     *  When enabled, the message processing thread is bypassed, and callbacks
+     *  are called synchronously by the network thread.
+     *  The result is a lower latency, but some configurations of synchronous
+     *  calls will not work anymore.
+     */
+    void setSynchronous(bool enable);
     /**
      * Block until kernel version is available, or an error occurrs.
      * @param hasProcessingThread true if a processing thread is running, false
@@ -279,6 +286,8 @@ namespace urbi
     connect_callback_type connectCallback_;
     // True if waitForTag is waiting from the polling thread.
     bool waitingFromPollThread_;
+    // If set, bypass callback thread and send messages synchronously.
+    bool synchronous_;
   };
 
 } // namespace urbi

@@ -89,6 +89,7 @@ namespace urbi
     , stopCallbackThread_(!opts.startCallbackThread())
     , cbThread(0)
     , connectCallback_(opts.connectCallback())
+    , synchronous_(false)
   {
     // Do not start if connectCallback_ is set, we were constructed by a
     // listening socket.
@@ -212,8 +213,13 @@ namespace urbi
     }
     else
     {
-      queue.push_back(new UMessage(msg));
-      sem_++;
+      if (synchronous_)
+        UClient::notifyCallbacks(msg);
+      else
+      {
+        queue.push_back(new UMessage(msg));
+        sem_++;
+      }
     }
     queueLock_.unlock();
   }
@@ -622,5 +628,11 @@ namespace urbi
   USyncClient::isCallbackThread() const
   {
     return pthread_self() == cbThread;
+  }
+
+  void
+  USyncClient::setSynchronous(bool enable)
+  {
+    synchronous_ = enable;
   }
 } // namespace urbi
