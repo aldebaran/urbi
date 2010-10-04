@@ -524,7 +524,6 @@ class Global.'external'
     uobjects.getSlot(objname).setSlot("lobby", lobby) |
     uobjects.getSlot(objname).setSlot("notifies", [ => ]) |
     uobjects.getSlot(objname).init() |
-    ("external object "+objname).print|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
     function cloner()
@@ -595,7 +594,6 @@ class Global.'external'
   /// Notify the remote when <objname>.<varname> is modified.
   function 'var'(objname, varname, fr)
   {
-    ("external var call "+varname).print|
     var fullname = objname + "." + varname|
 
     if (!uobjects.hasSlot(objname))
@@ -742,7 +740,6 @@ class Global.'external'
   // send it to the remote side, and wait for the result.
   function 'function'(nargs, objname, fname, fr)
   {
-    ("external function call "+fname).print |
     var functionName = objname + "." + fname|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
