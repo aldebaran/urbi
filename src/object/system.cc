@@ -30,6 +30,7 @@
 #include <urbi/object/code.hh>
 #include <urbi/object/cxx-primitive.hh>
 #include <urbi/object/dictionary.hh>
+#include <object/urbi-exception.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
@@ -376,13 +377,34 @@ namespace urbi
       return res;
     }
 
+#define MESSAGE "aborting module loading because of "
     void
     initializations_run()
     {
-      foreach (const Initialization& action, initializations_())
-        action();
+      try
+      {
+        foreach (const Initialization& action, initializations_())
+          action();
+      }
+      catch (const urbi::object::UrbiException& e)
+      {
+        initializations_().clear();
+        throw;
+      }
+      catch (const std::exception& e)
+      {
+        initializations_().clear();
+        runner::raise_primitive_error
+          (libport::format(MESSAGE "fatal error: %s", e.what()));
+      }
+      catch (...)
+      {
+        initializations_().clear();
+        runner::raise_primitive_error(MESSAGE "unkown exception");
+      }
       initializations_().clear();
     }
+#undef MESSAGE
 
     static void
     load(const rObject& name, bool global)
