@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <libport/compiler.hh>
+#include <libport/containers.hh>
 #include <libport/debug.hh>
 #include <libport/unistd.h>
 #include <sstream>
