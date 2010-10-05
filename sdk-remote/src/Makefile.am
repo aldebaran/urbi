@@ -65,6 +65,18 @@ include utils/local.mk
 endif EXAMPLES
 
 
+# Replace the git-version-stubs in these libraries.  They get it from
+# revision.cc in libuvalue, which is a convenience library included in
+# these two.
+libuobject/libuobject.stub.stamp: $(VERSIONIFY_CACHE) libuobject/libuobject$(LIBSFX).la $(VERSIONIFY)
+	$(VERSIONIFY_RUN) --resolve=libuobject/.libs/libuobject$(LIBSFX)$(SHLIBEXT)
+
+liburbi/liburbi.stub.stamp: $(VERSIONIFY_CACHE) liburbi/liburbi$(LIBSFX).la $(VERSIONIFY)
+	$(VERSIONIFY_RUN) --resolve=liburbi/.libs/liburbi$(LIBSFX)$(SHLIBEXT)
+
+all: libuobject/libuobject.stub.stamp libuobject/libuobject.stub.stamp
+
+
 ## ---------------------- ##
 ## Convenient shortcuts.  ##
 ## ---------------------- ##

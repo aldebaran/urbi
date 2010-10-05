@@ -8,14 +8,14 @@
 
 include build-aux/init.mk
 include build-aux/build-aux.mk
-include build-aux/package-version.mk
+include build-aux/make/package-version.mk
 include build-aux/fix-libtool-la.mk
 include build-aux/make/build-farm.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/bootstrap.mk
 
 AUTOMAKE_OPTIONS += subdir-objects
-ACLOCAL_AMFLAGS = -I build-aux -I sdk
+ACLOCAL_AMFLAGS = -I build-aux/m4 -I build-aux -I sdk
 
 EXTRA_DIST += LICENSE
 
@@ -30,13 +30,6 @@ SUBDIRS =					\
 
 # Also fix libjpeg.la.
 LTLIBRARIES_TO_FIX += jpeg/libjpeg4urbi$(LIBSFX).la
-
-# Replace the git-version-stubs in these libraries.  They get it from
-# revision.cc in libuvalue, which is a convenience library included in
-# these two.
-VERSION_STUBS =					\
-  src/libuobject/.libs/libuobject$(SHLIBEXT)	\
-  src/liburbi/.libs/liburbi$(SHLIBEXT)
 
 # Work around a problem in Automake that needs to the be tracked.
 BUILT_SOURCES +=				\

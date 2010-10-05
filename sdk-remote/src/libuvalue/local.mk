@@ -6,15 +6,6 @@
 ##
 ## See the LICENSE file for more information.
 
-## ------------ ##
-## version.hh.  ##
-## ------------ ##
-
-REVISION_FILE = libuvalue/version.hh
-REVISIONFLAGS = --stub
-include $(top_srcdir)/build-aux/revision.mk
-
-nodist_env_DATA = $(REVISION_FILE)
 
 ## --------------------- ##
 ## Sources and headers.  ##
@@ -37,3 +28,13 @@ dist_libuvalue_libuvalue_la_SOURCES =		\
   libuvalue/uimage.cc				\
   libuvalue/usound.cc				\
   libuvalue/uvalue-common.cc
+
+## ------------ ##
+## version.hh.  ##
+## ------------ ##
+
+BUILT_SOURCES += $(nodist_libuvalue_libuvalue_la_SOURCES)
+libuvalue/revision-stub.hh: $(VERSIONIFY)
+	$(VERSIONIFY_RUN) --stub=$@
+nodist_libuvalue_libuvalue_la_SOURCES =		\
+  libuvalue/revision-stub.hh
