@@ -68,25 +68,17 @@ namespace urbi
     template <typename T>
     void CxxObject::add(const std::string& ns)
     {
-      GD_CATEGORY(Urbi.CxxObject);
       using boost::bind;
 
-      rObject dest = global_class;
-      if (!ns.empty())
-      {
-        GD_FINFO_TRACE("register C++ object %s in namespace %s", T::type_name(), ns);
-        if (dest->hasLocalSlot(ns))
-          dest = dest->getSlot(ns);
-        else
-        {
-          // FIXME: this is a 'Namespace'
-          dest = dest->setSlot(ns, new Object);
-          dest->proto_add(Object::proto);
-          dest->setSlot(libport::Symbol("asString"), to_urbi(ns));
-        }
-      }
+      std::string name = (ns.empty() ? "" : ns + ".") + T::type_name();
+      rObject dest = resolve_namespace(name);
+
+      GD_CATEGORY(Urbi.CxxObject);
+
+      if (ns.empty())
+        GD_FINFO_TRACE("register C++ object %s", name);
       else
-        GD_FINFO_TRACE("register C++ object %s", T::type_name());
+        GD_FINFO_TRACE("register C++ object %s as %s", name, ns);
 
       libport::intrusive_ptr<T> res;
       if (!T::proto)
@@ -108,17 +100,17 @@ namespace urbi
       // type.
       static libport::Symbol type("type");
       res->slot_set(type,
-                     new String(T::type_name()), true);
+                     new String(name), true);
       // clone.
       static libport::Symbol clone("clone");
       res->slot_set(clone,
                     new Primitive(bind(cxx_object_clone<T>, _1)), true);
 
       // asFoo.
-      libport::Symbol name(std::string("as") + T::type_name());
-      if (!res->slot_locate(name, false).first)
-        res->slot_set(name, new Primitive(bind(cxx_object_id<T>, _1)), true);
-      dest->setSlot(libport::Symbol(T::type_name()), res);
+      libport::Symbol as(std::string("as") + name);
+      if (!res->slot_locate(as, false).first)
+        res->slot_set(as, new Primitive(bind(cxx_object_id<T>, _1)), true);
+      dest->setSlot(libport::Symbol(name), res);
     }
 
     // BINDER
