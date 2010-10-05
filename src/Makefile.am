@@ -78,14 +78,17 @@ libuobject@LIBSFX@_la_LIBADD =				\
   $(SERIALIZE_LIBS)					\
   $(top_builddir)/sdk-remote/src/libuco/libuco.la
 
-## ------------ ##
-## version.hh.  ##
-## ------------ ##
+## ---------------------- ##
+## Revision information.  ##
+## ---------------------- ##
 
-REVISION_FILE = version.hh
-REVISIONFLAGS = --stub
-include $(top_srcdir)/build-aux/revision.mk
-nodist_noinst_HEADERS = $(REVISION_FILE)
+VERSIONIFY = $(build_aux_dir)/bin/git-version-gen
+
+# Resolve stubs in libuobject.
+all-local: libuobject.unstub.stamp
+libuobject.unstub.stamp: libuobject@LIBSFX@.la
+	$(VERSIONIFY) --cache=$(top_srcdir)/.version \
+	  --resolve=.libs/libuobject$(LIBSFX)$(SHLIBEXT)
 
 dist_libuobject@LIBSFX@_la_SOURCES =
 nodist_libuobject@LIBSFX@_la_SOURCES =

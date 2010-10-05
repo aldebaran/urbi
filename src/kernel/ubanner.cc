@@ -18,7 +18,7 @@
 #include <kernel/userver.hh>
 
 #include <kernel/config.h>
-#include <version.hh>
+#include <kernel/revision-stub.hh>
 #include <kernel/ubanner.hh>
 
 namespace kernel

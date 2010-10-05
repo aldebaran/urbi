@@ -7,12 +7,17 @@
 ## See the LICENSE file for more information.
 
 include build-aux/init.mk
-include build-aux/package-version.mk
+include build-aux/make/package-version.mk
 include build-aux/build-aux.mk
 DISTCHECK_BUILDFARM_HOSTNAME = bf-7
 include build-aux/make/build-farm.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/bootstrap.mk
+
+VERSIONIFY = $(top_srcdir)/build-aux/bin/git-version-gen
+all-am: include/kernel/revision.hh
+include/kernel/revision.hh: $(top_srcdir)/.version $(VERSIONIFY)
+	$(VERSIONIFY) --cache=$< --directory --header=$@ --prefix=URBI_SDK_
 
 ACLOCAL_AMFLAGS = -I build-aux/m4 -I build-aux -I tests/m4
 
@@ -43,10 +48,6 @@ include share/urbi/local.mk
 include share/images/local.mk
 
 EXTRA_DIST += urbi-sdk.key
-
-# Replace the git-version-stubs in this library.
-VERSION_STUBS =					\
-  src/libuobject/.libs/libuobject$(SHLIBEXT)
 
 
 ## ------------------------------------- ##

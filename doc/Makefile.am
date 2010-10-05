@@ -1,6 +1,4 @@
 include $(top_srcdir)/build-aux/init.mk
-# include $(top_srcdir)/build-aux/doxygen.mk
-include $(top_srcdir)/build-aux/revision.mk
 include $(top_srcdir)/build-aux/make/html-dir.mk
 include tests/local.mk
 
@@ -131,7 +129,11 @@ urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
   $(call ls_files,*.sty tables/*.txt)
 REVISION_FILE = revision.sty
-REVISIONFLAGS = --latex=$(REVISION_FILE)
+CLEANFILES += $(REVISION_FILE)
+BUILT_SOURCES += $(REVISION_FILE)
+# Don't depend on .version, it changes too often.
+$(REVISION_FILE):
+	$(VERSIONIFY) --directory --cache=$(top_srcdir)/.version --latex=$@
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi_sdk_deps = 				\
   config.sty					\

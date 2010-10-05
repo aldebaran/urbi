@@ -13,7 +13,7 @@ dist_kernelinclude_kernel_HEADERS =		\
   include/kernel/utypes.hh
 
 nodist_kernelinclude_kernel_HEADERS =		\
-  include/kernel/version.hh
+  include/kernel/revision.hh
 
 kernelinclude_urbidir = $(brandincludedir)/urbi
 dist_kernelinclude_urbi_HEADERS =		\

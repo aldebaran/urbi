@@ -31,6 +31,14 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   kernel/uvalue-cast.cc				\
   kernel/uvalue-cast.hh
 
+# revision-stub.hh.
+#
+# We do not depend upon .version, because we do not want to be
+# refreshed too frequently.  That's the whole point of a stub.
+kernel/revision-stub.hh: $(VERSIONIFY)
+	$(VERSIONIFY) --cache=$(top_srcdir)/.version --directory --stub=$@
+nodist_libuobject@LIBSFX@_la_SOURCES += kernel/revision-stub.hh
+
 
 ## ------------------------ ##
 ## kernel/urbi-sdk-key.hh.  ##
