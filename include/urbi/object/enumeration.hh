@@ -53,17 +53,18 @@
   static void LIBPORT_CAT(_urbi_enum_create, __LINE__)()                \
   {                                                                     \
     std::string name = #UName;                                          \
+    ::urbi::object::rObject dest =                                      \
+        ::urbi::object::resolve_namespace(name);                        \
     std::vector<std::string> values;                                    \
     LIBPORT_LIST_FLATTEN                                                \
       (LIBPORT_LIST_MAP(URBI_ENUM_PUSH, LIBPORT_LIST(__VA_ARGS__,)));   \
-    CAPTURE_GLOBAL(Global);                                             \
-    CAPTURE_GLOBAL(Enumeration);                                         \
-    ::urbi::object::rObject e = Enumeration->call                        \
+    CAPTURE_GLOBAL(Enumeration);                                        \
+    ::urbi::object::rObject e = Enumeration->call                       \
         ("new",                                                         \
          ::urbi::object::to_urbi(name),                                 \
          ::urbi::object::to_urbi(values));                              \
     LIBPORT_CAT(_urbi_enum_enum, __LINE__)() = e;                       \
-    Global->setSlot(name, e);                                           \
+    dest->setSlot(name, e);                                             \
     LIBPORT_LIST_FLATTEN                                                \
       (LIBPORT_LIST_MAP(URBI_ENUM_REG, LIBPORT_LIST(__VA_ARGS__,)));    \
   }                                                                     \

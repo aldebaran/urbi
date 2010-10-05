@@ -40,5 +40,26 @@ namespace urbi
       }
     }
 
+    rObject
+    resolve_namespace(std::string& name)
+    {
+      rObject dest = global_class;
+      size_t dot;
+      while ((dot = name.find(".")) != std::string::npos)
+      {
+        std::string ns = name.substr(0, dot);
+        name = name.substr(dot + 1);
+        if (dest->hasLocalSlot(ns))
+          dest = dest->getSlot(ns);
+        else
+        {
+          ::urbi::object::rObject o = new ::urbi::object::Object;
+          o->proto_add(::urbi::object::Object::proto);
+          o->setSlot(SYMBOL(asString), to_urbi(ns));
+          dest = dest->setSlot(ns, o);
+        }
+      }
+      return dest;
+    }
   }
 }

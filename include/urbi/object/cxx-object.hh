@@ -152,6 +152,9 @@ namespace urbi
     URBI_SDK_API
     void check_arg_count(unsigned effective,
                          unsigned minformal, unsigned maxformal);
+
+    rObject resolve_namespace(std::string& path);
+
   }
 
   typedef boost::function0<void> Initialization;
