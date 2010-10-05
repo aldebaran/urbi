@@ -153,6 +153,13 @@ namespace urbi
     void check_arg_count(unsigned effective,
                          unsigned minformal, unsigned maxformal);
 
+    /// Resolve the namespace part of an Urbi object name.
+    /* The namespace component is stripped from named, created and
+     * returned.  I.e., given "Foo.Bar.Baz", Foo.Bar will be created
+     * and returned, and name will equal "Baz". Namespaces are rooted
+     * in Global.
+     */
+    URBI_SDK_API
     rObject resolve_namespace(std::string& path);
 
   }
