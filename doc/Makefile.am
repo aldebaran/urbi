@@ -131,7 +131,7 @@ urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
   $(call ls_files,*.sty tables/*.txt)
 REVISION_FILE = revision.sty
-REVISIONFLAGS = --latex
+REVISIONFLAGS = --latex=$(REVISION_FILE)
 EXTRA_DIST += $(urbi_sdk_sources)
 urbi_sdk_deps = 				\
   config.sty					\
