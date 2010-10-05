@@ -25,7 +25,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([tar-ustar foreign nostdinc silent-rules subdir-objects -Wall])
+AM_INIT_AUTOMAKE([foreign nostdinc silent-rules subdir-objects tar-ustar -Wall])
 AM_SILENT_RULES([yes])
 
 ## ------------ ##
