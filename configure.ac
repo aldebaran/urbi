@@ -16,9 +16,7 @@ AC_PREREQ([2.60])
 AC_INIT([Urbi SDK], [2.3],
         [kernel-bugs@lists.gostai.com], [urbi-sdk])
 URBI_PACKAGE_VERSION
-# FIXME: Disable the generation of CPP symbols defining the current
-# version, as it is unclear what it should be.
-# URBI_KERNEL_VERSION
+URBI_KERNEL_VERSION
 URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2005-2010])
 URBI_DISTCHECK_CONFIGURE_FLAGS
 

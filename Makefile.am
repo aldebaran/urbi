@@ -14,7 +14,7 @@ include build-aux/make/build-farm.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/bootstrap.mk
 
-ACLOCAL_AMFLAGS = -I build-aux -I tests/m4
+ACLOCAL_AMFLAGS = -I build-aux/m4 -I build-aux -I tests/m4
 
 # To keep the time stamps up to date, we need to compile our
 # dependencies first, so process sdk-remote and src before "." (where

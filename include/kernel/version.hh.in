@@ -37,7 +37,4 @@
 /// Human readable version number.
 # define KERNEL_VERSION_STRING "@PACKAGE_VERSION@"
 
-/// Revision number of this kernel.
-# define KERNEL_REVISION @KERNEL_REVISION@
-
 #endif // !KERNEL_VERSION_HH
