@@ -82,13 +82,10 @@ libuobject@LIBSFX@_la_LIBADD =				\
 ## Revision information.  ##
 ## ---------------------- ##
 
-VERSIONIFY = $(build_aux_dir)/bin/git-version-gen
-
 # Resolve stubs in libuobject.
 all-local: libuobject.unstub.stamp
-libuobject.unstub.stamp: libuobject@LIBSFX@.la
-	$(VERSIONIFY) --cache=$(top_srcdir)/.version \
-	  --resolve=.libs/libuobject$(LIBSFX)$(SHLIBEXT)
+libuobject.unstub.stamp: $(VERSIONIFY_CACHE) libuobject$(LIBSFX).la $(VERSIONIFY)
+	$(VERSIONIFY_RUN) --resolve=.libs/libuobject$(LIBSFX)$(SHLIBEXT)
 
 dist_libuobject@LIBSFX@_la_SOURCES =
 nodist_libuobject@LIBSFX@_la_SOURCES =

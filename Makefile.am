@@ -14,11 +14,6 @@ include build-aux/make/build-farm.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
 include build-aux/bootstrap.mk
 
-VERSIONIFY = $(top_srcdir)/build-aux/bin/git-version-gen
-all-am: include/kernel/revision.hh
-include/kernel/revision.hh: $(top_srcdir)/.version $(VERSIONIFY)
-	$(VERSIONIFY) --cache=$< --directory --header=$@ --prefix=URBI_SDK_
-
 ACLOCAL_AMFLAGS = -I build-aux/m4 -I build-aux -I tests/m4
 
 # To keep the time stamps up to date, we need to compile our
