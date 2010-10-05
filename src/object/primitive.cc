@@ -104,7 +104,8 @@ namespace urbi
         }
         else
         {
-          GD_FINFO_TRACE("arity error for primitive: expected between %s and %s, got %s.",
+          GD_FINFO_TRACE("arity error for primitive: "
+                         "expected between %s and %s, got %s.",
                          min, max, arity);
           runner::raise_arity_error(arity - 1, min - 1, max - 1);
         }

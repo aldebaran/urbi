@@ -30,7 +30,7 @@ namespace urbi
     {
       public:
       typedef boost::function1<rObject, const objects_type&> value_type;
-      typedef boost::unordered_map<unsigned, value_type> values_type;
+      typedef boost::unordered_map<size_t, value_type> values_type;
 
       Primitive();
       Primitive(const value_type& p);
