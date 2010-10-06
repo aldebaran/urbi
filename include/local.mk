@@ -14,8 +14,6 @@ dist_kernelinclude_kernel_HEADERS =		\
 
 nodist_kernelinclude_kernel_HEADERS =		\
   include/kernel/revision.hh
-include/kernel/revision.hh: $(top_srcdir)/.version $(VERSIONIFY)
-	$(VERSIONIFY) --cache=$< --directory --header=$@ --prefix=URBI_SDK_
 
 kernelinclude_urbidir = $(brandincludedir)/urbi
 dist_kernelinclude_urbi_HEADERS =		\
