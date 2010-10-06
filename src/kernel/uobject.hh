@@ -17,7 +17,7 @@
 urbi::object::rObject uobject_make_proto(const std::string& name);
 
 //! Instanciate a new prototype inheriting from a UObject.
-urbi::object::rObject uobject_new(urbi::object::rObject proto, bool forceName=false);
+urbi::object::rObject uobject_new(urbi::object::rObject proto, bool forceName=false, bool instanciate = true);
 
 //! Initialize plugin UObjects.
 urbi::object::rObject uobject_initialize(const urbi::object::objects_type& args);

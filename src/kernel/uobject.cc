@@ -542,9 +542,11 @@ uobject_make_proto(const std::string& name)
  A new instance of UObject is created
  \param proto proto object, created by uobject_make_proto() or uobject_new()
  \param forceName force the reported C++ name to be the class name
+ \param instanciate true if the UObject should be instanciated, false if it
+   already is.
 */
 rObject
-uobject_new(rObject proto, bool forceName)
+uobject_new(rObject proto, bool forceName, bool instanciate)
 {
   rObject r = new object::Finalizable(proto->as<object::Finalizable>());
 
@@ -573,15 +575,18 @@ uobject_new(rObject proto, bool forceName)
   r->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
   r->call(SYMBOL(uobjectInit));
   // Instanciate UObject.
-  foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
+  if (instanciate)
   {
-    if (i->name == cname)
+    foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
     {
-      LIBPORT_DEBUG("Instanciating a new " << cname << " named "<< name);
-      bound_context.push_back(std::make_pair(name, name + ".new"));
-      FINALLY(((std::string, name)), bound_context.pop_back());
-      i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
-      return r;
+      if (i->name == cname)
+      {
+        LIBPORT_DEBUG("Instanciating a new " << cname << " named "<< name);
+        bound_context.push_back(std::make_pair(name, name + ".new"));
+        FINALLY(((std::string, name)), bound_context.pop_back());
+        i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
+        return r;
+      }
     }
   }
   return r;
@@ -1039,7 +1044,18 @@ namespace urbi
     KernelUObjectImpl::initialize(UObject* owner)
     {
       LOCK_KERNEL;
+      static int uid = 0;
       owner_ = owner;
+      LIBPORT_DEBUG("Uobject ctor start for " << owner->__name);
+      bool fromcxx = owner_->__name.empty();
+      if (fromcxx)
+        owner_->__name = "uob_plug_" + string_cast(++uid);
+      if (fromcxx)
+      {
+        rObject r = uobject_new(where->slot_get(SYMBOL(UObject)), false, false);
+        owner->__name = r->slot_get(SYMBOL(__uobjectName))->as<object::String>()
+        ->value_get();
+      }
       LIBPORT_DEBUG("Uobject ctor for " << owner->__name);
       uobject_to_robject[owner_->__name] = owner;
       owner_->ctx_->registerObject(owner);
