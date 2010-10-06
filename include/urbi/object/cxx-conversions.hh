@@ -22,17 +22,11 @@ namespace urbi
     {
       typedef T target_type;
 
-      static target_type
-      to(const rObject&, unsigned)
-      {
-        return target_type::No_such_conversion;
-      }
+      static target_type&
+      to(rObject o, unsigned idx);
 
       static rObject
-      from(const target_type&)
-      {
-        return target_type::No_such_conversion;
-      }
+      from(const target_type& v);
     };
 
     // Helper function

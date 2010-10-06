@@ -57,6 +57,21 @@ namespace urbi
     | Objects.  |
     `----------*/
 
+    template <typename T>
+    typename CxxConvert<T>::target_type&
+    CxxConvert<T>::to(rObject o, unsigned idx)
+    {
+      type_check<T>(o, idx);
+      return *o->as<T>();
+    }
+
+    template <typename T>
+    rObject
+    CxxConvert<T>::from(const target_type& v)
+    {
+      return &v;
+    }
+
     template <>
     struct CxxConvert<libport::intrusive_ptr<Object> >
     {
@@ -122,25 +137,6 @@ namespace urbi
         return v;
       }
     };
-
-    template <typename Urbi>
-    struct CxxConvert<Urbi&>
-    {
-      typedef Urbi& target_type;
-      static target_type
-      to(const rObject& o, unsigned idx)
-      {
-        type_check<Urbi>(o, idx);
-        return *o->as<Urbi>().get();
-      }
-
-      static rObject
-      from(target_type v)
-      {
-        return &v;
-      }
-    };
-
 
     /*------.
     | int.  |
