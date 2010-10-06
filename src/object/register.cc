@@ -170,7 +170,7 @@ namespace urbi
 #undef DECLARE
     }
 
-#if !defined WIN32
+#if !defined WIN32 && !defined COMPILATION_MODE_SPACE
     URBI_CXX_OBJECT_REGISTER(Process)
       : name_(libport::path("true").basename())
       , pid_(0)
