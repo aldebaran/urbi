@@ -32,14 +32,27 @@ public:
   {
     aver(mainthread == pthread_self());
   }
+  all()
+  {
+    GD_INFO_TRACE("all default ctor");
+    count = 0;
+    mainthread = pthread_self();
+    setup();
+    init(1);
+  }
   all(const std::string& name)
     : urbi::UObject(name)
   {
+    GD_INFO_TRACE("all string ctor");
     count = 0;
     mainthread = pthread_self();
     if (getenv("CTOR_EXCEPTION") &&
         !strcmp(getenv("CTOR_EXCEPTION"), "true"))
     throw std::runtime_error("constructor failure");
+    setup();
+  }
+  void setup()
+  {
     UBindFunction(all, init);
     UBindFunction(all, setOwned);
     UBindFunction(all, setNotifyChange);
@@ -119,6 +132,7 @@ public:
 
     UBindFunction(all, throwException);
     UBindFunction(all, socketStats);
+    UBindFunction(all, instanciate);
     UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
               changeCount);
     UNotifyChange(periodicWriteRate, &all::onRateChange);
@@ -138,6 +152,10 @@ public:
   void onRateChange(urbi::UVar&)
   {
     USetUpdate((ufloat)periodicWriteRate * 1000.0);
+  }
+  UObject* instanciate()
+  {
+    return new all;
   }
   virtual int update()
   {

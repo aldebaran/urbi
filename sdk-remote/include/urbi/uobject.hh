@@ -254,7 +254,9 @@ namespace urbi
   class URBI_SDK_API UObject: public UContext
   {
   public:
-
+    /// Call this constructor to create an UObject from C++.
+    UObject(impl::UContextImpl* impl = 0);
+    /// Must be called by your constructor when called with a string.
     UObject(const std::string&, impl::UContextImpl* impl = 0);
     /// Reserved for internal use
     UObject(int, impl::UContextImpl* impl = 0);

@@ -231,14 +231,17 @@ namespace urbi
     //! UObject constructor.
     void RemoteUObjectImpl::initialize(UObject* owner)
     {
+      static int uid = 0;
+      this->owner_ = owner;
+      RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
       //We were called by UObject base constructor.
       period = -1;
-      this->owner_ = owner;
       if (owner->__name == "_dummy")
         return;
-      owner_->ctx_->registerObject(owner);
-      UClient* client =
-        dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
+      bool fromcxx = owner_->__name.empty();
+      if (fromcxx)
+        owner_->__name = "uob_" +  getFilteredHostname() + string_cast(++uid);
+      UClient* client = ctx->client_;
       URBI_SEND_PIPED_COMMAND_C(*client,
                                 "class " << owner_->__name << "{}");
       URBI_SEND_PIPED_COMMAND_C(*client,
@@ -251,6 +254,16 @@ namespace urbi
       // At this point the child class constructor is called, and will
       // also send piped commands.
       // Then the starter will call instanciated() which will send a semicolon.
+      // ...unless instanciation was made from c++.
+      if (fromcxx)
+      { // Delay calls to register functions until UObject constructor finishes,
+        // othewrise typeid is wrong.
+        ctx->addCleanup(boost::bind(&RemoteUContextImpl::instanciated,
+                               ctx, owner));
+        ctx->addCleanup(boost::bind(&UContextImpl::registerObject, ctx, owner));
+      }
+      else
+        owner_->ctx_->registerObject(owner);
     }
 
     //! UObject cleaner
@@ -446,7 +459,9 @@ namespace urbi
         REQUIRE(i != objects.end(),
                 "No such objects %s\n", std::string(array[2]).c_str());
         baseURBIStarter* bsa = i->second->cloner;
-        GD_FINFO_DEBUG("instantiating from %s, name: %s", bsa, array[1]);
+        REQUIRE(bsa, "Object %s has no cloner", std::string(array[2]).c_str());
+        GD_FINFO_DEBUG("instantiating from %s (%s), name: %s", bsa, array[2],
+                       array[1]);
         bsa->instanciate(this, (std::string) array[1]);
       }
       break;

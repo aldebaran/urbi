@@ -9,6 +9,8 @@
  */
 
 #include <cstdarg>
+#include <typeinfo>
+
 #include <libport/cstdio>
 #include <libport/debug.hh>
 
@@ -184,6 +186,19 @@ namespace urbi
   | UObject.  |
   `----------*/
 
+  UObject::UObject(impl::UContextImpl* impl)
+   : UContext(impl)
+   , derived(false)
+   , autogroup(false)
+   , remote(true)
+   , cloner(0)
+   , impl_(ctx_->getObjectImpl())
+   , taskLock_(new libport::ThreadPool::TaskLock)
+ {
+   impl_->initialize(this);
+    objecthub = 0;
+  }
+
   UObject::UObject(int, impl::UContextImpl* impl)
     : UContext(impl)
     , __name("_dummy")
@@ -191,6 +206,7 @@ namespace urbi
     , derived(false)
     , autogroup(false)
     , remote(true)
+    , cloner(0)
     , impl_(ctx_->getObjectImpl())
     , taskLock_(new libport::ThreadPool::TaskLock)
   {
@@ -206,6 +222,7 @@ namespace urbi
     , derived(false)
     , autogroup(false)
     , remote(true)
+    , cloner(0)
     , impl_(ctx_->getObjectImpl())
     , taskLock_(new libport::ThreadPool::TaskLock)
   {
@@ -324,6 +341,25 @@ namespace urbi
     UContextImpl::registerObject(UObject*o)
     {
       objects[o->__name] = o;
+      const std::type_info& ti = typeid(*o);
+      GD_FINFO_TRACE("Comparing %s %s %s", ti.name());
+      if (!o->cloner)
+      {
+        // Object was instanciated from C++ and has no cloner, try to find one.
+        foreach(objects_type::value_type& v, objects)
+        {
+          GD_FINFO_TRACE("    Scanning %s (%s)",  v.second->__name,
+                         typeid(*v.second).name());
+          if (typeid(*v.second) == ti && o != v.second)
+          {
+            GD_FINFO_TRACE("Found parent of %s: %s", o->__name,
+                           v.second->__name);
+            o->cloner = v.second->cloner;
+            return;
+          }
+        }
+        GD_FINFO_TRACE("No parent fonud for %s", o->__name);
+      }
     }
 
     void
