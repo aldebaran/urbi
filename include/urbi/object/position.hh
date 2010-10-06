@@ -74,9 +74,6 @@ namespace urbi
       rObject file_get() const;
       void file_set(rObject o);
 
-      unsigned int* line_ref();
-      unsigned int* column_ref();
-
     /*----------.
     | Details.  |
     `----------*/
@@ -95,6 +92,27 @@ namespace urbi
     operator <(const Position::value_type& lhs,
                const Position::value_type& rhs);
 
+    /*-------------.
+    | Conversion.  |
+    `-------------*/
+
+    template <>
+    struct CxxConvert<Position::value_type>
+    {
+      typedef Position::value_type target_type;
+      static target_type&
+      to(const rObject& o, unsigned idx)
+      {
+        type_check<Position>(o, idx);
+        return o->as<Position>()->value_get();
+      }
+
+      static rObject
+      from(target_type v)
+      {
+        return new Position(v);
+      }
+    };
 
   } // namespace object
 } // namespace urbi

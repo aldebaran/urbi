@@ -60,11 +60,8 @@ namespace urbi
     }
 
     void
-    Primitive::initialize(CxxObject::Binder<Primitive>& bind)
-    {
-      //FIXME BINDING
-      bind(SYMBOL(apply), &Primitive::apply);
-    }
+    Primitive::initialize(CxxObject::Binder<Primitive>&)
+    {}
 
     // FIXME: Code duplication with Code::apply.  Maybe there are more
     // opportunity to factor.

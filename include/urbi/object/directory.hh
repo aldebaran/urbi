@@ -78,6 +78,11 @@ namespace urbi
 
     URBI_CXX_OBJECT_(Directory);
     };
+
+    rObject
+    directory_mk_string(Directory&, const std::string& entry);
+    rObject
+    directory_mk_path(Directory& d, const std::string& entry);
   }
 }
 

@@ -228,45 +228,29 @@ namespace urbi
       return new List(res);
     }
 
+    rObject
+    directory_mk_string(Directory&, const std::string& entry)
+    {
+      return new String(entry);
+    }
+
+    rObject
+    directory_mk_path(Directory& d, const std::string& entry)
+    {
+      return new Path(d.value_get()->value_get() / entry);
+    }
+
+    template
+    rList Directory::list<directory_mk_string>();
+    template
+    rList Directory::list<directory_mk_path>();
+
     /*----------.
     | Binding.  |
     `----------*/
-
-    //FIXME
-    namespace details
-    {
-      rObject mk_string(Directory&, const std::string&);
-      rObject mk_path(Directory&, const std::string&);
-
-      rObject
-      mk_string(Directory&, const std::string& entry)
-      {
-        return new String(entry);
-      }
-
-      rObject
-      mk_path(Directory& d, const std::string& entry)
-      {
-        return new Path(d.value_get()->value_get() / entry);
-      }
-    }
-
-    OVERLOAD_TYPE(directory_init_bouncer, 1, 1,
-                  Path,
-                  (void (Directory::*)(rPath)) &Directory::init,
-                  String,
-                  (void (Directory::*)(const std::string&)) &Directory::init);
-
     void
-    Directory::initialize(CxxObject::Binder<Directory>& bind)
-    {
-      //FIXME BINDING
-      bind(SYMBOL(asList), &Directory::list<&details::mk_path>);
-      bind(SYMBOL(content), &Directory::list<&details::mk_string>);
-      bind(SYMBOL(asPrintable), &Directory::as_printable);
-      bind(SYMBOL(asString), &Directory::as_string);
-      proto->slot_set(SYMBOL(init), new Primitive(&directory_init_bouncer));
-    }
+    Directory::initialize(CxxObject::Binder<Directory>&)
+    {}
 
   }
 }

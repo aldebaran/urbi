@@ -100,21 +100,6 @@ namespace urbi
       }
     }
 
-    static rObject
-    update_bounce(objects_type args)
-    {
-      //called with self slotname slotval
-      check_arg_count(args.size() - 1, 2);
-      libport::intrusive_ptr<UVar> rvar =
-        args.front()
-        ->slot_get(libport::Symbol(args[1]->as<String>()->value_get())).value()
-        .unsafe_cast<UVar>();
-      if (!rvar)
-        RAISE("UVar updatehook called on non-uvar slot");
-      rvar->update_(args[2]);
-      return void_class;
-    }
-
     UVar::UVar()
       : Primitive(boost::function1<rObject, objects_type>(boost::bind(&UVar::accessor, this, _1)))
       , looping_(false)
@@ -323,13 +308,8 @@ namespace urbi
     }
 
     void
-    UVar::initialize(CxxObject::Binder<UVar>& bind)
-    {
-      //FIXME BINDING
-      bind(SYMBOL(update_), &UVar::update_);
-      bind(SYMBOL(update_timed_), &UVar::update_timed_);
-      proto->slot_set(SYMBOL(updateBounce), new Primitive(&update_bounce));
-    }
+    UVar::initialize(CxxObject::Binder<UVar>&)
+    {}
 
   }
 }

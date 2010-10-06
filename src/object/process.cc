@@ -319,11 +319,7 @@ namespace urbi
     }
 
     void
-    Process::initialize(CxxObject::Binder<Process>& bind)
-    {
-      //FIXME BINDING
-      bind.var(SYMBOL(name), &Process::name_);
-      libport::startThread(boost::function0<void>(&Process::monitor_children));
-    }
+    Process::initialize(CxxObject::Binder<Process>&)
+    {}
   }
 }

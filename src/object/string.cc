@@ -359,27 +359,9 @@ namespace urbi
       return value_get()[0];
     }
 
-    OVERLOAD_2
-    (sub_bouncer, 2,
-     (std::string (String::*) (unsigned) const) (&String::sub),
-     (std::string (String::*) (unsigned, unsigned) const) (&String::sub)
-      );
-
-    OVERLOAD_2
-    (sub_eq_bouncer, 3,
-     (std::string (String::*) (unsigned, const std::string&))
-     (&String::sub_eq),
-     (std::string (String::*) (unsigned, unsigned, const std::string&))
-     (&String::sub_eq)
-      );
-
     void
     String::initialize(CxxObject::Binder<String>&)
-    {
-      //FIXME BINDING
-      proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
-      proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
-    }
+    {}
 
   } // namespace object
 }

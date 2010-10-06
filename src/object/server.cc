@@ -45,7 +45,6 @@ namespace urbi
     void
     Server::initialize()
     {
-      //FIXME BINDING
       CAPTURE_GLOBAL(Event);
       connection_ = Event->call(SYMBOL(new));
       slot_set(SYMBOL(connection), connection_);

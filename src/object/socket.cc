@@ -117,15 +117,6 @@ namespace urbi
         RAISE(err.message());
     }
 
-    OVERLOAD_TYPE(
-      connect_overload, 2, 2,
-      String,
-      (void (Socket::*)(const std::string&, const std::string&))
-      &Socket::connect,
-      Float,
-      (void (Socket::*)(const std::string&, unsigned))
-      &Socket::connect)
-
     void
     Socket::connectSerial(const std::string& device, unsigned int baudrate)
     {
@@ -222,10 +213,7 @@ namespace urbi
 
     void
     Socket::initialize(CxxObject::Binder<Socket>&)
-    {
-      //FIXME BINDING
-      proto->slot_set(SYMBOL(connect), new Primitive(connect_overload));
-    }
+    {}
 
     rIoService
     Socket::get_default_io_service()

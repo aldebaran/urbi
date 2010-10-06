@@ -182,18 +182,9 @@ namespace urbi
     | Binding.  |
     `----------*/
 
-    OVERLOAD_TYPE(file_init_bouncer, 1, 1,
-                  Path,
-                  (void (File::*)(rPath)) &File::init,
-                  String,
-                  (void (File::*)(const std::string&)) &File::init);
-
     void
     File::initialize(CxxObject::Binder<File>&)
-    {
-      //FIXME BINDING
-      proto->slot_set(SYMBOL(init), new Primitive(&file_init_bouncer));
-    }
+    {}
 
   }
 }

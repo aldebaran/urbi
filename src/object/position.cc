@@ -171,17 +171,8 @@ namespace urbi
     `-----------------*/
 
     void
-    Position::initialize(CxxObject::Binder<Position>& bind)
-    {
-    //FIXME BINDING
-#define DECLARE(Name)                                           \
-      bind.var(SYMBOL( Name ), &Position:: Name ## _ref)
-
-      DECLARE(line);
-      DECLARE(column);
-
-#undef DECLARE
-    }
+    Position::initialize(CxxObject::Binder<Position>&)
+    {}
 
   } // namespace object
 } // namespace urbi
