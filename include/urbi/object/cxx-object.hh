@@ -16,8 +16,10 @@
 # include <boost/optional.hpp>
 
 # include <libport/debug.hh>
+# include <libport/package-info.hh>
 # include <libport/preproc.hh>
 
+# include <kernel/userver.hh>
 # include <urbi/object/enumeration.hh>
 # include <urbi/object/object.hh>
 
@@ -37,6 +39,51 @@
 #define URBI_CXX_OBJECT(Name)                   \
   URBI_CXX_OBJECT_(Name)                        \
   {}                                            \
+
+
+# ifndef URBI_INHIBIT_REVISION_CHECK
+#  include <kernel/revision.hh>
+#  define URBI_CHECK_SDK_VERSION()                                      \
+  do                                                                    \
+  {                                                                     \
+    GD_CATEGORY(Urbi.CxxObject);                                        \
+    static const libport::PackageInfo& info =                           \
+      ::kernel::UServer::package_info();                                \
+    std::string version_eff = info.get("version");                      \
+    std::string revision_eff = info.get("revision");                    \
+    std::string version_exp = URBI_SDK_VERSION;                         \
+    std::string revision_exp = URBI_SDK_REVISION;                       \
+    if (revision_eff != revision_exp)                                   \
+    {                                                                   \
+      std::string expected = version_exp;                               \
+      std::string effective  = version_eff;                             \
+      if (expected == effective)                                        \
+      {                                                                 \
+        expected += " " + revision_exp;                                 \
+        effective += " " + revision_eff;                                \
+      }                                                                 \
+      std::string msg(libport::format                                   \
+                      ("Module was compiled with Urbi SDK version %s,"  \
+                       " but is loaded in version %s",                  \
+                       expected, effective));                           \
+                                                                        \
+      static const std::string varname = "URBI_ACCEPT_BINARY_MISMATCH"; \
+      static const bool fatal = !libport::getenv(varname.c_str());      \
+      if (fatal)                                                        \
+      {                                                                 \
+        GD_ERROR(msg);                                                  \
+        GD_FERROR("define %s to bypass this error", varname);           \
+        runner::raise_primitive_error(msg);                             \
+      }                                                                 \
+      else                                                              \
+        GD_WARN(msg);                                                   \
+    }                                                                   \
+  } while (0)                                                           \
+
+# else
+#  define URBI_CHECK_SDK_VERSION()
+# endif
+
 
 #define URBI_CXX_OBJECT_REGISTER(Name, ...)                             \
   URBI_CXX_OBJECT_REGISTER_(Name, LIBPORT_LIST(__VA_ARGS__,))
@@ -67,6 +114,7 @@
   static void                                                           \
   LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__)()           \
   {                                                                     \
+    URBI_CHECK_SDK_VERSION();                                           \
     ::urbi::object::CxxObject::add<Name>(BOOST_PP_STRINGIZE(Ns));       \
   }                                                                     \
   URBI_INITIALIZATION_REGISTER                                          \
@@ -161,7 +209,6 @@ namespace urbi
      */
     URBI_SDK_API
     rObject resolve_namespace(std::string& path);
-
   }
 
   typedef boost::function0<void> Initialization;
