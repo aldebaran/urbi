@@ -544,6 +544,9 @@ Otherwise, the argument is passed as is to \command{make}.
 \item[C]{core=\var{core}} Set the build type.
 \item[H]{host=\var{host}} Set the destination host.
 \item[m]{disable-automain} Do not add the \lstinline|main| function.
+\item{package=\var{pkg}} Use \command{pkg-config} to retrieve compilation
+  flags (\code{cflags} and \code{libs}).  Fails if \command{pkg-config} does
+  not know about the package \var{pkg}.
 \item[I\var{path}]{} Forwarded to the preprocessor (i.e., added to the
   \env{EXTRA\_CPPFLAGS}).
 \item[L\var{path}]{} Forwarded to the linker (i.e., added to the
