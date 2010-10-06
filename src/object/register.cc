@@ -221,8 +221,10 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Location)
       : loc_()
     {
-      bind(SYMBOL(begin), &Location::value_type::begin);
-      bind(SYMBOL(end),   &Location::value_type::end);
+      // For some reason, cl.exe refuses "&Location::value_type::begin",
+      // with error: function cannot access 'yy::location::begin'
+      bind(SYMBOL(begin), &yy::location::begin);
+      bind(SYMBOL(end),   &yy::location::end);
       bind(SYMBOL(init),  static_cast<void (Location::*)()>(&Location::init));
       bind(SYMBOL(init),  static_cast<void (Location::*)(const Position::value_type&)>(&Location::init));
       bind(SYMBOL(init),  static_cast<void (Location::*)(const Position::value_type&, const Position::value_type&)>(&Location::init));
