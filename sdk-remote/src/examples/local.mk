@@ -49,16 +49,17 @@ monitor_sources =				\
   examples/monitor.cc
 endif
 
-# The -I flags are honored lifo.  So pass X_CFLAGS.
-
+# Pass the X11 flags after cppflags so that we have a chance to use
+# our boost rather than the system one if there is one that lives in
+# the same place as X11.
 examples_urbi_balltrackinghead_SOURCES =	\
   examples/urbi-balltrackinghead.cc		\
   $(monitor_sources)
-examples_urbi_balltrackinghead_CPPFLAGS = $(X11_CPPFLAGS)  $(AM_CPPFLAGS)
+examples_urbi_balltrackinghead_CPPFLAGS = $(AM_CPPFLAGS) $(X11_CPPFLAGS)
 examples_urbi_balltrackinghead_LDADD = $(AM_LDADD) $(X11_LDADD)
 
 examples_urbi_image_SOURCES =			\
   examples/urbi-image.cc			\
   $(monitor_sources)
-examples_urbi_image_CPPFLAGS = $(X11_CPPFLAGS) $(AM_CPPFLAGS)
+examples_urbi_image_CPPFLAGS = $(AM_CPPFLAGS) $(X11_CPPFLAGS)
 examples_urbi_image_LDADD = $(AM_LDADD) $(X11_LDADD)
