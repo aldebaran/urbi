@@ -35,7 +35,8 @@ namespace urbi
       Location(rLocation model);
       void init();
       void init(const Position::value_type& begin);
-      void init(const Position::value_type& begin, const Position::value_type& end);
+      void init(const Position::value_type& begin,
+                const Position::value_type& end);
 
     /*--------------.
     | Comparisons.  |
