@@ -136,9 +136,13 @@ get_options ()
       (-p | --prefix)   shift; prefix=$1;;
       (-P | --param-mk) shift; param_mk=$1;;
       (-k | --kernel)   shift; kernel=$1;;
-      (-I*) append EXTRA_CPPFLAGS $1 ;;
-      (-L*) append EXTRA_LDFLAGS $1 ;;
-      (-l*) append EXTRA_LDFLAGS $1 ;;
+
+      (-I) shift; append EXTRA_CPPFLAGS "-I$1";;
+      (-L) shift; append EXTRA_LDFLAGS  "-L$1";;
+
+      (-I*)     append EXTRA_CPPFLAGS "$1";;
+      (-L*|-l*) append EXTRA_LDFLAGS  "$1";;
+
       (--package) shift;
         pkg-config --print-errors --exists $1
         append EXTRA_CPPFLAGS "$(pkg-config --cflags $1)"
