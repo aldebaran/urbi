@@ -212,25 +212,8 @@ namespace urbi
     }
 
     void
-    Tag::initialize(CxxObject::Binder<Tag>& bind)
-    {
-#define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &Tag::Function)
-
-      DECLARE(blocked, blocked);
-      DECLARE(enter, enter);
-      DECLARE(freeze, freeze);
-      DECLARE(frozen, frozen);
-      DECLARE(getParent, parent_get);
-      DECLARE(leave, leave);
-      DECLARE(name, name);
-      DECLARE(priority, priority);
-      DECLARE(scope, scope);
-      DECLARE(setPriority, priority_set);
-      DECLARE(unblock, unblock);
-      DECLARE(unfreeze, unfreeze);
-#undef DECLARE
-    }
+    Tag::initialize(CxxObject::Binder<Tag>&)
+    {}
 
   } // namespace object
 }

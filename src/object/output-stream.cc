@@ -86,14 +86,8 @@ namespace urbi
     `----------------*/
 
     void
-    OutputStream::initialize(CxxObject::Binder<OutputStream>& bind)
-    {
-      bind(SYMBOL(LT_LT), &OutputStream::put    );
-      bind(SYMBOL(close), &OutputStream::close  );
-      bind(SYMBOL(flush), &OutputStream::flush  );
-      bind(SYMBOL(init),  &OutputStream::init   );
-      bind(SYMBOL(put),   &OutputStream::putByte);
-    }
+    OutputStream::initialize(CxxObject::Binder<OutputStream>&)
+    {}
 
   }
 }

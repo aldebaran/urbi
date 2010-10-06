@@ -321,16 +321,8 @@ namespace urbi
     void
     Process::initialize(CxxObject::Binder<Process>& bind)
     {
-      bind(SYMBOL(asString), &Process::as_string);
-      bind(SYMBOL(done), &Process::done);
-      bind(SYMBOL(init), &Process::init);
-      bind(SYMBOL(join), &Process::join);
+      //FIXME BINDING
       bind.var(SYMBOL(name), &Process::name_);
-      bind(SYMBOL(run),  &Process::run );
-      bind(SYMBOL(runTo),  &Process::runTo );
-      bind(SYMBOL(kill),  &Process::kill );
-      bind(SYMBOL(status),  &Process::status );
-
       libport::startThread(boost::function0<void>(&Process::monitor_children));
     }
   }

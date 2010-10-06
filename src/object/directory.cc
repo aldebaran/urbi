@@ -229,9 +229,10 @@ namespace urbi
     }
 
     /*----------.
-    | Details.  |
+    | Binding.  |
     `----------*/
 
+    //FIXME
     namespace details
     {
       rObject mk_string(Directory&, const std::string&);
@@ -250,26 +251,21 @@ namespace urbi
       }
     }
 
-    OVERLOAD_TYPE(init_bouncer, 1, 1,
+    OVERLOAD_TYPE(directory_init_bouncer, 1, 1,
                   Path,
                   (void (Directory::*)(rPath)) &Directory::init,
                   String,
                   (void (Directory::*)(const std::string&)) &Directory::init);
 
-    /*----------.
-    | Binding.  |
-    `----------*/
-
     void
     Directory::initialize(CxxObject::Binder<Directory>& bind)
     {
+      //FIXME BINDING
       bind(SYMBOL(asList), &Directory::list<&details::mk_path>);
+      bind(SYMBOL(content), &Directory::list<&details::mk_string>);
       bind(SYMBOL(asPrintable), &Directory::as_printable);
       bind(SYMBOL(asString), &Directory::as_string);
-      bind(SYMBOL(content), &Directory::list<&details::mk_string>);
-
-      rPrimitive p = new Primitive(&init_bouncer);
-      proto->slot_set(SYMBOL(init), p);
+      proto->slot_set(SYMBOL(init), new Primitive(&directory_init_bouncer));
     }
 
   }

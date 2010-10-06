@@ -249,30 +249,8 @@ namespace urbi
     }
 
     void
-    FormatInfo::initialize(CxxObject::Binder<FormatInfo>& bind)
-    {
-      bind(SYMBOL(init),     &FormatInfo::init);
-      bind(SYMBOL(asString), &FormatInfo::as_string);
-      bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
-
-#define DECLARE(Name)                                                   \
-      bind(SYMBOL(Name), &FormatInfo::Name ##_get);                     \
-      bind.proto()->property_set(SYMBOL(Name),                          \
-                                 SYMBOL(updateHook),                    \
-                                 primitive(&FormatInfo::update_hook))   \
-
-      DECLARE(alignment);
-      DECLARE(alt);
-      DECLARE(group);
-      DECLARE(pad);
-      DECLARE(precision);
-      DECLARE(prefix);
-      DECLARE(spec);
-      DECLARE(uppercase);
-      DECLARE(width);
-
-#undef DECLARE
-    }
+    FormatInfo::initialize(CxxObject::Binder<FormatInfo>&)
+    {}
 
   } // namespace object
 }

@@ -174,14 +174,9 @@ namespace urbi
               && *this == *that->as<Code>());
     }
 
-    void Code::initialize(CxxObject::Binder<Code>& bind)
-    {
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (self_type::*)(const rObject&) const>
-           (&self_type::operator==));
-      bind(SYMBOL(asString), &Code::as_string);
-      bind(SYMBOL(bodyString), &Code::body_string);
-    }
+    void
+    Code::initialize(CxxObject::Binder<Code>&)
+    {}
 
     rObject
     Code::operator() (object::objects_type args)

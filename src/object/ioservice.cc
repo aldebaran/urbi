@@ -20,7 +20,7 @@ namespace urbi
 {
   namespace object
   {
-        IoService::IoService()
+    IoService::IoService()
       : CxxObject()
     {
       proto_add(Object::proto);
@@ -34,14 +34,9 @@ namespace urbi
     }
 
 
-    void IoService::initialize(CxxObject::Binder<IoService>& bind)
-    {
-      bind(SYMBOL(pollFor), &IoService::pollFor);
-      bind(SYMBOL(pollOneFor), &IoService::pollOneFor);
-      bind(SYMBOL(poll), &IoService::poll);
-      bind(SYMBOL(makeServer), &IoService::makeServer);
-      bind(SYMBOL(makeSocket), &IoService::makeSocket);
-    }
+    void
+    IoService::initialize(CxxObject::Binder<IoService>&)
+    {}
 
     void IoService::pollFor(double d)
     {

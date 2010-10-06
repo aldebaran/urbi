@@ -220,27 +220,10 @@ namespace urbi
       return io_service_;
     }
 
-    void Socket::initialize(CxxObject::Binder<Socket>& bind)
+    void
+    Socket::initialize(CxxObject::Binder<Socket>&)
     {
-#define DECLARE(Name)                           \
-      bind(SYMBOL(Name), &Socket::Name)
-
-      // Uncomment the line below when overloading will work.
-      //bind(SYMBOL(connectSerial), (void (Socket::*)(const std::string&, unsigned int))&Socket::connectSerial);
-      bind(SYMBOL(connectSerial), (void (Socket::*)(const std::string&, unsigned int, bool))&Socket::connectSerial);
-      DECLARE(disconnect);
-      DECLARE(host);
-      DECLARE(init);
-      DECLARE(isConnected);
-      DECLARE(localHost);
-      DECLARE(localPort);
-      DECLARE(poll);
-      DECLARE(port);
-      DECLARE(read);
-      DECLARE(write);
-      DECLARE(syncWrite);
-      DECLARE(getIoService);
-#undef DECLARE
+      //FIXME BINDING
       proto->slot_set(SYMBOL(connect), new Primitive(connect_overload));
     }
 

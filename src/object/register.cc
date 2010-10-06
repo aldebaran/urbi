@@ -127,6 +127,47 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(String)
     {
       bind_variadic(SYMBOL(split), split_bouncer);
+
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+           (&self_type::operator==));
+#define DECLARE(Name, Function)                 \
+      bind(SYMBOL(Name), &String::Function)
+
+      DECLARE(LT_EQ       , operator<=);
+      DECLARE(PLUS        , plus);
+      DECLARE(STAR        , star);
+      DECLARE(asBool      , as_bool);
+      DECLARE(asFloat     , as_float);
+      DECLARE(asPrintable , as_printable);
+      DECLARE(asString    , as_string);
+      DECLARE(distance    , distance);
+      DECLARE(empty       , empty);
+#if !defined COMPILATION_MODE_SPACE
+      DECLARE(format      , format);
+#endif
+      DECLARE(fresh       , fresh);
+      DECLARE(fromAscii   , fromAscii);
+      DECLARE(isAlnum     , is_alnum);
+      DECLARE(isAlpha     , is_alpha);
+      DECLARE(isCntrl     , is_cntrl);
+      DECLARE(isDigit     , is_digit);
+      DECLARE(isGraph     , is_graph);
+      DECLARE(isLower     , is_lower);
+      DECLARE(isPrint     , is_print);
+      DECLARE(isPunct     , is_punct);
+      DECLARE(isSpace     , is_space);
+      DECLARE(isUpper     , is_upper);
+      DECLARE(isXdigit    , is_xdigit);
+      DECLARE(join        , join);
+      DECLARE(replace     , replace);
+      DECLARE(set         , set);
+      DECLARE(size        , size);
+      DECLARE(toAscii     , toAscii);
+      DECLARE(toLower     , to_lower);
+      DECLARE(toUpper     , to_upper);
+
+#undef DECLARE
     }
 
 #if !defined WIN32
@@ -138,16 +179,43 @@ namespace urbi
       , status_(-1)
     {
       argv_ << binary_;
+      bind(SYMBOL(asString), &Process::as_string);
+      bind(SYMBOL(done), &Process::done);
+      bind(SYMBOL(init), &Process::init);
+      bind(SYMBOL(join), &Process::join);
+      bind(SYMBOL(run),  &Process::run );
+      bind(SYMBOL(runTo),  &Process::runTo );
+      bind(SYMBOL(kill),  &Process::kill );
+      bind(SYMBOL(status),  &Process::status );
     }
 #endif
 
 #if !defined COMPILATION_MODE_SPACE
     URBI_CXX_OBJECT_REGISTER(Regexp)
       : re_(".")
-    {}
+    {
+#define DECLARE(Urbi, Cxx)                      \
+      bind(SYMBOL(Urbi), &Regexp::Cxx)
+
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString, as_string);
+      DECLARE(init, init);
+      DECLARE(match, match);
+      DECLARE(matches, matches);
+#undef DECLARE
+      bind(SYMBOL(SBL_SBR), &Regexp::operator[]);
+    }
 
     URBI_CXX_OBJECT_REGISTER(Formatter)
-    {}
+    {
+      bind(SYMBOL(init),    &Formatter::init);
+      bind(SYMBOL(data),    &Formatter::data_get);
+#define OPERATOR_PCT(Type)                                      \
+    static_cast<std::string (Formatter::*)(const Type&) const>  \
+    (&Formatter::operator%)
+      bind(SYMBOL(PERCENT), OPERATOR_PCT(rObject));
+#undef OPERATOR_PCT
+    }
 
     URBI_CXX_OBJECT_REGISTER(FormatInfo)
       : alignment_(Align::RIGHT)
@@ -161,11 +229,39 @@ namespace urbi
       , spec_("s")
       , uppercase_(Case::UNDEFINED)
       , width_(0)
-    {}
+    {
+      bind(SYMBOL(init),     &FormatInfo::init);
+      bind(SYMBOL(asString), &FormatInfo::as_string);
+      bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
+
+#define DECLARE(Name)                                     \
+      bind(SYMBOL(Name), &FormatInfo::Name ##_get);       \
+      property_set(SYMBOL(Name),                          \
+                   SYMBOL(updateHook),                    \
+                   primitive(&FormatInfo::update_hook))   \
+
+      DECLARE(alignment);
+      DECLARE(alt);
+      DECLARE(group);
+      DECLARE(pad);
+      DECLARE(precision);
+      DECLARE(prefix);
+      DECLARE(spec);
+      DECLARE(uppercase);
+      DECLARE(width);
+
+#undef DECLARE
+    }
 #endif
 
     URBI_CXX_OBJECT_REGISTER(UValue)
-    {}
+    {
+      bind(SYMBOL(extract), &UValue::extract);
+      bind(SYMBOL(extractAsToplevelPrintable),
+           &UValue::extractAsToplevelPrintable);
+      bind(SYMBOL(invalidate), &UValue::invalidate);
+      bind(SYMBOL(put), (void (UValue::*)(rObject))&UValue::put);
+    }
 
 
     URBI_CXX_OBJECT_REGISTER(Tag)
@@ -178,21 +274,68 @@ namespace urbi
       bind(SYMBOL(block), static_cast<void (Tag::*)(                      )>(&Tag::block));
       bind(SYMBOL(block), static_cast<void (Tag::*)(rObject               )>(&Tag::block));
       bind_variadic(SYMBOL(newFlowControl), &Tag::new_flow_control);
+
+#define DECLARE(Name, Function)                 \
+      bind(SYMBOL(Name), &Tag::Function)
+
+      DECLARE(blocked, blocked);
+      DECLARE(enter, enter);
+      DECLARE(freeze, freeze);
+      DECLARE(frozen, frozen);
+      DECLARE(getParent, parent_get);
+      DECLARE(leave, leave);
+      DECLARE(name, name);
+      DECLARE(priority, priority);
+      DECLARE(scope, scope);
+      DECLARE(setPriority, priority_set);
+      DECLARE(unblock, unblock);
+      DECLARE(unfreeze, unfreeze);
+#undef DECLARE
     }
 
     URBI_CXX_OBJECT_REGISTER(Server)
       : libport::Socket(*object::Socket::get_default_io_service().get())
       , io_service_(object::Socket::get_default_io_service())
-    {}
+    {
+      bind(SYMBOL(getIoService), &Server::getIoService);
+      bind(SYMBOL(host),    &Server::host);
+      bind(SYMBOL(listen),  &Server::listen);
+      bind(SYMBOL(port),    &Server::port);
+      bind(SYMBOL(sockets), &Server::sockets);
+    }
 
     URBI_CXX_OBJECT_REGISTER(Socket)
       : libport::Socket(*get_default_io_service().get())
     {
       io_service_ = get_default_io_service();
+#define DECLARE(Name)                           \
+      bind(SYMBOL(Name), &Socket::Name)
+
+      // Uncomment the line below when overloading will work.
+      //bind(SYMBOL(connectSerial), (void (Socket::*)(const std::string&, unsigned int))&Socket::connectSerial);
+      bind(SYMBOL(connectSerial), (void (Socket::*)(const std::string&, unsigned int, bool))&Socket::connectSerial);
+      DECLARE(disconnect);
+      DECLARE(host);
+      DECLARE(init);
+      DECLARE(isConnected);
+      DECLARE(localHost);
+      DECLARE(localPort);
+      DECLARE(poll);
+      DECLARE(port);
+      DECLARE(read);
+      DECLARE(write);
+      DECLARE(syncWrite);
+      DECLARE(getIoService);
+#undef DECLARE
     }
 
     URBI_CXX_OBJECT_REGISTER(Semaphore)
-    {}
+    {
+      bind(SYMBOL(new),             &Semaphore::_new);
+      bind(SYMBOL(criticalSection), &Semaphore::criticalSection);
+      bind(SYMBOL(acquire),         &Semaphore::acquire);
+      bind(SYMBOL(release),         &Semaphore::release);
+    }
 
     URBI_CXX_OBJECT_REGISTER(Code)
     {
@@ -201,13 +344,23 @@ namespace urbi
       proto_add(Executable::proto);
       proto_remove(Object::proto);
       bind_variadic<rObject, Code>(SYMBOL(apply), &Code::apply);
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+           (&self_type::operator==));
+      bind(SYMBOL(asString), &Code::as_string);
+      bind(SYMBOL(bodyString), &Code::body_string);
     }
 
     URBI_CXX_OBJECT_REGISTER(UVar)
       : Primitive(boost::function1<rObject, objects_type>(boost::bind(&UVar::accessor, this, _1)))
       , looping_(false)
       , inAccess_(false)
-    {}
+    {
+      bind(SYMBOL(writeOwned), &UVar::writeOwned);
+      bind(SYMBOL(update_timed), &UVar::update_timed);
+      bind(SYMBOL(loopCheck), &UVar::loopCheck);
+      bind(SYMBOL(accessor), &UVar::accessor);
+    }
 
     URBI_CXX_OBJECT_REGISTER(Position)
       : pos_()
@@ -216,6 +369,24 @@ namespace urbi
       bind(SYMBOL(init), static_cast<void (Position::*)(const value_type& pos)>(&Position::init));
       bind(SYMBOL(init), static_cast<void (Position::*)(unsigned from, unsigned to)>(&Position::init));
       bind(SYMBOL(init), static_cast<void (Position::*)(rObject file, unsigned from, unsigned to)>(&Position::init));
+      typedef bool (Position::*comparison_type)(rPosition rhs) const;
+      bind(SYMBOL(EQ_EQ), (comparison_type) &Position::operator ==);
+      bind(SYMBOL(LT), (comparison_type) &Position::operator <);
+      bind(SYMBOL(MINUS), &Position::operator -);
+      bind(SYMBOL(PLUS), &Position::operator +);
+      bind(SYMBOL(lines), &Position::lines);
+      bind(SYMBOL(columns), &Position::columns);
+      bind(SYMBOL(asString), &Position::as_string);
+
+#define DECLARE(Name)                                     \
+      bind(SYMBOL(Name), &Position::Name ##_get);         \
+      property_set(SYMBOL(Name),                          \
+                   SYMBOL(updateHook),                    \
+                   primitive(&Position::Name ##_set))
+
+      DECLARE(file);
+
+#undef DECLARE
     }
 
     URBI_CXX_OBJECT_REGISTER(Location)
@@ -228,6 +399,10 @@ namespace urbi
       bind(SYMBOL(init),  static_cast<void (Location::*)()>(&Location::init));
       bind(SYMBOL(init),  static_cast<void (Location::*)(const Position::value_type&)>(&Location::init));
       bind(SYMBOL(init),  static_cast<void (Location::*)(const Position::value_type&, const Position::value_type&)>(&Location::init));
+      bind(SYMBOL(EQ_EQ),
+           (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
+      bind(SYMBOL(asString), &Location::as_string);
+      bind(SYMBOL(isSystemLocation), &Location::is_system_location);
     }
 
 
@@ -238,12 +413,53 @@ namespace urbi
            static_cast<void (Lobby::*)(const std::string&)>(&Lobby::send));
       bind(SYMBOL(send),
            static_cast<void (Lobby::*)(const std::string&, const std::string&)>(&Lobby::send));
+#define DECLARE(Name)                           \
+      bind(SYMBOL(Name), &Lobby::Name)
+      DECLARE(bytesSent);
+      DECLARE(bytesReceived);
+      DECLARE(create);
+      DECLARE(lobby);
+      DECLARE(quit);
+      DECLARE(receive);
+      DECLARE(write);
+#undef DECLARE
+
+      bind(SYMBOL(instances), &Lobby::instances_get);
     }
 
     URBI_CXX_OBJECT_REGISTER(List)
     {
       bind(SYMBOL(sort), static_cast<List::value_type (List::*)()>(&List::sort));
       bind(SYMBOL(sort), static_cast<List::value_type (List::*)(rObject)>(&List::sort));
+#define DECLARE(Name, Function)                 \
+      bind(SYMBOL(Name), &List::Function)
+
+      DECLARE(asBool,         as_bool         );
+      DECLARE(asString,       as_string       );
+      DECLARE(back,           back            );
+      DECLARE(clear,          clear           );
+      DECLARE(each,           each            );
+      DECLARE(each_AMPERSAND, each_and        );
+      DECLARE(each_PIPE,      each_pipe       );
+      DECLARE(eachi,          eachi           );
+      DECLARE(empty,          empty           );
+      DECLARE(front,          front           );
+      DECLARE(SBL_SBR,        operator[]      );
+      DECLARE(SBL_SBR_EQ,     set             );
+      DECLARE(PLUS,           operator+       );
+      DECLARE(PLUS_EQ,        operator+=      );
+      DECLARE(insert,         insert          );
+      DECLARE(insertBack,     insertBack      );
+      DECLARE(insertFront,    insertFront     );
+      DECLARE(removeBack,     removeBack      );
+      DECLARE(removeFront,    removeFront     );
+      DECLARE(removeById,     remove_by_id    );
+      DECLARE(reverse,        reverse         );
+      DECLARE(size,           size            );
+      DECLARE(STAR,           operator*       );
+      DECLARE(tail,           tail            );
+
+#undef DECLARE
     }
 
     URBI_CXX_OBJECT_REGISTER(Event)
@@ -264,10 +480,25 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Job)
-    {}
+    {
+      bind(SYMBOL(DOLLAR_backtrace), &Job::backtrace);
+      bind(SYMBOL(name), &Job::name);
+      bind(SYMBOL(setSideEffectFree), &Job::setSideEffectFree);
+      bind(SYMBOL(status), &Job::status);
+      bind(SYMBOL(tags), &Job::tags);
+      bind(SYMBOL(terminate), &Job::terminate);
+      bind(SYMBOL(timeShift), &Job::timeShift);
+      bind(SYMBOL(waitForChanges), &Job::waitForChanges);
+      bind(SYMBOL(waitForTermination), &Job::waitForTermination);
+    }
 
     URBI_CXX_OBJECT_REGISTER(IoService)
     {
+      bind(SYMBOL(pollFor), &IoService::pollFor);
+      bind(SYMBOL(pollOneFor), &IoService::pollOneFor);
+      bind(SYMBOL(poll), &IoService::poll);
+      bind(SYMBOL(makeServer), &IoService::makeServer);
+      bind(SYMBOL(makeSocket), &IoService::makeSocket);
     }
 
     URBI_CXX_OBJECT_REGISTER(Float)
@@ -292,11 +523,27 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(Finalizable)
-    {}
+    {
+#define DECLARE(Name)                           \
+      bind(SYMBOL(Name), &Finalizable::Name)
+
+      DECLARE(__dec);
+      DECLARE(__inc);
+      DECLARE(__get);
+#undef DECLARE
+    }
 
     URBI_CXX_OBJECT_REGISTER(File)
       : path_(new Path("/"))
-    {}
+    {
+      bind(SYMBOL(asList), &File::as_list);
+      bind(SYMBOL(asPrintable), &File::as_printable);
+      bind(SYMBOL(asString), &File::as_string);
+      bind(SYMBOL(content), &File::content);
+      bind(SYMBOL(create), &File::create);
+      bind(SYMBOL(rename), &File::rename);
+      bind(SYMBOL(remove), &File::remove);
+    }
 
     OVERLOAD_TYPE(concat_bouncer, 1, 1,
                   Path, &Path::path_concat,
@@ -306,6 +553,31 @@ namespace urbi
       : path_(WIN32_IF("C:\\", "/"))
     {
       bind_variadic(SYMBOL(SLASH), concat_bouncer);
+
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (Path::self_type::*)(const rObject&) const>
+           (&Path::self_type::operator==));
+
+#define DECLARE(Urbi, Cxx)                      \
+      bind(SYMBOL(Urbi), &Path::Cxx)
+
+      DECLARE(LT_EQ, operator<=);
+      DECLARE(absolute, absolute);
+      DECLARE(asList, as_list);
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString, as_string);
+      DECLARE(basename, basename);
+      DECLARE(cd, cd);
+      DECLARE(cwd, cwd);
+      DECLARE(dirname, dirname);
+      DECLARE(exists, exists);
+      DECLARE(init, init);
+      DECLARE(isDir, is_dir);
+      DECLARE(isReg, is_reg);
+      DECLARE(open, open);
+      DECLARE(readable, readable);
+      DECLARE(writable, writable);
+#undef DECLARE
     }
 
     URBI_CXX_OBJECT_REGISTER(Directory)
@@ -315,17 +587,43 @@ namespace urbi
 #if !defined COMPILATION_MODE_SPACE
     URBI_CXX_OBJECT_REGISTER(OutputStream)
       : Stream(STDOUT_FILENO, false)
-    {}
+    {
+      bind(SYMBOL(LT_LT), &OutputStream::put    );
+      bind(SYMBOL(close), &OutputStream::close  );
+      bind(SYMBOL(flush), &OutputStream::flush  );
+      bind(SYMBOL(init),  &OutputStream::init   );
+      bind(SYMBOL(put),   &OutputStream::putByte);
+    }
 
     URBI_CXX_OBJECT_REGISTER(InputStream)
       : Stream(STDIN_FILENO, false)
       , pos_(0)
       , size_(0)
-    {}
+    {
+      bind(SYMBOL(close), &InputStream::close);
+      bind(SYMBOL(get), &InputStream::get);
+      bind(SYMBOL(getChar), &InputStream::getChar);
+      bind(SYMBOL(getLine), &InputStream::getLine);
+      bind(SYMBOL(init), &InputStream::init);
+    }
 #endif
 
     URBI_CXX_OBJECT_REGISTER(Dictionary)
-    {}
+    {
+      bind(SYMBOL(asBool), &Dictionary::as_bool);
+#define DECLARE(Name)                           \
+      bind(SYMBOL(Name), &Dictionary::Name)
+
+      DECLARE(clear);
+      DECLARE(empty);
+      DECLARE(erase);
+      DECLARE(get);
+      DECLARE(has);
+      DECLARE(keys);
+      DECLARE(set);
+      DECLARE(size);
+#undef DECLARE
+    }
 
 
     /*-------.
@@ -361,10 +659,23 @@ namespace urbi
       DECLARE(second);
       DECLARE(year);
 #undef DECLARE
+      bind(SYMBOL(EQ_EQ), &Date::operator ==);
+      bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
+      bind(SYMBOL(PLUS), &Date::operator +);
+      bind(SYMBOL(asFloat), &Date::as_float);
+      bind(SYMBOL(asString), &Date::as_string);
+      bind(SYMBOL(epoch), &Date::epoch);
+      bind(SYMBOL(init), &Date::init);
+      bind(SYMBOL(now), &Date::now);
     }
 
 
     URBI_CXX_OBJECT_REGISTER(Barrier)
-    {}
+    {
+      bind(SYMBOL(new),       &Barrier::_new);
+      bind(SYMBOL(signal),    &Barrier::signal);
+      bind(SYMBOL(signalAll), &Barrier::signalAll);
+      bind(SYMBOL(wait),      &Barrier::wait);
+    }
   }
 }

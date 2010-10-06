@@ -30,8 +30,7 @@ namespace urbi
 
     void
     global_class_initialize()
-    {
-    }
+    {}
 
   }; // namespace object
 }

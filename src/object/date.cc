@@ -241,16 +241,7 @@ namespace urbi
     `-----------------*/
 
     void
-    Date::initialize(CxxObject::Binder<Date>& bind)
-    {
-      bind(SYMBOL(EQ_EQ), &Date::operator ==);
-      bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
-      bind(SYMBOL(PLUS), &Date::operator +);
-      bind(SYMBOL(asFloat), &Date::as_float);
-      bind(SYMBOL(asString), &Date::as_string);
-      bind(SYMBOL(epoch), &Date::epoch);
-      bind(SYMBOL(init), &Date::init);
-      bind(SYMBOL(now), &Date::now);
-    }
+    Date::initialize(CxxObject::Binder<Date>&)
+    {}
   }
 }

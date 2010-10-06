@@ -173,30 +173,12 @@ namespace urbi
     void
     Position::initialize(CxxObject::Binder<Position>& bind)
     {
-      typedef bool (Position::*comparison_type)(rPosition rhs) const;
-      bind(SYMBOL(EQ_EQ), (comparison_type) &Position::operator ==);
-      bind(SYMBOL(LT), (comparison_type) &Position::operator <);
-      bind(SYMBOL(MINUS), &Position::operator -);
-      bind(SYMBOL(PLUS), &Position::operator +);
-      bind(SYMBOL(lines), &Position::lines);
-      bind(SYMBOL(columns), &Position::columns);
-      bind(SYMBOL(asString), &Position::as_string);
-
+    //FIXME BINDING
 #define DECLARE(Name)                                           \
       bind.var(SYMBOL( Name ), &Position:: Name ## _ref)
 
       DECLARE(line);
       DECLARE(column);
-
-#undef DECLARE
-
-#define DECLARE(Name)                                                   \
-      bind(SYMBOL(Name), &Position::Name ##_get);                       \
-      bind.proto()->property_set(SYMBOL(Name),                          \
-                                 SYMBOL(updateHook),                    \
-                                 primitive(&Position::Name ##_set))
-
-      DECLARE(file);
 
 #undef DECLARE
     }

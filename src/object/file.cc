@@ -179,32 +179,20 @@ namespace urbi
     }
 
     /*----------.
-    | Details.  |
+    | Binding.  |
     `----------*/
 
-    OVERLOAD_TYPE(init_bouncer, 1, 1,
+    OVERLOAD_TYPE(file_init_bouncer, 1, 1,
                   Path,
                   (void (File::*)(rPath)) &File::init,
                   String,
                   (void (File::*)(const std::string&)) &File::init);
 
-
-    /*----------.
-    | Binding.  |
-    `----------*/
-
     void
-    File::initialize(CxxObject::Binder<File>& bind)
+    File::initialize(CxxObject::Binder<File>&)
     {
-      bind(SYMBOL(asList), &File::as_list);
-      bind(SYMBOL(asPrintable), &File::as_printable);
-      bind(SYMBOL(asString), &File::as_string);
-      bind(SYMBOL(content), &File::content);
-      bind(SYMBOL(create), &File::create);
-      bind(SYMBOL(rename), &File::rename);
-      bind(SYMBOL(remove), &File::remove);
-
-      proto->slot_set(SYMBOL(init), new Primitive(&init_bouncer));
+      //FIXME BINDING
+      proto->slot_set(SYMBOL(init), new Primitive(&file_init_bouncer));
     }
 
   }

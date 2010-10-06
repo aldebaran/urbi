@@ -45,6 +45,7 @@ namespace urbi
     void
     Server::initialize()
     {
+      //FIXME BINDING
       CAPTURE_GLOBAL(Event);
       connection_ = Event->call(SYMBOL(new));
       slot_set(SYMBOL(connection), connection_);
@@ -98,14 +99,8 @@ namespace urbi
       return io_service_;
     }
 
-    void Server::initialize(CxxObject::Binder<Server>& bind)
-    {
-      bind(SYMBOL(getIoService), &Server::getIoService);
-      bind(SYMBOL(host),    &Server::host);
-      bind(SYMBOL(listen),  &Server::listen);
-      bind(SYMBOL(port),    &Server::port);
-      bind(SYMBOL(sockets), &Server::sockets);
-    }
+    void Server::initialize(CxxObject::Binder<Server>&)
+    {}
 
   }
 }

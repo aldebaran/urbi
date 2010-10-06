@@ -149,21 +149,8 @@ namespace urbi
     }
 
     void
-    Lobby::initialize(CxxObject::Binder<Lobby>& bind)
-    {
-#define DECLARE(Name)                           \
-      bind(SYMBOL(Name), &Lobby::Name)
-      DECLARE(bytesSent);
-      DECLARE(bytesReceived);
-      DECLARE(create);
-      DECLARE(lobby);
-      DECLARE(quit);
-      DECLARE(receive);
-      DECLARE(write);
-#undef DECLARE
-
-      bind(SYMBOL(instances), &Lobby::instances_get);
-    }
+    Lobby::initialize(CxxObject::Binder<Lobby>&)
+    {}
 
   }; // namespace object
 }

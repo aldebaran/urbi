@@ -68,15 +68,9 @@ namespace urbi
     {
       return counter_get();
     }
-    void Finalizable::initialize(CxxObject::Binder<Finalizable>& bind)
-    {
-#define DECLARE(Name)                           \
-      bind(SYMBOL(Name), &Finalizable::Name)
-
-      DECLARE(__dec);
-      DECLARE(__inc);
-      DECLARE(__get);
-    }
+    void
+    Finalizable::initialize(CxxObject::Binder<Finalizable>&)
+    {}
 
   }
 }

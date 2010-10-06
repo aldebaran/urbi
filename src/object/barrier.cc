@@ -103,13 +103,9 @@ namespace urbi
       return res;
     }
 
-    void Barrier::initialize(CxxObject::Binder<Barrier>& bind)
-    {
-      bind(SYMBOL(new),       &Barrier::_new);
-      bind(SYMBOL(signal),    &Barrier::signal);
-      bind(SYMBOL(signalAll), &Barrier::signalAll);
-      bind(SYMBOL(wait),      &Barrier::wait);
-    }
+    void
+    Barrier::initialize(CxxObject::Binder<Barrier>&)
+    {}
 
   } // namespace object
 }

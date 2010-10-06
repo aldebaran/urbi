@@ -59,8 +59,10 @@ namespace urbi
       return content_;
     }
 
-    void Primitive::initialize(CxxObject::Binder<Primitive>& bind)
+    void
+    Primitive::initialize(CxxObject::Binder<Primitive>& bind)
     {
+      //FIXME BINDING
       bind(SYMBOL(apply), &Primitive::apply);
     }
 

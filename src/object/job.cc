@@ -169,18 +169,8 @@ namespace urbi
     }
 
     void
-    Job::initialize(CxxObject::Binder<Job>& bind)
-    {
-      bind(SYMBOL(DOLLAR_backtrace), &Job::backtrace);
-      bind(SYMBOL(name), &Job::name);
-      bind(SYMBOL(setSideEffectFree), &Job::setSideEffectFree);
-      bind(SYMBOL(status), &Job::status);
-      bind(SYMBOL(tags), &Job::tags);
-      bind(SYMBOL(terminate), &Job::terminate);
-      bind(SYMBOL(timeShift), &Job::timeShift);
-      bind(SYMBOL(waitForChanges), &Job::waitForChanges);
-      bind(SYMBOL(waitForTermination), &Job::waitForTermination);
-    }
+    Job::initialize(CxxObject::Binder<Job>&)
+    {}
 
   }; // namespace object
 }

@@ -373,49 +373,10 @@ namespace urbi
      (&String::sub_eq)
       );
 
-    void String::initialize(CxxObject::Binder<String>& bind)
+    void
+    String::initialize(CxxObject::Binder<String>&)
     {
-      bind(SYMBOL(EQ_EQ),
-           static_cast<bool (self_type::*)(const rObject&) const>
-           (&self_type::operator==));
-#define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &String::Function)
-
-      DECLARE(LT_EQ       , operator<=);
-      DECLARE(PLUS        , plus);
-      DECLARE(STAR        , star);
-      DECLARE(asBool      , as_bool);
-      DECLARE(asFloat     , as_float);
-      DECLARE(asPrintable , as_printable);
-      DECLARE(asString    , as_string);
-      DECLARE(distance    , distance);
-      DECLARE(empty       , empty);
-#if !defined COMPILATION_MODE_SPACE
-      DECLARE(format      , format);
-#endif
-      DECLARE(fresh       , fresh);
-      DECLARE(fromAscii   , fromAscii);
-      DECLARE(isAlnum     , is_alnum);
-      DECLARE(isAlpha     , is_alpha);
-      DECLARE(isCntrl     , is_cntrl);
-      DECLARE(isDigit     , is_digit);
-      DECLARE(isGraph     , is_graph);
-      DECLARE(isLower     , is_lower);
-      DECLARE(isPrint     , is_print);
-      DECLARE(isPunct     , is_punct);
-      DECLARE(isSpace     , is_space);
-      DECLARE(isUpper     , is_upper);
-      DECLARE(isXdigit    , is_xdigit);
-      DECLARE(join        , join);
-      DECLARE(replace     , replace);
-      DECLARE(set         , set);
-      DECLARE(size        , size);
-      DECLARE(toAscii     , toAscii);
-      DECLARE(toLower     , to_lower);
-      DECLARE(toUpper     , to_upper);
-
-#undef DECLARE
-
+      //FIXME BINDING
       proto->slot_set(SYMBOL(SBL_SBR), new Primitive(sub_bouncer));
       proto->slot_set(SYMBOL(SBL_SBR_EQ), new Primitive(sub_eq_bouncer));
     }

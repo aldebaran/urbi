@@ -325,12 +325,9 @@ namespace urbi
     void
     UVar::initialize(CxxObject::Binder<UVar>& bind)
     {
-      bind(SYMBOL(writeOwned), &UVar::writeOwned);
+      //FIXME BINDING
       bind(SYMBOL(update_), &UVar::update_);
       bind(SYMBOL(update_timed_), &UVar::update_timed_);
-      bind(SYMBOL(update_timed), &UVar::update_timed);
-      bind(SYMBOL(loopCheck), &UVar::loopCheck);
-      bind(SYMBOL(accessor), &UVar::accessor);
       proto->slot_set(SYMBOL(updateBounce), new Primitive(&update_bounce));
     }
 

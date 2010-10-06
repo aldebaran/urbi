@@ -89,13 +89,9 @@ namespace urbi
       return (*f)(args);
     }
 
-    void Semaphore::initialize(CxxObject::Binder<Semaphore>& bind)
-    {
-      bind(SYMBOL(new),             &Semaphore::_new);
-      bind(SYMBOL(criticalSection), &Semaphore::criticalSection);
-      bind(SYMBOL(acquire),         &Semaphore::acquire);
-      bind(SYMBOL(release),         &Semaphore::release);
-    }
+    void
+    Semaphore::initialize(CxxObject::Binder<Semaphore>&)
+    {}
 
   } // namespace object
 }

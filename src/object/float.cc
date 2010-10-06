@@ -408,6 +408,7 @@ namespace urbi
     void
     Float::initialize(CxxObject::Binder<Float>& bind)
     {
+      //FIXME BINDING
       bind(SYMBOL(EQ_EQ),
            static_cast<bool (self_type::*)(const rObject&) const>
                       (&self_type::operator==));

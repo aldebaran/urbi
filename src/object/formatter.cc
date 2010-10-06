@@ -107,17 +107,9 @@ namespace urbi
         return operator%(objects_type(1, arg));
     }
 
-#define OPERATOR_PCT(Type)                                      \
-    static_cast<std::string (Formatter::*)(const Type&) const>  \
-    (&Formatter::operator%)
     void
-    Formatter::initialize(CxxObject::Binder<Formatter>& bind)
-    {
-      bind(SYMBOL(init),    &Formatter::init);
-      bind(SYMBOL(data),    &Formatter::data_get);
-      bind(SYMBOL(PERCENT), OPERATOR_PCT(rObject));
-    }
-#undef OPERATOR_PCT
+    Formatter::initialize(CxxObject::Binder<Formatter>&)
+    {}
 
   } // namespace object
 }

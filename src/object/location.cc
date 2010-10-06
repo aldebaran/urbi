@@ -94,13 +94,8 @@ namespace urbi
     `-----------------*/
 
     void
-    Location::initialize(CxxObject::Binder<Location>& bind)
-    {
-      bind(SYMBOL(EQ_EQ),
-           (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
-      bind(SYMBOL(asString), &Location::as_string);
-      bind(SYMBOL(isSystemLocation), &Location::is_system_location);
-    }
+    Location::initialize(CxxObject::Binder<Location>&)
+    {}
 
   } // namespace object
 } // namespace urbi

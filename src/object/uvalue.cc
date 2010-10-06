@@ -124,14 +124,8 @@ namespace urbi
     }
 
     void
-    UValue::initialize(CxxObject::Binder<UValue>& bind)
-    {
-      bind(SYMBOL(extract), &UValue::extract);
-      bind(SYMBOL(extractAsToplevelPrintable),
-           &UValue::extractAsToplevelPrintable);
-      bind(SYMBOL(invalidate), &UValue::invalidate);
-      bind(SYMBOL(put), (void (UValue::*)(rObject))&UValue::put);
-    }
+    UValue::initialize(CxxObject::Binder<UValue>&)
+    {}
 
   }
 }

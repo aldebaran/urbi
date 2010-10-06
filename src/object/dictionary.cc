@@ -125,22 +125,8 @@ namespace urbi
 
 
     void
-    Dictionary::initialize(CxxObject::Binder<Dictionary>& bind)
-    {
-      bind(SYMBOL(asBool), &Dictionary::as_bool);
-#define DECLARE(Name)                           \
-      bind(SYMBOL(Name), &Dictionary::Name)
-
-      DECLARE(clear);
-      DECLARE(empty);
-      DECLARE(erase);
-      DECLARE(get);
-      DECLARE(has);
-      DECLARE(keys);
-      DECLARE(set);
-      DECLARE(size);
-#undef DECLARE
-    }
+    Dictionary::initialize(CxxObject::Binder<Dictionary>&)
+    {}
 
   }
 }

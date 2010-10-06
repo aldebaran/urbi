@@ -144,14 +144,8 @@ namespace urbi
     `----------------*/
 
     void
-    InputStream::initialize(CxxObject::Binder<InputStream>& bind)
-    {
-      bind(SYMBOL(close), &InputStream::close);
-      bind(SYMBOL(get), &InputStream::get);
-      bind(SYMBOL(getChar), &InputStream::getChar);
-      bind(SYMBOL(getLine), &InputStream::getLine);
-      bind(SYMBOL(init), &InputStream::init);
-    }
+    InputStream::initialize(CxxObject::Binder<InputStream>&)
+    {}
 
   }
 }

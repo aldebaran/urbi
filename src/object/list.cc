@@ -365,38 +365,8 @@ namespace urbi
       return new List(res);
     }
 
-    void List::initialize(CxxObject::Binder<List>& bind)
-    {
-#define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &List::Function)
-
-      DECLARE(asBool,         as_bool         );
-      DECLARE(asString,       as_string       );
-      DECLARE(back,           back            );
-      DECLARE(clear,          clear           );
-      DECLARE(each,           each            );
-      DECLARE(each_AMPERSAND, each_and        );
-      DECLARE(each_PIPE,      each_pipe       );
-      DECLARE(eachi,          eachi           );
-      DECLARE(empty,          empty           );
-      DECLARE(front,          front           );
-      DECLARE(SBL_SBR,        operator[]      );
-      DECLARE(SBL_SBR_EQ,     set             );
-      DECLARE(PLUS,           operator+       );
-      DECLARE(PLUS_EQ,        operator+=      );
-      DECLARE(insert,         insert          );
-      DECLARE(insertBack,     insertBack      );
-      DECLARE(insertFront,    insertFront     );
-      DECLARE(removeBack,     removeBack      );
-      DECLARE(removeFront,    removeFront     );
-      DECLARE(removeById,     remove_by_id    );
-      DECLARE(reverse,        reverse         );
-      DECLARE(size,           size            );
-      DECLARE(STAR,           operator*       );
-      DECLARE(tail,           tail            );
-
-#undef DECLARE
-    }
+    void List::initialize(CxxObject::Binder<List>&)
+    {}
 
   } // namespace object
 }

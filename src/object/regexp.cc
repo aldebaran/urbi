@@ -89,19 +89,8 @@ namespace urbi
     }
 
     void
-    Regexp::initialize(CxxObject::Binder<Regexp>& bind)
-    {
-#define DECLARE(Urbi, Cxx)                      \
-      bind(SYMBOL(Urbi), &Regexp::Cxx)
-
-      DECLARE(asPrintable, as_printable);
-      DECLARE(asString, as_string);
-      DECLARE(init, init);
-      DECLARE(match, match);
-      DECLARE(matches, matches);
-#undef DECLARE
-      bind(SYMBOL(SBL_SBR), &Regexp::operator[]);
-    }
+    Regexp::initialize(CxxObject::Binder<Regexp>&)
+    {}
 
   }
 }
