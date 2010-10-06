@@ -11,6 +11,10 @@
 #ifndef URBI_OBJECT_DATE_HXX
 # define URBI_OBJECT_DATE_HXX
 
+/*--------------.
+| Conversions.  |
+`--------------*/
+
 namespace urbi
 {
   namespace object
@@ -32,7 +36,40 @@ namespace urbi
         return new Date(v);
       }
     };
+
+# define BOOST_GREG_CONVERSION(Name)                                      \
+  template<>                                                              \
+  struct CxxConvert<Date::Name ## _type>                                  \
+  {                                                                       \
+    typedef Date::Name ## _type target_type;                              \
+    static target_type                                                    \
+    to(const rObject& o, unsigned idx)                                    \
+    {                                                                     \
+      type_check(o, Float::proto, idx);                                   \
+      try                                                                 \
+      {                                                                   \
+        return target_type(o->as<Float>()->to_int_type());                \
+      }                                                                   \
+      catch(std::exception& e)                                            \
+      {                                                                   \
+        runner::raise_primitive_error(e.what());                          \
+      }                                                                   \
+    }                                                                     \
+                                                                          \
+    static rObject                                                        \
+    from(target_type v)                                                   \
+    {                                                                     \
+      return new Float(v);                                                \
+    }                                                                     \
+  };                                                                      \
+
+    BOOST_GREG_CONVERSION(year);
+    BOOST_GREG_CONVERSION(month);
+    BOOST_GREG_CONVERSION(day);
+
+# undef BOOST_GREG_CONVERSION
   }
 }
+
 
 #endif

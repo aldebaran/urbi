@@ -325,6 +325,11 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Dictionary)
     {}
 
+
+    /*-------.
+    | Date.  |
+    `-------*/
+
     // FIXME: kill this when overloading is fully supported
     OVERLOAD_TYPE_3(
       MINUS_overload, 1, 1,
@@ -344,7 +349,18 @@ namespace urbi
       : time_(boost::posix_time::microsec_clock::local_time())
     {
       bind_variadic(SYMBOL(MINUS), MINUS);
+#define DECLARE(Unit)                                           \
+  bind(libport::Symbol(#Unit),       &Date::Unit ## _get,       \
+       libport::Symbol(#Unit "Set"), &Date::Unit ## _set)
+      DECLARE(day);
+      DECLARE(hour);
+      DECLARE(minute);
+      DECLARE(month);
+      DECLARE(second);
+      DECLARE(year);
+#undef DECLARE
     }
+
 
     URBI_CXX_OBJECT_REGISTER(Barrier)
     {}

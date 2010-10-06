@@ -18,6 +18,10 @@
 
 # include <urbi/object/cxx-object.hh>
 
+#define DATE_MODIFIERS(Name)          \
+  Name ## _type Name ## _get() const; \
+  void Name ## _set(Name ## _type y); \
+
 namespace urbi
 {
   namespace object
@@ -32,6 +36,14 @@ namespace urbi
     public:
       typedef boost::posix_time::ptime value_type;
       typedef boost::posix_time::time_duration duration_type;
+      typedef boost::posix_time::time_duration::hour_type hour_type;
+      typedef boost::posix_time::time_duration::min_type minute_type;
+      typedef boost::posix_time::time_duration::sec_type second_type;
+
+      typedef boost::gregorian::date date_type;
+      typedef boost::gregorian::greg_year year_type;
+      typedef boost::gregorian::greg_month month_type;
+      typedef boost::gregorian::greg_day day_type;
 
       Date();
       Date(rDate model);
@@ -60,6 +72,17 @@ namespace urbi
 
       rDuration operator - (rDate rhs) const;
 
+    /*----------------.
+    | Modifications.  |
+    `----------------*/
+
+    public:
+      DATE_MODIFIERS(year)
+      DATE_MODIFIERS(month)
+      DATE_MODIFIERS(day)
+      DATE_MODIFIERS(hour)
+      DATE_MODIFIERS(minute)
+      DATE_MODIFIERS(second)
 
     /*--------------.
     | Conversions.  |
@@ -89,6 +112,8 @@ namespace urbi
     };
   }
 }
+
+# undef DATE_MODIFIERS
 
 # include <urbi/object/date.hxx>
 

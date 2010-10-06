@@ -121,6 +121,68 @@ namespace urbi
       return new Duration(time_ - rhs->time_);
     }
 
+
+    /*----------------.
+    | Modifications.  |
+    `----------------*/
+
+#define TIME_GETTER(Unit)                        \
+  Date::Unit ## _type Date::Unit ## _get() const \
+  {                                              \
+    return time_.time_of_day().Unit ## s();      \
+  }                                              \
+
+#define TIME_SETTER(Unit)                               \
+  void Date::Unit ## _set(Date::Unit ## _type value)    \
+  {                                                     \
+    Date::duration_type td = time_.time_of_day();       \
+    td -= boost::posix_time::Unit ## s(td.Unit ## s()); \
+    td += boost::posix_time::Unit ## s(value);          \
+    time_ = Date::value_type(time_.date(), td);         \
+  }                                                     \
+
+#define TIME_MODIFIERS(Unit) \
+  TIME_GETTER(Unit)          \
+  TIME_SETTER(Unit)          \
+
+#define DATE_GETTER(Unit)                        \
+  Date::Unit ## _type Date::Unit ## _get() const \
+  {                                              \
+    return time_.date().Unit();                  \
+  }                                              \
+
+#define DATE_SETTER(Unit, Y, M, D)                            \
+  void Date::Unit ## _set(Date::Unit ## _type Unit ## _given) \
+  {                                                           \
+    try                                                       \
+    {                                                         \
+      time_ = Date::value_type(Date::date_type(Y, M, D),      \
+                               time_.time_of_day());          \
+    }                                                         \
+    catch(std::exception& e)                                  \
+    {                                                         \
+      runner::raise_primitive_error(e.what());                \
+    }                                                         \
+  }                                                           \
+
+#define DATE_MODIFIERS(Unit, Y, M, D) \
+  DATE_GETTER(Unit)                   \
+  DATE_SETTER(Unit, Y, M, D)          \
+
+  TIME_MODIFIERS(hour)
+  TIME_MODIFIERS(minute)
+  TIME_MODIFIERS(second)
+  DATE_MODIFIERS(year, year_given, time_.date().month(), time_.date().day())
+  DATE_MODIFIERS(month, time_.date().year(), month_given, time_.date().day())
+  DATE_MODIFIERS(day, time_.date().year(), time_.date().month(), day_given)
+
+#undef TIME_GETTER
+#undef TIME_SETTER
+#undef TIME_MODIFIERS
+#undef DATE_GETTER
+#undef DATE_SETTER
+#undef DATE_MODIFIERS
+
     /*--------------.
     | Conversions.  |
     `--------------*/
@@ -166,9 +228,10 @@ namespace urbi
       value_type abs(boost::gregorian::date(1970, 1, 1));
       // FIXME: Crappy way to find the local time offset, but AFAICT,
       // Boost provides no way to get the current timezone :-(
-      static boost::posix_time::time_duration diff = boost::posix_time::seconds
-        ((boost::posix_time::microsec_clock::local_time()
-          - boost::posix_time::microsec_clock::universal_time()).total_seconds());
+      using namespace boost::posix_time;
+      static time_duration diff =
+        seconds((microsec_clock::local_time()
+                 - microsec_clock::universal_time()).total_seconds());
       return abs + diff;
     }
 
@@ -189,6 +252,5 @@ namespace urbi
       bind(SYMBOL(init), &Date::init);
       bind(SYMBOL(now), &Date::now);
     }
-
   }
 }
