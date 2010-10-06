@@ -140,6 +140,9 @@ namespace urbi
       template<typename T>
       void addCleanup(T* ptr);
 
+      /// Add an arbitrary operation to perform at cleanup() time.
+      void addCleanup(boost::function0<void> op);
+
       /// Push a new cleanup stack.
       void pushCleanupStack();
      /// Delete all pointers passed to addCleanup in current stack and pop.
