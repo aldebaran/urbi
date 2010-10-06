@@ -65,7 +65,7 @@ include utils/local.mk
 endif EXAMPLES
 
 
-# Replace the git-version-stubs in these libraries.  They get it from
+# Replace the version stubs in these libraries.  They get it from
 # revision.cc in libuvalue, which is a convenience library included in
 # these two.
 libuobject/libuobject.stub.stamp: $(VERSIONIFY_CACHE) libuobject/libuobject$(LIBSFX).la $(VERSIONIFY)
