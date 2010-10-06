@@ -233,8 +233,20 @@ namespace urbi
       return self.*Attr;
     }
 
+    template <typename T>
+    struct Ref
+    {
+      typedef T& res;
+    };
+
+    template <typename T>
+    struct Ref<T*>
+    {
+      typedef T* res;
+    };
+
     template <typename Self, typename T>
-    T bindvar_setter_(Self& self, const std::string&, T val, T (Self::*Attr))
+    T bindvar_setter_(typename Ref<Self>::res  self, const std::string&, T val, T (Self::*Attr))
     {
       return self.*Attr = val;
     }
