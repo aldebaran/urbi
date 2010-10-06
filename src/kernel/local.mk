@@ -36,8 +36,15 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
 # We do not depend upon .version, because we do not want to be
 # refreshed too frequently.  That's the whole point of a stub.
 kernel/revision-stub.hh: $(VERSIONIFY)
-	$(VERSIONIFY) --cache=$(top_srcdir)/.version --directory --stub=$@
+	$(VERSIONIFY_RUN) --stub=$@
 nodist_libuobject@LIBSFX@_la_SOURCES += kernel/revision-stub.hh
+
+# Resolve stubs in libubanner, because at install time, we relink urbi
+# and so forth to use this library.  As a consequence, we'd have old
+# versions of the revision info.
+all-local: kernel/ubanner.unstub.stamp
+kernel/ubanner.unstub.stamp: kernel/libuobject$(LIBSFX)_la-ubanner.lo $(VERSIONIFY) $(VERSIONIFY_CACHE)
+	$(VERSIONIFY_RUN) --resolve=kernel/.libs/libuobject$(LIBSFX)_la-ubanner.$(OBJEXT)
 
 
 ## ------------------------ ##
