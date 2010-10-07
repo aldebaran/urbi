@@ -30,9 +30,13 @@ import urbi.*;
 ///     // [00007802] Update called 5 times.
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObject'
+/// 'urbi.UObject'
 public class Feature4 extends UObject
 {
+    /// Register your UObject (so that urbi knows about it)
+    static { UStart(Feature4.class); };
+
+
     /// Some variables used in the functions below
     private int timer_count = 1;
     private int update_count = 1;
@@ -41,18 +45,16 @@ public class Feature4 extends UObject
     // Feature4 constructor //
     // -------------------- //
 
-    public Feature4 (String str)
-	throws Exception {
+    public Feature4 (String str) {
 	super (str);
-	UBindFunction (this, "init");
+	UBindFunction ("init");
     }
 
     // --------------------------------------- //
     // Urbiscript constructor for this UObject //
     // --------------------------------------- //
 
-    public int init ()
-	throws Exception {
+    public int init () {
 
 	// --------------- //
 	// Timer functions //

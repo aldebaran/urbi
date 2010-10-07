@@ -26,16 +26,17 @@ import urbi.*;
 ///     // [00073470] 41
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObject'
+/// 'urbi.UObject'
 public class Feature5 extends UObject
 {
+    /// Register your UObject (so that urbi knows about it)
+    static { UStart(Feature5.class); };
 
     // -------------------- //
     // Feature5 constructor //
     // -------------------- //
 
-    public Feature5 (String str)
-	throws Exception {
+    public Feature5 (String str) {
 	super (str);
 	UBindFunction (this, "init");
     }
@@ -44,8 +45,7 @@ public class Feature5 extends UObject
     // Urbiscript constructor for this UObject //
     // --------------------------------------- //
 
-    public int init (UValue somevar_name)
-	throws Exception {
+    public int init (UValue somevar_name) {
 
 	/// These function are used to demonstrate the setting and the
 	/// getting of an UVar extern to this UObject.  Please see
@@ -66,11 +66,10 @@ public class Feature5 extends UObject
     /// of UNotifyOnRequest which is asynchronous (ie will not freeze
     /// your UObject if the Urbi server doesn't answer).
     ///
-    public int getValue (UValue varname) {
+    public int getValue (String name) {
 
 	/// Create an UVar with the name of an existing UVar, and
 	/// retrieve its value synchronously:
-	String name = varname.stringValue ();
 	UVar tmp = new UVar (name);
 	tmp.syncValue(); /// ! WARNING ! This call can freeze your
 			 /// UObject if the server does not answer.
@@ -81,10 +80,10 @@ public class Feature5 extends UObject
 
     /// Here we demonstrate the setting of an UVar external to this
     /// UObject
-    public void setValue (UValue name, UValue value) {
+    public void setValue (String name, UValue value) {
 
 	/// Create an UVar with the name of an existing UVar
-	UVar tmp = new UVar (name.stringValue ());
+	UVar tmp = new UVar (name);
 	/// And assign a value to it. The walue will be set on the
 	/// UVar existing on the server. All is transparent.
 	tmp.setValue(value);

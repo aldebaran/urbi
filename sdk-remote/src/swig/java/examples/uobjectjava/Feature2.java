@@ -29,9 +29,11 @@ import urbi.*;
 ///
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObject'
+/// 'urbi.UObject'
 public class Feature2 extends UObject
 {
+    /// Register your UObject (so that urbi knows about it)
+    static { UStart(Feature2.class); };
 
     /// Binded UVar val1
     private UVar val1 = new UVar ();
@@ -43,18 +45,16 @@ public class Feature2 extends UObject
     // Feature2 constructor //
     // -------------------- //
 
-    public Feature2 (String str)
-        throws Exception {
+    public Feature2 (String str) {
         super (str);
-        UBindFunction (this, "init");
+        UBindFunction ("init");
     }
 
     // --------------------------------------- //
     // Urbiscript constructor for this UObject //
     // --------------------------------------- //
 
-    public int init ()
-        throws Exception {
+    public int init () {
         // ----------------- //
         // Variables Binding //
         // ----------------- //

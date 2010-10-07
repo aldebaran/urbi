@@ -31,9 +31,11 @@ import urbi.*;
 ///    // [00117457] Global.a is changed and is equal to -1
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObject'
+/// 'urbi.UObject'
 public class Feature3 extends UObject
 {
+    /// Register your UObject (so that urbi knows about it)
+    static { UStart(Feature3.class); };
 
     private UVar val1 = new UVar ();
     private UVar val2 = new UVar ();
@@ -42,18 +44,16 @@ public class Feature3 extends UObject
     // Feature3 constructor //
     // -------------------- //
 
-    public Feature3 (String str)
-        throws Exception {
+    public Feature3 (String str) {
         super (str);
-        UBindFunction (this, "init");
+        UBindFunction ("init");
     }
 
     // --------------------------------------- //
     // Urbiscript constructor for this UObject //
     // --------------------------------------- //
 
-    public int init (UValue somevar_name)
-        throws Exception {
+    public int init (String somevar_name) {
 
         UBindVar (val1, "val1");
         val1.setValue ("some string");
@@ -73,20 +73,36 @@ public class Feature3 extends UObject
         /// the signature of the function must be one of the
         /// following:
         ///
-        ///    int functionName ()
+        ///    [int|void] functionName ()
         /// or
-        ///    int functionName (UVar v)
+        ///    [int|void] functionName (UVar v)
+	///
+	///  or any of
+	///    [int|void] functionName (<TYPE> v)
+	///
+	///  with <TYPE> in
+	///     urbi.UValue, urbi.UVar, urbi.UList, urbi.UBinary,
+	///     urbi.UImage, urbi.USound, urbi.UDictionary,
+	///     java.lang.String, java.lang.Integer,
+	///     java.lang.Boolean, java.lang.Double, java.lang.Float,
+	///     java.lang.Long, java.lang.Short, java.lang.Character,
+	///     java.lang.Byte, int, boolean, byte, char, short, long,
+	///     float, double
+	///
         ///
         /// if you choose the second prototype, then the UVar you
         /// registered will be given as parameter to your callback
         /// function.
+	/// if you choose the third, then your callback will be given
+	/// the value of the UVar you registered cast'ed to the desired
+	/// type.
         ///
         /// NB2: here, the functions we register are unique (there is
         /// only one function named "val1Change" in this UObject, so
         /// we don't need to specify the arguments. If it was not
         /// unique, we could have precised the parameters as follow:
         ///
-        ///  String[] parameters = { "liburbi.main.UVar" };
+        ///  String[] parameters = { "urbi.UVar" };
         ///  UNotifyChange (val1, "val1Change", parameters);
         ///
 
@@ -99,13 +115,12 @@ public class Feature3 extends UObject
         /// this UObject takes one argument, an UValue. If the user
         /// gives a string with the name of an existing Urbiscript variable,
         /// we bind it to the function "somevarChange"
-        String name = somevar_name.stringValue ();
-        if (name.compareTo("") != 0) {
+        if (somevar_name.compareTo("") != 0) {
 
-            /// Then each time the variable named "name" will changed,
+            /// Then each time the variable named "somevar_name" will changed,
             /// our function somevarChange will be called with the
-            /// UVar named "name" given as parameter
-            UNotifyChange (name, "somevarChange");
+            /// UVar named "somevar_name" given as parameter
+            UNotifyChange (somevar_name, "somevarChange");
         }
 	return 0;
     }

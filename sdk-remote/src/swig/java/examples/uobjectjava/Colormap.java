@@ -14,21 +14,13 @@ import java.lang.Math;
 /// c = new colormap (....  /// note the 'c' minuscule of 'c'olormap
 ///
 /// Colormap is used to do ball detection.
-/// In Webots, with a Nao, you can try:
-///
-/// ball = new Colormap("camera.ycbcr",0, 255, 50, 90, 160,210, 0.0015);
-/// var ball.a = 50;
 
-/// balltracking : whenever (ball.visible) {
-///     HeadYaw.val  = HeadYaw.val  + ball.a * camera.xfov * ball.x &
-///     HeadPitch.val = HeadPitch.val - ball.a * camera.yfov * ball.y &
-/// }
-///
-/// Then move the orange ball with the mouse in front of the Nao camera,
-/// and the Nao head will follow it
-///
 public class Colormap extends UObject
 {
+    /// Register your UObject (so that urbi knows about it)
+    static { UStart(Colormap.class); };
+
+
     /// x position of the color blob in the image
     private UVar x = new UVar ();
     // y position of the color blob in the image
@@ -52,58 +44,45 @@ public class Colormap extends UObject
     /// Java constructor
     public Colormap (String str) {
 	super (str);
-
-	try {
-	    UBindFunction (this, "init");
-	}
-	catch (Exception e) {
-	    System.out.println (e);
-	}
+	UBindFunction (this, "init");
     }
 
     /// Urbi constructor
-    public int init(UValue source, /// We expect the name of a camera variable or any UImage variable
-		    UValue _Ymin, /// double
-		    UValue _Ymax, /// double
-		    UValue _Cbmin, /// double
-		    UValue _Cbmax, /// double
-		    UValue _Crmin, /// double
-		    UValue _Crmax, /// double
-		    UValue _threshold) /// double
+    public int init(String source, /// We expect the name of a camera variable or any UImage variable
+		    double _Ymin,
+		    double _Ymax,
+		    double _Cbmin,
+		    double _Cbmax,
+		    double _Crmin,
+		    double _Crmax,
+		    double _threshold)
     {
-	try {
+	UBindVar(x, "x");
+	UBindVar(y, "y");
+	UBindVar(visible, "visible");
+	UBindVar(ratio, "ratio");
+	UBindVar(threshold, "threshold");
+	UBindVar(ymin, "ymin");
+	UBindVar(ymax, "ymax");
+	UBindVar(cbmin, "cbmin");
+	UBindVar(cbmax, "cbmax");
+	UBindVar(crmin, "crmin");
+	UBindVar(crmax, "crmax");
 
-	    UBindVar(x, "x");
-	    UBindVar(y, "y");
-	    UBindVar(visible, "visible");
-	    UBindVar(ratio, "ratio");
-	    UBindVar(threshold, "threshold");
-	    UBindVar(ymin, "ymin");
-	    UBindVar(ymax, "ymax");
-	    UBindVar(cbmin, "cbmin");
-	    UBindVar(cbmax, "cbmax");
-	    UBindVar(crmin, "crmin");
-	    UBindVar(crmax, "crmax");
+	UNotifyChange(source, "newImage");
 
-	    UNotifyChange(source.stringValue (), "newImage");
-
-	    // initialization
-	    ymin.setValue (_Ymin);
-	    ymax.setValue (_Ymax);
-	    cbmin.setValue (_Cbmin);
-	    cbmax.setValue (_Cbmax);
-	    crmin.setValue (_Crmin);
-	    crmax.setValue (_Crmax);
-	    threshold.setValue (_threshold);
-	    x.setValue (-1);
-	    y.setValue (-1);
-	    visible.setValue (0);
-	    ratio.setValue (0);
-	}
-	catch (Exception e) {
-	    System.out.println (e);
-	    return 1;
-	}
+	// initialization
+	ymin.setValue (_Ymin);
+	ymax.setValue (_Ymax);
+	cbmin.setValue (_Cbmin);
+	cbmax.setValue (_Cbmax);
+	crmin.setValue (_Crmin);
+	crmax.setValue (_Crmax);
+	threshold.setValue (_threshold);
+	x.setValue (-1);
+	y.setValue (-1);
+	visible.setValue (0);
+	ratio.setValue (0);
 	return 0;
     }
 

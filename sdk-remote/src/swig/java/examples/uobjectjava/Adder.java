@@ -6,58 +6,37 @@ import urbi.UValue;
 
 public class Adder extends UObject // must extends UObject
 {
+    /// Register your UObject (so that urbi knows about it)
+    static { UStart(Adder.class); };
+
     /// Declare a variable v that will be accessible in Urbi
     private UVar v = new UVar ();
 
     /// Constructor
     public Adder (String s) {
     	super (s);
-
-    	try
-    	{
-	    UBindFunction (this, "init");
-    	}
-    	catch (Exception e)
-    	{
-	    System.out.println (e);
-    	}
+	UBindFunction (this, "init");
     }
 
     /// The init function is the constructor in Urbi. Here it takes
     /// one argument that we use to initialise the 'v' variable.
     /// The init function must return an int of value 0
     /// if all went OK.
-    public int init (UValue v_init) {
-
-    	try
-    	{
-	    /// Bind the variable v to Urbi
-	    UBindVar (v, "v");
-
-	    /// Initialise our UVar v to the value given in the
-	    /// constructor
-	    v.setValue(v_init.doubleValue ());
-
-	    /// Bind the function add to Urbi
-	    UBindFunction (this, "add");
-
-    	}
-    	catch (Exception e)
-    	{
-	    System.out.println (e);
-    	}
-
+    public int init (double v_init) {
+	/// Bind the variable v to Urbi
+	UBindVar (v, "v");
+	/// Initialise our UVar v to the value given in the
+	/// constructor
+	v.setValue(v_init);
+	/// Bind the function add to Urbi
+	UBindFunction (this, "add");
 	return 0;
     }
 
-    /// The binded function can take no other type than UValue as
-    /// parameters.
-    public double add (UValue rhs) {
-    	/// Convert the UValue to a double
-    	double drhs = rhs.doubleValue ();
+    public double add (double rhs) {
     	/// Return the value of our UVar v (converted to double)
     	/// plus the value of the argument of the function.
-    	return v.doubleValue () + drhs;
+    	return v.doubleValue () + rhs;
     }
 }
 
@@ -69,39 +48,30 @@ public class Adder extends UObject // must extends UObject
 
 public class Adder extends UObject // must extends UObject
 {
+    /// Register your UObject (so that urbi knows about it)
+    static { UStart(Adder.class); };
+
     /// Declare a variable v that will be accessible in Urbi
     private UVar v = new UVar ();
 
     /// Constructor
     public Adder (String s) {
     	super (s);
-
-    	try
-    	{
-    		/// Bind the variable v to Urbi
-    		UBindVar (v, "v");
-
-    		/// Initialise our UVar v to some value
-    		/// (we choose 42 :)
-    	 	v.setValue(42);
-
-    		/// Bind the function add to Urbi
-    		UBindFunction (this, "add");
-    	}
-    	catch (Exception e)
-    	{
-    		System.out.println (e);
-    	}
+	/// Bind the variable v to Urbi
+	UBindVar (v, "v");
+	/// Initialise our UVar v to some value
+	/// (we choose 42 :)
+	v.setValue(42);
+	/// Bind the function add to Urbi
+	UBindFunction (this, "add");
     }
 
     /// The binded function can take no other type than UValue as
     /// parameters.
-    public double add (UValue rhs) {
-    	/// Convert the UValue to a double
-    	double drhs = rhs.doubleValue ();
+    public double add (double rhs) {
     	/// Return the value of our UVar v (converted to double)
     	/// plus the value of the argument of the function.
-    	return v.doubleValue () + drhs;
+    	return v.doubleValue () + rhs;
     }
 }
 

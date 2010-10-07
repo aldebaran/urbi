@@ -35,15 +35,17 @@ import urbi.*;
 ///
 ///
 /// First note that all Java UObject must extends
-/// 'liburbi.main.UObject'
+/// 'urbi.UObject'
 public class Feature1 extends UObject
 {
+    /// Register your UObject (so that urbi knows about it)
+    static { UStart(Feature1.class); };
+
     // -------------------- //
     // Feature1 constructor //
     // -------------------- //
 
-    public Feature1 (String str)
-        throws Exception {
+    public Feature1 (String str) {
         /// First call the super class constructor (mandatory)
         super (str);
         /// Bind the function 'init'.  In Urbi, the init function if
@@ -57,8 +59,7 @@ public class Feature1 extends UObject
     // Urbiscript constructor for this UObject //
     // --------------------------------------- //
 
-    public int init ()
-        throws Exception {
+    public int init () {
         myUrbiEcho("Feature1 constructor called !");
 
         // ----------------- //
@@ -70,16 +71,23 @@ public class Feature1 extends UObject
         UBindFunction (this, "testFunction1");
         /// NB: The functions you can bind must follow these rules:
         ///   1) They must have between 0 and 16 arguments.
-        ///   2) All their arguments must be of type
-        ///   liburbi.main.UValue
+        ///   2) Their arguments can be of type:
+	///     urbi.UValue, urbi.UVar, urbi.UList, urbi.UBinary,
+	///     urbi.UImage, urbi.USound, urbi.UDictionary,
+	///     java.lang.String, java.lang.Integer,
+	///     java.lang.Boolean, java.lang.Double, java.lang.Float,
+	///     java.lang.Long, java.lang.Short, java.lang.Character,
+	///     java.lang.Byte, int, boolean, byte, char, short, long,
+	///     float, double
         ///   3) Their return type must be one of the following type:
-        ///   void, boolean, byte, char, short, int, long, float,
-        ///   double, UValue
-
+	///     void, urbi.UValue, urbi.UVar, urbi.UList,
+	///     urbi.UBinary, urbi.UImage, urbi.USound,
+	///     urbi.UDictionary, java.lang.String, int, boolean,
+	///     byte, char, short, long, float, double
         /// You can specify the arguments if there is more than one
         /// function with the same name in your UObject:
-        String[] parameters = { "urbi.UValue",
-                                "urbi.UValue" };
+        String[] parameters = { "int",
+                                "double" };
         UBindFunction (this, "testFunction2", parameters);
 
         /// You can also bind functions that are in other class, and
@@ -87,7 +95,8 @@ public class Feature1 extends UObject
         //SomeClass c = new SomeClass ();
         //UBindFunction (c, "someFunction");
 
-        UBindFunction (this, "testFunction3");
+	/// You don't have to pass this if you bind functions of this object.
+        UBindFunction ("testFunction3");
 
         return 0;
     }
@@ -97,13 +106,13 @@ public class Feature1 extends UObject
     // ----------------------------------- //
 
 
-    public UValue testFunction1 (UValue i) {
+    public UValue testFunction1 (UList i) {
 
         myUrbiEcho ("testFunction (" + i + ") called.");
         return new UValue ("you can return any UValue !");
     }
 
-    public int testFunction2 (UValue i, UValue j) {
+    public int testFunction2 (int i, double j) {
 
         myUrbiEcho ("testFunction (" + i + ", " + j + ") called.");
         return 0;
