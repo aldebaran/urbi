@@ -74,6 +74,8 @@ liburbijava@LIBSFX@_la_SOURCES =		\
   src/callbacks-caller.hh			\
   src/callbacks-caller.cc			\
   src/call-macros.hh				\
+  src/converter.hh				\
+  src/converter.cc				\
   src/urbi_UObject.h				\
   src/urbi_UObject.cc				\
   src/urbi_Log.cc				\

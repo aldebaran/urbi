@@ -226,9 +226,8 @@ void registerNotify (JNIEnv *env,
 
     jstring jstr = (jstring) env->GetObjectArrayElement(types, 0);
     const char* type_ = env->GetStringUTFChars(jstr, 0);
-    ConversionFunc cf = f->typeNameToConversionFunc(type_);
-    f->arg_convert.push_back(cf);
-    f->notify_change_uvar_arg = (std::string(type_) == "class urbi.UVar");
+    Converter* c = Converter::instance(type_, true);
+    f->arg_convert.push_back(c);
     env->ReleaseStringUTFChars(jstr, type_);
   }
   urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
@@ -345,8 +344,8 @@ Java_urbi_UObject_registerFunction(JNIEnv *env,
   {
     jstring jstr = (jstring) env->GetObjectArrayElement(types, i);
     const char* type_ = env->GetStringUTFChars(jstr, 0);
-    ConversionFunc cf = f->typeNameToConversionFunc(type_);
-    f->arg_convert.push_back(cf);
+    Converter* c = Converter::instance(type_);
+    f->arg_convert.push_back(c);
     env->ReleaseStringUTFChars(jstr, type_);
   }
   urbi::UObject* uob = CallbacksCaller::getUObjectFromObject(obj, env);
@@ -383,12 +382,12 @@ Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
   /// set. If the are not and we can't set them, return.
   if (!CallbacksCaller::areJNIVariablesCached ()
       && !CallbacksCaller::cacheJNIVariables (env))
-    return (jstring) CallbacksCaller::getObjectFromString(env, "").l;
+    return StringConverter::staticConvert(env, "");
 
   MethodIdAndUrbiName miaun =
     getMethodIdAndUrbiName (env, obj, obj_name, method_name, method_signature);
   if (!miaun.java_mid)
-    return (jstring) CallbacksCaller::getObjectFromString(env, "").l;
+    return StringConverter::staticConvert(env, "");
 
   CallbacksCaller *f = new CallbacksCaller ();
   f->setObject (env->NewGlobalRef(obj));
@@ -412,5 +411,5 @@ Java_urbi_UObject_registerTimerFunction(JNIEnv *env,
   }
   env->ReleaseStringUTFChars(obj_name, obj_name_);
   env->ReleaseStringUTFChars(return_type, return_type_);
-  return (jstring) CallbacksCaller::getObjectFromString(env, res).l;
+  return StringConverter::staticConvert(env, res);
 }

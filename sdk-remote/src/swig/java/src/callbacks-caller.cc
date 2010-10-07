@@ -13,49 +13,17 @@
 #include "callbacks-caller.hh"
 
 
-jmethodID	CallbacksCaller::double_valueof_id = 0;
-jclass  	CallbacksCaller::double_cls = 0;
-jmethodID	CallbacksCaller::float_valueof_id = 0;
-jclass  	CallbacksCaller::float_cls = 0;
-jmethodID	CallbacksCaller::long_valueof_id = 0;
-jclass  	CallbacksCaller::long_cls = 0;
-jmethodID	CallbacksCaller::short_valueof_id = 0;
-jclass  	CallbacksCaller::short_cls = 0;
-jmethodID	CallbacksCaller::character_valueof_id = 0;
-jclass  	CallbacksCaller::character_cls = 0;
-jmethodID	CallbacksCaller::byte_valueof_id = 0;
-jclass  	CallbacksCaller::byte_cls = 0;
-jmethodID	CallbacksCaller::boolean_valueof_id = 0;
-jclass  	CallbacksCaller::boolean_cls = 0;
-jmethodID	CallbacksCaller::integer_valueof_id = 0;
-jclass  	CallbacksCaller::integer_cls = 0;
-jmethodID	CallbacksCaller::class_getname_id = 0;
-jclass  	CallbacksCaller::class_cls = 0;
-jmethodID	CallbacksCaller::string_ctor_id = 0;
-jclass  	CallbacksCaller::string_cls = 0;
-jmethodID	CallbacksCaller::ulist_ctor_id = 0;
 jfieldID	CallbacksCaller::ulist_swigptr_id = 0;
-jclass  	CallbacksCaller::ulist_cls = 0;
-jmethodID	CallbacksCaller::uimage_ctor_id = 0;
 jfieldID	CallbacksCaller::uimage_swigptr_id = 0;
-jclass  	CallbacksCaller::uimage_cls = 0;
-jmethodID	CallbacksCaller::usound_ctor_id = 0;
 jfieldID	CallbacksCaller::usound_swigptr_id = 0;
-jclass  	CallbacksCaller::usound_cls = 0;
-jmethodID	CallbacksCaller::udictionary_ctor_id = 0;
 jfieldID	CallbacksCaller::udictionary_swigptr_id = 0;
-jclass  	CallbacksCaller::udictionary_cls = 0;
-jmethodID	CallbacksCaller::ubinary_ctor_id = 0;
 jfieldID	CallbacksCaller::ubinary_swigptr_id = 0;
-jclass  	CallbacksCaller::ubinary_cls = 0;
-jmethodID	CallbacksCaller::uvalue_ctor_id = 0;
 jfieldID	CallbacksCaller::uvalue_swigptr_id = 0;
-jclass		CallbacksCaller::uvalue_cls = 0;
 jfieldID	CallbacksCaller::uvar_swigptr_id = 0;
-jmethodID	CallbacksCaller::uvar_ctor_id = 0;
-jclass		CallbacksCaller::uvar_cls = 0;
-jfieldID	CallbacksCaller::uobject_swigptr_id = 0;
 jclass		CallbacksCaller::uobject_cls = 0;
+jfieldID	CallbacksCaller::uobject_swigptr_id = 0;
+jmethodID CallbacksCaller::class_getname_id = 0;
+jclass  CallbacksCaller::class_cls = 0;
 bool		CallbacksCaller::jni_variables_cached_ = false;
 
 
@@ -81,12 +49,7 @@ CallbacksCaller::callNotifyChangeInt_1 (urbi::UVar& v)
 {
   if (!init_env ())
     return 0;
-  jvalue obj1;
-  if (notify_change_uvar_arg) {
-    obj1.l = getObjectFromUVar_(env_, v);
-  }
-  else
-    obj1 = arg_convert[0](env_, v.val());
+  jvalue obj1 = arg_convert[0]->convert(env_, v);
   jvalue arg[] = { obj1 };
   int ret = env_->CallIntMethodA(obj, mid, arg);
   testForException();
@@ -107,15 +70,11 @@ CallbacksCaller::callNotifyChangeVoid_1 (urbi::UVar& v)
 {
   if (!init_env ())
     return;
-  jvalue obj1;
-  if (notify_change_uvar_arg) {
-    obj1.l = getObjectFromUVar_(env_, v);
-  }
-  else
-    obj1 = arg_convert[0](env_, v.val());
+  jvalue obj1 = arg_convert[0]->convert(env_, v);
   jvalue arg[] = { obj1 };
   env_->CallVoidMethodA(obj, mid, arg);
   testForException();
+
 }
 
 
@@ -162,38 +121,11 @@ CallbacksCaller::areJNIVariablesCached ()
   return jni_variables_cached_;
 }
 
-static void condDeleteGlobalRef(JNIEnv* env, jclass cls)
-{
-  if (cls)
-    env->DeleteGlobalRef (cls);
-}
-
-void
-CallbacksCaller::deleteClassRefs(JNIEnv* env)
-{
-  condDeleteGlobalRef(env, uvalue_cls);
-  condDeleteGlobalRef(env, uvar_cls);
-  condDeleteGlobalRef(env, uobject_cls);
-  condDeleteGlobalRef(env, string_cls);
-  condDeleteGlobalRef(env, class_cls);
-  condDeleteGlobalRef(env, integer_cls);
-  condDeleteGlobalRef(env, boolean_cls);
-  condDeleteGlobalRef(env, byte_cls);
-  condDeleteGlobalRef(env, character_cls);
-  condDeleteGlobalRef(env, short_cls);
-  condDeleteGlobalRef(env, long_cls);
-  condDeleteGlobalRef(env, float_cls);
-  condDeleteGlobalRef(env, double_cls);
-  condDeleteGlobalRef(env, ulist_cls);
-  condDeleteGlobalRef(env, ubinary_cls);
-  condDeleteGlobalRef(env, usound_cls);
-  condDeleteGlobalRef(env, uimage_cls);
-  condDeleteGlobalRef(env, udictionary_cls);
-}
-
 bool
 CallbacksCaller::cacheJNIVariables (JNIEnv* env)
 {
+
+  INIT_CONVERTERS_STATIC_ATTRS(env);
 
 #define CLEAN_AND_THROW(msg)			\
   do						\
@@ -204,87 +136,32 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   } while (0)
 
 
-  /// Get the jclass for UValue
-  if (!(uvalue_cls = getGlobalRef (env, "urbi/UValue")))
-    CLEAN_AND_THROW("Can't find UValue class");
-
-  /// Get UValue (int, bool) Constructor id
-  if (!(uvalue_ctor_id = env->GetMethodID(uvalue_cls, "<init>", "(JZ)V")))
-    CLEAN_AND_THROW("Can't find UValue constructor");
-
   /// Get UValue swigCPtr attribute id
-  if (!(uvalue_swigptr_id = env->GetFieldID(uvalue_cls, "swigCPtr", "J")))
+  if (!(uvalue_swigptr_id = env->GetFieldID(UValueConverter::cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find UValue swigCPtr");
 
-  /// Get the jclass for Ulist
-  if (!(ulist_cls = getGlobalRef (env, "urbi/UList")))
-    CLEAN_AND_THROW("Can't find UList class");
-
-  /// Get Ulist (int, bool) Constructor id
-  if (!(ulist_ctor_id = env->GetMethodID(ulist_cls, "<init>", "(JZ)V")))
-    CLEAN_AND_THROW("Can't find UList constructor");
-
   /// Get UList swigCPtr attribute id
-  if (!(ulist_swigptr_id = env->GetFieldID(ulist_cls, "swigCPtr", "J")))
+  if (!(ulist_swigptr_id = env->GetFieldID(UListConverter::cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find UList swigCPtr");
 
-  /// Get the jclass for Uimage
-  if (!(uimage_cls = getGlobalRef (env, "urbi/UImage")))
-    CLEAN_AND_THROW("Can't find UImage class");
-
-  /// Get Uimage (int, bool) Constructor id
-  if (!(uimage_ctor_id = env->GetMethodID(uimage_cls, "<init>", "(JZ)V")))
-    CLEAN_AND_THROW("Can't find UImage constructor");
-
   /// Get UImage swigCPtr attribute id
-  if (!(uimage_swigptr_id = env->GetFieldID(uimage_cls, "swigCPtr", "J")))
+  if (!(uimage_swigptr_id = env->GetFieldID(UImageConverter::cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find UImage swigCPtr");
 
-  /// Get the jclass for Ubinary
-  if (!(ubinary_cls = getGlobalRef (env, "urbi/UBinary")))
-    CLEAN_AND_THROW("Can't find UBinary class");
-
-  /// Get Ubinary (int, bool) Constructor id
-  if (!(ubinary_ctor_id = env->GetMethodID(ubinary_cls, "<init>", "(JZ)V")))
-    CLEAN_AND_THROW("Can't find UBinary constructor");
-
   /// Get UBinary swigCPtr attribute id
-  if (!(ubinary_swigptr_id = env->GetFieldID(ubinary_cls, "swigCPtr", "J")))
+  if (!(ubinary_swigptr_id = env->GetFieldID(UBinaryConverter::cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find UBinary swigCPtr");
 
-  /// Get the jclass for Usound
-  if (!(usound_cls = getGlobalRef (env, "urbi/USound")))
-    CLEAN_AND_THROW("Can't find USound class");
-
-  /// Get Usound (int, bool) Constructor id
-  if (!(usound_ctor_id = env->GetMethodID(usound_cls, "<init>", "(JZ)V")))
-    CLEAN_AND_THROW("Can't find USound constructor");
-
   /// Get Usound swigCPtr attribute id
-  if (!(usound_swigptr_id = env->GetFieldID(usound_cls, "swigCPtr", "J")))
+  if (!(usound_swigptr_id = env->GetFieldID(USoundConverter::cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find USound swigCPtr");
 
-  /// Get the jclass for UDictionary
-  if (!(udictionary_cls = getGlobalRef (env, "urbi/UDictionary")))
-    CLEAN_AND_THROW("Can't find UDictionary class");
-
-  /// Get UDictionary (int, bool) Constructor id
-  if (!(udictionary_ctor_id = env->GetMethodID(udictionary_cls, "<init>", "(JZ)V")))
-    CLEAN_AND_THROW("Can't find UDictionary constructor");
-
   /// Get Udictionary swigCPtr attribute id
-  if (!(udictionary_swigptr_id = env->GetFieldID(udictionary_cls, "swigCPtr", "J")))
+  if (!(udictionary_swigptr_id = env->GetFieldID(UDictionaryConverter::cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find UDictionary swigCPtr");
 
-  /// Get the jclass for UVar
-  if (!(uvar_cls = getGlobalRef (env, "urbi/UVar")))
-    CLEAN_AND_THROW("Can't find UVar class");
-
-  if (!(uvar_ctor_id = env->GetMethodID(uvar_cls, "<init>", "(JZ)V")))
-    CLEAN_AND_THROW("Can't find UVar constructor");
-
   /// Get UValue swigCPtr attribute id
-  if (!(uvar_swigptr_id = env->GetFieldID(uvar_cls, "swigCPtr", "J")))
+  if (!(uvar_swigptr_id = env->GetFieldID(UVarConverter::cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find UVar swigCPtr");
 
   /// Get the jclass for UObject
@@ -295,14 +172,6 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   if (!(uobject_swigptr_id = env->GetFieldID(uobject_cls, "swigCPtr", "J")))
     CLEAN_AND_THROW("Can't find UObject swigCPtr");
 
-  /// Get the jclass for String
-  if (!(string_cls = getGlobalRef (env, "java/lang/String")))
-    CLEAN_AND_THROW("Can't find String class");
-
-  /// Get String (char) Constructor id
-  if (!(string_ctor_id = env->GetMethodID(string_cls, "<init>", "([C)V")))
-    CLEAN_AND_THROW("Can't find String constructor");
-
   /// Get the jclass for Class
   if (!(class_cls = getGlobalRef (env, "java/lang/Class")))
     CLEAN_AND_THROW("Can't find Class class");
@@ -310,70 +179,6 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   /// Get String (char) Constructor id
   if (!(class_getname_id = env->GetMethodID(class_cls, "getName", "()Ljava/lang/String;")))
     CLEAN_AND_THROW("Can't find Class getName function");
-
-  /// Get the jclass for Integer
-  if (!(integer_cls = getGlobalRef (env, "java/lang/Integer")))
-    CLEAN_AND_THROW("Can't find Integer class");
-
-  /// Get Integer::valueOf (int) method id
-  if (!(integer_valueof_id = env->GetStaticMethodID(integer_cls, "valueOf", "(I)Ljava/lang/Integer;")))
-    CLEAN_AND_THROW("Can't find Integer valueOf function");
-
-  /// Get the jclass for Boolean
-  if (!(boolean_cls = getGlobalRef (env, "java/lang/Boolean")))
-    CLEAN_AND_THROW("Can't find Boolean class");
-
-  /// Get Boolean::valueOf (boolean) method id
-  if (!(boolean_valueof_id = env->GetStaticMethodID(boolean_cls, "valueOf", "(Z)Ljava/lang/Boolean;")))
-    CLEAN_AND_THROW("Can't find Boolean valueOf function");
-
-  /// Get the jclass for Byte
-  if (!(byte_cls = getGlobalRef (env, "java/lang/Byte")))
-    CLEAN_AND_THROW("Can't find Byte class");
-
-  /// Get Byte::valueOf (byte) method id
-  if (!(byte_valueof_id = env->GetStaticMethodID(byte_cls, "valueOf", "(B)Ljava/lang/Byte;")))
-    CLEAN_AND_THROW("Can't find Byte valueOf function");
-
-  /// Get the jclass for Character
-  if (!(character_cls = getGlobalRef (env, "java/lang/Character")))
-    CLEAN_AND_THROW("Can't find Character class");
-
-  /// Get Character::valueOf (character) method id
-  if (!(character_valueof_id = env->GetStaticMethodID(character_cls, "valueOf", "(C)Ljava/lang/Character;")))
-    CLEAN_AND_THROW("Can't find Character valueOf function");
-
-  /// Get the jclass for Short
-  if (!(short_cls = getGlobalRef (env, "java/lang/Short")))
-    CLEAN_AND_THROW("Can't find Short class");
-
-  /// Get Short::valueOf (short) method id
-  if (!(short_valueof_id = env->GetStaticMethodID(short_cls, "valueOf", "(S)Ljava/lang/Short;")))
-    CLEAN_AND_THROW("Can't find Short valueOf function");
-
-  /// Get the jclass for Long
-  if (!(long_cls = getGlobalRef (env, "java/lang/Long")))
-    CLEAN_AND_THROW("Can't find Long class");
-
-  /// Get Long::valueOf (long) method id
-  if (!(long_valueof_id = env->GetStaticMethodID(long_cls, "valueOf", "(J)Ljava/lang/Long;")))
-    CLEAN_AND_THROW("Can't find Long valueOf function");
-
-  /// Get the jclass for Float
-  if (!(float_cls = getGlobalRef (env, "java/lang/Float")))
-    CLEAN_AND_THROW("Can't find Float class");
-
-  /// Get Float::valueOf (float) method id
-  if (!(float_valueof_id = env->GetStaticMethodID(float_cls, "valueOf", "(F)Ljava/lang/Float;")))
-    CLEAN_AND_THROW("Can't find Float valueOf function");
-
-  /// Get the jclass for Double
-  if (!(double_cls = getGlobalRef (env, "java/lang/Double")))
-    CLEAN_AND_THROW("Can't find Double class");
-
-  /// Get Double::valueOf (double) method id
-  if (!(double_valueof_id = env->GetStaticMethodID(double_cls, "valueOf", "(D)Ljava/lang/Double;")))
-    CLEAN_AND_THROW("Can't find Double valueOf function");
 
 #undef CLEAN_AND_THROW
 
@@ -531,238 +336,6 @@ CallbacksCaller::getStringFromJString (jstring obj)
   return res;
 }
 
-ConversionFunc
-CallbacksCaller::typeNameToConversionFunc(const std::string& type_name)
-{
-  ConversionFunc f;
-  if (type_name.length() > 10)
-  {
-    if (type_name[6] == 'u')
-    {
-      if (type_name == "class urbi.UValue")
-	f = boost::bind(CallbacksCaller::getObjectFromUValue, _1, _2);
-      else if (type_name == "class urbi.UVar")
-	f = boost::bind(CallbacksCaller::getObjectFromUVar, _1, _2);
-      else if (type_name == "class urbi.UList")
-	f = boost::bind(CallbacksCaller::getObjectFromUList, _1, _2);
-      else if (type_name == "class urbi.UBinary")
-	f = boost::bind(CallbacksCaller::getObjectFromUBinary, _1, _2);
-      else if (type_name == "class urbi.UImage")
-	f = boost::bind(CallbacksCaller::getObjectFromUImage, _1, _2);
-      else if (type_name == "class urbi.USound")
-	f = boost::bind(CallbacksCaller::getObjectFromUSound, _1, _2);
-      else if (type_name == "class urbi.UDictionary")
-	f = boost::bind(CallbacksCaller::getObjectFromUDictionary, _1, _2);
-      else
-	throw std::runtime_error(libport::format("type %s not supported", type_name));
-    }
-    else
-    {
-      if (type_name == "class java.lang.String")
-	f = boost::bind(CallbacksCaller::getObjectFromString, _1, _2);
-      else if (type_name == "class java.lang.Integer")
-	f = boost::bind(CallbacksCaller::getObjectFromInteger, _1, _2);
-      else if (type_name == "class java.lang.Boolean")
-	f = boost::bind(CallbacksCaller::getObjectFromBoolean, _1, _2);
-      else if (type_name == "class java.lang.Double")
-	f = boost::bind(CallbacksCaller::getObjectFromDouble, _1, _2);
-      else if (type_name == "class java.lang.Float")
-	f = boost::bind(CallbacksCaller::getObjectFromFloat, _1, _2);
-      else if (type_name == "class java.lang.Long")
-	f = boost::bind(CallbacksCaller::getObjectFromLong, _1, _2);
-      else if (type_name == "class java.lang.Short")
-	f = boost::bind(CallbacksCaller::getObjectFromShort, _1, _2);
-      else if (type_name == "class java.lang.Character")
-	f = boost::bind(CallbacksCaller::getObjectFromCharacter, _1, _2);
-      else if (type_name == "class java.lang.Byte")
-	f = boost::bind(CallbacksCaller::getObjectFromByte, _1, _2);
-      else
-	throw std::runtime_error(libport::format("type %s not supported", type_name));
-    }
-  }
-  else
-  {
-    if (type_name == "int")
-      f = boost::bind(CallbacksCaller::intFromUValue, _1, _2);
-    else if (type_name == "boolean")
-      f = boost::bind(CallbacksCaller::boolFromUValue, _1, _2);
-    else if (type_name == "byte")
-      f = boost::bind(CallbacksCaller::byteFromUValue, _1, _2);
-    else if (type_name == "char")
-      f = boost::bind(CallbacksCaller::charFromUValue, _1, _2);
-    else if (type_name == "short")
-      f = boost::bind(CallbacksCaller::shortFromUValue, _1, _2);
-    else if (type_name == "long")
-      f = boost::bind(CallbacksCaller::longFromUValue, _1, _2);
-    else if (type_name == "float")
-      f = boost::bind(CallbacksCaller::floatFromUValue, _1, _2);
-    else if (type_name == "double")
-      f = boost::bind(CallbacksCaller::doubleFromUValue, _1, _2);
-    else
-      throw std::runtime_error(libport::format("type %s not supported", type_name));
-  }
-  return f;
-}
-
-#define TEST_ALLOCATION(x, name)				\
-  if (!x) std::cerr << "Cannot allocate a new object of type "	\
-		    << name << std::endl;
-
-jvalue
-CallbacksCaller::getObjectFromDouble (JNIEnv* env_, double val)
-{
-  jvalue res;
-  res.l = env_->CallStaticObjectMethod(double_cls, double_valueof_id, (jdouble) val);
-  TEST_ALLOCATION(res.l, "java.lang.Double");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromFloat (JNIEnv* env_, ufloat val)
-{
-  jvalue res;
-  res.l = env_->CallStaticObjectMethod(float_cls, float_valueof_id, (jfloat) val);
-  TEST_ALLOCATION(res.l, "java.lang.Float");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromLong (JNIEnv* env_, long long val)
-{
-  jvalue res;
-  res.l = env_->CallStaticObjectMethod(long_cls, long_valueof_id, (jlong) val);
-  TEST_ALLOCATION(res.l, "java.lang.Long");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromShort (JNIEnv* env_, int val)
-{
-  jvalue res;
-  res.l = env_->CallStaticObjectMethod(short_cls, short_valueof_id, (jshort) val);
-  TEST_ALLOCATION(res.l, "java.lang.Short");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromCharacter (JNIEnv* env_, int val)
-{
-  jvalue res;
-  res.l = env_->CallStaticObjectMethod(character_cls, character_valueof_id, (jchar) val);
-  TEST_ALLOCATION(res.l, "java.lang.Character");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromByte (JNIEnv* env_, int val)
-{
-  jvalue res;
-  res.l = env_->CallStaticObjectMethod(byte_cls, byte_valueof_id, (jbyte) val);
-  TEST_ALLOCATION(res.l, "java.lang.Byte");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromBoolean (JNIEnv* env_, bool val)
-{
-  jvalue res;
-  res.l = env_->CallStaticObjectMethod(boolean_cls, boolean_valueof_id, (jboolean) val);
-  TEST_ALLOCATION(res.l, "java.lang.Boolean");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromInteger (JNIEnv* env_, long val)
-{
-  jvalue res;
-  res.l = env_->CallStaticObjectMethod(integer_cls, integer_valueof_id, val);
-  TEST_ALLOCATION(res.l, "java.lang.Integer");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromString (JNIEnv* env_, const std::string& val)
-{
-  jvalue res;
-  res.l = env_->NewStringUTF(val.c_str());
-  TEST_ALLOCATION(res.l, "java.lang.String");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromUList (JNIEnv* env_, const urbi::UList& v)
-{
-  jvalue res;
-  res.l = env_->NewObject(ulist_cls, ulist_ctor_id, (jlong) new urbi::UList(v), true);
-  TEST_ALLOCATION(res.l, "urbi.UList");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromUBinary (JNIEnv* env_, const urbi::UBinary& v)
-{
-  jvalue res;
-  res.l = env_->NewObject(ubinary_cls, ubinary_ctor_id, (jlong) new urbi::UBinary(v), false);
-  TEST_ALLOCATION(res.l, "urbi.UBinary");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromUImage (JNIEnv* env_, const urbi::UImage& v)
-{
-  jvalue res;
-  res.l = env_->NewObject(uimage_cls, uimage_ctor_id, (jlong) new urbi::UImage(v), false);
-  TEST_ALLOCATION(res.l, "urbi.UImage");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromUSound (JNIEnv* env_, const urbi::USound& v)
-{
-  jvalue res;
-  res.l = env_->NewObject(usound_cls, usound_ctor_id, (jlong) new urbi::USound(v), false);
-  TEST_ALLOCATION(res.l, "urbi.USound");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromUDictionary (JNIEnv* env_, const urbi::UDictionary& v)
-{
-  jvalue res;
-  res.l = env_->NewObject(udictionary_cls, udictionary_ctor_id, (jlong) new urbi::UDictionary(v), false);
-  TEST_ALLOCATION(res.l, "urbi.UDictionary");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromUValue (JNIEnv* env_, const urbi::UValue& v)
-{
-  jvalue res;
-  res.l = env_->NewObject(uvalue_cls, uvalue_ctor_id, (jlong) new urbi::UValue(v), false);
-  TEST_ALLOCATION(res.l, "urbi.UValue");
-  return res;
-}
-
-jobject
-CallbacksCaller::getObjectFromUVar_ (JNIEnv* env_, urbi::UVar& v)
-{
-  jobject res  = env_->NewObject(uvar_cls, uvar_ctor_id, (jlong) &v, false);
-  TEST_ALLOCATION(res, "urbi.UVar");
-  return res;
-}
-
-jvalue
-CallbacksCaller::getObjectFromUVar (JNIEnv* env_, urbi::UValue& v)
-{
-  jvalue res;
-  urbi::UVar var = urbi::uvar_uvalue_cast<urbi::UVar&>(v);
-  res.l = getObjectFromUVar_ (env_, *new urbi::UVar(var));
-  //res.l = env_->NewObject(uvar_cls, uvar_ctor_id, (jlong) new urbi::UVar(var), false);
-  //TEST_ALLOCATION(res.l, "urbi.UVar");
-  return res;
-}
-
-#undef TEST_ALLOCATION
 
 void
 CallbacksCaller::testForException()
