@@ -305,7 +305,7 @@ namespace urbi
     {
       // CoW
       if (safe_slot_locate(k).first != this)
-        slot_set(k, slot_get(k));
+        slot_set(k, &slot_get(k));
       Slot& slot = slot_get(k);
       if (slot.property_set(p, value))
         if (slot->slot_has(SYMBOL(newPropertyHook)))
