@@ -99,8 +99,6 @@ namespace urbi
 
     virtual unsigned int getCurrentTime() const;
 
-    UCallbackAction pong(const UMessage& msg);
-
     /// Activate KeepAlive functionality.
     /// \param pingInterval  is in milliseconds.
     /// \param pongTimeout   is in milliseconds.

@@ -59,8 +59,6 @@ namespace urbi
     std::string name;
     /// Set to true to have the UObjects use a random unique name.
     bool local;
-    /// Return the full name to pass to the UObject constructor.
-    std::string getFullName(const std::string& name) const;
 
     /// List of starters.
     typedef std::list<baseURBIStarter*> list_type;
