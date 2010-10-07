@@ -38,7 +38,7 @@ namespace urbi
       void block();
       void block(rObject payload);
       void init();
-      void init(const libport::Symbol& name);
+      void init(libport::Symbol name);
       void freeze();
       libport::Symbol name() const;
       void name_set(libport::Symbol s);

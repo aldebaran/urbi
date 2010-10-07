@@ -91,7 +91,7 @@ namespace urbi
     }
 
     void
-    Tag::init(const libport::Symbol& name)
+    Tag::init(libport::Symbol name)
     {
       name_set(name);
     }

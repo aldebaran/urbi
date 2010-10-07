@@ -348,29 +348,35 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Tag)
       : value_(new sched::Tag(libport::Symbol::make_empty()))
     {
-      bind(SYMBOL(init),  static_cast<void (Tag::*)(                      )>(&Tag::init ));
-      bind(SYMBOL(init),  static_cast<void (Tag::*)(const libport::Symbol&)>(&Tag::init ));
-      bind(SYMBOL(stop),  static_cast<void (Tag::*)(                      )>(&Tag::stop ));
-      bind(SYMBOL(stop),  static_cast<void (Tag::*)(rObject               )>(&Tag::stop ));
-      bind(SYMBOL(block), static_cast<void (Tag::*)(                      )>(&Tag::block));
-      bind(SYMBOL(block), static_cast<void (Tag::*)(rObject               )>(&Tag::block));
+#define DECLARE(Name, Cast)                                             \
+      bind(SYMBOL(Name), static_cast<void (Tag::*)(Cast)>(&Tag::Name)); \
+
+      DECLARE(init,                 );
+      DECLARE(init,  libport::Symbol);
+      DECLARE(stop,                 );
+      DECLARE(stop,  rObject        );
+      DECLARE(block,                );
+      DECLARE(block, rObject        );
+
+#undef DECLARE
+
       bind_variadic(SYMBOL(newFlowControl), &Tag::new_flow_control);
 
 #define DECLARE(Name, Function)                 \
       bind(SYMBOL(Name), &Tag::Function)        \
 
-      DECLARE(blocked, blocked);
-      DECLARE(enter, enter);
-      DECLARE(freeze, freeze);
-      DECLARE(frozen, frozen);
-      DECLARE(getParent, parent_get);
-      DECLARE(leave, leave);
-      DECLARE(name, name);
-      DECLARE(priority, priority);
-      DECLARE(scope, scope);
+      DECLARE(blocked,     blocked);
+      DECLARE(enter,       enter);
+      DECLARE(freeze,      freeze);
+      DECLARE(frozen,      frozen);
+      DECLARE(getParent,   parent_get);
+      DECLARE(leave,       leave);
+      DECLARE(name,        name);
+      DECLARE(priority,    priority);
+      DECLARE(scope,       scope);
       DECLARE(setPriority, priority_set);
-      DECLARE(unblock, unblock);
-      DECLARE(unfreeze, unfreeze);
+      DECLARE(unblock,     unblock);
+      DECLARE(unfreeze,    unfreeze);
 
 #undef DECLARE
     }
@@ -383,11 +389,16 @@ namespace urbi
       : libport::Socket(*object::Socket::get_default_io_service().get())
       , io_service_(object::Socket::get_default_io_service())
     {
-      bind(SYMBOL(getIoService), &Server::getIoService);
-      bind(SYMBOL(host),    &Server::host);
-      bind(SYMBOL(listen),  &Server::listen);
-      bind(SYMBOL(port),    &Server::port);
-      bind(SYMBOL(sockets), &Server::sockets);
+#define DECLARE(Name, Cxx)             \
+      bind(SYMBOL(Name), &Server::Cxx) \
+
+      DECLARE(getIoService, getIoService);
+      DECLARE(host,         host);
+      DECLARE(listen,       listen);
+      DECLARE(port,         port);
+      DECLARE(sockets,      sockets);
+
+#undef DECLARE
     }
 
     /*--------.
@@ -412,8 +423,12 @@ namespace urbi
       bind(SYMBOL(Name), &Socket::Name)         \
 
       // Uncomment the line below when overloading will work.
-      //bind(SYMBOL(connectSerial), (void (Socket::*)(const std::string&, unsigned int))&Socket::connectSerial);
-      bind(SYMBOL(connectSerial), (void (Socket::*)(const std::string&, unsigned int, bool))&Socket::connectSerial);
+      //bind(SYMBOL(connectSerial),
+      //     (void (Socket::*)(const std::string&, unsigned int))
+      //       &Socket::connectSerial);
+      bind(SYMBOL(connectSerial),
+           (void (Socket::*)(const std::string&, unsigned int, bool))
+             &Socket::connectSerial);
       DECLARE(disconnect);
       DECLARE(host);
       DECLARE(init);
@@ -438,10 +453,15 @@ namespace urbi
 
     URBI_CXX_OBJECT_REGISTER(Semaphore)
     {
-      bind(SYMBOL(new),             &Semaphore::_new);
-      bind(SYMBOL(criticalSection), &Semaphore::criticalSection);
-      bind(SYMBOL(acquire),         &Semaphore::acquire);
-      bind(SYMBOL(release),         &Semaphore::release);
+#define DECLARE(Name, Cxx)                \
+      bind(SYMBOL(Name), &Semaphore::Cxx) \
+
+      DECLARE(new,             _new);
+      DECLARE(criticalSection, criticalSection);
+      DECLARE(acquire,         acquire);
+      DECLARE(release,         release);
+
+#undef DECLARE
     }
 
     /*------.
@@ -458,8 +478,14 @@ namespace urbi
       bind(SYMBOL(EQ_EQ),
            static_cast<bool (self_type::*)(const rObject&) const>
            (&self_type::operator==));
-      bind(SYMBOL(asString), &Code::as_string);
-      bind(SYMBOL(bodyString), &Code::body_string);
+
+#define DECLARE(Name, Cxx)           \
+      bind(SYMBOL(Name), &Code::Cxx) \
+
+      DECLARE(asString,   as_string);
+      DECLARE(bodyString, body_string);
+
+#undef DECLARE
     }
 
     /*------.
@@ -482,16 +508,23 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER(UVar)
-      : Primitive(boost::function1<rObject, objects_type>(boost::bind(&UVar::accessor, this, _1)))
+      : Primitive(boost::function1<rObject, objects_type>
+                    (boost::bind(&UVar::accessor, this, _1)))
       , looping_(false)
       , inAccess_(false)
     {
-      bind(SYMBOL(writeOwned), &UVar::writeOwned);
-      bind(SYMBOL(update_timed), &UVar::update_timed);
-      bind(SYMBOL(loopCheck), &UVar::loopCheck);
-      bind(SYMBOL(accessor), &UVar::accessor);
-      bind(SYMBOL(update_), &UVar::update_);
-      bind(SYMBOL(update_timed_), &UVar::update_timed_);
+#define DECLARE(Name, Cxx)           \
+      bind(SYMBOL(Name), &UVar::Cxx) \
+
+      DECLARE(writeOwned,    writeOwned);
+      DECLARE(update_timed,  update_timed);
+      DECLARE(loopCheck,     loopCheck);
+      DECLARE(accessor,      accessor);
+      DECLARE(update_,       update_);
+      DECLARE(update_timed_, update_timed_);
+
+#undef DECLARE
+
       setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
     }
 
@@ -503,17 +536,30 @@ namespace urbi
       : pos_()
     {
       bind(SYMBOL(init), static_cast<void (Position::*)()>(&Position::init));
-      bind(SYMBOL(init), static_cast<void (Position::*)(const value_type& pos)>(&Position::init));
-      bind(SYMBOL(init), static_cast<void (Position::*)(unsigned from, unsigned to)>(&Position::init));
-      bind(SYMBOL(init), static_cast<void (Position::*)(rObject file, unsigned from, unsigned to)>(&Position::init));
+      bind(SYMBOL(init),
+           static_cast<void (Position::*)(const value_type& pos)>
+             (&Position::init));
+      bind(SYMBOL(init),
+           static_cast<void (Position::*)(unsigned from, unsigned to)>
+             (&Position::init));
+      bind(SYMBOL(init),
+           static_cast
+             <void (Position::*)(rObject file, unsigned from, unsigned to)>
+               (&Position::init));
       typedef bool (Position::*comparison_type)(rPosition rhs) const;
       bind(SYMBOL(EQ_EQ), (comparison_type) &Position::operator ==);
       bind(SYMBOL(LT), (comparison_type) &Position::operator <);
-      bind(SYMBOL(MINUS), &Position::operator -);
-      bind(SYMBOL(PLUS), &Position::operator +);
-      bind(SYMBOL(lines), &Position::lines);
-      bind(SYMBOL(columns), &Position::columns);
-      bind(SYMBOL(asString), &Position::as_string);
+
+#define DECLARE(Name, Cxx)               \
+      bind(SYMBOL(Name), &Position::Cxx) \
+
+      DECLARE(MINUS,    operator -);
+      DECLARE(PLUS,     operator +);
+      DECLARE(lines,    lines);
+      DECLARE(columns,  columns);
+      DECLARE(asString, as_string);
+
+#undef DECLARE
 
 #define DECLARE(Name)                                     \
       bind(SYMBOL(Name), &Position::Name ##_get);         \
@@ -543,17 +589,30 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Location)
       : loc_()
     {
+      bind(SYMBOL(init),
+           static_cast<void (Location::*)()>(&Location::init));
+      bind(SYMBOL(init),
+           static_cast<void (Location::*)(const Position::value_type&)>
+             (&Location::init));
+      bind(SYMBOL(init),
+           static_cast<void (Location::*)(const Position::value_type&,
+                                          const Position::value_type&)>
+             (&Location::init));
+      bind(SYMBOL(EQ_EQ),
+           (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
+
       // For some reason, cl.exe refuses "&Location::value_type::begin"
       // with error: function cannot access 'yy::location::begin'
       bind(SYMBOL(begin), &yy::location::begin);
       bind(SYMBOL(end),   &yy::location::end);
-      bind(SYMBOL(init),  static_cast<void (Location::*)()>(&Location::init));
-      bind(SYMBOL(init),  static_cast<void (Location::*)(const Position::value_type&)>(&Location::init));
-      bind(SYMBOL(init),  static_cast<void (Location::*)(const Position::value_type&, const Position::value_type&)>(&Location::init));
-      bind(SYMBOL(EQ_EQ),
-           (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
-      bind(SYMBOL(asString), &Location::as_string);
-      bind(SYMBOL(isSystemLocation), &Location::is_system_location);
+
+#define DECLARE(Name, Cxx)                             \
+      bind(SYMBOL( Name ), &Location::Cxx) \
+
+      DECLARE(asString,         as_string);
+      DECLARE(isSystemLocation, is_system_location);
+
+#undef DECLARE
     }
 
     /*-------.
@@ -566,7 +625,8 @@ namespace urbi
       bind(SYMBOL(send),
            static_cast<void (Lobby::*)(const std::string&)>(&Lobby::send));
       bind(SYMBOL(send),
-           static_cast<void (Lobby::*)(const std::string&, const std::string&)>(&Lobby::send));
+           static_cast<void (Lobby::*)(const std::string&, const std::string&)>
+             (&Lobby::send));
 
 #define DECLARE(Name)                  \
       bind(SYMBOL(Name), &Lobby::Name) \
@@ -590,8 +650,11 @@ namespace urbi
 
     URBI_CXX_OBJECT_REGISTER(List)
     {
-      bind(SYMBOL(sort), static_cast<List::value_type (List::*)()>(&List::sort));
-      bind(SYMBOL(sort), static_cast<List::value_type (List::*)(rObject)>(&List::sort));
+      bind(SYMBOL(sort),
+           static_cast<List::value_type (List::*)()>(&List::sort));
+      bind(SYMBOL(sort),
+           static_cast<List::value_type (List::*)(rObject)>
+             (&List::sort));
 
 #define DECLARE(Name, Function)                 \
       bind(SYMBOL(Name), &List::Function)       \
@@ -631,18 +694,25 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Event)
     {
       typedef void (Event::*emit_type)(const objects_type& args);
-      bind_variadic<void, Event>(SYMBOL(emit), static_cast<emit_type>(&Event::emit));
+      bind_variadic<void, Event>(SYMBOL(emit),
+                                 static_cast<emit_type>(&Event::emit));
       bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
       bind(SYMBOL(localTrigger), &Event::localTrigger);
       typedef
       void (Event::*on_event_type)
       (rExecutable guard, rExecutable enter, rExecutable leave);
       bind(SYMBOL(onEvent), static_cast<on_event_type>(&Event::onEvent));
-      bind(SYMBOL(stop), &Event::stop);
       bind_variadic<void, Event>(SYMBOL(syncEmit), &Event::syncEmit);
       bind_variadic<rEvent, Event>(SYMBOL(syncTrigger), &Event::syncTrigger);
       bind_variadic<rEvent, Event>(SYMBOL(trigger), &Event::trigger);
-      bind(SYMBOL(waituntil), &Event::waituntil);
+
+#define DECLARE(Name, Cxx)            \
+      bind(SYMBOL(Name), &Event::Cxx) \
+
+      DECLARE(stop,      stop);
+      DECLARE(waituntil, waituntil);
+
+#undef DECLARE
     }
 
     /*-----.
@@ -651,15 +721,20 @@ namespace urbi
 
     URBI_CXX_OBJECT_REGISTER(Job)
     {
-      bind(SYMBOL(DOLLAR_backtrace), &Job::backtrace);
-      bind(SYMBOL(name), &Job::name);
-      bind(SYMBOL(setSideEffectFree), &Job::setSideEffectFree);
-      bind(SYMBOL(status), &Job::status);
-      bind(SYMBOL(tags), &Job::tags);
-      bind(SYMBOL(terminate), &Job::terminate);
-      bind(SYMBOL(timeShift), &Job::timeShift);
-      bind(SYMBOL(waitForChanges), &Job::waitForChanges);
-      bind(SYMBOL(waitForTermination), &Job::waitForTermination);
+#define DECLARE(Name, Cxx)          \
+      bind(SYMBOL(Name), &Job::Cxx) \
+
+      DECLARE(DOLLAR_backtrace,   backtrace);
+      DECLARE(name,               name);
+      DECLARE(setSideEffectFree,  setSideEffectFree);
+      DECLARE(status,             status);
+      DECLARE(tags,               tags);
+      DECLARE(terminate,          terminate);
+      DECLARE(timeShift,          timeShift);
+      DECLARE(waitForChanges,     waitForChanges);
+      DECLARE(waitForTermination, waitForTermination);
+
+#undef DECLARE
     }
 
     /*-----------.
@@ -668,11 +743,16 @@ namespace urbi
 
     URBI_CXX_OBJECT_REGISTER(IoService)
     {
-      bind(SYMBOL(pollFor), &IoService::pollFor);
-      bind(SYMBOL(pollOneFor), &IoService::pollOneFor);
-      bind(SYMBOL(poll), &IoService::poll);
-      bind(SYMBOL(makeServer), &IoService::makeServer);
-      bind(SYMBOL(makeSocket), &IoService::makeSocket);
+#define DECLARE(Name, Cxx)                \
+      bind(SYMBOL(Name), &IoService::Cxx) \
+
+      DECLARE(pollFor,    pollFor);
+      DECLARE(pollOneFor, pollOneFor);
+      DECLARE(poll,       poll);
+      DECLARE(makeServer, makeServer);
+      DECLARE(makeSocket, makeSocket);
+
+#undef DECLARE
     }
 
     /*-------.
@@ -682,10 +762,16 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Float)
       : value_(0)
     {
-      bind(SYMBOL(PLUS),   static_cast<Float::value_type (Float::*)() const>(&Float::plus));
-      bind(SYMBOL(PLUS),   static_cast<Float::value_type (Float::*)(Float::value_type) const>(&Float::plus));
-      bind(SYMBOL(MINUS),  static_cast<Float::value_type (Float::*)() const>(&Float::minus));
-      bind(SYMBOL(MINUS),  static_cast<Float::value_type (Float::*)(Float::value_type) const>(&Float::minus));
+      bind(SYMBOL(PLUS),
+           static_cast<Float::value_type (Float::*)() const>(&Float::plus));
+      bind(SYMBOL(PLUS),
+           static_cast<Float::value_type (Float::*)(Float::value_type) const>
+            (&Float::plus));
+      bind(SYMBOL(MINUS),
+           static_cast<Float::value_type (Float::*)() const>(&Float::minus));
+      bind(SYMBOL(MINUS),
+           static_cast<Float::value_type (Float::*)(Float::value_type) const>
+             (&Float::minus));
       bind(SYMBOL(EQ_EQ),
            static_cast<bool (self_type::*)(const rObject&) const>
                       (&self_type::operator==));
@@ -719,40 +805,40 @@ namespace urbi
       DECLARE(GT_EQ,     operator>=);
       DECLARE(BANG_EQ,   operator!=);
       DECLARE(LT_LT,     operator<<);
-      DECLARE(PERCENT, operator%);
-      DECLARE(SLASH, operator/);
-      DECLARE(STAR, operator*);
+      DECLARE(PERCENT,   operator%);
+      DECLARE(SLASH,     operator/);
+      DECLARE(STAR,      operator*);
       DECLARE(STAR_STAR, pow);
-      DECLARE(abs, fabs);
-      DECLARE(acos, acos);
-      DECLARE(asString, as_string);
-      DECLARE(asin, asin);
-      DECLARE(atan, atan);
-      DECLARE(atan2, atan2);
-      DECLARE(bitand, operator&);
-      DECLARE(bitor, operator|);
-      DECLARE(ceil, ceil);
-      DECLARE(compl, operator~);
-      DECLARE(cos, cos);
-      DECLARE(exp, exp);
+      DECLARE(abs,       fabs);
+      DECLARE(acos,      acos);
+      DECLARE(asString,  as_string);
+      DECLARE(asin,      asin);
+      DECLARE(atan,      atan);
+      DECLARE(atan2,     atan2);
+      DECLARE(bitand,    operator&);
+      DECLARE(bitor,     operator|);
+      DECLARE(ceil,      ceil);
+      DECLARE(compl,     operator~);
+      DECLARE(cos,       cos);
+      DECLARE(exp,       exp);
 #if !defined COMPILATION_MODE_SPACE
       DECLARE(format, format);
 #endif
-      DECLARE(floor, floor);
-      DECLARE(inf, inf);
-      DECLARE(isInf, is_inf);
-      DECLARE(isNan, is_nan);
-      DECLARE(log, log);
-      DECLARE(nan, nan);
-      DECLARE(random, random);
+      DECLARE(floor,   floor);
+      DECLARE(inf,     inf);
+      DECLARE(isInf,   is_inf);
+      DECLARE(isNan,   is_nan);
+      DECLARE(log,     log);
+      DECLARE(nan,     nan);
+      DECLARE(random,  random);
       DECLARE(srandom, srandom);
-      DECLARE(round, round);
-      DECLARE(seq, seq);
-      DECLARE(sign, sign);
-      DECLARE(sin, sin);
-      DECLARE(sqrt, sqrt);
-      DECLARE(tan, tan);
-      DECLARE(trunc, trunc);
+      DECLARE(round,   round);
+      DECLARE(seq,     seq);
+      DECLARE(sign,    sign);
+      DECLARE(sin,     sin);
+      DECLARE(sqrt,    sqrt);
+      DECLARE(tan,     tan);
+      DECLARE(trunc,  trunc);
 
 #undef DECLARE
 
@@ -773,11 +859,20 @@ namespace urbi
     {
       proto_add(Float::proto);
 
-      bind(SYMBOL(asPrintable), &Duration::asPrintable);
-      bind(SYMBOL(asString),    &Duration::as_string);
-      bind(SYMBOL(init),        static_cast<void (Duration::*)()>(&Duration::init));
-      bind(SYMBOL(init),        static_cast<void (Duration::*)(const Duration::value_type&)>(&Duration::init));
-      bind(SYMBOL(seconds),     &Duration::seconds);
+      bind(SYMBOL(init),
+           static_cast<void (Duration::*)()>(&Duration::init));
+      bind(SYMBOL(init),
+           static_cast<void (Duration::*)(const Duration::value_type&)>
+             (&Duration::init));
+
+#define DECLARE(Name, Cxx)               \
+      bind(SYMBOL(Name), &Duration::Cxx) \
+
+      DECLARE(asPrintable, asPrintable);
+      DECLARE(asString,    as_string);
+      DECLARE(seconds,     seconds);
+
+#undef DECLARE
     }
 
     /*-------------.
@@ -809,13 +904,19 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(File)
       : path_(new Path("/"))
     {
-      bind(SYMBOL(asList), &File::as_list);
-      bind(SYMBOL(asPrintable), &File::as_printable);
-      bind(SYMBOL(asString), &File::as_string);
-      bind(SYMBOL(content), &File::content);
-      bind(SYMBOL(create), &File::create);
-      bind(SYMBOL(rename), &File::rename);
-      bind(SYMBOL(remove), &File::remove);
+#define DECLARE(Name, Cxx)           \
+      bind(SYMBOL(Name), &File::Cxx) \
+
+      DECLARE(asList,      as_list);
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString,    as_string);
+      DECLARE(content,     content);
+      DECLARE(create,      create);
+      DECLARE(rename,      rename);
+      DECLARE(remove,      remove);
+
+#undef DECLARE
+
       setSlot(SYMBOL(init), new Primitive(&file_init_bouncer));
     }
 
@@ -834,27 +935,27 @@ namespace urbi
 
       bind(SYMBOL(EQ_EQ),
            static_cast<bool (Path::self_type::*)(const rObject&) const>
-           (&Path::self_type::operator==));
+             (&Path::self_type::operator==));
 
 #define DECLARE(Urbi, Cxx)           \
       bind(SYMBOL(Urbi), &Path::Cxx) \
 
-      DECLARE(LT_EQ, operator<=);
-      DECLARE(absolute, absolute);
-      DECLARE(asList, as_list);
+      DECLARE(LT_EQ,       operator<=);
+      DECLARE(absolute,    absolute);
+      DECLARE(asList,      as_list);
       DECLARE(asPrintable, as_printable);
-      DECLARE(asString, as_string);
-      DECLARE(basename, basename);
-      DECLARE(cd, cd);
-      DECLARE(cwd, cwd);
-      DECLARE(dirname, dirname);
-      DECLARE(exists, exists);
-      DECLARE(init, init);
-      DECLARE(isDir, is_dir);
-      DECLARE(isReg, is_reg);
-      DECLARE(open, open);
-      DECLARE(readable, readable);
-      DECLARE(writable, writable);
+      DECLARE(asString,    as_string);
+      DECLARE(basename,    basename);
+      DECLARE(cd,          cd);
+      DECLARE(cwd,         cwd);
+      DECLARE(dirname,     dirname);
+      DECLARE(exists,      exists);
+      DECLARE(init,        init);
+      DECLARE(isDir,       is_dir);
+      DECLARE(isReg,       is_reg);
+      DECLARE(open,        open);
+      DECLARE(readable,    readable);
+      DECLARE(writable,    writable);
 
 #undef DECLARE
     }
@@ -872,10 +973,16 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Directory)
       : path_(new Path())
     {
-      bind(SYMBOL(asList), &Directory::list<&directory_mk_path>);
-      bind(SYMBOL(content), &Directory::list<&directory_mk_string>);
-      bind(SYMBOL(asPrintable), &Directory::as_printable);
-      bind(SYMBOL(asString), &Directory::as_string);
+#define DECLARE(Name, Cxx)                \
+      bind(SYMBOL(Name), &Directory::Cxx) \
+
+      DECLARE(asList,      list<&directory_mk_path>);
+      DECLARE(content,     list<&directory_mk_string>);
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString,    as_string);
+
+#undef DECLARE
+
       setSlot(SYMBOL(init), new Primitive(&directory_init_bouncer));
     }
 
@@ -887,11 +994,16 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(OutputStream)
       : Stream(STDOUT_FILENO, false)
     {
-      bind(SYMBOL(LT_LT), &OutputStream::put    );
-      bind(SYMBOL(close), &OutputStream::close  );
-      bind(SYMBOL(flush), &OutputStream::flush  );
-      bind(SYMBOL(init),  &OutputStream::init   );
-      bind(SYMBOL(put),   &OutputStream::putByte);
+#define DECLARE(Name, Cxx)                   \
+      bind(SYMBOL(Name), &OutputStream::Cxx) \
+
+      DECLARE(LT_LT, put);
+      DECLARE(close, close);
+      DECLARE(flush, flush);
+      DECLARE(init,  init);
+      DECLARE(put,   putByte);
+
+#undef DECLARE
     }
 
     /*-------------.
@@ -903,11 +1015,16 @@ namespace urbi
       , pos_(0)
       , size_(0)
     {
-      bind(SYMBOL(close), &InputStream::close);
-      bind(SYMBOL(get), &InputStream::get);
-      bind(SYMBOL(getChar), &InputStream::getChar);
-      bind(SYMBOL(getLine), &InputStream::getLine);
-      bind(SYMBOL(init), &InputStream::init);
+#define DECLARE(Name, Cxx)                  \
+      bind(SYMBOL(Name), &InputStream::Cxx) \
+
+      DECLARE(close,   close);
+      DECLARE(get,     get);
+      DECLARE(getChar, getChar);
+      DECLARE(getLine, getLine);
+      DECLARE(init,    init);
+
+#undef DECLARE
     }
 #endif
 
@@ -941,9 +1058,12 @@ namespace urbi
     // FIXME: kill this when overloading is fully supported
     OVERLOAD_TYPE_3(
       MINUS_overload, 1, 1,
-      Date, (rDuration (Date::*)(rDate) const)     &Date::operator-,
-      Duration, (rDate (Date::*)(const Date::duration_type&) const) &Date::operator-,
-      Float, (rDate (Date::*)(const Date::duration_type&) const) &Date::operator-)
+      Date,
+      (rDuration (Date::*)(rDate) const)                      &Date::operator-,
+      Duration,
+      (rDate     (Date::*)(const Date::duration_type&) const) &Date::operator-,
+      Float,
+      (rDate     (Date::*)(const Date::duration_type&) const) &Date::operator-)
 
     // FIXME: kill this when overloading is fully supported
     static rObject MINUS(const objects_type& args)
@@ -971,14 +1091,20 @@ namespace urbi
 
 #undef DECLARE
 
-      bind(SYMBOL(EQ_EQ), &Date::operator ==);
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
-      bind(SYMBOL(PLUS), &Date::operator +);
-      bind(SYMBOL(asFloat), &Date::as_float);
-      bind(SYMBOL(asString), &Date::as_string);
-      bind(SYMBOL(epoch), &Date::epoch);
-      bind(SYMBOL(init), &Date::init);
-      bind(SYMBOL(now), &Date::now);
+
+#define DECLARE(Name, Cxx)           \
+      bind(SYMBOL(Name), &Date::Cxx) \
+
+      DECLARE(EQ_EQ,    operator ==);
+      DECLARE(PLUS,     operator +);
+      DECLARE(asFloat,  as_float);
+      DECLARE(asString, as_string);
+      DECLARE(epoch,    epoch);
+      DECLARE(init,     init);
+      DECLARE(now,      now);
+
+#undef DECLARE
     }
 
     /*---------.
@@ -987,10 +1113,15 @@ namespace urbi
 
     URBI_CXX_OBJECT_REGISTER(Barrier)
     {
-      bind(SYMBOL(new),       &Barrier::_new);
-      bind(SYMBOL(signal),    &Barrier::signal);
-      bind(SYMBOL(signalAll), &Barrier::signalAll);
-      bind(SYMBOL(wait),      &Barrier::wait);
+#define DECLARE(Name, Cxx)              \
+      bind(SYMBOL(Name), &Barrier::Cxx) \
+
+      DECLARE(new,       _new);
+      DECLARE(signal,    signal);
+      DECLARE(signalAll, signalAll);
+      DECLARE(wait,      wait);
+
+#undef DECLARE
     }
   }
 }
