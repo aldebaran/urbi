@@ -42,6 +42,53 @@ on compiled C++ code. Thus, remote Java UObjects can only run on computers
 having the full \urbi native SDK installed.
 \end{itemize}
 
+
+\section{Compiling and running UObjects}
+
+UObjects can be compiled easily directly with the \lstinline{javac} compiler, then
+you can create JAR archives using the \lstinline{jar} tool.
+
+In the following sections, we will try to create an uobject jar archive
+named \file{factory.jar} from a set of two files (\file{Factory.java},
+\file{UFactory.java}.
+
+In what follows, \var{urbi-root} denotes the top-level directory of your
+\usdk package, see \autoref{sec:install:install}.
+
+\subsection{Compiling and running by hand}
+
+To compile your UObject you need to include in the classpath liburbijava.jar:
+
+\begin{shell}
+$ javac -cp \var{urbi-root}/share/sdk-remote/java/lib/liburbijava.jar:. Factory.java UFactory.java
+$ jar -cvf factory.jar UFactory.class Factory.class
+added manifest
+adding: UFactory.class
+adding: Factory.class
+\end{shell}
+
+Then to run your uobject, you need to call \lstinline{java}. We provide a main class
+called urbi.UMain in the liburbijava.jar archive. You can use this class to start your
+UObjects. This class takes the names of your uobjects jar files as argument.
+You also need to specify the lib folder of the urbi SDK into \lstinline{java.library.path}:
+
+\begin{shell}
+$ java -Djava.library.path=\var{urbi-root}/lib                          \
+    -cp \var{urbi-root}/share/sdk-remote/java/lib/liburbijava.jar       \
+     urbi.UMain ./factory.jar
+urbi-launch: obeying to URBI_ROOT = /usr/local/gostai
+UObject: Urbi SDK Remote version urbi-sdk-2.3 rev. 3e93ec1
+Copyright (C) 2004-2010 Gostai S.A.S..
+
+Libport version urbi-sdk-2.3 rev. 66cb0ec
+Copyright (C) 2005-2010 Gostai S.A.S..
+UObject: Remote Component Running on 127.0.0.1 54000
+Kernel Version: 0
+[  LibUObject   ] Registering function UFactory.init 1 into UFactory.init from UFactory
+[  LibUObject   ] Pushing UFactory.init in function
+\end{shell}
+
+
 \section{Creating a class, binding variables and functions}
 \label{sec:uob:apijava:bind}
 
@@ -418,7 +465,7 @@ for the registering of your uobjects.
 
 \begin{itemize}
 
-\item When launching your UObjects with urbi-launch-java, please do not provide your main class.
+\item When launching your UObjects with \lstinline{java} or urbi-launch-java, please do not provide your main class.
 
 \item When launching your UObjects with Eclipse:
 \begin{itemize}
