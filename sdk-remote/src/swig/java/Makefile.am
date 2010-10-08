@@ -256,14 +256,14 @@ balltrack_SRC =							\
   examples/urbiballtrackinghead/URBIBallTrackingHead.java	\
   examples/urbiballtrackinghead/CallImage.java
 balltrack_JAR = examples/urbiballtrackinghead/URBIBallTrackingHead.jar
-JAR_RULES += balltrack
+#JAR_RULES += balltrack
 $(balltrack_JAR): balltrack
 
 bandwidth_SRC =					\
   examples/urbibandwidth/URBIBandWidth.java	\
   examples/urbibandwidth/BW.java
 bandwidth_JAR = examples/urbibandwidth/URBIBandWidth.jar
-JAR_RULES += bandwidth
+#JAR_RULES += bandwidth
 $(bandwidth_JAR): bandwidth
 
 ping_SRC =					\
@@ -271,45 +271,45 @@ ping_SRC =					\
   examples/urbiping/UPing.java
 ping_JAR = examples/urbiping/URBIPing.jar
 ping_OBJECTS = $(ping_SRC:.java=.class)
-JAR_RULES += ping
+#JAR_RULES += ping
 $(ping_JAR): ping
 
 image_SRC =					\
   examples/urbiimage/ShowImage.java		\
   examples/urbiimage/URBIImage.java
 image_JAR = examples/urbiimage/URBIImage.jar
-JAR_RULES += image
+#JAR_RULES += image
 $(image_JAR): image
 
 mirror_SRC =					\
   examples/urbimirror/Command.java		\
   examples/urbimirror/URBIMirror.java
 mirror_JAR = examples/urbimirror/URBIMirror.jar
-JAR_RULES += mirror
+#JAR_RULES += mirror
 $(mirror_JAR): mirror
 
 play_SRC = examples/urbiplay/URBIPlay.java
 play_JAR = examples/urbiplay/URBIPlay.jar
-JAR_RULES += play
+#JAR_RULES += play
 $(play_JAR): play
 
 record_SRC =					\
   examples/urbirecord/URBIRecord.java		\
   examples/urbirecord/Command.java
 record_JAR = examples/urbirecord/URBIRecord.jar
-JAR_RULES += record
+#JAR_RULES += record
 $(record_JAR): record
 
 send_SRC = examples/urbisend/URBISend.java
 send_JAR = examples/urbisend/URBISend.jar
-JAR_RULES += send
+#JAR_RULES += send
 $(send_JAR): send
 
 sound_SRC =					\
   examples/urbisound/CallSound.java		\
   examples/urbisound/URBISound.java
 sound_JAR = examples/urbisound/URBISound.jar
-JAR_RULES += sound
+#JAR_RULES += sound
 $(sound_JAR): sound
 
 talkie_SRC =					\
@@ -317,7 +317,7 @@ talkie_SRC =					\
   examples/urbitalkie/MicroNotify2.java		\
   examples/urbitalkie/URBITalkie.java
 talkie_JAR = examples/urbitalkie/URBITalkie.jar
-JAR_RULES += talkie
+#JAR_RULES += talkie
 $(talkie_JAR): talkie
 
 
@@ -371,17 +371,17 @@ nobase_dist_java_DATA = $(ALL_SOURCES)
 nobase_nodist_java_DATA = $(ALL_JARS)
 
 # Install examples manifests
-nobase_dist_java_DATA +=			\
-	examples/urbiballtrackinghead/manifest	\
-	examples/urbibandwidth/manifest		\
-	examples/urbiping/manifest		\
-	examples/urbiimage/manifest		\
-	examples/urbimirror/manifest		\
-	examples/urbiplay/manifest		\
-	examples/urbirecord/manifest		\
-	examples/urbisend/manifest		\
-	examples/urbisound/manifest		\
-	examples/urbitalkie/manifest
+# nobase_dist_java_DATA +=
+# 	examples/urbiballtrackinghead/manifest
+# 	examples/urbibandwidth/manifest
+# 	examples/urbiping/manifest
+# 	examples/urbiimage/manifest
+# 	examples/urbimirror/manifest
+# 	examples/urbiplay/manifest
+# 	examples/urbirecord/manifest
+# 	examples/urbisend/manifest
+# 	examples/urbisound/manifest
+# 	examples/urbitalkie/manifest
 
 # Install a sample `build.xml' (equivalent of Makefile
 # for `ant') to allow the user to recompile liburbijava.jar
@@ -392,17 +392,18 @@ dist_java_DATA =				\
 	sample/.project				\
 	sample/uobject.classpath		\
 	sample/uobject.project			\
-	sample/uobjectjava.launch		\
-	sample/URBIBallTrackingHead.launch	\
-	sample/URBIBandWidth.launch		\
-	sample/URBIImage.launch			\
-	sample/URBIMirror.launch		\
-	sample/URBIPing.launch			\
-	sample/URBIPlay.launch			\
-	sample/URBIRecord.launch		\
-	sample/URBISend.launch			\
-	sample/URBISound.launch			\
-	sample/URBITalkie.launch
+	sample/uobjectjava.launch
+
+# 	sample/URBIBallTrackingHead.launch
+# 	sample/URBIBandWidth.launch
+# 	sample/URBIImage.launch
+# 	sample/URBIMirror.launch
+# 	sample/URBIPing.launch
+# 	sample/URBIPlay.launch
+# 	sample/URBIRecord.launch
+# 	sample/URBISend.launch
+# 	sample/URBISound.launch
+# 	sample/URBITalkie.launch
 
 clean-local:
 	$(RM) $(ALL_OBJECTS) $(ALL_JARS)
