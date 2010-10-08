@@ -12,19 +12,19 @@
 class Global.RangeIterable
 {
   // Repeat \a action \a this times in concurrently.
-  function 'each&' (action)
+  function 'each&'(action)
   {
     asList.'each&'(action)
   };
 
   // Repeat \a action \a this times in concurrently.
-  function 'each' (action)
+  function 'each'(action)
   {
     asList.'each'(action)
   };
 
   // Repeat \a action \a this times in concurrently.
-  function 'each|' (action)
+  function 'each|'(action)
   {
     asList.'each|'(action)
   };

@@ -8,8 +8,8 @@
 
 \section{List}
 
-\lstinline|List|s implement potentially-empty ordered (heterogeneous)
-collections of elements.
+\lstinline|List|s implement possibly-empty ordered (heterogeneous)
+collections of objects.
 
 \subsection{Prototypes}
 
@@ -19,12 +19,29 @@ collections of elements.
 \item[Orderable]
 \end{refObjects}
 
+\subsection{Examples}
+
+Since lists are \refObject[RangeIterable], they also support
+\refSlot[RangeIterable]{all} and \refSlot[RangeIterable]{any}.
+
+\begin{urbiassert}
+// Are all elements positive?
+! [-2, 0, 2, 4].all(function (e) { 0 < e });
+// Are all elements even?
+  [-2, 0, 2, 4].all(function (e) { e % 2 == 0 });
+
+// Is there any even element?
+! [-3, 1, -1].any(function (e) { e % 2 == 0 });
+// Is there any positive element?
+  [-3, 1, -1].any(function (e) { 0 < e });
+\end{urbiassert}
+
+
 \subsection{Construction}
 
-List can be created with their literal syntax: a possibly empty
-sequence of expressions in square brackets, separated by commas.
-Non-empty list may actually \emph{terminate} with a comma, rather than
-\emph{separate}; in other words, an optional trailing comma is accepted.
+Lists can be created with their literal syntax: a possibly empty sequence of
+expressions in square brackets, separated by commas.  Non-empty lists may
+actually end with a comma.
 
 \begin{urbiscript}
 []; // The empty list
