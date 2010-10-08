@@ -140,13 +140,13 @@ public:
 };
 
 
-static void onCloseStdin(kernel::UConnection* c)
+static void onCloseStdin(kernel::UConnection& c)
 {
   GD_INFO("stdin Closed.");
-  c->close();
-  object::objects_type args;
-  kernel::urbiserver->schedule(urbi::object::global_class,
-                               SYMBOL(shutdown), args);
+  c.close();
+//  object::objects_type args;
+  // kernel::urbiserver->schedule(urbi::object::global_class,
+  //                             SYMBOL(shutdown), args);
 }
 
 
@@ -157,23 +157,29 @@ namespace
   void
   onReadStdin(boost::asio::posix::stream_descriptor& sd,
               boost::asio::streambuf& buffer,
+              kernel::UConnection& c,
               const boost::system::error_code& erc,
-              size_t len, kernel::UConnection* c)
+              size_t len)
   {
+    GD_INFO_DEBUG("onReadStdin");
     if (erc)
     {
       if (erc == boost::asio::error::eof)
         onCloseStdin(c);
       return;
     }
-    std::istream is(&buffer);
     std::string s;
     s.resize(len);
+    std::istream is(&buffer);
     is.read(&s[0], len);
-    ::kernel::urbiserver->ghost_connection_get().received(s);
+    c.received(s);
+    GD_FINFO_DEBUG("onReadStdin: %s", s);
     boost::asio::async_read(sd, buffer, boost::asio::transfer_at_least(1),
-                            boost::bind(&onReadStdin, boost::ref(sd),
-                                        boost::ref(buffer), _1, _2, c));
+                            boost::bind(&onReadStdin,
+                                        boost::ref(sd),
+                                        boost::ref(buffer),
+                                        boost::ref(c),
+                                        _1, _2));
   }
 #endif
 
@@ -510,13 +516,16 @@ namespace urbi
             || 10 <= machine.release_major()))
     {
       boost::asio::posix::stream_descriptor* sd =
-      new boost::asio::posix::stream_descriptor(
-        s.kernel::UServer::get_io_service());
+        new boost::asio::posix::stream_descriptor(
+          s.kernel::UServer::get_io_service());
       sd->assign(0);
       boost::asio::streambuf* buffer = new boost::asio::streambuf;
       boost::asio::async_read(*sd, *buffer, boost::asio::transfer_at_least(1),
-                              boost::bind(&onReadStdin, boost::ref(*sd),
-                                          boost::ref(*buffer), _1, _2, &c));
+                              boost::bind(&onReadStdin,
+                                          boost::ref(*sd),
+                                          boost::ref(*buffer),
+                                          boost::ref(c),
+                                          _1, _2));
       // Under Mac OS X and linux, in interactive sessions, and unless there are
       // redirections, stdin, stdout, and stderr are bound together:
       // fcntl on one of them, affects the others.  Our using ASIO has
@@ -550,9 +559,11 @@ namespace urbi
     ConsoleServer& s = *data.server;
     libport::utime_t next_time = 0;
     libport::utsname machine;
+    GD_FINFO_DEBUG("machine: %s", machine);
 #if defined WIN32 || defined __APPLE__
     bool needs_read_stdin =
       (machine.system() != "Darwin" || machine.release_major() < 10);
+    GD_FINFO_DEBUG("needs_read_stdin: %s", needs_read_stdin);
 #endif
     while (true)
     {
@@ -569,13 +580,17 @@ namespace urbi
           std::cerr << libport::program_name() << ": "
                     << e.what() << std::endl;
           data.interactive = false;
-          onCloseStdin(*s.ghost_connection_get());
+          onCloseStdin(s.ghost_connection_get());
         }
+        GD_FINFO_DEBUG("Got input: %s", input);
         if (!input.empty())
           s.ghost_connection_get().received(input);
       }
 #endif
       next_time = s.work();
+      GD_FINFO_DEBUG("next_time: %s (is exit: %s)",
+                     next_time,
+                     next_time == sched::SCHED_EXIT);
       if (next_time == sched::SCHED_EXIT)
         break;
       s.ctime = std::max(next_time, s.ctime + 1000L);
