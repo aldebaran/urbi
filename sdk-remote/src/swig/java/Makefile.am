@@ -252,6 +252,14 @@ uobjectjava_JAR = examples/uobjectjava/UObjectJava.jar
 JAR_RULES += uobjectjava
 $(uobjectjava_JAR): uobjectjava
 
+uobjectjava_withmain_SRC =				\
+  examples/uobjectjava_withmain/Main.java		\
+  examples/uobjectjava_withmain/SimpleUObject.java
+uobjectjava_withmain_JAR = examples/uobjectjava_withmain/UObjectJava_withmain.jar
+JAR_RULES += uobjectjava_withmain
+$(uobjectjava_withmain_JAR): uobjectjava_withmain
+
+
 balltrack_SRC =							\
   examples/urbiballtrackinghead/URBIBallTrackingHead.java	\
   examples/urbiballtrackinghead/CallImage.java
@@ -392,7 +400,8 @@ dist_java_DATA =				\
 	sample/.project				\
 	sample/uobject.classpath		\
 	sample/uobject.project			\
-	sample/uobjectjava.launch
+	sample/uobjectjava.launch		\
+	sample/uobjectjava_withmain.launch
 
 # 	sample/URBIBallTrackingHead.launch
 # 	sample/URBIBandWidth.launch

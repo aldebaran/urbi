@@ -37,6 +37,7 @@ ECLIPSE_test_ARGS=""
 ECLIPSE_URBIPing_ARGS=""
 ECLIPSE_URBIRecord_ARGS=""
 ECLIPSE_UObjectJava_ARGS="\${workspace_loc:urbijava}/examples/uobjectjava/UObjectJava.jar"
+ECLIPSE_UObjectJava_withmain_ARGS=""
 ECLIPSE_URBISound_ARGS=""
 ECLIPSE_URBISend_ARGS=""
 ECLIPSE_URBIBandWidth_ARGS=""
@@ -53,6 +54,7 @@ AC_SUBST([ECLIPSE_test_ARGS])
 AC_SUBST([ECLIPSE_URBIPing_ARGS])
 AC_SUBST([ECLIPSE_URBIRecord_ARGS])
 AC_SUBST([ECLIPSE_UObjectJava_ARGS])
+AC_SUBST([ECLIPSE_UObjectJava_withmain_ARGS])
 AC_SUBST([ECLIPSE_URBISound_ARGS])
 AC_SUBST([ECLIPSE_URBISend_ARGS])
 AC_SUBST([ECLIPSE_URBIBandWidth_ARGS])
@@ -64,6 +66,7 @@ AC_SUBST([ECLIPSE_URBIMirror_ARGS])
 
 AC_CONFIG_FILES([src/swig/java/sample/test.launch])
 AC_CONFIG_FILES([src/swig/java/sample/uobjectjava.launch])
+AC_CONFIG_FILES([src/swig/java/sample/uobjectjava_withmain.launch])
 AC_CONFIG_FILES([src/swig/java/sample/URBIPing.launch])
 AC_CONFIG_FILES([src/swig/java/sample/URBIRecord.launch])
 AC_CONFIG_FILES([src/swig/java/sample/Main.launch])
