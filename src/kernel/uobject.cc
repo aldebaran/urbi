@@ -1386,16 +1386,14 @@ namespace urbi
         callback_->slot_set
           (SYMBOL(target),
            new object::String(&owner_->owner ? owner_->owner.__name:"unknown"));
-        object::objects_type args = list_of
-          (var)
-          (handle)
-          (callback_);
+        object::objects_type args = list_of(var)(handle)(callback_);
         runner.apply(f, sym, args);
         if (owner_->target)
           static_cast<KernelUVarImpl*>(owner_->target->impl_)
             ->callbacks_ << this;
       }
     }
+
     void
     KernelUGenericCallbackImpl::clear()
     {
@@ -1407,14 +1405,17 @@ namespace urbi
     const std::string& kv = kernelVersion();
     return boost::lexical_cast<int>(kv.substr(0, kv.find_first_of('.')));
   }
+
   int kernelMinor()
   {
     const std::string& kv = kernelVersion();
     return boost::lexical_cast<int>(kv.substr(kv.find_first_of('.')+1,
                                               kv.npos));
   }
+
   const std::string& kernelVersion()
   {
+    // FIXME: Most certainly does not work since it is now a function.
     return object::system_class->slot_get(SYMBOL(version))->as<object::String>()
       ->value_get();
   }
