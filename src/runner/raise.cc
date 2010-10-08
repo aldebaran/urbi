@@ -43,11 +43,12 @@ namespace runner
 	     rObject arg1,
 	     rObject arg2,
 	     rObject arg3,
-             bool skip)
+             bool skip,
+             const boost::optional<ast::loc>& loc)
   {
     Runner& r = dbg::runner_or_sneaker_get();
     raise_urbi(exn_name, to_urbi(r.innermost_call_get()), arg1, arg2, arg3,
-               skip);
+               skip, loc);
   }
 
   void
@@ -56,19 +57,21 @@ namespace runner
 	     rObject arg2,
 	     rObject arg3,
 	     rObject arg4,
-             bool skip)
+             bool skip,
+             const boost::optional<ast::loc>& loc)
   {
     GD_FPUSH_TRACE("raise exception: %s", exn_name);
     // Too dangerous to try to print arg1 etc. here, as it certainly
     // involves running urbiscript code.
     // assert_user_mode(exn_name, "");
     assert_ne(exn_name, SYMBOL(Exception));
-    Runner& r = dbg::runner_or_sneaker_get();
+    Interpreter& r = dynamic_cast<runner::Interpreter&>
+      (dbg::runner_or_sneaker_get());
     CAPTURE_GLOBAL(Exception);
     const rObject& exn = Exception->slot_get(exn_name);
     if (arg1 == void_class)
       raise_unexpected_void_error();
-    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4), skip);
+    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4), skip, loc);
     pabort("Unreachable");
   }
 
@@ -87,9 +90,10 @@ namespace runner
                   rObject arg1,
                   rObject arg2,
                   rObject arg3,
-                  rObject arg4)
+                  rObject arg4,
+                  const boost::optional<ast::loc>& loc)
   {
-    raise_urbi(exn_name, arg1, arg2, arg3, arg4, true);
+    raise_urbi(exn_name, arg1, arg2, arg3, arg4, true, loc);
   }
 
   void
@@ -213,9 +217,10 @@ namespace runner
 
   void
   raise_type_error(rObject effective,
-                   rObject expected)
+                   rObject expected,
+                   const boost::optional<ast::loc>& loc)
   {
-    raise_urbi_skip(SYMBOL(Type), effective, expected);
+    raise_urbi_skip(SYMBOL(Type), effective, expected, 0, 0, loc);
   }
 
   void

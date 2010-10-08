@@ -377,6 +377,13 @@ namespace runner
   void
   Interpreter::raise(rObject exn, bool skip_last)
   {
+    raise(exn, skip_last, boost::optional<ast::loc>());
+    pabort("Unreachable");
+  }
+
+  void
+  Interpreter::raise(rObject exn, bool skip_last, const boost::optional<ast::loc>& loc)
+  {
     CAPTURE_GLOBAL(Exception);
 
     // innermost_node_ can be empty if the interpreter has not interpreted
@@ -384,7 +391,7 @@ namespace runner
     // C++ side.  It would be better to produce a C++ backtrace instead.
     if (is_a(exn, Exception) && innermost_node_)
     {
-      boost::optional<ast::loc> l = innermost_node_->location_get();
+      boost::optional<ast::loc> l = loc ? loc : innermost_node_->location_get();
       exn->slot_update(SYMBOL(DOLLAR_location), object::to_urbi(l));
       exn->slot_update(SYMBOL(DOLLAR_backtrace),
                        as_job()->as<object::Job>()->backtrace());

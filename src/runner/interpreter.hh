@@ -237,6 +237,9 @@ namespace runner
      */
     ATTRIBUTE_NORETURN
     virtual void raise(rObject exn, bool skip_last = false);
+    ATTRIBUTE_NORETURN
+    virtual void raise(rObject exn, bool skip_last,
+                       const boost::optional<ast::loc>& loc);
 
     virtual libport::Symbol innermost_call_get() const;
 

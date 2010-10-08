@@ -15,6 +15,7 @@
 # include <libport/ufloat.hh>
 
 # include <urbi/object/fwd.hh>
+# include <parser/location.hh>
 
 // Do not leak yy::loc in K2 headers.
 namespace yy
@@ -44,7 +45,8 @@ namespace runner
 		  object::rObject arg1 = 0,
 		  object::rObject arg2 = 0,
 		  object::rObject arg3 = 0,
-                  bool skip = false);
+                  bool skip = false,
+                  const boost::optional<ast::loc>& loc = boost::optional<ast::loc>());
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_urbi(libport::Symbol exn_name,
@@ -52,7 +54,8 @@ namespace runner
 		  object::rObject arg2 = 0,
 		  object::rObject arg3 = 0,
 		  object::rObject arg4 = 0,
-                  bool skip = false);
+                  bool skip = false,
+                  const boost::optional<ast::loc>& loc = boost::optional<ast::loc>());
 
   /// Like raise_urbi, but skip the last callstack element.
   ATTRIBUTE_NORETURN
@@ -69,7 +72,8 @@ namespace runner
                        object::rObject arg1 = 0,
                        object::rObject arg2 = 0,
                        object::rObject arg3 = 0,
-                       object::rObject arg4 = 0);
+                       object::rObject arg4 = 0,
+                       const boost::optional<ast::loc>& loc = boost::optional<ast::loc>());
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
@@ -131,7 +135,9 @@ namespace runner
   ATTRIBUTE_NORETURN
   URBI_SDK_API
   void raise_type_error(object::rObject effective,
-                        object::rObject expected);
+                        object::rObject expected,
+                        const boost::optional<ast::loc>& loc =
+                        boost::optional<ast::loc>());
 
   URBI_SDK_API
   void raise_unexpected_void_error();
