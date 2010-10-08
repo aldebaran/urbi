@@ -258,6 +258,8 @@
    ! < ( so that !m(x) be read as !(m(x)).
  */
 
+%right ASSIGN;
+
 // This is very painful: because we want to declare the resolution
 // in the following case, we give a relative precedence between "in"
 // and "identifier" which kills the support of "for (var i in c)".
@@ -596,7 +598,6 @@ k1_id:
 
 
 %type <::ast::Factory::modifier_type> modifier;
-
 modifier:
   "identifier" ":" exp
   {
@@ -605,47 +606,31 @@ modifier:
   }
 ;
 
+%type <ast::modifiers_type> modifiers;
+modifiers:
+  modifier
+  {
+    modifiers_add(up, @1, $$, $1);
+  }
+| modifiers modifier
+  {
+    std::swap($$, $1);
+    modifiers_add(up, @2, $$, $2);
+  }
+;
+
 /*-------------------.
 | Stmt: Assignment.  |
 `-------------------*/
 
 exp:
-  exp "=" exp
+  exp "=" exp %prec ASSIGN
   {
-    ast::rDictionary d = $3.unsafe_cast<ast::Dictionary>();
-    // If exp is "e0 k1: e1 k2: e2...", i.e. a dictionary plus a
-    // "base" (e0), then this is a trajectory.
-    if (d && d->base_get())
-      $$ = new ast::Assign(@$, $1, d->base_get(),
-                           new ast::modifiers_type(d->value_get()));
-    else
-      $$ = new ast::Assign(@$, $1, $3, 0);
+    $$ = new ast::Assign(@$, $1, $3, 0);
   }
-| exp modifier
+| exp "=" exp modifiers %prec ASSIGN
   {
-    if (ast::rDictionary d = $1.unsafe_cast<ast::Dictionary>())
-    {
-      modifiers_add(up, @2, d->value_get(), $2);
-      $$ = $1;
-    }
-    else if (ast::rAssign a = $1.unsafe_cast<ast::Assign>())
-    {
-      ast::modifiers_type* m = a->modifiers_get();
-      if (!m)
-      {
-        m = new ast::modifiers_type();
-        a->modifiers_set(m);
-      }
-      modifiers_add(up, @2, *a->modifiers_get(), $2);
-      $$ = $1;
-    }
-    else
-    {
-      ast::rDictionary d = new ast::Dictionary(@$, 0, ast::modifiers_type());
-      modifiers_add(up, @2, d->value_get(), $2);
-      d->base_get() = $1;
-      $$ = d;
-    }
+    $$ = new ast::Assign(@$, $1, $3, $4);
   }
 ;
 

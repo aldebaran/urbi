@@ -66,6 +66,20 @@ namespace ast
     return res;
   }
 
+  inline
+  std::pair<ast::rExp, ast::rExp>
+  Cloner::recurse(const std::pair<ast::rExp, ast::rExp>& p)
+  {
+    return std::pair<ast::rExp, ast::rExp>(recurse(p.first), recurse(p.second));
+  }
+
+  template <typename T>
+  boost::optional<T>
+  Cloner::recurse(const boost::optional<T>& o)
+  {
+    return o ? recurse_collection(o.get()) : o;
+  }
+
   // Specializations to workaround some limitations of ast-cloner-gen.
   template <>
   inline

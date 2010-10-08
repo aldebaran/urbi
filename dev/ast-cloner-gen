@@ -72,6 +72,13 @@ print """\
     libport::intrusive_ptr<T>
     recurse (libport::intrusive_ptr<T> t);
 
+    std::pair<ast::rExp, ast::rExp>
+    recurse(const std::pair<ast::rExp, ast::rExp>& p);
+
+    template <typename T>
+    boost::optional<T>
+    recurse(const boost::optional<T>&);
+
     /** \\brief Clone a collection object.
 
 	Using overloading for this method is tempting, but it would
