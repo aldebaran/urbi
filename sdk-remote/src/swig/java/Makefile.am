@@ -240,7 +240,6 @@ JAR_RULES=
 ## ------------ ##
 
 uobjectjava_SRC =				\
-  examples/uobjectjava/Main.java		\
   examples/uobjectjava/Adder.java		\
   examples/uobjectjava/Feature1.java		\
   examples/uobjectjava/Feature2.java		\
@@ -373,8 +372,6 @@ nobase_nodist_java_DATA = $(ALL_JARS)
 
 # Install examples manifests
 nobase_dist_java_DATA +=			\
-	examples/test/manifest			\
-	examples/uobjectjava/manifest		\
 	examples/urbiballtrackinghead/manifest	\
 	examples/urbibandwidth/manifest		\
 	examples/urbiping/manifest		\
@@ -391,13 +388,11 @@ nobase_dist_java_DATA +=			\
 # from the java sources.
 # Install also sample Eclipse project files
 dist_java_DATA =				\
-	sample/build.xml			\
 	sample/.classpath			\
 	sample/.project				\
 	sample/uobject.classpath		\
 	sample/uobject.project			\
 	sample/uobjectjava.launch		\
-	sample/test.launch			\
 	sample/URBIBallTrackingHead.launch	\
 	sample/URBIBandWidth.launch		\
 	sample/URBIImage.launch			\

@@ -16,10 +16,10 @@
 -->
 
 
-<project default="examples" name="liburbi" basedir=".">
+<project default="examples" name="urbijava" basedir=".">
   <property name="exampledir" value="./examples/">
   </property>
-  <property name="srcdir" value="./liburbi/">
+  <property name="srcdir" value="./urbijava/">
   </property>
   <property name="libdir" value=".">
   </property>
@@ -31,7 +31,7 @@
   </property>
   <property name="distdir" value="./dist/">
   </property>
-  <property name="name" value="liburbijava">
+  <property name="name" value="urbijavajava">
   </property>
 
 
@@ -545,7 +545,7 @@
     </property>
     <property name="title" value="Liburbi Java">
     </property>
-    <javadoc use="true" private="true" destdir="${javadocdir}" author="true" version="true" sourcepath="java" packagenames="liburbi.*">
+    <javadoc use="true" private="true" destdir="${javadocdir}" author="true" version="true" sourcepath="java" packagenames="urbijava.*">
       <classpath>
         <fileset dir="${libdir}">
           <include name="*.jar">

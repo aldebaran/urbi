@@ -2,10 +2,10 @@
 <classpath>
 	<classpathentry excluding="lib/" kind="src" path="">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="${resource_loc:liburbi}/lib"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="${resource_loc:urbijava}/lib:${resource_loc:urbijava}/../../../lib:${resource_loc:urbijava}/../../../lib/gostai/remote"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/liburbijava.jar"/>
+	<classpathentry kind="lib" path="lib/urbijavajava.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
