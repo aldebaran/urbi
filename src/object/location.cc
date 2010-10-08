@@ -88,14 +88,5 @@ namespace urbi
     {
       return string_cast(loc_);
     }
-
-    /*-----------------.
-    | Binding system.  |
-    `-----------------*/
-
-    void
-    Location::initialize(CxxObject::Binder<Location>&)
-    {}
-
   } // namespace object
 } // namespace urbi

@@ -247,10 +247,5 @@ namespace urbi
       consistent_ = false;
       return 0;
     }
-
-    void
-    FormatInfo::initialize(CxxObject::Binder<FormatInfo>&)
-    {}
-
   } // namespace object
 }

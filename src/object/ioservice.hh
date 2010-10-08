@@ -31,7 +31,7 @@ namespace urbi
       rSocket makeSocket();
       rServer makeServer();
       private:
-      URBI_CXX_OBJECT_(IoService);
+      URBI_CXX_OBJECT(IoService);
     };
   }
 }

@@ -88,10 +88,5 @@ namespace urbi
       libport::Finally finally(boost::bind(&Semaphore::release, this));
       return (*f)(args);
     }
-
-    void
-    Semaphore::initialize(CxxObject::Binder<Semaphore>&)
-    {}
-
   } // namespace object
 }

@@ -128,7 +128,7 @@ namespace urbi
 
       void check_bounds(size_type from, size_type to) const;
 
-      URBI_CXX_OBJECT_(String);
+      URBI_CXX_OBJECT(String);
     };
 
     // Urbi functions

@@ -210,11 +210,6 @@ namespace urbi
     {
       return io_service_;
     }
-
-    void
-    Socket::initialize(CxxObject::Binder<Socket>&)
-    {}
-
     rIoService
     Socket::get_default_io_service()
     {

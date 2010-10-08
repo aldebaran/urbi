@@ -401,13 +401,5 @@ namespace urbi
       return o;
     }
 
-
-    /*-----------------.
-    | Binding system.  |
-    `-----------------*/
-    void
-    Float::initialize(CxxObject::Binder<Float>&)
-    {}
-
   }; // namespace object
 }

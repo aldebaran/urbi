@@ -61,7 +61,7 @@ namespace urbi
     private:
       value_type loc_;
 
-      URBI_CXX_OBJECT_(Location);
+      URBI_CXX_OBJECT(Location);
     };
 
     bool

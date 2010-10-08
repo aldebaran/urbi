@@ -210,10 +210,5 @@ namespace urbi
     {
       return value_->blocked();
     }
-
-    void
-    Tag::initialize(CxxObject::Binder<Tag>&)
-    {}
-
   } // namespace object
 }

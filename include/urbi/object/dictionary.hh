@@ -50,7 +50,7 @@ namespace urbi
     private:
       value_type content_;
 
-    URBI_CXX_OBJECT_(Dictionary);
+    URBI_CXX_OBJECT(Dictionary);
     };
   }; // namespace object
 }

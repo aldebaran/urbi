@@ -108,7 +108,7 @@ namespace urbi
     private:
       value_type time_;
 
-      URBI_CXX_OBJECT_(Date);
+      URBI_CXX_OBJECT(Date);
     };
   }
 }

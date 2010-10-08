@@ -37,7 +37,7 @@ namespace urbi
       void initialize();
       sockets_type sockets_;
       rIoService io_service_;
-      URBI_CXX_OBJECT_(Server);
+      URBI_CXX_OBJECT(Server);
     };
   }
 }

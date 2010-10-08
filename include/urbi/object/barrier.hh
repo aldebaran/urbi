@@ -42,7 +42,7 @@ namespace urbi
     private:
       value_type value_;
 
-    URBI_CXX_OBJECT_(Barrier);
+    URBI_CXX_OBJECT(Barrier);
     };
 
   }; // namespace object

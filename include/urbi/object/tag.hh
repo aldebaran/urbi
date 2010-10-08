@@ -76,7 +76,7 @@ namespace urbi
       value_type value_;
       rTag parent_;
 
-    URBI_CXX_OBJECT_(Tag);
+    URBI_CXX_OBJECT(Tag);
     };
 
   } // namespace object

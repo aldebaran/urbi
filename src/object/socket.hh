@@ -57,7 +57,7 @@ namespace urbi
       rServer server_;
       rObject disconnect_;
       rIoService io_service_;
-      URBI_CXX_OBJECT_(Socket);
+      URBI_CXX_OBJECT(Socket);
     };
   }
 }

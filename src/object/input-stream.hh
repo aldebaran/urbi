@@ -63,7 +63,7 @@ namespace urbi
       `----------*/
 
     private:
-      URBI_CXX_OBJECT_(InputStream);
+      URBI_CXX_OBJECT(InputStream);
     };
   }
 }

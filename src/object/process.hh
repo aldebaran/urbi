@@ -63,7 +63,7 @@ namespace urbi
       std::string binary_;
       arguments_type argv_;
       int status_;
-      URBI_CXX_OBJECT_(Process);
+      URBI_CXX_OBJECT(Process);
     };
   }
 }

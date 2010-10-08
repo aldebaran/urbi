@@ -122,10 +122,5 @@ namespace urbi
       value_ = urbi::UValue();
       cache_ = r;
     }
-
-    void
-    UValue::initialize(CxxObject::Binder<UValue>&)
-    {}
-
   }
 }

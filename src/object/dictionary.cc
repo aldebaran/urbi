@@ -122,11 +122,5 @@ namespace urbi
     {
       return libport::mhas(content_, key);
     }
-
-
-    void
-    Dictionary::initialize(CxxObject::Binder<Dictionary>&)
-    {}
-
   }
 }

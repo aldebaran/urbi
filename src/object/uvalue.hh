@@ -49,7 +49,7 @@ namespace urbi
       rObject cache_;
       bool bypassMode_;
       friend class ::urbi::object::UVar;
-      URBI_CXX_OBJECT_(UValue);
+      URBI_CXX_OBJECT(UValue);
     };
 
   }

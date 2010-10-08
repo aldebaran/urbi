@@ -364,9 +364,5 @@ namespace urbi
         res.push_back(obj);
       return new List(res);
     }
-
-    void List::initialize(CxxObject::Binder<List>&)
-    {}
-
   } // namespace object
 }

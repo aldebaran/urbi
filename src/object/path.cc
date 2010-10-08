@@ -219,12 +219,5 @@ namespace urbi
       FRAISE("%1%: %2%", strerror(errno), path_);
     }
 
-    /*-----------------.
-    | Binding system.  |
-    `-----------------*/
-
-    void Path::initialize(CxxObject::Binder<Path>&)
-    {}
-
   }
 }

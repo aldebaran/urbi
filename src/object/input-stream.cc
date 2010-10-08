@@ -138,14 +138,5 @@ namespace urbi
         return to_urbi(res);
       return 0;
     }
-
-    /*----------------.
-    | Urbi bindings.  |
-    `----------------*/
-
-    void
-    InputStream::initialize(CxxObject::Binder<InputStream>&)
-    {}
-
   }
 }

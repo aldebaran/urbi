@@ -58,11 +58,6 @@ namespace urbi
     {
       return content_;
     }
-
-    void
-    Primitive::initialize(CxxObject::Binder<Primitive>&)
-    {}
-
     // FIXME: Code duplication with Code::apply.  Maybe there are more
     // opportunity to factor.
     rObject

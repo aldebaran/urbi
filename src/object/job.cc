@@ -167,10 +167,5 @@ namespace urbi
         return new Float(0);
       return new Float(value_->time_shift_get() / 1000000.0);
     }
-
-    void
-    Job::initialize(CxxObject::Binder<Job>&)
-    {}
-
   }; // namespace object
 }

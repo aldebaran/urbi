@@ -87,10 +87,5 @@ namespace urbi
     {
       return matches_;
     }
-
-    void
-    Regexp::initialize(CxxObject::Binder<Regexp>&)
-    {}
-
   }
 }

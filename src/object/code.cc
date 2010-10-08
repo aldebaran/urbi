@@ -173,11 +173,6 @@ namespace urbi
       return (that->is_a<Code>()
               && *this == *that->as<Code>());
     }
-
-    void
-    Code::initialize(CxxObject::Binder<Code>&)
-    {}
-
     rObject
     Code::operator() (object::objects_type args)
     {

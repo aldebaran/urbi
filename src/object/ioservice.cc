@@ -32,12 +32,6 @@ namespace urbi
     {
       proto_add(proto);
     }
-
-
-    void
-    IoService::initialize(CxxObject::Binder<IoService>&)
-    {}
-
     void IoService::pollFor(double d)
     {
       libport::pollFor(static_cast<useconds_t>(d*1000000.0), false, *this);

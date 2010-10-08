@@ -234,14 +234,5 @@ namespace urbi
                  - microsec_clock::universal_time()).total_seconds());
       return abs + diff;
     }
-
-
-    /*-----------------.
-    | Binding system.  |
-    `-----------------*/
-
-    void
-    Date::initialize(CxxObject::Binder<Date>&)
-    {}
   }
 }

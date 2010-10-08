@@ -30,10 +30,5 @@ namespace urbi
     {
       proto_add(model);
     }
-
-    void
-    Executable::initialize(CxxObject::Binder<Executable>&)
-    {}
-
   }
 }

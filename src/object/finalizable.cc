@@ -68,9 +68,5 @@ namespace urbi
     {
       return counter_get();
     }
-    void
-    Finalizable::initialize(CxxObject::Binder<Finalizable>&)
-    {}
-
   }
 }

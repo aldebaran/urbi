@@ -44,7 +44,7 @@ namespace urbi
       `----------*/
 
     private:
-      URBI_CXX_OBJECT_(OutputStream);
+      URBI_CXX_OBJECT(OutputStream);
     };
   }
 }

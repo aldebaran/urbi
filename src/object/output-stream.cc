@@ -80,14 +80,5 @@ namespace urbi
       (void)size;
       return this;
     }
-
-    /*----------------.
-    | Urbi bindings.  |
-    `----------------*/
-
-    void
-    OutputStream::initialize(CxxObject::Binder<OutputStream>&)
-    {}
-
   }
 }

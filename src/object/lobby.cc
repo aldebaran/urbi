@@ -147,10 +147,5 @@ namespace urbi
     {
       connection_->received(s);
     }
-
-    void
-    Lobby::initialize(CxxObject::Binder<Lobby>&)
-    {}
-
   }; // namespace object
 }

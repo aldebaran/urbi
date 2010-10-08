@@ -165,14 +165,5 @@ namespace urbi
       if (o != nil_class)
         pos_.filename = new libport::Symbol(from_urbi<std::string>(o));
     }
-
-    /*-----------------.
-    | Binding system.  |
-    `-----------------*/
-
-    void
-    Position::initialize(CxxObject::Binder<Position>&)
-    {}
-
   } // namespace object
 } // namespace urbi

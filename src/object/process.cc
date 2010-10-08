@@ -317,9 +317,5 @@ namespace urbi
 
       return res;
     }
-
-    void
-    Process::initialize(CxxObject::Binder<Process>&)
-    {}
   }
 }

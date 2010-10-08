@@ -358,10 +358,5 @@ namespace urbi
       check_bounds(0, 1);
       return value_get()[0];
     }
-
-    void
-    String::initialize(CxxObject::Binder<String>&)
-    {}
-
   } // namespace object
 }

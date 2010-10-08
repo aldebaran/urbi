@@ -102,10 +102,5 @@ namespace urbi
 
       return res;
     }
-
-    void
-    Barrier::initialize(CxxObject::Binder<Barrier>&)
-    {}
-
   } // namespace object
 }

@@ -306,10 +306,5 @@ namespace urbi
       slot_get(SYMBOL(changed))->call("emit");
       return newval;
     }
-
-    void
-    UVar::initialize(CxxObject::Binder<UVar>&)
-    {}
-
   }
 }

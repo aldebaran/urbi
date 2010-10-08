@@ -245,12 +245,5 @@ namespace urbi
     template
     rList Directory::list<directory_mk_path>();
 
-    /*----------.
-    | Binding.  |
-    `----------*/
-    void
-    Directory::initialize(CxxObject::Binder<Directory>&)
-    {}
-
   }
 }

@@ -46,7 +46,7 @@ namespace urbi
       /// The FormatInfos and Strings.
       ATTRIBUTE_R(rList, data);
 
-      URBI_CXX_OBJECT_(Formatter);
+      URBI_CXX_OBJECT(Formatter);
     };
 
   } // namespace object

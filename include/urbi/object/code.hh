@@ -81,7 +81,7 @@ namespace urbi
       /// Captured 'this'. Only for closures.
       rObject this_;
 
-    URBI_CXX_OBJECT_(Code);
+    URBI_CXX_OBJECT(Code);
     };
 
   } // namespace object

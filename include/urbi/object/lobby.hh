@@ -74,7 +74,7 @@ namespace urbi
       /// The actual lobbies must have a non-empty one.
       connection_type* connection_;
 
-      URBI_CXX_OBJECT_(Lobby);
+      URBI_CXX_OBJECT(Lobby);
     };
   }; // namespace object
 }

@@ -42,7 +42,7 @@ namespace urbi
     private:
       value_type value_;
 
-      URBI_CXX_OBJECT_(Semaphore);
+      URBI_CXX_OBJECT(Semaphore);
     };
 
   }; // namespace object

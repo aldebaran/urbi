@@ -48,7 +48,7 @@ namespace urbi
       values_type content_;
       value_type default_;
 
-      URBI_CXX_OBJECT_(Primitive);
+      URBI_CXX_OBJECT(Primitive);
     };
   }; // namespace object
 }

@@ -81,7 +81,7 @@ namespace urbi
     private:
       value_type pos_;
 
-      URBI_CXX_OBJECT_(Position);
+      URBI_CXX_OBJECT(Position);
     };
 
     bool

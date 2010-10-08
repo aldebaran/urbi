@@ -106,10 +106,5 @@ namespace urbi
       else
         return operator%(objects_type(1, arg));
     }
-
-    void
-    Formatter::initialize(CxxObject::Binder<Formatter>&)
-    {}
-
   } // namespace object
 }

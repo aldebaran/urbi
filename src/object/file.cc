@@ -177,14 +177,5 @@ namespace urbi
                           to_urbi(std::string()),
                           to_urbi(libport::file_content(path_->as_string())));
     }
-
-    /*----------.
-    | Binding.  |
-    `----------*/
-
-    void
-    File::initialize(CxxObject::Binder<File>&)
-    {}
-
   }
 }

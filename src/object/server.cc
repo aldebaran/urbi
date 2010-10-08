@@ -97,9 +97,5 @@ namespace urbi
     {
       return io_service_;
     }
-
-    void Server::initialize(CxxObject::Binder<Server>&)
-    {}
-
   }
 }

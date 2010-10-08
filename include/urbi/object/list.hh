@@ -74,7 +74,7 @@ namespace urbi
       /// Check that the function fun is using a valid index, and return it.
       size_type index(const rFloat& idx) const;
 
-      URBI_CXX_OBJECT_(List);
+      URBI_CXX_OBJECT(List);
 
     public:
       static bool list_added;
