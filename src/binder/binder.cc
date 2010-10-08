@@ -528,8 +528,6 @@ namespace binder
   void
   Binder::visit(const ast::Dictionary* dict)
   {
-    if (dict->base_get())
-      errors_.error(dict->location_get(), "Modifier without an assignment.");
     super_type::visit(dict);
   }
 } // namespace binder

@@ -101,14 +101,15 @@
     }
 
     static void
-    assocs_add(parser::ParserImpl& up, const ast::loc& loc,
-                  ast::modifiers_type& mods,
-                  const ::ast::Factory::modifier_type& mod)
+    assocs_add(parser::ParserImpl& /*up*/, const ast::loc& /*loc*/,
+                  ast::dictionary_elts_type& mods,
+                  const ast::dictionary_elt_type& mod)
     {
-      if (libport::mhas(mods, mod.first))
-        up.warn(loc,
-                libport::format("key redefined: %s", mod.first));
-      mods[mod.first] = mod.second;
+      // FIXME: check for duplicate literal keys?
+      // if (libport::mhas(mods, mod.first))
+      //   up.warn(loc,
+      //           libport::format("key redefined: %s", mod.first));
+      mods.push_back(mod);
     }
 
     /// Use the scanner in the right parser::ParserImpl.
@@ -1021,13 +1022,13 @@ duration:
 
 %token EQ_GT "=>";
 
-%type <ast::Factory::modifier_type> assoc;
-%type <ast::rDictionary> assocs assocs.1 dictionary;
+%type <ast::dictionary_elt_type> assoc;
+%type <ast::dictionary_elts_type> assocs assocs.1;
 
 assoc:
-  string "=>" exp
+  exp "=>" exp
   {
-    $$.first = libport::Symbol($1);
+    $$.first = $1;
     $$.second = $3;
   }
 ;
@@ -1035,13 +1036,12 @@ assoc:
 assocs.1:
   assoc
   {
-    $$ = new ast::Dictionary(@$, 0, ast::modifiers_type());
-    assocs_add(up, @1, $$->value_get(), $1);
+    assocs_add(up, @1, $$, $1);
   }
 | assocs.1 "," assoc
   {
     std::swap($$, $1);
-    assocs_add(up, @3, $$->value_get(), $3);
+    assocs_add(up, @3, $$, $3);
   }
 ;
 
@@ -1050,14 +1050,15 @@ assocs:
 | assocs.1 "," { std::swap($$, $1); }
 ;
 
+%type <ast::rDictionary> dictionary;
 dictionary:
   "[" "=>" "]"
   {
-    $$ = new ast::Dictionary(@$, 0, ast::modifiers_type());
+    $$ = new ast::Dictionary(@$, ast::dictionary_elts_type());
   }
 | "[" assocs "]"
   {
-    std::swap($$, $2);
+    $$ = new ast::Dictionary(@$, $2);
   }
 ;
 

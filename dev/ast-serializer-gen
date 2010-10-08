@@ -236,6 +236,11 @@ namespace %(ns)s
   SerializerPrinter::recurse<ast::modifiers_type>(const ast::modifiers_type&)
   {}
 
+  template<>
+  void
+  SerializerPrinter::recurse<ast::dictionary_elts_type>(const ast::dictionary_elts_type&)
+  {}
+
   template<typename T>
   void
   SerializerPrinter::recurse(const T* c)

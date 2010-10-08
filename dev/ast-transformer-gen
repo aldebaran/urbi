@@ -90,6 +90,13 @@ namespace ast
       transform_collection(*v);
     }
 
+    void
+    transform(std::pair<ast::rExp, ast::rExp>& p)
+    {
+      this->transform<ast::Exp>(p.first);
+      this->transform<ast::Exp>(p.second);
+    }
+
     using super_type::visit;
     VISITOR_VISIT_NODES(
       %(boost_seq_nodes)s

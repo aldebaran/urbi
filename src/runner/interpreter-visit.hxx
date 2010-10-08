@@ -365,7 +365,8 @@ namespace runner
         {
           GD_FPUSH_TRACE("Register local variable '%s' for at monitoring",
                          e->name_get());
-          dependency_add(static_cast<object::Event*>(slot->property_get(SYMBOL(changed)).get()));
+          dependency_add(static_cast<object::Event*>
+                         (slot->property_get(SYMBOL(changed)).get()));
           dependency_add(slotGet_changed(*slot));
         }
       }
@@ -574,15 +575,18 @@ namespace runner
   {
     object::rDictionary res = new object::Dictionary();
     /// Dictionary with a base was caught at parse time.
-    aver(!e->base_get());
-    foreach (ast::modifiers_type::value_type exp, e->value_get())
+    foreach (ast::dictionary_elts_type::value_type exp, e->value_get())
     {
       rObject v = operator()(exp.second.get());
       // Refuse void in literals.
       if (v == object::void_class)
         raise_unexpected_void_error();
       passert(v, v);
-      res->set(exp.first, v);
+      object::rObject o = operator()(exp.first.get());
+      object::rString key = o->as<object::String>();
+      if (!key)
+        raise_type_error(o, object::String::proto, exp.first->location_get());
+      res->set(libport::Symbol(key->value_get()), v);
     }
     return res;
   }

@@ -90,6 +90,7 @@ collections:
   - "local_declarations_type"
   - "symbols_type"
   - "modifiers_type"
+  - "dictionary_elts_type"
 
 # The function to clear a list of pointers.
 deep_clear: "libport::deep_clear"
@@ -138,6 +139,8 @@ fwd_hh_epilogue: |2
   struct EventMatch;
 
   typedef boost::unordered_map<libport::Symbol, ast::rExp> modifiers_type;
+  typedef std::pair<ast::rExp, ast::rExp> dictionary_elt_type;
+  typedef std::vector<dictionary_elt_type> dictionary_elts_type;
 
 printer_cc_prologue: |2
 
@@ -813,12 +816,8 @@ String:
 Dictionary:
   super: Exp
   attributes:
-    - base:
-        type: 'rExp'
-        access: rw
-        desc: Base value. This is a Generator if set.
     - value:
-       type: 'modifiers_type'
+       type: dictionary_elts_type
        access: rw
        desc: Stored dictionary
   printer:
@@ -829,9 +828,9 @@ Dictionary:
          else
          {
            ostr_ << libport::incindent;
-           foreach (modifiers_type::value_type exp, n->value_get())
+           foreach (dictionary_elts_type::value_type exp, n->value_get())
              ostr_  << libport::iendl
-                    << "\"" << exp.first << "\""
+                    << *exp.first .get()
                     << " => "
                     << *exp.second.get()
                     << ",";
@@ -841,7 +840,7 @@ Dictionary:
     - '"]"'
   default: |2
     /* Kind of dump to iterate on vals without the keys */
-    foreach (modifiers_type::value_type exp, n->value_get())
+    foreach (dictionary_elts_type::value_type exp, n->value_get())
       ; //operator()(exp.second.get());
 
 List:
