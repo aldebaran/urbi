@@ -10,6 +10,7 @@
 package tests.java;
 
 import urbi.UObject;
+import urbi.UBinary;
 
 
 public class Java extends UObject
@@ -24,6 +25,7 @@ public class Java extends UObject
 	UBindFunction("short_");
 	UBindFunction("int_");
 	UBindFunction("long_");
+	UBindFunction("ubinary");
     }
 
     public byte byte_(byte b)
@@ -52,5 +54,9 @@ public class Java extends UObject
 	return b;
     }
 
+    public UBinary ubinary (UBinary b)
+    {
+	return b;
+    }
 
 }
