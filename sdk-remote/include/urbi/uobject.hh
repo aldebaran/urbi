@@ -301,7 +301,7 @@ namespace urbi
     \brief Similar to UNotifyChange(), but run function in a thread.
     \param v the variable to monitor.
     \param fun the function to call.
-    \param the locking mode to use.
+    \param m the locking mode to use.
     */
     void UNotifyThreadedChange(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
 
@@ -321,6 +321,7 @@ namespace urbi
     template <class T>
     TimerHandle
     USetTimer(ufloat t, void (T::*fun)());
+
 # else
 
     /// \internal
@@ -378,10 +379,10 @@ namespace urbi
 
 # undef MKUSetTimer
 
+# endif //DOXYGEN
+
     /// Remove a timer registered with USetTimer.
     bool removeTimer(TimerHandle h);
-
-# endif //DOXYGEN
 
     /// Request permanent synchronization for v.
     void USync(UVar &v);

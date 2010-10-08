@@ -51,6 +51,7 @@ namespace urbi
     /// issues.  We end with a `,', as this is an asynchronous command.
     ///
     /// \param name  the name of the channel
+    /// \param major version number
     std::string evaluate_in_channel_open(const std::string& name,
                                          unsigned major);
     std::string evaluate_in_channel_close(const std::string& name,

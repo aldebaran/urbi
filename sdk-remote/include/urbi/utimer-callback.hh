@@ -32,7 +32,11 @@ namespace urbi
   class URBI_SDK_API UTimerCallback
   {
   public:
-    /// \param period in milliseconds.
+    /**
+     * \param objname object name.
+     * \param period in milliseconds.
+     * \param ctx uobject context.
+     */
     UTimerCallback(const std::string& objname,
                    ufloat period,
                    impl::UContextImpl* ctx);

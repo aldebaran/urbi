@@ -205,20 +205,21 @@ namespace urbi
     UValue& operator,(Type rhs);
 
 // Types convertibles to DATA_DOUBLE
-#define URBI_DERIVED_NUMERIC_TYPES LIBPORT_LIST( \
-  int, long, unsigned int, unsigned long, \
-  unsigned long long, long long,)
-#define URBI_NUMERIC_TYPES LIBPORT_LIST( \
-  ufloat, int, long, unsigned int, unsigned long, \
-  unsigned long long, long long,)
+#define URBI_DERIVED_NUMERIC_TYPES                     \
+  LIBPORT_LIST(int, long, unsigned int, unsigned long, \
+               unsigned long long, long long,)
+
+#define URBI_NUMERIC_TYPES                                     \
+  LIBPORT_LIST(ufloat, int, long, unsigned int, unsigned long, \
+               unsigned long long, long long,)
 
 // Types convertibles to DATA_STRING
-#define URBI_STRING_TYPES LIBPORT_LIST( \
-  const char*, const void*, const std::string&,)
+#define URBI_STRING_TYPES \
+  LIBPORT_LIST(const char*, const void*, const std::string&,)
 
-#define URBI_MISC_TYPES LIBPORT_LIST( \
-  const UBinary&, const UList&, const UDictionary&, const UObjectStruct&, \
-  const USound&, const UImage&,)
+#define URBI_MISC_TYPES                                          \
+  LIBPORT_LIST(const UBinary&, const UList&, const UDictionary&, \
+               const UObjectStruct&, const USound&, const UImage&,)
 
     LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_NUMERIC_TYPES)
     LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_STRING_TYPES)
@@ -231,6 +232,11 @@ namespace urbi
 
     LIBPORT_LIST_APPLY(CAST_OPERATOR, URBI_NUMERIC_TYPES)
 #undef CAST_OPERATOR
+
+#ifdef DOXYGEN
+    // Doxygens needs a prototype for ufloat.
+    operator ufloat() const;
+#endif
 
     operator std::string() const;
     operator bool() const;
@@ -285,6 +291,7 @@ namespace urbi
 
   // For each Type, define an operator() that casts its UValue&
   // argument into Type.  We need partial specialization.
+
   template <typename Type>
   struct uvalue_caster
   {

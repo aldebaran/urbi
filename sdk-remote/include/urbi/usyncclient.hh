@@ -117,14 +117,14 @@ namespace urbi
      *   It's a printf-like format string.
      * \param arg
      *   the arguments for the expression
-     * \param send_options
+     * \param options
      *   what tag to use and so forth.
      * \return
      *   the resulting message, or 0 in case of error.
      */
     UMessage*
     syncGet_(const char* expression, va_list& arg,
-	     const send_options& = send_options::default_options);
+	     const send_options& options = send_options::default_options);
 
   public:
     /// Synchronously evaluate an Urbi expression. The expression must
