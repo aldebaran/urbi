@@ -54,10 +54,12 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 ## ------------ ##
 
 env_LTLIBRARIES = libuobject@LIBSFX@.la
-# The -DBUILDING_LIBPORT is required since libport/network/* are
-# considered as kernel sources.
-libuobject@LIBSFX@_la_CPPFLAGS =				\
-  $(AM_CPPFLAGS) -DBUILDING_URBI_SDK -DLIBPORT_NO_SSL
+libuobject@LIBSFX@_la_CPPFLAGS =		\
+  $(AM_CPPFLAGS) 				\
+  -DBUILDING_URBI_SDK 				\
+  -DLIBPORT_NO_SSL				\
+  -DURBI_INHIBIT_REVISION_CHECK
+
 # Unfortunately, we _have_ to disable -fstrict-aliasing.  Because of
 # Bison's variants.  I don't know how to avoid this.
 #
