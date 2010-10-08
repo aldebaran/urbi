@@ -43,7 +43,8 @@ namespace urbi
     setg(buffer_read_->buffer, buffer_read_->buffer, buffer_read_->buffer);
   }
 
-  int StreamBuffer::underflow()
+  int
+  StreamBuffer::underflow()
   {
     GD_PUSH_TRACE("requesting new data.");
     if (buffer_write_->used == 0)
@@ -111,13 +112,13 @@ namespace urbi
 
   int StreamBuffer::overflow(int)
   {
-    GD_ABORT("write is not implemented for urbi::StreamBuffer.");
+    GD_FABORT("%s: not implemented.", __FUNCTION__);
   }
 
   int
   StreamBuffer::sync()
   {
-    GD_ABORT("write is not implemented for urbi::StreamBuffer.");
+    GD_FABORT("%s: not implemented.", __FUNCTION__);
   }
 
   void
