@@ -1402,12 +1402,6 @@ namespace urbi
     }
   }
 
-  std::string
-  baseURBIStarter::getFullName(const std::string& name) const
-  {
-    return name;
-  }
-
   int kernelMajor()
   {
     const std::string& kv = kernelVersion();
