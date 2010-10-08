@@ -54,14 +54,6 @@ namespace urbi
       virtual std::string as_string() const;
       inline value_type& value_get();
 
-    /*-----------.
-    | Accessor.  |
-    `-----------*/
-
-    private:
-      Position::value_type* begin_ref_;
-      Position::value_type* end_ref_;
-
     /*----------.
     | Details.  |
     `----------*/
