@@ -43,3 +43,10 @@ TFAIL_TESTS +=					\
 XFAIL_TESTS +=					\
   2.x/derive.chk				\
   2.x/uob/group.chk
+
+XFAIL_TESTS +=						\
+  uob/java/all/change-bypass-external-access.chk	\
+  uob/java/all/change-bypass.chk			\
+  uob/java/all/transmit-object.chk
+
+
