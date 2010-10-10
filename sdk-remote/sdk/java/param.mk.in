@@ -14,37 +14,22 @@ bindir = @bindir@
 libdir = @libdir@
 libexecdir = @libexecdir@
 
-JAVAC=javac
-JAR=jar
-
+JFLAGS= -cp $(CLASSPATH) -d $(builddir)
 OUTJAR=nothing3
 
-# We use GNU Make pattern rules so that we can provide extra
-# dependencies.  Before changing something, read the doc.
-#
-#    Suffix rules cannot have any prerequisites of their own.  If they
-#    have any, they are treated as normal files with funny names, not as
-#    suffix rules.  Thus, the rule:
-#
-#      .c.o: foo.h
-#              $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
-#
-#    tells how to make the file `.c.o' from the prerequisite file `foo.h',
-#    and is not at all like the pattern rule:
-#
-#      %.o: %.c foo.h
-#              $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
-#
-#    which tells how to make `.o' files from `.c' files, and makes all `.o'
-#    files using this pattern rule also depend on `foo.h'.
-$(builddir)/%.class: %.java
-	$(JAVAC) -cp $(CLASSPATH) -d $(builddir) $<
+# Build all java sources one shot (because of java dependancies which
+# are not handled correctly in a per-file build).
+$(builddir)/java.stamp: $(JSOURCES)
+	$(JAVAC) $(JFLAGS) $+
+	touch $(builddir)/java.stamp
+
+$(JOBJECTS): $(builddir)/java.stamp
 
 $(OUTJAR): $(JOBJECTS)
-	$(JAR) cf $@ $(JAROBJECTS)
+	$(JAR) $(JARFLAGS) $@ $(MANIFEST) $(JAROBJECTS)
 
 clean:
 	$(RM) $(JOBJECTS)
 
-distclean: cleanxo
+distclean: clean
 	$(RM) $(OUTJAR)

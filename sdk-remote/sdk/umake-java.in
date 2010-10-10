@@ -13,8 +13,15 @@ General options:
   -v, --verbose     report on what is done
 
 Compilation options:
-      --deep-clean        remove all building directories
-  -c, --clean             clean building directory before compilation
+      --deep-clean           remove all building directories
+  -c, --clean                clean building directory before
+                             compilation
+  -cp, --classpath=classpath A : separated list of directories, JAR
+                             archives, and ZIP archives to search for
+                             class files
+  -m, --manifest=manifest    include manifest information from specified
+                             manifest file
+  -o, --output=output        output file name
 
 Developper options:
   -p, --prefix=DIR     library file location [$prefix]
@@ -72,6 +79,13 @@ deep_clean ()
   fi
 }
 
+tool_test ()
+{
+  local toolname="$1"
+  local tool="$2"
+  test -e $tool \
+      || fatal "Could not find a working '$toolname' tool."
+}
 
 ## ---------------------- ##
 ## Command line parsing.  ##
@@ -115,6 +129,8 @@ get_options ()
 
       (-p | --prefix)   shift; prefix=$1;;
       (-k | --kernel)   shift; kernel=$1;;
+      (-cp | --classpath)   shift; classpath="$classpath:$1";;
+      (-m | --manifest)   shift; manifest="$1";;
 
       (--) # What remains are not options.
 	shift
@@ -177,6 +193,12 @@ get_options ()
 ## Main.  ##
 ## ------ ##
 
+test "x$JAVA_HOME" != x || fatal "Environment variable JAVA_HOME is not set."
+: ${javac="${JAVA_HOME}/bin/javac"}
+: ${jar="${JAVA_HOME}/bin/jar"}
+tool_test "javac" "$javac"
+tool_test "jar" "$jar"
+
 clean=false
 havearg=false   # we have at least one path or file arg
 
@@ -197,12 +219,14 @@ prefix=$(cd $(dirname $0)/.. && pwd)
 : ${libdir="@libdir@"}
 : ${brandlibdir="@brandlibdir@"}
 
+: ${liburbi_jar="$prefix/share/sdk-remote/java/lib/liburbijava.jar"}
+: ${classpath=".:$liburbi_jar"}
+
 # Target name.
 target="uobject"
 sources=
 makeargs=
-classpath=
-
+manifest=
 objects=
 
 get_options "$@"
@@ -222,8 +246,6 @@ append makeargs "OUTJAR=$target"
 
 # Then pass env.
 append makeargs "prefix=$prefix"
-
-append classpath $prefix/share/sdk-remote/java/lib/liburbijava.jar
 
 # Set and create build dir for temporary files
 builddir="$(dirname $target)/${builddir_pref}-$(basename $target)"
@@ -260,14 +282,23 @@ if $verb; then
   sed  >&2 's/^/> /' $(param_mk)
 fi
 
+jarflags="cf"
+if test "x$manifest" != x; then
+    jarflags="${jarflags}m"
+fi
 
 verbose "invoking make -f $(param_mk) $target"
 run eval make -f "$(param_mk)"			\
     "$target"					\
     UMAKE_BUILD_DIR="$builddir"			\
     JOBJECTS="'$objects'"			\
+    JSOURCES="'$sources'"			\
     JAROBJECTS="'$jar_objects'"			\
     CLASSPATH="'$classpath'"			\
+    MANIFEST="$manifest"			\
+    JAVAC="$javac"				\
+    JAR="$jar"					\
+    JARFLAGS="$jarflags"			\
     "$makeargs"
 
 verbose "done."
