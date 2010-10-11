@@ -8,9 +8,7 @@
 # See the LICENSE file for more information.
 # For comments, bug reports and feedback: http://www.urbiforge.com
 #
-m4_pattern_forbid([^ACX_])dnl
-m4_pattern_forbid([^URBI_])dnl
-
+m4_pattern_forbid([^(ACX|AX|URBI)_])dnl
 AC_PREREQ([2.61])
 
 
@@ -133,6 +131,7 @@ do
     (*) AC_MSG_ERROR([invalid --enable-bindings argument: $i]);;
   esac
 done
+IFS=$save_IFS
 AC_MSG_RESULT([$enable_bindings])
 
 AM_CONDITIONAL([BINDINGS], [test x"$enable_bindings" != xno])
@@ -156,12 +155,8 @@ AM_CONDITIONAL([BINDING_RUBY],
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.
  AC_ENABLE_SHARED
- AX_PKG_SWIG([1.3.40])
- if (eval "$SWIG -version") >/dev/null 2>&1; then :; else
-   AC_MSG_ERROR([SWIG 1.3.40 is required to build bindings.])
-   SWIG_ENABLE_CXX
- fi
-
+ AX_PKG_SWIG([1.3.40], [],
+             [AC_MSG_ERROR([SWIG 1.3.40 is required to build bindings.])])
 
  ## -------------------------- ##
  ## liburbi java configuration ##
