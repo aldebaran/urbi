@@ -90,8 +90,8 @@ namespace urbi
    * \param useSyncClient use a UClient instead of USyncClient if false.
    * \return 0 if no error occured.
    */
-  int
   URBI_SDK_API
+  int
   initialize(const std::string& host, int port, size_t buflen,
              bool exitOnDisconnect, bool server = false,
              const std::vector<std::string>& files = std::vector<std::string>(),
