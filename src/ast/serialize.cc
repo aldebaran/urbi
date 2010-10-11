@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+#include <boost/serialization/optional.hpp>
+
 #include <serialize/serialize.hh>
 
 #include <ast/all.hh>

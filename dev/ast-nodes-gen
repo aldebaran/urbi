@@ -407,7 +407,8 @@ def print_serialization(node, header, inline, impl):
   for a in node.attributes:
     if not a.serialize:
       continue
-    ser += '    ser.template serialize<%s>("%s", %s_);\n' % (a.type, a.name, a.name)
+    ser += '    ser.template serialize< %(type)s >("%(name)s", %(name)s_);\n' \
+        % { 'name': a.name, 'type': a.type }
 
   print """#if defined ENABLE_SERIALIZATION
  template <typename T>
@@ -429,7 +430,8 @@ def print_serialization(node, header, inline, impl):
   for a in node.attributes:
     if not a.serialize:
       continue
-    ser += '    %s_ = ser.template unserialize<%s>("%s");\n' % (a.name, a.type, a.name)
+    ser += '    %(name)s_ = ser.template unserialize< %(type)s >("%(name)s");\n' \
+        % { 'name': a.name, 'type': a.type }
 
   print """  template <typename T>
   %(name)s::%(name)s(libport::serialize::ISerializer<T>& ser)
