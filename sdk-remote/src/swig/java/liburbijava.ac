@@ -8,8 +8,7 @@ AC_PROG_JAVAC
 AC_PROG_JAVA
 AC_PROG_JAR
 
-
-if test "x$JAVA_HOME" = "x"; then
+if test x"$JAVA_HOME" = "x"; then
   AC_MSG_ERROR([Environment variable JAVA_HOME is not set.])
 fi
 
@@ -18,25 +17,25 @@ case $host_os in
   (*darwin*)         JAVA_INCLUDE_DIR=;;
   (*)                JAVA_INCLUDE_DIR=linux;;
 esac
-AC_SUBST([JAVA_INCLUDE_DIR])
-AC_SUBST([SHARED_LIBS_ENVVAR_NAME], [URBI_ROOT])
-AC_SUBST([SHARED_LIBS_ENVVAR_VALUE], ["\${resource_loc:urbijava}/../../../"])
+AC_SUBST([JAVA_INCLUDE_DIR])dnl
+AC_SUBST([SHARED_LIBS_ENVVAR_NAME], [URBI_ROOT])dnl
+AC_SUBST([SHARED_LIBS_ENVVAR_VALUE], ["\${resource_loc:urbijava}/../../../"])dnl
 
 
-AC_SUBST([ECLIPSE_test_ARGS], [""])
-AC_SUBST([ECLIPSE_URBIPing_ARGS], [""])
-AC_SUBST([ECLIPSE_URBIRecord_ARGS], [""])
+AC_SUBST([ECLIPSE_test_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBIPing_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBIRecord_ARGS], [""])dnl
 AC_SUBST([ECLIPSE_UObjectJava_ARGS],
-         ["\${workspace_loc:urbijava}/examples/uobjectjava/UObjectJava.jar"])
-AC_SUBST([ECLIPSE_UObjectJava_withmain_ARGS], [""])
-AC_SUBST([ECLIPSE_URBISound_ARGS], [""])
-AC_SUBST([ECLIPSE_URBISend_ARGS], [""])
-AC_SUBST([ECLIPSE_URBIBandWidth_ARGS], [""])
-AC_SUBST([ECLIPSE_URBIPlay_ARGS], [""])
-AC_SUBST([ECLIPSE_URBIImage_ARGS], [""])
-AC_SUBST([ECLIPSE_URBITalkie_ARGS], [""])
-AC_SUBST([ECLIPSE_URBIBallTrackingHead_ARGS], [""])
-AC_SUBST([ECLIPSE_URBIMirror_ARGS], [""])
+         ["\${workspace_loc:urbijava}/examples/uobjectjava/UObjectJava.jar"])dnl
+AC_SUBST([ECLIPSE_UObjectJava_withmain_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBISound_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBISend_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBIBandWidth_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBIPlay_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBIImage_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBITalkie_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBIBallTrackingHead_ARGS], [""])dnl
+AC_SUBST([ECLIPSE_URBIMirror_ARGS], [""])dnl
 
 AC_CONFIG_FILES([src/swig/java/sample/test.launch])
 AC_CONFIG_FILES([src/swig/java/sample/uobjectjava.launch])
