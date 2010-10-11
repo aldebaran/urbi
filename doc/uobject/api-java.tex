@@ -88,6 +88,46 @@ Kernel Version: 0
 [  LibUObject   ] Pushing UFactory.init in function
 \end{shell}
 
+\subsection{The \command{umake-java} and \command{urbi-launch-java} tools}
+
+\command{umake-java} can be used to compile Java UObjects. It will produce a JAR archive that you can use with \command{urbi-launch-java}.
+
+You can give it a list of files to compile:
+\begin{shell}
+$ umake-java -q factory.uob/*.java -o factory.jar
+\end{shell}
+
+\noindent
+or directories in which \Cxx sources are looked for:
+
+\begin{shell}
+$ umake-java -q factory.uob -o factory.jar
+\end{shell}
+
+\noindent
+or finally, if you give no argument at all, the sources in the current
+directory:
+
+\begin{shell}
+$ cd factory.uob
+$ umake-java -q -o factory.jar
+\end{shell}
+
+To run your UObject then use \command{urbi-launch-java}:
+
+\begin{shell}
+$ urbi-launch-java factory.jar
+urbi-launch: obeying to URBI_ROOT = /usr/local/gostai
+UObject: Urbi SDK Remote version urbi-sdk-2.3 rev. 3e93ec1
+Copyright (C) 2004-2010 Gostai S.A.S..
+
+Libport version urbi-sdk-2.3 rev. 66cb0ec
+Copyright (C) 2005-2010 Gostai S.A.S..
+UObject: Remote Component Running on 127.0.0.1 54000
+Kernel Version: 0
+[  LibUObject   ] Registering function UFactory.init 1 into UFactory.init from UFactory
+[  LibUObject   ] Pushing UFactory.init in function
+\end{shell}
 
 \section{Creating a class, binding variables and functions}
 \label{sec:uob:apijava:bind}
