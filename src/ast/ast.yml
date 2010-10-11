@@ -9,30 +9,30 @@
 # The base directory to prepend to all the file names generated in the
 # generated Makefile snippet.  If this ast-nodes.mk is to be included
 # by ast/Makefile.am, then define to empty.  If it is included by its
-# parent Makefile.am, define to "ast/".
-ast_basedir: "ast/"
+# parent Makefile.am, define to 'ast/'.
+ast_basedir: 'ast/'
 
 # The name of the directory/namespace that contains our auxiliary C++
 # library.
-auxlib: "libport"
+auxlib: 'libport'
 
 # The name of the directory/namespace that contains the cloner.
-clonerlib: "ast"
+clonerlib: 'ast'
 # The name of the directory/namespace that contains the transformer.
-transformerlib: "ast"
+transformerlib: 'ast'
 
 # The generator will accept these types as is, without looking for a
 # particular header.  Also, they are handled by copy.
 atomic_types:
-  - "bool"
-  - "int"
-  - "ufloat"
-  - "unsigned"
+  - 'bool'
+  - 'int'
+  - 'ufloat'
+  - 'unsigned'
 
 # Likewise, but these types are handled by references, because of
 # their size.
 # compound_types:
-# - "DecsList::decs_type"
+# - 'DecsList::decs_type'
 
 # Text to include on top of any generated file.  Typically the
 # license.
@@ -58,42 +58,42 @@ file_prologue: |2
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map:
-  "local_declarations_type":            '<ast/local-declarations-type.hh>'
-  "catches_type":                       '<ast/catches-type.hh>'
-  "exps_type":                          '<ast/exps-type.hh>'
-  "flavor_type":                        '<ast/flavor.hh>'
-  "libport::RefCounted":                '<libport/ref-counted.hh>'
-  "libport::meta::Hierarchy<Ast, Nodes>": '<libport/hierarchy.hh>'
-  "libport::Symbol":                    '<libport/symbol.hh>'
-  "std::string":                        '<string>'
-  "symbols_type":                       '<ast/symbols-type.hh>'
-  "ufloat":                             '<libport/ufloat.h>'
-  "modifiers_type":                     '<libport/hash.hh>'
-  "dictionary_elts_type":               '<vector>'
-  "boost::optional<modifiers_type>":    '<boost/optional.hpp>'
+  'boost::optional<modifiers_type>':      '<boost/optional.hpp>'
+  'catches_type':                         '<ast/catches-type.hh>'
+  'dictionary_elts_type':                 '<vector>'
+  'exps_type':                            '<ast/exps-type.hh>'
+  'flavor_type':                          '<ast/flavor.hh>'
+  'libport::RefCounted':                  '<libport/ref-counted.hh>'
+  'libport::Symbol':                      '<libport/symbol.hh>'
+  'libport::meta::Hierarchy<Ast, Nodes>': '<libport/hierarchy.hh>'
+  'local_declarations_type':              '<ast/local-declarations-type.hh>'
+  'modifiers_type':                       '<libport/hash.hh>'
+  'std::string':                          '<string>'
+  'symbols_type':                         '<ast/symbols-type.hh>'
+  'ufloat':                               '<libport/ufloat.h>'
 # FIXME: Can't we compute this list from atomic_types?  Or simply, one
 # cannot visit something which is not a defined ast node?
 # Used by the cloner.
 non_visitable_types:
-  - "bool"
-  - "flavor_type"
-  - "libport::Symbol"
-  - "loc"
-  - "std::string"
-  - "ufloat"
-  - "unsigned"
+  - 'bool'
+  - 'flavor_type'
+  - 'libport::Symbol'
+  - 'loc'
+  - 'std::string'
+  - 'ufloat'
+  - 'unsigned'
 
-# In the cloner, these require "recurse_collection".
+# In the cloner, these require 'recurse_collection'.
 collections:
-  - "catches_type"
-  - "exps_type"
-  - "local_declarations_type"
-  - "symbols_type"
-  - "modifiers_type"
-  - "dictionary_elts_type"
+  - 'catches_type'
+  - 'dictionary_elts_type'
+  - 'exps_type'
+  - 'local_declarations_type'
+  - 'modifiers_type'
+  - 'symbols_type'
 
 # The function to clear a list of pointers.
-deep_clear: "libport::deep_clear"
+deep_clear: 'libport::deep_clear'
 
 # A regexp mathing the types that need to be deep-cleared.
 deep_clear_p: '^$'
@@ -286,7 +286,7 @@ Ast:
         type: rConstAst
         access: r
         desc: Original node, if this is a rewrite
-        init: "0"
+        init: '0'
         serialize: false
 
 Exp:
@@ -1381,7 +1381,6 @@ Assign:
     - modifiers:
         type: 'boost::optional<modifiers_type>'
         access: rwW
-        mandatory: true
   printer:
     - ~what
     - '" = "'
