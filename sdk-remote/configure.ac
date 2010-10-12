@@ -155,8 +155,8 @@ AM_CONDITIONAL([BINDING_RUBY],
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.
  AC_ENABLE_SHARED
- AX_PKG_SWIG([1.3.40], [],
-             [AC_MSG_ERROR([SWIG 1.3.40 is required to build bindings.])])
+ AX_PKG_SWIG([1.3.36], [],
+             [AC_MSG_ERROR([SWIG 1.3.36 is required to build bindings.])])
 
  ## -------------------------- ##
  ## liburbi java configuration ##
