@@ -53,7 +53,7 @@ urbiinclude_HEADERS =				\
 nodist_urbiinclude_HEADERS =				\
   include/urbi/revision.hh
 include/urbi/revision.hh: $(VERSIONIFY_CACHE) $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --prefix=SDK_REMOTE_ --stub=$@
+	$(VERSIONIFY_RUN) --prefix=SDK_REMOTE_ --header=$@
 
 ## --------------- ##
 ## ucallbacks.hh.  ##
