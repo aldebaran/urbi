@@ -18,7 +18,7 @@ UMAKE_SHARED = tests/bin/umake-shared
 
 umake_verbose = $(umake_verbose_$(V))
 umake_verbose_ = $(umake_verbose_$(AM_DEFAULT_VERBOSITY))
-umake_verbose_0 = @echo " UMAKE  " $@;
+umake_verbose_0 = @echo "  UMAKE " $@;
 
 UMAKE_VERBOSE = $(UMAKE_VERBOSE_$(V))
 UMAKE_VERBOSE_ = $(UMAKE_VERBOSE_$(AM_DEFAULT_VERBOSITY))
