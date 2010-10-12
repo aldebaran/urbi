@@ -94,9 +94,6 @@ namespace urbi
         res->proto_add(Object::proto);
       aver(res);
 
-      Binder<T> b(res);
-      T::initialize(b);
-
       // type.
       static libport::Symbol type("type");
       res->slot_set(type,
