@@ -63,6 +63,10 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXXCOMPILE)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link \
   $(CXX) -module $(CXXFLAGS) $(LDFLAGS) $(EXTRA_LDFLAGS)
 
+# Install.
+INSTALL_LIB = install -m 755
+LTINSTALL_LIB = $(LIBTOOL) --mode=install $(INSTALL_LIB)
+
 # We use GNU Make pattern rules so that we can provide extra
 # dependencies.  Before changing something, read the doc.
 #
@@ -94,13 +98,30 @@ $(builddir)/%.lo: %.cpp $(HEADERS)
 $(OUTLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS) -o $@
 
-lalib = $(OUTSHLIB:$(DLMODEXT)=.la)
-ABS_OUTSHLIB = $(shell cd $(dir $(OUTSHLIB)) && pwd)/$(notdir $(OUTSHLIB))
+# Library to create without its extension.
+lib_noext = $(OUTSHLIB:$(DLMODEXT)=)
+# Libtool library.
+lib_la = $(lib_noext).la
+# The true library, in libtool's .libs directory.
+lib_so = $(shell 							\
+  ls $(dir $(lib_noext)).libs/$(notdir $(lib_noext))*$(DLMODEXT)	\
+  | head -n 1)
+# Absolute path to OUTSHLIB.
+OUTSHLIB_ABS = $(shell cd $(dir $(OUTSHLIB)) && pwd)/$(notdir $(OUTSHLIB))
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
-	$(CXXLINK) -export-dynamic -o $(lalib)	\
+	$(CXXLINK) -export-dynamic -o $(lib_la)	\
 	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)	\
 	  -rpath $(envdir) $(LIBADD) -avoid-version
-	$(LIBTOOL) --mode=install install -m 755 $(lalib) $(ABS_OUTSHLIB)
+# Sometimes people build libraries with dependencies that are not
+# sufficiently exposed to Libtool.  It then believes that it's going
+# to do something wrong, and refuses to do it.  It might indeed go
+# wrong, but more often than never, it works.  So let's proceed
+# anyway, keeping fingers crossed.
+	if $(LTINSTALL_LIB) $(lib_la) $(OUTSHLIB_ABS); then :; else	    \
+	  echo >&2 "umake: Libtool failed to install the library.";	    \
+	  echo >&2 "umake: proceeding by hand.";			    \
+	  $(INSTALL_LIB) $(lib_so) $(OUTSHLIB);				    \
+	fi
 
 
 # The command to generate the library.
