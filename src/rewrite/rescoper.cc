@@ -65,6 +65,14 @@ namespace rewrite
                       ast::flavor_pipe);
       return make_assignment(l, call, dec->value_get());
     }
+    else if (ast::rConstPipe pipe =
+             subject.unsafe_cast<const ast::Pipe>())
+    {
+      ast::rPipe res = new ast::Pipe(pipe->location_get(), ast::exps_type());
+      foreach (const ast::rExp& child, pipe->children_get())
+        res->children_get().push_back(unscope(child, nary));
+      return res;
+    }
     else
       return subject;
   }
