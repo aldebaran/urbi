@@ -64,6 +64,8 @@ package: automake
 package: cvs
 \end{package}
 
+\item[colordiff] Not a requirement, but a useful addition.  Used if exists.
+
 \item[Git 1.6 or later]
   Beware that older versions behave poorly with submodules.
 \begin{package}
@@ -121,7 +123,7 @@ MacPorts: py26-yaml
 deb:   python-yaml
 \end{package}
 
-At least on OS X you also need to specify the PYTHONPATH:
+On OS X you may also need to specify the \env{PYTHONPATH}:
 
 \begin{shell}
 export PYTHONPATH="\
@@ -152,6 +154,9 @@ windows: http://www.boostpro.com/download
 \begin{package}
 package: ccache
 \end{package}
+
+\item[Doxygen] Needed if you enable the Doxygen documentation (via
+  \command{configure}'s option \option{--enable-documentation=doxygen,...}).
 
 \item[Flex 2.5.35 or later]
   Beware that 2.5.33 has bugs than prevents this package from building
@@ -196,9 +201,11 @@ deb: imagemagick
 \end{package}
 
 \item[PDFLaTeX] TeX Live is the most common \TeX{} distribution nowadays.
+  We use \command{pdfcrop} from \file{texlive-bin-extra}.  We also use
+  TeX4HT, which is part of \file{texlive-htmlxml} on MacPorts.
 \begin{package}
-deb: texlive-base texlive-latex-extra
-MacPorts: texlive texlive-latex-extra texlive-htmlxml
+deb: texlive-base texlive-latex-extra texlive-bin-extra
+MacPorts: texlive texlive-latex-extra texlive-bin-extra texlive-htmlxml
 \end{package}
 
 \item[py-docutils] This is not a requirement, but it's better to have
@@ -212,6 +219,12 @@ MacPorts: py26-docutils
 \item[socat] Needed by the test suite to send messages to an \urbi server.
 \begin{package}
 package: socat
+\end{package}
+
+\item[SWIG] Used to generate the Java support for UObjects.  Version 1.3.40
+  is known to work.
+\begin{package}
+package: swig
 \end{package}
 
 \item[TeX4HT] Used to generate the HTML documentation.
@@ -228,7 +241,8 @@ package: transfig
 
 \item[Valgrind] Not needed, but if present, used by the test suite.
 \begin{package}
-package: valgrind
+deb: valgrind
+MacPorts: valgrind-devel
 \end{package}
 
 \item[xsltproc] This is not a requirement, but it's better to have it.
@@ -248,19 +262,23 @@ $ ./bootstrap
 \end{shell}
 
 \section{Configure}
-You should compile in another directory than the one containing the sources.
+
+As of today, building where the source files are is a bad idea (the test
+suite of a subcomponent of ours, Libport, is known to fail in that
+situation).  So, \strong{compile in another directory than the one
+  containing the sources}, for instance as follows.
 
 \begin{shell}
 $ mkdir _build
 $ cd _build
-$ ../configure OPTIONS...
+$ ../configure \var{options}...
 \end{shell}
 
 \subsection{configuration options}
 See \samp{../configure --help} for detailed information.  Unless you
 want to do funky stuff, you probably need no option.
 
-To use ccache, pass \samp{CC='ccache gcc' CXX='ccache g++'} as
+To use \command{ccache}, pass \samp{CC='ccache gcc' CXX='ccache g++'} as
 arguments to configure:
 
 \begin{shell}
@@ -349,12 +367,6 @@ $ ../configure                                                  \
   --host=mingw32
 \end{shell}
 
-%%% FIXME: Obsolete I think.
-%%%
-%%% For some reason, the building of \file{libuobject.dll} will fail.
-%%% You need to remove the reference to \file{libltld.la} from the
-%%% libtool invocation.  This will be simplified later.
-
 \section{Compile}
 Should be straightforward.
 
@@ -377,7 +389,7 @@ If you intend to make a relocatable tree of \usdk (i.e., a self-contained
 tree that can be moved around), then run \samp{make relocatable} after
 \samp{make install}.
 
-This step \emph{requires} that you use a DESTDIR (see the Automake
+This step \emph{requires} that you use a \code{DESTDIR} (see the Automake
 documentation for more information).  Basically, the sequence of commands
 should look like:
 
