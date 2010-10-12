@@ -16,3 +16,9 @@
 [submodule "fsm"]
 	path = fsm
 	url = git@git.gostai.com:fsm
+[submodule "sdk-remote/libport"]
+	path = sdk-remote/libport
+	url = git@git.gostai.com:libport.git
+[submodule "sdk-remote/jpeg"]
+	path = sdk-remote/jpeg
+	url = git@git.gostai.com:libjpeg-6b.git
