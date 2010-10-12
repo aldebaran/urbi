@@ -151,9 +151,9 @@ AM_CONDITIONAL([BINDING_RUBY],
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.
  AC_ENABLE_SHARED
- AC_PROG_SWIG([1.3.24])
+ AX_PKG_SWIG([1.3.40])
  if (eval "$SWIG -version") >/dev/null 2>&1; then :; else
-   AC_MSG_ERROR([SWIG 1.3.24 is required to build bindings.])
+   AC_MSG_ERROR([SWIG 1.3.40 is required to build bindings.])
    SWIG_ENABLE_CXX
  fi
 fi
