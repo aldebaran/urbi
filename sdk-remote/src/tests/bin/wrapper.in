@@ -1,0 +1,114 @@
+#! @SHELL@
+# @configure_input@
+# Wrapper around a non installed umake component to make it work as
+# an installed one.
+
+# No unnoticed problem.
+set -e
+
+case $VERBOSE in
+  (x) set -x;;
+esac
+
+me=$(basename "$0")
+
+stderr ()
+{
+  echo >&2 "$0: $@"
+}
+
+fatal ()
+{
+  stderr "$@"
+  exit 1
+}
+
+abs_top_builddir='@abs_top_builddir@'
+abs_top_srcdir='@abs_top_srcdir@'
+
+# Find urbi headers.
+EXTRA_CPPFLAGS+=" -I$abs_top_srcdir/include -I$abs_top_builddir/include"
+
+# Find libport headers.
+EXTRA_CPPFLAGS+=" -I$abs_top_srcdir/libport/include -I$abs_top_builddir/libport/include"
+
+test -d "$abs_top_builddir" ||
+  fatal "cannot find top build directory: $abs_top_builddir"
+
+param_mk=$abs_top_builddir/sdk/param.mk
+test -f "$param_mk" ||
+  fatal "cannot find $param_mk"
+
+: ${LIBTOOL=$abs_top_builddir/libtool}
+test -f "$LIBTOOL" ||
+  fatal "cannot find $LIBTOOL"
+
+# umake-link does not support -P.
+case $me in
+  (umake-link)
+      ;;
+  (*)
+      set x --param-mk "$param_mk" "$@"
+      shift
+      ;;
+esac
+
+# special case for kernel and umake-remote
+case $me in
+   (umake-remote|umake-shared)
+     envdir="$abs_top_builddir/src/libuobject"
+     prefix="$abs_top_builddir"
+     ;;
+   (*)
+     # Use the libuobject from the kernel.
+     envdir="$abs_top_builddir/../src"
+     prefix="$abs_top_builddir"
+     ;;
+esac
+
+# Recover EXTRA_CPPFLAGS and EXTRA_LDFLAGS on command line
+set x "$@" myseparator ; shift
+while true; do
+  arg=$1
+  shift
+  case $arg in
+    (EXTRA_CPPFLAGS=*|EXTRA_LDFLAGS=*)
+      var=`echo "$arg" | sed -e 's/=.*//'`
+      val=`echo "$arg" | sed -e 's/[^=]*=//'`
+      eval "$var+=' $val'"
+      ;;
+    (myseparator)
+      break ;;
+    (*)
+      set x "$@" "$arg"; shift
+      ;;
+  esac
+done
+
+# FIXME: Instead of exporting, we should have a means to give
+# it to wrappee only, maybe via command line?
+export UMAKE=$abs_top_builddir/sdk/umake
+wrappee=$abs_top_builddir/sdk/$me
+# PREURBI can be valgrind for instance.  Admitedly useless here, since
+# these are scripts.
+set x                                           \
+    $PREURBI "$wrappee"                         \
+    LIBTOOL="$LIBTOOL"                          \
+    envdir="$envdir"                            \
+    "$@"                                        \
+    --kernel="$kernel_dir"                      \
+    --prefix="$prefix"                          \
+    EXTRA_CPPFLAGS="$EXTRA_CPPFLAGS"            \
+    EXTRA_LDFLAGS="$EXTRA_LDFLAGS"              \
+    VPATH="$abs_top_srcdir/src/liburbi"
+shift
+
+case $@ in
+  (*" --quiet "* | *"-q"*);;
+  (*)  stderr "running: $*";;
+esac
+exec "$@"
+
+# Local Variables:
+# mode: shell-script
+# End:

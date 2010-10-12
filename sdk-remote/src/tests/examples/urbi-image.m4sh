@@ -1,0 +1,75 @@
+                                                        -*- shell-script -*-
+URBI_INIT
+
+# Avoid zombies and preserve debugging information.
+cleanup ()
+{
+  local exit_status="$?"
+
+  # Let a second C-c really kill us: restore default traps.
+  trap - 0 1 2 13 15
+
+  # In case we were caught by set -e, kill the children.
+  children_kill    >>debug
+  children_harvest >>debug
+
+  rst_subsection "Debug outputs"
+  rst_pre "debug" debug
+
+  # Results: Only for the children that are not actually output.
+  local i
+  for i in $children
+  do
+    case $i in
+      (*)
+	rst_subsection "$i"
+	children_report "$i"
+	;;
+    esac
+  done
+
+# FIXME: We should have children expected exit status.
+#  case $exit_status in
+#    (0) exit_status=$(children_status);;
+#  esac
+
+  error $exit_status "cleanup: exiting $exit_status$(ex_to_string $exit_status)"
+}
+trap cleanup 0
+
+exec 3>&2
+me=$as_me
+medir=$(absolute "$0").dir
+mkcd $medir
+
+xrun "--help"    urbi-image$EXEEXT --help
+xrun "--version" urbi-image$EXEEXT --version
+
+# Send a file and check the output.
+
+# Leaves trailing files, so run it in subdir.
+find_urbi_server
+
+# Start it.
+spawn_urbi_server
+
+## ------ ##
+## Test.  ##
+## ------ ##
+
+xrun "server init"                              \
+   urbi-send --port-file server.port            \
+             -e 'load("urbi/test-suite.u");'    \
+             -e 'camera.load = true;'           \
+             -e 'sleep(1s);'                    \
+             -e 'quit;'
+
+xrun "urbi-image"                                       \
+     urbi-image -o camera.jpg --port $(cat server.port)
+
+xrun "shutdown"                                 \
+  urbi-send --port-file server.port             \
+            -e 'shutdown;'                      \
+            --quit
+
+file camera.jpg | grep -q JPEG

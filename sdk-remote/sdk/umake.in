@@ -1,0 +1,460 @@
+@UMAKE_COMMON@
+
+usage ()
+{
+  cat <<EOF
+Usage: $me [OPTION]... [FILE]...
+
+General options:
+  -D, --debug       turn on shell debugging (set -x)
+  -h, --help        display this help and exit successfully
+  -q, --quiet       no output unless errors
+  -V, --version     display version information and exit successfully
+  -v, --verbose     report on what is done
+
+Compilation options:
+      --deep-clean        remove all building directories
+  -c, --clean             clean building directory before compilation
+  -j, --jobs=JOBS         specify the numbers of commands to run simultaneously
+  -l, --library           produce a library, don't link to a particular core
+  -s, --shared            produce a shared library loadable by any core
+  -o, --output=output     output file name
+  -C, --core=CORE         build type [$core]
+  -H, --host=HOST         destination host [$host]
+  -m, --disable-automain  do not add the main function
+  --package=PACKAGE       use pkg-config to add flags required by PACKAGE
+  -I<path>                pass unchanged to compiler
+  -L<path>                pass unchanged to linker
+  -l<lib>                 pass unchanged to linker
+Developper options:
+  -p, --prefix=DIR     library file location [$prefix]
+  -P, --param-mk=FILE  param.mk location [$(param_mk)]
+  -k, --kernel=DIR     kernel location [$(kernel)]
+
+Exit codes:
+   1   some tool failed
+   2   invalid command line option
+   3   unknown command line argument
+   4   cannot find file or directory
+
+FILE may be C/C++ source files, headers, libraries or directory that
+will be searched for such files.
+
+Report bugs to @PACKAGE_BUGREPORT@.
+EOF
+
+  exit 0
+}
+
+version ()
+{
+  cat <<\EOF
+umake @PACKAGE_VERSION@ (@PACKAGE_STRING@)
+@PACKAGE_COPYRIGHT@
+EOF
+  exit 0
+}
+
+# Return the location of param_mk
+param_mk ()
+{
+  if test -n "$param_mk"; then
+    echo "$param_mk"
+  else
+    # If we are building a library, there is no core, so use param.mk
+    # from the remote core which is always present.
+    echo "$brandlibdir/${core:-remote}/param.mk"
+  fi
+}
+
+# Return the location of the kernel
+kernel ()
+{
+  echo "${kernel+$prefix}"
+}
+
+
+# Clean all build directories.
+deep_clean ()
+{
+  if find . -name "${builddir_pref}*" -a -type d | xargs rm -rf; then
+    verbose "all build directories cleaned"
+    exit 0
+  else
+    fatal "cannot clean build directories"
+  fi
+}
+
+
+## ---------------------- ##
+## Command line parsing.  ##
+## ---------------------- ##
+
+get_options ()
+{
+  # Push a token among the arguments that will be used to notice when we
+  # ended options/arguments parsing.
+  # Use "set dummy ...; shift" rather than 'set - ..." because on
+  # Solaris set - turns off set -x (but keeps set -e).
+  # Use ${1+"$@"} rather than "$@" because Digital Unix and Ultrix 4.3
+  # still expand "$@" to a single argument (the empty string) rather
+  # than nothing at all.
+  arg_sep="$$--$$"
+  set dummy ${1+"$@"} "$arg_sep"; shift
+
+  # Parse command line arguments.
+  while test x"$1" != x"$arg_sep"
+  do
+    # Handle --option=value by splitting apart and putting back on argv.
+    case $1 in
+      (--*=*)
+	opt=`echo "$1" | sed -e 's/=.*//'`
+	val=`echo "$1" | sed -e 's/[^=]*=//'`
+	shift
+	set dummy "$opt" "$val" ${1+"$@"}; shift
+	;;
+    esac
+
+    case $1 in
+      (-D | --debug  ) debug=true;;
+      (-v | --verbose) verb=true;;
+      (-h | --help   ) usage;;
+      (-q | --quiet  ) quiet=true;;
+      (-V | --version) version;;
+
+      (-l | --library) core= ; shared=false ;;
+      (-s | --shared | --shared-library)
+                       core= ; shared=true ; automain=false ;;
+      (     --deep-clean)    deep_clean ;;
+      (-c | --clean)         clean=true ;;
+      (-j | --jobs)  shift; append "-j $1" " ";;
+      (-C | --core  ) shift; core=$1;;
+      (-H | --host  ) shift; host=$1;;
+      (-o | --output) shift; target=$1;;
+      (-m | --disable-automain) automain=false;;
+
+      (-p | --prefix)   shift; prefix=$1;;
+      (-P | --param-mk) shift; param_mk=$1;;
+      (-k | --kernel)   shift; kernel=$1;;
+
+      (-I) shift; append EXTRA_CPPFLAGS "-I$1";;
+      (-L) shift; append EXTRA_LDFLAGS  "-L$1";;
+
+      (-I*)     append EXTRA_CPPFLAGS "$1";;
+      (-L*|-l*) append EXTRA_LDFLAGS  "$1";;
+
+      (--package) shift;
+        pkg-config --print-errors --exists $1
+        append EXTRA_CPPFLAGS "$(pkg-config --cflags $1)"
+        append EXTRA_LDFLAGS "$(pkg-config --libs $1)"
+        ;;
+      (--) # What remains are not options.
+	shift
+	while test x"$1" != x"$arg_sep"
+	do
+	  set dummy ${1+"$@"} "$1"; shift
+	  shift
+	done
+	break
+	;;
+      (-*)
+	error 2 "Unknown or ambiguous option \`$1'." \
+	      "Try \`--help' for more information."
+	;;
+      (*) set dummy ${1+"$@"} "$1"; shift;;
+     esac
+     shift
+  done
+  # Pop the token
+  shift
+
+  # Interpret remaining command line args as filenames.
+  case $#:$oname in
+   ([01]:* | *:);;
+   (*) error 2 "Can't use option \`--output' with more than one argument.";;
+  esac
+
+  while test x"$1" != x || test $havearg = false
+  do
+    if test x"$1" = x && test $havearg = false; then
+      set dummy . ${1+"$@"}; shift
+      havearg=true
+    fi
+
+    # If this is a directory, append a slash.
+    case $1$(test -d "$1" && echo '/') in
+      (VPATH=*) vpath=$vpath:$(echo "$1" | sed -e 's/^[^=]*=//');;
+      (EXTRA_CPPFLAGS=*)
+          append EXTRA_CPPFLAGS "$(echo "$1" | sed -e 's/^[^=]*=//')" ;;
+      (EXTRA_LDFLAGS=*)
+          append EXTRA_LDFLAGS "$(echo "$1" | sed -e 's/^[^=]*=//')" ;;
+      (*=*)     append makeargs "'$1'";;
+
+      (*.h |*.hh|*.hxx|*.hpp) append headers "'$1'";  havearg=true ;;
+      (*.cc|*.cpp|*.c|*.C)    append sources "'$1'";  havearg=true ;;
+      (*.a|*.o|*.obj)         append libs "'$1'";     havearg=true ;;
+      (*/)
+	# It is a directory.
+	files=$(find "$1"				\
+	    -iname '*.h'				\
+	    -or -iname '*.hh'				\
+	    -or -iname '*.hxx'				\
+	    -or -iname '*.hpp'				\
+	    -or -iname '*.c'				\
+	    -or -iname '*.cc'				\
+	    -or -iname '*.cpp'				\
+	    -or -iname '*.o'				\
+	    -or -iname '*.obj'				\
+	    -or -iname '*.a' | grep -Fv "$builddir_pref" ) || true
+	havearg=true;
+	shift
+	set dummy $files ${1+"$@"};;
+      (*)
+        error 3 "unknown type of file '$1'"
+	;;
+    esac
+    shift
+  done
+}
+
+
+## ------ ##
+## Main.  ##
+## ------ ##
+
+: ${DLMODEXT='@DLMODEXT@'}
+: ${EXEEXT='@EXEEXT@'}
+: ${LIBSFX='@LIBSFX@'}
+
+clean=false
+: ${URBI_ENV='@URBI_ENV@'}
+core=
+havearg=false   # we have at least one path or file arg
+: ${URBI_HOST='@URBI_HOST@'}
+host=$URBI_HOST
+# Libraries (and flags) to use when linking a module.
+LIBADD=
+# Whether building a shared lib/module.
+shared=true
+
+builddir=
+builddir_pref="_ubuild"
+
+# Make the package relocatable: the urbi-root contains the bin
+# directory that contains this tool.  Yet, make it absolute.  For
+# instance because libtool does not want relative rpath, and prefix
+# contributes to libdir.
+prefix=$(cd $(dirname $0)/.. && pwd)
+
+# Keep the variables in that order, they have dependencies.  bindir is
+# needed at least on Windows, where libdir is defined as $bindir.
+: ${PACKAGE_BRAND="@PACKAGE_BRAND@"}
+: ${exec_prefix="@exec_prefix@"}
+: ${bindir="@bindir@"}
+: ${libdir="@libdir@"}
+: ${brandlibdir="@brandlibdir@"}
+
+# Target name.
+target=
+libs=
+sources=
+headers=
+makeargs=
+
+automain=true
+
+
+# Produce objects in the current directory, not in the source tree.
+objects=
+vpath=.
+
+get_options "$@"
+initialize
+
+# Use default main.
+if $automain; then
+  : ${umaindir='@umaindir@'}
+  append sources "$umaindir/umain.cc"
+fi
+
+for s in $(eval echo "$sources")
+do
+  append objects "'"$(basename "$s" | sed 's/\.[^.]*$/.o/g')"'"
+  append vpath $(dirname "$s") :
+done
+
+# The library extension.
+libext=$DLMODEXT
+$shared || libext=.a
+
+# Select target name if unspecified.
+case $target:$core in
+  (:)   target=uobject$libext;;
+  (:*)  target=urbiengine-$core$EXEEXT;;
+
+  # The user can provide $target with or without extension.  Be sure
+  # to give it the proper extension.
+  (*:)  target=${target%$libext}$libext;;
+  (*:*) target=${target%$EXEEXT}$EXEEXT;;
+esac
+
+# Remove ourselves from library list in lib generation mode, add OUTBIN
+# option otherwise.
+case $core in
+  ('')
+    res=
+    for i in $libs
+    do
+      test "$i" = "$target" ||
+        append res "$i"
+    done
+    libs=$res
+    if $shared; then
+      append makeargs "OUTSHLIB=$target"
+    else
+      append makeargs "OUTLIB=$target"
+    fi
+    ;;
+  (*)
+    append makeargs "OUTBIN=$target"
+    ;;
+esac
+
+# When building an UObject as a shared lib, we have to pass
+# -no-undefined to libtool, otherwise it refuses to build a DLL.  But
+# then we have missing symbols: those in libuobject, so we link
+# against libuobject.
+#
+# We don't do that in general (Linux etc.) to avoid keeping an
+# explicit rpath dependency on libuobject.  It will be found and
+# dlopened later by urbi-launch.
+if $shared; then
+  case $host in
+    (*pw32*|*mingw32*)
+      # The following does not work:
+      #
+      # # Pass the true library, not the *.la file, since it contains
+      # # hard-coded locations to where the libraries we depend on were
+      # # installed.  In other words, *.la files are not relocatable.
+      # #
+      # # This is not an issue in the present case.
+      # append LIBADD "\${envdir}/libuobject$LIBSFX.dll"
+      #
+      # because for some reason libtool then refuses to build a dll.
+      # So we will probably have to find a means to fix relocatability
+      # elsewhere.
+      append LIBADD "-no-undefined \${envdir}/libuobject$LIBSFX.la"
+      ;;
+  esac
+fi
+
+# The tool to link.
+# Always honor UMAKE_LINK if defined.
+# Then try to find umake-link where it was installed, otherwise in the
+# same dir as this tool, or finally, trust the \$PATH.
+if test -z "$UMAKE_LINK"; then
+  for dir in '@BINDIR@' $(dirname "$0")
+  do
+    if test -f $dir/umake-link; then
+      UMAKE_LINK=$dir/umake-link
+      break;
+    fi
+  done
+fi
+: ${UMAKE_LINK=umake-link}
+($UMAKE_LINK --version) >/dev/null 2>&1 ||
+  fatal "cannot run umake-link: $UMAKE_LINK"
+
+
+# Define lib to link against.
+if test -z "$LIBNAME"; then
+  case $core in
+    (''|remote|engine|webots)
+       UMAKE_LIBNAME=libuobject${LIBSFX};;
+    (fullengine)
+       UMAKE_LIBNAME=libuobject${LIBSFX}
+       UMAKE_EXTRALIB="${libdir}/liburbi$LIBSFX.la ${libdir}/libjpeg4urbi$LIBSFX.la"
+       core=engine;;
+  esac
+else
+  UMAKE_LIBNAME=$LIBNAME
+fi
+
+# Then pass env.
+append makeargs "prefix=$prefix"
+verbose                                         \
+        "LIBADD='$LIBADD'"                      \
+        "headers='$headers'"                    \
+        "libs='$libs'"                          \
+        "makeargs='$makeargs'"                  \
+        "objects='$objects'"                    \
+        "sources='$sources'"                    \
+        "vpath='$vpath'"
+
+# Set and create build dir for temporary files
+builddir="$(dirname $target)/_ubuild-$(basename $target)"
+libsdir="$(dirname $target)/.libs"
+# Clean target build directory
+if $clean; then
+  if rm -rf "$builddir"; then
+    verbose "build directory cleaned."
+  else
+    fatal "cannot remove $builddir"
+  fi
+fi
+
+# Create target build directory
+mkdir -p "$builddir"
+
+# Generate object fullnames
+obj_fullnames=
+for o in $objects; do
+  obj_fullnames="$obj_fullnames '"${builddir}/$(echo "$o" | tr -d "'")"'"
+done
+objects=$obj_fullnames
+
+line="\
+-------------------------------------------------------------------------------"
+bintype="'$core' binary"
+if test -z "$core"; then
+  bintype="library"
+fi
+verbose "" "$line" "running to build $bintype." "$line" ""
+
+
+# Check if base directory exists
+exist_error 4 d "$prefix" prefix
+
+# Check param.mk file
+exist_error 4 f $(param_mk) param-mk
+
+# Invoke make.
+if $verb; then
+  echo >&2 "$(param_mk):"
+  sed  >&2 's/^/> /' $(param_mk)
+fi
+
+verbose "invoking make -f $(param_mk) $target"
+run eval make -f "$(param_mk)"                  \
+    "$target"                                   \
+    UMAKE_BUILD_DIR="$builddir"                 \
+    UMAKE_URBI_ENV="${core:-remote}"            \
+    UMAKE_LIBNAME="$UMAKE_LIBNAME"              \
+    UMAKE_EXTRALIB="\"$UMAKE_EXTRALIB\""        \
+    UMAKE_LINK="$UMAKE_LINK"                    \
+    EXTRA_CPPFLAGS="'$EXTRA_CPPFLAGS'"            \
+    EXTRA_LDFLAGS="'$EXTRA_LDFLAGS'"              \
+    ARGUMENT_LIBS="'$libs'"                     \
+    LIBADD="'$LIBADD'"                          \
+    HEADERS="'$headers'"                        \
+    OBJECTS="'$objects'"                        \
+    VPATH="'$vpath'"                            \
+    "$makeargs"
+
+verbose "done."
+
+exit 0
+
+# Local variables:
+# mode: shell-script
+# End:

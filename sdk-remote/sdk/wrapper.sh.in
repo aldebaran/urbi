@@ -1,0 +1,82 @@
+#! @SHELL@
+# @configure_input@
+# Wrapper generator for umake.
+
+me=$(basename "$0")
+target=$1
+
+stderr ()
+{
+  echo >&2 "$me: $@"
+}
+
+fatal ()
+{
+  stderr "$@"
+  exit 1
+}
+
+builddir='@builddir@'
+top_srcdir='@top_srcdir@'
+case "$top_srcdir" in
+ (/*) ;;
+ (*) top_srcdir=$(pwd)/sdk/$top_srcdir ;;
+esac
+
+test -d "$builddir" ||
+  fatal "cannot find build directory: $builddir"
+
+test $# -lt 1 &&
+  fatal "missing target, need wrapper name"
+
+gen_wrapper ()
+{
+    target=$(basename "$1" | sed -e 's/^umake-//')
+    dir=$(dirname "$1")
+    case $target in
+	(deepclean)  args="--deep-clean";;
+	(shared)     args="--shared";;
+	(link | common) return;; # ignore
+	(*) fatal "unknown target: $target";;
+    esac
+    # Help it find umain.cc.
+    args="$args VPATH=$top_srcdir/sdk-remote/src/liburbi"
+    wrapper=$builddir/$dir/umake-$target
+
+    cat >$wrapper <<EOF
+#! @SHELL@
+# umake-$target.  Generated wrapper for umake.
+
+me=\$(basename "\$0")
+
+# Always honor UMAKE if defined.
+# Then try to find umake where it was installed, otherwise in the
+# same dir as this tool, or finally, trust the \$PATH.
+if test -z "\$UMAKE"; then
+  for dir in '@BINDIR@' \$(dirname "\$0")
+  do
+    if test -f \$dir/umake; then
+      UMAKE=\$dir/umake
+      break
+    fi
+  done
+fi
+
+: \${UMAKE=umake}
+
+(\$UMAKE --version) >/dev/null 2>&1 ||
+  {
+    echo >&2 "\$me: cannot run umake: \$UMAKE"
+    exit 1
+  }
+
+exec \$UMAKE $args "\$@"
+EOF
+
+    chmod +x $wrapper
+}
+
+for arg
+do
+    gen_wrapper "$arg"
+done

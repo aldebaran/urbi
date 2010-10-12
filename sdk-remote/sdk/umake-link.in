@@ -1,0 +1,149 @@
+@UMAKE_COMMON@
+
+: ${URBI_HOST=@URBI_HOST@}
+
+dir=$medir
+
+usage ()
+{
+cat <<EOF
+Usage: $me [OPTION]... -- ARGUMENTS
+
+Invoke libtool with magic to pass --whole-archive where/when needed.
+Hopefully this tool will be obsolete some day --- the day Libtool
+supports --whole-archive appropriately.
+
+General options:
+  -D, --debug         turn on shell debugging (set -x)
+  -h, --help          display this help and exit successfully
+  -q, --quiet         no output unless errors (implies --batch)
+  -V, --version       display version information and exit successfully
+  -v, --verbose       report on what is done
+
+Specific options:
+  -L, --libtool=PATH    path to libtool
+  -E, --env=URBI-ENV    urbi environment name (e.g., engine)
+
+Report bugs to @PACKAGE_BUGREPORT@.
+EOF
+
+  exit 0
+}
+
+version ()
+{
+    cat <<\EOF
+umake-link @PACKAGE_VERSION@ (@PACKAGE_STRING@)
+@PACKAGE_COPYRIGHT@
+EOF
+    exit 0
+}
+
+## ---------------------- ##
+## Command line parsing.  ##
+## ---------------------- ##
+
+# This is not a function, since we want to manipulate the script's $@,
+# not the function's local copy.
+
+# Push a token among the arguments that will be used to notice when we
+# ended options/arguments parsing.
+# Use "set dummy ...; shift" rather than 'set - ..." because on
+# Solaris set - turns off set -x (but keeps set -e).
+# Use ${1+"$@"} rather than "$@" because Digital Unix and Ultrix 4.3
+# still expand "$@" to a single argument (the empty string) rather
+# than nothing at all.
+arg_sep="$$--$$"
+set dummy ${1+"$@"} "$arg_sep"; shift
+
+# Parse command line arguments.
+while test x"$1" != x"$arg_sep"
+do
+  # Handle --option=value by splitting apart and putting back on argv.
+  case "$1" in
+    (--*=*)
+      opt=`echo "$1" | sed -e 's/=.*//'`
+      val=`echo "$1" | sed -e 's/[^=]*=//'`
+      shift
+      set dummy "$opt" "$val" ${1+"$@"}; shift
+      ;;
+  esac
+
+  case "$1" in
+    (-D | --debug  ) debug=true;;
+    (-v | --verbose) verb=true;;
+    (-h | --help   ) usage;;
+    (-q | --quiet  ) quiet=true;;
+    (-V | --version) version;;
+
+    (-L | --libtool) shift; libtool=$1;;
+    (-E | --env)     shift; urbi_env=$1;;
+
+    (--) # What remains are not options.
+      shift
+      while test x"$1" != x"$arg_sep"
+      do
+	  set dummy ${1+"$@"} "$1"; shift
+	  shift
+      done
+      break
+      ;;
+    (-*)
+      error 2 "Unknown or ambiguous option \`$1'." \
+	      "Try \`--help' for more information."
+      ;;
+    (*) set dummy ${1+"$@"} "$1"; shift;;
+   esac
+   shift
+done
+# Pop the token
+shift
+
+initialize
+
+# Check that these are defined.
+for i in libtool urbi_env urbi_host
+do
+  if eval test -z "\$$i"; then
+    fatal "$i is not defined"
+  fi
+done
+
+if $verb; then
+  echo >&2 "$libtool --config:"
+  $libtool --config | sed  >&2 's/^/> /'
+fi
+
+set -x
+
+case $($libtool --config) in
+  (*build_old_libs=no*)
+  # shared library mode, nothing special required
+  command="$libtool --tag=CXX --mode=link $@"
+  ;;
+
+  (*)
+  # Static mode: we need to insert a --whole-archive or similar.
+  command=$($libtool -n --tag=CXX --mode=link "$@" |
+      # libtool 2.2 outputs additional prefixes.
+      sed -e 's/^libtool: link: //')
+  case $URBI_HOST in
+    (*darwin*)
+      command=$(echo "$command" |
+        sed -e 's/ \([a-zA-Z0-9.\/_-]*\.a\( \|$\)\)/ -Wl,-all_load \1 /g')
+      ;;
+    (*)
+      command=$(echo "$command" |
+        sed -e 's/ \([a-zA-Z0-9.\/_-]*\.a\( \|$\)\)/ -Wl,-whole-archive \1 -Wl,-no-whole-archive /')
+      ;;
+  esac
+  ;;
+esac
+
+verbose "$command"
+eval "$command"
+exit $?
+
+# Local variables:
+# mode: shell-script
+# End:

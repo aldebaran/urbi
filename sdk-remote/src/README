@@ -1,0 +1,25 @@
+-*- outline -*-
+
+* depencies
+libuvalue.a:
+libuco.a: libuvalue.a
+liburbi.so: libuvalue.a
+libuobject-sdk.so: libuco.a liburbi.so
+libuobject-ker.so: libuco.a libuvalue.a
+
+* libuco
+This convenience library contains code that is used both by
+kernel/libuobject and sdk-remote/libuobject.  (Yes, there are two
+different libuobject's.)
+
+We used to use the same sources twice, which was quite a PITA: two
+compilations, and more importantly, a terrible headache to try to
+factor the Makefile snippets.  It turned out to be virtually
+impossible to share the Makefile snippets while trying to get rid of
+recursive Makefiles in SDK-Remote.
+
+The name is a contraction of "library uobject-common".
+
+
+* Dependencies
+UGenericCallback: UContext

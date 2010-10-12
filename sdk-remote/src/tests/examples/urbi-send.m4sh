@@ -1,0 +1,119 @@
+                                                        -*- shell-script -*-
+URBI_INIT
+
+# Avoid zombies and preserve debugging information.
+cleanup ()
+{
+  local exit_status="$?"
+
+  # Let a second C-c really kill us: restore default traps.
+  trap - 0 1 2 13 15
+
+  # In case we were caught by set -e, kill the children.
+  children_kill    >>debug
+  children_harvest >>debug
+
+  rst_subsection "Debug outputs"
+  rst_pre "debug" debug
+
+  # Results: Only for the children that are not actually output.
+  local i
+  for i in $children
+  do
+    case $i in
+      (*)
+	rst_subsection "$i"
+	children_report "$i"
+	;;
+    esac
+  done
+
+# FIXME: We should have children expected exit status.
+#  case $exit_status in
+#    (0) exit_status=$(children_status);;
+#  esac
+
+  error $exit_status "cleanup: exiting $exit_status$(ex_to_string $exit_status)"
+}
+trap cleanup 0
+
+exec 3>&2
+me=$as_me
+medir=$(absolute "$0").dir
+mkcd $medir
+
+xrun "--help"    urbi-send$EXEEXT --help
+xrun "--version" urbi-send$EXEEXT --version
+
+# Send a file and check the output.
+
+# Leaves trailing files, so run it in subdir.
+find_urbi_server
+
+# Start it.
+spawn_urbi_server
+
+# urbi_send NAME OPTION...
+# ------------------------
+# Run "urbi-send OPTION" in the background as child NAME.
+urbi_send ()
+{
+  local name="$1"
+  shift
+  instrument -o $name.val --                     \
+     urbi-send$EXEEXT --port-file server.port   \
+                      "$@" --quit
+  echo "$instrument_result" >$name.cmd
+  eval "$instrument_result" >$name.out 2>$name.err &
+  children_register $name
+}
+
+## -------- ##
+## Test 1.  ##
+## -------- ##
+# Check that -f works.
+cat >pass.u <<EOF
+"PASS";
+EOF
+
+urbi_send client1 \
+          -e '100+100;' -e '400*400;' -f pass.u --quit
+children_wait 10 client1
+
+xrun "check" grep "200" client1.out
+xrun "check" grep "160000" client1.out
+xrun "check" grep "PASS" client1.out
+
+
+## -------- ##
+## Test 2.  ##
+## -------- ##
+
+# File that does not exist.  Should exit without --quit.
+urbi_send client2 \
+          -f '1; 2; 3; 4;'
+children_wait 1 client2
+children_harvest client2
+
+xrun "check" \
+   grep "failed to send file \`1; 2; 3; 4;': No such file or directory" \
+   client2.err
+# FIXME: We should have children expected exit status.
+xrun "check" grep "^1$" client2.sta
+
+## -------- ##
+## Test 3.  ##
+## -------- ##
+
+cat >shutdown.u <<EOF
+"LAST";
+shutdown;
+EOF
+
+urbi_send client3 \
+          -e 'var x = 0;at (x>5) echo("coucou"); x = 7;' \
+          -f shutdown.u
+children_wait 10 client3
+
+xrun "check" grep "coucou" client3.out
+xrun "check" grep '"LAST"' client3.out

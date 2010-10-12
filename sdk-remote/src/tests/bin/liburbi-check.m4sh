@@ -1,0 +1,198 @@
+m4_pattern_allow([^URBI_(PATH|SERVER)$])         -*- shell-script -*-
+URBI_INIT
+
+# Avoid zombies and preserve debugging information.
+cleanup ()
+{
+  local exit_status=$?
+
+  # We can be killed even before children are spawned.
+  test -n "$children" ||
+    exit $exit_status
+
+  # In case we were caught by set -e, kill the children.
+  children_kill
+  children_harvest
+  children_check_skip
+  children_report
+
+  local server_sta=$(children_status server)
+  case $exit_status:$server_sta in
+    (0:142)
+	 verbose "Server killed after a timeout.";;
+    (176:*) # Maybe the server exited for SKIP etc.
+	 exit $server_sta;;
+  esac
+
+  # Don't check for before because the server may failed before any other
+  # children get started.
+
+  local children_sta=$(children_status)
+  case $exit_status:$children_sta in
+    (0:0) ;;
+    (0:*) # Maybe a children exited for SKIP etc.
+	 exit $children_sta;;
+    (*:*) # If the checker failed, there is a big problem.
+	 error SOFTWARE "$0 itself failed with $exit_status";;
+  esac
+  # Don't clean before calling children_status...
+  # test x$VERBOSE != x || children_clean
+
+  # rst_expect sets exit=false if it saw a failure.
+  $exit
+}
+trap cleanup 0
+
+
+# Overriden to include the test name.
+stderr ()
+{
+  local i
+  for i
+  do
+    echo >&2 "$(basename $0): $me: $i"
+  done
+  echo >&2
+}
+
+
+## -------------- ##
+## Main program.  ##
+## -------------- ##
+
+exec 3>&2
+
+check_dir abs_builddir bin/liburbi-check
+
+# Make it absolute.
+chk=$(absolute "$1")
+test -f "$chk.cc" ||
+  fatal "no such file: $chk.cc"
+
+# ./../../../tests/2.x/andexp-pipeexp.chk -> 2.x
+medir=$(basename $(dirname "$chk"))
+# ./../../../tests/2.x/andexp-pipeexp.chk -> 2.x/andexp-pipeexp
+me=$medir/$(basename "$chk" ".cc")
+# ./../../../tests/2.x/andexp-pipeexp.chk -> andexp-pipeexp
+meraw=$(basename $me)    # MERAW!
+
+srcdir=$(absolute $srcdir)
+export srcdir
+# Move to a private dir.
+mkcd $me.dir
+
+# Be verbose.
+export GD_LEVEL=DUMP
+
+# Help debugging
+set | rst_pre "$me variables"
+
+# Leaves trailing files, so run it in subdir.
+find_urbi_server
+
+# Compute expected output.
+sed -n -e 's,//= ,,p' $chk.cc >output.exp
+touch error.exp
+echo 0 >status.exp
+
+# For some unknown reason, Valgrind itself SEGVs on these tests.
+#
+#   Memcheck, a memory error detector
+#   Copyright (C) 2002-2009, and GNU GPL'd, by Julian Seward et al.
+#   Using Valgrind-3.5.0 and LibVEX; rerun with -h for copyright info
+#   Command: urbi-launch --start -- --port 0 --port-file server.port
+#   Parent PID: 26045
+#
+#   DWARF2 CFI reader: unhandled CFI instruction 0:50
+#   DWARF2 CFI reader: unhandled CFI instruction 0:50
+#   DWARF2 CFI reader: unhandled CFI instruction 0:50
+#   DWARF2 CFI reader: unhandled CFI instruction 0:50
+#   Warning: client switching stacks?  SP change: 0xbe8f8c1c --> 0x460eab0
+#            to suppress, use: --max-stackframe=1171349140 or greater
+#   Warning: client switching stacks?  SP change: 0x460e2a4 --> 0xbe8f8c1c
+#            to suppress, use: --max-stackframe=1171347080 or greater
+#   Warning: client switching stacks?  SP change: 0xbe8f8c4c --> 0x460e2a4
+#            to suppress, use: --max-stackframe=1171347032 or greater
+#            further instances of this message will not be shown.
+#   VALGRIND INTERNAL ERROR: Valgrind received a signal 11 (SIGSEGV) - exiting
+#   si_code=1;  Faulting address: 0x31534E56;  sp: 0x62813ce0
+#
+#   the 'impossible' happened:
+#   by fatal signal
+#      at 0x3803D937: vgPlain_get_StackTrace_wrk (m_stacktrace.c:167)
+#      by 0x3803DB71: vgPlain_get_StackTrace (m_stacktrace.c:511)
+#      by 0x38026D75: record_ExeContext_wrk (m_execontext.c:316)
+#      by 0x38002E8C: vgMemCheck_new_block (mc_malloc_wrappers.c:215)
+#      by 0x38003311: vgMemCheck___builtin_new (mc_malloc_wrappers.c:246)
+#      by 0x38065743: do_client_request (scheduler.c:1362)
+#      by 0x38066FD8: vgPlain_scheduler (scheduler.c:1061)
+#      by 0x38091079: run_a_thread_NORETURN (syswrap-linux.c:91)
+#
+#   sched status:
+#     running_tid=1
+#
+#   Thread 1: status = VgTs_Runnable
+#
+# This happens only on the Debian Etch, on the other platforms on
+# which Valgrind works (Gentoo, OS X), the test passes.  So don't run
+# these tests on Valgrind on Etch.  Don't use uname, which is fooled
+# by our chroot.  /etc/issue is right though.
+if test -f /etc/issue &&
+   fgrep 'Debian GNU/Linux 4.0' /etc/issue >/dev/null; then
+   echo "Valgrind fails on liburbi tests on Debian Etch."
+   echo "Setting INSTRUMENTATION to 0."
+   export INSTRUMENTATION=0
+fi
+
+# FIXME: Do something more clever.  instrument should support a
+# --query mode that says if it will instrument or not.
+#
+# The ping test cannot be run with a Valgrind'ed server.  The problem
+# is not runing the ping remote under Valgrind, but really the server.
+case $meraw in
+  (ping) echo "$me fails when the server runs under Valgrind."
+         echo "Setting INSTRUMENTATION to 0."
+         export INSTRUMENTATION=0
+         ;;
+esac
+
+# Start it.
+spawn_urbi_server
+
+# Start the test.
+instrument -o "remote.val" -- \
+  ../../liburbi/$meraw$EXEEXT --port-file server.port
+echo "$instrument_result" >remote.cmd
+$instrument_result >remote.out.raw 2>remote.err &
+children_register remote
+
+# Let some time to run the tests.
+children_wait 10
+
+# Ignore the "client errors" and ping maintenance.
+#
+# Ignore "__gostai_private__connection_timeout" because it duplicates
+# "client errors" mesages.
+#
+# Ignore "warning: no debug symbols in executable (-arch i386)"
+# because on OS X, when instrumenting, valgrind might call dsymutil
+# which dumps this message on stdout (!)  if the executable does not
+# have debug symbols.
+sed -e '/^E End of file/d'                                              \
+    -e '/^E client_error End of file/d'                                 \
+    -e '/^E client_error Operation canceled/d'                          \
+    -e '/^E __gostai_private__connection_timeout /d'                    \
+    -e '/^warning: no debug symbols in executable (-arch i386)/d'       \
+  remote.out.raw >remote.out.eff
+
+# Compare expected output with actual output.
+rst_expect output remote.out
+rst_pre "Error output" remote.err
+
+# Display Valgrind report.
+rst_pre "Valgrind" remote.val
+
+# Exit with success: liburbi-check made its job.  But now clean (on
+# trap 0) will check $exit to see if there is a failure in the tests
+# and adjust the exit status accordingly.
+exit 0

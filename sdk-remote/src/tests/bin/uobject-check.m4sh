@@ -1,0 +1,34 @@
+                                                     -*- shell-script -*-
+URBI_INIT
+
+# $1 is "../../src/urbi/all.la".
+# The full path to the *.la.
+la=$(absolute $1)
+require_file "$la"
+
+# For error messages: "all"
+me=$(basename "${la/.la}")
+
+# To load the object: "urbi/all".
+uob="urbi/$me"
+
+# The directory we work in.
+# The ending part, for our builddir: all.dir.
+builddir="uobjects/$me.dir"
+mkcd $builddir
+
+# Find urbi-launch.
+xfind_prog urbi-launch$EXEEXT
+urbi_launch=$xfind_prog_result
+
+# If urbi-launch cannot work because there is no kernel libuobject,
+# skip the test.  Do pass something that will fail to be loaded,
+# otherwise if it works, a server is launched, and will run endlessly.
+run "urbi-launch --start" \
+  $urbi_launch --debug 3 --start /dev/null ||
+  case $? in
+    (72) error SKIP "urbi-launch cannot find libuobject";;
+  esac
+
+xrun "urbi-launch $me$ext --version" \
+  "$urbi_launch" --debug 3 --start $uob -- --version
