@@ -15,8 +15,8 @@
 # include <urbi/uobject.hh>
 # include <urbi/ucallbacks.hh>
 
-
-# define THROW_RUNTIME(env, msg) throw std::runtime_error(msg);
+# define THROW_RUNTIME(Env, Msg) \
+  throw std::runtime_error(Msg)
 
 class Converter
 {

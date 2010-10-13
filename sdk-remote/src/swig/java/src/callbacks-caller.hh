@@ -21,7 +21,6 @@
 # include <urbi/utimer-callback.hh>
 # include <urbi/export.hh>
 
-
 typedef boost::function<jvalue(JNIEnv*, urbi::UValue)> ConversionFunc;
 
 /// This class allow to register Java callbacks in C++.
@@ -181,9 +180,5 @@ void
 SWIG_JavaThrowException(JNIEnv *jenv,
                         SWIG_JavaExceptionCodes code,
                         const char *msg);
-
-# define THROW_RUNTIME(Env, Msg)					\
-  throw std::runtime_error(Msg)
-//  SWIG_JavaThrowException(env, SWIG_JavaRuntimeException, msg)
 
 #endif
