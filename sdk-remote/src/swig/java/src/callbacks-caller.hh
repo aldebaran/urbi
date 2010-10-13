@@ -113,11 +113,11 @@ public:
 private:
 
   /// The java object containing the Java callback method
-  jobject		obj;
+  jobject obj;
 
   /// The id of the java callback method. This method is then called in the
   /// callbacks contained in this class.
-  jmethodID		mid;
+  jmethodID mid;
 
 private:
 

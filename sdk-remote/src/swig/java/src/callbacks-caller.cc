@@ -12,7 +12,6 @@
 #include <libport/format.hh>
 #include "callbacks-caller.hh"
 
-
 jfieldID CallbacksCaller::ulist_swigptr_id = 0;
 jfieldID CallbacksCaller::uimage_swigptr_id = 0;
 jfieldID CallbacksCaller::usound_swigptr_id = 0;
@@ -26,7 +25,6 @@ jmethodID CallbacksCaller::class_getname_id = 0;
 jclass CallbacksCaller::class_cls = 0;
 bool CallbacksCaller::jni_variables_cached_ = false;
 
-
 CallbacksCaller::CallbacksCaller()
   : mid(0)
   , obj(0)
@@ -39,9 +37,9 @@ CallbacksCaller::callNotifyChangeInt_0()
 {
   if (!init_env())
     return 0;
-  int ret = env_->CallIntMethod(obj, mid);
+  int res = env_->CallIntMethod(obj, mid);
   testForException();
-  return ret;
+  return res;
 }
 
 int
@@ -51,9 +49,9 @@ CallbacksCaller::callNotifyChangeInt_1(urbi::UVar& v)
     return 0;
   jvalue obj1 = arg_convert[0]->convert(env_, v);
   jvalue arg[] = { obj1 };
-  int ret = env_->CallIntMethodA(obj, mid, arg);
+  int res = env_->CallIntMethodA(obj, mid, arg);
   testForException();
-  return ret;
+  return res;
 }
 
 void
