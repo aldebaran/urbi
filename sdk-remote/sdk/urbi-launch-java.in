@@ -122,7 +122,7 @@ main=urbi.UMain
 : ${liburbi_jar="$prefix/share/sdk-remote/java/lib/liburbijava.jar"}
 : ${library_path="$prefix/lib"}
 
-get_options $@
+get_options "$@"
 
 classpath="$classpath:$liburbi_jar"
 
