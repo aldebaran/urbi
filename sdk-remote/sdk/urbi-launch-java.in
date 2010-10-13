@@ -96,7 +96,6 @@ get_options ()
 	do
 	  append urbi_launch_args "$1"
 	  set dummy ${1+"$@"} "$1"; shift
-
 	  shift
 	done
 	break

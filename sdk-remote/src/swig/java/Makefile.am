@@ -30,7 +30,7 @@
 
 include $(top_srcdir)/build-aux/make/libport.mk
 
-JAVA_HOME = $$JAVA_HOME
+JAVA_HOME := $(shell echo "$$JAVA_HOME")
 if WIN32
 JAVA_CPPFLAGS = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32
 else
