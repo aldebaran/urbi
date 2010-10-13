@@ -15,9 +15,9 @@
 
 The UObject Java API can be used to add new remote objects written in Java
 to the \us language, and to interact from Java with the objects that are
-already defined. We cover the use cases of interfacing higher-lever
-components (voice recognition, object detection\ldots) with \urbi using the
-Java language.
+already defined. We cover the use cases of interfacing higher-level
+components (voice recognition, object detection\ldots) with \urbi using
+Java.
 
 The Java API defines the UObject class. To each instance of a Java class
 deriving from UObject will correspond an \us object sharing some of its
@@ -31,15 +31,16 @@ setter member functions for all types known to \urbi: \lstinline{double},
 \lstinline{urbi.Dictionary}. This type can also read from and write to the
 \lstinline{urbi.UValue} class. The API provides methods to set up callbacks
 functions that will be notified when a variable is modified or read from
-\urbi code. Instance methods of any prototype can be rendered accessible
-from \us, providing all the parameters types and the return type can be
+\us code. Instance methods of any prototype can be made accessible
+from \us, providing all the parameter types and the return type can be
 converted to/from urbi.UValue.
 
 The UObject Java API has the following limitations:
 \begin{itemize}
-\item it is avalaible only to create remote UObjects.
-\item the Java library is generated from the C++ SDK implementation, and
-  rely on compiled C++ code. Thus, remote Java UObjects can only run on
+\item it is available only to create remote UObjects, i.e., these objects
+  run as separate processes.
+\item the Java library is generated from the \Cxx SDK implementation, and
+  rely on compiled \Cxx code. Thus, remote Java UObjects can only run on
   computers having the full \urbi native SDK installed.
 \end{itemize}
 
@@ -166,7 +167,7 @@ public class Adder extends UObject // must extends UObject
     /// Bind the variable v to Urbi
     UBindVar (v, "v");
 
-    /// Initialise our UVar v to some value
+    /// Initialize our UVar v to some value
     /// (we choose 42 :)
     v.set(42);
 
@@ -191,7 +192,7 @@ void UBindVar (UVar v, String name)
 
 This function take as parameter the UVar variables, and the name of the
 UVar (because \urbi need to know what is the name of your variable).
-Once your variable is binded with UBindVar it will be accessible in \urbi.
+Once your variable is bound with UBindVar it will be accessible in \urbi.
 
 \item Each UObject needs to be registered within urbi using the code
 \begin{cxx}
@@ -267,7 +268,7 @@ public class Adder extends UObject // must extends UObject
   }
 
   /// The init function is the constructor in Urbi. Here it takes
-  /// one argument that we use to initialise the 'v' variable.
+  /// one argument that we use to initialize the 'v' variable.
   /// The init function must return an int of value 0
   /// if all went OK.
   public int init (double v_init)
@@ -275,7 +276,7 @@ public class Adder extends UObject // must extends UObject
     /// Bind the variable v to Urbi
     UBindVar (v, "v");
 
-    /// Initialise our UVar v to the value given in the
+    /// Initialize our UVar v to the value given in the
     /// constructor
     v.set(v_init);
 
@@ -294,9 +295,9 @@ public class Adder extends UObject // must extends UObject
 }
 \end{java}
 
-Now 'v' and 'add' are binded only when instance of the Adder object are
+Now 'v' and 'add' are bound only when instance of the Adder object are
 constructed. We have added an 'init' constructor with one parameter that
-we use to initialise the value of v. You can run this UObject and test
+we use to initialize the value of v. You can run this UObject and test
 it in \urbi to see the difference with the previous example. Here is what
 it gives:
 
@@ -377,14 +378,14 @@ The functions you can bind must follow these rules:
 You can register a function that will be called each time a variable is
 modified by calling UNotifyChange, passing either an \UVar or a variable
 name as first argument, and a member function of your \UObject as second
-argument (and optionlly a String array containing the name of the types of
+argument (and optionally a String array containing the name of the types of
 the parameters). The prototype for UNotifyChange is:
 
 \begin{java}
-void UNotifyChange (String var_name, String method_name, String[] args_name)
-void UNotifyChange (String var_name, String method_name)
-void UNotifyChange (UVar v, String method_name, String[] args_name)
-void UNotifyChange (UVar v, String method_name)
+void UNotifyChange(String var_name, String method_name, String[] args_name);
+void UNotifyChange(String var_name, String method_name);
+void UNotifyChange(UVar v, String method_name, String[] args_name);
+void UNotifyChange(UVar v, String method_name);
 \end{java}
 
 The callback function can take zero or one argument: an UVar pointing to the
@@ -448,9 +449,9 @@ These functions are member functions of the UObject class.
 
 % \section{Loading the native code}
 %
-% The UObject Java API is generated from the C++ API, and rely on a native
-% C++ library. When you develop an UObject Java project you need, prior
-% to doing anything, to load the C++ native code. This code is located
+% The UObject Java API is generated from the \Cxx API, and rely on a native
+% \Cxx library. When you develop an UObject Java project you need, prior
+% to doing anything, to load the \Cxx native code. This code is located
 % in the \var{urbijava} library (\var{liburbijava.so} under Linux, \var{urbijava.dll}
 % under Windows and \var{liburbijava.dylib} under MacOS).
 % This is how you should load the library in you Java project:
@@ -544,13 +545,15 @@ public class Main
 }
 \end{java}
 
-You can see that you also need to call \lstinline{System.loadLibrary("urbijava");} in order to load the liburbijava native library.
+Call \lstinline{System.loadLibrary("urbijava");} to load the liburbijava
+native library.
 
 Note: when you call System.loadLibrary, java search for the library in the
 locations given in \var{java.library.path}. This special Java variable must
 be correctly set or you will get a loading error when you run your Java
-program.  You can set this options giving: -Djava.library.path=\var{path to
-  dir containing urbijava lib} to the Java VM running your program.
+program.  You can set this options giving:
+\samp{-Djava.library.path=\var{path to dir containing urbijava lib}} to the
+Java VM running your program.
 
 
 \end{itemize}

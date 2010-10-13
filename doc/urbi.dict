@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1147 utf-8
+personal_ws-1.1 en 1171 utf-8
 aaa
 abc
 abcdef
@@ -54,6 +54,7 @@ argMin
 args
 argsCount
 ArgumentType
+argv
 arith
 ArithPair
 arity
@@ -120,6 +121,7 @@ Blog
 bodyString
 Bonjour
 bool
+boolean
 brandNewTag
 bsd
 bufferIn
@@ -143,12 +145,14 @@ cameraYaw
 cancelFindBase
 canem
 CardinalDirection
+cb
 ccache
 ccc
 ccwLimit
 cd
 ceil
 cerr
+cflags
 channelName
 chargeStop
 chatTag
@@ -157,10 +161,12 @@ chk
 chmod
 clapCount
 classname
+classpath
 clearStats
 cloneSlot
 ClosedLoop
 CODESET
+colordiff
 compl
 computeSalary
 cond
@@ -182,15 +188,18 @@ coveredAngle
 coveredDistance
 cp
 cpp
+CPPFLAGS
 cpu
 createSlot
 criticalSection
 Ctrl
 CustomUVar
+cvf
 cvs
 cwd
 cwLimit
 CXX
+CXXFLAGS
 Cyberbotics
 cygcheck
 cygdrive
@@ -219,6 +228,7 @@ desugared
 detectBall
 Deux
 dev
+devel
 DGain
 DifferentialWheels
 dir
@@ -236,7 +246,7 @@ dlopen
 docutils
 doesNotExist
 doin
-Doxygen
+doxygen
 DUMPBIN
 dumpState
 dx
@@ -331,6 +341,7 @@ generateALBindings
 getAll
 getChar
 getConfigValue
+getDouble
 getenv
 getHeight
 getHis
@@ -460,6 +471,7 @@ isvoid
 isWindows
 isxdigit
 iterable
+javac
 jessie
 jpeg
 keepEmpty
@@ -483,6 +495,7 @@ LaunchThread
 lazyFail
 LD
 ldd
+LDFLAGS
 le
 ledL
 ledR
@@ -504,8 +517,10 @@ LIBREMOTE
 LIBSCHED
 LIBSERIALIZE
 libtool
+LibUObject
 libuobject
 liburbi
+liburbijava
 licensors
 lightCenter
 lightLeft
@@ -679,9 +694,11 @@ ownsSlot
 p's
 PackageInfo
 param
+params
 pathPlanningEvent
 pc
 pdf
+pdfcrop
 PDFLaTeX
 perl
 perlre
@@ -709,6 +726,7 @@ ppc
 pre
 prepend
 prepended
+preprocessor
 PrimitiveError
 printf
 printSalaries
@@ -1001,6 +1019,7 @@ UImageFormat
 UList
 UltraSonicSensor
 UltraSoundSensor
+UMain
 umake
 UMIX
 Un
@@ -1033,6 +1052,8 @@ uob
 UObject
 uobject
 UObjectHub
+UObjectJava
+uobjectjava
 UObjectList
 uobjectName
 UObjects
@@ -1046,6 +1067,7 @@ UProp
 urbi
 urbiConsole
 urbiHelloWorld
+urbijava
 urbiscript
 urbiscript's
 UrbiSDKEnv
@@ -1090,6 +1112,7 @@ VideoIn
 VM
 VoiceXML
 voicexml
+VPATH
 waitForChanges
 waitForTermination
 waituntil
@@ -1137,6 +1160,7 @@ yawSpeedCoeff
 ycrcb
 yfov
 yourservice
+YourUObject
 yuv
 YUYV
 yy
