@@ -15,8 +15,9 @@
 
 The UObject Java API can be used to add new remote objects written in Java
 to the \us language, and to interact from Java with the objects that are
-already defined. We cover the use cases of interfacing higher-lever components
-(voice recognition, object detection\ldots) with \urbi using the Java language.
+already defined. We cover the use cases of interfacing higher-lever
+components (voice recognition, object detection\ldots) with \urbi using the
+Java language.
 
 The Java API defines the UObject class. To each instance of a Java class
 deriving from UObject will correspond an \us object sharing some of its
@@ -37,16 +38,16 @@ converted to/from urbi.UValue.
 The UObject Java API has the following limitations:
 \begin{itemize}
 \item it is avalaible only to create remote UObjects.
-\item the Java library is generated from the C++ SDK implementation, and rely
-on compiled C++ code. Thus, remote Java UObjects can only run on computers
-having the full \urbi native SDK installed.
+\item the Java library is generated from the C++ SDK implementation, and
+  rely on compiled C++ code. Thus, remote Java UObjects can only run on
+  computers having the full \urbi native SDK installed.
 \end{itemize}
 
 
 \section{Compiling and running UObjects}
 
-UObjects can be compiled easily directly with the \lstinline{javac} compiler, then
-you can create JAR archives using the \lstinline{jar} tool.
+UObjects can be compiled easily directly with the \lstinline{javac}
+compiler, then you can create JAR archives using the \lstinline{jar} tool.
 
 In the following sections, we will try to create an uobject jar archive
 named \file{factory.jar} from a set of two files (\file{Factory.java},
@@ -57,7 +58,8 @@ In what follows, \var{urbi-root} denotes the top-level directory of your
 
 \subsection{Compiling and running by hand}
 
-To compile your UObject you need to include in the classpath liburbijava.jar:
+To compile your UObject you need to include in the classpath
+liburbijava.jar:
 
 \begin{shell}
 $ javac -cp \var{urbi-root}/share/sdk-remote/java/lib/liburbijava.jar:. Factory.java UFactory.java
@@ -67,10 +69,11 @@ adding: UFactory.class
 adding: Factory.class
 \end{shell}
 
-Then to run your uobject, you need to call \lstinline{java}. We provide a main class
-called urbi.UMain in the liburbijava.jar archive. You can use this class to start your
-UObjects. This class takes the names of your uobjects jar files as argument.
-You also need to specify the lib folder of the urbi SDK into \lstinline{java.library.path}:
+Then to run your uobject, you need to call \lstinline{java}. We provide a
+main class called urbi.UMain in the liburbijava.jar archive. You can use
+this class to start your UObjects. This class takes the names of your
+uobjects jar files as argument.  You also need to specify the lib folder of
+the urbi SDK into \lstinline{java.library.path}:
 
 \begin{shell}
 $ java -Djava.library.path=\var{urbi-root}/lib                          \
@@ -90,7 +93,8 @@ Kernel Version: 0
 
 \subsection{The \command{umake-java} and \command{urbi-launch-java} tools}
 
-\command{umake-java} can be used to compile Java UObjects. It will produce a JAR archive that you can use with \command{urbi-launch-java}.
+\command{umake-java} can be used to compile Java UObjects. It will produce a
+JAR archive that you can use with \command{urbi-launch-java}.
 
 You can give it a list of files to compile:
 \begin{shell}
@@ -133,52 +137,52 @@ Kernel Version: 0
 \label{sec:uob:apijava:bind}
 
 Let's illustrate those concepts by defining a simple object:
-\lstinline{adder}. This object has one variable \lstinline{v}, and a
-method \lstinline{add} that returns the sum of this variable and its
-argument.
+\lstinline{adder}. This object has one variable \lstinline{v}, and a method
+\lstinline{add} that returns the sum of this variable and its argument.
 
 \begin{itemize}
 \item First you need some imports:
 
-\begin{cxx}
+\begin{java}
 import urbi.UObjectJava;
 import urbi.UVar;
 import urbi.UValue;
-\end{cxx}
+\end{java}
 
 \item Then we declare and implement our \lstinline{adder} class:
-\begin{cxx}
+\begin{java}
 public class Adder extends UObject // must extends UObject
 {
-    /// Register the class within urbi
-    static { UStart(Adder.class); }
+  /// Register the class within urbi
+  static { UStart(Adder.class); }
 
-    /// Declare a variable v that will be accessible in Urbi
-    private UVar v = new UVar ();
+  /// Declare a variable v that will be accessible in Urbi
+  private UVar v = new UVar ();
 
-    /// the class must have a single constructor taking a string
-    public Adder (String s) {
+  /// the class must have a single constructor taking a string
+  public Adder (String s)
+  {
+    super (s);
+    /// Bind the variable v to Urbi
+    UBindVar (v, "v");
 
-    	super (s);
-    	/// Bind the variable v to Urbi
-    	UBindVar (v, "v");
+    /// Initialise our UVar v to some value
+    /// (we choose 42 :)
+    v.set(42);
 
-    	/// Initialise our UVar v to some value
-    	/// (we choose 42 :)
-    	v.set(42);
+    /// Bind the function add to Urbi
+    UBindFunction ("add");
+  }
 
-    	/// Bind the function add to Urbi
-    	UBindFunction ("add");
-    }
-
-    /// Our method.
-    public double add (double rhs) {
-    	/// Return the value of our UVar v (converted to double)
-    	/// plus the value of the argument of the function.
-    	return v.getDouble () + rhs;
-    }
+  /// Our method.
+  public double add (double rhs)
+  {
+    /// Return the value of our UVar v (converted to double)
+    /// plus the value of the argument of the function.
+    return v.getDouble () + rhs;
+  }
 }
-\end{cxx}
+\end{java}
 
 To bind the variables to Urbi, we use the function:
 \begin{cxx}
@@ -197,7 +201,7 @@ static { UStart(YourUObject.class); }
 
 If you run this UObject and test it from Urbi it gives:
 
-\begin{cxx}
+\begin{urbiunchecked}
 [00000102] *** ********************************************************
 [00000102] *** Urbi SDK version 2.0 rev. 96a4b2f
 [00000102] *** Copyright (C) 2005-2010 Gostai S.A.S.
@@ -216,7 +220,7 @@ Adder.add(-26);
 [00025795] 16
 Adder.add(-2.6);
 [00035411] 39.4
-\end{cxx}
+\end{urbiunchecked}
 
 To summarize:
 
@@ -228,7 +232,8 @@ To summarize:
   urbi.UVar.
 \item In the constructor, call UBindVar for each UVar you want as an
   instance variable, and UBindFunction for each function you want to bind.
-\item Don't forget to call the function UStart for each UObject class you define.
+\item Don't forget to call the function UStart for each UObject class you
+  define.
 \end{itemize}
 
 \section{Creating new instances}
@@ -245,47 +250,49 @@ arguments.
 For example let's add an \urbi constructor to our Adder class. We rewrite
 it as follow:
 
-\begin{cxx}
+\begin{java}
 public class Adder extends UObject // must extends UObject
 {
-    /// Register the class within urbi
-    static { UStart(Adder.class); }
+  /// Register the class within urbi
+  static { UStart(Adder.class); }
 
-    /// Declare a variable v that will be accessible in Urbi
-    private UVar v = new UVar ();
+  /// Declare a variable v that will be accessible in Urbi
+  private UVar v = new UVar ();
 
-    /// Constructor
-    public Adder (String s) {
-    	super (s);
-	UBindFunction ("init");
-    }
+  /// Constructor
+  public Adder (String s)
+  {
+    super (s);
+    UBindFunction ("init");
+  }
 
-    /// The init function is the constructor in Urbi. Here it takes
-    /// one argument that we use to initialise the 'v' variable.
-    /// The init function must return an int of value 0
-    /// if all went OK.
-    public int init (double v_init) {
+  /// The init function is the constructor in Urbi. Here it takes
+  /// one argument that we use to initialise the 'v' variable.
+  /// The init function must return an int of value 0
+  /// if all went OK.
+  public int init (double v_init)
+  {
+    /// Bind the variable v to Urbi
+    UBindVar (v, "v");
 
-	/// Bind the variable v to Urbi
-	UBindVar (v, "v");
+    /// Initialise our UVar v to the value given in the
+    /// constructor
+    v.set(v_init);
 
-	/// Initialise our UVar v to the value given in the
-	/// constructor
-	v.set(v_init);
+    /// Bind the function add to Urbi
+    UBindFunction ("add");
 
-	/// Bind the function add to Urbi
-	UBindFunction ("add");
+    return 0;
+  }
 
-	return 0;
-    }
-
-    public double add (double rhs) {
-    	/// Return the value of our UVar v (converted to double)
-    	/// plus the value of the argument of the function.
-    	return v.getDouble () + rhs;
-    }
+  public double add (double rhs)
+  {
+    /// Return the value of our UVar v (converted to double)
+    /// plus the value of the argument of the function.
+    return v.getDouble () + rhs;
+  }
 }
-\end{cxx}
+\end{java}
 
 Now 'v' and 'add' are binded only when instance of the Adder object are
 constructed. We have added an 'init' constructor with one parameter that
@@ -293,7 +300,7 @@ we use to initialise the value of v. You can run this UObject and test
 it in \urbi to see the difference with the previous example. Here is what
 it gives:
 
-\begin{cxx}
+\begin{urbiunchecked}
 [00000097] *** ********************************************************
 [00000097] *** Urbi SDK version 2.0 rev. 96a4b2f
 [00000097] *** Copyright (C) 2005-2010 Gostai S.A.S.
@@ -314,7 +321,7 @@ a.v;
 [00044742] 51
 a.add(10);
 [00054783] 61
-\end{cxx}
+\end{urbiunchecked}
 
 
 \section{Binding functions}
@@ -323,16 +330,16 @@ a.add(10);
 \subsection{Simple binding}
 
 To bind the functions to \urbi, you can use:
-\begin{cxx}
+\begin{java}
 void UBindFunction (Object obj, String method_name, String[] parameters_name)
-\end{cxx}
+\end{java}
 or one of the convenient version:
-\begin{cxx}
+\begin{java}
 void UBindFunction (String method_name)
 void UBindFunctions(String ... method_names)
 void UBindFunction (Object obj, String method_name)
 void UBindFunctions (Object obj, String ... method_names)
-\end{cxx}
+\end{java}
 
 The first function takes as parameter the object containing the function
 (for now it is only possible to bind instance method, we do not handle static
@@ -357,35 +364,34 @@ The functions you can bind must follow these rules:
   java.lang.String, java.lang.Integer, java.lang.Boolean, java.lang.Double,
   java.lang.Float, java.lang.Long, java.lang.Short, java.lang.Character,
   java.lang.Byte, int, boolean, byte, char, short, long, float, double
-\item Their return type can be one of the following type:
- void, urbi.UValue, urbi.UVar, urbi.UList,
- urbi.UBinary, urbi.UImage, urbi.USound,
- urbi.UDictionary, java.lang.String, int, boolean,
- byte, char, short, long, float, double
+\item Their return type can be one of the following type: void, urbi.UValue,
+  urbi.UVar, urbi.UList, urbi.UBinary, urbi.UImage, urbi.USound,
+  urbi.UDictionary, java.lang.String, int, boolean, byte, char, short, long,
+  float, double
 \end{itemize}
 
 
 \section{Notification of a variable change or access}
 \label{sec:uob:apijava:uvar-notify}
 
-You can register a function that will be called each time a
-variable is modified by calling UNotifyChange, passing either an \UVar
-or a variable name as first argument, and a member function of
-your \UObject as second argument (and optionlly a String array containing
-the name of the types of the parameters). The prototype for UNotifyChange is:
+You can register a function that will be called each time a variable is
+modified by calling UNotifyChange, passing either an \UVar or a variable
+name as first argument, and a member function of your \UObject as second
+argument (and optionlly a String array containing the name of the types of
+the parameters). The prototype for UNotifyChange is:
 
-\begin{cxx}
+\begin{java}
 void UNotifyChange (String var_name, String method_name, String[] args_name)
 void UNotifyChange (String var_name, String method_name)
 void UNotifyChange (UVar v, String method_name, String[] args_name)
 void UNotifyChange (UVar v, String method_name)
-\end{cxx}
+\end{java}
 
 The callback function can take zero or one argument: an UVar pointing to the
 UVar being modified. And the callback function must return an int (the value
-returned is currently ignored in the actual implementation) or nothing at all (void).
-The notifyChange callback function is always called after the variable value
-is changed.
+returned is currently ignored in the actual implementation) or nothing at
+all (void).  The notifyChange callback function is always called after the
+variable value is changed.
 
 Notify functions can be unregistered by calling the \lstinline|unnotify|
 function of the \UVar class.
@@ -400,26 +406,24 @@ The API gives you two methods to have a function called periodically:
   UObject method \lstinline{update ()} with the specified \var{period} (in
   milliseconds).Disable updates if \var{period} is -1.
 \item[USetTimer (double period, Object o, String method\_name)] or
-\item[USetTimer (double period, Object o, String method\_name, String\[\] args\_name)]
- Invoke an UObject member function \var{method\_name} every \var{period} milliseconds.
+\item[USetTimer (double period, Object o, String method\_name, String\[\]
+  args\_name)] Invoke an UObject member function \var{method\_name} every
+  \var{period} milliseconds.
 \end{cxxapi}
 
 
 \section{Using \urbi variables}
 \label{sec:uob:apijava:uvar}
 
-You can read or write any \urbi variable by creating an
-\UVar passing the variable name to the constructor. Change
-the value by writing any compatible type to the \UVar, and
-access the value by casting the \UVar to any compatible
-type.
+You can read or write any \urbi variable by creating an \UVar passing the
+variable name to the constructor. Change the value by writing any compatible
+type to the \UVar, and access the value by casting the \UVar to any
+compatible type.
 
-Note however that changes on the
-variable coming from \urbi code or an other module can take time to propagate
-to the \UVar.
-You can read and write all the \urbi properties of an \UVar by
-reading and writing the appropriate \lstinline{UProp} object in the
-\UVar.
+Note however that changes on the variable coming from \urbi code or an other
+module can take time to propagate to the \UVar.  You can read and write all
+the \urbi properties of an \UVar by reading and writing the appropriate
+\lstinline{UProp} object in the \UVar.
 
 \section{Sending \urbi code}
 \label{sec:uob:apijava:sendcode}
@@ -499,90 +503,100 @@ These functions are member functions of the UObject class.
 
 \section{Providing a main class or not}
 
-We provide a main class, containing a main function, embedded in the liburbijava.jar file. This main class,
-called \lstinline{urbi.UMain} is responsible for the loading of the liburbijava native library, and also
-for the registering of your uobjects.
+We provide a main class, containing a main function, embedded in the
+liburbijava.jar file. This main class, called \lstinline{urbi.UMain} is
+responsible for the loading of the liburbijava native library, and also for
+the registering of your uobjects.
 
 \begin{itemize}
 
-\item When launching your UObjects with \lstinline{java} or urbi-launch-java, please do not provide your main class.
+\item When launching your UObjects with \lstinline{java} or
+  urbi-launch-java, please do not provide your main class.
 
 \item When launching your UObjects with Eclipse:
 \begin{itemize}
-\item You can use the UMain class we provide, but this class require that you pass as argument the path to your UObject jar file, when you run your uobject.
-\item Or you can provide your own main file. In this case you have to put the UStart(YourUObject.class) call directly in your main file, and not in your
-uobject classes. Your main should look like:
+\item You can use the UMain class we provide, but this class require that
+  you pass as argument the path to your UObject jar file, when you run your
+  uobject.
+\item Or you can provide your own main file. In this case you have to put
+  the UStart(YourUObject.class) call directly in your main file, and not in
+  your uobject classes. Your main should look like:
 
-\begin{cxx}
+\begin{java}
 import liburbi.main.*;
 
-public class Main {
+public class Main
+{
+  /// load urbijava library
+  static
+  {
+    System.loadLibrary("urbijava");
+  }
 
-    /// load urbijava library
-    static {
-        System.loadLibrary("urbijava");
-    }
+  public static void main(String argv[])
+  {
+    UObject.UStart(MyUObject1.class);
+    UObject.UStart(MyUObject2.class);
+    // ...
 
-    public static void main(String argv[]) {
-      UObject.UStart(MyUObject1.class);
-      UObject.UStart(MyUObject2.class);
-      ...
-
-      UObject.main(argv);
-    }
+    UObject.main(argv);
+  }
 }
-\end{cxx}
+\end{java}
 
 You can see that you also need to call \lstinline{System.loadLibrary("urbijava");} in order to load the liburbijava native library.
 
-Note: when you call System.loadLibrary, java search for the library in the locations given
-in \var{java.library.path}. This special Java variable must be correctly set or you
-will get a loading error when you run your Java program.
-You can set this options giving: -Djava.library.path=\var{path to dir containing urbijava lib}
-to the Java VM running your program.
+Note: when you call System.loadLibrary, java search for the library in the
+locations given in \var{java.library.path}. This special Java variable must
+be correctly set or you will get a loading error when you run your Java
+program.  You can set this options giving: -Djava.library.path=\var{path to
+  dir containing urbijava lib} to the Java VM running your program.
 
 
 \end{itemize}
 
-We provide two UObjects examples under eclipse. One use urbi.UMain, the other provide it's own main class.
+We provide two UObjects examples under eclipse. One use urbi.UMain, the
+other provide it's own main class.
 \end{itemize}
 
 
 \section{Import the examples with Eclipse}
-\label{sec:uob:apijava:import}
 
-We provide a sample \htmladdnormallink{Eclipse}{http://www.eclipse.org/} project configuration that
-you can import in Eclipse and use to create your own UObject Java.
+We provide a sample \htmladdnormallink{Eclipse}{http://www.eclipse.org/}
+project configuration that you can import in Eclipse and use to create your
+own UObject Java.
 
 We illustrate here how you can do this:
 
 \begin{itemize}
 \item Open Eclipse
 
-\begin{center}
-  \includegraphics[width=0.6\linewidth]{img/eclipse-import}
-\end{center}
+  \begin{center}
+    \includegraphics[width=0.6\linewidth]{img/eclipse-import}
+  \end{center}
 
-\item Right click in the Package Explorer panel and select 'import' (or go in File/import)
+\item Right click in the Package Explorer panel and select 'import' (or go
+  in File/import)
 
-\begin{center}
-  \includegraphics[width=0.6\linewidth]{img/select-import}
-\end{center}
+  \begin{center}
+    \includegraphics[width=0.6\linewidth]{img/select-import}
+  \end{center}
 
 \item Select 'Existing Projects into Workspace' in the opened windows
 \item Click 'Next'
 
-\begin{center}
-  \includegraphics[width=0.6\linewidth]{img/select-proj}
-\end{center}
+  \begin{center}
+    \includegraphics[width=0.6\linewidth]{img/select-proj}
+  \end{center}
 
 \item Enter the path of the \urbi SDK on your computer
-\item Eclipse should find the .project file we provide and display the 'urbijava' project
+\item Eclipse should find the .project file we provide and display the
+  'urbijava' project
 \item Select the 'urbijava' project and click 'Finish'
 
-\begin{center}
-  \includegraphics[width=0.6\linewidth]{img/project-uobject-open}
-\end{center}
+  \begin{center}
+    \includegraphics[width=0.6\linewidth]{img/project-uobject-open}
+  \end{center}
 
 \end{itemize}
 
@@ -602,7 +616,6 @@ compliance level to Java 5 at least (Windows/Preferences/Java/Compiler).
 
 
 \section{Run the UObject Java examples}
-\label{sec:uob:apijava:import}
 
 
 We provide a sample uobjectjava.launch files that you can load in eclipse to
@@ -616,24 +629,30 @@ run the projects.
   \includegraphics[width=0.6\linewidth]{img/run-uobjectjava}
 \end{center}
 
-\item The launch configurations should be recognized automatically. Choose 'uobjectjava'.
+\item The launch configurations should be recognized automatically. Choose
+  'uobjectjava'.
 
-\item The project needs to load the urbijava native library. To this end, it will search the special
-java.library.path path. If this path is not correctly set, the example will trigger an error.
-You have to add to java.library.path the path to the \var{lib} folder in the \urbi SDK. You can do
-this from the 'Run' menu, by selecting the 'Arguments' tab, and setting -Djava.library.path=\var{path to lib folder}
-into the VM arguments. See:
+\item The project needs to load the urbijava native library. To this end, it
+  will search the special java.library.path path. If this path is not
+  correctly set, the example will trigger an error.  You have to add to
+  java.library.path the path to the \var{lib} folder in the \urbi SDK. You
+  can do this from the 'Run' menu, by selecting the 'Arguments' tab, and
+  setting -Djava.library.path=\var{path to lib folder} into the VM
+  arguments. See:
 
 \begin{center}
   \includegraphics[width=0.6\linewidth]{img/set_javalibrarypath}
 \end{center}
 
-\item In order to run your remote UObject, you need also run an \urbi server. Your remote UObject
-will connect to this \urbi server. By default \urbi servers listen on port 54000, and remote UObjects
-try to connect to localhost on port 54000. If your urbi server is running on a different port or different
-address, then you will need to give these port and address as argument to your program, in the 'Arguments'
-tab (something like: -H address -P port). You can also write "--help" in this field, and then when you will
-run the program it will display some help on the arguments available.
+\item In order to run your remote UObject, you need also run an \urbi
+  server. Your remote UObject will connect to this \urbi server. By default
+  \urbi servers listen on port 54000, and remote UObjects try to connect to
+  localhost on port 54000. If your urbi server is running on a different
+  port or different address, then you will need to give these port and
+  address as argument to your program, in the 'Arguments' tab (something
+  like: -H address -P port). You can also write "--help" in this field, and
+  then when you will run the program it will display some help on the
+  arguments available.
 
 \item Click 'Apply'. Click 'Run'.
 
