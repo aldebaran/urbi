@@ -1415,8 +1415,7 @@ namespace urbi
 
   const std::string& kernelVersion()
   {
-    // FIXME: Most certainly does not work since it is now a function.
-    return object::system_class->slot_get(SYMBOL(version))->as<object::String>()
+    return object::system_class->call(SYMBOL(version))->as<object::String>()
       ->value_get();
   }
 
