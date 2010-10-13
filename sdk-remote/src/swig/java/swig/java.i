@@ -527,7 +527,8 @@ namespace urbi
   /// We declare the type 'UValueVector' corresponding to the C++ templated
   /// type. and Swig generate the class with some convenient functions to
   /// manipulate the Vector of UValue
-namespace std {
+namespace std
+{
   %template(UValueVector) vector<urbi::UValue*>;
   %template(StringVector) vector<std::string>;
   %template(UNamedValueVector) std::vector<urbi::UNamedValue>;
@@ -535,20 +536,25 @@ namespace std {
 
 %include "std_pair.i"
 
-namespace std {
+namespace std
+{
   %template(IntPair) std::pair<int, int>;
 }
 
 %include "boost_shared_ptr.i"
 
-namespace boost {
+namespace boost
+{
   %template(FinallySharedPtr) boost::shared_ptr<libport::Finally>;
   %template(TimerHandle) boost::shared_ptr<std::string>;
 }
 
-namespace boost {
-  %extend shared_ptr<std::string> {
-    static boost::shared_ptr<std::string> create(const std::string& s) {
+namespace boost
+{
+  %extend shared_ptr<std::string>
+  {
+    static boost::shared_ptr<std::string> create(const std::string& s)
+    {
       return boost::shared_ptr<std::string>(new std::string (s));
     }
 
@@ -569,12 +575,15 @@ namespace boost {
 %include "udictionary-javacode.i"
 %include "boost_unordered_map.i"
 
-namespace boost {
+namespace boost
+{
   %template(UDictionary) unordered_map<std::string, urbi::UValue>;
   %template(UDictionaryCPPIterator) iterator_wrapper<std::string, urbi::UValue>;
 
   %define UDIRECTORY_PUT(value_type)
-    %extend unordered_map<std::string, urbi::UValue> {
+
+  %extend unordered_map<std::string, urbi::UValue>
+  {
     value_type put(const std::string& key, value_type v)
     {
       return (*self)[key] = v;
@@ -592,8 +601,8 @@ namespace boost {
   UDIRECTORY_PUT(double)
   UDIRECTORY_PUT(bool)
 
-  %extend unordered_map<std::string, urbi::UValue> {
-
+  %extend unordered_map<std::string, urbi::UValue>
+  {
     float put(const std::string& key, float v)
     {
       return (ufloat) ((*self)[key] = v);
@@ -633,33 +642,33 @@ namespace boost {
 namespace urbi
 {
 
-  %extend UValue {
-
+  %extend UValue
+  {
     double		doubleValue () { return self->val; }
 
     void		setValue (std::string s)
-      {
-	self->stringValue = new std::string (s);
-      }
+    {
+      self->stringValue = new std::string (s);
+    }
 
     void		setValue (double d) { self->val = d; }
 
     void		setValue (UBinary& b)
-      {
-	self->binary = new urbi::UBinary (b);
-      }
+    {
+      self->binary = new urbi::UBinary (b);
+    }
 
     void		setValue (UList& l)
-      {
-	self->list = new urbi::UList (l);
-      }
+    {
+      self->list = new urbi::UList (l);
+    }
 
     std::string		toString ()
-      {
-	std::ostringstream os;
-	self->print (os);
-	return os.str ();
-      }
+    {
+      std::ostringstream os;
+      self->print(os);
+      return os.str ();
+    }
   }
 
 };
