@@ -99,7 +99,11 @@ liburbijava@LIBSFX@_la_CPPFLAGS =		\
 CLEANFILES +=					\
   java.cc.h					\
   java.cc					\
-  $(java_src_outdir)/*.java
+  $(java_src_outdir)/*.java			\
+  $(ALL_OBJECTS)				\
+  $(ALL_JARS)
+clean-local:
+	rm -rf urbi
 
 if WIN32
 #liburbijava@LIBSFX@_la_LDFLAGS = -Wl,--add-stdcall-alias
@@ -125,8 +129,7 @@ JAVAROOT = .
 ##   SDK Java   ##
 ## ------------ ##
 
-liburbijava_SRC=
-liburbijava_SRC +=				\
+liburbijava_SRC =				\
   gnu/bytecode/Access.java			\
   gnu/bytecode/ArrayClassLoader.java		\
   gnu/bytecode/ArrayType.java			\
@@ -389,6 +392,3 @@ dist_java_DATA =				\
 # 	sample/URBISend.launch
 # 	sample/URBISound.launch
 # 	sample/URBITalkie.launch
-
-clean-local:
-	$(RM) $(ALL_OBJECTS) $(ALL_JARS)
