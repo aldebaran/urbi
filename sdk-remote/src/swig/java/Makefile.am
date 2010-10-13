@@ -207,7 +207,7 @@ gen-liburbi-java:
 	$(mkdir_p) $$(dirname $(liburbijava_JAR))
 	mv $$(basename $(liburbijava_JAR)) $$(dirname $(liburbijava_JAR))
 
-$(liburbijava_JAR): java.cc
+$(liburbijava_JAR): java.cc $(liburbijava_SRC)
 	$(MAKE) -C . gen-liburbi-java
 
 JAR_RULES =
