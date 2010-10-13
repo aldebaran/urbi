@@ -19,7 +19,6 @@
 # include <urbi/uvar.hh>
 # include <urbi/ucallbacks.hh>
 # include <urbi/utimer-callback.hh>
-# include <urbi/export.hh>
 
 typedef boost::function<jvalue(JNIEnv*, urbi::UValue)> ConversionFunc;
 
@@ -30,7 +29,7 @@ typedef boost::function<jvalue(JNIEnv*, urbi::UValue)> ConversionFunc;
 /// This class also store a java method id and an object. When the
 /// callbacks in this class are triggered, they trigger in turn the
 /// associated callbacks in Java.
-class URBI_SDK_API CallbacksCaller
+class CallbacksCaller
 {
 public:
   CallbacksCaller();
@@ -175,7 +174,6 @@ typedef struct
   const char *java_exception;
 } SWIG_JavaExceptions_t;
 
-URBI_SDK_API
 void
 SWIG_JavaThrowException(JNIEnv *jenv,
                         SWIG_JavaExceptionCodes code,

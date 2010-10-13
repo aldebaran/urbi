@@ -90,7 +90,6 @@ liburbijava@LIBSFX@_la_LIBADD =				\
   $(top_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
   $(top_builddir)/src/libuobject/libuobject$(LIBSFX).la
 liburbijava@LIBSFX@_la_CPPFLAGS =		\
-  -DBUILDING_URBI_SDK				\
   $(JAVA_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
   $(LIBPORT_CPPFLAGS)				\
