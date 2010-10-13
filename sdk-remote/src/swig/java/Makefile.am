@@ -28,7 +28,19 @@
 # - creation of jar files depends on compilation of java sources
 #   (since jars aggregate java objects)
 
-# Try to disable -O2 by all means (or liburbiJNI.SWIGURBIStarterJavaUpcast from wont work)
+include $(top_srcdir)/build-aux/make/libport.mk
+
+JAVA_HOME = $$JAVA_HOME
+if WIN32
+JAVA_CPPFLAGS = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32
+else
+JAVA_CPPFLAGS = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
+endif
+JAVA_LDFLAGS = -L$(JAVA_HOME)/lib
+JAVA_LIBS = -ljvm
+
+# Try to disable -O2 by all means (or
+# liburbiJNI.SWIGURBIStarterJavaUpcast from won't work).
 override CXXFLAGS:=$(filter-out -O%,$(CXXFLAGS))
 
 EXTRA_DIST =					\
@@ -78,25 +90,21 @@ liburbijava@LIBSFX@_la_LIBADD =				\
   $(top_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
   $(top_builddir)/src/libuobject/libuobject$(LIBSFX).la
 liburbijava@LIBSFX@_la_CPPFLAGS =		\
-  -I$$JAVA_HOME/include				\
+  $(JAVA_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
-  -I$(top_srcdir)/libport/include		\
-  -I$(top_builddir)/libport/include		\
-  -I$(top_srcdir)/include/
+  $(LIBPORT_CPPFLAGS)				\
+  -I$(top_srcdir)/include
 
 CLEANFILES =					\
   java.cc.h					\
   java.cc					\
-  $(wildcard $(java_src_outdir)/*.java)
+  $(java_src_outdir)/*.java
 
 if WIN32
 #liburbijava@LIBSFX@_la_LDFLAGS = -Wl,--add-stdcall-alias
 liburbijava@LIBSFX@_la_LDFLAGS = -no-undefined
 # link with the generated jvm link file
-liburbijava@LIBSFX@_la_LIBADD += -L$$JAVA_HOME/lib -ljvm
-liburbijava@LIBSFX@_la_CPPFLAGS += -I$$JAVA_HOME/include/win32
-else
-liburbijava@LIBSFX@_la_CPPFLAGS += -I$$JAVA_HOME/include/linux
+liburbijava@LIBSFX@_la_LIBADD += $(JAVA_LDFLAGS)  $(JAVA_LIBS)
 endif
 
 # Under windows path are set to C:/cygwin... in libdir, which
@@ -118,74 +126,74 @@ JAVAROOT = .
 
 liburbijava_SRC=
 liburbijava_SRC +=				\
-	gnu/bytecode/Access.java		\
-	gnu/bytecode/ArrayClassLoader.java	\
-	gnu/bytecode/ArrayType.java		\
-	gnu/bytecode/AttrContainer.java		\
-	gnu/bytecode/Attribute.java		\
-	gnu/bytecode/ClassFileInput.java	\
-	gnu/bytecode/ClassType.java		\
-	gnu/bytecode/ClassTypeWriter.java	\
-	gnu/bytecode/CodeAttr.java		\
-	gnu/bytecode/ConstantPool.java		\
-	gnu/bytecode/ConstantValueAttr.java	\
-	gnu/bytecode/CpoolClass.java		\
-	gnu/bytecode/CpoolEntry.java		\
-	gnu/bytecode/CpoolNameAndType.java	\
-	gnu/bytecode/CpoolRef.java		\
-	gnu/bytecode/CpoolString.java		\
-	gnu/bytecode/CpoolUtf8.java		\
-	gnu/bytecode/CpoolValue1.java		\
-	gnu/bytecode/CpoolValue2.java		\
-	gnu/bytecode/dump.java			\
-	gnu/bytecode/ExceptionsAttr.java	\
-	gnu/bytecode/Field.java			\
-	gnu/bytecode/Filter.java		\
-	gnu/bytecode/IfState.java		\
-	gnu/bytecode/InnerClassesAttr.java	\
-	gnu/bytecode/Label.java			\
-	gnu/bytecode/LineNumbersAttr.java	\
-	gnu/bytecode/ListCodeSize.java		\
-	gnu/bytecode/LocalVarsAttr.java		\
-	gnu/bytecode/Location.java		\
-	gnu/bytecode/Member.java		\
-	gnu/bytecode/Method.java		\
-	gnu/bytecode/MiscAttr.java		\
-	gnu/bytecode/ObjectType.java		\
-	gnu/bytecode/PrimType.java		\
-	gnu/bytecode/Scope.java			\
-	gnu/bytecode/SourceDebugExtAttr.java	\
-	gnu/bytecode/SourceFileAttr.java	\
-	gnu/bytecode/SwitchState.java		\
-	gnu/bytecode/TryState.java		\
-	gnu/bytecode/Type.java			\
-	gnu/bytecode/VarEnumerator.java		\
-	gnu/bytecode/Variable.java		\
-	gnu/bytecode/ZipArchive.java		\
-	gnu/bytecode/ZipLoader.java
+  gnu/bytecode/Access.java			\
+  gnu/bytecode/ArrayClassLoader.java		\
+  gnu/bytecode/ArrayType.java			\
+  gnu/bytecode/AttrContainer.java		\
+  gnu/bytecode/Attribute.java			\
+  gnu/bytecode/ClassFileInput.java		\
+  gnu/bytecode/ClassType.java			\
+  gnu/bytecode/ClassTypeWriter.java		\
+  gnu/bytecode/CodeAttr.java			\
+  gnu/bytecode/ConstantPool.java		\
+  gnu/bytecode/ConstantValueAttr.java		\
+  gnu/bytecode/CpoolClass.java			\
+  gnu/bytecode/CpoolEntry.java			\
+  gnu/bytecode/CpoolNameAndType.java		\
+  gnu/bytecode/CpoolRef.java			\
+  gnu/bytecode/CpoolString.java			\
+  gnu/bytecode/CpoolUtf8.java			\
+  gnu/bytecode/CpoolValue1.java			\
+  gnu/bytecode/CpoolValue2.java			\
+  gnu/bytecode/dump.java			\
+  gnu/bytecode/ExceptionsAttr.java		\
+  gnu/bytecode/Field.java			\
+  gnu/bytecode/Filter.java			\
+  gnu/bytecode/IfState.java			\
+  gnu/bytecode/InnerClassesAttr.java		\
+  gnu/bytecode/Label.java			\
+  gnu/bytecode/LineNumbersAttr.java		\
+  gnu/bytecode/ListCodeSize.java		\
+  gnu/bytecode/LocalVarsAttr.java		\
+  gnu/bytecode/Location.java			\
+  gnu/bytecode/Member.java			\
+  gnu/bytecode/Method.java			\
+  gnu/bytecode/MiscAttr.java			\
+  gnu/bytecode/ObjectType.java			\
+  gnu/bytecode/PrimType.java			\
+  gnu/bytecode/Scope.java			\
+  gnu/bytecode/SourceDebugExtAttr.java		\
+  gnu/bytecode/SourceFileAttr.java		\
+  gnu/bytecode/SwitchState.java			\
+  gnu/bytecode/TryState.java			\
+  gnu/bytecode/Type.java			\
+  gnu/bytecode/VarEnumerator.java		\
+  gnu/bytecode/Variable.java			\
+  gnu/bytecode/ZipArchive.java			\
+  gnu/bytecode/ZipLoader.java
 
 liburbijava_SRC +=				\
-	urbi/ImageComponent.java		\
-	urbi/ImageFilter.java			\
-	urbi/ImageSampler.java			\
-	urbi/ImageUtilities.java		\
-	urbi/MedianFilter.java			\
-	urbi/SendSoundSampler.java		\
-	urbi/SoundAction.java			\
-	urbi/SoundSampler.java			\
-	urbi/SoundUtilities.java		\
-	urbi/UObjectStarter.java		\
-	urbi/UObject.java			\
-	urbi/UMain.java				\
-	urbi/Log.java
+  urbi/ImageComponent.java			\
+  urbi/ImageFilter.java				\
+  urbi/ImageSampler.java			\
+  urbi/ImageUtilities.java			\
+  urbi/MedianFilter.java			\
+  urbi/SendSoundSampler.java			\
+  urbi/SoundAction.java				\
+  urbi/SoundSampler.java			\
+  urbi/SoundUtilities.java			\
+  urbi/UObjectStarter.java			\
+  urbi/UObject.java				\
+  urbi/UMain.java				\
+  urbi/Log.java
 
 liburbijava_SRC += $(wildcard urbi/*.java)
 
 # javac generate objects files (.class) that contains $ in their name,
 # so escape them before constructing .jar file.
-liburbijava_OBJECTS =
-liburbijava_OBJECTS += $(foreach file,$(wildcard gnu/bytecode/*.class),'$(file)')
-liburbijava_OBJECTS += $(foreach file,$(wildcard urbi/*.class),'$(file)')
+liburbijava_OBJECTS =						\
+  $(foreach file,$(wildcard gnu/bytecode/*.class),'$(file)')	\
+  $(foreach file,$(wildcard urbi/*.class),'$(file)')
 
 liburbijava_JAR = lib/liburbijava.jar
 liburbijavadir = $(javadir)
@@ -195,13 +203,13 @@ liburbijavadir = $(javadir)
 # from the generated java sources
 gen-liburbi-java:
 	$(JAR) -cvf $$(basename $(liburbijava_JAR)) $(liburbijava_OBJECTS)
-	mkdir -p $$(dirname $(liburbijava_JAR))
+	$(mkdir_p) $$(dirname $(liburbijava_JAR))
 	mv $$(basename $(liburbijava_JAR)) $$(dirname $(liburbijava_JAR))
 
 $(liburbijava_JAR): java.cc
-	make -C . gen-liburbi-java
+	$(MAKE) -C . gen-liburbi-java
 
-JAR_RULES=
+JAR_RULES =
 
 ## ------------ ##
 ##   Examples   ##
@@ -359,17 +367,16 @@ nobase_nodist_java_DATA = $(ALL_JARS)
 # 	examples/urbisound/manifest
 # 	examples/urbitalkie/manifest
 
-# Install a sample `build.xml' (equivalent of Makefile
-# for `ant') to allow the user to recompile liburbijava.jar
-# from the java sources.
+# Install a sample `build.xml' (equivalent of Makefile for `ant') to
+# allow the user to recompile liburbijava.jar from the java sources.
 # Install also sample Eclipse project files
 dist_java_DATA =				\
-	sample/.classpath			\
-	sample/.project				\
-	sample/uobject.classpath		\
-	sample/uobject.project			\
-	sample/uobjectjava.launch		\
-	sample/uobjectjava_withmain.launch
+  sample/.classpath				\
+  sample/.project				\
+  sample/uobject.classpath			\
+  sample/uobject.project			\
+  sample/uobjectjava.launch			\
+  sample/uobjectjava_withmain.launch
 
 # 	sample/URBIBallTrackingHead.launch
 # 	sample/URBIBandWidth.launch
