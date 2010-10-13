@@ -171,7 +171,7 @@ case $me in
       args="$args $filtered"
     done
     verbose "running $program $args"
-    exec "$program" "$args"
+    exec "$program" $args
     ;;
 
   (*)
