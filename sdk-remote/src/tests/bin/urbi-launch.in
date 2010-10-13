@@ -163,24 +163,13 @@ case $me in
   (urbi-launch-java)
     setenv liburbi_jar "$sdk_remote_builddir/src/swig/java/lib/liburbijava.jar"
     setenv library_path "$sdk_remote_builddir/src/swig/java/.libs/"
+    prependenv URBI_UOBJECT_PATH "$sdk_remote_builddir/src/swig/java:"
     # In Java, we never have to load the plugin implementation.
     ld_path_add $sdk_remote_builddir/src/libuobject/.libs
-    args=
-    for i
-    do
-      filtered=$(echo $i \
-          | sed "s,\(.*\.jar\),$sdk_remote_builddir/src/swig/java/\1,")
-      args="$args $filtered"
-    done
-    verbose "running $program $args"
-    exec "$program" $args
-    ;;
-
-  (*)
-    verbose "running $program $*"
-    exec "$program" "$@"
-    ;;
 esac
+
+verbose "running $program $*"
+exec "$program" "$@"
 
 # Local Variables:
 # mode: shell-script

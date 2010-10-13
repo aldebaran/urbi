@@ -124,6 +124,8 @@ main=urbi.UMain
 get_options "$@"
 
 classpath="$classpath:$liburbi_jar"
+# Add standart location to uobject path
+export URBI_UOBJECT_PATH="$URBI_UOBJECT_PATH:$prefix/share/sdk-remote/java/"
 
 eval java -Djava.library.path="$library_path"	\
   -classpath "$classpath"  "$main"		\
