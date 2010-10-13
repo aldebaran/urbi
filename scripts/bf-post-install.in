@@ -48,6 +48,8 @@ export DESTDIR
 #
 $builddir/scripts/install-boost
 
+# JVM.
+#
 $builddir/scripts/install-java
 
 # Shared lib dependencies.
