@@ -11,17 +11,18 @@
 #ifndef CALLBACKS_CALLER_HH_
 # define CALLBACKS_CALLER_HH_
 
-#include <boost/function.hpp>
-#include <libport/bind.hh>
-#include <jni.h>
-#include "converter.hh"
-#include "call-macros.hh"
-#include "urbi/uvar.hh"
-#include "urbi/ucallbacks.hh"
-#include "urbi/utimer-callback.hh"
+# include <boost/function.hpp>
+# include <libport/bind.hh>
+# include <jni.h>
+# include "converter.hh"
+# include "call-macros.hh"
+# include <urbi/uvar.hh>
+# include <urbi/ucallbacks.hh>
+# include <urbi/utimer-callback.hh>
+# include <urbi/export.hh>
 
 
-typedef boost::function<jvalue (JNIEnv*, urbi::UValue)> ConversionFunc;
+typedef boost::function<jvalue(JNIEnv*, urbi::UValue)> ConversionFunc;
 
 /// This class allow to register Java callbacks in C++.
 ///
@@ -30,17 +31,15 @@ typedef boost::function<jvalue (JNIEnv*, urbi::UValue)> ConversionFunc;
 /// This class also store a java method id and an object. When the
 /// callbacks in this class are triggered, they trigger in turn the
 /// associated callbacks in Java.
-class CallbacksCaller
+class URBI_SDK_API CallbacksCaller
 {
 public:
+  CallbacksCaller();
 
-  CallbacksCaller ();
-
-  void			setObject (jobject o);
-  void			setMethodID (jmethodID id);
+  void setObject(jobject o);
+  void setMethodID(jmethodID id);
 
 public:
-
   /// Function callbacks
   /// below are macros. The the file call-macros.hh.
   /// NB: long long is not handled in Urbi. jlong is 'long long'.
