@@ -37,7 +37,6 @@ namespace urbi
   {
     typedef libport::xalloc<int> version_type;
     static version_type version;
-    std::cerr << "Kernel Version: " << version(o) << std::endl;
     return version(o);
   }
 
