@@ -8,6 +8,7 @@ import java.lang.UnsatisfiedLinkError;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -83,6 +84,11 @@ public class UMain {
 
 	boolean done = false;
 	int i = 0;
+        String uob_path_s = System.getenv("URBI_UOBJECT_PATH");
+	// If URBI_UOBJECT_PATH is not defined, look in .
+        if (uob_path_s == null)
+            uob_path_s = ".";
+        String[] uob_path = uob_path_s.split(":");
 	for (; i < argv.length && !done; ++i)
 	{
 	    String s = argv[i];
@@ -94,6 +100,28 @@ public class UMain {
 	    {
 		try {
 		    String jarname = argv[i];
+		    boolean found = false;
+		    // Test if path is absolute
+		    if (new File(jarname).getAbsolutePath().equals(jarname)){
+			if ((new File(jarname)).exists())
+			    found = true;
+		    }
+		    else
+			// Search for uobject in URBI_UOBJECT_PATH
+			for(String p: uob_path)
+			{
+			    String possible_path = String.format("%s/%s", p, jarname);
+			    if ((new File(possible_path)).exists()) {
+				jarname = possible_path;
+				found = true;
+				break;
+			    }
+			}
+		    if (!found) {
+			String msg = "JAR archive %s not found (is URBI_UOBJECT_PATH correctly set ?).";
+			msg = String.format(msg, jarname);
+			throw new FileNotFoundException(msg);
+		    }
 		    Log.info("Processing " + jarname);
 		    addFile(jarname);
 		    JarInputStream jis = new JarInputStream(new FileInputStream(jarname));
