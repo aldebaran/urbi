@@ -13,6 +13,16 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \section{\usdk 2.4}
 
+\subsection{Fixes}
+
+\begin{itemize}
+\item Fix transmission of binary data in dictionaries from remote UObjects.
+\item Fix bugs in sound conversion code when converting between mono and stereo.
+\item Fix the sendsound liburbi example.
+\item Fix a bug in liburbi stream formatting that made the code waste a lot of
+  bandwidth.
+\end{itemize}
+
 \subsection{New Features}
 \begin{itemize}
 \item Enumerations.
@@ -45,6 +55,16 @@ for (var suit : Suit)
   \autoref{sec:tools:umake}. The documentation of \command{umake} now
   describes \env{EXTRA\_CPPFLAGS}, \env{EXTRA\_CXXFLAGS}, and
   \env{EXTRA\_LDFLAGS}.
+
+\item RTP mode can now be switched on at any time. Change is applied to existing
+  notifies.
+
+\item UObjects can now be instanciated directly from C++, both in plugin and
+  remote mode.
+
+\item umake now supports the -I, -L and -l flags that bounce to the
+  compiler/linker. It also supports --package to fetch flags using pkg-config.
+
 \end{itemize}
 
 \subsection{Documentation}
