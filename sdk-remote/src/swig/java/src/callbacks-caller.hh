@@ -182,7 +182,7 @@ SWIG_JavaThrowException(JNIEnv *jenv,
                         SWIG_JavaExceptionCodes code,
                         const char *msg);
 
-# define TROW_RUNTIME(Env, Msg)					\
+# define THROW_RUNTIME(Env, Msg)					\
   throw std::runtime_error(Msg)
 //  SWIG_JavaThrowException(env, SWIG_JavaRuntimeException, msg)
 

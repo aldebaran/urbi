@@ -74,7 +74,7 @@ createFunctionCallback##RetType (JNIEnv* env,				\
       sprintf(tmp,"%d", argNb);						\
       msg += tmp;							\
       msg += " arguments. Maximum is 16.";				\
-      TROW_RUNTIME(env, msg.c_str ());					\
+      THROW_RUNTIME(env, msg.c_str ());					\
   }									\
   return 0;								\
 }
@@ -140,7 +140,7 @@ static urbi::UGenericCallback* createFunctionCallback (JNIEnv* env,
 
   std::string msg = "Can't define a callback on a function with return type ";
   msg += retType;
-  TROW_RUNTIME(env, msg.c_str ());
+  THROW_RUNTIME(env, msg.c_str ());
   return 0;
 }
 
@@ -163,7 +163,7 @@ static MethodIdAndUrbiName getMethodIdAndUrbiName (JNIEnv *env,
   jclass cls = env->GetObjectClass(obj);
   if (!cls)
   {
-    TROW_RUNTIME(env, "Can't find java object class");
+    THROW_RUNTIME(env, "Can't find java object class");
     return res;
   }
 
@@ -173,7 +173,7 @@ static MethodIdAndUrbiName getMethodIdAndUrbiName (JNIEnv *env,
   res.java_mid = env->GetMethodID(cls, method_name_, method_signature_);
   if (!res.java_mid)
   {
-    TROW_RUNTIME(env, "Can't find java callback method id");
+    THROW_RUNTIME(env, "Can't find java callback method id");
     return res;
   }
 

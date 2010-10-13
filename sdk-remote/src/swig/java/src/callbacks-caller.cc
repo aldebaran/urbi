@@ -131,7 +131,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
   do						\
   {						\
     deleteClassRefs(env);			\
-    TROW_RUNTIME(env, msg);			\
+    THROW_RUNTIME(env, msg);			\
     return false;				\
   } while (0)
 
@@ -193,13 +193,13 @@ CallbacksCaller::getGlobalRef (JNIEnv* env, const char* classname)
   jclass tmp, res;
   if (!(tmp = env->FindClass(classname)))
   {
-    TROW_RUNTIME (env, libport::format("Can't find class %s", classname));
+    THROW_RUNTIME (env, libport::format("Can't find class %s", classname));
     return false;
   }
 
   if (!(res = (jclass) env->NewGlobalRef(tmp)))
   {
-    TROW_RUNTIME (env, libport::format("Can't create Global Ref for class %s", classname));
+    THROW_RUNTIME (env, libport::format("Can't create Global Ref for class %s", classname));
     return false;
   }
 
