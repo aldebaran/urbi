@@ -6,8 +6,8 @@
 ##
 ## See the LICENSE file for more information.
 
-include $(top_srcdir)/build-aux/init.mk
-include $(top_srcdir)/build-aux/libport.mk
+include $(top_srcdir)/build-aux/make/init.mk
+include $(top_srcdir)/build-aux/make/libport.mk
 
 # This is what modules' configure.ac defines as the variable that
 # points to the install headers.  We use a non-installed kernel.

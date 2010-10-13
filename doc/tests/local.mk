@@ -52,7 +52,7 @@ $(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
 	  $(srcdir)/bin/tex2chk $<
 
 
-include $(top_srcdir)/build-aux/check.mk
+include $(top_srcdir)/build-aux/make/check.mk
 
 # A target that just runs "make check", we don't want to "make all" as
 # is the default with "make check-am".
