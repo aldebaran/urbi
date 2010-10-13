@@ -13,31 +13,31 @@
 #include "callbacks-caller.hh"
 
 
-jfieldID	CallbacksCaller::ulist_swigptr_id = 0;
-jfieldID	CallbacksCaller::uimage_swigptr_id = 0;
-jfieldID	CallbacksCaller::usound_swigptr_id = 0;
-jfieldID	CallbacksCaller::udictionary_swigptr_id = 0;
-jfieldID	CallbacksCaller::ubinary_swigptr_id = 0;
-jfieldID	CallbacksCaller::uvalue_swigptr_id = 0;
-jfieldID	CallbacksCaller::uvar_swigptr_id = 0;
-jclass		CallbacksCaller::uobject_cls = 0;
-jfieldID	CallbacksCaller::uobject_swigptr_id = 0;
+jfieldID CallbacksCaller::ulist_swigptr_id = 0;
+jfieldID CallbacksCaller::uimage_swigptr_id = 0;
+jfieldID CallbacksCaller::usound_swigptr_id = 0;
+jfieldID CallbacksCaller::udictionary_swigptr_id = 0;
+jfieldID CallbacksCaller::ubinary_swigptr_id = 0;
+jfieldID CallbacksCaller::uvalue_swigptr_id = 0;
+jfieldID CallbacksCaller::uvar_swigptr_id = 0;
+jclass CallbacksCaller::uobject_cls = 0;
+jfieldID CallbacksCaller::uobject_swigptr_id = 0;
 jmethodID CallbacksCaller::class_getname_id = 0;
-jclass  CallbacksCaller::class_cls = 0;
-bool		CallbacksCaller::jni_variables_cached_ = false;
+jclass CallbacksCaller::class_cls = 0;
+bool CallbacksCaller::jni_variables_cached_ = false;
 
 
-CallbacksCaller::CallbacksCaller ()
-  : mid (0),
-    obj (0),
-    jvm (0),
-    env_ (0)
+CallbacksCaller::CallbacksCaller()
+  : mid(0)
+  , obj(0)
+  , jvm(0)
+  , env_(0)
 {}
 
 int
-CallbacksCaller::callNotifyChangeInt_0 ()
+CallbacksCaller::callNotifyChangeInt_0()
 {
-  if (!init_env ())
+  if (!init_env())
     return 0;
   int ret = env_->CallIntMethod(obj, mid);
   testForException();
@@ -45,9 +45,9 @@ CallbacksCaller::callNotifyChangeInt_0 ()
 }
 
 int
-CallbacksCaller::callNotifyChangeInt_1 (urbi::UVar& v)
+CallbacksCaller::callNotifyChangeInt_1(urbi::UVar& v)
 {
-  if (!init_env ())
+  if (!init_env())
     return 0;
   jvalue obj1 = arg_convert[0]->convert(env_, v);
   jvalue arg[] = { obj1 };
@@ -57,18 +57,18 @@ CallbacksCaller::callNotifyChangeInt_1 (urbi::UVar& v)
 }
 
 void
-CallbacksCaller::callNotifyChangeVoid_0 ()
+CallbacksCaller::callNotifyChangeVoid_0()
 {
-  if (!init_env ())
+  if (!init_env())
     return;
   env_->CallVoidMethod(obj, mid);
   testForException();
 }
 
 void
-CallbacksCaller::callNotifyChangeVoid_1 (urbi::UVar& v)
+CallbacksCaller::callNotifyChangeVoid_1(urbi::UVar& v)
 {
-  if (!init_env ())
+  if (!init_env())
     return;
   jvalue obj1 = arg_convert[0]->convert(env_, v);
   jvalue arg[] = { obj1 };
@@ -79,7 +79,7 @@ CallbacksCaller::callNotifyChangeVoid_1 (urbi::UVar& v)
 
 
 bool
-CallbacksCaller::init_env ()
+CallbacksCaller::init_env()
 {
   if (!env_ || !jvm)
   {
@@ -103,26 +103,26 @@ CallbacksCaller::init_env ()
 
 
 void
-CallbacksCaller::setObject (jobject o)
+CallbacksCaller::setObject(jobject o)
 {
   obj = o;
 }
 
 
 void
-CallbacksCaller::setMethodID (jmethodID id)
+CallbacksCaller::setMethodID(jmethodID id)
 {
   mid = id;
 }
 
 bool
-CallbacksCaller::areJNIVariablesCached ()
+CallbacksCaller::areJNIVariablesCached()
 {
   return jni_variables_cached_;
 }
 
 bool
-CallbacksCaller::cacheJNIVariables (JNIEnv* env)
+CallbacksCaller::cacheJNIVariables(JNIEnv* env)
 {
 
   INIT_CONVERTERS_STATIC_ATTRS(env);
@@ -173,7 +173,7 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
     CLEAN_AND_THROW("Can't find UObject swigCPtr");
 
   /// Get the jclass for Class
-  if (!(class_cls = getGlobalRef (env, "java/lang/Class")))
+  if (!(class_cls = getGlobalRef(env, "java/lang/Class")))
     CLEAN_AND_THROW("Can't find Class class");
 
   /// Get String (char) Constructor id
@@ -187,19 +187,19 @@ CallbacksCaller::cacheJNIVariables (JNIEnv* env)
 }
 
 jclass
-CallbacksCaller::getGlobalRef (JNIEnv* env, const char* classname)
+CallbacksCaller::getGlobalRef(JNIEnv* env, const char* classname)
 {
   /// Get the jclass for UValue
   jclass tmp, res;
   if (!(tmp = env->FindClass(classname)))
   {
-    THROW_RUNTIME (env, libport::format("Can't find class %s", classname));
+    THROW_RUNTIME(env, libport::format("Can't find class %s", classname));
     return false;
   }
 
   if (!(res = (jclass) env->NewGlobalRef(tmp)))
   {
-    THROW_RUNTIME (env, libport::format("Can't create Global Ref for class %s", classname));
+    THROW_RUNTIME(env, libport::format("Can't create Global Ref for class %s", classname));
     return false;
   }
 
@@ -208,7 +208,7 @@ CallbacksCaller::getGlobalRef (JNIEnv* env, const char* classname)
 }
 
 urbi::UObject*
-CallbacksCaller::getUObjectFromObject (jobject obj, JNIEnv* env)
+CallbacksCaller::getUObjectFromObject(jobject obj, JNIEnv* env)
 {
   if (obj)
   {
@@ -238,7 +238,7 @@ CallbacksCaller::getUVarFromObject(jobject obj)
 }
 
 urbi::UValue
-CallbacksCaller::getUValueFromObject (jobject obj)
+CallbacksCaller::getUValueFromObject(jobject obj)
 {
   if (obj)
   {
@@ -246,14 +246,14 @@ CallbacksCaller::getUValueFromObject (jobject obj)
     if (ptr)  /// Java alocated memory, prefer allocate mine
       return *(urbi::UValue*) ptr;
     else
-      return urbi::UValue ();
+      return urbi::UValue();
   }
   else
-    return urbi::UValue ();
+    return urbi::UValue();
 }
 
 urbi::UDictionary
-CallbacksCaller::getUDictionaryFromObject (jobject obj)
+CallbacksCaller::getUDictionaryFromObject(jobject obj)
 {
   if (obj)
   {
@@ -261,14 +261,14 @@ CallbacksCaller::getUDictionaryFromObject (jobject obj)
     if (ptr)  /// Java alocated memory, prefer allocate mine
       return *(urbi::UDictionary*) ptr;
     else
-      return urbi::UDictionary ();
+      return urbi::UDictionary();
   }
   else
-    return urbi::UDictionary ();
+    return urbi::UDictionary();
 }
 
 urbi::UBinary
-CallbacksCaller::getUBinaryFromObject (jobject obj)
+CallbacksCaller::getUBinaryFromObject(jobject obj)
 {
   if (obj)
   {
@@ -276,14 +276,14 @@ CallbacksCaller::getUBinaryFromObject (jobject obj)
     if (ptr)  /// Java alocated memory, prefer allocate mine
       return *(urbi::UBinary*) ptr;
     else
-      return urbi::UBinary ();
+      return urbi::UBinary();
   }
   else
-    return urbi::UBinary ();
+    return urbi::UBinary();
 }
 
 urbi::UImage
-CallbacksCaller::getUImageFromObject (jobject obj)
+CallbacksCaller::getUImageFromObject(jobject obj)
 {
   if (obj)
   {
@@ -291,14 +291,14 @@ CallbacksCaller::getUImageFromObject (jobject obj)
     if (ptr)  /// Java alocated memory, prefer allocate mine
       return *(urbi::UImage*) ptr;
     else
-      return urbi::UImage ();
+      return urbi::UImage();
   }
   else
-    return urbi::UImage ();
+    return urbi::UImage();
 }
 
 urbi::USound
-CallbacksCaller::getUSoundFromObject (jobject obj)
+CallbacksCaller::getUSoundFromObject(jobject obj)
 {
   if (obj)
   {
@@ -306,14 +306,14 @@ CallbacksCaller::getUSoundFromObject (jobject obj)
     if (ptr)  /// Java alocated memory, prefer allocate mine
       return *(urbi::USound*) ptr;
     else
-      return urbi::USound ();
+      return urbi::USound();
   }
   else
-    return urbi::USound ();
+    return urbi::USound();
 }
 
 urbi::UList
-CallbacksCaller::getUListFromObject (jobject obj)
+CallbacksCaller::getUListFromObject(jobject obj)
 {
   if (obj)
   {
@@ -321,14 +321,14 @@ CallbacksCaller::getUListFromObject (jobject obj)
     if (ptr)  /// Java alocated memory, prefer allocate mine
       return *(urbi::UList*) ptr;
     else
-      return urbi::UList ();
+      return urbi::UList();
   }
   else
-    return urbi::UList ();
+    return urbi::UList();
 }
 
 std::string
-CallbacksCaller::getStringFromJString (jstring obj)
+CallbacksCaller::getStringFromJString(jstring obj)
 {
   char const* str = env_->GetStringUTFChars(obj, 0);
   std::string res = str;
@@ -341,12 +341,13 @@ void
 CallbacksCaller::testForException()
 {
   jthrowable exc = env_->ExceptionOccurred();
-  if (exc) {
+  if (exc)
+  {
     env_->ExceptionDescribe();
     env_->ExceptionClear();
-    jclass java_class = env_->GetObjectClass (exc);
+    jclass java_class = env_->GetObjectClass(exc);
     assert(java_class);
-    jmethodID getMessage = env_->GetMethodID (java_class,
+    jmethodID getMessage = env_->GetMethodID(java_class,
 					     "getMessage",
 					     "()Ljava/lang/String;");
     assert(getMessage);
@@ -374,7 +375,8 @@ SWIG_JavaThrowException(JNIEnv *jenv,
 			const char *msg)
 {
   jclass excep;
-  static const SWIG_JavaExceptions_t java_exceptions[] = {
+  static const SWIG_JavaExceptions_t java_exceptions[] =
+  {
     { SWIG_JavaOutOfMemoryError, "java/lang/OutOfMemoryError" },
     { SWIG_JavaIOException, "java/io/IOException" },
     { SWIG_JavaRuntimeException, "java/lang/RuntimeException" },
@@ -384,9 +386,10 @@ SWIG_JavaThrowException(JNIEnv *jenv,
     { SWIG_JavaNullPointerException, "java/lang/NullPointerException" },
     { SWIG_JavaDirectorPureVirtual, "java/lang/RuntimeException" },
     { SWIG_JavaUnknownError,  "java/lang/UnknownError" },
-    { (SWIG_JavaExceptionCodes)0,  "java/lang/UnknownError" } };
-  const SWIG_JavaExceptions_t *except_ptr = java_exceptions;
+    { (SWIG_JavaExceptionCodes)0,  "java/lang/UnknownError" }
+  };
 
+  const SWIG_JavaExceptions_t *except_ptr = java_exceptions;
   while (except_ptr->code != code && except_ptr->code)
     except_ptr++;
 
