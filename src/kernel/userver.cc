@@ -73,7 +73,6 @@
 #include <sched/scheduler.hh>
 
 #include <kernel/connection-set.hh>
-#include <kernel/lock.hh>
 #include <kernel/server-timer.hh>
 #include <kernel/ughostconnection.hh>
 #include <kernel/uobject.hh>
@@ -87,10 +86,6 @@ GD_CATEGORY(Urbi);
 
 namespace kernel
 {
-  /*----------------.
-  | Free standing.  |
-  `----------------*/
-
   // Global server reference
   UServer* urbiserver = 0;
 
@@ -100,7 +95,10 @@ namespace kernel
   {
     static bool ignore = getenv("URBI_IGNORE_URBI_U");
     if (!ignore)
-      urbi::Exit(EX_OSFILE, "set URBI_IGNORE_URBI_U to ignore.");
+    {
+      boost::format fmt("%s: set URBI_IGNORE_URBI_U to ignore.");
+      throw urbi::Exit(EX_OSFILE, str(fmt % program_name()));
+    }
   }
 
   static
@@ -143,7 +141,6 @@ namespace kernel
     , thread_id_(pthread_self())
     , urbi_root_(urbi_root)
   {
-    lock_check(*this);
     TIMER_INIT();
     TIMER_PUSH("server");
     urbiserver = this;

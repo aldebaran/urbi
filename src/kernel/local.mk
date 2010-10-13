@@ -11,8 +11,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   kernel/connection.hh				\
   kernel/connection-set.cc			\
   kernel/connection-set.hh			\
-  kernel/lock.cc				\
-  kernel/lock.hh				\
   kernel/server-timer.hh			\
   kernel/server-timer.cc			\
   kernel/ubanner.hh				\
@@ -45,16 +43,3 @@ nodist_libuobject@LIBSFX@_la_SOURCES += kernel/revision-stub.hh
 all-local: kernel/ubanner.unstub.stamp
 kernel/ubanner.unstub.stamp: kernel/libuobject$(LIBSFX)_la-ubanner.lo $(VERSIONIFY) $(VERSIONIFY_CACHE)
 	$(VERSIONIFY_RUN) --resolve=kernel/.libs/libuobject$(LIBSFX)_la-ubanner.$(OBJEXT)
-
-
-## ------------------------ ##
-## kernel/urbi-sdk-key.hh.  ##
-## ------------------------ ##
-
-nodist_libuobject@LIBSFX@_la_SOURCES +=			\
-  kernel/urbi-sdk-key.hh
-dist_noinst_SCRIPTS += kernel/generate-urbi-sdk-key-hh
-kernel/urbi-sdk-key.hh: $(top_srcdir)/urbi-sdk.key
-	rm -f $@ $@.tmp
-	$(srcdir)/kernel/generate-urbi-sdk-key-hh <$< >$@.tmp
-	mv $@.tmp $@
