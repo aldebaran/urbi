@@ -28,6 +28,7 @@
 # - creation of jar files depends on compilation of java sources
 #   (since jars aggregate java objects)
 
+include $(top_srcdir)/build-aux/make/init.mk
 include $(top_srcdir)/build-aux/make/libport.mk
 
 JAVA_HOME := $(shell echo "$$JAVA_HOME")
@@ -43,7 +44,7 @@ JAVA_LIBS = -ljvm
 # liburbiJNI.SWIGURBIStarterJavaUpcast from won't work).
 override CXXFLAGS:=$(filter-out -O%,$(CXXFLAGS))
 
-EXTRA_DIST =					\
+EXTRA_DIST +=					\
   swig/boost_unordered_map.i			\
   swig/java.i					\
   swig/udictionary-javacode.i
@@ -70,9 +71,9 @@ java.cc: swig/java.i
 
 java.cc.h: java.cc
 
-BUILT_SOURCES = java.cc java.cc.h
+BUILT_SOURCES += java.cc java.cc.h
 
-lib_LTLIBRARIES = liburbijava@LIBSFX@.la
+lib_LTLIBRARIES += liburbijava@LIBSFX@.la
 
 liburbijava@LIBSFX@_la_SOURCES =		\
   java.cc					\
@@ -95,7 +96,7 @@ liburbijava@LIBSFX@_la_CPPFLAGS =		\
   $(LIBPORT_CPPFLAGS)				\
   -I$(top_srcdir)/include
 
-CLEANFILES =					\
+CLEANFILES +=					\
   java.cc.h					\
   java.cc					\
   $(java_src_outdir)/*.java
