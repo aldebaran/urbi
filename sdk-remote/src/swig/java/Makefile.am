@@ -51,21 +51,21 @@ EXTRA_DIST =					\
 java_src_outdir = urbi/
 java_package = urbi
 
-SWIG_FLAGS =					\
+SWIGFLAGS =					\
   -c++ -java -Wall				\
   -outdir $(java_src_outdir)			\
-  -I$(top_srcdir)/src/liburbi/uobject/		\
-  -I$(top_srcdir)/include/			\
+  -I$(top_srcdir)/src/liburbi/uobject		\
+  -I$(top_srcdir)/include			\
   -package $(java_package)
 
 if APPLE
-SWIG_FLAGS += -DAPPLE
+SWIGFLAGS += -DAPPLE
 endif
 
 # Invoque Swig and generate: java sources & C++ jni code (liburbi_java.cc)
 java.cc: swig/java.i
 	$(mkdir_p) $(java_src_outdir)
-	$(SWIG) $(SWIG_FLAGS) $(SWIG_ARGS) -o $@.tmp $<
+	$(SWIG) $(SWIGFLAGS) $(SWIG_ARGS) -o $@.tmp $<
 	mv $@.tmp $@
 
 java.cc.h: java.cc
@@ -104,7 +104,7 @@ if WIN32
 #liburbijava@LIBSFX@_la_LDFLAGS = -Wl,--add-stdcall-alias
 liburbijava@LIBSFX@_la_LDFLAGS = -no-undefined
 # link with the generated jvm link file
-liburbijava@LIBSFX@_la_LIBADD += $(JAVA_LDFLAGS)  $(JAVA_LIBS)
+liburbijava@LIBSFX@_la_LIBADD += $(JAVA_LDFLAGS) $(JAVA_LIBS)
 endif
 
 # Under windows path are set to C:/cygwin... in libdir, which
