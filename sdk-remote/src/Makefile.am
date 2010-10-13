@@ -14,7 +14,9 @@ AUTOMAKE_OPTIONS += subdir-objects
 
 SUBDIRS = . tests
 if BINDINGS
- SUBDIRS += swig
+if  BINDING_JAVA
+SUBDIRS += swig/java
+endif
 endif
 
 # libjpeg.

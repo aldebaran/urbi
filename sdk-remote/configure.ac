@@ -229,8 +229,7 @@ AC_SUBST([sdk_remote_builddir], ['${abs_top_builddir}'])
 AC_CONFIG_FILES([
   Makefile
     src/Makefile
-      src/swig/Makefile
-        src/swig/java/Makefile
+      src/swig/java/Makefile
       src/tests/Makefile
 ])
 
