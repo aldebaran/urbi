@@ -128,10 +128,9 @@ CallbacksCaller::cacheJNIVariables(JNIEnv* env)
 #define CLEAN_AND_THROW(msg)			\
   do						\
   {						\
-    deleteClassRefs(env);			\
     THROW_RUNTIME(env, msg);			\
     return false;				\
-  } while (0)
+  } while (false)
 
 
   /// Get UValue swigCPtr attribute id

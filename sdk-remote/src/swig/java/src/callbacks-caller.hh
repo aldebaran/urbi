@@ -88,8 +88,6 @@ private:
 
   void testForException();
 
-  static void deleteClassRefs(JNIEnv* env);
-
 public:
 
   /// Private conversion functions. These function are used to convert from
