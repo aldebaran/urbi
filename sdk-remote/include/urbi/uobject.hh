@@ -171,18 +171,16 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
 /// to \a C.
 # define URBI_SEND_C(C, Args)			\
   do {						\
-    std::ostringstream os;			\
-    os << Args;					\
-    C << os.str();                              \
+    libport::BlockLock bl((C).sendBufferLock);  \
+    (C) << Args;                                \
   } while (false)
 
 /// Send \a Args (which is given to a stream and therefore can use <<)
 /// to \a C, then flush.
 # define URBI_SEND_C_FLUSH(C, Args)		\
   do {						\
-    std::ostringstream os;			\
-    os << Args;					\
-    (C) << os.str() << std::endl;               \
+    libport::BlockLock bl((C).sendBufferLock);  \
+    (C) << Args << std::endl;                   \
   } while (false)
 /// Send \a Args (which is given to a stream and therefore can use <<)
 /// to the server.

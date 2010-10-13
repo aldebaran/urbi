@@ -216,7 +216,6 @@ namespace urbi
 				   bool server)
     : std::ostream(new UClientStreambuf(this))
     , closed_ (false)
-    , sendBufferLock()
     , listLock()
     , host_(host)
     , port_(port)
@@ -1131,7 +1130,6 @@ namespace urbi
                kernelMajor_,
                kernelMinor_);
     }
-
     // Set the kernel version of our associated stream.
     ::urbi::kernelMajor(*this) = kernelMajor_;
 

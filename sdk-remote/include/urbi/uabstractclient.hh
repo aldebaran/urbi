@@ -347,6 +347,10 @@ namespace urbi
     /// dummy tag for client error callback.
     static const char* CLIENTERROR_TAG;
 
+    /** Lock on send buffer. Can be locked by the user when performing an
+     * atomic operation in multiple calls.
+     */
+    libport::Lockable sendBufferLock;
   protected:
     /// Must be called by subclasses when the connection is established.
     void onConnection();
@@ -364,7 +368,6 @@ namespace urbi
     /// Bounce to effectiveSend() using c_str().
     error_type effective_send(const std::string& buffer);
 
-    libport::Lockable sendBufferLock;
     libport::Lockable listLock;
 
     /// Add a callback to the list.
