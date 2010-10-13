@@ -125,7 +125,7 @@ private:
 
   /// Java interface pointer. Initialised the first time one of the calllbacks
   /// is triggered.
-  JNIEnv*	env_;
+  JNIEnv* env_;
 
   /// All theses variables below are used in the conversion functions to
   /// convert from jobject to UVar or UValue or UObject.
