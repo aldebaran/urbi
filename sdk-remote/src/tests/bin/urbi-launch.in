@@ -1,6 +1,12 @@
 #! @SHELL@
 # @configure_input@
 
+## ------------------------------------------------------------- ##
+## This script is common to SDK Remote                           ##
+## (src/tests/bin/urbi-launch.in) and Urbi Valid (bin/urbi.in).  ##
+## Keep them sync.                                               ##
+## ------------------------------------------------------------- ##
+
 me=$(basename $0)
 
 : ${EXEEXT="@EXEEXT@"}
@@ -13,8 +19,9 @@ me=$(basename $0)
 : ${sdk_remote_srcdir="@sdk_remote_srcdir@"}
 
 case $me in
-  (urbi-launch) : ${program=$sdk_remote_builddir/src/bin/urbi-launch$EXEEXT};;
-  (urbi)        : ${program=$kernel_builddir/src/bin/urbi$EXEEXT};;
+  (urbi)             : ${program=$kernel_builddir/src/bin/$me$EXEEXT};;
+  (urbi-launch)      : ${program=$sdk_remote_builddir/src/bin/$me$EXEEXT};;
+  (urbi-launch-java) : ${program=$sdk_remote_builddir/sdk/$me$EXEEXT};;
 esac
 
 # Whether the Kernel tree is available.
@@ -22,8 +29,6 @@ has_kernel=false
 if test -d $kernel_builddir/src/.libs; then
   has_kernel=true
 fi
-
-###################### Common between urbi-launch.in and urbi.in: begin.
 
 set -e
 
@@ -154,10 +159,26 @@ fi
 # Bounce to the build-tree urbi-launch.
 setenv URBI_LAUNCH "$sdk_remote_builddir/src/tests/bin/urbi-launch$EXEEXT"
 
-###################### Common between urbi-launch.in and urbi.in: end.
+case $me in
+  (urbi-launch-java)
+    setenv liburbi_jar "$sdk_remote_builddir/src/swig/java/lib/liburbijava.jar"
+    setenv library_path "$sdk_remote_builddir/src/swig/java/.libs/"
+    args=
+    for i
+    do
+      filtered=$(echo $i \
+          | sed "s,\(.*\.jar\),$sdk_remote_builddir/src/swig/java/\1,")
+      args="$args $filtered"
+    done
+    verbose "running $program $args"
+    exec "$program" "$args"
+    ;;
 
-verbose "running $program $*"
-exec "$program" "$@"
+  (*)
+    verbose "running $program $*"
+    exec "$program" "$@"
+    ;;
+esac
 
 # Local Variables:
 # mode: shell-script
