@@ -342,7 +342,6 @@ namespace urbi
     {
       objects[o->__name] = o;
       const std::type_info& ti = typeid(*o);
-      GD_FINFO_TRACE("Comparing %s %s %s", ti.name());
       if (!o->cloner)
       {
         // Object was instanciated from C++ and has no cloner, try to find one.
