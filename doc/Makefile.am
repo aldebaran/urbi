@@ -82,7 +82,7 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
 	$(AM_V_at)$(TEXI2HTML) $(TEXI2HTMLFLAGS) -o $@.tmp/$(notdir $*).html $<
 	$(AM_V_at)cd $@.tmp \
-	  && $(TEX4HT_POST) -v -v --index $(notdir $*).html $(notdir $*)*.html
+	  && $(TEX4HT_POST) -v --index $(notdir $*).html $(notdir $*)*.html
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
 # compilation seems to prefer *.png to *.pdf, which is wrong here.
