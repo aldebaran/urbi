@@ -210,7 +210,7 @@ gen-liburbi-java:
 	$(mkdir_p) $$(dirname $(liburbijava_JAR))
 	mv $$(basename $(liburbijava_JAR)) $$(dirname $(liburbijava_JAR))
 
-$(liburbijava_JAR): java.cc $(liburbijava_SRC)
+$(liburbijava_JAR): java.cc $(liburbijava_SRC) classtobuild.stamp
 	$(MAKE) -C . gen-liburbi-java
 
 JAR_RULES =
@@ -328,10 +328,11 @@ test_timer_JAR = tests/timer/Timer.jar
 JAR_RULES += test_timer
 $(test_timer_JAR): test_timer
 
+#$$(patsubst %.java,%.class,$$($$@_SRC))
 
 # Generate all jars files
 .SECONDEXPANSION:
-$(JAR_RULES): $$(patsubst %.java,%.class,$$($$@_SRC))
+$(JAR_RULES): $$($$@_SRC) classtobuild.stamp
 	$(JAR) -cvf $$(basename $($@_JAR)) $+
 	mkdir -p $$(dirname $($@_JAR))
 	mv $$(basename $($@_JAR)) $$(dirname $($@_JAR))
