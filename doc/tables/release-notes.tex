@@ -25,6 +25,8 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
+\item \Java API for UObjects, see \autoref{sec:uob:apijava}.
+
 \item Enumerations.
 
   Enumeration types can be created with the usual \C-like syntax.
@@ -61,6 +63,35 @@ for (var suit : Suit)
 
 \item UObjects can now be instanciated directly from C++, both in plugin and
   remote mode.
+
+\item The \Cxx header \file{kernel/revision.hh} contains versioning
+  information that can be used to set requirements.   For instance:
+\begin{cxx}
+#include <kernel/revision.hh>
+#if URBI_SDK_VERSION_VALUE < 2003000
+# error Urbi SDK 2.3 or better is required.
+#endif
+
+\item \refSlot[Date]{year}, \refSlot[Date]{month}, \refSlot[Date]{day},
+  \refSlot[Date]{hour}, \refSlot[Date]{minute}, \refSlot[Date]{second}.
+
+\item The keys in Dictionary literals are no longer required to be literal
+  strings.
+\begin{urbiscript}
+["a" + "b" => "ab", 12.asString => "12"];
+[00002405] ["12" => "12", "ab" => "ab"]
+\end{urbiscript}
+
+\noindent
+They still need to evaluate into String values.
+
+\begin{urbiscript}
+[12 => 123];
+[00005064:error] !!! 1.2-3: unexpected 12, expected a String
+\end{urbiscript}
+\end{cxx}
+
+
 
 \end{itemize}
 
