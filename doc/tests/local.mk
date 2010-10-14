@@ -48,7 +48,8 @@ EXTRA_DIST +=					\
 
 # Generating the test files.
 $(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
-	srcdir=$(srcdir) move_if_change=$(move_if_change) \
+	$(AM_V_GEN)
+	$(AM_V_at)srcdir=$(srcdir) move_if_change=$(move_if_change) \
 	  $(srcdir)/bin/tex2chk $<
 
 
