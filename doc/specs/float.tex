@@ -97,32 +97,10 @@ nan.asBool == true;
 \end{urbiassert}
 
 \item[asList]
-  Bounces to \lstinline|seq|.  It is therefore possible to use the
-  various flavors of \lstinline|for|-range loops on integers:
+  Bounces to \lstinline|seq|.
 \begin{urbiassert}
-{
-  var res = [];
-  for (var i : 3)
-    res << i;
-  res
-}
-== [0, 1, 2];
-
-{
-  var res = [];
-  for|(var i : 3)
-    res << i;
-  res
-}
-== [0, 1, 2];
-
-{
-  var res = [];
-  for&(var i : 3)
-    res << i;
-  res.sort
-}
-== [0, 1, 2];
+3.asList == [0, 1, 2];
+0.asList == [];
 \end{urbiassert}
 
 \item[asin]
