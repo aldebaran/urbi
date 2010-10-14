@@ -135,12 +135,6 @@ export PYTHONPATH="\
 \subsection{Build}
 
 \begin{description}
-\item[bc]
-  Needed by the test suite.
-\begin{package}
-package: bc
-\end{package}
-
 \item[Boost 1.38 or later] Don't try to build it yourself, ask your
   distribution's management to install it.
 \begin{package}
@@ -216,15 +210,11 @@ MacPorts: texlive texlive-latex-extra texlive-bin-extra texlive-htmlxml
 MacPorts: py26-docutils
 \end{package}
 
-\item[socat] Needed by the test suite to send messages to an \urbi server.
-\begin{package}
-package: socat
-\end{package}
-
-\item[SWIG] Used to generate the Java support for UObjects.  Version 1.3.40
-  is known to work.
+\item[SWIG 1.3.36 or later] Used to generate the Java support for UObjects.
+  Versions 1.3.36, 1.3.40, and 2.0.0 are known to work.
 \begin{package}
 package: swig
+MacPorts: swig-java
 \end{package}
 
 \item[TeX4HT] Used to generate the HTML documentation.
@@ -239,14 +229,38 @@ MacPorts: texlive_texmf-full
 package: transfig
 \end{package}
 
+\item[xsltproc] This is not a requirement, but it's better to have it. Used
+  to generate reports about the \us grammar.
+\end{description}
+
+\subsection{Check}
+
+\begin{description}
+\item[aspell] Needed by the test suite.
+\begin{package}
+package: aspell aspell-dict-en
+\end{package}
+
+\item[bc]
+  Needed by the test suite.
+\begin{package}
+package: bc
+\end{package}
+
+\item[socat] Needed by the test suite to send messages to an \urbi server.
+\begin{package}
+package: socat
+\end{package}
+
 \item[Valgrind] Not needed, but if present, used by the test suite.
 \begin{package}
 deb: valgrind
 MacPorts: valgrind-devel
 \end{package}
 
-\item[xsltproc] This is not a requirement, but it's better to have it.
 \end{description}
+
+
 
 \section{Check out}
 
