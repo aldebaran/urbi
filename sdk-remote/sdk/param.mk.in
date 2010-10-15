@@ -118,7 +118,7 @@ $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 # to do something wrong, and refuses to do it.  It might indeed go
 # wrong, but more often than never, it works.  So let's proceed
 # anyway, keeping fingers crossed.
-	if $(LTINSTALL_LIB) $(lib_la) $(OUTSHLIB_ABS) >$@.log; then	\
+	if $(LTINSTALL_LIB) $(lib_la) $(OUTSHLIB_ABS) 2>$@.log; then	\
 	  sed >&2 -n							\
 	    -e '/warning: remember to run `libtool --finish/!p' $@.log;	\
 	  rm -f $@.log							\
@@ -126,7 +126,7 @@ $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	  echo >&2 "umake: Libtool failed to install the library:";	\
 	  sed >&2 -e 's/^/umake: /g' $@.log;				\
 	  echo >&2 "umake: proceeding by hand.";			\
-	  rm $@.log;							\
+	  rm -f $@.log;							\
 	  lib_so=$$(ls $(lib_dir).libs/$(lib_base)*$(DLMODEXT)		\
 	            | head -n 1);					\
 	  $(INSTALL_LIB) $$lib_so $(OUTSHLIB);				\
