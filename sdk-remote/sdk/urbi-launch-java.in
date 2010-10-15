@@ -12,14 +12,14 @@ Urbi-Launch options:
   -d, --debug=LEVEL  set the debug level in NONE, LOG (default), TRACE, DEBUG, DUMP
 
 Java options:
-  -cp, --classpath CLASSPATH A : separated list of directories, JAR archives,
-                             and ZIP archives to search for class files.
+  -c, --classpath=PATH
+        A colon-separated list of directories, JAR archives, and ZIP archives
+        to search for class files.
 
 Urbi-Launch options for plugin mode:
   -H, --host=HOST       address to connect to
   -P, --port=PORT       port to connect to
       --port-file=FILE  file containing the port to listen to
-
 
 MODULE_NAMES is a list of JAR and ZIP archives containings UObjects.
 UOPTIONS are passed to urbi::main.
@@ -78,7 +78,7 @@ get_options ()
       (-h | --help   ) usage;;
       (-V | --version) version;;
 
-      (-cp | --classpath)   shift; classpath="$classpath:$1";;
+      (-c | --classpath)   shift; classpath="$classpath:$1";;
       (-H | --host)
         shift; host=$1
 	append urbi_launch_args "--host $host";;
