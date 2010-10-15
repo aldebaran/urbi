@@ -48,10 +48,10 @@ mygetenv(const std::string& var, const std::string& val = "")
 
 static std::string
 urbi_getenv(const std::string& self,
-            const std::string& _var,
+            std::string var,
             const std::string& val = "")
 {
-  std::string var = "URBI_" + _var;
+  var = "URBI_" + var;
   const char* res = getenv(var.c_str());
   if (res)
   {
