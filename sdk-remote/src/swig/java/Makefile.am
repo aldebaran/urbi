@@ -69,7 +69,7 @@ java.cc: swig/java.i
 	$(SWIG) $(SWIGFLAGS) $(SWIG_ARGS) -o $@.tmp $<
 	mv $@.tmp $@
 
-java.cc.h: java.cc
+urbi/urbi.java java.cc.h: java.cc
 
 BUILT_SOURCES += java.cc java.cc.h
 
@@ -215,19 +215,6 @@ $(liburbijava_JAR): $(liburbijava_SRC) classtobuild.stamp
 	$(MAKE) -C . gen-liburbi-java
 
 
-# We must run SWIG before trying to compile the *.java files, since
-# SWIG generates a bazillion of them.
-#
-# Don't use the literal "classtobuild.stamp", as in that case Automake
-# thinks we want to override its command.  We want to keep it!
-#
-# Don't use a regular dependency either, since the rule for
-# classtobuild.stamp actually compiles the files that are
-# dependencies.  Using an order-only dependency addresses the issue
-# (see "4.3 Types of Prerequisites" in info make).
-fool_automake = classtobuild.stamp
-$(fool_automake): | java.cc
-
 JAR_RULES =
 
 ## ------------ ##
@@ -353,7 +340,10 @@ $(JAR_RULES): $$(patsubst %.java,%.class,$$($$@_SRC))
 
 ALL_SOURCES = $(liburbijava_SRC)
 ALL_SOURCES += $(foreach name,$(JAR_RULES),$($(name)_SRC))
-ALL_OBJECTS= $(ALL_SOURCES:.java=.class)
+ALL_OBJECTS = $(ALL_SOURCES:.java=.class)
+# The generation of the *.class is perform by an Automake internal
+# target that update classtobuild.stamp.
+$(ALL_OBJECTS): classtobuild.stamp
 ALL_JARS = $(liburbijava_JAR)
 ALL_JARS += $(foreach name,$(JAR_RULES),$($(name)_JAR))
 
