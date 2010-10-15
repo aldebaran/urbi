@@ -50,10 +50,11 @@ urbiinclude_HEADERS =				\
   include/urbi/uvar.hxx
 
 
-nodist_urbiinclude_HEADERS =				\
+nodist_urbiinclude_HEADERS =			\
   include/urbi/revision.hh
 include/urbi/revision.hh: $(VERSIONIFY_CACHE) $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --prefix=SDK_REMOTE_ --header=$@
+	$(AM_V_GEN)
+	$(AM_V_at)$(VERSIONIFY_RUN) --prefix=SDK_REMOTE_ --header=$@
 
 ## --------------- ##
 ## ucallbacks.hh.  ##
@@ -69,10 +70,12 @@ MAINTAINERCLEANFILES += $(ucallbacks_hh)
 # the only such file, it is easier to put it in srcdir (and ship it to
 # comply with the Automake model).
 $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.pl
-	rm -f $@.tmp $@
-	$(mkdir_p) $$(dirname "$@.tmp")
-	$(srcdir)/include/template_autogen.pl $(srcdir)/$(ucallbacks_hh).template >$@.tmp
+	$(AM_V_GEN)
+	$(AM_V_at)rm -f $@.tmp $@
+	$(AM_V_at)$(mkdir_p) $$(dirname "$@.tmp")
+	$(AM_V_at)$(srcdir)/include/template_autogen.pl \
+	  $(srcdir)/$(ucallbacks_hh).template >$@.tmp
 # Avoid accidental edition.
-	chmod a-w $@.tmp
-	mv $@.tmp $@
+	$(AM_V_at)chmod a-w $@.tmp
+	$(AM_V_at)mv $@.tmp $@
 

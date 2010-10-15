@@ -207,12 +207,14 @@ liburbijavadir = $(javadir)
 # _all_ java objects ie, .class from the normal java sources + .class
 # from the generated java sources
 gen-liburbi-java:
-	$(JAR) -cvf $$(basename $(liburbijava_JAR)) $(liburbijava_OBJECTS)
-	$(mkdir_p) $$(dirname $(liburbijava_JAR))
-	mv $$(basename $(liburbijava_JAR)) $$(dirname $(liburbijava_JAR))
+	$(AM_V_GEN)
+	$(AM_V_at)$(JAR) -cf $$(basename $(liburbijava_JAR)) $(liburbijava_OBJECTS)
+	$(AM_V_at)$(mkdir_p) $$(dirname $(liburbijava_JAR))
+	$(AM_V_at)mv $$(basename $(liburbijava_JAR)) $$(dirname $(liburbijava_JAR))
 
 $(liburbijava_JAR): $(liburbijava_SRC) classtobuild.stamp
-	$(MAKE) -C . gen-liburbi-java
+	$(AM_V_GEN)
+	$(AM_V_at)$(MAKE) -C . gen-liburbi-java
 
 
 JAR_RULES =
