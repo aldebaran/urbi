@@ -1,4 +1,4 @@
-include $(top_srcdir)/build-aux/init.mk
+include $(top_srcdir)/build-aux/make/init.mk
 include $(top_srcdir)/build-aux/make/html-dir.mk
 include tests/local.mk
 

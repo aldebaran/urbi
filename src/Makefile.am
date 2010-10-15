@@ -10,9 +10,9 @@
 ## Initialization.  ##
 ## ---------------- ##
 
-include $(top_srcdir)/build-aux/init.mk
-include $(top_srcdir)/build-aux/fix-libtool-la.mk
-include $(top_srcdir)/build-aux/libport.mk
+include $(top_srcdir)/build-aux/make/init.mk
+include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
+include $(top_srcdir)/build-aux/make/libport.mk
 
 # A tool that cuts code we don't want to keep in space-optimized
 # versions (when cpp cannot be used).
