@@ -100,12 +100,13 @@ $(OUTLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 
 # Library to create without its extension.
 lib_noext = $(OUTSHLIB:$(DLMODEXT)=)
+# Its directory.
+lib_dir = $(dir $(lib_noext))
+# Its base name (no directory, no extension).
+lib_base = $(notdir $(lib_noext))
 # Libtool library.
 lib_la = $(lib_noext).la
-# The true library, in libtool's .libs directory.
-lib_so = $(shell 							\
-  ls $(dir $(lib_noext)).libs/$(notdir $(lib_noext))*$(DLMODEXT)	\
-  | head -n 1)
+
 # Absolute path to OUTSHLIB.
 OUTSHLIB_ABS = $(shell cd $(dir $(OUTSHLIB)) && pwd)/$(notdir $(OUTSHLIB))
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
@@ -117,10 +118,18 @@ $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 # to do something wrong, and refuses to do it.  It might indeed go
 # wrong, but more often than never, it works.  So let's proceed
 # anyway, keeping fingers crossed.
-	if $(LTINSTALL_LIB) $(lib_la) $(OUTSHLIB_ABS); then :; else	    \
-	  echo >&2 "umake: Libtool failed to install the library.";	    \
-	  echo >&2 "umake: proceeding by hand.";			    \
-	  $(INSTALL_LIB) $(lib_so) $(OUTSHLIB);				    \
+	if $(LTINSTALL_LIB) $(lib_la) $(OUTSHLIB_ABS) >$@.log; then	\
+	  sed >&2 -n							\
+	    -e '/warning: remember to run `libtool --finish/!p' $@.log;	\
+	  rm -f $@.log							\
+	else								\
+	  echo >&2 "umake: Libtool failed to install the library:";	\
+	  sed >&2 -e 's/^/umake: /g' $@.log;				\
+	  echo >&2 "umake: proceeding by hand.";			\
+	  rm $@.log;							\
+	  lib_so=$$(ls $(lib_dir).libs/$(lib_base)*$(DLMODEXT)		\
+	            | head -n 1);					\
+	  $(INSTALL_LIB) $$lib_so $(OUTSHLIB);				\
 	fi
 
 
