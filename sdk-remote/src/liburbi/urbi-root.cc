@@ -47,7 +47,9 @@ mygetenv(const std::string& var, const std::string& val = "")
 }
 
 static std::string
-urbi_getenv(const std::string& self, const std::string& _var, const std::string& val = "")
+urbi_getenv(const std::string& self,
+            const std::string& _var,
+            const std::string& val = "")
 {
   std::string var = "URBI_" + _var;
   const char* res = getenv(var.c_str());
@@ -112,9 +114,9 @@ operator/(const std::string& lhs, const std::string& rhs)
 `-------------------------------------*/
 
 #ifdef WIN32
-#define RTLD_LAZY 0
-#define RTLD_NOW 0
-#define RTLD_GLOBAL 0
+# define RTLD_LAZY 0
+# define RTLD_NOW 0
+# define RTLD_GLOBAL 0
 
 static RTLD_HANDLE
 dlopen(const char* name, int)
