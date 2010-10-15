@@ -262,6 +262,85 @@ resolve_symlinks(const std::string& logname, const std::string& s)
 #endif
 }
 
+/// Find \a prog in $PATH.
+/// \param logname  the prefix for log messages
+/// \param prog     the program to look for (.exe will be appended on Windows)
+/// \return  The full path to the parent of the directory that contains
+///          \a prog, or "" if not found.
+static
+std::string
+find_program(const std::string& logname,
+             std::string prog)
+{
+#ifdef WIN32
+  size_t pos = prog.find_last_of("/\\");
+  {
+    size_t dot = prog.find_last_of(".");
+    if (dot == prog.npos || prog.substr(dot + 1) != "exe")
+      prog += ".exe";
+  }
+#else
+  size_t pos = prog.rfind('/');
+#endif
+  if (pos == std::string::npos)
+  {
+    struct stat stats;
+    std::string dir, file;
+    bool found = false;
+
+#ifdef WIN32
+    URBI_ROOT_DEBUG(logname,
+                    "check if invoked from the current directory");
+
+    {
+      char *dir_buf = getcwd(0, 0);
+      std::string dir(dir_buf);
+      free(dir_buf);
+      file = dir / prog;
+    }
+
+    found = stat(file.c_str(), &stats) == 0;
+    if (!found)
+    {
+      URBI_ROOT_DEBUG(logname, "not found: " << file);
+#endif
+      URBI_ROOT_DEBUG(logname,
+                      "check if invoked from the path");
+      strings_type path = split(mygetenv("PATH"));
+      foreach (const std::string& dir_, path)
+      {
+        file = dir_ / prog;
+        found = stat(file.c_str(), &stats) == 0;
+        if (found)
+        {
+          dir = dir_;
+          break;
+        }
+        URBI_ROOT_DEBUG(logname, "not found: " << file);
+      }
+#ifdef WIN32
+    }
+#endif
+
+    if (found)
+    {
+      URBI_ROOT_DEBUG(logname, "found: " << file);
+      std::string res = dir / "..";
+      URBI_ROOT_DEBUG(logname, "root directory is: " << res);
+      return res;
+    }
+  }
+  else
+  {
+    std::string res = prog.substr(0, pos) / "..";
+    URBI_ROOT_DEBUG(logname,
+                    "invoked with a path, setting root to parent directory: "
+                    << res);
+    return res;
+  }
+  return "";
+}
+
 /*-----------.
 | UrbiRoot.  |
 `-----------*/
@@ -277,82 +356,18 @@ UrbiRoot::UrbiRoot(const std::string& program, bool static_build)
 {
   // Find our directory.
   std::string uroot = urbi_getenv(program, "ROOT");
-  if (!uroot.empty())
-  {
-    URBI_ROOT_DEBUG(program_,
-                    "URBI_ROOT is set, forcing root directory: " << root_);
-    root_ = uroot;
-  }
-  else
+  if (uroot.empty())
   {
     URBI_ROOT_DEBUG(program_, "guessing Urbi root: invoked as: " << program_);
     // Handle the chained symlinks case.
     std::string argv0 = resolve_symlinks(program_, program);
-
-#ifdef WIN32
-    size_t pos = argv0.find_last_of("/\\");
-    {
-      size_t dot = argv0.find_last_of(".");
-      if (dot == argv0.npos || argv0.substr(dot + 1) != "exe")
-        argv0 += ".exe";
-    }
-#else
-    size_t pos = argv0.rfind('/');
-#endif
-    if (pos == std::string::npos)
-    {
-      struct stat stats;
-      std::string dir, file;
-      bool found = false;
-
-#ifdef WIN32
-      URBI_ROOT_DEBUG(program_,
-                      "check if invoked from the current directory");
-
-      {
-        char *dir_buf = getcwd(0, 0);
-        std::string dir(dir_buf);
-        free(dir_buf);
-        file = dir / argv0;
-      }
-
-      found = stat(file.c_str(), &stats) == 0;
-      if (!found)
-      {
-        URBI_ROOT_DEBUG(program_, "not found: " << file);
-#endif
-        URBI_ROOT_DEBUG(program_,
-                        "check if invoked from the path");
-        strings_type path = split(mygetenv("PATH"));
-        foreach (const std::string& dir_, path)
-        {
-          file = dir_ / argv0;
-          found = stat(file.c_str(), &stats) == 0;
-          if (found)
-          {
-            dir = dir_;
-            break;
-          }
-          URBI_ROOT_DEBUG(program_, "not found: " << file);
-        }
-#ifdef WIN32
-      }
-#endif
-
-      if (found)
-      {
-        URBI_ROOT_DEBUG(program_, "found: " << file);
-        root_ = dir / "..";
-        URBI_ROOT_DEBUG(program_, "root directory is: " << root_);
-      }
-    }
-    else
-    {
-      root_ = argv0.substr(0, pos) / "..";
-      URBI_ROOT_DEBUG(program_,
-                      "invoked with a path, setting root to parent directory: "
-                      << root_);
-    }
+    root_ = find_program(program_, argv0);
+  }
+  else
+  {
+    root_ = uroot;
+    URBI_ROOT_DEBUG(program_,
+                    "URBI_ROOT is set, forcing root directory: " << root_);
   }
 
   if (root_.empty())
