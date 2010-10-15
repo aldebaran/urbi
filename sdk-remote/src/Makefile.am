@@ -6,9 +6,9 @@
 ##
 ## See the LICENSE file for more information.
 
-include $(top_srcdir)/build-aux/init.mk
-include $(top_srcdir)/build-aux/fix-libtool-la.mk
-include $(top_srcdir)/build-aux/libport.mk
+include $(top_srcdir)/build-aux/make/init.mk
+include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
+include $(top_srcdir)/build-aux/make/libport.mk
 
 AUTOMAKE_OPTIONS += subdir-objects
 

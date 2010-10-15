@@ -6,13 +6,13 @@
 ##
 ## See the LICENSE file for more information.
 
-include build-aux/init.mk
-include build-aux/build-aux.mk
+include build-aux/make/init.mk
+include build-aux/make/build-aux.mk
 include build-aux/make/package-version.mk
-include build-aux/fix-libtool-la.mk
+include build-aux/make/fix-libtool-la.mk
 include build-aux/make/build-farm.mk
 BOOTSTRAP_CFG = .bootstrap.cfg
-include build-aux/bootstrap.mk
+include build-aux/make/bootstrap.mk
 
 AUTOMAKE_OPTIONS += subdir-objects
 ACLOCAL_AMFLAGS = -I build-aux/m4 -I build-aux -I sdk

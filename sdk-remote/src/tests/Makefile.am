@@ -6,13 +6,13 @@
 ##
 ## See the LICENSE file for more information.
 
-include $(top_srcdir)/build-aux/init.mk
+include $(top_srcdir)/build-aux/make/init.mk
 AUTOMAKE_OPTIONS += subdir-objects
 TESTS =
 AM_CXXFLAGS += $(WARNING_CXXFLAGS)
-include $(top_srcdir)/build-aux/check.mk
-include $(top_srcdir)/build-aux/m4sh.mk
-include $(top_srcdir)/build-aux/libport.mk
+include $(top_srcdir)/build-aux/make/check.mk
+include $(top_srcdir)/build-aux/make/m4sh.mk
+include $(top_srcdir)/build-aux/make/libport.mk
 
 include examples/local.mk
 include liburbi/local.mk
