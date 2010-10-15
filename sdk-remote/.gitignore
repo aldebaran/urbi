@@ -5,7 +5,6 @@
 /aclocal.m4
 /autom4te.cache
 /bootstrap.stamp
-/build-aux
 /configure
 /include/urbi/ucallbacks.hh
 /sdk/config.h.in
