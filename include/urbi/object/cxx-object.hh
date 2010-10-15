@@ -34,7 +34,7 @@
     virtual bool valid_proto(const ::urbi::object::Object& o) const
 
 # ifndef URBI_INHIBIT_REVISION_CHECK
-#  include <kernel/revision.hh>
+#  include <urbi/revision.hh>
 #  define URBI_CHECK_SDK_VERSION()                                      \
   do                                                                    \
   {                                                                     \

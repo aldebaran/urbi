@@ -64,10 +64,10 @@ for (var suit : Suit)
 \item UObjects can now be instanciated directly from C++, both in plugin and
   remote mode.
 
-\item The \Cxx header \file{kernel/revision.hh} contains versioning
+\item The \Cxx header \file{urbi/revision.hh} contains versioning
   information that can be used to set requirements.   For instance:
 \begin{cxx}
-#include <kernel/revision.hh>
+#include <urbi/revision.hh>
 #if URBI_SDK_VERSION_VALUE < 2003000
 # error Urbi SDK 2.3 or better is required.
 #endif

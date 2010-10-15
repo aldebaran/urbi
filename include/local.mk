@@ -12,9 +12,6 @@ dist_kernelinclude_kernel_HEADERS =		\
   include/kernel/userver.hxx			\
   include/kernel/utypes.hh
 
-nodist_kernelinclude_kernel_HEADERS =		\
-  include/kernel/revision.hh
-
 kernelinclude_urbidir = $(brandincludedir)/urbi
 dist_kernelinclude_urbi_HEADERS =		\
   include/urbi/sdk.hh				\
