@@ -113,6 +113,7 @@ $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lib_la)	\
 	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)	\
 	  -rpath $(envdir) $(LIBADD) -avoid-version
+	$(mkdir_p) $(lib_dir)
 # Sometimes people build libraries with dependencies that are not
 # sufficiently exposed to Libtool.  It then believes that it's going
 # to do something wrong, and refuses to do it.  It might indeed go
