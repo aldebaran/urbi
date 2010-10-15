@@ -102,6 +102,7 @@ CLEANFILES +=					\
   $(java_src_outdir)/*.java			\
   $(ALL_OBJECTS)				\
   $(ALL_JARS)
+
 clean-local:
 	rm -rf urbi
 
@@ -210,8 +211,22 @@ gen-liburbi-java:
 	$(mkdir_p) $$(dirname $(liburbijava_JAR))
 	mv $$(basename $(liburbijava_JAR)) $$(dirname $(liburbijava_JAR))
 
-$(liburbijava_JAR): java.cc $(liburbijava_SRC) classtobuild.stamp
+$(liburbijava_JAR): $(liburbijava_SRC) classtobuild.stamp
 	$(MAKE) -C . gen-liburbi-java
+
+
+# We must run SWIG before trying to compile the *.java files, since
+# SWIG generates a bazillion of them.
+#
+# Don't use the literal "classtobuild.stamp", as in that case Automake
+# thinks we want to override its command.  We want to keep it!
+#
+# Don't use a regular dependency either, since the rule for
+# classtobuild.stamp actually compiles the files that are
+# dependencies.  Using an order-only dependency addresses the issue
+# (see "4.3 Types of Prerequisites" in info make).
+fool_automake = classtobuild.stamp
+$(fool_automake): | java.cc
 
 JAR_RULES =
 
