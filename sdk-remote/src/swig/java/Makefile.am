@@ -335,9 +335,10 @@ $(test_timer_JAR): test_timer
 # Generate all jars files
 .SECONDEXPANSION:
 $(JAR_RULES): $$(patsubst %.java,%.class,$$($$@_SRC))
-	$(JAR) -cvf $$(basename $($@_JAR)) $+
-	mkdir -p $$(dirname $($@_JAR))
-	mv $$(basename $($@_JAR)) $$(dirname $($@_JAR))
+	$(AM_V_GEN)
+	$(AM_V_at)$(JAR) -cf $$(basename $($@_JAR)) $+
+	$(AM_V_at)mkdir -p $$(dirname $($@_JAR))
+	$(AM_V_at)mv $$(basename $($@_JAR)) $$(dirname $($@_JAR))
 
 
 ALL_SOURCES = $(liburbijava_SRC)
