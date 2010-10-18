@@ -89,7 +89,8 @@ class Global.Channel.Filter: Channel
   function uclientFilter()
   {
     // Some of those slot does not exist at function definition time
-    ["Float", "String", "List", "Dictionary", "Binary", "UValue", "Tuple"]
+    ["Float", "String", "List", "Dictionary", "Binary", "UValue", "Tuple",
+    "nil"]
     .map(function(x) { getSlot(x)})
   };
 };

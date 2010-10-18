@@ -303,7 +303,13 @@ namespace urbi
       pos += 4;
       return pos;
     }
-
+    if (strprefix("nil", message+pos))
+    {
+      //void
+      type = DATA_VOID;
+      pos += 3;
+      return pos;
+    }
     if (strprefix("BIN ", message + pos))
     {
       //binary message: delegate
@@ -373,6 +379,7 @@ namespace urbi
 	s << *object;
         break;
       case DATA_VOID:
+        s << "nil";
         break;
     }
     return s;

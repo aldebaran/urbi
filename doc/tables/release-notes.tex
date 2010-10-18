@@ -64,6 +64,8 @@ for (var suit : Suit)
 \item UObjects can now be instanciated directly from C++, both in plugin and
   remote mode.
 
+\item 'nil' is now correctly serialized to/from remote UObjects.
+
 \item The \Cxx header \file{urbi/revision.hh} contains versioning
   information that can be used to set requirements.   For instance:
 \begin{cxx}
@@ -71,6 +73,7 @@ for (var suit : Suit)
 #if URBI_SDK_VERSION_VALUE < 2003000
 # error Urbi SDK 2.3 or better is required.
 #endif
+\end{cxx}
 
 \item \refSlot[Date]{year}, \refSlot[Date]{month}, \refSlot[Date]{day},
   \refSlot[Date]{hour}, \refSlot[Date]{minute}, \refSlot[Date]{second}.
@@ -89,8 +92,6 @@ They still need to evaluate into String values.
 [12 => "12"];
 [00005064:error] !!! unexpected 12, expected a String
 \end{urbiscript}
-\end{cxx}
-
 
 
 \end{itemize}
