@@ -12,6 +12,7 @@
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
 #include <libport/debug.hh>
+#include <libport/ufloat.hh>
 #include <libport/unistd.h>
 #include <sstream>
 #include <stdexcept>
@@ -808,7 +809,7 @@ public:
   }
   double area(Rect r)
   {
-    return roundf((r.a.x-r.b.x) * (r.a.y  - r.b.y));
+    return libport::round((r.a.x-r.b.x) * (r.a.y  - r.b.y));
   }
   PointOfInterest transmitPointOfInterest(PointOfInterest p)
   {
