@@ -21,10 +21,28 @@ This chapter lists the user-visible changes in \usdk releases.
 \item Fix the sendsound liburbi example.
 \item Fix a bug in liburbi stream formatting that made the code waste a lot of
   bandwidth.
+\item Optimize runtime performances when log messages are inhibited.
+\item Preserve properties when a property assignment triggers a copy-on-write.
+\item Trigger a tags' 'changed' attribute when they are frozen, unfrozen,
+  blocked, \ldots This fixes \lstinline|at (someTag.frozen) ...;|.
+\item Fix Float.random on windows, which always returned \lstinline|41| in
+  some situations.
+\item Do not scope variables created inside a pipe inside a comma:
+  \begin{urbiscript}
+var a = 0 | var b = 1,
+echo(a);
+[00000001] *** 0
+echo(b);
+[00000001] *** 1
+  \end{urbiscript}
 \end{itemize}
 
 \subsection{New Features}
 \begin{itemize}
+\item Issue a warning when an UObject is plugged in a different version of
+  the kernel than the SDK that compiled it -- which can provoke undefined
+  runtime behavior.
+
 \item \Java API for UObjects, see \autoref{sec:uob:apijava}.
 
 \item Enumerations.
