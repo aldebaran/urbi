@@ -18,7 +18,8 @@ AC_PREREQ([2.61])
 
 AC_INIT([Urbi SDK Remote], [UNDEFINED],
         [sdk-remote-bugs@gostai.com], [sdk-remote])
-URBI_PACKAGE_VERSION
+## Use the .version and git info of kernel.
+URBI_PACKAGE_VERSION([/..])
 URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2004-2010])
 URBI_DISTCHECK_CONFIGURE_FLAGS
 

@@ -18,14 +18,17 @@ nodist_urbi_package_info_DATA =			\
   share/urbi/package-info/libport.u
 
 share/urbi/package-info/urbi-sdk.u: $(top_srcdir)/.version $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK'
-	touch $@
-share/urbi/package-info/urbi-sdk-remote.u: $(top_srcdir)/sdk-remote/.version $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK Remote'
-	touch $@
+	$(AM_V_GEN)
+	$(AM_V_at)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK'
+	$(AM_V_at)touch $@
+share/urbi/package-info/urbi-sdk-remote.u: $(top_srcdir)/.version $(VERSIONIFY)
+	$(AM_V_GEN)
+	$(AM_V_at)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK Remote'
+	$(AM_V_at)touch $@
 share/urbi/package-info/libport.u: $(top_srcdir)/sdk-remote/libport/.version $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Libport'
-	touch $@
+	$(AM_V_GEN)
+	$(AM_V_at)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Libport'
+	$(AM_V_at)touch $@
 
 urbi.stamp: $(dist_urbi_DATA) $(nodist_urbi_DATA)
 	@echo "$$(date)"': $?' >>$@

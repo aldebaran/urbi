@@ -6,6 +6,8 @@
 ##
 ## See the LICENSE file for more information.
 
+## Use the versioning information of the Kernel.
+VERSIONIFY_CACHE = $(top_srcdir)/../.version
 include $(top_srcdir)/build-aux/make/init.mk
 include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
 include $(top_srcdir)/build-aux/make/libport.mk

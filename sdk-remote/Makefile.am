@@ -8,6 +8,7 @@
 
 include build-aux/make/init.mk
 include build-aux/make/build-aux.mk
+VERSIONIFY_CACHE = $(top_srcdir)/../.version
 include build-aux/make/package-version.mk
 include build-aux/make/fix-libtool-la.mk
 include build-aux/make/build-farm.mk
