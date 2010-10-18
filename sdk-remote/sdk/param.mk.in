@@ -122,7 +122,7 @@ $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	if $(LTINSTALL_LIB) $(lib_la) $(OUTSHLIB_ABS) 2>$@.log; then	\
 	  sed >&2 -n							\
 	    -e '/warning: remember to run `libtool --finish/!p' $@.log;	\
-	  rm -f $@.log							\
+	  rm -f $@.log;							\
 	else								\
 	  echo >&2 "umake: Libtool failed to install the library:";	\
 	  sed >&2 -e 's/^/umake: /g' $@.log;				\
