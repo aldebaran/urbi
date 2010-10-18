@@ -56,11 +56,13 @@ CONVERT_TO_EPS =				\
   mv $@.tmp $@
 
 %.eps: %.pdf
-	$(CONVERT_TO_EPS)
+	$(AM_V_GEN)
+	$(AM_V_at)$(CONVERT_TO_EPS)
 # We have png => pdf => eps, but the result is poor, and it even fails
 # with old versions of ghostscript.
 %.eps: %.png
-	$(CONVERT_TO_EPS)
+	$(AM_V_GEN)
+	$(AM_V_at)$(CONVERT_TO_EPS)
 CLEANFILES += $(EPS_IMAGES)
 
 
