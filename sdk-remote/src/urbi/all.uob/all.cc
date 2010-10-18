@@ -9,6 +9,7 @@
  */
 
 #include <iostream>
+#include <libport/cmath>
 #include <libport/compiler.hh>
 #include <libport/containers.hh>
 #include <libport/debug.hh>
