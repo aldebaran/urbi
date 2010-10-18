@@ -75,8 +75,10 @@ endif EXAMPLES
 # these two.
 stub.stamp: $(VERSIONIFY_CACHE) $(VERSIONIFY) libuvalue/.libs/libuvalue_libuvalue_la-package-info.o libuobject/libuobject$(LIBSFX).la liburbi/liburbi$(LIBSFX).la
 	$(VERSIONIFY_RUN)						  \
-	  --resolve=libuobject/.libs/libuobject$(LIBSFX)$(SHLIBEXT)	  \
-	  --resolve=libuvalue/.libs/libuvalue_libuvalue_la-package-info.o \
+	  --resolve=libuobject/.libs/libuobject$(LIBSFX)$(SHLIBEXT)
+	$(VERSIONIFY_RUN)						  \
+	  --resolve=libuvalue/.libs/libuvalue_libuvalue_la-package-info.o
+	$(VERSIONIFY_RUN)						  \
 	  --resolve=liburbi/.libs/liburbi$(LIBSFX)$(SHLIBEXT)
 
 all: stub.stamp
