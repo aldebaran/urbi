@@ -74,12 +74,17 @@ endif EXAMPLES
 # revision.cc in libuvalue, which is a convenience library included in
 # these two.
 .PHONY: stub.stamp
-stub.stamp:
+stub.stamp: libuobject/libuobject$(LIBSFX).la liburbi/liburbi$(LIBSFX).la libuco/libuco.la libuvalue/libuvalue.la libuvalue/libuvalue_libuvalue_la-package-info.lo
+	if test -f libuco/.libs/libuco.a; then				  \
+	  libext=a;							  \
+	else								  \
+	  libext=lib;							  \
+	fi;								  \
 	$(VERSIONIFY_RUN)						  \
-	  --resolve=libuco/.libs/libuco.a				  \
+	  --resolve=libuco/.libs/libuco.$$libext			  \
 	  --resolve=libuobject/.libs/libuobject$(LIBSFX)$(SHLIBEXT)	  \
 	  --resolve=liburbi/.libs/liburbi$(LIBSFX)$(SHLIBEXT)		  \
-	  --resolve=libuvalue/.libs/libuvalue.a				  \
+	  --resolve=libuvalue/.libs/libuvalue.$$libext			  \
 	  --resolve=libuvalue/.libs/libuvalue_libuvalue_la-package-info.o
 all: stub.stamp
 
