@@ -79,7 +79,7 @@ libuobject/libuobject.stub.stamp: $(VERSIONIFY_CACHE) libuobject/libuobject$(LIB
 liburbi/liburbi.stub.stamp: $(VERSIONIFY_CACHE) liburbi/liburbi$(LIBSFX).la $(VERSIONIFY)
 	$(VERSIONIFY_RUN) --resolve=liburbi/.libs/liburbi$(LIBSFX)$(SHLIBEXT)
 
-all: libuobject/libuobject.stub.stamp libuobject/libuobject.stub.stamp
+all: libuobject/libuobject.stub.stamp liburbi/liburbi.stub.stamp
 
 
 ## ---------------------- ##
