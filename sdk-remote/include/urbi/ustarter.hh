@@ -19,15 +19,19 @@
 
 #include <urbi/ucontext.hh>
 #include <urbi/uobject.hh>
+#include <urbi/version-check.hh>
+
 /// This macro must be called once for every UObject class.
 # define UStartRename(Type, Name)               \
   ::urbi::URBIStarter<Type>                     \
-  Name ##  ____URBI_object(#Name)
+  Name ##  ____URBI_object(#Name);              \
+  URBI_CHECK_SDK_VERSION_BARE
 
 /// Append connectionID to object name
 # define UStartWithID(Type)                     \
   ::urbi::URBIStarter<Type>                     \
-  Type ##  ____URBI_object(#Type, true)
+  Type ##  ____URBI_object(#Type, true);        \
+  URBI_CHECK_SDK_VERSION_BARE
 
 /// This macro must be called once for every UObject class.
 # define UStart(Type)                           \
@@ -36,7 +40,8 @@
 /// This macro must be called once for each UObjectHub class.
 # define UStartHub(Type)                        \
   ::urbi::URBIStarterHub<Type>                  \
-  Type ##  ____URBI_object(#Type)
+  Type ##  ____URBI_object(#Type);              \
+  URBI_CHECK_SDK_VERSION_BARE
 
 namespace urbi
 {

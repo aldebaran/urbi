@@ -28,6 +28,7 @@ JPEG_LIBS = $(top_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la
 AM_CPPFLAGS +=					\
   $(LIBPORT_CPPFLAGS)				\
   $(JPEG_CPPFLAGS)				\
+  -DURBI_INHIBIT_REVISION_CHECK                 \
   -I$(top_srcdir)/include -I$(top_builddir)	\
   -I$(srcdir)
 

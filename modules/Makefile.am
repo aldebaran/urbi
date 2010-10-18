@@ -17,6 +17,7 @@ include $(top_srcdir)/build-aux/make/libport.mk
 URBI_SDK_CPPFLAGS =				\
   $(LIBPORT_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
+  -DURBI_INHIBIT_REVISION_CHECK                 \
   -I$(top_srcdir)/include			\
   -I$(top_srcdir)/sdk-remote/include
 

@@ -47,7 +47,8 @@ urbiinclude_HEADERS =				\
   include/urbi/uvalue.hh			\
   include/urbi/uvalue.hxx			\
   include/urbi/uvar.hh				\
-  include/urbi/uvar.hxx
+  include/urbi/uvar.hxx                         \
+  include/urbi/version-check.hh
 
 nodist_urbiinclude_HEADERS =			\
   include/urbi/revision.hh

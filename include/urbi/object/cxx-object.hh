@@ -22,6 +22,7 @@
 # include <kernel/userver.hh>
 # include <urbi/object/enumeration.hh>
 # include <urbi/object/object.hh>
+# include <urbi/version-check.hh>
 
 #define URBI_CXX_OBJECT(Name)                                           \
   private:                                                              \
@@ -32,50 +33,6 @@
     virtual ::std::string type_name_get() const;                        \
     static ::libport::intrusive_ptr<Name> proto;                        \
     virtual bool valid_proto(const ::urbi::object::Object& o) const
-
-# ifndef URBI_INHIBIT_REVISION_CHECK
-#  include <urbi/revision.hh>
-#  define URBI_CHECK_SDK_VERSION()                                      \
-  do                                                                    \
-  {                                                                     \
-    GD_CATEGORY(Urbi.CxxObject);                                        \
-    static const libport::PackageInfo& info =                           \
-      ::kernel::UServer::package_info();                                \
-    std::string version_eff = info.get("version");                      \
-    std::string revision_eff = info.get("revision");                    \
-    std::string version_exp = URBI_SDK_VERSION;                         \
-    std::string revision_exp = URBI_SDK_REVISION;                       \
-    if (revision_eff != revision_exp)                                   \
-    {                                                                   \
-      std::string expected = version_exp;                               \
-      std::string effective  = version_eff;                             \
-      if (expected == effective)                                        \
-      {                                                                 \
-        expected += " " + revision_exp;                                 \
-        effective += " " + revision_eff;                                \
-      }                                                                 \
-      std::string msg(libport::format                                   \
-                      ("Module was compiled with Urbi SDK version %s,"  \
-                       " but is loaded in version %s",                  \
-                       expected, effective));                           \
-                                                                        \
-      static const std::string varname = "URBI_ACCEPT_BINARY_MISMATCH"; \
-      static const bool fatal = !libport::getenv(varname.c_str());      \
-      if (fatal)                                                        \
-      {                                                                 \
-        GD_ERROR(msg);                                                  \
-        GD_FERROR("define %s to bypass this error", varname);           \
-        runner::raise_primitive_error(msg);                             \
-      }                                                                 \
-      else                                                              \
-        GD_WARN(msg);                                                   \
-    }                                                                   \
-  } while (0)                                                           \
-
-# else
-#  define URBI_CHECK_SDK_VERSION()
-# endif
-
 
 #define URBI_CXX_OBJECT_REGISTER(Name, ...)                             \
   URBI_CXX_OBJECT_REGISTER_(Name, LIBPORT_LIST(__VA_ARGS__,))
