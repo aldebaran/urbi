@@ -422,7 +422,7 @@ send("every|(100ms) Global.x = time,");
 // At this point, v is updated approximately every 100 milliseconds.
 
 v.unnotify();
-// At this point v is no longuer updated. If v was the only UVar pointing to
+// At this point v is no longer updated. If v was the only UVar pointing to
 // 'Global.x', the value is no longer transmitted.
 
 v.syncValue();

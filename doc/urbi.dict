@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1174 utf-8
+personal_ws-1.1 en 1176 utf-8
 aaa
 abc
 abcdef
@@ -832,6 +832,7 @@ sendbin
 sendsound
 sep
 sequentiality
+Serializables
 serv
 serverPort
 servohub
@@ -1093,6 +1094,7 @@ UTF
 UValue
 uvalue
 UValues
+UValueSerializable
 UVar
 UVars
 valgrind

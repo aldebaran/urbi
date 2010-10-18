@@ -58,19 +58,19 @@ for (var suit : Suit)
   describes \env{EXTRA\_CPPFLAGS}, \env{EXTRA\_CXXFLAGS}, and
   \env{EXTRA\_LDFLAGS}.
 
-\item RTP mode can now be switched on at any time. Change is applied to existing
-  notifies.
+\item RTP mode can now be switched on at any time. Change is applied to
+  existing notifies.
 
-\item UObjects can now be instanciated directly from C++, both in plugin and
+\item UObjects can now be instantiated directly from \Cxx, both in plugin and
   remote mode.
 
-\item New mechanism to map simple structures between C++ and urbiscript
-(\autoref{sec:extend-cast-system}).
+\item New mechanism to map simple structures between \Cxx and \us
+  (\autoref{sec:extend-cast-system}).
 
-\item 'nil' is now correctly serialized to/from remote UObjects.
+\item \lstinline{nil} is now correctly serialized to/from remote UObjects.
 
-\item The \Cxx header \file{urbi/revision.hh} contains versioning
-  information that can be used to set requirements.   For instance:
+\item The \Cxx header \file{urbi/revision.hh} contains version information
+  that can be used to set requirements.  For instance:
 \begin{cxx}
 #include <urbi/revision.hh>
 #if URBI_SDK_VERSION_VALUE < 2003000
