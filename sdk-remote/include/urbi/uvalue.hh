@@ -379,7 +379,56 @@ namespace urbi
   "\n"                                          \
   SYNCLINE_POP()
 
+#define URBI_STRUCT_CAST_FIELD(_, cname, field)                      \
+if (!libport::mhas(dict, BOOST_PP_STRINGIZE(field)))                 \
+  GD_WARN("Serialized data for " #cname "is missing field"           \
+          BOOST_PP_STRINGIZE(field));                                \
+else                                                                 \
+{                                                                    \
+  uvalue_cast_bounce(res.field, dict[BOOST_PP_STRINGIZE(field)]);    \
+}
 
+#define URBI_STRUCT_BCAST_FIELD(_, cname, field) \
+  dict[BOOST_PP_STRINGIZE(field)], c.field;
+
+
+#define URBI_REGISTER_STRUCT(cname, ...)                                 \
+namespace urbi {                                                         \
+  template<> struct uvalue_caster<cname>                                 \
+  {                                                                      \
+    cname operator()(UValue& v)                                          \
+    {                                                                    \
+      if (v.type != DATA_DICTIONARY)                                     \
+        throw std::runtime_error("Invalid cast to " #cname "from "       \
+                                 + string_cast(v));                      \
+      UDictionary& dict = *v.dictionary;                                 \
+      cname res;                                                         \
+      LIBPORT_VAARGS_APPLY(URBI_STRUCT_CAST_FIELD, cname, __VA_ARGS__);  \
+      return res;                                                        \
+    }                                                                    \
+  };                                                                     \
+UValue& operator,(UValue& v, const cname &c)                             \
+  {                                                                        \
+    v = UDictionary();                                                     \
+    UDictionary& dict = *v.dictionary;                                     \
+    dict["$sn"] = BOOST_PP_STRINGIZE(cname);                               \
+    LIBPORT_VAARGS_APPLY(URBI_STRUCT_BCAST_FIELD, cname, __VA_ARGS__);     \
+    return v;                                                              \
+  }                                                                        \
+}
+
+/** Packed data structure.
+ *  This template class behaves exactly as a std::vector, except it gets
+ *  serialized efficiently in a Binary, whereas std::vector is converted in
+ *  an urbiscript list.
+ */
+template<typename T> class UPackedData: public std::vector<T>
+{
+public:
+  UPackedData() {};
+  UPackedData(const std::vector<T>& src): std::vector<T>(src) {};
+  template<typename I> UPackedData(I begin, I end):std::vector<T>(begin, end){};
+};
 
 # include <urbi/uvalue.hxx>
 

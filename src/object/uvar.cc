@@ -218,8 +218,12 @@ namespace urbi
                                           SYMBOL(timestamp), to_urbi(double(timestamp) / 1000000));
       // Do not bother with UValue for numeric types.
       if (rUValue uval = val->as<UValue>())
+      {
         if (uval->value_get().type == urbi::DATA_DOUBLE)
           val = uval->extract();
+      }
+      else
+        val = val->call(SYMBOL(uvalueDeserialize));
       runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(val), val);
       if (slot_get(SYMBOL(owned))->as_bool())

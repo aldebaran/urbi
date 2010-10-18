@@ -16,6 +16,7 @@
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
+#include <urbi/object/lobby.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
@@ -44,8 +45,18 @@ urbi::UDataType uvalue_type(const object::rObject& o)
   return urbi::DATA_OBJECT;
 }
 
-urbi::UValue uvalue_cast(const object::rObject& o)
+urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
 {
+  // Protect ourselve against user errors.
+  static int maxRecursionLevel = 0;
+  if (!maxRecursionLevel)
+  {
+    maxRecursionLevel = 50;
+    if (getenv("URBI_MAX_CAST_RECURSION_LEVEL"))
+      maxRecursionLevel = strtol(getenv("URBI_MAX_CAST_RECURSION_LEVEL"), 0,0);
+  }
+  if (recursionLevel > maxRecursionLevel)
+    FRAISE("Maximum level of recursion reached while casting to uvalue. Loop?");
   CAPTURE_GLOBAL(Binary);
   CAPTURE_GLOBAL(UObject);
   CAPTURE_GLOBAL(UVar);
@@ -107,6 +118,10 @@ urbi::UValue uvalue_cast(const object::rObject& o)
       + "."
       + o->slot_get(SYMBOL(initialName))->as<object::String>()->value_get();
   }
+  else if (o->slot_has(SYMBOL(uvalueSerialize)))
+  {
+    res = uvalue_cast(o->call(SYMBOL(uvalueSerialize)), recursionLevel+1);
+  }
   else // We could not find how to cast this value
   {
     const object::rString& rs =
@@ -147,10 +162,13 @@ object_cast(const urbi::UValue& v)
 
     case urbi::DATA_DICTIONARY:
     {
+
       object::rDictionary r = new object::Dictionary();
       foreach (const urbi::UDictionary::value_type& d, *v.dictionary)
         r->set(libport::Symbol(d.first), object_cast(d.second));
       res = r;
+      if (libport::mhas(*v.dictionary, "$sn")) // Serialized class
+        res = r->call(SYMBOL(uvalueDeserialize));
       break;
     }
 
@@ -185,3 +203,62 @@ object_cast(const urbi::UValue& v)
   }
   return res;
 }
+
+
+object::rObject uvalue_deserialize(object::rObject s)
+{
+  using namespace object;
+  CAPTURE_GLOBAL(Serializables);
+  CAPTURE_GLOBAL(Global);
+  CAPTURE_GLOBAL(Object);
+  rObject lobby = ::kernel::urbiserver->getCurrentRunner().lobby_get();
+  if (rList l = s->as<List>())
+  { // Recurse
+    rList res = new List;
+    foreach(rObject& r, l->value_get())
+      res->insertBack(uvalue_deserialize(r));
+    return res;
+  }
+  else if (rDictionary d = s->as<Dictionary>())
+  { // Check if this is a serialized class
+    if (d->has(SYMBOL(DOLLAR_sn)))
+    { // Look for the class
+      libport::Symbol cn
+        = libport::Symbol(d->get(SYMBOL(DOLLAR_sn))->as<String>()->value_get());
+      rObject proto;
+      Object::location_type l = lobby->slot_locate(cn);
+      if (l.first)
+        proto = l.second->value();
+      else
+      {
+        l = Serializables->slot_locate(cn);
+        if (l.first)
+          proto = l.second->value();
+        else
+          proto = Object;
+      }
+      rObject res = proto->call(SYMBOL(new));
+      foreach(Dictionary::value_type::value_type& v, d->value_get())
+      if (v.first != SYMBOL(DOLLAR_sn))
+      {
+        if (rSlot s = res->local_slot_get(v.first))
+          s->set(uvalue_deserialize(v.second));
+        else
+          res->slot_set(v.first, uvalue_deserialize(v.second));
+      }
+      return res;
+    }
+    else
+    { // Recurse
+      rDictionary res = new Dictionary;
+      foreach(Dictionary::value_type::value_type& v, d->value_get())
+      {
+        res->set(v.first, uvalue_deserialize(v.second));
+      }
+      return res;
+    }
+  }
+  else // Everything else deserialize into itself
+    return s;
+}
+

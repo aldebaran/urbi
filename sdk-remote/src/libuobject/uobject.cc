@@ -128,6 +128,9 @@ namespace urbi
       GET(us_t, us);
 #undef GET
 
+      // Compatibility for wire protocol 2.3-2.4.
+      URBI_SEND_COMMAND_C(*client_, "if (!Object.hasSlot(\"uvalueSerialize\"))"
+                          " var Object.uvalueSerialize = function() { this}");
       libport::utime_reference_set
         (boost::posix_time::ptime(boost::gregorian::date(year, month, day),
                                   boost::posix_time::microseconds(us)));

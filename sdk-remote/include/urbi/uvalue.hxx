@@ -11,6 +11,7 @@
 /// \file urbi/uvalue.hxx
 
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <libport/cassert>
 
@@ -380,4 +381,41 @@ namespace urbi
     return res;
   }
 
+  /** Bounce to uvalue_cast(). Useful when the type of the argument is not
+   * directly available.
+   */
+  template<typename T>
+  void uvalue_cast_bounce(T& t, UValue& v)
+  {
+    t = uvalue_cast<T>(v);
+  }
+
+  template<typename T>
+  struct uvalue_caster<UPackedData<T> >
+  {
+    UPackedData<T> operator() (UValue& v)
+    {
+      if (v.type != DATA_BINARY)
+        throw std::runtime_error("Invalid cast to UPackedData: not a Binary");
+      if (v.binary->common.size % sizeof(T))
+        throw std::runtime_error("Invalid cast to UPackedData: incorrect binary"
+                                 "size");
+      return UPackedData<T>((T*)v.binary->common.data,
+                            (T*)((char*)v.binary->common.data
+                                 + v.binary->common.size));
+    }
+  };
+
+  template<typename T>
+  UValue& operator, (UValue&v, const UPackedData<T>& d)
+  {
+    v = UBinary();
+    UBinary& b = *v.binary;
+    b.common.size = sizeof(T)*d.size();
+    b.common.data = malloc(b.common.size);
+    b.message = "packed " + boost::lexical_cast<std::string>(sizeof(T))
+      + " " + typeid(T).name();
+    memcpy(b.common.data, &d.front(), b.common.size);
+    return v;
+  }
 } // namespace urbi

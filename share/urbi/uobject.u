@@ -713,7 +713,7 @@ class Global.'external'
         return|
       var uvar = uob.getSlot(varname) |
       var v = uvar.getSlot({if (uvar.owned) "valsensor" else "val"})
-      .acceptVoid |
+      .acceptVoid.uvalueSerialize  |
       if (!v.isNil && !v.isVoid)
         chan << ['external'.UEM_ASSIGNVALUE,
                  fullname,
@@ -748,10 +748,13 @@ class Global.'external'
       var args = call.evalArgs |
       // Just to be safe, do not rely on asString for UObject and UVar
       for| (var i: args.size)
+      {
         if (args[i].isA(UObject))
           args[i] = args[i].__uobjectName
         else if (args[i].isA(UVar))
-          args[i] = args[i].ownerName + "." + args[i].initialName |
+          args[i] = args[i].ownerName + "." + args[i].initialName|
+        args[i] = args[i].uvalueSerialize
+      }|
       if (args.size != nargs)
         throw Exception.Arity.new("Remote bound function", args.size, nargs)|
       var u = String.fresh |
@@ -763,7 +766,7 @@ class Global.'external'
       if (res.isA(Exception))
         throw res
       else
-        res.unacceptVoid
+        res.uvalueDeserialize.unacceptVoid;
     }|
     Global.uobjects.getSlot(objname).setSlot(fname, f)|
     void
@@ -820,3 +823,41 @@ class Global.'external'
     }
   };
 };
+
+/** Inherit from UValueSerializable to make objects of your class available from
+ * UObjects.
+ * You can set 'uvalueSerializeSlots' to fix the names of the slots that must
+ * be serialized.
+ */
+class Global.UValueSerializable
+{
+  var uvalueSerializeSlots = nil;
+  function uvalueSerialize()
+  {
+    nonInterruptible;
+    var res = Dictionary.new;
+    res["$sn"] = type;
+    // No need to recurse here.
+    var names = uvalueSerializeSlots || localSlotNames;
+    for|(var s: names)
+    if (!getSlot(s).isA(Executable))
+      res[s] = getSlot(s).uvalueSerialize;
+    res;
+  };
+};
+
+function Object.uvalueSerialize() {this};
+function List.uvalueSerialize()
+{
+  map(function(x) {x.uvalueSerialize})
+};
+function Dictionary.uvalueSerialize()
+{
+  var res = Dictionary.new |
+  for|(var e: this)
+    res[e.first] = e.second.uvalueSerialize()|
+  res
+};
+
+// Srote serializable objects here.
+class Global.Serializables {};

@@ -328,7 +328,7 @@ namespace urbi
       fmt("{\n"
           "  if (isdef (%s) && !(%s))\n"
           "  {\n"
-          "    %s %s\n"
+          "    %s %s.uvalueSerialize\n"
           "  }\n"
           "  else\n"
           "  {\n"

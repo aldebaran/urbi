@@ -226,11 +226,14 @@ The following types for arguments and return value are supported:
 \item Basic integer and floating types (int, double, float...).
 \item \lstinline{const std::string&} or \lstinline{const char*}.
 \item \lstinline{urbi::UValue} or any of its subtypes (\UBinary, \UList...).
-\item \lstinline{std::list} or \lstinline{std::vector} of the above types.
+\item \lstinline{std::list}, \lstinline{std::vector} or
+\lstinline{boost::unordered_map} of the above types.
 \end{itemize}
 
-\subsection{Multiple bindings}
+The procedure to register new types to this system is explained in
+\autoref{sec:extend-cast-system}.
 
+\subsection{Multiple bindings}
 If you have multiple functions to bind, you can use the
 \lstinline|UBindFunctions| macro to bind multiple functions at once:
 
@@ -387,11 +390,24 @@ the following effects:
 
 \section{Using \urbi variables}
 
-You can read or write any \urbi variable by creating an
-\UVar passing the variable name to the constructor. Change
-the value by writing any compatible type to the \UVar, and
-access the value by casting the \UVar to any compatible
-type.
+The C++ class \UVar is used to represent any \urbi slot in C++.
+To bind the \UVar to a specific slot, pass its name to the \UVar constructor,
+or its \lstinline|init| method.
+Once the \UVar is bound, you can write any compatible type to it, and the
+new value will be visible in \us.
+Similarly, you can cast the \UVar (or use the \lstinline{as()} method) to
+convert the current \us value held to any compatible type.
+
+Compatible types are the same as for bound functions
+(see \autoref{sec:extend-cast-system}).
+
+\begin{cxx}
+// Set the camera format to 0 if it is 1.
+UVar v;
+v.init("camera", "format");
+if (v == 1)
+ v = 0;
+\end{cxx}
 
 Some care must be taken in remote mode: changes on the
 variable coming from \urbi code or an other module can take time to propagate
@@ -399,6 +415,20 @@ to the \UVar. By default, all changes to the value will be sent to the remote
 \UObject. To have more control on the bandwidth used, you can
 disable the automatic update by calling \lstinline|unnotify()|. Then you can get
 the value on demand by calling \lstinline|UVar::syncValue()|.
+
+\begin{cxx}
+UVar v("Global", "x");
+send("every|(100ms) Global.x = time,");
+// At this point, v is updated approximately every 100 milliseconds.
+
+v.unnotify();
+// At this point v is no longuer updated. If v was the only UVar pointing to
+// 'Global.x', the value is no longer transmitted.
+
+v.syncValue();
+// The previous call will ask for the value of Global.x once, and block until
+// the value is written to v.
+\end{cxx}
 
 You can read and write all the \urbi properties of an \UVar by
 reading and writing the appropriate \lstinline{UProp} object in the
@@ -517,6 +547,89 @@ directions will by default use a RTP connection.
 You can control whether a specific \UVar uses RTP mode by calling its
 \lstinline|useRTP(bool)| function. Each binary-type \UVar will have its own
 RTP connection, and all non-binary \UVar will share one.
+
+From \us, you can also write to the \lstinline|rtp| slot of each UVar. Existing
+notifies will be modified to use rtp if you set it to true.
+
+
+\section{Extending the cast system}
+\label{sec:extend-cast-system}
+
+\subsection{Principle}
+
+The same cast system is used both for bound function's arguments and return
+values, and for reading/writing \UVar.
+
+Should you want to add new type \lstinline{MyType} to the system you must define
+two functions:
+
+\begin{cxx}
+namespace urbi
+{
+  void operator, (UValue& v, const MyType& t)
+  { // Here you must fill v with the serialized representation of t.
+  }
+  template<> struct uvalue_caster<MyType>
+  {
+    MyType operator()(UValue& v)
+    { // Here you must return a MyType made with the information in v.
+    }
+  }
+}
+\end{cxx}
+
+Once done, you will be able without any other change to
+\begin{itemize}
+\item Take MyType as argument to a bound function.
+\item Return a MyType from a bound function.
+\item Write a MyType to an \UVar.
+\item Convert an \UVar to MyType using the \lstinline{UVar::as} function.
+\end{itemize}
+
+\subsection{Casting simple structures}
+
+The system provides facilities to serialize simple structures by value between
+C++ and \us. This system uses two declarations of each structure, one in
+C++ and the other in \urbi, and maps between the two.
+
+Here is a complete commented example to map a simple Point structure between
+\us and C++.
+\begin{cxx}
+struct Point
+{
+  // Your struct must have a default constructor.
+  Point():x(0), y(0) {}
+  double x,y;
+};
+
+// Declare the structure to the cast system. First argument is the struct,
+// following arguments are the field names.
+URBI_REGISTER_STRUCT(Point, x, y);
+\end{cxx}
+
+\begin{urbiunchecked}
+// Declare the urbiscript structure. It must be globally accessible, and
+// inheriting from UValueSerializable.
+class Global.Point: UValueSerializable
+{
+  var x;
+  var y;
+  function init(xx=0, yy=0)
+  {
+     x = xx|
+     y = yy
+  };
+  function asString()
+  {
+    "<" + x +", " + y  + ">"
+  };
+};
+// Add the class to Serializables to register it.
+var Serializables.Point = Point;
+\end{urbiunchecked}
+
+Once done, you can call bound functions taking a C++ Point by passing them
+an \us Point and exchange Point between both worlds through \UVar read/write.
 
 %%% Local Variables:
 %%% mode: latex

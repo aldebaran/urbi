@@ -22,6 +22,27 @@
 
 GD_CATEGORY(all);
 
+struct Point
+{
+  Point() :x(0), y(0) {}
+  double x,y;
+};
+struct Rect
+{
+  Point a;
+  Point b;
+};
+
+struct PointOfInterest
+{
+  std::string sectorName;
+  std::vector<Rect> subSectors;
+  boost::unordered_map<std::string, Rect> byName;
+};
+
+URBI_REGISTER_STRUCT(Point, x, y);
+URBI_REGISTER_STRUCT(Rect, a, b);
+URBI_REGISTER_STRUCT(PointOfInterest, sectorName, subSectors, byName);
 class all: public urbi::UObject
 {
 public:
@@ -133,6 +154,10 @@ public:
     UBindFunction(all, throwException);
     UBindFunction(all, socketStats);
     UBindFunction(all, instanciate);
+    UBindFunctions(all, area, translate, makeRect, multiTranslate,
+                   transmitPointOfInterest, writePointOfInterest,
+                   readPointOfInterest);
+    UBindFunctions(all, pack, unpack);
     UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
               changeCount);
     UNotifyChange(periodicWriteRate, &all::onRateChange);
@@ -781,7 +806,51 @@ public:
     if (!libport::mhas(vu, "coin") || vu["coin"] != this)
       throw std::runtime_error("hash is not what we expect");
   }
+  double area(Rect r)
+  {
+    return roundf((r.a.x-r.b.x) * (r.a.y  - r.b.y));
+  }
+  PointOfInterest transmitPointOfInterest(PointOfInterest p)
+  {
+    return p;
+  }
+  void writePointOfInterest(urbi::UVar& target, PointOfInterest p)
+  {
+    target = p;
+  }
 
+  PointOfInterest readPointOfInterest(urbi::UVar& source)
+  {
+    source.syncValue();
+    return source.as((PointOfInterest*)0);
+  }
+
+  Rect translate(Rect r, Point v)
+  {
+    r.a.x += v.x;
+    r.a.y += v.y;
+    r.b.x += v.x;
+    r.b.y += v.y;
+    return r;
+  }
+  Rect makeRect()
+  {
+    return Rect();
+  }
+  std::vector<Rect> multiTranslate(std::vector<Rect> src, Point v)
+  {
+    foreach(Rect& r, src)
+      r = translate(r, v);
+    return src;
+  }
+  std::vector<double> unpack(UPackedData<double> d)
+  {
+    return d;
+  }
+  UPackedData<double> pack(std::vector<double> d)
+  {
+    return d;
+  }
   urbi::UVar a, b, c, d;
   urbi::UVar* vars[4];
   urbi::UEvent ev;
@@ -819,3 +888,4 @@ int all::destructionCount = 0;
 ::urbi::URBIStarter<all>
     starter1(urbi::isPluginMode() ? "all"  : "remall"),
     starter2(urbi::isPluginMode() ? "all2" : "remall2");
+

@@ -383,6 +383,7 @@ void uobjects_reload()
 */
 rObject uobject_initialize(const objects_type& args)
 {
+  CAPTURE_GLOBAL(Global);
   urbi::setCurrentContext(new urbi::impl::KernelUContextImpl());
   where = args.front();
   where->slot_set(SYMBOL(setTrace), object::primitive(&setTrace));
@@ -390,6 +391,7 @@ rObject uobject_initialize(const objects_type& args)
   where->slot_set(SYMBOL(getStats),    object::primitive(&Stats::get));
   where->slot_set(SYMBOL(clearStats),  object::primitive(&Stats::clear));
   where->slot_set(SYMBOL(enableStats), object::primitive(&Stats::enable));
+  Global->slot_set(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
   return object::void_class;
 }
 
