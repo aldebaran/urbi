@@ -73,13 +73,13 @@ endif EXAMPLES
 # Replace the version stubs in these libraries.  They get it from
 # revision.cc in libuvalue, which is a convenience library included in
 # these two.
-libuobject/libuobject.stub.stamp: $(VERSIONIFY_CACHE) libuobject/libuobject$(LIBSFX).la $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --resolve=libuobject/.libs/libuobject$(LIBSFX)$(SHLIBEXT)
+stub.stamp: $(VERSIONIFY_CACHE) $(VERSIONIFY) libuvalue/.libs/libuvalue_libuvalue_la-package-info.o libuobject/libuobject$(LIBSFX).la liburbi/liburbi$(LIBSFX).la
+	$(VERSIONIFY_RUN)						  \
+	  --resolve=libuobject/.libs/libuobject$(LIBSFX)$(SHLIBEXT)	  \
+	  --resolve=libuvalue/.libs/libuvalue_libuvalue_la-package-info.o \
+	  --resolve=liburbi/.libs/liburbi$(LIBSFX)$(SHLIBEXT)
 
-liburbi/liburbi.stub.stamp: $(VERSIONIFY_CACHE) liburbi/liburbi$(LIBSFX).la $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --resolve=liburbi/.libs/liburbi$(LIBSFX)$(SHLIBEXT)
-
-all: libuobject/libuobject.stub.stamp liburbi/liburbi.stub.stamp
+all: stub.stamp
 
 
 ## ---------------------- ##
