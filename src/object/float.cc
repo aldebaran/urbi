@@ -16,6 +16,7 @@
 #include <algorithm>
 
 #include <libport/cmath>
+#include <libport/cstdlib>
 #include <libport/compiler.hh>
 #include <libport/format.hh>
 
@@ -324,7 +325,7 @@ namespace urbi
     {
       static const std::string fmt = "expected positive integer, got %s";
       if (unsigned_type upper_bound = to_unsigned_type(fmt))
-        return rand() % upper_bound;
+        return libport::rand() % upper_bound;
       runner::raise_bad_integer_error(value_get(), fmt);
     }
 
