@@ -11,6 +11,7 @@ AC_PROG_JAR
 if test x"$JAVA_HOME" = "x"; then
   AC_MSG_ERROR([Environment variable JAVA_HOME is not set.])
 fi
+AC_SUBST([JAVA_HOME])
 
 case $host_os in
   (*mingw*|*cygwin*) JAVA_INCLUDE_DIR=win32;;
