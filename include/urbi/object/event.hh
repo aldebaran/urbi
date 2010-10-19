@@ -87,6 +87,8 @@ namespace urbi
         unsigned int frozen;
         std::vector<boost::signals::connection> connections;
         runner::tag_stack_type tag_stack;
+        /// Create job with this lobby when executing actions if set.
+        rLobby lobby;
       };
       typedef libport::intrusive_ptr<Actions> rActions;
 

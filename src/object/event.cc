@@ -86,6 +86,7 @@ namespace urbi
       rActions actions(new Actions(guard, enter, leave));
       runner::Runner& r = ::kernel::runner();
       actions->tag_stack = r.tag_stack_get();
+      actions->lobby = r.lobby_get();
       foreach (object::rTag tag, actions->tag_stack)
       {
         sched::rTag t = tag->value_get();
@@ -135,7 +136,7 @@ namespace urbi
           typedef rObject(Executable::*fun_type)(objects_type);
           sched::rJob job =
             new runner::Interpreter
-            (r.lobby_get(),
+            (actions->lobby?actions->lobby:r.lobby_get(),
              r.scheduler_get(),
              boost::bind(static_cast<fun_type>(&Executable::operator()),
                          actions->enter.get(), args),
