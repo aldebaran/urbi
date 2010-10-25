@@ -3019,9 +3019,10 @@ onleave
   echo("out: %s" % (time - start).round);
 
 // This emission is too short to trigger the at.
-e!;
+e!(time);
 
-// This one is long enough. Note that the body triggers 1s after the emission.
+// This one is long enough.
+// The body triggers 1s after the emission started.
 e!(time) ~ 2s;
 [00001000] *** in : 1
 [00002000] *** out: 2

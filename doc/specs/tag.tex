@@ -334,21 +334,21 @@ use of \lstinline|enter| and \lstinline|leave| events
 this feature.
 
 \begin{urbiscript}
-var mytag = Tag.new("mytag");
-[00000000] Tag<mytag>
+var myTag = Tag.new("myTag");
+[00000000] Tag<myTag>
 
-mytag.begin: echo(1);
-[00000000] *** mytag: begin
+myTag.begin: echo(1);
+[00000000] *** myTag: begin
 [00000000] *** 1
 
-mytag.end: echo(2);
+myTag.end: echo(2);
 [00000000] *** 2
-[00000000] *** mytag: end
+[00000000] *** myTag: end
 
-mytag.begin.end: echo(3);
-[00000000] *** mytag: begin
+myTag.begin.end: echo(3);
+[00000000] *** myTag: begin
 [00000000] *** 3
-[00000000] *** mytag: end
+[00000000] *** myTag: end
 \end{urbiscript}
 
 \subsection{Construction}
