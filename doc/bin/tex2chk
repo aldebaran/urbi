@@ -189,7 +189,6 @@ C<\begin> to its C<\end>.
 sub process_listing ($$$)
 {
   my ($file, $line, $lst) = @_;
-#  print STDERR "[[[$lst]]]\n";
 
   my $loc = sprintf "%s:%04d", $file, $line;
   my %res;
@@ -213,8 +212,6 @@ sub process_listing ($$$)
 
   $res{'_contents'} =
     ($env eq 'urbiassert') ? "assert {\n$content\n};" : "$content";
-
-#  print STDERR "$2\n";
 
   # Decode and normalize the options.
   if ($options)
@@ -371,10 +368,9 @@ sub translate ($)
   # directory.
   my $u = $input;
   $u =~ s/\.tex$/.u/;
-  print STDERR "Testing $u\n";
   if (-f $u)
   {
-    print STDERR "Installing $u\n";
+    verbose 2, "installing $u\n";
     my $dir = dirname($base);
     file_symlink($u, "$dir/test.u");
   }

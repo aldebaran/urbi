@@ -125,8 +125,8 @@ check-sdk-uobjects-buildfarm:
 	$(MAKE) $(AM_MAKEFLAGS) -C sdk-remote/src/tests check-uobjects $(CHECK_BUILDFARM_FLAGS)
 
 # Run just the doc test suite, without building again the PDF.
-check-doc:
-	$(MAKE) $(AM_MAKEFLAGS) -C doc just-check
+check-addons check-doc:
+	$(MAKE) $(AM_MAKEFLAGS) -C doc $@
 
 # Check the kernel: doc and tests.
 check-kernel:

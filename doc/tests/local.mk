@@ -57,10 +57,13 @@ include $(top_srcdir)/build-aux/make/check.mk
 
 # A target that just runs "make check", we don't want to "make all" as
 # is the default with "make check-am".
-just-check: $(nodist_check_SCRIPTS)
+check-doc: $(nodist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 	$(MAKE) $(AM_MAKEFLAGS) spell-check
 
+check-addons:
+	$(MAKE) $(AM_MAKEFLAGS) check-doc \
+	  TESTS="$(call ls_files, @{tests/addons}/*.chk)"
 
 TEST_LOGS = $(TESTS:.chk=.log)
 LAZY_TEST_SUITE = 1
@@ -120,4 +123,4 @@ CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no VERBOSE=1 # INSTRUMENTATION=1
 %heck-buildfarm:
 	$(MAKE) $(AM_MAKEFLAGS) $*heck-html $(CHECK_BUILDFARM_FLAGS)
 
-.check-TESTS: clean-semaphores
+check-TESTS: clean-semaphores
