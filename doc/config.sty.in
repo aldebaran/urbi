@@ -7,7 +7,7 @@
 \newcommand{\packagePatchlevel}{@PACKAGE_PATCHLEVEL@}
 \newcommand{\gostaiUrl}{http://www.gostai.com}
 \newcommand{\downloadUrl}{\gostaiUrl/downloads}
-\newcommand{\docurl}{\downloadUrl/\packageTarname/\packageVersion/doc}
+\newcommand{\docurl}{\downloadUrl/urbi/\packageVersion/doc}
 
 \titleImage{figs/urbi-sdk/\packageMajor.\packageMinor/cube-and-disc}
 

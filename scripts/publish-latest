@@ -161,7 +161,7 @@ indirect_scp ()
 from=build@bf-1:share/built/urbi-sdk/releases
 
 # The (scp-like) location into which the per-architecture directories are.
-to=downloads@www.gostai.com:gostai.com-downloads/urbi-sdk
+to=downloads@www.gostai.com:gostai.com-downloads/urbi
 
 exts="-linux -macos -windows .tar.bz2"
 
