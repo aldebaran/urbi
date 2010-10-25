@@ -1,19 +1,24 @@
-<h1>Urbi SDK 2.3</h1>
+<h1>Urbi 2.4</h1>
 
 <h2>Package Types</h2>
 <p>
   There are two kinds of packages:
   <dl>
-    <dt>urbi-sdk-*</dt>
+    <dt>Urbi SDK (urbi-sdk-*)</dt>
     <dd>They contain the full Software Development Kit.  They are made
-    for computers on which applications are developed.</dd>
-    <dt>urbi-runtime-*</dt>
+      for computers on which applications are developed.</dd>
+    <dt>Urbi Runtime (urbi-runtime-*)</dt>
     <dd>They contain only what is needed to run Urbi programs.  They
-    are made for robots on which these applications run.</dd>
+      are made for robots on which these applications run.</dd>
   </dl>
 </p>
 
 <h2>Architectures</h2>
+<h3>Source</h3>
+<p>
+  The files with no architecture specified are BZip2 source tarballs
+  (<a href="urbi-sdk-2.4.tar.bz2">urbi-sdk-2.4.tar.bz2</a>).
+  Use them only if you are ready to compile Urbi SDK yourself.
 <h3>Unix</h3>
 <p>
   GNU/Linux and Mac OS X packages are regular BZip2 tarballs.
@@ -21,20 +26,22 @@
 
 <h3>Windows</h3>
 <p>
-  Note that packages depend upon the version of Visual C++ you intend
-  to use: 2005 or 2008.
+  The packages depend on the version of Visual C++ you
+  use: 2005 or 2008.
 </p>
 
 <p>
-  Windows packages in "*.exe" contain an installer that install both
+  Windows packages in "*.exe" contain an installer that installs both
   debug and release libraries, an UObject wizard for Visual C++,
   Gostai Editor and Gostai Console.  Using the installers is strongly
   recommended.
 </p>
 
 <p>
-  But if you really know what you are doing, you might want to use the
-  "*.zip" files.  They come in two flavors: debug or release.  They
-  require that you have MS Visual C++ installed, or that you run
-  "vcredist.exe".
+  If you know what you are doing, you might want to use the "*.zip"
+  files.  They come in two flavors: debug or release.  They require
+  that you have MS Visual C++ installed, or that you run
+  "vcredist.exe" that can be
+  found <a href="http://www.gostai.com/downloads/urbi-sdk/windows/">
+  here</a>.
 </p>

@@ -1,4 +1,6 @@
-#! /bin/sh -e
+#! /bin/sh
+
+set -e
 
 # stderr LINE...
 # --------------
@@ -223,7 +225,7 @@ do
   for pack in $(echo "$all" | grep -e "$latest$ext")
   do
     echo " --------------- $pack ---------------- "
-    indirect_scp "$from/$pack" "$to/$latest"
-    indirect_scp "$from/$pack.md5" "$to/$latest"
+    indirect_scp "$from/$latest/$pack" "$to/$latest"
+    indirect_scp "$from/$latest/$pack.md5" "$to/$latest"
   done
 done
