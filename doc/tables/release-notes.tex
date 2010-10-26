@@ -25,8 +25,9 @@ Released on 2010-10-20.
 \item Optimize runtime performances when log messages are inhibited.
 \item Preserve properties when a property assignment triggers a copy-on-write.
 \item Trigger the \lstinline|changed| attribute of tags when they are
-  frozen, unfrozen, blocked, \ldots This fixes \lstinline|at (myTag.frozen)
-  ...;|.
+  frozen, unfrozen, blocked, \ldots
+
+  This fixes \lstinline|at (myTag.frozen) ...;|.
 \item Fix \refSlot[Float]{random} on windows, which always returned
   \lstinline|41| in some situations.
 \item Do not scope variables created inside a pipe inside a comma:
