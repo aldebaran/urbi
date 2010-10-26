@@ -31,14 +31,6 @@
 include $(top_srcdir)/build-aux/make/init.mk
 include $(top_srcdir)/build-aux/make/libport.mk
 
-if WIN32
-JAVA_CPPFLAGS = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/win32
-else
-JAVA_CPPFLAGS = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
-endif
-JAVA_LDFLAGS = -L$(JAVA_HOME)/lib
-JAVA_LIBS = -ljvm
-
 # Try to disable -O2 by all means (or
 # liburbiJNI.SWIGURBIStarterJavaUpcast from won't work).
 override CXXFLAGS:=$(filter-out -O%,$(CXXFLAGS))
