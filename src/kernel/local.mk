@@ -42,4 +42,4 @@ nodist_libuobject@LIBSFX@_la_SOURCES += kernel/revision-stub.hh
 # versions of the revision info.
 all-local: kernel/ubanner.unstub.stamp
 kernel/ubanner.unstub.stamp: kernel/libuobject$(LIBSFX)_la-ubanner.lo $(VERSIONIFY) $(VERSIONIFY_CACHE)
-	$(VERSIONIFY_RUN) --resolve=kernel/.libs/libuobject$(LIBSFX)_la-ubanner.$(OBJEXT)
+	$(VERSIONIFY_RUN) --resolve=$<
