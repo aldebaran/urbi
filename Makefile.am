@@ -86,7 +86,7 @@ libs:
 
 doc_host = downloads@www.gostai.com
 doc_upload_dir = gostai.com-downloads
-doc_dir = $(doc_upload_dir)/$(PACKAGE_TARNAME)/$(PACKAGE_VERSION)
+doc_dir = $(doc_upload_dir)/urbi/$(PACKAGE_VERSION)
 install-doc:
 	ssh $(doc_host) 'rm -rf $(doc_dir)/doc.new $(doc_dir)/doc.old && \
 			 mkdir -p $(doc_dir)/doc.new'
