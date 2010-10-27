@@ -11,8 +11,8 @@
 UObject is used by the \lstinline|UObject| API (see
 \autoref{part:uobject}) to represent a bound \Cxx instance.
 
-All the UObjects are copied under an unique name as slots of
-\lstinline{uobjects}.
+All the UObjects are copied under a unique name as slots of
+\refSlot[Global]{uobjects}.
 
 \subsection{Prototypes}
 \begin{refObjects}
@@ -25,9 +25,10 @@ All the UObjects are copied under an unique name as slots of
 \item[__uobjectName]%
   Unique name assigned to this object. This is also the slot name of
   \refSlot[Global]{uobjects} containing this \lstinline|UObject|.
-\item[searchPath] The search-path for UObjects files
-  (see \autoref{sec:tools:envvars}) as a \refObject{List} of
-  \refObject[s]{Path}.
+
+\item[searchPath] The search-path for UObjects files (see
+  \autoref{sec:tools:envvars}) as a \refObject{List} of \refObject[s]{Path}.
+  See also \refSlot[System]{loadLibrary} and \refSlot[System]{loadModule}.
 \begin{urbiassert}
 UObject.searchPath.isA(List);
 UObject.searchPath[0].isA(Path);
