@@ -44,13 +44,7 @@
 #include <urbi/sdk.hh>
 
 #include <object/finalizable.hh>
-#include <object/format-info.hh>
-#include <object/formatter.hh>
-#include <object/input-stream.hh>
 #include <object/ioservice.hh>
-#include <object/output-stream.hh>
-#include <object/process.hh>
-#include <object/regexp.hh>
 #include <object/semaphore.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
@@ -206,123 +200,6 @@ namespace urbi
       setSlot(SYMBOL(SBL_SBR_EQ), new Primitive(string_sub_eq_bouncer));
     }
 
-    /*---------.
-    | Process. |
-    `---------*/
-
-#if !defined WIN32
-    URBI_CXX_OBJECT_REGISTER(Process)
-      : name_(libport::path("true").basename())
-      , pid_(0)
-      , binary_("/bin/true")
-      , argv_()
-      , status_(-1)
-    {
-      argv_ << binary_;
-
-# define DECLARE(Name, Function)             \
-      bind(SYMBOL(Name), &Process::Function) \
-
-      DECLARE(asString, as_string);
-      DECLARE(done,     done);
-      DECLARE(init,     init);
-      DECLARE(join,     join);
-      DECLARE(run,      run);
-      DECLARE(runTo,    runTo);
-      DECLARE(kill,     kill);
-      DECLARE(status,   status);
-      DECLARE(name,     name_);
-# undef DECLARE
-
-      libport::startThread(boost::function0<void>(&Process::monitor_children));
-    }
-#endif
-
-    /*--------.
-    | Regexp. |
-    `--------*/
-
-#if !defined COMPILATION_MODE_SPACE
-    URBI_CXX_OBJECT_REGISTER(Regexp)
-      : re_(".")
-    {
-# define DECLARE(Urbi, Cxx)            \
-      bind(SYMBOL(Urbi), &Regexp::Cxx) \
-
-      DECLARE(asPrintable, as_printable);
-      DECLARE(asString,    as_string);
-      DECLARE(init,        init);
-      DECLARE(match,       match);
-      DECLARE(matches,     matches);
-      DECLARE(SBL_SBR,     operator[]);
-
-# undef DECLARE
-    }
-
-    /*-----------.
-    | Formatter. |
-    `-----------*/
-
-    URBI_CXX_OBJECT_REGISTER(Formatter)
-    {
-# define DECLARE(Urbi, Cxx)               \
-      bind(SYMBOL(Urbi), &Formatter::Cxx) \
-
-      DECLARE(init, init);
-      DECLARE(data, data_get);
-
-# undef DECLARE
-
-# define OPERATOR_PCT(Type)                                       \
-      static_cast<std::string (Formatter::*)(const Type&) const>  \
-      (&Formatter::operator%)                                     \
-
-      bind(SYMBOL(PERCENT), OPERATOR_PCT(rObject));
-
-# undef OPERATOR_PCT
-    }
-
-    /*------------.
-    | FormatInfo. |
-    `------------*/
-
-    URBI_CXX_OBJECT_REGISTER(FormatInfo)
-      : alignment_(Align::RIGHT)
-      , alt_(false)
-      , consistent_(true)
-      , group_("")
-      , pad_(" ")
-      , pattern_("%s")
-      , precision_(6)
-      , prefix_("")
-      , spec_("s")
-      , uppercase_(Case::UNDEFINED)
-      , width_(0)
-    {
-      bind(SYMBOL(init),     &FormatInfo::init);
-      bind(SYMBOL(asString), &FormatInfo::as_string);
-      bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
-
-# define DECLARE(Name)                                    \
-      bind(SYMBOL(Name), &FormatInfo::Name ##_get);       \
-      property_set(SYMBOL(Name),                          \
-                   SYMBOL(updateHook),                    \
-                   primitive(&FormatInfo::update_hook))   \
-
-      DECLARE(alignment);
-      DECLARE(alt);
-      DECLARE(group);
-      DECLARE(pad);
-      DECLARE(precision);
-      DECLARE(prefix);
-      DECLARE(spec);
-      DECLARE(uppercase);
-      DECLARE(width);
-
-# undef DECLARE
-    }
-#endif
-
     /*--------.
     | UValue. |
     `--------*/
@@ -422,7 +299,7 @@ namespace urbi
 #define DECLARE(Name)                           \
       bind(SYMBOL(Name), &Socket::Name)         \
 
-      // Uncomment the line below when overloading will work.
+      // Uncomment the line below when overloading works.
       //bind(SYMBOL(connectSerial),
       //     (void (Socket::*)(const std::string&, unsigned int))
       //       &Socket::connectSerial);
@@ -986,47 +863,6 @@ namespace urbi
       setSlot(SYMBOL(init), new Primitive(&directory_init_bouncer));
     }
 
-    /*--------------.
-    | OutputStream. |
-    `--------------*/
-
-#if !defined COMPILATION_MODE_SPACE
-    URBI_CXX_OBJECT_REGISTER(OutputStream)
-      : Stream(STDOUT_FILENO, false)
-    {
-#define DECLARE(Name, Cxx)                   \
-      bind(SYMBOL(Name), &OutputStream::Cxx) \
-
-      DECLARE(LT_LT, put);
-      DECLARE(close, close);
-      DECLARE(flush, flush);
-      DECLARE(init,  init);
-      DECLARE(put,   putByte);
-
-#undef DECLARE
-    }
-
-    /*-------------.
-    | InputStream. |
-    `-------------*/
-
-    URBI_CXX_OBJECT_REGISTER(InputStream)
-      : Stream(STDIN_FILENO, false)
-      , pos_(0)
-      , size_(0)
-    {
-#define DECLARE(Name, Cxx)                  \
-      bind(SYMBOL(Name), &InputStream::Cxx) \
-
-      DECLARE(close,   close);
-      DECLARE(get,     get);
-      DECLARE(getChar, getChar);
-      DECLARE(getLine, getLine);
-      DECLARE(init,    init);
-
-#undef DECLARE
-    }
-#endif
 
     /*------------.
     | Dictionary. |
@@ -1123,5 +959,182 @@ namespace urbi
 
 #undef DECLARE
     }
-  }
-}
+  } // namespace object
+} // namespace urbi
+
+
+/*===============================================\
+| Objects compiled only when not in space mode.  |
+\===============================================*/
+
+#if !defined COMPILATION_MODE_SPACE
+
+# include <object/format-info.hh>
+# include <object/formatter.hh>
+# include <object/input-stream.hh>
+# include <object/output-stream.hh>
+# include <object/process.hh>
+# include <object/regexp.hh>
+
+namespace urbi
+{
+  namespace object
+  {
+
+    /*--------------.
+    | OutputStream. |
+    `--------------*/
+
+    URBI_CXX_OBJECT_REGISTER(OutputStream)
+      : Stream(STDOUT_FILENO, false)
+    {
+#define DECLARE(Name, Cxx)                   \
+      bind(SYMBOL(Name), &OutputStream::Cxx) \
+
+      DECLARE(LT_LT, put);
+      DECLARE(close, close);
+      DECLARE(flush, flush);
+      DECLARE(init,  init);
+      DECLARE(put,   putByte);
+
+#undef DECLARE
+    }
+
+    /*-------------.
+    | InputStream. |
+    `-------------*/
+
+    URBI_CXX_OBJECT_REGISTER(InputStream)
+      : Stream(STDIN_FILENO, false)
+      , pos_(0)
+      , size_(0)
+    {
+#define DECLARE(Name, Cxx)                  \
+      bind(SYMBOL(Name), &InputStream::Cxx) \
+
+      DECLARE(close,   close);
+      DECLARE(get,     get);
+      DECLARE(getChar, getChar);
+      DECLARE(getLine, getLine);
+      DECLARE(init,    init);
+
+#undef DECLARE
+    }
+
+    /*---------.
+    | Process. |
+    `---------*/
+
+#if !defined WIN32
+    URBI_CXX_OBJECT_REGISTER(Process)
+      : name_(libport::path("true").basename())
+      , pid_(0)
+      , binary_("/bin/true")
+      , argv_()
+      , status_(-1)
+    {
+      argv_ << binary_;
+
+# define DECLARE(Name, Function)             \
+      bind(SYMBOL(Name), &Process::Function) \
+
+      DECLARE(asString, as_string);
+      DECLARE(done,     done);
+      DECLARE(init,     init);
+      DECLARE(join,     join);
+      DECLARE(run,      run);
+      DECLARE(runTo,    runTo);
+      DECLARE(kill,     kill);
+      DECLARE(status,   status);
+      DECLARE(name,     name_);
+# undef DECLARE
+
+      libport::startThread(boost::function0<void>(&Process::monitor_children));
+    }
+#endif
+
+    /*--------.
+    | Regexp. |
+    `--------*/
+
+    URBI_CXX_OBJECT_REGISTER(Regexp)
+      : re_(".")
+    {
+# define DECLARE(Urbi, Cxx)            \
+      bind(SYMBOL(Urbi), &Regexp::Cxx) \
+
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString,    as_string);
+      DECLARE(init,        init);
+      DECLARE(match,       match);
+      DECLARE(matches,     matches);
+      DECLARE(SBL_SBR,     operator[]);
+
+# undef DECLARE
+    }
+
+    /*-----------.
+    | Formatter. |
+    `-----------*/
+
+    URBI_CXX_OBJECT_REGISTER(Formatter)
+    {
+# define DECLARE(Urbi, Cxx)               \
+      bind(SYMBOL(Urbi), &Formatter::Cxx) \
+
+      DECLARE(init, init);
+      DECLARE(data, data_get);
+
+# undef DECLARE
+
+# define OPERATOR_PCT(Type)                                       \
+      static_cast<std::string (Formatter::*)(const Type&) const>  \
+      (&Formatter::operator%)                                     \
+
+      bind(SYMBOL(PERCENT), OPERATOR_PCT(rObject));
+
+# undef OPERATOR_PCT
+    }
+
+    /*------------.
+    | FormatInfo. |
+    `------------*/
+
+    URBI_CXX_OBJECT_REGISTER(FormatInfo)
+      : alignment_(Align::RIGHT)
+      , alt_(false)
+      , consistent_(true)
+      , group_("")
+      , pad_(" ")
+      , pattern_("%s")
+      , precision_(6)
+      , prefix_("")
+      , spec_("s")
+      , uppercase_(Case::UNDEFINED)
+      , width_(0)
+    {
+      bind(SYMBOL(init),     &FormatInfo::init);
+      bind(SYMBOL(asString), &FormatInfo::as_string);
+      bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
+
+# define DECLARE(Name)                                    \
+      bind(SYMBOL(Name), &FormatInfo::Name ##_get);       \
+      property_set(SYMBOL(Name),                          \
+                   SYMBOL(updateHook),                    \
+                   primitive(&FormatInfo::update_hook))   \
+
+      DECLARE(alignment);
+      DECLARE(alt);
+      DECLARE(group);
+      DECLARE(pad);
+      DECLARE(precision);
+      DECLARE(prefix);
+      DECLARE(spec);
+      DECLARE(uppercase);
+      DECLARE(width);
+
+# undef DECLARE
+    }
+  } // namespace object
+} // namespace urbi
+#endif
