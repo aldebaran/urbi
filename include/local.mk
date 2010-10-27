@@ -71,26 +71,18 @@ endif INSTALL_KERNEL_HEADERS
 ## Generated source files.  ##
 ## ------------------------ ##
 
-FROM_PY =					\
+FROM_GEN =					\
   include/urbi/object/any-to-boost-function.hxx	\
   include/urbi/object/cxx-primitive.hxx		\
   include/urbi/object/executable.hh
-BUILT_SOURCES += $(FROM_PY)
+BUILT_SOURCES += $(FROM_GEN)
 
 if INSTALL_KERNEL_HEADERS
-dist_kernelinclude_urbi_object_HEADERS += $(FROM_PY)
+dist_kernelinclude_urbi_object_HEADERS += $(FROM_GEN)
 endif INSTALL_KERNEL_HEADERS
-EXTRA_DIST += $(FROM_PY:=.py)
+EXTRA_DIST += $(FROM_GEN:=.gen)
 
-%.hh: %.hh.py
-	$(AM_V_GEN)
-	$(AM_V_at)mkdir -p $(dir $@)
-	$(AM_V_at)$< > $@.tmp
-	$(AM_V_at)chmod a-w $@.tmp
-	$(AM_V_at)$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
-	$(AM_V_at)touch $@
-
-%.hxx: %.hxx.py
+%: %.gen
 	$(AM_V_GEN)
 	$(AM_V_at)mkdir -p $(dir $@)
 	$(AM_V_at)$< > $@.tmp
