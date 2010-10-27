@@ -5,13 +5,14 @@
 URBI = $(top_builddir)/tests/bin/urbi
 GNUPLOT = gnuplot
 $(srcdir)/%.dat: %.utraj
-	$(ENSURE_TARGET_DIR)
-	$(URBI) -q						\
+	$(AM_V_GEN)
+	$(AM_V_at)$(ENSURE_TARGET_DIR)
+	$(AM_V_at)$(URBI) -q					\
 	        -f $(srcdir)/trajectories/plot.u		\
 	        -f '$<'						\
 	        -e 'plot("$@.tmp", sample(y, 40, 0.1s));'	\
 	        -e 'shutdown;'
-	mv $@.tmp $@
+	$(AM_V_at)mv $@.tmp $@
 
 ## pdftex/pdftex_t combined GNU Plot pictures.
 ##
@@ -21,22 +22,23 @@ $(srcdir)/%.dat: %.utraj
 ## A single Make rule with two commands because it simplifies the use:
 ## depend on one file, not two.
 %.pdftex_t %.eps %.pdf: %.dat
-	$(ENSURE_TARGET_DIR)
+	$(AM_V_GEN)
+	$(AM_V_at)$(ENSURE_TARGET_DIR)
 # gnuplot creates an output, even if it failed.  Remove it.
-	rm -f $*.{tex,eps,pdf,pdftex_t}
+	$(AM_V_at)rm -f $*.{tex,eps,pdf,pdftex_t}
 # Put the output first, before the plotting command, and before
 # requests from the user.  Set the terminal too there for the same
 # reasons.
-	{						\
+	$(AM_V_at){					\
 	  echo 'set output "$*.eps"';			\
 	  echo 'set terminal epslatex color';		\
 	  echo 'set key off';				\
 	  echo 'plot "$<" using 1:2 with linespoints';	\
 	} > $*.plt.tmp
-	LC_ALL=C $(GNUPLOT) $*.plt.tmp
-	mv $*.tex $*.pdftex_t
-	$(EPSTOPDF) $*.eps -o $*.pdf
-	rm $*.plt.tmp
+	$(AM_V_at)LC_ALL=C $(GNUPLOT) $*.plt.tmp
+	$(AM_V_at)mv $*.tex $*.pdftex_t
+	$(AM_V_at)$(EPSTOPDF) $*.eps -o $*.pdf
+	$(AM_V_at)rm $*.plt.tmp
 
 
 TRAJECTORIES = $(call ls_files,trajectories/*.utraj)

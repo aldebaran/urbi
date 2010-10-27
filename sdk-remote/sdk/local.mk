@@ -21,7 +21,8 @@ nodist_bin_SCRIPTS += $(UMAKE_WRAPPERS)
 dist_bin_SCRIPTS   += $(UMAKE_CONFIGURED)
 
 $(UMAKE_WRAPPERS): sdk/wrapper.sh
-	sdk/wrapper.sh $@
+	$(AM_V_GEN)
+	$(AM_V_at)sdk/wrapper.sh $@
 $(UMAKE_CONFIGURED): sdk/umake-common
 
 CLEANFILES += $(nodist_bin_SCRIPTS)

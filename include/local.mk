@@ -83,15 +83,17 @@ endif INSTALL_KERNEL_HEADERS
 EXTRA_DIST += $(FROM_PY:=.py)
 
 %.hh: %.hh.py
-	mkdir -p $(dir $@)
-	$< > $@.tmp
-	chmod a-w $@.tmp
-	$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
-	touch $@
+	$(AM_V_GEN)
+	$(AM_V_at)mkdir -p $(dir $@)
+	$(AM_V_at)$< > $@.tmp
+	$(AM_V_at)chmod a-w $@.tmp
+	$(AM_V_at)$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
+	$(AM_V_at)touch $@
 
 %.hxx: %.hxx.py
-	mkdir -p $(dir $@)
-	$< > $@.tmp
-	chmod a-w $@.tmp
-	$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
-	touch $@
+	$(AM_V_GEN)
+	$(AM_V_at)mkdir -p $(dir $@)
+	$(AM_V_at)$< > $@.tmp
+	$(AM_V_at)chmod a-w $@.tmp
+	$(AM_V_at)$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
+	$(AM_V_at)touch $@
