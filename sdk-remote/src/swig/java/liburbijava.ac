@@ -24,6 +24,7 @@ case $host_os in
      JAVA_LIBS='-ljvm'
      ;;
   (*darwin*)
+     JAVA_CPPFLAGS='-I$(JAVA_HOME)/include'
      ;;
   (*)
      JAVA_CPPFLAGS='-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux'
