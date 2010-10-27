@@ -159,7 +159,7 @@ namespace urbi
            (&self_type::operator==));
 
 #define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &String::Function)     \
+      bind(SYMBOL(Name), &String::Function)
 
       DECLARE(LT_EQ       , operator<=);
       DECLARE(PLUS        , plus);
@@ -207,7 +207,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(UValue)
     {
 #define DECLARE(Name)                   \
-      bind(SYMBOL(Name), &UValue::Name) \
+      bind(SYMBOL(Name), &UValue::Name)
 
       DECLARE(extract);
       DECLARE(extractAsToplevelPrintable);
@@ -226,7 +226,7 @@ namespace urbi
       : value_(new sched::Tag(libport::Symbol::make_empty()))
     {
 #define DECLARE(Name, Cast)                                             \
-      bind(SYMBOL(Name), static_cast<void (Tag::*)(Cast)>(&Tag::Name)); \
+      bind(SYMBOL(Name), static_cast<void (Tag::*)(Cast)>(&Tag::Name))
 
       DECLARE(init,                 );
       DECLARE(init,  libport::Symbol);
@@ -240,7 +240,7 @@ namespace urbi
       bind_variadic(SYMBOL(newFlowControl), &Tag::new_flow_control);
 
 #define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &Tag::Function)        \
+      bind(SYMBOL(Name), &Tag::Function)
 
       DECLARE(blocked,     blocked);
       DECLARE(enter,       enter);
@@ -267,7 +267,7 @@ namespace urbi
       , io_service_(object::Socket::get_default_io_service())
     {
 #define DECLARE(Name, Cxx)             \
-      bind(SYMBOL(Name), &Server::Cxx) \
+      bind(SYMBOL(Name), &Server::Cxx)
 
       DECLARE(getIoService, getIoService);
       DECLARE(host,         host);
@@ -297,7 +297,7 @@ namespace urbi
       io_service_ = get_default_io_service();
 
 #define DECLARE(Name)                           \
-      bind(SYMBOL(Name), &Socket::Name)         \
+      bind(SYMBOL(Name), &Socket::Name)
 
       // Uncomment the line below when overloading works.
       //bind(SYMBOL(connectSerial),
@@ -331,7 +331,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Semaphore)
     {
 #define DECLARE(Name, Cxx)                \
-      bind(SYMBOL(Name), &Semaphore::Cxx) \
+      bind(SYMBOL(Name), &Semaphore::Cxx)
 
       DECLARE(new,             _new);
       DECLARE(criticalSection, criticalSection);
@@ -357,7 +357,7 @@ namespace urbi
            (&self_type::operator==));
 
 #define DECLARE(Name, Cxx)           \
-      bind(SYMBOL(Name), &Code::Cxx) \
+      bind(SYMBOL(Name), &Code::Cxx)
 
       DECLARE(asString,   as_string);
       DECLARE(bodyString, body_string);
@@ -391,7 +391,7 @@ namespace urbi
       , inAccess_(false)
     {
 #define DECLARE(Name, Cxx)           \
-      bind(SYMBOL(Name), &UVar::Cxx) \
+      bind(SYMBOL(Name), &UVar::Cxx)
 
       DECLARE(writeOwned,    writeOwned);
       DECLARE(update_timed,  update_timed);
@@ -428,7 +428,7 @@ namespace urbi
       bind(SYMBOL(LT), (comparison_type) &Position::operator <);
 
 #define DECLARE(Name, Cxx)               \
-      bind(SYMBOL(Name), &Position::Cxx) \
+      bind(SYMBOL(Name), &Position::Cxx)
 
       DECLARE(MINUS,    operator -);
       DECLARE(PLUS,     operator +);
@@ -442,7 +442,7 @@ namespace urbi
       bind(SYMBOL(Name), &Position::Name ##_get);         \
       property_set(SYMBOL(Name),                          \
                    SYMBOL(updateHook),                    \
-                   primitive(&Position::Name ##_set))     \
+                   primitive(&Position::Name ##_set))
 
       DECLARE(file);
 
@@ -450,8 +450,8 @@ namespace urbi
 
       // For some reason, cl.exe refuses "&Position::value_type::line"
       // with error: function cannot access 'yy::position::line'
-#define DECLARE(Name)                                   \
-      bind(SYMBOL( Name ), &yy::position::Name) \
+#define DECLARE(Name)                           \
+      bind(SYMBOL( Name ), &yy::position::Name)
 
       DECLARE(line);
       DECLARE(column);
@@ -484,7 +484,7 @@ namespace urbi
       bind(SYMBOL(end),   &yy::location::end);
 
 #define DECLARE(Name, Cxx)                             \
-      bind(SYMBOL( Name ), &Location::Cxx) \
+      bind(SYMBOL( Name ), &Location::Cxx)
 
       DECLARE(asString,         as_string);
       DECLARE(isSystemLocation, is_system_location);
@@ -506,7 +506,7 @@ namespace urbi
              (&Lobby::send));
 
 #define DECLARE(Name)                  \
-      bind(SYMBOL(Name), &Lobby::Name) \
+      bind(SYMBOL(Name), &Lobby::Name)
 
       DECLARE(bytesSent);
       DECLARE(bytesReceived);
@@ -534,7 +534,7 @@ namespace urbi
              (&List::sort));
 
 #define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &List::Function)       \
+      bind(SYMBOL(Name), &List::Function)
 
       DECLARE(asBool,         as_bool         );
       DECLARE(asString,       as_string       );
@@ -584,7 +584,7 @@ namespace urbi
       bind_variadic<rEvent, Event>(SYMBOL(trigger), &Event::trigger);
 
 #define DECLARE(Name, Cxx)            \
-      bind(SYMBOL(Name), &Event::Cxx) \
+      bind(SYMBOL(Name), &Event::Cxx)
 
       DECLARE(stop,      stop);
       DECLARE(waituntil, waituntil);
@@ -599,7 +599,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Job)
     {
 #define DECLARE(Name, Cxx)          \
-      bind(SYMBOL(Name), &Job::Cxx) \
+      bind(SYMBOL(Name), &Job::Cxx)
 
       DECLARE(DOLLAR_backtrace,   backtrace);
       DECLARE(name,               name);
@@ -621,7 +621,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(IoService)
     {
 #define DECLARE(Name, Cxx)                \
-      bind(SYMBOL(Name), &IoService::Cxx) \
+      bind(SYMBOL(Name), &IoService::Cxx)
 
       DECLARE(pollFor,    pollFor);
       DECLARE(pollOneFor, pollOneFor);
@@ -656,7 +656,7 @@ namespace urbi
       limits = urbi::object::Object::proto->clone();
 
 #define DECLARE(Urbi, Cxx)                    \
-      limits->bind(SYMBOL(Urbi), &Float::Cxx) \
+      limits->bind(SYMBOL(Urbi), &Float::Cxx)
 
       DECLARE(digits, limit_digits);
       DECLARE(digits10, limit_digits10);
@@ -672,7 +672,7 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Urbi, Cxx)            \
-      bind(SYMBOL(Urbi), &Float::Cxx) \
+      bind(SYMBOL(Urbi), &Float::Cxx)
 
       DECLARE(CARET,     operator^);
       DECLARE(GT_GT,     operator>>);
@@ -743,7 +743,7 @@ namespace urbi
              (&Duration::init));
 
 #define DECLARE(Name, Cxx)               \
-      bind(SYMBOL(Name), &Duration::Cxx) \
+      bind(SYMBOL(Name), &Duration::Cxx)
 
       DECLARE(asPrintable, asPrintable);
       DECLARE(asString,    as_string);
@@ -759,7 +759,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Finalizable)
     {
 #define DECLARE(Name)                        \
-      bind(SYMBOL(Name), &Finalizable::Name) \
+      bind(SYMBOL(Name), &Finalizable::Name)
 
       DECLARE(__dec);
       DECLARE(__inc);
@@ -782,7 +782,7 @@ namespace urbi
       : path_(new Path("/"))
     {
 #define DECLARE(Name, Cxx)           \
-      bind(SYMBOL(Name), &File::Cxx) \
+      bind(SYMBOL(Name), &File::Cxx)
 
       DECLARE(asList,      as_list);
       DECLARE(asPrintable, as_printable);
@@ -815,7 +815,7 @@ namespace urbi
              (&Path::self_type::operator==));
 
 #define DECLARE(Urbi, Cxx)           \
-      bind(SYMBOL(Urbi), &Path::Cxx) \
+      bind(SYMBOL(Urbi), &Path::Cxx)
 
       DECLARE(LT_EQ,       operator<=);
       DECLARE(absolute,    absolute);
@@ -851,7 +851,7 @@ namespace urbi
       : path_(new Path())
     {
 #define DECLARE(Name, Cxx)                \
-      bind(SYMBOL(Name), &Directory::Cxx) \
+      bind(SYMBOL(Name), &Directory::Cxx)
 
       DECLARE(asList,      list<&directory_mk_path>);
       DECLARE(content,     list<&directory_mk_string>);
@@ -873,7 +873,7 @@ namespace urbi
       bind(SYMBOL(asBool), &Dictionary::as_bool);
 
 #define DECLARE(Name)                       \
-      bind(SYMBOL(Name), &Dictionary::Name) \
+      bind(SYMBOL(Name), &Dictionary::Name)
 
       DECLARE(clear);
       DECLARE(empty);
@@ -916,7 +916,7 @@ namespace urbi
 
 #define DECLARE(Unit)                                         \
       bind(libport::Symbol(#Unit),       &Date::Unit ## _get, \
-           libport::Symbol(#Unit "Set"), &Date::Unit ## _set) \
+           libport::Symbol(#Unit "Set"), &Date::Unit ## _set)
 
       DECLARE(day);
       DECLARE(hour);
@@ -930,7 +930,7 @@ namespace urbi
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
 
 #define DECLARE(Name, Cxx)           \
-      bind(SYMBOL(Name), &Date::Cxx) \
+      bind(SYMBOL(Name), &Date::Cxx)
 
       DECLARE(EQ_EQ,    operator ==);
       DECLARE(PLUS,     operator +);
@@ -950,7 +950,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Barrier)
     {
 #define DECLARE(Name, Cxx)              \
-      bind(SYMBOL(Name), &Barrier::Cxx) \
+      bind(SYMBOL(Name), &Barrier::Cxx)
 
       DECLARE(new,       _new);
       DECLARE(signal,    signal);
@@ -989,7 +989,7 @@ namespace urbi
       : Stream(STDOUT_FILENO, false)
     {
 #define DECLARE(Name, Cxx)                   \
-      bind(SYMBOL(Name), &OutputStream::Cxx) \
+      bind(SYMBOL(Name), &OutputStream::Cxx)
 
       DECLARE(LT_LT, put);
       DECLARE(close, close);
@@ -1010,7 +1010,7 @@ namespace urbi
       , size_(0)
     {
 #define DECLARE(Name, Cxx)                  \
-      bind(SYMBOL(Name), &InputStream::Cxx) \
+      bind(SYMBOL(Name), &InputStream::Cxx)
 
       DECLARE(close,   close);
       DECLARE(get,     get);
@@ -1036,7 +1036,7 @@ namespace urbi
       argv_ << binary_;
 
 # define DECLARE(Name, Function)             \
-      bind(SYMBOL(Name), &Process::Function) \
+      bind(SYMBOL(Name), &Process::Function)
 
       DECLARE(asString, as_string);
       DECLARE(done,     done);
@@ -1061,7 +1061,7 @@ namespace urbi
       : re_(".")
     {
 # define DECLARE(Urbi, Cxx)            \
-      bind(SYMBOL(Urbi), &Regexp::Cxx) \
+      bind(SYMBOL(Urbi), &Regexp::Cxx)
 
       DECLARE(asPrintable, as_printable);
       DECLARE(asString,    as_string);
@@ -1080,7 +1080,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Formatter)
     {
 # define DECLARE(Urbi, Cxx)               \
-      bind(SYMBOL(Urbi), &Formatter::Cxx) \
+      bind(SYMBOL(Urbi), &Formatter::Cxx)
 
       DECLARE(init, init);
       DECLARE(data, data_get);
@@ -1121,7 +1121,7 @@ namespace urbi
       bind(SYMBOL(Name), &FormatInfo::Name ##_get);       \
       property_set(SYMBOL(Name),                          \
                    SYMBOL(updateHook),                    \
-                   primitive(&FormatInfo::update_hook))   \
+                   primitive(&FormatInfo::update_hook))
 
       DECLARE(alignment);
       DECLARE(alt);
