@@ -220,6 +220,18 @@ namespace urbi
       return res;
     }
 
+    static void
+    system_searchPathSet(const rObject&, List::value_type list)
+    {
+      ::kernel::urbiserver->search_path.search_path().clear();
+      BOOST_FOREACH (rObject p, list)
+      {
+        rPath path = p->as<Path>();
+        ::kernel::urbiserver->search_path.search_path()
+          .push_back(path->value_get());
+      }
+    }
+
     static rObject
     system_loadFile(const rObject&, const rObject& f)
     {
@@ -411,12 +423,9 @@ namespace urbi
     {
       libport::xlt_advise dl;
       dl.ext()
-        .global(global);
-      (dl.path())
-        .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"), ":");
-      foreach(const std::string& s,
-              kernel::urbiserver->urbi_root_get().uobjects_path())
-        dl.path().push_back(s);
+        .global(global)
+        .path(uobject_uobjects_path());
+
       libport::xlt_handle handle;
       try
       {
@@ -640,7 +649,6 @@ namespace urbi
       DECLARE(redefinitionMode);
       DECLARE(resetStats);
       DECLARE(searchFile);
-      DECLARE(searchPath);
       DECLARE(setenv);
       DECLARE(shiftedTime);
       DECLARE(shutdown);
@@ -656,7 +664,11 @@ namespace urbi
       DECLARE(addSystemFile);
       DECLARE(setSystemFiles);
       DECLARE(systemFiles);
+
 #undef DECLARE
+
+      system_class->bind(SYMBOL(searchPath), &system_searchPath,
+                         SYMBOL(searchPathSet), &system_searchPathSet);
     }
 
   } // namespace object

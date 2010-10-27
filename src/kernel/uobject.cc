@@ -58,6 +58,9 @@
 
 // Make it more readable.
 using namespace boost::assign;
+using object::List;
+using object::rPath;
+using object::Path;
 using object::rEvent;
 using object::rObject;
 using object::rLobby;
@@ -203,6 +206,7 @@ typedef boost::unordered_map<std::string, urbi::UObject*> uobject_to_robject_typ
 static uobject_to_robject_type uobject_to_robject;
 static std::set<void*> initialized;
 static bool trace_uvars = 0;
+static libport::file_library uobjects_path;
 
 static rObject get_base(const std::string& objname);
 static void writeFromContext(const std::string& ctx, const std::string& varName,
@@ -392,7 +396,46 @@ rObject uobject_initialize(const objects_type& args)
   where->slot_set(SYMBOL(clearStats),  object::primitive(&Stats::clear));
   where->slot_set(SYMBOL(enableStats), object::primitive(&Stats::enable));
   Global->slot_set(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
+
+  where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
+              SYMBOL(searchPathSet), &uobject_uobjectsPathSet);
+
+  uobjects_path = libport::file_library(boost::assign::list_of
+          (libport::xgetenv("URBI_UOBJECT_PATH", ".:"))
+          (boost::lexical_cast<std::string>(
+              kernel::urbiserver->urbi_root_get().uobjects_path())),
+          ":");
+
   return object::void_class;
+}
+
+//! Read/Write UObjects PATH
+const libport::file_library
+uobject_uobjects_path()
+{
+  return uobjects_path;
+}
+
+List::value_type
+uobject_uobjectsPath(const rObject&)
+{
+  List::value_type list;
+
+  foreach (const libport::path& p,
+           uobjects_path.search_path_get())
+    list << new Path(p);
+  return list;
+}
+
+void
+uobject_uobjectsPathSet(const rObject&, List::value_type list)
+{
+  uobjects_path.search_path().clear();
+  BOOST_FOREACH (rObject p, list)
+  {
+    rPath path = p->as<Path>();
+    uobjects_path.search_path().push_back(path->value_get());
+  }
 }
 
 // No rObject here as we do not want to prevent object destruction.

@@ -25,6 +25,13 @@ All the UObjects are copied under an unique name as slots of
 \item[__uobjectName]%
   Unique name assigned to this object. This is also the slot name of
   \refSlot[Global]{uobjects} containing this \lstinline|UObject|.
+\item[searchPath] The search-path for UObjects files
+  (see \autoref{sec:tools:envvars}) as a \refObject{List} of
+  \refObject[s]{Path}.
+\begin{urbiassert}
+UObject.searchPath.isA(List);
+UObject.searchPath[0].isA(Path);
+\end{urbiassert}
 \end{urbiscriptapi}
 
 %%% Local Variables:
