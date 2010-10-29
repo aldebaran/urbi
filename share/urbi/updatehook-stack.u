@@ -8,6 +8,14 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/nil.u");
+requireFile("urbi/exception.u");
+requireFile("urbi/object.u");
+requireFile("urbi/global.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/control.u");
+
 function Global.UpdateHookStack (name, value)
 {
   var myself = getProperty(name, "updateHook")|

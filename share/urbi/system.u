@@ -168,7 +168,13 @@ do (System)
     setSystemFiles(value) |
     void
   };
+
+  // '$loadedFiles' local slot names are files loaded so far
+  // Object.new not being loaded yet, '$loadedFiles' is a dummy string
+  var '$loadedFiles' = [ => ];
+
   var loadFile_ = .&loadFile;
+
   var defaultIsSystem = true;
   loadFile = function(file, isSystem = defaultIsSystem)
   {
@@ -179,6 +185,7 @@ do (System)
     } |
     res.unacceptVoid
   };
+
   addSystemFile("urbi/urbi.u");
   addSystemFile(searchFile("urbi/urbi.u").asString);
   addSystemFile(searchFile("urbi/system.u").asString);
@@ -200,9 +207,16 @@ do (System)
 
   /// Look for file and load it.
   // Throw on errors.
-  function load(file)
+  function load(var file, var isSystem = defaultIsSystem)
   {
-    loadFile(searchFile(file));
+    var res = loadFile(searchFile(file), isSystem).acceptVoid |
+
+    if (file in '$loadedFiles')
+      '$loadedFiles'.set(file, '$loadedFiles'.get(file) + 1)
+    else
+      '$loadedFiles'.set(file, 1) |
+
+    res.unacceptVoid
   };
 
   function lobbies()
@@ -240,6 +254,17 @@ do (System)
       t.dumpState
   };
 
+  // Require module stage 1
+  function requireFile(var file)
+  {
+    if (file in '$loadedFiles')
+    {}
+    else
+    {
+      load(file)
+    } | void
+  };
+
   // Do not make a wrapper function here, as you would get a tag for
   // the scope of that function, instead of the caller.
   setSlot("scopeTag", Tag.&scope);
@@ -248,5 +273,4 @@ do (System)
   {
     PackageInfo.components["Urbi SDK"].version
   };
-
 };

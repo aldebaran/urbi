@@ -8,6 +8,7 @@
  * See the LICENSE file for more information.
  */
 
+
 /** Localization class.
  */
 class Global.Localization {} | do (Localization)

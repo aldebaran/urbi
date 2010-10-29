@@ -8,6 +8,9 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/global.u");
+requireFile("urbi/comparable.u");
+
 class Global.Lazy : Global.Comparable
 {
   var code;

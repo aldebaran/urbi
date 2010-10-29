@@ -8,6 +8,9 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/global.u");
+requireFile("urbi/traceable.u");
+
 class Global.Exception
 {
   addProto(Global.Traceable);

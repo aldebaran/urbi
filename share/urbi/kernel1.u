@@ -8,6 +8,12 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/call-message.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/global.u");
+requireFile("urbi/singleton.u");
+requireFile("urbi/control.u");
+
 // k1 compatibility.
 class Global.Kernel1
 {

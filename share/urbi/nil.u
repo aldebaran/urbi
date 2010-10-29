@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/singleton.u");
+
 do (nil)
 {
   // Singleton derives from Object.

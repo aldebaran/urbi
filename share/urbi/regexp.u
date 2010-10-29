@@ -8,6 +8,13 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/loadable.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/container.u");
+requireFile("urbi/global.u");
+requireFile("urbi/kernel1.u");
+requireFile("urbi/control.u");
+
 do (Regexp)
 {
   protos.insertFront(Global.Container);

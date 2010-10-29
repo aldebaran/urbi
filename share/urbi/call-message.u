@@ -8,6 +8,9 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/global.u");
+requireFile("urbi/object.u");
+
 class Global.CallMessage
 {
   // Set/updated by Object.callMessage.

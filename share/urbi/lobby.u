@@ -8,6 +8,15 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/event.u");
+requireFile("urbi/loadable.u");
+requireFile("urbi/call-message.u");
+requireFile("urbi/object.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/list.u");
+requireFile("urbi/nil.u");
+requireFile("urbi/file.u");
+
 var Lobby.systemLobby = this;
 do (Lobby)
 {

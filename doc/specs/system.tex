@@ -327,6 +327,19 @@ var Global.x = 0;
 \end{urbiscript}
 
 
+\item[requireFile](<file>)%
+  Load \var{file} only if it has not been loaded before. Unlike \refSlot{load},
+  \lstinline{requireFile} always returns \lstinline|void|.
+
+\begin{urbiscript}
+// Create the file ``test.u'' that echoes a string.
+File.save("test.u", "echo(\"required\");");
+requireFile("test.u");
+[00000001] *** required
+requireFile("test.u");
+// File is not re-loaded
+\end{urbiscript}
+
 %% \item[resetStats]
 
 

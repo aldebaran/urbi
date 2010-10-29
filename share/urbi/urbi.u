@@ -33,20 +33,21 @@ System.loadFile(System.searchFile("urbi/system.u"));
 System.load("urbi/object.u");
 System.load("urbi/global.u");
 System.load("urbi/platform.u");
-load("urbi/traceable.u");
-load("urbi/exception.u");
-load("urbi/call-message.u");
-load("urbi/comparable.u");
-load("urbi/container.u");
-load("urbi/lazy.u");
-load("urbi/range-iterable.u");
-load("urbi/list.u");
-load("urbi/singleton.u");
 
-load("urbi/boolean.u");
-load("urbi/nil.u");
-load("urbi/control.u");
-load("urbi/channel.u");
+requireFile("urbi/traceable.u");
+requireFile("urbi/exception.u");
+requireFile("urbi/call-message.u");
+requireFile("urbi/comparable.u");
+requireFile("urbi/container.u");
+requireFile("urbi/lazy.u");
+requireFile("urbi/range-iterable.u");
+requireFile("urbi/list.u");
+requireFile("urbi/singleton.u");
+
+requireFile("urbi/boolean.u");
+requireFile("urbi/nil.u");
+requireFile("urbi/control.u");
+requireFile("urbi/channel.u");
 
 // Disable top-level display
 Channel.topLevel.enabled = false;
@@ -54,50 +55,50 @@ Channel.topLevel.enabled = false;
 // Provide !=.
 Object.addProto(Comparable);
 
-load("urbi/orderable.u");
+requireFile("urbi/orderable.u");
 List.protos.insertBack(Global.Orderable);
 
-load("urbi/updatehook-stack.u");
+requireFile("urbi/updatehook-stack.u");
 
-load("urbi/binary.u");
-load("urbi/code.u");
-load("urbi/date.u");
-load("urbi/dictionary.u");
-load("urbi/duration.u");
-load("urbi/enumeration.u");
-load("urbi/event.u");
-load("urbi/file.u");
-load("urbi/float.u");
-load("urbi/formatter.u");
-load("urbi/group.u");
-load("urbi/input-stream.u");
-load("urbi/job.u");
-load("urbi/kernel1.u");
-load("urbi/loadable.u");
-load("urbi/lobby.u");
-load("urbi/math.u");
-load("urbi/mutex.u");
-load("urbi/package-info.u");
-load("urbi/path.u");
-load("urbi/pattern.u");
-load("urbi/profiling.u");
-load("urbi/pubsub.u");
-load("urbi/regexp.u");
-load("urbi/socket.u");
-load("urbi/stack-frame.u");
-load("urbi/string.u");
-load("urbi/tag.u");
-load("urbi/timeout.u");
-load("urbi/trajectory-generator.u");
-load("urbi/tuple.u");
-load("urbi/weak-pointer.u");
+requireFile("urbi/binary.u");
+requireFile("urbi/code.u");
+requireFile("urbi/date.u");
+requireFile("urbi/dictionary.u");
+requireFile("urbi/duration.u");
+requireFile("urbi/enumeration.u");
+requireFile("urbi/event.u");
+requireFile("urbi/file.u");
+requireFile("urbi/float.u");
+requireFile("urbi/formatter.u");
+requireFile("urbi/group.u");
+requireFile("urbi/input-stream.u");
+requireFile("urbi/job.u");
+requireFile("urbi/kernel1.u");
+requireFile("urbi/loadable.u");
+requireFile("urbi/lobby.u");
+requireFile("urbi/math.u");
+requireFile("urbi/mutex.u");
+requireFile("urbi/package-info.u");
+requireFile("urbi/path.u");
+requireFile("urbi/pattern.u");
+requireFile("urbi/profiling.u");
+requireFile("urbi/pubsub.u");
+requireFile("urbi/regexp.u");
+requireFile("urbi/socket.u");
+requireFile("urbi/stack-frame.u");
+requireFile("urbi/string.u");
+requireFile("urbi/tag.u");
+requireFile("urbi/timeout.u");
+requireFile("urbi/trajectory-generator.u");
+requireFile("urbi/tuple.u");
+requireFile("urbi/weak-pointer.u");
 
 /*----------.
 | UObject.  |
 `----------*/
 
 "Initializing uobjects NOW";
-load("urbi/uobject.u");
+requireFile("urbi/uobject.u");
 
 if ("ros" in Platform.enabledModules && System.getenv("ROS_ROOT"))
   loadModule("urbi/ros");

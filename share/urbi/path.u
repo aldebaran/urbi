@@ -8,6 +8,10 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/loadable.u");
+requireFile("urbi/comparable.u");
+requireFile("urbi/orderable.u");
+
 do (Path)
 {
   // WARNING: We must derive from Orderable first.

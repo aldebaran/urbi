@@ -8,6 +8,8 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/global.u");
+
 /// Provide range-for loops, provided we have some "asList".
 class Global.RangeIterable
 {

@@ -8,6 +8,9 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/orderable.u");
+requireFile("urbi/comparable.u");
+
 do (Date)
 {
   setProtos([Orderable, Comparable]);

@@ -8,6 +8,20 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/loadable.u");
+requireFile("urbi/call-message.u");
+requireFile("urbi/container.u");
+requireFile("urbi/global.u");
+requireFile("urbi/string.u");
+requireFile("urbi/exception.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/control.u");
+requireFile("urbi/pattern.u");
+requireFile("urbi/list.u");
+requireFile("urbi/nil.u");
+requireFile("urbi/range-iterable.u");
+
 class Global.Tuple
 {
   protos = [Global.RangeIterable, Global.Container];

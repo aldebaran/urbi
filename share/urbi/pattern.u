@@ -8,6 +8,13 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/loadable.u");
+requireFile("urbi/nil.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/global.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/control.u");
+
 class Global.Pattern
 {
   var pattern;

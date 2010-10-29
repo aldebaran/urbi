@@ -8,6 +8,17 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/call-message.u");
+requireFile("urbi/container.u");
+requireFile("urbi/global.u");
+requireFile("urbi/exception.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/control.u");
+requireFile("urbi/list.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/range-iterable.u");
+requireFile("urbi/comparable.u");
+
 do (Global.Dictionary)
 {
   protos = [Global.RangeIterable, Global.Comparable, Global.Container];

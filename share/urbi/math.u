@@ -8,6 +8,14 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/loadable.u");
+requireFile("urbi/call-message.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/global.u");
+requireFile("urbi/singleton.u");
+requireFile("urbi/control.u");
+requireFile("urbi/float.u");
+
 class Global.Math
 {
   setProtos([Singleton]);

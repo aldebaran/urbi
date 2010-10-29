@@ -8,6 +8,10 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/channel.u");
+requireFile("urbi/global.u");
+requireFile("urbi/control.u");
+
 do (Global.Duration)
 {
   copySlot("seconds", "asFloat");

@@ -8,6 +8,16 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/list.u");
+requireFile("urbi/nil.u");
+requireFile("urbi/orderable.u");
+requireFile("urbi/formatter.u");
+requireFile("urbi/object.u");
+requireFile("urbi/loadable.u");
+requireFile("urbi/range-iterable.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/comparable.u");
+
 do (String)
 {
   // The connectives == and < are builtins.

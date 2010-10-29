@@ -8,6 +8,19 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/loadable.u");
+requireFile("urbi/call-message.u");
+requireFile("urbi/global.u");
+requireFile("urbi/object.u");
+requireFile("urbi/dictionary.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/control.u");
+requireFile("urbi/list.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/group.u");
+requireFile("urbi/tag.u");
+requireFile("urbi/float.u");
+
 /*----------------------.
 | TrajectoryGenerator.  |
 `----------------------*/

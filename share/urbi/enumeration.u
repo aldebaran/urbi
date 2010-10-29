@@ -8,6 +8,13 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/list.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/container.u");
+requireFile("urbi/global.u");
+requireFile("urbi/range-iterable.u");
+requireFile("urbi/control.u");
+
 class Global.Enumeration : Global.RangeIterable
 {
   var this.name = "Enumeration";

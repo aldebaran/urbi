@@ -8,6 +8,15 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/list.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/loadable.u");
+requireFile("urbi/global.u");
+requireFile("urbi/dictionary.u");
+requireFile("urbi/enumeration.u");
+requireFile("urbi/control.u");
+requireFile("urbi/trajectory-generator.u");
+
 var Global.WeakPointer = Finalizable.new;
 /** A WeakPointer can be inserted into a WeakDictionary without increasing its
   * reference count. Upon destruction of the WeakPointer, it is automatically

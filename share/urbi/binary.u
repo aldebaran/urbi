@@ -8,6 +8,14 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/nil.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/global.u");
+requireFile("urbi/object.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/comparable.u");
+requireFile("urbi/control.u");
+
 class Global.Binary
 {
   addProto(Comparable);

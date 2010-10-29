@@ -8,6 +8,11 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/channel.u");
+requireFile("urbi/comparable.u");
+requireFile("urbi/control.u");
+requireFile("urbi/global.u");
+
 do (Global.&Code)
 {
   addProto(Comparable);

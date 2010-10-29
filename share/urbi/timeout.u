@@ -8,6 +8,18 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/event.u");
+requireFile("urbi/loadable.u");
+requireFile("urbi/global.u");
+requireFile("urbi/object.u");
+requireFile("urbi/string.u");
+requireFile("urbi/exception.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/control.u");
+requireFile("urbi/nil.u");
+requireFile("urbi/tag.u");
+
 const var Global.Timeout = Tag.new;
 do (Timeout)
 {

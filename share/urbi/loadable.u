@@ -8,6 +8,11 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/boolean.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/control.u");
+requireFile("urbi/global.u");
+
 class Global.Loadable
 {
   var load = false;

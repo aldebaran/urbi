@@ -8,6 +8,16 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/call-message.u");
+requireFile("urbi/object.u");
+requireFile("urbi/global.u");
+requireFile("urbi/boolean.u");
+requireFile("urbi/channel.u");
+requireFile("urbi/control.u");
+requireFile("urbi/list.u");
+requireFile("urbi/nil.u");
+requireFile("urbi/range-iterable.u");
+
 class Global.Group : RangeIterable
 {
   function init

@@ -8,6 +8,11 @@
  * See the LICENSE file for more information.
  */
 
+requireFile("urbi/global.u");
+requireFile("urbi/traceable.u");
+requireFile("urbi/control.u");
+requireFile("urbi/channel.u");
+
 do (Job)
 {
   addProto(Global.Traceable);
