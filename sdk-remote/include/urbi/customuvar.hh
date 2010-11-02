@@ -41,18 +41,27 @@ namespace urbi
   template<typename T> class CustomUVar: public UVar
   {
   public:
+    CustomUVar();
     CustomUVar(const std::string&, impl::UContextImpl* = 0);
     CustomUVar(const std::string&, const std::string&, impl::UContextImpl* = 0);
     CustomUVar(UObject&, const std::string&, impl::UContextImpl* = 0);
     T& data();
+
+    template<typename D> void operator=(D v);
     /** @return a reference to the data structure from an UVar.
      * The UVar must be a CustomUVar<T>, or the behavior will be undefined.
      */
     static T& data(UVar&);
+    static void updateCache(UVar& v);
   private:
     T data_;
   };
 }
+/// Declare a CustomVar whose custom store is its value.
+#define UBindCacheVar(cls, v, t) \
+  UBindVar(cls, v); \
+  ::urbi::createUCallback(*this, &v, "var", &CustomUVar<t>::updateCache, \
+                          v.get_name(), ctx_);
 
 # include <urbi/customuvar.hxx>
 

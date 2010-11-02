@@ -14,6 +14,10 @@
 namespace urbi
 {
   template<typename T>
+  CustomUVar<T>::CustomUVar()
+  {
+  }
+  template<typename T>
   CustomUVar<T>::CustomUVar(const std::string& name, impl::UContextImpl* impl)
   : UVar(name, impl)
   {}
@@ -36,6 +40,18 @@ namespace urbi
   T& CustomUVar<T>::data(UVar& v)
   {
     return static_cast<CustomUVar<T>&>(v).data();
+  }
+  template<typename T> void
+  CustomUVar<T>::updateCache(UVar& v)
+  {
+   static_cast<CustomUVar<T>&>(v).data() = v;
+  }
+
+  template<typename T>
+  template<typename U>
+  void CustomUVar<T>::operator = (U v)
+  {
+    this->UVar::operator = (v);
   }
 }
 
