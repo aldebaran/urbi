@@ -49,7 +49,7 @@ namespace urbi
   void
   UVar::setOwned()
   {
-    check_();
+    check();
     impl_->setOwned();
   }
 
@@ -57,7 +57,7 @@ namespace urbi
   UDataType
   UVar::type() const
   {
-    check_();
+    check();
     return impl_->type();
   }
 
@@ -65,14 +65,14 @@ namespace urbi
   void
   UVar::syncValue()
   {
-    check_();
+    check();
     impl_->sync();
   }
 
   inline const UValue&
   UVar::val() const
   {
-    check_();
+    check();
     return impl_->get();
   }
 
@@ -80,7 +80,7 @@ namespace urbi
   void
   UVar::keepSynchronized()
   {
-    check_();
+    check();
     impl_->keepSynchronized();
   }
 
@@ -88,7 +88,7 @@ namespace urbi
   UVar&
   UVar::operator=(const UValue& v)
   {
-    check_();
+    check();
     impl_->set(v);
     return *this;
   }
@@ -97,7 +97,7 @@ namespace urbi
   inline UVar& UVar::operator=(Type tv)    \
   {                                        \
     /*no need to copy, impl will do it*/   \
-    check_();                              \
+    check();                              \
     UValue v(tv, false);                   \
     impl_->set(v);                         \
     return *this;                          \
@@ -115,7 +115,7 @@ namespace urbi
   template<typename T>
   UVar& UVar::operator = (const T& v)
   {
-    check_();
+    check();
     UValue val;
     val, v;
     impl_->set(val);
@@ -125,7 +125,7 @@ namespace urbi
 # define GET(Type)                    \
   inline UVar::operator Type() const  \
   {                                   \
-    check_();                         \
+    check();                         \
     return impl_->get();              \
   }
 
@@ -146,20 +146,20 @@ namespace urbi
 
   inline void UVar::setProp(UProperty prop, const UValue &v)
   {
-    check_();
+    check();
     impl_->setProp(prop, v);
   }
 
   inline void UVar::setProp(UProperty prop, const char* v)
   {
-    check_();
+    check();
     UValue tv(v);
     impl_->setProp(prop, tv);
   }
 
   inline void UVar::setProp(UProperty prop, ufloat v)
   {
-    check_();
+    check();
     UValue tv(v);
     impl_->setProp(prop, tv);
   }
@@ -167,26 +167,26 @@ namespace urbi
   inline bool
   UVar::setBypass(bool enable)
   {
-    check_();
+    check();
     return impl_->setBypass(enable);
   }
 
   inline UValue
   UVar::getProp(UProperty prop)
   {
-    check_();
+    check();
     return impl_->getProp(prop);
   }
 
   inline void
   UVar::unnotify()
   {
-    check_();
+    check();
     impl_->unnotify();
   }
 
   inline void
-  UVar::check_() const
+  UVar::check() const
   {
     if (!impl_)
       throw std::runtime_error("Invalid use of unbound UVar");

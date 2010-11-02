@@ -160,9 +160,10 @@ namespace urbi
       RTP_YES,     ///< Force RTP
       RTP_NO       ///< Do not use RTP
     };
+
+     /// Check that impl_ is set or throw a runtime error.
+    void check() const;
   private:
-    /// Check that impl_ is set or throw a runtime error.
-    void check_() const;
     /// Pointer to internal data specifics.
     UVardata* vardata;
     void __init();

@@ -167,6 +167,7 @@ public:
     vars[1] = &b;
     vars[2] = &c;
     vars[3] = &d;
+    vars[4] = &unbound;
 
     UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB, manyWriteTest);
   }
@@ -853,8 +854,8 @@ public:
   {
     return d;
   }
-  urbi::UVar a, b, c, d;
-  urbi::UVar* vars[4];
+  urbi::UVar a, b, c, d, unbound;
+  urbi::UVar* vars[5];
   urbi::UEvent ev;
 
   //name of var that trigerred notifyChange

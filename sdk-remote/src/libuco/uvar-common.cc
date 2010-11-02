@@ -148,7 +148,7 @@ namespace urbi
   libport::utime_t
   UVar::timestamp() const
   {
-    check_();
+    check();
     return impl_->timestamp();
   }
 

@@ -80,6 +80,8 @@ namespace urbi
     , owner(owner)
     , synchronous_(true)
   {
+    if (target)
+      target->check();
     impl_ = ctx_->getGenericCallbackImpl();
     impl_->initialize(this, target?target->owned:false);
   }
@@ -97,6 +99,8 @@ namespace urbi
     , owner(owner)
     , synchronous_(true)
   {
+    if (target)
+      target->check();
     impl_ = ctx_->getGenericCallbackImpl();
     impl_->initialize(this);
   }
