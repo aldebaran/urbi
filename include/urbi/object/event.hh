@@ -15,6 +15,7 @@
 # include <boost/unordered_map.hpp>
 
 # include <urbi/object/cxx-object.hh>
+# include <urbi/object/lobby.hh>
 
 # include <runner/interpreter.hh>
 
