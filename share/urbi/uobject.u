@@ -289,8 +289,9 @@ do (getSlot("UVar"))
       var parent_getprop = parent.getSlot("getProperty")|
       parent.getProperty = getSlot("parentGetProperty")
     };
-    at(rtp->changed? if rtp != rtp_old)
-    { // Propagate to all remotes.
+    at (rtp->changed? if rtp != rtp_old)
+    {
+      // Propagate to all remotes.
       // First find the list of lobbies that have remotes
       rtp_old = rtp|
       var lobbies = []|
@@ -323,10 +324,10 @@ do (getSlot("UVar"))
     }
   };
 
-  var parentGetProperty =  function(varname, propname)
+  var parentGetProperty = function(varname, propname)
   {
     // Constant is special and does not trigger newPropertyHook.
-    if (getSlot(varname).isA(UVar) &&  propname != "constant")
+    if (getSlot(varname).isA(UVar) && propname != "constant")
     {
       if (propname == "changed")
         getSlot(varname).changed
@@ -631,7 +632,7 @@ class Global.'external'
       UVar.new(obj, varname) |
       if (!v.isVoid())
         obj.updateSlot(varname, v)|
-      // Restore properties
+      // Restore properties.
       for|(var p: props)
         obj.setProperty(varname, p.first, p.second)
     }|

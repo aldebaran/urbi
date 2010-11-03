@@ -104,10 +104,10 @@ namespace runner
   {
     if (method_name)
       raise_urbi_skip(SYMBOL(ArgumentType),
-                    method_name,
-                    to_urbi(idx),
-                    effective,
-                    expected);
+                      method_name,
+                      to_urbi(idx),
+                      effective,
+                      expected);
     else
       raise_urbi_skip(SYMBOL(ArgumentType),
                       raise_current_method,

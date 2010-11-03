@@ -580,7 +580,8 @@ namespace urbi
     }
 
     rObject
-    Object::setProperty(const std::string& slot, const std::string& prop, const rObject& value)
+    Object::setProperty(const std::string& slot,
+                        const std::string& prop, const rObject& value)
     {
       return property_set(libport::Symbol(slot), libport::Symbol(prop), value);
     }
@@ -681,14 +682,14 @@ namespace urbi
       return call(libport::Symbol(name), arg1, arg2, arg3, arg4, arg5);
     }
 
-    std::ostream& operator<< (std::ostream& s, const Object& o)
+    std::ostream& operator<<(std::ostream& s, const Object& o)
     {
       return o.print(s);
     }
 
     void
     Object::bind_variadic(const std::string& name,
-                         const boost::function1<rObject, const objects_type&>& val)
+                          const boost::function1<rObject, const objects_type&>& val)
     {
       setSlot(libport::Symbol(name), new Primitive(val));
     }
