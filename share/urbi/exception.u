@@ -323,7 +323,7 @@ class Exception.Lookup: Exception
 {
   var msg;
   var obj;
-  var suggested = nil;
+  var deep;
 
   var fixSpelling = true;
 
@@ -334,15 +334,19 @@ class Exception.Lookup: Exception
   {
     msg = m |
     obj = o |
-    if (fixSpelling)
-      suggested = m.closest({ if (deep) o.slotNames else o.localSlotNames })|
+    this.deep = deep
   };
 
   function message()
   {
-    var res = "lookup failed: %s" % msg;
-    if (suggested)
-      res += " (possible misspelling of %s)" % suggested |
+    var res = "lookup failed: %s" % msg |
+    if (fixSpelling)
+    {
+      var fix =
+        msg.closest({ if (deep) obj.slotNames else obj.localSlotNames }) |
+      if (fix)
+        res += " (possible misspelling of %s)" % fix
+    } |
     res
   };
 };
