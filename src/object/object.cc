@@ -475,10 +475,8 @@ namespace urbi
       // the C++ object to give him the right primitive type. For now,
       // we forbid inheriting from atoms.
       if (!p->valid_proto(*this))
-      {
-        boost::format fmt("cannot inherit from a %1% without being a %1% too");
-        runner::raise_primitive_error((fmt % p->type_name_get()).str());
-      }
+        FRAISE("cannot inherit from a %1% without being one",
+               p->type_name_get());
 
       if (!libport::has(*protos_, p))
         push_front (*protos_, p);

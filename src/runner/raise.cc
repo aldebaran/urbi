@@ -159,13 +159,10 @@ namespace runner
                      bool deep)
   {
     // assert_user_mode("Lookup", msg);
-
     static bool raising = false;
-
     if (raising)
-    {
-      raise_primitive_error(libport::format("Lookup error in lookup error on %s.", libport::escape(msg)));
-    }
+      FRAISE("lookup error in lookup error on %s",
+             libport::escape(msg));
 
     LIBPORT_SCOPE_SET(raising, true);
     raise_urbi_skip(SYMBOL(Lookup),
