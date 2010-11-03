@@ -244,11 +244,10 @@ do (getSlot("UVar"))
   {
     targetObj.setSlot(slotName, this)|
     targetObj.setProperty(slotName, "updateHook", getSlot("updateBounce"))|
-    if (!getProperty("val", "rangemax").isVoid)
-    {
+    if (hasProperty("val", "rangemax"))
       targetObj.setProperty(slotName, "rangemax",
-                            getProperty("val", "rangemax"))}|
-    if (!getProperty("val", "rangemin").isVoid)
+                            getProperty("val", "rangemax"))|
+    if (hasProperty("val", "rangemin"))
       targetObj.setProperty(slotName, "rangemin",
                             getProperty("val", "rangemin"))|
     targetObj.updateSlot("getProperty", getSlot("parentGetProperty"))
@@ -324,7 +323,7 @@ do (getSlot("UVar"))
     }
   };
 
-  var parentGetProperty = function(varname, propname)
+  function parentGetProperty(varname, propname)
   {
     // Constant is special and does not trigger newPropertyHook.
     if (getSlot(varname).isA(UVar) && propname != "constant")
@@ -439,14 +438,17 @@ var Global.uobjects_handle = WeakPointer.new;
 
 // UObjects can use evaluate at initialization-time.
 UVar.new(Global,"evaluate");
-Global.getSlot("evaluate").eraseThrowingCallbacks = false;
-Global.getSlot("evaluate").owned = true;
-Global.getSlot("evaluate").notifyChangeOwned(uobjects_handle, function()
+do (Global.getSlot("evaluate"))
 {
-  var res = eval(Global.getSlot("evaluate").val.asString).acceptVoid |
-  if (!res.isVoid)
-    Global.getSlot("evaluate").writeOwned(res)
-})|;
+  eraseThrowingCallbacks = false;
+  owned = true;
+  notifyChangeOwned(uobjects_handle, function()
+  {
+    var res = eval(Global.getSlot("evaluate").val.asString).acceptVoid |
+    if (!res.isVoid)
+      Global.getSlot("evaluate").writeOwned(res)
+  });
+};
 
 UVar.new(Global, "currentLobbyId");
 Global.getSlot("currentLobbyId").notifyAccess(uobjects_handle, function()
@@ -513,18 +515,24 @@ class Global.'external'
     if (uobjects not in Global.protos)
       Global.addProto(uobjects)|
     uobjects.setSlot(objname, UObject.new) |
-    uobjects.getSlot(objname).setSlot("__uobjectName", objname) |
-    uobjects.getSlot(objname).setSlot("isRemote", true) |
-    uobjects.getSlot(objname).uobjectInit |
+    do (uobjects.getSlot(objname))
+    {
+      var __uobjectName = objname |
+      var isRemote = true |
+      uobjectInit |
+    }|
     if (!lobby.hasLocalSlot(objname))
       wall("ERROR: lobby " + lobby + " has no slot " + objname)
     else
       for| (var s: lobby.getSlot(objname).localSlotNames)
         uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s))|
     lobby.removeSlot(objname)|
-    uobjects.getSlot(objname).setSlot("lobby", lobby) |
-    uobjects.getSlot(objname).setSlot("notifies", [ => ]) |
-    uobjects.getSlot(objname).init() |
+    do (uobjects.getSlot(objname))
+    {
+      var lobby = lobby |
+      var notifies = [ => ] |
+      init() |
+    }|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
     function cloner()
