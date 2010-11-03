@@ -106,7 +106,6 @@ do (Float)
   function newPropertyHook(owner, name, prop, value)
   {
     installUpdateHookStack(owner, name)|
-
     // Setup 'n mecanism
     {
       var slotName = name + "_quote_n"|

@@ -53,11 +53,9 @@ function Global.installUpdateHookStack(o, slot)
   function setProperty(name, prop, v)
   {
     if (prop == "updateHook"
-      && !getProperty(name, prop).isVoid
-      && getProperty(name, prop).isA(getSlot("UpdateHookStack")))
-    {
+        && hasProperty(name, prop)
+        && getProperty(name, prop).isA(getSlot("UpdateHookStack")))
       getProperty(name, prop).addHook(v)
-    }
     else
       Object.getSlot("setProperty").apply([this, name, prop, v]);
   };

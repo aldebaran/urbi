@@ -1702,14 +1702,37 @@ o.getSlot("test");
 
 There is some syntactic sugar for slot methods:
 \begin{itemize}
-\item \lstinline|var o.name| is equivalent to
-  \lstinline|o.createSlot("name")|.
-\item \lstinline|var o.name = value| is equivalent to
-  \lstinline|o.setSlot("name", value)|.
-\item \lstinline|o.name = value| is equivalent to
-  \lstinline|o.updateSlot("name", value)|.
+\item \lstinline|var \var{o}.\var{name}| is equivalent to
+  \lstinline|\var{o}.createSlot("name")|.
+\item \lstinline|var \var{o}.\var{name} = \var{value}| is equivalent to
+  \lstinline|\var{o}.setSlot("name", \var{value})|.
+\item \lstinline|\var{o}.\var{name} = \var{value}| is equivalent to
+  \lstinline|\var{o}.updateSlot("name", \var{value})|.
 \end{itemize}
 
+
+\subsubsection{Properties}
+
+See \autoref{sec:tut:prop} for an introduction to properties.
+
+There is a number of functions to manipulate properties:
+\begin{itemize}
+\item \refSlot[Object]{setProperty}, to define/set a property.
+\item \refSlot[Object]{getProperty}, to get a property.
+\item \refSlot[Object]{removeProperty}, to delete a property.
+\item \refSlot[Object]{hasProperty}, to test for the existence of a
+  property.
+\item \refSlot[Object]{properties}, to get all the properties of a slot.
+\end{itemize}
+
+There is also syntactic sugar for some of them:
+
+\begin{itemize}
+\item \lstinline|\var{slot}->\var{name}| is equivalent to
+  \lstinline|getProperty("slot", "name")|.
+\item \lstinline|\var{slot}->\var{name} = \var{value}| is equivalent to
+  \lstinline|setProperty("slot", "name", \var{value})|.
+\end{itemize}
 
 \subsection{Prototypes}
 

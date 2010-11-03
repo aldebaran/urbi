@@ -1232,6 +1232,12 @@ PropertyWrite:
   attributes:
     - value:
         type: rExp
+  printer:
+    - ~owner
+    - '"->"'
+    - $name
+    - '" = "'
+    - ~value
 
 MetaCall:
   super: LValueArgs

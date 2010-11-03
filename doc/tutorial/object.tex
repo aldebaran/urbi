@@ -413,8 +413,126 @@ ArithPair.new(1, 10) + ArithPair.new(2, 20) * ArithPair.new(3, 30);
 [00000000] (7, 610)
 \end{urbiscript}
 
+\section{Properties}
+\label{sec:tut:prop}
 
-%\section{Conclusion}
+Slots should be understood as names to values.  Several names may point to
+the same value (a phenomenon called \dfn{aliasing}).  Enriching values is
+easy: provide them with new slots.  Yet it is sometimes needed to define the
+behavior of the \emph{slot} rather than the property of the value.  This is
+the purpose of \dfn[property]{properties} in \us.
+
+\subsection{Features of Values}
+In following example, we attach some random property \lstinline|foo| to the
+value pointed to by the slot \lstinline|x|.
+
+\begin{urbiscript}
+var x = 123;
+[00000000] 123
+var x.foo = 42;
+[00000000] 42
+\end{urbiscript}
+
+If \lstinline|y| is another slot to the value of \lstinline|x|, then it
+provides the same \lstinline|foo| feature:
+
+\begin{urbiscript}
+var y = x;
+[00000000] 123
+y.foo;
+[00000000] 42
+\end{urbiscript}
+
+If \lstinline|x| is bound to a new object (e.g., 456), then the feature
+\lstinline|foo| is no longer present, since it's a feature of the
+\emph{value} (i.e., 123), and not one of the slot (i.e., \lstinline|x|).
+
+\begin{urbiscript}
+x = 456;
+[00000000] 456
+x.foo;
+[00000000:error] !!! lookup failed: foo
+\end{urbiscript}
+
+Of course, \lstinline|y|, which is still linked to the original value (123),
+answers to queries to \lstinline|foo|.
+
+\begin{urbiscript}
+y.foo;
+[00000000] 42
+\end{urbiscript}
+
+\subsection{Features of Slots}
+
+If, on the contrary you want to attach a feature to the slot-as-a-name,
+rather than to the value it contains, use the properties.  The syntax is
+\lstinline|\var{slotName}->\var{propertyName}|.
+
+\begin{urbiscript}
+x = 123;
+[00000000] 123
+x->foo = 42;
+[00000000] 42
+x->foo;
+[00000000] 42
+\end{urbiscript}
+
+Copying the value contained by a slot does not propagate the properties of
+the slot:
+
+\begin{urbiscript}
+y = x;
+[00000000] 123
+y->foo;
+[00000000:error] !!! property lookup failed: y->foo
+\end{urbiscript}
+
+And if you assign a new value to a slot, the properties of the slot are
+preserved:
+
+\begin{urbiscript}
+x = 456;
+[00000000] 456
+x->foo = 42;
+[00000000] 42
+\end{urbiscript}
+
+\subsection{Standard Properties}
+
+Some properties are handled by the system itself.
+
+\subsubsection{Constant Slots}
+\label{sec:prop:const}
+The \lstinline|constant| property defines whether a slot can be assigned a
+new value.
+
+\begin{urbiscript}
+var c = 0;
+[00000000] 0
+c = 1;
+[00000000] 1
+
+c->constant = true;
+[00000000] true
+c = 2;
+[00000000:error] !!! cannot modify const slot
+
+c->constant = false;
+[00000000] false
+c = 3;
+[00000000] 3
+\end{urbiscript}
+
+A new slot can be declared constant when first defined:
+
+\begin{urbiscript}
+const var two = 2;
+[00000036] 2
+two = 3;
+[00000037:error] !!! cannot modify const slot
+two->constant;
+[00000038] true
+\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex

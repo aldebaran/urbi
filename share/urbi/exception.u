@@ -351,6 +351,29 @@ class Exception.Lookup: Exception
   };
 };
 
+class Exception.PropertyLookup: Exception
+{
+  var obj;
+  // Not named "slot" to avoid the features of Exception.slot.
+  var slotName;
+  var prop;
+
+  // \param o     the object into which the lookup is performed
+  // \param s     the slot name
+  // \param p     the property name
+  function init(var o, var s, var p)
+  {
+    obj = o |
+    slotName = s |
+    prop = p
+  };
+
+  function message()
+  {
+    "property lookup failed: %s->%s" % [slotName, prop];
+  };
+};
+
 makeMsgException(
   "UnexpectedVoid", Exception, [],
   "unexpected void"

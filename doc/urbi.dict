@@ -734,6 +734,7 @@ printf
 printSalaries
 prog
 programName
+propertyName
 propName
 proto
 proto's

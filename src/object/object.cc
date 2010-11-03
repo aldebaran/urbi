@@ -287,9 +287,12 @@ namespace urbi
     }
 
     rObject
-    Object::property_get(key_type k, key_type p)
+    Object::property_get(key_type slot, key_type prop)
     {
-      return slot_get(k).property_get(p);
+      if (rObject res = slot_get(slot).property_get(prop))
+        return res;
+      runner::raise_urbi_skip(SYMBOL(PropertyLookup),
+                              this, to_urbi(slot), to_urbi(prop));
     }
 
     bool
@@ -307,10 +310,10 @@ namespace urbi
       if (safe_slot_locate(k).first != this)
         slot_set(k, &slot_get(k));
       Slot& slot = slot_get(k);
-      if (slot.property_set(p, value))
-        if (slot->slot_has(SYMBOL(newPropertyHook)))
-          slot->call(SYMBOL(newPropertyHook),
-                     this, new String(k), new String(p), value);
+      if (slot.property_set(p, value)
+          && slot->slot_has(SYMBOL(newPropertyHook)))
+        slot->call(SYMBOL(newPropertyHook),
+                   this, new String(k), new String(p), value);
       return value;
     }
 

@@ -234,14 +234,13 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
 
 \item[getProperty](<slotName>, <propName>)%
   Return the value of the \var{propName} property associated to the
-  slot \var{slotName} if defined, \lstinline|void| otherwise.
+  slot \var{slotName} if defined.  Raise an error otherwise.
 \begin{urbiscript}
 const var myPi = 3.14|;
-assert
-{
-  getProperty("myPi", "constant");
-  getProperty("myPi", "foobar").isVoid;
-};
+assert (getProperty("myPi", "constant"));
+
+getProperty("myPi", "foobar");
+[00000045:error] !!! property lookup failed: myPi->foobar
 \end{urbiscript}
 
 \item[getLocalSlot](<name>)%
