@@ -1671,18 +1671,17 @@ Any value in \us is an object. Objects contain:
 
 \subsubsection{Manipulation}
 
-\dfn{Objects} can contain any number of \dfn{slots}, every slot has a
-name and a value. Slots are often called ``fields'', ``attributes'' or
+\dfn{Objects} can contain any number of \dfn{slots}, every slot has a name
+and a value. Slots are often called ``fields'', ``attributes'' or
 ``members'' in other object-oriented languages.
 
-The \lstinline|createSlot| function adds a slot to an object with the
-void (\autoref{sec:std-void}) value. The \lstinline|updateSlot|
-function changes the value of a slot; \lstinline|getSlot| reads
-it. The \lstinline|setSlot| method creates a slot with a given
-value. Finally, the \lstinline|localSlotNames| method returns the list of
-the object slot's name. The listing below shows how to manipulate
-slots. More documentation about these methods can be found in
-\autorefObject{Object}.
+The \lstinline|createSlot| function adds a slot to an object with the void
+(\autoref{sec:std-void}) value. The \lstinline|updateSlot| function changes
+the value of a slot; \lstinline|getSlot| reads it. The \lstinline|setSlot|
+method creates a slot with a given value. Finally, the
+\lstinline|localSlotNames| method returns the list of the object slot's
+name. The listing below shows how to manipulate slots. More documentation
+about these methods can be found in \autorefObject{Object}.
 
 \begin{urbiscript}
 var o = Object.new|
@@ -1716,14 +1715,13 @@ There is some syntactic sugar for slot methods:
 
 \subsubsection{Manipulation}
 
-\us is a prototype-based language, unlike most classical object
-oriented language, which are class-based. In prototype-based
-languages, objects have no type, only \dfn{prototypes}, from which they
-inherit behavior.
+\us is a prototype-based language, unlike most classical object oriented
+language, which are class-based. In prototype-based languages, objects have
+no type, only \dfn{prototypes}, from which they inherit behavior.
 
-\us objects can have several prototypes. The list of prototypes is
-given by the \lstinline|protos| method; they can be added or removed
-with \lstinline|addProto| and \lstinline|removeProto|.  See
+\us objects can have several prototypes. The list of prototypes is given by
+the \lstinline|protos| method; they can be added or removed with
+\lstinline|addProto| and \lstinline|removeProto|.  See
 \autorefObject{Object} for more documentation.
 
 \begin{urbiscript}
@@ -1750,16 +1748,16 @@ is, when looking for a slot in an object:
 \begin{itemize}
 \item \lstinline|getSlot| checks first if the object itself has the
   requested slot. If so, it returns its value.
-\item Otherwise, it applies the same research on every prototype, in
-  the order of the prototype list (since addProto inserts in the front
-  of the prototype list, the last prototype added has priority). This
+\item Otherwise, it applies the same research on every prototype, in the
+  order of the prototype list (since \lstinline|addProto| inserts in the
+  front of the prototype list, the last prototype added has priority). This
   search is recursive: \lstinline|getSlot| will also look in the first
-  prototype's prototype, etc before looking in the second
-  prototype. If the slot is found in a prototype, it is returned.
+  prototype's prototype, etc. before looking in the second prototype. If the
+  slot is found in a prototype, it is returned.
 \item Finally, if no prototype had the slot, an error is raised.
 \end{itemize}
 
-This listing shows how slots are inherited.
+The following example shows how slots are inherited.
 
 \begin{urbiscript}
 var a = Object.new|
@@ -1786,14 +1784,13 @@ c.getSlot("x");
 
 \subsubsection{Copy on write}
 
-The \lstinline|updateSlot| method has a particular behavior with
-respect to prototypes. Although performing an \lstinline|updateSlot|
-on a non existent slot is an error, it is valid if the slot is
-inherited from a prototype. In this case, the slot is however not
-updated in the prototype, but rather created in the object itself,
-with the new value. This process is called \dfn{copy on write}; thanks
-to it, prototypes are not altered when the slot is overridden in a
-child object.
+The \lstinline|updateSlot| method has a particular behavior with respect to
+prototypes. Although performing an \lstinline|updateSlot| on a non existent
+slot is an error, it is valid if the slot is inherited from a prototype. In
+this case, the slot is however not updated in the prototype, but rather
+created in the object itself, with the new value. This process is called
+\dfn{copy on write}; thanks to it, prototypes are not altered when the slot
+is overridden in a child object.
 
 \begin{urbiscript}
 var p = Object.new|
@@ -1815,12 +1812,11 @@ d.slot;
 \subsection{Sending messages}
 
 A \dfn{message} in \us consists in a message name and arguments. One can
-send a message to an object with the dot (\lstinline|.|) operator,
-followed by the message name (which can be any valid identifier) and
-the arguments, as shown below. When there are no
-arguments, the parentheses can be omitted. As you might see,
-sending messages is very similar to calling methods in classical
-languages.
+send a message to an object with the dot (\lstinline|.|) operator, followed
+by the message name (which can be any valid identifier) and the arguments,
+as shown below. When there are no arguments, the parentheses can be
+omitted. As you might see, sending messages is very similar to calling
+methods in classical languages.
 
 \begin{urbiunchecked}
 // Send the message msg to object obj, with arguments arg1 and arg2.
@@ -1836,14 +1832,14 @@ When a message \var{msg} is sent to object \lstinline|obj|:
 \begin{itemize}
 \item The \var{msg} slot of \lstinline|obj| is retrieved (i.e.,
   \lstinline[style=varInString]|obj.getSlot("\var{msg}")|). If the slot is
-  not found, the classic lookup error is raised.
-\item If the object is a \dfn{routine} (either a primitive, written in
-  \Cxx for instance, or a function implemented in \us), it is invoked
-  with the message arguments, and the returned value is the result. As
-  a consequence, the number of arguments in the message sending must
-  match the one required by the routine.
-\item Otherwise (the object is not a routine), this object is the
-  result of the message sending. There must be no argument.
+  not found, a lookup error is raised.
+\item If the object is a \dfn{routine} (either a primitive, written in \Cxx
+  for instance, or a function implemented in \us), it is invoked with the
+  message arguments, and the returned value is the result. As a consequence,
+  the number of arguments in the message sending must match the one required
+  by the routine.
+\item Otherwise (the object is not a routine), this object is the result of
+  the message sending. There must be no argument.
 \end{itemize}
 
 Such message sending is illustrated below.
