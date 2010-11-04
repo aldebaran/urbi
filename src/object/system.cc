@@ -422,9 +422,9 @@ namespace urbi
     load(const rObject& name, bool global)
     {
       libport::xlt_advise dl;
-      dl.ext()
+      dl.ext   ()
         .global(global)
-        .path(uobject_uobjects_path());
+        .path  (uobject_uobjects_path());
 
       libport::xlt_handle handle;
       try

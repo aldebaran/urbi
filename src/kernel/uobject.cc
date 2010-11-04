@@ -400,11 +400,9 @@ rObject uobject_initialize(const objects_type& args)
   where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
               SYMBOL(searchPathSet), &uobject_uobjectsPathSet);
 
-  uobjects_path = libport::file_library(boost::assign::list_of
-          (libport::xgetenv("URBI_UOBJECT_PATH", ".:"))
-          (boost::lexical_cast<std::string>(
-              kernel::urbiserver->urbi_root_get().uobjects_path())),
-          ":");
+  uobjects_path.push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"),
+                          kernel::urbiserver->urbi_root_get().uobjects_path(),
+                          ":");
 
   return object::void_class;
 }
