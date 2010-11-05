@@ -24,8 +24,7 @@ class Global.Lazy : Global.Comparable
   {
     // code is very likely to be a closure, do not fire it, otherwise
     // we might compare two values instead of two expressions.
-    ::code == other::code
-    && ::val.acceptVoid == other::val.acceptVoid;
+    ::code == other::code && ::val.acceptVoid == other::val.acceptVoid;
   };
 
   function eval()

@@ -141,8 +141,7 @@ do (System)
         // Evaluate all arguments, and pretty print them.
         var argStr = args.map(closure (v) { v.asString }) |
         var argVal = args.map(closure (v) {
-          if (v::val.isVoid
-            || v::val.allProtos.hasSame(Executable))
+          if (v::val.isVoid || v::val.allProtos.hasSame(Executable))
             unevaluated
           else
             v.val
