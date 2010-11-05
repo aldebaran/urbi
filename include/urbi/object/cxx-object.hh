@@ -15,8 +15,6 @@
 
 # include <boost/optional.hpp>
 
-# include <libport/debug.hh>
-# include <libport/package-info.hh>
 # include <libport/preproc.hh>
 
 # include <kernel/userver.hh>
@@ -168,9 +166,6 @@ namespace urbi
   static                                                                \
   int LIBPORT_CAT(_urbi_initialization, __LINE__)()                     \
   {                                                                     \
-    GD_CATEGORY(Urbi.CxxObject);                                        \
-    GD_INFO_TRACE("register initialization: "                           \
-                  BOOST_PP_STRINGIZE(Action));                          \
     ::urbi::initialization_register(Action);                            \
     return 0xbadf00d;                                                   \
   }                                                                     \
