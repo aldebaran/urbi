@@ -21,7 +21,7 @@ function Global.UpdateHookStack (name, value)
   res
 };
 
-do (getSlot("UpdateHookStack"))
+do (::UpdateHookStack)
 {
   var hooks = [];
 
@@ -44,20 +44,20 @@ function Global.installUpdateHookStack(o, slot)
   if (o.hasProperty(slot, "updateHook"))
   {
     old = o.getProperty(slot, "updateHook");
-    if (old.isA(getSlot("UpdateHookStack")))
+    if (old.isA(::UpdateHookStack))
       return;
   };
 
-  o.setProperty(slot, "updateHook", getSlot("UpdateHookStack").new);
+  o.setProperty(slot, "updateHook", ::UpdateHookStack.new);
 
   function setProperty(name, prop, v)
   {
     if (prop == "updateHook"
         && hasProperty(name, prop)
-        && getProperty(name, prop).isA(getSlot("UpdateHookStack")))
+        && getProperty(name, prop).isA(::UpdateHookStack))
       getProperty(name, prop).addHook(v)
     else
-      Object.getSlot("setProperty").apply([this, name, prop, v]);
+      Object::setProperty.apply([this, name, prop, v]);
   };
 
   o.setProperty = setProperty;

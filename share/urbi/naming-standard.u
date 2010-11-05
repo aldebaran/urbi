@@ -58,5 +58,5 @@ do (Global)
     Lobby.wall("Warning, Facet is deprecated, use 'Interface'");
     Facet = Interface
   };
-  var Interface.facets = Interface.getSlot("interfaces");
+  var Interface.facets = Interface::interfaces;
 };

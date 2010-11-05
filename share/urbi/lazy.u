@@ -24,26 +24,26 @@ class Global.Lazy : Global.Comparable
   {
     // code is very likely to be a closure, do not fire it, otherwise
     // we might compare two values instead of two expressions.
-    getSlot("code") == other.getSlot("code")
-    && getSlot("val").acceptVoid == other.getSlot("val").acceptVoid;
+    ::code == other::code
+    && ::val.acceptVoid == other::val.acceptVoid;
   };
 
   function eval()
   {
     val = code.acceptVoid|
-    getSlot("val").unacceptVoid
+    ::val.unacceptVoid
   };
 
   function value()
   {
-    if (getSlot("val").isVoid)
+    if (::val.isVoid)
       eval|
-    getSlot("val").unacceptVoid
+    ::val.unacceptVoid
   };
 
   function asString ()
   {
-    var c = getSlot("code") |
+    var c = ::code |
     if (c.hasSlot("bodyString"))
       c.bodyString
     else
@@ -56,8 +56,8 @@ class Global.PseudoLazy: Lazy
 
   function eval()
   {
-    val = getSlot("code").acceptVoid|
-    getSlot("val").unacceptVoid
+    val = ::code.acceptVoid|
+    ::val.unacceptVoid
   };
 
 };

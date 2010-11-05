@@ -33,7 +33,7 @@ do (Global.UObject)
   function 'new'
   {
     // The fresh child.
-    var res = call.getSlot("target").clone |
+    var res = call::target.clone |
     // Call the "init" from the parent, retargetted to the child.
     call.message = "init" |
     try
@@ -105,7 +105,7 @@ do (Global.UObject)
   {
     if (0 < obj.updateInterval)
       obj.updateTask: detach(obj.periodicCall(obj.updateInterval,
-                                          obj.getSlot("update"),
+                                          obj::update,
                                       "update", [obj]))
   };
 
@@ -218,7 +218,7 @@ do (Global.UObject)
  * someFunc called just before a value is read. The contained value is stored
  * in the 'val' slot of the UVar.
  */
-do (getSlot("UVar"))
+do (::UVar)
 {
   var traceSet = Event.new;
   var traceGet = Event.new;
@@ -243,14 +243,14 @@ do (getSlot("UVar"))
   function copy(targetObj, slotName)
   {
     targetObj.setSlot(slotName, this)|
-    targetObj.setProperty(slotName, "updateHook", getSlot("updateBounce"))|
+    targetObj.setProperty(slotName, "updateHook", ::updateBounce)|
     if (hasProperty("val", "rangemax"))
       targetObj.setProperty(slotName, "rangemax",
                             getProperty("val", "rangemax"))|
     if (hasProperty("val", "rangemin"))
       targetObj.setProperty(slotName, "rangemin",
                             getProperty("val", "rangemin"))|
-    targetObj.updateSlot("getProperty", getSlot("parentGetProperty"))
+    targetObj.updateSlot("getProperty", ::parentGetProperty)
   };
 
   function init(parent, name)
@@ -264,8 +264,8 @@ do (getSlot("UVar"))
       ownerName = parent.asString|
     var this.initialName = name|
     parent.setSlot(name, this)|
-    parent.setProperty(name, "updateHook", getSlot("updateBounce"))|
-    var this.newPropertyHook = getSlot("newPropertyHook_")|
+    parent.setProperty(name, "updateHook", ::updateBounce)|
+    var this.newPropertyHook = ::newPropertyHook_|
     var slotName = name + "_quote_n"|
     // If the slot was containing a float, it already has a *_quote_n
     // slot, which is not the right one.
@@ -285,8 +285,8 @@ do (getSlot("UVar"))
       })|
     if (not parent.hasLocalSlot("__has_uvar"))
     {
-      var parent_getprop = parent.getSlot("getProperty")|
-      parent.getProperty = getSlot("parentGetProperty")
+      var parent_getprop = parent::getProperty|
+      parent.getProperty = ::parentGetProperty
     };
     at (rtp->changed? if rtp != rtp_old)
     {
@@ -311,7 +311,7 @@ do (getSlot("UVar"))
         chan.lobby = l |
         chan << msg |
         var currentBindings = l.__bindingFunc.getWithDefault(fullname,nil)|
-        if (currentBindings.isA(getSlot("Executable")))
+        if (currentBindings.isA(::Executable))
         { // Standard TCP notifychange, remove it...
           change.remove(currentBindings);
           //... and replace it with RTP version
@@ -334,7 +334,7 @@ do (getSlot("UVar"))
         getSlot(varname).getProperty("val", propname).acceptVoid
     }
     else
-      Object.getSlot("getProperty").apply([this, varname, propname])
+      Object::getProperty.apply([this, varname, propname])
   };
 
   /// Global number of notifyaccess
@@ -353,7 +353,7 @@ do (getSlot("UVar"))
     }
   };
 
-  var __clone = getSlot("clone");
+  var __clone = ::clone;
 
   removeSlot("clone");
   const var clone = function()
@@ -397,12 +397,12 @@ do (getSlot("UVar"))
   function notifyAccess(handle, f)
   {
     //beware of the CoW
-    getSlot("UVar").nAccess++ |
+    ::UVar.nAccess++ |
     var wasEmpty = access.empty |
     access[handle] = f |
     if (wasEmpty)
       loopCheck |
-    if (getSlot("UVar").nAccess == 1)
+    if (::UVar.nAccess == 1)
       onHasNotifyAccess! |
     void
   };
@@ -430,7 +430,7 @@ do (UValue)
     else
       '$id'.asToplevelPrintable
   };
-  var asPrintable = getSlot("asToplevelPrintable");
+  var asPrintable = ::asToplevelPrintable;
 };
 
 class Global.uobjects {};
@@ -438,28 +438,28 @@ var Global.uobjects_handle = WeakPointer.new;
 
 // UObjects can use evaluate at initialization-time.
 UVar.new(Global,"evaluate");
-do (Global.getSlot("evaluate"))
+do (Global::evaluate)
 {
   eraseThrowingCallbacks = false;
   owned = true;
   notifyChangeOwned(uobjects_handle, function()
   {
-    var res = eval(Global.getSlot("evaluate").val.asString).acceptVoid |
+    var res = eval(Global::evaluate.val.asString).acceptVoid |
     if (!res.isVoid)
-      Global.getSlot("evaluate").writeOwned(res)
+      Global::evaluate.writeOwned(res)
   });
 };
 
 UVar.new(Global, "currentLobbyId");
-Global.getSlot("currentLobbyId").notifyAccess(uobjects_handle, function()
+Global::currentLobbyId.notifyAccess(uobjects_handle, function()
 {
-  getSlot("currentLobbyId").val = lobby.uid;
+  ::currentLobbyId.val = lobby.uid;
 });
 
 UVar.new(Global, "currentRunnerInUObjectUpdate");
-Global.getSlot("currentRunnerInUObjectUpdate").notifyAccess(uobjects_handle, function()
+Global::currentRunnerInUObjectUpdate.notifyAccess(uobjects_handle, function()
 {
-  getSlot("currentRunnerInUObjectUpdate").val
+  ::currentRunnerInUObjectUpdate.val
     = currentRunner.hasLocalSlot("$uobjectInUpdate");
 });
 

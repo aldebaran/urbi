@@ -101,7 +101,7 @@ class Global.Tuple
                                     size)|
         var m = call.evalArgs |
         m += m.range(size - m.size) |
-        Tuple.getSlot("init").apply([this, m])
+        Tuple::init.apply([this, m])
       };
 
       var idx = 0;

@@ -39,6 +39,6 @@ class Global.CallMessage
 
   function eval()
   {
-    getSlot("target").callMessage(this)
+    ::target.callMessage(this)
   };
 };

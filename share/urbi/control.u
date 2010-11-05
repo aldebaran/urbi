@@ -86,7 +86,7 @@ class Global.Control
 // Provide these at the Global level.
 do (Global)
 {
-  var detach  = Control.getSlot("detach");
-  var disown  = Control.getSlot("disown");
-  var persist = Control.getSlot("persist");
+  var detach  = Control::detach;
+  var disown  = Control::disown;
+  var persist = Control::persist;
 }|;

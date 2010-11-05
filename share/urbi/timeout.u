@@ -14,7 +14,7 @@ do (Timeout)
   var type = "Timeout" |
   var asTimeout = this |
   var timedOut = false |
-  var asString = Object.getSlot("asString");
+  var asString = Object::asString;
 
   function init(time_, thrower_ = true)
   {

@@ -31,7 +31,7 @@ class Global.Exception
   /// Make the instanciation of subobjects easier.
   function '$Exception'(msg)
   {
-    Exception.getSlot("init").apply([this, msg])
+    Exception::init.apply([this, msg])
   };
 
   function location()
@@ -292,7 +292,7 @@ class Exception.Type: Exception
   function message()
   {
     "unexpected %s, expected a %s"
-      % [getSlot("effective").asPrintable, expectedType]
+      % [::effective.asPrintable, expectedType]
   };
 };
 
@@ -303,7 +303,7 @@ class Exception.ArgumentType: Exception.Type
 
   function init(routine, index, effective, expected)
   {
-    Exception.Type.getSlot("init").apply([this, effective, expected]) |
+    Exception.Type::init.apply([this, effective, expected]) |
     this.routine = routine |
     this.index = index
   };
@@ -311,7 +311,7 @@ class Exception.ArgumentType: Exception.Type
   function message()
   {
     "unexpected %s for argument %s, expected a %s"
-      % [getSlot("effective").asPrintable, index, expectedType]
+      % [::effective.asPrintable, index, expectedType]
   };
 };
 

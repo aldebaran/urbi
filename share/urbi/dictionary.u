@@ -17,7 +17,7 @@ do (Global.Dictionary)
     function init(name)
     {
       var this.key = name;
-      Exception.getSlot("init").apply([this, "missing key: %s" % name]);
+      Exception::init.apply([this, "missing key: %s" % name]);
     }
   };
 

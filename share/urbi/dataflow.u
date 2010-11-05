@@ -529,13 +529,13 @@ var a = all.new(0);
 var b = all.new(0);
 var a.compactName = "a";
 var b.compactName = "b";
-a.setNotifyChangeByName(b.getSlot("c"));
-all.setNotifyChangeByName(a.getSlot("lastChangeVal"));
+a.setNotifyChangeByName(b::c);
+all.setNotifyChangeByName(a::lastChangeVal);
 b.c = 12;
-all2.writeByName(b.getSlot("c"), 15);
+all2.writeByName(b::c, 15);
 b.b = 12;
 b.setNotifyAccess(1);
-all.setNotifyChangeByName(b.getSlot("lastAccessVal"));
+all.setNotifyChangeByName(b::lastAccessVal);
 b.b;
 */
 /* RTC test sequence
@@ -553,6 +553,6 @@ fsink.connect("val", cp2);
 fsink2.connect("val", cp2);
 a.connect("b", cp);
 a.connect("b", cp2);
-all2.writeByName(a.getSlot("b"), 15);
-all2.writeByName(a.getSlot("a"), 15);
+all2.writeByName(a::b, 15);
+all2.writeByName(a::a, 15);
 */

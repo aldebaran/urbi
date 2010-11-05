@@ -16,7 +16,7 @@ do (Lobby)
 
   function asString()
   {
-    var res = Object.getSlot("asString").apply([this]) |
+    var res = Object::asString.apply([this]) |
     if (hasSlot("remoteIP"))
       res += " (%s)" % remoteIP |
     return res
@@ -133,7 +133,7 @@ do (Lobby)
 
       }|
       // Prevent call to quit as it would close the ghost connection
-      var quitBackend = getSlot("quit");
+      var quitBackend = ::quit;
       quit = function() { socket.disconnect}|
       socket.connect(host, port)|
       var t = Tag.new|
