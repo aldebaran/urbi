@@ -497,42 +497,6 @@ x->foo = 42;
 [00000000] 42
 \end{urbiscript}
 
-\subsection{Standard Properties}
-
-Some properties are handled by the system itself.
-
-\subsubsection{Constant Slots}
-\label{sec:prop:const}
-The \lstinline|constant| property defines whether a slot can be assigned a
-new value.
-
-\begin{urbiscript}
-var c = 0;
-[00000000] 0
-c = 1;
-[00000000] 1
-
-c->constant = true;
-[00000000] true
-c = 2;
-[00000000:error] !!! cannot modify const slot
-
-c->constant = false;
-[00000000] false
-c = 3;
-[00000000] 3
-\end{urbiscript}
-
-A new slot can be declared constant when first defined:
-
-\begin{urbiscript}
-const var two = 2;
-[00000036] 2
-two = 3;
-[00000037:error] !!! cannot modify const slot
-two->constant;
-[00000038] true
-\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex

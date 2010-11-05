@@ -1716,9 +1716,12 @@ There is some syntactic sugar for slot methods:
 \end{itemize}
 
 
-\subsubsection{Properties}
+\subsection{Properties}
+\label{sec:lang:prop}
+Slots can have properties, see \autoref{sec:tut:prop} for an introduction to
+properties.
 
-See \autoref{sec:tut:prop} for an introduction to properties.
+\subsubsection{Manipulation}
 
 There is a number of functions to manipulate properties:
 \begin{itemize}
@@ -1738,6 +1741,83 @@ There is also syntactic sugar for some of them:
 \item \lstinline|\var{slot}->\var{name} = \var{value}| is equivalent to
   \lstinline[style=varInString]|setProperty("\var{slot}", "\var{name}", \var{value})|.
 \end{itemize}
+
+\subsubsection{Standard Properties}
+\label{sec:lang:prop:std}
+
+Some properties are handled by the system itself.
+
+
+\paragraph{\lstinline|changed|}
+
+The \lstinline|changed| property allows to monitor when a slot is bound to
+new values: each time a new value is assigned to the monitored slot, a event
+\lstinline|changed| is emitted:
+
+\begin{urbiscript}[firstnumber=1]
+var x = []|;
+
+at (x->changed?)
+  echo("x->changed");
+
+x = [1]|;
+[00092656] *** x->changed
+x = [1, 2]|;
+[00092756] *** x->changed
+\end{urbiscript}
+
+Even if the slot is assigned to the very same value, the
+\lstinline|x->changed| event is emitted.
+
+\begin{urbiscript}
+x = x|;
+[00092856] *** x->changed
+\end{urbiscript}
+
+This is different from checking updates to the value a slot is bound to:
+
+\begin{urbiscript}
+x << 3;
+[00092866] [1, 2, 3]
+\end{urbiscript}
+
+One can monitor updates using the \lstinline|changed| \emph{slot} (not
+property).
+
+
+\paragraph{\lstinline|constant|}
+The \lstinline|constant| property defines whether a slot can be assigned a
+new value.
+
+\begin{urbiscript}
+var c = 0;
+[00000000] 0
+c = 1;
+[00000000] 1
+
+c->constant = true;
+[00000000] true
+c = 2;
+[00000000:error] !!! cannot modify const slot
+
+c->constant = false;
+[00000000] false
+c = 3;
+[00000000] 3
+\end{urbiscript}
+
+A new slot can be declared constant when first defined:
+
+\begin{urbiscript}
+const var two = 2;
+[00000036] 2
+two = 3;
+[00000037:error] !!! cannot modify const slot
+two->constant;
+[00000038] true
+\end{urbiscript}
+
+
 
 \subsection{Prototypes}
 
