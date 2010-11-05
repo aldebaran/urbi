@@ -59,7 +59,8 @@ namespace urbi
         o << "UrbiException"
           << "{"
           << libport::incendl
-          <<   value_get() << "," << libport::iendl
+          <<   value_get()->call(SYMBOL(asPrintable))->as<String>()->value_get()
+          << "," << libport::iendl
           <<   backtrace_get()
           << libport::decendl
           << "}";
