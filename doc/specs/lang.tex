@@ -1660,42 +1660,47 @@ w();
 
 \section{Objects}
 
-Any value in \us is an object. Objects contain:
+Any \us value is an object. Objects contain:
 
 \begin{itemize}
+\item A set of slots, which associate an object to a name.
 \item A list of prototypes, which are also objects.
-\item A list of slots, which to a name associate an object.
 \end{itemize}
 
 \subsection{Slots}
-
-\subsubsection{Manipulation}
 
 \dfn{Objects} can contain any number of \dfn{slots}, every slot has a name
 and a value. Slots are often called ``fields'', ``attributes'' or
 ``members'' in other object-oriented languages.
 
-The \lstinline|createSlot| function adds a slot to an object with the void
-(\autoref{sec:std-void}) value. The \lstinline|updateSlot| function changes
-the value of a slot; \lstinline|getSlot| reads it. The \lstinline|setSlot|
-method creates a slot with a given value. Finally, the
-\lstinline|localSlotNames| method returns the list of the object slot's
-name. The listing below shows how to manipulate slots. More documentation
-about these methods can be found in \autorefObject{Object}.
+\subsubsection{Manipulation}
+
+The \refSlot[Object]{createSlot} function adds a slot to an object with the
+void (\autoref{sec:std-void}) value. The \refSlot[Object]{updateSlot}
+function changes the value of a slot; \refSlot[Object]{getSlot} reads
+it. The \refSlot[Object]{setSlot} method creates a slot with a given
+value. Finally, the \refSlot[Object]{localSlotNames} method returns the list
+of the object slot's name. The listing below shows how to manipulate
+slots. More documentation about these methods can be found in
+\autorefObject{Object}.
 
 \begin{urbiscript}
 var o = Object.new|
-o.localSlotNames;
-[00000000] []
+assert (o.localSlotNames == []);
+
 o.createSlot("test");
-o.localSlotNames;
-[00000000] ["test"]
-o.getSlot("test").asString;
-[00000000] "void"
+assert
+{
+  o.localSlotNames == ["test"];
+  o.getSlot("test").isVoid;
+};
+
 o.updateSlot("test", 42);
 [00000000] 42
-o.getSlot("test");
-[00000000] 42
+assert
+{
+  o.getSlot("test") == 42;
+};
 \end{urbiscript}
 
 \subsubsection{Syntactic Sugar}
@@ -1703,11 +1708,11 @@ o.getSlot("test");
 There is some syntactic sugar for slot methods:
 \begin{itemize}
 \item \lstinline|var \var{o}.\var{name}| is equivalent to
-  \lstinline|\var{o}.createSlot("name")|.
+  \lstinline[style=varInString]|\var{o}.createSlot("\var{name}")|.
 \item \lstinline|var \var{o}.\var{name} = \var{value}| is equivalent to
-  \lstinline|\var{o}.setSlot("name", \var{value})|.
+  \lstinline[style=varInString]|\var{o}.setSlot("\var{name}", \var{value})|.
 \item \lstinline|\var{o}.\var{name} = \var{value}| is equivalent to
-  \lstinline|\var{o}.updateSlot("name", \var{value})|.
+  \lstinline[style=varInString]|\var{o}.updateSlot("\var{name}", \var{value})|.
 \end{itemize}
 
 
@@ -1729,9 +1734,9 @@ There is also syntactic sugar for some of them:
 
 \begin{itemize}
 \item \lstinline|\var{slot}->\var{name}| is equivalent to
-  \lstinline|getProperty("slot", "name")|.
+  \lstinline[style=varInString]|getProperty("\var{slot}", "\var{name}")|.
 \item \lstinline|\var{slot}->\var{name} = \var{value}| is equivalent to
-  \lstinline|setProperty("slot", "name", \var{value})|.
+  \lstinline[style=varInString]|setProperty("\var{slot}", "\var{name}", \var{value})|.
 \end{itemize}
 
 \subsection{Prototypes}
@@ -1743,22 +1748,21 @@ language, which are class-based. In prototype-based languages, objects have
 no type, only \dfn{prototypes}, from which they inherit behavior.
 
 \us objects can have several prototypes. The list of prototypes is given by
-the \lstinline|protos| method; they can be added or removed with
-\lstinline|addProto| and \lstinline|removeProto|.  See
+the \refSlot[Object]{protos} method; they can be added or removed with
+\refSlot[Object]{addProto} and \refSlot[Object]{removeProto}.  See
 \autorefObject{Object} for more documentation.
 
 \begin{urbiscript}
 var ob = Object.new|
-ob.protos;
-[00000000] [Object]
+assert (ob.protos == [Object]);
+
 ob.addProto(Pair);
 [00000000] (nil, nil)
-ob.protos;
-[00000000] [(nil, nil), Object]
+assert (ob.protos == [(nil, nil), Object]);
+
 ob.removeProto(Object);
 [00000000] (nil, nil)
-ob.protos;
-[00000000] [(nil, nil)]
+assert (ob.protos == [(nil, nil)]);
 \end{urbiscript}
 
 \subsubsection{Inheritance}
@@ -1795,11 +1799,11 @@ c.getSlot("x");
 c.addProto(a)|
 c.getSlot("x");
 [00000000] "slot in a"
-// b is prepended to the prototype list, and has thus priority
+// b is prepended to the prototype list, and has thus priority.
 c.addProto(b)|
 c.getSlot("x");
 [00000000] "slot in b"
-// a local slot in c has priority over prototypes
+// A local slot in c has priority over prototypes.
 c.setSlot("x", "slot in c")|
 c.getSlot("x");
 [00000000] "slot in c"
@@ -1850,12 +1854,12 @@ obj.msg();
 obj.msg;
 \end{urbiunchecked}
 
-When a message \var{msg} is sent to object \lstinline|obj|:
+When a message \var{msg} is sent to object \var{obj}:
 
 \begin{itemize}
-\item The \var{msg} slot of \lstinline|obj| is retrieved (i.e.,
-  \lstinline[style=varInString]|obj.getSlot("\var{msg}")|). If the slot is
-  not found, a lookup error is raised.
+\item The \var{msg} slot of \var{obj} is retrieved (i.e.,
+  \lstinline[style=varInString]|\var{obj}.getSlot("\var{msg}")|). If the
+  slot is not found, a lookup error is raised.
 \item If the object is a \dfn{routine} (either a primitive, written in \Cxx
   for instance, or a function implemented in \us), it is invoked with the
   message arguments, and the returned value is the result. As a consequence,
