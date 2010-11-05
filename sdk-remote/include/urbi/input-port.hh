@@ -23,6 +23,7 @@ namespace urbi
   {
   public:
     InputPort();
+    InputPort(const std::string& objname, const std::string& name);
     InputPort(UObject* owner, const std::string& name);
     InputPort(const InputPort& b);
     InputPort& operator=(const InputPort& b);

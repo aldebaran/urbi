@@ -108,7 +108,8 @@ namespace urbi
     callConnections(runner::Runner& r, rObject self, libport::Symbol notifyList)
     {
       rList l = self->slot_get(notifyList)->as<List>();
-      List::value_type& callbacks = l->value_get();
+      // We must copy the list as callbacks might remove themselve
+      List::value_type callbacks = l->value_get();
       for (List::value_type::iterator i = callbacks.begin();
            i != callbacks.end(); )
       {
@@ -193,7 +194,8 @@ namespace urbi
       if (!looping_
           &&
           (!slot_get(SYMBOL(change))->call(SYMBOL(empty))->as_bool()
-           || slot_get(SYMBOL(changed))->call(SYMBOL(hasSubscribers))->as_bool()
+          || slot_get(SYMBOL(changed))->call(SYMBOL(hasSubscribers))->as_bool()
+          ||!slot_get(SYMBOL(changeConnections))->call(SYMBOL(empty))->as_bool()
            )
           && !slot_get(SYMBOL(access))->call(SYMBOL(empty))->as_bool())
       {

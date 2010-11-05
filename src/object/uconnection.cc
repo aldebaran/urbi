@@ -50,11 +50,6 @@ namespace urbi
       if (!t)
         return false;
       libport::utime_t now = libport::utime();
-      std::cerr << (now - libport::seconds_to_utime(lastCall))
-      <<" " << libport::seconds_to_utime(minInterval)
-      << " " << (now - libport::seconds_to_utime(lastCall) >
-                 libport::seconds_to_utime(minInterval))
-      <<" " << processing << std::endl;
       if (enabled && now - libport::seconds_to_utime(lastCall) >
           libport::seconds_to_utime(minInterval) && !processing)
       {
@@ -86,11 +81,11 @@ namespace urbi
                    target, SYMBOL(change), self);
       libport::utime_t end = libport::utime();
       lastCall = (double)end / 1.0e6;
-      dobule ct = (double)(end-now) / 1.0e6;
+      double ct = (double)(end-now) / 1.0e6;
       minCallTime = (callCount? std::min(ct, minCallTime):ct);
       maxCallTime = std::max(ct, maxCallTime);
       callCount++;
-      totalCallTime += ct
+      totalCallTime += ct;
       processing = false;
     }
   }

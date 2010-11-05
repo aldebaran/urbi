@@ -1146,6 +1146,8 @@ namespace urbi
       DECLARE(lastCall);
       DECLARE(callCount);
       DECLARE(totalCallTime);
+      DECLARE(minCallTime);
+      DECLARE(maxCallTime);
       DECLARE(asynchronous);
       init_();
     }

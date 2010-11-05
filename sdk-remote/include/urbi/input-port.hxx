@@ -18,6 +18,13 @@ namespace urbi
   {
   }
 
+  inline InputPort::InputPort(const std::string& objname,
+                              const std::string& name)
+  :UVar(objname, name)
+  {
+    impl_->setInputPort(true);
+  }
+
   inline InputPort::InputPort(UObject* owner, const std::string& name)
   :UVar(*owner, name)
   {

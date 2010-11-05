@@ -189,7 +189,10 @@ do (Global.UObject)
     if (!cnt && hasSlot(objname) && getSlot(objname).hasSlot(varname))
     {
       // May or may not be present, never mind
-      getSlot(objname).getSlot(varname).change.remove(lobby.__bindingFunc[fullname])|
+      if (lobby.__bindingFunc[fullname].isA(UConnection))
+        lobby.__bindingFunc[fullname].disconnect
+      else
+        getSlot(objname).getSlot(varname).change.remove(lobby.__bindingFunc[fullname])|
       // May be using the shared RTP object
       if (lobby.hasLocalSlot("sharedRTP")
           && lobby.__bindingFunc[fullname] === lobby.sharedRTP)
@@ -392,7 +395,7 @@ do (.&UVar)
 
   function notifyChange(handle, f)
   {
-    var wasEmpty = change.empty |
+    var wasEmpty = change.empty&&changeConnections.empty |
     change[handle] = f |
     if (wasEmpty)
       loopCheck |
@@ -431,7 +434,7 @@ do (.&UVar)
   {
     var base = lobby;
     for|(var c: n.split("."))
-      base = base.getSLot(c) |
+      base = base.getSlot(c) |
     base
   };
   void
@@ -442,19 +445,51 @@ do(UConnection)
   function init(from, to)
   {
     /// We cannot take a reference on those uvars.
-    source = from.fullName;
-    target = to.fullName;
-    from.changeConnections << this;
-    var this.start = time;
+    source = from.fullName|
+    target = to.fullName |
+    var wasEmpty = from.change.empty&& from.changeConnections.empty |
+    from.changeConnections << this |
+    if (wasEmpty)
+      from.loopCheck |
+    var this.start = time
+  };
+  function niceName(varname)
+  {
+    var uvar|
+    try {
+      uvar = UVar.fromName(varname)
+    }
+    catch(var e)
+    {
+      return varname
+    };
+    var uob = uobjects.getSlot(uvar.ownerName)|
+    {
+      ["compactName", "componentName", "__uobjectName"].map
+      ( function(x) { if (uob.hasSlot(x)) uob.getSlot(x) else ""}).filter
+      ( function(x) { x})[0] + "." + uvar.initialName
+    }
   };
   function asString()
   {
-    "Connection( " + source + " >> " + target +" )"
+    if (!source)
+      "Connection ()"
+    else
+      niceName(source) + " >> " + niceName(target)
+  };
+  function displayStats()
+  {
+    "" + fireRate +" Hz   mean " + meanCallTime*1000000 + " us   max "
+      + maxCallTime * 1000000  + " us   min "
+      + minCallTime * 1000000 + " us"
   };
   function disconnect()
   {
-    src = UVar.fromName(source)|
+    try {
+    var src = UVar.fromName(source)|
     src.changeConnections.remove(this)
+    } catch(var e) {}|
+    source = ""
   };
   function reconnect(from)
   {
@@ -474,6 +509,20 @@ do(UConnection)
   function fireRate()
   {
     callCount / (time-start)
+  };
+  /// Return the list of all connections in the system
+  function getAll()
+  {
+    var res = []|
+    for|(var i: uobjects.localSlotNames)
+    {
+      var o = getSlot(i)|
+      if (o.isA(UObject))
+        for|(var j: o.localSlotNames)
+          if (o.getSlot(j).isA(UVar))
+            res += o.getSlot(j).changeConnections
+    }|
+    res
   };
 };
 
@@ -796,13 +845,26 @@ class Global.'external'
                  v,
                  uob.getProperty(varname, "timestamp")]
     }|
-    lobby.__bindingFunc[fullname] = f |
-    if (uobjects.hasLocalSlot(fr))
+    if (uobjects.hasSlot(fr))
     {
-        uobjects.getSlot(fr).notifies
-        .getWithDefault(objname + "." + varname, [], true) << f|
+      var o = uobjects.getSlot(fr)|
+      var iportname = fullname.replace(".", "_")|
+      if (!o.hasLocalSlot(iportname))
+      {
+        UVar.new(o, iportname)|
+        var o.getSlot(iportname).inputPort = true
+      }|
+      o.getSlot(iportname).notifyChange(lobby.handle, f)|
+      lobby.__bindingFunc[fullname] =
+          uobjects.getSlot(objname).getSlot(varname) >> o.getSlot(iportname)|
+      uobjects.getSlot(fr).notifies
+      .getWithDefault(objname + "." + varname, [], true) << f|
+    }
+    else
+    {
+      lobby.__bindingFunc[fullname] = f |
+      uobjects.getSlot(objname).getSlot(varname).notifyChange(lobby.handle, f)
     }|
-    uobjects.getSlot(objname).getSlot(varname).notifyChange(lobby.handle, f)|
     void
   };
 
@@ -898,6 +960,18 @@ class Global.'external'
       }
     }
   };
+};
+
+/// Display statistics for all found connections
+function uobjects.connectionStats()
+{
+  for|(var c: UConnection.getAll)
+    echo(c.asString  + " " +  c.displayStats)
+};
+function uobjects.resetConnectionStats()
+{
+  for|(var c: UConnection.getAll)
+    c.resetStats
 };
 
 /** Inherit from UValueSerializable to make objects of your class available from

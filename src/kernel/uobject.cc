@@ -45,6 +45,7 @@
 #include <urbi/object/tag.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
+#include <object/uconnection.hh>
 #include <object/urbi-exception.hh>
 #include <object/uvalue.hh>
 #include <object/uvar.hh>
@@ -55,6 +56,7 @@
 
 #include <urbi/ucontext-factory.hh>
 
+GD_CATEGORY(UObject);
 
 // Make it more readable.
 using namespace boost::assign;
@@ -189,11 +191,18 @@ namespace urbi
       virtual void initialize(UGenericCallback* owner);
       virtual void registerCallback();
       virtual void clear();
+      /// Force using the closed Var instead of the one given as argument.
+      bool useClosedVar_;
     private:
       UGenericCallback* owner_;
       bool owned_;
       bool registered_;
+      /// The Primitive we put in 'change'.
       rObject callback_;
+      /// The connection we implicitly created or 0.
+      object::rUConnection connection_;
+      /// Input port the notify was redirected to, or empty
+      std::string inportName_;
       friend class KernelUObjectImpl;
       friend class KernelUVarImpl;
     };
@@ -417,18 +426,20 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
       (&ugc->owner)? ugc->owner.__name:"unknown",
       ugc->name
       ));
+  urbi::impl::KernelUGenericCallbackImpl& impl =
+    static_cast<urbi::impl::KernelUGenericCallbackImpl&>  (*ugc->impl_);
   bool dummy = false;
   FINALLY(((bool, dummy)), bound_context.pop_back());
   urbi::UList l;
   l.array << new urbi::UValue();
-  if (ol.size() > 1)
+  if (ol.size() > 1 && !impl.useClosedVar_)
     l[0].storage = new urbi::UVar
       (object::from_urbi<std::string>(ol[1]->call(SYMBOL(fullName))));
   else
     l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
   ugc->eval(l);
-  if (ol.size() > 1)
+  if (ol.size() > 1 && !impl.useClosedVar_)
     delete (urbi::UVar*)l[0].storage;
   Stats::add(ol.front().get(), traceName, libport::utime() - t);
   return object::void_class;
@@ -1013,31 +1024,28 @@ namespace urbi
       rObject r;
       // Try to locate the target urbiscript UVar, which might be gone.
       // In this case, callbacks are gone too.
-      try {
-        StringPair p = split_name(owner_->get_name());
-        r = get_base(p.first);
-        if (!r)
-          return;
-        r = r->slot_get(Symbol(p.second));
-      }
-      catch(...)
-      {
-        return;
-      }
       foreach(KernelUGenericCallbackImpl* v, callbacks_)
       {
-        Symbol s;
-        if (v->owner_->type == "var")
-          s = Symbol(v->owned_?"changeOwned":"change");
-        else if (v->owner_->type == "varaccess")
-	{
-          r->slot_get(SYMBOL(access))->call(SYMBOL(remove), v->callback_);
-          r->slot_get(SYMBOL(accessInLoop))->call(SYMBOL(remove), v->callback_);
+        rObject r = object::UVar::fromName(
+          v->inportName_.empty()?v->owner_->name:v->inportName_);
+        if (r)
+        {
+          Symbol s;
+          if (v->owner_->type == "var")
+            s = Symbol(v->owned_?"changeOwned":"change");
+          else if (v->owner_->type == "varaccess")
+          {
+            r->slot_get(SYMBOL(access))->call(SYMBOL(remove), v->callback_);
+            r->slot_get(SYMBOL(accessInLoop))->call(SYMBOL(remove),
+                                                    v->callback_);
           continue;
-	}
-        else
-          continue;
-        r->slot_get(s)->call(SYMBOL(remove), v->callback_);
+          }
+          else
+            continue;
+          r->slot_get(s)->call(SYMBOL(remove), v->callback_);
+        }
+        if (v->connection_)
+          v->connection_->CxxObject::call(SYMBOL(disconnect));
       }
     }
 
@@ -1216,6 +1224,11 @@ namespace urbi
     {
       StringPair p = split_name(owner_->get_name());
       rObject o = get_base(p.first);
+      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
+      bool last_rdm = r.redefinition_mode_get();
+      FINALLY( ((bool, last_rdm))((runner::Runner&, r)),
+                      r.redefinition_mode_set(last_rdm));
+      r.redefinition_mode_set(true);
       if (enable)
         o->slot_get(Symbol(p.second))->slot_set(SYMBOL(inputPort),
                                                 object::to_urbi(true));
@@ -1257,6 +1270,7 @@ namespace urbi
                   << " already registered" << std::endl;
         return;
       }
+      useClosedVar_ = false;
       registered_ = true;
       StringPair p = split_name(owner_->name);
       std::string method = p.second;
@@ -1271,9 +1285,14 @@ namespace urbi
                      args)
         ->as<object::String>()->value_get();
       std::string traceName;
-      Symbol s = me->slot_has(SYMBOL(compactName))?
-        SYMBOL(compactName):SYMBOL(__uobjectName);
-      traceName = me->slot_get(s)->as<object::String>()->value_get();
+      if (me->slot_has(SYMBOL(compactName)))
+        traceName = me->slot_get(SYMBOL(compactName))
+          ->as<object::String>()->value_get();
+      else if (me->slot_has(SYMBOL(__uobjectName)))
+        traceName = me->slot_get(SYMBOL(__uobjectName))
+          ->as<object::String>()->value_get();
+      else
+        traceName = meId;
       if (owner_->type == "function")
       {
         traceName += "." + p.second;
@@ -1283,7 +1302,10 @@ namespace urbi
                        (boost::bind(&wrap_ucallback, _1, owner_, traceName))));
       }
       if (owner_->type == "var" || owner_->type == "varaccess")
-      {
+      { // NotifyChange or NotifyAccess callback
+
+        //owner_->owner is the UObject that sets the callback: target
+        // Compute tracing name
         // traceName is objName__obj__var
         traceName += "." + p.second + " --> ";
         if (&owner_->owner)
@@ -1296,6 +1318,7 @@ namespace urbi
               traceName += you->slot_get(s)->as<object::String>()->value_get();
           }
         }
+        // Source UVar
         rObject var = me->slot_get(Symbol(method));
         aver(var);
         Symbol sym(SYMBOL(notifyAccess));
@@ -1308,6 +1331,32 @@ namespace urbi
         }
         rObject source = get_base(owner_->objname);
         aver(source);
+        if (source != me)
+        {
+          if (sym == SYMBOL(notifyChange))
+          {
+            // Use the new mechanism: create an input port and use it
+            std::string ipname = owner_->name;
+            size_t p = ipname.find_first_of('.');
+            if (p != ipname.npos)
+              ipname[p] = '_';
+            InputPort ip(owner_->objname, ipname);
+            inportName_ = owner_->objname + "." + ipname;
+            // Retarget callback
+            var = object::UVar::fromName(owner_->objname + "." + ipname);
+            object::rUConnection c
+            = object::UConnection::proto->CxxObject::call(SYMBOL(new),
+               object::UVar::fromName(owner_->name),
+               var)->as<object::UConnection>();
+            connection_ = c;
+            useClosedVar_ = true;
+          }
+          else
+            GD_FWARN("Invalid usage of foreign UVar: notifyaccess or USensor"
+                       "notifychange on %s from %s",
+                     owner_->name, owner_->objname);
+        }
+        // Get the weakpointer handle for this object
         rObject handle = source->slot_get(SYMBOL(handle));
         rObject f = var->slot_get(sym);
         aver(f);
@@ -1356,6 +1405,11 @@ namespace urbi
     StringPair split_name(const std::string& name)
     {
       size_t p = name.find_last_of(".");
+      if (p == name.npos)
+      {
+        GD_FWARN("Invalid argument to split_name: %s", name);
+        return StringPair(name, "");
+      }
       std::string oname = name.substr(0, p);
       std::string slot = name.substr(p + 1, name.npos);
       return StringPair(oname, slot);
