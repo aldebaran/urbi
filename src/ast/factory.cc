@@ -407,6 +407,13 @@ namespace ast
     return exp(get % target % make_string(l, member));
   }
 
+  rExp
+  Factory::make_get_slot(const location& l,
+                         libport::Symbol member)
+  {
+    return make_get_slot(l, new Implicit(l), member);
+  }
+
   /// "class" lvalue protos block
   rExp
   Factory::make_class(const location& l,

@@ -935,6 +935,7 @@ lvalue:
 
 exp:
   exp "::" id   { $$ = MAKE(get_slot, @$, $1, $3); }
+|     "::" id   { $$ = MAKE(get_slot, @$, $2); }
 ;
 
 id:

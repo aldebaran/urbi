@@ -123,6 +123,12 @@ namespace ast
     make_get_slot(const location& l,
                   rExp target, libport::Symbol member);
 
+    /// ":: <member>".
+    static
+    rExp
+    make_get_slot(const location& l,
+                  libport::Symbol member);
+
     /// "class" lvalue protos block
     static
     rExp
