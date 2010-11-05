@@ -581,6 +581,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "->"            RETURN(MINUS_GT);
 "."             RETURN(POINT);
+"::"            RETURN(COLON_COLON);
 ":"             RETURN(COLON);
 "~"             RETURN(TILDA);
 

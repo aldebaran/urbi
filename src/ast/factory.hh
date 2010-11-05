@@ -117,6 +117,11 @@ namespace ast
               rExp target, libport::Symbol method,
               rExp arg1, rExp arg2, rExp arg3 = 0) /* const */;
 
+    /// "<target> :: <member>".
+    static
+    rExp
+    make_get_slot(const location& l,
+                  rExp target, libport::Symbol member);
 
     /// "class" lvalue protos block
     static

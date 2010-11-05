@@ -147,6 +147,7 @@
         CLOSURE      "closure"
         CONST        "const"
         CONTINUE     "continue"
+        COLON_COLON  "::"
         COLON        ":"
         DEFAULT       "default"
         ELSE         "else"
@@ -253,7 +254,7 @@
 // + -                             left to right
 // * / %                           left to right
 // ! ~ ++ -- - (type) * & sizeof   right to left
-// () [] -> .                      left to right
+// () [] -> . ::                   left to right
 
  /*
    ! < ( so that !m(x) be read as !(m(x)).
@@ -317,6 +318,7 @@
 %precedence "("
 %precedence "["
 %precedence  "."
+%precedence  "::"
 
 /* Urbi Grammar */
 %%
@@ -929,6 +931,10 @@ exp:
 lvalue:
           id    { $$ = MAKE(call, @$, $1); }
 | exp "." id    { $$ = MAKE(call, @$, $1, $3); }
+;
+
+exp:
+  exp "::" id   { $$ = MAKE(get_slot, @$, $1, $3); }
 ;
 
 id:
