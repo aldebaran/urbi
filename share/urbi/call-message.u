@@ -39,6 +39,6 @@ class Global.CallMessage
 
   function eval()
   {
-    ::target.callMessage(this)
+    .&target.callMessage(this)
   };
 };

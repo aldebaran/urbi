@@ -46,7 +46,7 @@ do (Event)
       control:
         {
           sleep(duration)|
-          var '$pattern'.instance = res::trigger.apply([res] + '$evt'.payload)|
+          var '$pattern'.instance = res.&trigger.apply([res] + '$evt'.payload)|
         }
     }
     onleave

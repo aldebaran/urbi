@@ -8,7 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-do (Global::Code)
+do (Global.&Code)
 {
   addProto(Comparable);
 };

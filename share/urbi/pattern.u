@@ -24,7 +24,7 @@ class Global.Pattern
   function match(value)
   {
     matchPattern(pattern, value)
-    && (::guard.isNil || guard(this))
+    && (.&guard.isNil || guard(this))
   };
 
   function matchPattern(pattern, value)

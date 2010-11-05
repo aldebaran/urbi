@@ -65,7 +65,7 @@ class Global.Channel.Filter: Channel
 {
   function init(name="", filter=Channel.Filter.uclientFilter)
   {
-    Channel::init.apply([this, name]);
+    Channel.&init.apply([this, name]);
     var this.filter = filter;
   };
   function checkFilter(v)

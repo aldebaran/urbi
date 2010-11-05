@@ -20,7 +20,7 @@ class Global.Group : RangeIterable
   function add
   {
     // Fetch Object's updateSlot or we will trigger the fallback
-    Object::updateSlot.apply([this, "members", members + call.evalArgs])|
+    Object.&updateSlot.apply([this, "members", members + call.evalArgs])|
     this
   };
 
@@ -31,7 +31,7 @@ class Global.Group : RangeIterable
   function remove
   {
     // Fetch Object's updateSlot or we will trigger the fallback
-    Object::updateSlot.apply([this, "members", members - call.evalArgs])|
+    Object.&updateSlot.apply([this, "members", members - call.evalArgs])|
     this
   };
 
@@ -66,7 +66,7 @@ class Global.Group : RangeIterable
     if (results.all(methodToFunction("isVoid")))
       void
     else
-      Group::new.apply([Group] + results)
+      Group.&new.apply([Group] + results)
   };
 
   for| (var s : ["getProperty", "hasProperty", "setProperty", "updateSlot"])

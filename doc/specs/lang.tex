@@ -750,7 +750,7 @@ documentation of the classes that provide them.
 \newcommand{\operatorpropass}{\operator  {->}   {a->b = v}         {-}     {Property assignment}    {setProperty("a", "b", v)}}
 \newcommand{\operatordot}    {\operator  {.}    {a.b}              {-}     {Message sending}        {Not redefinable}       }
 \newcommand{\operatordota}   {\operator  {.}    {a.b(args)}        {-}     {Message sending}        {Not redefinable}       }
-\newcommand{\operatorcolcol} {\operator  {::}   {a::b}             {-}     {Slot access}            {a.getSlot("b")}        }
+\newcommand{\operatorcolcol} {\operator  {.\&}   {a.\&b}             {-}     {Slot access}            {a.getSlot("b")}        }
 \newcommand{\operatorass}[1][]{\operator[#1]
                                          {=}    {a = b}            {Right} {Assignment}             {updateSlot("a", b)}    }
 
@@ -1250,9 +1250,9 @@ function obj.f() { 24 }|;
 assert
 {
   obj.f == 24;
-  obj::f != 24;
-  obj::f.isA(Code);
-  obj::f === obj.getSlot("f");
+  obj.&f != 24;
+  obj.&f.isA(.&Code);
+  obj.&f === obj.getSlot("f");
 };
 \end{urbiscript}
 
@@ -1710,14 +1710,14 @@ o.createSlot("test");
 assert
 {
   o.localSlotNames == ["test"];
-  o.getSlot("test").isVoid;
+  o.&test.isVoid;
 };
 
 o.updateSlot("test", 42);
 [00000000] 42
 assert
 {
-  o.getSlot("test") == 42;
+  o.&test == 42;
 };
 \end{urbiscript}
 

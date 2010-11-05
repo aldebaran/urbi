@@ -31,7 +31,7 @@ class Global.Exception
   /// Make the instanciation of subobjects easier.
   function '$Exception'(msg)
   {
-    Exception::init.apply([this, msg])
+    Exception.&init.apply([this, msg])
   };
 
   function location()
@@ -40,7 +40,7 @@ class Global.Exception
     // the exception was thrown from (e.g., the "eval" or "load"
     // call).  This location is stored in 'loc', while '$location' is
     // always set by the generic exception throwing mechanism
-    // (Interpreter::raise).
+    // (Interpreter.&raise).
     if (hasLocalSlot("loc"))
       loc
     else if (!hideSystemFiles)
@@ -292,7 +292,7 @@ class Exception.Type: Exception
   function message()
   {
     "unexpected %s, expected a %s"
-      % [::effective.asPrintable, expectedType]
+      % [.&effective.asPrintable, expectedType]
   };
 };
 
@@ -303,7 +303,7 @@ class Exception.ArgumentType: Exception.Type
 
   function init(routine, index, effective, expected)
   {
-    Exception.Type::init.apply([this, effective, expected]) |
+    Exception.Type.&init.apply([this, effective, expected]) |
     this.routine = routine |
     this.index = index
   };
@@ -311,7 +311,7 @@ class Exception.ArgumentType: Exception.Type
   function message()
   {
     "unexpected %s for argument %s, expected a %s"
-      % [::effective.asPrintable, index, expectedType]
+      % [.&effective.asPrintable, index, expectedType]
   };
 };
 

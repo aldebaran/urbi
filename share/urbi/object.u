@@ -50,7 +50,7 @@ do (Object)
   {
     // Beware that we may be losing the ancestry on Object, which has
     // access to "addProto".
-    var add = Object::addProto |
+    var add = Object.&addProto |
     protos.clear() |
     for| (var p: ps.reverse)
       add.apply([this, p]) |
@@ -65,7 +65,7 @@ do (Object)
   function 'new'
   {
     // The fresh child.
-    var res = call::target.clone |
+    var res = call.&target.clone |
     // Call the "init" from the parent, retargetted to the child.
     call.message = "init" |
     res.callMessage(call) |

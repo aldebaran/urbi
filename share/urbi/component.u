@@ -163,9 +163,9 @@ class Global.Component
   function updateSlot(name, val)
   {
     if (hasLocalSlot(name))
-      Object::updateSlot.apply([this, name, val])
+      Object.&updateSlot.apply([this, name, val])
     else
-      Group::updateSlot.apply([this, name, val], "updateSlot")
+      Group.&updateSlot.apply([this, name, val], "updateSlot")
   };
   function init(name)
   {
@@ -186,7 +186,7 @@ class Global.Component
     setSlot(value.componentName, value) |
     setProperty(value.componentName, "constant", true) |
     this << value |
-    Object::updateSlot.apply([value, "parentComponent", this]) |
+    Object.&updateSlot.apply([value, "parentComponent", this]) |
     value
   };
   /// Add device \b value, name it \b name.

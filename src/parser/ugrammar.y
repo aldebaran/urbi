@@ -147,7 +147,6 @@
         CLOSURE      "closure"
         CONST        "const"
         CONTINUE     "continue"
-        COLON_COLON  "::"
         COLON        ":"
         DEFAULT       "default"
         ELSE         "else"
@@ -162,6 +161,7 @@
         LPAREN       "("
         ONLEAVE      "onleave"
         POINT        "."
+        POINT_AND    ".&"
         RBRACE       "}"
         RBRACKET     "]"
         RETURN       "return"
@@ -318,7 +318,7 @@
 %precedence "("
 %precedence "["
 %precedence  "."
-%precedence  "::"
+%precedence  ".&"
 
 /* Urbi Grammar */
 %%
@@ -934,8 +934,8 @@ lvalue:
 ;
 
 exp:
-  exp "::" id   { $$ = MAKE(get_slot, @$, $1, $3); }
-|     "::" id   { $$ = MAKE(get_slot, @$, $2); }
+      ".&" id   { $$ = MAKE(get_slot, @$, $2); }
+| exp ".&" id   { $$ = MAKE(get_slot, @$, $1, $3); }
 ;
 
 id:

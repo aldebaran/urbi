@@ -141,7 +141,7 @@ do (System)
         // Evaluate all arguments, and pretty print them.
         var argStr = args.map(closure (v) { v.asString }) |
         var argVal = args.map(closure (v) {
-          if (v::val.isVoid || v::val.allProtos.hasSame(Executable))
+          if (v.&val.isVoid || v.&val.allProtos.hasSame(Executable))
             unevaluated
           else
             v.val
@@ -158,7 +158,7 @@ do (System)
 
 
   /// assert_op(Operator: String | Lazy, Lhs, Rhs).
-  var assert_op = ::assertCall;
+  var assert_op = .&assertCall;
 
   var period = 20ms;
 
@@ -168,7 +168,7 @@ do (System)
     setSystemFiles(value) |
     void
   };
-  var loadFile_ = ::loadFile;
+  var loadFile_ = .&loadFile;
   var defaultIsSystem = true;
   loadFile = function(file, isSystem = defaultIsSystem)
   {
@@ -196,7 +196,7 @@ do (System)
     "rewrite/desugarer.cc",
     "rewrite/pattern-binder.cc",
     "rewrite/rescoper.cc"
-  ].each(::addSystemFile);
+  ].each(.&addSystemFile);
 
   /// Look for file and load it.
   // Throw on errors.
@@ -242,7 +242,7 @@ do (System)
 
   // Do not make a wrapper function here, as you would get a tag for
   // the scope of that function, instead of the caller.
-  setSlot("scopeTag", Tag::scope);
+  setSlot("scopeTag", Tag.&scope);
 
   function version()
   {

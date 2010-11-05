@@ -71,7 +71,7 @@ at (headTouch.val->changed? if headTouch.val)
   the callback. You can use the global \var{uobjects\_handle}.
 \begin{urbiscript}
 UVar.new(Global, "y")|
-Global.getSlot("y").notifyChange(uobjects_handle, closure() {
+Global.&y.notifyChange(uobjects_handle, closure() {
   echo("The value is now " + Global.y)
 })|
 Global.y = 12;
