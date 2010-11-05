@@ -1243,6 +1243,19 @@ These core operators provide access to slots and their properties. See
   \operatorcolcol
 \end{operatorTable}
 
+\begin{urbiscript}
+var obj = Object.new|;
+function obj.f() { 24 }|;
+
+assert
+{
+  obj.f == 24;
+  obj::f != 24;
+  obj::f.isA(Code);
+  obj::f === obj.getSlot("f");
+};
+\end{urbiscript}
+
 \subsubsection{All operators summary}
 
 \autoref{tab:operators-summary} is a summary of all operators, to
