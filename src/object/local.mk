@@ -112,6 +112,8 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/system.cc				\
   object/system.hh				\
   object/tag.cc					\
+  object/uconnection.hh				\
+  object/uconnection.cc				\
   object/urbi-exception.cc			\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\

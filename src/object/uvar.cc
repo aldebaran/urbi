@@ -14,10 +14,12 @@
  */
 
 # include <kernel/uconnection.hh>
+# include <kernel/uobject.hh>
 # include <kernel/userver.hh>
 # include <kernel/uvalue-cast.hh>
 
 # include <object/symbols.hh>
+# include <object/uconnection.hh>
 # include <object/urbi-exception.hh>
 # include <object/uvalue.hh>
 # include <object/uvar.hh>
@@ -52,14 +54,16 @@ namespace urbi
                           new String("error"));
     }
 
-    static inline void
+    inline void
     callNotify(runner::Runner& r, rObject self,
-               libport::Symbol notifyList)
+               libport::Symbol notifyList, rObject sourceUVar = 0)
     {
       rList l =
         self->slot_get(notifyList)->slot_get(SYMBOL(values))->as<List>();
       objects_type args;
       args.push_back(self);
+      if (sourceUVar)
+        args.push_back(sourceUVar);
       List::value_type& callbacks = l->value_get();
       for (List::value_type::iterator i = callbacks.begin();
            i != callbacks.end(); )
@@ -98,6 +102,44 @@ namespace urbi
         else
           ++i;
       }
+    }
+
+    static inline void
+    callConnections(runner::Runner& r, rObject self, libport::Symbol notifyList)
+    {
+      rList l = self->slot_get(notifyList)->as<List>();
+      List::value_type& callbacks = l->value_get();
+      for (List::value_type::iterator i = callbacks.begin();
+           i != callbacks.end(); )
+      {
+        rUConnection c = (*i)->as<UConnection>();
+        if (c->call(r, self))
+          ++i;
+        else
+          i = callbacks.erase(i);
+      }
+    }
+
+    rObject UVar::fromName(const std::string& name)
+    {
+      try
+      {
+        ::urbi::uobjects::StringPair p = ::urbi::uobjects::split_name(name);
+        rObject o = uobjects::get_base(p.first);
+        if (!o)
+          return o;
+        else
+          return o->slot_get(libport::Symbol(p.second));
+      }
+      catch(UrbiException& e)
+      {
+        return 0;
+      }
+      catch(sched::exception& e)
+      {
+        throw;
+      }
+      return 0;
     }
 
     UVar::UVar()
@@ -237,6 +279,7 @@ namespace urbi
           // callNotify does not throw, this is safe.
           i = inChange_.insert(&r).first;
           callNotify(r, rObject(this), SYMBOL(change));
+          callConnections(r, rObject(this), SYMBOL(changeConnections));
           inChange_.erase(i);
         }
         slot_get(SYMBOL(changed))->call("emit");
@@ -307,6 +350,7 @@ namespace urbi
       slot_update(SYMBOL(valsensor), newval);
       checkBypassCopy();
       callNotify(r, rObject(this), SYMBOL(change));
+      callConnections(r, rObject(this), SYMBOL(changeConnections));
       slot_get(SYMBOL(changed))->call("emit");
       return newval;
     }

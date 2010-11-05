@@ -403,5 +403,21 @@ namespace urbi
          + "\").rtp = " + (enable?"true;":"false;"));
     ctx->dataSent = true;
   }
+  void RemoteUVarImpl::setInputPort(bool enable)
+  {
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
+    std::string name = owner_->get_name();
+    size_t p = name.find_first_of(".");
+    if (p == name.npos)
+      throw std::runtime_error("Invalid argument to isInputPort: "+name);
+    if (enable)
+      send(name.substr(0, p) + ".getSlot(\"" + name.substr(p+1, name.npos)
+         + "\").setSlot(\"inputPort\", true)|");
+    else
+       send(name.substr(0, p) + ".getSlot(\"" + name.substr(p+1, name.npos)
+         + "\").removeSlot(\"inputPort\")|");
+    ctx->dataSent = true;
+  }
+
   }
 } //namespace urbi

@@ -152,4 +152,9 @@ namespace urbi
     return impl_->timestamp();
   }
 
+  void InputPort::init(UObject* owner, const std::string& name)
+  {
+    UVar::init(owner->__name, name);
+    impl_->setInputPort(true);
+  }
 } // namespace urbi

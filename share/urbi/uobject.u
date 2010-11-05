@@ -65,6 +65,15 @@ do (Global.UObject)
     timerTask = [ => ]
   };
 
+  /// Move a notifychange on 'from' setup by this object, move it on 'to'.
+  function reconnect(from, to)
+  {
+    var cbs = from.change[handle]|
+    from.change.erase(handle)|
+    for (var cb in cbs)
+      to.notifyChange(handle, cb)
+  };
+
   function destroy()
   {
     for| (var t: timerTask)
@@ -263,6 +272,7 @@ do (.&UVar)
     else
       ownerName = parent.asString|
     var this.initialName = name|
+    var this.fullName = ownerName + "." + initialName|
     parent.setSlot(name, this)|
     parent.setProperty(name, "updateHook", .&updateBounce)|
     var this.newPropertyHook = .&newPropertyHook_|
@@ -362,6 +372,7 @@ do (.&UVar)
     do (uv)
     {
       var change = WeakDictionary.new |
+      var changeConnections = [] |
       var changeOwned = WeakDictionary.new |
       var access = WeakDictionary.new |
       var accessInLoop = WeakDictionary.new |
@@ -407,7 +418,63 @@ do (.&UVar)
     void
   };
 
+  function '>>'(target)
+  {
+    UConnection.new(this, target)
+  };
+  function '<<'(source)
+  {
+    UConnection.new(source, this)
+  };
+  /// Return an UVar from its name
+  function fromName(n)
+  {
+    var base = lobby;
+    for|(var c: n.split("."))
+      base = base.getSLot(c) |
+    base
+  };
   void
+};
+
+do(UConnection)
+{
+  function init(from, to)
+  {
+    /// We cannot take a reference on those uvars.
+    source = from.fullName;
+    target = to.fullName;
+    from.changeConnections << this;
+    var this.start = time;
+  };
+  function asString()
+  {
+    "Connection( " + source + " >> " + target +" )"
+  };
+  function disconnect()
+  {
+    src = UVar.fromName(source)|
+    src.changeConnections.remove(this)
+  };
+  function reconnect(from)
+  {
+    disconnect()|
+    init(from, UVar.fromName(target))
+  };
+  function resetStats()
+  {
+    totalCallTime = callCount = 0|
+    minCallTime = maxCallTime = 0|
+    start = time
+  };
+  function meanCallTime()
+  {
+    totalCallTime / callCount
+  };
+  function fireRate()
+  {
+    callCount / (time-start)
+  };
 };
 
 /** BypassValue is UValue container which does only cast the content into
@@ -868,5 +935,5 @@ function Dictionary.uvalueSerialize()
   res
 };
 
-// Srote serializable objects here.
+// Store serializable objects here.
 class Global.Serializables {};

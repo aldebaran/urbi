@@ -172,6 +172,7 @@ namespace urbi
       virtual time_t timestamp() const;
       virtual void unnotify();
       virtual void useRTP(bool enable);
+      virtual void setInputPort(bool enable);
     private:
       UVar* owner_;
       bool bypassMode_;
@@ -199,7 +200,6 @@ namespace urbi
   }
 }
 
-typedef std::pair<std::string, std::string> StringPair;
 // Where to store uobjects
 static rObject where;
 typedef boost::unordered_map<std::string, urbi::UObject*> uobject_to_robject_type;
@@ -207,18 +207,14 @@ static uobject_to_robject_type uobject_to_robject;
 static std::set<void*> initialized;
 static bool trace_uvars = 0;
 static libport::file_library uobjects_path;
+using urbi::uobjects::get_base;
+using urbi::uobjects::split_name;
+using urbi::uobjects::StringPair;
+// No rObject here as we do not want to prevent object destruction.
+static boost::unordered_map<std::string, object::Object*> uobject_map;
 
-static rObject get_base(const std::string& objname);
 static void writeFromContext(const std::string& ctx, const std::string& varName,
                              const urbi::UValue& val);
-/// Split a string of the form "a.b" in two
-static StringPair split_name(const std::string& name)
-{
-  size_t p = name.find_last_of(".");
-  std::string oname = name.substr(0, p);
-  std::string slot = name.substr(p + 1, name.npos);
-  return StringPair(oname, slot);
-}
 
 static void setTrace(rObject, bool v)
 {
@@ -382,31 +378,6 @@ void uobjects_reload()
     }
 }
 
-/*! Initialize plugin UObjects.
- \param args object in which the instances will be stored.
-*/
-rObject uobject_initialize(const objects_type& args)
-{
-  CAPTURE_GLOBAL(Global);
-  urbi::setCurrentContext(new urbi::impl::KernelUContextImpl());
-  where = args.front();
-  where->slot_set(SYMBOL(setTrace), object::primitive(&setTrace));
-  uobjects_reload();
-  where->slot_set(SYMBOL(getStats),    object::primitive(&Stats::get));
-  where->slot_set(SYMBOL(clearStats),  object::primitive(&Stats::clear));
-  where->slot_set(SYMBOL(enableStats), object::primitive(&Stats::enable));
-  Global->slot_set(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
-
-  where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
-              SYMBOL(searchPathSet), &uobject_uobjectsPathSet);
-
-  uobjects_path.push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"),
-                          kernel::urbiserver->urbi_root_get().uobjects_path(),
-                          ":");
-
-  return object::void_class;
-}
-
 //! Read/Write UObjects PATH
 const libport::file_library
 uobject_uobjects_path()
@@ -436,9 +407,6 @@ uobject_uobjectsPathSet(const rObject&, List::value_type list)
   }
 }
 
-// No rObject here as we do not want to prevent object destruction.
-static boost::unordered_map<std::string, object::Object*> uobject_map;
-
 static rObject wrap_ucallback_notify(const object::objects_type& ol ,
                                      urbi::UGenericCallback* ugc,
                                      std::string traceName)
@@ -453,9 +421,15 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
   FINALLY(((bool, dummy)), bound_context.pop_back());
   urbi::UList l;
   l.array << new urbi::UValue();
-  l[0].storage = ugc->target;
+  if (ol.size() > 1)
+    l[0].storage = new urbi::UVar
+      (object::from_urbi<std::string>(ol[1]->call(SYMBOL(fullName))));
+  else
+    l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
   ugc->eval(l);
+  if (ol.size() > 1)
+    delete (urbi::UVar*)l[0].storage;
   Stats::add(ol.front().get(), traceName, libport::utime() - t);
   return object::void_class;
 }
@@ -544,7 +518,7 @@ static rObject
 uobject_clone(const object::objects_type& l)
 {
   rObject proto = l.front();
-  return uobject_new(proto);
+  return urbi::uobjects::uobject_new(proto);
 }
 
 static rObject
@@ -561,115 +535,6 @@ uobject_finalize(const object::objects_type& args)
   urbi::impl::KernelUContextImpl::instance()->objects.erase(objName);
   return object::void_class;
 }
-
-/*! Create the prototype for an UObject class.
-*/
-rObject
-uobject_make_proto(const std::string& name)
-{
-  rObject oc =
-    object::Object::proto
-    ->slot_get(SYMBOL(UObject))
-    ->call(SYMBOL(clone));
-  oc->call(SYMBOL(uobjectInit));
-  oc->call(SYMBOL(init));
-  oc->slot_set(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
-  oc->slot_set(SYMBOL(__uobject_cname), new object::String(name));
-  oc->slot_set(SYMBOL(__uobject_base), oc);
-  oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
-  oc->slot_set(SYMBOL(periodicCall), object::primitive(&periodic_call));
-  return oc;
-}
-
-/*! Instanciate a new prototype inheriting from a UObject.
- A new instance of UObject is created
- \param proto proto object, created by uobject_make_proto() or uobject_new()
- \param forceName force the reported C++ name to be the class name
- \param instanciate true if the UObject should be instanciated, false if it
-   already is.
-*/
-rObject
-uobject_new(rObject proto, bool forceName, bool instanciate)
-{
-  rObject r = new object::Finalizable(proto->as<object::Finalizable>());
-
-  // Get UObject name.
-  rObject rcName = proto->slot_get(SYMBOL(__uobject_cname));
-  const std::string& cname = rcName.cast<object::String>()->value_get();
-
-  // Get the name we will pass to uobject.
-  std::string name;
-  if (forceName)
-  {
-    r->slot_set(SYMBOL(type), rcName);
-    name = cname;
-  }
-  else
-  {
-    // boost::lexical_cast does not work on the way back, so dont use it here
-    std::stringstream ss;
-    ss << "uob_" << r.get();
-    name = ss.str();
-    /* We need to make this name accessible in urbi in case the UObject code
-    emits urbi code using this name.*/
-    where->slot_set(libport::Symbol(name), r);
-  }
-  uobject_map[name] = r.get();
-  r->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
-  r->call(SYMBOL(uobjectInit));
-  // Instanciate UObject.
-  if (instanciate)
-  {
-    foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
-    {
-      if (i->name == cname)
-      {
-        LIBPORT_DEBUG("Instanciating a new " << cname << " named "<< name);
-        bound_context.push_back(std::make_pair(name, name + ".new"));
-        FINALLY(((std::string, name)), bound_context.pop_back());
-        i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
-        return r;
-      }
-    }
-  }
-  return r;
-}
-
-/** Find an UObject from its name.
-
-The UObject class expects to know the variable name, i.e. a = new b;
-should pass a to b's corresponding UObject ctor. Since we don't have this
-information, we create a unique string, pass it to the ctor, and store it
-in a.
-
-But the user can create UVars based on the variable name it knows about,
-i.e. a.val. So get_base must look in its uid map, and if it finds nothing,
-look for an Urbi variable with given name. We expect all UObjects to be created
-in Global.
-*/
-
-static rObject
-get_base(const std::string& objname)
-{
-  rObject res = libport::find0(uobject_map, objname);
-  object::Object::location_type s;
-  // The user may be using the Urbi variable name.
-  if (!res)
-  {
-    s = object::global_class->slot_locate(libport::Symbol(objname));
-    // Not simplifyable! If the rSlot contains 0, casting to rObject will segv.
-    if (s.second)
-      res = *s.second;
-  }
-  if (!res)
-  {
-    s = where->slot_locate(libport::Symbol(objname));
-    if (s.second)
-      res = *s.second;
-  }
-  return res;
-}
-
 
 /// Get the uvar owner from is name
 static rObject
@@ -806,10 +671,11 @@ namespace urbi
     KernelUContextImpl::newUObjectClass(baseURBIStarter* s)
     {
       LOCK_KERNEL;
-      object::rObject proto = uobject_make_proto(s->name);
+      object::rObject proto = ::urbi::uobjects::uobject_make_proto(s->name);
       where->slot_set(libport::Symbol(s->name + "_class"), proto);
       // Make our first instance.
-      where->slot_set(libport::Symbol(s->name), uobject_new(proto, true));
+      where->slot_set(libport::Symbol(s->name),
+                      ::urbi::uobjects::uobject_new(proto, true));
     }
     void
     KernelUContextImpl::newUObjectHubClass(baseURBIStarterHub* s)
@@ -1095,7 +961,8 @@ namespace urbi
         owner_->__name = "uob_plug_" + string_cast(++uid);
       if (fromcxx)
       {
-        rObject r = uobject_new(where->slot_get(SYMBOL(UObject)), false, false);
+        rObject r = ::urbi::uobjects::uobject_new(
+                      where->slot_get(SYMBOL(UObject)), false, false);
         owner->__name = r->slot_get(SYMBOL(__uobjectName))->as<object::String>()
         ->value_get();
       }
@@ -1106,7 +973,7 @@ namespace urbi
       if (!o)
       {
         // Instanciation occured through ucontext::bind.
-        o = uobject_make_proto(owner->__name);
+        o = ::urbi::uobjects::uobject_make_proto(owner->__name);
         where->slot_set(Symbol(owner->__name), o);
       }
     }
@@ -1345,6 +1212,17 @@ namespace urbi
                                               object::to_urbi(enable));
     }
 
+    void KernelUVarImpl::setInputPort(bool enable)
+    {
+      StringPair p = split_name(owner_->get_name());
+      rObject o = get_base(p.first);
+      if (enable)
+        o->slot_get(Symbol(p.second))->slot_set(SYMBOL(inputPort),
+                                                object::to_urbi(true));
+      else
+        o->slot_get(Symbol(p.second))->slot_remove(SYMBOL(inputPort));
+    }
+
     time_t
     KernelUVarImpl::timestamp() const
     {
@@ -1392,11 +1270,13 @@ namespace urbi
         runner.apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id),
                      args)
         ->as<object::String>()->value_get();
-      std::string traceName = meId + "::" + owner_->type + "::"
-        + string_cast((void*)this);
+      std::string traceName;
+      Symbol s = me->slot_has(SYMBOL(compactName))?
+        SYMBOL(compactName):SYMBOL(__uobjectName);
+      traceName = me->slot_get(s)->as<object::String>()->value_get();
       if (owner_->type == "function")
       {
-        traceName = owner_->name; // object.function, unique
+        traceName += "." + p.second;
         LIBPORT_DEBUG("binding " << p.first << "." << owner_->method);
         me->slot_set(libport::Symbol(method), new object::Primitive(
                        boost::function1<rObject, const objects_type&>
@@ -1405,8 +1285,17 @@ namespace urbi
       if (owner_->type == "var" || owner_->type == "varaccess")
       {
         // traceName is objName__obj__var
-        traceName = ((&owner_->owner)? owner_->owner.__name:"unknown")
-          + "__" + p.first + "__" + p.second;
+        traceName += "." + p.second + " --> ";
+        if (&owner_->owner)
+        {
+          rObject you = get_base(owner_->owner.__name);
+          if (you)
+          {
+            Symbol s = you->slot_has(SYMBOL(compactName))?
+              SYMBOL(compactName):SYMBOL(__uobjectName);
+              traceName += you->slot_get(s)->as<object::String>()->value_get();
+          }
+        }
         rObject var = me->slot_get(Symbol(method));
         aver(var);
         Symbol sym(SYMBOL(notifyAccess));
@@ -1462,4 +1351,145 @@ namespace urbi
       ->value_get();
   }
 
+  namespace uobjects
+  {
+    StringPair split_name(const std::string& name)
+    {
+      size_t p = name.find_last_of(".");
+      std::string oname = name.substr(0, p);
+      std::string slot = name.substr(p + 1, name.npos);
+      return StringPair(oname, slot);
+    }
+
+    /** Find an UObject from its name.
+
+    The UObject class expects to know the variable name, i.e. a = new b;
+    should pass a to b's corresponding UObject ctor. Since we don't have this
+    information, we create a unique string, pass it to the ctor, and store it
+    in a.
+
+    But the user can create UVars based on the variable name it knows about,
+    i.e. a.val. So get_base must look in its uid map, and if it finds nothing,
+    look for an Urbi variable with given name. We expect all UObjects to be
+    created in Global.
+    */
+    rObject
+    get_base(const std::string& objname)
+    {
+      rObject res = libport::find0(uobject_map, objname);
+      object::Object::location_type s;
+      // The user may be using the Urbi variable name.
+      if (!res)
+      {
+        s = object::global_class->slot_locate(libport::Symbol(objname));
+        // Not simplifyable! If the rSlot contains 0, casting to rObject will segv.
+        if (s.second)
+          res = *s.second;
+      }
+      if (!res)
+      {
+        s = where->slot_locate(libport::Symbol(objname));
+        if (s.second)
+          res = *s.second;
+      }
+      return res;
+    }
+
+    /*! Initialize plugin UObjects.
+    \param args object in which the instances will be stored.
+    */
+    rObject uobject_initialize(const objects_type& args)
+    {
+      CAPTURE_GLOBAL(Global);
+      urbi::setCurrentContext(new urbi::impl::KernelUContextImpl());
+      where = args.front();
+      where->slot_set(SYMBOL(setTrace), object::primitive(&setTrace));
+      uobjects_reload();
+      where->slot_set(SYMBOL(getStats),    object::primitive(&Stats::get));
+      where->slot_set(SYMBOL(clearStats),  object::primitive(&Stats::clear));
+      where->slot_set(SYMBOL(enableStats), object::primitive(&Stats::enable));
+      Global->slot_set(SYMBOL(uvalueDeserialize), primitive(&uvalue_deserialize));
+
+      where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
+                  SYMBOL(searchPathSet), &uobject_uobjectsPathSet);
+      uobjects_path.push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"),
+                          kernel::urbiserver->urbi_root_get().uobjects_path(),
+        ":");
+      return object::void_class;
+    }
+
+    /*! Create the prototype for an UObject class.
+    */
+    rObject
+    uobject_make_proto(const std::string& name)
+    {
+      rObject oc =
+      object::Object::proto
+      ->slot_get(SYMBOL(UObject))
+      ->call(SYMBOL(clone));
+      oc->call(SYMBOL(uobjectInit));
+      oc->call(SYMBOL(init));
+      oc->slot_set(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
+      oc->slot_set(SYMBOL(__uobject_cname), new object::String(name));
+      oc->slot_set(SYMBOL(__uobject_base), oc);
+      oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
+      oc->slot_set(SYMBOL(periodicCall), object::primitive(&periodic_call));
+      return oc;
+    }
+
+    /*! Instanciate a new prototype inheriting from a UObject.
+    A new instance of UObject is created
+    \param proto proto object, created by uobject_make_proto() or uobject_new()
+    \param forceName force the reported C++ name to be the class name
+    \param instanciate true if the UObject should be instanciated, false if it
+    already is.
+    */
+    rObject
+    uobject_new(rObject proto, bool forceName, bool instanciate)
+    {
+      rObject r = new object::Finalizable(proto->as<object::Finalizable>());
+
+      // Get UObject name.
+      rObject rcName = proto->slot_get(SYMBOL(__uobject_cname));
+      const std::string& cname = rcName.cast<object::String>()->value_get();
+
+      // Get the name we will pass to uobject.
+      std::string name;
+      if (forceName)
+      {
+        r->slot_set(SYMBOL(type), rcName);
+        name = cname;
+      }
+      else
+      {
+        // boost::lexical_cast does not work on the way back, so dont use it here
+        std::stringstream ss;
+        ss << "uob_" << r.get();
+        name = ss.str();
+        /* We need to make this name accessible in urbi in case the UObject code
+        emits urbi code using this name.*/
+        where->slot_set(libport::Symbol(name), r);
+      }
+      uobject_map[name] = r.get();
+      r->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
+      r->call(SYMBOL(uobjectInit));
+      // Instanciate UObject.
+      if (instanciate)
+      {
+        foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
+        {
+          if (i->name == cname)
+          {
+            LIBPORT_DEBUG("Instanciating a new " << cname << " named "<< name);
+            bound_context.push_back(std::make_pair(name, name + ".new"));
+            FINALLY(((std::string, name)), bound_context.pop_back());
+            i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
+            return r;
+          }
+        }
+      }
+      return r;
+    }
+
+  }
 }

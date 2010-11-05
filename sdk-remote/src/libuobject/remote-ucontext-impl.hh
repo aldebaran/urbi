@@ -184,7 +184,7 @@ namespace urbi
       void update(const UValue& v);
       void update(const UValue& v, time_t timestamp);
       virtual void useRTP(bool enable);
-
+      virtual void setInputPort(bool enable);
     private:
       // transmit the value to the remote kernel
       void transmit(const UValue& v, libport::utime_t timestamp);

@@ -43,6 +43,7 @@
 #include <urbi/object/tag.hh>
 #include <urbi/sdk.hh>
 
+#include <object/uconnection.hh>
 #include <object/finalizable.hh>
 #include <object/ioservice.hh>
 #include <object/semaphore.hh>
@@ -1134,6 +1135,19 @@ namespace urbi
       DECLARE(width);
 
 # undef DECLARE
+    }
+    URBI_CXX_OBJECT_REGISTER(UConnection)
+    {
+      #define DECLARE(a) bind(SYMBOL(a), &UConnection::a);
+      DECLARE(source);
+      DECLARE(target);
+      DECLARE(enabled);
+      DECLARE(minInterval);
+      DECLARE(lastCall);
+      DECLARE(callCount);
+      DECLARE(totalCallTime);
+      DECLARE(asynchronous);
+      init_();
     }
   } // namespace object
 } // namespace urbi

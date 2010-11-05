@@ -14,14 +14,28 @@
 # include <urbi/object/fwd.hh>
 # include <urbi/object/list.hh>
 
-//! create and return a new prototype for a bound UObject
-urbi::object::rObject uobject_make_proto(const std::string& name);
+namespace urbi
+{
+  namespace uobjects
+  {
+    //! create and return a new prototype for a bound UObject
+    urbi::object::rObject uobject_make_proto(const std::string& name);
 
-//! Instanciate a new prototype inheriting from a UObject.
-urbi::object::rObject uobject_new(urbi::object::rObject proto, bool forceName=false, bool instanciate = true);
+    //! Instanciate a new prototype inheriting from a UObject.
+    urbi::object::rObject uobject_new(urbi::object::rObject proto, bool forceName=false, bool instanciate = true);
 
-//! Initialize plugin UObjects.
-urbi::object::rObject uobject_initialize(const urbi::object::objects_type& args);
+    //! Initialize plugin UObjects.
+    ::urbi::object::rObject uobject_initialize(const urbi::object::objects_type& args);
+
+    //! Find and return rObject of an UObject based on its name.
+    ::urbi::object::rObject get_base(const std::string& objname);
+
+    typedef std::pair<std::string, std::string> StringPair;
+
+    //! Split an UVar full name into its two components.
+    StringPair split_name(const std::string& name);
+  }
+}
 
 //! Reload uobject list
 void uobjects_reload();

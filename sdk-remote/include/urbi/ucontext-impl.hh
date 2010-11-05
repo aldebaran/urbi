@@ -192,6 +192,7 @@ namespace urbi
       virtual time_t timestamp() const = 0;
       virtual void unnotify() = 0;
       virtual void useRTP(bool enable) = 0;
+      virtual void setInputPort(bool enable) = 0;
     };
   }
 }

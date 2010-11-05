@@ -7,6 +7,8 @@ urbiinclude_HEADERS =				\
   include/urbi/exit.hh				\
   include/urbi/export.hh			\
   include/urbi/fwd.hh				\
+  include/urbi/input-port.hh			\
+  include/urbi/input-port.hxx			\
   include/urbi/kernel-version.hh		\
   include/urbi/package-info.hh			\
   include/urbi/socket.hh			\

@@ -65,6 +65,7 @@ namespace urbi
     Macro(String);                              \
     Macro(Tag);                                 \
     Macro(TextOutputStream);                    \
+    Macro(UConnection);                         \
     Macro(UValue);                              \
     Macro(UVar);
 

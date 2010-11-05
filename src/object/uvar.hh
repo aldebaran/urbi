@@ -40,6 +40,8 @@ namespace urbi
       /// Check if we have both in/out callbaks, periodicaly trigger if so.
       void loopCheck();
       rObject writeOwned(rObject newval);
+      // Return the UVar from its full name.
+      static rObject fromName(const std::string& n);
     private:
       /// Check and unlock getters stuck waiting.
       void checkBypassCopy();
@@ -51,6 +53,9 @@ namespace urbi
       URBI_CXX_OBJECT(UVar);
       int waiterCount_;
     };
+    /// Call some notifies on an UVar.
+    void callNotify(runner::Runner& r, rObject self,
+               libport::Symbol notifyList, rObject sourceUVar);
   }
 }
 #endif

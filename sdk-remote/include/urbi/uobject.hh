@@ -28,6 +28,7 @@
 # include <urbi/export.hh>
 # include <urbi/fwd.hh>
 # include <urbi/kernel-version.hh>
+# include <urbi/input-port.hh>
 # include <urbi/ucallbacks.hh>
 # include <urbi/uevent.hh>
 # include <urbi/utimer-callback.hh>
@@ -351,6 +352,9 @@ namespace urbi
     MakeNotify(Type, UVar& v, TypeString,				\
                       v.owned, v.get_name (),                           \
                       v.get_temp()?new UVar(v.get_name(), ctx_):&v);    \
+    MakeNotify(Type, InputPort& v, TypeString,				\
+                      v.owned, v.get_name (),                           \
+                      &v);                                              \
     MakeNotify(Type, const std::string& name, TypeString,		\
                       false, name, new UVar(name, ctx_));
 

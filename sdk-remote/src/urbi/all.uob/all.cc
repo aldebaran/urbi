@@ -21,6 +21,7 @@
 #include <urbi/uclient.hh>
 #undef URBI
 #include <urbi/uobject.hh>
+#include <urbi/input-port.hh>
 
 GD_CATEGORY(all);
 
@@ -168,7 +169,14 @@ public:
     vars[2] = &c;
     vars[3] = &d;
     vars[4] = &unbound;
-
+    std::string name = "ia";
+    for(int i=0; i<4; ++i)
+    {
+      name[1] = 'a' + i;
+      ports[i] = new urbi::InputPort(this, name);
+    }
+    // 4 is unbound
+    ports[4] = new urbi::InputPort();
     UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB, manyWriteTest);
   }
 
@@ -228,7 +236,10 @@ public:
   }
   void unnotify(int id)
   {
-    vars[id]->unnotify();
+    if (id <5)
+      vars[id]->unnotify();
+    else
+      ports[id-5]->unnotify();
   }
   int onBinaryBypass(urbi::UVar& var)
   {
@@ -324,7 +335,10 @@ public:
   int setNotifyChange(int id)
   {
     threadCheck();
-    UNotifyChange(*vars[id], &all::onChange);
+    if (id<5)
+      UNotifyChange(*vars[id], &all::onChange);
+    else
+      UNotifyChange(*ports[id-5], &all::onChange);
     return 0;
   }
 
@@ -855,7 +869,8 @@ public:
     return d;
   }
   urbi::UVar a, b, c, d, unbound;
-  urbi::UVar* vars[5];
+  urbi::UVar* vars[10];
+  urbi::InputPort* ports[5];
   urbi::UEvent ev;
 
   //name of var that trigerred notifyChange
