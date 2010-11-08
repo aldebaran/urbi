@@ -1731,6 +1731,8 @@ There is some syntactic sugar for slot methods:
   \lstinline[style=varInString]|\var{o}.setSlot("\var{name}", \var{value})|.
 \item \lstinline|\var{o}.\var{name} = \var{value}| is equivalent to
   \lstinline[style=varInString]|\var{o}.updateSlot("\var{name}", \var{value})|.
+\item \lstinline|\var{o}.&\var{name}| is equivalent to
+  \lstinline[style=varInString]|\var{o}.getSlot("\var{name}")|.
 \end{itemize}
 
 

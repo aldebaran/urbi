@@ -16,11 +16,37 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
-\item It is now possible to change the search path for \us files
-  (\refSlot[System]{searchPath}) and the search path for the UObject files
-  (\refSlot[UObject]{searchPath}).
+\item The search paths for \us files (\refSlot[System]{searchPath}) and for
+  UObject files (\refSlot[UObject]{searchPath}) can be changed.
 \item \refSlot[Object]{getProperty} raises an error if the property does not
   exist.  It used to return \lstinline|void|.
+\item New syntactic sugar for \refSlot[Object]{getSlot}:
+  \lstinline|\var{o}.&\var{name}| is equivalent to
+  \lstinline[style=varInString]|\var{o}.getSlot("\var{name}")|.  For
+  instance, instead of
+\begin{urbiunchecked}
+function derive.init(var arg)
+{
+  base.getSlot("init").apply([this, arg]);
+};
+
+function Foo.'=='(var that)
+{
+  getSlot("function") == that.getSlot("function");
+};
+\end{urbiunchecked}
+  write
+\begin{urbiunchecked}
+function derive.init(var arg)
+{
+  base.&init.apply([this, arg]);
+};
+
+function Foo.'=='(var that)
+{
+  .&function == that.&function;
+};
+\end{urbiunchecked}
 \end{itemize}
 
 \subsection{Documentation}
