@@ -351,6 +351,99 @@ Using this model, chains of processing elements can be created. Each time the
 UObject at the start of the chain updates, all the notifyChange will be called
 synchronously in cascade to update the state of the intermediate components.
 
+\section{Data-flow based programming: InputPort}
+
+\urbi provides a second and more standard way to perform data-flow programming.
+In this approach, inputs of a component are declared as local InputPort, and
+the binding between this InputPort and the output of another component is done
+in \us using the \lstinline|>>| operator between two \UVar :
+
+
+\begin{cxx}
+class ObjectTracker: public urbi::UObject
+{
+  ObjectTracker(const std::string& n)
+    : urbi::UObject(n)
+  {
+    // Bind our constructor.
+    UBindFunction(ObjectTracker, init);
+    // Bind our input port.
+    UBindVar(ObjectTracker, input);
+    // NotifyChange on our own inputport
+    UNotifyChange(input, &ObjectTracker::onImage);
+  }
+  // Init is empty
+  void init()
+  {
+  }
+  // onImage is unchanged.
+  void onImage(UVar& src)
+  {
+    UBinary b = src;
+    // Processing here.
+    val = processing_result;
+  }
+  UVar val;
+  // Declare our input port.
+  InputPort input;
+};
+UStart(ObjectTracker);
+\end{cxx}
+
+In this model, linking the components is done in \us :
+
+\begin{urbiunchecked}
+var tracker = ObjectTracker.new();
+camera.getSlot("val") >> tracker.getSlot("input");
+\end{urbiunchecked}
+
+\subsection{Customizing data-flow links}
+\defObject{UConnection}
+The \lstinline|>>| operator to establish a data-flow link between two \UVar
+returns an object of type \refObject{UConnection} that can be used to customize
+the link.
+
+This object is also present in the slot \lstinline|changeConnections| of the
+source \UVar.
+
+Here is the list of \dfn{UConnection} slots:
+
+\begin{urbiscriptapi}
+\item[enabled]
+  Set to false to disable the link.
+\item[minInterval]
+  Minimal interval in seconds at which the link can activate. Changes of the
+  source at a higher rate will be ignored.
+\item[asynchronous]
+  If true, notifies on the target InputPort will trigger asynchronously. The
+  system will also prevent two instances from running in parallel by dropping
+  updates until the callback functions terminate.
+\item[disconnect]
+  Disconnect the link.
+\item[reconnect](src)
+  Reconnect the link by changing the source to \var{src}.
+\item[callCount]
+  Number of times the link was reset.
+\item[fireRate]
+  Rate in Hertz at which the link triggers.
+\item[meanCallTime]
+  Average time taken by the callback function on the target InputPort.
+\item[minCallTime]
+  Minimum call time.
+\item[maxCallTime]
+  Maximum call time.
+\item[resetStats]
+  Reset all statistics.
+\item[getAll]
+  Return the list of all the connections in the system.
+\end{urbiscriptapi}
+
+
+The function \lstinline|uobjects.connectionStats()| can be used to display the
+statistics of all the connections, and
+\lstinline|uobjects.resetConnectionStats()| can be called to reset all
+statistics.
+
 \section{Timers}
 \label{sec:uob:timers}
 
