@@ -13,32 +13,13 @@ Notes:
   -> isdef (a): 1, but a == Void
   -> missing some "isinit" ?
 
-- Call on getSlot result ?
-  class a { function f () { echo (42); };};
-  a.getSlot ("f")();
-  [04974102:error] !!! 170.16: syntax error, unexpected (, expecting end of command
-  class a { var x = 42; function f () { echo (x); }; function g () {return getSlot ("f");};};
-  [05258319] Lobby_0x805d180
-  [05258321] a
-  a.g()();
-  [05262522:error] !!! 204.6: syntax error, unexpected (, expecting end of command
-
 - Stop some detached code ? if not tagged ?
 - stopall works only on "my" code. Way to stop everything ?
 - page 56, 8.3, and a colon ($:$) -> ":"
-- listing 8.8: some "/* HIDE */"
 - Add come "clean" method on tags: stop, unfreeze, unblock
-- Catch lasting events ?
-  at (e? ~ 1s) echo ("e");
-  [09438263:error] !!! 1026.8: syntax error, unexpected ~, expecting )
-- page 75-76: error in script positioning
 - Table 14.1: "bitand Synonym for & operator" ???
 
 - CallMessage.args ?
-
-- page 115 some snippets not in "purple" ?
-- Section 15.5 "comparables" -> "see section 15.5 ..."
-
 
 Questions:
 - diff .asString and .asPrintable ?
@@ -57,11 +38,7 @@ Questions:
 
 Check:
 - redefine '=' for an object ?
-- autoevaluation of 0 arg function is not that great...
-  I more often need "getSlot" than f() when
 - Need Float.srand ? Done automagically ?
-- Float.ceil ?
-  Float.trunc + 1 ?
 
 Local Variables:
 mode: outline
