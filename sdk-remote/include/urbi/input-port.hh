@@ -23,11 +23,12 @@ namespace urbi
   {
   public:
     InputPort();
-    InputPort(const std::string& objname, const std::string& name);
-    InputPort(UObject* owner, const std::string& name);
+    InputPort(const std::string& objname, const std::string& name,
+              impl::UContextImpl* = 0);
+    InputPort(UObject* owner, const std::string& name, impl::UContextImpl* = 0);
     InputPort(const InputPort& b);
     InputPort& operator=(const InputPort& b);
-    void init(UObject* owner, const std::string& name);
+    void init(UObject* owner, const std::string& name, impl::UContextImpl* = 0);
     /// Remove all notifies setup on this port.
     void unnotify();
   private:

@@ -19,14 +19,16 @@ namespace urbi
   }
 
   inline InputPort::InputPort(const std::string& objname,
-                              const std::string& name)
-  :UVar(objname, name)
+                              const std::string& name,
+                              impl::UContextImpl* ctx)
+  :UVar(objname, name, ctx)
   {
     impl_->setInputPort(true);
   }
 
-  inline InputPort::InputPort(UObject* owner, const std::string& name)
-  :UVar(*owner, name)
+  inline InputPort::InputPort(UObject* owner, const std::string& name,
+                              impl::UContextImpl* ctx)
+  :UVar(*owner, name, ctx)
   {
     impl_->setInputPort(true);
   }
@@ -39,7 +41,7 @@ namespace urbi
 
   inline InputPort& InputPort::operator=(const InputPort& b)
   {
-    UVar::init(b.get_name());
+    UVar::init(b.get_name(), b.ctx_);
     impl_->setInputPort(true);
     return *this;
   }
