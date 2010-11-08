@@ -19,14 +19,14 @@ equality \lstinline{===}.
 class Foo : Comparable
 {
   var value = 0;
-  function init (v) { value = v; };
-  function '==' (lhs) { value == lhs.value; };
+  function init (v)    { value = v; };
+  function '==' (that) { value == that.value; };
+}|;
+assert
+{
+  Foo.new(1) == Foo.new(1);
+  Foo.new(1) != Foo.new(2);
 };
-[00000000] Foo
-Foo.new(1) == Foo.new(1);
-[00000000] true
-Foo.new(1) == Foo.new(2);
-[00000000] false
 \end{urbiscript}
 
 \subsection{Slots}

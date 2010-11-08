@@ -22,19 +22,19 @@ method will result in endless recursions.
 class Foo : Orderable
 {
   var value = 0;
-  function init (v) { value = v; };
-  function '<' (lhs)  { value < lhs.value; };
+  function init (v)   { value = v; };
+  function '<' (that) { value < that.value; };
   function asString() { "<" + value.asString + ">"; };
-};
-[00000000] <0>
-var one = Foo.new(1);
-[00000001] <1>
-var two = Foo.new(2);
-[00000002] <2>
+}|;
+var one = Foo.new(1)|;
+var two = Foo.new(2)|;
 
-assert( (one <= one) &&  (one <= two) && !(two <= one));
-assert(!(one >  one) && !(one >  two) &&  (two >  one));
-assert( (one >= one) && !(one >= two) &&  (two >= one));
+assert
+{
+   one <= one  ;   one <= two  ; !(two <= one);
+ !(one >  one) ; !(one >  two) ;   two >  one;
+  (one >= one) ; !(one >= two) ;   two >= one;
+};
 \end{urbiscript}
 
 
