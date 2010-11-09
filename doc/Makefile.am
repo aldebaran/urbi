@@ -65,12 +65,6 @@ CLEANFILES += $(PDF_IMAGES) $(EPS_IMAGES)
 %.eps: %.png
 	$(AM_V_GEN)
 	$(AM_V_at)$(CONVERT_TO_EPS)
-# Use some good quality rasterization.
-document-aux/figs/$(cube_and_disc).png: %.png: %.pdf
-	$(AM_V_GEN)
-	$(AM_V_at)$(ENSURE_TARGET_DIR)
-	$(AM_V_at)$(CONVERT) -density 600x600 -quality 90 $< png:$@.tmp
-	$(AM_V_at)mv $@.tmp $@
 CLEANFILES += $(EPS_IMAGES)
 
 
@@ -86,7 +80,7 @@ pdf_DATA =
 TEX4HTFLAGS = urbi-style,2,sections+
 TEXI2HTMLFLAGS += --tex4ht --tex4ht-options=$(TEX4HTFLAGS)
 TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
-%.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg document-aux/figs/$(cube_and_disc).png
+%.htmldir: %.tex $(share_tex_dependencies) urbi-style.cfg
 	$(AM_V_GEN)
 	$(AM_V_at)rm -rf $@ $@.tmp
 	$(AM_V_at)$(mkdir_p) $@.tmp || true
