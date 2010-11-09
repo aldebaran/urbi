@@ -342,7 +342,7 @@ The following \us code would be used to initialize an ObjectTracker given a
 camera:
 
 \begin{urbiunchecked}
-var tracker = ObjectTracker.new(camera.getSlot("val"));
+var tracker = ObjectTracker.new(camera.&val);
 \end{urbiunchecked}
 
 An other component could then take the tracker output as its input.
@@ -352,12 +352,13 @@ UObject at the start of the chain updates, all the notifyChange will be called
 synchronously in cascade to update the state of the intermediate components.
 
 \section{Data-flow based programming: InputPort}
+\label{sec:uob:input-port}
 
-\urbi provides a second and more standard way to perform data-flow programming.
-In this approach, inputs of a component are declared as local InputPort, and
-the binding between this InputPort and the output of another component is done
-in \us using the \lstinline|>>| operator between two \UVar :
-
+\urbi provides a second and more standard way to perform data-flow
+programming.  In this approach, inputs of a component are declared as local
+InputPort, and the binding between this InputPort and the output of another
+component is done in \us using the \lstinline|>>| operator between two
+\UVar:
 
 \begin{cxx}
 class ObjectTracker: public urbi::UObject
@@ -390,11 +391,11 @@ class ObjectTracker: public urbi::UObject
 UStart(ObjectTracker);
 \end{cxx}
 
-In this model, linking the components is done in \us :
+In this model, linking the components is done in \us:
 
 \begin{urbiunchecked}
 var tracker = ObjectTracker.new();
-camera.getSlot("val") >> tracker.getSlot("input");
+camera.&val >> tracker.&input;
 \end{urbiunchecked}
 
 \subsection{Customizing data-flow links}
@@ -420,7 +421,7 @@ Here is the list of \dfn{UConnection} slots:
   updates until the callback functions terminate.
 \item[disconnect]
   Disconnect the link.
-\item[reconnect](src)
+\item[reconnect](<src>)
   Reconnect the link by changing the source to \var{src}.
 \item[callCount]
   Number of times the link was reset.
@@ -439,8 +440,8 @@ Here is the list of \dfn{UConnection} slots:
 \end{urbiscriptapi}
 
 
-The function \lstinline|uobjects.connectionStats()| can be used to display the
-statistics of all the connections, and
+The function \lstinline|uobjects.connectionStats()| can be used to display
+the statistics of all the connections, and
 \lstinline|uobjects.resetConnectionStats()| can be called to reset all
 statistics.
 
@@ -464,35 +465,33 @@ The API provides two methods to have a function called periodically:
 
 \section{The special case of sensor/effector variables}
 
-In \urbi, a variable can have a different meaning depending on whether
-you are reading or writing it: you can use the same variable to
-represent the target value of an effector and the current value
-measured by an associated sensor. This special mode is activated by
-the \UObject defining the variable by calling
-\lstinline{UOwned} after calling \lstinline{UBindVar}. This call has
-the following effects:
+In \urbi, a variable can have a different meaning depending on whether you
+are reading or writing it: you can use the same variable to represent the
+target value of an effector and the current value measured by an associated
+sensor. This special mode is activated by the \UObject defining the variable
+by calling \lstinline{UOwned} after calling \lstinline{UBindVar}. This call
+has the following effects:
 \begin{itemize}
-\item When \urbi code or code in other modules read the variable, they
-  read the current value.
-\item When \urbi code or code in other modules write the variable,
-  they set the target value.
-\item When the module that called \lstinline|UOwned| reads the
-  variable, it reads the target value. When it writes the variable, it
-  writes the current value.
+\item When \urbi code or code in other modules read the variable, they read
+  the current value.
+\item When \urbi code or code in other modules write the variable, they set
+  the target value.
+\item When the module that called \lstinline|UOwned| reads the variable, it
+  reads the target value. When it writes the variable, it writes the current
+  value.
 \end{itemize}
 
 \section{Using \urbi variables}
 
-The C++ class \UVar is used to represent any \urbi slot in C++.
-To bind the \UVar to a specific slot, pass its name to the \UVar constructor,
-or its \lstinline|init| method.
-Once the \UVar is bound, you can write any compatible type to it, and the
-new value will be visible in \us.
-Similarly, you can cast the \UVar (or use the \lstinline{as()} method) to
-convert the current \us value held to any compatible type.
+The C++ class \UVar is used to represent any \urbi slot in C++.  To bind the
+\UVar to a specific slot, pass its name to the \UVar constructor, or its
+\lstinline|init| method.  Once the \UVar is bound, you can write any
+compatible type to it, and the new value will be visible in \us.  Similarly,
+you can cast the \UVar (or use the \lstinline{as()} method) to convert the
+current \us value held to any compatible type.
 
-Compatible types are the same as for bound functions
-(see \autoref{sec:extend-cast-system}).
+Compatible types are the same as for bound functions (see
+\autoref{sec:extend-cast-system}).
 
 \begin{cxx}
 // Set the camera format to 0 if it is 1.
@@ -502,12 +501,12 @@ if (v == 1)
  v = 0;
 \end{cxx}
 
-Some care must be taken in remote mode: changes on the
-variable coming from \urbi code or an other module can take time to propagate
-to the \UVar. By default, all changes to the value will be sent to the remote
-\UObject. To have more control on the bandwidth used, you can
-disable the automatic update by calling \lstinline|unnotify()|. Then you can get
-the value on demand by calling \lstinline|UVar::syncValue()|.
+Some care must be taken in remote mode: changes on the variable coming from
+\urbi code or an other module can take time to propagate to the \UVar. By
+default, all changes to the value will be sent to the remote \UObject. To
+have more control on the bandwidth used, you can disable the automatic
+update by calling \lstinline|unnotify()|. Then you can get the value on
+demand by calling \lstinline|UVar::syncValue()|.
 
 \begin{cxx}
 UVar v("Global", "x");
@@ -540,18 +539,17 @@ any compatible type.
 
 \section{UObject and Threads}
 
-The \UObject API is thread-safe in both plugin and remote mode: All API calls
-including operations on \UVar can be performed from any thread.
+The \UObject API is thread-safe in both plugin and remote mode: All API
+calls including operations on \UVar can be performed from any thread.
 
 \section{Using binary types}
 
 \urbi can store binary objects of any type in a generic container, and
-provides specific structures for sound and images. The generic
-containers is called \UBinary and is defined in the
-\file{urbi/ubinary.hh} header. It contains an enum field type
-giving the type of the binary (\lstinline{UNKNOWN}, \lstinline{SOUND}
-or \lstinline{IMAGE}), and an union of a \USound and
-\UImage struct containing a pointer to the data, the size
+provides specific structures for sound and images. The generic containers is
+called \UBinary and is defined in the \file{urbi/ubinary.hh} header. It
+contains an enum field type giving the type of the binary
+(\lstinline{UNKNOWN}, \lstinline{SOUND} or \lstinline{IMAGE}), and an union
+of a \USound and \UImage struct containing a pointer to the data, the size
 of the data and type-specific meta-information.
 
 \subsection{UVar conversion and memory management}
