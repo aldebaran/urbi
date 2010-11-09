@@ -1309,15 +1309,14 @@ namespace urbi
         // traceName is objName__obj__var
         traceName += "." + p.second + " --> ";
         if (&owner_->owner)
-        {
-          rObject you = get_base(owner_->owner.__name);
-          if (you)
+          if (rObject you = get_base(owner_->owner.__name))
           {
-            Symbol s = you->slot_has(SYMBOL(compactName))?
-              SYMBOL(compactName):SYMBOL(__uobjectName);
-              traceName += you->slot_get(s)->as<object::String>()->value_get();
+            Symbol s = (you->slot_has(SYMBOL(compactName))
+                        ? SYMBOL(compactName)
+                        : SYMBOL(__uobjectName));
+            traceName += you->slot_get(s)->as<object::String>()->value_get();
           }
-        }
+
         // Source UVar
         rObject var = me->slot_get(Symbol(method));
         aver(var);
@@ -1345,9 +1344,10 @@ namespace urbi
             // Retarget callback
             var = object::UVar::fromName(owner_->objname + "." + ipname);
             object::rUConnection c
-            = object::UConnection::proto->CxxObject::call(SYMBOL(new),
-               object::UVar::fromName(owner_->name),
-               var)->as<object::UConnection>();
+              = object::UConnection::proto
+              ->CxxObject::call(SYMBOL(new),
+                                object::UVar::fromName(owner_->name), var)
+              ->as<object::UConnection>();
             connection_ = c;
             useClosedVar_ = true;
           }
@@ -1436,7 +1436,8 @@ namespace urbi
       if (!res)
       {
         s = object::global_class->slot_locate(libport::Symbol(objname));
-        // Not simplifyable! If the rSlot contains 0, casting to rObject will segv.
+        // Not simplifyable! If the rSlot contains 0, casting to
+        // rObject will segv.
         if (s.second)
           res = *s.second;
       }
@@ -1466,9 +1467,10 @@ namespace urbi
 
       where->bind(SYMBOL(searchPath),    &uobject_uobjectsPath,
                   SYMBOL(searchPathSet), &uobject_uobjectsPathSet);
-      uobjects_path.push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"),
-                          kernel::urbiserver->urbi_root_get().uobjects_path(),
-        ":");
+      uobjects_path
+        .push_back(libport::xgetenv("URBI_UOBJECT_PATH", ".:"),
+                   kernel::urbiserver->urbi_root_get().uobjects_path(),
+                   ":");
       return object::void_class;
     }
 
@@ -1477,18 +1479,18 @@ namespace urbi
     rObject
     uobject_make_proto(const std::string& name)
     {
-      rObject oc =
-      object::Object::proto
-      ->slot_get(SYMBOL(UObject))
-      ->call(SYMBOL(clone));
-      oc->call(SYMBOL(uobjectInit));
-      oc->call(SYMBOL(init));
-      oc->slot_set(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
-      oc->slot_set(SYMBOL(__uobject_cname), new object::String(name));
-      oc->slot_set(SYMBOL(__uobject_base), oc);
-      oc->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
-      oc->slot_set(SYMBOL(periodicCall), object::primitive(&periodic_call));
-      return oc;
+      rObject res =
+        object::Object::proto
+        ->slot_get(SYMBOL(UObject))
+        ->call(SYMBOL(clone));
+      res->call(SYMBOL(uobjectInit));
+      res->call(SYMBOL(init));
+      res->slot_set(SYMBOL(finalize), new object::Primitive(&uobject_finalize));
+      res->slot_set(SYMBOL(__uobject_cname), new object::String(name));
+      res->slot_set(SYMBOL(__uobject_base), res);
+      res->slot_set(SYMBOL(clone), new object::Primitive(&uobject_clone));
+      res->slot_set(SYMBOL(periodicCall), object::primitive(&periodic_call));
+      return res;
     }
 
     /*! Instanciate a new prototype inheriting from a UObject.
@@ -1501,7 +1503,7 @@ namespace urbi
     rObject
     uobject_new(rObject proto, bool forceName, bool instanciate)
     {
-      rObject r = new object::Finalizable(proto->as<object::Finalizable>());
+      rObject res = new object::Finalizable(proto->as<object::Finalizable>());
 
       // Get UObject name.
       rObject rcName = proto->slot_get(SYMBOL(__uobject_cname));
@@ -1511,38 +1513,37 @@ namespace urbi
       std::string name;
       if (forceName)
       {
-        r->slot_set(SYMBOL(type), rcName);
+        res->slot_set(SYMBOL(type), rcName);
         name = cname;
       }
       else
       {
-        // boost::lexical_cast does not work on the way back, so dont use it here
+        // boost::lexical_cast does not work on the way back, so dont
+        // use it here.
         std::stringstream ss;
-        ss << "uob_" << r.get();
+        ss << "uob_" << res.get();
         name = ss.str();
         /* We need to make this name accessible in urbi in case the UObject code
         emits urbi code using this name.*/
-        where->slot_set(libport::Symbol(name), r);
+        where->slot_set(libport::Symbol(name), res);
       }
-      uobject_map[name] = r.get();
-      r->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
-      r->call(SYMBOL(uobjectInit));
+      uobject_map[name] = res.get();
+      res->slot_set(SYMBOL(__uobjectName), object::to_urbi(name));
+      res->call(SYMBOL(uobjectInit));
       // Instanciate UObject.
       if (instanciate)
       {
         foreach (urbi::baseURBIStarter* i, urbi::baseURBIStarter::list())
-        {
           if (i->name == cname)
           {
             LIBPORT_DEBUG("Instanciating a new " << cname << " named "<< name);
             bound_context.push_back(std::make_pair(name, name + ".new"));
             FINALLY(((std::string, name)), bound_context.pop_back());
             i->instanciate(urbi::impl::KernelUContextImpl::instance(), name);
-            return r;
+            return res;
           }
-        }
       }
-      return r;
+      return res;
     }
 
   }
