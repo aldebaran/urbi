@@ -239,7 +239,10 @@ namespace urbi
       if (!rtp)
       {
         client_->startPack();
-        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed(";
+        *client_
+          << owner
+          << ".getSlot(\"" << libport::escape(name)
+          << "\").update_timed(";
         UBinary& b = *(v.binary);
         client_->sendBinary(b.common.data, b.common.size,
                             b.getMessage());
@@ -268,7 +271,10 @@ namespace urbi
       if (!rtp)
       {
         client_->startPack();
-        (*client_) << owner << ".getSlot(\"" << libport::escape(name) << "\").update_timed(";
+        *client_
+          << owner
+          << ".getSlot(\"" << libport::escape(name)
+          << "\").update_timed(";
         if (v.type == DATA_STRING)
           (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\"";
         else
@@ -367,17 +373,17 @@ namespace urbi
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
-      throw std::runtime_error("Invalid argument to unnotify: "+name);
-    // Each UVar creation and each notifychange causes an 'external var'
-    // message, so when the UVar dies, creation count is callbacks.size +1
-    send(libport::format(
-                         "UObject.unnotify(\"%s\", \"%s\", %s)|",
+      throw std::runtime_error("invalid argument to unnotify: "+name);
+    // Each UVar creation and each notifychange causes an 'external
+    // var' message, so when the UVar dies, creation count is
+    // callbacks.size +1.
+    send(libport::format("UObject.unnotify(\"%s\", \"%s\", %s)|",
                          name.substr(0, p), name.substr(p+1, name.npos),
                          callbacks_.size()+1));
     foreach(RemoteUGenericCallbackImpl* c, callbacks_)
     {
       UTable& t =
-      dynamic_cast<RemoteUContextImpl*>(c->owner_->ctx_)
+        dynamic_cast<RemoteUContextImpl*>(c->owner_->ctx_)
         ->tableByName(c->owner_->type);
       UTable::callbacks_type& ct = t[c->owner_->name];
       UTable::callbacks_type::iterator i =
@@ -391,31 +397,33 @@ namespace urbi
     ctx->dataSent = true;
     if (std::list<UVar*> *us = ctx->varmap().find0(name))
       us->remove(owner_);
-  };
+  }
+
   void RemoteUVarImpl::useRTP(bool enable)
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
-      throw std::runtime_error("Invalid argument to useRTP: "+name);
-    send(name.substr(0, p) + ".getSlot(\"" + name.substr(p+1, name.npos)
-         + "\").rtp = " + (enable?"true;":"false;"));
+      throw std::runtime_error("invalid argument to useRTP: "+name);
+    send(libport::format("%s.getSlot(\"%s\").rtp = %s;",
+                         name.substr(0, p), name.substr(p+1, name.npos),
+                         enable ? "true" : "false"));
     ctx->dataSent = true;
   }
+
   void RemoteUVarImpl::setInputPort(bool enable)
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
     if (p == name.npos)
-      throw std::runtime_error("Invalid argument to isInputPort: "+name);
-    if (enable)
-      send(name.substr(0, p) + ".getSlot(\"" + name.substr(p+1, name.npos)
-         + "\").setSlot(\"inputPort\", true)|");
-    else
-       send(name.substr(0, p) + ".getSlot(\"" + name.substr(p+1, name.npos)
-         + "\").removeSlot(\"inputPort\")|");
+      throw std::runtime_error("invalid argument to setInputPort: "+name);
+    send(libport::format("%s.getSlot(\"%s\").%s|",
+                         name.substr(0, p), name.substr(p+1, name.npos),
+                         enable
+                         ? "setSlot(\"inputPort\", true)"
+                         : "removeSlot(\"inputPort\")"));
     ctx->dataSent = true;
   }
 
