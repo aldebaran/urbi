@@ -55,6 +55,8 @@ CONVERT_TO_EPS =				\
   $(CONVERT) $< eps:$@.tmp &&			\
   mv $@.tmp $@
 
+CLEANFILES += $(PDF_IMAGES) $(EPS_IMAGES)
+
 %.eps: %.pdf
 	$(AM_V_GEN)
 	$(AM_V_at)$(CONVERT_TO_EPS)
@@ -64,7 +66,7 @@ CONVERT_TO_EPS =				\
 	$(AM_V_GEN)
 	$(AM_V_at)$(CONVERT_TO_EPS)
 # Use some good quality rasterization.
-document-aux/figs/urbi-sdk/2.5/cube-and-disc.png: %.png: %.pdf
+document-aux/figs/$(cube_and_disc).png: %.png: %.pdf
 	$(AM_V_GEN)
 	$(AM_V_at)$(ENSURE_TARGET_DIR)
 	$(AM_V_at)$(CONVERT) -density 600x600 -quality 90 $< png:$@.tmp
@@ -139,8 +141,8 @@ urbi_sdk_sources =				\
   $(urbi_sdk_tex)				\
   $(call ls_files,*.sty tables/*.txt)
 REVISION_FILE = revision.sty
-CLEANFILES += $(REVISION_FILE)
 BUILT_SOURCES += $(REVISION_FILE)
+CLEANFILES += config.sty
 # Don't depend on .version, it changes too often.
 $(REVISION_FILE):
 	$(VERSIONIFY) --directory --cache=$(top_srcdir)/.version --latex=$@

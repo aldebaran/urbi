@@ -43,7 +43,7 @@ $(srcdir)/%.dat: %.utraj
 
 TRAJECTORIES = $(call ls_files,trajectories/*.utraj)
 EXTRA_DIST += $(TRAJECTORIES) $(TRAJECTORIES:.utraj=.dat)
-
+CLEANFILES += $(TRAJECTORIES:.utraj=.pdftex_t)
 # Not only is this true (i.e., we do want these intermediate files to
 # be kept, as we store them in our repository), but it is also
 # mandated by GNU Make, who, otherwise, does not seem to understand
