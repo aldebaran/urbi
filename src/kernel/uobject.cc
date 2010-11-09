@@ -475,7 +475,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
     l.array << new urbi::UValue(v);
   }
   libport::utime_t start = libport::utime();
-  urbi::UValue r;
+  urbi::UValue res;
 
   bound_context.push_back(std::make_pair(
       (&ugc->owner)? ugc->owner.__name:"unknown",
@@ -486,7 +486,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   {
     // This if is there to optimize the synchronous case.
     if (ugc->isSynchronous())
-      r = ugc->__evalcall(l);
+      res = ugc->__evalcall(l);
     else
     {
       libport::Finally f;
@@ -497,7 +497,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       // before we freeze. So go throug backend.
       tag->value_get()->freeze();
       std::string exception;
-      ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(r),
+      ugc->eval(l, boost::bind(write_and_unfreeze, boost::ref(res),
                                boost::ref(exception), &tag, _1, _2));
       ::kernel::runner().yield();
       if (!exception.empty())
@@ -508,19 +508,19 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   {
     throw;
   }
-  catch(const std::exception& e)
+  catch (const std::exception& e)
   {
     FRAISE("Exception caught while calling %s: %s",
            ugc->getName(), e.what());
   }
-  catch(...)
+  catch (...)
   {
     FRAISE("Unknown exception caught while calling %s",
            ugc->getName());
   }
   start = libport::utime() - start;
   Stats::add(ol.front().get(), message, start);
-  return object_cast(r);
+  return object_cast(res);
 }
 
 
@@ -988,12 +988,14 @@ namespace urbi
         where->slot_set(Symbol(owner->__name), o);
       }
     }
+
     void
     KernelUObjectImpl::clean()
     {
       LOCK_KERNEL;
       uobject_to_robject.erase(owner_->__name);
     }
+
     void
     KernelUObjectImpl::setUpdate(ufloat period)
     {
@@ -1021,28 +1023,29 @@ namespace urbi
     KernelUVarImpl::unnotify()
     {
       LOCK_KERNEL;
-      rObject r;
-      // Try to locate the target urbiscript UVar, which might be gone.
-      // In this case, callbacks are gone too.
-      foreach(KernelUGenericCallbackImpl* v, callbacks_)
+      // Try to locate the target urbiscript UVar, which might be
+      // gone.  In this case, callbacks are gone too.
+      foreach (KernelUGenericCallbackImpl* v, callbacks_)
       {
-        rObject r = object::UVar::fromName(
-          v->inportName_.empty()?v->owner_->name:v->inportName_);
-        if (r)
+        if (rObject r =
+            object::UVar::fromName(v->inportName_.empty()
+                                   ? v->owner_->name
+                                   : v->inportName_))
         {
-          Symbol s;
           if (v->owner_->type == "var")
-            s = Symbol(v->owned_?"changeOwned":"change");
+          {
+            Symbol s = Symbol(v->owned_ ? "changeOwned" : "change");
+            r->slot_get(s)->call(SYMBOL(remove), v->callback_);
+          }
           else if (v->owner_->type == "varaccess")
           {
             r->slot_get(SYMBOL(access))->call(SYMBOL(remove), v->callback_);
             r->slot_get(SYMBOL(accessInLoop))->call(SYMBOL(remove),
                                                     v->callback_);
-          continue;
+            continue;
           }
           else
             continue;
-          r->slot_get(s)->call(SYMBOL(remove), v->callback_);
         }
         if (v->connection_)
           v->connection_->CxxObject::call(SYMBOL(disconnect));
