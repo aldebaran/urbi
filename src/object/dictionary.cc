@@ -55,30 +55,41 @@ namespace urbi
       return content_;
     }
 
+    void
+    Dictionary::key_check(libport::Symbol key) const
+    {
+      if (!libport::mhas(content_, key))
+      {
+        static rObject exn = slot_get(SYMBOL(KeyError));
+        ::kernel::runner().raise(exn->call("new", new String(key)));
+      }
+    }
+
     rDictionary
     Dictionary::set(libport::Symbol key, rObject val)
     {
       content_[key] = val;
+      changed();
       return this;
     }
 
     rObject
     Dictionary::get(libport::Symbol key)
     {
-      if (libport::mhas(content_, key))
-        return content_[key];
-      else
-      {
-        static rObject exn = slot_get(SYMBOL(KeyError));
-        ::kernel::runner().raise(exn->call("new", new String(key)));
-      }
+      key_check(key);
+      return content_[key];
       unreachable();
     }
 
     rDictionary
     Dictionary::clear()
     {
-      content_.clear();
+      if (!empty())
+      {
+        content_.clear();
+        changed();
+      }
+
       return this;
     }
 
@@ -103,7 +114,9 @@ namespace urbi
     rDictionary
     Dictionary::erase(libport::Symbol key)
     {
+      key_check(key);
       content_.erase(key);
+      changed();
       return this;
     }
 

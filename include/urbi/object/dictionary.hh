@@ -34,6 +34,7 @@ namespace urbi
       Dictionary(const value_type& value);
       const value_type& value_get() const;
       value_type& value_get();
+      void key_check(libport::Symbol key) const;
 
       /// Urbi methods
       rDictionary clear();

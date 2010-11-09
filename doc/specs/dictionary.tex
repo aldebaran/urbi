@@ -153,6 +153,27 @@ An extra comma can be added at the end of the list.
 ["a" => 1, "b" => 2].asString == "[\"a\" => 1, \"b\" => 2]";
 \end{urbiassert}
 
+\item[changed?] An event emitted each time the Dictionary is modified:
+
+\begin{urbiscript}
+d = [ => ] |;
+at(d.changed?) echo ("changed");
+d["key1"] = "value1";
+[00000001] "value1"
+[00000001] *** changed
+d["key2"] = "value2";
+[00000001] "value2"
+[00000001] *** changed
+d.erase("key2");
+[00000002] ["key1" => "value1"]
+[00000002] *** changed
+d.clear;
+[00000003] [ => ]
+[00000003] *** changed
+d.clear;
+[00000004] [ => ]
+// No event emitted, dictionary was already empty
+\end{urbiscript}
 
 \item[clear]
   Empty the dictionary.
@@ -174,9 +195,18 @@ An extra comma can be added at the end of the list.
 \item[erase](<key>)
   Remove the mapping for \var{key}.
 
-\begin{urbiassert}
-["one" => 1, "two" => 2].erase("two") == ["one" => 1]
-\end{urbiassert}
+\begin{urbiscript}
+assert(["one" => 1, "two" => 2].erase("two") == ["one" => 1]);
+try
+{
+  ["one" => 1, "two" => 2].erase("three");
+  echo("never reached");
+}
+catch (var e if e.isA(Dictionary.KeyError))
+{
+  assert(e.key == "three")
+};
+\end{urbiscript}
 
 %% commented until a consensus is reached.
 %%
