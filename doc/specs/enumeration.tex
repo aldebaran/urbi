@@ -23,14 +23,25 @@ See \autoref{sec:lang:enum}.
 \subsection{Construction}
 
 An \lstinline{Enumeration} is created with two arguments: the name of the
-enumeration type, and the list of possible values.  Most of the time, it is a
-good idea to store it in a variable with the same name.
+enumeration type, and the list of possible values. Each enumeration value
+can be associated a return value. The latter is returned when evaluating
+the former. Most of the time, it is a good idea to store it in a variable
+with the same name.
 
 \begin{urbiscript}[firstnumber=1]
 var Direction = Enumeration.new("Direction", ["up", "down", "left", "right"]);
 [00000001] Direction
 Direction.up;
 [00000002] up
+var Color = Enumeration.new("Color", [("red",   0xff0000),
+                                      ("green", 0x00ff00),
+                                      ("blue",  0x0000ff)]);
+[00000003] Color
+Color.green;
+[00000004] green
+var white = Color.red bitor Color.green bitor Color.blue |;
+echo("0x%x" % white);
+[00000005] *** 0xffffff
 \end{urbiscript}
 
 The following syntax is equivalent.
@@ -44,6 +55,13 @@ enum Direction
   right
 };
 [00000001] Direction
+enum Color
+{
+  red   = 0xff0000,
+  green = 0x00ff00,
+  blue  = 0x0000ff,
+};
+[00000002] Color
 \end{urbiunchecked}
 
 The created values are derive from the created enumeration type.

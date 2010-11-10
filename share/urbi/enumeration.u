@@ -29,7 +29,17 @@ class Global.Enumeration : Global.RangeIterable
     var i = 0;
     for (var value in values)
     {
-      var val = clone;
+      var val;
+
+      if (value.isA(Tuple) && value.size == 2)
+      {
+        val = value[1];
+        val.addProto(this);
+        value = value[0]
+      }
+      else
+        val = clone;
+
       var val.asString = value;
       setSlot(value, val);
       this.values << val;
