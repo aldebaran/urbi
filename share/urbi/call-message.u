@@ -13,26 +13,19 @@ requireFile("urbi/object.u");
 
 class Global.CallMessage
 {
-  // Set/updated by Object.callMessage.
-  var code;
-  function argString(i)
+  // Non-evaluated target
+  var targetLazy;
+
+  // All evaluated arguments including target as first element
+  function allArgs()
   {
-    args[i].asString
+    evalOnce |
+    allArgs = [targetLazy] + args
   };
 
-  function evalArgAt(i)
-  {
-    args[i].eval
-  };
-
-  function argAt(i)
+  function argAt(var i)
   {
     args[i].value
-  };
-
-  function evalArgs()
-  {
-    args.map(function (arg) { arg.eval })
   };
 
   function argsCount()
@@ -40,8 +33,146 @@ class Global.CallMessage
     args.size
   };
 
-  function eval()
+  function argsPrint()
   {
-    .&target.callMessage(this)
+    // Pretty print arguments.
+    argsPrint = argsVal.map(closure (var v) { v.asPrintable }) |
+    if (targetLazy.asString == "<IMPLICIT>")
+      argsPrint[0] = "" |
+    argsPrint
+  };
+
+  function argsStr()
+  {
+    // Evaluate arguments.
+    argsStr = allArgs.map(closure (var v) { v.asString }) |
+    if (targetLazy.asString == "<IMPLICIT>")
+      argsStr[0] = "" |
+    argsStr
+  };
+
+  function argString(var i)
+  {
+    args[i].asString
+  };
+
+  function argsVal()
+  {
+    // Retrieve arguments values.
+    var unevaluated = Object.new |
+    var unevaluated.asString = "?" |
+    argsVal = allArgs.map(closure (var v) {
+      if (v.&val.isVoid || v.&val.allProtos.hasSame(Executable))
+        unevaluated
+      else
+        v.val
+    })
+  };
+
+  // Set/updated by Object.callMessage.
+  var code;
+
+  function evalArgAt(var i)
+  {
+    args[i].eval
+  };
+
+  function eval
+  {
+    value = .&target.callMessage(this)
+  };
+
+  function evalOnce()
+  {
+    eval |
+    evalOnce = function() {} |
+    void
+  };
+
+  function evalArgs()
+  {
+    args.map(function (arg) { arg.eval })
+  };
+
+  /// callFormat
+  function format(var formatArgs = argsStr)
+  {
+    '$registerOps' |
+    if (formatArgs.size == 1 && message in ["!"])
+      "%s %s" % [message, formatArgs[0]]
+    else if (formatArgs.size == 2 && message in '$funRename')
+      "%s %s %s" % [formatArgs[1], '$funRename'[message], formatArgs[0]]
+    else if (formatArgs.size == 2 && message in '$opNeg')
+      "%s %s %s" % [formatArgs[0], message, formatArgs[1]]
+    else if (2 <= formatArgs.size)
+    {
+      if (formatArgs[0])
+        "%s.%s(%s)" % [formatArgs[0], message, formatArgs.tail.join(", ")]
+      else
+        "%s(%s)" % [message, formatArgs.tail.join(", ")]
+    }
+    else
+    {
+      if (formatArgs[0])
+        "%s.%s" % [formatArgs[0], message]
+      else
+        "%s" % [message]
+    }
+  };
+
+  /// callNegatedFormat
+  function negatedFormat(var formatArgs = argsStr)
+  {
+    '$registerOps' |
+    if (formatArgs.size == 1 && message in ["!"])
+      "%s %s == %s" % [message, formatArgs[0], value]
+    else if (formatArgs.size == 2 && message in '$funRename')
+      "%s %s %s" % [formatArgs[1], '$opNeg'['$funRename'[message]],
+                    formatArgs[0]]
+    else if (formatArgs.size == 2 && message in '$opNeg')
+      "%s %s %s" % [formatArgs[0], '$opNeg'[message], formatArgs[1]]
+    else if (2 <= formatArgs.size)
+    {
+      if (formatArgs[0])
+        "%s.%s(%s) == %s" % [formatArgs[0], message,
+                             formatArgs.tail.join(", "), value]
+      else
+        "%s(%s) == %s" % [message, formatArgs.tail.join(", "), value]
+    }
+    else
+    {
+      if (formatArgs[0])
+        "%s.%s == %s" % [formatArgs[0], message, value]
+      else
+        "%s == %s" % [message, value]
+    }
+  };
+
+  // To be executed when we have dictionnaries.
+  function '$registerOps'()
+  {
+    if (this.hasLocalSlot("$opNeg"))
+      return |
+    var this.'$funRename' =
+      [
+        "has"    => "in",
+        "hasNot" => "not in",
+      ] |
+    var this.'$opNeg' =
+      [
+        "=="  => "!=",
+        "===" => "!==",
+        "<"   => ">=",
+        "<="  => ">",
+        "in"  => "not in",
+      ] |
+    // Add the opposite.
+    for|(var p: this.'$opNeg')
+      this.'$opNeg'[p[1]] = p[0];
+  };
+
+  function value()
+  {
+    eval
   };
 };

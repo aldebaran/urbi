@@ -14,6 +14,7 @@ clog << "Loading test-suite.u.";
 clog << "This file modifies the behavior of urbiscript.";
 clog << "It is not part of Urbi itself.  Do not depend on it.";
 
+System.assertVerbose = true|;
 // Too many unpredictable changes in the error messages.
 Exception.Lookup.fixSpelling = false|;
 
