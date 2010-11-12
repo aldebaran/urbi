@@ -52,6 +52,42 @@ namespace urbi
       proto_add(model);
     }
 
+    URBI_CXX_OBJECT_INIT(FormatInfo)
+      : alignment_(Align::RIGHT)
+      , alt_(false)
+      , consistent_(true)
+      , group_("")
+      , pad_(" ")
+      , pattern_("%s")
+      , precision_(6)
+      , prefix_("")
+      , spec_("s")
+      , uppercase_(Case::UNDEFINED)
+      , width_(0)
+    {
+      bind(SYMBOL(init),     &FormatInfo::init);
+      bind(SYMBOL(asString), &FormatInfo::as_string);
+      bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
+
+# define DECLARE(Name)                                    \
+      bind(SYMBOL(Name), &FormatInfo::Name ##_get);       \
+      property_set(SYMBOL(Name),                          \
+                   SYMBOL(updateHook),                    \
+                   primitive(&FormatInfo::update_hook))
+
+      DECLARE(alignment);
+      DECLARE(alt);
+      DECLARE(group);
+      DECLARE(pad);
+      DECLARE(precision);
+      DECLARE(prefix);
+      DECLARE(spec);
+      DECLARE(uppercase);
+      DECLARE(width);
+
+# undef DECLARE
+    }
+
     void
     FormatInfo::init(const std::string& pattern)
     {

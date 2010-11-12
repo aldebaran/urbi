@@ -37,6 +37,19 @@ namespace urbi
       proto_add(proto);
     }
 
+    URBI_CXX_OBJECT_INIT(Semaphore)
+    {
+#define DECLARE(Name, Cxx)                \
+      bind(SYMBOL(Name), &Semaphore::Cxx)
+
+      DECLARE(new,             _new);
+      DECLARE(criticalSection, criticalSection);
+      DECLARE(acquire,         acquire);
+      DECLARE(release,         release);
+
+#undef DECLARE
+    }
+
     struct SemaphoreException : public sched::SchedulerException
     {
       COMPLETE_EXCEPTION(SemaphoreException);

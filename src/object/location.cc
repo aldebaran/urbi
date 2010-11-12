@@ -45,6 +45,35 @@ namespace urbi
       proto_add(proto);
     }
 
+    URBI_CXX_OBJECT_INIT(Location)
+      : loc_()
+    {
+      bind(SYMBOL(init),
+           static_cast<void (Location::*)()>(&Location::init));
+      bind(SYMBOL(init),
+           static_cast<void (Location::*)(const Position::value_type&)>
+             (&Location::init));
+      bind(SYMBOL(init),
+           static_cast<void (Location::*)(const Position::value_type&,
+                                          const Position::value_type&)>
+             (&Location::init));
+      bind(SYMBOL(EQ_EQ),
+           (bool (Location::*)(rLocation rhs) const) &Location::operator ==);
+
+      // For some reason, cl.exe refuses "&Location::value_type::begin"
+      // with error: function cannot access 'yy::location::begin'
+      bind(SYMBOL(begin), &yy::location::begin);
+      bind(SYMBOL(end),   &yy::location::end);
+
+#define DECLARE(Name, Cxx)                             \
+      bind(SYMBOL( Name ), &Location::Cxx)
+
+      DECLARE(asString,         as_string);
+      DECLARE(isSystemLocation, is_system_location);
+
+#undef DECLARE
+    }
+
     void
     Location::init()
     {}

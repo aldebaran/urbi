@@ -31,6 +31,22 @@ namespace urbi
       proto_add(model);
     }
 
+    URBI_CXX_OBJECT_INIT(Regexp)
+      : re_(".")
+    {
+# define DECLARE(Urbi, Cxx)            \
+      bind(SYMBOL(Urbi), &Regexp::Cxx)
+
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString,    as_string);
+      DECLARE(init,        init);
+      DECLARE(match,       match);
+      DECLARE(matches,     matches);
+      DECLARE(SBL_SBR,     operator[]);
+
+# undef DECLARE
+    }
+
     std::string
     Regexp::as_printable() const
     {

@@ -47,6 +47,24 @@ namespace urbi
       proto_add(proto);
     }
 
+    static rObject nil(const objects_type&)
+    {
+      return void_class;
+    }
+
+    URBI_CXX_OBJECT_INIT(Primitive)
+      : content_()
+    {
+      extend(nil);
+      proto_add(Executable::proto);
+      proto_remove(Object::proto);
+
+      // Hack to avoid proto = 0,
+      // proto will redefined after.
+      proto = this;
+      bind(SYMBOL(apply), &Primitive::apply);
+    }
+
     const Primitive::values_type&
     Primitive::value_get() const
     {

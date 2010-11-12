@@ -65,6 +65,113 @@ namespace urbi
       proto_add(proto);
     }
 
+    // FIXME: kill this when overloading is fully supported
+    typedef std::vector<std::string> strings_type;
+    OVERLOAD_TYPE(
+      split_overload, 4, 1,
+      String,
+      (strings_type (String::*)(const std::string&, int, bool, bool) const)
+      &String::split,
+      List,
+      (strings_type (String::*)(const strings_type&, int, bool, bool) const)
+      &String::split)
+
+    // FIXME: kill this when overloading is fully supported
+    static rObject string_split_bouncer(const objects_type& _args)
+    {
+      objects_type args = _args;
+      static rPrimitive actual = new Primitive(split_overload);
+      check_arg_count(args.size() - 1, 0, 4);
+      switch (args.size())
+      {
+        case 1:
+        {
+          static strings_type seps =
+            boost::assign::list_of(" ")("\t")("\r")("\n");
+          args << to_urbi(seps)
+               << new Float(-1)
+               << object::false_class
+               << object::false_class;
+          break;
+        }
+        case 2:
+          args << new Float(-1);
+        case 3:
+          args << object::false_class;
+        case 4:
+          args << object::true_class;
+        default:
+          break;
+      }
+      if (args[2] == object::nil_class)
+        args[2] = new Float(-1);
+      return (*actual)(args);
+    }
+
+    OVERLOAD_2
+    (string_sub_bouncer, 2,
+     (std::string (String::*) (unsigned) const) (&String::sub),
+     (std::string (String::*) (unsigned, unsigned) const) (&String::sub)
+      );
+
+    OVERLOAD_2
+    (string_sub_eq_bouncer, 3,
+     (std::string (String::*) (unsigned, const std::string&))
+     (&String::sub_eq),
+     (std::string (String::*) (unsigned, unsigned, const std::string&))
+     (&String::sub_eq)
+      );
+
+    URBI_CXX_OBJECT_INIT(String)
+    {
+      bind_variadic(SYMBOL(split), string_split_bouncer);
+
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+           (&self_type::operator==));
+
+#define DECLARE(Name, Function)                 \
+      bind(SYMBOL(Name), &String::Function)
+
+      DECLARE(LT_EQ       , operator<=);
+      DECLARE(PLUS        , plus);
+      DECLARE(STAR        , star);
+      DECLARE(asBool      , as_bool);
+      DECLARE(asFloat     , as_float);
+      DECLARE(asPrintable , as_printable);
+      DECLARE(asString    , as_string);
+      DECLARE(distance    , distance);
+      DECLARE(empty       , empty);
+#if !defined COMPILATION_MODE_SPACE
+      DECLARE(format      , format);
+#endif
+      DECLARE(fresh       , fresh);
+      DECLARE(fromAscii   , fromAscii);
+      DECLARE(isAlnum     , is_alnum);
+      DECLARE(isAlpha     , is_alpha);
+      DECLARE(isCntrl     , is_cntrl);
+      DECLARE(isDigit     , is_digit);
+      DECLARE(isGraph     , is_graph);
+      DECLARE(isLower     , is_lower);
+      DECLARE(isPrint     , is_print);
+      DECLARE(isPunct     , is_punct);
+      DECLARE(isSpace     , is_space);
+      DECLARE(isUpper     , is_upper);
+      DECLARE(isXdigit    , is_xdigit);
+      DECLARE(join        , join);
+      DECLARE(replace     , replace);
+      DECLARE(set         , set);
+      DECLARE(size        , size);
+      DECLARE(toAscii     , toAscii);
+      DECLARE(toLower     , to_lower);
+      DECLARE(toUpper     , to_upper);
+
+#undef DECLARE
+
+      setSlot(SYMBOL(SBL_SBR), new Primitive(string_sub_bouncer));
+      setSlot(SYMBOL(SBL_SBR_EQ), new Primitive(string_sub_eq_bouncer));
+    }
+
     const String::value_type& String::value_get() const
     {
       return content_;

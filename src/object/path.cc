@@ -68,6 +68,42 @@ namespace urbi
       proto_add(proto ? rObject(proto) : Object::proto);
     }
 
+    OVERLOAD_TYPE(concat_bouncer, 1, 1,
+                  Path, &Path::path_concat,
+                  String, &Path::string_concat);
+
+    URBI_CXX_OBJECT_INIT(Path)
+      : path_(WIN32_IF("C:\\", "/"))
+    {
+      bind_variadic(SYMBOL(SLASH), concat_bouncer);
+
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (Path::self_type::*)(const rObject&) const>
+             (&Path::self_type::operator==));
+
+#define DECLARE(Urbi, Cxx)           \
+      bind(SYMBOL(Urbi), &Path::Cxx)
+
+      DECLARE(LT_EQ,       operator<=);
+      DECLARE(absolute,    absolute);
+      DECLARE(asList,      as_list);
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString,    as_string);
+      DECLARE(basename,    basename);
+      DECLARE(cd,          cd);
+      DECLARE(cwd,         cwd);
+      DECLARE(dirname,     dirname);
+      DECLARE(exists,      exists);
+      DECLARE(init,        init);
+      DECLARE(isDir,       is_dir);
+      DECLARE(isReg,       is_reg);
+      DECLARE(open,        open);
+      DECLARE(readable,    readable);
+      DECLARE(writable,    writable);
+
+#undef DECLARE
+    }
+
     void Path::init(const std::string& path)
     {
       path_ = path;

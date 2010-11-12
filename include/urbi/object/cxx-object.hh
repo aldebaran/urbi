@@ -32,13 +32,23 @@
     static ::libport::intrusive_ptr<Name> proto;                        \
     virtual bool valid_proto(const ::urbi::object::Object& o) const
 
-#define URBI_CXX_OBJECT_REGISTER(Name, ...)                             \
+#define URBI_CXX_OBJECT_REGISTER(Name, ...)                   \
   URBI_CXX_OBJECT_REGISTER_(Name, LIBPORT_LIST(__VA_ARGS__,))
 
-#define URBI_CXX_OBJECT_REGISTER_(Name, Attrs)                          \
+#define URBI_CXX_OBJECT_REGISTER_(Name, Attrs)                \
   URBI_CXX_OBJECT_REGISTER__(Name, LIBPORT_LIST_NTH(0, Attrs))
 
 #define URBI_CXX_OBJECT_REGISTER__(Name, Ns)                            \
+  static void                                                           \
+  LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__)()           \
+  {                                                                     \
+    URBI_CHECK_SDK_VERSION();                                           \
+    ::urbi::object::CxxObject::add<Name>(BOOST_PP_STRINGIZE(Ns));       \
+  }                                                                     \
+  URBI_INITIALIZATION_REGISTER                                          \
+  (LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__))
+
+#define URBI_CXX_OBJECT_INIT(Name)                                      \
   const std::string& Name::type_name()                                  \
   {                                                                     \
     static std::string res = #Name;                                     \
@@ -53,22 +63,20 @@
     return type_name();                                                 \
   }                                                                     \
                                                                         \
-  bool Name::valid_proto(const ::urbi::object::Object& o) const         \
+  bool                                                                  \
+  Name::valid_proto(const ::urbi::object::Object& o) const              \
   {                                                                     \
     return dynamic_cast<const Name*>(&o);                               \
   }                                                                     \
                                                                         \
-  static void                                                           \
-  LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__)()           \
-  {                                                                     \
-    URBI_CHECK_SDK_VERSION();                                           \
-    ::urbi::object::CxxObject::add<Name>(BOOST_PP_STRINGIZE(Ns));       \
-  }                                                                     \
-  URBI_INITIALIZATION_REGISTER                                          \
-  (LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__));          \
-                                                                        \
   Name::Name(const ::urbi::object::FirstPrototypeFlag&)
 
+#define URBI_CXX_OBJECT_REGISTER_INIT(Name, ...)                   \
+  URBI_CXX_OBJECT_REGISTER_INIT_(Name, LIBPORT_LIST(__VA_ARGS__,))
+
+#define URBI_CXX_OBJECT_REGISTER_INIT_(Name, Attrs) \
+  URBI_CXX_OBJECT_REGISTER_(Name, Attrs);           \
+  URBI_CXX_OBJECT_INIT(Name)
 
 namespace urbi
 {

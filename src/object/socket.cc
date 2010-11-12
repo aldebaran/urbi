@@ -62,6 +62,48 @@ namespace urbi
       init();
     }
 
+    OVERLOAD_TYPE(
+      socket_connect_overload, 2, 2,
+      String,
+      (void (Socket::*)(const std::string&, const std::string&))
+      &Socket::connect,
+      Float,
+      (void (Socket::*)(const std::string&, unsigned))
+      &Socket::connect)
+
+    URBI_CXX_OBJECT_INIT(Socket)
+      : libport::Socket(*get_default_io_service().get())
+    {
+      io_service_ = get_default_io_service();
+
+#define DECLARE(Name)                           \
+      bind(SYMBOL(Name), &Socket::Name)
+
+      // Uncomment the line below when overloading works.
+      //bind(SYMBOL(connectSerial),
+      //     (void (Socket::*)(const std::string&, unsigned int))
+      //       &Socket::connectSerial);
+      bind(SYMBOL(connectSerial),
+           (void (Socket::*)(const std::string&, unsigned int, bool))
+             &Socket::connectSerial);
+      DECLARE(disconnect);
+      DECLARE(host);
+      DECLARE(init);
+      DECLARE(isConnected);
+      DECLARE(localHost);
+      DECLARE(localPort);
+      DECLARE(poll);
+      DECLARE(port);
+      DECLARE(read);
+      DECLARE(write);
+      DECLARE(syncWrite);
+      DECLARE(getIoService);
+
+#undef DECLARE
+
+      setSlot(SYMBOL(connect), new Primitive(socket_connect_overload));
+    }
+
     void
     Socket::init()
     {

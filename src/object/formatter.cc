@@ -29,6 +29,25 @@ namespace urbi
       proto_add(model);
     }
 
+    URBI_CXX_OBJECT_INIT(Formatter)
+    {
+# define DECLARE(Urbi, Cxx)               \
+      bind(SYMBOL(Urbi), &Formatter::Cxx)
+
+      DECLARE(init, init);
+      DECLARE(data, data_get);
+
+# undef DECLARE
+
+# define OPERATOR_PCT(Type)                                       \
+      static_cast<std::string (Formatter::*)(const Type&) const>  \
+      (&Formatter::operator%)                                     \
+
+      bind(SYMBOL(PERCENT), OPERATOR_PCT(rObject));
+
+# undef OPERATOR_PCT
+    }
+
     void
     Formatter::init(const std::string& format)
     {

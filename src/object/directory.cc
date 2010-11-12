@@ -128,6 +128,28 @@ namespace urbi
       proto_add(proto ? rObject(proto) : Object::proto);
     }
 
+    OVERLOAD_TYPE(directory_init_bouncer, 1, 1,
+                  Path,
+                  (void (Directory::*)(rPath)) &Directory::init,
+                  String,
+                  (void (Directory::*)(const std::string&)) &Directory::init);
+
+    URBI_CXX_OBJECT_INIT(Directory)
+      : path_(new Path())
+    {
+#define DECLARE(Name, Cxx)                \
+      bind(SYMBOL(Name), &Directory::Cxx)
+
+      DECLARE(asList,      list<&directory_mk_path>);
+      DECLARE(content,     list<&directory_mk_string>);
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString,    as_string);
+
+#undef DECLARE
+
+      setSlot(SYMBOL(init), new Primitive(&directory_init_bouncer));
+    }
+
     void
     Directory::create_events()
     {

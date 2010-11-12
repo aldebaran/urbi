@@ -43,6 +43,58 @@ namespace urbi
       proto_add(proto);
     }
 
+    // FIXME: kill this when overloading is fully supported
+    OVERLOAD_TYPE_3(
+      MINUS_overload, 1, 1,
+      Date,
+      (rDuration (Date::*)(rDate) const)                      &Date::operator-,
+      Duration,
+      (rDate     (Date::*)(const Date::duration_type&) const) &Date::operator-,
+      Float,
+      (rDate     (Date::*)(const Date::duration_type&) const) &Date::operator-)
+
+    // FIXME: kill this when overloading is fully supported
+    static rObject MINUS(const objects_type& args)
+    {
+      check_arg_count(args.size() - 1, 0, 1);
+      static rPrimitive actual = new Primitive(MINUS_overload);
+      return (*actual)(args);
+    }
+
+    URBI_CXX_OBJECT_INIT(Date)
+      : time_(boost::posix_time::microsec_clock::local_time())
+    {
+      bind_variadic(SYMBOL(MINUS), MINUS);
+
+#define DECLARE(Unit)                                         \
+      bind(libport::Symbol(#Unit),       &Date::Unit ## _get, \
+           libport::Symbol(#Unit "Set"), &Date::Unit ## _set)
+
+      DECLARE(day);
+      DECLARE(hour);
+      DECLARE(minute);
+      DECLARE(month);
+      DECLARE(second);
+      DECLARE(year);
+
+#undef DECLARE
+
+      bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
+
+#define DECLARE(Name, Cxx)           \
+      bind(SYMBOL(Name), &Date::Cxx)
+
+      DECLARE(EQ_EQ,    operator ==);
+      DECLARE(PLUS,     operator +);
+      DECLARE(asFloat,  as_float);
+      DECLARE(asString, as_string);
+      DECLARE(epoch,    epoch);
+      DECLARE(init,     init);
+      DECLARE(now,      now);
+
+#undef DECLARE
+    }
+
     void
     Date::init(const objects_type& args)
     {

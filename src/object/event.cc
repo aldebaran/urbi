@@ -50,6 +50,30 @@ namespace urbi
       slot_set(SYMBOL(payload), payload);
     }
 
+    URBI_CXX_OBJECT_INIT(Event)
+    {
+      typedef void (Event::*emit_type)(const objects_type& args);
+      bind_variadic<void, Event>(SYMBOL(emit),
+                                 static_cast<emit_type>(&Event::emit));
+      bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
+      bind(SYMBOL(localTrigger), &Event::localTrigger);
+      typedef
+      void (Event::*on_event_type)
+      (rExecutable guard, rExecutable enter, rExecutable leave);
+      bind(SYMBOL(onEvent), static_cast<on_event_type>(&Event::onEvent));
+      bind_variadic<void, Event>(SYMBOL(syncEmit), &Event::syncEmit);
+      bind_variadic<rEvent, Event>(SYMBOL(syncTrigger), &Event::syncTrigger);
+      bind_variadic<rEvent, Event>(SYMBOL(trigger), &Event::trigger);
+
+#define DECLARE(Name, Cxx)            \
+      bind(SYMBOL(Name), &Event::Cxx)
+
+      DECLARE(stop,      stop);
+      DECLARE(waituntil, waituntil);
+
+#undef DECLARE
+    }
+
     void
     Event::unregister(Actions* a)
     {

@@ -47,6 +47,23 @@ namespace urbi
       proto_add(model);
     }
 
+    URBI_CXX_OBJECT_INIT(InputStream)
+      : Stream(STDIN_FILENO, false)
+      , pos_(0)
+      , size_(0)
+    {
+# define DECLARE(Name, Cxx)                  \
+      bind(SYMBOL(Name), &InputStream::Cxx)
+
+      DECLARE(close,   close);
+      DECLARE(get,     get);
+      DECLARE(getChar, getChar);
+      DECLARE(getLine, getLine);
+      DECLARE(init,    init);
+
+# undef DECLARE
+    }
+
     InputStream::~InputStream()
     {
     }

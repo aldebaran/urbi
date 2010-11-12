@@ -39,6 +39,21 @@ namespace urbi
       proto_add(proto);
     }
 
+    URBI_CXX_OBJECT_INIT(OutputStream)
+      : Stream(STDOUT_FILENO, false)
+    {
+# define DECLARE(Name, Cxx)                   \
+      bind(SYMBOL(Name), &OutputStream::Cxx)
+
+      DECLARE(LT_LT, put);
+      DECLARE(close, close);
+      DECLARE(flush, flush);
+      DECLARE(init,  init);
+      DECLARE(put,   putByte);
+
+# undef DECLARE
+    }
+
     OutputStream::~OutputStream()
     {
     }

@@ -165,6 +165,42 @@ namespace urbi
       slot_set(SYMBOL(waiterTag), new Tag());
     }
 
+    static rObject
+    uvar_update_bounce(objects_type args)
+    {
+      //called with self slotname slotval
+      check_arg_count(args.size() - 1, 2);
+      libport::intrusive_ptr<UVar> rvar =
+        args.front()
+        ->slot_get(libport::Symbol(args[1]->as<String>()->value_get())).value()
+        .unsafe_cast<UVar>();
+      if (!rvar)
+        RAISE("UVar updatehook called on non-uvar slot");
+      rvar->update_(args[2]);
+      return void_class;
+    }
+
+    URBI_CXX_OBJECT_INIT(UVar)
+      : Primitive(boost::function1<rObject, objects_type>
+                    (boost::bind(&UVar::accessor, this, _1)))
+      , looping_(false)
+      , inAccess_(false)
+    {
+#define DECLARE(Name, Cxx)           \
+      bind(SYMBOL(Name), &UVar::Cxx)
+
+      DECLARE(writeOwned,    writeOwned);
+      DECLARE(update_timed,  update_timed);
+      DECLARE(loopCheck,     loopCheck);
+      DECLARE(accessor,      accessor);
+      DECLARE(update_,       update_);
+      DECLARE(update_timed_, update_timed_);
+
+#undef DECLARE
+
+      setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
+    }
+
     void
     UVar::changeAccessLoop()
     {

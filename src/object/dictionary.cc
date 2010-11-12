@@ -43,6 +43,25 @@ namespace urbi
       proto_add(proto);
     }
 
+    URBI_CXX_OBJECT_INIT(Dictionary)
+    {
+      bind(SYMBOL(asBool), &Dictionary::as_bool);
+
+#define DECLARE(Name)                       \
+      bind(SYMBOL(Name), &Dictionary::Name)
+
+      DECLARE(clear);
+      DECLARE(empty);
+      DECLARE(erase);
+      DECLARE(get);
+      DECLARE(has);
+      DECLARE(keys);
+      DECLARE(set);
+      DECLARE(size);
+
+#undef DECLARE
+    }
+
     const Dictionary::value_type&
     Dictionary::value_get() const
     {

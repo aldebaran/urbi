@@ -48,6 +48,24 @@ namespace urbi
       proto_add(Tag::proto);
     }
 
+    URBI_CXX_OBJECT_INIT(Job)
+    {
+#define DECLARE(Name, Cxx)          \
+      bind(SYMBOL(Name), &Job::Cxx)
+
+      DECLARE(DOLLAR_backtrace,   backtrace);
+      DECLARE(name,               name);
+      DECLARE(setSideEffectFree,  setSideEffectFree);
+      DECLARE(status,             status);
+      DECLARE(tags,               tags);
+      DECLARE(terminate,          terminate);
+      DECLARE(timeShift,          timeShift);
+      DECLARE(waitForChanges,     waitForChanges);
+      DECLARE(waitForTermination, waitForTermination);
+
+#undef DECLARE
+    }
+
     const Job::value_type&
     Job::value_get() const
     {

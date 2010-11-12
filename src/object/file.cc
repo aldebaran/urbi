@@ -60,6 +60,31 @@ namespace urbi
       proto_add(proto ? rObject(proto) : Object::proto);
     }
 
+    OVERLOAD_TYPE(file_init_bouncer, 1, 1,
+                  Path,
+                  (void (File::*)(rPath)) &File::init,
+                  String,
+                  (void (File::*)(const std::string&)) &File::init);
+
+    URBI_CXX_OBJECT_INIT(File)
+      : path_(new Path("/"))
+    {
+#define DECLARE(Name, Cxx)           \
+      bind(SYMBOL(Name), &File::Cxx)
+
+      DECLARE(asList,      as_list);
+      DECLARE(asPrintable, as_printable);
+      DECLARE(asString,    as_string);
+      DECLARE(content,     content);
+      DECLARE(create,      create);
+      DECLARE(rename,      rename);
+      DECLARE(remove,      remove);
+
+#undef DECLARE
+
+      setSlot(SYMBOL(init), new Primitive(&file_init_bouncer));
+    }
+
     rFile File::create(rObject, const std::string& p)
     {
       libport::path path(p);

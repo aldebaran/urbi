@@ -50,6 +50,42 @@ namespace urbi
         parent_ = model;
     }
 
+    URBI_CXX_OBJECT_INIT(Tag)
+      : value_(new sched::Tag(libport::Symbol::make_empty()))
+    {
+#define DECLARE(Name, Cast)                                             \
+      bind(SYMBOL(Name), static_cast<void (Tag::*)(Cast)>(&Tag::Name))
+
+      DECLARE(init,                 );
+      DECLARE(init,  libport::Symbol);
+      DECLARE(stop,                 );
+      DECLARE(stop,  rObject        );
+      DECLARE(block,                );
+      DECLARE(block, rObject        );
+
+#undef DECLARE
+
+      bind_variadic(SYMBOL(newFlowControl), &Tag::new_flow_control);
+
+#define DECLARE(Name, Function)                 \
+      bind(SYMBOL(Name), &Tag::Function)
+
+      DECLARE(blocked,     blocked);
+      DECLARE(enter,       enter);
+      DECLARE(freeze,      freeze);
+      DECLARE(frozen,      frozen);
+      DECLARE(getParent,   parent_get);
+      DECLARE(leave,       leave);
+      DECLARE(name,        name);
+      DECLARE(priority,    priority);
+      DECLARE(scope,       scope);
+      DECLARE(setPriority, priority_set);
+      DECLARE(unblock,     unblock);
+      DECLARE(unfreeze,    unfreeze);
+
+#undef DECLARE
+    }
+
     Tag::value_type&
     Tag::value_get()
     {

@@ -54,6 +54,56 @@ namespace urbi
       proto_add(proto);
     }
 
+    URBI_CXX_OBJECT_INIT(Position)
+      : pos_()
+    {
+      bind(SYMBOL(init), static_cast<void (Position::*)()>(&Position::init));
+      bind(SYMBOL(init),
+           static_cast<void (Position::*)(const value_type& pos)>
+             (&Position::init));
+      bind(SYMBOL(init),
+           static_cast<void (Position::*)(unsigned from, unsigned to)>
+             (&Position::init));
+      bind(SYMBOL(init),
+           static_cast
+             <void (Position::*)(rObject file, unsigned from, unsigned to)>
+               (&Position::init));
+      typedef bool (Position::*comparison_type)(rPosition rhs) const;
+      bind(SYMBOL(EQ_EQ), (comparison_type) &Position::operator ==);
+      bind(SYMBOL(LT), (comparison_type) &Position::operator <);
+
+#define DECLARE(Name, Cxx)               \
+      bind(SYMBOL(Name), &Position::Cxx)
+
+      DECLARE(MINUS,    operator -);
+      DECLARE(PLUS,     operator +);
+      DECLARE(lines,    lines);
+      DECLARE(columns,  columns);
+      DECLARE(asString, as_string);
+
+#undef DECLARE
+
+#define DECLARE(Name)                                     \
+      bind(SYMBOL(Name), &Position::Name ##_get);         \
+      property_set(SYMBOL(Name),                          \
+                   SYMBOL(updateHook),                    \
+                   primitive(&Position::Name ##_set))
+
+      DECLARE(file);
+
+#undef DECLARE
+
+      // For some reason, cl.exe refuses "&Position::value_type::line"
+      // with error: function cannot access 'yy::position::line'
+#define DECLARE(Name)                           \
+      bind(SYMBOL( Name ), &yy::position::Name)
+
+      DECLARE(line);
+      DECLARE(column);
+
+#undef DECLARE
+    }
+
     void
     Position::init()
     {}

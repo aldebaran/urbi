@@ -32,6 +32,23 @@ namespace urbi
       proto_add(model);
       init_();
     }
+
+    URBI_CXX_OBJECT_INIT(UConnection)
+    {
+# define DECLARE(a) bind(SYMBOL(a), &UConnection::a)
+      DECLARE(source);
+      DECLARE(target);
+      DECLARE(enabled);
+      DECLARE(minInterval);
+      DECLARE(lastCall);
+      DECLARE(callCount);
+      DECLARE(totalCallTime);
+      DECLARE(minCallTime);
+      DECLARE(maxCallTime);
+      DECLARE(asynchronous);
+      init_();
+# undef DECLARE
+    }
     void UConnection::init_()
     {
       enabled = true;

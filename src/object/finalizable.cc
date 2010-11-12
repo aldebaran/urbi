@@ -35,6 +35,18 @@ namespace urbi
       proto_add(model);
     }
 
+    URBI_CXX_OBJECT_INIT(Finalizable)
+    {
+#define DECLARE(Name)                        \
+      bind(SYMBOL(Name), &Finalizable::Name)
+
+      DECLARE(__dec);
+      DECLARE(__inc);
+      DECLARE(__get);
+
+#undef DECLARE
+    }
+
     Finalizable::~Finalizable()
     {
       try

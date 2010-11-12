@@ -48,6 +48,20 @@ namespace urbi
       put(v, bypass);
     }
 
+    URBI_CXX_OBJECT_INIT(UValue)
+    {
+#define DECLARE(Name)                   \
+      bind(SYMBOL(Name), &UValue::Name)
+
+      DECLARE(extract);
+      DECLARE(extractAsToplevelPrintable);
+      DECLARE(invalidate);
+
+#undef DECLARE
+
+      bind(SYMBOL(put), (void (UValue::*)(rObject))&UValue::put);
+    }
+
     UValue::~UValue()
     {}
 

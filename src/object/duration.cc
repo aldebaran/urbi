@@ -39,6 +39,27 @@ namespace urbi
       proto_add(proto);
     }
 
+    URBI_CXX_OBJECT_INIT(Duration)
+      : Float(0)
+    {
+      proto_add(Float::proto);
+
+      bind(SYMBOL(init),
+           static_cast<void (Duration::*)()>(&Duration::init));
+      bind(SYMBOL(init),
+           static_cast<void (Duration::*)(const Duration::value_type&)>
+             (&Duration::init));
+
+#define DECLARE(Name, Cxx)               \
+      bind(SYMBOL(Name), &Duration::Cxx)
+
+      DECLARE(asPrintable, asPrintable);
+      DECLARE(asString,    as_string);
+      DECLARE(seconds,     seconds);
+
+#undef DECLARE
+    }
+
     void
     Duration::init()
     {

@@ -30,5 +30,8 @@ namespace urbi
     {
       proto_add(model);
     }
+
+    URBI_CXX_OBJECT_INIT(Executable)
+    {}
   }
 }

@@ -55,6 +55,97 @@ namespace urbi
       proto_add(model);
     }
 
+    URBI_CXX_OBJECT_INIT(Float)
+      : value_(0)
+    {
+      bind(SYMBOL(PLUS),
+           static_cast<Float::value_type (Float::*)() const>(&Float::plus));
+      bind(SYMBOL(PLUS),
+           static_cast<Float::value_type (Float::*)(Float::value_type) const>
+            (&Float::plus));
+      bind(SYMBOL(MINUS),
+           static_cast<Float::value_type (Float::*)() const>(&Float::minus));
+      bind(SYMBOL(MINUS),
+           static_cast<Float::value_type (Float::*)(Float::value_type) const>
+             (&Float::minus));
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+                      (&self_type::operator==));
+
+      limits = urbi::object::Object::proto->clone();
+
+#define DECLARE(Urbi, Cxx)                    \
+      limits->bind(SYMBOL(Urbi), &Float::Cxx)
+
+      DECLARE(digits, limit_digits);
+      DECLARE(digits10, limit_digits10);
+      DECLARE(min, limit_min);
+      DECLARE(max, limit_max);
+      DECLARE(epsilon, limit_epsilon);
+      DECLARE(minExponent, limit_min_exponent);
+      DECLARE(minExponent10, limit_min_exponent10);
+      DECLARE(maxExponent, limit_max_exponent);
+      DECLARE(maxExponent10, limit_max_exponent10);
+      DECLARE(radix, limit_radix);
+
+#undef DECLARE
+
+#define DECLARE(Urbi, Cxx)            \
+      bind(SYMBOL(Urbi), &Float::Cxx)
+
+      DECLARE(CARET,     operator^);
+      DECLARE(GT_GT,     operator>>);
+      DECLARE(LT_EQ,     operator<=);
+      DECLARE(LT,        less_than);
+      DECLARE(GT,        operator>);
+      DECLARE(GT_EQ,     operator>=);
+      DECLARE(BANG_EQ,   operator!=);
+      DECLARE(LT_LT,     operator<<);
+      DECLARE(PERCENT,   operator%);
+      DECLARE(SLASH,     operator/);
+      DECLARE(STAR,      operator*);
+      DECLARE(STAR_STAR, pow);
+      DECLARE(abs,       fabs);
+      DECLARE(acos,      acos);
+      DECLARE(asString,  as_string);
+      DECLARE(asin,      asin);
+      DECLARE(atan,      atan);
+      DECLARE(atan2,     atan2);
+      DECLARE(bitand,    operator&);
+      DECLARE(bitor,     operator|);
+      DECLARE(ceil,      ceil);
+      DECLARE(compl,     operator~);
+      DECLARE(cos,       cos);
+      DECLARE(exp,       exp);
+#if !defined COMPILATION_MODE_SPACE
+      DECLARE(format, format);
+#endif
+      DECLARE(floor,   floor);
+      DECLARE(inf,     inf);
+      DECLARE(isInf,   is_inf);
+      DECLARE(isNan,   is_nan);
+      DECLARE(log,     log);
+      DECLARE(nan,     nan);
+      DECLARE(random,  random);
+      DECLARE(srandom, srandom);
+      DECLARE(round,   round);
+      DECLARE(seq,     seq);
+      DECLARE(sign,    sign);
+      DECLARE(sin,     sin);
+      DECLARE(sqrt,    sqrt);
+      DECLARE(tan,     tan);
+      DECLARE(trunc,  trunc);
+
+#undef DECLARE
+
+      // Hack to avoid proto = 0,
+      // proto will redefined after.
+      proto = this;
+
+      setSlot("pi", new Float(M_PI));
+      setSlot(SYMBOL(limits), Float::limits);
+    }
+
     const Float::value_type&
     Float::value_get() const
     {

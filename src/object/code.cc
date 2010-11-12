@@ -59,6 +59,28 @@ namespace urbi
       proto_remove(Object::proto);
     }
 
+    URBI_CXX_OBJECT_INIT(Code)
+    {
+      PARAMETRIC_AST(ast, "function () {}");
+      ast_ = ast.result<const ast::Routine>();
+      proto_add(Executable::proto);
+      proto_remove(Object::proto);
+      bind_variadic<rObject, Code>(SYMBOL(apply), &Code::apply);
+      bind(SYMBOL(EQ_EQ),
+           static_cast<bool (self_type::*)(const rObject&) const>
+           (&self_type::operator==));
+
+#define DECLARE(Name, Cxx)           \
+      bind(SYMBOL(Name), &Code::Cxx)
+
+      DECLARE(asString,   as_string);
+      DECLARE(bodyString, body_string);
+
+#undef DECLARE
+    }
+
+
+
     Code::ast_type Code::ast_get() const
     {
       return ast_;

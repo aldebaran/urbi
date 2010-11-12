@@ -54,6 +54,31 @@ namespace urbi
       RAISE("`Lobby' objects cannot be cloned");
     }
 
+    URBI_CXX_OBJECT_INIT(Lobby)
+      : connection_(0)
+    {
+      bind(SYMBOL(send),
+           static_cast<void (Lobby::*)(const std::string&)>(&Lobby::send));
+      bind(SYMBOL(send),
+           static_cast<void (Lobby::*)(const std::string&, const std::string&)>
+             (&Lobby::send));
+
+#define DECLARE(Name)                  \
+      bind(SYMBOL(Name), &Lobby::Name)
+
+      DECLARE(bytesSent);
+      DECLARE(bytesReceived);
+      DECLARE(create);
+      DECLARE(lobby);
+      DECLARE(quit);
+      DECLARE(receive);
+      DECLARE(write);
+
+#undef DECLARE
+
+      bind(SYMBOL(instances), &Lobby::instances_get);
+    }
+
     size_t
     Lobby::bytesSent() const
     {

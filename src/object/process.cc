@@ -106,6 +106,32 @@ namespace urbi
       proto_add(model);
     }
 
+    URBI_CXX_OBJECT_INIT(Process)
+      : name_(libport::path("true").basename())
+      , pid_(0)
+      , binary_("/bin/true")
+      , argv_()
+      , status_(-1)
+    {
+      argv_ << binary_;
+
+#  define DECLARE(Name, Function)             \
+      bind(SYMBOL(Name), &Process::Function)
+
+      DECLARE(asString, as_string);
+      DECLARE(done,     done);
+      DECLARE(init,     init);
+      DECLARE(join,     join);
+      DECLARE(run,      run);
+      DECLARE(runTo,    runTo);
+      DECLARE(kill,     kill);
+      DECLARE(status,   status);
+      DECLARE(name,     name_);
+#  undef DECLARE
+
+      libport::startThread(boost::function0<void>(&Process::monitor_children));
+    }
+
     void
     Process::init(const std::string& binary,
                   const arguments_type& argv)

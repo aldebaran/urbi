@@ -14,6 +14,7 @@
 
 #include <kernel/userver.hh>
 
+#include <urbi/object/cxx-object.hh>
 #include <urbi/object/barrier.hh>
 #include <urbi/object/float.hh>
 #include <object/symbols.hh>
@@ -34,6 +35,19 @@ namespace urbi
       : value_(value)
     {
       proto_add(proto ? rObject(proto) : Object::proto);
+    }
+
+    URBI_CXX_OBJECT_INIT(Barrier)
+    {
+#define DECLARE(Name, Cxx)              \
+      bind(SYMBOL(Name), &Barrier::Cxx)
+
+      DECLARE(new,       _new);
+      DECLARE(signal,    signal);
+      DECLARE(signalAll, signalAll);
+      DECLARE(wait,      wait);
+
+#undef DECLARE
     }
 
     struct BarrierException : public sched::SchedulerException
