@@ -203,15 +203,14 @@ namespace urbi
 
     template<typename T>
     inline libport::intrusive_ptr<T>
-    type_check(const rObject& o,
-               boost::optional<unsigned> idx)
+    type_check(const rObject& o)
     {
       // If we do not have the right type, bounce onto the slower version
       // which will take care of throwing the appropriate exception. The
       // check will be done again, but this is harmless and only happens
       // when there is actually a mismatch.
       if (!is_a<T>(o))
-        type_check(o, T::proto, idx);
+        type_check(o, T::proto);
       return o->as<T>();
     }
   }

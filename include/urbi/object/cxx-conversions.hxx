@@ -30,6 +30,27 @@ namespace urbi
 {
   namespace object
   {
+    inline
+    TypeError::TypeError(const rObject& expected)
+      : expected_(expected)
+    {}
+
+    inline
+    TypeError::~TypeError() throw()
+    {}
+
+    inline const char*
+    TypeError::what() const throw()
+    {
+      return "TypeError";
+    };
+
+    inline const rObject&
+    TypeError::expected() const
+    {
+      return expected_;
+    }
+
     /*--------.
     | Helpers |
     `--------*/
@@ -58,16 +79,16 @@ namespace urbi
     `----------*/
 
     template <typename T>
-    typename CxxConvert<T>::target_type&
-    CxxConvert<T>::to(rObject o, unsigned idx)
+    typename CxxConvert<T>::target_type
+    CxxConvert<T>::to(rObject o)
     {
-      type_check<T>(o, idx);
+      type_check<T>(o);
       return *o->as<T>();
     }
 
     template <typename T>
     rObject
-    CxxConvert<T>::from(const target_type& v)
+    CxxConvert<T>::from(source_type v)
     {
       return &v;
     }
@@ -78,7 +99,7 @@ namespace urbi
       typedef libport::intrusive_ptr<Object> target_type;
 
       static rObject
-      to(const rObject& o, unsigned)
+      to(const rObject& o)
       {
         return o;
       }
@@ -102,9 +123,9 @@ namespace urbi
     {
       typedef libport::intrusive_ptr<Urbi> target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<Urbi>(o, idx);
+        type_check<Urbi>(o);
         return o->as<Urbi>();
       }
 
@@ -125,9 +146,9 @@ namespace urbi
     {
       typedef Urbi* target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<Urbi>(o, idx);
+        type_check<Urbi>(o);
         return o->as<Urbi>().get();
       }
 
@@ -147,9 +168,9 @@ namespace urbi
     {
       typedef Float::int_type target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        return type_check<Float>(o, idx)->to_int_type();
+        return type_check<Float>(o)->to_int_type();
       }
 
       static rObject
@@ -170,9 +191,9 @@ namespace urbi
     {                                           \
       typedef Type target_type;                 \
       static target_type                        \
-        to(const rObject& o, unsigned idx)      \
+        to(const rObject& o)                    \
       {                                         \
-        type_check<Float>(o, idx);              \
+        type_check<Float>(o);                   \
         return to_integer<target_type>(o);      \
       }                                         \
                                                 \
@@ -201,9 +222,9 @@ namespace urbi
     {
       typedef float target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check(o, Float::proto, idx);
+        type_check(o, Float::proto);
         return o->as<Float>()->value_get();
       }
 
@@ -224,9 +245,9 @@ namespace urbi
     {
       typedef Float::unsigned_type target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<Float>(o, idx);
+        type_check<Float>(o);
         return o->as<Float>()->to_unsigned_type();
       }
 
@@ -247,9 +268,9 @@ namespace urbi
     {
       typedef Float::value_type target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<Float>(o, idx);
+        type_check<Float>(o);
         return o->as<Float>()->value_get();
       }
 
@@ -268,18 +289,19 @@ namespace urbi
     template <>
     struct CxxConvert<std::string>
     {
-      typedef std::string target_type;
+      typedef       std::string  target_type;
+      typedef const std::string& source_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
         if (rPath p = o->as<Path>())
           return p->value_get();
-        type_check<String>(o, idx);
+        type_check<String>(o);
         return o->as<String>()->value_get();
       }
 
       static rObject
-      from(const target_type& v)
+      from(source_type v)
       {
         return new String(v);
       }
@@ -295,14 +317,14 @@ namespace urbi
     {
       typedef char target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<String>(o, idx);
+        type_check<String>(o);
         std::string str = o->as<String>()->value_get();
         if (str.size() != 1)
           runner::raise_primitive_error
-            (libport::format("expected one character string for argument %s",
-                             idx));
+            ("expected one character string for argument");
+            //FIXME: Would be good to give argument number.
         return str[0];
       }
 
@@ -324,9 +346,9 @@ namespace urbi
     {                                                                   \
       typedef Type target_type;                                         \
       static target_type                                                \
-        to(const rObject& o, unsigned idx)                              \
+        to(const rObject& o)                                            \
       {                                                                 \
-        return strdup(CxxConvert<std::string>::to(o, idx).c_str());     \
+        return strdup(CxxConvert<std::string>::to(o).c_str());          \
       }                                                                 \
                                                                         \
       static rObject                                                    \
@@ -351,9 +373,9 @@ namespace urbi
     {
       typedef libport::Symbol target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<String>(o, idx);
+        type_check<String>(o);
         return libport::Symbol(o->as<String>()->value_get());
       }
 
@@ -374,7 +396,7 @@ namespace urbi
     {
       typedef bool target_type;
       static target_type
-      to(const rObject& o, unsigned)
+      to(const rObject& o)
       {
         return o->as_bool();
       }
@@ -396,11 +418,11 @@ namespace urbi
     {
       typedef libport::path target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
         if (rString str = o->as<String>())
           return str->value_get();
-        type_check<Path>(o, idx);
+        type_check<Path>(o);
         return o->as<String>()->value_get();
       }
 
@@ -423,12 +445,12 @@ namespace urbi
       typedef Name<T ExtraT> target_type;                               \
                                                                         \
       static target_type                                                \
-        to(const rObject& o, unsigned idx)                              \
+        to(const rObject& o)                                            \
       {                                                                 \
         type_check<List>(o);                                            \
         Name<T ExtraT> res;                                             \
         foreach (const rObject& elt, o->as<List>()->value_get())        \
-          res.Method(CxxConvert<T>::to(elt, idx));                      \
+          res.Method(CxxConvert<T>::to(elt));                           \
         return res;                                                     \
       }                                                                 \
                                                                         \
@@ -460,11 +482,11 @@ namespace urbi
     {
       typedef boost::optional<T> target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
         if (o == void_class)
           return target_type();
-        return CxxConvert<T>::to(o, idx);
+        return CxxConvert<T>::to(o);
       }
 
       static rObject
@@ -486,9 +508,9 @@ namespace urbi
     {
       typedef std::pair<T1, T2> target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<List>(o, idx);
+        type_check<List>(o);
         const List::value_type& list = o->as<List>()->value_get();
         if (list.size() != 2)
           runner::raise_primitive_error("Expected a list of size 2");
@@ -517,9 +539,31 @@ namespace urbi
     }
 
     template <typename T>
-    T from_urbi(rObject v)
+    typename CxxConvert<T>::target_type
+    from_urbi(rObject v)
     {
-      return CxxConvert<T>::to(v, 0);
+      try
+      {
+        return CxxConvert<T>::to(v);
+      }
+      catch (TypeError& e)
+      {
+        runner::raise_type_error(v, e.expected());
+      }
+    }
+
+    template<typename T>
+    typename CxxConvert<T>::target_type
+    from_urbi(rObject o, unsigned idx)
+    {
+      try
+      {
+        return CxxConvert<T>::to(o);
+      }
+      catch (TypeError& e)
+      {
+        runner::raise_argument_type_error(idx, o, e.expected());
+      }
     }
   }
 }

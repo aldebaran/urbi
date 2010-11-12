@@ -24,9 +24,9 @@ namespace urbi
     {
       typedef boost::posix_time::ptime target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check(o, Date::proto, idx);
+        type_check(o, Date::proto);
         return o->as<Date>()->as_boost();
       }
 
@@ -43,9 +43,9 @@ namespace urbi
   {                                                                       \
     typedef Date::Name ## _type target_type;                              \
     static target_type                                                    \
-    to(const rObject& o, unsigned idx)                                    \
+    to(const rObject& o)                                                  \
     {                                                                     \
-      type_check(o, Float::proto, idx);                                   \
+      type_check(o, Float::proto);                                        \
       try                                                                 \
       {                                                                   \
         return target_type(o->as<Float>()->to_int_type());                \

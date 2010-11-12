@@ -134,12 +134,16 @@ namespace urbi
     rObject Code::apply(const objects_type& apply_args)
     {
       check_arg_count(apply_args.size(), 1, 2);
-      rList args = type_check<List>(apply_args[0], 0u);
+      rList args;
+
+      args = from_urbi<rList>(apply_args[0], 0);
+
       runner::Runner& r = runner();
-      libport::Symbol s =
-        1 < apply_args.size()
-        ? libport::Symbol(type_check<String>(apply_args[1], 1u)->value_get())
-        : SYMBOL(apply);
+      libport::Symbol s;
+      if(1 < apply_args.size())
+        s = libport::Symbol(from_urbi<rString>(apply_args[1], 1)->value_get());
+      else
+        s = SYMBOL(apply);
       if (args->value_get().empty())
         RAISE("argument list must begin with `this'");
       List::value_type a = args->value_get();

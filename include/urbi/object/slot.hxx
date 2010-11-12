@@ -48,7 +48,7 @@ namespace urbi
     inline T
     Slot::get()
     {
-      return object::CxxConvert<T>::to(value_, 0);
+      return from_urbi<T>(value_);
     }
 
     template <typename T>

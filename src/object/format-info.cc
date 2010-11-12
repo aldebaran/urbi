@@ -216,7 +216,7 @@ namespace urbi
     FormatInfo::update_hook(const std::string& slot, rObject val)
     {
       if (slot == "alignment")
-        switch (Float::int_type v = type_check<Float>(val, 0u)->to_int_type())
+        switch (Float::int_type v = from_urbi<rFloat>(val)->to_int_type())
         {
 #define CASE(In, Out)                                   \
           case In: alignment_ = Align::Out; break
@@ -231,41 +231,41 @@ namespace urbi
         alt_ = val->as_bool();
       else if (slot == "group")
       {
-        std::string v = type_check<String>(val, 0u)->value_get();
+        std::string v = from_urbi<rString>(val)->value_get();
         if (!v.empty() && v != " ")
           FRAISE("expected \" \" or \"\", got \"%s\"", v);
         group_ = v;
       }
       else if (slot == "pad")
       {
-        std::string v = type_check<String>(val, 0u)->value_get();
+        std::string v = from_urbi<rString>(val)->value_get();
         if (v != " " && v != "0")
           FRAISE("expected \" \" or \"0\", got \"%s\"", v);
         pad_ = v;
       }
       else if (slot == "precision")
-        precision_ = type_check<Float>(val, 0u)->to_unsigned_type();
+        precision_ = from_urbi<rFloat>(val)->to_unsigned_type();
       else if (slot == "prefix")
       {
-        std::string v = type_check<String>(val, 0u)->value_get();
+        std::string v = from_urbi<rString>(val)->value_get();
         if (v != " " && v != "+" && v != "")
           FRAISE("expected \"\", \" \" or \"+\", got \"%s\"", v);
         prefix_ = v;
       }
       else if (slot == "spec")
       {
-        std::string val_(type_check<String>(val, 0u)->value_get());
+        std::string val_(from_urbi<rString>(val)->value_get());
         if (val_.size() != 1)
           RAISE("expected one-character long string, got " + val_);
         if (!strchr("sdbxoefEDX", val_[0]))
           RAISE("expected one character in \"sdbxoefEDX\", got \"" + val_ + "\"");
-        spec_ = type_check<String>(val, 0u)->to_lower();
+        spec_ = from_urbi<rString>(val)->to_lower();
         uppercase_ = (spec_ == "s"       ? Case::UNDEFINED
                       : islower(val_[0]) ? Case::LOWER
                       :                    Case::UPPER);
       }
       else if (slot == "uppercase")
-        switch (Float::int_type v = type_check<Float>(val, 0u)->to_int_type())
+        switch (Float::int_type v = from_urbi<rFloat>(val)->to_int_type())
         {
 #define CASE(In, Out, Spec)                                     \
           case In: uppercase_ = Case::Out; spec_ = Spec; break
@@ -277,7 +277,7 @@ namespace urbi
             FRAISE("expected integer -1, 0 or 1, got %s", v);
         }
       else if (slot == "width")
-        width_ = type_check<Float>(val, 0u)->to_unsigned_type();
+        width_ = from_urbi<rFloat>(val)->to_unsigned_type();
       else
         return 0;
       consistent_ = false;

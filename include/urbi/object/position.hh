@@ -99,16 +99,17 @@ namespace urbi
     template <>
     struct CxxConvert<Position::value_type>
     {
-      typedef Position::value_type target_type;
-      static target_type&
-      to(const rObject& o, unsigned idx)
+      typedef       Position::value_type& target_type;
+      typedef const Position::value_type& source_type;
+      static target_type
+      to(const rObject& o)
       {
-        type_check<Position>(o, idx);
+        type_check<Position>(o);
         return o->as<Position>()->value_get();
       }
 
       static rObject
-      from(target_type v)
+      from(source_type v)
       {
         return new Position(v);
       }

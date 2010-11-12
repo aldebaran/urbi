@@ -134,16 +134,14 @@ namespace urbi
     /// report the type error for argument \a idx.
     URBI_SDK_API
     void
-    type_check(const rObject& o, const rObject& exp,
-               boost::optional<unsigned> idx = boost::optional<unsigned>());
+    type_check(const rObject& o, const rObject& exp);
 
     /// Same as above, but check first with a dynamic_cast in order to handle
     /// atoms more efficiently.
     template<typename T>
     URBI_SDK_API
     libport::intrusive_ptr<T>
-    type_check(const rObject& o,
-               boost::optional<unsigned> idx = boost::optional<unsigned>());
+    type_check(const rObject& o);
 
     /// Throw an exception if formal != effective.
     /// \note: \c self is included in the count.

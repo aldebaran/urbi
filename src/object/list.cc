@@ -221,7 +221,7 @@ namespace urbi
       rExecutable fun = f.unsafe_cast<Executable>();
       if (!fun)
       {
-        type_check<Code>(f);
+        from_urbi<Code>(f);
         unreachable();
       }
       objects_type args;

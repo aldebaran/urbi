@@ -80,9 +80,9 @@
       {                                                                 \
         typedef Name target_type;                                       \
         static target_type                                              \
-          to(const rObject& o, unsigned idx)                            \
+          to(const rObject& o)                                          \
         {                                                               \
-          type_check(o, LIBPORT_CAT(_urbi_enum_enum, __LINE__)(), idx); \
+          type_check(o, LIBPORT_CAT(_urbi_enum_enum, __LINE__)());      \
           return LIBPORT_CAT(_urbi_enum_u2c, __LINE__)()[o];            \
         }                                                               \
                                                                         \

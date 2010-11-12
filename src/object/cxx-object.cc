@@ -26,17 +26,13 @@ namespace urbi
     {}
 
     void
-    type_check(const rObject& o, const rObject& exp,
-               boost::optional<unsigned> idx)
+    type_check(const rObject& o, const rObject& exp)
     {
       aver(o);
       aver(exp);
       if (!is_a(o, exp))
       {
-        if (idx)
-          runner::raise_argument_type_error(idx.get(), o, exp);
-        else
-          runner::raise_type_error(o, exp);
+        throw TypeError(exp);
       }
     }
 

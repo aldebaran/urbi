@@ -75,16 +75,17 @@ namespace urbi
     template <>
     struct CxxConvert<Location::value_type>
     {
-      typedef Location::value_type target_type;
-      static target_type&
-      to(const rObject& o, unsigned idx)
+      typedef       Location::value_type& target_type;
+      typedef const Location::value_type& source_type;
+      static target_type
+      to(const rObject& o)
       {
-        type_check<Location>(o, idx);
+        type_check<Location>(o);
         return o->as<Location>()->value_get();
       }
 
       static rObject
-      from(target_type v)
+      from(source_type v)
       {
         return new Location(v);
       }

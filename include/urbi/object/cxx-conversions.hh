@@ -11,22 +11,36 @@
 #ifndef OBJECT_CXX_CONVERSIONS_HH
 # define OBJECT_CXX_CONVERSIONS_HH
 
+# include <boost/typeof/typeof.hpp>
 # include <urbi/object/object.hh>
+# include <urbi/runner/raise.hh>
 
 namespace urbi
 {
   namespace object
   {
+    class TypeError : public std::exception
+    {
+    public:
+      TypeError(const rObject& expected);
+      ~TypeError() throw();
+      const char* what() const throw();
+      const rObject& expected() const;
+    private:
+      rObject expected_;
+    };
+
     template <typename T>
     struct CxxConvert
     {
-      typedef T target_type;
+      typedef T& target_type;
+      typedef const T& source_type;
 
-      static target_type&
-      to(rObject o, unsigned idx);
+      static target_type
+      to(rObject o);
 
       static rObject
-      from(const target_type& v);
+      from(source_type v);
     };
 
     // Helper function
@@ -35,10 +49,15 @@ namespace urbi
 
     // Helper function
     template <typename T>
-    T from_urbi(rObject);
+    typename CxxConvert<T>::target_type
+    from_urbi(rObject);
+
+    template<typename T>
+    typename CxxConvert<T>::target_type
+    from_urbi(rObject, unsigned idx);
   }
 }
 
-#include <urbi/object/cxx-conversions.hxx>
+# include <urbi/object/cxx-conversions.hxx>
 
 #endif

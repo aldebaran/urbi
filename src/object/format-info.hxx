@@ -20,9 +20,9 @@ namespace urbi
     {
       typedef FormatInfo::Align::position target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<Float>(o, idx);
+        type_check<Float>(o);
         switch (o->as<Float>()->sign())
         {
         case -1: return FormatInfo::Align::RIGHT;
@@ -43,9 +43,9 @@ namespace urbi
     {
       typedef FormatInfo::Case::mode target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check<Float>(o, idx);
+        type_check<Float>(o);
         switch (o->as<Float>()->sign())
         {
         case -1: return FormatInfo::Case::UPPER;

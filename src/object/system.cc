@@ -72,7 +72,7 @@ namespace urbi
     {
       if (o.is_a<Path>())
         return o->as<Path>()->as_string();
-      type_check<String>(o);
+      from_urbi<String>(o);
       return o->as<String>()->value_get();
     }
 

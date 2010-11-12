@@ -51,12 +51,7 @@ def primitive(r, nargs):
 
     # Convert argument n from Urbi to type
     def to(n, type):
-        return 'CxxConvert<typename Flatten<%s>::type>::to(args[%s], %s)'\
-               % (type, n, n)
-
-    # Convert argument n from type to Urbi
-    def fr(n, type):
-        return 'CxxConvert<typename Flatten<%s>::type>::from(args[%s], %s)'\
+        return 'from_urbi<typename Flatten<%s>::type>(args[%s], %s)'\
                % (type, n, n)
 
     def make_arg(n):
@@ -136,7 +131,7 @@ def primitive_list(r, met):
         params += ['typename S']
     params = ', '.join(params)
     if met:
-        target_get =  'S tgt = CxxConvert<S>::to(args[0], 0);\n'
+        target_get =  'S tgt = from_urbi<typename Flatten<S>::type>(args[0], 0);\n'
         target_get += '        object::objects_type new_args = args;\n'
         target_get += '        libport::pop_front(new_args);'
         target = 'tgt, '
@@ -275,7 +270,7 @@ namespace urbi
       {
         assert(!args.empty());
         objects_type args_left(args.begin() + 1, args.end());
-        Self* self = CxxConvert<Self*>::to(args[0], 0);
+        Self* self = from_urbi<Self*>(args[0], 0);
         return CxxConvert<Return>::from(f(self, args_left));
       }
     };
@@ -289,7 +284,7 @@ namespace urbi
       {
         assert(!args.empty());
         objects_type args_left(args.begin() + 1, args.end());
-        Self* self = CxxConvert<Self*>::to(args[0], 0);
+        Self* self = from_urbi<Self*>(args[0], 0);
         f(self, args_left);
         return void_class;
       }

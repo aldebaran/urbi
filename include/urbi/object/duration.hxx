@@ -20,9 +20,9 @@ namespace urbi
     {
       typedef boost::posix_time::time_duration target_type;
       static target_type
-      to(const rObject& o, unsigned idx)
+      to(const rObject& o)
       {
-        type_check(o, Float::proto, idx);
+        type_check(o, Float::proto);
         typedef long long time_t;
        // Multiply the time_duration by 1000000, not the time_t,
        // because in boost 1.38 the argument type of
