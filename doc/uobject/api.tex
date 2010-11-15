@@ -370,7 +370,7 @@ class ObjectTracker: public urbi::UObject
     UBindFunction(ObjectTracker, init);
     // Bind our input port.
     UBindVar(ObjectTracker, input);
-    // NotifyChange on our own inputport
+    // NotifyChange on our own input port
     UNotifyChange(input, &ObjectTracker::onImage);
   }
   // Init is empty

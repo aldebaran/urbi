@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1176 utf-8
+personal_ws-1.1 en 1190 utf-8
 aaa
 abc
 abcdef
@@ -131,6 +131,7 @@ bumperR
 buzzerIndex
 buzzerTime
 bz
+callCount
 callGetSender
 callGetTarget
 callMessage
@@ -154,6 +155,7 @@ cd
 ceil
 cerr
 cflags
+changeConnections
 channelName
 chargeStop
 chatTag
@@ -172,6 +174,7 @@ compl
 computeSalary
 cond
 config
+connectionStats
 connectionTag
 connectSerial
 const
@@ -306,6 +309,7 @@ findBase
 finfo
 fingerLR
 fingerR
+fireRate
 FIXME
 flatDump
 fmt
@@ -433,6 +437,7 @@ init
 injunctive
 inline
 inotify
+InputPort
 InputStream
 InputStreams
 insectoid
@@ -569,10 +574,12 @@ mapFileName
 matchAgainst
 MatchFailure
 matchPattern
+maxCallTime
 maxExponent
 maybeLoad
 mc
 MCPAN
+meanCallTime
 Meccano
 memoization
 memoryName
@@ -581,9 +588,11 @@ methodToFunction
 microL
 microR
 middleware
+minCallTime
 Mindstorms
 minExponent
 mingw
+minInterval
 mk
 mkdir
 mn
@@ -779,7 +788,10 @@ removeTimer
 req
 reqStruct
 requestValue
+requireFile
 resendBanner
+resetConnectionStats
+resetStats
 resStruct
 rf
 rgb
@@ -1008,6 +1020,7 @@ UBindVar
 ubuild
 UClient
 UClient's
+UConnection
 UDataType
 UDictionary
 UDP
