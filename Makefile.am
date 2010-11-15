@@ -43,6 +43,7 @@ include dev/local.mk
 
 include include/local.mk
 include share/urbi/local.mk
+include share/emacs/local.mk
 include share/images/local.mk
 
 
