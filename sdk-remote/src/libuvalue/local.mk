@@ -6,7 +6,6 @@
 ##
 ## See the LICENSE file for more information.
 
-
 ## --------------------- ##
 ## Sources and headers.  ##
 ## --------------------- ##
