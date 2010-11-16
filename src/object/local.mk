@@ -82,6 +82,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/global.cc				\
   object/hash-slots.hh				\
   object/hash-slots.hxx				\
+  object/hash.cc				\
   object/ioservice.cc				\
   object/ioservice.hh				\
   object/job.cc					\

@@ -30,6 +30,7 @@
 #include <urbi/object/float.hh>
 #include <urbi/object/fwd.hh>
 #include <urbi/object/global.hh>
+#include <urbi/object/hash.hh>
 #include <urbi/object/job.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/lobby.hh>
@@ -86,6 +87,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Dictionary);
     URBI_CXX_OBJECT_REGISTER(Date);
     URBI_CXX_OBJECT_REGISTER(Barrier);
+    URBI_CXX_OBJECT_REGISTER(Hash);
   } // namespace object
 } // namespace urbi
 

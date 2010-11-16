@@ -46,6 +46,7 @@ namespace urbi
     Macro(Float);                               \
     Macro(FormatInfo);                          \
     Macro(Formatter);                           \
+    Macro(Hash);                                \
     Macro(InputStream);                         \
     Macro(IoService);				\
     Macro(Job);                                 \
