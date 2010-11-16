@@ -29,9 +29,7 @@ namespace urbi
     std::size_t
     unordered_map_hash::operator()(rObject val) const
     {
-      std::size_t res = from_urbi<rHash>(val->call("hash"))->value();
-      // std::cerr << "hasher() => " << res << std::endl;
-      return res;
+      return hash_value(*val);
     }
 
     bool

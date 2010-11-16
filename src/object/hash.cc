@@ -45,11 +45,24 @@ namespace urbi
       return val_;
     }
 
+    std::size_t
+    hash_value(const Object& o)
+    {
+      return from_urbi<rHash>(const_cast<Object&>(o).call("hash"))->value();
+    }
+
+    void
+    Hash::combine(rObject o)
+    {
+      boost::hash_combine(val_, *o);
+    }
+
     URBI_CXX_OBJECT_INIT(Hash)
       : val_(boost::hash_value(this))
     {
       bind(SYMBOL(EQ_EQ),   &Hash::operator ==);
       bind(SYMBOL(asFloat), &Hash::asFloat);
+      bind(SYMBOL(combine), &Hash::combine);
     }
   }
 }
