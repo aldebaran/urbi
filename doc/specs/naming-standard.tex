@@ -194,22 +194,22 @@ F/B side information. This can be used in the typical layout below:
 This dual positioning using side+depth can also be used to combine
 side+height or height+depth information.
 
-Layouts with a sequence of three or more identical components can use numbers
-as their Localization, starting from 0.  The smaller the number, the closer to
-the front, up, or left. For instance, an insectoid robot with 3 legs on each
-side will use
-\code{robot.body.leg[left][0]} to address the frontleft leg.
+Layouts with a sequence of three or more identical components can use
+numbers as their Localization, starting from 0.  The smaller the number, the
+closer to the front, up, or left. For instance, an insectoid robot with 3
+legs on each side will use \code{robot.body.leg[left][0]} to address the
+frontleft leg.
 
 Layouts with identical components arranged in a circle can also use numeric
-localization. The component with index 0 should be the uppermost, or front-most
-if non applicable. Index should increase counterclockwise.
+localization. The component with index 0 should be the uppermost, or
+front-most if non applicable. Index should increase counterclockwise.
 
-Some components like spines or tails are highly articulated with a set
-of identical sub-components. When talking about these sub-components,
-the above localization should be replaced by an array with a numbering
-starting at 0. The smaller the number, the closer the sub-component is
-to the robot main body. For surface-like sub-components, like skin
-touch sensors, the array can be two dimensional.
+Some components like spines or tails are highly articulated with a set of
+identical sub-components. When talking about these sub-components, the above
+localization should be replaced by an array with a numbering starting at
+0. The smaller the number, the closer the sub-component is to the robot main
+body. For surface-like sub-components, like skin touch sensors, the array
+can be two dimensional.
 
 
 Other possible localization for sensors are the X, Y and Z axis
@@ -225,24 +225,24 @@ Examples of component names including localization:
 
 \begin{urbiunchecked}
 leg[right], leg[left];
-finger[right], finger[center], finger[left];      // three-finger hand
-joint[0], joint[1] ... joint[5] // from tail
-touch[478][124]                 // from skin
-accel[x], accel[y], accel[z];         // typical accelerometer
-gyro[x], gyro[y], gyro[z];            // typical gyro sensor
+finger[right], finger[center], finger[left];  // three-finger hand
+joint[0], joint[1] ... joint[5]               // from tail
+touch[478][124]                               // from skin
+accel[x], accel[y], accel[z];                 // typical accelerometer
+gyro[x], gyro[y], gyro[z];                    // typical gyro sensor
 \end{urbiunchecked}
 
 \section{Interface}
 \label{sec:interface}
 
-An ``interface'' describes some aspects of a type of device, by specifying the
-slots and methods that implementations must provide. Each child node of
+An ``interface'' describes some aspects of a type of device, by specifying
+the slots and methods that implementations must provide. Each child node of
 the component hierarchy should implement at least one interface.
 
 For example, for a joint, we can have a ``Swivel'' interface, used to define
 patella joints. For the robot body itself, we have a ``Mobile'' interface
-describing mobile robots, which includes some standard way of
-requesting a move forward, a turn, etc.
+describing mobile robots, which includes some standard way of requesting a
+move forward, a turn, etc.
 
 In short, interfaces are standard Urbi objects that components can inherit
 from to declare that they have some functionalities.
@@ -449,61 +449,64 @@ level motion control capabilities.
 
 The following set of functions will block until associated movement is finished.
 If a function of this set is called while an other is already running, the
-first call will be cancelled: the movement will be interrupted and the
+first call will be canceled: the movement will be interrupted and the
 call will return.
 
 Many of the functions below take a position argument. This position is expressed
 as a subset of the six values x, y, z, rho, theta, phi.
 
 \begin{urbiscriptapi}
-\item[go](<x>) Move approximately \var{x} meters forward (along the X axis) if
-\var{x} is positive, backward otherwise.
+\item[go](<x>) Move approximately \var{x} meters forward (along the X axis)
+  if \var{x} is positive, backward otherwise.
 
-\item[turn](<theta>) Turn left (in the direction going from the positive X axis
-to the positive Y axis) approximately \var{theta} radians.  \var{theta} can be a
-  positive or negative value.
+\item[turn](<theta>) Turn left (in the direction going from the positive X
+  axis to the positive Y axis) approximately \var{theta} radians.
+  \var{theta} can be a positive or negative value.
 
 \item[goTo](<position>) Try to reach the given coordinates in the robot
-frame of reference.
+  frame of reference.
 
-\item[gotoChargingStation]() Try to reach the charging station. If the feature
-is not available, return immediately.
+\item[goToChargingStation]() Try to reach the charging station. If the
+  feature is not available, return immediately.
 
-\item[gotoAbsolute](<position>) Try to reach given coordinates in an
-absolute frame of reference. This frame of reference is maintained using the
-robot odometry, or any other localisation system available.
+\item[goToAbsolute](<position>) Try to reach given coordinates in an
+  absolute frame of reference. This frame of reference is maintained using
+  the robot odometry, or any other localization system available.
 
-\item[position] The current robot position in the absolute frame of reference.
+\item[position] The current robot position in the absolute frame of
+  reference.
 
 \item[stop]() Stop current movement.
 
 \item[setAbsolutePosition](<position>) Force absolute position to the given
-value.
+  value.
 \end{urbiscriptapi}
 
 \subsubsection{Speed-control API}
 
-In addition to the previous functions, one can directly set the target movement
-speed in all linear/angular directions using the 6 scalar variables xSpeed,
-ySpeed, zSpeed, yawSpeed, pitchSpeed, rollSpeed, or the variable speed which
-contains a list.
-Writting to one of those slots will abort any function in the blocking API.
+In addition to the previous functions, one can directly set the target
+movement speed in all linear/angular directions using the 6 scalar variables
+\lstinline{xSpeed}, \lstinline{ySpeed}, \lstinline{zSpeed},
+\lstinline{yawSpeed}, \lstinline{pitchSpeed}, \lstinline{rollSpeed}, or the
+variable \lstinline{speed} which contains a list.  Writing to one of those
+slots will abort any function in the blocking API.
 
-Implementations should provide default reasonable values for speed in the slots
-defaultXSpeed, defaultYSpeed, defaultZSpeed, defaultYawSpeed, defaultPitchSpeed
-and defaultRollSpeed.
+Implementations should provide default reasonable values for speed in the
+slots \lstinline{defaultXSpeed}, \lstinline{defaultYSpeed},
+\lstinline{defaultZSpeed}, \lstinline{defaultYawSpeed},
+\lstinline{defaultPitchSpeed} and \lstinline{defaultRollSpeed}.
 
 \subsubsection{Safety}
 
 \begin{urbiscriptapi}
 
-\item{watchdogInterval} If non-zero, duration after which the robot will stop
-if no order was received. Once activated, one has to write to
-\lstinline|watchdog|, to one of the speed variables or call one of the
-blocking API functions every \lstinline|watchdogInterval| at most, or the
-stop() function will be called.
+\item{watchdogInterval} If non-zero, duration after which the robot will
+  stop if no order was received. Once activated, one has to write to
+  \lstinline|watchdog|, to one of the speed variables or call one of the
+  blocking API functions every \lstinline|watchdogInterval| at most, or the
+  stop() function will be called.
 \item{watchdog} Writing any value to \lstinline|watchdog| will reset the
-watchdog timer.
+  watchdog timer.
 
 \end{urbiscriptapi}
 
@@ -511,23 +514,23 @@ watchdog timer.
 
 \begin{urbiscriptapi}
 \item[moving] True if the robot is currently moving for any reason, false
-otherwise.
-\item[aborted?] Emited each time a function in the blocking API is aborted
-because it was preempted by an other movement.
-\item[unreachable?] Emited when a function in the blocking API is aborted
-because the target cannot be reached.
-\item[finished?] Emited each time a function in the blocking API finished
-normaly.
+  otherwise.
+\item[aborted?] Emitted each time a function in the blocking API is aborted
+  because it was preempted by an other movement.
+\item[unreachable?] Emitted when a function in the blocking API is aborted
+  because the target cannot be reached.
+\item[finished?] Emitted each time a function in the blocking API finished
+  normally.
 
 \end{urbiscriptapi}
 
 \interface{Tracker}
 
-Camera-equipped robots can sometimes move the orientation of the field
-of view horizontally and vertically, which is a very important feature
-for many applications. In that case, this interface abstracts how such
-motion can be achieved, whether it is done with a pan/tilt camera or
-with whole body motion or a combination of both.
+Camera-equipped robots can sometimes move the orientation of the field of
+view horizontally and vertically, which is a very important feature for many
+applications. In that case, this interface abstracts how such motion can be
+achieved, whether it is done with a pan/tilt camera or with whole body
+motion or a combination of both.
 
 \begin{urbiscriptapi}
 \item[yaw] Rotational articulation around the Z axis in the robot, expressed
@@ -552,9 +555,8 @@ image sensor.
 \item[width] Width of the image in the current resolution, expressed in
   pixels
 
-\item[format?]
-    Format of the image, expressed as an integer in the enum
-    urbi::UImageFormat.  See below for more information.
+\item[format?]  Format of the image, expressed as an integer in the enum
+  urbi::UImageFormat.  See below for more information.
 
 \item[exposure?] Exposure duration, expressed in seconds. 0 if non
   applicable.
@@ -580,11 +582,11 @@ The image sensor is expected to use the cheapest way in term of CPU and/or
 energy consumption to produce images of the requested format.
 Implementations linked to a physical image sensor do not have to implement
 all the possible formats. In this case, the format closest to what was
-requested must be used.
-A generic image conversion object will be provided. In order to avoid
-duplicate image conversions when multiple unrelated behaviors need the same
-format, it is recommended that this object be instantiated in a slot of the
-VideoIn object named after the format it converts to:
+requested must be used.  A generic image conversion object will be
+provided. In order to avoid duplicate image conversions when multiple
+unrelated behaviors need the same format, it is recommended that this object
+be instantiated in a slot of the VideoIn object named after the format it
+converts to:
 \begin{urbiunchecked}
 if (!robot.body.head.camera.hasSlot("jpeg"))
 {

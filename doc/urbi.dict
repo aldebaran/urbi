@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1191 utf-8
+personal_ws-1.1 en 1209 utf-8
 aaa
 abc
 abcdef
@@ -217,7 +217,13 @@ dcon
 decompile
 Decrementation
 deepclean
+defaultPitchSpeed
+defaultRollSpeed
 defaultValue
+defaultXSpeed
+defaultYawSpeed
+defaultYSpeed
+defaultZSpeed
 Demaille
 DependencyWalker
 dequeue
@@ -378,7 +384,11 @@ gnulib
 gnuplot
 gostai
 Gostai's
+goTo
 goto
+goToAbsolute
+goToChargingStation
+gotoChargingStation
 GPL
 GraphViz
 graphviz
@@ -675,6 +685,7 @@ nxt
 o's
 ObjectTracker
 Odometric
+odometry
 odometryAlpha
 odometryDelta
 OgreMain
@@ -719,6 +730,7 @@ physicsReset
 PID
 pidChanged
 Pierron
+pitchSpeed
 playSound
 plugin
 plusTwo
@@ -806,6 +818,7 @@ rlwrap
 rmp
 robotis
 robotType
+rollSpeed
 ros
 roscore
 roscpp
@@ -849,6 +862,7 @@ Serializables
 serv
 serverPort
 servohub
+setAbsolutePosition
 setAngle
 setBypass
 setConfigValue
@@ -1137,6 +1151,7 @@ waitForTermination
 waituntil
 waituntilWalkIsFinished
 walkTo
+watchdogInterval
 wav
 wb
 wbt
@@ -1172,6 +1187,7 @@ xffffffff
 xfov
 xml
 xsltproc
+xSpeed
 xvjf
 yaml
 yawCoeff
@@ -1181,6 +1197,7 @@ ycrcb
 yfov
 yourservice
 YourUObject
+ySpeed
 yuv
 YUYV
 yy
@@ -1188,5 +1205,6 @@ yypush
 yyyy
 zA
 zsh
+zSpeed
 zxf
 Été
