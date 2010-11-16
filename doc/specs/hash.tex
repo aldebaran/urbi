@@ -1,0 +1,61 @@
+%% Copyright (C) 2009-2010, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Hash}
+
+A \dfn{hash} is a condensed, easily comparable representation of
+another value. They are mainly used to map \refObject{Dictionary} keys
+to values.
+
+Equal objects must always have the same hash. Different objects
+should, as much as possible, have different hashes.
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+Objects can be hashed with \refSlot[Object]{hash}.
+\begin{urbiassert}
+Object.new.hash.isA(Hash);
+\end{urbiassert}
+
+\subsection{Slots}
+\begin{urbiscriptapi}
+\item[asFloat] A Float value equivalent to the \lstinline|Hash|
+  object. Two hashes have the same Float representation if and only if
+  they are equal.
+\item[combine](<other>) combine \var{other}'s hash with \var{this},
+  and return \var{this}. This is used to hash composite objects based
+  on more primitive object hashes. For instance, an object with two
+  slots could be hashed by hashing its first first, and combining the
+  second in.
+
+\begin{urbiscript}
+class C
+{
+  function init(var a, var b)
+  {
+    var this.a = a;
+    var this.b = b;
+  };
+
+  function hash()
+  {
+    this.a.hash().combine(b)
+  };
+}|
+
+assert
+{
+  C.new(0, 0).hash == C.new(0, 0).hash;
+  C.new(0, 0).hash != C.new(0, 1).hash;
+};
+\end{urbiscript}
+\end{urbiscriptapi}

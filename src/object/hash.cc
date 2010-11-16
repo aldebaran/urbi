@@ -51,10 +51,11 @@ namespace urbi
       return from_urbi<rHash>(const_cast<Object&>(o).call("hash"))->value();
     }
 
-    void
+    rHash
     Hash::combine(rObject o)
     {
       boost::hash_combine(val_, *o);
+      return this;
     }
 
     URBI_CXX_OBJECT_INIT(Hash)

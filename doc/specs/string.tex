@@ -124,6 +124,15 @@ String.fromAscii(0xFF) == "\xff";
   == [0, 1, 2, 254, 255];
 \end{urbiassert}
 
+\item[hash] Return a \refObject{Hash} object corresponding to this string
+  value. Two string hashes are equal if the string are equal. See
+  \refSlot[Object]{hash}.
+
+\begin{urbiassert}
+"".hash.isA(Hash);
+"foo".hash == "foo".hash;
+"foo".hash != "bar".hash;
+\end{urbiassert}
 
 \item Character handling functions\\
   Here is a map of how the original 127-character ASCII set is

@@ -264,6 +264,17 @@ assert([0, 1, 2].front == 0);
 !(1 not in [0, 1]);
 \end{urbiassert}
 
+\item[hash] Return a \refObject{Hash} object corresponding to this list
+  value. Two list hashes are equal if the list have the same size, and
+  elements hashes are equal two by two. See \refSlot[Object]{hash}.
+
+\begin{urbiassert}
+[].hash.isA(Hash);
+[].hash == [].hash;
+[1, "foo"].hash == [1, "foo"].hash;
+[0, 1].hash != [1, 0].hash;
+\end{urbiassert}
+
 \item[hasSame](<that>)%
   Whether one of the members of the target is physically equal to
   \var{that}.

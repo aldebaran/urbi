@@ -290,6 +290,16 @@ Float.pi.cos == -1;
 };
 \end{urbiscript}
 
+\item[hash] Return a \refObject{Hash} object corresponding to this float
+  value. Two float hashes are equal if the float are equal. See
+  \refSlot[Object]{hash}.
+
+\begin{urbiassert}
+0.hash.isA(Hash);
+0.hash == 0.hash;
+0.hash != 1.hash;
+\end{urbiassert}
+
 %%% FIXME: This message is not right, it should be:
 %%% [00000005:error] !!! hex: expected integer, got 0.5
 \item[hex]

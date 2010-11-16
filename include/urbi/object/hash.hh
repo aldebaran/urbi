@@ -26,7 +26,7 @@ namespace urbi
       value_type value() const;
       bool operator== (rHash other) const;
       Float::value_type asFloat() const;
-      void combine(rObject o);
+      rHash combine(rObject o);
       static std::size_t hash(rObject o);
 
     private:
