@@ -676,7 +676,6 @@ class Global.'external'
     // cope with currently.
     while (src.stats["packetSent"] == 0)
       sleep(period)|
-    waituntil (src.stats["packetSent"])|
     // Data has been transmitted. Wait a bit...
     sleep(20 * period)|
     // And check if something was received.
