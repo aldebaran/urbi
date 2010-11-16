@@ -17,24 +17,39 @@
 # define OBJECT_DICTIONARY_HH
 
 # include <libport/hash.hh>
-# include <urbi/object/fwd.hh>
 # include <urbi/object/cxx-object.hh>
+# include <urbi/object/fwd.hh>
+# include <urbi/object/hash.hh>
 
 namespace urbi
 {
   namespace object
   {
+    struct unordered_map_hash
+    {
+      std::size_t operator()(rObject val) const;
+    };
+    struct unordered_map_equal_to
+    {
+      bool operator()(rObject lhs, rObject rhs) const;
+    };
+
+    typedef boost::unordered_map<rObject, rObject,
+                                 unordered_map_hash,
+                                 unordered_map_equal_to>
+    unordered_map;
+
     class URBI_SDK_API Dictionary: public CxxObject
     {
     public:
-      typedef boost::unordered_map<libport::Symbol, rObject> value_type;
+      typedef unordered_map value_type;
 
       Dictionary();
       Dictionary(rDictionary model);
       Dictionary(const value_type& value);
       const value_type& value_get() const;
       value_type& value_get();
-      void key_check(libport::Symbol key) const;
+      void key_check(rObject key) const;
 
       /// Urbi methods
       rDictionary clear();
@@ -42,11 +57,11 @@ namespace urbi
       size_t size() const;
       /// False iff empty.
       virtual bool as_bool() const;
-      rDictionary erase(libport::Symbol key);
-      rObject get(libport::Symbol key);
-      bool has(libport::Symbol key) const;
+      rDictionary erase(rObject key);
+      rObject get(rObject key);
+      bool has(rObject key) const;
       rList keys();
-      rDictionary set(libport::Symbol key, rObject value);
+      rDictionary set(rObject key, rObject value);
 
     private:
       value_type content_;

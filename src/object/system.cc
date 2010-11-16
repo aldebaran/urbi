@@ -45,6 +45,8 @@
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
 
+GD_CATEGORY(Urbi);
+
 namespace urbi
 {
   static std::vector<Initialization>&
@@ -222,6 +224,7 @@ namespace urbi
     static rObject
     loadFile(rObject, const std::string& filename, rObject self)
     {
+      GD_FPUSH_TRACE("Load file: %s", filename);
 #if defined ENABLE_SERIALIZATION
       if (!libport::path(filename).exists())
         runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
@@ -289,7 +292,7 @@ namespace urbi
       // symbol generation code
       Dictionary::value_type res;
 #define ADDSTAT(Suffix, Function, Divisor)      \
-      res[libport::Symbol("cycles" # Suffix)] = \
+      res[new String("cycles" # Suffix)] = \
         new Float(stats.Function() / Divisor)
       ADDSTAT(, size, 1);
       ADDSTAT(Max, max, 1e6);

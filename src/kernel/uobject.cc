@@ -295,7 +295,7 @@ namespace Stats
       l->insertBack(new Float(v.second.min));
       l->insertBack(new Float(v.second.max));
       l->insertBack(new Float(v.second.count));
-      res->set(libport::Symbol(v.first), l);
+      res->set(new object::String(v.first), l);
       /*
       size_t sep = v.first.find_first_of(' ');
       std::string sPtr = v.first.substr(0, sep);

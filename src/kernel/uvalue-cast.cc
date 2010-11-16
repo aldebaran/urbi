@@ -87,7 +87,8 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
     res.dictionary = new urbi::UDictionary;
     object::Dictionary::value_type& r = s->value_get();
     foreach (const object::Dictionary::value_type::value_type& d, r)
-      (*res.dictionary)[d.first] = uvalue_cast(d.second);
+      (*res.dictionary)[object::from_urbi<libport::Symbol>(d.first)]
+      = uvalue_cast(d.second);
   }
   else if (is_a(o, Binary))
   {
@@ -162,10 +163,9 @@ object_cast(const urbi::UValue& v)
 
     case urbi::DATA_DICTIONARY:
     {
-
       object::rDictionary r = new object::Dictionary();
       foreach (const urbi::UDictionary::value_type& d, *v.dictionary)
-        r->set(libport::Symbol(d.first), object_cast(d.second));
+        r->set(new object::String(d.first), object_cast(d.second));
       res = r;
       if (libport::mhas(*v.dictionary, "$sn")) // Serialized class
         res = r->call(SYMBOL(uvalueDeserialize));
@@ -221,10 +221,11 @@ object::rObject uvalue_deserialize(object::rObject s)
   }
   else if (rDictionary d = s->as<Dictionary>())
   { // Check if this is a serialized class
-    if (d->has(SYMBOL(DOLLAR_sn)))
+    static object::rString sn = new object::String(SYMBOL(DOLLAR_sn));
+    if (d->has(sn))
     { // Look for the class
       libport::Symbol cn
-        = libport::Symbol(d->get(SYMBOL(DOLLAR_sn))->as<String>()->value_get());
+        = from_urbi<libport::Symbol>(d->get(sn));
       rObject proto;
       Object::location_type l = lobby->slot_locate(cn);
       if (l.first)
@@ -239,12 +240,15 @@ object::rObject uvalue_deserialize(object::rObject s)
       }
       rObject res = proto->call(SYMBOL(new));
       foreach(Dictionary::value_type::value_type& v, d->value_get())
-      if (v.first != SYMBOL(DOLLAR_sn))
       {
-        if (rSlot s = res->local_slot_get(v.first))
-          s->set(uvalue_deserialize(v.second));
-        else
-          res->slot_set(v.first, uvalue_deserialize(v.second));
+        libport::Symbol key = object::from_urbi<libport::Symbol>(v.first);
+        if (key != SYMBOL(DOLLAR_sn))
+        {
+          if (rSlot s = res->local_slot_get(key))
+            s->set(uvalue_deserialize(v.second));
+          else
+            res->slot_set(key, uvalue_deserialize(v.second));
+        }
       }
       return res;
     }
@@ -252,13 +256,11 @@ object::rObject uvalue_deserialize(object::rObject s)
     { // Recurse
       rDictionary res = new Dictionary;
       foreach(Dictionary::value_type::value_type& v, d->value_get())
-      {
         res->set(v.first, uvalue_deserialize(v.second));
-      }
       return res;
     }
   }
-  else // Everything else deserialize into itself
+  else // Everything else deserializes into itself
     return s;
 }
 

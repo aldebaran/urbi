@@ -197,7 +197,10 @@ namespace urbi
     Object::slot_set(key_type k, Slot* o)
     {
       if (!slots_.set(this, k, o, redefinition_mode()))
+      {
+        GD_FINFO_DEBUG("Slot redefinition: %s", k);
         runner::raise_urbi_skip(SYMBOL(Redefinition), to_urbi(k));
+      }
       changed();
       return *this;
     }
@@ -272,7 +275,7 @@ namespace urbi
       for (slots_implem::const_iterator slot = slots_.begin(this);
            slot != slots_.end(this);
            ++slot)
-        res[slot->first.second] = properties_get(slot->first.second);
+        res[new String(slot->first.second)] = properties_get(slot->first.second);
       return new Dictionary(res);
     }
 
@@ -280,7 +283,12 @@ namespace urbi
     Object::properties_get(key_type k)
     {
       if (Slot::properties_type* props = slot_get(k).properties_get())
-        return new Dictionary(*props);
+      {
+        Dictionary::value_type res;
+        foreach (const Slot::properties_type::value_type& elt, *props)
+          res.insert(std::make_pair(new String(elt.first), elt.second));
+        return new Dictionary(res);
+      }
       else
         return new Dictionary();
     }

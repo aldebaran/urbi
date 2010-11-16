@@ -26,7 +26,24 @@ namespace urbi
 {
   namespace object
   {
+    std::size_t
+    unordered_map_hash::operator()(rObject val) const
+    {
+      std::size_t res = from_urbi<rHash>(val->call("hash"))->value();
+      // std::cerr << "hasher() => " << res << std::endl;
+      return res;
+    }
+
+    bool
+    unordered_map_equal_to::operator()(rObject lhs, rObject rhs) const
+    {
+      bool res = from_urbi<bool>(lhs->call("==", rhs));
+      // std::cerr << "equal_to() => " << res << std::endl;
+      return res;
+    }
+
     Dictionary::Dictionary()
+      : content_()
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
@@ -75,17 +92,17 @@ namespace urbi
     }
 
     void
-    Dictionary::key_check(libport::Symbol key) const
+    Dictionary::key_check(rObject key) const
     {
       if (!libport::mhas(content_, key))
       {
         static rObject exn = slot_get(SYMBOL(KeyError));
-        ::kernel::runner().raise(exn->call("new", new String(key)));
+        ::kernel::runner().raise(exn->call("new", key));
       }
     }
 
     rDictionary
-    Dictionary::set(libport::Symbol key, rObject val)
+    Dictionary::set(rObject key, rObject val)
     {
       content_[key] = val;
       changed();
@@ -93,11 +110,11 @@ namespace urbi
     }
 
     rObject
-    Dictionary::get(libport::Symbol key)
+    Dictionary::get(rObject key)
     {
       key_check(key);
       return content_[key];
-      unreachable();
+      unreachable(); // wtf?
     }
 
     rDictionary
@@ -131,7 +148,7 @@ namespace urbi
     }
 
     rDictionary
-    Dictionary::erase(libport::Symbol key)
+    Dictionary::erase(rObject key)
     {
       key_check(key);
       content_.erase(key);
@@ -143,14 +160,14 @@ namespace urbi
     Dictionary::keys()
     {
       List::value_type res;
-      typedef const std::pair<libport::Symbol, rObject> elt_type;
+      typedef const std::pair<rObject, rObject> elt_type;
       foreach (elt_type& elt, content_)
-        res.push_back(new String(elt.first));
+        res.push_back(elt.first);
       return new List(res);
     }
 
     bool
-    Dictionary::has(libport::Symbol key) const
+    Dictionary::has(rObject key) const
     {
       return libport::mhas(content_, key);
     }

@@ -586,7 +586,7 @@ namespace runner
       object::rString key = o->as<object::String>();
       if (!key)
         raise_type_error(o, object::String::proto, exp.first->location_get());
-      res->set(libport::Symbol(key->value_get()), v);
+      res->set(new object::String(key->value_get()), v);
     }
     return res;
   }
