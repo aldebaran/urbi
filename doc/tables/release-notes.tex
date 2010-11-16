@@ -95,6 +95,14 @@ assert
   Foo.super == Bar;
 };
 \end{urbiscript}
+
+\item \refObject{Dictionary} keys can now be arbitrary objects. Objects
+  hashing can be overridden. See \refSlot[Object]{hash}.
+
+\item \refObject{Hash}, type for hash codes for \refObject{Dictionary}.
+
+\item \refSlot[Object]{hash}, \refSlot[Float]{hash}, \refSlot[String]{hash},
+  \refSlot[List]{hash}.
 \end{itemize}
 
 \subsection{Changes}
@@ -232,7 +240,8 @@ for (var suit : Suit)
 \end{urbiscript}
 
 \noindent
-They still need to evaluate into String values.
+They still need to evaluate into String values. Note: this is no longer true
+since \usdk 2.5.
 
 \begin{urbiunchecked}
 [12 => "12"];
