@@ -28,6 +28,7 @@
 # include <object/format-info.hh>
 #endif
 #include <urbi/object/global.hh>
+#include <urbi/object/hash.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
@@ -147,6 +148,7 @@ namespace urbi
 #endif
       DECLARE(fresh       , fresh);
       DECLARE(fromAscii   , fromAscii);
+      DECLARE(hash        , hash);
       DECLARE(isAlnum     , is_alnum);
       DECLARE(isAlpha     , is_alpha);
       DECLARE(isCntrl     , is_cntrl);
@@ -465,5 +467,12 @@ namespace urbi
       check_bounds(0, 1);
       return value_get()[0];
     }
+
+    rHash
+    String::hash() const
+    {
+      return new Hash(boost::hash_value(value_get()));
+    }
+
   } // namespace object
 }

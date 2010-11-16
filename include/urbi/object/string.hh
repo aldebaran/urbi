@@ -122,6 +122,8 @@ namespace urbi
 
       static std::string fromAscii(rObject, unsigned char code);
 
+      rHash hash() const;
+
       unsigned char toAscii() const;
     private:
       value_type content_;
