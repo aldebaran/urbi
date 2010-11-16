@@ -445,12 +445,80 @@ what value will actually be used by the implementation.
 Mobile robots all share this generic interface to provide high order
 level motion control capabilities.
 
-\begin{urbiscriptapi}
-\item[go](<x>) Move approximately \var{x} meters forward if \var{x} is
-  positive, backward otherwise.
+\subsubsection{Blocking API}
 
-\item[turn](<x>) Turn right approximately \var{x} radians.  \var{x} can be a
+The following set of functions will block until associated movement is finished.
+If a function of this set is called while an other is already running, the
+first call will be cancelled: the movement will be interrupted and the
+call will return.
+
+Many of the functions below take a position argument. This position is expressed
+as a subset of the six values x, y, z, rho, theta, phi.
+
+\begin{urbiscriptapi}
+\item[go](<x>) Move approximately \var{x} meters forward (along the X axis) if
+\var{x} is positive, backward otherwise.
+
+\item[turn](<theta>) Turn left (in the direction going from the positive X axis
+to the positive Y axis) approximately \var{theta} radians.  \var{theta} can be a
   positive or negative value.
+
+\item[goTo](<position>) Try to reach the given coordinates in the robot
+frame of reference.
+
+\item[gotoChargingStation]() Try to reach the charging station. If the feature
+is not available, return immediately.
+
+\item[gotoAbsolute](<position>) Try to reach given coordinates in an
+absolute frame of reference. This frame of reference is maintained using the
+robot odometry, or any other localisation system available.
+
+\item[position] The current robot position in the absolute frame of reference.
+
+\item[stop]() Stop current movement.
+
+\item[setAbsolutePosition](<position>) Force absolute position to the given
+value.
+\end{urbiscriptapi}
+
+\subsubsection{Speed-control API}
+
+In addition to the previous functions, one can directly set the target movement
+speed in all linear/angular directions using the 6 scalar variables xSpeed,
+ySpeed, zSpeed, yawSpeed, pitchSpeed, rollSpeed, or the variable speed which
+contains a list.
+Writting to one of those slots will abort any function in the blocking API.
+
+Implementations should provide default reasonable values for speed in the slots
+defaultXSpeed, defaultYSpeed, defaultZSpeed, defaultYawSpeed, defaultPitchSpeed
+and defaultRollSpeed.
+
+\subsubsection{Safety}
+
+\begin{urbiscriptapi}
+
+\item{watchdogInterval} If non-zero, duration after which the robot will stop
+if no order was received. Once activated, one has to write to
+\lstinline|watchdog|, to one of the speed variables or call one of the
+blocking API functions every \lstinline|watchdogInterval| at most, or the
+stop() function will be called.
+\item{watchdog} Writing any value to \lstinline|watchdog| will reset the
+watchdog timer.
+
+\end{urbiscriptapi}
+
+\subsubsection{State}
+
+\begin{urbiscriptapi}
+\item[moving] True if the robot is currently moving for any reason, false
+otherwise.
+\item[aborted?] Emited each time a function in the blocking API is aborted
+because it was preempted by an other movement.
+\item[unreachable?] Emited when a function in the blocking API is aborted
+because the target cannot be reached.
+\item[finished?] Emited each time a function in the blocking API finished
+normaly.
+
 \end{urbiscriptapi}
 
 \interface{Tracker}
