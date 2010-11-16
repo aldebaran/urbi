@@ -100,11 +100,11 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/root-classes.hh			\
   object/semaphore.cc				\
   object/semaphore.hh				\
+  object/server.cc                              \
+  object/server.hh                              \
   object/slot.cc				\
   object/socket.cc                              \
   object/socket.hh                              \
-  object/server.cc                              \
-  object/server.hh                              \
   object/sorted-vector-slots.hh			\
   object/sorted-vector-slots.hxx		\
   object/string.cc				\
@@ -113,8 +113,8 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/system.cc				\
   object/system.hh				\
   object/tag.cc					\
-  object/uconnection.hh				\
   object/uconnection.cc				\
+  object/uconnection.hh				\
   object/urbi-exception.cc			\
   object/urbi-exception.hh			\
   object/urbi-exception.hxx			\
