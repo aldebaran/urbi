@@ -48,6 +48,7 @@ namespace urbi
       void    eachi       (const rObject&);
       bool empty() const;
       rObject front       ();
+      rHash   hash() const;
       /// Also known as pop.
       rObject removeFront ();
       rObject removeBack  ();

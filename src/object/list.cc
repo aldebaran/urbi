@@ -27,6 +27,7 @@
 
 #include <urbi/object/code.hh>
 #include <urbi/object/float.hh>
+#include <urbi/object/hash.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 
@@ -76,6 +77,7 @@ namespace urbi
       DECLARE(eachi,          eachi           );
       DECLARE(empty,          empty           );
       DECLARE(front,          front           );
+      DECLARE(hash,           hash            );
       DECLARE(SBL_SBR,        operator[]      );
       DECLARE(SBL_SBR_EQ,     set             );
       DECLARE(PLUS,           operator+       );
@@ -353,6 +355,16 @@ namespace urbi
       return this;
     }
 
+    rHash
+    List::hash() const
+    {
+      rHash res = new Hash(boost::hash_value(proto));
+      foreach (const rObject& o, content_)
+      {
+        res->combine(o);
+      }
+      return res;
+    }
 
     // FIXME: Really looks like String::join, we should find a means to
     // factor both.
