@@ -289,6 +289,8 @@ namespace urbi
       rObject urbi_updateSlot(key_type k, const rObject& o);
       rObject asPrintable() const;
       rObject asToplevelPrintable() const;
+      rObject addProto(rObject proto);
+      rObject removeProto(rObject proto);
 
       /*--------.
       | Binding |

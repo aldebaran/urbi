@@ -164,22 +164,6 @@ namespace urbi
     | Protos.  |
     `---------*/
 
-    /// Adding or removing protos. \a Verb is "add" or "remove".
-#define CHANGE_PARENTS(Verb)                                    \
-    static rObject                                              \
-    object_class_ ## Verb ## Proto (const objects_type& args)   \
-    {                                                           \
-      check_arg_count(args.size() - 1, 1);                      \
-      args[0]->proto_ ## Verb (args[1]);                        \
-      return args[0];                                           \
-    }
-
-    /// Add a proto.
-    CHANGE_PARENTS(add);
-    /// Remove a proto.
-    CHANGE_PARENTS(remove);
-#undef CHANGE_PARENTS
-
     /// Get protos' list.
     static rObject
     object_class_protos (const objects_type& args)
@@ -324,14 +308,12 @@ namespace urbi
 
       DECLARE(EQ_EQ);
       DECLARE(EQ_EQ_EQ);
-      DECLARE(addProto);
       DECLARE(allProtos);
       DECLARE(clone);
       DECLARE(dump);
       DECLARE(init);
       DECLARE(localSlotNames);
       DECLARE(protos);
-      DECLARE(removeProto);
       DECLARE(slotNames);
       DECLARE(uid);
 #undef DECLARE
@@ -374,6 +356,9 @@ namespace urbi
               static_cast<set_slot_type>(&Object::setSlot));
       DECLARE(updateSlot         , &Object::urbi_updateSlot);
 #undef DECLARE
+
+      Object::proto->bind(SYMBOL(addProto),     &Object::addProto);
+      Object::proto->bind(SYMBOL(removeProto),  &Object::removeProto);
     }
   }; // namespace object
 }

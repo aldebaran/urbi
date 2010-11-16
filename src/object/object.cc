@@ -635,6 +635,20 @@ namespace urbi
       return const_cast<Object*>(this)->call(SYMBOL(asPrintable));
     }
 
+    rObject
+    Object::addProto(rObject proto)
+    {
+      proto_add(proto);
+      return this;
+    }
+
+    rObject
+    Object::removeProto(rObject proto)
+    {
+      proto_remove(proto);
+      return this;
+    }
+
 #define CHECK_ARG(N)				\
     if (!arg ## N)				\
       goto done;                                \
