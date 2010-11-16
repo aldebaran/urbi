@@ -34,6 +34,7 @@
 #include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
+#include <urbi/object/hash.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
@@ -358,6 +359,7 @@ namespace urbi
 #undef DECLARE
 
       Object::proto->bind(SYMBOL(addProto),     &Object::addProto);
+      Object::proto->bind(SYMBOL(hash),         &Object::hash);
       Object::proto->bind(SYMBOL(removeProto),  &Object::removeProto);
     }
   }; // namespace object

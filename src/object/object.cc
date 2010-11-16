@@ -32,6 +32,7 @@
 #include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
+#include <urbi/object/hash.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <object/root-classes.hh>
@@ -633,6 +634,14 @@ namespace urbi
     Object::asToplevelPrintable() const
     {
       return const_cast<Object*>(this)->call(SYMBOL(asPrintable));
+    }
+
+    rHash
+    Object::hash() const
+    {
+      std::size_t h = boost::hash_value(this);
+      Hash* res = new Hash(h);
+      return res;
     }
 
     rObject
