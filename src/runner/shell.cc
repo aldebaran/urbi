@@ -13,12 +13,18 @@
 #include <ast/nary.hh>
 #include <ast/stmt.hh>
 
+#include <libport/debug.hh>
+
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/tag.hh>
 
+#include <ast/print.hh>
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>
+#include <parser/parse-result.hh>
+#include <parser/transform.hh>
+#include <parser/uparser.hh>
 #include <runner/shell.hh>
 
 #include <sched/job.hh>
@@ -26,14 +32,17 @@
 
 namespace runner
 {
-  GD_CATEGORY(Urbi);
+  GD_CATEGORY(Urbi.Shell);
 
   Shell::Shell(const rLobby& lobby,
 	       sched::Scheduler& scheduler,
-	       libport::Symbol name)
+	       libport::Symbol name,
+               std::istream& input)
     : Interpreter(lobby, scheduler, ast::rConstAst(), name)
     , executing_(false)
+    , input_(input)
   {
+    GD_FINFO_TRACE("new shell: %s.", name_get());
   }
 
   inline
@@ -104,11 +113,11 @@ namespace runner
     // kill the jobs, not the shell.
     catch (const sched::StopException& e)
     {
-      GD_FINFO_DUMP("shell: StopException ignored: %s", e.what());
+      GD_FINFO_DUMP("StopException ignored: %s", e.what());
     }
     catch (const sched::TerminateException&)
     {
-      GD_INFO_DUMP("shell: TerminateException");
+      GD_INFO_DUMP("TerminateException");
       throw;
     }
     // Stop invalid exceptions thrown by primitives
@@ -127,11 +136,8 @@ namespace runner
   }
 
   void
-  Shell::handle_command_()
+  Shell::handle_command_(ast::rConstExp exp)
   {
-    ast::rConstExp exp = commands_.front();
-    commands_.pop_front();
-
     const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(exp.get());
 
     if (stmt && stmt->flavor_get() == ast::flavor_comma)
@@ -166,7 +172,7 @@ namespace runner
       // fired by "connectionTag.stop".
       catch (const sched::StopException& e)
       {
-        GD_FINFO_DUMP("shell: StopException ignored: %s", e.what());
+        GD_FINFO_DUMP("StopException ignored: %s", e.what());
       }
     }
   }
@@ -174,42 +180,23 @@ namespace runner
   void
   Shell::work_()
   {
-    handle_oob_();
-    // Wait until we have some work to do
-    if (commands_.empty())
+    parser::UParser parser;
+
+    while (true)
     {
-      executing_ = false;
-
-      // The first yield will remember our possible side effect. Subsequent
-      // ones will not and will pretend that we didn't have any side effect,
-      // as we couldn't have influenced the system any further.
-      yield_until_things_changed();
-
-      libport::Finally finally(boost::bind(&Job::side_effect_free_set,
-                                           this,
-                                           side_effect_free_get()));
-      side_effect_free_set(true);
-      while (commands_.empty())
+      parser::parse_result_type res;
       {
-        libport::Finally finally(boost::bind(&Job::side_effect_free_set,
-                                             this,
-                                             side_effect_free_get()));
-        handle_oob_();
-        yield_until_things_changed();
+        GD_FPUSH_TRACE("%s: reading command.", name_get());
+        res = parser.parse(input_);
       }
-      executing_ = true;
+      // FIXME: check parse error
+      ast::rExp ast = parser::transform(res->ast_xget());
+      {
+        GD_FPUSH_TRACE("%s: executing command.", name_get());
+        GD_FINFO_DUMP("%s: command: %s", name_get(), *ast);
+        handle_command_(ast);
+      }
     }
-
-    handle_command_();
-    yield();
-  }
-
-  void
-  Shell::append_command(const ast::rConstNary& command)
-  {
-    foreach (const ast::rExp& e, command->children_get())
-      commands_ << e;
-    scheduler_get().signal_world_change();
   }
 
   void

@@ -68,9 +68,11 @@ namespace kernel
     , interactive_p_(true)
     , bytes_sent_(0)
     , bytes_received_(0)
+    , stream_buffer_()
+    , stream_(&stream_buffer_)
   {
     // Create the shell.
-    shell_ = new runner::Shell(lobby_, server_.scheduler_get(), SYMBOL(shell));
+    shell_ = new runner::Shell(lobby_, server_.scheduler_get(), SYMBOL(shell), stream_);
     shell_->start_job();
 
     // Create the sneaker if it needs to be.
@@ -86,10 +88,8 @@ namespace kernel
   void
   UConnection::initialize()
   {
-    recv_queue_->push
-      (libport::format(SYNCLINE_WRAP("initialize(%s)|;"),
-                       kernel::urbiserver->opt_banner_get()));
-    received("");
+    received(libport::format(SYNCLINE_WRAP("initialize(%s)|;"),
+                             kernel::urbiserver->opt_banner_get()));
   }
 
   void
@@ -167,59 +167,7 @@ namespace kernel
   void
   UConnection::received(const char* buffer, size_t length)
   {
-    bytes_received_ += length;
-    LIBPORT_PING();
-
-    recv_queue_->push(buffer, length);
-    parser::UParser& p = parser_get();
-
-    // Starts processing
-    receiving_ = true;
-
-    ast::rNary active_command = new ast::Nary;
-    // Get all the commands that are ready to be executed.
-    for (std::string command = recv_queue_->pop_command();
-         !command.empty();
-         command = recv_queue_->pop_command())
-    {
-      parser::parse_result_type result(p.parse(command));
-      passert(result.get(), result->status != -1);
-      result->process_errors(*active_command);
-
-      if (ast::rNary ast = result->ast_get())
-      {
-        LIBPORT_DEBUG("parsed: {{{" << *ast << "}}}");
-        ast = parser::transform(ast);
-        aver(ast);
-        LIBPORT_DEBUG("bound and flowed: {{{" << *ast << "}}}");
-        // Append to the current list.
-        active_command->splice_back(ast);
-        LIBPORT_DEBUG("appended: " << *active_command << "}}}");
-      }
-      else
-        LIBPORT_DEBUG("the parser returned 0:" << std::endl
-                      << "{{{" << command << "}}}");
-    }
-
-    // Execute the new command.
-    execute(active_command);
-
-    receiving_ = false;
-
-    error_ = USUCCESS;
-  }
-
-  void
-  UConnection::execute(ast::rNary active_command)
-  {
-    LIBPORT_PING();
-    if (active_command->empty())
-      return;
-
-    LIBPORT_DEBUG("Command is: {{{" << *active_command << "}}}");
-    shell_->append_command(const_cast<const ast::Nary*>(active_command.get()));
-
-    LIBPORT_PING();
+    stream_buffer_.post_data(buffer, length);
   }
 
   bool

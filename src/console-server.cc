@@ -263,7 +263,7 @@ namespace urbi
     void
     operator()(const libport::opts::FileData& d)
     {
-      if (server_.load_file(d.filename_, connection_.recv_queue_get())
+      if (server_.load_file(d.filename_, connection_)
           != USUCCESS)
         URBI_EXIT(EX_NOINPUT,
                   "failed to process file %s: %s",

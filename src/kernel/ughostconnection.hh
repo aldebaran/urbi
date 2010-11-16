@@ -32,10 +32,6 @@ namespace kernel
     //! UGhostConnection destructor.
     virtual ~UGhostConnection();
 
-    /// Set up the connection.
-    /// Loads global.u, local.u and so forth.
-    void initialize();
-
     //! Close the connection
     /// Does nothing. The ghost connection cannot be closed.
     virtual void close();

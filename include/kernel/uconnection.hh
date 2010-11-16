@@ -28,6 +28,7 @@
 
 # include <kernel/fwd.hh>
 # include <urbi/export.hh>
+# include <urbi/iostream.hh>
 # include <kernel/utypes.hh>
 # ifdef _MSC_VER
 #  include <urbi/object/lobby.hh>
@@ -229,8 +230,6 @@ namespace kernel
      */
     virtual size_t effective_send(const char*, size_t length) = 0;
 
-    void execute(ast::rNary);
-
   public:
     /// Error return code for the constructor.
     UErrorValue uerror_;
@@ -281,6 +280,11 @@ namespace kernel
     size_t bytes_sent_;
     /// Number of bytes received so far.
     size_t bytes_received_;
+
+  private:
+    /// The received data stream.
+    urbi::StreamBuffer stream_buffer_;
+    std::istream stream_;
   };
 
 }

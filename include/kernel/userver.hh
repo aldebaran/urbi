@@ -138,8 +138,7 @@ namespace kernel
     /// Load a file into the connection.
     /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
     virtual UErrorValue load_file(const std::string& file_name,
-                                  UQueue& loadQueue,
-                                  QueueType t = QUEUE_URBI);
+                                  UConnection& dest);
 
     /// Load \a fn in the ghostqueue.
     UErrorValue load_init_file(const char* fn);

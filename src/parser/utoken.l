@@ -31,7 +31,6 @@
 #include <libport/format.hh>
 #include <libport/ufloat.hh>
 
-#include <parser/prescan.hh>
 #include <parser/parser-impl.hh>
 #include <parser/utoken.hh>
 
@@ -51,60 +50,10 @@ static size_t bin_split(char* yytext, size_t yyleng, char*& keywords);
 template <typename Out, typename In>
 static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
-
-/*--------------------.
-| Prescanner macros.  |
-`--------------------*/
-
 // Skip the spaces in yytext.
 # define SKIP_SPACES()                          \
   while (isspace(*yytext))                      \
     ++yytext;
-
-// Skip this action if in pre-parser.  Do not put this in a do-while,
-// as it would capture the "continue" which is meant to yylex's
-// "while(1)".
-#define PRE_SKIP()                              \
-  /* no do-while!  Read above. */               \
-  if (!up)                                      \
-    continue
-
-# define PRE_PUSH(Char)                         \
-  /* no do-while!  Read above. */               \
-  if (!up)                                      \
-  {                                             \
-    pre_closers.push_back(Char);                \
-    continue;                                   \
-  }
-
-# define PRE_POP()                                                    \
-  /* no do-while!  Read above. */                                     \
-  if (!up)                                                            \
-  {                                                                   \
-    if (!pre_closers.empty() && pre_closers.back() == yytext[0])      \
-    {                                                                 \
-      pre_closers.pop_back();                                         \
-      continue;                                                       \
-    }                                                                 \
-    else                                                              \
-    {                                                                 \
-      /* Syntax error (unbalanced closers).  Return as if the         \
-         sentence was correct.  The parser will report the error      \
-         itself. */                                                   \
-      return yy::parser::make_PRE_COMPLETE(loc);                      \
-    }                                                                 \
-  }
-
-// Return from the prescanner if everything is closed.
-# define PRE_RETURN()                                   \
-  /* no do-while!  Read above. */                       \
-  if (!up)                                              \
-  {                                                     \
-    if (pre_closers.empty())                            \
-      return yy::parser::make_PRE_COMPLETE(loc);        \
-    else                                                \
-      continue;                                         \
-  }
 
 # define YY_USER_INIT                                                   \
   static bool flex_debug = getenv("URBI_SCANNER");                      \
@@ -112,7 +61,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
                                                                         \
   static bool uconsole_mode = getenv ("URBI_CONSOLE_MODE");             \
   sc_default = uconsole_mode ? SC_UCONSOLE : INITIAL;                   \
-  if (up && up->meta())                                                 \
+  if (up->meta())                                                       \
     sc_default = SC_META;                                               \
   BEGIN sc_default;                                                     \
                                                                         \
@@ -121,16 +70,11 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
   {                                                                     \
     init = true;                                                        \
     if (uconsole_mode)                                                  \
-      std::cerr << "Message from the scanner: URBI_CONSOLE_MODE enabled." \
-                << std::endl;                                           \
-  }                                                                     \
-                                                                        \
-  if (!up)                                                              \
-  {                                                                     \
-    pre_length = 0;                                                     \
-    length_hint = 0;                                                    \
-    pre_closers.clear();                                                \
+      std::cerr                                                         \
+        << "Message from the scanner: URBI_CONSOLE_MODE enabled."       \
+        << std::endl;                                                   \
   }
+
 
 // Each time a rule is matched.
 #define YY_USER_ACTION                          \
@@ -139,48 +83,43 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // Move the front cursor to the end cursor.
 #define STEP()                                  \
   do {                                          \
-    if (up)                                     \
-      loc.step();                               \
+    aver(up);                                   \
+    loc.step();                                 \
   } while (false)
 
 // Called via YY_USER_ACION each time we *advance* the cursor, in
 // which case Num is actually the number of bytes read.  In prescanner
 // mode, this advances the whole length.
-#define COLUMNS(Num)                                    \
-  do {                                                  \
-    if (up)                                             \
-      /* At each match, adjust the end cursor. */       \
-      loc.columns(Num);                                 \
-    else                                                \
-      pre_length += Num;                                \
- } while (false)
+#define COLUMNS(Num)                                        \
+  do {                                                      \
+    aver(up);                                               \
+    /* At each match, adjust the end cursor. */             \
+    loc.columns(Num);                                       \
+  } while (false)
 
 // To avoid differences between versions of Bison, set by hand the
 // initial columns when advancing lines.  Does not touch pre_length,
 // since LINES is always called after COLUMNS was, which did update
 // pre_length.
-#define LINES(Num)                              \
-  do {                                          \
-    if (up)                                     \
-    {                                           \
-      loc.lines(Num);                           \
-      loc.end.column = 1;                       \
-    }                                           \
+#define LINES(Num)                                  \
+  do {                                              \
+    aver(up);                                       \
+    loc.lines(Num);                                 \
+    loc.end.column = 1;                             \
   } while (false)
 
 // Report an error.
-#define SCAN_ERROR(...)                                 \
-  do {                                                  \
-    if (up)                                             \
-      up->error(loc, libport::format(__VA_ARGS__));     \
+#define SCAN_ERROR(...)                                     \
+  do {                                                      \
+    aver(up);                                               \
+    up->error(loc, libport::format(__VA_ARGS__));           \
   } while (false)
 
 // Report an EOF error.  In that case, the prescanner must return
 // non-null, since null means there is not enough data.
 #define EOF_ERROR(Where)                                \
   do {                                                  \
-    if (!up)                                            \
-      return yy::parser::make_PRE_EOF(loc);             \
+    aver(up);                                           \
     SCAN_ERROR("unexpected end of file in %s", Where);  \
   } while(0)
 
@@ -190,23 +129,24 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate()                                   \
-  return (up                                            \
-          ? yy::parser::make_EOF(loc)                   \
-          : yy::parser::make_PRE_WANTS_MORE(loc));
+  do {                                                  \
+    aver(up);                                           \
+    return yy::parser::make_EOF(loc);                   \
+  } while(0)
 
 
 // Extend the string value of valp.
-#define GROW_VAL(Value)                         \
-  do {                                          \
-    if (up)                                     \
-      grown_string += Value;                    \
+#define GROW_VAL(Value)                             \
+  do {                                              \
+    aver(up);                                       \
+    grown_string += Value;                          \
   } while(0)
 
 // Extend the string value of valp.
 #define APPEND_VAL(Arg1, Arg2)                  \
   do {                                          \
-    if (up)                                     \
-      grown_string.append(Arg1, Arg2);          \
+    aver(up);                                   \
+    grown_string.append(Arg1, Arg2);            \
   } while(0)
 
 
@@ -216,19 +156,16 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 #define RETURN(Symbol)                          \
   {                                             \
-    PRE_SKIP();                                 \
     return yy::parser::make_ ## Symbol(loc);    \
   }
 
 // Return an assignment operator: its value is the base operator.
 #define RETURN_ASSIGN_OP(Token)                 \
-  PRE_SKIP();                                   \
   RETURN_OP(Token);
 
 // UnitLength is the number of letters used for the unit.
 #define RETURN_UNIT(Token, UnitLength, From, To)                        \
   {                                                                     \
-    PRE_SKIP();                                                         \
     yytext[yyleng - UnitLength] = 0;                                    \
     RETURN_VALUE(Token,                                                 \
                  lexical_cast<ufloat>(up, loc, yytext) / (From) * (To)); \
@@ -243,12 +180,11 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
-#define RETURN_FLAVOR(Symbol, Flavor)                                   \
+#define RETURN_FLAVOR(Symbol, Flavor)           \
   RETURN_VALUE(Symbol, ast::flavor_ ## Flavor)
 
 #define RETURN_FLAVORED_KEYWORD(Token)                  \
   {                                                     \
-    PRE_SKIP();                                         \
     switch (yytext[yyleng - 1])                         \
     {                                                   \
       case '|': RETURN_FLAVOR(Token, pipe);             \
@@ -266,8 +202,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // Return a meta-variable type.  Only if desugaring is enabled.
 #define RETURN_PERCENT(Token)                   \
   do {                                          \
-    PRE_SKIP();                                 \
-    assert(up->meta());                         \
+    aver(up->meta());                           \
     RETURN(PERCENT_ ## Token ## _COLON);        \
   } while (false)
 
@@ -281,7 +216,6 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 #define RETURN_VALUE(Token, Value)                      \
   {                                                     \
-    PRE_SKIP();                                         \
     return yy::parser::make_ ## Token(Value, loc);      \
   }
 
@@ -307,7 +241,6 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // We matched an alternative token, rescan with Str instead.
 #define SYNONYM(Str)                            \
   {                                             \
-    PRE_SKIP();                                 \
     UNPUT(Str);                                 \
  }
 
@@ -316,7 +249,6 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // needed to scope msg and rewritten.
 #define DEPRECATED(New)                         \
   {                                             \
-    PRE_SKIP();                                 \
     std::string rewritten = New;                \
     up->deprecated(loc, yytext, rewritten);     \
     UNPUT(rewritten);                           \
@@ -327,8 +259,8 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 %option nodefault
 /* Allow faster implements. */
 %option noreject noyymore
-/* We don't need an interactive scanner. */
-%option batch
+/* We need an interactive scanner. */
+%option interactive
 /* Even in -Cf mode, support 8 bit characters. */
 %option 8bit
 
@@ -401,8 +333,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
      LINES and STEP etc. were placed as they are in the
      synclines-rules below.  */
 
-  PRE_SKIP();
-
   yytext += strlen("//#");
   SKIP_SPACES();
 
@@ -438,7 +368,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 }
 
 "//#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
-  PRE_SKIP();
   if (up->synclines_.empty())
   {
     SCAN_ERROR("too many //#pop");
@@ -584,17 +513,17 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 ":"             RETURN(COLON);
 "~"             RETURN(TILDA);
 
-"("             PRE_PUSH(')'); RETURN(LPAREN);
-")"             PRE_POP();     RETURN(RPAREN);
-"["             PRE_PUSH(']'); RETURN(LBRACKET);
-"]"             PRE_POP();     RETURN(RBRACKET);
-"{"             PRE_PUSH('}'); RETURN(LBRACE);
-"}"             PRE_POP();     RETURN(RBRACE);
+"("             RETURN(LPAREN);
+")"             RETURN(RPAREN);
+"["             RETURN(LBRACKET);
+"]"             RETURN(RBRACKET);
+"{"             RETURN(LBRACE);
+"}"             RETURN(RBRACE);
 
 "&"             RETURN_FLAVOR(AMPERSAND, and);
 "|"             RETURN_FLAVOR(PIPE, pipe);
-";"             PRE_RETURN(); RETURN_FLAVOR(SEMICOLON, semicolon);
-","             PRE_RETURN(); RETURN_FLAVOR(COMMA, comma);
+";"             RETURN_FLAVOR(SEMICOLON, semicolon);
+","             RETURN_FLAVOR(COMMA, comma);
 
 "and"           SYNONYM("&&");
 "and_eq"        SYNONYM("&=");
@@ -704,7 +633,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "static"      DEPRECATED("");
 
 {ID}{SUFFIX}    { // Treat "n'" as "n.'\''".
-  PRE_SKIP();
   // Push back "n.'\''" in the stream.
   char* quote = strchr(yytext, '\'');
   std::string s (yytext, quote - yytext);
@@ -717,7 +645,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
   /* operator XXX -> 'XXX'. */
 {OPERATOR}    {
-                PRE_SKIP();
                 yytext += strlen("operator");
                 SKIP_SPACES();
                 RETURN_SYMBOL(IDENTIFIER);
@@ -737,7 +664,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          BEGIN sc_default;
          if (*yytext == '\'')
          {
-           PRE_SKIP();
            RETURN_VALUE(IDENTIFIER, libport::Symbol(grown_string));
          }
          else
@@ -807,24 +733,21 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
          }
          COLUMNS(len);
          // Yes, go on.
-         if (up)
-         {
-           // Eat 'eaten' from buffer.
-           grown_string += std::string(yy_c_buf_p, eat);
-           size_t current_size = grown_string.length();
-           grown_string.resize(current_size + len - eat);
-           yyin->seekg(pos, std::ios_base::beg);
-           yyin->read(const_cast<char*>(grown_string.c_str()) + current_size,
-                      len-eat);
-         }
-         else
-           yyin->seekg(pos + len - eat, std::ios_base::beg);
+         aver(up);
+
+         // Eat 'eaten' from buffer.
+         grown_string += std::string(yy_c_buf_p, eat);
+         size_t current_size = grown_string.length();
+         grown_string.resize(current_size + len - eat);
+         yyin->seekg(pos, std::ios_base::beg);
+         yyin->read(const_cast<char*>(grown_string.c_str()) + current_size,
+                    len-eat);
        }
        else
        {
          // All we have to read is in Flex' buffer.
-         if (up)
-           grown_string += std::string(yy_c_buf_p, eat);
+         aver(up);
+         grown_string += std::string(yy_c_buf_p, eat);
          COLUMNS(eat);
        }
 

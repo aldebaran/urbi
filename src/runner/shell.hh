@@ -12,6 +12,7 @@
 # define RUNNER_SHELL_HH
 
 # include <deque>
+# include <istream>
 
 # include <libport/compiler.hh>
 # include <libport/symbol.hh>
@@ -27,10 +28,11 @@ namespace runner
   public:
     Shell(const rLobby& lobby,
 	  sched::Scheduler& scheduler,
-	  libport::Symbol name);
+	  libport::Symbol name,
+          std::istream& input);
     ATTRIBUTE_NORETURN virtual void work();
     void work_();
-    void append_command(const ast::rConstNary& command);
+    // void append_command(const ast::rConstNary& command);
     void insert_oob_call(boost::function0<void> func);
     bool pending_command_get() const;
     void pending_commands_clear();
@@ -41,12 +43,13 @@ namespace runner
     /// \precondition \a exp should be a foreground job.
     void eval_print_(const ast::Exp* exp);
     /// Execute the front of commands_.
-    void handle_command_();
+    void handle_command_(ast::rConstExp exp);
     /// Execute everything in oob_calls_.
     void handle_oob_();
     std::deque<ast::rConstExp> commands_;
     std::list<boost::function0<void> > oob_calls_;
     bool executing_;
+    std::istream& input_;
   };
 
 } // namespace runner

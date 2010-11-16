@@ -42,15 +42,6 @@ namespace kernel
   }
 
   void
-  UGhostConnection::initialize()
-  {
-    recv_queue_->push
-      (libport::format(SYNCLINE_WRAP("initialize(%s, true)|;"),
-                       kernel::urbiserver->opt_banner_get()));
-    received("");
-  }
-
-  void
   UGhostConnection::close()
   {
     kernel::urbiserver->interactive_set(false);

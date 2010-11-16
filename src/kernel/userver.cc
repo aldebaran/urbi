@@ -76,13 +76,12 @@
 #include <kernel/server-timer.hh>
 #include <kernel/ughostconnection.hh>
 #include <kernel/uobject.hh>
-#include <kernel/uqueue.hh>
 
 using libport::program_name;
 using object::objects_type;
 using object::rObject;
 
-GD_CATEGORY(Urbi);
+GD_CATEGORY(Urbi.UServer);
 
 namespace kernel
 {
@@ -153,19 +152,10 @@ namespace kernel
     object::root_classes_initialize();
   }
 
-  UErrorValue
-  UServer::load_init_file(const char* fn)
-  {
-    UErrorValue res = load_file(fn, ghost_->recv_queue_get());
-    if (res == USUCCESS)
-      ghost_->received("");
-    return res;
-  }
-
   void
   UServer::xload_init_file(const char* fn)
   {
-    if (load_init_file(fn) != USUCCESS)
+    if (load_file(fn, *ghost_) != USUCCESS)
     {
       std::cerr
         << program_name() << ": cannot load " << fn << "." << std::endl
@@ -334,22 +324,28 @@ namespace kernel
     // The order is important: ghost connection, plugins, urbi.u.
 
     // Ghost connection
-    GD_INFO_DUMP("Setting up ghost connection...");
-    ghost_ = new UGhostConnection(*this, interactive);
-    GD_INFO_DUMP("Setting up ghost connection... done");
+    {
+      GD_PUSH_TRACE("setting up ghost connection.");
+      ghost_ = new UGhostConnection(*this, interactive);
+    }
 
     xload_init_file("urbi/urbi.u");
 
     // Handle plugged UObjects.
     // Create "uobject" in lobby where UObjects will be put.
-    object::Object::proto->slot_set(SYMBOL(uobjectInit),
-      new object::Primitive(&::urbi::uobjects::uobject_initialize));
+    object::Object::proto->slot_set
+      (SYMBOL(uobjectInit),
+       new object::Primitive(&urbi::uobjects::uobject_initialize));
 
     // Force processing of urbi.u.
-    while (!object::Object::proto->slot_has(SYMBOL(loaded)))
-      work();
+    {
+      GD_PUSH_TRACE("going to work until urbi.u is processed.");
+      while (!object::Object::proto->slot_has(SYMBOL(loaded)))
+        work();
+    }
     mode_ = mode_user;
     object::Object::proto->slot_remove(SYMBOL(loaded));
+    GD_INFO_TRACE("urbi.u has been processed.");
 
     urbi::object::rObject ref = new urbi::object::Object;
     ref->proto_add(urbi::object::Object::proto);
@@ -621,9 +617,9 @@ namespace kernel
   }
 
   UErrorValue
-  UServer::load_file(const std::string& base, UQueue& q, QueueType type)
+  UServer::load_file(const std::string& base, UConnection& connection)
   {
-    GD_FINFO_DUMP("Looking for %s...", base);
+    GD_FPUSH_DUMP("looking for %s", base);
     std::istream *is;
     libport::Finally finally;
     if (base == "/dev/stdin")
@@ -635,7 +631,7 @@ namespace kernel
         std::string file = find_file(base);
         is = new std::ifstream(file.c_str(), std::ios::binary);
         finally << boost::bind(boost::checked_delete<std::istream>, is);
-        GD_FINFO_DUMP("Loading %s...", file);
+        GD_FINFO_DUMP("loading %s", file);
       }
       catch (libport::file_library::Not_found&)
       {
@@ -646,21 +642,21 @@ namespace kernel
       if (!*is)
         return UFAIL;
     }
-    if (type == QUEUE_URBI)
-    {
-      q.push(libport::format("//#push 1 \"%1%\"\n", base));
-      finally
-        << boost::bind(static_cast<void(UQueue::*)(const char*)>
-                       (&UQueue::push),
-                       &q, "//#pop\n");
-    }
+    // FIXME: w00t?
+    // if (type == QUEUE_URBI)
+    // {
+    //   q.push(libport::format("//#push 1 \"%1%\"\n", base));
+    //   finally
+    //     << boost::bind(static_cast<void(UQueue::*)(const char*)>
+    //                    (&UQueue::push),
+    //                    &q, "//#pop\n");
+    // }
     while (is->good())
     {
       static char buf[BUFSIZ];
       is->read(buf, sizeof buf);
-      q.push(buf, is->gcount());
+      connection.received(buf, is->gcount());
     }
-    GD_FINFO_DUMP("Looking for %s... done", base);
     return USUCCESS;
   }
 
