@@ -578,15 +578,13 @@ namespace runner
     foreach (ast::dictionary_elts_type::value_type exp, e->value_get())
     {
       rObject v = operator()(exp.second.get());
-      // Refuse void in literals.
-      if (v == object::void_class)
-        raise_unexpected_void_error();
+      rObject k = operator()(exp.first.get());
       passert(v, v);
-      object::rObject o = operator()(exp.first.get());
-      object::rString key = o->as<object::String>();
-      if (!key)
-        raise_type_error(o, object::String::proto, exp.first->location_get());
-      res->set(new object::String(key->value_get()), v);
+      passert(k, k);
+      // Refuse void in literals.
+      if (v == object::void_class || k == object::void_class)
+        raise_unexpected_void_error();
+      res->set(k, v);
     }
     return res;
   }
