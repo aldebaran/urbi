@@ -180,6 +180,7 @@ namespace urbi
       bool is_nan() const;
       static value_type inf();
       static value_type nan();
+      rHash hash() const;
 
 
     /*----------.

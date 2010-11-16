@@ -31,6 +31,7 @@
 #include <object/symbols.hh>
 
 #include <urbi/object/float.hh>
+#include <urbi/object/hash.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
@@ -121,6 +122,7 @@ namespace urbi
       DECLARE(format, format);
 #endif
       DECLARE(floor,   floor);
+      DECLARE(hash,    hash);
       DECLARE(inf,     inf);
       DECLARE(isInf,   is_inf);
       DECLARE(isNan,   is_nan);
@@ -134,7 +136,7 @@ namespace urbi
       DECLARE(sin,     sin);
       DECLARE(sqrt,    sqrt);
       DECLARE(tan,     tan);
-      DECLARE(trunc,  trunc);
+      DECLARE(trunc,   trunc);
 
 #undef DECLARE
 
@@ -481,6 +483,12 @@ namespace urbi
       for (unsigned int i = 0; i < n; i++)
         res << new Float(i);
       return new List(res);
+    }
+
+    rHash
+    Float::hash() const
+    {
+      return new Hash(boost::hash_value(value_get()));
     }
 
     /*----------.
