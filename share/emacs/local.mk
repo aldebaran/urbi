@@ -6,6 +6,6 @@
 ##
 ## See the LICENSE file for more information.
 
-lisp_LISP = share/emacs/urbiscript-mode.el
+dist_lisp_LISP = share/emacs/urbiscript-mode.el
 # Arguably a bug in Automake.
 CLEANFILES += share/emacs/urbiscript-mode.elc
