@@ -128,7 +128,7 @@ namespace rewrite
         result_ = factory_->make_while(l,
                                        l, a->flavor_get(),
                                        recurse(a->test_get()),
-                                       l, body);
+                                       body);
       }
     else
       super_type::visit(a);

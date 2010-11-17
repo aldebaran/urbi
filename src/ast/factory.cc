@@ -609,7 +609,7 @@ namespace ast
       new Foreach(loc, flavor,
                   new LocalDeclaration(id_loc, id,
                                        new Implicit(id_loc)),
-                  iterable, make_scope(loc, body));
+                  iterable, make_scope(body));
   }
 
 
@@ -696,8 +696,8 @@ namespace ast
                    rExp iftrue, rExp iffalse) // const
   {
     return new If(l, make_strip(cond),
-                  make_scope(l, iftrue),
-                  iffalse ? make_scope(l, iffalse) : new Noop(l, 0));
+                  make_scope(iftrue),
+                  iffalse ? make_scope(iffalse) : new Noop(l, 0));
   }
 
 
@@ -712,7 +712,7 @@ namespace ast
   rExp
   Factory::make_loop(const location&,
                      const location& flavor_loc, flavor_type flavor,
-                     const location&, rExp body) // const
+                     rExp body) // const
   {
     FLAVOR_DEFAULT(semicolon);
     PARAMETRIC_AST
@@ -873,13 +873,13 @@ namespace ast
   rRoutine
   Factory::make_routine(const location& loc, bool closure,
                         const location& floc, formals_type* f,
-                        const location& bloc, rExp b) // const
+                        rExp b) // const
   {
     if (closure && !f)
       SYNTAX_ERROR(loc, "closure cannot be lazy");
     return new Routine(loc, closure,
                        symbols_to_decs(floc, f),
-                       make_scope(bloc, b));
+                       make_scope(b));
   }
 
 
@@ -1251,11 +1251,11 @@ namespace ast
   Factory::make_while(const location& loc,
                       const location& flavor_loc, flavor_type flavor,
                       rExp cond,
-                      const location& body_loc, rExp body) // const
+                      rExp body) // const
   {
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK3("while", comma, pipe, semicolon);
-    return new While(loc, flavor, cond, make_scope(body_loc, body));
+    return new While(loc, flavor, cond, make_scope(body));
   }
 
 }

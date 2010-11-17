@@ -259,7 +259,7 @@ namespace ast
     rExp
     make_loop(const location& loc,
               const location& flavor_loc, flavor_type flavor,
-              const location& body_loc, rExp body) /* const */;
+              rExp body) /* const */;
 
     /** Use these functions to avoid CPP-like problem when referring
      *  several times to an lvalue.  For instance, do not desugar
@@ -316,13 +316,12 @@ namespace ast
     /// \param loc      location for the whole declaration.
     /// \param floc     location of the formals.
     /// \param f        formals.  Mandatory for closures.
-    /// \param bloc     location of the body.
     /// \param b        body.
     static
     rRoutine
     make_routine(const location& loc, bool closure,
                  const location& floc, formals_type* f,
-                 const location& bloc, const rExp b) /* const */;
+                 const rExp b) /* const */;
 
     /// Return \a e in a Scope unless it is already one.
     static
@@ -437,7 +436,7 @@ namespace ast
     make_while(const location& loc,
                const location& flavor_loc, flavor_type flavor,
                rExp cond,
-               const location& body_loc, rExp body) /* const */;
+               rExp body) /* const */;
   };
 
   /// Whether the \a e was the empty command.

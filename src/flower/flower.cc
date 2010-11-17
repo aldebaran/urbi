@@ -76,7 +76,6 @@ namespace flower
       "{var '$loopContinueTag' = Tag.newFlowControl(\"loopContinueTag\") |"
       "'$loopContinueTag': %exp:1}");
 
-
     return exp(cont % e);
   }
 
@@ -88,10 +87,9 @@ namespace flower
             << scoped_set(has_break_, false)
             << scoped_set(has_continue_, false);
 
-
     ast::rExp res = code->body_get()->body_get();
+    // FIXME: how come res can be null?
     res = res ? recurse(res) : new ast::Noop(code->location_get(), 0);
-
     if (has_continue_)
       res = cont(res.get());
 

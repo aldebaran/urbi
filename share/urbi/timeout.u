@@ -55,7 +55,7 @@ do (Timeout)
   {
     timeout (time)
       while (running)
-        |
+        {}|
     timedOut = running|
     if (timedOut)
       stop

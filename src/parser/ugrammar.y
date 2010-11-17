@@ -403,7 +403,7 @@ block:
 
 // A useless optional visibility.
 visibility:
-  /* Nothing. */
+  /* empty */
 | "private"
 | "protected"
 | "public"
@@ -429,7 +429,7 @@ protos.1:
 
 // A list of parents to derive from.
 protos:
-  /* nothing */   { $$ = 0; }
+  /* empty */   { $$ = 0; }
 | ":" protos.1    { std::swap($$, $2); }
 ;
 
@@ -454,7 +454,7 @@ enum.elt:
 |  id "=" exp { $$ = std::make_pair($1, $3); }
 
 enum.id.0:
-  /* nothing */ {}
+  /* empty */ {}
 | enum.id.0 enum.elt ","
   {
     std::swap($$, $1);
@@ -462,13 +462,8 @@ enum.id.0:
   }
 ;
 
-comma.opt:
-  /* nothing */ {}
-| ","           {}
-;
-
 enum.id.1:
-  /* nothing */ {}
+  /* empty */ {}
 | enum.id.0 enum.elt comma.opt
   {
     std::swap($$, $1);
@@ -569,7 +564,7 @@ stmt:
     {
       // Compiled as "var name = function args stmt".
       $$ = new ast::Declaration(@$, $2,
-                                MAKE(routine, @$, $1, @3, $3, @4, $4));
+                                MAKE(routine, @$, $1, @3, $3, $4));
     }
 ;
 
@@ -727,11 +722,11 @@ stmt:
     {
       $$ = MAKE(if, @$, $3, $5, $6);
     }
-| "freezeif" "(" exp ")" stmt
+| "freezeif" "(" exp ")" nstmt
     {
       $$ = MAKE(freezeif, @$, $3, $5);
     }
-| "stopif" "(" exp ")" stmt
+| "stopif" "(" exp ")" nstmt
     {
       $$ = MAKE(stopif, @$, $3, $5);
     }
@@ -739,7 +734,7 @@ stmt:
     {
       $$ = MAKE(switch, @3, $3, $6, $7);
     }
-| "timeout" "(" exp ")" stmt
+| "timeout" "(" exp ")" nstmt
     {
       $$ = MAKE(timeout, $3, $5);
     }
@@ -784,21 +779,21 @@ stmt:
 
 %type <ast::rNary> default.opt;
 default.opt:
-  /* nothing. */ %prec CMDBLOCK   { $$ = 0;            }
-|  "default" ":" stmts            { std::swap($$, $3); }
+  /* empty */ %prec CMDBLOCK   { $$ = 0;            }
+|  "default" ":" stmts         { std::swap($$, $3); }
 ;
 
 %type <ast::rExp> else.opt;
 else.opt:
-  /* nothing. */ %prec CMDBLOCK   { $$ = 0;            }
-| "else" nstmt                    { std::swap($$, $2); }
+  /* empty */ %prec CMDBLOCK   { $$ = 0;            }
+| "else" nstmt                 { std::swap($$, $2); }
 ;
 
 // An optional onleave clause.
 %type <ast::rExp> onleave.opt;
 onleave.opt:
-  /* nothing. */ %prec CMDBLOCK   { $$ = 0;            }
-| "onleave" nstmt                 { std::swap($$, $2); }
+  /* empty */ %prec CMDBLOCK   { $$ = 0;            }
+| "onleave" nstmt              { std::swap($$, $2); }
 ;
 
 
@@ -890,25 +885,25 @@ stmt_loop:
  *
  *  i.e. execute "42"  forever, with 42 being parenthesized.
  */
-  "loop" stmt %prec CMDBLOCK
+  "loop" nstmt %prec CMDBLOCK
     {
-      $$ = MAKE(loop, @$, @1, $1, @2, $2);
+      $$ = MAKE(loop, @$, @1, $1, $2);
     }
-| "for" "(" exp ")" stmt %prec CMDBLOCK
+| "for" "(" exp ")" nstmt %prec CMDBLOCK
     {
       $$ = MAKE(for, @$, @1, $1, $3, $5);
     }
-| "for" "(" stmt[init] ";" exp[cond] ";" stmt[inc] ")" stmt[body] %prec CMDBLOCK
+| "for" "(" stmt[init] ";" exp[cond] ";" stmt[inc] ")" nstmt %prec CMDBLOCK
     {
-      $$ = MAKE(for, @$, @1, $1, $init, $cond, $inc, $body);
+      $$ = MAKE(for, @$, @1, $1, $init, $cond, $inc, $nstmt);
     }
-| "for" "(" "var" "identifier"[id] in_or_colon exp ")" stmt %prec CMDBLOCK
+| "for" "(" "var" "identifier"[id] in_or_colon exp ")" nstmt %prec CMDBLOCK
     {
-      $$ = MAKE(for, @$, @1, $1, @id, $id, $exp, $stmt);
+      $$ = MAKE(for, @$, @1, $1, @id, $id, $exp, $nstmt);
     }
-| "while" "(" exp ")" stmt %prec CMDBLOCK
+| "while" "(" exp ")" nstmt %prec CMDBLOCK
     {
-      $$ = MAKE(while, @$, @1, $1, $exp, @stmt, $stmt);
+      $$ = MAKE(while, @$, @1, $1, $exp, $nstmt);
     }
 ;
 
@@ -1008,7 +1003,7 @@ id:
 exp:
   routine formals block
     {
-      $$ = MAKE(routine, @$, $1, @2, $2, @3, $3);
+      $$ = MAKE(routine, @$, $1, @2, $2, $3);
     }
 ;
 
@@ -1067,8 +1062,7 @@ assocs.1:
 ;
 
 assocs:
-  assocs.1     { std::swap($$, $1); }
-| assocs.1 "," { std::swap($$, $1); }
+  assocs.1 comma.opt    { std::swap($$, $1); }
 ;
 
 %type <ast::rDictionary> dictionary;
@@ -1151,14 +1145,14 @@ event_match:
 
 %type <ast::rExp> guard.opt;
 guard.opt:
-  /* nothing */  { $$ = 0; }
-| "if" exp       { std::swap($$, $2); }
+  /* empty */  { $$ = 0; }
+| "if" exp     { std::swap($$, $2); }
 ;
 
 %type<ast::rExp> tilda.opt;
 tilda.opt:
-  /* nothing */ { $$ = 0; }
-| "~" exp       { std::swap($$, $2); }
+  /* empty */ { $$ = 0; }
+| "~" exp     { std::swap($$, $2); }
 ;
 
 
@@ -1269,8 +1263,8 @@ exp:
 ;
 
 exp.opt:
-  /* nothing */ { $$ = 0; }
-| exp           { std::swap($$, $1); }
+  /* empty */ { $$ = 0; }
+| exp         { std::swap($$, $1); }
 ;
 
 /*---------------------.
@@ -1345,9 +1339,8 @@ exp:
 
 // claims: a list of "exp"s separated/terminated with semicolons.
 claims:
-  /* empty */   { $$ = new ast::exps_type; }
-| claims.1      { std::swap($$, $1); }
-| claims.1 ";"  { std::swap($$, $1); }
+  /* empty */        { $$ = new ast::exps_type; }
+| claims.1 semi.opt  { std::swap($$, $1); }
 ;
 
 claims.1:
@@ -1358,9 +1351,8 @@ claims.1:
 
 // exps: a list of "exp"s separated/terminated with colons.
 exps:
-  /* empty */ { $$ = new ast::exps_type; }
-| exps.1      { std::swap($$, $1); }
-| exps.1 ","  { std::swap($$, $1); }
+  /* empty */       { $$ = new ast::exps_type; }
+| exps.1 comma.opt  { std::swap($$, $1); }
 ;
 
 exps.1:
@@ -1387,12 +1379,6 @@ args.opt:
 | List of identifiers.  |
 `----------------------*/
 
-// "var"?
-var.opt:
-  /* empty. */
-| "var"
-;
-
 %type <::ast::Factory::formal_type> formal;
 formal:
   var.opt "identifier"          { $$ = ::ast::Factory::formal_type($2, 0);  }
@@ -1408,9 +1394,8 @@ formals.1:
 
 // Zero or several comma-separated identifiers.
 formals.0:
-  /* empty */    { $$ = new ::ast::Factory::formals_type; }
-| formals.1      { std::swap($$, $1); }
-| formals.1 ","  { std::swap($$, $1); }
+  /* empty */          { $$ = new ::ast::Factory::formals_type; }
+| formals.1 comma.opt  { std::swap($$, $1); }
 ;
 
 // Function formal arguments.
@@ -1418,6 +1403,10 @@ formals:
   /* empty */         { $$ = 0; }
 | "(" formals.0 ")"   { std::swap($$, $2); }
 ;
+
+comma.opt: /* empty */ | ",";
+semi.opt:  /* empty */ | ";";
+var.opt:   /* empty */ | "var";
 
 %%
 
