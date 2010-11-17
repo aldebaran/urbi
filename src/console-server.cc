@@ -348,6 +348,7 @@ namespace urbi
         << "Execution:"
         << libport::opts::exp
         << libport::opts::file
+        << libport::opts::module
         << arg_interactive
         << arg_remaining
         ;
