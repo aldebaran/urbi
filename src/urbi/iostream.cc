@@ -28,7 +28,7 @@ namespace urbi
     , used(0)
     , size(chunk_size)
   {
-    assert(buffer);
+    aver(buffer);
   }
 
   StreamBuffer::StreamBuffer()
@@ -62,15 +62,20 @@ namespace urbi
         GD_INFO_DEBUG("closed, woken up, return EOF.");
         return EOF;
       }
-      assert(buffer_write_->used);
-      GD_FINFO_DEBUG("%s bytes available, woken up, swapping buffers.", buffer_write_->used);
+      aver(buffer_write_->used);
+      GD_FINFO_DEBUG("%s bytes available, woken up, swapping buffers.",
+                     buffer_write_->used);
     }
     else
-      GD_FINFO_DEBUG("%s bytes available, swapping buffers.", buffer_write_->used);
+      GD_FINFO_DEBUG("%s bytes available, swapping buffers.",
+                     buffer_write_->used);
     std::swap(buffer_read_, buffer_write_);
-    setg(buffer_read_->buffer, buffer_read_->buffer, buffer_read_->buffer + buffer_read_->used);
+    setg(buffer_read_->buffer,
+         buffer_read_->buffer, buffer_read_->buffer + buffer_read_->used);
     buffer_write_->used = 0;
-    GD_FINFO_DUMP("available data: \"%x\".", libport::escape(std::string(buffer_read_->buffer, buffer_read_->used)));
+    GD_FINFO_DUMP("available data: \"%x\".",
+                  libport::escape(std::string(buffer_read_->buffer,
+                                              buffer_read_->used)));
     int res = static_cast<unsigned char>(buffer_read_->buffer[0]);
     GD_FINFO_DUMP("return: %x.", res);
     return res;
@@ -95,7 +100,9 @@ namespace urbi
     {
       buffer_write_->size = ((needed - 1) / chunk_size + 1) * chunk_size;
       GD_FINFO_DEBUG("growing buffer to %s bytes.", buffer_write_->size);
-      buffer_write_->buffer = reinterpret_cast<char*>(realloc(buffer_write_->buffer, buffer_write_->size));
+      buffer_write_->buffer =
+        reinterpret_cast<char*>(realloc(buffer_write_->buffer,
+                                        buffer_write_->size));
     }
     memcpy(buffer_write_->buffer + buffer_write_->used, data, size);
     buffer_write_->used = needed;
