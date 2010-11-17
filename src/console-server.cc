@@ -457,8 +457,9 @@ namespace urbi
 
 #ifndef NO_OPTION_PARSER
     // If neither -e, -f, or -P is used, enable -i.
-    if (! data.network
-        && libport::opts::input_arguments.empty())
+    if (   ! data.network
+        && ! libport::opts::input_arguments.has_exps()
+        && ! libport::opts::input_arguments.has_files())
       data.interactive = true;
 #endif
 
