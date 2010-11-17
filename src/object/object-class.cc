@@ -74,8 +74,7 @@ namespace urbi
       int depth_max = 0;
       if (2 <= args.size())
       {
-        from_urbi<Float>(args[1]);
-        const rFloat& arg1 = args[1]->as<Float>();
+        const rFloat& arg1 = from_urbi<rFloat>(args[1], 1u);
         try
         {
           depth_max = libport::numeric_cast<int>(arg1->value_get());
@@ -90,8 +89,7 @@ namespace urbi
       std::string tag;
       if (3 <= args.size())
       {
-        from_urbi<String>(args[2]);
-        const rString& arg2 = args[2].unsafe_cast<String>();
+        const rString& arg2 = from_urbi<String>(args[2], 2u);
         aver(arg2);
         tag = arg2->value_get();
       }
@@ -154,8 +152,7 @@ namespace urbi
 
       // We need to set the 'code' slot: make a copy of the call message.
       const rObject& message = call_message->slot_get(SYMBOL(message));
-      from_urbi<String>(message);
-      const libport::Symbol msg(message->as<String>()->value_get());
+      const libport::Symbol msg(from_urbi<rString>(message)->value_get());
       const rObject& code = target->slot_get(msg);
       call_message->slot_update(SYMBOL(code), code);
       call_message->slot_update(SYMBOL(target), target);

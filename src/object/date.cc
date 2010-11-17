@@ -104,8 +104,7 @@ namespace urbi
         time_ = boost::posix_time::microsec_clock::local_time();
       else
       {
-        from_urbi<String>(args[0]);
-        const std::string& s = args[0]->as<object::String>()->value_get();
+        const std::string& s = from_urbi<rString>(args[0])->value_get();
         try
         {
           time_ = boost::posix_time::time_from_string(s);

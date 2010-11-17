@@ -373,8 +373,7 @@ namespace urbi
     Object::id_dump(std::ostream& o) const
     {
       rObject data = const_cast<Object*>(this)->call(SYMBOL(DOLLAR_id));
-      from_urbi<String>(data);
-      return o << data->as<String>()->value_get();
+      return o << from_urbi<rString>(data)->value_get();
     }
 
 

@@ -222,8 +222,10 @@ namespace urbi
       if (!fun)
       {
         from_urbi<Code>(f);
+        //FIXME: strange.
         unreachable();
       }
+
       objects_type args;
       args << l << a << b;
       return (*fun)(args)->as_bool();
