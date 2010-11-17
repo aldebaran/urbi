@@ -72,7 +72,7 @@ namespace urbi
     {
       if (o.is_a<Path>())
         return o->as<Path>()->as_string();
-      return from_urbi<rString>(o)->value_get();
+      return from_urbi<std::string>(o);
     }
 
     /// \param context  if there is an error message, the string to display.

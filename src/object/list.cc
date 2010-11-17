@@ -218,13 +218,7 @@ namespace urbi
     compareListItemsLambda (const rObject& f, const rObject& l,
                             const rObject& a, const rObject& b)
     {
-      rExecutable fun = f.unsafe_cast<Executable>();
-      if (!fun)
-      {
-        from_urbi<Code>(f);
-        //FIXME: strange.
-        unreachable();
-      }
+      rExecutable fun = from_urbi<rExecutable>(f);
 
       objects_type args;
       args << l << a << b;

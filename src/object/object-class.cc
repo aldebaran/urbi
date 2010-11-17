@@ -89,7 +89,7 @@ namespace urbi
       std::string tag;
       if (3 <= args.size())
       {
-        const rString& arg2 = from_urbi<String>(args[2], 2u);
+        const rString& arg2 = from_urbi<rString>(args[2], 2u);
         aver(arg2);
         tag = arg2->value_get();
       }
@@ -152,7 +152,7 @@ namespace urbi
 
       // We need to set the 'code' slot: make a copy of the call message.
       const rObject& message = call_message->slot_get(SYMBOL(message));
-      const libport::Symbol msg(from_urbi<rString>(message)->value_get());
+      const libport::Symbol msg(from_urbi<std::string>(message));
       const rObject& code = target->slot_get(msg);
       call_message->slot_update(SYMBOL(code), code);
       call_message->slot_update(SYMBOL(target), target);
