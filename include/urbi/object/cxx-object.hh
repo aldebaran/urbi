@@ -13,8 +13,6 @@
 
 # include <vector>
 
-# include <boost/optional.hpp>
-
 # include <libport/preproc.hh>
 
 # include <kernel/userver.hh>

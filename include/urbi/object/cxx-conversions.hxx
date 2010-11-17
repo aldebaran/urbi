@@ -30,15 +30,6 @@ namespace urbi
 {
   namespace object
   {
-    inline
-    TypeError::TypeError(const rObject& expected)
-      : expected_(expected)
-    {}
-
-    inline
-    TypeError::~TypeError() throw()
-    {}
-
     inline const char*
     TypeError::what() const throw()
     {

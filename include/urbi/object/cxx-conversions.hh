@@ -11,7 +11,6 @@
 #ifndef OBJECT_CXX_CONVERSIONS_HH
 # define OBJECT_CXX_CONVERSIONS_HH
 
-# include <boost/typeof/typeof.hpp>
 # include <urbi/object/object.hh>
 # include <urbi/runner/raise.hh>
 
@@ -33,7 +32,9 @@ namespace urbi
     template <typename T>
     struct CxxConvert
     {
-      typedef T& target_type;
+      /// type returned when conversion from Urbi.
+      typedef       T& target_type;
+      /// type taken when conversion to Urbi.
       typedef const T& source_type;
 
       static target_type

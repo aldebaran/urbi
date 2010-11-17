@@ -31,9 +31,7 @@ namespace urbi
       aver(o);
       aver(exp);
       if (!is_a(o, exp))
-      {
         throw TypeError(exp);
-      }
     }
 
     rObject
