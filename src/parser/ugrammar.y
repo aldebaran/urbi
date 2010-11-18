@@ -76,16 +76,16 @@
 #include <ast/parametric-ast.hh>
 #include <ast/print.hh>
 
-#define MAKE(Kind, ...)                         \
-  up.factory().make_ ## Kind(__VA_ARGS__)
-
 #include <parser/parse.hh>
 #include <parser/parser-impl.hh>
 #include <parser/utoken.hh>
 
-#if defined(__GNUC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 4
+#if defined __GNUC__ && __GNUC__ == 4 && __GNUC_MINOR__ == 4
 # pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
+
+#define MAKE(Kind, ...)                         \
+  up.factory().make_ ## Kind(__VA_ARGS__)
 
   namespace
   {
@@ -228,7 +228,7 @@
 | Expressions.  |
 `--------------*/
 
-%type <ast::rExp> block exp exp.opt stmt stmt_loop;
+%type <ast::rExp> block exp exp.opt stmt;
 
 
 /*----------------------.
@@ -631,9 +631,9 @@ modifiers:
   }
 ;
 
-/*-------------------.
-| Stmt: Assignment.  |
-`-------------------*/
+/*-------------.
+| Assignment.  |
+`-------------*/
 
 exp:
   exp "=" exp %prec ASSIGN
@@ -702,11 +702,7 @@ nstmt:
 ;
 
 stmt:
-  stmt_loop
-    {
-      std::swap($$, $1);
-    }
-| "at" "(" exp tilda.opt ")" nstmt onleave.opt
+  "at" "(" exp tilda.opt ")" nstmt onleave.opt
     {
       $$ = MAKE(at, @$, @1, $1, $3, $6, $7, $4);
     }
@@ -866,7 +862,7 @@ stmt:
 | Loops.  |
 `--------*/
 
-stmt_loop:
+stmt:
 /*
  *  This loop keyword can't be converted to a for, since it would
  *  cause an ambiguity in the language. Consider this line:
@@ -1356,7 +1352,7 @@ exps:
 ;
 
 exps.1:
-  exp             { $$ = new ast::exps_type (1, $1); }
+  exp             { $$ = new ast::exps_type(1, $1); }
 | exps.1 "," exp  { std::swap($$, $1); *$$ << $3; }
 ;
 
