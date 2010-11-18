@@ -170,7 +170,6 @@
         LPAREN       "("
         ONLEAVE      "onleave"
         POINT        "."
-        POINT_AND    ".&"
         RBRACE       "}"
         RBRACKET     "]"
         RETURN       "return"
@@ -327,9 +326,10 @@
 %precedence "("
 %precedence "["
 %precedence  "."
-%precedence  ".&"
 
-/* Urbi Grammar */
+/*---------------.
+| Urbi Grammar.  |
+`---------------*/
 %%
 
 %start start;
@@ -961,8 +961,8 @@ lvalue:
 ;
 
 exp:
-      "&" id   { $$ = MAKE(get_slot, @$, $2); }
-| exp ".&" id   { $$ = MAKE(get_slot, @$, $1, $3); }
+          "&" id   { $$ = MAKE(get_slot, @$, $2); }
+| exp "." "&" id   { $$ = MAKE(get_slot, @$, $1, $4); }
 ;
 
 id:
