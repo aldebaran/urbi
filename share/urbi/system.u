@@ -68,7 +68,7 @@ do (System)
 
 
   /// assert_op(Operator: String | Lazy, Lhs, Rhs).
-  var assert_op = .&assertCall;
+  var assert_op = &assertCall;
 
   var period = 20ms;
 
@@ -83,7 +83,7 @@ do (System)
   // Object.new not being loaded yet, '$loadedFiles' is a dummy string
   var '$loadedFiles' = [ => ];
 
-  var loadFile_ = .&loadFile;
+  var loadFile_ = &loadFile;
 
   var defaultIsSystem = true;
   loadFile = function(file, isSystem = defaultIsSystem)
@@ -113,7 +113,7 @@ do (System)
     "rewrite/desugarer.cc",
     "rewrite/pattern-binder.cc",
     "rewrite/rescoper.cc"
-  ].each(.&addSystemFile);
+  ].each(&addSystemFile);
 
   /// Look for file and load it.
   // Throw on errors.

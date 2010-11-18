@@ -395,13 +395,13 @@ tag:
 // non-empty-statement: A statement that triggers a warning if empty.
 %type <ast::rExp> nstmt stmt.opt;
 nstmt:
-  /* empty */  { $$ = make_implicit(up, @$); }
-| stmt         { std::swap($$, $1); }
+  /* empty */   %prec CMDBLOCK  { $$ = make_implicit(up, @$); }
+| stmt                          { std::swap($$, $1); }
 ;
 
 stmt.opt:
-  /* empty */  { $$ = MAKE(noop, @$); }
-| stmt         { std::swap($$, $1); }
+  /* empty */   %prec CMDBLOCK  { $$ = MAKE(noop, @$); }
+| stmt                          { std::swap($$, $1); }
 ;
 
 
@@ -961,7 +961,7 @@ lvalue:
 ;
 
 exp:
-      ".&" id   { $$ = MAKE(get_slot, @$, $2); }
+      "&" id   { $$ = MAKE(get_slot, @$, $2); }
 | exp ".&" id   { $$ = MAKE(get_slot, @$, $1, $3); }
 ;
 
@@ -1281,8 +1281,8 @@ exp:
 ;
 
 exp.opt:
-  /* empty */ { $$ = 0; }
-| exp         { std::swap($$, $1); }
+  /* empty */  %prec CMDBLOCK   { $$ = 0; }
+| exp                           { std::swap($$, $1); }
 ;
 
 /*---------------------.

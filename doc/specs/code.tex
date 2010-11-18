@@ -23,8 +23,8 @@ The keywords \lstinline|function| and \lstinline|closure| build Code
 instances.
 
 \begin{urbiassert}
-function(){}.protos[0] === .&Code;
-closure(){}.protos[0] === .&Code;
+function(){}.protos[0] === &Code;
+closure (){}.protos[0] === &Code;
 \end{urbiassert}
 
 \subsection{Slots}
@@ -72,8 +72,8 @@ If the functions capture different variables, they are different.
 }|;
 assert
 {
-  .&capture_x == .&capture_x_again;
-  .&capture_x != .&capture_another_x;
+  &capture_x == &capture_x_again;
+  &capture_x != &capture_another_x;
 };
 \end{urbiscript}
 

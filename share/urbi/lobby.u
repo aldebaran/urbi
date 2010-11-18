@@ -142,7 +142,7 @@ do (Lobby)
 
       }|
       // Prevent call to quit as it would close the ghost connection
-      var quitBackend = .&quit;
+      var quitBackend = &quit;
       quit = function() { socket.disconnect}|
       socket.connect(host, port)|
       var t = Tag.new|

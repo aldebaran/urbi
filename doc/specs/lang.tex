@@ -1251,7 +1251,7 @@ assert
 {
   obj.f == 24;
   obj.&f != 24;
-  obj.&f.isA(.&Code);
+  obj.&f.isA(&Code);
   obj.&f === obj.getSlot("f");
 };
 \end{urbiscript}
@@ -1732,7 +1732,9 @@ There is some syntactic sugar for slot methods:
 \item \lstinline|\var{o}.\var{name} = \var{value}| is equivalent to
   \lstinline[style=varInString]|\var{o}.updateSlot("\var{name}", \var{value})|.
 \item \lstinline|\var{o}.&\var{name}| is equivalent to
-  \lstinline[style=varInString]|\var{o}.getSlot("\var{name}")|.
+  \lstinline[style=varInString]|\var{o}.getSlot("\var{name}")| (\var{o} can
+  be omitted, like for regular method invocations: \lstinline|&\var{name}|
+  is equivalent to \lstinline[style=varInString]|getSlot("\var{name}")|).
 \end{itemize}
 
 

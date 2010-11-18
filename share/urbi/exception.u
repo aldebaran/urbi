@@ -295,7 +295,7 @@ class Exception.Type: Exception
   function message()
   {
     "unexpected %s, expected a %s"
-      % [.&effective.asPrintable, expectedType]
+      % [&effective.asPrintable, expectedType]
   };
 };
 
@@ -314,7 +314,7 @@ class Exception.ArgumentType: Exception.Type
   function message()
   {
     "unexpected %s for argument %s, expected a %s"
-      % [.&effective.asPrintable, index, expectedType]
+      % [&effective.asPrintable, index, expectedType]
   };
 };
 

@@ -230,7 +230,7 @@ do (Global.UObject)
  * someFunc called just before a value is read. The contained value is stored
  * in the 'val' slot of the UVar.
  */
-do (.&UVar)
+do (&UVar)
 {
   var traceSet = Event.new;
   var traceGet = Event.new;
@@ -255,14 +255,14 @@ do (.&UVar)
   function copy(targetObj, slotName)
   {
     targetObj.setSlot(slotName, this)|
-    targetObj.setProperty(slotName, "updateHook", .&updateBounce)|
+    targetObj.setProperty(slotName, "updateHook", &updateBounce)|
     if (hasProperty("val", "rangemax"))
       targetObj.setProperty(slotName, "rangemax",
                             getProperty("val", "rangemax"))|
     if (hasProperty("val", "rangemin"))
       targetObj.setProperty(slotName, "rangemin",
                             getProperty("val", "rangemin"))|
-    targetObj.updateSlot("getProperty", .&parentGetProperty)
+    targetObj.updateSlot("getProperty", &parentGetProperty)
   };
 
   function init(parent, name)
@@ -277,8 +277,8 @@ do (.&UVar)
     var this.initialName = name|
     var this.fullName = ownerName + "." + initialName|
     parent.setSlot(name, this)|
-    parent.setProperty(name, "updateHook", .&updateBounce)|
-    var this.newPropertyHook = .&newPropertyHook_|
+    parent.setProperty(name, "updateHook", &updateBounce)|
+    var this.newPropertyHook = &newPropertyHook_|
     var slotName = name + "_quote_n"|
     // If the slot was containing a float, it already has a *_quote_n
     // slot, which is not the right one.
@@ -299,7 +299,7 @@ do (.&UVar)
     if (not parent.hasLocalSlot("__has_uvar"))
     {
       var parent_getprop = parent.&getProperty|
-      parent.getProperty = .&parentGetProperty
+      parent.getProperty = &parentGetProperty
     };
     at (rtp->changed? if rtp != rtp_old)
     {
@@ -324,7 +324,7 @@ do (.&UVar)
         chan.lobby = l |
         chan << msg |
         var currentBindings = l.__bindingFunc.getWithDefault(fullname,nil)|
-        if (currentBindings.isA(.&Executable))
+        if (currentBindings.isA(&Executable))
         { // Standard TCP notifychange, remove it...
           change.remove(currentBindings);
           //... and replace it with RTP version
@@ -366,7 +366,7 @@ do (.&UVar)
     }
   };
 
-  var __clone = .&clone;
+  var __clone = &clone;
 
   removeSlot("clone");
   const var clone = function()
@@ -411,12 +411,12 @@ do (.&UVar)
   function notifyAccess(handle, f)
   {
     //beware of the CoW
-    .&UVar.nAccess++ |
+    &UVar.nAccess++ |
     var wasEmpty = access.empty |
     access[handle] = f |
     if (wasEmpty)
       loopCheck |
-    if (.&UVar.nAccess == 1)
+    if (&UVar.nAccess == 1)
       onHasNotifyAccess! |
     void
   };
@@ -546,7 +546,7 @@ do (UValue)
     else
       '$id'.asToplevelPrintable
   };
-  var asPrintable = .&asToplevelPrintable;
+  var asPrintable = &asToplevelPrintable;
 };
 
 class Global.uobjects {};
@@ -569,13 +569,13 @@ do (Global.&evaluate)
 UVar.new(Global, "currentLobbyId");
 Global.&currentLobbyId.notifyAccess(uobjects_handle, function()
 {
-  .&currentLobbyId.val = lobby.uid;
+  &currentLobbyId.val = lobby.uid;
 });
 
 UVar.new(Global, "currentRunnerInUObjectUpdate");
 Global.&currentRunnerInUObjectUpdate.notifyAccess(uobjects_handle, function()
 {
-  .&currentRunnerInUObjectUpdate.val
+  &currentRunnerInUObjectUpdate.val
     = currentRunner.hasLocalSlot("$uobjectInUpdate");
 });
 

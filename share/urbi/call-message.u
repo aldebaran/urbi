@@ -79,7 +79,7 @@ class Global.CallMessage
 
   function eval
   {
-    value = .&target.callMessage(this)
+    value = &target.callMessage(this)
   };
 
   function evalOnce()
