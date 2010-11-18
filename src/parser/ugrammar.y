@@ -90,6 +90,14 @@
   namespace
   {
 
+    inline ast::rNoop
+    make_implicit(parser::ParserImpl& up, const ast::loc& loc)
+    {
+      up.warn(loc,
+              "implicit empty instruction.  Use '{}' to make it explicit.");
+      return MAKE(noop, loc);
+    }
+
     static void
     modifiers_add(parser::ParserImpl& up, const ast::loc& loc,
                   ast::modifiers_type& mods,
@@ -349,13 +357,22 @@ root:
 
 // Statements: with ";" and ",".
 stmts:
-  cstmt            { $$ = MAKE(nary, @$, $1); }
-| stmts ";" cstmt  { $$ = MAKE(nary, @$, $1, @2, $2, $3); }
-| stmts "," cstmt  { $$ = MAKE(nary, @$, $1, @2, $2, $3); }
+  cstmt.opt            { $$ = MAKE(nary, @$, $1); }
+| stmts ";" cstmt.opt  { $$ = MAKE(nary, @$, $1, @2, $2, $3); }
+| stmts "," cstmt.opt  { $$ = MAKE(nary, @$, $1, @2, $2, $3); }
 ;
 
-%type <ast::rExp> cstmt;
-// Composite statement: with "|" and "&".
+%type <ast::rExp> cstmt cstmt.opt;
+
+// Optional composite statement: separated with "|" and "&", possibly
+// terminated by one "|".
+cstmt.opt:
+  /* empty */  { $$ = MAKE(noop, @$); }
+| cstmt        { std::swap($$, $1); }
+| cstmt "|"    { $$ = MAKE(bin, @$, $2, $1, MAKE(noop, @2)); }
+;
+
+// Composite statement: separated with "|" and "&".
 cstmt:
   stmt            { assert($1); std::swap($$, $1); }
 | cstmt "|" cstmt { $$ = MAKE(bin, @$, $2, $1, $3); }
@@ -372,6 +389,23 @@ tag:
   exp { std::swap($$, $1); }
 ;
 
+// stmt: cannot be empty.
+// stmt.opt: stmt?
+// nstmt: stmt? but with a warning on empty stmt.
+// non-empty-statement: A statement that triggers a warning if empty.
+%type <ast::rExp> nstmt stmt.opt;
+nstmt:
+  /* empty */  { $$ = make_implicit(up, @$); }
+| stmt         { std::swap($$, $1); }
+;
+
+stmt.opt:
+  /* empty */  { $$ = MAKE(noop, @$); }
+| stmt         { std::swap($$, $1); }
+;
+
+
+
 stmt:
   tag ":" stmt
   {
@@ -384,8 +418,7 @@ stmt:
 `-------*/
 
 stmt:
-  /* empty */ { $$ = new ast::Noop(@$, 0); }
-| exp         { std::swap($$, $1); }
+  exp         { std::swap($$, $1); }
 ;
 
 block:
@@ -689,18 +722,6 @@ exp:
 | Stmt: Control flow.  |
 `---------------------*/
 
-// non-empty-statement: A statement that triggers a warning if empty.
-%type <ast::rExp> nstmt;
-nstmt:
-  stmt
-    {
-      std::swap($$, $1);
-      if (ast::implicit($$))
-        up.warn(@1,
-                "implicit empty instruction.  Use '{}' to make it explicit.");
-    }
-;
-
 stmt:
   "at" "(" exp tilda.opt ")" nstmt onleave.opt
     {
@@ -889,9 +910,10 @@ stmt:
     {
       $$ = MAKE(for, @$, @1, $1, $3, $5);
     }
-| "for" "(" stmt[init] ";" exp[cond] ";" stmt[inc] ")" nstmt %prec CMDBLOCK
+| "for" "(" stmt.opt[init] ";" exp[cond] ";" stmt.opt[inc] ")" nstmt[body]
+  %prec CMDBLOCK
     {
-      $$ = MAKE(for, @$, @1, $1, $init, $cond, $inc, $nstmt);
+      $$ = MAKE(for, @$, @1, $1, $init, $cond, $inc, $body);
     }
 | "for" "(" "var" "identifier"[id] in_or_colon exp ")" nstmt %prec CMDBLOCK
     {

@@ -842,6 +842,12 @@ namespace ast
     return exp(nil);
   }
 
+  rNoop
+  Factory::make_noop(const location& l)
+  {
+    return new ast::Noop(l, 0);
+  }
+
   namespace
   {
     static local_declarations_type*

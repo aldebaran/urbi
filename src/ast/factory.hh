@@ -309,6 +309,10 @@ namespace ast
     rExp make_nil() /* const */;
 
     static
+    /// Return "do nothing".
+    rNoop make_noop(const location& l);
+
+    static
     /// Create a Position.
     rExp make_position(const location& loc) /* const */;
 
