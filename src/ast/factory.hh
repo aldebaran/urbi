@@ -292,7 +292,8 @@ namespace ast
 
     static
     rNary
-    make_nary(const location& loc, const rExp& e, flavor_type flavor = flavor_none);
+    make_nary(const location& loc, const rExp& e,
+	      flavor_type flavor = flavor_none);
 
     /// Append \a e to \a lhs using \a flavor, and return \a lhs.
     /// \return \a lhs, modified.

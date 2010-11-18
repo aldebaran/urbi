@@ -1117,8 +1117,8 @@ namespace ast
     rExp guard;
     if (event.guard)
     {
-      PARAMETRIC_AST(desugar_guard, "closure (var '$pattern') { %exp:1 | %exp:2 }");
-      guard = exp(desugar_guard % bind.bindings_get() % event.guard);
+      PARAMETRIC_AST(a, "closure (var '$pattern') { %exp:1 | %exp:2 }");
+      guard = exp(a % bind.bindings_get() % event.guard);
     }
     else
     {
