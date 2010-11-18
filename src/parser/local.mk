@@ -125,15 +125,16 @@ endif
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
 parser/ugrammar.stamp: parser/ugrammar.y $(ugrammar_deps)
-	rm -f $@ $@.tmp parser/ugrammar-pruned.y
-	echo '$@ rebuilt because of: $?' >$@.tmp
-	$(MAKE) $(BISONXX)
-	$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
-	$(PRUNE_FOR_SPACE) - <$< >parser/ugrammar-pruned.y
-	chmod a-w parser/ugrammar-pruned.y
-	$(BISONXX) parser/ugrammar-pruned.y parser/ugrammar.cc \
+	$(AM_V_GEN)
+	$(AM_V_at)rm -f $@ $@.tmp parser/ugrammar-pruned.y
+	$(AM_V_at)echo '$@ rebuilt because of: $?' >$@.tmp
+	$(AM_V_at)$(MAKE) $(BISONXX)
+	$(AM_V_at)$(MAKE) -C $(top_builddir)/bison MAKEFLAGS=
+	$(AM_V_at)$(PRUNE_FOR_SPACE) - <$< >parser/ugrammar-pruned.y
+	$(AM_V_at)chmod a-w parser/ugrammar-pruned.y
+	$(AM_V_at)$(BISONXX) parser/ugrammar-pruned.y parser/ugrammar.cc \
 	  $(AM_BISONFLAGS) $(BISONFLAGS)
-	mv -f $@.tmp $@
+	$(AM_V_at)mv -f $@.tmp $@
 
 # Not $(FROM_UGRAMMAR_Y) since it contains ugrammar.stamp too.
 # See Automake's documentation for the whole story.
@@ -183,16 +184,19 @@ EXTRA_DIST += parser/keywords
 
 .PHONY: listings emacs
 listings: parser/utoken.l
-	KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
+	$(AM_V_GEN)
+	$(AM_V_at)KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
 
 emacs: parser/utoken.l
-	KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
+	$(AM_V_GEN)
+	$(AM_V_at)KEYWORDS_MODE=$@ $(srcdir)/parser/keywords $<
 
 nodist_libuobject@LIBSFX@_la_SOURCES += parser/keywords.hh
 parser/keywords.hh: parser/utoken.l
-	rm -f $@
-	KEYWORDS_MODE=c++ $(srcdir)/parser/keywords $< >$@.tmp
-	mv $@.tmp $@
+	$(AM_V_GEN)
+	$(AM_V_at)rm -f $@
+	$(AM_V_at)KEYWORDS_MODE=c++ $(srcdir)/parser/keywords $< >$@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 ## -------------- ##
 ## Flex Scanner.  ##
@@ -208,12 +212,14 @@ nodist_libuobject@LIBSFX@_la_SOURCES += $(FROM_UTOKEN_L)
 EXTRA_DIST += parser/utoken.l
 utoken_deps = $(FLEXXX_IN) parser/local.mk
 parser/utoken.stamp: parser/utoken.l $(utoken_deps)
-	$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
-	@rm -f $@.tmp
-	@touch $@.tmp
-	$(PRUNE_FOR_SPACE) - <$< >parser/utoken-pruned.l
-	$(FLEXXX) parser/utoken-pruned.l parser/utoken.cc $(FLEXXXFLAGS)
-	@mv -f $@.tmp $@
+	$(AM_V_GEN)
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) $(FLEXXX)
+	$(AM_V_at)rm -f $@.tmp
+	$(AM_V_at)touch $@.tmp
+	$(AM_V_at)$(PRUNE_FOR_SPACE) - <$< >parser/utoken-pruned.l
+	$(AM_V_at)$(FLEXXX) parser/utoken-pruned.l parser/utoken.cc \
+	  $(FLEXXXFLAGS)
+	$(AM_V_at)mv -f $@.tmp $@
 
 $(FROM_UTOKEN_L): parser/utoken.stamp
 	@if test ! -f $@; then			\
