@@ -94,10 +94,29 @@ class Global.CallMessage
     args.map(function (arg) { arg.eval })
   };
 
+  /// Used by format functions.
+  var '$opNeg' =
+    [
+      "=="  => "!=",
+      "===" => "!==",
+      "<"   => ">=",
+      "<="  => ">",
+      "in"  => "not in",
+    ] |
+
+  // Add the opposite.
+  for|(var k: '$opNeg'.keys)
+    '$opNeg'.set('$opNeg'.get(k), k);
+
+  var '$funRename' =
+    [
+      "has"    => "in",
+      "hasNot" => "not in",
+    ];
+
   /// callFormat
   function format(var formatArgs = argsStr)
   {
-    '$registerOps' |
     if (formatArgs.size == 1 && message in ["!"])
       "%s %s" % [message, formatArgs[0]]
     else if (formatArgs.size == 2 && message in '$funRename')
@@ -123,7 +142,6 @@ class Global.CallMessage
   /// callNegatedFormat
   function negatedFormat(var formatArgs = argsStr)
   {
-    '$registerOps' |
     if (formatArgs.size == 1 && message in ["!"])
       "%s %s == %s" % [message, formatArgs[0], value]
     else if (formatArgs.size == 2 && message in '$funRename')
@@ -146,29 +164,6 @@ class Global.CallMessage
       else
         "%s == %s" % [message, value]
     }
-  };
-
-  // To be executed when we have dictionnaries.
-  function '$registerOps'()
-  {
-    if (this.hasLocalSlot("$opNeg"))
-      return |
-    var this.'$funRename' =
-      [
-        "has"    => "in",
-        "hasNot" => "not in",
-      ] |
-    var this.'$opNeg' =
-      [
-        "=="  => "!=",
-        "===" => "!==",
-        "<"   => ">=",
-        "<="  => ">",
-        "in"  => "not in",
-      ] |
-    // Add the opposite.
-    for|(var p: this.'$opNeg')
-      this.'$opNeg'[p[1]] = p[0];
   };
 
   function value()
