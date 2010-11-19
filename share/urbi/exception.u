@@ -205,12 +205,12 @@ class Exception.BadInteger: Exception.BadNumber
 
 makeFmtException(
   "NegativeNumber", Exception.BadNumber, ["routine"],
-  "expected non-negative number, got %s", ["effective"]
+  "unexpected %s, expected non-negative number", ["effective"]
 );
 
 makeFmtException(
   "NonPositiveNumber", Exception.BadNumber, ["routine"],
-  "expected positive number, got %s", ["effective"]
+  "unexpected %s, expected positive number", ["effective"]
 );
 
 makeMsgException(

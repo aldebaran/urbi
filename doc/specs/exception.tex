@@ -205,7 +205,7 @@ Exception.MatchFailure.new;
   (\var{effective}).  Derives from \refSlot{BadNumber}.
 \begin{urbiscript}
 Exception.NegativeNumber.new("myRoutine", -12);
-[00000005] Exception.NegativeNumber `myRoutine: expected non-negative number, got -12'
+[00000005] Exception.NegativeNumber `myRoutine: unexpected -12, expected non-negative number'
 \end{urbiscript}
 
 \item[NonPositiveNumber](<routine>, <effective>)
@@ -213,7 +213,7 @@ Exception.NegativeNumber.new("myRoutine", -12);
   (\var{effective}).  Derives from \refSlot{BadNumber}.
 \begin{urbiscript}
 Exception.NonPositiveNumber.new("myRoutine", -12);
-[00000005] Exception.NonPositiveNumber `myRoutine: expected positive number, got -12'
+[00000005] Exception.NonPositiveNumber `myRoutine: unexpected -12, expected positive number'
 \end{urbiscript}
 
 \item[Primitive](<routine>, <msg>)
