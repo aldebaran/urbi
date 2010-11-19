@@ -31,6 +31,12 @@ namespace urbi
     {
     }
 
+    inline const rObject&
+    UrbiException::value() const
+    {
+      return *value_;
+    }
+
   } // namespace object
 }
 

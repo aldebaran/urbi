@@ -96,24 +96,35 @@ namespace runner
     raise_urbi(exn_name, arg1, arg2, arg3, arg4, true, loc);
   }
 
+  void raise_argument_error(unsigned idx, const object::rObject& exn,
+                            object::rObject method_name)
+  {
+    if (method_name)
+      raise_urbi_skip(SYMBOL(Argument),
+                      method_name,
+                      to_urbi(idx),
+                      exn);
+    else
+      raise_urbi_skip(SYMBOL(Argument),
+                      raise_current_method,
+                      to_urbi(idx),
+                      exn);
+  }
+
   void
   raise_argument_type_error(unsigned idx,
                             rObject effective,
                             rObject expected,
 			    rObject method_name)
   {
-    if (method_name)
-      raise_urbi_skip(SYMBOL(ArgumentType),
-                      method_name,
-                      to_urbi(idx),
-                      effective,
-                      expected);
-    else
-      raise_urbi_skip(SYMBOL(ArgumentType),
-                      raise_current_method,
-                      to_urbi(idx),
-                      effective,
-                      expected);
+    try
+    {
+      raise_type_error(effective, expected);
+    }
+    catch (UrbiException& e)
+    {
+      raise_argument_error(idx, e.value(), method_name);
+    }
   }
 
   void

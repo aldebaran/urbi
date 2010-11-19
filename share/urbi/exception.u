@@ -277,9 +277,9 @@ class Exception.Syntax: Exception
   };
 };
 
-/*----------------------.
-| Type and subobjects.  |
-`----------------------*/
+/*---------------------------------.
+| Type, arguments and subobjects.  |
+`---------------------------------*/
 
 class Exception.Type: Exception
 {
@@ -296,6 +296,27 @@ class Exception.Type: Exception
   {
     "unexpected %s, expected a %s"
       % [&effective.asPrintable, expectedType]
+  };
+};
+
+class Exception.Argument: Exception
+{
+  var index = nil;
+  var msg = nil;
+  var routine = nil;
+
+  function init(routine, index, arg3)
+  {
+    this.routine = routine |
+    this.index = index |
+    if (arg3.isA(Exception))
+      this.msg = arg3.message()
+    //FIXME: else error ?
+  };
+
+  function message()
+  {
+    "argument %s: %s" % [index, msg]
   };
 };
 

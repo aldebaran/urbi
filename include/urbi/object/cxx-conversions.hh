@@ -18,17 +18,6 @@ namespace urbi
 {
   namespace object
   {
-    class TypeError : public std::exception
-    {
-    public:
-      TypeError(const rObject& expected);
-      ~TypeError() throw();
-      const char* what() const throw();
-      const rObject& expected() const;
-    private:
-      rObject expected_;
-    };
-
     template <typename T>
     struct CxxConvert
     {

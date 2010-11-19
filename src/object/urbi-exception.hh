@@ -45,6 +45,7 @@ namespace urbi
       /// Dump this on \a o, for debugging.
       virtual std::ostream& dump(std::ostream& o) const;
       virtual const char* what() const throw();
+      const rObject& value() const;
       ADD_FIELD(rObject, value)
       ADD_FIELD(call_stack_type, backtrace)
       PARTIAL_COMPLETE_EXCEPTION(UrbiException)

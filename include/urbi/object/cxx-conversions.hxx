@@ -18,30 +18,19 @@
 # include <libport/path.hh>
 # include <libport/symbol.hh>
 
+# include <object/urbi-exception.hh>
+
+# include <urbi/object/cxx-object.hh>
 # include <urbi/object/float.hh>
 # include <urbi/object/list.hh>
 # include <urbi/object/path.hh>
 # include <urbi/object/string.hh>
 # include <urbi/runner/raise.hh>
 
-# include <urbi/object/cxx-object.hh>
-
 namespace urbi
 {
   namespace object
   {
-    inline const char*
-    TypeError::what() const throw()
-    {
-      return "TypeError";
-    };
-
-    inline const rObject&
-    TypeError::expected() const
-    {
-      return expected_;
-    }
-
     /*--------.
     | Helpers |
     `--------*/
@@ -313,9 +302,8 @@ namespace urbi
         type_check<String>(o);
         std::string str = o->as<String>()->value_get();
         if (str.size() != 1)
-          runner::raise_primitive_error
-            ("expected one character string for argument");
-            //FIXME: Would be good to give argument number.
+          runner::raise_primitive_error("expected one character string");
+          //FIXME: Primitive error or custom type error?
         return str[0];
       }
 
@@ -533,14 +521,7 @@ namespace urbi
     typename CxxConvert<T>::target_type
     from_urbi(rObject v)
     {
-      try
-      {
-        return CxxConvert<T>::to(v);
-      }
-      catch (TypeError& e)
-      {
-        runner::raise_type_error(v, e.expected());
-      }
+      return CxxConvert<T>::to(v);
     }
 
     template<typename T>
@@ -551,9 +532,9 @@ namespace urbi
       {
         return CxxConvert<T>::to(o);
       }
-      catch (TypeError& e)
+      catch (UrbiException& e)
       {
-        runner::raise_argument_type_error(idx, o, e.expected());
+        runner::raise_argument_error(idx, e.value());
       }
     }
   }

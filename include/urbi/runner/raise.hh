@@ -81,6 +81,11 @@ namespace runner
 
   ATTRIBUTE_NORETURN
   URBI_SDK_API
+  void raise_argument_error(unsigned idx, const object::rObject& exn,
+                            object::rObject method_name = 0);
+
+  ATTRIBUTE_NORETURN
+  URBI_SDK_API
   void raise_argument_type_error(unsigned idx,
                                  object::rObject effective,
                                  object::rObject expected,

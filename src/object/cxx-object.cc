@@ -31,7 +31,7 @@ namespace urbi
       aver(o);
       aver(exp);
       if (!is_a(o, exp))
-        throw TypeError(exp);
+        runner::raise_type_error(o, exp);
     }
 
     rObject

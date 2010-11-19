@@ -67,7 +67,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/barrier.cc				\
   object/centralized-slots.cc			\
   object/code.cc				\
-  object/cxx-conversions.cc			\
   object/cxx-helper.hh				\
   object/cxx-object.cc				\
   object/date.cc				\
