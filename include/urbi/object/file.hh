@@ -47,11 +47,13 @@ namespace urbi
       void init(const std::string& path);
 
       static rFile createTemp(rObject);
-      void rename(const std::string& dst);
+      rFile rename(const std::string& dst);
       void remove();
+      rString name() const;
 
       // Conversions
       rList as_list() const;
+      rPath as_path() const;
       virtual std::string as_string() const;
       std::string as_printable() const;
 
