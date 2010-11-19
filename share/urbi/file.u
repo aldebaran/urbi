@@ -16,4 +16,9 @@ do (File)
     o << content |
     o.close
   };
+
+  function copy(filename)
+  {
+    File.save(filename, content.data)
+  };
 };

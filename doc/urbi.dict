@@ -74,6 +74,7 @@ asJob
 asList
 asm
 asMutex
+asPath
 aspell
 asPrimitive
 asPrintable
@@ -185,6 +186,7 @@ connectSerial
 const
 Constness
 controllerArgs
+copyInto
 copyrightHolder
 copyrightYears
 copySlot
@@ -199,6 +201,7 @@ cp
 cpp
 CPPFLAGS
 cpu
+createAll
 createSlot
 criticalSection
 Ctrl
@@ -318,6 +321,7 @@ ffffffff
 FiftyOne
 fileCreated
 fileDeleted
+filename
 FileNotFound
 filesystem
 finalizable
@@ -628,6 +632,7 @@ monomethods
 mooh
 motorsLoad
 Moulard
+moveInto
 moveTo
 msg
 msgs
@@ -803,6 +808,7 @@ redefinable
 redefinitionMode
 relicensing
 remoteIP
+removeAll
 removeAllSlots
 removeBack
 removeById

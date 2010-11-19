@@ -55,6 +55,7 @@ requireFile("urbi/binary.u");
 requireFile("urbi/code.u");
 requireFile("urbi/date.u");
 requireFile("urbi/dictionary.u");
+requireFile("urbi/directory.u");
 requireFile("urbi/duration.u");
 requireFile("urbi/enumeration.u");
 requireFile("urbi/event.u");

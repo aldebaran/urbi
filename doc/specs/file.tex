@@ -41,6 +41,8 @@ File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asList == ["1", "2"]);
 \end{urbiscript}
 
+\item[asPath] A \refObject{Path} being the path of the file.
+
 \item[asPrintable]
 \begin{urbiscript}
 File.save("file.txt", "1\n2\n");
@@ -62,6 +64,20 @@ assert
 {
   File.new("file.txt").content == Binary.new("", "1\n2\n");
 };
+\end{urbiscript}
+
+\item[copy](<filename>)
+  Copy the file to a new file named \var{filename}.
+\begin{urbiscript}
+File.save("file", "content");
+var file = File.new("file");
+[00000001] File("file")
+file.copy("file2");
+var file2 = File.new("file2");
+[00000002] File("file2")
+assert(file2.content == file.content);
+file.remove;
+file2.remove;
 \end{urbiscript}
 
 \item[create](<name>)%
@@ -90,6 +106,10 @@ assert
 };
 \end{urbiscript}
 
+\item[name]
+  Return a \refObject{String} containing the path of the file without
+  its dirname.
+
 \item[remove]
   Remove the current file.  Returns void.
 \begin{urbiscript}[firstnumber=1]
@@ -109,10 +129,11 @@ p.exists;
 
 \item[rename](<name>)%
   Rename the file to \var{name}.  If the target exists, it is replaced by
-  the opened file.
+  the opened file. Return the file renamed.
 \begin{urbiscript}
 File.save("file.txt", "1\n2\n");
 File.new("file.txt").rename("bar.txt");
+[00000001] File("bar.txt")
 assert
 {
   !Path.new("file.txt").exists;
