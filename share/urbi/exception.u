@@ -302,40 +302,37 @@ class Exception.Type: Exception
 class Exception.Argument: Exception
 {
   var index = nil;
-  var msg = nil;
+  var exception = nil;
   var routine = nil;
 
-  function init(routine, index, arg3)
+  function init(routine, index, exn)
   {
     this.routine = routine |
     this.index = index |
-    if (arg3.isA(Exception))
-      this.msg = arg3.message()
-    //FIXME: else error ?
+    this.exception = exn
   };
 
   function message()
   {
-    "argument %s: %s" % [index, msg]
+    if (index == 0)
+      "target: %s" % [exception.message()]
+    else
+      "argument %s: %s" % [index, exception.message()]
   };
 };
 
-class Exception.ArgumentType: Exception.Type
+class Exception.ArgumentType: Exception.Argument
 {
   var index = nil;
   var routine = nil;
 
   function init(routine, index, effective, expected)
   {
-    Exception.Type.&init.apply([this, effective, expected]) |
+    Kernel1.deprecated("Exception.ArgumentType") |
+    var exn = Exception.Type.new(effective, expected) |
+    Exception.Argument.&init.apply([this, routine, index, exn]) |
     this.routine = routine |
     this.index = index
-  };
-
-  function message()
-  {
-    "unexpected %s for argument %s, expected a %s"
-      % [&effective.asPrintable, index, expectedType]
   };
 };
 

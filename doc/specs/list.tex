@@ -424,7 +424,7 @@ The list cannot be empty.
 The members must be comparable.
 \begin{urbiscript}
 [0, 2, "a", 1].max;
-[00000002:error] !!! max: unexpected "a" for argument 2, expected a Float
+[00000002:error] !!! max: argument 2: unexpected "a", expected a Float
 \end{urbiscript}
 
 \item[min](<fun> = function(a, b) { a < b })%
@@ -659,7 +659,7 @@ assert (f == [0, 420, 20]);
 
 \begin{urbiscript}
 [0, 1] * -2;
-[00000063:error] !!! *: expected non-negative integer, got -2
+[00000063:error] !!! *: argument 1: expected non-negative integer, got -2
 \end{urbiscript}
 
 

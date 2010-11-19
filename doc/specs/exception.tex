@@ -108,13 +108,22 @@ In the following, since these slots are actually Objects, what is presented
 as arguments to the slots are actually arguments to pass to the constructor
 of the corresponding exception type.
 \begin{urbiscriptapi}
+\item[Argument](<routine>, <index>, <exception>)
+  During the call of \var{routine}, the instanciation of the \var{index}-nth
+  argument has thrown an \var{exception}.
+\begin{urbiscript}
+Exception.Argument.new("myRoutine", 3, Exception.Type.new("19/11/2010", Date));
+[00000003] Exception.Argument `myRoutine: argument 3: unexpected "19/11/2010", expected a Date'
+\end{urbiscript}
+
 \item[ArgumentType](<routine>, <index>, <effective>, <expected>)
-  Derives from \refSlot{Type}.  The \var{routine} was
+  Deprecated exception that derives from \refSlot{Type}.  The \var{routine} was
   called with a \var{index}-nth argument of type \var{effective}
   instead of \var{expected}.
 \begin{urbiscript}
 Exception.ArgumentType.new("myRoutine", 1, "hisResult", "Expectation");
-[00000003] Exception.ArgumentType `myRoutine: unexpected "hisResult" for argument 1, expected a String'
+[00000003:warning] *** `Exception.ArgumentType' is deprecated
+[00000003] Exception.ArgumentType `myRoutine: argument 1: unexpected "hisResult", expected a String'
 \end{urbiscript}
 
 \item[Arity](<routine>, <effective>, <min>, <max> = void)

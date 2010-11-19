@@ -81,7 +81,7 @@ do (List)
         if (comp(this[i], this[res]))
           res = i |
     }
-    catch (var e if e.isA(Exception.ArgumentType))
+    catch (var e if e.isA(Exception.Argument))
     {
       e.index = i;
       throw
