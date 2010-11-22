@@ -158,4 +158,10 @@ namespace urbi
     UVar::init(owner->__name, name, ctx);
     impl_->setInputPort(true);
   }
+  void InputPort::init(const std::string& owner, const std::string& name,
+                       impl::UContextImpl* ctx)
+  {
+    UVar::init(owner, name, ctx);
+    impl_->setInputPort(true);
+  }
 } // namespace urbi

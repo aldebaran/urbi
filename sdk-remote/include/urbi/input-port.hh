@@ -29,6 +29,8 @@ namespace urbi
     InputPort(const InputPort& b);
     InputPort& operator=(const InputPort& b);
     void init(UObject* owner, const std::string& name, impl::UContextImpl* = 0);
+    void init(const std::string& obj, const std::string& name,
+              impl::UContextImpl* = 0);
     /// Remove all notifies setup on this port.
     void unnotify();
   private:
