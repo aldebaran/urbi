@@ -30,7 +30,9 @@ This chapter lists the user-visible changes in \usdk releases.
   exist.  It used to return \lstinline|void|.
 \item New syntactic sugar for \refSlot[Object]{getSlot}:
   \lstinline|\var{o}.&\var{name}| is equivalent to
-  \lstinline[style=varInString]|\var{o}.getSlot("\var{name}")|.  For
+  \lstinline[style=varInString]|\var{o}.getSlot("\var{name}")| (and
+  \lstinline|&\var{name}| is equivalent to
+  \lstinline[style=varInString]|getSlot("\var{name}")|)).  For
   instance, instead of
 \begin{urbiunchecked}
 function derive.init(var arg)
@@ -52,7 +54,7 @@ function derive.init(var arg)
 
 function Foo.'=='(var that)
 {
-  .&function == that.&function;
+  &function == that.&function;
 };
 \end{urbiunchecked}
 \item \refSlot[Dictionary]{erase} raises an error if the key does not exit.
