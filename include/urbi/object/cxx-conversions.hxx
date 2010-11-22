@@ -319,16 +319,14 @@ namespace urbi
     | char* and const char*.  |
     `------------------------*/
 
+/// For char* and const char* the CxxConvert template is intentionally
+/// specialized without the 'to' method that would imply a memory leak.
+
 #define CONVERT(Type)                                                   \
     template <>                                                         \
     struct CxxConvert<Type>                                             \
     {                                                                   \
       typedef Type target_type;                                         \
-      static target_type                                                \
-        to(const rObject& o)                                            \
-      {                                                                 \
-        return strdup(CxxConvert<std::string>::to(o).c_str());          \
-      }                                                                 \
                                                                         \
       static rObject                                                    \
         from(target_type v)                                             \
