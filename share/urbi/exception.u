@@ -314,10 +314,9 @@ class Exception.Argument: Exception
 
   function message()
   {
-    if (index == 0)
-      "target: %s" % [exception.message()]
-    else
-      "argument %s: %s" % [index, exception.message()]
+    "%s: %s"
+     % [{if (index) "argument %s" % index else "this"},
+        exception.message]
   };
 };
 
