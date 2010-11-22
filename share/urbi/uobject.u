@@ -382,12 +382,6 @@ do (&UVar)
       var owned = false |
       var val |
       var changed = Event.new |
-      if (hookChanged)
-      {
-        var changed.onSubscribe = Event.new |
-        at (changed.onSubscribe?)
-          loopCheck
-      }|
       var valsensor = 0 |
       var isUVar = 1
     }
@@ -415,7 +409,25 @@ do (&UVar)
     var wasEmpty = access.empty |
     access[handle] = f |
     if (wasEmpty)
+    {
       loopCheck |
+      // Arm recheck on subscribe to change event.
+      disown({if (hookChanged)
+      {
+        var t = Tag.new |
+        if (!changed.hasLocalSlot("onSubscribe"))
+          var changed.onSubscribe = Event.new |
+        t: at (changed.onSubscribe?)
+        {
+          loopCheck |
+          if (!accessInLoop.dict.empty)
+          {
+            changed.removeSlot("onSubscribe")|
+            t.stop
+          }
+        }
+      }})|
+    }|
     if (&UVar.nAccess == 1)
       onHasNotifyAccess! |
     void
