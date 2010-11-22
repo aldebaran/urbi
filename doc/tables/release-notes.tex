@@ -16,6 +16,10 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
+\item \command{urbi-launch} and \command{urbi-send} support
+  \option{-m}/\option{--module=\var{file}}, to load a module
+  (\autoref{sec:tools:urbi-launch}, \autoref{sec:tools:urbi-send}).
+
 \item The UObjects support a new form of data-flow, based on
   \lstinline|InputPort| (see \autoref{sec:uob:input-port}).  \fixme{A short
     example?  A migration guide somewhere?}.
@@ -331,10 +335,10 @@ x = 1|;
 
 \subsection{New Features}
 \begin{itemize}
-\item Pressing \key{C-c} in the \us shell (\samp{urbi -i}) interrupts the
-  foreground job, and clears the pending commands.  A second \key{C-c} in a
-  row invokes \refSlot[System]{shutdown}, giving a chance to the system to
-  shut down properly.  A third \key{C-c} kills
+\item Pressing \key{C-c} in the \us shell (\samp{urbi -i}) interrupts
+  the foreground job, and clears the pending commands.  A second
+  \key{C-c} in a row invokes \refSlot[System]{shutdown}, giving a
+  chance to the system to shut down properly.  A third \key{C-c} kills
   \command{urbi}/\command{urbi-launch}.  See
   \autoref{sec:tools:urbi:quitting} for more details.
 \item Closing the standard input (e.g., by pressing \key{C-d}) in

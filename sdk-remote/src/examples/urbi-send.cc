@@ -144,6 +144,7 @@ try
   opt_parser << "Options:"
 	     << libport::opts::exp
 	     << libport::opts::file
+	     << libport::opts::module
 	     << libport::opts::help
 	     << libport::opts::host
 	     << libport::opts::port

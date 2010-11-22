@@ -455,6 +455,8 @@ as \key{C-c} under a Unix terminal).
 \item[e]{expression=\var{script}} Send \var{script} to the server.
 \item[f]{file=\var{file}} Send the contents of \var{file} to the
   server.
+\item[m]{module=\var{module}} Load the \UObject \var{module}.  This is
+  equivalent to \samp[style=varInString]|{-e 'loadModule("\var{module}");'}.
 \item[h]{help} \optionHelp
 \item[H]{host=\var{host}} Address to connect to.
 \item[P]{port=\var{port}} Port to connect to.
