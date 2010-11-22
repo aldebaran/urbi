@@ -477,8 +477,8 @@ do(UConnection)
     };
     var uob = uobjects.getSlot(uvar.ownerName)|
     {
-      ["compactName", "componentName", "__uobjectName"].map
-      ( function(x) { if (uob.hasSlot(x)) uob.getSlot(x) else ""}).filter
+      ["compactName", "componentName", "__uobjectName", "uid"].map
+      ( function(x) { if (uob.hasSlot(x)) uob.getSlot(x).apply([uob]) else ""}).filter
       ( function(x) { x})[0] + "." + uvar.initialName
     }
   };
