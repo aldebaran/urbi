@@ -17,21 +17,19 @@ higher-lever components (voice recognition, object detection\ldots)
 with \urbi.
 
 The \Cxx API defines the UObject class. To each instance of a \Cxx class
-deriving from UObject
-will correspond an \us object sharing some of its
-methods and attributes. The API provides methods to declare which
-elements of your object are to be shared. To share a variable with
-\urbi, you have to give it the type UVar. This type is a container
-that provides conversion and assignment operators for all types known to
-\urbi: \lstinline{double}, \lstinline{std::string} and \lstinline{char*},
-and the binary-holding structures
-\lstinline{UBinary}, \lstinline{USound} and \lstinline{UImage}. This type
-can also read from and write to
-the liburbi UValue class. The API provides methods to set up callbacks
-functions that will be notified when a variable is modified or read
-from \urbi code. Instance methods of any prototype can be rendered
-accessible from \us, providing all the parameters types and the return
-type can be converted to/from UValue.
+deriving from UObject will correspond an \us object sharing some of its
+methods and attributes. The API provides methods to declare which elements
+of your object are to be shared. To share a variable with \urbi, you have to
+give it the type UVar. This type is a container that provides conversion and
+assignment operators for all types known to \urbi: \lstinline{double},
+\lstinline{std::string} and \lstinline{char*}, and the binary-holding
+structures \lstinline{UBinary}, \lstinline{USound} and
+\lstinline{UImage}. This type can also read from and write to the liburbi
+UValue class. The API provides methods to set up callbacks functions that
+will be notified when a variable is modified or read from \urbi
+code. Instance methods of any prototype can be rendered accessible from \us,
+providing all the parameters types and the return type can be converted
+to/from UValue.
 
 \section{Compiling UObjects}
 
@@ -129,9 +127,8 @@ And run it.
 \label{sec:uob:api:bind}
 
 Let's illustrate those concepts by defining a simple object:
-\lstinline{adder}. This object has one variable \lstinline{v}, and a
-method \lstinline{add} that returns the sum of this variable and its
-argument.
+\lstinline{adder}. This object has one variable \lstinline{v}, and a method
+\lstinline{add} that returns the sum of this variable and its argument.
 
 \begin{itemize}
 \item First the required include:
@@ -146,7 +143,7 @@ class adder : public urbi::UObject // Must inherit from UObject.
 {
   public:
    // The class must have a single constructor taking a string.
-   adder (const std::string&);
+   adder(const std::string&);
 
    // Our variable.
    urbi::UVar v;
@@ -178,7 +175,7 @@ adder::add (double rhs)
 \item And register this class:
 \begin{cxx}
 // Register the class to the Urbi kernel.
-UStart (adder);
+UStart(adder);
 \end{cxx}
 \end{itemize}
 
@@ -281,19 +278,18 @@ the \lstinline{setThreadLimit} function.
 
 \section{Notification of a variable change or access}
 \label{sec:uobject:uvar-notify}
-You can register a function that will be called each time a variable
-is modified or accessed (for embedded components only) by calling
-\lstinline{UNotifyChange} and \lstinline{UNotifyAccess}, passing
-either an \UVar or a variable name as first argument, and a member
-function of your \UObject as second argument. This function can take
-zero or one argument of any type. If the argument is of type \lstinline{UVar&},
-the value will be a reference  to the \UVar being accessed or modified.
-If it is of any other type, the system will try to convert the current value
-of the \UVar to this type and pass this value to the function.
-The \lstinline{notifyChange} callback function
-is called after the variable value is changed, whereas the
-\lstinline{notifyAccess} callback is called before the variable is
-accessed, giving you the possibility to update its value.
+You can register a function that will be called each time a variable is
+modified or accessed (for embedded components only) by calling
+\lstinline{UNotifyChange} and \lstinline{UNotifyAccess}, passing either an
+\UVar or a variable name as first argument, and a member function of your
+\UObject as second argument. This function can take zero or one argument of
+any type. If the argument is of type \lstinline{UVar&}, the value will be a
+reference to the \UVar being accessed or modified.  If it is of any other
+type, the system will try to convert the current value of the \UVar to this
+type and pass this value to the function.  The \lstinline{notifyChange}
+callback function is called after the variable value is changed, whereas the
+\lstinline{notifyAccess} callback is called before the variable is accessed,
+giving you the possibility to update its value.
 
 Notify functions can be unregistered by calling the
 \lstinline|unnotify| function of the \UVar class.
@@ -450,10 +446,9 @@ statistics.
 
 The API provides two methods to have a function called periodically:
 \begin{cxxapi}
-\item[void urbi::UObject::USetUpdate(ufloat period)]
-  Set up a timer that calls the virtual method
-  \lstinline{UObject::update()} with the specified period (in
-  milliseconds).  Disable updates if \var{period} is -1.
+\item[void urbi::UObject::USetUpdate(ufloat period)] Set up a timer that
+  calls the virtual method \lstinline{UObject::update()} with the specified
+  period (in milliseconds).  Disable updates if \var{period} is -1.
 
 \item[urbi::TimerHandle urbi::UObject::USetTimer<T>(ufloat period, void (T::*fun)())]
   Invoke an UObject member function \var{fun} every \var{period}
