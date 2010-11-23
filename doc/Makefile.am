@@ -41,11 +41,14 @@ PNG_IMAGES =							\
   $(call ls_files,img/*.png					\
                   @{../modules/system/ros}/doc/img/*.png)
 
-cube_and_disc = urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)/cube-and-disc
+cube_and_disc =									\
+  document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)/cube-and-disc
+cubes_pdf = $(call ls_files,@document-aux/figs/urbi-sdk/*/cube.pdf)
 PDF_IMAGES =					\
   $(call ls_files,img/*.pdf)			\
   document-aux/figs/gostai.pdf			\
-  document-aux/figs/$(cube_and_disc).pdf	\
+  $(cube_and_disc).pdf				\
+  $(cubes_pdf)					\
   $(DOT_IMAGES:.dot=.pdf)
 EXTRA_DIST += $(call ls_files,img/*)
 
@@ -90,7 +93,7 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 # We need to find a better means to provide our own *.png here.  I
 # have not used the name "gostai.png" because stupidly the PDF
 # compilation seems to prefer *.png to *.pdf, which is wrong here.
-	$(AM_V_at)cp document-aux/figs/$(cube_and_disc).png $@.tmp/urbi-sdk0x.png
+	$(AM_V_at)cp $(srcdir)/$(cube_and_disc).png $@.tmp/urbi-sdk0x.png
 	$(AM_V_at)cp $(share_dir)/figs/gostai.png $@.tmp/urbi-sdk1x.png
 	$(AM_V_at)mv $@.tmp $@
 

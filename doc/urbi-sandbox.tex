@@ -7,9 +7,9 @@
 %% See the LICENSE file for more information.
 
 \documentclass[openright,twoside,11pt]{book}
-  \usepackage{config}
   \usepackage{gostai-documentation}
-  \usepackage{rotating}
+  \usepackage{config}
+  \usepackage{lipsum}  % to provide "filler" text
 
 \title{Urbi Documentation Sandbox}
 \subtitle{Version \VcsDescription}
@@ -51,6 +51,47 @@ Last example.
 \begin{urbiassert}
 1+2 == 3;
 \end{urbiassert}
+
+% \release{Release}{Date}
+% -----------------------
+\newcommand{\release}[2]{%
+  \marginpar{%
+    \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
+
+    #2.
+  }%
+  Released on #2.
+}
+
+\section{\usdk 2.5}
+\release{2.5}{2010-11-xx}
+
+\subsection{New Features}
+\begin{itemize}
+\item More types of empty statements are warned about.  For instance \urbi
+  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
+  body, and recommends writing \lstinline|if (foo) {};|.
+\end{itemize}
+
+\section{\usdk 2.4}
+\release{2.4}{2010-11-xx}
+
+\subsection{New Features}
+\begin{itemize}
+\item More types of empty statements are warned about.  For instance \urbi
+  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
+  body, and recommends writing \lstinline|if (foo) {};|.
+\end{itemize}
+
+\section{\usdk 2.3}
+\release{2.3}{2010-11-xx}
+
+\subsection{New Features}
+\begin{itemize}
+\item More types of empty statements are warned about.  For instance \urbi
+  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
+  body, and recommends writing \lstinline|if (foo) {};|.
+\end{itemize}
 
 
 \sectionObject{Bar}

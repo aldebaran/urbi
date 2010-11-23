@@ -11,8 +11,21 @@
 
 This chapter lists the user-visible changes in \usdk releases.
 
+% \release{Release}{Date}
+% -----------------------
+\newcommand{\release}[2]{%
+  Released on #2.
+  \ifx\ifHtml\undefined%
+    \marginpar{%
+      \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
+      
+      #2.
+    }%
+  \fi%
+}
 
 \section{\usdk 2.5}
+\release{2.5}{2010-11-xx}
 
 \subsection{New Features}
 \begin{itemize}
@@ -73,7 +86,7 @@ function Foo.'=='(var that)
 
 
 \section{\usdk 2.4}
-Released on 2010-10-20.
+\release{2.4}{2010-10-20}
 
 \subsection{Fixes}
 
@@ -187,7 +200,7 @@ They still need to evaluate into String values.
 \end{itemize}
 
 \section{\usdk 2.3}
-Released on 2010-09-28.
+\release{2.3}{2010-09-28}
 
 \subsection{Fixes}
 \begin{itemize}
@@ -295,7 +308,7 @@ to the generic cast system.
 
 
 \section{\usdk 2.2}
-Released on 2010-08-23.
+\release{2.2}{2010-08-23}
 
 \subsection{Fixes}
 \begin{itemize}
@@ -378,7 +391,7 @@ x = 1|;
 \end{itemize}
 
 \section{\usdk 2.1}
-Released on 2010-07-08.
+\release{2.1}{2010-07-08}
 
 \subsection{Fixes}
 \begin{itemize}
@@ -436,7 +449,7 @@ Released on 2010-07-08.
 
 
 \section{\usdk 2.0.3}
-Released on 2010-05-28.
+\release{2.0}{2010-05-28}
 
 \subsection{New Features}
 \begin{itemize}
@@ -503,7 +516,7 @@ assert (one == two);
 \end{itemize}
 
 \section{\usdk 2.0.2}
-Released on 2010-05-06.
+\release{2.0}{2010-05-06}
 
 \subsection{\us}
 \begin{itemize}
@@ -525,7 +538,7 @@ Released on 2010-05-06.
 \end{itemize}
 
 \section{\usdk 2.0.1}
-Released on 2010-05-03.
+\release{2.0}{2010-05-03}
 
 \subsection{\us}
 \begin{itemize}
@@ -554,7 +567,7 @@ Released on 2010-05-03.
 
 \section{\usdk 2.0}
 
-Released on 2010-04-09.
+\release{2.0}{2010-04-09}
 
 \subsection{\us}
 
@@ -660,7 +673,7 @@ Released on 2010-04-09.
 \end{itemize}
 
 \section{\usdk 2.0 RC 4}
-Released on 2010-01-29.
+\release{2.0}{2010-01-29}
 
 \subsection{\us}
 \subsubsection{Changes}
@@ -694,7 +707,7 @@ Released on 2010-01-29.
 
 
 \section{\usdk 2.0 RC 3}
-Released on 2010-01-13.
+\release{2.0}{2010-01-13}
 
 \subsection{\us}
 
@@ -720,7 +733,7 @@ Released on 2010-01-13.
 \end{itemize}
 
 \section{\usdk 2.0 RC 2}
-Released on 2009-11-30.
+\release{2.0}{2009-11-30}
 
 This release candidate includes many fixes and improvements that are
 not reported below. The following list is by no means exhaustive.
@@ -973,7 +986,7 @@ also improved.  Changes include, but are not limited to:
 \end{itemize}
 
 \section{\usdk 2.0 RC 1}
-Released on 2009-04-03.
+\release{2.0}{2009-04-03}
 
 \subsection{Auxiliary programs}
 
@@ -1051,7 +1064,7 @@ Extended documentation on: \refObject{Comparable}, \refObject{Orderable}.
 
 
 \section{\usdk 2.0 beta 4}
-Released on 2009-03-03.
+\release{2.0}{2009-03-03}
 
 \subsection{Documentation}
 
@@ -1169,7 +1182,7 @@ $ urbi-send -e 'var x;' -e "x = $value;" -e 'shutdown;'
 
 
 \section{\usdk 2.0 beta 3}
-Released on 2009-01-05.
+\release{2.0}{2009-01-05}
 
 \subsection{Documentation}
 
@@ -1411,7 +1424,7 @@ is now safe.
 
 
 \section{\usdk 2.0 beta 2}
-Released on 2008-11-03.
+\release{2.0}{2008-11-03}
 
 \subsection{\us}
 
