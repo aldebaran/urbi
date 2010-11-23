@@ -64,8 +64,7 @@ classes in traditional object-oriented programming languages (see
 
 
 \item[addProto](<proto>)%
-  Add \var{proto} into the list of prototypes of \this.
-  Return \this.
+  Add \var{proto} into the list of prototypes of \this.  Return \this.
 \begin{urbiscript}
 do (Object.new)
 {
@@ -77,10 +76,8 @@ do (Object.new)
 }|;
 \end{urbiscript}
 
-\item[allProto]
-  Return a list with \this, all parents of
-  \this, the parents of the parents of
-  \this,\ldots
+\item[allProto]%
+  A list with \this, its parents, their parents,\ldots
 \begin{urbiassert}
 123.allProtos.size == 12;
 \end{urbiassert}
@@ -233,8 +230,8 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar" }.dump(1);
   Deprecated.  Use \refSlot[System]{period} instead.
 
 \item[getProperty](<slotName>, <propName>)%
-  Return the value of the \var{propName} property associated to the
-  slot \var{slotName} if defined.  Raise an error otherwise.
+  The value of the \var{propName} property associated to the slot
+  \var{slotName} if defined.  Raise an error otherwise.
 \begin{urbiscript}
 const var myPi = 3.14|;
 assert (getProperty("myPi", "constant"));
@@ -338,38 +335,36 @@ do (2) { var this.attr = "foo"; this.attr->prop = "bar"}.inspect;
 \end{urbiscript}
 
 \item[isA](<obj>)%
-  Return true if \this has \var{obj} in his parents, false
-  otherwise.
+  Whether \this has \var{obj} in his parents.
 \begin{urbiassert}
-Float.isA(Orderable);
-!(String.isA(Float));
+   Float.isA(Orderable);
+! String.isA(Float);
 \end{urbiassert}
 
-\item[isNil]
-  Return true if \this is \refObject{nil}, false otherwise.
+\item[isNil]%
+  Whether \this is \refObject{nil}.
 \begin{urbiassert}
-nil.isNil;
-!(0.isNil);
+ nil.isNil;
+!  0.isNil;
 \end{urbiassert}
 
 \item[isProto]
-  Return true if \this is a prototype, false otherwise;
+  Whether \this is a prototype.
 \begin{urbiassert}
-Float.isProto;
-!(42.isProto);
+ Float.isProto;
+!   42.isProto;
 \end{urbiassert}
 
-\item[isVoid]
-  Return true if \this is \lstinline|void|.  See
-  \refObject{void}.
+\item[isVoid]%
+  Whether \this is \lstinline|void|.  See \refObject{void}.
 \begin{urbiassert}
 void.isVoid;
 ! 42.isVoid;
 \end{urbiassert}
 
-\item[localSlotNames] Return a list with the names of the local slots of
-  \this, not including those of its ancestors.  See also
-  \refSlot{slotNames}.
+\item[localSlotNames]%
+  A list with the names of the local (i.e., not including those of its
+  ancestors) slots of \this.  See also \refSlot{slotNames}.
 \begin{urbiscript}
 var top = Object.new|;
 var top.top1 = 1|;
@@ -385,16 +380,14 @@ assert
 \end{urbiscript}
 
 \item[locateSlot](<slot>)%
-  Return \lstinline|nil| if \this don't have the slot
-  \lstinline|slot|. Otherwise it returns the first lowest owner of
-  \lstinline|slot| of \this.
+  The Object that provides \var{slot} to \this, or \lstinline|nil| if \this
+  does not feature \var{slot}.
 \begin{urbiassert}
-locateSlot("init") == Channel;
+locateSlot("locateSlot") == Object;
 locateSlot("doesNotExist").isNil;
 \end{urbiassert}
 
-\item[print]
-  Send \lstinline|print| to the \refSlot[Channel]{topLevel} channel.
+\item[print] Send \this to the \refSlot[Channel]{topLevel} channel.
 \begin{urbiscript}
 1.print;
 [00001228] 1
@@ -403,14 +396,14 @@ locateSlot("doesNotExist").isNil;
 \end{urbiscript}
 
 \item[protos]
-  Return the list of prototypes of \this.
+  The list of prototypes of \this.
 \begin{urbiassert}
-12.protos == [0];
+12.protos == [Float];
 \end{urbiassert}
 
 \item[properties](<slotName>)%
-  Return a dictionary of the properties of slot \var{slotName}.  Raise
-  an error if the slot does not exist.
+  A dictionary of the properties of slot \var{slotName}.  Raise an error if
+  the slot does not exist.
 \begin{urbiscript}
 2.properties("foo");
 [00238495:error] !!! lookup failed: foo
@@ -444,9 +437,8 @@ do (2)
 \end{urbiscript}
 
 \item[removeProto](<proto>)%
-  Remove \var{proto} from the list of prototypes of \this,
-  and return \this.  Do nothing if \var{proto} is not a
-  prototype of \this.
+  Remove \var{proto} from the list of prototypes of \this, and return \this.
+  Do nothing if \var{proto} is not a prototype of \this.
 \begin{urbiscript}
 do (Object.new)
 {
@@ -462,9 +454,8 @@ do (Object.new)
 \end{urbiscript}
 
 \item[removeSlot](<slot>)%
-  Remove \var{slot} from the (local) list of slots of
-  \this, and return \this.  Do nothing if
-  \var{slot} does not exist.
+  Remove \var{slot} from the (local) list of slots of \this, and return
+  \this.  Do nothing if \var{slot} does not exist.
 \begin{urbiscript}
 {
   var base = Object.new;
@@ -498,11 +489,10 @@ fortyTwo = 51;
 \end{urbiscript}
 
 \item[setProperty](<slotName>, <propName>, <value>)%
-  Set the property \var{propName} of slot \var{slotName} to
-  \var{value}.  Raise an error in \var{slotName} does not exist.
-  Return \var{value}.  This is what
-  \lstinline|\var{slotName}->\var{propName} = \var{value}| actually
-  performs.
+  Set the property \var{propName} of slot \var{slotName} to \var{value}.
+  Raise an error in \var{slotName} does not exist.  Return \var{value}.
+  This is what \lstinline|\var{slotName}->\var{propName} = \var{value}|
+  actually performs.
 \begin{urbiscript}
 do (Object.new)
 {
@@ -523,8 +513,8 @@ setProperty("noSuchSlot", "prop", "12");
 
 
 \item[setProtos](<protos>)%
-  Set the list of prototypes of \this to \var{protos}.
-  Return \lstinline|void|.
+  Set the list of prototypes of \this to \var{protos}.  Return
+  \lstinline|void|.
 \begin{urbiscript}
 do (Object.new)
 {
@@ -552,9 +542,8 @@ theObject === Object;
   \lstinline|updateSlot| would. See the \lstinline|redefinitionMode|
   method in \refObject{System}.
 
-\item[slotNames]
-  Return a list with the slot names of \this and its
-  ancestors.
+\item[slotNames]%
+  A list with the slot names of \this and its ancestors.
 \begin{urbiassert}
 Object.localSlotNames
   .subset(Object.slotNames);
@@ -580,7 +569,7 @@ Example.new;
 \end{urbiscript}
 
 \item[uid]
-  Returns the unique id of \this.
+  The unique id of \this.
 \begin{urbiscript}
 {
   var foo = Object.new;
@@ -613,9 +602,8 @@ Object.one                  == 2;
 \end{urbiassert}
 
 \item['&&'](<that>)%
-  Short-circuiting logical and. If \this evaluates to true
-  evaluate and return \var{that}, otherwise return \this
-  without evaluating \var{that}.
+  Short-circuiting logical and. If \this evaluates to true evaluate and
+  return \var{that}, otherwise return \this without evaluating \var{that}.
 \begin{urbiassert}
 (0 && "foo") == 0;
 (2 && "foo") == "foo";
@@ -625,9 +613,8 @@ Object.one                  == 2;
 \end{urbiassert}
 
 \item['||'](<that>)%
-  Short-circuiting logical or. If \this evaluates to false
-  evaluate and return \var{that}, otherwise return \this
-  without evaluating \var{that}.
+  Short-circuiting logical or. If \this evaluates to false evaluate and
+  return \var{that}, otherwise return \this without evaluating \var{that}.
 \begin{urbiassert}
 (0 || "foo") == "foo";
 (2 ||  1/0)  == 2;
@@ -637,8 +624,8 @@ Object.one                  == 2;
 \end{urbiassert}
 
 \item \lstinline|'!'|\\
-  Logical negation. If \this evaluates to false return
-  \lstinline|true| and vice-versa.
+  Logical negation.  If \this evaluates to false return \lstinline|true| and
+  vice-versa.
 \begin{urbiassert}
 !1 == false;
 !0 == true;
