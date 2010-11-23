@@ -58,7 +58,7 @@ function derive.init(var arg)
 
 function Foo.'=='(var that)
 {
-  getSlot("function") == that.getSlot("function");
+  getSlot("accessor") == that.getSlot("accessor");
 };
 \end{urbiunchecked}
   write
@@ -70,7 +70,7 @@ function derive.init(var arg)
 
 function Foo.'=='(var that)
 {
-  &function == that.&function;
+  &accessor == that.&accessor;
 };
 \end{urbiunchecked}
 \item \refSlot[Dictionary]{erase} raises an error if the key does not exit.
