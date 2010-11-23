@@ -581,6 +581,69 @@ parenthesized expression, the extra comma must be added.  See
 \end{urbiscript}
 
 
+\subsubsection{Pseudo classes}
+\label{sec:lang:class}
+
+Objects that are meant to serve as prototypes for new objects are best
+defined using the \lstinline|class| construct.  See also the tutorial,
+\autoref{sec:tut:class}.
+
+\begin{lstlisting}[language=bnf]
+<class-statement>
+  ::= "class" <lvalue> (: <expression>)? <block>
+
+<lvalue>
+  ::= (<expression> ".")* "identifier"
+
+<block>
+  ::= "{" <statement>* "}"
+\end{lstlisting}
+
+This results in the (constant) definition of the name \var{lvalue} in the
+current context (\lstinline|class| construct can be used inside a scope or
+in an object) with:
+\begin{itemize}
+\item a slot named \lstinline|type| which is a the trailing component of
+  \var{lvalue} as a \refObject{String};
+\item a slot named \lstinline|as\var{type}| that returns \this.
+\item the list of prototypes is equal to the \var{expression} that served as
+  parent, defaulting to \refObject{Object};
+\item the \var{block} is evaluated in the context of this object, as with a
+  \lstinline|do|-block;
+\item the value of the whole statement is the newly defined object.
+\end{itemize}
+
+\begin{urbiscript}
+class Base
+{
+  var slot = 12;
+}|;
+
+assert
+{
+  hasLocalSlot("Base");
+  Base.type == "Base";
+  Base.protos == [Object];
+  Base.slot == 12;
+  Base.asBase === Base;
+};
+
+class Global.Derive : Base
+{
+  var slot = 34;
+}|;
+
+assert
+{
+  Global.hasLocalSlot("Derive");
+  Global.Derive.type == "Derive";
+  Global.Derive.protos == [Base];
+  Global.Derive.slot == 34;
+  Global.Derive.asDerive == Global.Derive;
+  Global.Derive.asBase == Global.Derive;
+};
+\end{urbiscript}
+
 
 \subsection{Statement Separators}
 \label{sec:lang:separators}

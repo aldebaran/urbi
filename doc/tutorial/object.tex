@@ -340,9 +340,31 @@ class MyPair
 \end{urbiscript}
 
 The \lstinline{class} keyword simply creates \lstinline|MyPair| with
-\lstinline|MyPair|Object.clone|, and provides you with a \lstinline|do
-(MyPair)| scope. It actually also pre-defines a few slots, but this is not
-the point here.
+\lstinline|Object.clone|, and provides you with a \lstinline|do (MyPair)|
+scope. It actually also pre-defines a few slots, but this is not the point
+here.
+
+It is also possible to specify a proto for the newly created ``class'',
+using the same syntax as \Java and \Cxx:
+
+\begin{urbiscript}
+class Top
+{
+  var top = "top";
+};
+[00000000] Top
+
+class Bottom : Top
+{
+  var bottom = "bottom";
+};
+[00000000] Bottom
+
+Bottom.new.top;
+[00000000] "top"
+\end{urbiscript}
+
+For more details, see \autoref{sec:lang:class}.
 
 \section{Constructors}
 \label{sec:tut:ctor}

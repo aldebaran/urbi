@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1217 utf-8
+personal_ws-1.1 en 1218 utf-8
 aaa
 abc
 abcdef
@@ -63,6 +63,7 @@ armR
 arnl
 ARNLPATH
 ary
+asBase
 asBool
 asEvent
 asExecutable
