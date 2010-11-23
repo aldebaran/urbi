@@ -51,24 +51,35 @@ verbose ()
     stderr "$@"
 }
 
-# prependenv VAR VAL
+# setenv VAR VAL1...
 # ------------------
-# Set env verbosely $VAR=$VAL.
+# Set env verbosely $VAR="$VAL1$VAL2...".
 setenv ()
 {
-  eval "$1=\$2"
-  export $1
-  verbose "$1 = $2"
+  local var
+  var=$1
+  shift
+  local val
+  local i
+  for i
+  do
+    val=$val$i
+  done
+  eval "$var=\$val"
+  export $var
+  verbose "$var = $val"
 }
 
-# prependenv VAR VAL
-# ------------------
-# Set env verbosely $VAR=$VAL${$VAR}.
+# prependenv VAR VAL...
+# ---------------------
+# Set env verbosely $VAR="$VAL1$VAL2...${$VAR}".
 prependenv ()
 {
   local val
-  eval "val=\$2\$$1"
-  setenv "$1" "$val"
+  eval "val=\$$1"
+  set x "$@" "$val"
+  shift
+  setenv "$@"
 }
 
 # ld_path_add DIR...
@@ -143,8 +154,10 @@ ld_path_add $libport_builddir/lib/*/.libs               \
 if $has_kernel; then
   urbi_lib PLUGIN "$kernel_builddir/src/.libs/libuobject"
   # Use the shipped Urbi files.
-  prependenv URBI_PATH \
-    "$kernel_srcdir/share:$kernel_builddir/share:$kernel_builddir/modules:"
+  prependenv URBI_PATH					\
+    "$kernel_srcdir/share:$kernel_builddir/share:"	\
+    "$kernel_srcdir/fsm/share:"				\
+    "$kernel_builddir/modules:"
   case $(uname -o 2>/dev/null) in
     (Cygwin)
       # We use colon as separators, not semicolon.
