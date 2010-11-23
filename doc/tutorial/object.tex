@@ -59,9 +59,9 @@ Pair;
 [00000000] (nil, nil)
 \end{urbiscript}
 
-Since \lstinline|Pair| is a regular pair object, you can modify and
-use it at will. Yet this is not a good idea, since you will alter your
-base prototype, which alters any derivative, future and even past.
+Since \lstinline|Pair| is a regular pair object, you can modify and use it
+at will. Yet this is not a good idea, since you will alter your base
+prototype, which alters any derivative, future and even past.
 
 \begin{urbiscript}
 var before = Pair.clone;
@@ -79,10 +79,10 @@ assert(Pair.first === after.first);
 
 \section{Prototypes and slot lookup}
 
-In prototype-based language, \emph{is-a} relations (being an instance
-of some type) and inheritance relations (extending another type) are
-simplified in a single relation: prototyping. You can inspect an
-object prototypes with the \lstinline{protos} method.
+In prototype-based language, \emph{is-a} relations (being an instance of
+some type) and inheritance relations (extending another type) are simplified
+in a single relation: prototyping. You can inspect an object prototypes with
+the \lstinline{protos} method.
 
 \begin{urbiscript}[firstnumber=1]
 var p = Pair.clone;
@@ -91,9 +91,9 @@ p.protos;
 [00000000] [(nil, nil)]
 \end{urbiscript}
 
-As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|,
-which is how \lstinline|Pair| displays itself. We can check this as
-presented below.
+As expected, our fresh pair has one prototype, \lstinline|(nil, nil)|, which
+is how \lstinline|Pair| displays itself. We can check this as presented
+below.
 
 \begin{urbiscript}
 // List.head returns the first element.
@@ -104,17 +104,16 @@ p.protos.head === Pair;
 [00000000] true
 \end{urbiscript}
 
-Prototypes are the base of the slot lookup mechanism. Slot lookup is
-the action of finding an object slot when the dot notation is used.
-So far, when we typed
-\lstinline|\var{obj}.\var{slot}|, \var{slot} was always a slot of
-\var{obj}.  Yet, this call can be valid even if \var{obj} has no
+Prototypes are the base of the slot lookup mechanism. Slot lookup is the
+action of finding an object slot when the dot notation is used.  So far,
+when we typed \lstinline|\var{obj}.\var{slot}|, \var{slot} was always a slot
+of \var{obj}.  Yet, this call can be valid even if \var{obj} has no
 \var{slot} slot, because slots are also looked up in prototypes. For
 instance, \lstinline|p|, our clone of \lstinline|Pair|, has no
-\lstinline|first| or \lstinline|second| slots. Yet,
-\lstinline|p.first| and \lstinline|p.second| work, because these slots
-are present in \lstinline|Pair|, which is \lstinline|p|'s
-prototype. This is illustrated below.
+\lstinline|first| or \lstinline|second| slots. Yet, \lstinline|p.first| and
+\lstinline|p.second| work, because these slots are present in
+\lstinline|Pair|, which is \lstinline|p|'s prototype. This is illustrated
+below.
 
 \begin{urbiscript}[firstnumber=1]
 var p = Pair.clone;
@@ -131,12 +130,12 @@ p.protos.head === Pair;
 [00000000] true
 \end{urbiscript}
 
-As shown here, the \lstinline{clone} method simply creates an empty
-object, with its target as prototype. The new object has the exact
-same behavior as the cloned on thanks to slot lookup.
+As shown here, the \lstinline{clone} method simply creates an empty object,
+with its target as prototype. The new object has the exact same behavior as
+the cloned on thanks to slot lookup.
 
-Let's experience slot lookup by ourselves. In \us, you can add and
-remove prototypes from an object thanks to \lstinline{addProto} and
+Let's experience slot lookup by ourselves. In \us, you can add and remove
+prototypes from an object thanks to \lstinline{addProto} and
 \lstinline{removeProto}.
 
 \begin{urbiscript}[firstnumber=1]
@@ -168,8 +167,8 @@ from \var{x}:
 
 \begin{itemize}
 \item If \var{x} itself has the slot, the requested value is found.
-\item Otherwise, the same lookup algorithm is applied on all
-  prototypes, most recent first.
+\item Otherwise, the same lookup algorithm is applied on all prototypes,
+  most recent first.
 \end{itemize}
 
 Thus, slots from the last prototype added take precedence over other
@@ -204,9 +203,9 @@ o.x;
 [00000000] 2
 \end{urbiscript}
 
-You can check where in the prototype hierarchy a slot is found with
-the \lstinline{locateSlot} method. This is a very
-handful tool when inspecting an object.
+You can check where in the prototype hierarchy a slot is found with the
+\lstinline{locateSlot} method. This is a very handful tool when inspecting
+an object.
 
 \begin{urbiscript}[firstnumber=1]
 var p = Pair.clone;
@@ -220,22 +219,21 @@ p.locateSlot("locateSlot");
 \end{urbiscript}
 
 The prototype model is rather simple: creating a fresh object simply
-consists in cloning a model object, a prototype, that was provided to
-you.  Moreover, you can add behavior to an object at any time with a
-simple \lstinline{addProto}: you can make any object a fully
-functional \lstinline|Pair| with a simple
-\lstinline|myObj.addProto(Pair)|.
+consists in cloning a model object, a prototype, that was provided to you.
+Moreover, you can add behavior to an object at any time with a simple
+\lstinline{addProto}: you can make any object a fully functional
+\lstinline|Pair| with a simple \lstinline|myObj.addProto(Pair)|.
 
 \section{Copy on write}
 
-One point might be bothering you though: what if you want to update a
-slot value in a clone of your prototype?
+One point might be bothering you though: what if you want to update a slot
+value in a clone of your prototype?
 
 Say we implement a simple prototype, with an \var{x} slot equal to
-\lstinline|0|, and clone it twice. We have three objects with an
-\var{x} slot, yet only one actual \lstinline|0| integer. Will
-modifying \var{x} in one of the clone change the prototype's \var{x},
-thus altering the prototype and the other clone as well?
+\lstinline|0|, and clone it twice. We have three objects with an \var{x}
+slot, yet only one actual \lstinline|0| integer. Will modifying \var{x} in
+one of the clone change the prototype's \var{x}, thus altering the prototype
+and the other clone as well?
 
 The answer is, of course, no, as illustrated below.
 
@@ -260,8 +258,8 @@ o1.x;
 [00000000] 1
 \end{urbiscript}
 
-This work thanks to copy-on-write: slots are first duplicated to the
-local object when they're updated, as we can check below.
+This work thanks to copy-on-write: slots are first duplicated to the local
+object when they're updated, as we can check below.
 
 \begin{urbiscript}
 // This is the continuation of previous example.
@@ -277,32 +275,30 @@ o1.locateSlot("x") === o1;
 [00000000] true
 \end{urbiscript}
 
-This is why, when we cloned Pair earlier, and modified the ``first''
-slot of our fresh Pair, we didn't alter Pair one all its other clones.
+This is why, when we cloned Pair earlier, and modified the ``first'' slot of
+our fresh Pair, we didn't alter Pair one all its other clones.
 
 \section{Defining pseudo-classes}
 \label{sec:tut:class}
 
-Now that we know the internals of \us's object model, we can start
-defining our own classes.
+Now that we know the internals of \us's object model, we can start defining
+our own classes.
 
 But wait, we just said there are no classes in prototype-based
-object-oriented languages!  That is true: there are no classes in the
-sense of \Cxx: compile-time entities that are not objects.  Instead,
-prototype-based languages rely on the existence of a canonical object
-(the \dfn{prototype}) from which (pseudo) \emph{instances} are
-derived.  Yet, since the syntactic inspiration for \us comes from
-languages such as \Java, \Cxx and so forth, it is nevertheless the
-\lstinline|class| keyword that is used to define the pseudo-classes,
-i.e., prototypes.
+object-oriented languages!  That is true: there are no classes in the sense
+of \Cxx: compile-time entities that are not objects.  Instead,
+prototype-based languages rely on the existence of a canonical object (the
+\dfn{prototype}) from which (pseudo) \emph{instances} are derived.  Yet,
+since the syntactic inspiration for \us comes from languages such as \Java,
+\Cxx and so forth, it is nevertheless the \lstinline|class| keyword that is
+used to define the pseudo-classes, i.e., prototypes.
 
-As an example, we define our own \lstinline{Pair} class. We just have
-to create a pair, with its \lstinline|first| and \lstinline|second|
-slots. For this we use the \lstinline{do} scope described in
-\autoref{section:constructs:do}. The listing below defines a new
-\lstinline{Pair} class. The \lstinline{asString} function is simply
-used to customize pairs printing --- don't give it too much attention
-for now.
+As an example, we define our own \lstinline{Pair} class. We just have to
+create a pair, with its \lstinline|first| and \lstinline|second| slots. For
+this we use the \lstinline{do} scope described in
+\autoref{sec:constructs:do}. The listing below defines a new
+\lstinline{Pair} class. The \lstinline{asString} function is simply used to
+customize pairs printing --- don't give it too much attention for now.
 
 \begin{urbiscript}[firstnumber=1]
 var MyPair = Object.clone;
@@ -330,9 +326,8 @@ MyPair;
 [00000000] MyPair: nil, nil
 \end{urbiscript}
 
-That's it, we defined a pair that can be cloned at will! \us
-provides a shorthand to define classes as we did above: the
-\lstinline{class} keyword.
+That's it, we defined a pair that can be cloned at will! \us provides a
+shorthand to define classes as we did above: the \lstinline{class} keyword.
 
 \begin{urbiscript}[firstnumber=1]
 class MyPair
@@ -345,16 +340,16 @@ class MyPair
 \end{urbiscript}
 
 The \lstinline{class} keyword simply creates \lstinline|MyPair| with
-\lstinline|MyPair|Object.clone|, and provides you with a
-\lstinline|do (MyPair)| scope. It actually also pre-defines a few
-slots, but this is not the point here.
+\lstinline|MyPair|Object.clone|, and provides you with a \lstinline|do
+(MyPair)| scope. It actually also pre-defines a few slots, but this is not
+the point here.
 
 \section{Constructors}
 \label{sec:tut:ctor}
-As we've seen, we can use the \lstinline|clone| method on any object
-to obtain an identical object. Yet, some classes provide more
-elaborate constructors, accessible by calling \lstinline{new} instead
-of \lstinline{clone}, potentially passing arguments.
+As we've seen, we can use the \lstinline|clone| method on any object to
+obtain an identical object. Yet, some classes provide more elaborate
+constructors, accessible by calling \lstinline{new} instead of
+\lstinline{clone}, potentially passing arguments.
 
 \begin{urbiscript}[firstnumber=1]
 var p = Pair.new("foo", false);
@@ -363,13 +358,13 @@ var p = Pair.new("foo", false);
 
 While \lstinline{clone} guarantees you obtain an empty fresh object
 inheriting from the prototype, \lstinline{new} behavior is left to the
-discretion of the cloned prototype --- although its behavior is the
-same as \lstinline{clone} by default.
+discretion of the cloned prototype --- although its behavior is the same as
+\lstinline{clone} by default.
 
 To define such constructors, prototypes only need to provide an
 \lstinline{init} method, that will be called with the arguments given to
-new. For instance, we can improve our previous \lstinline{Pair} class
-with a constructor.
+new. For instance, we can improve our previous \lstinline{Pair} class with a
+constructor.
 
 \begin{urbiscript}[firstnumber=1]
 class MyPair
