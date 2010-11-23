@@ -16,6 +16,9 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
+\item More types of empty statements are warned about.  For instance \urbi
+  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
+  body, and recommends writing \lstinline|if (foo) {};|.
 \item \command{urbi-launch} and \command{urbi-send} support
   \option{-m}/\option{--module=\var{file}}, to load a module
   (\autoref{sec:tools:urbi-launch}, \autoref{sec:tools:urbi-send}).
@@ -58,8 +61,9 @@ function Foo.'=='(var that)
 };
 \end{urbiunchecked}
 \item \refSlot[Dictionary]{erase} raises an error if the key does not exit.
-\item \lstinline|Exception.ArgumentType| is deprecated,
-  use \lstinline|Exception.Argument| that wraps around any \lstinline|Exception| instead.
+\item \lstinline|Exception.ArgumentType| is deprecated, use
+  \lstinline|Exception.Argument| that wraps around any \lstinline|Exception|
+  instead.
 \end{itemize}
 
 \subsection{Documentation}
