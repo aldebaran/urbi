@@ -8,17 +8,17 @@
 
 \section{Tag}
 
-A \dfn{tag} is an object meant to label blocks of code in order to
-control them externally.  Tagged code can be frozen, resumed,
-stopped\ldots See also \autoref{sec:tut:tags}.
+A \dfn{tag} is an object meant to label blocks of code in order to control
+them externally.  Tagged code can be frozen, resumed, stopped\ldots See also
+\autoref{sec:tut:tags}.
 
 \subsection{Examples}
 
 \subsubsection{Stop}
 \label{sec:specs:tag:stop}
 
-To \dfn{stop} a tag means to kill all the code currently running that
-it labels.  It does not affect ``newcomers''.
+To \dfn{stop} a tag means to kill all the code currently running that it
+labels.  It does not affect ``newcomers''.
 
 \begin{urbiscript}[firstnumber=1]
 var t = Tag.new|;
@@ -58,13 +58,13 @@ t.stop("result");
 assert(res == "result");
 \end{urbiscript}
 
-Be extremely cautious, the precedence rules can be
-misleading: \lstinline|\var{var} = \var{tag}: \var{exp}| is read as
-\lstinline|(\var{var} = \var{tag}): \var{exp}| (i.e., defining
-\var{var} as an alias to \var{tag} and using it to tag \var{exp}), not as
-\lstinline|\var{var} = { \var{tag}: \var{exp} }|.  Contrast the
-following example, which is most probably an error from the user, with
-the previous, correct, one.
+Be extremely cautious, the precedence rules can be misleading:
+\lstinline|\var{var} = \var{tag}: \var{exp}| is read as
+\lstinline|(\var{var} = \var{tag}): \var{exp}| (i.e., defining \var{var} as
+an alias to \var{tag} and using it to tag \var{exp}), not as
+\lstinline|\var{var} = { \var{tag}: \var{exp} }|.  Contrast the following
+example, which is most probably an error from the user, with the previous,
+correct, one.
 
 \begin{urbiscript}[firstnumber=1]
 var t = Tag.new("t")|;
@@ -93,8 +93,8 @@ To \dfn{block} a tag means:
 \end{itemize}
 
 One can \dfn{unblock} the tag.  Contrary to
-\lstinline|freeze|/\lstinline|unfreeze|, tagged code does not resume
-the execution.
+\refSlot{freeze}/\refSlot{unfreeze}, tagged code does not resume the
+execution.
 
 \begin{urbiscript}[firstnumber=1]
 var ping = Tag.new("ping")|;
@@ -129,7 +129,7 @@ sleep(2.1s);
 [00006000] *** ping again
 \end{urbiscript}
 
-As with \lstinline|stop|, one can force the value of stopped
+As with \refSlot{stop}, one can force the value of stopped
 expressions.
 
 \begin{urbiassert}[firstnumber=1]
@@ -214,8 +214,8 @@ sleep(2s);
 \subsubsection{Enter/leave events}
 \label{sec:specs:tag:enter-leave}
 
-Tags provide two events, \lstinline|enter| and \lstinline|leave|, that
-trigger whenever flow control enters or leaves statements the tag.
+Tags provide two events, \refSlot{enter} and \refSlot{leave}, that trigger
+whenever flow control enters or leaves statements the tag.
 
 \begin{urbiscript}[firstnumber=1]
 var t = Tag.new("t");
@@ -247,16 +247,16 @@ we're done cooking. Here is the \emph{bad} way to do it:
 {
   function cook()
   {
-    turn_gas_on();
+    turnGasOn();
 
     // Cooking code ...
 
-    turn_gas_off();
+    turnGasOff();
   }|
 
-  enter_the_kitchen();
+  enterTheKitchen();
   cook();
-  leave_the_kitchen();
+  leaveTheKitchen();
 };
 \end{urbiscript}
 
@@ -268,9 +268,9 @@ code:
 {
   function cook()
   {
-    turn_gas_on();
+    turnGasOn();
 
-    if (meal_ready)
+    if (mealReady)
     {
       echo("The meal is already there, nothing to do!");
       // Oops ...
@@ -282,22 +282,22 @@ code:
         // Oops ...
         throw Exception("missing ingredient: %s" % ingredient)
       else
-        put_ingredient();
+        putIngredient();
 
     // ...
 
-    turn_gas_off();
+    turnGasOff();
   }|
 
-  enter_the_kitchen();
+  enterTheKitchen();
   cook();
-  leave_the_kitchen();
+  leaveTheKitchen();
 };
 \end{urbiscript}
 
 Here, if the meal was already prepared, or if an
 ingredient is missing, we will leave the \lstinline|cook| function
-without executing the \lstinline|turn_gas_off| statement, through the
+without executing the \lstinline|turnGasOff| statement, through the
 \lstinline|return| statement or the exception. The right way to ensure
 gas is necessarily turned off is:
 
@@ -305,33 +305,33 @@ gas is necessarily turned off is:
 {
   function cook()
   {
-    var with_gas = Tag.new("with_gas");
+    var withGas = Tag.new("withGas");
 
-    at (with_gas.enter?)
-      turn_gas_on();
-    at (with_gas.leave?)
-      turn_gas_off();
+    at (withGas.enter?)
+      turnGasOn();
+    at (withGas.leave?)
+      turnGasOff();
 
-    with_gas: {
+    withGas: {
       // Cooking code. Even if exception are thrown here or return is called,
       // the gas will be turned off.
     }
   }|
 
-  enter_the_kitchen();
+  enterTheKitchen();
   cook();
-  leave_the_kitchen();
+  leaveTheKitchen();
 };
 \end{urbiscript}
 
 \subsubsection{Begin/end}
 \label{sec:specs:tag:begin-end}
 
-The \lstinline|begin| and \lstinline|end| methods enable to monitor
-when code is executed.  The following example illustrates the proper
-use of \lstinline|enter| and \lstinline|leave| events
-(\autoref{sec:specs:tag:enter-leave}), which are used to implement
-this feature.
+The \refSlot{begin} and \refSlot{end} methods enable to monitor when code is
+executed.  The following example illustrates the proper use of
+\refSlot{enter} and \refSlot{leave} events
+(\autoref{sec:specs:tag:enter-leave}), which are used to implement this
+feature.
 
 \begin{urbiscript}
 var myTag = Tag.new("myTag");
@@ -354,9 +354,9 @@ myTag.begin.end: echo(3);
 \subsection{Construction}
 \label{stdlib:tag:ctor}
 
-As any object, tags are created using \lstinline{new} to create
-derivatives of the \lstinline{Tag} object.  The name is optional, it
-makes easier to display a tag and remember what it is.
+As any object, tags are created using \lstinline{new} to create derivatives
+of the \lstinline{Tag} object.  The name is optional, it makes easier to
+display a tag and remember what it is.
 
 \begin{urbiscript}[firstnumber=1]
 // Anonymous tag.
