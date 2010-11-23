@@ -46,16 +46,18 @@ struct PointOfInterest
 URBI_REGISTER_STRUCT(Point, x, y);
 URBI_REGISTER_STRUCT(Rect, a, b);
 URBI_REGISTER_STRUCT(PointOfInterest, sectorName, subSectors, byName);
+
 class all: public urbi::UObject
 {
 public:
   typedef urbi::UObject super_type;
   pthread_t mainthread;
 
-  inline void threadCheck()
+  inline void threadCheck() const
   {
     aver(mainthread == pthread_self());
   }
+
   all()
   {
     GD_INFO_TRACE("all default ctor");
@@ -64,6 +66,7 @@ public:
     setup();
     init(1);
   }
+
   all(const std::string& name)
     : urbi::UObject(name)
   {
@@ -75,6 +78,7 @@ public:
     throw std::runtime_error("constructor failure");
     setup();
   }
+
   void setup()
   {
     UBindFunction(all, init);
@@ -189,10 +193,12 @@ public:
   {
     USetUpdate((ufloat)periodicWriteRate * 1000.0);
   }
-  UObject* instanciate()
+
+  UObject* instanciate() const
   {
     return new all;
   }
+
   virtual int update()
   {
     int target = periodicWriteTarget;
@@ -212,28 +218,33 @@ public:
     }
     return 0;
   }
+
   int setBypassNotifyChangeBinary(const std::string& name)
   {
     threadCheck();
     UNotifyChange(name, &all::onBinaryBypass);
     return 0;
   }
+
   int setBypassNotifyChangeImage(const std::string& name)
   {
     threadCheck();
     UNotifyChange(name, &all::onImageBypass);
     return 0;
   }
+
   int markBypass(int id, bool state)
   {
     threadCheck();
     return vars[id]->setBypass(state);
   }
+
   int markRTP(int id, bool state)
   {
     vars[id]->useRTP(state);
     return 0;
   }
+
   void unnotify(int id)
   {
     if (id <5)
@@ -241,6 +252,7 @@ public:
     else
       ports[id-5]->unnotify();
   }
+
   int onBinaryBypass(urbi::UVar& var)
   {
     threadCheck();
@@ -251,6 +263,7 @@ public:
       ((char*)b.common.data)[i]++;
     return 0;
   }
+
   void onImageBypass(urbi::UVar& var)
   {
     threadCheck();
@@ -260,6 +273,7 @@ public:
     for (unsigned int i=0; i<b.size; ++i)
       b.data[i]++;
   }
+
   std::string selfWriteB(int idx, const std::string& content)
   {
     threadCheck();
@@ -275,6 +289,7 @@ public:
     b.common.data = 0;
     return res;
   }
+
   std::string selfWriteI(int idx, const std::string& content)
   {
     threadCheck();
@@ -288,6 +303,7 @@ public:
     return res;
 
   }
+
   int writeOwnByName(const std::string& name, int val)
   {
     threadCheck();
@@ -304,10 +320,12 @@ public:
     send(ss.str());
     return 0;
   }
+
   void selfWriteVD(int i, std::vector<double> v)
   {
     *vars[i] = v;
   }
+
   std::string typeOf(const std::string& name)
   {
     threadCheck();
@@ -348,6 +366,7 @@ public:
     UNotifyChange(v, &all::onChange);
     return 0;
   }
+
   int setNotifyAccess(int id)
   {
     threadCheck();
@@ -369,18 +388,21 @@ public:
     int v = *vars[id];
     return v;
   }
+
   int write(int id, int val)
   {
     threadCheck();
     *vars[id] = val;
     return val;
   }
+
   void invalidWrite()
   {
     threadCheck();
     urbi::UVar v;
     v = 12;
   }
+
   void invalidRead()
   {
     threadCheck();
@@ -388,6 +410,7 @@ public:
     int i = v;
     (void)i;
   }
+
   int readByName(const std::string &name)
   {
     threadCheck();
@@ -628,13 +651,13 @@ public:
 
 
   /** Test function parameter and return value **/
-  double transmitD(double v)
+  double transmitD(double v) const
   {
     threadCheck();
     return -(double)v;
   }
 
-  urbi::UList transmitL(urbi::UList l)
+  urbi::UList transmitL(urbi::UList l) const
   {
     urbi::UList r;
     for (unsigned int i=0; i<l.array.size(); i++)
@@ -642,7 +665,7 @@ public:
     return r;
   }
 
-  urbi::UDictionary transmitM(urbi::UDictionary d)
+  urbi::UDictionary transmitM(urbi::UDictionary d) const
   {
     urbi::UDictionary r;
     foreach (const urbi::UDictionary::value_type& t, d)
@@ -650,12 +673,12 @@ public:
     return r;
   }
 
-  std::string transmitS(const std::string &name)
+  std::string transmitS(const std::string &name) const
   {
     return name.substr(1, name.length()-2);
   }
 
-  urbi::UBinary transmitB(urbi::UBinary b)
+  urbi::UBinary transmitB(urbi::UBinary b) const
   {
     urbi::UBinary res(b);
     unsigned char* data = static_cast<unsigned char*>(res.common.data);
@@ -665,21 +688,21 @@ public:
     return res;
   }
 
-  urbi::UImage transmitI(urbi::UImage im)
+  urbi::UImage transmitI(urbi::UImage im) const
   {
     for (unsigned int i=0; i<im.size; i++)
       im.data[i] -= 1;
     return im;
   }
 
-  urbi::USound transmitSnd(urbi::USound im)
+  urbi::USound transmitSnd(urbi::USound im) const
   {
     for (unsigned int i=0; i<im.size; i++)
       im.data[i] -= 1;
     return im;
   }
 
-  urbi::UObject* transmitO(UObject* o)
+  urbi::UObject* transmitO(UObject* o) const
   {
     return o;
   }
@@ -690,11 +713,13 @@ public:
     send(s.c_str());
     return 0;
   }
+
   int sendBuf(const std::string& b, int l)
   {
     send(const_cast<void*>(static_cast<const void*>(b.c_str())), l);
     return 0;
   }
+
   int sendPar()
   {
     URBI((Object.a = 123,));
@@ -711,7 +736,7 @@ public:
     }
   }
 
-  int getDestructionCount()
+  int getDestructionCount() const
   {
     return destructionCount;
   }
@@ -747,9 +772,13 @@ public:
       UNotifyChange(target, &all::writeAV);
     }
   }
+
   void writeAD(double d) { a = d; }
+
   void writeAS(const std::string& s) {a = s;}
+
   void writeAB(urbi::UBinary b) { a=b;}
+
   void writeAV(urbi::UValue v) { a=v;}
 
   void makeCall(const std::string& obj, const std::string& func,
@@ -823,14 +852,17 @@ public:
     if (!libport::mhas(vu, "coin") || vu["coin"] != this)
       throw std::runtime_error("hash is not what we expect");
   }
+
   double area(Rect r)
   {
     return libport::round((r.a.x-r.b.x) * (r.a.y  - r.b.y));
   }
+
   PointOfInterest transmitPointOfInterest(PointOfInterest p)
   {
     return p;
   }
+
   void writePointOfInterest(urbi::UVar& target, PointOfInterest p)
   {
     target = p;
@@ -850,20 +882,24 @@ public:
     r.b.y += v.y;
     return r;
   }
+
   Rect makeRect()
   {
     return Rect();
   }
+
   std::vector<Rect> multiTranslate(std::vector<Rect> src, Point v)
   {
     foreach(Rect& r, src)
       r = translate(r, v);
     return src;
   }
+
   std::vector<double> unpack(UPackedData<double> d)
   {
     return d;
   }
+
   UPackedData<double> pack(std::vector<double> d)
   {
     return d;

@@ -149,27 +149,30 @@ class adder : public urbi::UObject // Must inherit from UObject.
    urbi::UVar v;
 
    // Our method.
-   double add (double);
+   double add(double rhs) const;
 };
 \end{cxx}
-\item The implementation of the constructor and our \lstinline{add}
-  method:
+
+\item The implementation of the constructor.
 \begin{cxx}
 // the constructor defines what is available from Urbi
-adder::adder (const std::string& s)
-  : UObject (s) // required
+adder::adder(const std::string& s)
+  : UObject(s) // required
 {
   // Bind the variable.
-  UBindVar (adder, v);
+  UBindVar(adder, v);
 
   // Bind the function.
-  UBindFunction (adder, add);
+  UBindFunction(adder, add);
 }
+\end{cxx}
 
+\item The implementation of our \lstinline{add} method.
+\begin{cxx}
 double
-adder::add (double rhs)
+adder::add(double rhs) const
 {
-  return v + rhs;
+  return ((double) v) + rhs;
 }
 \end{cxx}
 \item And register this class:
