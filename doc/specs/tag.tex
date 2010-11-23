@@ -133,8 +133,6 @@ As with \refSlot{stop}, one can force the value of stopped
 expressions.
 
 \begin{urbiassert}[firstnumber=1]
-["foo", "foo", "foo"]
-==
 {
   var t = Tag.new;
   var res = [];
@@ -142,7 +140,9 @@ expressions.
     detach(res << {t: sleep(inf)});
   t.block("foo");
   res;
-};
+}
+==
+["foo", "foo", "foo"];
 \end{urbiassert}
 
 \subsubsection{Freeze/unfreeze}
@@ -233,12 +233,11 @@ t: {echo("inside"); 42};
 [00000000] 42
 \end{urbiscript}
 
-This feature is fundamental; it is a concise and safe way to ensure
-code will be executed upon exiting a chunk of code (like
-\acro{raii} in \Cxx or \lstinline|finally| in Java). The exit code
-will be run no matter what the reason for leaving the block was:
-natural exit, exceptions, flow control statements like
-\lstinline|return| or \lstinline|break|, \ldots
+This feature is fundamental; it is a concise and safe way to ensure code
+will be executed upon exiting a chunk of code (like \acro{raii} in \Cxx or
+\lstinline|finally| in Java). The exit code will be run no matter what the
+reason for leaving the block was: natural exit, exceptions, flow control
+statements like \lstinline|return| or \lstinline|break|, \ldots
 
 For instance, suppose we want to make sure we turn the gas off when
 we're done cooking. Here is the \emph{bad} way to do it:
@@ -248,9 +247,7 @@ we're done cooking. Here is the \emph{bad} way to do it:
   function cook()
   {
     turnGasOn();
-
     // Cooking code ...
-
     turnGasOff();
   }|
 
@@ -260,9 +257,9 @@ we're done cooking. Here is the \emph{bad} way to do it:
 };
 \end{urbiscript}
 
-This is wrong because there are several situations where we could leave
-the kitchen with gas still turned on. Consider the following cooking
-code:
+This \lstinline|cook| function is wrong because there are several situations
+where we could leave the kitchen with gas still turned on. Consider the
+following cooking code:
 
 \begin{urbiscript}
 {
@@ -274,32 +271,28 @@ code:
     {
       echo("The meal is already there, nothing to do!");
       // Oops ...
-      return
+      return;
     };
 
-    for (var ingredient in recipe)
-      if (ingredient not in kitchen)
-        // Oops ...
-        throw Exception("missing ingredient: %s" % ingredient)
+    for (var i in recipe)
+      if (i in kitchen)
+        putIngredient(i)
       else
-        putIngredient();
+        // Oops ...
+        throw Exception("missing ingredient: %s" % i);
 
     // ...
 
     turnGasOff();
   }|
-
-  enterTheKitchen();
-  cook();
-  leaveTheKitchen();
 };
 \end{urbiscript}
 
-Here, if the meal was already prepared, or if an
-ingredient is missing, we will leave the \lstinline|cook| function
-without executing the \lstinline|turnGasOff| statement, through the
-\lstinline|return| statement or the exception. The right way to ensure
-gas is necessarily turned off is:
+Here, if the meal was already prepared, or if an ingredient is missing, we
+will leave the \lstinline|cook| function without executing the
+\lstinline|turnGasOff| statement, through the \lstinline|return| statement
+or the exception.  One correct way to ensure gas is necessarily turned off
+is:
 
 \begin{urbiscript}
 {
@@ -309,18 +302,37 @@ gas is necessarily turned off is:
 
     at (withGas.enter?)
       turnGasOn();
+    // Even if exceptions are thrown or return is called,
+    // the gas will be turned off.
     at (withGas.leave?)
       turnGasOff();
 
     withGas: {
-      // Cooking code. Even if exception are thrown here or return is called,
-      // the gas will be turned off.
+      // Cooking code...
     }
   }|
+};
+\end{urbiscript}
 
-  enterTheKitchen();
-  cook();
-  leaveTheKitchen();
+Alternatively, the \lstinline|try|/\lstinline|finally| construct provides an
+elegant means to achieve the same result (\autoref{sec:lang:except:finally}).
+
+\begin{urbiscript}
+{
+  function cook()
+  {
+    try
+    {
+      turnGasOn();
+      // Cooking code...
+    }
+    finally
+    {
+      // Even if exceptions are thrown or return is called,
+      // the gas will be turned off.
+      turnGasOff();
+    }
+  }|
 };
 \end{urbiscript}
 
