@@ -68,6 +68,11 @@ namespace runner
                    unsigned local, unsigned captured);
 
 
+    /// Push a whole new context. Returns a token for pop_context.
+    unsigned push_context(rObject self);
+    /// Pop the context.
+    void pop_context(unsigned base, unsigned local, unsigned captured);
+
   /*---------------.
   | Reading values |
   `---------------*/
@@ -137,6 +142,8 @@ namespace runner
     local_stack_type captured_stack_;
     /// The closed variables frame pointer
     unsigned local_pointer_;
+    /// The bottom of the local stack
+    unsigned local_base_;
     /// The captured variables frame pointer
     unsigned captured_pointer_;
   };

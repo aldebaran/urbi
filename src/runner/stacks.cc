@@ -16,9 +16,10 @@
 #include <ast/local-assignment.hh>
 #include <ast/local-declaration.hh>
 #include <ast/local.hh>
+#include <object/symbols.hh>
+#include <runner/stacks.hh>
 #include <urbi/object/slot.hh>
 #include <urbi/object/slot.hxx>
-#include <runner/stacks.hh>
 
 namespace runner
 {
@@ -28,10 +29,27 @@ namespace runner
 
   Stacks::Stacks(rObject lobby)
     : local_pointer_(0)
+    , local_base_(local_pointer_)
     , captured_pointer_(0)
   {
-    // Push toplevel's 'this' and 'call'.
-    local_stack_ << new Slot(lobby) << new Slot();
+    // Create toplevel frame.
+    push_frame(SYMBOL(toplevel), 0, 0, lobby, 0);
+  }
+
+  unsigned
+  Stacks::push_context(rObject self)
+  {
+    push_frame(SYMBOL(context), 0, 0, self, 0);
+    unsigned previous = local_base_;
+    local_base_ = local_pointer_;
+    return previous;
+  }
+
+  void
+  Stacks::pop_context(unsigned base, unsigned local, unsigned captured)
+  {
+    pop_frame(SYMBOL(context), local, captured);
+    local_base_ = base;
   }
 
   void
@@ -118,14 +136,14 @@ namespace runner
   Stacks::def(ast::rConstLocalDeclaration e, rObject v, bool constant)
   {
     // The toplevel's stack grows on demand.
-    if (local_pointer_ == 0)
+    if (local_pointer_ == local_base_)
     {
+      const size_t size = local_base_ + e->local_index_get() + 2;
       // FIXME: We may have to grow the stacks by more than one
       // because of a binder limitation. See FIXME in Binder::bind.
-      if (e->local_index_get() + 2 >= local_stack_.size())
+      if (size >= local_stack_.size())
       {
-        for (unsigned i = local_stack_.size();
-             i <= e->local_index_get() + 2; ++i)
+        for (unsigned i = local_stack_.size(); i <= size; ++i)
         {
           rSlot slot = new Slot();
           slot->constant_set(constant);
