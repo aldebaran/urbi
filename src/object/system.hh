@@ -35,13 +35,15 @@ namespace urbi
     /// \param input   the file name, or the string, being parsed
     /// \returns the result of the evaluation.
     rObject execute_parsed(parser::parse_result_type p,
-                           libport::Symbol fun, const std::string& input);
+                           libport::Symbol fun, const std::string& input,
+                           rObject self = 0);
     /// Set the current script name
     void system_set_program_name(const std::string& name);
     /// Register a new user-argument for the script
     void system_push_argument(const std::string& arg);
     /// System.eval
     rObject eval(const std::string& code);
+    rObject eval(const std::string& code, rObject self);
 
     /// Initialize the System class.
     void system_class_initialize();

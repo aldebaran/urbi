@@ -66,19 +66,11 @@ namespace urbi
     using ::kernel::interpreter;
     using ::kernel::runner;
 
-    // Extract a filename from a String or a Path object
-    static std::string
-    filename_get(const rObject& o)
-    {
-      if (o.is_a<Path>())
-        return o->as<Path>()->as_string();
-      return from_urbi<std::string>(o);
-    }
-
     /// \param context  if there is an error message, the string to display.
     rObject
     execute_parsed(parser::parse_result_type p,
-                   libport::Symbol fun, const std::string& context)
+                   libport::Symbol, const std::string& context,
+                   rObject self)
     {
       runner::Interpreter& run = interpreter();
 
@@ -117,25 +109,8 @@ namespace urbi
       if (!ast)
         RAISE(context);
 
-      runner::Interpreter* sub = new runner::Interpreter(run, ast, fun);
-      // So that it will resist to the call to yield_until_terminated,
-      // and will be reclaimed at the end of the scope.
-      sched::rJob job = sub;
-      sched::Job::Collector collector(&run);
-      run.register_child(sub, collector);
-      sub->start_job();
-      try
-      {
-        run.yield_until_terminated(*job);
-      }
-      catch (const sched::ChildException& ce)
-      {
-        // Kill the sub-job and propagate.
-        ce.rethrow_child_exception();
-      }
-      return sub->result_get();
+      return run.eval(ast.get(), self ? self : rObject(run.lobby_get()));
     }
-
 
     rObject system_class;
 
@@ -180,22 +155,35 @@ namespace urbi
       return (r.scheduler_get().get_time() - r.time_shift_get()) / 1000000.0;
     }
 
-    static rObject
-    system_eval(const rObject&, const std::string& code)
+    rObject
+    eval(const std::string& code)
     {
       return execute_parsed(parser::parse(code, ast::loc()),
                             SYMBOL(eval), code);
     }
 
-    rObject eval(const std::string& code)
+    rObject
+    eval(const std::string& code, rObject)
     {
-      return system_eval(0, code);
+      return execute_parsed(parser::parse(code, ast::loc()),
+                            SYMBOL(eval), code);
     }
 
     static rObject
-    system_searchFile(const rObject&, const rObject& f)
+    eval(rObject, const std::string& code)
     {
-      const std::string& filename = filename_get(f);
+      return eval(code);
+    }
+
+    static rObject
+    eval(rObject, const std::string& code, rObject self)
+    {
+      return eval(code, self);
+    }
+
+    static rObject
+    system_searchFile(const rObject&, const std::string& filename)
+    {
       try
       {
         return new Path(::kernel::urbiserver->find_file(filename));
@@ -232,15 +220,21 @@ namespace urbi
     }
 
     static rObject
-    system_loadFile(const rObject&, const rObject& f)
+    loadFile(rObject, const std::string& filename, rObject self)
     {
-      const std::string& filename = filename_get(f);
 #if defined ENABLE_SERIALIZATION
       if (!libport::path(filename).exists())
         runner::raise_urbi(SYMBOL(FileNotFound), to_urbi(filename));
 #endif
-      return execute_parsed(parser::parse_file(filename),
-                            SYMBOL(loadFile), filename);
+      rObject res = execute_parsed(parser::parse_file(filename),
+                                   SYMBOL(loadFile), filename, self);
+      return res;
+    }
+
+    static rObject
+    loadFile(rObject self, const std::string& filename)
+    {
+      return loadFile(self, filename, 0);
     }
 
     static rObject
@@ -418,7 +412,7 @@ namespace urbi
 #undef MESSAGE
 
     static void
-    load(const rObject& name, bool global)
+    load(const std::string& filename, bool global)
     {
       libport::xlt_advise dl;
       dl.ext   ()
@@ -428,7 +422,7 @@ namespace urbi
       libport::xlt_handle handle;
       try
       {
-        handle = dl.open(filename_get(name));
+        handle = dl.open(filename);
       }
       catch(const libport::xlt_advise::exception& e)
       {
@@ -444,13 +438,13 @@ namespace urbi
     }
 
     static void
-    system_loadLibrary(const rObject&, const rObject& name)
+    system_loadLibrary(const rObject&, const std::string& name)
     {
       load(name, true);
     }
 
     static void
-    system_loadModule(const rObject&, const rObject& name)
+    system_loadModule(const rObject&, const std::string& name)
     {
       load(name, false);
     }
@@ -506,9 +500,9 @@ namespace urbi
     static system_files_type system_files_;
 
     static void
-    system_addSystemFile(const rObject&, libport::Symbol name)
+    system_addSystemFile(const rObject&, rObject name)
     {
-      system_files_.insert(name);
+      system_files_.insert(libport::Symbol(from_urbi<std::string>(name)));
     }
 
     static void
@@ -632,11 +626,9 @@ namespace urbi
       DECLARE(breakpoint);
       DECLARE(currentRunner);
       DECLARE(cycle);
-      DECLARE(eval);
       DECLARE(getenv);
       DECLARE(interactive);
       DECLARE(jobs);
-      DECLARE(loadFile);
       DECLARE(loadLibrary);
       DECLARE(loadModule);
       DECLARE(noVoidError);
@@ -668,6 +660,14 @@ namespace urbi
 
       system_class->bind(SYMBOL(searchPath), &system_searchPath,
                          SYMBOL(searchPathSet), &system_searchPathSet);
+      system_class->bind(SYMBOL(eval),
+                         static_cast<rObject (*)(rObject, const std::string&)>(&eval));
+      system_class->bind(SYMBOL(eval),
+                         static_cast<rObject (*)(rObject, const std::string&, rObject)>(&eval));
+      system_class->bind(SYMBOL(loadFile),
+                         static_cast<rObject (*)(rObject, const std::string&)>(&loadFile));
+      system_class->bind(SYMBOL(loadFile),
+                         static_cast<rObject (*)(rObject, const std::string&, rObject)>(&loadFile));
     }
 
   } // namespace object

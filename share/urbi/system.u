@@ -86,6 +86,7 @@ do (System)
   var loadFile_ = &loadFile;
 
   var defaultIsSystem = true;
+  loadFile->constant = false;
   loadFile = function(file, isSystem = defaultIsSystem)
   {
     var res = loadFile_(file).acceptVoid |
@@ -95,6 +96,7 @@ do (System)
     } |
     res.unacceptVoid
   };
+  loadFile->constant = true;
 
   addSystemFile("urbi/urbi.u");
   addSystemFile(searchFile("urbi/urbi.u").asString);
