@@ -87,8 +87,11 @@ namespace runner
     virtual ~Interpreter();
     /// \}
 
-    /// The entry point: visit \a e.
+    /// Visit \a e within the current context.
     ATTRIBUTE_ALWAYS_INLINE object::rObject operator() (const ast::Ast* e);
+
+    /// Evaluate \a e in a new context.
+    object::rObject eval(const ast::Ast* e, rObject self);
 
     // Apply methods summary:
     //
