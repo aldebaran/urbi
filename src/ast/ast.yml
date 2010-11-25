@@ -1033,11 +1033,15 @@ LocalDeclaration:
   super: LocalWrite
   attributes:
     - constant:
-        desc: /// Whether this slot should be constant
+        desc: Whether this slot should be constant
         type: bool
         access: rW
         init: "false"
   printer:
+    - '{
+         if (n->constant_get())
+           ostr_ << "const ";
+       }'
     - '"var "'
     - $what
     - '{

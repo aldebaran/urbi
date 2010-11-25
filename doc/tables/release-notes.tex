@@ -18,7 +18,7 @@ This chapter lists the user-visible changes in \usdk releases.
   \ifx\ifHtml\undefined%
     \marginpar{%
       \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
-      
+
       #2.
     }%
   \fi%
@@ -78,6 +78,14 @@ function Foo.'=='(var that)
   \lstinline|Exception.Argument| that wraps around any \lstinline|Exception|
   instead.
 \end{itemize}
+\item Objects created with the \lstinline|class| keyword have a new
+  \lstinline|super| member that returns the main prototype of the object.
+\begin{urbiscript}
+class Bar {} |;
+class Foo : Bar {} |;
+assert(Bar.super == Object);
+assert(Foo.super == Bar);
+\end{urbiscript}
 
 \subsection{Documentation}
 \begin{itemize}
