@@ -8,22 +8,23 @@
 
 \section{Dictionary}
 
-A \dfn{dictionary} is an \dfn{associative array}, also known as a
-\dfn{hash} in some programming languages.  They are arrays whose
-indexes are arbitrary objects.
+A \dfn{dictionary} is an \dfn{associative array}, also known as a \dfn{hash}
+in some programming languages.  They are arrays whose indexes are arbitrary
+objects.
 
 \subsection{Example}
 
-The following session demonstrates the features of the Dictionary
-objects.
+The following session demonstrates the features of the Dictionary objects.
 
 \begin{urbiscript}[firstnumber=1]
 var d = ["one" => 1, "two" => 2];
 [00000001] ["one" => 1, "two" => 2]
+
 for (var p : d)
   echo (p.first + " => " + p.second);
 [00000003] *** one => 1
 [00000002] *** two => 2
+
 "three" in d;
 [00000004] false
 d["three"];
@@ -39,14 +40,14 @@ d.getWithDefault("four", 4);
 \label{sec:dictionary:hash}
 
 Arbitrary objects can be used as dictionary keys. To map to the same cell,
-two objects used as key must have equal hashes (retrieved with the
-\refSlot[Object]{hash} method) and equal each other (in the
+two objects used as keys must have equal hashes (retrieved with the
+\refSlot[Object]{hash} method) and be equal to each other (in the
 \refSlot[Object]{==} sense).
 
-This mean two different objects can have the same hash: the equality
+This means that two different objects may have the same hash: the equality
 operator (\refSlot[Object]{==}) is checked in addition to the hash, to
-handle such collision. A good hash algorithm should avoid this case however,
-since it hinders performances.
+handle such collision.  However a good hash algorithm should avoid this
+case, since it hinders performances.
 
 See \refSlot[Object]{hash} for more detail on how to override hash
 values. Most standard value-based classes implement a reasonable hash
@@ -137,9 +138,9 @@ An extra comma can be added at the end of the list.
 \end{urbiassert}
 
 
-\item[asList]
-  Return the contents of the dictionary as a \refObject{Pair} list
-  (\var{key}, \var{value}).
+\item[asList]%
+  The contents of the dictionary as a \refObject{Pair} list (\var{key},
+  \var{value}).
 
 \begin{urbiassert}
 ["one" => 1, "two" => 2].asList == [("one", 1), ("two", 2)];
@@ -236,9 +237,9 @@ catch (var e if e.isA(Dictionary.KeyError))
 %% \end{urbiscript}
 
 
-\item[get](<key>)
-  Return the value associated to \var{key}.  A
-  Dictionary.KeyError exception is thrown if the key is missing.
+\item[get](<key>)%
+  The value associated to \var{key}.  A \lstinline|Dictionary.KeyError|
+  exception is thrown if the key is missing.
 
   % FIXME: the following exception test should be rewritten when (if)
   % we introduce the throw assertion.

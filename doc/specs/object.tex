@@ -284,23 +284,23 @@ b.getSlot("ENOENT");
 [00041066:error] !!! lookup failed: ENOENT
 \end{urbiscript}
 
-\item[hash] Return a \refObject{Hash} object corresponding to this object.
-  This default implementation returns a different hash for every object, so
-  every key maps to a different cells. Classes that have value semantic
-  should override the hash method so as objects that are equal (in the
-  \refSlot[Object]{==} sense) have the same hash. \refSlot[String]{hash}
-  does so for instance; as a consequence different strings with the same
-  value map to the same cell.
+\item[hash]%
+  A \refObject{Hash} object for \this.  This default implementation returns
+  a different hash for every object, so every key maps to a different
+  cells. Classes that have value semantic should override the hash method so
+  as objects that are equal (in the \refSlot[Object]{==} sense) have the
+  same hash. \refSlot[String]{hash} does so for instance; as a consequence
+  different String objects with the same value map to the same cell.
 
   A hash only makes sense as long as the hashed object exists.
 
 \begin{urbiscript}
-var h1 = Object.new|
-var h2 = Object.new|
+var o1 = Object.new|
+var o2 = Object.new|
 assert
 {
-  h1.hash == h1.hash;
-  h1.hash != h2.hash;
+  o1.hash == o1.hash;
+  o1.hash != o2.hash;
 };
 \end{urbiscript}
 

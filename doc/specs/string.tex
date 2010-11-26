@@ -124,9 +124,9 @@ String.fromAscii(0xFF) == "\xff";
   == [0, 1, 2, 254, 255];
 \end{urbiassert}
 
-\item[hash] Return a \refObject{Hash} object corresponding to this string
-  value. Two string hashes are equal if the string are equal. See
-  \refSlot[Object]{hash}.
+\item[hash]%
+  A \refObject{Hash} object corresponding to this string value. Two string
+  hashes are equal if the string are equal. See \refSlot[Object]{hash}.
 
 \begin{urbiassert}
 "".hash.isA(Hash);

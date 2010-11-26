@@ -8,12 +8,11 @@
 
 \section{Hash}
 
-A \dfn{hash} is a condensed, easily comparable representation of
-another value. They are mainly used to map \refObject{Dictionary} keys
-to values.
+A \dfn{hash} is a condensed, easily comparable representation of another
+value. They are mainly used to map \refObject{Dictionary} keys to values.
 
-Equal objects must always have the same hash. Different objects
-should, as much as possible, have different hashes.
+Equal objects must always have the same hash. Different objects should, as
+much as possible, have different hashes.
 
 \subsection{Prototypes}
 \begin{refObjects}
@@ -28,14 +27,23 @@ Object.new.hash.isA(Hash);
 
 \subsection{Slots}
 \begin{urbiscriptapi}
-\item[asFloat] A Float value equivalent to the \lstinline|Hash|
-  object. Two hashes have the same Float representation if and only if
-  they are equal.
-\item[combine](<other>) combine \var{other}'s hash with \var{this},
-  and return \var{this}. This is used to hash composite objects based
-  on more primitive object hashes. For instance, an object with two
-  slots could be hashed by hashing its first first, and combining the
-  second in.
+\item[asFloat] A Float value equivalent to the \lstinline|Hash| object. Two
+  hashes have the same Float representation if and only if they are equal.
+\begin{urbiscript}
+var h1 = Object.new.hash|;
+var h2 = Object.new.hash|;
+assert
+{
+  h1.asFloat == h1.asFloat;
+  h1.asFloat != h2.asFloat;
+};
+\end{urbiscript}
+
+\item[combine](<that>)%
+  Combine \that's hash with \this, and return \this. This is used to hash
+  composite objects based on more primitive object hashes. For instance, an
+  object with two slots could be hashed by hashing its first first, and
+  combining the second in.
 
 \begin{urbiscript}
 class C
@@ -59,3 +67,11 @@ assert
 };
 \end{urbiscript}
 \end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
