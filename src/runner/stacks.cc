@@ -28,87 +28,89 @@ namespace runner
   using object::rSlot;
 
   Stacks::Stacks(rObject lobby)
-    : local_pointer_(0)
-    , local_base_(local_pointer_)
-    , captured_pointer_(0)
+    : toplevel_stack_()
+    , current_frame_(0, 0)
+    , depth_(0)
   {
-    // Create toplevel frame.
-    push_frame(SYMBOL(toplevel), 0, 0, lobby, 0);
+    toplevel_stack_ << new Slot(lobby) << new Slot;
+    current_frame_.first = &toplevel_stack_[0];
+    current_frame_.second = 0;
   }
 
-  unsigned
+
+  Stacks::context_type
   Stacks::push_context(rObject self)
   {
-    push_frame(SYMBOL(context), 0, 0, self, 0);
-    unsigned previous = local_base_;
-    local_base_ = local_pointer_;
-    return previous;
+    context_type res(toplevel_stack_, current_frame_, depth_);
+    toplevel_stack_.clear();
+    toplevel_stack_ << new Slot(self) << new Slot;
+    current_frame_.first = &toplevel_stack_[0];
+    current_frame_.second = 0;
+    depth_ = 0;
+    return res;
   }
 
   void
-  Stacks::pop_context(unsigned base, unsigned local, unsigned captured)
+  Stacks::pop_context(const context_type& previous_context)
   {
-    pop_frame(SYMBOL(context), local, captured);
-    local_base_ = base;
+    toplevel_stack_ = previous_context.toplevel_stack;
+    current_frame_ = previous_context.frame;
+    depth_ = previous_context.depth;
+    if (depth_ == 0)
+      current_frame_.first = &toplevel_stack_[0];
   }
 
-  void
+  Stacks::frame_type
   Stacks::push_frame(libport::Symbol,
-                     unsigned local, unsigned captured,
+                     frame_type frame,
                      rObject self, rObject call)
   {
-    // Reserve room for 'this' and 'call'.
-    local += 2;
-
-    // Adjust frame pointers.
-    local_pointer_ = local_stack_.size();
-    captured_pointer_ = captured_stack_.size();
-
-    // Grow stacks.
-    local_stack_.resize(local_pointer_ + local);
-    unsigned size = captured_pointer_ + captured;
-    captured_stack_.resize(size, rSlot());
-    for (unsigned i = captured_pointer_; i < size; ++i)
-      captured_stack_[i] = new Slot();
+    // Switch frame.
+    frame_type prev = current_frame_;
+    current_frame_ = frame;
 
     // Bind 'this' and 'call'.
     this_set(self);
     call_set(call);
+    ++depth_;
+
+    // Return previous frame.
+    return prev;
   }
 
   void
   Stacks::this_set(rObject s)
   {
-    local_stack_[local_pointer_] = new Slot(s);
+    // FIXME: new slot?
+    current_frame_.first[0] = new Slot(s);
   }
 
   void
   Stacks::call_set(rObject v)
   {
-    local_stack_[local_pointer_ + 1] = new Slot(v);
+    // FIXME: new slot?
+    current_frame_.first[1] = new Slot(v);
   }
 
   Stacks::rObject
   Stacks::this_get()
   {
-    return *local_stack_[local_pointer_];
+    return *current_frame_.first[0];
   }
 
   Stacks::rObject
   Stacks::call()
   {
-    return *local_stack_[local_pointer_ + 1];
+    return *current_frame_.first[1];
   }
 
   void
-  Stacks::pop_frame(libport::Symbol,
-                    unsigned local, unsigned captured)
+  Stacks::pop_frame(libport::Symbol, frame_type prev)
   {
-    local_stack_.resize(local_pointer_, rSlot());
-    captured_stack_.resize(captured_pointer_, rSlot());
-
-    local_pointer_ = local;
-    captured_pointer_ = captured;
+    --depth_;
+    current_frame_ = prev;
+    if (!depth_)
+      current_frame_.first = &toplevel_stack_[0];
   }
 
   void
@@ -121,35 +123,30 @@ namespace runner
   Stacks::set(unsigned local, bool captured, rObject v)
   {
     if (captured)
-    {
-      unsigned idx = captured_pointer_ + local;
-      *captured_stack_[idx] = v;
-    }
+      *current_frame_.second[local] = v;
     else
-    {
-      unsigned idx = local_pointer_ + local + 2;
-      *local_stack_[idx] = v;
-    }
+      *current_frame_.first[local + 2] = v;
   }
 
   void
   Stacks::def(ast::rConstLocalDeclaration e, rObject v, bool constant)
   {
     // The toplevel's stack grows on demand.
-    if (local_pointer_ == local_base_)
+    if (depth_ == 0)
     {
-      const size_t size = local_base_ + e->local_index_get() + 2;
+      const size_t size = e->local_index_get() + 2;
       // FIXME: We may have to grow the stacks by more than one
       // because of a binder limitation. See FIXME in Binder::bind.
-      if (size >= local_stack_.size())
+      if (size >= toplevel_stack_.size())
       {
-        for (unsigned i = local_stack_.size(); i <= size; ++i)
+        for (unsigned i = toplevel_stack_.size(); i <= size; ++i)
         {
           rSlot slot = new Slot();
           slot->constant_set(constant);
-          local_stack_ << slot;
+          toplevel_stack_ << slot;
         }
       }
+      current_frame_.first = &toplevel_stack_[0];
     }
 
     rSlot slot = new Slot(v);
@@ -160,7 +157,7 @@ namespace runner
   void
   Stacks::def_arg(ast::rConstLocalDeclaration e, rObject v)
   {
-    def(e->local_index_get(), v);
+    def(e->local_index_get() + 2, v);
   }
 
   void
@@ -174,41 +171,24 @@ namespace runner
   {
     aver(v);
     if (captured)
-    {
-      unsigned idx = captured_pointer_ + local;
-      captured_stack_[idx] = v;
-    }
+      current_frame_.second[local] = v;
     else
-    {
-      unsigned idx = local_pointer_ + local;
-      local_stack_[idx] = v;
-    }
+      current_frame_.first[local] = v;
   }
 
   void
   Stacks::def(unsigned local, rObject v)
   {
-    unsigned idx = local_pointer_ + local + 2;
-    local_stack_[idx] = new Slot(v);
+    current_frame_.first[local] = new Slot(v);
   }
 
   Stacks::rSlot
-  Stacks::rget(libport::Symbol name, unsigned index, unsigned depth)
+  Stacks::rget(libport::Symbol, unsigned index, unsigned depth)
   {
-    (void)name;
-    rSlot res;
-
     if (depth)
-    {
-      unsigned idx = captured_pointer_ + index;
-      res = captured_stack_[idx];
-    }
+      return current_frame_.second[index];
     else
-    {
-      unsigned idx = local_pointer_ + 2 + index;
-      res = local_stack_[idx];
-    }
-    return res;
+      return current_frame_.first[index + 2];
   }
 
   Stacks::rSlot

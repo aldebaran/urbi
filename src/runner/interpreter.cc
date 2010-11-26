@@ -405,11 +405,10 @@ namespace runner
   object::rObject
   Interpreter::eval(const ast::Ast* e, rObject self)
   {
-    size_t local_pointer = stacks_.local_pointer();
-    size_t captured_pointer = stacks_.captured_pointer();
-    unsigned token = stacks_.push_context(self);
-    rObject res = operator()(e);
-    stacks_.pop_context(token, local_pointer, captured_pointer);
+    Stacks::context_type ctx = stacks_.push_context(self);
+    rObject res;
+    res = operator()(e);
+    stacks_.pop_context(ctx);
     return res;
   }
 

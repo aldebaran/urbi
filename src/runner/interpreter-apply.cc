@@ -260,22 +260,24 @@ namespace runner
       call = call_message;
     }
 
-    size_t local_pointer = stacks_.local_pointer();
-    size_t captured_pointer = stacks_.captured_pointer();
     size_t local = ast->local_size_get();
     size_t captured = ast->captured_variables_get()->size();
     // Use closure's lobby if there is one.
     if (ast->closure_get() && function->lobby_get())
       lobby_set(function->lobby_get());
     // Push new frames on the stacks
-    stacks_.push_frame(msg, local, captured, self, call);
+    local += 2;
+    rSlot local_stack[local];
+    rSlot captured_stack[captured];
+    Stacks::frame_type previous_frame =
+      stacks_.push_frame(msg, Stacks::frame_type(&local_stack[0], &captured_stack[0]),
+                         self, call);
     FINALLY(((Stacks&, stacks_))
             ((libport::Symbol, msg))
-            ((size_t, local_pointer))
-            ((size_t, captured_pointer))
+            ((Stacks::frame_type, previous_frame))
             ((rLobby&, lobby_))
             ((rLobby, caller_lobby)),
-            stacks_.pop_frame(msg, local_pointer, captured_pointer);
+            stacks_.pop_frame(msg, previous_frame);
             lobby_ = caller_lobby;
     );
 

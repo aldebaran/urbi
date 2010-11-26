@@ -34,6 +34,25 @@ namespace runner
     /// Type of callable entities.
     typedef boost::function0<void> action_type;
 
+    /// Type of a stack frame.
+    typedef std::pair<rSlot*, rSlot*> frame_type;
+
+    /// Type of the toplevel variable stack.
+    typedef std::vector<rSlot> toplevel_stack_type;
+
+    /// Type of a context.
+    struct context_type
+    {
+      context_type(const toplevel_stack_type& s, frame_type f, unsigned d)
+        : toplevel_stack(s)
+        , frame(f)
+        , depth(d)
+      {}
+      toplevel_stack_type toplevel_stack;
+      frame_type frame;
+      unsigned depth;
+    };
+
   /*-------------.
   | Contsruction |
   `-------------*/
@@ -58,20 +77,19 @@ namespace runner
      *  \param self     Value of 'this' in the new frame.
      *  \param call     Value of 'call' in the new frame.
      */
-    void
+    frame_type
     push_frame(libport::Symbol msg,
-               unsigned local, unsigned captured,
+               frame_type local_frame,
                rObject self, rObject call);
 
     /// Helper to restore a previous frame state
-    void pop_frame(libport::Symbol msg,
-                   unsigned local, unsigned captured);
+    void pop_frame(libport::Symbol msg, frame_type previous_frame);
 
 
     /// Push a whole new context. Returns a token for pop_context.
-    unsigned push_context(rObject self);
+    context_type push_context(rObject self);
     /// Pop the context.
-    void pop_context(unsigned base, unsigned local, unsigned captured);
+    void pop_context(const context_type& previous_context);
 
   /*---------------.
   | Reading values |
@@ -89,10 +107,6 @@ namespace runner
     rObject this_get();
     /// Get 'call'.
     rObject call();
-    /// Get the current local pointer.
-    unsigned local_pointer() const;
-    /// Get the current captured pointer.
-    unsigned captured_pointer() const;
 
   private:
     /// Factored helpers for both rget.
@@ -137,15 +151,9 @@ namespace runner
   private:
     /// The double-indirection local stack, for captured and
     /// closed-over variables
-    typedef std::vector<rSlot> local_stack_type;
-    local_stack_type local_stack_;
-    local_stack_type captured_stack_;
-    /// The closed variables frame pointer
-    unsigned local_pointer_;
-    /// The bottom of the local stack
-    unsigned local_base_;
-    /// The captured variables frame pointer
-    unsigned captured_pointer_;
+    toplevel_stack_type toplevel_stack_;
+    frame_type current_frame_;
+    unsigned depth_;
   };
 }
 
