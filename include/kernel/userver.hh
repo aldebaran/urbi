@@ -237,16 +237,19 @@ namespace kernel
   public:
     void schedule(urbi::object::rObject target, libport::Symbol method,
                   const urbi::object::objects_type& args = urbi::object::objects_type());
+    void schedule(libport::Symbol method, boost::function0<void> callback);
 
   private:
     struct AsyncJob
     {
       AsyncJob(urbi::object::rObject t, libport::Symbol m,
                const urbi::object::objects_type& a);
-
+      AsyncJob(boost::function0<void> callback, libport::Symbol m);
       urbi::object::rObject target;
       libport::Symbol method;
       urbi::object::objects_type args;
+      boost::function0<void> callback;
+      bool synchronous;
     };
     std::vector<AsyncJob> async_jobs_;
     libport::Lockable async_jobs_lock_;

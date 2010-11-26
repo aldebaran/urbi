@@ -471,13 +471,23 @@ namespace kernel
       libport::BlockLock lock(async_jobs_lock_);
       foreach (AsyncJob& job, async_jobs_)
       {
-        object::rPrimitive p = new object::Primitive
-          (boost::bind(method_wrap, job.target, job.method, job.args, _1));
-
         // Clone the shell to run asynchronous jobs.
-        runner::Interpreter* interpreter =  new runner::Interpreter
-          (*ghost_connection_get().shell_get(), p, job.method, job.args);
-
+        runner::Interpreter* interpreter = 0;
+        if (job.target)
+        {
+          object::rPrimitive p = new object::Primitive
+          (boost::bind(method_wrap, job.target, job.method, job.args, _1));
+          interpreter =  new runner::Interpreter
+            (*ghost_connection_get().shell_get(), p, job.method, job.args);
+        }
+        else if (job.callback)
+        {
+          interpreter = new runner::Interpreter
+          (ghost_connection_get().lobby_get(), *scheduler_, job.callback,
+           ghost_connection_get().lobby_get(), job.method);
+        }
+        else
+          pabort("Uninitialized AsyncJob in async_jobs");
         // Clean the tag stack because the shell could be frozen and
         // scheduled jobs have no reason to inherit frozen tags.
         interpreter->tag_stack_clear();
@@ -508,12 +518,26 @@ namespace kernel
     wake_up();
   }
 
+  void
+  UServer::schedule(libport::Symbol method, boost::function0<void> callback)
+  {
+    libport::BlockLock lock(async_jobs_lock_);
+    async_jobs_.push_back(AsyncJob(callback, method));
+    wake_up();
+  }
+
   UServer::AsyncJob::AsyncJob(object::rObject t, libport::Symbol m,
                               const object::objects_type& a)
     : target(t)
     , method(m)
     , args(a)
   {}
+
+   UServer::AsyncJob::AsyncJob(boost::function0<void> c,
+                               libport::Symbol m)
+   : method(m)
+   , callback(c)
+   {}
 
   static void bounce_disconnection(UConnection* uc)
   {
