@@ -156,7 +156,7 @@ namespace urbi
       /// \return 0 if there is no such slot.
       rSlot local_slot_get(key_type k) const;
 
-      /// Remove slot.
+      /// Remove (local) slot.
       Object& slot_remove(key_type k);
       /// Read only access to slots.
       const slots_implem& slots_get() const;
@@ -268,12 +268,13 @@ namespace urbi
       /// \throw Exception.Lookup if not available locally.
       rObject getLocalSlot(key_type k);
       rObject getProperty(const std::string& slot, const std::string& prop);
-      bool    hasSlot(const std::string& k);
-      bool    hasLocalSlot(const std::string& k);
+      bool hasSlot(const std::string& k);
+      bool hasLocalSlot(const std::string& k);
       rObject urbi_locateSlot(key_type k);
       rDictionary urbi_properties(key_type slotName);
       rObject urbi_removeSlot(key_type k);
-      rObject setProperty(const std::string& slot, const std::string& prop, const rObject& value);
+      rObject setProperty(const std::string& slot,
+                          const std::string& prop, const rObject& value);
       rObject setSlot(key_type slot, const rObject& value);
       // Convenience overload because Symbols don't cast to strings.
       rObject setSlot(const std::string& slot, const rObject& value);
@@ -289,7 +290,8 @@ namespace urbi
       template <typename T>
       void bind(const std::string& name, T);
       template <typename F1, typename F2>
-      void bind(const std::string& getter_name, F1 getter, const std::string& setter_name, F2 setter);
+      void bind(const std::string& getter_name, F1 getter,
+                const std::string& setter_name, F2 setter);
       void bind_variadic(const std::string& name,
                          const boost::function1<rObject, const objects_type&>& val);
       template <typename Return, typename Self>
