@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1218 utf-8
+personal_ws-1.1 en 1221 utf-8
 aaa
 abc
 abcdef
@@ -78,6 +78,7 @@ aspell
 asPrimitive
 asPrintable
 asProcess
+assertCall
 asString
 AST
 ASTs
@@ -456,6 +457,7 @@ InputStreams
 insectoid
 insertBack
 insertFront
+insertUnique
 installcheck
 interruptible
 io
@@ -798,6 +800,7 @@ removeAllSlots
 removeBack
 removeById
 removeFront
+removeLocalSlot
 removeProperty
 removeProto
 removeSlot
