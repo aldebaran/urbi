@@ -283,6 +283,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     // Output result
     [nodes, edges]
   };
+
   /// Make a 'short' version with one node per UObject from the full graph
   function shortGraph(graph)
   {
@@ -320,6 +321,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     };
     [nodes, hashedEdges.asList.map(function(v) { v.second})]
   };
+
   /// Add UObject statistics data to the graph. Modifies the graph inplace.
   function addStats(graph, stats=uobjects.getStats)
   {
@@ -346,10 +348,12 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     };
     graph
   };
+
   function killEdges(edges, name)
   {
     edges.filter(function(x) { x[0]!= name && x[1] != name})
   };
+
   function getUVar(name)
   {
     var names = name.split(".");
@@ -358,6 +362,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     else
       nil
   };
+
   // Handle RTC components.
   function filterRTC(graph)
   {
@@ -380,6 +385,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
         }
       }
     };
+
     // Now create connector_profiles and links, update/create UVars
     for|(var on: uobjects.localSlotNames)
     {
@@ -435,6 +441,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     };
     [nodes, edges]
   };
+
   /// Output a dot-format string from nodes and edges.
   function dotify(graph)
   {
@@ -457,7 +464,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
       };
       res += "];\n";
     };
-    for|(var e: edges)
+    for| (var e: edges)
     {
       res += e[0] + " -- " + e[1] + " [";
       var noprop = true;
@@ -477,6 +484,7 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     res += "}\n";
     res
   };
+
   function step()
   {
     var ngraph = filterRTC(addStats(makeGraph));
@@ -498,15 +506,15 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     content.keywords = "jpeg 100 100";
     val = content;
   };
+
   function run(period)
   {
     startMonitor;
     var f = File.create("/tmp/dataflow.dot");
     every|(period)
-    {
-      step()
-    }
+      step
   };
+
   var monitor = Tag.new;
   var uvarBindings = Dictionary.new;
   var uvarSetters = Dictionary.new;

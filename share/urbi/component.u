@@ -24,6 +24,7 @@ class Global.Localization {} | do (Localization)
     }
   };
   var name = "";
+
   function init(index, name, compactName=nil)
   {
     var this.name = name |
@@ -33,10 +34,12 @@ class Global.Localization {} | do (Localization)
     else
       var this.compactName = name[0].toUpper
   };
+
   function asString()
   {
     name
   };
+
   makeEnum(Localization,
            up,
            inbetween,
@@ -75,11 +78,13 @@ var Global.Localizer = Group.new | do (Global.Localizer)
     var this.dict = Dictionary.new |
     addProto(Component)
   };
+
   function '[]'
   {
     var key = getKey(call.argString(0)) |
     get(key)
   };
+
   function getKey(keyString)
   {
     if (Localization.hasLocalSlot(keyString))
@@ -87,12 +92,14 @@ var Global.Localizer = Group.new | do (Global.Localizer)
     else
       eval(keyString).asString
   };
+
   function '[]='
   {
     var key = getKey(call.argString(0)) |
     var v = call.evalArgAt(1) |
     set(key, v)
   };
+
   function get(key)
   {
     var okey = key |
@@ -104,6 +111,7 @@ var Global.Localizer = Group.new | do (Global.Localizer)
       set(okey, Component.new(key)) |
     dict.get(key)
   };
+
   function set(key, val)
   {
     var okey = key |
@@ -122,12 +130,14 @@ var Global.Localizer = Group.new | do (Global.Localizer)
     val.componentName = key |
     val
   };
+
   function has(key)
   {
     if (key.isA(Localization))
       key = key.name |
     dict.has(key)
   };
+
   function asString()
   {
     "Localizer <" + dict.keys.join(", ") + ">"
@@ -161,6 +171,7 @@ class Global.Component
     res.protos.insertFront(this) |
     res
   };
+
   function updateSlot(name, val)
   {
     if (hasLocalSlot(name))
@@ -168,17 +179,20 @@ class Global.Component
     else
       Group.&updateSlot.apply([this, name, val], "updateSlot")
   };
+
   function init(name)
   {
     var this.componentName = name;
     var this.parentComponent = nil;
     var this.cachedNames;
   };
+
   /// Add a localizer name \b name as a sub-component of this.
   function addLocalizer(name)
   {
     addComponent(Localizer.new(name))
   };
+
   /// Add component \b value (or named value) as a sub-component of this.
   function addComponent(value)
   {
@@ -190,6 +204,7 @@ class Global.Component
     Object.&updateSlot.apply([value, "parentComponent", this]) |
     value
   };
+
   /// Add device \b value, name it \b name.
   function addDevice(name, value)
   {
@@ -201,6 +216,7 @@ class Global.Component
     this << value |
     value
   };
+
   function asString()
   {
     if (this === Component)
@@ -220,6 +236,7 @@ class Global.Component
       res[0, res.length - 2] + ">"
     }
   };
+
   /// Get all devices and subdevices of type \b filter
   function allMembers(var filter=Interface)
   {
@@ -233,11 +250,13 @@ class Global.Component
         res << m |
     res
   };
+
   /// Give a flattened view of all the implemented Facets in the hierarchy.
   function flatDump()
   {
     dumpByInterface(allMembers)
   };
+
   function dumpByInterface(what, indent=0)
   {
     var bf = Dictionary.new|
@@ -257,6 +276,7 @@ class Global.Component
                  x.componentName
              }).sort.join(" "))
   };
+
   /// Hierarchical dump of all components and devices
   function dump(var indent = 0)
   {
@@ -269,6 +289,7 @@ class Global.Component
     members.filter(function(x) { x.isA(Component)})
       .each(function(x) {x.dump(indent+2)})
   };
+
   /// Give the full name of a device by crawling through the hieararchy
   function Object.fullname()
   {
@@ -294,6 +315,7 @@ class Global.Component
     } |
     name
   };
+
   function Dictionary.merge(b)
   {
     for| (var k:keys)
@@ -303,6 +325,7 @@ class Global.Component
        if (!has(k))
          set(k, b.get(k))
   };
+
   // Store at each level a map nodename->[loc1, loc2...]
   function Object.cacheNames()
   {
@@ -319,6 +342,7 @@ class Global.Component
     |
       cachedNames.set(componentName, [this])
   };
+
   /// Call makeCompactName() on all components and devices.
   function Object.makeCompactNames(where=Global, cache=true)
   {
@@ -330,6 +354,7 @@ class Global.Component
         for|(var m: members)
           m.makeCompactNames(where, false)
   };
+
   /** Generate the compact name for current Device/Component.
    *
    *  The algorithm goes through the hierarchy, and include in the name
@@ -372,8 +397,7 @@ class Global.Component
           first = ""
         }
       }|
-      if (base && p.cachedNames[base].size
-          == robot.cachedNames[base].size)
+      if (base && p.cachedNames[base].size == robot.cachedNames[base].size)
       break |
       next = p |
       p = p.parentComponent
