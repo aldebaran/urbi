@@ -91,12 +91,14 @@ namespace urbi
       return it->second;
     }
 
-    inline void
+    inline bool
     CentralizedSlots::erase(Object* owner, const key_type& key)
     {
       loc_index_type::iterator it = where(owner, key);
-      if (it != content_->end())
-        loc_index_.erase(it);
+      if (it == content_->end())
+	return false;
+      loc_index_.erase(it);
+      return true;
     }
 
     inline bool

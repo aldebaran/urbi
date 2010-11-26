@@ -85,7 +85,9 @@ namespace urbi
       /// Get a past-the-end cosnt iterator.
       static const_iterator end(const Object* owner);
       /// Erase \a owner's \a key slot.
-      static void erase(Object* owner, const key_type& key);
+      /// @return Success status.
+      ///         I.e., false if the slot was not defined (entailing failure).
+      static bool erase(Object* owner, const key_type& key);
       /// Get \a owner's \a key slot's value.
       static value_type get(const Object* owner, const key_type& key);
       /// Return whether \a owner has a \a key slot.
