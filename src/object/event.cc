@@ -150,25 +150,31 @@ namespace urbi
         return;
       objects_type args;
       args << this << this;
-      rObject pattern = (*actions->guard)(args);
+      rObject pattern = nil_class;
+      if (actions->guard)
+        pattern = (*actions->guard)(args);
       if (pattern != void_class)
       {
         args << pattern;
-        register_stop_job(stop_job_type(actions->leave, args));
-        if (detach)
+        if (actions->leave)
+          register_stop_job(stop_job_type(actions->leave, args));
+        if (actions->enter)
         {
-          typedef rObject(Executable::*fun_type)(objects_type);
-          sched::rJob job =
+          if (detach)
+          {
+            typedef rObject(Executable::*fun_type)(objects_type);
+            sched::rJob job =
             new runner::Interpreter
             (actions->lobby?actions->lobby:r.lobby_get(),
              r.scheduler_get(),
              boost::bind(static_cast<fun_type>(&Executable::operator()),
                          actions->enter.get(), args),
              this, SYMBOL(at));
-          job->start_job();
+            job->start_job();
+          }
+          else
+            (*actions->enter)(args);
         }
-        else
-          (*actions->enter)(args);
       }
     }
 
