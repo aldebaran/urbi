@@ -12,6 +12,8 @@
 # define RUNNER_STACKS_HXX
 
 # include <libport/bind.hh>
+# include <libport/config.h>
+# include <libport/compilation.hh>
 
 # include <ast/local-assignment.hh>
 # include <ast/local-declaration.hh>
@@ -73,8 +75,8 @@ namespace runner
     current_frame_ = frame;
 
     // Bind 'this' and 'call'.
-    this_set(self);
-    call_set(call);
+    current_frame_.first[0] = new Slot(self);
+    current_frame_.first[1] = new Slot(call);
     ++depth_;
 
     // Return previous frame.
@@ -85,16 +87,14 @@ namespace runner
   void
   Stacks::this_set(rObject s)
   {
-    // FIXME: new slot?
-    current_frame_.first[0] = new Slot(s);
+    *current_frame_.first[0] = s;
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
   void
   Stacks::call_set(rObject v)
   {
-    // FIXME: new slot?
-    current_frame_.first[1] = new Slot(v);
+    *current_frame_.first[1] = v;
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
@@ -151,11 +151,7 @@ namespace runner
       if (size >= toplevel_stack_.size())
       {
         for (unsigned i = toplevel_stack_.size(); i <= size; ++i)
-        {
-          rSlot slot = new Slot();
-          slot->constant_set(constant);
-          toplevel_stack_ << slot;
-        }
+          toplevel_stack_ << rSlot();
       }
       current_frame_.first = &toplevel_stack_[0];
     }
@@ -194,7 +190,7 @@ namespace runner
   void
   Stacks::def(unsigned local, rObject v)
   {
-    current_frame_.first[local] = new Slot(v);
+    def(local, false, new Slot(v));
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
