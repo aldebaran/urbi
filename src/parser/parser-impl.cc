@@ -178,7 +178,7 @@ namespace parser
     const char* synerr = "syntax error, ";
     if (boost::algorithm::starts_with(err, synerr))
       boost::algorithm::erase_head(err, strlen(synerr));
-    errors_.err(l, err);
+    errors_.err(l, err, "syntax error");
   }
 
   void
