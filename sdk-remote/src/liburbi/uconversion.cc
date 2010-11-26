@@ -127,9 +127,9 @@ namespace urbi
       int c298 = c * 298;
       int d = in[i+1] - 128;
       int e = in[i+2] - 128;
-      out[i] = clamp((c298 + 409*e + 128) >> 8);
+      out[i+2] = clamp((c298 + 409*e + 128) >> 8);
       out[i+1] = clamp((c298 + 100*d - 20*e + 128) >> 8);
-      out[i+2] = clamp((c298 + 516*d + 128) >> 8);
+      out[i] = clamp((c298 + 516*d + 128) >> 8);
       /* Float version, 5 times slower on p4.
       float y = in[i];
       float cb = in[i + 1];
@@ -507,6 +507,8 @@ namespace urbi
 	targetformat = 1;
 	break;
       case IMAGE_YCbCr:
+      case IMAGE_NV12:
+      case IMAGE_YUV411_PLANAR:
 	targetformat = 0;
 	break;
       case IMAGE_JPEG:
@@ -575,11 +577,11 @@ namespace urbi
         for (unsigned i=0; i< src.width*src.height; i+=2)
         {
           uncompressedData[i*3] = src.data[i*2];
-          uncompressedData[i*3 + 1] = src.data[i*2+1];
-          uncompressedData[i*3 + 2] = src.data[i*2+3];
+          uncompressedData[i*3 + 2] = src.data[i*2+1];
+          uncompressedData[i*3 + 1] = src.data[i*2+3];
           uncompressedData[(i+1)*3] = src.data[i*2+2];
-          uncompressedData[(i+1)*3 + 1] = src.data[i*2+1];
-          uncompressedData[(i+1)*3 + 2] = src.data[i*2+3];
+          uncompressedData[(i+1)*3 + 2] = src.data[i*2+1];
+          uncompressedData[(i+1)*3 + 1] = src.data[i*2+3];
         }
         break;
       case IMAGE_YUV411_PLANAR:
@@ -588,16 +590,32 @@ namespace urbi
           uncompressedData = (byte*)malloc(src.width * src.height * 3);
           allocated = true;
           unsigned char* cy = src.data;
-          unsigned char* u = cy+320*240;
-          unsigned char* v = u+320*240/4;
+          unsigned char* u = cy + w*h;
+          unsigned char* v = u + w*h/4;
           int w = src.width;
           int h = src.height;
           for (int x=0; x<w;++x)
             for (int y=0; y<h; ++y)
             {
               uncompressedData[(x+y*w)*3+0] = cy[x+y*w];
-              uncompressedData[(x+y*w)*3+1] = u[x/2 + (y/2)*w/2];
-              uncompressedData[(x+y*w)*3+2] = v[x/2 + (y/2)*w/2];
+              uncompressedData[(x+y*w)*3+2] = u[x/2 + (y/2)*w/2];
+              uncompressedData[(x+y*w)*3+1] = v[x/2 + (y/2)*w/2];
+            }
+        }
+        break;
+      case IMAGE_NV12:
+        {
+          format = 1;
+          uncompressedData = (byte*)malloc(src.width * src.height * 3);
+          allocated = true;
+          unsigned char* cy = src.data;
+          unsigned char* uv = src.data + w*h;
+          for (unsigned int x=0; x<w;++x)
+            for (unsigned int y=0; y<h; ++y)
+            {
+              uncompressedData[(x+y*w)*3+0] = cy[x+y*w];
+              uncompressedData[(x+y*w)*3+2] = uv[((x>>1) + (((y>>1)*w)>>1))*2];
+              uncompressedData[(x+y*w)*3+1] = uv[((x>>1) + (((y>>1)*w)>>1))*2 + 1];
             }
         }
         break;
@@ -619,6 +637,7 @@ namespace urbi
           uncompressedData[i*3] = src.data[i/2] & 0xF0;
           uncompressedData[(i+1)*3] = (src.data[i/2] & 0x0F) << 4;
         }
+        break;
       case IMAGE_UNKNOWN:
 	break;
     }
@@ -685,6 +704,39 @@ namespace urbi
 			   (byte*) dest.data, dsz, 80);
         dest.size = dsz;
 	break;
+      case IMAGE_YUV411_PLANAR:
+        {
+          unsigned int plane = dest.width * dest.height;
+          for (unsigned int i=0; i<dest.width * dest.height;++i)
+            dest.data[i] = uncompressedData[i*3];
+          for (unsigned int y=0; y<dest.height; y+=2)
+            for (unsigned int x=0; x<dest.width; x+=2)
+            {
+              dest.data[plane + x/2 + y*dest.width/4]
+                = uncompressedData[(x+y*dest.width)*3+2];
+              dest.data[plane+plane/4 + x/2 + y*dest.width/4]
+                = uncompressedData[(x+y*dest.width)*3+1];
+            }
+          break;
+        }
+      case IMAGE_NV12:
+        {
+          unsigned int planeS = dest.width * dest.height;
+          // y plane
+          for (unsigned int p=0; p<planeS; ++p)
+            dest.data[p] = uncompressedData[p*3];
+          // crcb interleaved plane
+          for (unsigned int y=0; y<dest.height; y+=2)
+            for (unsigned int x=0; x<dest.width; x+=2)
+            {
+              dest.data[planeS + x + y*dest.width/2]
+                = uncompressedData[(x+y*dest.width)*3+2];
+              dest.data[planeS + x + y*dest.width/2 +1 ]
+                = uncompressedData[(x+y*dest.width)*3+1];
+            }
+          dest.size = planeS * 3 / 2;
+        }
+        break;
       default:
         printf("Image conversion to format %s is not implemented\n",
                dest.format_string());

@@ -34,6 +34,7 @@ namespace urbi
     IMAGE_GREY8 = 6,   ///< Grey image, 1 byte/pixel
     IMAGE_GREY4 = 7,   ///< Grey image, two pixels per byte
     IMAGE_YUV411_PLANAR=8, ///< 4y 1u1v planar
+    IMAGE_NV12=9,      ///< planar y then interleaved uv subsampled 2x2.
   };
 
 
