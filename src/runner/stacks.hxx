@@ -23,7 +23,6 @@
 
 namespace runner
 {
-  typedef Stacks::action_type action_type;
   using object::Slot;
   using object::rSlot;
 

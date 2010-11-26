@@ -31,9 +31,6 @@ namespace runner
     typedef object::rObject rObject;
     typedef object::rSlot   rSlot;
 
-    /// Type of callable entities.
-    typedef boost::function0<void> action_type;
-
     /// Type of a stack frame.
     typedef std::pair<rSlot*, rSlot*> frame_type;
 
