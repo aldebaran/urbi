@@ -18,7 +18,6 @@ do (Object)
     var res = Object.clone |
     if (protos)
       res.setProtos(protos) |
-    const var res.super = res.protos[0] |
     var res.type = name |
     res.setSlot("as" + name, function () { this })|
     res

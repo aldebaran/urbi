@@ -84,18 +84,6 @@ function Foo.'=='(var that)
 };
 \end{urbiunchecked}
 
-\item Objects created with the \lstinline|class| keyword have a new
-  \lstinline|super| member that returns the main prototype of the object.
-\begin{urbiscript}
-class Bar {} |;
-class Foo : Bar {} |;
-assert
-{
-  Bar.super == Object;
-  Foo.super == Bar;
-};
-\end{urbiscript}
-
 \item \refObject{Dictionary} keys can now be arbitrary objects. Objects
   hashing can be overridden. See \refSlot[Object]{hash}.
 

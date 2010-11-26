@@ -603,8 +603,6 @@ This results in the (constant) definition of the name \var{lvalue} in the
 current context (\lstinline|class| construct can be used inside a scope or
 in an object) with:
 \begin{itemize}
-\item a constant slot named \lstinline|super| which evaluates to
-  \var{expression} if a prototype is given and \refObject{Object} if none.
 \item a slot named \lstinline|type| which is a the trailing component of
   \var{lvalue} as a \refObject{String};
 \item a slot named \lstinline|as\var{type}| that returns \this.
@@ -638,7 +636,6 @@ class Global.Derive : Base
 assert
 {
   Global.hasLocalSlot("Derive");
-  Global.Derive.super == Base;
   Global.Derive.type == "Derive";
   Global.Derive.protos == [Base];
   Global.Derive.slot == 34;
