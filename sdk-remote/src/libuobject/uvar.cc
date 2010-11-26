@@ -423,7 +423,7 @@ namespace urbi
                          name.substr(0, p), name.substr(p+1, name.npos),
                          enable
                          ? "setSlot(\"inputPort\", true)"
-                         : "removeSlot(\"inputPort\")"));
+                         : "removeLocalSlot(\"inputPort\")"));
     ctx->dataSent = true;
   }
 

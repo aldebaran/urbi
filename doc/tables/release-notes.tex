@@ -30,10 +30,6 @@ This chapter lists the user-visible changes in \usdk releases.
 \subsection{Fixes}
 
 \begin{itemize}
-\item More types of empty statements are warned about.  For instance \urbi
-  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
-  body, and recommends writing \lstinline|if (foo) {};|.
-
 \item Memory consumption at start-up is reduced.
 \end{itemize}
 
@@ -41,6 +37,11 @@ This chapter lists the user-visible changes in \usdk releases.
 \begin{itemize}
 \item \refSlot[List]{insertUnique} inserts a member if it's not already part
   of the list.
+
+\item \refSlot[Object]{removeLocalSlot}.  It raises an error when asked to
+  remove of a non-existing slot.  Please note that, contrary to what its
+  name suggests, \refSlot[Object]{removeSlot} is only removing \emph{local}
+  slots.  Using \refSlot[Object]{removeLocalSlot} is encouraged.
 
 \item \command{urbi-launch} and \command{urbi-send} support
   \option{-m}/\option{--module=\var{file}}, to load a module
@@ -52,9 +53,6 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \item The search paths for \us files (\refSlot[System]{searchPath}) and for
   UObject files (\refSlot[UObject]{searchPath}) can be changed from \us.
-
-\item \refSlot[Object]{getProperty} raises an error if the property does not
-  exist.  It used to return \lstinline|void|.
 
 \item New syntactic sugar for \refSlot[Object]{getSlot}:
   \lstinline|\var{o}.&\var{name}| is equivalent to
@@ -86,12 +84,6 @@ function Foo.'=='(var that)
 };
 \end{urbiunchecked}
 
-\item \refSlot[Dictionary]{erase} raises an error if the key does not exit.
-
-\item \lstinline|Exception.ArgumentType| is deprecated, use
-  \lstinline|Exception.Argument| that wraps around any \lstinline|Exception|
-  instead.
-
 \item Objects created with the \lstinline|class| keyword have a new
   \lstinline|super| member that returns the main prototype of the object.
 \begin{urbiscript}
@@ -103,6 +95,33 @@ assert
   Foo.super == Bar;
 };
 \end{urbiscript}
+\end{itemize}
+
+\subsection{Changes}
+\begin{itemize}
+\item More types of empty statements are warned about.  For instance \urbi
+  used to accept silently \lstinline|if (foo);|.  It now warns about the empty
+  body, and recommends writing \lstinline|if (foo) {};|.
+
+\item \refSlot[Dictionary]{erase} raises an error if the key does not exit.
+
+\item \lstinline|Exception.ArgumentType| is deprecated, use
+  \lstinline|Exception.Argument| that wraps around any \lstinline|Exception|
+  instead.
+
+\item \refSlot[Object]{getProperty} raises an error if the property does not
+  exist.  It used to return \lstinline|void|.
+
+\item \refSlot[Object]{removeSlot} warns when asked to remove of a
+  non-existing slot.
+\begin{urbiscript}
+removeSlot("doesNotExist")|;
+[00000002:warning] !!! no such local slot: doesNotExist
+[00000002:warning] !!!    called from: removeSlot
+\end{urbiscript}
+  In the past, it used to accept this silently; in the future, this will be
+  an error, as with \refSlot[Object]{removeLocalSlot}.  Use
+  \refSlot[Object]{hasLocalSlot} beforehand, if needed.
 \end{itemize}
 
 

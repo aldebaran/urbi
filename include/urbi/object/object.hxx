@@ -75,11 +75,10 @@ namespace urbi
     }
 
     inline
-    Object&
+    bool
     Object::slot_remove(key_type k)
     {
-      slots_.erase(this, k);
-      return *this;
+      return slots_.erase(this, k);
     }
 
     inline

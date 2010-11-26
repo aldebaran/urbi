@@ -364,6 +364,7 @@ namespace urbi
       DECLARE(locateSlot         , &Object::urbi_locateSlot);
       DECLARE(properties         , &Object::urbi_properties);
       DECLARE(removeProperty     , &Object::property_remove);
+      DECLARE(removeLocalSlot    , &Object::urbi_removeLocalSlot);
       DECLARE(removeSlot         , &Object::urbi_removeSlot);
       DECLARE(setConstSlot       , &Object::urbi_setConstSlot);
       DECLARE(setProperty        , &Object::property_set);

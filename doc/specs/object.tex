@@ -413,9 +413,9 @@ do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
 \end{urbiscript}
 
 \item[removeProperty](<slotName>, <propName>)%
-  Remove the property \var{propName} from the slot \var{slotName}.
-  Raise an error if the slot does not exist, do nothing if the
-  property does not exist.
+  Remove the property \var{propName} from the slot \var{slotName}.  Raise an
+  error if the slot does not exist, do nothing if the property does not
+  exist.
 \begin{urbiscript}
 do (2)
 {
@@ -452,9 +452,41 @@ do (Object.new)
 }|;
 \end{urbiscript}
 
+\item[removeLocalSlot](<slot>)%
+  Remove \var{slot} from the (local) list of slots of \this, and return
+  \this.  Raise an error if \var{slot} does not exist.  See also
+  \refSlot{removeSlot}.
+\begin{urbiscript}
+var base = Object.new|;
+var base.slot = "base"|;
+
+var derive = Base.new|;
+var derive.slot = "derive"|;
+
+derive.removeLocalSlot("foo");
+[00000080:error] !!! lookup failed: foo
+
+assert
+{
+  derive.removeLocalSlot("slot") === derive;
+  derive.localSlotNames == [];
+  base.slot == "base";
+};
+
+derive.removeLocalSlot("slot");
+[00000090:error] !!! lookup failed: slot
+
+assert
+{
+  base.slot == "base";
+};
+\end{urbiscript}
+
+
 \item[removeSlot](<slot>)%
   Remove \var{slot} from the (local) list of slots of \this, and return
-  \this.  Do nothing if \var{slot} does not exist.
+  \this.  Warn if \var{slot} does not exist; in the future this will be an
+  error.  See also \refSlot{removeLocalSlot}.
 \begin{urbiscript}
 {
   var base = Object.new;
@@ -463,24 +495,35 @@ do (Object.new)
   var derive = Base.new;
   var derive.slot = "derive";
 
-  do (derive)
+  assert
   {
-    assert
-    {
-      removeSlot("no such slot") === this;
-      removeSlot("slot") === this;
-      localSlotNames == [];
-      base.slot == "base";
-      removeSlot("slot") === this;
-      base.slot == "base";
-    };
-  }|;
+    derive.removeSlot("foo") === derive;
+[00000080:warning] !!! no such local slot: foo
+[00000080:warning] !!!    called from: removeSlot
+[00000080:warning] !!!    called from: code
+[00000080:warning] !!!    called from: eval
+[00000080:warning] !!!    called from: value
+[00000080:warning] !!!    called from: assertCall
+
+    derive.removeSlot("slot") === derive;
+    derive.localSlotNames == [];
+    base.slot == "base";
+    derive.removeSlot("slot") === derive;
+[00000099:warning] !!! no such local slot: slot
+[00000099:warning] !!!    called from: removeSlot
+[00000099:warning] !!!    called from: code
+[00000099:warning] !!!    called from: eval
+[00000099:warning] !!!    called from: value
+[00000099:warning] !!!    called from: assertCall
+
+    base.slot == "base";
+  };
 };
 \end{urbiscript}
 
 
-\item[setConstSlot]
-  Like \lstinline|setSlot| but the created slot is const.
+\item[setConstSlot]%
+  Like \refSlot{setSlot} but the created slot is const.
 \begin{urbiscript}
 assert(setConstSlot("fortyTwo", 42) == 42);
 fortyTwo = 51;

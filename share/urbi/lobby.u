@@ -86,10 +86,10 @@ do (Lobby)
     Lobby.systemLobby.echo("disconnecting " + this) |
     // Break the reference loop of notifyChange local to this lobby.
     if (hasLocalSlot("handle") && handle.isA(Finalizable))
-      removeSlot("handle")|
+      removeLocalSlot("handle")|
     // Reverse connect socket has a closure on lobby.
     if (hasLocalSlot("socket"))
-      removeSlot("socket")|
+      removeLocalSlot("socket")|
     onDisconnect!(this)
   };
 

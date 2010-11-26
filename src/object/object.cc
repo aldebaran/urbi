@@ -570,9 +570,23 @@ namespace urbi
     }
 
     rObject
+    Object::urbi_removeLocalSlot(key_type name)
+    {
+      if (!slot_remove(name))
+        runner::raise_lookup_error(name, const_cast<Object*>(this), false);
+      return this;
+    }
+
+    rObject
     Object::urbi_removeSlot(key_type name)
     {
-      slot_remove(name);
+      if (!slot_remove(name))
+      {
+        runner::Runner& r = ::kernel::runner();
+        r.send_message("warning",
+                       libport::format("!!! no such local slot: %s", name));
+        r.show_backtrace("warning");
+      }
       return this;
     }
 

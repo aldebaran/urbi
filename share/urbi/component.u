@@ -329,8 +329,9 @@ class Global.Component
   // Store at each level a map nodename->[loc1, loc2...]
   function Object.cacheNames()
   {
-    // Avoid problems with group updateslot
-    removeSlot("cachedNames") |
+    // Avoid problems with group updateslot.
+    if (hasLocalSlot("cachedNames"))
+      removeLocalSlot("cachedNames") |
     var this.cachedNames = Dictionary.new |
     if (isA(Group))
       for| (var m: members)
@@ -338,9 +339,8 @@ class Global.Component
         m.cacheNames() |
         cachedNames.merge(m.cachedNames) |
         cachedNames.getWithDefault(m.componentName, [], true).insertBack(this)
-      }
-    |
-      cachedNames.set(componentName, [this])
+      }|
+    cachedNames.set(componentName, [this])
   };
 
   /// Call makeCompactName() on all components and devices.
@@ -351,7 +351,7 @@ class Global.Component
     if (!cache)
       makeCompactName |
     if (isA(Group))
-        for|(var m: members)
+        for| (var m: members)
           m.makeCompactNames(where, false)
   };
 
@@ -408,7 +408,9 @@ class Global.Component
         where.setSlot(name, this) |
         where.setProperty(name, "constant", true)
     }|
-    removeSlot("compactName") | setSlot("compactName", name)
+    if (hasLocalSlot("compactName"))
+      removeLocalSlot("compactName")|
+    setSlot("compactName", name)
   }|;
 
 };

@@ -82,7 +82,7 @@ do (Global.UObject)
     var name = __uobjectName |
     var remote = hasLocalSlot("isRemote") |
     var lob = lobby | // will find this.lobby if we are a remote uobject
-    uobjects.removeSlot(__uobjectName)|
+    uobjects.removeLocalSlot(__uobjectName)|
     // Deregister all callbacks
     handle = nil|
     // Remove reference loops induced by closures.
@@ -90,7 +90,7 @@ do (Global.UObject)
       if (getSlot(f).isA(UVar))
         removeProperty(f + "_quote_n", "updateHook") |
     for| (var f: localSlotNames.remove("__uobjectName").remove("finalize"))
-      removeSlot(f)|
+      removeLocalSlot(f)|
     // Destroy C++ UObject instance
     if (!remote)
     {
@@ -282,8 +282,8 @@ do (&UVar)
     var slotName = name + "_quote_n"|
     // If the slot was containing a float, it already has a *_quote_n
     // slot, which is not the right one.
-    if (parent.hasSlot(slotName))
-      parent.removeSlot(slotName) |
+    if (parent.hasLocalSlot(slotName))
+      parent.removeLocalSlot(slotName) |
     parent.setSlot(slotName, function ()
       {
         var min = parent.getSlot(name).getProperty("val", "rangemin")|
@@ -368,7 +368,7 @@ do (&UVar)
 
   var __clone = &clone;
 
-  removeSlot("clone");
+  removeLocalSlot("clone");
   const var clone = function()
   {
     var uv = __clone|
@@ -422,7 +422,7 @@ do (&UVar)
           loopCheck |
           if (!accessInLoop.dict.empty)
           {
-            changed.removeSlot("onSubscribe")|
+            changed.removeLocalSlot("onSubscribe")|
             t.stop
           }
         }
@@ -654,7 +654,7 @@ class Global.'external'
     else
       for| (var s: lobby.getSlot(objname).localSlotNames)
         uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s))|
-    lobby.removeSlot(objname)|
+    lobby.removeLocalSlot(objname)|
     do (uobjects.getSlot(objname))
     {
       var lobby = lobby |
@@ -763,7 +763,7 @@ class Global.'external'
       // The slot already exists, but is not an uvar.
       var v = obj.getSlot(varname).acceptVoid|
       var props = obj.properties(varname)|
-      obj.removeSlot(varname)|
+      obj.removeLocalSlot(varname)|
       UVar.new(obj, varname) |
       if (!v.isVoid())
         obj.updateSlot(varname, v)|

@@ -3952,7 +3952,7 @@ var A = Object.new;
 var A.B = Object.new; // A refers to B
 var A.B.A = A; // B refers back to A
 
-removeSlot("A"); // delete our last reference to A
+removeLocalSlot("A"); // delete our last reference to A
 // Although we have no reference left to A or B,
 // they won't be deleted since they refer to each other.
 \end{urbiunchecked}
@@ -3960,8 +3960,8 @@ removeSlot("A"); // delete our last reference to A
 If you really need the cycle, this is how you could break it manually:
 
 \begin{urbiunchecked}
-A.B.removeSlot("A"); // Break the cycle
-removeSlot("A"); // Delete our last reference to A
+A.B.removeLocalSlot("A"); // Break the cycle
+removeLocalSlot("A"); // Delete our last reference to A
 // A will be deleted since it's not referred from anywhere.
 // Since A held the last reference to B, B will be deleted too.
 \end{urbiunchecked}

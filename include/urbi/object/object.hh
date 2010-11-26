@@ -157,7 +157,8 @@ namespace urbi
       rSlot local_slot_get(key_type k) const;
 
       /// Remove (local) slot.
-      Object& slot_remove(key_type k);
+      /// \return  Whether there was such a slot.
+      bool slot_remove(key_type k);
       /// Read only access to slots.
       const slots_implem& slots_get() const;
 
@@ -272,6 +273,12 @@ namespace urbi
       bool hasLocalSlot(const std::string& k);
       rObject urbi_locateSlot(key_type k);
       rDictionary urbi_properties(key_type slotName);
+
+      /// Raise an error if k is not a local slot name.
+      rObject urbi_removeLocalSlot(key_type k);
+
+      /// Obsolete.  Same as urbi_removeLocalSlot, but make a warning
+      /// instead of an error.
       rObject urbi_removeSlot(key_type k);
       rObject setProperty(const std::string& slot,
                           const std::string& prop, const rObject& value);

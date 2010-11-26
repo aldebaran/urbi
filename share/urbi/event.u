@@ -57,7 +57,7 @@ do (Event)
       if ('$pattern'.hasLocalSlot("instance"))
       {
         '$pattern'.instance.stop |
-        '$pattern'.removeSlot("instance") |
+        '$pattern'.removeLocalSlot("instance") |
       }
     };
     return res
