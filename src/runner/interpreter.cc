@@ -407,8 +407,13 @@ namespace runner
   {
     Stacks::context_type ctx = stacks_.push_context(self);
     rObject res;
-    res = operator()(e);
-    stacks_.pop_context(ctx);
+    {
+      FINALLY(
+        ((Stacks&, stacks_))
+        ((const Stacks::context_type&, ctx)),
+        stacks_.pop_context(ctx));
+      res = operator()(e);
+    }
     return res;
   }
 
