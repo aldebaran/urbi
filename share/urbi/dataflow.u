@@ -8,8 +8,6 @@
  * See the LICENSE file for more information.
  */
 
-
-Global.removeSlot("DataFlow");
 /** Extract the Data Flow from the UObjects.
  *
  * Part of the information is gathered from the UVars, the rest by monitoring
