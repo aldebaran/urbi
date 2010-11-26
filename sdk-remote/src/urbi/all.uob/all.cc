@@ -182,11 +182,18 @@ public:
     // 4 is unbound
     ports[4] = new urbi::InputPort();
     UBindFunctions(all, notifyWriteA, writeAD, writeAS, writeAB, manyWriteTest);
+    UAt(all, boundev);
   }
 
   ~all()
   {
     ++destructionCount;
+  }
+
+  void boundev(double v)
+  {
+    lastChange = "boundev";
+    lastChangeVal = v;
   }
 
   void onRateChange(urbi::UVar&)

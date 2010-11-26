@@ -524,6 +524,22 @@ static rObject wrap_ucallback(const object::objects_type& ol,
 }
 
 
+static rObject wrap_event(const object::objects_type& ol,
+                       urbi::UGenericCallback* ugc,
+                       const std::string& traceName)
+{
+  // we were called with arg1=event instance, arg2 = pattern
+  object::objects_type args = ol[1]->slot_get(SYMBOL(payload))->as<object::List>
+  ()->value_get();
+  if (args.size() == (unsigned int)ugc->nbparam)
+  {
+    return wrap_ucallback(args, ugc, traceName, false);
+  }
+  else
+    GD_FINFO_DEBUG("C++ at %s not called: wrong arity", traceName);
+  return object::void_class;
+}
+
 
 static rObject
 uobject_clone(const object::objects_type& l)
@@ -1312,7 +1328,18 @@ namespace urbi
         LIBPORT_DEBUG("binding " << p.first << "." << owner_->method);
         me->slot_set(libport::Symbol(method), new object::Primitive(
                        boost::function1<rObject, const objects_type&>
-                       (boost::bind(&wrap_ucallback, _1, owner_, traceName))));
+                       (boost::bind(&wrap_ucallback, _1, owner_, traceName,
+                                    true))));
+      }
+      if (owner_->type == "event")
+      {
+        UEvent e = UEvent(p.first, p.second); // force creation of the event
+        rEvent event =
+          me->slot_get(libport::Symbol(method))->as<object::Event>();
+        event->onEvent(0, new object::Primitive(
+                       boost::function1<rObject, const objects_type&>
+                       (boost::bind(&wrap_event, _1, owner_, traceName))),
+                       0);
       }
       if (owner_->type == "var" || owner_->type == "varaccess")
       { // NotifyChange or NotifyAccess callback
