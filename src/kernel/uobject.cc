@@ -461,15 +461,15 @@ static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
 
 static rObject wrap_ucallback(const object::objects_type& ol,
                               urbi::UGenericCallback* ugc,
-                              const std::string& message)
+                              const std::string& message, bool withThis)
 {
   urbi::UList l;
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
-  object::check_arg_count(ol.size() - 1, ugc->nbparam);
+  object::check_arg_count(ol.size() - (withThis?1:0), ugc->nbparam);
   bool tail = false;
   foreach (const rObject& co, ol)
   {
-    if (!tail++)
+    if (withThis && !tail++)
       continue;
     urbi::UValue v = uvalue_cast(co);
     l.array << new urbi::UValue(v);
@@ -821,6 +821,12 @@ namespace urbi
         o->slot_set(Symbol(p.second), e);
     }
 
+    static void doEmit(const std::string& object, object::objects_type& args)
+    {
+       StringPair p = split_name(object);
+       rObject o = get_base(p.first)->slot_get(libport::Symbol(p.second));
+       o->call(SYMBOL(emit), args);
+    }
     void
     KernelUContextImpl::emit(const std::string& object,
                              UAutoValue& v1,
@@ -833,10 +839,6 @@ namespace urbi
                              UAutoValue& v8
                              )
     {
-      LOCK_KERNEL;
-      StringPair p = split_name(object);
-      rObject o = get_base(p.first)->slot_get(libport::Symbol(p.second));
-
       object::objects_type args;
       ARG(1);
       ARG(2);
@@ -846,7 +848,15 @@ namespace urbi
       ARG(6);
       ARG(7);
       ARG(8);
-      o->call(SYMBOL(emit), args);
+      if (!::kernel::urbiserver->isAnotherThread())
+      {
+        doEmit(object, args);
+      }
+      else
+      {
+        ::kernel::urbiserver->schedule(SYMBOL(emit),
+          boost::bind(&doEmit, object, args));
+      }
     }
 
     void
