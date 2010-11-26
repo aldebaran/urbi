@@ -27,11 +27,18 @@ This chapter lists the user-visible changes in \usdk releases.
 \section{\usdk 2.5}
 \release{2.5}{2010-11-xx}
 
-\subsection{New Features}
+\subsection{Fixes}
+
 \begin{itemize}
 \item More types of empty statements are warned about.  For instance \urbi
   used to accept silently \lstinline|if (foo);|.  It now warns about the empty
   body, and recommends writing \lstinline|if (foo) {};|.
+
+\item Memory consumption at start-up is reduced.
+\end{itemize}
+
+\subsection{New Features}
+\begin{itemize}
 \item \command{urbi-launch} and \command{urbi-send} support
   \option{-m}/\option{--module=\var{file}}, to load a module
   (\autoref{sec:tools:urbi-launch}, \autoref{sec:tools:urbi-send}).
@@ -41,9 +48,11 @@ This chapter lists the user-visible changes in \usdk releases.
     example?  A migration guide somewhere?}.
 
 \item The search paths for \us files (\refSlot[System]{searchPath}) and for
-  UObject files (\refSlot[UObject]{searchPath}) can be changed.
+  UObject files (\refSlot[UObject]{searchPath}) can be changed from \us.
+
 \item \refSlot[Object]{getProperty} raises an error if the property does not
   exist.  It used to return \lstinline|void|.
+
 \item New syntactic sugar for \refSlot[Object]{getSlot}:
   \lstinline|\var{o}.&\var{name}| is equivalent to
   \lstinline[style=varInString]|\var{o}.getSlot("\var{name}")| (and
@@ -51,9 +60,9 @@ This chapter lists the user-visible changes in \usdk releases.
   \lstinline[style=varInString]|getSlot("\var{name}")|)).  For
   instance, instead of
 \begin{urbiunchecked}
-function derive.init(var arg)
+function Derive.init(var arg)
 {
-  base.getSlot("init").apply([this, arg]);
+  Base.getSlot("init").apply([this, arg]);
 };
 
 function Foo.'=='(var that)
@@ -63,9 +72,9 @@ function Foo.'=='(var that)
 \end{urbiunchecked}
   write
 \begin{urbiunchecked}
-function derive.init(var arg)
+function Derive.init(var arg)
 {
-  base.&init.apply([this, arg]);
+  Base.&init.apply([this, arg]);
 };
 
 function Foo.'=='(var that)
@@ -73,19 +82,26 @@ function Foo.'=='(var that)
   &accessor == that.&accessor;
 };
 \end{urbiunchecked}
+
 \item \refSlot[Dictionary]{erase} raises an error if the key does not exit.
+
 \item \lstinline|Exception.ArgumentType| is deprecated, use
   \lstinline|Exception.Argument| that wraps around any \lstinline|Exception|
   instead.
-\end{itemize}
+
 \item Objects created with the \lstinline|class| keyword have a new
   \lstinline|super| member that returns the main prototype of the object.
 \begin{urbiscript}
 class Bar {} |;
 class Foo : Bar {} |;
-assert(Bar.super == Object);
-assert(Foo.super == Bar);
+assert
+{
+  Bar.super == Object;
+  Foo.super == Bar;
+};
 \end{urbiscript}
+\end{itemize}
+
 
 \subsection{Documentation}
 \begin{itemize}

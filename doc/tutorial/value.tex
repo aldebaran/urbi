@@ -37,7 +37,7 @@ an object (\refObject{Object}).
 \begin{urbiscript}
 // Inspect it.
 Foo.localSlotNames;
-[00000000] ["a", "asFoo", "b", "type"]
+[00000000] ["a", "asFoo", "b", "super", "type"]
 \end{urbiscript} % fix color $
 
 You can get an object's slot value by using the dot (\lstinline{.})
@@ -57,13 +57,14 @@ convenient short-hand to discover an object (\refObject{Object}).
 \begin{urbiscript}
 Foo.inspect;
 [00000009] *** Inspecting Foo
-[00000010] *** ** Prototypes:
-[00000011] ***   Object
-[00000012] *** ** Local Slots:
-[00000014] ***   a : Float
-[00000015] ***   asFoo : Code
-[00000016] ***   b : String
-[00000013] ***   type : String
+[00000009] *** ** Prototypes:
+[00000009] ***   Object
+[00000009] *** ** Local Slots:
+[00000009] ***   a : Float
+[00000009] ***   asFoo : Code
+[00000009] ***   b : String
+[00000009] ***   super : const Object
+[00000009] ***   type : String
 \end{urbiscript} % fix color $
 
 Let's now try to build such an object. First, we want a fresh object
@@ -147,13 +148,15 @@ function set(object, name, value)
   // We have to use setSlot here, since we don't
   // know the actual name of the slot.
   return object.setSlot("x_" + name, value);
-} |;
+}|;
+
 function get(object, name)
 {
   // We have to use getSlot here, since we don't
   // know the actual name of the slot.
   return object.getSlot("x_" + name);
-} |;
+}|;
+
 var x = Object.clone;
 [00000000] Object_0x00000000
 set(x, "foo", 0);

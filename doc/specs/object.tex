@@ -28,10 +28,9 @@ Object.new;
 [00000421] Object_0x00000000
 \end{urbiscript}
 
-The keyword \lstindex{class} also allows to define objects which are
-intended to serve as prototype of a family of objects, similarly to
-classes in traditional object-oriented programming languages (see
-\autoref{sec:tut:class}).
+The keyword \lstindex{class} also allows to define objects intended to serve
+as prototype of a family of objects, similarly to classes in traditional
+object-oriented programming languages (see \autoref{sec:tut:class}).
 
 \begin{urbiscript}
 {
@@ -41,7 +40,7 @@ classes in traditional object-oriented programming languages (see
   };
   assert
   {
-    Foo.localSlotNames == ["asFoo", "attr", "type"];
+    Foo.localSlotNames == ["asFoo", "attr", "super", "type"];
     Foo.asFoo === Foo;
     Foo.attr == 23;
     Foo.type == "Foo";
