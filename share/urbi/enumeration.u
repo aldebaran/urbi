@@ -23,26 +23,16 @@ class Global.Enumeration : Global.RangeIterable
 
   function init(name, values)
   {
-    this.name = name;
-    this.values = [];
-    this.type = name;
-    var i = 0;
-    for (var value in values)
+    this.name = name|
+    this.values = []|
+    this.type = name|
+    var i = 0|
+    for| (var value in values)
     {
-      var val;
-
-      if (value.isA(Tuple) && value.size == 2)
-      {
-        val = value[1];
-        val.addProto(this);
-        value = value[0]
-      }
-      else
-        val = clone;
-
-      var val.asString = value;
-      setSlot(value, val);
-      this.values << val;
+      var val = clone |
+      var val.asString = value |
+      setSlot(value, val)|
+      this.values << val|
     }
   };
 

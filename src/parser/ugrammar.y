@@ -30,7 +30,6 @@
 
 #include <ast/call.hh>
 #include <ast/catches-type.hh>
-#include <ast/enum-types.hh>
 #include <ast/event-match.hh>
 #include <ast/exps-type.hh>
 #include <ast/factory.hh>
@@ -479,37 +478,23 @@ stmt:
 | Enum.  |
 `-------*/
 
-%type <ast::enum_elt_type>  enum.elt;
-%type <ast::enum_elts_type> enum.id.0;
-%type <ast::enum_elts_type> enum.id.1;
+%type <ast::symbols_type> id.0 id.1;
 
-enum.elt:
-   id         { $$ = std::make_pair($1, ast::rExp(0)); }
-|  id "=" exp { $$ = std::make_pair($1, $3); }
-
-enum.id.0:
-  /* empty */ {}
-| enum.id.0 enum.elt ","
-  {
-    std::swap($$, $1);
-    $$ << $2;
-  }
+id.0:
+  /* empty */    {}
+| id.1 comma.opt { std::swap($$, $1); }
 ;
 
-enum.id.1:
-  /* empty */ {}
-| enum.id.0 enum.elt comma.opt
-  {
-    std::swap($$, $1);
-    $$ << $2;
-  }
+id.1:
+  id            { $$ << $id; }
+| id.1 "," id   { std::swap($$, $1); $$ << $id; }
 ;
 
 %token ENUM "enum";
 stmt:
-  "enum" id "{" enum.id.1 "}"
+  "enum" id "{" id.0 "}"
   {
-    $$ = MAKE(enum, @$, $2, $4);
+    $$ = MAKE(enum, @$, $id, $[id.0]);
   }
 ;
 

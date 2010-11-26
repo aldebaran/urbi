@@ -16,7 +16,6 @@
 # include <libport/ufloat.hh>
 
 # include <ast/catches-type.hh>
-# include <ast/enum-types.hh>
 # include <ast/exps-type.hh>
 # include <ast/flavor.hh>
 # include <ast/fwd.hh>
@@ -148,7 +147,7 @@ namespace ast
     rExp
     make_enum(const yy::location& l,
               libport::Symbol name,
-              const ast::enum_elts_type& pairs) /* const */;
+              const symbols_type& ids) /* const */;
 
     static
     rExp

@@ -59,7 +59,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   ast/cloner.hxx				\
   ast/dot-print.cc				\
   ast/dot-print.hh				\
-  ast/enum-types.hh				\
   ast/event-match.hh				\
   ast/event-match.hxx				\
   ast/event-match.cc				\
