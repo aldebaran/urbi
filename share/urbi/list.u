@@ -124,6 +124,13 @@ do (List)
 
   copySlot ("front", "head");
 
+  function insertUnique(var e)
+  {
+    if (!has(e))
+      insertBack(e)|
+    this
+  };
+
   // Concatenate the string representation of the members, separated by \a sep
   function join(sep = "", prefix = "", suffix = "")
   {

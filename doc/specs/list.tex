@@ -284,57 +284,73 @@ assert([0, 1, 2].head == 0);
 [00000000:error] !!! head: cannot be applied onto empty list
 \end{urbiscript}
 
-\item[insertBack](<that>)%
-  Insert the given element at the end of the target.
-
-\begin{urbiscript}
-do ([0, 1])
-{
-  assert
-  {
-    insertBack(2) == [0, 1, 2];
-    this          == [0, 1, 2];
-  };
-}|;
-\end{urbiscript}
-
 \item[insert](<where>, <what>)%
   Insert \var{what} before the value at index \var{where}, return
   \this.
 \begin{urbiscript}
-do ([0, 1])
 {
+  var l = [0, 1];
   assert
   {
-    insert(0, 10) == [10, 0, 1];
-    this          == [10, 0, 1];
-    insert(2, 20) == [10, 0, 20, 1];
-    this          == [10, 0, 20, 1];
+    l.insert(0, 10) === l;
+    l == [10, 0, 1];
+    l.insert(2, 20) === l;
+    l == [10, 0, 20, 1];
   };
-  insert(4, 30);
 }|;
-[00044239:error] !!! insert: invalid index: 4
 \end{urbiscript}
 
   The index must be valid, to insert past the end, use \refSlot{insertBack}.
 \begin{urbiscript}
 [].insert(0, "foo");
 [00044239:error] !!! insert: invalid index: 0
+[1, 2, 3].insert(4, 30);
+[00044339:error] !!! insert: invalid index: 4
 \end{urbiscript}
 
 
-\item[insertFront](<that>)%
-  Insert the given element at the beginning of the target.
+\item[insertBack](<that>)%
+  Insert the given element at the end of the target, return \this.
 
 \begin{urbiscript}
-do ([1, 2])
 {
+  var l = [0, 1];
   assert
   {
-    insertFront(0) == [0, 1, 2];
-    this           == [0, 1, 2];
+    l.insertBack(2) === l;
+    l == [0, 1, 2];
   };
 }|;
+\end{urbiscript}
+
+\item[insertFront](<that>)%
+  Insert the given element at the beginning of the target.  Return \this.
+
+\begin{urbiscript}
+{
+  var l = [0, 1];
+  assert
+  {
+    l.insertFront(0) === l;
+    l == [0, 0, 1];
+  };
+}|;
+\end{urbiscript}
+
+\item[insertUnique](<that>)%
+  If \var{that} is not in \this, append it. Return \this.
+
+\begin{urbiscript}
+{
+  var l = [0, 1];
+  assert
+  {
+    l.insertUnique(0) === l;
+    l == [0, 1];
+    l.insertUnique(2) === l;
+    l == [0, 1, 2];
+  };
+};
 \end{urbiscript}
 
 \item[join](<sep> = "", <prefix> = "", <suffix> = "")%
@@ -368,8 +384,8 @@ do ([1, 2])
 \end{urbiscript}
 
 \item[map](<fun>)%
-Apply the given functional value on every member, and return the list
-of results.
+  Apply the given functional value on every member, and return the list of
+  results.
 
 \begin{urbiassert}
 [0, 1, 2, 3].map(function (v) { v % 2 == 0})

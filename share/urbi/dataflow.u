@@ -10,14 +10,6 @@
 
 
 Global.removeSlot("DataFlow");
-
-List.removeSlot("insertUnique");
-function List.insertUnique(a)
-{
-  if (!has(a))
-    insertBack(a)
-};
-
 /** Extract the Data Flow from the UObjects.
  *
  * Part of the information is gathered from the UVars, the rest by monitoring
