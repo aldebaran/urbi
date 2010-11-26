@@ -181,6 +181,7 @@ namespace urbi
       mutable UValue cache_;
       typedef std::vector<KernelUGenericCallbackImpl*> callbacks_type;
       callbacks_type callbacks_;
+      object::rUVar ruvar_;
       friend class KernelUGenericCallbackImpl;
     };
 
@@ -336,41 +337,6 @@ static void periodic_call(rObject, ufloat interval, rObject method,
     r.yield_until(target);
   }
 }
-
-/// UObject read to an urbi variable.
-static rObject urbi_get(rObject r, const std::string& slot)
-{
-  object::objects_type args;
-  args << r;
-  Symbol symSlot(slot);
-  LIBPORT_DEBUG("applying get for " << slot << "...");
-  rObject var = r->slot_get(symSlot);
-  // Bypass the apply if we can.
-  if (object::rUVar uvar = var->as<object::UVar>())
-    return uvar->getter(true);
-  else
-    return ::kernel::runner().apply(var, symSlot, args);
-}
-
-/// UObject write to an urbi variable.
-static rObject urbi_set(rObject r, const std::string& slot, rObject v)
-{
-  rObject name = new object::String(slot);
-  object::objects_type args = list_of (r)(name)(v);
-  LIBPORT_DEBUG("applying set...");
-  rObject ret = ::kernel::runner().apply(r->slot_get(SYMBOL(updateSlot)),
-                               SYMBOL(updateSlot), args);
-  LIBPORT_DEBUG("done");
-  return ret;
-}
-
-
-static rObject uvar_get(const std::string& name);
-static rObject uvar_set(const std::string& name, rObject val);
-
-static rObject uvar_uowned_get(const std::string& name);
-static rObject uvar_uowned_set(const std::string& name, rObject val);
-
 
 void uobjects_reload()
 {
@@ -575,56 +541,6 @@ static std::string
 uvar_name_get(const std::string& name)
 {
   return split_name(name).second;
-}
-
-/// Get an rObject from its uvar name
-static rObject
-uvar_get(const std::string& name)
-{
-  StringPair p = split_name(name);
-  rObject o = get_base(p.first);
-  if (!o)
-    runner::raise_lookup_error(libport::Symbol(name), object::global_class);
-  return urbi_get(o, p.second);
-}
-
-/// Write an rObject to a slot from its uvar name
-static rObject
-uvar_set(const std::string& name, rObject val)
-{
-  StringPair p = split_name(name);
-  rObject o = get_base(p.first);
-  if (!o)
-    runner::raise_lookup_error(libport::Symbol(name), object::global_class);
-  return urbi_set(o, p.second, val);
-}
-
-/// UVar get in owned mode: directly access the value.
-static rObject
-uvar_uowned_get(const std::string& name)
-{
-  LIBPORT_DEBUG("uowned get for "<<name);
-  StringPair p = split_name(name);
-  rObject o = get_base(p.first);
-  if (!o)
-    runner::raise_lookup_error(libport::Symbol(name), object::global_class);
-  return o->slot_get(Symbol(p.second))
-    ->slot_get(SYMBOL(val));
-}
-/// UVar set in owned mode: call Urbi-side writeOwned.
-static rObject
-uvar_uowned_set(const std::string& name, rObject val)
-{
-  LIBPORT_DEBUG("uowned set for "<<name);
-  StringPair p = split_name(name);
-  rObject o = get_base(p.first);
-  if (!o)
-    runner::raise_lookup_error(libport::Symbol(name), object::global_class);
-  rObject v = o->slot_get(Symbol(p.second));
-  object::objects_type args = list_of (v) (val);
-  return ::kernel::runner().apply(v->slot_get(SYMBOL(writeOwned)),
-                                  SYMBOL(writeOwned),
-                                  args);
 }
 
 // Write to an UVar, pretending we are comming from lobby ctx.
@@ -1114,6 +1030,7 @@ namespace urbi
         if (initVal->slot_has(SYMBOL(owned)))
         {
           traceOperation(owner, SYMBOL(traceBind));
+          ruvar_ = o->slot_get(varName)->as<object::UVar>();
           return;
         }
         else
@@ -1128,6 +1045,7 @@ namespace urbi
       if (initVal)
         o->slot_get(varName)->slot_update(SYMBOL(val), initVal);
       traceOperation(owner, SYMBOL(traceBind));
+      ruvar_ = uvar->as<object::UVar>();
     }
     void KernelUVarImpl::clean()
     {
@@ -1138,10 +1056,7 @@ namespace urbi
       LOCK_KERNEL;
       owner_->owned = true;
       // Write 1 to the Urbi-side uvar owned slot.
-      StringPair p = split_name(owner_->get_name());
-      rObject o = get_base(p.first);
-      o->slot_get(Symbol(p.second))
-        ->slot_update(SYMBOL(owned), object::true_class);
+      ruvar_->slot_update(SYMBOL(owned), object::true_class);
       LIBPORT_DEBUG("call to setowned on "<<owner_->get_name());
     }
     void KernelUVarImpl::sync()
@@ -1165,9 +1080,9 @@ namespace urbi
       object::rUValue ov(new object::UValue());
       ov->put(v, bypassMode_);
       if (owner_->owned)
-        uvar_uowned_set(owner_->get_name(), ov);
+        ruvar_->writeOwned(ov);
       else
-        uvar_set(owner_->get_name(), ov);
+        ruvar_->update_(ov);
       ov->invalidate();
     }
 
@@ -1178,8 +1093,8 @@ namespace urbi
       LIBPORT_DEBUG("uvar cast operator for "<<owner_->get_name());
       try {
         rObject o = (owner_->owned
-                     ? ::uvar_uowned_get(owner_->get_name())
-                     : ::uvar_get(owner_->get_name()));
+                     ? ruvar_->slot_get(SYMBOL(val)).value()
+                     : ruvar_->getter(true));
         aver(o);
         if (object::rUValue bv = o->as<object::UValue>())
           return bv->value_get();
@@ -1189,9 +1104,10 @@ namespace urbi
           return cache_;
         }
       }
-      catch (object::UrbiException&)
+      catch (object::UrbiException& e)
       {
-        FRAISE("Invalid read of void UVar '%s'", owner_->get_name());
+        FRAISE("Invalid read of void UVar '%s': %s", owner_->get_name(),
+               e.what());
       }
     }
 
@@ -1209,9 +1125,10 @@ namespace urbi
     KernelUVarImpl::type() const
     {
       LOCK_KERNEL;
-      return ::uvalue_type(owner_->owned
-                           ? uvar_uowned_get(owner_->get_name())
-                           : uvar_get(owner_->get_name()));
+      rObject o = (owner_->owned
+                   ? ruvar_->slot_get(SYMBOL(val)).value()
+                   : ruvar_->getter(true));
+      return ::uvalue_type(o);
     }
 
     UValue KernelUVarImpl::getProp(UProperty prop)
@@ -1243,26 +1160,20 @@ namespace urbi
 
     void KernelUVarImpl::useRTP(bool enable)
     {
-      StringPair p = split_name(owner_->get_name());
-      rObject o = get_base(p.first);
-      o->slot_get(Symbol(p.second))->slot_set(SYMBOL(rtp),
-                                              object::to_urbi(enable));
+      ruvar_->slot_set(SYMBOL(rtp),  object::to_urbi(enable));
     }
 
     void KernelUVarImpl::setInputPort(bool enable)
     {
-      StringPair p = split_name(owner_->get_name());
-      rObject o = get_base(p.first);
       runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
       bool last_rdm = r.redefinition_mode_get();
       FINALLY( ((bool, last_rdm))((runner::Runner&, r)),
                       r.redefinition_mode_set(last_rdm));
       r.redefinition_mode_set(true);
       if (enable)
-        o->slot_get(Symbol(p.second))->slot_set(SYMBOL(inputPort),
-                                                object::to_urbi(true));
+        ruvar_->slot_set(SYMBOL(inputPort), object::to_urbi(true));
       else
-        o->slot_get(Symbol(p.second))->slot_remove(SYMBOL(inputPort));
+        ruvar_->slot_remove(SYMBOL(inputPort));
     }
 
     time_t
