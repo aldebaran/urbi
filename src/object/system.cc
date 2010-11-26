@@ -41,6 +41,7 @@
 #include <urbi/object/tag.hh>
 #include <urbi/object/job.hh>
 #include <parser/transform.hh>
+#include <runner/exception.hh>
 #include <runner/interpreter.hh>
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
@@ -107,9 +108,15 @@ namespace urbi
           }
       }
 
-      ast::rConstAst ast = parser::transform(p->ast_get());
-      if (!ast)
-        RAISE(context);
+      ast::rConstAst ast;
+      try
+      {
+        ast = parser::transform(ast::rConstExp(p->ast_get()));
+      }
+      catch (const runner::Exception& e)
+      {
+        e.raise(context);
+      }
 
       return run.eval(ast.get(), self ? self : rObject(run.lobby_get()));
     }

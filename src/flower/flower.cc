@@ -35,7 +35,7 @@ namespace flower
   Flower::visit(const ast::Break* b)
   {
     if (!in_loop_)
-      errors_.error(b->location_get(), "`break' not within a loop");
+      errors_.err(b->location_get(), "`break' not within a loop");
 
     has_break_ = true;
 
@@ -48,7 +48,7 @@ namespace flower
   Flower::visit(const ast::Continue* c)
   {
     if (!in_loop_)
-      errors_.error(c->location_get(), "`continue' not within a loop");
+      errors_.err(c->location_get(), "`continue' not within a loop");
 
     has_continue_ = true;
 
@@ -176,7 +176,7 @@ namespace flower
   Flower::visit(const ast::Return* ret)
   {
     if (!in_function_)
-      errors_.error(ret->location_get(), "return: outside a function");
+      errors_.err(ret->location_get(), "return: outside a function");
 
     has_return_ = true;
 
@@ -205,7 +205,7 @@ namespace flower
   Flower::visit(const ast::Catch* code)
   {
     if (has_general_catch_)
-      errors_.error(code->location_get(),
+      errors_.err(code->location_get(),
 		    "catch: exception already caught by a previous clause");
     has_general_catch_ = !code->match_get();
 
@@ -217,7 +217,7 @@ namespace flower
   Flower::visit(const ast::Throw* code)
   {
     if (!code->value_get() && !in_catch_)
-      errors_.error(code->location_get(),
+      errors_.err(code->location_get(),
 		    "throw: argumentless throw outside of a catch block");
     super_type::visit(code);
   }

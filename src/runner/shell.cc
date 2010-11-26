@@ -25,6 +25,7 @@
 #include <parser/parse-result.hh>
 #include <parser/transform.hh>
 #include <parser/uparser.hh>
+#include <runner/exception.hh>
 #include <runner/shell.hh>
 
 #include <sched/job.hh>
@@ -183,31 +184,40 @@ namespace runner
 
     while (!stop_)
     {
-      parser::parse_result_type res;
+      try
       {
-        GD_FPUSH_TRACE("%s: reading command.", name_get());
-        res = parser.parse(input_);
-      }
-      if (!res->good())
-      {
-        // FIXME: Now that parsing/execution is synchronous, this is
-        // needlessly complex. Just print the damn message.
-        ast::rNary n = new ast::Nary;
-        res->process_errors(*n);
-        handle_command_(n);
-        continue;
-      }
-      ast::rExp ast = parser::transform(res->ast_xget());
-      {
-        GD_FPUSH_TRACE("%s: executing command.", name_get());
-        GD_FINFO_DUMP("%s: command: %s", name_get(), *ast);
+        parser::parse_result_type res;
+        {
+          GD_FPUSH_TRACE("%s: reading command.", name_get());
+          res = parser.parse(input_);
+        }
+        if (!res->perfect())
+        {
+          GD_FINFO_TRACE("%s: reporting errors and warnings.", name_get());
+          // FIXME: Now that parsing/execution is synchronous, this is
+          // needlessly complex. Just print the damn message.
+          ast::rNary n = new ast::Nary;
+          res->process_errors(*n);
+          handle_command_(n);
+        }
+        if (!res->good())
+        {
+          GD_FINFO_TRACE("%s: command is invalid.", name_get());
+          continue;
+        }
+        ast::rExp ast = parser::transform(ast::rConstExp(res->ast_xget()));
         handle_command_(ast);
+        if (input_.eof())
+        {
+          GD_FPUSH_TRACE("%s: end reached, disconnecting.", name_get());
+          lobby_get()->disconnect();
+          stop_ = true;
+        }
       }
-      if (input_.eof())
+      catch (const Exception& e)
       {
-        GD_FPUSH_TRACE("%s: end reached, disconnecting.", name_get());
-        lobby_get()->disconnect();
-        stop_ = true;
+        GD_FINFO_TRACE("%s: command is invalid, printing errors.", name_get());
+        e.print(*this);
       }
     }
   }

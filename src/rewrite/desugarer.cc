@@ -64,7 +64,7 @@ namespace rewrite
   {
     ast::rLValue what = assign->what_get().unsafe_cast<ast::LValue>();
     if (!what)
-      errors_.error(what->location_get(),
+      errors_.err(what->location_get(),
                     "cannot use modifiers on pattern assignments");
 
     ast::rConstBinding binding = what.unsafe_cast<const ast::Binding>();
@@ -128,7 +128,7 @@ namespace rewrite
     if (ast::rBinding what = assign->what_get().unsafe_cast<ast::Binding>())
     {
       if (!allow_decl_)
-        errors_.error(what->location_get(), "declaration not allowed here");
+        errors_.err(what->location_get(), "declaration not allowed here");
       ast::rDeclaration res =
         new ast::Declaration(loc, what->what_get(), assign->value_get());
       res->constant_set(what->constant_get());
@@ -229,7 +229,7 @@ namespace rewrite
   Desugarer::visit(const ast::Binding* binding)
   {
     if (!allow_decl_)
-      errors_.error(binding->location_get(), "declaration not allowed here");
+      errors_.err(binding->location_get(), "declaration not allowed here");
     ast::loc loc = binding->location_get();
 
     result_ = new ast::Declaration(loc, binding->what_get(), 0);

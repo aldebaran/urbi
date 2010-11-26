@@ -18,6 +18,7 @@
 
 # include <ast/cloner.hh>
 # include <ast/error.hh>
+# include <runner/exception.hh>
 
 namespace ast
 {
@@ -30,13 +31,11 @@ namespace ast
 
     Analyzer();
     virtual ~Analyzer();
-
-    /// The errors seen so far.
-    ast::Error& errors_get();
+    void throw_if_err();
 
   protected:
     /// The errors found so far.
-    ast::Error errors_;
+    runner::Exception errors_;
 
     /// Factory.
     std::auto_ptr<ast::Factory> factory_;

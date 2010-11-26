@@ -171,7 +171,7 @@ namespace binder
       // Check this is not a redefinition
       if (scope_depth_ - unscope_ == scope_depth_get(name))
         if (report_errors_)
-          errors_.error(loc, "variable redefinition: " + name.name_get());
+          errors_.err(loc, "variable redefinition: " + name.name_get());
 
       BIND_ECHO("Bind " << name);
 
@@ -336,7 +336,7 @@ namespace binder
       super_type::visit(input);
     }
     else if (report_errors_)
-      errors_.error(input->location_get(), "call: used outside any function");
+      errors_.err(input->location_get(), "call: used outside any function");
   }
 
   void
@@ -426,7 +426,7 @@ namespace binder
         if (decl->value_get())
           found = true;
         else if (found)
-          errors_.error(decl->location_get(),
+          errors_.err(decl->location_get(),
                         "argument with no default value after arguments"
                         " with default value");
       }

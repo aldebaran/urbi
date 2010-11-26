@@ -24,10 +24,11 @@ namespace ast
   Analyzer::~Analyzer()
   {}
 
-  ast::Error&
-  Analyzer::errors_get()
+  void
+  Analyzer::throw_if_err()
   {
-    return errors_;
+    if (!errors_.empty())
+      throw errors_;
   }
 
 
@@ -36,17 +37,9 @@ namespace ast
   {
     if (!a)
       return 0;
-
     analyze(a.get());
-
-    if (analyze.errors_get().empty())
-      return analyze.result_get().unsafe_cast<ast::Exp>();
-    else
-    {
-      ast::rNary res = new ast::Nary();
-      analyze.errors_get().process_errors(*res);
-      return res;
-    }
+    analyze.throw_if_err();
+    return analyze.result_get().unchecked_cast<ast::Exp>();
   }
 
 } // namespace binder
