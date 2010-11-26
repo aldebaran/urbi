@@ -29,11 +29,11 @@ namespace urbi
     class URBI_SDK_API CentralizedSlots
     {
 
-      /*-------------.
-      | Type aliases |
-      `-------------*/
+      /*---------------.
+      | Type aliases.  |
+      `---------------*/
 
-      public:
+    public:
       /// The slot type
       typedef rSlot value_type;
       /// The key type
@@ -43,19 +43,18 @@ namespace urbi
       /// A slot and its location
       typedef std::pair<location_type, value_type> q_slot_type;
 
-      private:
+    private:
       /// Boost multi index helper
       static Object* get_owner(const q_slot_type& slot);
       /// The boost multi index
       typedef multi_index_container<
         q_slot_type,
-        indexed_by<
-        hashed_unique<member<q_slot_type,
-        location_type,
-        &q_slot_type::first> >,
-        hashed_non_unique<global_fun<const q_slot_type&,
-        Object*,
-        get_owner> > > >
+        indexed_by<hashed_unique<member<q_slot_type,
+                                        location_type,
+                                        &q_slot_type::first> >,
+                   hashed_non_unique<global_fun<const q_slot_type&,
+                                               Object*,
+                                               get_owner> > > >
         content_type;
 
       /// The location-wise index type
@@ -63,18 +62,18 @@ namespace urbi
       /// The owner-wise index type
       typedef content_type::nth_index<1>::type obj_index_type;
 
-      public:
+    public:
       /// The iterator type
       typedef obj_index_type::iterator iterator;
       /// The const iterator type
       typedef obj_index_type::const_iterator const_iterator;
 
 
-      /*----.
-      | API |
-      `----*/
+      /*------.
+      | API.  |
+      `------*/
 
-      public:
+    public:
       /// Get a begin iterator.
       static iterator begin(Object* owner);
       /// Get a begin const iterator.
@@ -91,30 +90,33 @@ namespace urbi
       static value_type get(const Object* owner, const key_type& key);
       /// Return whether \a owner has a \a key slot.
       static bool has(Object* owner, const key_type& key);
+
       /// Set \a owner's \a key slot's value to \a v.
-      /// @return Whether the slot was already defined (entailing failure).
-      static bool set(Object* owner, const key_type& key, value_type v, bool overwrite = false);
+      /// @return Success status.
+      ///         I.e., false if the slot was already defined (entailing failure).
+      static bool set(Object* owner,
+		      const key_type& key, value_type v, bool overwrite = false);
 
 
-      /*--------.
-      | Helpers |
-      `--------*/
+      /*----------.
+      | Helpers.  |
+      `----------*/
 
-      private:
+    private:
       static loc_index_type::iterator
         where(const Object* owner, const key_type& key);
 
 
-      /*--------.
-      | Members |
-      `--------*/
+      /*----------.
+      | Members.  |
+      `----------*/
 
-      private:
-      /// The boost multi index
+    private:
+      /// The boost multi index.
       static content_type* content_;
-      /// The location-wise index
+      /// The location-wise index.
       static loc_index_type& loc_index_;
-      /// The owner-wise index
+      /// The owner-wise index.
       static obj_index_type& obj_index_;
     };
   }

@@ -12,7 +12,6 @@
 # define OBJECT_CENTRALIZED_SLOTS_HXX
 
 # include <libport/containers.hh>
-# include <libport/foreach.hh>
 # include <iostream>
 
 # include <urbi/object/object.hh>
@@ -68,7 +67,8 @@ namespace urbi
     }
 
     inline bool
-    CentralizedSlots::set(Object* owner, const key_type& key, value_type v, bool overwrite)
+    CentralizedSlots::set(Object* owner,
+			  const key_type& key, value_type v, bool overwrite)
     {
       loc_index_type::iterator it = where(owner, key);
       if (it != content_->end())
