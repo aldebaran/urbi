@@ -218,12 +218,8 @@ namespace urbi
     Object::slot_update(key_type k, const rObject& o,
                         bool hook)
     {
-      runner::Runner& r = ::kernel::runner();
-
       // The updated slot
       Slot& s = slot_get(k);
-      // Its owner
-      rObject owner = slot_locate(k).first;
       // Value to write to the slot
       rObject v = o;
 
@@ -237,14 +233,15 @@ namespace urbi
           args << rObject(this)
                << new String(k)
                << o;
-          v = r.apply(hook, SYMBOL(updateHook), args);
+          v = ::kernel::runner().apply(hook, SYMBOL(updateHook), args);
           // If the updateHook returned void, do nothing. Otherwise let
           // the slot be overwritten.
           if (v == object::void_class)
             return o;
         }
+
       // If return-value of hook is not void, write it to slot.
-      if (owner == this)
+      if (slot_locate(k).first == this)
       {
         bool prev = squash;
         FINALLY(((bool&, squash))((bool, prev)), squash = prev);
@@ -666,9 +663,8 @@ namespace urbi
     Object::call_with_this(libport::Symbol name,
                            const objects_type& args)
     {
-      runner::Runner& r = ::kernel::runner();
       rObject fun = slot_get(name);
-      return r.apply(fun, name, args);
+      return ::kernel::runner().apply(fun, name, args);
     }
 
     rObject
