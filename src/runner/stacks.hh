@@ -157,6 +157,8 @@ namespace runner
   };
 }
 
-# include <runner/stacks.hxx>
+# ifdef LIBPORT_COMPILATION_MODE_SPEED
+#  include <runner/stacks.hxx>
+# endif
 
 #endif
