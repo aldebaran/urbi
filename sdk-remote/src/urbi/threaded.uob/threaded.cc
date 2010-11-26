@@ -98,7 +98,8 @@ public:
     DIE,
     SET_UOWNED,
     SET_BYPASS,
-    WRITE_BINARY
+    WRITE_BINARY,
+    EMIT
   };
 
   struct Operation
@@ -149,6 +150,7 @@ static const char* opname[] =
     "SET_UOWNED",
     "SET_BYPASS",
     "WRITE_BINARY",
+    "EMIT",
     0
   };
 void Threaded::init()
@@ -361,6 +363,12 @@ bool Threaded::threadLoopBody(int id)
           ctx.lastRead =  "0";
         else
           ctx.lastRead = uob->__name;
+      }
+      break;
+    case EMIT:
+      {
+        UEvent e(string0);
+        e.emit(12, 15, "canard");
       }
       break;
     case DELAY:
