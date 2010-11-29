@@ -50,6 +50,8 @@
 # define URBI_DYNAMIC_STACK_VECTOR
 #endif
 
+GD_CATEGORY(Urbi);
+
 namespace urbi
 {
   namespace object
@@ -183,6 +185,7 @@ namespace runner
         bool prev = object::squash;
         FINALLY(((bool, prev)), object::squash = prev);
         object::squash = true;
+        GD_FPUSH_TRACE("Register %s result for at monitoring", msg);
         r->dependency_add(res->call(SYMBOL(changed))->as<object::Event>());
       }
 

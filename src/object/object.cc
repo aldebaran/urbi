@@ -168,6 +168,7 @@ namespace urbi
           // GD_FPUSH_TRACE("Register slot '%s' for at monitoring", k);
           // r->dependency_add
 	  //     (static_cast<Event*>(res->property_get(SYMBOL(changed)).get()));
+          GD_FPUSH_TRACE("Register slot %s for at monitoring", k);
           rObject changed = (*res)->call(SYMBOL(changed));
           assert(changed);
           rEvent evt = changed->as<Event>();

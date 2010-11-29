@@ -239,7 +239,11 @@ namespace runner
   {
     object::rObject res = stacks_.this_get();
     if (!object::squash && dependencies_log_get())
+    {
+      LIBPORT_SCOPE_SET(object::squash, true);
+      GD_PUSH_TRACE("Register this for at monitoring");
       dependency_add(slotGet_changed(res));
+    }
     return res;
   }
 
@@ -362,13 +366,11 @@ namespace runner
         FINALLY_Local(USE);
         squash = true;
 
-        {
-          GD_FPUSH_TRACE("Register local variable '%s' for at monitoring",
-                         e->name_get());
-          dependency_add(static_cast<object::Event*>
-                         (slot->property_get(SYMBOL(changed)).get()));
-          dependency_add(slotGet_changed(*slot));
-        }
+        GD_FPUSH_TRACE("Register local variable '%s' for at monitoring",
+                       e->name_get());
+        dependency_add(static_cast<object::Event*>
+                       (slot->property_get(SYMBOL(changed)).get()));
+        dependency_add(slotGet_changed(*slot));
       }
 
       return value;
@@ -673,7 +675,11 @@ namespace runner
   {
     object::rObject res = stacks_.this_get();
     if (!object::squash && dependencies_log_get())
+    {
+      LIBPORT_SCOPE_SET(object::squash, true);
+      GD_PUSH_TRACE("Register this for at monitoring");
       dependency_add(slotGet_changed(res));
+    }
     return res;
   }
 
