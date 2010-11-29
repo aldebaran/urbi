@@ -72,7 +72,8 @@ one.append(["one", [1]]);
 [00000005] [1, "one", [1]]
 \end{urbiscript}
 
-\item[argMax](<fun> = function(a, b) { a < b })%
+\item \hypertarget{slot:\currentObject.argMax}{}%
+  \lstinline|argMax(\var{fun} = function(a, b) { a < b })|\\%
   The index of the (leftmost) ``largest'' member based on the comparison
   function \var{fun}.
 \begin{urbiassert}
@@ -93,7 +94,8 @@ The list cannot be empty.
 \end{urbiscript}
 
 
-\item[argMin](<fun> = function(a, b) { a < b })%
+\item \hypertarget{slot:\currentObject.argMin}{}%
+  \lstinline|argMin(\var{fun} = function(a, b) { a < b })|\\%
   The index of the (leftmost) ``smallest'' member based on the comparison
   function \var{fun}.
 \begin{urbiassert}
@@ -430,7 +432,8 @@ assert
 [00005865:error] !!! pattern did not match
 \end{urbiscript}
 
-\item[max](<fun> = function(a, b) { a < b })%
+\item \hypertarget{slot:\currentObject.max}{}%
+  \lstinline|max(\var{fun} = function(a, b) { a < b })|\\%
   Return the ``largest'' member based on the comparison function \var{fun}.
 \begin{urbiassert}
            [1].max == 1;
@@ -454,7 +457,8 @@ The members must be comparable.
 [00000002:error] !!! max: argument 2: unexpected "a", expected a Float
 \end{urbiscript}
 
-\item[min](<fun> = function(a, b) { a < b })%
+\item \hypertarget{slot:\currentObject.min}{}%
+  \lstinline|min(\var{fun} = function(a, b) { a < b })|\\%
   Return the ``smallest'' member based on the comparison function \var{fun}.
 \begin{urbiassert}
            [1].min == 1;
@@ -571,7 +575,8 @@ Return the number of elements in the target.
 [].size == 0;
 \end{urbiassert}
 
-\item[sort](<comp> = function(a, b) {a < b})%
+\item \hypertarget{slot:\currentObject.sort}{}%
+  \lstinline|sort(\var{fun} = function(a, b) { a < b })|\\%
   A new List with the contents of \this, sorted with respect to the
   \var{comp} comparison function.
 
