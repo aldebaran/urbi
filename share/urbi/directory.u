@@ -14,26 +14,57 @@ requireFile("urbi/exception.u");
 
 do(Global.Directory)
 {
-  function '<<'(rhs)
+  function '$doInto'(rhs, action, method)
   {
     if (!rhs.isA(File) && !rhs.isA(Directory))
-      throw Exception.Primitive.new("<<",
-                                    "cannot put a %s in a directory"
+      throw Exception.Primitive.new(method,
+                                    "cannot put it in a directory: %s"
                                     % [rhs.type]) |
-
-    var path = Path.new(asString) / Path.new(rhs.name) |
-    rhs.rename(path.asString) |
+    var path = Path.new(asString) / Path.new(rhs.basename) |
+    rhs.getSlot(action).apply([rhs, path.asString]) |
     this
   };
 
   function '/'(rhs)
   {
-    var path = Path.new(asString) / Path.new(rhs) |
+    var path = asPath / Path.new(rhs) |
     if (path.isDir)
       Directory.new(path.asString)
     else if(path.exists)
       File.new(path.asString)
     else
       throw Exception.FileNotFound.new("/", path)
+  };
+
+  function '<<'(rhs)
+  {
+    copyInto(rhs)
+  };
+
+  function moveInto(rhs)
+  {
+    '$doInto'(rhs, "rename", "moveInto")
+  };
+
+  function copy(dirname)
+  {
+    var target = Directory.createAll(dirname) |
+    for (var item: content)
+      target << this / item |
+    target
+  };
+
+  function copyInto(rhs)
+  {
+    '$doInto'(rhs, "copy", "copyInto")
+  };
+
+  function removeAll()
+  {
+    if (this === Global.Directory)
+      throw Exception.Primitive.new("removeAll",
+                                    "cannot call method on %s"
+                                    % Global.Directory.type) |
+    removeAll_
   };
 };

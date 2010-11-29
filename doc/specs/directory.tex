@@ -35,29 +35,28 @@ Directory.new(Path.new("."));
   If the resulting path is either a directory or a file, \refSlot{'/'} will
   returns either a \refObject{Directory} or a \refObject{File} object.
 \begin{urbiscript}
-var d = Directory.create("dir1")|;
+var dir1 = Directory.create("dir1")|;
 Directory.create("dir1/dir2")|;
 File.create("dir1/file")|;
-d / "dir2";
+dir1 / "dir2";
 [00000001] Directory("dir1/dir2")
-d / "file";
+dir1 / "file";
 [00000002] File("dir1/file")
-d.removeAll;
+dir1.removeAll;
 \end{urbiscript}
 
 \item['<<'](<entity>)
-  If \var{entity} is a \refObject{Directory} or a \refObject{File},
-  \refSlot{'<<'} moves \var{entity} in the \lstinline|this| directory.
-  Return \lstinline|this| to allow chained operations.
+  Alias for \refSlot[Directory]{copyInto}.
 \begin{urbiscript}
-var d1 = Directory.create("dir1")|;
-var d2 = Directory.create("dir2")|;
-var f = Directory.create("file")|;
-d1 << f << d2;
+dir1 = Directory.create("dir1")|;
+var dir2 = Directory.create("dir2")|;
+var file = Directory.create("file")|;
+dir1 << file << dir2;
 [00000001] Directory("dir1")
-d1.content;
+dir1.content;
 [00000003] ["dir2", "file"]
-d1.removeAll;
+dir1.removeAll;
+dir2.removeAll;
 \end{urbiscript}
 
 \item[asList]
@@ -76,23 +75,59 @@ Directory.new(".").asString == ".";
   strings include only the last component name; they do not contain
   the directory name of \this.
 
+\item[copy](<dirname>)
+  Copy recursively all files and directories in the \lstinline|this| directory
+  to the directory \var{dirname} after creating it. Return the new directory.
+\begin{urbiscript}
+dir1 = Directory.create("dir1")|;
+dir2 = Directory.create("dir1/dir2")|;
+file = File.create("dir1/file")|;
+var directory1 = dir1.copy("directory1");
+[00000001] Directory("directory1")
+directory1.content;
+[00000002] ["dir2", "file"]
+dir1.removeAll;
+directory1.removeAll;
+\end{urbiscript}
+
+\item[copyInto](<entity>)
+  If \var{entity} is a \refObject{Directory} or a \refObject{File},
+  \refSlot{copyInto} copies \var{entity} in the \lstinline|this| directory.
+  Return \lstinline|this| to allow chained operations.
+\begin{urbiscript}
+dir1 = Directory.create("dir1")|;
+dir2 = Directory.create("dir2")|;
+file = File.create("file")|;
+dir1.copyInto(file).copyInto(dir2);
+[00000001] Directory("dir1")
+dir1.content;
+[00000003] ["dir2", "file"]
+dir2;
+[00000004] Directory("dir2")
+file;
+[00000005] File("file")
+dir1.removeAll;
+dir2.removeAll;
+file.remove;
+\end{urbiscript}
+
 \item[clear]
-  Remove all childs recursively but not the directory itself. After a
+  Remove all children recursively but not the directory itself. After a
   call to \refSlot{clear}, a call to \refSlot{empty} should return
   \lstinline|true|.
 \begin{urbiscript}
-d1 = Directory.create("dir1")|;
-d2 = Directory.create("dir1/dir2")|;
-var f1 = File.create("dir1/file1")|;
-var f2 = File.create("dir1/dir2/file2")|;
-d1.content;
+dir1 = Directory.create("dir1")|;
+dir2 = Directory.create("dir1/dir2")|;
+var file1 = File.create("dir1/file1")|;
+var file2 = File.create("dir1/dir2/file2")|;
+dir1.content;
 [00000001] ["file1", "dir2"]
-d2.content;
+dir2.content;
 [00000002] ["file2"]
-d1.clear;
-d1.content;
+dir1.clear;
+dir1.content;
 [00000003] []
-d1.remove;
+dir1.remove;
 \end{urbiscript}
 
 \item[create](<name>)
@@ -100,13 +135,13 @@ d1.remove;
   \refObject{String} or a \refObject{Path}. In addition to system errors that
   can occur, errors are raised if directory or file \var{name} already exists.
 \begin{urbiscript}
-d = Directory.new("dir");
-[00000001:error] !!! new: Directory does not exist: "dir"
-d = Directory.create("dir");
+var dir = Directory.new("dir");
+[00000001:error] !!! new: directory does not exist: "dir"
+var dir = Directory.create("dir");
 [00000002] Directory("dir")
-d.content;
+dir.content;
 [00000003] []
-d.remove;
+dir.remove;
 \end{urbiscript}
 
 \item[createAll](<name>)
@@ -117,32 +152,32 @@ d.remove;
   \refSlot{createAll} creates them all as in the Unix \samp{make -p} command.
 \begin{urbiscript}
 Directory.create("dir1/dir2/dir3");
-[00000001:error] !!! create: No such file or directory: "dir1/dir2/dir3"
-d = Directory.create("dir1");
+[00000001:error] !!! create: no such file or directory: "dir1/dir2/dir3"
+dir1 = Directory.create("dir1");
 [00000002] Directory("dir1")
 Directory.createAll("dir1/dir2/dir3");
 [00000002] Directory("dir1/dir2/dir3")
-d.removeAll;
+dir1.removeAll;
 \end{urbiscript}
 
 \item[empty]
   Whether the directory is empty.
 \begin{urbiscript}
-d = Directory.create("dir")|;
-assert(d.empty);
+dir = Directory.create("dir")|;
+assert(dir.empty);
 File.create("dir/file")|;
-assert(!d.empty);
-d.removeAll;
+assert(!dir.empty);
+dir.removeAll;
 \end{urbiscript}
 
 \item[exists]
   Whether the directory still exists.
 \begin{urbiscript}
-d = Directory.create("dir");
+dir = Directory.create("dir");
 [00000001] Directory("dir")
-assert(d.exists);
-d.remove;
-assert(!d.exists);
+assert(dir.exists);
+dir.remove;
+assert(!dir.exists);
 \end{urbiscript}
 
 \item[fileCreated](<name>)%
@@ -195,68 +230,87 @@ if (!Path.new("./dummy.txt").exists)
 \end{urbiscript}
 %% Use firstline after this test if this is not related to inotify.
 
-\item[name]
-  Return a \refObject{String} containing the name of the directory without
-  its basename.
+\item[basename]
+  Return a \refObject{String} containing the path of the directory without
+  its dirname.
 \begin{urbiscript}
-var d1 = Directory.create("dir1");
+var dir1 = Directory.create("dir1");
 [00000001] Directory("dir1")
-var d2 = Directory.create("dir1/dir2");
+var dir2 = Directory.create("dir1/dir2");
 [00000002] Directory("dir1/dir2")
-d1.name;
+dir1.basename;
 [00000002] "dir1"
-d2.name;
+dir2.basename;
 [00000003] "dir2"
-d1.removeAll;
+dir1.removeAll;
+\end{urbiscript}
+
+\item[moveInto](<entity>)
+  If \var{entity} is a \refObject{Directory} or a \refObject{File},
+  \refSlot{moveInto} moves \var{entity} in the \lstinline|this| directory.
+  Return \lstinline|this| to allow chained operations.
+\begin{urbiscript}
+dir1 = Directory.create("dir1")|;
+dir2 = Directory.create("dir2")|;
+var file = File.create("file")|;
+dir1.moveInto(file).moveInto(dir2);
+[00000001] Directory("dir1")
+dir1.content;
+[00000003] ["dir2", "file"]
+dir2;
+[00000004] Directory("dir1/dir2")
+file;
+[00000005] File("dir1/file")
+dir1.removeAll;
 \end{urbiscript}
 
 \item[parent]
   Return the parent of the directory.
 \begin{urbiscript}
 Directory.create("dir")|;
-var d = Directory.create("dir/dir")|;
-d.parent;
+var dir = Directory.create("dir/dir")|;
+dir.parent;
 [00000001] Directory("dir")
-assert(d.parent.parent.asString == Directory.current.asString);
-d.parent.removeAll;
+assert(dir.parent.parent.asString == Directory.current.asString);
+dir.parent.removeAll;
 \end{urbiscript}
 
 \item[remove]
   Remove the directory only if it is empty.
 \begin{urbiscript}
-d = Directory.create("dir")|;
+dir = Directory.create("dir")|;
 File.create("dir/file")|;
-d.remove;
-[00000001:error] !!! remove: Directory not empty: "dir"
-d.clear;
-d.remove;
-assert(!d.exists);
+dir.remove;
+[00000001:error] !!! remove: directory not empty: "dir"
+dir.clear;
+dir.remove;
+assert(!dir.exists);
 \end{urbiscript}
 
 \item[removeAll]
-  Remove all childs recursively including the directory itself.
+  Remove all children recursively including the directory itself.
 \begin{urbiscript}
-d1 = Directory.create("dir1")|;
-d2 = Directory.create("dir1/dir2")|;
-var f1 = File.create("dir1/file1")|;
-var f2 = File.create("dir1/dir2/file2")|;
-d1.removeAll;
-assert(!d1.exists);
+dir1 = Directory.create("dir1")|;
+dir2 = Directory.create("dir1/dir2")|;
+var file1 = File.create("dir1/file1")|;
+var file2 = File.create("dir1/dir2/file2")|;
+dir1.removeAll;
+assert(!dir1.exists);
 \end{urbiscript}
 
 \item[rename]
   Rename or move the directory. Return the modified directory.
 \begin{urbiscript}
-d = Directory.create("dir")|;
+dir = Directory.create("dir")|;
 File.create("dir/file")|;
-d.rename("other");
+dir.rename("other");
 [00000001] Directory("other")
-d.content;
+dir.content;
 [00000002] ["file"]
-var dir2 = Directory.create("dir2")|;
-d.rename("dir2/other2");
+dir2 = Directory.create("dir2")|;
+dir.rename("dir2/other2");
 [00000003] Directory("dir2/other2")
-d.content;
+dir.content;
 [00000004] ["file"]
 dir2.removeAll;
 \end{urbiscript}
