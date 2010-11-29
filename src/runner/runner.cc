@@ -176,7 +176,7 @@ namespace runner
   {
     assert(evt);
     if (dependencies_log_)
-      dependencies_.push_back(evt);
+      dependencies_.insert(evt);
   }
 
   void

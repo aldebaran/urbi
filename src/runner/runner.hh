@@ -19,6 +19,7 @@
 # include <vector>
 
 # include <boost/tuple/tuple.hpp>
+# include <boost/unordered_set.hpp>
 
 # include <libport/attributes.hh>
 # include <libport/compiler.hh>
@@ -233,7 +234,7 @@ namespace runner
     ATTRIBUTE_Rw(bool, frozen);
 
   public:
-    typedef std::vector<object::rEvent> dependencies_type;
+    typedef boost::unordered_set<object::rEvent> dependencies_type;
     const dependencies_type& dependencies() const;
     bool dependencies_log_get() const;
     void dependency_add(object::rEvent evt);
