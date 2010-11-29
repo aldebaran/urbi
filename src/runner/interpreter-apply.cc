@@ -42,6 +42,14 @@
 #include <runner/interpreter.hh>
 #include <urbi/runner/raise.hh>
 
+#ifdef _MSC_VER
+// Use malloc with CL.
+# define URBI_DYNAMIC_STACK_NONE
+#else
+// Use variable size vectors on the stack with GCC.
+# define URBI_DYNAMIC_STACK_VECTOR
+#endif
+
 namespace runner
 {
   using object::Slot;
@@ -265,20 +273,47 @@ namespace runner
     // Use closure's lobby if there is one.
     if (ast->closure_get() && function->lobby_get())
       lobby_set(function->lobby_get());
+
     // Push new frames on the stacks
     local += 2;
-    rSlot local_stack[local];
-    rSlot captured_stack[captured];
+# if defined(URBI_DYNAMIC_STACK_VECTOR)
+    rSlot local_stack_space[local];
+    rSlot captured_stack_space[captured];
+    rSlot* local_stack = &local_stack_space[0];
+    rSlot* captured_stack = &captured_stack_space[0];
+#elif defined(URBI_DYNAMIC_STACK_ALLOCA)
+    rSlot* local_stack = reinterpret_cast<rSlot*>(alloca(local * sizeof(rSlot)));
+    new (local_stack) rSlot[local];
+    rSlot* captured_stack = reinterpret_cast<rSlot*>(alloca(captured * sizeof(rSlot)));
+    new (captured_stack) rSlot[captured];
+#elif defined(URBI_DYNAMIC_STACK_NONE)
+    rSlot* local_stack = new rSlot[local];
+    rSlot* captured_stack = new rSlot[captured];
+#else
+# error "No dynamic stack policy defined."
+#endif
+
     Stacks::frame_type previous_frame =
-      stacks_.push_frame(msg, Stacks::frame_type(&local_stack[0], &captured_stack[0]),
+      stacks_.push_frame(msg, Stacks::frame_type(local_stack, captured_stack),
                          self, call);
     FINALLY(((Stacks&, stacks_))
             ((libport::Symbol, msg))
             ((Stacks::frame_type, previous_frame))
             ((rLobby&, lobby_))
-            ((rLobby, caller_lobby)),
+            ((rLobby, caller_lobby))
+#if defined(URBI_DYNAMIC_STACK_ALLOCA) || defined(URBI_DYNAMIC_STACK_ALLOCA)
+            ((rSlot*, local_stack))
+            ((rSlot*, captured_stack))
+#endif
+            ,
             stacks_.pop_frame(msg, previous_frame);
             lobby_ = caller_lobby;
+#if defined(URBI_DYNAMIC_STACK_ALLOCA)
+#  error "Alloca deallocation not handled"
+#elif defined(URBI_DYNAMIC_STACK_NONE)
+            delete [] local_stack;
+            delete [] captured_stack;
+#endif
     );
 
     // Push captured variables
