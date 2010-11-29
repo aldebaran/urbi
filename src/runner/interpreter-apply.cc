@@ -50,6 +50,14 @@
 # define URBI_DYNAMIC_STACK_VECTOR
 #endif
 
+namespace urbi
+{
+  namespace object
+  {
+    extern bool squash;
+  }
+}
+
 namespace runner
 {
   using object::Slot;
@@ -169,13 +177,12 @@ namespace runner
       return function;
     }
 
-    static bool squash = false;
     if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
-      if (!squash && r->dependencies_log_get())
+      if (!object::squash && r->dependencies_log_get())
       {
-        bool prev = squash;
-        FINALLY(((bool&, squash))((bool, prev)), squash = prev);
-        squash = true;
+        bool prev = object::squash;
+        FINALLY(((bool, prev)), object::squash = prev);
+        object::squash = true;
         r->dependency_add(res->call(SYMBOL(changed))->as<object::Event>());
       }
 
