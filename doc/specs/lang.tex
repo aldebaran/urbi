@@ -584,8 +584,8 @@ parenthesized expression, the extra comma must be added.  See
 \subsubsection{Pseudo classes}
 \label{sec:lang:class}
 
-Objects that are meant to serve as prototypes for new objects are best
-defined using the \lstinline|class| construct.  See also the tutorial,
+Objects meant to serve as prototypes are best defined using the
+\lstinline|class| construct.  See also the tutorial,
 \autoref{sec:tut:class}.
 
 \begin{lstlisting}[language=bnf]
@@ -642,6 +642,22 @@ assert
   Global.Derive.asDerive == Global.Derive;
   Global.Derive.asBase == Global.Derive;
 };
+\end{urbiscript}
+
+It is guaranteed that the expressions that define the class name and its
+parents are evaluated only once.
+
+\begin{urbiscript}
+function Global.verboseId(var x)
+{
+  echo(x) | x
+}|;
+class verboseId(Global).math : verboseId(Math)
+{
+};
+[00000686] *** Global
+[00000686] *** Math
+[00000686] math
 \end{urbiscript}
 
 
