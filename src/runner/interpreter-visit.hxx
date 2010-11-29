@@ -183,7 +183,15 @@ namespace runner
 
         object::objects_type args;
         args.push_back(data->exp);
-        v = object::from_urbi<bool>(r.apply(data->exp, SYMBOL(at_cond), args));
+        rObject res = r.apply(data->exp, SYMBOL(at_cond), args);
+        if (dynamic_cast<object::Event*>(res.get()))
+        {
+          CAPTURE_GLOBAL(Global);
+          Global->call("warn", new object::String(
+                         "at (<event>) without a '?', "
+                         "this is probably not what you meant."));
+        }
+        v = object::from_urbi<bool>(res);
       }
       foreach (object::rEvent evt, r.dependencies_)
         data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
