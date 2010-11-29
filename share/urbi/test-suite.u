@@ -90,16 +90,9 @@ System.unsetenv("GD_LEVEL")|;
 
 do (Object)
 {
-  function override(slot, value)
-  {
-    copySlot(slot, "old" + slot);
-    setProperty(slot, "constant", false);
-    updateSlot(slot, value);
-  };
-
   // Deterministic localSlotNames.
-  override("localSlotNames",
-           function () { oldlocalSlotNames.sort });
+  overrideSlot("localSlotNames",
+    function () { 'localSlotNames$old'.sort });
 }|;
 
 
@@ -110,8 +103,8 @@ do (Object)
 // Determinism: Dictionary.asList and Dictionary.asString.
 do (Dictionary)
 {
-  override("keys",
-           function () { oldkeys.sort })|;
+  overrideSlot("keys",
+               function () { 'keys$old'.sort })|;
 }|;
 
 
@@ -155,7 +148,7 @@ do (Float)
     76, 12, 54, 97, 4, 81, 48, 65, 78, 99, 9, 29, 53, 83, 47, 7, 73,
     22, 5, 76];
 
-  override("random",
+  overrideSlot("random",
   function ()
   {
     // We don't want COW here.
@@ -219,7 +212,7 @@ if (System.Platform.isWindows)
     var this.count = 1;
 
     // On Windows, use /bin/sh to please our tests.
-    override("system",
+    overrideSlot("system",
     function (command)
     {
       // For some reason I don't understand, the command is
@@ -240,7 +233,7 @@ if (System.Platform.isWindows)
       cmd += "\"" |
 
       // Run the command, wait for the stamp.
-      oldsystem(cmd) |
+      'system$old'(cmd) |
       while| (!stamp.exists)
         sleep(20ms)|
       var res = File.new(stamp).asList[0].asFloat |
