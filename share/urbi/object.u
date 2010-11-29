@@ -106,6 +106,14 @@ do (Object)
     hasLocalSlot("type")
   };
 
+  function overrideSlot(var slot, var value)
+  {
+    copySlot(slot, slot + "$old")|
+    setProperty(slot, "constant", false)|
+    updateSlot(slot, value)|
+    setProperty(slot, "constant", true)|
+  };
+
   function ownsSlot(s)
   {
     warn("`o.ownsSlot(s)' is deprecated, use `o.hasLocalSlot(s)'") |

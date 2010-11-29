@@ -17,7 +17,7 @@ include build-aux/make/html-dir.mk
 # modify something which is not part of our sources.
 doc/sdk-remote.htmldir: $(call ls_files, *.hh *.hxx *.cc)
 
-# Take into account Java sources and generated sources for java Doxygen
+# Take into account Java sources and generated sources.
 JAVA_FILES =                                           \
   $(call ls_files, src/swig/java/urbi/*.java)          \
   $(wildcard $(top_builddir)/src/swig/java/urbi/*.java)

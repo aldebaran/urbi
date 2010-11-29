@@ -35,14 +35,6 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \subsection{New Features}
 \begin{itemize}
-\item \refSlot[List]{insertUnique} inserts a member if it's not already part
-  of the list.
-
-\item \refSlot[Object]{removeLocalSlot}.  It raises an error when asked to
-  remove of a non-existing slot.  Please note that, contrary to what its
-  name suggests, \refSlot[Object]{removeSlot} is only removing \emph{local}
-  slots.  Using \refSlot[Object]{removeLocalSlot} is encouraged.
-
 \item \command{urbi-launch} and \command{urbi-send} support
   \option{-m}/\option{--module=\var{file}}, to load a module
   (\autoref{sec:tools:urbi-launch}, \autoref{sec:tools:urbi-send}).
@@ -89,8 +81,20 @@ function Foo.'=='(var that)
 
 \item \refObject{Hash}, type for hash codes for \refObject{Dictionary}.
 
+\item \refSlot[List]{insertUnique} inserts a member if it's not already part
+  of the list.
+
 \item \refSlot[Object]{hash}, \refSlot[Float]{hash}, \refSlot[String]{hash},
   \refSlot[List]{hash}.
+
+\item \refSlot[Object]{removeLocalSlot}.  It raises an error when asked to
+  remove of a non-existing slot.  Please note that, contrary to what its
+  name suggests, \refSlot[Object]{removeSlot} is only removing \emph{local}
+  slots.  Using \refSlot[Object]{removeLocalSlot} is encouraged.
+
+\item \refSlot[System]{eval}, \refSlot[System]{load}, and
+  \refSlot[System]{loadFile} accept an optional second argument, the
+  context (\this) of the evaluation.
 \end{itemize}
 
 \subsection{Changes}

@@ -119,10 +119,10 @@ outermost;
 \end{urbiscript}
 
 
-\item[eval](<source>)%
-  Evaluate the \us \var{source}, and return its result.  The
-  \var{source} must be complete, yet the terminator (e.g., \samp{;})
-  is not required.
+\item[eval](<source>, <target> = this)%
+  Evaluate the \us \var{source}, and return its result.  See also
+  \refSlot{loadFile}.  The \var{source} must be complete, yet the terminator
+  (e.g., \samp{;}) is not required.
 \begin{urbiassert}
 eval("1+2") == 1+2;
 eval("\"x\" * 10") == "x" * 10;
@@ -130,13 +130,16 @@ eval("eval(\"1\")") == 1;
 eval("{ var x = 1; x + x; }") == 2;
 \end{urbiassert}
 
-  The evaluation is performed in the context of the current object
-  (\this), in particular, to create local variables, create
-  scopes.
+The evaluation is performed in the context of the current object (\this) or
+\var{target} if specified.  In particular, to create local variables, create
+scopes.
 \begin{urbiassert}
 // Create a slot in the current object.
-eval("var x = 23;") == 23;
-x == 23;
+eval("var a = 23;") == 23;
+this.a == 23;
+
+eval("var a = 3", Global) == 3;
+Global.a == 3;
 \end{urbiassert}
 
   Exceptions are thrown on error (including syntax errors).
@@ -202,24 +205,42 @@ getenv("UndefinedEnvironmentVariable").isNil;
 %% \item[jobs]
 
 
-\item[load](<file>)%
+\item[load](<file>, <target> = this)%
   Look for \var{file} in the \urbi path (\autoref{sec:tools:envvars}), and
-  load it.  Throw a \refSlot[Exception]{FileNotFound} error if the file
-  cannot be found.  Return the last value of the file.
+  load it in the context of \var{target}.  See also \refSlot{loadFile}.
+  Throw a \refSlot[Exception]{FileNotFound} error if the file cannot be
+  found.  Return the last value of the file.
 \begin{urbiscript}
-// Create the file ``123.u'' that contains exactly ``123;''.
-File.save("123.u", "123;");
-assert (load("123.u") == 123);
+// Create the file ``123.u'' that contains exactly ``var t = 123;''.
+File.save("123.u", "var t = 123;");
+assert
+{
+  load("123.u") == 123;
+  this.t == 123;
+
+  load("123.u", Global) == 123;
+  Global.t == 123;
+};
 \end{urbiscript}
 
 
-\item[loadFile](<file>)%
-  Load the \us file \var{file}.  Throw a \refSlot[Exception]{FileNotFound}
-  error if the file cannot be found.  Return the last value of the file.
+\item[loadFile](<file>, <target> = this)%
+  Load the \us file \var{file} in the context of \var{target}.  Behaves like
+  \refSlot{eval} applied to the content of \var{file}.  Throw a
+  \refSlot[Exception]{FileNotFound} error if the file cannot be found.
+  Return the last value of the file.
 \begin{urbiscript}
-// Create the file ``123.u'' that contains exactly ``123;''.
-File.save("123.u", "123;");
-assert (loadFile("123.u") == 123);
+// Create the file ``123.u'' that contains exactly ``var y = 123;''.
+File.save("123.u", "var y = 123;");
+assert
+{
+  loadFile("123.u") == 123;
+  this.y == 123;
+
+  loadFile("123.u", Global) == 123;
+  Global.y == 123;
+};
+
 \end{urbiscript}
 
 

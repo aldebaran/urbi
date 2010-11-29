@@ -37,13 +37,12 @@ namespace urbi
     rObject execute_parsed(parser::parse_result_type p,
                            libport::Symbol fun, const std::string& input,
                            rObject self = 0);
-    /// Set the current script name
+    /// Set the current script name.
     void system_set_program_name(const std::string& name);
-    /// Register a new user-argument for the script
+    /// Register a new user-argument for the script.
     void system_push_argument(const std::string& arg);
-    /// System.eval
-    rObject eval(const std::string& code);
-    rObject eval(const std::string& code, rObject self);
+    /// System.eval.
+    rObject eval(const std::string& code, rObject self = 0);
 
     /// Initialize the System class.
     void system_class_initialize();
@@ -55,9 +54,9 @@ namespace urbi
     /// Return the list of loaded system files.
     system_files_type& system_files_get();
 
-    /// Switch to redefinition mode in the current scope
+    /// Switch to redefinition mode in the current scope.
     void system_redefinitionMode();
-    /// Deactivate void errors in the current scope
+    /// Deactivate void errors in the current scope.
     void system_noVoidError();
 
     /// Return the URBI_ROOT path.

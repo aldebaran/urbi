@@ -158,17 +158,10 @@ namespace urbi
     }
 
     rObject
-    eval(const std::string& code)
+    eval(const std::string& code, rObject self)
     {
       return execute_parsed(parser::parse(code, ast::loc()),
-                            SYMBOL(eval), code);
-    }
-
-    rObject
-    eval(const std::string& code, rObject)
-    {
-      return execute_parsed(parser::parse(code, ast::loc()),
-                            SYMBOL(eval), code);
+                            SYMBOL(eval), code, self);
     }
 
     static rObject

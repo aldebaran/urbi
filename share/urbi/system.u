@@ -81,28 +81,27 @@ do (System)
 
   // '$loadedFiles' local slot names are files loaded so far
   // Object.new not being loaded yet, '$loadedFiles' is a dummy string
-  var '$loadedFiles' = [ => ];
-
-  var loadFile_ = &loadFile;
-
+  var '$loadedFiles' =
+    [
+      "urbi/object.u" => 1,
+      "urbi/urbi.u"   => 1,
+      "urbi/system.u" => 1,
+    ];
   var defaultIsSystem = true;
-  loadFile->constant = false;
-  loadFile = function(file, isSystem = defaultIsSystem)
-  {
-    var res = loadFile_(file).acceptVoid |
-    if (isSystem)
-    {
-      addSystemFile(file.asString)
-    } |
-    res.unacceptVoid
-  };
-  loadFile->constant = true;
 
-  addSystemFile("urbi/urbi.u");
-  addSystemFile(searchFile("urbi/urbi.u").asString);
-  addSystemFile(searchFile("urbi/system.u").asString);
+  // Enhance loadFile to fill systemFiles.
+  overrideSlot("loadFile",
+  function (var file, var target = this, var isSystem = defaultIsSystem)
+    {
+      if (isSystem)
+        addSystemFile(file.asString)|
+      'loadFile$old'(file, target)
+    });
 
   [
+    searchFile("urbi/urbi.u").asString,
+    searchFile("urbi/system.u").asString,
+    searchFile("urbi/object.u").asString,
     "ast/factory.cc",
     "ast/parametric-ast.cc",
     "ast/parametric-ast.hh",
@@ -119,15 +118,11 @@ do (System)
 
   /// Look for file and load it.
   // Throw on errors.
-  function load(var file, var isSystem = defaultIsSystem)
+  function load(var file, var target = this, var isSystem = defaultIsSystem)
   {
-    var res = loadFile(searchFile(file), isSystem).acceptVoid |
-
-    if (file in '$loadedFiles')
-      '$loadedFiles'.set(file, '$loadedFiles'.get(file) + 1)
-    else
-      '$loadedFiles'.set(file, 1) |
-
+    var res = loadFile(searchFile(file), target, isSystem).acceptVoid |
+    '$loadedFiles'.set(file,
+      { if (file in '$loadedFiles') '$loadedFiles'.get(file) + 1 else 1 })|
     res.unacceptVoid
   };
 
@@ -169,12 +164,12 @@ do (System)
   // Require module stage 1
   function requireFile(var file)
   {
+    // Cannot use "not in" yet.
     if (file in '$loadedFiles')
-    {}
+      {}
     else
-    {
-      load(file)
-    } | void
+      load(file)|
+    void
   };
 
   // Do not make a wrapper function here, as you would get a tag for

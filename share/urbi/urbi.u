@@ -29,8 +29,8 @@ do (void.acceptVoid)
   function unacceptVoid() { protos.front };
 };
 
+System.loadFile(System.searchFile("urbi/object.u"));
 System.loadFile(System.searchFile("urbi/system.u"));
-System.load("urbi/object.u");
 System.load("urbi/global.u");
 System.load("urbi/platform.u");
 
