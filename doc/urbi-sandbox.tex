@@ -106,19 +106,6 @@ Last example.
 \item beware (not to catch the first word)
 \item|slot[foo][bar]| a slot
 \item|fun[foo][bar]|(<var>) a function
-\item[argMax](<fun> = a < b function LPAREN a, b RPAREN LBRACE a < b RBRACE)%
-  The index of the (leftmost) ``largest'' member based on the comparison
-  function \var{fun}.
-\begin{urbiassert}
-           [1].argMax == 0;
-        [1, 2].argMax == 1;
-     [1, 2, 2].argMax == 1;
-        [2, 1].argMax == 0;
-[2, -1, 3, -4].argMax == 2;
-
-[2, -1, 3, -4].argMax (function (a, b) { a.abs < b.abs }) == 3;
-\end{urbiassert}
-
 \end{urbiscriptapi}
 
 \sectionObject{Foo}
