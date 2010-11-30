@@ -320,6 +320,14 @@ class Exception.Argument: Exception
   };
 };
 
+do(Global.Exception)
+{
+  function argumentTypeException(routine, index, effective, expected)
+  {
+    Argument.new(routine, index, Type.new(effective, expected))
+  }
+};
+
 class Exception.ArgumentType: Exception.Argument
 {
   var index = nil;
