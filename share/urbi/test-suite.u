@@ -121,7 +121,7 @@ do (Directory)
     testSkip("requires inotify support");
   }|;
 
-  // Deterministic localSlotNames.
+  // Deterministic content.
   overrideSlot("content",
     function () { 'content$old'.sort });
 
