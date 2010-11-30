@@ -79,7 +79,7 @@ class Global.Channel.Filter: Channel
   };
   function checkFilter(v)
   {
-    filter.any(function(f) { v.isA(f)}) &&
+    filter.any(function(f) { v.isA(f) }) &&
     (! v.isA(Container) || v.all(closure(v) {checkFilter(v)}))
   };
   function '<<'(v)
@@ -103,6 +103,7 @@ class Global.Channel.Filter: Channel
     .map(function(x) { getSlot(x)})
   };
 };
+
 // Default channels.
 do (Global)
 {
@@ -113,7 +114,7 @@ do (Global)
 
   function warn(msg)
   {
-    Channel.warning.echo(msg)
+    lobby.echo(msg, Channel.warning.name, "!!!")
   };
 };
 

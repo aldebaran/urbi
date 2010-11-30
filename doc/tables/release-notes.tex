@@ -79,6 +79,9 @@ function Foo.'=='(var that)
 \item \refObject{Dictionary} keys can now be arbitrary objects. Objects
   hashing can be overridden. See \refSlot[Object]{hash}.
 
+\item \refSlot[Global]{warn} sends messages prefixed with \lstinline|!!!|
+  (as error messages), instead of \lstinline|***|.
+
 \item \refObject{Hash}, type for hash codes for \refObject{Dictionary}.
 
 \item \refSlot[List]{insertUnique} inserts a member if it's not already part
@@ -135,7 +138,7 @@ var e = Event.new;
 
 // This is not the correct way to match an event.
 at (e) echo("Oops.");
-[00000002:warning] *** at (<event>) without a '?', this is probably not what you meant.
+[00000002:warning] !!! at (<event>) without a '?', this is probably not what you meant.
 [00000003] *** Oops.
 
 // This is.

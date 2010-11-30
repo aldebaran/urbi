@@ -41,7 +41,7 @@ var a = BIN 10;0123456789
 [:]0123456789
 
 var b = Kernel1.copy(a);
-[00000003:warning] *** `copy(binary)' is deprecated, use `binary.copy'
+[00000003:warning] !!! `copy(binary)' is deprecated, use `binary.copy'
 [00000004] BIN 10
 [:]0123456789
 
@@ -88,7 +88,7 @@ Kernel1.ping;
   \refObject{List}.
 \begin{urbiassert}
 Kernel1.size([1, 2, 3]) == [1, 2, 3].size;
-[00000002:warning] *** `size(list)' is deprecated, use `list.size'
+[00000002:warning] !!! `size(list)' is deprecated, use `list.size'
 \end{urbiassert}
 
 \item[strict]
@@ -99,7 +99,7 @@ Kernel1.size([1, 2, 3]) == [1, 2, 3].size;
   \refObject{String}.
 \begin{urbiassert}
 Kernel1.strlen("123") == "123".length;
-[00000002:warning] *** `strlen(string)' is deprecated, use `string.length'
+[00000002:warning] !!! `strlen(string)' is deprecated, use `string.length'
 \end{urbiassert}
 
 \item[taglist]

@@ -63,21 +63,18 @@ do (Lobby)
   };
 
   // Echo \a msg "on tag" \a tag.
-  function echo(var msg, var tag = "")
+  function echo(var msg, var tag = "", var prefix = "***")
   {
     // Avoid the trailing space.
     msg = msg.asString |
-    if (msg)
-      send("*** " + msg, tag)
-    else
-      send("***", tag)
+    send(prefix + { if (msg) " " + msg else "" }, tag)
   };
 
   // Each each member or \a lines as a line, on \a tag.
-  function echoEach(var lines, var tag = "")
+  function echoEach(var lines, var tag = "", var prefix = "***")
   {
     for (var line: lines)
-      echo(line, tag);
+      echo(line, tag, prefix);
   };
 
   function handleDisconnect()
