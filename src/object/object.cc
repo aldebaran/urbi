@@ -60,6 +60,18 @@ namespace urbi
         static const long idx = std::ios::xalloc();
         return o.iword(idx);
       }
+
+      /// Send a warning about something that will be an error in a future
+      /// release.
+      static
+      void
+      warn_hard(const std::string& msg)
+      {
+        runner::Runner& r = ::kernel::runner();
+        r.send_message("warning", libport::format("!!! %s", msg));
+        r.show_backtrace("warning");
+      }
+
     }
 
 
@@ -330,7 +342,10 @@ namespace urbi
     {
       Slot& slot = slot_get(k);
       rObject res = slot.property_get(p);
-      slot.property_remove(p);
+      if (res)
+        slot.property_remove(p);
+      else
+        warn_hard(libport::format("no such property: %s->%s", k, p));
       return res;
     }
 
@@ -591,12 +606,7 @@ namespace urbi
     Object::urbi_removeSlot(key_type name)
     {
       if (!slot_remove(name))
-      {
-        runner::Runner& r = ::kernel::runner();
-        r.send_message("warning",
-                       libport::format("!!! no such local slot: %s", name));
-        r.show_backtrace("warning");
-      }
+        warn_hard(libport::format("no such local slot: %s", name));
       return this;
     }
 
