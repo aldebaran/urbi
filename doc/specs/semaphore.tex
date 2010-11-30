@@ -31,8 +31,7 @@ Semaphore.new(1);
 
 \begin{urbiscriptapi}
 
-\item \hypertarget{slot:\currentObject.criticalSection}{}%
-  \lstinline|criticalSection(function() { \var{code} })|\\%
+\item \labelSlot{criticalSection}\lstinline|(function() { \var{code} })|\\%
   Put the piece of \var{code} inside a critical section which can be
   executed simultaneously at most the number of time given at the creation
   of the \lstinline|Semaphore|.  This method is similar to a call to
