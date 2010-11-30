@@ -592,7 +592,9 @@ namespace urbi
     case SOUND_RAW:
     {
       const char* dev = device ? device : "speaker";
-      send("%s.removeSlot(\"sendsoundsaveblend\") | var %s.sendsoundsaveblend = %s.val->blend; %s.val->blend=\"queue\";",
+      send("%s.removeSlot(\"sendsoundsaveblend\") |"
+           "var %s.sendsoundsaveblend = %s.val->blend;"
+           "%s.val->blend=\"queue\";",
            dev, dev, dev, dev);
       sendSoundData* s = new sendSoundData();
       s->bytespersec = sound.channels * sound.rate * (sound.sampleSize / 8);
