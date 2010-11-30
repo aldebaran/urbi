@@ -432,46 +432,6 @@ do (2) { var foo = "foo" ; foo->bar = "bar" }.properties("foo");
 [00238502] ["bar" => "bar", "constant" => false]
 \end{urbiscript}
 
-\item[removeProperty](<slotName>, <propName>)%
-  Remove the property \var{propName} from the slot \var{slotName}.  Raise an
-  error if the slot does not exist, do nothing if the property does not
-  exist.
-\begin{urbiscript}
-do (2)
-{
-  var foo = "foo";
-  foo->bar = "bar";
-  removeProperty("foo", "bar");
-}.properties("foo");
-[00238502] ["constant" => false]
-
-2.removeProperty("foo", "bar");
-[00000072:error] !!! lookup failed: foo
-
-do (2)
-{
-  var foo = "foo";
-  removeProperty("foo", "bar");
-}|;
-\end{urbiscript}
-
-\item[removeProto](<proto>)%
-  Remove \var{proto} from the list of prototypes of \this, and return \this.
-  Do nothing if \var{proto} is not a prototype of \this.
-\begin{urbiscript}
-do (Object.new)
-{
-  assert
-  {
-    addProto(Orderable);
-    removeProto(123) === this;
-    protos == [Orderable, Object];
-    removeProto(Orderable) === this;
-    protos == [Object];
-  };
-}|;
-\end{urbiscript}
-
 \item[removeLocalSlot](<slot>)%
   Remove \var{slot} from the (local) list of slots of \this, and return
   \this.  Raise an error if \var{slot} does not exist.  See also
@@ -503,10 +463,54 @@ assert
 \end{urbiscript}
 
 
+\item[removeProperty](<slotName>, <propName>)%
+  Remove the property \var{propName} from the slot \var{slotName}.  Raise an
+  error if the slot does not exist.  Warn if \var{propName} does not exist;
+  in a future release this will be an error.
+\begin{urbiscript}
+var r = Object.new|;
+
+// Non-existing slot.
+r.removeProperty("slot", "property");
+[00000072:error] !!! lookup failed: slot
+
+var r.slot = "slot value"|;
+// Non-existing property.
+r.removeProperty("slot", "property");
+[00000081:warning] !!! no such property: slot->property
+[00000081:warning] !!!    called from: removeProperty
+
+r.slot->property = "property value"|;
+assert
+{
+  r.hasProperty("slot", "property");
+  // Existing property.
+  r.removeProperty("slot", "property") == "property value";
+  ! r.hasProperty("slot", "property");
+};
+\end{urbiscript}
+
+\item[removeProto](<proto>)%
+  Remove \var{proto} from the list of prototypes of \this, and return \this.
+  Do nothing if \var{proto} is not a prototype of \this.
+\begin{urbiscript}
+do (Object.new)
+{
+  assert
+  {
+    addProto(Orderable);
+    removeProto(123) === this;
+    protos == [Orderable, Object];
+    removeProto(Orderable) === this;
+    protos == [Object];
+  };
+}|;
+\end{urbiscript}
+
 \item[removeSlot](<slot>)%
   Remove \var{slot} from the (local) list of slots of \this, and return
-  \this.  Warn if \var{slot} does not exist; in the future this will be an
-  error.  See also \refSlot{removeLocalSlot}.
+  \this.  Warn if \var{slot} does not exist; in a future release this will
+  be an error.  See also \refSlot{removeLocalSlot}.
 \begin{urbiscript}
 {
   var base = Object.new;
