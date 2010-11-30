@@ -378,7 +378,7 @@ namespace urbi
     | Subscription.  |
     `---------------*/
 
-    Event::Subscription::Subscription(rEvent event, const callback_type* cb)
+    Event::Subscription::Subscription(rEvent event, callback_type* cb)
       : event_(event)
       , cb_(cb)
     {}
@@ -386,15 +386,10 @@ namespace urbi
     void
     Event::Subscription::stop()
     {
-      for (Event::callbacks_type::iterator it = event_->callbacks_.begin();
-           it != event_->callbacks_.end();
-           ++it)
-        if (*it == cb_)
-        {
-          delete *it;
-          event_->callbacks_.erase(it);
-          return;
-        }
+      Event::callbacks_type::iterator it = libport::find(event_->callbacks_, cb_);
+      assert(it != event_->callbacks_.end());
+      delete *it;
+      event_->callbacks_.erase(it);
     }
   }
 }

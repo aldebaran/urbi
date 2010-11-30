@@ -40,9 +40,9 @@ namespace urbi
 
       private:
         friend class Event;
-        Subscription(rEvent event, const callback_type* cb);
+        Subscription(rEvent event, callback_type* cb);
         rEvent event_;
-        const callback_type* cb_;
+        callback_type* cb_;
       };
 
     public:
