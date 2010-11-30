@@ -283,19 +283,33 @@ class Exception.Syntax: Exception
 
 class Exception.Type: Exception
 {
-  var expectedType = nil;
+  var expectedTypes = nil;
   var effective = nil;
 
   function init(effective, expected)
   {
-    this.expectedType = expected.type |
+    if (expected.isA(List) && expected !== List)
+      this.expectedTypes = expected.map(function(v){ v.type })
+    else
+      this.expectedTypes = [expected.type] |
+
     this.effective = effective
+  };
+
+  function formatTypes()
+  {
+    if (expectedTypes.size > 1)
+      expectedTypes.range(0, expectedTypes.size - 1)
+                   .join(", a ", "a ", " or a %s")
+                   % expectedTypes.back
+    else
+      "a %s" % expectedTypes[0]
   };
 
   function message()
   {
-    "unexpected %s, expected a %s"
-      % [&effective.asPrintable, expectedType]
+    "unexpected %s, expected %s"
+      % [&effective.asPrintable, formatTypes]
   };
 };
 
@@ -322,9 +336,10 @@ class Exception.Argument: Exception
 
 do(Global.Exception)
 {
-  function argumentTypeException(routine, index, effective, expected)
+  function argumentTypeException(routine, index, effective,
+                                 expected, alternatives = [])
   {
-    Argument.new(routine, index, Type.new(effective, expected))
+    Argument.new(routine, index, Type.new(effective, expected, alternatives))
   }
 };
 
