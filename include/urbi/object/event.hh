@@ -131,6 +131,12 @@ namespace urbi
 
       /// C++ callbacks
       typedef std::vector<callback_type*> callbacks_type;
+      // Using an unordered set is slightly slower with few elements,
+      // which is the most common case (isn't it?). So although it
+      // entails linear-time search, std::vector is preferable.
+      //
+      // typedef boost::unordered_set<callback_type*> callbacks_type;
+
       callbacks_type callbacks_;
       /// Running C++ callbacks of an event instance
       typedef std::vector<callback_type> callbacks_instance_type;
