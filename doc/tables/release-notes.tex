@@ -43,8 +43,8 @@ This chapter lists the user-visible changes in \usdk releases.
   \lstinline|InputPort| (see \autoref{sec:uob:input-port}).  \fixme{A short
     example?  A migration guide somewhere?}.
 
-\item The search paths for \us files (\refSlot[System]{searchPath}) and for
-  UObject files (\refSlot[UObject]{searchPath}) can be changed from \us.
+\item The search paths for \us files and for UObject files can be changed
+  from \us (\refSlot[System]{searchPath}, \refSlot[UObject]{searchPath}).
 
 \item New syntactic sugar for \refSlot[Object]{getSlot}:
   \lstinline|\var{o}.&\var{name}| is equivalent to
@@ -101,7 +101,7 @@ function Foo.'=='(var that)
 \begin{itemize}
 \item More types of empty statements are warned about.  For instance \urbi
   used to accept silently \lstinline|if (foo);|.  It now warns about the empty
-  body, and recommends writing \lstinline|if (foo) {};|.
+  body, and recommends \lstinline|if (foo) {};|.
 
 \item \refSlot[Dictionary]{erase} raises an error if the key does not exit.
 
@@ -449,7 +449,7 @@ x = 1|;
   \refSlot[Float]{isNan}.
 \item \refObject{Traceable}.
 \item Improved context (the call stacks) when error are reported.
-  Especially when using \refSlot[System]{eval}/\refSlot[System]{load}.
+  Especially when using \refSlot[System]{eval} or \refSlot[System]{load}.
 \item \lstinline|at (expression)| --- as opposed to \lstinline|at (event?)| ---
   implementation has been improved: the condition will now be reevaluated even
   if a parameter not directly in the expression (in the body of a called
@@ -490,8 +490,8 @@ x = 1|;
 \item \refSlot[Regexp]{asPrintable}, \refSlot[Regexp]{asString},
   \refSlot[Regexp]{has}.
 \item \refSlot[System.Platform]{host}, \refSlot[System.Platform]{hostAlias},
-  \refSlot[System.Platform]{hostCpu}, \refSlot[System.Platform]{hostOs},
-  \refSlot[System.Platform]{hostVendor}.
+  \refSlot[System.Platform]{hostCpu}, \\
+  \refSlot[System.Platform]{hostOs}, \refSlot[System.Platform]{hostVendor}.
 \item UObject init method and methods bound by notifyChange no longer need
   to return an int.
 \item \refSlot[Channel]{Filter}, a \refObject{Channel} that outputs text
@@ -972,8 +972,8 @@ at (headTouch.val->changed? if headTouch.val)
   tts.say("ouch");
 \end{urbiunchecked}
   \noindent
-  will now work. This hook costs one \lstinline|at| per UVar, and can be
-  disabled by setting \refSlot[UVar]{hookChanged} to false.
+  will now work. This hook costs one \lstinline|at| per UVar; set
+  \refSlot[UVar]{hookChanged} to false to disable it.
 
 \item Add a statistics-gathering tool. Enable it by calling
   \samp{uobjects.enableStats(true)}. Reset counters by calling
@@ -1277,25 +1277,21 @@ asked by our users during the beta-test period.
 \subsubsection{Changes}
 
 \begin{description}
-\item \lstinline|new| syntax revamped
-
+\item \lstinline|new| syntax revamped.\\
   The syntax "new myObject(myArgs)" has been deprecated and now gives a
   warning. The recommended "myObject.new(myArgs)" is suggested.
 
-\item \lstinline|delete| has been removed
-
+\item \lstinline|delete| has been removed.\\
   \lstinline|delete| was never the right thing to do. A local variable
   should not be deleted, and a slot can be removed using
   \refSlot[Object]{removeSlot}.  The construct "delete object" has been
   removed from the language.
 
-\item \lstinline|__HERE__|
-
+\item \lstinline|__HERE__|.\\
   The new \lstinline|__HERE__| pseudo-symbol gives the current position.  It
   features three self explanatory slots: "file", "line", and "column".
 
-\item Operator "()"
-
+\item Operator "()".\\
   It is now possible to define the "()" operator on objects and have it
   called as soon as at least one parameter is given:
 
@@ -1311,8 +1307,7 @@ A(42);
 [00000003] *** A called with 42
 \end{urbiscript}
 
-\item \lstinline|catch(\var{type} \var{name}| syntax removed
-
+\item \lstinline|catch(\var{type} \var{name}| syntax removed.\\
   It was used to catch exceptions if and only if they inherited
   \var{type}. This behavior can be obtained with the more general guard
   system:
@@ -1324,8 +1319,7 @@ catch (var e if e.isA(<type>))
 }
 \end{urbiunchecked}
 
-\item Pattern matching and guards in catch blocks
-
+\item Pattern matching and guards in catch blocks.\\
   Exception can now be filtered thanks to pattern matching, just like
   events. Moreover, the pattern can be followed by the "if" keyword and an
   arbitrary guard. The block will catch the exception only if the guard is
@@ -1342,19 +1336,16 @@ catch (var e)  // Catch any other exception
 { ... }
 \end{urbiunchecked}
 
-\item Parsing of integer literals
-
+\item Parsing of integer literals.\\
   The parser could not read integer literals greater than 2**31-1.  This
   constraint has been alleviated, and Urbi now accepts integer literals up
   to 2**63-1.
 
-\item Display of integer literals
-
+\item Display of integer literals.\\
   Some large floating point values could not be displayed correctly at the
   top level of the interpreter. This limitation has been removed.
 
-\item Variables binding in event matching
-
+\item Variables binding in event matching.\\
   Parentheses around variables bindings ("var x") are no longer required in
   event matching:
 
@@ -1369,8 +1360,7 @@ instead of:
 at (?myEvent((var x), (var y), 1))
 \end{urbiunchecked}
 
-\item Waituntil and bindings
-
+\item Waituntil and bindings.\\
   Bindings performed in "waituntil" constructs are now available in its
   context:
 
@@ -1380,8 +1370,7 @@ waituntil(?event(var x));
 echo (x);
 \end{urbiunchecked}
 
-\item "\refSlot[List]{insert}" method
-
+\item \refSlot[List]{insert}.\\
   Now uses an index as its first argument and inserts the given element
   before the index position:
 
@@ -1390,8 +1379,7 @@ echo (x);
 [00000001] ["a", "foo", "b", "c"]
 \end{urbiscript}
 
-\item "\refSlot[List]{sort}" method
-
+\item \refSlot[List]{sort}.\\
   Now takes an optional argument, which is a function to call instead of the
   "<" operator. Here are two examples illustrating how to sort strings,
   depending on whether we want to be case-sensitive (the default) or not:
@@ -1403,13 +1391,11 @@ echo (x);
 [00000002] ["bar", "Baz", "foo"]
 \end{urbiscript}
 
-\item "\refSlot[System]{searchPath}" method
-
+\item \refSlot[System]{searchPath}.\\
   It is now possible to get the search path for files such as \file{urbi.u}
   or \file{URBI.INI} by using \refSlot[System]{searchPath}.
 
-\item "\refSlot[System]{getenv}" method
-
+\item \refSlot[System]{getenv}.\\
   Now returns "nil" if a variable cannot be found in the environment instead
   of "void". This allows you do to things such as:
 
@@ -1422,19 +1408,16 @@ if (!ne.isNil) do_something(ne);
   while previously you had to retrieve the environment variable twice, once
   to check for its existence and once to get its content.
 
-\item "\refSlot[Control]{disown}"
-
+\item \refSlot[Control]{disown}.\\
   It is now possible to start executing code in background while dropping
   all the tags beforehand, including the connection tag. The code will still
   continue to execute after the connection that created it has died.
 
-\item "\refSlot[Object]{removeSlot}"
-
+\item \refSlot[Object]{removeSlot}.\\
   Now silently accepts non-existing slot names instead of signaling an
   error.
 
-\item "\refSlot[Semaphore]{criticalSection}"
-
+\item \refSlot[Semaphore]{criticalSection}.\\
   It is now possible to define a critical section associated with a
   semaphore. The \refSlot[Semaphore]{acquire} method will be called at the
   beginning, and if after that the operation is interrupted by any means the
@@ -1447,7 +1430,7 @@ var s = \refSlot[Semaphore]{new}(1);
 s.criticalSection(function () { echo ("In the critical section") });
 \end{urbiunchecked}
 
-\item "\refSlot[System]{stats}"
+\item \refSlot[System]{stats}.\\
   Its output is now expressed in seconds rather than milliseconds, for
   consistency with the rest of the kernel.
 \end{description}
