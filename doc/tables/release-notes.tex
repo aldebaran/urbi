@@ -122,6 +122,23 @@ removeSlot("doesNotExist")|;
   In the past, it used to accept this silently; in the future, this will be
   an error, as with \refSlot[Object]{removeLocalSlot}.  Use
   \refSlot[Object]{hasLocalSlot} beforehand, if needed.
+
+\item A warning is now issued when the evaluation of the condition of an
+  \lstinline|at| statement yields an Event and no question mark was used,
+  since this is most likely an omission.
+
+\begin{urbiunchecked}
+var e = Event.new;
+[00000001] Event_0xADDR
+
+// This is not the correct way to match an event.
+at (e) echo("Oops.");
+[00000002:warning] *** at (<event>) without a '?', this is probably not what you meant.
+[00000003] *** Oops.
+
+// This is.
+at (e?) echo("Okay.");
+\end{urbiunchecked}
 \end{itemize}
 
 
