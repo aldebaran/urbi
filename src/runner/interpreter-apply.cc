@@ -44,10 +44,12 @@
 
 #ifdef _MSC_VER
 // Use malloc with CL.
-# define URBI_DYNAMIC_STACK_NONE
+# define URBI_DYNAMIC_STACK_NONE   1
+# define URBI_DYNAMIC_STACK_VECTOR 0
 #else
 // Use variable size vectors on the stack with GCC.
-# define URBI_DYNAMIC_STACK_VECTOR
+# define URBI_DYNAMIC_STACK_NONE   0
+# define URBI_DYNAMIC_STACK_VECTOR 1
 #endif
 
 GD_CATEGORY(Urbi);
@@ -286,18 +288,15 @@ namespace runner
 
     // Push new frames on the stacks
     local += 2;
-# if defined(URBI_DYNAMIC_STACK_VECTOR)
+# if URBI_DYNAMIC_STACK_VECTOR
     rSlot local_stack_space[local];
     rSlot captured_stack_space[captured];
     rSlot* local_stack = &local_stack_space[0];
     rSlot* captured_stack = &captured_stack_space[0];
-#elif defined(URBI_DYNAMIC_STACK_NONE)
-    // FIXME: Check whether this is as efficient as a new []
+#elif URBI_DYNAMIC_STACK_NONE
     // FIXME: What about alloca?
-    std::vector<rSlot> local_stack_space(local);
-    std::vector<rSlot> captured_stack_space(captured);
-    rSlot* local_stack = &local_stack_space[0];
-    rSlot* captured_stack = &captured_stack_space[0];
+    rSlot* local_stack = new rSlot[local];
+    rSlot* captured_stack = new rSlot[captured];
 #else
 # error "No dynamic stack policy defined."
 #endif
@@ -310,9 +309,17 @@ namespace runner
             ((Stacks::frame_type, previous_frame))
             ((rLobby&, lobby_))
             ((rLobby, caller_lobby))
+            ((rSlot*, local_stack))
+            ((rSlot*, captured_stack))
             ,
             stacks_.pop_frame(msg, previous_frame);
             lobby_ = caller_lobby;
+            BOOST_PP_IF(URBI_DYNAMIC_STACK_NONE,
+                        {
+                          delete [] local_stack;
+                          delete [] captured_stack;
+                        },
+              );
       );
 
     // Push captured variables
