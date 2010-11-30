@@ -291,14 +291,13 @@ namespace runner
     rSlot captured_stack_space[captured];
     rSlot* local_stack = &local_stack_space[0];
     rSlot* captured_stack = &captured_stack_space[0];
-#elif defined(URBI_DYNAMIC_STACK_ALLOCA)
-    rSlot* local_stack = reinterpret_cast<rSlot*>(alloca(local * sizeof(rSlot)));
-    new (local_stack) rSlot[local];
-    rSlot* captured_stack = reinterpret_cast<rSlot*>(alloca(captured * sizeof(rSlot)));
-    new (captured_stack) rSlot[captured];
 #elif defined(URBI_DYNAMIC_STACK_NONE)
-    rSlot* local_stack = new rSlot[local];
-    rSlot* captured_stack = new rSlot[captured];
+    // FIXME: Check whether this is as efficient as a new []
+    // FIXME: What about alloca?
+    std::vector<rSlot> local_stack_space(local);
+    std::vector<rSlot> captured_stack_space(captured);
+    rSlot* local_stack = &local_stack_space[0];
+    rSlot* captured_stack = &captured_stack_space[0];
 #else
 # error "No dynamic stack policy defined."
 #endif
@@ -311,20 +310,10 @@ namespace runner
             ((Stacks::frame_type, previous_frame))
             ((rLobby&, lobby_))
             ((rLobby, caller_lobby))
-#if defined(URBI_DYNAMIC_STACK_ALLOCA) || defined(URBI_DYNAMIC_STACK_ALLOCA)
-            ((rSlot*, local_stack))
-            ((rSlot*, captured_stack))
-#endif
             ,
             stacks_.pop_frame(msg, previous_frame);
             lobby_ = caller_lobby;
-#if defined(URBI_DYNAMIC_STACK_ALLOCA)
-#  error "Alloca deallocation not handled"
-#elif defined(URBI_DYNAMIC_STACK_NONE)
-            delete [] local_stack;
-            delete [] captured_stack;
-#endif
-    );
+      );
 
     // Push captured variables
     foreach (const ast::rConstLocalDeclaration& dec,
