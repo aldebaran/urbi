@@ -121,6 +121,10 @@ do (Directory)
     testSkip("requires inotify support");
   }|;
 
+  // Deterministic content.
+  overrideSlot("content",
+    function () { 'content$old'.sort });
+
   var fileDeleted = fileCreated;
 }|;
 
