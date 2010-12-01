@@ -42,10 +42,10 @@ d.getWithDefault("four", 4);
 Arbitrary objects can be used as dictionary keys. To map to the same cell,
 two objects used as keys must have equal hashes (retrieved with the
 \refSlot[Object]{hash} method) and be equal to each other (in the
-\refSlot[Object]{==} sense).
+\refSlot[Object]{'=='} sense).
 
 This means that two different objects may have the same hash: the equality
-operator (\refSlot[Object]{==}) is checked in addition to the hash, to
+operator (\refSlot[Object]{'=='}) is checked in addition to the hash, to
 handle such collision.  However a good hash algorithm should avoid this
 case, since it hinders performances.
 

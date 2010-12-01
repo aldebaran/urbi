@@ -371,7 +371,13 @@ load("test2.u");
 [00000006] 2
 \end{urbiscript}
 
-%% \item[resetStats]
+\item[resetStats]%
+  Reinitialize the \refSlot{stats} computation.
+\begin{urbiassert}
+ 0  < System.stats["cycles"];
+System.resetStats.isVoid;
+ 1 == System.stats["cycles"];
+\end{urbiassert}
 
 
 \item[scopeTag] Bounce to \refSlot[Tag]{scope}.
@@ -497,7 +503,23 @@ sleep(100ms);
 assert (res == [0, 1, 0]);
 \end{urbiscript}
 
-%% \item[stats]
+\item[stats]%
+  Return a \refObject{Dictionary} containing information about the execution
+  cycles of \urbi.  This is an internal feature made for developers, it
+  might be changed without notice.  See also \refSlot{resetStats}.
+\begin{urbiscript}
+var stats = System.stats|;
+assert
+{
+  stats.isA(Dictionary);
+  stats.keys.sort == ["cycles",
+                      "cyclesMin", "cyclesMean", "cyclesMax",
+                      "cyclesVariance", "cyclesStdDev"].sort;
+  0 < stats["cycles"];
+  stats["cyclesMin"]  <= stats["cyclesMean"];
+  stats["cyclesMean"] <= stats["cyclesMax"];
+};
+\end{urbiscript}
 
 
 %% \item[stopall]

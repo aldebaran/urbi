@@ -40,8 +40,7 @@ This chapter lists the user-visible changes in \usdk releases.
   (\autoref{sec:tools:urbi-launch}, \autoref{sec:tools:urbi-send}).
 
 \item The UObjects support a new form of data-flow, based on
-  \lstinline|InputPort| (see \autoref{sec:uob:input-port}).  \fixme{A short
-    example?  A migration guide somewhere?}.
+  \lstinline|InputPort| (see \autoref{sec:uob:input-port}).
 
 \item The search paths for \us files and for UObject files can be changed
   from \us (\refSlot[System]{searchPath}, \refSlot[UObject]{searchPath}).
@@ -145,8 +144,8 @@ at (e) echo("Oops.");
 at (e?) echo("Okay.");
 \end{urbiunchecked}
 
-\item \refObject{Directory} objects have new functionalities for creation, modification
-  and deletion.
+\item \refObject{Directory} objects have new functionalities for creation,
+  modification and deletion.
 \begin{urbiscript}
 Directory.createAll("dir1/dir2/dir3")|;
 Directory.new("dir1").rename("dir")|;
@@ -1155,22 +1154,19 @@ library specifications) is included.
 \subsubsection{Bug fixes}
 
 \begin{itemize}
-\item Bitwise operations.
-
+\item Bitwise operations.\\
   The native "long unsigned int" type is now used for all the bitwise
   operations (\lstinline|&|, \lstinline{|}, \lstinline|^|,
   \lstinline|compl|, \lstinline|<<|, \lstinline|>>|).  As a consequence it
   is now an error to pass negative operands to these operations.
 
-\item \refSlot[System]{PackageInfo}.
-
+\item \refSlot[System]{PackageInfo}.\\
   This new object provides version information about the Urbi package.  It
   is also used to ensure that the initialization process uses matching Urbi
   and \Cxx files.  This should prevent accidental mismatches due to
   incomplete installation processes.
 
-\item Precedence of operator \lstinline|**|.
-
+\item Precedence of operator \lstinline|**|.\\
   In conformance with the usage in mathematics, the operator \lstinline|**|
   now has a stronger precedence than the unary operators.  Therefore, as in
   Perl, Python and others, '-2 ** 2 == -4' whereas it used to be equal to
@@ -1184,8 +1180,7 @@ library specifications) is included.
 \subsubsection{Changes}
 
 \begin{itemize}
-\item \refSlot[String]{asFloat}
-
+\item \refSlot[String]{asFloat}.\\
   This new method has been introduced to transform a string to a float.  It
   raises a PrimitiveError exception if the conversion fails:
 
@@ -1201,16 +1196,16 @@ library specifications) is included.
 
 \subsubsection{Environment variables}
 
-The environment variable \env{URBI\_ROOT} denotes the directory which
-is the root of the tree into which Urbi was installed.  It corresponds
-to the "prefix" in GNU Autoconf parlance, and defaults to
-\file{/usr/local} under Unix.  urbiscript library files are expected
-to be in <URBI\_ROOT>/share/gostai/urbi.
+The environment variable \env{URBI\_ROOT} denotes the directory which is the
+root of the tree into which Urbi was installed.  It corresponds to the
+"prefix" in GNU Autoconf parlance, and defaults to \file{/usr/local} under
+Unix.  urbiscript library files are expected to be in
+<URBI\_ROOT>/share/gostai/urbi.
 
-The environment variable URBI\_PATH, which allows to specify a
+The environment variable \env{URBI\_PATH}, which allows to specify a
 colon-separated list of directories into which urbiscript files are
-looked-up, may extend or override URBI\_ROOT.  Any superfluous colon
-denotes the place where the URBI\_ROOT path is taken into account.
+looked-up, may extend or override \env{URBI\_ROOT}.  Any superfluous colon
+denotes the place where the \env{URBI\_ROOT} path is taken into account.
 
 \subsubsection{Scripting}
 
@@ -1281,7 +1276,7 @@ asked by our users during the beta-test period.
 
 \subsubsection{Changes}
 
-\begin{description}
+\begin{itemize}
 \item \lstinline|new| syntax revamped.\\
   The syntax "new myObject(myArgs)" has been deprecated and now gives a
   warning. The recommended "myObject.new(myArgs)" is suggested.
@@ -1312,7 +1307,7 @@ A(42);
 [00000003] *** A called with 42
 \end{urbiscript}
 
-\item \lstinline|catch(\var{type} \var{name}| syntax removed.\\
+\item \lstinline|catch(\var{type} \var{name})| syntax removed.\\
   It was used to catch exceptions if and only if they inherited
   \var{type}. This behavior can be obtained with the more general guard
   system:
@@ -1438,34 +1433,32 @@ s.criticalSection(function () { echo ("In the critical section") });
 \item \refSlot[System]{stats}.\\
   Its output is now expressed in seconds rather than milliseconds, for
   consistency with the rest of the kernel.
-\end{description}
+\end{itemize}
 
 \subsection{UObjects}
 
-\begin{description}
-\item[void] The error message given to the user trying to cast a void UVar
-  has been specialized.
+\begin{itemize}
+\item void.\\
+  The error message given to the user trying to cast a void UVar has been
+  specialized.
 
   Remote bound methods can now return void.
 
 
-\item[Coroutine interface]
-
+\item Coroutine interface.\\
   The functions \lstinline|yield()|, \lstinline|yield_until()|, and
-  \lstinline|yield_until_things_changed()| have been added to the
-  UObject API. They allow the user to write plugin UObject code that
-  behaves like any other coroutine in the kernel: if yield() is called
-  regularly, the kernel can continue to work while the user code runs.
-  Meaningful implementation for these functions is provided also in
-  remote mode: calling yield() will allow the UObject remote library
-  to process pending messages from within the user callback.
+  \lstinline|yield_until_things_changed()| have been added to the UObject
+  API. They allow the user to write plugin UObject code that behaves like
+  any other coroutine in the kernel: if yield() is called regularly, the
+  kernel can continue to work while the user code runs.  Meaningful
+  implementation for these functions is provided also in remote mode:
+  calling yield() will allow the UObject remote library to process pending
+  messages from within the user callback.
 
-\item[Remote UObject initialization]
-
-  Remote UObject instantiation is now atomic: the API now ensures that
-  all variables and functions bound from the UObject constructor and
-  init are visible as soon as the UObject itself is visible. Code
-  like:
+\item Remote UObject initialization.\\
+  Remote UObject instantiation is now atomic: the API now ensures that all
+  variables and functions bound from the UObject constructor and init are
+  visible as soon as the UObject itself is visible. Code like:
 
 \begin{urbiunchecked}
 waituntil(uobjects.hasSlot("MyRemote")) | var m = \refSlot[MyRemote]{new}();
@@ -1473,7 +1466,7 @@ waituntil(uobjects.hasSlot("MyRemote")) | var m = \refSlot[MyRemote]{new}();
 
 \noindent
 is now safe.
-\end{description}
+\end{itemize}
 
 \subsection{Auxiliary programs}
 
@@ -1491,9 +1484,8 @@ is now safe.
 
 \subsection{\us}
 
-\begin{description}
-\item "object" and "from" as identifiers
-
+\begin{itemize}
+\item "object" and "from" as identifiers.\\
   "object" and "from" are now regular identifiers and can be used as other
   names.  For example, it is now legal to declare:
 
@@ -1502,7 +1494,7 @@ var object = 1|;
 var from = 1|;
 \end{urbiscript}
 
-\item Hexadecimal literals
+\item Hexadecimal literals.\\
   It is now possible to enter (integral) hexadecimal numbers by
   prefixing them with "0x", as in:
 
@@ -1511,7 +1503,7 @@ var from = 1|;
 [00000001] 42
 \end{urbiscript}
 
-Only integral numbers are supported.
+  Only integral numbers are supported.
 
 %% FIXME: The hexadecimal representation of a number can be obtained by specifying the
 %% FIXME: base to \refSlot[Float]{asString}:
@@ -1523,13 +1515,11 @@ Only integral numbers are supported.
 %% FIXME: 42.hex;
 %% FIXME: [00000001] "2a"
 %% FIXME: \end{urbiscript}
-\end{description}
+\end{itemize}
 
 \subsection{Standard library}
-\begin{description}
-
-\item \refSlot[String]{asList}
-
+\begin{itemize}
+\item \refSlot[String]{asList}.\\
   "String" now has a "asList" method, which can be used transparently to
   iterate over the characters of a string:
 
@@ -1551,13 +1541,12 @@ for (var c: "foo") echo (c);
 %%% FIXME: ", ".join(["abc", "def", "ghi"]);
 %%% FIXME: [00000001] "abc, def, ghi"
 %%% FIXME: \end{urbiscript}
-\item "min" and "max"
-
-It is now possible to call "min" and "max" on a list. By default, the
-"<" comparison operator is used, but one explicit `lower than'
-function can be provided as "min" or "max" argument should one be
-needed. Here is an example on how to compare strings in case-sensitive
-and case-insensitive modes:
+\item \refSlot[List]{min} and \refSlot[list]{max}.\\
+  It is now possible to call "min" and "max" on a list. By default, the "<"
+  comparison operator is used, but one explicit `lower than' function can be
+  provided as "min" or "max" argument should one be needed. Here is an
+  example on how to compare strings in case-sensitive and case-insensitive
+  modes:
 
 \begin{urbiscript}
 ["the", "brown", "Fox"].min;
@@ -1566,27 +1555,25 @@ and case-insensitive modes:
 [00000002] "brown"
 \end{urbiscript}
 
-Global functions "min" and "max" taking an arbitrary number of
-arguments have also been defined. In this case, the default "<"
-operator is used for comparison:
+  \refSlot[Math]{min} and \refSlot[Math]{max} taking an arbitrary number of
+  arguments have also been defined. In this case, the default "<" operator
+  is used for comparison:
 
 \begin{urbiscript}
 min(3, 2, 17);
 [00000001] 2
 \end{urbiscript}
 
-\item Negative indices
-
-It is now possible to use negative indices when taking list elements.
-For example, -1 designates the last element, and -2 the one before that.
+\item Negative indices.\\
+  It is now possible to use negative indices when taking list elements.  For
+  example, -1 designates the last element, and -2 the one before that.
 
 \begin{urbiscript}
 ["a", "b", "c"][-1];
 [00000001] "c"
 \end{urbiscript}
 
-\item Tag names
-
+\item Tag names.\\
   Tags were displayed as \lstinline|Tag_0xADDR| which did not make
   their "name" slot apparent. They are now displayed as "Tag<name>":
 
@@ -1597,19 +1584,18 @@ Tag.new("mytag");
 [00000002] Tag<mytag>
 \end{urbiscript}
 
-\item "every" and exceptions
-
-If an exception is thrown and not caught during the execution of an "every"
-block, the "every" expression is stopped and the exception displayed.
-\end{description}
+\item "every" and exceptions.\\
+  If an exception is thrown and not caught during the execution of an
+  "every" block, the "every" expression is stopped and the exception
+  displayed.
+\end{itemize}
 
 \subsection{UObjects}
 \begin{description}
-\item "UVar::type()" method
-
-It is now possible to get the type of a "UVar" by calling its "type()"
-method, which returns a "UDataType" (see \file{urbi/uvalue.hh} for the
-types declarations).
+\item "UVar::type()" method.\\
+  It is now possible to get the type of a "UVar" by calling its "type()"
+  method, which returns a "UDataType" (see \file{urbi/uvalue.hh} for the
+  types declarations).
 \end{description}
 
 \subsection{Run-time}

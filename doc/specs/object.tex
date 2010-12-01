@@ -15,7 +15,7 @@ with many primitives that are mandatory for all object in \us.
 \subsection{Prototypes}
 
 \begin{refObjects}
-\item[Orderable]
+\item[Comparable]
 \item[Global]
 \end{refObjects}
 
@@ -717,6 +717,73 @@ Object.one                  == 2;
 
 \item \lstinline|'%='(\var{that})|\\
   Bounce to \lstinline|this '-' \var{that}|.
+
+\item['=='](<that>)%
+  Whether \this and \that are equal.  See also \refObject{Comparable} and
+  \autoref{sec:lang:operators:comparison}.  By default, bounces to
+  \refSlot{'==='}.  This operator \emph{must} be redefined for objects that
+  have a value-semantics; for instance two \refObject{String} objects that
+  denotes the same string should be equal according to \lstinline|==|,
+  although physically different (i.e., not equal according to
+  \lstinline|===|).
+\begin{urbiscript}
+{
+  var o1 = Object.new;
+  var o2 = Object.new;
+  assert
+  {
+      o1 == o1;
+    !(o1 == o2);
+      o1 != o2;
+    !(o1 != o1);
+
+      1  ==  1;
+     "1" == "1";
+     [1] == [1];
+  };
+};
+\end{urbiscript}
+
+\item['==='](<that>)%
+  Whether \this and \that are exactly the same object (i.e., \this and \that
+  are two different means to denote the very same location in memory).  To
+  denote equivalence, use \refSlot{'=='}; for instance two \refObject{Float}
+  objects that denote 42 can be different objects (in the sense of
+  \lstinline|===|), but will be considered equal by \lstinline|==|.  See
+  also \refSlot{'==='} and \autoref{sec:lang:operators:comparison}.
+\begin{urbiscript}
+{
+  var o1 = Object.new;
+  var o2 = Object.new;
+  assert
+  {
+      o1 === o1;
+    !(o1 === o2);
+
+    !( 1  ===  1 );
+    !("1" === "1");
+    !([1] === [1]);
+  };
+};
+\end{urbiscript}
+
+\item \lstinline|'!=='(\var{that})|\\%
+  The negation of \lstinline|\this === \that|, see \refSlot{'==='}.
+\begin{urbiscript}
+{
+  var o1 = Object.new;
+  var o2 = Object.new;
+  assert
+  {
+      o1 !== o2;
+    !(o1 !== o1);
+
+      1  !==  1;
+     "1" !== "1";
+     [1] !== [1];
+  };
+};
+\end{urbiscript}
 
 \end{urbiscriptapi}
 
