@@ -38,7 +38,7 @@ pong(const urbi::UMessage& msg)
 
   sumtime += ptime;
   printf("ping reply from %s: seq=%d time=%d ms\n",
-         rname, pingCount+1, ptime);
+         rname, pingCount, ptime);
   ++pingCount;
   received = true;
   if (pingCount == count)
@@ -46,7 +46,7 @@ pong(const urbi::UMessage& msg)
   if (flood)
   {
     sendtime = msg.client.getCurrentTime();
-    msg.client.send("uping << ping,");
+    msg.client.send("ping,\n");
   }
   return urbi::URBI_CONTINUE;
 }
@@ -81,6 +81,9 @@ main(int argc, char* argv[])
   if (c.error())
     exit(1);
 
+  c.send("var uping = Channel.new(\"uping\")|;\n"
+         "function ping () { uping << \"ping\"}|;\n");
+
   int interval = 2 < argc ? strtol(argv[2], NULL, 0) : 1000;
   // count initialization
   count = 3 < argc ? strtol(argv[3], NULL, 0) : 0;
@@ -96,13 +99,13 @@ main(int argc, char* argv[])
 	usleep(200);
       received = false;
       sendtime = c.getCurrentTime();
-      c.send("uping << ping;");
+      c.send("ping,\n");
       usleep(interval*1000);
     }
   else
   {
     flood = true;
-    c.send("uping << ping;");
+    c.send("ping,\n");
   }
 
   while (!over)
