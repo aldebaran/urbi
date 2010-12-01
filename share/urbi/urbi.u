@@ -8,15 +8,6 @@
  * See the LICENSE file for more information.
  */
 
-// Global.load is not defined, yet.
-
-/*-------.
-| void.  |
-`-------*/
-
-// FIXME: Can't do this in urbi
-// void.addProto(Singleton);
-
 do (Object)
 {
   var isVoid = false;
