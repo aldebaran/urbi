@@ -467,7 +467,7 @@ assert
   Remove the property \var{propName} from the slot \var{slotName}.  Raise an
   error if the slot does not exist.  Warn if \var{propName} does not exist;
   in a future release this will be an error.
-\begin{urbiscript}
+\begin{urbiunchecked}
 var r = Object.new|;
 
 // Non-existing slot.
@@ -488,7 +488,7 @@ assert
   r.removeProperty("slot", "property") == "property value";
   ! r.hasProperty("slot", "property");
 };
-\end{urbiscript}
+\end{urbiunchecked}
 
 \item[removeProto](<proto>)%
   Remove \var{proto} from the list of prototypes of \this, and return \this.
@@ -511,7 +511,7 @@ do (Object.new)
   Remove \var{slot} from the (local) list of slots of \this, and return
   \this.  Warn if \var{slot} does not exist; in a future release this will
   be an error.  See also \refSlot{removeLocalSlot}.
-\begin{urbiscript}
+\begin{urbiunchecked}
 {
   var base = Object.new;
   var base.slot = "base";
@@ -543,7 +543,7 @@ do (Object.new)
     base.slot == "base";
   };
 };
-\end{urbiscript}
+\end{urbiunchecked}
 
 
 \item[setConstSlot]%
