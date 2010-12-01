@@ -72,12 +72,26 @@ assert
 File.save("file", "content");
 var file = File.new("file");
 [00000001] File("file")
-file.copy("file2");
-var file2 = File.new("file2");
+var file2 = file.copy("file2");
 [00000002] File("file2")
 assert(file2.content == file.content);
 file.remove;
 file2.remove;
+\end{urbiscript}
+
+\item[copyInto](<dirname>)
+  Copy file into \var{dirname} directory.
+\begin{urbiscript}
+var dir = Directory.create("dir")|;
+file = File.create("file")|;
+file.copyInto(dir);
+[00000001] File("dir/file")
+file;
+[00000002] File("file")
+dir.content;
+[00000003] ["file"]
+dir.removeAll;
+file.remove;
 \end{urbiscript}
 
 \item[create](<name>)%
@@ -104,6 +118,20 @@ assert
   File.create(p).isA(File);
   f.content.data == "";
 };
+\end{urbiscript}
+
+\item[moveInto](<dirname>)
+  Move file into \var{dirname} directory.
+\begin{urbiscript}
+dir = Directory.create("dir")|;
+file = File.create("file")|;
+file.moveInto(dir);
+[00000001] File("dir/file")
+file;
+[00000001] File("dir/file")
+dir.content;
+[00000001] ["file"]
+dir.removeAll;
 \end{urbiscript}
 
 \item[name]

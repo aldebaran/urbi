@@ -10,15 +10,31 @@
 
 do (File)
 {
+  function '$doInto'(rhs, action, routine)
+  {
+    Directory.&'$doInto'.apply([this, rhs, action, routine]);
+  };
+
+  function copy(filename)
+  {
+    File.save(filename, content.data) |
+    File.new(filename)
+  };
+
+  function copyInto(dir)
+  {
+    '$doInto'(dir, "copy", "copyInto")
+  };
+
+  function moveInto(dir)
+  {
+    '$doInto'(dir, "rename", "moveInto")
+  };
+
   function save(name, content)
   {
     var o = OutputStream.new(create(name)) |
     o << content |
     o.close
-  };
-
-  function copy(filename)
-  {
-    File.save(filename, content.data)
   };
 };

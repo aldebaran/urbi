@@ -14,15 +14,18 @@ requireFile("urbi/exception.u");
 
 do(Global.Directory)
 {
-  function '$doInto'(rhs, action, method)
+  function '$doInto'(rhs, action, routine)
   {
-    if (!rhs.isA(File) && !rhs.isA(Directory))
-      throw Exception.Primitive.new(method,
-                                    "cannot put it in a directory: %s"
-                                    % [rhs.type]) |
-    var path = Path.new(asString) / Path.new(rhs.basename) |
-    rhs.getSlot(action).apply([rhs, path.asString]) |
-    this
+    var dir;
+    if (rhs.isA(Directory))
+      dir = rhs
+    else if (rhs.isA(Path) || rhs.isA(String))
+      dir = Directory.new(rhs)
+    else
+      throw Exception.argumentTypeException(routine, 1, rhs,
+                                            [Directory, Path, String]) |
+    var path = Path.new(dir.asString) / Path.new(basename) |
+    getSlot(action).apply([this, path.asString])
   };
 
   function '/'(rhs)
@@ -38,25 +41,30 @@ do(Global.Directory)
 
   function '<<'(rhs)
   {
-    copyInto(rhs)
-  };
-
-  function moveInto(rhs)
-  {
-    '$doInto'(rhs, "rename", "moveInto")
+    if (!rhs.isA(File) && !rhs.isA(Directory))
+      throw Exception.argumentTypeException(
+                        '<<', 1, rhs.type, [File, Directory]) |
+    var path = Path.new(asString) / Path.new(rhs.basename) |
+    rhs.copy(path.asString) |
+    this
   };
 
   function copy(dirname)
   {
-    var target = Directory.createAll(dirname) |
+    var dir = Directory.createAll(dirname) |
     for (var item: content)
-      target << this / item |
-    target
+      dir << this / item |
+    dir
   };
 
-  function copyInto(rhs)
+  function copyInto(dir)
   {
-    '$doInto'(rhs, "copy", "copyInto")
+    '$doInto'(dir, "copy", "copyInto")
+  };
+
+  function moveInto(dir)
+  {
+    '$doInto'(dir, "rename", "moveInto")
   };
 
   function removeAll()
