@@ -10,7 +10,7 @@
 ## Trajectories.  ##
 ## -------------- ##
 
-URBI = $(top_builddir)/tests/bin/urbi
+URBI = $(top_builddir)/tests/bin/urbi$(EXEEXT)
 GNUPLOT = gnuplot
 $(srcdir)/%.dat: %.utraj
 	$(AM_V_GEN)
