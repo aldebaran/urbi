@@ -8,13 +8,10 @@
 
 # I don't know yet how to avoid this painful list.
 UOBJECTS =					\
-  uaccess					\
-  uaccess2					\
-  uaccess3					\
-  uchange					\
   all						\
   factory					\
   generic					\
+  issue-3699					\
   lib-urbi					\
   remote					\
   sensor					\
@@ -22,6 +19,10 @@ UOBJECTS =					\
   subsumption					\
   threaded					\
   timer						\
+  uaccess					\
+  uaccess2					\
+  uaccess3					\
+  uchange					\
   ultest
 
 if HAVE_ORTP
@@ -48,6 +49,7 @@ endif
 urbi/all$(DLMODEXT): $(wildcard $(srcdir)/urbi/all.uob/*)
 urbi/factory$(DLMODEXT): $(wildcard $(srcdir)/urbi/factory.uob/*)
 urbi/generic$(DLMODEXT): $(wildcard $(srcdir)/urbi/generic.uob/*)
+urbi/issue-3699(DLMODEXT): $(wildcard $(srcdir)/urbi/issue-3699.uob/*)
 urbi/lib-urbi$(DLMODEXT): $(wildcard $(srcdir)/urbi/liburbi.uob/*)
 urbi/remote$(DLMODEXT): $(wildcard $(srcdir)/urbi/remote.uob/*)
 urbi/sensor$(DLMODEXT): $(wildcard $(srcdir)/urbi/sensor.uob/*)
