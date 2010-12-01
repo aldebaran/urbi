@@ -46,10 +46,12 @@ namespace urbi
       void init(rPath path);
       void init(const std::string& path);
 
-      static rFile createTemp(rObject);
-      rFile rename(const std::string& dst);
-      void remove();
       rString basename() const;
+      static rFile createTemp(rObject);
+      rDate last_modified_date() const;
+      void remove();
+      rFile rename(const std::string& dst);
+      rFloat size() const;
 
       // Conversions
       rList as_list() const;

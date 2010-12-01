@@ -100,6 +100,7 @@ namespace urbi
     public:
       static rDate now();
       static value_type epoch();
+      static duration_type local_time_offset();
 
     /*----------.
     | Details.  |

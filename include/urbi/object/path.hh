@@ -60,6 +60,7 @@ namespace urbi
       rPath cd() const;
       rPath dirname() const;
       rObject open() const;
+      rDate last_modified_date() const;
       rPath path_concat(rPath other) const;
       rPath parent() const;
       rPath string_concat(rString other) const;

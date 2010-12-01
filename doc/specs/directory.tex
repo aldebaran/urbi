@@ -254,6 +254,9 @@ dir2.basename;
 dir1.removeAll;
 \end{urbiscript}
 
+\item[lastModifiedDate]
+  Return a \refObject{Date} object stating when the directory was last modified.
+
 \item[moveInto](<dirname>)
   Move \lstinline|this| into \var{dirname} without creating it.
 \begin{urbiscript}
@@ -325,6 +328,18 @@ dir;
 dir.content;
 [00000006] ["file"]
 dir2.removeAll;
+\end{urbiscript}
+
+\item[size]
+  The size of all the directory content computed recursively.
+\begin{urbiscript}
+dir = Directory.create("dir")|;
+Directory.create("dir/dir")|;
+File.save("dir/file", "content");
+file1 = File.create("dir/file")|;
+File.save("dir/dir/file", "content");
+file2 = File.create("dir/dir/file")|;
+assert(dir.size() == file1.size() + file2.size());
 \end{urbiscript}
 \end{urbiscriptapi}
 

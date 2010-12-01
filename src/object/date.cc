@@ -278,13 +278,19 @@ namespace urbi
     Date::epoch()
     {
       value_type abs(boost::gregorian::date(1970, 1, 1));
+      return abs + local_time_offset();
+    }
+
+    Date::duration_type
+    Date::local_time_offset()
+    {
       // FIXME: Crappy way to find the local time offset, but AFAICT,
       // Boost provides no way to get the current timezone :-(
       using namespace boost::posix_time;
-      static time_duration diff =
+      static Date::duration_type offset =
         seconds((microsec_clock::local_time()
                  - microsec_clock::universal_time()).total_seconds());
-      return abs + diff;
+      return offset;
     }
   }
 }

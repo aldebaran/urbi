@@ -75,4 +75,14 @@ do(Global.Directory)
                                     % Global.Directory.type) |
     removeAll_
   };
+
+  function size()
+  {
+    var s = 0;
+    for (var item: content)
+    {
+      s += (this / item).size
+    };
+    s
+  };
 };

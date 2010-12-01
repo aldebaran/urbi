@@ -13,6 +13,7 @@
 
 #include <libport/file-system.hh>
 
+#include <urbi/object/date.hh>
 #include <urbi/object/file.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/path.hh>
@@ -20,11 +21,28 @@
 
 #include <urbi/runner/raise.hh>
 
+namespace boostfs = boost::filesystem;
+
+namespace boost
+{
+  namespace filesystem
+  {
+    typedef basic_filesystem_error<boostfs::path> fserror;
+  }
+}
+
 namespace urbi
 {
   namespace object
   {
     using boost::format;
+
+    ATTRIBUTE_NORETURN
+    static void
+    raise_boost_fs_error(boostfs::fserror& e)
+    {
+      FRAISE("%s", libport::format_boost_fs_error(e.what()));
+    }
 
     /*--------------.
     | C++ methods.  |
@@ -72,18 +90,32 @@ namespace urbi
 #define DECLARE(Name, Cxx)           \
       bind(SYMBOL(Name), &File::Cxx)
 
-      DECLARE(asList,      as_list);
-      DECLARE(asPrintable, as_printable);
-      DECLARE(asString,    as_string);
-      DECLARE(content,     content);
-      DECLARE(create,      create);
-      DECLARE(basename,    basename);
-      DECLARE(rename,      rename);
-      DECLARE(remove,      remove);
+      DECLARE(asList,           as_list);
+      DECLARE(asPrintable,      as_printable);
+      DECLARE(asString,         as_string);
+      DECLARE(content,          content);
+      DECLARE(create,           create);
+      DECLARE(basename,         basename);
+      DECLARE(lastModifiedDate, last_modified_date);
+      DECLARE(rename,           rename);
+      DECLARE(remove,           remove);
+      DECLARE(size,             size);
 
 #undef DECLARE
 
       setSlot(SYMBOL(init), new Primitive(&file_init_bouncer));
+    }
+
+    rString
+    File::basename() const
+    {
+      return new String(path_->basename());
+    }
+
+    rDate
+    File::last_modified_date() const
+    {
+      return path_->last_modified_date();
     }
 
     rFile File::create(rObject, const std::string& p)
@@ -96,6 +128,11 @@ namespace urbi
       return new File(p);
     }
 
+    void File::remove()
+    {
+      path_->value_get().remove();
+    }
+
     rFile
     File::rename(const std::string& dst)
     {
@@ -105,15 +142,17 @@ namespace urbi
       return this;
     }
 
-    void File::remove()
+    rFloat
+    File::size() const
     {
-      path_->value_get().remove();
-    }
-
-    rString
-    File::basename() const
-    {
-      return new String(path_->basename());
+      try
+      {
+        return new Float(boostfs::file_size(boostfs::path(path_->as_string())));
+      }
+      catch (boostfs::fserror& e)
+      {
+        raise_boost_fs_error(e);
+      }
     }
 
     void File::init(rPath path)

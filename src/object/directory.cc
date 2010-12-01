@@ -27,6 +27,7 @@
 
 #include <kernel/userver.hh>
 
+#include <urbi/object/date.hh>
 #include <urbi/object/directory.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/path.hh>
@@ -271,22 +272,23 @@ namespace urbi
 #define DECLARE(Name, Cxx)                \
       bind(SYMBOL(Name), &Directory::Cxx)
 
-      DECLARE(asList,      list<&directory_mk_path>);
-      DECLARE(asPath,      as_path);
-      DECLARE(asPrintable, as_printable);
-      DECLARE(asString,    as_string);
-      DECLARE(clear,       clear);
-      DECLARE(current,     current);
-      DECLARE(content,     list<&directory_mk_string>);
-      DECLARE(create,      create);
-      DECLARE(createAll,   create_all);
-      DECLARE(basename,    basename);
-      DECLARE(empty,       empty);
-      DECLARE(exists,      exists);
-      DECLARE(parent,      parent);
-      DECLARE(remove,      remove);
-      DECLARE(removeAll_,  remove_all);
-      DECLARE(rename,      rename);
+      DECLARE(asList,           list<&directory_mk_path>);
+      DECLARE(asPath,           as_path);
+      DECLARE(asPrintable,      as_printable);
+      DECLARE(asString,         as_string);
+      DECLARE(clear,            clear);
+      DECLARE(current,          current);
+      DECLARE(content,          list<&directory_mk_string>);
+      DECLARE(create,           create);
+      DECLARE(createAll,        create_all);
+      DECLARE(basename,         basename);
+      DECLARE(empty,            empty);
+      DECLARE(exists,           exists);
+      DECLARE(lastModifiedDate, last_modified_date);
+      DECLARE(parent,           parent);
+      DECLARE(remove,           remove);
+      DECLARE(removeAll_,       remove_all);
+      DECLARE(rename,           rename);
 
 #undef DECLARE
 
@@ -400,6 +402,12 @@ namespace urbi
     Directory::basename() const
     {
       return new String(path_->basename());
+    }
+
+    rDate
+    Directory::last_modified_date() const
+    {
+      return path_->last_modified_date();
     }
 
     rDirectory

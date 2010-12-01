@@ -20,6 +20,7 @@
 #include <libport/unistd.h> // For stat, getcwd
 
 #include <object/symbols.hh>
+#include <urbi/object/date.hh>
 #include <urbi/object/directory.hh>
 #include <urbi/object/file.hh>
 #include <urbi/object/path.hh>
@@ -224,6 +225,15 @@ namespace urbi
       if (is_reg())
         return new File(path_);
       FRAISE("unsupported file type: %s", path_);
+    }
+
+    rDate
+    Path::last_modified_date() const
+    {
+      // Be careful of boost exception that can be
+      // thrown if binding this method to Urbi.
+      return new Date(boost::posix_time::from_time_t(path_.last_write_time())
+                      + Date::local_time_offset());
     }
 
     rPath

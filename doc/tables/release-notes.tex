@@ -102,6 +102,19 @@ function Foo.'=='(var that)
 \item \refSlot[System]{eval}, \refSlot[System]{load}, and
   \refSlot[System]{loadFile} accept an optional second argument, the
   context (\this) of the evaluation.
+
+\item \refObject{Directory} objects have new functionalities for creation, modification
+  and deletion.
+\begin{urbiscript}
+Directory.createAll("dir1/dir2/dir3")|;
+Directory.new("dir1").rename("dir")|;
+Directory.new("dir1/dir2").copy("dir1/dir4")|;
+Directory.new("dir").removeAll;
+\end{urbiscript}
+
+\item \refObject{Directory} and \refObject{File} objects have new slots
+  \refSlot[Directory]{size}, \refSlot[File]{size},
+  \refSlot[Directory]{lastModifiedDate}, \refSlot[File]{lastModifiedDate}.
 \end{itemize}
 
 \subsection{Changes}
@@ -148,14 +161,6 @@ at (e) echo("Oops.");
 // This is.
 at (e?) echo("Okay.");
 \end{urbiunchecked}
-
-\item \refObject{Directory} objects have new functionalities for creation, modification
-  and deletion.
-\begin{urbiscript}
-Directory.createAll("dir1/dir2/dir3")|;
-Directory.new("dir1").rename("dir")|;
-Directory.new("dir").removeAll;
-\end{urbiscript}
 
 \item \refSlot[File]{rename} returns \lstinline|this|.
 \end{itemize}
