@@ -184,9 +184,7 @@ namespace runner
     if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
       if (!object::squash && r->dependencies_log_get())
       {
-        bool prev = object::squash;
-        FINALLY(((bool, prev)), object::squash = prev);
-        object::squash = true;
+        LIBPORT_SCOPE_SET(object::squash, true);
         GD_FPUSH_TRACE("Register %s result for at monitoring", msg);
         r->dependency_add(res->call(SYMBOL(changed))->as<object::Event>());
       }
