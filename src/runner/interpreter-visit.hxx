@@ -78,6 +78,8 @@ namespace runner
   using object::Slot;
   using object::Tag;
 
+  LIBPORT_SCOPE_SET_DECLARE(bool, bool);
+
   static object::Event* slotGet_changed(object::rObject o)
   {
     object::rObject changed = o->call(SYMBOL(changed));
@@ -248,7 +250,7 @@ namespace runner
     object::rObject res = stacks_.this_get();
     if (!object::squash && dependencies_log_get())
     {
-      LIBPORT_SCOPE_SET(object::squash, true);
+      LIBPORT_SCOPE_SET_USE(bool, object::squash, true);
       GD_PUSH_TRACE("Register this for at monitoring");
       dependency_add(slotGet_changed(res));
     }
@@ -684,7 +686,7 @@ namespace runner
     object::rObject res = stacks_.this_get();
     if (!object::squash && dependencies_log_get())
     {
-      LIBPORT_SCOPE_SET(object::squash, true);
+      LIBPORT_SCOPE_SET_USE(bool, object::squash, true);
       GD_PUSH_TRACE("Register this for at monitoring");
       dependency_add(slotGet_changed(res));
     }
