@@ -21,16 +21,16 @@ public:
 
   int init()
   {
-    std::cout << "init"<< std::endl;
+    std::cout << "[00000000:issue] *** init"<< std::endl;
     UBindThreadedFunction(Test, foo, urbi::LOCK_INSTANCE);
     return 0;
   }
 
   int foo(const std::string& s)
   {
-    std::cout << "mmm sleepy..." << s << std::endl;
+    std::cout << "[00000000:issue] *** mmm sleepy..." << s << std::endl;
     sleep(1);
-    std::cout << "awake !"<< std::endl;
+    std::cout << "[00000000:issue] *** awake!"<< std::endl;
     return 0;
   }
 
