@@ -69,6 +69,12 @@ namespace urbi
       {
         runner::Runner& r = ::kernel::runner();
         r.send_message("warning", libport::format("!!! %s", msg));
+        // For some mysterious reason, on Windows the display of the
+        // backtrace fails here.  To trigger it, run urbi, and
+        // run "removeSlot("foo")" for instance.
+#if defined _MSC_VER
+        if (getenv("URBI_SHOW_BACKTRACE"))
+#endif
         r.show_backtrace("warning");
       }
 
