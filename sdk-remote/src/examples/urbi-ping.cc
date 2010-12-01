@@ -53,12 +53,11 @@ pong(const urbi::UMessage& msg)
 
 static void showstats(int)
 {
-  if (!pingCount)
-    urbi::exit(0);
-  printf("rtt min/avg/max %d/%d/%d ms\n",
-	 (mintime),
-	 (int)(sumtime/(float)pingCount),
-	 (maxtime));
+  if (pingCount)
+    printf("rtt min/avg/max %d/%d/%d ms\n",
+           (mintime),
+           (int)(sumtime/(float)pingCount),
+           (maxtime));
   exit(0);
 }
 
