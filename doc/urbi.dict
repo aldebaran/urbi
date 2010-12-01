@@ -524,6 +524,7 @@ laserLastTimestamp
 laserLoad
 laserVal
 lastCaptureTimestamp
+lastModifiedDate
 LaunchThread
 lazyFail
 LD

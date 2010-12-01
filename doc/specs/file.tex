@@ -56,6 +56,10 @@ File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asString == "file.txt");
 \end{urbiscript}
 
+\item[basename]
+  Return a \refObject{String} containing the path of the file without
+  its dirname.
+
 \item[content]
   The content of the file as a \refObject{Binary} object.
 \begin{urbiscript}
@@ -80,6 +84,8 @@ file2.remove;
 \end{urbiscript}
 
 \item[copyInto](<dirname>)
+  \experimental{}
+
   Copy file into \var{dirname} directory.
 \begin{urbiscript}
 var dir = Directory.create("dir")|;
@@ -121,9 +127,13 @@ assert
 \end{urbiscript}
 
 \item[lastModifiedDate]
+  \experimental{}
+
   Return a \refObject{Date} object stating when the file was last modified.
 
 \item[moveInto](<dirname>)
+  \experimental{}
+
   Move file into \var{dirname} directory.
 \begin{urbiscript}
 dir = Directory.create("dir")|;
@@ -136,10 +146,6 @@ dir.content;
 [00000001] ["file"]
 dir.removeAll;
 \end{urbiscript}
-
-\item[name]
-  Return a \refObject{String} containing the path of the file without
-  its dirname.
 
 \item[remove]
   Remove the current file.  Returns void.
