@@ -16,13 +16,12 @@
 
 #include <urbi/uclient.hh>
 
-urbi::UClient* c;
 unsigned sendtime;
 unsigned mintime;
 unsigned maxtime;
-unsigned avgtime=0;
-unsigned pingCount=0;
-bool over=false;
+unsigned sumtime = 0;
+unsigned pingCount = 0;
+bool over = false;
 char* rname;
 bool received;
 unsigned count;
@@ -32,22 +31,22 @@ static urbi::UCallbackAction
 pong(const urbi::UMessage& msg)
 {
   unsigned int ptime = msg.client.getCurrentTime() - sendtime;
-  if (!pingCount || mintime>ptime)
+  if (!pingCount || ptime < mintime)
     mintime = ptime;
-  if (!pingCount || maxtime<ptime)
+  if (!pingCount || maxtime < ptime)
     maxtime = ptime;
 
-  avgtime+=ptime;
+  sumtime += ptime;
   printf("ping reply from %s: seq=%d time=%d ms\n",
          rname, pingCount+1, ptime);
   ++pingCount;
-  received=true;
+  received = true;
   if (pingCount == count)
     over = true;
   if (flood)
   {
-    sendtime = c->getCurrentTime();
-    c->send("uping << ping,");
+    sendtime = msg.client.getCurrentTime();
+    msg.client.send("uping << ping,");
   }
   return urbi::URBI_CONTINUE;
 }
@@ -58,7 +57,7 @@ static void showstats(int)
     urbi::exit(0);
   printf("rtt min/avg/max %d/%d/%d ms\n",
 	 (mintime),
-	 (int)(avgtime/(float)pingCount),
+	 (int)(sumtime/(float)pingCount),
 	 (maxtime));
   exit(0);
 }
@@ -77,40 +76,33 @@ main(int argc, char* argv[])
   rname = argv[1];
 
   // Client initialization
-  c = new urbi::UClient(argv[1]);
-  c->start();
-  if (c->error())
+  urbi::UClient c(argv[1]);
+  c.start();
+  if (c.error())
     exit(1);
 
-  int interval = 1000;
-
-  if (2 < argc)
-    interval=strtol(argv[2],NULL,0);
-
+  int interval = 2 < argc ? strtol(argv[2], NULL, 0) : 1000;
   // count initialization
-  if (3 < argc)
-    count = strtol(argv[3],NULL,0);
-  else
-    count = 0;
+  count = 3 < argc ? strtol(argv[3], NULL, 0) : 0;
 
-  c->setCallback(&pong,"uping");
+  c.setCallback(&pong, "uping");
 
-  received=true;
+  received = true;
 
   if (interval)
     for (unsigned i = 0; i < count || !count; ++i)
     {
       while (!received)
 	usleep(200);
-      received=false;
-      sendtime = c->getCurrentTime();
-      c->send("uping << ping;");
+      received = false;
+      sendtime = c.getCurrentTime();
+      c.send("uping << ping;");
       usleep(interval*1000);
     }
   else
   {
     flood = true;
-    c->send("uping << ping;");
+    c.send("uping << ping;");
   }
 
   while (!over)
