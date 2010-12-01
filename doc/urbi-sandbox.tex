@@ -55,12 +55,17 @@ Last example.
 % \release{Release}{Date}
 % -----------------------
 \newcommand{\release}[2]{%
-  \marginpar{%
-    \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
+  \ifx\ifHtml\undefined%
+    Released on #2.
+    \marginpar{%
+      \includegraphics[width=\marginparwidth]{figs/urbi-sdk/#1/cube}
 
-    #2.
-  }%
-  Released on #2.
+      #2.
+    }%
+  \else
+    \includegraphics[width=.2\textwidth]{figs/urbi-sdk/#1/cube},
+    released on #2.
+  \fi%
 }
 
 \section{\usdk 2.5}
