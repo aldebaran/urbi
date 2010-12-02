@@ -41,31 +41,16 @@ namespace urbi
       Directory();
       Directory(rDirectory model);
       Directory(const std::string& path);
-      Directory(rPath path);
+      void init(rPath path);
+      void init(const std::string& path);
 
-      void init(rPath);
-      void init(const std::string&);
-      static rObject create(rObject, rPath);
-      static rObject create_all(rObject, rPath);
+  //     // Global informations
+  //     static rDirectory cwd();
 
-      // Modifiers
-      rPath as_path() const;
-      void clear();
-      bool empty() const;
-      bool exists() const;
-      rString name() const;
-      rDirectory parent() const;
-      void remove();
-      void remove_all();
-      rDirectory rename(const std::string&);
-
-    /*----------------------.
-    | Global informations.  |
-    `----------------------*/
-
-    public:
-
-      static rDirectory current();
+  //     // Operations
+  //     rDirectory concat(rDirectory other);
+  //     std::string basename();
+  //     std::string dirname();
 
     private:
       void create_events();

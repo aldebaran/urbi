@@ -33,17 +33,16 @@ namespace urbi
     | C++ methods.  |
     `--------------*/
 
-    const Path::value_type&
-    Path::value_get() const
+    const Path::value_type& Path::value_get() const
     {
       return path_;
     }
 
-    void
-    Path::value_set(const value_type& val)
+    void Path::value_set(const value_type& val)
     {
       path_ = val;
     }
+
 
     /*---------------.
     | Urbi methods.  |
@@ -105,8 +104,7 @@ namespace urbi
 #undef DECLARE
     }
 
-    void
-    Path::init(const std::string& path)
+    void Path::init(const std::string& path)
     {
       path_ = path;
     }
@@ -136,8 +134,7 @@ namespace urbi
       return path_.absolute_get();
     }
 
-    struct stat
-    Path::stat() const
+    struct stat Path::stat() const
     {
       struct stat res;
 
@@ -147,26 +144,17 @@ namespace urbi
       return res;
     }
 
-    bool
-    Path::is_dir() const
+    bool Path::is_dir() const
     {
       return stat().st_mode & S_IFDIR;
     }
 
-    bool
-    Path::is_reg() const
+    bool Path::is_reg() const
     {
       return stat().st_mode & S_IFREG;
     }
 
-    bool
-    Path::is_root() const
-    {
-      return path_.is_root();
-    }
-
-    bool
-    Path::exists() const
+    bool Path::exists() const
     {
       if (!::access(path_.to_string().c_str(), F_OK))
         return true;
@@ -175,8 +163,7 @@ namespace urbi
       handle_any_error();
     }
 
-    bool
-    Path::readable() const
+    bool Path::readable() const
     {
       if (!::access(path_.to_string().c_str(), R_OK))
         return true;
@@ -185,8 +172,7 @@ namespace urbi
       handle_any_error();
     }
 
-    bool
-    Path::writable() const
+    bool Path::writable() const
     {
       if (!::access(path_.to_string().c_str(), W_OK))
         return true;
@@ -196,38 +182,19 @@ namespace urbi
     }
 
     // Operations.
-    std::string
-    Path::basename() const
+    std::string Path::basename() const
     {
       return path_.basename();
     }
 
-    rPath
-    Path::cd() const
+    rPath Path::cd() const
     {
       if (chdir(as_string().c_str()))
         handle_any_error();
       return cwd();
     }
 
-    rPath
-    Path::dirname() const
-    {
-      return new Path(path_.dirname());
-    }
-
-    rObject
-    Path::open() const
-    {
-      if (is_dir())
-        return new Directory(path_);
-      if (is_reg())
-        return new File(path_);
-      FRAISE("unsupported file type: %s", path_);
-    }
-
-    rPath
-    Path::path_concat(rPath other) const
+    rPath Path::path_concat(rPath other) const
     {
       try
       {
@@ -239,34 +206,38 @@ namespace urbi
       }
     }
 
-    rPath
-    Path::parent() const
-    {
-      return new Path(path_.parent());
-    }
-
-    rPath
-    Path::string_concat(rString other) const
+    rPath Path::string_concat(rString other) const
     {
       return path_concat(new Path(other->value_get()));
     }
 
+    rPath Path::dirname() const
+    {
+      return new Path(path_.dirname());
+    }
+
+    rObject Path::open() const
+    {
+      if (is_dir())
+        return new Directory(path_);
+      if (is_reg())
+        return new File(path_);
+      FRAISE("unsupported file type: %s", path_);
+    }
+
     // Conversions
 
-    std::string
-    Path::as_string() const
+    std::string Path::as_string() const
     {
       return path_.to_string();
     }
 
-    std::string
-    Path::as_printable() const
+    std::string Path::as_printable() const
     {
       return libport::format("Path(\"%s\")", as_string());
     }
 
-    rList
-    Path::as_list() const
+    rList Path::as_list() const
     {
       List::value_type res;
       foreach (const std::string& c, path_.components())
@@ -279,8 +250,7 @@ namespace urbi
     | Details.  |
     `----------*/
 
-    void
-    Path::handle_any_error() const
+    void Path::handle_any_error() const
     {
       FRAISE("%1%: %2%", strerror(errno), path_);
     }

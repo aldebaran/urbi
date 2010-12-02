@@ -77,7 +77,6 @@ namespace urbi
       DECLARE(asString,    as_string);
       DECLARE(content,     content);
       DECLARE(create,      create);
-      DECLARE(name,        name);
       DECLARE(rename,      rename);
       DECLARE(remove,      remove);
 
@@ -96,24 +95,16 @@ namespace urbi
       return new File(p);
     }
 
-    rFile
-    File::rename(const std::string& dst)
+    void File::rename(const std::string& dst)
     {
       libport::path path = path_->value_get();
       path.rename(dst);
       path_->value_set(path);
-      return this;
     }
 
     void File::remove()
     {
       path_->value_get().remove();
-    }
-
-    rString
-    File::name() const
-    {
-      return new String(path_->basename());
     }
 
     void File::init(rPath path)
@@ -192,12 +183,6 @@ namespace urbi
         res << new String(line);
 
       return new List(res);
-    }
-
-    rPath
-    File::as_path() const
-    {
-      return new Path(path_);
     }
 
     std::string File::as_string() const

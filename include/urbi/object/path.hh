@@ -58,18 +58,16 @@ namespace urbi
       // Operations.
       std::string basename() const;
       rPath cd() const;
+      rPath path_concat(rPath other) const;
+      rPath string_concat(rString other) const;
       rPath dirname() const;
       rObject open() const;
-      rPath path_concat(rPath other) const;
-      rPath parent() const;
-      rPath string_concat(rString other) const;
 
       // Stat.
       bool absolute() const;
       bool exists() const;
       bool is_dir() const;
       bool is_reg() const;
-      bool is_root() const;
       bool readable() const;
       bool writable() const;
 

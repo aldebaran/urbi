@@ -41,8 +41,6 @@ File.save("file.txt", "1\n2\n");
 assert(File.new("file.txt").asList == ["1", "2"]);
 \end{urbiscript}
 
-\item[asPath] A \refObject{Path} being the path of the file.
-
 \item[asPrintable]
 \begin{urbiscript}
 File.save("file.txt", "1\n2\n");
@@ -92,10 +90,6 @@ assert
 };
 \end{urbiscript}
 
-\item[name]
-  Return a \refObject{String} containing the name of the file without
-  its basename.
-
 \item[remove]
   Remove the current file.  Returns void.
 \begin{urbiscript}[firstnumber=1]
@@ -115,11 +109,10 @@ p.exists;
 
 \item[rename](<name>)%
   Rename the file to \var{name}.  If the target exists, it is replaced by
-  the opened file. Return the file renamed.
+  the opened file.
 \begin{urbiscript}
 File.save("file.txt", "1\n2\n");
 File.new("file.txt").rename("bar.txt");
-[00000001] File("bar.txt")
 assert
 {
   !Path.new("file.txt").exists;

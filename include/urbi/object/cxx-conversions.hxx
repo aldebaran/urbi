@@ -410,34 +410,6 @@ namespace urbi
       }
     };
 
-    /*--------.
-    | rPath.  |
-    `--------*/
-
-    template<>
-    struct CxxConvert<rPath>
-    {
-      typedef rPath target_type;
-      typedef rPath source_type;
-
-      static target_type
-      to(const rObject& o)
-      {
-        if(rPath path = o->as<Path>())
-          return path;
-        if (rString str = o->as<String>())
-          return new Path(str->value_get());
-
-        runner::raise_type_error(o, Path::proto);
-      }
-
-      static rObject
-      from(source_type v)
-      {
-        return v;
-      }
-    };
-
 
     /*-------------------------------------------------------------.
     | std::set, std::vector, std::deque, libport::ReservedVector.  |
