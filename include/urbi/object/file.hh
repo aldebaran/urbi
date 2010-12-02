@@ -49,7 +49,7 @@ namespace urbi
       static rFile createTemp(rObject);
       rFile rename(const std::string& dst);
       void remove();
-      rString basename() const;
+      rString name() const;
 
       // Conversions
       rList as_list() const;

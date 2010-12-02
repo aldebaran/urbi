@@ -53,15 +53,15 @@ namespace urbi
       void clear();
       bool empty() const;
       bool exists() const;
-      rString basename() const;
+      rString name() const;
       rDirectory parent() const;
       void remove();
       void remove_all();
       rDirectory rename(const std::string&);
 
-    /*---------------------.
-    | Global information.  |
-    `---------------------*/
+    /*----------------------.
+    | Global informations.  |
+    `----------------------*/
 
     public:
 

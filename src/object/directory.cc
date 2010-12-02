@@ -67,28 +67,28 @@ namespace urbi
     check_directory(const rPath& path)
     {
       if (!path->is_dir())
-        FRAISE("not a directory: \"%s\"", path->as_string());
+        FRAISE("Not a directory: \"%s\"", path->as_string());
     }
 
     static void
     check_exists(const rPath& path)
     {
       if (!path->exists())
-        FRAISE("directory does not exist: \"%s\"", path->as_string());
+        FRAISE("Directory does not exist: \"%s\"", path->as_string());
     }
 
     ATTRIBUTE_NORETURN
     static void
     raise_file_exists(const rPath& path)
     {
-      FRAISE("file exists: \"%s\"", path->as_string());
+      FRAISE("File exists: \"\"", path->as_string());
     }
 
     ATTRIBUTE_NORETURN
     static void
     raise_directory_exists(const rPath& path)
     {
-      FRAISE("directory exists: \"%s\"", path->as_string());
+      FRAISE("Directory exists: \"%s\"", path->as_string());
     }
 
     static void
@@ -107,15 +107,15 @@ namespace urbi
     check_empty(const Directory& dir)
     {
       if (!dir.empty())
-        FRAISE("directory not empty: \"%s\"", dir.as_string());
+        FRAISE("Directory not empty: \"%s\"", dir.as_string());
     }
 
     static rDirectory
     create_directory(rPath path)
     {
-      bool created = false;
       check_nexists(path);
 
+      bool created = false;
       try
       {
         created = boostfs::create_directory(path->as_string().c_str());
@@ -127,7 +127,7 @@ namespace urbi
 
       // Should not be raised as check is done before creating directory.
       if (!created)
-        FRAISE("no directory was effectively created: \"%s\"",
+        FRAISE("No directory was effectively created: \"%s\"",
                path->as_string());
 
       return new Directory(path->as_string());
@@ -280,12 +280,12 @@ namespace urbi
       DECLARE(content,     list<&directory_mk_string>);
       DECLARE(create,      create);
       DECLARE(createAll,   create_all);
-      DECLARE(basename,    basename);
+      DECLARE(name,        name);
       DECLARE(empty,       empty);
       DECLARE(exists,      exists);
       DECLARE(parent,      parent);
       DECLARE(remove,      remove);
-      DECLARE(removeAll_,  remove_all);
+      DECLARE(removeAll,   remove_all);
       DECLARE(rename,      rename);
 
 #undef DECLARE
@@ -397,7 +397,7 @@ namespace urbi
     }
 
     rString
-    Directory::basename() const
+    Directory::name() const
     {
       return new String(path_->basename());
     }
@@ -426,6 +426,8 @@ namespace urbi
     Directory::remove_all()
     {
       check_exists(path_);
+      if (*path_ <= Path::cwd())
+        FRAISE("Cannot remove parent of current working directory");
       boostfs::remove_all(boostfs::path(path_->as_string()));
     }
 
@@ -439,9 +441,9 @@ namespace urbi
       return this;
     }
 
-    /*---------------------.
-    | Global information.  |
-    `---------------------*/
+    /*----------------------.
+    | Global informations.  |
+    `----------------------*/
 
     rDirectory
     Directory::current()

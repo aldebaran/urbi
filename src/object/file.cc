@@ -77,7 +77,7 @@ namespace urbi
       DECLARE(asString,    as_string);
       DECLARE(content,     content);
       DECLARE(create,      create);
-      DECLARE(basename,    basename);
+      DECLARE(name,        name);
       DECLARE(rename,      rename);
       DECLARE(remove,      remove);
 
@@ -111,7 +111,7 @@ namespace urbi
     }
 
     rString
-    File::basename() const
+    File::name() const
     {
       return new String(path_->basename());
     }

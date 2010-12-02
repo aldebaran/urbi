@@ -66,20 +66,6 @@ assert
 };
 \end{urbiscript}
 
-\item[copy](<filename>)
-  Copy the file to a new file named \var{filename}.
-\begin{urbiscript}
-File.save("file", "content");
-var file = File.new("file");
-[00000001] File("file")
-file.copy("file2");
-var file2 = File.new("file2");
-[00000002] File("file2")
-assert(file2.content == file.content);
-file.remove;
-file2.remove;
-\end{urbiscript}
-
 \item[create](<name>)%
   If the file \var{name} does not exist, create it and a return a File to
   it.  Otherwise, first empty it.  See \refObject{OutputStream} for methods
@@ -107,8 +93,8 @@ assert
 \end{urbiscript}
 
 \item[name]
-  Return a \refObject{String} containing the path of the file without
-  its dirname.
+  Return a \refObject{String} containing the name of the file without
+  its basename.
 
 \item[remove]
   Remove the current file.  Returns void.
