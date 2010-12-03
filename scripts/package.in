@@ -151,7 +151,11 @@ else
     stderr "Documentation found, installing"
     tar -C "$docsrc" -xf "$archivedir/$urbi_doc.tar.bz2"
   else
+    # We couldn't find the doc, and it's not our job to compile it.
+    # So, instead of blocking the generation of packages, generate
+    # packages without the doc, but make it clear in the tarball name.
     stderr "Documentation NOT found"
+    name=$name-no-doc
   fi
 fi
 
@@ -164,7 +168,7 @@ tree_copy "$DESTDIR$prefix" "$updir/$name"
 # 3. Prebuilt-Urbi Runtime.
 #
 # Create a run-time version of the package.
-rtname=$(echo "$name" | sed -e 's/urbi-sdk/urbi-runtime/')
+rtname=$(echo "$name" | sed -e 's/urbi-sdk/urbi-runtime/;s/-no-doc//')
 if test $name != $rtname; then
   packagedir="$updir/$rtname"
   tree_copy "$DESTDIR$prefix" "$packagedir"
