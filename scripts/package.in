@@ -123,16 +123,26 @@ else
   name="$PROJECT-$version-$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP-$MODE"
 fi
 
-# 1. Prebuilt-Urbi SDK.
+# 1. Documentation tree.
+#
+# Create a directory with only the documentation part of the install
+# tree.
+packagedir="$updir/$PROJECT-$version-doc"
+rm -rf "$packagedir"
+mkdir -p "$packagedir"
+tar -C "$DESTDIR$prefix/share/doc" cf - . | tar -C "$packagedir" xpBf -
+
+# 2. Prebuilt-Urbi SDK.
 #
 # Create a fresh directory in which we put the subdirectories of the
 # $install directory.
 packagedir="$updir/$name"
 rm -rf "$packagedir"
 mkdir -p "$packagedir"
-(cd "$DESTDIR$prefix" && tar cf - .) | (cd "$packagedir" && tar xpBf -)
+tar -C "$DESTDIR$prefix" cf - . | tar -C "$packagedir" xpBf -
 
-# 2. Prebuilt-Urbi Runtime.
+
+# 3. Prebuilt-Urbi Runtime.
 #
 # Create a run-time version of the package.
 rtname=$(echo "$name" | sed -e 's/urbi-sdk/urbi-runtime/')
@@ -140,7 +150,7 @@ if test $name != $rtname; then
   packagedir="$updir/$rtname"
   rm -rf "$packagedir"
   mkdir -p "$packagedir"
-  (cd "$DESTDIR$prefix" && tar cf - .) | (cd "$packagedir" && tar xpBf -)
+  tar -C "$DESTDIR$prefix" cf - . | tar -C "$packagedir" xpBf -
   # Keep only the bin, lib, and share/urbi directories.  Don't forget
   # bin is lib on Windows.  Leave LICENSE.txt since it is used by
   # Lobby.license.
@@ -148,7 +158,7 @@ if test $name != $rtname; then
       rm -rf README.txt include libexec share/doc)
 fi
 
-# 3. Source tarball.
+# 4. Source tarball.
 #
 # Create a run-time version of the package.
 tarname=$PROJECT-$version.tar.bz2
