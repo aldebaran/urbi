@@ -74,6 +74,33 @@ namespace urbi
 #undef DECLARE
     }
 
+    Event::~Event()
+    {
+      destructed_();
+    }
+
+    /*------------.
+    | Callbacks.  |
+    `------------*/
+
+    Event::signal_type&
+    Event::destructed_get()
+    {
+      return destructed_;
+    }
+
+    Event::signal_type&
+    Event::subscribed_get()
+    {
+      return subscribed_;
+    }
+
+    Event::signal_type&
+    Event::unsubscribed_get()
+    {
+      return unsubscribed_;
+    }
+
     void
     Event::unregister(Actions* a)
     {
@@ -85,6 +112,8 @@ namespace urbi
       foreach(boost::signals::connection& c, a->connections)
         c.disconnect();
       a->connections.clear();
+      if (listeners_.empty())
+        unsubscribed_();
     }
 
     void
@@ -129,6 +158,7 @@ namespace urbi
         active.first->trigger_job(actions, true);
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+      subscribed_();
     }
 
     Event::Subscription

@@ -14,6 +14,8 @@
 # include <boost/signal.hpp>
 # include <boost/unordered_map.hpp>
 
+# include <libport/attributes.hh>
+
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/lobby.hh>
 
@@ -29,8 +31,19 @@ namespace urbi
       Event();
       Event(rEvent model);
       Event(rEvent model, rList payload);
+      virtual ~Event();
       URBI_CXX_OBJECT(Event);
 
+    public:
+      typedef boost::signal0<void> signal_type;
+      signal_type& destructed_get();
+      signal_type& subscribed_get();
+      signal_type& unsubscribed_get();
+      ATTRIBUTE_R(signal_type, destructed);
+      ATTRIBUTE_R(signal_type, subscribed);
+      ATTRIBUTE_R(signal_type, unsubscribed);
+
+    public:
       typedef boost::function1<void, const objects_type&> callback_type;
 
       class Subscription
@@ -141,7 +154,6 @@ namespace urbi
       /// Running C++ callbacks of an event instance
       typedef std::vector<callback_type> callbacks_instance_type;
       callbacks_instance_type callbacks_instance_;
-
     };
   }
 }
