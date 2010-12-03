@@ -117,11 +117,11 @@ function Foo.'=='(var that)
 \item \refSlot[Object]{removeSlot} warns when asked to remove of a
   non-existing slot, and \refSlot[Object]{removeSlot} about non-existing
   properties.
-\begin{urbiunchecked}
+\begin{urbiscript}
 removeSlot("doesNotExist")|;
 [00000002:warning] !!! no such local slot: doesNotExist
 [00000002:warning] !!!    called from: removeSlot
-\end{urbiunchecked}
+\end{urbiscript}
   In the past, it used to accept this silently; in the future, this will be
   an error, as with \refSlot[Object]{removeLocalSlot}.  Use
   \refSlot[Object]{hasLocalSlot} or \refSlot[Object]{hasProperty}

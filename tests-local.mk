@@ -42,8 +42,7 @@ TFAIL_TESTS +=					\
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   2.x/derive.chk				\
-  2.x/uob/group.chk				\
-  uob/plug/issue-3699.chk
+  2.x/uob/group.chk
 
 XFAIL_TESTS +=						\
   uob/java/all/change-bypass-external-access.chk	\
