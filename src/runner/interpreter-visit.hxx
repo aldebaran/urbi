@@ -148,15 +148,16 @@ namespace runner
   struct Interpreter::AtEventData
   {
     AtEventData(urbi::object::rEvent ev, object::rCode e)
-      : event(ev)
+      : event(ev.get())
       , exp(e)
       , current(0)
       , subscriptions()
     {}
 
-    object::rEvent event;
+    object::Event* event;
+    object::rEvent event_ward;
     object::rCode exp;
-    object::rEvent current;
+    object::Event* current;
     std::vector<object::Event::Subscription> subscriptions;
   };
 
@@ -202,7 +203,7 @@ namespace runner
     if (v && !data->current)
     {
       GD_PUSH_TRACE("Triggering at block (enter)");
-      data->current = data->event->trigger(object::objects_type());
+      data->current = data->event->trigger(object::objects_type()).get();
     }
     else if (!v && data->current)
     {
@@ -212,13 +213,33 @@ namespace runner
     }
   }
 
+  inline void
+  Interpreter::at_stop(Interpreter::AtEventData* data)
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Stopping at condition: %s", data->exp->body_string());
+    foreach (object::Event::Subscription& s, data->subscriptions)
+      s.stop();
+    delete data;
+  }
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Event* e)
   {
     object::rEvent res = new object::Event;
-    at_run(new AtEventData
-           (res,
-            dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get())));
+    AtEventData* data =
+      new AtEventData(res,
+                      dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get()));
+    res->destructed_get().connect(boost::bind(&at_stop, data));
+    typedef object::rEvent& (object::rEvent::*setter_type)(object::Event*);
+    // Maintain that event alive as long as it is subscribed to.
+    res->subscribed_get().connect(
+      boost::bind(static_cast<setter_type>(&object::rEvent::operator = <object::Event>),
+                  &data->event_ward, res.get()));
+    res->unsubscribed_get().connect(
+      boost::bind(static_cast<setter_type>(&object::rEvent::operator = <object::Event>),
+                  &data->event_ward, (object::Event*)(0)));
+    at_run(data);
 
     return res;
     // std::cerr << "VISIT" << std::endl;

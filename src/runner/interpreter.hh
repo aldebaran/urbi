@@ -293,6 +293,7 @@ namespace runner
     static void
     at_run(AtEventData* data,
            const object::objects_type& = object::objects_type());
+    static void at_stop(AtEventData* data);
 
 
     // Work around limitations of VC++ 2005.
