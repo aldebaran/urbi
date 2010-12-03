@@ -344,7 +344,10 @@ namespace runner
   void
   Interpreter::show_backtrace(const std::string& chan) const
   {
-    show_backtrace(call_stack_, chan);
+    // Displaying a stack invokes urbiscript code, which in turn
+    // changes the call stack.  Don't play this kind of games.
+    call_stack_type stack = call_stack_;
+    show_backtrace(stack, chan);
   }
 
   Interpreter::backtrace_type
@@ -352,9 +355,8 @@ namespace runner
   {
     CAPTURE_GLOBAL(StackFrame);
     backtrace_type res;
-    /* We need to create StackFrame objects while iterating, which will modify
-     * the call stack, so make a copy.
-     */
+    // We need to create StackFrame objects while iterating, which
+    // will modify the call stack, so make a copy.
     call_stack_type copy = call_stack_;
     foreach (call_type c, copy)
     {
@@ -382,7 +384,8 @@ namespace runner
   }
 
   void
-  Interpreter::raise(rObject exn, bool skip_last, const boost::optional<ast::loc>& loc)
+  Interpreter::raise(rObject exn, bool skip_last,
+                     const boost::optional<ast::loc>& loc)
   {
     CAPTURE_GLOBAL(Exception);
 
