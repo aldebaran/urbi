@@ -50,17 +50,17 @@ namespace runner
       unsigned depth;
     };
 
-  /*-------------.
-  | Contsruction |
-  `-------------*/
+  /*---------------.
+  | Construction.  |
+  `---------------*/
 
   public:
     /// Build static stacks.
     Stacks(rObject lobby);
 
-  /*------------------------.
-  | Starting / ending calls |
-  `------------------------*/
+  /*--------------------------.
+  | Starting / ending calls.  |
+  `--------------------------*/
 
   public:
     /// Signal the stacks a new execution is starting
@@ -88,9 +88,9 @@ namespace runner
     /// Pop the context.
     void pop_context(const context_type& previous_context);
 
-  /*---------------.
-  | Reading values |
-  `---------------*/
+  /*-----------------.
+  | Reading values.  |
+  `-----------------*/
 
   public:
     /// Get value from the stack.
@@ -110,9 +110,9 @@ namespace runner
     Stacks::rSlot
     rget(libport::Symbol name, unsigned index, unsigned depth);
 
-  /*---------------.
-  | Setting values |
-  `---------------*/
+  /*-----------------.
+  | Setting values.  |
+  `-----------------*/
 
   public:
     /// Set 'this'.
@@ -141,9 +141,9 @@ namespace runner
     /// Restore switched 'this'.
     void this_switch_back(rObject v);
 
-  /*--------.
-  | Details |
-  `--------*/
+  /*----------.
+  | Details.  |
+  `----------*/
 
   private:
     /// The double-indirection local stack, for captured and
@@ -154,7 +154,7 @@ namespace runner
   };
 }
 
-# ifdef LIBPORT_COMPILATION_MODE_SPEED
+# if defined LIBPORT_COMPILATION_MODE_SPEED
 #  include <runner/stacks.hxx>
 # endif
 
