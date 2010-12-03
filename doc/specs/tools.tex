@@ -440,6 +440,37 @@ the \command{urbi} program, both programs are quit the same way (see
 \autoref{sec:tools:urbi:quitting}).
 
 
+\section{\command{urbi-ping} --- Checking the Delays with a Server}
+\label{sec:tools:urbi-ping}
+
+\begin{shell}
+urbi-ping \var{option}... [\var{host}] [\var{interval}] [\var{count}]
+\end{shell}
+
+Send ``ping''s to an \urbi server, and report how long it tooks for
+``pong''s to come back.
+
+\subsection{Options}
+
+\begin{options}[General Options]
+\item[h]{help} \optionHelp
+\item{version} \optionVersion
+\end{options}
+
+\begin{options}[Networking]
+\item[H]{host=\var{host}} Address to connect to.
+\item[P]{port=\var{port}} Port to connect to.
+\item{port-file=\var{file}} Connect to the port contained in the file
+  \var{file}.
+\end{options}
+
+\begin{options}[Tuning]
+\item[c]{count=\var{count}} Number of pings to send.  Pass 0 to send an
+  unlimited number of pings.  Defaults to 0.
+\item[i]{interval=\var{interval}} Set the delays between pings, in
+  milliseconds.  Pass 0 to flood the connection.  Defaults to 1000.
+\end{options}
+
 \section{\command{urbi-send} --- Sending \us Commands to a Server}
 \label{sec:tools:urbi-send}
 
