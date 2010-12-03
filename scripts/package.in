@@ -86,6 +86,19 @@ check_equal ()
   fi
 }
 
+# tree_copy SOURCE DEST
+# ---------------------
+# Copy a file-system tree from SOURCE to DEST.  Preserve rights etc.
+# DEST is cleared first.
+tree_copy ()
+{
+  local source=$1
+  local dest=$2
+  rm -rf "$dest"
+  mkdir -p "$dest"
+  tar -C "$source" -cf - . | tar -C "$dest" -xpBf -
+}
+
 check_equal ARCH         URBI_HOST_CPU
 check_equal COMP         URBI_HOST_COMP
 # check_equal OS           URBI_HOST_OS
@@ -127,20 +140,26 @@ fi
 #
 # Create a directory with only the documentation part of the install
 # tree.
-packagedir="$updir/$PROJECT-$version-doc"
-rm -rf "$packagedir"
-mkdir -p "$packagedir"
-tar -C "$DESTDIR$prefix/share/doc" cf - . | tar -C "$packagedir" xpBf -
+docsrc="$DESTDIR$prefix/share/doc/urbi-sdk"
+urbi_doc=${PROJECT%-sdk}-doc-$version
+if test -f "$docsrc/urbi-sdk.pdf"; then
+  stderr "Documentation is compiled, shipping"
+  tree_copy "$docsrc" "$updir/$urbi_doc"
+else
+  stderr "Documentation is NOT compiled, looking for it in $archivedir"
+  if test -f "$archivedir/$urbi_doc.tar.bz2"; then
+    stderr "Documentation found, installing"
+    tar -C "$docsrc" -xf "$archivedir/$urbi_doc.tar.bz2"
+  else
+    stderr "Documentation NOT found"
+  fi
+fi
 
 # 2. Prebuilt-Urbi SDK.
 #
 # Create a fresh directory in which we put the subdirectories of the
 # $install directory.
-packagedir="$updir/$name"
-rm -rf "$packagedir"
-mkdir -p "$packagedir"
-tar -C "$DESTDIR$prefix" cf - . | tar -C "$packagedir" xpBf -
-
+tree_copy "$DESTDIR$prefix" "$updir/$name"
 
 # 3. Prebuilt-Urbi Runtime.
 #
@@ -148,9 +167,7 @@ tar -C "$DESTDIR$prefix" cf - . | tar -C "$packagedir" xpBf -
 rtname=$(echo "$name" | sed -e 's/urbi-sdk/urbi-runtime/')
 if test $name != $rtname; then
   packagedir="$updir/$rtname"
-  rm -rf "$packagedir"
-  mkdir -p "$packagedir"
-  tar -C "$DESTDIR$prefix" cf - . | tar -C "$packagedir" xpBf -
+  tree_copy "$DESTDIR$prefix" "$packagedir"
   # Keep only the bin, lib, and share/urbi directories.  Don't forget
   # bin is lib on Windows.  Leave LICENSE.txt since it is used by
   # Lobby.license.
