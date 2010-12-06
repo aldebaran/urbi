@@ -29,9 +29,9 @@ do (Event)
   // conditions.
   function '<<' (rhs)
   {
-    rhs.onEvent(closure (var evt) { true },
-                closure (var evt, var pattern) { this.trigger },
-                closure (var evt, var pattern) { this.stop }) |
+    rhs.onEvent(closure (var evt, var payload) { true },
+                closure (var evt, var payload, var pattern) { this.trigger },
+                closure (var evt, var payload, var pattern) { this.stop }) |
 
     // To watch many at once.
     this
