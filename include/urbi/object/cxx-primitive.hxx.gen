@@ -116,58 +116,6 @@ def primitive(r, nargs):
         'self': to(0, 'S'),
         }
 
-
-def primitive_list(r, met):
-
-    params = []
-    if r:
-        params += ['typename R']
-        r = 'return CxxConvert<typename Flatten<R>::type>::from'
-        r_void = ''
-    else:
-        r = ''
-        r_void = 'return object::void_class;'
-    if met:
-        params += ['typename S']
-    params = ', '.join(params)
-    if met:
-        target_get =  'S tgt = from_urbi<typename Flatten<S>::type>(args[0], 0);\n'
-        target_get += '        object::objects_type new_args = args;\n'
-        target_get += '        libport::pop_front(new_args);'
-        target = 'tgt, '
-        args_name = 'new_args'
-    else:
-        target_get = ''
-        target = ''
-        args_name = 'args'
-    return '''\
-    template <%(params)s>
-    struct MakePrimitive<%(boost)s>
-    {
-      static rObject primitive(
-        const object::objects_type& args,
-        %(boost)s f)
-      {
-        %(target_get)s
-        %(return)s(f(%(target)s%(args)s));
-        %(return_void)s
-      }
-    };
-    ''' % {
-        'args': args_name,
-        'boost': boost_list_type(r, met),
-        'params': params,
-        'return': r,
-        'return_void': r_void,
-        'target': target,
-        'target_get': target_get,
-        }
-
-
-# print primitive(True, True, 3)
-# print primitive_list(True, True, False)
-# print primitive_list(True, True, True)
-
 primitives = ''
 
 for ret in [True, False]:
