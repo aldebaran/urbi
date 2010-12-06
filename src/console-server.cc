@@ -50,7 +50,7 @@
 
 #include <libltdl/ltdl.h>
 
-#include <sched/coroutine-data.hh>
+#include <sched/coroutine-local-storage.hh>
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
 #include <kernel/uqueue.hh>
@@ -72,7 +72,7 @@
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 
-static  libport::local_data&
+static libport::local_data&
 debugger_data_thread_coro_local()
 {
   typedef boost::thread_specific_ptr<libport::local_data> thread_storage;
