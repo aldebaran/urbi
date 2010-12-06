@@ -129,12 +129,19 @@ fi
 # Determine the version from the latest component of the tag. This will
 # ease ordering.
 version=$(cd "$srcdir" && git describe | sed -e "s,^preview/,,;s,/,-,g")
-# If we are in release mode, do not tell it, the final users won't care
-if $release_mode; then
-  name="$PROJECT-$version-$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP"
-else
-  name="$PROJECT-$version-$URBI_HOST_OS-$URBI_HOST_CPU-$URBI_HOST_COMP-$MODE"
-fi
+# If we are in release mode, do not tell it, the final users won't care.
+# Otherwise, add "-debug".
+configuration=$version-$URBI_HOST_OS-$URBI_HOST_CPU
+$release_mode || configuration=$configuration-$MODE
+
+# The SDK package.
+name=$PROJECT-$configuration
+name_sdk=$name
+# The SDK package, without the doc.
+name_no_doc=$name_sdk-no-doc
+# The runtime package, i.e., without doc etc.
+name_runtime=$(echo "$name_sdk" | sed -e 's/urbi-sdk/urbi-runtime/')
+
 
 # 1. Documentation tree.
 #
@@ -150,12 +157,14 @@ else
   if test -f "$archivedir/$urbi_doc.tar.bz2"; then
     stderr "Documentation found, installing"
     tar -C "$docsrc" -xf "$archivedir/$urbi_doc.tar.bz2"
+    # So remove the one without doc if there is one.
+    rm -f "$archivedir/$name_no_doc".*
   else
     # We couldn't find the doc, and it's not our job to compile it.
     # So, instead of blocking the generation of packages, generate
     # packages without the doc, but make it clear in the tarball name.
     stderr "Documentation NOT found"
-    name=$name-no-doc
+    name=$name_no_doc
   fi
 fi
 
@@ -168,16 +177,13 @@ tree_copy "$DESTDIR$prefix" "$updir/$name"
 # 3. Prebuilt-Urbi Runtime.
 #
 # Create a run-time version of the package.
-rtname=$(echo "$name" | sed -e 's/urbi-sdk/urbi-runtime/;s/-no-doc//')
-if test $name != $rtname; then
-  packagedir="$updir/$rtname"
-  tree_copy "$DESTDIR$prefix" "$packagedir"
-  # Keep only the bin, lib, and share/urbi directories.  Don't forget
-  # bin is lib on Windows.  Leave LICENSE.txt since it is used by
-  # Lobby.license.
-  (cd "$packagedir" &&
-      rm -rf README.txt include libexec share/doc)
-fi
+packagedir="$updir/$name_runtime"
+tree_copy "$DESTDIR$prefix" "$packagedir"
+# Keep only the bin, lib, and share/urbi directories.  Don't forget
+# bin is lib on Windows.  Leave LICENSE.txt since it is used by
+# Lobby.license.
+(cd "$packagedir" &&
+    rm -rf README.txt include libexec share/doc)
 
 # 4. Source tarball.
 #
