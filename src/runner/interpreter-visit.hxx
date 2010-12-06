@@ -224,22 +224,46 @@ namespace runner
     delete data;
   }
 
+  inline void
+  Interpreter::at_ward(Interpreter::AtEventData* data)
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Subscribed at condition: %s", data->exp->body_string());
+    data->event_ward = data->event;
+  }
+
+  inline void
+  Interpreter::at_unward(Interpreter::AtEventData* data)
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Unsubscribed at condition: %s, %s",
+                   data->exp->body_string(), data->event->counter_get());
+    // If this event is alive only because it's up, terminate it.
+    if (data->current && data->event->counter_get() == 2)
+    {
+      GD_FINFO_TRACE("KILL %s", data->current->counter_get());
+      data->current->stop();
+      GD_FINFO_TRACE("KILL %s, %s", data->current->counter_get(), data->event->counter_get());
+    }
+    data->event_ward = 0;
+  }
+
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Event* e)
   {
+    object::rCode code = dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get());
+
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Create at condition: %s", code->body_string());
+
     object::rEvent res = new object::Event;
     AtEventData* data =
-      new AtEventData(res,
-                      dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get()));
+      new AtEventData(res, code);
     res->destructed_get().connect(boost::bind(&at_stop, data));
-    typedef object::rEvent& (object::rEvent::*setter_type)(object::Event*);
     // Maintain that event alive as long as it is subscribed to.
-    res->subscribed_get().connect(
-      boost::bind(static_cast<setter_type>(&object::rEvent::operator = <object::Event>),
-                  &data->event_ward, res.get()));
-    res->unsubscribed_get().connect(
-      boost::bind(static_cast<setter_type>(&object::rEvent::operator = <object::Event>),
-                  &data->event_ward, (object::Event*)(0)));
+    res->subscribed_get().connect(boost::bind(at_ward, data));
+    res->unsubscribed_get().connect(boost::bind(at_unward, data));
+    // Test it a first time.
     at_run(data);
 
     return res;
