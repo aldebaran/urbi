@@ -138,10 +138,12 @@ namespace urbi
       std::vector<stop_job_type> stop_jobs_;
       void register_stop_job(const stop_job_type& stop_job);
 
+    public:
       /// Active instances of this event (handler => payload).
       typedef boost::unordered_map<rEvent, rList> actives_type;
-      actives_type _active;
+      ATTRIBUTE_R(actives_type, active);
 
+    private:
       /// C++ callbacks
       typedef std::vector<callback_type*> callbacks_type;
       // Using an unordered set is slightly slower with few elements,

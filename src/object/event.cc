@@ -154,7 +154,7 @@ namespace urbi
       }
 
       listeners_ << actions;
-      foreach (const actives_type::value_type& active, _active)
+      foreach (const actives_type::value_type& active, active_)
         active.first->trigger_job(actions, true);
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
@@ -242,7 +242,7 @@ namespace urbi
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       // Check whether there's already a matching instance.
-      foreach (const actives_type::value_type& active, _active)
+      foreach (const actives_type::value_type& active, active_)
         if (pattern == nil_class
             || pattern->call(SYMBOL(match), active.second)->as_bool())
           return;
@@ -300,7 +300,7 @@ namespace urbi
     Event::localTrigger(const objects_type& pl, bool detach)
     {
       rList payload = new List(pl);
-      source()->_active[this] = payload;
+      source()->active_[this] = payload;
       waituntil_release(payload);
 
       foreach (const callback_type& cb, callbacks_instance_)
@@ -352,8 +352,8 @@ namespace urbi
       else
         foreach (const stop_job_type& stop_job, stop_jobs_)
           (*stop_job.first)(stop_job.second);
-      source()->_active.erase(this);
       stop_jobs_.clear();
+      source()->active_.erase(this);
     }
 
     void
