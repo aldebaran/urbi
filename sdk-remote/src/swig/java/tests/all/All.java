@@ -34,17 +34,22 @@ import java.util.Map;
 // doubleValue()
 // ...
 //
-// - UStart avec juste la class
+// - UStart with just the class
 // - UBindFunction avec du typage statique
 // - verifier http://www.swig.org/Doc1.3/Java.html#memory_management
 // - http://svn.osgeo.org/gdal/trunk/gdal/swig/include/java/ogr_java.i
 //   https://valelab.ucsf.edu/svn/micromanager2/trunk/MMCoreJ_wrap/MMCoreJ.i
-// - tester plus en détail UDictionary
+//
+// - more thorough testing of UDictionary
+//
 // - checker pkoi dans list ils font new UValue(val) plutot que val
 //   tout court dans all.cc
-// - arreter de checker les types a l'appel des fonctions bindées,
-//   mais plutot au setting (mettre pointeur sur fct)
+//
+// - stop checking the types when calling UBind'ed functions,
+//   but rather at setting (putting point on fct)
+//
 // - uniformiser UBindFunction et UBindVar ?
+//
 // - generer javadoc
 
 // DONE.
@@ -410,7 +415,7 @@ public class All extends UObject
 
     // void sendEvent8Args()
     // {
-    // 	ev.emit(0, "foo", 5.1, 4, 5, 6, 7, 8);
+    //	ev.emit(0, "foo", 5.1, 4, 5, 6, 7, 8);
     // }
 
 
@@ -626,8 +631,8 @@ public class All extends UObject
 
     // public int sendPar()
     // {
-    // 	URBI((Object.a = 123,));
-    // 	return 0;
+    //	URBI((Object.a = 123,));
+    //	return 0;
     // }
 
 //    void loop_yield(long duration)
