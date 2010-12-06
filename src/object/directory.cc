@@ -39,14 +39,6 @@
 
 namespace boostfs = boost::filesystem;
 
-namespace boost
-{
-  namespace filesystem
-  {
-    typedef basic_filesystem_error<boostfs::path> fserror;
-  }
-}
-
 using libport::BlockLock;
 
 namespace urbi
@@ -59,7 +51,7 @@ namespace urbi
 
     ATTRIBUTE_NORETURN
     static void
-    raise_boost_fs_error(boostfs::fserror& e)
+    raise_boost_fs_error(boostfs::filesystem_error& e)
     {
       FRAISE("%s", libport::format_boost_fs_error(e.what()));
     }
@@ -121,7 +113,7 @@ namespace urbi
       {
         created = boostfs::create_directory(path->as_string().c_str());
       }
-      catch (boostfs::fserror& e)
+      catch (boostfs::filesystem_error& e)
       {
         raise_boost_fs_error(e);
       }
@@ -386,7 +378,7 @@ namespace urbi
       {
         return boostfs::is_empty(path_->as_string().c_str());
       }
-      catch (boostfs::fserror& e)
+      catch (boostfs::filesystem_error& e)
       {
         raise_boost_fs_error(e);
       }
@@ -424,7 +416,7 @@ namespace urbi
       {
         boostfs::remove_all(path_->as_string());
       }
-      catch (boostfs::fserror& e)
+      catch (boostfs::filesystem_error& e)
       {
         raise_boost_fs_error(e);
       }
