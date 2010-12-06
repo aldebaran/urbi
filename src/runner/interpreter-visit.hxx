@@ -274,7 +274,7 @@ namespace runner
     {
       LIBPORT_SCOPE_SET_USE(bool, object::squash, true);
       GD_CATEGORY(Urbi.At);
-      GD_PUSH_TRACE("Register this for at monitoring");
+      GD_PUSH_DEBUG("Register this for at monitoring");
       dependency_add(slotGet_changed(res));
     }
     return res;
@@ -400,7 +400,7 @@ namespace runner
         squash = true;
 
         GD_CATEGORY(Urbi.At);
-        GD_FPUSH_TRACE("Register local variable '%s' for at monitoring",
+        GD_FPUSH_DEBUG("Register local variable '%s' for at monitoring",
                        e->name_get());
         dependency_add(static_cast<object::Event*>
                        (slot->property_get(SYMBOL(changed)).get()));
@@ -712,7 +712,7 @@ namespace runner
     {
       LIBPORT_SCOPE_SET_USE(bool, object::squash, true);
       GD_CATEGORY(Urbi.At);
-      GD_PUSH_TRACE("Register this for at monitoring");
+      GD_PUSH_DEBUG("Register this for at monitoring");
       dependency_add(slotGet_changed(res));
     }
     return res;
