@@ -164,11 +164,11 @@ namespace runner
   inline void
   Interpreter::at_run(AtEventData* data, const object::objects_type&)
   {
+    GD_CATEGORY(Urbi.At);
     runner::Interpreter& r = ::kernel::interpreter();
     bool v;
     // FIXME: optimize: do not unregister and reregister the same dependency
     {
-      GD_CATEGORY(Urbi.At);
       GD_FPUSH_TRACE("Evaluating at condition: %s", data->exp->body_string());
       foreach (object::Event::Subscription& s, data->subscriptions)
         s.stop();
