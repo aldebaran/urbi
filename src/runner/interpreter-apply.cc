@@ -144,6 +144,8 @@ namespace runner
                      const rObject& call_message,
                      boost::optional<ast::loc> loc)
   {
+    GD_CATEGORY(Urbi.Stack);
+    GD_FPUSH_TRACE("Call %s", msg);
     aver(function);
     aver(!args.empty());
     aver(args.front());
