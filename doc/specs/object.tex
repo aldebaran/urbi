@@ -288,7 +288,7 @@ b.getSlot("ENOENT");
   A \refObject{Hash} object for \this.  This default implementation returns
   a different hash for every object, so every key maps to a different
   cells. Classes that have value semantic should override the hash method so
-  as objects that are equal (in the \refSlot[Object]{==} sense) have the
+  as objects that are equal (in the \refSlot[Object]{'=='} sense) have the
   same hash. \refSlot[String]{hash} does so for instance; as a consequence
   different String objects with the same value map to the same cell.
 
