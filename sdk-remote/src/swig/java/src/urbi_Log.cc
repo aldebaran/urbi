@@ -21,8 +21,8 @@ Java_urbi_Log_info (JNIEnv *env,jobject, jstring category, jstring msg, jstring 
   const char* filename_ = env->GetStringUTFChars(filename, 0);
   const char*category_ = env->GetStringUTFChars(category, 0);
   libport::debug::category_type _libport_gd_category = ::libport::debug::add_category(::libport::debug::category_type(category_));
-  if (libport::debugger()->enabled(::libport::Debug::levels::debug, _libport_gd_category))
-    libport::debugger()->debug(msg_, ::libport::Debug::types::info, _libport_gd_category, functionname_, filename_, (int) linenumber);
+  if (GD_DEBUGGER->enabled(::libport::Debug::levels::debug, _libport_gd_category))
+    GD_DEBUGGER->debug(msg_, ::libport::Debug::types::info, _libport_gd_category, functionname_, filename_, (int) linenumber);
   env->ReleaseStringUTFChars(msg, msg_);
   env->ReleaseStringUTFChars(functionname, functionname_);
   env->ReleaseStringUTFChars(filename, filename_);
@@ -37,8 +37,8 @@ Java_urbi_Log_error (JNIEnv *env,jobject, jstring category, jstring msg, jstring
   const char* filename_ = env->GetStringUTFChars(filename, 0);
   const char*category_ = env->GetStringUTFChars(category, 0);
   ::libport::debug::category_type _libport_gd_category = ::libport::debug::add_category(::libport::debug::category_type(category_));
-  if (libport::debugger()->enabled(::libport::Debug::levels::log, _libport_gd_category))
-    libport::debugger()->debug(msg_, ::libport::Debug::types::error, _libport_gd_category, functionname_, filename_, (int) linenumber);
+  if (GD_DEBUGGER->enabled(::libport::Debug::levels::log, _libport_gd_category))
+    GD_DEBUGGER->debug(msg_, ::libport::Debug::types::error, _libport_gd_category, functionname_, filename_, (int) linenumber);
   env->ReleaseStringUTFChars(msg, msg_);
   env->ReleaseStringUTFChars(functionname, functionname_);
   env->ReleaseStringUTFChars(filename, filename_);
