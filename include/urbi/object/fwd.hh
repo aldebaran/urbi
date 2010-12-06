@@ -40,6 +40,7 @@ namespace urbi
     Macro(Directory);                           \
     Macro(Duration);                            \
     Macro(Event);                               \
+    Macro(EventHandler);                       \
     Macro(Executable);                          \
     Macro(File);                                \
     Macro(Finalizable);                         \

@@ -491,12 +491,11 @@ static rObject wrap_ucallback(const object::objects_type& ol,
 
 
 static rObject wrap_event(const object::objects_type& ol,
-                       urbi::UGenericCallback* ugc,
-                       const std::string& traceName)
+                          urbi::UGenericCallback* ugc,
+                          const std::string& traceName)
 {
-  // we were called with arg1=event instance, arg2 = pattern
-  object::objects_type args = ol[1]->slot_get(SYMBOL(payload))->as<object::List>
-  ()->value_get();
+  // we were called with arg1=event instance, arg2 = payload, arg3 = pattern
+  object::objects_type args = ol[2]->as<object::List>()->value_get();
   if (args.size() == (unsigned int)ugc->nbparam)
   {
     return wrap_ucallback(args, ugc, traceName, false);

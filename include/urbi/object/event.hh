@@ -12,7 +12,7 @@
 # define URBI_OBJECT_EVENT_HH
 
 # include <boost/signal.hpp>
-# include <boost/unordered_map.hpp>
+# include <boost/unordered_set.hpp>
 
 # include <libport/attributes.hh>
 
@@ -27,6 +27,8 @@ namespace urbi
   {
     class URBI_SDK_API Event: public CxxObject
     {
+      friend class EventHandler;
+
     public:
       Event();
       Event(rEvent model);
@@ -59,22 +61,23 @@ namespace urbi
       };
 
     public:
-      void emit(const objects_type& args);
-      void emit();
       void onEvent(rExecutable guard, rExecutable enter, rExecutable leave);
       Subscription onEvent(const callback_type& cb);
       void stop();
       void syncEmit(const objects_type& args);
-      rEvent syncTrigger(const objects_type& args);
-      rEvent trigger(const objects_type& args);
-      void localTrigger(const objects_type& args, bool detach);
+      void emit(const objects_type& args);
+      void emit();
+      rEventHandler trigger(const objects_type& args);
+      rEventHandler syncTrigger(const objects_type& args);
       void waituntil(rObject pattern);
       bool hasSubscribers() const;
 
     private:
-      void emit_backend(const objects_type& args, bool detach);
-      rEvent trigger_backend(const objects_type& args, bool detach);
+      void emit_backend(const objects_type& pl, bool detach);
+      rEventHandler trigger_backend(const objects_type& pl, bool detach);
       void stop_backend(bool detach);
+      void stop_backend_async();
+      void stop_backend_sync();
 
       /** Callbacks listening on this event.
        *
@@ -109,7 +112,7 @@ namespace urbi
       void waituntil_release(rObject payload);
       void waituntil_remove(rTag what);
       rEvent source();
-      void trigger_job(const rActions& actions, bool detach);
+      void emit_job_async(rActions actions, const objects_type& args);
 
       /** The following three functions are callbacks installed on tags.
        *  The Actions argument is stored in the boost::bind.
@@ -119,8 +122,8 @@ namespace urbi
       void unregister(Actions*);
       void freeze(Actions*);
       void unfreeze(Actions*);
-      typedef std::vector<rActions> Listeners;
-      Listeners listeners_;
+      typedef std::vector<rActions> listeners_type;
+      listeners_type listeners_;
 
       struct Waiter
       {
@@ -135,12 +138,13 @@ namespace urbi
 
       /// Leave callbacks to trigger on stop.
       typedef std::pair<rExecutable, objects_type> stop_job_type;
-      std::vector<stop_job_type> stop_jobs_;
+      typedef std::vector<stop_job_type> stop_jobs_type;
+      stop_jobs_type stop_jobs_;
       void register_stop_job(const stop_job_type& stop_job);
 
     public:
       /// Active instances of this event (handler => payload).
-      typedef boost::unordered_map<rEvent, rList> actives_type;
+      typedef boost::unordered_set<rEventHandler> actives_type;
       ATTRIBUTE_R(actives_type, active);
 
     private:
@@ -153,9 +157,6 @@ namespace urbi
       // typedef boost::unordered_set<callback_type*> callbacks_type;
 
       callbacks_type callbacks_;
-      /// Running C++ callbacks of an event instance
-      typedef std::vector<callback_type> callbacks_instance_type;
-      callbacks_instance_type callbacks_instance_;
     };
   }
 }

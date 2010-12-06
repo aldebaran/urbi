@@ -14,8 +14,11 @@
 #include <object/symbols.hh>
 #include <runner/interpreter.hh>
 #include <urbi/object/event.hh>
+#include <urbi/object/event_handler.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/sdk.hh>
+
+GD_CATEGORY(Urbi.Event);
 
 namespace urbi
 {
@@ -37,33 +40,19 @@ namespace urbi
       slot_set(SYMBOL(active), to_urbi(false));
     }
 
-    Event::Event(rEvent parent, rList payload)
-      : listeners_(parent->listeners_)
-      , waiters_()
-      , callbacks_()
-      , callbacks_instance_()
-    {
-      foreach (callback_type* cb, parent->callbacks_)
-        callbacks_instance_ << *cb;
-      proto_add(parent);
-      slot_set(SYMBOL(active), to_urbi(true));
-      slot_set(SYMBOL(payload), payload);
-    }
-
     URBI_CXX_OBJECT_INIT(Event)
     {
       typedef void (Event::*emit_type)(const objects_type& args);
       bind_variadic<void, Event>(SYMBOL(emit),
                                  static_cast<emit_type>(&Event::emit));
       bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
-      bind(SYMBOL(localTrigger), &Event::localTrigger);
       typedef
       void (Event::*on_event_type)
       (rExecutable guard, rExecutable enter, rExecutable leave);
       bind(SYMBOL(onEvent), static_cast<on_event_type>(&Event::onEvent));
       bind_variadic<void, Event>(SYMBOL(syncEmit), &Event::syncEmit);
-      bind_variadic<rEvent, Event>(SYMBOL(syncTrigger), &Event::syncTrigger);
-      bind_variadic<rEvent, Event>(SYMBOL(trigger), &Event::trigger);
+      bind_variadic<rEventHandler, Event>(SYMBOL(syncTrigger), &Event::syncTrigger);
+      bind_variadic<rEventHandler, Event>(SYMBOL(trigger), &Event::trigger);
 
 #define DECLARE(Name, Cxx)            \
       bind(SYMBOL(Name), &Event::Cxx)
@@ -106,7 +95,7 @@ namespace urbi
     {
       // The erase might make us loose the last counted ref on a.
       rActions ra(a);
-      Listeners::iterator it = libport::find(listeners_, a);
+      listeners_type::iterator it = libport::find(listeners_, a);
       if (it != listeners_.end())
         listeners_.erase(it);
       foreach(boost::signals::connection& c, a->connections)
@@ -140,7 +129,7 @@ namespace urbi
       runner::Runner& r = ::kernel::runner();
       actions->tag_stack = r.tag_stack_get();
       actions->lobby = r.lobby_get();
-      foreach (object::rTag tag, actions->tag_stack)
+      foreach (object::rTag& tag, actions->tag_stack)
       {
         sched::rTag t = tag->value_get();
         using boost::bind;
@@ -155,7 +144,7 @@ namespace urbi
 
       listeners_ << actions;
       foreach (const actives_type::value_type& active, active_)
-        active.first->trigger_job(actions, true);
+        active->trigger_job(actions, true);
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       subscribed_();
@@ -173,70 +162,6 @@ namespace urbi
     }
 
     void
-    Event::trigger_job(const rActions& actions, bool detach)
-    {
-      runner::Runner& r = ::kernel::runner();
-      if (actions->frozen)
-        return;
-      objects_type args;
-      args << this << this;
-      rObject pattern = nil_class;
-      if (actions->guard)
-        pattern = (*actions->guard)(args);
-      if (pattern != void_class)
-      {
-        args << pattern;
-        if (actions->leave)
-          register_stop_job(stop_job_type(actions->leave, args));
-        if (actions->enter)
-        {
-          if (detach)
-          {
-            typedef rObject(Executable::*fun_type)(objects_type);
-            sched::rJob job =
-            new runner::Interpreter
-            (actions->lobby?actions->lobby:r.lobby_get(),
-             r.scheduler_get(),
-             boost::bind(static_cast<fun_type>(&Executable::operator()),
-                         actions->enter.get(), args),
-             this, SYMBOL(at));
-            job->start_job();
-          }
-          else
-            (*actions->enter)(args);
-        }
-      }
-    }
-
-    void
-    Event::emit_backend(const objects_type& pl, bool detach)
-    {
-      rEvent instance = new Event(this, new List(pl));
-
-      instance->slot_update(SYMBOL(active), to_urbi(false));
-      instance->localTrigger(pl, detach);
-      instance->stop_backend(detach);
-    }
-
-    void
-    Event::syncEmit(const objects_type& pl)
-    {
-      emit_backend(pl, false);
-    }
-
-    void
-    Event::emit(const objects_type& args)
-    {
-      emit_backend(args, true);
-    }
-
-    void
-    Event::emit()
-    {
-      emit(objects_type());
-    }
-
-    void
     Event::waituntil(rObject pattern)
     {
       if (slot_has(SYMBOL(onSubscribe)))
@@ -244,7 +169,7 @@ namespace urbi
       // Check whether there's already a matching instance.
       foreach (const actives_type::value_type& active, active_)
         if (pattern == nil_class
-            || pattern->call(SYMBOL(match), active.second)->as_bool())
+            || pattern->call(SYMBOL(match), active->payload())->as_bool())
           return;
 
       runner::Runner& r = ::kernel::runner();
@@ -269,44 +194,10 @@ namespace urbi
     }
 
     rEvent
-    Event::trigger_backend(const objects_type& pl, bool detach)
-    {
-      rEvent instance = new Event(this, new List(pl));
-
-      instance->localTrigger(pl, detach);
-      return instance;
-    }
-
-    rEvent
-    Event::syncTrigger(const objects_type& pl)
-    {
-      return trigger_backend(pl, false);
-    }
-
-    rEvent
-    Event::trigger(const objects_type& pl)
-    {
-      return trigger_backend(pl, true);
-    }
-
-    rEvent
     Event::source()
     {
       rObject proto = protos_get().front();
       return from_urbi<rEvent>(proto);
-    }
-
-    void
-    Event::localTrigger(const objects_type& pl, bool detach)
-    {
-      rList payload = new List(pl);
-      source()->active_[this] = payload;
-      waituntil_release(payload);
-
-      foreach (const callback_type& cb, callbacks_instance_)
-        cb(pl);
-      foreach (Event::rActions actions, listeners_)
-        trigger_job(actions, detach);
     }
 
     void
@@ -329,15 +220,122 @@ namespace urbi
       (*e)(args);
     }
 
+    /*-------.
+    | Emit.  |
+    `-------*/
+
+    void
+    Event::emit_job_async(Event::rActions actions, const objects_type& args)
+    {
+      runner::Runner& r = ::kernel::runner();
+      if (actions->leave)
+        register_stop_job(stop_job_type(actions->leave, args));
+      if (actions->enter)
+      {
+        typedef rObject(Executable::*fun_type)(objects_type);
+        sched::rJob job =
+          new runner::Interpreter
+          (actions->lobby ? actions->lobby : r.lobby_get(),
+           r.scheduler_get(),
+           boost::bind(static_cast<fun_type>(&Executable::operator()),
+                       actions->enter.get(), args),
+           this, SYMBOL(at));
+        job->start_job();
+      }
+    }
+
+    void
+    Event::emit_backend(const objects_type& pl, bool detach)
+    {
+      rList payload = new List(pl);
+      slot_update(SYMBOL(active), to_urbi(false));
+      waituntil_release(payload);
+      foreach (callback_type* cb, callbacks_type(callbacks_))
+        (*cb)(pl);
+      foreach (const Event::rActions& actions, listeners_type(listeners_))
+      {
+        if (actions->frozen)
+          return;
+        objects_type args;
+        args << this << this << payload;
+        rObject pattern = nil_class;
+        if (actions->guard)
+          pattern = (*actions->guard)(args);
+        if (pattern != void_class)
+        {
+          args << pattern;
+
+          if (detach)
+            emit_job_async(actions, args);
+          else
+          {
+            if (actions->enter)
+              (*actions->enter)(args);
+            if (actions->leave)
+              (*actions->leave)(args);
+          }
+        }
+      }
+      stop_backend(detach);
+    }
+
+    void
+    Event::syncEmit(const objects_type& pl)
+    {
+      emit_backend(pl, false);
+    }
+
+    void
+    Event::emit(const objects_type& args)
+    {
+      emit_backend(args, true);
+    }
+
+    void
+    Event::emit()
+    {
+      emit(objects_type());
+    }
+
+    /*----------.
+    | Trigger.  |
+    `----------*/
+
+    rEventHandler
+    Event::trigger_backend(const objects_type& pl, bool detach)
+    {
+      rList payload = new List(pl);
+      rEventHandler handler = new EventHandler(this, payload);
+      waituntil_release(payload);
+      handler->trigger(detach);
+      return handler;
+    }
+
+    rEventHandler
+    Event::syncTrigger(const objects_type& pl)
+    {
+      return trigger_backend(pl, false);
+    }
+
+    rEventHandler
+    Event::trigger(const objects_type& pl)
+    {
+      return trigger_backend(pl, true);
+    }
+
+    /*-------.
+    | Stop.  |
+    `-------*/
+
     void
     Event::stop_backend(bool detach)
     {
-      runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(active), to_urbi(false));
       if (detach)
       {
+        runner::Runner& r = ::kernel::runner();
         sched::jobs_type children;
-        foreach (const stop_job_type& stop_job, stop_jobs_)
+        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
           typedef rObject(Executable::*fun_type)(objects_type);
           sched::rJob job = new runner::Interpreter
@@ -348,22 +346,23 @@ namespace urbi
           job->start_job();
         }
         r.yield_until_terminated(children);
+        stop_jobs_.clear();
       }
       else
-        foreach (const stop_job_type& stop_job, stop_jobs_)
+      {
+        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
           (*stop_job.first)(stop_job.second);
-      stop_jobs_.clear();
-      source()->active_.erase(this);
+        stop_jobs_.clear();
+      }
     }
 
     void
     Event::waituntil_release(rObject payload)
     {
-      rEvent src = source();
       // This iteration needs to remove some elements as it goes.
-      for (unsigned i = 0; i < src->waiters_.size(); )
+      for (unsigned i = 0; i < waiters_.size(); )
       {
-	Waiter& waiter = src->waiters_[i];
+	Waiter& waiter = waiters_[i];
 	if (waiter.pattern == nil_class
             || waiter.pattern->call(SYMBOL(match), payload)->as_bool())
 	{
@@ -384,8 +383,8 @@ namespace urbi
           }
 	  waiter.controlTag->unfreeze();
 	  // Yes this is also valid for the last element.
-	  src->waiters_[i] = src->waiters_[src->waiters_.size()-1];
-	  src->waiters_.pop_back();
+	  waiters_[i] = waiters_[waiters_.size()-1];
+	  waiters_.pop_back();
 	}
 	else
 	  ++i;

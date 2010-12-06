@@ -26,6 +26,7 @@
 #include <urbi/object/enumeration.hh>
 #include <urbi/object/equality-comparable.hh>
 #include <urbi/object/event.hh>
+#include <urbi/object/event_handler.hh>
 #include <urbi/object/file.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/fwd.hh>
@@ -76,6 +77,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Lobby);
     URBI_CXX_OBJECT_REGISTER(List);
     URBI_CXX_OBJECT_REGISTER(Event);
+    URBI_CXX_OBJECT_REGISTER(EventHandler);
     URBI_CXX_OBJECT_REGISTER(Job);
     URBI_CXX_OBJECT_REGISTER(IoService);
     URBI_CXX_OBJECT_REGISTER(Float);

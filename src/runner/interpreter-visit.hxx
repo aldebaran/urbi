@@ -35,6 +35,7 @@
 
 # include <urbi/object/code.hh>
 # include <urbi/object/event.hh>
+# include <urbi/object/event_handler.hh>
 # include <urbi/object/global.hh>
 # include <urbi/object/list.hh>
 # include <urbi/object/dictionary.hh>
@@ -157,7 +158,7 @@ namespace runner
     object::Event* event;
     object::rEvent event_ward;
     object::rCode exp;
-    object::Event* current;
+    object::EventHandler* current;
     std::vector<object::Event::Subscription> subscriptions;
   };
 
@@ -201,6 +202,7 @@ namespace runner
         data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
       r.dependencies_.clear();
     }
+    GD_FINFO_TRACE("%p: v = %s, current = %p", data, v, data->current);
     if (v && !data->current)
     {
       GD_PUSH_TRACE("Triggering at block (enter)");
