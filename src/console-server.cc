@@ -72,7 +72,21 @@
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 
-GD_INIT_DEBUG_PER(::libport::localdata::ThreadCoroutine);
+static  libport::local_data&
+debugger_data_thread_coro_local()
+{
+  typedef boost::thread_specific_ptr<libport::local_data> thread_storage;
+  typedef sched::CoroutineLocalStorage<thread_storage> coro_storage;
+
+  static coro_storage cstorage;
+
+  thread_storage& tstorage = *cstorage;
+  if (!tstorage.get())
+    tstorage.reset(new libport::local_data);
+  return *tstorage;
+}
+
+GD_INIT_DEBUG_PER(debugger_data_thread_coro_local);
 GD_CATEGORY(Urbi);
 
 #define URBI_EXIT(Status, ...)                 \
