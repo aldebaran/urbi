@@ -150,7 +150,7 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   {
     modules = opt_parser(libport::program_arguments());
   }
-  catch (libport::Error& e)
+  catch (const libport::Error& e)
   {
     const libport::Error::errors_type& err = e.errors();
     foreach (std::string wrong_arg, err)
