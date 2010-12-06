@@ -231,20 +231,20 @@ namespace ast
         (desugar,
          "{\n"
          "  %exp:1.onEvent(\n"
-         "  closure ('$evt', '$payload')\n"
+         "  closure ('$evt')\n"
          "  {\n"
          "    var '$pattern' = Pattern.new(%exp:2) |\n"
-         "    if ('$pattern'.match('$payload'))\n"
+         "    if ('$pattern'.match('$evt'.payload))\n"
          "      %exp: 3\n"
          "    else\n"
          "      void\n"
          "  },\n"
-         "  closure ('$evt', '$payload', '$pattern')\n"
+         "  closure ('$evt', '$pattern')\n"
          "  {\n"
          "    %exp: 4 |\n"
          "    %exp: 5 |\n"
          "  },\n"
-         "  closure ('$evt', '$payload', '$pattern')\n"
+         "  closure ('$evt', '$pattern')\n"
          "  {\n"
          "    %exp: 6 |\n"
          "    %exp: 7 |\n"
@@ -265,9 +265,9 @@ namespace ast
         (desugar_no_pattern,
          "{\n"
          "  %exp:1.onEvent(\n"
-         "  closure ('$evt', '$payload') { var '$pattern' = true | %exp:2 },\n"
-         "  closure ('$evt', '$payload', '$pattern') { %exp:3 },\n"
-         "  closure ('$evt', '$payload', '$pattern') { %exp:4 })\n"
+         "  closure ('$evt') { var '$pattern' = true | %exp:2 },\n"
+         "  closure ('$evt', '$pattern') { %exp:3 },\n"
+         "  closure ('$evt', '$pattern') { %exp:4 })\n"
          "}\n");
       return exp(desugar_no_pattern % event.event % guard % enter % leave);
     }

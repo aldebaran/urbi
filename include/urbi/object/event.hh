@@ -59,24 +59,22 @@ namespace urbi
       };
 
     public:
+      void emit(const objects_type& args);
+      void emit();
       void onEvent(rExecutable guard, rExecutable enter, rExecutable leave);
       Subscription onEvent(const callback_type& cb);
       void stop();
       void syncEmit(const objects_type& args);
-      void emit(const objects_type& args);
-      void emit();
-      void localTrigger(const objects_type& args, bool detach);
-      rEvent trigger(const objects_type& args);
       rEvent syncTrigger(const objects_type& args);
+      rEvent trigger(const objects_type& args);
+      void localTrigger(const objects_type& args, bool detach);
       void waituntil(rObject pattern);
       bool hasSubscribers() const;
 
     private:
-      void emit_backend(const objects_type& pl, bool detach);
-      rEvent trigger_backend(const objects_type& pl, bool detach);
+      void emit_backend(const objects_type& args, bool detach);
+      rEvent trigger_backend(const objects_type& args, bool detach);
       void stop_backend(bool detach);
-      void stop_backend_async();
-      void stop_backend_sync();
 
       /** Callbacks listening on this event.
        *
@@ -111,7 +109,6 @@ namespace urbi
       void waituntil_release(rObject payload);
       void waituntil_remove(rTag what);
       rEvent source();
-      void emit_job_async(rActions actions, const objects_type& args);
       void trigger_job(const rActions& actions, bool detach);
 
       /** The following three functions are callbacks installed on tags.
