@@ -89,10 +89,11 @@ namespace urbi
       DECLARE(asFloat,  as_float);
       DECLARE(asString, as_string);
       DECLARE(epoch,    epoch);
-      DECLARE(init,     init);
       DECLARE(now,      now);
 
 #undef DECLARE
+
+      bind_variadic(SYMBOL(init), &Date::init);
     }
 
     void

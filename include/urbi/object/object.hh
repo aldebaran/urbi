@@ -307,6 +307,9 @@ namespace urbi
       template <typename Return, typename Self>
       void bind_variadic(const std::string& name,
                          const boost::function2<Return, Self*, const objects_type&>& val);
+      template <typename Return, typename Self>
+      void bind_variadic(const std::string& name,
+                         Return (Self::*val)(const objects_type&));
     private:
       template <bool mem, typename T>
       friend class DispatchBind_;
