@@ -14,12 +14,12 @@ programming is inconvenient. We want to react to external, random
 events, not execute code linearly with a predefined flow. \us has a
 strong support for event-based programming.
 
-\section{Event related constructs}
+\section{Watchdog constructs}
 
-The first construct we will study is the \lstinline|at| keyword. Given
-a condition, and an expression, \lstinline|at| will evaluate the
-expression every time the condition becomes true. That is,
-when a rising edge occurs on the condition.
+The first construct we will study uses the \lstinline|at| keyword. Given a
+condition and a statement, \lstinline|at| will evaluate the statement each
+time the condition \emph{becomes} true. That is, when a rising edge occurs
+on the condition.
 
 \begin{urbiscript}[firstnumber=1]
 var x = 0;
@@ -28,7 +28,7 @@ at (x > 5)
   echo("ping");
 x = 5;
 [00000000] 5
-// This triggers the event
+// This triggers the event.
 x = 6;
 [00000000] 6
 [00000000] *** ping
@@ -44,8 +44,8 @@ x = 10;
 [00000000] *** ping
 \end{urbiscript}
 
-An \lstinline|onleave| block can be appended to execute an expression
-when the expression \emph{becomes} false --- that is, on falling edges.
+An \lstinline|onleave| block can be appended to execute an expression when
+the expression \emph{becomes} false --- that is, on falling edges.
 
 \begin{urbiscript}[firstnumber=1]
 var x = false;
@@ -62,12 +62,11 @@ x = false;
 [00000000] *** !x
 \end{urbiscript}
 
-See \autoref{sec:lang:at} for more details on \lstinline|at|
-statements.
+See \autoref{sec:lang:at} for more details on \lstinline|at| statements.
 
-The \lstinline|whenever| construct is similar to \lstinline|at|,
-except the expression evaluation is systematically restarted when it
-finishes as long as the condition stands true.
+The \lstinline|whenever| construct is similar to \lstinline|at|, except the
+expression evaluation is systematically restarted when it finishes as long
+as the condition stands true.
 
 \begin{urbiscript}[firstnumber=1]
 var x = false;
@@ -125,10 +124,14 @@ sleep (2s);
 
 \section{Events}
 \label{sec:tut:events}
-\us enables you to define events, that can be caught with the \lstinline|at|
-and \lstinline|whenever| constructs we saw earlier. You can create events by
-cloning the \refObject{Event} prototype. They can then be emitted with the
-\lstinline|!| keyword.
+
+In addition to monitoring an expression with a watchdog, \us enables you to
+define events that can be caught with the \lstinline|at| and
+\lstinline|whenever| constructs we saw earlier. You can create events by
+instantiating the \refObject{Event} prototype. They can then be emitted with
+the \lstinline|!| keyword.
+
+\subsection{Emitting Events}
 
 \begin{urbiscript}[firstnumber=1]
 var myEvent = Event.new;
@@ -169,7 +172,122 @@ myEvent! ~ 300ms;
 [00000000] *** ping (at)
 \end{urbiunchecked}
 
-%\section{Valued events}
+\subsection{Emitting events with a payload}
+\label{sec:tut:events:payload}
+
+Events behave very much like ``channels'': listeners use \lstinline|at| or
+\lstinline|whenever|, and producers use \lstinline|!|.  Fortunately, the
+messages can include a \dfn{payload}, i.e., something sent in the
+``message''.  The Event then behaves very much like an identifier of the
+message type.  To send/catch the payload, just pass arguments to
+\lstinline|!| and \lstinline|?|:
+
+\begin{urbiscript}
+var event = Event.new;
+[00000000] Event_0x0
+
+at (event?(var payload))
+  echo("received: " + payload)
+onleave
+  echo("had received: " + payload);
+
+event!(1);
+[00000008] *** received: 1
+[00000009] *** had received: 1
+
+event!(["string", 124]);
+[00000010] *** received: ["string", 124]
+[00000011] *** had received: ["string", 124]
+\end{urbiscript}
+
+Like functions, events have an \dfn{arity}, i.e., they depend on the number
+of arguments: \lstinline|at (\var{event}?(\var{arg}))| will only match
+emissions whose payload contain exactly one argument, i.e.,
+\lstinline|\var{event}!(\var{arg})|.
+
+\begin{urbiscript}
+// Too many arguments.
+event!(1, 2);
+
+// Not enough arguments.
+event!;
+event!();
+\end{urbiscript}
+
+Event handlers that do not specify their arity (i.e., without parentheses)
+match event emissions of any arity.
+
+\begin{urbiscript}
+at (event?)
+  echo("received an event")
+onleave
+  echo("had received an event");
+
+event!;
+[00000014] *** received an event
+[00000015] *** had received an event
+
+event!(1);
+[00000016] *** received: 1
+[00000017] *** received an event
+[00000018] *** had received: 1
+[00000019] *** had received an event
+
+event!(1, 2);
+[00000020] *** received an event
+[00000021] *** had received an event
+\end{urbiscript}
+
+Actually, the feature is much more powerful than this: full pattern matching
+applies, as with the \lstinline|switch|/\lstinline|case| construct.
+
+\begin{urbiscript}
+var e = Event.new|;
+
+at (e?)
+  echo("e");
+
+at (e?(var x))
+  echo("e(x)");
+
+at (e?(1))
+  echo("e(1)");
+
+at (e?(var x) if x.isA(Float) && x % 2)
+  echo("e(odd)");
+
+// Payload must be a list of three members, the first two being 1 and 2, and
+// the third one being greater than 2, when converted as a Float.
+at (e?([1, 2, var x]) if 2 < x.asFloat)
+  echo("e([1, 2, x = %s])" % x);
+
+e!;
+[00000845] *** e
+
+e!(0);
+[00011902] *** e
+[00011902] *** e(x)
+
+e!(1);
+[00023327] *** e
+[00023327] *** e(x)
+[00023327] *** e(1)
+[00023327] *** e(odd)
+
+e!([1, 2, 1]);
+[00024327] *** e
+[00024327] *** e(x)
+
+e!([1, 2, 3]);
+[00025327] *** e
+[00025327] *** e(x)
+[00025327] *** e([1, 2, x = 3])
+
+e!([1, 2, "4"]);
+[00026327] *** e
+[00026327] *** e(x)
+[00026327] *** e([1, 2, x = 4])
+\end{urbiscript}
 
 %%% Local Variables:
 %%% mode: latex
