@@ -187,7 +187,8 @@ namespace runner
       if (!object::squash && r->dependencies_log_get())
       {
         LIBPORT_SCOPE_SET(object::squash, true);
-        GD_FPUSH_TRACE("Register %s result for at monitoring", msg);
+        GD_CATEGORY(Urbi.At);
+        GD_FPUSH_TRACE("Register '%s' result for at monitoring", msg);
         r->dependency_add(res->call(SYMBOL(changed))->as<object::Event>());
       }
 

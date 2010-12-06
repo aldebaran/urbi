@@ -168,6 +168,7 @@ namespace runner
     bool v;
     // FIXME: optimize: do not unregister and reregister the same dependency
     {
+      GD_CATEGORY(Urbi.At);
       GD_FPUSH_TRACE("Evaluating at condition: %s", data->exp->body_string());
       foreach (object::Event::Subscription& s, data->subscriptions)
         s.stop();
@@ -272,6 +273,7 @@ namespace runner
     if (!object::squash && dependencies_log_get())
     {
       LIBPORT_SCOPE_SET_USE(bool, object::squash, true);
+      GD_CATEGORY(Urbi.At);
       GD_PUSH_TRACE("Register this for at monitoring");
       dependency_add(slotGet_changed(res));
     }
@@ -397,6 +399,7 @@ namespace runner
         FINALLY_Local(USE);
         squash = true;
 
+        GD_CATEGORY(Urbi.At);
         GD_FPUSH_TRACE("Register local variable '%s' for at monitoring",
                        e->name_get());
         dependency_add(static_cast<object::Event*>
@@ -708,6 +711,7 @@ namespace runner
     if (!object::squash && dependencies_log_get())
     {
       LIBPORT_SCOPE_SET_USE(bool, object::squash, true);
+      GD_CATEGORY(Urbi.At);
       GD_PUSH_TRACE("Register this for at monitoring");
       dependency_add(slotGet_changed(res));
     }
