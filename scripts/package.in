@@ -156,7 +156,9 @@ else
   stderr "Documentation is NOT compiled, looking for it in $archivedir"
   if test -f "$archivedir/$urbi_doc.tar.bz2"; then
     stderr "Documentation found, installing"
-    tar -C "$docsrc" -xf "$archivedir/$urbi_doc.tar.bz2"
+    rm -rf "$docsrc"
+    tar -C "$(dirname $docsrc)" -xf "$archivedir/$urbi_doc.tar.bz2"
+    mv "$(dirname $docsrc)" "$docsrc"
     # So remove the one without doc if there is one.
     rm -f "$archivedir/$name_no_doc".*
   else
