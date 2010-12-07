@@ -1,3 +1,11 @@
+## Copyright (C) 2006, 2008-2010, Gostai S.A.S.
+##
+## This software is provided "as is" without warranty of any kind,
+## either expressed or implied, including but not limited to the
+## implied warranties of fitness for a particular purpose.
+##
+## See the LICENSE file for more information.
+
 include $(top_srcdir)/build-aux/make/init.mk
 include $(top_srcdir)/build-aux/make/html-dir.mk
 include tests/local.mk
@@ -41,8 +49,8 @@ PNG_IMAGES =							\
   $(call ls_files,img/*.png					\
                   @{../modules/system/ros}/doc/img/*.png)
 
-cube_and_disc =									\
-  document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)/cube-and-disc
+logodir = document-aux/figs/urbi-sdk/$(PACKAGE_MAJOR).$(PACKAGE_MINOR)
+cube_and_disc =	$(logodir)/cube-and-disc
 cubes_pdf = $(call ls_files,@document-aux/figs/urbi-sdk/*/cube.pdf)
 PDF_IMAGES =					\
   $(call ls_files,img/*.pdf)			\
@@ -71,6 +79,16 @@ CLEANFILES += $(PDF_IMAGES) $(EPS_IMAGES)
 CLEANFILES += $(EPS_IMAGES)
 
 
+# Images to include in the documentation directory.
+imagedir = $(docdir)/images
+nodist_image_DATA = $(call ls_files,@$(logodir)/*)
+
+
+
+## ----------- ##
+## LaTeX doc.  ##
+## ----------- ##
+
 # Find local *.sty files.  Find converted images from document-aux.
 TEXI2DVIFLAGS +=				\
   -I $(srcdir)					\
@@ -97,16 +115,6 @@ TEX4HT_POST = $(abs_top_srcdir)/build-aux/bin/tex4ht-post
 	$(AM_V_at)cp $(share_dir)/figs/gostai.png $@.tmp/urbi-sdk1x.png
 	$(AM_V_at)mv $@.tmp $@
 
-
-## ------------------------------- ##
-## Additional text documentation.  ##
-## ------------------------------- ##
-
-dist_doc_DATA =					\
-  AUTHORS.txt					\
-  LICENSE.txt					\
-  README.txt					\
-  THANKS.txt
 
 ## -------------- ##
 ## urbi-sdk.pdf.  ##
@@ -164,6 +172,16 @@ sandbox: urbi-sandbox.htmldir urbi-sandbox.pdf
 include trajectories/local.mk
 
 
+## ------------------------------- ##
+## Additional text documentation.  ##
+## ------------------------------- ##
+
+dist_doc_DATA =					\
+  AUTHORS.txt					\
+  LICENSE.txt					\
+  README.txt					\
+  THANKS.txt
+
 ## ---------------- ##
 ## Spell-checking.  ##
 ## ---------------- ##
@@ -207,6 +225,11 @@ install-data-hook:
 ## install-doc.  ##
 ## ------------- ##
 .PHONY: install-doc
-doc_files = $(pdf_DATA) urbi-sdk.htmldir
+doc_files = $(pdf_DATA) urbi-sdk.htmldir images
+images: $(nodist_image_DATA)
+	rm -rf $@.tmp
+	mkdir -p $@.tmp
+	cp $^ $@.tmp
+	mv $@.tmp $@
 install-doc: $(doc_files)
 	scp -r $(doc_files) $(doc_host):$(doc_dir)/doc.new

@@ -107,7 +107,7 @@ install-doc:
 ## have the script run ssh rather that the converse.
 	scp $(build_aux_dir)/bin/symlink-to-latest $(doc_host):/tmp
 	ssh $(doc_host) 'perl -f /tmp/symlink-to-latest $(doc_dir)'
-
+	scp $(top_srcdir)/scripts/HEADER.html $(doc_host):$(doc_dir)
 
 ## ------- ##
 ## Check.  ##
