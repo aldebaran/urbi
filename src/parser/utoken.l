@@ -291,8 +291,12 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 %option nodefault
 /* Allow faster implements. */
 %option noreject noyymore
-/* We need an interactive scanner. */
-%option batch
+/* We need an interactive scanner.  Otherwise the generate scanner
+   will always fetch one character of look-ahead, even when not
+   needed.  This results in examples such as `lobby.received("1;");'
+   not working, because we are waiting for the character after the
+   (inner) `;' to process that `;'.  */
+%option interactive
 /* Even in -Cf mode, support 8 bit characters. */
 %option 8bit
 
