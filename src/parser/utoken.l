@@ -58,33 +58,34 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
   while (isspace(*yytext))                      \
     ++yytext;
 
-# define YY_INPUT(buf, result, max_size)        \
-  do                                            \
-  {                                             \
-    if ( yyin->eof() || yyin->fail() )          \
-    {                                           \
-      result = 0;                               \
-      break;                                    \
-    }                                           \
-                                                \
-    GD_PUSH_TRACE("LexerInput");                \
-    yyin->readsome(buf, max_size);              \
-                                                \
-    if (!yyin->gcount() && !yyin->eof())        \
-    {                                           \
-      yyin->peek();                             \
-      yyin->readsome(buf, max_size);            \
-    }                                           \
-                                                \
-    if ( yyin->bad() )                          \
-    {                                           \
-      GD_INFO_DEBUG("BAD");                     \
-      result = -1;                              \
-      break;                                    \
-    }                                           \
-                                                \
-    GD_FINFO_DEBUG("%s bytes", yyin->gcount()); \
-    result = yyin->gcount();                    \
+# define YY_INPUT(Buf, Result, MaxSize)                 \
+  do                                                    \
+  {                                                     \
+    if (yyin->eof() || yyin->fail())                    \
+    {                                                   \
+      Result = 0;                                       \
+      break;                                            \
+    }                                                   \
+                                                        \
+    GD_FPUSH_TRACE("LexerInput (max size = %s)",        \
+                   MaxSize);                            \
+    yyin->readsome(Buf, MaxSize);                       \
+                                                        \
+    if (!yyin->gcount() && !yyin->eof())                \
+    {                                                   \
+      yyin->peek();                                     \
+      yyin->readsome(Buf, MaxSize);                     \
+    }                                                   \
+                                                        \
+    if (yyin->bad())                                    \
+    {                                                   \
+      GD_INFO_DEBUG("BAD");                             \
+      Result = -1;                                      \
+      break;                                            \
+    }                                                   \
+                                                        \
+    GD_FINFO_DEBUG("%s bytes", yyin->gcount());         \
+    Result = yyin->gcount();                            \
   } while (0)
 
 # define YY_USER_INIT                                                   \
