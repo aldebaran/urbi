@@ -104,6 +104,20 @@ namespace urbi
     }
 
     static rDirectory
+    instanciate_directory(rPath path)
+    {
+      rDirectory dir = new Directory;
+      dir->init(path);
+      return dir;
+    }
+
+    static rDirectory
+    instanciate_directory(const std::string& name)
+    {
+      return instanciate_directory(new Path(name));
+    }
+
+    static rDirectory
     create_directory(rPath path)
     {
       bool created = false;
@@ -123,7 +137,7 @@ namespace urbi
         FRAISE("no directory was effectively created: \"%s\"",
                path->as_string());
 
-      return new Directory(path->as_string());
+      return instanciate_directory(path->as_string());
     }
 
     static void
@@ -348,7 +362,7 @@ namespace urbi
     Directory::create_all(rObject, rPath path)
     {
       create_all_recursive(path);
-      return new Directory(path);
+      return instanciate_directory(path);
     }
 
     // Modifiers
@@ -405,7 +419,7 @@ namespace urbi
     rDirectory
     Directory::parent() const
     {
-      return new Directory(new Path(path_->parent()));
+      return instanciate_directory(new Path(path_->parent()));
     }
 
     void
@@ -446,7 +460,7 @@ namespace urbi
     rDirectory
     Directory::current()
     {
-      return new Directory(Path::cwd());
+      return instanciate_directory(Path::cwd());
     }
 
     void
