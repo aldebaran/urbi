@@ -158,7 +158,7 @@ else
     stderr "Documentation found, installing"
     rm -rf "$docsrc"
     tar -C "$(dirname $docsrc)" -xf "$archivedir/$urbi_doc.tar.bz2"
-    mv "$(dirname $docsrc)" "$docsrc"
+    mv "$(dirname $docsrc)/$urbi_doc" "$docsrc"
     # So remove the one without doc if there is one.
     rm -f "$archivedir/$name_no_doc".*
   else
