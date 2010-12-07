@@ -92,20 +92,21 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
   static bool flex_debug = getenv("URBI_SCANNER");                      \
   yy_flex_debug = flex_debug;                                           \
                                                                         \
-  static bool uconsole_mode = getenv ("URBI_CONSOLE_MODE");             \
-  sc_default = uconsole_mode ? SC_UCONSOLE : INITIAL;                   \
-  if (up->meta())                                                       \
-    sc_default = SC_META;                                               \
+  static bool urbi_check_mode = getenv ("URBI_CHECK_MODE");             \
+                                                                        \
+  /* The default start condition.  */                                   \
+  sc_default =                                                          \
+    up->meta() ? SC_META                                                \
+    : urbi_check_mode ? SC_URBI_CHECK                                   \
+    : INITIAL;                                                          \
   BEGIN sc_default;                                                     \
                                                                         \
   static bool init = false;                                             \
   if (!init)                                                            \
   {                                                                     \
     init = true;                                                        \
-    if (uconsole_mode)                                                  \
-      std::cerr                                                         \
-        << "Message from the scanner: URBI_CONSOLE_MODE enabled."       \
-        << std::endl;                                                   \
+    if (urbi_check_mode)                                                \
+      GD_INFO("URBI_CHECK_MODE enabled.");                              \
   }
 
 
@@ -303,7 +304,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 %x SC_C_COMMENT SC_STRING_OR_SYMBOL
  // Ignore lines starting with "[000000:tag]", we are fed with a chk file.
-%s SC_UCONSOLE
+%s SC_URBI_CHECK
  // Enable meta variable support.
 %s SC_META
 
@@ -418,11 +419,11 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   }
 }
 
-  /*--------------------------------------------------------------.
-  | Console mode: skip the [01234567] lines for expected output.  |
-  `--------------------------------------------------------------*/
+  /*-----------------------------------------------------------------.
+  | Urbi check mode: skip the [01234567] lines for expected output.  |
+  `-----------------------------------------------------------------*/
 
-<SC_UCONSOLE>{
+<SC_URBI_CHECK>{
   ^\[[0-9X]{8,}.*\]\ .* /* ignore the "[timestamp:tags] whatever" messages */;
   ^"[:]".*               /* ignore the "[:] whatever" messages */;
 }
