@@ -70,6 +70,48 @@ lobby.banner;
 [00001112] *** ********************************************************
 \end{urbiscript}
 
+\item[bytesReceived] The number of bytes that were ``input'' to \this.  See
+  also \refSlot{receive}.
+\begin{urbiscript}
+var l = Lobby.create|;
+assert (l.bytesReceived == 0);
+
+l.receive("123456789;");
+[00000022] 123456789
+assert (l.bytesReceived == 10);
+
+l.receive("1234;");
+[00000023] 1234
+assert (l.bytesReceived == 15);
+\end{urbiscript}
+
+\begin{comment}
+\begin{urbiscript}
+removeSlot("l")|;
+\end{urbiscript}
+\end{comment}
+
+\item[bytesSent] The number of bytes that were ``output'' by \this.  See
+  also \refSlot{send} and \refSlot{write}.
+\begin{urbiscript}
+var l = Lobby.create|;
+assert (l.bytesSent == 0);
+
+l.send("0123456789");
+[00011988] 0123456789
+// 22 = "[00011988] 0123456789\n".size.
+assert (l.bytesSent == 22);
+
+l.send("xx", "label");
+[00061783:label] xx
+// 20 = "[00061783:label] xx\n".size.
+assert (l.bytesSent == 42);
+
+l.write("[01234567]\n");
+[01234567]
+assert (l.bytesSent == 53);
+\end{urbiscript}
+
 \item[connected]
   Whether \this is connected.
 \begin{urbiassert}

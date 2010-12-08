@@ -129,7 +129,7 @@ namespace kernel
     return bytes_sent_;
   }
 
-    inline
+  inline
   size_t
   UConnection::bytes_received() const
   {

@@ -168,6 +168,7 @@ namespace kernel
   void
   UConnection::received(const char* buffer, size_t length)
   {
+    bytes_received_ += length;
     stream_buffer_.post_data(buffer, length);
   }
 
