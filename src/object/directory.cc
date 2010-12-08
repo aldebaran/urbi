@@ -103,58 +103,6 @@ namespace urbi
         FRAISE("directory not empty: \"%s\"", dir.as_string());
     }
 
-    static rDirectory
-    instanciate_directory(rPath path)
-    {
-      rDirectory dir = new Directory;
-      dir->init(path);
-      return dir;
-    }
-
-    static rDirectory
-    instanciate_directory(const std::string& name)
-    {
-      return instanciate_directory(new Path(name));
-    }
-
-    static rDirectory
-    create_directory(rPath path)
-    {
-      bool created = false;
-      check_nexists(path);
-
-      try
-      {
-        created = boostfs::create_directory(path->as_string().c_str());
-      }
-      catch (boostfs::filesystem_error& e)
-      {
-        raise_boost_fs_error(e);
-      }
-
-      // Should not be raised as check is done before creating directory.
-      if (!created)
-        FRAISE("no directory was effectively created: \"%s\"",
-               path->as_string());
-
-      return instanciate_directory(path->as_string());
-    }
-
-    static void
-    create_all_recursive(rPath path)
-    {
-      if (path->exists() && !path->is_dir())
-        raise_file_exists(path);
-      if (!path->is_root())
-      {
-        rPath parent = path->parent();
-        if (parent->as_string() != Path::cwd()->as_string())
-          create_all_recursive(parent);
-      }
-      if (!path->exists())
-        create_directory(path);
-    }
-
     /*--------------.
     | C++ methods.  |
     `--------------*/
@@ -358,6 +306,44 @@ namespace urbi
       return create_directory(path);
     }
 
+    rDirectory
+    Directory::create_directory(rPath path)
+    {
+      bool created = false;
+      check_nexists(path);
+
+      try
+      {
+        created = boostfs::create_directory(path->as_string().c_str());
+      }
+      catch (boostfs::filesystem_error& e)
+      {
+        raise_boost_fs_error(e);
+      }
+
+      // Should not be raised as check is done before creating directory.
+      if (!created)
+        FRAISE("no directory was effectively created: \"%s\"",
+               path->as_string());
+
+      return instanciate_directory(path->as_string());
+    }
+
+    void
+    Directory::create_all_recursive(rPath path)
+    {
+      if (path->exists() && !path->is_dir())
+        raise_file_exists(path);
+      if (!path->is_root())
+      {
+        rPath parent = path->parent();
+        if (parent->as_string() != Path::cwd()->as_string())
+          create_all_recursive(parent);
+      }
+      if (!path->exists())
+        create_directory(path);
+    }
+
     rObject
     Directory::create_all(rObject, rPath path)
     {
@@ -461,6 +447,21 @@ namespace urbi
     Directory::current()
     {
       return instanciate_directory(Path::cwd());
+    }
+
+    rDirectory
+    Directory::instanciate_directory(rPath path)
+    {
+      rDirectory dir = new Directory;
+      dir->create_events();
+      dir->init(path);
+      return dir;
+    }
+
+    rDirectory
+    Directory::instanciate_directory(const std::string& name)
+    {
+      return instanciate_directory(new Path(name));
     }
 
     void

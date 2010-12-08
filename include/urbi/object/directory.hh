@@ -65,11 +65,14 @@ namespace urbi
     `---------------------*/
 
     public:
-
       static rDirectory current();
 
     private:
+      static void create_all_recursive(rPath path);
+      static rDirectory create_directory(rPath path);
       void create_events();
+      static rDirectory instanciate_directory(rPath path);
+      static rDirectory instanciate_directory(const std::string&);
       rObject on_file_created_;
       rObject on_file_deleted_;
 
