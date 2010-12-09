@@ -194,6 +194,14 @@ MacPorts: ImageMagick
 deb: imagemagick
 \end{package}
 
+\item[oRTP] The UObject middleware can use the RTP protocol to provide
+  better throughput for streams.  The implementation relies on the oRTP
+  library which is now part of the linphone package.  oRTP is not needed,
+  but it is strongly recommended.
+\begin{package}
+package: linphone
+\end{package}
+
 \item[PDFLaTeX] TeX Live is the most common \TeX{} distribution nowadays.
   We use \command{pdfcrop} from \file{texlive-bin-extra}.  We also use
   TeX4HT, which is part of \file{texlive-htmlxml} on MacPorts.
