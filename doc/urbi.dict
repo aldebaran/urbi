@@ -133,6 +133,8 @@ bumperL
 bumperR
 buzzerIndex
 buzzerTime
+bytesReceived
+bytesSent
 bz
 callCount
 callGetSender
