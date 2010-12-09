@@ -18,6 +18,7 @@ AC_PROG_JAR
 ## ----------- ##
 ## JAVA_HOME.  ##
 ## ----------- ##
+AX_CHECK_JAVA_HOME
 if test x"$JAVA_HOME" = "x"; then
   AC_MSG_ERROR([Environment variable JAVA_HOME is not set.])
 fi
