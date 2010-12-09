@@ -243,14 +243,20 @@ if (System.Platform.isWindows)
   }
 }|;
 
-// Skip tests that cannot run in space builds.
-function skip_if_space ()
+// Skip tests that cannot run in some configuations.
+function skipIfDebug ()
+{
+  if (System.Platform.compilationModeDebug)
+    testSkip("cannot run in debug compilation-mode");
+}|
+
+function skipIfSpace ()
 {
   if (System.Platform.compilationModeSpace)
     testSkip("cannot run in space compilation-mode");
 }|
 
-function skip_if_windows ()
+function skipIfWindows ()
 {
   if (System.Platform.isWindows)
     testSkip("cannot run on Windows");
