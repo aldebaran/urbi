@@ -509,6 +509,7 @@ namespace urbi
       case IMAGE_YCbCr:
       case IMAGE_NV12:
       case IMAGE_YUV411_PLANAR:
+      case IMAGE_YUV420_PLANAR:
 	targetformat = 0;
 	break;
       case IMAGE_JPEG:
@@ -598,8 +599,27 @@ namespace urbi
             for (int y=0; y<h; ++y)
             {
               uncompressedData[(x+y*w)*3+0] = cy[x+y*w];
-              uncompressedData[(x+y*w)*3+2] = u[x/2 + (y/2)*w/2];
-              uncompressedData[(x+y*w)*3+1] = v[x/2 + (y/2)*w/2];
+              uncompressedData[(x+y*w)*3+2] = u[x/4 + y*w/4];
+              uncompressedData[(x+y*w)*3+1] = v[x/4 + y*w/4];
+            }
+        }
+        break;
+      case IMAGE_YUV420_PLANAR:
+        {
+          format = 1;
+          uncompressedData = (byte*)malloc(src.width * src.height * 3);
+          allocated = true;
+          unsigned char* cy = src.data;
+          unsigned char* u = cy + w*h;
+          unsigned char* v = u + w*h/4;
+          int w = src.width;
+          int h = src.height;
+          for (int x=0; x<w;++x)
+            for (int y=0; y<h; ++y)
+            {
+              uncompressedData[(x+y*w)*3+0] = cy[x+y*w];
+              uncompressedData[(x+y*w)*3+2] = u[x/2 + (y>>1)*w/2];
+              uncompressedData[(x+y*w)*3+1] = v[x/2 + (y>>1)*w/2];
             }
         }
         break;
@@ -709,13 +729,28 @@ namespace urbi
           unsigned int plane = dest.width * dest.height;
           for (unsigned int i=0; i<dest.width * dest.height;++i)
             dest.data[i] = uncompressedData[i*3];
-          for (unsigned int y=0; y<dest.height; y+=2)
-            for (unsigned int x=0; x<dest.width; x+=2)
+          for (unsigned int y=0; y<dest.height; y++)
+            for (unsigned int x=0; x<dest.width; x+=4)
             {
-              dest.data[plane + x/2 + y*dest.width/4]
+              dest.data[plane + x/4 + y*dest.width/4]
                 = uncompressedData[(x+y*dest.width)*3+2];
-              dest.data[plane+plane/4 + x/2 + y*dest.width/4]
+              dest.data[plane+plane/4 + x/4 + y*dest.width/4]
                 = uncompressedData[(x+y*dest.width)*3+1];
+            }
+          break;
+        }
+      case IMAGE_YUV420_PLANAR:
+        {
+          unsigned int plane = dest.width * dest.height;
+          for (unsigned int i=0; i<dest.width * dest.height;++i)
+            dest.data[i] = uncompressedData[i*3];
+          for (unsigned int y=0; y<dest.height/2; y++)
+            for (unsigned int x=0; x<dest.width/2; x++)
+            {
+              dest.data[plane + x +y*dest.width/2]
+              = uncompressedData[(x*2+y*2*dest.width)*3+2];
+              dest.data[plane + plane/4 + x +y*dest.width/2]
+              = uncompressedData[(x*2+y*2*dest.width)*3+1];
             }
           break;
         }
