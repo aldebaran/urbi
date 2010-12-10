@@ -27,7 +27,10 @@ GD_CATEGORY(all);
 
 struct Point
 {
-  Point() :x(0), y(0) {}
+  Point()
+    : x(0)
+    , y(0)
+  {}
   double x,y;
 };
 struct Rect
@@ -210,13 +213,14 @@ public:
   {
     int target = periodicWriteTarget;
     int type = periodicWriteType;
-    switch(type)
+    GD_FINFO_DEBUG("update: type = %s, target = %s", type, target);
+    switch (type)
     {
     case urbi::DATA_STRING:
       *vars[target] = string_cast(libport::utime());
       break;
     case urbi::DATA_BINARY:
-      selfWriteB(target,  string_cast(libport::utime()));
+      selfWriteB(target, string_cast(libport::utime()));
       break;
     case urbi::DATA_DOUBLE:
     default:
@@ -949,4 +953,3 @@ int all::destructionCount = 0;
 ::urbi::URBIStarter<all>
     starter1(urbi::isPluginMode() ? "all"  : "remall"),
     starter2(urbi::isPluginMode() ? "all2" : "remall2");
-

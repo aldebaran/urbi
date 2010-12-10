@@ -388,7 +388,7 @@ namespace urbi
           client->startPack();
           *client << "Global.UObject.funCall(\"" << var << "\", ";
           client->send(retval);
-          *client << "),";
+          *client << "),\n";
           client->endPack();
           break;
 

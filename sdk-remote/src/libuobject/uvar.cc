@@ -166,8 +166,9 @@ namespace urbi
       << "}})|;\n";
     GD_SINFO_TRACE("fetching engine listen port...");
     UMessage* mport =
-    client_->syncGet(rLinkName +".listen(\"0.0.0.0\", \"0\");");
-    if (!mport || mport->type != MESSAGE_DATA
+      client_->syncGet(rLinkName +".listen(\"0.0.0.0\", \"0\");");
+    if (!mport
+        || mport->type != MESSAGE_DATA
         || mport->value->type != DATA_DOUBLE)
     {
       GD_SWARN("Failed to get remote RTP port, disabling RTP");
@@ -184,9 +185,10 @@ namespace urbi
     UObject* ob = getUObject(linkName);
     rtpLinks[key]  = ob;
     // Monitor this RTP link.
-    (*client_) << "detach('external'.monitorRTP(" << linkName << ","
-               << rLinkName << ", closure() {'external'.failRTP}))|"
-               << std::endl;
+    *client_
+      << "detach('external'.monitorRTP(" << linkName << ","
+      << rLinkName << ", closure() {'external'.failRTP}))|"
+      << std::endl;
     return linkName;
   }
 
