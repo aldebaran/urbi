@@ -479,19 +479,13 @@ proto:
 %type <ast::exps_type*> protos.1 protos;
 
 protos.1:
-  proto           { $$ = new ast::exps_type(1, $1); }
-// Cannot add this part currently, as the prescanner cuts
-//
-//    class A : B, C {};
-//
-// at the comma.
-//
-// | protos.1 "," proto  { std::swap($$, $1); *$$ << $3; }
+  proto               { $$ = new ast::exps_type(1, $1); }
+| protos.1 "," proto  { std::swap($$, $1); *$$ << $3; }
 ;
 
 // A list of parents to derive from.
 protos:
-  /* empty */   { $$ = 0; }
+  /* empty */     { $$ = 0; }
 | ":" protos.1    { std::swap($$, $2); }
 ;
 
@@ -1337,8 +1331,7 @@ exp:
 lvalue:
   "%lvalue:" unsigned
   {
-    $$ = new ast::MetaLValue(@$, new ast::exps_type(),
-                             $2);
+    $$ = new ast::MetaLValue(@$, new ast::exps_type(), $2);
   }
 ;
 

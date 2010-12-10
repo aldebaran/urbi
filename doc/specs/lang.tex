@@ -590,10 +590,13 @@ Objects meant to serve as prototypes are best defined using the
 
 \begin{lstlisting}[language=bnf]
 <class-statement>
-  ::= "class" <lvalue> (: <expression>)? <block>
+  ::= "class" <lvalue> (: <prototypes>)? <block>
 
 <lvalue>
   ::= (<expression> ".")* "identifier"
+
+<prototypes>>
+  ::= (<expression> ",")* expression
 
 <block>
   ::= "{" <statement>* "}"
@@ -606,8 +609,8 @@ in an object) with:
 \item a slot named \lstinline|type| which is a the trailing component of
   \var{lvalue} as a \refObject{String};
 \item a slot named \lstinline|as\var{type}| that returns \this.
-\item the list of prototypes is equal to the \var{expression} that served as
-  parent, defaulting to \refObject{Object};
+\item the list of prototypes is equal to the list \var{prototypes} that
+  served as parent, defaulting to \refObject{Object};
 \item the \var{block} is evaluated in the context of this object, as with a
   \lstinline|do|-block;
 \item the value of the whole statement is the newly defined object.
@@ -622,9 +625,9 @@ class Base
 assert
 {
   hasLocalSlot("Base");
-  Base.type == "Base";
+  Base.type   == "Base";
   Base.protos == [Object];
-  Base.slot == 12;
+  Base.slot   == 12;
   Base.asBase === Base;
 };
 
@@ -636,11 +639,25 @@ class Global.Derive : Base
 assert
 {
   Global.hasLocalSlot("Derive");
-  Global.Derive.type == "Derive";
-  Global.Derive.protos == [Base];
-  Global.Derive.slot == 34;
-  Global.Derive.asDerive == Global.Derive;
-  Global.Derive.asBase == Global.Derive;
+  Global.Derive.type     == "Derive";
+  Global.Derive.protos   == [Base];
+  Global.Derive.slot     == 34;
+  Global.Derive.asDerive === Global.Derive;
+  Global.Derive.asBase   === Global.Derive;
+};
+
+class Base2 {}|;
+
+class Derive2 : Base, Base2 {}|;
+
+assert
+{
+  Derive2.type      == "Derive2";
+  Derive2.protos    == [Base, Base2];
+  Derive2.slot      == 12;
+  Derive2.asDerive2 === Derive2;
+  Derive2.asBase    === Derive2;
+  Derive2.asBase2   === Derive2;
 };
 \end{urbiscript}
 

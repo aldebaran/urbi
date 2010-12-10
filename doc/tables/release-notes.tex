@@ -26,11 +26,17 @@ This chapter lists the user-visible changes in \usdk releases.
 
 \section{\usdk 2.5.1}
 \release{2.5}{201x-xx-xx}
+
+\subsection{New Features}
+\begin{itemize}
+\item The usual \Cxx syntax to declare classes with multiple inheritance is
+  supported, see \autoref{sec:lang:class}.
+\end{itemize}
+
 \subsection{Documentation}
 \begin{itemize}
-\item \refSlot[Lobby]{bytesReceived}, \refSlot[Lobby]{bytesSent}.
-\item \refObject{Directory} objects have new functionalities for creation, modification
-  and deletion.
+\item \refObject{Directory} objects have new features for creation,
+  modification and deletion.
 \begin{urbiscript}
 Directory.createAll("dir1/dir2/dir3")|;
 Directory.new("dir1").rename("dir")|;
@@ -38,9 +44,10 @@ Directory.new("dir/dir2").copy("dir/dir4")|;
 Directory.new("dir").removeAll;
 \end{urbiscript}
 
-\item \refObject{Directory} and \refObject{File} objects have new slots
-  \refSlot[Directory]{size}, \refSlot[File]{size},
+\item \refSlot[Directory]{size}, \refSlot[File]{size},
   \refSlot[Directory]{lastModifiedDate}, \refSlot[File]{lastModifiedDate}.
+
+\item \refSlot[Lobby]{bytesReceived}, \refSlot[Lobby]{bytesSent}.
 \end{itemize}
 
 
