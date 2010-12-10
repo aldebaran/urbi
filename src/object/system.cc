@@ -72,45 +72,11 @@ namespace urbi
     /// \param context  if there is an error message, the string to display.
     rObject
     execute_parsed(parser::parse_result_type p,
-                   libport::Symbol, const std::string& context,
+                   libport::Symbol, const std::string&,
                    rObject self)
     {
+      ast::rConstAst ast = parser::transform(ast::rConstExp(p->ast_get()));
       runner::Interpreter& run = interpreter();
-
-      // Report errors.
-      if (ast::rError errs = p->errors_get())
-      {
-        // Steal the errors from the ParseResult.  It is tailored to
-        // abort if there are some errors that were not reported to
-        // the user, which is what we are doing now.
-        ast::Error::messages_type ms;
-        std::swap(ms, errs->messages_get());
-        // FIXME: Yes, we actually raise only the first error.
-        foreach (ast::rMessage m, ms)
-          if (m->tag_get() == "error")
-            runner::raise_syntax_error(m->location_get(), m->text_get(),
-                                       context);
-          else
-          {
-            // Raising and catching is not elegant, and probably
-            // costly, as compared to making the exceptions and
-            // displaying with regular functions.  But it's short to
-            // implement, and it is definitely not a hot spot.
-            try
-            {
-              runner::raise_syntax_error(m->location_get(), m->text_get(),
-                                         context, false);
-            }
-            catch (const object::UrbiException& ue)
-            {
-              run.show_exception(ue, "warning");
-            }
-          }
-      }
-
-      ast::rConstAst ast;
-      ast = parser::transform(ast::rConstExp(p->ast_get()));
-
       return run.eval(ast.get(), self ? self : rObject(run.lobby_get()));
     }
 

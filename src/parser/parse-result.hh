@@ -24,7 +24,7 @@
 namespace parser
 {
 
-  /// A structure to record the result of a parsing (AST and errors).
+  /// A structure to record the result of a parsing (AST).
   ///
   /// This structure is used to decouple the parser and all its
   /// internal data from the user's space.  There are two main
@@ -73,36 +73,10 @@ namespace parser
     /// Set \a ast_.
     void ast_set(ast_type ast);
 
-    typedef ast::rError error_type;
-    /// The parse errors and warnings.
-    error_type errors_get();
-
   private:
     /// The resulting AST.
     ast_type ast_;
     /// \}
-
-  public:
-    /// Declare an error about \a msg.
-    void error(const ast::loc& l, const std::string& msg);
-
-    /// Warn about \a msg.
-    void warn(const ast::loc& l, const std::string& msg);
-
-    /// Dump all the errors on std::cerr.
-    /// For developer.
-    void dump_errors() const;
-
-    /// Push all warning and error messages in \b target.
-    /// If errors were pushed, the ast is deleted and set to 0.
-    void process_errors(ast::Nary& target);
-
-  private:
-    /// List of parse error messages.
-    error_type errors_;
-
-    /// Whether the errors and warnings were output or given.
-    mutable bool reported_;
 
   public:
     /// Dump for debugging.
