@@ -35,9 +35,7 @@ namespace parser
     {
       UParser p(cmd, &l);
       p.meta(meta_p);
-      parse_result_type res = p.parse();
-      passert(*res, !res->status);
-      return res;
+      return p.parse();
     }
   }
 
@@ -62,9 +60,7 @@ namespace parser
   {
     libport::path path(file);
     UParser p(path);
-    parse_result_type res = p.parse();
-    passert(*res, !res->status);
-    return res;
+    return p.parse();
   }
 
 }

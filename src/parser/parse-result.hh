@@ -49,9 +49,6 @@ namespace parser
     /// This is to avoid that parse errors get lost.
     ~ParseResult();
 
-    /// The status as reported by Bison's parser.
-    int status;
-
     /// Whether everything is fine.
     /// The status is 0, the ast is defined, there are no errors.
     /// Warnings are allowed though.

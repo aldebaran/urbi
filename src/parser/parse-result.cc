@@ -28,14 +28,12 @@ namespace parser
 {
 
   ParseResult::ParseResult()
-    : status(-1)
-    , ast_(0)
+    : ast_(0)
   {
   }
 
   ParseResult::ParseResult(ParseResult& rhs)
-    : status(rhs.status)
-    , ast_(rhs.ast_)
+    : ast_(rhs.ast_)
   {
   }
 
@@ -46,8 +44,7 @@ namespace parser
   bool
   ParseResult::good() const
   {
-    return (!status
-            && ast_.get());
+    return ast_.get();
   }
 
   bool
@@ -60,8 +57,6 @@ namespace parser
   ParseResult::dump(std::ostream& o) const
   {
     return o
-      << "Status:"
-      << libport::incendl << status << libport ::decendl
       << "Ast:"
       << libport::incendl << libport::deref << ast_ << libport ::decendl
       ;

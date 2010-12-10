@@ -110,7 +110,7 @@ namespace parser
       finally << libport::scoped_set(loc_, *l);
 
     // Parse.
-    result_->status = p.parse();
+    p.parse();
     if (debug_)
       LIBPORT_ECHO("====================== Parse end:" << std::endl
                    << *result_);
