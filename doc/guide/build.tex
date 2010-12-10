@@ -210,11 +210,18 @@ deb: texlive-base texlive-latex-extra texlive-bin-extra
 MacPorts: texlive texlive-latex-extra texlive-bin-extra texlive-htmlxml
 \end{package}
 
+\item[pkg-config] To find some libraries (such as oRTP), we use
+  \command{pkg-config}.
+\begin{package}
+deb: pkg-config
+MacPorts: pkgconfig
+\end{package}
+
 \item[py-docutils] This is not a requirement, but it's better to have
   it.  Used by the test suite.  Unfortunately the name of the package
   varies between distributions.  It provides \command{rst2html}.
-
 \begin{package}
+deb: python-docutils
 MacPorts: py26-docutils
 \end{package}
 
