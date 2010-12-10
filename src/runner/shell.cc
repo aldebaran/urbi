@@ -22,7 +22,6 @@
 #include <ast/print.hh>
 #include <kernel/uconnection.hh>
 #include <kernel/userver.hh>
-#include <parser/parse-result.hh>
 #include <parser/transform.hh>
 #include <parser/uparser.hh>
 #include <runner/exception.hh>
@@ -196,7 +195,7 @@ namespace runner
           GD_FPUSH_TRACE("%s: reading command.", name_get());
           res = parser.parse();
         }
-        ast::rExp ast = parser::transform(ast::rConstExp(res->ast_xget()));
+        ast::rExp ast = parser::transform(ast::rConstExp(res));
         handle_command_(ast);
         if (input_.eof())
         {

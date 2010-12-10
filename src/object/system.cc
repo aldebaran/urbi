@@ -75,7 +75,7 @@ namespace urbi
                    libport::Symbol, const std::string&,
                    rObject self)
     {
-      ast::rConstAst ast = parser::transform(ast::rConstExp(p->ast_get()));
+      ast::rConstAst ast = parser::transform(ast::rConstExp(p));
       runner::Interpreter& run = interpreter();
       return run.eval(ast.get(), self ? self : rObject(run.lobby_get()));
     }

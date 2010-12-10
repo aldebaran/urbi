@@ -17,6 +17,7 @@
 #ifndef PARSER_FWD_HH
 # define PARSER_FWD_HH
 
+# include <ast/fwd.hh>
 # include <memory>
 
 // flex-lexer.hh.
@@ -27,11 +28,8 @@ namespace parser
   // parser-impl.hh.
   class ParserImpl;
 
-  // parse-result.hh.
-  class ParseResult;
-
   // The actual definition.
-  typedef std::auto_ptr<ParseResult> parse_result_type;
+  typedef ast::rExp parse_result_type;
 
   // uparser.hh.
   class UParser;

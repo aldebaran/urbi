@@ -19,7 +19,6 @@
 #include <ast/factory.hh>
 
 #include <parser/parse.hh>
-#include <parser/parse-result.hh>
 
 #include <rewrite/rewrite.hh>
 
@@ -31,7 +30,7 @@ namespace ast
   `----------------*/
 
   ParametricAst::ParametricAst(const char* s, const loc& l, bool desugar)
-    : ast_(parser::parse_meta(s, l)->ast_xget())
+    : ast_(parser::parse_meta(s, l))
   {
     /*  Simplify the result as much as possible
      *

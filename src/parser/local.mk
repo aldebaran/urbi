@@ -17,9 +17,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
   parser/prescan.hh				\
   parser/prescan.cc				\
   parser/utoken.hh				\
-  parser/parse-result.hh			\
-  parser/parse-result.hxx			\
-  parser/parse-result.cc			\
   parser/parser-impl.hh				\
   parser/parser-impl.hxx			\
   parser/parser-impl.cc				\

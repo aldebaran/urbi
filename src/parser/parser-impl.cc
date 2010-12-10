@@ -89,12 +89,7 @@ namespace parser
     errors_.clear();
 
     // Set up result_.
-
-    // FIXME: This check will evaluate (void)*result_ in NDEBUG,
-    // entailing an abortion since result_ == 0. Passert should
-    // probably be fixed.
-    // passert(*result_, !result_.get());
-    result_.reset(new ParseResult);
+    result_ = 0;
 
     // Set up parser.
     parser_type p(*this, scanner_);

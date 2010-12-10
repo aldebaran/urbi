@@ -16,6 +16,7 @@
 #include <kernel/userver.hh>
 
 #include <ast/print.hh>
+#include <ast/exp.hh>
 
 #include <object/symbols.hh>
 #include <object/system.hh>

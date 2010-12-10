@@ -19,7 +19,6 @@
 #include <ast/factory.hh>
 #include <ast/event-match.hh>
 #include <parser/parser-impl.hh>
-#include <parser/parse-result.hh>
 #include <parser/parse.hh>
 #include <rewrite/pattern-binder.hh>
 #include <rewrite/rewrite.hh>
@@ -211,8 +210,7 @@ namespace ast
     if (event.pattern)
     {
       rExp pattern = make_list(loc, event.pattern);
-      rewrite::PatternBinder
-        bind(make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
+      rewrite::PatternBinder bind(make_call(loc, SYMBOL(DOLLAR_pattern)), loc);
       bind(pattern.get());
 
       rExp positive;

@@ -21,7 +21,6 @@
 #endif
 
 #include <parser/parse.hh>
-#include <parser/parse-result.hh>
 #include <parser/uparser.hh>
 
 namespace parser
@@ -44,7 +43,7 @@ namespace parser
   {
     parse_result_type res = parse_(cmd, l, true);
     // A parametric ast should never issue parse warnings/errors.
-    passert(*res, res->perfect());
+    aver(res);
     return res;
   }
 

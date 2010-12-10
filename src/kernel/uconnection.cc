@@ -39,7 +39,6 @@
 #include <object/urbi-exception.hh>
 
 #include <parser/uparser.hh>
-#include <parser/parse-result.hh>
 #include <parser/transform.hh>
 
 #include <binder/binder.hh>

@@ -345,7 +345,7 @@
 start:
   root
   {
-    up.result_->ast_set($1);
+    up.result_ = $1;
     up.loc_ = @$;
     YYACCEPT;
   }

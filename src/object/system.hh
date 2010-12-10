@@ -16,9 +16,9 @@
 #ifndef OBJECT_SYSTEM_HH
 # define OBJECT_SYSTEM_HH
 
+# include <ast/loc.hh>
 # include <urbi/object/fwd.hh>
 # include <parser/parse.hh>
-# include <parser/parse-result.hh>
 
 namespace urbi
 {
