@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1233 utf-8
+personal_ws-1.1 en 1239 utf-8
 aaa
 abc
 abcdef
@@ -65,6 +65,7 @@ ARNLPATH
 ary
 asBase
 asBool
+asDerive
 asEvent
 asExecutable
 asFloat
@@ -564,6 +565,7 @@ LightSensor
 lim
 LinearMotor
 LinearSpeedMotor
+linphone
 linux
 ln
 loadFile
@@ -727,6 +729,7 @@ OpenSSL
 openssl
 Oper
 Orderable
+oRTP
 os
 osx
 otool
@@ -751,6 +754,7 @@ PID
 pidChanged
 Pierron
 pitchSpeed
+pkgconfig
 playSound
 plugin
 plusTwo
