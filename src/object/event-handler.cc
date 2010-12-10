@@ -10,7 +10,7 @@
 
 #include <object/symbols.hh>
 #include <urbi/object/event.hh>
-#include <urbi/object/event_handler.hh>
+#include <urbi/object/event-handler.hh>
 
 namespace urbi
 {
@@ -19,6 +19,7 @@ namespace urbi
     EventHandler::EventHandler(rEventHandler model)
       : source_(model->source_)
       , payload_(model->payload_)
+      , detach_(false) // trigger has to be called before stop.
     {
       proto_add(model);
       slot_set(SYMBOL(active), to_urbi(true));
@@ -27,6 +28,7 @@ namespace urbi
     EventHandler::EventHandler(rEvent source, rList payload)
       : source_(source)
       , payload_(payload)
+      , detach_(false) // trigger has to be called before stop.
     {
       proto_add(proto);
       slot_set(SYMBOL(active), to_urbi(true));
@@ -43,11 +45,44 @@ namespace urbi
 #undef DECLARE
     }
 
+    /*-------.
+    | Stop.  |
+    `-------*/
+
+    // Use an intermediary bouncer to make sure the Executable is
+    // stored in a smart pointer, and not deleted too early.
+    static void
+    executable_bouncer(rExecutable e, objects_type args)
+    {
+      (*e)(args);
+    }
+
     void
     EventHandler::stop()
     {
       slot_update(SYMBOL(active), to_urbi(false));
-      source()->stop_backend(true);
+      stop_jobs_type& stop_jobs = source()->stop_jobs_;
+      if (detach_)
+      {
+        runner::Runner& r = ::kernel::runner();
+        sched::jobs_type children;
+        // Copy container to avoid in-place modification problems.
+        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs))
+        {
+          typedef rObject(Executable::*fun_type)(objects_type);
+          sched::rJob job = new runner::Interpreter
+            (r.lobby_get(), r.scheduler_get(),
+             boost::bind(&executable_bouncer,
+                         stop_job.first, stop_job.second),
+             this, SYMBOL(onleave));
+          job->start_job();
+        }
+        r.yield_until_terminated(children);
+      }
+      else
+        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs))
+          (*stop_job.first)(stop_job.second);
+      stop_jobs.clear();
       source()->active_.erase(this);
     }
 
@@ -66,11 +101,14 @@ namespace urbi
     void
     EventHandler::trigger(bool detach)
     {
+      detach_ = detach;
       source()->active_.insert(this);
+      // Copy container to avoid in-place modification problems.
       foreach (callback_type* cb, callbacks_type(source()->callbacks_))
         (*cb)(payload_->value_get());
+      // Copy container to avoid in-place modification problems.
       foreach (Event::rActions actions, listeners_type(source()->listeners_))
-        trigger_job(actions, detach);
+        trigger_job(actions, detach_);
     }
 
     void

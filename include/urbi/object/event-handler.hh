@@ -25,9 +25,10 @@ namespace urbi
     public:
       EventHandler(rEventHandler model);
       EventHandler(rEvent parent, rList payload);
-      rEvent source();
-      void stop();
+
       void trigger(bool detach);
+      void stop();
+      rEvent source();
       rList payload();
 
     private:
@@ -39,11 +40,11 @@ namespace urbi
       typedef Event::stop_jobs_type stop_jobs_type;
       typedef Event::listeners_type listeners_type;
 
-      void stop_backend();
-      void trigger_job(const rActions& actions, bool detach);
+      void trigger_job(const rActions& actions, bool detacht);
 
       rEvent source_;
       rList payload_;
+      bool   detach_;
 
     URBI_CXX_OBJECT(EventHandler);
     };

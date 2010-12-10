@@ -26,7 +26,7 @@
 #include <urbi/object/enumeration.hh>
 #include <urbi/object/equality-comparable.hh>
 #include <urbi/object/event.hh>
-#include <urbi/object/event_handler.hh>
+#include <urbi/object/event-handler.hh>
 #include <urbi/object/file.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/fwd.hh>

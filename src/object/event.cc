@@ -14,11 +14,9 @@
 #include <object/symbols.hh>
 #include <runner/interpreter.hh>
 #include <urbi/object/event.hh>
-#include <urbi/object/event_handler.hh>
+#include <urbi/object/event-handler.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/sdk.hh>
-
-GD_CATEGORY(Urbi.Event);
 
 namespace urbi
 {
@@ -57,7 +55,6 @@ namespace urbi
 #define DECLARE(Name, Cxx)            \
       bind(SYMBOL(Name), &Event::Cxx)
 
-      DECLARE(stop,      stop);
       DECLARE(waituntil, waituntil);
 
 #undef DECLARE
@@ -118,6 +115,23 @@ namespace urbi
       a->frozen--;
     }
 
+    Event::Subscription
+    Event::onEvent(const callback_type& cb)
+    {
+      aver(!cb.empty());
+      callback_type* res = new callback_type(cb);
+      callbacks_ << res;
+      if (slot_has(SYMBOL(onSubscribe)))
+        slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
+      return Subscription(this, res);
+    }
+
+    void
+    Event::register_stop_job(const stop_job_type& stop_job)
+    {
+      stop_jobs_ << stop_job;
+    }
+
     /*-----------------.
     | Urbi functions.  |
     `-----------------*/
@@ -148,17 +162,6 @@ namespace urbi
       if (slot_has(SYMBOL(onSubscribe)))
         slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
       subscribed_();
-    }
-
-    Event::Subscription
-    Event::onEvent(const callback_type& cb)
-    {
-      aver(!cb.empty());
-      callback_type* res = new callback_type(cb);
-      callbacks_ << res;
-      if (slot_has(SYMBOL(onSubscribe)))
-        slot_get(SYMBOL(onSubscribe))->call(SYMBOL(syncEmit));
-      return Subscription(this, res);
     }
 
     void
@@ -200,58 +203,34 @@ namespace urbi
       return from_urbi<rEvent>(proto);
     }
 
-    void
-    Event::register_stop_job(const stop_job_type& stop_job)
-    {
-      stop_jobs_ << stop_job;
-    }
-
-    void
-    Event::stop()
-    {
-      stop_backend(true);
-    }
-
-    // Use an intermediary bouncer to make sure the Executable is
-    // stored in a smart pointer, and not deleted too early.
-    static void
-    executable_bouncer(rExecutable e, objects_type args)
-    {
-      (*e)(args);
-    }
-
     /*-------.
     | Emit.  |
     `-------*/
 
-    void
-    Event::emit_job_async(Event::rActions actions, const objects_type& args)
+    sched::rJob
+    Event::spawn_actions_job(rLobby lobby, rExecutable e,
+                             const objects_type& args)
     {
+      typedef rObject(Executable::*fun_type)(objects_type);
       runner::Runner& r = ::kernel::runner();
-      if (actions->leave)
-        register_stop_job(stop_job_type(actions->leave, args));
-      if (actions->enter)
-      {
-        typedef rObject(Executable::*fun_type)(objects_type);
-        sched::rJob job =
-          new runner::Interpreter
-          (actions->lobby ? actions->lobby : r.lobby_get(),
-           r.scheduler_get(),
-           boost::bind(static_cast<fun_type>(&Executable::operator()),
-                       actions->enter.get(), args),
-           this, SYMBOL(at));
-        job->start_job();
-      }
+      return new runner::Interpreter
+        (lobby ? lobby : r.lobby_get(),
+         r.scheduler_get(),
+         boost::bind(static_cast<fun_type>(&Executable::operator()),
+                     e.get(), args),
+         this, SYMBOL(at));
     }
 
     void
     Event::emit_backend(const objects_type& pl, bool detach)
     {
+      sched::rJob enter, leave;
       rList payload = new List(pl);
       slot_update(SYMBOL(active), to_urbi(false));
       waituntil_release(payload);
       foreach (callback_type* cb, callbacks_type(callbacks_))
         (*cb)(pl);
+      /// Copy container to avoid in-place modification problems.
       foreach (const Event::rActions& actions, listeners_type(listeners_))
       {
         if (actions->frozen)
@@ -266,7 +245,18 @@ namespace urbi
           args << pattern;
 
           if (detach)
-            emit_job_async(actions, args);
+          {
+            if (actions->enter)
+              enter = spawn_actions_job(actions->lobby, actions->enter, args);
+            if (actions->leave)
+              leave = spawn_actions_job(actions->lobby, actions->leave, args);
+
+            /// Start jobs simultaneously.
+            if (actions->enter)
+              enter->start_job();
+            if (actions->leave)
+              leave->start_job();
+          }
           else
           {
             if (actions->enter)
@@ -276,7 +266,7 @@ namespace urbi
           }
         }
       }
-      stop_backend(detach);
+
     }
 
     void
@@ -321,39 +311,6 @@ namespace urbi
     Event::trigger(const objects_type& pl)
     {
       return trigger_backend(pl, true);
-    }
-
-    /*-------.
-    | Stop.  |
-    `-------*/
-
-    void
-    Event::stop_backend(bool detach)
-    {
-      slot_update(SYMBOL(active), to_urbi(false));
-      if (detach)
-      {
-        runner::Runner& r = ::kernel::runner();
-        sched::jobs_type children;
-        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
-        {
-          typedef rObject(Executable::*fun_type)(objects_type);
-          sched::rJob job = new runner::Interpreter
-            (r.lobby_get(), r.scheduler_get(),
-             boost::bind(&executable_bouncer,
-                         stop_job.first, stop_job.second),
-             this, SYMBOL(onleave));
-          job->start_job();
-        }
-        r.yield_until_terminated(children);
-        stop_jobs_.clear();
-      }
-      else
-      {
-        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
-          (*stop_job.first)(stop_job.second);
-        stop_jobs_.clear();
-      }
     }
 
     void

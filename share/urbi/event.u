@@ -29,9 +29,10 @@ do (Event)
   // conditions.
   function '<<' (rhs)
   {
+    var handler |
     rhs.onEvent(closure (var evt, var payload) { true },
-                closure (var evt, var payload, var pattern) { this.trigger },
-                closure (var evt, var payload, var pattern) { this.stop }) |
+                closure (var evt, var payload, var pattern) { handler = this.trigger },
+                closure (var evt, var payload, var pattern) { handler.stop }) |
 
     // To watch many at once.
     this
@@ -43,22 +44,22 @@ do (Event)
   {
     var res = Event.new |
     var control = Tag.new |
-    var instance = nil |
+    var handler = nil |
     at (this?)
     {
       control:
       {
         sleep(duration) |
-        instance = res.&trigger.apply([res] + '$payload')
+        handler = res.&trigger.apply([res] + '$payload')
       }
     }
     onleave
     {
       control.stop |
-      if (instance != nil)
+      if (handler != nil)
       {
-        instance.stop |
-        instance = nil
+        handler.stop |
+        handler = nil
       }
     } |
     return res

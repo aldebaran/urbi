@@ -61,23 +61,32 @@ namespace urbi
       };
 
     public:
-      void onEvent(rExecutable guard, rExecutable enter, rExecutable leave);
+      /// C++ callback registration.
       Subscription onEvent(const callback_type& cb);
-      void stop();
+      /// Urbi callback registration.
+      void onEvent(rExecutable guard, rExecutable enter, rExecutable leave);
+
+      /// Synchronous emission.
       void syncEmit(const objects_type& args);
+
+      /// Asynchronous emission.
       void emit(const objects_type& args);
       void emit();
+
+      /// Asynchronous trigger.
       rEventHandler trigger(const objects_type& args);
+
+      /// Synchronous trigger.
       rEventHandler syncTrigger(const objects_type& args);
+
       void waituntil(rObject pattern);
       bool hasSubscribers() const;
 
     private:
       void emit_backend(const objects_type& pl, bool detach);
+      sched::rJob spawn_actions_job(rLobby lobby, rExecutable e,
+                                    const objects_type& args);
       rEventHandler trigger_backend(const objects_type& pl, bool detach);
-      void stop_backend(bool detach);
-      void stop_backend_async();
-      void stop_backend_sync();
 
       /** Callbacks listening on this event.
        *
@@ -112,7 +121,6 @@ namespace urbi
       void waituntil_release(rObject payload);
       void waituntil_remove(rTag what);
       rEvent source();
-      void emit_job_async(rActions actions, const objects_type& args);
 
       /** The following three functions are callbacks installed on tags.
        *  The Actions argument is stored in the boost::bind.
@@ -155,7 +163,6 @@ namespace urbi
       // entails linear-time search, std::vector is preferable.
       //
       // typedef boost::unordered_set<callback_type*> callbacks_type;
-
       callbacks_type callbacks_;
     };
   }
