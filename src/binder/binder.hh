@@ -22,7 +22,6 @@
 
 # include <ast/all.hh>
 # include <ast/analyzer.hh>
-# include <ast/error.hh>
 # include <binder/bind.hh>
 # include <urbi/object/fwd.hh>
 

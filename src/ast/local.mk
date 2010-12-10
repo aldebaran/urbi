@@ -62,9 +62,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   ast/event-match.hh				\
   ast/event-match.hxx				\
   ast/event-match.cc				\
-  ast/error.hh					\
-  ast/error.hxx					\
-  ast/error.cc					\
   ast/exps-type.hh				\
   ast/exps-type.cc				\
   ast/factory.hh				\

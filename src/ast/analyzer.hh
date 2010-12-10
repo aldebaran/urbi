@@ -17,7 +17,6 @@
 # define AST_ANALYZER_HH
 
 # include <ast/cloner.hh>
-# include <ast/error.hh>
 # include <runner/exception.hh>
 
 namespace ast

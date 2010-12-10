@@ -388,23 +388,6 @@ Flavored:
        }'
 
 
-Message:
-  super: Exp
-  desc: /// Display a message when visited.  Used for syntactic issues.
-  attributes:
-    - text:
-        type: 'std::string'
-        desc: The message to display when visited.
-    - tag:
-        type: 'std::string'
-        desc: The tag for the message (error or warning).
-  printer:
-    - $location
-    - '": "'
-    - $tag
-    - '": "'
-    - $text
-
 Stmt:
   super:
     - Flavored
@@ -424,7 +407,7 @@ Stmt:
 Nary:
   declAttribute: 'URBI_SDK_API'
   super: Exp
-  desc: /// A list of \c Exp, mainly Stmt and Message.
+  desc: /// A list of \c Exp.
   attributes:
     - children:
         type: 'exps_type*'
@@ -453,9 +436,6 @@ Nary:
 
           /// Push a new expression, creating a Statement node.
           void push_back(rExp e, flavor_type f = flavor_none);
-
-          /// Push a message.
-          void push_message(rMessage m);
 
           /// Sets the flavor of the last child.
           void back_flavor_set(flavor_type k, const loc& l);
@@ -488,7 +468,6 @@ Nary:
       #include <libport/indent.hh>
       #include <libport/separate.hh>
 
-      #include <ast/message.hh>
       #include <ast/stmt.hh>
 
     impl inside: |2
@@ -535,12 +514,6 @@ Nary:
         {
           *children_ << stmt(e.get(), f);
           location_adjust();
-        }
-
-        void
-        Nary::push_message(rMessage m)
-        {
-          *children_ << m;
         }
 
         template <typename T>
