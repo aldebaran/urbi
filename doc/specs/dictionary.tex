@@ -74,8 +74,14 @@ Dictionary.new;
 [00000000] [ => ]
 \end{urbiscript}
 
-Yet you are encouraged to use the specific syntax for Dictionary
-literals:
+There must be an even number of arguments.
+
+\begin{urbiscript}
+Dictionary.new("1", 2, "3");
+[00000001:error] !!! new: Dictionary constructor must be given an even number of arguments
+\end{urbiscript}
+
+You are encouraged to use the specific syntax for Dictionary literals:
 
 \begin{urbiscript}
 ["one" => 1, "two" => 2];
@@ -94,6 +100,14 @@ An extra comma can be added at the end of the list.
 [00000000] ["one" => 1, "two" => 2]
 \end{urbiscript}
 
+It is guaranteed that the pairs to insert are evaluated left-to-write, key
+first, the value.
+
+\begin{urbiassert}
+   ["a".fresh => "b".fresh, "c".fresh => "d".fresh]
+== ["a_5"     => "b_6",     "c_7"     => "d_8"];
+\end{urbiassert}
+
 \subsection{Slots}
 
 \begin{urbiscriptapi}
@@ -106,12 +120,14 @@ An extra comma can be added at the end of the list.
 \end{urbiassert}
 
 
-\item|'[]'|(<key>)
+\item|'[]'|(<key>)%
   Syntactic sugar for \lstinline|get(\var{key})|.
 
-\begin{urbiassert}
-["one" => 1]["one"] == 1;
-\end{urbiassert}
+\begin{urbiscript}
+assert (["one" => 1]["one"] == 1);
+["one" => 1]["two"];
+[00000012:error] !!! missing key: two
+\end{urbiscript}
 
 
 \item|'[]='|(<key>, <value>)%
@@ -206,26 +222,35 @@ d.clear;
 \end{urbiassert}
 
 
-\item[erase](<key>)
-  Remove the mapping for \var{key}.
-
+\item[erase](<key>) Remove the mapping for \var{key}.
+\begin{comment}
 \begin{urbiscript}
-assert(["one" => 1, "two" => 2].erase("two") == ["one" => 1]);
-try
+removeSlot("d")|;
+\end{urbiscript}
+\end{comment}
+\begin{urbiscript}
 {
-  ["one" => 1, "two" => 2].erase("three");
-  echo("never reached");
-}
-catch (var e if e.isA(Dictionary.KeyError))
-{
-  assert(e.key == "three")
+  var d = ["one" => 1, "two" => 2];
+  assert
+  {
+    d.erase("two") === d;
+    d == ["one" => 1];
+  };
+
+  try
+  {
+    ["one" => 1, "two" => 2].erase("three");
+    echo("never reached");
+  }
+  catch (var e if e.isA(Dictionary.KeyError))
+  {
+    assert(e.key == "three")
+  };
 };
 \end{urbiscript}
 
 %% commented until a consensus is reached.
 %%
-
-
 %% \item[extend](<ext>)
 %%   Extend with the dictionary \var{ext}.
 %%   Return the value of the new dictionary.
@@ -236,18 +261,21 @@ catch (var e if e.isA(Dictionary.KeyError))
 %% [00000002] ["one" => 0, "three" => 3, "two" => 2]
 %% \end{urbiscript}
 
-
 \item[get](<key>)%
   The value associated to \var{key}.  A \lstinline|Dictionary.KeyError|
   exception is thrown if the key is missing.
-
   % FIXME: the following exception test should be rewritten when (if)
   % we introduce the throw assertion.
 \begin{urbiscript}
-assert(["one" => 1, "two" => 2].get("one") == 1);
+var d = ["one" => 1, "two" => 2]|;
+
+assert(d.get("one") == 1);
+["one" => 1, "two" => 2].get("three");
+[00000010:error] !!! missing key: three
+
 try
 {
-  ["one" => 1, "two" => 2].get("three");
+  d.get("three");
   echo("never reached");
 }
 catch (var e if e.isA(Dictionary.KeyError))
@@ -262,25 +290,28 @@ catch (var e if e.isA(Dictionary.KeyError))
   otherwise.
 
 \begin{urbiscript}
-do (["one" => 1, "two" => 2])
 {
+  var d = ["one" => 1, "two" => 2];
   assert
   {
-    getWithDefault("one",  -1) == 1;
-    getWithDefault("three", 3) == 3;
+    d.getWithDefault("one",  -1) == 1;
+    d.getWithDefault("three", 3) == 3;
   };
 }|;
 \end{urbiscript}
 
 
-\item[has](<key>)
+\item[has](<key>)%
   Whether the dictionary has a mapping for \var{key}.
 
 \begin{urbiscript}
-do (["one" => 1])
 {
-  assert(has("one"));
-  assert(!has("zero"));
+  var d = ["one" => 1];
+  assert
+  {
+    d.has("one");
+    !d.has("zero");
+  };
 }|;
 \end{urbiscript}
 
@@ -293,7 +324,7 @@ do (["one" => 1])
 \end{urbiassert}
 
 
-\item[init](<key1>, <value1>, ...)%~\\
+\item[init](<key1>, <value1>, ...)%
   Insert the mapping from \var{key1} to \var{value1} and so forth.
 
 \begin{urbiscript}
@@ -302,7 +333,7 @@ Dictionary.clone.init("one", 1, "two", 2);
 \end{urbiscript}
 
 
-\item[keys]\\
+\item[keys]%
   The list of all the keys.  No particular order is ensured.  Since
   \refObject{List} features the same function, uniform iteration over
   a List or a Dictionary is possible.
@@ -340,8 +371,10 @@ Dictionary.clone.init("one", 1, "two", 2);
   overridden.
 
 \begin{urbiscript}
-[=>].set("one", 2).set("one", 1);
-[00000000] ["one" => 1]
+[=>].set("one", 2)
+    .set("two", 2)
+    .set("one", 1);
+[00000000] ["one" => 1, "two" => 2]
 \end{urbiscript}
 
 

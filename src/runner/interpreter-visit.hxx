@@ -624,10 +624,10 @@ namespace runner
     /// Dictionary with a base was caught at parse time.
     foreach (ast::dictionary_elts_type::value_type exp, e->value_get())
     {
-      rObject v = operator()(exp.second.get());
       rObject k = operator()(exp.first.get());
-      passert(v, v);
-      passert(k, k);
+      aver(k);
+      rObject v = operator()(exp.second.get());
+      aver(v);
       // Refuse void in literals.
       if (v == object::void_class || k == object::void_class)
         raise_unexpected_void_error();
@@ -693,8 +693,8 @@ namespace runner
     }
     catch (sched::StopException& e_)
     {
-      // trigger_leave will yield, which migth throw and crush our exception
-      // so copy it
+      // trigger_leave will yield, which might throw and crush our
+      // exception so copy it.
       sched::StopException e(e_);
       trigger_leave(applied);
       // Rewind up to the appropriate depth.
