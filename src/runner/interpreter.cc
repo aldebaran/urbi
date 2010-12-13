@@ -91,6 +91,7 @@ namespace runner
                            ast::rConstAst ast,
                            libport::Symbol name)
     : Runner(lobby, sched, name)
+    , profile_(0)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -107,6 +108,7 @@ namespace runner
                            rObject self,
                            const objects_type& args)
     : Runner(lobby, sched, name)
+    , profile_(0)
     , ast_(0)
     , code_(code)
     , this_(self)
@@ -122,6 +124,7 @@ namespace runner
 			   libport::Symbol name,
                            const objects_type& args)
     : Runner(model, name)
+    , profile_(0)
     , ast_(0)
     , code_(code)
     , args_(args)
@@ -137,6 +140,7 @@ namespace runner
 			   ast::rConstAst ast,
 			   libport::Symbol name)
     : Runner(model, name)
+    , profile_(0)
     , ast_(ast)
     , code_(0)
     , result_(0)
@@ -154,6 +158,7 @@ namespace runner
                            rObject self,
                            libport::Symbol name)
     : Runner(lobby, sched, name)
+    , profile_(0)
     , ast_(0)
     , code_(0)
     , job_(job)
@@ -418,6 +423,77 @@ namespace runner
       res = operator()(e);
     }
     return res;
+  }
+
+  /*------------.
+  | Profiling.  |
+  `------------*/
+
+  Interpreter::Profile::Profile()
+    : yields_(0)
+    , wall_clock_time_(0)
+    , total_time_(0)
+    , function_calls_(0)
+    , function_call_depth_max_(0)
+    , checkpoint_(0)
+    , function_call_depth_(0)
+    , function_current_(0)
+  {}
+
+
+  Interpreter::Profile::FunctionProfile::FunctionProfile()
+    : calls_(0)
+    , self_time_(0)
+    , time_(0)
+  {}
+
+  libport::utime_t
+  Interpreter::Profile::step()
+  {
+    libport::utime_t now = libport::utime();
+    libport::utime_t res = now - checkpoint_;
+    total_time_ += res;
+    wall_clock_time_ += res;
+    functions_profile_[function_current_].self_time_ += res;
+    checkpoint_ = now;
+    return res;
+  }
+
+  void
+  Interpreter::profile_start(Profile* profile)
+  {
+    profile_ = profile;
+    profile_->checkpoint_ = libport::utime();
+    profile_->functions_profile_[0].name_ = SYMBOL(profiled);
+    ++profile_->functions_profile_[0].calls_;
+  }
+
+  void
+  Interpreter::profile_stop()
+  {
+    profile_->step();
+    profile_ = 0;
+  }
+
+  void
+  Interpreter::hook_preempted() const
+  {
+    if (profile_)
+    {
+      profile_->step();
+      ++profile_->yields_;
+    }
+  }
+
+  void
+  Interpreter::hook_resumed() const
+  {
+    if (profile_)
+    {
+      libport::utime_t now = libport::utime();
+      profile_->wall_clock_time_ += now - profile_->checkpoint_;
+      profile_->checkpoint_ = now;
+    }
   }
 
 } // namespace runner

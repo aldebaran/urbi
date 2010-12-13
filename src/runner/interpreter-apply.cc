@@ -154,9 +154,30 @@ namespace runner
 
     if (reg)
       call_stack_ << std::make_pair(msg, loc);
-    FINALLY(((call_stack_type&, call_stack_))((bool, reg)),
+    void* profile_prev = 0;
+    if (profile_)
+    {
+      profile_->step();
+      profile_prev = profile_->function_current_;
+      profile_->function_current_ = function.get();
+      ++profile_->function_calls_;
+      ++profile_->function_call_depth_;
+      if (profile_->function_call_depth_ > profile_->function_call_depth_max_)
+        profile_->function_call_depth_max_ = profile_->function_call_depth_;
+      ++profile_->functions_profile_[function.get()].calls_;
+      if (profile_->functions_profile_[function.get()].name_.empty())
+        profile_->functions_profile_[function.get()].name_ = msg;
+    }
+    FINALLY(((call_stack_type&, call_stack_))((bool, reg))
+            ((Profile*, profile_))((void*, profile_prev)),
             if (reg)
               call_stack_.pop_back();
+            if (profile_)
+            {
+              --profile_->function_call_depth_;
+              profile_->step();
+              profile_->function_current_ = profile_prev;
+            }
       );
 
     // Check if any argument is void.
@@ -193,7 +214,6 @@ namespace runner
       }
 
     return res;
-
   }
 
   /*--------------------------.

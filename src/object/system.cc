@@ -531,6 +531,56 @@ namespace urbi
       return kernel::urbiserver->interactive_get();
     }
 
+    static bool
+    per_self_time(const runner::Interpreter::Profile::FunctionProfile& lhs,
+                  const runner::Interpreter::Profile::FunctionProfile& rhs)
+    {
+      return lhs.self_time_get() > rhs.self_time_get();
+    }
+
+    static void
+    system_profile(Object* self, Executable* action)
+    {
+      runner::Interpreter::Profile p;
+      interpreter().profile_start(&p);
+      objects_type args;
+      args << self;
+      (*action)(args);
+      interpreter().profile_stop();
+      std::cerr << std::endl;
+      std::cerr << libport::format("Yields: %s", p.yields_get()) << std::endl;
+      std::cerr << libport::format("Total time: %.6fs", p.total_time_get() / 1000000.) << std::endl;
+      std::cerr << libport::format("Wall clock time: %.6fs", p.wall_clock_time_get() / 1000000.) << std::endl;
+      std::cerr << libport::format("Function calls: %s", p.function_calls_get()) << std::endl;
+      std::cerr << libport::format("Max function call depth: %s", p.function_call_depth_max_get()) << std::endl;
+      std::cerr << std::endl;
+      std::cerr << ".--------------+---------+---------------+---------------." << std::endl;
+      std::cerr << "|   Function   |  Calls  |   Self time   | Self time per |" << std::endl;
+      std::cerr << "|--------------+---------+---------------|---------------|" << std::endl;
+
+      std::vector<runner::Interpreter::Profile::FunctionProfile> fps;
+      foreach (const runner::Interpreter::Profile::FunctionProfiles::value_type& fp, p.functions_profile_get())
+        fps << fp.second;
+      std::sort(fps.begin(), fps.end(), &per_self_time);
+      unsigned calls = 0;
+      double self_times = 0;
+      double self_time_pers = 0;
+      foreach (const runner::Interpreter::Profile::FunctionProfile& fp, fps)
+      {
+        unsigned call = fp.calls_get();
+        double self_time = fp.self_time_get() / 1000000.;
+        double self_time_per = self_time / call;
+        std::cerr << libport::format("| %12s | %7s | %13.6f | %13.6f |", fp.name_get(), call, self_time, self_time_per) << std::endl;
+        calls += call;
+        self_times += self_time;
+        self_time_pers += self_time_per;
+      }
+      std::cerr << "|--------------+---------+---------------+---------------|" << std::endl;
+      std::cerr << libport::format("| %12s | %7s | %13.6f | %13.6f |", "Totals", calls, self_times, self_time_pers) << std::endl;
+      std::cerr << "'--------------+---------+---------------+---------------'" << std::endl;
+      std::cerr << std::endl;
+    }
+
     static void
     system_poll()
     {
@@ -609,6 +659,7 @@ namespace urbi
       DECLARE(nonInterruptible);
       DECLARE(poll);
       DECLARE(pollLoop);
+      DECLARE(profile);
       DECLARE(programName);
       DECLARE(reboot);
       DECLARE(redefinitionMode);
