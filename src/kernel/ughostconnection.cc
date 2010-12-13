@@ -17,7 +17,6 @@
 #include <urbi/uvalue.hh> // SYNCLINE_WRAP
 
 #include <kernel/ughostconnection.hh>
-#include <kernel/uqueue.hh>
 #include <kernel/userver.hh>
 #include <kernel/utypes.hh>
 

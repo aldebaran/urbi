@@ -24,13 +24,6 @@ namespace kernel
     `----------*/
 
   inline
-  UQueue&
-  UConnection::send_queue_get()
-  {
-    return *send_queue_;
-  }
-
-  inline
   UErrorValue
   UConnection::error_get() const
   {

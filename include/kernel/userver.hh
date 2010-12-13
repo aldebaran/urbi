@@ -126,15 +126,6 @@ namespace kernel
     /// Return \a f on failure.
     virtual std::string find_file(const libport::path& path) const;
 
-    /// Type of UCommandQueue
-    enum QueueType
-    {
-      /// The UCommandQueue contains urbiscript code.
-      QUEUE_URBI,
-      /// The UCommandQueue contains data, not to be messed with.
-      QUEUE_DATA
-    };
-
     /// Load a file into the connection.
     /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
     virtual UErrorValue load_file(const std::string& file_name,

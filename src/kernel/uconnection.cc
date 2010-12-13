@@ -46,8 +46,6 @@
 #include <runner/sneaker.hh>
 #include <runner/shell.hh>
 
-#include <kernel/uqueue.hh>
-
 namespace kernel
 {
 
@@ -57,7 +55,7 @@ namespace kernel
     , receiving_(false)
     , server_(server)
     , lobby_(new object::Lobby(this))
-    , send_queue_(new UQueue())
+    , send_queue_(new queue_type(1024))
     , packet_size_(packetSize)
     , blocked_(false)
       // Initial state of the connection: unblocked, not receiving binary.

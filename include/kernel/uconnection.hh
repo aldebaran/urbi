@@ -87,9 +87,7 @@ namespace kernel
       limit.
 
       When exiting, UError can have the following values: - USUCCESS:
-      success - UFAIL : memory allocation failed.
-
-      \sa UQueue */
+      success - UFAIL : memory allocation failed. */
     UConnection(UServer& userver, size_t packetSize);
     virtual ~UConnection();
 
@@ -176,8 +174,6 @@ namespace kernel
 
     bool send_queue_empty() const;
 
-    UQueue& send_queue_get();
-
     bool& active_get();
     bool& blocked_get();
     bool& closing_get();
@@ -252,8 +248,8 @@ namespace kernel
     urbi::object::rLobby lobby_;
 
   protected:
-    /// A pointer to stop dependencies.
-    std::auto_ptr<UQueue> send_queue_;
+    typedef libport::Fifo<char, '\0'> queue_type;
+    std::auto_ptr<queue_type> send_queue_;
 
     /// Each call to effective_send() will send packetSize byte (or less).
     size_t packet_size_;

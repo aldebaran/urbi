@@ -31,7 +31,6 @@ namespace kernel
 {
   class UConnection;
   class UGhostConnection;
-  class UQueue;
   class UServer;
   struct ConnectionSet;
 }

@@ -53,7 +53,6 @@
 #include <sched/coroutine-local-storage.hh>
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
-#include <kernel/uqueue.hh>
 #include <kernel/userver.hh>
 #include <kernel/uconnection.hh>
 
