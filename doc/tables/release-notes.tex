@@ -48,6 +48,10 @@ Directory.new("dir").removeAll;
   \refSlot[Directory]{lastModifiedDate}, \refSlot[File]{lastModifiedDate}.
 
 \item \refSlot[Lobby]{bytesReceived}, \refSlot[Lobby]{bytesSent}.
+\item Event emission routines have been optimized: \refSlot[Event]{emit} by
+  around 25\%, \refSlot[Event]{syncEmit} by around 13\%,
+  \refSlot[Event]{trigger} by around 25\% and \refSlot[Event]{syncTrigger} by
+  around 10\%.
 \end{itemize}
 
 
