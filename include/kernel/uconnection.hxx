@@ -9,6 +9,7 @@
  */
 
 /// \file kernel/uconnection.hxx
+/// \brief Inline implementation of kernel::UConnection.
 
 #ifndef KERNEL_UCONNECTION_HXX
 # define KERNEL_UCONNECTION_HXX
@@ -21,13 +22,6 @@ namespace kernel
     /*----------.
     | Accessors |
     `----------*/
-
-  inline
-  UQueue&
-  UConnection::recv_queue_get()
-  {
-    return *recv_queue_;
-  }
 
   inline
   UQueue&

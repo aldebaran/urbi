@@ -58,7 +58,6 @@ namespace kernel
     , server_(server)
     , lobby_(new object::Lobby(this))
     , send_queue_(new UQueue())
-    , recv_queue_(new UQueue())
     , packet_size_(packetSize)
     , blocked_(false)
       // Initial state of the connection: unblocked, not receiving binary.
