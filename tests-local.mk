@@ -29,7 +29,7 @@ URBI_SERVER = urbi-launch$(EXEEXT) --start --
 
 # Run k2 tests only.
 k2-check:
-	$(MAKE) check TESTS_DIRS=2.x
+	@$(MAKE) check TESTS_DIRS=2.x
 
 # Do not remove this one, it is failing on purpose.
 XFAIL_TESTS +=					\
@@ -50,5 +50,3 @@ XFAIL_TESTS +=						\
   uob/java/all/change-bypass-external-access.chk	\
   uob/java/all/change-bypass.chk			\
   uob/java/all/transmit-object.chk
-
-
