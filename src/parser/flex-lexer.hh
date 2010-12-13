@@ -236,14 +236,6 @@ public:
   | Urbi's scanner specific features.  |
   `-----------------------------------*/
 
-  // When used in the prescanner mode, the accepted length before the
-  // first terminator.
-  size_t pre_length;
-
-  // In prescanner mode, hint on the minimum number of bytes required to
-  // hit a terminator.
-  size_t length_hint;
-
   // The default start condition: the one replacing INITIAL.
   int sc_default;
 

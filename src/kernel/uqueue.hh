@@ -32,29 +32,6 @@ namespace kernel
 
     using super_type::push;
     void push(const std::string& s);
-
-    //! Pops the next command in the queue.
-    /*! Scan the buffer to a terminating ',' or ';' symbol by removing
-     any text between:
-
-     - { and }
-     - [ and ]
-     - / * and * /
-     - // and \\n
-     - # and \\n
-     - ( and )
-
-     The final ',' or ';' is the last character of the popped data.
-
-     \return the command popped or an empty string if there was an error or
-	   nothing to pop.
-     */
-    std::string pop_command();
-
-  private:
-    /// Do not try to pop a command if less than preparse_hint bytes are
-    /// available.
-    size_t preparse_hint;
   };
 }
 

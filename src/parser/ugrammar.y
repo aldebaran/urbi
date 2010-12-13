@@ -195,11 +195,6 @@
 
 %token EOF 0 "end of command"
 
- // Special tokens for the prescanner.
-%token PRE_EOF        "prescanner end of file"
-       PRE_WANTS_MORE "prescanner needs more input" // no terminator found
-       PRE_COMPLETE   "prescanner found command" // Complete sentence.
-
 /*----------.
 | Flavors.  |
 `----------*/

@@ -116,8 +116,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
   } while (false)
 
 // Called via YY_USER_ACION each time we *advance* the cursor, in
-// which case Num is actually the number of bytes read.  In prescanner
-// mode, this advances the whole length.
+// which case Num is actually the number of bytes read.
 #define COLUMNS(Num)                                        \
   do {                                                      \
     aver(up);                                               \
@@ -143,8 +142,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
     up->error(loc, libport::format(__VA_ARGS__));           \
   } while (false)
 
-// Report an EOF error.  In that case, the prescanner must return
-// non-null, since null means there is not enough data.
+// Report an EOF error.
 #define EOF_ERROR(Where)                                \
   do {                                                  \
     aver(up);                                           \
@@ -251,11 +249,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 /// Unput a large string.
 //
-// In prescanner mode, remove from the pre-length the length of Str,
-// otherwise the prescanner will count too many characters: those of
-// the original string, and those of the unput string.
-//
-// As this will be rescanned, and its length will be added.  It must
+// As this will be rescanned, length will be added.  It must
 // not, otherwise we introduce an offset in the locations, so subtract
 // it first.
 #define UNPUT(Str)                                      \

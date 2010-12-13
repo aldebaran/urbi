@@ -6,7 +6,7 @@
 ##
 ## See the LICENSE file for more information.
 
-dist_libuobject@LIBSFX@_la_SOURCES +=			\
+dist_libuobject@LIBSFX@_la_SOURCES +=		\
   parser/fwd.hh					\
   parser/is-keyword.hh				\
   parser/is-keyword.cc				\
@@ -14,8 +14,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
   parser/metavar-map.hxx			\
   parser/parse.hh				\
   parser/parse.cc				\
-  parser/prescan.hh				\
-  parser/prescan.cc				\
   parser/utoken.hh				\
   parser/parser-impl.hh				\
   parser/parser-impl.hxx			\
