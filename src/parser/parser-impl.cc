@@ -14,7 +14,6 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
-#include <libport/echo.hh>
 #include <libport/format.hh>
 
 #include <libport/cassert>
@@ -34,6 +33,8 @@
 #include <parser/utoken.hh>
 
 #include <kernel/server-timer.hh>
+
+GD_CATEGORY(Urbi.Parser);
 
 namespace parser
 {
@@ -106,13 +107,9 @@ namespace parser
 
     // Parse.
     p.parse();
-    if (debug_)
-      LIBPORT_ECHO("====================== Parse end:" << std::endl
-                   << *result_);
-
     TIMER_POP("parse");
-    if (debug_)
-      LIBPORT_ECHO("Result: " << *result_);
+    if (debug_ && result_)
+      GD_SINFO_DEBUG("Parse end:" << *result_);
 
     if (!errors_.empty())
       throw errors_;
