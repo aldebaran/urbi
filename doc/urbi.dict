@@ -989,6 +989,7 @@ sw
 syncEmit
 syncline
 synclines
+syncTrigger
 syncValue
 syncWrite
 SYSV

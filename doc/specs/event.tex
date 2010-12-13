@@ -63,8 +63,18 @@ var e = Event.new;
 \item[trigger]
   This function is used to launch an event during an unknown amount of
   time. Calling this function launches and keeps the event triggered
-  and returns an object whose \lstinline|stop| method stops launching
-  the event.
+  and returns a handler object whose \lstinline|stop| method stops launching
+  the event. This method is asynchronous and the \lstinline|stop| call
+  will be asynchronous as well.
+
+\item[syncEmit]
+  This function does the same job as \refSlot{'emit'} but the call
+  will be synchronous.
+
+\item[syncTrigger]
+  This function does the same job as \refSlot{trigger} but the call
+  will be synchronous. The stop method of the handler object will be
+  synchronous as well.
 
 \item['||'](<other>)%
   Logical or on events: a new Event that triggers whenever \var{this}
