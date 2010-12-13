@@ -26,7 +26,10 @@ namespace urbi
       EventHandler(rEventHandler model);
       EventHandler(rEvent parent, rList payload);
 
+      /// Effective trigger action.
       void trigger(bool detach);
+      /// Event stopping function.
+      /// Same synchronicity as trigger function.
       void stop();
       rEvent source();
       rList payload();
@@ -40,10 +43,13 @@ namespace urbi
       typedef Event::stop_jobs_type stop_jobs_type;
       typedef Event::listeners_type listeners_type;
 
-      void trigger_job(const rActions& actions, bool detacht);
-
+      /// Listener jobs execution function.
+      void trigger_job(const Event::rActions& actions, bool detach);
+      /// The parent Event of this handler.
       rEvent source_;
+      /// The payload given to handler constructor.
       rList payload_;
+      /// Copy of boolean given to trigger, used for stop synchronicity.
       bool   detach_;
 
     URBI_CXX_OBJECT(EventHandler);

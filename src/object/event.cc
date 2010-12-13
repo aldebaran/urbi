@@ -181,7 +181,7 @@ namespace urbi
       libport::Finally f;
       r.apply_tag(t, &f);
       f << boost::bind(&Event::waituntil_remove, this, t);
-      t->freeze();// Will yield
+      t->freeze(); // Will yield.
     }
 
     void
@@ -230,7 +230,7 @@ namespace urbi
       waituntil_release(payload);
       foreach (callback_type* cb, callbacks_type(callbacks_))
         (*cb)(pl);
-      /// Copy container to avoid in-place modification problems.
+      // Copy container to avoid in-place modification problems.
       foreach (const Event::rActions& actions, listeners_type(listeners_))
       {
         if (actions->frozen)
@@ -251,7 +251,7 @@ namespace urbi
             if (actions->leave)
               leave = spawn_actions_job(actions->lobby, actions->leave, args);
 
-            /// Start jobs simultaneously.
+            // Start jobs simultaneously.
             if (actions->enter)
               enter->start_job();
             if (actions->leave)
