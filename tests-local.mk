@@ -37,7 +37,6 @@ XFAIL_TESTS +=					\
 
 # Fix this soon.
 TFAIL_TESTS +=					\
-  2.x/trajectories/exception.chk		\
   uob/remote/rtp/loop.chk
 
 # Uobject tests that we fail because features are not implemented
