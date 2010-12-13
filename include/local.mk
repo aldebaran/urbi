@@ -47,6 +47,7 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/equality-comparable.hh	\
   include/urbi/object/equality-comparable.hxx	\
   include/urbi/object/event.hh			\
+  include/urbi/object/event-handler.hh          \
   include/urbi/object/file.hh			\
   include/urbi/object/float.hh			\
   include/urbi/object/fwd.hh			\
@@ -92,8 +93,7 @@ endif INSTALL_KERNEL_HEADERS
 EXTRA_DIST += $(FROM_GEN:=.gen)
 
 %: %.gen
-	$(AM_V_GEN)
-	$(AM_V_at)mkdir -p $(dir $@)
+	$(AM_V_GEN)mkdir -p $(dir $@)
 	$(AM_V_at)$< > $@.tmp
 	$(AM_V_at)chmod a-w $@.tmp
 	$(AM_V_at)$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
