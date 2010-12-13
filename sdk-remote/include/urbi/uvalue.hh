@@ -399,7 +399,7 @@ namespace urbi {                                                         \
     cname operator()(UValue& v)                                          \
     {                                                                    \
       if (v.type != DATA_DICTIONARY)                                     \
-        throw std::runtime_error("Invalid cast to " #cname "from "       \
+        throw std::runtime_error("invalid cast to " #cname "from "       \
                                  + string_cast(v));                      \
       UDictionary& dict = *v.dictionary;                                 \
       cname res;                                                         \

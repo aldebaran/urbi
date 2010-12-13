@@ -140,7 +140,7 @@ namespace urbi
     {
       if (onDone)
       {
-        std::runtime_error e("Invalid exception");
+        std::runtime_error e("invalid exception");
         onDone(res, &e);
       }
     }

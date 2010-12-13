@@ -550,7 +550,7 @@ static void writeFromContext(const std::string& ctx,
 {
   LOCK_KERNEL;
   if (ctx.substr(0, 2) != "0x")
-    throw std::runtime_error("Invalid context: " + ctx);
+    throw std::runtime_error("invalid context: " + ctx);
   unsigned long l = strtol(ctx.c_str()+2, 0, 16);
   rLobby rl((object::Lobby*)l);
   runner::Runner& r = kernel::urbiserver->getCurrentRunner();
@@ -1106,7 +1106,7 @@ namespace urbi
       }
       catch (object::UrbiException& e)
       {
-        FRAISE("Invalid read of void UVar '%s': %s", owner_->get_name(),
+        FRAISE("invalid read of void UVar '%s': %s", owner_->get_name(),
                e.what());
       }
     }
@@ -1303,7 +1303,7 @@ namespace urbi
             useClosedVar_ = true;
           }
           else
-            GD_FWARN("Invalid usage of foreign UVar: notifyaccess or USensor"
+            GD_FWARN("invalid usage of foreign UVar: notifyaccess or USensor"
                        "notifychange on %s from %s",
                      owner_->name, owner_->objname);
         }
@@ -1358,7 +1358,7 @@ namespace urbi
       size_t p = name.find_last_of(".");
       if (p == name.npos)
       {
-        GD_FWARN("Invalid argument to split_name: %s", name);
+        GD_FWARN("invalid argument to split_name: %s", name);
         return StringPair(name, "");
       }
       std::string oname = name.substr(0, p);

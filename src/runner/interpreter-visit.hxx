@@ -840,7 +840,7 @@ namespace runner
   Interpreter::visit(const ast::Node* n)                                \
   {                                                                     \
     static_cast<void>(n);                                               \
-    pabort("Invalid " #Node " node in the Interpreter: " << *n);        \
+    pabort("invalid " #Node " node in the Interpreter: " << *n);        \
   }                                                                     \
 
   INVALID(Assign);

@@ -189,7 +189,7 @@ namespace urbi
   UVar::check() const
   {
     if (!impl_)
-      throw std::runtime_error("Invalid use of unbound UVar");
+      throw std::runtime_error("invalid use of unbound UVar");
   }
 
   inline void

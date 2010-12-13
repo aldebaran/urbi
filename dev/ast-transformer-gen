@@ -43,7 +43,7 @@ namespace ast
       operator()(ptr.get());
 # ifndef NDEBUG
       if (!result_.unsafe_cast<T>())
-        (void)pabort("Invalid transformation, expected a"
+        (void)pabort("invalid transformation, expected a"
           << libport::TypeInfo(typeid(T))
           << ", got a "
           << libport::TypeInfo(typeid(*result_)));

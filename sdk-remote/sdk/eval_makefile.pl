@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w
 #
-# Copyright (C) 2006, 2007, 2008  Benoit Sigoure.
+# Copyright (C) 2006, 2007, 2008, 2010  Benoit Sigoure.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -98,7 +98,7 @@ for ($n = 0; $n <= $nblines; ++$n)
     #print STDERR "condition: '$condition'\n";
     if ($condition !~ /^\w+$/)
     {
-      error ("Invalid macro name: `$condition'");
+      error ("invalid macro name: `$condition'");
       while ($n <= $nblines && $param_mk[$n] !~ /^endif/)
       {
 	#print STDERR "skip[error]>$param_mk[$n]";

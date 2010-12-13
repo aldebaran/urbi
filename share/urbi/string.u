@@ -84,7 +84,7 @@ do (String)
         list = [list] |
       var chunks = split("%s") |
       if (list.size != chunks.size - 1)
-        throw "Invalid format: wrong number of arguments" |
+        throw "invalid format: wrong number of arguments" |
       var res = "" |
       for| (var el: chunks)
       {

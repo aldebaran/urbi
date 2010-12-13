@@ -396,9 +396,9 @@ namespace urbi
     UPackedData<T> operator() (UValue& v)
     {
       if (v.type != DATA_BINARY)
-        throw std::runtime_error("Invalid cast to UPackedData: not a Binary");
+        throw std::runtime_error("invalid cast to UPackedData: not a Binary");
       if (v.binary->common.size % sizeof(T))
-        throw std::runtime_error("Invalid cast to UPackedData: incorrect binary"
+        throw std::runtime_error("invalid cast to UPackedData: incorrect binary"
                                  "size");
       return UPackedData<T>((T*)v.binary->common.data,
                             (T*)((char*)v.binary->common.data

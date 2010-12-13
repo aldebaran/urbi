@@ -433,7 +433,7 @@ namespace urbi
       {
       case UEM_ASSIGNVALUE:
         REQUIRE(array.size() == 4,
-                "Component Error: Invalid number "
+                "Component Error: invalid number "
                 "of arguments in the server message: %lu (expected 4)\n",
                 static_cast<unsigned long>(array.size()));
         assignMessage(array[1], array[2], array[3]);
@@ -441,7 +441,7 @@ namespace urbi
 
       case UEM_EVALFUNCTION:
         REQUIRE(3 <= array.size(),
-                "Component Error: Invalid number "
+                "Component Error: invalid number "
                 "of arguments in the server message: %lu\n",
                 static_cast<unsigned long>(array.size()));
         evalFunctionMessage(array[1], array[2], array);
@@ -499,7 +499,7 @@ namespace urbi
         break;
       case UEM_SETRTP:
         REQUIRE(array.size() == 3,
-                "Component Error: Invalid number "
+                "Component Error: invalid number "
                 "of arguments in the server message: %lu (expected 3)\n",
                 static_cast<unsigned long>(array.size()));
         setRTPMessage(array[1], array[2]);

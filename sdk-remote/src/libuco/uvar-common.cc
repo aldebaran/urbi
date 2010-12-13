@@ -131,12 +131,12 @@ namespace urbi
     if (v.type == DATA_VOID)
     {
       if (!v.storage)
-        throw std::runtime_error("Invalid cast to UVar from void value.");
+        throw std::runtime_error("invalid cast to UVar from void value.");
       else
         return *((UVar*)v.storage);
     }
     if (v.type != DATA_STRING)
-      throw std::runtime_error("Invalid cast to UVar from non-string value.");
+      throw std::runtime_error("invalid cast to UVar from non-string value.");
     UVar* var = new UVar(*v.stringValue);
     getCurrentContext()->addCleanup(var);
     var->set_temp(true);

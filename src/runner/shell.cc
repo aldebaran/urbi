@@ -113,11 +113,11 @@ namespace runner
     catch (const std::exception& e)
     {
       send_message("error",
-                   libport::format("Invalid exception `%s' caught", e.what()));
+                   libport::format("invalid exception `%s' caught", e.what()));
     }
     catch (...)
     {
-      send_message("error", "Invalid unknown exception caught");
+      send_message("error", "invalid unknown exception caught");
     }
 
     if (exception_to_show.get())

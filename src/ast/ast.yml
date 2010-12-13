@@ -845,7 +845,7 @@ LValue:
         rCall LValue::call()
         {
           rCall res = dynamic_cast<Call*>(this);
-          passert("Invalid call: " << *this, res);
+          passert("invalid call: " << *this, res);
           return res;
         }
 
