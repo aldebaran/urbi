@@ -102,11 +102,7 @@ namespace dbg
   eval(const char* command)
   {
     aver(sneaker);
-    return
-      object::execute_parsed(parser::parse(command, LOCATION_HERE),
-                             SYMBOL(eval),
-			     std::string("error evaluating command `") +
-			     command + "'");
+    return ::urbi::object::eval(command);
   }
 
   void

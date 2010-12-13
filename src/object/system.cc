@@ -50,6 +50,7 @@ GD_CATEGORY(Urbi);
 
 namespace urbi
 {
+
   static std::vector<Initialization>&
   initializations_()
   {
@@ -69,15 +70,17 @@ namespace urbi
     using ::kernel::interpreter;
     using ::kernel::runner;
 
-    /// \param context  if there is an error message, the string to display.
-    rObject
-    execute_parsed(parser::parse_result_type p,
-                   libport::Symbol, const std::string&,
-                   rObject self)
+    namespace
     {
-      ast::rConstAst ast = parser::transform(ast::rConstExp(p));
-      runner::Interpreter& run = interpreter();
-      return run.eval(ast.get(), self ? self : rObject(run.lobby_get()));
+
+      static rObject
+      execute_parsed(parser::parse_result_type p, rObject self)
+      {
+        ast::rConstAst ast = parser::transform(ast::rConstExp(p));
+        runner::Interpreter& run = interpreter();
+        return run.eval(ast.get(), self ? self : rObject(run.lobby_get()));
+      }
+
     }
 
     rObject system_class;
@@ -125,17 +128,14 @@ namespace urbi
 
     rObject
     eval(const std::string& code, rObject self)
-    {
       try
       {
-        return execute_parsed(parser::parse(code, ast::loc()),
-                              SYMBOL(eval), code, self);
+        return execute_parsed(parser::parse(code, ast::loc()), self);
       }
-      catch (runner::Exception& e)
+      catch (const runner::Exception& e)
       {
         e.raise(code);
       }
-    }
 
     static rObject
     eval(rObject, const std::string& code)
@@ -197,8 +197,7 @@ namespace urbi
 #endif
       try
       {
-        return execute_parsed(parser::parse_file(filename),
-			      SYMBOL(loadFile), filename, self);
+        return execute_parsed(parser::parse_file(filename), self);
       }
       catch (const runner::Exception& e)
       {
