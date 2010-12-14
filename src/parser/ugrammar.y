@@ -110,8 +110,8 @@
 
     static void
     assocs_add(parser::ParserImpl& /*up*/, const ast::loc& /*loc*/,
-                  ast::dictionary_elts_type& mods,
-                  const ast::dictionary_elt_type& mod)
+               ast::dictionary_elts_type& mods,
+               const ast::dictionary_elt_type& mod)
     {
       // FIXME: check for duplicate literal keys?
       // if (libport::mhas(mods, mod.first))
@@ -1084,19 +1084,13 @@ assocs.1:
 ;
 
 assocs:
-  assocs.1 comma.opt    { std::swap($$, $1); }
+  "=>"                  { /* nothing */ }
+| assocs.1 comma.opt    { std::swap($$, $1); }
 ;
 
 %type <ast::rDictionary> dictionary;
 dictionary:
-  "[" "=>" "]"
-  {
-    $$ = new ast::Dictionary(@$, ast::dictionary_elts_type());
-  }
-| "[" assocs "]"
-  {
-    $$ = new ast::Dictionary(@$, $2);
-  }
+  "[" assocs "]"   { $$ = new ast::Dictionary(@$, $2); }
 ;
 
 /*--------.
