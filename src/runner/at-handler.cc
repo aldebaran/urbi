@@ -24,6 +24,8 @@
 
 #include <urbi/object/lobby.hh>
 
+GD_CATEGORY(Urbi.At);
+
 namespace runner
 {
 
@@ -140,14 +142,13 @@ namespace runner
 	}
 	catch (const sched::exception& ke)
 	{
-	  std::cerr << "at condition triggered an exception: " << ke.what()
-		    << std::endl;
+	  GD_SERROR("at condition triggered an exception: " << ke.what())
 	  job = jobs_.erase(job);
 	  continue;
 	}
 	catch (...)
 	{
-	  std::cerr << "at condition triggered an exception\n";
+	  GD_ERROR("at condition triggered an exception");
 	  job = jobs_.erase(job);
 	  continue;
 	}
@@ -161,7 +162,7 @@ namespace runner
 	// on whether we have seen a rising or a falling edge and save the
 	// condition evaluation result.
 	const rObject& to_launch =
-	  new_state ? job->clause_get() : job->on_leave_get();
+          new_state ? job->clause_get() : job->on_leave_get();
 	if (to_launch != object::nil_class)
 	{
 	  // We do not need to check for an exception here as "detach",
@@ -197,13 +198,12 @@ namespace runner
       }
       catch (const sched::exception& e)
       {
-	std::cerr << "at job handler exited with exception " << e.what()
-		  << std::endl;
+	GD_SERROR("at job handler exited with exception " << e.what());
 	throw;
       }
       catch (...)
       {
-	std::cerr << "at job handler exited with unknown exception\n";
+	GD_ERROR("at job handler exited with unknown exception");
 	throw;
       }
     }
