@@ -229,6 +229,7 @@ namespace runner
         ATTRIBUTE_R(unsigned, time);
       private:
         friend class Interpreter;
+        friend class Profile;
       };
       typedef boost::unordered_map<void*, FunctionProfile> FunctionProfiles;
       ATTRIBUTE_R(unsigned, yields);
