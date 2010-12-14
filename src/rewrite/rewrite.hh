@@ -16,12 +16,16 @@
 
 namespace rewrite
 {
-  ast::rNary URBI_SDK_API rewrite(ast::rConstNary a);
-  ast::rExp  URBI_SDK_API rewrite(ast::rConstExp a);
   ast::rAst  URBI_SDK_API rewrite(ast::rConstAst a);
+  ast::rExp  URBI_SDK_API rewrite(ast::rConstExp a);
+  ast::rNary URBI_SDK_API rewrite(ast::rConstNary a);
+
+  ast::rAst  URBI_SDK_API rewrite(ast::rAst a);
+  ast::rExp  URBI_SDK_API rewrite(ast::rExp a);
+  ast::rNary URBI_SDK_API rewrite(ast::rNary a);
+
   ast::rAst  URBI_SDK_API desugar(ast::rConstAst Ast);
   ast::rAst  URBI_SDK_API rescope(ast::rConstAst Ast);
-
 }
 
 #endif

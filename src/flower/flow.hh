@@ -17,7 +17,7 @@
 namespace flower
 {
   template <typename T>
-  URBI_SDK_API libport::intrusive_ptr<const T>
+  URBI_SDK_API libport::intrusive_ptr<T>
   flow(libport::intrusive_ptr<const T> ast);
 } // namespace flower
 

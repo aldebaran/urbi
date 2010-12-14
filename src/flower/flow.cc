@@ -15,7 +15,7 @@
 namespace flower
 {
   template <typename T>
-  libport::intrusive_ptr<const T>
+  libport::intrusive_ptr<T>
   flow(libport::intrusive_ptr<const T> a)
   {
     TIMER_PUSH("flow");
@@ -25,9 +25,9 @@ namespace flower
     return res.unchecked_cast<T>();
   }
 
-#define INST(Type)                              \
-  template libport::intrusive_ptr<const ast::Type>    \
-  flow(libport::intrusive_ptr<const ast::Type>); \
+#define INST(Type)                                      \
+  template libport::intrusive_ptr<ast::Type>            \
+  flow(libport::intrusive_ptr<const ast::Type>)
 
   INST(Ast);
   INST(Exp);

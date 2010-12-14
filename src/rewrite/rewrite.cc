@@ -29,25 +29,28 @@ namespace rewrite
     return ast::analyze(rescope, Ast);
   }
 
-  ast::rExp
-  rewrite(ast::rConstExp nary)
-  {
-    return rewrite(ast::rConstAst(nary)).unsafe_cast<ast::Exp>();
-  }
-
-  ast::rNary
-  rewrite(ast::rConstNary nary)
-  {
-    return rewrite(ast::rConstAst(nary)).unsafe_cast<ast::Nary>();
-  }
-
   ast::rAst
-  rewrite(ast::rConstAst nary)
+  rewrite(ast::rConstAst a)
   {
     Desugarer desugar;
+    ast::rAst res = ast::analyze(desugar, a);
     Rescoper rescope;
-    ast::rAst res = ast::analyze(desugar, nary);
     rescope(res.get());
     return rescope.result_get();
   }
+
+#define REWRITE(In, Out)                                                \
+  libport::intrusive_ptr<Out>                                           \
+  rewrite(libport::intrusive_ptr<In> a)                                 \
+  {                                                                     \
+    return rewrite(a.unsafe_cast<const ast::Ast>()).unsafe_cast<Out>(); \
+  }
+
+  REWRITE(ast::Ast,  ast::Ast);
+  REWRITE(ast::Exp,  ast::Exp);
+  REWRITE(ast::Nary, ast::Nary);
+
+  REWRITE(const ast::Exp,  ast::Exp);
+  REWRITE(const ast::Nary, ast::Nary);
+#undef REWRITE
 }
