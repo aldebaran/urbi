@@ -10,7 +10,7 @@
 
 /**
  ** \file object/float.hh
- ** \brief Definition of the Urbi object float.
+ ** \brief Definition of urbi::object::Float.
  */
 
 #ifndef OBJECT_FLOAT_HH
@@ -170,16 +170,19 @@ namespace urbi
       value_type trunc() const;
 
 
-    /*-----------------.
-    | Urbi functions.  |
-    `-----------------*/
-
     public:
 
+      /// Whether is infinity.
       bool is_inf() const;
+      /// Whether is convertible to an integer.
+      bool is_integer() const;
+      /// Whether is not a number.
       bool is_nan() const;
+      /// Infinity.
       static value_type inf();
+      /// Not a number.
       static value_type nan();
+
       rHash hash() const;
 
 
@@ -199,5 +202,6 @@ namespace urbi
 
 # include <urbi/object/cxx-object.hxx>
 # include <urbi/object/slot.hxx>
+# include <urbi/object/float.hxx>
 
 #endif // !OBJECT_FLOAT_HH

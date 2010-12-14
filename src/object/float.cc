@@ -184,8 +184,8 @@ namespace urbi
     | Conversions.  |
     `--------------*/
 
-    // FIXME: For some reason I don't understand, MSVC fails to link
-    // when we pass const ref strings here...
+    // FIXME: For some reason MSVC fails to link when we pass const
+    // ref strings here...
 #define CONVERSION(Type)				\
     Float::Type                                         \
     Float::to_##Type(const std::string fmt) const       \
@@ -206,37 +206,7 @@ namespace urbi
 
 #undef CONVERSION
 
-    bool
-    Float::as_bool() const
-    {
-      return value_;
-    }
-
-    Float::value_type
-    Float::inf()
-    {
-      return std::numeric_limits<libport::ufloat>::infinity();
-    }
-
-    bool
-    Float::is_inf() const
-    {
-      return std::isinf(value_);
-    }
-
-    bool
-    Float::is_nan() const
-    {
-      return std::isnan(value_);
-    }
-
-    Float::value_type
-    Float::nan()
-    {
-      return std::numeric_limits<libport::ufloat>::quiet_NaN();
-    }
-
-    static bool
+    static inline bool
     format_manual(float value, std::string& res, const std::string& prefix = "")
     {
       // We format nan and inf by ourselves because behavior differs
@@ -274,16 +244,9 @@ namespace urbi
       replace(pattern.begin(), pattern.end(), 's', 'g');
       replace(pattern.begin(), pattern.end(), 'd', 'g');
       replace(pattern.begin(), pattern.end(), 'D', 'G');
-      try
-      {
+      if (is_integer())
         return libport::format(pattern,
-                               libport::numeric_cast<long long>(value_));
-      }
-      catch (const libport::bad_numeric_cast&)
-      {
-        // Do nothing.
-      }
-
+                               libport::numeric_cast<long_type>(value_));
       if (finfo->spec_get() == "x" || finfo->spec_get() == "o")
         runner::raise_bad_integer_error(value_);
       return libport::format(pattern, value_);
@@ -296,16 +259,10 @@ namespace urbi
       std::string manual;
       if (format_manual(value_, manual))
         return manual;
-
-      try
-      {
-        return libport::format("%1%",
-                               libport::numeric_cast<long long>(value_));
-      }
-      catch (const libport::bad_numeric_cast&)
-      {
-        return libport::format("%1%", value_);
-      }
+      if (is_integer())
+         return libport::format("%s",
+                                libport::numeric_cast<long_type>(value_));
+      return libport::format("%s", value_);
     }
 
     Float::value_type

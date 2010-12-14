@@ -112,9 +112,11 @@ nan.asBool == true;
 \item[asString]
   Return a string representing the target.
 \begin{urbiassert}
-         42.asString == "42";
-      42.51.asString == "42.51";
-21474836470.asString == "21474836470";
+                    42.asString == "42";
+                 42.51.asString == "42.51";
+           21474836470.asString == "21474836470";
+   4611686018427387904.asString == "4611686018427387904";
+(-4611686018427387904).asString == "-4611686018427387904";
 \end{urbiassert}
 
 \item[atan]

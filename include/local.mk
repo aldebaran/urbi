@@ -50,6 +50,7 @@ dist_kernelinclude_urbi_object_HEADERS =	\
   include/urbi/object/event-handler.hh          \
   include/urbi/object/file.hh			\
   include/urbi/object/float.hh			\
+  include/urbi/object/float.hxx			\
   include/urbi/object/fwd.hh			\
   include/urbi/object/global.hh			\
   include/urbi/object/hash.hh			\
