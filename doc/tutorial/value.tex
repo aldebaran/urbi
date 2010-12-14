@@ -293,9 +293,7 @@ inspection to avoid invoking slots, as shown below.
 [00000000] true
 // Using getSlot, we can fetch the function without calling it.
 "".getSlot("asList");
-[00000000] function () {
-[:]  split("")
-[:]}
+[00000000] function () { split("") }
 \end{urbiscript}
 
 The \lstinline|asList| function simply bounces the task to

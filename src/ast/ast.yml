@@ -297,12 +297,20 @@ Exp:
         public:
           /// Whether it is an empty Nary.
           virtual bool empty() const;
+          /// Whether it is a single statement.
+          /// Actually, whether it should be pretty-printed on one line.
+          virtual bool single() const;
           /// Whether is an instance of ast::Implicit.
           virtual bool implicit() const;
     impl inside: |2
           bool Exp::empty() const
           {
             return false;
+          }
+
+          bool Exp::single() const
+          {
+            return true;
           }
 
           bool Exp::implicit() const
@@ -348,10 +356,25 @@ Scope:
         type: 'rExp'
         desc: The scoped expression
         access: rwW
+  inline:
+    header inside: |2
+        public:
+          /// Is there just one child?
+          virtual bool single() const;
+
+    impl inside: |2
+        bool
+        Scope::single() const
+        {
+          return body_->single();
+        }
+
   printer:
     - '"{"'
     - "{
-         if (!n->body_get()->empty())
+         if (n->single())
+           ostr_ << ' ' << *n->body_get() << ' ';
+         else if (!n->body_get()->empty())
            ostr_ << libport::incendl << *n->body_get() << libport::decendl;
        }"
     - '"}"'
@@ -434,6 +457,9 @@ Nary:
           /// Are there any children?
           virtual bool empty() const;
 
+          /// Is there just one child?
+          virtual bool single() const;
+
           /// Push a new expression, creating a Statement node.
           void push_back(rExp e, flavor_type f = flavor_none);
 
@@ -467,6 +493,7 @@ Nary:
     impl prologue: |2
       #include <libport/indent.hh>
       #include <libport/separate.hh>
+      #include <ast/print.hh>
 
       #include <ast/stmt.hh>
 
@@ -487,6 +514,12 @@ Nary:
         Nary::empty() const
         {
           return children_->empty();
+        }
+
+        bool
+        Nary::single() const
+        {
+          return children_->size() == 1;
         }
 
         void

@@ -1536,14 +1536,10 @@ this.
 
 \begin{urbiscript}
 function () { echo(0) };
-[00000000] function () {
-[:]  echo(0)
-[:]}
+[00000000] function () { echo(0) }
 
 function (arg1, arg2) { echo(0) };
-[00000000] function (var arg1, var arg2) {
-[:]  echo(0)
-[:]}
+[00000000] function (var arg1, var arg2) { echo(0) }
 
 function (
            arg1, // Ignored argument.
@@ -1552,9 +1548,7 @@ function (
 {
   echo(0)
 };
-[00000000] function (var arg1, var arg2) {
-[:]  echo(0)
-[:]}
+[00000000] function (var arg1, var arg2) { echo(0) }
 \end{urbiscript}
 
 Usually functions are bound to an identifier to be invoked later.

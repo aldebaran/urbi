@@ -120,8 +120,8 @@ function () {}.apply([1, 2]);
 \item[asString]
   Conversion to \refObject{String}.
 \begin{urbiassert}
-closure  () { 1 }.asString == "closure () {\n  1\n}";
-function () { 1 }.asString == "function () {\n  1\n}";
+closure  () { 1 }.asString == "closure () { 1 }";
+function () { 1 }.asString == "function () { 1 }";
 \end{urbiassert}
 
 \item[bodyString]
