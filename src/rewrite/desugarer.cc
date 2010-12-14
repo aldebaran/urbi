@@ -108,6 +108,13 @@ namespace rewrite
     }
     PARAMETRIC_AST(traj, "TrajectoryGenerator.new(%exp:1).run");
     ast::rExp res(factory_->make_lvalue_wrap(what, exp(traj % dict).get()));
+    // Parametric ASTs forward the location of the user code to the
+    // desugared code.  In the case of trajectories, this is a
+    // nuisance, as it results in errors in "run" calls _not_ being
+    // flagged as system errors.  So restore a location that really
+    // means it's a system feature that should be hidden from the user
+    // in the back traces.
+    res->location_set(LOCATION_HERE);
 
     if (binding)
     {
