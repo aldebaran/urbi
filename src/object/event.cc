@@ -207,6 +207,14 @@ namespace urbi
     | Emit.  |
     `-------*/
 
+    // Use an intermediary bouncer to make sure the Executable is
+    // stored in a smart pointer, and not deleted too early.
+    static void
+    executable_bouncer(rExecutable e, objects_type args)
+    {
+      (*e)(args);
+    }
+
     sched::rJob
     Event::spawn_actions_job(rLobby lobby, rExecutable e,
                              const objects_type& args)
@@ -216,8 +224,7 @@ namespace urbi
       return new runner::Interpreter
         (lobby ? lobby : r.lobby_get(),
          r.scheduler_get(),
-         boost::bind(static_cast<fun_type>(&Executable::operator()),
-                     e.get(), args),
+         boost::bind(&executable_bouncer, e, args),
          this, SYMBOL(at));
     }
 
