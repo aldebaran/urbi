@@ -14,9 +14,9 @@
 namespace ast
 {
   void
-  dot_print(rConstAst ast, std::ostream& stream)
+  dot_print(rConstAst ast, std::ostream& stream, const std::string& title)
   {
-    DotPrinter p(stream);
+    DotPrinter p(stream, title);
     p(ast.get());
   }
 }

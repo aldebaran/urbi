@@ -18,7 +18,12 @@
 
 namespace ast
 {
-  void URBI_SDK_API dot_print(rConstAst ast, std::ostream& stream);
+  /// Dump an AST as a Dot graph.
+  /// \param ast     the AST to dump.
+  /// \param stream  where to dump.
+  /// \param title   the name of the graph.
+  void URBI_SDK_API
+  dot_print(rConstAst ast, std::ostream& stream, const std::string& title = "");
 }
 
 #endif

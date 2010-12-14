@@ -36,7 +36,7 @@ namespace %(ns)s
   public:
     typedef %(super)s super_type;
 
-    DotPrinter(std::ostream& output);
+    DotPrinter(std::ostream& output, const std::string& title = "");
     virtual ~DotPrinter();
     virtual void operator()(const ast::Ast* n);
 
@@ -48,6 +48,8 @@ namespace %(ns)s
     unsigned id_;
     std::list<std::pair<unsigned, std::string> > ids_;
     bool root_;
+    /// The name of the graph.
+    std::string title_;
 
     template<typename T>
     void recurse(const T& c);
@@ -119,7 +121,7 @@ for node in concrete:
     ++id_;
     if (!ids_.empty())
       output_ << "  node_" << ids_.back().first << " -> node_" << id_
-              << "[label=\\"" << ids_.back().second << "\\"];" << std::endl;
+              << " [label=\\"" << ids_.back().second << "\\"];" << std::endl;
     ids_.push_back(std::make_pair(id_, ""));
     output_ << "  node_" << id_ << " [label=\\"{%(type)s%(label)s}\\"];" << std::endl;
 %(attrs)s
@@ -135,16 +137,18 @@ for node in concrete:
 print >> dot_printer_cc, """\
 %(banner)s
 
+#include <libport/lexical-cast.hh>
 #include <ast/dot-printer.hh>
 #include <ast/all.hh>
 
 namespace %(ns)s
 {
-  DotPrinter::DotPrinter(std::ostream& output)
+  DotPrinter::DotPrinter(std::ostream& output, const std::string& title)
     : output_(output)
     , id_(0)
     , ids_()
     , root_(true)
+    , title_(title)
   {}
 
   DotPrinter::~DotPrinter()
@@ -154,9 +158,7 @@ namespace %(ns)s
   std::string
   escape(const T& e)
   {
-    std::stringstream s;
-    s << e;
-    std::string res = s.str();
+    std::string res = string_cast(e);
     for (std::string::size_type i = res.find_first_of("<>");
          i != std::string::npos;
 	 i = res.find_first_of("<>", i+4))
@@ -171,7 +173,7 @@ namespace %(ns)s
     if (root_)
     {
       root_ = false;
-      output_ << "digraph" << std::endl
+      output_ << "digraph \\"" << escape(title_) << '"' << std::endl
               << "{" << std::endl
               << "  node [shape=\\"record\\"];" << std::endl;
       super_type::operator()(n);

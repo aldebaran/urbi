@@ -10,15 +10,16 @@
 ## ast-dump.  ##
 ## ---------- ##
 
-EXTRA_PROGRAMS = bin/ast-dump bin/serialize bin/urbi-parse bin/urbi-pp bin/urbi-compile
+EXTRA_PROGRAMS =							 \
+  bin/ast-dump bin/serialize bin/urbi-parse bin/urbi-pp bin/urbi-compile
 
 if BUILD_PROGRAMS
-if !WIN32
+if  !WIN32
 noinst_PROGRAMS = bin/ast-dump
-if ENABLE_SERIALIZATION
+if   ENABLE_SERIALIZATION
 bin_PROGRAMS += bin/urbi-parse bin/urbi-pp bin/urbi-compile bin/serialize
-endif
-endif !WIN32
+endif   ENABLE_SERIALIZATION
+endif  !WIN32
 endif BUILD_PROGRAMS
 
 # ast-dump.

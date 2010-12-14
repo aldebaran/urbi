@@ -206,14 +206,14 @@ def print_ctor_dtor (node, header, inline, impl):
     print tools.wrap_proto ("  " + node.name + "::" + node.name + " (" + \
 	  re.sub(" =.*(, )?", "", args) + ")", 75)
     print init
-  print "  { }"
+  print "  {}"
   if hide:
     print "  //->>"
     print ""
     print tools.wrap_proto ("  " + node.name + "::" + node.name + " (" + \
 	  re.sub(" =.*(, )?", "", args_h) + ")", 75)
     print init_h
-    print "  { }"
+    print "  {}"
   print ""
   print "  " + node.name + "::~" + node.name + " ()"
   print "  {"

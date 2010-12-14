@@ -67,12 +67,12 @@ usage()
 }
 
 static void
-print(rAst ast)
+print(const std::string& name, rAst ast)
 {
   static int fd = 2;
   ++fd;
   std::stringstream output;
-  ast::dot_print(ast, output);
+  ast::dot_print(ast, output, name);
   ssize_t s = write(fd, output.str().c_str(), output.str().length());
   if (0 <= s)
   {
@@ -93,18 +93,18 @@ main(int argc, const char* argv[])
       || libport::streq(argv[1], "--help"))
     usage();
 
-  rAst res = parse_file(argv[1])->ast_get();
-  print(res);
+  rAst res = parse_file(argv[1]);
+  print("parse", res);
 
-  res = flower::flow(res);
-  print(res);
+  res = flower::flow<Ast>(res);
+  print("flow", res);
 
   res = rewrite::desugar(res);
-  print(res);
+  print("rewrite", res);
 
   res = rewrite::rescope(res);
-  print(res);
+  print("rescope", res);
 
   res = binder::bind(res);
-  print(res);
+  print("bind", res);
 }
