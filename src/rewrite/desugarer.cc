@@ -84,31 +84,30 @@ namespace rewrite
     // FIXME: There is a copy here that we would like to get rid of.
     ast::modifiers_type source = *assign->modifiers_get();
     source[SYMBOL(base)] = assign->value_get();
-    PARAMETRIC_AST(getter, "closure ( ) { %exp:1 }");
-    source[SYMBOL(getter)] = exp(getter % new_clone(tgt));
+    source[SYMBOL(getter)] = factory_->make_closure(new_clone(tgt));
     PARAMETRIC_AST(setter, "closure (v) { %exp:1 }");
     source[SYMBOL(setter)] =
       exp(setter
           % new ast::Assign(loc, new_clone(tgt),
                             factory_->make_call(loc, SYMBOL(v)), 0));
 
-    // Generating a filled Dictionary would be more efficient because the
-    // ast::Dictionary node is converted into the object by the interpreter.
-    PARAMETRIC_AST(dict, "[ => ]");
-    ast::rExp modifiers = exp(dict);
-    foreach (const ast::modifiers_type::value_type& elt, source)
+    // Convert into a dictionary.  Sort it to improve determinism in
+    // the desugared output.  The cost is neglectible.
+    ast::rExp dict;
     {
-      PARAMETRIC_AST(add, "%exp:1.set(%exp:2, %exp:3)");
+      std::vector<libport::Symbol> keys;
+      foreach (const ast::modifiers_type::value_type& i, source)
+        keys << i.first;
+      std::sort(keys.begin(), keys.end());
 
-      add % modifiers
-        % new ast::String(loc, elt.first)
-        % recurse(elt.second);
-      modifiers = exp(add);
+      ast::dictionary_elts_type d;
+      foreach (libport::Symbol k, keys)
+        d << ast::dictionary_elt_type(new ast::String(loc, k),
+                                      recurse(source[k]));
+      dict = new ast::Dictionary(loc, d);
     }
-
     PARAMETRIC_AST(traj, "TrajectoryGenerator.new(%exp:1).run");
-    ast::rExp res(factory_->make_lvalue_wrap(what,
-                                             exp(traj % modifiers)).get());
+    ast::rExp res(factory_->make_lvalue_wrap(what, exp(traj % dict).get()));
 
     if (binding)
     {
