@@ -303,16 +303,18 @@ namespace urbi
       void bind(const std::string& getter_name, F1 getter,
                 const std::string& setter_name, F2 setter);
       void bind_variadic(const std::string& name,
-                         const boost::function1<rObject, const objects_type&>& val);
+                         const boost::function1<rObject,
+                         const objects_type&>& val);
       template <typename Return, typename Self>
       void bind_variadic(const std::string& name,
-                         const boost::function2<Return, Self*, const objects_type&>& val);
+                         const boost::function2<Return, Self*,
+                         const objects_type&>& val);
       template <typename Return, typename Self>
       void bind_variadic(const std::string& name,
                          Return (Self::*val)(const objects_type&));
     private:
       template <bool mem, typename T>
-      friend class DispatchBind_;
+      friend struct DispatchBind_;
       template <typename T>
       void bindfun_(const std::string& name, T);
       template <typename Self, typename T>

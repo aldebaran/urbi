@@ -198,7 +198,8 @@ namespace urbi
     inline void
     Object::bind(const std::string& name, T p)
     {
-      DispatchBind_<std::tr1::is_member_object_pointer<T>::value, T>::res(this, name, p);
+      DispatchBind_<std::tr1::is_member_object_pointer<T>::value, T>
+        ::res(this, name, p);
     }
 
     template <typename T>
