@@ -538,47 +538,64 @@ namespace urbi
       return lhs.self_time_get() > rhs.self_time_get();
     }
 
-    static void
+    static rObject
     system_profile(Object* self, Executable* action)
     {
+      typedef runner::Interpreter::Profile::FunctionProfiles FunctionProfiles;
+      typedef runner::Interpreter::Profile::FunctionProfile FunctionProfile;
+
       runner::Interpreter::Profile p;
       interpreter().profile_start(&p);
       objects_type args;
       args << self;
-      (*action)(args);
-      interpreter().profile_stop();
-      std::cerr << std::endl;
-      std::cerr << libport::format("Yields: %s", p.yields_get()) << std::endl;
-      std::cerr << libport::format("Total time: %.6fs", p.total_time_get() / 1000000.) << std::endl;
-      std::cerr << libport::format("Wall clock time: %.6fs", p.wall_clock_time_get() / 1000000.) << std::endl;
-      std::cerr << libport::format("Function calls: %s", p.function_calls_get()) << std::endl;
-      std::cerr << libport::format("Max function call depth: %s", p.function_call_depth_max_get()) << std::endl;
-      std::cerr << std::endl;
-      std::cerr << ".--------------+---------+---------------+---------------." << std::endl;
-      std::cerr << "|   Function   |  Calls  |   Self time   | Self time per |" << std::endl;
-      std::cerr << "|--------------+---------+---------------|---------------|" << std::endl;
-
-      std::vector<runner::Interpreter::Profile::FunctionProfile> fps;
-      foreach (const runner::Interpreter::Profile::FunctionProfiles::value_type& fp, p.functions_profile_get())
-        fps << fp.second;
-      std::sort(fps.begin(), fps.end(), &per_self_time);
-      unsigned calls = 0;
-      double self_times = 0;
-      double self_time_pers = 0;
-      foreach (const runner::Interpreter::Profile::FunctionProfile& fp, fps)
       {
-        unsigned call = fp.calls_get();
-        double self_time = fp.self_time_get() / 1000000.;
-        double self_time_per = self_time / call;
-        std::cerr << libport::format("| %12s | %7s | %13.6f | %13.6f |", fp.name_get(), call, self_time, self_time_per) << std::endl;
-        calls += call;
-        self_times += self_time;
-        self_time_pers += self_time_per;
+        FINALLY(((Object*, self)), ::kernel:: interpreter().profile_stop());
+        (*action)(args);
       }
-      std::cerr << "|--------------+---------+---------------+---------------|" << std::endl;
-      std::cerr << libport::format("| %12s | %7s | %13.6f | %13.6f |", "Totals", calls, self_times, self_time_pers) << std::endl;
-      std::cerr << "'--------------+---------+---------------+---------------'" << std::endl;
-      std::cerr << std::endl;
+
+      CAPTURE_GLOBAL(FunctionCall);
+      CAPTURE_GLOBAL(Profile);
+      rObject profile = Profile->call(SYMBOL(new));
+      rList calls = new List;
+
+#define DECLARE(Name, Value)                            \
+      profile->setSlot(libport::Symbol(#Name), new Float(Value))
+
+      DECLARE(yields,               p.yields_get());
+      DECLARE(totalTime,            p.total_time_get() / 1000000.);
+      DECLARE(wallClockTime,        p.wall_clock_time_get() / 1000000.);
+      DECLARE(totalCalls,           p.function_calls_get());
+      DECLARE(maxFunctionCallDepth, p.function_call_depth_max_get());
+
+#undef DECLARE
+
+      std::vector<FunctionProfile> fps;
+      foreach (const FunctionProfiles::value_type& fp,
+               p.functions_profile_get())
+        fps << fp.second;
+
+      std::sort(fps.begin(), fps.end(), &per_self_time);
+
+      foreach (const FunctionProfile& fp, fps)
+      {
+        rObject function_call = FunctionCall->call(SYMBOL(new));
+
+#define DECLARE(Name, Value)                            \
+        function_call->setSlot(libport::Symbol(#Name), Value)
+
+        DECLARE(name,        new String(fp.name_get()));
+        DECLARE(calls,       new Float(fp.calls_get()));
+        DECLARE(selfTime,    new Float(fp.self_time_get() / 1000000.));
+        DECLARE(selfTimePer, new Float(fp.self_time_get() / fp.calls_get()));
+
+#undef DECLARE
+
+        calls->insertBack(function_call);
+      }
+
+      profile->setSlot(SYMBOL(calls), calls);
+
+      return profile;
     }
 
     static void

@@ -64,3 +64,45 @@ class Global.Profiling
   };
 };
 
+class Global.FunctionCall
+{
+  function asString()
+  {
+    "%s('%s', %s, %.6f, %.6f)"
+    % [type, name, calls, selfTime, selfTimePer]
+  };
+};
+
+class Global.Profile
+{
+  function asString()
+  {
+    var str = "Profile(\n" |
+    str += "  Yields: %s\n"                  % yields |
+    str += "  Total time: %.6fs\n"           % totalTime |
+    str += "  Wall clock time: %.6fs\n"      % wallClockTime |
+    str += "  Function calls: %s\n"          % totalCalls |
+    str += "  Max function call depth: %s\n" % maxFunctionCallDepth |
+    str += "\n" |
+
+    str += "  .--------------+---------+---------------+---------------.\n" |
+    str += "  |   Function   |  Calls  |   Self time   | Self time per |\n" |
+    str += "  |--------------+---------+---------------|---------------|\n" |
+
+    var totalSelfTimes = 0 |
+    var totalSelfTimePers = 0 |
+    for (var c: calls)
+    {
+      str += "  | %12s | %7s | %13.6f | %13.6f |\n"
+               % [c.name, c.calls, c.selfTime, c.selfTimePer] |
+      totalSelfTimes    += c.selfTime |
+      totalSelfTimePers += c.selfTimePer |
+    } |
+
+    str += "  |--------------+---------+---------------+---------------|\n" |
+    str += "  | %12s | %7s | %13.6f | %13.6f |\n"
+             % ["Totals", totalCalls, totalSelfTimes, totalSelfTimePers] |
+    str += "  '--------------+---------+---------------+---------------'\n" |
+    str += ")\n"
+  };
+};
