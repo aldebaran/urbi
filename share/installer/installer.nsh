@@ -12,6 +12,7 @@
 
 
 !include share\installer\WriteEnvStr.nsh
+!include share\installer\OpenUrl.nsh
 !include Sections.nsh
 !define SECTION_ON ${SF_SELECTED}
 
@@ -134,10 +135,12 @@ Section "-End"
 
 ; If the documentation is not installed, use online documentation instead.
   IfFileExists $INSTDIR\share\doc\urbi-sdk\urbi-sdk.htmldir\getting-started.html 0 no_doc
-    ExecShell "open" '"$INSTDIR\share\doc\urbi-sdk\urbi-sdk.htmldir\getting-started.html"'
+    Push '"$INSTDIR\share\doc\urbi-sdk\urbi-sdk.htmldir\getting-started.html"'
+    Call openLinkNewWindow
   Goto done
 no_doc:
-    ExecShell "open" "http://gostai.com/downloads/urbi-sdk/doc/getting-started.html"
+    Push "http://gostai.com/downloads/urbi-sdk/doc/getting-started.html"
+    Call openLinkNewWindow
 done:
 SectionEnd
 
