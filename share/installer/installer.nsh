@@ -43,9 +43,15 @@ Section "Urbi" opt_urbi
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   CreateDirectory "$SMPROGRAMS\Gostai"
   CreateShortcut  "$SMPROGRAMS\Gostai\runtime.lnk" "$INSTDIR\bin\urbi.exe" "--interactive --port 54000"
-  CreateShortcut  "$SMPROGRAMS\Gostai\doc.lnk" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf"
   CreateShortcut  "$SMPROGRAMS\Gostai\uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
+; If the documentation is not installed, use online documentation instead.
+  IfFileExists $INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf 0 no_doc
+    CreateShortcut  "$SMPROGRAMS\Gostai\doc.lnk" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.pdf"
+  Goto shortcuts_end
+no_doc:
+    CreateShortcut  "$SMPROGRAMS\Gostai\doc.lnk" "http://gostai.com/downloads/urbi-sdk/doc/"
+shortcuts_end:
 
 ; Run vcredist to install Visual Studio libraries.
 ; msiexec arguments are /qn (mute) or /qb! (no user interactions)
@@ -124,8 +130,13 @@ Section "-End"
     MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to start using URBI now?" IDNO done
     ReadEnvStr $2 COMSPEC
     Exec '"$2" /K "cd $INSTDIR\bin"'
-    ExecShell "open" "$INSTDIR\share\doc\urbi-sdk\urbi-sdk.htmldir\getting-started.html"
 
+; If the documentation is not installed, use online documentation instead.
+  IfFileExists $INSTDIR\share\doc\urbi-sdk\urbi-sdk.htmldir\getting-started.html 0 no_doc
+    ExecShell "open" '"$INSTDIR\share\doc\urbi-sdk\urbi-sdk.htmldir\getting-started.html"'
+  Goto done
+no_doc:
+    ExecShell "open" "http://gostai.com/downloads/urbi-sdk/doc/getting-started.html"
 done:
 SectionEnd
 

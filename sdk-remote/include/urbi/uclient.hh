@@ -82,7 +82,7 @@ namespace urbi
 	    size_t buflen = URBI_BUFLEN,
             // FIXME: See http://llvm.org/bugs/show_bug.cgi?id=8692,
             // revert this in the future.
-	    const UClient::options& opt = options::options(false));
+	    const UClient::options& opt = UClient::options(false));
 
     virtual ~UClient();
 
