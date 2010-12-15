@@ -33,7 +33,6 @@ EXTRA_DIST +=					\
   build-aux/bin/bootstrap-modules		\
   build-aux/bin/flex++.in			\
   build-aux/bin/fuse-switch			\
-  build-aux/bin/move-if-change			\
   build-aux/bin/output-to-dot			\
   build-aux/bin/studentize
 
