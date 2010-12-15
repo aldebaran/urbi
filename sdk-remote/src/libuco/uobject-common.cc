@@ -275,35 +275,36 @@ namespace urbi
   }
 
 
-  #define GENERIC_TRY(desc, code)                         \
-  do {                                                    \
-    std::string estr_;                                    \
-    try {                                                 \
-      code                                                \
-    }                                                     \
-    catch(const std::exception& e)                        \
-    {                                                     \
-      estr_ = e.what();                                   \
-    }                                                     \
-    catch(...)                                            \
-    {                                                     \
-      estr_ = "unknown exception";                        \
-    }                                                     \
-    if (!estr_.empty())                                   \
-      GD_SERROR("Exception " << desc << " : " << estr_);  \
-  } while(0)
-
-
   /*---------------.
   | UContextImpl.  |
   `---------------*/
   namespace impl
   {
+# define GENERIC_TRY(Desc, Code)                                \
+    do {                                                        \
+      std::string estr_;                                        \
+      try                                                       \
+      {                                                         \
+        Code;                                                   \
+      }                                                         \
+      catch(const std::exception& e)                            \
+      {                                                         \
+        estr_ = e.what();                                       \
+      }                                                         \
+      catch(...)                                                \
+      {                                                         \
+        estr_ = "unknown exception";                            \
+      }                                                         \
+      if (!estr_.empty())                                       \
+        GD_SERROR("Exception " << Desc << ": " << estr_);       \
+    } while(0)
+
+
     void
     UContextImpl::init()
     {
       setCurrentContext(this);
-      foreach(baseURBIStarterHub* s, baseURBIStarterHub::list())
+      foreach (baseURBIStarterHub* s, baseURBIStarterHub::list())
       {
         if (!libport::mhas(initialized, s))
         {
@@ -314,7 +315,7 @@ namespace urbi
                       );
         }
       }
-      foreach(baseURBIStarter* s, baseURBIStarter::list())
+      foreach (baseURBIStarter* s, baseURBIStarter::list())
       {
         if (!libport::mhas(initialized, s))
         {
@@ -327,6 +328,7 @@ namespace urbi
       }
     }
 #undef GENERIC_TRY
+
     bool
     UContextImpl::bind(const std::string& n, std::string rename)
     {

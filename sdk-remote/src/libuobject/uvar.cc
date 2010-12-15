@@ -388,8 +388,7 @@ namespace urbi
         dynamic_cast<RemoteUContextImpl*>(c->owner_->ctx_)
         ->tableByName(c->owner_->type);
       UTable::callbacks_type& ct = t[c->owner_->name];
-      UTable::callbacks_type::iterator i =
-        std::find(ct.begin(), ct.end(), c->owner_);
+      UTable::callbacks_type::iterator i = libport::find(ct, c->owner_);
       if (i != ct.end())
         ct.erase(i);
       owner_->ctx_->addCleanup(c->owner_);
