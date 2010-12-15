@@ -478,9 +478,11 @@ namespace urbi
         objects.erase(i);
       }
       break;
+
       case UEM_INIT:
         init();
         break;
+
       case UEM_TIMER:
         {
         std::string cbname = array[1];
@@ -489,10 +491,12 @@ namespace urbi
           i->second.second->call();
         }
         break;
+
       case UEM_NORTP:
         GD_WARN("Disabling RTP as requested by engine");
         enableRTP = false;
         break;
+
       case UEM_SETRTP:
         REQUIRE(array.size() == 3,
                 "Component Error: invalid number "
@@ -500,6 +504,7 @@ namespace urbi
                 static_cast<unsigned long>(array.size()));
         setRTPMessage(array[1], array[2]);
         break;
+
       default:
         REQUIRE(false,
                 "Component Error: unknown server message type number %d\n",
@@ -596,8 +601,7 @@ namespace urbi
     {
       cb->call();
       libport::AsyncCallHandler h =
-        libport::asyncCall(
-                           boost::bind(&RemoteUContextImpl::onTimer, this, cb),
+        libport::asyncCall(boost::bind(&RemoteUContextImpl::onTimer, this, cb),
                            useconds_t(cb->period * 1000));
       libport::BlockLock bl(mapLock);
       std::string cbname = "timer" + string_cast(cb);
@@ -623,8 +627,7 @@ namespace urbi
 
       libport::BlockLock bl(mapLock);
       libport::AsyncCallHandler h =
-        libport::asyncCall(
-                           boost::bind(&RemoteUContextImpl::onTimer, this, cb),
+        libport::asyncCall(boost::bind(&RemoteUContextImpl::onTimer, this, cb),
                            useconds_t(cb->period * 1000));
       timerMap[cbname] = std::make_pair(h, cb);
     }
@@ -690,8 +693,7 @@ namespace urbi
                              UAutoValue& v5,
                              UAutoValue& v6,
                              UAutoValue& v7,
-                             UAutoValue& v8
-                             )
+                             UAutoValue& v8)
     {
       std::stringstream s;
       s << object << "!(";
