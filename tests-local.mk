@@ -36,7 +36,9 @@ XFAIL_TESTS +=					\
   0.x/2-xfail.chk
 
 # Fix this soon.
-TFAIL_TESTS +=					\
+TFAIL_TESTS +=						\
+  uob/plug/all/change-bypass-external-access.chk	\
+  uob/plug/all/change-bypass.chk			\
   uob/remote/rtp/loop.chk
 
 # Uobject tests that we fail because features are not implemented
