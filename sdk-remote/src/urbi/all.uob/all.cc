@@ -25,6 +25,14 @@
 
 GD_CATEGORY(all);
 
+/// Same as strdup, but without the \0 limitation.
+static void*
+memdup(const void *data, size_t size)
+{
+  return memcpy(malloc(size), data, size);
+}
+
+
 struct Point
 {
   Point()
@@ -289,10 +297,10 @@ public:
   {
     threadCheck();
     urbi::UBinary b;
-    b.type = urbi::BINARY_IMAGE;
+    b.type = urbi::BINARY_UNKNOWN;
     // Dup since we want to test no-copy op: the other end will write.
-    b.common.data = strdup(content.c_str());
-    b.common.size = content.length();
+    b.common.data = memdup(content.c_str(), content.size());
+    b.common.size = content.size();
     GD_FINFO_DEBUG("writeB cptr %s", b.common.data);
     *vars[idx] = b;
     std::string res((char*)b.common.data, b.common.size);
@@ -305,7 +313,7 @@ public:
   {
     threadCheck();
     urbi::UImage i;
-    i.data = (unsigned char*)strdup(content.c_str());
+    i.data = (unsigned char*)memdup(content.c_str(), content.size());
     GD_FINFO_DEBUG("writeI cptr %s", (void*)i.data);
     i.size = content.length();
     *vars[idx] = i;
