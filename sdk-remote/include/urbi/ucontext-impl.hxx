@@ -56,13 +56,13 @@ namespace urbi
     }
 
 
-    template<typename T> void
+    template <typename T> void
     deletor(T* ptr)
     {
       delete ptr;
     }
 
-    template<typename T> void
+    template <typename T> void
     UContextImpl::addCleanup(T* ptr)
     {
       addCleanup(boost::bind(&deletor<T>, ptr));
@@ -71,7 +71,9 @@ namespace urbi
     inline void
     UContextImpl::addCleanup(boost::function0<void> op)
     {
-       cleanup_list_->back().push_back(op);
+      aver(cleanup_list_.get());
+      aver(!cleanup_list_->empty());
+      cleanup_list_->back().push_back(op);
     }
 
     inline void
