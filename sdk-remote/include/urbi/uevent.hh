@@ -21,7 +21,7 @@ namespace urbi
 {
   /** UEvent class definition
 
-     Each UEvent instance corresponds to one URBI event. The class
+     Each UEvent instance corresponds to one Urbi event. The class
      provides access to the event properties, and emitting/receiving
      events with payload.  */
   class URBI_SDK_API UEvent: public UContext
@@ -29,10 +29,12 @@ namespace urbi
   public:
     /// Creates an unbound UEvent. Call init() to bind it.
     UEvent();
-    UEvent(const std::string&, urbi::impl::UContextImpl* = 0);
-    UEvent(const std::string&, const std::string&, urbi::impl::UContextImpl* = 0);
-    UEvent(urbi::UObject&, const std::string&, urbi::impl::UContextImpl* = 0);
-    UEvent(const UEvent&);
+    UEvent(const std::string& varname, urbi::impl::UContextImpl* impl = 0);
+    UEvent(const std::string& objname, const std::string& varname,
+           urbi::impl::UContextImpl* impl = 0);
+    UEvent(urbi::UObject& obj, const std::string& varname,
+           urbi::impl::UContextImpl* impl = 0);
+    UEvent(const UEvent& e);
 
     // Bind to \a object.slot.
     void init(const std::string& object, const std::string& slot,
@@ -46,8 +48,7 @@ namespace urbi
               urbi::UAutoValue v5 = UAutoValue(),
               urbi::UAutoValue v6 = UAutoValue(),
               urbi::UAutoValue v7 = UAutoValue(),
-              urbi::UAutoValue v8 = UAutoValue()
-              );
+              urbi::UAutoValue v8 = UAutoValue());
 
  private:
     void __init();

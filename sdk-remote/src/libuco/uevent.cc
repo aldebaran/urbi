@@ -16,17 +16,19 @@
 namespace urbi
 {
 
-  /*-------.
+  /*---------.
   | UEvent.  |
-  `-------*/
-  UEvent::UEvent(const std::string& varname, impl::UContextImpl* impl)
+  `---------*/
+  UEvent::UEvent(const std::string& varname,
+                 impl::UContextImpl* impl)
     : UContext(impl)
     , name(varname)
   {
     __init();
   }
 
-  UEvent::UEvent(UObject& obj, const std::string& varname, impl::UContextImpl* impl)
+  UEvent::UEvent(UObject& obj, const std::string& varname,
+                 impl::UContextImpl* impl)
     : UContext(impl)
     , name(obj.__name + '.' + varname)
   {
@@ -34,7 +36,7 @@ namespace urbi
   }
 
   UEvent::UEvent(const std::string& objname, const std::string& varname,
-             impl::UContextImpl* impl)
+                 impl::UContextImpl* impl)
     : UContext(impl)
     , name(objname + '.' + varname)
   {
@@ -42,8 +44,8 @@ namespace urbi
   }
 
   UEvent::UEvent(const UEvent& b)
-  : UContext(b.ctx_)
-  , name (b.name)
+    : UContext(b.ctx_)
+    , name(b.name)
   {
     __init();
   }

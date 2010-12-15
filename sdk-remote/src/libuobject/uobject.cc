@@ -83,9 +83,8 @@ namespace urbi
     impl::UContextImpl*
     makeRemoteContext(const std::string& host, const std::string& port)
     {
-      impl::UContextImpl* c = new impl::RemoteUContextImpl(
+      return new impl::RemoteUContextImpl(
         new USyncClient(host, lexical_cast<unsigned>(port)));
-      return c;
     }
 
     impl::UContextImpl*
@@ -95,10 +94,7 @@ namespace urbi
       contexts_type::iterator i = contexts.find(key);
       if (i != contexts.end())
         return i->second;
-      impl::UContextImpl* c = new impl::RemoteUContextImpl(
-        new USyncClient(host, lexical_cast<unsigned>(port)));
-      contexts[key] = c;
-      return c;
+      return contexts[key] = makeRemoteContext(host, port);
     }
 
     /*---------------------.
@@ -189,7 +185,7 @@ namespace urbi
         return monitormap_;
       if (n == "varaccess")
         return accessmap_;
-      throw std::runtime_error("Unexpected table name. " + n);
+      throw std::runtime_error("unexpected table name: " + n);
     }
 
     std::pair<int, int>

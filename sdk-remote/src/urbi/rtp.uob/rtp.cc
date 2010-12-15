@@ -35,7 +35,9 @@ extern "C"
 {
   // We are using our own network backend, which requires using a bit of the
   // internal ortp API.
-  void rtp_session_rtp_parse(RtpSession *session, mblk_t *mp, uint32_t local_str_ts, struct sockaddr *addr, socklen_t addrlen);
+  void rtp_session_rtp_parse(RtpSession *session, mblk_t *mp,
+                             uint32_t local_str_ts,
+                             struct sockaddr *addr, socklen_t addrlen);
   void rtp_session_rtcp_parse(RtpSession *session, mblk_t *mp);
 }
 
@@ -320,7 +322,8 @@ void URTP::onChange(UVar& v)
   send(v.val());
 }
 
-template<typename T> void
+template<typename T>
+void
 transmitRemoteWrite(const std::string& name, const T& val)
 {
   UMessage m(*getDefaultClient());
@@ -676,7 +679,7 @@ void URTP::onLogLevelChange(UVar&v)
 {
   int level = v;
   int el = 0;
-  switch(level)
+  switch (level)
   {
   default:
   case 4:
@@ -791,7 +794,8 @@ void URTP::commitGroup()
 
     int res = rtp_session_sendm_with_ts(session, p, write_ts++);
     GD_SINFO_DUMP("wrote " << res <<" bytes");
-    // But reset it so that it will not attempt to call recvfrom() on our socket.
+    // But reset it so that it will not attempt to call recvfrom() on
+    // our socket.
     session->rtp.socket = -1;
   }
   delete groupChange;
