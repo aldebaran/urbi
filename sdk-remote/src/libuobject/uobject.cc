@@ -783,6 +783,7 @@ namespace urbi
     UCallbackAction
     RemoteUContextImpl::clientError(const UMessage&)
     {
+      impl::UContextImpl::CleanupStack s_(*this);
       closed_ = true;
       /* Destroy everything
        *  We must remove each object from the hash right after deleting it
