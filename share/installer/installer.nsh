@@ -12,16 +12,24 @@
 
 
 !include share\installer\WriteEnvStr.nsh
+!include Sections.nsh
+!define SECTION_ON ${SF_SELECTED}
 
 Name "Gostai Engine Runtime"
 outFile gostai-engine-runtime.exe
+
+; Text on top of the selection of the list.
+ComponentText "The following components would be installed on your system."
 
 InstallDir "$PROGRAMFILES\Gostai Engine Runtime"
 
 ;Get installation folder from registry if available
 InstallDirRegKey HKCU "Software\Gostai Engine" ""
 
-Section
+Section "Urbi" opt_urbi
+  ; Cannot disable Urbi from the list.
+  SectionIn RO
+
 ;  Write URBI_ROOT=$INSTDIR to persistent env
   Push URBI_INSTALL_DIR
   Push $INSTDIR
@@ -52,22 +60,27 @@ Section
   ExecWait '"$INSTDIR\vcredist-x86.exe" /q'
 
 ; Error 1723 => Need to update the Windows Installer to a newer version.
-
+SectionEnd
 
 ; Install Gostai Console
+Section "Gostai Console" opt_console
   IfFileExists $INSTDIR\gostai-console-installer.exe 0 +2
   ExecWait '"$INSTDIR\\gostai-console-installer.exe"'
+SectionEnd
 
 ; Install Gostai Editor
+Section "Gostai Editor" opt_editor
   IfFileExists $INSTDIR\gostai-editor-installer.exe 0 +2
   ExecWait '"$INSTDIR\\gostai-editor-installer.exe"'
+SectionEnd
 
 ; Install our visual studio wizard
 ;
 ; This is done by creating two files in the vcprojects directory.
-  ClearErrors
-
 !ifdef vcxx-2008
+Section "Microsoft Visual Studio 2008 Wizard" opt_vcxx2008
+  DetailPrint "Install: Microsoft Visual Studio 2008 Wizard"
+  ClearErrors
   ReadEnvStr $1 VS90COMNTOOLS
   IfErrors enverror
   FileOpen $0 $1\..\..\VC\vcprojects\uobject.vsdir w
@@ -96,16 +109,18 @@ Section
   FileWriteByte $0 "13"
   FileWriteByte $0 "10"
   FileClose $0
-  GoTo gettingStarted
+  GoTo done
 enverror:
     MessageBox MB_OK "Microsoft Visual Studio 2008 not detected, not installing the UObject wizard."
-    GoTo gettingStarted
+    GoTo done
 fileerror:
     MessageBox MB_OK "Problem installing the Microsof Visual Studio Wizard: Error opening file for writing."
-    GoTo gettingStarted
+    GoTo done
+done:
+SectionEnd
 !endif
 
-gettingStarted:
+Section "-End"
     MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to start using URBI now?" IDNO done
     ReadEnvStr $2 COMSPEC
     Exec '"$2" /K "cd $INSTDIR\bin"'
