@@ -46,12 +46,19 @@ namespace urbi
       typedef unsigned int unsigned_type;
       typedef long long long_type;
 
+      // The type used when we try to convert a Float into an integral
+      // value.
+      typedef long_type integer_type;
+
       value_type& value_get();
       const value_type& value_get() const;
 
       /// False iff equals zero.
       virtual bool as_bool() const;
 
+      /// Conversion to long long.
+      /// \requires is_integer().
+      integer_type as_integer() const;
 
       // Comparison. All of them for performance reasons.
       bool operator<=(const value_type& rhs) const;

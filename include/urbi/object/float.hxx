@@ -26,6 +26,13 @@ namespace urbi
     }
 
     inline
+    Float::integer_type
+    Float::as_integer() const
+    {
+      return libport::numeric_cast<integer_type>(value_);
+    }
+
+    inline
     Float::value_type
     Float::inf()
     {
@@ -43,7 +50,7 @@ namespace urbi
     bool
     Float::is_integer() const
     {
-      return libport::numeric_castable<long_type>(value_);
+      return libport::numeric_castable<integer_type>(value_);
     }
 
     inline

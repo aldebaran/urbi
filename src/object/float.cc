@@ -190,20 +190,14 @@ namespace urbi
     Float::Type                                         \
     Float::to_##Type(const std::string fmt) const       \
     {							\
-      try                                               \
-      {							\
+      if (libport::numeric_castable<Type>(value_))      \
         return libport::numeric_cast<Type>(value_);     \
-      }							\
-      catch (libport::bad_numeric_cast&)                \
-      {							\
-        runner::raise_bad_integer_error(value_, fmt);	\
-      }							\
+      runner::raise_bad_integer_error(value_, fmt);	\
     }							\
 
     CONVERSION(int_type);
     CONVERSION(unsigned_type);
     CONVERSION(long_type);
-
 #undef CONVERSION
 
     static inline bool
@@ -245,8 +239,7 @@ namespace urbi
       replace(pattern.begin(), pattern.end(), 'd', 'g');
       replace(pattern.begin(), pattern.end(), 'D', 'G');
       if (is_integer())
-        return libport::format(pattern,
-                               libport::numeric_cast<long_type>(value_));
+        return libport::format(pattern, as_integer());
       if (finfo->spec_get() == "x" || finfo->spec_get() == "o")
         runner::raise_bad_integer_error(value_);
       return libport::format(pattern, value_);
@@ -260,8 +253,7 @@ namespace urbi
       if (format_manual(value_, manual))
         return manual;
       if (is_integer())
-         return libport::format("%s",
-                                libport::numeric_cast<long_type>(value_));
+        return libport::format("%s", as_integer());
       return libport::format("%s", value_);
     }
 
