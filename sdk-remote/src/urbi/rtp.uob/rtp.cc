@@ -600,15 +600,17 @@ void URTP::send_(const UValue& v)
     fcntl(getFD(), F_SETFL, flags | O_NONBLOCK);
 #endif
   }
-  static bool dstats = getenv("STATS");
+  static bool dstats = getenv("URBI_STATS");
   if (dstats)
   {
     sendTime.add_sample(libport::utime() - start);
     if (sendTime.n_samples() == 100)
     {
-      std::cerr <<"rtp send: " <<  (bool)rawUDP <<" "
-      << sendTime.mean() <<" " << sendTime.max()
-      <<" " << sendTime.min() <<" " << sendTime.variance() << std::endl;
+      GD_FINFO_DEBUG("rtp send %s: "
+                     "mean = %s, max = %s, min = %s, variance = %s",
+                     (bool)rawUDP,
+                     sendTime.mean(), sendTime.max(),
+                     sendTime.min(), sendTime.variance());
       sendTime.resize(0); //reset
     }
   }
@@ -716,7 +718,7 @@ void URTP::groupedSendVar(UVar& v)
   libport::BlockLock bl(lock);
   // This uvar is temporary.
   UVar* nv = new UVar(v.get_name());
-  std::cerr << "testuvar is " << nv << " " << nv->get_temp() << std::endl;
+  GD_SINFO_DEBUG("testuvar is " << nv << " " << nv->get_temp());
   groupedVars[v.get_name()] = nv;
   UNotifyChange(*nv, &URTP::onGroupedChange);
 }
@@ -724,7 +726,7 @@ void URTP::groupedSendVar(UVar& v)
 void URTP::unGroupedSendVar(UVar& v)
 {
   libport::BlockLock bl(lock);
-  std::cerr << "testuvar unis " << groupedVars[v.get_name()] << std::endl;
+  GD_SINFO_DEBUG("testuvar unis" << groupedVars[v.get_name()]);
   groupedVars[v.get_name()]->unnotify();
   groupedVars.erase(v.get_name());
 }
@@ -800,14 +802,16 @@ void URTP::commitGroup()
   }
   delete groupChange;
   groupChange = 0;
-  static bool dstats = getenv("STATS");
+  static bool dstats = getenv("URBI_STATS");
   if (dstats)
   {
     sendTime.add_sample(libport::utime() - start);
     if (sendTime.n_samples() == 500)
     {
-      std::cerr <<"rtp group send: " <<  sendTime.mean() <<" " << sendTime.max()
-      <<" " << sendTime.min() <<" " << sendTime.variance() << std::endl;
+      GD_FINFO_DEBUG("rtp group send: "
+                     "mean = %s, max = %s, min = %s, variance = %s",
+                     sendTime.mean(), sendTime.max(),
+                     sendTime.min(), sendTime.variance());
       sendTime.resize(0); //reset
     }
   }
