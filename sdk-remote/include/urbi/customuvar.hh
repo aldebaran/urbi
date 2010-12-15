@@ -9,6 +9,7 @@
  */
 
 /// \file urbi/uvar.hh
+
 #ifndef URBI_CUSTOMUVAR_HH
 # define URBI_CUSTOMUVAR_HH
 

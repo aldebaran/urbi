@@ -1,21 +1,14 @@
-/*! \file urbi/ucallbacks.hh
- *******************************************************************************
+/*
+ * Copyright (C) 2006-2010, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
 
- Definition of the callback classes.
-
- This file is part of UObject Component Architecture\n
- Copyright (c) 2006, 2007, 2008, 2009 Gostai S.A.S.
-
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
-
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
-
- For more information, comments, bug reports: http://www.urbiforge.com
-
- **************************************************************************** */
+/// \file urbi/ucallbacks.hh
 
 #ifndef URBI_UCALLBACKS_HH
 # define URBI_UCALLBACKS_HH
@@ -88,9 +81,9 @@ namespace urbi
     /** Start evaluation, call onDone with result when done.
      * Synchronous if isSynchronous(), asynchronous else.
      */
-    void eval(UList& param, OnDone onDone=0);
+    void eval(UList& param, OnDone onDone = 0);
     /// Force synchronous evaluation.
-    void syncEval(UList& param, OnDone onDone=0);
+    void syncEval(UList& param, OnDone onDone = 0);
     virtual UValue __evalcall(UList& param)  = 0;
 
     /// Period of timers.
@@ -108,7 +101,7 @@ namespace urbi
     UVar* target;
     impl::UGenericCallbackImpl* impl_;
     UObject& owner;
-    /// Returns wether the call is synchronous or not.
+    /// Returns whether the call is synchronous or not.
     bool isSynchronous() const;
     /// Return the thread pool to use
     static libport::ThreadPool& threadPool();
@@ -120,13 +113,13 @@ namespace urbi
     template<typename T>
     static inline impl::UContextImpl* fetchContext(T* ptr, libport::meta::True)
     {
-    return ptr->ctx_;
+      return ptr->ctx_;
     }
 
     template<typename T>
     static inline impl::UContextImpl* fetchContext(T*, libport::meta::False)
     {
-    return getCurrentContext();
+      return getCurrentContext();
     }
   };
 
@@ -171,21 +164,21 @@ uvar_uvalue_cast<UVar&>(UValue& v)
   {
   public:
 
-# define MKUCallBackNotifyCtr%N%(Const, IsConst)			\
-      UCallback%N%(UObject& owner,                                      \
-                   UVar* target,                                        \
-                   const std::string& type,	                        \
-		   OBJ* obj,						\
-		   R (OBJ::*fun) (%%%,% P% %%) Const,			\
-		   const std::string& funname )                	        \
-      : UGenericCallback(owner, target, type, funname, %N%,             \
-      fetchContext(obj,                                                 \
-      typename libport::meta::If<libport::meta::Inherits<OBJ,           \
-        UContext>::res>::res())),                                       \
-	obj(obj), fun##Const(fun), is_const_ (IsConst)			\
-    {									\
-      nbparam = %N%;                                                    \
-      registerCallback();						\
+# define MKUCallBackNotifyCtr%N%(Const, IsConst)                \
+      UCallback%N%(UObject& owner,                              \
+                   UVar* target,                                \
+                   const std::string& type,                     \
+                   OBJ* obj,                                    \
+                   R (OBJ::*fun) (%%%,% P% %%) Const,           \
+                   const std::string& funname )                 \
+      : UGenericCallback(owner, target, type, funname, %N%,     \
+      fetchContext(obj,                                         \
+      typename libport::meta::If<libport::meta::Inherits<OBJ,   \
+        UContext>::res>::res())),                               \
+        obj(obj), fun##Const(fun), is_const_ (IsConst)          \
+    {                                                           \
+      nbparam = %N%;                                            \
+      registerCallback();                                       \
     }
 
     MKUCallBackNotifyCtr%N% (/**/, false);
@@ -219,21 +212,21 @@ uvar_uvalue_cast<UVar&>(UValue& v)
   {
   public:
 
-# define MKUCallBackNotifyEndCtr%N%(FConst, EConst, IsConst)		\
-      UCallbacknotifyend%N%(UObject& owner, UVar* target,       	\
-			    const std::string& type,			\
-			    OBJ* obj,					\
-			    void (OBJ::*fun) (%%%,% P% %%) FConst,	\
-			    void (OBJ::*end)() EConst,			\
-			    const std::string& funname)	                \
+# define MKUCallBackNotifyEndCtr%N%(FConst, EConst, IsConst)            \
+      UCallbacknotifyend%N%(UObject& owner, UVar* target,               \
+                            const std::string& type,                    \
+                            OBJ* obj,                                   \
+                            void (OBJ::*fun) (%%%,% P% %%) FConst,      \
+                            void (OBJ::*end)() EConst,                  \
+                            const std::string& funname)                 \
       : UGenericCallback(owner, target, type, funname,%N%,              \
       fetchContext(obj,                                                 \
         typename libport::meta::If<libport::meta::Inherits<OBJ,         \
           UContext>::res>::res())),                                     \
-	obj(obj), fun(end), is_const_(IsConst)				\
-    {									\
+        obj(obj), fun(end), is_const_(IsConst)                          \
+    {                                                                   \
       nbparam = %N%;                                                    \
-      registerCallback();						\
+      registerCallback();                                               \
     }
 
     MKUCallBackNotifyEndCtr%N% (/**/, /**/, false);
@@ -326,18 +319,18 @@ uvar_uvalue_cast<UVar&>(UValue& v)
 # undef MKUCreateCallBack%N%
 
   // Special case for eventend notification
-# define MKCreateUCallBackEnd%N%(FConst, EConst)			\
-template <class OBJ, class EOBJ%%, class P% %%>         		\
-  UGenericCallback*							\
+# define MKCreateUCallBackEnd%N%(FConst, EConst)                        \
+template <class OBJ, class EOBJ%%, class P% %%>                         \
+  UGenericCallback*                                                     \
   createUCallback(UObject& owner, UVar* target,                         \
-                  const std::string& type,	                        \
-		  EOBJ* obj,						\
-		  void (OBJ::*fun) (%%%,% P% %%) FConst,		\
-		  void (OBJ::*end)() EConst,				\
-		  const std::string& funname)                           \
-  {									\
-    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (owner, target,	\
-	type, &dynamic_cast<OBJ&>(*obj), fun, end,funname);	        \
+                  const std::string& type,                              \
+                  EOBJ* obj,                                            \
+                  void (OBJ::*fun) (%%%,% P% %%) FConst,                \
+                  void (OBJ::*end)() EConst,                            \
+                  const std::string& funname)                           \
+  {                                                                     \
+    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (owner, target,      \
+        type, &dynamic_cast<OBJ&>(*obj), fun, end,funname);             \
   }
 
   MKCreateUCallBackEnd%N% (/**/, /**/);
@@ -389,7 +382,8 @@ template <class OBJ, class EOBJ%%, class P% %%>         		\
 		  const std::string& funname,
                   impl::UContextImpl* ctx)
   {
-    return new UBoostFunctionCallback%N%<R%%, P% %%> (owner, target, type,fun,funname, ctx);
+    return new UBoostFunctionCallback%N%<R%%, P% %%>
+      (owner, target, type,fun,funname, ctx);
   }
 
 // No stdcall on 64 bit gcc it seems.
@@ -403,8 +397,8 @@ template <class OBJ, class EOBJ%%, class P% %%>         		\
 		  const std::string& funname,
                   impl::UContextImpl* ctx)
   {
-    return new UBoostFunctionCallback%N%<R %%, P% %%> (owner, target,
-    type,boost::function%N%<R %%, P% %%>(fun),funname, ctx);
+    return new UBoostFunctionCallback%N%<R %%, P% %%>
+      (owner, target, type,boost::function%N%<R %%, P% %%>(fun),funname, ctx);
   }
 #endif
 %%%%
