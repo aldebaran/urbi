@@ -41,6 +41,10 @@ XFAIL_TESTS +=					\
   2.x/uob/group.chk				\
   uob/plug/issue-3699.chk
 
+# Removing laziness
+XFAIL_TESTS +=					\
+  2.x/lazy-init.chk
+
 XFAIL_TESTS +=						\
   uob/java/all/change-bypass-external-access.chk	\
   uob/java/all/change-bypass.chk			\

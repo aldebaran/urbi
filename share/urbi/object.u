@@ -62,7 +62,7 @@ do (Object)
   };
 
   // Invoke "clone", then "init".
-  function 'new'
+  function 'new'(var args[])
   {
     // The fresh child.
     var res = call.&target.clone |
