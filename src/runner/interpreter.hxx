@@ -42,6 +42,13 @@ namespace runner
       return call_stack_.back().first;
   }
 
+  inline
+  const ast::Ast*
+  Interpreter::innermost_node() const
+  {
+    return innermost_node_;
+  }
+
   /*----------------.
   | Regular visit.  |
   `----------------*/

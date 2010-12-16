@@ -491,6 +491,7 @@ namespace runner
   void
   Interpreter::profile_start(Profile* profile)
   {
+    assert(!profile_);
     profile_ = profile;
     profile_->checkpoint_ = libport::utime();
     profile_->functions_profile_[0].name_ = SYMBOL(profiled);
@@ -500,8 +501,15 @@ namespace runner
   void
   Interpreter::profile_stop()
   {
+    assert(profile_);
     profile_->step();
     profile_ = 0;
+  }
+
+  bool
+  Interpreter::is_profiling() const
+  {
+    return profile_ != 0;
   }
 
   void

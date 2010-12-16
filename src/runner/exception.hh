@@ -26,6 +26,7 @@ namespace runner
     void err(const ast::loc& loc, const std::string& msg,
 	     const std::string& prefix = "");
     /// Report a warning.
+    static
     void warn(const ast::loc& loc, const std::string& msg,
 	      const std::string& prefix = "");
     /// Whether there's any fatal error.

@@ -545,6 +545,17 @@ namespace urbi
       typedef runner::Interpreter::Profile::FunctionProfile FunctionProfile;
 
       runner::Interpreter::Profile p;
+
+      if (interpreter().is_profiling())
+      {
+        runner::Exception::warn(interpreter().innermost_node()->location_get(),
+                                "already profiling");
+        objects_type args;
+        args << self;
+        (*action)(args);
+        return nil_class;
+      }
+
       interpreter().profile_start(&p);
       objects_type args;
       args << self;

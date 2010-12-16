@@ -252,6 +252,8 @@ namespace runner
     void profile_start(Profile* profile);
     /// Stop profiling.
     void profile_stop();
+    /// Wheter there is a profiling in run.
+    bool is_profiling() const;
   protected:
     virtual void hook_preempted() const;
     virtual void hook_resumed() const;
@@ -294,6 +296,7 @@ namespace runner
                        const boost::optional<ast::loc>& loc);
 
     virtual libport::Symbol innermost_call_get() const;
+    const ast::Ast* innermost_node() const;
 
     /// Report an exception.
     void show_exception(const object::UrbiException& ue,
