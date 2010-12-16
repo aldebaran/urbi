@@ -227,6 +227,7 @@ namespace runner
         ATTRIBUTE_R(unsigned, calls);
         ATTRIBUTE_R(unsigned, self_time);
         ATTRIBUTE_R(unsigned, time);
+        void append(FunctionProfile* other);
       private:
         friend class Interpreter;
         friend class Profile;
@@ -238,6 +239,7 @@ namespace runner
       ATTRIBUTE_R(unsigned, function_calls);
       ATTRIBUTE_R(unsigned, function_call_depth_max);
       ATTRIBUTE_R(FunctionProfiles, functions_profile);
+      void append(Profile* other);
     private:
       libport::utime_t step();
       libport::utime_t checkpoint_;

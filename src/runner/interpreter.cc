@@ -447,6 +447,35 @@ namespace runner
     , time_(0)
   {}
 
+  void
+  Interpreter::Profile::FunctionProfile::append(FunctionProfile* other)
+  {
+    calls_     += other->calls_;
+    self_time_ += other->self_time_;
+    time_      += other->time_;
+  }
+
+  void
+  Interpreter::Profile::append(Profile* other)
+  {
+    yields_          += other->yields_;
+    wall_clock_time_ += other->wall_clock_time_;
+    total_time_      += other->total_time_;
+    function_calls_  += other->function_calls_;
+
+    function_call_depth_max_ = std::max(function_call_depth_max_,
+                                        other->function_call_depth_max_);
+
+    foreach(FunctionProfiles::value_type value, other->functions_profile_)
+    {
+      FunctionProfiles::iterator it = functions_profile_.find(value.first);
+      if (it != functions_profile_.end())
+        it->second.append(&value.second);
+      else
+        functions_profile_.insert(value);
+    }
+  }
+
   libport::utime_t
   Interpreter::Profile::step()
   {

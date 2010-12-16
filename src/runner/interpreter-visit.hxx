@@ -94,6 +94,7 @@ namespace runner
   Interpreter::visit(const ast::And* e)
   {
     Job::Collector collector(this, e->children_get().size() - 1);
+    Profile* p = 0;
 
     // Create separate runners for every child but the first
     foreach (const ast::rConstExp& child,
@@ -102,6 +103,13 @@ namespace runner
       Interpreter* job =
         new Interpreter(*this, operator()(child.get()),
                         libport::Symbol::fresh(name_get()));
+      if (profile_)
+      {
+        p = new Profile;
+        // Max function call depth has to start at current depth.
+        p->function_call_depth_max_ = profile_->function_call_depth_max_;
+        job->profile_start(p);
+      }
       register_child(job, collector);
       job->start_job();
     }
@@ -125,6 +133,22 @@ namespace runner
     {
       // If a child caused us to die, then throw the encapsulated exception.
       ce.rethrow_child_exception();
+    }
+
+    if (profile_)
+    {
+      foreach(libport::intrusive_ptr<Job> job, collector)
+      {
+        // We are sure these jobs are Interpeters.
+        Interpreter* i = static_cast<Interpreter*>(job.get());
+        if (i->profile_)
+        {
+          i->profile_->step();
+          profile_->append(i->profile_);
+          delete i->profile_;
+          i->profile_ = 0;
+        }
+      }
     }
 
     return object::void_class;
