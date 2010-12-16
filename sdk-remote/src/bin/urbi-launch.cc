@@ -12,8 +12,16 @@
 
 #include <urbi/urbi-root.hh>
 
+#include <sdk/config.hh>
+
 int main(int argc, char* argv[])
 {
-  UrbiRoot urbi_root(argv[0]);
+  UrbiRoot urbi_root(argv[0],
+#ifdef STATIC_BUILD
+                     true
+#else
+                     false
+#endif
+                     );
   return urbi_root.urbi_launch(argc, argv);
 }
