@@ -62,7 +62,8 @@ GD_CATEGORY(UObject);
 using namespace boost::assign;
 using object::List;
 using object::rPath;
-using object::Path;
+//Next using disabled, fails on gcc3, conflict with boost::filesystem::Path.
+//using object::Path;
 using object::rEvent;
 using object::rObject;
 using object::rLobby;
@@ -367,7 +368,7 @@ uobject_uobjectsPath(const rObject&)
 
   foreach (const libport::path& p,
            uobjects_path.search_path_get())
-    list << new Path(p);
+    list << new object::Path(p);
   return list;
 }
 
@@ -377,7 +378,7 @@ uobject_uobjectsPathSet(const rObject&, List::value_type list)
   uobjects_path.search_path().clear();
   BOOST_FOREACH (rObject p, list)
   {
-    rPath path = p->as<Path>();
+    rPath path = p->as<object::Path>();
     uobjects_path.search_path().push_back(path->value_get());
   }
 }

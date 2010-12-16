@@ -11,6 +11,8 @@
 #ifndef RUNNER_RAISE_HH
 # define RUNNER_RAISE_HH
 
+# include <boost/optional.hpp>
+
 # include <libport/compiler.hh>
 # include <libport/ufloat.hh>
 

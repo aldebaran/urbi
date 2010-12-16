@@ -71,6 +71,8 @@
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 
+#ifndef LIBPORT_DEBUG_DISABLE
+
 static libport::local_data&
 debugger_data_thread_coro_local()
 {
@@ -87,6 +89,9 @@ debugger_data_thread_coro_local()
 
 GD_INIT_DEBUG_PER(debugger_data_thread_coro_local);
 GD_CATEGORY(Urbi);
+
+#endif
+
 
 #define URBI_EXIT(Status, ...)                 \
   throw urbi::Exit(Status, libport::format (__VA_ARGS__))
