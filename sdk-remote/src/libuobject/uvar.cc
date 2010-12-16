@@ -12,6 +12,7 @@
 
 #include <libport/format.hh>
 
+#include <libport/containers.hh>
 #include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <libport/lexical-cast.hh>
