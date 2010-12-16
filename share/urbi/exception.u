@@ -175,8 +175,11 @@ class Exception.Arity: Exception
 
   function message()
   {
-     if (max.isVoid)
+    if (max.isVoid)
       "expected %s argument%s, given %s"
+      % [min, {if (1 < min) "s" else ""}, effective]
+    else if (max == Float.inf)
+      "expected at least %s argument%s, given %s"
       % [min, {if (1 < min) "s" else ""}, effective]
     else
       "expected between %s and %s argument%s, given %s"

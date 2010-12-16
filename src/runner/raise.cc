@@ -142,11 +142,14 @@ namespace runner
                     unsigned minimum,
                     unsigned maximum)
   {
+    CAPTURE_GLOBAL(Float);
     raise_urbi_skip(SYMBOL(Arity),
                     raise_current_method,
                     to_urbi(effective),
                     to_urbi(minimum),
-                    to_urbi(maximum));
+                    maximum == UINT_MAX
+                    ? Float->getSlot(SYMBOL(inf))
+                    : to_urbi(maximum));
   }
 
   void
