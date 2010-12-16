@@ -50,14 +50,6 @@ namespace std
   {
     return o << m.first << ": " << m.second;
   }
-
-  ostream&
-  operator<<(ostream& o, const ast::Factory::formals_type& f)
-  {
-    foreach (const ast::Factory::formal_type& var, f)
-      o << var.first << " " << var.second;
-    return o;
-  }
 }
 
 
@@ -842,13 +834,13 @@ namespace ast
   {
     static local_declarations_type*
     symbols_to_decs(const loc& loc,
-                    Factory::formals_type* formals)
+                    Formals* formals)
     {
       if (!formals)
         return 0;
       local_declarations_type* res = new local_declarations_type();
-      foreach (const Factory::formal_type& var, *formals)
-        res->push_back(new LocalDeclaration(loc, var.first, var.second));
+      foreach (const Formal& var, *formals)
+        res->push_back(new LocalDeclaration(loc, var.name_get(), var.def_get()));
       delete formals;
       return res;
     }
@@ -868,7 +860,7 @@ namespace ast
 
   rRoutine
   Factory::make_routine(const location& loc, bool closure,
-                        const location& floc, formals_type* f,
+                        const location& floc, Formals* f,
                         rExp b) // const
   {
     if (closure && !f)

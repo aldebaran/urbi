@@ -69,6 +69,8 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   ast/flavor.cc					\
   ast/flavor.hh					\
   ast/flavor.hxx				\
+  ast/formal.cc					\
+  ast/formal.hh					\
   ast/loc.hh					\
   ast/local-declarations-type.cc		\
   ast/local-declarations-type.hh		\

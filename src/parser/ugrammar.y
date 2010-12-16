@@ -33,6 +33,7 @@
 #include <ast/event-match.hh>
 #include <ast/exps-type.hh>
 #include <ast/factory.hh>
+#include <ast/formal.hh>
 #include <ast/fwd.hh>
 #include <ast/nary.hh>
 #include <ast/symbols-type.hh>
@@ -1395,22 +1396,22 @@ args.opt:
 | List of identifiers.  |
 `----------------------*/
 
-%type <::ast::Factory::formal_type> formal;
+%type <::ast::Formal> formal;
 formal:
-  var.opt "identifier"          { $$ = ::ast::Factory::formal_type($2, 0);  }
-| var.opt "identifier" "=" exp  { $$ = ::ast::Factory::formal_type($2, $4); }
+  var.opt "identifier"          { $$ = ::ast::Formal($2, 0);  }
+| var.opt "identifier" "=" exp  { $$ = ::ast::Formal($2, $4); }
 ;
 
 // One or several comma-separated identifiers.
-%type <::ast::Factory::formals_type*> formals.0 formals.1 formals;
+%type <::ast::Formals*> formals.0 formals.1 formals;
 formals.1:
-  formal                 { $$ = new ::ast::Factory::formals_type(1, $1); }
+  formal                 { $$ = new ::ast::Formals(1, $1); }
 | formals.1 "," formal   { std::swap($$, $1); *$$ << $3; }
 ;
 
 // Zero or several comma-separated identifiers.
 formals.0:
-  /* empty */          { $$ = new ::ast::Factory::formals_type; }
+  /* empty */          { $$ = new ::ast::Formals; }
 | formals.1 comma.opt  { std::swap($$, $1); }
 ;
 

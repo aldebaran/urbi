@@ -18,6 +18,7 @@
 # include <ast/catches-type.hh>
 # include <ast/exps-type.hh>
 # include <ast/flavor.hh>
+# include <ast/formal.hh>
 # include <ast/fwd.hh>
 # include <ast/symbols-type.hh>
 
@@ -28,8 +29,6 @@ namespace ast
   {
   public:
     typedef std::pair<libport::Symbol, rExp> modifier_type;
-    typedef modifier_type formal_type;
-    typedef std::vector<formal_type> formals_type;
 
     typedef yy::location location;
 
@@ -324,7 +323,7 @@ namespace ast
     static
     rRoutine
     make_routine(const location& loc, bool closure,
-                 const location& floc, formals_type* f,
+                 const location& floc, Formals* f,
                  const rExp b) /* const */;
 
     /// Return \a e in a Scope unless it is already one.
@@ -455,7 +454,6 @@ namespace std
   ostream& operator<<(ostream& o, const ast::Factory::case_type& c);
   ostream& operator<<(ostream& o, const ast::Factory::cases_type& c);
   ostream& operator<<(ostream& o, const ast::Factory::modifier_type& m);
-  ostream& operator<<(ostream& o, const ast::Factory::formals_type& f);
 }
 
 #endif // !AST_FACTORY_HH
