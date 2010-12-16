@@ -98,14 +98,14 @@ do (Float)
     asList.map(f)
   };
 
-  function max
+  function max(var args[])
   {
-    (call.evalArgs << this).max;
+    (args << this).max;
   };
 
-  function min
+  function min(var args[])
   {
-    (call.evalArgs << this).min;
+    (args << this).min;
   };
 
   /// owner: The object that owns the slot onto which a property will be

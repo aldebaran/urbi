@@ -127,9 +127,8 @@ do (Lobby)
       var socket = Socket.new|
       var socket.receive = closure(t) { receive(t)}|
       write = function(t) { socket.write(t)}|
-      send = function
+      send = function (var args[])
       {
-        var args = call.evalArgs|
         if (args.size == 2 && !args[1].empty)
         write("[%08d:%s] %s\n"
               % [(time*1000).round, args[1], args[0]])

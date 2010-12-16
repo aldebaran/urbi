@@ -17,6 +17,6 @@ requireFile("urbi/global.u");
 class Global.Singleton
 {
   function clone() { this };
-  function 'new' { this };
-  function init {};
+  function 'new'(var args[]) { this };
+  function init(var args[]) {};
 };
