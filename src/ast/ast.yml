@@ -1043,6 +1043,11 @@ LocalDeclaration:
         type: bool
         access: rW
         init: "false"
+    - list:
+        desc: Whether this is a list formal argument.
+        type: bool
+        access: rW
+        init: "false"
   printer:
     - '{
          if (n->constant_get())

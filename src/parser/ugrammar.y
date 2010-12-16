@@ -1400,6 +1400,7 @@ args.opt:
 formal:
   var.opt "identifier"          { $$ = ::ast::Formal($2, 0);  }
 | var.opt "identifier" "=" exp  { $$ = ::ast::Formal($2, $4); }
+| var.opt "identifier" "[" "]"  { $$ = ::ast::Formal($2, true); }
 ;
 
 // One or several comma-separated identifiers.
