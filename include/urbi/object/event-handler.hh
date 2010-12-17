@@ -39,18 +39,23 @@ namespace urbi
       typedef Event::rActions rActions;
       typedef Event::callback_type callback_type;
       typedef Event::callbacks_type callbacks_type;
-      typedef Event::stop_job_type stop_job_type;
-      typedef Event::stop_jobs_type stop_jobs_type;
       typedef Event::listeners_type listeners_type;
+
+      /// Leave callbacks to trigger on stop.
+      typedef std::pair<rExecutable, objects_type> stop_job_type;
+      typedef std::vector<stop_job_type> stop_jobs_type;
 
       /// Listener jobs execution function.
       void trigger_job(const Event::rActions& actions, bool detach);
+      /// Register the stop job.
+      void register_stop_job(const stop_job_type& stop_job);
       /// The parent Event of this handler.
       rEvent source_;
       /// The payload given to handler constructor.
       rList payload_;
       /// Copy of boolean given to trigger, used for stop synchronicity.
       bool   detach_;
+      stop_jobs_type stop_jobs_;
 
     URBI_CXX_OBJECT(EventHandler);
     };

@@ -126,12 +126,6 @@ namespace urbi
       return Subscription(this, res);
     }
 
-    void
-    Event::register_stop_job(const stop_job_type& stop_job)
-    {
-      stop_jobs_ << stop_job;
-    }
-
     /*-----------------.
     | Urbi functions.  |
     `-----------------*/

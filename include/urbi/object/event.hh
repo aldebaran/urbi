@@ -144,12 +144,6 @@ namespace urbi
       /// Job waiting for this event.
       std::vector<Waiter> waiters_;
 
-      /// Leave callbacks to trigger on stop.
-      typedef std::pair<rExecutable, objects_type> stop_job_type;
-      typedef std::vector<stop_job_type> stop_jobs_type;
-      stop_jobs_type stop_jobs_;
-      void register_stop_job(const stop_job_type& stop_job);
-
     public:
       /// Active instances of this event (handler => payload).
       typedef boost::unordered_set<rEventHandler> actives_type;

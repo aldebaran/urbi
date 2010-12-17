@@ -61,13 +61,12 @@ namespace urbi
     EventHandler::stop()
     {
       slot_update(SYMBOL(active), to_urbi(false));
-      stop_jobs_type& stop_jobs = source()->stop_jobs_;
       if (detach_)
       {
         runner::Runner& r = ::kernel::runner();
         sched::jobs_type children;
         // Copy container to avoid in-place modification problems.
-        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs))
+        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
           typedef rObject(Executable::*fun_type)(objects_type);
           sched::rJob job = new runner::Interpreter
@@ -80,9 +79,10 @@ namespace urbi
         r.yield_until_terminated(children);
       }
       else
-        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs))
+        foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
           (*stop_job.first)(stop_job.second);
-      stop_jobs.clear();
+
+      stop_jobs_.clear();
       source()->active_.erase(this);
     }
 
@@ -126,7 +126,7 @@ namespace urbi
       {
         args << pattern;
         if (actions->leave)
-          source()->register_stop_job(stop_job_type(actions->leave, args));
+          register_stop_job(stop_job_type(actions->leave, args));
         if (actions->enter)
         {
           if (detach)
@@ -145,6 +145,12 @@ namespace urbi
             (*actions->enter)(args);
         }
       }
+    }
+
+    void
+    EventHandler::register_stop_job(const stop_job_type& stop_job)
+    {
+      stop_jobs_ << stop_job;
     }
   }
 }
