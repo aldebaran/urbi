@@ -339,7 +339,8 @@ do (&UVar)
   function parentGetProperty(varname, propname)
   {
     // Constant is special and does not trigger newPropertyHook.
-    if (getSlot(varname).isA(UVar) && propname != "constant")
+    if (getSlot(varname).isA(UVar) && propname != "constant"
+        && propname != "timestamp")
     {
       if (propname == "changed")
         getSlot(varname).changed
@@ -359,7 +360,8 @@ do (&UVar)
 
   function newPropertyHook_(parent, name, prop, value)
   {
-    if (parent.getSlot(name).isA(UVar) && prop != "updateHook")
+    if (parent.getSlot(name).isA(UVar) && prop != "updateHook"
+        && prop != "timestamp")
     {
       parent.getSlot(name).setProperty("val", prop, value)|
       parent.removeProperty(name, prop)
