@@ -1292,8 +1292,20 @@ namespace ast
     {
       PARAMETRIC_AST
         (desugar,
-         "var '$whenever' = persist(%exp:1, %exp:2) |\n"
-         "Control.whenever_('$whenever'.val, %exp:3, %exp:4) |'\n"
+         "detach({"
+         "  var '$status' = false|"
+         "  at sync (%exp:1 ~ %exp:2)"
+         "    '$status' = true"
+         "  onleave"
+         "    '$status' = false |"
+         "  loop"
+         "  {"
+         "    if ('$status')"
+         "      %exp:3"
+         "    else"
+         "      %exp:4"
+         "  }"
+         "})|;"
           );
       return exp(desugar % cond % duration % body % else_stmt);
     }
@@ -1301,8 +1313,22 @@ namespace ast
     {
       PARAMETRIC_AST
         (desugar,
-         "Control.whenever_(%exp:1, %exp:2, %exp:3)");
-      return exp(desugar % cond % body % else_stmt);
+         "detach({"
+         "  var '$status' = false|"
+         "  at sync (%exp:1)"
+         "    '$status' = true"
+         "  onleave"
+         "    '$status' = false |"
+         "  loop"
+         "  {"
+         "    if ('$status')"
+         "      %exp:2"
+         "    else"
+         "      %exp:3"
+         "  }"
+         "})|;"
+          );
+      return exp(desugar % cond % body %else_stmt);
     }
   }
 

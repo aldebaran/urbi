@@ -50,18 +50,6 @@ class Global.Control
     deadline
   };
 
-  // whenever_(test, on_true, on_false)
-  //
-  // Takes three expressions, a test and some code to execute each
-  // time the test is true and some code to execute each time the test
-  // is false.
-  function whenever_
-  {
-    detach ({
-      loop call.evalArgAt ({ if (call.evalArgAt (0)) 1 else 2 })
-    })|;
-  };
-
   // persist takes an expression and a delay, and returns an object
   // whose val slot evaluates to true if the expression has been
   // continously true for this delay and false otherwise.
