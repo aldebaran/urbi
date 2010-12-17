@@ -320,7 +320,7 @@ namespace urbi
           callConnections(r, rObject(this), SYMBOL(changeConnections));
           inChange_.erase(i);
         }
-        slot_get(SYMBOL(changed))->call("emit");
+        slot_get(SYMBOL(changed))->as<Event>()->emit(); // call("emit");
       }
       return val;
     }
