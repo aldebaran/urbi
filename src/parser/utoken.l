@@ -477,6 +477,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "function"      RETURN(FUNCTION);
 "if"            RETURN(IF);
 "in"            RETURN(IN);
+"isdef"         RETURN(ISDEF);
   /*<no-space< New.*/
 "new"           RETURN_OP(NEW);
   /*>no-space>*/

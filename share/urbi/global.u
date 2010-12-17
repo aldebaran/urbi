@@ -19,27 +19,6 @@ do (Global)
     lobby.&echo.apply([lobby] + args);
   };
 
-  /// Returns true if argument is defined. Argument can be of the form a.b.c.
-  function isdef
-  {
-    var base = call.sender |
-    var first = true |
-    for| (var c: call.argString(0).split([".", " "], nil, false, false))
-    {
-      if (base.hasSlot(c))
-      {
-        if (!first && !base.hasLocalSlot(c))
-          return false |
-        var s = base.getSlot(c).acceptVoid |
-        base = s.apply([s]).acceptVoid |
-        first = false
-      }
-        else
-        return false |
-    } |
-    return true
-  };
-
   /*---------------------------.
   | Method function wrappers.  |
   `---------------------------*/

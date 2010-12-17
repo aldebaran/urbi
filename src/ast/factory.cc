@@ -751,6 +751,18 @@ namespace ast
                   iffalse ? make_scope(iffalse) : new Noop(l, 0));
   }
 
+  /// \param isdef(%call)
+  rExp
+  Factory::make_isdef(const location& loc, rCall call) /* const */
+  {
+    if (call->arguments_get())
+      SYNTAX_ERROR(loc, "call with arguments inside isdef");
+    PARAMETRIC_AST
+      (desugar,
+       "try { %exp:1.hasSlot(%exp:2) } catch { false }"
+        );
+    return exp(desugar % call->target_get() % make_string(loc, call->name_get()));
+  }
 
   rList
   Factory::make_list(const location& loc,

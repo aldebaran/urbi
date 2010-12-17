@@ -256,6 +256,11 @@ namespace ast
     make_if(const location& l,
             rExp cond, rExp iftrue, rExp iffalse) /* const */;
 
+    /// isdef(call)
+    static
+    rExp
+    make_isdef(const location& l, rCall call) /* const */;
+
 
     /// Make a list.
     /// \param loc    the location of the whole list, "[", "]" included.

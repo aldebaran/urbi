@@ -175,6 +175,7 @@
         FUNCTION     "function"
         IF           "if"
         IN           "in"
+        ISDEF        "isdef"
         LBRACE       "{"
         LBRACKET     "["
         LPAREN       "("
@@ -1283,6 +1284,17 @@ exp:
 exp.opt:
   /* empty */  %prec CMDBLOCK   { $$ = 0; }
 | exp                           { std::swap($$, $1); }
+;
+
+/*--------.
+| Isdef.  |
+`--------*/
+
+exp:
+  "isdef" "(" k1_id ")"
+  {
+    $$ = MAKE(isdef, @$, $3);
+  }
 ;
 
 /*---------------------.
