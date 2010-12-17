@@ -72,7 +72,7 @@ namespace urbi
           sched::rJob job = new runner::Interpreter
             (r.lobby_get(), r.scheduler_get(),
              boost::bind(&executable_bouncer,
-                         stop_job.first, stop_job.second),
+                         stop_job.get<0>(), stop_job.get<1>()),
              this, SYMBOL(onleave));
           job->start_job();
         }
@@ -80,7 +80,7 @@ namespace urbi
       }
       else
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
-          (*stop_job.first)(stop_job.second);
+          (*stop_job.get<0>())(stop_job.get<1>());
 
       stop_jobs_.clear();
       source()->active_.erase(this);
@@ -114,6 +114,7 @@ namespace urbi
     void
     EventHandler::trigger_job(const rActions& actions, bool detach)
     {
+      detach = detach && !actions->sync;
       runner::Runner& r = ::kernel::runner();
       if (actions->frozen)
         return;
@@ -126,7 +127,7 @@ namespace urbi
       {
         args << pattern;
         if (actions->leave)
-          register_stop_job(stop_job_type(actions->leave, args));
+          register_stop_job(stop_job_type(actions->leave, args, detach));
         if (actions->enter)
         {
           if (detach)

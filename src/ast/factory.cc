@@ -10,6 +10,7 @@
 
 #include <libport/deref.hh>
 #include <libport/format.hh>
+#include <libport/preproc.hh>
 #include <libport/separate.hh>
 
 #include <ast/all.hh>
@@ -98,6 +99,40 @@ namespace std
       flavor = flavor_ ## Flavor;               \
   } while (false)
 
+// DISPATCH_IDS(Args, id1, id2, ...): Args being a symbols_type, check
+// that every element is one of [Id1, Id2, ...], and set the boolean
+// variable of the same name to true.
+// FIXME: doesn't check for duplicates for now.
+#define DISPATCH_IDS(List, ...)                                         \
+  DISPATCH_IDS_(List, LIBPORT_LIST(__VA_ARGS__,))
+
+#define DISPATCH_IDS_(List, Args)                                       \
+  BOOST_PP_SEQ_FOR_EACH(DISPATCH_IDS_DECLARE, ~, Args);                 \
+  foreach (libport::Symbol arg, args)                                   \
+  if (false)                                                            \
+  {}                                                                    \
+  BOOST_PP_SEQ_FOR_EACH(DISPATCH_IDS_CHECK, ~, Args)                    \
+  else                                                                  \
+    SYNTAX_ERROR(                                                       \
+      loc, "unexpected `%s', expecting %s",                             \
+      arg,                                                              \
+      LIBPORT_ENUM_PRETTY(LIBPORT_MAP(DISPATCH_IDS_FORMAT, Args),       \
+                    ", ", " or ")                                       \
+      );                                                                \
+
+#define DISPATCH_IDS_DECLARE(R, Data, Arg) bool Arg = false;
+
+#define DISPATCH_IDS_CHECK(R, Data, Arg) \
+  else if (arg == libport::Symbol(BOOST_PP_STRINGIZE(Arg)))     \
+  {                                                             \
+    if (Arg)                                                    \
+      SYNTAX_ERROR(loc, "duplicate keyword: `%s'",              \
+                   BOOST_PP_STRINGIZE(Arg));                    \
+    Arg = true;                                                 \
+  }                                                             \
+
+#define DISPATCH_IDS_FORMAT(Arg) "`" BOOST_PP_STRINGIZE(Arg) "'"
+
 namespace ast
 {
   namespace
@@ -160,12 +195,18 @@ namespace ast
   rExp
   Factory::make_at(const location& loc,
                    const location& flavor_loc, flavor_type flavor,
+                   const ast::symbols_type& args,
                    rExp cond, rExp body, rExp onleave, rExp duration) // const
   {
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
 
+    DISPATCH_IDS(args, sync, async);
+    if (sync && async)
+      SYNTAX_ERROR(loc, "incompatible keywords: `sync' and `async'");
+
     return new At(loc, flavor, flavor_loc,
+                  sync,
                   make_strip(cond),
                   make_scope(loc, body),
                   onleave ? make_scope(loc, onleave) : new Noop(loc, 0),
@@ -175,8 +216,16 @@ namespace ast
   rExp
   Factory::make_event_catcher(const location& loc,
                               EventMatch& event,
-                              rExp enter, rExp leave) // const
+                              rExp enter, rExp leave,
+                              bool sync) // const
   {
+    rExp sync_ast;
+    {
+      PARAMETRIC_AST(ast_true, "true");
+      PARAMETRIC_AST(ast_false, "false");
+      sync_ast = sync ? exp(ast_true) : exp(ast_false);
+    }
+
     if (!leave)
     {
       PARAMETRIC_AST(noop, "{}");
@@ -240,7 +289,8 @@ namespace ast
          "  {\n"
          "    %exp: 6 |\n"
          "    %exp: 7 |\n"
-         "  })\n"
+         "  },\n"
+         "  %exp: 8)\n"
          "}\n");
       return exp(desugar
                  % event.event
@@ -249,7 +299,8 @@ namespace ast
                  % bind.bindings_get()
                  % enter
                  % bind.bindings_get()
-                 % leave);
+                 % leave
+                 % sync_ast);
     }
     else
     {
@@ -259,9 +310,10 @@ namespace ast
          "  %exp:1.onEvent(\n"
          "  closure ('$evt', '$payload') { var '$pattern' = true | %exp:2 },\n"
          "  closure ('$evt', '$payload', '$pattern') { %exp:3 },\n"
-         "  closure ('$evt', '$payload', '$pattern') { %exp:4 })\n"
+         "  closure ('$evt', '$payload', '$pattern') { %exp:4 },\n"
+         "  %exp:5)\n"
          "}\n");
-      return exp(desugar_no_pattern % event.event % guard % enter % leave);
+      return exp(desugar_no_pattern % event.event % guard % enter % leave % sync_ast);
     }
   }
 
@@ -269,12 +321,27 @@ namespace ast
   rExp
   Factory::make_at_event(const location& loc,
                          const location& flavor_loc, flavor_type flavor,
+                         const ast::symbols_type& args,
+                         EventMatch& event,
+                         rExp body, rExp onleave) // const
+  {
+    DISPATCH_IDS(args, sync, async);
+    if (sync && async)
+      SYNTAX_ERROR(loc, "incompatible keywords: `sync' and `async'");
+
+    return make_at_event(loc, flavor_loc, flavor, sync, event, body, onleave);
+  }
+
+  rExp
+  Factory::make_at_event(const location& loc,
+                         const location& flavor_loc, flavor_type flavor,
+                         bool sync,
                          EventMatch& event,
                          rExp body, rExp onleave) // const
   {
     FLAVOR_DEFAULT(semicolon);
     FLAVOR_CHECK1("at", semicolon);
-    return make_event_catcher(loc, event, body, onleave);
+    return make_event_catcher(loc, event, body, onleave, sync);
   }
 
 

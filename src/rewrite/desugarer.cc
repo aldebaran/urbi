@@ -225,6 +225,7 @@ namespace rewrite
     ast::EventMatch match(new ast::Event(cond_loc, closure), 0, at->duration_get(), 0);
     result_ = factory.make_at_event(loc,
                                     at->flavor_location_get(), at->flavor_get(),
+                                    at->sync_get(),
                                     match, at->body_get(), at->onleave_get());
     recurse(result_);
   }

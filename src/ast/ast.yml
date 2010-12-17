@@ -1466,6 +1466,9 @@ At:
         type: loc
         access: rW
         serialize: false
+    - sync:
+        type: bool
+        access: rW
     - cond:
         type: rExp
         access: rwW

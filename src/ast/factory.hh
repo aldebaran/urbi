@@ -50,16 +50,28 @@ namespace ast
     static
     rExp
     make_at(const location& loc,
-            const location& flavor_loc, flavor_type flavor,
+            const location& flavor_loc,
+            flavor_type flavor,
+            const ast::symbols_type& args,
             rExp cond,
             rExp body, rExp onleave = 0,
             rExp duration = 0) /* const */;
 
-    /// at(%flavor) (?(%event)(%payload) {%body} onleave {%onleave}
+    /// at(%flavor) (%args) (?(%event)(%payload) {%body} onleave {%onleave}
     static
     rExp
     make_at_event(const location& loc,
-                  const location& flavor_loc, flavor_type flavor,
+                  const location& flavor_loc,
+                  flavor_type flavor,
+                  const ast::symbols_type& args,
+                  EventMatch& event,
+                  rExp body, rExp onleave = 0) /* const */;
+    static
+    rExp
+    make_at_event(const location& loc,
+                  const location& flavor_loc,
+                  flavor_type flavor,
+                  bool sync,
                   EventMatch& event,
                   rExp body, rExp onleave = 0) /* const */;
 
@@ -152,7 +164,8 @@ namespace ast
     rExp
     make_event_catcher(const location& loc,
                        EventMatch& event,
-                       rExp body, rExp onleave) /* const */;
+                       rExp body, rExp onleave,
+                       bool sync = false) /* const */;
 
     /// <event> "?" <args> ~ <duration> if <guard>.
     static

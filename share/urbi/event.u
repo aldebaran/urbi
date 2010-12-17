@@ -32,7 +32,8 @@ do (Event)
     var handler |
     rhs.onEvent(closure (var evt, var payload) { true },
                 closure (var evt, var payload, var pattern) { handler = this.trigger },
-                closure (var evt, var payload, var pattern) { handler.stop }) |
+                closure (var evt, var payload, var pattern) { handler.stop },
+                true) |
 
     // To watch many at once.
     this

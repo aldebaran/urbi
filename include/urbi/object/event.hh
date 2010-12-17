@@ -64,7 +64,7 @@ namespace urbi
       /// C++ callback registration.
       Subscription onEvent(const callback_type& cb);
       /// Urbi callback registration.
-      void onEvent(rExecutable guard, rExecutable enter, rExecutable leave);
+      void onEvent(rExecutable guard, rExecutable enter, rExecutable leave = 0, bool sync = false);
 
       /// Synchronous emission.
       void syncEmit(const objects_type& args);
@@ -95,8 +95,8 @@ namespace urbi
        */
       struct Actions: public libport::RefCounted
       {
-        Actions(rExecutable g, rExecutable e, rExecutable l)
-          : guard(g), enter(e), leave(l), frozen(0)
+        Actions(rExecutable g, rExecutable e, rExecutable l, bool s)
+          : guard(g), enter(e), leave(l), frozen(0), sync(s)
         {}
 	~Actions();
 
@@ -111,6 +111,8 @@ namespace urbi
         rExecutable guard, enter, leave;
 	/// Number of frozen tag this Actions is marked with.
         unsigned int frozen;
+        /// Whether this onEvent is synchronous
+        bool sync;
         std::vector<boost::signals::connection> connections;
         runner::tag_stack_type tag_stack;
         /// Create job with this lobby when executing actions if set.

@@ -11,6 +11,8 @@
 #ifndef URBI_OBJECT_EVENT_INSTANCE_HH
 # define URBI_OBJECT_EVENT_INSTANCE_HH
 
+# include <boost/tuple/tuple.hpp>
+
 # include <urbi/object/object.hh>
 # include <urbi/object/event.hh>
 
@@ -42,7 +44,7 @@ namespace urbi
       typedef Event::listeners_type listeners_type;
 
       /// Leave callbacks to trigger on stop.
-      typedef std::pair<rExecutable, objects_type> stop_job_type;
+      typedef boost::tuple<rExecutable, objects_type, bool> stop_job_type;
       typedef std::vector<stop_job_type> stop_jobs_type;
 
       /// Listener jobs execution function.

@@ -728,13 +728,13 @@ exp:
 `---------------------*/
 
 stmt:
-  "at" "(" exp tilda.opt ")" nstmt onleave.opt
+  "at" identifiers "(" exp tilda.opt ")" nstmt onleave.opt
     {
-      $$ = MAKE(at, @$, @1, $1, $3, $6, $7, $4);
+      $$ = MAKE(at, @$, @1, $1, $2, $4, $7, $8, $5);
     }
-| "at" "(" event_match ")" nstmt onleave.opt
+| "at" identifiers "(" event_match ")" nstmt onleave.opt
     {
-      $$ = MAKE(at_event, @$, @1, $1, $3, $5, $6);
+      $$ = MAKE(at_event, @$, @1, $1, $2, $4, $6, $7);
     }
 | "every" "(" exp ")" nstmt
     {
@@ -1395,6 +1395,12 @@ args.opt:
 /*----------------------.
 | List of identifiers.  |
 `----------------------*/
+
+%type <::ast::symbols_type> identifiers;
+identifiers:
+  /* empty */ { /* empty */ }
+| identifiers "identifier" { std::swap($$, $1); $$.push_back($2); }
+;
 
 %type <::ast::Formal> formal;
 formal:

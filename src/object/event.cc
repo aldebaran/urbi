@@ -45,8 +45,8 @@ namespace urbi
                                  static_cast<emit_type>(&Event::emit));
       bind(SYMBOL(hasSubscribers), &Event::hasSubscribers);
       typedef
-      void (Event::*on_event_type)
-      (rExecutable guard, rExecutable enter, rExecutable leave);
+        void (Event::*on_event_type)
+        (rExecutable guard, rExecutable enter, rExecutable leave, bool sync);
       bind(SYMBOL(onEvent), static_cast<on_event_type>(&Event::onEvent));
       bind_variadic<void, Event>(SYMBOL(syncEmit), &Event::syncEmit);
       bind_variadic<rEventHandler, Event>(SYMBOL(syncTrigger), &Event::syncTrigger);
@@ -131,9 +131,9 @@ namespace urbi
     `-----------------*/
 
     void
-    Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave)
+    Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave, bool sync)
     {
-      rActions actions(new Actions(guard, enter, leave));
+      rActions actions(new Actions(guard, enter, leave, sync));
       runner::Runner& r = ::kernel::runner();
       actions->tag_stack = r.tag_stack_get();
       actions->lobby = r.lobby_get();
@@ -245,7 +245,9 @@ namespace urbi
         {
           args << pattern;
 
-          if (detach)
+          // FIXME: Start all the sync job in parallel, I think.
+          // FIXME: But leave the one-child case optimized!
+          if (detach && !actions->sync)
           {
             if (actions->enter)
               enter = spawn_actions_job(actions->lobby, actions->enter, args);

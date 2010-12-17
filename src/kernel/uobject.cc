@@ -1267,8 +1267,7 @@ namespace urbi
           me->slot_get(libport::Symbol(method))->as<object::Event>();
         event->onEvent(0, new object::Primitive(
                        boost::function1<rObject, const objects_type&>
-                       (boost::bind(&wrap_event, _1, owner_, traceName))),
-                       0);
+                       (boost::bind(&wrap_event, _1, owner_, traceName))));
       }
       if (owner_->type == "var" || owner_->type == "varaccess")
       { // NotifyChange or NotifyAccess callback
