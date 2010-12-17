@@ -49,29 +49,6 @@ class Global.Control
       deadline -= delta |
     deadline
   };
-
-  // persist takes an expression and a delay, and returns an object
-  // whose val slot evaluates to true if the expression has been
-  // continously true for this delay and false otherwise.
-  //
-  // This function is used to implement
-  //   at (condition ~ delay) action [onleave leaveaction]
-  // as
-  //   var u = persist (condition, delay);
-  //   at (u.val) action [onleave leaveaction]
-  //
-  // The "persist" action will be controlled by the same tags as
-  // the initial "at" block.
-  function persist
-  {
-    var res = false |
-    var tag = Tag.new("persist".fresh) |
-    var delay = call.evalArgAt (1) |
-    Control.at_ (call.evalArgAt (0),
-                 detach({tag: { sleep (delay) | res = true }}),
-                 detach({ res = false | tag.stop })) |
-    function () { res }
-  };
 };
 
 // Provide these at the Global level.
@@ -79,5 +56,4 @@ do (Global)
 {
   var detach  = Control.&detach;
   var disown  = Control.&disown;
-  var persist = Control.&persist;
 }|;

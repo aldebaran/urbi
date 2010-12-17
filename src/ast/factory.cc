@@ -1128,35 +1128,14 @@ namespace ast
   }
 
   rExp
-  Factory::make_waituntil(const location&, const rExp& cond, rExp duration)
+  Factory::make_waituntil(const location& loc, const rExp& cond, rExp duration)
   {
-    if (duration)
-    {
-      PARAMETRIC_AST
-        (desugar,
-         "{\n"
-         "  var '$waituntil' = persist(%exp:1, %exp:2) |\n"
-         "  waituntil('$waituntil'())\n"
-         "}\n"
-          );
-      return exp(desugar % cond % duration);
-    }
-    else
-    {
-      PARAMETRIC_AST(stop_ast, "'$waituntil'.stop");
-      static const rExp stop = exp(stop_ast);
-
-      PARAMETRIC_AST
-        (desugar,
-         "{"
-         "  var '$waituntil' = Tag.new |"
-         "  '$waituntil': { at (%exp:1) %exp:2 | sleep(inf) } |"
-         "}");
-      ;
-      return exp(desugar % cond % stop);
-    }
+    ast::rScope body = make_scope(loc, cond);
+    ast::rRoutine closure =
+      new ast::Routine(loc, true, new ast::local_declarations_type, body);
+    ast::EventMatch match(new ast::Event(loc, closure), 0, duration, 0);
+    return make_waituntil_event(loc, match);
   }
-
 
   rExp
   Factory::make_waituntil_event(const location& loc,
