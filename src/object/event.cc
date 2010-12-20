@@ -193,7 +193,7 @@ namespace urbi
     rEvent
     Event::source()
     {
-      rObject proto = protos_get().front();
+      rObject proto = protos_get_first();
       return from_urbi<rEvent>(proto);
     }
 

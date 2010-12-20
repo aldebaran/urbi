@@ -76,7 +76,7 @@ namespace urbi
 
 
     Object::Object()
-      : protos_(new protos_type)
+      : protos_(0)
       , slots_()
       , lookup_id_(INT_MAX)
     {
@@ -85,7 +85,7 @@ namespace urbi
     Object::~Object ()
     {
       slots_.finalize(this);
-      if (!protos_cache_)
+      if (!protos_cache_ && protos_)
         delete protos_;
     }
 
@@ -99,9 +99,20 @@ namespace urbi
       if (protos_cache_)
         return protos_cache_->as<List>();
 
-      rList protos = new List(*protos_);
+      rList protos;
+      if (protos_)
+      {
+        protos = new List(*protos_);
+        delete protos_;
+      }
+      else
+      {
+        protos = new List();
+        if (proto_)
+          protos->value_get().push_back(proto_);
+        proto_ = 0;
+      }
       protos_cache_ = protos;
-      delete protos_;
       protos_ = &protos->value_get();
       return protos;
     }
@@ -109,10 +120,21 @@ namespace urbi
     void
     Object::protos_set(const rList& l)
     {
-      if (!protos_cache_)
+      if (!protos_cache_ && protos_)
         delete protos_;
-      protos_cache_ = l;
-      protos_ = &l->value_get();
+      protos_cache_ = 0;
+      protos_ = 0;
+      proto_ = 0;
+      if (l->value_get().size() == 1)
+      {
+        proto_ = l->value_get().front();
+      }
+      else
+      {
+        protos_cache_ = l;
+        protos_ = &l->value_get();
+        proto_ = 0;
+      }
     }
 
     static int lookup_id = 0;
@@ -125,11 +147,23 @@ namespace urbi
       lookup_id_ = lookup_id;
       if (rSlot slot = local_slot_get(k))
         return location_type(const_cast<Object*>(this), slot);
-      foreach (const rObject& proto, protos_get())
+      if (proto_)
       {
-        location_type rec = proto->slot_locate_(k, fallback);
+        location_type rec = proto_->slot_locate_(k, fallback);
         if (rec.first)
           return rec;
+      }
+      else
+      {
+        if (protos_)
+        {
+          foreach (const rObject& proto, *protos_)
+          {
+            location_type rec = proto->slot_locate_(k, fallback);
+            if (rec.first)
+              return rec;
+          }
+        }
       }
       if (fallback)
         if (rSlot slot = local_slot_get(SYMBOL(fallback)))
@@ -501,7 +535,24 @@ namespace urbi
       if (!p->valid_proto(*this))
         FRAISE("cannot inherit from a %1% without being one",
                p->type_name_get());
-
+      if (!protos_)
+      {
+        if (proto_ == p)
+          return *this;
+        else if (!proto_)
+        {
+          proto_ = p;
+          return *this;
+        }
+        else
+        {
+          protos_ = new protos_type;
+          protos_->push_back(p);
+          protos_->push_back(proto_);
+          proto_ = 0;
+          return *this;
+        }
+      }
       if (!libport::has(*protos_, p))
         push_front (*protos_, p);
       return *this;

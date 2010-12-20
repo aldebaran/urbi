@@ -41,27 +41,63 @@ namespace urbi
     `---------*/
 
     inline
-    Object&
-    Object::proto_remove(const rObject& p)
+    bool
+    Object::protos_has() const
     {
-      aver(p);
-      for (protos_type::iterator i = protos_->begin();
-           i != protos_->end();
-           /* nothing */)
-        if (*i == p)
-          i = protos_->erase(i);
+      return proto_ || (protos_ && !protos_->empty());
+    }
+
+    inline
+    rObject
+    Object::protos_get_first() const
+    {
+      if (proto_)
+        return proto_;
+      else if (protos_ && !protos_->empty())
+        return protos_->front();
+      else
+        return rObject();
+    }
+
+    inline
+    Object&
+    Object::unsafe_proto_add(const rObject& v)
+    {
+      if (protos_)
+        push_front(*protos_, v);
+      else
+        if (!proto_)
+          proto_ = v;
         else
-          ++i;
+        {
+          protos_ = new protos_type;
+          protos_->push_back(v);
+          protos_->push_back(proto_);
+          proto_ = 0;
+        }
       return *this;
     }
 
     inline
-    const Object::protos_type&
-    Object::protos_get() const
+    Object&
+    Object::proto_remove(const rObject& p)
     {
-      return *protos_;
+      aver(p);
+      if (!protos_)
+      {
+        if (proto_ == p)
+          proto_ = 0;
+      }
+      else
+        for (protos_type::iterator i = protos_->begin();
+           i != protos_->end();
+           /* nothing */)
+          if (*i == p)
+            i = protos_->erase(i);
+          else
+            ++i;
+      return *this;
     }
-
 
     /*--------.
     | Slots.  |
@@ -116,8 +152,14 @@ namespace urbi
       if (f(r))
         return true;
       objects.push_back(r);
-      foreach(const rObject& p, r->protos_get())
-        if (for_all_protos(p, f, objects))
+      if (r->protos_)
+      {
+        foreach(const rObject& p, *r->protos_)
+          if (for_all_protos(p, f, objects))
+            return true;
+      }
+      else if (r->proto_)
+        if (for_all_protos(r->proto_, f, objects))
           return true;
       return false;
     }

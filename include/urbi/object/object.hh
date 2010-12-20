@@ -87,12 +87,19 @@ namespace urbi
 
       /// Add proto.
       Object& proto_add(const rObject& p);
+      /// Add proto without performing any check.
+      Object& unsafe_proto_add(const rObject& v);
       /// Remove proto.
       Object& proto_remove(const rObject& p);
-      /// Read only access to protos.
-      const protos_type& protos_get() const;
+      /// Returns true if we have at least one proto.
+      bool protos_has() const;
       /// Change the whole set of protos.
       void protos_set(const rList&);
+      /// Return the first proto
+      rObject protos_get_first() const;
+
+      // Use for_all_protos to access the list of protos in an efficient way.
+
       // Urbi access to protos.
       rList urbi_protos_get();
 
@@ -323,6 +330,9 @@ namespace urbi
 
       location_type slot_locate_(key_type k, bool fallback) const;
 
+      /// Our proto as long as we only have one, ie protos_ = 0.
+      rObject proto_;
+
       /// The protos.
       protos_type* protos_;
 
@@ -333,6 +343,9 @@ namespace urbi
       slots_implem slots_;
 
       mutable int lookup_id_;
+
+      template<class F> friend bool
+      for_all_protos(const rObject& r, F& f, objects_type& objects);
     };
 
     /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.
