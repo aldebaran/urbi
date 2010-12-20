@@ -164,27 +164,30 @@ uvar_uvalue_cast<UVar&>(UValue& v)
   {
   public:
 
-# define MKUCallBackNotifyCtr%N%(Const, IsConst)                \
-      UCallback%N%(UObject& owner,                              \
-                   UVar* target,                                \
-                   const std::string& type,                     \
-                   OBJ* obj,                                    \
-                   R (OBJ::*fun) (%%%,% P% %%) Const,           \
-                   const std::string& funname )                 \
-      : UGenericCallback(owner, target, type, funname, %N%,     \
-      fetchContext(obj,                                         \
-      typename libport::meta::If<libport::meta::Inherits<OBJ,   \
-        UContext>::res>::res())),                               \
-        obj(obj), fun##Const(fun), is_const_ (IsConst)          \
-    {                                                           \
-      nbparam = %N%;                                            \
-      registerCallback();                                       \
+# define MAKE_UCallBackNotifyCtr%N%(Const, IsConst)                     \
+      UCallback%N%(UObject& owner,                                      \
+                   UVar* target,                                        \
+                   const std::string& type,                             \
+                   OBJ* obj,                                            \
+                   R (OBJ::*fun) (%%%,% P% %%) Const,                   \
+                   const std::string& funname)                          \
+      : UGenericCallback                                                \
+      (owner, target, type, funname, %N%,                               \
+       fetchContext(obj,                                                \
+                    typename libport::meta::If<libport::meta::Inherits<OBJ, \
+                    UContext>::res>::res()))                            \
+      , obj(obj)                                                        \
+      , fun##Const(fun)                                                 \
+      , is_const_(IsConst)                                              \
+    {                                                                   \
+      nbparam = %N%;                                                    \
+      registerCallback();                                               \
     }
 
-    MKUCallBackNotifyCtr%N% (/**/, false);
-    MKUCallBackNotifyCtr%N% (const, true);
+    MAKE_UCallBackNotifyCtr%N% (/**/, false);
+    MAKE_UCallBackNotifyCtr%N% (const, true);
 
-# undef MKUCallBackNotifyCtr%N%
+# undef MAKE_UCallBackNotifyCtr%N%
 
     virtual UValue __evalcall(UList& param)
     {
@@ -212,29 +215,32 @@ uvar_uvalue_cast<UVar&>(UValue& v)
   {
   public:
 
-# define MKUCallBackNotifyEndCtr%N%(FConst, EConst, IsConst)            \
+# define MAKE_UCallBackNotifyEndCtr%N%(FConst, EConst, IsConst)         \
       UCallbacknotifyend%N%(UObject& owner, UVar* target,               \
                             const std::string& type,                    \
                             OBJ* obj,                                   \
                             void (OBJ::*fun) (%%%,% P% %%) FConst,      \
                             void (OBJ::*end)() EConst,                  \
                             const std::string& funname)                 \
-      : UGenericCallback(owner, target, type, funname,%N%,              \
-      fetchContext(obj,                                                 \
-        typename libport::meta::If<libport::meta::Inherits<OBJ,         \
-          UContext>::res>::res())),                                     \
-        obj(obj), fun(end), is_const_(IsConst)                          \
+      : UGenericCallback                                                \
+      (owner, target, type, funname, %N%,                               \
+       fetchContext(obj,                                                \
+                    typename libport::meta::If<libport::meta::Inherits<OBJ, \
+                    UContext>::res>::res()))                            \
+      , obj(obj)                                                        \
+      , fun(end)                                                        \
+      , is_const_(IsConst)                                              \
     {                                                                   \
       nbparam = %N%;                                                    \
       registerCallback();                                               \
     }
 
-    MKUCallBackNotifyEndCtr%N% (/**/, /**/, false);
-    MKUCallBackNotifyEndCtr%N% (/**/, const, true);
-    MKUCallBackNotifyEndCtr%N% (const ,/**/, false);
-    MKUCallBackNotifyEndCtr%N% (const, const, true);
+    MAKE_UCallBackNotifyEndCtr%N% (/**/, /**/, false);
+    MAKE_UCallBackNotifyEndCtr%N% (/**/, const, true);
+    MAKE_UCallBackNotifyEndCtr%N% (const ,/**/, false);
+    MAKE_UCallBackNotifyEndCtr%N% (const, const, true);
 
-# undef MKUCallBackNotifyEndCtr%N%
+# undef MAKE_UCallBackNotifyEndCtr%N%
 
     virtual UValue __evalcall(UList&)
     {
@@ -298,9 +304,9 @@ uvar_uvalue_cast<UVar&>(UValue& v)
   // callback creation for non void return type
 
   // Second argument is useless, it exist only for visual c++ compiler
-  // which warn at compilation for a call of MKUCreateCallBack()
+  // which warn at compilation for a call of MAKE_UCreateCallBack()
   // Use a by-ref dynamic_cast to throw an exception in case of failure.
-# define MKUCreateCallBack%N%(Const, Useless)                           \
+# define MAKE_UCreateCallBack%N%(Const, Useless)                        \
   template <class OBJ, class EOBJ, class R%%, class P% %%>		\
   UGenericCallback*							\
   createUCallback(UObject& owner, UVar* target,                         \
@@ -313,13 +319,13 @@ uvar_uvalue_cast<UVar&>(UValue& v)
        &dynamic_cast<OBJ&>(*obj), fun, funname);			\
   }
 
-  MKUCreateCallBack%N% (/**/, /**/);
-  MKUCreateCallBack%N% (const, /**/);
+  MAKE_UCreateCallBack%N% (/**/, /**/);
+  MAKE_UCreateCallBack%N% (const, /**/);
 
-# undef MKUCreateCallBack%N%
+# undef MAKE_UCreateCallBack%N%
 
   // Special case for eventend notification
-# define MKCreateUCallBackEnd%N%(FConst, EConst)                        \
+# define MAKE_CreateUCallBackEnd%N%(FConst, EConst)                     \
 template <class OBJ, class EOBJ%%, class P% %%>                         \
   UGenericCallback*                                                     \
   createUCallback(UObject& owner, UVar* target,                         \
@@ -329,16 +335,16 @@ template <class OBJ, class EOBJ%%, class P% %%>                         \
                   void (OBJ::*end)() EConst,                            \
                   const std::string& funname)                           \
   {                                                                     \
-    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (owner, target,      \
-        type, &dynamic_cast<OBJ&>(*obj), fun, end,funname);             \
+    return new UCallbacknotifyend%N%<OBJ%%, P% %%>                      \
+      (owner, target, type, &dynamic_cast<OBJ&>(*obj), fun, end, funname); \
   }
 
-  MKCreateUCallBackEnd%N% (/**/, /**/);
-  MKCreateUCallBackEnd%N% (/**/, const);
-  MKCreateUCallBackEnd%N% (const, /**/);
-  MKCreateUCallBackEnd%N% (const, const);
+  MAKE_CreateUCallBackEnd%N% (/**/, /**/);
+  MAKE_CreateUCallBackEnd%N% (/**/, const);
+  MAKE_CreateUCallBackEnd%N% (const, /**/);
+  MAKE_CreateUCallBackEnd%N% (const, const);
 
-# undef MKCreateUCallBackEnd%N%
+# undef MAKE_CreateUCallBackEnd%N%
 
   %%%%
 
