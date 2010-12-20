@@ -14,6 +14,8 @@
 
 #include <kernel/server-timer.hh>
 
+#include <urbi/object/object.hh>
+
 namespace binder
 {
   template <typename T>

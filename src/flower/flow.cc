@@ -11,6 +11,7 @@
 #include <flower/flow.hh>
 #include <flower/flower.hh>
 #include <kernel/server-timer.hh>
+#include <urbi/object/object.hh>
 
 namespace flower
 {

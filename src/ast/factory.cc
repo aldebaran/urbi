@@ -16,12 +16,14 @@
 #include <ast/new-clone.hh>
 #include <ast/parametric-ast.hh>
 #include <object/symbols.hh>
+#include <urbi/object/object.hh>
 #include <ast/factory.hh>
 #include <ast/event-match.hh>
 #include <parser/parser-impl.hh>
 #include <parser/parse.hh>
 #include <rewrite/pattern-binder.hh>
 #include <rewrite/rewrite.hh>
+
 
 namespace std
 {
@@ -289,7 +291,7 @@ namespace ast
     case flavor_pipe:
     {
       rPipe pipe;
-      if (pipe = lhs.unsafe_cast<Pipe>())
+      if ((pipe = lhs.unsafe_cast<Pipe>()))
         pipe->children_get() << rhs;
       else
       {
@@ -302,7 +304,7 @@ namespace ast
     case flavor_and:
     {
       rAnd rand;
-      if (rand = lhs.unsafe_cast<And>())
+      if ((rand = lhs.unsafe_cast<And>()))
         rand->children_get() << rhs;
       else
       {

@@ -11,6 +11,7 @@
 #include <ast/analyzer.hh>
 #include <ast/nary.hh>
 #include <ast/factory.hh>
+#include <urbi/object/object.hh>
 
 namespace ast
 {
