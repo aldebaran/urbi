@@ -441,30 +441,30 @@ namespace urbi
   {
     /// Accessor for the UImage
     UImage uimageValue ()
-      {
-	return self->image;
-      }
+    {
+      return self->image;
+    }
 
     /// Accessor for the USound
     USound usoundValue ()
-      {
-	return self->sound;
-      }
+    {
+      return self->sound;
+    }
 
     size_t getSize ()
-      {
-	return self->common.size;
-      }
+    {
+      return self->common.size;
+    }
 
     std::string getExtraHeader ()
-      {
-	return self->message;
-      }
+    {
+      return self->message;
+    }
 
     void setExtraHeader (const std::string& msg)
-      {
-	self->message = msg;
-      }
+    {
+      self->message = msg;
+    }
 
     // make swig generate getData and setData
     unsigned char* data;
@@ -644,30 +644,36 @@ namespace urbi
 
   %extend UValue
   {
-    double		doubleValue () { return self->val; }
+    double doubleValue ()
+    {
+      return self->val;
+    }
 
-    void		setValue (std::string s)
+    void setValue (std::string s)
     {
       self->stringValue = new std::string (s);
     }
 
-    void		setValue (double d) { self->val = d; }
+    void setValue (double d)
+    {
+      self->val = d;
+    }
 
-    void		setValue (UBinary& b)
+    void setValue (UBinary& b)
     {
       self->binary = new urbi::UBinary (b);
     }
 
-    void		setValue (UList& l)
+    void setValue (UList& l)
     {
       self->list = new urbi::UList (l);
     }
 
-    std::string		toString ()
+    std::string toString ()
     {
       std::ostringstream os;
       self->print(os);
-      return os.str ();
+      return os.str();
     }
   }
 
@@ -1005,19 +1011,19 @@ namespace urbi
   %extend UVar
   {
     const UValue& getUValue ()
-      {
-    	return self->val ();
-      }
+    {
+      return self->val ();
+    }
 
     std::string getName ()
-      {
-	return self->get_name ();
-      }
+    {
+      return self->get_name ();
+    }
 
     void setName (std::string name)
-      {
-	self->set_name (name);
-      }
+    {
+      self->set_name (name);
+    }
 
   }
 };
@@ -1051,15 +1057,15 @@ namespace urbi
   {
     /// 'load' attibutte setter
     void setLoad (UValue val)
-      {
-	self->load = val;
-      }
+    {
+      self->load = val;
+    }
 
     /// 'load' attibutter getter
     const UVar& getLoad ()
-      {
-	return self->load;
-      }
+    {
+      return self->load;
+    }
 
     void setCloner (urbi::baseURBIStarter *cloner)
     {

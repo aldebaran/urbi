@@ -173,53 +173,59 @@ public class All extends UObject
 	super.finalize();
     }
 
-//
-//    void onRateChange(urbi::UVar&)
-//    {
-//	USetUpdate((ufloat)periodicWriteRate * 1000.0);
-//    }
-//    virtual int update()
-//    {
-//	int target = periodicWriteTarget;
-//	int type = periodicWriteType;
-//	switch(type)
-//	{
-//	    case urbi::DATA_STRING:
-//		*vars[target] = string_cast(libport::utime());
-//		break;
-//	    case urbi::DATA_BINARY:
-//		selfWriteB(target,  string_cast(libport::utime()));
-//		break;
-//	    case urbi::DATA_DOUBLE:
-//	    default:
-//		*vars[target] = libport::utime();
-//		break;
-//	}
-//	return 0;
-//    }
+    //
+    //    void onRateChange(urbi::UVar&)
+    //    {
+    //	USetUpdate((ufloat)periodicWriteRate * 1000.0);
+    //    }
+    //    virtual int update()
+    //    {
+    //	int target = periodicWriteTarget;
+    //	int type = periodicWriteType;
+    //	switch(type)
+    //	{
+    //	    case urbi::DATA_STRING:
+    //		*vars[target] = string_cast(libport::utime());
+    //		break;
+    //	    case urbi::DATA_BINARY:
+    //		selfWriteB(target,  string_cast(libport::utime()));
+    //		break;
+    //	    case urbi::DATA_DOUBLE:
+    //	    default:
+    //		*vars[target] = libport::utime();
+    //		break;
+    //	}
+    //	return 0;
+    //    }
+
     public int setBypassNotifyChangeBinary(String name)
     {
 	UNotifyChange(name, "onBinaryBypass");
 	return 0;
     }
+
     public int setBypassNotifyChangeImage(String name)
     {
 	UNotifyChange(name, "onImageBypass");
 	return 0;
     }
+
     public int markBypass(int id, boolean state)
     {
 	return vars[id].setBypass(state) ? 1 : 0;
     }
-//    int markRTP(int id, bool state)
-//    {
-//	vars[id]->useRTP(state);
-//	return 0;
-//    }
-//    void unnotify(int id)
-//    {
-//	vars[id]->unnotify();
-//    }
+
+    //    int markRTP(int id, bool state)
+    //    {
+    //	vars[id]->useRTP(state);
+    //	return 0;
+    //    }
+
+    //    void unnotify(int id)
+    //    {
+    //	vars[id]->unnotify();
+    //    }
+
     public int onBinaryBypass(UVar var)
     {
 	final UBinary cb = var.ubinaryValue();
@@ -251,6 +257,7 @@ public class All extends UObject
 	// FIXME: free b.data array ?
 	return res;
     }
+
     public String selfWriteI(int idx, String content)
     {
 	UImage i = new UImage();
@@ -262,8 +269,8 @@ public class All extends UObject
 	String res = new String(i.getData());
 	// FIXME: free i.data array ?
 	return res;
+    }
 
-   }
     public int writeOwnByName(String name, int val)
     {
 	UVar v = new UVar(get__name() + "." + name);
@@ -276,16 +283,18 @@ public class All extends UObject
 	send(String.format("%s.%s = %d;", get__name(), name, val));
 	return 0;
     }
-//    void selfWriteVD(int i, std::vector<double> v)
-//    {
-//	*vars[i] = v;
-//    }
+
+    //    void selfWriteVD(int i, std::vector<double> v)
+    //    {
+    //	*vars[i] = v;
+    //    }
+
     public String typeOf(String name)
     {
 	UVar v = new UVar(name);
 	v.syncValue();
 	return v.getUValue().format_string();
-   }
+    }
 
     public int init(int fail)
     {
@@ -294,14 +303,14 @@ public class All extends UObject
 	    throw new RuntimeException("KABOOOM");
 	return fail;
     }
-//
-//    int setOwned(int id)
-//    {
-//	threadCheck();
-//	UOwned(*vars[id]);
-//	return 0;
-//    }
-//
+
+    //    int setOwned(int id)
+    //    {
+    //	threadCheck();
+    //	UOwned(*vars[id]);
+    //	return 0;
+    //    }
+
     public int setNotifyChange(int id)
     {
 	UNotifyChange(vars[id], "onChange");
@@ -314,42 +323,44 @@ public class All extends UObject
 	return 0;
     }
 
-//    int setNotifyAccess(int id)
-//    {
-//	threadCheck();
-//	UNotifyAccess(*vars[id], &all::onAccess);
-//	return 0;
-//    }
-//
+    //    int setNotifyAccess(int id)
+    //    {
+    //	threadCheck();
+    //	UNotifyAccess(*vars[id], &all::onAccess);
+    //	return 0;
+    //    }
+
     public int setNotifyChangeByName(String name)
     {
 	UNotifyChange(name, "onChange");
 	return 0;
     }
 
-//
-//    int read(int id)
-//    {
-//	threadCheck();
-//	int v = *vars[id];
-//	return v;
-//    }
-//    int write(int id, int val)
-//    {
-//	threadCheck();
-//	*vars[id] = val;
-//	return val;
-//    }
+    //    int read(int id)
+    //    {
+    //	threadCheck();
+    //	int v = *vars[id];
+    //	return v;
+    //    }
+    //    int write(int id, int val)
+    //    {
+    //	threadCheck();
+    //	*vars[id] = val;
+    //	return val;
+    //    }
+
     public void invalidWrite()
     {
 	UVar v = new UVar();
 	v.setValue(12);
     }
+
     public void invalidRead()
     {
 	UVar v = new UVar();
 	int i = v.intValue();
     }
+
     public int readByName(String name)
     {
 	UVar v = new UVar(name);
@@ -375,34 +386,34 @@ public class All extends UObject
 	lastChange.setValue(v.getName());
 	changeCount.setValue(++count);
 	if (v.type() == UDataType.DATA_DOUBLE)
-	{
-	    int val = v.intValue();
-	    lastChangeVal.setValue(val);
-	}
+	    {
+		int val = v.intValue();
+		lastChangeVal.setValue(val);
+	    }
 	if (removeNotify.stringValue().equals(v.getName()))
-	{
-	    v.unnotify();
-	    removeNotify.setValue("");
-	}
+	    {
+		v.unnotify();
+		removeNotify.setValue("");
+	    }
 	return 0;
-   }
+    }
 
-//    int onAccess(urbi::UVar& v)
-//    {
-//	threadCheck();
-//	static int val = 0;
-//	lastAccess = v.get_name();
-//	val++;
-//	v = val;
-//	lastAccessVal = val;
-//	if ((std::string)removeNotify == v.get_name())
-//	{
-//	    v.unnotify();
-//	    removeNotify = "";
-//	}
-//	return 0;
-//    }
-//
+    //    int onAccess(urbi::UVar& v)
+    //    {
+    //	threadCheck();
+    //	static int val = 0;
+    //	lastAccess = v.get_name();
+    //	val++;
+    //	v = val;
+    //	lastAccessVal = val;
+    //	if ((std::string)removeNotify == v.get_name())
+    //	{
+    //	    v.unnotify();
+    //	    removeNotify = "";
+    //	}
+    //	return 0;
+    //    }
+
     public void sendEvent()
     {
 	ev.emit();
@@ -417,7 +428,6 @@ public class All extends UObject
     // {
     //	ev.emit(0, "foo", 5.1, 4, 5, 6, 7, 8);
     // }
-
 
     public void sendNamedEvent(String name)
     {
@@ -461,7 +471,7 @@ public class All extends UObject
 	UVar v = new UVar (name);
 	v.setValue(val);
 	return 0;
-   }
+    }
 
     public int writeS(String name, String val)
     {
@@ -480,7 +490,7 @@ public class All extends UObject
 	l.push_back(42);
 	v.setValue(l);
 	return 0;
-   }
+    }
 
     public int writeM(String name, String val)
     {
@@ -501,7 +511,7 @@ public class All extends UObject
 	val.setData(content.getBytes());
 	v.setValue(val);
 	return 0;
-   }
+    }
 
     public int writeBNone(String name, String content)
     {
@@ -523,7 +533,7 @@ public class All extends UObject
 	v.setValue(i);
 	i.deleteData();	// WARNING: this function is used only when data was allocated JAVA side
 	return 0;
-   }
+    }
 
     public int writeSnd(String name, String content)
     {
@@ -538,26 +548,24 @@ public class All extends UObject
 	v.setValue(s);
 	s.deleteData();
 	return 0;
-   }
+    }
 
+    //    int writeRI(const std::string &name, const std::string &content)
+    //    {
+    //	urbi::UVar v(name);
+    //	urbi::UImage i = v;
+    //	memcpy(i.data, content.c_str(), content.length());
+    //	return 0;
+    //    }
+    //
+    //    int writeRSnd(const std::string &name, const std::string &content)
+    //    {
+    //	urbi::UVar v(name);
+    //	urbi::USound i = v;
+    //	memcpy(i.data, content.c_str(), content.length());
+    //	return 0;
+    //    }
 
-//    int writeRI(const std::string &name, const std::string &content)
-//    {
-//	urbi::UVar v(name);
-//	urbi::UImage i = v;
-//	memcpy(i.data, content.c_str(), content.length());
-//	return 0;
-//    }
-//
-//    int writeRSnd(const std::string &name, const std::string &content)
-//    {
-//	urbi::UVar v(name);
-//	urbi::USound i = v;
-//	memcpy(i.data, content.c_str(), content.length());
-//	return 0;
-//    }
-//
-//
     /** Test function parameter and return value **/
     public double transmitD(double v)
     {
@@ -596,33 +604,33 @@ public class All extends UObject
 	return res;
     }
 
-//    urbi::UImage transmitI(urbi::UImage im)
-//    {
-//	for (unsigned int i=0; i<im.size; i++)
-//	    im.data[i] -= 1;
-//	return im;
-//    }
-//
-//    urbi::USound transmitSnd(urbi::USound im)
-//    {
-//	for (unsigned int i=0; i<im.size; i++)
-//	    im.data[i] -= 1;
-//	return im;
-//    }
-//
-    /*
-    urbi::UObject* transmitO(UObject* o)
-    {
-	return o;
-    }
-    */
+    //    urbi::UImage transmitI(urbi::UImage im)
+    //    {
+    //	for (unsigned int i=0; i<im.size; i++)
+    //	    im.data[i] -= 1;
+    //	return im;
+    //    }
 
+    //    urbi::USound transmitSnd(urbi::USound im)
+    //    {
+    //	for (unsigned int i=0; i<im.size; i++)
+    //	    im.data[i] -= 1;
+    //	return im;
+    //    }
+
+    /*
+      urbi::UObject* transmitO(UObject* o)
+      {
+      return o;
+      }
+    */
 
     public int sendString(String s)
     {
 	send(s);
 	return 0;
     }
+
     public int sendBuf(String b, int l)
     {
 	send(b.getBytes(), l);
@@ -635,39 +643,39 @@ public class All extends UObject
     //	return 0;
     // }
 
-//    void loop_yield(long duration)
-//    {
-//	libport::utime_t end = libport::utime() + duration;
-//	while (libport::utime() < end)
-//	{
-//	    yield();
-//	    usleep(1000);
-//	}
-//    }
+    //    void loop_yield(long duration)
+    //    {
+    //	libport::utime_t end = libport::utime() + duration;
+    //	while (libport::utime() < end)
+    //	{
+    //	    yield();
+    //	    usleep(1000);
+    //	}
+    //    }
 
     public int getDestructionCount()
     {
 	return destructionCount;
     }
-//
-//    std::string uobjectName(UObject* n)
-//    {
-//	threadCheck();
-//	if (!n)
-//	    return std::string();
-//	else
-//	    return n->__name;
-//    }
-//
-//    std::string allUObjectName(all* n)
-//    {
-//	return uobjectName(n);
-//    }
-//
+
+    //    std::string uobjectName(UObject* n)
+    //    {
+    //	threadCheck();
+    //	if (!n)
+    //	    return std::string();
+    //	else
+    //	    return n->__name;
+    //    }
+
+    //    std::string allUObjectName(all* n)
+    //    {
+    //	return uobjectName(n);
+    //    }
+
     public void notifyWriteA(String target, int func)
     {
 	switch(func)
-	{
+	    {
 	    case 0:
 		UNotifyChange(target, "writeAD");
 		break;
@@ -679,7 +687,7 @@ public class All extends UObject
 		break;
 	    case 3:
 		UNotifyChange(target, "writeAV");
-	}
+	    }
     }
 
     public void writeAD(double d) { a.setValue(d); }
@@ -691,7 +699,7 @@ public class All extends UObject
 			 UList args)
     {
 	switch((int) args.size())
-	{
+	    {
 	    case 0:
 		call(obj, func);
 		break;
@@ -709,7 +717,7 @@ public class All extends UObject
 		break;
 	    default:
 		throw new RuntimeException("Not implemented");
-	}
+	    }
     }
 
     public void throwException(boolean stdexcept)
@@ -720,16 +728,16 @@ public class All extends UObject
 	    throw new Error("KABOOM");
     }
 
-//    std::vector<unsigned long> socketStats()
-//    {
-//	std::vector<unsigned long> res;
-//	urbi::UClient* cl = urbi::getDefaultClient();
-//	if (!cl)
-//	    return res;
-//	res.push_back(cl->bytesSent());
-//	res.push_back(cl->bytesReceived());
-//	return res;
-//    }
+    //    std::vector<unsigned long> socketStats()
+    //    {
+    //	std::vector<unsigned long> res;
+    //	urbi::UClient* cl = urbi::getDefaultClient();
+    //	if (!cl)
+    //	    return res;
+    //	res.push_back(cl->bytesSent());
+    //	res.push_back(cl->bytesReceived());
+    //	return res;
+    //    }
 
 
     public UVar a = new UVar(), b = new UVar(), c = new UVar(), d = new UVar();
