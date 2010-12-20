@@ -506,9 +506,9 @@ namespace kernel
         // shell.
         scheduler_->add_job(sched::rJob(interpreter));
       }
-      //FIXME: work around a scheduler bug when adding a job from outside work.
-      // It is supposed to work, but turns on the new job is only scheduled
-      // after we force an extra work() run.
+      // FIXME: work around a scheduler bug when adding a job from
+      // outside work.  It is supposed to work, but turns on the new
+      // job is only scheduled after we force an extra work() run.
       if (!async_jobs_.empty())
         wake_up();
       async_jobs_.clear();
@@ -522,31 +522,14 @@ namespace kernel
   UServer::schedule(object::rObject o, libport::Symbol method,
                     const object::objects_type& args)
   {
-    libport::BlockLock lock(async_jobs_lock_);
-    async_jobs_.push_back(AsyncJob(o, method, args));
-    wake_up();
+    schedule(AsyncJob(o, method, args));
   }
 
   void
   UServer::schedule(libport::Symbol method, boost::function0<void> callback)
   {
-    libport::BlockLock lock(async_jobs_lock_);
-    async_jobs_.push_back(AsyncJob(callback, method));
-    wake_up();
+    schedule(AsyncJob(callback, method));
   }
-
-  UServer::AsyncJob::AsyncJob(object::rObject t, libport::Symbol m,
-                              const object::objects_type& a)
-    : target(t)
-    , method(m)
-    , args(a)
-  {}
-
-  UServer::AsyncJob::AsyncJob(boost::function0<void> c,
-                              libport::Symbol m)
-    : method(m)
-    , callback(c)
-  {}
 
   void
   UServer::work_handle_stopall_()

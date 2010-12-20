@@ -19,9 +19,37 @@
 namespace kernel
 {
 
+  /*--------------------.
+  | UServer::AsyncJob.  |
+  `--------------------*/
+
+  inline
+  UServer::AsyncJob::AsyncJob(object::rObject t, libport::Symbol m,
+                              const object::objects_type& a)
+    : target(t)
+    , method(m)
+    , args(a)
+  {}
+
+  inline
+  UServer::AsyncJob::AsyncJob(boost::function0<void> c,
+                              libport::Symbol m)
+    : method(m)
+    , callback(c)
+  {}
+
   /*----------.
   | UServer.  |
   `----------*/
+
+  inline
+  void
+  UServer::schedule(const AsyncJob& j)
+  {
+    libport::BlockLock lock(async_jobs_lock_);
+    async_jobs_ << j;
+    wake_up();
+  }
 
   inline
   libport::utime_t
