@@ -209,53 +209,6 @@ uvar_uvalue_cast<UVar&>(UValue& v)
     bool is_const_;
   };
 
-  // void return type : special case for notifyend event callbacks
-  template <class OBJ%%, class P% %%>
-  class UCallbacknotifyend%N% : public UGenericCallback
-  {
-  public:
-
-# define INSTANTIATE(FConst, EConst, IsConst)                           \
-      UCallbacknotifyend%N%(UObject& owner, UVar* target,               \
-                            const std::string& type,                    \
-                            OBJ* obj,                                   \
-                            void (OBJ::*fun) (%%%,% P% %%) FConst,      \
-                            void (OBJ::*end)() EConst,                  \
-                            const std::string& funname)                 \
-      : UGenericCallback                                                \
-      (owner, target, type, funname, %N%,                               \
-       fetchContext(obj,                                                \
-                    typename libport::meta::If<libport::meta::Inherits<OBJ, \
-                    UContext>::res>::res()))                            \
-      , obj(obj)                                                        \
-      , fun(end)                                                        \
-      , is_const_(IsConst)                                              \
-    {                                                                   \
-      nbparam = %N%;                                                    \
-      registerCallback();                                               \
-    }
-
-    INSTANTIATE(     ,      , false);
-    INSTANTIATE(     , const, true);
-    INSTANTIATE(const,      , false);
-    INSTANTIATE(const, const, true);
-
-# undef INSTANTIATE
-
-    virtual UValue __evalcall(UList&)
-    {
-      impl::UContextImpl::CleanupStack s_(*ctx_);
-      UValue res;
-      res(), (is_const_) ? ((*obj).*func)() : ((*obj).*fun)();
-      return res;
-    }
-
-  private:
-    OBJ* obj;
-    void (OBJ::*fun) ();
-    void (OBJ::*func) ();
-    bool is_const_;
-  };
 
   // non void non-member function
   template <class R%%, class P% %%>
@@ -320,28 +273,6 @@ uvar_uvalue_cast<UVar&>(UValue& v)
 
   INSTANTIATE();
   INSTANTIATE(const);
-
-# undef INSTANTIATE
-
-  // Special case for eventend notification
-# define INSTANTIATE(FConst, EConst)                                    \
-template <class OBJ, class EOBJ%%, class P% %%>                         \
-  UGenericCallback*                                                     \
-  createUCallback(UObject& owner, UVar* target,                         \
-                  const std::string& type,                              \
-                  EOBJ* obj,                                            \
-                  void (OBJ::*fun) (%%%,% P% %%) FConst,                \
-                  void (OBJ::*end)() EConst,                            \
-                  const std::string& funname)                           \
-  {                                                                     \
-    return new UCallbacknotifyend%N%<OBJ%%, P% %%>                      \
-      (owner, target, type, &dynamic_cast<OBJ&>(*obj), end, funname);   \
-  }
-
-  INSTANTIATE(     ,      );
-  INSTANTIATE(     , const);
-  INSTANTIATE(const,      );
-  INSTANTIATE(const, const);
 
 # undef INSTANTIATE
 
