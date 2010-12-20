@@ -85,5 +85,6 @@ $(srcdir)/$(ucallbacks_hh): $(ucallbacks_hh).template include/template_autogen.p
 	  $(srcdir)/$(ucallbacks_hh).template >$@.tmp
 # Avoid accidental edition.
 	$(AM_V_at)chmod a-w $@.tmp
-	$(AM_V_at)mv $@.tmp $@
+	$(AM_V_at)$(top_srcdir)/build-aux/bin/move-if-change --color $@.tmp $@
+	$(AM_V_at)touch $@
 
