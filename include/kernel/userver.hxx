@@ -23,43 +23,50 @@ namespace kernel
   | UServer.  |
   `----------*/
 
-  inline libport::utime_t
+  inline
+  libport::utime_t
   UServer::lastTime()
   {
     return lastTime_;
   }
 
-  inline const sched::Scheduler&
+  inline
+  const sched::Scheduler&
   UServer::scheduler_get () const
   {
     return *scheduler_;
   }
 
-  inline sched::Scheduler&
+  inline
+  sched::Scheduler&
   UServer::scheduler_get ()
   {
     return *scheduler_;
   }
 
-  inline libport::Synchronizer&
+  inline
+  libport::Synchronizer&
   UServer::synchronizer_get()
   {
     return synchronizer_;
   }
 
-  inline UrbiRoot&
+  inline
+  UrbiRoot&
   UServer::urbi_root_get()
   {
     return urbi_root_;
   }
 
-  inline bool
+  inline
+  bool
   UServer::interactive_get() const
   {
     return interactive_;
   }
 
-  inline void
+  inline
+  void
   UServer::interactive_set(bool i)
   {
     interactive_ = i;

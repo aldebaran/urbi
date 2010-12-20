@@ -472,15 +472,15 @@ namespace kernel
         if (job.target)
         {
           object::rPrimitive p = new object::Primitive
-          (boost::bind(method_wrap, job.target, job.method, job.args, _1));
+            (boost::bind(method_wrap, job.target, job.method, job.args, _1));
           interpreter =  new runner::Interpreter
             (*ghost_connection_get().shell_get(), p, job.method, job.args);
         }
         else if (job.callback)
         {
           interpreter = new runner::Interpreter
-          (ghost_connection_get().lobby_get(), *scheduler_, job.callback,
-           ghost_connection_get().lobby_get(), job.method);
+            (ghost_connection_get().lobby_get(), *scheduler_, job.callback,
+             ghost_connection_get().lobby_get(), job.method);
         }
         else
           pabort("Uninitialized AsyncJob in async_jobs");
@@ -529,11 +529,11 @@ namespace kernel
     , args(a)
   {}
 
-   UServer::AsyncJob::AsyncJob(boost::function0<void> c,
-                               libport::Symbol m)
-   : method(m)
-   , callback(c)
-   {}
+  UServer::AsyncJob::AsyncJob(boost::function0<void> c,
+                              libport::Symbol m)
+    : method(m)
+    , callback(c)
+  {}
 
   void
   UServer::work_handle_stopall_()

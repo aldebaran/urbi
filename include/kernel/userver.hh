@@ -220,7 +220,8 @@ namespace kernel
 
   public:
     void schedule(urbi::object::rObject target, libport::Symbol method,
-                  const urbi::object::objects_type& args = urbi::object::objects_type());
+                  const urbi::object::objects_type& args =
+                    urbi::object::objects_type());
     void schedule(libport::Symbol method, boost::function0<void> callback);
 
   private:
@@ -239,14 +240,13 @@ namespace kernel
     libport::Lockable async_jobs_lock_;
 
   protected:
-    //! Overload this function to specify how your robot is displaying messages.
-    virtual void effectiveDisplay(const char*) = 0;
+    /// Overload this function to specify how your robot is displaying messages.
+    virtual void effectiveDisplay(const char* s) = 0;
 
     libport::Synchronizer synchronizer_;
   private:
     // Pointer to stop the header dependency.
     sched::Scheduler* scheduler_;
-
 
   private:
     /// \{ Various parts of @c UServer::work.
