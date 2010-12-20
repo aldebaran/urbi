@@ -52,9 +52,11 @@ namespace urbi
       bool inAccess_;
       URBI_CXX_OBJECT(UVar);
       int waiterCount_;
+      std::string initialName;
+      bool owned;
     };
     /// Call some notifies on an UVar.
-    void callNotify(runner::Runner& r, rObject self,
+    void callNotify(runner::Runner& r, rUVar self,
                libport::Symbol notifyList, rObject sourceUVar);
   }
 }

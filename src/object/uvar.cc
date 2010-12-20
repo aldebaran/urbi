@@ -13,6 +13,8 @@
  ** \brief Creation of the Urbi object UVar.
  */
 
+# include <libport/debug.hh>
+
 # include <kernel/uconnection.hh>
 # include <kernel/uobject.hh>
 # include <kernel/userver.hh>
@@ -33,12 +35,13 @@
 # include <runner/interpreter.hh>
 
 
+GD_CATEGORY(UVar);
 namespace urbi
 {
   namespace object
   {
     static inline void
-    show_exception_message(runner::Runner& r, rObject self,
+    show_exception_message(runner::Runner& r, rUVar self,
                            const char* m1, const char* m2 = "")
     {
       std::string msg =
@@ -46,8 +49,7 @@ namespace urbi
                         m1,
                         (self->slot_get(SYMBOL(ownerName))
                          ->as<String>()->value_get()),
-                        (self->slot_get(SYMBOL(initialName))
-                         ->as<String>()->value_get()),
+                        self->initialName,
                         m2);
 
       r.lobby_get()->call(SYMBOL(send),
@@ -56,7 +58,7 @@ namespace urbi
     }
 
     inline void
-    callNotify(runner::Runner& r, rObject self,
+    callNotify(runner::Runner& r, rUVar self,
                libport::Symbol notifyList, rObject sourceUVar = 0)
     {
       rList l =
@@ -149,6 +151,7 @@ namespace urbi
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
+      , owned(false)
     {
       protos_set(new List);
       proto_add(proto ? rPrimitive(proto) : Primitive::proto);
@@ -160,6 +163,7 @@ namespace urbi
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
+      , owned(false)
     {
       protos_set(new List);
       proto_add(proto ? rPrimitive(proto) : Primitive::proto);
@@ -196,7 +200,8 @@ namespace urbi
       DECLARE(accessor,      accessor);
       DECLARE(update_,       update_);
       DECLARE(update_timed_, update_timed_);
-
+      DECLARE(owned,         owned);
+      DECLARE(initialName,   initialName);
 #undef DECLARE
 
       setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
@@ -211,7 +216,7 @@ namespace urbi
       runner::Runner& r = ::kernel::runner();
       while (true)
       {
-        callNotify(r, rObject(this), SYMBOL(accessInLoop));
+        callNotify(r, rUVar(this), SYMBOL(accessInLoop));
         rObject period = System->call(SYMBOL(period));
         r.yield_for(libport::utime_t(period->as<Float>()->value_get()
                                      * 1000000.0));
@@ -266,7 +271,7 @@ namespace urbi
          *                              may be used uninitialized in this function.
          */
         rUValue val;
-        val = slot_get(slot_get(SYMBOL(owned))->as_bool()
+        val = slot_get(owned
                        ? SYMBOL(valsensor)
                        : SYMBOL(val))->as<UValue>();
         if (val)
@@ -295,7 +300,7 @@ namespace urbi
     rObject
     UVar::update_timed_(rObject val, libport::utime_t timestamp)
     {
-      getSlot(SYMBOL(owner))->setProperty(from_urbi<std::string>(getSlot(SYMBOL(initialName))),
+      getSlot(SYMBOL(owner))->setProperty(initialName,
                                           SYMBOL(timestamp), to_urbi(double(timestamp) / 1000000));
       // Do not bother with UValue for numeric types.
       if (rUValue uval = val->as<UValue>())
@@ -307,21 +312,21 @@ namespace urbi
         val = val->call(SYMBOL(uvalueDeserialize));
       runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(val), val);
-      if (slot_get(SYMBOL(owned))->as_bool())
-        callNotify(r, rObject(this), SYMBOL(changeOwned));
+      if (owned)
+        callNotify(r, rUVar(this), SYMBOL(changeOwned));
       else
       {
         checkBypassCopy();
         std::set<void*>::iterator i = inChange_.find(&r);
+        GD_FINFO_DUMP("update calling notify if %s", i == inChange_.end());
         if (i == inChange_.end())
         {
-          // callNotify does not throw, this is safe.
           i = inChange_.insert(&r).first;
-          callNotify(r, rObject(this), SYMBOL(change));
+          FINALLY(((std::set<void*>&, inChange_)) ((std::set<void*>::iterator&, i)), inChange_.erase(i));
+          callNotify(r, rUVar(this), SYMBOL(change));
           callConnections(r, rObject(this), SYMBOL(changeConnections));
-          inChange_.erase(i);
         }
-        slot_get(SYMBOL(changed))->as<Event>()->emit(); // call("emit");
+        changed();
       }
       return val;
     }
@@ -342,10 +347,10 @@ namespace urbi
       if (!inAccess_)
       {
         inAccess_ = true;
-        callNotify(r, rObject(this), SYMBOL(access));
+        callNotify(r, rUVar(this), SYMBOL(access));
         inAccess_ = false;
       }
-      rObject res = slot_get(slot_get(SYMBOL(owned))->as_bool()
+      rObject res = slot_get(owned
                              ? SYMBOL(valsensor)
                              : SYMBOL(val));
       if (!fromCXX)
@@ -368,7 +373,7 @@ namespace urbi
                                               new Float(0.5));
             --waiterCount_;
             // The val slot likely changed, fetch it again.
-            res = slot_get(slot_get(SYMBOL(owned))->as_bool()
+            res = slot_get(owned
                            ? SYMBOL(valsensor)
                            : SYMBOL(val));
             if (rUValue bv = res->as<UValue>())
@@ -388,7 +393,7 @@ namespace urbi
       runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(valsensor), newval);
       checkBypassCopy();
-      callNotify(r, rObject(this), SYMBOL(change));
+      callNotify(r, rUVar(this), SYMBOL(change));
       callConnections(r, rObject(this), SYMBOL(changeConnections));
       slot_get(SYMBOL(changed))->call("emit");
       return newval;

@@ -274,7 +274,7 @@ do (&UVar)
       ownerName = parent.__uobjectName
     else
       ownerName = parent.asString|
-    var this.initialName = name|
+    this.initialName = name|
     var this.fullName = ownerName + "." + initialName|
     parent.setSlot(name, this)|
     parent.setProperty(name, "updateHook", &updateBounce)|
@@ -381,7 +381,6 @@ do (&UVar)
       var changeOwned = WeakDictionary.new |
       var access = WeakDictionary.new |
       var accessInLoop = WeakDictionary.new |
-      var owned = false |
       var val |
       var changed = Event.new |
       var valsensor = 0 |

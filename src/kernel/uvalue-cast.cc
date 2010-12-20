@@ -117,7 +117,7 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
     res =
       o->slot_get(SYMBOL(ownerName))->as<object::String>()->value_get()
       + "."
-      + o->slot_get(SYMBOL(initialName))->as<object::String>()->value_get();
+      + o->as<object::UVar>()->initialName;
   }
   else if (o->slot_has(SYMBOL(uvalueSerialize)))
   {

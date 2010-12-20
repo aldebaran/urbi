@@ -95,7 +95,7 @@ namespace urbi
         target->as<UVar>()->update_(self->as<UVar>()->getter(true));
       else // Else bypass write and call notifies.
       callNotify(r?*r:kernel::urbiserver->getCurrentRunner(),
-                   target, SYMBOL(change), self);
+                   target->as<UVar>(), SYMBOL(change), self);
       libport::utime_t end = libport::utime();
       lastCall = (double)end / 1.0e6;
       double ct = (double)(end-now) / 1.0e6;
