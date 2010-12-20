@@ -329,6 +329,10 @@ namespace kernel
       ghost_ = new UGhostConnection(*this, interactive);
     }
 
+
+    /*--------------.
+    | urbi/urbi.u.  |
+    `--------------*/
     xload_init_file("urbi/urbi.u");
 
     // Handle plugged UObjects.
@@ -347,15 +351,24 @@ namespace kernel
     object::Object::proto->slot_remove(SYMBOL(loaded));
     GD_INFO_TRACE("urbi.u has been processed.");
 
-    urbi::object::rObject ref = new urbi::object::Object;
-    ref->proto_add(urbi::object::Object::proto);
-    urbi::object::system_class->setSlot(SYMBOL(timeReference), ref);
+    /*----------------.
+    | timeReference.  |
+    `----------------*/
+    {
+      urbi::object::rObject ref = new urbi::object::Object;
+      ref->proto_add(urbi::object::Object::proto);
+      urbi::object::system_class->setSlot(SYMBOL(timeReference), ref);
 
-    const boost::posix_time::ptime& time = libport::utime_reference();
-    ref->setSlot(SYMBOL(us), urbi::object::to_urbi(time.time_of_day().total_microseconds()));
-    ref->setSlot(SYMBOL(day), urbi::object::to_urbi(int(time.date().day())));
-    ref->setSlot(SYMBOL(month), urbi::object::to_urbi(int(time.date().month())));
-    ref->setSlot(SYMBOL(year), urbi::object::to_urbi(int(time.date().year())));
+      const boost::posix_time::ptime& time = libport::utime_reference();
+# define DECLARE(Name, Value)                                   \
+      ref->setSlot(SYMBOL(Name), urbi::object::to_urbi(Value))
+
+      DECLARE(us,    time.time_of_day().total_microseconds());
+      DECLARE(day,   int(time.date().day()));
+      DECLARE(month, int(time.date().month()));
+      DECLARE(year,  int(time.date().year()));
+# undef DECLARE
+    }
 
     // urbiscript is up and running.  Send local.u and the banner to
     // the ghostconnection too.
