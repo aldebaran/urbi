@@ -529,11 +529,14 @@ do(UConnection)
     var res = []|
     for|(var i: uobjects.localSlotNames)
     {
-      var o = getSlot(i)|
-      if (o.isA(UObject))
-        for|(var j: o.localSlotNames)
-          if (o.getSlot(j).isA(UVar))
-            res += o.getSlot(j).changeConnections
+      if (!getSlot(i).isVoid)
+      {
+        var o = getSlot(i)|
+        if (o.isA(UObject))
+          for|(var j: o.localSlotNames)
+            if (!o.getSlot(j).isVoid && o.getSlot(j).isA(UVar))
+              res += o.getSlot(j).changeConnections
+      }
     }|
     res
   };
