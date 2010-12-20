@@ -238,6 +238,7 @@ namespace kernel
     };
     std::vector<AsyncJob> async_jobs_;
     libport::Lockable async_jobs_lock_;
+    void async_jobs_process_();
     void schedule(const AsyncJob& j);
 
   protected:

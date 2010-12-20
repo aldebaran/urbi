@@ -413,6 +413,46 @@ namespace kernel
     return tgt->call(m, args);
   }
 
+  void
+  UServer::async_jobs_process_()
+  {
+    std::vector<AsyncJob> jobs;
+    std::swap(jobs, async_jobs_);
+    foreach (AsyncJob& job, jobs)
+    {
+      // Clone the shell to run asynchronous jobs.
+      runner::Interpreter* interpreter = 0;
+      if (job.target)
+      {
+        object::rPrimitive p = new object::Primitive
+          (boost::bind(method_wrap, job.target, job.method, job.args, _1));
+        interpreter =  new runner::Interpreter
+          (*ghost_connection_get().shell_get(), p, job.method, job.args);
+      }
+      else if (job.callback)
+      {
+        interpreter = new runner::Interpreter
+          (ghost_connection_get().lobby_get(), *scheduler_, job.callback,
+           ghost_connection_get().lobby_get(), job.method);
+      }
+      else
+        pabort("Uninitialized AsyncJob in async_jobs");
+      // Clean the tag stack because the shell could be frozen and
+      // scheduled jobs have no reason to inherit frozen tags.
+      interpreter->tag_stack_clear();
+
+      // FIXME: clean the stack of the interpreter, this cause strange
+      // issue where scheduled jobs inherit the stack of the primary
+      // shell.
+      scheduler_->add_job(sched::rJob(interpreter));
+    }
+    // FIXME: work around a scheduler bug when adding a job from
+    // outside work.  It is supposed to work, but turns out the new
+    // job is only scheduled after we force an extra work() run.
+    if (!jobs.empty())
+      wake_up();
+  }
+
   libport::utime_t
   UServer::work()
   {
@@ -476,44 +516,8 @@ namespace kernel
       next_time = scheduler_->work ();
       updateTime();
     }
-    {
-      std::vector<AsyncJob> jobs;
-      std::swap(jobs, async_jobs_);
-      foreach (AsyncJob& job, jobs)
-      {
-        // Clone the shell to run asynchronous jobs.
-        runner::Interpreter* interpreter = 0;
-        if (job.target)
-        {
-          object::rPrimitive p = new object::Primitive
-            (boost::bind(method_wrap, job.target, job.method, job.args, _1));
-          interpreter =  new runner::Interpreter
-            (*ghost_connection_get().shell_get(), p, job.method, job.args);
-        }
-        else if (job.callback)
-        {
-          interpreter = new runner::Interpreter
-            (ghost_connection_get().lobby_get(), *scheduler_, job.callback,
-             ghost_connection_get().lobby_get(), job.method);
-        }
-        else
-          pabort("Uninitialized AsyncJob in async_jobs");
-        // Clean the tag stack because the shell could be frozen and
-        // scheduled jobs have no reason to inherit frozen tags.
-        interpreter->tag_stack_clear();
-
-        // FIXME: clean the stack of the interpreter, this cause strange
-        // issue where scheduled jobs inherit the stack of the primary
-        // shell.
-        scheduler_->add_job(sched::rJob(interpreter));
-      }
-      // FIXME: work around a scheduler bug when adding a job from
-      // outside work.  It is supposed to work, but turns on the new
-      // job is only scheduled after we force an extra work() run.
-      if (!jobs.empty())
-        wake_up();
-      jobs.clear();
-    }
+    if (!async_jobs_.empty())
+      async_jobs_process_();
     work_handle_stopall_();
     afterWork();
     return next_time;
