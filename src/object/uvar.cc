@@ -24,6 +24,7 @@
 # include <object/uvalue.hh>
 # include <object/uvar.hh>
 
+# include <urbi/object/event.hh>
 # include <urbi/object/global.hh>
 # include <urbi/object/list.hh>
 # include <urbi/object/lobby.hh>
