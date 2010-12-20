@@ -16,6 +16,8 @@
 
 # include <kernel/userver.hh>
 
+# include <sched/scheduler.hh>
+
 namespace kernel
 {
 
@@ -100,6 +102,22 @@ namespace kernel
     interactive_ = i;
   }
 
+
+  inline runner::Runner&
+  UServer::getCurrentRunner() const
+  {
+    // FIXME: check that main thread is currently in handle_synchronizer_().
+    return reinterpret_cast<runner::Runner&> (scheduler_->current_job());
+  }
+
+  inline runner::Runner*
+  UServer::getCurrentRunnerOpt() const
+  {
+    sched::Job* j = scheduler_->current_job_opt();
+    if (j)
+      return reinterpret_cast<runner::Runner*>(j);
+    return 0;
+  }
 
   /*-------------------------.
   | Freestanding functions.  |

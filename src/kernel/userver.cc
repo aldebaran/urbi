@@ -650,22 +650,6 @@ namespace kernel
     return *ghost_;
   }
 
-  runner::Runner&
-  UServer::getCurrentRunner() const
-  {
-    // FIXME: check that main thread is currently in handle_synchronizer_().
-    return dynamic_cast<runner::Runner&> (scheduler_->current_job());
-  }
-
-  runner::Runner*
-  UServer::getCurrentRunnerOpt() const
-  {
-    sched::Job* j = scheduler_->current_job_opt();
-    if (j)
-      return dynamic_cast<runner::Runner*>(j);
-    return 0;
-  }
-
   bool
   UServer::isAnotherThread() const
   {
