@@ -40,6 +40,50 @@ finalize ()
   rm -rf "$tmp"
 }
 
+find_dual ()
+{
+  local f="$1"
+  local dbg="debug_dynamic"
+  local nod="no-doc"
+
+  test -r "$f" || exit 1
+
+  if test "$f" = "${f%%-$dbg*}"; then # MODE= release
+    if test "$f" = "${f%%-$nod*}"; then # HASDOC= yes
+      f="${f/.zip/-$dbg.zip}"
+      test -r "$f" && echo "$f" && return 0
+    else # HASDOC= no
+      f="${f/-$nod/-$dbg}"
+      test -r "$f" && echo "$f" && return 0
+    fi
+    f="${f/.zip/-$nod.zip}"
+    test -r "$f" && echo "$f" && return 0
+  else # MODE = debug
+    f="${f/-$dbg/}"
+    test -r "$f" && echo "$f" && return 0
+    if test "$f" = "${f%%-$nod*}"; then # HASDOC= yes
+      f="${f/.zip/-$nod.zip}"
+      test -r "$f" && echo "$f" && return 0
+    else # HASDOC= no
+      f="${f/-$nod/}"
+      test -r "$f" && echo "$f" && return 0
+    fi
+  fi
+  return 1
+}
+
+get_instaler_name ()
+{
+  local f="$1"
+  local nod="no-doc"
+
+  f="${f/-$MODE/}"
+  f="${f/-$nod/}"
+  f="${f/.zip/.exe}"
+  echo "$f"
+}
+
+
 ## ----------- ##
 ## Variables.  ##
 ## ----------- ##
@@ -86,27 +130,16 @@ tmp=$(mktemp -d "$TMPDIR/kernel-make-installer.XXXXXX")
 trap cleanup 0 1 2 13 15
 
 updir=$(dirname "$upname")
-basename=$(basename "${upname%-$MODE}")
-
-release_zip=$basename.zip
-debug_zip=$basename-debug_dynamic.zip
-installer=$basename.exe
 
 # my_zip represents the archive build by this slave.
-case $MODE in
-  (release)
-    my_zip=$release_zip
-    other_zip=$debug_zip
-    ;;
-  (debug*)
-    my_zip=$debug_zip
-    other_zip=$release_zip
-    ;;
-esac
+my_zip="$upname.zip"
+# other_zip represents the archive build by the other slave.
+other_zip=$(find_dual "$my_zip")
+installer=$(get_instaler_name "$(basename $my_zip)")
 
-if test -r "$updir/$my_zip"                             \
-    -a -r "$updir/$other_zip"                           \
-    -a "$updir/$my_zip" -nt "$updir/$other_zip"; then
+if test -r "$my_zip"                             \
+    -a -r "$other_zip"                           \
+    -a "$my_zip" -nt "$other_zip"; then
   # My zip is the newest, do the merge-install.
 
   # Merge zips.
@@ -122,7 +155,7 @@ if test -r "$updir/$my_zip"                             \
       --gostai-console "$gostai_console"                \
       --gostai-editor "$gostai_editor"                  \
       --output "$tmp/$installer"                        \
-      "$updir/$my_zip" "$updir/$other_zip"
+      "$my_zip" "$other_zip"
 
   # Upload the installer and its MD5.  Be sure to generate an MD5sum
   # file that does not include a path: cd into
