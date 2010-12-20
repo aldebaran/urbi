@@ -477,8 +477,9 @@ namespace kernel
       updateTime();
     }
     {
-      libport::BlockLock lock(async_jobs_lock_);
-      foreach (AsyncJob& job, async_jobs_)
+      std::vector<AsyncJob> jobs;
+      std::swap(jobs, async_jobs_);
+      foreach (AsyncJob& job, jobs)
       {
         // Clone the shell to run asynchronous jobs.
         runner::Interpreter* interpreter = 0;
@@ -509,9 +510,9 @@ namespace kernel
       // FIXME: work around a scheduler bug when adding a job from
       // outside work.  It is supposed to work, but turns on the new
       // job is only scheduled after we force an extra work() run.
-      if (!async_jobs_.empty())
+      if (!jobs.empty())
         wake_up();
-      async_jobs_.clear();
+      jobs.clear();
     }
     work_handle_stopall_();
     afterWork();
