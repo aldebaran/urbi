@@ -221,16 +221,34 @@ static libport::file_library uobjects_path;
 using urbi::uobjects::get_base;
 using urbi::uobjects::split_name;
 using urbi::uobjects::StringPair;
+
 // No rObject here as we do not want to prevent object destruction.
 static boost::unordered_map<std::string, object::Object*> uobject_map;
 
-static void writeFromContext(const std::string& ctx, const std::string& varName,
-                             const urbi::UValue& val);
+static
+void
+writeFromContext(const std::string& ctx, const std::string& varName,
+                 const urbi::UValue& val);
 
 static void setTrace(rObject, bool v)
 {
   trace_uvars = v;
 }
+
+namespace
+{
+  inline
+  rObject
+  xget_base(const std::string& objname,
+            const std::string& error = "no such UObject: %s")
+  {
+    if (rObject res = get_base(objname))
+      return res;
+    FRAISE(error, objname);
+  }
+}
+
+
 // Object,method names of last call
 static std::vector<std::pair<std::string, std::string> > bound_context;
 
@@ -316,7 +334,7 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
   if (trace_uvars)
   {
     StringPair p = split_name(v->get_name());
-    rObject o = get_base(p.first);
+    rObject o = xget_base(p.first);
     object::global_class
       ->slot_get(SYMBOL(UVar))
       ->slot_get(op)
@@ -717,7 +735,7 @@ namespace urbi
         return;
       }
       LOCK_KERNEL;
-      rObject b = get_base(object);
+      rObject b = xget_base(object);
       object::objects_type args;
       args << b;
 
@@ -744,17 +762,16 @@ namespace urbi
       LOCK_KERNEL;
       rEvent e = new object::Event(object::Event::proto);
       StringPair p = split_name(owner->get_name());
-      rObject o = get_base(p.first);
-      if (!o)
-        FRAISE("UEvent creation on non existing object: %s", p.first);
-      else if (!o->local_slot_get(Symbol(p.second)))
+      rObject o = xget_base(p.first,
+                            "UEvent creation on non existing object: %s");
+      if (!o->local_slot_get(Symbol(p.second)))
         o->slot_set(Symbol(p.second), e);
     }
 
     static void doEmit(const std::string& object, object::objects_type& args)
     {
        StringPair p = split_name(object);
-       rObject o = get_base(p.first)->slot_get(libport::Symbol(p.second));
+       rObject o = xget_base(p.first)->slot_get(libport::Symbol(p.second));
        o->call(SYMBOL(emit), args);
     }
     void
@@ -826,7 +843,7 @@ namespace urbi
     KernelUContextImpl::setTimer(UTimerCallback* cb)
     {
       LOCK_KERNEL;
-      rObject me = get_base(cb->objname);
+      rObject me = xget_base(cb->objname);
       rObject f = me->slot_get(SYMBOL(setTimer));
       rObject p = new object::Float(cb->period / 1000.0);
       std::string stag = object::String::proto->as<object::String>()->fresh();
@@ -849,7 +866,7 @@ namespace urbi
       if (!h)
         return false;
       LOCK_KERNEL;
-      rObject me = get_base(owner_->__name);
+      rObject me = xget_base(owner_->__name);
       me->call(SYMBOL(removeTimer), new object::String(*h));
       h.reset();
       return true;
@@ -940,7 +957,7 @@ namespace urbi
     KernelUObjectImpl::setUpdate(ufloat period)
     {
       LOCK_KERNEL;
-      rObject me = get_base(owner_->__name);
+      rObject me = xget_base(owner_->__name);
       rObject f = me->slot_get(SYMBOL(setUpdate));
       object::objects_type args;
       args << me;
@@ -1133,7 +1150,7 @@ namespace urbi
     {
       LOCK_KERNEL;
       StringPair p = split_name(owner_->get_name());
-      rObject o = get_base(p.first);
+      rObject o = xget_base(p.first);
       return ::uvalue_cast(o->call(SYMBOL(getProperty),
                                    new object::String(p.second),
                                    new object::String(UPropertyNames[prop])));
@@ -1143,7 +1160,7 @@ namespace urbi
     {
       LOCK_KERNEL;
       StringPair p = split_name(owner_->get_name());
-      rObject o = get_base(p.first);
+      rObject o = xget_base(p.first);
       o->call(SYMBOL(setProperty),
               new object::String(p.second),
               new object::String(UPropertyNames[prop]),
@@ -1215,8 +1232,7 @@ namespace urbi
       LIBPORT_DEBUG("ugenericcallback " << owner_->type << " " << p.first << " "
                     << method << "  " << owned_);
       // UObject owning the variable/event to monitor
-      rObject me = get_base(p.first); //objname?
-      aver(me);
+      rObject me = xget_base(p.first); //objname?
       object::objects_type args = list_of(me);
       std::string meId =
         runner.apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id),
@@ -1277,8 +1293,7 @@ namespace urbi
           else
             sym = SYMBOL(notifyChange);
         }
-        rObject source = get_base(owner_->objname);
-        aver(source);
+        rObject source = xget_base(owner_->objname);
         if (source != me)
         {
           if (sym == SYMBOL(notifyChange))
