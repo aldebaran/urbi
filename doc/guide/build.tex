@@ -159,9 +159,9 @@ package: ccache
 package: flex
 \end{package}
 
-\item[G++ 4.0 or later] GCC 4.2 or later is a better option.  Beware that we
-  have a problem with GCC-4.4 which rejects some Bison generated code.  See
-  \autoref{sec:faq:build:uninitialized}.
+\item[G++ 4.0 or later] GCC 4.2 or later is a better option.  Beware that
+  you may find a problem with GCC-4.4 which rejects some Bison generated
+  code.  See \autoref{sec:faq:build:uninitialized}.
 \begin{package}
 deb: g++-4.2
 MacPorts: gcc42
@@ -199,7 +199,7 @@ deb: imagemagick
   Leopard, you need the ``Java Developer'' package from Apple.  See
   \url{http://connect.apple.com/}.
 \begin{package}
-deb: jdk
+deb: sun-java6-jdk
 \end{package}
 
 \item[oRTP] The UObject middleware can use the RTP protocol to provide
@@ -208,14 +208,14 @@ deb: jdk
   but it is strongly recommended.
 \begin{package}
 MacPorts: linphone
-deb: linphone-dev
+deb: liblinphone-dev
 \end{package}
 
 \item[PDFLaTeX] TeX Live is the most common \TeX{} distribution nowadays.
   We use \command{pdfcrop} from \file{texlive-bin-extra}.  We also use
   TeX4HT, which is part of \file{texlive-htmlxml} on MacPorts.
 \begin{package}
-deb: texlive-base texlive-latex-extra texlive-bin-extra
+deb: texlive-base texlive-latex-extra texlive-binaries
 MacPorts: texlive texlive-latex-extra texlive-bin-extra texlive-htmlxml
 \end{package}
 
@@ -262,7 +262,8 @@ package: transfig
 \begin{description}
 \item[aspell] Needed by the test suite.
 \begin{package}
-package: aspell aspell-dict-en
+deb: aspell aspell-en
+MacPorts: aspell aspell-dict-en
 \end{package}
 
 \item[bc]
