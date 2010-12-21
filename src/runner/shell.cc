@@ -43,7 +43,7 @@ namespace runner
     , input_(input)
     , stop_(false)
   {
-    GD_FINFO_TRACE("new shell: %s.", name_get());
+    GD_FINFO_TRACE("new shell: %s", name_get());
   }
 
   void

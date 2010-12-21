@@ -278,7 +278,7 @@ namespace kernel
       // First level interrupt.
       runner::rShell shell = urbiserver->ghost_connection_get().shell_get();
       shell->pending_commands_clear();
-      shell->async_throw(sched::StopException(-1, object::void_class));
+      shell->async_throw(sched::StopException(-1, object::void_class), true);
       last_call = libport::time::now();
       urbiserver->schedule(urbiserver->ghost_connection_get().lobby_get(),
                            SYMBOL(sigint_interrupt));
@@ -426,7 +426,7 @@ namespace kernel
       {
         object::rPrimitive p = new object::Primitive
           (boost::bind(method_wrap, job.target, job.method, job.args, _1));
-        interpreter =  new runner::Interpreter
+        interpreter = new runner::Interpreter
           (*ghost_connection_get().shell_get(), p, job.method, job.args);
       }
       else if (job.callback)
