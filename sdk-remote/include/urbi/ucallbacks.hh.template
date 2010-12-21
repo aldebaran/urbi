@@ -17,6 +17,7 @@
 
 # include <libport/compiler.hh>
 # include <libport/meta.hh>
+# include <libport/preproc.hh>
 # include <libport/thread-pool.hh>
 # include <urbi/export.hh>
 # include <urbi/fwd.hh>
@@ -271,7 +272,7 @@ uvar_uvalue_cast<UVar&>(UValue& v)
        &dynamic_cast<OBJ&>(*obj), fun, funname);			\
   }
 
-  INSTANTIATE();
+  INSTANTIATE(__);
   INSTANTIATE(const);
 
 # undef INSTANTIATE

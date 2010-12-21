@@ -10,6 +10,7 @@
 
 /// \file urbi/uvalue.hxx
 
+#include <libport/preproc.hh>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -34,8 +35,8 @@ namespace urbi
       return UValue::error();                   \
   }
 
+  ULIST_NTH(__)
   ULIST_NTH(const)
-  ULIST_NTH(/* const */)
 
 # undef ULIST_NTH
 
@@ -110,8 +111,8 @@ namespace urbi
       return UNamedValue::error();              \
   }
 
+  UOBJECTSTRUCT_NTH(__)
   UOBJECTSTRUCT_NTH(const)
-  UOBJECTSTRUCT_NTH(/* const */)
 
 # undef UOBJECTSTRUCT_NTH
 
@@ -164,7 +165,7 @@ namespace urbi
 # undef CONTAINER_TO_UVALUE_DECLARE
 
 
-# define OP_COMMA(Type)        \
+# define OP_COMMA(Type)                         \
   inline                                        \
   UValue& UValue::operator, (Type rhs)          \
   {						\
@@ -226,7 +227,8 @@ namespace urbi
   typename uvar_ref_traits<typename uvalue_cast_return_type<Type>::type>::type
   uvalue_cast(UValue& v)
   {
-    return uvalue_caster<typename libport::traits::remove_reference<Type>::type>()(v);
+    typedef typename libport::traits::remove_reference<Type>::type res_type;
+    return uvalue_caster<res_type>()(v);
   }
 
 
@@ -339,6 +341,7 @@ namespace urbi
       return res;
     }
   };
+
   template<typename V>
   inline UValue&
   operator,(UValue& v, const boost::unordered_map<std::string, V> & d)
@@ -371,6 +374,7 @@ namespace urbi
     }
     return *this;
   }
+
   template<typename T>
   T
   UList::as()
@@ -418,4 +422,5 @@ namespace urbi
     memcpy(b.common.data, &d.front(), b.common.size);
     return v;
   }
+
 } // namespace urbi
