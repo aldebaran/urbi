@@ -449,6 +449,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
                               const std::string& message, bool withThis)
 {
   urbi::UList l;
+  l.array.reserve(ol.size() - (withThis?1:0));
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
   object::check_arg_count(ol.size() - (withThis?1:0), ugc->nbparam);
   bool tail = false;
