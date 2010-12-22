@@ -29,8 +29,11 @@
 # include <libport/foreach.hh>
 # include <libport/indent.hh>
 # include <libport/intrusive-ptr.hh>
+# include <libport/typelist.hh>
 
 # include <urbi/object/object.hh>
+
+# include <kernel/userver.hh>
 
 namespace urbi
 {
@@ -174,42 +177,6 @@ namespace urbi
     to_boolean(bool b)
     {
       return b ? true_class : false_class;
-    }
-
-    template<typename T>
-    inline bool
-    is_a(const rObject& c)
-    {
-      // Atom case.
-      if (dynamic_cast<T*>(c.get()))
-        return true;
-      // Through protos case.
-      return is_a(c, T::proto);
-    }
-
-    /*-------------------.
-    | Type conversions.  |
-    `-------------------*/
-
-    template <typename T>
-    bool
-    Object::is_a() const
-    {
-      return dynamic_cast<const T*>(this);
-    }
-
-    template <typename T>
-    libport::intrusive_ptr<T>
-    Object::as() const
-    {
-      return dynamic_cast<const T*>(this);
-    }
-
-    template <typename T>
-    libport::intrusive_ptr<T>
-    Object::as()
-    {
-      return dynamic_cast<T*>(this);
     }
 
     /*---------------.

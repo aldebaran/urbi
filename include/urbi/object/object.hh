@@ -299,7 +299,6 @@ namespace urbi
       rHash   hash() const;
       rObject addProto(rObject proto);
       rObject removeProto(rObject proto);
-
       /*--------.
       | Binding |
       `--------*/
@@ -319,6 +318,8 @@ namespace urbi
       template <typename Return, typename Self>
       void bind_variadic(const std::string& name,
                          Return (Self::*val)(const objects_type&));
+      /// Return one different uid per effective C++ class.
+      virtual size_t magic() const;
     private:
       template <bool mem, typename T>
       friend struct DispatchBind_;

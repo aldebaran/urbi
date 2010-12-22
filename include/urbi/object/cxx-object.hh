@@ -13,6 +13,8 @@
 
 # include <vector>
 
+# include <boost/functional/hash.hpp>
+
 # include <libport/preproc.hh>
 
 # include <kernel/userver.hh>
@@ -28,7 +30,9 @@
     static const ::std::string& type_name();                            \
     virtual ::std::string type_name_get() const;                        \
     static ::libport::intrusive_ptr<Name> proto;                        \
-    virtual bool valid_proto(const ::urbi::object::Object& o) const
+    virtual bool valid_proto(const ::urbi::object::Object& o) const;    \
+    virtual size_t magic() const;                                       \
+    static size_t magicStatic()
 
 #define URBI_CXX_OBJECT_REGISTER(Name, ...)                   \
   URBI_CXX_OBJECT_REGISTER_(Name, LIBPORT_LIST(__VA_ARGS__,))
@@ -67,6 +71,18 @@
     return dynamic_cast<const Name*>(&o);                               \
   }                                                                     \
                                                                         \
+  size_t                                                                \
+  Name::magic() const                                                   \
+  {                                                                     \
+    static size_t res = boost::hash<const char*>()(#Name);              \
+    return res;                                                         \
+  }                                                                     \
+  size_t                                                                \
+  Name::magicStatic() /*No you cant bounce on the one above!*/    \
+  {                                                                     \
+    static size_t res = boost::hash<const char*>()(#Name);              \
+    return res;                                                         \
+  }                                                                     \
   Name::Name(const ::urbi::object::FirstPrototypeFlag&)
 
 #define URBI_CXX_OBJECT_REGISTER_INIT(Name, ...)                   \

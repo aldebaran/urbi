@@ -17,7 +17,13 @@
 
 # include <urbi/object/cxx-conversions.hh>
 # include <urbi/object/cxx-primitive.hh>
+
+// Order is important for this block
 # include <urbi/object/primitive.hh>
+# include <urbi/object/code.hh>
+# include <urbi/object/executable.hh>
+# include <urbi/object/object-as.hh>
+
 # include <urbi/object/string.hh>
 # include <urbi/runner/raise.hh>
 
@@ -211,7 +217,7 @@ namespace urbi
       // when there is actually a mismatch.
       if (!is_a<T>(o))
         type_check(o, T::proto);
-      return o->as<T>();
+      return assert_exp(o->as<T>());
     }
   }
 }

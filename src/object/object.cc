@@ -797,7 +797,12 @@ namespace urbi
       setSlot(libport::Symbol(name), new Primitive(val));
     }
 
-    rObject Object::proto;
+    size_t
+    Object::magic() const
+    {
+      return 0;
+    }
 
+    rObject Object::proto;
   } // namespace object
 }
