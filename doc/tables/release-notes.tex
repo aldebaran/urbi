@@ -24,8 +24,21 @@ This chapter lists the user-visible changes in \usdk releases.
   \fi%
 }
 
-\section{\usdk 2.5.1}
-\release{2.5}{201x-xx-xx}
+\section{\usdk 2.6}
+\release{2.6}{201x-xx-xx}
+
+This release features several deep changes that are not user visible, but
+which provide significant optimizations.  Several bugs have beeb fixed too.
+
+\subsection{Fixes}
+\begin{itemize}
+\item Improper behavior when there are several concurrent
+  \lstinline|at (\var{exp} ~ \var{duration})|.
+\item System interruptions with Control-C sometimes failed.
+\item Remote UObject exit properly when the server shuts down.
+\item Binary packages provide RTP support for more architectures.
+\end{itemize}
+
 
 \subsection{New Features}
 \begin{itemize}
@@ -59,7 +72,6 @@ Directory.new("dir").removeAll;
 \release{2.5}{2010-12-07}
 
 \subsection{Fixes}
-
 \begin{itemize}
 \item Memory consumption at start-up is reduced.
 \end{itemize}
@@ -257,8 +269,8 @@ for (var suit : Suit)
 \item RTP mode can now be switched on at any time. Change is applied to
   existing notifies.
 
-\item UObjects can now be instantiated directly from \Cxx, both in plugin and
-  remote mode.
+\item UObjects can now be instantiated directly from \Cxx, both in plugin
+  and remote mode.
 
 \item New mechanism to map simple structures between \Cxx and \us
   (\autoref{sec:extend-cast-system}).
