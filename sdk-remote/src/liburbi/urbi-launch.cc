@@ -227,17 +227,18 @@ urbi_launch_(int argc, const char* argv[], UrbiRoot& urbi_root)
   return urbi_root.urbi_main(args, true, true);
 }
 
-extern "C" int
-URBI_SDK_API
-urbi_launch(int argc, const char* argv[], UrbiRoot& urbi_root)
+extern "C"
 {
-  try
-  {
-    return urbi_launch_(argc, argv, urbi_root);
-  }
-  catch (const std::exception& e)
-  {
-    std::cerr << argv[0] << ": " << e.what() << std::endl
-              << libport::exit(EX_FAIL);
-  }
+  int
+  URBI_SDK_API
+  urbi_launch(int argc, const char* argv[], UrbiRoot& root)
+    try
+    {
+      return urbi_launch_(argc, argv, root);
+    }
+    catch (const std::exception& e)
+    {
+      std::cerr << argv[0] << ": " << e.what() << std::endl
+                << libport::exit(EX_FAIL);
+    }
 }

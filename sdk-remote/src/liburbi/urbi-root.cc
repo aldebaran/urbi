@@ -469,7 +469,6 @@ UrbiRoot::load_custom(const std::string& path_)
             EX_OSFILE);
 }
 
-typedef int(*urbi_launch_type)(int, const char*[], UrbiRoot&);
 int
 UrbiRoot::urbi_launch(int argc, const char** argv)
 {

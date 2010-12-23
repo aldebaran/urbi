@@ -89,4 +89,13 @@ private:
   RTLD_HANDLE handle_libuobject_;
 };
 
+extern "C"
+{
+  typedef int(*urbi_launch_type)(int argc, const char* argv[], UrbiRoot& root);
+
+  int
+  URBI_SDK_API
+  urbi_launch(int argc, const char* argv[], UrbiRoot& root);
+}
+
 #endif
