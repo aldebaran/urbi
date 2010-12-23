@@ -158,12 +158,18 @@ namespace urbi
 
     void RemoteUContextImpl::send(const char* a)
     {
-      *client_ << a;
+      if (closed_)
+        GD_WARN("Write on closed remote context");
+      else
+        *client_ << a;
     }
 
     void RemoteUContextImpl::send(const void* buf, size_t size)
     {
-      client_->rdbuf()->sputn(static_cast<const char*> (buf), size);
+      if (closed_)
+        GD_WARN("Write on closed remote context");
+      else
+        client_->rdbuf()->sputn(static_cast<const char*> (buf), size);
     }
 
     UObjectMode RemoteUContextImpl::getRunningMode() const
@@ -781,6 +787,12 @@ namespace urbi
     UCallbackAction
     RemoteUContextImpl::clientError(const UMessage&)
     {
+      GD_INFO_TRACE("clientError on remote context");
+      if (closed_)
+      {
+        GD_WARN("ClientError already processed");
+        return URBI_CONTINUE;
+      }
       impl::UContextImpl::CleanupStack s_(*this);
       closed_ = true;
       /* Destroy everything
@@ -793,6 +805,7 @@ namespace urbi
       while (!objects.empty())
       {
         objects_type::iterator i = objects.begin();
+        GD_FINFO_TRACE("Destroying object %s", i->second);
         delete i->second;
         objects.erase(i);
       }
@@ -800,6 +813,7 @@ namespace urbi
       while (!hubs.empty())
       {
         hubs_type::iterator i = hubs.begin();
+        GD_FINFO_TRACE("Destroying hub %s", i->second);
         delete i->second;
         hubs.erase(i);
       }
