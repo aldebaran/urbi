@@ -35,7 +35,7 @@ AC_SUBST([remotedir], ['${brandlibdir}/remote'])
 AC_SUBST([enginedir], ['${brandlibdir}/engine'])
 URBI_DOC
 URBI_ENABLE_DOC_SECTIONS([bioloid, nao, nxt, p3dx, rmp, spykee, webots])
-AC_CONFIG_FILES([doc/config.sty doc/Makefile])
+AC_CONFIG_FILES([doc/config.sty doc/Makefile doc/README.txt])
 AM_PATH_LISPDIR
 
 ## ------------- ##
@@ -144,6 +144,7 @@ AC_CHECK_HEADERS([sys/inotify.h])
 # ortp
 PKG_CHECK_MODULES([ORTP], [ortp], [HAVE_ORTP=true], [HAVE_ORTP=false])
 AM_CONDITIONAL([HAVE_ORTP], [$HAVE_ORTP])
+URBI_PKG_CONFIG_VERSION([ortp])
 
 # X11.
 # AC_PATH_XTRA finds X11 headers even if cross-compiling to windows.

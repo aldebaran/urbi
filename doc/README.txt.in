@@ -126,6 +126,13 @@ is blocking you or not. Also, please keep
 do not reply individually to a member of our team as this may slow
 down the handling of the report.
 
+* Components
+
+Here is a non-exhastive list of the various components that where used
+to compile this Urbi SDK package.
+
+** Boost @BOOST_VERSION@
+** oRTP @ORTP_VERSION@
 
 ---
 Local Variables:
