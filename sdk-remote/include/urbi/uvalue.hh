@@ -379,43 +379,44 @@ namespace urbi
   "\n"                                          \
   SYNCLINE_POP()
 
-#define URBI_STRUCT_CAST_FIELD(_, cname, field)                      \
-if (!libport::mhas(dict, BOOST_PP_STRINGIZE(field)))                 \
-  GD_WARN("Serialized data for " #cname "is missing field"           \
-          BOOST_PP_STRINGIZE(field));                                \
-else                                                                 \
-{                                                                    \
-  uvalue_cast_bounce(res.field, dict[BOOST_PP_STRINGIZE(field)]);    \
-}
+#define URBI_STRUCT_CAST_FIELD(_, Cname, Field)                         \
+  if (libport::mhas(dict, BOOST_PP_STRINGIZE(Field)))                   \
+    uvalue_cast_bounce(res.Field, dict[BOOST_PP_STRINGIZE(Field)]);     \
+  else                                                                  \
+    GD_WARN("Serialized data for " #Cname "is missing field"            \
+            BOOST_PP_STRINGIZE(Field));                                 \
 
-#define URBI_STRUCT_BCAST_FIELD(_, cname, field) \
-  dict[BOOST_PP_STRINGIZE(field)], c.field;
+#define URBI_STRUCT_BCAST_FIELD(_, Cname, Field)        \
+  dict[BOOST_PP_STRINGIZE(Field)], c.Field;
 
 
-#define URBI_REGISTER_STRUCT(cname, ...)                                 \
-namespace urbi {                                                         \
-  template<> struct uvalue_caster<cname>                                 \
-  {                                                                      \
-    cname operator()(UValue& v)                                          \
-    {                                                                    \
-      if (v.type != DATA_DICTIONARY)                                     \
-        throw std::runtime_error("invalid cast to " #cname "from "       \
-                                 + string_cast(v));                      \
-      UDictionary& dict = *v.dictionary;                                 \
-      cname res;                                                         \
-      LIBPORT_VAARGS_APPLY(URBI_STRUCT_CAST_FIELD, cname, __VA_ARGS__);  \
-      return res;                                                        \
-    }                                                                    \
-  };                                                                     \
-UValue& operator,(UValue& v, const cname &c)                             \
-  {                                                                        \
-    v = UDictionary();                                                     \
-    UDictionary& dict = *v.dictionary;                                     \
-    dict["$sn"] = BOOST_PP_STRINGIZE(cname);                               \
-    LIBPORT_VAARGS_APPLY(URBI_STRUCT_BCAST_FIELD, cname, __VA_ARGS__);     \
-    return v;                                                              \
-  }                                                                        \
-}
+#define URBI_REGISTER_STRUCT(Cname, ...)                                \
+  namespace urbi                                                        \
+  {                                                                     \
+    template<>                                                          \
+      struct uvalue_caster<Cname>                                       \
+    {                                                                   \
+      Cname operator()(UValue& v)                                       \
+      {                                                                 \
+        if (v.type != DATA_DICTIONARY)                                  \
+          throw std::runtime_error("invalid cast to " #Cname "from "    \
+                                   + string_cast(v));                   \
+        UDictionary& dict = *v.dictionary;                              \
+        Cname res;                                                      \
+        LIBPORT_VAARGS_APPLY(URBI_STRUCT_CAST_FIELD, Cname, __VA_ARGS__); \
+        return res;                                                     \
+      }                                                                 \
+    };                                                                  \
+                                                                        \
+    static UValue& operator,(UValue& v, const Cname &c)                 \
+    {                                                                   \
+      v = UDictionary();                                                \
+      UDictionary& dict = *v.dictionary;                                \
+      dict["$sn"] = BOOST_PP_STRINGIZE(Cname);                          \
+      LIBPORT_VAARGS_APPLY(URBI_STRUCT_BCAST_FIELD, Cname, __VA_ARGS__); \
+      return v;                                                         \
+    }                                                                   \
+  }
 
 /** Packed data structure.
  *  This template class behaves exactly as a std::vector, except it gets
