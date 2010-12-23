@@ -329,7 +329,6 @@ namespace urbi
       struct jpeg_compress_struct cinfo;
       struct jpeg_error_mgr jerr;
 
-      JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
       int row_stride;		/* physical row width in image buffer */
 
       cinfo.err = jpeg_std_error(&jerr);
@@ -361,8 +360,10 @@ namespace urbi
 
       while (cinfo.next_scanline < cinfo.image_height)
       {
-	row_pointer[0] = (JSAMPLE *)& src[cinfo.next_scanline * row_stride];
-	(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+	/* pointer to JSAMPLE row[s] */
+        const JSAMPLE* row =
+          (const JSAMPLE*) &src[cinfo.next_scanline * row_stride];
+	jpeg_write_scanlines(&cinfo, const_cast<JSAMPLE**>(&row), 1);
       }
 
       jpeg_finish_compress(&cinfo);
@@ -410,9 +411,8 @@ namespace urbi
       jpeg_start_decompress(&cinfo);
       w = cinfo.output_width;
       h = cinfo.output_height;
-      output_size = cinfo.output_width *
-	cinfo.output_components        *
-	cinfo.output_height;
+      output_size =
+        cinfo.output_width * cinfo.output_components * cinfo.output_height;
       void *buffer = malloc(output_size);
 
       while (cinfo.output_scanline < cinfo.output_height)
@@ -421,12 +421,11 @@ namespace urbi
 	 * Here the array is only one element long, but you could ask for
 	 * more than one scanline at a time if that's more convenient.
 	 */
-	JSAMPROW row_pointer[1];
-	row_pointer[0] =
-          (JOCTET *) & ((char*) buffer)[cinfo.output_scanline
-                                         * cinfo.output_components
-                                         * cinfo.output_width];
-	jpeg_read_scanlines(&cinfo, row_pointer, 1);
+	JSAMPLE* row =
+          (JSAMPLE *) &((char*) buffer)[cinfo.output_scanline
+                                        * cinfo.output_components
+                                        * cinfo.output_width];
+	jpeg_read_scanlines(&cinfo, &row, 1);
       }
       jpeg_finish_decompress(&cinfo);
       jpeg_destroy_decompress(&cinfo);
