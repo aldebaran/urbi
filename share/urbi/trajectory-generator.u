@@ -26,6 +26,8 @@ requireFile("urbi/float.u");
 `----------------------*/
 class Global.TrajectoryGenerator
 {
+  var 'pi/2' = pi / 2;
+
   // Initialization: Instantiate one of the sub classes.
   function init(args)
   {
@@ -41,7 +43,7 @@ class Global.TrajectoryGenerator
         else if ("cos" in args)
         {
           // Bounce to a sine.
-          args["phase"] = args.getWithDefault("phase", 0) + pi/2 |
+          args["phase"] = args.getWithDefault("phase", 0) + 'pi/2' |
           args["sin"] = args["cos"] |
           Sin
         }
@@ -115,8 +117,14 @@ class Global.TrajectoryGenerator
     System.time - currentRunner.timeShift
   };
 
+  /// Use this tag to end a trajectory.
+  var tag;
 
-  var isOver = false;
+  /// End the trajectory.
+  function stop()
+  {
+    tag.stop
+  };
 
   // Update the variable according to the trajectory.
   // Use the functions getter/setter to read/update the variable.
@@ -124,15 +132,10 @@ class Global.TrajectoryGenerator
   function run()
   {
     reset |
-    var tag = Tag.new|
+    tag = Tag.new|
     tag:
-    {
-      at (isOver)
-        tag.stop|
       every|(System.period)
-	setter(nextValue) |
-      sleep(inf)
-    }|
+	setter(nextValue)
   };
 
   // Generate a TrajectoryGenerator that first runs \a this, then
@@ -159,14 +162,9 @@ class TrajectoryGenerator.Until : TrajectoryGenerator
   // Blocking until the trajectory is over.
   function run()
   {
-    gen.run,
-    while (!gen.isOver)
-    {
-      if (until)
-        gen.isOver = true
-      else
-        sleep(System.period)
-    }|
+    at (until)
+      gen.stop;
+    gen.run;
   };
 };
 
@@ -214,12 +212,13 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
   function init(args)
   {
     var this.accel = args["accel"] |
+    var this.'accel/2' = accel / 2
   };
 
   function reset()
   {
     TrajectoryGenerator.OpenLoop.&reset.apply([this]) |
-    var this.duration = sqrt( 2 * (targetValue - this.startValue) / accel)
+    var this.duration = sqrt(2 * (targetValue - this.startValue) / accel)
   };
 
   function get()
@@ -227,13 +226,13 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
     var time = time |
     if (duration - System.period < time - startTime)
     {
-      isOver = true |
-      targetValue
+      setter(targetValue) |
+      stop
     }
     else
     {
-      var d = (time - startTime) |
-      d * d * 0.5 * accel
+      var d = time - startTime |
+      d * d * 'accel/2'
     }
   };
 };
@@ -256,7 +255,6 @@ class TrajectoryGenerator.Sin : TrajectoryGenerator.OpenLoop
 
 class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
 {
-  var 'pi/2' = pi / 2;
   function init(args)
   {
     var this.duration = args["smooth"] |
@@ -267,8 +265,8 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
     var time = time |
     if (duration - System.period < time - startTime)
     {
-      isOver = true|
-      targetValue
+      setter(targetValue)|
+      stop
     }
     else
     {
@@ -297,15 +295,15 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 
   function get()
   {
-    var time = time |
-    if (duration - System.period < time - startTime)
+    var timeElapsed = time - startTime |
+    if (duration - System.period < timeElapsed)
     {
-      isOver = true|
-      targetValue
+      setter(targetValue)|
+      stop
     }
     else
     {
-      var stat = (time - startTime) / duration |
+      var stat = timeElapsed / duration |
       startValue + (targetValue - startValue) * stat
     }
   };
@@ -327,7 +325,14 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
 
   function nextValue()
   {
-    get(getter)
+    var currentVal = getter |
+    if (targetReached(currentVal))
+    {
+      setter(targetValue) |
+      stop
+    }
+    else
+      get(currentVal)
   };
 
   function reset()
@@ -336,7 +341,7 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
     lastVal = getter
   };
 
-  // compute a float mean for the relative positionning errors.
+  // Compute a float mean for the relative positionning errors.
   function errorLevel(currentVal)
   {
     delta = abs(currentVal - lastVal) * 0.02 + delta * 0.98 |
@@ -344,11 +349,10 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
     delta
   };
 
-  function done(currentVal)
+  // Whether we reached the target value.
+  function targetReached(var currentVal)
   {
-    if (abs(currentVal - targetValue) <= errorLevel(currentVal))
-      isOver = true |
-    isOver
+    abs(currentVal - targetValue) <= errorLevel(currentVal)
   };
 };
 
@@ -366,17 +370,13 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
 
   function get(currentVal)
   {
-    if (done(currentVal))
+    var res = currentVal
+        + speed * (targetValue - currentVal).sign * System.period |
+    if ((currentVal < targetValue && targetValue < res)
+        || (res < targetValue && targetValue < currentVal))
       targetValue
     else
-    {
-      var res = currentVal
-        + speed * (targetValue - currentVal).sign * System.period |
-      if ((currentVal < targetValue && targetValue < res)
-          || (res < targetValue && targetValue < currentVal))
-        res = targetValue |
       res
-    }
   };
 };
 
@@ -398,20 +398,15 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
       { if ("time" in args) args["time"] else duration(args["speed"]) }
   };
 
-  function get(currentVal)
+  function get(var currentVal)
   {
-    if (done(currentVal))
+    var timeLeft = startTime + duration - time |
+    if (timeLeft < System.period)
       targetValue
     else
     {
-      var time = time |
-      if (startTime + duration - System.period < time)
-        targetValue
-      else
-      {
-        var stat = System.period / (startTime + duration - time) |
-        currentVal + stat * (targetValue - currentVal)
-      }
+      var stat = System.period / timeLeft |
+      currentVal + stat * (targetValue - currentVal)
     }
   };
 };
