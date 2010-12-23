@@ -8,6 +8,7 @@
  * See the LICENSE file for more information.
  */
 
+# include <urbi/object/event.hh>
 # include <object/symbols.hh>
 # include <object/uconnection.hh>
 # include <object/urbi-exception.hh>
@@ -27,6 +28,7 @@ namespace urbi
       proto_add(new UConnection);
       init_();
     }
+
     UConnection::UConnection(libport::intrusive_ptr<UConnection> model)
     {
       proto_add(model);
@@ -49,6 +51,7 @@ namespace urbi
       init_();
 # undef DECLARE
     }
+
     void UConnection::init_()
     {
       enabled = true;
@@ -61,24 +64,27 @@ namespace urbi
       asynchronous = false;
       processing = false;
     }
+
     bool UConnection::call(runner::Runner& r, rObject self)
     {
       rObject t = UVar::fromName(target);
       if (!t)
         return false;
-      libport::utime_t now = libport::utime();
-      if (enabled && now - libport::seconds_to_utime(lastCall) >
-          libport::seconds_to_utime(minInterval) && !processing)
+      if (enabled
+          && !processing
+          && (libport::utime() - libport::seconds_to_utime(lastCall) >
+              libport::seconds_to_utime(minInterval)))
       {
         if (asynchronous)
         {
           processing = true;
           sched::rJob job = new runner::Interpreter
-          ( r.lobby_get(),
-           r.scheduler_get(),
-           boost::bind(&UConnection::doCall, this, (runner::Runner*)0, self, t),
-           rUConnection(this),
-           SYMBOL(doCall));
+            (r.lobby_get(),
+             r.scheduler_get(),
+             boost::bind(&UConnection::doCall,
+                         this, (runner::Runner*)0, self, t),
+             rUConnection(this),
+             SYMBOL(doCall));
           job->start_job();
         }
         else
@@ -86,20 +92,22 @@ namespace urbi
       }
       return true;
     }
+
     void UConnection::doCall(runner::Runner* r, rObject self, rObject target)
     {
       processing = true;
       libport::utime_t now = libport::utime();
-      // If target is not inputport, write to uvar
-      if (!target->slot_has(SYMBOL(inputPort)))
-        target->as<UVar>()->update_(self->as<UVar>()->getter(true));
-      else // Else bypass write and call notifies.
-      callNotify(r?*r:kernel::urbiserver->getCurrentRunner(),
+      if (target->slot_has(SYMBOL(inputPort)))
+        // If target is InputPut, bypass write and call notifies.
+        callNotify(r ? *r : ::kernel::runner(),
                    target->as<UVar>(), SYMBOL(change), self);
+      else
+        // If target is not, write to uvar.
+        target->as<UVar>()->update_(self->as<UVar>()->getter(true));
       libport::utime_t end = libport::utime();
       lastCall = (double)end / 1.0e6;
       double ct = (double)(end-now) / 1.0e6;
-      minCallTime = (callCount? std::min(ct, minCallTime):ct);
+      minCallTime = callCount ? std::min(ct, minCallTime) : ct;
       maxCallTime = std::max(ct, maxCallTime);
       callCount++;
       totalCallTime += ct;
@@ -107,4 +115,3 @@ namespace urbi
     }
   }
 }
-

@@ -28,16 +28,16 @@ namespace urbi
     `-------------------*/
 
     /* Dynamic_cast based implementation is surprisingly very slow.
-    * Implementation using the proto field is possible, but also slow since
-    * recursion is needed.
-    * So we use a unique magic for each CxxObject type. The magic can b read
-    * from a virtual method magic() giving the effective type of an instance,
-    * and from a static staticMagic() giving the magic of any known type.
-    *
-    * We handle multiple layers of inheritance using a TypeList trait that lists
-    * all the child classes for each class inheriting CxxObject.
-    *
-    */
+     * Implementation using the proto field is possible, but also slow
+     * since recursion is needed.  So we use a unique magic for each
+     * CxxObject type. The magic can be read from a virtual method
+     * magic() giving the effective type of an instance, and from a
+     * static staticMagic() giving the magic of any known type.
+     *
+     * We handle multiple layers of inheritance using a TypeList trait
+     * that lists all the child classes for each class inheriting
+     * CxxObject.
+     */
 
     template<typename T>
     inline bool

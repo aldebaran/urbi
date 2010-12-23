@@ -13,6 +13,7 @@
 
 #include <kernel/uvalue-cast.hh>
 #include <urbi/object/cxx-conversions.hh>
+#include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/list.hh>
@@ -263,4 +264,3 @@ object::rObject uvalue_deserialize(object::rObject s)
   else // Everything else deserializes into itself
     return s;
 }
-
