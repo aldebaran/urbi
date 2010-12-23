@@ -468,6 +468,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "const"         RETURN(CONST);
 "continue"      RETURN(CONTINUE);
 "default"       RETURN(DEFAULT);
+"detach"        RETURN(DETACH);
+"disown"        RETURN(DISOWN);
 "do"            RETURN(DO);
 "else"          RETURN(ELSE);
 "emit"          RETURN(EMIT);

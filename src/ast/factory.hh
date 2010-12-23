@@ -128,6 +128,12 @@ namespace ast
               rExp target, libport::Symbol method,
               rExp arg1, rExp arg2, rExp arg3 = 0) /* const */;
 
+    /// "<detach-or-disown> (<body>)".
+    static
+    rExp
+    make_detach(const location& l,
+                bool is_detach, rExp body) /* const */;
+
     /// "<target> :: <member>".
     static
     rExp

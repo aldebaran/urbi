@@ -459,6 +459,16 @@ namespace ast
   }
 
   rExp
+  Factory::make_detach(const location&,
+                       bool is_detach, rExp body) /* const */
+  {
+    PARAMETRIC_AST(detach, "Control.'detach'(%exp:1)");
+    PARAMETRIC_AST(disown, "Control.'disown'(%exp:1)");
+    return exp((is_detach ? detach : disown) % make_closure(body));
+  }
+
+
+  rExp
   Factory::make_get_slot(const location& l,
                          rExp target, libport::Symbol member)
   {

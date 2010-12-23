@@ -945,14 +945,24 @@ exp:
 | "do" "(" exp ")" block  { $$ = MAKE(scope, @$, $3, $5); }
 ;
 
-/*-------------.
-| Assertions.  |
-`-------------*/
+/*--------------------.
+| Sugared functions.  |
+`--------------------*/
 
-%token ASSERT "assert";
+%token ASSERT "assert"
+       DETACH "detach"
+       DISOWN "disown";
+%type <bool> detach;
+detach:
+  "detach" { $$ = true; }
+| "disown" { $$ = false; }
+;
+
 exp:
-  "assert" "(" exp ")"    { $$ = MAKE(assert, @$, $3); }
-| "assert" "{" claims "}" { $$ = MAKE(assert, @$, $3); }
+  "assert" "(" exp ")"      { $$ = MAKE(assert, @$, $3); }
+| "assert" "{" claims "}"   { $$ = MAKE(assert, @$, $3); }
+| detach "(" exp[block] ")" { $$ = MAKE(detach, @$, $detach, $block); }
+| detach block              { $$ = MAKE(detach, @$, $detach, $block); }
 ;
 
 

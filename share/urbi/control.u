@@ -13,16 +13,15 @@ requireFile("urbi/boolean.u");
 
 class Global.Control
 {
-  function detach
+  function 'detach'(var c)
   {
-    spawn(closure() { call.evalArgAt(0) }, false)
+    System.spawn(c, false)
   };
 
-  function disown
+  function 'disown'(var c)
   {
-    spawn(closure() { call.evalArgAt(0) }, true)
+    System.spawn(c, true)
   };
-
 
   // 'every,sleep'(deadline, delay)
   //
@@ -50,10 +49,3 @@ class Global.Control
     deadline
   };
 };
-
-// Provide these at the Global level.
-do (Global)
-{
-  var detach  = Control.&detach;
-  var disown  = Control.&disown;
-}|;
