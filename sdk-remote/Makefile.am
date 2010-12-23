@@ -14,9 +14,6 @@ include $(top_srcdir)/build-aux/make/build-farm.mk
 
 EXTRA_DIST += LICENSE
 
-libtool: $(LIBTOOL_DEPS)
-	$(SHELL) ./config.status $@
-
 SUBDIRS =					\
   jpeg						\
   libport					\

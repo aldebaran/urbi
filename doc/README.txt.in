@@ -128,8 +128,8 @@ down the handling of the report.
 
 * Components
 
-Here is a non-exhastive list of the various components that where used
-to compile this Urbi SDK package.
+Here is a non-exhastive list of the components used to compile this
+package.
 
 ** Boost @BOOST_VERSION@
 ** oRTP @ORTP_VERSION@

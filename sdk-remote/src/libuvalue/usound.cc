@@ -72,6 +72,7 @@ namespace urbi
     return is;
   }
 
+  static
   std::ostream&
   operator<<(std::ostream& o, USoundSampleFormat f)
   {
@@ -127,11 +128,11 @@ namespace urbi
   std::ostream&
   USound::dump(std::ostream& o) const
   {
-    return o << "sound(format: " << format_string() << ", "
-             << "size: " << size << ", "
-             << "channels: " << channels << ", "
-             << "rate: " << rate << ", "
-             << "sample size: " << sampleSize << ", "
+    return o <<  "sound(format: " << format_string() << ", "
+             <<          "size: " << size << ", "
+             <<      "channels: " << channels << ", "
+             <<          "rate: " << rate << ", "
+             <<   "sample size: " << sampleSize << ", "
              << "sample format: " << sampleFormat
              << ")";
   }

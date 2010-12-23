@@ -42,7 +42,7 @@ param_mk=$sdk_remote_builddir/sdk/param.mk
 test -f "$param_mk" ||
   fatal "cannot find $param_mk"
 
-: ${LIBTOOL=$sdk_remote_builddir/libtool}
+: ${LIBTOOL=$abs_top_builddir/libtool}
 test -f "$LIBTOOL" ||
   fatal "cannot find $LIBTOOL"
 

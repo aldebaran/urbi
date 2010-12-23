@@ -7,7 +7,7 @@
 ## See the LICENSE file for more information.
 
 # libtool is required by umake.
-brandlibexec_SCRIPTS += $(sdk_remote_builddir)/libtool
+brandlibexec_SCRIPTS += $(top_builddir)/libtool
 
 # This file tells umake how to build things.
 nodist_remote_DATA = sdk/param.mk

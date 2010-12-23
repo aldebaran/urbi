@@ -343,7 +343,7 @@ esac
 AC_CONFIG_HEADERS([src/kernel/config.h])
 AC_CONFIG_FILES([share/urbi/package-info.u share/urbi/platform.u])
 URBI_APPEND_CONFIGUREFLAGS([LIBSFX=$LIBSFX])
-AC_CONFIG_SUBDIRS([libport])
+AC_CONFIG_SUBDIRS([sdk-remote/libport])
 
 AC_CONFIG_FILES([
   sdk-remote/Makefile
