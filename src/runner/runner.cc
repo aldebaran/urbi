@@ -165,6 +165,12 @@ namespace runner
     return dependencies_;
   }
 
+  void
+  Runner::dependencies_log_set(bool v)
+  {
+    dependencies_log_ = v;
+  }
+
   bool
   Runner::dependencies_log_get() const
   {

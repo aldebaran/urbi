@@ -202,6 +202,7 @@ namespace urbi
       DECLARE(update_timed_, update_timed_);
       DECLARE(owned,         owned);
       DECLARE(initialName,   initialName);
+      DECLARE(changed,   changed);
 #undef DECLARE
 
       setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
@@ -233,13 +234,15 @@ namespace urbi
       r.non_interruptible_set(true);
       // Loop if we have both notifychange and notifyaccess callbacs.
       // Listeners on the changed event counts as notifychange
-      if (!looping_
+      bool loopChecker = !looping_
           &&
           (!slot_get(SYMBOL(change))->call(SYMBOL(empty))->as_bool()
-          || slot_get(SYMBOL(changed))->call(SYMBOL(hasSubscribers))->as_bool()
+          || (changed_ && changed_->hasSubscribers())
           ||!slot_get(SYMBOL(changeConnections))->call(SYMBOL(empty))->as_bool()
            )
-          && !slot_get(SYMBOL(access))->call(SYMBOL(empty))->as_bool())
+          && !slot_get(SYMBOL(access))->call(SYMBOL(empty))->as_bool();
+      GD_FINFO_TRACE("Loopcheck on %s: %s", initialName, loopChecker);
+      if (loopChecker)
       {
         // There is no need to keep an accessor present if we are
         // going to trigger it periodicaly.
@@ -326,14 +329,32 @@ namespace urbi
           callNotify(r, rUVar(this), SYMBOL(change));
           callConnections(r, rObject(this), SYMBOL(changeConnections));
         }
-        changed();
+        if (changed_)
+          changed_->emit();
       }
       return val;
     }
 
     rObject
+    UVar::changed()
+    {
+      GD_FINFO_DEBUG("Creating changed! for var %s", initialName);
+      if (!changed_)
+      {
+        changed_ = new Event;
+        slot_update(SYMBOL(changed), changed_);
+      }
+      return changed_;
+    }
+
+    rObject
     UVar::accessor(const objects_type&)
     {
+      runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt();
+      bool dl = r->dependencies_log_get();
+      r->dependencies_log_set(false);
+      FINALLY(((runner::Runner*, r))((bool, dl)),
+              r->dependencies_log_set(dl));
       return getter(false);
     }
 
@@ -395,7 +416,8 @@ namespace urbi
       checkBypassCopy();
       callNotify(r, rUVar(this), SYMBOL(change));
       callConnections(r, rObject(this), SYMBOL(changeConnections));
-      slot_get(SYMBOL(changed))->call("emit");
+      if (changed_)
+        changed_->emit();
       return newval;
     }
   }

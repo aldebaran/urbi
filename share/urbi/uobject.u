@@ -382,7 +382,6 @@ do (&UVar)
       var access = WeakDictionary.new |
       var accessInLoop = WeakDictionary.new |
       var val |
-      var changed = Event.new |
       var valsensor = 0 |
       var isUVar = 1
     }

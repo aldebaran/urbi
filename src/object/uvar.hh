@@ -40,6 +40,7 @@ namespace urbi
       /// Check if we have both in/out callbaks, periodicaly trigger if so.
       void loopCheck();
       rObject writeOwned(rObject newval);
+      rObject changed();
       // Return the UVar from its full name.
       static rObject fromName(const std::string& n);
     private:
@@ -54,6 +55,9 @@ namespace urbi
       int waiterCount_;
       std::string initialName;
       bool owned;
+      // We must duplicate changed! mechanism because we want to disable
+      // automatic triggering.
+      rEvent changed_;
     };
     /// Call some notifies on an UVar.
     void callNotify(runner::Runner& r, rUVar self,

@@ -237,6 +237,7 @@ namespace runner
     typedef boost::unordered_set<object::rEvent> dependencies_type;
     const dependencies_type& dependencies() const;
     bool dependencies_log_get() const;
+    void dependencies_log_set(bool val);
     void dependency_add(object::rEvent evt);
   protected:
     bool dependencies_log_;
