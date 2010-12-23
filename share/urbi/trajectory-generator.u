@@ -67,7 +67,7 @@ class Global.TrajectoryGenerator
   // TrajectoryGenerator might be created way before it is run, in
   // which case we want startTime to match that of run(), not that of
   // init().
-  function reset ()
+  function reset()
   {
     var this.startTime = time|
     // Sin does not need startValue, but it is simpler to compute it
@@ -77,7 +77,7 @@ class Global.TrajectoryGenerator
   };
 
   // Going from startValue to targetValue with given speed.
-  function duration(speed)
+  function duration(var speed)
   {
     if (speed)
       abs(startValue - targetValue) / speed
@@ -103,8 +103,7 @@ class Global.TrajectoryGenerator
         // Accept unknown types as long as they have a '+' slot.
         if (!res.hasSlot("+"))
         {
-          res = 0|
-          "Warning: setting dummy startValue".print
+          res = 0| warn("setting dummy startValue")
         }
     } |
     res
@@ -128,12 +127,10 @@ class Global.TrajectoryGenerator
     var tag = Tag.new|
     tag:
     {
+      at (isOver)
+        tag.stop|
       every|(System.period)
-      {
-	if (isOver)
-          tag.stop|
 	setter(nextValue) |
-      }|
       sleep(inf)
     }|
   };
@@ -156,8 +153,6 @@ class TrajectoryGenerator.Until : TrajectoryGenerator
     var this.gen = call.evalArgAt(0) |
     var this.until = call.argAt(1) |
   };
-
-  var isOver = false;
 
   // Update the variable according to the trajectory.
   // Use the functions getter/setter to read/update the variable.
@@ -216,15 +211,15 @@ class TrajectoryGenerator.OpenLoop : TrajectoryGenerator
 
 class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
 {
-  function init (args)
+  function init(args)
   {
     var this.accel = args["accel"] |
   };
 
-  function reset ()
+  function reset()
   {
     TrajectoryGenerator.OpenLoop.&reset.apply([this]) |
-    var this.duration = sqrt ( 2 * (targetValue - this.startValue) / accel)
+    var this.duration = sqrt( 2 * (targetValue - this.startValue) / accel)
   };
 
   function get()
@@ -233,31 +228,36 @@ class TrajectoryGenerator.Accel : TrajectoryGenerator.OpenLoop
     if (duration - System.period < time - startTime)
     {
       isOver = true |
-      return targetValue
-    } |
-    var d = (time - startTime) |
-    d * d * 0.5 * accel
+      targetValue
+    }
+    else
+    {
+      var d = (time - startTime) |
+      d * d * 0.5 * accel
+    }
   };
 };
 
 class TrajectoryGenerator.Sin : TrajectoryGenerator.OpenLoop
 {
-  function init (args)
+  function init(args)
   {
     var this.phase = args.getWithDefault("phase", 0) |
     var this.ampli = args.getWithDefault("ampli", 0) |
-    var this.period = args["sin"]
+    var this.period = args["sin"] |
+    var this.alpha = 2 * pi / period
   };
 
   function get()
   {
-    targetValue + ampli * sin( (time - startTime) * 2 * pi / period + phase)
+    targetValue + ampli * sin((time - startTime) * alpha + phase)
   };
 };
 
 class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
 {
-  function init (args)
+  var 'pi/2' = pi / 2;
+  function init(args)
   {
     var this.duration = args["smooth"] |
   };
@@ -268,21 +268,24 @@ class TrajectoryGenerator.Smooth : TrajectoryGenerator.OpenLoop
     if (duration - System.period < time - startTime)
     {
       isOver = true|
-      return targetValue
-    } |
-    var stat = (time - startTime) / duration |
-    startValue +
-      (targetValue - startValue) * ( sin ( - pi / 2.0 + pi * stat) +1) / 2.0
+      targetValue
+    }
+    else
+    {
+      var stat = (time - startTime) / duration |
+      startValue
+        + (targetValue - startValue) * (sin(pi * stat - 'pi/2') + 1) / 2
+    }
   };
 };
 
 class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
 {
-  function init (args)
+  function init(args)
   {
   };
 
-  function reset ()
+  function reset()
   {
     // Speed is just Time, but with initial conditions expressed in
     // speed instead of duration.  But since this relies on the
@@ -298,10 +301,13 @@ class TrajectoryGenerator.Time : TrajectoryGenerator.OpenLoop
     if (duration - System.period < time - startTime)
     {
       isOver = true|
-      return targetValue
-    } |
-    var stat = (time - startTime) / duration |
-    startValue + (targetValue - startValue) * stat
+      targetValue
+    }
+    else
+    {
+      var stat = (time - startTime) / duration |
+      startValue + (targetValue - startValue) * stat
+    }
   };
 
 };
@@ -342,18 +348,18 @@ class TrajectoryGenerator.ClosedLoop : TrajectoryGenerator
   {
     if (abs(currentVal - targetValue) <= errorLevel(currentVal))
       isOver = true |
-    return isOver
+    isOver
   };
 };
 
 class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
 {
-  function init (args)
+  function init(args)
   {
     var this.speed = args["speed"] |
   };
 
-  function reset ()
+  function reset()
   {
     TrajectoryGenerator.ClosedLoop.&reset.apply([this]) |
   };
@@ -361,15 +367,16 @@ class TrajectoryGenerator.SpeedAdaptive : TrajectoryGenerator.ClosedLoop
   function get(currentVal)
   {
     if (done(currentVal))
-      return targetValue |
-    var res = currentVal
-      + speed * (targetValue - currentVal).sign * System.period |
-    if ((currentVal < targetValue && targetValue < res)
-      || (res < targetValue && targetValue < currentVal))
+      targetValue
+    else
     {
-      res = targetValue
-    } |
-    res
+      var res = currentVal
+        + speed * (targetValue - currentVal).sign * System.period |
+      if ((currentVal < targetValue && targetValue < res)
+          || (res < targetValue && targetValue < currentVal))
+        res = targetValue |
+      res
+    }
   };
 };
 
@@ -377,11 +384,11 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
 {
   var duration;
 
-  function init (args)
+  function init(args)
   {
   };
 
-  function reset ()
+  function reset()
   {
     // Speed is just Time, but with initial conditions expressed in
     // speed instead of duration.  But since this relies on the
@@ -394,11 +401,17 @@ class TrajectoryGenerator.TimeAdaptive : TrajectoryGenerator.ClosedLoop
   function get(currentVal)
   {
     if (done(currentVal))
-      return targetValue |
-    var time = time |
-    if (startTime + duration - System.period < time)
-      return targetValue |
-    var stat = System.period / ( startTime + duration - time) |
-    currentVal + stat * (targetValue - currentVal)
+      targetValue
+    else
+    {
+      var time = time |
+      if (startTime + duration - System.period < time)
+        targetValue
+      else
+      {
+        var stat = System.period / (startTime + duration - time) |
+        currentVal + stat * (targetValue - currentVal)
+      }
+    }
   };
 };
