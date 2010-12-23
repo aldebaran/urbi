@@ -417,7 +417,10 @@ namespace kernel
   UServer::async_jobs_process_()
   {
     std::vector<AsyncJob> jobs;
-    std::swap(jobs, async_jobs_);
+    {
+      libport::BlockLock lock(async_jobs_lock_);
+      std::swap(jobs, async_jobs_);
+    }
     foreach (AsyncJob& job, jobs)
     {
       // Clone the shell to run asynchronous jobs.
