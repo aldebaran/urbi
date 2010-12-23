@@ -50,8 +50,8 @@ namespace urbi
     return URBI_CONTINUE;
   }
 
-  UCallbackAction
   static
+  UCallbackAction
   endProgram(const UMessage& msg)
   {
     GD_SWARN("got a disconnection message: " << msg);

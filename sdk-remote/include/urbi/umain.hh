@@ -49,11 +49,13 @@
 extern "C"
 {
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  URBI_SDK_API int urbi_main(int argc, const char* argv[], UrbiRoot& root,
-                             bool block, bool errors);
+  URBI_SDK_API
+  int urbi_main(int argc, const char* argv[], UrbiRoot& root,
+                bool block, bool errors);
   /** Bouncer to urbi::main() for easier access through dlsym(). */
-  URBI_SDK_API int urbi_main_args(const libport::cli_args_type& args, UrbiRoot& root,
-                                  bool block, bool errors);
+  URBI_SDK_API
+  int urbi_main_args(const libport::cli_args_type& args, UrbiRoot& root,
+                     bool block, bool errors);
 }
 
 namespace urbi
