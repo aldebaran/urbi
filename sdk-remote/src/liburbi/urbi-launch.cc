@@ -15,8 +15,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <sdk/config.h>
-
 #include <boost/assign/list_of.hpp>
 using namespace boost::assign;
 

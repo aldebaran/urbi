@@ -12,7 +12,7 @@ brandlibexec_SCRIPTS += $(sdk_remote_builddir)/libtool
 # This file tells umake how to build things.
 nodist_remote_DATA = sdk/param.mk
 
-javaremotedir=$(remotedir)/java
+javaremotedir = $(remotedir)/java
 nodist_javaremote_DATA = sdk/java/param.mk
 
 UMAKE_WRAPPERS =                                \
@@ -35,7 +35,7 @@ $(UMAKE_CONFIGURED): sdk/umake-common
 
 CLEANFILES += $(nodist_bin_SCRIPTS)
 
-EXTRA_DIST += sdk/umake-common sdk/eval_makefile.pl
+EXTRA_DIST += sdk/umake-common
 
 ## ------------- ##
 ## param.mk.in.  ##

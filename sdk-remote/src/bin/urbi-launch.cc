@@ -12,7 +12,7 @@
 
 #include <urbi/urbi-root.hh>
 
-#include <sdk/config.h>
+#include <libport/config.h>
 
 int main(int argc, char* argv[])
 {

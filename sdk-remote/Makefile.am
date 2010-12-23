@@ -26,12 +26,6 @@ SUBDIRS =					\
 # Also fix libjpeg.la.
 LTLIBRARIES_TO_FIX += jpeg/libjpeg4urbi$(LIBSFX).la
 
-# Work around a problem in Automake that needs to the be tracked.
-BUILT_SOURCES +=				\
-  $(top_srcdir)/sdk-remote/sdk/config.h.in	\
-  sdk/config.h
-
-
 brandlibexec_SCRIPTS =
 AM_CPPFLAGS +=					\
   $(LIBPORT_CPPFLAGS)				\

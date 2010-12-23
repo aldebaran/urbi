@@ -11,8 +11,10 @@
 ## --------------------- ##
 
 noinst_LTLIBRARIES += libuvalue/libuvalue.la
+# Find kernel/config.h which is above.
 libuvalue_libuvalue_la_CPPFLAGS =		\
   $(AM_CPPFLAGS)				\
+  -I $(top_builddir)/src			\
   -DBUILDING_URBI_SDK
 # Find version.hh.
 libuvalue_libuvalue_la_CPPFLAGS += -I.

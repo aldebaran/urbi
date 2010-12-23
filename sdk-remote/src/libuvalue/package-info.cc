@@ -11,7 +11,7 @@
 #include <libport/package-info.hh>
 #include <libport/version.hh>
 
-#include <sdk/config.h>
+#include <kernel/config.h>
 #include <urbi/package-info.hh>
 
 #include <libuvalue/revision-stub.hh>

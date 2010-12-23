@@ -1,12 +1,5 @@
-/INSTALL
 /Makefile.in
-/aclocal.m4
-/autom4te.cache
-/bootstrap.stamp
-/configure
 /include/urbi/ucallbacks.hh
-/sdk/config.h.in
-/sdk/config.h.in~
 /src/Makefile.in
 /src/swig/java/Makefile.in
 /src/tests/Makefile.in
