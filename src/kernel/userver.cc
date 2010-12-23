@@ -381,7 +381,7 @@ namespace kernel
     scheduler_->add_job
       (new runner::Interpreter(*ghost_->shell_get().get(),
                                p->as<object::Object>(),
-                               SYMBOL(handle_synchronizer)));
+                               SYMBOL(handleSynchronizer)));
     sched::rJob poll =
       new runner::Interpreter(*ghost_->shell_get().get(),
                               object::system_class->slot_get(SYMBOL(pollLoop)),
