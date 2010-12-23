@@ -10,10 +10,10 @@
 brandlibexec_SCRIPTS += $(sdk_remote_builddir)/libtool
 
 # This file tells umake how to build things.
-nodist_env_DATA = sdk/param.mk
+nodist_remote_DATA = sdk/param.mk
 
-javaenvdir=$(envdir)/java
-nodist_javaenv_DATA = sdk/java/param.mk
+javaremotedir=$(remotedir)/java
+nodist_javaremote_DATA = sdk/java/param.mk
 
 UMAKE_WRAPPERS =                                \
   sdk/umake-deepclean                           \

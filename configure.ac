@@ -31,7 +31,8 @@ AM_SILENT_RULES([yes])
 ## ------------ ##
 
 URBI_PACKAGE_KIND([kernel])
-
+AC_SUBST([remotedir], ['${brandlibdir}/remote'])
+AC_SUBST([enginedir], ['${brandlibdir}/engine'])
 URBI_DOC
 URBI_ENABLE_DOC_SECTIONS([bioloid, nao, nxt, p3dx, rmp, spykee, webots])
 AC_CONFIG_FILES([doc/config.sty doc/Makefile])

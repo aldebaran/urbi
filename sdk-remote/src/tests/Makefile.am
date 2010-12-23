@@ -7,7 +7,6 @@
 ## See the LICENSE file for more information.
 
 include $(top_srcdir)/build-aux/make/init.mk
-AUTOMAKE_OPTIONS += subdir-objects
 TESTS =
 AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 include $(top_srcdir)/build-aux/make/check.mk

@@ -11,8 +11,6 @@ include $(top_srcdir)/build-aux/make/init.mk
 include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
 include $(top_srcdir)/build-aux/make/libport.mk
 
-AUTOMAKE_OPTIONS += subdir-objects
-
 SUBDIRS = . tests
 if BINDINGS
 if  BINDING_JAVA
@@ -91,29 +89,6 @@ all: stub.stamp
 libs: $(LTLIBRARIES)
 core: libs bin/urbi-launch$(EXEEXT)
 
-
-
-## --------- ##
-## Install.  ##
-## --------- ##
-install-exec-hook: post-install
-post-install:
-# If we are used as a module of Urbi SDK, there is no need to run this
-# post-install step here, Urbi SDK.  Besides, under some
-# circumstances, running it twice can result in failure.
-	if test -n "$(DESTDIR)" &&				\
-	   ! grep 'PACKAGE_TARNAME = urbi-sdk'			\
-	       $(top_builddir)/Makefile >/dev/null 2>&1;	\
-	then							\
-	  $(build_aux_dir)/bin/check-lib-deps			\
-	    --verbose --verbose --verbose --verbose		\
-	    --destdir "$(DESTDIR)"				\
-	    --host-os "$(URBI_HOST_OS)"				\
-	    --prefix "$(prefix)"				\
-	    --libdir "$(libdir)"				\
-	    --libpath "$(BOOST_LDPATH)"				\
-	    "$(DESTDIR)";					\
-	fi
 
 ## ----------- ##
 ## Buildfarm.  ##

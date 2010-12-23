@@ -7,7 +7,7 @@ brandincludedir = @brandincludedir@
 brandlibdir = @brandlibdir@
 brandlibexecdir = @brandlibexecdir@
 builddir = $(UMAKE_BUILD_DIR)
-envdir = @envdir@
+remotedir = @remotedir@
 exec_prefix = @exec_prefix@
 includedir = @includedir@
 # On Windows, libdir is defined as ${bindir}.
@@ -112,7 +112,7 @@ OUTSHLIB_ABS = $(shell cd $(dir $(OUTSHLIB)) && pwd)/$(notdir $(OUTSHLIB))
 $(OUTSHLIB): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(CXXLINK) -export-dynamic -o $(lib_la)	\
 	  $(LTOBJECTS) $(ARGUMENT_LIBS) $(LIBS)	\
-	  -rpath $(envdir) $(LIBADD) -avoid-version
+	  -rpath $(remotedir) $(LIBADD) -avoid-version
 	mkdir -p $(lib_dir)
 # Sometimes people build libraries with dependencies that are not
 # sufficiently exposed to Libtool.  It then believes that it's going
@@ -151,7 +151,7 @@ $(OUTBIN): $(LTOBJECTS) $(ARGUMENT_LIBS)
 	$(LINK) \
 	    $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ \
 	    $(ARGUMENT_LIBS) $(LIBS) $(LTOBJECTS) \
-	    $(envdir)/$(LIBNAME)$(DLMODEXT) $(UMAKE_EXTRALIB) \
+	    $(remotedir)/$(LIBNAME)$(DLMODEXT) $(UMAKE_EXTRALIB) \
 	    $(EXTRA_LDFLAGS)
 
 clean:

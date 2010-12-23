@@ -6,7 +6,7 @@ brandincludedir = @brandincludedir@
 brandlibdir = @brandlibdir@
 brandlibexecdir = @brandlibexecdir@
 builddir = $(UMAKE_BUILD_DIR)
-envdir = @envdir@
+remotedir = @remotedir@
 exec_prefix = @exec_prefix@
 includedir = @includedir@
 # On Windows, libdir is defined as ${bindir}.

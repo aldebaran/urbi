@@ -59,12 +59,12 @@ esac
 # special case for kernel and umake-remote
 case $me in
    (umake-remote|umake-shared)
-     envdir="$sdk_remote_builddir/src/libuobject"
+     remotedir="$sdk_remote_builddir/src/libuobject"
      prefix="$sdk_remote_builddir"
      ;;
    (*)
      # Use the libuobject from the kernel.
-     envdir="$sdk_remote_builddir/../src"
+     remotedir="$sdk_remote_builddir/../src"
      prefix="$sdk_remote_builddir"
      ;;
 esac
@@ -97,7 +97,7 @@ wrappee=$sdk_remote_builddir/sdk/$me
 set x                                           \
     $PREURBI "$wrappee"                         \
     LIBTOOL="$LIBTOOL"                          \
-    envdir="$envdir"                            \
+    remotedir="$remotedir"                            \
     "$@"                                        \
     --kernel="$kernel_dir"                      \
     --prefix="$prefix"                          \

@@ -11,8 +11,8 @@
 ## --------------- ##
 
 # Hook to install-exec, not install-data.
-execenvdir = $(envdir)
-execenv_LTLIBRARIES = libuobject/libuobject@LIBSFX@.la
+execremotedir = $(remotedir)
+execremote_LTLIBRARIES = libuobject/libuobject@LIBSFX@.la
 libuobject_libuobject@LIBSFX@_la_SOURCES =	\
   libuobject/main.cc				\
   libuobject/remote-ucontext-impl.hh		\
@@ -37,7 +37,7 @@ libuobject_libuobject@LIBSFX@_la_LDFLAGS =	\
 # therefore relinks them) in unspecified order.  So be sure to install
 # lib libraries before the env libraries.  We cannot insert the
 # dependency here, because Automake thinks we are trying to override
-# its definition of install-execenvdir and no longer produces it.  As
+# its definition of install-execremotedir and no longer produces it.  As
 # a result, we do have the right dependencies, but nothing is
 # installed.
 install_execenvltlibraries = install-execenvLTLIBRARIES

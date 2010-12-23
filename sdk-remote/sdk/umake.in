@@ -338,12 +338,12 @@ if $shared; then
       # # installed.  In other words, *.la files are not relocatable.
       # #
       # # This is not an issue in the present case.
-      # append LIBADD "\${envdir}/libuobject$LIBSFX.dll"
+      # append LIBADD "\${remotedir}/libuobject$LIBSFX.dll"
       #
       # because for some reason libtool then refuses to build a dll.
       # So we will probably have to find a means to fix relocatability
       # elsewhere.
-      append LIBADD "-no-undefined \${envdir}/libuobject$LIBSFX.la"
+      append LIBADD "-no-undefined \${remotedir}/libuobject$LIBSFX.la"
       ;;
   esac
 fi

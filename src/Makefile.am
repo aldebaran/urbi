@@ -53,7 +53,7 @@ AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 ## libuobject.  ##
 ## ------------ ##
 
-env_LTLIBRARIES = libuobject@LIBSFX@.la
+engine_LTLIBRARIES = libuobject@LIBSFX@.la
 libuobject@LIBSFX@_la_CPPFLAGS =		\
   $(AM_CPPFLAGS) 				\
   -DBUILDING_URBI_SDK 				\
@@ -123,5 +123,5 @@ dist_libuobject@LIBSFX@_la_SOURCES +=			\
 # We used to install a different version (with s/remote/engine/g), but
 # there is no occurrence of remote in param.mk.  Yet MN insists on
 # installing this guy.
-nodist_env_DATA = $(top_builddir)/sdk-remote/sdk/param.mk
+nodist_engine_DATA = $(top_builddir)/sdk-remote/sdk/param.mk
 
