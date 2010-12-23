@@ -7,7 +7,6 @@
 ## See the LICENSE file for more information.
 
 ## Use the versioning information of the Kernel.
-VERSIONIFY_CACHE = $(top_srcdir)/../.version
 include $(top_srcdir)/build-aux/make/init.mk
 include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
 include $(top_srcdir)/build-aux/make/libport.mk
@@ -22,14 +21,14 @@ endif
 endif
 
 # libjpeg.
-JPEG_CPPFLAGS = -I$(top_srcdir)/jpeg -I$(top_builddir)/jpeg
-JPEG_LIBS = $(top_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la
+JPEG_CPPFLAGS = -I$(sdk_remote_srcdir)/jpeg -I$(sdk_remote_builddir)/jpeg
+JPEG_LIBS = $(sdk_remote_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la
 
-AM_CPPFLAGS +=					\
-  $(LIBPORT_CPPFLAGS)				\
-  $(JPEG_CPPFLAGS)				\
-  -DURBI_INHIBIT_REVISION_CHECK                 \
-  -I$(top_srcdir)/include -I$(top_builddir)	\
+AM_CPPFLAGS +=							\
+  $(LIBPORT_CPPFLAGS)						\
+  $(JPEG_CPPFLAGS)						\
+  -DURBI_INHIBIT_REVISION_CHECK					\
+  -I$(sdk_remote_srcdir)/include -I$(sdk_remote_builddir)	\
   -I$(srcdir)
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(SOCKETS_CFLAGS) $(WARNING_CXXFLAGS)
@@ -104,7 +103,7 @@ post-install:
 # circumstances, running it twice can result in failure.
 	if test -n "$(DESTDIR)" &&				\
 	   ! grep 'PACKAGE_TARNAME = urbi-sdk'			\
-	       $(top_builddir)/../Makefile >/dev/null 2>&1;	\
+	       $(top_builddir)/Makefile >/dev/null 2>&1;	\
 	then							\
 	  $(build_aux_dir)/bin/check-lib-deps			\
 	    --verbose --verbose --verbose --verbose		\

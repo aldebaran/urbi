@@ -39,10 +39,10 @@ nodist_noinst_SCRIPTS +=                       \
 # changes here.  Which basically amounts to duplicating what Automake
 # does in the top-level Makefile.
 $(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
-	cd $(top_builddir) && $(SHELL) ./config.status src/tests/$@
+	cd $(top_builddir) && $(SHELL) ./config.status sdk-remote/src/tests/$@
 
 bin/urbi-launch$(EXEEXT): bin/urbi-launch.in
-	cd $(top_builddir) && $(SHELL) ./config.status --file src/tests/$@:src/tests/$<
+	cd $(top_builddir) && $(SHELL) ./config.status --file sdk-remote/src/tests/$@:src/tests/$<
 	chmod +x $@
 
 # By default, instrument the code.

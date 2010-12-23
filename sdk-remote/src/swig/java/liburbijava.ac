@@ -65,23 +65,22 @@ AC_SUBST([ECLIPSE_URBITalkie_ARGS], [])dnl
 AC_SUBST([ECLIPSE_URBIBallTrackingHead_ARGS], [])dnl
 AC_SUBST([ECLIPSE_URBIMirror_ARGS], [])dnl
 
-AC_CONFIG_FILES([src/swig/java/sample/test.launch])
-AC_CONFIG_FILES([src/swig/java/sample/uobjectjava.launch])
-AC_CONFIG_FILES([src/swig/java/sample/uobjectjava_withmain.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBIPing.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBIRecord.launch])
-AC_CONFIG_FILES([src/swig/java/sample/Main.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBISound.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBISend.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBIBandWidth.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBIPlay.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBIImage.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBITalkie.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBIBallTrackingHead.launch])
-AC_CONFIG_FILES([src/swig/java/sample/URBIMirror.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/test.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/uobjectjava.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/uobjectjava_withmain.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBIPing.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBIRecord.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/Main.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBISound.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBISend.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBIBandWidth.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBIPlay.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBIImage.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBITalkie.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBIBallTrackingHead.launch])
+AC_CONFIG_FILES([sdk-remote/src/swig/java/sample/URBIMirror.launch])
 
 ## Local Variables:
 ## mode: autoconf
 ## End:
 ## vim:ft=config
-

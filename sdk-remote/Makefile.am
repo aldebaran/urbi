@@ -6,17 +6,11 @@
 ##
 ## See the LICENSE file for more information.
 
-include build-aux/make/init.mk
-include build-aux/make/build-aux.mk
-VERSIONIFY_CACHE = $(top_srcdir)/../.version
-include build-aux/make/package-version.mk
-include build-aux/make/fix-libtool-la.mk
-include build-aux/make/build-farm.mk
-BOOTSTRAP_CFG = .bootstrap.cfg
-include build-aux/make/bootstrap.mk
-
-AUTOMAKE_OPTIONS += subdir-objects
-ACLOCAL_AMFLAGS = -I build-aux/m4 -I build-aux -I sdk
+include $(top_srcdir)/build-aux/make/init.mk
+include $(top_srcdir)/build-aux/make/build-aux.mk
+include $(top_srcdir)/build-aux/make/package-version.mk
+include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
+include $(top_srcdir)/build-aux/make/build-farm.mk
 
 EXTRA_DIST += LICENSE
 
@@ -34,7 +28,7 @@ LTLIBRARIES_TO_FIX += jpeg/libjpeg4urbi$(LIBSFX).la
 
 # Work around a problem in Automake that needs to the be tracked.
 BUILT_SOURCES +=				\
-  $(top_srcdir)/sdk/config.h.in			\
+  $(top_srcdir)/sdk-remote/sdk/config.h.in	\
   sdk/config.h
 
 

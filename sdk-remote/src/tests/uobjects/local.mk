@@ -11,7 +11,7 @@
 ## -------------------- ##
 
 # Compile each UObject using umake.
-include $(top_srcdir)/src/urbi/uobjects.mk
+include $(top_srcdir)/sdk-remote/src/urbi/uobjects.mk
 UOBJECTS_TESTS = $(addprefix uobjects/, $(UOBJECTS:=.uob))
 
 # uobject-check
@@ -19,7 +19,7 @@ EXTRA_DIST += bin/uobject-check.m4sh
 nodist_check_SCRIPTS += bin/uobject-check
 m4sh_scripts += bin/uobject-check
 
-$(UOBJECTS_TESTS:.uob=.log): uobjects/%.log: $(top_builddir)/src/urbi/%.la bin/uobject-check
+$(UOBJECTS_TESTS:.uob=.log): uobjects/%.log: $(sdk_remote_builddir)/src/urbi/%.la bin/uobject-check
 	@$(am__check_pre) bin/uobject-check $< $(am__check_post)
 
 TESTS += $(UOBJECTS_TESTS)

@@ -8,19 +8,18 @@
 # See the LICENSE file for more information.
 # For comments, bug reports and feedback: http://www.urbiforge.com
 #
-m4_pattern_forbid([^ACX_])
-m4_pattern_forbid([^AX_])
-m4_pattern_forbid([^URBI_])
+m4_pattern_forbid([^(ACX|AX|URBI)_])dnl
 
 AC_PREREQ([2.60])
 AC_INIT([Urbi SDK], [2.6],
         [kernel-bugs@lists.gostai.com], [urbi-sdk])
 URBI_PACKAGE_VERSION
-URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2005-2010])
+URBI_PACKAGE_COPYRIGHT([Gostai S.A.S.], [2004-2010])
 URBI_DISTCHECK_CONFIGURE_FLAGS
 
 # Libtoolize needs to see this invocation...
 AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
@@ -37,10 +36,10 @@ URBI_DOC
 URBI_ENABLE_DOC_SECTIONS([bioloid, nao, nxt, p3dx, rmp, spykee, webots])
 AC_CONFIG_FILES([doc/config.sty doc/Makefile])
 AM_PATH_LISPDIR
+
 ## ------------- ##
 ## Compilation.  ##
 ## ------------- ##
-
 
 # Bison.
 URBI_CONFIG_SCRIPTS([build-aux/bin/bison++])
@@ -126,6 +125,7 @@ URBI_BOOST_REQUIRE
 URBI_BOOST([DATE_TIME])
 URBI_BOOST([REGEX])
 URBI_BOOST([SYSTEM])
+URBI_BOOST([THREADS])
 URBI_BOOST([TOKENIZER])
 URBI_BOOST_LOCATION
 
@@ -140,6 +140,146 @@ WITH_XENOMAI
 # object/directory.
 AC_CHECK_HEADERS([sys/inotify.h])
 
+# ortp
+PKG_CHECK_MODULES([ORTP], [ortp], [HAVE_ORTP=true], [HAVE_ORTP=false])
+AM_CONDITIONAL([HAVE_ORTP], [$HAVE_ORTP])
+
+# X11.
+# AC_PATH_XTRA finds X11 headers even if cross-compiling to windows.
+case $ac_cv_host in
+  (*pw32*|*win32*|*mingw*) no_x=yes;;
+  (*)  AC_PATH_XTRA ;;
+esac
+
+AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
+# FIXME: -lXext should be checked too.
+if test x"$no_x" != xyes; then
+  AC_SUBST([X11_LDADD],
+           ['$(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)'])
+fi
+# We use -isystem for Boost if possible.  But then, if X11 is
+# installed in the same place as another copy of Boost, because system
+# directories are processed last, the Boost headers that will be used
+# are those where X11 is installed (think of /opt/local/include on OS
+# X for instance).  So look make X11 header's location isystem too.
+#
+# Note by the way that isystem is a tremendous help to fight Boost
+# warnings.
+AC_SUBST([X11_CPPFLAGS], [$X_CFLAGS])
+URBI_ISYSTEM([X11_CPPFLAGS])
+
+
+# Examples.
+URBI_ARG_ENABLE([disable-examples],
+                [do no compile the examples], [yes|no], [yes])
+AC_MSG_CHECKING([whether compiling the examples])
+AC_MSG_RESULT([$enable_examples])
+AM_CONDITIONAL([EXAMPLES], [test x"$enable_examples" = xyes])
+
+# --without-sdk-remote.
+URBI_ARG_ENABLE([disable-sdk-remote],
+                [do not compile the remote sdk], [yes|no], [yes])
+AC_MSG_CHECKING([whether compiling the remote sdk])
+AC_MSG_RESULT([$enable_sdk_remote])
+AM_CONDITIONAL([SDK_REMOTE], [test x"$enable_sdk_remote" = xyes])
+
+# Soundcard.
+AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
+AM_CONDITIONAL([SOUNDCARD], [$soundcard])
+
+
+## --------- ##
+## Bindings  ##
+## --------- ##
+URBI_ARGLIST_ENABLE([enable-bindings], [disable the bindings],
+                    [yes|no|csharp|java|perl|php|python|ruby], [yes])
+AC_MSG_CHECKING([the bindings to activate])
+save_IFS=$IFS
+IFS=,
+for i in $enable_bindings
+do
+  IFS=$save_IFS
+  case $i in
+    (yes) enable_bindings="csharp,java,lua,perl,php,python,ruby";;
+    (no | csharp | java | perl | php | python | ruby) ;;
+    (*) AC_MSG_ERROR([invalid --enable-bindings argument: $i]);;
+  esac
+done
+IFS=$save_IFS
+AC_MSG_RESULT([$enable_bindings])
+
+AM_CONDITIONAL([BINDINGS], [test x"$enable_bindings" != xno])
+AM_CONDITIONAL([BINDING_CSHARP],
+               [echo "$enable_bindings" | grep -w csharp >/dev/null])
+AM_CONDITIONAL([BINDING_JAVA],
+               [echo "$enable_bindings" | grep -w java >/dev/null])
+AM_CONDITIONAL([BINDING_LUA],
+               [echo "$enable_bindings" | grep -w lua >/dev/null])
+AM_CONDITIONAL([BINDING_PERL],
+               [echo "$enable_bindings" | grep -w perl >/dev/null])
+AM_CONDITIONAL([BINDING_PHP],
+               [echo "$enable_bindings" | grep -w php >/dev/null])
+AM_CONDITIONAL([BINDING_PYTHON],
+               [echo "$enable_bindings" | grep -w python >/dev/null])
+AM_CONDITIONAL([BINDING_RUBY],
+               [echo "$enable_bindings" | grep -w ruby >/dev/null])
+
+if test x"$enable_bindings" != xno; then
+ # With the bindings, we need shared libraries.
+ AC_ENABLE_SHARED
+ AX_PKG_SWIG([1.3.36], [],
+             [AC_MSG_ERROR([SWIG 1.3.36 is required to build bindings.])])
+
+ ## -------------------------- ##
+ ## liburbi java configuration ##
+ ## -------------------------- ##
+ m4_include([sdk-remote/src/swig/java/liburbijava.ac])
+
+ ac_configure_args=" $ac_configure_args --disable-programs"
+fi
+
+## --------- ##
+## libjpeg.  ##
+## --------- ##
+
+# Whether we should build (and test) the libjpeg executables.
+# Reverses the default behavior in libjpeg, that's why we don't simply
+# rely on configure's argument passing.
+URBI_ARG_ENABLE([enable-programs],
+                [Build extra programs], [yes|no], [no])
+case $enable_programs in
+ (yes) # No need to pass --enable-programs, because (i) it's the
+       # default for libjpeg, and (ii) if --enable-programs is
+       # passed to this configure, it gives it to its subconfigures,
+       # so we would just duplicate the request.
+       ;;
+  (*)  URBI_APPEND_CONFIGUREFLAGS([--disable-programs]);;
+esac
+
+# Rename libjpeg to libjpeg4urbi to avoid conflicts with system
+# versions of the library.
+URBI_APPEND_CONFIGUREFLAGS([LIBJPEG_NAME=jpeg4urbi])
+
+
+# Let libjpeg use the same libdir as us.
+URBI_APPEND_CONFIGUREFLAGS(["libdir='${libdir}'"])
+AC_CONFIG_SUBDIRS([sdk-remote/jpeg])
+
+# If we use a specific runtime for MSVC, tell it to libjpeg, which
+# does not use the compilation-mode macros.
+if test -n "$urbi_msvc_runtime"; then
+  URBI_APPEND_CONFIGUREFLAGS([--enable-cflags=$urbi_msvc_runtime_compilerflags])
+  URBI_APPEND_CONFIGUREFLAGS([--enable-ldflags=$urbi_msvc_runtime_ldflags])
+fi
+
+## ----------------- ##
+## Late SDK Remote.  ##
+## ----------------- ##
+
+AC_CONFIG_FILES([sdk-remote/doc/sdk-remote.dox])
+AC_CONFIG_FILES([sdk-remote/doc/sdk-remote-java.dox])
+
+URBI_APPLE
 
 ## --------- ##
 ## modules.  ##
@@ -151,12 +291,6 @@ URBI_MODULAR_BUILD
 URBI_MODULE_REPORT
 AC_CONFIG_FILES([modules/Makefile])
 
-
-## -------------- ##
-## Sub packages.  ##
-## -------------- ##
-
-AC_CONFIG_SUBDIRS([sdk-remote])
 
 ## -------- ##
 ## Output.  ##
@@ -184,4 +318,31 @@ esac
 
 AC_CONFIG_HEADERS([src/kernel/config.h])
 AC_CONFIG_FILES([share/urbi/package-info.u share/urbi/platform.u])
+URBI_APPEND_CONFIGUREFLAGS([LIBSFX=$LIBSFX])
+AC_CONFIG_SUBDIRS([libport])
+
+AC_CONFIG_FILES([
+  sdk-remote/Makefile
+    sdk-remote/src/Makefile
+      sdk-remote/src/swig/java/Makefile
+      sdk-remote/src/tests/Makefile
+])
+
+# URBI_CONFIG_WRAPPER(COMPONENT-NAME)
+# -----------------------------------
+# Create a testing wrapper for the COMPONENT-NAME.
+m4_define([URBI_CONFIG_WRAPPER],
+[URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/$1:sdk-remote/src/tests/bin/wrapper.in])
+])
+
+# Prepare the umake wrappers.
+URBI_CONFIG_WRAPPER([umake])
+URBI_CONFIG_WRAPPER([umake-link])
+URBI_CONFIG_WRAPPER([umake-shared])
+URBI_CONFIG_WRAPPER([umake-java])
+URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/urbi-launch$EXEEXT:sdk-remote/src/tests/bin/urbi-launch.in])
+URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/urbi-launch-java$EXEEXT:sdk-remote/src/tests/bin/urbi-launch.in])
+
+URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/urbi-send])
+
 AC_OUTPUT
