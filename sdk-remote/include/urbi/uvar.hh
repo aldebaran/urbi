@@ -217,11 +217,11 @@ namespace urbi
   blend(*this, PROP_BLEND),                     \
   constant(*this, PROP_CONSTANT)
 
-} // end namespace urbi
+  /// Report \a u on \a o for debugging.
+  URBI_SDK_API
+  std::ostream& operator<< (std::ostream& o, const urbi::UVar& u);
 
-/// Report \a u on \a o for debugging.
-URBI_SDK_API
-std::ostream& operator<< (std::ostream& o, const urbi::UVar& u);
+} // end namespace urbi
 
 # include <urbi/uvar.hxx>
 

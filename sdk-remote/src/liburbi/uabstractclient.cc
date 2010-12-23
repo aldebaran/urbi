@@ -111,15 +111,7 @@ namespace urbi
   public:
     UClientStreambuf(UAbstractClient* cl)
       : client_(cl)
-    {
-    }
-
-    /// The associate client.
-    UAbstractClient*
-    client_get()
-    {
-      return client_;
-    }
+    {}
 
   protected:
     virtual int overflow(int c = EOF);
@@ -1164,16 +1156,6 @@ namespace urbi
     if (!cli)
       return "";
     return cli->connectionID();
-  }
-
-
-  UAbstractClient*
-  client_get(std::ostream& o)
-  {
-    if (UClientStreambuf* buf = dynamic_cast<UClientStreambuf*>(o.rdbuf()))
-      return buf->client_get();
-    else
-      return 0;
   }
 
 

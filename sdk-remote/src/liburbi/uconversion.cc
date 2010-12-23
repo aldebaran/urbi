@@ -50,19 +50,16 @@ namespace urbi
     }
   } // namespace
 
-  /** Convert a buffer \a sourceImage, which contains an RGB image, to a
-      buffer for the \a destinationImage, which will contain a YCrCb image.
-
-      The \a sourceImage and \a destinationImage are expected to be pointers
-      to a valid memory area of size equal to \a bufferSize.
-   */
+  /// Convert a buffer \a in containing a source image, (an RGB
+  /// image), to a buffer \a out for the destinationImage, which will
+  /// contain a YCrCb image.
+  ///
+  /// The \a sourceImage and \a destinationImage are expected to be
+  /// pointers to a valid memory area of size equal to \a bufferSize.
   int
-  convertRGBtoYCrCb(const byte* sourceImage,
-		    size_t bufferSize,
-		    byte* destinationImage)
+  convertRGBtoYCrCb(const byte* in, size_t bufferSize,
+		    byte* out)
   {
-    byte* in = (byte*) sourceImage;
-    byte* out = (byte*) destinationImage;
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
       float r = in[i];
@@ -73,28 +70,25 @@ namespace urbi
 	Cr = V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128
 	Cb = U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128
       */
-      out[i] = clamp((0.257f * r) + (0.504f * g) + (0.098f * b) + 16.0f);
-      out[i + 1] = clamp((0.439f * r) - (0.368f * g) - (0.071f * b) + 128.0f);
-      out[i + 2] = clamp(-(0.148f * r) - (0.291f * g) + (0.439f * b) + 128.0f);
+      out[i]     = clamp( 0.257f * r + 0.504f * g + 0.098f * b +  16.0f);
+      out[i + 1] = clamp( 0.439f * r - 0.368f * g - 0.071f * b + 128.0f);
+      out[i + 2] = clamp(-0.148f * r - 0.291f * g + 0.439f * b + 128.0f);
     }
     return 1;
   }
 
-  /** Convert a buffer \a sourceImage, which contains an YCrCb, image to
-      a buffer for the \a destinationImage, which will contain a YCbCr image.
+  /** Convert a buffer \a in, which contains an YCrCb, image to
+      a buffer for the \a out, which will contain a YCbCr image.
       This function is its own reverse operation and can be used to convert
       YCbCr image into YCrCb.
 
-      The \a sourceImage and \a destinationImage are expected to be pointers
+      The \a in and \a out are expected to be pointers
       to a valid memory area of size equal to \a bufferSize.
   */
   int
-  convertYCrCbtoYCbCr(const byte* sourceImage,
-		      size_t bufferSize,
-		      byte* destinationImage)
+  convertYCrCbtoYCbCr(const byte* in, size_t bufferSize,
+		      byte* out)
   {
-    byte*in = (byte*) sourceImage;
-    byte*out = (byte*) destinationImage;
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
       byte tmp; // If source == destination
@@ -107,20 +101,17 @@ namespace urbi
   }
 
 
-  /** Convert a buffer \a sourceImage, which contains an YCrCb, image to a
-      buffer for the \a destinationImage, which will contain a RGB image.
+  /** Convert a buffer \a in, which contains an YCrCb, image to a
+      buffer for the \a out, which will contain a RGB image.
 
-      The \a sourceImage and \a destinationImage are expected to be pointers
+      The \a in and \a out are expected to be pointers
       to a valid memory area of size equal to \a bufferSize.
    */
   int
-  convertYCrCbtoRGB(const byte* sourceImage,
-		    size_t bufferSize,
-		    byte* destinationImage)
+  convertYCrCbtoRGB(const byte* in, size_t bufferSize,
+		    byte* out)
   {
     // http://en.wikipedia.org/wiki/YUV#Converting_between_Y.27UV_and_RGB
-    byte*in = (byte*) sourceImage;
-    byte*out = (byte*) destinationImage;
     for (size_t i = 0; i < bufferSize - 2; i += 3)
     {
       int c = in[i]-16;
@@ -162,6 +153,7 @@ namespace urbi
 
       \return 1 on success.
    */
+  static
   int
   convert_jpeg_to(const byte* source, size_t sourcelen,
                   UImageFormat dest_format,
@@ -787,7 +779,9 @@ namespace urbi
 
 namespace urbi
 {
-  void dup(unsigned short* dst, const unsigned short* src, size_t count)
+  static
+  void
+  dup(unsigned short* dst, const unsigned short* src, size_t count)
   {
     unsigned int* idst = (unsigned int*)dst;
     const unsigned short* end = src + count;
@@ -798,7 +792,10 @@ namespace urbi
     }
   }
 
-  void dup(byte* dst, const byte* src, size_t count)
+
+  static
+  void
+  dup(byte* dst, const byte* src, size_t count)
   {
     unsigned short* idst = (unsigned short*)dst;
     const byte* end = src + count;

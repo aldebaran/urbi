@@ -43,6 +43,7 @@ namespace urbi
 {
   static impl::RemoteUContextImpl* defaultContext;
 
+  static
   UCallbackAction
   debug(const UMessage& msg)
   {
