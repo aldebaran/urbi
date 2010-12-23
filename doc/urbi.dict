@@ -548,8 +548,8 @@ lhs
 libboost
 libcoroutine
 libjpeg
+liblinphone
 libltdl
-libltld
 LIBPLUGIN
 libport
 LIBREMOTE
