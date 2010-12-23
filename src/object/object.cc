@@ -437,15 +437,20 @@ namespace urbi
     std::ostream&
     Object::protos_dump(std::ostream& o) const
     {
-      if (!protos_->empty())
+      if (proto_ || !protos_->empty())
       {
         o << "protos = ";
         bool tail = false;
-        foreach (const rObject& p, *protos_)
+        if (proto_)
+          proto_->id_dump(o);
+        else
         {
-          if (tail++)
-            o << ", ";
-          p->id_dump (o);
+          foreach (const rObject& p, *protos_)
+          {
+            if (tail++)
+              o << ", ";
+            p->id_dump (o);
+          }
         }
         o << libport::iendl;
       }
