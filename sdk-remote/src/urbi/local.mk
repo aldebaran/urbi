@@ -50,7 +50,7 @@ clean-uobjects:
 # Help to restart broken builds.
 $(UMAKE_SHARED):
 	$(MAKE) $(AM_MAKEFLAGS) -C tests bin/umake-shared
-	$(MAKE) $(AM_MAKEFLAGS) -C $(top_builddir) sdk/umake-shared sdk/umake
+	$(MAKE) $(AM_MAKEFLAGS) -C $(sdk_remote_builddir) sdk/umake-shared sdk/umake
 
 
 ## -------------- ##

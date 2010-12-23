@@ -19,6 +19,6 @@ bin_urbi_launch_LDFLAGS  = $(AM_LDFLAGS)
 bin_urbi_launch_LDADD    = $(LTDL_LIBS)
 
 if STATIC_BUILD
-bin_urbi_launch_LDADD += $(top_builddir)/src/libuvalue/libuvalue.la \
-  $(top_builddir)/src/libuobject/libuobject.la
+bin_urbi_launch_LDADD += $(sdk_remote_builddir)/src/libuvalue/libuvalue.la \
+  $(sdk_remote_builddir)/src/libuobject/libuobject.la
 endif

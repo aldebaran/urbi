@@ -38,12 +38,12 @@ AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
 # Find bin/tests.hh.
 AM_CPPFLAGS += -I$(srcdir)
 # Find urbi/ headers.
-AM_CPPFLAGS += -I$(top_srcdir)/include
+AM_CPPFLAGS += -I$(sdk_remote_srcdir)/include
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
-AM_LDADD =						\
-  $(top_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
-  $(top_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la		\
+AM_LDADD =							\
+  $(sdk_remote_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
+  $(sdk_remote_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la		\
   $(PTHREAD_LIBS)
 # We should not need to report the -rpath to Boost here, since we
 # don't depend directly from it (it is liburbi.la which does, via

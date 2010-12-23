@@ -5,8 +5,8 @@
 # need to cheat to avoid gratuitous issues on argv[0].
 me=$(basename "$0")
 
-abs_top_builddir='@abs_top_builddir@'
-prog=$abs_top_builddir/src/examples/$me
+sdk_remote_builddir='@abs_top_builddir@/sdk-remote'
+prog=$sdk_remote_builddir/src/examples/$me
 err=/tmp/$me-$$.stderr
 
 "$prog" "$@" 2>$err
@@ -14,6 +14,6 @@ sta=$?
 
 # Strip the various prefixes we can have to "urbi-send" so that in
 # error message only "urbi-send:" is used.
-perl >&2 -pe "s{\Q$abs_top_builddir\E/src/examples(/\.libs/(lt-)?)?}{}g" $err
+perl >&2 -pe "s{\Q$sdk_remote_builddir\E/src/examples(/\.libs/(lt-)?)?}{}g" $err
 rm $err
 exit $sta

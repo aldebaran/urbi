@@ -60,7 +60,7 @@ CHECK_ENVIRONMENT +=				\
   URBI_SERVER='$(URBI_SERVER)'
 
 # Find (i) our wrappers, (ii) the examples programs.
-BUILDCHECK_PATH = $(abs_builddir)/bin:$(abs_top_builddir)/src/examples
+BUILDCHECK_PATH = $(abs_builddir)/bin:$(abs_top_builddir)/sdk-remote/src/examples
 
 # Use the wrappers to run the non-installed executables.
 BUILDCHECK_ENVIRONMENT +=			\

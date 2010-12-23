@@ -46,8 +46,8 @@ java_package = urbi
 SWIGFLAGS =					\
   -c++ -java -Wall				\
   -outdir $(java_src_outdir)			\
-  -I$(top_srcdir)/src/liburbi/uobject		\
-  -I$(top_srcdir)/include			\
+  -I$(sdk_remote_srcdir)/src/liburbi/uobject	\
+  -I$(sdk_remote_srcdir)/include		\
   -package $(java_package)
 
 if APPLE
@@ -79,15 +79,15 @@ liburbijava@LIBSFX@_la_SOURCES =		\
   src/urbi_UObject.cc				\
   src/urbi_Log.cc				\
   src/urbi_Log.h
-liburbijava@LIBSFX@_la_LIBADD =				\
-  $(top_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
-  $(top_builddir)/src/libuobject/libuobject$(LIBSFX).la
+liburbijava@LIBSFX@_la_LIBADD =					\
+  $(sdk_remote_builddir)/src/liburbi/liburbi$(LIBSFX).la	\
+  $(sdk_remote_builddir)/src/libuobject/libuobject$(LIBSFX).la
 liburbijava@LIBSFX@_la_CPPFLAGS =		\
   $(JAVA_CPPFLAGS)				\
   $(BOOST_CPPFLAGS)				\
   $(LIBPORT_CPPFLAGS)				\
   -DURBI_INHIBIT_REVISION_CHECK                 \
-  -I$(top_srcdir)/include
+  -I$(sdk_remote_srcdir)/include
 
 CLEANFILES +=					\
   java.cc.h					\
