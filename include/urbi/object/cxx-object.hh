@@ -74,14 +74,13 @@
   size_t                                                                \
   Name::magic() const                                                   \
   {                                                                     \
-    static size_t res = boost::hash<const char*>()(#Name);              \
-    return res;                                                         \
+    return magicStatic();                                               \
   }                                                                     \
   size_t                                                                \
-  Name::magicStatic() /*No you cant bounce on the one above!*/    \
+  Name::magicStatic()                                                   \
   {                                                                     \
-    static size_t res = boost::hash<const char*>()(#Name);              \
-    return res;                                                         \
+    static const char* myname = #Name;                                  \
+    return (size_t)myname;                                              \
   }                                                                     \
   Name::Name(const ::urbi::object::FirstPrototypeFlag&)
 
