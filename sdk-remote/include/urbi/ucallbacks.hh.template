@@ -323,8 +323,7 @@ uvar_uvalue_cast<UVar&>(UValue& v)
       (owner, target, type,fun,funname, ctx);
   }
 
-// No stdcall on 64 bit gcc it seems.
-# ifndef __x86_64
+# ifdef ATTRIBUTE_STDCALL
   template <class R%%, class P% %%>
   UGenericCallback*
   createUCallbackStd(UObject& owner, UVar* target,
