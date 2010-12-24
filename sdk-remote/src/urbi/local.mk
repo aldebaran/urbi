@@ -48,7 +48,7 @@ clean-uobjects:
 	-rm -f $(urbi_uobjects_DATA) $(urbi_uobjects_DATA:$(DLMODEXT)=.la)
 
 # Help to restart broken builds.
-$(UMAKE_SHARED):
+$(UMAKE_SHARED): tests/bin/wrapper.in $(sdk_remote_srcdir)/sdk/umake.in
 	$(MAKE) $(AM_MAKEFLAGS) -C tests bin/umake-shared
 	$(MAKE) $(AM_MAKEFLAGS) -C $(sdk_remote_builddir) sdk/umake-shared sdk/umake
 
