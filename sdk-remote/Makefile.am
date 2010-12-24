@@ -7,8 +7,6 @@
 ## See the LICENSE file for more information.
 
 include $(top_srcdir)/build-aux/make/init.mk
-include $(top_srcdir)/build-aux/make/build-aux.mk
-include $(top_srcdir)/build-aux/make/package-version.mk
 include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
 include $(top_srcdir)/build-aux/make/build-farm.mk
 

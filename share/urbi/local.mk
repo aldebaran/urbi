@@ -22,16 +22,11 @@ BUILT_SOURCES += $(nodist_urbi_DATA)
 urbi_package_infodir = $(urbidir)/package-info
 nodist_urbi_package_info_DATA =			\
   share/urbi/package-info/urbi-sdk.u		\
-  share/urbi/package-info/urbi-sdk-remote.u	\
   share/urbi/package-info/libport.u
 
 share/urbi/package-info/urbi-sdk.u: $(top_srcdir)/.version $(VERSIONIFY)
 	$(AM_V_GEN)
 	$(AM_V_at)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK'
-	$(AM_V_at)touch $@
-share/urbi/package-info/urbi-sdk-remote.u: $(top_srcdir)/.version $(VERSIONIFY)
-	$(AM_V_GEN)
-	$(AM_V_at)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK Remote'
 	$(AM_V_at)touch $@
 share/urbi/package-info/libport.u: $(top_srcdir)/sdk-remote/libport/.version $(VERSIONIFY)
 	$(AM_V_GEN)

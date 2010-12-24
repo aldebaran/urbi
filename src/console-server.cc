@@ -60,7 +60,6 @@
 #include <sched/scheduler.hh>
 
 #include <kernel/connection.hh>
-#include <kernel/ubanner.hh>
 #include <object/symbols.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/object.hh>
@@ -68,6 +67,7 @@
 
 #include <object/system.hh>
 #include <urbi/export.hh>
+#include <urbi/package-info.hh>
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 
@@ -208,7 +208,7 @@ namespace
   void
   version()
   {
-    throw urbi::Exit(EX_OK, kernel::UServer::package_info().signature());
+    throw urbi::Exit(EX_OK, urbi::package_info().signature());
   }
 
   static

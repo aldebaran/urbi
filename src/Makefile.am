@@ -88,8 +88,6 @@ libuobject@LIBSFX@_la_LIBADD =				\
 all-local: libuobject.unstub.stamp
 libuobject.unstub.stamp: $(VERSIONIFY_CACHE) libuobject$(LIBSFX).la $(VERSIONIFY)
 	$(VERSIONIFY_RUN) --resolve=libuobject$(LIBSFX).la
-## Also unstub with SDK-Remote's key.
-	$(VERSIONIFY_RUN) --package=sdk-remote --resolve=libuobject$(LIBSFX).la
 
 dist_libuobject@LIBSFX@_la_SOURCES =
 nodist_libuobject@LIBSFX@_la_SOURCES =

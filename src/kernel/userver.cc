@@ -39,7 +39,6 @@
 #include <libport/foreach.hh>
 #include <libport/lexical-cast.hh>
 #include <libport/path.hh>
-#include <libport/package-info.hh>
 #include <libport/program-name.hh>
 #include <libport/sysexits.hh>
 #include <libport/time.hh>
@@ -57,6 +56,9 @@
 #include <ast/ast.hh>
 #include <ast/nary.hh>
 
+#include <libport/package-info.hh>
+#include <urbi/package-info.hh>
+#include <urbi/object/global.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
@@ -249,7 +251,7 @@ namespace kernel
         << "Please include it in the report."
         << ""
         << "---------- VERSION ----------"
-        << libport::lines(UServer::package_info().signature())
+        << libport::lines(::urbi::package_info().signature())
         << ""
         << "---------- CURRENT C++ BACKTRACE ----------"
         << libport::Backtrace()

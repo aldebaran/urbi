@@ -57,7 +57,6 @@ class System.PackageInfo
 };
 
 load("urbi/package-info/urbi-sdk.u");
-load("urbi/package-info/urbi-sdk-remote.u");
 load("urbi/package-info/libport.u");
 
 do (System.PackageInfo)
@@ -66,11 +65,6 @@ do (System.PackageInfo)
   var copyrightYears = "@PACKAGE_COPYRIGHT_YEARS@";
   do (components["Urbi SDK"])
   {
-    depend(components["Urbi SDK Remote"]);
-  };
-
-  do (components["Urbi SDK Remote"])
-  {
     depend(components["Libport"]);
-  }
+  };
 };
