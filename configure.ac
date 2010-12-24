@@ -8,7 +8,7 @@
 # See the LICENSE file for more information.
 # For comments, bug reports and feedback: http://www.urbiforge.com
 #
-m4_pattern_forbid([^(ACX|AX|URBI)_])dnl
+m4_pattern_forbid([^(ACX|AX|TC|URBI)_])dnl
 
 AC_PREREQ([2.60])
 AC_INIT([Urbi SDK], [2.6],
@@ -231,6 +231,7 @@ if test x"$enable_bindings" != xno; then
  AC_ENABLE_SHARED
  AX_PKG_SWIG([1.3.36], [],
              [AC_MSG_ERROR([SWIG 1.3.36 is required to build bindings.])])
+ AC_SUBST([SWIG_VERSION], [$swig_version])
 
  ## -------------------------- ##
  ## liburbi java configuration ##

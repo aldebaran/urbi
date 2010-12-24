@@ -131,8 +131,11 @@ down the handling of the report.
 Here is a non-exhastive list of the components used to compile this
 package.
 
+** Bison @BISON_VERSION@
 ** Boost @BOOST_VERSION@
+** Flex @FLEX_VERSION@
 ** oRTP @ORTP_VERSION@
+** SWIG @SWIG_VERSION@
 
 ---
 Local Variables:
