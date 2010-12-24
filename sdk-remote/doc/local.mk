@@ -17,18 +17,31 @@ include build-aux/make/html-dir.mk
 # modify something which is not part of our sources.
 doc/sdk-remote.htmldir: $(call ls_files, *.hh *.hxx *.cc)
 
-# Take into account Java sources and generated sources.
-JAVA_FILES =                                           \
-  $(call ls_files, src/swig/java/urbi/*.java)          \
-  $(wildcard $(top_builddir)/src/swig/java/urbi/*.java)
-doc/sdk-remote-java.htmldir: $(JAVA_FILES)
-
-
 # We cannot simply use html_DATA here, since Automake does not
 # support installing directories.
 if ENABLE_DOC_DOXYGEN
 html_DIR += doc/sdk-remote.htmldir
-html_DIR += doc/sdk-remote-java.htmldir
+endif
+
+## ------ ##
+## Java.  ##
+## ------ ##
+
+if BINDING_JAVA
+# Take into account Java sources and generated sources, since the
+# latter include most of the Doxygen documentation.
+#
+# Specify at least one generated file (urbi.java, also covered by the
+# wildcard) so that the build would fail if the files were not
+# generated.
+JAVA_FILES =							\
+  $(call ls_files, src/swig/java/urbi/*.java)			\
+  $(sdk_remote_builddir)/src/swig/java/urbi/urbi.java		\
+  $(wildcard $(sdk_remote_builddir)/src/swig/java/urbi/*.java)
+doc/sdk-remote-java.htmldir: $(JAVA_FILES)
+if ENABLE_DOC_DOXYGEN
+html_DIR += doc/sdk-remote.htmldir
+endif
 endif
 
 ## ------------- ##

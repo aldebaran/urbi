@@ -12,10 +12,8 @@ include $(top_srcdir)/build-aux/make/fix-libtool-la.mk
 include $(top_srcdir)/build-aux/make/libport.mk
 
 SUBDIRS = . tests
-if BINDINGS
-if  BINDING_JAVA
+if BINDING_JAVA
 SUBDIRS += swig/java
-endif
 endif
 
 # libjpeg.
