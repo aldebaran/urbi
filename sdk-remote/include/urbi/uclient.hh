@@ -82,7 +82,12 @@ namespace urbi
 	    size_t buflen = URBI_BUFLEN,
             // FIXME: See http://llvm.org/bugs/show_bug.cgi?id=8692,
             // revert this in the future.
-	    const UClient::options& opt = options::options(false));
+            // FIXME: ndmefyl: changed from options::options(false) -
+            // wtf a direct call to a ctor - which doesn't work - at
+            // least with 4.5.1 - to option(false). If this is related
+            // to the LLVM bug, please check you're not breaking gcc
+            // compilation while fixing.
+	    const UClient::options& opt = options(false));
 
     virtual ~UClient();
 
