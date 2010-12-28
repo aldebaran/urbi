@@ -66,8 +66,12 @@ if test -d $srcdir/bison; then
     AC_MSG_ERROR([failed to configure bison])
   fi
   AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
+  AC_SUBST([BISON_VERSION],
+           [$(cd "$srcdir/bison" &&
+              build-aux/git-version-gen .tarball-version)])
+else
+  TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
 fi
-TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
 
 # Flex.  2.3.33 has a problem with REJECT and produces a scanner that
 # does not compile.

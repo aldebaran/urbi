@@ -182,7 +182,12 @@ fi
 # $install directory.
 tree_copy "$DESTDIR$prefix" "$updir/$name"
 
-# 3. Prebuilt-Urbi Runtime.
+# 3. Description.
+#
+# Extract the file that describes the contents of the package.
+cp "$docsrc/COMPONENTS.txt" "$updir/$urbi_sdk.txt"
+
+# 4. Prebuilt-Urbi Runtime.
 #
 # Create a run-time version of the package.
 packagedir="$updir/$urbi_runtime"
@@ -193,8 +198,9 @@ tree_copy "$DESTDIR$prefix" "$packagedir"
 (cd "$packagedir" &&
     rm -rf README.txt include libexec share/doc)
 
-# 4. Source tarball.
+# 5. Source tarball.
 tarname=$PROJECT-$version.tar.bz2
 if test -f $abs_top_builddir/$tarname; then
-  cp -v $abs_top_builddir/$tarname $updir
+  cp -v $abs_top_builddir/$tarname $updir/$tarname.tmp
+  mv $updir/$tarname.tmp $updir/$tarname
 fi

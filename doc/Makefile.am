@@ -178,6 +178,7 @@ include trajectories/local.mk
 
 dist_doc_DATA =					\
   AUTHORS.txt					\
+  COMPONENTS.txt				\
   LICENSE.txt					\
   README.txt					\
   THANKS.txt
