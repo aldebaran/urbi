@@ -177,14 +177,14 @@ include trajectories/local.mk
 ## Additional text documentation.  ##
 ## ------------------------------- ##
 
-if ENABLE_DOC
+# Always install these guys.  At least because our build and package
+# process uses them (especially COMPONENTS.txt).
 dist_doc_DATA =					\
   AUTHORS.txt					\
   COMPONENTS.txt				\
   LICENSE.txt					\
   README.txt					\
   THANKS.txt
-endif
 
 ## ---------------- ##
 ## Spell-checking.  ##
