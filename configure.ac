@@ -152,6 +152,7 @@ case $enable_rtp:$HAVE_ORTP in
     AC_MSG_ERROR([cannot find oRTP, although required.  Pass --disable-rtp to proceed])
   ;;
 esac
+AC_SUBST([HAVE_ORTP])
 AM_CONDITIONAL([HAVE_ORTP], [$HAVE_ORTP])
 URBI_PKG_CONFIG_VERSION([ortp])
 
