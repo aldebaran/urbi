@@ -1186,9 +1186,9 @@ whose semantics is ``return the successor of \this''.
 
 Beware that the operator \lstinline|'++'| should \emph{not} modify its
 target, but rather return a fresh value.  Indeed, if it alters \this, the
-copy made in \lstinline|'$save'| will also have its value updated.  In other
-words, the value of \lstinline|\var{a}++| would be its new one, not its
-former one.
+copy made in \lstinline|'$save'| will also have its value updated.  In % $ Pacify emacs
+other words, the value of \lstinline|\var{a}++| would be its new one, not
+its former one.
 
 Redefining \lstinline|'++'| is still an experimental feature which might be
 changed in future releases of \usdk, do not rely on it.
@@ -1765,6 +1765,73 @@ w();
 [00000000] 1
 [00000000] *** ping
 \end{urbiscript}
+
+
+\subsection{Variadic functions}
+\label{sec:us-fun-variadic}
+
+\dfn{Variadic} functions are functions that take a variable number of
+arguments. They are created by using the \lstinline|[]| tag after a
+formal argument: the function will accept any number of arguments, and
+they will be assigned to the variadic formal argument as a list.
+
+\begin{urbiscript}
+function variadic(var args[])
+{
+  echo(args)
+} |
+
+variadic();
+[00000000] *** []
+variadic(1, 2, 3);
+[00000000] *** [1, 2, 3]
+\end{urbiscript}
+
+There can be other formal arguments, as long as the variadic argument is at
+the last position. If \var{n} is the number of non variadic arguments, the
+function will request as least \var{n} effective arguments, which will be
+assigned to the non variadic arguments in order like a classical function
+call. All remaining arguments will be passed in list as the variadic
+argument.
+
+\begin{comment}
+\begin{urbiscript}
+removeSlot("variadic")|;
+\end{urbiscript}
+\end{comment}
+
+\begin{urbiscript}
+function invalid(var args[], var last)
+{} |;
+[00000000:error] !!! syntax error: argument after list-argument
+
+function variadic(var a1, var a2, var a3, var args[])
+{
+  echo(a1);
+  echo(a2);
+  echo(a3);
+  echo(args)
+} |
+
+// Not enough arguments.
+variadic();
+[00000000:error] !!! variadic: expected at least 3 arguments, given 0
+
+// No variadic arguments.
+variadic(1, 2, 3);
+[00000000] *** 1
+[00000000] *** 2
+[00000000] *** 3
+[00000000] *** []
+
+// Two variadic arguments.
+variadic(1, 2, 3, 4, 5);
+[00000000] *** 1
+[00000000] *** 2
+[00000000] *** 3
+[00000000] *** [4, 5]
+\end{urbiscript}
+
 
 
 \section{Objects}
