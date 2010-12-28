@@ -80,9 +80,10 @@ CLEANFILES += $(EPS_IMAGES)
 
 
 # Images to include in the documentation directory.
+if ENABLE_DOC
 imagedir = $(docdir)/images
 nodist_image_DATA = $(call ls_files,@$(logodir)/*)
-
+endif
 
 
 ## ----------- ##
@@ -176,12 +177,14 @@ include trajectories/local.mk
 ## Additional text documentation.  ##
 ## ------------------------------- ##
 
+if ENABLE_DOC
 dist_doc_DATA =					\
   AUTHORS.txt					\
   COMPONENTS.txt				\
   LICENSE.txt					\
   README.txt					\
   THANKS.txt
+endif
 
 ## ---------------- ##
 ## Spell-checking.  ##
