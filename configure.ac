@@ -150,11 +150,13 @@ PKG_CHECK_MODULES([ORTP], [ortp], [HAVE_ORTP=true], [HAVE_ORTP=false])
 case $enable_rtp:$HAVE_ORTP in
   (yes:false)
     AC_MSG_ERROR([cannot find oRTP, although required.  Pass --disable-rtp to proceed])
-  ;;
+    ;;
+  (*:true)
+    URBI_PKG_CONFIG_VERSION([ortp])
+    ;;
 esac
 AC_SUBST([HAVE_ORTP])
 AM_CONDITIONAL([HAVE_ORTP], [$HAVE_ORTP])
-URBI_PKG_CONFIG_VERSION([ortp])
 
 # X11.
 # AC_PATH_XTRA finds X11 headers even if cross-compiling to windows.
