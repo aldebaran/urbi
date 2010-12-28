@@ -35,7 +35,9 @@ AC_SUBST([remotedir], ['${brandlibdir}/remote'])
 AC_SUBST([enginedir], ['${brandlibdir}/engine'])
 URBI_DOC
 URBI_ENABLE_DOC_SECTIONS([bioloid, nao, nxt, p3dx, rmp, spykee, webots])
-AC_CONFIG_FILES([doc/config.sty doc/Makefile doc/README.txt])
+AC_CONFIG_FILES([doc/config.sty doc/Makefile doc/README.txt doc/COMPONENTS.txt])
+COMPONENTS_FILE=doc/COMPONENTS.txt
+AC_SUBST_FILE([COMPONENTS_FILE])
 AM_PATH_LISPDIR
 
 ## ------------- ##
@@ -64,9 +66,8 @@ if test -d $srcdir/bison; then
     AC_MSG_ERROR([failed to configure bison])
   fi
   AC_SUBST([BISON], [$(pwd)/bison/tests/bison])
-else
-  TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
 fi
+TC_PROG([bison], [>= 2.3a+], [BISON], [GNU parser generator])
 
 # Flex.  2.3.33 has a problem with REJECT and produces a scanner that
 # does not compile.
