@@ -89,9 +89,6 @@ TC_CXX_WARNINGS([[-Wcast-align],
 		 [-Wbad-function-cast],
 		 [-Wmissing-declarations]])
 
-# We compile libsched.
-AM_PROG_AS
-
 # Disable static libraries. Loading modules as shared libraries
 # requires us to be one.
 AC_DISABLE_STATIC
