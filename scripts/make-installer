@@ -48,24 +48,25 @@ find_dual ()
 
   test -r "$f" || exit 1
 
+  # FIXME: this is too hard to read.  Use case/esac.
   if test "$f" = "${f%%-$dbg*}"; then # MODE= release
     if test "$f" = "${f%%-$nod*}"; then # HASDOC= yes
-      f="${f/.zip/-$dbg.zip}"
+      f=${f/.zip/-$dbg.zip}
       test -r "$f" && echo "$f" && return 0
     else # HASDOC= no
-      f="${f/-$nod/-$dbg}"
+      f=${f/-$nod/-$dbg}
       test -r "$f" && echo "$f" && return 0
     fi
-    f="${f/.zip/-$nod.zip}"
+    f=${f/.zip/-$nod.zip}
     test -r "$f" && echo "$f" && return 0
   else # MODE = debug
-    f="${f/-$dbg/}"
+    f=${f/-$dbg/}
     test -r "$f" && echo "$f" && return 0
     if test "$f" = "${f%%-$nod*}"; then # HASDOC= yes
-      f="${f/.zip/-$nod.zip}"
+      f=${f/.zip/-$nod.zip}
       test -r "$f" && echo "$f" && return 0
     else # HASDOC= no
-      f="${f/-$nod/}"
+      f=${f/-$nod/}
       test -r "$f" && echo "$f" && return 0
     fi
   fi
@@ -77,9 +78,9 @@ get_instaler_name ()
   local f="$1"
   local nod="no-doc"
 
-  f="${f/-$MODE/}"
-  f="${f/-$nod/}"
-  f="${f/.zip/.exe}"
+  f=${f/-$MODE/}
+  f=${f/-$nod/}
+  f=${f/.zip/.exe}
   echo "$f"
 }
 
