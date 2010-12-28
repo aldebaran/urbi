@@ -147,7 +147,14 @@ WITH_XENOMAI
 AC_CHECK_HEADERS([sys/inotify.h])
 
 # ortp
+URBI_ARG_ENABLE([disable-rtp],
+                [disable support for RTP protocol], [yes|no], [yes])
 PKG_CHECK_MODULES([ORTP], [ortp], [HAVE_ORTP=true], [HAVE_ORTP=false])
+case $enable_rtp:$HAVE_ORTP in
+  (yes:false)
+    AC_MSG_ERROR([cannot find oRTP, although required.  Pass --disable-rtp to proceed])
+  ;;
+esac
 AM_CONDITIONAL([HAVE_ORTP], [$HAVE_ORTP])
 URBI_PKG_CONFIG_VERSION([ortp])
 
