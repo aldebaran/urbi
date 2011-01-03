@@ -23,8 +23,10 @@ namespace ast
   public:
     Formal();
     Formal(libport::Symbol name, rExp def = 0);
+    Formal(libport::Symbol name, bool list);
     ATTRIBUTE_R(libport::Symbol, name);
-    ATTRIBUTE_R(rExp, def);
+    ATTRIBUTE_RW(rExp, def);
+    ATTRIBUTE_R(bool, list);
   };
   typedef std::vector<Formal> Formals;
 

@@ -356,25 +356,44 @@ namespace runner
     {
       const ast::local_declarations_type& formals =
         *ast->formals_get();
-      size_t max = formals.size();
-      size_t min = max;
+      unsigned int max = formals.size();
+      unsigned int min = max;
+      if (!formals.empty() && formals.back()->list_get())
+        max = UINT_MAX;
       rforeach (const ast::rLocalDeclaration& dec, formals)
       {
-        if (!dec->value_get())
+        if (!dec->list_get() && !dec->value_get())
           break;
         --min;
       }
       // Check arity
       object::check_arg_count (args.size() - 1, min, max);
-      object::objects_type::const_iterator it = args.begin();
+      object::objects_type::const_iterator effective = args.begin();
       // skip target
-      ++it;
+      ++effective;
       // Bind
-      foreach (const ast::rConstLocalDeclaration& s, formals)
-        if (it != args.end())
-          stacks_.def_arg(s, *(it++));
+      foreach (ast::rLocalDeclaration formal, formals)
+        if (effective != args.end())
+          if (formal->list_get())
+          {
+            // Remaining list arguments.
+            object::rList arg = new object::List;
+            do
+            {
+              arg->insertBack(*effective);
+            } while (++effective != args.end());
+            stacks_.def_arg(formal, arg);
+          }
+          else
+            // Classical argument.
+            stacks_.def_arg(formal, *(effective++));
         else
-          stacks_.def_arg(s, operator()(s->value_get().get()));
+          if (formal->list_get())
+            // Empty list argument.
+            stacks_.def_arg(formal, new object::List);
+          else
+            // Take default value.
+            stacks_.def_arg(formal, operator()(formal->value_get().get()));
     }
 
     // Before calling, check that we are not exhausting the stack

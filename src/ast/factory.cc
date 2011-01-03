@@ -835,14 +835,18 @@ namespace ast
   namespace
   {
     static local_declarations_type*
-    symbols_to_decs(const loc& loc,
+    formals_to_decs(const loc& loc,
                     Formals* formals)
     {
       if (!formals)
         return 0;
       local_declarations_type* res = new local_declarations_type();
       foreach (const Formal& var, *formals)
-        res->push_back(new LocalDeclaration(loc, var.name_get(), var.def_get()));
+      {
+        LocalDeclaration* dec = new LocalDeclaration(loc, var.name_get(), var.def_get());
+        dec->list_set(var.list_get());
+        res->push_back(dec);
+      }
       delete formals;
       return res;
     }
@@ -867,9 +871,7 @@ namespace ast
   {
     if (closure && !f)
       SYNTAX_ERROR(loc, "closure cannot be lazy");
-    return new Routine(loc, closure,
-                       symbols_to_decs(floc, f),
-                       make_scope(b));
+    return new Routine(loc, closure, formals_to_decs(floc, f), make_scope(b));
   }
 
 

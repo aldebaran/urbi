@@ -77,7 +77,7 @@ class Global.CallMessage
     args[i].eval
   };
 
-  function eval
+  function eval(var args[])
   {
     value = &target.callMessage(this)
   };

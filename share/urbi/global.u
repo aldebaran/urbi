@@ -14,9 +14,9 @@ do (Global)
   addProto(System);
   removeProto(Object);
 
-  function echo
+  function echo(var args[])
   {
-    lobby.callMessage(call);
+    lobby.&echo.apply([lobby] + args);
   };
 
   /// Returns true if argument is defined. Argument can be of the form a.b.c.
@@ -50,9 +50,8 @@ do (Global)
   // better
   function methodToFunction(name)
   {
-    function
+    function (var args[])
     {
-      var args = call.evalArgs |
       var val = args.head.getSlot(name) |
       if (val.isA(Executable))
         return val.apply(args)
@@ -61,8 +60,8 @@ do (Global)
     }
   };
 
-  function wall
+  function wall(var args[])
   {
-    lobby.callMessage(call);
+    lobby.&wall.apply([lobby] + args);
   };
 };

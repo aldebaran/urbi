@@ -39,8 +39,8 @@ class Global.Math
 
   function atan2(x, y)  { x.atan2(y) };
 
-  function min { return call.evalArgs.min };
-  function max { return call.evalArgs.max };
+  function min(var args[]) { return args.min };
+  function max(var args[]) { return args.max };
 
   for (var v: ["inf", "nan", "pi"])
     setSlot(v, Float.getSlot(v));

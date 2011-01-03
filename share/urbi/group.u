@@ -20,17 +20,17 @@ requireFile("urbi/range-iterable.u");
 
 class Global.Group : RangeIterable
 {
-  function init
+  function init(var args[])
   {
-    var this.members = call.evalArgs |
+    var this.members = args |
     this
   };
 
   // n-ary strict: add the arguments as group members.
-  function add
+  function add(var args[])
   {
     // Fetch Object's updateSlot or we will trigger the fallback
-    Object.&updateSlot.apply([this, "members", members + call.evalArgs])|
+    Object.&updateSlot.apply([this, "members", members + args])|
     this
   };
 
@@ -38,10 +38,10 @@ class Global.Group : RangeIterable
 
   // n-ary strict: remove the arguments as group members.
   // Removing a non-member is ok.
-  function remove
+  function remove(var args[])
   {
     // Fetch Object's updateSlot or we will trigger the fallback
-    Object.&updateSlot.apply([this, "members", members - call.evalArgs])|
+    Object.&updateSlot.apply([this, "members", members - args])|
     this
   };
 
@@ -60,13 +60,12 @@ class Global.Group : RangeIterable
 
   // FIXME: This implementation always evaluates the
   // arguments. There's no other way to do it for now.
-  function fallback
+  function fallback(var args[])
   {
     var results = [] |
     // We must use callMessage instead of apply, as the later looses the message
     var outer_call = call |
     // Evaluate args once.
-    call.evalArgs = call.evalArgs |
     function action (m)
     {
       results.insertBack(m.callMessage(outer_call).acceptVoid)

@@ -107,13 +107,13 @@ class Global.Tuple
       var members = [nil] * size;
       var size = size;
 
-      function init
+      function init(var args[])
       {
-        if (call.argsCount != size)
+        if (args.size != size)
           throw Exception.Arity.new("%s.%s" % [name, "init"],
-                                    call.argsCount,
+                                    args.size,
                                     size)|
-        var m = call.evalArgs |
+        var m = args |
         m += m.range(size - m.size) |
         Tuple.&init.apply([this, m])
       };

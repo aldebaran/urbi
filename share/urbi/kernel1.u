@@ -39,7 +39,7 @@ class Global.Kernel1
     cerr
   };
 
-  function isvoid
+  function isvoid()
   {
     deprecated("isvoid(o)", "o.isVoid") |
     call.evalArgAt(0).acceptVoid.isVoid

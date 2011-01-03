@@ -426,15 +426,21 @@ namespace binder
     // Check whether default arguments are followed by non-default arguments
     if (input->formals_get())
     {
-      bool found = false;
+      bool found_def = false;
+      bool found_list = false;
       foreach (ast::rLocalDeclaration decl, *input->formals_get())
       {
+        if (found_list)
+          err(decl->location_get(), "argument after list-argument");
+
         if (decl->value_get())
-          found = true;
-        else if (found)
+          found_def = true;
+        else if (found_def && !decl->list_get())
           err(decl->location_get(),
                         "argument with no default value after arguments"
                         " with default value");
+        if (decl->list_get())
+          found_list = true;
       }
     }
 

@@ -17,17 +17,27 @@ namespace ast
   Formal::Formal()
     : name_()
     , def_()
+    , list_(false)
   {}
 
   Formal::Formal(libport::Symbol name, rExp def)
     : name_(name)
     , def_(def)
+    , list_(false)
+  {}
+
+  Formal::Formal(libport::Symbol name, bool list)
+    : name_(name)
+    , def_()
+    , list_(list)
   {}
 
   std::ostream&
   operator<<(std::ostream& o, const ast::Formal& f)
   {
     o << "var " << f.name_get();
+    if (f.list_get())
+      o << "[]";
     if (f.def_get())
       o << " = " << *f.def_get();
     return o;

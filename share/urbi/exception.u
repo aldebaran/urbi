@@ -121,17 +121,16 @@ class Global.Exception
       type = name;
       var fmt = fmt;
 
-      function init
+      function init(var args[])
       {
-        if (call.argsCount != locSize + fmtSize)
+        if (args.size != locSize + fmtSize)
           throw Exception.Arity.new("%s.%s" % [name, "init"],
-                                    call.argsCount,
+                                    args.size,
                                     size) |
-        var values = call.evalArgs |
         for (var i: locSize)
-          this.updateSlot(locSlots[i], values[i]) |
+          this.updateSlot(locSlots[i], args[i]) |
         for (var i: fmtSize)
-          this.setSlot(fmtSlots[i], values[i + locSize])
+          this.setSlot(fmtSlots[i], args[i + locSize])
       };
 
       function message()

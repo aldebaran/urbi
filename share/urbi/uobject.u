@@ -30,7 +30,7 @@ do (Global.UObject)
   };
 
   // Override new to throw an exception in init returned
-  function 'new'
+  function 'new'(var args[])
   {
     // The fresh child.
     var res = call.&target.clone |
@@ -895,9 +895,8 @@ class Global.'external'
     var functionName = objname + "." + fname|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
-    function f
+    function f(var args[])
     {
-      var args = call.evalArgs |
       // Just to be safe, do not rely on asString for UObject and UVar
       for| (var i: args.size)
       {
