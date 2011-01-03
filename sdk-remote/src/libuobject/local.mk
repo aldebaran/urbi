@@ -40,5 +40,5 @@ libuobject_libuobject@LIBSFX@_la_LDFLAGS =	\
 # its definition of install-execremotedir and no longer produces it.  As
 # a result, we do have the right dependencies, but nothing is
 # installed.
-install_execenvltlibraries = install-execenvLTLIBRARIES
-$(install_execenvltlibraries): install-libLTLIBRARIES
+install_execremoteltlibraries = install-execremoteLTLIBRARIES
+$(install_execremoteltlibraries): install-libLTLIBRARIES
