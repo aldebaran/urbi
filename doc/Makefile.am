@@ -192,12 +192,13 @@ dist_doc_DATA =					\
 
 .PHONY: spell-check
 SPELL_CHECK = $(abs_top_srcdir)/build-aux/bin/spell-check
-AM_SPELL_CHECKFLAGS = -p urbi.dict --clean
+AM_SPELL_CHECKFLAGS = -p $(srcdir)/urbi.dict --clean
 EXTRA_DIST += $(build_aux_dir)/bin/spell-check
 RUN_SPELL_CHECK = $(SPELL_CHECK) $(AM_SPELL_CHECKFLAGS) $(SPELL_CHECKFLAGS)
-spell-check:
-	cd $(srcdir) &&						\
-	$(RUN_SPELL_CHECK) $(urbi_sdk_tex) $(dist_doc_DATA)
+# Rely on Make to resolve the location (src or build) of the files to
+# spell-check.
+spell-check: $(urbi_sdk_tex) $(dist_doc_DATA)
+	$(RUN_SPELL_CHECK) $^
 
 
 ## --------- ##
