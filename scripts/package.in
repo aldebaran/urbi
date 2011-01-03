@@ -144,7 +144,7 @@ urbi_sdk_no_doc=$urbi_sdk-no-doc
 urbi_runtime=$(echo "$urbi_sdk" | sed -e 's/urbi-sdk/urbi-runtime/')
 
 # Primary target.
-name=urbi_sdk
+name=$urbi_sdk
 
 # 1. Documentation.
 #
