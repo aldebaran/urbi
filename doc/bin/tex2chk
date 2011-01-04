@@ -258,12 +258,13 @@ sub process_file ($)
   local $_;
   my $test;
   my $line;
-  # The current environment: urbiassert or urbiscript or undef.
+  # The current environment: urbiassert or urbicomment or urbiscript
+  # or undef.
   my $environment;
   while ($_ = $in->getline)
   {
     if (!defined $environment
-        && /^\\begin{(urbiassert|urbiscript)}/)
+        && /^\\begin{(urbiassert|urbicomment|urbiscript)}/)
       {
         $environment = $1;
         # Issue a #line for the first line of Urbi, not the LaTeX line.
