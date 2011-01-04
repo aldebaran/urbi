@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -85,11 +85,9 @@ l.receive("1234;");
 assert (l.bytesReceived == 15);
 \end{urbiscript}
 
-\begin{comment}
-\begin{urbiscript}
+\begin{urbicomment}
 removeSlot("l")|;
-\end{urbiscript}
-\end{comment}
+\end{urbicomment}
 
 \item[bytesSent] The number of bytes that were ``output'' by \this.  See
   also \refSlot{send} and \refSlot{write}.
