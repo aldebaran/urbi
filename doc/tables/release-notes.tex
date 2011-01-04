@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -45,7 +45,21 @@ which provide significant optimizations.  Several bugs have been fixed too.
 \item The usual \Cxx syntax to declare classes with multiple inheritance is
   supported, see \autoref{sec:lang:class}.
 \item A literal syntax for strict variadic functions has been added, see
-  \autoref{sec:us-fun-variadic}.
+  \autoref{sec:us-fun-variadic}.  For instance
+\begin{urbiscript}
+function variadic(var a1, var a2, var a3, var args[])
+{
+  echo("a1 = %s, a2 = %s, a3 = %s, args = %s"
+       % [a1, a2, a3, args]);
+}|
+variadic(1, 2, 3);
+[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = []
+variadic(1, 2, 3, 4);
+[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4]
+variadic(1, 2, 3, 4, 5);
+[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4, 5]
+\end{urbiscript}
+  This is faster than using lazy functions and call messages.
 \end{itemize}
 
 \subsection{Documentation}
