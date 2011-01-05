@@ -35,10 +35,6 @@ k2-check:
 XFAIL_TESTS +=					\
   0.x/2-xfail.chk
 
-# Fix this soon.
-TFAIL_TESTS +=						\
-  uob/remote/rtp/loop.chk
-
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   2.x/derive.chk				\
