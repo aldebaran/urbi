@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -164,7 +164,7 @@ namespace urbi
       << "  wall(\" destroying lRTP...\")|\n"
       << "  try { " << rLinkName << ".destroy} catch {}|\n"
       << "  t.stop\n"
-      << "}})|;\n";
+      << "}})|;" << std::endl;
     GD_SINFO_TRACE("fetching engine listen port...");
     UMessage* mport =
       client_->syncGet(rLinkName +".listen(\"0.0.0.0\", \"0\");");
@@ -213,6 +213,7 @@ namespace urbi
     assert(pos != std::string::npos);
     std::string owner = fullname.substr(0, pos);
     std::string name = fullname.substr(pos + 1);
+    GD_FINFO_DUMP("transmit new value for %s", fullname);
     bool rtp = false;
     if (v.type == DATA_BINARY)
     {
@@ -246,6 +247,8 @@ namespace urbi
           << owner
           << ".getSlot(\"" << libport::escape(name)
           << "\").update_timed(";
+        // Sendbinary is not using the stream, so we must flush.
+        client_->flush();
         UBinary& b = *(v.binary);
         client_->sendBinary(b.common.data, b.common.size,
                             b.getMessage());
@@ -266,6 +269,7 @@ namespace urbi
             goto rtpfail2;
           i = ctx->rtpLinks.find("_shared_");
         }
+        GD_INFO_DUMP("localCalling sendGrouped");
         ctx->localCall(i->second->__name, "sendGrouped",
                          owner_->get_name(), v);
         rtp = true;

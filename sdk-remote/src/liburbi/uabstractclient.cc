@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include <libport/format.hh>
+#include <libport/io-stream.hh>
 #include <libport/lexical-cast.hh>
 
 #include <libport/cstdio>
@@ -106,7 +107,7 @@ namespace urbi
   | UClientStreambuf.  |
   `-------------------*/
 
-  class UClientStreambuf: public std::streambuf
+  class UClientStreambuf: public libport::StreamBuffer
   {
   public:
     UClientStreambuf(UAbstractClient* cl)
@@ -114,49 +115,24 @@ namespace urbi
     {}
 
   protected:
-    virtual int overflow(int c = EOF);
-    // Override std::basic_streambuf<_CharT, _Traits>::xsputn.
-    virtual std::streamsize xsputn(const char* s, std::streamsize n);
+     virtual size_t read(char* buffer, size_t size);
+     virtual void write(char* buffer, size_t size);
 
   private:
     UAbstractClient* client_;
   };
 
-  int
-  UClientStreambuf::overflow(int c)
+  void
+  UClientStreambuf::write(char* buffer, size_t size)
   {
-    if (c != EOF)
-    {
-      char ch = static_cast<char>(c);
-      xsputn(&ch, 1);
-    }
-    return c;
+    client_->effectiveSend(buffer, size);
   }
 
-  std::streamsize
-  UClientStreambuf::xsputn(const char* s, std::streamsize n)
+  size_t
+  UClientStreambuf::read(char*, size_t)
   {
-    client_->sendBufferLock.lock();
-    size_t clen = strlen(client_->sendBuffer);
-    if (client_->sendBufSize < clen + 1 + n)
-    {
-      client_->effective_send(client_->sendBuffer);
-      client_->sendBuffer[0] = 0;
-      client_->effectiveSend(s, n);
-      client_->sendBufferLock.unlock();
-      return n;
-    }
-    memcpy(client_->sendBuffer + clen, s, n);
-    client_->sendBuffer[clen+n] = 0;
-    if (strpbrk(client_->sendBuffer+clen, "&|;,"))
-    {
-      client_->effective_send(client_->sendBuffer);
-      client_->sendBuffer[0] = 0;
-    }
-    client_->sendBufferLock.unlock();
-    return n;
+    return 0;
   }
-
 
   /*------------------.
   | UAbstractClient.  |
@@ -483,10 +459,9 @@ namespace urbi
       sendBufferLock.lock();
       *this << libport::format("Global.Binary.new(\"%s\", \"\\B(%s)(",
                                libport::escape(header), len);
-      send(0);
+      flush();
       effectiveSend(data, len);
       *this << ")\")";
-      send(0);
       sendBufferLock.unlock();
       return rc;
     }
