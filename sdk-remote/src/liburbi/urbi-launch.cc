@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -37,7 +37,6 @@ using namespace boost::assign;
 #include <urbi/uclient.hh>
 #include <urbi/urbi-root.hh>
 
-GD_INIT();
 GD_CATEGORY(urbi-launch);
 
 using namespace urbi;

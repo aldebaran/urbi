@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -71,27 +71,7 @@
 #include <urbi/umain.hh>
 #include <urbi/uobject.hh>
 
-#ifndef LIBPORT_DEBUG_DISABLE
-
-static libport::local_data&
-debugger_data_thread_coro_local()
-{
-  typedef boost::thread_specific_ptr<libport::local_data> thread_storage;
-  typedef sched::CoroutineLocalStorage<thread_storage> coro_storage;
-
-  static coro_storage cstorage;
-
-  thread_storage& tstorage = *cstorage;
-  if (!tstorage.get())
-    tstorage.reset(new libport::local_data);
-  return *tstorage;
-}
-
-GD_INIT_DEBUG_PER(debugger_data_thread_coro_local);
 GD_CATEGORY(Urbi);
-
-#endif
-
 
 #define URBI_EXIT(Status, ...)                 \
   throw urbi::Exit(Status, libport::format (__VA_ARGS__))
@@ -603,10 +583,28 @@ namespace urbi
     return EX_OK;
   }
 
+#ifndef LIBPORT_DEBUG_DISABLE
+
+static libport::local_data&
+debugger_data_thread_coro_local()
+{
+  typedef boost::thread_specific_ptr<libport::local_data> thread_storage;
+  typedef sched::CoroutineLocalStorage<thread_storage> coro_storage;
+
+  static coro_storage cstorage;
+
+  thread_storage& tstorage = *cstorage;
+  if (!tstorage.get())
+    tstorage.reset(new libport::local_data);
+  return *tstorage;
+}
+#endif
   int
   main(const libport::cli_args_type& args,
        UrbiRoot& urbi_root, bool block, bool errors)
   {
+    GD_INIT_DEBUG_PER(debugger_data_thread_coro_local);
+
     if (block)
       return init(args, errors, 0, urbi_root);
     else

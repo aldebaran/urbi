@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -10,9 +10,10 @@
 
 /// \file libuobject/main.cc
 
-#include <libport/cstdio>
-#include <libport/unistd.h>
 #include <libport/cerrno>
+#include <libport/cstdio>
+#include <libport/debug.hh>
+#include <libport/unistd.h>
 
 #include <iostream>
 #include <list>
@@ -185,6 +186,8 @@ namespace urbi
   URBI_SDK_API int
   main(const libport::cli_args_type& args, UrbiRoot&, bool block, bool)
   {
+    GD_INIT();
+
     std::string host = UClient::default_host();
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;

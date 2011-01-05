@@ -20,7 +20,6 @@ libuco_libuco_la_LDFLAGS = $(BOOST_THREAD_LDFLAGS) $(BOOST_DATE_TIME_LDFLAGS)
 libuco_libuco_la_LIBADD = libuvalue/libuvalue.la $(BOOST_THREAD_LIBS) $(BOOST_DATE_TIME_LIBS)
 
 dist_libuco_libuco_la_SOURCES =			\
-  libuco/gd-init.cc				\
   libuco/uevent.cc				\
   libuco/uobject-common.cc			\
   libuco/uobject-hub-common.cc			\
