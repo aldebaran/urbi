@@ -1,0 +1,33 @@
+/*
+ * Copyright (C) 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+/** Pretty printing of urbiscript values as Python code. Results can
+ *  be passed to Python's eval function for instance.
+ */
+
+var Float.asPython = Float.&asPrintable;
+var String.asPython = String.&asPrintable;
+var true.asPython = "True";
+var false.asPython = "False";
+var nil.asPython = "None";
+{
+  noVoidError;
+  var void.asPython = "None";
+};
+
+function List.asPython()
+{
+  return "[%s]" % this.map(function (var elt) { elt.asPython }).join(", ");
+};
+
+function Dictionary.asPython()
+{
+  "{%s}" % this.keys.map(closure (var key) { "%s: %s" % [key.asPython, this[key].asPython] }).join(", ");
+};
