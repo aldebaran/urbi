@@ -102,7 +102,8 @@ public:
     UBindFunctions(all, markBypass, markRTP);
     UBindFunctions(all, selfWriteB, selfWriteI, selfWriteVD);
 
-    UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args, unnotify);
+    UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args, unnotify,
+                   setThreadedNotifyChange);
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
@@ -381,6 +382,13 @@ public:
     return 0;
   }
 
+  int setThreadedNotifyChange(urbi::UVar& v)
+  {
+    threadCheck();
+    UNotifyThreadedChange(v, &all::onChange, urbi::LOCK_FUNCTION);
+    return 0;
+  }
+
   int setNotifyChangeByUVar(urbi::UVar& v)
   {
     threadCheck();
@@ -456,13 +464,17 @@ public:
 
   int onChange(urbi::UVar& v)
   {
-    threadCheck();
     lastChange = v.get_name();
     changeCount = ++count;
     if (v.type() == urbi::DATA_DOUBLE)
     {
       int val = v;
       lastChangeVal = val;
+    }
+    else if (v.type() == urbi::DATA_BINARY)
+    {
+      urbi::UBinary b = v;
+      lastChangeVal = b;
     }
     if (removeNotify == v.get_name())
     {
