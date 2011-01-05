@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -177,7 +177,8 @@ public:
                    readPointOfInterest);
     UBindFunctions(all, pack, unpack);
     UBindVars(all, periodicWriteTarget, periodicWriteType, periodicWriteRate,
-              changeCount);
+              periodicWriteCount, changeCount);
+    periodicWriteCount = 1;
     UNotifyChange(periodicWriteRate, &all::onRateChange);
     vars[0] = &a;
     vars[1] = &b;
@@ -222,6 +223,7 @@ public:
     int target = periodicWriteTarget;
     int type = periodicWriteType;
     GD_FINFO_DEBUG("update: type = %s, target = %s", type, target);
+    for (int i=0; i<(int)periodicWriteCount; ++i)
     switch (type)
     {
     case urbi::DATA_STRING:
@@ -945,6 +947,8 @@ public:
   urbi::UVar periodicWriteRate;
   // Write data type
   urbi::UVar periodicWriteType;
+  // Number of writes per call
+  urbi::UVar periodicWriteCount;
 
   // If an UVar with the name in removeNotify reaches a callback,
   // unnotify will be called.
