@@ -25,10 +25,16 @@ This chapter lists the user-visible changes in \usdk releases.
 }
 
 \section{\usdk 2.6}
-\release{2.6}{2011-01-05}
+\release{2.6}{2011-01-06}
 
 This release features several deep changes that are not user visible, but
 which provide significant optimizations.  Several bugs have been fixed too.
+
+\subsection{Documentation}
+
+\begin{itemize}
+\item \refSlot[Lobby]{bytesReceived}, \refSlot[Lobby]{bytesSent}.
+\end{itemize}
 
 \subsection{Fixes}
 \begin{itemize}
@@ -38,7 +44,6 @@ which provide significant optimizations.  Several bugs have been fixed too.
 \item Remote UObject exit properly when the server shuts down.
 \item Binary packages provide RTP support for more architectures.
 \end{itemize}
-
 
 \subsection{New Features}
 \begin{itemize}
@@ -60,10 +65,6 @@ variadic(1, 2, 3, 4, 5);
 [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4, 5]
 \end{urbiscript}
   This is faster than using lazy functions and call messages.
-\end{itemize}
-
-\subsection{Documentation}
-\begin{itemize}
 \item \refObject{Directory} objects have new features for creation,
   modification and deletion.
 \begin{urbiscript}
@@ -72,17 +73,20 @@ Directory.new("dir1").rename("dir")|;
 Directory.new("dir/dir2").copy("dir/dir4")|;
 Directory.new("dir").removeAll;
 \end{urbiscript}
-
 \item \refSlot[Directory]{size}, \refSlot[File]{size},
   \refSlot[Directory]{lastModifiedDate}, \refSlot[File]{lastModifiedDate}.
+\end{itemize}
 
-\item \refSlot[Lobby]{bytesReceived}, \refSlot[Lobby]{bytesSent}.
+\subsection{Optimizations}
+
+\begin{itemize}
+\item Urbiscript code interpretation has been globally optimized by around
+  30\%.
 \item Event emission routines have been optimized: \refSlot[Event]{'emit'} by
   around 25\%, \refSlot[Event]{syncEmit} by around 13\%,
   \refSlot[Event]{trigger} by around 25\% and \refSlot[Event]{syncTrigger} by
   around 10\%.
 \end{itemize}
-
 
 \section{\usdk 2.5}
 \release{2.5}{2010-12-07}
