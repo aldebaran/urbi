@@ -1,5 +1,5 @@
 # This file is part of Urbi SDK.
-# Copyright (C) 2006-2010, Gostai S.A.S.
+# Copyright (C) 2006-2011, Gostai S.A.S.
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -382,5 +382,17 @@ URBI_CONFIG_SCRIPTS(
   [sdk-remote/src/tests/bin/urbi-launch-java$EXEEXT:sdk-remote/src/tests/bin/urbi-launch.in])
 
 URBI_CONFIG_SCRIPTS([sdk-remote/src/tests/bin/urbi-send])
+
+
+# Show what components are used.
+AC_CONFIG_COMMANDS([report],
+[
+  AC_MSG_NOTICE([=========================])
+  AC_MSG_NOTICE([components used:])
+  while read i; do
+    AC_MSG_NOTICE([ $i])
+  done <doc/COMPONENTS.txt
+  AC_MSG_NOTICE([=========================])
+])
 
 AC_OUTPUT
