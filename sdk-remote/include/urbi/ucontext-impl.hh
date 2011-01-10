@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -55,6 +55,9 @@ namespace urbi
 
       /// Send buf to the connection hosting the UObject.
       virtual void send(const void* buf, size_t size) = 0;
+
+      /// Bouncing overload.
+      void send(const std::string& s);
 
       virtual void call(const std::string& object,
                         const std::string& method,
