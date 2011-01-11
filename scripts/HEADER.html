@@ -1,8 +1,43 @@
 <h1 style="text-align:center"><img src="doc/images/cube-and-disc.png"
 style="width:80%" alt="Urbi 2.6" /></h1>
 
-<p>All the versions of Urbi packages are
-available <a href="..">here</a>.</p>
+<p>
+  All the versions of Urbi packages are
+  available <a href="..">here</a>.  An introduction about Urbi,
+  including a video, can be
+  found <a href="http://www.gostai.com/products/urbi">here</a>.
+</p>
+
+<h2>What's new</h2>
+<p>
+  This release was focused on improving runtime performances, and
+  addressing bugs.  We expect users to find some significant
+  improvements.
+</p>
+
+<p>
+  It also provides some new features such as (strict) variadic
+  functions.  For instance:
+
+<pre>
+  function variadic(var a1, var a2, var a3, var args[])
+  {
+    echo("a1 = %s, a2 = %s, a3 = %s, args = %s"
+         % [a1, a2, a3, args]);
+  }|
+  variadic(1, 2, 3);
+  [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = []
+  variadic(1, 2, 3, 4);
+  [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4]
+  variadic(1, 2, 3, 4, 5);
+  [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4, 5]
+</pre>
+</p>
+
+<p>
+  See the <a href="doc/release-notes.html">release notes</a> for a
+  more complete description of the changes.
+</p>
 
 <h2>Package Types</h2>
 <p>
