@@ -1,4 +1,0 @@
-#! /bin/sh
-
-export LIBTOOLIZE_FLAGS="--ltdl --nonrecursive"
-exec libport/build-aux/bin/bootstrap "$@"
