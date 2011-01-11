@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -9,8 +9,13 @@
  */
 
 // Ortp needs a little help to know it's compiling on WIN32.
+
+// ORTP defines its own version of int32_t and all, so disable ours.
+#define LIBPORT_NO_CSTDINT_TYPES
+
 #include <libport/config.h>
 #include <libport/detect-win32.h>
+
 #include <libport/lexical-cast.hh>
 #include <libport/statistics.hh>
 #include <libport/sys/socket.h>
