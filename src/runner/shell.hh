@@ -62,11 +62,9 @@ namespace runner
     jobs_type jobs_;
     // Expect serialized messages.
     bool binary_mode_;
-    // When switching to serialization mode, we need a new stream to handle
-    // encapsulated arbitrary urbiscript messages.
-    std::istream textStream_;
     // Job handling serialized message.
     sched::rJob serializationJob_;
+    // Our parser, deleted when we switch to binary mode.
     parser::UParser* parser_;
   };
 

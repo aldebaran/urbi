@@ -50,10 +50,8 @@ namespace runner
     , input_(input)
     , stop_(false)
     , binary_mode_(false)
-    , textStream_(new urbi::StreamBuffer)
     , parser_(new parser::UParser(input_))
   {
-    textStream_.exceptions(std::ios::badbit);
     GD_FINFO_TRACE("new shell: %s", name_get());
   }
 
@@ -303,7 +301,7 @@ namespace runner
     if (!m && binary_mode_)
       throw std::runtime_error("There is no turning back from serialized mode");
     delete parser_;
-    parser_ = new parser::UParser(m?textStream_:input_);
+    parser_ = 0;
     lobby_get()->send("1", tag);
     binary_mode_ = m;
     if (binary_mode_)
