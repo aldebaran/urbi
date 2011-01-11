@@ -1,4 +1,4 @@
-## Copyright (C) 2010, Gostai S.A.S.
+## Copyright (C) 2010, 2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -12,6 +12,9 @@ include build-aux/make/html-dir.mk
 ## ----- ##
 ## Doc.  ##
 ## ----- ##
+
+%.dox: %.dox.in
+	cd $(top_builddir) && $(SHELL) ./config.status sdk-remote/$@
 
 # Avoid to fire the compilation of Doxygen documentation when we
 # modify something which is not part of our sources.
