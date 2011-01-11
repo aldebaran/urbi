@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2010, Gostai S.A.S.
+## Copyright (C) 2008-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -28,7 +28,8 @@ libuobject_libuobject@LIBSFX@_la_LIBADD =	\
   $(LIBADD)					\
   libuco/libuco.la				\
   liburbi/liburbi$(LIBSFX).la			\
-  $(BOOST_DATE_TIME_LIBS)
+  $(BOOST_DATE_TIME_LIBS)			\
+  $(SERIALIZE_LIBS)
 libuobject_libuobject@LIBSFX@_la_LDFLAGS =	\
   -avoid-version -no-undefined			\
   $(BOOST_DATE_TIME_LDFLAGS)
