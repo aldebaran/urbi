@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -197,9 +197,10 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
 
 /** Send "\a Args | \n" to \a C.
   * \b Warning: nothing is executed until a ';' or ',' is sent.
+  * Do not endl, we do not want to flush.
   */
 # define URBI_SEND_PIPED_COMMAND_C(C, Args)     \
-  URBI_SEND_C(C, Args << '|' << std::endl)
+  URBI_SEND_C(C, Args << "|\n")
 
 # define URBI_SEND_PIPED_COMMAND(Args)          \
   URBI_SEND_PIPED_COMMAND_C(URBI(()), Args)
