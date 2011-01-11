@@ -6,8 +6,8 @@
 ##
 ## See the LICENSE file for more information.
 
-include build-aux/make/doxygen.mk
-include build-aux/make/html-dir.mk
+include $(top_srcdir)/build-aux/make/doxygen.mk
+include $(top_srcdir)/build-aux/make/html-dir.mk
 
 ## ----- ##
 ## Doc.  ##
@@ -44,8 +44,8 @@ JAVA_FILES =							\
 doc/sdk-remote-java.htmldir: $(JAVA_FILES)
 if ENABLE_DOC_DOXYGEN
 html_DIR += doc/sdk-remote.htmldir
-endif
-endif
+endif ENABLE_DOC_DOXYGEN
+endif BINDING_JAVA
 
 ## ------------- ##
 ## install-doc.  ##
