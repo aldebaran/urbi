@@ -30,19 +30,22 @@ This chapter lists the user-visible changes in \usdk releases.
 This release features several deep changes that are not user visible, but
 which provide significant optimizations.  Several bugs have been fixed too.
 
-\subsection{Documentation}
-
-\begin{itemize}
-\item \refSlot[Lobby]{bytesReceived}, \refSlot[Lobby]{bytesSent}.
-\end{itemize}
-
 \subsection{Fixes}
 \begin{itemize}
 \item Improper behavior when there are several concurrent
   \lstinline|at (\var{exp} ~ \var{duration})|.
 \item System interruptions with Control-C sometimes failed.
-\item Remote UObject exit properly when the server shuts down.
-\item Binary packages provide RTP support for more architectures.
+\item Remote UObjects exit properly when the server shuts down.
+\item Binary packages provide RTP support for all the architectures.
+\end{itemize}
+
+\subsection{Optimizations}
+\begin{itemize}
+\item \us interpretation has been globally sped up by around 30\%.
+\item Event emission routines have been optimized: \refSlot[Event]{'emit'} by
+  around 25\%, \refSlot[Event]{syncEmit} by around 13\%,
+  \refSlot[Event]{trigger} by around 25\% and \refSlot[Event]{syncTrigger} by
+  around 10\%.
 \end{itemize}
 
 \subsection{New Features}
@@ -77,16 +80,12 @@ Directory.new("dir").removeAll;
   \refSlot[Directory]{lastModifiedDate}, \refSlot[File]{lastModifiedDate}.
 \end{itemize}
 
-\subsection{Optimizations}
 
+\subsection{Documentation}
 \begin{itemize}
-\item Urbiscript code interpretation has been globally optimized by around
-  30\%.
-\item Event emission routines have been optimized: \refSlot[Event]{'emit'} by
-  around 25\%, \refSlot[Event]{syncEmit} by around 13\%,
-  \refSlot[Event]{trigger} by around 25\% and \refSlot[Event]{syncTrigger} by
-  around 10\%.
+\item \refSlot[Lobby]{bytesReceived}, \refSlot[Lobby]{bytesSent}.
 \end{itemize}
+
 
 \section{\usdk 2.5}
 \release{2.5}{2010-12-07}
