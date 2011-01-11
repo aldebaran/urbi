@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -59,7 +59,8 @@ namespace urbi
                owner_->nbparam,
                owner_->name,
                owner_->objname);
-      UClient& cl = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
+      LockableOstream& cl
+        = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->outputStream;
       if (type == "var")
         URBI_SEND_PIPED_COMMAND_C
           (cl,
@@ -81,7 +82,8 @@ namespace urbi
     RemoteUGenericCallbackImpl::initialize(UGenericCallback* owner)
     {
       owner_ = owner;
-      UClient& cl = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->client_;
+      LockableOstream& cl
+        = *dynamic_cast<RemoteUContextImpl*>(owner_->ctx_)->outputStream;
       URBI_SEND_PIPED_COMMAND_C
         (cl,
            libport::format("external %s %s",

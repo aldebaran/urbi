@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -11,6 +11,7 @@
 #ifndef KERNEL_UOBJECT_HH
 # define KERNEL_UOBJECT_HH
 
+# include <serialize/binary-i-serializer.hh>
 # include <urbi/object/fwd.hh>
 # include <urbi/object/list.hh>
 
@@ -34,6 +35,10 @@ namespace urbi
 
     //! Split an UVar full name into its two components.
     StringPair split_name(const std::string& name);
+
+    //! Process serialized request from a remote, return urbiscript to eval.
+    std::string processSerializedMessage(int msgType,
+                                      libport::serialize::BinaryISerializer& v);
   }
 }
 

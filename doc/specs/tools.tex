@@ -119,12 +119,16 @@ override the default behavior.
   This variable also to override that guess.  Do not use it unless you
   know exactly what you are doing.
 
+\item[URBI\_TEXT\_MODE] If set in the environment of a remote urbi-launch,
+  disable binary protocol and force using \us messages.
+
 \item[URBI\_UOBJECT\_PATH] The search-path for UObjects files.
   This is used by \command{urbi-launch}, by
   \refSlot[System]{loadModule} and \refSlot[System]{loadLibrary}.
 
 \item[URBI\_UVAR\_HOOK\_CHANGED] If set, set \refSlot[UVar]{hookChanged} to
   false.
+
 \end{envs}
 
 \section{Special Files}

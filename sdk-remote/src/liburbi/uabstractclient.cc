@@ -182,7 +182,7 @@ namespace urbi
 				   unsigned port,
 				   size_t buflen,
 				   bool server)
-    : std::ostream(new UClientStreambuf(this))
+    : LockableOstream(new UClientStreambuf(this))
     , closed_ (false)
     , listLock()
     , host_(host)

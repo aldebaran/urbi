@@ -21,6 +21,7 @@
 #include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <libport/foreach.hh>
+#include <libport/io-stream.hh>
 #include <libport/lexical-cast.hh>
 #include <libport/unistd.h>
 
@@ -34,6 +35,7 @@
 #include <urbi/uobject.hh>
 #include <urbi/ustarter.hh>
 #include <urbi/usyncclient.hh>
+#include <urbi/uvalue-serialize.hh>
 #include <urbi/uvar.hh>
 #include <urbi/ucontext-factory.hh>
 #include <libuobject/remote-ucontext-impl.hh>
@@ -97,41 +99,84 @@ namespace urbi
       return contexts[key] = makeRemoteContext(host, port);
     }
 
+    class SerializedUrbiscriptStreamBuffer: public libport::StreamBuffer
+    {
+    public:
+      SerializedUrbiscriptStreamBuffer(RemoteUContextImpl* backend)
+        : backend_(backend)
+      {
+      }
+    protected:
+      virtual size_t read(char*, size_t)
+      {
+        return 0;
+      }
+      virtual void write(char* buffer, size_t size)
+      {
+        char code = UEM_EVAL;
+        std::string msg(buffer, size);
+        *backend_->oarchive << code << msg;
+        backend_->backend_->flush();
+      }
+    private:
+      RemoteUContextImpl* backend_;
+    };
     /*---------------------.
     | RemoteUContextImpl.  |
     `---------------------*/
 
     RemoteUContextImpl::RemoteUContextImpl(USyncClient* client)
-      : client_(client)
+      : backend_(client)
       , closed_(false)
       , dummyUObject(0)
       , enableRTP(true)
       , dispatchDepth(0)
+      , outputStream(client)
       , dataSent(false)
+      , serializationMode(false)
+      , oarchive(0)
     {
-      client_->setCallback(callback(*this, &RemoteUContextImpl::dispatcher),
+      backend_->setCallback(callback(*this, &RemoteUContextImpl::dispatcher),
                            externalModuleTag.c_str());
-      client_->setClientErrorCallback(callback(*this,
+      backend_->setClientErrorCallback(callback(*this,
                  &RemoteUContextImpl::clientError));
 
       typedef long long int us_t;
-#define GET(Type, Part)                                                 \
-      Type Part =                                                       \
-        Type(client_->syncGet("System.timeReference." #Part)->value->val)
-      GET(int, year);
-      GET(int, month);
-      GET(int, day);
-      GET(us_t, us);
-#undef GET
-
+      UMessage* m = backend_->syncGet(
+        "[System.timeReference.year,"
+         "System.timeReference.month,"
+         "System.timeReference.day,"
+         "System.timeReference.us,"
+         "PackageInfo.components[\"Urbi SDK\"].major,"
+         "PackageInfo.components[\"Urbi SDK\"].minor,"
+         "PackageInfo.components[\"Urbi SDK\"].subMinor,"
+         "PackageInfo.components[\"Urbi SDK\"].patch,"
+         "]"
+         );
+      int year  = (*m->value->list)[0];
+      int month = (*m->value->list)[1];
+      int day   = (*m->value->list)[2];
+      int us    = (*m->value->list)[3];
+      version = libport::PackageInfo::Version((*m->value->list)[4],
+                                              (*m->value->list)[5],
+                                              (*m->value->list)[6],
+                                              (*m->value->list)[7]);
       // Compatibility for wire protocol 2.3-2.4.
-      URBI_SEND_COMMAND_C(*client_, "if (!Object.hasSlot(\"uvalueSerialize\"))"
+      URBI_SEND_COMMAND_C(*outputStream, "if (!Object.hasSlot(\"uvalueSerialize\"))"
                           " var Object.uvalueSerialize = function() { this}");
+      // Compatibility for versions < 2.7
+      URBI_SEND_COMMAND_C(*outputStream,
+        "if (!UObject.hasSlot(\"syncGet\"))"
+        "  var UObject.syncGet = function(exp, tag) {"
+        "    var res; try{ res = eval(exp)|Channel.new(tag) << res}"
+        "    catch (var e) { lobby.send(\"!!! \" + e, tag)"
+        " }}");
       libport::utime_reference_set
         (boost::posix_time::ptime(boost::gregorian::date(year, month, day),
                                   boost::posix_time::microseconds(us)));
       GD_FINFO_DEBUG("Remote kernel reference timestamp: %s.",
                      to_simple_string(libport::utime_reference()));
+      GD_FINFO_DEBUG("Remote kernel version: %s", version);
     }
 
     RemoteUContextImpl::~RemoteUContextImpl()
@@ -140,7 +185,7 @@ namespace urbi
     USyncClient*
     RemoteUContextImpl::getClient()
     {
-      return client_;
+      return backend_;
     }
 
     UObject*
@@ -153,7 +198,17 @@ namespace urbi
 
     void RemoteUContextImpl::uobject_unarmorAndSend(const char* a)
     {
-      unarmorAndSend(a, client_);
+      if (!serializationMode)
+        unarmorAndSend(a, backend_);
+      else
+      {
+        size_t len = strlen(a);
+        if (2 <= len && a[0] == '(')
+          *outputStream << std::string(a+1, len-2);
+        else
+          *outputStream << std::string(a, len);
+        dataSent = true;
+      }
     }
 
     void RemoteUContextImpl::send(const char* a)
@@ -161,7 +216,10 @@ namespace urbi
       if (closed_)
         GD_WARN("Write on closed remote context");
       else
-        *client_ << a;
+      {
+        *outputStream << a;
+        outputStream->flush();
+      }
     }
 
     void RemoteUContextImpl::send(const void* buf, size_t size)
@@ -169,7 +227,10 @@ namespace urbi
       if (closed_)
         GD_WARN("Write on closed remote context");
       else
-        client_->rdbuf()->sputn(static_cast<const char*> (buf), size);
+      {
+        outputStream->rdbuf()->sputn(static_cast<const char*> (buf), size);
+        outputStream->flush();
+      }
     }
 
     UObjectMode RemoteUContextImpl::getRunningMode() const
@@ -197,9 +258,9 @@ namespace urbi
     std::pair<int, int>
     RemoteUContextImpl::kernelVersion() const
     {
-      client_->waitForKernelVersion(true);
-      return std::make_pair(client_->kernelMajor(),
-                            client_->kernelMinor());
+      backend_->waitForKernelVersion(true);
+      return std::make_pair(backend_->kernelMajor(),
+                            backend_->kernelMinor());
     }
 
     void
@@ -223,7 +284,7 @@ namespace urbi
     boost::asio::io_service&
     RemoteUContextImpl::getIoService()
     {
-      return client_->get_io_service();
+      return backend_->get_io_service();
     }
 
     /*--------------------.
@@ -246,7 +307,7 @@ namespace urbi
       bool fromcxx = owner_->__name.empty();
       if (fromcxx)
         owner_->__name = "uob_" +  getFilteredHostname() + string_cast(++uid);
-      UClient* client = ctx->client_;
+      LockableOstream* client = ctx->outputStream;
       URBI_SEND_PIPED_COMMAND_C(*client,
                                 "class " << owner_->__name << "{}");
       URBI_SEND_PIPED_COMMAND_C(*client,
@@ -306,7 +367,7 @@ namespace urbi
       {
         RemoteUContextImpl& ctx =
           dynamic_cast<RemoteUContextImpl&>(*(owner_->ctx_));
-        UMessage m(*ctx.client_);
+        UMessage m(*ctx.backend_);
         m.type = MESSAGE_DATA;
         m.tag = externalModuleTag;
         m.value = new UValue(UList());
@@ -333,7 +394,7 @@ namespace urbi
       while (true)
       {
         bool processed =
-          dynamic_cast<USyncClient*>(client_)->processEvents(0);
+          dynamic_cast<USyncClient*>(backend_)->processEvents(0);
         if (deadline < libport::utime())
           return;
         if (!processed)
@@ -345,7 +406,7 @@ namespace urbi
     {
       while (true)
       {
-        if (dynamic_cast<USyncClient*>(client_)->processEvents(0))
+        if (dynamic_cast<USyncClient*>(backend_)->processEvents(0))
           return;
         usleep(0);
       }
@@ -360,7 +421,7 @@ namespace urbi
     }
 
     static void
-    call_result(UAbstractClient* client, std::string var,
+    call_result(RemoteUContextImpl* ctx, std::string var,
                 const UValue& retval, const std::exception* e)
     {
       // var is empty for internally generated messages (such as update())
@@ -373,7 +434,7 @@ namespace urbi
       if (e)
       {
          URBI_SEND_COMMA_COMMAND_C
-           (*client,
+           (*ctx->outputStream,
             "Global.UObject.funCall(\"" << var << "\", "
             << "Exception.new(\""
             << "Exception while calling remote bound method: "
@@ -381,32 +442,42 @@ namespace urbi
             << "\"))");
       }
       else
+      {
+        if (ctx->serializationMode)
+        {
+          char type = UEM_REPLY;
+          ctx->outputStream->flush();
+          *ctx->oarchive << type << var << retval;
+          ctx->backend_->flush();
+        }
+        else
         switch (retval.type)
         {
         case DATA_BINARY:
           // Send it
           // URBI_SEND_COMMAND does not now how to send binary since it
           // depends on the kernel version.
-          client->startPack();
-          *client << "Global.UObject.funCall(\"" << var << "\", ";
-          client->send(retval);
-          *client << "),\n";
-          client->endPack();
-          client->flush();
+          ctx->backend_->startPack();
+          *ctx->backend_ << "Global.UObject.funCall(\"" << var << "\", ";
+          ctx->backend_->send(retval);
+          *ctx->backend_ << "),\n";
+          ctx->backend_->endPack();
+          ctx->backend_->flush();
           break;
 
         case DATA_VOID:
           URBI_SEND_COMMAND_C
-            (*client,
+            (*ctx->outputStream,
              "Global.UObject.funCall(\"" << var << "\")");
           break;
 
         default:
           URBI_SEND_COMMA_COMMAND_C
-            (*client,
+            (*ctx->outputStream,
              "Global.UObject.funCall(\"" << var << "\", " << retval << ")");
           break;
         }
+      }
     }
 
     UCallbackAction
@@ -488,6 +559,13 @@ namespace urbi
 
       case UEM_INIT:
         init();
+        // switch to binary mode
+        if (!getenv("URBI_TEXT_MODE")
+            && version >= libport::PackageInfo::Version(2, 6, 0, 13))
+        {
+          GD_INFO_TRACE("Switching to binary mode");
+          setSerializationMode(true);
+        }
         break;
 
       case UEM_TIMER:
@@ -522,7 +600,7 @@ namespace urbi
       // But only in outermost dispatch call
       if (dispatchDepth == 1 && dataSent)
       {
-        URBI_SEND_COMMAND_C(*client_, "");
+        URBI_SEND_COMMAND_C(*outputStream, "");
         dataSent = false;
       }
       return URBI_CONTINUE;
@@ -573,7 +651,7 @@ namespace urbi
         throw std::runtime_error("no callback found");
       args.setOffset(3);
       (*i)->eval(args,
-                 boost::bind(&call_result, client_, var, _1, _2));
+                 boost::bind(&call_result, this, var, _1, _2));
     }
 
     void
@@ -625,7 +703,7 @@ namespace urbi
         if (!libport::mhas(timerMap, cbname))
           return;
       }
-      client_->notifyCallbacks(UMessage(*client_, 0,
+      backend_->notifyCallbacks(UMessage(*backend_, 0,
                                         externalModuleTag.c_str(),
           ("["
           + string_cast(UEM_TIMER) + ","
@@ -677,7 +755,7 @@ namespace urbi
       if (v1.type != DATA_VOID)
         r = r.substr(0, r.length() - 1);
       r += ')';
-      URBI_SEND_COMMA_COMMAND_C(*client_, r);
+      URBI_SEND_COMMA_COMMAND_C(*outputStream, r);
       dataSent = true;
     }
 
@@ -687,7 +765,7 @@ namespace urbi
       // Event may or may not already exist.
       std::string r = "try{var " + owner->get_name() + " = Event.new()}"
       " catch(var e) {}";
-      URBI_SEND_PIPED_COMMAND_C(*client_, r);
+      URBI_SEND_PIPED_COMMAND_C(*outputStream, r);
       dataSent = true;
     }
 
@@ -702,6 +780,20 @@ namespace urbi
                              UAutoValue& v7,
                              UAutoValue& v8)
     {
+      if (serializationMode)
+      {
+        UAutoValue* vals[] = {&v1, &v2, &v3, &v4, &v5, &v6, &v7, &v8};
+        int i = 0;
+        while (i<8 && vals[i]->type != DATA_VOID)
+          ++i;
+        outputStream->flush();
+        char code = UEM_EMITEVENT;
+        *oarchive << code << object << i;
+        for (int t=0; t<i; ++t)
+          *oarchive << *(UValue*)vals[t];
+        backend_->flush();
+        return;
+      }
       std::stringstream s;
       s << object << "!(";
 #define CHECK(v) if (v.type != DATA_VOID) s << v << ","
@@ -712,7 +804,7 @@ namespace urbi
       if (v1.type != DATA_VOID)
         r = r.substr(0, r.length() - 1);
       r += ')';
-      URBI_SEND_COMMAND_C(*client_, r);
+      URBI_SEND_COMMAND_C(*outputStream, r);
       dataSent = true;
     }
 
@@ -820,6 +912,52 @@ namespace urbi
       }
       return URBI_CONTINUE;
     }
+
+    void RemoteUContextImpl::setSerializationMode(bool mode)
+    {
+      if (mode == serializationMode)
+        return;
+      if (!mode)
+        throw std::runtime_error("Serialization mode can not be undone");
+      serializationMode = mode;
+      // Notify the kernel, in the current mode.
+      // Do not use call, we must be foreground.
+      // Do not send any other message until we get a reply.
+      backend_->lockQueue();
+      send("binaryMode("
+           + string_cast(mode)
+           + ",\"remotecontext_setmode\");");
+      delete backend_->waitForTag("remotecontext_setmode", 0);
+      /* Change the urbiscript outputstream to one that encapsulates in UValue
+       * and serializes.
+      */
+      if (mode)
+      {
+        if (!oarchive)
+          oarchive = new libport::serialize::BinaryOSerializer(*backend_);
+        outputStream =
+          new LockableOstream(new SerializedUrbiscriptStreamBuffer(this));
+      }
+      else
+      {
+        // Reset outputstream to the USyncClient.
+        delete outputStream->rdbuf();
+        delete outputStream;
+        outputStream = backend_;
+      }
+    }
+
+    UMessage*
+    RemoteUContextImpl::syncGet(const std::string& exp,
+                                libport::utime_t timeout)
+    {
+      static int counter = 0;
+      counter++;
+      std::string tag = "remotecontext_" + string_cast(counter);
+      backend_->lockQueue();
+      call("UObject", "syncGet", exp, tag);
+      return backend_->waitForTag(tag, timeout);
+    }
   } // namespace urbi::impl
 
   /*
@@ -828,7 +966,7 @@ namespace urbi
     baseURBIStarter::getFullName(const std::string& name) const
     {
     if (local)
-    return name + "_" + getClientConnectionID(client_);
+    return name + "_" + getClientConnectionID(outputStream);
     else
     return name;
     }*/

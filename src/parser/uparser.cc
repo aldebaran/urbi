@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -82,5 +82,11 @@ namespace parser
                               ? ::yy::parser::token::TOK_MODE_EXPS
                               : ::yy::parser::token::TOK_MODE_EXP);
     return pimpl_->parse(loc_);
+  }
+
+  void
+  UParser::oneshot_set(bool v)
+  {
+    oneshot_ = v;
   }
 }

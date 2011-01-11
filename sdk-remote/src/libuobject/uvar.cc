@@ -23,6 +23,7 @@
 #include <urbi/umessage.hh>
 #include <urbi/uobject.hh>
 #include <urbi/usyncclient.hh>
+#include <urbi/uvalue-serialize.hh>
 
 #include <liburbi/compatibility.hh>
 
@@ -41,13 +42,14 @@ namespace urbi
   {
     owner_ = owner;
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
-    client_ = ctx->client_;
+    client_ = ctx->backend_;
+    LockableOstream* outputStream = ctx->outputStream;
     std::string name = owner_->get_name();
     ctx->varmap()[name].push_back(owner_);
-    URBI_SEND_PIPED_COMMAND_C((*client_), "if (!isdef(" << name << ")) var "
+    URBI_SEND_PIPED_COMMAND_C((*outputStream), "if (!isdef(" << name << ")) var "
                             << name);
     URBI_SEND_PIPED_COMMAND_C
-          ((*client_),
+          ((*outputStream),
            libport::format("external var %s from dummy",
                            owner_->get_name()));
     ctx->dataSent = true;
@@ -77,7 +79,8 @@ namespace urbi
   RemoteUVarImpl::setProp(UProperty p, const UValue& v)
   {
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
-    URBI_SEND_PIPED_COMMAND_C((*client_), owner_->get_name() << "->"
+    LockableOstream* outputStream = ctx->outputStream;
+    URBI_SEND_PIPED_COMMAND_C((*outputStream), owner_->get_name() << "->"
                               << urbi::name(p) << " = " << v);
     ctx->dataSent = true;
   }
@@ -91,9 +94,12 @@ namespace urbi
   UValue
   RemoteUVarImpl::getProp(UProperty p)
   {
-    UMessage* m = client_->syncGet("%s->%s", owner_->get_name().c_str(),
-                                  urbi::name(p));
-    aver(m->value);
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
+    UMessage* m = ctx->syncGet(owner_->get_name() +"->"
+                               + urbi::name(p));
+    if (!m->value)
+      throw std::runtime_error("Error fetching property on "
+                               + owner_->get_name());
     UValue res = *m->value;
     delete m;
     return res;
@@ -156,7 +162,7 @@ namespace urbi
     // Spawn a remote RTP instance and bind it.
     // Also destroy it when this remote disconnects
     std::string rLinkName = linkName + "_l";
-    *client_
+    *outputStream
       << "var " << rLinkName <<" = URTP.new|\n"
       << rLinkName << ".sourceContext = lobby.uid|\n"
       << "disown({var t = Tag.new | t:at(Lobby.onDisconnect?(lobby))\n"
@@ -167,7 +173,7 @@ namespace urbi
       << "}})|;" << std::endl;
     GD_SINFO_TRACE("fetching engine listen port...");
     UMessage* mport =
-      client_->syncGet(rLinkName +".listen(\"0.0.0.0\", \"0\");");
+      syncGet(rLinkName +".listen(\"0.0.0.0\", \"0\");");
     if (!mport
         || mport->type != MESSAGE_DATA
         || mport->value->type != DATA_DOUBLE)
@@ -182,11 +188,11 @@ namespace urbi
     // Invoke the connect method on our RTP instance. Having a reference
     // to URTP symbols would be painful, so pass through our
     // UGenericCallback mechanism.
-    localCall(linkName, "connect", client_->getRemoteHost(), port);
+    localCall(linkName, "connect", backend_->getRemoteHost(), port);
     UObject* ob = getUObject(linkName);
     rtpLinks[key]  = ob;
     // Monitor this RTP link.
-    *client_
+    *outputStream
       << "detach('external'.monitorRTP(" << linkName << ","
       << rLinkName << ", closure() {'external'.failRTP}))|"
       << std::endl;
@@ -202,6 +208,24 @@ namespace urbi
       transmit(v, time);
     // Loopback notification
     ctx->assignMessage(owner_->get_name(), v, time);
+  }
+
+  void
+  RemoteUVarImpl::transmitSerialized(const UValue& v, libport::utime_t time)
+  {
+    GD_INFO_DEBUG("transmitSerialized");
+    char av = UEM_ASSIGNVALUE;
+    std::string n = owner_->get_name();
+    unsigned int tlow = (unsigned int)time;
+    unsigned int thi = (unsigned int)(time >> 32);
+    static_cast<RemoteUContextImpl*>(owner_->ctx_)->outputStream->flush();
+    *static_cast<RemoteUContextImpl*>(owner_->ctx_)->
+      oarchive
+        << av
+        << n
+        << v
+        << tlow << thi;
+     client_->flush();
   }
 
   void
@@ -231,7 +255,7 @@ namespace urbi
             goto rtpfail;
 
           std::string rLinkName = linkName + "_l";
-          (*ctx->client_)
+          (*ctx->outputStream)
            << rLinkName << ".receiveVar(\"" << owner_->get_name()
            <<"\")|";
           i = ctx->rtpLinks.find(owner_->get_name());
@@ -242,18 +266,23 @@ namespace urbi
     rtpfail:
       if (!rtp)
       {
-        client_->startPack();
-        *client_
+        if (ctx->serializationMode)
+          transmitSerialized(v, time);
+        else
+        {
+          ctx->backend_->startPack();
+          *ctx->outputStream
           << owner
           << ".getSlot(\"" << libport::escape(name)
           << "\").update_timed(";
         // Sendbinary is not using the stream, so we must flush.
-        client_->flush();
-        UBinary& b = *(v.binary);
-        client_->sendBinary(b.common.data, b.common.size,
-                            b.getMessage());
-        *client_ << ", " << time << ")|";
-        client_->endPack();
+          ctx->outputStream->flush();
+          UBinary& b = *(v.binary);
+          ctx->backend_->sendBinary(b.common.data, b.common.size,
+                              b.getMessage());
+          *ctx->outputStream << ", " << time << ")|";
+          ctx->backend_->endPack();
+        }
       }
     }
     else
@@ -277,25 +306,33 @@ namespace urbi
     rtpfail2:
       if (!rtp)
       {
-        client_->startPack();
-        *client_
+        if (ctx->serializationMode)
+          transmitSerialized(v, time);
+        else
+        {
+          ctx->backend_->startPack();
+          *ctx->outputStream
           << owner
           << ".getSlot(\"" << libport::escape(name)
           << "\").update_timed(";
-        if (v.type == DATA_STRING)
-          (*client_) << "\"" << libport::escape(*v.stringValue, '"') << "\"";
-        else
-          *client_ << v ;
-        *client_ << ", " << time << ")|";
-        client_->endPack();
+          if (v.type == DATA_STRING)
+            (*ctx->outputStream) << "\"" << libport::escape(*v.stringValue, '"') << "\"";
+          else
+            *ctx->outputStream << v ;
+          *ctx->outputStream << ", " << time << ")|";
+          ctx->backend_->endPack();
+        }
       }
     }
     if (!rtp)
     {
-      if (client_->isCallbackThread() && ctx->dispatchDepth)
-        ctx->dataSent = true;
+      if (ctx->backend_->isCallbackThread() && ctx->dispatchDepth)
+      {
+        if (!ctx->serializationMode) // No it cannot go in the if above.
+          ctx->dataSent = true;
+      }
       else // we were not called by dispatch: send the terminating ';' ourselve.
-        URBI_SEND_COMMAND_C((*client_), "");
+        URBI_SEND_COMMAND_C((*ctx->outputStream), "");
     }
   }
 
@@ -324,7 +361,7 @@ namespace urbi
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
     //build a getvalue message  that will be parsed and returned by the server
-    URBI_SEND_PIPED_COMMAND_C((*client_), externalModuleTag << "<<"
+    URBI_SEND_PIPED_COMMAND_C((*ctx->outputStream), externalModuleTag << "<<"
                             <<'[' << UEM_ASSIGNVALUE << ","
                             << '"' << name << '"' << ',' << name << ']');
     ctx->dataSent = true;
@@ -333,32 +370,12 @@ namespace urbi
   void
   RemoteUVarImpl::sync()
   {
-    std::string tag(client_->fresh());
-    std::string repeatChannel;
-    if (client_->kernelMajor() < 2)
-      repeatChannel = tag + " << ";
-    static boost::format
-      fmt("{\n"
-          "  if (isdef (%s) && !(%s))\n"
-          "  {\n"
-          "    %s %s.uvalueSerialize\n"
-          "  }\n"
-          "  else\n"
-          "  {\n"
-          "     %s 1/0\n"
-          "  }\n"
-          "};\n");
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
-    std::string cmd = str(fmt
-                          % name
-                          % compatibility::isvoid(name.c_str(),
-                                                  client_->kernelMajor())
-                          % repeatChannel
-                          % name
-                          % repeatChannel);
-    UMessage* m = client_->syncGetTag("%s", tag.c_str(), 0, cmd.c_str());
+    UMessage* m = ctx->syncGet(name + ".uvalueSerialize");
     if (m->type == MESSAGE_DATA)
       value_ = *m->value;
+    delete m;
   }
 
   time_t
@@ -412,7 +429,7 @@ namespace urbi
     size_t p = name.find_first_of(".");
     if (p == name.npos)
       throw std::runtime_error("invalid argument to useRTP: "+name);
-    send(libport::format("%s.getSlot(\"%s\").rtp = %s;",
+    ctx->send(libport::format("%s.getSlot(\"%s\").rtp = %s;",
                          name.substr(0, p), name.substr(p+1, name.npos),
                          enable ? "true" : "false"));
     ctx->dataSent = true;
@@ -425,7 +442,7 @@ namespace urbi
     size_t p = name.find_first_of(".");
     if (p == name.npos)
       throw std::runtime_error("invalid argument to setInputPort: "+name);
-    send(libport::format("%s.getSlot(\"%s\").%s|",
+    ctx->send(libport::format("%s.getSlot(\"%s\").%s|",
                          name.substr(0, p), name.substr(p+1, name.npos),
                          enable
                          ? "setSlot(\"inputPort\", true)"

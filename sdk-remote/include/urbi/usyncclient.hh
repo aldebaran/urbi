@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2004, 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -198,6 +198,10 @@ namespace urbi
     /// Wait until a message with specified tag is received. Returned
     /// message must be deleted.
     UMessage* waitForTag(const std::string& tag, libport::utime_t useconds = 0);
+
+    /// Must be called once before sending message associated with waitForTag
+    void lockQueue();
+
     /// Overriding UAbstractclient implementation
     virtual void notifyCallbacks(const UMessage &msg);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -7,6 +7,8 @@
  *
  * See the LICENSE file for more information.
  */
+
+#include <serialize/binary-i-serializer.hh>
 
 #include <libport/finally.hh>
 
@@ -19,8 +21,13 @@
 #include <urbi/object/object.hh>
 #include <urbi/object/tag.hh>
 
+#include <urbi/uvalue-serialize.hh>
+
+#include <object/system.hh>
+
 #include <ast/print.hh>
 #include <kernel/uconnection.hh>
+#include <kernel/uobject.hh>
 #include <kernel/userver.hh>
 #include <parser/transform.hh>
 #include <parser/uparser.hh>
@@ -42,8 +49,19 @@ namespace runner
     , executing_(false)
     , input_(input)
     , stop_(false)
+    , binary_mode_(false)
+    , textStream_(new urbi::StreamBuffer)
+    , parser_(new parser::UParser(input_))
   {
+    textStream_.exceptions(std::ios::badbit);
     GD_FINFO_TRACE("new shell: %s", name_get());
+  }
+
+  Shell::~Shell()
+  {
+    if (serializationJob_)
+      serializationJob_->terminate_asap();
+    delete parser_;
   }
 
   void
@@ -125,7 +143,7 @@ namespace runner
   }
 
   void
-  Shell::handle_command_(ast::rConstExp exp)
+  Shell::handle_command_(ast::rConstExp exp, bool canYield)
   {
     LIBPORT_SCOPE_SET(executing_, true);
     const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(exp.get());
@@ -139,15 +157,15 @@ namespace runner
                         libport::Symbol::fresh(name_get()));
       jobs_ <<  subrunner;
       subrunner->start_job();
-      if (!input_.eof())
+      if (canYield && !input_.eof())
         yield();
     }
     else
     {
-      GD_FPUSH_TRACE("%s: executing command.", name_get());
+      GD_FPUSH_TRACE("%s: executing command (%s).", name_get(), stmt);
       GD_FINFO_DUMP("%s: command: %s", name_get(), *exp);
       eval_print_(exp.get());
-      if (!input_.eof())
+      if (canYield && !input_.eof())
         yield();
     }
 
@@ -184,8 +202,6 @@ namespace runner
   void
   Shell::work_()
   {
-    parser::UParser parser(input_);
-
     while (!stop_)
     {
       try
@@ -193,7 +209,7 @@ namespace runner
         parser::parse_result_type res;
         {
           GD_FPUSH_TRACE("%s: reading command.", name_get());
-          res = parser.parse();
+          res = parser_->parse();
         }
         ast::rExp ast = parser::transform(ast::rConstExp(res));
         handle_command_(ast);
@@ -206,7 +222,8 @@ namespace runner
       }
       catch (const Exception& e)
       {
-        GD_FINFO_TRACE("%s: command is invalid, printing errors.", name_get());
+        GD_FINFO_TRACE("%s: command is invalid, printing errors.",
+                       name_get());
         e.print(*this);
       }
       for (jobs_type::iterator it = jobs_.begin();
@@ -217,6 +234,80 @@ namespace runner
         else
           ++it;
     }
+  }
+
+  void
+  Shell::processSerializedMessages()
+  {
+    GD_CATEGORY(Shell.serialize);
+    GD_INFO_TRACE("Entering processSerializedMessages");
+    libport::serialize::BinaryISerializer deserializer(input_);
+    while (binary_mode_ && !stop_)
+    {
+      try
+      {
+        GD_INFO_DEBUG("Reading new serialized message type");
+        char msgType;
+        deserializer >> msgType;
+        GD_FINFO_DEBUG("Processing serialized message of type %s",
+                       (int)msgType);
+        std::string code
+          = urbi::uobjects::processSerializedMessage(msgType, deserializer);
+        GD_FINFO_DEBUG("Got value '%s'", code);
+        if (!code.empty())
+        {
+          // We must parse and execute synchronously, but honor ',': this is
+          // toplevel code.
+          yy::location loc;
+          parser::UParser p(code, &loc);
+          p.oneshot_set(false);
+          ast::rConstExp e = p.parse();
+          ast::rConstExp ast = parser::transform(e);
+          handle_command_(ast::rConstExp(ast), false);
+        }
+        if (input_.eof())
+        {
+          GD_FPUSH_TRACE("%s: end reached, disconnecting.", name_get());
+          lobby_get()->disconnect();
+          stop_ = true;
+        }
+      }
+      catch(std::runtime_error& re)
+      {
+        GD_FINFO_TRACE("Serialized message error: %s", re.what());
+        Exception e;
+        e.err(ast::loc(), re.what());
+        e.print(*this);
+      }
+      catch (const sched::StopException& e)
+      {
+        GD_FINFO_DUMP("StopException ignored: %s", e.what());
+      }
+      for (jobs_type::iterator it = jobs_.begin();
+           it != jobs_.end();
+           /* nothing */)
+        if ((*it)->terminated())
+          it = jobs_.erase(it);
+        else
+          ++it;
+    }
+  }
+
+  void
+  Shell::setSerializationMode(bool m, const std::string& tag)
+  {
+    GD_CATEGORY(Shell.serialize);
+    GD_FINFO_TRACE("setSerializationMode %s", m);
+    if (m == binary_mode_)
+      return;
+    if (!m && binary_mode_)
+      throw std::runtime_error("There is no turning back from serialized mode");
+    delete parser_;
+    parser_ = new parser::UParser(m?textStream_:input_);
+    lobby_get()->send("1", tag);
+    binary_mode_ = m;
+    if (binary_mode_)
+      processSerializedMessages();
   }
 
   bool

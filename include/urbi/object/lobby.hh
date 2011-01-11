@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -69,6 +69,10 @@ namespace urbi
 
       size_t bytesSent() const;
       size_t bytesReceived() const;
+
+      /// Switch binary mode on/off for this connection.
+      void binaryMode(bool, const std::string& s);
+
     private:
       /// The Lobby prototype uses an empty connection_.
       /// The actual lobbies must have a non-empty one.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -11,6 +11,7 @@
 #include <cstdarg>
 
 #include <boost/assign.hpp>
+
 #include <libport/bind.hh>
 #include <libport/lexical-cast.hh>
 
@@ -53,6 +54,8 @@
 #include <runner/runner.hh>
 
 #include <urbi/uobject.hh>
+#include <urbi/uexternal.hh>
+#include <urbi/uvalue-serialize.hh>
 
 #include <urbi/ucontext-factory.hh>
 
@@ -1511,5 +1514,65 @@ namespace urbi
       return res;
     }
 
+    std::string processSerializedMessage(int msgType,
+                                 libport::serialize::BinaryISerializer& ia)
+    {
+      switch(msgType)
+      {
+      case urbi::UEM_ASSIGNVALUE:
+        {
+          std::string name;
+          urbi::UValue val;
+          libport::utime_t time;
+          unsigned int tlow, thi;
+          ia >> name >> val >> tlow >> thi;
+          time = tlow + ((libport::utime_t)thi << 32);
+          StringPair p = split_name(name);
+          GD_FINFO_TRACE("UEM_ASSIGNVALUE %s %s", name, val);
+          object::rUValue ov(new object::UValue(val));
+          object::global_class
+            ->slot_get(Symbol(p.first))
+            ->slot_get(Symbol(p.second))
+            ->call(SYMBOL(update_timed), ov, object::to_urbi(time));
+        }
+        break;
+      case urbi::UEM_EMITEVENT:
+        {
+          std::string name;
+          int count;
+          ia >> name >> count;
+          object::objects_type args;
+          for (int i=0; i<count; ++i)
+          {
+            UValue v;
+            ia >> v;
+            args.push_back(object_cast(v));
+          }
+          impl::doEmit(name, args);
+        }
+        break;
+      case urbi::UEM_REPLY:
+        {
+          std::string id;
+          UValue val;
+          ia >> id >> val;
+          object::global_class->slot_get(SYMBOL(UObject))
+          ->call(SYMBOL(funCall), object::to_urbi(id),
+                 object_cast(val));
+        }
+        break;
+      case urbi::UEM_EVAL:
+        {
+          std::string code;
+          ia >> code;
+          return code;
+        }
+        break;
+      default:
+        GD_FWARN("Invalid serialized message number %s", (int)msgType);
+        break;
+      }
+      return "";
+    }
   }
 }

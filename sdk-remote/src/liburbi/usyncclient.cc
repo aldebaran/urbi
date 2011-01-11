@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -634,5 +634,11 @@ namespace urbi
   USyncClient::setSynchronous(bool enable)
   {
     synchronous_ = enable;
+  }
+
+  void
+  USyncClient::lockQueue()
+  {
+    queueLock_.lock();
   }
 } // namespace urbi

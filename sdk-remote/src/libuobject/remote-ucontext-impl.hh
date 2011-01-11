@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -10,6 +10,10 @@
 
 #ifndef LIBUOBJECT_REMOTE_UCONTEXT_IMPL_HH
 # define LIBUOBJECT_REMOTE_UCONTEXT_IMPL_HH
+
+# include <libport/package-info.hh>
+
+# include <serialize/binary-o-serializer.hh>
 # include <urbi/uobject.hh>
 # include <urbi/usyncclient.hh>
 
@@ -29,6 +33,10 @@ namespace urbi
       virtual void uobject_unarmorAndSend(const char* str);
       virtual void send(const char* str);
       virtual void send(const void* buf, size_t size);
+      void send(const std::string& s)
+      {
+        send(s.c_str(), s.size());
+      }
       virtual void call(const std::string& object,
                         const std::string& method,
                         UAutoValue v1 = UAutoValue(),
@@ -96,7 +104,13 @@ namespace urbi
       void setRTPMessage(const std::string& varname,
                          int state);
 
-      USyncClient* client_;
+      /// Enable/disable binary serialization mode.
+      void setSerializationMode(bool);
+
+      /// Return the result of the evaluation of the given expression
+      UMessage* syncGet(const std::string& exp, libport::utime_t timeout=0);
+
+      USyncClient* backend_;
 
       /// True if we received a clientError message.
       bool closed_;
@@ -142,8 +156,14 @@ namespace urbi
       // Use RTP connections in this context if available
       bool enableRTP;
       unsigned int dispatchDepth;
+      // Stream to use for urbiscript output
+      LockableOstream* outputStream;
       // True when something was sent. Reset by dispatcher().
       bool dataSent;
+      // Send serialized binary messages if set.
+      bool serializationMode;
+      libport::serialize::BinaryOSerializer* oarchive;
+      libport::PackageInfo::Version version;
     };
 
     class URBI_SDK_API RemoteUObjectImpl: public UObjectImpl
@@ -188,6 +208,8 @@ namespace urbi
     private:
       // transmit the value to the remote kernel
       void transmit(const UValue& v, libport::utime_t timestamp);
+      // Transmit in serialized mode.
+      void transmitSerialized(const UValue& v, libport::utime_t time);
       USyncClient* client_;
       UValue value_;
       UVar* owner_;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2004, 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -88,6 +88,15 @@ namespace urbi
   class UClientStreambuf;
 
 
+  class LockableOstream: public std::ostream
+  {
+  public:
+    LockableOstream(std::streambuf* sb)
+    : std::ostream(sb)
+    {
+    }
+    libport::Lockable sendBufferLock;
+  };
   /// Interface for an URBI wrapper object.
   /*! Implementations of this interface are wrappers around the URBI protocol.
     It handles URBI messages parsing, callback registration and various
@@ -106,7 +115,7 @@ namespace urbi
    See the liburbi-cpp documentation for more informations on
    how to use this class.
   */
-  class URBI_SDK_API UAbstractClient : public std::ostream
+  class URBI_SDK_API UAbstractClient : public LockableOstream
   {
   public:
     /// Connection Buffer size.
@@ -350,7 +359,7 @@ namespace urbi
     /** Lock on send buffer. Can be locked by the user when performing an
      * atomic operation in multiple calls.
      */
-    libport::Lockable sendBufferLock;
+    /* Inherited from LockableOstream libport::Lockable sendBufferLock;*/
   protected:
     /// Must be called by subclasses when the connection is established.
     void onConnection();

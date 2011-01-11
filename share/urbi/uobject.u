@@ -219,6 +219,20 @@ do (Global.UObject)
     barriers.erase(name) |
     b.signal(val.acceptVoid)
   };
+
+  function syncGet(exp, tag)
+  {
+    var res;
+    try
+    {
+      res = eval(exp)|
+      Channel.new(tag) << res
+    }
+    catch (var e)
+    {
+      lobby.send("!!! " + e, tag)
+    }
+  };
 };
 
 /*

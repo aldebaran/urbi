@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -27,6 +27,7 @@
 
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
+#include <runner/shell.hh>
 
 namespace urbi
 {
@@ -66,6 +67,7 @@ namespace urbi
 #define DECLARE(Name)                  \
       bind(SYMBOL(Name), &Lobby::Name)
 
+      DECLARE(binaryMode);
       DECLARE(bytesSent);
       DECLARE(bytesReceived);
       DECLARE(create);
@@ -171,6 +173,15 @@ namespace urbi
     Lobby::receive(const std::string& s)
     {
       connection_->received(s);
+    }
+
+    void
+    Lobby::binaryMode(bool m, const std::string& tag)
+    {
+      runner::Shell& s = dynamic_cast<runner::Shell&>(::kernel::runner());
+      if (!&s)
+        throw std::runtime_error("Current runner is not the shell");
+      s.setSerializationMode(m, tag);
     }
   }; // namespace object
 }

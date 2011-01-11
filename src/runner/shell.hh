@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -22,6 +22,8 @@
 # include <ast/exps-type.hh>
 # include <runner/interpreter.hh>
 
+# include <parser/uparser.hh>
+
 namespace runner
 {
 
@@ -32,24 +34,40 @@ namespace runner
 	  sched::Scheduler& scheduler,
 	  libport::Symbol name,
           std::istream& input);
+    ~Shell();
     virtual void work();
     void work_();
     bool pending_command_get() const;
     void pending_commands_clear();
 
+    void processSerializedMessages();
+    /** Enable/disable serialization mode. If set, expects serialized messages.
+     * Sends a reply message on tag 'tagReply'.
+     * This function does not return, and must be called from the Shell itself.
+     * (i.e. the remote must call setSerializationMode() at toplevel.
+     */
+    void setSerializationMode(bool, const std::string& tagReply);
   private:
 
     /// Evaluate \a exp and print its value.
     /// \precondition \a exp should be a foreground job.
     void eval_print_(const ast::Exp* exp);
     /// Execute the front of commands_.
-    void handle_command_(ast::rConstExp exp);
+    void handle_command_(ast::rConstExp exp, bool canYield = true);
     std::deque<ast::rConstExp> commands_;
     bool executing_;
     std::istream& input_;
     bool stop_;
     typedef sched::jobs_type jobs_type;
     jobs_type jobs_;
+    // Expect serialized messages.
+    bool binary_mode_;
+    // When switching to serialization mode, we need a new stream to handle
+    // encapsulated arbitrary urbiscript messages.
+    std::istream textStream_;
+    // Job handling serialized message.
+    sched::rJob serializationJob_;
+    parser::UParser* parser_;
   };
 
 } // namespace runner

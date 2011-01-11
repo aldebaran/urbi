@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -55,6 +55,7 @@ namespace parser
     /// use the current location and update it.
     parse_result_type parse();
 
+    void oneshot_set(bool);
   private:
     ParserImpl* pimpl_;
     std::istream* stream_;
