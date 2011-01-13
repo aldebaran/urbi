@@ -103,7 +103,7 @@ public:
     UBindFunctions(all, selfWriteB, selfWriteI, selfWriteVD);
 
     UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args, unnotify,
-                   setThreadedNotifyChange);
+                   setThreadedNotifyChange, setThreadedNotifyChangeByUVar);
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
@@ -382,9 +382,18 @@ public:
     return 0;
   }
 
-  int setThreadedNotifyChange(urbi::UVar& v)
+  int setThreadedNotifyChange(int id)
   {
     threadCheck();
+    if (id<5)
+      UNotifyThreadedChange(*vars[id], &all::onChange, urbi::LOCK_FUNCTION);
+    else
+      UNotifyThreadedChange(*ports[id-5], &all::onChange, urbi::LOCK_FUNCTION);
+    return 0;
+  }
+
+  int setThreadedNotifyChangeByUVar(urbi::UVar& v)
+  {
     UNotifyThreadedChange(v, &all::onChange, urbi::LOCK_FUNCTION);
     return 0;
   }
