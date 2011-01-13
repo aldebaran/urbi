@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -93,7 +93,7 @@ namespace runner
       *finally << boost::bind(&tag_stack_type::pop_back, boost::ref(tag_stack_))
 	       << boost::bind(&Runner::recompute_prio, this,
 			      tag->value_get()->prio_get());
-    recompute_prio(tag);
+    recompute_prio(tag->value_get()->prio_get());
   }
 
   LIBPORT_SPEED_INLINE bool
