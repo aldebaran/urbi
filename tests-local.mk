@@ -49,3 +49,7 @@ XFAIL_TESTS +=						\
   uob/java/all/change-bypass-external-access.chk	\
   uob/java/all/change-bypass.chk			\
   uob/java/all/transmit-object.chk
+
+# Lobby destruction
+TFAIL_TESTS +=
+  uuob/remote/lobby-destruction.chk
