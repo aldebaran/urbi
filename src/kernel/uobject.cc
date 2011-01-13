@@ -404,6 +404,11 @@ uobject_uobjectsPathSet(const rObject&, List::value_type list)
   }
 }
 
+static void delete_uvar(urbi::UVar* v)
+{
+  delete v;
+}
+
 static rObject wrap_ucallback_notify(const object::objects_type& ol ,
                                      urbi::UGenericCallback* ugc,
                                      std::string traceName)
@@ -420,15 +425,18 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
   FINALLY(((bool, dummy)), bound_context.pop_back());
   urbi::UList l;
   l.array << new urbi::UValue();
-  if (ol.size() > 1 && !impl.useClosedVar_)
+  // Decide whether we use the closed UVar, or the one given in arguments.
+  bool useArgVar = ol.size() > 1 && !impl.useClosedVar_;
+  if (useArgVar)
     l[0].storage = new urbi::UVar
       (object::from_urbi<std::string>(ol[1]->call(SYMBOL(fullName))));
   else
     l[0].storage = ugc->target;
   libport::utime_t t = libport::utime();
-  ugc->eval(l);
-  if (ol.size() > 1 && !impl.useClosedVar_)
-    delete (urbi::UVar*)l[0].storage;
+  if (useArgVar)
+    ugc->eval(l, boost::bind(delete_uvar, (urbi::UVar*)l[0].storage));
+  else
+    ugc->eval(l);
   Stats::add(ol.front().get(), traceName, libport::utime() - t);
   return object::void_class;
 }
