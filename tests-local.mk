@@ -52,4 +52,4 @@ XFAIL_TESTS +=						\
 
 # Lobby destruction
 TFAIL_TESTS +=                                          \
-  uuob/remote/lobby-destruction.chk
+  uob/remote/lobby-destruction.chk
