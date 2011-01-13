@@ -51,5 +51,5 @@ XFAIL_TESTS +=						\
   uob/java/all/transmit-object.chk
 
 # Lobby destruction
-TFAIL_TESTS +=
+TFAIL_TESTS +=                                          \
   uuob/remote/lobby-destruction.chk
