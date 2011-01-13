@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -41,8 +41,10 @@ namespace runner
     /// \{
     /// Super class type.
     typedef runner::Runner super_type;
+    typedef object::Object Object;
     typedef object::rObject rObject;
     typedef object::rSlot rSlot;
+    typedef object::Code Code;
     typedef object::rCode rCode;
     typedef object::rLobby rLobby;
     typedef object::objects_type objects_type;
@@ -137,24 +139,24 @@ namespace runner
     /// \param call_message  the callMessage.  Valid only when \a func
     ///             is a Code.
     ///
-    virtual rObject apply(const rObject& func,
+    virtual rObject apply(Object* func,
                           libport::Symbol msg,
                           const object::objects_type& args,
-                          const rObject& call_message = 0);
+                          Object* call_message = 0);
 
-    rObject apply(const rObject& function,
+    rObject apply(Object* function,
                   libport::Symbol msg,
                   const object::objects_type& args,
-                  const rObject& call_message,
+                  Object* call_message,
                   boost::optional<ast::loc> loc);
 
-    virtual rObject apply_call_message(const rObject& function,
+    virtual rObject apply_call_message(Object* function,
                                        libport::Symbol msg,
-                                       const rObject& call_message);
+                                       Object* call_message);
 
-    rObject apply_call_message(const rObject& function,
+    rObject apply_call_message(Object* function,
                                libport::Symbol msg,
-                               const rObject& call_message,
+                               Object* call_message,
                                boost::optional<ast::loc> loc);
 
     /// Invoke a function with the arguments as ast chunks.
@@ -162,7 +164,7 @@ namespace runner
     /// \param msg   name of the function to look up in tgt.
     /// \param args  effective argument.
     /// \param loc   call location to add the call stack.
-    rObject apply_ast(const rObject& tgt,
+    rObject apply_ast(Object* tgt,
                       libport::Symbol msg,
                       const ast::exps_type* args,
                       boost::optional<ast::loc> loc);
@@ -174,8 +176,8 @@ namespace runner
     ///              stack
     /// \param args  effective argument.
     /// \param loc   call location to add the call stack.
-    rObject apply_ast(const rObject& tgt,
-                      const rObject& fun,
+    rObject apply_ast(Object* tgt,
+                      Object* fun,
                       libport::Symbol msg,
                       const ast::exps_type* args,
                       boost::optional<ast::loc> loc);
@@ -201,13 +203,13 @@ namespace runner
 
     /// Build a call message
     virtual rObject
-    build_call_message(const rObject& code,
+    build_call_message(Object* code,
 		       libport::Symbol msg,
                        const object::objects_type& args);
 
     /// Build a call message
-    rObject build_call_message(const rObject& tgt,
-			       const rObject& code,
+    rObject build_call_message(Object* tgt,
+			       Object* code,
 			       libport::Symbol msg,
                                const ast::exps_type& args);
 
@@ -306,10 +308,10 @@ namespace runner
   private:
     void init();
     /// Reset result_, set the location and call stack of ue.
-    rObject apply_urbi(const rCode& function,
+    rObject apply_urbi(Code* function,
                        libport::Symbol msg,
                        const object::objects_type& args,
-                       const rObject& call_message);
+                       Object* call_message);
 
   private:
     /// The root of the AST being executed.

@@ -59,7 +59,7 @@ namespace runner
   }
 
   LIBPORT_SPEED_INLINE
-  const object::rLobby&
+  object::rLobby
   Runner::lobby_get() const
   {
     return lobby_;

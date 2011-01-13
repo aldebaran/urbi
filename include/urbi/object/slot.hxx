@@ -78,6 +78,12 @@ namespace urbi
     }
 
     inline
+    Slot::operator Object* ()
+    {
+      return get<rObject>();
+    }
+
+    inline
     Slot::operator bool ()
     {
       return value_;

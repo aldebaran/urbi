@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -73,7 +73,7 @@ namespace runner
   `-------------------------------------*/
 
   Interpreter::rObject
-  Interpreter::apply_ast(const rObject& target,
+  Interpreter::apply_ast(Object* target,
                          libport::Symbol message,
                          const ast::exps_type* arguments,
                          boost::optional<ast::loc> location)
@@ -92,8 +92,8 @@ namespace runner
   }
 
   Interpreter::rObject
-  Interpreter::apply_ast(const rObject& target,
-                         const rObject& routine,
+  Interpreter::apply_ast(Object* target,
+                         Object* routine,
                          libport::Symbol message,
                          const ast::exps_type* input_ast_args,
                          boost::optional<ast::loc> loc)
@@ -128,20 +128,20 @@ namespace runner
   `-----------------------------------------------------------------*/
 
   object::rObject
-  Interpreter::apply(const rObject& function,
+  Interpreter::apply(Object* function,
                      libport::Symbol msg,
                      const object::objects_type& args,
-                     const rObject& call_message)
+                     Object* call_message)
   {
     return apply(function, msg, args, call_message,
                  boost::optional<ast::loc>());
   }
 
   object::rObject
-  Interpreter::apply(const rObject& function,
+  Interpreter::apply(Object* function,
                      libport::Symbol msg,
                      const object::objects_type& args,
-                     const rObject& call_message,
+                     Object* call_message,
                      boost::optional<ast::loc> loc)
   {
     GD_CATEGORY(Urbi.Stack);
@@ -159,14 +159,14 @@ namespace runner
     {
       profile_->step();
       profile_prev = profile_->function_current_;
-      profile_->function_current_ = function.get();
+      profile_->function_current_ = function;
       ++profile_->function_calls_;
       ++profile_->function_call_depth_;
       if (profile_->function_call_depth_ > profile_->function_call_depth_max_)
         profile_->function_call_depth_max_ = profile_->function_call_depth_;
-      ++profile_->functions_profile_[function.get()].calls_;
-      if (profile_->functions_profile_[function.get()].name_.empty())
-        profile_->functions_profile_[function.get()].name_ = msg;
+      ++profile_->functions_profile_[function].calls_;
+      if (profile_->functions_profile_[function].name_.empty())
+        profile_->functions_profile_[function].name_ = msg;
     }
     FINALLY(((call_stack_type&, call_stack_))((bool, reg))
             ((Profile*, profile_))((void*, profile_prev)),
@@ -181,12 +181,12 @@ namespace runner
       );
 
     // Check if any argument is void.
-    foreach (const rObject& arg, libport::skip_first(args))
+    foreach (Object* arg, libport::skip_first(args))
       if (arg == object::void_class)
 	raise_unexpected_void_error();
 
     object::rObject res;
-    if (const rCode& code = function->as<object::Code>())
+    if (Code* code = function->as<object::Code>())
       res = apply_urbi(code, msg, args, call_message);
     else if (const object::rPrimitive& p = function->as<object::Primitive>())
       res = (*p)(args);
@@ -221,18 +221,18 @@ namespace runner
   `--------------------------*/
 
   object::rObject
-  Interpreter::apply_call_message(const rObject& function,
+  Interpreter::apply_call_message(Object* function,
                                   libport::Symbol msg,
-                                  const rObject& call_message)
+                                  Object* call_message)
   {
     return apply_call_message(function, msg, call_message,
                               boost::optional<ast::loc>());
   }
 
   object::rObject
-  Interpreter::apply_call_message(const rObject& function,
+  Interpreter::apply_call_message(Object* function,
                                   libport::Symbol msg,
-                                  const rObject& call_message,
+                                  Object* call_message,
                                   boost::optional<ast::loc> loc)
   {
     rObject target = call_message->slot_get(SYMBOL(target));
@@ -246,7 +246,7 @@ namespace runner
         || function->as<object::Code>()->ast_get()->strict())
     {
       rObject urbi_args = call_message->call(SYMBOL(evalArgs));
-      foreach (const rObject& arg,
+      foreach (Object* arg,
 	       urbi_args->as<object::List>()->value_get())
 	args << arg;
     }
@@ -259,11 +259,13 @@ namespace runner
   `-----------------------------------------------*/
 
   object::rObject
-  Interpreter::apply_urbi(const rCode& function,
+  Interpreter::apply_urbi(Code* function,
                           libport::Symbol msg,
                           const object::objects_type& args,
-                          const rObject& call_message)
+                          Object* call_message_)
   {
+    rObject call_message = call_message_;
+
     // The called function.
     const object::Code::ast_type& ast = function->ast_get();
 
@@ -274,15 +276,14 @@ namespace runner
     {
       object::objects_type lazy_args;
       lazy_args << args.front();
-      foreach (const rObject& o, libport::skip_first(args))
+      foreach (Object* o, libport::skip_first(args))
       {
 	CAPTURE_GLOBAL(PseudoLazy);
         rObject lazy = PseudoLazy->clone();
         lazy->slot_set(SYMBOL(code), o);
         lazy_args << lazy;
       }
-      const_cast<rObject&>(call_message) =
-        build_call_message(function, msg, lazy_args);
+      call_message = build_call_message(function, msg, lazy_args);
     }
 
     // Determine the function's 'this' and 'call'
@@ -347,7 +348,7 @@ namespace runner
     foreach (const ast::rConstLocalDeclaration& dec,
              *ast->captured_variables_get())
     {
-      const rSlot& value = function->captures_get()[dec->local_index_get()];
+      Slot* value = function->captures_get()[dec->local_index_get()];
       stacks_.def_captured(dec, value);
     }
 
@@ -427,7 +428,7 @@ namespace runner
   }
 
   object::rObject
-  Interpreter::build_call_message(const rObject& code,
+  Interpreter::build_call_message(Object* code,
                                   libport::Symbol msg,
                                   const object::objects_type& args)
   {
@@ -557,8 +558,8 @@ namespace runner
   };
 
   object::rObject
-  Interpreter::build_call_message(const rObject& tgt,
-				  const rObject& code,
+  Interpreter::build_call_message(Object* tgt,
+				  Object* code,
                                   libport::Symbol msg,
                                   const ast::exps_type& args)
   {

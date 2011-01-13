@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -48,6 +48,7 @@ namespace runner
     typedef sched::Job super_type;
 
     /// Shorthands used everywhere.
+    typedef object::Object Object;
     typedef object::rObject rObject;
     typedef object::rLobby rLobby;
     /// \}
@@ -70,7 +71,7 @@ namespace runner
     /// \{
   public:
     /// Return the lobby in which this runner has been started.
-    const rLobby& lobby_get() const;
+    rLobby lobby_get() const;
     rLobby lobby_get();
     /// \}
 
@@ -119,17 +120,17 @@ namespace runner
     ///             being Code.
     ///
     /// One cannot have both a call message and args.
-    virtual rObject apply(const rObject& function,
+    virtual rObject apply(Object* function,
 			  libport::Symbol msg,
 			  const object::objects_type& args,
-			  const rObject& call_message = 0) = 0;
+			  Object* call_message = 0) = 0;
 
-    virtual rObject apply_call_message(const rObject& function,
+    virtual rObject apply_call_message(Object* function,
                                        libport::Symbol msg,
-                                       const rObject& call_message) = 0;
-    virtual rObject apply_call_message(const rObject& function,
+                                       Object* call_message) = 0;
+    virtual rObject apply_call_message(Object* function,
                                        libport::Symbol msg,
-                                       const rObject& call_message,
+                                       Object* call_message,
                                        boost::optional<ast::loc> loc) = 0;
 
     /// Return the current scope_tag, after creating it if needed.
@@ -187,7 +188,7 @@ namespace runner
      *  \a args is taken by reference for performance sake, and might
      *  be arbitrarily modified by apply!
      */
-    virtual rObject build_call_message(const rObject& code,
+    virtual rObject build_call_message(Object* code,
 				       libport::Symbol msg,
 				       const object::objects_type& args) = 0;
 
