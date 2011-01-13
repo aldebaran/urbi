@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -90,6 +90,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Date);
     URBI_CXX_OBJECT_REGISTER(Barrier);
     URBI_CXX_OBJECT_REGISTER(Hash);
+    URBI_CXX_OBJECT_REGISTER(UConnection);
   } // namespace object
 } // namespace urbi
 
@@ -120,7 +121,6 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Regexp);
     URBI_CXX_OBJECT_REGISTER(Formatter);
     URBI_CXX_OBJECT_REGISTER(FormatInfo);
-    URBI_CXX_OBJECT_REGISTER(UConnection);
   } // namespace object
 } // namespace urbi
 #endif
