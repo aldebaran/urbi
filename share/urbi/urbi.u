@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -61,9 +61,13 @@ requireFile("urbi/enumeration.u");
 requireFile("urbi/event.u");
 requireFile("urbi/file.u");
 requireFile("urbi/float.u");
-requireFile("urbi/formatter.u");
 requireFile("urbi/group.u");
-requireFile("urbi/input-stream.u");
+if (!System.Platform.compilationModeSpace)
+{
+  requireFile("urbi/formatter.u");
+  requireFile("urbi/input-stream.u");
+  requireFile("urbi/regexp.u");
+};
 requireFile("urbi/job.u");
 requireFile("urbi/kernel1.u");
 requireFile("urbi/loadable.u");
@@ -75,7 +79,6 @@ requireFile("urbi/path.u");
 requireFile("urbi/pattern.u");
 requireFile("urbi/profiling.u");
 requireFile("urbi/pubsub.u");
-requireFile("urbi/regexp.u");
 requireFile("urbi/socket.u");
 requireFile("urbi/stack-frame.u");
 requireFile("urbi/string.u");
