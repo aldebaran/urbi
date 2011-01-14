@@ -1,0 +1,31 @@
+/*
+ * Copyright (C) 2011, Gostai S.A.S.
+ *
+ * This software is provided "as is" without warranty of any kind,
+ * either expressed or implied, including but not limited to the
+ * implied warranties of fitness for a particular purpose.
+ *
+ * See the LICENSE file for more information.
+ */
+
+do(System)
+{
+  // Make requireFile wait if a file is currently being loaded.
+  // Avoid lookup errors when call several requireFile in parallel.
+  // Not done in system.u because of bootstrapping problems.
+  requireWait = function (var file)
+    {
+      if (! '$loadedFiles'[file])
+      {
+        var e = Event.new |
+        tag: at ('$loadedFiles'.changed?)
+        {
+          if ('$loadedFiles'[file])
+          {
+            tag.stop | e!
+          }
+        } |
+        waituntil (e?)
+      }
+    };
+};

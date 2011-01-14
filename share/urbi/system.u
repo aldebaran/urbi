@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -118,11 +118,12 @@ do (System)
 
   /// Look for file and load it.
   // Throw on errors.
+  var x = 0;
   function load(var file, var target = this, var isSystem = defaultIsSystem)
   {
+    '$loadedFiles'.set(file, false)|
     var res = loadFile(searchFile(file), target, isSystem).acceptVoid |
-    '$loadedFiles'.set(file,
-      { if (file in '$loadedFiles') '$loadedFiles'.get(file) + 1 else 1 })|
+    '$loadedFiles'.set(file, true)|
     res.unacceptVoid
   };
 
@@ -161,14 +162,15 @@ do (System)
       t.dumpState
   };
 
-  // Require module stage 1
+  function requireWait(var file)
+  {};
+
   function requireFile(var file)
   {
-    // Cannot use "not in" yet.
     if (file in '$loadedFiles')
-      {}
+      requireWait(file)
     else
-      load(file)|
+      load(file) |
     void
   };
 

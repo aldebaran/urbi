@@ -56,10 +56,12 @@ requireFile("urbi/code.u");
 requireFile("urbi/date.u");
 requireFile("urbi/dictionary.u");
 requireFile("urbi/directory.u");
+requireFile("urbi/file.u");
+requireFile("urbi/path.u");
+requireFile("urbi/loadable.u");
 requireFile("urbi/duration.u");
 requireFile("urbi/enumeration.u");
 requireFile("urbi/event.u");
-requireFile("urbi/file.u");
 requireFile("urbi/float.u");
 requireFile("urbi/group.u");
 if (!System.Platform.compilationModeSpace)
@@ -68,14 +70,12 @@ if (!System.Platform.compilationModeSpace)
   requireFile("urbi/input-stream.u");
   requireFile("urbi/regexp.u");
 };
-requireFile("urbi/job.u");
 requireFile("urbi/kernel1.u");
-requireFile("urbi/loadable.u");
+requireFile("urbi/job.u");
 requireFile("urbi/lobby.u");
 requireFile("urbi/math.u");
 requireFile("urbi/mutex.u");
 requireFile("urbi/package-info.u");
-requireFile("urbi/path.u");
 requireFile("urbi/pattern.u");
 requireFile("urbi/profiling.u");
 requireFile("urbi/pubsub.u");
@@ -87,6 +87,8 @@ requireFile("urbi/timeout.u");
 requireFile("urbi/trajectory-generator.u");
 requireFile("urbi/tuple.u");
 requireFile("urbi/weak-pointer.u");
+// Enhance requireFile thanks to previous loadings.
+requireFile("urbi/require-file.u");
 
 /*----------.
 | UObject.  |
