@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -360,15 +360,20 @@ you can use the shorter versions of UBindFunction.
 The functions you can bind must follow these rules:
 \begin{itemize}
 \item They can have between 0 and 16 arguments.
-\item Their arguments can be of type: urbi.UValue, urbi.UVar, urbi.UList,
-  urbi.UBinary, urbi.UImage, urbi.USound, urbi.UDictionary,
-  java.lang.String, java.lang.Integer, java.lang.Boolean, java.lang.Double,
-  java.lang.Float, java.lang.Long, java.lang.Short, java.lang.Character,
-  java.lang.Byte, int, boolean, byte, char, short, long, float, double
-\item Their return type can be one of the following type: void, urbi.UValue,
-  urbi.UVar, urbi.UList, urbi.UBinary, urbi.UImage, urbi.USound,
-  urbi.UDictionary, java.lang.String, int, boolean, byte, char, short, long,
-  float, double
+\item Their arguments can be of type: \samp{urbi.UValue}, \samp{urbi.UVar},
+  \samp{urbi.UList}, \samp{urbi.UBinary}, \samp{urbi.UImage},
+  \samp{urbi.USound}, \samp{urbi.UDictionary}, \samp{java.lang.String},
+  \samp{java.lang.Integer}, \samp{java.lang.Boolean},
+  \samp{java.lang.Double}, \samp{java.lang.Float}, \samp{java.lang.Long},
+  \samp{java.lang.Short}, \samp{java.lang.Character}, \samp{java.lang.Byte},
+  \samp{int}, \samp{boolean}, \samp{byte}, \samp{char}, \samp{short},
+  \samp{long}, \samp{float}, \samp{double}.
+\item Their return type can be one of the following type: \samp{void},
+  \samp{urbi.UValue}, \samp{urbi.UVar}, \samp{urbi.UList},
+  \samp{urbi.UBinary}, \samp{urbi.UImage}, \samp{urbi.USound},
+  \samp{urbi.UDictionary}, \samp{java.lang.String}, \samp{int},
+  \samp{boolean}, \samp{byte}, \samp{char}, \samp{short}, \samp{long},
+  \samp{float}, \samp{double}.
 \end{itemize}
 
 
@@ -569,53 +574,49 @@ We provide a sample \htmladdnormallink{Eclipse}{http://www.eclipse.org/}
 project configuration that you can import in Eclipse and use to create your
 own UObject Java.
 
+\newcommand{\snapshot}[2][.6]{
+  \begin{center}
+    \includegraphics[width=#1\linewidth]{img/#2}
+  \end{center}
+}
+
 We illustrate here how you can do this:
 
-\begin{itemize}
+\begin{enumerate}
 \item Open Eclipse
 
-  \begin{center}
-    \includegraphics[width=0.6\linewidth]{img/eclipse-import}
-  \end{center}
+  \snapshot[.8]{eclipse-import}
 
 \item Right click in the Package Explorer panel and select 'import' (or go
   in File/import)
 
-  \begin{center}
-    \includegraphics[width=0.6\linewidth]{img/select-import}
-  \end{center}
+  \snapshot{select-import}
 
 \item Select 'Existing Projects into Workspace' in the opened windows
 \item Click 'Next'
 
-  \begin{center}
-    \includegraphics[width=0.6\linewidth]{img/select-proj}
-  \end{center}
+  \snapshot{select-proj}
 
 \item Enter the path of the \urbi SDK on your computer
 \item Eclipse should find the .project file we provide and display the
   'urbijava' project
 \item Select the 'urbijava' project and click 'Finish'
 
-  \begin{center}
-    \includegraphics[width=0.6\linewidth]{img/project-uobject-open}
-  \end{center}
+  \snapshot[.8]{project-uobject-open}
 
-\end{itemize}
+\end{enumerate}
 
 The Java project is loaded. You can see the jar containing the liburbi
-(liburbijava.jar, storing the UObject Java API) which contains the urbi package, and
-also see the sources of the example we provide. We put them in the packages
-examples.  You can inspire yourself from these examples to make
+(liburbijava.jar, storing the UObject Java API) which contains the urbi
+package, and also see the sources of the example we provide. We put them in
+the packages examples.  You can inspire yourself from these examples to make
 your own UObjects.  Here, we will see how to compile and run them in eclipse
 
 NB: If Eclipse complains about errors in the source code, it can be that
 your compiler compliance level is two low. You have to set the compiler
 compliance level to Java 5 at least (Windows/Preferences/Java/Compiler).
 
-\begin{center}
-  \includegraphics[width=0.6\linewidth]{img/compiler-compliance-level}
-\end{center}
+\snapshot[.8]{compiler-compliance-level}
 
 
 \section{Run the UObject Java examples}
@@ -628,9 +629,7 @@ run the projects.
 \item Click on Run/Open Run Dialog (or 'Run...' or 'Run Configurations' in
   some versions of Eclipse)
 
-\begin{center}
-  \includegraphics[width=0.6\linewidth]{img/run-uobjectjava}
-\end{center}
+  \snapshot[.8]{run-uobjectjava}
 
 \item The launch configurations should be recognized automatically. Choose
   'uobjectjava'.
@@ -643,9 +642,7 @@ run the projects.
   setting -Djava.library.path=\var{path to lib folder} into the VM
   arguments. See:
 
-\begin{center}
-  \includegraphics[width=0.6\linewidth]{img/set_javalibrarypath}
-\end{center}
+  \snapshot[.8]{set_javalibrarypath}
 
 \item In order to run your remote UObject, you need also run an \urbi
   server. Your remote UObject will connect to this \urbi server. By default

@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -15,66 +15,109 @@ scripting language that can be used to write orchestration programs.
 
 \section{\urbi and UObjects}
 
-\urbi makes the orchestration of independent, concurrent, components
-easier.  It was first designed for robotics: it provides all the
-needed features to coordinate the execution of various components
-(actuators, sensors, software devices that provide features such as
-text-to-speech, face recognition and so forth).  Languages such as
-\Cxx are well suited to program the local, low-level, handling of
-these hardware or software devices; indeed one needs efficiency, small
-memory footprint, and access to low-level hardware details.  Yet, when
-it comes to component orchestration and coordination, in a word, when
-it comes to addressing concurrency, it can be tedious to use such
-languages.
+\urbi makes the orchestration of independent, concurrent, components easier.
+It was first designed for robotics: it provides all the needed features to
+coordinate the execution of various components (actuators, sensors, software
+devices that provide features such as text-to-speech, face recognition and
+so forth).  Languages such as \Cxx are well suited to program the local,
+low-level, handling of these hardware or software devices; indeed one needs
+efficiency, small memory footprint, and access to low-level hardware
+details.  Yet, when it comes to component orchestration and coordination, in
+a word, when it comes to addressing concurrency, it can be tedious to use
+such languages.
 
-Middleware infrastructures make possible to use remote components as
-if they were local, to allow concurrent execution, to make synchronous
-or asynchronous requests and so forth.  The \dfn{UObject} \Cxx
-architecture provides exactly this: a common API that allows
-conforming components to be used seamlessly in highly concurrent
-settings.  Components need not be designed with UObjects in mind,
-rather, UObjects are typically ``shells'' around ``regular''
-components.
+Middleware infrastructures make possible to use remote components as if they
+were local, to allow concurrent execution, to make synchronous or
+asynchronous requests and so forth.  The \dfn{UObject} \Cxx architecture
+provides exactly this: a common API that allows conforming components to be
+used seamlessly in highly concurrent settings.  Components need not be
+designed with UObjects in mind, rather, UObjects are typically ``shells''
+around ``regular'' components.
 
-Components with an UObject interface are naturally supported by the
-\us programming language.  This provides a tremendous help: one can
-interact with these components (making queries, changing them,
-observing their state, monitoring various kinds of events and so
-forth), which provides a huge speed-up during development.
+Components with an UObject interface are naturally supported by the \us
+programming language.  This provides a tremendous help: one can interact
+with these components (making queries, changing them, observing their state,
+monitoring various kinds of events and so forth), which provides a huge
+speed-up during development.
 
-Finally, note that, although made with robots in mind, the UObject
-architecture is well suited to tame any heavily concurrent
-environment, such as video games or complex systems in general.
+Although made with robots in mind, the UObject architecture is well suited
+to tame any heavily concurrent environment, such as video games or complex
+systems in general.
+
+\section{The Big Picture}
+
+The \autoref{fig:arch} shows the architecture of \urbi.  Let's browse it
+bottom up.
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=.8\linewidth]{img/urbi-architecture}
+  \caption{A Bird-View of the \urbi Architecture}
+  \label{fig:arch}
+\end{figure}
+
+At the lowest level, \urbi requires a (possibly very limited) embedded
+computer.  This is the case for most robots today, but on occasion, some
+device cannot even run reasonably small pieces of code.  In that case, \urbi
+can still be used, but then the robot is actually remote-controled from a
+computer running \urbi.
+
+Right on top of the hardware, is running the \dfn{Operating System}.  \urbi
+supports the major OSes; it was also ported on top of realtime OSes such as
+Xenomai, and on specific OSes such as Aperios, Sony's proprietary system
+running its Aibo robotic dog.
+
+The \dfn{Urbi Runtime}, which is the actual core of the system, also known
+as the \dfn{engine} or the \dfn{kernel}, is interfacing the OS with the rest
+of the \urbi world, \us and UObjects.
+
+UObjects are used to bind hardware or software components, such as
+actuators and sensors on the one hand, and voice synthesis or face
+recognition on the other hand.  They can be run locally on the robot, or on
+a remote, more powerful, computer.
+
+To orchestrate all the components, \us is a programming language of choice
+(see below).
+
+Finally, applications are available for the \urbi environment.  For
+instance, Gostai Studio provides high-level tools to develop complex robotic
+behaviors.
 
 \section{\urbi and \us}
 
 \us is a programming language primarily designed for robotics. It's a
-dynamic, prototype-based, object-oriented scripting language. It
-supports and emphasizes parallel and event-based programming, which
-are very popular paradigms in robotics, by providing core primitives
-and language constructs.
+dynamic, prototype-based, object-oriented scripting language. It supports
+and emphasizes parallel and event-based programming, which are very popular
+paradigms in robotics, by providing core primitives and language constructs.
+
+\medskip
 
 Its main features are:
 \begin{itemize}
-\item syntactically close to \Cxx. If you know \C or \Cxx, you can
-  easily write \us programs.
-\item fully integrated with \Cxx. You can bind \Cxx classes in \us
-  seamlessly. \us is also integrated with many other languages such as
-  \Java, \MatLab or \Python.
-\item object-oriented. It supports encapsulation, inheritance and
-  inclusion polymorphism. Dynamic dispatching is available through
-  monomethods --- just as \Cxx, \Cs or \Java.
-\item concurrent. It provides you with natural constructs to run and
-  control high numbers of interacting concurrent tasks.
-\item event-based. Triggering events and reacting to them is
-  absolutely straightforward.
-\item functional programming.  Inspired by languages such as \Lisp or
-  \Caml, \us features first class functions and pattern matching.
-\item client/server.  The interpreter accepts multiple connections
-  from different sources (human users, robots, other servers \ldots)
-  and enables them to interact.
-\item distributed.  You can run objects in different processes,
-  potentially remote computers across the network.
+\item syntactically close to \Cxx.\\
+  If you know \C, \Cxx, \Java, or JavaScript, you can easily write \us
+  programs.
+\item fully integrated with \Cxx.\\
+  You can bind \Cxx classes in \us seamlessly. \us is also integrated with
+  many other languages such as \Java, \MatLab or \Python.
+\item object-oriented.\\
+  It supports encapsulation, inheritance and inclusion polymorphism. Dynamic
+  dispatching is available through monomethods --- just as \Cxx, \Cs or
+  \Java.
+\item concurrent.\\
+  It provides you with natural constructs to run and control high numbers of
+  interacting concurrent tasks.
+\item event-based.\\
+  Triggering events and reacting to them is absolutely straightforward.
+\item functional programming.\\
+  Inspired by languages such as \Lisp or \Caml, \us features first class
+  functions and pattern matching.
+\item client/server.\\
+  The interpreter accepts multiple connections from different sources (human
+  users, robots, other servers \ldots) and enables them to interact.
+\item distributed.\\
+  You can run objects in different processes, potentially remote computers
+  across the network.
 \end{itemize}
 
 \section{Genesis}
