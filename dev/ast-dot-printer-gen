@@ -101,10 +101,10 @@ def dot_attrs(node):
     else:
       if label != '':
         label += '|'
-      label += '%(name)s: " << escape(n->%(name)s_get()) << "' % {'name' : attr.name}
+      label += '%(name)s: " << ast::escape(n->%(name)s_get()) << "' % {'name' : attr.name}
   if label != '':
     label = '|{%s}' % label
-  label = '|{" << escape(n->location_get()) << " }' + label
+  label = '|{" << ast::escape(n->location_get()) << " }' + label
   return recurse, label
 
 
@@ -173,7 +173,7 @@ namespace %(ns)s
     if (root_)
     {
       root_ = false;
-      output_ << "digraph \\"" << escape(title_) << '"' << std::endl
+      output_ << "digraph \\"" << ast::escape(title_) << '"' << std::endl
               << "{" << std::endl
               << "  node [shape=\\"record\\"];" << std::endl;
       super_type::operator()(n);
