@@ -6,7 +6,7 @@ usage ()
 Usage: $me [OPTION]... [FILE]...
 
 General options:
-  -D, --debug       turn on shell debugging (set -x)
+      --debug       turn on shell debugging (set -x)
   -h, --help        display this help and exit successfully
   -q, --quiet       no output unless errors
   -V, --version     display version information and exit successfully
@@ -23,10 +23,14 @@ Compilation options:
   -H, --host=HOST         destination host [$host]
   -m, --disable-automain  do not add the main function
   --package=PACKAGE       use pkg-config to add flags required by PACKAGE
-  -I<path>                pass unchanged to compiler
-  -L<path>                pass unchanged to linker
-  -l<lib>                 pass unchanged to linker
-Developper options:
+
+Compiler and linker options:
+  -D SYMBOL     passed to compiler (i.e., appended to EXTRA_CPPFLAGS)
+  -I PATH       likewise
+  -L PATH       passed to linker  (i.e., appended to EXTRA_LDFLAGS)
+  -l LIB        likewise
+
+Developer options:
   -p, --prefix=DIR     library file location [$prefix]
   -P, --param-mk=FILE  param.mk location [$(param_mk)]
   -k, --kernel=DIR     kernel location [$(kernel)]
@@ -116,7 +120,7 @@ get_options ()
     esac
 
     case $1 in
-      (-D | --debug  ) debug=true;;
+      (     --debug  ) debug=true;;
       (-v | --verbose) verb=true;;
       (-h | --help   ) usage;;
       (-q | --quiet  ) quiet=true;;
@@ -137,10 +141,10 @@ get_options ()
       (-P | --param-mk) shift; param_mk=$1;;
       (-k | --kernel)   shift; kernel=$1;;
 
-      (-I) shift; append EXTRA_CPPFLAGS "-I$1";;
-      (-L) shift; append EXTRA_LDFLAGS  "-L$1";;
+      (-D|-I) append EXTRA_CPPFLAGS "$1$2"; shift;;
+      (-L)    append EXTRA_LDFLAGS  "$1$2" shift;;
 
-      (-I*)     append EXTRA_CPPFLAGS "$1";;
+      (-D*|-I*) append EXTRA_CPPFLAGS "$1";;
       (-L*|-l*) append EXTRA_LDFLAGS  "$1";;
 
       (--package) shift;

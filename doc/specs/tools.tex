@@ -1,4 +1,4 @@
-%% Copyright (C) 2008-2010, Gostai S.A.S.
+%% Copyright (C) 2008-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -425,18 +425,18 @@ specified.
 \subsection{Examples}
 
 To launch a fresh server in an interactive session with the
-\lstinline|UFactory| UObject compiled as the file \file{factory.so}
-(or \file{factory.dll} plugged in, run:
+\lstinline|UFactory| UObject compiled as the file \file{test/factory.so} (or
+\file{test/factory.dll} plugged in, run:
 
 \begin{shell}
-urbi-launch --start urbi/factory -- --interactive
+urbi-launch --start test/factory -- --interactive
 \end{shell}
 
 To start an \urbi server accepting connections on the local port 54000
 from any remote host, with \lstinline|UFactory| plugged in, run:
 
 \begin{shell}
-urbi-launch --start --host 0.0.0.0 --port 54000 urbi/factory
+urbi-launch --start --host 0.0.0.0 --port 54000 test/factory
 \end{shell}
 
 Since \command{urbi-launch} in server mode is basically the same as running
@@ -563,8 +563,8 @@ arguments of the type \samp{\var{var}=\var{val}}.  The behavior depends on
 Otherwise, the argument is passed as is to \command{make}.
 
 \begin{options}[General options]
-\item[D]{debug} Turn on shell debugging (\lstinline|set -x|) to
-  track \command{umake} problems.
+\item{debug} Turn on shell debugging (\lstinline|set -x|) to track
+  \command{umake} problems.
 \item[h]{help} \optionHelp
 \item[q]{quiet} Produce no output except errors.
 \item[V]{version} \optionVersion
@@ -585,6 +585,11 @@ Otherwise, the argument is passed as is to \command{make}.
 \item{package=\var{pkg}} Use \command{pkg-config} to retrieve compilation
   flags (\code{cflags} and \code{libs}).  Fails if \command{pkg-config} does
   not know about the package \var{pkg}.
+\end{options}
+
+\begin{options}[Compiler and linker options]
+\item[D\var{symbol}]{} Forwarded to the preprocessor (i.e., added to the
+  \env{EXTRA\_CPPFLAGS}).
 \item[I\var{path}]{} Forwarded to the preprocessor (i.e., added to the
   \env{EXTRA\_CPPFLAGS}).
 \item[L\var{path}]{} Forwarded to the linker (i.e., added to the

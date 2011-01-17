@@ -1,4 +1,4 @@
-## Copyright (C) 2005-2010, Gostai S.A.S.
+## Copyright (C) 2005-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -53,7 +53,7 @@ include bin/local.mk
 include liburbi/local.mk
 
 if !STATIC_BUILD
-include urbi/local.mk
+include uobjects/local.mk
 endif !STATIC_BUILD
 
 include libuobject/local.mk

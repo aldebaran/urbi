@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2010, Gostai S.A.S.
+## Copyright (C) 2008-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -11,15 +11,18 @@
 ## -------------------- ##
 
 # Compile each UObject using umake.
-include $(top_srcdir)/sdk-remote/src/urbi/uobjects.mk
-UOBJECTS_TESTS = $(addprefix uobjects/, $(UOBJECTS:=.uob))
+UOBJECTS =
+include $(top_srcdir)/sdk-remote/src/uobjects/test/local.mk
+include $(top_srcdir)/sdk-remote/src/uobjects/urbi/local.mk
+UOBS = $(patsubst %,uobjects/%.uob,$(UOBJECTS))
+UOBJECTS_TESTS = $(UOBS)
 
 # uobject-check
 EXTRA_DIST += bin/uobject-check.m4sh
 nodist_check_SCRIPTS += bin/uobject-check
 m4sh_scripts += bin/uobject-check
 
-$(UOBJECTS_TESTS:.uob=.log): uobjects/%.log: $(sdk_remote_builddir)/src/urbi/%.la bin/uobject-check
+$(UOBJECTS_TESTS:.uob=.log): uobjects/%.log: $(sdk_remote_builddir)/src/uobjects/%.la bin/uobject-check
 	@$(am__check_pre) bin/uobject-check $< $(am__check_post)
 
 TESTS += $(UOBJECTS_TESTS)
