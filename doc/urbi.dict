@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1246 utf-8
+personal_ws-1.1 en 1251 utf-8
 aaa
 abc
 abcdef
@@ -42,7 +42,9 @@ angleMin
 angTag
 animaloid
 aoba
+Aperios
 api
+apijava
 APIS
 ar
 arccosine
@@ -508,6 +510,8 @@ isWindows
 isxdigit
 iterable
 javac
+javalibrarypath
+JavaScript
 jdk
 jessie
 jni
@@ -784,6 +788,7 @@ printf
 printSalaries
 prog
 programName
+proj
 propertyName
 propName
 proto
@@ -1213,6 +1218,7 @@ xabcdef
 xabcdefg
 xADDR
 xb
+Xenomai
 xf
 xFF
 xfF
