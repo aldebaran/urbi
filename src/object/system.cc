@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -102,13 +102,19 @@ namespace urbi
 
 #undef SERVER_FUNCTION
 
+    static void
+    system_sleep_inf(const rObject&)
+    {
+      runner::Runner& r = runner();
+      r.yield_until_terminated(r);
+    }
 
     static void
-    system_sleep(const rObject&, libport::ufloat seconds)
+    system_sleep(const rObject& o, libport::ufloat seconds)
     {
       runner::Runner& r = runner();
       if (seconds == std::numeric_limits<ufloat>::infinity())
-        r.yield_until_terminated(r);
+        system_sleep_inf(o);
       else
         r.yield_for(libport::utime_t(seconds * 1000000.0));
     }
@@ -696,7 +702,6 @@ namespace urbi
       DECLARE(setenv);
       DECLARE(shiftedTime);
       DECLARE(shutdown);
-      DECLARE(sleep);
       DECLARE(spawn);
       DECLARE(stats);
       DECLARE(stopall);
@@ -710,6 +715,9 @@ namespace urbi
       DECLARE(systemFiles);
 
 #undef DECLARE
+
+      system_class->bind(SYMBOL(sleep), &system_sleep);
+      system_class->bind(SYMBOL(sleep), &system_sleep_inf);
 
       system_class->bind(SYMBOL(searchPath), &system_searchPath,
                          SYMBOL(searchPathSet), &system_searchPathSet);
