@@ -351,8 +351,8 @@ var Global.x = 0;
 \item[requireFile](<file>)%
   Load \var{file} if it was not loaded before (with \refSlot{load} or
   \refSlot{requireFile}). Unlike \refSlot{load}, \lstinline{requireFile}
-  always returns \lstinline|void|. If the file is currently being loaded
-  \lstinline{requireFile} waits untill the loading is finished.
+  always returns \lstinline|void|. If \var{file} is being loaded concurrently
+  \lstinline{requireFile} waits until the loading is finished.
 
 \begin{urbiscript}
 // Create the file ``test.u'' that echoes a string.
