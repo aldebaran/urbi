@@ -161,13 +161,13 @@ do (System)
       t.dumpState
   };
 
-  function requireWait(var file)
+  function '$requireWait'(var file)
   {};
 
   function requireFile(var file)
   {
     if (file in '$loadedFiles')
-      requireWait(file)
+      '$requireWait'(file)
     else
       load(file) |
     void

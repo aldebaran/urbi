@@ -13,19 +13,19 @@ do(System)
   // Make requireFile wait if a file is currently being loaded.
   // Avoid lookup errors when call several requireFile in parallel.
   // Not done in system.u because of bootstrapping problems.
-  requireWait = function (var file)
+  '$requireWait' = function (var file)
+  {
+    if (! '$loadedFiles'[file])
     {
-      if (! '$loadedFiles'[file])
+      tag:
       {
-        tag:
+        at ('$loadedFiles'.changed?)
         {
-          at ('$loadedFiles'.changed?)
-          {
-            if ('$loadedFiles'[file])
-              tag.stop
-          } |
-          sleep
-        }
+          if ('$loadedFiles'[file])
+            tag.stop
+        } |
+        sleep
       }
-    };
+    }
+  };
 };
