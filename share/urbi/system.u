@@ -118,7 +118,6 @@ do (System)
 
   /// Look for file and load it.
   // Throw on errors.
-  var x = 0;
   function load(var file, var target = this, var isSystem = defaultIsSystem)
   {
     '$loadedFiles'.set(file, false)|
