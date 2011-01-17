@@ -90,6 +90,8 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/list.cc				\
   object/lobby.cc				\
   object/location.cc				\
+  object/log.cc					\
+  object/log.hh					\
   object/object-class.cc			\
   object/object-class.hh			\
   object/object.cc				\

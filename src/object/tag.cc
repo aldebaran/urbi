@@ -203,8 +203,12 @@ namespace urbi
     void
     Tag::triggerEnter()
     {
-      if (slot_has(SYMBOL(onEnter)))
-        call(SYMBOL(onEnter));
+      if (rSlot f = local_slot_get(SYMBOL(onEnter)))
+      {
+        objects_type args;
+        args << this;
+        ::kernel::runner().apply(f->value(), SYMBOL(onEnter), args);
+      }
       if (local_slot_get(SYMBOL(enterEvent)))
         slot_get(SYMBOL(enterEvent))->call(SYMBOL(syncEmit));
     }
@@ -212,8 +216,12 @@ namespace urbi
     void
     Tag::triggerLeave()
     {
-      if (slot_has(SYMBOL(onLeave)))
-        call(SYMBOL(onLeave));
+      if (rSlot f = local_slot_get(SYMBOL(onLeave)))
+      {
+        objects_type args;
+        args << this;
+        ::kernel::runner().apply(f->value(), SYMBOL(onLeave), args);
+      }
       if (local_slot_get(SYMBOL(leaveEvent)))
         slot_get(SYMBOL(leaveEvent))->call(SYMBOL(syncEmit));
     }

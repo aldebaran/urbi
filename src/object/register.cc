@@ -33,6 +33,7 @@
 #include <urbi/object/global.hh>
 #include <urbi/object/hash.hh>
 #include <urbi/object/job.hh>
+#include <object/log.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/lobby.hh>
 #include <urbi/object/location.hh>
@@ -91,6 +92,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER(Barrier);
     URBI_CXX_OBJECT_REGISTER(Hash);
     URBI_CXX_OBJECT_REGISTER(UConnection);
+    URBI_CXX_OBJECT_REGISTER(Log);
   } // namespace object
 } // namespace urbi
 
