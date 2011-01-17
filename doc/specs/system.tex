@@ -459,7 +459,8 @@ getenv("MyVar").isNil == Platform.isWindows;
 
 \item[sleep](<duration>)%
   Suspend the execution for \var{duration} seconds.  No CPU cycle is
-  wasted during this wait.
+  wasted during this wait. If no \var{duration} is given the execution
+  is suspended indefinitely.
 
 \begin{urbiassert}
 (time - {sleep(1s); time}).round == -1;
