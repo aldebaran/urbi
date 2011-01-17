@@ -17,15 +17,15 @@ do(System)
     {
       if (! '$loadedFiles'[file])
       {
-        var e = Event.new |
-        tag: at ('$loadedFiles'.changed?)
+        tag:
         {
-          if ('$loadedFiles'[file])
+          at ('$loadedFiles'.changed?)
           {
-            tag.stop | e!
-          }
-        } |
-        waituntil (e?)
+            if ('$loadedFiles'[file])
+              tag.stop
+          } |
+          sleep
+        }
       }
     };
 };
