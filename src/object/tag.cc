@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -203,6 +203,8 @@ namespace urbi
     void
     Tag::triggerEnter()
     {
+      if (slot_has(SYMBOL(onEnter)))
+        call(SYMBOL(onEnter));
       if (local_slot_get(SYMBOL(enterEvent)))
         slot_get(SYMBOL(enterEvent))->call(SYMBOL(syncEmit));
     }
@@ -210,6 +212,8 @@ namespace urbi
     void
     Tag::triggerLeave()
     {
+      if (slot_has(SYMBOL(onLeave)))
+        call(SYMBOL(onLeave));
       if (local_slot_get(SYMBOL(leaveEvent)))
         slot_get(SYMBOL(leaveEvent))->call(SYMBOL(syncEmit));
     }
