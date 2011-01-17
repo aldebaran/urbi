@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -20,6 +20,7 @@
 //#include <libport/compiler.hh>
 
 # include <ostream>
+# include <typeinfo>
 
 # include <boost/bind.hpp>
 # include <boost/tr1/type_traits.hpp>
@@ -270,6 +271,75 @@ namespace urbi
       setProperty(name, "updateHook", primitive(setter));
     }
 
+    bool
+    Object::as_check_(const std::type_info* req)
+    {
+      return req == &typeid(Object);
+    }
+
+
+    // Function heavily inlined, keep as short as possible (no GD_ !).
+    template <typename T>
+    libport::intrusive_ptr<T>
+    Object::as() const
+    {
+      return const_cast<Object*>(this)->as<T>();
+    }
+
+    template <typename T>
+    libport::intrusive_ptr<T>
+    Object::as()
+    {
+      return reinterpret_cast<T*>(as_dispatch_(&typeid(T)));
+    }
+
+    // Specializations for object.
+
+    template<>
+    inline
+    rObject
+    Object::as<Object>()
+    {
+      return this;
+    }
+
+    template<>
+    inline
+    rObject
+    Object::as<Object>() const
+    {
+      return const_cast<Object*>(this);
+    }
+
+    template<>
+    inline
+    libport::intrusive_ptr<const Object>
+    Object::as<const Object>()
+    {
+      return this;
+    }
+
+    template<>
+    inline
+    libport::intrusive_ptr<const Object>
+    Object::as<const Object>() const
+    {
+      return const_cast<Object*>(this);
+    }
+
+    template<typename T>
+    bool
+    is_a(const rObject& c)
+    {
+      return c->is_a<T>();
+    }
+
+    template<typename T>
+    bool
+    Object::is_a() const
+    {
+      return as<T>();
+    }
   } // namespace object
 }
 

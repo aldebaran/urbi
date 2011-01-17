@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -22,7 +22,6 @@
 # include <urbi/object/primitive.hh>
 # include <urbi/object/code.hh>
 # include <urbi/object/executable.hh>
-# include <urbi/object/object-as.hh>
 
 # include <urbi/object/string.hh>
 # include <urbi/runner/raise.hh>

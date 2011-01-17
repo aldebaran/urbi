@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -19,11 +19,13 @@
 # include <deque>
 # include <iosfwd>
 # include <set>
+# include <typeinfo>
 
 # include <boost/function.hpp>
 # include <boost/shared_ptr.hpp>
 
 # include <libport/attributes.hh>
+# include <libport/compiler.hh>
 # include <libport/intrusive-ptr.hh>
 
 # include <urbi/object/fwd.hh>
@@ -57,6 +59,7 @@ namespace urbi
       typedef libport::intrusive_ptr<Object> shared_type;
 
       /// Check whether this is of type \a T
+      // FIXME: remove in favor of Object::is_a
       template<typename T>
         bool is_a() const;
 
@@ -72,14 +75,32 @@ namespace urbi
       /// Conversion to string, using asString in Urbi, if defined.
       virtual std::string as_string() const;
 
+    /*--------------.
+    | Conversions.  |
+    `--------------*/
+
+    public:
       /// Convert this to type \a T
       /** \return This seen as a \a T, or 0 if it's not of type \a T
        */
       template<typename T>
+        ATTRIBUTE_ALWAYS_INLINE
         libport::intrusive_ptr<T> as() const;
       template<typename T>
+        ATTRIBUTE_ALWAYS_INLINE
         libport::intrusive_ptr<T> as();
 
+    protected:
+      virtual void* as_dispatch_(const std::type_info* requested);
+      ATTRIBUTE_ALWAYS_INLINE
+      bool as_check_(const std::type_info* requested);
+
+
+    /*---------.
+    | Protos.  |
+    `---------*/
+
+    public:
       /// \name The protos.
       /// \{
       /// The protos.
@@ -318,8 +339,6 @@ namespace urbi
       template <typename Return, typename Self>
       void bind_variadic(const std::string& name,
                          Return (Self::*val)(const objects_type&));
-      /// Return one different uid per effective C++ class.
-      virtual size_t magic() const;
     private:
       template <bool mem, typename T>
       friend struct DispatchBind_;

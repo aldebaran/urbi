@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -75,7 +75,7 @@ namespace urbi
       /// Check that the function fun is using a valid index, and return it.
       size_type index(const rFloat& idx) const;
 
-      URBI_CXX_OBJECT(List);
+      URBI_CXX_OBJECT(List, CxxObject);
 
     public:
       static bool list_added;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -34,7 +34,7 @@ namespace urbi
       Event(rEvent model);
       Event(rEvent model, rList payload);
       virtual ~Event();
-      URBI_CXX_OBJECT(Event);
+      URBI_CXX_OBJECT(Event, CxxObject);
 
     public:
       typedef boost::signal0<void> signal_type;

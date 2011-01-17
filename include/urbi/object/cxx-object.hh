@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -22,7 +22,7 @@
 # include <urbi/object/object.hh>
 # include <urbi/version-check.hh>
 
-#define URBI_CXX_OBJECT(Name)                                           \
+#define URBI_CXX_OBJECT(Name, Parent)                                   \
   private:                                                              \
     Name(const ::urbi::object::FirstPrototypeFlag&);                    \
     friend class CxxObject;                                             \
@@ -31,8 +31,13 @@
     virtual ::std::string type_name_get() const;                        \
     static ::libport::intrusive_ptr<Name> proto;                        \
     virtual bool valid_proto(const ::urbi::object::Object& o) const;    \
-    virtual size_t magic() const;                                       \
-    static size_t magicStatic()
+    virtual void* as_dispatch_(const std::type_info* requested);        \
+    ATTRIBUTE_ALWAYS_INLINE                                             \
+    bool                                                                \
+    as_check_(const std::type_info* req)                                \
+    {                                                                   \
+      return &typeid(Name) == req || Parent::as_check_(req);            \
+    }                                                                   \
 
 #define URBI_CXX_OBJECT_REGISTER(Name, ...)                   \
   URBI_CXX_OBJECT_REGISTER_(Name, LIBPORT_LIST(__VA_ARGS__,))
@@ -71,16 +76,10 @@
     return dynamic_cast<const Name*>(&o);                               \
   }                                                                     \
                                                                         \
-  size_t                                                                \
-  Name::magic() const                                                   \
+  void*                                                                 \
+  Name::as_dispatch_(const std::type_info* requested)                   \
   {                                                                     \
-    return magicStatic();                                               \
-  }                                                                     \
-  size_t                                                                \
-  Name::magicStatic()                                                   \
-  {                                                                     \
-    static const char* myname = #Name;                                  \
-    return (size_t)myname;                                              \
+    return this->as_check_(requested) ? this : 0;                       \
   }                                                                     \
   Name::Name(const ::urbi::object::FirstPrototypeFlag&)
 

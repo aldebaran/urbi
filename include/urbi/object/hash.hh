@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -31,7 +31,7 @@ namespace urbi
 
     private:
       value_type val_;
-      URBI_CXX_OBJECT(Hash);
+      URBI_CXX_OBJECT(Hash, CxxObject);
     };
 
     std::size_t hash_value(const Object& o);

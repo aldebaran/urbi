@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -57,7 +57,7 @@ namespace urbi
       rServer server_;
       rObject disconnect_;
       rIoService io_service_;
-      URBI_CXX_OBJECT(Socket);
+      URBI_CXX_OBJECT(Socket, CxxObject);
     };
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -51,7 +51,7 @@ namespace urbi
       /// Set of runners currently in a notifyChange.
       std::set<void*> inChange_;
       bool inAccess_;
-      URBI_CXX_OBJECT(UVar);
+      URBI_CXX_OBJECT(UVar, Primitive);
       int waiterCount_;
       std::string initialName;
       bool owned;

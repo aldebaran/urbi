@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -53,7 +53,7 @@ namespace urbi
     `----------*/
 
     private:
-      URBI_CXX_OBJECT(Duration);
+      URBI_CXX_OBJECT(Duration, Float);
     };
   }
 }

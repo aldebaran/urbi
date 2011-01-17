@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -802,10 +802,10 @@ namespace urbi
       setSlot(libport::Symbol(name), new Primitive(val));
     }
 
-    size_t
-    Object::magic() const
+    void*
+    Object::as_dispatch_(const std::type_info* requested)
     {
-      return 0;
+      return this->as_check_(requested) ? this : 0;
     }
 
     rObject Object::proto;

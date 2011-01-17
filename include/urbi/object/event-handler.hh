@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -59,7 +59,7 @@ namespace urbi
       bool   detach_;
       stop_jobs_type stop_jobs_;
 
-    URBI_CXX_OBJECT(EventHandler);
+      URBI_CXX_OBJECT(EventHandler, CxxObject);
     };
   }
 }
