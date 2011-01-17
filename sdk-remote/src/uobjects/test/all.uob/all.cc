@@ -102,8 +102,12 @@ public:
     UBindFunctions(all, markBypass, markRTP);
     UBindFunctions(all, selfWriteB, selfWriteI, selfWriteVD);
 
-    UBindFunctions(all, setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar, sendEvent8Args, unnotify,
-                   setThreadedNotifyChange, setThreadedNotifyChangeByUVar);
+    UBindFunctions
+      (all,
+       setNotifyAccess, setNotifyChangeByName, setNotifyChangeByUVar,
+       sendEvent8Args,
+       unnotify,
+       setThreadedNotifyChange, setThreadedNotifyChangeByUVar);
     UBindFunction(all, read);
     UBindFunction(all, write);
     UBindFunction(all, readByName);
