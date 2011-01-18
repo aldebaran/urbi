@@ -115,6 +115,7 @@ namespace urbi
   namespace object
   {
 
+    URBI_CXX_OBJECT_REGISTER(Stream);
     URBI_CXX_OBJECT_REGISTER(OutputStream);
     URBI_CXX_OBJECT_REGISTER(InputStream);
 # if !defined WIN32
