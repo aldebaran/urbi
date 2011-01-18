@@ -42,7 +42,7 @@
 #include <runner/interpreter.hh>
 #include <urbi/runner/raise.hh>
 
-#ifdef _MSC_VER
+#if defined _MSC_VER || defined __arm__
 // Use malloc with CL.
 # define URBI_DYNAMIC_STACK_NONE   1
 # define URBI_DYNAMIC_STACK_VECTOR 0
