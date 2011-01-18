@@ -1,4 +1,4 @@
-## Copyright (C) 2007-2010, Gostai S.A.S.
+## Copyright (C) 2007-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -41,7 +41,7 @@ $(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
 	cd $(top_builddir) && $(SHELL) ./config.status sdk-remote/src/tests/$@
 
 bin/urbi-launch$(EXEEXT): bin/urbi-launch.in
-	cd $(top_builddir) && $(SHELL) ./config.status --file sdk-remote/src/tests/$@:src/tests/$<
+	cd $(top_builddir) && $(SHELL) ./config.status --file sdk-remote/src/tests/$@:sdk-remote/src/tests/bin/urbi-launch.in
 	chmod +x $@
 
 # By default, instrument the code.
