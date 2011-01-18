@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -46,7 +46,7 @@ namespace urbi
     static rPrimitive v2 = primitive(V2);                               \
                                                                         \
     object::check_arg_count (args.size() - 1, N);                       \
-    if (args[Arg]->is_a<T2>())                                          \
+    if (args[Arg]->as<T2>())                                            \
       return (*v2)(args);                                               \
     else                                                                \
       return (*v1)(args);                                               \
@@ -61,8 +61,8 @@ namespace urbi
     static rPrimitive v3 = primitive(V3);                               \
                                                                         \
     object::check_arg_count (args.size() - 1, N);                       \
-    return (args[Arg]->is_a<T1>()   ? (*v1)(args)                       \
-            : args[Arg]->is_a<T2>() ? (*v2)(args)                       \
+    return (args[Arg]->as<T1>()   ? (*v1)(args)                         \
+            : args[Arg]->as<T2>() ? (*v2)(args)                         \
             :                         (*v3)(args));                     \
   }                                                                     \
 

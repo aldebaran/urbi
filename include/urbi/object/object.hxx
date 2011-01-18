@@ -326,20 +326,6 @@ namespace urbi
     {
       return const_cast<Object*>(this);
     }
-
-    template<typename T>
-    bool
-    is_a(const rObject& c)
-    {
-      return c->is_a<T>();
-    }
-
-    template<typename T>
-    bool
-    Object::is_a() const
-    {
-      return as<T>();
-    }
   } // namespace object
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -23,8 +23,9 @@ namespace urbi
     bool
     EqualityComparable<Exact, Value>::operator==(const rObject& rhs) const
     {
-      return (rhs->is_a<Exact>()
-              && *this == rhs->as<Exact>()->value_get());
+      if (Exact* e = rhs->as<Exact>())
+        return *this == e->value_get();
+      return false;
     }
 
     template <typename Exact, typename Value>

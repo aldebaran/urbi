@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -92,7 +92,7 @@ namespace urbi
       foreach (const rObject& c, data_->value_get())
       {
         rObject str;
-        if (c->is_a<FormatInfo>())
+        if (c->as<FormatInfo>())
         {
           if (index < max)
             str = args[index++]->call("format", c);
@@ -103,7 +103,7 @@ namespace urbi
           str = c;
 
         aver(str);
-        if (!str->is_a<String>())
+        if (!str->as<String>())
         {
           // Need this because operator<< is not const.
           std::stringstream o;

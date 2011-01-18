@@ -58,11 +58,6 @@ namespace urbi
       /// Ref-couting.
       typedef libport::intrusive_ptr<Object> shared_type;
 
-      /// Check whether this is of type \a T
-      // FIXME: remove in favor of Object::is_a
-      template<typename T>
-        bool is_a() const;
-
       /// Whether \a this represents a true value. UnexpectedVoidError
       /// will be signalled if void is passed.
       virtual bool as_bool() const;
@@ -373,11 +368,6 @@ namespace urbi
 
     /// Whether \b p is present in \b c's proto hierarchy.
     URBI_SDK_API bool is_a(const rObject& c, const rObject& p);
-
-    /// Same as above, but check first with a dynamic_cast in order to handle
-    /// atoms more efficiently.
-    template<typename T>
-    URBI_SDK_API bool is_a(const rObject& c);
 
     /// Return an Urbi boolean object corresponding to \a b.
     URBI_SDK_API const rObject& to_boolean(bool b);

@@ -242,15 +242,14 @@ namespace runner
     // only a call message is provided.  If the called function is
     // strict, we need to extract arguments values for it.  This can
     // happen when
-    if (!function->is_a<object::Code>()
-        || function->as<object::Code>()->ast_get()->strict())
+    object::Code* c = function->as<object::Code>();
+    if (!c || c->ast_get()->strict())
     {
       rObject urbi_args = call_message->call(SYMBOL(evalArgs));
       foreach (Object* arg,
-	       urbi_args->as<object::List>()->value_get())
-	args << arg;
+               urbi_args->as<object::List>()->value_get())
+      args << arg;
     }
-
     return apply(function, msg, args, call_message, loc);
   }
 

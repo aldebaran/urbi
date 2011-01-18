@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -192,8 +192,9 @@ namespace urbi
     bool
     Code::operator==(const rObject& that) const
     {
-      return (that->is_a<Code>()
-              && *this == *that->as<Code>());
+      if (Code* c = that->as<Code>())
+        return *this == *c;
+      return false;
     }
     rObject
     Code::operator() (object::objects_type args)
