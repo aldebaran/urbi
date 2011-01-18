@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -127,17 +127,17 @@ class Global.Exception
           throw Exception.Arity.new("%s.%s" % [name, "init"],
                                     args.size,
                                     size) |
-        for (var i: locSize)
+        for| (var i: locSize)
           this.updateSlot(locSlots[i], args[i]) |
-        for (var i: fmtSize)
+        for| (var i: fmtSize)
           this.setSlot(fmtSlots[i], args[i + locSize])
       };
 
       function message()
       {
-        var l = [];
-        for (var i: fmtSize)
-          l << this.getSlot(fmtSlots[i]) |
+        var l = []|
+        for| (var f: fmtSlots)
+          l << { if (hasSlot(f)) getSlot(f) else ""} |
         fmt % l
       };
     };
@@ -147,9 +147,9 @@ class Global.Exception
 
   function makeMsgException(name, inherit, locSlots, msg)
   {
-    makeFmtException(name, inherit, locSlots, "", []);
-    Exception.getSlot(name).removeSlot("fmt");
-    Exception.getSlot(name).message = msg;
+    makeFmtException(name, inherit, locSlots, "", [])|
+    Exception.getSlot(name).removeSlot("fmt")|
+    Exception.getSlot(name).message = msg
   };
 
   function makeException(name, inherit, locSlots)
@@ -190,9 +190,9 @@ class Exception.BadNumber: Exception
 {
   function init(routine, fmt, effective)
   {
-    this.routine = routine;
-    var this.fmt = fmt;
-    var this.effective = effective;
+    this.routine = routine|
+    var this.fmt = fmt|
+    var this.effective = effective
   };
 
   function message()
