@@ -21,28 +21,21 @@ include uobjects/local.mk
 ## Wrappers for non-installed executables.  ##
 ## ---------------------------------------- ##
 
-configured_scripts =				\
+nodist_noinst_SCRIPTS =				\
   bin/umake					\
   bin/umake-java				\
   bin/umake-link				\
   bin/umake-shared				\
+  bin/urbi-launch$(EXEEXT)			\
   bin/urbi-launch-java$(EXEEXT)			\
   bin/urbi-send
-
-nodist_noinst_SCRIPTS +=                       \
-  $(configured_scripts)                        \
-  bin/urbi-launch$(EXEEXT)
 
 # This is really painful: dependencies on config.status are handled
 # only in the top-level Makefile by Automake.  So enforce these
 # changes here.  Which basically amounts to duplicating what Automake
 # does in the top-level Makefile.
-$(configured_scripts): bin/%: $(wildcard $(srcdir)/bin/*.in)
+$(nodist_noinst_SCRIPTS): bin/%: $(wildcard $(srcdir)/bin/*.in)
 	cd $(top_builddir) && $(SHELL) ./config.status sdk-remote/src/tests/$@
-
-bin/urbi-launch$(EXEEXT): bin/urbi-launch.in
-	cd $(top_builddir) && $(SHELL) ./config.status --file sdk-remote/src/tests/$@:sdk-remote/src/tests/bin/urbi-launch.in
-	chmod +x $@
 
 # By default, instrument the code.
 #INSTRUMENTATION = true
