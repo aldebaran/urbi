@@ -210,13 +210,14 @@ namespace urbi
     inline libport::intrusive_ptr<T>
     type_check(const rObject& o)
     {
+      if (T* res = o->as<T>())
+        return res;
       // If we do not have the right type, bounce onto the slower version
       // which will take care of throwing the appropriate exception. The
       // check will be done again, but this is harmless and only happens
       // when there is actually a mismatch.
-      if (!is_a<T>(o))
-        type_check(o, T::proto);
-      return assert_exp(o->as<T>());
+      type_check(o, T::proto);
+      unreachable();
     }
   }
 }
