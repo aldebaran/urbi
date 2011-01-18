@@ -88,21 +88,6 @@ my $synclines = 1;
 
 =over 4
 
-=item C<strip($string)>
-
-Return C<$string> stripped from leading/trailing spaces.
-
-=cut
-
-sub strip ($)
-{
-  local ($_) = @_;
-  s/^\s+//;
-  s/\s+$//g;
-  $_;
-}
-
-
 =item C<line(\%lst)>
 
 Issue an urbiscript //#line for test $lst.
