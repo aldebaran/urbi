@@ -82,9 +82,9 @@ namespace urbi
                         UAutoValue& v7,
                         UAutoValue& v8) = 0;
 
-      /// Return the mode in which the code is running.
+      /// The mode in which the code is running.
       virtual UObjectMode getRunningMode() const = 0;
-      /// Get the kernel major,minor version
+      /// The kernel major,minor version
       virtual std::pair<int, int> kernelVersion() const = 0;
 
       /// Yield execution until next cycle.
@@ -139,6 +139,7 @@ namespace urbi
       private:
         UContextImpl& owner_;
       };
+
       /// Add \b ptr to the list of objects to delete whean cleanup() is called.
       template<typename T>
       void addCleanup(T* ptr);
@@ -157,7 +158,7 @@ namespace urbi
       virtual void lock() = 0;
       /// Release lock acquired with lock()
       virtual void unlock() = 0;
-      /// Get the io_service used by this context
+      /// The io_service used by this context.
       virtual boost::asio::io_service& getIoService() = 0;
     private:
       typedef std::vector<std::vector<boost::function0<void> > > CleanupList;

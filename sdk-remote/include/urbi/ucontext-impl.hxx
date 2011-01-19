@@ -36,6 +36,7 @@ namespace urbi
     /*--------------.
     | UObjectImpl.  |
     `--------------*/
+
     inline
     UObjectImpl::~UObjectImpl()
     {
@@ -105,7 +106,7 @@ namespace urbi
 
     inline
     UContextImpl::CleanupStack::CleanupStack(UContextImpl& owner)
-    : owner_(owner)
+      : owner_(owner)
     {
       owner_.pushCleanupStack();
     }

@@ -218,16 +218,17 @@ namespace urbi
    * This enum is used in UBindThreadedFunction to tell what locking model
    * should be used
    */
-  enum LockMode {
-      LOCK_NONE,      ///< No locking is performed
-      /** Prevent parallel call to the same function. For notifies, it prevent
-       * multiple parallel notifies on the same variable
-       */
-      LOCK_FUNCTION,
-      LOCK_INSTANCE,  ///< Prevent parallel call to any function of this object
-      LOCK_CLASS,     ///< Prevent parallel call to any function of this class
-      LOCK_MODULE     ///< Prevent parallel call to any function of this module
-    };
+  enum LockMode
+  {
+    LOCK_NONE,      ///< No locking is performed
+    /** Prevent parallel call to the same function. For notifies, it prevent
+     * multiple parallel notifies on the same variable
+     */
+    LOCK_FUNCTION,
+    LOCK_INSTANCE,  ///< Prevent parallel call to any function of this object
+    LOCK_CLASS,     ///< Prevent parallel call to any function of this class
+    LOCK_MODULE     ///< Prevent parallel call to any function of this module
+  };
   UObjectHub* getUObjectHub(const std::string& n);
   UObject* getUObject(const std::string& n);
   void uobject_unarmorAndSend(const char* str);
@@ -239,13 +240,13 @@ namespace urbi
   bool isRemoteMode();
 
 
-
   /// Set maximum number of threads to use for threaded calls (0=unlimited).
   URBI_SDK_API void setThreadLimit(size_t nThreads);
   /// Return current hostname mangled to fit into an urbiscript variable name.
   URBI_SDK_API std::string getFilteredHostname();
 
   typedef int UReturn;
+
   /** Main UObject class definition
       Each UObject instance corresponds to an URBI object.
       It provides mechanisms to bind variables and functions between

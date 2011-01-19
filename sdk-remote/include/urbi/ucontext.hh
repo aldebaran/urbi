@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -63,12 +63,12 @@ namespace urbi
               UAutoValue v7 = UAutoValue(),
               UAutoValue v8 = UAutoValue());
 
-    /// Return the mode in which the code is running.
+    /// The mode in which the code is running.
     UObjectMode getRunningMode() const;
 
-    /// Return true if the code is running in plugin mode.
+    /// Whether running in plugin mode.
     bool isPluginMode() const;
-    /// Return true if the code is running in remote mode.
+    /// Whether running in remote mode.
     bool isRemoteMode() const;
 
     /// Yield execution until next cycle.
