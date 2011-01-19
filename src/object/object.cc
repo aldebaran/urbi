@@ -48,7 +48,6 @@ namespace urbi
 {
   namespace object
   {
-
     namespace
     {
       /// Use xalloc/iword to store our current depth within the stream object.
