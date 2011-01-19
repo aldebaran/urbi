@@ -20,13 +20,15 @@
 
 # include <urbi/object/fwd.hh>
 
+# define URBI_OBJECT_MAX 1024 * 4
+
 namespace urbi
 {
   namespace object
   {
     class Slot
       : public libport::RefCounted
-      , public libport::StaticallyAllocated<4096, 24>
+      , public libport::StaticallyAllocated<URBI_OBJECT_MAX, 24>
     {
     public:
       typedef boost::unordered_map<libport::Symbol, rObject> properties_type;

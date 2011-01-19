@@ -40,7 +40,7 @@ namespace urbi
     /// Run time values for Urbi.
     class URBI_SDK_API Object
       : public libport::RefCounted
-      , public libport::StaticallyAllocated<4096, 184>
+      , public libport::StaticallyAllocated<URBI_OBJECT_MAX, 184>
     {
       /// \name Ctor & dtor.
       /// \{
