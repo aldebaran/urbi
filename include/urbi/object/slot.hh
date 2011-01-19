@@ -11,6 +11,7 @@
 #ifndef OBJECT_SLOT_HH
 # define OBJECT_SLOT_HH
 
+# include <libport/allocator-static.hh>
 # include <libport/cassert>
 # include <libport/hash.hh>
 # include <libport/intrusive-ptr.hh>
@@ -23,7 +24,9 @@ namespace urbi
 {
   namespace object
   {
-    class Slot: public libport::RefCounted
+    class Slot
+      : public libport::RefCounted
+      , public libport::StaticallyAllocated<4096, 24>
     {
     public:
       typedef boost::unordered_map<libport::Symbol, rObject> properties_type;
