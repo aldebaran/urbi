@@ -40,20 +40,21 @@ namespace urbi
       return this;                                              \
     }                                                           \
 
-    LEVEL(log, info, log);
-    LEVEL(trace, info, trace);
-    LEVEL(debug, info, debug);
-    LEVEL(dump, info, dump);
-    LEVEL(err, error, log);
-    LEVEL(warn, warn, log);
+    LEVEL(log,   info,  log);
+    LEVEL(trace, info,  trace);
+    LEVEL(debug, info,  debug);
+    LEVEL(dump,  info,  dump);
+    LEVEL(err,   error, log);
+    LEVEL(warn,  warn,  log);
 #undef LEVEL
+
     void
     Log::msg_(libport::Debug::types::Type type,
               libport::Debug::levels::Level level,
               const std::string& category,
               const std::string& msg)
     {
-      static ::libport::debug::category_type c =
+      ::libport::debug::category_type c =
         libport::debug::add_category(libport::debug::category_type(category));
 
       std::string function = "<urbi-toplevel>";
@@ -73,13 +74,9 @@ namespace urbi
       if (bt.size() > 1)
         function = bt[bt.size() - 2].first.name_get();
 
-      if (GD_DEBUGGER &&
-          GD_DEBUGGER->enabled(level, c))
-
-        GD_DEBUGGER->debug(msg,
-                           type, c, function,
-                           // FIXME: use full location when GD handles it
-                           file, line);
+      if (GD_DEBUGGER && GD_DEBUGGER->enabled(level, c))
+        // FIXME: use full location when GD handles it
+        GD_DEBUGGER->debug(msg, type, c, function, file, line);
     }
 
     void
