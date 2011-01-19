@@ -24,6 +24,7 @@
 # include <boost/function.hpp>
 # include <boost/shared_ptr.hpp>
 
+# include <libport/allocator-static.hh>
 # include <libport/attributes.hh>
 # include <libport/compiler.hh>
 # include <libport/intrusive-ptr.hh>
@@ -37,7 +38,9 @@ namespace urbi
   namespace object
   {
     /// Run time values for Urbi.
-    class URBI_SDK_API Object: public libport::RefCounted
+    class URBI_SDK_API Object
+      : public libport::RefCounted
+      , public libport::StaticallyAllocated<4096, 184>
     {
       /// \name Ctor & dtor.
       /// \{
