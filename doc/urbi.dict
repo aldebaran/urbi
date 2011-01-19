@@ -197,6 +197,7 @@ copyrightYears
 copySlot
 coreutils
 coroutine
+coroutines
 cosinus
 countAlias
 cout
@@ -367,6 +368,7 @@ fsr
 fullengine
 func
 functionalities
+FunctionProfile
 gcc
 ge
 generateALBindings
@@ -614,6 +616,7 @@ MatchFailure
 matchPattern
 maxCallTime
 maxExponent
+maxFunctionCallDepth
 maybeLoad
 mc
 MCPAN
@@ -893,6 +896,8 @@ searchFile
 searchPath
 SEGVs
 segway
+selfTime
+selfTimePer
 sendbin
 sendsound
 sep
@@ -1040,6 +1045,8 @@ toAscii
 toLower
 topLevel
 toplevel
+totalCalls
+totalTime
 toto
 TouchSensor
 toUpper
@@ -1194,6 +1201,7 @@ waitForTermination
 waituntil
 waituntilWalkIsFinished
 walkTo
+wallClockTime
 watchdogInterval
 wav
 wb

@@ -547,8 +547,8 @@ namespace urbi
     static rObject
     system_profile(Object* self, Executable* action)
     {
-      typedef runner::Interpreter::Profile::FunctionProfiles FunctionProfiles;
-      typedef runner::Interpreter::Profile::FunctionProfile FunctionProfile;
+      typedef runner::Interpreter::Profile::FunctionProfiles FProfiles;
+      typedef runner::Interpreter::Profile::FunctionProfile FProfile;
 
       runner::Interpreter::Profile p;
 
@@ -570,7 +570,7 @@ namespace urbi
         (*action)(args);
       }
 
-      CAPTURE_GLOBAL(FunctionCall);
+      CAPTURE_GLOBAL(FunctionProfile);
       CAPTURE_GLOBAL(Profile);
       rObject profile = Profile->call(SYMBOL(new));
       rList calls = new List;
@@ -586,19 +586,19 @@ namespace urbi
 
 #undef DECLARE
 
-      std::vector<FunctionProfile> fps;
-      foreach (const FunctionProfiles::value_type& fp,
+      std::vector<FProfile> fps;
+      foreach (const FProfiles::value_type& fp,
                p.functions_profile_get())
         fps << fp.second;
 
       std::sort(fps.begin(), fps.end(), &per_self_time);
 
-      foreach (const FunctionProfile& fp, fps)
+      foreach (const FProfile& fp, fps)
       {
-        rObject function_call = FunctionCall->call(SYMBOL(new));
+        rObject function_profile = FunctionProfile->call(SYMBOL(new));
 
 #define DECLARE(Name, Value)                            \
-        function_call->setSlot(libport::Symbol(#Name), Value)
+        function_profile->setSlot(libport::Symbol(#Name), Value)
 
         DECLARE(name,        new String(fp.name_get()));
         DECLARE(calls,       new Float(fp.calls_get()));
@@ -607,7 +607,7 @@ namespace urbi
 
 #undef DECLARE
 
-        calls->insertBack(function_call);
+        calls->insertBack(function_profile);
       }
 
       profile->setSlot(SYMBOL(calls), calls);

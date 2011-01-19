@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -64,7 +64,7 @@ class Global.Profiling
   };
 };
 
-class Global.FunctionCall
+class Global.FunctionProfile
 {
   function asString()
   {
@@ -85,9 +85,9 @@ class Global.Profile
     str += "  Max function call depth: %s\n" % maxFunctionCallDepth |
     str += "\n" |
 
-    str += "  .--------------+---------+---------------+---------------.\n" |
+    str += "  .--------------------------------------------------------.\n" |
     str += "  |   Function   |  Calls  |   Self time   | Self time per |\n" |
-    str += "  |--------------+---------+---------------|---------------|\n" |
+    str += "  |--------------+---------+---------------+---------------|\n" |
 
     var totalSelfTimes = 0 |
     var totalSelfTimePers = 0 |
@@ -102,7 +102,7 @@ class Global.Profile
     str += "  |--------------+---------+---------------+---------------|\n" |
     str += "  | %12s | %7s | %13.6f | %13.6f |\n"
              % ["Totals", totalCalls, totalSelfTimes, totalSelfTimePers] |
-    str += "  '--------------+---------+---------------+---------------'\n" |
+    str += "  '--------------'---------'---------------'---------------'\n" |
     str += ")\n"
   };
 };

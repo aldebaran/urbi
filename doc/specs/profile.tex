@@ -1,0 +1,97 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Profile}
+
+A \lstinline|Profile| object contains information about the efficiency of a
+piece of code.
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+\lstinline|Profile| objects are not meant to be cloned as they are created
+by \refSlot[System]{profile} internal machinery. Note that the order of the
+result rows only depends on this machinery and does not emphasis
+any particular phenomenon.
+
+\begin{urbiscript}
+System.profile(function() { echo("foo") });
+[00000001] *** foo
+[00000002] Profile(
+[:]  Yields: 0
+[:]  Total time: 0.001015s
+[:]  Wall clock time: 0.001015s
+[:]  Function calls: 16
+[:]  Max function call depth: 5
+[:]
+[:]  .--------------------------------------------------------.
+[:]  |   Function   |  Calls  |   Self time   | Self time per |
+[:]  |--------------+---------+---------------+---------------|
+[:]  |              |       1 |      0.000075 |            75 |
+[:]  |            + |       2 |      0.000055 |            27 |
+[:]  |            + |       1 |      0.000041 |            41 |
+[:]  |        apply |       1 |      0.000164 |           164 |
+[:]  |        apply |       1 |      0.000046 |            46 |
+[:]  |     asString |       1 |      0.000043 |            43 |
+[:]  |         echo |       1 |      0.000178 |           178 |
+[:]  |      getSlot |       1 |      0.000040 |            40 |
+[:]  |        Lobby |       2 |      0.000029 |            14 |
+[:]  |        lobby |       2 |      0.000159 |            79 |
+[:]  |        lobby |       2 |      0.000049 |            24 |
+[:]  |     profiled |       1 |      0.000042 |            42 |
+[:]  |         send |       1 |      0.000094 |            94 |
+[:]  |--------------+---------+---------------+---------------|
+[:]  |       Totals |      16 |      0.001015 |           867 |
+[:]  '--------------'---------'---------------'---------------'
+[:])
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item[calls]%
+  Return a \refObject{List} of \refObject{FunctionProfile} objects. Each
+  element of this list describes, for a given function, statistics about how
+  many times it is called and how much time is spent in it.
+
+\item[maxFunctionCallDepth]%
+  The maximum function call depth reached.
+
+\item[totalCalls]%
+  The total number of function calls made.
+
+\item[totalTime]%
+  The total CPU time. It can be higher than the wall clock time on
+  multi-core processors for instance.
+
+\item[wallClockTime]%
+  The time spent between the beginning and the end as if measured on a wall
+  clock.
+
+\item[yields]%
+  The scheduler has to execute many coroutines in parallel. A coroutine
+  yields when it gives the opportunity to an other to be executed until this
+  one yields and so on\dots This slot contains the number of scheduler
+  yields.
+
+\end{urbiscriptapi}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:

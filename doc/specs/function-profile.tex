@@ -1,0 +1,56 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{FunctionProfile}
+
+A \lstinline|FunctionProfile| object contains information about calls of a
+given function during a profiling operation.
+
+\subsection{Prototypes}
+
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+
+\lstinline|FunctionProfile| objects are not meant to be cloned as they are
+created by \refSlot[System]{profile} internal machinery.
+
+\begin{urbi}
+System.profile(function() { echo("foo") }).calls[0];
+[00000001] FunctionProfile('echo', 1, 0.000181, 181)
+\end{urbi}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item[calls]%
+  The number of times this function was called during the profiling.
+
+\item[name]%
+  The name of the function called.
+
+\item[selfTimePer]%
+  Average CPU time spent in one function call. It is computed as the ratio
+  of \refSlot{selfTime} divided by \refSlot{calls}.
+
+\item[selfTime]%
+  Total CPU time spent in all calls of the function.
+
+\end{urbiscriptapi}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
