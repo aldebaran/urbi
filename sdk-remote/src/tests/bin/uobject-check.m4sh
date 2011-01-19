@@ -1,16 +1,16 @@
                                                      -*- shell-script -*-
 URBI_INIT
 
-# $1 is "../../src/urbi/all.la".
+# $1 is "../../src/test/all.la".
 # The full path to the *.la.
 la=$(absolute $1)
 require_file "$la"
 
-# For error messages: "all"
-me=$(basename "${la/.la}")
+# For error messages: "test/all"
+me=$(echo "$la" | sed -e 's,^.*/\([^/]*/[^/]*\)\.la,\1,')
 
-# To load the object: "urbi/all".
-uob="urbi/$me"
+# To load the object: "test/all".
+uob=$me
 
 # The directory we work in.
 # The ending part, for our builddir: all.dir.
