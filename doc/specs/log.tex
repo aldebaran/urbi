@@ -1,0 +1,94 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Log}
+
+\lstinline|Log| is used to report information to the final user or to
+the developer. May it be a warning, an error, a debug information or
+a system log, \lstinline|Log| will pretty print it for you using
+appropriate colors. \lstinline|Log| can also be used as a
+\lstinline|Tag| for it to handle nested calls indentation.
+
+\begin{urbiscript}
+Log.log("category", "message") |;
+[       category        ] message
+
+Log.log("category", "message") :
+{
+  Log.log("sub-category", "indented message")
+} |;
+[       category        ] message
+[      sub-category      ]   indented message
+\end{urbiscript}
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Tag]
+\end{refObjects}
+
+\subsection{Construction}
+
+\lstinline|Log| can be used as is, without being cloned. One may want
+to extend its functionalities though and will then use it as a
+prototype. A \lstinline|Log| can be created with no argument.
+
+\begin{urbiscript}
+Log.new |;
+\end{urbiscript}
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+
+\item[debug](<category>, <message>)%
+  Report a debug \var{message} of \var{category} to the user. It will
+  be shown if the debug level is DEBUG or DUMP. Return
+  \lstinline|this| to allow chained operations.
+
+\item[dump](<category>, <message>)%
+  Report a debug \var{message} of \var{category} to the user. It will
+  be shown if the debug level is DUMP. Return \lstinline|this| to
+  allow chained operations.
+
+\item[err](<category>, <message>)%
+  Report an error \var{message} of \var{category} to the user. Return
+  \lstinline|this| to allow chained operations.
+
+\item[log](<category>, <message>)%
+  Report a debug \var{message} of \var{category} to the user. It will
+  be shown if debug is not disabled. Return \lstinline|this| to allow
+  chained operations.
+
+\item[onEnter]%
+  The primitive called when \lstinline|Log| is used as a
+  \lstinline|Tag| and is entered. This primitive only increments the
+  indentation level.
+
+\item[onLeave]%
+  The primitive called when \lstinline|Log| is used as a
+  \lstinline|Tag| and is left. This primitive only decrements the
+  indentation level.
+
+\item[trace](<category>, <message>)%
+  Report a debug \var{message} of \var{category} to the user. It will
+  be shown if the debug level is TRACE, DEBUG or DUMP. Return
+  \lstinline|this| to allow chained operations.
+
+\item[warn](<category>, <message>)%
+  Report a warning \var{message} of \var{category} to the user. Return
+  \lstinline|this| to allow chained operations.
+
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:

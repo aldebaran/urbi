@@ -727,7 +727,9 @@ onboard
 onChange
 onConnect
 onDisconnect
+onEnter
 onImage
+onLeave
 onleave
 onMessage
 onSubscribe
