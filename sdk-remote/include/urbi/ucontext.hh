@@ -11,6 +11,7 @@
 #ifndef URBI_UCONTEXT_HH
 # define URBI_UCONTEXT_HH
 
+#include <libport/fwd.hh>
 #include <libport/utime.hh>
 
 #include <urbi/uvalue.hh>
@@ -62,6 +63,9 @@ namespace urbi
               UAutoValue v6 = UAutoValue(),
               UAutoValue v7 = UAutoValue(),
               UAutoValue v8 = UAutoValue());
+
+    /// The underlying IO Service, from the UContextImpl.
+    boost::asio::io_service& getIoService();
 
     /// The mode in which the code is running.
     UObjectMode getRunningMode() const;
