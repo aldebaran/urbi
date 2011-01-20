@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -64,12 +64,19 @@ namespace runner
     raise_syntax_error(m.loc, m.msg, input);
   }
 
-  Exception::Message::Message(const ast::loc& _loc, const std::string& _kind,
-                              const std::string& _msg, const std::string& _prefix)
-    : loc(_loc)
-    , kind(_kind)
-    , msg(_msg)
-    , prefix(_prefix)
+
+  /*---------------------.
+  | Exception::Message.  |
+  `---------------------*/
+
+  Exception::Message::Message(const ast::loc& loc,
+                              const std::string& kind,
+                              const std::string& msg,
+                              const std::string& prefix)
+    : loc(loc)
+    , kind(kind)
+    , msg(msg)
+    , prefix(prefix)
   {}
 
   void Exception::Message::print(runner::Runner& r) const

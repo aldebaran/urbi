@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -25,11 +25,11 @@ namespace urbi
 {
 
   enum UMessageType
-    {
-      MESSAGE_SYSTEM, ///< Messages prefixed by ***.
-      MESSAGE_ERROR,  ///< Messages prefixed by !!!.
-      MESSAGE_DATA    ///< All other messages.
-    };
+  {
+    MESSAGE_SYSTEM, ///< Messages prefixed by ***.
+    MESSAGE_ERROR,  ///< Messages prefixed by !!!.
+    MESSAGE_DATA    ///< All other messages.
+  };
 
   /// Class containing all informations related to an URBI message.
   class URBI_SDK_API UMessage

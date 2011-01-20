@@ -146,7 +146,7 @@ namespace urbi
     // Waiting for connectionID.
     while (getDefaultClient()
            && getDefaultClient()->connectionID() == "")
-    usleep(5000);
+      usleep(5000);
     // Initialize in the correct thread.
     getDefaultClient()->notifyCallbacks(UMessage(*getDefaultClient(), 0,
                              externalModuleTag.c_str(),
