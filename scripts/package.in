@@ -117,6 +117,8 @@ check_equal srcdir       abs_top_srcdir
 #
 # Don't accept - in the OS.
 OS=$(echo "$OS" | sed -e 's/-/_/g')
+# bleeding-edge actually means Ubuntu Lucid.
+OS=$(echo "$OS" | sed -e 's/bleeding_edge/lucid/g')
 if test "$OS" = "$URBI_HOST_OS"; then
   stderr "OS = URBI_HOST_OS = $OS"
 else
