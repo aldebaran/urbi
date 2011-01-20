@@ -15,6 +15,7 @@
 #include <iostream>
 
 #include <libport/debug.hh>
+#include <libport/escape.hh>
 
 #include <urbi/umessage.hh>
 #include <urbi/uvalue.hh>
@@ -39,6 +40,7 @@ namespace urbi
     , value(0)
     , rawMessage(msg)
   {
+    GD_FINFO_DUMP("new: \"%s\"", libport::escape(msg));
     while (msg[0] == ' ')
       ++msg;
 
@@ -107,8 +109,10 @@ namespace urbi
 	o << *value;
 	break;
       case MESSAGE_SYSTEM:
+        o << "*** " << message;
+        break;
       case MESSAGE_ERROR:
-	o << message;
+	o << "!!! " << message;
 	break;
     }
     return o;

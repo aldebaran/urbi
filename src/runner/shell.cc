@@ -128,12 +128,13 @@ namespace runner
     // Stop invalid exceptions thrown by primitives
     catch (const std::exception& e)
     {
-      send_message("error",
-                   libport::format("invalid exception `%s' caught", e.what()));
+      Exception::warn(exp->location_get(),
+                      libport::format("invalid exception caught: %s",
+                                      e.what()));
     }
     catch (...)
     {
-      send_message("error", "invalid unknown exception caught");
+      Exception::warn(exp->location_get(), "unknown exception caught");
     }
 
     if (exception_to_show.get())

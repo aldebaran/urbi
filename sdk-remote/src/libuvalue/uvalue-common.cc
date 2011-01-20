@@ -347,8 +347,7 @@ namespace urbi
     }
 
     // Anything else is an error, but be resilient and ignore it.
-    GD_FWARN("syntax error: %s (ignored)",
-                std::string(message + pos));
+    GD_FWARN("syntax error (ignored): \"%s\"", libport::escape(message + pos));
     return -pos;
   }
 

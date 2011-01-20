@@ -50,7 +50,7 @@ namespace urbi
     /// Return the message.
     operator urbi::UValue&();
 
-    /// Format as "[TIMESTAMP:TAG] CONTENTS".
+    /// Format as "[TIMESTAMP:TAG] (!!!|***)? CONTENTS".
     std::ostream& print(std::ostream& o) const;
 
     /// Connection from which originated the message.
