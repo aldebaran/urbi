@@ -101,11 +101,9 @@ namespace urbi
 	     bool exitOnDisconnect, bool server, const files_type& files,
              bool useSyncClient)
   {
-    std::cerr << program_name()
-	      << ": " << urbi::package_info() << std::endl
-	      << program_name()
-	      << ": Remote Component Running on "
-	      << host << " " << port << std::endl;
+    GD_FINFO_TRACE("this is %s", program_name());
+    GD_SINFO_TRACE(urbi::package_info());
+    GD_FINFO_TRACE("remote component running on %s:%s", host, port);
     if (useSyncClient)
     {
       USyncClient::options o;
@@ -114,9 +112,9 @@ namespace urbi
     }
     else
     {
-      std::cerr << "#WARNING: the no-sync-client mode is dangerous.\n"
-	"Any attempt to use synchronous operation will crash your program."
-        << std::endl;
+      GD_WARN("the no-sync-client mode is dangerous.  "
+              "Any attempt to use synchronous operation will crash"
+              " your program.");
       UClient::options o;
       o.server(server);
       setDefaultClient(new UClient(host, port, buflen, o));
