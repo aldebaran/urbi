@@ -208,6 +208,18 @@ namespace runner
         parser::parse_result_type res;
         {
           GD_FPUSH_TRACE("%s: reading command.", name_get());
+          // It once happened that parser_ was null here.  The
+          // scenario is that an remote UObject in binary mode sends a
+          // message that is too big to fit into the stream buffer,
+          // and as a result the message was incomplete.  This caused
+          // processSerializedMessages to end in an unexpected way,
+          // and control returned here, with !stop_.  So we returned
+          // in the regular processing flow, although there is no
+          // parser around.
+          //
+          // To work around this, the buffer size was increased (from
+          // 1k to 8k on OS X).
+          assert(parser_);
           res = parser_->parse();
         }
         ast::rExp ast = parser::transform(ast::rConstExp(res));
@@ -238,7 +250,7 @@ namespace runner
   void
   Shell::processSerializedMessages()
   {
-    GD_CATEGORY(Shell.serialize);
+    GD_CATEGORY(Shell.Serialize);
     GD_INFO_TRACE("Entering processSerializedMessages");
     libport::serialize::BinaryISerializer deserializer(input_);
     while (binary_mode_ && !stop_)
@@ -271,7 +283,7 @@ namespace runner
           stop_ = true;
         }
       }
-      catch(std::runtime_error& re)
+      catch (const std::runtime_error& re)
       {
         GD_FINFO_TRACE("Serialized message error: %s", re.what());
         Exception e;
@@ -281,6 +293,11 @@ namespace runner
       catch (const sched::StopException& e)
       {
         GD_FINFO_DUMP("StopException ignored: %s", e.what());
+      }
+      catch (const std::exception& e)
+      {
+        GD_FINFO_DUMP("std::exception: %s", e.what());
+        throw;
       }
       for (jobs_type::iterator it = jobs_.begin();
            it != jobs_.end();
