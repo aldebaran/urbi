@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -25,9 +25,8 @@ main(int argc, char** argv)
 
   while (!input->eof())
   {
-    input->read(buf, BUFSIZ);
-    buf[input->gcount()] = 0;
-    source += buf;
+    input->read(buf, sizeof buf);
+    source.append(buf, input->gcount());
   }
 
   ast::rAst res = parser::parse(source, LOCATION_HERE)->ast_get();

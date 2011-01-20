@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -254,9 +254,9 @@ resolve_symlinks(const std::string& logname, const std::string& s)
   return s;
 #else
   char path[BUFSIZ];
-  strncpy(path, s.c_str(), BUFSIZ);
-  path[BUFSIZ - 1] = 0;
-  while (readlink(path, path, BUFSIZ) != -1)
+  strncpy(path, s.c_str(), sizeof path - 1);
+  path[sizeof path - 1] = 0;
+  while (readlink(path, path, sizeof path) != -1)
     URBI_ROOT_DEBUG(logname, "unrolling symbolic link: " << path);
   return path;
 #endif

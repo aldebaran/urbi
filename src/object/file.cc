@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -195,9 +195,8 @@ namespace urbi
     static void
     get_buf(std::istream& input, std::string& output)
     {
-      char buf[BUFSIZ + 1];
-
-      input.read(buf, sizeof buf - 1);
+      char buf[BUFSIZ];
+      input.read(buf, sizeof buf);
       output += std::string(buf, input.gcount());
     }
 
