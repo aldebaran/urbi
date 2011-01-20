@@ -31,15 +31,10 @@ namespace urbi
   {
   }
 
-  UMessage::UMessage(UAbstractClient& client, int timestamp,
-		     const char* tag, const char* msg,
-		     const binaries_type& bins)
-    : client(client)
-    , timestamp(timestamp)
-    , tag(tag)
-    , value(0)
-    , rawMessage(msg)
+  void
+  UMessage::init_(const binaries_type& bins)
   {
+    const char* msg = rawMessage.c_str();
     GD_FINFO_DUMP("new: \"%s\"", libport::escape(msg));
     while (msg[0] == ' ')
       ++msg;
@@ -65,6 +60,30 @@ namespace urbi
      * for binaries */
     if (p < 0 || /*message[p] ||*/ iter != bins.end())
       GD_FERROR("parse error in `%s' at %s", msg, abs(p));
+  }
+
+  UMessage::UMessage(UAbstractClient& client, int timestamp,
+		     const char* tag, const char* msg,
+		     const binaries_type& bins)
+    : client(client)
+    , timestamp(timestamp)
+    , tag(tag)
+    , value(0)
+    , rawMessage(msg)
+  {
+    init_(bins);
+  }
+
+  UMessage::UMessage(UAbstractClient& client, int timestamp,
+		     const std::string& tag, const std::string& msg,
+		     const binaries_type& bins)
+    : client(client)
+    , timestamp(timestamp)
+    , tag(tag)
+    , value(0)
+    , rawMessage(msg)
+  {
+    init_(bins);
   }
 
   UMessage::UMessage(const UMessage& b)

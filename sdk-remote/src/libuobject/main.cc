@@ -148,11 +148,9 @@ namespace urbi
            && getDefaultClient()->connectionID() == "")
       usleep(5000);
     // Initialize in the correct thread.
-    getDefaultClient()->notifyCallbacks(UMessage(*getDefaultClient(), 0,
-                             externalModuleTag.c_str(),
-                             ("[" + boost::lexical_cast<std::string>(UEM_INIT)
-                               + "]").c_str()
-                             ));
+    getDefaultClient()->notifyCallbacks
+      (UMessage(*getDefaultClient(), 0, externalModuleTag,
+                libport::format("[%s]", UEM_INIT)));
     // Load initialization files.
     foreach (const std::string& file, files)
       getDefaultClient()->sendFile(file);

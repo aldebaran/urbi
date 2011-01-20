@@ -171,7 +171,7 @@ namespace urbi
     resetAsyncCalls_();
     clientError("!!! " + erc.message());
     notifyCallbacks(UMessage(*this, 0, CLIENTERROR_TAG,
-                             ("!!! " + erc.message()).c_str()));
+                             "!!! " + erc.message()));
     return;
   }
 

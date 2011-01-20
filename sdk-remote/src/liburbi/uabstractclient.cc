@@ -584,11 +584,11 @@ namespace urbi
       (*this) << "var " + utag +" = Channel.new(\"" << utag << "\");";
       UCallbackID cid = setCallback(sendSound_, s, utag.c_str());
       // Invoke it 2 times to queue sound.
-      if (sendSound_(s, UMessage(*this, 0, utag.c_str(), "*** stop",
+      if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
 				 binaries_type()))
           == URBI_CONTINUE)
       {
-	if (sendSound_(s, UMessage(*this, 0, utag.c_str(), "*** stop",
+	if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
 				   binaries_type()))
             == URBI_REMOVE)
 	  deleteCallback(cid);

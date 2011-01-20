@@ -703,12 +703,9 @@ namespace urbi
         if (!libport::mhas(timerMap, cbname))
           return;
       }
-      backend_->notifyCallbacks(UMessage(*backend_, 0,
-                                        externalModuleTag.c_str(),
-          ("["
-          + string_cast(UEM_TIMER) + ","
-          + '"' + cbname + '"'
-          +"]").c_str()));
+      backend_->notifyCallbacks
+        (UMessage(*backend_, 0, externalModuleTag,
+                  libport::format("[%s,\"%s\"]", UEM_TIMER, cbname)));
 
       libport::BlockLock bl(mapLock);
       libport::AsyncCallHandler h =

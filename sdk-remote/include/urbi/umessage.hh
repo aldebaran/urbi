@@ -38,8 +38,13 @@ namespace urbi
     UMessage(UAbstractClient& client);
 
     /// Parser constructor.
+    /// Keeps a copy of tag and message.
     UMessage(UAbstractClient& client, int timestamp,
 	     const char* tag, const char* message,
+	     const binaries_type& bins = binaries_type());
+    /// Likewise.
+    UMessage(UAbstractClient& client, int timestamp,
+	     const std::string& tag, const std::string& message,
 	     const binaries_type& bins = binaries_type());
 
     UMessage(const UMessage& source);
@@ -69,8 +74,14 @@ namespace urbi
     std::string	message;
     /// Raw message without the binary data.
     std::string	rawMessage;
+
+  private:
+    /// Factor common code between ctors.
+    /// Works on rawMessage.
+    void init_(const binaries_type& bins);
   };
 
+  /// For debugging purpose.
   std::ostream& operator<<(std::ostream& s, const UMessage& m);
 
   /// Set \a val to the value of \a m.
