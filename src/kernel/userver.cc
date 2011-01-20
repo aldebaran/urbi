@@ -110,12 +110,6 @@ namespace kernel
     return sz;
   }
 
-  runner::Interpreter&
-  interpreter()
-  {
-    return dynamic_cast<runner::Interpreter&>(runner());
-  }
-
   sched::Scheduler&
   scheduler()
   {
