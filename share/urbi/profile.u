@@ -32,17 +32,18 @@ class Global.Profile
 
   function asString()
   {
-    var str = "Profile(\n" |
-    str += "  Yields: %s\n"                  % yields |
-    str += "  Total time: %.6fs\n"           % totalTime |
-    str += "  Wall clock time: %.6fs\n"      % wallClockTime |
-    str += "  Function calls: %s\n"          % totalCalls |
-    str += "  Max function call depth: %s\n" % maxFunctionCallDepth |
-    str += "\n" |
+    var str = "Profile(\n"
+              "  Yields: %s\n"
+              "  Total time: %.6fs\n"
+              "  Wall clock time: %.6fs\n"
+              "  Function calls: %s\n"
+              "  Max function call depth: %s\n\n"
+              % [yields, totalTime, wallClockTime,
+                 totalCalls, maxFunctionCallDepth] |
 
-    str += "  .--------------------------------------------------------.\n" |
-    str += "  |   Function   |  Calls  |   Self time   | Self time per |\n" |
-    str += "  |--------------+---------+---------------+---------------|\n" |
+    str += "  .--------------------------------------------------------.\n"
+           "  |   Function   |  Calls  |   Self time   | Self time per |\n"
+           "  |--------------+---------+---------------+---------------|\n" |
 
     var totalSelfTimes = 0 |
     var totalSelfTimePers = 0 |
@@ -54,10 +55,9 @@ class Global.Profile
       totalSelfTimePers += c.selfTimePer |
     } |
 
-    str += "  |--------------+---------+---------------+---------------|\n" |
-    str += "  | %12s | %7s | %13.6f | %13.6f |\n"
-             % ["Totals", totalCalls, totalSelfTimes, totalSelfTimePers] |
-    str += "  '--------------'---------'---------------'---------------'\n" |
-    str += ")\n"
+    str += "  |--------------+---------+---------------+---------------|\n"
+           "  | %12s | %7s | %13.6f | %13.6f |\n"
+           "  '--------------'---------'---------------'---------------'\n)\n"
+           % ["Totals", totalCalls, totalSelfTimes, totalSelfTimePers]
   };
 };
