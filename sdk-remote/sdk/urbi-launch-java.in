@@ -125,14 +125,13 @@ get_options "$@"
 
 classpath="$classpath:$liburbi_jar"
 # Add standart location to uobject path
-export URBI_UOBJECT_PATH="$URBI_UOBJECT_PATH:.:$prefix/share/sdk-remote/java/"
+export URBI_UOBJECT_PATH="$URBI_UOBJECT_PATH:.:$prefix/share/sdk-remote/java"
 
-eval java -Djava.library.path="$library_path"	\
-  -classpath "$classpath"  "$main"		\
-  "$uob_archives"				\
-  -- "$urbi_launch_args"
+exec java -Djava.library.path="$library_path"   \
+  -classpath "$classpath"  "$main"              \
+  $uob_archives                                 \
+  -- $urbi_launch_args
 
-exit 0
 
 # Local variables:
 # mode: shell-script
