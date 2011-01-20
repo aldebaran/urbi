@@ -6,9 +6,9 @@
 %%
 %% See the LICENSE file for more information.
 
-\section{FunctionProfile}
+\section{Profile.Function}
 
-A \lstinline|FunctionProfile| object contains information about calls of a
+A \lstinline|Function| object contains information about calls of a
 given function during a profiling operation.
 
 \subsection{Prototypes}
@@ -19,13 +19,13 @@ given function during a profiling operation.
 
 \subsection{Construction}
 
-\lstinline|FunctionProfile| objects are not meant to be cloned as they are
+\lstinline|Function| objects are not meant to be cloned as they are
 created by \refSlot[System]{profile} internal machinery.
 
-\begin{urbi}
+\begin{urbiscript}
 System.profile(function() { echo("foo") }).calls[0];
-[00000001] FunctionProfile('echo', 1, 0.000181, 181)
-\end{urbi}
+[00000001] Function('echo', 1, 0.000181, 181)
+\end{urbiscript}
 
 \subsection{Slots}
 

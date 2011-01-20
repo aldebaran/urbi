@@ -77,7 +77,7 @@ requireFile("urbi/math.u");
 requireFile("urbi/mutex.u");
 requireFile("urbi/package-info.u");
 requireFile("urbi/pattern.u");
-requireFile("urbi/profiling.u");
+requireFile("urbi/profile.u");
 requireFile("urbi/pubsub.u");
 requireFile("urbi/socket.u");
 requireFile("urbi/stack-frame.u");
