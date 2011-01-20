@@ -73,7 +73,7 @@
   bool                                                                  \
   Name::valid_proto(const ::urbi::object::Object& o) const              \
   {                                                                     \
-    return dynamic_cast<const Name*>(&o);                               \
+    return o.as<Name>();                                                \
   }                                                                     \
                                                                         \
   void*                                                                 \

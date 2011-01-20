@@ -533,12 +533,6 @@ namespace urbi
               "referring to a not-yet-initialized class\n"
               "See the stack trace to find the dependency to add in "
               "root_classes_initialize().");
-      // Inheriting from atoms is a problem: we cannot morph in place
-      // the C++ object to give him the right primitive type. For now,
-      // we forbid inheriting from atoms.
-      if (!p->valid_proto(*this))
-        FRAISE("cannot inherit from a %1% without being one",
-               p->type_name_get());
       if (!protos_)
       {
         if (proto_ == p)
@@ -721,6 +715,13 @@ namespace urbi
     rObject
     Object::addProto(rObject proto)
     {
+      assert(proto);
+      // Inheriting from atoms is a problem: we cannot morph in place
+      // the C++ object to give him the right primitive type. For now,
+      // we forbid inheriting from atoms.
+      if (!proto->valid_proto(*this))
+        FRAISE("cannot inherit from a %1% without being one",
+               proto->type_name_get());
       proto_add(proto);
       return this;
     }
