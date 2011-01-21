@@ -831,23 +831,16 @@ public:
                 urbi::UList args)
   {
     threadCheck();
-    switch(args.size())
+    switch (args.size())
     {
-    case 0:
-      call(obj, func);
-      break;
-    case 1:
-      call(obj, func, args[0]);
-      break;
-    case 2:
-      call(obj, func, args[0], args[1]);
-      break;
-    case 3:
-      call(obj, func, args[0], args[1], args[2]);
-      break;
-    case 4:
-      call(obj, func, args[0], args[1], args[2]);
-      break;
+#define CASE(Num, ...)                                  \
+      case Num: call(obj, func, ## __VA_ARGS__); break;
+      CASE(0);
+      CASE(1, args[0]);
+      CASE(2, args[0], args[1]);
+      CASE(3, args[0], args[1], args[2]);
+      CASE(4, args[0], args[1], args[2], args[3]);
+#undef CASE
     default:
       throw std::runtime_error("Not implemented");
     }
