@@ -82,6 +82,7 @@ void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
       os.write((const char*)v.binary->common.data, v.binary->common.size);
     }
     break;
+
   case urbi::DATA_DICTIONARY:
     {
       unsigned int len =  v.dictionary->size();
@@ -90,9 +91,11 @@ void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
         ar << e.first << e.second;
     }
     break;
+
   case urbi::DATA_DOUBLE:
     ar << v.val;
     break;
+
   case urbi::DATA_LIST:
     {
       unsigned int len = v.list->size();
@@ -101,16 +104,20 @@ void saveUValue(Archive & ar, const urbi::UValue& v, std::ostream& os)
         ar << *v.list->array[i];
     }
     break;
+
   case urbi::DATA_STRING:
   case urbi::DATA_SLOTNAME:
     ar << *v.stringValue;
     break;
+
   case urbi::DATA_VOID:
     break;
+
   default:
     throw std::runtime_error("Unsupported UValue type");
   }
 }
+
 template<class Archive>
 void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
 {
@@ -147,6 +154,7 @@ void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
       ar >> (*v.dictionary)[key];
     }
     break;
+
   case urbi::DATA_DOUBLE:
     {
       v.type = urbi::DATA_DOUBLE;
@@ -155,6 +163,7 @@ void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
       v = val;
     }
     break;
+
   case urbi::DATA_LIST:
     ar >> sz;
     v = urbi::UList();
@@ -165,15 +174,18 @@ void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
       v.list->array.push_back(val);
     }
     break;
+
   case urbi::DATA_STRING:
   case urbi::DATA_SLOTNAME:
     ar >> s;
     v = s;
     v.type = (urbi::UDataType)dt;
     break;
+
   case urbi::DATA_VOID:
     v.type = urbi::DATA_VOID;
     break;
+
   default:
     throw std::runtime_error("Unsupported serialized UValue type");
   }

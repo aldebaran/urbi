@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -95,12 +95,10 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
   {
     const std::string& data =
       o->slot_get(SYMBOL(data))->as<object::String>()->value_get();
-    const std::string& keywords =
-      o->slot_get(SYMBOL(keywords))->
-      as<object::String>()->value_get();
+    std::string keywords =
+      o->slot_get(SYMBOL(keywords))->as<object::String>()->value_get();
     std::list<urbi::BinaryData> l;
-    l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()),
-				 data.size()));
+    l.push_back(urbi::BinaryData(const_cast<char*>(data.c_str()), data.size()));
     std::list<urbi::BinaryData>::const_iterator i = l.begin();
     res.type = urbi::DATA_BINARY;
     res.binary = new urbi::UBinary();
@@ -110,8 +108,8 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
   }
   else if (is_a(o, UObject))
   {
-    res = o->slot_get(SYMBOL(__uobjectName))->as<object::String>()
-      ->value_get();
+    res = o->slot_get(SYMBOL(__uobjectName))
+      ->as<object::String>()->value_get();
   }
   else if (is_a(o, UVar))
   {
@@ -179,8 +177,7 @@ object_cast(const urbi::UValue& v)
       res = new object::Object();
       res->proto_add(Binary);
       std::string msg = v.binary->getMessage();
-      res->slot_set(SYMBOL(keywords),
-                    new object::String(msg));
+      res->slot_set(SYMBOL(keywords), new object::String(msg));
       res->slot_set(SYMBOL(data),
                     new object::String
                     (std::string(static_cast<char*>(v.binary->common.data),
