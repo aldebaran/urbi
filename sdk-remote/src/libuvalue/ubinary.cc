@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -295,8 +295,11 @@ namespace urbi
     else
     {
       // Format for the Kernel, which wants ';' as header terminator.
-      o << libport::format("BIN %s %s;",
-                           common.size, getMessage());
+      o << "BIN " << common.size;
+      const std::string h = getMessage();
+      if (!h.empty())
+        o << ' ' << h;
+      o << ';';
       o.write((char*) common.data, common.size);
     }
     return o;

@@ -129,7 +129,7 @@ void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
   switch((urbi::UDataType)dt)
   {
   case urbi::DATA_BINARY:
-    {
+  {
     std::string headers;
     ar >> headers;
     ar >> sz;
@@ -140,10 +140,13 @@ void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
     v.type = urbi::DATA_BINARY;
     v.binary = new urbi::UBinary;
     urbi::binaries_type::const_iterator i = bins.begin();
-    headers = string_cast(sz) + " " + headers +";";
+    headers = (string_cast(sz)
+               + (headers.empty() ? "" : " ")
+               + headers +";");
     v.binary->parse(headers.c_str(), 0, bins, i, false);
-    }
-    break;
+  }
+  break;
+
   case urbi::DATA_DICTIONARY:
     ar >> sz;
     v = urbi::UDictionary();

@@ -102,9 +102,10 @@ urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)
     std::list<urbi::BinaryData>::const_iterator i = l.begin();
     res.type = urbi::DATA_BINARY;
     res.binary = new urbi::UBinary();
-    res.binary->parse(
-      (boost::lexical_cast<std::string>(data.size()) +
-       " " + keywords + '\n').c_str(), 0, l, i);
+    res.binary->parse((boost::lexical_cast<std::string>(data.size())
+                       + (keywords.empty() ? "" : " ")
+                       + keywords + '\n').c_str(),
+                      0, l, i);
   }
   else if (is_a(o, UObject))
   {
