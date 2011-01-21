@@ -171,6 +171,7 @@ public class All extends UObject
 
     protected void finalize()
     {
+	Log.info("all.finalize");
 	++destructionCount;
 	super.finalize();
     }
@@ -657,6 +658,7 @@ public class All extends UObject
 
     public int getDestructionCount()
     {
+	Log.info("all.getDestructionCount");
 	return destructionCount;
     }
 

@@ -141,8 +141,10 @@ public class UMain
 		    }
 		} catch (ClassNotFoundException cnfe) {
 		    Log.error(cnfe.toString());
+                    System.exit(1);
 		} catch (Exception e) {
 		    Log.error(e.toString());
+                    System.exit(1);
 		}
 	    }
 	}
@@ -156,11 +158,12 @@ public class UMain
 	    subargv = new String[0];
 	try
 	{
-	    UObject.main (subargv);
+	    UObject.main(subargv);
 	}
 	catch (Exception e)
 	{
-	    Log.error (e.toString());
+	    Log.error(e.toString());
+            System.exit(1);
 	}
     }
 }
