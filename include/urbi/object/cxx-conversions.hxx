@@ -243,9 +243,9 @@ namespace urbi
     `-----------------*/
 
     template<>
-    struct CxxConvert<Float::value_type>
+    struct CxxConvert<double>
     {
-      typedef Float::value_type target_type;
+      typedef double target_type;
       static target_type
       to(const rObject& o)
       {
@@ -260,6 +260,26 @@ namespace urbi
       }
     };
 
+# if defined LIBPORT_URBI_UFLOAT_LONG || defined LIBPORT_URBI_UFLOAT_LONG_LONG
+    // Ufloat if neither double nor float
+    template<>
+    struct CxxConvert<ufloat>
+    {
+      typedef double target_type;
+      static target_type
+      to(const rObject& o)
+      {
+        type_check<Float>(o);
+        return o->as<Float>()->value_get();
+      }
+
+      static rObject
+      from(target_type v)
+      {
+        return new Float(v);
+      }
+    };
+#endif
 
     /*--------------.
     | std::string.  |
