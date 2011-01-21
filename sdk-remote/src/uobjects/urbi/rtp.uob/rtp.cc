@@ -298,7 +298,7 @@ int URTP::listen(const std::string& host, const std::string& port)
 }
 
 void URTP::readFrom(const void* data, size_t size,
-               boost::shared_ptr<libport::UDPLink>)
+                    boost::shared_ptr<libport::UDPLink>)
 {
   onRead(data, size);
 }
@@ -390,17 +390,23 @@ size_t URTP::onRead(const void* data, size_t sz)
       type = forceType;
   }
   std::string ld = localDeliver;
-  if (type == URBISCRIPT)
+
+  switch (type)
+  {
+  case URBISCRIPT:
     UObject::send(std::string((const char*)payload, payload_size));
-  else if (type == VALUES)
-  {// FIXME: this will not work with binaries
+    break;
+
+  case VALUES:
+  {
+    // FIXME: this will not work with binaries
     binaries_type bd;
     UMessage m(*(UClient*)0, 0, "",
-               std::string((const char*)payload, payload_size).c_str(),
+               std::string((const char*)payload, payload_size),
                bd);
     if (m.type != MESSAGE_DATA || m.value->type != DATA_LIST)
     {
-      GD_WARN("Unexpeected RTP message with payload type 'values'");
+      GD_WARN("Unexpected RTP message with payload type 'values'");
       return sz;
     }
     foreach(UValue* v, m.value->list->array)
@@ -443,8 +449,12 @@ size_t URTP::onRead(const void* data, size_t sz)
         getDefaultClient()->notifyCallbacks(m);
       }
     }
+    break;
   }
-  else if (type == BINARY || type == RAW_BINARY || type == 26)
+
+  case BINARY:
+  case RAW_BINARY:
+  case 26:
   {
     if (!writeTo && ld.empty())
       return sz;
@@ -452,40 +462,31 @@ size_t URTP::onRead(const void* data, size_t sz)
     binaries_type bd;
     std::string keywords;
     if (type == BINARY)
-    { // Just onhor the included header.
+    {
+      // Just honor the included header.
       void* p = memchr(payload, '\n', payload_size);
-      char* start = (char*)p + 1;
-      size_t len = start - (char*)payload;
       if (!p)
       {
         GD_WARN("Parse error in binary message: no newline detected");
         return sz;
       }
+      char* start = (char*)p + 1;
+      size_t len = start - (char*)payload;
       bd.push_back(BinaryData(start, payload_size - len));
       keywords = string_cast(payload_size-len) + " "
         + std::string((const char*)payload, len+1);
     }
     else
-    { // Use forceheader, or session type (26=jpeg), otherwise, raw binary.
+    {
+      // Use forceheader, or session type (26=jpeg), otherwise, raw binary.
       std::string fh = forceHeader;
+      keywords = string_cast(payload_size);
       if (!fh.empty())
-      {
-        keywords = string_cast(payload_size) + " " + fh + "\n";
-        bd.push_back(BinaryData(payload, payload_size));
-      }
-      else
-      {
-        switch (type)
-        {
-        case 26:
-          keywords = string_cast(payload_size) + " jpeg\n";
-          bd.push_back(BinaryData(payload, payload_size));
-          break;
-        default:
-          keywords = string_cast(payload_size) + "\n";
-          bd.push_back(BinaryData(payload, payload_size));
-        }
-      }
+        keywords += " " + fh;
+      else if (type == 26)
+        keywords += " jpeg";
+      keywords += "\n";
+      bd.push_back(BinaryData(payload, payload_size));
     }
     binaries_type::const_iterator beg = bd.begin();
     b.parse(keywords.c_str(), 0, bd, beg, false);
@@ -501,14 +502,16 @@ size_t URTP::onRead(const void* data, size_t sz)
     }
     if (!ld.empty())
     {
-      // We are in the io_service thread, deliver asynchronously
-      //FIXME: use the client of current context instead
+      // We are in the io_service thread, deliver asynchronously.
+      // FIXME: use the client of current context instead.
       GD_SINFO_DUMP("Transmitting " << b.getMessage() <<" " << b.common.size);
       transmitRemoteWrite(ld, b);
     }
     b.common.data = 0;
     if (res)
       freeb(res);
+  }
+  break;
   }
   return sz;
 }
@@ -521,6 +524,7 @@ void URTP::send(const UValue& v)
   else
     send_(v);
 }
+
 void URTP::send_(const UValue& v)
 {
   bool sync = syncSendSocket;
