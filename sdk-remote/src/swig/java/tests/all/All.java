@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -57,12 +57,14 @@ import java.util.Map;
 
 public class All extends UObject
 {
-    static {
+    static
+    {
 	UStartRename(All.class, "remall");
 	UStartRename(All.class, "remall2");
     }
 
-    public All (String s) {
+    public All (String s)
+    {
 	super(s);
 
 	count = 0;

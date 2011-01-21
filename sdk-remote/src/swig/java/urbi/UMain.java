@@ -15,9 +15,11 @@ import java.net.URLClassLoader;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarEntry;
 
-public class UMain {
+public class UMain
+{
 
-    static {
+    static
+    {
 
 	try
 	{
@@ -51,11 +53,13 @@ public class UMain {
     // anthony_miguel @ http://forum.java.sun.com/thread.jsp?forum=32&thread=300557&tstart=0&trange=15
     private static final Class[] parameters = new Class[]{URL.class};
 
-    public static void addFile(String s) throws IOException {
+    public static void addFile(String s) throws IOException
+    {
 	addURL(new URL("file", null, s));
     }//end method
 
-    public static void addURL(URL u) throws IOException {
+    public static void addURL(URL u) throws IOException
+    {
 	URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
 	Class sysclass = URLClassLoader.class;
 	try {
@@ -80,8 +84,8 @@ public class UMain {
 	System.exit(0);
     }
 
-    public static void main(String argv[]) {
-
+    public static void main(String argv[])
+    {
 	boolean done = false;
 	int i = 0;
         String uob_path_s = System.getenv("URBI_UOBJECT_PATH");
@@ -108,9 +112,8 @@ public class UMain {
 		    }
 		    else
 			// Search for uobject in URBI_UOBJECT_PATH
-			for(String p: uob_path)
-			{
-			    String possible_path = String.format("%s/%s", p, jarname);
+			for(String p: uob_path) {
+                            String possible_path = String.format("%s/%s", p, jarname);
 			    if ((new File(possible_path)).exists()) {
 				jarname = possible_path;
 				found = true;
