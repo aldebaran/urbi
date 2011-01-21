@@ -126,6 +126,23 @@ namespace runner
     return tag_stack_.size();
   }
 
+  LIBPORT_SPEED_INLINE const Runner::dependencies_type&
+  Runner::dependencies() const
+  {
+    return dependencies_;
+  }
+
+  LIBPORT_SPEED_INLINE void
+  Runner::dependencies_log_set(bool v)
+  {
+    dependencies_log_ = v;
+  }
+
+  LIBPORT_SPEED_INLINE bool
+  Runner::dependencies_log_get() const
+  {
+    return dependencies_log_;
+  }
 } // namespace runner
 
 #endif // RUNNER_RUNNER_HXX

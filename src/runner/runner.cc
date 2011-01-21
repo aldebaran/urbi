@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -159,22 +159,11 @@ namespace runner
     return o;
   }
 
-  const Runner::dependencies_type&
-  Runner::dependencies() const
-  {
-    return dependencies_;
-  }
-
   void
-  Runner::dependencies_log_set(bool v)
+  Runner::frozen_set(bool v)
   {
-    dependencies_log_ = v;
-  }
-
-  bool
-  Runner::dependencies_log_get() const
-  {
-    return dependencies_log_;
+    frozen_ = v;
+    scheduler_get().signal_world_change();
   }
 
   void
@@ -183,13 +172,6 @@ namespace runner
     assert(evt);
     if (dependencies_log_)
       dependencies_.insert(evt);
-  }
-
-  void
-  Runner::frozen_set(bool v)
-  {
-    frozen_ = v;
-    scheduler_get().signal_world_change();
   }
 } // namespace runner
 
