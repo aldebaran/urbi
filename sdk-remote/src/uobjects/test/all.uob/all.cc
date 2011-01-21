@@ -453,7 +453,7 @@ public:
     (void)i;
   }
 
-  int readByName(const std::string &name)
+  int readByName(const std::string& name)
   {
     threadCheck();
     urbi::UVar v(name);
@@ -568,7 +568,7 @@ public:
     return res;
   }
 
-  int writeProps(const std::string &name, double val)
+  int writeProps(const std::string& name, double val)
   {
     threadCheck();
     urbi::UVar v(name);
@@ -585,7 +585,7 @@ public:
 
   /**  Test write to UVAR.  **/
 
-  int writeD(const std::string &name, double val)
+  int writeD(const std::string& name, double val)
   {
     threadCheck();
     GD_FINFO_DEBUG("writeD %s", name);
@@ -594,7 +594,7 @@ public:
     return 0;
   }
 
-  int writeS(const std::string &name, const std::string &val)
+  int writeS(const std::string& name, const std::string& val)
   {
     GD_FINFO_DEBUG("writeS %s", name);
     urbi::UVar v(name);
@@ -602,7 +602,7 @@ public:
     return 0;
   }
 
-  int writeL(const std::string &name, const std::string &val)
+  int writeL(const std::string& name, const std::string& val)
   {
     GD_FINFO_DEBUG("writeL %s", name);
     urbi::UVar v(name);
@@ -613,7 +613,7 @@ public:
     return 0;
   }
 
-  int writeM(const std::string &name, const std::string &val)
+  int writeM(const std::string& name, const std::string& val)
   {
     GD_FINFO_DEBUG("writeM %s", name);
     urbi::UVar v(name);
@@ -624,7 +624,7 @@ public:
     return 0;
   }
 
-  int writeB(const std::string &name, const std::string &content)
+  int writeB(const std::string& name, const std::string& content)
   {
     urbi::UVar v(name);
     urbi::UBinary val;
@@ -636,7 +636,7 @@ public:
     return 0;
   }
 
-  int writeBNone(const std::string &name, const std::string &content)
+  int writeBNone(const std::string& name, const std::string& content)
   {
     urbi::UVar v(name);
     urbi::UBinary val;
@@ -647,7 +647,7 @@ public:
     return 0;
   }
 
-  int writeI(const std::string &name, const std::string &content)
+  int writeI(const std::string& name, const std::string& content)
   {
     urbi::UVar v(name);
     urbi::UImage i;
@@ -661,7 +661,7 @@ public:
     return 0;
   }
 
-  int writeSnd(const std::string &name, const std::string &content)
+  int writeSnd(const std::string& name, const std::string& content)
   {
     urbi::UVar v(name);
     urbi::USound s;
@@ -679,7 +679,7 @@ public:
   }
 
 
-  int writeRI(const std::string &name, const std::string &content)
+  int writeRI(const std::string& name, const std::string& content)
   {
     urbi::UVar v(name);
     urbi::UImage i = v;
@@ -687,7 +687,7 @@ public:
     return 0;
   }
 
-  int writeRSnd(const std::string &name, const std::string &content)
+  int writeRSnd(const std::string& name, const std::string& content)
   {
     urbi::UVar v(name);
     urbi::USound i = v;
@@ -719,7 +719,7 @@ public:
     return r;
   }
 
-  std::string transmitS(const std::string &name) const
+  std::string transmitS(const std::string& name) const
   {
     return name.substr(1, name.length()-2);
   }
@@ -831,26 +831,26 @@ public:
                 urbi::UList args)
   {
     threadCheck();
-     switch(args.size())
-     {
-     case 0:
-       call(obj, func);
-       break;
-     case 1:
-       call(obj, func, args[0]);
-       break;
-     case 2:
-       call(obj, func, args[0], args[1]);
-       break;
-     case 3:
-       call(obj, func, args[0], args[1], args[2]);
-       break;
-     case 4:
-       call(obj, func, args[0], args[1], args[2]);
-       break;
-     default:
-       throw std::runtime_error("Not implemented");
-     }
+    switch(args.size())
+    {
+    case 0:
+      call(obj, func);
+      break;
+    case 1:
+      call(obj, func, args[0]);
+      break;
+    case 2:
+      call(obj, func, args[0], args[1]);
+      break;
+    case 3:
+      call(obj, func, args[0], args[1], args[2]);
+      break;
+    case 4:
+      call(obj, func, args[0], args[1], args[2]);
+      break;
+    default:
+      throw std::runtime_error("Not implemented");
+    }
   }
 
   void throwException(bool stdexcept)
