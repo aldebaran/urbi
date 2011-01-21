@@ -8,8 +8,8 @@
  * See the LICENSE file for more information.
  */
 
-#ifndef OBJECT_LOG_HH
-# define OBJECT_LOG_HH
+#ifndef OBJECT_LOGGER_HH
+# define OBJECT_LOGGER_HH
 
 # include <libport/debug.hh>
 
@@ -19,23 +19,27 @@ namespace urbi
 {
   namespace object
   {
-    class URBI_SDK_API Log: public Tag
+    class URBI_SDK_API Logger: public Tag
     {
     public:
-      Log();
-      Log(rLog model);
-      virtual ~Log();
+      Logger();
+      Logger(rLogger model);
+      virtual ~Logger();
 
-    /*----------------.
-    | Log functions.  |
-    `----------------*/
+    /*-------------------.
+    | Logger functions.  |
+    `-------------------*/
     public:
-      rObject log(const std::string& category, const std::string& msg);
-      rObject trace(const std::string& category, const std::string& msg);
-      rObject debug(const std::string& category, const std::string& msg);
-      rObject dump(const std::string& category, const std::string& msg);
-      rObject warn(const std::string& category, const std::string& msg);
-      rObject err(const std::string& category, const std::string& msg);
+#define LEVEL(Level)                                                    \
+      rObject Level(const std::string& msg, const std::string& category)
+
+      LEVEL(log);
+      LEVEL(trace);
+      LEVEL(debug);
+      LEVEL(dump);
+      LEVEL(warn);
+      LEVEL(err);
+#undef LEVEL
 
     /*--------------.
     | Indentation.  |
@@ -52,7 +56,7 @@ namespace urbi
                 libport::Debug::levels::Level level,
                 const std::string& category,
                 const std::string& msg);
-      URBI_CXX_OBJECT(Log, Tag);
+      URBI_CXX_OBJECT(Logger, Tag);
     };
   }
 }

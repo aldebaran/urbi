@@ -9,36 +9,36 @@
  */
 
 #include <runner/interpreter.hh>
-#include <object/log.hh>
+#include <object/logger.hh>
 
 namespace urbi
 {
   namespace object
   {
-    Log::Log()
+    Logger::Logger()
       : Tag()
     {
       proto_add(proto);
     }
 
-    Log::Log(rLog model)
+    Logger::Logger(rLogger model)
       : Tag()
     {
       proto_add(model);
     }
 
-    Log::~Log()
+    Logger::~Logger()
     {}
 
 #define LEVEL(Name, Type, Level)                                \
     rObject                                                     \
-    Log::Name(const std::string& category,                      \
-              const std::string& msg)                           \
+    Logger::Name(const std::string& msg,                        \
+                 const std::string& category)                   \
     {                                                           \
       msg_(libport::Debug::types::Type,                         \
            libport::Debug::levels::Level, category, msg);       \
       return this;                                              \
-    }                                                           \
+    }
 
     LEVEL(log,   info,  log);
     LEVEL(trace, info,  trace);
@@ -49,7 +49,7 @@ namespace urbi
 #undef LEVEL
 
     void
-    Log::msg_(libport::Debug::types::Type type,
+    Logger::msg_(libport::Debug::types::Type type,
               libport::Debug::levels::Level level,
               const std::string& category,
               const std::string& msg)
@@ -80,28 +80,28 @@ namespace urbi
     }
 
     void
-    Log::onEnter()
+    Logger::onEnter()
     {
       libport::debugger_data().indent++;
     }
 
     void
-    Log::onLeave()
+    Logger::onLeave()
     {
       libport::debugger_data().indent--;
     }
 
-    URBI_CXX_OBJECT_INIT(Log)
+    URBI_CXX_OBJECT_INIT(Logger)
     {
       proto_add(Tag::proto);
-      bind(SYMBOL(debug),   &Log::debug);
-      bind(SYMBOL(dump),    &Log::dump);
-      bind(SYMBOL(err),     &Log::err);
-      bind(SYMBOL(log),     &Log::log);
-      bind(SYMBOL(onEnter), &Log::onEnter);
-      bind(SYMBOL(onLeave), &Log::onLeave);
-      bind(SYMBOL(trace),   &Log::trace);
-      bind(SYMBOL(warn),    &Log::warn);
+      bind(SYMBOL(debug),   &Logger::debug);
+      bind(SYMBOL(dump),    &Logger::dump);
+      bind(SYMBOL(err),     &Logger::err);
+      bind(SYMBOL(log),     &Logger::log);
+      bind(SYMBOL(onEnter), &Logger::onEnter);
+      bind(SYMBOL(onLeave), &Logger::onLeave);
+      bind(SYMBOL(trace),   &Logger::trace);
+      bind(SYMBOL(warn),    &Logger::warn);
     }
   }
 }

@@ -6,21 +6,21 @@
 %%
 %% See the LICENSE file for more information.
 
-\section{Log}
+\section{Logger}
 
-\lstinline|Log| is used to report information to the final user or to
-the developer. May it be a warning, an error, a debug information or
-a system log, \lstinline|Log| will pretty print it for you using
-appropriate colors. \lstinline|Log| can also be used as a
-\lstinline|Tag| for it to handle nested calls indentation.
+\lstinline|Logger| is used to report information to the final user or to the
+developer. May it be a warning, an error, a debug information or a system
+log, \lstinline|Logger| will pretty print it for you using appropriate
+colors. \lstinline|Logger| can also be used as a \lstinline|Tag| for it to
+handle nested calls indentation.
 
 \begin{urbiunchecked}
-Log.log("Category", "message") |;
+Logger.log("message", "Category") |;
 [       Category        ] message
 
-Log.log("category", "message") :
+Logger.log("message", "Category") :
 {
-  Log.log("SubCategory", "indented message")
+  Logger.log("indented message", "SubCategory")
 }|;
 [       Category        ] message
 [      SubCategory      ]   indented message
@@ -33,50 +33,50 @@ Log.log("category", "message") :
 
 \subsection{Construction}
 
-\lstinline|Log| can be used as is, without being cloned. One may want
-to extend its functionalities though and will then use it as a
-prototype. A \lstinline|Log| can be created with no argument.
+\lstinline|Logger| can be used as is, without being cloned. One may want to
+extend its functionalities though and will then use it as a prototype. A
+\lstinline|Logger| can be created with no argument.
 
 \begin{urbiscript}
-Log.new|;
+Logger.new|;
 \end{urbiscript}
 
 \subsection{Slots}
 
 \begin{urbiscriptapi}
 
-\item[debug](<category>, <message>)%
+\item[debug](<message>, <category>)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is DEBUG or DUMP. Return \this to allow chained
   operations.
 
-\item[dump](<category>, <message>)%
+\item[dump](<message>, <category>)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is DUMP. Return \this to allow chained
   operations.
 
-\item[err](<category>, <message>)%
+\item[err](<message>, <category>)%
   Report an error \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
 
-\item[log](<category>, <message>)%
+\item[log](<message>, <category>)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if debug is not disabled. Return \this to allow chained operations.
 
 \item[onEnter]%
-  The primitive called when \lstinline|Log| is used as a \lstinline|Tag| and
-  is entered. This primitive only increments the indentation level.
+  The primitive called when \lstinline|Logger| is used as a \lstinline|Tag|
+  and is entered. This primitive only increments the indentation level.
 
 \item[onLeave]%
-  The primitive called when \lstinline|Log| is used as a \lstinline|Tag| and
-  is left. This primitive only decrements the indentation level.
+  The primitive called when \lstinline|Logger| is used as a \lstinline|Tag|
+  and is left. This primitive only decrements the indentation level.
 
-\item[trace](<category>, <message>)%
+\item[trace](<message>, <category>)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is TRACE, DEBUG or DUMP. Return \this to allow
   chained operations.
 
-\item[warn](<category>, <message>)%
+\item[warn](<message>, <category>)%
   Report a warning \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
 

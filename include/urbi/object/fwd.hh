@@ -54,7 +54,7 @@ namespace urbi
     Macro(List);                                \
     Macro(Lobby);                               \
     Macro(Location);                            \
-    Macro(Log);                                 \
+    Macro(Logger);                              \
     Macro(OutputStream);                        \
     Macro(Path);                                \
     Macro(Position);                            \
