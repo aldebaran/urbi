@@ -31,10 +31,6 @@ URBI_SERVER = urbi-launch$(EXEEXT) --start --
 k2-check:
 	@$(MAKE) check TESTS_DIRS=2.x
 
-# Do not remove this one, it is failing on purpose.
-XFAIL_TESTS +=					\
-  0.x/2-xfail.chk
-
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   2.x/derive.chk				\
