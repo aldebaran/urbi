@@ -161,7 +161,7 @@ void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
   case urbi::DATA_DOUBLE:
     {
       v.type = urbi::DATA_DOUBLE;
-      double val;
+      ufloat val;
       ar >> val;
       v = val;
     }

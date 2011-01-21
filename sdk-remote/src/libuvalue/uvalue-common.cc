@@ -287,10 +287,12 @@ namespace urbi
     // Last attempt: it should be a double.
     {
       int p;
-      if (sscanf(message+pos, "%lf%n", &val, &p))
+      double dval; // in case ufloat is not double
+      if (sscanf(message+pos, "%lf%n", &dval, &p))
       {
         type = DATA_DOUBLE;
         pos += p;
+        val = dval;
         return pos;
       }
     }
@@ -306,7 +308,7 @@ namespace urbi
     switch (type)
     {
       case DATA_DOUBLE:
-	s << std::setprecision(21) <<  static_cast<ufloat>(val);
+	s << std::setprecision(21) << val;
 	break;
       case DATA_STRING:
 	s << '"' << libport::escape(*stringValue, '"') << '"';

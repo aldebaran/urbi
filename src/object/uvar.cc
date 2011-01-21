@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -304,7 +304,7 @@ namespace urbi
     UVar::update_timed_(rObject val, libport::utime_t timestamp)
     {
       getSlot(SYMBOL(owner))->setProperty(initialName,
-                                          SYMBOL(timestamp), to_urbi(double(timestamp) / 1000000));
+                                          SYMBOL(timestamp), to_urbi(libport::ufloat(timestamp) / 1000000));
       // Do not bother with UValue for numeric types.
       if (rUValue uval = val->as<UValue>())
       {

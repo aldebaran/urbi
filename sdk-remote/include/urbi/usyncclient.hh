@@ -171,24 +171,24 @@ namespace urbi
 
     /// Get the value of device.val in a synchronous way.
     /// \return 1 on success, 0 on failure.
-    int syncGetDevice(const char* device, double &val,
+    int syncGetDevice(const char* device, ufloat &val,
 		      libport::utime_t useconds = 0);
 
     /// Execute an URBI command, return the resulting double
     /// value.
     /// \return 1 on success, 0 on failure.
-    int syncGetResult(const char* command, double &val,
+    int syncGetResult(const char* command, ufloat &val,
 		      libport::utime_t useconds = 0);
 
     /// Get the normalized value of a device in a synchronous
     /// way.
     /// \return 1 on success, 0 on failure.
-    int syncGetNormalizedDevice(const char* device, double &val,
+    int syncGetNormalizedDevice(const char* device, ufloat &val,
 				libport::utime_t useconds = 0);
 
     /// Get a field of a device in a synchronous way.
     /// \return 1 on success, 0 on failure.
-    int syncGetDevice(const char* device, const char* field, double &val,
+    int syncGetDevice(const char* device, const char* field, ufloat &val,
 		      libport::utime_t useconds = 0);
 
     /// Get sound for duration milliseconds in buffer.

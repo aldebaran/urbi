@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -22,7 +22,7 @@ namespace urbi
   {
     int res = 0;
     if ((res = (m && m->type == MESSAGE_DATA)))
-      val = (T) *m->value;
+      val = *m->value;
     delete m;
     return res;
   }
@@ -30,11 +30,11 @@ namespace urbi
   template <>
   inline
   int
-  getValue<double>(UMessage* m, double& val)
+  getValue<ufloat>(UMessage* m, ufloat& val)
   {
     int res = 0;
     if ((res = (m && m->type == MESSAGE_DATA && m->value->type == DATA_DOUBLE)))
-      val = (double) *m->value;
+      val = m->value->val;
     delete m;
     return res;
   }

@@ -39,7 +39,7 @@ struct Point
     : x(0)
     , y(0)
   {}
-  double x,y;
+  ufloat x,y;
 };
 struct Rect
 {
@@ -95,6 +95,7 @@ public:
     UBindFunction(all, init);
     UBindFunction(all, setOwned);
     UBindFunction(all, setNotifyChange);
+    UBindFunctions(all, multiRead, multiWrite);
 
     /** BYPASS check **/
     UBindFunction(all, setBypassNotifyChangeBinary);
@@ -207,7 +208,19 @@ public:
     ++destructionCount;
   }
 
-  void boundev(double v)
+  void multiWrite(int idx, int count, ufloat val)
+  {
+    for (int i=0; i<count; ++i)
+      (*vars[idx]) = val+idx;
+  }
+  void multiRead(int idx, int count)
+  {
+    ufloat sum = 0;
+    for (int i=0; i<count; ++i)
+      sum += (ufloat)*vars[idx];
+  }
+
+  void boundev(ufloat v)
   {
     lastChange = "boundev";
     lastChangeVal = v;
@@ -347,7 +360,7 @@ public:
     return 0;
   }
 
-  void selfWriteVD(int i, std::vector<double> v)
+  void selfWriteVD(int i, std::vector<ufloat> v)
   {
     *vars[i] = v;
   }
@@ -568,7 +581,7 @@ public:
     return res;
   }
 
-  int writeProps(const std::string& name, double val)
+  int writeProps(const std::string& name, ufloat val)
   {
     threadCheck();
     urbi::UVar v(name);
@@ -585,7 +598,7 @@ public:
 
   /**  Test write to UVAR.  **/
 
-  int writeD(const std::string& name, double val)
+  int writeD(const std::string& name, ufloat val)
   {
     threadCheck();
     GD_FINFO_DEBUG("writeD %s", name);
@@ -697,10 +710,10 @@ public:
 
 
   /** Test function parameter and return value **/
-  double transmitD(double v) const
+  ufloat transmitD(ufloat v) const
   {
     threadCheck();
-    return -(double)v;
+    return -(ufloat)v;
   }
 
   urbi::UList transmitL(urbi::UList l) const
@@ -819,7 +832,7 @@ public:
     }
   }
 
-  void writeAD(double d) { a = d; }
+  void writeAD(ufloat d) { a = d; }
 
   void writeAS(const std::string& s) {a = s;}
 
@@ -871,14 +884,14 @@ public:
     #define CHECK                                     \
     if (d.size() !=2 || d[0] != 1 || d[1] != 2)       \
       throw std::runtime_error("vector is not what we expect")
-    std::vector<double> d;
+    std::vector<ufloat> d;
     d.push_back(1);
     d.push_back(2);
     urbi::UVar& v =*vars[i];
     v = d;
     d = v.as(&d);
     CHECK;
-    d = v.as<std::vector<double> >();
+    d = v.as<std::vector<ufloat> >();
     CHECK;
     v.fill(d);
     if (!(v == d))
@@ -892,7 +905,7 @@ public:
       throw std::runtime_error("hash is not what we expect");
   }
 
-  double area(Rect r)
+  ufloat area(Rect r)
   {
     return libport::round((r.a.x-r.b.x) * (r.a.y  - r.b.y));
   }
@@ -934,12 +947,12 @@ public:
     return src;
   }
 
-  std::vector<double> unpack(UPackedData<double> d)
+  std::vector<ufloat> unpack(UPackedData<ufloat> d)
   {
     return d;
   }
 
-  UPackedData<double> pack(std::vector<double> d)
+  UPackedData<ufloat> pack(std::vector<ufloat> d)
   {
     return d;
   }

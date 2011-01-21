@@ -462,7 +462,7 @@ namespace urbi
   }
 
   int
-  USyncClient::syncGetNormalizedDevice(const char* device, double& val,
+  USyncClient::syncGetNormalizedDevice(const char* device, ufloat& val,
 				       libport::utime_t useconds)
   {
     return getValue(syncGet(useconds, "%s.valn;", device), val);
@@ -483,14 +483,14 @@ namespace urbi
   }
 
   int
-  USyncClient::syncGetDevice(const char* device, double& val,
+  USyncClient::syncGetDevice(const char* device, ufloat& val,
 			     libport::utime_t useconds)
   {
     return getValue(syncGet(useconds, "%s.val;", device), val);
   }
 
   int
-  USyncClient::syncGetResult(const char* command, double& val,
+  USyncClient::syncGetResult(const char* command, ufloat& val,
 			     libport::utime_t useconds)
   {
     return getValue(syncGet(useconds, "%s", command), val);
@@ -499,7 +499,7 @@ namespace urbi
 
   int
   USyncClient::syncGetDevice(const char* device, const char* access,
-			     double& val, libport::utime_t useconds)
+			     ufloat& val, libport::utime_t useconds)
   {
     return getValue(syncGet(useconds, "%s.%s;", device, access), val);
   }
