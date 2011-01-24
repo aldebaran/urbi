@@ -59,22 +59,23 @@ namespace urbi
 
     inline void
     callNotify(runner::Runner& r, rUVar self,
-               libport::Symbol notifyList, rObject sourceUVar = 0)
+               UVar::Callbacks& callbacks_, rObject sourceUVar = 0)
     {
-      rList l =
-        self->slot_get(notifyList)->slot_get(SYMBOL(values))->as<List>();
+      if (callbacks_.empty())
+        return;
+      // List might be modified while iterating, so make a copy.
+      UVar::Callbacks callbacks(callbacks_);
       objects_type args;
       args.push_back(self);
       if (sourceUVar)
         args.push_back(sourceUVar);
-      List::value_type& callbacks = l->value_get();
-      for (List::value_type::iterator i = callbacks.begin();
-           i != callbacks.end(); )
+      for (UVar::Callbacks::iterator i = callbacks.begin();
+           i != callbacks.end(); ++i)
       {
         bool failed = true;
         try
         {
-          r.apply(*i, SYMBOL(NOTIFY), args);
+          r.apply(i->second, SYMBOL(NOTIFY), args);
           failed = false;
         }
         catch(UrbiException& e)
@@ -98,12 +99,8 @@ namespace urbi
         }
         if (failed && self->slot_get(SYMBOL(eraseThrowingCallbacks))->as_bool())
         {
-          // 'value' is just a cache, not the actual storage location.
-          self->slot_get(notifyList)->call(SYMBOL(remove), *i);
-          i = callbacks.erase(i);
+          self->removeCallback(callbacks_, i->first);
         }
-        else
-          ++i;
       }
     }
 
@@ -122,6 +119,44 @@ namespace urbi
         else
           i = callbacks.erase(i);
       }
+    }
+
+    unsigned int UVar::uid_ = 0;
+
+    unsigned int
+    UVar::notifyChange_(rObject function)
+    {
+      unsigned int id = ++uid_;
+      bool empty = change_.empty();
+      change_.push_back(std::make_pair(id, function));
+      if (empty)
+        loopCheck();
+      GD_FINFO_DUMP("Registered change with id %s on %s", id, this);
+      return id;
+    }
+
+    unsigned int
+    UVar::notifyChangeOwned_(rObject function)
+    {
+      unsigned int id = ++uid_;
+      changeOwned_.push_back(std::make_pair(id, function));
+      GD_FINFO_DUMP("Registered changeOwned with id %s on %s ", id, this);
+      return id;
+    }
+
+    unsigned int
+    UVar::notifyAccess_(rObject function)
+    {
+      unsigned int id = ++uid_;
+      bool empty = access_.empty();
+      access_.push_back(std::make_pair(id, function));
+      if (empty)
+      {
+        if (!loopCheck())
+          call(SYMBOL(hookChangedEvent)); // monitor changed.onSubscribe
+      }
+      GD_FINFO_DUMP("Registered access with id %s on %s", id, this);
+      return id;
     }
 
     rObject UVar::fromName(const std::string& name)
@@ -191,18 +226,24 @@ namespace urbi
       , looping_(false)
       , inAccess_(false)
     {
-#define DECLARE(Name, Cxx)           \
-      bind(SYMBOL(Name), &UVar::Cxx)
+#define DECLARE(Name)           \
+      bind(SYMBOL(Name), &UVar::Name)
 
-      DECLARE(writeOwned,    writeOwned);
-      DECLARE(update_timed,  update_timed);
-      DECLARE(loopCheck,     loopCheck);
-      DECLARE(accessor,      accessor);
-      DECLARE(update_,       update_);
-      DECLARE(update_timed_, update_timed_);
-      DECLARE(owned,         owned);
-      DECLARE(initialName,   initialName);
-      DECLARE(changed,   changed);
+      DECLARE(writeOwned);
+      DECLARE(update_timed);
+      DECLARE(loopCheck);
+      DECLARE(accessor);
+      DECLARE(update_);
+      DECLARE(update_timed_);
+      DECLARE(owned);
+      DECLARE(initialName);
+      DECLARE(changed);
+      DECLARE(removeNotifyChange);
+      DECLARE(removeNotifyChangeOwned);
+      DECLARE(removeNotifyAccess);
+      DECLARE(notifyChange_);
+      DECLARE(notifyChangeOwned_);
+      DECLARE(notifyAccess_);
 #undef DECLARE
 
       setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
@@ -217,14 +258,14 @@ namespace urbi
       runner::Runner& r = ::kernel::runner();
       while (true)
       {
-        callNotify(r, rUVar(this), SYMBOL(accessInLoop));
+        callNotify(r, rUVar(this), accessInLoop_);
         rObject period = System->call(SYMBOL(period));
         r.yield_for(libport::utime_t(period->as<Float>()->value_get()
                                      * 1000000.0));
       }
     }
 
-    void
+    bool
     UVar::loopCheck()
     {
       runner::Runner& r = ::kernel::runner();
@@ -236,20 +277,17 @@ namespace urbi
       // Listeners on the changed event counts as notifychange
       bool loopChecker = !looping_
           &&
-          (!slot_get(SYMBOL(change))->call(SYMBOL(empty))->as_bool()
+          (!change_.empty()
           || (changed_ && changed_->hasSubscribers())
           ||!slot_get(SYMBOL(changeConnections))->call(SYMBOL(empty))->as_bool()
            )
-          && !slot_get(SYMBOL(access))->call(SYMBOL(empty))->as_bool();
+          && !access_.empty();
       GD_FINFO_TRACE("Loopcheck on %s: %s", initialName, loopChecker);
       if (loopChecker)
       {
         // There is no need to keep an accessor present if we are
         // going to trigger it periodicaly.
-        slot_update(SYMBOL(accessInLoop),
-                    slot_get(SYMBOL(access)));
-        slot_update(SYMBOL(access),
-                    slot_get(SYMBOL(WeakDictionary))->call(SYMBOL(new)));
+        std::swap(access_, accessInLoop_);
         looping_ = true;
 	runner::Interpreter* nr =
         new runner::Interpreter(
@@ -260,6 +298,7 @@ namespace urbi
 	nr->tag_stack_clear();
 	nr->start_job();
        }
+       return loopChecker;
     }
 
     void
@@ -316,7 +355,7 @@ namespace urbi
       runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(val), val);
       if (owned)
-        callNotify(r, rUVar(this), SYMBOL(changeOwned));
+        callNotify(r, rUVar(this), changeOwned_);
       else
       {
         checkBypassCopy();
@@ -326,7 +365,7 @@ namespace urbi
         {
           i = inChange_.insert(&r).first;
           FINALLY(((std::set<void*>&, inChange_)) ((std::set<void*>::iterator&, i)), inChange_.erase(i));
-          callNotify(r, rUVar(this), SYMBOL(change));
+          callNotify(r, rUVar(this), change_);
           callConnections(r, rObject(this), SYMBOL(changeConnections));
         }
         if (changed_)
@@ -368,7 +407,7 @@ namespace urbi
       if (!inAccess_)
       {
         inAccess_ = true;
-        callNotify(r, rUVar(this), SYMBOL(access));
+        callNotify(r, rUVar(this), access_);
         inAccess_ = false;
       }
       rObject res = slot_get(owned
@@ -414,11 +453,43 @@ namespace urbi
       runner::Runner& r = ::kernel::runner();
       slot_update(SYMBOL(valsensor), newval);
       checkBypassCopy();
-      callNotify(r, rUVar(this), SYMBOL(change));
+      callNotify(r, rUVar(this), change_);
       callConnections(r, rObject(this), SYMBOL(changeConnections));
       if (changed_)
         changed_->emit();
       return newval;
+    }
+    bool
+    UVar::removeNotifyChange(unsigned int id)
+    {
+      return removeCallback(change_, id);
+    }
+    bool
+    UVar::removeNotifyChangeOwned(unsigned int id)
+    {
+      return removeCallback(changeOwned_, id);
+    }
+    bool
+    UVar::removeNotifyAccess(unsigned int id)
+    {
+      return removeCallback(access_, id) ||
+        removeCallback(accessInLoop_, id);
+    }
+    bool
+    UVar::removeCallback(Callbacks& cb, unsigned int id)
+    {
+      for (unsigned int i=0; i<cb.size(); ++i)
+      {
+        if (cb[i].first == id)
+        {
+          // Remove by swapping with last since order is not important.
+          if (i != cb.size() -1)
+            cb[i] = cb[cb.size()-1];
+          cb.pop_back();
+          return true;
+        }
+      }
+      return false;
     }
   }
 }

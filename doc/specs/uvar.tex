@@ -59,24 +59,28 @@ at (headTouch.val->changed? if headTouch.val)
   instantiating afterward.  See also the environment variable
   \env{URBI\_UVAR\_HOOK\_CHANGED}, \autoref{sec:tools:env}.
 
-\item[notifyAccess](<handle>, <onAccess>)%
+\item[notifyAccess](<onAccess>)%
   Similar to the \Cxx \lstinline|UNotifyAccess|, calls \var{onAccess} each
   time the \lstinline|UVar| is accessed (read).
 
-\item[notifyChange](<handle>, <onChange>)
+\item[notifyChange](<onChange>)
   Similar to the \Cxx \lstinline|UNotifyChange|
   (see \autoref{sec:uobject:uvar-notify}), register \var{onChange} and
   call it each time this \lstinline|UVar| is written to.
-  \var{handle} is a \lstinline|WeakPointer| used to automatically unregister
-  the callback. You can use the global \var{uobjects\_handle}.
+  Returns an identifier that can be passed to removeNotifyChange to
+  unregister the callback.
+
 \begin{urbiscript}
 UVar.new(Global, "y")|
-Global.&y.notifyChange(uobjects_handle, closure() {
+var handle = Global.&y.notifyChange(closure() {
   echo("The value is now " + Global.y)
 })|
 Global.y = 12;
 [00000001] *** The value is now 12
 [00000002] 12
+Global.&y.removeNotifyChange(handle)|;
+Global.y = 13;
+[00000003] 13
 \end{urbiscript}
 
 \item[owned]

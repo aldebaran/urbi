@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -100,7 +100,7 @@ namespace urbi
       if (target->slot_has(SYMBOL(inputPort)))
         // If target is InputPut, bypass write and call notifies.
         callNotify(r ? *r : ::kernel::runner(),
-                   target->as<UVar>(), SYMBOL(change), self);
+                   target->as<UVar>(), target->as<UVar>()->change_, self);
       else
         // If target is not, write to uvar.
         target->as<UVar>()->update_(self->as<UVar>()->getter(true));

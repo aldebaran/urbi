@@ -196,6 +196,8 @@ namespace urbi
       UGenericCallback* owner_;
       bool owned_;
       bool registered_;
+      // Notify id
+      int id_;
       /// The Primitive we put in 'change'.
       rObject callback_;
       /// The connection we implicitly created or 0.
@@ -985,32 +987,37 @@ namespace urbi
     KernelUVarImpl::unnotify()
     {
       LOCK_KERNEL;
+      GD_FINFO_TRACE("Unnotify on %s: %s callbacks", owner_->get_name(),
+                     callbacks_.size());
       // Try to locate the target urbiscript UVar, which might be
       // gone.  In this case, callbacks are gone too.
       foreach (KernelUGenericCallbackImpl* v, callbacks_)
       {
-        if (rObject r =
-            object::UVar::fromName(v->inportName_.empty()
-                                   ? v->owner_->name
-                                   : v->inportName_))
+        GD_FINFO_TRACE("Unnotify processing callback %s", v);
+        object::rUVar r = v->inportName_.empty()
+          ? ruvar_ : object::UVar::fromName(v->inportName_)->as<object::UVar>();
+        if (r)
         {
+          bool ok = false;
           if (v->owner_->type == "var")
           {
-            Symbol s = Symbol(v->owned_ ? "changeOwned" : "change");
-            r->slot_get(s)->call(SYMBOL(remove), v->callback_);
+            if (v->owned_)
+              ok = r->removeNotifyChangeOwned(v->id_);
+            else
+              ok = r->removeNotifyChange(v->id_);
           }
           else if (v->owner_->type == "varaccess")
           {
-            r->slot_get(SYMBOL(access))->call(SYMBOL(remove), v->callback_);
-            r->slot_get(SYMBOL(accessInLoop))->call(SYMBOL(remove),
-                                                    v->callback_);
-            continue;
+            ok = r->removeNotifyAccess(v->id_);
           }
-          else
-            continue;
+          GD_FINFO_TRACE("Removal said %s for id %s on %s(%s)", ok, v->id_,
+                         owner_->get_name(), ruvar_.get());
         }
         if (v->connection_)
+        {
           v->connection_->CxxObject::call(SYMBOL(disconnect));
+          GD_FINFO_TRACE("Killing connection associated with UGC %s", v);
+        }
       }
     }
 
@@ -1050,12 +1057,15 @@ namespace urbi
         {
           traceOperation(owner, SYMBOL(traceBind));
           ruvar_ = o->slot_get(varName)->as<object::UVar>();
+          GD_FINFO_DUMP("UVar %s reusing existing object %s",
+                        owner_->get_name(),
+                        ruvar_.get());
           return;
         }
         else
           o->slot_remove(varName);
       }
-      //clone uvar
+
       rObject protouvar = object::Object::proto->slot_get(SYMBOL(UVar));
       rObject uvar = protouvar->call(SYMBOL(new),
                                      o, new object::String(varName));
@@ -1064,6 +1074,9 @@ namespace urbi
         o->slot_get(varName)->slot_update(SYMBOL(val), initVal);
       traceOperation(owner, SYMBOL(traceBind));
       ruvar_ = uvar->as<object::UVar>();
+      GD_FINFO_DUMP("Uvar %s creating new object %s.",
+                    owner_->get_name(),
+                    ruvar_.get());
     }
     void KernelUVarImpl::clean()
     {
@@ -1230,6 +1243,7 @@ namespace urbi
       registered_ = true;
       StringPair p = split_name(owner_->name);
       std::string method = p.second;
+      GD_FPUSH_DUMP("UGC %s, %s, %s, %s", owner_->type,p.first, method, owned_);
       // UObject owning the variable/event to monitor
       rObject me = xget_base(p.first); //objname?
       object::objects_type args = list_of(me);
@@ -1265,7 +1279,7 @@ namespace urbi
       }
       if (owner_->type == "var" || owner_->type == "varaccess")
       { // NotifyChange or NotifyAccess callback
-
+        GD_FINFO_DUMP("UGC %s using backend UConnection.", this);
         //owner_->owner is the UObject that sets the callback: target
         // Compute tracing name
         // traceName is objName__obj__var
@@ -1280,21 +1294,16 @@ namespace urbi
           }
 
         // Source UVar
-        rObject var = me->slot_get(Symbol(method));
+        object::rUVar var = me->slot_get(Symbol(method))->as<object::UVar>();
         aver(var);
-        Symbol sym(SYMBOL(notifyAccess));
-        if (owner_->type != "varaccess")
-        {
-          if (owned_)
-            sym = SYMBOL(notifyChangeOwned);
-          else
-            sym = SYMBOL(notifyChange);
-        }
         rObject source = xget_base(owner_->objname);
+        GD_FINFO_TRACE("UGC same source: %s (%s==%s)", source == me,
+                       owner_->objname, p.first);
         if (source != me)
         {
-          if (sym == SYMBOL(notifyChange))
+          if (owner_->type != "varaccess" && !owned_)
           {
+            GD_FINFO_TRACE("UGC %s using UConnection backend.", this);
             // Use the new mechanism: create an input port and use it
             std::string ipname = owner_->name;
             size_t p = ipname.find_first_of('.');
@@ -1303,7 +1312,8 @@ namespace urbi
             InputPort ip(owner_->objname, ipname);
             inportName_ = owner_->objname + "." + ipname;
             // Retarget callback
-            var = object::UVar::fromName(owner_->objname + "." + ipname);
+            var = object::UVar::fromName(owner_->objname + "." + ipname)
+              ->as<object::UVar>();
             object::rUConnection c
               = object::UConnection::proto
               ->CxxObject::call(SYMBOL(new),
@@ -1311,15 +1321,14 @@ namespace urbi
               ->as<object::UConnection>();
             connection_ = c;
             useClosedVar_ = true;
+            GD_FINFO_TRACE("UGC %s using UConnection backend %s.", this,
+                           connection_.get());
           }
           else
             GD_FWARN("invalid usage of foreign UVar: notifyaccess or USensor"
                        "notifychange on %s from %s",
                      owner_->name, owner_->objname);
         }
-        // Get the weakpointer handle for this object
-        rObject handle = source->slot_get(SYMBOL(handle));
-        rObject f = var->slot_get(sym);
         aver(f);
         callback_ = new object::Primitive(
             boost::function1<rObject, const objects_type&>
@@ -1328,11 +1337,23 @@ namespace urbi
         callback_->slot_set
           (SYMBOL(target),
            new object::String(&owner_->owner ? owner_->owner.__name:"unknown"));
-        object::objects_type args = list_of(var)(handle)(callback_);
-        runner.apply(f, sym, args);
+
+        if (owner_->type != "varaccess")
+          if (owned_)
+            id_ = var->notifyChangeOwned_(callback_);
+          else
+            id_ = var->notifyChange_(callback_);
+        else
+           id_ = var->notifyAccess_(callback_);
+         GD_FINFO_DUMP("Registered gave id %s on %s(%s)", id_, owner_->name,
+                       var.get());
         if (owner_->target)
-          static_cast<KernelUVarImpl*>(owner_->target->impl_)
-            ->callbacks_ << this;
+        {
+          KernelUVarImpl* vimpl
+            = static_cast<KernelUVarImpl*>(owner_->target->impl_);
+          GD_FINFO_DUMP("Registering callback to KernelUVarImpl %s", vimpl);
+          vimpl->callbacks_ << this;
+        }
       }
     }
 

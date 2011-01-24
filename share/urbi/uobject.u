@@ -61,17 +61,13 @@ do (Global.UObject)
     // COW
     updateTask = Tag.new|
     remoteEventMap = [ => ]|
-    var this.handle = WeakPointer.new|
     timerTask = [ => ]
   };
 
   /// Move a notifychange on 'from' setup by this object, move it on 'to'.
   function reconnect(from, to)
   {
-    var cbs = from.change[handle]|
-    from.change.erase(handle)|
-    for (var cb in cbs)
-      to.notifyChange(handle, cb)
+    warn("reconnect is deprecated, use connections");
   };
 
   function destroy()
@@ -83,8 +79,6 @@ do (Global.UObject)
     var remote = hasLocalSlot("isRemote") |
     var lob = lobby | // will find this.lobby if we are a remote uobject
     uobjects.removeLocalSlot(__uobjectName)|
-    // Deregister all callbacks
-    handle = nil|
     // Remove reference loops induced by closures.
     for| (var f: localSlotNames)
       if (getSlot(f).isA(UVar))
@@ -191,8 +185,9 @@ do (Global.UObject)
       // May or may not be present, never mind
       if (lobby.__bindingFunc[fullname].isA(UConnection))
         lobby.__bindingFunc[fullname].disconnect
-      else
-        getSlot(objname).getSlot(varname).change.remove(lobby.__bindingFunc[fullname])|
+      else if (lobby.__bindingFunc[fullname].isA(Float))
+        getSlot(objname).getSlot(varname)
+          .removeNotifyChange(lobby.__bindingFunc[fullname])|
       // May be using the shared RTP object
       if (lobby.hasLocalSlot("sharedRTP")
           && lobby.__bindingFunc[fullname] === lobby.sharedRTP)
@@ -337,9 +332,9 @@ do (&UVar)
         chan.lobby = l |
         chan << msg |
         var currentBindings = l.__bindingFunc.getWithDefault(fullname,nil)|
-        if (currentBindings.isA(&Executable))
+        if (currentBindings.isA(&Float))
         { // Standard TCP notifychange, remove it...
-          change.remove(currentBindings);
+          removeNotifyChange(currentBindings);
           //... and replace it with RTP version
           'external'.setupRTP(tv.isA(Binary), ownerName, name, l, nil)
           // Do not change bindingCount.
@@ -389,61 +384,61 @@ do (&UVar)
     var uv = __clone|
     do (uv)
     {
-      var change = WeakDictionary.new |
       var changeConnections = [] |
-      var changeOwned = WeakDictionary.new |
-      var access = WeakDictionary.new |
-      var accessInLoop = WeakDictionary.new |
       var val |
       var valsensor = 0 |
       var isUVar = 1
     }
   };
-
-  function notifyChange(handle, f)
+  /// Calls f each time the UVar is modified, returns an id to remove it
+  function notifyChange(f, compatF=nil)
   {
-    var wasEmpty = change.empty&&changeConnections.empty |
-    change[handle] = f |
-    if (wasEmpty)
-      loopCheck |
-    void
+    if (!compatF.isNil)
+    {
+      wall("notifyChange(handle, func) is deprecated, use notifyChange(func)")|
+      f = compatF
+    }|
+    notifyChange_(f)
   };
 
-  function notifyChangeOwned(handle, f)
+  function notifyChangeOwned(f, compatF=nil)
   {
-    changeOwned[handle] = f |
-    void
+    if (!compatF.isNil)
+    {
+      wall("notifyChange(handle, func) is deprecated, use notifyChange(func)")|
+      f = compatF
+    }|
+    notifyChangeOwned_(f)
   };
 
-  function notifyAccess(handle, f)
+  function notifyAccess(f, compatF=nil)
   {
+    if (!compatF.isNil)
+    {
+      wall("notifyChange(handle, func) is deprecated, use notifyChange(func)")|
+      f = compatF
+    }|
     //beware of the CoW
     &UVar.nAccess++ |
-    var wasEmpty = access.empty |
-    access[handle] = f |
-    if (wasEmpty)
-    {
-      loopCheck |
-      // Arm recheck on subscribe to change event.
-      disown({if (hookChanged)
-      {
-        var t = Tag.new |
-        if (!changed.hasLocalSlot("onSubscribe"))
-          var changed.onSubscribe = Event.new |
-        t: at (changed.onSubscribe?)
-        {
-          loopCheck |
-          if (!accessInLoop.dict.empty)
-          {
-            changed.removeLocalSlot("onSubscribe")|
-            t.stop
-          }
-        }
-      }})|
-    }|
     if (&UVar.nAccess == 1)
       onHasNotifyAccess! |
-    void
+    notifyAccess_(f)
+  };
+  function hookChangedEvent()
+  {
+    disown({
+      var t = Tag.new |
+      if (!changed.hasLocalSlot("onSubscribe"))
+        var changed.onSubscribe = Event.new |
+      t: at (changed.onSubscribe?)
+      {
+        if (loopCheck)
+        {
+          changed.removeLocalSlot("onSubscribe")|
+          t.stop
+        }
+      }
+    })
   };
 
   function '>>'(target)
@@ -457,7 +452,7 @@ do (&UVar)
   /// Return an UVar from its name
   function fromName(n)
   {
-    var base = lobby;
+    var base = lobby|
     for|(var c: n.split("."))
       base = base.getSlot(c) |
     base
@@ -472,10 +467,8 @@ do(UConnection)
     /// We cannot take a reference on those uvars.
     source = from.fullName|
     target = to.fullName |
-    var wasEmpty = from.change.empty&& from.changeConnections.empty |
     from.changeConnections << this |
-    if (wasEmpty)
-      from.loopCheck |
+    from.loopCheck |
     var this.start = time
   };
   function niceName(varname)
@@ -513,7 +506,10 @@ do(UConnection)
     try {
     var src = UVar.fromName(source)|
     src.changeConnections.remove(this)
-    } catch(var e) {}|
+    } catch(var e)
+    {
+      //wall(e)
+    }|
     source = ""
   };
   function reconnect(from)
@@ -578,7 +574,11 @@ do (UValue)
 };
 
 class Global.uobjects {};
-var Global.uobjects_handle = WeakPointer.new;
+var Global.uobjects_handle = function()
+{
+  warn("uobjects_handle no longuer necessary")|
+  nil
+};
 
 // UObjects can use evaluate at initialization-time.
 UVar.new(Global,"evaluate");
@@ -586,7 +586,7 @@ do (Global.&evaluate)
 {
   eraseThrowingCallbacks = false;
   owned = true;
-  notifyChangeOwned(uobjects_handle, function()
+  notifyChangeOwned(function()
   {
     var res = eval(Global.&evaluate.val.asString).acceptVoid |
     if (!res.isVoid)
@@ -595,13 +595,13 @@ do (Global.&evaluate)
 };
 
 UVar.new(Global, "currentLobbyId");
-Global.&currentLobbyId.notifyAccess(uobjects_handle, function()
+Global.&currentLobbyId.notifyAccess(function()
 {
   &currentLobbyId.val = lobby.uid;
 });
 
 UVar.new(Global, "currentRunnerInUObjectUpdate");
-Global.&currentRunnerInUObjectUpdate.notifyAccess(uobjects_handle, function()
+Global.&currentRunnerInUObjectUpdate.notifyAccess(function()
 {
   &currentRunnerInUObjectUpdate.val
     = currentRunner.hasLocalSlot("$uobjectInUpdate");
@@ -756,7 +756,11 @@ class Global.'external'
     }|
     if (!lobby.hasSlot("handle"))
     {
-      var lobby.handle = WeakPointer.new
+      var lobby.handle = function()
+      {
+        warn("Lobby handles are no longuer used")|
+        nil
+      }
     }|
     // Refcount number of binds to this var
     if (!lobby.hasLocalSlot("__bindingCount"))
@@ -858,6 +862,7 @@ class Global.'external'
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
     var fullname = objname + "." + varname|
+    // Construct the callback function
     function f()
     {
       // If source is the current lobby, loopback took care of notification
@@ -872,25 +877,30 @@ class Global.'external'
                  v,
                  uob.getProperty(varname, "timestamp")]
     }|
-    if (uobjects.hasSlot(fr))
+    // Directly set it if the source UVar is from this connection
+    if (getSlot(objname).lobby == lobby)
+    {
+      lobby.__bindingFunc[fullname] =
+        uobjects.getSlot(objname).getSlot(varname).notifyChange(f)
+    }
+    else// Or use an intermediate UConnection and InputPort to handle disconnect
     {
       var o = uobjects.getSlot(fr)|
+      assert(o.lobby == lobby) |
       var iportname = fullname.replace(".", "_")|
       if (!o.hasLocalSlot(iportname))
       {
         UVar.new(o, iportname)|
         var o.getSlot(iportname).inputPort = true
       }|
-      o.getSlot(iportname).notifyChange(lobby.handle, f)|
+      o.getSlot(iportname).notifyChange(f)|
       lobby.__bindingFunc[fullname] =
-          uobjects.getSlot(objname).getSlot(varname) >> o.getSlot(iportname)|
+      uobjects.getSlot(objname).getSlot(varname) >> o.getSlot(iportname)
+          |
+      /*| should not be needed anymore
       uobjects.getSlot(fr).notifies
       .getWithDefault(objname + "." + varname, [], true) << f|
-    }
-    else
-    {
-      lobby.__bindingFunc[fullname] = f |
-      uobjects.getSlot(objname).getSlot(varname).notifyChange(lobby.handle, f)
+      */
     }|
     void
   };

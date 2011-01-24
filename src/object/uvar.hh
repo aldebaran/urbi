@@ -28,6 +28,8 @@ namespace urbi
     class UVar: public Primitive
     {
     public:
+      typedef std::pair<unsigned int, rObject> Callback;
+      typedef std::vector<Callback> Callbacks;
       UVar();
       UVar(libport::intrusive_ptr<UVar> model);
       rObject update_(rObject arg);
@@ -37,13 +39,26 @@ namespace urbi
       /// Like accessor, but if fromCxx is true and the value is an UValue,
       /// return it instead of its content.
       rObject getter(bool fromCXX);
-      /// Check if we have both in/out callbaks, periodicaly trigger if so.
-      void loopCheck();
+      /** Check if we have both in/out callbaks, periodicaly trigger
+       * and return true if so.
+       */
+      bool loopCheck();
       rObject writeOwned(rObject newval);
       rObject changed();
+      unsigned int notifyChange_(rObject cb);
+      unsigned int notifyAccess_(rObject cb);
+      unsigned int notifyChangeOwned_(rObject cb);
+      bool removeNotifyChange(unsigned int);
+      bool removeNotifyAccess(unsigned int);
+      bool removeNotifyChangeOwned(unsigned int);
+      bool removeCallback(Callbacks& cb, unsigned int id);
       // Return the UVar from its full name.
       static rObject fromName(const std::string& n);
     private:
+      Callbacks change_;
+      Callbacks access_;
+      Callbacks changeOwned_;
+      Callbacks accessInLoop_;
       /// Check and unlock getters stuck waiting.
       void checkBypassCopy();
       void changeAccessLoop();
@@ -58,10 +73,12 @@ namespace urbi
       // We must duplicate changed! mechanism because we want to disable
       // automatic triggering.
       rEvent changed_;
+      static unsigned int uid_; // Unique id for callbacks
+      friend class UConnection;
     };
     /// Call some notifies on an UVar.
     void callNotify(runner::Runner& r, rUVar self,
-               libport::Symbol notifyList, rObject sourceUVar);
+                    UVar::Callbacks& notifyList, rObject sourceUVar);
   }
 }
 #endif
