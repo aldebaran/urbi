@@ -40,8 +40,12 @@ namespace urbi
     /// Run time values for Urbi.
     class URBI_SDK_API Object
       : public libport::RefCounted
-      , public libport::StaticallyAllocated<URBI_OBJECT_MAX, 184>
+      , public libport::StaticallyAllocated<Object, URBI_OBJECT_MAX>
     {
+    public:
+      /// Maximum object size for the allocator
+      static const size_t allocator_static_max_size;
+
       /// \name Ctor & dtor.
       /// \{
     public:

@@ -95,6 +95,7 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/object-class.cc			\
   object/object-class.hh			\
   object/object.cc				\
+  object/object-size.cc				\
   object/path.cc				\
   object/position.cc				\
   object/primitive.cc				\

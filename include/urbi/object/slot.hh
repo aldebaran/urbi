@@ -28,8 +28,12 @@ namespace urbi
   {
     class Slot
       : public libport::RefCounted
-      , public libport::StaticallyAllocated<URBI_OBJECT_MAX, 24>
+      , public libport::StaticallyAllocated<Slot, URBI_OBJECT_MAX>
     {
+    public:
+      /// Maximum object size for the allocator
+      static const size_t allocator_static_max_size;
+
     public:
       typedef boost::unordered_map<libport::Symbol, rObject> properties_type;
 
