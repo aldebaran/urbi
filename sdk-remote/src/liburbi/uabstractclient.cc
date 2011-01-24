@@ -291,13 +291,8 @@ namespace urbi
     // Lists can contain binary, so recurse using this function.
     case DATA_LIST:
       send("[");
-      for (size_t i = 0, sz = v.list->size();
-           i < sz; ++i)
-      {
-        send((*v.list)[i]);
-        if (i != sz-1)
-          send(" , ");
-      }
+      foreach (const UValue* u, *v.list)
+        send(libport::format("%s,", u));
       return send("]");
       break;
 
@@ -306,17 +301,9 @@ namespace urbi
       if (v.dictionary->empty())
         send("=>");
       else
-      {
-        bool first = true;
         foreach (const UDictionary::value_type& d, *v.dictionary)
-        {
-          if (!first)
-            send(",");
-          send("\"%s\"=>", string_cast(libport::escape(d.first)).c_str());
-          send(d.second);
-          first = false;
-        }
-      }
+          send(libport::format("\"%s\"=>%s,",
+                               libport::escape(d.first), d.second));
       return send("]");
       break;
 

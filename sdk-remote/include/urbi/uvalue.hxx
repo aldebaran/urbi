@@ -41,6 +41,34 @@ namespace urbi
 # undef ULIST_NTH
 
   inline
+  UList::iterator
+  UList::begin()
+  {
+    return array.begin();
+  }
+
+  inline
+  UList::iterator
+  UList::end()
+  {
+    return array.end();
+  }
+
+  inline
+  UList::const_iterator
+  UList::begin() const
+  {
+    return array.begin();
+  }
+
+  inline
+  UList::const_iterator
+  UList::end() const
+  {
+    return array.end();
+  }
+
+  inline
   size_t
   UList::size() const
   {

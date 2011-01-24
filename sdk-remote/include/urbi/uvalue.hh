@@ -71,6 +71,15 @@ namespace urbi
     template<typename T>
     T as();
 
+    /// Iteration.
+    typedef std::vector<UValue*> list_type;
+    typedef list_type::iterator iterator;
+    typedef list_type::const_iterator const_iterator;
+    iterator begin();
+    iterator end();
+    const_iterator begin() const;
+    const_iterator end() const;
+
     // Append an element to the end.
     template<typename T>
     UList&
@@ -89,7 +98,7 @@ namespace urbi
     std::ostream& print(std::ostream& o) const;
 
     // The actual contents.
-    std::vector<UValue*> array;
+    list_type array;
 
   private:
     void clear();
