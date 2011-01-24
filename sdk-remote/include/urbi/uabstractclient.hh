@@ -168,6 +168,9 @@ namespace urbi
     ATTRIBUTE_PRINTF(2, 3)
     error_type send(const char* format, ...);
 
+    /// A C++ string.
+    error_type send(const std::string& s);
+
     /// Send the value without any prefix or terminator
     error_type send(const urbi::UValue& v);
 

@@ -243,9 +243,6 @@ namespace urbi
     return res;
   }
 
-
-  /*! Multiple commands can be sent in one call.
-   */
   UAbstractClient::error_type
   UAbstractClient::send(const char* command, ...)
   {
@@ -265,6 +262,12 @@ namespace urbi
   }
 
   UAbstractClient::error_type
+  UAbstractClient::send(const std::string& s)
+  {
+    return send("%s", s.c_str());
+  }
+
+  UAbstractClient::error_type
   UAbstractClient::send(const UValue& v)
   {
     switch (v.type)
@@ -273,7 +276,7 @@ namespace urbi
     case DATA_DOUBLE:
     case DATA_SLOTNAME:
     case DATA_STRING:
-      return send("%s", string_cast(v).c_str());
+      return send(string_cast(v));
       break;
 
     // Use our own sendBinary for binary, who knows how to talk to k1 and k2.
