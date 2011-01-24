@@ -1,4 +1,4 @@
-## Copyright (C) 2006-2010, Gostai S.A.S.
+## Copyright (C) 2006-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -29,6 +29,7 @@ AM_CPPFLAGS += -I$(srcdir) -I.
 AM_CPPFLAGS +=					\
   -I$(top_srcdir)/include			\
   -I$(top_builddir)/include			\
+  -D__SRCDIR__="\"$(top_srcdir)\""		\
   $(LIBPORT_CPPFLAGS)				\
   $(LTDL_CPPFLAGS)
 

@@ -24,6 +24,7 @@ AM_CPPFLAGS +=							\
   $(LIBPORT_CPPFLAGS)						\
   $(JPEG_CPPFLAGS)						\
   -DURBI_INHIBIT_REVISION_CHECK					\
+  -D__SRCDIR__="\"$(top_srcdir)\""				\
   -I$(sdk_remote_srcdir)/include -I$(sdk_remote_builddir)	\
   -I$(srcdir)
 

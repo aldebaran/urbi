@@ -333,9 +333,6 @@ AC_CONFIG_FILES([modules/Makefile])
 ## Output.  ##
 ## -------- ##
 
-AC_DEFINE_UNQUOTED([SRCDIR], ["$srcdir"],
-  [Define to the path from build to source tree.])
-
 AC_SUBST([kernel_srcdir], ['${abs_top_srcdir}'])
 AC_SUBST([kernel_builddir], ['${abs_top_builddir}'])
 AC_SUBST([sdk_remote_srcdir], ['${kernel_srcdir}/sdk-remote'])

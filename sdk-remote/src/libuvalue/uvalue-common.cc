@@ -9,8 +9,6 @@
  */
 
 /// \file libuvalue/uvalue-common.cc
-#include <kernel/config.h> // SRCDIR
-
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -779,10 +777,10 @@ namespace
   }
 
   std::string
-  syncline_push(std::string file, unsigned line)
+  syncline_push(const std::string& srcdir, std::string file, unsigned line)
   {
-    if (boost::algorithm::ends_with(file, SRCDIR "/"))
-      boost::algorithm::erase_tail(file, sizeof (SRCDIR "/"));
+    if (boost::algorithm::starts_with(file, srcdir + "/"))
+      boost::algorithm::erase_head(file, srcdir.size() + 1);
     return libport::format("//#push %d \"%s\"\n", line, file);
   }
 

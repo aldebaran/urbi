@@ -374,7 +374,13 @@ namespace urbi
   typename uvar_ref_traits<typename uvalue_cast_return_type<Type>::type>::type
   uvalue_cast (UValue& v);
 
-  std::string syncline_push(std::string file, unsigned line);
+  /// Issue a syncline.
+  /// \param srcdir   the path from here to the top-srcdir.
+  ///                 Will be removed from file.
+  /// \param file     __FILE__
+  /// \param line     __LINE__
+  std::string
+  syncline_push(const std::string& srcdir, std::string file, unsigned line);
 
 } // namespace urbi
 
@@ -384,10 +390,14 @@ namespace urbi
 #define SYNCLINE_POP()                          \
   "//#pop\n"
 
-#define SYNCLINE_WRAP(...)                      \
-  (::urbi::syncline_push(__FILE__, __LINE__)    \
-   + libport::format(__VA_ARGS__)               \
-   + "\n"                                       \
+#ifndef __SRCDIR__
+# define __SRCDIR__ ""
+#endif
+
+#define SYNCLINE_WRAP(...)                                      \
+  (::urbi::syncline_push(__SRCDIR__, __FILE__, __LINE__)        \
+   + libport::format(__VA_ARGS__)                               \
+   + "\n"                                                       \
    SYNCLINE_POP())
 
 #define URBI_STRUCT_CAST_FIELD(_, Cname, Field)                         \

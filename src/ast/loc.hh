@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -22,8 +22,8 @@
 
 # include <kernel/config.h>
 
-# define LOCATION_HERE					\
-  ::ast::loc(new libport::Symbol(__FILE__ + sizeof("../" SRCDIR "/src/") - 1), \
+# define LOCATION_HERE                                                  \
+  ::ast::loc(new libport::Symbol(__FILE__ + sizeof(__SRCDIR__ "/src/") - 1), \
              __LINE__)
 
 namespace ast
