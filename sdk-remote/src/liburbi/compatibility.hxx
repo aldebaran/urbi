@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -28,7 +28,7 @@ namespace urbi
       if (major < 2)
         return name + " << ";
       else
-        return SYNCLINE_WRAP("try { Channel.new(\"" + name + "\") << {");
+        return SYNCLINE_WRAP("try { Channel.new(\"%s\") << {", name);
     }
 
     inline
@@ -39,12 +39,12 @@ namespace urbi
         return ",";
       else
         return ("\n"
-                SYNCLINE_WRAP(
+                + SYNCLINE_WRAP(
                               "} }\n"
                               "catch (var e)\n"
                               "{\n"
-                              "  lobby.send(\"!!! \" + e, \"" + name + "\");\n"
-                              "},"));
+                              "  lobby.send(\"!!! \" + e, \"%s\");\n"
+                              "},", name));
     }
 
     /*-------.

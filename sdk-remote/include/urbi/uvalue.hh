@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -365,6 +365,8 @@ namespace urbi
   typename uvar_ref_traits<typename uvalue_cast_return_type<Type>::type>::type
   uvalue_cast (UValue& v);
 
+  std::string syncline_push(std::string file, unsigned line);
+
 } // namespace urbi
 
 #define SYNCLINE_PUSH()                                         \
@@ -374,10 +376,10 @@ namespace urbi
   "//#pop\n"
 
 #define SYNCLINE_WRAP(...)                      \
-  SYNCLINE_PUSH()                               \
-  __VA_ARGS__                                   \
-  "\n"                                          \
-  SYNCLINE_POP()
+  (::urbi::syncline_push(__FILE__, __LINE__)    \
+   + libport::format(__VA_ARGS__)               \
+   + "\n"                                       \
+   SYNCLINE_POP())
 
 #define URBI_STRUCT_CAST_FIELD(_, Cname, Field)                         \
   if (libport::mhas(dict, BOOST_PP_STRINGIZE(Field)))                   \

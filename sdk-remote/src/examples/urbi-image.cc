@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -191,12 +191,13 @@ main (int argc, char *argv[])
     client.send(SYNCLINE_WRAP("var uimg = Channel.new(\"uimg\")|;"));
   client.setCallback(showImage, "uimg");
 
-  client.send(SYNCLINE_WRAP("%s.resolution = %s|;\n"
-                            "%s.jpegfactor = %d|;\n"
-                            "%s.reconstruct = %d|;"),
-              device.c_str(), arg_resolution.value("0").c_str(),
-              device.c_str(), arg_jpeg.get<int>(70),
-              device.c_str(), arg_rec.get() ? 1 : 0);
+  client.send(SYNCLINE_WRAP(
+                "%s.resolution = %s|;\n"
+                "%s.jpegfactor = %d|;\n"
+                "%s.reconstruct = %d|;",
+                device, arg_resolution.value("0"),
+                device, arg_jpeg.get<int>(70),
+                device, arg_rec.get() ? 1 : 0));
 
   if (arg_out.filled())
   {
@@ -227,22 +228,21 @@ main (int argc, char *argv[])
   {
     imcount = 0;
     int fmt = (arg_format[0] == 'r') ? 0 : 1;
-    client.send(SYNCLINE_WRAP("%s.format = %d|;"), device.c_str(), fmt);
+    client.send(SYNCLINE_WRAP("%s.format = %d|;", device, fmt));
     client.waitForKernelVersion(true);
     if (int period = arg_period.get<int>(0))
-      client.send(SYNCLINE_WRAP("every (%dms) uimg << %s.val,"),
-                  period, device.c_str());
+      client.send(SYNCLINE_WRAP("every (%dms) uimg << %s.val,",
+                                period, device));
     else if (client.kernelMajor() < 2)
-      client.send(SYNCLINE_WRAP("loop { uimg << %s.val; noop },"),
-                  device.c_str());
+      client.send(SYNCLINE_WRAP("loop { uimg << %s.val; noop },", device));
     else
       client.send(
         SYNCLINE_WRAP("var handle = WeakPointer.new|;\n"
                       "%s.getSlot(\"val\").notifyChange(handle, closure() {\n"
                       "  connectionTag:\n"
                       "    this.send(%s.val.asString, \"uimg\")\n"
-                      "});"),
-        device.c_str(), device.c_str());
+                      "});",
+                      device, device));
     urbi::execute();
   }
 

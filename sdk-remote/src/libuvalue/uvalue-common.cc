@@ -9,6 +9,10 @@
  */
 
 /// \file libuvalue/uvalue-common.cc
+#include <kernel/config.h> // SRCDIR
+
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include <libport/cassert>
 #include <libport/compiler.hh>
@@ -772,6 +776,14 @@ namespace
   operator<< (std::ostream& o, const UObjectStruct& t)
   {
     return t.print(o);
+  }
+
+  std::string
+  syncline_push(std::string file, unsigned line)
+  {
+    if (boost::algorithm::ends_with(file, SRCDIR "/"))
+      boost::algorithm::erase_tail(file, sizeof (SRCDIR "/"));
+    return libport::format("//#push %d \"%s\"\n", line, file);
   }
 
 } // namespace urbi

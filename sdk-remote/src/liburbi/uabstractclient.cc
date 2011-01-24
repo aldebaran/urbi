@@ -1108,9 +1108,10 @@ namespace urbi
     // Have the connectionId sent on __ident.
 # define IDENT_TAG TAG_PRIVATE_PREFIX "__ident"
     setCallback(*this, &UAbstractClient::setConnectionID, IDENT_TAG);
-    send(kernelMajor_ < 2
-         ? IDENT_TAG " << local.connectionID;\n"
-         : SYNCLINE_WRAP("Channel.new(\"" IDENT_TAG "\")"
+    if (kernelMajor_ < 2)
+      send(IDENT_TAG " << local.connectionID;\n");
+    else
+      send(SYNCLINE_WRAP("Channel.new(\"" IDENT_TAG "\")"
                          " << connectionTag.name;\n"));
     return URBI_REMOVE;
 # undef IDENT_TAG

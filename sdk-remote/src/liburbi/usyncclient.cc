@@ -402,7 +402,7 @@ namespace urbi
            "noop;\n"
            "noop;\n", camera, f);
     else
-      send(SYNCLINE_WRAP("%s.format = %d|;"), camera, f);
+      send(SYNCLINE_WRAP("%s.format = %d|;", camera, f));
     UMessage *m = syncGet(useconds, "%s.val", camera);
     if (!m
         || m->type != MESSAGE_DATA
@@ -526,7 +526,7 @@ namespace urbi
              "{\n"
              "  sleep(%d);\n"
              "  loopsound.stop;\n"
-             "};"), device, duration);
+             "};", device, duration));
 
     UMessage* m = syncGet(useconds, "%s", "syncgetsound;");
     if (!m

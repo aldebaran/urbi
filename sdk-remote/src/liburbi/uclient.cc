@@ -149,8 +149,8 @@ namespace urbi
     // need to write something that both k1 and k2 will like.
     send(SYNCLINE_WRAP(
            "if (isdef(Channel))\n"
-           "  var lobby.%s = Channel.new(\"%s\")|;"),
-         internalPongTag, internalPongTag);
+           "  var lobby.%s = Channel.new(\"%s\")|;",
+           internalPongTag, internalPongTag));
     // The folowwing calls may fail if we got disconnected.
     try
     {
