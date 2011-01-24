@@ -31,11 +31,6 @@ URBI_SERVER = urbi-launch$(EXEEXT) --start --
 k2-check:
 	@$(MAKE) $(AM_MAKEFLAGS) check TESTS_DIRS=2.x
 
-# Big problems in serialized communication.
-XFAIL_TESTS +=					\
-  uob/java/all/destruction-unregister.chk	\
-  uob/remote/all/destruction-unregister.chk
-
 # Uobject tests that we fail because features are not implemented
 XFAIL_TESTS +=					\
   2.x/derive.chk				\

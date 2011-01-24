@@ -283,6 +283,22 @@ namespace runner
           stop_ = true;
         }
       }
+      // Catch and print unhandled exceptions
+      catch (object::UrbiException& e)
+      {
+        show_exception(object::UrbiException(e.value_get(),
+                                             e.backtrace_get()));
+      }
+      catch (const Exception& e)
+      {
+        GD_FINFO_TRACE("%s: command is invalid, printing errors.",
+                       name_get());
+        e.print(*this);
+      }
+      catch (const sched::StopException& e)
+      {
+        GD_FINFO_DUMP("StopException ignored: %s", e.what());
+      }
       catch (const std::runtime_error& re)
       {
         GD_FINFO_TRACE("Serialized message error: %s", re.what());
@@ -290,13 +306,15 @@ namespace runner
         e.err(ast::loc(), re.what());
         e.print(*this);
       }
-      catch (const sched::StopException& e)
-      {
-        GD_FINFO_DUMP("StopException ignored: %s", e.what());
-      }
       catch (const std::exception& e)
       {
-        GD_FINFO_DUMP("std::exception: %s", e.what());
+        GD_FWARN("Unexpected error '%s' caught in processSerializedMessages",
+                 e.what());
+        throw;
+      }
+      catch(...)
+      {
+        GD_WARN("Unknown error caught in processSerializedMessages");
         throw;
       }
       for (jobs_type::iterator it = jobs_.begin();
