@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -55,6 +55,7 @@ namespace urbi
   }
 
   template<typename T>
+  inline
   UList&
   UList::push_back(const T& v)
   {
@@ -224,6 +225,7 @@ namespace urbi
 
   // Run the uvalue_caster<Type> on v.
   template <typename Type>
+  inline
   typename uvar_ref_traits<typename uvalue_cast_return_type<Type>::type>::type
   uvalue_cast(UValue& v)
   {
@@ -327,7 +329,7 @@ namespace urbi
 # endif
 
   // Dictionary casters.
-  template<typename V>
+  template <typename V>
   struct uvalue_caster<boost::unordered_map<std::string, V> >
   {
     boost::unordered_map<std::string, V> operator()(UValue& v)
@@ -342,8 +344,9 @@ namespace urbi
     }
   };
 
-  template<typename V>
-  inline UValue&
+  template <typename V>
+  inline
+  UValue&
   operator,(UValue& v, const boost::unordered_map<std::string, V> & d)
   {
     typedef typename boost::unordered_map<std::string, V>::value_type DictVal;
@@ -360,7 +363,8 @@ namespace urbi
   }
 
   // Uses casters, must be at the end
-  template<typename T>
+  template <typename T>
+  inline
   UList&
   UList::operator=(const T& container)
   {
@@ -375,7 +379,8 @@ namespace urbi
     return *this;
   }
 
-  template<typename T>
+  template <typename T>
+  inline
   T
   UList::as()
   {
@@ -388,13 +393,14 @@ namespace urbi
   /** Bounce to uvalue_cast(). Useful when the type of the argument is not
    * directly available.
    */
-  template<typename T>
+  template <typename T>
+  inline
   void uvalue_cast_bounce(T& t, UValue& v)
   {
     t = uvalue_cast<T>(v);
   }
 
-  template<typename T>
+  template <typename T>
   struct uvalue_caster<UPackedData<T> >
   {
     UPackedData<T> operator() (UValue& v)
@@ -410,7 +416,8 @@ namespace urbi
     }
   };
 
-  template<typename T>
+  template <typename T>
+  inline
   UValue& operator, (UValue&v, const UPackedData<T>& d)
   {
     v = UBinary();
