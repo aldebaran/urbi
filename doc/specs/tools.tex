@@ -74,12 +74,20 @@ They are meant for developers.
 \begin{envs}
 \item[GD\_COLOR] If set, force the use of colors in the logs, even if the
   output device does not seem to support them.  See also \env{GD\_NO\_COLOR}.
-\item[GD\_ENABLE\_CATEGORY] If set, a comma-separated list of categories
-  (e.g., \code{UValue}, \code{Urbi}) to display.  All the others will be
-  discarded.  See also \env{GD\_DISABLE\_CATEGORY}.
-\item[GD\_DISABLE\_CATEGORY] If set, a comma-separated list of categories
-  (e.g., \code{UValue}, \code{Urbi}) \emph{not} to display.  See also
-  \env{GD\_ENABLE\_CATEGORY}.
+\item[GD\_CATEGORY] If set, a comma-separated list of categories or globs
+  (e.g., \code{UValue}, \code{Urbi.*}) with modifiers \code{+} or
+  \code{-}. If the modifier is a \code{+} or if there is no modifier the
+  category will be displayed. If the modifier is a \code{-} it will be
+  hidden. Modifiers can be chained so we get the following behavior:
+  \code{-*,+Urbi.*,-Urbi.At} will only display categories beginning with
+  \code{Urbi.} except \code{Urbi.At}, \code{-Urbi.*} will display all
+  categories except those beginning with \code{Urbi.}.
+\item[GD\_ENABLE\_CATEGORY] If set, a comma-separated list of categories or
+  globs (e.g., \code{UValue}, \code{Urbi.*}) to display.  All the others
+  will be discarded.  See also \env{GD\_DISABLE\_CATEGORY}.
+\item[GD\_DISABLE\_CATEGORY] If set, a comma-separated list of categories or
+  globs (e.g., \code{UValue}, \code{Urbi.*}) \emph{not} to display.  See
+  also \env{GD\_ENABLE\_CATEGORY}.
 \item[GD\_LEVEL] Set the verbosity level of traces.  This environment
   variable is meant for the developers of \usdk, yet it is very useful
   when tracking problems such as a UObject that fails to load properly.
