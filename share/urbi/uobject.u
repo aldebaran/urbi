@@ -347,15 +347,18 @@ do (&UVar)
   function parentGetProperty(varname, propname)
   {
     // Constant is special and does not trigger newPropertyHook.
-    if (getSlot(varname).isA(UVar) && propname != "constant"
-        && propname != "timestamp")
+    if (getSlot(varname).isA(UVar))
     {
-      if (propname == "changed")
-        getSlot(varname).changed
-      else
+      if (propname == "timestamp") //timestamp cached in a slot
+        getSlot(varname).timestamp
+      else if (propname == "constant") // constant not bounced
+        Object.&getProperty.apply([this, varname, propname])
+      else if (propname == "changed")
+        getSlot(varname).changed  // prop changed->slot changed
+      else // everything else bounces to val
         getSlot(varname).getProperty("val", propname).acceptVoid
     }
-    else
+    else // Default behavior if not an UVar.
       Object.&getProperty.apply([this, varname, propname])
   };
 
@@ -384,7 +387,6 @@ do (&UVar)
     var uv = __clone|
     do (uv)
     {
-      var changeConnections = [] |
       var val |
       var valsensor = 0 |
       var isUVar = 1

@@ -54,6 +54,8 @@ namespace urbi
       bool removeCallback(Callbacks& cb, unsigned int id);
       // Return the UVar from its full name.
       static rObject fromName(const std::string& n);
+      rList changeConnections; // bound in urbiscript
+      ufloat timestamp; // idem
     private:
       Callbacks change_;
       Callbacks access_;
@@ -68,7 +70,7 @@ namespace urbi
       bool inAccess_;
       URBI_CXX_OBJECT(UVar, Primitive);
       int waiterCount_;
-      std::string initialName;
+      libport::Symbol initialName;
       bool owned;
       // We must duplicate changed! mechanism because we want to disable
       // automatic triggering.

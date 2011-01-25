@@ -105,9 +105,8 @@ namespace urbi
     }
 
     static inline void
-    callConnections(runner::Runner& r, rObject self, libport::Symbol notifyList)
+    callConnections(runner::Runner& r, rObject self, rList l)
     {
-      rList l = self->slot_get(notifyList)->as<List>();
       // We must copy the list as callbacks might remove themselve
       List::value_type callbacks = l->value_get();
       for (List::value_type::iterator i = callbacks.begin();
@@ -183,24 +182,24 @@ namespace urbi
 
     UVar::UVar()
       : Primitive(boost::function1<rObject, objects_type>(boost::bind(&UVar::accessor, this, _1)))
+      , changeConnections(new List)
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
       , owned(false)
     {
-      protos_set(new List);
       proto_add(proto ? rPrimitive(proto) : Primitive::proto);
       slot_set(SYMBOL(waiterTag), new Tag());
     }
 
     UVar::UVar(libport::intrusive_ptr<UVar>)
       : Primitive(boost::function1<rObject, const objects_type&>(boost::bind(&UVar::accessor, this, _1)))
+      , changeConnections(new List)
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
       , owned(false)
     {
-      protos_set(new List);
       proto_add(proto ? rPrimitive(proto) : Primitive::proto);
       slot_set(SYMBOL(waiterTag), new Tag());
     }
@@ -237,6 +236,7 @@ namespace urbi
       DECLARE(update_timed_);
       DECLARE(owned);
       DECLARE(initialName);
+      DECLARE(changeConnections);
       DECLARE(changed);
       DECLARE(removeNotifyChange);
       DECLARE(removeNotifyChangeOwned);
@@ -244,6 +244,7 @@ namespace urbi
       DECLARE(notifyChange_);
       DECLARE(notifyChangeOwned_);
       DECLARE(notifyAccess_);
+      DECLARE(timestamp);
 #undef DECLARE
 
       setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
@@ -279,7 +280,7 @@ namespace urbi
           &&
           (!change_.empty()
           || (changed_ && changed_->hasSubscribers())
-          ||!slot_get(SYMBOL(changeConnections))->call(SYMBOL(empty))->as_bool()
+          ||!changeConnections->empty()
            )
           && !access_.empty();
       GD_FINFO_TRACE("Loopcheck on %s: %s", initialName, loopChecker);
@@ -342,8 +343,7 @@ namespace urbi
     rObject
     UVar::update_timed_(rObject val, libport::utime_t timestamp)
     {
-      getSlot(SYMBOL(owner))->setProperty(initialName,
-                                          SYMBOL(timestamp), to_urbi(libport::ufloat(timestamp) / 1000000));
+      this->timestamp = timestamp / 1000000.0;
       // Do not bother with UValue for numeric types.
       if (rUValue uval = val->as<UValue>())
       {
@@ -366,7 +366,7 @@ namespace urbi
           i = inChange_.insert(&r).first;
           FINALLY(((std::set<void*>&, inChange_)) ((std::set<void*>::iterator&, i)), inChange_.erase(i));
           callNotify(r, rUVar(this), change_);
-          callConnections(r, rObject(this), SYMBOL(changeConnections));
+          callConnections(r, rObject(this), changeConnections);
         }
         if (changed_)
           changed_->emit();
@@ -454,7 +454,7 @@ namespace urbi
       slot_update(SYMBOL(valsensor), newval);
       checkBypassCopy();
       callNotify(r, rUVar(this), change_);
-      callConnections(r, rObject(this), SYMBOL(changeConnections));
+      callConnections(r, rObject(this), changeConnections);
       if (changed_)
         changed_->emit();
       return newval;
