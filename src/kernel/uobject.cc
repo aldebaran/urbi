@@ -1329,7 +1329,6 @@ namespace urbi
                        "notifychange on %s from %s",
                      owner_->name, owner_->objname);
         }
-        aver(f);
         callback_ = new object::Primitive(
             boost::function1<rObject, const objects_type&>
             (boost::bind(&wrap_ucallback_notify, _1, owner_,
