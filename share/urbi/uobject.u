@@ -386,8 +386,6 @@ do (&UVar)
     var uv = __clone|
     do (uv)
     {
-      var val |
-      var valsensor = 0 |
       var isUVar = 1
     }
   };
@@ -871,7 +869,8 @@ class Global.'external'
         return|
       var uvar = uob.getSlot(varname) |
       var v = uvar.getSlot({if (uvar.owned) "valsensor" else "val"})
-      .acceptVoid.uvalueSerialize  |
+        .apply([uvar])
+        .acceptVoid.uvalueSerialize  |
       if (!v.isNil && !v.isVoid)
         chan << ['external'.UEM_ASSIGNVALUE,
                  fullname,

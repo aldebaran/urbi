@@ -1122,7 +1122,7 @@ namespace urbi
       try
       {
         rObject o = (owner_->owned
-                     ? ruvar_->slot_get(SYMBOL(val)).value()
+                     ? ruvar_->val
                      : ruvar_->getter(true));
         aver(o);
         if (object::rUValue bv = o->as<object::UValue>())
@@ -1155,7 +1155,7 @@ namespace urbi
     {
       LOCK_KERNEL;
       rObject o = (owner_->owned
-                   ? ruvar_->slot_get(SYMBOL(val)).value()
+                   ? ruvar_->val
                    : ruvar_->getter(true));
       return ::uvalue_type(o);
     }

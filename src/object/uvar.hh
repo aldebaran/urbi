@@ -57,6 +57,8 @@ namespace urbi
       rList changeConnections; // bound in urbiscript
       ufloat timestamp; // idem
       ufloat rangemin, rangemax;
+      rObject val;
+      rObject valsensor;
     private:
       Callbacks change_;
       Callbacks access_;

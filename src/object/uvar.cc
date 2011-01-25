@@ -185,6 +185,8 @@ namespace urbi
       , changeConnections(new List)
       , rangemin(-std::numeric_limits<libport::ufloat>::infinity())
       , rangemax(std::numeric_limits<libport::ufloat>::infinity())
+      , val(void_class)
+      , valsensor(void_class)
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
@@ -199,6 +201,8 @@ namespace urbi
       , changeConnections(new List)
       , rangemin(-std::numeric_limits<libport::ufloat>::infinity())
       , rangemax(std::numeric_limits<libport::ufloat>::infinity())
+      , val(void_class)
+      , valsensor(void_class)
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
@@ -251,6 +255,8 @@ namespace urbi
       DECLARE(rangemax);
       DECLARE(rangemin);
       DECLARE(timestamp);
+      DECLARE(val);
+      DECLARE(valsensor);
 #undef DECLARE
 
       setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
@@ -320,9 +326,7 @@ namespace urbi
          *                              may be used uninitialized in this function.
          */
         rUValue val;
-        val = slot_get(owned
-                       ? SYMBOL(valsensor)
-                       : SYMBOL(val))->as<UValue>();
+        val = (owned?valsensor:this->val)->as<UValue>();
         if (val)
           val->extract();
         slot_get(SYMBOL(waiterTag))->call(SYMBOL(stop));
@@ -370,7 +374,7 @@ namespace urbi
       else
         val = val->call(SYMBOL(uvalueDeserialize));
       runner::Runner& r = ::kernel::runner();
-      slot_update(SYMBOL(val), val);
+      this->val = val;
       if (owned)
         callNotify(r, rUVar(this), changeOwned_);
       else
@@ -427,9 +431,7 @@ namespace urbi
         callNotify(r, rUVar(this), access_);
         inAccess_ = false;
       }
-      rObject res = slot_get(owned
-                             ? SYMBOL(valsensor)
-                             : SYMBOL(val));
+      rObject res = owned?valsensor:val;
       if (!fromCXX)
       {
         if (rUValue bv = res->as<UValue>())
@@ -450,9 +452,7 @@ namespace urbi
                                               new Float(0.5));
             --waiterCount_;
             // The val slot likely changed, fetch it again.
-            res = slot_get(owned
-                           ? SYMBOL(valsensor)
-                           : SYMBOL(val));
+            res = owned?valsensor:val;
             if (rUValue bv = res->as<UValue>())
               return bv->extract();
             else
@@ -468,7 +468,7 @@ namespace urbi
     UVar::writeOwned(rObject newval)
     {
       runner::Runner& r = ::kernel::runner();
-      slot_update(SYMBOL(valsensor), newval);
+      valsensor = newval;
       checkBypassCopy();
       callNotify(r, rUVar(this), change_);
       callConnections(r, rObject(this), changeConnections);
