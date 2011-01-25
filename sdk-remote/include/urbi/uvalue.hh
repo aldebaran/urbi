@@ -37,14 +37,14 @@ namespace urbi
   /// Possible value types a UValue can contain.
   enum UDataType
   {
-    DATA_BINARY,
-    DATA_DICTIONARY,
-    DATA_DOUBLE,
-    DATA_LIST,
-    DATA_OBJECT,
-    DATA_STRING,
-    DATA_SLOTNAME,
-    DATA_VOID
+    DATA_BINARY = 0,
+    DATA_DICTIONARY = 1,
+    DATA_DOUBLE = 2,
+    DATA_LIST = 3,
+    // No longer supported. DATA_OBJECT = 4,
+    DATA_STRING = 5,
+    DATA_SLOTNAME = 6,
+    DATA_VOID = 7,
   };
 
   /*--------.
@@ -130,37 +130,6 @@ namespace urbi
   };
 
 
-  /*----------------.
-  | UObjectStruct.  |
-  `----------------*/
-
-  class URBI_SDK_API UObjectStruct
-  {
-  public:
-    UObjectStruct();
-    UObjectStruct(const UObjectStruct &b);
-    UObjectStruct& operator=(const UObjectStruct &b);
-    ~UObjectStruct();
-
-    /// Return UValue::error() on errors.
-    UValue& operator[](const std::string& s);
-
-    /// Return UNamedValue::error() on errors.
-    const UNamedValue& operator[](size_t i) const;
-    UNamedValue& operator [](size_t i);
-
-    size_t size() const;
-
-    std::ostream& print(std::ostream& o) const;
-
-    std::string refName;
-    std::vector<UNamedValue> array;
-  };
-
-  URBI_SDK_API
-  std::ostream& operator<< (std::ostream& o, const UObjectStruct& t);
-
-
   /*---------.
   | UValue.  |
   `---------*/
@@ -170,15 +139,15 @@ namespace urbi
   class URBI_SDK_API UValue
   {
   public:
-    UDataType       type;
-    ufloat          val;  ///< value if of type DATA_DOUBLE
+    UDataType type;
+
+    ufloat val;                 ///< value if of type DATA_DOUBLE
     union
     {
       std::string* stringValue; ///< value if of type DATA_STRING
       UBinary* binary;          ///< value if of type DATA_BINARY
       UList* list;              ///< value if of type DATA_LIST
       UDictionary* dictionary;  ///< value if of type DATA_DICTIONARY
-      UObjectStruct* object;    ///< value if of type DATA_OBJ
       void* storage;            ///< internal
     };
 
@@ -228,7 +197,7 @@ namespace urbi
 
 #define URBI_MISC_TYPES                                          \
   LIBPORT_LIST(const UBinary&, const UList&, const UDictionary&, \
-               const UObjectStruct&, const USound&, const UImage&,)
+               const USound&, const UImage&,)
 
 # ifndef SWIG
     LIBPORT_LIST_APPLY(CTOR_AND_ASSIGN_AND_COMMA, URBI_NUMERIC_TYPES)
@@ -253,7 +222,6 @@ namespace urbi
     CTOR_AND_ASSIGN_AND_COMMA(const UBinary&);
     CTOR_AND_ASSIGN_AND_COMMA(const UList&);
     CTOR_AND_ASSIGN_AND_COMMA(const UDictionary&);
-    CTOR_AND_ASSIGN_AND_COMMA(const UObjectStruct&);
     CTOR_AND_ASSIGN_AND_COMMA(const USound&);
     CTOR_AND_ASSIGN_AND_COMMA(const UImage&);
 # endif

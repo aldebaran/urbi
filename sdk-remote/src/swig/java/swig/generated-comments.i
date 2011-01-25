@@ -811,15 +811,7 @@
 %javamethodmodifiers urbi::UNamedValue::error
 "    // Used on errors.
  public ";
-%typemap(javaimports) urbi::UObjectStruct
-"  /*----------------.
-  | UObjectStruct.  |
-  `----------------*/
-"
 
-%javamethodmodifiers urbi::UObjectStruct::operator[](const std::string& s)
-"    /// Return UValue::error() on errors.
- public ";
 %typemap(javaimports) urbi::UValue
 "  /*---------.
   | UValue.  |

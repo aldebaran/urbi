@@ -43,7 +43,7 @@ urbi::UDataType uvalue_type(const object::rObject& o)
     return urbi::DATA_BINARY;
   if (o == object::void_class)
     return urbi::DATA_VOID;
-  return urbi::DATA_OBJECT;
+  pabort(*o);
 }
 
 urbi::UValue uvalue_cast(const object::rObject& o, int recursionLevel)

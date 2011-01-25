@@ -70,14 +70,6 @@ namespace urbi
     return UDictionary();
   }
 
-  UObjectStruct
-  uvalue_caster<UObjectStruct>::operator() (UValue& v)
-  {
-    if (v.type == DATA_OBJECT)
-      return UObjectStruct(*v.object);
-    return UObjectStruct();
-  }
-
   const char*
   uvalue_caster<const char*>::operator() (UValue& v)
   {
@@ -253,51 +245,6 @@ namespace urbi
       return pos + 1;
     }
 
-    //OBJ a [x:12, y:4]
-    if (strprefix("OBJ ", message + pos))
-    {
-      //obj message
-      pos += 4;
-      type = DATA_OBJECT;
-      object = new UObjectStruct();
-      SKIP_SPACES();
-      EXPECT('[');
-      ++pos;
-
-      while (message[pos])
-      {
-	SKIP_SPACES();
-	if (message[pos] == ']')
-	  break; //empty object
-	//parse name
-	int p = pos;
-	while (message[p] && message[p] != ':')
-	  ++p;
-	CHECK_NEOF();
-	++p;
-	UNamedValue nv;
-	nv.name = std::string(message + pos, p - pos - 1);
-	pos = p;
-	SKIP_SPACES();
-	UValue* v = new UValue();
-	p = v->parse(message, pos, bins, binpos);
-	if (p < 0)
-	  return p;
-	nv.val = v;
-	object->array.push_back(nv);
-	pos = p;
-	SKIP_SPACES();
-	//expect , or rbracket
-	if (message[pos] == ']')
-	  break;
-	EXPECT(',');
-	++pos;
-      }
-
-      EXPECT(']');
-      return pos + 1;
-    }
-
     if (strprefix("void", message+pos))
     {
       //void
@@ -375,9 +322,6 @@ namespace urbi
         break;
       case DATA_DICTIONARY:
         s << *dictionary;
-        break;
-      case DATA_OBJECT:
-	s << *object;
         break;
       case DATA_VOID:
         s << "nil";
@@ -470,8 +414,6 @@ namespace
   UVALUE_OPERATORS(const UList& v, DATA_LIST, list, new UList(v))
   UVALUE_OPERATORS(const UDictionary& d,
                    DATA_DICTIONARY, dictionary, new UDictionary(d));
-  UVALUE_OPERATORS(const UObjectStruct& v,
-		   DATA_OBJECT, object, new UObjectStruct(v))
 
 #undef UVALUE_OPERATORS
 
@@ -493,9 +435,6 @@ namespace
       case DATA_DICTIONARY:
         delete dictionary;
         break;
-      case DATA_OBJECT:
-	delete object;
-	break;
       case DATA_DOUBLE:
       case DATA_VOID:
 	break;
@@ -519,7 +458,6 @@ namespace
       case DATA_BINARY:
       case DATA_LIST:
       case DATA_DICTIONARY:
-      case DATA_OBJECT:
       case DATA_VOID:
       case DATA_SLOTNAME:
         break;
@@ -620,9 +558,6 @@ namespace
       case DATA_DICTIONARY:
         dictionary = new UDictionary(*v.dictionary);
         break;
-      case DATA_OBJECT:
-	object = new UObjectStruct(*v.object);
-	break;
       case DATA_VOID:
         storage = v.storage;
 	break;
@@ -712,69 +647,9 @@ namespace
     }
     return s << "]";
   }
-  /*----------------.
-  | UObjectStruct.  |
-  `----------------*/
-
-  UObjectStruct::UObjectStruct()
-  {}
-
-  UObjectStruct::UObjectStruct(const UObjectStruct& b)
-  {
-    *this = b;
-  }
-
-  UObjectStruct::~UObjectStruct()
-  {
-    // Relax, it's a vector.
-    for (size_t i = 0; i < size(); ++i)
-      delete array[i].val;
-    array.clear();
-  }
-
-  UObjectStruct&
-  UObjectStruct::operator= (const UObjectStruct& b)
-  {
-    if (this == &b)
-      return *this;
-
-    // Relax, it's a vector.
-    this->~UObjectStruct();
-
-    for (std::vector<UNamedValue>::const_iterator it = b.array.begin();
-	 it != b.array.end();
-	 ++it)
-      array.push_back(UNamedValue(it->name, new UValue(*(it->val))));
-
-    return *this;
-  }
-
-  UValue&
-  UObjectStruct::operator[] (const std::string& s)
-  {
-    for (size_t i = 0; i < size(); ++i)
-      if (array[i].name == s)
-	return *array[i].val;
-    return UValue::error();
-  }
 
 
-  std::ostream&
-  UObjectStruct::print(std::ostream& o) const
-  {
-    o << "OBJ " << refName << " [";
-    size_t sz = size();
-    for (size_t i = 0; i < sz; ++i)
-      o << (*this)[i].name << ':' << (*this)[i].val
-        << (i != sz - 1 ? ", " : "");
-    return o << ']';
-  }
 
-  std::ostream&
-  operator<< (std::ostream& o, const UObjectStruct& t)
-  {
-    return t.print(o);
-  }
 
   std::string
   syncline_push(const std::string& srcdir, std::string file, unsigned line)

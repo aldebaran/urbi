@@ -124,35 +124,6 @@ namespace urbi
   }
 
 
-
-  /*----------------.
-  | UObjectStruct.  |
-  `----------------*/
-
-# define UOBJECTSTRUCT_NTH(Const)               \
-  inline                                        \
-  Const UNamedValue&                            \
-  UObjectStruct::operator[](size_t i) Const     \
-  {                                             \
-    if (i < size())                             \
-      return array[i];                          \
-    else                                        \
-      return UNamedValue::error();              \
-  }
-
-  UOBJECTSTRUCT_NTH(__)
-  UOBJECTSTRUCT_NTH(const)
-
-# undef UOBJECTSTRUCT_NTH
-
-  inline
-  size_t
-  UObjectStruct::size() const
-  {
-    return array.size();
-  }
-
-
   /*---------.
   | UValue.  |
   `---------*/
@@ -323,7 +294,6 @@ namespace urbi
   UVALUE_CASTER_DECLARE(UBinary);
   UVALUE_CASTER_DECLARE(UList);
   UVALUE_CASTER_DECLARE(UDictionary);
-  UVALUE_CASTER_DECLARE(UObjectStruct);
   UVALUE_CASTER_DECLARE(const char*);
 
 # undef UVALUE_CASTER_DECLARE

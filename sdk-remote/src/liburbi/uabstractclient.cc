@@ -307,19 +307,6 @@ namespace urbi
       return send("]");
       break;
 
-    case DATA_OBJECT:
-      send("OBJ %s [", v.object->refName.c_str());
-      for (size_t i = 0, sz = v.object->size();
-           i < sz; ++i)
-      {
-        send("%s :", (*v.object)[i].name.c_str());
-        send(*((*v.object)[i].val) );
-        if (i != sz-1)
-          send(" , ");
-      }
-      return send("]");
-      break;
-
     case DATA_VOID:
       break;
     };

@@ -1,4 +1,3 @@
-
 package examples.test;
 
 
@@ -98,8 +97,6 @@ public class testcall extends UCallbackInterface {
 		    System.out.println (l.getArray ().get (i));
 		}
 	    }
-	    else if (UDataType.DATA_OBJECT == value.getType ())
-		System.out.println (" DATA_OBJECT value");
 	    else if (UDataType.DATA_VOID == value.getType ())
 		System.out.println (" DATA_VOID value");
 	    else
