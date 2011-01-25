@@ -124,6 +124,8 @@ namespace urbi
       protos_cache_ = 0;
       protos_ = 0;
       proto_ = 0;
+      if (l->value_get().size() == 0)
+        return;
       if (l->value_get().size() == 1)
       {
         proto_ = l->value_get().front();
