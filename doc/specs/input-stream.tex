@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -15,7 +15,7 @@ provides a more fine-grained interface to read files.
 
 \subsection{Prototypes}
 \begin{refObjects}
-\item[Object]
+\item[Stream]
 \end{refObjects}
 
 \begin{windows}
@@ -36,7 +36,7 @@ var is = InputStream.new(File.new("file.txt"));
 \end{urbiscript}
 
 Bear in mind that open streams should be closed
-(\autoref{sec:specs:OutputStream:ctor}).
+(\autoref{sec:specs:Stream:ctor}).
 
 \begin{urbiscript}
 is.close;
@@ -45,17 +45,6 @@ is.close;
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-\item[close] Close the stream, return void.  Raise an error if the file is
-  closed.
-\begin{urbiscript}
-{
-  var i = InputStream.new(File.create("file.txt"));
-  assert(i.close.isVoid);
-  i.close;
-};
-[00000001:error] !!! close: stream is closed
-\end{urbiscript}
-
 \item[get]%
   Get the next available byte as a \refObject{Float}, or \lstinline|void| if
   the end of file was reached.  Raise an error if the file is closed.

@@ -58,7 +58,6 @@ namespace urbi
 # define DECLARE(Name, Cxx)                     \
       bind(SYMBOL(Name), &InputStream::Cxx)
 
-      DECLARE(close,   close);
       DECLARE(get,     get);
       DECLARE(getChar, getChar);
       DECLARE(getLine, getLine);

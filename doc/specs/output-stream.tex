@@ -12,7 +12,7 @@ OutputStreams are used to write (possibly binary) files by hand.
 
 \subsection{Prototypes}
 \begin{refObjects}
-\item[Object]
+\item[Stream]
 \end{refObjects}
 
 \subsection{Construction}
@@ -56,17 +56,6 @@ o.close;
 assert (File.new("fresh.txt").content.data == "12[3, [4]]");
 o << 1;
 [00000005:error] !!! <<: stream is closed
-\end{urbiscript}
-
-\item[close] Flush the buffers, close the stream, return void.  Raise an
-  error if the file is closed.
-\begin{urbiscript}
-{
-  var o = OutputStream.new(File.create("file.txt"));
-  assert(o.close.isVoid);
-  o.close;
-};
-[00000001:error] !!! close: stream is closed
 \end{urbiscript}
 
 \item[flush]%

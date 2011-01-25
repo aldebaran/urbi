@@ -49,7 +49,6 @@ namespace urbi
       bind(SYMBOL(Name), &OutputStream::Cxx)
 
       DECLARE(LT_LT, put);
-      DECLARE(close, close);
       DECLARE(flush, flush);
       DECLARE(init,  init);
       DECLARE(put,   putByte);

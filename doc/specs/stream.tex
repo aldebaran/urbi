@@ -1,0 +1,60 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\section{Stream}
+
+This is used to factor code between \refObject{InputStream} and
+\refObject{OutputStream}.
+
+\subsection{Prototypes}
+\begin{refObjects}
+\item[Object]
+\end{refObjects}
+
+\subsection{Construction}
+\label{sec:specs:Stream:ctor}
+
+Streams are not meant to be built, rather, use \refObject{InputStream} or
+\refObject{OutputStream}.
+
+When a stream (\refObject{OutputStream} or \refObject{InputStream}) is
+opened on a File, that File cannot be removed.  On Unix systems, this is
+handled gracefully (the references to the file are removed, but the content
+is still there for the streams that were already bound to this file); so in
+practice, the File appears to be removable.  On Windows, the File cannot be
+removed at all.  Therefore, do not forget to close the streams you opened.
+
+\subsection{Slots}
+
+\begin{urbiscriptapi}
+\item[close] Flush the buffers, close the stream, return void.  Raise an
+  error if the file is closed.
+\begin{urbiscript}
+{
+  var i = InputStream.new(File.create("file.txt"));
+  assert(i.close.isVoid);
+  i.close;
+};
+[00000001:error] !!! close: stream is closed
+
+{
+  var o = OutputStream.new(File.create("file.txt"));
+  assert(o.close.isVoid);
+  o.close;
+};
+[00000002:error] !!! close: stream is closed
+\end{urbiscript}
+\end{urbiscriptapi}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
