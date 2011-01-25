@@ -380,12 +380,21 @@ namespace urbi
       else
       {
         checkBypassCopy();
-        std::set<void*>::iterator i = inChange_.find(&r);
-        GD_FINFO_DUMP("update calling notify if %s", i == inChange_.end());
-        if (i == inChange_.end())
+        bool isIn = libport::has(inChange_, &r);
+        GD_FINFO_DUMP("update calling notify if %s", isIn);
+        if (!isIn)
         {
-          i = inChange_.insert(&r).first;
-          FINALLY(((std::set<void*>&, inChange_)) ((std::set<void*>::iterator&, i)), inChange_.erase(i));
+          inChange_.push_back(&r);
+          FINALLY(((std::vector<void*>&, inChange_))
+                  ((runner::Runner&, r)),
+                   for (unsigned i=0; i<inChange_.size(); ++i)
+                  if (inChange_[i] == &r)
+                  {
+                    if (i != inChange_.size()-1)
+                      inChange_[inChange_.size()-1] = inChange_[i];
+                    inChange_.pop_back();
+                  }
+                  );
           callNotify(r, rUVar(this), change_);
           callConnections(r, rObject(this), changeConnections);
         }
