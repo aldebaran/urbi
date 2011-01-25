@@ -56,6 +56,7 @@ namespace urbi
       static rObject fromName(const std::string& n);
       rList changeConnections; // bound in urbiscript
       ufloat timestamp; // idem
+      ufloat rangemin, rangemax;
     private:
       Callbacks change_;
       Callbacks access_;

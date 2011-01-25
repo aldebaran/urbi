@@ -264,13 +264,9 @@ do (&UVar)
   {
     targetObj.setSlot(slotName, this)|
     targetObj.setProperty(slotName, "updateHook", &updateBounce)|
-    if (hasProperty("val", "rangemax"))
-      targetObj.setProperty(slotName, "rangemax",
-                            getProperty("val", "rangemax"))|
-    if (hasProperty("val", "rangemin"))
-      targetObj.setProperty(slotName, "rangemin",
-                            getProperty("val", "rangemin"))|
-    targetObj.updateSlot("getProperty", &parentGetProperty)
+    targetObj.updateSlot("getProperty", &parentGetProperty)|
+    targetObj.updateSlot("setProperty", &parentSetProperty)|
+    targetObj.updateSlot("hasProperty", &parentHasProperty)
   };
 
   function init(parent, name)
@@ -286,7 +282,6 @@ do (&UVar)
     var this.fullName = ownerName + "." + initialName|
     parent.setSlot(name, this)|
     parent.setProperty(name, "updateHook", &updateBounce)|
-    var this.newPropertyHook = &newPropertyHook_|
     var slotName = name + "_quote_n"|
     // If the slot was containing a float, it already has a *_quote_n
     // slot, which is not the right one.
@@ -294,20 +289,21 @@ do (&UVar)
       parent.removeLocalSlot(slotName) |
     parent.setSlot(slotName, function ()
       {
-        var min = parent.getSlot(name).getProperty("val", "rangemin")|
-        var max = parent.getSlot(name).getProperty("val", "rangemax")|
+        var min = parent.getSlot(name).rangemin |
+        var max = parent.getSlot(name).rangemax |
         {var r = parent.getSlot(name) | return (r() - min) / (max-min)}
       })|
     parent.setProperty(slotName, "updateHook", function(slot, value)
       {
-        var min = parent.getSlot(name).getProperty("val", "rangemin")|
-        var max = parent.getSlot(name).getProperty("val", "rangemax")|
+        var min = parent.getSlot(name).rangemin |
+        var max = parent.getSlot(name).rangemax |
         parent.updateSlot(name, min + (max - min) * value)
       })|
     if (not parent.hasLocalSlot("__has_uvar"))
     {
-      var parent_getprop = parent.&getProperty|
-      parent.getProperty = &parentGetProperty
+      parent.getProperty = &parentGetProperty|
+      parent.setProperty = &parentSetProperty|
+      parent.hasProperty = &parentHasProperty
     };
     at (rtp->changed? if rtp != rtp_old)
     {
@@ -343,41 +339,44 @@ do (&UVar)
 
     }
   };
-
   function parentGetProperty(varname, propname)
   {
     // Constant is special and does not trigger newPropertyHook.
-    if (getSlot(varname).isA(UVar))
+    if (getSlot(varname).isA(UVar)
+        && propname in ["timestamp", "rangemin", "rangemax", "changed"])
     {
-      if (propname == "timestamp") //timestamp cached in a slot
-        getSlot(varname).timestamp
-      else if (propname == "constant") // constant not bounced
-        Object.&getProperty.apply([this, varname, propname])
-      else if (propname == "changed")
-        getSlot(varname).changed  // prop changed->slot changed
-      else // everything else bounces to val
-        getSlot(varname).getProperty("val", propname).acceptVoid
+      var v = getSlot(varname)|
+      v.getSlot(propname).apply([v])
     }
     else // Default behavior if not an UVar.
       Object.&getProperty.apply([this, varname, propname])
   };
+  function parentSetProperty(varname, propname, propval)
+  {
+    if (getSlot(varname).isA(UVar)
+        &&  propname in ["timestamp", "rangemin", "rangemax"])
+      getSlot(varname).updateSlot(propname, propval)
+    else
+      Object.&setProperty.apply([this, varname, propname, propval])
+  };
+  function parentHasProperty(varname, propname)
+  {
+    if (getSlot(varname).isA(UVar)
+        && propname in ["timestamp", "rangemin", "rangemax", "changed"])
+      true
+    else
+      Object.&hasProperty.apply([this, varname, propname])
+  };
 
+  // Compatibility with gostai studio which checks
+  // UObject.hasLocalSlot(hasProperty)
+  UObject.hasProperty = &parentHasProperty;
   /// Global number of notifyaccess
   var nAccess = 0;
   var nAccessTag = Tag.new;
   var onHasNotifyAccess = Event.new;
   // hooking of changed has a cost of one at per UVar.
   var hookChanged = !getenv("URBI_UVAR_HOOK_CHANGED");
-
-  function newPropertyHook_(parent, name, prop, value)
-  {
-    if (parent.getSlot(name).isA(UVar) && prop != "updateHook"
-        && prop != "timestamp")
-    {
-      parent.getSlot(name).setProperty("val", prop, value)|
-      parent.removeProperty(name, prop)
-    }
-  };
 
   var __clone = &clone;
 

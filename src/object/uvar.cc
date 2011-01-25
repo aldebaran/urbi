@@ -183,6 +183,8 @@ namespace urbi
     UVar::UVar()
       : Primitive(boost::function1<rObject, objects_type>(boost::bind(&UVar::accessor, this, _1)))
       , changeConnections(new List)
+      , rangemin(-std::numeric_limits<libport::ufloat>::infinity())
+      , rangemax(std::numeric_limits<libport::ufloat>::infinity())
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
@@ -195,6 +197,8 @@ namespace urbi
     UVar::UVar(libport::intrusive_ptr<UVar>)
       : Primitive(boost::function1<rObject, const objects_type&>(boost::bind(&UVar::accessor, this, _1)))
       , changeConnections(new List)
+      , rangemin(-std::numeric_limits<libport::ufloat>::infinity())
+      , rangemax(std::numeric_limits<libport::ufloat>::infinity())
       , looping_(false)
       , inAccess_(false)
       , waiterCount_(0)
@@ -244,6 +248,8 @@ namespace urbi
       DECLARE(notifyChange_);
       DECLARE(notifyChangeOwned_);
       DECLARE(notifyAccess_);
+      DECLARE(rangemax);
+      DECLARE(rangemin);
       DECLARE(timestamp);
 #undef DECLARE
 
@@ -344,11 +350,22 @@ namespace urbi
     UVar::update_timed_(rObject val, libport::utime_t timestamp)
     {
       this->timestamp = timestamp / 1000000.0;
+      // Apply rangemax/rangemin for float and encapsulated float
       // Do not bother with UValue for numeric types.
       if (rUValue uval = val->as<UValue>())
       {
         if (uval->value_get().type == urbi::DATA_DOUBLE)
-          val = uval->extract();
+        {
+          ufloat f = uval->value_get().val;
+          f = std::min(rangemax, std::max(f, rangemin));
+          val = to_urbi(f);
+        }
+      }
+      else if (rFloat vf = val->as<Float>())
+      {
+        ufloat f = vf->value_get();
+        f = std::min(rangemax, std::max(f, rangemin));
+        val = to_urbi(f);
       }
       else
         val = val->call(SYMBOL(uvalueDeserialize));
