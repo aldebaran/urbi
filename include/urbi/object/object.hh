@@ -118,6 +118,8 @@ namespace urbi
       bool protos_has() const;
       /// Change the whole set of protos.
       void protos_set(const rList&);
+      /// Remove all protos and set this unique object instead
+      void proto_set(const rObject& o);
       /// Return the first proto
       rObject protos_get_first() const;
 

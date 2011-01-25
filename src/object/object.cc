@@ -117,6 +117,16 @@ namespace urbi
     }
 
     void
+    Object::proto_set(const rObject& o)
+    {
+      if (!protos_cache_ && protos_)
+        delete protos_;
+      protos_cache_ = 0;
+      protos_ = 0;
+      proto_ = o;
+    }
+
+    void
     Object::protos_set(const rList& l)
     {
       if (!protos_cache_ && protos_)
