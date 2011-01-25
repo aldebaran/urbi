@@ -171,11 +171,15 @@ namespace urbi
         "    var res; try{ res = eval(exp)|Channel.new(tag) << res}"
         "    catch (var e) { lobby.send(\"!!! \" + e, tag)"
         " }}");
+
+      boost::posix_time::ptime now
+        (boost::posix_time::microsec_clock::local_time());
+      boost::posix_time::ptime ref(boost::gregorian::date(year, month, day),
+                                   boost::posix_time::microseconds(us));
       libport::utime_reference_set
-        (boost::posix_time::ptime(boost::gregorian::date(year, month, day),
-                                  boost::posix_time::microseconds(us)));
+        (libport::utime() - (now - ref).total_microseconds());
       GD_FINFO_DEBUG("Remote kernel reference timestamp: %s.",
-                     to_simple_string(libport::utime_reference()));
+                     to_simple_string(ref));
       GD_FINFO_DEBUG("Remote kernel version: %s", version);
     }
 

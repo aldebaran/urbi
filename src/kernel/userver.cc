@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -361,14 +361,16 @@ namespace kernel
       ref->proto_add(urbi::object::Object::proto);
       urbi::object::system_class->setSlot(SYMBOL(timeReference), ref);
 
-      const boost::posix_time::ptime& time = libport::utime_reference();
+      boost::posix_time::ptime now
+        (boost::posix_time::microsec_clock::local_time());
+      libport::utime_reference_set(libport::utime());
 # define DECLARE(Name, Value)                                   \
       ref->setSlot(SYMBOL(Name), urbi::object::to_urbi(Value))
 
-      DECLARE(us,    time.time_of_day().total_microseconds());
-      DECLARE(day,   int(time.date().day()));
-      DECLARE(month, int(time.date().month()));
-      DECLARE(year,  int(time.date().year()));
+      DECLARE(us,    now.time_of_day().total_microseconds());
+      DECLARE(day,   int(now.date().day()));
+      DECLARE(month, int(now.date().month()));
+      DECLARE(year,  int(now.date().year()));
 # undef DECLARE
     }
 
