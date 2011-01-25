@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -29,22 +29,19 @@ namespace urbi
     UValue::UValue()
       : bypassMode_(false)
     {
-      protos_set(new List);
-      proto_add(proto ? rObject(proto) : CxxObject::proto);
+      proto_set(proto ? rObject(proto) : CxxObject::proto);
     }
 
     UValue::UValue(libport::intrusive_ptr<UValue>)
       : bypassMode_(false)
     {
-      protos_set(new List);
-      proto_add(proto ? rObject(proto) : CxxObject::proto);
+      proto_set(proto ? rObject(proto) : CxxObject::proto);
     }
 
     UValue::UValue(const urbi::UValue& v, bool bypass)
       : bypassMode_(false)
     {
-      protos_set(new List);
-      proto_add(proto ? rObject(proto) : CxxObject::proto);
+      proto_set(proto ? rObject(proto) : CxxObject::proto);
       put(v, bypass);
     }
 
