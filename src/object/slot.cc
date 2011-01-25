@@ -45,13 +45,23 @@ namespace urbi
     Slot::property_set(libport::Symbol k, rObject value)
     {
       bool res = true;
+      properties_type::iterator i;
       if (!properties_)
+      {
         properties_ = new properties_type;
+        i = properties_->end();
+      }
       else
-        res = !property_has(k);
+      {
+        i = properties_->find(k);
+        res = i == properties_->end();
+      }
       if (k == SYMBOL(constant))
         constant_ = from_urbi<bool>(value);
-      (*properties_)[k] = value;
+      if (i == properties_->end())
+        (*properties_)[k] = value;
+      else
+        i->second = value;
       return res;
     }
 
