@@ -11,6 +11,7 @@
 #ifndef OBJECT_SLOT_HH
 # define OBJECT_SLOT_HH
 
+# include <libport/allocator-static.hh>
 # include <libport/cassert>
 # include <libport/hash.hh>
 # include <libport/intrusive-ptr.hh>
@@ -19,12 +20,20 @@
 
 # include <urbi/object/fwd.hh>
 
+# define URBI_OBJECT_MAX 1024 * 4
+
 namespace urbi
 {
   namespace object
   {
-    class Slot: public libport::RefCounted
+    class Slot
+      : public libport::RefCounted
+      , public libport::StaticallyAllocated<Slot, URBI_OBJECT_MAX>
     {
+    public:
+      /// Maximum object size for the allocator
+      static const size_t allocator_static_max_size;
+
     public:
       typedef boost::unordered_map<libport::Symbol, rObject> properties_type;
 
