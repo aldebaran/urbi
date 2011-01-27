@@ -9,10 +9,18 @@
  */
 
 #include <object/finalizable.hh>
-#include <object/formatter.hh>
 #include <object/format-info.hh>
+#include <object/formatter.hh>
 #include <object/input-stream.hh>
+#include <object/logger.hh>
 #include <object/output-stream.hh>
+#include <object/process.hh>
+#include <object/regexp.hh>
+#include <object/semaphore.hh>
+#include <object/socket.hh>
+#include <object/uconnection.hh>
+#include <object/uvalue.hh>
+#include <object/uvar.hh>
 #include <urbi/object/barrier.hh>
 #include <urbi/object/code.hh>
 #include <urbi/object/date.hh>
@@ -21,21 +29,14 @@
 #include <urbi/object/duration.hh>
 #include <urbi/object/event-handler.hh>
 #include <urbi/object/file.hh>
+#include <urbi/object/job.hh>
 #include <urbi/object/location.hh>
-#include <object/logger.hh>
-#include <object/process.hh>
-#include <object/regexp.hh>
-#include <object/socket.hh>
-#include <object/semaphore.hh>
-#include <object/uconnection.hh>
-#include <object/uvalue.hh>
-#include <object/uvar.hh>
 
 namespace urbi
 {
   namespace object
   {
-# define URBI_OBJECT_UNION_FIELD(Class) char Class ## _[sizeof(Class)],
+# define URBI_OBJECT_UNION_FIELD(Class) char Class ## _[sizeof(Class)]
     union ObjectSize
     {
       APPLY_ON_ALL_OBJECTS(URBI_OBJECT_UNION_FIELD)
