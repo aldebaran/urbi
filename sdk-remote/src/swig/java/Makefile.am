@@ -96,8 +96,7 @@ CLEANFILES +=					\
   $(ALL_OBJECTS)				\
   $(ALL_JARS)
 
-clean-local:
-	rm -rf urbi
+CLEANDIRS += urbi
 
 if WIN32
 #liburbijava@LIBSFX@_la_LDFLAGS = -Wl,--add-stdcall-alias

@@ -41,7 +41,7 @@ UMAKE_VERBOSE_0 = --quiet
 ## will keep on cycling.
 	touch $@
 
-clean-local: clean-uobjects
+CLEAN_LOCAL += clean-uobjects
 clean-uobjects:
 # If we are unlucky, umake-shared will be cleaned before we call it.
 # When clean is concurrent, we might even have "rm" be given
