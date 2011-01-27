@@ -35,8 +35,9 @@
 #include <urbi/object/list.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/string.hh>
-
 #include <urbi/runner/raise.hh>
+
+#include <runner/interpreter.hh>
 
 namespace urbi
 {
@@ -117,6 +118,8 @@ namespace urbi
       DECLARE(ceil,      ceil);
       DECLARE(compl,     operator~);
       DECLARE(cos,       cos);
+      DECLARE(each,      each);
+      DECLARE(each_PIPE, each_pipe);
       DECLARE(exp,       exp);
 #if !defined COMPILATION_MODE_SPACE
       DECLARE(format, format);
@@ -362,13 +365,15 @@ namespace urbi
 #undef CHECK_TRIGO_RANGE
 #undef BOUNCE
 
+    static const std::string positive_error_fmt =
+      "expected positive integer, got %s";
+
     Float::unsigned_type
     Float::random() const
     {
-      static const std::string fmt = "expected positive integer, got %s";
-      if (unsigned_type upper_bound = to_unsigned_type(fmt))
+      if (unsigned_type upper_bound = to_unsigned_type(positive_error_fmt))
         return libport::rand() % upper_bound;
-      runner::raise_bad_integer_error(value_get(), fmt);
+      runner::raise_bad_integer_error(value_get(), positive_error_fmt);
     }
 
     void
@@ -422,6 +427,38 @@ namespace urbi
       return (0 < value_    ? 1
               : 0 == value_ ? 0
               :               -1);
+    }
+
+    void
+    Float::each(Executable* action)
+    {
+      // Check we're non-negative.
+      if (value_ < 0)
+        runner::raise_bad_integer_error(value_, positive_error_fmt);
+      // Iterate, yielding at each iteration.
+      runner::Interpreter& r = ::kernel::interpreter();
+      for (int i = 0; i < value_; ++i)
+      {
+        object::objects_type args;
+        args << this << new Float(i);
+        (*action)(args);
+        r.yield();
+      }
+    }
+
+    void
+    Float::each_pipe(Executable* action)
+    {
+      // Check we're non-negative.
+      if (value_ < 0)
+        runner::raise_bad_integer_error(value_, positive_error_fmt);
+      // Iterate
+      for (int i = 0; i < value_; ++i)
+      {
+        object::objects_type args;
+        args << this << new Float(i);
+        (*action)(args);
+      }
     }
 
     rList

@@ -68,6 +68,10 @@ namespace urbi
       bool operator> (const value_type& rhs) const;
       bool operator!=(const value_type& rhs) const;
 
+      // Iteration
+      void each(Executable* action);
+      void each_pipe(Executable* action);
+
       /// \name Conversions.
       /// \{
       // FIXME: For some reason I don't understand, MSVC fails to
