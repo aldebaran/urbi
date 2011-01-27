@@ -28,9 +28,40 @@
 namespace urbi
 {
 
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
   /// If a kernel version was associated to this stream, its value.
   URBI_SDK_API
   int& kernelMajor(std::ostream& o);
+
+  /// Issue a syncline.
+  /// \param srcdir   the path from here to the top-srcdir.
+  ///                 Will be removed from file.
+  /// \param file     __FILE__
+  /// \param line     __LINE__
+  URBI_SDK_API
+  std::string
+  syncline_push(const std::string& srcdir, std::string file, unsigned line);
+
+#define SYNCLINE_PUSH()                                         \
+  "//#push " BOOST_PP_STRINGIZE(__LINE__) " \"" __FILE__ "\"\n"
+
+#define SYNCLINE_POP()                          \
+  "//#pop\n"
+
+#ifndef __SRCDIR__
+# define __SRCDIR__ ""
+#endif
+
+#define SYNCLINE_WRAP(...)                                      \
+  (::urbi::syncline_push(__SRCDIR__, __FILE__, __LINE__)        \
+   + libport::format(__VA_ARGS__)                               \
+   + "\n"                                                       \
+   SYNCLINE_POP())
+
+
 
   // UValue and other related types
 
@@ -112,7 +143,10 @@ namespace urbi
   /*--------------.
   | UDictionary.  |
   `--------------*/
+
   typedef boost::unordered_map<std::string, UValue> UDictionary;
+
+  std::ostream& operator<<(std::ostream& s, const UDictionary& d);
 
 
   /*--------------.
@@ -287,13 +321,8 @@ namespace urbi
     static const bool copy = true;
   };
 
-  inline
   std::ostream&
   operator<<(std::ostream& s, const UValue& v);
-
-  inline
-  std::ostream&
-  operator<<(std::ostream& s, const UDictionary& d);
 
 
   /*----------.
@@ -342,31 +371,7 @@ namespace urbi
   typename uvar_ref_traits<typename uvalue_cast_return_type<Type>::type>::type
   uvalue_cast (UValue& v);
 
-  /// Issue a syncline.
-  /// \param srcdir   the path from here to the top-srcdir.
-  ///                 Will be removed from file.
-  /// \param file     __FILE__
-  /// \param line     __LINE__
-  std::string
-  syncline_push(const std::string& srcdir, std::string file, unsigned line);
-
 } // namespace urbi
-
-#define SYNCLINE_PUSH()                                         \
-  "//#push " BOOST_PP_STRINGIZE(__LINE__) " \"" __FILE__ "\"\n"
-
-#define SYNCLINE_POP()                          \
-  "//#pop\n"
-
-#ifndef __SRCDIR__
-# define __SRCDIR__ ""
-#endif
-
-#define SYNCLINE_WRAP(...)                                      \
-  (::urbi::syncline_push(__SRCDIR__, __FILE__, __LINE__)        \
-   + libport::format(__VA_ARGS__)                               \
-   + "\n"                                                       \
-   SYNCLINE_POP())
 
 #define URBI_STRUCT_CAST_FIELD(_, Cname, Field)                         \
   if (libport::mhas(dict, BOOST_PP_STRINGIZE(Field)))                   \
