@@ -87,8 +87,11 @@ libuobject@LIBSFX@_la_LIBADD =				\
 
 # Resolve stubs in libuobject.
 all-local: libuobject.unstub.stamp
-libuobject.unstub.stamp: $(VERSIONIFY_CACHE) libuobject$(LIBSFX).la $(VERSIONIFY)
-	$(VERSIONIFY_RUN) --resolve=libuobject$(LIBSFX).la
+VERSIONIFY_STUBS = libuobject$(LIBSFX).la
+libuobject.unstub.stamp: $(VERSIONIFY_STUBS) $(VERSIONIFY_CACHE) $(VERSIONIFY)
+	$(AT_V_PATCH) $(VERSIONIFY_RUN)		\
+	  $(if $(V:0=),-v,-q)			\
+	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
 
 dist_libuobject@LIBSFX@_la_SOURCES =
 nodist_libuobject@LIBSFX@_la_SOURCES =

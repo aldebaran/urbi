@@ -70,13 +70,17 @@ endif EXAMPLES
 # revision.cc in libuvalue, which is a convenience library included in
 # these two.
 .PHONY: stub.stamp
-stub.stamp: libuobject/libuobject$(LIBSFX).la liburbi/liburbi$(LIBSFX).la libuco/libuco.la libuvalue/libuvalue.la libuvalue/libuvalue_libuvalue_la-package-info.lo
-	$(VERSIONIFY_RUN)						\
-	  --resolve=libuco/libuco.la					\
-	  --resolve=libuobject/libuobject$(LIBSFX).la			\
-	  --resolve=liburbi/liburbi$(LIBSFX).la				\
-	  --resolve=libuvalue/libuvalue.la				\
-	  --resolve=libuvalue/libuvalue_libuvalue_la-package-info.lo
+VERSIONIFY_STUBS = 					\
+  libuco/libuco.la					\
+  libuobject/libuobject$(LIBSFX).la			\
+  liburbi/liburbi$(LIBSFX).la				\
+  libuvalue/libuvalue.la				\
+  libuvalue/libuvalue_libuvalue_la-package-info.lo
+
+stub.stamp: $(VERSIONIFY_STUBS)
+	$(AT_V_PATCH) $(VERSIONIFY_RUN)			\
+	  $(if $(V:0=),-v,-q)				\
+	  $(addprefix --resolve=, $(VERSIONIFY_STUBS))
 all: stub.stamp
 
 
