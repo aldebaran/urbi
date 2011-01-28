@@ -59,7 +59,7 @@
 
 #include <urbi/ucontext-factory.hh>
 
-GD_CATEGORY(UObject);
+GD_CATEGORY(Urbi.UObject);
 
 // Make it more readable.
 using namespace boost::assign;

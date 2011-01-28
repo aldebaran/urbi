@@ -250,7 +250,7 @@ namespace runner
   void
   Shell::processSerializedMessages()
   {
-    GD_CATEGORY(Shell.Serialize);
+    GD_CATEGORY(Urbi.Shell.Serialize);
     GD_INFO_TRACE("Entering processSerializedMessages");
     libport::serialize::BinaryISerializer deserializer(input_);
     while (binary_mode_ && !stop_)
@@ -312,7 +312,7 @@ namespace runner
   void
   Shell::setSerializationMode(bool m, const std::string& tag)
   {
-    GD_CATEGORY(Shell.serialize);
+    GD_CATEGORY(Urbi.Shell.serialize);
     GD_FINFO_TRACE("setSerializationMode %s", m);
     if (m == binary_mode_)
       return;

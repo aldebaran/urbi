@@ -38,7 +38,7 @@
 #include <libuobject/remote-ucontext-impl.hh>
 using libport::program_name;
 
-GD_CATEGORY(urbi-launch);
+GD_CATEGORY(UrbiLaunch);
 
 namespace urbi
 {

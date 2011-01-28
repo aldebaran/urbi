@@ -23,7 +23,7 @@
 #include <urbi/uobject.hh>
 #include <urbi/input-port.hh>
 
-GD_CATEGORY(all);
+GD_CATEGORY(All);
 
 /// Same as strdup, but without the \0 limitation.
 static void*

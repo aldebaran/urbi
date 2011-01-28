@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -49,7 +49,7 @@ Test file layout
 */
 
 /// Register the message category for each file including this header.
-GD_CATEGORY(TEST);
+GD_CATEGORY(Test);
 
 /// Display a debug message.
 #define VERBOSE(S)                              \
