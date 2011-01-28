@@ -132,13 +132,19 @@ namespace urbi
       return ::kernel::runner().lobby_get();
     }
 
+#define REQUIRE_DERIVATIVE_AND_CONNECTION()             \
+    do {                                                \
+      if (proto == this)                                \
+        RAISE("must be called on Lobby derivative");    \
+      if (!connection_)                                 \
+        return;                                         \
+    } while (false)
+
     void
     Lobby::quit()
     {
-      if (proto == this)
-        RAISE("must be called on Lobby derivative");
-      if (&connection_get())
-        connection_get().close();
+      REQUIRE_DERIVATIVE_AND_CONNECTION();
+      connection_->close();
     }
 
     void
@@ -150,21 +156,14 @@ namespace urbi
     void
     Lobby::send(const std::string& data, const std::string& tag)
     {
-      if (proto == this)
-        RAISE("must be called on Lobby derivative");
-
-      if (!connection_)
-        return;
+      REQUIRE_DERIVATIVE_AND_CONNECTION();
       connection_->send((data + "\n").c_str(), data.length() + 1, tag.c_str());
     }
 
     void
     Lobby::write(const std::string& data)
     {
-      if (proto == this)
-        RAISE("must be called on Lobby derivative");
-      if (!connection_)
-        return;
+      REQUIRE_DERIVATIVE_AND_CONNECTION();
       connection_->send_queue(data.c_str(), data.size());
       connection_->flush();
     }
