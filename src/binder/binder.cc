@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -13,8 +13,6 @@
  ** \brief Implementation of binder::Binder.
  */
 
-// #define ENABLE_BIND_DEBUG_TRACES
-
 #include <boost/bind.hpp>
 #include <boost/optional.hpp>
 
@@ -27,13 +25,13 @@
 #include <ast/print.hh>
 
 #include <binder/binder.hh>
-#include <binder/bind-debug.hh>
-
 #include <object/symbols.hh>
 #include <urbi/object/object.hh>
 
 #include <ast/factory.hh>
 #include <parser/parse.hh>
+
+GD_CATEGORY(Urbi.Bind);
 
 namespace binder
 {
@@ -179,7 +177,7 @@ namespace binder
         if (report_errors_)
           err(loc, "variable redefinition: " + name.name_get());
 
-      BIND_ECHO("Bind " << name);
+      GD_SINFO_DUMP("Bind " << name);
 
       if (value)
       {
@@ -203,8 +201,6 @@ namespace binder
   {
     super_type::visit(input);
     ast::rLocalDeclaration dec = result_.unsafe_cast<ast::LocalDeclaration>();
-
-    BIND_ECHO("Bind " << name);
     bind(dec);
   }
 
@@ -254,7 +250,7 @@ namespace binder
                               const libport::Symbol& name,
                               unsigned depth)
   {
-    BIND_ECHO("Linking " << name << " to its declaration");
+    GD_SINFO_DUMP("Linking " << name << " to its declaration");
     ast::rLocalDeclaration outer_decl = decl_get(name);
     ast::rLocalDeclaration decl = outer_decl;
     ast::rLocal current;
@@ -262,8 +258,7 @@ namespace binder
     if (routine_depth_ > depth)
     {
       // The variable is captured
-      BIND_NECHO(libport::incindent);
-      BIND_ECHO("It's captured");
+      GD_PUSH_DUMP("It's captured");
 
       routine_stack_type::reverse_iterator f_it = routine_stack_.rbegin();
       const ast::loc loc = input->location_get();
@@ -275,7 +270,7 @@ namespace binder
           if (dec->what_get() == name)
           {
             decl = outer_decl = dec;
-            // Break foreach and for
+            // Break foreach and for.
             goto stop;
           }
 
@@ -291,8 +286,7 @@ namespace binder
 
         f->captured_variables_get()->push_back(decl);
       }
-      stop:
-      BIND_NECHO(libport::decindent);
+    stop:;
     }
 
     if (current)
@@ -444,7 +438,7 @@ namespace binder
       }
     }
 
-    BIND_ECHO("Push" << libport::incindent);
+    GD_PUSH_DUMP("Push");
     Finally finally(5);
 
     // Clone and push the function, without filling its body and arguments
@@ -486,9 +480,7 @@ namespace binder
     foreach (ast::rLocalDeclaration dec, *res->captured_variables_get())
       dec->local_index_set(captured++);
 
-    BIND_NECHO(libport::decindent);
-    BIND_ECHO("Pop");
-
+    GD_INFO_DUMP("Pop");
   }
 
 
