@@ -38,8 +38,9 @@
 
    Therefore, declare here all the symbols we use somewhere in the C++
    code.  */
+#  define SYMBOL(Sym) ::object::symbol_ ## Sym
+#  define SYMBOL_EXPAND(Sym) BOOST_PP_CAT(::object::symbol_, Sym)
 
-#  define SYMBOL(Sym) BOOST_PP_CAT(::object::symbol_, Sym)
 #  include <object/precompiled-symbols.hh>
 
 namespace object
@@ -66,7 +67,8 @@ namespace object
   URBI_SDK_API libport::Symbol symbol_get(const std::string& s = "");
 }
 
-#  define SYMBOL(Sym) ::object::symbol_get(BOOST_PP_STRINGIZE(Sym))
+#  define SYMBOL(Sym) ::object::symbol_get(#Sym)
+#  define SYMBOL_EXPAND(Sym) ::object::symbol_get(BOOST_PP_STRINGIZE(Sym))
 
 # endif // ! SYMBOLS_PRECOMPILED
 
