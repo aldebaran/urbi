@@ -251,7 +251,9 @@ for (var l : lobbies)
 \end{urbiscript}
 
 \item[onDisconnect](<lobby>)%
-  Event launched when \this has disconnected.
+  Event launched when \this is disconnected.  There is a single event
+  instance for all the lobby, \refSlot[Lobby]{onDisconnect}, the
+  disconnected lobby being passed as argument.
 
 \item[quit] Shut this lobby down, i.e., close the connection.  The
   server is still running, see \refSlot[System]{shutdown} to quit the
