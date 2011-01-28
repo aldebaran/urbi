@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -15,7 +15,6 @@
 
 # include <libport/bind.hh>
 # include <libport/compilation.hh>
-# include <libport/echo.hh>
 # include <libport/finally.hh>
 # include <libport/foreach.hh>
 # include <libport/format.hh>
@@ -44,22 +43,6 @@
 # include <urbi/object/string.hh>
 
 GD_CATEGORY(Urbi);
-
-/// Job echo.
-#define JECHO(Title, Content)                                   \
-  LIBPORT_DEBUG("job " << ME << ", " Title ": " << Content)
-
-/// Job & astecho.
-#define JAECHO(Title, Ast)                      \
-  JECHO(Title, AST(Ast))
-
-/* Yield and trace. */
-#define YIELD()                                         \
-  do {                                                  \
-    LIBPORT_DEBUG("job " << ME << " yielding on AST: "  \
-                  << &e << ' ' << AST(e));              \
-    yield ();                                           \
-  } while (false)
 
 
 namespace urbi
@@ -394,20 +377,9 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::If* e)
   {
-    // Evaluate the test.
-    JAECHO ("test", e->test_get ());
-    rObject cond = operator()(e->test_get().get());
-
-    if (cond->as_bool())
-    {
-      JAECHO ("then", e->thenclause_get());
-      return e->thenclause_get()->eval(*this);
-    }
-    else
-    {
-      JAECHO ("else", e->elseclause_get());
-      return e->elseclause_get()->eval(*this);
-    }
+    return (operator()(e->test_get().get())->as_bool()
+            ? e->thenclause_get()->eval(*this)
+            : e->elseclause_get()->eval(*this));
   }
 
 
@@ -500,9 +472,7 @@ namespace runner
         // immediately. However, we don't want to do it before the first
         // statement or if we only have one statement in the scope.
         if (tail++)
-          YIELD();
-
-        JAECHO("child", c);
+          yield();
 
         const ast::Stmt* stmt = dynamic_cast<const ast::Stmt*>(c.get());
         const ast::Exp* exp = stmt ? stmt->expression_get().get() : c.get();
@@ -630,7 +600,6 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Stmt* e)
   {
-    JAECHO ("expression", e->expression_get());
     return operator()(e->expression_get().get());
   }
 
@@ -831,7 +800,7 @@ namespace runner
       while (true)
       {
         if (must_yield && tail++)
-          YIELD();
+          yield();
         if (!operator()(e->test_get().get())->as_bool())
           break;
         if (e->flavor_get() == ast::flavor_comma)

@@ -18,8 +18,6 @@
 #include <sstream>
 #include <iomanip>
 
-//#define ENABLE_DEBUG_TRACES
-#include <libport/echo.hh>
 #include <libport/foreach.hh>
 #include <libport/format.hh>
 #include <libport/ref-pt.hh>
@@ -131,7 +129,6 @@ namespace kernel
 
     // nb of bytes to send.
     size_t toSend = std::min(packet_size_, send_queue_->size());
-    LIBPORT_DEBUG(toSend);
 
     if (!toSend)
     {
@@ -141,7 +138,6 @@ namespace kernel
 
     if (const char* popData = send_queue_->peek(toSend))
     {
-      LIBPORT_DEBUG(popData);
       int wasSent = effective_send(popData, toSend);
       bytes_sent_ += wasSent;
       // FIXME: This can never happen, as effective_send

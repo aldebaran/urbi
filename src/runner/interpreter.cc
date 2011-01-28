@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -13,15 +13,12 @@
  ** \brief Implementation of runner::Interpreter.
  */
 
-// #define ENABLE_DEBUG_TRACES
-
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include <libport/config.h>
-#include <libport/echo.hh>
 #include <libport/finally.hh>
 #include <libport/foreach.hh>
 #include <libport/format.hh>
@@ -292,7 +289,6 @@ namespace runner
     }
     catch (object::UrbiException&)
     {
-      LIBPORT_DEBUG("Implicit tag: " << *e);
       // We got a lookup error. It means that we have to automatically
       // create the tag. In this case, we only accept k1 style tags,
       // i.e. chains of identifiers, excluding function calls.
@@ -314,11 +310,11 @@ namespace runner
 	// exists.
 	if (rObject owner = where->slot_locate(elt).first)
         {
-          LIBPORT_DEBUG("Component " << elt << " exists.");
+          GD_FINFO_DUMP("Component %s exists.", elt);
 	  where = owner->local_slot_get(elt)->value();
 	  if (object::Tag* parent_ = dynamic_cast<object::Tag*>(where.get()))
 	  {
-            LIBPORT_DEBUG("It is a tag, so use it as the new parent.");
+            GD_INFO_DUMP("It is a tag, so use it as the new parent.");
 	    parent = parent_;
 	  }
         }
