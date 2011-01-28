@@ -13,7 +13,6 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <libport/cassert>
-#include <libport/compiler.hh>
 #include <libport/csignal>
 #include <libport/cstdlib>
 

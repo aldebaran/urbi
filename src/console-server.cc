@@ -8,9 +8,7 @@
  * See the LICENSE file for more information.
  */
 
-//#define ENABLE_DEBUG_TRACES
 #include <libport/config.h>
-#include <libport/compiler.hh>
 
 #include <libport/unistd.h>
 #include <iostream>

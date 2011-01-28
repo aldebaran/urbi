@@ -16,9 +16,6 @@
 #ifndef OBJECT_OBJECT_HXX
 # define OBJECT_OBJECT_HXX
 
-//#define ENABLE_DEBUG_TRACES
-//#include <libport/compiler.hh>
-
 # include <ostream>
 # include <typeinfo>
 

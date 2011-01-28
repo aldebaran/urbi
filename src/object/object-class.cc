@@ -13,8 +13,6 @@
  ** \brief Creation of the Urbi object object.
  */
 
-//#define ENABLE_DEBUG_TRACES
-
 #include <libport/bind.hh>
 #include <libport/format.hh>
 
