@@ -3,45 +3,45 @@
 use strict;
 
 my %char =
-(
-    'AMPERSAND' => '&',
-    'BANG'      => '!',
-    'CARET'     => '^',
-    'COLON'     => ':',
-    'DOLLAR'    => '$',
-    'EQ'        => '=',
-    'GT'        => '>',
-    'LPAREN'    => '(',
-    'LT'        => '<',
-    'MINUS'     => '-',
-    'PERCENT'   => '%',
-    'PIPE'      => '|',
-    'PLUS'      => '+',
-    'RPAREN'    => ')',
-    'SBL'       => '[',
-    'SBR'       => ']',
-    'SLASH'     => '/',
-    'SP'        => ' ',
-    'STAR'      => '*',
-    'TILDA'     => '~',
-    'UL'        => '_',
-);
+  (
+   'AMPERSAND' => '&',
+   'BANG'      => '!',
+   'CARET'     => '^',
+   'COLON'     => ':',
+   'DOLLAR'    => '$',
+   'EQ'        => '=',
+   'GT'        => '>',
+   'LPAREN'    => '(',
+   'LT'        => '<',
+   'MINUS'     => '-',
+   'PERCENT'   => '%',
+   'PIPE'      => '|',
+   'PLUS'      => '+',
+   'RPAREN'    => ')',
+   'SBL'       => '[',
+   'SBR'       => ']',
+   'SLASH'     => '/',
+   'SP'        => ' ',
+   'STAR'      => '*',
+   'TILDA'     => '~',
+   'UL'        => '_',
+  );
 
 # Convert a symbol name into its representation.
 sub symbol ($)
 {
-    my ($res) = @_;
-    while (my ($code, $char) = each %char)
-    {
-	$res =~ s/_?${code}_?/$char/g;
-    }
-    $res;
+  my ($res) = @_;
+  while (my ($code, $char) = each %char)
+  {
+    $res =~ s/_?${code}_?/$char/g;
+  }
+  $res;
 }
 
 # Check that no symbol::Symbol are called directly with literals.
 my $literals = `grep -E -n 'libport::Symbol *\\("[^"]*"\\)' @ARGV`;
 die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
-    if $literals;
+  if $literals;
 
 # Get the list of all the SYMBOL() uses.
 #
@@ -66,8 +66,8 @@ die "grep failed"
 # The set of symbols used.
 # Accept only identifiers followed by ')', or ','.
 my %symbol =
-    map { $_ => symbol($_) }
-	($symbols =~ /\b(?:$symbol_tag) *\((\w+)\s*[,)]/gm);
+  map { $_ => symbol($_) }
+      ($symbols =~ /\b(?:$symbol_tag) *\((\w+)\s*[,)]/gm);
 
 print <<'EOF';
 /**
@@ -81,13 +81,30 @@ print <<'EOF';
 # define SYMBOLS_APPLY(Macro)			  \
 EOF
 
-for (sort keys %symbol)
-{
-    printf "  %-48s\\\n", "Macro($_, \"$symbol{$_}\");";
-}
+printf "  %-48s\\\n", "Macro($_, \"$symbol{$_}\");"
+  foreach sort keys %symbol;
 
 print <<'EOF';
   /* Backslash terminator. */
 
 #endif // !OBJECT_PRECOMPILED_SYMBOLS_HH
 EOF
+
+
+
+### Setup "Gostai" style for perl-mode and cperl-mode.
+## Local Variables:
+## perl-indent-level: 2
+## perl-continued-statement-offset: 2
+## perl-continued-brace-offset: -2
+## perl-brace-offset: 0
+## perl-brace-imaginary-offset: 0
+## perl-label-offset: -2
+## cperl-indent-level: 2
+## cperl-brace-offset: 0
+## cperl-continued-brace-offset: -2
+## cperl-label-offset: -2
+## cperl-extra-newline-before-brace: t
+## cperl-merge-trailing-else: nil
+## cperl-continued-statement-offset: 2
+## End:
