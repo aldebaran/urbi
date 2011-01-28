@@ -92,6 +92,15 @@ namespace urbi
         ATTRIBUTE_ALWAYS_INLINE
         libport::intrusive_ptr<T> as();
 
+        /// Convert this to type \a T
+      /** \return This seen as a \a T, or raise if it's not of type \a T
+       */
+      template<typename T>
+        ATTRIBUTE_ALWAYS_INLINE
+        libport::intrusive_ptr<T> as_checked() const;
+      template<typename T>
+        ATTRIBUTE_ALWAYS_INLINE
+        libport::intrusive_ptr<T> as_checked();
     protected:
       virtual void* as_dispatch_(const std::type_info* requested);
       ATTRIBUTE_ALWAYS_INLINE

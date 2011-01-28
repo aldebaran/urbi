@@ -33,6 +33,8 @@
 
 # include <kernel/userver.hh>
 
+# include <urbi/runner/raise.hh>
+
 namespace urbi
 {
   namespace object
@@ -288,6 +290,24 @@ namespace urbi
     Object::as()
     {
       return reinterpret_cast<T*>(as_dispatch_(&typeid(T)));
+    }
+
+    // Function heavily inlined, keep as short as possible (no GD_ !).
+    template <typename T>
+    libport::intrusive_ptr<T>
+    Object::as_checked() const
+    {
+      return const_cast<Object*>(this)->as_checked<T>();
+    }
+
+    template <typename T>
+    libport::intrusive_ptr<T>
+    Object::as_checked()
+    {
+      T* v = reinterpret_cast<T*>(as_dispatch_(&typeid(T)));
+      if (!v)
+        runner::raise_type_error(this, T::proto);
+      return v;
     }
 
     // Specializations for object.
