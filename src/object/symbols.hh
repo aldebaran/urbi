@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -15,6 +15,9 @@
 
 #ifndef OBJECT_SYMBOLS_HH
 # define OBJECT_SYMBOLS_HH
+
+# include <boost/preprocessor/cat.hpp>
+# include <boost/preprocessor/stringize.hpp>
 
 # include <libport/symbol.hh>
 
@@ -36,7 +39,7 @@
    Therefore, declare here all the symbols we use somewhere in the C++
    code.  */
 
-#  define SYMBOL(Sym) ::object::symbol_ ## Sym
+#  define SYMBOL(Sym) BOOST_PP_CAT(::object::symbol_, Sym)
 #  include <object/precompiled-symbols.hh>
 
 namespace object
@@ -63,7 +66,7 @@ namespace object
   URBI_SDK_API libport::Symbol symbol_get(const std::string& s = "");
 }
 
-#  define SYMBOL(Sym) ::object::symbol_get(#Sym)
+#  define SYMBOL(Sym) ::object::symbol_get(BOOST_PP_STRINGIZE(Sym))
 
 # endif // ! SYMBOLS_PRECOMPILED
 
