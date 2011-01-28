@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -29,7 +29,7 @@ namespace object
 
 #else // ! SYMBOLS_PRECOMPILED
 
-# include <map>
+# include <boost/unordered_map.hpp>
 # include <string>
 # include <object/precompiled-symbols.hh>
 
@@ -57,20 +57,21 @@ namespace object
     libport::Symbol
     operator[](const std::string& s)
     {
-      // See ``Efficient STL''.
-      map_type::iterator i = map_.lower_bound(s);
-      if (i != map_.end() && !map_.key_comp()(s, i->first))
+      map_type::iterator i = map_.find(s);
+      if (i != map_.end())
         return i->second;
       else
       {
+        GD_CATEGORY(Urbi.Symbols);
+        GD_FINFO_DUMP("insert: %s", s);
         libport::Symbol res(s);
-        map_.insert(map_type::value_type(s, res));
+        map_[s] = res;
         return res;
       }
     }
 
   private:
-    typedef std::map<const std::string, libport::Symbol> map_type;
+    typedef boost::unordered_map<const std::string, libport::Symbol> map_type;
     map_type map_;
   };
 
