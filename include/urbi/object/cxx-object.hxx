@@ -124,7 +124,7 @@ namespace urbi
     template <typename T>
     template <typename M>
     void
-    CxxObject::Binder<T>::operator()(const libport::Symbol& name,
+    CxxObject::Binder<T>::operator()(libport::Symbol name,
                                      M method)
     {
       tgt_->slot_set(name, primitive(method), true);
@@ -149,7 +149,7 @@ namespace urbi
     template <typename T>
     template <typename A>
     void
-    CxxObject::Binder<T>::var(const libport::Symbol& name,
+    CxxObject::Binder<T>::var(libport::Symbol name,
                               A (T::*attr))
     {
       using libport::intrusive_ptr;
@@ -187,7 +187,7 @@ namespace urbi
     template <typename T>
     template <typename A>
     void
-    CxxObject::Binder<T>::var(const libport::Symbol& name,
+    CxxObject::Binder<T>::var(libport::Symbol name,
                               A* (T::*ref)())
     {
       using libport::intrusive_ptr;

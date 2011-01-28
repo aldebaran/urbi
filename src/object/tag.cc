@@ -177,7 +177,7 @@ namespace urbi
     }
 
     static inline rObject
-    tag_event(Tag* owner, const libport::Symbol& field)
+    tag_event(Tag* owner, libport::Symbol field)
     {
       if (owner->local_slot_get(field))
         return owner->slot_get(field);

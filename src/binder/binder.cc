@@ -58,7 +58,7 @@ namespace binder
   {}
 
   unsigned
-  Binder::routine_depth_get(const libport::Symbol& name)
+  Binder::routine_depth_get(libport::Symbol name)
   {
     if (env_[name].empty())
       return 0;
@@ -70,7 +70,7 @@ namespace binder
   }
 
   unsigned
-  Binder::scope_depth_get(const libport::Symbol& name)
+  Binder::scope_depth_get(libport::Symbol name)
   {
     if (env_[name].empty())
       return 0;
@@ -82,7 +82,7 @@ namespace binder
   }
 
   ast::rLocalDeclaration
-  Binder::decl_get(const libport::Symbol& name)
+  Binder::decl_get(libport::Symbol name)
   {
     aver(!env_[name].empty());
     return env_[name].back().first;
@@ -91,8 +91,8 @@ namespace binder
   ast::rCall
   Binder::changeSlot(const ast::loc& l,
                      const ast::rExp& target,
-                     const libport::Symbol& name,
-                     const libport::Symbol& method,
+                     libport::Symbol name,
+                     libport::Symbol method,
                      ast::rConstExp value)
   {
     PARAMETRIC_AST(call, "%exp:1 . %id:2 (%exps:3)");
@@ -247,7 +247,7 @@ namespace binder
   void
   Binder::link_to_declaration(Node input,
                               NewNode result,
-                              const libport::Symbol& name,
+                              libport::Symbol name,
                               unsigned depth)
   {
     GD_SINFO_DUMP("Linking " << name << " to its declaration");

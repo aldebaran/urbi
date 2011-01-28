@@ -74,7 +74,7 @@ namespace binder
     template <typename Node, typename NewNode>
     void link_to_declaration(Node input,
                              NewNode current,
-                             const libport::Symbol& name,
+                             libport::Symbol name,
                              unsigned depth);
 
   private:
@@ -129,9 +129,9 @@ namespace binder
 
     /// \return 0 if the variable isn't local, or the depth in
     /// number of nested routines otherwise.
-    unsigned routine_depth_get(const libport::Symbol& name);
-    unsigned scope_depth_get(const libport::Symbol& name);
-    ast::rLocalDeclaration decl_get(const libport::Symbol& name);
+    unsigned routine_depth_get(libport::Symbol name);
+    unsigned scope_depth_get(libport::Symbol name);
+    ast::rLocalDeclaration decl_get(libport::Symbol name);
 
     /// Factored method to handle scopes.
     libport::Finally::action_type scope_open(bool set_on_self);
@@ -140,8 +140,8 @@ namespace binder
     /// Factored method to create updateSlot/setSlot calls.
     ast::rCall changeSlot(const ast::loc& l,
                           const ast::rExp& target,
-                          const libport::Symbol& name,
-                          const libport::Symbol& method,
+                          libport::Symbol name,
+                          libport::Symbol method,
                           ast::rConstExp value = 0);
 
     /// Make a lazy from \a arg.

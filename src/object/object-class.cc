@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -260,7 +260,7 @@ namespace urbi
     }
 
     static bool
-    object_class_hasLocalSlot(rObject self, const libport::Symbol& slot)
+    object_class_hasLocalSlot(rObject self, libport::Symbol slot)
     {
       return self->local_slot_get(slot);
     }

@@ -127,11 +127,11 @@ namespace urbi
       public:
         /// Bind \a method with \a name
         template <typename M>
-        void operator()(const libport::Symbol& name, M method);
+        void operator()(libport::Symbol name, M method);
         template <typename A>
-        void var(const libport::Symbol& name, A (T::*attr));
+        void var(libport::Symbol name, A (T::*attr));
         template <typename A>
-        void var(const libport::Symbol& name, A* (T::*ref)());
+        void var(libport::Symbol name, A* (T::*ref)());
         rObject proto() { return tgt_; }
 
       private:
