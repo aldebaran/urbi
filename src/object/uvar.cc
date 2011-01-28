@@ -40,6 +40,7 @@ namespace urbi
 {
   namespace object
   {
+    using libport::Symbol;
     static inline void
     show_exception_message(runner::Runner& r, rUVar self,
                            const char* m1, const char* m2 = "")
@@ -121,6 +122,61 @@ namespace urbi
     }
 
     unsigned int UVar::uid_ = 0;
+
+    static inline bool matchCachedProps(Symbol s)
+    {
+      return
+         s == SYMBOL(rangemin)
+      || s == SYMBOL(rangemax)
+      || s == SYMBOL(timestamp)
+      || s == SYMBOL(changed);
+    }
+
+    static rObject parentGetProperty(const objects_type& o)
+    {
+      if (o.size() != 3)
+        runner::raise_arity_error(o.size()-1, 2);
+      Object* self = o[0];
+      Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
+      Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
+      rUVar v = self->slot_get(vname)->as<UVar>();
+      if (v && matchCachedProps(pname))
+      {
+        return v->call(pname);
+      }
+      else
+        return self->property_get(vname, pname);
+    };
+    static rObject parentHasProperty(const objects_type& o)
+    {
+      if (o.size() != 3)
+        runner::raise_arity_error(o.size()-1, 2);
+      Object* self = o[0];
+      Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
+      Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
+      rUVar v = self->slot_get(vname)->as<UVar>();
+      if (v && matchCachedProps(pname))
+      {
+        return true_class;
+      }
+      else
+        return self->property_has(vname, pname)?true_class:false_class;
+    };
+    static rObject parentSetProperty(const objects_type& o)
+    {
+      if (o.size() != 4)
+        runner::raise_arity_error(o.size()-1, 3);
+      Object* self = o[0];
+      Symbol vname = Symbol(o[1]->as_checked<String>()->value_get());
+      Symbol pname = Symbol(o[2]->as_checked<String>()->value_get());
+      rUVar v = self->slot_get(vname)->as<UVar>();
+      if (v && matchCachedProps(pname))
+      {
+        return v->slot_update(pname, o[3]);
+      }
+      else
+        return self->property_set(vname, pname, o[3]);
+    };
 
     unsigned int
     UVar::notifyChange_(rObject function)
@@ -258,7 +314,9 @@ namespace urbi
       DECLARE(val);
       DECLARE(valsensor);
 #undef DECLARE
-
+      slot_set(SYMBOL(parentGetProperty), new Primitive(&parentGetProperty));
+      slot_set(SYMBOL(parentSetProperty), new Primitive(&parentSetProperty));
+      slot_set(SYMBOL(parentHasProperty), new Primitive(&parentHasProperty));
       setSlot(SYMBOL(updateBounce), new Primitive(&uvar_update_bounce));
     }
 

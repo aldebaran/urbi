@@ -339,34 +339,6 @@ do (&UVar)
 
     }
   };
-  function parentGetProperty(varname, propname)
-  {
-    // Constant is special and does not trigger newPropertyHook.
-    if (getSlot(varname).isA(UVar)
-        && propname in ["timestamp", "rangemin", "rangemax", "changed"])
-    {
-      var v = getSlot(varname)|
-      v.getSlot(propname).apply([v])
-    }
-    else // Default behavior if not an UVar.
-      Object.&getProperty.apply([this, varname, propname])
-  };
-  function parentSetProperty(varname, propname, propval)
-  {
-    if (getSlot(varname).isA(UVar)
-        &&  propname in ["timestamp", "rangemin", "rangemax"])
-      getSlot(varname).updateSlot(propname, propval)
-    else
-      Object.&setProperty.apply([this, varname, propname, propval])
-  };
-  function parentHasProperty(varname, propname)
-  {
-    if (getSlot(varname).isA(UVar)
-        && propname in ["timestamp", "rangemin", "rangemax", "changed"])
-      true
-    else
-      Object.&hasProperty.apply([this, varname, propname])
-  };
 
   // Compatibility with gostai studio which checks
   // UObject.hasLocalSlot(hasProperty)
