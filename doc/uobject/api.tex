@@ -157,7 +157,7 @@ class adder : public urbi::UObject // Must inherit from UObject.
 \begin{cxx}
 // the constructor defines what is available from Urbi
 adder::adder(const std::string& s)
-  : UObject(s) // required
+  : urbi::UObject(s) // required
 {
   // Bind the variable.
   UBindVar(adder, v);
@@ -315,6 +315,7 @@ example of an object-tracker:
 \begin{cxx}
 class ObjectTracker: public urbi::UObject
 {
+public:
   ObjectTracker(const std::string& n)
     : urbi::UObject(n)
   {
@@ -556,41 +557,37 @@ of the data and type-specific meta-information.
 The \UBinary manages its memory: when destroyed (or going out-of-scope), it
 frees all its allocated data. The \USound and \UImage do not.
 
-Reading an \UBinary from a \UVar, and writing a
-\UBinary, \USound or \UImage to an \UVar performs a deep-copy of the
-data (by default, see below).
+Reading an \UBinary from a \UVar, and writing a \UBinary, \USound or \UImage
+to an \UVar performs a deep-copy of the data (by default, see below).
 
-Reading a \USound or \UImage from an \UVar performs a shallow copy. Modifying
-the data is not allowed in that case.
+Reading a \USound or \UImage from an \UVar performs a shallow
+copy. Modifying the data is not allowed in that case.
 
 \subsection{0-copy mode}
 In plugin mode, you can setup any \UVar in 0-copy mode by calling
 \lstinline{setBypass(true)}. In this mode, binary data written to the \UVar
-is not copied, but a reference is kept.
-As a consequence, the data is only available from within registered
-notifyChange callbacks. Those callbacks can use \lstinline|UVar::val()| or
-cast the \UVar to a \UBinary\& to retrieve the reference.
-Attempts to read the \UVar from outside notifyChange will result in
-\lstinline{nil} being returned.
+is not copied, but a reference is kept.  As a consequence, the data is only
+available from within registered notifyChange callbacks. Those callbacks can
+use \lstinline|UVar::val()| or cast the \UVar to a \UBinary\& to retrieve
+the reference.  Attempts to read the \UVar from outside notifyChange will
+result in \lstinline{nil} being returned.
 
 \section{Using hubs to group objects}
 
-Sometimes, you need to perform actions for a group of
-\lstinline{UObjects}, for instance devices that need to be updated
-together. The API provides the \UObjectHub class for this
-purpose. To create a hub, simply declare a subclass of
-\UObjectHub, and register it by calling once the macro
+Sometimes, you need to perform actions for a group of \lstinline{UObjects},
+for instance devices that need to be updated together. The API provides the
+\UObjectHub class for this purpose. To create a hub, simply declare a
+subclass of \UObjectHub, and register it by calling once the macro
 \lstinline|UStartHub (\var{class-name})|. A single instance of this class
-will then be created upon server start-up. \UObject
-instances can then register to this hub by calling
-\lstinline|URegister (\var{hub-class-name})|. Timers can be attached to
-\UObjectHub the same way as to \UObject (see
+will then be created upon server start-up. \UObject instances can then
+register to this hub by calling %
+\lstinline|URegister (\var{hub-class-name})|. %
+Timers can be attached to \UObjectHub the same way as to \UObject (see
 \autoref{sec:uob:timers}). The kernel will call the \lstinline{update()}
-method of all \UObject before calling the
-\lstinline{update()} method of the hub. A hub instance can be
-retrieved by calling \lstinline{getUObjectHub (string classname)}. The
-hub also holds the list of registered UObject in its members
-attribute.
+method of all \UObject before calling the \lstinline{update()} method of the
+hub. A hub instance can be retrieved by calling
+\lstinline{getUObjectHub (string classname)}. The hub also holds the list of
+registered UObject in its members attribute.
 
 \section{Sending \us code}
 
