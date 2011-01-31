@@ -83,8 +83,9 @@ namespace kernel
   void
   UConnection::initialize()
   {
-    received(SYNCLINE_WRAP("initialize(%s)|;",
-                           kernel::urbiserver->opt_banner_get()));
+    received(SYNCLINE_WRAP("initialize(%s, %s)|;",
+                             kernel::urbiserver->opt_banner_get(),
+                             &kernel::urbiserver->ghost_connection_get()==this));
   }
 
   void
