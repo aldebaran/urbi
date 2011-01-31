@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -252,20 +252,22 @@ to execute, you can have it execute in a separate thread by calling
 The function code will be executed in a separate thread without breaking the
 \us execution semantics.
 
-The \lstinline{lockMode} argument can be used to prevent parallel execution
+The \var{lockMode} argument can be used to prevent parallel execution
 of multiple bound functions if your code is not thread-safe. It can be any of
-\lstinline{LOCK_NONE}, \lstinline{LOCK_FUNCTION}, \lstinline{LOCK_INSTANCE},
-\lstinline{LOCK_CLASS} or \lstinline{LOCK_MODULE}.
-When set to \lstinline{LOCK_NONE}, no locking is performed. Otherwise, it
-limits parallel executions to:
-
+the following values.
 \begin{itemize}
-\item One instance of the bound function for \lstinline{LOCK_FUNCTION}.
-\item One bound function for each object instance for
-\lstinline{LOCK_INSTANCE}.
-\item One bound function for the class for \lstinline{LOCK_CLASS}.
-\item One bound function for the whole module (shared object) for
-\lstinline{LOCK_MODULE}.
+\item \lstinline{LOCK_NONE}\\
+  No locking is performed.
+\item \lstinline{LOCK_FUNCTION}\\
+  Parallel execution is limited to one instance of the bound function.
+\item \lstinline{LOCK_INSTANCE}\\
+  Parallel execution is limited to one bound function for each object
+  instance.
+\item \lstinline{LOCK_CLASS}\\
+  Parallel execution is limited to one bound function for the class.
+\item \lstinline{LOCK_MODULE}\\
+  Parallel execution is limited to one bound function for the whole module
+  (shared object).
 \end{itemize}
 
 There is however a restriction: you cannot mix multiple locking modes: for
@@ -294,8 +296,8 @@ callback function is called after the variable value is changed, whereas the
 \lstinline{notifyAccess} callback is called before the variable is accessed,
 giving you the possibility to update its value.
 
-Notify functions can be unregistered by calling the
-\lstinline|unnotify| function of the \UVar class.
+Notify functions can be unregistered by calling the \lstinline|unnotify|
+function of the \UVar class.
 
 \section{Data-flow based programming: exchanging UVars}
 
