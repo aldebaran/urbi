@@ -186,18 +186,18 @@ public class Adder extends UObject // must extends UObject
 \end{java}
 
 To bind the variables to Urbi, we use the function:
-\begin{cxx}
+\begin{java}
 void UBindVar (UVar v, String name)
-\end{cxx}
+\end{java}
 
 This function take as parameter the UVar variables, and the name of the
 UVar (because \urbi need to know what is the name of your variable).
 Once your variable is bound with UBindVar it will be accessible in \urbi.
 
 \item Each UObject needs to be registered within urbi using the code
-\begin{cxx}
+\begin{java}
 static { UStart(YourUObject.class); }
-\end{cxx}
+\end{java}
 \end{itemize}
 
 If you run this UObject and test it from Urbi it gives:
@@ -349,10 +349,10 @@ The third parameter is a list of the names if the types of the arguments.
 For example for the function add, in the previous Adder example, we could have
 used:
 
-\begin{cxx}
+\begin{java}
 String[] params = { "double" };
 UBindFunction (this, "add", params);
-\end{cxx}
+\end{java}
 
 If in your UObject you have different names for each of your methods, then
 you can use the shorter versions of UBindFunction.
@@ -360,20 +360,34 @@ you can use the shorter versions of UBindFunction.
 The functions you can bind must follow these rules:
 \begin{itemize}
 \item They can have between 0 and 16 arguments.
-\item Their arguments can be of type: \samp{urbi.UValue}, \samp{urbi.UVar},
-  \samp{urbi.UList}, \samp{urbi.UBinary}, \samp{urbi.UImage},
-  \samp{urbi.USound}, \samp{urbi.UDictionary}, \samp{java.lang.String},
-  \samp{java.lang.Integer}, \samp{java.lang.Boolean},
-  \samp{java.lang.Double}, \samp{java.lang.Float}, \samp{java.lang.Long},
-  \samp{java.lang.Short}, \samp{java.lang.Character}, \samp{java.lang.Byte},
-  \samp{int}, \samp{boolean}, \samp{byte}, \samp{char}, \samp{short},
-  \samp{long}, \samp{float}, \samp{double}.
-\item Their return type can be one of the following type: \samp{void},
-  \samp{urbi.UValue}, \samp{urbi.UVar}, \samp{urbi.UList},
-  \samp{urbi.UBinary}, \samp{urbi.UImage}, \samp{urbi.USound},
-  \samp{urbi.UDictionary}, \samp{java.lang.String}, \samp{int},
-  \samp{boolean}, \samp{byte}, \samp{char}, \samp{short}, \samp{long},
-  \samp{float}, \samp{double}.
+\item Their arguments can be of type:
+  \begin{itemize}
+  \item \urbi types:\\
+    \samp{urbi.UValue}, \samp{urbi.UVar}, \samp{urbi.UList},
+    \samp{urbi.UBinary}, \samp{urbi.UImage}, \samp{urbi.USound},
+    \samp{urbi.UDictionary}
+  \item \Java instances:\\
+    \samp{java.lang.String}, \samp{java.lang.Integer},
+    \samp{java.lang.Boolean}, \samp{java.lang.Double},
+    \samp{java.lang.Float}, \samp{java.lang.Long}, \samp{java.lang.Short},
+    \samp{java.lang.Character}, \samp{java.lang.Byte}
+  \item \Java primitive types:\\
+    \samp{int}, \samp{boolean}, \samp{byte}, \samp{char}, \samp{short},
+    \samp{long}, \samp{float}, \samp{double}.
+  \end{itemize}
+\item Their return type can be one of the following type:
+  \begin{itemize}
+  \item \samp{void}
+  \item \urbi types:\\
+    \samp{urbi.UValue}, \samp{urbi.UVar}, \samp{urbi.UList},
+    \samp{urbi.UBinary}, \samp{urbi.UImage}, \samp{urbi.USound},
+    \samp{urbi.UDictionary}
+  \item \Java instances:\\
+    \samp{java.lang.String}
+  \item \Java primitive types:\\
+    \samp{int}, \samp{boolean}, \samp{byte}, \samp{char}, \samp{short},
+    \samp{long}, \samp{float}, \samp{double}.
+  \end{itemize}
 \end{itemize}
 
 
@@ -461,7 +475,7 @@ These functions are member functions of the UObject class.
 % under Windows and \var{liburbijava.dylib} under MacOS).
 % This is how you should load the library in you Java project:
 %
-% \begin{cxx}
+% \begin{java}
 % import liburbi.main.*;
 %
 % public class Main {
@@ -475,7 +489,7 @@ These functions are member functions of the UObject class.
 %       /// Does nothing for now.
 %     }
 % }
-% \end{cxx}
+% \end{java}
 %
 % When you call System.loadLibrary, java search for the library in the locations given
 % in \var{java.library.path}. This special Java variable must be correctly set or you
@@ -486,7 +500,7 @@ These functions are member functions of the UObject class.
 % To display the content of the java.library.path variable in your program, you
 % can use:
 %
-% \begin{cxx}
+% \begin{java}
 % import liburbi.main.*;
 %
 % public class Main {
@@ -504,7 +518,7 @@ These functions are member functions of the UObject class.
 %       /// Does nothing for now.
 %     }
 % }
-% \end{cxx}
+% \end{java}
 
 
 \section{Providing a main class or not}
