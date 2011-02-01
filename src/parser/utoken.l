@@ -163,9 +163,10 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 `----------------------------------*/
 
 #define RETURN(Symbol)                          \
-  {                                             \
-    return yy::parser::make_ ## Symbol(loc);    \
-  }
+  return yy::parser::make_ ## Symbol(loc)
+
+#define RETURN_VALUE(Symbol, Value)              \
+  return yy::parser::make_ ## Symbol(Value, loc)
 
 // Return an assignment operator: its value is the base operator.
 #define RETURN_ASSIGN_OP(Token)                 \
@@ -222,12 +223,6 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // Return a Symbol of kind Token with yytext as Value.
 #define RETURN_SYMBOL(Token)                    \
   RETURN_VALUE(Token, libport::Symbol(yytext))
-
-#define RETURN_VALUE(Token, Value)                      \
-  {                                                     \
-    return yy::parser::make_ ## Token(Value, loc);      \
-  }
-
 
 
 /// Unput a large string.
