@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -89,9 +89,6 @@ namespace parser
     // Clear previous errors.
     errors_.clear();
 
-    // Set up result_.
-    result_ = 0;
-
     // Set up parser.
     parser_type p(*this, scanner_);
 #if defined YYDEBUG && YYDEBUG
@@ -107,14 +104,19 @@ namespace parser
 
     // Parse.
     p.parse();
+
+    // Do not keep the result in the parser.
+    parse_result_type res = result_;
+    result_ = 0;
+
     TIMER_POP("parse");
-    if (debug_ && result_)
-      GD_SINFO_DEBUG("Parse end:" << *result_);
+    if (debug_ && res)
+      GD_SINFO_DEBUG("Parse end:" << *res);
 
     if (!errors_.empty())
       throw errors_;
 
-    return result_;
+    return res;
   }
 
   void
