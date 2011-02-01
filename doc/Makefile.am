@@ -1,4 +1,4 @@
-## Copyright (C) 2006, 2008-2010, Gostai S.A.S.
+## Copyright (C) 2006, 2008-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -198,7 +198,7 @@ RUN_SPELL_CHECK = $(SPELL_CHECK) $(AM_SPELL_CHECKFLAGS) $(SPELL_CHECKFLAGS)
 # Rely on Make to resolve the location (src or build) of the files to
 # spell-check.
 spell-check: $(urbi_sdk_tex) $(dist_doc_DATA)
-	$(RUN_SPELL_CHECK) $^
+	$(AM_V_GEN) $(RUN_SPELL_CHECK) $(if $(V:0=),-v,-q) $^
 
 
 ## --------- ##
