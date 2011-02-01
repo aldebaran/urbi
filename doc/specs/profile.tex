@@ -24,7 +24,7 @@ by \refSlot[System]{profile} internal machinery. Lines are sorted by
 decreasing ``self time''.
 
 \begin{urbiscript}
-System.profile(function() { echo("foo") });
+var profile = System.profile(function() { echo("foo") });
 [00000001] *** foo
 [00001672] Profile(
 [:]  Yields: 0
@@ -66,11 +66,19 @@ System.profile(function() { echo("foo") });
 
 \item[maxFunctionCallDepth]%
   The maximum function call depth reached.
+\begin{urbiassert}
+// Example continued from Construction.
+profile.maxFunctionCallDepth == 5;
+\end{urbiassert}
 
 \item[Function] See \refObject{Profile.Function}.
 
 \item[totalCalls]%
   The total number of function calls made.
+\begin{urbiassert}
+// Example continued from Construction.
+profile.totalCalls == 16;
+\end{urbiassert}
 
 \item[totalTime]%
   The total CPU time. It can be higher than the wall clock time on
@@ -85,7 +93,10 @@ System.profile(function() { echo("foo") });
   yields when it gives the opportunity to an other to be executed until this
   one yields and so on\dots This slot contains the number of scheduler
   yields.
-
+\begin{urbiassert}
+// Example continued from Construction.
+profile.yields == 0;
+\end{urbiassert}
 \end{urbiscriptapi}
 
 
