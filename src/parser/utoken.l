@@ -240,9 +240,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 // We matched an alternative token, rescan with Str instead.
 #define SYNONYM(Str)                            \
-  {                                             \
-    UNPUT(Str);                                 \
- }
+  UNPUT(Str)
 
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.  The braces are
@@ -300,10 +298,6 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 %%
 %{
-
-  // FIXME: get rid of this useless argument.
-  (void) up;
-
   // The first delimiter of a string or a symbol : ' or ".
   // Used in SC_STRING_OR_SYMBOL to know if it is reading a string or a symbol.
   char delimiter = 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -81,9 +81,11 @@ namespace parser
     friend int parser_type::parse();
     friend YY_DECL;
 
+  public:
     /// The scanner.
     yyFlexLexer scanner_;
 
+  private:
     /// The current location.
     ///
     /// The real parser (ugrammar.y) fetches its starting location

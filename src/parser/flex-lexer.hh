@@ -94,15 +94,14 @@ public:
   void yypush_buffer_state( struct yy_buffer_state* new_buffer );
   void yypop_buffer_state();
 
-  virtual yy::parser::symbol_type yylex(parser::ParserImpl* p = 0) = 0;
+  virtual yy::parser::symbol_type yylex() = 0;
 
   // Call yylex with new input/output sources.
-  yy::parser::symbol_type yylex(parser::ParserImpl* p,
-                                FLEX_STD istream* new_in,
+  yy::parser::symbol_type yylex(FLEX_STD istream* new_in,
                                 FLEX_STD ostream* new_out = 0)
   {
     switch_streams(new_in, new_out);
-    return yylex(p);
+    return yylex();
   }
 
   // Switch to new input/output streams.  A nil stream pointer
@@ -157,7 +156,7 @@ public:
   void yypush_buffer_state( struct yy_buffer_state* new_buffer );
   void yypop_buffer_state();
 
-  virtual yy::parser::symbol_type yylex(parser::ParserImpl* p = 0);
+  virtual yy::parser::symbol_type yylex();
   virtual void switch_streams( FLEX_STD istream* new_in, FLEX_STD ostream* new_out );
 
   virtual int yywrap() { return 1; }

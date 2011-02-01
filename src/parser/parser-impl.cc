@@ -91,7 +91,7 @@ namespace parser
     errors_.clear();
 
     // Set up parser.
-    parser_type p(*this, scanner_);
+    parser_type p(*this);
 #if defined YYDEBUG && YYDEBUG
     p.set_debug_level(debug_);
 #endif

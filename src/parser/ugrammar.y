@@ -22,7 +22,7 @@
 
 // The leading :: are needed to avoid symbol clashes in the
 // parser class when it sees a parser namespace occurrence.
-%param {::parser::ParserImpl& up} {yyFlexLexer& scanner};
+%param {::parser::ParserImpl& up};
 
 %code requires // Output in ugrammar.hh.
 {
@@ -54,7 +54,7 @@
 %initial-action
 {
   // Saved when exiting the start symbol.
-  scanner.loc = up.loc_;
+  up.scanner_.loc = up.loc_;
 }
 
 
@@ -125,16 +125,17 @@
     static
     inline
     yy::parser::symbol_type
-    yylex(parser::ParserImpl& up, yyFlexLexer& scanner)
+    yylex(parser::ParserImpl& up)
     {
-      boost::optional< ::yy::parser::token_type>& initial_token(up.initial_token_get());
+      boost::optional< ::yy::parser::token_type>&
+        initial_token(up.initial_token_get());
       if (initial_token)
       {
         ::yy::parser::token_type res = initial_token.get();
         initial_token = boost::optional< ::yy::parser::token_type>();
         return yy::parser::symbol_type(res, yy::location());
       }
-      return scanner.yylex(&up);
+      return up.scanner_.yylex();
     }
 
   } // anon namespace
