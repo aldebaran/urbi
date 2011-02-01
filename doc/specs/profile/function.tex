@@ -23,27 +23,73 @@ given function during a profiling operation.
 created by \refSlot[System]{profile} internal machinery.
 
 \begin{urbiscript}
-System.profile(function() { echo("foo") }).calls[6];
-[00000002] *** foo
-[00000001] Function('echo', 1, 0.000181, 181)
+function Float.fact()
+{
+  if (this == 0 || this == 1)
+    this
+  else
+    this * (this - 1).fact;
+}|;
+var profile = System.profile(function() { 6.fact });
+[00009050] Profile(
+[:]  Yields: 0
+[:]  Total time: 0.000762s
+[:]  Wall clock time: 0.000762s
+[:]  Function calls: 35
+[:]  Max function call depth: 8
+[:]
+[:]  .--------------------------------------------------------.
+[:]  |   Function   |  Calls  |   Self time   | Self time per |
+[:]  |--------------+---------+---------------+---------------|
+[:]  |         fact |       6 |      0.000436 |            72 |
+[:]  |           == |      12 |      0.000108 |             9 |
+[:]  |           || |       6 |      0.000075 |            12 |
+[:]  |            - |       5 |      0.000052 |            10 |
+[:]  |            * |       5 |      0.000046 |             9 |
+[:]  |              |       1 |      0.000030 |            30 |
+[:]  |     profiled |       1 |      0.000015 |            15 |
+[:]  |--------------+---------+---------------+---------------|
+[:]  |       Totals |      35 |      0.000762 |           157 |
+[:]  '--------------'---------'---------------'---------------'
+[:])
+profile.calls[0];
+[00123833] Function('fact', 6, 0.000436, 72)
 \end{urbiscript}
 
 \subsection{Slots}
 
 \begin{urbiscriptapi}
-
 \item[calls]%
   The number of times this function was called during the profiling.
+\begin{urbiassert}
+// Example continued from Construction section.
+profile.calls[0].calls == 6;
+\end{urbiassert}
 
 \item[name]%
   The name of the function called.
+\begin{urbiassert}
+// Example continued from Construction section.
+profile.calls[0].name == "fact";
+\end{urbiassert}
 
 \item[selfTimePer]%
   Average CPU time spent in one function call. It is computed as the ratio
   of \refSlot{selfTime} divided by \refSlot{calls}.
+\begin{urbiassert}
+// Example continued from Construction section.
+do (profile.calls[0])
+{
+  selfTimePer == selfTime / calls;
+}
+\end{urbiassert}
 
 \item[selfTime]%
   Total CPU time spent in all calls of the function.
+\begin{urbiassert}
+// Example continued from Construction section.
+profile.calls[0].selfTime.isA(Float);
+\end{urbiassert}
 
 \end{urbiscriptapi}
 

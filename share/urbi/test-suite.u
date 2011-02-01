@@ -176,30 +176,6 @@ do (String)
   }
 }|
 
-/*---------.
-| System.  |
-`---------*/
-
-// Deterministic System.profile.
-do (System)
-{
-  var 'profile$old' = &profile |
-  profile = function(code)
-  {
-    var p = 'profile$old'(code) |
-    var order = closure(var a, var b)
-    {
-      var aLower = a.name.toLower |
-      var bLower = b.name.toLower |
-      if (aLower != bLower)
-        aLower < bLower
-      else
-        a.name < b.name
-    } |
-    p.calls = p.calls.sort(order) |
-    p
-  }
-} |
 
 /*----------.
 | Windows.  |
