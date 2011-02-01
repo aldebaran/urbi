@@ -344,7 +344,7 @@ start:
   {
     // Remove the reference from yystack by swaping with a 0 intrusive
     // pointer.
-    aver_eq(up.result_.get(), 0);
+    aver(up.result_.get() == 0);
     std::swap(up.result_, $1);
     up.loc_ = @$;
     YYACCEPT;
