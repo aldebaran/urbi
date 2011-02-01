@@ -30,6 +30,7 @@ namespace object
 #else // ! SYMBOLS_PRECOMPILED
 
 # include <boost/unordered_map.hpp>
+# include <libport.debug.hh>
 # include <string>
 # include <object/precompiled-symbols.hh>
 
