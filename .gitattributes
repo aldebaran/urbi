@@ -1,1 +1,3 @@
 *.pdf	binary
+
+src/parser/flex-lexer.hh -hook_copyright

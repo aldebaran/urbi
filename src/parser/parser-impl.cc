@@ -55,6 +55,7 @@ namespace parser
     , initial_token_()
   {
     scanner_.switch_streams(&input, 0);
+    scanner_.parser_impl_ = this;
   }
 
   void

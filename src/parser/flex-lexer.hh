@@ -244,6 +244,8 @@ public:
 
   // The current location.
   yy::location loc;
+
+  parser::ParserImpl* parser_impl_;
 };
 
 #endif // !PARSER_FLEX_LEXER_HH

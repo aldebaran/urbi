@@ -90,7 +90,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
                                                                         \
   /* The default start condition.  */                                   \
   sc_default =                                                          \
-    up->meta() ? SC_META                                                \
+    parser_impl_->meta() ? SC_META                                      \
     : urbi_check_mode ? SC_URBI_CHECK                                   \
     : INITIAL;                                                          \
   BEGIN sc_default;                                                     \
@@ -129,10 +129,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 // Report an error.
 #define SCAN_ERROR(...)                                     \
-  do {                                                      \
-    aver(up);                                               \
-    up->error(loc, libport::format(__VA_ARGS__));           \
-  } while (false)
+  parser_impl_->error(loc, libport::format(__VA_ARGS__))
 
 // Report an EOF error.
 #define EOF_ERROR(Where)                                \
@@ -171,11 +168,12 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 // UnitLength is the number of letters used for the unit.
 #define RETURN_UNIT(Token, UnitLength, From, To)                        \
-  {                                                                     \
+  do {                                                                  \
     yytext[yyleng - UnitLength] = 0;                                    \
     RETURN_VALUE(Token,                                                 \
-                 lexical_cast<ufloat>(up, loc, yytext) / (From) * (To)); \
-  }
+                 lexical_cast<ufloat>(parser_impl_, loc, yytext)        \
+                 / (From) * (To));                                      \
+  } while (false)
 
 
 #define RETURN_ANGLE(UnitLength, From, To)      \
@@ -208,7 +206,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // Return a meta-variable type.  Only if desugaring is enabled.
 #define RETURN_PERCENT(Token)                   \
   do {                                          \
-    aver(up->meta());                           \
+    aver(parser_impl_->meta());                 \
     RETURN(PERCENT_ ## Token ## _COLON);        \
   } while (false)
 
@@ -249,12 +247,12 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.  The braces are
 // needed to scope msg and rewritten.
-#define DEPRECATED(New)                         \
-  {                                             \
-    std::string rewritten = New;                \
-    up->deprecated(loc, yytext, rewritten);     \
-    UNPUT(rewritten);                           \
-  }
+#define DEPRECATED(New)                                   \
+  do {                                                    \
+    std::string rewritten = New;                          \
+    parser_impl_->deprecated(loc, yytext, rewritten);     \
+    UNPUT(rewritten);                                     \
+  } while (false)
 
 %}
 /* No default rule. */
@@ -303,6 +301,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 %%
 %{
 
+  // FIXME: get rid of this useless argument.
+  (void) up;
+
   // The first delimiter of a string or a symbol : ' or ".
   // Used in SC_STRING_OR_SYMBOL to know if it is reading a string or a symbol.
   char delimiter = 0;
@@ -348,7 +349,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
     // When pushing, store the location that *precedes* this request,
     // that of the starting cursor.
     loc.end = loc.begin;
-    up->synclines_.push(loc);
+    parser_impl_->synclines_.push(loc);
   }
   yytext += 4;
 
@@ -369,12 +370,12 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   loc.initialize(!file || libport::streq(file, "-")
 		 ? 0
 		 : new libport::Symbol(file));
-  loc.lines(lexical_cast<unsigned>(up, loc, line) - 1);
+  loc.lines(lexical_cast<unsigned>(parser_impl_, loc, line) - 1);
   loc.step();
 }
 
 "//#"{BLANKS}?"pop"{BLANKS}?{EOL}     {
-  if (up->synclines_.empty())
+  if (parser_impl_->synclines_.empty())
   {
     SCAN_ERROR("too many //#pop");
     LINES(1);
@@ -382,8 +383,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
   }
   else
   {
-    loc = up->synclines_.top();
-    up->synclines_.pop();
+    loc = parser_impl_->synclines_.top();
+    parser_impl_->synclines_.pop();
   }
 }
 
@@ -417,7 +418,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 {HEXA}        RETURN_VALUE(FLOAT, strtoll(yytext + 2, 0, 16));
 {NATURAL}     |
-{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(up, loc, yytext));
+{FLOAT}       RETURN_VALUE(FLOAT, lexical_cast<ufloat>(parser_impl_, loc, yytext));
 
 ({NUMBER}|{HEXA}){ID} SCAN_ERROR("invalid token: `%s'", yytext);
 
@@ -736,7 +737,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
        else
        {
          // All we have to read is in Flex' buffer.
-         aver(up);
+         aver(parser_impl_);
          grown_string += std::string(yy_c_buf_p, eat);
        }
        COLUMNS(len);
@@ -818,9 +819,11 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 %%
 
 // Safe conversion to a numeric value.
+// The name parser_impl_ is chosen so that SCAN_ERROR can be used
+// from out of the scanner.
 template <typename Out, typename In>
 Out
-lexical_cast (parser::ParserImpl* up, const yy::location& loc, In t)
+lexical_cast (parser::ParserImpl* parser_impl_, const yy::location& loc, In t)
 {
   try
   {
