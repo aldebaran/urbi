@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -110,19 +110,12 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 // Move the front cursor to the end cursor.
 #define STEP()                                  \
-  do {                                          \
-    aver(up);                                   \
-    loc.step();                                 \
-  } while (false)
+    loc.step()
 
 // Called via YY_USER_ACION each time we *advance* the cursor, in
 // which case Num is actually the number of bytes read.
 #define COLUMNS(Num)                                        \
-  do {                                                      \
-    aver(up);                                               \
-    /* At each match, adjust the end cursor. */             \
-    loc.columns(Num);                                       \
-  } while (false)
+  loc.columns(Num)
 
 // To avoid differences between versions of Bison, set by hand the
 // initial columns when advancing lines.  Does not touch pre_length,
@@ -130,7 +123,6 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 // pre_length.
 #define LINES(Num)                                  \
   do {                                              \
-    aver(up);                                       \
     loc.lines(Num);                                 \
     loc.end.column = 1;                             \
   } while (false)
@@ -144,10 +136,7 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 // Report an EOF error.
 #define EOF_ERROR(Where)                                \
-  do {                                                  \
-    aver(up);                                           \
-    SCAN_ERROR("unexpected end of file in %s", Where);  \
-  } while(0)
+  SCAN_ERROR("unexpected end of file in %s", Where)
 
 // Report the use of a reserved word.
 #define RESERVED_ERROR                          \
@@ -155,25 +144,16 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate()                                   \
-  do {                                                  \
-    aver(up);                                           \
-    return yy::parser::make_EOF(loc);                   \
-  } while(0)
+  return yy::parser::make_EOF(loc)
 
 
 // Extend the string value of valp.
-#define GROW_VAL(Value)                             \
-  do {                                              \
-    aver(up);                                       \
-    grown_string += Value;                          \
-  } while(0)
+#define GROW_VAL(Value)                         \
+  grown_string += Value
 
 // Extend the string value of valp.
 #define APPEND_VAL(Arg1, Arg2)                  \
-  do {                                          \
-    aver(up);                                   \
-    grown_string.append(Arg1, Arg2);            \
-  } while(0)
+  grown_string.append(Arg1, Arg2)
 
 
 /*----------------------------------.
