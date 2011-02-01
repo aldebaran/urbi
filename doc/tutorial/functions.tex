@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -9,23 +9,20 @@
 \chapter{Advanced Functions and Scoping}
 \label{sec:tut:function}
 
-This section presents advanced uses of functions and scoping, as well
-as their combo: lexical closures, which prove to be a very powerful
-tool.
+This section presents advanced uses of functions and scoping, as well as
+their combo: lexical closures, which prove to be a very powerful tool.
 
 \section{Scopes as expressions}
 
-Contrary to other languages from the \C family, scopes are
-expressions: they can be used where values are expected, just as
-\lstinline|1 + 1| or \lstinline|"foo"|.
-They evaluate to the value of their last expression, or
-\lstinline|void| if they are
-empty. The following listing illustrates the use of scopes as
-expressions. Note that the last semicolon inside a scope is optional.
+Contrary to other languages from the \C family, scopes are expressions: they
+can be used where values are expected, just as \lstinline|1 + 1| or
+\lstinline|"foo"|.  They evaluate to the value of their last expression, or
+\lstinline|void| if they are empty. The following listing illustrates the
+use of scopes as expressions. The last semicolon inside a scope is optional.
 
 \begin{urbiscript}[firstnumber=1]
-// Scopes evaluate to the last expression they contain.
-{ 1; 2; 3};
+// Scopes evaluate to the value of their last expression.
+{ 1; 2; 3; };
 [00000000] 3
 // They are expressions.
 echo({1; 2; 3});
@@ -34,9 +31,8 @@ echo({1; 2; 3});
 
 \section{Advanced scoping}
 
-Scopes can be nested. Variables can be redefined in sub-scopes. In
-this case, the inner variables hide the outer ones, as illustrated
-below.
+Scopes can be nested. Variables can be redefined in nested scopes. In this
+case, the inner variables hide the outer ones, as illustrated below.
 
 \begin{urbiscript}
 var x = 0;   // Define the outer x.
@@ -60,10 +56,10 @@ x;
 
 \section{Local functions}
 
-Functions can be defined anywhere local variables can --- that is,
-about anywhere. These functions' visibility are limited to the scope
-they're defined in, like variables. This enables for instance to write
-local helper functions like ``max2'' in the example below.
+Functions can be defined anywhere local variables can --- that is, about
+anywhere. These functions' visibility are limited to the scope they're
+defined in, like variables. This enables for instance to write local helper
+functions like \lstinline{max2} in the example below.
 
 \begin{urbiscript}
 function max3(a, b, c) // Max of three values
@@ -71,9 +67,9 @@ function max3(a, b, c) // Max of three values
   function max2(a, b)
   {
     if (a > b)
-      return a
+      a
     else
-      return b
+      b
   };
   max2(a, max2(b, c));
 } | {};
@@ -87,13 +83,12 @@ local variables, as long as they are visible (in scope) from where
 the function is defined.
 
 \begin{urbiscript}
-function printSalaries(rate)
+function printSalaries(var rate)
 {
   var charges = 100;
-  function computeSalary(hours)
+  function computeSalary(var hours)
   {
-    // Here rate and charges are captured
-    // from the environment by closure
+    // rate and charges are captured from the environment by closure.
     rate * hours - charges
   };
 
@@ -105,7 +100,7 @@ printSalaries(15);
 [00000000] *** Bob's salary is 350
 \end{urbiscript}
 
-Closures can also write to captured variables, as shown below.
+Closures can also change captured variables, as shown below.
 
 % Fixme: these are not actually closures because of the toplevel ...
 \begin{urbiscript}
@@ -115,10 +110,10 @@ var b = 0;
 [00000000] 0
 function add(n)
 {
-  // x and y are updated by closure
+  // a and b are updated by closure.
   a += n;
   b += n;
-  void
+  {}
 } | {};
 add(25);
 add(25);
@@ -129,9 +124,9 @@ b;
 [00000000] 51
 \end{urbiscript}
 
-Closure can be really powerful tools in some situation, and they are
-even more useful when combined with functional programing, as
-described in \autoref{sec:tut:functional}.
+Closure can be really powerful tools in some situations; they are even more
+useful when combined with functional programing, as described in
+\autoref{sec:tut:functional}.
 
 %\section{Conclusion}
 
