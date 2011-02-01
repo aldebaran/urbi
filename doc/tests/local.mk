@@ -1,4 +1,4 @@
-## Copyright (C) 2009-2010, Gostai S.A.S.
+## Copyright (C) 2009-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -55,10 +55,13 @@ EXTRA_DIST +=					\
   tests/test.u
 
 # Generating the test files.
-$(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
-	$(AM_V_GEN)
-	$(AM_V_at)srcdir=$(srcdir) move_if_change=$(move_if_change) \
-	  $(srcdir)/bin/tex2chk $<
+# We specify that it applies to $(test_mks) to take precedence over
+# the default rule for %.mk in make/init.mk
+$(test_mks): $(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
+	$(AM_V_GEN)							\
+	  srcdir=$(srcdir)						\
+	  move_if_change="$(move_if_change) $(if $(V:0=),-v,-s)"	\
+	  $(srcdir)/bin/tex2chk $(if $(V:0=),-v,-q) $<
 
 
 include $(top_srcdir)/build-aux/make/check.mk
