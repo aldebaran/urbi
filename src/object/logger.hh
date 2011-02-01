@@ -11,7 +11,10 @@
 #ifndef OBJECT_LOGGER_HH
 # define OBJECT_LOGGER_HH
 
+# include <boost/optional.hpp>
+
 # include <libport/debug.hh>
+# include <libport/symbol.hh>
 
 # include <urbi/object/tag.hh>
 
@@ -23,15 +26,21 @@ namespace urbi
     {
     public:
       Logger();
+      Logger(std::string category);
       Logger(rLogger model);
       virtual ~Logger();
+
+      void init();
+      void init(libport::debug::category_type name);
+      std::string as_printable() const;
 
     /*-------------------.
     | Logger functions.  |
     `-------------------*/
     public:
-#define LEVEL(Level)                                                    \
-      rObject Level(const std::string& msg, const std::string& category)
+#define LEVEL(Level)                                                     \
+      rObject Level(const std::string& msg, const std::string& category); \
+      rObject Level(const std::string& msg)
 
       LEVEL(log);
       LEVEL(trace);
@@ -55,9 +64,9 @@ namespace urbi
 #ifndef LIBPORT_DEBUG_DISABLE
       void msg_(libport::Debug::types::Type type,
                 libport::Debug::levels::Level level,
-                const std::string& category,
-                const std::string& msg);
-#endif
+                const std::string& msg,
+                boost::optional<std::string> category);
+      boost::optional<libport::debug::category_type> category_;
       URBI_CXX_OBJECT(Logger, Tag);
     };
   }

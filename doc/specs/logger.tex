@@ -12,9 +12,12 @@
 developer. May it be a warning, an error, a debug information or a system
 log, \lstinline|Logger| will pretty print it for you using appropriate
 colors. \lstinline|Logger| can also be used as a \lstinline|Tag| for it to
-handle nested calls indentation.
+handle nested calls indentation. A log message is assigned a category which
+is shown between brackets at beginning of lines. Log level definition and
+categories filtering can be changed using environment variables defined in
+\autoref{sec:tools:env}.
 
-\begin{urbiunchecked}
+\begin{urbiscript}
 Logger.log("message", "Category") |;
 [       Category        ] message
 
@@ -24,7 +27,7 @@ Logger.log("message", "Category") :
 }|;
 [       Category        ] message
 [      SubCategory      ]   indented message
-\end{urbiunchecked}
+\end{urbiscript}
 
 \subsection{Prototypes}
 \begin{refObjects}
@@ -33,33 +36,56 @@ Logger.log("message", "Category") :
 
 \subsection{Construction}
 
-\lstinline|Logger| can be used as is, without being cloned. One may want to
-extend its functionalities though and will then use it as a prototype. A
-\lstinline|Logger| can be created with no argument.
+\lstinline|Logger| can be used as is, without being cloned. If one wants to
+set the category name it is possible to clone \lstinline|Logger| with this
+name as an argument.
 
 \begin{urbiscript}
-Logger.new|;
+Logger.log("foo");
+[00027928:error] !!! log: no category defined
+
+Logger.log("foo", "Category") |;
+[       Category        ] foo
+
+var l = Logger.new("Category2");
+[00044703] Logger<Category2>
+l.log("foo") |;
+[       Category2       ] foo
+l.log("foo", "ForcedCategory") |;
+[    ForcedCategory     ] foo
+
+var l2 = Logger.new;
+[00090939] Logger_0x86900c8
+l2.log("foo");
+[00097912:error] !!! log: no category defined
+l2.log("foo", "Category") |;
+[       Category        ] foo
 \end{urbiscript}
 
 \subsection{Slots}
 
 \begin{urbiscriptapi}
 
-\item[debug](<message>, <category>)%
+\item[debug](<message>, <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is DEBUG or DUMP. Return \this to allow chained
   operations.
 
-\item[dump](<message>, <category>)%
+\item[dump](<message>, <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is DUMP. Return \this to allow chained
   operations.
 
-\item[err](<message>, <category>)%
+\item[err](<message>, <category> = category)%
   Report an error \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
 
-\item[log](<message>, <category>)%
+\item[init](<category>)%
+  Define the \var{category} of the new \lstinline|Logger| object. If no
+  category is given the new \lstinline|Logger| will inherit the category of
+  its prototype.
+
+\item[log](<message>, <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if debug is not disabled. Return \this to allow chained operations.
 
@@ -71,15 +97,14 @@ Logger.new|;
   The primitive called when \lstinline|Logger| is used as a \lstinline|Tag|
   and is left. This primitive only decrements the indentation level.
 
-\item[trace](<message>, <category>)%
+\item[trace](<message>, <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is TRACE, DEBUG or DUMP. Return \this to allow
   chained operations.
 
-\item[warn](<message>, <category>)%
+\item[warn](<message>, <category> = category)%
   Report a warning \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
-
 \end{urbiscriptapi}
 
 %%% Local Variables:
