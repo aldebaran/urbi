@@ -103,6 +103,11 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
       GD_INFO("URBI_CHECK_MODE enabled.");                              \
   }
 
+// Stupidly enough the Flex documentation recommends redefining
+// LexerError, which does not seem to be possible (since it is flex
+// which generates unconditionally its definition in utoken.cc).
+#define YY_FATAL_ERROR(Msg)                     \
+  parser_impl_->error(loc, Msg)
 
 // Each time a rule is matched.
 #define YY_USER_ACTION                          \
