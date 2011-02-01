@@ -834,6 +834,7 @@ removeBack
 removeById
 removeFront
 removeLocalSlot
+removeNotifyChange
 removeProperty
 removeProto
 removeSlot
