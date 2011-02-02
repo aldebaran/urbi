@@ -18,7 +18,7 @@
 
 # include <libport/finally.hh>
 # include <list>
-# include <map>
+# include <boost/unordered_map.hpp>
 
 # include <ast/all.hh>
 # include <ast/analyzer.hh>
@@ -43,10 +43,10 @@ namespace binder
     /// \name Ctor & dtor.
     /// \{
     /// Construct a \c Binder.
-    Binder ();
+    Binder();
 
     /// Destroy a Binder.
-    virtual ~Binder ();
+    virtual ~Binder();
     /// \}
 
     /// Import visit from DefaultVisitor.
@@ -88,7 +88,7 @@ namespace binder
     typedef std::pair<ast::rLocalDeclaration,
                       std::pair<unsigned, unsigned> > binding_type;
     typedef std::list<binding_type> Bindings;
-    typedef std::map<libport::Symbol, Bindings> Environment;
+    typedef boost::unordered_map<libport::Symbol, Bindings> Environment;
     /// Map of currently bound variables
     Environment env_;
 
