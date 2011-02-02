@@ -267,7 +267,7 @@ namespace urbi
     static rObject                                              \
     object_class_ ## Name ## _EQ(rObject lhs, rObject rhs)      \
     {                                                           \
-      return lhs->call(SYMBOL(Name), rhs);                      \
+      return lhs->call(SYMBOL_(Name), rhs);                     \
     }
 
     OPERATOR(CARET)
@@ -301,7 +301,7 @@ namespace urbi
                               primitive(&object_class_hasLocalSlot));
 
 #define DECLARE(Name)                                                   \
-      Object::proto->slot_set(SYMBOL(Name),                             \
+      Object::proto->slot_set(SYMBOL_(Name),                            \
                               new Primitive(object_class_##Name),       \
                               true)                                     \
 
@@ -318,7 +318,7 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Name, Code)                                             \
-      Object::proto->slot_set(SYMBOL(Name), primitive(Code))
+      Object::proto->slot_set(SYMBOL_(Name), primitive(Code))
 
       DECLARE(CARET_EQ           , object_class_CARET_EQ);
       DECLARE(MINUS_EQ           , object_class_MINUS_EQ);

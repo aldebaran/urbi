@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -69,10 +69,10 @@ namespace urbi
       bind(SYMBOL(asString), &FormatInfo::as_string);
       bind(SYMBOL(pattern),  &FormatInfo::pattern_get);
 
-# define DECLARE(Name)                                    \
-      bind(SYMBOL(Name), &FormatInfo::Name ##_get);       \
-      property_set(SYMBOL(Name),                          \
-                   SYMBOL(updateHook),                    \
+# define DECLARE(Name)                                  \
+      bind(SYMBOL_(Name), &FormatInfo::Name ##_get);    \
+      property_set(SYMBOL_(Name),                       \
+                   SYMBOL(updateHook),                  \
                    primitive(&FormatInfo::update_hook))
 
       DECLARE(alignment);

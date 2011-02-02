@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -63,7 +63,7 @@ namespace urbi
       bind(SYMBOL(asBool), &Dictionary::as_bool);
 
 #define DECLARE(Name)                       \
-      bind(SYMBOL(Name), &Dictionary::Name)
+      bind(SYMBOL_(Name), &Dictionary::Name)
 
       DECLARE(clear);
       DECLARE(empty);

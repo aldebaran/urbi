@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -38,7 +38,7 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Finalizable)
     {
 #define DECLARE(Name)                        \
-      bind(SYMBOL(Name), &Finalizable::Name)
+      bind(SYMBOL_(Name), &Finalizable::Name)
 
       DECLARE(__dec);
       DECLARE(__inc);

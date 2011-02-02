@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -224,7 +224,7 @@ namespace urbi
       : path_(new Path())
     {
 #define DECLARE(Name, Cxx)                \
-      bind(SYMBOL(Name), &Directory::Cxx)
+      bind(SYMBOL_(Name), &Directory::Cxx)
 
       DECLARE(asList,           list<&directory_mk_path>);
       DECLARE(asPath,           as_path);

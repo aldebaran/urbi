@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -73,7 +73,7 @@ namespace urbi
       bind(SYMBOL(LT), (comparison_type) &Position::operator <);
 
 #define DECLARE(Name, Cxx)               \
-      bind(SYMBOL(Name), &Position::Cxx)
+      bind(SYMBOL_(Name), &Position::Cxx)
 
       DECLARE(MINUS,    operator -);
       DECLARE(PLUS,     operator +);
@@ -84,8 +84,8 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Name)                                     \
-      bind(SYMBOL(Name), &Position::Name ##_get);         \
-      property_set(SYMBOL(Name),                          \
+      bind(SYMBOL_(Name), &Position::Name ##_get);        \
+      property_set(SYMBOL_(Name),                         \
                    SYMBOL(updateHook),                    \
                    primitive(&Position::Name ##_set))
 
@@ -96,7 +96,7 @@ namespace urbi
       // For some reason, cl.exe refuses "&Position::value_type::line"
       // with error: function cannot access 'yy::position::line'
 #define DECLARE(Name)                           \
-      bind(SYMBOL( Name ), &yy::position::Name)
+      bind(SYMBOL_(Name), &yy::position::Name)
 
       DECLARE(line);
       DECLARE(column);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -116,7 +116,7 @@ namespace urbi
       argv_ << binary_;
 
 #  define DECLARE(Name, Function)             \
-      bind(SYMBOL(Name), &Process::Function)
+      bind(SYMBOL_(Name), &Process::Function)
 
       DECLARE(asString, as_string);
       DECLARE(done,     done);

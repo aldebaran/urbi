@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -84,7 +84,7 @@ namespace urbi
              (&Path::self_type::operator==));
 
 #define DECLARE(Urbi, Cxx)           \
-      bind(SYMBOL(Urbi), &Path::Cxx)
+      bind(SYMBOL_(Urbi), &Path::Cxx)
 
       DECLARE(LT_EQ,       operator<=);
       DECLARE(absolute,    absolute);

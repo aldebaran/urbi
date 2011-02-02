@@ -65,7 +65,7 @@ namespace urbi
              (&Lobby::send));
 
 #define DECLARE(Name)                  \
-      bind(SYMBOL(Name), &Lobby::Name)
+      bind(SYMBOL_(Name), &Lobby::Name)
 
       DECLARE(binaryMode);
       DECLARE(bytesSent);

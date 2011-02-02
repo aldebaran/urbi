@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -35,7 +35,7 @@ namespace urbi
       : re_(".")
     {
 # define DECLARE(Urbi, Cxx)            \
-      bind(SYMBOL(Urbi), &Regexp::Cxx)
+      bind(SYMBOL_(Urbi), &Regexp::Cxx)
 
       DECLARE(asPrintable, as_printable);
       DECLARE(asString,    as_string);

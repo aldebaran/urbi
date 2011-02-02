@@ -37,7 +37,8 @@ namespace urbi
 
     URBI_CXX_OBJECT_INIT(UConnection)
     {
-# define DECLARE(a) bind(SYMBOL(a), &UConnection::a)
+# define DECLARE(Name)                          \
+      bind(SYMBOL_(Name), &UConnection::Name)
       DECLARE(source);
       DECLARE(target);
       DECLARE(enabled);

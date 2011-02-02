@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -76,7 +76,7 @@ namespace urbi
       limits = urbi::object::Object::proto->clone();
 
 #define DECLARE(Urbi, Cxx)                    \
-      limits->bind(SYMBOL(Urbi), &Float::Cxx)
+      limits->bind(SYMBOL_(Urbi), &Float::Cxx)
 
       DECLARE(digits, limit_digits);
       DECLARE(digits10, limit_digits10);
@@ -92,7 +92,7 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Urbi, Cxx)            \
-      bind(SYMBOL(Urbi), &Float::Cxx)
+      bind(SYMBOL_(Urbi), &Float::Cxx)
 
       DECLARE(CARET,     operator^);
       DECLARE(GT_GT,     operator>>);
@@ -338,8 +338,8 @@ namespace urbi
     Float::value_type					\
     Float::F() const                                    \
     {                                                   \
-      WHEN(Pos, CHECK_POSITIVE(SYMBOL(F)));             \
-      WHEN(Range, CHECK_TRIGO_RANGE(SYMBOL(F)));        \
+      WHEN(Pos, CHECK_POSITIVE(SYMBOL_(F)));            \
+      WHEN(Range, CHECK_TRIGO_RANGE(SYMBOL_(F)));       \
       return Namespace F(value_get());                  \
     }
 

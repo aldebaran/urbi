@@ -358,7 +358,7 @@ namespace kernel
         (boost::posix_time::microsec_clock::local_time());
       libport::utime_reference_set(libport::utime());
 # define DECLARE(Name, Value)                                   \
-      ref->setSlot(SYMBOL(Name), urbi::object::to_urbi(Value))
+      ref->setSlot(SYMBOL_(Name), urbi::object::to_urbi(Value))
 
       DECLARE(us,    now.time_of_day().total_microseconds());
       DECLARE(day,   int(now.date().day()));

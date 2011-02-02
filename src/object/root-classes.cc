@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -140,15 +140,15 @@ namespace urbi
 #define CLASS_CREATE(What, Name)                \
       What = Object::proto->clone()
 
-#define CLASS_INIT(What, Name)                  \
-      What->slot_set(SYMBOL(type),       \
-                     new String(SYMBOL(Name))); \
-      What->slot_set(SYMBOL(as ## Name),        \
+#define CLASS_INIT(What, Name)                          \
+      What->slot_set(SYMBOL(type),                      \
+                     new String(SYMBOL_(Name)));        \
+      What->slot_set(SYMBOL(as ## Name),                \
                      new Primitive(id))
 
 #define CLASS_REGISTER(What, Name)                      \
       What ## _initialize();                            \
-      global_class->slot_set(SYMBOL(Name), What, true)
+      global_class->slot_set(SYMBOL_(Name), What, true)
 
 
 #define CLASS_SETUP(What, Name)                 \
@@ -203,8 +203,6 @@ namespace urbi
       CLASS_SETUP(void_class, void);
 
       ANONYMOUS_CLASS_SETUP(accepted_void_class, acceptedVoid);
-
-#undef SYMBOL_
 
       // Object.addProto(Global)
       Object::proto->proto_add(global_class);

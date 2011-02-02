@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -132,7 +132,7 @@ namespace urbi
            (&self_type::operator==));
 
 #define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &String::Function)
+      bind(SYMBOL_(Name), &String::Function)
 
       DECLARE(LT_EQ       , operator<=);
       DECLARE(PLUS        , plus);

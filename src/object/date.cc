@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -82,7 +82,7 @@ namespace urbi
       bind(SYMBOL(LT), (bool (Date::*)(rDate rhs) const)&Date::operator <);
 
 #define DECLARE(Name, Cxx)           \
-      bind(SYMBOL(Name), &Date::Cxx)
+      bind(SYMBOL_(Name), &Date::Cxx)
 
       DECLARE(EQ_EQ,    operator ==);
       DECLARE(PLUS,     operator +);

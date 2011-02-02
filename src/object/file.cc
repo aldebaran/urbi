@@ -88,7 +88,7 @@ namespace urbi
       : path_(new Path("/"))
     {
 #define DECLARE(Name, Cxx)           \
-      bind(SYMBOL(Name), &File::Cxx)
+      bind(SYMBOL_(Name), &File::Cxx)
 
       DECLARE(asList,           as_list);
       DECLARE(asPrintable,      as_printable);

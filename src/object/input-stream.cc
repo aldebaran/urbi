@@ -56,7 +56,7 @@ namespace urbi
       proto_add(Stream::proto);
 
 # define DECLARE(Name, Cxx)                     \
-      bind(SYMBOL(Name), &InputStream::Cxx)
+      bind(SYMBOL_(Name), &InputStream::Cxx)
 
       DECLARE(get,     get);
       DECLARE(getChar, getChar);

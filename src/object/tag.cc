@@ -54,7 +54,7 @@ namespace urbi
       : value_(new sched::Tag(libport::Symbol::make_empty()))
     {
 #define DECLARE(Name, Cast)                                             \
-      bind(SYMBOL(Name), static_cast<void (Tag::*)(Cast)>(&Tag::Name))
+      bind(SYMBOL_(Name), static_cast<void (Tag::*)(Cast)>(&Tag::Name))
 
       DECLARE(init,                 );
       DECLARE(init,  libport::Symbol);
@@ -68,7 +68,7 @@ namespace urbi
       bind_variadic(SYMBOL(newFlowControl), &Tag::new_flow_control);
 
 #define DECLARE(Name, Function)                 \
-      bind(SYMBOL(Name), &Tag::Function)
+      bind(SYMBOL_(Name), &Tag::Function)
 
       DECLARE(blocked,     blocked);
       DECLARE(enter,       enter);

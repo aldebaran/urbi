@@ -71,7 +71,7 @@ namespace urbi
            (&self_type::operator==));
 
 #define DECLARE(Name, Cxx)           \
-      bind(SYMBOL(Name), &Code::Cxx)
+      bind(SYMBOL_(Name), &Code::Cxx)
 
       DECLARE(asString,   as_string);
       DECLARE(bodyString, body_string);

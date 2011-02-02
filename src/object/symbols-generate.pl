@@ -53,12 +53,18 @@ die "use SYMBOL instead of direct calls to libport::Symbol:\n$literals\n"
 # DECLARE(EQ, ...) is used in object/*.cc to bind C++ functions
 # into the Urbi world.  Similarly with BOUNCE.
 #
-# RETURN_OP(EQ) is used in the scanner to return tokens which
+# RETURN_OP(EQ) is used in the scanner to return tokens whose
 # semantical value is the string itself.
 my $symbol_tag = 'BOUNCE|CAPTURE_GLOBAL|DECLARE|SYMBOL|RETURN_OP';
 
 # The lines that declare a symbol.
-my $symbols = `grep -E '($symbol_tag) *\\(' @ARGV`;
+#
+# Skip the definition of macros.  Don't anchor at beginning of line,
+# since we have the file:line: prefix.
+my $symbols = `grep -E '($symbol_tag) *\\(' @ARGV |
+                 grep -Ev '# *define  *($symbol_tag)'`;
+
+# print STDERR "$symbols\n";
 
 die "grep failed"
     unless $symbols;

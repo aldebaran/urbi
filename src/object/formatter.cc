@@ -32,7 +32,7 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(Formatter)
     {
 # define DECLARE(Urbi, Cxx)               \
-      bind(SYMBOL(Urbi), &Formatter::Cxx)
+      bind(SYMBOL_(Urbi), &Formatter::Cxx)
 
       DECLARE(init, init);
       DECLARE(data, data_get);

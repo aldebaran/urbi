@@ -674,7 +674,7 @@ namespace urbi
     system_class_initialize()
     {
 #define DECLARE(Name)                                           \
-      system_class->slot_set(SYMBOL(Name),                      \
+      system_class->slot_set(SYMBOL_(Name),                     \
                              primitive(&system_##Name))         \
 
       DECLARE(_exit);

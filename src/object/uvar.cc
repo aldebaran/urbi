@@ -234,7 +234,7 @@ namespace urbi
       , inAccess_(false)
     {
 #define DECLARE(Name)           \
-      bind(SYMBOL(Name), &UVar::Name)
+      bind(SYMBOL_(Name), &UVar::Name)
 
       DECLARE(writeOwned);
       DECLARE(update_timed);

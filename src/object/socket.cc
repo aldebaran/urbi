@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -77,7 +77,7 @@ namespace urbi
       io_service_ = get_default_io_service();
 
 #define DECLARE(Name)                           \
-      bind(SYMBOL(Name), &Socket::Name)
+      bind(SYMBOL_(Name), &Socket::Name)
 
       // Uncomment the line below when overloading works.
       //bind(SYMBOL(connectSerial),
@@ -181,9 +181,9 @@ namespace urbi
     }
 
 #define EMIT(Name)                              \
-    slot_get(SYMBOL(Name))->call(SYMBOL(emit))
+    slot_get(SYMBOL_(Name))->call(SYMBOL(emit))
 #define EMIT1(Name, Arg)                                        \
-    slot_get(SYMBOL(Name))->call(SYMBOL(emit), to_urbi(Arg))
+    slot_get(SYMBOL_(Name))->call(SYMBOL(emit), to_urbi(Arg))
 
     void
     Socket::onConnect()

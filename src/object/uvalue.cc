@@ -48,7 +48,7 @@ namespace urbi
     URBI_CXX_OBJECT_INIT(UValue)
     {
 #define DECLARE(Name)                   \
-      bind(SYMBOL(Name), &UValue::Name)
+      bind(SYMBOL_(Name), &UValue::Name)
 
       DECLARE(extract);
       DECLARE(extractAsToplevelPrintable);
