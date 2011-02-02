@@ -84,7 +84,7 @@ namespace urbi
     Object::~Object ()
     {
       slots_.finalize(this);
-      if (!protos_cache_ && protos_)
+      if (!protos_cache_)
         delete protos_;
     }
 
@@ -119,7 +119,7 @@ namespace urbi
     void
     Object::proto_set(const rObject& o)
     {
-      if (!protos_cache_ && protos_)
+      if (!protos_cache_)
         delete protos_;
       protos_cache_ = 0;
       protos_ = 0;
@@ -129,17 +129,11 @@ namespace urbi
     void
     Object::protos_set(const rList& l)
     {
-      if (!protos_cache_ && protos_)
-        delete protos_;
-      protos_cache_ = 0;
-      protos_ = 0;
-      proto_ = 0;
-      if (l->value_get().size() == 0)
+      proto_set(0);
+      if (l->value_get().empty())
         return;
       if (l->value_get().size() == 1)
-      {
         proto_ = l->value_get().front();
-      }
       else
       {
         protos_cache_ = l;
@@ -164,18 +158,14 @@ namespace urbi
         if (rec.first)
           return rec;
       }
-      else
-      {
-        if (protos_)
+      else if (protos_)
+        foreach (const rObject& proto, *protos_)
         {
-          foreach (const rObject& proto, *protos_)
-          {
-            location_type rec = proto->slot_locate_(k, fallback);
-            if (rec.first)
-              return rec;
-          }
+          location_type rec = proto->slot_locate_(k, fallback);
+          if (rec.first)
+            return rec;
         }
-      }
+
       if (fallback)
         if (rSlot slot = local_slot_get(SYMBOL(fallback)))
           return location_type(const_cast<Object*>(this), slot);
@@ -245,10 +235,14 @@ namespace urbi
       return slot_set(k, slot);
     }
 
-    static bool redefinition_mode()
+    namespace
     {
-      runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt();
-      return r && r->redefinition_mode_get();
+      inline
+      bool redefinition_mode()
+      {
+        runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt();
+        return r && r->redefinition_mode_get();
+      }
     }
 
     Object&
