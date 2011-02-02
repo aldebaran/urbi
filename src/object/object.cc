@@ -158,13 +158,15 @@ namespace urbi
         if (rec.first)
           return rec;
       }
-      else if (protos_)
+      else if (protos_) // Braces to pacify G++.
+      {
         foreach (const rObject& proto, *protos_)
         {
           location_type rec = proto->slot_locate_(k, fallback);
           if (rec.first)
             return rec;
         }
+      }
 
       if (fallback)
         if (rSlot slot = local_slot_get(SYMBOL(fallback)))
