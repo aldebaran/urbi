@@ -193,9 +193,8 @@ get_options ()
 ## Main.  ##
 ## ------ ##
 
-test "x$JAVA_HOME" != x || fatal "Environment variable JAVA_HOME is not set."
-: ${javac="${JAVA_HOME}/bin/javac"}
-: ${jar="${JAVA_HOME}/bin/jar"}
+: ${javac="javac"}
+: ${jar="jar"}
 tool_test "javac" "$javac"
 tool_test "jar" "$jar"
 
