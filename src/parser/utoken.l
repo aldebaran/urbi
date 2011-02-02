@@ -168,10 +168,6 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
 #define RETURN_VALUE(Symbol, Value)              \
   return yy::parser::make_ ## Symbol(Value, loc)
 
-// Return an assignment operator: its value is the base operator.
-#define RETURN_ASSIGN_OP(Token)                 \
-  RETURN_OP(Token);
-
 // UnitLength is the number of letters used for the unit.
 #define RETURN_UNIT(Token, UnitLength, From, To)                        \
   do {                                                                  \
@@ -194,20 +190,20 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
   RETURN_VALUE(Symbol, ast::flavor_ ## Flavor)
 
 #define RETURN_FLAVORED_KEYWORD(Token)                  \
+  switch (yytext[yyleng - 1])                           \
   {                                                     \
-    switch (yytext[yyleng - 1])                         \
-    {                                                   \
-      case '|': RETURN_FLAVOR(Token, pipe);             \
-      case ',': RETURN_FLAVOR(Token, comma);            \
-      case '&': RETURN_FLAVOR(Token, and);              \
-      case ';': RETURN_FLAVOR(Token, semicolon);        \
-      default:  RETURN_FLAVOR(Token, none);             \
-    }                                                   \
+  case '|': RETURN_FLAVOR(Token, pipe);                 \
+  case ',': RETURN_FLAVOR(Token, comma);                \
+  case '&': RETURN_FLAVOR(Token, and);                  \
+  case ';': RETURN_FLAVOR(Token, semicolon);            \
+  default:  RETURN_FLAVOR(Token, none);                 \
   }
 
 // Return an operator whose string representation is kept as a Symbol.
-#define RETURN_OP(Token)                        \
-  RETURN_SYMBOL(Token)
+// Contrary to RETURN_SYMBOL, the symbol is resolved statically by
+// precompiled-symbols.
+#define RETURN_OP(Symbol)                       \
+  RETURN_VALUE(Symbol, SYMBOL_(Symbol))
 
 // Return a meta-variable type.  Only if desugaring is enabled.
 #define RETURN_PERCENT(Token)                   \
@@ -456,7 +452,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "in"            RETURN(IN);
 "isdef"         RETURN(ISDEF);
   /*<no-space< New.*/
-"new"           RETURN_OP(NEW);
+"new"           RETURN_SYMBOL(NEW);
   /*>no-space>*/
 "onleave"       RETURN(ONLEAVE);
 "return"        RETURN(RETURN);
@@ -483,12 +479,12 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "--"            RETURN(MINUS_MINUS);
 "/"             RETURN_OP(SLASH);
 
-"%="            RETURN_ASSIGN_OP(PERCENT_EQ);
-"*="            RETURN_ASSIGN_OP(STAR_EQ);
-"+="            RETURN_ASSIGN_OP(PLUS_EQ);
-"-="            RETURN_ASSIGN_OP(MINUS_EQ);
-"/="            RETURN_ASSIGN_OP(SLASH_EQ);
-"^="            RETURN_ASSIGN_OP(CARET_EQ);
+"%="            RETURN_OP(PERCENT_EQ);
+"*="            RETURN_OP(STAR_EQ);
+"+="            RETURN_OP(PLUS_EQ);
+"-="            RETURN_OP(MINUS_EQ);
+"/="            RETURN_OP(SLASH_EQ);
+"^="            RETURN_OP(CARET_EQ);
 
 "<"             RETURN_OP(LT);
 "<="            RETURN_OP(LT_EQ);
@@ -531,9 +527,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 
 "and"           SYNONYM("&&");
 "and_eq"        SYNONYM("&=");
-"bitand"        RETURN_OP(BITAND);
-"bitor"         RETURN_OP(BITOR);
-"compl"         RETURN_OP(COMPL);
+"bitand"        RETURN_SYMBOL(BITAND);
+"bitor"         RETURN_SYMBOL(BITOR);
+"compl"         RETURN_SYMBOL(COMPL);
 "not"           SYNONYM("!");
 "not_eq"        SYNONYM("!=");
 "or"            SYNONYM("||");
