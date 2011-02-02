@@ -777,7 +777,7 @@ namespace urbi
         o->slot_set(Symbol(p.second), e);
     }
 
-    static void doEmit(const std::string& object, object::objects_type& args)
+    static void doEmit(const std::string& object, object::objects_type args)
     {
        StringPair p = split_name(object);
        rObject o = xget_base(p.first)->slot_get(libport::Symbol(p.second));
@@ -795,6 +795,7 @@ namespace urbi
                              UAutoValue& v8
                              )
     {
+      LOCK_KERNEL;
       object::objects_type args;
       ARG(1);
       ARG(2);
