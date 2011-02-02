@@ -234,10 +234,6 @@ static Out lexical_cast(parser::ParserImpl* up, const yy::location& loc, In t);
     COLUMNS(-_rewritten.length());                      \
   } while (false)
 
-// We matched an alternative token, rescan with Str instead.
-#define SYNONYM(Str)                            \
-  UNPUT(Str)
-
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.  The braces are
 // needed to scope msg and rewritten.
@@ -470,7 +466,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "while"{FLAVOR} RETURN_FLAVORED_KEYWORD(WHILE);
 "at"{FLAVOR}    RETURN_FLAVORED_KEYWORD(AT);
 
-"!"             RETURN_OP(BANG);
+"!"|"not"       RETURN_OP(BANG);
 "%"             RETURN_OP(PERCENT);
 "*"             RETURN_OP(STAR);
 "+"             RETURN_OP(PLUS);
@@ -484,7 +480,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "+="            RETURN_OP(PLUS_EQ);
 "-="            RETURN_OP(MINUS_EQ);
 "/="            RETURN_OP(SLASH_EQ);
-"^="            RETURN_OP(CARET_EQ);
+"^="|"xor_eq"   RETURN_OP(CARET_EQ);
 
 "<"             RETURN_OP(LT);
 "<="            RETURN_OP(LT_EQ);
@@ -492,17 +488,17 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "=="            RETURN_OP(EQ_EQ);
 "=>"            RETURN(EQ_GT);
 "==="           RETURN_OP(EQ_EQ_EQ);
-"!="            RETURN_OP(BANG_EQ);
+"!="|"not_eq"   RETURN_OP(BANG_EQ);
 "!=="           RETURN_OP(BANG_EQ_EQ);
 "=~="           RETURN_OP(EQ_TILDA_EQ);
 "~="            RETURN_OP(TILDA_EQ);
 ">"             RETURN_OP(GT);
 ">="            RETURN_OP(GT_EQ);
 ">>"            RETURN_OP(GT_GT);
-"^"             RETURN_OP(CARET);
+"^"|"xor"       RETURN_OP(CARET);
 "**"            RETURN_OP(STAR_STAR);
-"&&"            RETURN_OP(AMPERSAND_AMPERSAND);
-"||"            RETURN_OP(PIPE_PIPE);
+"&&"|"and"      RETURN_OP(AMPERSAND_AMPERSAND);
+"||"|"or"       RETURN_OP(PIPE_PIPE);
 
 "?"             RETURN(QUEST_MARK);
 
@@ -525,17 +521,9 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 ";"             RETURN_FLAVOR(SEMICOLON, semicolon);
 ","             RETURN_FLAVOR(COMMA, comma);
 
-"and"           SYNONYM("&&");
-"and_eq"        SYNONYM("&=");
 "bitand"        RETURN_SYMBOL(BITAND);
 "bitor"         RETURN_SYMBOL(BITOR);
 "compl"         RETURN_SYMBOL(COMPL);
-"not"           SYNONYM("!");
-"not_eq"        SYNONYM("!=");
-"or"            SYNONYM("||");
-"or_eq"         SYNONYM("|=");
-"xor"           SYNONYM("^");
-"xor_eq"        SYNONYM("^=");
 
 "private"       RETURN(PRIVATE);
 "protected"     RETURN(PROTECTED);
@@ -548,6 +536,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "__HERE__"      RETURN(__HERE__);
 
   /*<no-space< Reserved keywords.*/
+"&="               |
+"and_eq"           |
 "asm"              |
 "auto"             |
 "bool"             |
@@ -567,6 +557,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "long"             |
 "mutable"          |
 "namespace"        |
+"or_eq"
 "register"         |
 "reinterpret_cast" |
 "short"            |
@@ -584,8 +575,8 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "virtual"          |
 "volatile"         |
 "wchar_t"          |
-"when"             RESERVED_ERROR;
-
+"when"             |
+"|="               RESERVED_ERROR;
   /*>no-space>*/
 
   /*----------------------.
