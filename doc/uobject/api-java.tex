@@ -145,7 +145,7 @@ Let's illustrate those concepts by defining a simple object:
 \item First you need some imports:
 
 \begin{java}
-import urbi.UObjectJava;
+import urbi.UObject;
 import urbi.UVar;
 import urbi.UValue;
 \end{java}
@@ -169,7 +169,7 @@ public class Adder extends UObject // must extends UObject
 
     /// Initialize our UVar v to some value
     /// (we choose 42 :)
-    v.set(42);
+    v.setValue(42);
 
     /// Bind the function add to Urbi
     UBindFunction ("add");
@@ -180,7 +180,7 @@ public class Adder extends UObject // must extends UObject
   {
     /// Return the value of our UVar v (converted to double)
     /// plus the value of the argument of the function.
-    return v.getDouble () + rhs;
+    return v.doubleValue () + rhs;
   }
 }
 \end{java}
@@ -278,7 +278,7 @@ public class Adder extends UObject // must extends UObject
 
     /// Initialize our UVar v to the value given in the
     /// constructor
-    v.set(v_init);
+    v.setValue(v_init);
 
     /// Bind the function add to Urbi
     UBindFunction ("add");
@@ -290,7 +290,7 @@ public class Adder extends UObject // must extends UObject
   {
     /// Return the value of our UVar v (converted to double)
     /// plus the value of the argument of the function.
-    return v.getDouble () + rhs;
+    return v.doubleValue () + rhs;
   }
 }
 \end{java}
