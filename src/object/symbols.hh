@@ -43,8 +43,10 @@
    (e.g., it includes __LINE__ or whatever).
 */
 
-# define SYMBOL(Sym)        SYMBOL_(Sym)
-# define SYMBOL_EXPAND(Sym) SYMBOL_(BOOST_PP_EXPAND(Sym))
+// Without secondary expansion.
+# define SYMBOL             SYMBOL_
+// With secondary expansion.
+# define SYMBOL_EXPAND(Sym) SYMBOL_(Sym)
 
 
 # if defined SYMBOLS_PRECOMPILED
