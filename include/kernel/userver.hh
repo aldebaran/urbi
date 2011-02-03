@@ -251,7 +251,7 @@ namespace kernel
      */
     std::vector<boost::function0<void> > fast_async_jobs_;
     bool fast_async_jobs_start_; // must wake async jobs handler
-    object::rTag fast_async_jobs_tag_;
+    object::rObject fast_async_jobs_tag_;
     libport::Lockable fast_async_jobs_lock_;
     sched::rJob fast_async_jobs_job_; // For the sake of consistency.
     void fast_async_jobs_run_();

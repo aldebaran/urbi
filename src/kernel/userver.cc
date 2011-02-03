@@ -62,6 +62,7 @@
 #include <urbi/object/lobby.hh>
 #include <urbi/object/object.hh>
 #include <urbi/object/primitive.hh>
+#include <urbi/object/tag.hh>
 #include <object/root-classes.hh>
 #include <object/socket.hh>
 #include <object/symbols.hh>
@@ -465,7 +466,7 @@ namespace kernel
     beforeWork();
 
     if (fast_async_jobs_start_)
-      fast_async_jobs_tag_->unfreeze();
+      fast_async_jobs_tag_->as<object::Tag>()->unfreeze();
 
     dead_jobs_.clear();
     dead_jobs_ = scheduler_->terminated_jobs_get();
@@ -567,7 +568,7 @@ namespace kernel
   UServer::fast_async_jobs_run_()
   {
     libport::Finally f;
-    getCurrentRunner().apply_tag(fast_async_jobs_tag_, &f);
+    getCurrentRunner().apply_tag(fast_async_jobs_tag_->as<object::Tag>(), &f);
     unsigned count = 0;
     try{
     while (true)
@@ -587,7 +588,7 @@ namespace kernel
           j();
       }
       GD_INFO_TRACE("Fast async job sleeping");
-      fast_async_jobs_tag_->freeze();
+      fast_async_jobs_tag_->as<object::Tag>()->freeze();
       GD_INFO_TRACE("Fast async job waking up");
         // Wake up.
     }}
