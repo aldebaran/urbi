@@ -427,19 +427,13 @@ int Threaded::update()
 int Threaded::onChangeDelay(UVar& v)
 {
   usleep(500000);
-  ctx_->lock();
-  UList l = lastChange;
-  l.array.push_back(new UValue(v.get_name()));
-  lastChange = l;
-  ctx_->unlock();
+  lastChange = v.get_name();
   return 0;
 }
 
 int Threaded::onChange(UVar& v)
 {
-  UList l = lastChange;
-  l.array.push_back(new UValue(v.get_name()));
-  lastChange = l;
+  lastChange = v.get_name();
   return 0;
 }
 
