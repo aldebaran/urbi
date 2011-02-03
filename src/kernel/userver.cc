@@ -127,6 +127,8 @@ namespace kernel
                   (urbi_root.share_path()),
                   ":")
     , opt_banner_(true)
+    , fast_async_jobs_start_(false)
+    , fast_async_jobs_tag_(new object::Tag)
     , scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
                                                   boost::ref(*this))))
     , stopall(false)
@@ -379,6 +381,13 @@ namespace kernel
       (new runner::Interpreter(*ghost_->shell_get().get(),
                                p->as<object::Object>(),
                                SYMBOL(handleSynchronizer)));
+    fast_async_jobs_job_ =
+      new runner::Interpreter(ghost_->lobby_get(),
+                               scheduler_get(),
+                               boost::bind(&UServer::fast_async_jobs_run_,this),
+                               rObject(ghost_->lobby_get()),
+                               SYMBOL(FastAsyncJobs));
+    scheduler_->add_job(fast_async_jobs_job_);
     sched::rJob poll =
       new runner::Interpreter(*ghost_->shell_get().get(),
                               object::system_class->slot_get(SYMBOL(pollLoop)),
@@ -464,6 +473,8 @@ namespace kernel
 
     beforeWork();
 
+    if (fast_async_jobs_start_)
+      fast_async_jobs_tag_->unfreeze();
     // To make sure that we get different times before and after every work
     // phase if we use a monotonic clock, update the time before and after
     // working.
@@ -534,6 +545,61 @@ namespace kernel
   UServer::schedule(libport::Symbol method, boost::function0<void> callback)
   {
     schedule(AsyncJob(callback, method));
+  }
+
+  struct AsyncJobException : public sched::SchedulerException
+  {
+    COMPLETE_EXCEPTION(AsyncJobException);
+  };
+
+  void
+  UServer::schedule_fast(boost::function0<void> j)
+  {
+    libport::BlockLock bl(fast_async_jobs_lock_);
+    bool empty = fast_async_jobs_.empty();
+    fast_async_jobs_ << j;
+    if (empty)
+    {
+      // We cannot wake the job directly from here (an other thread), so
+      // ask work() to do it for us.
+      fast_async_jobs_start_ = true;
+      wake_up();
+    }
+  }
+
+  void
+  UServer::fast_async_jobs_run_()
+  {
+    libport::Finally f;
+    getCurrentRunner().apply_tag(fast_async_jobs_tag_, &f);
+    unsigned count = 0;
+    try{
+    while (true)
+    {
+      fast_async_jobs_start_ = false;
+      count++;
+      GD_FINFO_TRACE("Fast async jobs running %s", count);
+      {
+        std::vector<boost::function0<void> > jobs;
+        {
+          libport::BlockLock bl(fast_async_jobs_lock_);
+          std::swap(jobs, fast_async_jobs_);
+        }
+        GD_FINFO_TRACE("Fast async jobs processing %s operations",
+                       jobs.size());
+        foreach(boost::function0<void>& j, jobs)
+          j();
+      }
+      GD_INFO_TRACE("Fast async job sleeping");
+      fast_async_jobs_tag_->freeze();
+      GD_INFO_TRACE("Fast async job waking up");
+        // Wake up.
+    }}
+    catch(...)
+    {
+      GD_INFO_TRACE("Fast async job exiting");
+      throw;
+    }
   }
 
   void

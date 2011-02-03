@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -34,6 +34,7 @@
 # include <libport/utime.hh>
 # include <libport/pthread.h>
 # include <libport/synchronizer.hh>
+#include <sched/scheduler.hh>
 
 # include <kernel/fwd.hh>
 # include <kernel/utypes.hh>
@@ -211,16 +212,19 @@ namespace kernel
     /// Wake up from main loop.
     void wake_up();
 
-    /*--------------------------.
-    | Asynchronous scheduling.  |
-    `--------------------------*/
+    /*--------------------------------------.
+    | Thread-safe asynchronous scheduling   |
+    `---------------------------------------*/
 
   public:
+    /// Schedule a call in a new job.
     void schedule(urbi::object::rObject target, libport::Symbol method,
                   const urbi::object::objects_type& args =
                     urbi::object::objects_type());
+    /// Schedule callback in a new job.
     void schedule(libport::Symbol method, boost::function0<void> callback);
-
+    /// Schedule callback in the shared asynchronous job handler.
+    void schedule_fast(boost::function0<void> callback);
   private:
     struct AsyncJob
     {
@@ -235,8 +239,22 @@ namespace kernel
     };
     std::vector<AsyncJob> async_jobs_;
     libport::Lockable async_jobs_lock_;
+
     void async_jobs_process_();
     void schedule(const AsyncJob& j);
+
+    /* We use an always running job fast_async_jobs_job_ to handle all
+     * fast_async_jobs_ callback.
+     * When it has nothing to do, it sleeps by freezing
+     * fast_async_jobs_tag_. This tag is unfrozen by work() if
+     * fast_async_jobs_start_ is true (because tags are not thread-safe).
+     */
+    std::vector<boost::function0<void> > fast_async_jobs_;
+    bool fast_async_jobs_start_; // must wake async jobs handler
+    object::rTag fast_async_jobs_tag_;
+    libport::Lockable fast_async_jobs_lock_;
+    sched::rJob fast_async_jobs_job_; // For the sake of consistency.
+    void fast_async_jobs_run_();
 
   protected:
     /// Overload this function to specify how your robot is displaying messages.
