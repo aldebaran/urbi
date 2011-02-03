@@ -54,6 +54,9 @@ namespace runner
     void eval_print_(const ast::Exp* exp);
     /// Execute the front of commands_.
     void handle_command_(ast::rConstExp exp, bool canYield = true);
+    /// Handle end of a command.
+    void handle_command_end_();
+
     std::deque<ast::rConstExp> commands_;
     bool executing_;
     std::istream& input_;

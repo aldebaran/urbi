@@ -52,11 +52,12 @@ namespace runner
     , binary_mode_(false)
     , parser_(new parser::UParser(input_))
   {
-    GD_FINFO_TRACE("new shell: %s", name_get());
+    GD_FINFO_TRACE("new shell: %s %p", name_get(), this);
   }
 
   Shell::~Shell()
   {
+    GD_FINFO_TRACE("dying shell: %s %p", name_get(), this);
     if (serializationJob_)
       serializationJob_->terminate_asap();
     delete parser_;
@@ -175,6 +176,44 @@ namespace runner
     }
   }
 
+  static
+  void collect_connection(kernel::UConnection* c)
+  {
+    GD_FPUSH_DUMP("closing connection %p", c);
+    aver(c);
+    kernel::server().connection_remove(*c);
+  }
+
+  void
+  Shell::handle_command_end_()
+  {
+    if (input_.eof())
+    {
+      GD_FPUSH_TRACE("%s: end reached.", name_get());
+      if (&kernel::urbiserver->ghost_connection_get() !=
+          &lobby_get()->connection_get())
+      {
+        // Asynchronous destruction of the connection is necessary
+        // otherwise the connection destructor (which is stopping the
+        // connection tag) will raise a Stop exception.  In addition, the
+        // UConnection is supposed to hold the last reference on this
+        // Shell once the work function has ended, thus scheduling the
+        // ansynchronous destruction will destroy the lobby and the shell.
+        // The UConnection should be fetch before disconnecting the lobby,
+        // because the lobby will lose it's reference on the connection.
+        GD_FPUSH_DUMP("%s: schedule connection destruction.", name_get());
+        aver(&lobby_get()->connection_get());
+        kernel::server().schedule(
+          SYMBOL(collect_connection),
+          boost::bind(collect_connection, &lobby_get()->connection_get())
+        );
+        GD_FPUSH_DUMP("%s: disconnecting.", name_get());
+        lobby_get()->disconnect();
+        stop_ = true;
+      }
+    }
+  }
+
   void
   Shell::work()
   {
@@ -192,7 +231,6 @@ namespace runner
       }
     }
 
-    kernel::server().connection_remove(lobby_get()->connection_get());
     foreach (const sched::rJob& job, jobs_)
       job->terminate_now();
     yield_until_terminated(jobs_);
@@ -224,12 +262,7 @@ namespace runner
         }
         ast::rExp ast = parser::transform(ast::rConstExp(res));
         handle_command_(ast);
-        if (input_.eof())
-        {
-          GD_FPUSH_TRACE("%s: end reached, disconnecting.", name_get());
-          lobby_get()->disconnect();
-          stop_ = true;
-        }
+        handle_command_end_();
       }
       catch (const Exception& e)
       {
@@ -276,12 +309,7 @@ namespace runner
           ast::rConstExp ast = parser::transform(e);
           handle_command_(ast::rConstExp(ast), false);
         }
-        if (input_.eof())
-        {
-          GD_FPUSH_TRACE("%s: end reached, disconnecting.", name_get());
-          lobby_get()->disconnect();
-          stop_ = true;
-        }
+        handle_command_end_();
       }
       // Catch and print unhandled exceptions
       catch (object::UrbiException& e)
