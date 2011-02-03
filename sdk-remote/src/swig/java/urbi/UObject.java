@@ -587,19 +587,6 @@ public class UObject extends UObjectCPP
 	return params;
     }
 
-
-    public void call(String object, String method, UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6, UValue v7, UValue v8) {
-	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
-		   new UAutoValue(v3), new UAutoValue(v4), new UAutoValue(v5),
-		   new UAutoValue(v6), new UAutoValue(v7), new UAutoValue(v8));
-    }
-
-    public void call(String object, String method, UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6, UValue v7) {
-	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
-		   new UAutoValue(v3), new UAutoValue(v4), new UAutoValue(v5),
-		   new UAutoValue(v6), new UAutoValue(v7));
-    }
-
     public void call(String object, String method, UValue v1, UValue v2, UValue v3, UValue v4, UValue v5, UValue v6) {
 	super.call(object, method, new UAutoValue(v1), new UAutoValue(v2),
 		   new UAutoValue(v3), new UAutoValue(v4), new UAutoValue(v5),
