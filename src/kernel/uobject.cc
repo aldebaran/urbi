@@ -264,9 +264,8 @@ static std::vector<std::pair<std::string, std::string> > bound_context;
 # define CHECK_MAINTHREAD()
 #else
 # define CHECK_MAINTHREAD()				\
-  passert(!::kernel::urbiserver->isAnotherThread(),     \
-          "The UObject API isn't thread safe. "         \
-          "Do the last call within the main thread.")
+  if (::kernel::urbiserver->isAnotherThread())          \
+    throw std::runtime_error("Current thread is not main thread")
 #endif
 
 namespace Stats
@@ -723,7 +722,8 @@ namespace urbi
       if (res)
         return res;
       /// But those below cannot.
-      CHECK_MAINTHREAD();
+      if (server().isAnotherThread())
+        return 0;
       uobject_to_robject_type::iterator it = uobject_to_robject.find(n);
       if (it != uobject_to_robject.end())
         return it->second;
@@ -884,10 +884,27 @@ namespace urbi
     {
       return new KernelUGenericCallbackImpl();
     }
+
+    static void set_timer(UTimerCallback* cb, TimerHandle* handle,
+                          libport::Semaphore& sem)
+    {
+      *handle = KernelUContextImpl::instance()->setTimer(cb);
+      sem++;
+    }
     TimerHandle
     KernelUContextImpl::setTimer(UTimerCallback* cb)
     {
-      CHECK_MAINTHREAD();
+      if (server().isAnotherThread())
+      {
+        TimerHandle th;
+        libport::Semaphore sem;
+        GD_INFO_DUMP("SetTimer: async request.");
+        server().schedule_fast(boost::bind(&set_timer, cb, &th,
+                                           boost::ref(sem)));
+        sem--;
+        GD_INFO_DUMP("SetTimer: returning.");
+        return th;
+      }
       rObject me = xget_base(cb->objname);
       rObject f = me->slot_get(SYMBOL(setTimer));
       rObject p = new object::Float(cb->period / 1000.0);
@@ -896,6 +913,7 @@ namespace urbi
       rObject call = MAKE_VOIDCALL(cb, urbi::UTimerCallback, call);
       object::objects_type args = list_of (me)(p) (call)(tag);
       ::kernel::runner().apply(f, SYMBOL(setTimer), args);
+      GD_FINFO_DUMP("SetTimer on %s: %s", cb, stag);
       return TimerHandle(new std::string(stag));
     }
 
@@ -908,6 +926,7 @@ namespace urbi
     bool
     KernelUObjectImpl::removeTimer(TimerHandle h)
     {
+      GD_FINFO_DUMP("RemoveTimer on %s %s", h, owner_->__name);
       if (!h)
         return false;
       if (server().isAnotherThread())
