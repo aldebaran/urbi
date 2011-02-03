@@ -44,9 +44,7 @@ namespace urbi
                         UAutoValue v3 = UAutoValue(),
                         UAutoValue v4 = UAutoValue(),
                         UAutoValue v5 = UAutoValue(),
-                        UAutoValue v6 = UAutoValue(),
-                        UAutoValue v7 = UAutoValue(),
-                        UAutoValue v8 = UAutoValue());
+                        UAutoValue v6 = UAutoValue());
       virtual void declare_event(const UEvent* owner);
       virtual void emit(const std::string& object,
                         UAutoValue& v1,
@@ -55,8 +53,7 @@ namespace urbi
                         UAutoValue& v4,
                         UAutoValue& v5,
                         UAutoValue& v6,
-                        UAutoValue& v7,
-                        UAutoValue& v8
+                        UAutoValue& v7
                         );
       virtual UObjectMode getRunningMode() const;
       virtual std::pair<int, int> kernelVersion() const;

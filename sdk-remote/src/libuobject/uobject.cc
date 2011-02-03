@@ -742,15 +742,13 @@ namespace urbi
                              UAutoValue v3,
                              UAutoValue v4,
                              UAutoValue v5,
-                             UAutoValue v6,
-                             UAutoValue v7,
-                             UAutoValue v8)
+                             UAutoValue v6)
     {
       std::stringstream s;
       s << object << "." << method <<"(";
 #define CHECK(v) if (v.type != DATA_VOID) s << v << ","
       CHECK(v1); CHECK(v2); CHECK(v3); CHECK(v4);
-      CHECK(v5); CHECK(v6); CHECK(v7); CHECK(v8);
+      CHECK(v5); CHECK(v6);
 #undef CHECK
       std::string r = s.str();
       if (v1.type != DATA_VOID)
@@ -778,14 +776,13 @@ namespace urbi
                              UAutoValue& v4,
                              UAutoValue& v5,
                              UAutoValue& v6,
-                             UAutoValue& v7,
-                             UAutoValue& v8)
+                             UAutoValue& v7)
     {
       if (serializationMode)
       {
-        UAutoValue* vals[] = {&v1, &v2, &v3, &v4, &v5, &v6, &v7, &v8};
+        UAutoValue* vals[] = {&v1, &v2, &v3, &v4, &v5, &v6, &v7};
         int i = 0;
-        while (i<8 && vals[i]->type != DATA_VOID)
+        while (i<7 && vals[i]->type != DATA_VOID)
           ++i;
         outputStream->flush();
         char code = UEM_EMITEVENT;
@@ -799,7 +796,7 @@ namespace urbi
       s << object << "!(";
 #define CHECK(v) if (v.type != DATA_VOID) s << v << ","
       CHECK(v1); CHECK(v2); CHECK(v3); CHECK(v4);
-      CHECK(v5); CHECK(v6); CHECK(v7); CHECK(v8);
+      CHECK(v5); CHECK(v6); CHECK(v7);
 #undef CHECK
       std::string r = s.str();
       if (v1.type != DATA_VOID)

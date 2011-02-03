@@ -66,9 +66,7 @@ namespace urbi
                         UAutoValue v3 = UAutoValue(),
                         UAutoValue v4 = UAutoValue(),
                         UAutoValue v5 = UAutoValue(),
-                        UAutoValue v6 = UAutoValue(),
-                        UAutoValue v7 = UAutoValue(),
-                        UAutoValue v8 = UAutoValue()) = 0;
+                        UAutoValue v6 = UAutoValue()) = 0;
 
       virtual void declare_event(const UEvent* owner) = 0;
 
@@ -79,8 +77,7 @@ namespace urbi
                         UAutoValue& v4,
                         UAutoValue& v5,
                         UAutoValue& v6,
-                        UAutoValue& v7,
-                        UAutoValue& v8) = 0;
+                        UAutoValue& v7) = 0;
 
       /// The mode in which the code is running.
       virtual UObjectMode getRunningMode() const = 0;

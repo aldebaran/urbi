@@ -541,7 +541,7 @@ public:
 
   void sendEvent8Args()
   {
-    ev.emit(0, "foo", 5.1, 4, 5, 6, 7, 8);
+    ev.emit(0, "foo", 5.1, 4, 5, 6, 7);
   }
 
 

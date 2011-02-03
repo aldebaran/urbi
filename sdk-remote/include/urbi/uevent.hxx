@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -41,11 +41,10 @@ namespace urbi
                urbi::UAutoValue v4,
                urbi::UAutoValue v5,
                urbi::UAutoValue v6,
-               urbi::UAutoValue v7,
-               urbi::UAutoValue v8
+               urbi::UAutoValue v7
                )
   {
-    ctx_->emit(name, v1, v2, v3, v4, v5, v6, v7, v8);
+    ctx_->emit(name, v1, v2, v3, v4, v5, v6, v7);
   }
 } // end namespace urbi
 

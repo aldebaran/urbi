@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -47,8 +47,7 @@ namespace urbi
               urbi::UAutoValue v4 = UAutoValue(),
               urbi::UAutoValue v5 = UAutoValue(),
               urbi::UAutoValue v6 = UAutoValue(),
-              urbi::UAutoValue v7 = UAutoValue(),
-              urbi::UAutoValue v8 = UAutoValue());
+              urbi::UAutoValue v7 = UAutoValue());
 
  private:
     void __init();

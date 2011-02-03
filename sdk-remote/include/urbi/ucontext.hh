@@ -60,9 +60,7 @@ namespace urbi
               UAutoValue v3 = UAutoValue(),
               UAutoValue v4 = UAutoValue(),
               UAutoValue v5 = UAutoValue(),
-              UAutoValue v6 = UAutoValue(),
-              UAutoValue v7 = UAutoValue(),
-              UAutoValue v8 = UAutoValue());
+              UAutoValue v6 = UAutoValue());
 
     /// The underlying IO Service, from the UContextImpl.
     boost::asio::io_service& getIoService();

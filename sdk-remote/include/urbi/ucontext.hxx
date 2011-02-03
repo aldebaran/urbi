@@ -136,11 +136,9 @@ namespace urbi
                  UAutoValue v3,
                  UAutoValue v4,
                  UAutoValue v5,
-                 UAutoValue v6,
-                 UAutoValue v7,
-                 UAutoValue v8)
+                 UAutoValue v6)
   {
-    ctx_->call(object, method, v1, v2, v3, v4, v5, v6, v7, v8);
+    ctx_->call(object, method, v1, v2, v3, v4, v5, v6);
   }
 
   URBI_SDK_API UObjectMode running_mode();

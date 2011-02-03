@@ -33,7 +33,7 @@
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
 # include <libport/pthread.h>
-# include <libport/synchronizer.hh>
+
 #include <sched/scheduler.hh>
 
 # include <kernel/fwd.hh>
@@ -260,7 +260,6 @@ namespace kernel
     /// Overload this function to specify how your robot is displaying messages.
     virtual void effectiveDisplay(const char* s) = 0;
 
-    libport::Synchronizer synchronizer_;
   private:
     // Pointer to stop the header dependency.
     sched::Scheduler* scheduler_;
@@ -273,16 +272,12 @@ namespace kernel
     void work_test_cpuoverload_();
     /// \}
 
-    /// Call synchronizer::check() and yield in a loop.
-    void handle_synchronizer_();
   public:
     /// Stops all commands in all connections.
     bool stopall;
 
     /// True iff current thread is different from server thread Id.
     bool isAnotherThread() const;
-
-    libport::Synchronizer& synchronizer_get();
 
     UrbiRoot& urbi_root_get();
 
@@ -313,6 +308,9 @@ namespace kernel
 
     /// Socket pair used to wake us up
     std::pair<libport::Socket*, libport::Socket*> wake_up_pipe_;
+
+    /// Dead jobs from last sched cycle.
+    sched::jobs_type dead_jobs_;
   };
 
 }

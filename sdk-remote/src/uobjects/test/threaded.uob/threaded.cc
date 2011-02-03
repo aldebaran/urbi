@@ -16,6 +16,7 @@ using namespace urbi;
 
 
 
+GD_CATEGORY(Threaded);
 
 /** Threaded UObject.
  *
@@ -242,6 +243,7 @@ bool Threaded::threadLoopBody(int id)
       if (ctx.ops.empty())
         ctx.hasOp = false;
     }
+    GD_FINFO_TRACE("[%s] Executing operation %s", id, op.op);
     switch(op.op)
     {
     case SET_BYPASS:
@@ -379,6 +381,7 @@ bool Threaded::threadLoopBody(int id)
       return false;
       break;
     }
+    GD_FINFO_TRACE("[%s] Done executing operation %s", id, op.op);
   }
   return true;
 }

@@ -373,14 +373,6 @@ namespace kernel
     // the ghostconnection too.
     ghost_->initialize();
 
-    object::rPrimitive p =
-      object::primitive
-      (boost::function0<void>
-       (boost::bind(&UServer::handle_synchronizer_, this)));
-    scheduler_->add_job
-      (new runner::Interpreter(*ghost_->shell_get().get(),
-                               p->as<object::Object>(),
-                               SYMBOL(handleSynchronizer)));
     fast_async_jobs_job_ =
       new runner::Interpreter(ghost_->lobby_get(),
                                scheduler_get(),
@@ -475,6 +467,11 @@ namespace kernel
 
     if (fast_async_jobs_start_)
       fast_async_jobs_tag_->unfreeze();
+
+    dead_jobs_.clear();
+    dead_jobs_ = scheduler_->terminated_jobs_get();
+    scheduler_->terminated_jobs_clear(); // let refcounting do the job.
+
     // To make sure that we get different times before and after every work
     // phase if we use a monotonic clock, update the time before and after
     // working.
@@ -717,28 +714,6 @@ namespace kernel
   UServer::isAnotherThread() const
   {
     return thread_id_ != pthread_self();
-  }
-
-  void
-  UServer::handle_synchronizer_()
-  {
-    runner::Runner& r = getCurrentRunner();
-    sched::jobs_type dead_jobs;
-    while (true)
-    {
-      // Handle job destruction with a one-cycle delay (The scheduler seems
-      // to keep reference to dead jobs for one cycle).
-      dead_jobs.clear();
-      dead_jobs = scheduler_->terminated_jobs_get();
-      scheduler_->terminated_jobs_clear(); // let refcounting do the job.
-
-      r.side_effect_free_set(true);
-      // We cannot yield within check, or an other OS thread will jump stack!
-      r.non_interruptible_set(true);
-      synchronizer_.check();
-      r.non_interruptible_set(false);
-      r.yield_until_things_changed();
-    }
   }
 
   void
