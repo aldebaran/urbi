@@ -133,7 +133,7 @@ do (Global.UObject)
     if (!hasLocalSlot("timerTask"))
       timerTask = [ => ]|
     var tag = Tag.new|
-    tag: detach({loop{ func() | sleep(interval)}}) |
+    disown({tag:loop{ func() | sleep(interval)}}) |
     timerTask[tagName] = tag
   };
 
