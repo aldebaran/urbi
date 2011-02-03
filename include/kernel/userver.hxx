@@ -75,13 +75,6 @@ namespace kernel
   }
 
   inline
-  libport::Synchronizer&
-  UServer::synchronizer_get()
-  {
-    return synchronizer_;
-  }
-
-  inline
   UrbiRoot&
   UServer::urbi_root_get()
   {

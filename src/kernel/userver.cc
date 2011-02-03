@@ -312,7 +312,6 @@ namespace kernel
     libport::makePipe(wake_up_pipe_, io);
     dynamic_cast<libport::ConcreteSocket*>(wake_up_pipe_.first)
     ->onRead(boost::bind(&waker_socket_on_read, scheduler_, _1, _2));
-    synchronizer_.setOnLock(boost::bind(&UServer::wake_up, this));
 
     /*--------.
     | Setup.  |
