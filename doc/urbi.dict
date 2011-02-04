@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1266 utf-8
+personal_ws-1.1 en 1268 utf-8
 aaa
 abc
 abcdef
@@ -179,6 +179,7 @@ clearStats
 cloneSlot
 ClosedLoop
 Clément
+cmd
 CODESET
 colordiff
 compl
@@ -463,6 +464,7 @@ ImageMagick
 imagemagick
 ImmutableCounter
 ImplicitTagComponent
+inBounds
 indices
 ing
 INI

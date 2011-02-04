@@ -1,0 +1,110 @@
+%% Copyright (C) 2011, Gostai S.A.S.
+%%
+%% This software is provided "as is" without warranty of any kind,
+%% either expressed or implied, including but not limited to the
+%% implied warranties of fitness for a particular purpose.
+%%
+%% See the LICENSE file for more information.
+
+\chapter{Urbi Guideline}
+\label{sec:guideline}
+
+\section{\us Programming Guideline}
+
+\subsection{Prefer Expressions to Statements}
+
+Code like this:
+
+\begin{urbiunchecked}
+if (delta)
+  cmd = "go";
+else if (alpha)
+  cmd = "turn"
+else
+  cmd = "stop";
+\end{urbiunchecked}
+
+\noindent
+is more legible as follows:
+
+\begin{urbiunchecked}
+cmd =
+  {
+    if      (delta) "go"
+    else if (alpha) "turn"
+    else            "stop"
+  };
+\end{urbiunchecked}
+
+
+\subsection{Avoid \lstinline|return|}
+
+The \lstinline|return| statement is actually costly, because it also in
+charge of stopping all the event-handlers, detached code, and code sent into
+background (via \samp{,} or \samp{\&}).
+
+In a large number of cases, \lstinline|return| is actually used uselessly.
+For instance instead of:
+
+\begin{urbiscript}
+function inBounds1(var x, var low, var high)
+{
+  if (x < low)
+    return false;
+  if (high < x)
+    return false;
+  return true;
+}|;
+assert
+{
+  inBounds1(1, 0, 2);    inBounds1(0, 0, 2);  inBounds1(2, 0, 2);
+  !inBounds1(0, 1, 2);  !inBounds1(3, 0, 2);
+};
+\end{urbiscript}
+
+\noindent
+write
+
+\begin{urbiscript}
+function inBounds2(var x, var low, var high)
+{
+  if (x < low)
+    false
+  else if (high < x)
+    false
+  else
+    true;
+}|;
+assert
+{
+  inBounds2(1, 0, 2);    inBounds2(0, 0, 2);  inBounds2(2, 0, 2);
+  !inBounds2(0, 1, 2);  !inBounds2(3, 0, 2);
+};
+\end{urbiscript}
+
+\noindent
+or better yet, simply evaluate the Boolean expression.  As a matter of fact,
+returning a Boolean is often the sign that you ought to ``return'' a Boolean
+expression rather that evaluate it in a conditional, and return either true
+or false.
+
+\begin{urbiscript}
+function inBounds3(var x, var low, var high)
+{
+  low <= x && x <= high
+}|;
+assert
+{
+  inBounds3(1, 0, 2);    inBounds3(0, 0, 2);  inBounds3(2, 0, 2);
+  !inBounds3(0, 1, 2);  !inBounds3(3, 0, 2);
+};
+\end{urbiscript}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "urbi-sdk"
+%%% ispell-dictionary: "american"
+%%% ispell-personal-dictionary: "../urbi.dict"
+%%% fill-column: 76
+%%% End:
