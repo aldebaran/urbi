@@ -136,17 +136,16 @@ namespace urbi
 #endif
 
     // Wait for client to be connected if in server mode.
+    // Also wait for initialization exchanges.
     while (getDefaultClient()
            && !getDefaultClient()->error()
-           && !getDefaultClient()->isConnected())
+           && !getDefaultClient()->isConnected()
+	   && getDefaultClient()->connectionID() == "")
       usleep(20000);
 
     defaultContext = new impl::RemoteUContextImpl(
       (USyncClient*)dynamic_cast<UClient*>(getDefaultClient()));
-    // Waiting for connectionID.
-    while (getDefaultClient()
-           && getDefaultClient()->connectionID() == "")
-      usleep(5000);
+
     // Initialize in the correct thread.
     getDefaultClient()->notifyCallbacks
       (UMessage(*getDefaultClient(), 0, externalModuleTag,
