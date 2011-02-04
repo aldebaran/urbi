@@ -39,6 +39,18 @@ namespace urbi
     return res;
   }
 
+  template <>
+  inline
+  int
+  getValue<std::string>(UMessage* m, std::string& val)
+  {
+    bool res = m && m->type == MESSAGE_DATA && m->value->type == DATA_STRING;
+    if (res)
+      val = *m->value->stringValue;
+    delete m;
+    return res;
+  }
+
   inline
   UMessage::operator urbi::UValue& ()
   {
