@@ -20,8 +20,8 @@ namespace urbi
   int
   getValue(UMessage* m, T& val)
   {
-    int res = 0;
-    if ((res = (m && m->type == MESSAGE_DATA)))
+    bool res = m && m->type == MESSAGE_DATA;
+    if (res)
       val = *m->value;
     delete m;
     return res;
@@ -32,8 +32,8 @@ namespace urbi
   int
   getValue<ufloat>(UMessage* m, ufloat& val)
   {
-    int res = 0;
-    if ((res = (m && m->type == MESSAGE_DATA && m->value->type == DATA_DOUBLE)))
+    bool res = m && m->type == MESSAGE_DATA && m->value->type == DATA_DOUBLE;
+    if (res)
       val = m->value->val;
     delete m;
     return res;
