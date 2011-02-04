@@ -52,10 +52,12 @@ namespace urbi
     | Details.  |
     `----------*/
     private:
+#ifndef LIBPORT_DEBUG_DISABLE
       void msg_(libport::Debug::types::Type type,
                 libport::Debug::levels::Level level,
                 const std::string& category,
                 const std::string& msg);
+#endif
       URBI_CXX_OBJECT(Logger, Tag);
     };
   }

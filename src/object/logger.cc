@@ -30,7 +30,16 @@ namespace urbi
     Logger::~Logger()
     {}
 
-#define LEVEL(Name, Type, Level)                                \
+#ifdef LIBPORT_DEBUG_DISABLE
+# define LEVEL(Name, Type, Level) \
+   rObject                                                      \
+    Logger::Name(const std::string& msg,                        \
+                 const std::string& category)                   \
+   {                                                            \
+     std::cerr << category  << " : " << msg << std::endl;       \
+   }
+#else
+# define LEVEL(Name, Type, Level)                                \
     rObject                                                     \
     Logger::Name(const std::string& msg,                        \
                  const std::string& category)                   \
@@ -39,6 +48,7 @@ namespace urbi
            libport::Debug::levels::Level, category, msg);       \
       return this;                                              \
     }
+#endif
 
     LEVEL(log,   info,  log);
     LEVEL(trace, info,  trace);
@@ -48,6 +58,7 @@ namespace urbi
     LEVEL(warn,  warn,  log);
 #undef LEVEL
 
+#ifndef LIBPORT_DEBUG_DISABLE
     void
     Logger::msg_(libport::Debug::types::Type type,
               libport::Debug::levels::Level level,
@@ -78,17 +89,22 @@ namespace urbi
         // FIXME: use full location when GD handles it
         GD_DEBUGGER->debug(msg, type, c, function, file, line);
     }
+#endif
 
     void
     Logger::onEnter()
     {
+#ifndef LIBPORT_DEBUG_DISABLE
       libport::debugger_data().indent++;
+#endif
     }
 
     void
     Logger::onLeave()
     {
+#ifndef LIBPORT_DEBUG_DISABLE
       libport::debugger_data().indent--;
+#endif
     }
 
     URBI_CXX_OBJECT_INIT(Logger)
