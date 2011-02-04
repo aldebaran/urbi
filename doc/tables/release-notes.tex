@@ -28,7 +28,9 @@ This chapter lists the user-visible changes in \usdk releases.
 \release{2.6}{2011-xx-yy}
 
 Again, many optimizations have been implemented, and users should observe a
-significant speedup.
+significant speedup. Particularily, the threaded support in UObjects has
+been modified to perform all operations asynchronously, instead of locking
+the engine.
 
 \subsection{New Features}
 \begin{itemize}
