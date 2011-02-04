@@ -380,23 +380,12 @@ namespace urbi
   | UValue: DATA_STRING.  |
   `----------------------*/
 
-namespace
-{
-  std::string*
-  ptr_string (const void* v)
-  {
-    std::ostringstream i;
-    i << "%ptr_" << (unsigned long) v;
-    return new std::string(i.str());
-  }
-}
+#define UVALUE_STRING(Type, Value)                                      \
+  UVALUE_OPERATORS(Type v, DATA_STRING, stringValue, new std::string(Value))
 
-#define UVALUE_STRING(Type)			\
-  UVALUE_OPERATORS(Type v, DATA_STRING, stringValue, new std::string(v))
-
-  UVALUE_STRING(const char*)
-  UVALUE_STRING(const std::string&)
-  UVALUE_OPERATORS(const void* v, DATA_STRING, stringValue, ptr_string(v))
+  UVALUE_STRING(const char*,        v)
+  UVALUE_STRING(const std::string&, v)
+  UVALUE_STRING(const void*,        (libport::format("%ptr_%x", v)))
 
 #undef UVALUE_STRING
 
