@@ -20,6 +20,7 @@
 #include <libport/debug.hh>
 #include <libport/escape.hh>
 #include <libport/foreach.hh>
+#include <libport/format.hh>
 #include <libport/iostream>
 #include <libport/lexical-cast.hh>
 #include <libport/xalloc.hh>
