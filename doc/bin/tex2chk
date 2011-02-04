@@ -49,7 +49,7 @@ Be more verbose.  Accumulates.
 BEGIN
 {
   use File::Basename;
-  unshift @INC, dirname($0) . '/../../build-aux/perl';
+  unshift @INC, dirname($0) . '/../../build-aux/lib/perl';
 }
 
 use strict;
