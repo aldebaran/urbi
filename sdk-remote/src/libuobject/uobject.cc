@@ -115,8 +115,10 @@ namespace urbi
       {
         char code = UEM_EVAL;
         std::string msg(buffer, size);
+        backend_->backend_->startPack();
         *backend_->oarchive << code << msg;
         backend_->backend_->flush();
+        backend_->backend_->endPack();
       }
     private:
       RemoteUContextImpl* backend_;
@@ -212,7 +214,7 @@ namespace urbi
           *outputStream << std::string(a+1, len-2);
         else
           *outputStream << std::string(a, len);
-        dataSent = true;
+        markDataSent();
         backend_->endPack();
       }
     }
@@ -223,8 +225,10 @@ namespace urbi
         GD_WARN("Write on closed remote context");
       else
       {
+        backend_->startPack();
         *outputStream << a;
         outputStream->flush();
+        backend_->endPack();
       }
     }
 
@@ -619,6 +623,7 @@ namespace urbi
                                       const UValue& v, time_t ts)
     {
       int nv = 0, nc = 0;
+      libport::BlockLock bl(tableLock);
       if (std::list<UVar*> *us = varmap().find0(name))
       {
         foreach (UVar* u, *us)
@@ -653,12 +658,17 @@ namespace urbi
                                             UList& args)
     {
       GD_FINFO_DUMP("dispatch call %s = %s...", var, name);
-      UTable::callbacks_type funs = functionmap()[name];
-      UTable::callbacks_type::iterator i = funs.begin();
-      if (i == funs.end())
-        throw std::runtime_error("no callback found");
+      UGenericCallback* cb = 0;
+      {
+        libport::BlockLock bl(tableLock);
+        UTable::callbacks_type funs = functionmap()[name];
+        UTable::callbacks_type::iterator i = funs.begin();
+        if (i == funs.end())
+          throw std::runtime_error("no callback found");
+        cb = *i;
+      }
       args.setOffset(3);
-      (*i)->eval(args,
+      cb->eval(args,
                  boost::bind(&call_result, this, var, _1, _2));
     }
 
@@ -666,6 +676,7 @@ namespace urbi
     RemoteUContextImpl::setRTPMessage(const std::string& varname,
                                       int state)
     {
+      libport::BlockLock bl(tableLock);
       if (std::list<UVar*> *us = varmap().find0(varname))
       {
         foreach (UVar* u, *us)
@@ -759,7 +770,7 @@ namespace urbi
         r = r.substr(0, r.length() - 1);
       r += ')';
       URBI_SEND_COMMA_COMMAND_C(*outputStream, r);
-      dataSent = true;
+      markDataSent();
     }
 
     void
@@ -769,7 +780,7 @@ namespace urbi
       std::string r = "try{var " + owner->get_name() + " = Event.new()}"
       " catch(var e) {}";
       URBI_SEND_PIPED_COMMAND_C(*outputStream, r);
-      dataSent = true;
+      markDataSent();
     }
 
     void
@@ -807,7 +818,7 @@ namespace urbi
         r = r.substr(0, r.length() - 1);
       r += ')';
       URBI_SEND_COMMAND_C(*outputStream, r);
-      dataSent = true;
+      markDataSent();
     }
 
     UValue
@@ -833,13 +844,18 @@ namespace urbi
         FINALLY(((UList&, l)), l.array.clear());
         for (int i=0; i<nargs; ++i)
           l.array.push_back(vals[i]);
-        UTable::callbacks_type tmpfun = functionmap()[name];
-        UTable::callbacks_type::iterator tmpfunit = tmpfun.begin();
-        if (tmpfunit == tmpfun.end())
-        throw std::runtime_error("no callback found for " + object +"::"
-                                 + method + " with " + string_cast(nargs)
-                                 +" arguments");
-        return (*tmpfunit)->__evalcall(l);
+        UGenericCallback* cb;
+        {
+          libport::BlockLock bl(tableLock);
+          UTable::callbacks_type tmpfun = functionmap()[name];
+          UTable::callbacks_type::iterator tmpfunit = tmpfun.begin();
+          if (tmpfunit == tmpfun.end())
+          throw std::runtime_error("no callback found for " + object +"::"
+                                   + method + " with " + string_cast(nargs)
+                                   +" arguments");
+          cb = *tmpfunit;
+        }
+        return cb->__evalcall(l);
       }
     }
 
@@ -959,6 +975,18 @@ namespace urbi
       backend_->lockQueue();
       call("UObject", "syncGet", exp, tag);
       return backend_->waitForTag(tag, timeout);
+    }
+
+    void
+    RemoteUContextImpl::markDataSent()
+    {
+      if (backend_->isCallbackThread() && dispatchDepth)
+      {
+        if (!serializationMode) // No it cannot go in the if above.
+          dataSent = true;
+      }
+      else // we were not called by dispatch: send the terminating ';' ourselve.
+        URBI_SEND_COMMAND_C((*outputStream), "");
     }
   } // namespace urbi::impl
 

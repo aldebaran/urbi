@@ -110,6 +110,10 @@ namespace urbi
       /// Return the result of the evaluation of the given expression
       UMessage* syncGet(const std::string& exp, libport::utime_t timeout=0);
 
+      /** Notify that data was sent.
+       * Just write dataSent_ if called from dispatch, or add a '; and flush.
+       */
+      void markDataSent();
       USyncClient* backend_;
 
       /// True if we received a clientError message.
@@ -130,6 +134,7 @@ namespace urbi
       TABLE(UVarTable, varmap);
       TABLE(UTimerTable, timermap);
 #undef TABLE
+      libport::Lockable tableLock;
       UValue localCall(const std::string& object,
                 const std::string& method,
                 UAutoValue v1 = UAutoValue(),

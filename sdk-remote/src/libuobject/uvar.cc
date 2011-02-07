@@ -45,14 +45,17 @@ namespace urbi
     client_ = ctx->backend_;
     LockableOstream* outputStream = ctx->outputStream;
     std::string name = owner_->get_name();
-    ctx->varmap()[name].push_back(owner_);
+    {
+      libport::BlockLock bl(ctx->tableLock);
+      ctx->varmap()[name].push_back(owner_);
+    }
     URBI_SEND_PIPED_COMMAND_C((*outputStream), "if (!isdef(" << name << ")) var "
                             << name);
     URBI_SEND_PIPED_COMMAND_C
           ((*outputStream),
            libport::format("external var %s from dummy",
                            owner_->get_name()));
-    ctx->dataSent = true;
+    ctx->markDataSent();
   }
 
   bool RemoteUVarImpl::setBypass(bool enable)
@@ -82,7 +85,7 @@ namespace urbi
     LockableOstream* outputStream = ctx->outputStream;
     URBI_SEND_PIPED_COMMAND_C((*outputStream), owner_->get_name() << "->"
                               << urbi::name(p) << " = " << v);
-    ctx->dataSent = true;
+    ctx->markDataSent();
   }
 
   void
@@ -119,6 +122,7 @@ namespace urbi
   RemoteUVarImpl::clean()
   {
     RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
+    libport::BlockLock bl(ctx->tableLock);
     ctx->varmap().clean(*owner_);
   }
 
@@ -249,7 +253,9 @@ namespace urbi
     std::string n = owner_->get_name();
     unsigned int tlow = (unsigned int)time;
     unsigned int thi = (unsigned int)(time >> 32);
-    static_cast<RemoteUContextImpl*>(owner_->ctx_)->outputStream->flush();
+    RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
+    ctx->backend_->startPack();
+    ctx->outputStream->flush();
     *static_cast<RemoteUContextImpl*>(owner_->ctx_)->
       oarchive
         << av
@@ -257,6 +263,7 @@ namespace urbi
         << v
         << tlow << thi;
      client_->flush();
+     ctx->backend_->endPack();
   }
 
   void
@@ -361,13 +368,7 @@ namespace urbi
     }
     if (!rtp)
     {
-      if (ctx->backend_->isCallbackThread() && ctx->dispatchDepth)
-      {
-        if (!ctx->serializationMode) // No it cannot go in the if above.
-          ctx->dataSent = true;
-      }
-      else // we were not called by dispatch: send the terminating ';' ourselve.
-        URBI_SEND_COMMAND_C((*ctx->outputStream), "");
+      ctx->markDataSent();
     }
   }
 
@@ -399,7 +400,7 @@ namespace urbi
     URBI_SEND_PIPED_COMMAND_C((*ctx->outputStream), externalModuleTag << "<<"
                             <<'[' << UEM_ASSIGNVALUE << ","
                             << '"' << name << '"' << ',' << name << ']');
-    ctx->dataSent = true;
+    ctx->markDataSent();
   }
 
   void
@@ -439,6 +440,7 @@ namespace urbi
     ctx->send(libport::format("UObject.unnotify(\"%s\", \"%s\", %s)|",
                          name.substr(0, p), name.substr(p+1, name.npos),
                          callbacks_.size()+1).c_str());
+    libport::BlockLock bl(ctx->tableLock);
     foreach(RemoteUGenericCallbackImpl* c, callbacks_)
     {
       UTable& t =
@@ -452,7 +454,7 @@ namespace urbi
       owner_->ctx_->addCleanup(c);
     }
     callbacks_.clear();
-    ctx->dataSent = true;
+    ctx->markDataSent();
     if (std::list<UVar*> *us = ctx->varmap().find0(name))
       us->remove(owner_);
   }
@@ -464,10 +466,10 @@ namespace urbi
     size_t p = name.find_first_of(".");
     if (p == name.npos)
       throw std::runtime_error("invalid argument to useRTP: "+name);
-    ctx->send(libport::format("%s.getSlot(\"%s\").rtp = %s;",
+    ctx->send(libport::format("%s.getSlot(\"%s\").rtp = %s|",
                          name.substr(0, p), name.substr(p+1, name.npos),
                          enable ? "true" : "false"));
-    ctx->dataSent = true;
+    ctx->markDataSent();
   }
 
   void RemoteUVarImpl::setInputPort(bool enable)
@@ -482,7 +484,7 @@ namespace urbi
                          enable
                          ? "setSlot(\"inputPort\", true)"
                          : "removeLocalSlot(\"inputPort\")"));
-    ctx->dataSent = true;
+    ctx->markDataSent();
   }
 
   }
