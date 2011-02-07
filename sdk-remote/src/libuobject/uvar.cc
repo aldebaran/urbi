@@ -171,24 +171,24 @@ namespace urbi
     // Spawn a remote RTP instance and bind it.
     // Also destroy it when this remote disconnects
     std::string rLinkName = linkName + "_l";
-    *outputStream
-      << "var " << rLinkName <<" = URTP.new|\n"
+    URBI_SEND_COMMAND_C(*outputStream,
+      "var " << rLinkName <<" = URTP.new|\n"
       << rLinkName << ".sourceContext = lobby.uid|\n"
       << "disown({var t = Tag.new | t:at(Lobby.onDisconnect?(lobby))\n"
       << "{\n"
       << "  wall(\" destroying lRTP...\")|\n"
       << "  try { " << rLinkName << ".destroy} catch {}|\n"
       << "  t.stop\n"
-      << "}})|;" << std::endl;
+      << "}})|");
     // Now asynchronously ask the remote object to listen and to report
     // the port number.
     GD_SINFO_TRACE("fetching engine listen port...");
     backend_->setCallback(
       callback(*this, &RemoteUContextImpl::onRTPListenMessage),
       (URBI_REMOTE_RTP_INIT_CHANNEL + key).c_str());
-    *outputStream
-      << "Channel.new(\"" URBI_REMOTE_RTP_INIT_CHANNEL + key + "\") <<"
-        + rLinkName + ".listen(\"0.0.0.0\", \"0\")," << std::endl;
+    URBI_SEND_COMMA_COMMAND_C(*outputStream,
+      "Channel.new(\"" URBI_REMOTE_RTP_INIT_CHANNEL + key + "\") <<"
+        + rLinkName + ".listen(\"0.0.0.0\", \"0\")");
     rtpLinks[key]  = 0; // Not ready yet.
   }
 
@@ -221,11 +221,11 @@ namespace urbi
     localCall(linkName, "connect", backend_->getRemoteHost(), port);
     UObject* ob = getUObject(linkName);
     // Monitor this RTP link.
-    *outputStream
-      << "detach('external'.monitorRTP(" << linkName << ","
+    URBI_SEND_COMMA_COMMAND_C(*outputStream,
+      "detach('external'.monitorRTP(" << linkName << ","
       << rLinkName << ", closure() {'external'.failRTP}))|"
       << rLinkName << ".receiveVar(\"" << varname
-      << "\")," << std::endl;
+      << "\")");
     rtpLinks[key]  = ob;
     return URBI_REMOVE;
   }

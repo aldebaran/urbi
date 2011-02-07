@@ -206,12 +206,14 @@ namespace urbi
         unarmorAndSend(a, backend_);
       else
       {
+        backend_->startPack();
         size_t len = strlen(a);
         if (2 <= len && a[0] == '(')
           *outputStream << std::string(a+1, len-2);
         else
           *outputStream << std::string(a, len);
         dataSent = true;
+        backend_->endPack();
       }
     }
 
@@ -232,8 +234,10 @@ namespace urbi
         GD_WARN("Write on closed remote context");
       else
       {
+        backend_->startPack();
         outputStream->rdbuf()->sputn(static_cast<const char*> (buf), size);
         outputStream->flush();
+        backend_->endPack();
       }
     }
 
