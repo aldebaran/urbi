@@ -12,6 +12,8 @@
 #include <bin/arg.hh>
 #include <parser/parse.hh>
 
+DECLARE_LOCATION_FILE;
+
 int
 main(int argc, char** argv)
 {

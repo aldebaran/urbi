@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -14,6 +14,8 @@
 #include <ast/parametric-ast.hh>
 #include <ast/factory.hh>
 #include <rewrite/pattern-binder.hh>
+
+DECLARE_LOCATION_FILE;
 
 namespace rewrite
 {

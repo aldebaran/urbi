@@ -147,6 +147,7 @@ namespace urbi
     static rObject
     object_class_callMessage (rObject target, rObject call_message)
     {
+      DECLARE_LOCATION_FILE;
       runner::Runner& r = ::kernel::runner();
 
       // We need to set the 'code' slot: make a copy of the call message.

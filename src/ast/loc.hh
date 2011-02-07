@@ -22,9 +22,13 @@
 
 # include <kernel/config.h>
 
-# define LOCATION_HERE                                                  \
-  ::ast::loc(new libport::Symbol(__FILE__ + sizeof(__SRCDIR__ "/src/") - 1), \
-             __LINE__)
+# define DECLARE_LOCATION_FILE                  \
+  static /* const */ ::libport::Symbol          \
+    _DECLARE_LOCATION_FILE_is_not_defined       \
+    (__FILE__ + sizeof(__SRCDIR__ "/src/") - 1)
+
+# define LOCATION_HERE                                          \
+  ::ast::loc(&_DECLARE_LOCATION_FILE_is_not_defined, __LINE__)
 
 namespace ast
 {

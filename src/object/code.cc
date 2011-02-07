@@ -29,6 +29,8 @@
 #include <urbi/runner/raise.hh>
 #include <runner/runner.hh>
 
+DECLARE_LOCATION_FILE;
+
 namespace urbi
 {
   namespace object

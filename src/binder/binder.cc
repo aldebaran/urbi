@@ -32,6 +32,7 @@
 #include <parser/parse.hh>
 
 GD_CATEGORY(Urbi.Bind);
+DECLARE_LOCATION_FILE;
 
 namespace binder
 {

@@ -53,6 +53,7 @@
 #endif
 
 GD_CATEGORY(Urbi);
+DECLARE_LOCATION_FILE;
 
 namespace urbi
 {
