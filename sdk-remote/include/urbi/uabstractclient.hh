@@ -95,7 +95,7 @@ namespace urbi
     : std::ostream(sb)
     {
     }
-    libport::Lockable sendBufferLock;
+    mutable libport::Lockable sendBufferLock;
   };
   /// Interface for an URBI wrapper object.
   /*! Implementations of this interface are wrappers around the URBI protocol.

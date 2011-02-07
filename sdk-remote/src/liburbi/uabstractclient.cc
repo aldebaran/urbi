@@ -1036,11 +1036,13 @@ namespace urbi
   UCallbackAction
   UAbstractClient::setConnectionID(const UMessage& msg)
   {
+    GD_INFO_TRACE("UAbstractClient::setConnectionId");
     if (msg.type == MESSAGE_DATA && msg.value)
     {
       std::string id(*msg.value);
       if (!id.empty())
       {
+        libport::BlockLock bl(sendBufferLock);
 	connectionID_ = id;
 	return URBI_REMOVE;
       }
@@ -1051,6 +1053,8 @@ namespace urbi
   UCallbackAction
   UAbstractClient::setVersion(const UMessage& msg)
   {
+    GD_INFO_TRACE("UAbstractClient::setVersion");
+    libport::BlockLock bl(sendBufferLock);
     if (msg.type != MESSAGE_DATA)
       return URBI_CONTINUE;
     passert(msg.value->type, msg.value->type == DATA_STRING);
@@ -1100,6 +1104,7 @@ namespace urbi
   const std::string&
   UAbstractClient::connectionID() const
   {
+    libport::BlockLock bl(sendBufferLock);
     return connectionID_;
   }
 

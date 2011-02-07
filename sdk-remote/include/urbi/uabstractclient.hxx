@@ -95,6 +95,7 @@ namespace urbi
   UAbstractClient::kernelMajor() const
   {
     waitForKernelVersion();
+    libport::BlockLock bl(sendBufferLock);
     return kernelMajor_;
   }
 
@@ -103,6 +104,7 @@ namespace urbi
   UAbstractClient::kernelMinor() const
   {
     waitForKernelVersion();
+    libport::BlockLock bl(sendBufferLock);
     return kernelMinor_;
   }
 
@@ -111,6 +113,7 @@ namespace urbi
   UAbstractClient::kernelVersion() const
   {
     waitForKernelVersion();
+    libport::BlockLock bl(sendBufferLock);
     return kernelVersion_;
   }
 
