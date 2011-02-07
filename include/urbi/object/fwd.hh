@@ -98,6 +98,9 @@ namespace urbi
     extern URBI_SDK_API rObject nil_class;
     extern URBI_SDK_API rObject true_class;
     extern URBI_SDK_API rObject void_class;
+
+    template <typename T>
+    rObject to_urbi(const T&);
   } // namespace object
 }
 

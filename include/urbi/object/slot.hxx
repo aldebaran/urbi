@@ -20,16 +20,16 @@ namespace urbi
   {
     inline
     Slot::Slot()
-      : value_(object::void_class)
-      , constant_(false)
+      : constant_(false)
+      , value_(object::void_class)
       , properties_(0)
     {}
 
     inline
     Slot::Slot(const Slot& model)
       : libport::RefCounted()
-      , value_(model.value_)
       , constant_(false)
+      , value_(model.value_)
       , properties_(model.properties_
                     ? new properties_type(*model.properties_) : 0)
     {}
@@ -37,8 +37,8 @@ namespace urbi
     template <typename T>
     inline
     Slot::Slot(const T& value)
-      : value_(0)
-      , constant_(false)
+      : constant_(false)
+      , value_(0)
       , properties_(0)
     {
       set(value);

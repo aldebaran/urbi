@@ -11,13 +11,19 @@
 #ifndef OBJECT_SLOT_HH
 # define OBJECT_SLOT_HH
 
+# include <boost/preprocessor/seq/for_each.hpp>
+# include <boost/preprocessor/tuple/elem.hpp>
+
+
 # include <libport/allocator-static.hh>
+# include <libport/attributes.hh>
 # include <libport/cassert>
 # include <libport/hash.hh>
 # include <libport/intrusive-ptr.hh>
 # include <libport/ref-counted.hh>
 # include <libport/symbol.hh>
 
+# include <object/symbols.hh>
 # include <urbi/object/fwd.hh>
 
 # define URBI_OBJECT_MAX 1024 * 4
@@ -26,6 +32,9 @@ namespace urbi
 {
   namespace object
   {
+#define URBI_OBJECT_SLOT_CACHED_PROPERTIES      \
+    ((bool, constant))                          \
+
     class Slot
       : public libport::RefCounted
       , public libport::StaticallyAllocated<Slot, URBI_OBJECT_MAX>
@@ -54,8 +63,6 @@ namespace urbi
       Object* operator->();
       const Object* operator->() const;
       rObject value() const;
-      void constant_set(bool c);
-      bool constant_get() const;
 
       /*-------------.
       | Properties.  |
@@ -74,10 +81,26 @@ namespace urbi
       /// property at all.
       properties_type* properties_get();
 
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_DECLARE(R, Data, Elem)         \
+        ATTRIBUTE_Rw(BOOST_PP_TUPLE_ELEM(2, 0, Elem),                   \
+                     BOOST_PP_TUPLE_ELEM(2, 1, Elem))                   \
+        {                                                               \
+          if (BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _) != val)  \
+          {                                                             \
+            BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _) = val;     \
+            if (properties_)                                            \
+              (*properties_)[SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem))]   \
+                = to_urbi(val);                                         \
+          }                                                             \
+        }                                                               \
+
+        BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_DECLARE,
+                              _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
+#undef URBI_OBJECT_SLOT_CACHED_PROPERTY_DECLARE
+
     private:
       rObject value_;
       rObject changed_;
-      bool constant_;
       properties_type* properties_;
     };
 

@@ -29,6 +29,14 @@ namespace urbi
         }
         return changed_;
       }
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_GET(R, Data, Elem)     \
+      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem)))  \
+        return to_urbi                                          \
+          (BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _));
+
+      BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_GET,
+                            _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
+#undef URBI_OBJECT_SLOT_CACHED_PROPERTY_GET
       if (properties_)
         return libport::find0(*properties_, k);
       return 0;
@@ -38,36 +46,48 @@ namespace urbi
     bool
     Slot::property_has(libport::Symbol k) const
     {
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS(R, Data, Elem)     \
+      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem)))  \
+        return true;
+
+      BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS,
+                            _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
+#undef URBI_OBJECT_SLOT_CACHED_PROPERTY_HAS
       return properties_ && libport::mhas(*properties_, k);
     }
 
     bool
     Slot::property_set(libport::Symbol k, rObject value)
     {
-      bool res = true;
-      properties_type::iterator i;
-      if (!properties_)
-      {
-        properties_ = new properties_type;
-        i = properties_->end();
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_SET(R, Data, Elem)     \
+      if (k == SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem)))  \
+      {                                                         \
+        BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _set)     \
+          (from_urbi<BOOST_PP_TUPLE_ELEM(2, 0, Elem)>(value));  \
+        return false;                                           \
       }
-      else
-      {
-        i = properties_->find(k);
-        res = i == properties_->end();
-      }
-      if (k == SYMBOL(constant))
-        constant_ = from_urbi<bool>(value);
+
+      BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_SET,
+                            _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
+#undef URBI_OBJECT_SLOT_CACHED_PROPERTY_SET
+
+      properties_type::iterator i = properties_get()->find(k);
       if (i == properties_->end())
+      {
         (*properties_)[k] = value;
+        return true;
+      }
       else
+      {
         i->second = value;
-      return res;
+        return false;
+      }
     }
 
     void
     Slot::property_remove(libport::Symbol k)
     {
+      // FIXME: Err for cached properties?
       if (properties_)
         properties_->erase(k);
     }
@@ -76,20 +96,18 @@ namespace urbi
     Slot::properties_type*
     Slot::properties_get()
     {
+      if (!properties_)
+      {
+        properties_ = new properties_type;
+#define URBI_OBJECT_SLOT_CACHED_PROPERTY_SET(R, Data, Elem)             \
+        (*properties_)[SYMBOL_EXPAND(BOOST_PP_TUPLE_ELEM(2, 1, Elem))] = \
+          to_urbi(BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(2, 1, Elem), _));
+
+      BOOST_PP_SEQ_FOR_EACH(URBI_OBJECT_SLOT_CACHED_PROPERTY_SET,
+                            _, URBI_OBJECT_SLOT_CACHED_PROPERTIES);
+#undef URBI_OBJECT_SLOT_CACHED_PROPERTY_SET
+      }
       return properties_;
-    }
-
-    void
-    Slot::constant_set(bool c)
-    {
-      constant_ = c;
-      property_set(SYMBOL(constant), c ? true_class : false_class);
-    }
-
-    bool
-    Slot::constant_get() const
-    {
-      return constant_;
     }
 
     const size_t Slot::allocator_static_max_size = sizeof(Slot);
