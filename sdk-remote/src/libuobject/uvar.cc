@@ -139,7 +139,17 @@ namespace urbi
     return res;
   }
 
-  std::string
+  static std::string makeLinkName(const std::string& key)
+  {
+    // We cannot have '.' in here, but we want to be able to regenerate the
+    // original key unambiguously, so use something unlikely (as in reserved
+    // idealy)
+    std::string res =  rtp_id() + "___" + key;
+    res[res.find_first_of(".")] = '_';
+    return res;
+  }
+
+  void
   RemoteUContextImpl::makeRTPLink(const std::string& key)
   {
     /* Setup RTP mode
@@ -150,11 +160,10 @@ namespace urbi
     std::string localRTP = rtp_id();
     RemoteUContextImpl::objects_type::iterator oi = objects.find(localRTP);
     if (oi == objects.end())
-      return "";
+      return;
     baseURBIStarter* bsa = oi->second->cloner;
-    std::string linkName = localRTP + "_" + key;
+    std::string linkName = makeLinkName(key);
     GD_SINFO_TRACE("Instanciating local RTP " << linkName);
-    linkName[linkName.find_first_of(".")] = '_';
     bsa->instanciate(this, linkName);
     // Call init
     localCall(linkName, "init");
@@ -171,32 +180,54 @@ namespace urbi
       << "  try { " << rLinkName << ".destroy} catch {}|\n"
       << "  t.stop\n"
       << "}})|;" << std::endl;
+    // Now asynchronously ask the remote object to listen and to report
+    // the port number.
     GD_SINFO_TRACE("fetching engine listen port...");
-    UMessage* mport =
-      syncGet(rLinkName +".listen(\"0.0.0.0\", \"0\");");
-    if (!mport
-        || mport->type != MESSAGE_DATA
-        || mport->value->type != DATA_DOUBLE)
+    backend_->setCallback(
+      callback(*this, &RemoteUContextImpl::onRTPListenMessage),
+      (URBI_REMOTE_RTP_INIT_CHANNEL + key).c_str());
+    *outputStream
+      << "Channel.new(\"" URBI_REMOTE_RTP_INIT_CHANNEL + key + "\") <<"
+        + rLinkName + ".listen(\"0.0.0.0\", \"0\")," << std::endl;
+    rtpLinks[key]  = 0; // Not ready yet.
+  }
+
+  UCallbackAction RemoteUContextImpl::onRTPListenMessage(const UMessage& mport)
+  { // Second stage of RTP initialization: the remote is listening.
+    if (mport.type != MESSAGE_DATA
+        || mport.value->type != DATA_DOUBLE)
     {
       GD_SWARN("Failed to get remote RTP port, disabling RTP");
       enableRTP = false;
-      return "";
+      return URBI_REMOVE;
     }
-    int port = int(mport->value->val);
-    delete mport;
-    GD_SINFO_TRACE("...ok: " << port);
+    // Extract key from channel.
+    std::string key = mport.tag.substr(strlen(URBI_REMOTE_RTP_INIT_CHANNEL),
+                                         mport.tag.npos);
+    // Regenerate link name
+    std::string linkName = makeLinkName(key);
+    std::string rLinkName = linkName + "_l";
+    // And uvar name
+    std::string varname = key;
+    size_t p = varname.find("___");
+    if (p != varname.npos)
+      varname = varname.substr(0, p) + varname.substr(p+3, varname.npos);
+    int port = int(mport.value->val);
+    GD_FINFO_TRACE("Finishing RTP init, link %s port %s variable %s",
+                   linkName, port, varname);
     // Invoke the connect method on our RTP instance. Having a reference
     // to URTP symbols would be painful, so pass through our
     // UGenericCallback mechanism.
     localCall(linkName, "connect", backend_->getRemoteHost(), port);
     UObject* ob = getUObject(linkName);
-    rtpLinks[key]  = ob;
     // Monitor this RTP link.
     *outputStream
       << "detach('external'.monitorRTP(" << linkName << ","
       << rLinkName << ", closure() {'external'.failRTP}))|"
-      << std::endl;
-    return linkName;
+      << rLinkName << ".receiveVar(\"" << varname
+      << "\")," << std::endl;
+    rtpLinks[key]  = ob;
+    return URBI_REMOVE;
   }
 
   void
@@ -250,15 +281,15 @@ namespace urbi
           = ctx->rtpLinks.find(owner_->get_name());
         if (i == ctx->rtpLinks.end())
         {
-          std::string linkName = ctx->makeRTPLink(owner_->get_name());
-          if (linkName.empty())
-            goto rtpfail;
-
-          std::string rLinkName = linkName + "_l";
-          (*ctx->outputStream)
-           << rLinkName << ".receiveVar(\"" << owner_->get_name()
-           <<"\")|";
-          i = ctx->rtpLinks.find(owner_->get_name());
+          // Initiate rtp link asynchronously
+          GD_INFO_TRACE("Asynchronous RTP link initialization.");
+          ctx->makeRTPLink(owner_->get_name());
+          goto rtpfail;
+        }
+        else if (i->second == 0)
+        {
+          GD_INFO_TRACE("RTP link not ready yet, fallback");
+          goto rtpfail; // init started, link not ready yet
         }
         ctx->localCall(i->second->__name, "send", v);
         rtp = true;
@@ -293,10 +324,14 @@ namespace urbi
           = ctx->rtpLinks.find("_shared_");
         if (i == ctx->rtpLinks.end())
         {
-          std::string linkName = ctx->makeRTPLink("_shared_");
-          if (linkName.empty())
-            goto rtpfail2;
-          i = ctx->rtpLinks.find("_shared_");
+          GD_INFO_DUMP("Async init of RTP shared link");
+          ctx->makeRTPLink("_shared_");
+          goto rtpfail2;
+        }
+        else if (!i->second)
+        {
+          GD_INFO_DUMP("RTP shared link not yet ready");
+          goto rtpfail2;
         }
         GD_INFO_DUMP("localCalling sendGrouped");
         ctx->localCall(i->second->__name, "sendGrouped",

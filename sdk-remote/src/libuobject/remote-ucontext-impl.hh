@@ -81,7 +81,7 @@ namespace urbi
       /** Make a new RTP link with the engine, using hash key \b key.
        * @return the local UObject name
        */
-      std::string makeRTPLink(const std::string& key);
+      void makeRTPLink(const std::string& key);
 
       /// Handle an assignment request.
       void assignMessage(const std::string& name, const UValue& v, time_t ts);
@@ -139,6 +139,7 @@ namespace urbi
                 UAutoValue v8 = UAutoValue());
       UTable& tableByName(const std::string& n);
       UCallbackAction clientError(const UMessage&);
+      UCallbackAction onRTPListenMessage(const UMessage&);
       // Create it on demand.
       UObject* getDummyUObject();
       void onTimer(UTimerCallback* cb);
@@ -161,6 +162,7 @@ namespace urbi
       bool serializationMode;
       libport::serialize::BinaryOSerializer* oarchive;
       libport::PackageInfo::Version version;
+      #define URBI_REMOTE_RTP_INIT_CHANNEL "__remote_rtp_init"
     };
 
     class URBI_SDK_API RemoteUObjectImpl: public UObjectImpl
