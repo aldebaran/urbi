@@ -33,31 +33,70 @@ class Global.Profile
   function asString()
   {
     var str = "Profile(\n"
-              "  Yields: %s\n"
-              "  Total time: %.6fs\n"
-              "  Wall clock time: %.6fs\n"
-              "  Function calls: %s\n"
-              "  Max function call depth: %s\n\n"
-              % [yields, totalTime, wallClockTime,
-                 totalCalls, maxFunctionCallDepth] |
+              "  %-25s: %s\n"
+              "  %-25s: %.6f\n"
+              "  %-25s: %.6f\n"
+              "  %-25s: %s\n"
+              "  %-25s: %s\n\n"
+              % ["Yields",                  yields,
+                 "Total time (s)",          totalTime,
+                 "Wall-clock time (s)",     wallClockTime,
+                 "Function calls",          totalCalls,
+                 "Max function call depth", maxFunctionCallDepth] |
 
-    str += "  .--------------------------------------------------------.\n"
-           "  |   Function   |  Calls  |   Self time   | Self time per |\n"
-           "  |--------------+---------+---------------+---------------|\n" |
+    calls.each(function (var c) { c.selfTime *= 1000000 }) |
+    var selfTimes = calls.map(function (var c) { c.selfTime }) |
+    var selfTimePers = calls.map(function (var c) { c.selfTimePer }) |
+    function computeUnit(values)
+    {
+      // Values are expected to be in 'us'.
+      var min = values.filter(function (var v){ v != 0 }).min |
+      var factor |
+      var unit |
+      for (var i : [6, 3, 0])
+      {
+        factor = 10 ** i |
+        if (i != 0 && min / factor < 1)
+          continue |
+
+        switch (i)
+        {
+          case 6:
+            unit = " (s)" |
+          case 3:
+            unit = "(ms)" |
+          case 0:
+            unit = "(us)" |
+        } |
+
+        break
+      } |
+      (factor, unit)
+    } |
+    var selfTimeUnit = computeUnit(selfTimes) |
+    var selfTimePerUnit = computeUnit(selfTimePers) |
+
+    str += "  .---------------------------------------------------------------.\n"
+           "  |   Function   |  Calls  |    Self time    |  Self time / call  |\n"
+           "  |              |         |       %s      |        %s        |\n"
+           "  |--------------+---------+-----------------+--------------------|\n"
+           % [selfTimeUnit[1], selfTimePerUnit[1]] |
 
     var totalSelfTimes = 0 |
     var totalSelfTimePers = 0 |
     for (var c: calls)
     {
-      str += "  | %12s | %7s | %13.6f | %13.6f |\n"
-               % [c.name, c.calls, c.selfTime, c.selfTimePer] |
+      str += "  | %12s | %7s | %15.6f | %18.6f |\n"
+             % [c.name, c.calls, c.selfTime / selfTimeUnit[0],
+                c.selfTimePer / selfTimePerUnit[0]] |
       totalSelfTimes    += c.selfTime |
       totalSelfTimePers += c.selfTimePer |
     } |
 
-    str += "  |--------------+---------+---------------+---------------|\n"
-           "  | %12s | %7s | %13.6f | %13.6f |\n"
-           "  '--------------'---------'---------------'---------------'\n)"
-           % ["Totals", totalCalls, totalSelfTimes, totalSelfTimePers]
+    str += "  |--------------+---------+----------------+--------------------|\n"
+           "  | %12s | %7s | %15.6f | %18.6f |\n"
+           "  '--------------'---------'----------------'--------------------'\n)"
+           % ["Total", totalCalls, totalSelfTimes / selfTimeUnit[0],
+              totalSelfTimePers / selfTimePerUnit[0]]
   };
 };
