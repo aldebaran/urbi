@@ -57,7 +57,7 @@ EXTRA_DIST +=					\
 # Generating the test files.
 # We specify that it applies to $(test_mks) to take precedence over
 # the default rule for %.mk in make/init.mk
-$(test_mks): $(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
+$(srcdir)/tests/%-test.mk: %.tex $(srcdir)/bin/tex2chk
 	$(AM_V_GEN)							\
 	  srcdir=$(srcdir)						\
 	  move_if_change="$(move_if_change) $(if $(V:0=),-v,-s)"	\
