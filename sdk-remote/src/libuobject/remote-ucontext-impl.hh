@@ -79,7 +79,10 @@ namespace urbi
       UCallbackAction dispatcher(const UMessage& msg);
       USyncClient* getClient();
       /** Make a new RTP link with the engine, using hash key \b key.
-       * @return the local UObject name
+       * The link is established asynchronously and is ready when
+       * RTPLinks[key] != 0.
+       * Check if initialization is not already in progress by calling
+       * RTPLinks.has(key) first.
        */
       void makeRTPLink(const std::string& key);
 
