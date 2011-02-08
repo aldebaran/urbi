@@ -31,7 +31,7 @@ namespace urbi
   namespace object
   {
     Tag::Tag()
-      : value_(new sched::Tag(libport::Symbol::make_empty()))
+      : value_(new sched::Tag(""))
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
@@ -51,13 +51,13 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_INIT(Tag)
-      : value_(new sched::Tag(libport::Symbol::make_empty()))
+      : value_(new sched::Tag(""))
     {
 #define DECLARE(Name, Cast)                                             \
       bind(SYMBOL_(Name), static_cast<void (Tag::*)(Cast)>(&Tag::Name))
 
       DECLARE(init,                 );
-      DECLARE(init,  libport::Symbol);
+      DECLARE(init,  const std::string&);
       DECLARE(stop,                 );
       DECLARE(stop,  rObject        );
       DECLARE(block,                );
@@ -125,11 +125,11 @@ namespace urbi
     void
     Tag::init()
     {
-      init(libport::Symbol::fresh("tag"));
+      init(libport::Symbol::fresh_string("tag"));
     }
 
     void
-    Tag::init(libport::Symbol name)
+    Tag::init(const std::string& name)
     {
       name_set(name);
     }

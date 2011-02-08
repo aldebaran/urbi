@@ -35,7 +35,7 @@ namespace urbi
       const value_type& value_get() const;
 
       rList backtrace();
-      libport::Symbol name();
+      const std::string& name();
       void setSideEffectFree(rObject);
       std::string status();
       const runner::tag_stack_type tags();

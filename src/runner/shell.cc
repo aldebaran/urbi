@@ -43,7 +43,7 @@ namespace runner
 
   Shell::Shell(const rLobby& lobby,
 	       sched::Scheduler& scheduler,
-	       libport::Symbol name,
+	       const std::string& name,
                std::istream& input)
     : Interpreter(lobby, scheduler, ast::rConstAst(), name)
     , executing_(false)
@@ -154,7 +154,7 @@ namespace runner
       GD_FINFO_DUMP("%s: command: %s", name_get(), *exp);
       sched::rJob subrunner =
         new Interpreter(*this, stmt->expression_get().get(),
-                        libport::Symbol::fresh(name_get()));
+                        libport::Symbol::fresh_string(name_get()));
       jobs_ <<  subrunner;
       subrunner->start_job();
       if (canYield && !input_.eof())

@@ -86,7 +86,7 @@ namespace runner
   Interpreter::Interpreter(rLobby lobby,
                            sched::Scheduler& sched,
                            ast::rConstAst ast,
-                           libport::Symbol name)
+                           const std::string& name)
     : Runner(lobby, sched, name)
     , profile_(0)
     , ast_(ast)
@@ -101,7 +101,7 @@ namespace runner
   Interpreter::Interpreter(rLobby lobby,
                            sched::Scheduler& sched,
                            rObject code,
-                           libport::Symbol name,
+                           const std::string& name,
                            rObject self,
                            const objects_type& args)
     : Runner(lobby, sched, name)
@@ -118,7 +118,7 @@ namespace runner
   }
 
   Interpreter::Interpreter(const Interpreter& model, rObject code,
-			   libport::Symbol name,
+			   const std::string& name,
                            const objects_type& args)
     : Runner(model, name)
     , profile_(0)
@@ -135,7 +135,7 @@ namespace runner
 
   Interpreter::Interpreter(const Interpreter& model,
 			   ast::rConstAst ast,
-			   libport::Symbol name)
+			   const std::string& name)
     : Runner(model, name)
     , profile_(0)
     , ast_(ast)
@@ -153,7 +153,7 @@ namespace runner
                            sched::Scheduler& sched,
                            boost::function0<void> job,
                            rObject self,
-                           libport::Symbol name)
+                           const std::string& name)
     : Runner(lobby, sched, name)
     , profile_(0)
     , ast_(0)

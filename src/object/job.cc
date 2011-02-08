@@ -72,10 +72,11 @@ namespace urbi
       return value_;
     }
 
-    libport::Symbol
+    const std::string&
     Job::name()
     {
-      return value_ ? value_->name_get() : SYMBOL(Job);
+      static std::string otherwise("Job");
+      return value_ ? value_->name_get() : otherwise;
     }
 
     const runner::tag_stack_type

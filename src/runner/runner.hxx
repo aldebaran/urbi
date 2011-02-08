@@ -28,7 +28,7 @@ namespace runner
 
   LIBPORT_SPEED_INLINE
   Runner::Runner(rLobby lobby, sched::Scheduler& sched,
-		 libport::Symbol name)
+		 const std::string& name)
     : sched::Job(sched, name)
     , redefinition_mode_(false)
     , void_error_(true)
@@ -41,7 +41,7 @@ namespace runner
   }
 
   LIBPORT_SPEED_INLINE
-  Runner::Runner(const Runner& model, libport::Symbol name)
+  Runner::Runner(const Runner& model, const std::string& name)
     : sched::Job(model, name)
     , redefinition_mode_(model.redefinition_mode_)
     , void_error_(true)

@@ -244,7 +244,7 @@ namespace urbi
       runner::Interpreter* new_runner =
         new runner::Interpreter(interpreter(),
                                 rObject(code),
-                                libport::Symbol::fresh(r.name_get()));
+                                libport::Symbol::fresh_string(r.name_get()));
 
       if (clear_tags->as_bool())
         new_runner->tag_stack_clear();

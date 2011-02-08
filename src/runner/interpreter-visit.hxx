@@ -85,7 +85,7 @@ namespace runner
     {
       Interpreter* job =
         new Interpreter(*this, operator()(child.get()),
-                        libport::Symbol::fresh(name_get()));
+                        libport::Symbol::fresh_string(name_get()));
       if (profile_)
       {
         p = new Profile;
@@ -482,7 +482,7 @@ namespace runner
           // The new runners are attached to the same tags as we are.
           sched::rJob subrunner =
             new Interpreter(*this, operator()(exp),
-                            libport::Symbol::fresh(name_get()));
+                            libport::Symbol::fresh_string(name_get()));
           register_child(subrunner, collector);
           subrunner->start_job();
         }
@@ -811,7 +811,7 @@ namespace runner
           sched::rJob subrunner =
             new Interpreter(*this,
                             operator()(e->body_get().get()),
-                            libport::Symbol::fresh(name_get()));
+                            libport::Symbol::fresh_string(name_get()));
           register_child(subrunner, collector);
           subrunner->start_job();
         }

@@ -38,10 +38,10 @@ namespace urbi
       void block();
       void block(rObject payload);
       void init();
-      void init(libport::Symbol name);
+      void init(const std::string& name);
       void freeze();
-      libport::Symbol name() const;
-      void name_set(libport::Symbol s);
+      const std::string& name() const;
+      void name_set(const std::string& s);
       static rTag new_flow_control(const objects_type&);
 
       /// Return a tag for the current urbiscript scope.

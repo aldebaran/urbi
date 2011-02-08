@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -17,7 +17,7 @@ namespace urbi
   {
 
     inline
-    libport::Symbol
+    const std::string&
     Tag::name() const
     {
       return value_->name_get();
@@ -25,7 +25,7 @@ namespace urbi
 
     inline
     void
-    Tag::name_set(libport::Symbol s)
+    Tag::name_set(const std::string& s)
     {
       value_->name_set(s);
     }

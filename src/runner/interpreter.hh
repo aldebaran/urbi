@@ -60,17 +60,17 @@ namespace runner
     Interpreter(rLobby lobby,
                 sched::Scheduler& scheduler,
                 ast::rConstAst ast,
-                libport::Symbol name);
+                const std::string& name);
 
     Interpreter(const Interpreter&,
                 rObject code,
-                libport::Symbol name,
+                const std::string& name,
                 const objects_type& args = objects_type());
 
     Interpreter(rLobby lobby,
                 sched::Scheduler& sched,
                 rObject code,
-                libport::Symbol name,
+                const std::string& name,
                 rObject self,
                 const objects_type& args);
 
@@ -78,12 +78,12 @@ namespace runner
                 sched::Scheduler& scheduler,
                 boost::function0<void> job,
                 rObject self,
-                libport::Symbol name);
+                const std::string& name);
 
     /// Create a copy of a runner starting with another ast.
     Interpreter(const Interpreter&,
                 ast::rConstAst ast,
-                libport::Symbol name);
+                const std::string& name);
 
     /// Destroy a Interpreter.
     virtual ~Interpreter();

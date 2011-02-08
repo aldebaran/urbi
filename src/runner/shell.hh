@@ -32,7 +32,7 @@ namespace runner
   public:
     Shell(const rLobby& lobby,
 	  sched::Scheduler& scheduler,
-	  libport::Symbol name,
+	  const std::string& name,
           std::istream& input);
     ~Shell();
     virtual void work();

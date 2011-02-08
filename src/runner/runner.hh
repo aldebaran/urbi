@@ -59,9 +59,9 @@ namespace runner
     /// know its \a scheduler.  The new runner has no parent.
     Runner(rLobby lobby,
 	   sched::Scheduler& scheduler,
-	   libport::Symbol name);
+	   const std::string& name);
 
-    explicit Runner(const Runner&, libport::Symbol name);
+    explicit Runner(const Runner&, const std::string& name);
 
     /// Destroy a Runner.
     virtual ~Runner();
