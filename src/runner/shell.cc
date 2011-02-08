@@ -366,6 +366,8 @@ namespace runner
   void
   Shell::stop()
   {
+    if (stop_)
+      return;
     GD_FPUSH_TRACE("%s: end reached.", name_get());
     if (&kernel::urbiserver->ghost_connection_get() !=
         &lobby_get()->connection_get())

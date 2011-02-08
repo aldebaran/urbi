@@ -76,7 +76,7 @@ namespace kernel
 
   UConnection::~UConnection()
   {
-    lobby_->tag_get()->stop();
+    close(); // Just in case we reached here without closing.
     shell_->terminate_now();
   }
 
