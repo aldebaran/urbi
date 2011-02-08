@@ -195,6 +195,11 @@ namespace kernel
     interactive_p_ = b;
   }
 
+  static void shell_stop(runner::rShell s)
+  {
+    s->stop();
+  }
+
   void UConnection::close()
   {
     if (closing_)
@@ -202,5 +207,7 @@ namespace kernel
     closing_ = true;
     close_();
     stream_buffer_.close();
+    kernel::server().schedule_fast(boost::bind(&shell_stop,
+                                               shell_get()));
   }
 }

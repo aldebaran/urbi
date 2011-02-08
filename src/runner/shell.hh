@@ -47,6 +47,8 @@ namespace runner
      * (i.e. the remote must call setSerializationMode() at toplevel.
      */
     void setSerializationMode(bool, const std::string& tagReply);
+    /// Notify the shell that it must stop.
+    void stop();
   private:
 
     /// Evaluate \a exp and print its value.

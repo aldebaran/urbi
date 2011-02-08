@@ -189,28 +189,7 @@ namespace runner
   {
     if (input_.eof())
     {
-      GD_FPUSH_TRACE("%s: end reached.", name_get());
-      if (&kernel::urbiserver->ghost_connection_get() !=
-          &lobby_get()->connection_get())
-      {
-        // Asynchronous destruction of the connection is necessary
-        // otherwise the connection destructor (which is stopping the
-        // connection tag) will raise a Stop exception.  In addition, the
-        // UConnection is supposed to hold the last reference on this
-        // Shell once the work function has ended, thus scheduling the
-        // ansynchronous destruction will destroy the lobby and the shell.
-        // The UConnection should be fetch before disconnecting the lobby,
-        // because the lobby will lose it's reference on the connection.
-        GD_FPUSH_DUMP("%s: schedule connection destruction.", name_get());
-        aver(&lobby_get()->connection_get());
-        kernel::server().schedule(
-          SYMBOL(collect_connection),
-          boost::bind(collect_connection, &lobby_get()->connection_get())
-        );
-        GD_FPUSH_DUMP("%s: disconnecting.", name_get());
-        lobby_get()->disconnect();
-        stop_ = true;
-      }
+      stop();
     }
   }
 
@@ -382,5 +361,34 @@ namespace runner
   Shell::pending_commands_clear()
   {
     commands_.clear();
+  }
+
+  void
+  Shell::stop()
+  {
+    GD_FPUSH_TRACE("%s: end reached.", name_get());
+    if (&kernel::urbiserver->ghost_connection_get() !=
+        &lobby_get()->connection_get())
+    {
+      // Asynchronous destruction of the connection is necessary
+      // otherwise the connection destructor (which is stopping the
+      // connection tag) will raise a Stop exception.  In addition, the
+      // UConnection is supposed to hold the last reference on this
+      // Shell once the work function has ended, thus scheduling the
+      // ansynchronous destruction will destroy the lobby and the shell.
+      // The UConnection should be fetch before disconnecting the lobby,
+      // because the lobby will lose it's reference on the connection.
+      GD_FPUSH_DUMP("%s: schedule connection destruction.", name_get());
+      aver(&lobby_get()->connection_get());
+      kernel::server().schedule(
+                                SYMBOL(collect_connection),
+                                boost::bind(collect_connection, &lobby_get()->connection_get())
+                                );
+      GD_FPUSH_DUMP("%s: disconnecting.", name_get());
+      lobby_get()->disconnect();
+      stop_ = true;
+    }
+    // Force interruption of work_
+    lobby_get()->tag_get()->stop();
   }
 } // namespace runner
