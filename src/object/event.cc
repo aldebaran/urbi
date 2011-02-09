@@ -229,8 +229,14 @@ namespace urbi
       rList payload = new List(pl);
       slot_update(SYMBOL(active), to_urbi(false));
       waituntil_release(payload);
-      foreach (callback_type* cb, callbacks_type(callbacks_))
-        (*cb)(pl);
+      // Copy the callback list in case it's modified.
+      std::vector<callback_type> callbacks;
+      callbacks.reserve(callbacks_.size());
+      foreach (callback_type* cb, callbacks_)
+        callbacks << *cb;
+      // Trigger all callbacks.
+      foreach (const callback_type& cb, callbacks)
+        cb(pl);
       // Copy container to avoid in-place modification problems.
       foreach (const Event::rActions& actions, listeners_type(listeners_))
       {
