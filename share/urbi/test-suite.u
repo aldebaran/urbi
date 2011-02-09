@@ -18,7 +18,9 @@ System.assertVerbose = true|;
 // Too many unpredictable changes in the error messages.
 Exception.Lookup.fixSpelling = false|;
 
-// A fake camera.
+/*---------.
+| camera.  |
+`---------*/
 class Global.camera: Loadable
 {
   var count = 0;
@@ -161,6 +163,33 @@ do (Float)
 }|
 
 
+/*--------.
+| Range.  |
+`--------*/
+
+class Range : Global.Container
+{
+  var first;
+  var last;
+
+  function init(var f, var l)
+  {
+    first = f|
+    last = l;
+  };
+
+  function asString()
+  {
+    "[%s .. %s]" % [first, last]
+  };
+
+  function has(var e)
+  {
+    first <= e && e <= last
+  };
+}|;
+
+
 /*---------.
 | String.  |
 `---------*/
@@ -246,6 +275,11 @@ if (System.Platform.isWindows)
     });
   }
 }|;
+
+
+/*---------.
+| skipIf.  |
+`---------*/
 
 // Skip tests that cannot run in some configuations.
 function skipIfDebug ()
