@@ -266,7 +266,7 @@ namespace runner
     // The called function.
     const object::Code::ast_type& ast = function->ast_get();
 
-    // If the function is lazy and there's no call message, forge
+    // If the function uses call and there's no call message, forge
     // one. This happen when a lazy function is invoked with eval, for
     // instance.
     if (ast->uses_call_get() && !call_message)
