@@ -22,7 +22,7 @@
 #include <urbi/umessage.hh>
 #include <urbi/usyncclient.hh>
 
-GD_CATEGORY(USyncClient);
+GD_CATEGORY(Urbi.USyncClient);
 
 namespace urbi
 {

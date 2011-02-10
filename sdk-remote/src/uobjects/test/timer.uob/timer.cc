@@ -12,7 +12,7 @@
 #include <iostream>
 #include <urbi/uobject.hh>
 
-GD_CATEGORY(Timer);
+GD_CATEGORY(Test.Timer);
 
 urbi::UObjectHub* thub;
 class timer: public urbi::UObject

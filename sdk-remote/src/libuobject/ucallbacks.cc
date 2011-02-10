@@ -25,7 +25,7 @@
 
 #include <libuobject/remote-ucontext-impl.hh>
 
-GD_CATEGORY(LibUObject);
+GD_CATEGORY(Urbi.LibUObject);
 
 namespace urbi
 {

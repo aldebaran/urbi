@@ -30,7 +30,7 @@
 #include <urbi/ubinary.hh>
 #include <urbi/uvalue.hh>
 
-GD_CATEGORY(UValue);
+GD_CATEGORY(Urbi.UValue);
 
 namespace urbi
 {

@@ -12,7 +12,7 @@
 #include <libport/debug.hh>
 #include "uchange.hh"
 
-GD_CATEGORY(UChange);
+GD_CATEGORY(Test.UChange);
 
 using namespace urbi;
 

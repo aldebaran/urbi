@@ -20,7 +20,7 @@
 #include <urbi/umessage.hh>
 #include <urbi/uvalue.hh>
 
-GD_CATEGORY(UMessage);
+GD_CATEGORY(Urbi.UMessage);
 
 namespace urbi
 {

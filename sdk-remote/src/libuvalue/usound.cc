@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -20,7 +20,7 @@
 
 #define cardinality_of(Array) (sizeof (Array) / sizeof (*(Array)))
 
-GD_CATEGORY(UValue);
+GD_CATEGORY(Urbi.UValue);
 
 namespace urbi
 {

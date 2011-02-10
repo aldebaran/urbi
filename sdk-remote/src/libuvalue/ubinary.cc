@@ -20,7 +20,7 @@
 #include <urbi/ubinary.hh>
 #include <urbi/uvalue.hh> // kernelMajor.
 
-GD_CATEGORY(UValue);
+GD_CATEGORY(Urbi.UValue);
 
 namespace urbi
 {

@@ -14,7 +14,7 @@
 using namespace urbi;
 
 UStart (uaccess);
-GD_CATEGORY(UAccess);
+GD_CATEGORY(Test.UAccess);
 
 uaccess::uaccess (const std::string& s)
   : UObject (s)

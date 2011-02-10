@@ -12,7 +12,7 @@
 #include <iostream>
 #include "generic.hh"
 
-GD_CATEGORY(Generic);
+GD_CATEGORY(Test.Generic);
 UStart (generic);
 
 generic::generic(const std::string& s)

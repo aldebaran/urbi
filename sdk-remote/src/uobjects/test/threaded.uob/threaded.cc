@@ -16,7 +16,7 @@ using namespace urbi;
 
 
 
-GD_CATEGORY(Threaded);
+GD_CATEGORY(Test.Threaded);
 
 /** Threaded UObject.
  *

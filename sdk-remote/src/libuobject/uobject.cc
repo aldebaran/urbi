@@ -40,7 +40,7 @@
 #include <urbi/ucontext-factory.hh>
 #include <libuobject/remote-ucontext-impl.hh>
 
-GD_CATEGORY(LibUObject);
+GD_CATEGORY(Urbi.LibUObject);
 
 #define REQUIRE(Cond, ...)                      \
   do {                                          \

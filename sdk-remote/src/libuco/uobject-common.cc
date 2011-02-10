@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -24,7 +24,7 @@
 #include <urbi/ustarter.hh>
 #include <urbi/ucontext-factory.hh>
 
-GD_CATEGORY(UObject);
+GD_CATEGORY(Urbi.UObject);
 
 namespace urbi
 {

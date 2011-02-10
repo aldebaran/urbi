@@ -40,7 +40,7 @@
 
 #include <liburbi/compatibility.hh>
 
-GD_CATEGORY(UAbstractClient);
+GD_CATEGORY(Urbi.UAbstractClient);
 
 namespace urbi
 {

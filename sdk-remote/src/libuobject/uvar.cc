@@ -34,7 +34,7 @@ namespace urbi
   namespace impl
   {
 
-  GD_CATEGORY(LibUObject);
+  GD_CATEGORY(Urbi.LibUObject);
 
   //! UVar initialization
   void
