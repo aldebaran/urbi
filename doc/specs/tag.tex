@@ -242,6 +242,16 @@ statements like \lstinline|return| or \lstinline|break|, \ldots
 For instance, suppose we want to make sure we turn the gas off when
 we're done cooking. Here is the \emph{bad} way to do it:
 
+\begin{urbicomment}
+function enterTheKitchen() {}|
+function leaveTheKitchen() {}|
+function turnGasOn() {}|
+function turnGasOff() {}|
+
+var mealReady = false|
+var recipe = []|
+var ingredient = 0|;
+\end{urbicomment}
 \begin{urbiscript}
 {
   function cook()
