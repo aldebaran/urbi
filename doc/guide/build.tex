@@ -202,6 +202,14 @@ deb: imagemagick
 deb: sun-java6-jdk
 \end{package}
 
+\item[GNU Make] Although we use Automake that does provide portability
+  accross flavors of Make, we do use GNU Make extensions.  Actually, the
+  most common version, 3.81, behaves improperly on our Makefiles, so be sure
+  to use GNU Make 3.82.
+\begin{package}
+package: make
+\end{package}
+
 \item[oRTP] The UObject middleware can use the RTP protocol to provide
   better throughput for streams.  The implementation relies on the oRTP
   library which is now part of the linphone package.  oRTP is not needed,
