@@ -179,9 +179,7 @@ namespace urbi
     Lobby::binaryMode(bool m, const std::string& tag)
     {
       runner::Shell& s = dynamic_cast<runner::Shell&>(::kernel::runner());
-      if (!&s)
-        throw std::runtime_error("Current runner is not the shell");
       s.setSerializationMode(m, tag);
     }
-  }; // namespace object
+  } // namespace object
 }
