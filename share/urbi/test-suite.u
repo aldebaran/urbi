@@ -64,7 +64,7 @@ class Global.camera: Loadable
       count = (count + 1) % images.size;
     }
   };
-};
+}|;
 
 // A channel for synclines.
 var Global.syncline = Channel.new("syncline")|;
@@ -160,7 +160,7 @@ do (Float)
     // We don't want COW here.
     randomValue[(Float.randomCounter++) % randomValue.size] % this;
   });
-}|
+}|;
 
 
 /*--------.
@@ -203,7 +203,7 @@ do (String)
   {
     this + "_" + String.counter_++;
   }
-}|
+}|;
 
 
 /*----------.
@@ -286,13 +286,13 @@ function skipIfDebug ()
 {
   if (System.Platform.compilationModeDebug)
     testSkip("cannot run in debug compilation-mode");
-}|
+}|;
 
 function skipIfSpace ()
 {
   if (System.Platform.compilationModeSpace)
     testSkip("cannot run in space compilation-mode");
-}|
+}|;
 
 function skipIfWindows ()
 {
