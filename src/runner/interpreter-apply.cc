@@ -187,7 +187,7 @@ namespace runner
 	raise_unexpected_void_error();
 
     object::rObject res;
-    if (Code* code = function->as<object::Code>())
+    if (rCode code = function->as<object::Code>())
       res = apply_urbi(code, msg, args, call_message);
     else if (const object::rPrimitive& p = function->as<object::Primitive>())
       res = (*p)(args);
