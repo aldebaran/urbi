@@ -561,7 +561,6 @@ namespace urbi
       }
       if (!libport::has(*protos_, p))
         protos_->push_front(p);
-      protos_->push_front(p);
       return *this;
     }
 
