@@ -25,6 +25,9 @@ class Global.camera: Loadable
 {
   var count = 0;
   UVar.new(this, "val");
+  // In order to avoid the "unexpected void" messages if we forget to
+  // start the camera.
+  val = "!!! the camera is not load'ed";
 
   var sharedir =
     {
@@ -53,6 +56,11 @@ class Global.camera: Loadable
     }
   };
 
+  // Used by urbi-image for instance.
+  var resolution = 0;
+  var jpegfactor = 70;
+  var reconstruct = 0;
+
   // When the camera is active, loop on the images.
   var load = false;
   at (load)
@@ -74,14 +82,14 @@ function Global.testFail (var why)
 {
   echo("Aborting this test: " + why);
   System._exit(1)
-};
+}|;
 
 // Skip this test.
 function Global.testSkip (var why)
 {
   cerr << "Skipping this test: " + why;
   System._exit(176)
-};
+}|;
 
 // Too verbose when we launch another urbi from urbi.
 System.unsetenv("GD_LEVEL")|;
