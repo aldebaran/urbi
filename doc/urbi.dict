@@ -593,6 +593,7 @@ localSlotNames
 locateSlot
 locFailureEvent
 lockMode
+LockSpec
 login
 logService
 logTopic
@@ -681,6 +682,7 @@ myOtherList
 myOtherLocalVariable
 MyPair
 myPi
+myQueueSize
 MyRemote
 myRoutine
 myservice
