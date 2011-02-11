@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -90,6 +90,13 @@ namespace urbi
 
     rObject Primitive::operator() (object::objects_type args)
     {
+      return call_raw(args);
+    }
+
+
+
+    rObject Primitive::call_raw(const object::objects_type& args)
+    {
       size_t arity = args.size();
       if (!libport::mhas(content_, arity))
       {
@@ -124,6 +131,5 @@ namespace urbi
       }
       return content_[arity](args);
     }
-
   }; // namespace object
 }

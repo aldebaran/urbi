@@ -40,6 +40,7 @@ namespace urbi
       values_type& value_get();
       const values_type& value_get() const;
       virtual rObject operator() (object::objects_type args);
+      virtual rObject call_raw(const object::objects_type& args);
 
       // Urbi methods
       rObject apply(rList args);
