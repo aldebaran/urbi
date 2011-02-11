@@ -41,6 +41,10 @@ public:
     UBindThreadedFunction(Threaded, lockClassDelayOp, LOCK_CLASS);
     UBindThreadedFunction(Threaded, lockModuleDelayOp, LOCK_MODULE);
     UBindThreadedFunction(Threaded, lockFunctionDelayOp, LOCK_FUNCTION);
+    UBindThreadedFunction(Threaded, lockFunctionDropDelayOp,
+                          LOCK_FUNCTION_DROP);
+    UBindThreadedFunction(Threaded, lockFunctionKeepOneDelayOp,
+                          LOCK_FUNCTION_KEEP_ONE);
     UBindVar(Threaded, updated);
     updated = 0;
     UBindVar(Threaded, timerUpdated);
@@ -56,6 +60,8 @@ public:
   void lockNoneDelayOp(int id, int delay) { delayOp(id, delay);}
   void lockInstanceDelayOp(int id, int delay) { delayOp(id, delay);}
   void lockFunctionDelayOp(int id, int delay) { delayOp(id, delay);}
+  void lockFunctionDropDelayOp(int id, int delay) { delayOp(id, delay);}
+  void lockFunctionKeepOneDelayOp(int id, int delay) { delayOp(id, delay);}
   void lockClassDelayOp(int id, int delay) { delayOp(id, delay);}
   void lockModuleDelayOp(int id, int delay) { delayOp(id, delay);}
   void delayOp(int id, int delay);
@@ -215,7 +221,9 @@ UValue Threaded::getLastRead(unsigned tid)
 
 void Threaded::delayOp(int id, int delay)
 {
+  GD_FINFO_DUMP("delaying %s on %s...", delay, id);
   usleep(delay);
+  GD_FINFO_DUMP("...executing one op on %s", id);
   threadLoopBody(id);
 }
 

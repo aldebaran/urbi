@@ -106,12 +106,16 @@ virtual libport::ThreadPool::rTaskLock getClassTaskLock() {\
 
 # define UBindFunctions(Obj, ...)  \
   LIBPORT_VAARGS_APPLY(URBI_BINDFUNCTIONS, Obj, __VA_ARGS__)
+
 /** Bind the function so that it gets executed in a separate thread.
  *  @param Obj the UObject class name
  *  @param X the unquoted function name
  *  @param Uname the urbiscript name of the method
- *  @param lockMode (LockMode) which lock to use. This lock can be used to
- *  prevent multiple parallel execution of functions.
+ *  @param lockMode (LockMode or LockSpec) which lock to use. This lock can be
+ *         used to prevent multiple parallel execution of functions.
+ *         If you use only a lockMode, operations that cannot execute in
+ *         parallel will be queued. A LockSpec can be used to specify the
+ *         maximum queue size.
  */
 # define UBindThreadedFunctionRename(Obj, X, Uname, lockMode) \
   ::urbi::createUCallback(*this, 0, "function", static_cast<Obj*>(this), \
@@ -216,7 +220,7 @@ namespace urbi
 
   /** Locking model.
    * This enum is used in UBindThreadedFunction to tell what locking model
-   * should be used
+   * should be used.
    */
   enum LockMode
   {
@@ -229,6 +233,29 @@ namespace urbi
     LOCK_CLASS,     ///< Prevent parallel call to any function of this class
     LOCK_MODULE     ///< Prevent parallel call to any function of this module
   };
+
+  /** Extended locking model specifications.
+   * Permits to set the maximum queue size which is infinite by default.
+   */
+  class URBI_SDK_API LockSpec
+  {
+  public:
+    LockSpec(LockMode l, unsigned int maxQueueSize=0)
+    : lockMode(l)
+    , maxQueueSize(maxQueueSize)
+    {}
+    LockMode lockMode;
+    unsigned int maxQueueSize;
+  };
+  /** LockSpec that prevents parallel calls to the function, and drops all
+   * subsequent calls while one is running.
+   */
+  static const LockSpec LOCK_FUNCTION_DROP = LockSpec(LOCK_FUNCTION, 1);
+   /** LockSpec that prevents parallel calls to the function, and drops all
+   * subsequent calls while one is running but one. This mode will ensure
+   * maximum CPU usage.
+   */
+  static const LockSpec LOCK_FUNCTION_KEEP_ONE = LockSpec(LOCK_FUNCTION, 2);
   UObjectHub* getUObjectHub(const std::string& n);
   UObject* getUObject(const std::string& n);
   void uobject_unarmorAndSend(const char* str);
@@ -308,6 +335,15 @@ namespace urbi
     UNotifyThreadedChange(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
 
     /*!
+    \brief Similar to UNotifyChange(), but run function in a thread.
+    \param v the variable to monitor.
+    \param fun the function to call.
+    \param m the locking mode to use.
+    */
+    void
+    UNotifyThreadedChange(UVar& v, void (UObject::*fun)(UVar&), LockSpec s);
+
+    /*!
     \brief Call a function each time a variable is accessed.
     \param v the variable to monitor.
     \param fun the function to call each time the variable \b v is accessed.
@@ -318,7 +354,8 @@ namespace urbi
     UNotifyAccess(UVar& v, void (UObject::*fun)(UVar&));
     void
     UNotifyThreadedAccess(UVar& v, void (UObject::*fun)(UVar&), LockMode m);
-
+    void
+    UNotifyThreadedAccess(UVar& v, void (UObject::*fun)(UVar&), LockSpec s);
     /** @} */
 
     /// Call \a fun every \a t milliseconds.
@@ -341,6 +378,14 @@ namespace urbi
     template <typename F>				\
     void UNotifyThreaded##Type(Notified, F fun,		\
                                LockMode lockMode)	\
+    {							\
+	createUCallback(*this, StoreArg, TypeString,	\
+                        this, fun, Name)		\
+        ->setAsync(getTaskLock(lockMode, Name));	\
+    }                                                   \
+    template <typename F>				\
+    void UNotifyThreaded##Type(Notified, F fun,		\
+                               LockSpec lockMode)	\
     {							\
 	createUCallback(*this, StoreArg, TypeString,	\
                         this, fun, Name)		\
@@ -452,7 +497,9 @@ namespace urbi
     /// Find the TaskLock associated with lock mode \b m.
     libport::ThreadPool::rTaskLock getTaskLock(LockMode m,
                                                const std::string& what);
-
+    /// Find the TaskLock associated with lock mode \b s.lockMode.
+    libport::ThreadPool::rTaskLock getTaskLock(LockSpec s,
+                                               const std::string& what);
     /// The load attribute is standard and can be used to control the
     /// activity of the object.
     UVar load;

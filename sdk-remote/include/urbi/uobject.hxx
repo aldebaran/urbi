@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -78,11 +78,19 @@ namespace urbi
   libport::ThreadPool::rTaskLock
   UObject::getTaskLock(LockMode m, const std::string& what)
   {
+    return getTaskLock(LockSpec(m), what);
+  }
+
+  inline
+  libport::ThreadPool::rTaskLock
+  UObject::getTaskLock(LockSpec m, const std::string& what)
+  {
+    GD_CATEGORY(UObject);
     typedef libport::ThreadPool::rTaskLock rTaskLock;
     typedef libport::ThreadPool::TaskLock TaskLock;
     // Static in inlined functions are per-module.
     static rTaskLock module_lock(new TaskLock);
-    switch(m)
+    switch(m.lockMode)
     {
     case LOCK_NONE:
       return 0;
@@ -91,7 +99,11 @@ namespace urbi
       {
         rTaskLock& res = taskLocks_[what];
         if (!res)
-          res = new TaskLock;
+        {
+          res = new TaskLock(m.maxQueueSize);
+          GD_FINFO_TRACE("Creating taskLock for %s with %s: %s", what,
+                         m.maxQueueSize, res.get());
+        }
         return res;
       }
       break;

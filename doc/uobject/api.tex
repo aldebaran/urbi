@@ -240,6 +240,7 @@ If you have multiple functions to bind, you can use the
 \lstinline|UBindFunctions(\var{class-name}, \var{function1}, \var{function2}...)|.
 
 \subsection{Asynchronous binding}
+\label{sec:uobject:asynchronous-binding}
 Functions bound using \lstinline{UBindFunction} are called synchronously, and
 thus block everything until they return.
 
@@ -260,6 +261,12 @@ the following values.
   No locking is performed.
 \item \lstinline{LOCK_FUNCTION}\\
   Parallel execution is limited to one instance of the bound function.
+\item \lstinline{LOCK_FUNCTION_DROP}\\
+  Same as \lstinline{LOCK_FUNCTION}, but operations are dropped instead of
+  being queued if one is already running.
+\item \lstinline{LOCK_FUNCTION_KEEP_ONE}\\
+  Same as \lstinline{LOCK_FUNCTION}, but the queue is limited to one, and
+  subsequent calls are dropped.
 \item \lstinline{LOCK_INSTANCE}\\
   Parallel execution is limited to one bound function for each object
   instance.
@@ -270,7 +277,11 @@ the following values.
   (shared object).
 \end{itemize}
 
-There is however a restriction: you cannot mix multiple locking modes: for
+Other queue sizes can be used by passing
+\lstinline[LockSpec(LOCK_FUNCTION, myQueueSize)] as \lstinline[lockMode.
+
+There is restriction to the locking mechanism: you cannot mix multiple locking
+modes: for
 instance a function bound with \lstinline{LOCK_FUNCTION} mode will not prevent
 another function bound with \lstinline{LOCK_INSTANCE} from executing in
 parallel.

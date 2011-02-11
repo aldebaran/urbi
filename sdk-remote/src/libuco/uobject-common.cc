@@ -155,10 +155,18 @@ namespace urbi
     }
     else
     {
-      threadPool().queueTask(
+      libport::ThreadPool::rTaskHandle h
+       = threadPool().queueTask(
                              boost::function0<void>(
         boost::bind(&UGenericCallback::syncEval, this, params, onDone)),
         taskLock);
+       GD_FINFO_TRACE("Queued async op: with lock %s: %s", taskLock.get(),
+                      h->getState());
+      if (h->getState() == libport::ThreadPool::TaskHandle::DROPPED)
+      {
+        UValue res;
+        onDone(res, 0);
+      }
     }
   }
 
