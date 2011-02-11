@@ -1,90 +1,118 @@
-<h1 style="text-align:center"><img src="doc/images/cube-and-disc.png"
-style="width:80%" alt="Urbi 2.6" /></h1>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-US" xml:lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Urbi 2.6</title>
+    <link rel="stylesheet" type="text/css" href="style.css"></link>
+  </head>
 
-<p>
-  All the versions of Urbi packages are
-  available <a href="..">here</a>.  An introduction about Urbi,
-  including a video, can be
-  found <a href="http://www.gostai.com/products/urbi">here</a>.
-</p>
+  <body>
+    <h1><img src="../img/2.6/cube-and-disc.png" class="title" alt="Urbi 2.6" /></h1>
 
-<h2>What's new</h2>
-<p>
-  This release was focused on improving runtime performances, and
-  addressing bugs.  We expect users to find some significant
-  improvements.
-</p>
+    <div class="section">
+      <p class="abstract">
+	All the versions of Urbi packages are
+	available <a href="..">here</a>.  <br/> An introduction about
+	Urbi, including a video, can be
+	found <a href="http://www.gostai.com/products/urbi">here</a>.
+      </p>
 
-<p>
-  It also provides some new features such as (strict) variadic
-  functions.  For instance:
+      <h2>What's new in Urbi 2.6</h2>
+      <div class="section">
+	<p>
+	  This release was focused on improving runtime performances,
+	  and addressing bugs.  We expect users to find some
+	  significant improvements.
+	</p>
 
-<pre>
-  function variadic(var a1, var a2, var a3, var args[])
-  {
-    echo("a1 = %s, a2 = %s, a3 = %s, args = %s"
-         % [a1, a2, a3, args]);
-  }|
-  variadic(1, 2, 3);
-  [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = []
-  variadic(1, 2, 3, 4);
-  [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4]
-  variadic(1, 2, 3, 4, 5);
-  [00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4, 5]
-</pre>
-</p>
+	<p>
+	  It also provides some new features such as (strict) variadic
+	  functions.  For instance:
+	</p>
+	<pre style="margin-left:60px;padding:20px;border:1px solid #000000;background:#cccccc;width:500px;">
+function variadic(var a1, var a2, var a3, var args[])
+{
+  echo("a1 = %s, a2 = %s, a3 = %s, args = %s"
+       % [a1, a2, a3, args]);
+}|
+variadic(1, 2, 3);
+[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = []
+variadic(1, 2, 3, 4);
+[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4]
+variadic(1, 2, 3, 4, 5);
+[00000002] *** a1 = 1, a2 = 2, a3 = 3, args = [4, 5]
+	</pre>
 
-<p>
-  See the <a href="doc/urbi-sdk.htmldir/release-notes.html">release
-  notes</a> for a more complete description of the changes.
-</p>
 
-<h2>Package Types</h2>
-<p>
-  There are three kinds of packages:
-  <dl>
-    <dt>Urbi SDK (urbi-sdk-*)</dt>
-    <dd>The full Software Development Kit, including the full
-      documentation in HTML and PDF.  These packages are made for
-      computers on which applications are developed.</dd>
-    <dt>Urbi Runtime (urbi-runtime-*)</dt>
-    <dd>Only what is needed to run Urbi programs.  These packages are
-      made for robots running these applications.  They do not contain
-      the documentation.</dd>
-    <dt>Urbi documentation (urbi-doc-*)</dt>
-    <dd>The whole documentation, in HTML and PDF.</dd>
-  </dl>
-</p>
+	<p>
+	  See
+	  the <a href="doc/urbi-sdk.htmldir/release-notes.html">release
+	  notes</a> for a more complete description of the changes.
+	</p>
+      </div>
 
-<h2>Architectures</h2>
-<h3>Source</h3>
-<p>
-  The files with no architecture specified are BZip2 source tarballs
-  (<a href="urbi-sdk-2.6.tar.bz2">urbi-sdk-2.6.tar.bz2</a>).
-  Use them only if you are ready to compile Urbi SDK yourself.
-<h3>Unix</h3>
-<p>
-  GNU/Linux and Mac OS X packages are regular BZip2 tarballs.
-</p>
+	<h2>Package Types</h2>
+	<div class="section">
+	  <p>
+	    There are three kinds of packages:
+	    <dl>
+	      <dt>Urbi SDK (urbi-sdk-*)</dt>
+	      <dd>The full Software Development Kit, including the
+		full documentation in HTML and PDF.  These packages
+		are made for computers on which applications are
+		developed.</dd>
+	      <dt>Urbi Runtime (urbi-runtime-*)</dt>
+	      <dd>Only what is needed to run Urbi programs.  These
+		packages are made for robots running these
+		applications.  They do not contain the
+		documentation.</dd>
+	      <dt>Urbi documentation (urbi-doc-*)</dt>
+	      <dd>The whole documentation, in HTML and PDF.</dd>
+	    </dl>
+	  </p>
+	</div>
 
-<h3>Windows</h3>
-<p>
-  The packages depend on the version of Visual C++ you
-  use: 2005 or 2008.
-</p>
+	<h2>Architectures</h2>
+	<div class="section">
+	  <h3>Source</h3>
+	  <div class="section">
+	    <p>
+	      The files with no architecture specified are BZip2
+	      source tarballs
+	      (<a href="urbi-sdk-2.6.tar.bz2">urbi-sdk-2.6.tar.bz2</a>).
+	      Use them only if you are ready to compile Urbi SDK
+	      yourself.
+	    </p>
+	  </div>
+	  <h3>Unix</h3>
+	  <div class="section">
+	    <p>
+	      GNU/Linux and Mac OS X packages are regular BZip2 tarballs.
+	    </p>
+	  </div>
 
-<p>
-  Windows packages in "*.exe" contain an installer that installs both
-  debug and release libraries, an UObject wizard for Visual C++,
-  Gostai Editor and Gostai Console.  Using the installers is strongly
-  recommended.
-</p>
+	    <h3>Windows</h3>
+	    <div class="section">
+	      <p>
+		The packages depend on the version of Visual C++ you
+		use: 2005 or 2008.
+	      </p>
 
-<p>
-  If you know what you are doing, you might want to use the "*.zip"
-  files.  They come in two flavors: debug or release.  They require
-  that you have MS Visual C++ installed, or that you run
-  "vcredist.exe" that can be
-  found <a href="http://www.gostai.com/downloads/urbi/windows/">
-  here</a>.
-</p>
+	      <p>
+		Windows packages in "*.exe" contain an installer that
+		installs both debug and release libraries, an UObject
+		wizard for Visual C++, Gostai Editor and Gostai
+		Console.  Using the installers is strongly
+		recommended.
+	      </p>
+
+	      <p>
+		If you know what you are doing, you might want to use
+		the "*.zip" files.  They come in two flavors: debug or
+		release.  They require that you have MS Visual C++
+		installed, or that you run "vcredist.exe" that can be
+		found <a href="http://www.gostai.com/downloads/urbi/windows/">
+		here</a>.
+	      </p>
+	  </div>
+	</div>
+    </div>
