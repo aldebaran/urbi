@@ -67,7 +67,7 @@ namespace urbi
     Object::unsafe_proto_add(const rObject& v)
     {
       if (protos_)
-        push_front(*protos_, v);
+        protos_->push_front(v);
       else
         if (!proto_)
           proto_ = v;
@@ -148,13 +148,13 @@ namespace urbi
     `--------------------------*/
 
     template<class F> bool
-    for_all_protos(const rObject& r, F& f, objects_type& objects)
+    for_all_protos(const rObject& r, F& f, Object::objects_set_type& objects)
     {
       if (libport::has(objects, r))
         return false;
       if (f(r))
         return true;
-      objects.push_back(r);
+      objects.insert(r);
       if (r->protos_)
       {
         foreach(const rObject& p, *r->protos_)
@@ -169,7 +169,7 @@ namespace urbi
     template<class F> bool
     for_all_protos(const rObject& r, F f)
     {
-      objects_type objects;
+      Object::objects_set_type objects;
       return for_all_protos(r, f, objects);
     }
 

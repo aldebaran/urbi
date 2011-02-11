@@ -19,6 +19,7 @@
 # include <libport/fwd.hh>
 # include <libport/intrusive-ptr.hh>
 # include <libport/reserved-vector.hh>
+# include <libport/vector.hh>
 
 # include <urbi/export.hh>
 
@@ -30,7 +31,17 @@ namespace urbi
     class Object;
 
     typedef libport::intrusive_ptr<Object> rObject;
-    typedef libport::ReservedVector<rObject, 8> objects_type;
+    static const unsigned objects_type_floor = 8;
+    typedef libport::FlooredAllocator<rObject, objects_type_floor>
+    objects_type_allocator;
+    typedef libport::Constructor<rObject>
+    objects_type_constructor;
+    typedef libport::FlooredExponentialCapacity<objects_type_floor>
+    objects_type_capacity;
+    typedef libport::Vector<rObject,
+                            objects_type_allocator,
+                            objects_type_constructor,
+                            objects_type_capacity> objects_type;
 
 # define APPLY_ON_ALL_OBJECTS(Macro)            \
     Macro(Barrier);                             \

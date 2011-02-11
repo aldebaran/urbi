@@ -496,6 +496,31 @@ namespace urbi
 #undef comma
 #undef CONTAINER
 
+    template <>
+    struct CxxConvert<objects_type>
+    {
+      typedef objects_type target_type;
+
+      static target_type
+      to(const rObject& o)
+      {
+        type_check<List>(o);
+        objects_type res;
+        foreach (Object* elt, o->as<List>()->value_get())
+          res.push_back(elt);
+        return res;
+      }
+
+      static rObject
+      from(const target_type& v)
+      {
+        objects_type res;
+        foreach (Object* elt, v)
+          res.push_back(elt);
+        return new List(res);
+      }
+    };
+
 
     /*------------------.
     | boost::optional.  |

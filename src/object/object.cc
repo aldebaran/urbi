@@ -560,7 +560,8 @@ namespace urbi
         }
       }
       if (!libport::has(*protos_, p))
-        push_front (*protos_, p);
+        protos_->push_front(p);
+      protos_->push_front(p);
       return *this;
     }
 

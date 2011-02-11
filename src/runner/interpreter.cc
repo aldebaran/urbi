@@ -207,7 +207,7 @@ namespace runner
 	result_ = operator()(ast_.get());
       else if (code_)
       {
-        libport::push_front(args_, this_ ? this_ : rObject(lobby_));
+        args_.push_front(this_ ? this_ : rObject(lobby_));
 	result_ = apply(code_, libport::Symbol::make_empty(), args_);
       }
       else

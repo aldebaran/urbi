@@ -123,7 +123,11 @@ namespace urbi
       if (rList l = arg->as<List>())
         return operator%(l->value_get());
       else
-        return operator%(objects_type(1, arg));
+      {
+        objects_type args;
+        args << arg;
+        return operator%(args);
+      }
     }
   } // namespace object
 }

@@ -448,9 +448,7 @@ namespace runner
     res->slot_set(SYMBOL(message), new object::String(msg));
 
     res->slot_set(SYMBOL(args), new object::List(
-                    objects_type(
-                      boost::begin(libport::skip_first(args)),
-                      boost::end(libport::skip_first(args)))));
+                    objects_type(args.begin() + 1, args.end())));
 
     return res;
   }

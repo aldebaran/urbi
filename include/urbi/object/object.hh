@@ -377,8 +377,10 @@ namespace urbi
 
       mutable int lookup_id_;
 
+    public:
+      typedef boost::unordered_set<rObject> objects_set_type;
       template<class F> friend bool
-      for_all_protos(const rObject& r, F& f, objects_type& objects);
+      for_all_protos(const rObject& r, F& f, objects_set_type& objects);
     };
 
     /// Call f(robj) on r and all its protos hierarchy, stop if it returns true.

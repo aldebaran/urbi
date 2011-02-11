@@ -117,7 +117,7 @@ namespace urbi
     {
       CHECK_NON_EMPTY(tail);
       value_type res = content_;
-      libport::pop_front(res);
+      res.pop_front();
       return new List(res);
     }
 
@@ -318,7 +318,7 @@ namespace urbi
     rList
     List::insertFront(const rObject& o)
     {
-      libport::push_front(content_, o);
+      content_.push_front(o);
       changed();
       return this;
     }
@@ -399,7 +399,7 @@ namespace urbi
     {
       CHECK_NON_EMPTY(pop_front);
       rObject res = content_.front();
-      libport::pop_front(content_);
+      content_.pop_front();
       changed();
       return res;
     }
