@@ -548,7 +548,7 @@ namespace urbi
     if (rc != 0)
       return -1;
     sendBufferLock.lock();
-    int res = effectiveSend(buffer, length);
+    int res = effective_send(buffer, length);
     sendBufferLock.unlock();
     return res;
   }

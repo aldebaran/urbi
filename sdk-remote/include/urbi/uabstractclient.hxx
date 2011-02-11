@@ -11,6 +11,9 @@
 #ifndef URBI_UABSTRACTCLIENT_HXX
 # define URBI_UABSTRACTCLIENT_HXX
 
+# include <libport/debug.hh>
+# include <libport/escape.hh>
+
 namespace urbi
 {
 
@@ -63,6 +66,31 @@ namespace urbi
 
   inline
   UAbstractClient::error_type
+  UAbstractClient::effective_send(const void* buffer, size_t size)
+  {
+    GD_CATEGORY(Urbi.UAbstractClient);
+    GD_FINFO_DUMP("Sending: \"%s\"",
+                  libport::escape(std::string(static_cast<const char*>(buffer),
+                                              size)));
+    return effectiveSend(buffer, size);
+  }
+
+  inline
+  UAbstractClient::error_type
+  UAbstractClient::effective_send(const std::string& s)
+  {
+    return effective_send(s.c_str(), s.size());
+  }
+
+  inline
+  UAbstractClient::error_type
+  UAbstractClient::effective_send(const char* cp)
+  {
+    return effective_send(cp, strlen(cp));
+  }
+
+  inline
+  UAbstractClient::error_type
   UAbstractClient::error() const
   {
     return rc;
@@ -81,13 +109,6 @@ namespace urbi
   UAbstractClient::getServerPort() const
   {
     return port_;
-  }
-
-  inline
-  std::ostream&
-  UAbstractClient::stream_get()
-  {
-    return *stream_;
   }
 
   inline
@@ -115,6 +136,13 @@ namespace urbi
     waitForKernelVersion();
     libport::BlockLock bl(sendBufferLock);
     return kernelVersion_;
+  }
+
+  inline
+  std::ostream&
+  UAbstractClient::stream_get()
+  {
+    return *stream_;
   }
 
   inline

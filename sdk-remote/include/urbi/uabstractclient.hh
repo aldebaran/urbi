@@ -374,10 +374,14 @@ namespace urbi
     /// Queue data for sending, returns zero on success, nonzero on failure.
     virtual error_type effectiveSend(const void* buffer, size_t size) = 0;
 
-    /// Bounce to effectiveSend() using strlen.
+    /// Direct forward the call to effectiveSend.
+    /// Allows to insert debugging information.
+    error_type effective_send(const void* buffer, size_t size);
+
+    /// Bounce to effective_send() using strlen.
     error_type effective_send(const char* buffer);
 
-    /// Bounce to effectiveSend() using c_str().
+    /// Bounce to effective_send() using c_str().
     error_type effective_send(const std::string& buffer);
 
     libport::Lockable listLock;

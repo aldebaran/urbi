@@ -125,7 +125,7 @@ namespace urbi
   void
   UClientStreambuf::write(char* buffer, size_t size)
   {
-    client_->effectiveSend(buffer, size);
+    client_->effective_send(buffer, size);
   }
 
   size_t
@@ -322,7 +322,7 @@ namespace urbi
     while (is.good() && !rc)
     {
       is.read(sendBuffer, sendBufSize);
-      rc = effectiveSend(sendBuffer, is.gcount());
+      rc = effective_send(sendBuffer, is.gcount());
     }
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
@@ -418,7 +418,7 @@ namespace urbi
       effective_send(sendBuffer);
     }
 
-    error_type res = effectiveSend(buffer, len);
+    error_type res = effective_send(buffer, len);
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
     return res;
@@ -437,7 +437,7 @@ namespace urbi
       *this << libport::format("Global.Binary.new(\"%s\", \"\\B(%s)(",
                                libport::escape(header), len);
       flush();
-      effectiveSend(data, len);
+      effective_send(data, len);
       *this << ")\")";
       sendBufferLock.unlock();
       return rc;
@@ -1019,18 +1019,6 @@ namespace urbi
            "  };\n"
            "};\n"));
 # undef VERSION_TAG
-  }
-
-  UAbstractClient::error_type
-  UAbstractClient::effective_send(const std::string& s)
-  {
-    return effectiveSend(s.c_str(), s.size());
-  }
-
-  UAbstractClient::error_type
-  UAbstractClient::effective_send(const char* cp)
-  {
-    return effectiveSend(cp, strlen(cp));
   }
 
   UCallbackAction
