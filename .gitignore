@@ -2,6 +2,7 @@
 /.version
 /.version.bak
 /Makefile.in
+/TAGS
 /aclocal.m4
 /autom4te.cache
 /bootstrap.stamp
