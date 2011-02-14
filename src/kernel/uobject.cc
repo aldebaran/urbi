@@ -753,7 +753,11 @@ namespace urbi
         std::string ctx = v1;
         std::string varname = v2;
         urbi::UValue val = v3;
-        writeFromContext(v1, v2, v3);
+        if (server().isAnotherThread())
+          server().schedule(SYMBOL(UObject), boost::bind(&writeFromContext,
+                                                         ctx, varname, val));
+        else
+          writeFromContext(v1, v2, v3);
         return;
       }
       if (server().isAnotherThread())
