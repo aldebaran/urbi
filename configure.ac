@@ -80,6 +80,7 @@ TC_PROG([flex],  [>= 2.5.35], [FLEX],  [fast lexical analyzer generator])
 
 URBI_COMPILATION_MODE
 URBI_PROG_CXX
+AC_LANG([C++])
 URBI_DIRS([engine])
 TC_CXX_WARNINGS([[-Wcast-align],
 		 [-Wcast-qual],
