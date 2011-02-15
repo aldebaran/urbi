@@ -62,34 +62,34 @@ namespace urbi
     }
 
 #ifndef LIBPORT_DEBUG_DISABLE
-# define LEVEL(Name, Type, Lev)                                        \
-    rObject                                                            \
-    Logger::Name(const std::string& msg,                               \
-                 const std::string& category)                          \
-    {                                                                  \
-      msg_(libport::Debug::types::Type,                                \
-           libport::Debug::levels::Lev, msg, category);                \
-      return this;                                                     \
-    }                                                                  \
-    rObject                                                            \
-    Logger::Name(const std::string& msg)                               \
-    {                                                                  \
-      msg_(libport::Debug::types::Type,                                \
-           libport::Debug::levels::Lev, msg);                          \
-      return this;                                                     \
+# define LEVEL(Name, Type, Lev)                         \
+    rObject                                             \
+    Logger::Name(const std::string& msg,                \
+                 const std::string& category)           \
+    {                                                   \
+      msg_(libport::Debug::types::Type,                 \
+           libport::Debug::levels::Lev, msg, category); \
+      return this;                                      \
+    }                                                   \
+    rObject                                             \
+    Logger::Name(const std::string& msg)                \
+    {                                                   \
+      msg_(libport::Debug::types::Type,                 \
+           libport::Debug::levels::Lev, msg);           \
+      return this;                                      \
     }
 #else
-# define LEVEL(Name, Type, Level)                                       \
-    rObject                                                             \
-    Logger::Name(const std::string&,                                    \
-                 const std::string&)                                    \
-    {                                                                   \
-      return this;                                                      \
-    }                                                                   \
-    rObject                                                             \
-    Logger::Name(const std::string&)                                    \
-    {                                                                   \
-      return this;                                                      \
+# define LEVEL(Name, Type, Level)               \
+    rObject                                     \
+    Logger::Name(const std::string&,            \
+                 const std::string&)            \
+    {                                           \
+      return this;                              \
+    }                                           \
+    rObject                                     \
+    Logger::Name(const std::string&)            \
+    {                                           \
+      return this;                              \
     }
 #endif
 
@@ -158,9 +158,10 @@ namespace urbi
     std::string
     Logger::as_printable() const
     {
-      if (category_)
-        return libport::format("Logger<%s>", *category_);
-      return libport::format("Logger_%p", this);
+      return
+        category_
+        ? libport::format("Logger<%s>", *category_)
+        : libport::format("Logger_%p", this);
     }
 
     rObject
@@ -168,21 +169,17 @@ namespace urbi
     {
       switch(level_)
       {
-        case libport::Debug::levels::log:
-          log(msg);
-          break;
-        case libport::Debug::levels::trace:
-          trace(msg);
-          break;
-        case libport::Debug::levels::debug:
-          debug(msg);
-          break;
-        case libport::Debug::levels::dump:
-          dump(msg);
-          break;
-        case libport::Debug::levels::none:
-        default:
-          RAISE("no log level defined");
+#define CASE(Level)                             \
+        case libport::Debug::levels::Level:     \
+          Level(msg);                           \
+        break
+        CASE(log);
+        CASE(trace);
+        CASE(debug);
+        CASE(dump);
+#undef CASE
+      case libport::Debug::levels::none:
+        RAISE("no log level defined");
       }
 
       return this;
