@@ -116,6 +116,20 @@ namespace urbi
       }
     };
 
+    /*-----------.
+    | RefCounted |
+    `-----------*/
+
+    template <>
+    struct CxxConvert<const libport::RefCounted*>
+    {
+      typedef libport::RefCounted* target_type;
+      static target_type
+      to(Object* o)
+      {
+        return o;
+      }
+    };
 
     /*----------------------.
     | Urbi types pointers.  |
