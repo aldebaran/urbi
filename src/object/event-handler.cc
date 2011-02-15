@@ -103,9 +103,14 @@ namespace urbi
     {
       detach_ = detach;
       source()->active_.insert(this);
-      // Copy container to avoid in-place modification problems.
-      foreach (callback_type* cb, callbacks_type(source()->callbacks_))
-        (*cb)(payload_->value_get());
+      // Copy the callback list in case it's modified.
+      std::vector<callback_type> callbacks;
+      callbacks.reserve(source()->callbacks_.size());
+      foreach (callback_type* cb, source()->callbacks_)
+        callbacks << *cb;
+      // Trigger all callbacks.
+      foreach (callback_type& cb, callbacks)
+        cb(payload_->value_get());
       // Copy container to avoid in-place modification problems.
       foreach (Event::rActions actions, listeners_type(source()->listeners_))
         trigger_job(actions, detach_);
