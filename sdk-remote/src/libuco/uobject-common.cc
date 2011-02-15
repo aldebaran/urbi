@@ -108,6 +108,7 @@ namespace urbi
   UGenericCallback::~UGenericCallback()
   {
     impl_->clear();
+    delete impl_;
   }
 
   void

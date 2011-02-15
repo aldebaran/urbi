@@ -450,8 +450,7 @@ namespace urbi
       UTable::callbacks_type::iterator i = libport::find(ct, c->owner_);
       if (i != ct.end())
         ct.erase(i);
-      owner_->ctx_->addCleanup(c->owner_);
-      owner_->ctx_->addCleanup(c);
+      owner_->ctx_->addCleanup(c->owner_); // Will clean the impl_ too.
     }
     callbacks_.clear();
     ctx->markDataSent();

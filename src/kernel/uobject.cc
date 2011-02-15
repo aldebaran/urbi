@@ -140,9 +140,11 @@ namespace urbi
       virtual void clean();
       virtual void setUpdate(ufloat period);
       virtual bool removeTimer(TimerHandle h);
+      virtual ~KernelUObjectImpl();
     private:
       UObject* owner_;
       friend class KernelUGenericCallbackImpl;
+      std::vector<UGenericCallback*> callbacks_;
     };
 
     class KernelUVarImpl: public UVarImpl
@@ -996,6 +998,12 @@ namespace urbi
 
     }
 
+    KernelUObjectImpl::~KernelUObjectImpl()
+    {
+      foreach(UGenericCallback* c, callbacks_)
+        delete c;
+    }
+
     void
     KernelUObjectImpl::initialize(UObject* owner)
     {
@@ -1553,6 +1561,9 @@ namespace urbi
           vimpl->callbacks_ << this;
         }
       }
+      if (&owner_->owner)
+        static_cast<KernelUObjectImpl*>(owner_->owner.impl_get())->callbacks_
+          .push_back(owner_);
     }
 
     void
