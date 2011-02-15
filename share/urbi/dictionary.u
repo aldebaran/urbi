@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -90,11 +90,14 @@ do (Global.Dictionary)
   function '==' (rhs)
   {
     if (size != rhs.size)
-      return false |
-    for (var k: keys)
-      if (!rhs.has(k) || get(k) != rhs.get(k))
-        return false |
-    return true
+      false
+    else
+    {
+      for|(var k: keys)
+        if (!rhs.has(k) || get(k) != rhs.get(k))
+          return false |
+      true
+    }
   };
 
   // Extends the dictionary with the one provided in its argument.
@@ -109,11 +112,14 @@ do (Global.Dictionary)
   function matchAgainst(handler, pattern)
   {
     if (!pattern.isA(Dictionary))
-      return false |
-    for| (var k: pattern.keys)
-      if (!has(k) || !handler.matchPattern(pattern[k], this[k]))
-        return false |
-    return true
+      false
+    else
+    {
+      for| (var k: pattern.keys)
+        if (!has(k) || !handler.matchPattern(pattern[k], this[k]))
+          return false |
+      true
+    }
   };
 
 };

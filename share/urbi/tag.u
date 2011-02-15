@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -26,18 +26,18 @@ do (Global.Tag)
 
   function begin()
   {
-    var res = clone;
+    var res = clone|
     at (res.enter?)
-      echo("%s: begin" % res.name);
-    return res;
+      echo("%s: begin" % res.name)|
+    res;
   };
 
   function end()
   {
-    var res = clone;
+    var res = clone|
     at (res.leave?)
-      echo("%s: end" % res.name);
-    return res;
+      echo("%s: end" % res.name)|
+    res;
   };
 
   var SystemTag = new("SystemTag");
@@ -46,7 +46,7 @@ do (Global.Tag)
   {
     function 'new'(name)
     {
-      return Tag.new(name)
+      Tag.new(name)
     };
   };
 

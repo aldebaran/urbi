@@ -105,15 +105,14 @@ do (Float)
           var max = owner.getProperty(name, "rangemax") |
           var min = owner.getProperty(name, "rangemin") |
           var val = owner.getSlot(name) |
-          return (val - min) / (max - min) |
+          (val - min) / (max - min) |
         }|
 
         function hook(slot, val)
         {
           var max = owner.getProperty(name, "rangemax") |
           var min = owner.getProperty(name, "rangemin") |
-          updateSlot(name, min + (max - min) * val) |
-          return |
+          updateSlot(name, min + (max - min) * val)
         }|
 
         owner.setSlot(slotName, quote_n)|

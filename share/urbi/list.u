@@ -123,7 +123,7 @@ do (List)
   };
 
   // Build a new list containing the result of \a f applied to all elements
-  function map(f)
+  function map(var f)
   {
     var res = [] |
     for| (var i: this)
@@ -162,19 +162,22 @@ do (List)
   };
 
   // Pattern matching.
-  function matchAgainst(handler, pattern)
+  function matchAgainst(var handler, var pattern)
   {
-    if (!pattern.isA(List) || pattern.size != size)
-      return false |
-    // FIXME: do this with a crossed map
-    var i = 0 |
-    for| (var e : this)
+    pattern.isA(List)
+    && pattern.size == size
+    &&
     {
-      if (!handler.matchPattern(pattern[i], e))
-        return false |
-      i++ |
-    } |
-    return true
+      // FIXME: do this with a crossed map
+      var i = 0 |
+      for| (var e : this)
+      {
+        if (!handler.matchPattern(pattern[i], e))
+          return false |
+        i++ |
+      } |
+      true
+    }
   };
 
   function max(var comp = function (a, b) { a < b })

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -33,9 +33,9 @@ do (Global)
     {
       var val = args.head.getSlot(name) |
       if (val.isA(Executable))
-        return val.apply(args)
+        val.apply(args)
       else
-        return val |
+        val
     }
   };
 
