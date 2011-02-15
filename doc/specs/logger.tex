@@ -9,13 +9,13 @@
 \section{Logger}
 
 \lstinline|Logger| is used to report information to the final user or to the
-developer. May it be a warning, an error, a debug information or a system
-log, \lstinline|Logger| will pretty print it for you using appropriate
-colors. \lstinline|Logger| can also be used as a \lstinline|Tag| for it to
-handle nested calls indentation. A log message is assigned a category which
-is shown between brackets at beginning of lines. Log level definition and
-categories filtering can be changed using environment variables defined in
-\autoref{sec:tools:env}.
+developer. It allows to pretty print warnings, errors, debug messages or
+simple logs. \lstinline|Logger| can also be used as \refObject{Tag} objects
+for it to handle nested calls indentation. A log message is assigned a
+category which is shown between brackets at beginning of lines, and a level
+which defines the context in which it has to be shown (see
+\autoref{sec:tools:env}). Log level definition and categories filtering can
+be changed using environment variables defined in \autoref{sec:tools:env}.
 
 \begin{urbiscript}
 Logger.log("message", "Category") |;
@@ -36,45 +36,51 @@ Logger.log("message", "Category") :
 
 \subsection{Construction}
 
-\lstinline|Logger| can be used as is, without being cloned. If one wants to
-set the category name it is possible to clone \lstinline|Logger| with this
-name as an argument.
+\lstinline|Logger| can be used as is, without being cloned. It is possible
+to clone \lstinline|Logger| defining a category and/or a level of debug.
 
 \begin{urbiscript}
 Logger.log("foo");
-[00027928:error] !!! log: no category defined
+[        Logger         ] foo
 
 Logger.log("foo", "Category") |;
 [       Category        ] foo
 
 var l = Logger.new("Category2");
-[00044703] Logger<Category2>
+[00004703] Logger<Category2>
+
 l.log("foo") |;
 [       Category2       ] foo
+
 l.log("foo", "ForcedCategory") |;
 [    ForcedCategory     ] foo
-
-var l2 = Logger.new;
-[00090939] Logger_0x86900c8
-l2.log("foo");
-[00097912:error] !!! log: no category defined
-l2.log("foo", "Category") |;
-[       Category        ] foo
 \end{urbiscript}
 
 \subsection{Slots}
 
 \begin{urbiscriptapi}
 
+\item['<<'](<message>)%
+  Allow to use the \lstinline|Logger| object as a \refObject{Channel}. This
+  slot can only be used if both category and level have been defined when
+  cloning.
+
+\begin{urbiscript}
+l = Logger.new("Category", Logger.Levels.Log);
+[00090939] Logger<Category>
+l << "foo";
+[       Category        ] foo
+\end{urbiscript}
+
 \item[debug](<message>, <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
-  shown if the debug level is DEBUG or DUMP. Return \this to allow chained
-  operations.
+  shown if the debug level is \lstinline|Debug| or \lstinline|Dump|. Return
+  \this to allow chained operations.
 
 \item[dump](<message>, <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
-  shown if the debug level is DUMP. Return \this to allow chained
-  operations.
+  shown if the debug level is \lstinline|Dump|. Return \this to allow
+  chained operations.
 
 \item[err](<message>, <category> = category)%
   Report an error \var{message} of \var{category} to the user. Return \this
@@ -84,6 +90,15 @@ l2.log("foo", "Category") |;
   Define the \var{category} of the new \lstinline|Logger| object. If no
   category is given the new \lstinline|Logger| will inherit the category of
   its prototype.
+
+\item[Levels]%
+  An \refObject{Enumeration} of the log levels defined in
+  \autoref{sec:tools:env}.
+
+\begin{urbiscript}
+Logger.Levels.values;
+[00000001] [None, Log, Trace, Debug, Dump]
+\end{urbiscript}
 
 \item[log](<message>, <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
@@ -99,8 +114,8 @@ l2.log("foo", "Category") |;
 
 \item[trace](<message>, <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
-  shown if the debug level is TRACE, DEBUG or DUMP. Return \this to allow
-  chained operations.
+  shown if the debug level is \lstinline|Trace|, \lstinline|Debug| or
+  \lstinline|Dump|. Return \this to allow chained operations.
 
 \item[warn](<message>, <category> = category)%
   Report a warning \var{message} of \var{category} to the user. Return \this

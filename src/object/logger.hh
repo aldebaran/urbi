@@ -32,13 +32,18 @@ namespace urbi
 
       void init();
       void init(libport::debug::category_type name);
+      void init(libport::debug::category_type name, rObject level);
       std::string as_printable() const;
+      rObject operator<<(const std::string& msg);
+
+    private:
+      void init_helper(libport::debug::category_type name);
 
     /*-------------------.
     | Logger functions.  |
     `-------------------*/
     public:
-#define LEVEL(Level)                                                     \
+#define LEVEL(Level)                                                      \
       rObject Level(const std::string& msg, const std::string& category); \
       rObject Level(const std::string& msg)
 
@@ -61,15 +66,18 @@ namespace urbi
     | Details.  |
     `----------*/
     private:
-#ifndef LIBPORT_DEBUG_DISABLE
       void msg_(libport::Debug::types::Type type,
                 libport::Debug::levels::Level level,
                 const std::string& msg,
-                boost::optional<std::string> category);
+                boost::optional<std::string> category =
+                boost::optional<std::string>());
       boost::optional<libport::debug::category_type> category_;
+      libport::Debug::levels::Level level_;
       URBI_CXX_OBJECT(Logger, Tag);
     };
   }
 }
+
+URBI_ENUM_DECLARE(::libport::Debug::levels::Level);
 
 #endif

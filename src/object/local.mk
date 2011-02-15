@@ -90,8 +90,6 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/list.cc				\
   object/lobby.cc				\
   object/location.cc				\
-  object/logger.cc				\
-  object/logger.hh				\
   object/object-class.cc			\
   object/object-class.hh			\
   object/object.cc				\
@@ -152,3 +150,9 @@ if !WIN32
     object/process.hh
 endif !WIN32
 endif !COMPILATION_MODE_SPACE
+
+
+# FIXME: standalone object to build as shared libraries.
+#  object/logger.cc
+#  object/logger.hh
+

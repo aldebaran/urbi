@@ -9,7 +9,9 @@
  */
 
 #include <runner/interpreter.hh>
-#include <object/logger.hh>
+#include <urbi/object/enumeration.hh>
+
+#include "logger.hh"
 
 namespace urbi
 {
@@ -38,46 +40,56 @@ namespace urbi
     }
 
     void
-    Logger::init(libport::debug::category_type name)
+    Logger::init_helper(libport::debug::category_type name)
     {
       category_ = name;
-      this->slot_set(SYMBOL(onEnter), proto->slot_get(SYMBOL(onEnter)));
-      this->slot_set(SYMBOL(onLeave), proto->slot_get(SYMBOL(onLeave)));
+      slot_set(SYMBOL(onEnter), proto->slot_get(SYMBOL(onEnter)));
+      slot_set(SYMBOL(onLeave), proto->slot_get(SYMBOL(onLeave)));
     }
 
-#ifdef LIBPORT_DEBUG_DISABLE
-# define LEVEL(Name, Type, Level)                                      \
+    void
+    Logger::init(libport::debug::category_type name)
+    {
+      level_ = proto->level_;
+      init_helper(name);
+    }
+
+    void
+    Logger::init(libport::debug::category_type name, rObject level)
+    {
+      level_ = from_urbi<libport::Debug::levels::Level>(level);
+      init_helper(name);
+    }
+
+#ifndef LIBPORT_DEBUG_DISABLE
+# define LEVEL(Name, Type, Lev)                                        \
     rObject                                                            \
     Logger::Name(const std::string& msg,                               \
                  const std::string& category)                          \
     {                                                                  \
       msg_(libport::Debug::types::Type,                                \
-           libport::Debug::levels::Level, msg, category);              \
+           libport::Debug::levels::Lev, msg, category);                \
       return this;                                                     \
     }                                                                  \
     rObject                                                            \
     Logger::Name(const std::string& msg)                               \
     {                                                                  \
       msg_(libport::Debug::types::Type,                                \
-           libport::Debug::levels::Level, msg);                        \
+           libport::Debug::levels::Lev, msg);                          \
       return this;                                                     \
     }
 #else
-# define LEVEL(Name, Type, Level)                                      \
-    rObject                                                            \
-    Logger::Name(const std::string& msg,                               \
-                 const std::string& category)                          \
-    {                                                                  \
-      std::cerr << category  << " : " << msg << std::endl;             \
-      return this;                                                     \
-    }                                                                  \
-    rObject                                                            \
-    Logger::Name(const std::string& msg)                               \
-    {                                                                  \
-      if (! category_)                                                 \
-        FRAISE("no category defined");                                 \
-      std::cerr << *category_  << " : " << msg << std::endl;           \
-      return this;                                                     \
+# define LEVEL(Name, Type, Level)                                       \
+    rObject                                                             \
+    Logger::Name(const std::string&,                                    \
+                 const std::string&)                                    \
+    {                                                                   \
+      return this;                                                      \
+    }                                                                   \
+    rObject                                                             \
+    Logger::Name(const std::string&)                                    \
+    {                                                                   \
+      return this;                                                      \
     }
 #endif
 
@@ -151,15 +163,44 @@ namespace urbi
       return libport::format("Logger_%p", this);
     }
 
+    rObject
+    Logger::operator<<(const std::string& msg)
+    {
+      switch(level_)
+      {
+        case libport::Debug::levels::log:
+          log(msg);
+          break;
+        case libport::Debug::levels::trace:
+          trace(msg);
+          break;
+        case libport::Debug::levels::debug:
+          debug(msg);
+          break;
+        case libport::Debug::levels::dump:
+          dump(msg);
+          break;
+        case libport::Debug::levels::none:
+        default:
+          RAISE("no log level defined");
+      }
 
-    URBI_CXX_OBJECT_INIT(Logger)
+      return this;
+    }
+
+    URBI_CXX_OBJECT_REGISTER_INIT(Logger)
     {
       proto_add(Tag::proto);
+      level_ = libport::Debug::levels::log;
+      category_ = SYMBOL(Logger);
 
       bind(SYMBOL(init),
            static_cast<void (Logger::*)()>(&Logger::init));
       bind(SYMBOL(init),
            static_cast<void (Logger::*)(libport::debug::category_type)>
+           (&Logger::init));
+      bind(SYMBOL(init),
+           static_cast<void (Logger::*)(libport::debug::category_type, rObject)>
            (&Logger::init));
 
 #define DECLARE(Name)                                                   \
@@ -184,7 +225,7 @@ namespace urbi
       bind(SYMBOL(Name), &Logger::Cxx)
 
       DECLARE(asPrintable, as_printable);
-
+      DECLARE(LT_LT_, operator<<);
 #undef DECLARE
 
 
@@ -195,5 +236,12 @@ namespace urbi
       DECLARE(onLeave);
 #undef DECLARE
     }
+
+    URBI_ENUM_REGISTER(libport::Debug::levels::Level, Global.Logger.Levels,
+                       (libport::Debug::levels::none,  None),
+                       (libport::Debug::levels::log,   Log),
+                       (libport::Debug::levels::trace, Trace),
+                       (libport::Debug::levels::debug, Debug),
+                       (libport::Debug::levels::dump,  Dump));
   }
 }
