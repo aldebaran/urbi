@@ -132,14 +132,9 @@ namespace urbi
         {
           if (detach)
           {
-            typedef rObject(Executable::*fun_type)(objects_type);
-            sched::rJob job =
-              new runner::Interpreter
-              (actions->lobby?actions->lobby:r.lobby_get(),
-               r.scheduler_get(),
-               boost::bind(static_cast<fun_type>(&Executable::operator()),
-                           actions->enter.get(), args),
-               this, SYMBOL(at));
+            sched::rJob job = actions->enter.get()->make_job
+              (actions->lobby ? actions->lobby : r.lobby_get(),
+               r.scheduler_get(), args, SYMBOL(at));
             job->start_job();
           }
           else

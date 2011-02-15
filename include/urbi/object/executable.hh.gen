@@ -42,6 +42,10 @@ namespace urbi
     public:
       Executable();
       Executable(rExecutable model);
+      runner::Interpreter* make_job(rLobby lobby,
+                                    sched::Scheduler& sched,
+                                    const objects_type& args,
+                                    libport::Symbol name);
       virtual rObject operator() (object::objects_type args);
       %s
 
