@@ -1,4 +1,4 @@
-## Copyright (C) 2010, Gostai S.A.S.
+## Copyright (C) 2010, 2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -13,8 +13,7 @@
 URBI = $(top_builddir)/tests/bin/urbi$(EXEEXT)
 GNUPLOT = gnuplot
 $(srcdir)/%.dat: %.utraj
-	$(AM_V_GEN)
-	$(AM_V_at)$(ENSURE_TARGET_DIR)
+	$(AM_V_GEN)$(ENSURE_TARGET_DIR)
 	$(AM_V_at)$(URBI) -q					\
 	        -f $(srcdir)/trajectories/plot.u		\
 	        -f '$<'						\
@@ -30,8 +29,7 @@ $(srcdir)/%.dat: %.utraj
 ## A single Make rule with two commands because it simplifies the use:
 ## depend on one file, not two.
 %.pdftex_t %.eps %.pdf: %.dat
-	$(AM_V_GEN)
-	$(AM_V_at)$(ENSURE_TARGET_DIR)
+	$(AM_V_GEN)$(ENSURE_TARGET_DIR)
 # gnuplot creates an output, even if it failed.  Remove it.
 	$(AM_V_at)rm -f $*.{tex,eps,pdf,pdftex_t}
 # Put the output first, before the plotting command, and before
