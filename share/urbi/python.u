@@ -24,10 +24,13 @@ var nil.asPython = "None";
 
 function List.asPython()
 {
-  return "[%s]" % this.map(function (var elt) { elt.asPython }).join(", ");
+  "[%s]" % map(function (var elt) { elt.asPython }).join(", ");
 };
 
 function Dictionary.asPython()
 {
-  "{%s}" % this.keys.map(closure (var key) { "%s: %s" % [key.asPython, this[key].asPython] }).join(", ");
+  "{%s}"
+   % keys.map(closure (var key) { "%s: %s"
+                                   % [key.asPython, this[key].asPython] })
+         .join(", ");
 };

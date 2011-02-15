@@ -175,35 +175,38 @@ do (Global.UObject)
   // Decrease notify refcount for this UVar, stop notify if it reaches 0
   function unnotify(objname, varname, count)
   {
-    if (!lobby.hasLocalSlot("__bindingCount"))
-      return |
-    var fullname = objname + "." + varname |
-    var cnt = lobby.__bindingCount.getWithDefault(fullname, -1) |
-    if (cnt <= 0)
+    if (lobby.hasLocalSlot("__bindingCount"))
     {
-      wall("Error, unnotify on unknown variable " + fullname) |
-      return
-    } |
-    cnt -= count |
-    lobby.__bindingCount[fullname] = cnt |
-    if (!cnt && hasSlot(objname) && getSlot(objname).hasSlot(varname))
-    {
-      // May or may not be present, never mind
-      if (lobby.__bindingFunc[fullname].isA(UConnection))
-        lobby.__bindingFunc[fullname].disconnect
-      else if (lobby.__bindingFunc[fullname].isA(Float))
-        getSlot(objname).getSlot(varname)
-          .removeNotifyChange(lobby.__bindingFunc[fullname])|
-      // May be using the shared RTP object
-      if (lobby.hasLocalSlot("sharedRTP")
-          && lobby.__bindingFunc[fullname] === lobby.sharedRTP)
+      var fullname = objname + "." + varname |
+      var cnt = lobby.__bindingCount.getWithDefault(fullname, -1) |
+      if (cnt <= 0)
       {
-        lobby.sharedRTP.unGroupedSendVar(fullname)
-      }|
-      // If specific UObjects are used to handle this binding: destroy them
-      if (lobby.__bindingFunc[fullname].isA(List))
-        for|(var i: lobby.__bindingFunc[fullname])
-          try{i.destroy} catch {}
+        wall("Error, unnotify on unknown variable " + fullname)
+      }
+      else
+      {
+        cnt -= count |
+        lobby.__bindingCount[fullname] = cnt |
+        if (!cnt && hasSlot(objname) && getSlot(objname).hasSlot(varname))
+        {
+          // May or may not be present, never mind
+          if (lobby.__bindingFunc[fullname].isA(UConnection))
+            lobby.__bindingFunc[fullname].disconnect
+          else if (lobby.__bindingFunc[fullname].isA(Float))
+            getSlot(objname).getSlot(varname)
+              .removeNotifyChange(lobby.__bindingFunc[fullname])|
+          // May be using the shared RTP object
+          if (lobby.hasLocalSlot("sharedRTP")
+              && lobby.__bindingFunc[fullname] === lobby.sharedRTP)
+          {
+            lobby.sharedRTP.unGroupedSendVar(fullname)
+          }|
+          // If specific UObjects are used to handle this binding: destroy them
+          if (lobby.__bindingFunc[fullname].isA(List))
+            for|(var i: lobby.__bindingFunc[fullname])
+              try{i.destroy} catch {}
+        }
+      }
     }
   };
 
@@ -299,7 +302,7 @@ do (&UVar)
       {
         var min = parent.getSlot(name).rangemin |
         var max = parent.getSlot(name).rangemax |
-        {var r = parent.getSlot(name) | return (r() - min) / (max-min)}
+        {var r = parent.getSlot(name) | (r() - min) / (max-min)}
       })|
     parent.setProperty(slotName, "updateHook", function(slot, value)
       {
@@ -454,21 +457,22 @@ do(UConnection)
   };
   function niceName(varname)
   {
-    var uvar|
-    try {
-      uvar = UVar.fromName(varname)
+    try
+    {
+      var uvar = UVar.fromName(varname) |
+      var uob = uobjects.getSlot(uvar.ownerName)|
+      {
+        ["compactName", "componentName", "__uobjectName", "uid"].map
+        ( function(x) { if (uob.hasSlot(x)) uob.getSlot(x).apply([uob]) else ""}).filter
+        ( function(x) { x})[0] + "." + uvar.initialName
+      }
     }
     catch(var e)
     {
-      return varname
-    };
-    var uob = uobjects.getSlot(uvar.ownerName)|
-    {
-      ["compactName", "componentName", "__uobjectName", "uid"].map
-      ( function(x) { if (uob.hasSlot(x)) uob.getSlot(x).apply([uob]) else ""}).filter
-      ( function(x) { x})[0] + "." + uvar.initialName
+      varname
     }
   };
+
   function asString()
   {
     if (!source)
@@ -493,25 +497,30 @@ do(UConnection)
     }|
     source = ""
   };
+
   function reconnect(from)
   {
     disconnect()|
     init(from, UVar.fromName(target))
   };
+
   function resetStats()
   {
     totalCallTime = callCount = 0|
     minCallTime = maxCallTime = 0|
     start = time
   };
+
   function meanCallTime()
   {
     totalCallTime / callCount
   };
+
   function fireRate()
   {
     callCount / (time-start)
   };
+
   /// Return the list of all connections in the system
   function getAll()
   {
@@ -966,18 +975,19 @@ class Global.'external'
     var obj = uobjects.getSlot(objname)|
     var fullname = objname+"."+ename+"__" + nargs.asString |
     var key = lobby.uid + fullname |
-    if (obj.remoteEventMap.has(key))
-      return |
-    obj.remoteEventMap[key] = 1 |
-    if (not uobjects.getSlot(objname).hasLocalSlot(ename))
-      uobjects.getSlot(objname).setSlot(ename, Event.new) |
-    var args = nargs.map(function(x) { "p%s" %[x]}).join(", ") |
-    var varargs = nargs.map(function(x) { "var p%s" %[x]}).join(", ")|
-    var code =
-      ("at (uobjects.%s.%s?(%s)) 'external'.eventBounce(true, \"%s\",[%s])"
-      + "onleave 'external'.eventBounce(false, \"%s\",[%s])")
-    % [objname, ename, varargs, fullname, args, fullname, args]|
-    eval(code)
+    if (key not in obj.remoteEventMap)
+    {
+      obj.remoteEventMap[key] = 1 |
+      if (not uobjects.getSlot(objname).hasLocalSlot(ename))
+        uobjects.getSlot(objname).setSlot(ename, Event.new) |
+      var args = nargs.map(function(x) { "p%s" %[x]}).join(", ") |
+      var varargs = nargs.map(function(x) { "var p%s" %[x]}).join(", ")|
+      var code =
+        ("at (uobjects.%s.%s?(%s)) 'external'.eventBounce(true, \"%s\",[%s])"
+        + "onleave 'external'.eventBounce(false, \"%s\",[%s])")
+      % [objname, ename, varargs, fullname, args, fullname, args]|
+      eval(code)
+    }
   };
 
   at (Lobby.onDisconnect?(var l))
