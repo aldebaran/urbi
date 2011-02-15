@@ -13,14 +13,14 @@
 
 # include <boost/regex.hpp>
 
+# include <urbi/export.hh>
 # include <urbi/object/cxx-object.hh>
 
 namespace urbi
 {
   namespace object
   {
-    class Regexp
-      : public CxxObject
+    class  URBI_SDK_API Regexp : public CxxObject
     {
     public:
       typedef Regexp self_type;

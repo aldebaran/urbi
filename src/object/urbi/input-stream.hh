@@ -19,7 +19,7 @@ namespace urbi
 {
   namespace object
   {
-    class InputStream: public Stream
+    class URBI_SDK_API InputStream: public Stream
     {
 
       /*-----------------------------.

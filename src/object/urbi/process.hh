@@ -19,7 +19,7 @@ namespace urbi
 {
   namespace object
   {
-    class Process: public CxxObject
+    class URBI_SDK_API Process: public CxxObject
     {
 
     /*---------------------------.
