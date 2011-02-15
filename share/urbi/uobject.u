@@ -335,6 +335,8 @@ do (&UVar)
       {
         chan.lobby = l |
         chan << msg |
+        if (!l.hasSlot("__bindingFunc"))
+          continue|
         var currentBindings = l.__bindingFunc.getWithDefault(fullname,nil)|
         if (currentBindings.isA(&Float))
         { // Standard TCP notifychange, remove it...
