@@ -34,6 +34,8 @@ do (Global.UObject)
   {
     // The fresh child.
     var res = call.&target.clone |
+    if (!res.hasLocalSlot("tag"))
+      var res.tag = Tag.new|
     // Call the "init" from the parent, retargetted to the child.
     call.message = "init" |
     try
@@ -75,6 +77,7 @@ do (Global.UObject)
     for| (var t: timerTask)
       t.second.stop |
     updateTask.stop |
+    tag.stop |
     var name = __uobjectName |
     var remote = hasLocalSlot("isRemote") |
     var lob = lobby | // will find this.lobby if we are a remote uobject
@@ -82,7 +85,10 @@ do (Global.UObject)
     // Remove reference loops induced by closures.
     for| (var f: localSlotNames)
       if (getSlot(f).isA(UVar))
-        removeProperty(f + "_quote_n", "updateHook") |
+      {
+        getSlot(f).tag.stop|
+        removeProperty(f + "_quote_n", "updateHook")
+      }|
     for| (var f: localSlotNames.remove("__uobjectName").remove("finalize"))
       removeLocalSlot(f)|
     // Destroy C++ UObject instance
@@ -280,6 +286,8 @@ do (&UVar)
       ownerName = parent.asString|
     this.initialName = name|
     var this.fullName = ownerName + "." + initialName|
+    // We need to explicitly kill the at below, use this.tag for this.
+    var this.tag = Tag.new(fullName)|
     parent.setSlot(name, this)|
     parent.setProperty(name, "updateHook", &updateBounce)|
     var slotName = name + "_quote_n"|
@@ -305,7 +313,7 @@ do (&UVar)
       parent.setProperty = &parentSetProperty|
       parent.hasProperty = &parentHasProperty
     };
-    at (rtp->changed? if rtp != rtp_old)
+    tag:at (rtp->changed? if rtp != rtp_old)
     {
       // Propagate to all remotes.
       // First find the list of lobbies that have remotes
@@ -709,8 +717,16 @@ class Global.'external'
     //wall("...connecting to " + host +":" + port)|
     lrtp.connect(host, port)|
     var lrtp.lobbyId = lobby.uid|
+    var l = lobby |
     // Destroy local rtp object when the remote disconnects
-    disown({at(Lobby.onDisconnect?(lobby)) try{lrtp.destroy} catch {}})|
+    disown({
+           var t = Tag.new|
+           t:at(Lobby.onDisconnect?(l))
+           {
+             try{lrtp.destroy} catch {} |
+             t.stop
+           }
+    })|
     (lrtp, rrtp)
   };
 
@@ -979,6 +995,14 @@ class Global.'external'
         }
         catch
         {}
+      }
+    };
+    if (uobjects.hasLocalSlot("URTP"))
+    { // Also kill local RTP uobjects linked to this lobby.
+      for(var o: l.localSlotNames)
+      {
+        if (l.getSlot(o).isA(URTP))
+          l.getSlot(o).destroy;
       }
     }
   };

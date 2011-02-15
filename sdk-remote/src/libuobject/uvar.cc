@@ -177,13 +177,7 @@ namespace urbi
     std::string rLinkName = linkName + "_l";
     URBI_SEND_COMMAND_C(*outputStream,
       "var " << rLinkName <<" = URTP.new|\n"
-      << rLinkName << ".sourceContext = lobby.uid|\n"
-      << "disown({var t = Tag.new | t:at(Lobby.onDisconnect?(lobby))\n"
-      << "{\n"
-      << "  wall(\" destroying lRTP...\")|\n"
-      << "  try { " << rLinkName << ".destroy} catch {}|\n"
-      << "  t.stop\n"
-      << "}})|");
+      << rLinkName << ".sourceContext = lobby.uid|\n");
     // Now asynchronously ask the remote object to listen and to report
     // the port number.
     GD_SINFO_TRACE("fetching engine listen port...");

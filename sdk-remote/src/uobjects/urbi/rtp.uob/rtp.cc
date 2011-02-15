@@ -212,6 +212,7 @@ URTP::URTP(const std::string& n)
  , groupChange(0)
  , sendMode_(false) // we don't know yet
 {
+  GD_FINFO_DUMP("URTP::URTP on %s", this);
   UBindFunction(URTP, init);
   static bool ortpInit = false;
   if (!ortpInit)
@@ -236,7 +237,10 @@ URTP::URTP(const std::string& n)
 
 URTP::~URTP()
 {
+  GD_FINFO_DUMP("URTP::~URTP on %s", this);
   libport::BlockLock bl(lock);
+  foreach(GroupedVars::value_type& v, groupedVars)
+    delete v.second;
   groupedVars.clear();
   delete groupChange;
   delete writeTo;
@@ -737,6 +741,7 @@ void URTP::unGroupedSendVar(UVar& v)
   libport::BlockLock bl(lock);
   GD_SINFO_DEBUG("testuvar unis" << groupedVars[v.get_name()]);
   groupedVars[v.get_name()]->unnotify();
+  delete groupedVars[v.get_name()];
   groupedVars.erase(v.get_name());
 }
 
