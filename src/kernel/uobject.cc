@@ -414,6 +414,7 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
                                      urbi::UGenericCallback* ugc,
                                      std::string traceName)
 {
+  GD_FPUSH_TRACE("Calling bound notify %s", traceName);
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
   bound_context.push_back(std::make_pair(
       (&ugc->owner)? ugc->owner.__name:"unknown",
@@ -422,7 +423,7 @@ static rObject wrap_ucallback_notify(const object::objects_type& ol ,
   urbi::impl::KernelUGenericCallbackImpl& impl =
     static_cast<urbi::impl::KernelUGenericCallbackImpl&>  (*ugc->impl_);
   bool dummy = false;
-  FINALLY(((bool, dummy)), bound_context.pop_back());
+  FINALLY(((bool, dummy)), bound_context.pop_back(); GD_INFO_TRACE("Done"));
   urbi::UList l;
   l.array << new urbi::UValue();
   // Decide whether we use the closed UVar, or the one given in arguments.
@@ -460,6 +461,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
                               urbi::UGenericCallback* ugc,
                               const std::string& message, bool withThis)
 {
+  GD_FPUSH_TRACE("Calling bound function %s", message);
   urbi::UList l;
   l.array.reserve(ol.size() - (withThis?1:0));
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
@@ -479,7 +481,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
       (&ugc->owner)? ugc->owner.__name:"unknown",
       ugc->name
       ));
-  FINALLY(((bool, tail)), bound_context.pop_back());
+  FINALLY(((bool, tail)), bound_context.pop_back();GD_INFO_DUMP("Done"));
   try
   {
     // This if is there to optimize the synchronous case.
@@ -1148,6 +1150,7 @@ namespace urbi
     void
     KernelUVarImpl::initialize(UVar* owner)
     {
+      GD_FINFO_TRACE("KernelUVarImpl::init %s", owner->get_name());
       if (server().isAnotherThread())
       {
         schedule(SYMBOL(UObject),boost::bind(&KernelUVarImpl::initialize, this,
@@ -1204,6 +1207,7 @@ namespace urbi
     }
     void KernelUVarImpl::clean()
     {
+      GD_FINFO_TRACE("KernelUVarImpl::clean %s", owner_->get_name());
       // Called by the owner UVar's destructor.
       // Block destruction until all pending operations are finished
       if (server().isAnotherThread())

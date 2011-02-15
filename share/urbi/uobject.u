@@ -658,6 +658,7 @@ class Global.'external'
     }|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
+    var chan.source = objname|
     function cloner()
     {
       var u = "object".fresh|
@@ -920,6 +921,7 @@ class Global.'external'
     var functionName = objname + "." + fname|
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
+    var chan.source = functionName |
     function f(var args[])
     {
       // Just to be safe, do not rely on asString for UObject and UVar

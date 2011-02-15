@@ -74,6 +74,8 @@ namespace urbi
            i != callbacks.end(); ++i)
       {
         bool failed = true;
+        GD_FINFO_DUMP("Calling notify on %s with %s args  ", i->second,
+                      args.size());
         try
         {
           r.apply(i->second, SYMBOL(NOTIFY), args);

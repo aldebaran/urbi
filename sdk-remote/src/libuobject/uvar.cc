@@ -40,6 +40,8 @@ namespace urbi
   void
   RemoteUVarImpl::initialize(UVar* owner)
   {
+    GD_FINFO_TRACE("RemoteUVarImpl::initialize %s %s", owner->get_name(),
+                   this);
     owner_ = owner;
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     client_ = ctx->backend_;
@@ -423,6 +425,8 @@ namespace urbi
 
   void RemoteUVarImpl::unnotify()
   {
+    GD_FINFO_TRACE("RemoteUVarImpl::unnotify on %s (%s)", owner_->get_name(),
+                   this);
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     std::string name = owner_->get_name();
     size_t p = name.find_first_of(".");
