@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -20,26 +20,6 @@ requireFile("urbi/range-iterable.u");
 do (List)
 {
   protos = [Global.RangeIterable, Global.Container];
-
-  function '=='(var that)
-  {
-    try
-    {
-      if (size != that.size)
-        return false|
-      for| (var i : size)
-        if (this[i] != that[i])
-          return false|
-    }
-    catch
-    {
-      false
-    }
-    else
-    {
-      true
-    };
-  };
 
   function '<'(var that)
   {

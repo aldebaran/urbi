@@ -68,6 +68,7 @@ namespace urbi
       rList   operator+   (const rList& rhs);
       rList   operator+=  (const rList& rhs);
       rList   operator*   (unsigned int times) const;
+      bool    operator==  (List* rhs) const;
       rObject operator[]  (const rFloat& idx);
 
     private:

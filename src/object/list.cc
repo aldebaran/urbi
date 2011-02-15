@@ -82,6 +82,7 @@ namespace urbi
       DECLARE(SBL_SBR_EQ,     set             );
       DECLARE(PLUS,           operator+       );
       DECLARE(PLUS_EQ,        operator+=      );
+      DECLARE(EQ_EQ,          operator==      );
       DECLARE(insert,         insert          );
       DECLARE(insertBack,     insertBack      );
       DECLARE(insertFront,    insertFront     );
@@ -177,6 +178,25 @@ namespace urbi
       if (mutated)
         changed();
       return this;
+    }
+
+    bool
+    List::operator == (List* rhs) const
+    {
+      try
+      {
+        if (rhs->size() != size())
+          return false;
+        for (unsigned i = 0; i < content_.size(); ++i)
+          if (!from_urbi<bool>(content_[i]->call(SYMBOL(EQ_EQ),
+                                                 rhs->content_[i])))
+            return false;
+      }
+      catch (UrbiException& e)
+      {
+        return false;
+      }
+      return true;
     }
 
     rList List::operator+=(const rList& rhs)
