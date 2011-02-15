@@ -357,6 +357,7 @@ namespace urbi
       DECLARE(updateSlot         , &Object::urbi_updateSlot);
 #undef DECLARE
 
+      Object::proto->bind(SYMBOL(refCount),     &Object::counter_get);
       Object::proto->bind(SYMBOL(addProto),     &Object::addProto);
       Object::proto->bind(SYMBOL(hash),         &Object::hash);
       Object::proto->bind(SYMBOL(removeProto),  &Object::removeProto);
