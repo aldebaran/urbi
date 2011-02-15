@@ -200,13 +200,13 @@ namespace urbi
            static_cast<void (Logger::*)(libport::debug::category_type, rObject)>
            (&Logger::init));
 
-#define DECLARE(Name)                                                   \
-      bind(SYMBOL(Name),                                                \
-           static_cast<rObject (Logger::*)(const std::string&,          \
-                                           const std::string&)>         \
-           (&Logger::Name));                                            \
-      bind(SYMBOL(Name),                                                \
-           static_cast<rObject (Logger::*)(const std::string&)>         \
+#define DECLARE(Name)                                           \
+      bind(SYMBOL_(Name),                                       \
+           static_cast<rObject (Logger::*)(const std::string&,  \
+                                           const std::string&)> \
+           (&Logger::Name));                                    \
+      bind(SYMBOL_(Name),                                       \
+           static_cast<rObject (Logger::*)(const std::string&)> \
            (&Logger::Name))
 
       DECLARE(debug);
@@ -219,15 +219,15 @@ namespace urbi
 #undef DECLARE
 
 #define DECLARE(Name, Cxx)                      \
-      bind(SYMBOL(Name), &Logger::Cxx)
+      bind(SYMBOL_(Name), &Logger::Cxx)
 
       DECLARE(asPrintable, as_printable);
       DECLARE(LT_LT_, operator<<);
 #undef DECLARE
 
 
-#define DECLARE(Name)                                                   \
-      bind(SYMBOL(Name), &Logger::Name)
+#define DECLARE(Name)                           \
+      bind(SYMBOL_(Name), &Logger::Name)
 
       DECLARE(onEnter);
       DECLARE(onLeave);
