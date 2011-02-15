@@ -15,12 +15,12 @@ do (InputStream)
 {
   function asList()
   {
-    var l;
-    var res = [];
-    for (l = getLine.acceptVoid;
+    var l|
+    var res = []|
+    for| (l = getLine.acceptVoid;
          !l.isVoid;
          l = getLine.acceptVoid)
-      res << l;
-    return res;
+      res << l|
+    res
   };
 };
