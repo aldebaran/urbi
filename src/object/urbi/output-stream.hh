@@ -11,7 +11,7 @@
 #ifndef OBJECT_OUTPUT_STREAM_HH
 # define OBJECT_OUTPUT_STREAM_HH
 
-# include <object/stream.hh>
+# include <object/urbi/stream.hh>
 
 namespace urbi
 {

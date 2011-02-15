@@ -51,7 +51,6 @@
 #include <object/semaphore.hh>
 #include <object/server.hh>
 #include <object/socket.hh>
-#include <object/stream.hh>
 #include <object/symbols.hh>
 #include <object/system.hh>
 #include <object/uvalue.hh>
@@ -102,25 +101,13 @@ namespace urbi
 
 # include <object/format-info.hh>
 # include <object/formatter.hh>
-# include <object/input-stream.hh>
-# include <object/output-stream.hh>
-# include <object/process.hh>
-# include <object/regexp.hh>
 
 namespace urbi
 {
   namespace object
   {
-
-    URBI_CXX_OBJECT_REGISTER(Stream);
-    URBI_CXX_OBJECT_REGISTER(OutputStream);
-    URBI_CXX_OBJECT_REGISTER(InputStream);
-# if !defined WIN32
-    URBI_CXX_OBJECT_REGISTER(Process);
-# endif
-    URBI_CXX_OBJECT_REGISTER(Regexp);
-    URBI_CXX_OBJECT_REGISTER(Formatter);
     URBI_CXX_OBJECT_REGISTER(FormatInfo);
+    URBI_CXX_OBJECT_REGISTER(Formatter);
   } // namespace object
 } // namespace urbi
 #endif

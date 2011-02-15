@@ -13,7 +13,7 @@
 
 # include <libport/cstdio>
 
-# include <object/stream.hh>
+# include <object/urbi/stream.hh>
 
 namespace urbi
 {

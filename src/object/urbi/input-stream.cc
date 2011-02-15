@@ -17,8 +17,8 @@
 #include <libport/format.hh>
 
 #include <urbi/object/file.hh>
-#include <object/input-stream.hh>
-#include <object/output-stream.hh>
+#include <object/urbi/input-stream.hh>
+#include <object/urbi/output-stream.hh>
 #include <object/symbols.hh>
 
 #include <urbi/sdk.hh>

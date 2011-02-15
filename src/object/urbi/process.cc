@@ -23,9 +23,9 @@
 #include <libport/thread.hh>
 #include <libport/unistd.h>
 
-#include <object/input-stream.hh>
-#include <object/output-stream.hh>
-#include <object/process.hh>
+#include <object/urbi/input-stream.hh>
+#include <object/urbi/output-stream.hh>
+#include <object/urbi/process.hh>
 #include <object/symbols.hh>
 #include <urbi/sdk.hh>
 
@@ -42,6 +42,11 @@ namespace urbi
 {
   namespace object
   {
+
+    /*-----------------.
+    | Implementation.  |
+    `-----------------*/
+
     typedef std::vector<rProcess> processes_type;
     static processes_type processes;
     static libport::Lockable mutex;
@@ -106,7 +111,7 @@ namespace urbi
       proto_add(model);
     }
 
-    URBI_CXX_OBJECT_INIT(Process)
+    URBI_CXX_OBJECT_REGISTER_INIT(Process)
       : name_(libport::path("true").basename())
       , pid_(0)
       , binary_("/bin/true")

@@ -42,6 +42,7 @@ to clone \lstinline|Logger| defining a category and/or a level of debug.
 \begin{urbiscript}
 Logger.log("foo");
 [        Logger         ] foo
+[00004702] Logger<Logger>
 
 Logger.log("foo", "Category") |;
 [       Category        ] foo
@@ -49,7 +50,7 @@ Logger.log("foo", "Category") |;
 var l = Logger.new("Category2");
 [00004703] Logger<Category2>
 
-l.log("foo") |;
+l.log("foo")|;
 [       Category2       ] foo
 
 l.log("foo", "ForcedCategory") |;
@@ -70,6 +71,7 @@ l = Logger.new("Category", Logger.Levels.Log);
 [00090939] Logger<Category>
 l << "foo";
 [       Category        ] foo
+[00091939] Logger<Category>
 \end{urbiscript}
 
 \item[debug](<message>, <category> = category)%

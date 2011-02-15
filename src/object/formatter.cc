@@ -17,6 +17,11 @@ namespace urbi
 {
   namespace object
   {
+
+    /*-----------------.
+    | Implementation.  |
+    `-----------------*/
+
     Formatter::Formatter()
       : data_(new List)
     {

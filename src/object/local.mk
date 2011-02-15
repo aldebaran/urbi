@@ -27,7 +27,7 @@ precompiled_symbols_hh_sources =		\
                $(FROM_UGRAMMAR_Y)		\
                $(FROM_UTOKEN_L)			\
 	       ast/ignores,			\
-        $(dist_libuobject@LIBSFX@_la_SOURCES))
+        $(SOURCES))
 EXTRA_DIST += object/symbols-generate.pl
 
 $(precompiled_symbols_stamp): object/symbols-generate.pl $(precompiled_symbols_hh_sources)
@@ -128,31 +128,13 @@ dist_libuobject@LIBSFX@_la_SOURCES +=		\
   object/vector-slots.hxx
 
 if !COMPILATION_MODE_SPACE
+  # urbi/format.
   dist_libuobject@LIBSFX@_la_SOURCES +=		\
     object/format-info.cc			\
     object/format-info.hh			\
     object/format-info.hxx			\
     object/formatter.cc				\
-    object/formatter.hh				\
-    object/input-stream.cc			\
-    object/input-stream.hh			\
-    object/output-stream.cc			\
-    object/output-stream.hh			\
-    object/regexp.cc				\
-    object/regexp.hh				\
-    object/stream.cc				\
-    object/stream.hh
-
-# Too hard currently...
-if !WIN32
-  dist_libuobject@LIBSFX@_la_SOURCES +=		\
-    object/process.cc				\
-    object/process.hh
-endif !WIN32
+    object/formatter.hh
 endif !COMPILATION_MODE_SPACE
 
-
-# FIXME: standalone object to build as shared libraries.
-#  object/logger.cc
-#  object/logger.hh
-
+include object/urbi/local.mk

@@ -14,7 +14,6 @@
  */
 #include <urbi/object/fwd.hh>
 #include <object/object-class.hh>
-#include <object/output-stream.hh>
 #include <object/root-classes.hh>
 #include <object/semaphore.hh>
 #include <object/server.hh>

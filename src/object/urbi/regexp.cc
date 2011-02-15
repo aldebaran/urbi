@@ -12,13 +12,18 @@
 #include <libport/format.hh>
 #include <libport/lexical-cast.hh>
 
-#include <object/regexp.hh>
+#include <object/urbi/regexp.hh>
 #include <object/symbols.hh>
 
 namespace urbi
 {
   namespace object
   {
+
+    /*-----------------.
+    | Implementation.  |
+    `-----------------*/
+
     Regexp::Regexp(const std::string& r)
       : re_(r)
     {
@@ -31,7 +36,7 @@ namespace urbi
       proto_add(model);
     }
 
-    URBI_CXX_OBJECT_INIT(Regexp)
+    URBI_CXX_OBJECT_REGISTER_INIT(Regexp)
       : re_(".")
     {
 # define DECLARE(Urbi, Cxx)            \

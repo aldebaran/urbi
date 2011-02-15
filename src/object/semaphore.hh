@@ -16,6 +16,7 @@
 #ifndef OBJECT_SEMAPHORE_HH
 # define OBJECT_SEMAPHORE_HH
 
+# include <urbi/object/cxx-object.hh>
 # include <urbi/object/fwd.hh>
 # include <sched/fwd.hh>
 

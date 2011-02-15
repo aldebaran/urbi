@@ -18,8 +18,8 @@
 #include <libport/format.hh>
 
 #include <urbi/object/file.hh>
-#include <object/input-stream.hh>
-#include <object/output-stream.hh>
+#include <object/urbi/input-stream.hh>
+#include <object/urbi/output-stream.hh>
 #include <object/symbols.hh>
 
 #include <urbi/runner/raise.hh>
@@ -44,7 +44,6 @@ namespace urbi
       : Stream(STDOUT_FILENO, false)
     {
       proto_add(Stream::proto);
-
 # define DECLARE(Name, Cxx)                     \
       bind(SYMBOL_(Name), &OutputStream::Cxx)
 

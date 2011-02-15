@@ -64,12 +64,6 @@ requireFile("urbi/enumeration.u");
 requireFile("urbi/event.u");
 requireFile("urbi/float.u");
 requireFile("urbi/group.u");
-if (!System.Platform.compilationModeSpace)
-{
-  requireFile("urbi/formatter.u");
-  requireFile("urbi/input-stream.u");
-  requireFile("urbi/regexp.u");
-};
 requireFile("urbi/kernel1.u");
 requireFile("urbi/job.u");
 requireFile("urbi/lobby.u");
@@ -99,6 +93,17 @@ requireFile("urbi/uobject.u");
 
 if ("ros" in Platform.enabledModules && System.getenv("ROS_ROOT"))
   loadModule("urbi/ros");
+
+// These guys are loading modules via loadModule, which needs
+// UObject.searchPath, which is defined by urbi/uobject.u.
+if (!System.Platform.compilationModeSpace)
+{
+  requireFile("urbi/formatter.u");
+  requireFile("urbi/input-stream.u");
+  requireFile("urbi/logger.u");
+  requireFile("urbi/process.u");
+  requireFile("urbi/regexp.u");
+};
 
 // This variable is used by initialization code to detect the end of
 // urbi.u.

@@ -13,11 +13,12 @@
 #include <fstream>
 #include <libport/sys/stat.h>
 #include <libport/sys/types.h>
-
 #include <libport/format.hh>
 
 #include <urbi/object/file.hh>
-#include <object/stream.hh>
+#include <object/urbi/stream.hh>
+#include <object/urbi/input-stream.hh>
+#include <object/urbi/output-stream.hh>
 #include <object/symbols.hh>
 
 #include <urbi/sdk.hh>
@@ -27,6 +28,16 @@ namespace urbi
 {
   namespace object
   {
+
+    /*--------------.
+    | Registering.  |
+    `--------------*/
+
+    URBI_CXX_OBJECT_REGISTER(Stream);
+    URBI_CXX_OBJECT_REGISTER(InputStream);
+    URBI_CXX_OBJECT_REGISTER(OutputStream);
+
+
     /*-----------------------------.
     | Construction / Destruction.  |
     `-----------------------------*/
