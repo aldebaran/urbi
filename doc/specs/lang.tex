@@ -3354,6 +3354,68 @@ sleep(1.5s) | assert(!x_was_two_for_two_seconds);
 x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
 \end{urbiscript}
 
+\subsubsection{Synchronous and asynchronous \lstinline'at'}
+
+By default, \lstinline{at} is asynchronous: the enter and leave actions are
+executed in detached jobs and won't interfere with the execution flow of the
+job that triggered it.
+
+\begin{urbiscript}[firstnumber=1]
+var e = Event.new;
+[00000001] Event_0xADDR
+
+at (e?)
+{
+  sleep(1s);
+  echo("in");
+}
+onleave
+{
+  sleep(2s);
+  echo("out");
+};
+
+e!;
+// Actions are triggered in the background and won't block
+// the execution flow.
+sleep(500ms);
+echo("Not blocked");
+[00000002] *** Not blocked
+sleep(1s);
+[00000003] *** in
+echo("Not blocked");
+[00000004] *** Not blocked
+sleep(500ms);
+[00000003] *** out
+\end{urbiscript}
+
+When using the \lstinline{sync} keyword after \lstinline{at}, it becomes
+synchronous: when a job triggers it, all enter and leave actions are
+executed synchronously before the triggering statement returns.
+
+\begin{urbiscript}[firstnumber=1]
+var e = Event.new;
+[00000001] Event_0xADDR
+
+at sync (e?)
+{
+  sleep(1s);
+  echo("in");
+}
+onleave
+{
+  sleep(1s);
+  echo("out");
+};
+
+e!;
+// Actions are triggered synchronously, the next line will be executed
+// when they're done.
+echo("Blocked");
+[00000002] *** in
+[00000003] *** out
+[00000004] *** Blocked
+\end{urbiscript}
 
 \subsubsection{Scoping at \lstinline'at'}
 
