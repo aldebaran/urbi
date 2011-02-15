@@ -1035,6 +1035,7 @@ namespace urbi
         o = ::urbi::uobjects::uobject_make_proto(owner->__name);
         where->slot_set(Symbol(owner->__name), o);
       }
+      o->slot_set(SYMBOL(lobby), kernel::runner().lobby_get());
     }
 
     void

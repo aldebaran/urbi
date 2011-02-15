@@ -116,6 +116,10 @@ namespace urbi
       void markDataSent();
       USyncClient* backend_;
 
+      /** Return the name of the hook-point UObject for UVar notifies with
+       *  unknown source.
+       */
+      std::string hookPointName();
       /// True if we received a clientError message.
       bool closed_;
 #define TABLE(Type, Name)                       \
@@ -170,6 +174,8 @@ namespace urbi
       bool serializationMode;
       libport::serialize::BinaryOSerializer* oarchive;
       libport::PackageInfo::Version version;
+      // Name of the hook-point UObject for UVars.
+      std::string hookPointName_;
       #define URBI_REMOTE_RTP_INIT_CHANNEL "__remote_rtp_init"
     };
 

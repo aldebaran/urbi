@@ -51,6 +51,19 @@ GD_CATEGORY(Urbi.LibUObject);
     }                                           \
   } while (false)
 
+class HookPoint: public urbi::UObject
+{
+public:
+  HookPoint(const std::string&n, urbi::impl::UContextImpl* impl)
+  : UObject(n, impl)
+  {
+    UBindFunction(HookPoint, init);
+  }
+  int init()
+  {
+    return 1;
+  }
+};
 namespace urbi
 {
   UObjectMode running_mode()
@@ -138,6 +151,14 @@ namespace urbi
       , serializationMode(false)
       , oarchive(0)
     {
+      hookPointName_ = libport::format("hookPoint_%s_%s",
+                                       getFilteredHostname(),
+ #ifdef __UCLIBC__
+   "default"
+#else
+   getpid()
+#endif
+      );
       backend_->setCallback(callback(*this, &RemoteUContextImpl::dispatcher),
                            externalModuleTag.c_str());
       backend_->setClientErrorCallback(callback(*this,
@@ -183,10 +204,20 @@ namespace urbi
       GD_FINFO_DEBUG("Remote kernel reference timestamp: %s.",
                      to_simple_string(ref));
       GD_FINFO_DEBUG("Remote kernel version: %s", version);
+      // Connect hookPoint
+      setCurrentContext(this);
+      new HookPoint(hookPointName_, const_cast<RemoteUContextImpl*>(this));
+      URBI_SEND_COMMAND_C(*outputStream, "var hookPoint = "
+                          + hookPointName_+"|");
     }
 
     RemoteUContextImpl::~RemoteUContextImpl()
     {}
+
+    std::string RemoteUContextImpl::hookPointName()
+    {
+      return hookPointName_;
+    }
 
     USyncClient*
     RemoteUContextImpl::getClient()

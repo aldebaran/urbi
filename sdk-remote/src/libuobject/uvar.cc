@@ -53,8 +53,8 @@ namespace urbi
                             << name);
     URBI_SEND_PIPED_COMMAND_C
           ((*outputStream),
-           libport::format("external var %s from dummy",
-                           owner_->get_name()));
+           libport::format("external var %s from %s",
+                           owner_->get_name(), ctx->hookPointName()));
     ctx->markDataSent();
   }
 

@@ -833,13 +833,20 @@ class Global.'external'
     var chan = Channel.new(MODULE_TAG)|
     var chan.lobby = lobby|
     var fullname = objname + "." + varname|
+    var chan.source = fullname +" " + uob.protos[0].asString|
     // Construct the callback function
-    function f()
+    function f(args[])
     {
       // If source is the current lobby, loopback took care of notification
       if (lobby == chan.lobby && currentRunner.hasLocalSlot("$uobjectInUpdate"))
         return|
-      var uvar = uob.getSlot(varname) |
+      var uvar =
+      {
+        if (!args.size)
+          uob.getSlot(varname)
+        else
+          args[0]
+      }|
       var v = uvar.getSlot({if (uvar.owned) "valsensor" else "val"})
         .apply([uvar])
         .acceptVoid.uvalueSerialize  |
@@ -857,8 +864,15 @@ class Global.'external'
     }
     else// Or use an intermediate UConnection and InputPort to handle disconnect
     {
-      var o = uobjects.getSlot(fr)|
-      assert(o.lobby == lobby) |
+      // Try to put the port into source UObject if it exists, or lobby.
+      var o;
+      if (!uobjects.hasSlot(fr) || uobjects.getSlot(fr).lobby != lobby)
+      {
+        wall("Invalid source uobject in 'external var'")|
+        o = lobby.hookPoint
+      }
+      else
+        o = uobjects.getSlot(fr)|
       var iportname = fullname.replace(".", "_")|
       if (!o.hasLocalSlot(iportname))
       {
