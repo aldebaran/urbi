@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -38,16 +38,19 @@ class Global.Binary
   function asString()
   {
     if (this === Binary)
-      return "Binary" |
-    var res = "BIN " + data.size |
-    if (!keywords.empty)
-      res += " " + keywords |
-    // The way the data is separated from the header differs depending
-    // on whether the information is sent to the kernel, or send by it
-    // it.  This is tightly related to the liburbi protocol, don't
-    // play foolish games here.
-    res += "\n" + data |
-    res
+      "Binary"
+    else
+    {
+      var res = "BIN " + data.size |
+      if (!keywords.empty)
+        res += " " + keywords |
+      // The way the data is separated from the header differs depending
+      // on whether the information is sent to the kernel, or send by it
+      // it.  This is tightly related to the liburbi protocol, don't
+      // play foolish games here.
+      res += "\n" + data |
+      res
+    }
   };
 
   function copy()

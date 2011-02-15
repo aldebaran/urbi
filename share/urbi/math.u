@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -39,8 +39,8 @@ class Global.Math
 
   function atan2(x, y)  { x.atan2(y) };
 
-  function min(var args[]) { return args.min };
-  function max(var args[]) { return args.max };
+  function min(var args[]) { args.min };
+  function max(var args[]) { args.max };
 
   for (var v: ["inf", "nan", "pi"])
     setSlot(v, Float.getSlot(v));

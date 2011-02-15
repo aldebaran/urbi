@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -21,7 +21,7 @@ do (Event)
       res! |
     at (rhs?)
       res! |
-    return res
+    res
   };
 
   // This function does not handle events that have a duration because
@@ -63,6 +63,6 @@ do (Event)
         handler = nil
       }
     } |
-    return res
+    res
   };
 };

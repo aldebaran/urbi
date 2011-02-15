@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -488,21 +488,22 @@ var uobjects.DataFlow = UObject.new | do (uobjects.DataFlow)
     var ngraph = filterRTC(addStats(makeGraph));
     if (makeShortGraph)
       ngraph = shortGraph(ngraph)|
-    if (ngraph.asString.size == graph.asString.size)
-      return;
-    graph = ngraph;
-    var d = dotify(graph);
-    var f = File.create("/tmp/dataflow.dot");
-    f.remove;
-    OutputStream.new(f) << d;
-    var p = Process.new("neato", ["-Tjpeg", "/tmp/dataflow.dot"]);
-    p.runTo("/tmp/dataflow.jpg");
-    waituntil(p.done);
-    //sleep(300ms);
-    var content = File.new("/tmp/dataflow.jpg").content;
-    File.new("/tmp/dataflow.jpg").remove;
-    content.keywords = "jpeg 100 100";
-    val = content;
+    if (ngraph.asString.size != graph.asString.size)
+    {
+      graph = ngraph;
+      var d = dotify(graph);
+      var f = File.create("/tmp/dataflow.dot");
+      f.remove;
+      OutputStream.new(f) << d;
+      var p = Process.new("neato", ["-Tjpeg", "/tmp/dataflow.dot"]);
+      p.runTo("/tmp/dataflow.jpg");
+      waituntil(p.done);
+      //sleep(300ms);
+      var content = File.new("/tmp/dataflow.jpg").content;
+      File.new("/tmp/dataflow.jpg").remove;
+      content.keywords = "jpeg 100 100";
+      val = content;
+    }
   };
 
   function run(period)

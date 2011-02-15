@@ -111,9 +111,8 @@ do (Global.Dictionary)
   // Pattern matching.
   function matchAgainst(handler, pattern)
   {
-    if (!pattern.isA(Dictionary))
-      false
-    else
+    pattern.isA(Dictionary)
+    &&
     {
       for| (var k: pattern.keys)
         if (!has(k) || !handler.matchPattern(pattern[k], this[k]))
