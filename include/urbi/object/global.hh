@@ -33,6 +33,7 @@ namespace urbi
     /// Initialize the Global class.
     void global_class_initialize();
 
+    URBI_SDK_API
     rObject capture(libport::Symbol name, const rObject& from);
   }; // namespace object
 }

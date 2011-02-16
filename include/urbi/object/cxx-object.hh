@@ -177,6 +177,7 @@ namespace urbi
   }
 
   typedef boost::function0<void> Initialization;
+  URBI_SDK_API
   int initialization_register(const Initialization& action);
 
 # define URBI_INITIALIZATION_REGISTER(Action)                           \
