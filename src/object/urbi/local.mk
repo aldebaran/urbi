@@ -6,8 +6,7 @@
 ##
 ## See the LICENSE file for more information.
 
-urbi_uobjects_LTLIBRARIES =
-
+# Common flags.
 urbi_uobjects_LDFLAGS = $(AM_LDFLAGS) -module -avoid-version
 urbi_uobjects_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK
 # See the comment in src/Makefile.am.
@@ -16,6 +15,10 @@ if WIN32
 urbi_uobjects_LDFLAGS += -no-undefined
 urbi_uobjects_LIBADD = libuobject@LIBSFX@.la
 endif WIN32
+
+EXTRA_DIST += object/urbi/symbols.hh
+
+urbi_uobjects_LTLIBRARIES =
 
 # urbi/logger.
 urbi_uobjects_LTLIBRARIES += object/urbi/logger.la

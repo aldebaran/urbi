@@ -20,7 +20,7 @@
 #include <urbi/object/file.hh>
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>
-#include <object/symbols.hh>
+#include <object/urbi/symbols.hh>
 
 #include <urbi/runner/raise.hh>
 
@@ -44,10 +44,12 @@ namespace urbi
       : Stream(STDOUT_FILENO, false)
     {
       proto_add(Stream::proto);
+      // Spurious spaces to avoid static check on Symbol uses.
+      bind(libport::Symbol( "<<" ), &OutputStream::put);
+
 # define DECLARE(Name, Cxx)                     \
       bind(SYMBOL_(Name), &OutputStream::Cxx)
 
-      DECLARE(LT_LT, put);
       DECLARE(flush, flush);
       DECLARE(init,  init);
       DECLARE(put,   putByte);

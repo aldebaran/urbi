@@ -11,7 +11,8 @@
 #include <runner/interpreter.hh>
 #include <urbi/object/enumeration.hh>
 
-#include "logger.hh"
+#include <object/urbi/symbols.hh>
+#include <object/urbi/logger.hh>
 
 namespace urbi
 {
@@ -222,9 +223,9 @@ namespace urbi
       bind(SYMBOL_(Name), &Logger::Cxx)
 
       DECLARE(asPrintable, as_printable);
-      DECLARE(LT_LT_, operator<<);
 #undef DECLARE
 
+      bind(libport::Symbol( "<<" ), &Logger::operator<<);
 
 #define DECLARE(Name)                           \
       bind(SYMBOL_(Name), &Logger::Name)

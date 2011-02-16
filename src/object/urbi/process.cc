@@ -26,7 +26,7 @@
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>
 #include <object/urbi/process.hh>
-#include <object/symbols.hh>
+#include <object/urbi/symbols.hh>
 #include <urbi/sdk.hh>
 
 #define XRUN(Function, Args)                    \

@@ -19,7 +19,7 @@
 #include <urbi/object/file.hh>
 #include <object/urbi/input-stream.hh>
 #include <object/urbi/output-stream.hh>
-#include <object/symbols.hh>
+#include <object/urbi/symbols.hh>
 
 #include <urbi/sdk.hh>
 #include <urbi/runner/raise.hh>

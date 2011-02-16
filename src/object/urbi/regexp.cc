@@ -13,7 +13,7 @@
 #include <libport/lexical-cast.hh>
 
 #include <object/urbi/regexp.hh>
-#include <object/symbols.hh>
+#include <object/urbi/symbols.hh>
 
 namespace urbi
 {
@@ -39,6 +39,8 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER_INIT(Regexp)
       : re_(".")
     {
+      bind(libport::Symbol( "[]" ), &Regexp::operator[]);
+
 # define DECLARE(Urbi, Cxx)            \
       bind(SYMBOL_(Urbi), &Regexp::Cxx)
 
@@ -47,8 +49,6 @@ namespace urbi
       DECLARE(init,        init);
       DECLARE(match,       match);
       DECLARE(matches,     matches);
-      DECLARE(SBL_SBR,     operator[]);
-
 # undef DECLARE
     }
 
