@@ -19,7 +19,7 @@
 # include <urbi/export.hh>
 # include <urbi/object/global.hh>
 
-# define URBI_ENUM_PUSH(Elt)                            \
+# define URBI_ENUM_PUSH(R, D, Elt)                      \
   values << BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt));
 
 # define URBI_ENUM_DECLARE(Name)                                        \
@@ -89,9 +89,7 @@
     ::urbi::object::rObject dest =                                      \
         ::urbi::object::resolve_namespace(name);                        \
     std::vector<std::string> values;                                    \
-    LIBPORT_LIST_FLATTEN                                                \
-      (LIBPORT_LIST_MAP(URBI_ENUM_PUSH,                                 \
-                        LIBPORT_LIST(__VA_ARGS__,)));                   \
+    BOOST_PP_SEQ_FOR_EACH(URBI_ENUM_PUSH, LIBPORT_LIST(__VA_ARGS__,));  \
     CAPTURE_GLOBAL(Enumeration);                                        \
     ::urbi::object::rObject e = Enumeration->call                       \
         ("new",                                                         \
