@@ -77,21 +77,22 @@ class Global.Profile
     }) |
 
     var str = "Profile(\n"
-              "  %-15s %4s: %s\n"
-              "  %-15s %4s: %-6.2f\n"
-              "  %-15s %4s: %-6.2f\n"
-              "  %-15s %4s: %s\n"
-              "  %-15s %4s: %s\n\n"
+              "  %-15s %4s: %6s\n"
+              "  %-15s %4s: %6.2f\n"
+              "  %-15s %4s: %6.2f\n"
+              "  %-15s %4s: %6s\n"
+              "  %-15s %4s: %6s\n\n"
               % ["Yields",          "",                   yields,
                  "Total time",      "(%s)" % timeUnit[1], totalTime,
                  "Wall-clock time", "(%s)" % timeUnit[1], wallClockTime,
                  "Function calls",  "",                   totalCalls,
                  "Max depth",       "",                   maxFunctionCallDepth] |
-    str += "  .-------------------------------------------------------------------.\n"
-           "  |   function   |   %%    | cumulative |  self  |  calls  |   self    |\n"
-           "  |              |        |    (%s)    |  (%s)  |         | (%s/call) |\n"
-           "  |--------------+--------+------------+--------+---------+-----------|\n"
-           % [timeUnit[1], timeUnit[1], selfTimePerUnit[1]] |
+    str +=
+    "  .-------------------------------------------------------------------.\n"
+    "  |   function   |   %%    | cumulative |  self  |  calls  |   self    |\n"
+    "  |              |        |    (%s)    |  (%s)  |         | (%s/call) |\n"
+    "  |--------------+--------+------------+--------+---------+-----------|\n"
+    % [timeUnit[1], timeUnit[1], selfTimePerUnit[1]] |
 
     var cumulative = 0 |
     for (var c: calls)

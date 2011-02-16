@@ -25,42 +25,33 @@ created by \refSlot[System]{profile} internal machinery.
 \begin{urbiscript}
 function Float.fact()
 {
-  if (this == 0 || this == 1)
+  if (this <= 1)
     this
   else
     this * (this - 1).fact;
 }|;
 var profile = System.profile(function() { 6.fact });
 [00009050] Profile(
-[:]  Yields                   : 0
-[:]  Total time (s)           : 0.000390
-[:]  Wall-clock time (s)      : 0.000390
-[:]  Function calls           : 16
-[:]  Max function call depth  : 5
+[:]  Yields              :      0
+[:]  Total time      (us):    337
+[:]  Wall-clock time (us):    337
+[:]  Function calls      :     23
+[:]  Max depth           :      8
 [:]
-[:]  .---------------------------------------------------------------.
-[:]  |   Function   |  Calls  |    Self time    |  Self time / call  |
-[:]  |              |         |       (us)      |        (us)        |
-[:]  |--------------+---------+-----------------+--------------------|
-[:]  |         echo |       1 |              67 |                 67 |
-[:]  |        apply |       1 |              64 |                 64 |
-[:]  |         send |       1 |              56 |                 56 |
-[:]  |        lobby |       2 |              47 |                 23 |
-[:]  |     asString |       1 |              34 |                 34 |
-[:]  |              |       1 |              22 |                 22 |
-[:]  |        apply |       1 |              21 |                 21 |
-[:]  |            + |       2 |              20 |                 10 |
-[:]  |      getSlot |       1 |              16 |                 16 |
-[:]  |            + |       1 |              16 |                 16 |
-[:]  |        lobby |       2 |              12 |                  6 |
-[:]  |     profiled |       1 |              10 |                 10 |
-[:]  |        Lobby |       2 |               5 |                  2 |
-[:]  |--------------+---------+-----------------+--------------------|
-[:]  |        Total |      16 |             390 |                347 |
-[:]  '--------------'---------'-----------------'--------------------'
+[:]  .-------------------------------------------------------------------.
+[:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
+[:]  |              |        |    (us)    |  (us)  |         | (us/call) |
+[:]  |--------------+--------+------------+--------+---------+-----------|
+[:]  |         fact |  63.20 |        213 |    213 |       6 |        35 |
+[:]  |           <= |  10.98 |        250 |     37 |       6 |         6 |
+[:]  |            - |   9.20 |        281 |     31 |       5 |         6 |
+[:]  |            * |   8.61 |        310 |     29 |       5 |         5 |
+[:]  |              |   4.75 |        326 |     16 |       1 |        16 |
+[:]  |     profiled |   3.26 |        337 |     11 |       1 |        11 |
+[:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
 profile.calls[0];
-[00123833] Function('fact', 6, 0.000436, 72)
+[00123833] Function('fact', 6, 213, 35)
 \end{urbiscript}
 
 \subsection{Slots}
