@@ -40,7 +40,7 @@ urbi_uobjects_LTLIBRARIES += object/urbi/regexp.la
 dist_object_urbi_regexp_la_SOURCES = object/urbi/regexp.cc object/urbi/regexp.hh
 object_urbi_regexp_la_CPPFLAGS = $(urbi_uobjects_CPPFLAGS)
 object_urbi_regexp_la_CXXFLAGS = $(urbi_uobjects_CXXFLAGS)
-object_urbi_regexp_la_LDFLAGS = $(urbi_uobjects_LDFLAGS)
+object_urbi_regexp_la_LDFLAGS = $(urbi_uobjects_LDFLAGS) $(BOOST_REGEX_LDFLAGS)
 object_urbi_regexp_la_LIBADD = $(BOOST_REGEX_LIBS)
 
 # urbi/stream.
