@@ -24,7 +24,7 @@ namespace urbi
 {
   namespace object
   {
-    class Barrier: public CxxObject
+    class URBI_SDK_API Barrier: public CxxObject
     {
     public:
       typedef std::list<sched::rJob> value_type;

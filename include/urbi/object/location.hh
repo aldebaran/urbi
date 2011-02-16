@@ -21,7 +21,7 @@ namespace urbi
   namespace object
   {
 
-    class Location: public CxxObject
+    class URBI_SDK_API Location: public CxxObject
     {
 
     /*---------------.

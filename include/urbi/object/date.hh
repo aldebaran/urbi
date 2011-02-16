@@ -26,7 +26,7 @@ namespace urbi
 {
   namespace object
   {
-    class Date: public CxxObject
+    class URBI_SDK_API Date: public CxxObject
     {
 
     /*---------------.

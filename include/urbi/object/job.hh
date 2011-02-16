@@ -25,7 +25,7 @@ namespace urbi
 {
   namespace object
   {
-    class Job : public object::CxxObject
+    class URBI_SDK_API Job : public object::CxxObject
     {
     public:
       typedef sched::rJob value_type;

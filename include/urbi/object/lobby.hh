@@ -28,7 +28,8 @@ namespace urbi
 {
   namespace object
   {
-    class Lobby: public CxxObject, public libport::InstanceTracker<Lobby>
+    class URBI_SDK_API Lobby
+      : public CxxObject, public libport::InstanceTracker<Lobby>
     {
     public:
       typedef kernel::UConnection connection_type;

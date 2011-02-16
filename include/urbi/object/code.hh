@@ -28,7 +28,7 @@ namespace urbi
 {
   namespace object
   {
-    class Code: public Executable
+    class URBI_SDK_API Code: public Executable
     {
     public:
       typedef Code self_type;

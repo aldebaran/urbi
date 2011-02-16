@@ -19,7 +19,7 @@ namespace urbi
 {
   namespace object
   {
-    class Duration: public Float
+    class URBI_SDK_API Duration: public Float
     {
     /*---------------.
     | Construction.  |

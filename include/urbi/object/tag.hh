@@ -24,7 +24,7 @@ namespace urbi
 {
   namespace object
   {
-    class Tag : public object::CxxObject
+    class URBI_SDK_API Tag : public object::CxxObject
     {
     public:
       typedef sched::rTag value_type;

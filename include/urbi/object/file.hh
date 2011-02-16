@@ -19,7 +19,7 @@ namespace urbi
 {
   namespace object
   {
-    class File: public CxxObject
+    class URBI_SDK_API File: public CxxObject
     {
 
     /*------------.
