@@ -156,19 +156,26 @@ namespace runner
     if (reg)
       call_stack_ << std::make_pair(msg, loc);
     void* profile_prev = 0;
+
     if (profile_)
     {
-      profile_->step();
-      profile_prev = profile_->function_current_;
-      profile_->function_current_ = function;
-      ++profile_->function_calls_;
-      ++profile_->function_call_depth_;
-      if (profile_->function_call_depth_ > profile_->function_call_depth_max_)
-        profile_->function_call_depth_max_ = profile_->function_call_depth_;
-      ++profile_->functions_profile_[function].calls_;
-      if (profile_->functions_profile_[function].name_.empty())
-        profile_->functions_profile_[function].name_ = msg;
+      if (profile_->wrapper_function_seen)
+      {
+        profile_->step();
+        profile_prev = profile_->function_current_;
+        profile_->function_current_ = function;
+        ++profile_->function_calls_;
+        ++profile_->function_call_depth_;
+        if (profile_->function_call_depth_ > profile_->function_call_depth_max_)
+          profile_->function_call_depth_max_ = profile_->function_call_depth_;
+        ++profile_->functions_profile_[function].calls_;
+        if (profile_->functions_profile_[function].name_.empty())
+          profile_->functions_profile_[function].name_ = msg;
+      }
+      else
+        profile_->wrapper_function_seen = true;
     }
+
     FINALLY(((call_stack_type&, call_stack_))((bool, reg))
             ((Profile*, profile_))((void*, profile_prev)),
             if (reg)

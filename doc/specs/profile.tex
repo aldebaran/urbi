@@ -21,17 +21,18 @@ piece of code.
 
 \lstinline|Profile| objects are not meant to be cloned as they are created
 by \refSlot[System]{profile} internal machinery. Lines are sorted by
-decreasing ``self time''.
+decreasing ``self time''. Note that the \lstinline|<profiled>| special
+function stands for the function given in parameter.
 
 \begin{urbiscript}
 var profile = System.profile(function() { echo("foo") });
 [00000001] *** foo
 [00001672] Profile(
-[:]  Yields              :      0
-[:]  Total time      (us):    112
+[:]  Yields:                    0
+[:]  Total time (us):         112
 [:]  Wall-clock time (us):    112
-[:]  Function calls      :     16
-[:]  Max depth           :      5
+[:]  Function calls:           16
+[:]  Max depth:                 5
 [:]
 [:]  .-------------------------------------------------------------------.
 [:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
@@ -42,7 +43,7 @@ var profile = System.profile(function() { echo("foo") });
 [:]  |        apply |  10.71 |         55 |     12 |       1 |        12 |
 [:]  |        apply |   9.82 |         66 |     11 |       1 |        11 |
 [:]  |            + |   8.93 |         76 |     10 |       2 |         5 |
-[:]  |              |   6.25 |         83 |      7 |       1 |         7 |
+[:]  |   <profiled> |   6.25 |         83 |      7 |       1 |         7 |
 [:]  |     asString |   6.25 |         90 |      7 |       1 |         7 |
 [:]  |        lobby |   5.36 |         96 |      6 |       2 |         3 |
 [:]  |     profiled |   3.57 |        100 |      4 |       1 |         4 |

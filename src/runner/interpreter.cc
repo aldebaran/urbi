@@ -431,6 +431,7 @@ namespace runner
     , total_time_(0)
     , function_calls_(0)
     , function_call_depth_max_(0)
+    , wrapper_function_seen(false)
     , checkpoint_(0)
     , function_call_depth_(0)
     , function_current_(0)
@@ -490,7 +491,7 @@ namespace runner
     assert(!profile_);
     profile_ = profile;
     profile_->checkpoint_ = libport::utime();
-    profile_->functions_profile_[0].name_ = SYMBOL(profiled);
+    profile_->functions_profile_[0].name_ = SYMBOL(LT_profiled_GT);
     ++profile_->functions_profile_[0].calls_;
   }
 

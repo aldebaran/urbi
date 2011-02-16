@@ -243,6 +243,7 @@ namespace runner
       ATTRIBUTE_R(FunctionProfiles, functions_profile);
       void append(Profile* other);
     private:
+      bool wrapper_function_seen;
       libport::utime_t step();
       libport::utime_t checkpoint_;
       friend class Interpreter;

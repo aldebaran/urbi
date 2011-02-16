@@ -568,11 +568,11 @@ namespace urbi
         return nil_class;
       }
 
-      interpreter().profile_start(&p);
-      objects_type args;
-      args << self;
       {
         FINALLY(((Object*, self)), ::kernel:: interpreter().profile_stop());
+        interpreter().profile_start(&p);
+        objects_type args;
+        args << self;
         (*action)(args);
       }
 
@@ -602,14 +602,15 @@ namespace urbi
       foreach (const FunctionProfile& fp, fps)
       {
         rObject function = Function->call(SYMBOL(new));
+        double selfTimeSeconds = fp.self_time_get() / 1000000.;
 
 #define DECLARE(Name, Value)                            \
         function->setSlot(SYMBOL_(Name), Value)
 
         DECLARE(name,        new String(fp.name_get()));
         DECLARE(calls,       new Float(fp.calls_get()));
-        DECLARE(selfTime,    new Float(fp.self_time_get() / 1000000.));
-        DECLARE(selfTimePer, new Float(fp.self_time_get() / fp.calls_get()));
+        DECLARE(selfTime,    new Float(selfTimeSeconds));
+        DECLARE(selfTimePer, new Float(selfTimeSeconds / fp.calls_get()));
 
 #undef DECLARE
 

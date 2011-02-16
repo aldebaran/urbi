@@ -34,6 +34,8 @@ class Global.Profile
   {
     function computeUnit(values)
     {
+      // Keep original values and units in object:
+      var calls = this.calls |
       // Compute the optimal unit for given values.
       // Values are expected to be in 'us'.
       var max = values.filter(function (var v){ v != 0 }).max |
@@ -61,32 +63,37 @@ class Global.Profile
     } |
 
     // Convert selfTimes to 'us':
-    calls.each(function (var c) { c.selfTime *= 1000000 }) |
+    calls.each(function (var c)
+    {
+      c.selfTime    *= 1000000 |
+      c.selfTimePer *= 1000000
+    }) |
     // Compute unit for times:
     var timeUnit        = computeUnit(calls.map(function (var c) { c.selfTime    })) |
     // Compute unit for selfTimePers:
     var selfTimePerUnit = computeUnit(calls.map(function (var c) { c.selfTimePer })) |
-    // Convert total times in 'us' and then in unit computed previously:
-    totalTime     *= 1000000 / timeUnit[0] |
-    wallClockTime *= 1000000 / timeUnit[0] |
+    // Convert total times in 'us' and then in unit computed
+    // previously (do not override object values):
+    var totalTime     = totalTime * 1000000 / timeUnit[0] |
+    var wallClockTime = wallClockTime * 1000000 / timeUnit[0] |
     // Convert selfTimes and selfTimePers to units computed previously:
     calls.each(function (var c)
     {
       c.selfTime    /= timeUnit[0] |
-      c.selfTimePer /= selfTimePerUnit[0] |
+      c.selfTimePer /= selfTimePerUnit[0]
     }) |
 
     var str = "Profile(\n"
-              "  %-15s %4s: %6s\n"
-              "  %-15s %4s: %6.2f\n"
-              "  %-15s %4s: %6.2f\n"
-              "  %-15s %4s: %6s\n"
-              "  %-15s %4s: %6s\n\n"
-              % ["Yields",          "",                   yields,
-                 "Total time",      "(%s)" % timeUnit[1], totalTime,
-                 "Wall-clock time", "(%s)" % timeUnit[1], wallClockTime,
-                 "Function calls",  "",                   totalCalls,
-                 "Max depth",       "",                   maxFunctionCallDepth] |
+              "  %-25s %6s\n"
+              "  %-25s %6.2f\n"
+              "  %-25s %6.2f\n"
+              "  %-25s %6s\n"
+              "  %-25s %6s\n\n"
+              % ["Yields:",                             yields,
+                 "Total time (%s):"      % timeUnit[1], totalTime,
+                 "Wall-clock time (%s):" % timeUnit[1], wallClockTime,
+                 "Function calls:",                     totalCalls,
+                 "Max depth:",                          maxFunctionCallDepth] |
     str +=
     "  .-------------------------------------------------------------------.\n"
     "  |   function   |   %%    | cumulative |  self  |  calls  |   self    |\n"
@@ -98,7 +105,7 @@ class Global.Profile
     for (var c: calls)
     {
       str += "  | %12s | %6.2f | %10.2f | %6.2f | %7s | %9.3f |\n"
-             % [c.name,
+             % [{if (c.name.empty) "<anonymous>" else c.name},
                 c.selfTime / totalTime * 100.0,
                 cumulative += c.selfTime,
                 c.selfTime,
