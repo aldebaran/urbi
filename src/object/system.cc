@@ -143,6 +143,12 @@ namespace urbi
         e.raise(code);
       }
 
+    // The type for eval and load overloads.
+    typedef rObject (*eval_type)
+      (rObject, const std::string&);
+    typedef rObject (*eval_with_this_type)
+      (rObject, const std::string&, rObject);
+
     static rObject
     eval(rObject, const std::string& code)
     {
@@ -576,7 +582,7 @@ namespace urbi
       rList calls = new List;
 
 #define DECLARE(Name, Value)                            \
-      profile->setSlot(libport::Symbol(#Name), new Float(Value))
+      profile->setSlot(SYMBOL_(Name), new Float(Value))
 
       DECLARE(yields,               p.yields_get());
       DECLARE(totalTime,            p.total_time_get() / 1000000.);
@@ -598,7 +604,7 @@ namespace urbi
         rObject function = Function->call(SYMBOL(new));
 
 #define DECLARE(Name, Value)                            \
-        function->setSlot(libport::Symbol(#Name), Value)
+        function->setSlot(SYMBOL_(Name), Value)
 
         DECLARE(name,        new String(fp.name_get()));
         DECLARE(calls,       new Float(fp.calls_get()));
@@ -721,14 +727,14 @@ namespace urbi
 
       system_class->bind(SYMBOL(searchPath), &system_searchPath,
                          SYMBOL(searchPathSet), &system_searchPathSet);
-      system_class->bind(SYMBOL(eval),
-                         static_cast<rObject (*)(rObject, const std::string&)>(&eval));
-      system_class->bind(SYMBOL(eval),
-                         static_cast<rObject (*)(rObject, const std::string&, rObject)>(&eval));
-      system_class->bind(SYMBOL(loadFile),
-                         static_cast<rObject (*)(rObject, const std::string&)>(&loadFile));
-      system_class->bind(SYMBOL(loadFile),
-                         static_cast<rObject (*)(rObject, const std::string&, rObject)>(&loadFile));
+
+#define DECLARE(Name, Type)                             \
+      system_class->bind(SYMBOL_(Name), static_cast<Type>(&Name))
+      DECLARE(eval, eval_type);
+      DECLARE(eval, eval_with_this_type);
+      DECLARE(loadFile, eval_type);
+      DECLARE(loadFile, eval_with_this_type);
+#undef DECLARE
     }
 
   } // namespace object
