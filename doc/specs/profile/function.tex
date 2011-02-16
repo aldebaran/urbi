@@ -32,11 +32,11 @@ function Float.fact()
 }|;
 var profile = System.profile(function() { 6.fact });
 [00009050] Profile(
-[:]  Yields              :      0
-[:]  Total time      (us):    337
+[:]  Yields:                    0
+[:]  Total time (us):         337
 [:]  Wall-clock time (us):    337
-[:]  Function calls      :     23
-[:]  Max depth           :      8
+[:]  Function calls:           22
+[:]  Max depth:                 7
 [:]
 [:]  .-------------------------------------------------------------------.
 [:]  |   function   |   %    | cumulative |  self  |  calls  |   self    |
@@ -46,8 +46,7 @@ var profile = System.profile(function() { 6.fact });
 [:]  |           <= |  10.98 |        250 |     37 |       6 |         6 |
 [:]  |            - |   9.20 |        281 |     31 |       5 |         6 |
 [:]  |            * |   8.61 |        310 |     29 |       5 |         5 |
-[:]  |              |   4.75 |        326 |     16 |       1 |        16 |
-[:]  |     profiled |   3.26 |        337 |     11 |       1 |        11 |
+[:]  |   <profiled> |   3.26 |        337 |     11 |       1 |        11 |
 [:]  '--------------'--------'------------'--------'---------'-----------'
 [:])
 profile.calls[0];

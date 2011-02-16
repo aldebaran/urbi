@@ -84,11 +84,11 @@ class Global.Profile
     }) |
 
     var str = "Profile(\n"
-              "  %-25s %6s\n"
-              "  %-25s %6.2f\n"
-              "  %-25s %6.2f\n"
-              "  %-25s %6s\n"
-              "  %-25s %6s\n\n"
+              "  %-21s %6s\n"
+              "  %-21s %6.2f\n"
+              "  %-21s %6.2f\n"
+              "  %-21s %6s\n"
+              "  %-21s %6s\n\n"
               % ["Yields:",                             yields,
                  "Total time (%s):"      % timeUnit[1], totalTime,
                  "Wall-clock time (%s):" % timeUnit[1], wallClockTime,
