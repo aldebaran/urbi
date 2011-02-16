@@ -13,13 +13,14 @@
 
 # include <libport/cstdio>
 
+# include <object/urbi/export.hh>
 # include <object/urbi/stream.hh>
 
 namespace urbi
 {
   namespace object
   {
-    class URBI_SDK_API InputStream: public Stream
+    class URBI_MODULE_API InputStream: public Stream
     {
 
       /*-----------------------------.

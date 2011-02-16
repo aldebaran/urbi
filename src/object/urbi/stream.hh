@@ -14,13 +14,14 @@
 # include <libport/cstdio>
 # include <libport/sys/types.h> // mode_t
 
+# include <object/urbi/export.hh>
 # include <urbi/object/cxx-object.hh>
 
 namespace urbi
 {
   namespace object
   {
-    class URBI_SDK_API Stream: public CxxObject
+    class URBI_MODULE_API Stream: public CxxObject
     {
 
       /*-----------------------------.

@@ -16,14 +16,14 @@
 # include <libport/debug.hh>
 # include <libport/symbol.hh>
 
-# include <urbi/export.hh>
+# include <object/urbi/export.hh>
 # include <urbi/object/tag.hh>
 
 namespace urbi
 {
   namespace object
   {
-    class URBI_SDK_API Logger: public Tag
+    class URBI_MODULE_API Logger: public Tag
     {
     public:
       Logger();

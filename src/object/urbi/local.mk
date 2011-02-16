@@ -8,7 +8,7 @@
 
 # Common flags.
 urbi_uobjects_LDFLAGS = $(AM_LDFLAGS) -module -avoid-version
-urbi_uobjects_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_SDK
+urbi_uobjects_CPPFLAGS = $(AM_CPPFLAGS) -DBUILDING_URBI_MODULE
 # See the comment in src/Makefile.am.
 urbi_uobjects_CXXFLAGS = $(AM_CXXFLAGS) -fno-strict-aliasing
 if WIN32
