@@ -80,27 +80,30 @@
   [LIBPORT_FIRST(Elt)] =                                                \
             e->getSlot(BOOST_PP_STRINGIZE(LIBPORT_SECOND(Elt)));
 
-# define URBI_ENUM_REGISTER(Name, UName, ...)                           \
-                                                                        \
-  static void                                                           \
-  BOOST_PP_CAT(urbi_enum_create, __LINE__)()                            \
-  {                                                                     \
-    std::string name = #UName;                                          \
-    ::urbi::object::rObject dest =                                      \
-        ::urbi::object::resolve_namespace(name);                        \
-    std::vector<std::string> values;                                    \
-    BOOST_PP_SEQ_FOR_EACH(URBI_ENUM_PUSH, LIBPORT_LIST(__VA_ARGS__,));  \
-    CAPTURE_GLOBAL(Enumeration);                                        \
-    ::urbi::object::rObject e = Enumeration->call                       \
-        ("new",                                                         \
-         ::urbi::object::to_urbi(name),                                 \
-         ::urbi::object::to_urbi(values));                              \
-    ::urbi::object::CxxConvert< Name >::urbi_enum() = e;                \
-    dest->setSlot(name, e);                                             \
-    BOOST_PP_SEQ_FOR_EACH(URBI_ENUM_REG, Name,                          \
-                          LIBPORT_LIST(__VA_ARGS__,));                  \
-  }                                                                     \
-                                                                        \
-  URBI_INITIALIZATION_REGISTER(&BOOST_PP_CAT(urbi_enum_create, __LINE__));
+# define URBI_ENUM_REGISTER(Name, UName, ...)                   \
+                                                                \
+  static void                                                   \
+  BOOST_PP_CAT(urbi_enum_create, __LINE__)()                    \
+  {                                                             \
+    std::string name = #UName;                                  \
+    ::urbi::object::rObject dest =                              \
+        ::urbi::object::resolve_namespace(name);                \
+    std::vector<std::string> values;                            \
+    BOOST_PP_SEQ_FOR_EACH(URBI_ENUM_PUSH, _,                    \
+                          LIBPORT_LIST(__VA_ARGS__,));          \
+    CAPTURE_GLOBAL(Enumeration);                                \
+    ::urbi::object::rObject e = Enumeration->call               \
+        ("new",                                                 \
+         ::urbi::object::to_urbi(name),                         \
+         ::urbi::object::to_urbi(values));                      \
+    ::urbi::object::CxxConvert< Name >::urbi_enum() = e;        \
+    dest->setSlot(name, e);                                     \
+    BOOST_PP_SEQ_FOR_EACH(URBI_ENUM_REG, Name,                  \
+                          LIBPORT_LIST(__VA_ARGS__,));          \
+  }                                                             \
+                                                                \
+  URBI_INITIALIZATION_REGISTER(&BOOST_PP_CAT(urbi_enum_create,  \
+                                             __LINE__))
+
 
 #endif
