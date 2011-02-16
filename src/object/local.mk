@@ -26,6 +26,7 @@ precompiled_symbols_hh_sources =		\
   $(filter-out $(precompiled_symbols_hh)	\
                $(FROM_UGRAMMAR_Y)		\
                $(FROM_UTOKEN_L)			\
+	       parser/keywords.hh		\
 	       ast/ignores,			\
         $(SOURCES))
 EXTRA_DIST += object/symbols-generate.pl
