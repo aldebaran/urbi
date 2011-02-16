@@ -90,6 +90,31 @@ namespace kernel
   // Global server reference
   UServer* urbiserver = 0;
 
+  std::string current_function_name()
+  {
+    const ::runner::Interpreter::call_stack_type& bt =
+      interpreter().call_stack_get();
+    if (bt.size() > 1)
+      return bt[bt.size() - 2].first.name_get();
+    else
+      return "<urbi-toplevel>";
+  }
+
+  std::string current_file()
+  {
+    if (const ast::Ast* ast = interpreter().innermost_node())
+      if (libport::Symbol* f = ast->location_get().begin.filename)
+        return f->name_get();
+    return "<urbi-stdin>";
+  }
+
+  int current_line()
+  {
+    if (const ast::Ast* ast = interpreter().innermost_node())
+      return ast->location_get().begin.line;
+    return 0;
+  }
+
   static
   void
   init_error()

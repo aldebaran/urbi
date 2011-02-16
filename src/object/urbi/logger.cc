@@ -8,7 +8,6 @@
  * See the LICENSE file for more information.
  */
 
-#include <runner/interpreter.hh>
 #include <urbi/object/enumeration.hh>
 
 #include <object/urbi/symbols.hh>
@@ -117,23 +116,9 @@ namespace urbi
 
       libport::debug::add_category(c);
 
-      std::string function = "<urbi-toplevel>";
-      std::string file = "<urbi-stdin>";
-      int line = 0;
-
-      const ast::Ast* ast = ::kernel::interpreter().innermost_node();
-      if (ast)
-      {
-        if (libport::Symbol* f = ast->location_get().begin.filename)
-          file = f->name_get();
-        line = ast->location_get().begin.line;
-      }
-
-      const runner::Interpreter::call_stack_type& bt =
-        ::kernel::interpreter().call_stack_get();
-      if (bt.size() > 1)
-        function = bt[bt.size() - 2].first.name_get();
-
+      std::string file = ::kernel::current_file();
+      int line = ::kernel::current_line();
+      std::string function = ::kernel::current_function_name();
       if (GD_DEBUGGER && GD_DEBUGGER->enabled(level, c))
         // FIXME: use full location when GD handles it
         GD_DEBUGGER->debug(msg, type, c, function, file, line);

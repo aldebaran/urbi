@@ -286,7 +286,7 @@ namespace runner
     virtual void show_backtrace(const std::string& chan) const;
     virtual backtrace_type backtrace_get() const;
     typedef object::call_stack_type call_stack_type;
-    object::call_stack_type call_stack_get() const;
+    call_stack_type call_stack_get() const;
 
     /// Throw an excpetion.
     /**
