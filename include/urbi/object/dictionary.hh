@@ -65,8 +65,10 @@ namespace urbi
 
     private:
       value_type content_;
-
       URBI_CXX_OBJECT(Dictionary, CxxObject);
+      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, elementAdded);
+      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, elementChanged);
+      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, elementRemoved);
     };
   }; // namespace object
 }

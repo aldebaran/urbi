@@ -108,7 +108,7 @@ namespace urbi
     Tag::block(rObject payload)
     {
       value_->block(::kernel::scheduler(), payload);
-      changed();
+      // changed();
     }
 
     void
@@ -117,7 +117,7 @@ namespace urbi
       runner::Runner& r = ::kernel::runner();
 
       value_->freeze();
-      changed();
+      // changed();
       if (r.frozen())
         r.yield();
     }
@@ -159,21 +159,21 @@ namespace urbi
     Tag::stop(rObject payload)
     {
       value_->stop(::kernel::scheduler(), payload);
-      changed();
+      // changed();
     }
 
     void
     Tag::unblock()
     {
       value_->unblock();
-      changed();
+      // changed();
     }
 
     void
     Tag::unfreeze()
     {
       value_->unfreeze();
-      changed();
+      // changed();
     }
 
     static inline rObject

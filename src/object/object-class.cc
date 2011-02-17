@@ -247,12 +247,6 @@ namespace urbi
       return is_a(self, proto);
     }
 
-    static bool
-    object_class_hasLocalSlot(rObject self, libport::Symbol slot)
-    {
-      return self->local_slot_get(slot);
-    }
-
 #define OPERATOR(Name)                                          \
     static rObject                                              \
     object_class_ ## Name ## _EQ(rObject lhs, rObject rhs)      \
@@ -288,7 +282,7 @@ namespace urbi
       Object::proto->slot_set(SYMBOL(isA),
                               primitive(object_class_isA));
       Object::proto->slot_set(SYMBOL(hasLocalSlot),
-                              primitive(&object_class_hasLocalSlot));
+                              primitive(&Object::hasLocalSlot));
 
 #define DECLARE(Name)                                                   \
       Object::proto->slot_set(SYMBOL_(Name),                            \
@@ -322,7 +316,7 @@ namespace urbi
       DECLARE(asPrintable        , &Object::asPrintable);
       DECLARE(asToplevelPrintable, &Object::asToplevelPrintable);
       DECLARE(callMessage        , object_class_callMessage);
-      DECLARE(changed            , &Object::changed_get);
+      // DECLARE(changed            , &Object::changed_get);
       DECLARE(createSlot         , &Object::urbi_createSlot);
       DECLARE(getLocalSlot       , &Object::getLocalSlot);
       DECLARE(getProperty        , &Object::property_get);
@@ -330,7 +324,7 @@ namespace urbi
       DECLARE(getSlot            ,
               static_cast<get_slot_type>(&Object::getSlot));
       DECLARE(hasProperty        , &Object::property_has);
-      DECLARE(hasSlot            , &Object::slot_has);
+      DECLARE(hasSlot            , &Object::hasSlot);
       DECLARE(locateSlot         , &Object::urbi_locateSlot);
       DECLARE(properties         , &Object::urbi_properties);
       DECLARE(removeProperty     , &Object::property_remove);
@@ -346,6 +340,8 @@ namespace urbi
 #undef DECLARE
 
       Object::proto->bind(SYMBOL(uid),          &Object::uid);
+      Object::proto->bind(SYMBOL(slotAdded),    &Object::slotAdded_get);
+      Object::proto->bind(SYMBOL(slotRemoved),  &Object::slotRemoved_get);
       Object::proto->bind(SYMBOL(refCount),     &Object::counter_get);
       Object::proto->bind(SYMBOL(addProto),     &Object::addProto);
       Object::proto->bind(SYMBOL(hash),         &Object::hash);

@@ -211,16 +211,6 @@ namespace runner
       object::check_arg_count(args.size()-1, 0);
       return function;
     }
-
-    if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
-      if (!object::squash && r->dependencies_log_get())
-      {
-        LIBPORT_SCOPE_SET(object::squash, true);
-        GD_CATEGORY(Urbi.At);
-        GD_FPUSH_DEBUG("Register '%s' result for at monitoring", msg);
-        r->dependency_add(res->call(SYMBOL(changed))->as<object::Event>());
-      }
-
     return res;
   }
 

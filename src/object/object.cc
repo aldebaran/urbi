@@ -75,7 +75,9 @@ namespace urbi
 
 
     Object::Object()
-      : protos_(0)
+      : slotAdded_(0)
+      , slotRemoved_(0)
+      , protos_(0)
       , slots_()
       , lookup_id_(INT_MAX)
     {
@@ -174,6 +176,17 @@ namespace urbi
       return location_type(0, 0);
     }
 
+    rSlot
+    Object::local_slot_get(key_type k) const
+    {
+      rSlot res = slots_.get(this, k);
+      if (res)
+        URBI_AT_HOOK(slotRemoved);
+      else
+        URBI_AT_HOOK(slotAdded);
+      return res;
+    }
+
     Object::location_type
     Object::slot_locate(key_type k,
                         bool fallback) const
@@ -197,32 +210,25 @@ namespace urbi
       return const_cast<Object*>(this)->slot_get(k);
     }
 
-    bool squash = false;
     Slot&
     Object::slot_get(key_type k)
     {
       rSlot res = safe_slot_locate(k).second;
       if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
       {
-        if (!squash && r->dependencies_log_get())
+        if (r->dependencies_log_get())
         {
-          bool prev = squash;
-          FINALLY(((bool&, squash))((bool, prev)), squash = prev);
-          squash = true;
-          // I think this registration is useless, since the parent is
-          // already registered and will trigger its 'changed'
-          // event. Not absolutely sure for all cases though, so I let
-          // it live for a while, in case some at start not being
-          // triggered.
-          // GD_FPUSH_TRACE("Register slot '%s' for at monitoring", k);
-          // r->dependency_add
-	  //     (static_cast<Event*>(res->property_get(SYMBOL(changed)).get()));
-          GD_FPUSH_TRACE("Register slot %s for at monitoring", k);
-          rObject changed = (*res)->call(SYMBOL(changed));
-          assert(changed);
-          rEvent evt = changed->as<Event>();
-          assert(evt);
-          r->dependency_add(evt.get());
+          GD_CATEGORY(Urbi.At);
+          GD_FPUSH_TRACE("Register slot '%s' for at monitoring", k);
+          Event* e;
+          {
+            FINALLY(((runner::Runner*, r)), r->dependencies_log_set(true));
+            r->dependencies_log_set(false);
+            GD_CATEGORY(Urbi.At);
+            e = static_cast<Event*>
+              (res->property_get(SYMBOL(changed)).get());
+          }
+          r->dependency_add(e);
         }
       }
       return *res;
@@ -255,7 +261,7 @@ namespace urbi
         GD_FINFO_DEBUG("Slot redefinition: %s", k);
         runner::raise_urbi_skip(SYMBOL(Redefinition), to_urbi(k));
       }
-      changed();
+      slotAdded();
       return *this;
     }
 
@@ -301,10 +307,23 @@ namespace urbi
       // If return-value of hook is not void, write it to slot.
       if (slot_locate(k).first == this)
       {
-        bool prev = squash;
-        FINALLY(((bool&, squash))((bool, prev)), squash = prev);
-        squash = true;
-        s = v;
+        if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
+        {
+          bool d = r->dependencies_log_get();
+          try
+          {
+            r->dependencies_log_set(false);
+            s = v;
+            r->dependencies_log_set(d);
+          }
+          catch (...)
+          {
+            r->dependencies_log_set(d);
+            throw;
+          }
+        }
+        else
+          s = v;
       }
       else
       {
@@ -313,7 +332,6 @@ namespace urbi
         *slot = v;
         slot_set(k, slot);
       }
-      changed();
       return v;
     };
 
@@ -570,24 +588,16 @@ namespace urbi
       return "Object";
     }
 
-    /*------------------.
-    | 'changed' event.  |
-    `------------------*/
+    /*---------.
+    | Events.  |
+    `---------*/
 
-    void
-    Object::changed()
-    {
-      if (changed_)
-        changed_->emit();
-    }
-
-    const rEvent&
-    Object::changed_get() const
-    {
-      if (!changed_)
-        const_cast<Object*>(this)->changed_ = new Event;
-      return changed_;
-    }
+    /*
+       SYMBOL(slotAdded)
+       SYMBOL(slotRemoved)
+     */
+    URBI_ATTRIBUTE_ON_DEMAND_IMPL(Object, Event, slotAdded);
+    URBI_ATTRIBUTE_ON_DEMAND_IMPL(Object, Event, slotRemoved);
 
     /*---------------.
     | Urbi methods.  |
@@ -664,6 +674,8 @@ namespace urbi
     {
       if (!slot_remove(name))
         warn_hard(libport::format("no such local slot: %s", name));
+      else
+        slotRemoved();
       return this;
     }
 

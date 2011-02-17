@@ -19,7 +19,7 @@ do(System)
     {
       tag:
       {
-        at ('$loadedFiles'.changed?)
+        at ('$loadedFiles'.elementChanged?)
         {
           if ('$loadedFiles'[file])
             tag.stop

@@ -34,25 +34,52 @@
 # include <urbi/export.hh>
 
 # define URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Type, Name)   \
-  ATTRIBUTE_r(Type*, Name);                             \
+  private:                                              \
+  rObject Name##_;                                      \
+public:                                                 \
+libport::intrusive_ptr<Type> Name##_get() const;        \
   void Name();                                          \
 
 # define URBI_ATTRIBUTE_ON_DEMAND_IMPL(Class, Type, Name)               \
-  Type* Class::Name##_get() const                                       \
+  libport::intrusive_ptr<Type> Class::Name##_get() const                \
   {                                                                     \
     if (! Name##_)                                                      \
     {                                                                   \
       const_cast<Class*>(this)->Name##_ = new Type;                     \
-      const_cast<Class*>(this)->slot_set(SYMBOL_EXPAND(Name), Name##_); \
     }                                                                   \
-    return Name##_;                                                     \
+    return reinterpret_cast<Type*>(Name##_.get());                      \
   }                                                                     \
                                                                         \
   void Class::Name()                                                    \
   {                                                                     \
     if (Name##_)                                                        \
-      Name##_->call(SYMBOL(emit));                                      \
+      reinterpret_cast<Type*>(Name##_.get())->call(SYMBOL(emit));       \
   }                                                                     \
+
+#define URBI_AT_HOOK(Name)                                              \
+  do                                                                    \
+  {                                                                     \
+    if (runner::Runner* r =                                             \
+        ::kernel::urbiserver->getCurrentRunnerOpt())                    \
+      if (r->dependencies_log_get())                                    \
+      {                                                                 \
+        try                                                             \
+        {                                                               \
+          r->dependencies_log_set(false);                               \
+          GD_CATEGORY(Urbi.At);                                         \
+          GD_FPUSH_TRACE("Register %s for at monitoring", #Name);       \
+          rEvent e = Name##_get();                                      \
+          r->dependencies_log_set(true);                                \
+          r->dependency_add(e);                                         \
+        }                                                               \
+        catch (...)                                                     \
+        {                                                               \
+          r->dependencies_log_set(true);                                \
+          throw;                                                        \
+        }                                                               \
+      }                                                                 \
+  }                                                                     \
+  while (false)                                                         \
 
 namespace urbi
 {
@@ -307,16 +334,12 @@ namespace urbi
       /// as arg0.  UrbiScript's "this" must be args[0].
       rObject call_with_this(libport::Symbol name, const objects_type& args);
 
-      /*------------------.
-      | 'changed' event.  |
-      `------------------*/
+      /*---------.
+      | Events.  |
+      `---------*/
 
-    public:
-      /// Fire the 'changed' event.
-      void changed();
-
-    private:
-      ATTRIBUTE_r(rEvent, changed);
+      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, slotAdded);
+      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, slotRemoved);
 
       /*---------------.
       | Urbi methods.  |

@@ -76,6 +76,8 @@ namespace urbi
       /// Check that the function fun is using a valid index, and return it.
       size_type index(const rFloat& idx) const;
 
+      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, sizeChanged);
+      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, contentChanged);
       URBI_CXX_OBJECT(List, CxxObject);
 
     public:

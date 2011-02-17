@@ -26,6 +26,7 @@
 #include <object/symbols.hh>
 
 #include <urbi/object/code.hh>
+#include <urbi/object/event.hh>
 #include <urbi/object/float.hh>
 #include <urbi/object/hash.hh>
 #include <urbi/object/list.hh>
@@ -40,23 +41,31 @@ namespace urbi
   namespace object
   {
     List::List()
+      : sizeChanged_(0)
+      , contentChanged_(0)
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     List::List(const value_type& value)
       : content_(value)
+      , sizeChanged_(0)
+      , contentChanged_(0)
     {
       proto_add(proto);
     }
 
     List::List(const rList& model)
       : content_(model->content_)
+      , sizeChanged_(0)
+      , contentChanged_(0)
     {
       proto_add(model);
     }
 
     URBI_CXX_OBJECT_INIT(List)
+      : sizeChanged_(0)
+      , contentChanged_(0)
     {
       bind(SYMBOL(sort),
            static_cast<List::value_type (List::*)()>(&List::sort));
@@ -116,6 +125,7 @@ namespace urbi
     rList
     List::tail() const
     {
+      URBI_AT_HOOK(contentChanged);
       CHECK_NON_EMPTY(tail);
       value_type res = content_;
       res.pop_front();
@@ -131,6 +141,7 @@ namespace urbi
     bool
     List::empty() const
     {
+      URBI_AT_HOOK(sizeChanged);
       return content_.empty();
     }
 
@@ -147,19 +158,21 @@ namespace urbi
 
     rObject List::operator[](const rFloat& idx)
     {
+      URBI_AT_HOOK(contentChanged);
       return content_[index(idx)];
     }
 
     rObject List::set(const rFloat& idx, const rObject& val)
     {
       content_[index(idx)] = val;
-      changed();
+      contentChanged();
       return val;
     }
 
     List::size_type
     List::size() const
     {
+      URBI_AT_HOOK(sizeChanged);
       return content_.size();
     }
 
@@ -176,13 +189,17 @@ namespace urbi
         else
           ++it;
       if (mutated)
-        changed();
+      {
+        contentChanged();
+        sizeChanged();
+      }
       return this;
     }
 
     bool
     List::operator == (List* rhs) const
     {
+      URBI_AT_HOOK(contentChanged);
       try
       {
         if (rhs->size() != size())
@@ -201,19 +218,22 @@ namespace urbi
 
     rList List::operator+=(const rList& rhs)
     {
+      URBI_AT_HOOK(contentChanged);
       // Copy the list to make a += a work
       value_type other = rhs->value_get();
       if (!other.empty())
       {
         foreach (const rObject& o, other)
           content_.push_back(o);
-        changed();
+        contentChanged();
+        sizeChanged();
       }
       return this;
     }
 
     rList List::operator+(const rList& rhs)
     {
+      URBI_AT_HOOK(contentChanged);
       rList res = new List(this->value_get());
       *res += rhs;
       return res;
@@ -221,6 +241,7 @@ namespace urbi
 
     rList List::operator*(unsigned int times) const
     {
+      URBI_AT_HOOK(contentChanged);
       List::value_type res;
       unsigned int s = content_.size();
       for (unsigned int i = 0; i < times; ++i)
@@ -249,6 +270,7 @@ namespace urbi
 
     List::value_type List::sort()
     {
+      URBI_AT_HOOK(contentChanged);
       value_type s(content_);
       std::sort(s.begin(), s.end(),
                 boost::bind(compareListItems, _1, _2));
@@ -257,6 +279,7 @@ namespace urbi
 
     List::value_type List::sort(rObject f)
     {
+      URBI_AT_HOOK(contentChanged);
       value_type s(content_);
       std::sort(s.begin(), s.end(),
                 boost::bind(compareListItemsLambda, f, this, _1, _2));
@@ -266,6 +289,7 @@ namespace urbi
     void
     List::each_common(const rObject& f, bool yielding, bool idx)
     {
+      URBI_AT_HOOK(contentChanged);
       runner::Runner& r = ::kernel::runner();
 
       bool must_yield = false;
@@ -306,6 +330,7 @@ namespace urbi
     void
     List::each_and(const rObject& f)
     {
+      URBI_AT_HOOK(contentChanged);
       runner::Runner& r = ::kernel::runner();
 
       // Beware of iterations that modify the list in place: make a
@@ -339,7 +364,8 @@ namespace urbi
     List::insertFront(const rObject& o)
     {
       content_.push_front(o);
-      changed();
+      contentChanged();
+      sizeChanged();
       return this;
     }
 
@@ -347,7 +373,8 @@ namespace urbi
     List::insertBack(const rObject& o)
     {
       content_.push_back(o);
-      changed();
+      contentChanged();
+      sizeChanged();
       return this;
     }
 
@@ -355,9 +382,10 @@ namespace urbi
     IF(Ret, rObject, rList)                                     \
     List::Name()                                                \
     {                                                           \
+      URBI_AT_HOOK(contentChanged);                                            \
       WHEN(Check, CHECK_NON_EMPTY(Name));                       \
       WHEN(Ret, return) content_.Bounce();                      \
-      WHEN(Mutate, changed());                                  \
+      WHEN(Mutate, contentChanged(); sizeChanged());            \
       return this;                                              \
     }
 
@@ -371,13 +399,15 @@ namespace urbi
     List::insert(const rFloat& idx, const rObject& elt)
     {
       content_.insert(boost::next(content_.begin(), index(idx)), elt);
-      changed();
+      contentChanged();
+      sizeChanged();
       return this;
     }
 
     rHash
     List::hash() const
     {
+      URBI_AT_HOOK(contentChanged);
       rHash res = new Hash(boost::hash_value(proto));
       foreach (const rObject& o, content_)
       {
@@ -391,6 +421,7 @@ namespace urbi
     std::string
     List::as_string() const
     {
+      URBI_AT_HOOK(contentChanged);
       std::string res = "[";
       bool tail = false;
       foreach (const rObject& o, content_)
@@ -407,29 +438,41 @@ namespace urbi
     rObject
     List::removeBack()
     {
+      URBI_AT_HOOK(contentChanged);
       CHECK_NON_EMPTY(pop_back);
       rObject res = content_.back();
       content_.pop_back();
-      changed();
+      sizeChanged();
+      contentChanged();
       return res;
     }
 
     rObject
     List::removeFront()
     {
+      URBI_AT_HOOK(contentChanged);
       CHECK_NON_EMPTY(pop_front);
       rObject res = content_.front();
       content_.pop_front();
-      changed();
+      sizeChanged();
+      contentChanged();
       return res;
     }
 
     rList List::reverse() const
     {
+      URBI_AT_HOOK(contentChanged);
       value_type res;
       rforeach (const rObject& obj, content_)
         res.push_back(obj);
       return new List(res);
     }
+
+    /*
+       SYMBOL(sizeChanged)
+       SYMBOL(contentChanged)
+     */
+    URBI_ATTRIBUTE_ON_DEMAND_IMPL(List, Event, sizeChanged);
+    URBI_ATTRIBUTE_ON_DEMAND_IMPL(List, Event, contentChanged);
   } // namespace object
 }

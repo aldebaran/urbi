@@ -44,7 +44,6 @@ namespace urbi
        */
       bool loopCheck();
       rObject writeOwned(rObject newval);
-      rObject changed();
       unsigned int notifyChange_(rObject cb);
       unsigned int notifyAccess_(rObject cb);
       unsigned int notifyChangeOwned_(rObject cb);
@@ -75,11 +74,9 @@ namespace urbi
       int waiterCount_;
       libport::Symbol initialName;
       bool owned;
-      // We must duplicate changed! mechanism because we want to disable
-      // automatic triggering.
-      rEvent changed_;
       static unsigned int uid_; // Unique id for callbacks
       friend class UConnection;
+      URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Event, changed);
     };
     /// Call some notifies on an UVar.
     void callNotify(runner::Runner& r, rUVar self,

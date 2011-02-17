@@ -354,27 +354,12 @@ namespace runner
 
 
     // Work around limitations of VC++ 2005.
-#define FINALLY_at_run(DefineOrUse)             \
-    FINALLY_ ## DefineOrUse                     \
-    (at_run,                                    \
-     ((bool&, squash))                          \
-     ((bool, prev))                             \
-     ((bool&, dependencies_log)),               \
-     squash = prev; dependencies_log = false)
-
 #define FINALLY_Do(DefineOrUse)                 \
     FINALLY_ ## DefineOrUse                     \
     (Do,                                        \
      ((Stacks&, stacks_))                       \
      ((rObject&, old_tgt)),                     \
      stacks_.this_switch(old_tgt))
-
-#define FINALLY_Local(DefineOrUse)              \
-    FINALLY_ ## DefineOrUse                     \
-    (Local,                                     \
-     ((bool&, squash))                          \
-     ((bool, prev)),                            \
-     squash = prev)
 
 #define FINALLY_Scope(DefineOrUse)                      \
     FINALLY_ ## DefineOrUse                             \
@@ -397,9 +382,7 @@ namespace runner
      ((rObject&, old_exception)),               \
      current_exception_ = old_exception)
 
-    FINALLY_at_run(DEFINE);
     FINALLY_Do(DEFINE);
-    FINALLY_Local(DEFINE);
     FINALLY_Scope(DEFINE);
     FINALLY_Try(DEFINE);
 

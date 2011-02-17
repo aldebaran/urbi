@@ -107,13 +107,6 @@ namespace urbi
     `--------*/
 
     inline
-    rSlot
-    Object::local_slot_get(key_type k) const
-    {
-      return slots_.get(this, k);
-    }
-
-    inline
     bool
     Object::slot_remove(key_type k)
     {

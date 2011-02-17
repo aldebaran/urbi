@@ -249,6 +249,7 @@ namespace urbi
       , inAccess_(false)
       , waiterCount_(0)
       , owned(false)
+      , changed_(0)
     {
       proto_add(proto ? rPrimitive(proto) : Primitive::proto);
       slot_set(SYMBOL(waiterTag), new Tag());
@@ -265,6 +266,7 @@ namespace urbi
       , inAccess_(false)
       , waiterCount_(0)
       , owned(false)
+      , changed_(0)
     {
       proto_add(proto ? rPrimitive(proto) : Primitive::proto);
       slot_set(SYMBOL(waiterTag), new Tag());
@@ -303,7 +305,6 @@ namespace urbi
       DECLARE(owned);
       DECLARE(initialName);
       DECLARE(changeConnections);
-      DECLARE(changed);
       DECLARE(removeNotifyChange);
       DECLARE(removeNotifyChangeOwned);
       DECLARE(removeNotifyAccess);
@@ -316,6 +317,7 @@ namespace urbi
       DECLARE(val);
       DECLARE(valsensor);
 #undef DECLARE
+      bind(SYMBOL(changed), &UVar::changed_get);
       slot_set(SYMBOL(parentGetProperty), new Primitive(&parentGetProperty));
       slot_set(SYMBOL(parentSetProperty), new Primitive(&parentSetProperty));
       slot_set(SYMBOL(parentHasProperty), new Primitive(&parentHasProperty));
@@ -351,8 +353,8 @@ namespace urbi
       bool loopChecker = !looping_
           &&
           (!change_.empty()
-          || (changed_ && changed_->hasSubscribers())
-          ||!changeConnections->empty()
+           || (changed_ && changed_get()->hasSubscribers())
+           ||!changeConnections->empty()
            )
           && !access_.empty();
       GD_FINFO_TRACE("Loopcheck on %s: %s", initialName, loopChecker);
@@ -458,32 +460,15 @@ namespace urbi
           callNotify(r, rUVar(this), change_);
           callConnections(r, rObject(this), changeConnections);
         }
-        if (changed_)
-          changed_->emit();
+        changed();
       }
       return val;
     }
 
     rObject
-    UVar::changed()
-    {
-      GD_FINFO_DEBUG("Creating changed! for var %s", initialName);
-      if (!changed_)
-      {
-        changed_ = new Event;
-        slot_update(SYMBOL(changed), changed_);
-      }
-      return changed_;
-    }
-
-    rObject
     UVar::accessor(const objects_type&)
     {
-      runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt();
-      bool dl = r->dependencies_log_get();
-      r->dependencies_log_set(false);
-      FINALLY(((runner::Runner*, r))((bool, dl)),
-              r->dependencies_log_set(dl));
+      URBI_AT_HOOK(changed);
       return getter(false);
     }
 
@@ -541,8 +526,7 @@ namespace urbi
       checkBypassCopy();
       callNotify(r, rUVar(this), change_);
       callConnections(r, rObject(this), changeConnections);
-      if (changed_)
-        changed_->emit();
+      changed();
       return newval;
     }
     bool
@@ -577,5 +561,10 @@ namespace urbi
       }
       return false;
     }
+
+    /*
+      SYMBOL(changed)
+    */
+    URBI_ATTRIBUTE_ON_DEMAND_IMPL(UVar, Event, changed);
   }
 }

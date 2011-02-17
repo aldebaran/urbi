@@ -183,26 +183,43 @@ assert (["one" => 1]["one"] == 1);
 ["a" => 1, "b" => 2].asString == "[\"a\" => 1, \"b\" => 2]";
 \end{urbiassert}
 
-\item[changed?] An event emitted each time the Dictionary is modified:
+\item[elementAdded?] An event emitted each time a new element is added to
+  the Dictionary.
+
+\item[elementChanged?] An event emitted each time the value associated to a
+  key of the Dictionary is changed.
+
+\item[elementRemoved?] An event emitted each time an element is removed from
+  the Dictionary.
 
 \begin{urbiscript}
 d = [ => ] |;
-at(d.changed?) echo ("changed");
+at(d.elementAdded?) echo ("added");
+at(d.elementChanged?) echo ("changed");
+at(d.elementRemoved?) echo ("removed");
+
 d["key1"] = "value1";
 [00000001] "value1"
-[00000001] *** changed
+[00000001] *** added
+
 d["key2"] = "value2";
 [00000001] "value2"
+[00000001] *** added
+
+d["key2"] = "value3";
+[00000001] "value3"
 [00000001] *** changed
+
 d.erase("key2");
 [00000002] ["key1" => "value1"]
-[00000002] *** changed
+[00000001] *** removed
+
 d.clear;
 [00000003] [ => ]
-[00000003] *** changed
+[00000001] *** removed
+
 d.clear;
-[00000004] [ => ]
-// No event emitted, dictionary was already empty
+[00000003] [ => ]
 \end{urbiscript}
 
 \item[clear]

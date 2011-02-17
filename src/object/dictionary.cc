@@ -19,6 +19,7 @@
 #include <object/symbols.hh>
 #include <runner/runner.hh>
 #include <urbi/object/dictionary.hh>
+#include <urbi/object/event.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/string.hh>
 
@@ -42,25 +43,41 @@ namespace urbi
 
     Dictionary::Dictionary()
       : content_()
+      , elementAdded_(0)
+      , elementChanged_(0)
+      , elementRemoved_(0)
     {
       proto_add(proto ? rObject(proto) : Object::proto);
     }
 
     Dictionary::Dictionary(const value_type& value)
       : content_(value)
+      , elementAdded_(0)
+      , elementChanged_(0)
+      , elementRemoved_(0)
     {
       proto_add(proto);
     }
 
     Dictionary::Dictionary(rDictionary model)
       : content_(model->content_)
+      , elementAdded_(0)
+      , elementChanged_(0)
+      , elementRemoved_(0)
     {
       proto_add(proto);
     }
 
     URBI_CXX_OBJECT_INIT(Dictionary)
+      : content_()
+      , elementAdded_(0)
+      , elementChanged_(0)
+      , elementRemoved_(0)
     {
       bind(SYMBOL(asBool), &Dictionary::as_bool);
+      bind(SYMBOL(elementAdded), &Dictionary::elementAdded_get);
+      bind(SYMBOL(elementChanged), &Dictionary::elementChanged_get);
+      bind(SYMBOL(elementRemoved), &Dictionary::elementRemoved_get);
 
 #define DECLARE(Name)                       \
       bind(SYMBOL_(Name), &Dictionary::Name)
@@ -102,14 +119,24 @@ namespace urbi
     rDictionary
     Dictionary::set(rObject key, rObject val)
     {
-      content_[key] = val;
-      changed();
+      value_type::iterator it = content_.find(key);
+      if (it == content_.end())
+      {
+        content_[key] = val;
+        elementAdded();
+      }
+      else
+      {
+        it->second = val;
+        elementChanged();
+      }
       return this;
     }
 
     rObject
     Dictionary::get(rObject key)
     {
+      URBI_AT_HOOK(elementChanged);
       key_check(key);
       return content_[key];
       unreachable(); // wtf?
@@ -121,21 +148,27 @@ namespace urbi
       if (!empty())
       {
         content_.clear();
-        changed();
+        elementRemoved();
       }
-
       return this;
     }
 
     bool
     Dictionary::empty() const
     {
-      return content_.empty();
+      bool res = content_.empty();
+      if (res)
+        URBI_AT_HOOK(elementAdded);
+      else
+        URBI_AT_HOOK(elementRemoved);
+      return res;
     }
 
     size_t
     Dictionary::size() const
     {
+      URBI_AT_HOOK(elementAdded);
+      URBI_AT_HOOK(elementRemoved);
       return content_.size();
     }
 
@@ -150,13 +183,15 @@ namespace urbi
     {
       key_check(key);
       content_.erase(key);
-      changed();
+      elementRemoved();
       return this;
     }
 
     rList
     Dictionary::keys()
     {
+      URBI_AT_HOOK(elementRemoved);
+      URBI_AT_HOOK(elementAdded);
       List::value_type res;
       typedef const std::pair<rObject, rObject> elt_type;
       foreach (elt_type& elt, content_)
@@ -167,7 +202,21 @@ namespace urbi
     bool
     Dictionary::has(rObject key) const
     {
-      return libport::mhas(content_, key);
+      bool res = libport::mhas(content_, key);
+      if (res)
+        URBI_AT_HOOK(elementRemoved);
+      else
+        URBI_AT_HOOK(elementAdded);
+      return res;
     }
+
+    /*
+      SYMBOL(elementAdded)
+      SYMBOL(elementChanged)
+      SYMBOL(elementRemoved)
+    */
+    URBI_ATTRIBUTE_ON_DEMAND_IMPL(Dictionary, Event, elementAdded);
+    URBI_ATTRIBUTE_ON_DEMAND_IMPL(Dictionary, Event, elementChanged);
+    URBI_ATTRIBUTE_ON_DEMAND_IMPL(Dictionary, Event, elementRemoved);
   }
 }

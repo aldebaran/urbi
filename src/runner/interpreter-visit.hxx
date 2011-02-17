@@ -44,15 +44,6 @@
 
 GD_CATEGORY(Urbi);
 
-
-namespace urbi
-{
-  namespace object
-  {
-    extern bool squash;
-  }
-}
-
 namespace runner
 {
   using boost::bind;
@@ -63,15 +54,6 @@ namespace runner
   using object::Tag;
 
   LIBPORT_SCOPE_SET_DECLARE(bool, bool);
-
-  static object::Event* slotGet_changed(object::rObject o)
-  {
-    object::rObject changed = o->call(SYMBOL(changed));
-    aver(changed);
-    object::rEvent evt = changed->as<object::Event>();
-    aver(evt);
-    return evt.get();
-  }
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::And* e)
@@ -182,20 +164,25 @@ namespace runner
         s.stop();
       data->subscriptions.clear();
 
-      bool& squash = object::squash;
-      bool prev = squash;
-
-      bool& dependencies_log = r.dependencies_log_;
       // Do not leave dependencies_log to true while registering on dependencies
       // below.
       {
-        FINALLY_at_run(USE);
-        dependencies_log = true;
-        squash = false;
 
         object::objects_type args;
         args.push_back(data->exp);
-        rObject res = r.apply(data->exp, SYMBOL(at_cond), args);
+        rObject res;
+        try
+        {
+          r.dependencies_log_ = true;
+          res = r.apply(data->exp, SYMBOL(at_cond), args);
+          r.dependencies_log_ = false;
+        }
+        catch (...)
+        {
+          r.dependencies_log_ = false;
+          throw;
+        }
+
         if (dynamic_cast<object::Event*>(res.get()))
         {
           CAPTURE_GLOBAL(Global);
@@ -205,6 +192,7 @@ namespace runner
         }
         v = object::from_urbi<bool>(res);
       }
+      GD_FINFO_DEBUG("At condition has %s hooks.", r.dependencies_.size());
       foreach (object::rEvent evt, r.dependencies_)
         data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
       r.dependencies_.clear();
@@ -303,15 +291,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Implicit*)
   {
-    object::rObject res = stacks_.this_get();
-    if (!object::squash && dependencies_log_get())
-    {
-      LIBPORT_SCOPE_SET_USE(bool, object::squash, true);
-      GD_CATEGORY(Urbi.At);
-      GD_PUSH_DEBUG("Register this for at monitoring");
-      dependency_add(slotGet_changed(res));
-    }
-    return res;
+    return stacks_.this_get();
   }
 
 
@@ -415,21 +395,21 @@ namespace runner
                        e->location_get());
     else
     {
-      if (!object::squash && dependencies_log_get())
+      if (dependencies_log_)
       {
-        bool prev = object::squash;
-        bool& squash = object::squash;
-        FINALLY_Local(USE);
-        squash = true;
-
-        GD_CATEGORY(Urbi.At);
-        GD_FPUSH_DEBUG("Register local variable '%s' for at monitoring",
-                       e->name_get());
-        dependency_add(static_cast<object::Event*>
-                       (slot->property_get(SYMBOL(changed)).get()));
-        dependency_add(slotGet_changed(*slot));
+        object::Event* evt;
+        {
+          runner::Runner* r = this;
+          FINALLY(((runner::Runner*, r)), r->dependencies_log_set(true));
+          r->dependencies_log_set(false);
+          GD_CATEGORY(Urbi.At);
+          GD_FPUSH_DEBUG("Register local variable '%s' for at monitoring",
+                         e->name_get());
+          evt = static_cast<object::Event*>
+            (slot->property_get(SYMBOL(changed)).get());
+        }
+        dependency_add(evt);
       }
-
       return value;
     }
   }
@@ -713,15 +693,7 @@ namespace runner
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::This*)
   {
-    object::rObject res = stacks_.this_get();
-    if (!object::squash && dependencies_log_get())
-    {
-      LIBPORT_SCOPE_SET_USE(bool, object::squash, true);
-      GD_CATEGORY(Urbi.At);
-      GD_PUSH_DEBUG("Register this for at monitoring");
-      dependency_add(slotGet_changed(res));
-    }
-    return res;
+    return stacks_.this_get();
   }
 
 
