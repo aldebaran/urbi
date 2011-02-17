@@ -37,7 +37,6 @@ namespace urbi
     unordered_map_equal_to::operator()(rObject lhs, rObject rhs) const
     {
       bool res = from_urbi<bool>(lhs->call("==", rhs));
-      // std::cerr << "equal_to() => " << res << std::endl;
       return res;
     }
 
