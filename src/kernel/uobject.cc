@@ -565,8 +565,18 @@ static void writeFromContext(const std::string& ctx,
   CHECK_MAINTHREAD();
   if (ctx.substr(0, 2) != "0x")
     throw std::runtime_error("invalid context: " + ctx);
-  unsigned long l = strtol(ctx.c_str()+2, 0, 16);
-  rLobby rl((object::Lobby*)l);
+  rLobby rl;
+  foreach (object::Lobby* lobby, object::Lobby::instances_get())
+    if (lobby->uid() == ctx)
+    {
+      rl = lobby;
+      break;
+    }
+  if (!rl)
+  {
+    GD_FWARN("writeFromContext: non existing lobby: %x", ctx);
+    return;
+  }
   runner::Runner& r = kernel::urbiserver->getCurrentRunner();
   rLobby cl = r.lobby_get();
   FINALLY(((rLobby, cl))((runner::Runner&, r)), r.lobby_set(cl));
