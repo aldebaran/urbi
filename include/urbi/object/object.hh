@@ -33,6 +33,27 @@
 # include <urbi/object/centralized-slots.hh>
 # include <urbi/export.hh>
 
+# define URBI_ATTRIBUTE_ON_DEMAND_DECLARE(Type, Name)   \
+  ATTRIBUTE_r(Type*, Name);                             \
+  void Name();                                          \
+
+# define URBI_ATTRIBUTE_ON_DEMAND_IMPL(Class, Type, Name)               \
+  Type* Class::Name##_get() const                                       \
+  {                                                                     \
+    if (! Name##_)                                                      \
+    {                                                                   \
+      const_cast<Class*>(this)->Name##_ = new Type;                     \
+      const_cast<Class*>(this)->slot_set(SYMBOL_EXPAND(Name), Name##_); \
+    }                                                                   \
+    return Name##_;                                                     \
+  }                                                                     \
+                                                                        \
+  void Class::Name()                                                    \
+  {                                                                     \
+    if (Name##_)                                                        \
+      Name##_->call(SYMBOL(emit));                                      \
+  }                                                                     \
+
 namespace urbi
 {
   namespace object
