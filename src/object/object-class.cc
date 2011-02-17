@@ -107,17 +107,6 @@ namespace urbi
       return void_class;
     }
 
-    /// Return the address of an object as a number, mostly
-    /// for debugging purpose.
-    static rObject
-    object_class_uid(const objects_type& args)
-    {
-      static boost::format uid("0x%x");
-      check_arg_count(args.size() - 1, 0);
-      return
-        new String(str(uid % reinterpret_cast<long long>(args[0].get())));
-    }
-
     /// Structural equality
     static rObject
     object_class_EQ_EQ(const objects_type& args)
@@ -315,7 +304,6 @@ namespace urbi
       DECLARE(localSlotNames);
       DECLARE(protos);
       DECLARE(slotNames);
-      DECLARE(uid);
 #undef DECLARE
 
 #define DECLARE(Name, Code)                                             \
@@ -357,6 +345,7 @@ namespace urbi
       DECLARE(updateSlot         , &Object::urbi_updateSlot);
 #undef DECLARE
 
+      Object::proto->bind(SYMBOL(uid),          &Object::uid);
       Object::proto->bind(SYMBOL(refCount),     &Object::counter_get);
       Object::proto->bind(SYMBOL(addProto),     &Object::addProto);
       Object::proto->bind(SYMBOL(hash),         &Object::hash);

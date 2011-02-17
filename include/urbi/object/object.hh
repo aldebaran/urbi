@@ -333,6 +333,8 @@ namespace urbi
       rHash   hash() const;
       rObject addProto(rObject proto);
       rObject removeProto(rObject proto);
+      std::string uid() const;
+
       /*--------.
       | Binding |
       `--------*/

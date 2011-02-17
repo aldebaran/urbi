@@ -816,6 +816,14 @@ namespace urbi
       return this->as_check_(requested) ? this : 0;
     }
 
+    std::string
+    Object::uid() const
+    {
+      static boost::format uid("0x%x");
+      return str(uid % reinterpret_cast<long long>(this));
+    }
+
+
     rObject Object::proto;
   } // namespace object
 }
