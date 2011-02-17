@@ -217,8 +217,10 @@ namespace runner
     else if (!v && data->current)
     {
       GD_PUSH_TRACE("Triggering at block (exit)");
-      data->current->stop();
+
+      object::EventHandler* current = data->current;
       data->current = 0;
+      current->stop();
     }
   }
 
