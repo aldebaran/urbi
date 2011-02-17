@@ -230,11 +230,6 @@ using urbi::uobjects::StringPair;
 // No rObject here as we do not want to prevent object destruction.
 static boost::unordered_map<std::string, object::Object*> uobject_map;
 
-static
-void
-writeFromContext(const std::string& ctx, const std::string& varName,
-                 const urbi::UValue& val);
-
 static void setTrace(rObject, bool v)
 {
   trace_uvars = v;
