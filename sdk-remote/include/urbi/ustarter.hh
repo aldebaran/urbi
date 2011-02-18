@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, Gostai S.A.S.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -22,26 +22,26 @@
 #include <urbi/version-check.hh>
 
 /// This macro must be called once for every UObject class.
-# define UStartRename(Type, Name)               \
-  ::urbi::URBIStarter<Type>                     \
-  Name ##  ____URBI_object(#Name);              \
-  URBI_CHECK_SDK_VERSION_BARE
+# define UStartRename(Type, Name)                       \
+  ::urbi::URBIStarter<Type>                             \
+  Name ##  ____URBI_object(#Name);                      \
+  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " Name)
 
 /// Append connectionID to object name
-# define UStartWithID(Type)                     \
-  ::urbi::URBIStarter<Type>                     \
-  Type ##  ____URBI_object(#Type, true);        \
-  URBI_CHECK_SDK_VERSION_BARE
+# define UStartWithID(Type)                             \
+  ::urbi::URBIStarter<Type>                             \
+  Type ##  ____URBI_object(#Type, true);                \
+  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " Type)
 
 /// This macro must be called once for every UObject class.
 # define UStart(Type)                           \
   UStartRename(Type, Type)
 
 /// This macro must be called once for each UObjectHub class.
-# define UStartHub(Type)                        \
-  ::urbi::URBIStarterHub<Type>                  \
-  Type ##  ____URBI_object(#Type);              \
-  URBI_CHECK_SDK_VERSION_BARE
+# define UStartHub(Type)                                \
+  ::urbi::URBIStarterHub<Type>                          \
+  Type ##  ____URBI_object(#Type);                      \
+  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " Type)
 
 namespace urbi
 {
