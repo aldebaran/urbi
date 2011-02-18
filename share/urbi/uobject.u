@@ -885,7 +885,8 @@ class Global.'external'
                  uob.getProperty(varname, "timestamp")]
     }|
     // Directly set it if the source UVar is from this connection
-    if (getSlot(objname).lobby == lobby)
+    if (getSlot(objname).hasLocalSlot("lobby")
+         && getSlot(objname).lobby == lobby)
     {
       lobby.__bindingFunc[fullname] =
         uobjects.getSlot(objname).getSlot(varname).notifyChange(f)
