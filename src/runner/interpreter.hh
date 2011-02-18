@@ -344,13 +344,21 @@ namespace runner
     /// The current exception when executing a "catch" block.
     rObject current_exception_;
 
-    struct AtEventData;
+    struct WatchEventData;
+    static rObject watch_eval(WatchEventData* data);
     static void
-    at_run(AtEventData* data,
+    watch_run(WatchEventData* data,
+                const object::objects_type& = object::objects_type());
+    static void watch_stop(WatchEventData* data);
+    static void watch_ward(WatchEventData* data);
+    static void watch_unward(WatchEventData* data);
+
+    static void
+    at_run(WatchEventData* data,
            const object::objects_type& = object::objects_type());
-    static void at_stop(AtEventData* data);
-    static void at_ward(AtEventData* data);
-    static void at_unward(AtEventData* data);
+    static void at_stop(WatchEventData* data);
+    static void at_ward(WatchEventData* data);
+    static void at_unward(WatchEventData* data);
 
 
     // Work around limitations of VC++ 2005.

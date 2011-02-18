@@ -416,6 +416,12 @@ visitor.hh
 visitor.hh~
 visitor.stamp
 visitor.stamp~
+watch.cc
+watch.cc~
+watch.hh
+watch.hh~
+watch.hxx
+watch.hxx~
 while.cc
 while.cc~
 while.hh

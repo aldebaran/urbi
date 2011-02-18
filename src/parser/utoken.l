@@ -458,6 +458,7 @@ OPERATOR "operator"{BLANKS}?{OPERATORS}
 "timeout"       RETURN(TIMEOUT);
 "var"           RETURN(VAR);
 "waituntil"     RETURN(WAITUNTIL);
+"watch"         RETURN(WATCH);
 "whenever"      RETURN(WHENEVER);
 
 "every"{FLAVOR} RETURN_FLAVORED_KEYWORD(EVERY);

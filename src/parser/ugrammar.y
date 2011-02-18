@@ -194,6 +194,7 @@
         TRY          "try"
         VAR          "var"
         WAITUNTIL    "waituntil"
+        WATCH        "watch"
         WHENEVER     "whenever"
 
 %token EOF 0 "end of command"
@@ -823,7 +824,6 @@ onleave.opt:
 | "onleave" nstmt              { std::swap($$, $2); }
 ;
 
-
 /*--------.
 | Cases.  |
 `--------*/
@@ -1373,6 +1373,16 @@ exp:
   }
 ;
 
+/*--------.
+| Watch.  |
+`--------*/
+
+exp:
+  "watch" "(" exp ")"
+    {
+      $$ = MAKE(watch, @$, $3);
+    }
+;
 
 /*--------------.
 | Expressions.  |

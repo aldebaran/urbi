@@ -345,6 +345,11 @@ namespace ast
     return make_event_catcher(loc, event, body, onleave, sync);
   }
 
+  rExp
+  Factory::make_watch(const location& loc, ast::rExp exp)
+  {
+    return new ast::Watch(loc, make_closure(exp));
+  }
 
   rExp
   Factory::make_bin(const location& l,

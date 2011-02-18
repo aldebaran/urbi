@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -74,6 +74,10 @@ namespace ast
                   bool sync,
                   EventMatch& event,
                   rExp body, rExp onleave = 0) /* const */;
+
+    static
+    rExp
+    make_watch(const location& loc, ast::rExp exp);
 
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     /// \param op can be flavor_and or flavor_pipe.

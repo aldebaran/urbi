@@ -135,9 +135,9 @@ namespace runner
     return val;
   }
 
-  struct Interpreter::AtEventData
+  struct Interpreter::WatchEventData
   {
-    AtEventData(urbi::object::rEvent ev, object::rCode e)
+    WatchEventData(urbi::object::rEvent ev, object::rCode e)
       : event(ev.get())
       , exp(e)
       , current(0)
@@ -151,15 +151,14 @@ namespace runner
     std::vector<object::Event::Subscription> subscriptions;
   };
 
-  inline void
-  Interpreter::at_run(AtEventData* data, const object::objects_type&)
+  LIBPORT_SPEED_INLINE object::rObject
+  Interpreter::watch_eval(WatchEventData* data)
   {
-    GD_CATEGORY(Urbi.At);
     runner::Interpreter& r = ::kernel::interpreter();
-    bool v;
+    GD_CATEGORY(Urbi.At);
+    rObject v;
     // FIXME: optimize: do not unregister and reregister the same dependency
     {
-      GD_FPUSH_TRACE("Evaluating at condition: %s", data->exp->body_string());
       foreach (object::Event::Subscription& s, data->subscriptions)
         s.stop();
       data->subscriptions.clear();
@@ -167,14 +166,12 @@ namespace runner
       // Do not leave dependencies_log to true while registering on dependencies
       // below.
       {
-
         object::objects_type args;
         args.push_back(data->exp);
-        rObject res;
         try
         {
           r.dependencies_log_ = true;
-          res = r.apply(data->exp, SYMBOL(at_cond), args);
+          v = r.apply(data->exp, SYMBOL(UL_UL_watch), args);
           r.dependencies_log_ = false;
         }
         catch (...)
@@ -182,21 +179,84 @@ namespace runner
           r.dependencies_log_ = false;
           throw;
         }
-
-        if (dynamic_cast<object::Event*>(res.get()))
-        {
-          CAPTURE_GLOBAL(Global);
-          Global->call("warn", new object::String(
-                         "at (<event>) without a '?', "
-                         "this is probably not what you meant."));
-        }
-        v = object::from_urbi<bool>(res);
       }
-      GD_FINFO_DEBUG("At condition has %s hooks.", r.dependencies_.size());
-      foreach (object::rEvent evt, r.dependencies_)
-        data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
-      r.dependencies_.clear();
+      GD_FINFO_DEBUG("Watch event has %s hooks.", r.dependencies_.size());
     }
+    return v;
+  }
+
+  inline void
+  Interpreter::watch_run(WatchEventData* data, const object::objects_type&)
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Evaluating watch event expression: %s",
+                   data->exp->body_string());
+
+    runner::Interpreter& r = ::kernel::interpreter();
+    rObject v = watch_eval(data);
+    foreach (object::rEvent evt, r.dependencies_)
+      data->subscriptions << evt->onEvent(boost::bind(watch_run, data, _1));
+    r.dependencies_.clear();
+    object::objects_type args;
+    args << v;
+    data->event->emit(args);
+  }
+
+  inline void
+  Interpreter::watch_stop(Interpreter::WatchEventData* data)
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Stopping watch event: %s", data->exp->body_string());
+
+    foreach (object::Event::Subscription& s, data->subscriptions)
+      s.stop();
+    delete data;
+  }
+
+  inline void
+  Interpreter::watch_ward(Interpreter::WatchEventData* data)
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Subscribed watch event: %s", data->exp->body_string());
+    data->event_ward = data->event;
+  }
+
+  inline void
+  Interpreter::watch_unward(Interpreter::WatchEventData* data)
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Unsubscribed watch event: %s, %s",
+                   data->exp->body_string(), data->event->counter_get());
+    // If this event is alive only because it's up, terminate it.
+    if (data->current && data->event->counter_get() == 2)
+    {
+      GD_FINFO_TRACE("KILL %s", data->current->counter_get());
+      data->current->stop();
+      GD_FINFO_TRACE("KILL %s, %s", data->current->counter_get(), data->event->counter_get());
+    }
+    data->event_ward = 0;
+  }
+
+  inline void
+  Interpreter::at_run(WatchEventData* data, const object::objects_type&)
+  {
+    GD_CATEGORY(Urbi.At);
+    GD_FPUSH_TRACE("Evaluating at expression: %s",
+                   data->exp->body_string());
+
+    runner::Interpreter& r = ::kernel::interpreter();
+    rObject res = watch_eval(data);
+    if (dynamic_cast<object::Event*>(res.get()))
+    {
+      CAPTURE_GLOBAL(Global);
+      Global->call("warn", new object::String(
+                     "at (<event>) without a '?', "
+                     "this is probably not what you meant."));
+    }
+    bool v = object::from_urbi<bool>(res);
+    foreach (object::rEvent evt, r.dependencies_)
+      data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
+    r.dependencies_.clear();
     if (v && !data->current)
     {
       GD_PUSH_TRACE("Triggering at block (enter)");
@@ -212,64 +272,33 @@ namespace runner
     }
   }
 
-  inline void
-  Interpreter::at_stop(Interpreter::AtEventData* data)
-  {
-    GD_CATEGORY(Urbi.At);
-    GD_FPUSH_TRACE("Stopping at condition: %s", data->exp->body_string());
-    foreach (object::Event::Subscription& s, data->subscriptions)
-      s.stop();
-    delete data;
-  }
+#define URBI_EVENT_VISIT(Type, Fun)                                     \
+  LIBPORT_SPEED_INLINE object::rObject                                  \
+  Interpreter::visit(const ast::Type* e)                                \
+  {                                                                     \
+    object::rCode code = dynamic_cast<object::Code*>                    \
+      (operator()(e->exp_get().get()).get());                           \
+                                                                        \
+    GD_CATEGORY(Urbi.At);                                               \
+    GD_FPUSH_TRACE("Create watch event: %s", code->body_string());    \
+                                                                        \
+    object::rEvent res = new object::Event;                             \
+    WatchEventData* data =                                            \
+      new WatchEventData(res, code);                                  \
+    res->destructed_get().connect(boost::bind(&watch_stop, data));    \
+    /* Maintain that event alive as long as it is subscribed to. */     \
+    res->subscribed_get().connect(boost::bind(watch_ward, data));     \
+    res->unsubscribed_get().connect(boost::bind(watch_unward, data)); \
+    /* Test it a first time. */                                         \
+    Fun(data);                                                          \
+                                                                        \
+    return res;                                                         \
+  }                                                                     \
 
-  inline void
-  Interpreter::at_ward(Interpreter::AtEventData* data)
-  {
-    GD_CATEGORY(Urbi.At);
-    GD_FPUSH_TRACE("Subscribed at condition: %s", data->exp->body_string());
-    data->event_ward = data->event;
-  }
+  URBI_EVENT_VISIT(Watch, watch_run);
+  URBI_EVENT_VISIT(Event, at_run);
 
-  inline void
-  Interpreter::at_unward(Interpreter::AtEventData* data)
-  {
-    GD_CATEGORY(Urbi.At);
-    GD_FPUSH_TRACE("Unsubscribed at condition: %s, %s",
-                   data->exp->body_string(), data->event->counter_get());
-    // If this event is alive only because it's up, terminate it.
-    if (data->current && data->event->counter_get() == 2)
-    {
-      GD_FINFO_TRACE("KILL %s", data->current->counter_get());
-      data->current->stop();
-      GD_FINFO_TRACE("KILL %s, %s", data->current->counter_get(), data->event->counter_get());
-    }
-    data->event_ward = 0;
-  }
-
-  LIBPORT_SPEED_INLINE object::rObject
-  Interpreter::visit(const ast::Event* e)
-  {
-    object::rCode code = dynamic_cast<object::Code*>(operator()(e->exp_get().get()).get());
-
-    GD_CATEGORY(Urbi.At);
-    GD_FPUSH_TRACE("Create at condition: %s", code->body_string());
-
-    object::rEvent res = new object::Event;
-    AtEventData* data =
-      new AtEventData(res, code);
-    res->destructed_get().connect(boost::bind(&at_stop, data));
-    // Maintain that event alive as long as it is subscribed to.
-    res->subscribed_get().connect(boost::bind(at_ward, data));
-    res->unsubscribed_get().connect(boost::bind(at_unward, data));
-    // Test it a first time.
-    at_run(data);
-
-    return res;
-    // std::cerr << "VISIT" << std::endl;
-    // std::cerr << *e << std::endl;
-    // return object::void_class;
-  }
-
+#undef URBI_EVENT_VISIT
 
   LIBPORT_SPEED_INLINE object::rObject
   Interpreter::visit(const ast::Call* e)
@@ -405,7 +434,7 @@ namespace runner
           GD_FPUSH_DEBUG("Register local variable '%s' for at monitoring",
                          e->name_get());
           evt = static_cast<object::Event*>
-            (slot->property_get(SYMBOL(changed)).get());
+            (slot->property_get(SYMBOL(watch)).get());
           dependencies_log_set(true);
         }
         catch (...)

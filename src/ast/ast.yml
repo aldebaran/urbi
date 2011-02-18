@@ -1505,6 +1505,17 @@ Event:
     - ~exp
     - '")"'
 
+Watch:
+  super: Exp
+  attributes:
+    - exp:
+        type: rExp
+        access: rwW
+  printer:
+    - '"$changed("'
+    - ~exp
+    - '")"'
+
 # Local Variables:
 # mode: yaml
 # End:
