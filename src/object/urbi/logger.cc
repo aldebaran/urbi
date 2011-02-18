@@ -61,7 +61,35 @@ namespace urbi
       init_helper(name);
     }
 
-#ifndef LIBPORT_DEBUG_DISABLE
+    void
+    Logger::msg_(libport::Debug::types::Type type,
+                 libport::Debug::levels::Level level,
+                 const std::string& msg,
+                 boost::optional<std::string> category)
+    {
+#if defined LIBPORT_DEBUG_DISABLE
+      (void) type;
+      (void) level;
+      (void) msg;
+      (void) category;
+#else
+      if (! category && ! category_)
+        FRAISE("no category defined");
+
+      libport::debug::category_type c =
+        category ? libport::debug::category_type(*category) : *category_;
+
+      libport::debug::add_category(c);
+
+      std::string file = ::kernel::current_file();
+      int line = ::kernel::current_line();
+      std::string function = ::kernel::current_function_name();
+      if (GD_DEBUGGER && GD_DEBUGGER->enabled(level, c))
+        // FIXME: use full location when GD handles it
+        GD_DEBUGGER->debug(msg, type, c, function, file, line);
+#endif
+    }
+
 # define LEVEL(Name, Type, Lev)                         \
     rObject                                             \
     Logger::Name(const std::string& msg,                \
@@ -78,20 +106,6 @@ namespace urbi
            libport::Debug::levels::Lev, msg);           \
       return this;                                      \
     }
-#else
-# define LEVEL(Name, Type, Level)               \
-    rObject                                     \
-    Logger::Name(const std::string&,            \
-                 const std::string&)            \
-    {                                           \
-      return this;                              \
-    }                                           \
-    rObject                                     \
-    Logger::Name(const std::string&)            \
-    {                                           \
-      return this;                              \
-    }
-#endif
 
     LEVEL(log,   info,  log);
     LEVEL(trace, info,  trace);
@@ -100,30 +114,6 @@ namespace urbi
     LEVEL(err,   error, log);
     LEVEL(warn,  warn,  log);
 #undef LEVEL
-
-#ifndef LIBPORT_DEBUG_DISABLE
-    void
-    Logger::msg_(libport::Debug::types::Type type,
-                 libport::Debug::levels::Level level,
-                 const std::string& msg,
-                 boost::optional<std::string> category)
-    {
-      if (! category && ! category_)
-        FRAISE("no category defined");
-
-      libport::debug::category_type c =
-        category ? libport::debug::category_type(*category) : *category_;
-
-      libport::debug::add_category(c);
-
-      std::string file = ::kernel::current_file();
-      int line = ::kernel::current_line();
-      std::string function = ::kernel::current_function_name();
-      if (GD_DEBUGGER && GD_DEBUGGER->enabled(level, c))
-        // FIXME: use full location when GD handles it
-        GD_DEBUGGER->debug(msg, type, c, function, file, line);
-    }
-#endif
 
     void
     Logger::onEnter()

@@ -44,7 +44,7 @@ namespace urbi
     | Logger functions.  |
     `-------------------*/
     public:
-#define LEVEL(Level)                                                      \
+#define LEVEL(Level)                                                    \
       rObject Level(const std::string& msg, const std::string& category); \
       rObject Level(const std::string& msg)
 
