@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2010, Gostai S.A.S.
+## Copyright (C) 2008-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -25,13 +25,10 @@ nodist_urbi_package_info_DATA =			\
   share/urbi/package-info/libport.u
 
 share/urbi/package-info/urbi-sdk.u: $(top_srcdir)/.version $(VERSIONIFY)
-	$(AM_V_GEN)
-	$(AM_V_at)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK'
+	$(AM_V_GEN)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Urbi SDK'
 	$(AM_V_at)touch $@
 share/urbi/package-info/libport.u: $(top_srcdir)/sdk-remote/libport/.version $(VERSIONIFY)
-	$(AM_V_GEN)
-	$(AM_V_at)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Libport'
+	$(AM_V_GEN)$(VERSIONIFY_RUN) --urbiscript=$@ --prefix='Libport'
 	$(AM_V_at)touch $@
 
 urbi.stamp: $(dist_urbi_DATA) $(nodist_urbi_DATA)
-	@echo "$$(date)"': $?' >>$@

@@ -84,6 +84,20 @@ stub.stamp: $(VERSIONIFY_STUBS)
 all: stub.stamp
 
 
+
+
+
+## -------- ##
+## Stamps.  ##
+## -------- ##
+
+# All the libraries, executables, and everything.
+STAMPS += libraries.stamp executables.stamp all.stamp
+libraries.stamp: $(LTLIBRARIES)
+executables.stamp: $(PROGRAMS)
+all.stamp: $(LTLIBRARIES) $(PROGRAMS)
+
+
 ## ---------------------- ##
 ## Convenient shortcuts.  ##
 ## ---------------------- ##
