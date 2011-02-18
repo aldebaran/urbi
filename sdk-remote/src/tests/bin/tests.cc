@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -109,6 +109,20 @@ sget_error(urbi::USyncClient& c, const std::string& msg)
 }
 
 
+// Cannot make a template here, as we would like to return by copy.
+# define MAKE_CLIENT(Type, Name)                                        \
+  urbi::Type Name(host, port);                                          \
+  VERBOSE(#Name "(" << host << ", " << port << ") @ " << &Name);        \
+  Name.setErrorCallback(urbi::callback(&log));                          \
+  Name.setCallback(urbi::callback(&log), "log");                        \
+  if (Name.error())                                                     \
+    std::cerr << "Failed to set up properly the " #Name << std::endl    \
+              << libport::exit(EX_SOFTWARE);                            \
+  /* Wait to be set up. */                                              \
+  Name.waitForKernelVersion();                                          \
+  VERBOSE(#Name " received Kernel Version")
+
+
 int
 main(int argc, char* argv[])
 {
@@ -139,24 +153,10 @@ main(int argc, char* argv[])
       libport::invalid_option(arg);
   }
 
-  urbi::UClient client(host, port);
-  VERBOSE("client(" << host << ", " << port << ") @ " << &client);
-  client.setErrorCallback(urbi::callback(&log));
-  client.setCallback(urbi::callback(&log), "log");
-  if (client.error())
-    std::cerr << "Failed to set up properly the client" << std::endl
-              << libport::exit(EX_SOFTWARE);
-
-  urbi::USyncClient syncClient(host, port);
-  VERBOSE("syncClient(" << host << ", " << port << ") @ " << &syncClient);
-  syncClient.setErrorCallback(urbi::callback(&log));
-  syncClient.setCallback(urbi::callback(&log), "log");
-  if (syncClient.error())
-    std::cerr << "Failed to set up properly the syncClient" << std::endl
-              << libport::exit(EX_SOFTWARE);
+  MAKE_CLIENT(UClient, client);
+  MAKE_CLIENT(USyncClient, syncClient);
 
   VERBOSE("Starting");
-
   test(client, syncClient);
 
   VERBOSE("Epilogue, Sleep 3s");
