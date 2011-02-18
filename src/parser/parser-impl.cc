@@ -46,7 +46,8 @@ namespace parser
   static bool yydebug = getenv("URBI_PARSER");
 
   ParserImpl::ParserImpl(std::istream& input)
-    : loc_()
+    : input_(input)
+    , loc_()
     , synclines_()
     , result_(0)
     , debug_(yydebug)
@@ -104,7 +105,21 @@ namespace parser
       finally << libport::scoped_set(loc_, *l);
 
     // Parse.
-    p.parse();
+    try
+    {
+      p.parse();
+    }
+    catch (const std::exception& e)
+    {
+      // We may come back on the very same input (for instance when in
+      // interactive session, and hit C-c).  So clear the input, and
+      // reinitialize the Flex scanner, otherwise it will be jammed at
+      // the next run.
+      input_.clear();
+      scanner_.yyrestart(&input_);
+      throw;
+    }
+
 
     // Do not keep the result in the parser.
     parse_result_type res = result_;

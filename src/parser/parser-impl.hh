@@ -86,6 +86,9 @@ namespace parser
     yyFlexLexer scanner_;
 
   private:
+    /// The scanner input stream.
+    std::istream& input_;
+
     /// The current location.
     ///
     /// The real parser (ugrammar.y) fetches its starting location
