@@ -97,9 +97,11 @@ namespace urbi
     }
     mutable libport::Lockable sendBufferLock;
   };
-  /// Interface for an URBI wrapper object.
-  /*! Implementations of this interface are wrappers around the URBI protocol.
-    It handles URBI messages parsing, callback registration and various
+
+
+  /// Interface for an Urbi wrapper object.
+  /*! Implementations of this interface are wrappers around the Urbi protocol.
+    It handles Urbi messages parsing, callback registration and various
     formatting functions.
     Implementations of this interface should:
     - Redefine errorNotify() as a function able to notify the user of eventual
@@ -120,7 +122,7 @@ namespace urbi
   public:
     /// Connection Buffer size.
     enum { URBI_BUFLEN = 128000 };
-    /// Standard port of URBI server.
+    /// Standard port of Urbi server.
     enum { URBI_PORT = 54000 } ;
     /// Default host.
     static const char* default_host();
@@ -314,7 +316,7 @@ namespace urbi
     void makeUniqueTag(char* tag);
 
     /// Pass the given UMessage to all registered callbacks with the
-    /// corresponding tag, as if it were comming from the URBI server.
+    /// corresponding tag, as if it were comming from the Urbi server.
     virtual void notifyCallbacks(const UMessage& msg);
 
     /// Notify of an error.
@@ -326,7 +328,7 @@ namespace urbi
     virtual unsigned int getCurrentTime() const = 0;
 
     /// Active KeepAlive functionality
-    /// Sends an URBI message at specified interval, if no anwser is received
+    /// Sends an Urbi message at specified interval, if no anwser is received
     /// close the connection and notify 'URBI_ERROR_CONNECTION_TIMEOUT'.
     ///
     /// \param pingInterval  interval between ping messages
@@ -768,7 +770,7 @@ namespace urbi
   }
 
 
-  /// Conveniant macro for easy insertion of URBI code in C
+  /// Conveniant macro for easy insertion of Urbi code in C
   /**
      With this macro, the following code is enough to send a simple
      command to a robot using URBI:
@@ -801,7 +803,7 @@ namespace urbi
   URBI_SDK_API
   void execute(void);
 
-  /// Terminate your URBI program.
+  /// Terminate your Urbi program.
   URBI_SDK_API
   void exit(int code);
 

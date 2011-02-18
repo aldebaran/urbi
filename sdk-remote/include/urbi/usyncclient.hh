@@ -240,8 +240,9 @@ namespace urbi
     void waitForKernelVersion(bool hasProcessingThread);
 
     void setDefaultOptions(const USyncClient::send_options& opt);
-    const USyncClient::send_options& getOptions(const USyncClient::send_options& opt =
-                                   USyncClient::send_options::default_options) const;
+    const USyncClient::send_options&
+      getOptions(const USyncClient::send_options& opt =
+                 USyncClient::send_options::default_options) const;
 
     /**
      * Listen on the specified host:port pair. Bind an USyncClient on each
