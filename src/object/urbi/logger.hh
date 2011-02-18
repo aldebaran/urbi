@@ -26,19 +26,22 @@ namespace urbi
     class URBI_MODULE_API Logger: public Tag
     {
     public:
+      typedef libport::debug::category_type category_type;
+      typedef libport::Debug::types types;
+      typedef libport::Debug::levels levels;
       Logger();
       Logger(std::string category);
       Logger(rLogger model);
       virtual ~Logger();
 
       void init();
-      void init(libport::debug::category_type name);
-      void init(libport::debug::category_type name, rObject level);
+      void init(category_type name);
+      void init(category_type name, rObject level);
       std::string as_printable() const;
       rObject operator<<(const std::string& msg);
 
     private:
-      void init_helper(libport::debug::category_type name);
+      void init_helper(category_type name);
 
     /*-------------------.
     | Logger functions.  |
@@ -67,13 +70,13 @@ namespace urbi
     | Details.  |
     `----------*/
     private:
-      void msg_(libport::Debug::types::Type type,
-                libport::Debug::levels::Level level,
+      void msg_(types::Type type,
+                levels::Level level,
                 const std::string& msg,
                 boost::optional<std::string> category =
                 boost::optional<std::string>());
-      boost::optional<libport::debug::category_type> category_;
-      libport::Debug::levels::Level level_;
+      boost::optional<category_type> category_;
+      levels::Level level_;
       URBI_CXX_OBJECT(Logger, Tag);
     };
   }

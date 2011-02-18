@@ -95,15 +95,13 @@ namespace urbi
     Logger::Name(const std::string& msg,                \
                  const std::string& category)           \
     {                                                   \
-      msg_(libport::Debug::types::Type,                 \
-           libport::Debug::levels::Lev, msg, category); \
+      msg_(types::Type, levels::Lev, msg, category);    \
       return this;                                      \
     }                                                   \
     rObject                                             \
     Logger::Name(const std::string& msg)                \
     {                                                   \
-      msg_(libport::Debug::types::Type,                 \
-           libport::Debug::levels::Lev, msg);           \
+      msg_(types::Type, levels::Lev, msg);              \
       return this;                                      \
     }
 
@@ -146,7 +144,7 @@ namespace urbi
       switch(level_)
       {
 #define CASE(Level)                             \
-        case libport::Debug::levels::Level:     \
+        case levels::Level:                     \
           Level(msg);                           \
         break
         CASE(log);
@@ -154,7 +152,7 @@ namespace urbi
         CASE(debug);
         CASE(dump);
 #undef CASE
-      case libport::Debug::levels::none:
+      case levels::none:
         RAISE("no log level defined");
       }
 
@@ -164,7 +162,7 @@ namespace urbi
     URBI_CXX_OBJECT_REGISTER_INIT(Logger)
     {
       proto_add(Tag::proto);
-      level_ = libport::Debug::levels::log;
+      level_ = levels::log;
       category_ = SYMBOL(Logger);
 
       bind(SYMBOL(init),
@@ -210,11 +208,11 @@ namespace urbi
 #undef DECLARE
     }
 
-    URBI_ENUM_REGISTER(libport::Debug::levels::Level, Global.Logger.Levels,
-                       (libport::Debug::levels::none,  None),
-                       (libport::Debug::levels::log,   Log),
-                       (libport::Debug::levels::trace, Trace),
-                       (libport::Debug::levels::debug, Debug),
-                       (libport::Debug::levels::dump,  Dump));
+    URBI_ENUM_REGISTER(Logger::levels::Level, Global.Logger.Levels,
+                       (Logger::levels::none,  None),
+                       (Logger::levels::log,   Log),
+                       (Logger::levels::trace, Trace),
+                       (Logger::levels::debug, Debug),
+                       (Logger::levels::dump,  Dump));
   }
 }
