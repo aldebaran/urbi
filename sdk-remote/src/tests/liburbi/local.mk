@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2010, Gostai S.A.S.
+## Copyright (C) 2008-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -72,5 +72,5 @@ m4sh_scripts += bin/liburbi-check
 # From a test file to a log file.
 # Do not use a regular `.test.log:' rule here, since in that case the
 # following rule (without incoming extension) will mask this one.
-$(LIBURBI_TESTS:.cc=.log): %.log: %$(EXEEXT) $(check_programs)
+$(LIBURBI_TESTS:.cc=.log): %.log: %$(EXEEXT) $(check_programs) ../libraries.stamp
 	@$(am__check_pre) bin/liburbi-check $(srcdir)/$* $(am__check_post)

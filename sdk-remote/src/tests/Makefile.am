@@ -9,6 +9,10 @@
 include $(top_srcdir)/build-aux/make/init.mk
 TESTS =
 AM_CXXFLAGS += $(WARNING_CXXFLAGS)
+# Rerun only what failed, since sometimes it's only because of CPU
+# overloads that touchy tests failed.
+LAZY_TEST_SUITE = 1
+STRICT_TEST_LOGS = $(shell $(LIST_FAILED_TEST_LOGS))
 include $(top_srcdir)/build-aux/make/check.mk
 include $(top_srcdir)/build-aux/make/m4sh.mk
 include $(top_srcdir)/build-aux/make/libport.mk
@@ -16,6 +20,21 @@ include $(top_srcdir)/build-aux/make/libport.mk
 include examples/local.mk
 include liburbi/local.mk
 include uobjects/local.mk
+
+## -------- ##
+## Stamps.  ##
+## -------- ##
+
+# If stamps are missing, go and build them.  Be sure not to run
+# several makes in parallel in the same directory.
+stamps = all libraries executables
+$(patsubst %,../%.stamp, $(stamps)):
+	@set -x ; for i in $(stamps); do			\
+	  if test ! -f ../$$i.stamp; then			\
+	    $(MAKE) $(AM_MAKEFLAGS) -C .. $(stamps:=.stamp);	\
+	    break;						\
+	  fi;							\
+	done
 
 ## ---------------------------------------- ##
 ## Wrappers for non-installed executables.  ##
@@ -52,7 +71,8 @@ CHECK_ENVIRONMENT +=				\
   URBI_SERVER='$(URBI_SERVER)'
 
 # Find (i) our wrappers, (ii) the examples programs.
-BUILDCHECK_PATH = $(abs_builddir)/bin:$(abs_top_builddir)/sdk-remote/src/examples
+BUILDCHECK_PATH =							\
+  $(abs_builddir)/bin:$(abs_top_builddir)/sdk-remote/src/examples
 
 # Use the wrappers to run the non-installed executables.
 BUILDCHECK_ENVIRONMENT +=			\
