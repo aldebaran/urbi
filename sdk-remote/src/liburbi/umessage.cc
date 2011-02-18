@@ -35,7 +35,8 @@ namespace urbi
   UMessage::init_(const binaries_type& bins)
   {
     const char* msg = rawMessage.c_str();
-    GD_FINFO_DUMP("new: \"%s\"", libport::escape(msg));
+    GD_FINFO_DUMP("new: \"%s\", client: %p",
+                  libport::escape(msg), &client);
     while (msg[0] == ' ')
       ++msg;
 

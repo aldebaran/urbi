@@ -867,9 +867,10 @@ namespace urbi
           --nBracket;
           continue;
         case '\n':
-          /* XXX: handle '[' in echoed messages or errors nBracket == 0 */
-          //end of command
-          recvBuffer[parsePosition]=0;
+          // FIXME: handle '[' in echoed messages or errors nBracket == 0.
+          //
+          // end of command
+          recvBuffer[parsePosition] = 0;
           //listLock.lock();
           UMessage msg(*this, currentTimestamp, currentTag,
                        currentCommand,
@@ -1024,7 +1025,7 @@ namespace urbi
   UCallbackAction
   UAbstractClient::setConnectionID(const UMessage& msg)
   {
-    GD_INFO_TRACE("UAbstractClient::setConnectionId");
+    GD_FINFO_TRACE("setConnectionId for client %p", this);
     if (msg.type == MESSAGE_DATA && msg.value)
     {
       std::string id(*msg.value);
@@ -1041,11 +1042,11 @@ namespace urbi
   UCallbackAction
   UAbstractClient::setVersion(const UMessage& msg)
   {
-    GD_INFO_TRACE("UAbstractClient::setVersion");
+    GD_FINFO_TRACE("setVersion for client %p", this);
     libport::BlockLock bl(sendBufferLock);
     if (msg.type != MESSAGE_DATA)
       return URBI_CONTINUE;
-    passert(msg.value->type, msg.value->type == DATA_STRING);
+    aver_eq(msg.value->type, DATA_STRING);
     kernelVersion_ = *msg.value->stringValue;
     size_t sep = kernelVersion_.find_first_of('.');
     try

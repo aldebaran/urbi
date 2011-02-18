@@ -211,15 +211,12 @@ namespace urbi
       else
         syncLock_++;
     }
+    else if (synchronous_)
+      UClient::notifyCallbacks(msg);
     else
     {
-      if (synchronous_)
-        UClient::notifyCallbacks(msg);
-      else
-      {
-        queue.push_back(new UMessage(msg));
-        sem_++;
-      }
+      queue.push_back(new UMessage(msg));
+      sem_++;
     }
     queueLock_.unlock();
   }
