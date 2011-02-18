@@ -12,6 +12,8 @@
 #ifndef URBI_STARTER_HH
 # define URBI_STARTER_HH
 
+# include <libport/preproc.hh>
+
 # include <string>
 
 # include <urbi/export.hh>
@@ -25,13 +27,13 @@
 # define UStartRename(Type, Name)                       \
   ::urbi::URBIStarter<Type>                             \
   Name ##  ____URBI_object(#Name);                      \
-  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " Name)
+  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " #Name)
 
 /// Append connectionID to object name
 # define UStartWithID(Type)                             \
   ::urbi::URBIStarter<Type>                             \
   Type ##  ____URBI_object(#Type, true);                \
-  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " Type)
+  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " #Type)
 
 /// This macro must be called once for every UObject class.
 # define UStart(Type)                           \
@@ -41,7 +43,7 @@
 # define UStartHub(Type)                                \
   ::urbi::URBIStarterHub<Type>                          \
   Type ##  ____URBI_object(#Type);                      \
-  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " Type)
+  URBI_CHECK_SDK_VERSION_BARE(__HERE__ ": " #Type)
 
 namespace urbi
 {
