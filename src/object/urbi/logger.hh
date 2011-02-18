@@ -50,7 +50,8 @@ namespace urbi
 #define LEVEL(Level)                                                    \
     public:                                                             \
       Logger* Level(const std::string& msg, const std::string& category); \
-      Logger* Level(const std::string& msg);
+      Logger* Level(const std::string& msg);                            \
+      Logger* Level();
 
       LEVEL(log);
       LEVEL(trace);
@@ -77,6 +78,7 @@ namespace urbi
                 boost::optional<std::string> category =
                 boost::optional<std::string>());
       boost::optional<category_type> category_;
+      types::Type type_;
       levels::Level level_;
       URBI_CXX_OBJECT(Logger, Tag);
     };

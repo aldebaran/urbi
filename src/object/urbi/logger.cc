@@ -104,6 +104,15 @@ namespace urbi
     {                                                   \
       msg_(types::Type, levels::Lev, msg);              \
       return this;                                      \
+    }                                                   \
+                                                        \
+    Logger*                                             \
+    Logger::Name()                                      \
+    {                                                   \
+      Logger* res(this);                                \
+      res->type_ = types::Type;                         \
+      res->level_ = levels::Lev;                        \
+      return res;                                       \
     }
 
     LEVEL(log,   info,  log);
@@ -142,27 +151,34 @@ namespace urbi
     Logger*
     Logger::operator<<(rObject o)
     {
-      switch(level_)
+      switch (type_)
       {
+      case types::error:
+        return err(o->as_string());
+      case types::warn:
+        return warn(o->as_string());
+      case types::info:
+        switch(level_)
+        {
 #define CASE(Level)                             \
-        case levels::Level:                     \
-          Level(o->as_string());                \
-        break
-        CASE(log);
-        CASE(trace);
-        CASE(debug);
-        CASE(dump);
+          case levels::Level:                   \
+            return Level(o->as_string())
+          CASE(log);
+          CASE(trace);
+          CASE(debug);
+          CASE(dump);
 #undef CASE
-      case levels::none:
-        RAISE("no log level defined");
+        case levels::none:
+          RAISE("no log level defined");
+        }
       }
-
       return this;
     }
 
     URBI_CXX_OBJECT_REGISTER_INIT(Logger)
     {
       proto_add(Tag::proto);
+      type_ = types::info;
       level_ = levels::log;
       category_ = SYMBOL(Logger);
 
@@ -182,7 +198,10 @@ namespace urbi
            (&Logger::Name));                                    \
       bind(SYMBOL_(Name),                                       \
            static_cast<Logger* (Logger::*)(const std::string&)> \
-           (&Logger::Name));
+           (&Logger::Name));                                    \
+      bind(SYMBOL_(Name),                                       \
+           static_cast<Logger* (Logger::*)()>                   \
+           (&Logger::Name))
 
       DECLARE(debug);
       DECLARE(dump);
