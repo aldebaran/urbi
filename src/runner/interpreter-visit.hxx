@@ -398,15 +398,20 @@ namespace runner
       if (dependencies_log_)
       {
         object::Event* evt;
+        try
         {
-          runner::Runner* r = this;
-          FINALLY(((runner::Runner*, r)), r->dependencies_log_set(true));
-          r->dependencies_log_set(false);
+          dependencies_log_set(false);
           GD_CATEGORY(Urbi.At);
           GD_FPUSH_DEBUG("Register local variable '%s' for at monitoring",
                          e->name_get());
           evt = static_cast<object::Event*>
             (slot->property_get(SYMBOL(changed)).get());
+          dependencies_log_set(true);
+        }
+        catch (...)
+        {
+          dependencies_log_set(true);
+          throw;
         }
         dependency_add(evt);
       }
