@@ -35,7 +35,8 @@ class Global.Profile
     function computeUnit(values)
     {
       // Keep original values and units in object:
-      var calls = this.calls |
+      var calls = [] |
+      this.calls.each(function (var v) { calls.insertBack(v) }) |
       // Compute the optimal unit for given values.
       // Values are expected to be in 'us'.
       var max = values.filter(function (var v){ v != 0 }).max |
@@ -62,26 +63,20 @@ class Global.Profile
       (factor, unit)
     } |
 
-    // Convert selfTimes to 'us':
-    calls.each(function (var c)
-    {
-      c.selfTime    *= 1000000 |
-      c.selfTimePer *= 1000000
-    }) |
     // Compute unit for times:
-    var timeUnit        = computeUnit(calls.map(function (var c) { c.selfTime    })) |
+    var timeUnit = computeUnit(
+      calls.map(function (var c) {
+        c.selfTime * 1000000
+      })) |
     // Compute unit for selfTimePers:
-    var selfTimePerUnit = computeUnit(calls.map(function (var c) { c.selfTimePer })) |
+    var selfTimePerUnit = computeUnit(
+      calls.map(function (var c) {
+        c.selfTimePer * 1000000
+      })) |
     // Convert total times in 'us' and then in unit computed
     // previously (do not override object values):
     var totalTime     = totalTime * 1000000 / timeUnit[0] |
     var wallClockTime = wallClockTime * 1000000 / timeUnit[0] |
-    // Convert selfTimes and selfTimePers to units computed previously:
-    calls.each(function (var c)
-    {
-      c.selfTime    /= timeUnit[0] |
-      c.selfTimePer /= selfTimePerUnit[0]
-    }) |
 
     var str = "Profile(\n"
               "  %-21s %6s\n"
@@ -104,13 +99,15 @@ class Global.Profile
     var cumulative = 0 |
     for (var c: calls)
     {
+      var selfTime = 1000000 * c.selfTime / timeUnit[0] |
+      var selfTimePer = 1000000 * c.selfTimePer / selfTimePerUnit[0] |
       str += "  | %12s | %6.2f | %10.2f | %6.2f | %7s | %9.3f |\n"
              % [{if (c.name.empty) "<anonymous>" else c.name},
-                c.selfTime / totalTime * 100.0,
-                cumulative += c.selfTime,
-                c.selfTime,
+                selfTime / totalTime * 100.0,
+                cumulative += selfTime,
+                selfTime,
                 c.calls,
-                c.selfTimePer] |
+                selfTimePer] |
     } |
     str += "  '--------------'--------'------------'--------'---------'-----------'\n"
            ")"
