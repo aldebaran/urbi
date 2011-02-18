@@ -138,8 +138,8 @@ namespace urbi
         : libport::format("Logger_%p", this);
     }
 
-    rObject
-    Logger::operator<<(const std::string& msg)
+    Logger*
+    Logger::operator<<(rObject o)
     {
       switch(level_)
       {

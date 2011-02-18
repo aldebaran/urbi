@@ -38,7 +38,7 @@ namespace urbi
       void init(category_type name);
       void init(category_type name, rObject level);
       std::string as_printable() const;
-      rObject operator<<(const std::string& msg);
+      Logger* operator<<(rObject o);
 
     private:
       void init_helper(category_type name);
