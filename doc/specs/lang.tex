@@ -3355,6 +3355,7 @@ x = 3|; x = 2|; sleep (1s) | assert(!x_was_two_for_two_seconds);
 \end{urbiscript}
 
 \subsubsection{Synchronous and asynchronous \lstinline'at'}
+\label{sec:lang:at:sync-async}
 
 By default, \lstinline{at} is asynchronous: the enter and leave actions are
 executed in detached jobs and won't interfere with the execution flow of the
