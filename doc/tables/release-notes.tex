@@ -34,7 +34,19 @@ the engine.
 
 \subsection{New Features}
 \begin{itemize}
-\item \refObject{Logger} provides a logging service.
+\item \refObject{Logger} provides a logging service:
+\begin{urbiscript}
+var logger = Logger.new("Category")|;
+
+logger.dump << "Low level debug message"|;
+// Nothing displayed, unless the debug level is set to DUMP.
+
+logger.warn << "something wrong happened, proceeding"|;
+[       Category        ] something wrong happened, proceeding
+
+logger.err << "something really bad happened!"|;
+[       Category        ] something really bad happened!
+\end{urbiscript}
 
 \item \refObject{Profile} and \refObject{Profile.Function} replace the
   former \code{Profiling} object.

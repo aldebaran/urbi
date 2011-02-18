@@ -17,6 +17,29 @@ which defines the context in which it has to be shown (see
 \autoref{sec:tools:env}). Log level definition and categories filtering can
 be changed using environment variables defined in \autoref{sec:tools:env}.
 
+\subsection{Examples}
+
+The proper use of Loggers is to instantiate your own category, and then to
+use the operator \lstinline|<<| for log messages, possibly qualified by the
+proper level (in increase order of importance: \refSlot{dump},
+\refSlot{debug}, \refSlot{trace}, \refSlot{log}, \refSlot{warn},
+\refSlot{err}):
+
+\begin{urbiscript}
+var logger = Logger.new("Category")|;
+
+logger.dump << "Low level debug message"|;
+// Nothing displayed, unless the debug level is set to DUMP.
+
+logger.warn << "something wrong happened, proceeding"|;
+[       Category        ] something wrong happened, proceeding
+
+logger.err << "something really bad happened!"|;
+[       Category        ] something really bad happened!
+\end{urbiscript}
+
+You may also directly use the logger and passing arguments to these slots.
+
 \begin{urbiscript}
 Logger.log("message", "Category") |;
 [       Category        ] message
@@ -61,7 +84,7 @@ l.log("foo", "ForcedCategory") |;
 
 \begin{urbiscriptapi}
 
-\item['<<'](<message>)%
+\item['<<'](<object>)%
   Allow to use the \lstinline|Logger| object as a \refObject{Channel}. This
   slot can only be used if both category and level have been defined when
   cloning.
@@ -74,17 +97,29 @@ l << "foo";
 [00091939] Logger<Category>
 \end{urbiscript}
 
-\item[debug](<message>, <category> = category)%
+\item[debug](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Debug| or \lstinline|Dump|. Return
   \this to allow chained operations.
+\begin{urbiscript}
+// None of these are displayed unless the current level is at least DEBUG.
+logger.debug << "debug 1"|;
+logger.debug("debug 2")|;
+logger.debug("debug 3", "Category2")|;
+\end{urbiscript}
 
-\item[dump](<message>, <category> = category)%
+\item[dump](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Dump|. Return \this to allow
   chained operations.
+\begin{urbiscript}
+// None of these are displayed unless the current level is at least DEBUG.
+logger.dump << "dump 1"|;
+logger.dump("dump 2")|;
+logger.dump("dump 3", "Category2")|;
+\end{urbiscript}
 
-\item[err](<message>, <category> = category)%
+\item[err](<message> = "", <category> = category)%
   Report an error \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
 
@@ -102,9 +137,19 @@ Logger.Levels.values;
 [00000001] [None, Log, Trace, Debug, Dump]
 \end{urbiscript}
 
-\item[log](<message>, <category> = category)%
+\item[log](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if debug is not disabled. Return \this to allow chained operations.
+\begin{urbiscript}
+logger.log << "log 1"|;
+[       Category        ] log 1
+
+logger.log("log 2")|;
+[       Category        ] log 2
+
+logger.log("log 3", "Category2")|;
+[       Category2       ] log 3
+\end{urbiscript}
 
 \item[onEnter]%
   The primitive called when \lstinline|Logger| is used as a \lstinline|Tag|
@@ -114,14 +159,30 @@ Logger.Levels.values;
   The primitive called when \lstinline|Logger| is used as a \lstinline|Tag|
   and is left. This primitive only decrements the indentation level.
 
-\item[trace](<message>, <category> = category)%
+\item[trace](<message> = "", <category> = category)%
   Report a debug \var{message} of \var{category} to the user. It will be
   shown if the debug level is \lstinline|Trace|, \lstinline|Debug| or
   \lstinline|Dump|. Return \this to allow chained operations.
+\begin{urbiscript}
+// None of these are displayed unless the current level is at least TRACE.
+logger.trace << "trace 1"|;
+logger.trace("trace 2")|;
+logger.trace("trace 3", "Category2")|;
+\end{urbiscript}
 
-\item[warn](<message>, <category> = category)%
+\item[warn](<message> = "", <category> = category)%
   Report a warning \var{message} of \var{category} to the user. Return \this
   to allow chained operations.
+\begin{urbiscript}
+logger.warn << "warn 1"|;
+[       Category        ] warn 1
+
+logger.warn("warn 2")|;
+[       Category        ] warn 2
+
+logger.warn("warn 3", "Category2")|;
+[       Category2       ] warn 3
+\end{urbiscript}
 \end{urbiscriptapi}
 
 %%% Local Variables:
