@@ -58,6 +58,7 @@ namespace urbi
     , ping_sent_(libport::utime())
     , ping_sem_(0)
     , asynchronous_(opt.asynchronous())
+    , synchronous_send_(false)
   {
     if (opt.start())
       start();
@@ -127,7 +128,10 @@ namespace urbi
   {
     if (rc)
       return -1;
-    libport::Socket::write(buffer, size);
+    if (synchronous_send_)
+      libport::Socket::syncWrite(buffer, size);
+    else
+      libport::Socket::write(buffer, size);
     return 0;
   }
 
@@ -286,6 +290,11 @@ namespace urbi
       sleep(100000);
   }
 
+  void
+  UClient::setSynchronousSend(bool enable)
+  {
+    synchronous_send_ = enable;
+  }
 /*-----------------------.
 | Standalone functions.  |
 `-----------------------*/

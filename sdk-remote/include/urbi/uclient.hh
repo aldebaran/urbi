@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2004, 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -114,6 +114,8 @@ namespace urbi
 
     using UAbstractClient::send;
 
+    /// Use synchronous or asynchronous send.
+    void setSynchronousSend(bool enable);
   protected:
     virtual int effectiveSend(const void* buffer, size_t size);
 
@@ -159,6 +161,8 @@ namespace urbi
     void resetAsyncCalls_();
     /// Make an asynchronous connect.
     bool asynchronous_;
+    /// Use synchronous/asynchronous send.
+    bool synchronous_send_;
   };
 
 } // namespace urbi
