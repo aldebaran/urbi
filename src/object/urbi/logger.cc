@@ -91,14 +91,15 @@ namespace urbi
     }
 
 # define LEVEL(Name, Type, Lev)                         \
-    rObject                                             \
+    Logger*                                             \
     Logger::Name(const std::string& msg,                \
                  const std::string& category)           \
     {                                                   \
       msg_(types::Type, levels::Lev, msg, category);    \
       return this;                                      \
     }                                                   \
-    rObject                                             \
+                                                        \
+    Logger*                                             \
     Logger::Name(const std::string& msg)                \
     {                                                   \
       msg_(types::Type, levels::Lev, msg);              \
@@ -145,7 +146,7 @@ namespace urbi
       {
 #define CASE(Level)                             \
         case levels::Level:                     \
-          Level(msg);                           \
+          Level(o->as_string());                \
         break
         CASE(log);
         CASE(trace);
@@ -176,12 +177,12 @@ namespace urbi
 
 #define DECLARE(Name)                                           \
       bind(SYMBOL_(Name),                                       \
-           static_cast<rObject (Logger::*)(const std::string&,  \
+           static_cast<Logger* (Logger::*)(const std::string&,  \
                                            const std::string&)> \
            (&Logger::Name));                                    \
       bind(SYMBOL_(Name),                                       \
-           static_cast<rObject (Logger::*)(const std::string&)> \
-           (&Logger::Name))
+           static_cast<Logger* (Logger::*)(const std::string&)> \
+           (&Logger::Name));
 
       DECLARE(debug);
       DECLARE(dump);

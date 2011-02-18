@@ -46,10 +46,11 @@ namespace urbi
     /*-------------------.
     | Logger functions.  |
     `-------------------*/
-    public:
+
 #define LEVEL(Level)                                                    \
-      rObject Level(const std::string& msg, const std::string& category); \
-      rObject Level(const std::string& msg)
+    public:                                                             \
+      Logger* Level(const std::string& msg, const std::string& category); \
+      Logger* Level(const std::string& msg);
 
       LEVEL(log);
       LEVEL(trace);
