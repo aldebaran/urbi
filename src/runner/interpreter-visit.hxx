@@ -426,15 +426,14 @@ namespace runner
     {
       if (dependencies_log_)
       {
-        object::Event* evt;
         try
         {
           dependencies_log_set(false);
           GD_CATEGORY(Urbi.At);
           GD_FPUSH_DEBUG("Register local variable '%s' for at monitoring",
                          e->name_get());
-          evt = static_cast<object::Event*>
-            (slot->property_get(SYMBOL(changed)).get());
+          dependency_add(static_cast<object::Event*>
+                         (slot->property_get(SYMBOL(changed)).get()));
           dependencies_log_set(true);
         }
         catch (...)
@@ -442,7 +441,6 @@ namespace runner
           dependencies_log_set(true);
           throw;
         }
-        dependency_add(evt);
       }
       return value;
     }
