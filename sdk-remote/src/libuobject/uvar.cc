@@ -338,7 +338,7 @@ namespace urbi
         }
         GD_INFO_DUMP("localCalling sendGrouped");
         ctx->localCall(i->second->__name, "sendGrouped",
-                         owner_->get_name(), v);
+                         owner_->get_name(), v, time);
         rtp = true;
       }
     rtpfail2:

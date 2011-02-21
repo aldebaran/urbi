@@ -28,10 +28,14 @@
 #include <libport/asio.hh>
 #include <libport/debug.hh>
 
+#include <serialize/serialize.hh>
+
 #include <urbi/socket.hh>
 #include <urbi/uclient.hh>
 #include <urbi/uexternal.hh>
 #include <urbi/uobject.hh>
+
+#include <urbi/uvalue-serialize.hh>
 
 using namespace urbi;
 
@@ -93,14 +97,17 @@ public:
   /// Stop monitoring this UVar (previously passed to groupedSendVar()
   void unGroupedSendVar(UVar& v);
   /// Add this (name, value) pair to next group-send message.
-  void sendGrouped(const std::string& name, const UValue& v);
-  /// Add this value to the next group-send message
-  void addToGroup(const UValue& v);
+  void sendGrouped(const std::string& name, const UValue& v,
+                   libport::utime_t timestamp);
 
   /** Delay in seconds between the time first entry is added to the group, and
    * the time the group is sent.
    */
   UVar commitDelay;
+
+  /// Send the group when UVar with given name is updated (must be in group).
+  UVar commitTriggerVarName;
+
   /// @@}
 
   UEvent onConnectEvent, onErrorEvent;
@@ -124,7 +131,9 @@ public:
     RAW_BINARY = 100, //< Binary without keywords
     BINARY     = 101, //< Keywords then binary
     URBISCRIPT = 102, //< urbiscript to execute
-    VALUES     = 103, //< List of [name, value] to transmit to local backend
+    /// List of [name, value] to transmit to local backend. No longuer emited.
+    VALUES     = 103,
+    SER_VALUES = 104, //< Serialized stream of name value timestamp...
   };
   /// Set a variable name to which binary headers are written to.
   void setHeaderTarget(UVar& v);
@@ -147,6 +156,8 @@ public:
   void onLogLevelChange(UVar& v);
   void commitGroup();
   void send_(const UValue&);
+  void localWrite(const std::string& name, const UValue& val,
+                  libport::utime_t timestamp = 0);
   URTPLink* makeSocket();
   RtpSession* session;
   size_t read_ts;
@@ -157,7 +168,12 @@ public:
   UVar localDeliver;
   UVar logLevel;
   libport::Lockable lock; // group protection
-  UList* groupChange;
+  libport::serialize::BinaryOSerializer* groupOArchiver;
+  std::ostringstream sOArchiver;
+  libport::serialize::BinaryISerializer* groupIArchiver;
+  std::istringstream sIArchiver;
+  // True if group is empty.
+  bool groupEmpty_;
   typedef boost::unordered_map<std::string, UVar*> GroupedVars;
   GroupedVars groupedVars;
   friend class URTPLink;
@@ -209,7 +225,9 @@ URTP::URTP(const std::string& n)
  , write_ts(1)
  , writeTo(0)
  , headerTarget(0)
- , groupChange(0)
+ , groupOArchiver(0)
+ , groupIArchiver(0)
+ , groupEmpty_(true)
  , sendMode_(false) // we don't know yet
 {
   GD_FINFO_DUMP("URTP::URTP on %s", this);
@@ -242,9 +260,10 @@ URTP::~URTP()
   foreach(GroupedVars::value_type& v, groupedVars)
     delete v.second;
   groupedVars.clear();
-  delete groupChange;
   delete writeTo;
   delete headerTarget;
+  delete groupOArchiver;
+  delete groupIArchiver;
 }
 
 URTPLink* URTP::makeSocket()
@@ -258,7 +277,8 @@ void URTP::init()
   UBindEventRename(URTP, onErrorEvent, "onError");
   UBindVars(URTP, forceType, mediaType, jitter, jitterAdaptive, jitterTime,
             localDeliver, forceHeader, raw, commitDelay);
-  UBindVars(URTP, sourceContext, async, syncSendSocket, rawUDP);
+  UBindVars(URTP, sourceContext, async, syncSendSocket, rawUDP,
+            commitTriggerVarName);
   async = 0;
   syncSendSocket = 0;
   rawUDP = 0;
@@ -268,7 +288,7 @@ void URTP::init()
   jitterTime = 500;
   raw = 0;
   commitDelay = 0.0001;
-
+  commitTriggerVarName = "";
   forceType = 0;
   forceHeader = "";
   UBindFunctions(libport::Socket, getLocalPort, getRemotePort,
@@ -333,7 +353,8 @@ void URTP::onChange(UVar& v)
 
 template<typename T>
 void
-transmitRemoteWrite(const std::string& name, const T& val)
+transmitRemoteWrite(const std::string& name, const T& val,
+                    libport::utime_t timestamp)
 {
   UMessage m(*getDefaultClient());
   m.tag = externalModuleTag;
@@ -343,8 +364,7 @@ transmitRemoteWrite(const std::string& name, const T& val)
   l.push_back(UEM_ASSIGNVALUE);
   l.push_back(name);
   l.push_back(val);
-   // FIXME: timestamps should be transmitted through RTP
-  l.push_back(libport::utime());
+  l.push_back(timestamp);
   getDefaultClient()->notifyCallbacks(m);
 }
 
@@ -401,6 +421,33 @@ size_t URTP::onRead(const void* data, size_t sz)
     UObject::send(std::string((const char*)payload, payload_size));
     break;
 
+  case SER_VALUES:
+  {
+    sIArchiver.clear();
+    sIArchiver.str(std::string((const char*)payload, payload_size));
+    GD_FINFO_DUMP("Deserializing SER_VALUES (%s, %s)", (int)(((const char*)payload)[0]), (int)(((const char*)payload)[1]));
+    if (!groupIArchiver)
+      groupIArchiver = new libport::serialize::BinaryISerializer(sIArchiver);
+    try {
+    while (!sIArchiver.eof())
+    {
+      std::string name;
+      libport::utime_t timestamp;
+      unsigned int tlow, thi;
+      UValue val;
+      *groupIArchiver >> name >> tlow >> thi >> val;
+      timestamp = tlow + ((libport::utime_t)thi << 32);
+      if (!name.empty())
+        localWrite(name, val, timestamp);
+    }
+    }
+    // EOF detection is buggy. We will land there every turn.
+    catch(const libport::serialize::Exception& e)
+    {
+      GD_FINFO_TRACE("Serialize exception %s", e.what());
+    }
+  }
+  break;
   case VALUES:
   {
     // FIXME: this will not work with binaries
@@ -430,19 +477,7 @@ size_t URTP::onRead(const void* data, size_t sz)
         std::string name = *v->list->array[0]->stringValue;
         const UValue& val  = *v->list->array[1];
         // Transmit the value to the UObject backend directly
-        if (isRemoteMode())
-          transmitRemoteWrite(name, val);
-        else
-        {
-          std::string sc = sourceContext;
-          if (sc.empty())
-          {
-            UVar var(name);
-            var = val;
-          }
-          else
-            call("uobjects", "$uobject_writeFromContext", sc, name, val);
-        }
+        localWrite(name, val);
       }
       else if ((*v->list)[0].type == DATA_DOUBLE && isRemoteMode())
       {
@@ -509,7 +544,7 @@ size_t URTP::onRead(const void* data, size_t sz)
       // We are in the io_service thread, deliver asynchronously.
       // FIXME: use the client of current context instead.
       GD_SINFO_DUMP("Transmitting " << b.getMessage() <<" " << b.common.size);
-      transmitRemoteWrite(ld, b);
+      transmitRemoteWrite(ld, b, libport::utime());
     }
     b.common.data = 0;
     if (res)
@@ -518,6 +553,25 @@ size_t URTP::onRead(const void* data, size_t sz)
   break;
   }
   return sz;
+}
+
+void URTP::localWrite(const std::string& name, const UValue& val,
+                      libport::utime_t timestamp)
+{
+  GD_FINFO_DUMP("localWrite on %s at %s", name, timestamp);
+  if (isRemoteMode())
+    transmitRemoteWrite(name, val, timestamp);
+  else
+  {
+    std::string sc = sourceContext;
+    if (sc.empty())
+    {
+      UVar var(name);
+      var = val;
+    }
+    else
+      call("uobjects", "$uobject_writeFromContext", sc, name, val, timestamp);
+  }
 }
 
 void URTP::send(const UValue& v)
@@ -763,45 +817,47 @@ void URTP::onGroupedChange(UVar& v)
         && inUpdate)
       return;
   }
-  sendGrouped(v.get_name(), v.val());
+  sendGrouped(v.get_name(), v.val(), v.timestamp());
 }
 
-void URTP::sendGrouped(const std::string& name, const UValue& val)
+void URTP::sendGrouped(const std::string& name, const UValue& val,
+                       libport::utime_t time)
 {
   libport::BlockLock bl(lock);
-  bool first = !groupChange;
-  if (first)
-    groupChange = new UList;
-  groupChange->array.push_back(new UValue(UList()));
-  groupChange->array.back()->list->push_back(name);
-  groupChange->array.back()->list->push_back(val);
-  if (first)
+  if (!groupOArchiver)
+    groupOArchiver = new libport::serialize::BinaryOSerializer(sOArchiver);
+  unsigned int tlow = (unsigned int)time;
+  unsigned int thi = (unsigned int)(time >> 32);
+  *groupOArchiver
+    << name
+    << tlow << thi
+    << val;
+  ufloat cd = commitDelay;
+  bool empty = groupEmpty_;
+  groupEmpty_ = false;
+  if ((std::string)commitTriggerVarName == name)
+    commitGroup();
+  else if (empty && cd>=0)
     libport::asyncCall(boost::bind(&URTP::commitGroup, this),
-                       libport::utime_t((ufloat)commitDelay * 1000000LL),
+                       libport::utime_t(cd * 1000000LL),
                        ctx_->getIoService());
-}
-
-void URTP::addToGroup(const UValue& v)
-{
-  libport::BlockLock bl(lock);
-  bool first = !groupChange;
-  if (first)
-    groupChange = new UList;
-  groupChange->array.push_back(new UValue(v));
 }
 
 void URTP::commitGroup()
 {
   libport::utime_t start = libport::utime();
   libport::BlockLock bl(lock);
-  std::string s = string_cast(*groupChange);
+  std::string s = sOArchiver.str();
+  sOArchiver.clear();
+  sOArchiver.str("");
+  groupEmpty_ = true;
   if (rawUDP)
   {
     write(s.c_str(), s.length());
   }
   else
   {
-    rtp_session_set_payload_type(session, VALUES);
+    rtp_session_set_payload_type(session, SER_VALUES);
     mblk_t* p = rtp_session_create_packet(session, RTP_FIXED_HEADER_SIZE,
                                           (const unsigned char*)s.c_str(),
                                           s.size());
@@ -814,8 +870,6 @@ void URTP::commitGroup()
     // our socket.
     session->rtp.socket = -1;
   }
-  delete groupChange;
-  groupChange = 0;
   static bool dstats = getenv("URBI_STATS");
   if (dstats)
   {
