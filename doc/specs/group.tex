@@ -102,6 +102,20 @@ Group.new(1, "two");
 \item[hasProperty](<name>)%
   Bounced to the members.
 
+\item[hasSlot](<name>)%
+  True if and only if all the members have the slot.
+
+\begin{urbiscript}
+var g = Group.new(1, 2);
+[00000000] Group [1, 2]
+g.hasSlot("foo");
+[00000000] false
+g.hasSlot("+");
+[00000000] true
+g + 1;
+[00000000] Group [2, 3]
+\end{urbiscript}
+
 \item[remove](<member>, ...)%
   Remove members from \this group, and return
   \this.
