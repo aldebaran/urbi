@@ -135,6 +135,7 @@ namespace runner
     return val;
   }
 
+  typedef std::pair<object::Event*, object::Event::Subscription> Subscription;
   struct Interpreter::WatchEventData
   {
     WatchEventData(urbi::object::rEvent ev, object::rCode e)
@@ -148,7 +149,7 @@ namespace runner
     object::rEvent event_ward;
     object::rCode exp;
     object::EventHandler* current;
-    std::vector<object::Event::Subscription> subscriptions;
+    std::vector<Subscription> subscriptions;
   };
 
   LIBPORT_SPEED_INLINE object::rObject
@@ -157,30 +158,42 @@ namespace runner
     runner::Interpreter& r = ::kernel::interpreter();
     GD_CATEGORY(Urbi.At);
     rObject v;
-    // FIXME: optimize: do not unregister and reregister the same dependency
+    // Do not leave dependencies_log to true while registering on dependencies
+    // below.
     {
-      foreach (object::Event::Subscription& s, data->subscriptions)
-        s.stop();
-      data->subscriptions.clear();
-
-      // Do not leave dependencies_log to true while registering on dependencies
-      // below.
+      object::objects_type args;
+      args.push_back(data->exp);
+      try
       {
-        object::objects_type args;
-        args.push_back(data->exp);
-        try
+        r.dependencies_log_ = true;
+        v = r.apply(data->exp, SYMBOL(UL_UL_watch), args);
+        r.dependencies_log_ = false;
+      }
+      catch (...)
+      {
+        r.dependencies_log_ = false;
+        throw;
+      }
+      unsigned hooks_removed = 0;
+      std::vector<Subscription>::iterator it = data->subscriptions.begin();
+      while (it != data->subscriptions.end())
+      {
+        dependencies_type::iterator find = r.dependencies_.find(it->first);
+        if (find != r.dependencies_.end())
         {
-          r.dependencies_log_ = true;
-          v = r.apply(data->exp, SYMBOL(UL_UL_watch), args);
-          r.dependencies_log_ = false;
+          r.dependencies_.erase(find);
+          ++it;
         }
-        catch (...)
+        else
         {
-          r.dependencies_log_ = false;
-          throw;
+          ++hooks_removed;
+          it->second.stop();
+          it = data->subscriptions.erase(it);
         }
       }
-      GD_FINFO_DEBUG("Watch event has %s hooks.", r.dependencies_.size());
+      GD_FINFO_DEBUG("Watch event has %s hooks: %s new, %s removed.",
+                     r.dependencies_.size() + data->subscriptions.size(),
+                     r.dependencies_.size(), hooks_removed);
     }
     return v;
   }
@@ -194,8 +207,9 @@ namespace runner
 
     runner::Interpreter& r = ::kernel::interpreter();
     rObject v = watch_eval(data);
-    foreach (object::rEvent evt, r.dependencies_)
-      data->subscriptions << evt->onEvent(boost::bind(watch_run, data, _1));
+    foreach (object::Event* evt, r.dependencies_)
+      data->subscriptions <<
+      Subscription(evt, evt->onEvent(boost::bind(watch_run, data, _1)));
     r.dependencies_.clear();
     object::objects_type args;
     args << v;
@@ -208,8 +222,8 @@ namespace runner
     GD_CATEGORY(Urbi.At);
     GD_FPUSH_TRACE("Stopping watch event: %s", data->exp->body_string());
 
-    foreach (object::Event::Subscription& s, data->subscriptions)
-      s.stop();
+    foreach (Subscription& s, data->subscriptions)
+      s.second.stop();
     delete data;
   }
 
@@ -254,8 +268,9 @@ namespace runner
                      "this is probably not what you meant."));
     }
     bool v = object::from_urbi<bool>(res);
-    foreach (object::rEvent evt, r.dependencies_)
-      data->subscriptions << evt->onEvent(boost::bind(at_run, data, _1));
+    foreach (object::Event* evt, r.dependencies_)
+      data->subscriptions <<
+      Subscription(evt, evt->onEvent(boost::bind(at_run, data, _1)));
     r.dependencies_.clear();
     if (v && !data->current)
     {
