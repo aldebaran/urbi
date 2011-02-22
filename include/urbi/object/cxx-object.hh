@@ -36,7 +36,7 @@
     bool                                                                \
     as_check_(const std::type_info* req)                                \
     {                                                                   \
-      return &typeid(Name) == req || Parent::as_check_(req);            \
+      return typeid(Name) == *req || Parent::as_check_(req);            \
     }                                                                   \
 
 #define URBI_CXX_OBJECT_REGISTER(Name, ...)                   \
