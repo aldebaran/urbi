@@ -8,4 +8,14 @@
  * See the LICENSE file for more information.
  */
 
-loadModule("urbi/process");
+if (!System.Platform.isWindows)
+{
+  try
+  {
+    loadModule("urbi/process")
+  }
+  catch(var e)
+  {
+    Logger.err("Failed to load process module: "  + e, "Urbi")
+  }
+};
