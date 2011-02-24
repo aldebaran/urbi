@@ -256,9 +256,9 @@ URTP::URTP(const std::string& n)
     ortp_set_log_level_mask(/*ORTP_DEBUG|ORTP_MESSAGE|*/ORTP_WARNING|ORTP_ERROR);
     ortpInit = true;
     UObject::send("var _rtp_object_name = \"" + __name + "\"|");
-    UBindVar(URTP, logLevel);
-    UNotifyChange(logLevel, &URTP::onLogLevelChange);
   }
+  UBindVar(URTP, logLevel);
+  UNotifyChange(logLevel, &URTP::onLogLevelChange);
   session=rtp_session_new(RTP_SESSION_SENDRECV);
   rtp_session_set_scheduling_mode(session,0);
   // Should we block for sending?
