@@ -330,6 +330,7 @@ do (&UVar)
         if (o.hasLocalSlot("lobby") && !lobbies.has(o.lobby))
           lobbies << o.lobby
       }|
+      lobbies -= [Lobby.systemLobby]|
       // Then ask them to use RTP and reset existing notifies.
       var chan = Channel.new('external'.MODULE_TAG)|
       var msg = ['external'.UEM_SETRTP, fullname, rtp];
