@@ -217,6 +217,19 @@ rtp_id()
 ::urbi::URBIStarter<URTP>
 starter_URTP(urbi::isPluginMode() ? "URTP" : rtp_id());
 
+static void bounceSend(UObject*o, const UValue& v)
+{
+  URTP* r = reinterpret_cast<URTP*>(o);
+  r->send(v);
+}
+
+static void bounceSendGrouped(UObject*o, const std::string& n, const UValue& v,
+                       libport::utime_t ts)
+{
+  URTP* r = reinterpret_cast<URTP*>(o);
+  r->sendGrouped(n, v, ts);
+}
+
 URTP::URTP(const std::string& n)
  : UObject(n)
  , UObjectSocket(getCurrentContext()->getIoService())
@@ -230,6 +243,9 @@ URTP::URTP(const std::string& n)
  , groupEmpty_(true)
  , sendMode_(false) // we don't know yet
 {
+  // Register us to contextimpl hooks
+  ctx_->rtpSendGrouped = &bounceSendGrouped;
+  ctx_->rtpSend = &bounceSend;
   GD_FINFO_DUMP("URTP::URTP on %s", this);
   UBindFunction(URTP, init);
   static bool ortpInit = false;

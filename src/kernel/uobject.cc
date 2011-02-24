@@ -632,6 +632,8 @@ namespace urbi
 
     KernelUContextImpl::KernelUContextImpl()
     {
+      rtpSend = 0;
+      rtpSendGrouped = 0;
       instance_ = this;
     }
     void

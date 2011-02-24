@@ -314,7 +314,10 @@ namespace urbi
           GD_INFO_TRACE("RTP link not ready yet, fallback");
           goto rtpfail; // init started, link not ready yet
         }
-        ctx->localCall(i->second->__name, "send", v);
+        if (ctx->rtpSend)
+          ctx->rtpSend(i->second, v);
+        else
+          ctx->localCall(i->second->__name, "send", v);
         rtp = true;
       }
     rtpfail:
@@ -357,7 +360,10 @@ namespace urbi
           goto rtpfail2;
         }
         GD_INFO_DUMP("localCalling sendGrouped");
-        ctx->localCall(i->second->__name, "sendGrouped",
+        if (ctx->rtpSendGrouped)
+          ctx->rtpSendGrouped(i->second, owner_->get_name(), v, time);
+        else
+          ctx->localCall(i->second->__name, "sendGrouped",
                          owner_->get_name(), v, time);
         rtp = true;
       }

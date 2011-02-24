@@ -157,6 +157,14 @@ namespace urbi
       virtual void unlock() = 0;
       /// The io_service used by this context.
       virtual boost::asio::io_service& getIoService() = 0;
+
+      /// RTP hooks for performance
+      typedef void(*RTPSend)(UObject* rtp, const UValue& v);
+      typedef void(*RTPSendGrouped)(UObject* rtp, const std::string&,
+                                    const UValue&,
+                                   libport::utime_t);
+      RTPSend rtpSend;
+      RTPSendGrouped rtpSendGrouped;
     private:
       typedef std::vector<std::vector<boost::function0<void> > > CleanupList;
       boost::thread_specific_ptr<CleanupList> cleanup_list_;

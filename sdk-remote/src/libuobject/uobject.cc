@@ -151,6 +151,8 @@ namespace urbi
       , serializationMode(false)
       , oarchive(0)
     {
+      rtpSend = 0;
+      rtpSendGrouped = 0;
       hookPointName_ = libport::format("hookPoint_%s_%s",
                                        getFilteredHostname(),
  #ifdef __UCLIBC__
