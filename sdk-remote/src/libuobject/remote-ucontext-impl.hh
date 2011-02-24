@@ -87,7 +87,9 @@ namespace urbi
       void makeRTPLink(const std::string& key);
 
       /// Handle an assignment request.
-      void assignMessage(const std::string& name, const UValue& v, time_t ts);
+      void assignMessage(const std::string& name, const UValue& v, time_t ts,
+                         bool bypass=false, UValue* target=0,
+                         time_t* tsTarget = 0);
 
       /// Handle a function call.
       /// \param name  function name (should be array[1])
@@ -214,8 +216,6 @@ namespace urbi
       virtual bool setBypass(bool enable);
       virtual time_t timestamp() const;
       virtual void unnotify();
-      void update(const UValue& v);
-      void update(const UValue& v, time_t timestamp);
       virtual void useRTP(bool enable);
       virtual void setInputPort(bool enable);
     private:
@@ -224,11 +224,14 @@ namespace urbi
       // Transmit in serialized mode.
       void transmitSerialized(const UValue& v, libport::utime_t time);
       USyncClient* client_;
-      UValue value_;
+      // Last value, shared among all UVarImpls with the same name.
+      UValue* value_;
       UVar* owner_;
-      time_t timestamp_;
+      time_t* timestamp_; // shared among all UVarImpls with same name.
       friend class RemoteUGenericCallbackImpl;
+      friend class RemoteUContextImpl;
       std::vector<RemoteUGenericCallbackImpl*> callbacks_;
+      bool bypass_;
     };
 
     class URBI_SDK_API RemoteUGenericCallbackImpl: public UGenericCallbackImpl

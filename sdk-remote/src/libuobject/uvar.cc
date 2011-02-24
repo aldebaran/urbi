@@ -43,13 +43,27 @@ namespace urbi
     GD_FINFO_TRACE("RemoteUVarImpl::initialize %s %s", owner->get_name(),
                    this);
     owner_ = owner;
+    bypass_ = false;
     RemoteUContextImpl* ctx = static_cast<RemoteUContextImpl*>(owner_->ctx_);
     client_ = ctx->backend_;
     LockableOstream* outputStream = ctx->outputStream;
     std::string name = owner_->get_name();
     {
       libport::BlockLock bl(ctx->tableLock);
-      ctx->varmap()[name].push_back(owner_);
+      UVarTable::callbacks_type& ct = ctx->varmap()[name];
+      bool first = ct.empty();
+      ct.push_back(owner_);
+      if (first)
+      {
+        value_ = new UValue();
+        timestamp_ = new time_t;
+      }
+      else
+      {
+        RemoteUVarImpl* impl = static_cast<RemoteUVarImpl*>(ct.front()->impl_);
+        value_ = impl->value_;
+        timestamp_ = impl->timestamp_;
+      }
     }
     URBI_SEND_PIPED_COMMAND_C((*outputStream), "if (!isdef(" << name << ")) var "
                             << name);
@@ -62,7 +76,8 @@ namespace urbi
 
   bool RemoteUVarImpl::setBypass(bool enable)
   {
-    return !enable;
+    bypass_ = enable;
+    return true;
   }
 
   //! UVar out value (read mode)
@@ -126,6 +141,11 @@ namespace urbi
     RemoteUContextImpl* ctx = dynamic_cast<RemoteUContextImpl*>(owner_->ctx_);
     libport::BlockLock bl(ctx->tableLock);
     ctx->varmap().clean(*owner_);
+    if (ctx->varmap()[owner_->get_name()].empty())
+    {
+      delete value_;
+      delete timestamp_;
+    }
   }
 
   static
@@ -238,7 +258,7 @@ namespace urbi
     if (!owner_->get_local())
       transmit(v, time);
     // Loopback notification
-    ctx->assignMessage(owner_->get_name(), v, time);
+    ctx->assignMessage(owner_->get_name(), v, time, bypass_);
   }
 
   void
@@ -370,7 +390,7 @@ namespace urbi
 
   const UValue& RemoteUVarImpl::get() const
   {
-    return value_;
+    return *value_;
   };
 
   //! set own mode
@@ -406,21 +426,14 @@ namespace urbi
     std::string name = owner_->get_name();
     UMessage* m = ctx->syncGet(name + ".uvalueSerialize");
     if (m->type == MESSAGE_DATA)
-      value_ = *m->value;
+      value_->set(*m->value);
     delete m;
   }
 
   time_t
   RemoteUVarImpl::timestamp() const
   {
-    return timestamp_;
-  }
-
-  void
-  RemoteUVarImpl::update(const UValue& v, time_t timestamp)
-  {
-    value_ = v;
-    timestamp_ = timestamp;
+    return *timestamp_;
   }
 
   void RemoteUVarImpl::unnotify()

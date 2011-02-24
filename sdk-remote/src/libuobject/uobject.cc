@@ -651,35 +651,50 @@ namespace urbi
 
     void
     RemoteUContextImpl::assignMessage(const std::string& name,
-                                      const UValue& v, time_t ts)
+                                      const UValue& v, time_t ts,
+                                      bool bypass,
+                                      UValue* val, time_t* timestamp)
     {
-      int nv = 0, nc = 0;
       libport::BlockLock bl(tableLock);
-      if (std::list<UVar*> *us = varmap().find0(name))
+      std::list<UVar*> *us = 0;
+      bool cachedVal = val;
+      // Fetch storage UValue if it was not given to us
+      if (!val)
       {
-        foreach (UVar* u, *us)
+        us = varmap().find0(name); // Do not make this call if cachedVal
+        if (us && !us->empty())
         {
-          nv++;
-          if (RemoteUVarImpl* impl = dynamic_cast<RemoteUVarImpl*>(u->impl_))
-            impl->update(v, ts);
-          else
-          {
-            GD_FERROR("Unable to cast %x to a RemoteUVarImpl.", u->impl_);
-            std::abort();
-          }
+          // Get first UVarImpl to get pointers to val and timestamp
+          RemoteUVarImpl* vimpl =
+          static_cast<RemoteUVarImpl*>(us->front()->impl_);
+          val = vimpl->value_;
+          timestamp = vimpl->timestamp_;
         }
       }
+      if (val)
+      {
+        val->set(v, bypass);
+        *timestamp = ts;
+      }
+      // Process notifyChange
       if (UTable::callbacks_type* cs = monitormap().find0(name))
       {
         foreach (UGenericCallback *c, *cs)
         {
-          nc++;
           // test of return value here
           UList u;
           u.array.push_back(new UValue());
           u[0].storage = c->target;
           c->eval(u);
         }
+      }
+      /* Reset val to empty uvalue in bypass mode
+       * if val was not given to us as argument, maybe it was destroyed since
+       * we calculated it. So check that at least one UVar is still present.
+       */
+      if (bypass && (cachedVal || (us && !us->empty())))
+      { // Reset to void
+        val->set(UValue());
       }
     }
 
