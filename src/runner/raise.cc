@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -172,6 +172,7 @@ namespace runner
   raise_lookup_error(libport::Symbol msg, const object::rObject& obj,
                      bool deep)
   {
+    GD_FPUSH_TRACE("raise lookup error: %s", msg);
     // assert_user_mode("Lookup", msg);
     static bool raising = false;
     if (raising)
@@ -204,6 +205,7 @@ namespace runner
   void
   raise_primitive_error(const std::string& message)
   {
+    GD_FPUSH_TRACE("raise primitive error: %s", message);
     raise_urbi_skip(SYMBOL(Primitive),
                     raise_current_method,
                     to_urbi(message));
