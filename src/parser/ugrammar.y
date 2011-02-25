@@ -312,6 +312,7 @@
 %precedence CMDBLOCK
 %precedence "else" "onleave" "finally"
 
+%precedence SUBSCRIPT
 %right "=" "+=" "-=" "*=" "/=" "^=" "%="
 
 %precedence "const" "var"
@@ -1192,10 +1193,17 @@ tilda.opt:
 | Square brackets operator.  |
 `---------------------------*/
 
-lvalue:
-  exp "[" exps "]"
+exp:
+  exp "[" exps "]" %prec SUBSCRIPT
   {
-    $$ = new ast::Subscript(@$, $3, $1);
+    $$ = MAKE(subscript, @$, $1, $3);
+  }
+;
+
+exp:
+  exp "[" exps "]" "=" exp
+  {
+    $$ = MAKE(subscript_assign, @$, $1, $3, $6);
   }
 ;
 

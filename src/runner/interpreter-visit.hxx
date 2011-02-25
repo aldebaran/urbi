@@ -880,7 +880,6 @@ namespace runner
   INVALID(MetaLValue);
   INVALID(OpAssignment);
   INVALID(Return);
-  INVALID(Subscript);
   INVALID(Unscope);
 
 #undef INVALID
