@@ -49,7 +49,7 @@
   static void                                                           \
   LIBPORT_CAT(urbi_cxx_object_register_##Name##_, __LINE__)()           \
   {                                                                     \
-    URBI_CHECK_SDK_VERSION();                                           \
+    URBI_CHECK_SDK_VERSION(#Name);                                      \
     ::urbi::object::CxxObject::add<Name>(BOOST_PP_STRINGIZE(Ns));       \
   }                                                                     \
   URBI_INITIALIZATION_REGISTER                                          \
