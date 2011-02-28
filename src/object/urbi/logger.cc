@@ -147,27 +147,7 @@ namespace urbi
     Logger*
     Logger::operator<<(rObject o)
     {
-      switch (type_)
-      {
-      case types::error:
-        return err(o->as_string());
-      case types::warn:
-        return warn(o->as_string());
-      case types::info:
-        switch(level_)
-        {
-#define CASE(Level)                             \
-          case levels::Level:                   \
-            return Level(o->as_string())
-          CASE(log);
-          CASE(trace);
-          CASE(debug);
-          CASE(dump);
-#undef CASE
-        case levels::none:
-          RAISE("no log level defined");
-        }
-      }
+      msg_(type_, level_, o->as_string());
       return this;
     }
 
