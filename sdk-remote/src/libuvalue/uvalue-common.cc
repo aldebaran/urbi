@@ -386,7 +386,7 @@ namespace urbi
 
   UVALUE_STRING(const char*,        v)
   UVALUE_STRING(const std::string&, v)
-  UVALUE_STRING(const void*,        (libport::format("%ptr_%x", v)))
+  UVALUE_STRING(const void*,        (libport::format("%%ptr_%x", v)))
 
 #undef UVALUE_STRING
 
