@@ -23,7 +23,7 @@ namespace urbi
   /// Check SDK version, throw if mismatch.
   inline int check_sdk_version(std::string where = "")
   {
-    (void) where;
+    LIBPORT_USE(where);
 # ifndef URBI_INHIBIT_REVISION_CHECK
     GD_CATEGORY(Urbi);
     const libport::PackageInfo& info = urbi::package_info();
@@ -68,7 +68,7 @@ namespace urbi
   inline void check_sdk_version_once(const std::string& where = "")
   {
     static int i = check_sdk_version(where);
-    (void)i;
+    LIBPORT_USE(i);
   }
 
   class VersionChecker

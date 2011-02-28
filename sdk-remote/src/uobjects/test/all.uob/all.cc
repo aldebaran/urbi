@@ -463,7 +463,7 @@ public:
     threadCheck();
     urbi::UVar v;
     int i = v;
-    (void)i;
+    LIBPORT_USE(i);
   }
 
   int readByName(const std::string& name)

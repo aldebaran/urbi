@@ -352,7 +352,7 @@ namespace urbi
     : type(DataType)                                    \
     , Field(Value)                                      \
   {                                                     \
-    (void) copy;                                        \
+    LIBPORT_USE(copy);                                  \
   }                                                     \
 							\
   UValue& UValue::operator=(Args)			\

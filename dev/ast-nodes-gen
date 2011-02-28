@@ -415,7 +415,7 @@ def print_serialization(node, header, inline, impl):
   void
   %(name)s::serialize(libport::serialize::OSerializer<T>& ser) const
   {
-    (void)ser;
+    LIBPORT_USE(ser);
 %(super)s%(ser)s  }
 """ % { 'name': node.name, 'super': super, 'ser': ser }
 
@@ -437,7 +437,7 @@ def print_serialization(node, header, inline, impl):
   %(name)s::%(name)s(libport::serialize::ISerializer<T>& ser)
     %(super)s
   {
-    (void)ser;
+    LIBPORT_USE(ser);
 %(ser)s  }
 #endif
 """ % { 'name': node.name, 'super': super, 'ser': ser }

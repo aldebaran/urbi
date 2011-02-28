@@ -35,6 +35,7 @@ uchange::init ()
 UReturn
 uchange::newval (UVar& v)
 {
+  LIBPORT_USE(v);
   GD_FINFO_DEBUG("newval: %s", (int) v);
   return 0;
 }

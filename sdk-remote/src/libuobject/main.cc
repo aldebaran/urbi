@@ -48,6 +48,7 @@ namespace urbi
   UCallbackAction
   debug(const UMessage& msg)
   {
+    LIBPORT_USE(msg);
     GD_SWARN("unexpected message: " << msg);
     return URBI_CONTINUE;
   }
@@ -56,6 +57,7 @@ namespace urbi
   UCallbackAction
   endProgram(const UMessage& msg)
   {
+    LIBPORT_USE(msg);
     GD_SWARN("got a disconnection message: " << msg);
     exit(0);
     return URBI_CONTINUE; //stupid gcc

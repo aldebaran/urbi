@@ -140,9 +140,7 @@ urbi::UCallbackAction removeOnZero(const urbi::UMessage& msg);
   test(urbi::UClient& client,                                   \
        urbi::USyncClient& syncClient)                           \
   {                                                             \
-    /* Pacify the compiler in case we don't use these guys.  */ \
-    (void) client;                                              \
-    (void) syncClient;
+    LIBPORT_USE(client, syncClient);
 
 #define END_TEST                                \
   }

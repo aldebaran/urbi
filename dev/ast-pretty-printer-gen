@@ -145,8 +145,7 @@ for node in arr:
   void
   PrettyPrinter::visit (const %s* n)
   {
-    // Don't warn about unused arguments.
-    (void) n;
+    LIBPORT_USE(n);
 %s  }
 """ % (node.name, action)
 

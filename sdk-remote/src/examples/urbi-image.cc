@@ -220,7 +220,7 @@ main (int argc, char *argv[])
 			 : urbi::URBI_TRANSMIT_YCbCr),
 			w, h);
     size_t written = fwrite(buff, 1, sz, f);
-    (void) written;
+    LIBPORT_USE(written);
     assert_eq(sz, written);
     fclose(f);
   }

@@ -77,7 +77,7 @@ namespace urbi
       // FIXME: bufferize
       size_t size = write(fd_, &c, 1);
       assert_eq(size, 1u);
-      (void)size;
+      LIBPORT_USE(size);
       return this;
     }
 
@@ -95,7 +95,7 @@ namespace urbi
       size_t str_size = str.size();
       size_t size = write(fd_, str.c_str(), str_size);
       assert_eq(size, str_size);
-      (void)size;
+      LIBPORT_USE(size);
       return this;
     }
   }

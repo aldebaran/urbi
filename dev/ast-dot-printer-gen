@@ -116,7 +116,7 @@ for node in concrete:
   void
   DotPrinter::visit(const %(type)s* n)
   {
-    (void) n;
+    LIBPORT_USE(n);
 
     ++id_;
     if (!ids_.empty())

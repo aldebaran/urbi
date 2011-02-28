@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, Gostai S.A.S.
+ * Copyright (C) 2006-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -193,8 +193,7 @@ uvar_uvalue_cast<UVar&>(UValue& v)
     virtual UValue __evalcall(UList& param)
     {
       impl::UContextImpl::CleanupStack s_(*ctx_);
-      // Avoid warnings when we don't use param.
-      (void) param;
+      LIBPORT_USE(param);
       UValue res;
       res(),
 	(is_const_)
@@ -231,8 +230,7 @@ uvar_uvalue_cast<UVar&>(UValue& v)
     virtual UValue __evalcall(UList& param)
     {
       impl::UContextImpl::CleanupStack s_(*ctx_);
-      // Avoid warnings when we don't use param.
-      (void) param;
+      LIBPORT_USE(param);
       UValue res;
       res(), (*fun)(%%%,% uvar_uvalue_cast<P%>(param[% - 1]) %%);
       return res;
@@ -300,8 +298,7 @@ uvar_uvalue_cast<UVar&>(UValue& v)
     virtual UValue __evalcall(UList& param)
     {
       impl::UContextImpl::CleanupStack s_(*ctx_);
-      // Avoid warnings when we don't use param.
-      (void) param;
+      LIBPORT_USE(param);
       UValue res;
       res(), fun(%%%,% uvar_uvalue_cast<P%>(param[% - 1]) %%);
       return res;

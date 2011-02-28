@@ -62,6 +62,7 @@ generic::inc()
 UReturn
 generic::newval(UVar& v)
 {
+  LIBPORT_USE(v);
   GD_FINFO_DEBUG("newval: %s", (int) v);
   return 0;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010, 2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -319,7 +319,6 @@ main(int argc, char * argv[])
   else
     host = argv[1];
   BallTracking bt(host);
-  // Help GCC understand we really want this variable to be "used".
-  (void) bt;
+  LIBPORT_USE(bt);
   urbi::execute();
 }

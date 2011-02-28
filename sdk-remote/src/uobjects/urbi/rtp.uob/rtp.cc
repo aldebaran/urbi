@@ -775,6 +775,7 @@ void URTP::sendUrbiscript(const std::string& s)
   session->rtp.socket = getFD();
 
   int res = rtp_session_sendm_with_ts(session, p, write_ts++);
+  LIBPORT_USE(res);
   GD_SINFO_DUMP("wrote " << res <<" bytes");
   // But reset it so that it will not attempt to call recvfrom() on our socket.
   session->rtp.socket = -1;
@@ -865,6 +866,7 @@ void URTP::commitGroup()
     session->rtp.socket = getFD();
 
     int res = rtp_session_sendm_with_ts(session, p, write_ts++);
+    LIBPORT_USE(res);
     GD_SINFO_DUMP("wrote " << res <<" bytes");
     // But reset it so that it will not attempt to call recvfrom() on
     // our socket.

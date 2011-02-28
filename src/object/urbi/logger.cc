@@ -67,12 +67,8 @@ namespace urbi
                  const std::string& msg,
                  boost::optional<std::string> category)
     {
-#if defined LIBPORT_DEBUG_DISABLE
-      (void) type;
-      (void) level;
-      (void) msg;
-      (void) category;
-#else
+      LIBPORT_USE(type, level, msg, category);
+#if ! defined LIBPORT_DEBUG_DISABLE
       if (! category && ! category_)
         FRAISE("no category defined");
 

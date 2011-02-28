@@ -155,7 +155,7 @@ for node in concrete:
   void
   SerializerPrinter::visit(const %(type)s* n)
   {
-    (void) n;
+    LIBPORT_USE(n);
     %(code)s;
   }
 

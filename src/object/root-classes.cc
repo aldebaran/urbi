@@ -213,11 +213,11 @@ namespace urbi
     dummy_references()
     {
       Barrier     *b;
-      (void)b;
+      LIBPORT_USE(b);
       Date        date;
       Directory   d;
       Event       e(0);
-      (void)e;
+      LIBPORT_USE(e);
       File        f;
       Path        p;
       Semaphore   s;
