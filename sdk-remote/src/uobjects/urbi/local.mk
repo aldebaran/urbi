@@ -16,3 +16,6 @@ if  WIN32
 endif WIN32
   EXTRA_rtp_cppflags=$(ORTP_CFLAGS)
 endif
+
+UOBJECTS += urbi/fusion
+urbi/fusion$(DLMODEXT): $(wildcard $(srcdir)/uobjects/urbi/fusion.uob/*)
