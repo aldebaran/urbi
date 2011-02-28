@@ -37,6 +37,8 @@
 
 #include <urbi/uvalue-serialize.hh>
 
+#include <urbi/customuvar.hh>
+
 using namespace urbi;
 
 GD_CATEGORY(URTP);
@@ -103,10 +105,10 @@ public:
   /** Delay in seconds between the time first entry is added to the group, and
    * the time the group is sent.
    */
-  UVar commitDelay;
+  CustomUVar<ufloat> commitDelay;
 
   /// Send the group when UVar with given name is updated (must be in group).
-  UVar commitTriggerVarName;
+  CustomUVar<std::string> commitTriggerVarName;
 
   /// @@}
 
@@ -292,9 +294,10 @@ void URTP::init()
   UBindEventRename(URTP, onConnectEvent, "onConnect");
   UBindEventRename(URTP, onErrorEvent, "onError");
   UBindVars(URTP, forceType, mediaType, jitter, jitterAdaptive, jitterTime,
-            localDeliver, forceHeader, raw, commitDelay);
-  UBindVars(URTP, sourceContext, async, syncSendSocket, rawUDP,
-            commitTriggerVarName);
+            localDeliver, forceHeader, raw);
+  UBindVars(URTP, sourceContext, async, syncSendSocket, rawUDP);
+  UBindCacheVar(URTP, commitDelay, ufloat);
+  UBindCacheVar(URTP, commitTriggerVarName, std::string);
   async = 0;
   syncSendSocket = 0;
   rawUDP = 0;
@@ -592,11 +595,13 @@ void URTP::localWrite(const std::string& name, const UValue& val,
 
 void URTP::send(const UValue& v)
 {
+  GD_FINFO_TRACE("URTP::send type %s on %s", v.type, __name);
   // The boost::bind will make a copy of v.
   if (async)
     libport::asyncCall(boost::bind(&URTP::send_, this, v), 0, get_io_service());
   else
     send_(v);
+  GD_FINFO_TRACE("URTP::send finished on %s", v.type, __name);
 }
 
 void URTP::send_(const UValue& v)
@@ -849,12 +854,19 @@ void URTP::sendGrouped(const std::string& name, const UValue& val,
     << name
     << tlow << thi
     << val;
-  ufloat cd = commitDelay;
+  ufloat cd = commitDelay.data();
   bool empty = groupEmpty_;
   groupEmpty_ = false;
-  if ((std::string)commitTriggerVarName == name)
+  std::string& cn = commitTriggerVarName.data();
+  if (cn == name)
+  {
+    static bool synchronous_commit = false;
+    if (!synchronous_commit)
+      std::cerr <<"synchronous commitgroup" << std::endl;
+    synchronous_commit = true;
     commitGroup();
-  else if (empty && cd>=0)
+  }
+  else if (cn.empty() && empty && cd>=0)
     libport::asyncCall(boost::bind(&URTP::commitGroup, this),
                        libport::utime_t(cd * 1000000LL),
                        ctx_->getIoService());
