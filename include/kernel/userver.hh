@@ -34,7 +34,7 @@
 # include <libport/utime.hh>
 # include <libport/pthread.h>
 
-#include <sched/scheduler.hh>
+# include <sched/scheduler.hh>
 
 # include <kernel/fwd.hh>
 # include <kernel/utypes.hh>
@@ -66,12 +66,11 @@ namespace kernel
   sched::Scheduler& scheduler();
 
   //! Handle all Urbi system processing.
-  /*! There must be one UServer defined in the program and it must be overloaded
-      to make it specific to the particular robot.
+  /*! There must be one UServer defined in the program and it must be
+      overloaded to make it specific to the particular robot.
 
-      UServer is used to store the UConnection list and the UDevice list.
-      This object does all the internal processing of Urbi and handles the pool
-      of UCommand's.
+      UServer is used to store the UConnection list.
+      This object does all the internal processing of Urbi.
   */
   class URBI_SDK_API UServer
   {
