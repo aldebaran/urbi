@@ -42,6 +42,8 @@
 # include <urbi/object/object.hh>
 # include <urbi/urbi-root.hh>
 
+# include <ast/loc.hh>
+
 namespace kernel
 {
   /// Global variable for the server
@@ -59,8 +61,7 @@ namespace kernel
   /// Convenience wrapper for Logger objects, to avoid having to
   /// export the symbols of Interpreter.
   URBI_SDK_API std::string current_function_name();
-  URBI_SDK_API std::string current_file();
-  URBI_SDK_API int current_line();
+  URBI_SDK_API ast::loc current_location();
 
   /// Convenience wrapper to get urbiserver's current scheduler.
   sched::Scheduler& scheduler();

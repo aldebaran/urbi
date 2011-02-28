@@ -77,12 +77,14 @@ namespace urbi
 
       libport::debug::add_category(c);
 
-      std::string file = ::kernel::current_file();
-      int line = ::kernel::current_line();
-      std::string function = ::kernel::current_function_name();
       if (GD_DEBUGGER && GD_DEBUGGER->enabled(level, c))
+      {
+        ast::loc loc = ::kernel::current_location();
         // FIXME: use full location when GD handles it
-        GD_DEBUGGER->debug(msg, type, c, function, file, line);
+        GD_DEBUGGER->debug(msg, type, c,
+                           ::kernel::current_function_name(),
+                           loc.begin.filename->name_get(), loc.begin.line);
+      }
 #endif
     }
 
@@ -122,17 +124,13 @@ namespace urbi
     void
     Logger::onEnter()
     {
-#ifndef LIBPORT_DEBUG_DISABLE
-      libport::debugger_data().indent++;
-#endif
+      GD_INDENTATION_INC();
     }
 
     void
     Logger::onLeave()
     {
-#ifndef LIBPORT_DEBUG_DISABLE
-      libport::debugger_data().indent--;
-#endif
+      GD_INDENTATION_DEC();
     }
 
     std::string
