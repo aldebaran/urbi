@@ -29,6 +29,7 @@ namespace urbi
     UEM_SETRTP, // K->R [varname, state(0:off 1:on)]: Set rtp state.
     UEM_REPLY,  // R->K  Function call return value from a remote
     UEM_EVAL,   // R->K  Request to evaluate the string argument
+    UEM_SETLOCAL, // K->R(varname, enable) mark all uvars varname as local
   };
 
   static const std::string externalModuleTag = "__ExternalMessage__";

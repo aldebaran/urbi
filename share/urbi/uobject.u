@@ -621,6 +621,7 @@ class Global.'external'
   var UEM_TIMER        = 7;
   var UEM_NORTP        = 8; //< Disable RTP for this connection
   var UEM_SETRTP       = 9;
+  var UEM_SETLOCAL     = 12;
 
   /* external object <objname>: Set clone to send a UEM_NEW message.
   The remote upon reception of the UEM_NEW message 'instantiate <objname>

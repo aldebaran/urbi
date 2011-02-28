@@ -634,7 +634,25 @@ namespace urbi
                 static_cast<unsigned long>(array.size()));
         setRTPMessage(array[1], array[2]);
         break;
-
+      case UEM_SETLOCAL:
+      {
+        REQUIRE(array.size() == 3,
+                "Component Error: invalid number "
+                "of arguments in the server message: %lu (expected 3)\n",
+                static_cast<unsigned long>(array.size()));
+        std::string name = array[1];
+        bool state = array[2];
+        GD_FINFO_LOG("Set local mode to %s on %s", state, name);
+        {
+          libport::BlockLock bl(tableLock);
+          if (std::list<UVar*> *us = varmap().find0(name))
+          {
+            foreach(UVar* v, *us)
+              v->set_local(state);
+          }
+        }
+      }
+        break;
       default:
         REQUIRE(false,
                 "Component Error: unknown server message type number %d\n",
