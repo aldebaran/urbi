@@ -134,6 +134,7 @@ namespace urbi
   private:
     void clear();
     size_t offset;
+    friend class UValue;
   };
 
   URBI_SDK_API

@@ -529,31 +529,63 @@ namespace urbi
     // TODO: optimize
     if (this == &v)
       return *this;
-    clear();
+    bool sameType = type == v.type;
+    if (!sameType)
+      clear();
 
-    type = v.type;
-    switch (type)
+    switch (v.type)
     {
       case DATA_DOUBLE:
 	val = v.val;
 	break;
       case DATA_STRING:
       case DATA_SLOTNAME:
-	stringValue = new std::string(*v.stringValue);
+        if (sameType)
+          *stringValue = *v.stringValue;
+        else
+          stringValue = new std::string(*v.stringValue);
 	break;
       case DATA_BINARY:
+        if (sameType)
+          delete binary;
 	binary = new UBinary(*v.binary, copy);
 	break;
       case DATA_LIST:
-	list = new UList(*v.list);
+        if (sameType)
+        {
+          list->offset = v.list->offset;
+          unsigned int mins
+            = std::min(v.list->array.size(), list->array.size());
+          // Reuse existing uvalues
+          for (unsigned int i = 0; i<mins; ++i)
+            list->array[i]->set(*v.list->array[i]);
+          // Destroy extra ones
+          for(unsigned int k= 0; k<list->array.size() - mins; ++k)
+          {
+            delete list->array.back();
+            list->array.pop_back();
+          }
+          // Or push new ones
+          for (unsigned int j = mins; j< v.list->array.size(); ++j)
+            list->array.push_back(new UValue(v.list->array[j]));
+        }
+        else
+          list = new UList(*v.list);
 	break;
       case DATA_DICTIONARY:
-        dictionary = new UDictionary(*v.dictionary);
+        if (sameType)
+        {
+          dictionary->clear();
+          dictionary->insert(v.dictionary->begin(), v.dictionary->end());
+        }
+        else
+          dictionary = new UDictionary(*v.dictionary);
         break;
       case DATA_VOID:
         storage = v.storage;
 	break;
     }
+    type = v.type;
     return *this;
   }
 
