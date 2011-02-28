@@ -119,12 +119,12 @@ namespace kernel
   void
   init_error()
   {
-    static bool ignore = getenv("URBI_IGNORE_URBI_U");
+    const char* var = "URBI_IGNORE_URBI_U";
+    static bool ignore = getenv(var);
     if (!ignore)
-    {
-      boost::format fmt("%s: set URBI_IGNORE_URBI_U to ignore.");
-      throw urbi::Exit(EX_OSFILE, str(fmt % program_name()));
-    }
+      throw urbi::Exit(EX_OSFILE,
+                       libport::format("%s: set %s to ignore.",
+                                       program_name(), var));
   }
 
   static
