@@ -87,8 +87,8 @@ namespace urbi
   ::urbi::check_sdk_version(Where)
 
 /// Same as URBI_CHECK_SDK_VERSION, but callable from anywhere.
-#define URBI_CHECK_SDK_VERSION_BARE(Where)                      \
-  ::urbi::VersionChecker LIBPORT_CAT(urbicheck, __LINE__)       \
+#define URBI_CHECK_SDK_VERSION_BARE(Where)                             \
+  static ::urbi::VersionChecker LIBPORT_CAT(urbicheck, __LINE__)       \
   = ::urbi::VersionChecker(Where)
 
 #endif
