@@ -150,6 +150,7 @@ namespace urbi
       , dataSent(false)
       , serializationMode(false)
       , oarchive(0)
+      , sharedRTP_(0)
     {
       rtpSend = 0;
       rtpSendGrouped = 0;

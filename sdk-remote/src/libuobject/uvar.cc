@@ -314,6 +314,7 @@ namespace urbi
           GD_INFO_TRACE("RTP link not ready yet, fallback");
           goto rtpfail; // init started, link not ready yet
         }
+        GD_FINFO_TRACE("Link ready, using cache if %s", ctx->rtpSend);
         if (ctx->rtpSend)
           ctx->rtpSend(i->second, v);
         else
@@ -346,24 +347,28 @@ namespace urbi
     {
       if (ctx->enableRTP && owner_->get_rtp())
       {
-        RemoteUContextImpl::RTPLinks::iterator i
+        if (!ctx->sharedRTP_)
+        {
+          RemoteUContextImpl::RTPLinks::iterator i
           = ctx->rtpLinks.find("_shared_");
-        if (i == ctx->rtpLinks.end())
-        {
-          GD_INFO_DUMP("Async init of RTP shared link");
-          ctx->makeRTPLink("_shared_");
-          goto rtpfail2;
-        }
-        else if (!i->second)
-        {
-          GD_INFO_DUMP("RTP shared link not yet ready");
-          goto rtpfail2;
+          if (i == ctx->rtpLinks.end())
+          {
+            GD_INFO_DUMP("Async init of RTP shared link");
+            ctx->makeRTPLink("_shared_");
+            goto rtpfail2;
+          }
+          else if (!i->second)
+          {
+            GD_INFO_DUMP("RTP shared link not yet ready");
+            goto rtpfail2;
+          }
+          ctx->sharedRTP_ = i->second;
         }
         GD_INFO_DUMP("localCalling sendGrouped");
         if (ctx->rtpSendGrouped)
-          ctx->rtpSendGrouped(i->second, owner_->get_name(), v, time);
+          ctx->rtpSendGrouped(ctx->sharedRTP_, owner_->get_name(), v, time);
         else
-          ctx->localCall(i->second->__name, "sendGrouped",
+          ctx->localCall(ctx->sharedRTP_->__name, "sendGrouped",
                          owner_->get_name(), v, time);
         rtp = true;
       }
@@ -392,6 +397,7 @@ namespace urbi
     {
       ctx->markDataSent();
     }
+    GD_FINFO_DUMP("transmit new value for %s done", fullname);
   }
 
   const UValue& RemoteUVarImpl::get() const

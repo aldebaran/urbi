@@ -178,6 +178,8 @@ namespace urbi
       libport::PackageInfo::Version version;
       // Name of the hook-point UObject for UVars.
       std::string hookPointName_;
+      // Shared RTP link cached instance.
+      UObject* sharedRTP_;
       #define URBI_REMOTE_RTP_INIT_CHANNEL "__remote_rtp_init"
     };
 
