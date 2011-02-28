@@ -47,6 +47,7 @@ GD_CATEGORY(Urbi.LibUObject);
     if (!(Cond))                                \
     {                                           \
       msg.client.printf(__VA_ARGS__);           \
+      GD_FERROR("Message content: %s", *msg.value); \
       return URBI_CONTINUE;                     \
     }                                           \
   } while (false)
@@ -470,13 +471,13 @@ namespace urbi
     call_result(RemoteUContextImpl* ctx, std::string var,
                 const UValue& retval, const std::exception* e)
     {
+      GD_FINFO_DUMP("... dispatch %s done", var);
       // var is empty for internally generated messages (such as update())
       if (var.empty())
         return;
       // This method can be called by a thread from the Thread Pool because
       // it is used as a callback function.  Thus we have to declare the
       // category for the debugger used by the current thread.
-      GD_FINFO_DUMP("... dispatch %s done", var);
       if (e)
       {
          URBI_SEND_COMMA_COMMAND_C
@@ -541,7 +542,7 @@ namespace urbi
               msg.value->type);
 
       UList& array = *msg.value->list;
-
+      GD_FINFO_DUMP("Dispatching %s, first %s", array, array[0]);
       REQUIRE(array[0].type == DATA_DOUBLE,
               "Component Error: invalid server message type %d\n",
               array[0].type);
@@ -564,6 +565,9 @@ namespace urbi
                 "Component Error: invalid number "
                 "of arguments in the server message: %lu\n",
                 static_cast<unsigned long>(array.size()));
+        REQUIRE(array[2].type == DATA_STRING,
+                "Component Error, argument 2 to function call is not a"
+                "stirng\n");
         evalFunctionMessage(array[1], array[2], array);
         break;
 
@@ -737,6 +741,7 @@ namespace urbi
       args.setOffset(3);
       cb->eval(args,
                  boost::bind(&call_result, this, var, _1, _2));
+      GD_INFO_DUMP("dispatch call over, async call_result");
     }
 
     void
