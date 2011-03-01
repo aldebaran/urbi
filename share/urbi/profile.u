@@ -30,39 +30,39 @@ class Global.Profile
     };
   };
 
-  function asString()
+  /// Compute the optimal unit for given values.
+  /// \param values   are expected to be in 'us'.
+  function computeUnit(var values)
   {
-    function computeUnit(values)
+    // Keep original values and units in object:
+    var calls = [] |
+    this.calls.each(function (var v) { calls.insertBack(v) }) |
+    var max = values.filter(function (var v){ v != 0 }).max |
+    var factor |
+    var unit |
+    for (var i : [6, 3, 0])
     {
-      // Keep original values and units in object:
-      var calls = [] |
-      this.calls.each(function (var v) { calls.insertBack(v) }) |
-      // Compute the optimal unit for given values.
-      // Values are expected to be in 'us'.
-      var max = values.filter(function (var v){ v != 0 }).max |
-      var factor |
-      var unit |
-      for (var i : [6, 3, 0])
-      {
-        factor = 10 ** i |
-        if (max / factor < 1)
-          continue |
+      factor = 10 ** i |
+      if (max / factor < 1)
+        continue |
 
+      unit =
+      {
         switch (i)
         {
-          case 6:
-            unit = " s" |
-          case 3:
-            unit = "ms" |
-          case 0:
-            unit = "us" |
-        } |
+          case 6: " s"
+          case 3: "ms"
+          case 0: "us"
+        }
+      }|
 
-        break
-      } |
-      (factor, unit)
+      break
     } |
+    (factor, unit)
+  };
 
+  function asString()
+  {
     // Compute unit for times:
     var timeUnit = computeUnit(
       calls.map(function (var c) {
