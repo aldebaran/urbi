@@ -105,10 +105,7 @@ namespace kernel
     if (const ast::Ast* ast = interpreter().innermost_node())
       return ast->location_get();
     else
-    {
-      libport::Symbol in(SYMBOL(LT_urbi_MINUS_stdin_GT));
-      return ast::loc(&in);
-    }
+      return ast::loc();
   }
 
   static

@@ -86,10 +86,14 @@ namespace urbi
       if (GD_DEBUGGER && GD_DEBUGGER->enabled(level, c))
       {
         ast::loc loc = ::kernel::current_location();
+        std::string file = (loc.begin.filename
+                            ? loc.begin.filename->name_get()
+                            : "<stdin>");
+
         // FIXME: use full location when GD handles it
         GD_DEBUGGER->debug(msg, type, c,
                            ::kernel::current_function_name(),
-                           loc.begin.filename->name_get(), loc.begin.line);
+                           file, loc.begin.line);
       }
 #endif
     }
