@@ -99,11 +99,12 @@ namespace urbi
     size_t needed = buffer_write_->used + size;
     if (needed > buffer_write_->size)
     {
-      buffer_write_->size = ((needed - 1) / chunk_size + 1) * chunk_size;
-      GD_FINFO_DEBUG("growing buffer to %s bytes.", buffer_write_->size);
+      size_t size = ((needed - 1) / chunk_size + 1) * chunk_size;
+      GD_FINFO_DEBUG("growing buffer from %s to %s bytes.",
+                     buffer_write_->size, size);
+      buffer_write_->size = size;
       buffer_write_->buffer =
-        reinterpret_cast<char*>(realloc(buffer_write_->buffer,
-                                        buffer_write_->size));
+        reinterpret_cast<char*>(realloc(buffer_write_->buffer, size));
     }
     memcpy(buffer_write_->buffer + buffer_write_->used, data, size);
     buffer_write_->used = needed;
