@@ -10,8 +10,6 @@
 
 #include <cstdarg>
 
-#include <boost/assign.hpp>
-
 #include <libport/bind.hh>
 #include <libport/lexical-cast.hh>
 #include <libport/foreach.hh>
@@ -56,7 +54,6 @@
 GD_CATEGORY(Urbi.UObject);
 
 // Make it more readable.
-using namespace boost::assign;
 using object::List;
 using object::rPath;
 //Next using disabled, fails on gcc3, conflict with boost::filesystem::Path.
@@ -637,6 +634,7 @@ namespace urbi
       rtpSendGrouped = 0;
       instance_ = this;
     }
+
     void
     KernelUContextImpl::newUObjectClass(baseURBIStarter* s)
     {
@@ -653,6 +651,7 @@ namespace urbi
       where->slot_set(libport::Symbol(s->name),
                       ::urbi::uobjects::uobject_new(proto, true));
     }
+
     void
     KernelUContextImpl::newUObjectHubClass(baseURBIStarterHub* s)
     {
@@ -664,6 +663,7 @@ namespace urbi
       }
       s->instanciate(this);
     }
+
     void
     KernelUContextImpl::send(const char* str)
     {
@@ -691,36 +691,43 @@ namespace urbi
       kernel::urbiserver->ghost_connection_get()
         .received(static_cast<const char*>(buf), size);
     }
+
     void KernelUContextImpl::yield() const
     {
       CHECK_MAINTHREAD();
       ::kernel::runner().yield();
     }
+
     void KernelUContextImpl::yield_until(libport::utime_t deadline) const
     {
       CHECK_MAINTHREAD();
       ::kernel::runner().yield_until(deadline);
     }
+
     void KernelUContextImpl::yield_for(libport::utime_t delay) const
     {
       CHECK_MAINTHREAD();
       ::kernel::runner().yield_for(delay);
     }
+
     void KernelUContextImpl::yield_until_things_changed() const
     {
       CHECK_MAINTHREAD();
       ::kernel::runner().yield_until_things_changed();
     }
+
     void KernelUContextImpl::side_effect_free_set(bool s)
     {
       CHECK_MAINTHREAD();
       ::kernel::runner().side_effect_free_set(s);
     }
+
     bool KernelUContextImpl::side_effect_free_get() const
     {
       CHECK_MAINTHREAD();
       return ::kernel::runner().side_effect_free_get();
     }
+
     UObjectHub*
     KernelUContextImpl::getUObjectHub(const std::string& n)
     {
@@ -932,7 +939,8 @@ namespace urbi
       std::string stag = object::String::proto->as<object::String>()->fresh();
       rObject tag = new object::String(stag);
       rObject call = MAKE_VOIDCALL(cb, urbi::UTimerCallback, call);
-      object::objects_type args = list_of (me)(p) (call)(tag);
+      object::objects_type args;
+      args << me << p << call << tag;
       ::kernel::runner().apply(f, SYMBOL(setTimer), args);
       GD_FINFO_DUMP("SetTimer on %s: %s", cb, stag);
       return TimerHandle(new std::string(stag));
@@ -981,11 +989,11 @@ namespace urbi
       }
       rObject uob = object::Object::proto->slot_get(SYMBOL(UObject));
       rObject f = uob->slot_get(SYMBOL(setHubUpdate));
-      object::objects_type args = list_of
-        (uob)
-        (rObject(new object::String(hub->get_name())))
-        (new object::Float(period / 1000.0))
-        (MAKE_VOIDCALL(hub, urbi::UObjectHub, update));
+      object::objects_type args;
+      args << uob
+           << rObject(new object::String(hub->get_name()))
+           << new object::Float(period / 1000.0)
+           << MAKE_VOIDCALL(hub, urbi::UObjectHub, update);
       ::kernel::runner().apply(f, SYMBOL(setHubUpdate), args);
     }
 
@@ -1471,11 +1479,13 @@ namespace urbi
       GD_FPUSH_DUMP("UGC %s, %s, %s, %s", owner_->type,p.first, method, owned_);
       // UObject owning the variable/event to monitor
       rObject me = xget_base(p.first); //objname?
-      object::objects_type args = list_of(me);
+      object::objects_type args;
+      args << me;
       std::string meId =
-        runner.apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id),
-                     args)
-        ->as<object::String>()->value_get();
+        runner
+        .apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
+        ->as<object::String>()
+        ->value_get();
       std::string traceName;
       if (me->slot_has(SYMBOL(compactName)))
         traceName = me->slot_get(SYMBOL(compactName))
