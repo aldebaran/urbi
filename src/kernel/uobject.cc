@@ -691,29 +691,42 @@ namespace urbi
         .received(static_cast<const char*>(buf), size);
     }
 
+#define INTERRUPTIBLE                                                      \
+  runner::Runner& r = ::kernel::runner();                                  \
+  bool b = r.non_interruptible_get();                                      \
+  r.non_interruptible_set(false);                                          \
+  FINALLY(((runner::Runner&, r))((bool, b)), r.non_interruptible_set(b))
+
+
     void KernelUContextImpl::yield() const
     {
       CHECK_MAINTHREAD();
+      INTERRUPTIBLE;
       ::kernel::runner().yield();
     }
 
     void KernelUContextImpl::yield_until(libport::utime_t deadline) const
     {
       CHECK_MAINTHREAD();
+      INTERRUPTIBLE;
       ::kernel::runner().yield_until(deadline);
     }
 
     void KernelUContextImpl::yield_for(libport::utime_t delay) const
     {
       CHECK_MAINTHREAD();
+      INTERRUPTIBLE;
       ::kernel::runner().yield_for(delay);
     }
 
     void KernelUContextImpl::yield_until_things_changed() const
     {
       CHECK_MAINTHREAD();
+      INTERRUPTIBLE;
       ::kernel::runner().yield_until_things_changed();
     }
+
+#undef INTERRUPTIBLE
 
     void KernelUContextImpl::side_effect_free_set(bool s)
     {
