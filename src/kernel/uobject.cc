@@ -1072,6 +1072,39 @@ namespace urbi
       uobject_to_robject.erase(owner_->__name);
     }
 
+    static
+    std::string
+    me_id(rObject me)
+    {
+      object::objects_type args;
+      args << me;
+      return
+        ::kernel::runner()
+        .apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
+        ->as<object::String>()
+        ->value_get();
+    }
+
+    static
+    std::string
+    trace_name(rObject me)
+    {
+      if (me->slot_has(SYMBOL(compactName)))
+        return
+          me
+          ->slot_get(SYMBOL(compactName))
+          ->as<object::String>()
+          ->value_get();
+      else if (me->slot_has(SYMBOL(__uobjectName)))
+        return
+          me
+          ->slot_get(SYMBOL(__uobjectName))
+          ->as<object::String>()
+          ->value_get();
+      else
+        return me_id(me);
+    }
+
     void
     KernelUObjectImpl::setUpdate(ufloat period)
     {
@@ -1084,18 +1117,13 @@ namespace urbi
       }
       rObject me = xget_base(owner_->__name);
       rObject f = me->slot_get(SYMBOL(setUpdate));
-      object::objects_type args;
-      args << me;
-      std::string meId = ::kernel::runner().apply(
-        me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
-        ->as<object::String>()->value_get();
-
       me->slot_update
         (SYMBOL(update),
          object::primitive
          (boost::function1<void, rObject>(
-           boost::bind(&bounce_update, owner_, me.get(), meId + " update"))));
-      args.clear();
+           boost::bind(&bounce_update,
+                       owner_, me.get(), me_id(me) + " update"))));
+      object::objects_type args;
       args << me
            << new object::Float(period / 1000.0);
       ::kernel::runner().apply(f, SYMBOL(setUpdate), args);
@@ -1464,7 +1492,6 @@ namespace urbi
                      &KernelUGenericCallbackImpl::registerCallback, this));
         return;
       }
-      runner::Runner& runner = ::kernel::runner();
       if (registered_)
       {
         std::cerr << "###UGenericcallback on " << owner_->name
@@ -1478,22 +1505,7 @@ namespace urbi
       GD_FPUSH_DUMP("UGC %s, %s, %s, %s", owner_->type,p.first, method, owned_);
       // UObject owning the variable/event to monitor
       rObject me = xget_base(p.first); //objname?
-      object::objects_type args;
-      args << me;
-      std::string meId =
-        runner
-        .apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
-        ->as<object::String>()
-        ->value_get();
-      std::string traceName;
-      if (me->slot_has(SYMBOL(compactName)))
-        traceName = me->slot_get(SYMBOL(compactName))
-          ->as<object::String>()->value_get();
-      else if (me->slot_has(SYMBOL(__uobjectName)))
-        traceName = me->slot_get(SYMBOL(__uobjectName))
-          ->as<object::String>()->value_get();
-      else
-        traceName = meId;
+      std::string traceName = trace_name(me);
       if (owner_->type == "function")
       {
         traceName += "." + p.second;
@@ -1521,12 +1533,7 @@ namespace urbi
         traceName += "." + p.second + " --> ";
         if (&owner_->owner)
           if (rObject you = get_base(owner_->owner.__name))
-          {
-            Symbol s = (you->slot_has(SYMBOL(compactName))
-                        ? SYMBOL(compactName)
-                        : SYMBOL(__uobjectName));
-            traceName += you->slot_get(s)->as<object::String>()->value_get();
-          }
+            traceName += trace_name(you);
 
         // Source UVar
         object::rUVar var = me->slot_get(Symbol(method))->as<object::UVar>();
@@ -1578,7 +1585,7 @@ namespace urbi
           id_ = var->notifyChangeOwned_(callback_);
         else
           id_ = var->notifyChange_(callback_);
-         GD_FINFO_DUMP("Registered gave id %s on %s(%s)", id_, owner_->name,
+        GD_FINFO_DUMP("Registered gave id %s on %s(%s)", id_, owner_->name,
                        var.get());
         if (owner_->target)
         {
