@@ -454,17 +454,17 @@ namespace runner
   }
 
   Interpreter::Profile&
-  Interpreter::Profile::operator+=(const Profile& other)
+  Interpreter::Profile::operator+=(const Profile& rhs)
   {
-    yields_          += other.yields_;
-    wall_clock_time_ += other.wall_clock_time_;
-    total_time_      += other.total_time_;
-    function_calls_  += other.function_calls_;
+    yields_          += rhs.yields_;
+    wall_clock_time_ += rhs.wall_clock_time_;
+    total_time_      += rhs.total_time_;
+    function_calls_  += rhs.function_calls_;
 
     function_call_depth_max_ = std::max(function_call_depth_max_,
-                                        other.function_call_depth_max_);
+                                        rhs.function_call_depth_max_);
 
-    foreach(FunctionProfiles::value_type value, other.functions_profile_)
+    foreach (const FunctionProfiles::value_type& value, rhs.functions_profile_)
     {
       FunctionProfiles::iterator it = functions_profile_.find(value.first);
       if (it != functions_profile_.end())

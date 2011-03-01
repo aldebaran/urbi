@@ -553,11 +553,6 @@ namespace urbi
     static rObject
     system_profile(Object* self, Executable* action)
     {
-      typedef runner::Interpreter::Profile::FunctionProfiles FunctionProfiles;
-      typedef runner::Interpreter::Profile::FunctionProfile FunctionProfile;
-
-      runner::Interpreter::Profile p;
-
       if (interpreter().is_profiling())
       {
         runner::Exception::warn(interpreter().innermost_node()->location_get(),
@@ -568,6 +563,7 @@ namespace urbi
         return nil_class;
       }
 
+      runner::Interpreter::Profile p;
       {
         FINALLY(((Object*, self)), ::kernel:: interpreter().profile_stop());
         interpreter().profile_start(&p);
@@ -592,6 +588,8 @@ namespace urbi
 
 #undef DECLARE
 
+      typedef runner::Interpreter::Profile::FunctionProfiles FunctionProfiles;
+      typedef runner::Interpreter::Profile::FunctionProfile FunctionProfile;
       std::vector<FunctionProfile> fps;
       foreach (const FunctionProfiles::value_type& fp,
                p.functions_profile_get())
