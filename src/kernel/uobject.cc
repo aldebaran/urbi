@@ -393,7 +393,7 @@ void
 uobject_uobjectsPathSet(const rObject&, List::value_type list)
 {
   uobjects_path.search_path().clear();
-  BOOST_FOREACH (rObject p, list)
+  foreach (rObject p, list)
   {
     rPath path = p->as<object::Path>();
     uobjects_path.search_path().push_back(path->value_get());
@@ -446,7 +446,8 @@ static void write_and_unfreeze(urbi::UValue& r, std::string& exception,
   else
     r = v;
   if (server().isAnotherThread())
-    server().schedule(SYMBOL(UObject),boost::bind(&object::Tag::unfreeze, tag->get()));
+    server().schedule(SYMBOL(UObject),
+                      boost::bind(&object::Tag::unfreeze, tag->get()));
   else
     (*tag)->unfreeze();
 
@@ -642,7 +643,8 @@ namespace urbi
       if (server().isAnotherThread())
       {
         server().schedule(SYMBOL(UObject),
-          boost::bind(&KernelUContextImpl::newUObjectClass, this, s));
+                          boost::bind(&KernelUContextImpl::newUObjectClass,
+                                      this, s));
         return;
       }
       object::rObject proto = ::urbi::uobjects::uobject_make_proto(s->name);
@@ -884,16 +886,19 @@ namespace urbi
     {
       return MODE_PLUGIN;
     }
+
     UVarImpl*
     KernelUContextImpl::getVarImpl()
     {
       return new KernelUVarImpl();
     }
+
     UObjectImpl*
     KernelUContextImpl::getObjectImpl()
     {
       return new KernelUObjectImpl();
     }
+
     UGenericCallbackImpl*
     KernelUContextImpl::getGenericCallbackImpl()
     {
@@ -906,6 +911,7 @@ namespace urbi
       *handle = KernelUContextImpl::instance()->setTimer(cb);
       sem++;
     }
+
     TimerHandle
     KernelUContextImpl::setTimer(UTimerCallback* cb)
     {

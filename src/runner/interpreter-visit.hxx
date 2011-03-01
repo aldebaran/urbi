@@ -102,7 +102,7 @@ namespace runner
 
     if (profile_)
     {
-      foreach(libport::intrusive_ptr<Job> job, collector)
+      foreach (libport::intrusive_ptr<Job> job, collector)
       {
         // We are sure these jobs are Interpeters.
         Interpreter* i = static_cast<Interpreter*>(job.get());

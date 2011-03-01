@@ -506,7 +506,7 @@ namespace runner
   bool
   Interpreter::is_profiling() const
   {
-    return profile_ != 0;
+    return profile_;
   }
 
   void
