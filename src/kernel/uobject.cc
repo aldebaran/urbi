@@ -1162,8 +1162,15 @@ namespace urbi
       foreach (KernelUGenericCallbackImpl* v, callbacks_)
       {
         GD_FINFO_TRACE("Unnotify processing callback %s", v);
-        object::rUVar r = v->inportName_.empty()
-          ? ruvar_ : object::UVar::fromName(v->inportName_)->as<object::UVar>();
+        object::rUVar r;
+        if (v->inportName_.empty())
+          r = ruvar_;
+        else
+        {
+          rObject o = object::UVar::fromName(v->inportName_);
+          if (o)
+            r = o->as<object::UVar>();
+        }
         if (r)
         {
           bool ok = false;
