@@ -181,6 +181,7 @@ public:
   friend class URTPLink;
   libport::Statistics<libport::utime_t> sendTime;
   bool sendMode_; // will this socket be used for synchronous sending.
+  std::vector<unsigned short> localPorts;
 };
 
 class URTPLink: public libport::Socket
@@ -274,10 +275,15 @@ URTP::URTP(const std::string& n)
 URTP::~URTP()
 {
   GD_FINFO_DUMP("URTP::~URTP on %s", this);
+  close();
   libport::BlockLock bl(lock);
-  foreach(GroupedVars::value_type& v, groupedVars)
-    delete v.second;
-  groupedVars.clear();
+  {
+    foreach(GroupedVars::value_type& v, groupedVars)
+      delete v.second;
+    groupedVars.clear();
+  }
+  foreach(unsigned short lp, localPorts)
+    closeUDP(lp);
   delete writeTo;
   delete headerTarget;
   delete groupOArchiver;
@@ -337,6 +343,7 @@ int URTP::listen(const std::string& host, const std::string& port)
                       erc, get_io_service());
   if (erc)
     throw std::runtime_error(erc.message());
+  localPorts.push_back(res);
   return res;
 }
 
