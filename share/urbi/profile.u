@@ -31,52 +31,40 @@ class Global.Profile
   };
 
   /// Compute the optimal unit for given values.
-  /// \param values   are expected to be in 'us'.
+  /// \param values   in seconds.
+  /// \return (factor, unit)
   function computeUnit(var values)
   {
-    // Keep original values and units in object:
-    var calls = [] |
-    this.calls.each(function (var v) { calls.insertBack(v) }) |
     var max = values.filter(function (var v){ v != 0 }).max |
-    var factor |
-    var unit |
-    for (var i : [6, 3, 0])
-    {
-      factor = 10 ** i |
-      if (max / factor < 1)
-        continue |
-
-      unit =
+    var order = 0|
+    for (var i : [3, 6])
+      if (1 <= max * 10 ** i)
       {
-        switch (i)
-        {
-          case 6: " s"
-          case 3: "ms"
-          case 0: "us"
-        }
+        order = i|
+        break
       }|
-
-      break
-    } |
-    (factor, unit)
+    var unit =
+      {
+        switch (order)
+        {
+          case 0: " s"
+          case 3: "ms"
+          case 6: "us"
+        }
+     }|
+    (10 ** order, unit)
   };
 
   function asString()
   {
     // Compute unit for times:
-    var timeUnit = computeUnit(
-      calls.map(function (var c) {
-        c.selfTime * 1000000
-      })) |
+    var timeUnit =
+      computeUnit(calls.map(function (var c) { c.selfTime })) |
     // Compute unit for selfTimePers:
-    var selfTimePerUnit = computeUnit(
-      calls.map(function (var c) {
-        c.selfTimePer * 1000000
-      })) |
-    // Convert total times in 'us' and then in unit computed
-    // previously (do not override object values):
-    var totalTime     = totalTime * 1000000 / timeUnit[0] |
-    var wallClockTime = wallClockTime * 1000000 / timeUnit[0] |
+    var selfTimePerUnit =
+      computeUnit(calls.map(function (var c) { c.selfTimePer })) |
+    var totalTime     = totalTime * timeUnit[0] |
+    var wallClockTime = wallClockTime * timeUnit[0] |
 
     var str = "Profile(\n"
               "  %-21s %6s\n"
@@ -99,8 +87,8 @@ class Global.Profile
     var cumulative = 0 |
     for (var c: calls)
     {
-      var selfTime = 1000000 * c.selfTime / timeUnit[0] |
-      var selfTimePer = 1000000 * c.selfTimePer / selfTimePerUnit[0] |
+      var selfTime = c.selfTime * timeUnit[0] |
+      var selfTimePer = c.selfTimePer * selfTimePerUnit[0] |
       str += "  | %12s | %6.2f | %10.2f | %6.2f | %7s | %9.3f |\n"
              % [{if (c.name.empty) "<anonymous>" else c.name},
                 selfTime / totalTime * 100.0,
