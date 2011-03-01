@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -33,7 +33,7 @@ main(int argc, char * argv [])
 {
   if (argc<3)
   {
-    printf("usage: urbisendsound robot file\n"
+    printf("usage: urbi-sendsound robot file\n"
            "\t file must be in the WAV format\n");
     exit(1);
   }
@@ -74,8 +74,8 @@ main(int argc, char * argv [])
     {
       s.size = sz+44;
       convert(s, snd);
-      uc.sendSound("speaker", snd,sz<128000?"end":"void");
-      printf("sending %d bytes\n",sz);
+      uc.sendSound("speaker", snd, sz < 128000 ? "end" : "void");
+      printf("sending %d bytes\n", sz);
     }
   }
   else
@@ -87,9 +87,9 @@ main(int argc, char * argv [])
     ignore = fread(s.data, 1,st.st_size, f);
     snd.data = 0;
     convert(s, snd);
-    uc.setCallback(endProgram,"end");
+    uc.setCallback(endProgram, "end");
     printf("sending %d bytes\n", static_cast<int>(st.st_size));
-    uc.sendSound("speaker", snd,"end");
+    uc.sendSound("speaker", snd, "end");
     printf("done, waiting for end of play notification\n");
   }
   urbi::execute();

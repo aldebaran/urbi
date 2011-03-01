@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -116,7 +116,8 @@ send_data(urbi::UClient& client, const data_type& data)
     std::string content = libport::read_file(data.file);
     client << data.variable << " = ";
     client.sendBinary(content.c_str(), content.size(), data.headers);
-    client << ";";
+    client << ";\n";
+    client.flush();
   }
   catch (const std::exception& e)
   {
