@@ -144,6 +144,7 @@ void loadUValue(Archive & ar, urbi::UValue& v, std::istream& is)
                + (headers.empty() ? "" : " ")
                + headers +";");
     v.binary->parse(headers.c_str(), 0, bins, i, false);
+    v.binary->allocated_ = true;
   }
   break;
 
