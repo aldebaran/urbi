@@ -147,7 +147,6 @@ namespace kernel
                   ":")
     , opt_banner_(true)
     , fast_async_jobs_start_(false)
-    , fast_async_jobs_tag_(new object::Tag)
     , scheduler_(new sched::Scheduler(boost::bind(&UServer::getTime,
                                                   boost::ref(*this))))
     , stopall(false)
@@ -391,6 +390,7 @@ namespace kernel
     // the ghostconnection too.
     ghost_->initialize();
 
+    fast_async_jobs_tag_ = new object::Tag(new sched::Tag("fastAsyncJob"));
     fast_async_jobs_job_ =
       new runner::Interpreter(ghost_->lobby_get(),
                                scheduler_get(),
