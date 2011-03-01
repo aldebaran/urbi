@@ -229,7 +229,7 @@ namespace runner
         ATTRIBUTE_R(unsigned, calls);
         ATTRIBUTE_R(unsigned, self_time);
         ATTRIBUTE_R(unsigned, time);
-        void append(FunctionProfile* other);
+        FunctionProfile& operator +=(const FunctionProfile& other);
       private:
         friend class Interpreter;
         friend class Profile;
@@ -241,7 +241,7 @@ namespace runner
       ATTRIBUTE_R(unsigned, function_calls);
       ATTRIBUTE_R(unsigned, function_call_depth_max);
       ATTRIBUTE_R(FunctionProfiles, functions_profile);
-      void append(Profile* other);
+      Profile& operator+=(const Profile& other);
     private:
       bool wrapper_function_seen;
       libport::utime_t step();

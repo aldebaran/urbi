@@ -109,7 +109,7 @@ namespace runner
         if (i->profile_)
         {
           i->profile_->step();
-          profile_->append(i->profile_);
+          *profile_ += *i->profile_;
           delete i->profile_;
           i->profile_ = 0;
         }
