@@ -190,24 +190,41 @@ class Global.Component
   /// Add a localizer name \b name as a sub-component of this.
   function addLocalizer(name)
   {
-    addComponent(Localizer.new(name))
+    if (!hasLocalSlot(name))
+        addComponent(Localizer.new(name))
   };
 
   /// Add component \b value (or named value) as a sub-component of this.
   function addComponent(value)
   {
-    if (value.isA(String))
-      value = Component.new(value) |
-    setSlot(value.componentName, value) |
-    setProperty(value.componentName, "constant", true) |
-    this << value |
-    Object.&updateSlot.apply([value, "parentComponent", this]) |
-    value
+    if (value.isA(String) && hasLocalSlot(value))
+      getSlot(value)
+    else
+    {
+      if (value.isA(String))
+        value = Component.new(value) |
+      setSlot(value.componentName, value) |
+      setProperty(value.componentName, "constant", true) |
+      this << value |
+      Object.&updateSlot.apply([value, "parentComponent", this]) |
+      value
+    }
   };
 
   /// Add device \b value, name it \b name.
-  function addDevice(name, value)
+  function addDevice(name, value, replaceIfExists=false)
   {
+    if (hasLocalSlot(name))
+    {
+      if ((getSlot(name).hasLocalSlot("__uobjectName")
+        && !getSlot(name).hasLocalSlot("tag")) || replaceIfExists)
+      { // Dead uobject in the slot or override allowed, remove.
+        members.remove(getSlot(name));
+        removeLocalSlot(name);
+      }
+      else
+        throw ("Device %s already exists" % [name]);
+    }|
     setSlot(name, value) |
     setProperty(name, "constant", true) |
     // Device inherits from at least a facet which has those slots
@@ -344,15 +361,15 @@ class Global.Component
   };
 
   /// Call makeCompactName() on all components and devices.
-  function Object.makeCompactNames(where=Global, cache=true)
+  function Object.makeCompactNames(where=Global, constify=true, cache=true)
   {
     if (cache)
       cacheNames |
     if (!cache)
-      makeCompactName |
+      makeCompactName(where, constify) |
     if (isA(Group))
         for| (var m: members)
-          m.makeCompactNames(where, false)
+          m.makeCompactNames(where, constify, false)
   };
 
   /** Generate the compact name for current Device/Component.
@@ -363,7 +380,7 @@ class Global.Component
    *  The object is inserted into \b where, in a slot named after its
    *  compact name.
    */
-  var Object.makeCompactName = function (where=Global)
+  var Object.makeCompactName = function (where=Global,constify=true)
   {
     var name="" |
     var localizers = ""|
@@ -403,11 +420,14 @@ class Global.Component
       p = p.parentComponent
     }|
     name = name + localizers |
-    if (!where.hasLocalSlot(name))
+    if (where.hasLocalSlot(name))
     {
-        where.setSlot(name, this) |
-        where.setProperty(name, "constant", true)
+      Logger.warn("Replacing existing component " + name, "component")|
+      where.removeLocalSlot(name)
     }|
+    where.setSlot(name, this) |
+    if (constify)
+      where.setProperty(name, "constant", true)|
     if (hasLocalSlot("compactName"))
       removeLocalSlot("compactName")|
     setSlot("compactName", name)
