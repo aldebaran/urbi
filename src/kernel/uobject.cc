@@ -402,16 +402,16 @@ static void delete_uvar(urbi::UVar* v)
   delete v;
 }
 
-static rObject wrap_ucallback_notify(const object::objects_type& ol ,
-                                     urbi::UGenericCallback* ugc,
-                                     std::string traceName)
+static rObject
+wrap_ucallback_notify(const object::objects_type& ol,
+                      urbi::UGenericCallback* ugc,
+                      const std::string& traceName)
 {
   GD_FPUSH_TRACE("Calling bound notify %s", traceName);
   urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
-  bound_context.push_back(std::make_pair(
-      (&ugc->owner)? ugc->owner.__name:"unknown",
-      ugc->name
-      ));
+  bound_context
+    << std::make_pair(&ugc->owner ? ugc->owner.__name : "unknown",
+                      ugc->name);
   urbi::impl::KernelUGenericCallbackImpl& impl =
     static_cast<urbi::impl::KernelUGenericCallbackImpl&>  (*ugc->impl_);
   bool dummy = false;
@@ -470,10 +470,9 @@ static rObject wrap_ucallback(const object::objects_type& ol,
   libport::utime_t start = libport::utime();
   urbi::UValue res;
 
-  bound_context.push_back(std::make_pair(
-      (&ugc->owner)? ugc->owner.__name:"unknown",
-      ugc->name
-      ));
+  bound_context
+    << std::make_pair(&ugc->owner ? ugc->owner.__name : "unknown",
+                      ugc->name);
   FINALLY(((bool, tail)), bound_context.pop_back();GD_INFO_DUMP("Done"));
   try
   {
@@ -1513,7 +1512,8 @@ namespace urbi
                        (boost::bind(&wrap_event, _1, owner_, traceName))));
       }
       if (owner_->type == "var" || owner_->type == "varaccess")
-      { // NotifyChange or NotifyAccess callback
+      {
+        // NotifyChange or NotifyAccess callback
         GD_FINFO_DUMP("UGC %s using backend UConnection.", this);
         //owner_->owner is the UObject that sets the callback: target
         // Compute tracing name
@@ -1572,13 +1572,12 @@ namespace urbi
           (SYMBOL(target),
            new object::String(&owner_->owner ? owner_->owner.__name:"unknown"));
 
-        if (owner_->type != "varaccess")
-          if (owned_)
-            id_ = var->notifyChangeOwned_(callback_);
-          else
-            id_ = var->notifyChange_(callback_);
+        if (owner_->type == "varaccess")
+          id_ = var->notifyAccess_(callback_);
+        else if (owned_)
+          id_ = var->notifyChangeOwned_(callback_);
         else
-           id_ = var->notifyAccess_(callback_);
+          id_ = var->notifyChange_(callback_);
          GD_FINFO_DUMP("Registered gave id %s on %s(%s)", id_, owner_->name,
                        var.get());
         if (owner_->target)
