@@ -19,12 +19,18 @@ namespace urbi
   {
     Logger::Logger()
       : Tag()
+      , category_(SYMBOL(Logger))
+      , type_(types::info)
+      , level_(levels::log)
     {
       proto_add(proto);
     }
 
     Logger::Logger(rLogger model)
       : Tag()
+      , category_(model->category_)
+      , type_(model->type_)
+      , level_(model->level_)
     {
       proto_add(model);
     }
@@ -150,11 +156,12 @@ namespace urbi
     }
 
     URBI_CXX_OBJECT_REGISTER_INIT(Logger)
+      : Tag()
+      , category_(SYMBOL(Logger))
+      , type_(types::info)
+      , level_(levels::log)
     {
       proto_add(Tag::proto);
-      type_ = types::info;
-      level_ = levels::log;
-      category_ = SYMBOL(Logger);
 
       bind(SYMBOL(init),
            static_cast<void (Logger::*)()>(&Logger::init));
