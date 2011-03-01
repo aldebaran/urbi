@@ -37,7 +37,7 @@ class Global.Profile
   {
     var max = values.filter(function (var v){ v != 0 }).max |
     var order = 0|
-    for (var i : [3, 6])
+    for (var i : [0, 3, 6])
       if (1 <= max * 10 ** i)
       {
         order = i|
