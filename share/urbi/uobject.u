@@ -181,7 +181,8 @@ do (Global.UObject)
       var cnt = lobby.__bindingCount.getWithDefault(fullname, -1) |
       if (cnt <= 0)
       {
-        wall("Error, unnotify on unknown variable " + fullname)
+        Logger.warn("Error, unnotify on unknown variable " + fullname
+                    ,"UObject")
       }
       else
       {
@@ -379,7 +380,9 @@ do (&UVar)
   {
     if (!compatF.isNil)
     {
-      wall("notifyChange(handle, func) is deprecated, use notifyChange(func)")|
+      Logger.warn(
+        "notifyChange(handle, func) is deprecated, use notifyChange(func)",
+        "UObject")|
       f = compatF
     }|
     notifyChange_(f)
@@ -389,7 +392,9 @@ do (&UVar)
   {
     if (!compatF.isNil)
     {
-      wall("notifyChange(handle, func) is deprecated, use notifyChange(func)")|
+      Logger.warn(
+        "notifyChange(handle, func) is deprecated, use notifyChange(func)",
+         "UObject")|
       f = compatF
     }|
     notifyChangeOwned_(f)
@@ -399,7 +404,9 @@ do (&UVar)
   {
     if (!compatF.isNil)
     {
-      wall("notifyChange(handle, func) is deprecated, use notifyChange(func)")|
+      Logger.warn(
+        "notifyChange(handle, func) is deprecated, use notifyChange(func)",
+        "UObject")|
       f = compatF
     }|
     //beware of the CoW
@@ -657,7 +664,7 @@ class Global.'external'
       uobjectInit |
     }|
     if (!lobby.hasLocalSlot(objname))
-      wall("ERROR: lobby " + lobby + " has no slot " + objname)
+      Logger.err("ERROR: lobby " + lobby + " has no slot " + objname, "UObject")
     else
       for| (var s: lobby.getSlot(objname).localSlotNames)
         uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s))|
@@ -847,7 +854,7 @@ class Global.'external'
         }
         catch(var e)
         {
-          wall("Fatal error setting rtp: " + e)
+          Logger.err("Fatal error setting rtp: " + e, "UObject")
         }|
       }|
       lobby.__bindingFunc[fullname] = lobby.sharedRTP|
@@ -898,7 +905,7 @@ class Global.'external'
       var o;
       if (!uobjects.hasSlot(fr) || uobjects.getSlot(fr).lobby != lobby)
       {
-        wall("Invalid source uobject in 'external var'")|
+        Logger.warn("Invalid source uobject in 'external var'", "UObject")|
         o = lobby.hookPoint
       }
       else
