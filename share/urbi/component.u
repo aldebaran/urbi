@@ -422,7 +422,8 @@ class Global.Component
     name = name + localizers |
     if (where.hasLocalSlot(name))
     {
-      Logger.warn("Replacing existing component " + name, "component")|
+      if (! (where.getSlot(name) === this))
+        Logger.warn("Replacing existing component " + name, "component")|
       where.removeLocalSlot(name)
     }|
     where.setSlot(name, this) |
