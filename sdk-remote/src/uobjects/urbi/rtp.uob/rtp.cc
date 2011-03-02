@@ -161,6 +161,10 @@ public:
   void localWrite(const std::string& name, const UValue& val,
                   libport::utime_t timestamp = 0);
   URTPLink* makeSocket();
+  // Ctor code, size matters
+  void born();
+  // Dtor code, size matters
+  void die();
   RtpSession* session;
   size_t read_ts;
   size_t write_ts;
@@ -246,6 +250,11 @@ URTP::URTP(const std::string& n)
  , groupEmpty_(true)
  , sendMode_(false) // we don't know yet
 {
+  born();
+}
+
+void URTP::born()
+{
   // Register us to contextimpl hooks
   ctx_->rtpSendGrouped = &bounceSendGrouped;
   ctx_->rtpSend = &bounceSend;
@@ -273,6 +282,11 @@ URTP::URTP(const std::string& n)
 }
 
 URTP::~URTP()
+{
+  die();
+}
+
+void URTP::die()
 {
   GD_FINFO_DUMP("URTP::~URTP on %s", this);
   close();
