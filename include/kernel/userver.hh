@@ -33,6 +33,7 @@
 # include <libport/ufloat.h>
 # include <libport/utime.hh>
 # include <libport/pthread.h>
+# include <libport/synchronizer.hh>
 
 # include <sched/scheduler.hh>
 
@@ -317,6 +318,9 @@ namespace kernel
 
     /// Dead jobs from last sched cycle.
     sched::jobs_type dead_jobs_;
+
+    ///
+    ATTRIBUTE_RX(libport::Synchronizer, big_kernel_lock);
   };
 
 }

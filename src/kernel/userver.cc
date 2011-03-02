@@ -546,6 +546,7 @@ namespace kernel
       async_jobs_process_();
     work_handle_stopall_();
     afterWork();
+    big_kernel_lock_.check();
     return next_time;
   }
 
