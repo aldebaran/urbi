@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Gostai S.A.S.
+ * Copyright (C) 2010-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -14,7 +14,7 @@
 # include <vector>
 
 # include <ast/loc.hh>
-# include <runner/runner.hh>
+# include <runner/urbi-job.hh>
 
 namespace runner
 {
@@ -34,7 +34,7 @@ namespace runner
     /// Clear all stored errors.
     void clear();
     /// Print all fatal errors.
-    void print(runner::Runner& c) const;
+    void print(runner::UrbiJob& c) const;
     /// Raise an adequate Urbi exception.
     /// precondition: !empty().
     ATTRIBUTE_NORETURN
@@ -45,7 +45,7 @@ namespace runner
     {
       Message(const ast::loc& loc, const std::string& kind,
               const std::string& msg, const std::string& prefix);
-      void print(runner::Runner& r) const;
+      void print(runner::UrbiJob& r) const;
       ast::loc loc;
       std::string kind, msg, prefix;
     };

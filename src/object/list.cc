@@ -33,8 +33,10 @@
 #include <urbi/object/object.hh>
 
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
-#include <runner/interpreter.hh>
+
+#include <runner/urbi-job.hh>
+
+#include <eval/call.hh>
 
 namespace urbi
 {
@@ -290,7 +292,7 @@ namespace urbi
     List::each_common(const rObject& f, bool yielding, bool idx)
     {
       URBI_AT_HOOK(contentChanged);
-      runner::Runner& r = ::kernel::runner();
+      runner::UrbiJob& r = ::kernel::runner();
 
       bool must_yield = false;
       int i = 0;
@@ -305,7 +307,7 @@ namespace urbi
         args << f << o;
         if (idx)
           args << to_urbi(i++);
-        r.apply(f, SYMBOL(each), args);
+        eval::call_apply(r, f, SYMBOL(each), args);
       }
     }
 
@@ -331,7 +333,7 @@ namespace urbi
     List::each_and(const rObject& f)
     {
       URBI_AT_HOOK(contentChanged);
-      runner::Runner& r = ::kernel::runner();
+      runner::UrbiJob& r = ::kernel::runner();
 
       // Beware of iterations that modify the list in place: make a
       // copy.
@@ -344,9 +346,9 @@ namespace urbi
         object::objects_type args;
         args.push_back(o);
         sched::rJob job =
-          new runner::Interpreter(dynamic_cast<runner::Interpreter&>(r),
-                                  f, SYMBOL(each_AMPERSAND), args);
-        r.register_child(job, collector);
+          r.spawn_child(
+            eval::call_apply(this, f, SYMBOL(each_AMPERSAND), args),
+            collector);
         job->start_job();
       }
 

@@ -40,7 +40,10 @@
 #include <object/urbi-exception.hh>
 
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
+#include <runner/urbi-job.hh>
+
+#include <eval/send-message.hh>
+#include <eval/call.hh>
 
 GD_CATEGORY(Urbi);
 
@@ -66,9 +69,9 @@ namespace urbi
       void
       warn_hard(const std::string& msg)
       {
-        runner::Runner& r = ::kernel::runner();
-        r.send_message("warning", libport::format("!!! %s", msg));
-        r.show_backtrace("warning");
+        runner::UrbiJob& r = ::kernel::runner();
+        eval::send_message(r, "warning", libport::format("!!! %s", msg));
+        eval::show_backtrace(r, "warning");
       }
 
     }
@@ -214,7 +217,7 @@ namespace urbi
     Object::slot_get(key_type k)
     {
       rSlot res = safe_slot_locate(k).second;
-      if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
+      if (runner::UrbiJob* r = ::kernel::urbiserver->getCurrentRunnerOpt())
       {
         if (r->dependencies_log_get())
         {
@@ -222,7 +225,7 @@ namespace urbi
           GD_FPUSH_TRACE("Register slot '%s' for at monitoring", k);
           Event* e;
           {
-            FINALLY(((runner::Runner*, r)), r->dependencies_log_set(true));
+            FINALLY(((runner::UrbiJob*, r)), r->dependencies_log_set(true));
             r->dependencies_log_set(false);
             GD_CATEGORY(Urbi.At);
             e = static_cast<Event*>
@@ -248,8 +251,8 @@ namespace urbi
       inline
       bool redefinition_mode()
       {
-        runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt();
-        return r && r->redefinition_mode_get();
+        runner::UrbiJob* r = ::kernel::urbiserver->getCurrentRunnerOpt();
+        return r && r->state.redefinition_mode_get();
       }
     }
 
@@ -297,7 +300,8 @@ namespace urbi
           args << rObject(this)
                << new String(k)
                << o;
-          v = ::kernel::runner().apply(hook, SYMBOL(updateHook), args);
+          v = eval::call_apply(::kernel::runner(),
+                               hook, SYMBOL(updateHook), args);
           // If the updateHook returned void, do nothing. Otherwise let
           // the slot be overwritten.
           if (v == object::void_class)
@@ -307,7 +311,7 @@ namespace urbi
       // If return-value of hook is not void, write it to slot.
       if (slot_locate(k).first == this)
       {
-        if (runner::Runner* r = ::kernel::urbiserver->getCurrentRunnerOpt())
+        if (runner::UrbiJob* r = ::kernel::urbiserver->getCurrentRunnerOpt())
         {
           bool d = r->dependencies_log_get();
           try
@@ -796,7 +800,7 @@ namespace urbi
                            const objects_type& args)
     {
       rObject fun = slot_get(name);
-      return ::kernel::runner().apply(fun, name, args);
+      return eval::call_apply(::kernel::runner(), fun, name, args);
     }
 
     rObject

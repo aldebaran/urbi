@@ -17,11 +17,14 @@
 
 #include <kernel/userver.hh>
 #include <object/symbols.hh>
-#include <runner/runner.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/event.hh>
 #include <urbi/object/list.hh>
 #include <urbi/object/string.hh>
+
+#include <runner/urbi-job.hh>
+
+#include <eval/raise.hh>
 
 namespace urbi
 {
@@ -111,7 +114,7 @@ namespace urbi
       if (!libport::mhas(content_, key))
       {
         static rObject exn = slot_get(SYMBOL(KeyError));
-        ::kernel::runner().raise(exn->call("new", key));
+        eval::raise(::kernel::runner(), exn->call("new", key));
       }
     }
 

@@ -26,7 +26,8 @@
 #include <urbi/object/tag.hh>
 
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
+
+#include <runner/urbi-job.hh>
 #include <runner/shell.hh>
 
 namespace urbi
@@ -129,7 +130,7 @@ namespace urbi
     {
       // Don't return "this", as any "Lobby.lobby" must return the
       // lobby of the connection, not the target of the ".lobby" call.
-      return ::kernel::runner().lobby_get();
+      return ::kernel::runner().state.lobby_get();
     }
 
 #define REQUIRE_DERIVATIVE_AND_CONNECTION()             \

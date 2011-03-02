@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, Gostai S.A.S.
+ * Copyright (C) 2007-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -12,6 +12,8 @@
  ** \file runner/fwd.hh
  ** \brief Forward declarations for the namespace runner.
  */
+
+#error "hum hum ..."
 
 #ifndef RUNNER_FWD_HH
 # define RUNNER_FWD_HH

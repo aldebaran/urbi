@@ -20,14 +20,14 @@
 # include <sched/job.hh>
 
 # include <ast/exps-type.hh>
-# include <runner/interpreter.hh>
+# include <runner/urbi-job.hh>
 
 # include <parser/uparser.hh>
 
 namespace runner
 {
 
-  class Shell : public Interpreter
+  class Shell : public UrbiJob
   {
   public:
     Shell(const rLobby& lobby,
@@ -35,6 +35,11 @@ namespace runner
 	  const std::string& name,
           std::istream& input);
     ~Shell();
+
+    // FIXME: I don't like it because this implies that UrbiJob is not a
+    // final class on which actions are executed.  Thus transform these
+    // functions to actions to run them on the UrbiJob, which can latter be
+    // transformed to a shell. -- NBP
     virtual void work();
     void work_();
     bool pending_command_get() const;
@@ -63,6 +68,7 @@ namespace runner
     bool executing_;
     std::istream& input_;
     bool stop_;
+    // FIXME: Why isn't this a sched::Job::Collector ?
     typedef sched::jobs_type jobs_type;
     jobs_type jobs_;
     // Expect serialized messages.

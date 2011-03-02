@@ -10,8 +10,10 @@
 
 #include <libport/cassert>
 
-#include <runner/interpreter.hh>
+#include <runner/urbi-job.hh>
 #include <urbi/object/executable.hh>
+
+#include <eval/exec.hh>
 
 namespace urbi
 {
@@ -32,24 +34,15 @@ namespace urbi
       proto_add(model);
     }
 
-    // Use an intermediary bouncer to make sure the Executable is
-    // stored in a smart pointer, and not deleted too early.
-    static void
-    executable_bouncer(rExecutable e, objects_type args)
-    {
-      (*e)(args);
-    }
-
-    runner::Interpreter*
+    runner::UrbiJob*
     Executable::make_job(rLobby lobby,
                          sched::Scheduler& sched,
                          const objects_type& args,
                          libport::Symbol name)
     {
-      return new runner::Interpreter
-        (lobby, sched,
-         boost::bind(&executable_bouncer, this, args),
-         this, name);
+      runner::UrbiJob* j = new runner::UrbiJob(lobby, sched, name);
+      j->set_action(eval::exec(this, args));
+      return j;
     }
 
     URBI_CXX_OBJECT_INIT(Executable)

@@ -96,19 +96,19 @@ namespace kernel
   }
 
 
-  inline runner::Runner&
+  inline runner::UrbiJob&
   UServer::getCurrentRunner() const
   {
     // FIXME: check that main thread is currently in handle_synchronizer_().
-    return reinterpret_cast<runner::Runner&> (scheduler_->current_job());
+    return reinterpret_cast<runner::UrbiJob&> (scheduler_->current_job());
   }
 
-  inline runner::Runner*
+  inline runner::UrbiJob*
   UServer::getCurrentRunnerOpt() const
   {
     sched::Job* j = scheduler_->current_job_opt();
     if (j)
-      return reinterpret_cast<runner::Runner*>(j);
+      return reinterpret_cast<runner::UrbiJob*>(j);
     return 0;
   }
 
@@ -124,17 +124,17 @@ namespace kernel
   }
 
   inline
-  runner::Runner&
+  runner::UrbiJob&
   runner()
   {
     return server().getCurrentRunner();
   }
 
   inline
-  runner::Interpreter&
+  runner::UrbiJob&
   interpreter()
   {
-    return reinterpret_cast<runner::Interpreter&>(runner());
+    return runner();
   }
 }
 

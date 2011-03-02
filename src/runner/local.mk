@@ -6,23 +6,22 @@
 ##
 ## See the LICENSE file for more information.
 
-dist_libuobject@LIBSFX@_la_SOURCES +=           \
-  runner/exception.cc                           \
-  runner/exception.hh                           \
-  runner/fwd.hh                                 \
-  runner/interpreter-apply.cc                   \
-  runner/interpreter-visit.hxx                  \
-  runner/interpreter.cc                         \
-  runner/interpreter.hh                         \
-  runner/interpreter.hxx                        \
-  runner/raise.cc                               \
-  runner/runner.cc                              \
-  runner/runner.hh                              \
-  runner/runner.hxx                             \
-  runner/shell.cc                               \
-  runner/shell.hh                               \
-  runner/sneaker.cc                             \
-  runner/sneaker.hh                             \
-  runner/stacks.cc                              \
-  runner/stacks.hh                              \
+dist_libuobject@LIBSFX@_la_SOURCES +=		\
+  runner/exception.cc				\
+  runner/exception.hh				\
+  runner/fwd.hh					\
+  runner/urbi-fwd.hh				\
+  runner/urbi-job.cc				\
+  runner/urbi-job.hh				\
+  runner/urbi-job.hxx				\
+  runner/urbi-stack.cc				\
+  runner/urbi-stack.hh				\
+  runner/urbi-stack.hxx				\
+  runner/raise.cc				\
+  runner/shell.cc				\
+  runner/shell.hh				\
+  runner/sneaker.cc				\
+  runner/sneaker.hh				\
+  runner/stacks.cc				\
+  runner/stacks.hh				\
   runner/stacks.hxx

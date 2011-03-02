@@ -12,6 +12,9 @@
 #include <urbi/object/event.hh>
 #include <urbi/object/event-handler.hh>
 
+#include <runner/urbi-job.hh>
+#include <eval/exec.hh>
+
 namespace urbi
 {
   namespace object
@@ -49,31 +52,24 @@ namespace urbi
     | Stop.  |
     `-------*/
 
-    // Use an intermediary bouncer to make sure the Executable is
-    // stored in a smart pointer, and not deleted too early.
-    static void
-    executable_bouncer(rExecutable e, objects_type args)
-    {
-      (*e)(args);
-    }
-
     void
     EventHandler::stop()
     {
       slot_update(SYMBOL(active), to_urbi(false));
       if (detach_)
       {
-        runner::Runner& r = ::kernel::runner();
+        runner::UrbiJob& r = ::kernel::runner();
         sched::jobs_type children;
         // Copy container to avoid in-place modification problems.
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
-          typedef rObject(Executable::*fun_type)(objects_type);
-          sched::rJob job = new runner::Interpreter
-            (r.lobby_get(), r.scheduler_get(),
-             boost::bind(&executable_bouncer,
-                         stop_job.get<0>(), stop_job.get<1>()),
-             this, SYMBOL(onleave));
+          rLobby rlobby = r.state.lobby_get();
+          runner::UrbiJob* j =
+            new runner::UrbiJob(rlobby,
+                                r.scheduler_get(),
+                                "onleave");
+          j->set_action(eval::exec(stop_job.get<0>(), stop_job.get<1>()));
+          sched::rJob job(j);
           job->start_job();
         }
         r.yield_until_terminated(children);
@@ -120,7 +116,7 @@ namespace urbi
     EventHandler::trigger_job(const rActions& actions, bool detach)
     {
       detach = detach && !actions->sync;
-      runner::Runner& r = ::kernel::runner();
+      runner::UrbiJob& r = ::kernel::runner();
       if (actions->frozen)
         return;
       objects_type args;
@@ -137,9 +133,11 @@ namespace urbi
         {
           if (detach)
           {
+            rLobby lobby = actions->lobby;
+            if (!lobby)
+              lobby = r.state.lobby_get();
             sched::rJob job = actions->enter.get()->make_job
-              (actions->lobby ? actions->lobby : r.lobby_get(),
-               r.scheduler_get(), args, SYMBOL(at));
+              (lobby, r.scheduler_get(), args, SYMBOL(at));
             job->start_job();
           }
           else

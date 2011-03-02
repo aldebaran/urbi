@@ -43,7 +43,9 @@
 #include <object/uvalue.hh>
 #include <object/uvar.hh>
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
+#include <runner/urbi-job.hh>
+
+#include <eval/call.hh>
 
 #include <urbi/uobject.hh>
 #include <urbi/uexternal.hh>
@@ -342,12 +344,12 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
 static void periodic_call(rObject, ufloat interval, rObject method,
                           libport::Symbol msg, object::objects_type args)
 {
-  runner::Runner& r = ::kernel::runner();
+  runner::UrbiJob& r = ::kernel::runner();
   libport::utime_t delay = libport::seconds_to_utime(interval);
   while (true)
   {
     urbi::setCurrentContext(urbi::impl::KernelUContextImpl::instance());
-    r.apply(method, msg, args);
+    eval::call_apply(r, method, msg, args);
     libport::utime_t target = libport::utime() + delay;
     r.yield_until(target);
   }
@@ -483,7 +485,7 @@ static rObject wrap_ucallback(const object::objects_type& ol,
     {
       libport::Finally f;
       object::rTag tag(new object::Tag);
-      ::kernel::runner().apply_tag(tag, &f);
+      ::kernel::runner().state.apply_tag(tag, &f);
       // Tricky: tag->freeze() yields, but we must freeze tag before calling
       // eval or there will be a race if asyncEval goes to fast and unfreeze
       // before we freeze. So go throug backend.
@@ -574,10 +576,10 @@ static void writeFromContext(const std::string& ctx,
     GD_FWARN("writeFromContext: non existing lobby: %x", ctx);
     return;
   }
-  runner::Runner& r = kernel::urbiserver->getCurrentRunner();
-  rLobby cl = r.lobby_get();
-  FINALLY(((rLobby, cl))((runner::Runner&, r)), r.lobby_set(cl));
-  r.lobby_set(rl);
+  runner::UrbiJob& r = kernel::urbiserver->getCurrentRunner();
+  rLobby cl = r.state.lobby_get();
+  FINALLY(((rLobby, cl))((runner::UrbiJob&, r)), r.state.lobby_set(cl));
+  r.state.lobby_set(rl);
   object::rUValue ov(new object::UValue());
   ov->put(val, false);
   StringPair p = split_name(varName);
@@ -691,11 +693,11 @@ namespace urbi
         .received(static_cast<const char*>(buf), size);
     }
 
-#define INTERRUPTIBLE                                                      \
-  runner::Runner& r = ::kernel::runner();                                  \
-  bool b = r.non_interruptible_get();                                      \
-  r.non_interruptible_set(false);                                          \
-  FINALLY(((runner::Runner&, r))((bool, b)), r.non_interruptible_set(b))
+#define INTERRUPTIBLE                                                   \
+  runner::UrbiJob& r = ::kernel::runner();                              \
+  bool b = r.non_interruptible_get();                                   \
+  r.non_interruptible_set(false);                                       \
+  FINALLY(((runner::UrbiJob&, r))((bool, b)), r.non_interruptible_set(b))
 
 
     void KernelUContextImpl::yield() const
@@ -953,7 +955,7 @@ namespace urbi
       rObject call = MAKE_VOIDCALL(cb, urbi::UTimerCallback, call);
       object::objects_type args;
       args << me << p << call << tag;
-      ::kernel::runner().apply(f, SYMBOL(setTimer), args);
+      eval::call_apply(::kernel::runner(), f, SYMBOL(setTimer), args);
       GD_FINFO_DUMP("SetTimer on %s: %s", cb, stag);
       return TimerHandle(new std::string(stag));
     }
@@ -1006,7 +1008,7 @@ namespace urbi
            << rObject(new object::String(hub->get_name()))
            << new object::Float(period / 1000.0)
            << MAKE_VOIDCALL(hub, urbi::UObjectHub, update);
-      ::kernel::runner().apply(f, SYMBOL(setHubUpdate), args);
+      eval::call_apply(::kernel::runner(), f, SYMBOL(setHubUpdate), args);
     }
 
     std::pair<int, int>
@@ -1070,7 +1072,7 @@ namespace urbi
         o = ::urbi::uobjects::uobject_make_proto(owner->__name);
         where->slot_set(Symbol(owner->__name), o);
       }
-      o->slot_set(SYMBOL(lobby), kernel::runner().lobby_get());
+      o->slot_set(SYMBOL(lobby), kernel::runner().state.lobby_get());
     }
 
     void
@@ -1092,8 +1094,9 @@ namespace urbi
       object::objects_type args;
       args << me;
       return
-        ::kernel::runner()
-        .apply(me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
+        eval::call_apply(
+          ::kernel::runner(),
+          me->slot_get(SYMBOL(DOLLAR_id)), SYMBOL(DOLLAR_id), args)
         ->as<object::String>()
         ->value_get();
     }
@@ -1139,7 +1142,7 @@ namespace urbi
       object::objects_type args;
       args << me
            << new object::Float(period / 1000.0);
-      ::kernel::runner().apply(f, SYMBOL(setUpdate), args);
+      eval::call_apply(::kernel::runner(), f, SYMBOL(setUpdate), args);
     }
 
     void
@@ -1226,11 +1229,11 @@ namespace urbi
         return;
       }
       // Protect against multiple parallel creation of the same UVar.
-      runner::Runner& runner = ::kernel::runner();
+      runner::UrbiJob& runner = ::kernel::runner();
       bool prevState = runner.non_interruptible_get();
       FINALLY(
         ((bool, prevState))
-        ((runner::Runner&, runner))
+        ((runner::UrbiJob&, runner))
         ((UVar*, owner)),
         runner.non_interruptible_set(prevState););
       runner.non_interruptible_set(true);
@@ -1472,11 +1475,11 @@ namespace urbi
            this, enable));
         return;
       }
-      runner::Runner& r = ::kernel::urbiserver->getCurrentRunner();
-      bool last_rdm = r.redefinition_mode_get();
-      FINALLY( ((bool, last_rdm))((runner::Runner&, r)),
-                      r.redefinition_mode_set(last_rdm));
-      r.redefinition_mode_set(true);
+      runner::UrbiJob& r = ::kernel::urbiserver->getCurrentRunner();
+      bool last_rdm = r.state.redefinition_mode_get();
+      FINALLY( ((bool, last_rdm))((runner::UrbiJob&, r)),
+                      r.state.redefinition_mode_set(last_rdm));
+      r.state.redefinition_mode_set(true);
       if (enable)
         ruvar_->slot_set(SYMBOL(inputPort), object::to_urbi(true));
       else

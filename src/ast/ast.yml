@@ -260,7 +260,6 @@ Ast:
       # include <urbi/export.hh>
 
       # include <ast/fwd.hh>
-      namespace runner { class Interpreter; }
 
     header inside: |2
         public:

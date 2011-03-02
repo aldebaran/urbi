@@ -56,7 +56,7 @@ namespace urbi
       }
       frozen_ = &::kernel::runner();
       GD_FINFO_DEBUG("no data, going to sleep: %x.", frozen_.get());
-      frozen_->frozen_set(true);
+      frozen_->state.frozen_set(true);
       yield();
       if (close_)
       {
@@ -136,7 +136,7 @@ namespace urbi
     if (frozen_)
     {
       GD_FINFO_DEBUG("waking the frozen job up: %x.", frozen_.get());
-      frozen_->frozen_set(false);
+      frozen_->state.frozen_set(false);
       frozen_ = 0;
     }
   }

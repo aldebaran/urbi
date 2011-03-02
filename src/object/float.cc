@@ -37,7 +37,7 @@
 #include <urbi/object/string.hh>
 #include <urbi/runner/raise.hh>
 
-#include <runner/interpreter.hh>
+#include <runner/urbi-job.hh>
 
 namespace urbi
 {
@@ -436,7 +436,7 @@ namespace urbi
       if (value_ < 0)
         runner::raise_bad_integer_error(value_, positive_error_fmt);
       // Iterate, yielding at each iteration.
-      runner::Interpreter& r = ::kernel::interpreter();
+      runner::UrbiJob& r = ::kernel::interpreter();
       for (int i = 0; i < value_; ++i)
       {
         object::objects_type args;

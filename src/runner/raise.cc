@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2010, Gostai S.A.S.
+ * Copyright (C) 2008-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -15,7 +15,7 @@
 #include <object/symbols.hh>
 
 #include <urbi/runner/raise.hh>
-#include <runner/runner.hh>
+#include <runner/urbi-job.hh>
 #include <runner/sneaker.hh>
 
 #include <sched/scheduler.hh>
@@ -23,6 +23,8 @@
 #include <urbi/object/cxx-conversions.hh>
 #include <urbi/object/global.hh>
 #include <urbi/object/location.hh>
+
+#include <eval/raise.hh>
 
 #define assert_user_mode(Exn, Msg)                              \
   __passert((::kernel::urbiserver->mode_get()                   \
@@ -46,8 +48,9 @@ namespace runner
              bool skip,
              const boost::optional<ast::loc>& loc)
   {
-    Runner& r = dbg::runner_or_sneaker_get();
-    raise_urbi(exn_name, to_urbi(r.innermost_call_get()), arg1, arg2, arg3,
+    UrbiJob& r = dbg::runner_or_sneaker_get();
+    raise_urbi(exn_name,
+               to_urbi(r.state.innermost_call_get()), arg1, arg2, arg3,
                skip, loc);
   }
 
@@ -65,13 +68,14 @@ namespace runner
     // involves running urbiscript code.
     // assert_user_mode(exn_name, "");
     assert_ne(exn_name, SYMBOL(Exception));
-    Interpreter& r = dynamic_cast<runner::Interpreter&>
-      (dbg::runner_or_sneaker_get());
+    UrbiJob& r = dbg::runner_or_sneaker_get();
     CAPTURE_GLOBAL(Exception);
     const rObject& exn = Exception->slot_get(exn_name);
     if (arg1 == void_class)
       raise_unexpected_void_error();
-    r.raise(exn->call(SYMBOL(new), arg1, arg2, arg3, arg4), skip, loc);
+    eval::raise(r,
+                exn->call(SYMBOL(new), arg1, arg2, arg3, arg4),
+                skip, loc);
     pabort("Unreachable");
   }
 
@@ -237,7 +241,7 @@ namespace runner
   void
   raise_unexpected_void_error()
   {
-    if (::kernel::runner().void_error_get())
+    if (::kernel::runner().state.void_error_get())
       raise_urbi_skip(SYMBOL(UnexpectedVoid));
   }
 }
