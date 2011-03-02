@@ -146,41 +146,45 @@ namespace urbi
             errnoabort("read failed");
         }
         int i = 0;
-        while (i < len)
         {
-          inotify_event& evt = reinterpret_cast<inotify_event&>(buffer[i]);
-          i += evt_size + evt.len;
-
-          rObject event;
+          libport::Synchronizer::SynchroPoint lock(kernel::server().big_kernel_lock_get());
+          while (i < len)
           {
-            BlockLock lock(_watch_map_lock);
-            aver(libport::mhas(_watch_map, evt.wd));
-            if (evt.mask & IN_CREATE)
-              event = _watch_map[evt.wd].first;
-            else if (evt.mask & IN_DELETE)
-              event = _watch_map[evt.wd].second;
-            //FIXME: Do something with those...
-            else if (evt.mask & IN_DELETE_SELF)
-              ;
-            else if (evt.mask & IN_MOVED_FROM)
-              ;
-            else if (evt.mask & IN_MOVED_TO)
-              ;
-            else if (evt.mask & IN_MODIFY)
-              ;
-            else if (evt.mask & IN_IGNORED)
-              ;
-            else
-              pabort("unrecognized inotify event");
-          }
+            inotify_event& evt = reinterpret_cast<inotify_event&>(buffer[i]);
+            i += evt_size + evt.len;
 
-          if (event)
-          {
-            // FIXME: objects are refcounted and urbiserver->schedule is not
-            // thread safe.
-            object::objects_type args;
-            args << new object::String(evt.name);
-            ::kernel::urbiserver->schedule(event, SYMBOL(emit), args);
+            rObject event;
+            {
+              BlockLock lock(_watch_map_lock);
+              aver(libport::mhas(_watch_map, evt.wd));
+              if (evt.mask & IN_CREATE)
+                event = _watch_map[evt.wd].first;
+              else if (evt.mask & IN_DELETE)
+                event = _watch_map[evt.wd].second;
+              //FIXME: Do something with those...
+              else if (evt.mask & IN_DELETE_SELF)
+                ;
+              else if (evt.mask & IN_MOVED_FROM)
+                ;
+              else if (evt.mask & IN_MOVED_TO)
+                ;
+              else if (evt.mask & IN_MODIFY)
+                ;
+              else if (evt.mask & IN_IGNORED)
+                ;
+              else
+                pabort("unrecognized inotify event");
+            }
+
+
+            if (event)
+            {
+              // FIXME: objects are refcounted and urbiserver->schedule is not
+              // thread safe.
+              object::objects_type args;
+              args << new object::String(evt.name);
+              ::kernel::urbiserver->schedule(event, SYMBOL(emit), args);
+            }
           }
         }
       }
