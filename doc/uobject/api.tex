@@ -295,20 +295,32 @@ the \lstinline{setThreadLimit} function.
 \section{Notification of a variable change or access}
 \label{sec:uobject:uvar-notify}
 You can register a function that will be called each time a variable is
-modified or accessed (for embedded components only) by calling
-\lstinline{UNotifyChange} and \lstinline{UNotifyAccess}, passing either an
-\UVar or a variable name as first argument, and a member function of your
-\UObject as second argument. This function can take zero or one argument of
-any type. If the argument is of type \lstinline{UVar&}, the value will be a
-reference to the \UVar being accessed or modified.  If it is of any other
-type, the system will try to convert the current value of the \UVar to this
-type and pass this value to the function.  The \lstinline{notifyChange}
-callback function is called after the variable value is changed, whereas the
-\lstinline{notifyAccess} callback is called before the variable is accessed,
-giving you the possibility to update its value.
+modified by calling \lstinline{UNotifyChange(var, func)}.
 
-Notify functions can be unregistered by calling the \lstinline|unnotify|
-function of the \UVar class.
+\begin{itemize}
+\item \lstinline{var} must be either the name of an \UVar, or an \UVar itself.
+\item \lstinline{func} must be a member function of your \UObject. This function
+will be called each time the \UVar receives a new value.
+\end{itemize}
+
+The function can take 0 or 1 argument. If the argument is of type
+\lstinline{UVar&}, then the function will receive the \UVar that was passed to
+\lstinline{UNotifyChange}. If it is of any other type, then the new value in the
+\UVar will be converted to this type and passed to the function.
+
+In plugin mode, there is a similar mechanism to create a {\em getter function}
+that will be called each time an \UVar is accessed: the
+\lstinline{UNotifyAccess} function. It has the same signature as
+\lstinline{UNotifyChange}, and calls the given function each time someone tries
+to access the \UVar. The function can update the value in the \UVar before
+the access takes place. Usage of \lstinline{UNotifyAccess} should be reserved
+to infrequently used \UVar that take a long time to update, as it disrupts
+the data flow between \UObject.
+
+
+You can remove all notifies associated to any given \UVar by calling its
+\lstinline{unnotify} function.
+
 
 \section{Data-flow based programming: exchanging UVars}
 
@@ -711,8 +723,8 @@ URBI_REGISTER_STRUCT(Point, x, y);
 // inheriting from UValueSerializable.
 class Global.Point: UValueSerializable
 {
-  var x;
-  var y;
+  var x = 0;
+  var y = 0;
   function init(xx=0, yy=0)
   {
      x = xx|
