@@ -740,8 +740,32 @@ var Serializables.Point = Point;
 \end{urbiunchecked}
 
 Once done, you can call bound functions taking a C++ Point by passing them
-an \us Point and exchange Point between both worlds through \UVar read/write.
+an \us Point and exchange Point between both worlds through \UVar read/write:
 
+\begin{cxx}
+// This function can be bound using UBindFunction.
+Point MyObject::opposite(Point p)
+{
+  return Point(-p.x, -p.y);
+}
+// Writing a Point to an UVar is OK.
+void MyObject::writePoint(Point p)
+{
+  UVar v(this, "val");
+  v = p;
+}
+// Converting an UVar to a Point is easy.
+ufloat MyObject::xCoord()
+{
+  UVar v(this, "val");
+  Point p;
+  // Fill p with content of v.
+  v.fill(p);
+  // Alternate for the above.
+  p = v.as<Point>();
+  return v.x;
+}
+\end{cxx}
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../urbi-sdk"
