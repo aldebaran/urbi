@@ -3556,7 +3556,68 @@ are supported.
 [00000000] *** 1
 [00001500] *** 3
 \end{urbiscript}
+|
+\subsection{watch}
 
+The \lstinline|watch| construct is similar to the \lstinline|at| construct,
+except it enables you to be notified when an arbitrary expression changed,
+instead of when it becomes true or false. This make \lstinline|watch| a more
+powerful tool than \lstinline|at|, which actually uses \lstinline|watch| to
+determine when to reevaluate its condition.
+
+\lstinline|watch(expression)| evaluates to an \refObject{Event} that
+triggers every time \lstinline|expression| changes, with its new value as
+payload.
+
+\begin{urbiscript}[firstnumber=1]
+var x = 0;
+[00000000] 0
+var y = 0;
+[00000000] 0
+var e = watch(x + y);
+[00000000] Event_0xADDR
+at (e?(var value))
+  echo("x + y = %s" % value);
+x = 1;
+[00000000] 1
+[00000000] *** x + y = 1
+y = 2;
+[00000000] 2
+[00000000] *** x + y = 3
+\end{urbiscript}
+
+Note that ``the expression changed'' might be ambiguous: Urbi consider the
+expression to have change when any component implied in its evaluation
+changed. If a \refObject{Float} is replaced with another float of the same
+value, the expression has changed, since the new Float may have different
+slots.
+
+\begin{urbiscript}[firstnumber=1]
+var x = 0;
+[00000000] 0
+at (watch(x)?(var value))
+  echo("x = %s" % value);
+// This is considered as a change, although the new float value is also 0.
+x = 0;
+[00000000] 0
+[00000000] *** x = 0
+\end{urbiscript}
+
+Also, some modification may modify the evaluation, but still yield the same
+result.
+
+\begin{urbiscript}[firstnumber=1]
+var x = 1;
+[00000000] 1
+at (watch(x % 2)?(var value))
+  echo("x %% 2 = %s" % value);
+
+// This is considered as a change, although the computation yields the
+// same result.
+x = 3;
+[00000000] 3
+[00000000] *** x % 2 = 1
+\end{urbiscript}
 
 \subsubsection{\lstinline'every,'}
 The default flavor, \lstinline|every,| launches the execution of the
