@@ -57,7 +57,7 @@ if test -d $srcdir/bison; then
       cd bison
       # Unset everything that puts us in cross-compilation mode,
       # as Bison is a build tool.
-      unset AR CC CFLAGS CPPFLAGS CXX CXXFLAGS host host_alias LD
+      unset AR CC CFLAGS CPPFLAGS CXX CXXFLAGS LDFLAGS host host_alias LD
       "$abs_srcdir"/bison/configure -C
     )
   then
