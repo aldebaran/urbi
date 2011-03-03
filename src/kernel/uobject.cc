@@ -982,9 +982,11 @@ namespace urbi
       h.reset();
       return true;
     }
+
     void KernelUContextImpl::registerHub(UObjectHub*)
     {
     }
+
     void KernelUContextImpl::removeHub(UObjectHub*)
     {
     }
@@ -1024,13 +1026,11 @@ namespace urbi
     void
     KernelUContextImpl::lock()
     {
-
     }
 
     void
     KernelUContextImpl::unlock()
     {
-
     }
 
     KernelUObjectImpl::~KernelUObjectImpl()
@@ -1149,6 +1149,7 @@ namespace urbi
       libport::BlockLock bl(asyncLock_);
       --pending_;
     }
+
     void
     KernelUVarImpl::schedule(libport::Symbol, boost::function0<void> f) const
     {
@@ -1160,6 +1161,7 @@ namespace urbi
       }
       server().schedule_fast(boost::bind(&KernelUVarImpl::async, self, f));
     }
+
     void
     KernelUVarImpl::unnotify()
     {
@@ -1273,6 +1275,7 @@ namespace urbi
                     owner_->get_name(),
                     ruvar_.get());
     }
+
     void KernelUVarImpl::clean()
     {
       GD_FINFO_TRACE("KernelUVarImpl::clean %s", owner_->get_name());
@@ -1286,6 +1289,7 @@ namespace urbi
           ::kernel::runner().yield();
       //noop
     }
+
     void KernelUVarImpl::setOwned()
     {
       if (server().isAnotherThread())
@@ -1298,14 +1302,17 @@ namespace urbi
       // Write 1 to the Urbi-side uvar owned slot.
       ruvar_->slot_update(SYMBOL(owned), object::true_class);
     }
+
     void KernelUVarImpl::sync()
     {
       //noop
     }
+
     void KernelUVarImpl::request()
     {
       //noop
     }
+
     void KernelUVarImpl::keepSynchronized()
     {
       //noop
