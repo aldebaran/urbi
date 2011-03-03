@@ -295,11 +295,11 @@ the \lstinline{setThreadLimit} function.
 \section{Notification of a variable change or access}
 \label{sec:uobject:uvar-notify}
 You can register a function that will be called each time a variable is
-modified by calling \lstinline{UNotifyChange(var, func)}.
+modified by calling \lstinline|UNotifyChange(\var{var}, \var{func})|.
 
 \begin{itemize}
-\item \lstinline{var} must be either the name of an \UVar, or an \UVar itself.
-\item \lstinline{func} must be a member function of your \UObject. This function
+\item \var{var} must be either the name of an \UVar, or an \UVar itself.
+\item \var{func} must be a member function of your \UObject. This function
 will be called each time the \UVar receives a new value.
 \end{itemize}
 
@@ -308,14 +308,14 @@ The function can take 0 or 1 argument. If the argument is of type
 \lstinline{UNotifyChange}. If it is of any other type, then the new value in the
 \UVar will be converted to this type and passed to the function.
 
-In plugin mode, there is a similar mechanism to create a {\em getter function}
-that will be called each time an \UVar is accessed: the
+In plugin mode, there is a similar mechanism to create a \dfn{getter
+  function} that will be called each time an \UVar is accessed: the
 \lstinline{UNotifyAccess} function. It has the same signature as
-\lstinline{UNotifyChange}, and calls the given function each time someone tries
-to access the \UVar. The function can update the value in the \UVar before
-the access takes place. Usage of \lstinline{UNotifyAccess} should be reserved
-to infrequently used \UVar that take a long time to update, as it disrupts
-the data flow between \UObject.
+\lstinline{UNotifyChange}, and calls the given function each time someone
+tries to access the \UVar. The function can update the value in the \UVar
+before the access takes place. Usage of \lstinline{UNotifyAccess} should be
+reserved to infrequently used \UVar that take a long time to update, as it
+disrupts the data flow between \UObject.
 
 
 You can remove all notifies associated to any given \UVar by calling its
@@ -507,7 +507,7 @@ has the following effects:
 
 \section{Using \urbi variables}
 
-The C++ class \UVar is used to represent any \urbi slot in C++.  To bind the
+The \Cxx class \UVar is used to represent any \urbi slot in \Cxx.  To bind the
 \UVar to a specific slot, pass its name to the \UVar constructor, or its
 \lstinline|init| method.  Once the \UVar is bound, you can write any
 compatible type to it, and the new value will be visible in \us.  Similarly,
@@ -609,8 +609,8 @@ Timers can be attached to \UObjectHub the same way as to \UObject (see
 \autoref{sec:uob:timers}). The kernel will call the \lstinline{update()}
 method of all \UObject before calling the \lstinline{update()} method of the
 hub. A hub instance can be retrieved by calling
-\lstinline{getUObjectHub (string classname)}. The hub also holds the list of
-registered UObject in its members attribute.
+\lstinline|getUObjectHub (string \var{class-name})|. The hub also holds the
+list of registered UObject in its members attribute.
 
 \section{Sending \us code}
 
@@ -671,19 +671,21 @@ notifies will be modified to use rtp if you set it to true.
 The same cast system is used both for bound function's arguments and return
 values, and for reading/writing \UVar.
 
-Should you want to add new type \lstinline{MyType} to the system you must define
-two functions:
+Should you want to add new type \lstinline{MyType} to the system you must
+define two functions:
 
 \begin{cxx}
 namespace urbi
 {
   void operator, (UValue& v, const MyType& t)
-  { // Here you must fill v with the serialized representation of t.
+  {
+    // Here you must fill v with the serialized representation of t.
   }
   template<> struct uvalue_caster<MyType>
   {
     MyType operator()(UValue& v)
-    { // Here you must return a MyType made with the information in v.
+    {
+      // Here you must return a MyType made with the information in v.
     }
   }
 }
@@ -699,12 +701,12 @@ Once done, you will be able without any other change to
 
 \subsection{Casting simple structures}
 
-The system provides facilities to serialize simple structures by value between
-C++ and \us. This system uses two declarations of each structure, one in
-C++ and the other in \urbi, and maps between the two.
+The system provides facilities to serialize simple structures by value
+between \Cxx and \us. This system uses two declarations of each structure,
+one in \Cxx and the other in \urbi, and maps between the two.
 
 Here is a complete commented example to map a simple Point structure between
-\us and C++.
+\us and \Cxx.
 \begin{cxx}
 struct Point
 {
@@ -725,22 +727,23 @@ class Global.Point: UValueSerializable
 {
   var x = 0;
   var y = 0;
-  function init(xx=0, yy=0)
+  function init(var xx = 0, var yy = 0)
   {
-     x = xx|
-     y = yy
+    x = xx|
+    y = yy
   };
   function asString()
   {
-    "<" + x +", " + y  + ">"
+    "<%s, %s>" % [x, y]
   };
 };
 // Add the class to Serializables to register it.
 var Serializables.Point = Point;
 \end{urbiunchecked}
 
-Once done, you can call bound functions taking a C++ Point by passing them
-an \us Point and exchange Point between both worlds through \UVar read/write:
+Once done, you can call bound functions taking a \Cxx Point by passing them
+an \us Point and exchange Point between both worlds through \UVar
+read/write:
 
 \begin{cxx}
 // This function can be bound using UBindFunction.
@@ -748,12 +751,14 @@ Point MyObject::opposite(Point p)
 {
   return Point(-p.x, -p.y);
 }
+
 // Writing a Point to an UVar is OK.
 void MyObject::writePoint(Point p)
 {
   UVar v(this, "val");
   v = p;
 }
+
 // Converting an UVar to a Point is easy.
 ufloat MyObject::xCoord()
 {
