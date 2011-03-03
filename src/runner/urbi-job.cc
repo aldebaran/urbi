@@ -141,6 +141,7 @@ namespace runner
     , total_time_(0)
     , function_calls_(0)
     , function_call_depth_max_(0)
+    , wrapper_function_seen_(false)
     , checkpoint_(0)
     , function_call_depth_(0)
     , function_current_(0)
@@ -181,7 +182,7 @@ namespace runner
     function_call_depth_max_ = std::max(function_call_depth_max_,
                                         rhs.function_call_depth_max_);
 
-    foreach(FunctionProfiles::value_type value, rhs.functions_profile_)
+    foreach(const FunctionProfiles::value_type& value, rhs.functions_profile_)
     {
       FunctionProfiles::iterator it = functions_profile_.find(value.first);
       if (it != functions_profile_.end())
@@ -219,16 +220,22 @@ namespace runner
         functions_profile_[function].name_ = msg;
     }
     else
+    {
       wrapper_function_seen_ = true;
+      prev = (profile_idx) -1;
+    }
     return prev;
   }
 
   void
   UrbiJob::Profile::leave(profile_idx prev)
   {
-    --function_call_depth_;
-    step();
-    function_current_ = prev;
+    if (prev != (profile_idx) -1)
+    {
+      --function_call_depth_;
+      step();
+      function_current_ = prev;
+    }
   }
 
   libport::utime_t
