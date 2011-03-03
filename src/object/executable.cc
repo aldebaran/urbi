@@ -10,7 +10,7 @@
 
 #include <libport/cassert>
 
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 #include <urbi/object/executable.hh>
 
 #include <eval/exec.hh>
@@ -34,13 +34,13 @@ namespace urbi
       proto_add(model);
     }
 
-    runner::UrbiJob*
+    runner::Job*
     Executable::make_job(rLobby lobby,
                          sched::Scheduler& sched,
                          const objects_type& args,
                          libport::Symbol name)
     {
-      runner::UrbiJob* j = new runner::UrbiJob(lobby, sched, name);
+      runner::Job* j = new runner::Job(lobby, sched, name);
       j->set_action(eval::exec(this, args));
       return j;
     }

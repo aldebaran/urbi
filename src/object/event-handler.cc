@@ -12,7 +12,7 @@
 #include <urbi/object/event.hh>
 #include <urbi/object/event-handler.hh>
 
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 #include <eval/exec.hh>
 
 namespace urbi
@@ -58,14 +58,14 @@ namespace urbi
       slot_update(SYMBOL(active), to_urbi(false));
       if (detach_)
       {
-        runner::UrbiJob& r = ::kernel::runner();
+        runner::Job& r = ::kernel::runner();
         sched::jobs_type children;
         // Copy container to avoid in-place modification problems.
         foreach (const stop_job_type& stop_job, stop_jobs_type(stop_jobs_))
         {
           rLobby rlobby = r.state.lobby_get();
-          runner::UrbiJob* j =
-            new runner::UrbiJob(rlobby,
+          runner::Job* j =
+            new runner::Job(rlobby,
                                 r.scheduler_get(),
                                 "onleave");
           j->set_action(eval::exec(stop_job.get<0>(), stop_job.get<1>()));
@@ -116,7 +116,7 @@ namespace urbi
     EventHandler::trigger_job(const rActions& actions, bool detach)
     {
       detach = detach && !actions->sync;
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       if (actions->frozen)
         return;
       objects_type args;

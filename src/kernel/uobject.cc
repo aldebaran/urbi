@@ -43,7 +43,7 @@
 #include <object/uvalue.hh>
 #include <object/uvar.hh>
 #include <urbi/runner/raise.hh>
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 
 #include <eval/call.hh>
 
@@ -344,7 +344,7 @@ static inline void traceOperation(urbi::UVar*v, libport::Symbol op)
 static void periodic_call(rObject, ufloat interval, rObject method,
                           libport::Symbol msg, object::objects_type args)
 {
-  runner::UrbiJob& r = ::kernel::runner();
+  runner::Job& r = ::kernel::runner();
   libport::utime_t delay = libport::seconds_to_utime(interval);
   while (true)
   {
@@ -576,9 +576,9 @@ static void writeFromContext(const std::string& ctx,
     GD_FWARN("writeFromContext: non existing lobby: %x", ctx);
     return;
   }
-  runner::UrbiJob& r = kernel::urbiserver->getCurrentRunner();
+  runner::Job& r = kernel::urbiserver->getCurrentRunner();
   rLobby cl = r.state.lobby_get();
-  FINALLY(((rLobby, cl))((runner::UrbiJob&, r)), r.state.lobby_set(cl));
+  FINALLY(((rLobby, cl))((runner::Job&, r)), r.state.lobby_set(cl));
   r.state.lobby_set(rl);
   object::rUValue ov(new object::UValue());
   ov->put(val, false);
@@ -694,10 +694,10 @@ namespace urbi
     }
 
 #define INTERRUPTIBLE                                                   \
-  runner::UrbiJob& r = ::kernel::runner();                              \
+  runner::Job& r = ::kernel::runner();                              \
   bool b = r.non_interruptible_get();                                   \
   r.non_interruptible_set(false);                                       \
-  FINALLY(((runner::UrbiJob&, r))((bool, b)), r.non_interruptible_set(b))
+  FINALLY(((runner::Job&, r))((bool, b)), r.non_interruptible_set(b))
 
 
     void KernelUContextImpl::yield() const
@@ -1229,11 +1229,11 @@ namespace urbi
         return;
       }
       // Protect against multiple parallel creation of the same UVar.
-      runner::UrbiJob& runner = ::kernel::runner();
+      runner::Job& runner = ::kernel::runner();
       bool prevState = runner.non_interruptible_get();
       FINALLY(
         ((bool, prevState))
-        ((runner::UrbiJob&, runner))
+        ((runner::Job&, runner))
         ((UVar*, owner)),
         runner.non_interruptible_set(prevState););
       runner.non_interruptible_set(true);
@@ -1475,9 +1475,9 @@ namespace urbi
            this, enable));
         return;
       }
-      runner::UrbiJob& r = ::kernel::urbiserver->getCurrentRunner();
+      runner::Job& r = ::kernel::urbiserver->getCurrentRunner();
       bool last_rdm = r.state.redefinition_mode_get();
-      FINALLY( ((bool, last_rdm))((runner::UrbiJob&, r)),
+      FINALLY( ((bool, last_rdm))((runner::Job&, r)),
                       r.state.redefinition_mode_set(last_rdm));
       r.state.redefinition_mode_set(true);
       if (enable)

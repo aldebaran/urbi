@@ -12,7 +12,7 @@
 # define RUNNER_SNEAKER_HH
 
 # include <ast/ast.hh>
-# include <runner/urbi-job.hh>
+# include <runner/job.hh>
 # include <sched/scheduler.hh>
 
 namespace dbg
@@ -31,13 +31,13 @@ namespace dbg
   /// to execute code.
   ///
   /// \return A runner.
-  runner::UrbiJob& runner_or_sneaker_get();
+  runner::Job& runner_or_sneaker_get();
 
   /// Compare the current Job and determine if this is the sneaker. This is
   /// unlikely unless you are debugging.
   ///
   /// \return A runner.
-  bool is_sneaker(runner::UrbiJob& job);
+  bool is_sneaker(runner::Job& job);
 
   /// The following functions will be called from the debugger. Here
   /// are some example uses:

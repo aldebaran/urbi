@@ -15,7 +15,7 @@
 #include <object/symbols.hh>
 
 #include <urbi/runner/raise.hh>
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 #include <runner/sneaker.hh>
 
 #include <sched/scheduler.hh>
@@ -48,7 +48,7 @@ namespace runner
              bool skip,
              const boost::optional<ast::loc>& loc)
   {
-    UrbiJob& r = dbg::runner_or_sneaker_get();
+    Job& r = dbg::runner_or_sneaker_get();
     raise_urbi(exn_name,
                to_urbi(r.state.innermost_call_get()), arg1, arg2, arg3,
                skip, loc);
@@ -68,7 +68,7 @@ namespace runner
     // involves running urbiscript code.
     // assert_user_mode(exn_name, "");
     assert_ne(exn_name, SYMBOL(Exception));
-    UrbiJob& r = dbg::runner_or_sneaker_get();
+    Job& r = dbg::runner_or_sneaker_get();
     CAPTURE_GLOBAL(Exception);
     const rObject& exn = Exception->slot_get(exn_name);
     if (arg1 == void_class)

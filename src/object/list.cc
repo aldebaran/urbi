@@ -34,7 +34,7 @@
 
 #include <urbi/runner/raise.hh>
 
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 
 #include <eval/call.hh>
 
@@ -292,7 +292,7 @@ namespace urbi
     List::each_common(const rObject& f, bool yielding, bool idx)
     {
       URBI_AT_HOOK(contentChanged);
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       bool must_yield = false;
       int i = 0;
@@ -333,7 +333,7 @@ namespace urbi
     List::each_and(const rObject& f)
     {
       URBI_AT_HOOK(contentChanged);
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       // Beware of iterations that modify the list in place: make a
       // copy.

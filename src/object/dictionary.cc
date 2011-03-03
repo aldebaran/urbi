@@ -22,7 +22,7 @@
 #include <urbi/object/list.hh>
 #include <urbi/object/string.hh>
 
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 
 #include <eval/raise.hh>
 

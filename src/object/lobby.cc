@@ -27,7 +27,7 @@
 
 #include <urbi/runner/raise.hh>
 
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 #include <runner/shell.hh>
 
 namespace urbi

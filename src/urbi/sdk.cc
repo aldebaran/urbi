@@ -15,7 +15,7 @@
 #include <urbi/sdk.hh>
 #include <kernel/userver.hh>
 #include <object/system.hh>
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 
 namespace urbi
 {

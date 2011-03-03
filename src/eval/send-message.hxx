@@ -26,14 +26,14 @@
 # include <urbi/object/string.hh>
 
 
-# include <runner/urbi-stack.hh>
-# include <runner/urbi-job.hh>
+# include <runner/state.hh>
+# include <runner/job.hh>
 # include <runner/sneaker.hh>
 
 namespace eval
 {
   inline
-  rObject send_message(UrbiJob& job,
+  rObject send_message(Job& job,
                        const std::string& tag,
                        const std::string& msg)
   {
@@ -69,28 +69,28 @@ namespace eval
   }
 
   inline void
-  show_backtrace(UrbiJob& job,
-                 const runner::UrbiStack::call_stack_type& bt,
+  show_backtrace(Job& job,
+                 const runner::State::call_stack_type& bt,
                  const std::string& chan)
   {
-    rforeach (const runner::UrbiStack::call_type& c, bt)
+    rforeach (const runner::State::call_type& c, bt)
       send_message(job,
                    chan,
                    libport::format("!!!    called from: %s", c));
   }
 
   inline void
-  show_backtrace(UrbiJob& job,
+  show_backtrace(Job& job,
                  const std::string& chan)
   {
     // Displaying a stack invokes urbiscript code, which in turn
     // changes the call stack.  Don't play this kind of games.
-    runner::UrbiStack::call_stack_type call_stack(job.state.call_stack_get());
+    runner::State::call_stack_type call_stack(job.state.call_stack_get());
     show_backtrace(job, call_stack, chan);
   }
 
   inline
-  void show_exception(UrbiJob& job,
+  void show_exception(Job& job,
                       const object::UrbiException& ue,
                       const std::string& tag)
   {
@@ -114,7 +114,7 @@ namespace eval
   }
 
   inline
-  rObject verb_message(UrbiJob& job, const std::string& tag, Action act)
+  rObject verb_message(Job& job, const std::string& tag, Action act)
   {
     send_message(job, tag, "enter");
     rObject res = act(job);

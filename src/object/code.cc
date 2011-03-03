@@ -138,7 +138,7 @@ namespace urbi
       check_arg_count(apply_args.size(), 1, 2);
       rList args = from_urbi<rList>(apply_args[0], 0u);
 
-      runner::UrbiJob& r = runner();
+      runner::Job& r = runner();
       libport::Symbol s = (1 < apply_args.size())
         ? libport::Symbol(from_urbi<rString>(apply_args[1], 1u)->value_get())
         : SYMBOL(apply);
@@ -201,7 +201,7 @@ namespace urbi
     rObject
     Code::operator() (object::objects_type args)
     {
-      runner::UrbiJob& r = runner();
+      runner::Job& r = runner();
       aver(!args.empty());
       return eval::call_apply(r,
                               this,

@@ -15,7 +15,7 @@
 # include <object/uvalue.hh>
 # include <object/uvar.hh>
 
-# include <runner/urbi-job.hh>
+# include <runner/job.hh>
 
 # include <urbi/object/lobby.hh>
 
@@ -66,7 +66,7 @@ namespace urbi
       processing = false;
     }
 
-    bool UConnection::call(runner::UrbiJob& r, rObject self)
+    bool UConnection::call(runner::Job& r, rObject self)
     {
       rObject t = UVar::fromName(target);
       if (!t)
@@ -92,9 +92,9 @@ namespace urbi
       return true;
     }
 
-    rObject UConnection::doCall(runner::UrbiJob& r,
-                             rObject self,
-                             rObject target)
+    rObject UConnection::doCall(runner::Job& r,
+                                rObject self,
+                                rObject target)
     {
       processing = true;
       libport::utime_t now = libport::utime();

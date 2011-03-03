@@ -10,9 +10,9 @@
 
 // FIXME: remove these (frozen_set)
 #include <kernel/userver.hh>
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 
-#include <runner/urbi-stack.hh>
+#include <runner/state.hh>
 
 // define CAPTURE_GLOBAL
 #include <urbi/object/global.hh>
@@ -21,13 +21,13 @@
 #include <libport/config.h>
 
 #ifndef LIBPORT_COMPILATION_MODE_SPEED
-# include <runner/urbi-stack.hxx>
+# include <runner/state.hxx>
 #endif
 
 namespace runner
 {
 
-  UrbiStack::UrbiStack(rLobby lobby)
+  State::State(rLobby lobby)
     : priority_cache_valid_(false)
     , priority_cache_(sched::UPRIO_DEFAULT)
     , frozen_(false)
@@ -48,7 +48,7 @@ namespace runner
     apply_tag(lobby->tag_get());
   }
 
-  UrbiStack::UrbiStack(const UrbiStack& base)
+  State::State(const State& base)
     : priority_cache_valid_(base.priority_cache_valid_)
     , priority_cache_(base.priority_cache_)
     , frozen_(false)
@@ -71,7 +71,7 @@ namespace runner
   /// \{
 
   size_t
-  UrbiStack::has_tag(const sched::Tag& tag, size_t max_depth) const
+  State::has_tag(const sched::Tag& tag, size_t max_depth) const
   {
     max_depth = std::min(max_depth, tag_stack_.size());
     for (size_t i = 0; i < max_depth; i++)
@@ -81,7 +81,7 @@ namespace runner
   }
 
   bool
-  UrbiStack::frozen() const
+  State::frozen() const
   {
     foreach (const object::rTag& tag, tag_stack_)
       if (tag->value_get()->frozen())
@@ -90,14 +90,14 @@ namespace runner
   }
 
   void
-  UrbiStack::frozen_set(bool v)
+  State::frozen_set(bool v)
   {
     frozen_ = v;
     kernel::runner().scheduler_get().signal_world_change();
   }
 
   sched::prio_type
-  UrbiStack::priority() const
+  State::priority() const
   {
     if (priority_cache_valid_)
       return priority_cache_;
@@ -115,8 +115,8 @@ namespace runner
     return priority_cache_;
   }
 
-  UrbiStack::tag_stack_type
-  UrbiStack::tag_stack_get() const
+  State::tag_stack_type
+  State::tag_stack_get() const
   {
     tag_stack_type res;
     foreach (const object::rTag& tag, tag_stack_)
@@ -139,8 +139,8 @@ namespace runner
   /// Call Stack
   /// \{
 
-  UrbiStack::backtrace_type
-  UrbiStack::backtrace_get() const
+  State::backtrace_type
+  State::backtrace_get() const
   {
     CAPTURE_GLOBAL(StackFrame);
     backtrace_type res;

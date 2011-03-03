@@ -24,14 +24,14 @@
 
 #include <object/urbi-exception.hh>
 
-#include <runner/urbi-job.hh>
-#include <runner/urbi-stack.hh>
+#include <runner/job.hh>
+#include <runner/state.hh>
 
 namespace eval
 {
 
   void
-  raise(UrbiJob& job,
+  raise(Job& job,
         rObject exn, bool skip_last)
   {
     raise(job, exn, skip_last, boost::optional<ast::loc>());
@@ -39,7 +39,7 @@ namespace eval
   }
 
   void
-  raise(UrbiJob& job,
+  raise(Job& job,
         rObject exn, bool skip_last,
         const boost::optional<ast::loc>& loc)
   {
@@ -57,7 +57,7 @@ namespace eval
                        job.as_job()->as<object::Job>()->backtrace());
     }
     // FIXME: This cause a second duplication of the backtrace.
-    runner::UrbiStack::call_stack_type bt = job.state.call_stack_get();
+    runner::State::call_stack_type bt = job.state.call_stack_get();
     if (skip_last && !bt.empty())
       bt.pop_back();
     throw object::UrbiException(exn, bt);

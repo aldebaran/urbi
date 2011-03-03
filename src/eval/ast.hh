@@ -22,8 +22,8 @@
 # include <ast/all.hh>
 # include <ast/print.hh>
 
-# include <runner/urbi-stack.hh>
-# include <runner/urbi-job.hh>
+# include <runner/state.hh>
+# include <runner/job.hh>
 
 # include <eval/action.hh>
 
@@ -33,15 +33,15 @@ namespace eval
   namespace ast_impl
   {
 # define VISIT(Macro, Data, Node)                       \
-    rObject eval(UrbiJob& this_, const ast::Node* n);
+    rObject eval(Job& this_, const ast::Node* n);
 
     AST_FOR_EACH_NODE(VISIT);
 #undef VISIT
   }
 
-  rObject ast_context(UrbiJob& job, const ast::Ast* e, rObject self);
+  rObject ast_context(Job& job, const ast::Ast* e, rObject self);
 
-  rObject ast(UrbiJob& job, ast::rConstAst ast);
+  rObject ast(Job& job, ast::rConstAst ast);
   Action  ast(ast::rConstAst ast);
 
 

@@ -24,11 +24,11 @@ namespace eval
 {
 
   void
-  raise(UrbiJob& job,
+  raise(Job& job,
         rObject exn, bool skip_last = false);
 
   void
-  raise(UrbiJob& job,
+  raise(Job& job,
         rObject exn, bool skip_last,
         const boost::optional<ast::loc>& loc);
 

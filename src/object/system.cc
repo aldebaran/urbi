@@ -42,8 +42,8 @@
 #include <urbi/object/job.hh>
 #include <parser/transform.hh>
 #include <runner/exception.hh>
-#include <runner/urbi-stack.hh>
-#include <runner/urbi-job.hh>
+#include <runner/state.hh>
+#include <runner/job.hh>
 #include <urbi/runner/raise.hh>
 
 #include <eval/ast.hh>
@@ -81,7 +81,7 @@ namespace urbi
       execute_parsed(parser::parse_result_type p, rObject self)
       {
         ast::rConstAst ast = parser::transform(ast::rConstExp(p));
-        runner::UrbiJob& run = interpreter();
+        runner::Job& run = interpreter();
         return
           eval::ast_context(run, ast.get(),
                             self ? self : rObject(run.state.lobby_get()));
@@ -111,14 +111,14 @@ namespace urbi
     static void
     system_sleep_inf(const rObject&)
     {
-      runner::UrbiJob& r = runner();
+      runner::Job& r = runner();
       r.yield_until_terminated(r);
     }
 
     static void
     system_sleep(const rObject& o, libport::ufloat seconds)
     {
-      runner::UrbiJob& r = runner();
+      runner::Job& r = runner();
       if (seconds == std::numeric_limits<ufloat>::infinity())
         system_sleep_inf(o);
       else
@@ -134,7 +134,7 @@ namespace urbi
     static float
     system_shiftedTime()
     {
-      runner::UrbiJob& r = runner();
+      runner::Job& r = runner();
       return (r.scheduler_get().get_time() - r.time_shift_get()) / 1000000.0;
     }
 
@@ -252,8 +252,8 @@ namespace urbi
                  const rCode& code,
                  const rObject& clear_tags)
     {
-      runner::UrbiJob& r = runner();
-      runner::UrbiJob* new_runner =
+      runner::Job& r = runner();
+      runner::Job* new_runner =
         r.spawn_child(eval::call(code),
                       libport::Symbol::fresh_string(r.name_get()));
 
@@ -304,11 +304,11 @@ namespace urbi
     {
       // FIXME: This method sucks a bit, because show_backtrace sucks a
       // bit, because our channeling/message-sending system sucks a lot.
-      runner::UrbiJob& r = runner();
-      runner::UrbiStack::backtrace_type bt = r.state.backtrace_get();
+      runner::Job& r = runner();
+      runner::State::backtrace_type bt = r.state.backtrace_get();
       bt.pop_back();
       // This should be moved into eval/send-message.hh
-      rforeach (runner::UrbiStack::call_frame_type& i, bt)
+      rforeach (runner::State::call_frame_type& i, bt)
         eval::send_message(
           r,
           "backtrace",
@@ -323,7 +323,7 @@ namespace urbi
       List::value_type res;
       foreach (sched::rJob job, ::kernel::scheduler().jobs_get())
       {
-        rObject o = static_cast<runner::UrbiJob*>(job.get())->as_job();
+        rObject o = static_cast<runner::Job*>(job.get())->as_job();
         if (o != nil_class)
           res << o;
       }
@@ -552,8 +552,8 @@ namespace urbi
     }
 
     static bool
-    per_self_time(const runner::UrbiJob::Profile::FunctionProfile& lhs,
-                  const runner::UrbiJob::Profile::FunctionProfile& rhs)
+    per_self_time(const runner::Job::Profile::FunctionProfile& lhs,
+                  const runner::Job::Profile::FunctionProfile& rhs)
     {
       return lhs.self_time_get() > rhs.self_time_get();
     }
@@ -572,7 +572,7 @@ namespace urbi
         return nil_class;
       }
 
-      runner::UrbiJob::Profile p;
+      runner::Job::Profile p;
       {
         FINALLY(((Object*, self)), ::kernel:: interpreter().profile_stop());
         interpreter().profile_start(&p);
@@ -597,8 +597,8 @@ namespace urbi
 
 #undef DECLARE
 
-      typedef runner::UrbiJob::Profile::FunctionProfiles FunctionProfiles;
-      typedef runner::UrbiJob::Profile::FunctionProfile FunctionProfile;
+      typedef runner::Job::Profile::FunctionProfiles FunctionProfiles;
+      typedef runner::Job::Profile::FunctionProfile FunctionProfile;
       std::vector<FunctionProfile> fps;
       foreach (const FunctionProfiles::value_type& fp,
                p.functions_profile_get())

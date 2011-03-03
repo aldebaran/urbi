@@ -20,14 +20,14 @@
 # include <sched/job.hh>
 
 # include <ast/exps-type.hh>
-# include <runner/urbi-job.hh>
+# include <runner/job.hh>
 
 # include <parser/uparser.hh>
 
 namespace runner
 {
 
-  class Shell : public UrbiJob
+  class Shell : public Job
   {
   public:
     Shell(const rLobby& lobby,
@@ -36,9 +36,9 @@ namespace runner
           std::istream& input);
     ~Shell();
 
-    // FIXME: I don't like it because this implies that UrbiJob is not a
+    // FIXME: I don't like it because this implies that Job is not a
     // final class on which actions are executed.  Thus transform these
-    // functions to actions to run them on the UrbiJob, which can latter be
+    // functions to actions to run them on the Job, which can latter be
     // transformed to a shell. -- NBP
     virtual void work();
     void work_();

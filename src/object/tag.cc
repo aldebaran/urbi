@@ -21,7 +21,7 @@
 #include <urbi/object/string.hh>
 #include <object/symbols.hh>
 
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 #include <eval/call.hh>
 
 #include <sched/tag.hh>
@@ -114,7 +114,7 @@ namespace urbi
     void
     Tag::freeze()
     {
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       value_->freeze();
       // changed();
@@ -237,7 +237,7 @@ namespace urbi
     rTag
     Tag::scope()
     {
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       return new Tag(r.state.scope_tag(r.scheduler_get()));
     }
 

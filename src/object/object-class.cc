@@ -26,7 +26,7 @@
 #include <kernel/userver.hh>
 #include <object/object-class.hh>
 #include <object/symbols.hh>
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 #include <urbi/object/cxx-primitive.hh>
 #include <urbi/object/dictionary.hh>
 #include <urbi/object/event.hh>
@@ -68,7 +68,7 @@ namespace urbi
     static rObject
     object_class_dump(const objects_type& args)
     {
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       check_arg_count(args.size() - 1, 1, 2);
 
@@ -140,7 +140,7 @@ namespace urbi
     object_class_callMessage (rObject target, rObject call_message)
     {
       DECLARE_LOCATION_FILE;
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       // We need to set the 'code' slot: make a copy of the call message.
       const rObject& message = call_message->slot_get(SYMBOL(message));

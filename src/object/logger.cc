@@ -8,8 +8,8 @@
  * See the LICENSE file for more information.
  */
 
-#include <runner/urbi-stack.hh>
-#include <runner/urbi-job.hh>
+#include <runner/state.hh>
+#include <runner/job.hh>
 #include <object/logger.hh>
 
 namespace urbi
@@ -82,7 +82,7 @@ namespace urbi
         line = ast->location_get().begin.line;
       }
 
-      const runner::UrbiStack::call_stack_type& bt =
+      const runner::State::call_stack_type& bt =
         ::kernel::interpreter().state.call_stack_get();
       if (bt.size() > 1)
         function = bt[bt.size() - 2].first.name_get();

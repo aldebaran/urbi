@@ -12,7 +12,7 @@
 
 #include <kernel/userver.hh>
 #include <object/symbols.hh>
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 #include <urbi/object/event.hh>
 #include <urbi/object/event-handler.hh>
 #include <urbi/object/lobby.hh>
@@ -136,7 +136,7 @@ namespace urbi
     Event::onEvent(rExecutable guard, rExecutable enter, rExecutable leave, bool sync)
     {
       rActions actions(new Actions(guard, enter, leave, sync));
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       actions->tag_stack = r.state.tag_stack_get();
       actions->lobby = r.state.lobby_get();
       foreach (object::rTag& tag, actions->tag_stack)
@@ -171,7 +171,7 @@ namespace urbi
             || pattern->call(SYMBOL(match), active->payload())->as_bool())
           return;
 
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       rTag t(new Tag);
       waiters_ << Waiter(t, &r, pattern);
       libport::Finally f;
@@ -208,7 +208,7 @@ namespace urbi
                              const objects_type& args)
     {
       typedef rObject(Executable::*fun_type)(objects_type);
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       if (!lobby)
         lobby = r.state.lobby_get();
       return e->make_job(lobby, r.scheduler_get(), args, SYMBOL(at));

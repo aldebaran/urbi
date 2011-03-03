@@ -12,7 +12,7 @@
 # define OBJECT_UCONNECTION_HH
 
 # include <urbi/object/cxx-object.hh>
-# include <runner/urbi-job.hh>
+# include <runner/job.hh>
 
 # include <urbi/uvalue.hh>
 
@@ -30,7 +30,7 @@ namespace urbi
       UConnection();
       UConnection(libport::intrusive_ptr<UConnection> model);
       /// Call the connection, returns false if it must be unregistered.
-      bool call(runner::UrbiJob& r, rObject self);
+      bool call(runner::Job& r, rObject self);
       /// Source UVar name (cannot take rObject)
       std::string source;
       /// Target UVar name (cannot take rObject)
@@ -50,7 +50,7 @@ namespace urbi
       /// Call asynchronously
       bool asynchronous;
     private:
-      rObject doCall(runner::UrbiJob& r, rObject self, rObject target);
+      rObject doCall(runner::Job& r, rObject self, rObject target);
       /// True if we are currently processing this connection.
       bool processing;
       void init_();

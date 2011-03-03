@@ -28,7 +28,7 @@ namespace eval
   Action  call(object::rObject function,
                const object::objects_type& args = object::objects_type());
 
-  rObject call(UrbiJob& job,
+  rObject call(Job& job,
                object::rObject function,
                const object::objects_type& args = object::objects_type());
 
@@ -39,7 +39,7 @@ namespace eval
                const object::objects_type& args,
                boost::optional< ::ast::loc> loc);
 
-  rObject call(UrbiJob& job,
+  rObject call(Job& job,
                rObject target,
                libport::Symbol msg,
                rObject code,
@@ -56,7 +56,7 @@ namespace eval
                      libport::Symbol message,
                      const object::objects_type& args = object::objects_type());
 
-  rObject call_apply(UrbiJob& job,
+  rObject call_apply(Job& job,
                      object::rObject target,
                      object::rObject routine,
                      libport::Symbol message,
@@ -67,13 +67,13 @@ namespace eval
                      const object::objects_type& args,
                      object::rObject call_message = 0);
 
-  rObject call_apply(UrbiJob& job,
+  rObject call_apply(Job& job,
                      object::rObject function,
                      libport::Symbol msg,
                      const object::objects_type& args,
                      object::rObject call_message = 0);
 
-  rObject call_apply(UrbiJob& job,
+  rObject call_apply(Job& job,
                      object::Object* function,
                      libport::Symbol msg,
                      const object::objects_type& args,
@@ -85,12 +85,12 @@ namespace eval
   | Apply with a call message |
   `--------------------------*/
 
-  rObject call_msg(UrbiJob& job,
+  rObject call_msg(Job& job,
                    object::Object* function,
                    libport::Symbol msg,
                    object::Object* call_message);
 
-  rObject call_msg(UrbiJob& job,
+  rObject call_msg(Job& job,
                    object::Object* function,
                    libport::Symbol msg,
                    object::Object* call_message,
@@ -100,13 +100,13 @@ namespace eval
   | Apply an urbi function (i.e., not a primitive) |
   `-----------------------------------------------*/
 
-  rObject call_apply_urbi(UrbiJob& job,
+  rObject call_apply_urbi(Job& job,
                           object::Code* function,
                           libport::Symbol msg,
                           const object::objects_type& args,
                           object::Object* call_message_);
 
-  rObject call_funargs(UrbiJob& job,
+  rObject call_funargs(Job& job,
                        object::Code* function,
                        libport::Symbol msg,
                        const object::objects_type& args);
@@ -115,13 +115,13 @@ namespace eval
   | Apply with arguments as ast chunks.  |
   `-------------------------------------*/
 
-  rObject call_msg(UrbiJob& job,
+  rObject call_msg(Job& job,
                    rObject target,
                    libport::Symbol message,
                    const ::ast::exps_type* arguments,
                    boost::optional< ::ast::loc> loc);
 
-  rObject call_msg(UrbiJob& job,
+  rObject call_msg(Job& job,
                    object::Object* target,
                    object::Object* routine,
                    libport::Symbol message,

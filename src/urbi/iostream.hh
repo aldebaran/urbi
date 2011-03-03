@@ -14,7 +14,7 @@
 # include <libport/fifo.hh>
 # include <libport/iostream>
 
-# include <runner/urbi-job.hh>
+# include <runner/job.hh>
 # include <urbi/export.hh>
 
 namespace urbi
@@ -53,7 +53,7 @@ namespace urbi
     Buffer buffer2_;
     Buffer* buffer_read_;
     Buffer* buffer_write_;
-    runner::rUrbiJob frozen_;
+    runner::rJob frozen_;
     bool close_;
   };
 }

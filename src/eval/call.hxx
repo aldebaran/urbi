@@ -43,8 +43,8 @@
 
 # include <urbi/runner/raise.hh>
 
-#include <runner/urbi-stack.hh>
-#include <runner/urbi-job.hh>
+#include <runner/state.hh>
+#include <runner/job.hh>
 
 #include <eval/ast.hh>
 #include <eval/call.hh>
@@ -73,26 +73,26 @@ namespace eval
 
   static inline
   void
-  strict_args(UrbiJob& job,
+  strict_args(Job& job,
               object::objects_type& args,
               const ::ast::exps_type& exp_args);
 
   static inline
   void
-  lazy_args(UrbiJob& job,
+  lazy_args(Job& job,
             object::objects_type& args,
             const object::objects_type& exp_args);
 
   static inline
   object::rObject
-  build_call_message(UrbiJob& job,
+  build_call_message(Job& job,
                      object::Object* code,
                      libport::Symbol msg,
                      const object::objects_type& args);
 
   static inline
   object::rObject
-  build_call_message(UrbiJob& job,
+  build_call_message(Job& job,
                      object::Object* tgt,
                      object::Object* code,
                      libport::Symbol msg,
@@ -108,7 +108,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_INLINE
-  rObject call(UrbiJob& job,
+  rObject call(Job& job,
                object::rObject function,
                const object::objects_type& args)
   {
@@ -130,7 +130,7 @@ namespace eval
                      libport::Symbol message,
                      const object::objects_type& args)
   {
-    typedef rObject (*bound)(UrbiJob& job,
+    typedef rObject (*bound)(Job& job,
                              object::rObject target,
                              object::rObject routine,
                              libport::Symbol message,
@@ -140,7 +140,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_INLINE
-  rObject call_apply(UrbiJob& job,
+  rObject call_apply(Job& job,
                      object::rObject target,
                      object::rObject routine,
                      libport::Symbol message,
@@ -161,7 +161,7 @@ namespace eval
                      const object::objects_type& args,
                      object::rObject call_message)
   {
-    typedef rObject (*bound)(UrbiJob& job,
+    typedef rObject (*bound)(Job& job,
                              object::rObject function,
                              libport::Symbol msg,
                              const object::objects_type& args,
@@ -172,7 +172,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_INLINE
-  rObject call_apply(UrbiJob& job,
+  rObject call_apply(Job& job,
                      object::rObject function,
                      libport::Symbol msg,
                      const object::objects_type& args,
@@ -184,7 +184,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_INLINE
-  rObject call_apply(UrbiJob& job,
+  rObject call_apply(Job& job,
                      object::Object* function,
                      libport::Symbol msg,
                      const object::objects_type& args,
@@ -203,13 +203,13 @@ namespace eval
 
     if (reg)
       job.state.call_stack_get() << std::make_pair(msg, loc);
-    UrbiJob::Profile::profile_idx profile_prev = 0;
+    Job::Profile::profile_idx profile_prev = 0;
 
     if (job.profile)
       profile_prev = job.profile->enter(function, msg);
 
-    FINALLY(((UrbiJob&, job))((bool, reg))
-            ((UrbiJob::Profile::profile_idx, profile_prev)),
+    FINALLY(((Job&, job))((bool, reg))
+            ((Job::Profile::profile_idx, profile_prev)),
             if (reg)
               job.state.call_stack_get().pop_back();
             if (job.profile)
@@ -262,7 +262,7 @@ namespace eval
   `--------------------------*/
 
   LIBPORT_SPEED_INLINE
-  rObject call_msg(UrbiJob& job,
+  rObject call_msg(Job& job,
                    object::Object* function,
                    libport::Symbol msg,
                    object::Object* call_message)
@@ -273,7 +273,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_INLINE
-  rObject call_msg(UrbiJob& job,
+  rObject call_msg(Job& job,
                    object::Object* function,
                    libport::Symbol msg,
                    object::Object* call_message,
@@ -306,7 +306,7 @@ namespace eval
   // mode, even if messages are not printed.
 
   LIBPORT_SPEED_INLINE
-  rObject call_apply_urbi(UrbiJob& job,
+  rObject call_apply_urbi(Job& job,
                           object::Code* function,
                           libport::Symbol msg,
                           const object::objects_type& args,
@@ -371,13 +371,13 @@ namespace eval
 # error "No dynamic stack policy defined."
 #endif
 
-    typedef runner::UrbiStack::var_frame_type var_frame_type;
+    typedef runner::State::var_frame_type var_frame_type;
     var_frame_type previous_frame =
       job.state.push_frame(
         msg, var_frame_type(local_stack, captured_stack),
         self, call);
     // GD_INFO_DEBUG("Push frame");
-    FINALLY(((UrbiJob&, job))
+    FINALLY(((Job&, job))
             ((libport::Symbol, msg))
             ((var_frame_type, previous_frame))
             ((rLobby, caller_lobby))
@@ -463,7 +463,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_INLINE
-  rObject call_funargs(UrbiJob& job,
+  rObject call_funargs(Job& job,
                        object::Code* function,
                        libport::Symbol msg,
                        const object::objects_type& args)
@@ -478,7 +478,7 @@ namespace eval
   /// !!! old apply_ast
 
   LIBPORT_SPEED_INLINE
-  rObject call_msg(UrbiJob& job,
+  rObject call_msg(Job& job,
                    rObject target,
                    libport::Symbol message,
                    const ::ast::exps_type* arguments,
@@ -499,7 +499,7 @@ namespace eval
   }
 
   LIBPORT_SPEED_INLINE
-  rObject call_msg(UrbiJob& job,
+  rObject call_msg(Job& job,
                    object::Object* target,
                    object::Object* routine,
                    libport::Symbol message,
@@ -538,7 +538,7 @@ namespace eval
 
   LIBPORT_SPEED_INLINE
   void
-  strict_args(UrbiJob& job,
+  strict_args(Job& job,
               object::objects_type& args,
               const ::ast::exps_type& exp_args)
   {
@@ -558,7 +558,7 @@ namespace eval
 
   LIBPORT_SPEED_INLINE
   void
-  lazy_args(UrbiJob& /* job */,
+  lazy_args(Job& /* job */,
             object::objects_type& args,
             const object::objects_type& exp_args)
   {
@@ -574,7 +574,7 @@ namespace eval
 
   LIBPORT_SPEED_INLINE
   object::rObject
-  build_call_message(UrbiJob& job,
+  build_call_message(Job& job,
                      object::Object* code,
                      libport::Symbol msg,
                      const object::objects_type& args)
@@ -606,7 +606,7 @@ namespace eval
     typedef ::ast::Transformer super_type;
     Rebinder(::ast::rRoutine routine,
              object::rCode code,
-             runner::UrbiStack& state)
+             runner::State& state)
       : idx_(0)
       , routine_(routine)
       , code_(code)
@@ -705,12 +705,12 @@ namespace eval
     std::set< ::ast::LocalDeclaration*> decls_;
     ::ast::rRoutine routine_;
     object::rCode code_;
-    runner::UrbiStack& state_;
+    runner::State& state_;
   };
 
   LIBPORT_SPEED_INLINE
   object::rObject
-  build_call_message(UrbiJob& job,
+  build_call_message(Job& job,
                      object::Object* tgt,
                      object::Object* code,
                      libport::Symbol msg,

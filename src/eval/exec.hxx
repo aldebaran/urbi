@@ -26,14 +26,14 @@ namespace eval
   Action  exec(object::rExecutable e,
                const object::objects_type& args)
   {
-    typedef rObject (*fun_t)(UrbiJob& job,
+    typedef rObject (*fun_t)(Job& job,
                              object::rExecutable e,
                              const object::objects_type& args);
     return boost::bind((fun_t) &exec, _1, e, args);
   }
 
   inline
-  rObject exec(UrbiJob& job,
+  rObject exec(Job& job,
                object::rExecutable e,
                const object::objects_type& args)
   {
@@ -45,14 +45,14 @@ namespace eval
   Action  exec(boost::function0<void> e,
                rObject self)
   {
-    typedef rObject (*fun_t)(UrbiJob& job,
+    typedef rObject (*fun_t)(Job& job,
                              boost::function0<void> e,
                              rObject self);
     return boost::bind((fun_t) &exec, _1, e, self);
   }
 
   inline
-  rObject exec(UrbiJob& job,
+  rObject exec(Job& job,
                boost::function0<void> e,
                rObject self)
   {

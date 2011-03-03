@@ -13,7 +13,6 @@
  ** \brief Forward declarations for the namespace runner.
  */
 
-#error "hum hum ..."
 
 #ifndef RUNNER_FWD_HH
 # define RUNNER_FWD_HH
@@ -21,7 +20,8 @@
 namespace runner
 {
 
-  class Runner;
+  class State;
+  class Job;
 
 } // namespace runner
 

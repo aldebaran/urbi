@@ -11,7 +11,7 @@
 #include <libport/utime.hh>
 #include <libport/finally.hh>
 
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 
 #include <eval/call.hh>
 #include <eval/raise.hh>
@@ -20,13 +20,13 @@
 #include <libport/config.h>
 
 #ifndef LIBPORT_COMPILATION_MODE_SPEED
-# include <runner/urbi-job.hxx>
+# include <runner/job.hxx>
 #endif
 
 
 namespace runner
 {
-  UrbiJob::~UrbiJob()
+  Job::~Job()
   {
   }
 
@@ -34,7 +34,7 @@ namespace runner
   /// Urbiscript evaluation
   /// \{
 
-  void UrbiJob::work()
+  void Job::work()
   {
     aver(worker_);
     try
@@ -51,7 +51,7 @@ namespace runner
       // This is a detached runner, show the error.
       {
         // Yielding inside a catch is forbidden.
-        libport::Finally finally(boost::bind(&UrbiJob::non_interruptible_set,
+        libport::Finally finally(boost::bind(&Job::non_interruptible_set,
                                              this, non_interruptible_get()));
         non_interruptible_set(true);
         eval::show_exception(*this, exn);
@@ -60,7 +60,7 @@ namespace runner
   }
 
   void
-  UrbiJob::scheduling_error(const std::string& msg)
+  Job::scheduling_error(const std::string& msg)
   {
     // We may have a situation here. If the stack space is running
     // near exhaustion, we cannot reasonably hope that we will get
@@ -111,17 +111,17 @@ namespace runner
   /// Job status defined by Tags
   /// \{
 
-  bool UrbiJob::frozen() const
+  bool Job::frozen() const
   {
     return state.frozen();
   }
 
-  size_t UrbiJob::has_tag(const sched::Tag& tag, size_t max_depth) const
+  size_t Job::has_tag(const sched::Tag& tag, size_t max_depth) const
   {
     return state.has_tag(tag, max_depth);
   }
 
-  sched::prio_type UrbiJob::prio_get() const
+  sched::prio_type Job::prio_get() const
   {
     return state.priority();
   }
@@ -135,7 +135,7 @@ namespace runner
   | Profiling.  |
   `------------*/
 
-  UrbiJob::Profile::Profile()
+  Job::Profile::Profile()
     : yields_(0)
     , wall_clock_time_(0)
     , total_time_(0)
@@ -148,14 +148,14 @@ namespace runner
   {}
 
 
-  UrbiJob::Profile::FunctionProfile::FunctionProfile()
+  Job::Profile::FunctionProfile::FunctionProfile()
     : calls_(0)
     , self_time_(0)
     , time_(0)
   {}
 
-  UrbiJob::Profile::FunctionProfile&
-  UrbiJob::Profile::FunctionProfile::operator+= (const FunctionProfile& rhs)
+  Job::Profile::FunctionProfile&
+  Job::Profile::FunctionProfile::operator+= (const FunctionProfile& rhs)
   {
     calls_     += rhs.calls_;
     self_time_ += rhs.self_time_;
@@ -163,16 +163,16 @@ namespace runner
     return *this;
   }
 
-  UrbiJob::Profile*
-  UrbiJob::Profile::fork()
+  Job::Profile*
+  Job::Profile::fork()
   {
     Profile* child = new Profile;
     child->function_call_depth_max_ = function_call_depth_max_;
     return child;
   }
 
-  UrbiJob::Profile&
-  UrbiJob::Profile::operator+=(const Profile& rhs)
+  Job::Profile&
+  Job::Profile::operator+=(const Profile& rhs)
   {
     yields_          += rhs.yields_;
     wall_clock_time_ += rhs.wall_clock_time_;
@@ -195,15 +195,15 @@ namespace runner
   }
 
   void
-  UrbiJob::Profile::join(Profile* other)
+  Job::Profile::join(Profile* other)
   {
     other->step();
     *this += *other;
     delete other;
   }
 
-  UrbiJob::Profile::profile_idx
-  UrbiJob::Profile::enter(void* function, libport::Symbol msg)
+  Job::Profile::profile_idx
+  Job::Profile::enter(void* function, libport::Symbol msg)
   {
     profile_idx prev = 0;
     if (wrapper_function_seen_)
@@ -228,7 +228,7 @@ namespace runner
   }
 
   void
-  UrbiJob::Profile::leave(profile_idx prev)
+  Job::Profile::leave(profile_idx prev)
   {
     if (prev != (profile_idx) -1)
     {
@@ -239,8 +239,13 @@ namespace runner
   }
 
   libport::utime_t
-  UrbiJob::Profile::step()
+  Job::Profile::step()
   {
+    GD_CATEGORY(Profile);
+    GD_FINFO_LOG("profile step: \"%s\" (%p)",
+                 functions_profile_[function_current_].name_.name_get(),
+                 function_current_);
+
     libport::utime_t now = libport::utime();
     libport::utime_t res = now - checkpoint_;
     total_time_ += res;
@@ -251,7 +256,7 @@ namespace runner
   }
 
   void
-  UrbiJob::profile_start(Profile* p)
+  Job::profile_start(Profile* p)
   {
     assert(!profile);
     profile = p;
@@ -261,7 +266,7 @@ namespace runner
   }
 
   void
-  UrbiJob::profile_stop()
+  Job::profile_stop()
   {
     assert(profile);
     profile->step();
@@ -269,13 +274,13 @@ namespace runner
   }
 
   void
-  UrbiJob::profile_fork(UrbiJob& parent)
+  Job::profile_fork(Job& parent)
   {
     profile_start(parent.profile->fork());
   }
 
   void
-  UrbiJob::profile_join(UrbiJob& child)
+  Job::profile_join(Job& child)
   {
     aver(profile);
     Profile* p = child.profile;
@@ -284,7 +289,7 @@ namespace runner
   }
 
   void
-  UrbiJob::hook_preempted() const
+  Job::hook_preempted() const
   {
     if (profile)
     {
@@ -294,7 +299,7 @@ namespace runner
   }
 
   void
-  UrbiJob::hook_resumed() const
+  Job::hook_resumed() const
   {
     if (profile)
     {
@@ -310,13 +315,13 @@ namespace runner
   /// \{
 
   bool
-  UrbiJob::non_interruptible_get() const
+  Job::non_interruptible_get() const
   {
     return super_type::non_interruptible_get();
   }
 
   void
-  UrbiJob::non_interruptible_set(bool i)
+  Job::non_interruptible_set(bool i)
   {
     super_type::non_interruptible_set(i);
   }

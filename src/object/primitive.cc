@@ -19,7 +19,7 @@
 #include <urbi/object/primitive.hh>
 #include <object/symbols.hh>
 #include <urbi/runner/raise.hh>
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 #include <eval/call.hh>
 
 GD_CATEGORY(Urbi);

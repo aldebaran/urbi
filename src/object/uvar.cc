@@ -31,7 +31,7 @@
 # include <urbi/object/list.hh>
 # include <urbi/object/lobby.hh>
 
-# include <runner/urbi-job.hh>
+# include <runner/job.hh>
 # include <eval/send-message.hh>
 # include <eval/call.hh>
 
@@ -42,7 +42,7 @@ namespace urbi
   {
     using libport::Symbol;
     static inline void
-    show_exception_message(runner::UrbiJob& r, rUVar self,
+    show_exception_message(runner::Job& r, rUVar self,
                            const char* m1, const char* m2 = "")
     {
       std::string msg =
@@ -59,7 +59,7 @@ namespace urbi
     }
 
     inline void
-    callNotify(runner::UrbiJob& r, rUVar self,
+    callNotify(runner::Job& r, rUVar self,
                UVar::Callbacks& callbacks_, rObject sourceUVar = 0)
     {
       if (callbacks_.empty())
@@ -106,7 +106,7 @@ namespace urbi
     }
 
     static inline void
-    callConnections(runner::UrbiJob& r, rObject self, rList l)
+    callConnections(runner::Job& r, rObject self, rList l)
     {
       // We must copy the list as callbacks might remove themselve
       List::value_type callbacks = l->value_get();
@@ -323,7 +323,7 @@ namespace urbi
     }
 
     rObject
-    UVar::changeAccessLoop(runner::UrbiJob& r)
+    UVar::changeAccessLoop(runner::Job& r)
     {
       r.state.this_set(this);
       // Prepare a call to System.period.  Keep its computation in the
@@ -342,9 +342,9 @@ namespace urbi
     bool
     UVar::loopCheck()
     {
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       bool prevState = r.non_interruptible_get();
-      FINALLY(((runner::UrbiJob&, r))((bool, prevState)),
+      FINALLY(((runner::Job&, r))((bool, prevState)),
         r.non_interruptible_set(prevState));
       r.non_interruptible_set(true);
       // Loop if we have both notifychange and notifyaccess callbacs.
@@ -363,8 +363,8 @@ namespace urbi
         // going to trigger it periodicaly.
         std::swap(access_, accessInLoop_);
         looping_ = true;
-	runner::UrbiJob* nr =
-          new runner::UrbiJob(
+	runner::Job* nr =
+          new runner::Job(
             ::kernel::urbiserver->ghost_connection_get().lobby_get(),
             r.scheduler_get(),
             "changeAccessLoop");
@@ -435,7 +435,7 @@ namespace urbi
       }
       else
         val = val->call(SYMBOL(uvalueDeserialize));
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       this->val = val;
       if (owned)
         callNotify(r, rUVar(this), changeOwned_);
@@ -448,7 +448,7 @@ namespace urbi
         {
           inChange_.push_back(&r);
           FINALLY(((std::vector<void*>&, inChange_))
-                  ((runner::UrbiJob&, r)),
+                  ((runner::Job&, r)),
                    for (unsigned i=0; i<inChange_.size(); ++i)
                   if (inChange_[i] == &r)
                   {
@@ -475,7 +475,7 @@ namespace urbi
     rObject
     UVar::getter(bool fromCXX)
     {
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       if (this == proto.get())
         return this;
@@ -521,7 +521,7 @@ namespace urbi
     rObject
     UVar::writeOwned(rObject newval)
     {
-      runner::UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       valsensor = newval;
       checkBypassCopy();
       callNotify(r, rUVar(this), change_);

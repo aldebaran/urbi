@@ -9,18 +9,18 @@
  */
 
 /**
- ** \file runner/urbi-job.hh
- ** \brief Definition of runner::UrbiJob.
+ ** \file runner/job.hh
+ ** \brief Definition of runner::Job.
  */
 
-#ifndef RUNNER_URBI_JOB_HH
-# define RUNNER_URBI_JOB_HH
+#ifndef RUNNER_JOB_HH
+# define RUNNER_JOB_HH
 
 // declare sched::Job
 # include <sched/job.hh>
 
-// declare runner::UrbiStack
-# include <runner/urbi-stack.hh>
+// declare runner::State
+# include <runner/state.hh>
 
 // declare object::*
 # include <urbi/object/fwd.hh>
@@ -28,8 +28,8 @@
 // declare evalution interface eval::Action
 # include <eval/action.hh>
 
-// Avoid post-declaration of runner::UrbiJob
-# include <runner/urbi-fwd.hh>
+// Avoid post-declaration of runner::Job
+# include <runner/fwd.hh>
 
 // Register events used to watch for future changes of the evaluation
 // result.  \a Name corresponds to an attribute which of the object
@@ -37,7 +37,7 @@
 #define URBI_AT_HOOK(Name)                                              \
   do                                                                    \
   {                                                                     \
-    if (runner::UrbiJob* r =                                            \
+    if (runner::Job* r =                                                \
         ::kernel::urbiserver->getCurrentRunnerOpt())                    \
       if (r->dependencies_log_get())                                    \
       {                                                                 \
@@ -62,15 +62,14 @@
 namespace runner
 {
 
-  /// UrbiJob is holding a common stack representation for all method of
+  /// Job is holding a common stack representation for all method of
   /// evaluations.  Method of evaluation could be Text evaluation, AST
   /// evaluation, or Byte code evaluation.
-  class UrbiJob
+  class Job
     : public sched::Job
   {
   public:
     typedef sched::Job super_type;
-    typedef sched::Job Job;
 
     typedef object::Object Object;
     typedef object::rObject rObject;
@@ -83,7 +82,7 @@ namespace runner
     ///
     /// \param name The name of the new job, or a name derived from \a model
     ///        if none is provided.
-    UrbiJob(const UrbiJob& model, const std::string& name);
+    Job(const Job& model, const std::string& name);
 
     /// Create a new job.
     ///
@@ -93,12 +92,12 @@ namespace runner
     ///
     /// \param name The name of the new job, or an automatically created
     ///        one if none is provided.
-    UrbiJob(rLobby lobby,
-            sched::Scheduler& scheduler,
-            const std::string& name);
+    Job(rLobby lobby,
+        sched::Scheduler& scheduler,
+        const std::string& name);
 
     /// Destroy a job and the action bound to it.
-    virtual ~UrbiJob();
+    virtual ~Job();
 
   public:
 
@@ -151,18 +150,18 @@ namespace runner
     /// Job processing
     /// \{
 
-    /// Create a new UrbiJob which inherits the current lobby and clone
+    /// Create a new Job which inherits the current lobby and clone
     /// necessary stacks parts.  Define an action which would be executed by
     /// the child, and if a collector is specified, then the child is
     /// registered in the collector.
     ///
     /// This command return a child job which has to be started with
     /// 'start_job()' to execute the action asynchronously.
-    UrbiJob* spawn_child(eval::Action action,
-                         Job::Collector& collector,
-                         const std::string& name = "child");
-    UrbiJob* spawn_child(eval::Action action,
-                         const std::string& name = "child");
+    Job* spawn_child(eval::Action action,
+                     Job::Collector& collector,
+                     const std::string& name = "child");
+    Job* spawn_child(eval::Action action,
+                     const std::string& name = "child");
 
     void set_action(eval::Action action);
 
@@ -188,7 +187,7 @@ namespace runner
         ATTRIBUTE_R(unsigned, time);
         FunctionProfile& operator+=(const FunctionProfile& rhs);
       private:
-        friend class UrbiJob;
+        friend class Job;
         friend class Profile;
       };
 
@@ -212,7 +211,7 @@ namespace runner
       bool wrapper_function_seen_;
       libport::utime_t step();
       libport::utime_t checkpoint_;
-      friend class UrbiJob;
+      friend class Job;
       unsigned function_call_depth_;
       void* function_current_;
     };
@@ -226,10 +225,10 @@ namespace runner
 
     /// Fork the profiling content of the parent
     /// profile_fork should be used with profile_join.
-    void profile_fork(UrbiJob& parent);
+    void profile_fork(Job& parent);
     /// Append profiling content of a child.
     /// profile_join should be used with profile_fork.
-    void profile_join(UrbiJob& child);
+    void profile_join(Job& child);
 
     /// Wheter there is a profiling in run.
     bool is_profiling() const;
@@ -271,7 +270,7 @@ namespace runner
     /// \}
 
   public:
-    UrbiStack state;
+    State state;
 
   private:
     eval::Action worker_;
@@ -280,12 +279,12 @@ namespace runner
   };
 
   /// Smart pointer shorthand
-  typedef libport::intrusive_ptr<UrbiJob> rUrbiJob;
+  typedef libport::intrusive_ptr<Job> rJob;
 
 } // namespace runner
 
 # if defined LIBPORT_COMPILATION_MODE_SPEED
-#  include <runner/urbi-job.hxx>
+#  include <runner/job.hxx>
 # endif
 
-#endif // ! RUNNER_URBI_JOB_HH
+#endif // ! RUNNER_JOB_HH

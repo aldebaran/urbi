@@ -81,7 +81,7 @@ def print_includes (node, header, inline, impl):
   print >>header, "# include <kernel/config.h>"
   print >>header, """
 
-namespace runner { struct UrbiJob; }
+namespace runner { struct Job; }
 
 #if ENABLE_SERIALIZATION
 # include <serialize/serialize.hh>
@@ -330,7 +330,7 @@ def declare_visitor(node, header, abstract):
     virtual void accept (Visitor& v)%(impl)s;
     /// Evaluate the node in AST interpreter \\a r.
     virtual urbi::object::rObject
-    eval (runner::UrbiJob& r) const%(impl)s;
+    eval (runner::Job& r) const%(impl)s;
     /// Return the node type
     virtual std::string node_type() const%(impl)s;
     /// \\}""" % {'impl': impl}
@@ -352,7 +352,7 @@ def print_visitor(node, header, inline, impl):
   }
 
   urbi::object::rObject
-  %(name)s::eval (runner::UrbiJob& r) const
+  %(name)s::eval (runner::Job& r) const
   {
     urbi::object::rObject res = eval::ast_impl::eval(r, this);
     return assert_exp(res);

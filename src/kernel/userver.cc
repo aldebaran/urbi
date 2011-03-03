@@ -68,8 +68,8 @@
 #include <object/symbols.hh>
 #include <object/system.hh>
 
-#include <runner/urbi-stack.hh>
-#include <runner/urbi-job.hh>
+#include <runner/state.hh>
+#include <runner/job.hh>
 #include <runner/shell.hh>
 #include <runner/sneaker.hh>
 
@@ -97,7 +97,7 @@ namespace kernel
 
   std::string current_function_name()
   {
-    const ::runner::UrbiStack::call_stack_type& bt =
+    const ::runner::State::call_stack_type& bt =
       interpreter().state.call_stack_get();
     if (bt.size() > 1)
       return bt[bt.size() - 2].first.name_get();
@@ -214,8 +214,8 @@ namespace kernel
 
     static
     inline
-    runner::UrbiJob&
-    operator<<(runner::UrbiJob& r, const std::string& s)
+    runner::Job&
+    operator<<(runner::Job& r, const std::string& s)
     {
       // Avoid dynamic allocation, we're treating an ICE here.
       static const std::string notag = "";
@@ -225,8 +225,8 @@ namespace kernel
 
     static
     inline
-    runner::UrbiJob&
-    operator<<(runner::UrbiJob& r, const char* s)
+    runner::Job&
+    operator<<(runner::Job& r, const char* s)
     {
       return r << std::string(s);
     }
@@ -234,8 +234,8 @@ namespace kernel
     template<typename Cont>
     static
     inline
-    runner::UrbiJob&
-    operator<<(runner::UrbiJob& r, const Cont& c)
+    runner::Job&
+    operator<<(runner::Job& r, const Cont& c)
     {
       foreach (const std::string& s, c)
         r << s;
@@ -249,7 +249,7 @@ namespace kernel
       // If we have a job currently running, use it to signal the error,
       // otherwise try to use the sneaker which must have been created
       // (or we have an error very early on and we are in deep trouble).
-      runner::UrbiJob& r = dbg::runner_or_sneaker_get();
+      runner::Job& r = dbg::runner_or_sneaker_get();
 
       // Display information from the least demanding, to the most
       // demanding.  For instance "ps" requires that the kernel is not
@@ -397,8 +397,8 @@ namespace kernel
 
     fast_async_jobs_tag_ = new object::Tag(new sched::Tag("fastAsyncJob"));
     {
-      runner::UrbiJob* j =
-        new runner::UrbiJob(ghost_->lobby_get(),
+      runner::Job* j =
+        new runner::Job(ghost_->lobby_get(),
                             scheduler_get(),
                             "FastAsyncJobs");
       j->state.this_set(rObject(ghost_->lobby_get()));
@@ -450,7 +450,7 @@ namespace kernel
     foreach (AsyncJob& job, jobs)
     {
       // Clone the shell to run asynchronous jobs.
-      runner::UrbiJob* interpreter = 0;
+      runner::Job* interpreter = 0;
       if (job.target)
       {
         object::rPrimitive p = new object::Primitive
@@ -462,7 +462,7 @@ namespace kernel
       else if (job.callback)
       {
         interpreter =
-          new runner::UrbiJob(
+          new runner::Job(
             ghost_connection_get().lobby_get(),
             *scheduler_,
             job.method);
@@ -600,7 +600,7 @@ namespace kernel
   }
 
   object::rObject
-  UServer::fast_async_jobs_run_(runner::UrbiJob& r)
+  UServer::fast_async_jobs_run_(runner::Job& r)
   {
     libport::Finally f;
     r.state.apply_tag(fast_async_jobs_tag_->as<object::Tag>(), &f);

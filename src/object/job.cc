@@ -27,15 +27,12 @@
 #include <urbi/object/job.hh>
 #include <urbi/object/tag.hh>
 
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 
 namespace urbi
 {
   namespace object
   {
-    using runner::UrbiJob;
-    using runner::UrbiStack;
-
     Job::Job(const value_type& value)
       : value_(value)
     {
@@ -80,12 +77,12 @@ namespace urbi
       return value_ ? value_->name_get() : otherwise;
     }
 
-    const UrbiStack::tag_stack_type
+    const runner::State::tag_stack_type
     Job::tags()
     {
       return value_
-        ? dynamic_cast<UrbiJob*>(value_.get())->state.tag_stack_get()
-        : UrbiStack::tag_stack_type();
+        ? dynamic_cast<runner::Job*>(value_.get())->state.tag_stack_get()
+        : runner::State::tag_stack_type();
     }
 
     std::string
@@ -94,7 +91,7 @@ namespace urbi
       if (!value_)
         return "";
 
-      UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
 
       std::stringstream status;
       switch (value_->state_get())
@@ -138,9 +135,9 @@ namespace urbi
         return new List();
 
       List::value_type res;
-      if (const UrbiJob* r = dynamic_cast<UrbiJob*>(value_.get()))
+      if (const runner::Job* r = dynamic_cast<runner::Job*>(value_.get()))
       {
-        foreach(UrbiStack::call_frame_type frame, r->state.backtrace_get())
+        foreach(runner::State::call_frame_type frame, r->state.backtrace_get())
           res.push_front(frame);
       }
       return new List(res);
@@ -151,7 +148,7 @@ namespace urbi
     {
       if (!value_)
         return;
-      UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       r.yield_until_terminated(*value_);
     }
 
@@ -160,7 +157,7 @@ namespace urbi
     {
       if (!value_)
         return;
-      UrbiJob& r = ::kernel::runner();
+      runner::Job& r = ::kernel::runner();
       r.yield_until_things_changed();
     }
 

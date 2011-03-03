@@ -27,18 +27,18 @@ namespace eval
   Action  exec(object::rExecutable e,
                const object::objects_type& args);
 
-  rObject exec(UrbiJob& job,
+  rObject exec(Job& job,
                object::rExecutable e,
                const object::objects_type& args);
 
   /// Execute a boost function with no expected result. This is inefficient,
   /// and should be avoided. You should prefer adding an rObject result to
-  /// the function and make it accept a UrbiJob& as argument in order to
+  /// the function and make it accept a Job& as argument in order to
   /// create an Action out of it.
   Action  exec(boost::function0<void> e,
                rObject self);
 
-  rObject exec(UrbiJob& job,
+  rObject exec(Job& job,
                boost::function0<void> e,
                rObject self);
 

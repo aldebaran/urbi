@@ -21,7 +21,7 @@
 # include <sched/job.hh>
 
 // FIXME: This link to headers which are not installed.
-# include <runner/urbi-stack.hh>
+# include <runner/state.hh>
 
 namespace urbi
 {
@@ -40,7 +40,7 @@ namespace urbi
       const std::string& name();
       void setSideEffectFree(rObject);
       std::string status();
-      const runner::UrbiStack::tag_stack_type tags();
+      const runner::State::tag_stack_type tags();
       void terminate();
       rFloat timeShift();
       void waitForChanges();

@@ -18,7 +18,7 @@
 #include <urbi/object/barrier.hh>
 #include <urbi/object/float.hh>
 #include <object/symbols.hh>
-#include <runner/urbi-job.hh>
+#include <runner/job.hh>
 
 namespace urbi
 {
@@ -74,7 +74,7 @@ namespace urbi
     rObject
     Barrier::wait()
     {
-      runner::UrbiJob& r = runner();
+      runner::Job& r = runner();
       value_.push_back(&r);
       try
       {

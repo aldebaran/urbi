@@ -42,7 +42,7 @@
 # include <urbi/object/object.hh>
 # include <urbi/urbi-root.hh>
 
-# include <runner/urbi-fwd.hh>
+# include <runner/fwd.hh>
 
 # include <ast/loc.hh>
 
@@ -55,10 +55,10 @@ namespace kernel
   UServer& server();
 
   /// Convenience wrapper to get urbiserver's current runner.
-  runner::UrbiJob& runner();
+  runner::Job& runner();
 
   /// Convenience wrapper to get urbiserver's current interpreter.
-  runner::UrbiJob& interpreter();
+  runner::Job& interpreter();
 
   /// Convenience wrapper for Logger objects, to avoid having to
   /// export the symbols of Interpreter.
@@ -212,8 +212,8 @@ namespace kernel
     const sched::Scheduler& scheduler_get() const;
     sched::Scheduler& scheduler_get();
 
-    runner::UrbiJob& getCurrentRunner() const;
-    runner::UrbiJob* getCurrentRunnerOpt() const;
+    runner::Job& getCurrentRunner() const;
+    runner::Job* getCurrentRunnerOpt() const;
 
     boost::asio::io_service& get_io_service();
 
@@ -262,7 +262,7 @@ namespace kernel
     object::rObject fast_async_jobs_tag_;
     libport::Lockable fast_async_jobs_lock_;
     sched::rJob fast_async_jobs_job_; // For the sake of consistency.
-    object::rObject fast_async_jobs_run_(runner::UrbiJob& r);
+    object::rObject fast_async_jobs_run_(runner::Job& r);
 
   protected:
     /// Overload this function to specify how your robot is displaying messages.

@@ -52,7 +52,7 @@ namespace runner
   }
 
   void
-  Exception::print(runner::UrbiJob& r) const
+  Exception::print(runner::Job& r) const
   {
     foreach (const Message& m, messages_)
       m.print(r);
@@ -81,7 +81,7 @@ namespace runner
     , prefix(prefix)
   {}
 
-  void Exception::Message::print(runner::UrbiJob& r) const
+  void Exception::Message::print(runner::Job& r) const
   {
     std::string m = prefix.empty() ? msg
       : libport::format("%s: %s", prefix, msg);

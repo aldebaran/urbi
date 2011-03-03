@@ -63,7 +63,7 @@ namespace parser
 
 namespace runner
 {
-  class UrbiJob;
+  class Job;
 
   class Shell;
   typedef libport::intrusive_ptr<Shell> rShell;

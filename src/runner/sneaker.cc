@@ -29,19 +29,19 @@ namespace dbg
 {
   using namespace runner;
 
-  class Sneaker : public UrbiJob
+  class Sneaker : public Job
   {
   public:
     Sneaker(rLobby lobby,
             sched::Scheduler& scheduler);
 
-    virtual object::rObject action(UrbiJob& r);
+    virtual object::rObject action(Job& r);
   };
 
   // The sole sneaker instance.
   static Sneaker* sneaker;
 
-  runner::UrbiJob&
+  runner::Job&
   runner_or_sneaker_get()
   {
     if (kernel::scheduler().is_current_job(0))
@@ -53,20 +53,20 @@ namespace dbg
   }
 
   bool
-  is_sneaker(runner::UrbiJob& job)
+  is_sneaker(runner::Job& job)
   {
     return &job == sneaker;
   }
 
   Sneaker::Sneaker(object::rLobby lobby, sched::Scheduler& scheduler)
-    : UrbiJob(lobby, scheduler, "<sneaker>")
+    : Job(lobby, scheduler, "<sneaker>")
   {
     non_interruptible_set(true);
     set_action(boost::bind(&Sneaker::action, this, _1));
   }
 
   object::rObject
-  Sneaker::action(UrbiJob&)
+  Sneaker::action(Job&)
   {
     // This will never be called as...
     pabort("the sneaker is not supposed to be registered with the scheduler");

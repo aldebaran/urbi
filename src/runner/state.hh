@@ -9,12 +9,12 @@
  */
 
 /**
- ** \file runner/urbi-stack.hh
+ ** \file runner/state.hh
  ** \brief Interface for implementation of a tag stack.
  */
 
-#ifndef RUNNER_URBI_STACK_HH
-# define RUNNER_URBI_STACK_HH
+#ifndef RUNNER_STATE_HH
+# define RUNNER_STATE_HH
 
 // declare object::call_stack_type
 # include <object/urbi-exception.hh>
@@ -35,8 +35,8 @@ namespace runner
 {
   /// TODO: This class handle all stacks visible in the Urbi world.  Later
   /// it should be rewritten into multiple interfaces and implementations to
-  /// enable additional design of the UrbiJob states.
-  class UrbiStack
+  /// enable additional design of the Job states.
+  class State
   {
   public:
     typedef object::Object Object;
@@ -49,11 +49,11 @@ namespace runner
     // FIXME: The lobby argument should be removed from this constructor,
     // but it is currently used to create the frame stack.
     /// Create a new empty stack.
-    explicit UrbiStack(rLobby lobby);
+    explicit State(rLobby lobby);
 
     /// Fork a process from another and reuse the stack of the forking
     /// process.
-    explicit UrbiStack(const UrbiStack& base);
+    explicit State(const State& base);
 
     /// Handle tags.
     /// \{
@@ -188,7 +188,7 @@ namespace runner
     /// \{
   public:
     // This is a duplication of the interface of Stacks, but this is
-    // temporary and should be modified as soon as the UrbiStack can be
+    // temporary and should be modified as soon as the State can be
     // separated in multiple independent and/or inter-dependent components
     // to handle the state of a job.
 
@@ -322,7 +322,7 @@ namespace runner
 } // namespace runner
 
 # if defined LIBPORT_COMPILATION_MODE_SPEED
-#  include <runner/urbi-stack.hxx>
+#  include <runner/state.hxx>
 # endif
 
-#endif // ! RUNNER_URBI_STACK_HH
+#endif // ! RUNNER_STATE_HH

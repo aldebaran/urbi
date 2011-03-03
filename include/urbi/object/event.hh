@@ -19,7 +19,7 @@
 # include <urbi/object/cxx-object.hh>
 # include <urbi/object/lobby.hh>
 
-# include <runner/urbi-stack.hh>
+# include <runner/state.hh>
 
 namespace urbi
 {
@@ -114,7 +114,7 @@ namespace urbi
         /// Whether this onEvent is synchronous
         bool sync;
         std::vector<boost::signals::connection> connections;
-        runner::UrbiStack::tag_stack_type tag_stack;
+        runner::State::tag_stack_type tag_stack;
         /// Create job with this lobby when executing actions if set.
         rLobby lobby;
       };
@@ -137,10 +137,10 @@ namespace urbi
 
       struct Waiter
       {
-        Waiter(rTag ct, runner::UrbiJob* r, rObject& p)
+        Waiter(rTag ct, runner::Job* r, rObject& p)
         : controlTag(ct), runner(r), pattern(p) {}
         rTag controlTag;
-        runner::UrbiJob* runner;
+        runner::Job* runner;
         rObject pattern;
       };
       /// Job waiting for this event.

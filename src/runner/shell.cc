@@ -48,7 +48,7 @@ namespace runner
 	       sched::Scheduler& scheduler,
 	       const std::string& name,
                std::istream& input)
-    : UrbiJob(lobby, scheduler, name)
+    : Job(lobby, scheduler, name)
     , executing_(false)
     , input_(input)
     , stop_(false)

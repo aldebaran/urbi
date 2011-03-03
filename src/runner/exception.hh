@@ -14,7 +14,7 @@
 # include <vector>
 
 # include <ast/loc.hh>
-# include <runner/urbi-job.hh>
+# include <runner/job.hh>
 
 namespace runner
 {
@@ -34,7 +34,7 @@ namespace runner
     /// Clear all stored errors.
     void clear();
     /// Print all fatal errors.
-    void print(runner::UrbiJob& c) const;
+    void print(runner::Job& c) const;
     /// Raise an adequate Urbi exception.
     /// precondition: !empty().
     ATTRIBUTE_NORETURN
@@ -45,7 +45,7 @@ namespace runner
     {
       Message(const ast::loc& loc, const std::string& kind,
               const std::string& msg, const std::string& prefix);
-      void print(runner::UrbiJob& r) const;
+      void print(runner::Job& r) const;
       ast::loc loc;
       std::string kind, msg, prefix;
     };

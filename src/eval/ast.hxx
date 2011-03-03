@@ -47,8 +47,8 @@
 
 # include <urbi/runner/raise.hh>
 
-# include <runner/urbi-stack.hh>
-# include <runner/urbi-job.hh>
+# include <runner/state.hh>
+# include <runner/job.hh>
 
 # include <eval/ast.hh>
 # include <eval/call.hh>
@@ -74,9 +74,9 @@ namespace eval
     struct Visitor
     // : public ast::ConstVisitor
     {
-      Visitor(UrbiJob& job);
+      Visitor(Job& job);
 
-      UrbiJob& this_;
+      Job& this_;
 
       struct WatchEventData;
       static rObject watch_eval(WatchEventData* data);
@@ -110,7 +110,7 @@ namespace eval
 #define FINALLY_Scope(DefineOrUse)                          \
     FINALLY_ ## DefineOrUse                                 \
     (Scope,                                                 \
-     ((UrbiJob&, this_))                                    \
+     ((Job&, this_))                                        \
      ((bool, non_interruptible))                            \
      ((bool, redefinition_mode))                            \
      ((bool, void_error)),                                  \
@@ -123,14 +123,14 @@ namespace eval
 #define FINALLY_Do(DefineOrUse)                 \
     FINALLY_ ## DefineOrUse                     \
     (Do,                                        \
-     ((UrbiJob&, this_))                        \
+     ((Job&, this_))                            \
      ((rObject&, old_tgt)),                     \
      this_.state.this_switch(old_tgt))
 
 #define FINALLY_Try(DefineOrUse)                \
     FINALLY_ ## DefineOrUse                     \
     (Try,                                       \
-     ((UrbiJob&, this_))                        \
+     ((Job&, this_))                            \
      ((rObject&, old_exception)),               \
      this_.state.current_exception_set(old_exception))
 
@@ -139,7 +139,7 @@ namespace eval
     FINALLY_Try(DEFINE);
 
 
-# define VISIT(Macro, Data, Node)  \
+# define VISIT(Macro, Data, Node)         \
       LIBPORT_SPEED_ALWAYS_INLINE rObject \
       visit(const ast::Node* n);
 
@@ -149,7 +149,7 @@ namespace eval
 
 
     LIBPORT_SPEED_ALWAYS_INLINE
-    Visitor::Visitor(UrbiJob& job)
+    Visitor::Visitor(Job& job)
       : this_(job)
     {
     }
@@ -166,7 +166,7 @@ namespace eval
       foreach (const ast::rConstExp& child,
                boost::make_iterator_range(e->children_get(), 1, 0))
       {
-        UrbiJob* job =
+        Job* job =
           this_.spawn_child(call(ast(this_, child.get())),
                             collector,
                             libport::Symbol::fresh_string(this_.name_get()));
@@ -204,7 +204,7 @@ namespace eval
         foreach (libport::intrusive_ptr<sched::Job> job, collector)
         {
           // We are sure these jobs are Interpeters.
-          UrbiJob* i = static_cast<UrbiJob*>(job.get());
+          Job* i = static_cast<Job*>(job.get());
           if (i->is_profiling())
             this_.profile_join(*i);
         }
@@ -255,7 +255,7 @@ namespace eval
   LIBPORT_SPEED_ALWAYS_INLINE object::rObject
   Visitor::watch_eval(WatchEventData* data)
   {
-    runner::UrbiJob& r = ::kernel::interpreter();
+    runner::Job& r = ::kernel::interpreter();
     GD_CATEGORY(Urbi.At);
     rObject v;
     // Do not leave dependencies_log to true while registering on
@@ -278,7 +278,7 @@ namespace eval
       std::vector<Subscription>::iterator it = data->subscriptions.begin();
       while (it != data->subscriptions.end())
       {
-        UrbiJob::dependencies_type::iterator find =
+        Job::dependencies_type::iterator find =
           r.dependencies().find(it->first);
         if (find != r.dependencies().end())
         {
@@ -306,7 +306,7 @@ namespace eval
     GD_FPUSH_TRACE("Evaluating watch event expression: %s",
                    data->exp->body_string());
 
-    runner::UrbiJob& r = ::kernel::interpreter();
+    runner::Job& r = ::kernel::interpreter();
     rObject v = watch_eval(data);
     foreach (object::Event* evt, r.dependencies())
       data->subscriptions <<
@@ -359,7 +359,7 @@ namespace eval
 
       // FIXME: what is the kernel main interpreter in the new
       // implementation ?!
-      UrbiJob& r = ::kernel::interpreter();
+      Job& r = ::kernel::interpreter();
 
       rObject res = watch_eval(data);
       if (dynamic_cast<object::Event*>(res.get()))
@@ -648,7 +648,7 @@ namespace eval
         }
 
         // If we get a scope tag, stop the runners tagged with it. (should be
-        // a function close to UrbiStack::scope_tag)
+        // a function close to State::scope_tag)
         if (const sched::rTag& tag = this_.state.scope_tag_get())
           tag->stop(this_.scheduler_get(), object::void_class);
 
@@ -1112,7 +1112,7 @@ namespace eval
 #undef INVALID
 
 #define IMPOSSIBLE(Node)                                                \
-    LIBPORT_SPEED_ALWAYS_INLINE rObject                                        \
+    LIBPORT_SPEED_ALWAYS_INLINE rObject                                 \
     Visitor::visit(const ast::Node* n)                                  \
     {                                                                   \
       static_cast<void>(n);                                             \
@@ -1133,7 +1133,7 @@ namespace eval
 
 # define VISIT(Macro, Data, Node)               \
     LIBPORT_SPEED_ALWAYS_INLINE rObject         \
-    eval(UrbiJob& this_, const ast::Node* n)    \
+    eval(Job& this_, const ast::Node* n)        \
     {                                           \
       Visitor v(this_);                         \
       return v.visit(n);                        \
@@ -1145,7 +1145,7 @@ namespace eval
 
 #define FINALLY_Ast(DefineOrUse)                                        \
   FINALLY_ ## DefineOrUse(Ast,                                          \
-                          ((UrbiJob&, job))                             \
+                          ((Job&, job))                                 \
                           ((const ast::Ast*, previous)),                \
                           job.state.innermost_node_set(previous));
 
@@ -1153,12 +1153,12 @@ namespace eval
 
 
   LIBPORT_SPEED_INLINE
-  rObject ast_context(UrbiJob& job, const ast::Ast* e, rObject self)
+  rObject ast_context(Job& job, const ast::Ast* e, rObject self)
   {
-    typedef runner::UrbiStack::var_context_type var_context_type;
+    typedef runner::State::var_context_type var_context_type;
     var_context_type ctx = job.state.push_context(self);
     FINALLY(
-      ((UrbiJob&, job))
+      ((Job&, job))
       ((const var_context_type&, ctx)),
       job.state.pop_context(ctx));
     return ast(job, e);
@@ -1168,7 +1168,7 @@ namespace eval
   // mode, even if messages are not printed.
 
   LIBPORT_SPEED_INLINE
-  rObject ast(UrbiJob& job, ast::rConstAst n)
+  rObject ast(Job& job, ast::rConstAst n)
   {
     // GD_CATEGORY(Eval.Ast);
 

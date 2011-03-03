@@ -8,8 +8,8 @@
  * See the LICENSE file for more information.
  */
 
-#ifndef RUNNER_URBI_JOB_HXX
-# define RUNNER_URBI_JOB_HXX
+#ifndef RUNNER_JOB_HXX
+# define RUNNER_JOB_HXX
 
 # include <libport/compilation.hh>
 
@@ -24,7 +24,7 @@ namespace runner
   // Forking a child Job, implies having the same lobby and cloning the
   // state of the job, while creating a new working queue.
   LIBPORT_SPEED_INLINE
-  UrbiJob::UrbiJob(const UrbiJob& model, const std::string& name)
+  Job::Job(const Job& model, const std::string& name)
     : super_type(model, name)
     , profile(0)
     , dependencies_log_(false)
@@ -37,9 +37,9 @@ namespace runner
   }
 
   LIBPORT_SPEED_INLINE
-  UrbiJob::UrbiJob(rLobby lobby,
-                   sched::Scheduler& scheduler,
-                   const std::string& name)
+  Job::Job(rLobby lobby,
+           sched::Scheduler& scheduler,
+           const std::string& name)
     : super_type(scheduler, name)
     , profile(0)
     , dependencies_log_(false)
@@ -55,13 +55,13 @@ namespace runner
   /// \{
 
   LIBPORT_SPEED_INLINE
-  UrbiJob::rObject UrbiJob::result_get()
+  Job::rObject Job::result_get()
   {
     return result_cache_;
   }
 
   LIBPORT_SPEED_INLINE
-  UrbiJob::rObject UrbiJob::as_job()
+  Job::rObject Job::as_job()
   {
     if (terminated())
       return object::nil_class;
@@ -75,7 +75,7 @@ namespace runner
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
-  void UrbiJob::terminate_cleanup()
+  void Job::terminate_cleanup()
   {
     // Do not keep a reference on a job which keeps a reference onto
     // ourselves.
@@ -90,7 +90,7 @@ namespace runner
   /// \{
 
   LIBPORT_SPEED_ALWAYS_INLINE
-  bool UrbiJob::has_tag(const object::rTag& tag) const
+  bool Job::has_tag(const object::rTag& tag) const
   {
     return has_tag(*tag->value_get());
   }
@@ -101,11 +101,11 @@ namespace runner
   /// \{
 
   LIBPORT_SPEED_INLINE
-  UrbiJob* UrbiJob::spawn_child(eval::Action action,
-                                Job::Collector& collector,
-                                const std::string& name)
+  Job* Job::spawn_child(eval::Action action,
+                        Job::Collector& collector,
+                        const std::string& name)
   {
-    UrbiJob* j = new UrbiJob(*this, name);
+    Job* j = new Job(*this, name);
 
     j->set_action(action);
     register_child(j, collector);
@@ -116,16 +116,16 @@ namespace runner
   }
 
   LIBPORT_SPEED_INLINE
-  UrbiJob* UrbiJob::spawn_child(eval::Action action,
-                                const std::string& name)
+  Job* Job::spawn_child(eval::Action action,
+                        const std::string& name)
   {
-    UrbiJob* j = new UrbiJob(*this, name);
+    Job* j = new Job(*this, name);
     j->set_action(action);
     return j;
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE
-  void UrbiJob::set_action(eval::Action action)
+  void Job::set_action(eval::Action action)
   {
     worker_ = action;
   }
@@ -136,7 +136,7 @@ namespace runner
   /// \{
 
   LIBPORT_SPEED_ALWAYS_INLINE
-  bool UrbiJob::is_profiling() const
+  bool Job::is_profiling() const
   {
     return profile;
   }
@@ -147,26 +147,26 @@ namespace runner
   /// \name Dependencies tarcker
   /// \{
 
-  LIBPORT_SPEED_ALWAYS_INLINE UrbiJob::dependencies_type&
-  UrbiJob::dependencies()
+  LIBPORT_SPEED_ALWAYS_INLINE Job::dependencies_type&
+  Job::dependencies()
   {
     return dependencies_;
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE void
-  UrbiJob::dependencies_log_set(bool v)
+  Job::dependencies_log_set(bool v)
   {
     dependencies_log_ = v;
   }
 
   LIBPORT_SPEED_ALWAYS_INLINE bool
-  UrbiJob::dependencies_log_get() const
+  Job::dependencies_log_get() const
   {
     return dependencies_log_;
   }
 
   LIBPORT_SPEED_INLINE void
-  UrbiJob::dependency_add(object::rEvent evt)
+  Job::dependency_add(object::rEvent evt)
   {
     assert(evt);
     if (dependencies_log_)
@@ -175,7 +175,7 @@ namespace runner
 
   LIBPORT_SPEED_ALWAYS_INLINE
   void
-  UrbiJob::dependencies_clear()
+  Job::dependencies_clear()
   {
     dependencies_.clear();
   }
@@ -183,4 +183,4 @@ namespace runner
   /// \}
 }
 
-#endif // ! RUNNER_URBI_JOB_HXX
+#endif // ! RUNNER_JOB_HXX
