@@ -409,7 +409,7 @@ namespace ast
         || (exp.unsafe_cast<Call>()
             && exp.unsafe_cast<Call>()->arguments_get()))
       SYNTAX_ERROR(exp_loc,
-                   "a: syntax error, %s is not a valid lvalue", *exp);
+                   "syntax error, %s is not a valid lvalue", *exp);
 
     rBinding res = new Binding(l, exp.unchecked_cast<LValue>());
     res->constant_set(constant);
@@ -829,6 +829,15 @@ namespace ast
       else
         return make_call(lvalue->location_get(), tmp, call->name_get());
     }
+    else if (rSubscript sub = dynamic_cast<Subscript*>(lvalue.get()))
+    {
+      unsigned int i = 0;
+      exps_type* args = new exps_type();
+      foreach(rExp e, *sub->arguments_get())
+        *args << make_call(lvalue->location_get(),
+                           libport::Symbol(libport::format("$arg%u", i++)));
+      return new Subscript(lvalue->location_get(), args, tmp);
+    }
 
     SYNTAX_ERROR(lvalue->location_get(),
                  "syntax error, %s is not a valid lvalue", lvalue);
@@ -855,6 +864,27 @@ namespace ast
         wrap % call->target_get() % e;
         return exp(wrap);
       }
+    }
+    else if (rSubscript sub = dynamic_cast<Subscript*>(lvalue.get()))
+    {
+      rExp result = e;
+
+      unsigned int i = 0;
+      exps_type* args = sub->arguments_get();
+      foreach(rExp e, *args)
+      {
+        PARAMETRIC_AST
+          (arg,
+           "var %id:1 = %exp:2;\n"
+           "%exp:3");
+        arg % libport::Symbol(libport::format("$arg%u", i++))
+          % e
+          % result;
+        result = exp(arg);
+      }
+
+      wrap % sub->target_get() % result;
+      return exp(wrap);
     }
 
     SYNTAX_ERROR(lvalue->location_get(),
@@ -1016,23 +1046,6 @@ namespace ast
       return make_strip(nary);
     else
       return e;
-  }
-
-  rExp
-  Factory::make_subscript(const location&, rExp target,
-                          exps_type* args) // const
-  {
-    PARAMETRIC_AST(rewrite, "%exp:1 .'[]'(%exps:2)");
-    return ast::exp(rewrite % target % args);
-  }
-
-  rExp
-  Factory::make_subscript_assign(const location&, rExp target,
-                                 exps_type* args, rExp value) // const
-  {
-    args->push_back(value);
-    PARAMETRIC_AST(rewrite, "%exp:1 .'[]='(%exps:2)");
-    return ast::exp(rewrite % target % args);
   }
 
 

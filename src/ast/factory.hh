@@ -386,14 +386,6 @@ namespace ast
     static
     rExp make_strip(rExp e) /* const */;
 
-    static
-    rExp make_subscript(const location& loc, rExp target,
-                        exps_type* args) /* const */;
-
-    static
-    rExp make_subscript_assign(const location& loc, rExp target,
-                               exps_type* args, rExp value) /* const */;
-
 
     /*--------.
     | Switch  |

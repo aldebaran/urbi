@@ -1415,6 +1415,17 @@ Assign:
          }
        }'
 
+Subscript:
+  super: LValueArgs
+  attributes:
+    - target:
+        type: rExp
+  printer:
+    - ~target
+    - '"["'
+    - $arguments
+    - '"]"'
+
 Match:
   super: Ast
   attributes:

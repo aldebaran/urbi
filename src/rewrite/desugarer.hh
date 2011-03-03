@@ -62,6 +62,7 @@ namespace rewrite
       (Pipe)
       (Scope)
       (Stmt)
+      (Subscript)
       (Try)
       (While)
       );

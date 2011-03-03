@@ -162,6 +162,17 @@ namespace rewrite
       }
     }
 
+    // Subscript assignment: x[y] = value.
+    if (ast::rSubscript sub =
+        assign->what_get().unsafe_cast<ast::Subscript>())
+    {
+      ast::exps_type* args = maybe_recurse_collection(sub->arguments_get());
+      *args << recurse(assign->value_get());
+      result_ = factory_->make_call(loc, recurse(sub->target_get()),
+                                    SYMBOL(SBL_SBR_EQ), args);
+      return;
+    }
+
     // Property assignment: x->prop = value.
     if (ast::rProperty prop =
         assign->what_get().unsafe_cast<ast::Property>())
@@ -372,6 +383,18 @@ namespace rewrite
   {
     recurse_with_subdecl(s);
   }
+
+  void Desugarer::visit(const ast::Subscript* s)
+  {
+    PARAMETRIC_AST(rewrite, "%exp:1 .'[]'(%exps:2)");
+    // FIXME: arguments desugared twice
+    rewrite.location_set(s->location_get());
+    result_ = ast::exp(rewrite
+                       % s->target_get()
+                       % maybe_recurse_collection(s->arguments_get()));
+    result_ = recurse(result_);
+  }
+
 
   void
   Desugarer::visit(const ast::Catch* c)
