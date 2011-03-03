@@ -1,4 +1,4 @@
-%% Copyright (C) 2010, Gostai S.A.S.
+%% Copyright (C) 2010, 2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -38,10 +38,10 @@ x;
 
 \begin{urbiscriptapi}
 
-\item[copy](<targetObject>, <targetName>)
+\item[copy](<targetObject>, <targetName>)%
   Copy the \lstinline|UVar| to the slot \var{targetName} of object
-  \var{targetObject}. Since the \lstinline|UVar| is using properties, you must
-  use this method to copy it to an other location.
+  \var{targetObject}. Since the \lstinline|UVar| is using properties, you
+  must use this method to copy it to an other location.
 
 \item[hookChanged]%
   A Boolean that states whether future UVar instantiations support the
@@ -63,12 +63,32 @@ at (headTouch.val->changed? if headTouch.val)
   Similar to the \Cxx \lstinline|UNotifyAccess|, calls \var{onAccess} each
   time the \lstinline|UVar| is accessed (read).
 
-\item[notifyChange](<onChange>)
-  Similar to the \Cxx \lstinline|UNotifyChange|
-  (see \autoref{sec:uobject:uvar-notify}), register \var{onChange} and
-  call it each time this \lstinline|UVar| is written to.
-  Returns an identifier that can be passed to removeNotifyChange to
-  unregister the callback.
+\begin{urbiscript}
+var Global.counter = 0|
+UVar.new(Global, "access")|
+var accessHandle = &access.notifyAccess(closure() {
+  Global.access = Global.counter += 1
+})|
+assert
+{
+  access == 1;
+  access == 2;
+  access == 3;
+};
+&access.removeNotifyAccess(accessHandle)|;
+assert
+{
+  access == 3;
+  access == 3;
+};
+\end{urbiscript}
+
+
+\item[notifyChange](<onChange>)%
+  Similar to the \Cxx \lstinline|UNotifyChange| for a non-owned UVar (see
+  \autoref{sec:uobject:uvar-notify}), register \var{onChange} and call it
+  each time this \lstinline|UVar| is written to.  Return an identifier that
+  can be passed to removeNotifyChange to unregister the callback.
 
 \begin{urbiscript}
 UVar.new(Global, "y")|
@@ -83,9 +103,25 @@ Global.y = 13;
 [00000003] 13
 \end{urbiscript}
 
-\item[owned]
-  True if the \lstinline|UVar| is in owned mode, that is if it contains both a
-  sensor and a command value.
+\item[notifyChangeOwned](<onChangeOwned>)%
+  Similar to the \Cxx \lstinline|UNotifyChange| for an owned UVar (see
+  \autoref{sec:uobject:uvar-notify}), register \var{onChange} and call it
+  each time this \lstinline|UVar| is written to.  Return an identifier that
+  can be passed to removeNotifyChange to unregister the callback.
+
+\item[removeNotifyAccess](<id>)%
+  Disable the notification installed as \var{id} by \refSlot{notifyAccess}.
+
+\item[removeNotifyChange](<id>)%
+  Disable the notification installed as \var{id} by \refSlot{notifyChange}.
+
+\item[removeNotifyChangeOwned](<id>)%
+  Disable the notification installed as \var{id} by
+  \refSlot{notifyChangeOwned}.
+
+\item[owned]%
+  True if the \lstinline|UVar| is in \dfn{owned mode}, that is if it
+  contains both a sensor and a command value.
 
 \end{urbiscriptapi}
 
