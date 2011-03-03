@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2010, Gostai S.A.S.
+ * Copyright (C) 2005-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -51,9 +51,9 @@ struct wavheader
 
 
 
-char * fname;
+char* fname;
 int imcount;
-FILE *  file;
+FILE* file;
 bool outtodsp;
 bool withheader;
 bool waswithheader;
@@ -200,8 +200,11 @@ int main(int argc, char *argv[])
 
   client.setCallback(getSound, "usound");
   client.setCallback(endProgram, "end");
-
-  client.send("var end = Channel.new(\"end\"); var h = WeakPointer.new;var usound = Channel.new(\"usound\"); micro.getSlot(\"val\").notifyChange(h, closure() { usound << micro.val });"
-	      "{ sleep(%d); end << 1 }, ", time);
+  std::string command = SYNCLINE_WRAP
+    ("var end = Channel.new(\"end\")|;\n"
+     "var usound = Channel.new(\"usound\")|;\n"
+     "micro.&val.notifyChange(closure() { usound << micro.val })|;\n"
+     "{ sleep(%d); end << 1 },\n", time);
+  client.send(command);
   urbi::execute();
 }

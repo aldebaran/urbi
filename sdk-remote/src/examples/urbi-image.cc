@@ -230,19 +230,20 @@ main (int argc, char *argv[])
     int fmt = (arg_format[0] == 'r') ? 0 : 1;
     client.send(SYNCLINE_WRAP("%s.format = %d|;", device, fmt));
     client.waitForKernelVersion(true);
+    std::string command;
     if (int period = arg_period.get<int>(0))
-      client.send(SYNCLINE_WRAP("every (%dms) uimg << %s.val,",
-                                period, device));
+      command = SYNCLINE_WRAP("every (%dms) uimg << %s.val,",
+                              period, device);
     else if (client.kernelMajor() < 2)
-      client.send(SYNCLINE_WRAP("loop { uimg << %s.val; noop },", device));
+      command = SYNCLINE_WRAP("loop { uimg << %s.val; noop },", device);
     else
-      client.send(
-        SYNCLINE_WRAP("var handle = WeakPointer.new|;\n"
-                      "%s.getSlot(\"val\").notifyChange(handle, closure() {\n"
-                      "  connectionTag:\n"
-                      "    this.send(%s.val.asString, \"uimg\")\n"
-                      "});",
-                      device, device));
+      command = SYNCLINE_WRAP
+        ("%s.&val.notifyChange(closure() {\n"
+         "  connectionTag:\n"
+         "    this.send(%s.val.asString, \"uimg\")\n"
+         "});",
+         device, device);
+    client.send(command);
     urbi::execute();
   }
 
