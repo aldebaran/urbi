@@ -583,8 +583,62 @@ frees all its allocated data. The \USound and \UImage do not.
 Reading an \UBinary from a \UVar, and writing a \UBinary, \USound or \UImage
 to an \UVar performs a deep-copy of the data (by default, see below).
 
-Reading a \USound or \UImage from an \UVar performs a shallow
-copy. Modifying the data is not allowed in that case.
+Reading a \USound or \UImage from an \UVar directly will perform a shallow
+copy from the internal data. The structure content is only guaranteed to be
+valid until the function returns, and should not be modified.
+
+\subsection{Binary conversion}
+
+To convert between various sound and image formats, two functions are
+provided in the header \file{urbi/uconversion.hh}:
+
+\begin{cxx}
+void urbi::convert(UImage& source, UImage& destination);
+void urbi::convert(USound& source, USound& destination);
+\end{cxx}
+
+For those functions to work, destination must be filled correctly:
+
+\begin{itemize}
+\item data and size can be both 0, in which case data will be allocated for
+  you using \lstinline{malloc}. If data is set but size is too small to fit
+  the value, data will be reallocated using \lstinline{realloc}.
+\item all the description fields must be set. It is possible to set any field
+  to 0, in which case the value from \lstinline{source} will be used.
+\end{itemize}
+
+Consider this example of a sound algorithm requiring 8-bit mono input:
+
+\begin{cxx}
+class SoundAlgorithm: public UObject
+{
+public:
+  <...>
+  void init();
+  void onData(UVar& v);
+  // We reuse the same USound for converted data to avoid reallocation.
+  USound convertedData;
+}
+void SoundAlgorithm::init(UVar& dataSource)
+{
+  // initialize convertedData
+  convertedData.data = 0;
+  convertedData.size = 0; // Let convert allocate for us
+  convertedData.soundFormat = SOUND_RAW;
+  convertedData.channels = 1;
+  convertedData.rate = 0; // Use sample rate of the source
+  convertedData.sampleSize = 8;
+  convertedData.sampleFormat = SAMPLE_UNSIGNED;
+  UNotifyChange(dataSource, &SoundAlgorithm::onData);
+}
+void SoundAlgorithm::onData(UVar& v)
+{
+  USound src = v;
+  convert(src, convertedData);
+  // Work on convertedData.
+}
+
+\end{cxx}
 
 \subsection{0-copy mode}
 In plugin mode, you can setup any \UVar in 0-copy mode by calling
@@ -593,7 +647,66 @@ is not copied, but a reference is kept.  As a consequence, the data is only
 available from within registered notifyChange callbacks. Those callbacks can
 use \lstinline|UVar::val()| or cast the \UVar to a \UBinary\& to retrieve
 the reference.  Attempts to read the \UVar from outside notifyChange will
-result in \lstinline{nil} being returned.
+block until the \UVar is updated again, and copy the value at this time.
+
+An example will certainly clarify: Let us first declare an UObject that will
+generate binary data using 0-copy mode.
+
+\begin{cxx}
+// Declare an UObject producing images in 0-copy optimized mode.
+class OptimizedImageSource: public UObject
+{
+  <...>
+  public:
+    UVar val;
+    UBinary imageData;
+};
+
+void OptimizedImageSource::init()
+{
+  // Bind val
+  UBindVar(OptimizedImageSource, val);
+  // Mark it as bypass mode
+  setBypass(val, true);
+  // Start a timer.
+  USetTimer(10);
+}
+int OptimizedImageSource::update()
+{
+  <Update imageData here>
+  // Notify all notifyChange callbacks without copying the data.
+  val = imageData;
+}
+\end{cxx}
+
+Let us then declare an other component that will access this binary data
+without any copy:
+
+\begin{cxx}
+class BinaryProcessor: public UObject
+{
+  public:
+  void init();
+  void onData(UVar& v);
+  InputPort binaryIn;
+};
+
+void BinaryProcessor::init()
+{
+  UBindVar(BinaryProcessor, binaryIn);
+  UNotifyChange(binaryIn, &BinaryProcessor::onData);
+}
+void BinaryProcessor::onData(UVar& v)
+{
+  const UBinary& b = v;
+  // If in urbiscript you connect the two components using:
+  //  OptimizedImageSource.&val >> BinaryProcessor.&binaryIn
+  // then b will be OptimizedImageSource.binaryData, not a copy.
+}
+\end{cxx}
+
+Typing \lstinline{OptimizedImageSource.val} in \us will wait for the next
+update from OptimizedImageSource::update and copy the data at this point.
 
 \section{Using hubs to group objects}
 

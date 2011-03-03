@@ -118,6 +118,9 @@ Benoît
 Berlier
 Bezut
 bfac
+binaryData
+binaryIn
+BinaryProcessor
 bindRenameVariable
 bindUrbiMethod
 binList
@@ -192,6 +195,7 @@ connectSerial
 const
 Constness
 controllerArgs
+convertedData
 copyInto
 copyrightHolder
 copyrightYears
@@ -229,6 +233,7 @@ cygcheck
 cygdrive
 Cygwin
 Damerau
+dataSource
 DBA
 DBD
 DBI
@@ -464,6 +469,7 @@ IEEE
 iff
 IGain
 ImageConversion
+imageData
 ImageMagick
 imagemagick
 ImmutableCounter
@@ -618,6 +624,7 @@ Makefiles
 makeFunction
 makeServer
 makeSocket
+malloc
 ManipulateNode
 mapFileName
 matchAgainst
@@ -739,6 +746,7 @@ onAccess
 onboard
 onChange
 onConnect
+onData
 onDisconnect
 onEnter
 onImage
@@ -752,6 +760,7 @@ OpenLoop
 OpenSSL
 openssl
 Oper
+OptimizedImageSource
 Orderable
 oRTP
 os
@@ -897,6 +906,8 @@ rxconsole
 safetyDistanceMax
 safetyDistanceMin
 sameAs
+sampleFormat
+sampleSize
 SAS
 sayHello
 SchedulingError
@@ -966,6 +977,8 @@ SONARNL
 sonarR
 sonarsLoad
 sonarsVal
+SoundAlgorithm
+soundFormat
 SoundSensor
 soundVolume
 soundVolumeMax
