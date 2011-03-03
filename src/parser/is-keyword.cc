@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2010, Gostai S.A.S.
+ * Copyright (C) 2009-2011, Gostai S.A.S.
  *
  * This software is provided "as is" without warranty of any kind,
  * either expressed or implied, including but not limited to the
@@ -10,7 +10,7 @@
 
 /// \file parser/is-keyword.cc
 
-#include <set>
+#include <boost/unordered_set.hpp>
 #include <libport/containers.hh>
 #include <libport/foreach.hh>
 #include <parser/is-keyword.hh>
@@ -21,7 +21,7 @@ namespace parser
   bool
   is_keyword(libport::Symbol s)
   {
-    std::set<libport::Symbol> keyword_set;
+    boost::unordered_set<libport::Symbol> keyword_set;
     static bool tail = false;
     if (!++tail)
     {
