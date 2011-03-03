@@ -59,6 +59,36 @@ bool withheader;
 bool waswithheader;
 int totallength;
 
+namespace
+{
+
+  static
+  void
+  error(int status, const std::string& msg)
+  {
+    std::cerr << libport::program_name() << ": " << msg << std::endl;
+    exit(status);
+  }
+
+#define ERROR(Status, ...)                      \
+  error(Status, libport::format(__VA_ARGS__))
+
+
+  static
+  void
+  usage()
+  {
+    std::cout <<
+      "usage: " << "urbi-sound" << " [options] robot milisecondtime\n"
+      "    plays sound recorded by the aibo to /dev/dsp\n"
+      "\n"
+      "urbi-sound robot milisecondtime file [withoutheader]\n"
+      "  write recorded sound to a file, with a wav header except if argument\n"
+      "  withoutheader is set to anything\n";
+    ::exit(EX_FAILURE);
+  }
+}
+
 static urbi::UCallbackAction
 endProgram(const urbi::UMessage&)
 {
@@ -127,70 +157,50 @@ getSound(const urbi::UMessage& msg)
 
 int main(int argc, char *argv[])
 {
-  const char *usage = "usage:  urbisound robot milisecondtime  :plays sound recorded by the aibo to /dev/dsp\n"
-    "\turbisound robot milisecondtime file [withoutheader] : write recorded sound to a file, with a wav header except if argument withoutheader is set to anything\n";
   //16000 1 16
   if (argc != 3 && argc !=4 && argc != 5)
-  {
-    printf("%s", usage);
-    exit(1);
-  }
-
+    usage();
   int time = strtol(argv[2], NULL, 0);
-
-  if (argc >= 4)
-  {
-    outtodsp = false;
-    if (libport::streq(argv[3],"-"))
-      file=stdout;
-    else
-      file = fopen(argv[3], "wb+");
-    fname = argv[3];
-    if (file==0)
-    {
-      printf("error creating file\n");
-      exit(2);
-    }
-
-    withheader = argc !=5;
-  }
-  else
+  if (argc < 4)
   {
 #ifdef WIN32
-    printf("output to soundcard not supported under windows\n");
-    exit(2);
+    error(1, "output to soundcard not supported under windows");
 #else
     outtodsp = true;
     withheader = false;
-    file = fopen(device, "wb" );
-    if (file==0)
-    {
-      printf("error opening device\n"), exit(2);
-    }
+    file = fopen(device, "wb");
+    if (!file)
+      ERROR(1, "error opening device %s: %s", device, strerror(errno));
     int f = fileno(file);
-    int param;
 
-    param=16;
-    if (ioctl(f, SNDCTL_DSP_SAMPLESIZE, &param)==-1)
-      {
-	fprintf(stderr,"failed to set sample size for %s\n", device);
-	exit(1);
-      }
+# define IOCTL(Name, Key, Param)                                        \
+    do {                                                                \
+      int param = Param;                                                \
+      if (ioctl(f, SNDCTL_DSP_ ## Key, &param) == -1)                   \
+        ERROR(1, "failed to set %s for %s: %s",                         \
+              device, Name, strerror(errno));                           \
+    } while (false)
 
-    param=1;
-    if (ioctl (f, SNDCTL_DSP_STEREO, &param)==-1)
-      {
-	fprintf(stderr,"failed to set stereo for %s\n", device);
-	exit(1);
-      }
-
-    param=16000;
-    if (ioctl (f, SNDCTL_DSP_SPEED, &param) == -1)
-      {
-	fprintf(stderr,"failed to set speed for %s\n", device);
-	exit(1);
-      }
+    IOCTL("sample size", SAMPLESIZE, 16);
+    IOCTL("stereo", STEREO, 1);
+    IOCTL("speed", SPEED, 16000);
+# undef define
 #endif
+  }
+  else
+  {
+    outtodsp = false;
+    if (libport::streq(argv[3], "-"))
+      file = stdout;
+    else
+    {
+      fname = argv[3];
+      file = fopen(fname, "wb+");
+      if (!file)
+        ERROR(2, "error creating file %s: %s", fname, strerror(errno));
+    }
+
+    withheader = argc !=5;
   }
 
   waswithheader = withheader;
