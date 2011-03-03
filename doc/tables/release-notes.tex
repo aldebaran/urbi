@@ -32,6 +32,25 @@ significant speedup. Particularly, the threaded support in UObjects has
 been modified to perform all operations asynchronously, instead of locking
 the engine.
 
+\subsection{Changes}
+\begin{itemize}
+\item \code{WeakDictionary}, \code{WeakPointer} are removed.
+  \refSlot[UVar]{notifyAccess}, \refSlot[UVar]{notifyChange}, and
+  \refSlot[UVar]{notifyChangeOwned} no longer need a handler as first
+  argument.  Instead of:
+\begin{urbiunchecked}
+var myHandle = WeakPointer.new();
+&sensorsLoad.notifyChange(myHandle,
+  closure() { if (sensorsLoad) sensorsOn else sensorsOff; });
+\end{urbiunchecked}
+write:
+\begin{urbiunchecked}
+&sensorsLoad.notifyChange(closure()
+   { if (sensorsLoad) sensorsOn else sensorsOff; });
+\end{urbiunchecked}
+Backward compatibility is ensured, but a warning will be issued.
+\end{itemize}
+
 \subsection{New Features}
 \begin{itemize}
 \item \refObject{Logger} provides a logging service:
@@ -977,7 +996,6 @@ function binList(a, b) { [a, b] } | binList(1, 2)
 \item \refObject{Server}: TCP/UDP server socket.
 \item \refObject{Socket}: TCP/UDP client socket.
 \item \refObject{Timeout}
-%%% FIXME: use \refObject when documented.
 \item \code{WeakDictionary}, \code{WeakPointer}: Store
   dictionary of objects without increasing their reference count.
 \end{itemize}
