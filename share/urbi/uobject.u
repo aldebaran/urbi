@@ -18,6 +18,15 @@ do (Global.UObject)
 {
   var type = "UObject";
   var __uobject_cname = "UObject";
+  // We need this indirection to delay the first evaluation until
+  // urbi/logger is actually loaded, which requires the
+  // UObject.searchPath, which is defined below by the UObjectInit
+  // call.
+  function logger()
+  {
+    UObject.logger = Logger.new("UObject")
+  };
+
   var minimumInterval = System.period;
   var updateTask = 0;
   var timerTask = 0;
@@ -26,7 +35,7 @@ do (Global.UObject)
   var remoteEventMap;
   function update()
   {
-    "update not defined".print
+    logger.warn << "update not defined"
   };
 
   // Override new to throw an exception in init returned
@@ -181,8 +190,7 @@ do (Global.UObject)
       var cnt = lobby.__bindingCount.getWithDefault(fullname, -1) |
       if (cnt <= 0)
       {
-        Logger.warn("Error, unnotify on unknown variable " + fullname
-                    ,"UObject")
+        logger.warn << "Error, unnotify on unknown variable " + fullname
       }
       else
       {
@@ -249,6 +257,10 @@ do (Global.UObject)
  */
 do (&UVar)
 {
+  function logger()
+  {
+    &UVar.logger = Logger.new("UObject")
+  };
   var traceSet = Event.new;
   var traceGet = Event.new;
   var traceBind = Event.new;
@@ -375,46 +387,41 @@ do (&UVar)
       var isUVar = 1
     }
   };
+
+  // If \a compatF is non-nil, warn about a deprecated use of function
+  // \a fnName and return \a compatF, otherwise return \a f.
+  function backwards(var fnName, f, compatF)
+  {
+    if (!compatF.isNil)
+    {
+      logger.warn << ("%s(handle, func) is deprecated, use %s(func)"
+                      % [fnName, fnName])|
+      compatF
+    }
+    else
+      f
+  };
+
   /// Calls f each time the UVar is modified, returns an id to remove it
-  function notifyChange(f, compatF=nil)
+  function notifyChange(f, compatF = nil)
   {
-    if (!compatF.isNil)
-    {
-      Logger.warn(
-        "notifyChange(handle, func) is deprecated, use notifyChange(func)",
-        "UObject")|
-      f = compatF
-    }|
-    notifyChange_(f)
+    notifyChange_(backwards("notifyChange", f, compatF))
   };
 
-  function notifyChangeOwned(f, compatF=nil)
+  function notifyChangeOwned(f, compatF = nil)
   {
-    if (!compatF.isNil)
-    {
-      Logger.warn(
-        "notifyChange(handle, func) is deprecated, use notifyChange(func)",
-         "UObject")|
-      f = compatF
-    }|
-    notifyChangeOwned_(f)
+    notifyChangeOwned_(backwards("notifyChangeOwned", f, compatF))
   };
 
-  function notifyAccess(f, compatF=nil)
+  function notifyAccess(f, compatF = nil)
   {
-    if (!compatF.isNil)
-    {
-      Logger.warn(
-        "notifyChange(handle, func) is deprecated, use notifyChange(func)",
-        "UObject")|
-      f = compatF
-    }|
     //beware of the CoW
     &UVar.nAccess++ |
     if (&UVar.nAccess == 1)
       onHasNotifyAccess! |
-    notifyAccess_(f)
+    notifyAccess_(backwards("notifyAccess", f, compatF))
   };
+
   function hookChangedEvent()
   {
     disown({
@@ -487,18 +494,22 @@ do(UConnection)
     else
       niceName(source) + " >> " + niceName(target)
   };
+
   function displayStats()
   {
     "" + fireRate +" Hz   mean " + meanCallTime*1000000 + " us   max "
       + maxCallTime * 1000000  + " us   min "
       + minCallTime * 1000000 + " us"
   };
+
   function disconnect()
   {
-    try {
-    var src = UVar.fromName(source)|
-    src.changeConnections.remove(this)
-    } catch(var e)
+    try
+    {
+      var src = UVar.fromName(source)|
+      src.changeConnections.remove(this)
+    }
+    catch(var e)
     {
       //wall(e)
     }|
@@ -616,6 +627,10 @@ Global.addProto(uobjects);
 
 class Global.'external'
 {
+  function logger()
+  {
+    Global.'external'.logger = Logger.new("UObject")
+  };
   var MODULE_TAG = "__ExternalMessage__";
   var UEM_EVALFUNCTION = 0;
   var UEM_ASSIGNVALUE  = 1;
@@ -664,7 +679,7 @@ class Global.'external'
       uobjectInit |
     }|
     if (!lobby.hasLocalSlot(objname))
-      Logger.err("ERROR: lobby " + lobby + " has no slot " + objname, "UObject")
+      logger.err << "ERROR: lobby " + lobby + " has no slot " + objname
     else
       for| (var s: lobby.getSlot(objname).localSlotNames)
         uobjects.getSlot(objname).setSlot(s, lobby.getSlot(objname).getSlot(s))|
@@ -854,7 +869,7 @@ class Global.'external'
         }
         catch(var e)
         {
-          Logger.err("Fatal error setting rtp: " + e, "UObject")
+          logger.err << "Fatal error setting rtp: " + e
         }|
       }|
       lobby.__bindingFunc[fullname] = lobby.sharedRTP|
@@ -905,7 +920,7 @@ class Global.'external'
       var o;
       if (!uobjects.hasSlot(fr) || uobjects.getSlot(fr).lobby != lobby)
       {
-        Logger.warn("Invalid source uobject in 'external var'", "UObject")|
+        logger.warn << "Invalid source uobject in 'external var'"|
         o = lobby.hookPoint
       }
       else
