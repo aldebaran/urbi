@@ -458,7 +458,7 @@ do (&UVar)
   void
 };
 
-do(UConnection)
+do (UConnection)
 {
   function init(from, to)
   {
@@ -725,16 +725,16 @@ class Global.'external'
     {
       try
       {
-        Lobby.systemLobby.echo("RTP connection %s=>%s seems to be failing,"
-                               " falling back to TCP"
-                               % [dst.getRemoteHost, src.getRemoteHost])
+        logger.warn << "RTP connection %s=>%s seems to be failing,"
+                       " falling back to TCP"
+                       % [dst.getRemoteHost, src.getRemoteHost]
       }
       catch
       {
         // One of the getRemoteHost failed.
-        Lobby.systemLobby.echo("RTP connection with %s seems to be failing,"
-                               " falling back to TCP"
-                               % lobby.remoteIP)
+        logger.warn << "RTP connection with %s seems to be failing,"
+                       " falling back to TCP"
+                       % lobby.remoteIP
       }|
       onfail()
     }
@@ -744,7 +744,7 @@ class Global.'external'
   function makeRTPPair(lobby=lobby)
   {
     if (!lobby.hasLocalSlot("_rtp_object_name"))
-      throw ("RTP subsystem not setup for this lobby: ")|
+      throw "RTP subsystem not setup for this lobby: "|
     var rrtp = uobjects.getSlot(lobby._rtp_object_name).new|
     var port = rrtp.listen("0.0.0.0", "0")|
     var host = lobby.remoteIP|
@@ -774,11 +774,11 @@ class Global.'external'
     {
       if (varname == "load")
         return|
-      ("Error: external var called for "+objname+"."+varname).print
+      logger.err << "Error: external var called for "+objname+"."+varname
     }|
     if (!lobby.hasSlot("handle"))
     {
-      var lobby.handle = function()
+      function lobby.handle()
       {
         warn("Lobby handles are no longuer used")|
         nil
@@ -800,7 +800,7 @@ class Global.'external'
     if (!obj.hasLocalSlot(varname))
       UVar.new(obj, varname)
     else if (obj.getSlot(varname).isVoid
-        || !obj.getSlot(varname).hasSlot("isUVar"))
+             || !obj.getSlot(varname).hasSlot("isUVar"))
     {
       // The slot already exists, but is not an uvar.
       var v = obj.getSlot(varname).acceptVoid|
@@ -826,6 +826,7 @@ class Global.'external'
       remoteNotifyChange(objname, varname, fr)
     }
   };
+
   // Setup RTP connection
   function setupRTP(isbin, objname, varname, lobby, fr)
   {
@@ -851,7 +852,8 @@ class Global.'external'
         }))|
     }
     else
-    { // Other data types share one RTP connection
+    {
+      // Other data types share one RTP connection
       //wall("rtp mode for " + varname)|
       lobby.'$uobjectMutex': if (!lobby.hasSlot("sharedRTP"))
       {
