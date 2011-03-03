@@ -23,6 +23,7 @@ JPEG_LIBS = $(sdk_remote_builddir)/jpeg/libjpeg4urbi$(LIBSFX).la
 AM_CPPFLAGS +=							\
   $(LIBPORT_CPPFLAGS)						\
   $(JPEG_CPPFLAGS)						\
+  $(BOOST_CPPFLAGS)						\
   -DURBI_INHIBIT_REVISION_CHECK					\
   -D__SRCDIR__="\"$(top_srcdir)\""				\
   -I$(sdk_remote_srcdir)/include -I$(sdk_remote_builddir)	\
@@ -34,8 +35,6 @@ LIBADD =					\
   $(PTHREAD_LIBS)				\
   $(SOCKETS_LIBS)				\
   $(LIBPORT_LIBS)
-
-AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 # To be linked in all the executables (urbi-launch, examples/ etc.).
 AM_LDADD =					\

@@ -1,4 +1,4 @@
-## Copyright (C) 2008-2010, Gostai S.A.S.
+## Copyright (C) 2008-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -14,17 +14,17 @@ bin_PROGRAMS +=					\
   examples/urbi-record				\
   examples/urbi-send				\
   examples/urbi-sendbin				\
-  examples/urbi-sendsound
-
-if SOUNDCARD
-bin_PROGRAMS += examples/urbi-sound
-endif
+  examples/urbi-sendsound			\
+  examples/urbi-sound
 
 if !WIN32
 bin_PROGRAMS += examples/urbi-talkie
 endif
 
-
+# We need kernel/config.h.
+examples_urbi_sound_CPPFLAGS =			\
+  $(AM_CPPFLAGS)				\
+  -I$(kernel_builddir)/src
 
 ## -------------------------------------- ##
 ## Examples that require X11 or Windows.  ##

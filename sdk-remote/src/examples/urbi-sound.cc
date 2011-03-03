@@ -14,20 +14,30 @@
  * You can use the sox program to convert it.
  */
 
+#include <kernel/config.h>
+#include <libport/cli.hh>
 #include <libport/cstdio>
 #include <libport/ctime>
+#include <libport/package-info.hh>
 #include <libport/sys/types.h>
 #include <libport/sys/stat.h>
+#include <libport/sysexits.hh>
 
 #include <libport/fcntl.h>
 #include <urbi/uclient.hh>
 #include <urbi/uconversion.hh>
+#include <urbi/package-info.hh>
 
 #ifndef WIN32
 # include <sys/ioctl.h>
-# include <sys/soundcard.h>
-static const char *device="/dev/dsp";
+# ifdef HAVE_SYS_SOUNDCARD_H
+#   include <sys/soundcard.h>
+# endif
 #endif
+
+static const char *device = "/dev/dsp";
+
+using libport::program_name;
 
 // FIXME: those return values should not be ignored
 static size_t ignore;
@@ -50,13 +60,10 @@ struct wavheader
 };
 
 
-
-char* fname;
-int imcount;
 FILE* file;
-bool outtodsp;
-bool withheader;
-bool waswithheader;
+bool out_to_dsp;
+bool with_header;
+bool was_with_header;
 int totallength;
 
 namespace
@@ -76,32 +83,35 @@ namespace
 
   static
   void
-  usage()
+  usage(libport::OptionParser& parser)
   {
     std::cout <<
-      "usage: " << "urbi-sound" << " [options] robot milisecondtime\n"
-      "    plays sound recorded by the aibo to /dev/dsp\n"
-      "\n"
-      "urbi-sound robot milisecondtime file [withoutheader]\n"
-      "  write recorded sound to a file, with a wav header except if argument\n"
-      "  withoutheader is set to anything\n";
-    ::exit(EX_FAILURE);
+      "usage: " << program_name() << " [options]\n"
+      "    record and play (or save) sound from a robot\n";
+    parser.options_doc(std::cout);
+    ::exit(EX_OK);
+  }
+
+  static
+  void
+  version()
+  {
+    std::cout << "urbi-sound" << std::endl
+              << urbi::package_info() << std::endl
+              << libport::exit(EX_OK);
   }
 }
 
 static urbi::UCallbackAction
 endProgram(const urbi::UMessage&)
 {
-  if (waswithheader)
+  if (was_with_header)
   {
     //fclose(file);
     //file = fopen(fname, "w");
     // seek to set correct size in wav header
-    if (fseek(file,offsetof(wavheader, length),SEEK_SET)==-1)
-      {
-	fprintf(stderr, "warning, can't seek output file (stdout?), wav header will be incorrect!\n");
-	exit(0);
-    }
+    if (fseek(file, offsetof(wavheader, length), SEEK_SET) == -1)
+      ERROR(1, "cannot seek output file (stdout?)");
     int len = totallength  - 8;
     ignore = fwrite(&len, 1, 4, file);
     fseek(file,offsetof(wavheader, datalength),SEEK_SET);
@@ -118,14 +128,14 @@ static urbi::UCallbackAction
 getSound(const urbi::UMessage& msg)
 {
   static urbi::USound out;
-  static bool initialized=false;
+  static bool initialized = false;
   if (!initialized)
   {
-    totallength = 0;
     initialized = true;
+    totallength = 0;
     out.data = 0;
     out.size = 0;
-    if (outtodsp)
+    if (out_to_dsp)
     {
       out.channels = 2;
       out.sampleSize = 16;
@@ -141,38 +151,63 @@ getSound(const urbi::UMessage& msg)
     }
   }
 
-  if (msg.type != urbi::MESSAGE_DATA
-      || msg.value->type != urbi::DATA_BINARY
-      || msg.value->binary->type != urbi::BINARY_SOUND)
-    return urbi::URBI_CONTINUE;
-  out.soundFormat =
-    withheader? urbi::SOUND_WAV : urbi::SOUND_RAW;
-  withheader = false;
-  convert(msg.value->binary->sound, out);
-  totallength += out.size;
-  ignore = fwrite(out.data, out.size, 1, file);
+  if (msg.type == urbi::MESSAGE_DATA
+      && msg.value->type == urbi::DATA_BINARY
+      && msg.value->binary->type == urbi::BINARY_SOUND)
+  {
+    out.soundFormat = with_header? urbi::SOUND_WAV : urbi::SOUND_RAW;
+    with_header = false;
+    convert(msg.value->binary->sound, out);
+    totallength += out.size;
+    ignore = fwrite(out.data, out.size, 1, file);
+  }
   return urbi::URBI_CONTINUE;
 }
 
 
 int main(int argc, char *argv[])
 {
+  libport::program_initialize(argc, argv);
+
+  libport::OptionValue
+    arg_duration("recording duration in seconds",
+                 "duration", 'd', "DURATION"),
+    arg_out("save sound in FILE",
+            "output", 'o', "FILE");
+  libport::OptionFlag
+    arg_no_headers("don't include the headers when saving the sound",
+                   "no-headers", 'n');
+
+  libport::OptionParser opt_parser;
+  opt_parser << "Options:"
+	     << libport::opts::help
+	     << libport::opts::version
+	     << libport::opts::host
+	     << libport::opts::port
+	     << libport::opts::port_file
+             << arg_duration
+             << arg_out
+             << arg_no_headers;
+
+  opt_parser(libport::program_arguments());
+
+  if (libport::opts::help.get())
+    usage(opt_parser);
+  if (libport::opts::version.get())
+    version();
+
   //16000 1 16
-  if (argc != 3 && argc !=4 && argc != 5)
-    usage();
-  int time = strtol(argv[2], NULL, 0);
-  if (argc < 4)
+  std::string output = arg_out.value(device);
+  out_to_dsp = output == device;
+  if (out_to_dsp)
   {
-#ifdef WIN32
-    error(1, "output to soundcard not supported under windows");
-#else
-    outtodsp = true;
-    withheader = false;
+#ifdef HAVE_SYS_SOUNDCARD_H
+    with_header = false;
     file = fopen(device, "wb");
     if (!file)
       ERROR(1, "error opening device %s: %s", device, strerror(errno));
-    int f = fileno(file);
 
+    int f = fileno(file);
 # define IOCTL(Name, Key, Param)                                        \
     do {                                                                \
       int param = Param;                                                \
@@ -184,29 +219,34 @@ int main(int argc, char *argv[])
     IOCTL("sample size", SAMPLESIZE, 16);
     IOCTL("stereo", STEREO, 1);
     IOCTL("speed", SPEED, 16000);
-# undef define
+# undef IOCTL
+#else
+    error(1, "output to soundcard not supported on this computer");
 #endif
+  }
+  else if (output == "-")
+  {
+    file = stdout;
   }
   else
   {
-    outtodsp = false;
-    if (libport::streq(argv[3], "-"))
-      file = stdout;
-    else
-    {
-      fname = argv[3];
-      file = fopen(fname, "wb+");
-      if (!file)
-        ERROR(2, "error creating file %s: %s", fname, strerror(errno));
-    }
-
-    withheader = argc !=5;
+    file = fopen(output.c_str(), "wb+");
+    if (!file)
+      ERROR(2, "error creating file %s: %s", output, strerror(errno));
   }
 
-  waswithheader = withheader;
-  urbi::UClient client (argv[1]);
+  with_header = !arg_no_headers.get();
+  was_with_header = with_header;
+  /// Server port.
+  int port = libport::opts::port.get<int>(urbi::UClient::URBI_PORT);
+  if (libport::opts::port_file.filled())
+    port = libport::file_contents_get<int>(libport::opts::port_file.value());
+
+  urbi::UClient
+    client(libport::opts::host.value(urbi::UClient::default_host()),
+           port);
   if (client.error())
-    exit(0);
+    ERROR(1, "client failed to set up");
 
   client.setCallback(getSound, "usound");
   client.setCallback(endProgram, "end");
@@ -214,7 +254,8 @@ int main(int argc, char *argv[])
     ("var end = Channel.new(\"end\")|;\n"
      "var usound = Channel.new(\"usound\")|;\n"
      "micro.&val.notifyChange(closure() { usound << micro.val })|;\n"
-     "{ sleep(%d); end << 1 },\n", time);
+     "{ sleep(%d); end << 1 },\n",
+     arg_duration.get<float>(1.));
   client.send(command);
   urbi::execute();
 }

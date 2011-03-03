@@ -1,4 +1,4 @@
-## Copyright (C) 2009-2010, Gostai S.A.S.
+## Copyright (C) 2009-2011, Gostai S.A.S.
 ##
 ## This software is provided "as is" without warranty of any kind,
 ## either expressed or implied, including but not limited to the
@@ -14,7 +14,7 @@ noinst_LTLIBRARIES += libuvalue/libuvalue.la
 # Find kernel/config.h which is above.
 libuvalue_libuvalue_la_CPPFLAGS =		\
   $(AM_CPPFLAGS)				\
-  -I $(top_builddir)/src			\
+  -I$(kernel_builddir)/src			\
   -DBUILDING_URBI_SDK
 # Find version.hh.
 libuvalue_libuvalue_la_CPPFLAGS += -I.
