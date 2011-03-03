@@ -105,8 +105,7 @@ if (!System.Platform.compilationModeSpace)
   requireFile("urbi/regexp.u");
 };
 
-// This variable is used by initialization code to detect the end of
-// urbi.u.
 Channel.topLevel.enabled = true |
 System.defaultIsSystem = false |
-var Object.loaded = 1 |;
+// Used by initialization code to detect the end of urbi.u.
+var Object.loaded = true |;
