@@ -147,7 +147,8 @@ namespace urbi
         }
         int i = 0;
         {
-          libport::Synchronizer::SynchroPoint lock(kernel::server().big_kernel_lock_get());
+          libport::Synchronizer::SynchroPoint
+            lock(kernel::server().big_kernel_lock_get());
           while (i < len)
           {
             inotify_event& evt = reinterpret_cast<inotify_event&>(buffer[i]);
