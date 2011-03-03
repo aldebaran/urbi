@@ -517,6 +517,41 @@ as \key{C-c} under a Unix terminal).
 \end{options}
 
 
+\section{\command{urbi-sound} --- Querying Sounds from a Server}
+\label{sec:tools:urbi-sound}
+
+\begin{shell}
+urbi-sound \var{option}...
+\end{shell}
+
+Connect to an \urbi server, and record sounds from it, and play them on
+\file{/dev/dsp}.  This is only supported on GNU/Linux.  If
+\option[o]{output} is specified, the recording is saved instead of being
+played.
+
+\subsection{Options}
+
+\begin{options}[General Options]
+\item[h]{help} \optionHelp
+\item{version} \optionVersion
+\end{options}
+
+\begin{options}[Networking]
+\item[H]{host=\var{host}} Address to connect to.
+\item[P]{port=\var{port}} Port to connect to.
+\item{port-file=\var{file}} Connect to the port contained in the file
+  \var{file}.
+\end{options}
+
+\begin{options}[Tuning]
+\item[d]{duration=\var{duration}} Specify, in seconds, how long the
+  recording is performed.
+\item[n]{no-header} When saving the sound, do not include the WAV headers in
+  the file.
+\item[o]{output=\var{file}} Save the sound into \var{file}.
+\end{options}
+
+
 \section{\command{umake} --- Compiling UObject Components}
 \label{sec:tools:umake}
 
