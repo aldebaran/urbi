@@ -1,4 +1,4 @@
-%% Copyright (C) 2009-2010, Gostai S.A.S.
+%% Copyright (C) 2009-2011, Gostai S.A.S.
 %%
 %% This software is provided "as is" without warranty of any kind,
 %% either expressed or implied, including but not limited to the
@@ -8,8 +8,8 @@
 
 \section{Lazy}
 
-\dfn{Lazies} are objects that hold a lazy value, that is, a not yet evaluated
-value. They provide facilities to evaluate their content only once
+\dfn{Lazies} are objects that hold a lazy value, that is, a not yet
+evaluated value. They provide facilities to evaluate their content only once
 (\dfn{memoization}) or several times. Lazy are essentially used in call
 messages, to represent lazy arguments, as described in
 \autorefObject{CallMessage}.
@@ -18,11 +18,11 @@ messages, to represent lazy arguments, as described in
 
 \subsubsection{Evaluating once}
 
-One usage of lazy values is to avoid evaluating an expression unless
-it's actually needed, because it's expensive or has undesired side
-effects. The listing below presents a situation where an
-expensive-to-compute value (\lstinline|heavy_computation|) might be
-needed zero, one or two times. The objective is to save time by:
+One usage of lazy values is to avoid evaluating an expression unless it's
+actually needed, because it's expensive or has undesired side effects. The
+listing below presents a situation where an expensive-to-compute value
+(\lstinline|heavy_computation|) might be needed zero, one or two times. The
+objective is to save time by:
 
 \begin{itemize}
 \item Not evaluating it if it's not needed.
@@ -60,19 +60,19 @@ v.value;
 
 \subsubsection{Evaluating several times}
 
-Evaluating a lazy several times only makes sense with lazy arguments
-and call messages. See example with call messages in
+Evaluating a lazy several times only makes sense with lazy arguments and
+call messages. See example with call messages in
 \autoref{sec:std-callmsg-examples-several}.
 
 
 \subsection{Caching}
 
 \refObject{Lazy} is meant for functions without argument.  If you need
-\dfn{caching} for functions that depend on arguments, it is
-straightforward to implement using a \refObject{Dictionary}.  In the
-future \us might support dictionaries whose indices are not only
-strings, but in the meanwhile, convert the arguments into
-strings, as the following sample object demonstrates.
+\dfn{caching} for functions that depend on arguments, it is straightforward
+to implement using a \refObject{Dictionary}.  In the future \us might
+support dictionaries whose indices are not only strings, but in the
+meanwhile, convert the arguments into strings, as the following sample
+object demonstrates.
 
 \begin{urbiscript}
 class UnaryLazy
@@ -124,9 +124,9 @@ p.value(1);
 
 Lazies are seldom instantiated manually. They are mainly created
 automatically when a lazy function call is made (see
-\autoref{sec:us-fun-callmsg}). One can however create a lazy value
-with the standard \lstinline|new| method of \lstinline|Lazy|, giving
-it an argument-less function which evaluates to the value made lazy.
+\autoref{sec:us-fun-callmsg}). One can however create a lazy value with the
+standard \lstinline|new| method of \lstinline|Lazy|, giving it an
+argument-less function which evaluates to the value made lazy.
 
 \begin{urbiscript}
 Lazy.new(closure () { /* Value to make lazy */ 0 });
@@ -162,19 +162,18 @@ Lazy.new(closure () { 1 + 2 }) != Lazy.new(closure () { 2 + 1 });
 Lazy.new(closure () { echo(1); 1 }).asString == "echo(1);\n1";
 \end{urbiassert}
 
-\item[eval]
-  Force the evaluation of the held lazy value. Two calls to
-  \lstinline|eval| will systematically evaluate the expression twice,
-  which can be useful to duplicate its side effects.
+\item[eval]%
+  Force the evaluation of the held lazy value. Two calls to \refSlot{eval}
+  will systematically evaluate the expression twice, which can be useful to
+  duplicate its side effects.
 
-\item[value]
-  Return the held value, potentially evaluating it
-  before. \lstinline|value| performs memoization, that is, only the
-  first call will actually evaluate the expression, subsequent calls
-  will return the cached value. Unless you want to explicitly trigger
-  side effects from the expression by evaluating it several time, this
-  should be preferred over \lstinline|eval| to avoid evaluating the
-  expression several times uselessly.
+\item[value]%
+  Return the held value, potentially evaluating it before. \refSlot{value}
+  performs memoization, that is, only the first call will actually evaluate
+  the expression, subsequent calls will return the cached value. Unless you
+  want to explicitly trigger side effects from the expression by evaluating
+  it several time, this should be preferred over \lstinline|eval| to avoid
+  evaluating the expression several times uselessly.
 \end{urbiscriptapi}
 
 
